@@ -154,15 +154,15 @@ public class MainMenu extends MenuBar {
 		if (ev instanceof MenuEvent){ //&& ev.type == MenuEvent.PRESSED
 			MenuEvent mev = (MenuEvent)ev;
 			if(mev.selectedItem == wolflang){
-				InfoScreen is = new InfoScreen("wolflang.html", (String)lr.get(118,"WolfLanguage"), true, myPreferences);
+				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "wolflang.html", (String)lr.get(118,"WolfLanguage"), true, myPreferences);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == about){
-				InfoScreen is = new InfoScreen("info.html", (String)lr.get(117,"About"),true, myPreferences);
+				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "info.html", (String)lr.get(117,"About"),true, myPreferences);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == legend){
-				InfoScreen is = new InfoScreen("legende.html", (String)lr.get(155,"Legend"),true, myPreferences);
+				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "legende.html", (String)lr.get(155,"Legend"),true, myPreferences);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == profiles){
