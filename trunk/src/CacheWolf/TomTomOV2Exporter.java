@@ -27,7 +27,7 @@ public class TomTomOV2Exporter{
 		int a,b,c,d,data;
 		RandomAccessFile outp;
 		File dfile; 
-		String[] wayType = {"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final"};
+		String[] wayType = {"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final", "Trailhead"};
 		String ctype = "";
 		//need directory only!!!!
 		String dummy = new String();
@@ -38,7 +38,7 @@ public class TomTomOV2Exporter{
 			targetDir = fc.getChosen();
 			try{
 				//loop through type
-				for(int j = 0; j <= 14; j++){
+				for(int j = 0; j <= 15; j++){
 					switch (j){
 						case 0: ctype = "0"; break;
 						case 1: ctype = "2"; break;
@@ -55,6 +55,8 @@ public class TomTomOV2Exporter{
 						case 12: ctype = "51";break;
 						case 13: ctype = "52";break;
 						case 14: ctype = "53";break;
+						case 15: ctype = "54";break;
+
 
 					} 
 					dfile = new File(targetDir + "/GC-" + wayType[j] + ".ov2");

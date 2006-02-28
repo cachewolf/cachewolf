@@ -44,6 +44,7 @@ public final class Common {
 		if (typeText.equals("Waypoint|Stages of a Multicache")) return "51";
 		if (typeText.equals("Waypoint|Question to Answer")) return "52";
 		if (typeText.equals("Waypoint|Final Coordinates")) return "53";
+		if (typeText.equals("Waypoint|Trailhead")) return "54";
 		Vm.debug("Unknown Cache Type:" + typeText);
 		return "0";
 	}
@@ -62,6 +63,7 @@ public final class Common {
 		if(geoNum.equals("51")) geo = "Stages of a Multicache";
 		if(geoNum.equals("52")) geo = "Question to Answer";
 		if(geoNum.equals("53")) geo = "Final Coordinates";
+		if(geoNum.equals("54")) geo = "Trailhead";
 		return geo;
 	}
 

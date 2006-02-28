@@ -74,12 +74,15 @@ public class GPXImporter extends MinML {
 				while (zipEnum.hasMoreElements())
 				{
 					zipEnt = (ZipEntry) zipEnum.nextElement();
-					r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
-					infB = new InfoBox(zipEnt.toString(),((String)lr.get(4000,"Loaded caches") + ":" + zaehlerGel));
-					infB.show();
-					parse(r);
-					r.close();
-					infB.close(0);
+					// skip over PRC-files
+					if (zipEnt.getName().endsWith("gpx")){
+						r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
+						infB = new InfoBox(zipEnt.toString(),((String)lr.get(4000,"Loaded caches") + ":" + zaehlerGel));
+						infB.show();
+						parse(r);
+						r.close();
+						infB.close(0);
+					}
 				}
 			}
 			else {
