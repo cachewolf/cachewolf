@@ -71,6 +71,7 @@ public class HTMLExporter{
 					}
 					varParams = new Hashtable();
 					varParams.put("TYPE", Common.transType(holder.type));
+					varParams.put("SIZE", holder.CacheSize);
 					varParams.put("WAYPOINT", holder.wayPoint);
 					varParams.put("NAME", holder.CacheName);
 					varParams.put("OWNER", holder.CacheOwner);
@@ -85,6 +86,7 @@ public class HTMLExporter{
 					try{
 						Template page_tpl = new Template(template_init_page);
 						page_tpl.setParam("TYPE", Common.transType(holder.type));
+						page_tpl.setParam("SIZE", holder.CacheSize);
 						page_tpl.setParam("WAYPOINT", holder.wayPoint);
 						page_tpl.setParam("NAME", holder.CacheName);
 						page_tpl.setParam("OWNER", holder.CacheOwner);
@@ -103,6 +105,7 @@ public class HTMLExporter{
 							
 						}
 						page_tpl.setParam("HINTS", holder.Hints);
+						page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(holder.Hints));
 						dummy = new String();
 						for(int j = 0; j<holder.CacheLogs.size(); j++){
 							dummy = dummy + (String)holder.CacheLogs.get(j)+"<br>";
