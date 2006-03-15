@@ -77,12 +77,12 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Sub - Menu for maps
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mapitems = new MenuItem[2];
-		importmap = new MenuItem((String)lr.get(150,"Import"));
-		mapitems[0] = importmap;
-		kalibmap = new MenuItem((String)lr.get(151,"Calibrate"));
-		mapitems[1] = kalibmap;
-		Menu mn3 = new Menu(mapitems, (String)lr.get(149,"Maps"));
+		//MenuItem[] mapitems = new MenuItem[2];
+		//importmap = new MenuItem((String)lr.get(150,"Import"));
+		//mapitems[0] = importmap;
+		//kalibmap = new MenuItem((String)lr.get(151,"Calibrate"));
+		//mapitems[1] = kalibmap;
+		//Menu mn3 = new Menu(mapitems, (String)lr.get(149,"Maps"));
 		///////////////////////////////////////////////////////////////////////
 		ftest = new File(cwd + "/gpsbabel.exe");
 		if(!ftest.exists()){
