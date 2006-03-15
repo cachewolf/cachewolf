@@ -90,7 +90,7 @@ public class MainTab extends mTabbedPanel {
 		  if(ev instanceof MultiPanelEvent){
 			  //if(this.getSelectedItem() == 0){
 				  //Vm.debug(Convert.toString(cDB.size()));
-				  Vm.debug("Panel 0");
+				  //Vm.debug("Panel 0");
 				  if(detP.dirty_new == true || detP.dirty_delete == true) {
 					  tbP.refreshTable();
 					  Vm.debug("Panel 0.1");

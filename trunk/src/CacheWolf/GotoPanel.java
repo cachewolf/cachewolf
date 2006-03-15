@@ -4,9 +4,10 @@ import ewe.ui.*;
 import ewe.util.Vector;
 import ewe.util.mString;
 import ewe.fx.*;
-import ewe.io.IOException;
-import ewe.io.SerialPort;
-import ewe.io.SerialPortOptions;
+import ewe.io.*;
+//import ewe.io.IOException;
+//import ewe.io.SerialPort;
+//import ewe.io.SerialPortOptions;
 import ewe.sys.*;
 import ewe.sys.Double;
 
@@ -73,7 +74,7 @@ public class GotoPanel extends CellPanel {
 	CWPoint toPoint = new CWPoint();;
 
 	mButton btnGPS, btnCenter,btnSave;
-	mButton btnGoto;
+	mButton btnGoto, btnMap;
 	mCheckBox chkDMM, chkDMS, chkDD, chkUTM;
 	CheckBoxGroup chkFormat = new CheckBoxGroup();
 	int currFormat;
@@ -111,7 +112,11 @@ public class GotoPanel extends CellPanel {
 	static Font BOLD = new Font("Arial", Font.BOLD, 14);
 
 	int centerX, centerY;
-
+	boolean mapsLoaded = false;
+	public boolean runMovingMap = false;
+	Vector availableMaps = new Vector();
+	MapInfoObject tempMIO = new MapInfoObject();
+	
 	/**
 	 * Create GotoPanel 
 	 * @param Preferences 	global preferences
@@ -132,6 +137,8 @@ public class GotoPanel extends CellPanel {
 		ButtonP.addNext(btnGPS = new mButton("Start"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addNext(btnCenter = new mButton((String)lr.get(309,"Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addLast(btnSave = new mButton((String)lr.get(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		//ButtonP.addLast(btnMap = new mButton("Map"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		
 
 		//Format selection for coords
 		FormatP.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
@@ -363,6 +370,61 @@ public class GotoPanel extends CellPanel {
 				pref.mybrMin = gpsPosition.getLonMin(CWPoint.DMM);
 				pref.mybrWE = gpsPosition.getEWLetter();
 				mainT.updateBearDist();
+			}
+			//Start moving map
+			if (ev.target == btnMap){
+				if(mapsLoaded == false){
+					String dateien[];
+					InfoBox inf = new InfoBox("Info", "Loading maps...");
+					Vm.showWait(true);
+					inf.show();
+					String mapsPath = new String();
+					mapsPath = File.getProgramDirectory() + "/maps/";
+					try{
+						File files = new File(mapsPath);
+						File checkWFL;
+						FileReader mapFileReader;
+						String line = new String();
+						Extractor ext;
+						String rawFileName = new String();
+						dateien = files.list("*.png", File.LIST_FILES_ONLY);
+						for(int i = 0; i < dateien.length;i++){
+							ext = new Extractor(dateien[i], "", ".", 0, true);
+							rawFileName = ext.findNext();
+							tempMIO = new MapInfoObject();
+							//Vm.debug(mapsPath + rawFileName + ".wfl");
+							mapFileReader = new FileReader(mapsPath + rawFileName + ".wfl");
+							line = mapFileReader.readLine();
+							tempMIO.affine[0] = Convert.toDouble(line);
+							line = mapFileReader.readLine();
+							tempMIO.affine[1] = Convert.toDouble(line);
+							line = mapFileReader.readLine();
+							tempMIO.affine[2] = Convert.toDouble(line);
+							line = mapFileReader.readLine();
+							tempMIO.affine[3] = Convert.toDouble(line);
+							line = mapFileReader.readLine();
+							tempMIO.affine[4] = Convert.toDouble(line);
+							line = mapFileReader.readLine();
+							tempMIO.affine[5] = Convert.toDouble(line);
+							line = mapFileReader.readLine();
+							tempMIO.lowlat = Convert.toDouble(line);
+							line = mapFileReader.readLine();
+							tempMIO.lowlon = Convert.toDouble(line);
+							tempMIO.fileName = mapsPath + rawFileName + ".wfl";
+							tempMIO.mapName = rawFileName;
+							availableMaps.add(tempMIO);
+							mapFileReader.close();
+						}
+					}catch(Exception ex){
+					}
+					mapsLoaded = true;
+					inf.close(0);
+					Vm.showWait(false);
+				}
+				MovingMap mmp = new MovingMap(pref, availableMaps);
+				runMovingMap = true;
+				mmp.show();
+				
 			}
 			// create new waypoint with current GPS-position
 			if (ev.target == btnSave){
