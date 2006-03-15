@@ -104,7 +104,7 @@ public class CacheHolder {
 	  // now loop through new cachedata and compare logentries, 
 	  // starting with oldest log
 	  
-	  Vm.debug("made it to here!");
+	  //Vm.debug("made it to here!");
 	  int currLog = newCh.CacheLogs.size()-1;
 	  String newLogDate = new String();
 	  while (currLog >= 0 ){
@@ -123,9 +123,9 @@ public class CacheHolder {
 	 int z = 0;
 	  int sz = 0;
 	 String loganal = new String();
-	  Vm.debug("Checking size: ");
+	 // Vm.debug("Checking size: ");
 	  sz = newCh.CacheLogs.size();
-	 Vm.debug("log size: " + sz);
+	 //Vm.debug("log size: " + sz);
  	 while(z < newCh.CacheLogs.size() && z < 5){
 		loganal = (String)newCh.CacheLogs.get(z);
 		if(loganal.indexOf("icon_sad")>0) {
