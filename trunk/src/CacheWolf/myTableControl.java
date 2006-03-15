@@ -28,7 +28,7 @@ public class myTableControl extends TableControl{
 			//String cmd = "\""+pref.browser+ ".exe\"" + " www.aragorn.de";
 			Vm.debug(cmd);
 			ewe.sys.Process p = Vm.exec(cmd);
-			p.waitFor();
+			//p.waitFor();
 		}catch(Exception ex){
 			Vm.debug("Cannot start browser! " +ex.toString());
 		}
