@@ -93,13 +93,13 @@ public class MainTab extends mTabbedPanel {
 				  //Vm.debug("Panel 0");
 				  if(detP.dirty_new == true || detP.dirty_delete == true) {
 					  tbP.refreshTable();
-					  Vm.debug("Panel 0.1");
+					  //Vm.debug("Panel 0.1");
 					  detP.dirty_new = false;
 					  detP.dirty_delete = false;
 					  detP.dirty_status = false;
 				  }
 				  if(detP.dirty_status == true){
-					  Vm.debug("Panel 0.2");
+					  //Vm.debug("Panel 0.2");
 					  ch = new CacheHolder();
 					  ch = (CacheHolder)cDB.get(tbP.getSelectedCache());
 					  ch.CacheStatus = detP.wayStatus.getText();
