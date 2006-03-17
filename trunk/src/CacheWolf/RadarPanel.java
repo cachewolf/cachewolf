@@ -26,7 +26,8 @@ public class RadarPanel extends CellPanel{
 	Image cacheImages[] = new Image[138];
 	String selectedWaypoint = new String();
 	MainTab mt;
-	
+	boolean penMoving = false;
+	int x1,y1,x2,y2 = 0;
 	/**
 	* Constructor for the radar panel.
 	* Loads images, sets up the interactive panel and
@@ -178,8 +179,8 @@ public class RadarPanel extends CellPanel{
 	* Always call this before calling drawCaches().
 	*/
 	private void drawBackground(){
-		Rect r = new Rect(new Dimension(pref.myAppWidth,pref.myAppHeight));
-		iActP.virtualSize = r;
+		//Rect r = new Rect(new Dimension(width, height);
+		//iActP.virtualSize = r;
 		iActP.refresh();
 		Image img = new Image(width, height);
 		Graphics g = new Graphics(img);
@@ -223,6 +224,7 @@ public class RadarPanel extends CellPanel{
 	}
 	
 	public void onEvent(Event ev){
+		
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btPlus){
 				scaleKm = scaleKm - 10;
@@ -239,5 +241,6 @@ public class RadarPanel extends CellPanel{
 				drawThePanel();
 			}
 		}
+
 	}
 }
