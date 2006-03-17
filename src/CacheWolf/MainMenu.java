@@ -98,7 +98,7 @@ public class MainMenu extends MenuBar {
 		profiles = items[0]; preferences = items[1]; loadcaches = items[2];
 		//mn.addItem(mn3);
 		//mn.addItem("-");
-		//mn.addItem(mn2);
+		mn.addItem(mn2);
 		dummy = "-|";
 		dummy += (String)lr.get(127,"Save");
 		dummy += "|";
