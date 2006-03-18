@@ -42,7 +42,7 @@ public class ImagePanel extends InteractivePanel{
 		for(int i = 0; i<lgr;i++){
 			this.removeImage((AniImage)liste.get(0));
 		}
-		int rowCounter = cache.Images.size() + cache.LogImages.size();
+		int rowCounter = cache.Images.size() + cache.UserImages.size();
 		rowCounter = (int)(rowCounter/3)+1;
 		Rect r = new Rect(new Dimension(pref.myAppWidth,rowCounter*thumb_size+rowCounter*padding+padding));
 		this.virtualSize = r;
@@ -127,18 +127,17 @@ public class ImagePanel extends InteractivePanel{
 		//Vm.debug("locy before: " + Convert.toString(locY));
 		
 		
-		/*
 		if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
 		//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
 		//Vm.debug("locy after: " + Convert.toString(locY));
-		stringWidth = fm.getTextWidth("Log Images");
+		stringWidth = fm.getTextWidth("User Images");
 		Image img2 = new Image(stringWidth*2,stringHeight+5);
 		Graphics g2 = new Graphics(img2);
 		g2.setColor(new Color(195,195,195));
-		g2.fillRect(0,0,stringWidth*3,stringHeight+5);
+		g2.fillRect(0,0,stringWidth*2,stringHeight+5);
 		g2.setColor(new Color(0,0,0));
 		g2.setFont(font);
-		g2.drawText("Log Images:", 0,0);
+		g2.drawText("User Images:", 0,0);
 		g2.free();
 		aImg = new AniImage(img2);
 		aImg.setLocation(0, locY);
@@ -147,8 +146,8 @@ public class ImagePanel extends InteractivePanel{
 		locY = locY + 20;
 		locX = padding;
 		locCounter = 0;
-		for(int i = 0; i<cache.LogImages.size(); i++){
-			location = pref.mydatadir + (String)cache.LogImages.get(i);
+		for(int i = 0; i<cache.UserImages.size(); i++){
+			location = pref.mydatadir + (String)cache.UserImages.get(i);
 			//Vm.debug(location);
 			try{
 				mI = new mImage(location);
@@ -176,6 +175,16 @@ public class ImagePanel extends InteractivePanel{
 				ipi.fileName = location;
 				ipi.setLocation(locX, locY);
 				addImage(ipi);
+				//Name of picture:
+				if(cache.UserImagesText.size()>i){
+					imgText = (String)cache.UserImagesText.get(i);
+					if(imgText.length()==0) imgText = "???";
+					AimgText = new AniImage();
+					AimgText = getImageText(imgText);
+					AimgText.setLocation(locX,locY+scaleY);
+					addImage(AimgText);
+					AimgText.refresh();
+				}
 				ipi.refresh();
 				locX = locX + thumb_size + padding;
 				locCounter++;
@@ -185,9 +194,9 @@ public class ImagePanel extends InteractivePanel{
 					locY = locY+thumb_size+padding;
 				}
 			}catch(Exception imex){
+				Vm.debug("Error: " + imex.toString());
 			}
 		} //for
-		*/
 		
 		
 		this.refresh();

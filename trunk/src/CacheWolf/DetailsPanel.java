@@ -26,7 +26,7 @@ public class DetailsPanel extends CellPanel{
 	mChoice wayType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead"},0);
 	mChoice waySize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
 	mComboBox wayStatus = new mComboBox(new String[]{"", (String)lr.get(313,"Flag 1"), (String)lr.get(314,"Flag 2"), (String)lr.get(315,"Flag 3"), (String)lr.get(316,"Flag 4"), (String)lr.get(317,"Search"), (String)lr.get(318,"Found"), (String)lr.get(319,"Not Found"), (String)lr.get(320,"Owner")},0);
-	mButton btCrWp, showBug, showMap, addDateTime, btnGoto;
+	mButton btCrWp, showBug, showMap, addDateTime, btnGoto, addPicture;
 	Vector cacheDB;
 	CacheHolder thisCache;
 	CellPanel toolP = new CellPanel();
@@ -48,13 +48,16 @@ public class DetailsPanel extends CellPanel{
 		mImage mI = new mImage("bug.gif");
 		mImage mI2 = new mImage("globe_small.gif");
 		mImage mI3 = new mImage("date_time.png");
+		mImage mI4 = new mImage("images.gif");
 		showBug = new mButton((IImage)mI);
 		showMap = new mButton((IImage)mI2);
 		addDateTime = new mButton((IImage)mI3);
+		addPicture = new mButton((IImage)mI4);
 		toolP.addNext(showBug,this.DONTSTRETCH, this.WEST);
 		showBug.modify(Control.Disabled,0);
 		toolP.addNext(showMap,this.DONTSTRETCH, this.WEST);
-		toolP.addLast(addDateTime,this.DONTSTRETCH, this.WEST);
+		toolP.addNext(addDateTime,this.DONTSTRETCH, this.WEST);
+		toolP.addLast(addPicture,this.DONTSTRETCH, this.WEST);
 			
 		//showMap.modify(Control.Disabled,0);
 		this.addLast(toolP,this.DONTSTRETCH, this.WEST).setTag(SPAN,new Dimension(4,1));;
@@ -316,6 +319,9 @@ public class DetailsPanel extends CellPanel{
 				else 	note = note + dtm.toString();
 				note = note + "\n";
 				wayNotes.setText(note);
+			}
+			if (ev.target == addPicture){
+				thisCache.addUserImage(pref);
 			}
 			if (ev.target == btCrWp){
 				if(btCrWp.getText().equals((String)lr.get(312,"Save"))){
