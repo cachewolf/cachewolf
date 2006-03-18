@@ -13,6 +13,7 @@ public class MapInfoObject{
 	public double[] affine = {0,0,0,0,0,0};
 	public double lowlat = 0;
 	public double lowlon = 0;
+	public String fileNameWFL = new String();
 	public String fileName = new String();
 	public String mapName = new String();
 	boolean inBound = false;
