@@ -112,7 +112,7 @@ public class PreferencesScreen extends Form {
 				}
 				myPreferences.myAlias = Alias.getText();
 				myPreferences.browser = Browser.getText();
-				Vm.debug(myPreferences.browser);
+				//Vm.debug(myPreferences.browser);
 				myPreferences.myproxy = Proxy.getText();
 				myPreferences.myproxyport = ProxyPort.getText();
 				myPreferences.nLogs = Convert.parseInt(nLogs.getText());
