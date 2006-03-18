@@ -71,7 +71,7 @@ public class GotoPanel extends CellPanel {
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 
 	CWGPSPoint gpsPosition = new CWGPSPoint();
-	CWPoint toPoint = new CWPoint();;
+	public CWPoint toPoint = new CWPoint();
 
 	mButton btnGPS, btnCenter,btnSave;
 	mButton btnGoto, btnMap;
@@ -100,7 +100,7 @@ public class GotoPanel extends CellPanel {
 	CellPanel LogP = new CellPanel();
 	
 	SerialThread serThread;
-	int displayTimer = 0;
+	public int displayTimer = 0;
 	
 	ImageControl ic; 
 	
@@ -116,6 +116,7 @@ public class GotoPanel extends CellPanel {
 	public boolean runMovingMap = false;
 	Vector availableMaps = new Vector();
 	MapInfoObject tempMIO = new MapInfoObject();
+	MovingMap mmp;
 	
 	/**
 	 * Create GotoPanel 
@@ -136,8 +137,8 @@ public class GotoPanel extends CellPanel {
 		// Button
 		ButtonP.addNext(btnGPS = new mButton("Start"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addNext(btnCenter = new mButton((String)lr.get(309,"Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		ButtonP.addLast(btnSave = new mButton((String)lr.get(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		//ButtonP.addLast(btnMap = new mButton("Map"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		ButtonP.addNext(btnSave = new mButton((String)lr.get(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		ButtonP.addLast(btnMap = new mButton("Map"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		
 
 		//Format selection for coords
@@ -285,45 +286,49 @@ public class GotoPanel extends CellPanel {
 		Double speed = new Double();
 
 		if (timerId == displayTimer) {
-			lblSats.setText(Convert.toString(gpsPosition.getSats()));
-			// display values only, if signal good
-			if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()> 0)) {
-				lblPosition.setText(gpsPosition.toString(currFormat));
-				
-				speed.set(gpsPosition.getSpeed());
-				lblSpeed.setText(l.format(Locale.FORMAT_PARSE_NUMBER,speed,"0.0") + " km/h");
-
-				bearMov.set(gpsPosition.getBear());
-				lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
-
-				
-				bearWayP.set(gpsPosition.getBearing(toPoint));
-				lblBearWayP.setText(bearWayP.toString(0,0,0) + " Grad");
-				
-				dist.set(gpsPosition.getDistance(toPoint));
-				if (dist.value >= 1){
-					lblDist.setText(l.format( Locale.FORMAT_PARSE_NUMBER,dist,"0.000")+ " km");
-				}
-				else {
-					dist.set(dist.value * 1000);
-					lblDist.setText(dist.toString(3,0,0) + " m");
-				}
-				
-				drawArrows(ic,bearMov.value,bearWayP.value);
+			if(runMovingMap){
+				lblSats.setText(Convert.toString(gpsPosition.getSats()));
+				// display values only, if signal good
+				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()> 0)) {
+					lblPosition.setText(gpsPosition.toString(currFormat));
+					
+					speed.set(gpsPosition.getSpeed());
+					lblSpeed.setText(l.format(Locale.FORMAT_PARSE_NUMBER,speed,"0.0") + " km/h");
 	
-				// Set background to signal quality
-				lblSats.backGround = GREEN;
-				return;
-			}
-			// receiving data, but signal ist not good
-			if ((gpsPosition.getFix()== 0) && (gpsPosition.getSats()>= 0)) {
-				lblSats.backGround = YELLOW;
-				return;
-			}
-			// receiving no data
-			if (gpsPosition.getSats()== -1) {
-				lblSats.backGround = RED;
-				return;
+					bearMov.set(gpsPosition.getBear());
+					lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
+	
+					
+					bearWayP.set(gpsPosition.getBearing(toPoint));
+					lblBearWayP.setText(bearWayP.toString(0,0,0) + " Grad");
+					
+					dist.set(gpsPosition.getDistance(toPoint));
+					if (dist.value >= 1){
+						lblDist.setText(l.format( Locale.FORMAT_PARSE_NUMBER,dist,"0.000")+ " km");
+					}
+					else {
+						dist.set(dist.value * 1000);
+						lblDist.setText(dist.toString(3,0,0) + " m");
+					}
+					
+					drawArrows(ic,bearMov.value,bearWayP.value);
+		
+					// Set background to signal quality
+					lblSats.backGround = GREEN;
+					return;
+				}
+				// receiving data, but signal ist not good
+				if ((gpsPosition.getFix()== 0) && (gpsPosition.getSats()>= 0)) {
+					lblSats.backGround = YELLOW;
+					return;
+				}
+				// receiving no data
+				if (gpsPosition.getSats()== -1) {
+					lblSats.backGround = RED;
+					return;
+				}
+			}else{ // In moving map mode
+				mmp.updatePosition();
 			}
 		}
 	}
@@ -410,7 +415,8 @@ public class GotoPanel extends CellPanel {
 							tempMIO.lowlat = Convert.toDouble(line);
 							line = mapFileReader.readLine();
 							tempMIO.lowlon = Convert.toDouble(line);
-							tempMIO.fileName = mapsPath + rawFileName + ".wfl";
+							tempMIO.fileNameWFL = mapsPath + rawFileName + ".wfl";
+							tempMIO.fileName = mapsPath + rawFileName + ".png";
 							tempMIO.mapName = rawFileName;
 							availableMaps.add(tempMIO);
 							mapFileReader.close();
@@ -421,9 +427,9 @@ public class GotoPanel extends CellPanel {
 					inf.close(0);
 					Vm.showWait(false);
 				}
-				MovingMap mmp = new MovingMap(pref, availableMaps);
+				mmp = new MovingMap(pref, availableMaps, this);
 				runMovingMap = true;
-				mmp.show();
+				mmp.execute();
 				
 			}
 			// create new waypoint with current GPS-position
