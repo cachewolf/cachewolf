@@ -424,8 +424,10 @@ public class GPXImporter extends MinML {
 		// Get degrees
 		if (lon.indexOf('.') < 0) lon = lon + ".0";
 		deg = lon.substring(0, lon.indexOf('.'));
-		if (deg.substring(0,1).equals("-"))res = "W "; 
-		else  res = "E ";
+		if (deg.substring(0,1).equals("-")){
+			res = "W ";
+			deg = replace(deg, "-","");
+		} else  res = "E ";
 		// fill up leading '0'
 		for (int i=deg.length();i<3;i++)
 			res += "0";
@@ -488,7 +490,7 @@ public class GPXImporter extends MinML {
 	}
 	
 	private void spiderImages(){
-		Vm.debug("Spider now: " + holder.wayPoint);
+		//Vm.debug("Spider now: " + holder.wayPoint);
 		Extractor cacheEx;
 		String addr = new String();
 		String longDesc = new String();
@@ -536,8 +538,8 @@ public class GPXImporter extends MinML {
 				dummySrcExt = new Extractor(dummySrc, "src = \"", "\"",0,true);
 				dummy = dummySrcExt.findNext();
 			}
-			Vm.debug("Trying for: " + holder.wayPoint + " / " + dummySrc);
-			Vm.debug("Url = " + dummy);
+			//Vm.debug("Trying for: " + holder.wayPoint + " / " + dummySrc);
+			//Vm.debug("Url = " + dummy);
 			if(dummy.length()>0){
 				if(pref.myproxy.length()>0){
 					connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), dummy);
@@ -556,9 +558,9 @@ public class GPXImporter extends MinML {
 						fos.close();
 						sockImg.close();
 						holder.Images.add(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-						Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
+						//Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
 						holder.ImagesText.add(dummy.substring(dummy.lastIndexOf("/")+1, dummy.lastIndexOf("/")+1+dummy.length()-dummy.lastIndexOf("/")-1));
-						Vm.debug("adding...." +dummy.substring(dummy.lastIndexOf("/")+1, dummy.lastIndexOf("/")+1+dummy.length()-dummy.lastIndexOf("/")-1));
+						//Vm.debug("adding...." +dummy.substring(dummy.lastIndexOf("/")+1, dummy.lastIndexOf("/")+1+dummy.length()-dummy.lastIndexOf("/")-1));
 					} catch (UnknownHostException e) { 
 						Vm.debug("Host not there...");
 					}catch(IOException ioex){
@@ -571,7 +573,7 @@ public class GPXImporter extends MinML {
 					imgCounter++;
 			}
 			dummySrc = cacheEx.findNext();
-			Vm.debug("Dummy SRC = " + dummySrc);
+			//Vm.debug("Dummy SRC = " + dummySrc);
 			dummySrc = replace(dummySrc, "SRC", "src");
 			dummySrc =dummySrc.replace('\'', '\"');
 		}
@@ -587,7 +589,7 @@ public class GPXImporter extends MinML {
 		dummy2 = imgEx.findNext();
 		while(cacheEx.endOfSearch() == false){
 			dummy = "http://img.groundspeak.com/cache/"+dummy;
-			Vm.debug("Target= " +dummy);
+			//Vm.debug("Target= " +dummy);
 			if(pref.myproxy.length()>0){
 				connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), dummy);
 			}else{
@@ -605,8 +607,8 @@ public class GPXImporter extends MinML {
 				sockImg.close();
 				holder.Images.add(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
 				holder.ImagesText.add(dummy2);
-				Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-				Vm.debug(dummy2);
+				//Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
+				//Vm.debug(dummy2);
 			}catch(IOException ioex){
 				Vm.debug("File not found!");
 			}
