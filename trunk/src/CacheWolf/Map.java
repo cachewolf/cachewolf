@@ -189,6 +189,8 @@ public class Map extends Form {
 	*	into the maps folder in the CacheWolf base directory.
 	*	
 	*	If the maps directory does not exist it will create it.
+	*	If it finds .map files it will assume these are oziexplorer calibration files.
+	*	It will use these files to automatically georeference the files during import.
 	*/
 	public boolean importMap(){
 		Extractor ext;
