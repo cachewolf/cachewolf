@@ -1,0 +1,20 @@
+<!-- Diese Datei beschreibt, das Template, dass CW -->
+<!-- in Zukunft zum Spidern nutzen soll -->
+<!-- Status: Draft, 18.03.06 -->
+<!-- Author: Marc Schnitzler -->
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SPIDER>
+	<!-- Definition der Zielvariable in CW -->
+	<!-- occurance definiert, ob eine Mehrfachsuche stattfinden soll, -->
+	<!-- Beispiel sind die cacheattributes -->
+	<!-- recursive definiert, ob eine suche innerhalb des suchmuster erfolgen soll -->
+	<!-- Beispiel sind Spoilerbilder -->
+	<DBFIELD fieldname = "" occurance="single|many" recursive = "true|false">
+		<!-- Definition Regex-Muster -->
+		<PATTERN><![CDATA[]]></PATTERN>
+		<!-- ist recursive=true muss hier nochmal so ein Eintrag erfolgen -->
+		<DBFIELD>
+		<DBFIELD>
+		<!-- Ende: bei recursive = true -->
+	</DBFIELD>
+</SPIDER>
