@@ -72,6 +72,22 @@ public class CacheReaderWriter {
 			dummy = ex.findNext();
 		}
 
+		cache.UserImages.clear();
+		ex = new Extractor(text, "<USERIMG>", "</USERIMG>", 0, true);
+		dummy = ex.findNext();
+		while(ex.endOfSearch() == false){
+			cache.UserImages.add(dummy);
+			dummy = ex.findNext();
+		}
+		cache.UserImagesText.clear();
+		ex = new Extractor(text, "<USERIMGTEXT>", "</USERIMGTEXT>", 0, true);
+		dummy = ex.findNext();
+		while(ex.endOfSearch() == false){
+			cache.UserImagesText.add(dummy);
+			dummy = ex.findNext();
+		}
+
+
 		ex = new Extractor(text, "<BUGS><![CDATA[", "]]></BUGS>", 0, true);
 		cache.Bugs = ex.findNext();
 		
@@ -146,6 +162,15 @@ public class CacheReaderWriter {
 					stbuf = (String)ch.LogImagesText.get(i);
 					detfile.print("    <LOGIMGTEXT>"+stbuf+"</LOGIMGTEXT>\n");
 			  }
+			  for(int i = 0;i<ch.UserImages.size();i++){
+					stbuf = (String)ch.UserImages.get(i);
+					detfile.print("    <USERIMG>"+stbuf+"</USERIMG>\n");
+			  }
+			  for(int i = 0;i<ch.UserImagesText.size();i++){
+					stbuf = (String)ch.UserImagesText.get(i);
+					detfile.print("    <USERIMGTEXT>"+stbuf+"</USERIMGTEXT>\n");
+			  }
+
 
 			  detfile.print("</IMAGES>\n");
 			  detfile.print("<BUGS><![CDATA[\n");
@@ -190,27 +215,6 @@ public class CacheReaderWriter {
 		}catch(Exception e){
 			//Vm.debug("Problem writing to index file");
 		}
-		
 	}
 	
-		/** Replace all instances of a String in a String.
-		 *   @param  s  String to alter.
-		 *   @param  f  String to look for.
-		 *   @param  r  String to replace it with, or null to just remove it.
-		 */ 
-		private String replace( String s, String f, String r )
-		{
-		   if (s == null)  return s;
-		   if (f == null)  return s;
-		   if (r == null)  r = "";
-		
-		   int index01 = s.indexOf( f );
-		   while (index01 != -1)
-		   {
-			  s = s.substring(0,index01) + r + s.substring(index01+f.length());
-			  index01 += r.length();
-			  index01 = s.indexOf( f, index01 );
-		   }
-		   return s;
-		}
 }

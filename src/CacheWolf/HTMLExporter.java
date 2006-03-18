@@ -45,11 +45,13 @@ public class HTMLExporter{
 			Vector cacheImg = new Vector();
 			Vector logImg = new Vector();
 			Vector mapImg = new Vector();
+			Vector usrImg = new Vector();
 			
 
 			Hashtable varParams;
 			Hashtable imgParams;
 			Hashtable logImgParams;
+			Hashtable usrImgParams;
 			Hashtable mapImgParams;
 
 			//Generate index page
@@ -60,7 +62,7 @@ public class HTMLExporter{
 			}
 			for(int i = 0; i<counter;i++){
 				if (i%5 == 0){
-					pbf.display("Exporting...", "Exporting " + Convert.toString(i) + " of " + counter, null);
+					ProgressBarForm.display("Exporting...", "Exporting " + Convert.toString(i) + " of " + counter, null);
 				}
 				holder = (CacheHolder)cacheDB.get(i);
 				if(holder.is_black == false && holder.is_filtered == false){
@@ -140,6 +142,21 @@ public class HTMLExporter{
 							logImg.add(logImgParams);
 						}
 						page_tpl.setParam("logImg", logImg);
+						// User images
+						usrImg.clear();
+						for(int j = 0; j<holder.UserImages.size(); j++){
+							usrImgParams = new Hashtable();
+							String usrImgFile = new String((String)holder.UserImages.get(j));
+							usrImgParams.put("FILE", usrImgFile);
+							if (j < holder.UserImagesText.size())
+								usrImgParams.put("TEXT",(String)holder.UserImagesText.get(j));
+							else
+								usrImgParams.put("TEXT",usrImgFile);
+							DataMover.copy(myPreferences.mydatadir + usrImgFile,targetDir + usrImgFile);
+							usrImg.add(usrImgParams);
+						}
+						page_tpl.setParam("userImg", usrImg);
+
 						// Map images
 						mapImg.clear();
 						mapImgParams = new Hashtable();

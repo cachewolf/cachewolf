@@ -1,5 +1,8 @@
 package CacheWolf;
+import ewe.ui.InputBox;
 import ewe.util.*;
+import ewe.filechooser.FileChooser;
+import ewe.io.File;
 import ewe.sys.*;
 
 /**
@@ -34,6 +37,8 @@ public class CacheHolder {
   public Vector ImagesText = new Vector();
   public Vector LogImages = new Vector();
   public Vector LogImagesText = new Vector();
+  public Vector UserImages = new Vector();
+  public Vector UserImagesText = new Vector();
   public Vector attributes = new Vector();
   public Vector CacheIcons = new Vector();
   public String Bugs = new String();
@@ -134,6 +139,30 @@ public class CacheHolder {
 	 }
 	 noFindLogs = z;
  	return this;
+  }
+  
+  public void addUserImage(Preferences pref){
+	  File imgFile;
+	  String imgDesc, imgDestName;
+	  
+	  //Get Image and description
+		FileChooser fc = new FileChooser(FileChooser.OPEN, pref.mydatadir);
+		fc.setTitle("Select image file:");
+		if(fc.execute() != FileChooser.IDCANCEL){
+			imgFile = fc.getChosenFile();
+			imgDesc = new InputBox("Description").input("",10);
+			//Create Destination Filename
+			String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf("."));
+			imgDestName = this.wayPoint + "_U_" + (this.UserImages.size()+1) + ext;
+			
+			this.UserImages.add(imgDestName);
+			this.UserImagesText.add(imgDesc);
+			// Copy File
+			DataMover.copy(imgFile.getFullPath(),pref.mydatadir + imgDestName);
+			// Save Data
+			CacheReaderWriter crw = new CacheReaderWriter();
+			crw.saveCacheDetails(this, pref.mydatadir);
+		}
   }
   
 }
