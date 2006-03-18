@@ -229,7 +229,7 @@ public class GPXImporter extends MinML {
 				// don't spider additional waypoints, so check
 				// if waypoint starts with "GC"
 				if(doSpider == true && holder.wayPoint.startsWith("GC")){
-					if(spiderOK == true){
+					if(spiderOK == true && holder.is_archived == false){
 						spiderImages();
 						if(holder.LatLon.length() > 1){
 							ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
