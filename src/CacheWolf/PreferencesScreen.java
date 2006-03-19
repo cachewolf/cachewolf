@@ -64,9 +64,9 @@ public class PreferencesScreen extends Form {
 			DataDir.setText(myPreferences.mydatadir);
 			this.addLast(DataDir.setTag(Control.SPAN, new Dimension(3,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
 		}
-		this.addNext(nLogs = new mInput(),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		nLogs.setText(Convert.toString(myPreferences.nLogs));
-		this.addLast(new mLabel("Logs"), this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		//this.addNext(nLogs = new mInput(),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		//nLogs.setText(Convert.toString(myPreferences.nLogs));
+		//this.addLast(new mLabel("Logs"), this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addNext(new mLabel("Proxy"),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addLast(new mLabel("Port"),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addNext(Proxy = new mInput(),this.DONTSTRETCH, (this.HFILL|this.WEST));
@@ -115,7 +115,7 @@ public class PreferencesScreen extends Form {
 				//Vm.debug(myPreferences.browser);
 				myPreferences.myproxy = Proxy.getText();
 				myPreferences.myproxyport = ProxyPort.getText();
-				myPreferences.nLogs = Convert.parseInt(nLogs.getText());
+				//myPreferences.nLogs = Convert.parseInt(nLogs.getText());
 				myPreferences.tablePrefs[0] = (dif.getState()==true ? 1 : 0);
 				myPreferences.tablePrefs[1] = (ter.getState()==true ? 1 : 0);
 				myPreferences.tablePrefs[4] = (loc.getState()==true ? 1 : 0);
