@@ -88,7 +88,7 @@ public class TablePanel extends CellPanel{
 		for(int i = 0; i<=10;i++){
 			if(myPreferences.tablePrefs[i] == 1){
 				jester[ji] = spName[i];
-				colWidth[ji] = myPreferences.tableWidth[ji];
+				colWidth[ji] = myPreferences.tableWidth[i];
 				ji++;
 			}
 		}
