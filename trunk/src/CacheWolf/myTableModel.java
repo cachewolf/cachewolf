@@ -19,7 +19,7 @@ public class myTableModel extends TableModel{
 	String[] colName;
 	Image cacheImages[] = new Image[138];
 	Image noFindLogs[] = new Image[4];
-	int[] breiten = (int[])Array.newInstance(int.class, 11);
+	int[] breiten;
 	Image red, blue, green, yellow;
 	mImage bug;
 	myTableControl tcControl;
@@ -29,7 +29,7 @@ public class myTableModel extends TableModel{
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	String nmQuest, nmD,nmT,nmWay,nmName,nmLoc,nmOwn,nmHid,nmStat,nmDist,nmBear = new String();
 	
-	public myTableModel(Vector DB, String[] colNs, myTableControl tc, FontMetrics fm){
+	public myTableModel(Vector DB, String[] colNs,int[] colWidth, myTableControl tc, FontMetrics fm){
 		super();
 		nmQuest = "?";
 		nmD = (String)lr.get(1000,"D");
@@ -50,6 +50,8 @@ public class myTableModel extends TableModel{
 		this.cursorSize = selrow;
 		colName = new String[colNs.length];
 		colName = colNs;
+		breiten = new int[colWidth.length];
+		breiten = colWidth;
 		this.numCols = colName.length;
 		cacheImages[0] = new Image("0.png");
 		//cacheImages[1] = new Image();
@@ -84,17 +86,6 @@ public class myTableModel extends TableModel{
 		green = new Image("green.png");
 		yellow = new Image("yellow.png");
 		bug = new mImage("bug.png");
-		breiten[0] = 20;
-		breiten[1] = 20;
-		breiten[2] = 20;
-		breiten[3] = 65;
-		breiten[4] = 135;
-		breiten[5] = 135;
-		breiten[6] = 100;
-		breiten[7] = 60;
-		breiten[8] = 50;
-		breiten[9] = 50;		
-		breiten[10] = 50;
 	}
 	
 	public void setVector(Vector DB){
