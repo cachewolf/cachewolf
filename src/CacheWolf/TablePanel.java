@@ -24,16 +24,20 @@ public class TablePanel extends CellPanel{
 		myPreferences = pref;
 		String [] spName = {"?",(String)lr.get(1000,"D"),"T",(String)lr.get(1002,"Waypoint"),"Name",(String)lr.get(1004,"Location"),(String)lr.get(1005,"Owner"),(String)lr.get(1006,"Hidden"),(String)lr.get(1007,"Status"),(String)lr.get(1008,"Dist"),(String)lr.get(1009,"Bear")};
 		String[] jester;
+		int colWidth[];
 		int colnum = 0;
 		
 		for(int i = 0; i<=10; i++){
 			if(pref.tablePrefs[i] == 1) colnum++;
 		}
 		jester = new String[colnum];
+		colWidth = new int[colnum];
+		
 		int ji = 0;
 		for(int i = 0; i<=10;i++){
 			if(pref.tablePrefs[i] == 1){
-				jester[ji] = spName[i]; 
+				jester[ji] = spName[i];
+				colWidth[ji] = pref.tableWidth[i];
 				ji++;
 			}
 		}
@@ -41,7 +45,7 @@ public class TablePanel extends CellPanel{
 		addLast(new ScrollBarPanel(tc = new myTableControl()));
 		tc.db = cacheDB;
 		tc.pref = pref;
-		myMod = new myTableModel(cacheDB, jester, tc, getFontMetrics());
+		myMod = new myTableModel(cacheDB, jester, colWidth, tc, getFontMetrics());
 		myMod.hasRowHeaders = false;
 		myMod.hasColumnHeaders  = true;
 		tc.setTableModel(myMod);
@@ -71,20 +75,24 @@ public class TablePanel extends CellPanel{
 	public void refreshTable(){
 		String [] spName = {"?",(String)lr.get(1000,"D"),"T",(String)lr.get(1002,"Waypoint"),"Name",(String)lr.get(1004,"Location"),(String)lr.get(1005,"Owner"),(String)lr.get(1006,"Hidden"),(String)lr.get(1007,"Status"),(String)lr.get(1008,"Dist"),(String)lr.get(1009,"Bear")};
 		String[] jester;
+		int colWidth[];
+
 		int colnum = 0;
 		
 		for(int i = 0; i<=10; i++){
 			if(myPreferences.tablePrefs[i] == 1) colnum++;
 		}
 		jester = new String[colnum];
+		colWidth = new int[colnum];
 		int ji = 0;
 		for(int i = 0; i<=10;i++){
 			if(myPreferences.tablePrefs[i] == 1){
-				jester[ji] = spName[i]; 
+				jester[ji] = spName[i];
+				colWidth[ji] = myPreferences.tableWidth[ji];
 				ji++;
 			}
 		}
-		myMod = new myTableModel(cacheDB, jester, tc, getFontMetrics());
+		myMod = new myTableModel(cacheDB, jester, colWidth, tc, getFontMetrics());
 		myMod.hasRowHeaders = false;
 		myMod.hasColumnHeaders  = true;
 		tc.setTableModel(myMod);
