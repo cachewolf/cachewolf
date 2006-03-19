@@ -516,10 +516,10 @@ public class Spider extends TaskObject{
 				
 				cacheEx = new Extractor(dummy, "<STRONG><IMG SRC='http:", "</font></td></tr><tr><td VALIGN='TOP' ALIGN='LEFT'><font face='Verdana' size='2'>",0,true);
 				dummy = cacheEx.findNext();
-				int maxLogs = myPref.nLogs;
+				//int maxLogs = myPref.nLogs;
 				
-				while(cacheEx.endOfSearch() == false && maxLogs > 0){
-					maxLogs--;
+				while(cacheEx.endOfSearch() == false){
+					//maxLogs--;
 					//Vm.debug(dummy);
 					//extract any images if they exist
 					tempEx = new Extractor(dummy, "<A HREF='./log.aspx?IID=", "&", 0 ,true);
