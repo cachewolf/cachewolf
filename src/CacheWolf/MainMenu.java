@@ -18,6 +18,7 @@ import ewe.filechooser.*;
 public class MainMenu extends MenuBar {
 	MenuItem profiles, preferences,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchClr,export;
 	MenuItem kalibmap,importmap;
+	MenuItem spider;
 	MenuItem about, wolflang, sysinfo, testgps, legend;
 	MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTomASC, exportMSARCSV;
 	MenuItem exportOZI, exportKML, exportTomTomOVL;
@@ -94,8 +95,18 @@ public class MainMenu extends MenuBar {
 		dummy += (String)lr.get(108,"Preferences");
 		dummy = dummy + "|";
 		dummy = dummy + "Import GPX";
+		ftest = new File(cwd + "/geotoad.exe");
+		//Hide spider menu if geotoad.exe is not found
+		if(ftest.exists()){
+			dummy = dummy + "|";
+			dummy = dummy + "Spider";
+		}
 		MenuItem [] items = mn.addItems(mString.split(dummy));
 		profiles = items[0]; preferences = items[1]; loadcaches = items[2];
+		//Hide spider menu if geotoad.exe is not found
+		if(ftest.exists()){
+			spider=items[3];
+		}
 		//mn.addItem(mn3);
 		//mn.addItem("-");
 		mn.addItem(mn2);
@@ -347,6 +358,11 @@ public class MainMenu extends MenuBar {
 					inf.execute();
 				}
 				
+			}
+			
+			if(mev.selectedItem == spider){
+				GeoToadUI gtUI = new GeoToadUI();
+				gtUI.execute();
 			}
 			if(mev.selectedItem == exit){
 				ewe.sys.Vm.exit(0);
