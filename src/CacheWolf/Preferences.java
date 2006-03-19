@@ -33,7 +33,7 @@ public class Preferences extends MinML{
 		
 	public int myAppHeight = 0;
 	public int myAppWidth = 0;
-	public int nLogs = 5;
+	//public int nLogs = 5;
 	public boolean dirty = false;
 	
 	public int currProfile = 0;
@@ -141,9 +141,9 @@ public class Preferences extends MinML{
 			mySPO.portName = atts.getValue("portname");
 			mySPO.baudRate = Convert.toInt(atts.getValue("baud"));
 		}
-		if(name.equals("logs")){
-			nLogs = Convert.parseInt(atts.getValue("number"));
-		}
+		//if(name.equals("logs")){
+		//	nLogs = Convert.parseInt(atts.getValue("number"));
+		//}
 		if(name.equals("profile1")){
 			profiles[0] = atts.getValue("name");
 			profdirs[0] = atts.getValue("dir");
@@ -211,7 +211,7 @@ public class Preferences extends MinML{
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
 			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
 			outp.print("	<tableType active = \"1\"/>\n");
-			outp.print("    <logs number = \""+Convert.toString(nLogs)+"\"/>\n");
+			//outp.print("    <logs number = \""+Convert.toString(nLogs)+"\"/>\n");
 			outp.print("	<tableD active = \""+Convert.toString(tablePrefs[0])+"\"/>\n");
 			outp.print("	<tableT active = \""+Convert.toString(tablePrefs[1])+"\"/>\n");
 			outp.print("	<tableWay active = \"1\"/>\n");
