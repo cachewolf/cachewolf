@@ -55,6 +55,15 @@ public class TablePanel extends CellPanel{
 		return selectedCache;
 	}
 	
+	public void saveColWith(Preferences pref){
+		for (int i = 0; i<=10; i++){
+			if(pref.tablePrefs[i] == 1){
+				pref.tableWidth[i] = myMod.getColWidth(i);
+			}
+		}
+		pref.savePreferences();
+	}
+	
 	public void selectAndActive(int rownum){
 		tc.scrollToVisible(rownum, 0);
 		tc.clearSelectedCells(new Vector());
