@@ -331,11 +331,13 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == savenoxit){
 				CacheReaderWriter crw = new CacheReaderWriter();
 				crw.saveIndex(cacheDB, myPreferences.mydatadir);
+				tbp.saveColWith(myPreferences);
 			}
 			
 			if(mev.selectedItem == savenexit){
 				CacheReaderWriter crw = new CacheReaderWriter();
 				crw.saveIndex(cacheDB, myPreferences.mydatadir);
+				tbp.saveColWith(myPreferences);
 				ewe.sys.Vm.exit(0);
 			}
 			if(mev.selectedItem == kalibmap){
