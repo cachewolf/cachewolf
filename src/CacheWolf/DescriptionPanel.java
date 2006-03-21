@@ -12,10 +12,19 @@ import ewe.sys.*;
 public class DescriptionPanel extends CellPanel{
 	mTextPad myPad = new mTextPad();
 	HtmlDisplay disp = new HtmlDisplay();
+	mButton btnPlus, btnMinus;
+	
+	CellPanel buttonP = new CellPanel();
+	CellPanel descP = new CellPanel();
 	
 	public DescriptionPanel(){
+		buttonP.addNext(btnPlus = new mButton("+"),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		buttonP.addLast(btnMinus = new mButton("-"),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		ScrollBarPanel sbp = new ScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
-		this.addLast(sbp);
+		descP.addLast(sbp);
+		this.addLast(descP);
+		this.addLast(buttonP,CellConstants.HSTRETCH,CellConstants.HFILL);
+
 	}
 	
 	/**
@@ -28,4 +37,26 @@ public class DescriptionPanel extends CellPanel{
 		Vm.showWait(false);
 		//myPad.setText(cache.LongDescription);
 	}
+	
+	/**
+	 * Eventhandler
+	 */
+	public void onEvent(Event ev){
+		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
+			if (ev.target == btnPlus){
+				Font currFont = disp.getFont();
+				currFont = currFont.changeNameAndSize(null, currFont.getSize() + 2);
+				disp.setFont(currFont);
+				disp.displayPropertiesChanged();
+			}
+			if (ev.target == btnMinus){
+				Font currFont = disp.getFont();
+				currFont = currFont.changeNameAndSize(null, currFont.getSize() - 2);
+				disp.setFont(currFont);
+				disp.displayPropertiesChanged();
+			}
+		}
+		super.onEvent(ev);
+	}
+
 }
