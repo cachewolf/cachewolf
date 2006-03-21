@@ -56,9 +56,10 @@ public class TablePanel extends CellPanel{
 	}
 	
 	public void saveColWith(Preferences pref){
+		int j=0;
 		for (int i = 0; i<=10; i++){
 			if(pref.tablePrefs[i] == 1){
-				pref.tableWidth[i] = myMod.getColWidth(i);
+				pref.tableWidth[i] = myMod.getColWidth(j++);
 			}
 		}
 		pref.savePreferences();
