@@ -60,30 +60,30 @@ public class DetailsPanel extends CellPanel{
 		toolP.addLast(addPicture,this.DONTSTRETCH, this.WEST);
 			
 		//showMap.modify(Control.Disabled,0);
-		this.addLast(toolP,this.DONTSTRETCH, this.WEST).setTag(SPAN,new Dimension(4,1));;
+		this.addLast(toolP,this.DONTSTRETCH, this.WEST).setTag(SPAN,new Dimension(3,1));;
 		
 		this.addNext(new mLabel((String)lr.get(300,"Type:")),this.DONTSTRETCH, (this.DONTFILL|this.NORTHWEST));
-		this.addNext(wayType,this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		this.addLast(wayType,this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addNext(new mLabel((String)lr.get(301,"Size:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addLast(waySize,this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		
 		this.addNext(new mLabel((String)lr.get(302,"Waypoint:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayPoint.setTag(Control.SPAN, new Dimension(3,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addLast(wayPoint.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
 		
 		this.addNext(new mLabel((String)lr.get(303,"Name:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayName.setTag(Control.SPAN, new Dimension(3,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addLast(wayName.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
 		
 		this.addNext(new mLabel((String)lr.get(304,"Location:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayLoc.setTag(Control.SPAN, new Dimension(3,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addLast(wayLoc.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
 		
 		this.addNext(new mLabel((String)lr.get(305,"Hidden on:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayHidden.setTag(Control.SPAN, new Dimension(3,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addLast(wayHidden.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
 		
 		this.addNext(new mLabel((String)lr.get(306,"Owner:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayOwner.setTag(Control.SPAN, new Dimension(3,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addLast(wayOwner.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
 		
 		this.addNext(new mLabel((String)lr.get(307,"Status:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayStatus.setTag(Control.SPAN, new Dimension(3,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addLast(wayStatus.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
 		
 		this.addNext(new mLabel((String)lr.get(308,"Notes:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addNext(chkCenter = new mCheckBox((String)lr.get(309,"Make Center")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
@@ -91,7 +91,7 @@ public class DetailsPanel extends CellPanel{
 
 		ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
 		//this.addLast(sbp, this.STRETCH, this.FILL);
-		this.addLast(sbp.setTag(Control.SPAN, new Dimension(4,1)),this.STRETCH, (this.FILL|this.WEST));
+		this.addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),this.STRETCH, (this.FILL|this.WEST));
 	}
 	
 	/**
