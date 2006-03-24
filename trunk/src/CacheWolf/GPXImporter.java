@@ -36,7 +36,10 @@ public class GPXImporter extends MinML {
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	int zaehlerGel = 0;
 	Hashtable DBindex = new Hashtable();
-	
+	public static final int DOIT_ASK = 0;
+	public static final int DOIT_NOSPOILER = 1;
+	public static final int DOIT_WITHSPOILER = 2;
+		
 	public GPXImporter(Vector DB, String f, Preferences p)
 	{
 		pref = p;
@@ -57,12 +60,16 @@ public class GPXImporter extends MinML {
 		}//for
 	}
 	
-	public void doIt(){
+	public void doIt(int how){
 		try{
 			ewe.io.Reader r;
-			InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
-			iB.execute();
-			doSpider = iB.mCB_state;
+			if(how == DOIT_ASK){
+				InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
+				iB.execute();
+				doSpider = iB.mCB_state;
+			}
+			if(how == DOIT_NOSPOILER) doSpider = false;
+			if(how == DOIT_WITHSPOILER) doSpider = true;
 			//Vm.debug("State of: " + doSpider);
 			Vm.showWait(true);
 			//Test for zip.file
@@ -229,6 +236,7 @@ public class GPXImporter extends MinML {
 				// don't spider additional waypoints, so check
 				// if waypoint starts with "GC"
 				if(doSpider == true && holder.wayPoint.startsWith("GC")){
+					//Vm.debug("Should be spidering images...");
 					if(spiderOK == true && holder.is_archived == false){
 						spiderImages();
 						if(holder.LatLon.length() > 1){
@@ -510,9 +518,11 @@ public class GPXImporter extends MinML {
 		
 		addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.wayPoint ;
 		try{
+			//Vm.debug(addr + "|");
 			cacheText = fetch(addr);
 		}catch(IOException iox){
-			//Vm.debug("Error fetching cache page from gc.com");
+			Vm.debug("Error fetching cache page from gc.com");
+			Vm.debug(iox.toString());
 			spiderOK = false;
 			cacheText = "";
 		}
@@ -628,11 +638,17 @@ public class GPXImporter extends MinML {
 			} else {
 				conn = new HttpConnection(address);
 			}
+			
 			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+			
 			conn.setRequestorProperty("Connection", "close");
+			
 			conn.documentIsEncoded = true;
+			
 			Socket sock = conn.connect();
+			
 			ByteArray daten = conn.readData(sock);
+			
 			JavaUtf8Codec codec = new JavaUtf8Codec();
 			CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 			//Vm.debug(c_data.toString());

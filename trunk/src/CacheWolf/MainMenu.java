@@ -194,7 +194,7 @@ public class MainMenu extends MenuBar {
 				fc.setTitle((String)lr.get(909,"Select GPX file"));
 				if(fc.execute() != fc.IDCANCEL){
 					GPXImporter gpx = new GPXImporter(cacheDB, fc.getChosenFile().toString(),myPreferences);
-					gpx.doIt();
+					gpx.doIt(GPXImporter.DOIT_ASK);
 				}
 				tbp.resetModel(cacheDB);
 			}
@@ -363,8 +363,23 @@ public class MainMenu extends MenuBar {
 			}
 			
 			if(mev.selectedItem == spider){
-				GeoToadUI gtUI = new GeoToadUI();
+				GeoToadUI gtUI = new GeoToadUI(myPreferences, File.getProgramDirectory(),cacheDB);
 				gtUI.execute();
+				File ftest = new File(File.getProgramDirectory() + "/temp.gpx");
+				if(ftest.exists()){
+					if(gtUI.chkImport.getState()){
+						//if(chkSpoilers.getState()) inf = new InfoBox("GPX", "import + spoiler");
+						//else inf = new InfoBox("GPX", "import");
+						//inf.show();
+						GPXImporter imp = new GPXImporter(cacheDB, File.getProgramDirectory() + "/temp.gpx", myPreferences);
+						if(gtUI.chkSpoilers.getState()) {
+							imp.doIt(GPXImporter.DOIT_WITHSPOILER);
+						} else imp.doIt(GPXImporter.DOIT_NOSPOILER);
+					} else {
+						//Vm.debug("timer checking...");					
+					}
+					tbp.resetModel(cacheDB);
+				}
 			}
 			if(mev.selectedItem == exit){
 				ewe.sys.Vm.exit(0);
