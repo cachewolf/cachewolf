@@ -89,7 +89,11 @@ public class MainMenu extends MenuBar {
 		if(!ftest.exists()){
 			exitems[7].modifiers = MenuItem.Disabled;
 		}
-		Menu mn = this.addMenu((String)lr.get(120,"Application")).getMenu();
+		Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
+		String dum = new String();
+		dum = (String)lr.get(120,"Application");
+		if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
+		Menu mn = this.addMenu(dum).getMenu();
 		dummy = (String)lr.get(121,"Profiles");
 		dummy += "|";
 		dummy += (String)lr.get(108,"Preferences");
@@ -118,14 +122,19 @@ public class MainMenu extends MenuBar {
 		dummy += (String)lr.get(111,"Exit");
 		items = mn.addItems(mString.split(dummy));
 		savenoxit = items[1]; savenexit = items[2]; exit = items[3];
-		mn = this.addMenu((String)lr.get(112,"Search")).getMenu();
+		
+		dum = (String)lr.get(112,"Search");
+		if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
+		mn = this.addMenu(dum).getMenu();
 		dummy = (String)lr.get(112,"Search");
 		dummy = dummy + "|";
 		dummy += (String)lr.get(113,"Clear search");
 		items = mn.addItems(mString.split(dummy));
 		search = items[0]; searchClr = items[1];
 		
-		mn=this.addMenu("Filter").getMenu();
+		dum = "Filter";
+		if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
+		mn = this.addMenu(dum).getMenu();
 		dummy = (String)lr.get(114,"Create");
 		dummy = dummy + "|";
 		dummy += (String)lr.get(115,"Invert");
@@ -134,7 +143,9 @@ public class MainMenu extends MenuBar {
 		items = mn.addItems(mString.split(dummy));
 		filtCreate = items[0]; filtInvert=items[1]; filtClear=items[2];
 		
-		mn=this.addMenu((String)lr.get(140,"Organise")).getMenu();
+		dum = (String)lr.get(140,"Organise");
+		if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
+		mn =this.addMenu(dum).getMenu();
 		dummy = (String)lr.get(141,"Copy");
 		dummy = dummy + "|";
 		dummy += (String)lr.get(142,"Move");
@@ -151,10 +162,10 @@ public class MainMenu extends MenuBar {
 		dummy += (String)lr.get(118,"WolfLanguage");
 		dummy = dummy + "|";
 		dummy += "System";
-		//dummy = dummy + "|";
-		//dummy += "Test GPS";
+
 		items = mn.addItems(mString.split(dummy));
 		about = items[0]; legend = items[1]; wolflang = items[2]; sysinfo = items[3]; //testgps = items[3];
+		
 	}
 	
 	public void setTablePanel(TablePanel t){
@@ -331,13 +342,11 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == savenoxit){
 				CacheReaderWriter crw = new CacheReaderWriter();
 				crw.saveIndex(cacheDB, myPreferences.mydatadir);
-				tbp.saveColWith(myPreferences);
 			}
 			
 			if(mev.selectedItem == savenexit){
 				CacheReaderWriter crw = new CacheReaderWriter();
 				crw.saveIndex(cacheDB, myPreferences.mydatadir);
-				tbp.saveColWith(myPreferences);
 				ewe.sys.Vm.exit(0);
 			}
 			if(mev.selectedItem == kalibmap){
