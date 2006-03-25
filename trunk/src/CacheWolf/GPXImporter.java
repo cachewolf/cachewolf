@@ -397,7 +397,7 @@ public class GPXImporter extends MinML {
 		if (debugGPX) Vm.debug("Char: " + chars);
 	}
 	
-	public String latdeg2min(String lat){
+	public static String latdeg2min(String lat){
 		String res = new String();
 		String deg = new String();
 		String min = new String();
@@ -422,7 +422,7 @@ public class GPXImporter extends MinML {
 		res += min;
 		return res;
 	}
-	public String londeg2min(String lon){
+	public static String londeg2min(String lon){
 		String res = new String();
 		String deg = new String();
 		String min = new String();

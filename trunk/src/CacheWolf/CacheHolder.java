@@ -43,6 +43,7 @@ public class CacheHolder {
   public Vector CacheIcons = new Vector();
   public String Bugs = new String();
   public String URL = new String();
+  public String ocCacheID = new String();
   public int noFindLogs = 0;
   public boolean is_archived = false;
   public boolean is_available = true;

@@ -99,6 +99,9 @@ public class MainMenu extends MenuBar {
 		dummy += (String)lr.get(108,"Preferences");
 		dummy = dummy + "|";
 		dummy = dummy + "Import GPX";
+		dummy = dummy + "|";
+		dummy = dummy + "Sync OC";
+
 		ftest = new File(cwd + "/geotoad.exe");
 		//Hide spider menu if geotoad.exe is not found
 		if(ftest.exists()){
@@ -106,10 +109,11 @@ public class MainMenu extends MenuBar {
 			dummy = dummy + "Spider";
 		}
 		MenuItem [] items = mn.addItems(mString.split(dummy));
-		profiles = items[0]; preferences = items[1]; loadcaches = items[2];
+		profiles = items[0]; preferences = items[1]; loadcaches = items[2];loadOC = items[3];
+		
 		//Hide spider menu if geotoad.exe is not found
 		if(ftest.exists()){
-			spider=items[3];
+			spider=items[4];
 		}
 		//mn.addItem(mn3);
 		//mn.addItem("-");
@@ -209,6 +213,12 @@ public class MainMenu extends MenuBar {
 				}
 				tbp.resetModel(cacheDB);
 			}
+			if(mev.selectedItem == loadOC){
+				OCXMLImporter oc = new OCXMLImporter(cacheDB,myPreferences);
+				oc.doIt();
+				tbp.resetModel(cacheDB);
+			}
+
 			if(mev.selectedItem == filtCreate){
 				FilterScreen fsc = new FilterScreen(cacheDB, myPreferences.mydatadir);
 				fsc.execute(father.getFrame(), Gui.CENTER_FRAME);
@@ -342,11 +352,13 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == savenoxit){
 				CacheReaderWriter crw = new CacheReaderWriter();
 				crw.saveIndex(cacheDB, myPreferences.mydatadir);
+				tbp.saveColWith(myPreferences);
 			}
 			
 			if(mev.selectedItem == savenexit){
 				CacheReaderWriter crw = new CacheReaderWriter();
 				crw.saveIndex(cacheDB, myPreferences.mydatadir);
+				tbp.saveColWith(myPreferences);
 				ewe.sys.Vm.exit(0);
 			}
 			if(mev.selectedItem == kalibmap){

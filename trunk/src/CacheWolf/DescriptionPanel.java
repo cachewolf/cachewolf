@@ -36,6 +36,7 @@ public class DescriptionPanel extends CellPanel{
 			Vm.showWait(true);
 			if (cache.is_HTML)	disp.setHtml(cache.LongDescription);
 			else				disp.setPlainText(cache.LongDescription);
+			disp.scrollTo(0,false);
 			Vm.showWait(false);
 			currCache = cache;
 		}
