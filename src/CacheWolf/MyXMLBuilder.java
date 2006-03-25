@@ -62,6 +62,7 @@ public class MyXMLBuilder extends MinML {
 		  // for backwards compatibility set value to true, if it is not in the file
 		  if(atts.getName(i).equals("is_HTML")) holder.is_HTML = (atts.getValue(i).equals("false") ? false : true);
 		  if(atts.getName(i).equals("DNFLOGS")) holder.noFindLogs = Convert.toInt(atts.getValue(i));
+		  if(atts.getName(i).equals("ocCacheID")) holder.ocCacheID = atts.getValue(i);
 		}
 	}
 	

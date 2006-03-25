@@ -9,6 +9,7 @@ public class InfoBox extends Form{
 	mCheckBox mCB;
 	public boolean mCB_state = false;
 	mButton mB = new mButton("OK");
+	mButton mC = new mButton("Cancel");
 	mInput feedback = new mInput();
 	public static int CHECKBOX = 1;
 	public static int INPUT = 2;
@@ -34,6 +35,7 @@ public class InfoBox extends Form{
 			this.addNext(mL, this.STRETCH, this.FILL);
 			this.addLast(feedback, this.STRETCH, this.FILL);
 		}
+		this.addNext(mC, this.STRETCH, this.FILL);
 		this.addLast(mB, this.STRETCH, this.FILL);
 	}
 	
@@ -45,7 +47,10 @@ public class InfoBox extends Form{
 	public void onEvent(Event ev){
 		if(ev.target == mB){
 			if(type == CHECKBOX) mCB_state = mCB.getState();
-			this.close(0);
+			this.close(Form.IDOK);
+		}
+		if(ev.target == mC){
+			this.close(Form.IDCANCEL);
 		}
 		super.onEvent(ev);
 	}
