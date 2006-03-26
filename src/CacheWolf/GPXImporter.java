@@ -454,7 +454,7 @@ public class GPXImporter extends MinML {
 		return res;
 	}
 
-	public String typeText2Image(String typeText){
+	public static String typeText2Image(String typeText){
 		if (typeText.equals("Found it")||typeText.equals("Found")) return "<img src='icon_smile.gif'>&nbsp;";
 		if (typeText.equals("Didn't find it")||typeText.equals("Not Found")) return "<img src='icon_sad.gif'>&nbsp;";
 		if (typeText.equals("Write note")||typeText.equals("Note")

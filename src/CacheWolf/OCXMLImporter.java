@@ -31,12 +31,15 @@ public class OCXMLImporter extends MinML {
 	Preferences myPref = new Preferences();
 	String strData = new String();
 	int sync_year, sync_month,sync_day;
+	boolean incUpdate = false; // complete or incremental Update
 	Hashtable DBindexWpt = new Hashtable();
 	Hashtable DBindexID = new Hashtable();
 	
 	String picUrl = new String();
 	String picTitle =  new String();
 	String picID = new String();
+	
+	String logData, logIcon, logDate, logFinder;
 	
 
 	Locale l = Vm.getLocale();
@@ -83,8 +86,9 @@ public class OCXMLImporter extends MinML {
 			url += "modifiedsince=" + lastS;
 			url +="&cache=1";
 			url +="&cachedesc=1";
-			url +="&picture=1";
-			url +="&removedobject=1";
+			url +="&picture=0";
+			url +="&cachelog=1";
+			url +="&removedobject=0";
 			url +="&lat=" + center.getLatDeg(CWPoint.DD);
 			url +="&lon=" + center.getLonDeg(CWPoint.DD);
 			url +="&distance=" + dist;
@@ -93,7 +97,7 @@ public class OCXMLImporter extends MinML {
 			url +="&session=0";
 			//get file
 			file = fetch(url, "dummy");
-			//file = "380-0-1.zip";
+			//file = "415-0-1.zip";
 			
 			//parse
 			ZipFile zif = new ZipFile (myPref.mydatadir + file);
@@ -142,9 +146,9 @@ public class OCXMLImporter extends MinML {
 
 		//examine data
 		switch (state) {
-			case STAT_CACHE: startCache (name, atts); break;
-			case STAT_CACHE_DESC: startCacheDesc (name, atts); break; 
-			case STAT_CACHE_LOG: break;
+			case STAT_CACHE: startCache(name, atts); break;
+			case STAT_CACHE_DESC: startCacheDesc(name, atts); break; 
+			case STAT_CACHE_LOG: startCacheLog(name, atts); break;
 			case STAT_PICTURE: startPicture(name,atts); break;
 		}
 		
@@ -153,9 +157,9 @@ public class OCXMLImporter extends MinML {
 	public void endElement(String name){
 		//examine data
 		switch (state) {
-			case STAT_CACHE: endCache (name); break;
-			case STAT_CACHE_DESC: endCacheDesc (name);break;
-			case STAT_CACHE_LOG: break;
+			case STAT_CACHE: endCache(name); break;
+			case STAT_CACHE_DESC: endCacheDesc(name);break;
+			case STAT_CACHE_LOG: endCacheLog(name); break;
 			case STAT_PICTURE: endPicture(name); break;
 		}
 		
@@ -204,22 +208,43 @@ public class OCXMLImporter extends MinML {
 	private void startPicture(String name, AttributeList atts){
 	}
 
+	private void startCacheLog(String name, AttributeList atts){
+		if (name.equals("logtype")){
+			if(atts.getValue("id").equals("1")) logIcon = GPXImporter.typeText2Image("Found");
+			if(atts.getValue("id").equals("2")) {
+				logIcon = GPXImporter.typeText2Image("Not Found");
+				holder.noFindLogs += 1;
+			}
+			if(atts.getValue("id").equals("3")) logIcon = GPXImporter.typeText2Image("Note");
+			return;
+		}
+
+	}
 	
 	private void endCache(String name){
 		if (name.equals("cache")){
 			int index;
 			index = searchWpt(holder.wayPoint);
 			if (index == -1){
+				holder.is_new = true;
 				cacheDB.add(holder);
 				DBindexWpt.put((String)holder.wayPoint, new Integer(cacheDB.size()-1));
 				DBindexID.put((String)holder.ocCacheID, new Integer(cacheDB.size()-1));
 			}
 			// update (overwrite) data
 			else {
+				holder.is_new = false;
 				cacheDB.set(index, holder);
 				// save ocCacheID, in case, the previous data is from GPX
-				DBindexID.put((String)holder.ocCacheID, new Integer(cacheDB.size()-1));
+				DBindexID.put((String)holder.ocCacheID, new Integer(index));
 			}
+			// clear data (picture, logs) if we do a complete Update
+			if (incUpdate == false){
+				holder.CacheLogs.clear();
+				holder.Images.clear();
+				holder.ImagesText.clear();
+			}
+			// save all
 			CacheReaderWriter crw = new CacheReaderWriter();
 			crw.saveCacheDetails(holder,myPref.mydatadir);
 			crw.saveIndex(cacheDB,myPref.mydatadir);
@@ -337,6 +362,35 @@ public class OCXMLImporter extends MinML {
 		}
 	}
 
+	private void endCacheLog(String name){
+		if (name.equals("cachelog")){
+			holder.CacheLogs.add(0,logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
+			holder.is_log_update = true;
+			CacheReaderWriter crw = new CacheReaderWriter();
+			crw.saveCacheDetails(holder,myPref.mydatadir);
+			return;
+		}
+
+		if (name.equals("cacheid")){
+			// load cachedata
+			holder = getHolder(strData);
+			return;
+		}
+		
+		if (name.equals("date"))  {
+			logDate = new String(strData);
+			return;
+		}
+		if (name.equals("userid")){
+			logFinder = new String(strData);
+			return;
+		}
+		if (name.equals("text")){ 
+			logData = new String(strData);
+			return;
+		}
+		
+	}
 	
 	public void characters(char[] ch,int start,int length){
 		String chars = new String(ch,start,length);
