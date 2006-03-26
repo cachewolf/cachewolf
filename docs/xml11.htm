@@ -240,6 +240,20 @@
 		<P>Beispeil:<BR>
 			<A>http://www.opencaching.de/xml/ocxml11.php?modifiedsince=&lt;date&gt;&amp;user=1&amp;cache=1&amp;cachedesc=1&amp;cachelog=1&amp;picture=1&amp;removedobject=1&amp;session=0&amp;zip=bzip2</A><BR>
 			<A>http://www.opencaching.de/xml/ocxml11.php?sessionid=12345&amp;file=1&amp;zip=gzip</A></P>
+            <H3>XML-Optionen</H3>
+            <P>Die folgenden XML-Optionen müssen bei jedem Aufruf übergeben
+            werden.</P>
+            <P><a>xmldecl ... 0 = keine Xml-Deklaration / (Default) 1=Xml-Deklaration<br>
+            doctype</a><a> ... 0 = keine Xml-Document-Type-Definition /
+            (Default) 1=Xml-Document-Type-Definition<br>
+            ocxmltag ... 0 = kein oc11xml-Tag zu Beginn / (Default) 1=oc11xml-Tag
+            zu Beginn<br>
+            cdata ... 0=XML-Steuerzeichen in Texten maskieren (z.B. &amp; =&gt;
+            &amp;amp;) / (Default) 1=Texte in CDATA-Abschnitte einfassen<br>
+            charset ... (Default) iso-8859-1 / utf-8</a></P>
+            <h4><a>Beispiele</a></h4>
+            <P>http://www.opencaching.de/xml/ocxml11.php?modifiedsince=20060320000000&amp;user=1&amp;cache=1&amp;cachelog=1&amp;cachedesc=1&amp;picture=1&amp;removedobject=1&amp;session=1&amp;charset=utf-8&amp;cdata=1&amp;xmldecl=0&amp;ocxmltag=0&amp;doctype=0<br>
+            http://www.opencaching.de/xml/ocxml11.php?sessionid=4711&amp;file=1&amp;charset=utf-8&amp;cdata=1&amp;xmldecl=0&amp;ocxmltag=0&amp;doctype=0</P>
 		<H3>Sonstige Bemerkungen</H3>
 		<UL>
 			<LI>
@@ -261,8 +275,6 @@
 			<LI>
 			Zeitverschiebungen / unterschiedliche Zeitzonen zwischen Client und Server 
 			werden nicht unterstützt.
-			<LI>
-			Zeichensatz in den XML-Dateien ist immer ISO-8859-1
 			<LI>
 			Das XML-Dokument enthält folgende DTD (Document Type Definition): 
 			http://www.opencaching.de/xml/ocxml11.dtd

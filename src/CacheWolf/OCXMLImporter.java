@@ -84,9 +84,12 @@ public class OCXMLImporter extends MinML {
 			url +="&cache=1";
 			url +="&cachedesc=1";
 			url +="&picture=1";
+			url +="&removedobject=1";
 			url +="&lat=" + center.getLatDeg(CWPoint.DD);
 			url +="&lon=" + center.getLonDeg(CWPoint.DD);
 			url +="&distance=" + dist;
+			url +="&charset=utf-8";
+			url +="&cdata=0";
 			url +="&session=0";
 			//get file
 			file = fetch(url, "dummy");
@@ -102,7 +105,7 @@ public class OCXMLImporter extends MinML {
 				zipEnt = (ZipEntry) zipEnum.nextElement();
 				// skip over PRC-files
 				if (zipEnt.getName().endsWith("xml")){
-					r = new BufferedReader (new InputStreamReader(zif.getInputStream(zipEnt), IO.ASCII_CODEC));
+					r = new BufferedReader (new InputStreamReader(zif.getInputStream(zipEnt), IO.JAVA_UTF8_CODEC));
 					parse(r);
 					r.close();
 				}
