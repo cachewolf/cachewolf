@@ -86,7 +86,7 @@ public class OCXMLImporter extends MinML {
 			url += "modifiedsince=" + lastS;
 			url +="&cache=1";
 			url +="&cachedesc=1";
-			url +="&picture=0";
+			url +="&picture=1";
 			url +="&cachelog=1";
 			url +="&removedobject=0";
 			url +="&lat=" + center.getLatDeg(CWPoint.DD);
