@@ -71,7 +71,7 @@ public class GPXExporter{
 					outp.print("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp="+holder.wayPoint+"&amp;Submit6=Find</url>\r\n");
 					outp.print("    <urlname>"+SafeXML.cleanGPX(holder.CacheName)+" by "+SafeXML.cleanGPX(holder.CacheOwner)+"</urlname>\r\n");
 					outp.print("    <sym>Geocache</sym>\r\n");
-					outp.print("    <type>Geocache|"+Common.transType(holder.type)+"</type>\r\n");
+					outp.print("    <type>Geocache|"+CacheType.transType(holder.type)+"</type>\r\n");
 					//outp.print("    <type>Geocache|Geocache</type>\r\n");
 					String dummyAvailable = holder.is_available ? "True":"False";
 					String dummyArchived = holder.is_archived ? "True":"False";
@@ -79,7 +79,7 @@ public class GPXExporter{
 					outp.print("      <groundspeak:name>"+SafeXML.cleanGPX(holder.CacheName)+"</groundspeak:name>\r\n");
 					outp.print("      <groundspeak:placed_by>"+SafeXML.cleanGPX(holder.CacheOwner)+"</groundspeak:placed_by>\r\n");
 					outp.print("      <groundspeak:owner>"+SafeXML.cleanGPX(holder.CacheOwner)+"</groundspeak:owner>\r\n");
-					outp.print("      <groundspeak:type>"+Common.transType(holder.type)+"</groundspeak:type>\r\n");
+					outp.print("      <groundspeak:type>"+CacheType.transType(holder.type)+"</groundspeak:type>\r\n");
 					outp.print("      <groundspeak:container>"+holder.CacheSize+"</groundspeak:container>\r\n");
 					//KHF use '.' instead of ','
 					outp.print("      <groundspeak:difficulty>"+holder.hard.replace(',','.')+"</groundspeak:difficulty>\r\n");
