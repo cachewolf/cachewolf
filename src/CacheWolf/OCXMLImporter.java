@@ -96,8 +96,8 @@ public class OCXMLImporter extends MinML {
 			url +="&cdata=0";
 			url +="&session=0";
 			//get file
-			file = fetch(url, "dummy");
-			//file = "415-0-1.zip";
+			//file = fetch(url, "dummy");
+			file = "416-0-1.zip";
 			
 			//parse
 			ZipFile zif = new ZipFile (myPref.mydatadir + file);
@@ -174,7 +174,7 @@ public class OCXMLImporter extends MinML {
 	private void startCache(String name, AttributeList atts){
 
 		if(name.equals("type")){
-			holder.type = transType(atts.getValue("id"));
+			holder.type = CacheType.transOCType(atts.getValue("id"));
 			return;
 		}
 		if(name.equals("status")){
@@ -440,39 +440,6 @@ public class OCXMLImporter extends MinML {
 		}
 		
 			
-	/**
-	*	Method to translate opencaching types to geocaching types.
-	*	Required to be "backwards" compatible :-(
-	*	OC		GC		Comment		Regel
-	*	1		8		Other			1->8
-	*	2		2		Traditional		2->2
-	*	3		3		Multi			3->3
-	*	4		4		Virtual		4->4
-	*	5		11		Webcam		5->11
-	*	6		6		Event			6->6
-	*	7		8		Quiz			7->8
-	*	8		??		Math			8->108 (ok)
-	*	9		??		Moving		9->109 (ok)
-	*	10		??		Drive-In		10->110 (ok)
-	*/
-	private String transType(String type){
-		if(type.equals("1")) return "8";
-		if(type.equals("2")) return "2";
-		if(type.equals("3")) return "3";	
-		if(type.equals("4")) return "4";
-		if(type.equals("5")) return "11";
-		if(type.equals("6")) return "6";
-		if(type.equals("7")) return "8";
-		if(type.equals("8")|| type.equals("9") ||type.equals("10")) return "8";
-/* Not supportet at the moment
-		if(type.equals("8")) return "108";
-		if(type.equals("9")) return "109";
-		if(type.equals("10")) return "110";
-*/
-		//no match found? return custom type!
-		return "0";
-	}	
-
 	/**
 	*	Method to translate opencaching size types to geocaching types.
 	*	Required to be "backwards" compatible :-(

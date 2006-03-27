@@ -72,7 +72,7 @@ public class HTMLExporter{
 						//Vm.debug("Problem reading cache page");
 					}
 					varParams = new Hashtable();
-					varParams.put("TYPE", Common.transType(holder.type));
+					varParams.put("TYPE", CacheType.transType(holder.type));
 					varParams.put("SIZE", holder.CacheSize);
 					varParams.put("WAYPOINT", holder.wayPoint);
 					varParams.put("NAME", holder.CacheName);
@@ -87,7 +87,7 @@ public class HTMLExporter{
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						page_tpl.setParam("TYPE", Common.transType(holder.type));
+						page_tpl.setParam("TYPE", CacheType.transType(holder.type));
 						page_tpl.setParam("SIZE", holder.CacheSize);
 						page_tpl.setParam("WAYPOINT", holder.wayPoint);
 						page_tpl.setParam("NAME", holder.CacheName);

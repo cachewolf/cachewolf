@@ -29,44 +29,6 @@ public final class Common {
 		
 		return aDbl + bDbl;
 	}
-	public static String typeText2Number(String typeText){
-		if (typeText.equals("Traditional Cache") || typeText.equals("Traditional")) return "2";
-		if (typeText.equals("Multi-cache") || typeText.equals("Multi")) return "3";
-		if (typeText.equals("Virtual Cache") || typeText.equals("Virtual")) return "4";
-		if (typeText.equals("Letterbox Hybrid")) return "5";
-		if (typeText.equals("Event Cache") || typeText.equals("Event")) return "6";
-		if (typeText.equals("Unknown Cache") || typeText.equals("Other") || typeText.equals("Quiz")) return "8";
-		if (typeText.equals("Webcam Cache") || typeText.equals("Webcam")) return "11";
-		if (typeText.equals("Locationless (Reverse) Cache")) return "12";
-		if (typeText.equals("CITO")) return "13";
-		if (typeText.equals("Earthcache")) return "137";
-		if (typeText.equals("Waypoint|Parking Area")) return "50";
-		if (typeText.equals("Waypoint|Stages of a Multicache")) return "51";
-		if (typeText.equals("Waypoint|Question to Answer")) return "52";
-		if (typeText.equals("Waypoint|Final Coordinates")) return "53";
-		if (typeText.equals("Waypoint|Trailhead")) return "54";
-		Vm.debug("Unknown Cache Type:" + typeText);
-		return "0";
-	}
-	
-	public static String transType(String geoNum){
-		String geo = new String("Unknown");
-		if(geoNum.equals("2")) geo = "Traditional Cache";
-		if(geoNum.equals("3")) geo = "Multi-cache";
-		if(geoNum.equals("4")) geo = "Virtual Cache";
-		if(geoNum.equals("5")) geo = "Letterbox Hybrid";
-		if(geoNum.equals("6")) geo = "Event Cache";
-		if(geoNum.equals("11")) geo = "Webcam Cache";
-		if(geoNum.equals("8")) geo = "Unknown Cache";
-		if(geoNum.equals("12")) geo = "Locationless Cache";
-		if(geoNum.equals("50")) geo = "Parking Area";
-		if(geoNum.equals("51")) geo = "Stages of a Multicache";
-		if(geoNum.equals("52")) geo = "Question to Answer";
-		if(geoNum.equals("53")) geo = "Final Coordinates";
-		if(geoNum.equals("54")) geo = "Trailhead";
-		return geo;
-	}
-
 	public static String rot13 (String text) {
 		String dummy = new String();
 		for(int i = 0; i < text.length(); i++){

@@ -47,7 +47,7 @@ public class MSARCSVExporter{
 						outp.print("\"" + holder.wayPoint + " - " + holder.CacheName + "\";");
 						outp.print(pll.getLatDeg().replace('.',',') + ";");
 						outp.print(pll.getLonDeg().replace('.',',') + ";");
-						outp.print("\"" + Common.transType(holder.type) + "\";");
+						outp.print("\"" + CacheType.transType(holder.type) + "\";");
 						outp.print("\"" + holder.CacheSize + "\";");
 						outp.print("\"" + holder.wayPoint + "\";");
 						outp.print("\"" + holder.DateHidden + "\";");
