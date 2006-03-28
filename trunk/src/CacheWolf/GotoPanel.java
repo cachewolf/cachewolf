@@ -286,7 +286,7 @@ public class GotoPanel extends CellPanel {
 		Double speed = new Double();
 
 		if (timerId == displayTimer) {
-			if(runMovingMap){
+			if(!runMovingMap){
 				lblSats.setText(Convert.toString(gpsPosition.getSats()));
 				// display values only, if signal good
 				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()> 0)) {
