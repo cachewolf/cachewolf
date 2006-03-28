@@ -17,6 +17,11 @@ public class MovingMap extends Form{
 	GotoPanel gotoPanel;
 	AniImage statusImageHaveSignal = new AniImage("center_green.png");
 	AniImage statusImageNoSignal = new AniImage("center_yellow.png");
+	AniImage statusImageNoGps = new AniImage("center.png");
+	AniImage arrowUp = new AniImage("arrow_up.png");
+	AniImage arrowDown = new AniImage("arrow_down.png");
+	AniImage arrowLeft = new AniImage("arrow_left.png");
+	AniImage arrowRight = new AniImage("arrow_right.png");
 	
 	public MovingMap(Preferences pref, Vector maps, GotoPanel gP){
 		gotoPanel = gP;
@@ -25,6 +30,7 @@ public class MovingMap extends Form{
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
 		mmp = new MovingMapPanel(this, maps, gotoPanel);
+		this.addLast(mmp);
 		//Create index of all world files
 		//Create form
 		if(gP.toPoint.latDec == 0 && gP.toPoint.latDec == 0 && maps.size()>0){
@@ -37,14 +43,30 @@ public class MovingMap extends Form{
 				}else{ //Default: display the first map in the list.
 					MapInfoObject mo = (MapInfoObject)maps.get(0);
 					mapImage = new AniImage(mo.fileName);
+					this.setTitle = "Mov. Map: " + mo.mapName;
 					mapImage.setLocation(0,0);
 					mmp.addImage(mapImage);
+					statusImageNoGps.setLocation(10,10);
+					statusImageNoGps.properties = AniImage.AlwaysOnTop;
+					arrowUp.setLocation(pref.myAppWidth/2, 10);
+					arrowDown.setLocation(pref.myAppWidth/2, pref.myAppHeight-20);
+					arrowLeft.setLocation(10, pref.myAppHeight/2+7);
+					arrowRight.setLocation(pref.myAppWidth-25, pref.myAppHeight/2+7);
+					arrowUp.properties = AniImage.AlwaysOnTop;
+					arrowDown.properties = AniImage.AlwaysOnTop;
+					arrowLeft.properties = AniImage.AlwaysOnTop;
+					arrowRight.properties = AniImage.AlwaysOnTop;
+					mmp.addImage(arrowUp);
+					mmp.addImage(arrowDown);
+					mmp.addImage(arrowLeft);
+					mmp.addImage(arrowRight);
+					mmp.addImage(statusImageNoGps);
 				}
 			}catch (Exception ex){
 				Vm.debug("Problem loading map image file!");
 			}
 		}
-		this.addLast(mmp);
+		
 	}
 	
 	/**
@@ -72,18 +94,28 @@ class MovingMapPanel extends InteractivePanel{
 	*	Method to react to user.
 	*/
 	public void imageClicked(AniImage which, Point pos){
-		ListBox l = new ListBox(maps, false, null);
-		l.execute();
-		if(l.selected == true){
-			this.removeImage(mapImage);
-			try{
-				mapImage = new AniImage(l.selectedMap.fileName);
-				mapImage.setLocation(-100,-100);
-				this.addImage(mapImage);
-			}catch (Exception ex){
-				Vm.debug("Problem loading map image file!");
+		if(which == mm.statusImageNoGps){
+			ListBox l = new ListBox(maps, false, null);
+			l.execute();
+			if(l.selected == true){
+				this.removeImage(mapImage);
+				try{
+					mapImage = new AniImage(l.selectedMap.fileName);
+					mapImage.setLocation(-100,-100);
+					this.addImage(mapImage);
+				}catch (Exception ex){
+					Vm.debug("Problem loading map image file!");
+				}
+				this.repaintNow();
 			}
-			this.repaintNow();
+		}
+		if(which == mm.arrowRight){
+		}
+		if(which == mm.arrowLeft){
+		}
+		if(which == mm.arrowDown){
+		}
+		if(which == mm.arrowUp){
 		}
 	}
 }
