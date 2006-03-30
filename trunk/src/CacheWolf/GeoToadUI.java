@@ -71,7 +71,8 @@ public class GeoToadUI extends Form{
 				command += " -o " +"\"" + cwd + "/temp.gpx" + "\"";
 				try{
 					inf = new InfoBox("Geotoad:", "...spider pages");
-					inf.show();
+					//inf.show();
+					inf.exec();
 					File temp = new File(cwd + "/temp.gpx");
 					temp.delete();
 					waitTimer = Vm.requestTimer(this, 1000);
