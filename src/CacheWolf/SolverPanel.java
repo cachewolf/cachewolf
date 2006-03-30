@@ -56,7 +56,7 @@ public class SolverPanel extends CellPanel{
 			if(ev.target == btnLoad){
 				FileChooser fc = new FileChooser(FileChooser.OPEN, myPreferences.mydatadir);
 				
-				fc.addMask("*.wfl");
+				fc.addMask("*.wl");
 				fc.setTitle("Select File");
 				if(fc.execute() != FileChooser.IDCANCEL){
 					currFile = fc.getChosen();
