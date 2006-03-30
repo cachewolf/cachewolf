@@ -42,6 +42,7 @@ public class Preferences extends MinML{
 	public String profdirs[] = new String[4];
 	public String lats[] = new String[4];
 	public String longs[] = new String[4];
+	public String lastSyncOC[] = new String[4];
 		
 	public String last_sync_opencaching = new String();
 	
@@ -100,6 +101,7 @@ public class Preferences extends MinML{
 					   if(code > 0){
 						   if(profiles[code-1].length()>0){
 							mydatadir = profdirs[code-1];
+							last_sync_opencaching = lastSyncOC[code-1];
 							Extractor ex = new Extractor(" " + longs[code-1], " ", " ", 0,true);
 							mybrWE = ex.findNext();
 							mybrDeg = ex.findNext();
@@ -151,24 +153,32 @@ public class Preferences extends MinML{
 			profdirs[0] = atts.getValue("dir");
 			lats[0] = atts.getValue("lat");
 			longs[0] = atts.getValue("lon");
+			lastSyncOC[0] = atts.getValue("lastsyncoc");
+
 		}
 		if(name.equals("profile2")){
 			profiles[1] = atts.getValue("name");
 			profdirs[1] = atts.getValue("dir");
 			lats[1] = atts.getValue("lat");
 			longs[1] = atts.getValue("lon");
+			lastSyncOC[1] = atts.getValue("lastsyncoc");
+
 		}
 		if(name.equals("profile3")){
 			profiles[2] = atts.getValue("name");
 			profdirs[2] = atts.getValue("dir");
 			lats[2] = atts.getValue("lat");
 			longs[2] = atts.getValue("lon");
+			lastSyncOC[2] = atts.getValue("lastsyncoc");
+
 		}
 		if(name.equals("profile4")){
 			profiles[3] = atts.getValue("name");
 			profdirs[3] = atts.getValue("dir");
 			lats[3] = atts.getValue("lat");
 			longs[3] = atts.getValue("lon");
+			lastSyncOC[3] = atts.getValue("lastsyncoc");
+
 		}
 		if(name.equals("datadir")) {
 			mydatadir = atts.getValue("dir");
@@ -240,13 +250,13 @@ public class Preferences extends MinML{
 	public void savePreferences(){
 		String lat = new String();
 		String lon = new String();
-		int dummy = 0;
 		lat = mylgNS+" "+ mylgDeg+ " " + mylgMin;
 		lon = mybrWE+" "+ mybrDeg + " " + mybrMin;
 		lat = STRreplace.replace(lat, ",", ".");
 		lon = STRreplace.replace(lon, ",", ".");
 		String datei = File.getProgramDirectory() + "/" + "pref.xml";
 		datei = datei.replace('\\', '/');
+		lastSyncOC[currProfile -1] = last_sync_opencaching;
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(datei)));
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
@@ -276,12 +286,11 @@ public class Preferences extends MinML{
 					   				  " width = \""+Convert.toString(tableWidth[9])+"\"/>\n");
 			outp.print("	<tableBear active = \""+Convert.toString(tablePrefs[10])+ "\"" +
 					   				  " width = \""+Convert.toString(tableWidth[10])+"\"/>\n");
-			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" />\n");
-			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" />\n");
-			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" />\n");
-			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" />\n");
+			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" lastsyncoc= \"" + lastSyncOC[0] +  "\" />\n");
+			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] +"\" />\n");
+			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] +"\" />\n");
+			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" lastsyncoc= \"" + lastSyncOC[3] +"\" />\n");
 			outp.print("<browser name = \""+browser+"\"/>\n");
-			outp.print("<lastSyncOC>"+last_sync_opencaching+"</lastSyncOC>\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {

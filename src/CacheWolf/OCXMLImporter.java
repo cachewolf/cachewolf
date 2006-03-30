@@ -6,8 +6,7 @@ import ewe.io.*;
 import ewe.sys.*;
 import ewe.ui.InputBox;
 import ewe.util.*;
-import ewe.util.zip.ZipEntry;
-import ewe.util.zip.ZipFile;
+import ewe.util.zip.*;
 import ewe.net.*;
 
 /**
@@ -27,10 +26,11 @@ public class OCXMLImporter extends MinML {
 	
 	boolean debugGPX = false;
 	Vector cacheDB;
+	InfoBox inf;
 	CacheHolder holder;
 	Preferences myPref = new Preferences();
 	String strData = new String();
-	int sync_year, sync_month,sync_day;
+	int picCnt;
 	boolean incUpdate = false; // complete or incremental Update
 	Hashtable DBindexWpt = new Hashtable();
 	Hashtable DBindexID = new Hashtable();
@@ -38,6 +38,8 @@ public class OCXMLImporter extends MinML {
 	String picUrl = new String();
 	String picTitle =  new String();
 	String picID = new String();
+	String ocSeekUrl = new String("http://www.opencaching.de/viewcache.php?cacheid=");
+	String cacheID = new String();
 	
 	String logData, logIcon, logDate, logFinder;
 	
@@ -49,7 +51,8 @@ public class OCXMLImporter extends MinML {
 	{
 		cacheDB = DB;
 		myPref = pf;
-		if(myPref.last_sync_opencaching.length() == 0){
+		if(myPref.last_sync_opencaching == null ||
+			myPref.last_sync_opencaching.length() < 12){
 			myPref.last_sync_opencaching = "20050801000000";
 		}
 		CacheHolder ch = new CacheHolder();
@@ -73,7 +76,7 @@ public class OCXMLImporter extends MinML {
 
 			
 			//String dist = new String(new InputBox("Distance").input("",10));
-			InfoBox inf = new InfoBox("Sync OC","Distance: ", InfoBox.INPUT);
+			inf = new InfoBox("Sync OC","Distance: ", InfoBox.INPUT);
 			if (inf.execute() == InfoBox.IDCANCEL) {
 				return;
 			}
@@ -81,6 +84,7 @@ public class OCXMLImporter extends MinML {
 			String dist = inf.feedback.getText();
 
 			if (dist.length()== 0) return;
+			picCnt = 0;
 			//Build url
 			url ="http://www.opencaching.de/xml/ocxml11.php?";
 			url += "modifiedsince=" + lastS;
@@ -95,33 +99,42 @@ public class OCXMLImporter extends MinML {
 			url +="&charset=utf-8";
 			url +="&cdata=0";
 			url +="&session=0";
+			inf = new InfoBox("Sync OC", "...getting data");
+			//inf.show();
+			inf.exec();
+			//Vm.debug(url);
 			//get file
-			//file = fetch(url, "dummy");
-			file = "416-0-1.zip";
+			file = fetch(url, "dummy");
+			//file = "455-0-1.zip";
 			
 			//parse
 			ZipFile zif = new ZipFile (myPref.mydatadir + file);
 			ZipEntry zipEnt;
 			Enumeration zipEnum = zif.entries();
 			// there could be more than one file in the archive
+			inf.setInfo("...importing data"); 
 			while (zipEnum.hasMoreElements())
 			{
 				zipEnt = (ZipEntry) zipEnum.nextElement();
-				// skip over PRC-files
-				if (zipEnt.getName().endsWith("xml")){
+				// skip over PRC-files and empty files
+				if (zipEnt.getSize()> 0 && zipEnt.getName().endsWith("xml")){
 					r = new BufferedReader (new InputStreamReader(zif.getInputStream(zipEnt), IO.JAVA_UTF8_CODEC));
 					parse(r);
 					r.close();
 				}
 			}
-
 			
+		}catch (ZipException z){
+			inf.close(0);
+			Vm.showWait(false);
 		}catch (Exception e){
 			Vm.debug("Parse error: " + state + " " + holder.wayPoint);
 			e.printStackTrace();
+			inf.close(0);
 			Vm.showWait(false);
 		}
 		Vm.showWait(false);
+		inf.close(0);
 
 	}
 	
@@ -134,7 +147,17 @@ public class OCXMLImporter extends MinML {
 		strData ="";
 
 		if (name.equals("oc11xml")){
-			//TODO: save timestamp
+			//TODO: this should be saved in the index.xml or with the profiles!
+			Time lastSync = new Time();
+			try {
+				lastSync.parse(atts.getValue("date"),"yyyy-MM-dd HH:mm:ss");
+			}catch (Exception e){
+				Vm.debug(e.toString());
+			}
+			// reduce time at 1 second to avoid sync problems
+			lastSync.setTime(lastSync.getTime() - 1000);
+			myPref.last_sync_opencaching = lastSync.format("yyyyMMddHHmmss");
+			myPref.savePreferences();
 			state = STAT_INIT;
 		}
 
@@ -171,8 +194,17 @@ public class OCXMLImporter extends MinML {
 
 	}
 
+	public void characters(char[] ch,int start,int length){
+		String chars = new String(ch,start,length);
+		strData += chars;
+		if (debugGPX) Vm.debug(strData);
+	}
+
 	private void startCache(String name, AttributeList atts){
 
+		if(name.equals("id")){
+			cacheID = atts.getValue("id");
+		}
 		if(name.equals("type")){
 			holder.type = CacheType.transOCType(atts.getValue("id"));
 			return;
@@ -206,6 +238,9 @@ public class OCXMLImporter extends MinML {
 	}
 	
 	private void startPicture(String name, AttributeList atts){
+		if(name.equals("picture")){
+			inf.setInfo("Pictures: " + ++picCnt);
+		}
 	}
 
 	private void startCacheLog(String name, AttributeList atts){
@@ -252,6 +287,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if(name.equals("id")){
 			holder = getHolder(strData);
+			holder.URL = ocSeekUrl + cacheID;
 			return;
 		}
 
@@ -390,12 +426,6 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		
-	}
-	
-	public void characters(char[] ch,int start,int length){
-		String chars = new String(ch,start,length);
-		strData += chars;
-		if (debugGPX) Vm.debug(strData);
 	}
 	
 	private String fetch(String address, String fileName ) throws IOException
