@@ -16,5 +16,9 @@ public class MapInfoObject{
 	public String fileNameWFL = new String();
 	public String fileName = new String();
 	public String mapName = new String();
-	boolean inBound = false;
+	
+	public boolean inBound(CWGPSPoint pos){
+		boolean isInBound = false;
+		return isInBound;
+	}
 }

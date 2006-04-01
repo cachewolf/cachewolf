@@ -70,7 +70,7 @@ public class GotoPanel extends CellPanel {
 	Locale l = Vm.getLocale();
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 
-	CWGPSPoint gpsPosition = new CWGPSPoint();
+	public CWGPSPoint gpsPosition = new CWGPSPoint();
 	public CWPoint toPoint = new CWPoint();
 
 	mButton btnGPS, btnCenter,btnSave;
@@ -328,7 +328,7 @@ public class GotoPanel extends CellPanel {
 					return;
 				}
 			}else{ // In moving map mode
-				mmp.updatePosition();
+				mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
 			}
 		}
 	}

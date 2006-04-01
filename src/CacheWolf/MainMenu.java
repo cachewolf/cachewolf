@@ -78,12 +78,12 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Sub - Menu for maps
 		///////////////////////////////////////////////////////////////////////
-		//MenuItem[] mapitems = new MenuItem[2];
-		//importmap = new MenuItem((String)lr.get(150,"Import"));
-		//mapitems[0] = importmap;
-		//kalibmap = new MenuItem((String)lr.get(151,"Calibrate"));
-		//mapitems[1] = kalibmap;
-		//Menu mn3 = new Menu(mapitems, (String)lr.get(149,"Maps"));
+		MenuItem[] mapitems = new MenuItem[2];
+		importmap = new MenuItem((String)lr.get(150,"Import"));
+		mapitems[0] = importmap;
+		kalibmap = new MenuItem((String)lr.get(151,"Calibrate"));
+		mapitems[1] = kalibmap;
+		Menu mn3 = new Menu(mapitems, (String)lr.get(149,"Maps"));
 		///////////////////////////////////////////////////////////////////////
 		ftest = new File(cwd + "/gpsbabel.exe");
 		if(!ftest.exists()){
@@ -101,7 +101,6 @@ public class MainMenu extends MenuBar {
 		dummy = dummy + "Import GPX";
 		dummy = dummy + "|";
 		dummy = dummy + "Sync OC";
-
 		ftest = new File(cwd + "/geotoad.exe");
 		//Hide spider menu if geotoad.exe is not found
 		if(ftest.exists()){
@@ -110,13 +109,12 @@ public class MainMenu extends MenuBar {
 		}
 		MenuItem [] items = mn.addItems(mString.split(dummy));
 		profiles = items[0]; preferences = items[1]; loadcaches = items[2];loadOC = items[3];
-		
 		//Hide spider menu if geotoad.exe is not found
 		if(ftest.exists()){
 			spider=items[4];
 		}
-		//mn.addItem(mn3);
-		//mn.addItem("-");
+		mn.addItem(mn3);
+		mn.addItem("-");
 		mn.addItem(mn2);
 		dummy = "-|";
 		dummy += (String)lr.get(127,"Save");
@@ -218,7 +216,6 @@ public class MainMenu extends MenuBar {
 				oc.doIt();
 				tbp.resetModel(cacheDB);
 			}
-
 			if(mev.selectedItem == filtCreate){
 				FilterScreen fsc = new FilterScreen(cacheDB, myPreferences.mydatadir);
 				fsc.execute(father.getFrame(), Gui.CENTER_FRAME);
@@ -420,16 +417,9 @@ public class MainMenu extends MenuBar {
 				sysstring += "Entries in DB: " +cacheDB.size() + "<br>";
 				sysstring += "File seperator is: \"" + Vm.getProperty("file.separator","def")+ "\"<br>";
 				sysstring += "Programm directory is " + File.getProgramDirectory()+"<br>";
-				//Vm.debug("Sys: " + sysstring);
 				InfoScreen is = new InfoScreen(sysstring, "System", false,myPreferences);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
-			/*
-			if(mev.selectedItem == testgps){
-				Goto gt = new Goto(myPreferences);
-				gt.execute(father.getFrame(), Gui.CENTER_FRAME);
-			}
-			*/
 		}
 	}
 }
