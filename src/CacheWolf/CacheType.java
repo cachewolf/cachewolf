@@ -131,7 +131,7 @@ public class CacheType {
 		if (typeText.equals("Webcam Cache") || typeText.equals("Webcam")) return "11";
 		if (typeText.equals("Locationless (Reverse) Cache")) return "12";
 		if (typeText.equals("CITO")) return "13";
-		if (typeText.equals("Earthcache")) return "137";
+		if (typeText.equals("Earthcache") || typeText.equals("Earth")) return "137";
 		if (typeText.equals("Waypoint|Parking Area")) return "50";
 		if (typeText.equals("Waypoint|Stages of a Multicache")) return "51";
 		if (typeText.equals("Waypoint|Question to Answer")) return "52";
