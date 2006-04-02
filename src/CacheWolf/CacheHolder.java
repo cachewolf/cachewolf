@@ -165,5 +165,31 @@ public class CacheHolder {
 			crw.saveCacheDetails(this, pref.mydatadir);
 		}
   }
+  public void addLog(String logEntry){
+	  //Logs
+	  //<img src='icon_smile.gif'>&nbsp;2005-10-30 by Schatzpirat</strong><br>
+	  //get Date of latest log in old cachedata
+	  Extractor extOldDate;
+	  String oldLogDate = new String();
+	  if(this.CacheLogs.size()>0){
+		extOldDate = new Extractor((String) this.CacheLogs.get(0), ";"," by", 0, true);
+		oldLogDate= new String(extOldDate.findNext());
+	  }
+	  // now loop through new cachedata and compare logentries, 
+	  // starting with oldest log
+	  
+	  //Vm.debug("made it to here!");
+	  String newLogDate;
+	  Extractor extNewDate = new Extractor(logEntry, ";"," by", 0, true);
+	  newLogDate = extNewDate.findNext();
+	  if (newLogDate.compareTo(oldLogDate)> 0){
+  		  // oldest log from new cachedata is younger than stored data
+  		  // put the new logs in front of old logs
+		  //Vm.debug(newCh.wayPoint + " New: " + newLogDate + " Old: " + oldLogDate + " cmp: " + newLogDate.compareTo(oldLogDate));
+		  this.CacheLogs.add(0, logEntry);
+		  this.is_log_update = true;
+		  if (logEntry.indexOf("icon_sad")> 0) this.noFindLogs++;
+	  }
+  }
   
 }

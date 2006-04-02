@@ -31,7 +31,7 @@ public class OCXMLImporter extends MinML {
 	Preferences myPref = new Preferences();
 	String strData = new String();
 	int picCnt;
-	boolean incUpdate = false; // complete or incremental Update
+	boolean incUpdate = true; // complete or incremental Update
 	Hashtable DBindexWpt = new Hashtable();
 	Hashtable DBindexID = new Hashtable();
 	
@@ -54,8 +54,9 @@ public class OCXMLImporter extends MinML {
 		if(myPref.last_sync_opencaching == null ||
 			myPref.last_sync_opencaching.length() < 12){
 			myPref.last_sync_opencaching = "20050801000000";
+			incUpdate = false;
 		}
-		CacheHolder ch = new CacheHolder();
+		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			DBindexWpt.put((String)ch.wayPoint, new Integer(i));
@@ -75,8 +76,8 @@ public class OCXMLImporter extends MinML {
 					myPref.mybrWE, myPref.mybrDeg, myPref.mybrMin,"0", CWPoint.DMM);
 
 			
-			//String dist = new String(new InputBox("Distance").input("",10));
 			inf = new InfoBox("Sync OC","Distance: ", InfoBox.INPUT);
+			inf.feedback.setText(myPref.distOC);
 			if (inf.execute() == InfoBox.IDCANCEL) {
 				return;
 			}
@@ -84,6 +85,21 @@ public class OCXMLImporter extends MinML {
 			String dist = inf.feedback.getText();
 
 			if (dist.length()== 0) return;
+			//check, if distance is greater than before
+			if (Convert.toInt(dist) > Convert.toInt(myPref.distOC)) {
+				// resysnc
+				lastS = "20050801000000";
+				incUpdate = false;
+			}
+			myPref.distOC = dist;
+			// Clear status of caches in db
+			CacheHolder ch;
+			for(int i = 0; i<cacheDB.size();i++){
+				ch = (CacheHolder)cacheDB.get(i);
+				ch.is_update = false;
+				ch.is_new = false;
+				ch.is_log_update = false;
+			}	
 			picCnt = 0;
 			//Build url
 			url ="http://www.opencaching.de/xml/ocxml11.php?";
@@ -105,7 +121,7 @@ public class OCXMLImporter extends MinML {
 			//Vm.debug(url);
 			//get file
 			file = fetch(url, "dummy");
-			//file = "455-0-1.zip";
+			//file = "452-0-1.zip";
 			
 			//parse
 			ZipFile zif = new ZipFile (myPref.mydatadir + file);
@@ -338,6 +354,7 @@ public class OCXMLImporter extends MinML {
 		if (name.equals("cacheid")){
 			// load cachedata
 			holder = getHolder(strData);
+			holder.is_update = true;
 			return;
 		}
 
@@ -400,8 +417,7 @@ public class OCXMLImporter extends MinML {
 
 	private void endCacheLog(String name){
 		if (name.equals("cachelog")){
-			holder.CacheLogs.add(0,logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
-			holder.is_log_update = true;
+			holder.addLog(logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
 			CacheReaderWriter crw = new CacheReaderWriter();
 			crw.saveCacheDetails(holder,myPref.mydatadir);
 			return;
