@@ -175,10 +175,7 @@ public class CacheHolder {
 		extOldDate = new Extractor((String) this.CacheLogs.get(0), ";"," by", 0, true);
 		oldLogDate= new String(extOldDate.findNext());
 	  }
-	  // now loop through new cachedata and compare logentries, 
-	  // starting with oldest log
-	  
-	  //Vm.debug("made it to here!");
+
 	  String newLogDate;
 	  Extractor extNewDate = new Extractor(logEntry, ";"," by", 0, true);
 	  newLogDate = extNewDate.findNext();
@@ -189,6 +186,22 @@ public class CacheHolder {
 		  this.CacheLogs.add(0, logEntry);
 		  this.is_log_update = true;
 		  if (logEntry.indexOf("icon_sad")> 0) this.noFindLogs++;
+		  return;
+	  }
+	  if (newLogDate.compareTo(oldLogDate)== 0){
+		  // logdate is equal, so check, if finder is equal
+		  String newLogFinder, oldLogFinder;
+		  Extractor extOldFinder = new Extractor((String) this.CacheLogs.get(0), "by ","<", 0, true);
+		  oldLogFinder = extOldFinder.findNext().toLowerCase();
+		  
+		  Extractor extNewFinder = new Extractor(logEntry, "by ","<", 0, true);
+		  newLogFinder = extNewFinder.findNext().toLowerCase();
+		  
+		  if (newLogFinder.compareTo(oldLogFinder)!= 0){
+			  this.CacheLogs.add(0, logEntry);
+			  this.is_log_update = true;
+			  if (logEntry.indexOf("icon_sad")> 0) this.noFindLogs++;
+		  }
 	  }
   }
   
