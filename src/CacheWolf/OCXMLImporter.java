@@ -42,6 +42,7 @@ public class OCXMLImporter extends MinML {
 	String cacheID = new String();
 	
 	String logData, logIcon, logDate, logFinder;
+	String user;
 	
 
 	Locale l = Vm.getLocale();
@@ -56,6 +57,7 @@ public class OCXMLImporter extends MinML {
 			myPref.last_sync_opencaching = "20050801000000";
 			incUpdate = false;
 		}
+		user = pf.myAlias.toLowerCase();
 		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
@@ -435,6 +437,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if (name.equals("userid")){
 			logFinder = new String(strData);
+			if(logFinder.toLowerCase().compareTo(user) == 0) holder.is_found = true;
 			return;
 		}
 		if (name.equals("text")){ 
