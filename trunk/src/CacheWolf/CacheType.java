@@ -120,6 +120,15 @@ public class CacheType {
 		if(geoNum.equals("54")) geo = "Trailhead";
 		return geo;
 	}
+	
+	public static boolean isAddiWpt(String type){
+		if (type.equals("50")) return true;
+		if (type.equals("51")) return true;
+		if (type.equals("52")) return true;
+		if (type.equals("53")) return true;
+		if (type.equals("54")) return true;
+		return false;
+	}
 
 	public static String typeText2Number(String typeText){
 		if (typeText.equals("Traditional Cache") || typeText.equals("Traditional")) return "2";
