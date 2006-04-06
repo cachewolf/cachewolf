@@ -203,11 +203,18 @@ public class MainMenu extends MenuBar {
 				//lsc.execute(father.getFrame(), Gui.CENTER_FRAME);
 				//Vm.debug("Sending repaint!");
 				FileChooser fc = new FileChooser(FileChooser.OPEN, myPreferences.mydatadir);
-				fc.addMask("*.gpx,*.zip");
+				fc.addMask("*.gpx,*.zip,*.loc");
 				fc.setTitle((String)lr.get(909,"Select GPX file"));
 				if(fc.execute() != fc.IDCANCEL){
-					GPXImporter gpx = new GPXImporter(cacheDB, fc.getChosenFile().toString(),myPreferences);
-					gpx.doIt(GPXImporter.DOIT_ASK);
+					String file = fc.getChosenFile().toString();
+					if (file.endsWith("loc")){
+						LOCXMLImporter loc = new LOCXMLImporter(cacheDB, file, myPreferences);
+						loc.doIt();
+					}
+					else {
+						GPXImporter gpx = new GPXImporter(cacheDB, file,myPreferences);
+						gpx.doIt(GPXImporter.DOIT_ASK);
+					}
 				}
 				tbp.resetModel(cacheDB);
 			}
