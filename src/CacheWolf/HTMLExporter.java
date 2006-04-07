@@ -191,7 +191,18 @@ public class HTMLExporter{
 			try{
 				Template tpl = new Template(template_init_index);
 				tpl.setParam("cache_index", cache_index);
-				PrintWriter detfile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + "/index.html")));
+				PrintWriter detfile; 
+				detfile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + "/index.html")));
+				detfile.print(tpl.output());
+				detfile.close();
+				// sort by name
+				cache_index.sort(new HTMLComparer("NAME"),false);
+				detfile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + "/index_alpha.html")));
+				detfile.print(tpl.output());
+				detfile.close();
+				// sort by distance
+				cache_index.sort(new HTMLComparer("DISTANCE"),false);
+				detfile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + "/index_dist.html")));
 				detfile.print(tpl.output());
 				detfile.close();
 			}catch(Exception e){
@@ -199,7 +210,7 @@ public class HTMLExporter{
 			}//try
 			
 		}//if
-		pbf.clear();
+		ProgressBarForm.clear();
 	}
 	
 }

@@ -10,11 +10,11 @@
     <td>Art</td>
     <td>Size</td>
     <td>Wegpunkt</td>
-    <td>Name</td>
+    <td><a href = "index_alpha.html">Name</a></td>
     <td>Besitzer</td>
     <td>Schwierigkeit</td>
     <td>Gel&auml;nde</td>
-    <td>Entfernung</td>
+    <td><a href = "index_dist.html">Entfernung</a></td>
     <td>Richtung</td>
     <td>Koordinaten</td>
  </tr>
