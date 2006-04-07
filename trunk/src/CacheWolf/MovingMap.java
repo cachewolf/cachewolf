@@ -25,6 +25,7 @@ public class MovingMap extends Form{
 	AniImage arrowRight = new AniImage("arrow_right.png");
 	AniImage posCircle = new AniImage("position.png");
 	int centerx,centery = 0;
+	
 	public MovingMap(Preferences pref, Vector maps, GotoPanel gP){
 		gotoPanel = gP;
 		this.maps = maps;
@@ -33,9 +34,12 @@ public class MovingMap extends Form{
 		this.title = "Moving Map";
 		mmp = new MovingMapPanel(this, maps, gotoPanel);
 		this.addLast(mmp);
+	}
+	
+	public void loadMap(){
 		//Create index of all world files
 		//Create form
-		if(gP.toPoint.latDec == 0 && gP.toPoint.latDec == 0 && maps.size()>0){
+		if(gotoPanel.toPoint.latDec == 0 && gotoPanel.toPoint.latDec == 0 && maps.size()>0){
 			try{
 				statusImageNoGps.setLocation(10,10);
 				statusImageNoGps.properties = AniImage.AlwaysOnTop;
@@ -56,13 +60,22 @@ public class MovingMap extends Form{
 				centery = pref.myAppHeight/2;
 				// GPS has been switched on
 				//This means we display the correct map if we have a fix
-				if(gotoPanel.displayTimer != 0){
-					ListBox l = new ListBox(maps, true, gP.gpsPosition);
+				//if(gotoPanel.displayTimer != 0){
+				Vm.debug("Und: " +gotoPanel.gpsPosition.latDec);
+				if(gotoPanel.gpsPosition.latDec != 0){
+					ListBox l = new ListBox(maps, true, gotoPanel.gpsPosition);
 					l.execute();
 					posCircle.setLocation(pref.myAppWidth/2-10,pref.myAppHeight/2-10);
 					posCircle.properties = AniImage.AlwaysOnTop;
 					mmp.addImage(posCircle);
 					
+					mapImage = new AniImage(l.selectedMap.fileName);
+					this.title = l.selectedMap.mapName;
+					this.currentMap = l.selectedMap;
+					//updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec);
+					mmp.addImage(mapImage);
+					mmp.setMap(mapImage);
+					this.repaintNow();
 				}else{ //Default: display the first map in the list.
 					MapInfoObject mo = (MapInfoObject)maps.get(0);
 					currentMap = mo;
@@ -76,7 +89,6 @@ public class MovingMap extends Form{
 				Vm.debug("Problem loading map image file!");
 			}
 		}
-		
 	}
 	
 	/**
@@ -85,6 +97,9 @@ public class MovingMap extends Form{
 	public void updatePosition(double lat, double lon){
 		//x_ = affine[0]*x + affine[2]*y + affine[4];
 		//y_ = affine[1]*x + affine[3]*y + affine[5];
+		
+		// Benutze Cramersche Regel: http://de.wikipedia.org/wiki/Cramersche_Regel
+		
 		double mapx,mapy;
 		mapy = (currentMap.affine[0]*lon-currentMap.affine[1]*currentMap.affine[4]-lat*currentMap.affine[0]+currentMap.affine[0]*currentMap.affine[5])/(-1*currentMap.affine[3]*currentMap.affine[0]+currentMap.affine[1]*currentMap.affine[2]);
 		mapx = (lon-currentMap.affine[4]-currentMap.affine[2]*mapy)/(currentMap.affine[0]);
