@@ -1,5 +1,7 @@
 package CacheWolf;
 
+import ewe.sys.*;
+
 public class MapInfoObject{
 	//World file:
 	// x scale
@@ -19,6 +21,14 @@ public class MapInfoObject{
 	
 	public boolean inBound(CWGPSPoint pos){
 		boolean isInBound = false;
+		Vm.debug(mapName);
+		Vm.debug("Top: " + affine[4]);
+		Vm.debug("Bottom: " + lowlat);
+		Vm.debug("Test: " + pos.latDec);
+		Vm.debug("Left: " + affine[5]);
+		Vm.debug("Right: " + lowlon);
+		Vm.debug("Test: " + pos.lonDec);
+		if(affine[4] >= pos.latDec && pos.latDec >= lowlat && affine[5] <= pos.lonDec && pos.lonDec <= lowlon) isInBound = true;
 		return isInBound;
 	}
 }

@@ -429,6 +429,12 @@ public class GotoPanel extends CellPanel {
 				}
 				mmp = new MovingMap(pref, availableMaps, this);
 				runMovingMap = true;
+				//position test
+				gpsPosition.latDec = 48.22103333;
+				gpsPosition.lonDec = 11.62976667;
+				Vm.debug("pos: " + gpsPosition.latDec);
+				mmp.loadMap();
+				//end position test
 				mmp.execute();
 				
 			}
