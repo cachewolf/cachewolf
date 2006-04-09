@@ -15,6 +15,7 @@ public class MovingMap extends Form{
 	AniImage mapImage;
 	Vector maps;
 	GotoPanel gotoPanel;
+	Vector cacheDB;
 	MapInfoObject currentMap = new MapInfoObject();
 	AniImage statusImageHaveSignal = new AniImage("center_green.png");
 	AniImage statusImageNoSignal = new AniImage("center_yellow.png");
@@ -26,7 +27,8 @@ public class MovingMap extends Form{
 	AniImage posCircle = new AniImage("position.png");
 	int centerx,centery = 0;
 	
-	public MovingMap(Preferences pref, Vector maps, GotoPanel gP){
+	public MovingMap(Preferences pref, Vector maps, GotoPanel gP, Vector cacheDB){
+		this.cacheDB = cacheDB;
 		gotoPanel = gP;
 		this.maps = maps;
 		this.pref = pref;
@@ -61,7 +63,7 @@ public class MovingMap extends Form{
 				// GPS has been switched on
 				//This means we display the correct map if we have a fix
 				//if(gotoPanel.displayTimer != 0){
-				Vm.debug("Und: " +gotoPanel.gpsPosition.latDec);
+				//Vm.debug("Und: " +gotoPanel.gpsPosition.latDec);
 				if(gotoPanel.gpsPosition.latDec != 0){
 					ListBox l = new ListBox(maps, true, gotoPanel.gpsPosition);
 					l.execute();
@@ -72,7 +74,7 @@ public class MovingMap extends Form{
 					mapImage = new AniImage(l.selectedMap.fileName);
 					this.title = l.selectedMap.mapName;
 					this.currentMap = l.selectedMap;
-					//updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec);
+					updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec);
 					mmp.addImage(mapImage);
 					mmp.setMap(mapImage);
 					this.repaintNow();
@@ -92,22 +94,58 @@ public class MovingMap extends Form{
 	}
 	
 	/**
+	* Method to calculate bitmap x,y of the current map using
+	* lat and lon target coordinates
+	*/
+	public int[] calcMapXY(double lat, double lon){
+		//x_ = affine[0]*x + affine[2]*y + affine[4]; lat
+		//y_ = affine[1]*x + affine[3]*y + affine[5]; lon
+		
+		// Benutze Cramersche Regel: http://de.wikipedia.org/wiki/Cramersche_Regel
+		Matrix matrix = new Matrix(2,2);
+		double mapx,mapy;
+		int coords[] = new int[2];
+		double a[][] = new double[2][2];
+		double b[] = new double[2];
+		double a1[][] = new double[2][2];
+		double a2[][] = new double[2][2];
+		a[0][0] = currentMap.affine[0]; a[0][1] = currentMap.affine[2];
+		a[1][0] = currentMap.affine[1]; a[1][1] = currentMap.affine[3];
+		b[0] = lat - currentMap.affine[4];
+		b[1] = lon - currentMap.affine[5];
+		a1[0][0] = b[0]; a1[0][1] = a[0][1];
+		a1[1][0] = b[1]; a1[1][1] = a[1][1];
+		a2[0][0] = a[0][0]; a2[0][1] = b[0];
+		a2[1][0] = a[1][0]; a2[1][1] = b[1];
+		mapx = matrix.Determinant(a1)/matrix.Determinant(a);
+		mapy = matrix.Determinant(a2)/matrix.Determinant(a);
+		coords[0] = (int)mapx;
+		coords[1] = (int)mapy;
+		return coords;
+	}
+	
+	
+	/**
 	* Method to reset the position of the moving map.
 	*/
 	public void updatePosition(double lat, double lon){
-		//x_ = affine[0]*x + affine[2]*y + affine[4];
-		//y_ = affine[1]*x + affine[3]*y + affine[5];
-		
-		// Benutze Cramersche Regel: http://de.wikipedia.org/wiki/Cramersche_Regel
-		
-		double mapx,mapy;
-		mapy = (currentMap.affine[0]*lon-currentMap.affine[1]*currentMap.affine[4]-lat*currentMap.affine[0]+currentMap.affine[0]*currentMap.affine[5])/(-1*currentMap.affine[3]*currentMap.affine[0]+currentMap.affine[1]*currentMap.affine[2]);
-		mapx = (lon-currentMap.affine[4]-currentMap.affine[2]*mapy)/(currentMap.affine[0]);
+		int pos[] = new int[2];
 		int posy,posx = 0;
-		posy = centery - (int)mapy;
-		posx = centerx - (int)mapx;
+		pos = calcMapXY(lat, lon);
+		posy = centery - pos[1];
+		posx = centerx - pos[0];
+		//Vm.debug("mapx = " + mapx);
+		//Vm.debug("mapy = " + mapy);
 		mapImage.move(posx,posy);
 		mmp.repaintNow();
+	}
+	
+	public void onEvent(Event ev){
+		if(ev instanceof FormEvent && ev.type == FormEvent.CLOSED){
+			gotoPanel.runMovingMap = false;
+			gotoPanel.stopTheTimer();
+		}
+		super.onEvent(ev);
 	}
 }
 
@@ -141,6 +179,18 @@ class MovingMapPanel extends InteractivePanel{
 					mapImage = new AniImage(l.selectedMap.fileName);
 					mm.title = l.selectedMap.mapName;
 					mm.currentMap = l.selectedMap;
+					//Go through cache db to paint caches that are in bounds of the map
+					CWPoint tempPoint;
+					CacheHolder ch = new CacheHolder();
+					Graphics g = new Graphics(mapImage);
+					for(int i = 0; i < cacheDB.size();i++){
+						ch = (CacheHolder)cacheDB.get(i);
+						tempPoint = new CWPoint(ch.LatLon, CWPoint.CW);
+						if(mm.currentMap.inBound(tempPoint) == true) { //yes cache is on map!
+							
+						}
+					}
+					g.free();
 					mapImage.setLocation(0,0);
 					this.addImage(mapImage);
 				}catch (Exception ex){
@@ -215,7 +265,7 @@ class ListBox extends Form{
 				it = list.getText();
 				it = it.substring(0,it.indexOf(':'));
 				mapNum = Convert.toInt(it);
-				Vm.debug("Kartennummer: " + mapNum);
+				//Vm.debug("Kartennummer: " + mapNum);
 				selectedMap = (MapInfoObject)maps.get(mapNum);
 				selected = true;
 				this.close(0);
