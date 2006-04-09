@@ -203,18 +203,11 @@ public class MainMenu extends MenuBar {
 				//lsc.execute(father.getFrame(), Gui.CENTER_FRAME);
 				//Vm.debug("Sending repaint!");
 				FileChooser fc = new FileChooser(FileChooser.OPEN, myPreferences.mydatadir);
-				fc.addMask("*.gpx,*.zip,*.loc");
+				fc.addMask("*.gpx,*.zip");
 				fc.setTitle((String)lr.get(909,"Select GPX file"));
 				if(fc.execute() != fc.IDCANCEL){
-					String file = fc.getChosenFile().toString();
-					if (file.endsWith("loc")){
-						LOCXMLImporter loc = new LOCXMLImporter(cacheDB, file, myPreferences);
-						loc.doIt();
-					}
-					else {
-						GPXImporter gpx = new GPXImporter(cacheDB, file,myPreferences);
-						gpx.doIt(GPXImporter.DOIT_ASK);
-					}
+					GPXImporter gpx = new GPXImporter(cacheDB, fc.getChosenFile().toString(),myPreferences);
+					gpx.doIt(GPXImporter.DOIT_ASK);
 				}
 				tbp.resetModel(cacheDB);
 			}
@@ -388,7 +381,10 @@ public class MainMenu extends MenuBar {
 			}
 			
 			if(mev.selectedItem == spider){
-				GeoToadUI gtUI = new GeoToadUI(myPreferences, File.getProgramDirectory(),cacheDB);
+				//GeoToadUI gtUI = new GeoToadUI(myPreferences, File.getProgramDirectory(),cacheDB);
+				SpiderGC spGC = new SpiderGC(myPreferences);
+				spGC.doIt();
+				/*
 				gtUI.execute();
 				File ftest = new File(File.getProgramDirectory() + "/temp.gpx");
 				if(ftest.exists()){
@@ -405,6 +401,7 @@ public class MainMenu extends MenuBar {
 					}
 					tbp.resetModel(cacheDB);
 				}
+				*/
 			}
 			if(mev.selectedItem == exit){
 				ewe.sys.Vm.exit(0);

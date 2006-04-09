@@ -142,7 +142,7 @@ public class Matrix{
 	/**
 	*	Method to calculate the determinate of a matrix
 	*/
-	private double Determinant(double[][] matrix) {
+	public double Determinant(double[][] matrix) {
 		int tms = matrix.length;
 		double det = 1;
 		matrix = UpperTriangle(matrix);

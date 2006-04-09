@@ -19,8 +19,9 @@ public class MapInfoObject{
 	public String fileName = new String();
 	public String mapName = new String();
 	
-	public boolean inBound(CWGPSPoint pos){
+	public boolean inBound(CWPoint pos){
 		boolean isInBound = false;
+		/*
 		Vm.debug(mapName);
 		Vm.debug("Top: " + affine[4]);
 		Vm.debug("Bottom: " + lowlat);
@@ -28,6 +29,22 @@ public class MapInfoObject{
 		Vm.debug("Left: " + affine[5]);
 		Vm.debug("Right: " + lowlon);
 		Vm.debug("Test: " + pos.lonDec);
+		*/
+		if(affine[4] >= pos.latDec && pos.latDec >= lowlat && affine[5] <= pos.lonDec && pos.lonDec <= lowlon) isInBound = true;
+		return isInBound;
+	}
+	
+	public boolean inBound(CWGPSPoint pos){
+		boolean isInBound = false;
+		/*
+		Vm.debug(mapName);
+		Vm.debug("Top: " + affine[4]);
+		Vm.debug("Bottom: " + lowlat);
+		Vm.debug("Test: " + pos.latDec);
+		Vm.debug("Left: " + affine[5]);
+		Vm.debug("Right: " + lowlon);
+		Vm.debug("Test: " + pos.lonDec);
+		*/
 		if(affine[4] >= pos.latDec && pos.latDec >= lowlat && affine[5] <= pos.lonDec && pos.lonDec <= lowlon) isInBound = true;
 		return isInBound;
 	}

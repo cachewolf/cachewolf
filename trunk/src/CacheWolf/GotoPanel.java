@@ -112,6 +112,9 @@ public class GotoPanel extends CellPanel {
 	static Font BOLD = new Font("Arial", Font.BOLD, 14);
 
 	int centerX, centerY;
+	
+	int ticker = 0;
+	
 	boolean mapsLoaded = false;
 	public boolean runMovingMap = false;
 	Vector availableMaps = new Vector();
@@ -328,11 +331,35 @@ public class GotoPanel extends CellPanel {
 					return;
 				}
 			}else{ // In moving map mode
-				mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
+				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()> 0)) {
+					mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
+				}
+				// receiving data, but signal ist not good
+				if ((gpsPosition.getFix()== 0) && (gpsPosition.getSats()>= 0)) {
+					//lblSats.backGround = YELLOW;
+					//return;
+				}
+				// receiving no data
+				if (gpsPosition.getSats()== -1) {
+					//lblSats.backGround = RED;
+					//return;
+				}
+				/*
+				if(ticker == 0) mmp.updatePosition(48.23003333, 11.63345);
+				if(ticker == 1) mmp.updatePosition(48.23651667, 11.63716667);
+				if(ticker == 2) mmp.updatePosition(48.24335, 11.64035);
+				if(ticker == 3) mmp.updatePosition(48.22103333, 11.62976667);
+				ticker++;
+				if(ticker > 3) ticker = 0;
+				*/
 			}
 		}
 	}
 
+	public void stopTheTimer(){
+		Vm.cancelTimer(displayTimer);
+	}
+	
 	/**
 	 * Eventhandler
 	 */
@@ -427,16 +454,17 @@ public class GotoPanel extends CellPanel {
 					inf.close(0);
 					Vm.showWait(false);
 				}
-				mmp = new MovingMap(pref, availableMaps, this);
+				mmp = new MovingMap(pref, availableMaps, this, cacheDB);
 				runMovingMap = true;
 				//position test
 				gpsPosition.latDec = 48.22103333;
 				gpsPosition.lonDec = 11.62976667;
-				Vm.debug("pos: " + gpsPosition.latDec);
 				mmp.loadMap();
+				//serThread = new SerialThread(pref.mySPO, gpsPosition);
+				//serThread.start();
+				displayTimer = Vm.requestTimer(this, 1000);
 				//end position test
 				mmp.execute();
-				
 			}
 			// create new waypoint with current GPS-position
 			if (ev.target == btnSave){
