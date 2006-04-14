@@ -75,8 +75,12 @@ public class MyComparer implements Comparer{
 				str02 = oo2.CacheOwner;
 			}
 			if(compareWhat.equals(nmHid)){
-				str01 = oo1.DateHidden;
-				str02 = oo2.DateHidden;
+				str01 = oo1.DateHidden.substring(6,10); // year
+				str01 += oo1.DateHidden.substring(0,2); // month
+				str01 += oo1.DateHidden.substring(3,5); // day
+				str02 = oo2.DateHidden.substring(6,10); // year
+				str02 += oo2.DateHidden.substring(0,2); // month
+				str02 += oo2.DateHidden.substring(3,5); // day
 			}
 			if(compareWhat.equals(nmStat)){
 				str01 = oo1.CacheStatus;
