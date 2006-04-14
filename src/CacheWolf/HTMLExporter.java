@@ -19,6 +19,7 @@ public class HTMLExporter{
 	 		"filename",  "index.tpl",
 	 		"case_sensitive", "true",
 	 		"max_includes",   "5"
+	 		//,"debug", "true"
 	 	};
 	String [] template_init_page = {
 	 		"filename",  "page.tpl",
@@ -39,7 +40,7 @@ public class HTMLExporter{
 		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, myPreferences.mydatadir);
 		fc.setTitle("Select target directory:");
 		String targetDir;
-		if(fc.execute() != fc.IDCANCEL){
+		if(fc.execute() != FileChooser.IDCANCEL){
 			targetDir = fc.getChosen() + "/";
 			Vector cache_index = new Vector();
 			Vector cacheImg = new Vector();
@@ -195,22 +196,173 @@ public class HTMLExporter{
 				detfile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + "/index.html")));
 				detfile.print(tpl.output());
 				detfile.close();
+				// sort by waypoint
+				sortAndPrintIndex(tpl, cache_index,targetDir + "/index_wp.html", "WAYPOINT");
 				// sort by name
-				cache_index.sort(new HTMLComparer("NAME"),false);
-				detfile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + "/index_alpha.html")));
-				detfile.print(tpl.output());
-				detfile.close();
+				sortAndPrintIndex(tpl, cache_index,targetDir + "/index_alpha.html", "NAME", false);
+				// sort by type
+				sortAndPrintIndex(tpl, cache_index,targetDir + "/index_type.html", "TYPE", true);
+				// sort by size
+				sortAndPrintIndex(tpl, cache_index,targetDir + "/index_size.html", "SIZE", true);
 				// sort by distance
-				cache_index.sort(new HTMLComparer("DISTANCE"),false);
-				detfile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + "/index_dist.html")));
-				detfile.print(tpl.output());
-				detfile.close();
+				sortAndPrintIndex(tpl, cache_index,targetDir + "/index_dist.html", "DISTANCE", 10.0);
 			}catch(Exception e){
-				Vm.debug("Problem writing HTML files");
+				Vm.debug("Problem writing HTML files\n");
+				e.printStackTrace();
 			}//try
 			
 		}//if
 		ProgressBarForm.clear();
 	}
+	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field){
+		Vector navi_index;
+		PrintWriter detfile; 
+		
+		list.sort(new HTMLComparer(field),false);
+		try {
+			detfile = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+			detfile.print(tmpl.output());
+			detfile.close();
+		} catch (IOException e) {
+			Vm.debug("Problem writing HTML files\n");
+			e.printStackTrace();
+		}
+	}
+
+	
+	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field, boolean fullCompare){
+		Vector navi_index;
+		PrintWriter detfile; 
+		
+		list.sort(new HTMLComparer(field),false);
+		navi_index = addAnchorString(list,field, fullCompare);
+		if (navi_index != null){
+			tmpl.setParam("navi_index",navi_index);
+		}
+		try {
+			detfile = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+			detfile.print(tmpl.output());
+			detfile.close();
+		} catch (IOException e) {
+			Vm.debug("Problem writing HTML files\n");
+			e.printStackTrace();
+		}
+	}
+	
+	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field, double diff){
+		Vector navi_index;
+		PrintWriter detfile; 
+		
+		list.sort(new HTMLComparer(field),false);
+		navi_index = addAnchorString(list,field, diff);
+		if (navi_index != null){
+			tmpl.setParam("navi_index",navi_index);
+		}
+		try {
+			detfile = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+			detfile.print(tmpl.output());
+			detfile.close();
+		} catch (IOException e) {
+			Vm.debug("Problem writing HTML files\n");
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	private Vector addAnchorString(Vector list, String field, boolean fullCompare){
+		Vector topIndex = new Vector();
+		Hashtable topIndexParms, currEntry;
+		String lastValue, currValue;
+		
+		if (list.size() == 0) return null;
+		
+		currEntry = (Hashtable) list.get(0);
+		lastValue = (String) currEntry.get(field);
+		if (lastValue == null || lastValue.length() == 0) lastValue = "  ";
+		lastValue = lastValue.toUpperCase();
+		
+		for (int i=1; i<list.size(); i++){
+			currEntry = (Hashtable) list.get(i);
+			currValue = (String) currEntry.get(field);
+			currValue = currValue.toUpperCase();
+			if (currValue == null || currValue == "") continue;
+			try {
+				if (fullCompare) {
+					if (lastValue.compareTo(currValue)!= 0){
+						// Values for navigation line 
+						topIndexParms = new Hashtable();
+						topIndexParms.put("HREF", Convert.toString(i));
+						topIndexParms.put("TEXT", currValue);
+						topIndex.add(topIndexParms);
+						// add anchor entry to list
+						currEntry.put("ANCHORNAME", Convert.toString(i));
+						currEntry.put("ANCHORTEXT", currValue);
+					}
+					else {
+						// clear value from previous run
+						currEntry.put("ANCHORNAME", "");
+						currEntry.put("ANCHORTEXT", "");
+					}
+				}
+				else {
+					if (lastValue.charAt(0)!= currValue.charAt(0)){
+						// Values for navigation line 
+						topIndexParms = new Hashtable();
+						topIndexParms.put("HREF", Convert.toString(i));
+						topIndexParms.put("TEXT", currValue.charAt(0)+ " ");
+						topIndex.add(topIndexParms);
+						// add anchor entry to list
+						currEntry.put("ANCHORNAME", Convert.toString(i));
+						currEntry.put("ANCHORTEXT", currValue.charAt(0)+ " ");
+					}
+					else {
+						// clear value from previous run
+						currEntry.put("ANCHORNAME", "");
+						currEntry.put("ANCHORTEXT", "");
+					}
+				}
+				list.set(i,currEntry);
+				lastValue = currValue;
+			} catch (Exception e){
+				continue;
+			}
+		}
+		return topIndex;
+	}
+	private Vector addAnchorString(Vector list, String field, double diff){
+		Vector topIndex = new Vector();
+		Hashtable topIndexParms, currEntry;
+		double lastValue, currValue;
+		
+		if (list.size() == 0) return null;
+		
+		currEntry = (Hashtable) list.get(0);
+		lastValue = Common.parseDouble((String) currEntry.get(field)) + diff;
+		
+		for (int i=1; i<list.size(); i++){
+			currEntry = (Hashtable) list.get(i);
+			currValue = Common.parseDouble((String) currEntry.get(field));
+			if (currValue >= lastValue ){
+				// Values for navigation line 
+				topIndexParms = new Hashtable();
+				topIndexParms.put("HREF", Convert.toString(i));
+				topIndexParms.put("TEXT", Convert.toString(lastValue));
+				topIndex.add(topIndexParms);
+				// add anchor entry to list
+				currEntry.put("ANCHORNAME", Convert.toString(i));
+				currEntry.put("ANCHORTEXT", Convert.toString(lastValue));
+				lastValue = currValue + diff;
+			}
+			else {
+				// clear value from previous run
+				currEntry.put("ANCHORNAME", "");
+				currEntry.put("ANCHORTEXT", "");
+			}
+			list.set(i,currEntry);
+		}
+		return topIndex;
+	}
+
 	
 }

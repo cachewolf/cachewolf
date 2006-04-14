@@ -46,11 +46,15 @@ public class HTMLComparer implements Comparer {
 
 		str1 = hash1.get(compareWhat).toString().toLowerCase();
 		str2 = hash2.get(compareWhat).toString().toLowerCase();
-
+		
+		if (this.compareWhat.equals("WAYPOINT")){
+			str1 = hash1.get(compareWhat).toString().substring(2).toLowerCase();
+			str2 = hash2.get(compareWhat).toString().substring(2).toLowerCase();
+		}
 		
 		if (this.compareWhat.equals("DISTANCE")){
-			dbl1 = Common.parseDouble(str1);
-			dbl2 = Common.parseDouble(str2);
+			dbl1 = Common.parseDouble(str1.substring(0,str1.length()-3));
+			dbl2 = Common.parseDouble(str2.substring(0,str2.length()-3));
 			if (dbl1 > dbl2) return 1;
 			if (dbl1 < dbl2) return -1;
 			else return 0;
