@@ -509,10 +509,11 @@ public class GPXImporter extends MinML {
 		String cacheText = new String();
 		
 		addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.wayPoint ;
+		Vm.debug("Address: " + addr);
 		try{
 			cacheText = fetch(addr);
 		}catch(IOException iox){
-			//Vm.debug("Error fetching cache page from gc.com");
+			Vm.debug("Error fetching cache page from gc.com");
 			spiderOK = false;
 			cacheText = "";
 		}
@@ -582,13 +583,13 @@ public class GPXImporter extends MinML {
 		cacheEx = new Extractor(cacheText, "<span id=\"Images\"", "</span>",0,true);
 		longDesc = cacheEx.findNext();
 		//Vm.debug("In image span: " + longDesc);
-		cacheEx = new Extractor(longDesc, ";<A HREF='http://img.groundspeak.com/cache/", "' target='_blank' style='", 0, true);
+		cacheEx = new Extractor(longDesc, ";<A HREF='http://img.geocaching.com/cache/", "' target='_blank'", 0, true);
 		dummy = cacheEx.findNext();
 		//Vm.debug("And this is the target: " + dummy);
 		Extractor imgEx = new Extractor(longDesc, "style='text-decoration: underline;'>","</A>",0,true);
 		dummy2 = imgEx.findNext();
 		while(cacheEx.endOfSearch() == false){
-			dummy = "http://img.groundspeak.com/cache/"+dummy;
+			dummy = "http://img.geocaching.com/cache/"+dummy;
 			//Vm.debug("Target= " +dummy);
 			if(pref.myproxy.length()>0){
 				connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), dummy);
