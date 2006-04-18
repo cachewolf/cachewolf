@@ -457,8 +457,8 @@ public class GotoPanel extends CellPanel {
 				mmp = new MovingMap(pref, availableMaps, this, cacheDB);
 				runMovingMap = true;
 				//position test
-				gpsPosition.latDec = 48.22103333;
-				gpsPosition.lonDec = 11.62976667;
+				//gpsPosition.latDec = 48.22103333;
+				//gpsPosition.lonDec = 11.62976667;
 				mmp.loadMap();
 				//serThread = new SerialThread(pref.mySPO, gpsPosition);
 				//serThread.start();

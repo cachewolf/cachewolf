@@ -256,16 +256,22 @@ public class Map extends Form {
 								parts = mString.split(line, ',');
 								gcp1.bitMapX = Convert.toInt(parts[2]);
 								gcp1.bitMapY = Convert.toInt(parts[3]);
-								
+								if(gcp1.bitMapX == 0) gcp1.bitMapX = 1;
+								if(gcp1.bitMapY == 0) gcp1.bitMapY = 1;
+									
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
 								gcp2.bitMapX = Convert.toInt(parts[2]);
 								gcp2.bitMapY = Convert.toInt(parts[3]);
+								if(gcp2.bitMapX == 0) gcp2.bitMapX = 1;
+								if(gcp2.bitMapY == 0) gcp2.bitMapY = 1;
 								
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
 								gcp3.bitMapX = Convert.toInt(parts[2]);
 								gcp3.bitMapY = Convert.toInt(parts[3]);
+								if(gcp3.bitMapX == 0) gcp3.bitMapX = 1;
+								if(gcp3.bitMapY == 0) gcp3.bitMapY = 1;
 								imageWidth = gcp3.bitMapX;
 								imageHeight = gcp3.bitMapY;
 								
@@ -273,31 +279,33 @@ public class Map extends Form {
 								parts = mString.split(line, ',');
 								gcp4.bitMapX = Convert.toInt(parts[2]);
 								gcp4.bitMapY = Convert.toInt(parts[3]);
-								
+								if(gcp4.bitMapX == 0) gcp4.bitMapX = 1;
+								if(gcp4.bitMapY == 0) gcp4.bitMapY = 1;
+									
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
-								gcpG = new GCPoint(Convert.toDouble(parts[2]), Convert.toDouble(parts[3]));
+								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
 								gcpG.bitMapX = gcp1.bitMapX;
 								gcpG.bitMapY = gcp1.bitMapY;
 								addGCP(gcpG);
 								
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
-								gcpG = new GCPoint(Convert.toDouble(parts[2]), Convert.toDouble(parts[3]));
+								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
 								gcpG.bitMapX = gcp2.bitMapX;
 								gcpG.bitMapY = gcp2.bitMapY;
 								addGCP(gcpG);
 								
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
-								gcpG = new GCPoint(Convert.toDouble(parts[2]), Convert.toDouble(parts[3]));
+								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
 								gcpG.bitMapX = gcp3.bitMapX;
 								gcpG.bitMapY = gcp3.bitMapY;
 								addGCP(gcpG);
 
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
-								gcpG = new GCPoint(Convert.toDouble(parts[2]), Convert.toDouble(parts[3]));
+								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
 								gcpG.bitMapX = gcp4.bitMapX;
 								gcpG.bitMapY = gcp4.bitMapY;
 								addGCP(gcpG);
@@ -305,6 +313,7 @@ public class Map extends Form {
 								evalGCP();
 								//Vm.debug("Saving .map file to: " + mapsPath + "/" + rawFileName + ".wfl");
 								saveWFL(mapsPath + "/" + rawFileName + ".wfl");
+								GCPs.clear();
 							}
 						}
 						inMap.close();
