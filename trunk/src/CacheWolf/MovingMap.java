@@ -34,7 +34,7 @@ public class MovingMap extends Form{
 		this.pref = pref;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
-		mmp = new MovingMapPanel(this, maps, gotoPanel);
+		mmp = new MovingMapPanel(this, maps, gotoPanel, cacheDB);
 		this.addLast(mmp);
 	}
 	
@@ -157,7 +157,9 @@ class MovingMapPanel extends InteractivePanel{
 	Vector maps;
 	CellPanel gotoPanel;
 	AniImage mapImage;
-	public MovingMapPanel(MovingMap f, Vector maps, GotoPanel gP){
+	Vector cacheDB;
+	public MovingMapPanel(MovingMap f, Vector maps, GotoPanel gP, Vector cacheDB){
+		this.cacheDB = cacheDB;
 		gotoPanel = gP;
 		this.mm = f;
 		this.maps = maps;
@@ -176,10 +178,12 @@ class MovingMapPanel extends InteractivePanel{
 			if(l.selected == true){
 				this.removeImage(mapImage);
 				try{
+					Vm.debug("Trying map: " + l.selectedMap.fileName);
 					mapImage = new AniImage(l.selectedMap.fileName);
 					mm.title = l.selectedMap.mapName;
 					mm.currentMap = l.selectedMap;
 					//Go through cache db to paint caches that are in bounds of the map
+					/*
 					CWPoint tempPoint;
 					CacheHolder ch = new CacheHolder();
 					Graphics g = new Graphics(mapImage);
@@ -191,10 +195,11 @@ class MovingMapPanel extends InteractivePanel{
 						}
 					}
 					g.free();
+					*/
 					mapImage.setLocation(0,0);
 					this.addImage(mapImage);
 				}catch (Exception ex){
-					Vm.debug("Problem loading map image file!");
+					Vm.debug("Problem loading map image file!" +ex.toString());
 				}
 				this.repaintNow();
 			}
