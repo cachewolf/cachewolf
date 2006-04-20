@@ -462,7 +462,7 @@ public class GotoPanel extends CellPanel {
 				mmp.loadMap();
 				//serThread = new SerialThread(pref.mySPO, gpsPosition);
 				//serThread.start();
-				displayTimer = Vm.requestTimer(this, 1000);
+				//displayTimer = Vm.requestTimer(this, 1000);
 				//end position test
 				mmp.execute();
 			}

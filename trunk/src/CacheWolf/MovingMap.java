@@ -129,15 +129,17 @@ public class MovingMap extends Form{
 	* Method to reset the position of the moving map.
 	*/
 	public void updatePosition(double lat, double lon){
-		int pos[] = new int[2];
-		int posy,posx = 0;
-		pos = calcMapXY(lat, lon);
-		posy = centery - pos[1];
-		posx = centerx - pos[0];
-		//Vm.debug("mapx = " + mapx);
-		//Vm.debug("mapy = " + mapy);
-		mapImage.move(posx,posy);
-		mmp.repaintNow();
+		if(lat != 0 && lon != 0){
+			int pos[] = new int[2];
+			int posy,posx = 0;
+			pos = calcMapXY(lat, lon);
+			posy = centery - pos[1];
+			posx = centerx - pos[0];
+			//Vm.debug("mapx = " + mapx);
+			//Vm.debug("mapy = " + mapy);
+			mapImage.move(posx,posy);
+			mmp.repaintNow();
+		}
 	}
 	
 	public void onEvent(Event ev){
