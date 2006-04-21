@@ -32,6 +32,7 @@ public class OCXMLImporter extends MinML {
 	String strData = new String();
 	int picCnt;
 	boolean incUpdate = true; // complete or incremental Update
+	boolean ignoreDesc = false;
 	Hashtable DBindexWpt = new Hashtable();
 	Hashtable DBindexID = new Hashtable();
 	
@@ -123,7 +124,7 @@ public class OCXMLImporter extends MinML {
 			//Vm.debug(url);
 			//get file
 			file = fetch(url, "dummy");
-			//file = "452-0-1.zip";
+			//file = "628-0-1.zip";
 			
 			//parse
 			ZipFile zif = new ZipFile (myPref.mydatadir + file);
@@ -249,10 +250,18 @@ public class OCXMLImporter extends MinML {
 
 	}
 	private void startCacheDesc(String name, AttributeList atts){
+		if (name.equals("cachedesc")){
+			ignoreDesc = false;
+		}
+		
 		if (name.equals("desc")){
 			holder.is_HTML = atts.getValue("html").equals("1")?true:false;
 		}
-		
+
+		if (name.equals("language") && !atts.getValue("id").equals("DE")){
+			if (holder.LongDescription.length()> 0) ignoreDesc = true;
+			else ignoreDesc = false;
+		}
 	}
 	
 	private void startPicture(String name, AttributeList atts){
@@ -346,32 +355,34 @@ public class OCXMLImporter extends MinML {
 
 	private void endCacheDesc(String name){
 
-		if (name.equals("cachedesc")){
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(holder,myPref.mydatadir);
-			return;
-		}
-
-
-		if (name.equals("cacheid")){
-			// load cachedata
-			holder = getHolder(strData);
-			holder.is_update = true;
-			return;
-		}
-
-		if (name.equals("shortdesc")){
-			holder.LongDescription = strData;
-			return;
-		}
-		
-		if (name.equals("desc")){
-			holder.LongDescription += strData;
-			return;
-		}
-		if (name.equals("hint")){
-			holder.Hints = Common.rot13(strData);
-			return;
+		if (!ignoreDesc){
+			if (name.equals("cachedesc")){
+				CacheReaderWriter crw = new CacheReaderWriter();
+				crw.saveCacheDetails(holder,myPref.mydatadir);
+				return;
+			}
+	
+	
+			if (name.equals("cacheid")){
+				// load cachedata
+				holder = getHolder(strData);
+				holder.is_update = true;
+				return;
+			}
+	
+			if (name.equals("shortdesc")){
+				holder.LongDescription = strData;
+				return;
+			}
+			
+			if (name.equals("desc")){
+				holder.LongDescription += strData;
+				return;
+			}
+			if (name.equals("hint")){
+				holder.Hints = Common.rot13(strData);
+				return;
+			}
 		}
 	}
 
