@@ -43,8 +43,10 @@ public class Preferences extends MinML{
 	public String lats[] = new String[4];
 	public String longs[] = new String[4];
 	public String lastSyncOC[] = new String[4];
+	public String lastDistOC[] = new String[4];
 		
 	public String last_sync_opencaching = new String();
+	public String distOC = new String();
 	
 	public String digSeparator = new String();
 	public boolean debug = false;
@@ -101,7 +103,18 @@ public class Preferences extends MinML{
 					   if(code > 0){
 						   if(profiles[code-1].length()>0){
 							mydatadir = profdirs[code-1];
-							last_sync_opencaching = lastSyncOC[code-1];
+							if(lastSyncOC[code-1] == null || lastSyncOC[code-1].endsWith("null")){
+								last_sync_opencaching = "20050801000000";
+							}
+							else {
+								last_sync_opencaching = lastSyncOC[code-1];
+							}
+							if(lastDistOC[code-1] == null || lastDistOC[code-1].endsWith("null")){
+								distOC = "0";
+							}
+							else {
+								distOC = lastDistOC[code-1];
+							}
 							Extractor ex = new Extractor(" " + longs[code-1], " ", " ", 0,true);
 							mybrWE = ex.findNext();
 							mybrDeg = ex.findNext();
@@ -130,6 +143,20 @@ public class Preferences extends MinML{
 	public void startElement(String name, AttributeList atts){
 		String tmp;
 		if(name.equals("browser")) browser = atts.getValue("name");
+		if(name.equals("syncOC")) {
+			if (atts.getValue("date") == null || atts.getValue("date").endsWith("null")){
+				last_sync_opencaching = "20050801000000";
+			}
+			else {
+				last_sync_opencaching = atts.getValue("date");
+			}
+			if (atts.getValue("dist") == null || atts.getValue("dist").endsWith("null")){
+				distOC = "0";
+			}
+			else {
+				distOC =  atts.getValue("dist");
+			}
+		}
 		if(name.equals("alias")) myAlias = atts.getValue("name");
 		if(name.equals("location")){
 			Extractor ex = new Extractor(" " + atts.getValue("long"), " ", " ", 0,true);
@@ -154,6 +181,7 @@ public class Preferences extends MinML{
 			lats[0] = atts.getValue("lat");
 			longs[0] = atts.getValue("lon");
 			lastSyncOC[0] = atts.getValue("lastsyncoc");
+			lastDistOC[0] = atts.getValue("lastdistoc");
 
 		}
 		if(name.equals("profile2")){
@@ -162,6 +190,8 @@ public class Preferences extends MinML{
 			lats[1] = atts.getValue("lat");
 			longs[1] = atts.getValue("lon");
 			lastSyncOC[1] = atts.getValue("lastsyncoc");
+			lastDistOC[1] = atts.getValue("lastdistoc");
+
 
 		}
 		if(name.equals("profile3")){
@@ -170,6 +200,8 @@ public class Preferences extends MinML{
 			lats[2] = atts.getValue("lat");
 			longs[2] = atts.getValue("lon");
 			lastSyncOC[2] = atts.getValue("lastsyncoc");
+			lastDistOC[2] = atts.getValue("lastdistoc");
+
 
 		}
 		if(name.equals("profile4")){
@@ -178,6 +210,8 @@ public class Preferences extends MinML{
 			lats[3] = atts.getValue("lat");
 			longs[3] = atts.getValue("lon");
 			lastSyncOC[3] = atts.getValue("lastsyncoc");
+			lastDistOC[3] = atts.getValue("lastdistoc");
+
 
 		}
 		if(name.equals("datadir")) {
@@ -256,9 +290,13 @@ public class Preferences extends MinML{
 		lon = STRreplace.replace(lon, ",", ".");
 		String datei = File.getProgramDirectory() + "/" + "pref.xml";
 		datei = datei.replace('\\', '/');
-		if(currProfile >= 1){
+		last_sync_opencaching = last_sync_opencaching==null?"20050801000000":last_sync_opencaching;
+		distOC = distOC==null?"0":distOC;
+		if (currProfile > 0) {
 			lastSyncOC[currProfile -1] = last_sync_opencaching;
+			lastDistOC[currProfile - 1] = distOC;
 		}
+
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(datei)));
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
@@ -288,11 +326,12 @@ public class Preferences extends MinML{
 					   				  " width = \""+Convert.toString(tableWidth[9])+"\"/>\n");
 			outp.print("	<tableBear active = \""+Convert.toString(tablePrefs[10])+ "\"" +
 					   				  " width = \""+Convert.toString(tableWidth[10])+"\"/>\n");
-			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" lastsyncoc= \"" + lastSyncOC[0] +  "\" />\n");
-			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] +"\" />\n");
-			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] +"\" />\n");
-			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" lastsyncoc= \"" + lastSyncOC[3] +"\" />\n");
+			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" lastsyncoc= \"" + lastSyncOC[0] + "\" lastdistoc= \"" + lastDistOC[0] + "\" />\n");
+			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] + "\" lastdistoc= \"" + lastDistOC[1] + "\" />\n");
+			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] + "\" lastdistoc= \"" + lastDistOC[2] + "\" />\n");
+			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" lastsyncoc= \"" + lastSyncOC[3] + "\" lastdistoc= \"" + lastDistOC[3] + "\" />\n");
 			outp.print("<browser name = \""+browser+"\"/>\n");
+			outp.print("<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
