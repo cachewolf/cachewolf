@@ -39,14 +39,17 @@ class SerialThread extends mThread{
 		while (run){
 			try {
 				sleep(1000);
+				//Vm.debug("Loop? " + noData);
 				noData++;
 				if (noData > 5) myGPS.noData();
 			} catch (InterruptedException e) {}
 			if (comSp != null)	{  
 				comLength = comSp.nonBlockingRead(comBuff, 0 ,comBuff.length);
+				//Vm.debug("Length: " + comBuff.length);
 				if (comLength > 0)	{
 					noData = 0;
-					String str = mString.fromAscii(comBuff, 0, comLength);  
+					String str = mString.fromAscii(comBuff, 0, comLength); 
+					//Vm.debug(str);
 					myGPS.examine(str);
 				}
 			}
@@ -293,6 +296,7 @@ public class GotoPanel extends CellPanel {
 				lblSats.setText(Convert.toString(gpsPosition.getSats()));
 				// display values only, if signal good
 				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()> 0)) {
+					//gpsPosition.printAll();
 					lblPosition.setText(gpsPosition.toString(currFormat));
 					
 					speed.set(gpsPosition.getSpeed());
