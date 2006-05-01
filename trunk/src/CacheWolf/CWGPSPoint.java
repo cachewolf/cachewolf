@@ -43,8 +43,8 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		this.Speed = 0;
 		this.Bear = 0;
 		this.Time = "";
-		this.Fix = 0;
-		this.numSat = 0;
+		this.Fix = 1;
+		this.numSat = 10;
 		this.Alt = 0;
 		this.HDOP = 0;
 	}
@@ -70,8 +70,8 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	 *
 	 */
 	public void noData(){
-		this.Fix = 0;
-		this.numSat = -1;
+		//this.Fix = 0;
+		//this.numSat = -1;
 	}
 	
 	public void ticked(int timerId, int elapsed){
@@ -162,13 +162,14 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 			
 			//Vm.debug(NMEA.substring(start,end+3));
 			if ((end - start) < 15 || !checkSumOK(NMEA.substring(start,end+3))){
-				//Vm.debug("checksum wrong");
+				Vm.debug("checksum wrong");
 				continue;
 			}
 			Extractor ex = new Extractor ("," + NMEA.substring(start,end), ",",",",0,true);
 			currToken = ex.findNext();
 
 			if (currToken.equals("$GPGGA")){
+				//Vm.debug("In $GPGGA");
 				i = 0;
 				while(ex.endOfSearch() != true){
 					currToken = ex.findNext();
@@ -176,18 +177,18 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					switch (i){
 						case 1: this.Time = currToken; break;
 						case 2: latDeg = currToken.substring(0,2);
-								latMin = currToken.substring(2,9);
+								latMin = currToken.substring(2,currToken.length());
 								break;
 						case 3: latNS = currToken;
 								break;
 								
 						case 4: lonDeg = currToken.substring(0,3);
-								lonMin = currToken.substring(3,10);
+								lonMin = currToken.substring(3,currToken.length());
 								break;
 						case 5: lonEW = currToken;
 								break;
-						case 6: this.Fix = Convert.toInt(currToken); break;
-						case 7: this.numSat = Convert.toInt(currToken); break;
+						//case 6: this.Fix = Convert.toInt(currToken); break;
+						//case 7: this.numSat = Convert.toInt(currToken); break;
 						case 8: this.HDOP = Common.parseDouble(currToken); break;
 						case 9: this.Alt = Common.parseDouble(currToken); break;
 					} // switch
@@ -211,22 +212,28 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 			} // if
 			
 			if (currToken.equals("$GPRMC")){
+				//Vm.debug("In $GPRMC");
 				i = 0;
 				String status = "V";
 				while(ex.endOfSearch() != true){
 					currToken = ex.findNext();
 					i++;
+					//Vm.debug("zz: " + i);
+					//Vm.debug(currToken);
 					switch (i){
 						case 1: this.Time = currToken; break;
 						case 2: status = currToken;
 								break;
-						case 3: latDeg = currToken.substring(0,2);
-								latMin = currToken.substring(2,9);
+						case 3: 	//Vm.debug("Here--->");
+								latDeg = currToken.substring(0,2);
+								//Vm.debug(":" + latDeg);
+								latMin = currToken.substring(2,currToken.length());
+								//Vm.debug(":" + latMin);
 								break;
 						case 4: latNS = currToken;
 								break;
 						case 5: lonDeg = currToken.substring(0,3);
-								lonMin = currToken.substring(3,10);
+								lonMin = currToken.substring(3,currToken.length());
 								break;
 						case 6: lonEW = currToken;
 								break;
@@ -245,6 +252,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 							 lonEW, lonDeg, lonMin, "0", CWPoint.DMM);
 				}
 			} // if
+		Vm.debug("End of examine");
 		} //while
 	}
 	
