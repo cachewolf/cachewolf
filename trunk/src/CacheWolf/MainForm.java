@@ -75,6 +75,11 @@ public class MainForm extends Form {
 		//this.addLast(mMenu = new MainMenu(this, myPreferences, cacheDB),this.DONTSTRETCH, this.FILL);
 		//this.addLast(mTab = new MainTab(cacheDB, myPreferences),this.STRETCH, this.FILL); 
 		mMenu.setTablePanel(mTab.getTablePanel());
+		Version vers = new Version();
+		if(vers.newVersionAvailable(myPreferences)){
+			InfoBox inf = new InfoBox("New Version", "There is a new version available. Check http://developer.berlios.de/projects/cachewolf/");
+			inf.show();
+		}
 	}
 
 	
