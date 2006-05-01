@@ -144,7 +144,7 @@ public class CacheType {
 		if (typeText.equals("Waypoint|Parking Area")) return "50";
 		if (typeText.equals("Waypoint|Stages of a Multicache")) return "51";
 		if (typeText.equals("Waypoint|Question to Answer")) return "52";
-		if (typeText.equals("Waypoint|Final Coordinates")) return "53";
+		if (typeText.equals("Waypoint|Final Coordinates")||typeText.equals("Waypoint|Final Location")) return "53";
 		if (typeText.equals("Waypoint|Trailhead")) return "54";
 		Vm.debug("Unknown Cache Type:" + typeText);
 		return "0";
