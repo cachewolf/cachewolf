@@ -8,7 +8,7 @@ import ewe.sys.*;
 public class Version {
 	static final String VER_MAJOR = "0.9";
 	static final String VER_MINOR = "BE";
-	static final String VER_BUILD = " 0105";
+	static final String VER_BUILD = " 0205";
 	
 	public static String getRelease() {
 		return VER_MAJOR + VER_MINOR + VER_BUILD;
@@ -22,7 +22,7 @@ public class Version {
 		}catch(Exception ex){
 			Vm.debug("No load berlios?!");
 		}
-		if(!vers.equals(getRelease())){
+		if(!vers.equals(getRelease()) && vers.length()>0){
 			newvers = true;
 		}
 		return newvers;

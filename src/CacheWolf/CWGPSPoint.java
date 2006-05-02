@@ -43,8 +43,8 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		this.Speed = 0;
 		this.Bear = 0;
 		this.Time = "";
-		this.Fix = 1;
-		this.numSat = 10;
+		this.Fix = 0;
+		this.numSat = 0;
 		this.Alt = 0;
 		this.HDOP = 0;
 	}
@@ -70,8 +70,8 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	 *
 	 */
 	public void noData(){
-		//this.Fix = 0;
-		//this.numSat = -1;
+		this.Fix = 0;
+		this.numSat = -1;
 	}
 	
 	public void ticked(int timerId, int elapsed){
@@ -187,8 +187,8 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 								break;
 						case 5: lonEW = currToken;
 								break;
-						//case 6: this.Fix = Convert.toInt(currToken); break;
-						//case 7: this.numSat = Convert.toInt(currToken); break;
+						case 6: this.Fix = Convert.toInt(currToken); break;
+						case 7: this.numSat = Convert.toInt(currToken); break;
 						case 8: this.HDOP = Common.parseDouble(currToken); break;
 						case 9: this.Alt = Common.parseDouble(currToken); break;
 					} // switch
