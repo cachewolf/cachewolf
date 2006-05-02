@@ -431,20 +431,28 @@ public class GotoPanel extends CellPanel {
 							//Vm.debug(mapsPath + rawFileName + ".wfl");
 							mapFileReader = new FileReader(mapsPath + rawFileName + ".wfl");
 							line = mapFileReader.readLine();
+							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
 							tempMIO.affine[0] = Convert.toDouble(line);
 							line = mapFileReader.readLine();
+							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
 							tempMIO.affine[1] = Convert.toDouble(line);
 							line = mapFileReader.readLine();
+							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
 							tempMIO.affine[2] = Convert.toDouble(line);
 							line = mapFileReader.readLine();
+							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
 							tempMIO.affine[3] = Convert.toDouble(line);
 							line = mapFileReader.readLine();
+							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
 							tempMIO.affine[4] = Convert.toDouble(line);
 							line = mapFileReader.readLine();
+							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
 							tempMIO.affine[5] = Convert.toDouble(line);
 							line = mapFileReader.readLine();
+							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
 							tempMIO.lowlat = Convert.toDouble(line);
 							line = mapFileReader.readLine();
+							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
 							tempMIO.lowlon = Convert.toDouble(line);
 							tempMIO.fileNameWFL = mapsPath + rawFileName + ".wfl";
 							tempMIO.fileName = mapsPath + rawFileName + ".png";
@@ -459,11 +467,11 @@ public class GotoPanel extends CellPanel {
 					Vm.showWait(false);
 				}
 				mmp = new MovingMap(pref, availableMaps, this, cacheDB);
-				runMovingMap = true;
 				//position test
 				//gpsPosition.latDec = 48.22103333;
 				//gpsPosition.lonDec = 11.62976667;
 				mmp.loadMap();
+				runMovingMap = true;
 				//serThread = new SerialThread(pref.mySPO, gpsPosition);
 				//serThread.start();
 				//displayTimer = Vm.requestTimer(this, 1000);

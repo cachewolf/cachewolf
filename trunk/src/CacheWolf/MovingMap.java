@@ -129,7 +129,7 @@ public class MovingMap extends Form{
 	* Method to reset the position of the moving map.
 	*/
 	public void updatePosition(double lat, double lon){
-		if(lat != 0 && lon != 0){
+		if(lat != 0 && lon != 0 && currentMap != null){
 			int pos[] = new int[2];
 			int posy,posx = 0;
 			pos = calcMapXY(lat, lon);
@@ -145,7 +145,7 @@ public class MovingMap extends Form{
 	public void onEvent(Event ev){
 		if(ev instanceof FormEvent && ev.type == FormEvent.CLOSED){
 			gotoPanel.runMovingMap = false;
-			gotoPanel.stopTheTimer();
+			//gotoPanel.stopTheTimer();
 		}
 		super.onEvent(ev);
 	}
@@ -264,9 +264,11 @@ class ListBox extends Form{
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == cancelButton){
+				selectedMap = null;
 				this.close(0);
 			}
 			if (ev.target == okButton){
+				selectedMap = null;
 				int i,mapNum = 0;
 				String it = new String();
 				it = list.getText();
