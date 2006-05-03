@@ -18,7 +18,7 @@ import ewe.filechooser.*;
 public class MainMenu extends MenuBar {
 	MenuItem profiles, preferences,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchClr,export;
 	MenuItem kalibmap,importmap;
-	MenuItem spider;
+	MenuItem spider, chkVersion;
 	MenuItem about, wolflang, sysinfo, testgps, legend;
 	MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTomASC, exportMSARCSV;
 	MenuItem exportOZI, exportKML, exportTomTomOVL;
@@ -164,9 +164,11 @@ public class MainMenu extends MenuBar {
 		dummy += (String)lr.get(118,"WolfLanguage");
 		dummy = dummy + "|";
 		dummy += "System";
-
+		dummy = dummy + "|";
+		dummy += "Version Check";
+		
 		items = mn.addItems(mString.split(dummy));
-		about = items[0]; legend = items[1]; wolflang = items[2]; sysinfo = items[3]; //testgps = items[3];
+		about = items[0]; legend = items[1]; wolflang = items[2]; sysinfo = items[3]; chkVersion=items[4];
 		
 	}
 	
@@ -379,7 +381,16 @@ public class MainMenu extends MenuBar {
 				}
 				
 			}
-			
+			if(mev.selectedItem == chkVersion){
+				Version vers = new Version();
+				if(vers.newVersionAvailable(myPreferences)){
+					InfoBox inf = new InfoBox("New Version", "New version\navailable.");
+					inf.execute();
+				} else {
+					InfoBox inf = new InfoBox("Version Check", "You are at\nthe current version.");
+					inf.execute();
+				}
+			}
 			if(mev.selectedItem == spider){
 				//GeoToadUI gtUI = new GeoToadUI(myPreferences, File.getProgramDirectory(),cacheDB);
 				SpiderGC spGC = new SpiderGC(myPreferences);
