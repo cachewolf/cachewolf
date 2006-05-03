@@ -319,6 +319,9 @@ public class DetailsPanel extends CellPanel{
 				else 	note = note + dtm.toString();
 				note = note + "\n";
 				wayNotes.setText(note);
+				thisCache.CacheNotes = wayNotes.getText();
+				CacheReaderWriter crw = new CacheReaderWriter();
+				crw.saveCacheDetails(thisCache, pref.mydatadir);
 			}
 			if (ev.target == addPicture){
 				thisCache.addUserImage(pref);
