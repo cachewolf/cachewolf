@@ -21,7 +21,7 @@ public class MainMenu extends MenuBar {
 	MenuItem spider, chkVersion;
 	MenuItem about, wolflang, sysinfo, testgps, legend;
 	MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTomASC, exportMSARCSV;
-	MenuItem exportOZI, exportKML, exportTomTomOVL;
+	MenuItem exportOZI, exportKML, exportTomTomOVL, exportTPL;
 	MenuItem filtCreate, filtApply, filtClear, filtInvert;
 	MenuItem exportGPS, exportCacheMate;
 	MenuItem orgCopy, orgMove, orgDelete;
@@ -40,7 +40,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Sub - Menu for export
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] exitems = new MenuItem[12];
+		MenuItem[] exitems = new MenuItem[13];
 		exporthtml = new MenuItem((String)lr.get(100,"to HTML"));
 		exitems[0] = exporthtml;
 		exportpcx5 = new MenuItem((String)lr.get(101,"to PCX5 Mapsource"));
@@ -66,6 +66,8 @@ public class MainMenu extends MenuBar {
 		exitems[10] = exportKML;
 		exportTomTomOVL = new MenuItem((String)lr.get(126,"to TomTom OV2"));
 		exitems[11] = exportTomTomOVL;
+		exportTPL = new MenuItem("with Template");
+		exitems[12] = exportTPL;
 		
 		String cwd = new String();
 		cwd = File.getProgramDirectory();
@@ -297,6 +299,7 @@ public class MainMenu extends MenuBar {
 				MSARCSVExporter msar = new MSARCSVExporter(cacheDB, myPreferences);
 				msar.doIt();
 			}
+
 			if(mev.selectedItem == search){
 				String srch = new InputBox((String)lr.get(119,"Search for:")).input("",10);
 				SearchCache ssc = new SearchCache(cacheDB);
@@ -311,10 +314,22 @@ public class MainMenu extends MenuBar {
 				TomTomOV2Exporter tomovl = new TomTomOV2Exporter(cacheDB, myPreferences);
 				tomovl.doIt();
 			}
+
 			if(mev.selectedItem == exportKML){
 				KMLExporter kml = new KMLExporter(cacheDB, myPreferences);
 				kml.doIt();
 			}
+
+			if(mev.selectedItem == exportTPL){
+				FileChooser fc = new FileChooser(FileChooser.OPEN, File.getProgramDirectory());
+				fc.addMask("*.tpl");
+				fc.setTitle("Select Template file");
+				if(fc.execute() != FileChooser.IDCANCEL){
+					TPLExporter tpl = new TPLExporter(cacheDB, myPreferences,fc.getChosenFile().toString());
+					tpl.doIt();
+				}
+			}
+
 			if(mev.selectedItem == searchClr){
 				SearchCache ssc = new SearchCache(cacheDB);
 				ssc.clearSearch();
