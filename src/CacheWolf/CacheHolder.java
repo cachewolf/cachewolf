@@ -58,6 +58,7 @@ public class CacheHolder {
   public boolean is_update = false;
   public boolean is_selected = false;
   public boolean is_HTML = true;
+  public boolean is_Checked = false;
     
   public CacheHolder update(CacheHolder newCh){
 	  // flags
