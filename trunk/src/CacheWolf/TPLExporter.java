@@ -30,11 +30,47 @@ import ewe.filechooser.FileChooser;
 import ewe.io.*;
 import ewe.sys.*;
 import ewe.util.*;
+import com.stevesoft.ewe_pat.*;
 
 /**
  * @author Kalle
  * class to export cachedata using a template
  */
+class tplFilter implements HTML.Tmpl.Filter
+{
+	private int type=SCALAR;
+	private String newLine="\n";
+
+	public tplFilter(){
+		return;
+	}
+	
+	public int format() {
+		return this.type;
+	}
+	
+	public String parse(String t) {
+		Vm.debug(t);
+		Regex rex;
+		// Filter newlines 
+		rex = new Regex("(?m)\n$","");
+		t = rex.replaceAll(t);
+		// Filter comments <#-- and -->
+		rex = new Regex("<#--.*-->","");
+		t = rex.replaceAll(t);
+		// add newlines if line is not empty now
+		if (t.length()>0)t += newLine;
+		return t;
+	}
+		
+	
+	public String [] parse(String [] t) {
+		Vm.debug(t.toString());
+		throw new UnsupportedOperationException();
+	}
+}
+ 
+
 public class TPLExporter {
 	Vector cacheDB;
 	Preferences myPreferences;
@@ -92,10 +128,12 @@ public class TPLExporter {
 		}
 
 		Hashtable args = new Hashtable();
+		//args.put("debug", "true");
 		args.put("filename", tplFile);
 		args.put("case_sensitive", "true");
 		args.put("loop_context_vars", Boolean.TRUE);
 		args.put("max_includes", new Integer(5));
+		args.put("filter", new tplFilter());
 		try {
 			Template tpl = new Template(args);
 			tpl.setParam("cache_index", cache_index);
