@@ -27,10 +27,11 @@ public class myTableModel extends TableModel{
 	FontMetrics fm;
 	Locale l = Vm.getLocale();
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
-	String nmQuest, nmD,nmT,nmWay,nmName,nmLoc,nmOwn,nmHid,nmStat,nmDist,nmBear = new String();
+	String nmCheck, nmQuest, nmD,nmT,nmWay,nmName,nmLoc,nmOwn,nmHid,nmStat,nmDist,nmBear = new String();
 	
 	public myTableModel(Vector DB, String[] colNs,int[] colWidth, myTableControl tc, FontMetrics fm){
 		super();
+		nmCheck = " ";
 		nmQuest = "?";
 		nmD = (String)lr.get(1000,"D");
 		nmT = (String)lr.get(1001,"T");
@@ -175,6 +176,12 @@ public class myTableModel extends TableModel{
 					//Vm.debug(String.valueOf(cols[col]));
 					if(ch.is_filtered == false){
 						try{
+							if(colName[col].equals(nmCheck)) {
+								mCheckBox m = new mCheckBox();
+								if(ch.is_Checked == true) m.setState(true);
+								else m.setState(false);
+								rettext = m;
+							}
 							if(colName[col].equals(nmQuest)) rettext = (IImage)cacheImages[Convert.parseInt(ch.type)];				
 							if(colName[col].equals(nmD)) rettext = (String)ch.hard;
 							if(colName[col].equals(nmT)) rettext = (String)ch.terrain;

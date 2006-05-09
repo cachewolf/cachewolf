@@ -22,7 +22,7 @@ public class TablePanel extends CellPanel{
 	public TablePanel(Vector DB, Preferences pref){
 		cacheDB = DB;
 		myPreferences = pref;
-		String [] spName = {"?",(String)lr.get(1000,"D"),"T",(String)lr.get(1002,"Waypoint"),"Name",(String)lr.get(1004,"Location"),(String)lr.get(1005,"Owner"),(String)lr.get(1006,"Hidden"),(String)lr.get(1007,"Status"),(String)lr.get(1008,"Dist"),(String)lr.get(1009,"Bear")};
+		String [] spName = {" ","?",(String)lr.get(1000,"D"),"T",(String)lr.get(1002,"Waypoint"),"Name",(String)lr.get(1004,"Location"),(String)lr.get(1005,"Owner"),(String)lr.get(1006,"Hidden"),(String)lr.get(1007,"Status"),(String)lr.get(1008,"Dist"),(String)lr.get(1009,"Bear")};
 		String[] jester;
 		int colWidth[];
 		int colnum = 0;
@@ -83,7 +83,7 @@ public class TablePanel extends CellPanel{
 	}
 	
 	public void refreshTable(){
-		String [] spName = {"?",(String)lr.get(1000,"D"),"T",(String)lr.get(1002,"Waypoint"),"Name",(String)lr.get(1004,"Location"),(String)lr.get(1005,"Owner"),(String)lr.get(1006,"Hidden"),(String)lr.get(1007,"Status"),(String)lr.get(1008,"Dist"),(String)lr.get(1009,"Bear")};
+		String [] spName = {" ","?",(String)lr.get(1000,"D"),"T",(String)lr.get(1002,"Waypoint"),"Name",(String)lr.get(1004,"Location"),(String)lr.get(1005,"Owner"),(String)lr.get(1006,"Hidden"),(String)lr.get(1007,"Status"),(String)lr.get(1008,"Dist"),(String)lr.get(1009,"Bear")};
 		String[] jester;
 		int colWidth[];
 
@@ -163,7 +163,7 @@ public class TablePanel extends CellPanel{
 			}catch(NullPointerException npe){
 			}
 		}
-	  
+	  Vm.debug("There was a click in the table!");
 	  super.onEvent(ev); //Make sure you call this.
 	}
 }
