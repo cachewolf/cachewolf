@@ -27,14 +27,14 @@ public class TablePanel extends CellPanel{
 		int colWidth[];
 		int colnum = 0;
 		
-		for(int i = 0; i<=10; i++){
+		for(int i = 0; i<=11; i++){
 			if(pref.tablePrefs[i] == 1) colnum++;
 		}
 		jester = new String[colnum];
 		colWidth = new int[colnum];
 		
 		int ji = 0;
-		for(int i = 0; i<=10;i++){
+		for(int i = 0; i<=11;i++){
 			if(pref.tablePrefs[i] == 1){
 				jester[ji] = spName[i];
 				colWidth[ji] = pref.tableWidth[i];
@@ -43,8 +43,11 @@ public class TablePanel extends CellPanel{
 		}
 		
 		addLast(new ScrollBarPanel(tc = new myTableControl()));
+		Menu m = new Menu(new String[]{"Filter","Delete"},"With selected");
+		tc.setMenu(m);
 		tc.db = cacheDB;
 		tc.pref = pref;
+		tc.tbp = this;
 		myMod = new myTableModel(cacheDB, jester, colWidth, tc, getFontMetrics());
 		myMod.hasRowHeaders = false;
 		myMod.hasColumnHeaders  = true;
@@ -57,7 +60,7 @@ public class TablePanel extends CellPanel{
 	
 	public void saveColWith(Preferences pref){
 		int j=0;
-		for (int i = 0; i<=10; i++){
+		for (int i = 0; i<=11; i++){
 			if(pref.tablePrefs[i] == 1){
 				pref.tableWidth[i] = myMod.getColWidth(j++);
 			}
@@ -69,7 +72,7 @@ public class TablePanel extends CellPanel{
 		tc.scrollToVisible(rownum, 0);
 		tc.clearSelectedCells(new Vector());
 		selectedCache = rownum;
-		for(int i= 0; i < 10; i++){
+		for(int i= 0; i < 11; i++){
 			tc.addToSelection(rownum,i); 
 		}
 	}
@@ -89,13 +92,13 @@ public class TablePanel extends CellPanel{
 
 		int colnum = 0;
 		
-		for(int i = 0; i<=10; i++){
+		for(int i = 0; i<=11; i++){
 			if(myPreferences.tablePrefs[i] == 1) colnum++;
 		}
 		jester = new String[colnum];
 		colWidth = new int[colnum];
 		int ji = 0;
-		for(int i = 0; i<=10;i++){
+		for(int i = 0; i<=11;i++){
 			if(myPreferences.tablePrefs[i] == 1){
 				jester[ji] = spName[i];
 				colWidth[ji] = myPreferences.tableWidth[i];
@@ -154,16 +157,34 @@ public class TablePanel extends CellPanel{
 	public void onEvent(Event ev)
 	{
 		////Vm.debug(ev.toString());
+		if(ev instanceof PenEvent){
+			if(ev.type == PenEvent.RIGHT_BUTTON){
+				Vm.debug("Right mouse button pressed");
+			}
+		}
 		if(ev instanceof TableEvent){
 			Point a = new Point();
 			Point dest = new Point();
 			a = tc.getSelectedCell(dest);
 			try{
 				selectedCache = a.y;
-			}catch(NullPointerException npe){
+					}catch(NullPointerException npe){
 			}
 		}
-	  Vm.debug("There was a click in the table!");
+		if(ev instanceof ControlEvent && ev.target instanceof mCheckBox){
+			mCheckBox m = new mCheckBox();
+			m = (mCheckBox)ev.target;
+			CacheHolder ch = new CacheHolder();
+			String tag = new String();
+			tag = (String)m.getTag(0, "nix");
+			for(int i = 0; i<cacheDB.size();i++){
+				ch = (CacheHolder)cacheDB.get(i);
+				if(ch.wayPoint.equals(tag)){
+					ch.is_Checked = m.getState();
+					cacheDB.set(i, ch);
+				}
+			}
+		}
 	  super.onEvent(ev); //Make sure you call this.
 	}
 }

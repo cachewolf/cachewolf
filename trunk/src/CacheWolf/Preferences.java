@@ -13,8 +13,8 @@ import ewesoft.xml.sax.*;
 */
 public class Preferences extends MinML{
 	
-	public int tablePrefs[] = {1,1,1,1,1,1,1,1,1,1,1};
-	public int tableWidth[] = {20,20,20,65,135,135,100,60,50,50,50};
+	public int tablePrefs[] = {1,1,1,1,1,1,1,1,1,1,1,1};
+	public int tableWidth[] = {20,20,20,20,65,135,135,100,60,50,50,50};
 	     
 	//Longitude
 	public String mylgNS = new String();
@@ -221,60 +221,61 @@ public class Preferences extends MinML{
 			myproxy = atts.getValue("prx");
 			myproxyport = atts.getValue("prt");
 		}
+		
 		if(name.equals("tableType")){ 
-			tablePrefs[0] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[0] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableD")){
 			tablePrefs[1] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[1] = Convert.parseInt(tmp);
 		}
-		if(name.equals("tableT")){
+		if(name.equals("tableD")){
 			tablePrefs[2] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[2] = Convert.parseInt(tmp);
 		}
-		if(name.equals("tableWay")) {
+		if(name.equals("tableT")){
 			tablePrefs[3] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[3] = Convert.parseInt(tmp);
 		}
-		if(name.equals("tableName")){
+		if(name.equals("tableWay")) {
 			tablePrefs[4] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[4] = Convert.parseInt(tmp);
 		}
-		if(name.equals("tableLoc")){
+		if(name.equals("tableName")){
 			tablePrefs[5] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[5] = Convert.parseInt(tmp);
 		}
-		if(name.equals("tableOwn")){
+		if(name.equals("tableLoc")){
 			tablePrefs[6] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[6] = Convert.parseInt(tmp);
 		}
-		if(name.equals("tableHide")){
+		if(name.equals("tableOwn")){
 			tablePrefs[7] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[7] = Convert.parseInt(tmp);
 		}
-		if(name.equals("tableStat")){
+		if(name.equals("tableHide")){
 			tablePrefs[8] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[8] = Convert.parseInt(tmp);
 		}
-		if(name.equals("tableDist")){
+		if(name.equals("tableStat")){
 			tablePrefs[9] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[9] = Convert.parseInt(tmp);
 		}
-		if(name.equals("tableBear")){
+		if(name.equals("tableDist")){
 			tablePrefs[10] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[10] = Convert.parseInt(tmp);
+		}
+		if(name.equals("tableBear")){
+			tablePrefs[11] = Convert.parseInt(atts.getValue("active"));
+			tmp = atts.getValue("width");
+			if (tmp != null) tableWidth[11] = Convert.parseInt(tmp);
 		}
 	}
 	
@@ -306,26 +307,26 @@ public class Preferences extends MinML{
 			outp.print("	<datadir dir = \""+ mydatadir +"\"/>\n");
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
 			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
-			outp.print("	<tableType active = \"1\" width = \""+Convert.toString(tableWidth[0])+"\"/>\n");
+			outp.print("	<tableType active = \"1\" width = \""+Convert.toString(tableWidth[1])+"\"/>\n");
 			//outp.print("    <logs number = \""+Convert.toString(nLogs)+"\"/>\n");
-			outp.print("	<tableD active = \""+Convert.toString(tablePrefs[1])+ "\"" +
-					               " width = \""+Convert.toString(tableWidth[1])+"\"/>\n");
-			outp.print("	<tableT active = \""+Convert.toString(tablePrefs[2])+ "\"" +
-								   " width = \""+Convert.toString(tableWidth[2])+"\"/>\n");
-			outp.print("	<tableWay active = \"1\" width = \""+Convert.toString(tableWidth[3])+"\"/>\n");
-			outp.print("	<tableName active = \"1\" width = \""+Convert.toString(tableWidth[4])+"\"/>\n");
-			outp.print("	<tableLoc active = \""+Convert.toString(tablePrefs[5])+ "\"" +
-					   				 " width = \""+Convert.toString(tableWidth[5])+"\"/>\n");
-			outp.print("	<tableOwn active = \""+Convert.toString(tablePrefs[6])+ "\"" +
+			outp.print("	<tableD active = \""+Convert.toString(tablePrefs[2])+ "\"" +
+					               " width = \""+Convert.toString(tableWidth[2])+"\"/>\n");
+			outp.print("	<tableT active = \""+Convert.toString(tablePrefs[3])+ "\"" +
+								   " width = \""+Convert.toString(tableWidth[3])+"\"/>\n");
+			outp.print("	<tableWay active = \"1\" width = \""+Convert.toString(tableWidth[4])+"\"/>\n");
+			outp.print("	<tableName active = \"1\" width = \""+Convert.toString(tableWidth[5])+"\"/>\n");
+			outp.print("	<tableLoc active = \""+Convert.toString(tablePrefs[6])+ "\"" +
 					   				 " width = \""+Convert.toString(tableWidth[6])+"\"/>\n");
-			outp.print("	<tableHide active = \""+Convert.toString(tablePrefs[7])+ "\"" +
-					   				  " width = \""+Convert.toString(tableWidth[7])+"\"/>\n");
-			outp.print("	<tableStat active = \""+Convert.toString(tablePrefs[8])+ "\"" +
+			outp.print("	<tableOwn active = \""+Convert.toString(tablePrefs[7])+ "\"" +
+					   				 " width = \""+Convert.toString(tableWidth[7])+"\"/>\n");
+			outp.print("	<tableHide active = \""+Convert.toString(tablePrefs[8])+ "\"" +
 					   				  " width = \""+Convert.toString(tableWidth[8])+"\"/>\n");
-			outp.print("	<tableDist active = \""+Convert.toString(tablePrefs[9])+ "\"" +
+			outp.print("	<tableStat active = \""+Convert.toString(tablePrefs[9])+ "\"" +
 					   				  " width = \""+Convert.toString(tableWidth[9])+"\"/>\n");
-			outp.print("	<tableBear active = \""+Convert.toString(tablePrefs[10])+ "\"" +
+			outp.print("	<tableDist active = \""+Convert.toString(tablePrefs[10])+ "\"" +
 					   				  " width = \""+Convert.toString(tableWidth[10])+"\"/>\n");
+			outp.print("	<tableBear active = \""+Convert.toString(tablePrefs[11])+ "\"" +
+					   				  " width = \""+Convert.toString(tableWidth[11])+"\"/>\n");
 			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" lastsyncoc= \"" + lastSyncOC[0] + "\" lastdistoc= \"" + lastDistOC[0] + "\" />\n");
 			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] + "\" lastdistoc= \"" + lastDistOC[1] + "\" />\n");
 			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] + "\" lastdistoc= \"" + lastDistOC[2] + "\" />\n");
