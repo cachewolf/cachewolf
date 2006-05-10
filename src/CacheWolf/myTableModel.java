@@ -178,6 +178,7 @@ public class myTableModel extends TableModel{
 						try{
 							if(colName[col].equals(nmCheck)) {
 								mCheckBox m = new mCheckBox();
+								m.setTag(0, ch.wayPoint);
 								if(ch.is_Checked == true) m.setState(true);
 								else m.setState(false);
 								rettext = m;

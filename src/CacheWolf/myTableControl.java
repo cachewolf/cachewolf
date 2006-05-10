@@ -12,7 +12,38 @@ public class myTableControl extends TableControl{
 
 	public Vector db;
 	public Preferences pref;
-		
+	public TablePanel tbp;
+	
+	public void penRightReleased(Point p){
+		p.x =0;
+		doShowMenu(p);
+                //penReleased(p);
+	}
+	
+	public void popupMenuEvent(Object selectedItem){
+		CacheHolder ch = new CacheHolder();
+		if (selectedItem.toString().equals("Filter")){
+			for(int i = 0; i <	db.size(); i++){
+				ch = (CacheHolder)db.get(i);
+				if(ch.is_Checked != true) {
+					ch.is_filtered = true;
+					db.set(i, ch);
+				}
+			}
+			tbp.refreshTable();
+		}
+		if (selectedItem.toString().equals("Delete")){
+			for(int i = 0; i <	db.size(); i++){
+				ch = (CacheHolder)db.get(i);
+				if(ch.is_Checked == true) {
+					db.remove(ch);
+					i--;
+				}
+			}
+			tbp.refreshTable();
+		}
+	}
+	
 	public void  penDoubleClicked(Point where) {
 		Point a = new Point();
 		Point dest = new Point();
