@@ -1,3 +1,10 @@
 <#-- Kommentar -->
+<#-- Codecs: ASCII, UTF8 -->
+<tmpl_par name="charset" value="ASCII">
+<#-- somme chars should not appear in the cachename -->
+<tmpl_par name="badchars" value=",">
+<#-- newline: CR, LF, CRLF -->
+<tmpl_par name="newline" value="CRLF">
 <tmpl_loop cache_index>
-<tmpl_var WAYPOINT>-"<tmpl_var NAME>",<tmpl_var SHORTTYPE>-<tmpl_var SHORTSIZE>-<tmpl_var DIFFICULTY>-<tmpl_var TERRAIN>,<tmpl_var LON>,<tmpl_var LAT>,,,,</tmpl_loop>
+<tmpl_var name=WAYPOINT>-<tmpl_var name=NAME>,<tmpl_var name=SHORTTYPE>-<tmpl_var name=SHORTSIZE>-<tmpl_var name=DIFFICULTY>-<tmpl_var name=TERRAIN>,<tmpl_var name=LON>,<tmpl_var name=LAT>,,,,<br />
+</tmpl_loop>

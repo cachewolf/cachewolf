@@ -36,12 +36,17 @@ import com.stevesoft.ewe_pat.*;
  * @author Kalle
  * class to export cachedata using a template
  */
-class tplFilter implements HTML.Tmpl.Filter
+class TplFilter implements HTML.Tmpl.Filter
 {
 	private int type=SCALAR;
 	private String newLine="\n";
+	TextCodec codec;
+	String badChars;
+	String decSep = ".";
+	
 
-	public tplFilter(){
+	public TplFilter(){
+		codec = new AsciiCodec(AsciiCodec.STRIP_CR);
 		return;
 	}
 	
@@ -51,21 +56,61 @@ class tplFilter implements HTML.Tmpl.Filter
 	
 	public String parse(String t) {
 		Vm.debug(t);
-		Regex rex;
+		Regex rex, rex1;
+		String param, value;
 		// Filter newlines 
 		rex = new Regex("(?m)\n$","");
 		t = rex.replaceAll(t);
+
 		// Filter comments <#-- and -->
 		rex = new Regex("<#--.*-->","");
 		t = rex.replaceAll(t);
-		// add newlines if line is not empty now
-		if (t.length()>0)t += newLine;
+
+		// replace <br> or <br /> with newline
+		rex = new Regex("<br.*>","");
+		rex.search(t);
+		if (rex.didMatch()){
+			t = rex.replaceAll(t);
+			t += newLine;
+		}
+		
+		// search for parameters
+		rex = new Regex("(?i)<tmpl_par.*>");
+		rex.search(t);
+		if (rex.didMatch()){
+			// get parameter
+			rex1 = new Regex("(?i)name=\"(.*)\"\\svalue=\"(.*)\"[?\\s>]");
+			rex1.search(t);
+			param = rex1.stringMatched(1);
+			value = rex1.stringMatched(2);
+			Vm.debug("param=" + param + "\nvalue=" + value);
+			//clear t, because we allow only one parameter per line
+			t = "";
+			
+			// get the values
+			if (param.equals("charset")) {
+				if (value.equals("ASCII")) codec = new AsciiCodec();
+				if (value.equals("UTF8")) codec = new JavaUtf8Codec();
+			}
+			if (param.equals("badchars")) {
+				badChars = value;
+			}
+			if (param.equals("newline")){
+				newLine = "";
+				if (value.indexOf("CR") >= 0) newLine += "\r";
+				if (value.indexOf("LF") >= 0) newLine += "\n";
+			}
+			if (param.equals("decsep")) {
+				decSep = value;
+			}
+
+
+		}
 		return t;
 	}
 		
 	
 	public String [] parse(String [] t) {
-		Vm.debug(t.toString());
 		throw new UnsupportedOperationException();
 	}
 }
@@ -87,6 +132,7 @@ public class TPLExporter {
 		CacheReaderWriter crw = new CacheReaderWriter();
 		Vector cache_index = new Vector();
 		Hashtable varParams;
+		TplFilter myFilter;
 
 		FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
 		fc.setTitle("Select target file:");
@@ -99,48 +145,58 @@ public class TPLExporter {
 			if(holder.is_black == false && holder.is_filtered == false) counter++;
 		}
 		
-		for(int i = 0; i<counter;i++){
-			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_black == false && holder.is_filtered == false){
-				try{crw.readCache(holder, myPreferences.mydatadir);
-				}catch(Exception e){
-					Vm.debug("Problem reading cache page");
-				}
-			}
-			CWPoint point = new CWPoint(holder.LatLon, CWPoint.CW);
-			varParams = new Hashtable();
-			varParams.put("TYPE", CacheType.transType(holder.type));
-			varParams.put("SHORTTYPE", CacheType.transType(holder.type).substring(0,1));
-			varParams.put("SIZE", holder.CacheSize);
-			varParams.put("SHORTSIZE", holder.CacheSize.substring(0,1));
-			varParams.put("WAYPOINT", holder.wayPoint);
-			varParams.put("NAME", holder.CacheName);
-			varParams.put("OWNER", holder.CacheOwner);
-			varParams.put("DIFFICULTY", holder.hard.replace(',','.'));
-			varParams.put("TERRAIN", holder.terrain.replace(',','.'));
-			varParams.put("DISTANCE", holder.distance);
-			varParams.put("BEARING", holder.bearing);
-			varParams.put("LATLON", holder.LatLon);
-			varParams.put("LAT", point.getLatDeg(CWPoint.DD));
-			varParams.put("LON", point.getLonDeg(CWPoint.DD));
-			varParams.put("STATUS", holder.CacheStatus);
-			cache_index.add(varParams);
-		}
-
 		Hashtable args = new Hashtable();
+		myFilter = new TplFilter();
 		//args.put("debug", "true");
 		args.put("filename", tplFile);
 		args.put("case_sensitive", "true");
 		args.put("loop_context_vars", Boolean.TRUE);
 		args.put("max_includes", new Integer(5));
-		args.put("filter", new tplFilter());
+		args.put("filter", myFilter);
 		try {
 			Template tpl = new Template(args);
+
+			for(int i = 0; i<counter;i++){
+				holder = (CacheHolder)cacheDB.get(i);
+				if(holder.is_black == false && holder.is_filtered == false){
+					try{crw.readCache(holder, myPreferences.mydatadir);
+					}catch(Exception e){
+						Vm.debug("Problem reading cache page");
+					}
+				}
+				CWPoint point = new CWPoint(holder.LatLon, CWPoint.CW);
+				Regex dec = new Regex("[,.]",myFilter.decSep);
+				varParams = new Hashtable();
+				varParams.put("TYPE", CacheType.transType(holder.type));
+				varParams.put("SHORTTYPE", CacheType.transType(holder.type).substring(0,1));
+				varParams.put("SIZE", holder.CacheSize);
+				varParams.put("SHORTSIZE", holder.CacheSize.substring(0,1));
+				varParams.put("WAYPOINT", holder.wayPoint);
+				if (myFilter.badChars != null) {
+					Regex rex = new Regex("["+myFilter.badChars+"]","");
+					varParams.put("NAME", rex.replaceAll(holder.CacheName));
+				}
+				else {
+					varParams.put("NAME", holder.CacheName);
+				}
+				varParams.put("OWNER", holder.CacheOwner);
+				varParams.put("DIFFICULTY", dec.replaceAll(holder.hard));
+				varParams.put("TERRAIN", dec.replaceAll(holder.terrain));
+				varParams.put("DISTANCE", dec.replaceAll(holder.distance));
+				varParams.put("BEARING", holder.bearing);
+				varParams.put("LATLON", holder.LatLon);
+				varParams.put("LAT", dec.replaceAll(point.getLatDeg(CWPoint.DD)));
+				varParams.put("LON", dec.replaceAll(point.getLonDeg(CWPoint.DD)));
+				varParams.put("STATUS", holder.CacheStatus);
+				varParams.put("DATE", holder.DateHidden);
+				varParams.put("URL", holder.URL);
+				cache_index.add(varParams);
+			}
+
 			tpl.setParam("cache_index", cache_index);
 			PrintWriter detfile; 
 			FileWriter fw = new FileWriter(saveTo);
-			//fw.codec = IO.getCodec(IO.ASCII_CODEC);
-			fw.codec = new AsciiCodec(AsciiCodec.STRIP_CR);
+			fw.codec = myFilter.codec;
 			detfile = new PrintWriter(new BufferedWriter(fw));
 			tpl.printTo(detfile);
 			//detfile.print(tpl.output());
