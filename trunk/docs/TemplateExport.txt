@@ -1,0 +1,58 @@
+Short documentation for the export via templates
+
+Comment 
+<#-- TomTom ASC or POI -->
+Anything between "<#--" and "-->" is handled as a comment
+
+Configuration section
+Charsets: <tmpl_par name="charset" value="ASCII">, values ASCII or UTF8
+
+Bad Chars:
+These chars are removed from the cachename, for example the ',' if ',' is used as a separator.
+<tmpl_par name="badchars" value=",">
+
+Newline:
+These defines, what should be used for replacing <br />
+<tmpl_par name="newline" value="CRLF">, values are CR, LF or CRLF
+
+Decimal separator:
+Defines, which decimal separator is used
+<tmpl_par name="decsep" value=",">, values "." or ','
+
+Output section
+Anything (except comments and variables) is written to the output file. The cachedata ist placed between <tmpl_loop cache_index> and </tmpl_loop>. Variables defined like this: <tmpl_var name=LON>. At the end of the line <br /> has to be placed, this ist replaced by CR.
+
+Variables:
+TYPE: Type of cache, e.g. Regular, Multi
+SHORTTYPE: First Letter of sype
+SIZE: Size of Cache, e.g. Regular, Micro
+SHORTSIZE: First letter of size
+WAYPOINT: GCXXXX, OCXXXX
+NAME: Name of cache
+OWNER
+DIFFICULTY
+TERRAIN
+DISTANCE: Distance calculated in cachelist
+BEARING: Bearing calculated in cachelist
+LATON: Coordinates in long format, e.g. N 50° 31.234 E 008° 45.267
+LAT: Latitude in decimal format, e.g. 50.20147
+LON: Longitude in decimal format, e.g. 008.58132
+STATUS
+DATE: date hidden
+URL
+
+Example:
+<#-- Microsoft AutoRoute -->
+<#-- Codecs: ASCII, UTF8 -->
+<tmpl_par name="charset" value="ASCII">
+<#-- somme chars should not appear in the cachename -->
+<tmpl_par name="badchars" value=";"">
+<#-- newline: CR, LF, CRLF -->
+<tmpl_par name="newline" value="CRLF">
+<#-- decimal seperator: . or , -->
+<tmpl_par name="decsep" value=",">
+Name;Breitengrad;Längengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink<br />
+<tmpl_loop cache_index>
+"<tmpl_var name=SHORTTYPE>-<tmpl_var name=SHORTSIZE>-<tmpl_var name=DIFFICULTY>-<tmpl_var name=TERRAIN><tmpl_var name=NAME>,<tmpl_var name=LON>,<tmpl_var name=LAT>,,,,<br />
+</tmpl_loop>
+
