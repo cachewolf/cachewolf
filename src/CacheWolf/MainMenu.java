@@ -66,7 +66,7 @@ public class MainMenu extends MenuBar {
 		exitems[10] = exportKML;
 		exportTomTomOVL = new MenuItem((String)lr.get(126,"to TomTom OV2"));
 		exitems[11] = exportTomTomOVL;
-		exportTPL = new MenuItem("with Template");
+		exportTPL = new MenuItem("via Template");
 		exitems[12] = exportTPL;
 		
 		String cwd = new String();

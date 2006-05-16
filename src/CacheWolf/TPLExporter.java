@@ -29,6 +29,7 @@ import HTML.Template;
 import ewe.filechooser.FileChooser;
 import ewe.io.*;
 import ewe.sys.*;
+import ewe.ui.ProgressBarForm;
 import ewe.util.*;
 import com.stevesoft.ewe_pat.*;
 
@@ -55,7 +56,7 @@ class TplFilter implements HTML.Tmpl.Filter
 	}
 	
 	public String parse(String t) {
-		Vm.debug(t);
+		//Vm.debug(t);
 		Regex rex, rex1;
 		String param, value;
 		// Filter newlines 
@@ -83,7 +84,7 @@ class TplFilter implements HTML.Tmpl.Filter
 			rex1.search(t);
 			param = rex1.stringMatched(1);
 			value = rex1.stringMatched(2);
-			Vm.debug("param=" + param + "\nvalue=" + value);
+			//Vm.debug("param=" + param + "\nvalue=" + value);
 			//clear t, because we allow only one parameter per line
 			t = "";
 			
@@ -130,6 +131,8 @@ public class TPLExporter {
 	public void doIt(){
 		CacheHolder holder;
 		CacheReaderWriter crw = new CacheReaderWriter();
+		ProgressBarForm pbf = new ProgressBarForm();
+		ewe.sys.Handle h = new ewe.sys.Handle();
 		Vector cache_index = new Vector();
 		Hashtable varParams;
 		TplFilter myFilter;
@@ -144,6 +147,9 @@ public class TPLExporter {
 			holder = (CacheHolder)cacheDB.get(i);
 			if(holder.is_black == false && holder.is_filtered == false) counter++;
 		}
+		pbf.showMainTask = false;
+		pbf.setTask(h,"Exporting ...");
+		pbf.exec();
 		
 		Hashtable args = new Hashtable();
 		myFilter = new TplFilter();
@@ -158,39 +164,41 @@ public class TPLExporter {
 
 			for(int i = 0; i<counter;i++){
 				holder = (CacheHolder)cacheDB.get(i);
+				h.progress = (float)i/(float)counter;
+				h.changed();
 				if(holder.is_black == false && holder.is_filtered == false){
 					try{crw.readCache(holder, myPreferences.mydatadir);
 					}catch(Exception e){
 						Vm.debug("Problem reading cache page");
 					}
+					CWPoint point = new CWPoint(holder.LatLon, CWPoint.CW);
+					Regex dec = new Regex("[,.]",myFilter.decSep);
+					varParams = new Hashtable();
+					varParams.put("TYPE", CacheType.transType(holder.type));
+					varParams.put("SHORTTYPE", CacheType.transType(holder.type).substring(0,1));
+					varParams.put("SIZE", holder.CacheSize);
+					varParams.put("SHORTSIZE", holder.CacheSize.substring(0,1));
+					varParams.put("WAYPOINT", holder.wayPoint);
+					if (myFilter.badChars != null) {
+						Regex rex = new Regex("["+myFilter.badChars+"]","");
+						varParams.put("NAME", rex.replaceAll(holder.CacheName));
+					}
+					else {
+						varParams.put("NAME", holder.CacheName);
+					}
+					varParams.put("OWNER", holder.CacheOwner);
+					varParams.put("DIFFICULTY", dec.replaceAll(holder.hard));
+					varParams.put("TERRAIN", dec.replaceAll(holder.terrain));
+					varParams.put("DISTANCE", dec.replaceAll(holder.distance));
+					varParams.put("BEARING", holder.bearing);
+					varParams.put("LATLON", holder.LatLon);
+					varParams.put("LAT", dec.replaceAll(point.getLatDeg(CWPoint.DD)));
+					varParams.put("LON", dec.replaceAll(point.getLonDeg(CWPoint.DD)));
+					varParams.put("STATUS", holder.CacheStatus);
+					varParams.put("DATE", holder.DateHidden);
+					varParams.put("URL", holder.URL);
+					cache_index.add(varParams);
 				}
-				CWPoint point = new CWPoint(holder.LatLon, CWPoint.CW);
-				Regex dec = new Regex("[,.]",myFilter.decSep);
-				varParams = new Hashtable();
-				varParams.put("TYPE", CacheType.transType(holder.type));
-				varParams.put("SHORTTYPE", CacheType.transType(holder.type).substring(0,1));
-				varParams.put("SIZE", holder.CacheSize);
-				varParams.put("SHORTSIZE", holder.CacheSize.substring(0,1));
-				varParams.put("WAYPOINT", holder.wayPoint);
-				if (myFilter.badChars != null) {
-					Regex rex = new Regex("["+myFilter.badChars+"]","");
-					varParams.put("NAME", rex.replaceAll(holder.CacheName));
-				}
-				else {
-					varParams.put("NAME", holder.CacheName);
-				}
-				varParams.put("OWNER", holder.CacheOwner);
-				varParams.put("DIFFICULTY", dec.replaceAll(holder.hard));
-				varParams.put("TERRAIN", dec.replaceAll(holder.terrain));
-				varParams.put("DISTANCE", dec.replaceAll(holder.distance));
-				varParams.put("BEARING", holder.bearing);
-				varParams.put("LATLON", holder.LatLon);
-				varParams.put("LAT", dec.replaceAll(point.getLatDeg(CWPoint.DD)));
-				varParams.put("LON", dec.replaceAll(point.getLonDeg(CWPoint.DD)));
-				varParams.put("STATUS", holder.CacheStatus);
-				varParams.put("DATE", holder.DateHidden);
-				varParams.put("URL", holder.URL);
-				cache_index.add(varParams);
 			}
 
 			tpl.setParam("cache_index", cache_index);
@@ -204,6 +212,7 @@ public class TPLExporter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		pbf.exit(0);
 	}
 
 
