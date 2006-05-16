@@ -41,7 +41,7 @@ class TplFilter implements HTML.Tmpl.Filter
 {
 	private int type=SCALAR;
 	private String newLine="\n";
-	TextCodec codec;
+	TextCodec codec = new AsciiCodec();
 	String badChars;
 	String decSep = ".";
 	
