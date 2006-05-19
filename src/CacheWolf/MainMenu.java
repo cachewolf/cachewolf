@@ -206,11 +206,11 @@ public class MainMenu extends MenuBar {
 				//LoadScreen lsc = new LoadScreen(cacheDB, myPreferences);
 				//lsc.execute(father.getFrame(), Gui.CENTER_FRAME);
 				//Vm.debug("Sending repaint!");
-				FileChooser fc = new FileChooser(FileChooser.OPEN, myPreferences.mydatadir);
+				FileChooser fc = new FileChooser(FileChooser.OPEN|FileChooser.MULTI_SELECT, myPreferences.mydatadir);
 				fc.addMask("*.gpx,*.zip");
-				fc.setTitle((String)lr.get(909,"Select GPX file"));
+				fc.setTitle((String)lr.get(909,"Select file(s)"));
 				if(fc.execute() != fc.IDCANCEL){
-					GPXImporter gpx = new GPXImporter(cacheDB, fc.getChosenFile().toString(),myPreferences);
+					GPXImporter gpx = new GPXImporter(cacheDB, fc.getAllChosen(),fc.getChosenDirectory().getAbsolutePath(),myPreferences);
 					gpx.doIt(GPXImporter.DOIT_ASK);
 				}
 				tbp.resetModel(cacheDB);
