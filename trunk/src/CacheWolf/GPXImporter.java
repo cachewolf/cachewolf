@@ -24,7 +24,7 @@ public class GPXImporter extends MinML {
 	String strData, saveDir, logData, logIcon, logDate, logFinder;
 	boolean inWpt, inCache, inLogs, inBug;
 	public XMLElement document;
-	private String file = new String();
+	private Vector files = new Vector();
 	private boolean debugGPX = false; 
 	InfoBox infB;
 	static Preferences pref;
@@ -44,8 +44,32 @@ public class GPXImporter extends MinML {
 	{
 		pref = p;
 		cacheDB = DB;
-		file = f;
+		//file = f;
+		files.add(f);
 		saveDir = pref.mydatadir;
+		//msgA = msgArea;
+		inWpt = false;
+		inCache = false;
+		inLogs = false;
+		inBug =false;
+		strData = new String();
+		//index db for faster search
+		CacheHolder ch;
+		for(int i = 0; i<cacheDB.size();i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			DBindex.put((String)ch.wayPoint, new Integer(i));
+		}//for
+	}
+	
+	public GPXImporter(Vector DB, String[] f,String d, Preferences p)
+	{
+		pref = p;
+		cacheDB = DB;
+		saveDir = pref.mydatadir;
+		for (int i=0;i<f.length;i++){
+			files.add(d + "/" + f[i]);
+		}
+		
 		//msgA = msgArea;
 		inWpt = false;
 		inCache = false;
@@ -63,6 +87,7 @@ public class GPXImporter extends MinML {
 	public void doIt(int how){
 		try{
 			ewe.io.Reader r;
+			String file;
 			if(how == DOIT_ASK){
 				InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
 				iB.execute();
@@ -72,43 +97,46 @@ public class GPXImporter extends MinML {
 			if(how == DOIT_WITHSPOILER) doSpider = true;
 			//Vm.debug("State of: " + doSpider);
 			Vm.showWait(true);
-			//Test for zip.file
-			if (file.indexOf(".zip") > 0){
-				ZipFile zif = new ZipFile (file);
-				ZipEntry zipEnt;
-				Enumeration zipEnum = zif.entries();
-				// there could be more than one file in the archive
-				while (zipEnum.hasMoreElements())
-				{
-					zipEnt = (ZipEntry) zipEnum.nextElement();
-					// skip over PRC-files
-					if (zipEnt.getName().endsWith("gpx")){
-						r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
-						infB = new InfoBox(zipEnt.toString(),((String)lr.get(4000,"Loaded caches") + ":" + zaehlerGel));
-						infB.exec();
-						parse(r);
-						r.close();
-						infB.close(0);
+			for (int i=0; i<files.size();i++){
+				//Test for zip.file
+				file = (String)files.get(i);
+				if (file.indexOf(".zip") > 0){
+					ZipFile zif = new ZipFile (file);
+					ZipEntry zipEnt;
+					Enumeration zipEnum = zif.entries();
+					// there could be more than one file in the archive
+					while (zipEnum.hasMoreElements())
+					{
+						zipEnt = (ZipEntry) zipEnum.nextElement();
+						// skip over PRC-files
+						if (zipEnt.getName().endsWith("gpx")){
+							r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
+							infB = new InfoBox(zipEnt.toString(),((String)lr.get(4000,"Loaded caches") + ":" + zaehlerGel));
+							infB.exec();
+							parse(r);
+							r.close();
+							infB.close(0);
+						}
 					}
 				}
-			}
-			else {
-				r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
-				infB = new InfoBox("Info",((String)lr.get(4000,"Loaded caches") + ":" + zaehlerGel));
-				infB.show();
-				parse(r);
-				r.close();
+				else {
+					r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
+					infB = new InfoBox("Info",((String)lr.get(4000,"Loaded caches") + ":" + zaehlerGel));
+					infB.show();
+					parse(r);
+					r.close();
+					infB.close(0);
+				}
+				// save Index 
+				CacheReaderWriter crw = new CacheReaderWriter();
+				crw.saveIndex(cacheDB,saveDir);
 				infB.close(0);
 			}
-			// save Index 
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveIndex(cacheDB,saveDir);
-			infB.close(0);
-			Vm.showWait(false);
-		}catch(Exception e){
-			//Vm.debug(e.toString());
-			Vm.showWait(false);
-		}
+				Vm.showWait(false);
+			}catch(Exception e){
+				//Vm.debug(e.toString());
+				Vm.showWait(false);
+			}
 	}
 	public void startElement(String name, AttributeList atts){
 		strData ="";
@@ -406,7 +434,9 @@ public class GPXImporter extends MinML {
 		// Get degrees
 		if (lat.indexOf('.') < 0) lat = lat + ".0";
 		deg = lat.substring(0, lat.indexOf('.'));
-		if (deg.substring(0,1).equals("-"))res = "S" + deg.substring(1)+ "° "; 
+		if (deg.substring(0,1).equals("-")){
+			res = "S " + replace(deg, "-","") + "° ";
+		}
 		else  res = "N " + deg + "° ";
 
 		// Get minutes
