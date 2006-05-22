@@ -59,6 +59,7 @@ public class Preferences extends MinML{
 		mySPO.bits = 8;
 		mySPO.parity = SerialPort.NOPARITY;
 		mySPO.stopBits = 1;
+		mySPO.baudRate = 4800;
 	}
 	
 	/**
