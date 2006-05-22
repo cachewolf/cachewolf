@@ -134,7 +134,7 @@ public class PreferencesScreen extends Form {
 				if(fc.execute() != fc.IDCANCEL)	DataDir.setText(fc.getChosen()+"/");
 			}
 			if (ev.target == gpsB){
-				SerialPortOptions spo = new SerialPortOptions();
+				SerialPortOptions spo = new GPSPortOptions();
 				spo.portName = myPreferences.mySPO.portName;
 				spo.baudRate = myPreferences.mySPO.baudRate;
 				Editor s = spo.getEditor(SerialPortOptions.ADVANCED_EDITOR);
