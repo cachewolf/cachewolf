@@ -68,7 +68,6 @@ public class MainMenu extends MenuBar {
 		exitems[11] = exportTomTomOVL;
 		exportTPL = new MenuItem("via Template");
 		exitems[12] = exportTPL;
-		
 		String cwd = new String();
 		cwd = File.getProgramDirectory();
 		File ftest = new File(cwd + "/cmconvert/cmconvert.exe");
@@ -232,16 +231,14 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == exportGPS){
 				Vm.showWait(true);
-				GPXExporter htm = new GPXExporter(cacheDB, myPreferences);
-				htm.doIt(0);
+				PCX5Exporter pcx = new PCX5Exporter(cacheDB, myPreferences);
+				pcx.doIt(PCX5Exporter.MODE_AUTO);
 				ProgressBarForm pbf = new ProgressBarForm();
 				pbf.display("Transfer", "Sending to GPS", null);
 				String cwd = new String();
-				cwd = File.getProgramDirectory() + "/temp.gpx";
+				cwd = File.getProgramDirectory() + "/temp.pcx";
 				try{
-					//gpsbabel -s -i pcx -f temp.pcx5 -o garmin -F com1:
-					//Besser!!!
-					ewe.sys.Process p = Vm.exec("gpsbabel -s -i gpx -f "+ cwd +" -o garmin -F com1: ");
+					ewe.sys.Process p = Vm.exec("gpsbabel -s -i pcx -f "+ cwd +" -o garmin -F com1: ");
 					p.waitFor();
 				}catch(IOException ioex){};
 				pbf.clear();
@@ -273,7 +270,7 @@ public class MainMenu extends MenuBar {
 			
 			if(mev.selectedItem == exportpcx5){
 				PCX5Exporter pcx = new PCX5Exporter(cacheDB, myPreferences);
-				pcx.doIt();
+				pcx.doIt(PCX5Exporter.MODE_ASK);
 			} 
 			if(mev.selectedItem == exporttop50){
 				OVLExporter ovl = new OVLExporter(cacheDB, myPreferences);
@@ -299,7 +296,6 @@ public class MainMenu extends MenuBar {
 				MSARCSVExporter msar = new MSARCSVExporter(cacheDB, myPreferences);
 				msar.doIt();
 			}
-
 			if(mev.selectedItem == search){
 				String srch = new InputBox((String)lr.get(119,"Search for:")).input("",10);
 				SearchCache ssc = new SearchCache(cacheDB);
@@ -314,7 +310,6 @@ public class MainMenu extends MenuBar {
 				TomTomOV2Exporter tomovl = new TomTomOV2Exporter(cacheDB, myPreferences);
 				tomovl.doIt();
 			}
-
 			if(mev.selectedItem == exportKML){
 				KMLExporter kml = new KMLExporter(cacheDB, myPreferences);
 				kml.doIt();
