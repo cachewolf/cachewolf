@@ -29,6 +29,7 @@ package CacheWolf;
 import ewe.ui.*;
 import ewe.io.*;
 import ewe.ui.formatted.TextDisplay;
+import ewe.reflect.FieldTransfer;
 import ewe.sys.*;
 import ewe.util.*;
 
@@ -45,7 +46,6 @@ class mySerialThread extends mThread{
 	
 	public mySerialThread(SerialPortOptions spo, TextDisplay td){
 		try {
-			//Vm.debug("Opening "+spo.portName + " at "+ spo.baudRate);
 			comSp = new SerialPort(spo);
 		} catch (IOException e) {
 			Vm.debug("Error open COM-Port " + spo.portName);
@@ -61,15 +61,14 @@ class mySerialThread extends mThread{
 			} catch (InterruptedException e) {}
 			if (comSp != null)	{  
 				comLength = comSp.nonBlockingRead(comBuff, 0 ,comBuff.length);
-				//Vm.debug("Length: " + comBuff.length);
 				if (comLength > 0)	{
-					String str = mString.fromAscii(comBuff, 0, comLength); 
-					//Vm.debug(str);
+					String str = mString.fromAscii(comBuff, 0, comLength).toUpperCase();
 					out.appendText(str,true);
 				}
 			}
 		}
 	}
+
 	public void stop() {
 		run = false;
 		comSp.close();
@@ -86,12 +85,12 @@ public class GPSPortOptions extends SerialPortOptions {
 	public Editor getEditor(int whichEditor){
 		Editor ed;
 		ed = super.getEditor(0);
-		//ed.addField(ed.addNext(new mButton("Scan$u")).setCell(ed.DONTSTRETCH),"scan");
+		ed.addField(ed.addNext(new mButton("Scan$u")).setCell(Editor.DONTSTRETCH),"scan");
 		btnTest = new mButton("Test$u");
-		ed.addField(ed.addLast(btnTest.setCell(ed.DONTSTRETCH)),"test");
+		ed.addField(ed.addLast(btnTest.setCell(Editor.DONTSTRETCH)),"test");
 		txtOutput = new TextDisplay();
 		ScrollBarPanel sbp = new ScrollBarPanel(txtOutput);
-		sbp.setOptions(ScrollBarPanel.AlwaysShowVerticalScrollers | ScrollBarPanel.NeverShowHorizontalScrollers);
+		sbp.setOptions(ScrollBarPanel.AlwaysShowVerticalScrollers | ScrollBarPanel.AlwaysShowHorizontalScrollers);
 		ed.addField(ed.addLast(sbp),"out");
 		gpsRunning = false;
 		return ed;
@@ -107,20 +106,9 @@ public class GPSPortOptions extends SerialPortOptions {
 				else {
 					this.portName = ports[i];
 					ed.toControls("portName");
-					//try first default baudrate
-					if (testGPS(this.portName, 4800)){
-						this.baudRate = 4800;
-						ed.toControls("baudRate");
-						return;
-					}
-					int baud[] = {1200,2400,4800,9600,19200,38400,57600,115200};
-					for (int j=0;j<baud.length; j++ ){
-						if (testGPS(this.portName, baud[j])){
-							this.baudRate = baud[j];
-							ed.toControls("baudRate");
-							return;
-						}
-					}
+					this.baudRate = 4800;
+					ed.toControls("baudRate");
+					break;
 				}
 			}
 		}
@@ -143,6 +131,14 @@ public class GPSPortOptions extends SerialPortOptions {
 		super.action(field, ed);
 	}
 	
+	public void fieldEvent(FieldTransfer xfer, Editor editor, Object event){
+		EditorEvent ev = (EditorEvent) event;
+		if (xfer.fieldName.equals("_editor_") && (ev.type == EditorEvent.CLOSED)) {
+			if (serThread != null) serThread.stop();
+		}
+		super.fieldEvent(xfer,editor,event);
+	}
+	
 	private boolean testPort(String port, int baud){
 		SerialPort gpsPort; 
 		byte[] gpsBuff = new byte[1024];
@@ -154,11 +150,11 @@ public class GPSPortOptions extends SerialPortOptions {
 		
 		//try to read some data
 		now = new Time().getTime();
-		Vm.debug("Trying " + port + " at " + baud + " Baud");
+		txtOutput.appendText("Trying " + port + " at " + baud + " Baud\n",true);
 		while ( (new Time().getTime() - now) < 2000){
 			gpsLen = gpsPort.nonBlockingRead(gpsBuff,0, gpsBuff.length);
 			if (gpsLen > 0){
-				Vm.debug("Port found");
+				txtOutput.appendText("Port found\n", true);
 				gpsPort.close();
 				return true;
 			}
@@ -181,6 +177,7 @@ public class GPSPortOptions extends SerialPortOptions {
 		Vm.debug("Trying " + port + " at " + baud + " Baud");
 		while ( (new Time().getTime() - now) < 3000){
 			gpsLen = gpsPort.nonBlockingRead(gpsBuff,0, gpsBuff.length);
+			Vm.debug("Len:" + gpsLen);
 			if (gpsLen > 0){
 				String tmp = mString.fromAscii(gpsBuff,0,gpsLen);
 				Vm.debug(tmp);
@@ -194,5 +191,4 @@ public class GPSPortOptions extends SerialPortOptions {
 		gpsPort.close();
 		return false;
 	}
-
 }

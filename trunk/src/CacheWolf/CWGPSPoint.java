@@ -162,7 +162,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 			
 			//Vm.debug(NMEA.substring(start,end+3));
 			if ((end - start) < 15 || !checkSumOK(NMEA.substring(start,end+3))){
-				Vm.debug("checksum wrong");
+				//Vm.debug("checksum wrong");
 				continue;
 			}
 			Extractor ex = new Extractor ("," + NMEA.substring(start,end), ",",",",0,true);
@@ -252,7 +252,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 							 lonEW, lonDeg, lonMin, "0", CWPoint.DMM);
 				}
 			} // if
-		Vm.debug("End of examine");
+		//Vm.debug("End of examine");
 		} //while
 	}
 	
@@ -264,7 +264,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		for (int i= startPos; i<endPos;i++){
 			checkSum ^= nmea.charAt(i);
 		}
-		//Vm.debug("Checksum: " + nmea.substring(endPos+1) + " Calculated: " + Convert.intToHexString(checkSum));
+		//Vm.debug(nmea.substring(3,6)+" Checksum: " + nmea.substring(endPos+1) + " Calculated: " + Convert.intToHexString(checkSum));
 		return (checkSum == Byte.parseByte(nmea.substring(endPos+1),16));
 		
 	}
