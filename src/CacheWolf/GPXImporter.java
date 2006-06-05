@@ -294,7 +294,7 @@ public class GPXImporter extends MinML {
 					}
 				}
 				crw.saveCacheDetails(holder,saveDir);
-				crw.saveIndex(cacheDB,saveDir);
+				//crw.saveIndex(cacheDB,saveDir);
 			}
 			//Update cache data
 			else {
@@ -308,7 +308,7 @@ public class GPXImporter extends MinML {
 				} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
 				oldCh.update(holder);
 				crw.saveCacheDetails(oldCh,saveDir);
-				crw.saveIndex(cacheDB,saveDir);
+				//crw.saveIndex(cacheDB,saveDir);
 			}
 			
 			inWpt = false;
