@@ -37,6 +37,7 @@ public class CacheType {
 	static protected final int GC_UNKNOWN = 8;
 	static protected final int GC_WEBCAM = 11;
 	static protected final int GC_LOCATIONLESS = 12;
+	static protected final int GC_CITO = 13;
 	// additional waypoints have no numbers in GPX Files, so lets use our own.
 	static protected final int GC_AW_PARKING = 50;
 	static protected final int GC_AW_STAGE_OF_MULTI = 51;
@@ -69,6 +70,7 @@ public class CacheType {
 	static protected final int CW_DRIVE_IN = 10;
 	static protected final int CW_WEBCAM = 11;
 	static protected final int CW_LOCATIONLESS = 12;
+	static protected final int CW_CITO = 13;
 	static protected final int CW_PARKING = 50;
 	static protected final int CW_STAGE_OF_MULTI = 51;
 	static protected final int CW_QUESTION = 52;
@@ -94,6 +96,7 @@ public class CacheType {
 	static protected final String CW_PIC_DRIVE_IN = "110.png";
 	static protected final String CW_PIC_LETTERBOX = "5.png";
 	static protected final String CW_PIC_LOCATIONLESS = "12.png";
+	static protected final String CW_PIC_CITO = "13.png";
 	static protected final String CW_PIC_PARKING = "pkg.png";
 	static protected final String CW_PIC_STAGE_OF_MULTI = "stage.png";
 	static protected final String CW_PIC_QUESTION = "puzzle.png";
@@ -113,6 +116,7 @@ public class CacheType {
 		if(geoNum.equals("11")) geo = "Webcam Cache";
 		if(geoNum.equals("8")) geo = "Unknown Cache";
 		if(geoNum.equals("12")) geo = "Locationless Cache";
+		if(geoNum.equals("13")) geo = "Cache In Trash Out Event";
 		if(geoNum.equals("50")) geo = "Parking Area";
 		if(geoNum.equals("51")) geo = "Stages of a Multicache";
 		if(geoNum.equals("52")) geo = "Question to Answer";
@@ -139,7 +143,7 @@ public class CacheType {
 		if (typeText.equals("Unknown Cache") || typeText.equals("Other") || typeText.equals("Quiz")) return "8";
 		if (typeText.equals("Webcam Cache") || typeText.equals("Webcam")) return "11";
 		if (typeText.equals("Locationless (Reverse) Cache")) return "12";
-		if (typeText.equals("CITO")) return "13";
+		if (typeText.equals("Cache In Trash Out Event")) return "13";
 		if (typeText.equals("Earthcache") || typeText.equals("Earth")) return "137";
 		if (typeText.equals("Waypoint|Parking Area")) return "50";
 		if (typeText.equals("Waypoint|Stages of a Multicache")) return "51";
