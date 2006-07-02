@@ -37,7 +37,7 @@ import ewesoft.xml.sax.AttributeList;
  *
  */
 public class LOCXMLImporter extends MinML {
-	boolean debugXML = true;
+	boolean debugXML = false;
 	Vector cacheDB;
 	Preferences myPref = new Preferences();
 	String file;
