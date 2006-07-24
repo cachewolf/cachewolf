@@ -230,7 +230,7 @@ public class CacheWolf{
 		//Gui.screenIs(Gui.PDA_SCREEN)
 		if (Vm.isMobile() && s.height >= 400) {
 			Font defaultGuiFont = mApp.findFont("gui");
-			int sz = (int)(defaultGuiFont.getSize()*2);
+			int sz = (int)(defaultGuiFont.getSize()+4);
 			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
 			mApp.addFont(newGuiFont, "gui"); 
 			mApp.fontsChanged();
