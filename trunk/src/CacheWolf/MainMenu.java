@@ -209,8 +209,15 @@ public class MainMenu extends MenuBar {
 				fc.addMask("*.gpx,*.zip,*.loc");
 				fc.setTitle((String)lr.get(909,"Select file(s)"));
 				if(fc.execute() != fc.IDCANCEL){
-					GPXImporter gpx = new GPXImporter(cacheDB, fc.getAllChosen(),fc.getChosenDirectory().getAbsolutePath(),myPreferences);
-					gpx.doIt(GPXImporter.DOIT_ASK);
+					String file = fc.getChosenFile().toString();
+					if (file.endsWith("loc")){
+						LOCXMLImporter loc = new LOCXMLImporter(cacheDB, file, myPreferences);
+						loc.doIt();
+					}
+					else {
+						GPXImporter gpx = new GPXImporter(cacheDB, file,myPreferences);
+						gpx.doIt(GPXImporter.DOIT_ASK);
+					}
 				}
 				tbp.resetModel(cacheDB);
 			}
