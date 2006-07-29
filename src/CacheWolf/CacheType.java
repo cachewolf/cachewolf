@@ -44,6 +44,7 @@ public class CacheType {
 	static protected final int GC_AW_QUESTION = 52;
 	static protected final int GC_AW_FINAL = 53;
 	static protected final int GC_AW_TRAILHEAD = 54;
+	static protected final int GC_AW_REFERENCE = 55;
 	
 	//Types from oc.de
 	static protected final int OC_UNKNOWN = 1;
@@ -76,6 +77,7 @@ public class CacheType {
 	static protected final int CW_QUESTION = 52;
 	static protected final int CW_FINAL = 53;
 	static protected final int CW_TRAILHEAD = 54;
+	static protected final int CW_REFERENCE = 55;
 	static protected final int CW_CNT_TYPES = 17;
 
 	//Sources
@@ -102,6 +104,7 @@ public class CacheType {
 	static protected final String CW_PIC_QUESTION = "puzzle.png";
 	static protected final String CW_PIC_FINAL = "flag.png";
 	static protected final String CW_PIC_TRAILHEAD = "trailhead.png";
+	static protected final String CW_PIC_REFERENCE = "waypoint.png";
 	
 	//fields
 	int type = 0;
@@ -122,6 +125,7 @@ public class CacheType {
 		if(geoNum.equals("52")) geo = "Question to Answer";
 		if(geoNum.equals("53")) geo = "Final Coordinates";
 		if(geoNum.equals("54")) geo = "Trailhead";
+		if(geoNum.equals("55")) geo = "Reference";
 		return geo;
 	}
 	
@@ -131,6 +135,7 @@ public class CacheType {
 		if (type.equals("52")) return true;
 		if (type.equals("53")) return true;
 		if (type.equals("54")) return true;
+		if (type.equals("55")) return true;
 		return false;
 	}
 
@@ -150,6 +155,7 @@ public class CacheType {
 		if (typeText.equals("Waypoint|Question to Answer")) return "52";
 		if (typeText.equals("Waypoint|Final Coordinates")||typeText.equals("Waypoint|Final Location")) return "53";
 		if (typeText.equals("Waypoint|Trailhead")) return "54";
+		if (typeText.equals("Waypoint|Reference Point")) return "55";
 		Vm.debug("Unknown Cache Type:" + typeText);
 		return "0";
 	}
