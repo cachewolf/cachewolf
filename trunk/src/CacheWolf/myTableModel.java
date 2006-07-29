@@ -73,6 +73,7 @@ public class myTableModel extends TableModel{
 		cacheImages[52] = new Image("puzzle.png");
 		cacheImages[53] = new Image("flag.png");
 		cacheImages[54] = new Image("trailhead.png");
+		cacheImages[55] = new Image("waypoint.png");
 
 		cacheImages[108] = new Image("108.png");
 		cacheImages[109] = new Image("109.png");
