@@ -19,7 +19,9 @@ public class myTableControl extends TableControl{
 		doShowMenu(p);
                 //penReleased(p);
 	}
-	
+	public void penHeld(Point p){
+		doShowMenu(p);
+	}
 	public void popupMenuEvent(Object selectedItem){
 		CacheHolder ch = new CacheHolder();
 		if (selectedItem.toString().equals("Filter")){
