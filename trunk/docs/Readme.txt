@@ -1,4 +1,4 @@
-Readme zum CacheWolf 
+﻿Wie bekomme ich eine brandaktuelle Version des CacheWolf? 
 
 Die Sourcen von CacheWolf sind in einem Subversion-Repository bei www.berlios.de (Details siehe https://developer.berlios.de/svn/?group_id=2211) vorhanden, hierauf kann jeder lesend zugreifen. Schreibrechte werden auf Anfrage erteilt. Nachfolgend ist beschrieben, wie man sich die aktuelle Entwicklerversion besorgen kann und zum Laufen benommt. 
 
@@ -13,6 +13,7 @@ Java-Version
 - Checkout der aktuellen Sourcen aus dem Repository (z.B. http://svn.berlios.de/svnroot/repos/cachewolf/trunk)
 - Das Verzeichnis kann lokal umbenannt werden, z.B. in CacheWolf
 - Es sollte bereits ein Verzeichnis bin/CacheWolf geben, falls nicht, bitte anlegen
+- Die Linux-Scripte mit einem chmod 755 *.sh ausführbar machen
 - Script compile.bat (WinXP) bzw. ./compile.sh (Linux) ausführen. Es gibt etwa 10 Warnings.
 - Script getRes.bat bzw. ./getRes.sh ausführen. Damit werden u.a. die Image-Dateien in das Work-Verzeichnis kopiert
 - Script runwolf.bat bzw. ./runwolf.sh ausführen. Damit wird der CacheWolf im Work-Verzeichnis gestartet. Das Datenverzeichnis sollte man irgendwo anders hinlegen, z.B. parallel zum CacheWolf-Verzeichnis.
@@ -27,5 +28,12 @@ Der Inhalt des Verziechnisses ist bei mir unter Linux wie folgt:
 -rw-r--r-- 1 kalle kalle      47 2005-01-20 18:44 RunJewel.bat
 -rwxr-xr-x 1 kalle kalle      47 2006-07-24 21:30 runjewel.sh
 runjewel.sh habe ich mir selbst aus runJewel.bat erzeugt.
+
+- In dem Verzeichnis lib die folgenden Dateien rekursiv auspacken (.jar-Files sind zip-Dateien, falls der Entpacker muckt, einfach temporär in .zip umbenennen)
+ - ewesoft.zip
+ - EwesoftRegex.zip
+ - HTML.zip
+ - openmap.jar
+ Es gibt dann die Unterverzeichnisse com, ewesoft und HTML
 - Script buildexe.bat bzw. ./buildexe.sh aufrufen, es wird ein Verzeichnis CacheWolf erzeugt mit Unterverzeichnissen für die unterschiedlichen Plattformen.
 - mit dem Script runjewel können Änderungen an der Datei cwberlios.jnf vorgenommen werden.
