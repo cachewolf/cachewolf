@@ -7,8 +7,8 @@ import ewe.sys.*;
 
 public class Version {
 	static final String VER_MAJOR = "0.9";
-	static final String VER_MINOR = "BE";
-	static final String VER_BUILD = " 0510";
+	static final String VER_MINOR = " m";
+	static final String VER_BUILD = " RC";
 	
 	public static String getRelease() {
 		return VER_MAJOR + VER_MINOR + VER_BUILD;

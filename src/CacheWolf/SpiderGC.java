@@ -58,9 +58,13 @@ public class SpiderGC{
 		InfoBox infB = new InfoBox("Password", "Enter password:", InfoBox.INPUT);
 		infB.execute();
 		passwort = infB.getInput();
+		infB.close(0);
 		infB = new InfoBox("Distance", "Max distance:", InfoBox.INPUT);
 		infB.execute();
 		distance = Convert.toDouble(infB.getInput());
+		infB.close(0);
+		infB = new InfoBox("Status", "Logging in...", InfoBox.INPUT);
+		infB.execute();
 		try{
 			start = fetch("http://www.geocaching.com/login/Default.aspx");
 		}catch(Exception ex){
@@ -96,6 +100,7 @@ public class SpiderGC{
 		//Vm.debug(cookieSession);
 		
 		//Get first page
+		infB.setInfo("Fetching first page...");
 		try{
 			start = fetch("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD) + "&f=1");
 			
@@ -125,6 +130,7 @@ public class SpiderGC{
 				} else distance = 0;
 				rexLine.searchFrom(dummy, rexLine.matchedTo());
 			}
+			infB.setInfo("Found " + cachesToLoad.size() + " caches");
 			if(found_on_page < 20) distance = 0;
 			if(distance > 0){
 				page_number++;
@@ -144,7 +150,7 @@ public class SpiderGC{
 			Vm.debug("Distance is now: " + distance);
 			found_on_page = 0;
 		}
-		
+		infB.setInfo("Found " + cachesToLoad.size() + " caches");
 		// Now ready to spider each cache
 		String wpt = new String();
 		CacheReaderWriter crw = new CacheReaderWriter();
@@ -154,6 +160,7 @@ public class SpiderGC{
 			wpt = (String)cachesToLoad.get(i);
 			// Get only caches not already available in the DB
 			if(searchWpt(wpt) == -1){
+				infB.setInfo("Loading: " + wpt +"(" + i + " / " + cachesToLoad.size() + ")");
 				doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wpt+"&log=y";
 				try{
 					start = fetch(doc);
@@ -190,6 +197,7 @@ public class SpiderGC{
 			}
 		}
 		crw.saveIndex(cacheDB,pref.mydatadir);
+		infB.close(0);
 		/*
 		try{
 		  PrintWriter detfile = new PrintWriter(new BufferedWriter(new FileWriter("dubug.txt")));
@@ -215,10 +223,10 @@ public class SpiderGC{
 		//In the long description
 		String longDesc = new String();
 		longDesc = getLongDesc(doc);
-		Regex rex = new Regex("(?i)<img src=\"((?s).*?)\"");
+		Regex rex = new Regex("(?i)<img((?s).*?)src=\"((?s).*?)\"");
 		rex.search(longDesc);
 		while(rex.didMatch()){
-			imgUrl = rex.stringMatched(1);
+			imgUrl = rex.stringMatched(2);
 			imgType = imgUrl.substring(imgUrl.lastIndexOf("."), imgUrl.lastIndexOf(".")+4);
 			imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
 			spiderImage(imgUrl, imgName+"."+imgType);
@@ -229,22 +237,21 @@ public class SpiderGC{
 			rex.searchFrom(longDesc, rex.matchedTo());
 		}
 		//In the image span
-		
-		Stecke hier irgendwie fest... Bilder werden nicht gefunden!
-		
 		Regex imgSpan = new Regex("<span id=\"Images\"((?s).*?)</span>");
 		imgSpan.search(doc);
 		longDesc = imgSpan.stringMatched(1);
+		//Vm.debug("Image Span: " + longDesc);
 		if(longDesc.length()>0){
-			rex = new Regex("<A HREF='((?s).*?)' target='_blank' style='text-decoration: underline;'>((?s).*?)</A><br>");
+			rex = new Regex("&nbsp;<A HREF='((?s).*?)' target='_blank' style='text-decoration: underline;'>((?s).*?)</A><br>");
 			rex.search(longDesc);
 			while(rex.didMatch()){
+				//Vm.debug("Got an image match!" + rex.stringMatched(1));
 				imgUrl = rex.stringMatched(1);
 				imgType = imgUrl.substring(imgUrl.lastIndexOf("."), imgUrl.lastIndexOf(".")+4);
 				imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
-				spiderImage(imgUrl, imgName+"."+imgType);
+				spiderImage(imgUrl, imgName+imgType);
 				imgCounter++;
-				ch.Images.add(imgName+"."+imgType);
+				ch.Images.add(imgName+imgType);
 				ch.ImagesText.add(rex.stringMatched(2));
 				//replace img src in description!
 				rex.searchFrom(longDesc, rex.matchedTo());
@@ -262,7 +269,7 @@ public class SpiderGC{
 		byte[] buffer = new byte[9000];
 		ByteArray daten;
 		String datei = new String();
-		datei = target;
+		datei = pref.mydatadir + target;
 		if(pref.myproxy.length()>0){
 			connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), quelle);
 		}else{
@@ -444,6 +451,7 @@ public class SpiderGC{
 			String totline = new String();
 			if(pref.myproxy.length()==0){
 				try {
+					/*
 					// Create a socket to the host
 					String hostname = "www.geocaching.com";
 					int port = 80;
@@ -458,6 +466,7 @@ public class SpiderGC{
 					if(cookieSession.length()>0){
 						wr.write("Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
 					}
+					Vm.debug("Doc length: " + document.length());
 					wr.write("Content-Length: "+document.length()+"\r\n");
 					wr.write("Content-Type: application/x-www-form-urlencoded\r\n");
 					wr.write("Connection: close\r\n");
@@ -473,6 +482,30 @@ public class SpiderGC{
 					}
 					wr.close();
 					rd.close();
+					*/
+					HttpConnection conn;
+					conn = new HttpConnection(address);
+					JavaUtf8Codec codec = new JavaUtf8Codec();
+					conn.documentIsEncoded = true;
+					//Vm.debug(address + " / " + document);
+					//document = document + "\r\n";
+					//conn.setPostData(document.toCharArray());
+					conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+					conn.setPostData(codec.encodeText(document.toCharArray(),0,document.length(),true,null));
+					conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
+					if(cookieSession.length()>0){
+						conn.setRequestorProperty("Cookie: ", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
+					}
+					conn.setRequestorProperty("Connection", "close");
+					Socket sock = conn.connect();
+					
+					//Vm.debug("getting stuff!");
+					ByteArray daten = conn.readData(sock);
+					//Vm.debug("coming back!");
+					CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+					sock.close();
+					//Vm.debug(c_data.toString());
+					totline =  c_data.toString();
 				} catch (Exception e) {
 				}
 			} else {
