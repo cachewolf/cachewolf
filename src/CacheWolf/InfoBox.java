@@ -22,6 +22,10 @@ public class InfoBox extends Form{
 		msgArea.setText(info);
 	}
 	
+	public String getInput(){
+		return feedback.getText();
+	}
+	
 	public InfoBox(String title, String info, int ty){
 		type = ty;
 		this.setPreferredSize(150,50);
