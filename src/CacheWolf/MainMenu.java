@@ -103,17 +103,10 @@ public class MainMenu extends MenuBar {
 		dummy = dummy + "|";
 		dummy = dummy + "Sync OC";
 		ftest = new File(cwd + "/geotoad.exe");
-		//Hide spider menu if geotoad.exe is not found
-		if(ftest.exists()){
-			dummy = dummy + "|";
-			dummy = dummy + "Spider";
-		}
+		dummy = dummy + "|";
+		dummy = dummy + "Spider";
 		MenuItem [] items = mn.addItems(mString.split(dummy));
-		profiles = items[0]; preferences = items[1]; loadcaches = items[2];loadOC = items[3];
-		//Hide spider menu if geotoad.exe is not found
-		if(ftest.exists()){
-			spider=items[4];
-		}
+		profiles = items[0]; preferences = items[1]; loadcaches = items[2];loadOC = items[3];spider=items[4];
 		mn.addItem(mn3);
 		mn.addItem("-");
 		mn.addItem(mn2);
