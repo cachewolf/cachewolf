@@ -298,9 +298,11 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == search){
 				String srch = new InputBox((String)lr.get(119,"Search for:")).input("",10);
-				SearchCache ssc = new SearchCache(cacheDB);
-				ssc.search(srch);
-				tbp.refreshTable();
+				if (srch != null) {
+					SearchCache ssc = new SearchCache(cacheDB);
+					ssc.search(srch);
+					tbp.refreshTable();
+				}
 			}
 			if(mev.selectedItem == exportOZI){
 				OziExporter ozi = new OziExporter(cacheDB, myPreferences);
