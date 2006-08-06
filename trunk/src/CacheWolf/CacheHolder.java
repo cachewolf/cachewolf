@@ -3,7 +3,6 @@ import ewe.ui.InputBox;
 import ewe.util.*;
 import ewe.filechooser.FileChooser;
 import ewe.io.File;
-import ewe.sys.*;
 
 /**
 *	A class to hold information on a cache.<br>
@@ -128,7 +127,6 @@ public class CacheHolder {
 	  }//while
    	 //Check for number sukzessive DNF logs
 	 int z = 0;
-	  int sz = 0;
 	 String loganal = new String();
 	 // Vm.debug("Checking size: ");
 	  sz = newCh.CacheLogs.size();
