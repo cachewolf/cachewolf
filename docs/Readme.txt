@@ -37,3 +37,4 @@ runjewel.sh habe ich mir selbst aus runJewel.bat erzeugt.
  Es gibt dann die Unterverzeichnisse com, ewesoft und HTML
 - Script buildexe.bat bzw. ./buildexe.sh aufrufen, es wird ein Verzeichnis CacheWolf erzeugt mit Unterverzeichnissen für die unterschiedlichen Plattformen.
 - mit dem Script runjewel können Änderungen an der Datei cwberlios.jnf vorgenommen werden.
+
