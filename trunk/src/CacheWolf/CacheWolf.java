@@ -236,10 +236,11 @@ public class CacheWolf{
 			mApp.fontsChanged();
 			mApp.mainApp.font = newGuiFont;
 		}
+		/*
 		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
 		}
-		
+		*/
 		if(args.length > 0){
 			//Vm.debug("in args!!!!");
 			//Vm.sleep(500);
