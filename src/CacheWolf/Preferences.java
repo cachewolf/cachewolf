@@ -51,6 +51,7 @@ public class Preferences extends MinML{
 	public String digSeparator = new String();
 	public boolean debug = false;
 	public SerialPortOptions mySPO = new SerialPortOptions();
+	public int fontSize = 14;
 	
 	public Preferences(){
 		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
@@ -158,6 +159,7 @@ public class Preferences extends MinML{
 				distOC =  atts.getValue("dist");
 			}
 		}
+		if(name.equals("font")) fontSize = Convert.toInt(atts.getValue("size"));
 		if(name.equals("alias")) myAlias = atts.getValue("name");
 		if(name.equals("location")){
 			Extractor ex = new Extractor(" " + atts.getValue("long"), " ", " ", 0,true);

@@ -1,11 +1,8 @@
 package CacheWolf;
 
 import ewe.ui.*;
-import ewe.io.*;
-import ewesoft.xml.*;
 import ewe.util.*;
 import ewe.sys.*;
-import ewe.math.*;
 import ewe.fx.*;
 
 /**
@@ -48,8 +45,7 @@ public class MainForm extends Form {
 		this.exitSystemOnClose = true;
 		this.resizable = true;
 		this.moveable = true;
-		//if(Vm.isMobile() == false) 
-		this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
+		if(Vm.isMobile() == true) this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
 		/*
 		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
@@ -60,6 +56,15 @@ public class MainForm extends Form {
 		try{
 			Vm.showWait(true);
 			LoadPreferences(false);
+			
+			Font defaultGuiFont = mApp.findFont("gui");
+			int sz = (myPreferences.fontSize);
+			//Vm.debug("Font size:" + myPreferences.fontSize);
+			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
+			mApp.addFont(newGuiFont, "gui"); 
+			mApp.fontsChanged();
+			mApp.mainApp.font = newGuiFont;
+			
 			LoadAXML();
 			//updateBearingDistance();
 			TablePanel.updateBearingDistance(cacheDB,myPreferences);
@@ -83,6 +88,16 @@ public class MainForm extends Form {
 	public MainForm(String what, String dist){
 		try{
 			LoadPreferences(false);
+			
+			Font defaultGuiFont = mApp.findFont("gui");
+			//int sz = (int)(defaultGuiFont.getSize()+4);
+			int sz = (myPreferences.fontSize);
+			//Vm.debug("Font size:" + myPreferences.fontSize);
+			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
+			mApp.addFont(newGuiFont, "gui"); 
+			mApp.fontsChanged();
+			mApp.mainApp.font = newGuiFont;
+			
 			LoadAXML();
 			Spider mySpidy = new Spider(cacheDB, myPreferences, null, Spider.SPIDERNEAREST);
 			mySpidy.SpiderNearest(dist);
