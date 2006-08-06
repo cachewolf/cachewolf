@@ -2,6 +2,7 @@ package CacheWolf;
 import ewe.util.*;
 import ewe.io.*;
 import ewe.filechooser.*;
+import ewe.ui.*;
 
 /**
 *	Class to export cache database to an ASCII (CSV!) file.
@@ -26,7 +27,7 @@ public class ASCExporter{
 		ParseLatLon pll;
 		FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
 		fc.setTitle("Select target file:");
-		if(fc.execute() != FileChooser.IDCANCEL){
+		if(fc.execute() != FormBase.IDCANCEL){
 			File saveTo = fc.getChosenFile();
 			try{
 				PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(saveTo+".csv")));
@@ -45,6 +46,7 @@ public class ASCExporter{
 			}catch (Exception e){
 				//Vm.debug("Problem writing to ASC file!");
 			}//try
-		} //if
+		} //if else {
+		}
 	}
 }
