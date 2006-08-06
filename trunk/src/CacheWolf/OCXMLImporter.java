@@ -306,6 +306,13 @@ public class OCXMLImporter extends MinML {
 				holder.Images.clear();
 				holder.ImagesText.clear();
 			}
+			if(holder.LatLon.length() > 1 && holder.is_archived == false){
+				ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
+				pll.parse();
+				MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), myPref.myproxy, myPref.myproxyport);
+				mpl.loadTo(myPref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
+				mpl.loadTo(myPref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
+			}
 			// save all
 			CacheReaderWriter crw = new CacheReaderWriter();
 			crw.saveCacheDetails(holder,myPref.mydatadir);
