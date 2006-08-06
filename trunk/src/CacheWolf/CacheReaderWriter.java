@@ -1,7 +1,6 @@
 package CacheWolf;
 
 import ewe.util.*;
-import ewesoft.xml.*;
 import ewe.io.*;
 import ewe.sys.*;
 
@@ -114,12 +113,12 @@ public class CacheReaderWriter {
 		boolean exists = (new File(dir + ch.wayPoint + ".xml")).exists();
 		//yes: then delete
 		if (exists) {
-			boolean success = (new File(dir + ch.wayPoint + ".xml")).delete();
+			File(dir + ch.wayPoint + ".xml")).delete();
 		}
 		boolean exists2 = (new File(dir + ch.wayPoint.toLowerCase() + ".xml")).exists();
 		//yes: delete
 		if (exists2) {
-			boolean success2 = (new File(dir + ch.wayPoint.toLowerCase() + ".xml")).delete();
+			File(dir + ch.wayPoint.toLowerCase() + ".xml")).delete();
 		}
 		//Vm.debug("Writing to: " +dir + "for: " + ch.wayPoint);
 		try{
