@@ -1,6 +1,5 @@
 package CacheWolf;
 import ewe.util.*;
-import ewe.sys.*;
 import ewe.io.*;
 import ewe.filechooser.*;
 
@@ -24,12 +23,10 @@ public class ASCExporter{
 		String str = new String();
 		String dummy = new String();
 		CacheHolder holder = new CacheHolder();
-		String saveStr = new String();
-		String latlonstr = new String();
 		ParseLatLon pll;
 		FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
 		fc.setTitle("Select target file:");
-		if(fc.execute() != fc.IDCANCEL){
+		if(fc.execute() != FileChooser.IDCANCEL){
 			File saveTo = fc.getChosenFile();
 			try{
 				PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(saveTo+".csv")));
