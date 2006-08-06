@@ -263,18 +263,18 @@ public class GPXImporter extends MinML {
 				//if(doSpider == true && fromOC == false){
 				// don't spider additional waypoints, so check
 				// if waypoint starts with "GC"
-				if(doSpider == true && holder.wayPoint.startsWith("GC")){
+				if(doSpider == true) {
 					//Vm.debug("Should be spidering images...");
 					if(spiderOK == true && holder.is_archived == false){
-						spiderImages();
-						if(holder.LatLon.length() > 1){
+							if(holder.LatLon.length() > 1){
 							ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 							pll.parse();
 							MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
 							mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
 							mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
 						}
-					
+					if(holder.wayPoint.startsWith("GC")) {
+						spiderImages();
 						//Rename image sources
 						String text = new String();
 						String orig = new String();
@@ -290,6 +290,7 @@ public class GPXImporter extends MinML {
 							num++;
 							text = ex.findNext();
 						}
+					}
 						
 					}
 				}
