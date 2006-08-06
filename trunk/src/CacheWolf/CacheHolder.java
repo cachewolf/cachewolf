@@ -129,7 +129,7 @@ public class CacheHolder {
 	 int z = 0;
 	 String loganal = new String();
 	 // Vm.debug("Checking size: ");
-	  sz = newCh.CacheLogs.size();
+	 //int sz = newCh.CacheLogs.size();
 	 //Vm.debug("log size: " + sz);
  	 while(z < newCh.CacheLogs.size() && z < 5){
 		loganal = (String)newCh.CacheLogs.get(z);
