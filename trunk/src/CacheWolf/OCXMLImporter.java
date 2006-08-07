@@ -4,6 +4,7 @@ import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
 import ewe.io.*;
 import ewe.sys.*;
+import ewe.ui.Gui;
 import ewe.ui.InputBox;
 import ewe.util.*;
 import ewe.util.zip.*;
@@ -12,7 +13,8 @@ import ewe.net.*;
 /**
 *	Class to import Data from opencaching.de. 
 *	It uses the lastmodified parameter to identify new or changed caches.
-*	See here: http://www.opencaching.com/phpBB2/viewtopic.php?t=281
+*	See here: http://www.opencaching.com/phpBB2/viewtopic.php?t=281 (out-dated)
+*   See here: http://www.opencaching.de/doc/xml/xml11.htm and http://develforum.opencaching.de/viewtopic.php?t=135&postdays=0&postorder=asc&start=0
 *	for more information.
 */
 public class OCXMLImporter extends MinML {
@@ -78,15 +80,20 @@ public class OCXMLImporter extends MinML {
 			CWPoint center = new CWPoint(myPref.mylgNS, myPref.mylgDeg, myPref.mylgMin,"0",
 					myPref.mybrWE, myPref.mybrDeg, myPref.mybrMin,"0", CWPoint.DMM);
 
-			
-			inf = new InfoBox("Sync OC","Distance: ", InfoBox.INPUT);
-			inf.feedback.setText(myPref.distOC);
-			if (inf.execute() == InfoBox.IDCANCEL) {
+			OCXMLImporterScreen importOpt = new OCXMLImporterScreen(myPref);
+			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {
 				return;
 			}
+			
+			
+//			inf = new InfoBox("Sync OC","Distance: ", InfoBox.INPUT);
+//			inf.feedback.setText(myPref.distOC);
+//			if (inf.execute() == InfoBox.IDCANCEL) {
+//				return;
+//			}
 			Vm.showWait(true);
-			String dist = inf.feedback.getText();
-
+//			String dist = inf.feedback.getText();
+			String dist = importOpt.distanceInput.getText();
 			if (dist.length()== 0) return;
 			//check, if distance is greater than before
 			if (Convert.toInt(dist) > Convert.toInt(myPref.distOC)) {
@@ -307,6 +314,7 @@ public class OCXMLImporter extends MinML {
 				holder.ImagesText.clear();
 			}
 			if(holder.LatLon.length() > 1 && holder.is_archived == false){
+				
 				ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 				pll.parse();
 				MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), myPref.myproxy, myPref.myproxyport);
