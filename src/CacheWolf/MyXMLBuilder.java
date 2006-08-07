@@ -8,8 +8,9 @@ import ewe.util.*;
 import ewe.data.PropertyList;
 
 /**
-*	Class to parse the index file. The methods are rather straight forward.
+*	Class to parse the index.xml file. The methods are rather straight forward.
 *	This class could probably be substituted by an Extractor class.
+*   index.xml is saved by class CacheReaderWriter.
 */
 public class MyXMLBuilder extends MinML {
 	
