@@ -174,6 +174,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				while(ex.endOfSearch() != true){
 					currToken = ex.findNext();
 					i++;
+					if (currToken.length()==0) continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
 					switch (i){
 						case 1: this.Time = currToken; break;
 						case 2: latDeg = currToken.substring(0,2);
@@ -202,6 +203,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				while(ex.endOfSearch() != true){
 					currToken = ex.findNext();
 					i++;
+					if (currToken.length()==0) continue;
 					switch (i){
 						case 1: this.Bear =Common.parseDouble(currToken);
 								if (this.Bear > 360) Vm.debug("Error bear VTG");
@@ -218,6 +220,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				while(ex.endOfSearch() != true){
 					currToken = ex.findNext();
 					i++;
+					if (currToken.length()==0) continue;
 					//Vm.debug("zz: " + i);
 					//Vm.debug(currToken);
 					switch (i){
