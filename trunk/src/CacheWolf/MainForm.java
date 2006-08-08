@@ -46,11 +46,11 @@ public class MainForm extends Form {
 		this.resizable = true;
 		this.moveable = true;
 		if(Vm.isMobile() == true) this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
-		/*
+		
 		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
 		}
-		*/
+		
 		this.resizeOnSIP = true;
 		// Load CacheList
 		try{
