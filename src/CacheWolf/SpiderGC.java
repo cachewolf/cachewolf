@@ -28,7 +28,6 @@ import ewe.net.*;
 import ewe.io.*;
 import ewe.sys.*;
 import ewe.util.*;
-import ewe.ui.*;
 import com.stevesoft.ewe_pat.*;
 
 /**
@@ -36,7 +35,7 @@ import com.stevesoft.ewe_pat.*;
 *	It uses a generic parse tree to parse the page and build a gpx file.
 */
 public class SpiderGC{
-	static Preferences pref = new Preferences();
+	private static Preferences pref = new Preferences();
 	static String viewstate = new String();
 	static String passwort = new String();
 	static String cookieID = new String();
@@ -63,15 +62,15 @@ public class SpiderGC{
 		infB.execute();
 		distance = Convert.toDouble(infB.getInput());
 		infB.close(0);
-		infB = new InfoBox("Status", "Logging in...", InfoBox.INPUT);
-		infB.execute();
+		infB = new InfoBox("Status", "Logging in...");
+		infB.show();
 		try{
 			start = fetch("http://www.geocaching.com/login/Default.aspx");
 		}catch(Exception ex){
 			Vm.debug("Could not fetch: gc.com start page");
 		}
-		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		Regex rexCookieID = new Regex("Set-Cookie: userid=(.*?);.*");
+		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		Regex rexCookieSession = new Regex("Set-Cookie: ASP.NET_SessionId=(.*?);.*");
 		rex.search(start);
 		if(rex.didMatch()){
@@ -108,9 +107,9 @@ public class SpiderGC{
 			Vm.debug("Could not get list");
 		}
 		String dummy = new String();
-		String lineBlck = new String();
+		//String lineBlck = new String();
+		int page_number = 5;		
 		Regex rexLine = new Regex("<tr bgcolor=((?s).*?)</tr>");
-		int page_number = 5;
 		int found_on_page = 0;
 		//Loop till maximum distance has been found or no more caches are in the list
 		while(distance > 0){
@@ -263,10 +262,10 @@ public class SpiderGC{
 	private void spiderImage(String quelle, String target){
 		HttpConnection connImg;
 		Socket sockImg;
-		InputStream is;
+		//InputStream is;
 		FileOutputStream fos;
-		int bytes_read;
-		byte[] buffer = new byte[9000];
+		//int bytes_read;
+		//byte[] buffer = new byte[9000];
 		ByteArray daten;
 		String datei = new String();
 		datei = pref.mydatadir + target;
@@ -397,9 +396,9 @@ public class SpiderGC{
 		return reslts;
 	}
 	
-	public SpiderGC(Preferences pref, Vector cacheDB){
+	public SpiderGC(Preferences prf, Vector cacheDB){
 		this.cacheDB = cacheDB;
-		this.pref = pref;
+		pref = prf;
 		indexDB = new Hashtable(cacheDB.size());
 		CacheHolder ch = new CacheHolder();
 		//index the database for faster searching!
@@ -447,7 +446,7 @@ public class SpiderGC{
 	private static String fetch_post(String address, String document, String path) throws IOException 
 	   	{
 			
-			String line = new String();
+			//String line = new String();
 			String totline = new String();
 			if(pref.myproxy.length()==0){
 				try {
@@ -536,6 +535,7 @@ public class SpiderGC{
 			return totline;
 		}
 	
+	/*
 	private static String replace(String source, String pattern, String replace){
 		if (source!=null)
 		{
@@ -556,4 +556,5 @@ public class SpiderGC{
 		}
 		else return "";
 	}
+	*/
 }

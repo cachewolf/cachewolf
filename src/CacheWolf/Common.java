@@ -1,7 +1,6 @@
 package CacheWolf;
 
 import ewe.sys.Convert;
-import ewe.sys.*;
 
 public final class Common {
 
