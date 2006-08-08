@@ -226,6 +226,8 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					switch (i){
 						case 1: this.Time = currToken; break;
 						case 2: status = currToken;
+								if (status.equals("A")) this.Fix = 1;
+								else this.Fix = 0;
 								break;
 						case 3: 	//Vm.debug("Here--->");
 								latDeg = currToken.substring(0,2);
@@ -252,7 +254,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				} // while
 				if (status.equals("A")){
 					this.set(latNS, latDeg, latMin, "0",
-							 lonEW, lonDeg, lonMin, "0", CWPoint.DMM);
+							 lonEW, lonDeg, lonMin, "0", CWPoint.DMM);				
 				}
 			} // if
 		//Vm.debug("End of examine");
