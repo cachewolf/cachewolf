@@ -173,7 +173,7 @@ public class OCXMLImporter extends MinML {
 		strData ="";
 
 		if (name.equals("oc11xml")){
-			//TODO: this should be saved in the index.xml or with the profiles!
+			//TODO: this should be saved in the index.xml or with the profiles! - is it done?
 			Time lastSync = new Time();
 			try {
 				lastSync.parse(atts.getValue("date"),"yyyy-MM-dd HH:mm:ss");
