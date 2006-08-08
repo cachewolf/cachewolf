@@ -41,7 +41,7 @@ public class MovingMap extends Form{
 	public void loadMap(){
 		//Create index of all world files
 		//Create form
-		if(gotoPanel.toPoint.latDec == 0 && gotoPanel.toPoint.latDec == 0 && maps.size()>0){
+//		if(gotoPanel.toPoint.latDec == 0 && gotoPanel.toPoint.latDec == 0 && maps.size()>0){
 			try{
 				statusImageNoGps.setLocation(10,10);
 				statusImageNoGps.properties = AniImage.AlwaysOnTop;
@@ -90,7 +90,7 @@ public class MovingMap extends Form{
 			}catch (Exception ex){
 				Vm.debug("Problem loading map image file!");
 			}
-		}
+	//	}
 	}
 	
 	/**
