@@ -1,8 +1,6 @@
 package CacheWolf;
 
 import ewe.ui.*;
-import ewe.ui.formatted.TextDisplay;
-import ewe.util.Vector;
 import ewe.fx.Dimension;
 import ewe.sys.*;
 

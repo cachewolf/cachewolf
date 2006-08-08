@@ -51,7 +51,7 @@ public class Preferences extends MinML{
 	public String digSeparator = new String();
 	public boolean debug = false;
 	public SerialPortOptions mySPO = new SerialPortOptions();
-	public int fontSize = 14;
+	public int fontSize = 12;
 	
 	public Preferences(){
 		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
@@ -334,12 +334,14 @@ public class Preferences extends MinML{
 			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] + "\" lastdistoc= \"" + lastDistOC[1] + "\" />\n");
 			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] + "\" lastdistoc= \"" + lastDistOC[2] + "\" />\n");
 			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" lastsyncoc= \"" + lastSyncOC[3] + "\" lastdistoc= \"" + lastDistOC[3] + "\" />\n");
-			outp.print("<browser name = \""+browser+"\"/>\n");
-			outp.print("<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
+			outp.print("    <font size =\""+fontSize+"\"/>\n");
+			outp.print("	<browser name = \""+browser+"\"/>\n");
+			outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
 			Vm.debug("Problem saving: " +datei);
+			Vm.debug("Error: " +e.toString());
     		}
 	}
 }

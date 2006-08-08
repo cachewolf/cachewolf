@@ -113,12 +113,14 @@ public class CacheReaderWriter {
 		boolean exists = (new File(dir + ch.wayPoint + ".xml")).exists();
 		//yes: then delete
 		if (exists) {
-			File(dir + ch.wayPoint + ".xml")).delete();
+			boolean ok = (new File(dir + ch.wayPoint + ".xml")).delete();
+			if(ok) ok = true;
 		}
 		boolean exists2 = (new File(dir + ch.wayPoint.toLowerCase() + ".xml")).exists();
 		//yes: delete
 		if (exists2) {
-			File(dir + ch.wayPoint.toLowerCase() + ".xml")).delete();
+			boolean ok2 = (new File(dir + ch.wayPoint.toLowerCase() + ".xml")).delete();
+			if(ok2) ok2=true;
 		}
 		//Vm.debug("Writing to: " +dir + "for: " + ch.wayPoint);
 		try{
