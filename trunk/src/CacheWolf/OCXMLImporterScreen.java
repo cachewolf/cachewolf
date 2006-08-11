@@ -43,7 +43,7 @@ public class OCXMLImporterScreen extends Form {
 
 		missingCheckBox = new mCheckBox();
 		missingCheckBox.setText((String)lr.get(1606,"Alle erneut downloaden"));
-		missingCheckBox.setState(true); // @ToDo: aus Prefs
+		missingCheckBox.setState(false); // @ToDo: aus Prefs
 		this.addLast(missingCheckBox, this.DONTSTRETCH, this.DONTFILL|this.WEST);
 
 		this.addNext(cancelB = new mButton((String)lr.get(1604,"Cancel")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
