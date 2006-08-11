@@ -42,7 +42,7 @@ public class OCXMLImporterScreen extends Form {
 		this.addLast(mapsCheckBox, this.DONTSTRETCH, this.DONTFILL|this.WEST);
 
 		missingCheckBox = new mCheckBox();
-		missingCheckBox.setText((String)lr.get(1606,"nachladen"));
+		missingCheckBox.setText((String)lr.get(1606,"Alle erneut downloaden"));
 		missingCheckBox.setState(true); // @ToDo: aus Prefs
 		this.addLast(missingCheckBox, this.DONTSTRETCH, this.DONTFILL|this.WEST);
 

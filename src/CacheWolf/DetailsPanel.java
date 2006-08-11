@@ -273,7 +273,7 @@ public class DetailsPanel extends CellPanel{
 					MapDetailForm mdf = new MapDetailForm(thisCache.wayPoint, pref);
 					mdf.execute();
 				} catch (IllegalArgumentException e) {
-					MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht finden"), MessageBox.OKB); // @todo: language support
+					MessageBox tmp = new MessageBox((String)lr.get(321,"Error"), (String)lr.get(322,"Kann Bild/Karte nicht finden")+": "+e.getMessage(), MessageBox.OKB);
 					tmp.exec();
 				}
 			}
