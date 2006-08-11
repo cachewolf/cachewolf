@@ -17,7 +17,7 @@ public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;
 	Preferences myPreferences = new Preferences();
 	mInput distanceInput;
-	mCheckBox imagesCheckBox, mapsCheckBox;
+	mCheckBox imagesCheckBox, mapsCheckBox, missingCheckBox;
 	Locale l = Vm.getLocale();
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	
@@ -41,6 +41,11 @@ public class OCXMLImporterScreen extends Form {
 		mapsCheckBox.setState(true); // @ToDo: aus Prefs
 		this.addLast(mapsCheckBox, this.DONTSTRETCH, this.DONTFILL|this.WEST);
 
+		missingCheckBox = new mCheckBox();
+		missingCheckBox.setText((String)lr.get(1606,"nachladen"));
+		missingCheckBox.setState(true); // @ToDo: aus Prefs
+		this.addLast(missingCheckBox, this.DONTSTRETCH, this.DONTFILL|this.WEST);
+
 		this.addNext(cancelB = new mButton((String)lr.get(1604,"Cancel")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addLast(okB = new mButton((String)lr.get(1605,"OK")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 	}
@@ -50,16 +55,11 @@ public class OCXMLImporterScreen extends Form {
 				this.close(Form.IDCANCEL);
 			}
 			if (ev.target == okB){
-//				if (myPreferences.currProfile == 0){
-//					myPreferences.mylgNS = NS.getText();
-//					myPreferences.mylgDeg = NSDeg.getText();
-//					myPreferences.mylgMin = NSm.getText();
-//					myPreferences.mybrWE = EW.getText();
-//					myPreferences.mybrDeg = EWDeg.getText();
-//					myPreferences.mybrMin = EWm.getText();
-//					myPreferences.mydatadir = DataDir.getText();
-//					myPreferences.savePreferences();
-//					myPreferences.dirty = true;
+				    // distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
+					myPreferences.downloadMapsOC = mapsCheckBox.state;
+					myPreferences.downloadPicsOC = imagesCheckBox.state;
+					myPreferences.downloadmissingOC = missingCheckBox.state;
+					// @todo: sofort speichern?
 				this.close(Form.IDOK);
 				}
 		}

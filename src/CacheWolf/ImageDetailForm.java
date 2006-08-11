@@ -32,7 +32,7 @@ public class ImageDetailForm extends Form{
 	}
 
 	
-	public void setUp(String imgLoc, Preferences p){
+	public void setUp(String imgLoc, Preferences p) throws IllegalArgumentException {
 		pref = p;	
 		location = imgLoc;
 		mImage mI = new mImage(imgLoc);

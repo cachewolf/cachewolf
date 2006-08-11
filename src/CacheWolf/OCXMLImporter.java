@@ -96,7 +96,8 @@ public class OCXMLImporter extends MinML {
 			String dist = importOpt.distanceInput.getText();
 			if (dist.length()== 0) return;
 			//check, if distance is greater than before
-			if (Convert.toInt(dist) > Convert.toInt(myPref.distOC)) {
+			if (Convert.toInt(dist) > Convert.toInt(myPref.distOC) ||
+			  myPref.downloadmissingOC  ){
 				// resysnc
 				lastS = "20050801000000";
 				incUpdate = false;
@@ -313,11 +314,13 @@ public class OCXMLImporter extends MinML {
 				holder.Images.clear();
 				holder.ImagesText.clear();
 			}
-			if(holder.LatLon.length() > 1 && holder.is_archived == false){
+			if(holder.LatLon.length() > 1 && holder.is_archived == false &&
+					myPref.downloadMapsOC){
 				
 				ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 				pll.parse();
 				MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), myPref.myproxy, myPref.myproxyport);
+				// MapLoader tests itself if the file already exists and doesnt download if so.
 				mpl.loadTo(myPref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
 				mpl.loadTo(myPref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
 			}
@@ -431,7 +434,9 @@ public class OCXMLImporter extends MinML {
 					holder.Images.add(fileName);
 				}
 				else {
-					holder.Images.add(fetch(picUrl, fileName));
+					if (myPref.downloadPicsOC) {
+						holder.Images.add(fetch(picUrl, fileName));
+					}
 				}
 			} catch (IOException e) {
 				Vm.debug("Could not load Image " + picUrl);

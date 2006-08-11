@@ -269,8 +269,13 @@ public class DetailsPanel extends CellPanel{
 				dirty_delete = true;
 			}
 			if(ev.target == showMap){
-				MapDetailForm mdf = new MapDetailForm(thisCache.wayPoint, pref);
-				mdf.execute();
+				try {
+					MapDetailForm mdf = new MapDetailForm(thisCache.wayPoint, pref);
+					mdf.execute();
+				} catch (IllegalArgumentException e) {
+					MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht finden"), MessageBox.OKB); // @todo: language support
+					tmp.exec();
+				}
 			}
 			if(ev.target == showBug){
 				InfoScreen is = new InfoScreen(thisCache.Bugs, "Travelbugs", false, pref);
