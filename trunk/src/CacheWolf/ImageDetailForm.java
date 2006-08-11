@@ -31,27 +31,37 @@ public class ImageDetailForm extends Form{
 	public ImageDetailForm(){
 	}
 
-	
+	/**
+	 * Display Image.
+	 * @param imgLoc path to the image file
+	 * @param p Preferences.
+	 * @throws IllegalArgumentException if file not found getcause() gives the name and path of the missing file.
+	 */
 	public void setUp(String imgLoc, Preferences p) throws IllegalArgumentException {
 		pref = p;	
 		location = imgLoc;
-		mImage mI = new mImage(imgLoc);
-		double scaleFactorX = 1, scaleFactorY = 1, scaleFactor = 1;
-		origH = mI.getHeight();
-		origW = mI.getWidth();
-		if(origW >= pref.myAppWidth) scaleFactorX = pref.myAppWidth/(double)origW;
-		if(origH >= pref.myAppHeight) scaleFactorY = pref.myAppHeight/(double)origH;
-		if(scaleFactorX >= scaleFactorY) scaleFactor = scaleFactorY;
-		if(scaleFactorY >= scaleFactorX) scaleFactor = scaleFactorX;
-		state = -1;
-		scaleX = (int)(origW*scaleFactor);
-		scaleY = (int)(origH*scaleFactor);
-		mI = mI.scale(scaleX, scaleY, null, 0);
-		ai = new AniImage(mI);
-		ai.setLocation(0,0);
-		ipp.addImage(ai);
-		ipp.setPreferredSize(origW, origH);
-		ipp.setParams(state, scaleX, scaleY, origH, origW, scp, imgLoc);
+		try {
+			mImage mI = new mImage(imgLoc);
+			double scaleFactorX = 1, scaleFactorY = 1, scaleFactor = 1;
+			origH = mI.getHeight();
+			origW = mI.getWidth();
+			if(origW >= pref.myAppWidth) scaleFactorX = pref.myAppWidth/(double)origW;
+			if(origH >= pref.myAppHeight) scaleFactorY = pref.myAppHeight/(double)origH;
+			if(scaleFactorX >= scaleFactorY) scaleFactor = scaleFactorY;
+			if(scaleFactorY >= scaleFactorX) scaleFactor = scaleFactorX;
+			state = -1;
+			scaleX = (int)(origW*scaleFactor);
+			scaleY = (int)(origH*scaleFactor);
+			mI = mI.scale(scaleX, scaleY, null, 0);
+			ai = new AniImage(mI);
+			ai.setLocation(0,0);
+			ipp.addImage(ai);
+			ipp.setPreferredSize(origW, origH);
+			ipp.setParams(state, scaleX, scaleY, origH, origW, scp, imgLoc);
+		} catch (IllegalArgumentException e) {
+			IllegalArgumentException t = new IllegalArgumentException(imgLoc);
+			throw(t);
+		}
 	}
 }
 
