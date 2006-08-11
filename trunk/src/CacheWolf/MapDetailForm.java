@@ -6,18 +6,18 @@ import ewe.ui.*;
 import ewe.util.*;
 
 /**
-*	Class to display map images in different zoom levels.
-*	Extends ImageDetailForm that handles the resizing to screen
-*	size. The extension in this class handles the switching between
-*	different (map) images.
-*/
+ *	Class to display map images in different zoom levels.
+ *	Extends ImageDetailForm that handles the resizing to screen
+ *	size. The extension in this class handles the switching between
+ *	different (map) images.
+ */
 public class MapDetailForm extends ImageDetailForm {
-	
+
 	mButton btSwitch;
 	String cache = new String();
 	String imgLoc = new String();
 	int status = 0;
-	
+
 	public MapDetailForm(String cacheName, Preferences p){
 		cache = cacheName;
 		imgLoc = p.mydatadir + "/";
@@ -32,23 +32,30 @@ public class MapDetailForm extends ImageDetailForm {
 		butPanel.addLast(btSwitch);
 		this.addLast(butPanel, this.HSTRETCH, this.FILL);
 	}
-	
+
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
-				if (ev.target == btSwitch){
-					ipp.removeImage(ai);
-					imgLoc = pref.mydatadir + "/";
-					imgLoc = imgLoc + cache;
-					if(status == 0) {
-						imgLoc = imgLoc + "_map_2.gif";
-						status = 1;
-					} else {
-						imgLoc = imgLoc + "_map.gif";
-						status = 0;
-					}
+			if (ev.target == btSwitch){
+				ipp.removeImage(ai);
+				imgLoc = pref.mydatadir + "/";
+				imgLoc = imgLoc + cache;
+				if(status == 0) {
+					imgLoc = imgLoc + "_map_2.gif";
+					status = 1;
+				} else {
+					imgLoc = imgLoc + "_map.gif";
+					status = 0;
+				}
+				try {
 					setUp(imgLoc, pref);
 					this.repaintNow();
+				} catch (IllegalArgumentException e) {
+					Locale l = Vm.getLocale();
+					LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+					MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht finden")+": "+imgLoc, MessageBox.OKB); // @todo: language support
+					tmp.exec();
 				}
+			}
 		}
 	}
 }

@@ -47,6 +47,10 @@ public class Preferences extends MinML{
 		
 	public String last_sync_opencaching = new String();
 	public String distOC = new String();
+	public boolean downloadPicsOC = true; //@todo: sollte auch abgespeichert und beim Start eingelesen werden
+	public boolean downloadMapsOC = true;
+	public boolean downloadmissingOC = false;
+	
 	
 	public String digSeparator = new String();
 	public boolean debug = false;

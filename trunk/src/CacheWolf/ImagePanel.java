@@ -231,8 +231,15 @@ public class ImagePanel extends InteractivePanel{
 		if(which instanceof ImagePanelImage){
 			ImagePanelImage ich = (ImagePanelImage)which;
 			fn = ich.fileName;
-			ImageDetailForm iF = new ImageDetailForm(fn, pref);
-			iF.execute(null, Gui.CENTER_FRAME);
+			try {
+				ImageDetailForm iF = new ImageDetailForm(fn, pref);
+				iF.execute(null, Gui.CENTER_FRAME);
+			} catch (IllegalArgumentException e) {
+				Locale l = Vm.getLocale();
+				LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+				MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht finden"), MessageBox.OKB); // @todo: language support
+				tmp.exec();
+			}
 		}
 	}
 }
