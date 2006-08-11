@@ -81,18 +81,8 @@ public class OCXMLImporter extends MinML {
 					myPref.mybrWE, myPref.mybrDeg, myPref.mybrMin,"0", CWPoint.DMM);
 
 			OCXMLImporterScreen importOpt = new OCXMLImporterScreen(myPref);
-			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {
-				return;
-			}
-			
-			
-//			inf = new InfoBox("Sync OC","Distance: ", InfoBox.INPUT);
-//			inf.feedback.setText(myPref.distOC);
-//			if (inf.execute() == InfoBox.IDCANCEL) {
-//				return;
-//			}
-			Vm.showWait(true);
-//			String dist = inf.feedback.getText();
+			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
+    		Vm.showWait(true);
 			String dist = importOpt.distanceInput.getText();
 			if (dist.length()== 0) return;
 			//check, if distance is greater than before
