@@ -10,8 +10,8 @@ import ewe.ui.*;
 
 /**
  * @author pfeffer
- * Diese Class ist der Dialog fuer den Download von Opencaching.de 
- * wird von OCXMLImporter ausgerufen
+ * This Class is the Dialog for Download from Opencaching.de 
+ * is called from OCXMLImporter
  */
 public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;

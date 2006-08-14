@@ -6,6 +6,7 @@ import ewe.io.*;
 import ewe.sys.*;
 import ewe.ui.Gui;
 import ewe.ui.InputBox;
+import ewe.ui.MessageBox;
 import ewe.util.*;
 import ewe.util.zip.*;
 import ewe.net.*;
@@ -25,6 +26,7 @@ public class OCXMLImporter extends MinML {
 	static protected final int STAT_PICTURE = 4;
 	
 	int state = STAT_INIT;
+	int numCacheImported, numDescImported, numLogImported= 0;
 	
 	boolean debugGPX = false;
 	Vector cacheDB;
@@ -116,8 +118,7 @@ public class OCXMLImporter extends MinML {
 			url +="&charset=utf-8";
 			url +="&cdata=0";
 			url +="&session=0";
-			inf = new InfoBox("Sync OC", "...getting data");
-			//inf.show();
+			inf = new InfoBox("Opencaching download", (String)lr.get(1608,"downloading data\n from opencaching..."));
 			inf.exec();
 			//Vm.debug(url);
 			//get file
@@ -152,7 +153,8 @@ public class OCXMLImporter extends MinML {
 		}
 		Vm.showWait(false);
 		inf.close(0);
-
+		MessageBox mb = new MessageBox("Opencaching",(String)lr.get(1607,"Update from opencaching successful"),MessageBox.OKB);
+		mb.exec();
 	}
 	
 	public void startElement(String name, AttributeList atts){
@@ -179,10 +181,10 @@ public class OCXMLImporter extends MinML {
 		}
 
 		// look for changes in the state
-		if (name.equals("cache")) 		state = STAT_CACHE;
-		if (name.equals("cachedesc")) 	state = STAT_CACHE_DESC;
-		if (name.equals("cachelog")) 	state = STAT_CACHE_LOG;
-		if (name.equals("picture")) 	state = STAT_PICTURE;
+		if (name.equals("cache")) 		{ state = STAT_CACHE; numCacheImported++;}
+		if (name.equals("cachedesc")) 	{ state = STAT_CACHE_DESC; numDescImported++;}
+		if (name.equals("cachelog")) 	{ state = STAT_CACHE_LOG; numLogImported++;}
+		if (name.equals("picture")) 	{ state = STAT_PICTURE; }
 
 		//examine data
 		switch (state) {
@@ -218,7 +220,7 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void startCache(String name, AttributeList atts){
-
+		inf.setInfo((String)lr.get(1609,"Importing Cache:")+" " + numCacheImported + "\n");
 		if(name.equals("id")){
 			cacheID = atts.getValue("id");
 		}
@@ -248,6 +250,7 @@ public class OCXMLImporter extends MinML {
 
 	}
 	private void startCacheDesc(String name, AttributeList atts){
+		inf.setInfo((String)lr.get(1611,"Importing cache description:")+" " + numDescImported);
 		if (name.equals("cachedesc")){
 			ignoreDesc = false;
 		}
@@ -264,11 +267,12 @@ public class OCXMLImporter extends MinML {
 	
 	private void startPicture(String name, AttributeList atts){
 		if(name.equals("picture")){
-			inf.setInfo("Pictures: " + ++picCnt);
+			inf.setInfo((String)lr.get(1613,"Pictures:")+" " + ++picCnt);
 		}
 	}
 
 	private void startCacheLog(String name, AttributeList atts){
+		inf.setInfo((String)lr.get(1612,"Importing Cachlog:")+" " + numLogImported);
 		if (name.equals("logtype")){
 			if(atts.getValue("id").equals("1")) logIcon = GPXImporter.typeText2Image("Found");
 			if(atts.getValue("id").equals("2")) {
@@ -279,6 +283,10 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 
+	}
+	private boolean fileExits(String filename) {
+		File myfile = new File(filename);
+		return myfile.exists();
 	}
 	
 	private void endCache(String name){
@@ -311,8 +319,14 @@ public class OCXMLImporter extends MinML {
 				pll.parse();
 				MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), myPref.myproxy, myPref.myproxyport);
 				// MapLoader tests itself if the file already exists and doesnt download if so.
-				mpl.loadTo(myPref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
-				mpl.loadTo(myPref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
+				String filename = myPref.mydatadir + "/" + holder.wayPoint + "_map.gif";
+				if (!fileExits(filename)){
+					inf.setInfo((String)lr.get(1609,"Importing Cache:")+" " + numCacheImported + "\n"+(String)lr.get(1610,"Downloading missing map")+" 1");
+					mpl.loadTo(filename, "3"); }
+				filename = myPref.mydatadir + "/" + holder.wayPoint + "_map_2.gif";
+				if (!fileExits(filename)){
+					inf.setInfo((String)lr.get(1609,"Importing Cache: ")+" " + numCacheImported + "\n"+(String)lr.get(1610,"Downloading missing map")+" 2");
+					mpl.loadTo(filename, "10"); }
 			}
 			// save all
 			CacheReaderWriter crw = new CacheReaderWriter();
