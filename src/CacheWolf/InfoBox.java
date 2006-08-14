@@ -16,7 +16,7 @@ public class InfoBox extends Form{
 	private int type = 0;
 		
 	public InfoBox(String title, String info){
-		this.setPreferredSize(150,50);
+		this.setPreferredSize(170,50);
 		this.title = title;
 		this.addLast(msgArea = new MessageArea(""), this.STRETCH, this.FILL);
 		msgArea.setText(info);
