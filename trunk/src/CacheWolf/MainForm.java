@@ -47,10 +47,6 @@ public class MainForm extends Form {
 		this.moveable = true;
 		if(Vm.isMobile() == true) this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
 		
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
-		}
-		
 		this.resizeOnSIP = true;
 		// Load CacheList
 		try{
@@ -72,6 +68,13 @@ public class MainForm extends Form {
 		} catch (Exception e){
 			if(myPreferences.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}
+		
+		if(myPreferences.fixSIP == true){
+			if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
+				Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
+			}
+		} else Vm.setSIP(0);
+		
 		//Dimension dim = new Dimension();
 		//dim = this.getSize(new Dimension());
 		
