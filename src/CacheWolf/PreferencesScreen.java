@@ -3,7 +3,6 @@ package CacheWolf;
 import ewe.ui.*;
 import ewe.io.*;
 import ewe.fx.*;
-import ewe.util.*;
 import ewe.filechooser.*;
 import ewe.sys.*;
 

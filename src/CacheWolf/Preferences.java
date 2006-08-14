@@ -50,7 +50,7 @@ public class Preferences extends MinML{
 	public boolean downloadPicsOC = true; //@todo: sollte auch abgespeichert und beim Start eingelesen werden
 	public boolean downloadMapsOC = true;
 	public boolean downloadmissingOC = false;
-	
+	public boolean fixSIP = false;
 	
 	public String digSeparator = new String();
 	public boolean debug = false;
@@ -161,6 +161,11 @@ public class Preferences extends MinML{
 			}
 			else {
 				distOC =  atts.getValue("dist");
+			}
+		}
+		if(name.equals("fixedsip")) {
+			if(atts.getValue("state").equals("true")) {
+				fixSIP = true;
 			}
 		}
 		if(name.equals("font")) fontSize = Convert.toInt(atts.getValue("size"));
@@ -340,6 +345,7 @@ public class Preferences extends MinML{
 			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" lastsyncoc= \"" + lastSyncOC[3] + "\" lastdistoc= \"" + lastDistOC[3] + "\" />\n");
 			outp.print("    <font size =\""+fontSize+"\"/>\n");
 			outp.print("	<browser name = \""+browser+"\"/>\n");
+			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
 			outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
 			outp.print("</preferences>");
 			outp.close();
