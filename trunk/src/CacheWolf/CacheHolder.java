@@ -83,6 +83,9 @@ public class CacheHolder {
 	  
 	  // URL
 	  this.URL = newCh.URL;
+	  
+	  //coords
+	  this.LatLon = newCh.LatLon;
 
 	  // check only length of the description to see, if there was an update
 	  if (this.LongDescription.length() != newCh.LongDescription.length()){
