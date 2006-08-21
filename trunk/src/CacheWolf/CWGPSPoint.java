@@ -167,7 +167,6 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 			}
 			Extractor ex = new Extractor ("," + NMEA.substring(start,end), ",",",",0,true);
 			currToken = ex.findNext();
-
 			if (currToken.equals("$GPGGA")){
 				//Vm.debug("In $GPGGA");
 				i = 0;
@@ -177,21 +176,21 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					if (currToken.length()==0) continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
 					switch (i){
 						case 1: this.Time = currToken; break;
-						case 2: latDeg = currToken.substring(0,2);
-								latMin = currToken.substring(2,currToken.length());
+						case 2: try {latDeg = currToken.substring(0,2); } catch (IndexOutOfBoundsException e) {}
+								try {latMin = currToken.substring(2,currToken.length()); } catch (IndexOutOfBoundsException e) {}
 								break;
 						case 3: latNS = currToken;
 								break;
 								
-						case 4: lonDeg = currToken.substring(0,3);
-								lonMin = currToken.substring(3,currToken.length());
+						case 4: try {lonDeg = currToken.substring(0,3); } catch (IndexOutOfBoundsException e) {}
+								try {lonMin = currToken.substring(3,currToken.length()); } catch (IndexOutOfBoundsException e) {}
 								break;
 						case 5: lonEW = currToken;
 								break;
 						case 6: this.Fix = Convert.toInt(currToken); break;
 						case 7: this.numSat = Convert.toInt(currToken); break;
-						case 8: this.HDOP = Common.parseDouble(currToken); break;
-						case 9: this.Alt = Common.parseDouble(currToken); break;
+						case 8: try {this.HDOP = Common.parseDouble(currToken); } catch (NumberFormatException e) {} break;
+						case 9: try {this.Alt = Common.parseDouble(currToken);  } catch (NumberFormatException e) {} break;
 					} // switch
 				} // while
 				this.set(latNS, latDeg, latMin, "0",
@@ -205,10 +204,11 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					i++;
 					if (currToken.length()==0) continue;
 					switch (i){
-						case 1: this.Bear =Common.parseDouble(currToken);
+						case 1: try { this.Bear =Common.parseDouble(currToken); } catch (NumberFormatException e) {}
 								if (this.Bear > 360) Vm.debug("Error bear VTG");
 								break;
-						case 7: this.Speed = Common.parseDouble(currToken); break;
+						case 7: try { this.Speed = Common.parseDouble(currToken); } catch (NumberFormatException e) {} 
+								break;
 					} // switch
 				} // while
 			} // if
@@ -230,15 +230,15 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 								else this.Fix = 0;
 								break;
 						case 3: 	//Vm.debug("Here--->");
-								latDeg = currToken.substring(0,2);
+								try {latDeg = currToken.substring(0,2); } catch (IndexOutOfBoundsException e) {}
 								//Vm.debug(":" + latDeg);
-								latMin = currToken.substring(2,currToken.length());
+								try {latMin = currToken.substring(2,currToken.length()); } catch (IndexOutOfBoundsException e) {}
 								//Vm.debug(":" + latMin);
 								break;
 						case 4: latNS = currToken;
 								break;
-						case 5: lonDeg = currToken.substring(0,3);
-								lonMin = currToken.substring(3,currToken.length());
+						case 5: try {lonDeg = currToken.substring(0,3); } catch (IndexOutOfBoundsException e) {}
+								try {lonMin = currToken.substring(3,currToken.length()); } catch (IndexOutOfBoundsException e) {}
 								break;
 						case 6: lonEW = currToken;
 								break;
