@@ -33,75 +33,80 @@ public class MyComparer implements Comparer{
 		CacheHolder oo1 = (CacheHolder)o1;
 		CacheHolder oo2 = (CacheHolder)o2;
 		if(oo1.is_filtered == false && oo2.is_filtered == false){
-			
 			String str01 = new String();
 			String str02 = new String();
-			if(compareWhat.equals(nmQuest)){
-				str01 = oo1.type;
-				str02 = oo2.type;
-			}
-			if(compareWhat.equals(nmD)){
-				str01 = oo1.hard;
-				str02 = oo2.hard;
-			}
-			if(compareWhat.equals(nmT)){
-				str01 = oo1.terrain;
-				str02 = oo2.terrain;
-			}
-			if(compareWhat.equals(nmWay)){
-				if (CacheType.isAddiWpt(oo1.type)){
-					str01 = "GC" + oo1.wayPoint.substring(2);
+			try{
+				if(compareWhat.equals(nmQuest)){
+					str01 = oo1.type;
+					str02 = oo2.type;
 				}
-				else {
-					str01 = oo1.wayPoint;
+				if(compareWhat.equals(nmD)){
+					str01 = oo1.hard;
+					str02 = oo2.hard;
 				}
-				if (CacheType.isAddiWpt(oo2.type)){
-					str02 = "GC" + oo2.wayPoint.substring(2);
+				if(compareWhat.equals(nmT)){
+					str01 = oo1.terrain;
+					str02 = oo2.terrain;
 				}
-				else {
-					str02 = oo2.wayPoint;
+				if(compareWhat.equals(nmWay)){
+					if (CacheType.isAddiWpt(oo1.type) && oo1.wayPoint.length()>1){
+						str01 = "GC" + oo1.wayPoint.substring(2);
+					}
+					else {
+						str01 = oo1.wayPoint;
+					}
+					if (CacheType.isAddiWpt(oo2.type) && oo2.wayPoint.length()>1){
+						str02 = "GC" + oo2.wayPoint.substring(2);
+					}
+					else {
+						str02 = oo2.wayPoint;
+					}
 				}
+				if(compareWhat.equals(nmName)){
+					str01 = oo1.CacheName;
+					str02 = oo2.CacheName;
+				}
+				if(compareWhat.equals(nmLoc)){
+					str01 = oo1.LatLon;
+					str02 = oo2.LatLon;
+				}
+				if(compareWhat.equals(nmOwn)){
+					str01 = oo1.CacheOwner;
+					str02 = oo2.CacheOwner;
+				}
+				if(compareWhat.equals(nmHid)){
+					if (oo1.DateHidden.length() > 9) {
+						str01 = oo1.DateHidden.substring(6,10);   // year
+						str01 += oo1.DateHidden.substring(0,2);   // month
+						str01 += oo1.DateHidden.substring(3,5); } // day 
+					if (oo2.DateHidden.length() > 9) {
+						str02 = oo2.DateHidden.substring(6,10);   // year
+						str02 += oo2.DateHidden.substring(0,2);   // month
+						str02 += oo2.DateHidden.substring(3,5); } // day
+				}
+				if(compareWhat.equals(nmStat)){
+					str01 = oo1.CacheStatus;
+					str02 = oo2.CacheStatus;
+				}
+				if(compareWhat.equals(nmBear)){
+					str01 = oo1.bearing;
+					str02 = oo2.bearing;
+				}
+				if(compareWhat.equals("filter")){
+					str01 = Convert.toString(oo1.is_filtered);
+					str02 = Convert.toString(oo2.is_filtered);
+				}
+				return str01.toLowerCase().compareTo(str02.toLowerCase());
+			} catch (ArrayIndexOutOfBoundsException e ) { // sollte eigentlich nicht vorkommen könnte auftreten von substring
+				return str01.toLowerCase().compareTo(str02.toLowerCase());
 			}
-			if(compareWhat.equals(nmName)){
-				str01 = oo1.CacheName;
-				str02 = oo2.CacheName;
-			}
-			if(compareWhat.equals(nmLoc)){
-				str01 = oo1.LatLon;
-				str02 = oo2.LatLon;
-			}
-			if(compareWhat.equals(nmOwn)){
-				str01 = oo1.CacheOwner;
-				str02 = oo2.CacheOwner;
-			}
-			if(compareWhat.equals(nmHid)){
-				str01 = oo1.DateHidden.substring(6,10); // year
-				str01 += oo1.DateHidden.substring(0,2); // month
-				str01 += oo1.DateHidden.substring(3,5); // day
-				str02 = oo2.DateHidden.substring(6,10); // year
-				str02 += oo2.DateHidden.substring(0,2); // month
-				str02 += oo2.DateHidden.substring(3,5); // day
-			}
-			if(compareWhat.equals(nmStat)){
-				str01 = oo1.CacheStatus;
-				str02 = oo2.CacheStatus;
-			}
-			if(compareWhat.equals(nmBear)){
-				str01 = oo1.bearing;
-				str02 = oo2.bearing;
-			}
-			if(compareWhat.equals("filter")){
-				str01 = Convert.toString(oo1.is_filtered);
-				str02 = Convert.toString(oo2.is_filtered);
-			}
-			return str01.toLowerCase().compareTo(str02.toLowerCase());
-		}else{
+
+		} else{
 			int retval = 0;
 			if(oo1.is_filtered == false && oo2.is_filtered == true) retval = -1;
 			if(oo1.is_filtered == true && oo2.is_filtered == false) retval = 1;
-			
+
 			return retval;
 		}
-		
 	}
 }
