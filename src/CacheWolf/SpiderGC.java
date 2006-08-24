@@ -41,6 +41,7 @@ public class SpiderGC{
 	static String cookieID = new String();
 	static String cookieSession = new String();
 	static double distance = 0;
+	Regex inRex = new Regex();
 	Vector cacheDB;
 	Vector cachesToLoad = new Vector();
 	Hashtable indexDB = new Hashtable();
@@ -117,8 +118,16 @@ public class SpiderGC{
 			viewstate = rex.stringMatched(1);
 			Vm.debug("In loop");
 			dummy = getListBlock(start);
+			/*
+			try{
+				  PrintWriter detfile = new PrintWriter(new BufferedWriter(new FileWriter("debug.txt")));
+				  detfile.print(dummy);
+				  detfile.close();
+				} catch (Exception e) {
+					Vm.debug("Problem opening details file");
+				}
+			*/
 			rexLine.search(dummy);
-			//Vm.debug("rexline: " + rexLine.stringMatched());
 			while(rexLine.didMatch()){
 				Vm.debug(getDist(rexLine.stringMatched(1)) + " / " +getWP(rexLine.stringMatched(1)));
 				found_on_page++;
@@ -160,7 +169,7 @@ public class SpiderGC{
 			// Get only caches not already available in the DB
 			if(searchWpt(wpt) == -1){
 				infB.setInfo("Loading: " + wpt +"(" + i + " / " + cachesToLoad.size() + ")");
-				doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wpt+"&log=y";
+				doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wpt +"&log=y";
 				try{
 					start = fetch(doc);
 				}catch(Exception ex){
@@ -170,36 +179,54 @@ public class SpiderGC{
 				ch.is_HTML = true;
 				ch.wayPoint = wpt;
 				Vm.debug(ch.wayPoint);
-				ch.LatLon = getLatLon(start);
-				//Vm.debug("LatLon: " + ch.LatLon);
-				ch.LongDescription = getLongDesc(start);
-				ch.CacheName = getName(start);
-				//Vm.debug("Name: " + ch.CacheName);
-				ch.CacheOwner = getOwner(start);
-				//Vm.debug("Owner: " + ch.CacheOwner);
-				ch.DateHidden = getDateHidden(start);
-				//Vm.debug("Hidden: " + ch.DateHidden);
-				ch.Hints = getHints(start);
-				//Vm.debug("Hints: " + ch.Hints);
+				
 				ch.CacheLogs = getLogs(start);
+				
+				ch.LatLon = getLatLon(start);
+				Vm.debug("LatLon: " + ch.LatLon);
+				
+				ch.LongDescription = getLongDesc(start);
+				
+				ch.CacheName = getName(start);
+				Vm.debug("Name: " + ch.CacheName);
+				
+				ch.CacheOwner = getOwner(start);
+				
+				Vm.debug("Owner: " + ch.CacheOwner);
+				ch.DateHidden = getDateHidden(start);
+				
+				Vm.debug("Hidden: " + ch.DateHidden);
+				ch.Hints = getHints(start);
+				
+				Vm.debug("Hints: " + ch.Hints);
+				
+				
+				Vm.debug("Got the hints");
 				ch.CacheSize = getSize(start);
-				//Vm.debug("Size: " + ch.CacheSize);
+				
+				Vm.debug("Size: " + ch.CacheSize);
 				ch.hard = getDiff(start);
-				//Vm.debug("Hard: " + ch.hard);
+				
+				Vm.debug("Hard: " + ch.hard);
 				ch.terrain = getTerr(start);
-				//Vm.debug("Terr: " + ch.terrain);
+				
+				Vm.debug("Terr: " + ch.terrain);
 				ch.type = getType(start);
-				//Vm.debug("Type: " + ch.type);
+				
+				Vm.debug("Type: " + ch.type);
 				getImages(start, ch);
+				
 				crw.saveCacheDetails(ch, pref.mydatadir);
+				
 				cacheDB.add(ch);
+
 			}
 		}
 		crw.saveIndex(cacheDB,pref.mydatadir);
 		infB.close(0);
 		/*
 		try{
-		  PrintWriter detfile = new PrintWriter(new BufferedWriter(new FileWriter("dubug.txt")));
+		  PrintWriter detfile = new PrintWriter(new BufferedWriter(new FileWriter("debug.txt")));
 		  detfile.print(start);
 		  detfile.close();
 		} catch (Exception e) {
@@ -256,7 +283,6 @@ public class SpiderGC{
 				rex.searchFrom(longDesc, rex.matchedTo());
 			}
 		}
-		
 	}
 	
 	private void spiderImage(String quelle, String target){
@@ -294,104 +320,109 @@ public class SpiderGC{
 	}		
 	
 	private String getType(String doc){
-		Regex rex = new Regex("<img src=\"../images/WptTypes/(.*?)\\.gif");
-		rex.search(doc);
-		if(rex.didMatch()) return rex.stringMatched(1);
+		inRex = new Regex("<img src=\"../images/WptTypes/(.*?)\\.gif");
+		inRex.search(doc);
+		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "";
 	}
 	
 	private String getDiff(String doc){
-		Regex rex = new Regex("<span id=\"Difficulty\">.*?alt=\"(.*?) out of");
-		rex.search(doc);
-		if(rex.didMatch()) return rex.stringMatched(1);
+		inRex = new Regex("<span id=\"Difficulty\">.*?alt=\"(.*?) out of");
+		inRex.search(doc);
+		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "";
 	}
 	
 	private String getTerr(String doc){
-		Regex rex = new Regex("<span id=\"Terrain\">.*?alt=\"(.*?) out of");
-		rex.search(doc);
-		if(rex.didMatch()) return rex.stringMatched(1);
+		inRex = new Regex("<span id=\"Terrain\">.*?alt=\"(.*?) out of");
+		inRex.search(doc);
+		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "";
 	}
 	
 	private String getSize(String doc){
-		Regex rex = new Regex("This is a <strong>((?s).*?)</strong> cache");
-		rex.search(doc);
-		if(rex.didMatch()) return rex.stringMatched(1);
+		inRex = new Regex("This is a <strong>((?s).*?)</strong> cache");
+		inRex.search(doc);
+		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "";
 	}
 	
 	private String getHints(String doc){
-		Regex rex = new Regex("<span id=\"Hints\" class=\"displayMe\">((?s).*?)</span>");
-		rex.search(doc);
-		return rex.stringMatched(1);
+		inRex = new Regex("<span id=\"Hints\" class=\"displayMe\">((?s).*?)</span>");
+		inRex.search(doc);
+		return inRex.stringMatched(1);
 	}
 	
 	private String getDateHidden(String doc){
-		Regex rex = new Regex("<span id=\"DateHidden\">((?s).*?)</span>");
-		rex.search(doc);
-		return rex.stringMatched(1);
+		inRex = new Regex("<span id=\"DateHidden\">((?s).*?)</span>");
+		inRex.search(doc);
+		return inRex.stringMatched(1);
 	}
 	
 	private String getLatLon(String doc){
-		Regex rex = new Regex("<span id=\"LatLon\"><.*?>((?s).*?)</STRONG>");
-		rex.search(doc);
-		return rex.stringMatched(1);
+		inRex = new Regex("<span id=\"LatLon\"><.*?>((?s).*?)</STRONG>");
+		inRex.search(doc);
+		return inRex.stringMatched(1);
 	}
 	
 	private String getOwner(String doc){
-		Regex rex = new Regex("<span id=\"CacheOwner\".*?by((?s).*?)\\[<A HREF=");
-		rex.search(doc);
-		return rex.stringMatched(1);
+		inRex = new Regex("<span id=\"CacheOwner\".*?by((?s).*?)\\[<A HREF=");
+		inRex.search(doc);
+		return inRex.stringMatched(1);
 	}
 	
 	private String getName(String doc){
-		Regex rex = new Regex("<span id=\"CacheName\">((?s).*?)</span>");
-		rex.search(doc);
-		return rex.stringMatched(1);
+		inRex = new Regex("<span id=\"CacheName\">((?s).*?)</span>");
+		inRex.search(doc);
+		return inRex.stringMatched(1);
 	}
 	
 	private String getLongDesc(String doc){
 		String res = new String();
-		Regex rex = new Regex("<span id=\"ShortDescription\">((?s).*?)</span>");
+		inRex = new Regex("<span id=\"ShortDescription\">((?s).*?)</span>");
 		Regex rex2 = new Regex("<span id=\"LongDescription\">((?s).*?)</span>");
-		rex.search(doc);
+		inRex.search(doc);
 		rex2.search(doc);
-		res = rex.stringMatched(1) + "<br>";
+		res = inRex.stringMatched(1) + "<br>";
 		res += rex2.stringMatched(1); 
 		return res;
 	}
 	
 	private String getListBlock(String doc){
-		Regex rex = new Regex("<table id=\"dlResults\"((?s).*?)</table>");
-		rex.search(doc);
-		return rex.stringMatched(1);
+		inRex = new Regex("<table id=\"dlResults\"((?s).*?)</table>");
+		inRex.search(doc);
+		return inRex.stringMatched(1);
 	}
 	
 	private String getWP(String doc){
-		Regex rex = new Regex("</a> \\((.*?)\\)<br>");
-		rex.search(doc);
-		return rex.stringMatched(1);
+		inRex = new Regex("</a> \\((.*?)\\)<br>");
+		inRex.search(doc);
+		return inRex.stringMatched(1);
 	}
 	private double getDist(String doc){
-		Regex rex = new Regex("<br />(.*?)(km|mi)</td>");
-		rex.search(doc);
-		return Convert.toDouble(rex.stringMatched(1));
+		inRex = new Regex("<br />(.*?)(km|mi)</td>");
+		inRex.search(doc);
+		if(doc.indexOf("Here") > 0) return(0);
+		if(pref.digSeparator.equals(",")) return Convert.toDouble(inRex.stringMatched(1).replace('.',','));
+		return Convert.toDouble(inRex.stringMatched(1));
 	}
 	
 	private Vector getLogs(String doc){
-		Vector reslts = new Vector(0);
+		Vector reslts = new Vector();
 		Regex block = new Regex("<span id=\"CacheLogs\">((?s).*?)</span>");
 		block.search(doc);
 		doc = block.stringMatched(1);
 		//Vm.debug("Log Block: " + doc);
-		Regex rex = new Regex("<STRONG><IMG SRC='http://www.geocaching.com/images/icons/((?s).*?)'((?s).*?)&nbsp;((?s).*?)<A NAME=\"((?s).*?)'text-decoration: underline;'>((?s).*?)<A HREF=\"((?s).*?)'text-decoration: underline;'>((?s).*?)</A></strong>((?s).*?)\\[<A href=");
-		rex.search(doc);
-		while(rex.didMatch()){
-			//Vm.debug("Logs:" + rex.stringMatched(1) + " / " + rex.stringMatched(3)+ " / " + rex.stringMatched(7)+ " / " + rex.stringMatched(8));
+		Vm.debug("Setting log regex");
+		inRex = new Regex("<STRONG><IMG SRC='http://www.geocaching.com/images/icons/((?s).*?)'((?s).*?)&nbsp;((?s).*?)<A NAME=\"((?s).*?)'text-decoration: underline;'>((?s).*?)<A HREF=\"((?s).*?)'text-decoration: underline;'>((?s).*?)</A></strong>((?s).*?)\\[<A href=");
+		inRex.optimize();
+		inRex.search(doc);
+		Vm.debug("Log regex run...");
+		while(inRex.didMatch()){
+			Vm.debug("Logs:" + inRex.stringMatched(1) + " / " + inRex.stringMatched(3)+ " / " + inRex.stringMatched(7)+ " / " + inRex.stringMatched(8));
 			//<img src='icon_smile.gif'>&nbsp;
-			reslts.add("<img src='"+ rex.stringMatched(1) +"'>&nbsp;" + rex.stringMatched(3)+ rex.stringMatched(7)+ rex.stringMatched(8));
-			rex.searchFrom(doc, rex.matchedTo());
+			reslts.add("<img src='"+ inRex.stringMatched(1) +"'>&nbsp;" + inRex.stringMatched(3)+ inRex.stringMatched(7)+ inRex.stringMatched(8));
+			inRex.searchFrom(doc, inRex.matchedTo());
 		}
 		return reslts;
 	}

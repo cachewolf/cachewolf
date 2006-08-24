@@ -55,7 +55,7 @@ public class MainForm extends Form {
 			
 			Font defaultGuiFont = mApp.findFont("gui");
 			int sz = (myPreferences.fontSize);
-			//Vm.debug("Font size:" + myPreferences.fontSize);
+			Vm.debug("Font size:" + myPreferences.fontSize);
 			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
 			mApp.addFont(newGuiFont, "gui"); 
 			mApp.fontsChanged();
@@ -79,8 +79,8 @@ public class MainForm extends Form {
 		//dim = this.getSize(new Dimension());
 		
 		CellPanel [] p = addToolbar();
-		//p[0].defaultTags.set(INSETS,new Insets(0,1,0,1));
-		p[0].addNext(mMenu = new MainMenu(this, myPreferences, cacheDB)).setCell(DONTSTRETCH);
+		p[0].defaultTags.set(INSETS,new Insets(0,1,0,1));
+		p[1].addLast(mMenu = new MainMenu(this, myPreferences, cacheDB)).setCell(DONTSTRETCH);
 		p[1].addLast(mTab = new MainTab(cacheDB, myPreferences));
 		//this.addLast(mMenu = new MainMenu(this, myPreferences, cacheDB),this.DONTSTRETCH, this.FILL);
 		//this.addLast(mTab = new MainTab(cacheDB, myPreferences),this.STRETCH, this.FILL); 

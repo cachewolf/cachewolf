@@ -55,7 +55,7 @@ public class Preferences extends MinML{
 	public String digSeparator = new String();
 	public boolean debug = false;
 	public SerialPortOptions mySPO = new SerialPortOptions();
-	public int fontSize = 12;
+	public int fontSize = 14;
 	
 	public Preferences(){
 		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
