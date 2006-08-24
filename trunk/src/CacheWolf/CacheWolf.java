@@ -230,17 +230,17 @@ public class CacheWolf{
 		//Gui.screenIs(Gui.PDA_SCREEN)
 		if (Vm.isMobile() && s.height >= 400) {
 			Font defaultGuiFont = mApp.findFont("gui");
-			int sz = (int)(defaultGuiFont.getSize()+4);
+			int sz = (int)(defaultGuiFont.getSize());
 			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
 			mApp.addFont(newGuiFont, "gui"); 
 			mApp.fontsChanged();
 			mApp.mainApp.font = newGuiFont;
 		}
-		/*
+		
 		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
 		}
-		*/
+		
 		if(args.length > 0){
 			//Vm.debug("in args!!!!");
 			//Vm.sleep(500);

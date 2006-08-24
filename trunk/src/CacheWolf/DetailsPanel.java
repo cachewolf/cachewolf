@@ -40,7 +40,6 @@ public class DetailsPanel extends CellPanel{
 	Preferences pref;
 	
 	public DetailsPanel(){
-		
 		//String welcomeMessage = (String)lr.get(1,"how about that?");
 		
 		toolP.addNext(btCrWp = new mButton((String)lr.get(311,"Create Waypoint")),this.DONTSTRETCH, this.WEST);

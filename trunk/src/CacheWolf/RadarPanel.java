@@ -79,9 +79,11 @@ public class RadarPanel extends CellPanel{
 		cacheDB = db;
 		double dummy;
 		height = (int)(pref.myAppHeight);
+		//height = (int)height * 2;
 		////Vm.debug("Height: " + Convert.toString(height));
 		////Vm.debug("App Height: " + Convert.toString(pref.myAppHeight));
 		width = (int)(pref.myAppWidth);
+		//width = (int)width * 2;
 	}
 	
 	/**
@@ -179,8 +181,8 @@ public class RadarPanel extends CellPanel{
 	* Always call this before calling drawCaches().
 	*/
 	private void drawBackground(){
-		//Rect r = new Rect(new Dimension(width, height);
-		//iActP.virtualSize = r;
+		Rect r = new Rect(new Dimension(width, height));
+		iActP.virtualSize = r;
 		iActP.refresh();
 		Image img = new Image(width, height);
 		Graphics g = new Graphics(img);
@@ -196,6 +198,7 @@ public class RadarPanel extends CellPanel{
 		}
 		centerX = (int)(width / 2);
 		centerY = (int)(height / 2);
+		//centerY = (int)(centerY-centerY*0.15);
 		g.setColor(new Color(0,255,0));
 		int radstep= 0, steps=0, radius = 0;
 		

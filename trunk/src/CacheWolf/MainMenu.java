@@ -93,7 +93,7 @@ public class MainMenu extends MenuBar {
 		Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
 		String dum = new String();
 		dum = (String)lr.get(120,"Application");
-		if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
+		//if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
 		Menu mn = this.addMenu(dum).getMenu();
 		dummy = (String)lr.get(121,"Profiles");
 		dummy += "|";
@@ -120,7 +120,7 @@ public class MainMenu extends MenuBar {
 		savenoxit = items[1]; savenexit = items[2]; exit = items[3];
 		
 		dum = (String)lr.get(112,"Search");
-		if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
+		//if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
 		mn = this.addMenu(dum).getMenu();
 		dummy = (String)lr.get(112,"Search");
 		dummy = dummy + "|";
@@ -129,7 +129,7 @@ public class MainMenu extends MenuBar {
 		search = items[0]; searchClr = items[1];
 		
 		dum = "Filter";
-		if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
+		//if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
 		mn = this.addMenu(dum).getMenu();
 		dummy = (String)lr.get(114,"Create");
 		dummy = dummy + "|";
@@ -140,7 +140,7 @@ public class MainMenu extends MenuBar {
 		filtCreate = items[0]; filtInvert=items[1]; filtClear=items[2];
 		
 		dum = (String)lr.get(140,"Organise");
-		if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
+		//if (Vm.isMobile() && s.height < 400) dum = dum.substring(0,3)+".";
 		mn =this.addMenu(dum).getMenu();
 		dummy = (String)lr.get(141,"Copy");
 		dummy = dummy + "|";
