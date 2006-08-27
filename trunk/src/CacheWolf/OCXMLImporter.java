@@ -33,6 +33,7 @@ public class OCXMLImporter extends MinML {
 	InfoBox inf;
 	CacheHolder holder;
 	Preferences myPref = new Preferences();
+	Time dateOfthisSync;
 	String strData = new String();
 	int picCnt;
 	boolean incUpdate = true; // complete or incremental Update
@@ -73,6 +74,8 @@ public class OCXMLImporter extends MinML {
 	}
 	
 	public void doIt(){
+		String finalMessage = new String();
+		boolean success=true;
 		try{
 			BufferedReader r;
 			String file = new String();
@@ -142,18 +145,29 @@ public class OCXMLImporter extends MinML {
 				}
 			}
 			
-		}catch (ZipException z){
-			inf.close(0);
-			Vm.showWait(false);
-		}catch (Exception e){
+		}catch (ZipException e){
+			finalMessage=(String)lr.get(1614,"Error while unzipping udpate file");
+			success = false;
+		}catch (IOException e){
+			if (e.getMessage()=="Could not connect") { // is there a better way to find out what happened?
+				finalMessage=(String)lr.get(1616,"Error: could not download udpate file from opencaching.de");
+			} else { finalMessage = "IOException: "+e.getMessage(); }
+			success = false;
+		}catch (Exception e){ // here schould be used the correct exepion
+			finalMessage=(String)lr.get(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.wayPoint;
+			success = false;
 			Vm.debug("Parse error: " + state + " " + holder.wayPoint);
 			e.printStackTrace();
-			inf.close(0);
-			Vm.showWait(false);
 		}
 		Vm.showWait(false);
+		if (success) {
+			// @TODO: this should be saved in the index.xml not with the profiles!
+			myPref.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
+			myPref.savePreferences();
+			finalMessage=(String)lr.get(1607,"Update from opencaching successful");
+		}
 		inf.close(0);
-		MessageBox mb = new MessageBox("Opencaching",(String)lr.get(1607,"Update from opencaching successful"),MessageBox.OKB);
+		MessageBox mb = new MessageBox("Opencaching",finalMessage,MessageBox.OKB);
 		mb.exec();
 	}
 	
@@ -166,8 +180,6 @@ public class OCXMLImporter extends MinML {
 		strData ="";
 
 		if (name.equals("oc11xml")){
-			//TODO: this should be saved in the index.xml or with the profiles! - it shuold in the index.xml!
-			// it should be done only after the data-update has been succsessful
 			Time lastSync = new Time();
 			try {
 				lastSync.parse(atts.getValue("date"),"yyyy-MM-dd HH:mm:ss");
@@ -176,8 +188,7 @@ public class OCXMLImporter extends MinML {
 			}
 			// reduce time at 1 second to avoid sync problems
 			lastSync.setTime(lastSync.getTime() - 1000);
-			myPref.last_sync_opencaching = lastSync.format("yyyyMMddHHmmss");
-			myPref.savePreferences();
+			dateOfthisSync = lastSync;
 			state = STAT_INIT;
 		}
 
