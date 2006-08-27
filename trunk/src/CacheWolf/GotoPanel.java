@@ -295,7 +295,7 @@ public class GotoPanel extends CellPanel {
 			if(!runMovingMap){
 				lblSats.setText(Convert.toString(gpsPosition.getSats()));
 				// display values only, if signal good
-				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()> 0)) {
+				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()>= 0)) {
 					//gpsPosition.printAll();
 					lblPosition.setText(gpsPosition.toString(currFormat));
 					
@@ -330,24 +330,26 @@ public class GotoPanel extends CellPanel {
 					return;
 				}
 				// receiving no data
-				if (gpsPosition.getSats()== -1) {
+				if (gpsPosition.getFix()== -1) {
 					lblSats.backGround = RED;
 					return;
 				}
 			}else{ // In moving map mode
-				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()> 0)) {
+				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()>= 0)) {
 					mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
 				}
+				/* The following code does nothing, comment it out
 				// receiving data, but signal ist not good
 				if ((gpsPosition.getFix()== 0) && (gpsPosition.getSats()>= 0)) {
 					//lblSats.backGround = YELLOW;
 					//return;
 				}
 				// receiving no data
-				if (gpsPosition.getSats()== -1) {
+				if (gpsPosition.getFix()== -1) {
 					//lblSats.backGround = RED;
 					//return;
 				}
+				*/
 				/*
 				if(ticker == 0) mmp.updatePosition(48.23003333, 11.63345);
 				if(ticker == 1) mmp.updatePosition(48.23651667, 11.63716667);

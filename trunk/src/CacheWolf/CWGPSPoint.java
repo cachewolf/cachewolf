@@ -70,8 +70,8 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	 *
 	 */
 	public void noData(){
-		this.Fix = 0;
-		this.numSat = -1;
+		this.Fix = -1;
+		this.numSat = 0;
 	}
 	
 	public void ticked(int timerId, int elapsed){
