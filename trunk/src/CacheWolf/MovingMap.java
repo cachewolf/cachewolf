@@ -66,18 +66,20 @@ public class MovingMap extends Form{
 				//Vm.debug("Und: " +gotoPanel.gpsPosition.latDec);
 				if(gotoPanel.gpsPosition.latDec != 0){
 					ListBox l = new ListBox(maps, true, gotoPanel.gpsPosition);
-					l.execute();
-					posCircle.setLocation(pref.myAppWidth/2-10,pref.myAppHeight/2-10);
-					posCircle.properties = AniImage.AlwaysOnTop;
-					mmp.addImage(posCircle);
-					
-					mapImage = new AniImage(l.selectedMap.fileName);
-					this.title = l.selectedMap.mapName;
-					this.currentMap = l.selectedMap;
-					updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec);
-					mmp.addImage(mapImage);
-					mmp.setMap(mapImage);
-					this.repaintNow();
+					if (l.execute()==FormBase.IDOK){
+						posCircle.setLocation(pref.myAppWidth/2-10,pref.myAppHeight/2-10);
+						posCircle.properties = AniImage.AlwaysOnTop;
+						mmp.addImage(posCircle);
+						
+						mapImage = new AniImage(l.selectedMap.fileName);
+						this.title = l.selectedMap.mapName;
+						this.currentMap = l.selectedMap;
+						updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec);
+						mmp.addImage(mapImage);
+						mmp.setMap(mapImage);
+						this.repaintNow();
+					}
+					else this.currentMap = null;  
 				}else{ //Default: display the first map in the list.
 					MapInfoObject mo = (MapInfoObject)maps.get(0);
 					currentMap = mo;
@@ -176,8 +178,9 @@ class MovingMapPanel extends InteractivePanel{
 	public void imageClicked(AniImage which, Point pos){
 		if(which == mm.statusImageNoGps){
 			ListBox l = new ListBox(maps, false, null);
-			l.execute();
-			if(l.selected == true){
+//			l.execute();
+//			if(l.selected == true){
+			if(l.execute() == FormBase.IDOK){
 				this.removeImage(mapImage);
 				try{
 					Vm.debug("Trying map: " + l.selectedMap.fileName);
@@ -265,19 +268,27 @@ class ListBox extends Form{
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == cancelButton){
 				selectedMap = null;
-				this.close(0);
+				selected = false;
+				this.close(FormBase.IDCANCEL);
 			}
 			if (ev.target == okButton){
 				selectedMap = null;
 				int i,mapNum = 0;
 				String it = new String();
 				it = list.getText();
-				it = it.substring(0,it.indexOf(':'));
-				mapNum = Convert.toInt(it);
-				//Vm.debug("Kartennummer: " + mapNum);
-				selectedMap = (MapInfoObject)maps.get(mapNum);
-				selected = true;
-				this.close(0);
+				if (it != ""){
+					it = it.substring(0,it.indexOf(':'));
+					mapNum = Convert.toInt(it);
+				//	Vm.debug("Kartennummer: " + mapNum);
+					selectedMap = (MapInfoObject)maps.get(mapNum);
+					selected = true;
+					this.close(FormBase.IDOK);
+				}
+				else {
+					selected = false;
+					this.close(FormBase.IDCANCEL);
+				}
+				
 			}
 		}
 		super.onEvent(ev);
