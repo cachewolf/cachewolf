@@ -79,14 +79,14 @@ public class Map extends Form {
 				else linetest = linetest.replace(',','.');
 				affine[i] = Convert.toDouble(linetest);
 			}
+			if(affine[4] > 90 || affine[4] < -90 || affine[5] < -180 || affine[5] > 360 ||
+				affine[6] > 90 || affine[6] < -90 || affine[7] < -180 || affine[7] > 360) {
+				MessageBox tmpMB=new MessageBox("Error", "Longditute/latitude out of range while reading "+mapsPath + thisMap + ".wfl, affine: "+affine,MessageBox.OKB);
+				tmpMB.exec();
+			} 
 		}catch(Exception ex){
 			Vm.debug("Cannot load world file!");
 		}
-		if(affine[4] > 90 || affine[4] < -90 || affine[5] < -180 || affine[5] > 360 ||
-		   affine[6] > 90 || affine[6] < -90 || affine[7] < -180 || affine[7] > 360) {
-			MessageBox tmpMB=new MessageBox("Error", "Longditute/latitude out of range while reading "+mapsPath + thisMap + ".wfl, affine: "+affine,MessageBox.OKB);
-			tmpMB.exec();
-		} 
 		mapInteractivePanel pane = new mapInteractivePanel(this);
 		scp = new ScrollBarPanel(pane);
 		Image img = new Image(mapsPath + thisMap + ".png");
@@ -106,7 +106,7 @@ public class Map extends Form {
 		//scp.repaintNow();
 		//this.repaintNow();
 	}
-	
+
 	/**
 	*	Add a ground control point to the list
 	*	If the list is longer than 3 GCPs these will be evaluated
@@ -407,10 +407,10 @@ class mapInteractivePanel extends InteractivePanel{
 	public mapInteractivePanel(Map f){
 		this.f = f;
 	}
-	
+
 	/**
-	*	Event handler to catch clicks on the map
-	*/
+	 *	Event handler to catch clicks on the map
+	 */
 	public void imageClicked(AniImage which, Point pos){
 		//Vm.debug("X = " +pos.x + " Y = " + pos.y);
 		Image img = new Image(31, 31);
@@ -430,23 +430,34 @@ class mapInteractivePanel extends InteractivePanel{
 		this.repaintNow();
 		f.updatePosition(pos.x, pos.y);
 		InfoBox inf = new InfoBox((String)lr.get(4108,"Coordinates:"), (String)lr.get(4108,"Coordinates:"), InfoBox.INPUT);
-		inf.execute();
-		String txt = inf.feedback.getText();
-		Regex rex = new Regex("(N|S).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3}).*?(E|W).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3})");
-		rex.search(txt);
-		if(rex.didMatch()){
-			double lat = Convert.toDouble(rex.stringMatched(2)) + Convert.toDouble(rex.stringMatched(3))/60 + Convert.toDouble(rex.stringMatched(5))/60000;
-			double lon = Convert.toDouble(rex.stringMatched(7)) + Convert.toDouble(rex.stringMatched(8))/60 + Convert.toDouble(rex.stringMatched(10))/60000;
-			if(rex.stringMatched(1).equals("S") || rex.stringMatched(1).equals("s")) lat = lat * -1;
-			if(rex.stringMatched(6).equals("W") || rex.stringMatched(6).equals("w")) lon = lon * -1;	
-			GCPoint gcp = new GCPoint(lat, lon);
-			gcp.bitMapX = pos.x;
-			gcp.bitMapY = pos.y;
-			f.addGCP(gcp);
-		}
+		if (inf.execute()==InfoBox.IDOK) {
+			String txt = inf.feedback.getText();
+			Regex rex = new Regex("(N|S).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3}).*?(E|W).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3})");
+			try {
+				rex.search(txt);
+				if(rex.didMatch()){
+					double lat = Convert.toDouble(rex.stringMatched(2)) + Convert.toDouble(rex.stringMatched(3))/60 + Convert.toDouble(rex.stringMatched(5))/60000;
+					double lon = Convert.toDouble(rex.stringMatched(7)) + Convert.toDouble(rex.stringMatched(8))/60 + Convert.toDouble(rex.stringMatched(10))/60000;
+					if(rex.stringMatched(1).equals("S") || rex.stringMatched(1).equals("s")) lat = lat * -1;
+					if(rex.stringMatched(6).equals("W") || rex.stringMatched(6).equals("w")) lon = lon * -1;	
+					GCPoint gcp = new GCPoint(lat, lon);
+					gcp.bitMapX = pos.x;
+					gcp.bitMapY = pos.y;
+					f.addGCP(gcp); // throws IllegalArgumentException in case of lon/lat out of range
+				} else { coosInputFormat(); this.removeImage(aImg); }
+			} catch (IllegalArgumentException e) { // NumberFormatException is a subclass of IllagalArgumentException
+				coosInputFormat();
+				this.removeImage(aImg);
+			}
+		} else this.removeImage(aImg); // CANCEL pressed
+	}
+
+	private void coosInputFormat () {
+		MessageBox tmpMB = new MessageBox((String)lr.get(312,"Error"), (String)lr.get(4111,"Coordinates must be entered in the format N XX XX.XXX E XXX XX.XXX"), MessageBox.OKB);
+		tmpMB.exec();
+
 	}
 }
-
 /**
 *	Class based on CWPoint but intended to handle bitmap x and y
 *	Used for georeferencing bitmaps.
