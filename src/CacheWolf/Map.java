@@ -75,12 +75,18 @@ public class Map extends Form {
 			String linetest = new String();
 			for(int i = 0; i<6;i++){
 				linetest = in.readLine();
-				linetest = linetest.replace(',','.');
+				if (pref.digSeparator.equals(",")) {linetest = linetest.replace('.',','); }
+				else linetest = linetest.replace(',','.');
 				affine[i] = Convert.toDouble(linetest);
 			}
 		}catch(Exception ex){
 			Vm.debug("Cannot load world file!");
 		}
+		if(affine[4] > 90 || affine[4] < -90 || affine[5] < -180 || affine[5] > 360 ||
+		   affine[6] > 90 || affine[6] < -90 || affine[7] < -180 || affine[7] > 360) {
+			MessageBox tmpMB=new MessageBox("Error", "Longditute/latitude out of range while reading "+mapsPath + thisMap + ".wfl, affine: "+affine,MessageBox.OKB);
+			tmpMB.exec();
+		} 
 		mapInteractivePanel pane = new mapInteractivePanel(this);
 		scp = new ScrollBarPanel(pane);
 		Image img = new Image(mapsPath + thisMap + ".png");
@@ -108,6 +114,7 @@ public class Map extends Form {
 	*	transformation.
 	*/
 	public void addGCP(GCPoint GCP){
+		if (GCP.latDec>90 || GCP.latDec<-90 || GCP.lonDec>360 || GCP.lonDec<-180) throw new IllegalArgumentException("lat/lon out of range: "+GCP.toString());
 		GCPs.add(GCP);
 		if(GCPs.size() >= 3){
 			evalGCP();
@@ -221,8 +228,8 @@ public class Map extends Form {
 				String[] parts;
 				files = inDir.list("*.png", File.LIST_FILES_ONLY);
 				InfoBox inf = new InfoBox("Info", (String)lr.get(4109,"Loading maps...")); 
-				inf.show();
 				Vm.showWait(true);
+				inf.show();
 				for(int i = 0; i<files.length;i++){
 					inf.setInfo((String)lr.get(4110,"Loading:")+ " " + files[i]);
 					//Copy the file
@@ -284,6 +291,10 @@ public class Map extends Form {
 									
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
+								if(pref.digSeparator.equals(",")) {
+									parts[3]= parts[3].replace('.', ',');
+									parts[2]= parts[2].replace('.', ',');
+								}
 								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
 								gcpG.bitMapX = gcp1.bitMapX;
 								gcpG.bitMapY = gcp1.bitMapY;
@@ -291,6 +302,10 @@ public class Map extends Form {
 								
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
+								if(pref.digSeparator.equals(",")) {
+									parts[3]= parts[3].replace('.', ',');
+									parts[2]= parts[2].replace('.', ',');
+								}
 								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
 								gcpG.bitMapX = gcp2.bitMapX;
 								gcpG.bitMapY = gcp2.bitMapY;
@@ -298,6 +313,10 @@ public class Map extends Form {
 								
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
+								if(pref.digSeparator.equals(",")) {
+									parts[3]= parts[3].replace('.', ',');
+									parts[2]= parts[2].replace('.', ',');
+								}
 								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
 								gcpG.bitMapX = gcp3.bitMapX;
 								gcpG.bitMapY = gcp3.bitMapY;
@@ -305,6 +324,10 @@ public class Map extends Form {
 
 								line = inMap.readLine();
 								parts = mString.split(line, ',');
+								if(pref.digSeparator.equals(",")) {
+									parts[3]= parts[3].replace('.', ',');
+									parts[2]= parts[2].replace('.', ',');
+								}
 								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
 								gcpG.bitMapX = gcp4.bitMapX;
 								gcpG.bitMapY = gcp4.bitMapY;
@@ -322,6 +345,9 @@ public class Map extends Form {
 				inf.close(0);
 				Vm.showWait(false);
 				return true;
+			}catch(IllegalArgumentException ex){
+				MessageBox tmpMB = new MessageBox("Error", "Error while importing .map-file: "+ex.getMessage(),MessageBox.OKB);
+				tmpMB.exec();
 			}catch(Exception ex){
 				Vm.debug("Error:" + ex.toString());
 			}
@@ -335,14 +361,16 @@ public class Map extends Form {
 	private void saveWFL(String saveTo){
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(saveTo)));
-			outp.print(Convert.toString(affine[0])+"\n");
-			outp.print(Convert.toString(affine[1])+"\n");
-			outp.print(Convert.toString(affine[2])+"\n");
-			outp.print(Convert.toString(affine[3])+"\n");
-			outp.print(Convert.toString(affine[4])+"\n");
-			outp.print(Convert.toString(affine[5])+"\n");
-			outp.print(Convert.toString(bottomlat)+"\n");
-			outp.print(Convert.toString(bottomlon)+"\n");
+			String towrite=Convert.toString(affine[0])+"\n" +
+			               Convert.toString(affine[1])+"\n" +
+			               Convert.toString(affine[2])+"\n" + 
+			               Convert.toString(affine[3])+"\n" + 
+			               Convert.toString(affine[4])+"\n" +
+			               Convert.toString(affine[5])+"\n" +
+			               Convert.toString(bottomlat)+"\n" +
+			               Convert.toString(bottomlon)+"\n";
+			if (pref.digSeparator.equals(",")) towrite=towrite.replace(',', '.');
+			outp.print(towrite);
 			outp.close();
 		}catch(Exception ex){
 			Vm.debug("Error writing wfl file!");
