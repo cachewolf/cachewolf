@@ -138,18 +138,22 @@ public class RadarPanel extends CellPanel{
 						aImg.properties = mImage.IsNotHot;
 						iActP.addImage(aImg);
 					}
-					if(toggleMod == 2){ // draw cache names
-						Image img = new Image(fm.getTextWidth(holder.CacheName),fm.getHeight());
-						Graphics g = new Graphics(img);
-						g.setColor(new Color(0,0,0));
-						g.fillRect(0,0,fm.getTextWidth(holder.CacheName), fm.getHeight());
-						g.setColor(new Color(255,255,255));
-						g.drawText(holder.CacheName, 0,0);
-						aImg = new AniImage(img);
-						aImg.setLocation(centerX+x+5,centerY+y);
-						aImg.transparentColor = new Color(0,0,0);
-						aImg.properties = mImage.IsNotHot;
-						iActP.addImage(aImg);
+					if(toggleMod == 2 && holder.CacheName.length()> 0){ // draw cache names
+						try {
+							Image img = new Image(fm.getTextWidth(holder.CacheName),fm.getHeight());
+							Graphics g = new Graphics(img);
+							g.setColor(new Color(0,0,0));
+							g.fillRect(0,0,fm.getTextWidth(holder.CacheName), fm.getHeight());
+							g.setColor(new Color(255,255,255));
+							g.drawText(holder.CacheName, 0,0);
+							aImg = new AniImage(img);
+							aImg.setLocation(centerX+x+5,centerY+y);
+							aImg.transparentColor = new Color(0,0,0);
+							aImg.properties = mImage.IsNotHot;
+							iActP.addImage(aImg);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 					rpi = new RadarPanelImage(cacheImages[Convert.parseInt(holder.type)]);
 					rpi.wayPoint = holder.wayPoint;
