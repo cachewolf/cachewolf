@@ -83,15 +83,22 @@ public class MovingMap extends Form{
 					}
 					else this.currentMap = null;  
 				}else{ //Default: display the first map in the list.
-					MapInfoObject mo = (MapInfoObject)maps.get(0);
-					currentMap = mo;
-					mapImage = new AniImage(mo.fileName);
-					this.title = "Mov. Map: " + mo.mapName;
-					mapImage.setLocation(0,0);
-					mmp.addImage(mapImage);
-					mmp.setMap(mapImage);
+					try {
+						MapInfoObject mo = (MapInfoObject)maps.get(0);
+						currentMap = mo;
+						mapImage = new AniImage(mo.fileName);
+						this.title = "Mov. Map: " + mo.mapName;
+						mapImage.setLocation(0,0);
+						mmp.addImage(mapImage);
+						mmp.setMap(mapImage);
+					} catch (IndexOutOfBoundsException ex) { // wird von maps.get geworfen, wenn die Liste der Maps leer ist
+						Locale l = Vm.getLocale();
+						LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+						MessageBox tmpMB = new MessageBox((String)lr.get(321, "Error"), (String)lr.get(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB);
+						tmpMB.execute();
+					}
 				}
-			}catch (NumberFormatException ex){
+			}catch (NumberFormatException ex){ // veraltet - hier vielleicht auch einen MemoryError behandlung hin?
 				Vm.debug("Problem loading map image file!");
 			}
 	//	}
