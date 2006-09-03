@@ -15,7 +15,7 @@ import ewe.sys.*;
 public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB;
 	mChoice NS, EW;
-	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser;
+	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear;
 	Preferences myPreferences = new Preferences();
 	Locale l = Vm.getLocale();
@@ -67,11 +67,14 @@ public class PreferencesScreen extends Form {
 		//nLogs.setText(Convert.toString(myPreferences.nLogs));
 		//this.addLast(new mLabel("Logs"), this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addNext(new mLabel("Proxy"),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(new mLabel("Port"),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		this.addNext(new mLabel("Port"),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		this.addLast(new mLabel("Font"),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addNext(Proxy = new mInput(),this.DONTSTRETCH, (this.HFILL|this.WEST));
 		Proxy.setText(myPreferences.myproxy);
-		this.addLast(ProxyPort = new mInput(),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addNext(ProxyPort = new mInput(),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addLast(fontSize = new mInput(),this.DONTSTRETCH, (this.HFILL|this.WEST));
 		ProxyPort.setText(myPreferences.myproxyport);
+		fontSize.setText(Convert.toString(myPreferences.fontSize));
 		this.addLast(new mLabel((String)lr.get(605,"Display Preferences")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		this.addNext(dif = new mCheckBox((String)lr.get(606,"Difficulty")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		if(myPreferences.tablePrefs[2] == 1) dif.setState(true);
@@ -89,8 +92,8 @@ public class PreferencesScreen extends Form {
 		if(myPreferences.tablePrefs[10] == 1) dist.setState(true);
 		this.addLast(bear = new mCheckBox((String)lr.get(613,"Bearing")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
 		if(myPreferences.tablePrefs[11] == 1) bear.setState(true);
-		this.addNext(cancelB = new mButton((String)lr.get(614,"Cancel")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(applyB = new mButton((String)lr.get(615,"Apply")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		this.addNext(cancelB = new mButton((String)lr.get(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(applyB = new mButton((String)lr.get(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 	}
 	
 	public void onEvent(Event ev){
@@ -107,8 +110,16 @@ public class PreferencesScreen extends Form {
 					myPreferences.mybrDeg = EWDeg.getText();
 					myPreferences.mybrMin = EWm.getText();
 					myPreferences.mydatadir = DataDir.getText();
-
 				}
+				myPreferences.fontSize = Convert.toInt(fontSize.getText());
+				
+				Font defaultGuiFont = mApp.findFont("gui");
+				int sz = (myPreferences.fontSize);
+				Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
+				mApp.addFont(newGuiFont, "gui"); 
+				mApp.fontsChanged();
+				mApp.mainApp.font = newGuiFont;
+				
 				myPreferences.myAlias = Alias.getText();
 				myPreferences.browser = Browser.getText();
 				//Vm.debug(myPreferences.browser);
@@ -130,7 +141,7 @@ public class PreferencesScreen extends Form {
 			if(ev.target == brwBt){
 				FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, myPreferences.mydatadir);
 				fc.setTitle((String)lr.get(616,"Select data directory"));
-				if(fc.execute() != fc.IDCANCEL)	DataDir.setText(fc.getChosen()+"/");
+				if(fc.execute() != FileChooser.IDCANCEL)	DataDir.setText(fc.getChosen()+"/");
 			}
 			if (ev.target == gpsB){
 				SerialPortOptions spo = new GPSPortOptions();
