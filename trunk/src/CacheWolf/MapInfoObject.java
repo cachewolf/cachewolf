@@ -1,7 +1,19 @@
 package CacheWolf;
 
+import ewe.io.BufferedWriter;
+import ewe.io.FileReader;
+import ewe.io.FileWriter;
+import ewe.io.FilenameFilter;
+import ewe.io.IOException;
+import ewe.io.PrintWriter;
 import ewe.sys.*;
+import ewe.ui.MessageBox;
+import ewe.ui.SplittablePanel;
 
+/**
+ * @author r
+ *
+ */
 public class MapInfoObject{
 	//World file:
 	// x scale
@@ -18,7 +30,74 @@ public class MapInfoObject{
 	public String fileNameWFL = new String();
 	public String fileName = new String();
 	public String mapName = new String();
+	private Character digSep = ' ';
+/*
+ * loads an .wfl file
+ * throws FileNotFoundException and IOException (data out of range)
+ * @maps Path to .wfl file
+ * @thisMap filename of .wfl file without ".wfl"
+ * @DigSep "." or ","
+ */	
 	
+	public MapInfoObject() {
+		super();
+		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
+		if(testA == 4.5) digSep = ','; else digSep = '.';
+	}
+
+	public void loadwfl(String mapsPath, String thisMap) throws IOException {
+		FileReader in = new FileReader(mapsPath + thisMap + ".wfl");
+		String line = new String();
+		for(int i = 0; i<6;i++){
+			line = in.readLine();
+			if (digSep.equals(",")) {line = line.replace('.',','); }
+			else line = line.replace(',','.');
+			affine[i] = Convert.toDouble(line);
+		}
+		line = in.readLine();
+		if (digSep.equals(",")) {line = line.replace('.',','); }
+		else line = line.replace(',','.');
+		lowlat = Convert.toDouble(line);
+		line = in.readLine();
+		if (digSep.equals(",")) {line = line.replace('.',','); }
+		else line = line.replace(',','.');
+		lowlon = Convert.toDouble(line);
+
+		fileNameWFL = mapsPath + thisMap + ".wfl";
+		fileName = mapsPath + thisMap + ".png";
+		mapName = thisMap;
+		in.close();
+		if(affine[4] > 90 || affine[4] < -90 || affine[5] < -180 || affine[5] > 360 ||
+				lowlat > 90 || lowlat < -90 || lowlon > 360 || lowlon < -180 ) {
+			affine[0] = 0; affine[1] = 0; affine[2] = 0; affine[3] = 0; affine[4] = 0; affine[5] = 0;
+			lowlat = 0; lowlon = 0;
+			throw (new IOException("Lat/Lon out of range while reading "+mapsPath + thisMap + ".wfl" + "affine: "+affine));
+		} 
+	}
+
+	/**
+	*	Method to save a world file (.wfl)
+	*/
+	public void saveWFL(String mapsPath, String mapFileName) throws IOException, IllegalArgumentException {
+		if (affine[0]==0 && affine[1]==0 && affine[2]==0 && affine[3]==0 && 
+				affine[4]==0 && affine[5]==0 ) throw (new IllegalArgumentException("map not calibrated"));
+		PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(mapsPath + "/" + mapFileName + ".wfl")));
+		String towrite=Convert.toString(affine[0])+"\n" +
+		Convert.toString(affine[1])+"\n" +
+		Convert.toString(affine[2])+"\n" + 
+		Convert.toString(affine[3])+"\n" + 
+		Convert.toString(affine[4])+"\n" +
+		Convert.toString(affine[5])+"\n" +
+		Convert.toString(lowlat)+"\n" +
+		Convert.toString(lowlon)+"\n";
+		if (digSep.equals(",")) towrite=towrite.replace(',', '.');
+		outp.print(towrite);
+		outp.close();
+		this.fileName = mapsPath + "/" + mapFileName + ".png";
+		this.fileNameWFL = mapsPath + "/" + mapFileName + ".wfl";
+		this.mapName = mapFileName;
+	}
+
 	public boolean inBound(CWPoint pos){
 		boolean isInBound = false;
 		/*

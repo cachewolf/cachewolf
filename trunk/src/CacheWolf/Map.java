@@ -26,8 +26,9 @@ public class Map extends Form {
 	CellPanel infPanel;
 	mLabel infLabel = new mLabel("                          ");
 	Vector GCPs = new Vector();
-	double[] affine = {0,0,0,0,0,0};
-	double bottomlon, bottomlat = 0;
+	MapInfoObject wfl = new MapInfoObject();
+//	double[] affine = {0,0,0,0,0,0};
+//	double bottomlon, bottomlat = 0; // die werden im Moment nicht verwendet, nur berechnet nicht eingelesen von .wfl-datei und auch nie benutzt
 	mButton infButton;
 	ScrollBarPanel scp;
 	AniImage mapImg;
@@ -48,11 +49,11 @@ public class Map extends Form {
 	*	It helps to identify how good the georeferencing works based on the set GCPs.
 	*/
 	public void updatePosition(int x, int y){
-		if(GCPs.size()>=3  || (affine[4] > 0 && affine[5] > 0)){
+		if(GCPs.size()>=3  || (wfl.affine[4] > 0 && wfl.affine[5] > 0)){
 			double x_ = 0;
 			double y_ = 0;
-			x_ = affine[0]*x + affine[2]*y + affine[4];
-			y_ = affine[1]*x + affine[3]*y + affine[5];
+			x_ = wfl.affine[0]*x + wfl.affine[2]*y + wfl.affine[4];
+			y_ = wfl.affine[1]*x + wfl.affine[3]*y + wfl.affine[5];
 			CWPoint p = new CWPoint(x_ , y_);
 			infLabel.setText("--> " + p.getLatDeg(CWPoint.DMS) + " " +p.getLatMin(CWPoint.DMM) + " / " + p.getLonDeg(CWPoint.DMS) + " " + p.getLonMin(CWPoint.DMM));
 		}
@@ -70,21 +71,13 @@ public class Map extends Form {
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		thisMap = mapToLoad;
 		mapsPath = File.getProgramDirectory() + "/maps/";
-		try{
-			FileReader in = new FileReader(mapsPath + thisMap + ".wfl");
-			String linetest = new String();
-			for(int i = 0; i<6;i++){
-				linetest = in.readLine();
-				if (pref.digSeparator.equals(",")) {linetest = linetest.replace('.',','); }
-				else linetest = linetest.replace(',','.');
-				affine[i] = Convert.toDouble(linetest);
-			}
-			if(affine[4] > 90 || affine[4] < -90 || affine[5] < -180 || affine[5] > 360 ||
-				affine[6] > 90 || affine[6] < -90 || affine[7] < -180 || affine[7] > 360) {
-				MessageBox tmpMB=new MessageBox("Error", "Longditute/latitude out of range while reading "+mapsPath + thisMap + ".wfl, affine: "+affine,MessageBox.OKB);
-				tmpMB.exec();
-			} 
-		}catch(Exception ex){
+		try {
+			wfl.loadwfl(mapsPath, thisMap);
+		}catch(FileNotFoundException ex){
+			Vm.debug("Cannot load world file!");
+		}catch (IOException ex) { // is thrown if lat/lon out of range
+			MessageBox tmpMB=new MessageBox((String)lr.get(312, "Error"), ex.getMessage(), MessageBox.OKB);
+			tmpMB.exec();
 			Vm.debug("Cannot load world file!");
 		}
 		mapInteractivePanel pane = new mapInteractivePanel(this);
@@ -154,9 +147,9 @@ public class Map extends Form {
 		Matrix beta = new Matrix(XtranXinv);
 		beta.Multiply(Xtran);
 		beta.Multiply(trg);
-		affine[0] = beta.matrix[1][0];
-		affine[2] = beta.matrix[2][0];
-		affine[4] = beta.matrix[0][0];
+		wfl.affine[0] = beta.matrix[1][0];
+		wfl.affine[2] = beta.matrix[2][0];
+		wfl.affine[4] = beta.matrix[0][0];
 		
 		//Calculate parameters for longitude affine transformation (affine 1,3,5)
 		X = new Matrix(GCPs.size(),3);
@@ -177,16 +170,16 @@ public class Map extends Form {
 		beta = new Matrix(XtranXinv);
 		beta.Multiply(Xtran);
 		beta.Multiply(trg);
-		affine[1] = beta.matrix[1][0];
-		affine[3] = beta.matrix[2][0];
-		affine[5] = beta.matrix[0][0];
+		wfl.affine[1] = beta.matrix[1][0];
+		wfl.affine[3] = beta.matrix[2][0];
+		wfl.affine[5] = beta.matrix[0][0];
 		double x_ = 0;
 		double y_ = 0;
-		x_ = affine[0]*imageWidth+ affine[2]*imageHeight + affine[4];
-		y_ = affine[1]*imageWidth + affine[3]*imageHeight + affine[5];
+		x_ = wfl.affine[0]*imageWidth+ wfl.affine[2]*imageHeight + wfl.affine[4];
+		y_ = wfl.affine[1]*imageWidth + wfl.affine[3]*imageHeight + wfl.affine[5];
 		CWPoint p = new CWPoint(x_ , y_);
-		bottomlon = p.lonDec;
-		bottomlat = p.latDec;
+		wfl.lowlon = p.lonDec;
+		wfl.lowlat = p.latDec;
 		//Vm.debug("A B C" + affine[0] + " " + affine[2] + " " + affine[4]);
 		//Vm.debug("D E F" + affine[1] + " " + affine[3] + " " + affine[5]);
 	}
@@ -212,7 +205,7 @@ public class Map extends Form {
 			if (!dir.exists()) {
 				dir.createDir();
 			}
-			try{
+			try{ // TODO better chekcing for IO-Errors / Disk full etc.
 				//User selected a map, but maybe there are more png(s)
 				//copy all of them!
 				//at the same time try to find associated .map files!
@@ -243,6 +236,7 @@ public class Map extends Form {
 					}
 					in.close();
 					out.close();
+					// here catch IOException
 					
 					//Check for a .map file
 					ext = new Extractor(files[i], "", ".", 0, true);
@@ -335,7 +329,7 @@ public class Map extends Form {
 								
 								evalGCP();
 								//Vm.debug("Saving .map file to: " + mapsPath + "/" + rawFileName + ".wfl");
-								saveWFL(mapsPath + "/" + rawFileName + ".wfl");
+								wfl.saveWFL(mapsPath, rawFileName);
 								GCPs.clear();
 							}
 						}
@@ -345,51 +339,41 @@ public class Map extends Form {
 				inf.close(0);
 				Vm.showWait(false);
 				return true;
-			}catch(IllegalArgumentException ex){
+			}catch(IllegalArgumentException ex){ // is thrown from Convert.toDouble and saveWFL if affine[0-5]==0 NumberFormatException is a subclass of IllegalArgumentExepction
 				MessageBox tmpMB = new MessageBox("Error", "Error while importing .map-file: "+ex.getMessage(),MessageBox.OKB);
 				tmpMB.exec();
-			}catch(Exception ex){
+			}catch(IOException ex){
 				Vm.debug("Error:" + ex.toString());
 			}
 		}
 		return false;
 	}
 	
-	/**
-	*	Method to save a world file (.wfl)
-	*/
-	private void saveWFL(String saveTo){
-		try{
-			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(saveTo)));
-			String towrite=Convert.toString(affine[0])+"\n" +
-			               Convert.toString(affine[1])+"\n" +
-			               Convert.toString(affine[2])+"\n" + 
-			               Convert.toString(affine[3])+"\n" + 
-			               Convert.toString(affine[4])+"\n" +
-			               Convert.toString(affine[5])+"\n" +
-			               Convert.toString(bottomlat)+"\n" +
-			               Convert.toString(bottomlon)+"\n";
-			if (pref.digSeparator.equals(",")) towrite=towrite.replace(',', '.');
-			outp.print(towrite);
-			outp.close();
-		}catch(Exception ex){
-			Vm.debug("Error writing wfl file!");
-		}
-	}
+
 	/**
 	*	Handles button pressed event
 	*	When the button is pressed a mapname.wfl file is saved in the
 	*	maps directory.
 	*/
 	public void onEvent(Event ev){
-		
+
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			// display coords in another format
 			if (ev.target == infButton){
-				String saveTo = new String();
-				saveTo = mapsPath + thisMap + ".wfl";
-				saveWFL(saveTo);
-				close(0);
+				boolean retry = true;
+				while (retry == true) {
+					try {
+						retry = false;
+						wfl.saveWFL(mapsPath, thisMap);
+					} catch (IOException e) {
+						MessageBox tmpMB = new MessageBox((String)lr.get(321, "Error"), (String)lr.get(321, "Error writing file ") + e.getMessage()+(String)lr.get(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
+						if (tmpMB.execute() == MessageBox.IDYES) retry = true;
+					}catch (IllegalArgumentException e) {
+						MessageBox tmpMB = new MessageBox((String)lr.get(144, "Warning"), (String)lr.get(325, "Map not calibrated")+(String)lr.get(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
+						if (tmpMB.execute() == MessageBox.IDYES) { retry = true; break; }
+					}
+				}
+				if (!retry) close(0);
 			}
 		}
 	}
