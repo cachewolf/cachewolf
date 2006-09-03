@@ -55,7 +55,6 @@ public class MainForm extends Form {
 			
 			Font defaultGuiFont = mApp.findFont("gui");
 			int sz = (myPreferences.fontSize);
-			Vm.debug("Font size:" + myPreferences.fontSize);
 			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
 			mApp.addFont(newGuiFont, "gui"); 
 			mApp.fontsChanged();
