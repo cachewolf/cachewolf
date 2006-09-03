@@ -77,7 +77,7 @@ public class Map extends Form {
 			Vm.debug("Cannot load world file!");
 		}catch (IOException ex) { // is thrown if lat/lon out of range
 			MessageBox tmpMB=new MessageBox((String)lr.get(312, "Error"), ex.getMessage(), MessageBox.OKB);
-			tmpMB.exec();
+			tmpMB.execute();
 			Vm.debug("Cannot load world file!");
 		}
 		mapInteractivePanel pane = new mapInteractivePanel(this);

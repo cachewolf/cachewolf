@@ -71,7 +71,7 @@ public class MapInfoObject{
 				lowlat > 90 || lowlat < -90 || lowlon > 360 || lowlon < -180 ) {
 			affine[0] = 0; affine[1] = 0; affine[2] = 0; affine[3] = 0; affine[4] = 0; affine[5] = 0;
 			lowlat = 0; lowlon = 0;
-			throw (new IOException("Lat/Lon out of range while reading "+mapsPath + thisMap + ".wfl" + "affine: "+affine));
+			throw (new IOException("Lat/Lon out of range while reading "+mapsPath + thisMap + ".wfl"));
 		} 
 	}
 
