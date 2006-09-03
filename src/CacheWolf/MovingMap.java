@@ -2,6 +2,7 @@ package CacheWolf;
 
 import ewe.ui.*;
 import ewe.graphics.*;
+import ewe.io.IOException;
 import ewe.sys.*;
 import ewe.fx.*;
 import ewe.util.Vector;
@@ -16,7 +17,7 @@ public class MovingMap extends Form{
 	Vector maps;
 	GotoPanel gotoPanel;
 	Vector cacheDB;
-	MapInfoObject currentMap = new MapInfoObject();
+	MapInfoObject currentMap;
 	AniImage statusImageHaveSignal = new AniImage("center_green.png");
 	AniImage statusImageNoSignal = new AniImage("center_yellow.png");
 	AniImage statusImageNoGps = new AniImage("center.png");
@@ -34,6 +35,7 @@ public class MovingMap extends Form{
 		this.pref = pref;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
+		currentMap = new MapInfoObject();
 		mmp = new MovingMapPanel(this, maps, gotoPanel, cacheDB);
 		this.addLast(mmp);
 	}
@@ -89,7 +91,7 @@ public class MovingMap extends Form{
 					mmp.addImage(mapImage);
 					mmp.setMap(mapImage);
 				}
-			}catch (Exception ex){
+			}catch (NumberFormatException ex){
 				Vm.debug("Problem loading map image file!");
 			}
 	//	}

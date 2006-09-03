@@ -370,7 +370,7 @@ public class GotoPanel extends CellPanel {
 	 * Eventhandler
 	 */
 	public void onEvent(Event ev){
-		
+
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			// display coords in another format
 			if (ev.target == chkFormat){
@@ -418,53 +418,20 @@ public class GotoPanel extends CellPanel {
 					inf.show();
 					String mapsPath = new String();
 					mapsPath = File.getProgramDirectory() + "/maps/";
-					try{
-						File files = new File(mapsPath);
-						File checkWFL;
-						FileReader mapFileReader;
-						String line = new String();
-						Extractor ext;
-						String rawFileName = new String();
-						dateien = files.list("*.png", File.LIST_FILES_ONLY);
-						for(int i = 0; i < dateien.length;i++){
-							ext = new Extractor(dateien[i], "", ".", 0, true);
-							rawFileName = ext.findNext();
-							tempMIO = new MapInfoObject();
-							//Vm.debug(mapsPath + rawFileName + ".wfl");
-							mapFileReader = new FileReader(mapsPath + rawFileName + ".wfl");
-							line = mapFileReader.readLine();
-							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
-							tempMIO.affine[0] = Convert.toDouble(line);
-							line = mapFileReader.readLine();
-							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
-							tempMIO.affine[1] = Convert.toDouble(line);
-							line = mapFileReader.readLine();
-							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
-							tempMIO.affine[2] = Convert.toDouble(line);
-							line = mapFileReader.readLine();
-							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
-							tempMIO.affine[3] = Convert.toDouble(line);
-							line = mapFileReader.readLine();
-							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
-							tempMIO.affine[4] = Convert.toDouble(line);
-							line = mapFileReader.readLine();
-							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
-							tempMIO.affine[5] = Convert.toDouble(line);
-							line = mapFileReader.readLine();
-							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
-							tempMIO.lowlat = Convert.toDouble(line);
-							line = mapFileReader.readLine();
-							if(pref.digSeparator.equals(",")) line = line.replace('.', ',');
-							tempMIO.lowlon = Convert.toDouble(line);
-							tempMIO.fileNameWFL = mapsPath + rawFileName + ".wfl";
-							tempMIO.fileName = mapsPath + rawFileName + ".png";
-							tempMIO.mapName = rawFileName;
+					File files = new File(mapsPath);
+					Extractor ext;
+					String rawFileName = new String();
+					dateien = files.list("*.png", File.LIST_FILES_ONLY);
+					tempMIO = new MapInfoObject();
+					for(int i = 0; i < dateien.length;i++){
+						ext = new Extractor(dateien[i], "", ".", 0, true);
+						rawFileName = ext.findNext();
+						try {
+							tempMIO.loadwfl(mapsPath, rawFileName);
 							availableMaps.add(tempMIO);
-							mapFileReader.close();
-						}
-					}catch(Exception ex){
+							mapsLoaded = true;
+						}catch(IOException ex){ } // TODO etwas genauer auch Fehlermeldung ausgeben? Bei vorhandenen .wfl-Datei mit ungültigen Werten Fehler ausgeben oder wie jetz einfach ignorieren?
 					}
-					mapsLoaded = true;
 					inf.close(0);
 					Vm.showWait(false);
 				}
@@ -495,10 +462,7 @@ public class GotoPanel extends CellPanel {
 					btnGoto.setText(toPoint.toString(currFormat));
 				}
 			}
-
 		}
 		super.onEvent(ev);
 	}
-
-	
 }
