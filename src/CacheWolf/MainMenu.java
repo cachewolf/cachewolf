@@ -376,8 +376,13 @@ public class MainMenu extends MenuBar {
 				SelectMap sM = new SelectMap();
 				sM.execute();
 				if((sM.getSelectedMap()).length()>0){
-					Map map = new Map(myPreferences, sM.getSelectedMap(),sM.worldfileexists);
-					map.execute(null, Gui.CENTER_FRAME);
+					try {
+						Map map = new Map(myPreferences, sM.getSelectedMap(),sM.worldfileexists);
+						map.execute(null, Gui.CENTER_FRAME);
+					} catch (java.lang.OutOfMemoryError e) {
+						MessageBox tmpMB=new MessageBox((String)lr.get(312, "Error"), (String)lr.get(156,"Out of memory error, map to big"), MessageBox.OKB);
+						tmpMB.exec();
+					}
 				}
 			}
 			if(mev.selectedItem == importmap){
