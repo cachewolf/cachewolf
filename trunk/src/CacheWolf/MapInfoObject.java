@@ -30,7 +30,7 @@ public class MapInfoObject{
 	public String fileNameWFL = new String();
 	public String fileName = new String();
 	public String mapName = new String();
-	private Character digSep = ' ';
+	private Character digSep = new Character(' ');
 /*
  * loads an .wfl file
  * throws FileNotFoundException and IOException (data out of range)
@@ -42,7 +42,7 @@ public class MapInfoObject{
 	public MapInfoObject() {
 		super();
 		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
-		if(testA == 4.5) digSep = ','; else digSep = '.';
+		if(testA == 4.5) digSep = new Character(','); else digSep = new Character('.');
 	}
 
 	public void loadwfl(String mapsPath, String thisMap) throws IOException {
