@@ -1,0 +1,8 @@
+Leertaste: +
+ä %e4
+ö %f6 
+ü %fc 
+ß %df
+Ä %c6
+Ö %d6
+Ü %dc
