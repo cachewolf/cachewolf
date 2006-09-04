@@ -335,26 +335,28 @@ public class DetailsPanel extends CellPanel{
 			if (ev.target == btCrWp){
 				if(btCrWp.getText().equals((String)lr.get(312,"Save"))){
 					//Vm.debug("Sollte speichern");
-					CacheHolder ch = new CacheHolder();
-					ch.wayPoint = wayPoint.getText();
-					ch.CacheName = wayName.getText();
-					ch.LatLon = wayLoc.getText();
-					ch.DateHidden = wayHidden.getText();
-					ch.CacheOwner = wayOwner.getText();
-					ch.CacheStatus = wayStatus.getText();
-					ch.CacheNotes = wayNotes.getText();
-					ch.type = transSelect(wayType.getInt());
-					cacheDB.add(ch);
+					//CacheHolder ch = new CacheHolder();
+					thisCache.wayPoint = wayPoint.getText();
+					thisCache.CacheName = wayName.getText();
+					thisCache.LatLon = wayLoc.getText();
+					thisCache.DateHidden = wayHidden.getText();
+					thisCache.CacheOwner = wayOwner.getText();
+					thisCache.CacheStatus = wayStatus.getText();
+					thisCache.CacheNotes = wayNotes.getText();
+					thisCache.type = transSelect(wayType.getInt());
+					//cacheDB.add(ch);
 					
-					if(ch.CacheNotes.length()>0){
+					if(thisCache.CacheNotes.length()>0){
 						CacheReaderWriter crw = new CacheReaderWriter();
-						crw.saveCacheDetails(ch, pref.mydatadir);
+						crw.saveCacheDetails(thisCache, pref.mydatadir);
 					}
 					
 					dirty_new = true;
 					mainT.selectAndActive(cacheDB.size()-1);
 				}
 				if(btCrWp.getText().equals((String)lr.get(311,"Create Waypoint"))){
+					thisCache = new CacheHolder();
+					dirty_new = true;
 					wayPoint.setText(getNewWayPointName(cacheDB));
 					wayName.setText("");
 					wayLoc.setText("N hh dd.mmm E hh dd.mmm");
@@ -364,6 +366,8 @@ public class DetailsPanel extends CellPanel{
 					wayNotes.setText("");
 					wayType.setInt(0);
 					waySize.setInt(0);
+					thisCache.wayPoint = wayPoint.getText();
+					cacheDB.add(thisCache);
 				}
 				if(btCrWp.getText().equals((String)lr.get(312,"Save"))) btCrWp.setText((String)lr.get(311,"Create Waypoint"));
 				else btCrWp.setText((String)lr.get(312,"Save"));
