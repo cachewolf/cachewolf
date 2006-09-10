@@ -1,5 +1,7 @@
 package CacheWolf;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
 import ewe.io.*;
@@ -168,7 +170,7 @@ public class OCXMLImporter extends MinML {
 		}
 		inf.close(0);
 		MessageBox mb = new MessageBox("Opencaching",finalMessage,MessageBox.OKB);
-		mb.exec();
+		mb.execute();
 	}
 	
 	public void startElement(String name, AttributeList atts){
@@ -183,7 +185,7 @@ public class OCXMLImporter extends MinML {
 			Time lastSync = new Time();
 			try {
 				lastSync.parse(atts.getValue("date"),"yyyy-MM-dd HH:mm:ss");
-			}catch (Exception e){
+			}catch (IllegalArgumentException e){
 				Vm.debug(e.toString());
 			}
 			// reduce time at 1 second to avoid sync problems
@@ -391,6 +393,26 @@ public class OCXMLImporter extends MinML {
 
 		if (!ignoreDesc){
 			if (name.equals("cachedesc")){
+				String fetchUrl, imgTag, imgAltText;
+				imgAltText = new String ("No image title"); 
+				Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthält keine Anführungszeichen
+				Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
+				imgRegexAlt.setIgnoreCase(true);
+				imgRegexUrl.setIgnoreCase(true);
+				int descIndex=0;
+				while (imgRegexUrl.searchFrom(holder.LongDescription, descIndex)) { // "img" found
+					imgTag=imgRegexUrl.stringMatched(1); // (1) enthält das gesamte <img ...>-tag
+					fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anführungszeichen 
+					if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); } 
+					if (imgRegexAlt.search(imgTag)) {
+						imgAltText=imgRegexAlt.stringMatched(1);
+						if (imgAltText==null) {
+							imgAltText=imgRegexAlt.stringMatched(2)== null ? "No image title" : imgRegexAlt.stringMatched(2);
+						}
+					}
+					descIndex = imgRegexUrl.matchedTo();
+					getPic(fetchUrl, imgAltText);
+				}
 				CacheReaderWriter crw = new CacheReaderWriter();
 				crw.saveCacheDetails(holder,myPref.mydatadir);
 				return;
@@ -419,6 +441,28 @@ public class OCXMLImporter extends MinML {
 			}
 		}
 	}
+	
+	private void getPic(String fetchURL, String picDesc){
+		String fileName = holder.wayPoint + "_" + fetchURL.substring(fetchURL.lastIndexOf("/")+1);
+		// add title
+		holder.ImagesText.add(picDesc);
+		try {
+			File ftest = new File(myPref.mydatadir + fileName);
+			if (ftest.exists()){
+				holder.Images.add(fileName);
+			}
+			else {
+				if (myPref.downloadPicsOC) {
+					holder.Images.add(fetch(fetchURL, fileName));
+				}
+			}
+		} catch (IOException e) {
+			Vm.debug("Could not load Image " + fetchURL);
+			e.printStackTrace();
+		}
+
+	}
+	
 
 	private void endPicture(String name){
 
@@ -440,24 +484,9 @@ public class OCXMLImporter extends MinML {
 			holder = getHolder(strData);
 			return;
 		}
-		if(name.equals("picture")){
+		if(name.equals("picture")){ 
 			String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
-			// add title
-			holder.ImagesText.add(picTitle);
-			try {
-				File ftest = new File(myPref.mydatadir + fileName);
-				if (ftest.exists()){
-					holder.Images.add(fileName);
-				}
-				else {
-					if (myPref.downloadPicsOC) {
-						holder.Images.add(fetch(picUrl, fileName));
-					}
-				}
-			} catch (IOException e) {
-				Vm.debug("Could not load Image " + picUrl);
-				e.printStackTrace();
-			}
+			getPic(picUrl,picTitle);
 			CacheReaderWriter crw = new CacheReaderWriter();
 			crw.saveCacheDetails(holder,myPref.mydatadir);
 			return;
