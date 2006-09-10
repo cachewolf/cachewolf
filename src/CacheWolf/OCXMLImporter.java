@@ -135,7 +135,7 @@ public class OCXMLImporter extends MinML {
 			ZipEntry zipEnt;
 			Enumeration zipEnum = zif.entries();
 			// there could be more than one file in the archive
-			inf.setInfo("...importing data"); 
+			inf.setInfo("...unzipping update file"); 
 			while (zipEnum.hasMoreElements())
 			{
 				zipEnt = (ZipEntry) zipEnum.nextElement();
@@ -146,12 +146,12 @@ public class OCXMLImporter extends MinML {
 					r.close();
 				}
 			}
-			
+			zif.close();
 		}catch (ZipException e){
 			finalMessage=(String)lr.get(1614,"Error while unzipping udpate file");
 			success = false;
 		}catch (IOException e){
-			if (e.getMessage()=="Could not connect") { // is there a better way to find out what happened?
+			if (e.getMessage().equalsIgnoreCase("could not connect")) { // is there a better way to find out what happened?
 				finalMessage=(String)lr.get(1616,"Error: could not download udpate file from opencaching.de");
 			} else { finalMessage = "IOException: "+e.getMessage(); }
 			success = false;
@@ -185,7 +185,7 @@ public class OCXMLImporter extends MinML {
 			Time lastSync = new Time();
 			try {
 				lastSync.parse(atts.getValue("date"),"yyyy-MM-dd HH:mm:ss");
-			}catch (IllegalArgumentException e){
+			}catch (IllegalArgumentException e){ // TODO Fehler werfen
 				Vm.debug(e.toString());
 			}
 			// reduce time at 1 second to avoid sync problems
@@ -274,7 +274,7 @@ public class OCXMLImporter extends MinML {
 		}
 
 		if (name.equals("language") && !atts.getValue("id").equals("DE")){
-			if (holder.LongDescription.length()> 0) ignoreDesc = true;
+			if (holder.LongDescription.length()> 0) ignoreDesc = true; // TODO "DE" in preferences adjustable
 			else ignoreDesc = false;
 		}
 	}
@@ -393,25 +393,33 @@ public class OCXMLImporter extends MinML {
 
 		if (!ignoreDesc){
 			if (name.equals("cachedesc")){
-				String fetchUrl, imgTag, imgAltText;
-				imgAltText = new String ("No image title"); 
-				Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthält keine Anführungszeichen
-				Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
-				imgRegexAlt.setIgnoreCase(true);
-				imgRegexUrl.setIgnoreCase(true);
-				int descIndex=0;
-				while (imgRegexUrl.searchFrom(holder.LongDescription, descIndex)) { // "img" found
-					imgTag=imgRegexUrl.stringMatched(1); // (1) enthält das gesamte <img ...>-tag
-					fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anführungszeichen 
-					if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); } 
-					if (imgRegexAlt.search(imgTag)) {
-						imgAltText=imgRegexAlt.stringMatched(1);
-						if (imgAltText==null) {
-							imgAltText=imgRegexAlt.stringMatched(2)== null ? "No image title" : imgRegexAlt.stringMatched(2);
+				if (myPref.downloadPicsOC && holder.is_HTML) {
+					String fetchUrl, imgTag, imgAltText;
+					imgAltText = new String ("No image title"); 
+					Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthält keine Anführungszeichen
+					Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
+					imgRegexAlt.setIgnoreCase(true);
+					imgRegexUrl.setIgnoreCase(true);
+					int descIndex=0;
+					int numDownloaded=1;
+					while (imgRegexUrl.searchFrom(holder.LongDescription, descIndex)) { // "img" found
+						imgTag=imgRegexUrl.stringMatched(1); // (1) enthält das gesamte <img ...>-tag
+						fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anführungszeichen 
+						if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
+						if (fetchUrl==null) { 
+							(new MessageBox((String)lr.get(144, "Warning"),(String)lr.get(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.wayPoint), MessageBox.OKB)).exec();
+							continue;
 						}
+						inf.setInfo((String)lr.get(1611,"Importing cache description:")+" " + numDescImported + "\n"+(String)lr.get(1620, "downloading embedded images: ") + numDownloaded++);
+						if (imgRegexAlt.search(imgTag)) {
+							imgAltText=imgRegexAlt.stringMatched(1);
+							if (imgAltText==null) {
+								imgAltText=imgRegexAlt.stringMatched(2)== null ? "No image title" : imgRegexAlt.stringMatched(2);
+							}
+						}
+						descIndex = imgRegexUrl.matchedTo();
+						getPic(fetchUrl, imgAltText);
 					}
-					descIndex = imgRegexUrl.matchedTo();
-					getPic(fetchUrl, imgAltText);
 				}
 				CacheReaderWriter crw = new CacheReaderWriter();
 				crw.saveCacheDetails(holder,myPref.mydatadir);
@@ -457,6 +465,11 @@ public class OCXMLImporter extends MinML {
 				}
 			}
 		} catch (IOException e) {
+			String ErrMessage = new String ("Ignoring IOException: "+e.getMessage())+ "in cache: "+holder.wayPoint; 
+			if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect")) { // is there a better way to find out what happened?
+				ErrMessage=(String)lr.get(1618,"Ignoring error in cache ")+holder.wayPoint+(String)lr.get(1619,": could not download image from URL: ")+fetchURL;
+			} 
+			(new MessageBox((String)lr.get(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
 			Vm.debug("Could not load Image " + fetchURL);
 			e.printStackTrace();
 		}

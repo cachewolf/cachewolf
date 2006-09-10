@@ -101,10 +101,10 @@ public class MainMenu extends MenuBar {
 		dummy = dummy + "|";
 		dummy = dummy + "Import GPX";
 		dummy = dummy + "|";
-		dummy = dummy + "Sync OC";
+		dummy = dummy + "Download von opencaching.de";
 		ftest = new File(cwd + "/geotoad.exe");
 		dummy = dummy + "|";
-		dummy = dummy + "Spider";
+		dummy = dummy + "Spider von geocaching.com";
 		MenuItem [] items = mn.addItems(mString.split(dummy));
 		profiles = items[0]; preferences = items[1]; loadcaches = items[2];loadOC = items[3];spider=items[4];
 		mn.addItem(mn3);
