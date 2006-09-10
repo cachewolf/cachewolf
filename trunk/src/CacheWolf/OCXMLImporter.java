@@ -151,7 +151,8 @@ public class OCXMLImporter extends MinML {
 			finalMessage=(String)lr.get(1614,"Error while unzipping udpate file");
 			success = false;
 		}catch (IOException e){
-			if (e.getMessage().equalsIgnoreCase("could not connect")) { // is there a better way to find out what happened?
+			if (e.getMessage().equalsIgnoreCase("could not connect") ||
+					e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
 				finalMessage=(String)lr.get(1616,"Error: could not download udpate file from opencaching.de");
 			} else { finalMessage = "IOException: "+e.getMessage(); }
 			success = false;
@@ -395,7 +396,6 @@ public class OCXMLImporter extends MinML {
 			if (name.equals("cachedesc")){
 				if (myPref.downloadPicsOC && holder.is_HTML) {
 					String fetchUrl, imgTag, imgAltText;
-					imgAltText = new String ("No image title"); 
 					Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthält keine Anführungszeichen
 					Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
 					imgRegexAlt.setIgnoreCase(true);
@@ -406,16 +406,19 @@ public class OCXMLImporter extends MinML {
 						imgTag=imgRegexUrl.stringMatched(1); // (1) enthält das gesamte <img ...>-tag
 						fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anführungszeichen 
 						if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
-						if (fetchUrl==null) { 
+						if (fetchUrl==null) { // TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
 							(new MessageBox((String)lr.get(144, "Warning"),(String)lr.get(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.wayPoint), MessageBox.OKB)).exec();
 							continue;
 						}
 						inf.setInfo((String)lr.get(1611,"Importing cache description:")+" " + numDescImported + "\n"+(String)lr.get(1620, "downloading embedded images: ") + numDownloaded++);
 						if (imgRegexAlt.search(imgTag)) {
 							imgAltText=imgRegexAlt.stringMatched(1);
-							if (imgAltText==null) {
-								imgAltText=imgRegexAlt.stringMatched(2)== null ? "No image title" : imgRegexAlt.stringMatched(2);
-							}
+							if (imgAltText==null)	imgAltText=imgRegexAlt.stringMatched(2);
+							// kein alternativer Text als Bildüberschrift -> Dateiname
+						} else { 
+							if (fetchUrl.indexOf("opencaching.de") > 0 || fetchUrl.indexOf("geocaching.com") > 0) //wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend 
+								imgAltText = new String("No image title");
+							else imgAltText = fetchUrl.substring(fetchUrl.lastIndexOf("/")+1);
 						}
 						descIndex = imgRegexUrl.matchedTo();
 						getPic(fetchUrl, imgAltText);
@@ -425,8 +428,8 @@ public class OCXMLImporter extends MinML {
 				crw.saveCacheDetails(holder,myPref.mydatadir);
 				return;
 			}
-	
-	
+
+
 			if (name.equals("cacheid")){
 				// load cachedata
 				holder = getHolder(strData);
@@ -466,7 +469,8 @@ public class OCXMLImporter extends MinML {
 			}
 		} catch (IOException e) {
 			String ErrMessage = new String ("Ignoring IOException: "+e.getMessage())+ "in cache: "+holder.wayPoint; 
-			if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect")) { // is there a better way to find out what happened?
+			if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect") ||
+					e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
 				ErrMessage=(String)lr.get(1618,"Ignoring error in cache ")+holder.wayPoint+(String)lr.get(1619,": could not download image from URL: ")+fetchURL;
 			} 
 			(new MessageBox((String)lr.get(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
