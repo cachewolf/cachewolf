@@ -44,39 +44,49 @@ public class MapInfoObject{
 		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
 		if(testA == 4.5) digSep = new Character(','); else digSep = new Character('.');
 	}
-
+	/**
+	 * Method to load a .wfl-file
+	 * @throws IOException when there was a problem reading .wfl-file
+	 * @throws IOException when lat/lon were out of range
+	 */
 	public void loadwfl(String mapsPath, String thisMap) throws IOException {
 		FileReader in = new FileReader(mapsPath + thisMap + ".wfl");
 		String line = new String();
-		for(int i = 0; i<6;i++){
+		try {
+			for(int i = 0; i<6;i++){
+				line = in.readLine();
+				if (digSep == ',') {line = line.replace('.',','); } // digSep == ',' musss genau so lauten. digsep.equals(',') wirft eine Exception auf PocketPC, digsep.equals(",") wirft keine Exception, funktioniert aber nicht! 
+				else line = line.replace(',','.');
+				affine[i] = Convert.toDouble(line);
+			}
 			line = in.readLine();
-			if (digSep.equals(",")) {line = line.replace('.',','); }
+			if (digSep == ',') {line = line.replace('.',','); }
 			else line = line.replace(',','.');
-			affine[i] = Convert.toDouble(line);
-		}
-		line = in.readLine();
-		if (digSep.equals(",")) {line = line.replace('.',','); }
-		else line = line.replace(',','.');
-		lowlat = Convert.toDouble(line);
-		line = in.readLine();
-		if (digSep.equals(",")) {line = line.replace('.',','); }
-		else line = line.replace(',','.');
-		lowlon = Convert.toDouble(line);
+			lowlat = Convert.toDouble(line);
+			line = in.readLine();
+			if (digSep == ',') {line = line.replace('.',','); }
+			else line = line.replace(',','.');
+			lowlon = Convert.toDouble(line);
 
-		fileNameWFL = mapsPath + thisMap + ".wfl";
-		fileName = mapsPath + thisMap + ".png";
-		mapName = thisMap;
-		in.close();
-		if(affine[4] > 90 || affine[4] < -90 || affine[5] < -180 || affine[5] > 360 ||
-				lowlat > 90 || lowlat < -90 || lowlon > 360 || lowlon < -180 ) {
-			affine[0] = 0; affine[1] = 0; affine[2] = 0; affine[3] = 0; affine[4] = 0; affine[5] = 0;
-			lowlat = 0; lowlon = 0;
-			throw (new IOException("Lat/Lon out of range while reading "+mapsPath + thisMap + ".wfl"));
-		} 
+			fileNameWFL = mapsPath + thisMap + ".wfl";
+			fileName = mapsPath + thisMap + ".png";
+			mapName = thisMap;
+			in.close();
+			if(affine[4] > 90 || affine[4] < -90 || affine[5] < -180 || affine[5] > 360 ||
+					lowlat > 90 || lowlat < -90 || lowlon > 360 || lowlon < -180 ) {
+				affine[0] = 0; affine[1] = 0; affine[2] = 0; affine[3] = 0; affine[4] = 0; affine[5] = 0;
+				lowlat = 0; lowlon = 0;
+				throw (new IOException("Lat/Lon out of range while reading "+mapsPath + thisMap + ".wfl"));
+			}
+		} catch (NullPointerException e) { // in.readline liefert null zurück, wenn keine Daten mehr vorhanden sind
+			throw (new IOException("not enough lines in file "+mapsPath + thisMap + ".wfl"));
+		}
 	}
 
 	/**
 	*	Method to save a world file (.wfl)
+	* @throws IOException when there was a problem writing .wfl-file
+	* @throws IllegalArgumentException when affine[x] for all x == 0 ("map not calibrated").
 	*/
 	public void saveWFL(String mapsPath, String mapFileName) throws IOException, IllegalArgumentException {
 		if (affine[0]==0 && affine[1]==0 && affine[2]==0 && affine[3]==0 && 
@@ -90,7 +100,7 @@ public class MapInfoObject{
 		Convert.toString(affine[5])+"\n" +
 		Convert.toString(lowlat)+"\n" +
 		Convert.toString(lowlon)+"\n";
-		if (digSep.equals(",")) towrite=towrite.replace(',', '.');
+		if (digSep == ',') towrite=towrite.replace(',', '.');
 		outp.print(towrite);
 		outp.close();
 		this.fileName = mapsPath + "/" + mapFileName + ".png";

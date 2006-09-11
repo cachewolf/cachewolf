@@ -416,7 +416,7 @@ public class OCXMLImporter extends MinML {
 							if (imgAltText==null)	imgAltText=imgRegexAlt.stringMatched(2);
 							// kein alternativer Text als Bildüberschrift -> Dateiname
 						} else { 
-							if (fetchUrl.indexOf("opencaching.de") > 0 || fetchUrl.indexOf("geocaching.com") > 0) //wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend 
+							if (fetchUrl.toLowerCase().indexOf("opencaching.de") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0) //wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend 
 								imgAltText = new String("No image title");
 							else imgAltText = fetchUrl.substring(fetchUrl.lastIndexOf("/")+1);
 						}
