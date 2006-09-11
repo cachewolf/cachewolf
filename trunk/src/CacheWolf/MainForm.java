@@ -63,7 +63,6 @@ public class MainForm extends Form {
 			LoadAXML();
 			//updateBearingDistance();
 			TablePanel.updateBearingDistance(cacheDB,myPreferences);
-			Vm.showWait(false);
 		} catch (Exception e){
 			if(myPreferences.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}
@@ -84,6 +83,7 @@ public class MainForm extends Form {
 		//this.addLast(mMenu = new MainMenu(this, myPreferences, cacheDB),this.DONTSTRETCH, this.FILL);
 		//this.addLast(mTab = new MainTab(cacheDB, myPreferences),this.STRETCH, this.FILL); 
 		mMenu.setTablePanel(mTab.getTablePanel());
+		Vm.showWait(false);
 	}
 
 	
