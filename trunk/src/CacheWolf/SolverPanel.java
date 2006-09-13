@@ -39,6 +39,8 @@ public class SolverPanel extends CellPanel{
 				String src = new String();
 				src = mText.getText();
 				src = src + "\n";
+				if (myPreferences.digSeparator.equals(","))	src = src.replace('.', ',');
+				else src = src.replace(',', '.');
 				tk.setSource(src);
 				tk.TokenIt();
 				myP.setTockenStack(tk.getStack());
