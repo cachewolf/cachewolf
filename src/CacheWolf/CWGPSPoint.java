@@ -24,6 +24,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	double Speed; //Speed
 	double Bear;	//Bearing
 	String Time; //Time
+	String Date;
 	int Fix; //Fix
 	int numSat; //Satellites in use, -1 indicates no data
 	double HDOP; // Horizontal dilution of precision
@@ -43,6 +44,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		this.Speed = 0;
 		this.Bear = 0;
 		this.Time = "";
+		this.Date="";
 		this.Fix = 0;
 		this.numSat = 0;
 		this.Alt = 0;
@@ -248,6 +250,10 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 								break;
 						case 8: if (status.equals("A") && currToken.length()> 0){
 									this.Bear = Common.parseDouble(currToken);
+								}
+								break;
+						case 9: if (status.equals("A") && currToken.length()> 0){
+									this.Date = currToken;
 								}
 								break;
 					} // switch
