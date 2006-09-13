@@ -13,6 +13,8 @@ import ewe.sys.Double;
 
 
 
+
+
 /**
  * Thread for reading data from COM-port
  *
@@ -83,7 +85,7 @@ public class GotoPanel extends CellPanel {
 	int currFormat;
 	
 	mLabel lblPosition, lblSats, lblSpeed, lblBearMov, lblBearWayP, lblDist;
-	mLabel lblSatsText, lblSpeedText, lblDirText, lblDistText;
+	mLabel lblSatsText, lblSpeedText, lblDirText, lblDistText, lblSunAzimut;
 	mLabel lblGPS, lblDST, lblCurr, lblWayP;
 	mLabel lblLog;
 	mCheckBox chkLog;
@@ -211,6 +213,18 @@ public class GotoPanel extends CellPanel {
 		chkLog.useCross = true;
 		chkLog.setState(false);
 		
+		LogP.addLast(lblGPS = new mLabel("Sonne: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		lblGPS.backGround = YELLOW;
+		
+		LogP.addNext(lblSunAzimut = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
+		Double sunAzimut = new Double();
+		sunAzimut.set((getSunAzimut("060000","060806", 48.1, 11.6))); //wikipedia vergleich
+		//sunAzimut.set((getSunAzimut("121336.000","130906",50.744 , 7.0933)));
+		//sunAzimut.set((getSunAzimut("121436.000","130906",50.744 , 7.0933)));
+		lblSunAzimut.setText(l.format(Locale.FORMAT_PARSE_NUMBER,sunAzimut,"0.0") + " Grad");
+		lblSunAzimut.font = BOLD;
+
+		
 		//add Panels
 		this.addLast(ButtonP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(3,1));
 		this.addLast(FormatP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(4,1));
@@ -229,7 +243,7 @@ public class GotoPanel extends CellPanel {
 	 * @param destDir degrees of destination waypoint
 	 */
 	
-	private void drawArrows(Control ctrl,double moveDir, double destDir){
+	private void drawArrows(Control ctrl,double moveDir, double destDir, double sunAziumt){
 		Graphics g = ctrl.getGraphics();
 		
 		if (g != null) {
@@ -237,6 +251,7 @@ public class GotoPanel extends CellPanel {
 			//g.setColor(RED);
 			drawArrow(g, moveDir, RED);
 			drawArrow(g, destDir, BLUE);
+			drawArrow(g, sunAziumt, YELLOW);
 			g.free();
 		}
 
@@ -290,6 +305,7 @@ public class GotoPanel extends CellPanel {
 		Double bearWayP = new Double();
 		Double dist = new Double();
 		Double speed = new Double();
+		Double sunAzimut = new Double();
 
 		if (timerId == displayTimer) {
 			if(!runMovingMap){
@@ -301,6 +317,12 @@ public class GotoPanel extends CellPanel {
 					
 					speed.set(gpsPosition.getSpeed());
 					lblSpeed.setText(l.format(Locale.FORMAT_PARSE_NUMBER,speed,"0.0") + " km/h");
+					
+					sunAzimut.set(getSunAzimut(gpsPosition.Time, gpsPosition.Date, gpsPosition.latDec, gpsPosition.lonDec));
+					//sunAzimut.set(getSunAzimut("141303","130906", 50.744, 7.0935));
+					//lblSunAzimut.setText("utc:"+gpsPosition.Time+" datum: "+gpsPosition.Date+", lat: "+gpsPosition.latDec+", len: "+gpsPosition.lonDec);
+					lblSunAzimut.setText(l.format(Locale.FORMAT_PARSE_NUMBER,sunAzimut,"0.0") + " Grad");
+					
 	
 					bearMov.set(gpsPosition.getBear());
 					lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
@@ -318,7 +340,7 @@ public class GotoPanel extends CellPanel {
 						lblDist.setText(dist.toString(3,0,0) + " m");
 					}
 					
-					drawArrows(ic,bearMov.value,bearWayP.value);
+					drawArrows(ic,bearMov.value,bearWayP.value, sunAzimut.value);
 		
 					// Set background to signal quality
 					lblSats.backGround = GREEN;
@@ -364,6 +386,49 @@ public class GotoPanel extends CellPanel {
 
 	public void stopTheTimer(){
 		Vm.cancelTimer(displayTimer);
+	}
+	
+	
+	public double getSunAzimut (String utc, String datum, double lat, double lon) {
+	//	(new MessageBox("test", "utc:"+utc+" datum: "+datum+", lat: "+lat+", len: "+lon, MessageBox.OKB)).exec();
+		int tag, monat, jahr, stunde, minute, sekunde;
+		tag = Convert.parseInt(datum.substring(0, 2));
+		monat = Convert.parseInt(datum.substring(2, 4));
+		jahr = Convert.parseInt(datum.substring(4, 6)) + 2000;
+		stunde=Convert.parseInt(utc.substring(0, 2));
+		minute=Convert.parseInt(utc.substring(2, 4));
+		sekunde=Convert.parseInt(utc.substring(4, 6)); // Kommastellen werden abgeschnitten
+		// julianisches "Datum" jd berechnen (see http://de.wikipedia.org/wiki/Julianisches_Datum )
+		if (monat<2) {jahr--; monat+=12;} // verlegung des Jahres Endes auf Feb macht Berechnung von SChaltjahren einfacher
+		double a = (int)java.lang.Math.floor((double)jahr/100.); // Alle hundert Jahre kein Schlatjahr (abrunden)
+		double b = 2 - a + java.lang.Math.floor((double)a/4.);
+		double jd = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*((double)monat+1.)) + (double)tag + (double)stunde/24 + (double)minute/1440 + (double)sekunde/86400 + b - 1524.5;
+		double jd0 = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*((double)monat+1.)) +(double)tag + b - 1524.5;
+		// Ekliptikalkoordinaten der Sonne berechnen (see http://de.wikipedia.org/wiki/Sonnenstand )
+		double n = jd - 2451545.0;
+		double l = 280.46 + 0.9856474 * n;
+		double g = 357.528 + 0.9856003 * n;
+		double d = l + 1.915*java.lang.Math.sin(g/180*java.lang.Math.PI) + 0.02 * java.lang.Math.sin(2*g/180*java.lang.Math.PI);
+		// Rektaszension alpha und Deklination delta der Sonne berechnen
+		double e = 23.439 -0.0000004 * n;
+		double alphaNenner = java.lang.Math.cos(d/180*java.lang.Math.PI);
+		double alpha = 180/java.lang.Math.PI*java.lang.Math.atan(java.lang.Math.cos(e/180*java.lang.Math.PI)*java.lang.Math.sin(d/180*java.lang.Math.PI)/alphaNenner);
+		double delta = 180/java.lang.Math.PI*java.lang.Math.asin(java.lang.Math.sin(e/180*java.lang.Math.PI)*java.lang.Math.sin(d/180*java.lang.Math.PI) );
+		if (alphaNenner<0) {alpha +=180;}
+		// Azimut
+		double t0 = (jd0 - 2451545.)/36525.; // schon in t0 bzw jd0 richtig berechnet?
+		double thetaHG = 6.697376 + 2400.05134 * t0 + 1.002738 * ((double)stunde + (double)minute/60.);
+		double theta = thetaHG * 15. + lon;
+		double azimutNenner = java.lang.Math.cos((theta-alpha)/180*java.lang.Math.PI)*java.lang.Math.sin(lat/180*java.lang.Math.PI)-
+		java.lang.Math.tan(delta/180*java.lang.Math.PI)*java.lang.Math.cos(lat/180*java.lang.Math.PI);
+		double azimut = java.lang.Math.atan(java.lang.Math.sin((theta-alpha)/180*java.lang.Math.PI)/
+				azimutNenner);
+		azimut = azimut * 180. / java.lang.Math.PI;
+		if (azimutNenner<0) azimut +=180.;
+		// null = Sueden auf Null = Norden umrechnen
+		azimut +=180.;
+		if (azimut >360.) azimut -=360.;
+		return azimut;
 	}
 	
 	/**
