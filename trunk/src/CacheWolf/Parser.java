@@ -509,6 +509,26 @@ public class Parser{
 			if(runFlag) match(")");
 			////Vm.debug("!" + ")");
 		}
+
+		if(thisToken.token.equals("crosstotal") && foundFactor == false){
+			foundFactor = true;
+			if(runFlag) match("(");
+			parseExpr();
+			double a;
+			a = ((java.lang.Double)CalcStack.get(CalcStack.size()-1)).doubleValue();
+			CalcStack.removeElementAt(CalcStack.size()-1);
+			// Cross total = Quersumme berechnen
+			String aString = Convert.toString(a); // 
+			// bei 1.8e2 nur 1.8 verwenden 
+			if (aString.toLowerCase().indexOf("e") > 0) aString = aString.substring(0, aString.toLowerCase().indexOf("e"));
+			a=0;
+			for (int i=0; i<aString.length(); i++) {
+			 a += Convert.toDouble(Convert.toString(aString.charAt(i)));	
+			}
+			CalcStack.add(new java.lang.Double(a));
+			if(runFlag) match(")");
+			////Vm.debug("!" + ")");
+		}
 		
 		if(thisToken.token.equals("(") && foundFactor == false){
 			foundFactor = true;
