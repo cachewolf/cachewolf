@@ -51,7 +51,7 @@ public class Tokenizer{
 		String t = new String();
 		t = t + c;
 		t = t.toUpperCase();
-		if("0123456789.".indexOf(t) != -1) return true;
+		if("0123456789.,".indexOf(t) != -1) return true;
 		else return false;
 	}
 	
