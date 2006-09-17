@@ -44,6 +44,15 @@ public class myTableControl extends TableControl{
 			}
 			tbp.refreshTable();
 		}
+		if (selectedItem.toString().equals("Goto")){
+//			Point a = new Point();
+	//		a = this.getSelectedCell(a);
+		//	if(!(a == null)) ch = (CacheHolder)tbp.cacheDB.get(a.y);
+			ch = (CacheHolder)tbp.cacheDB.get(tbp.getSelectedCache());
+			
+			tbp.myGotoPanel.setDestination((ch.LatLon));
+//this.getSelectedCell(((Menu)selectedItem).curPoint)..LatLon
+		}
 	}
 	
 	public void  penDoubleClicked(Point where) {
