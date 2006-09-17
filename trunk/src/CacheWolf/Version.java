@@ -9,9 +9,10 @@ public class Version {
 	static final String VER_MAJOR = "0.9";
 	static final String VER_MINOR = " m";
 	static final String VER_BUILD = " RC6";
+	static final String Ver_SVN ="/$LastChangedRevision$";
 	
 	public static String getRelease() {
-		return VER_MAJOR + VER_MINOR + VER_BUILD;
+		return VER_MAJOR + VER_MINOR + VER_BUILD + Ver_SVN;
 	}
 	
 	public boolean newVersionAvailable(Preferences pref){
