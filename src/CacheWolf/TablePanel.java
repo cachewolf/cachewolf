@@ -18,6 +18,7 @@ public class TablePanel extends CellPanel{
 	Locale l = Vm.getLocale();
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	Vector cacheDB;
+	GotoPanel myGotoPanel;
 	
 	public TablePanel(Vector DB, Preferences pref){
 		cacheDB = DB;
@@ -43,7 +44,7 @@ public class TablePanel extends CellPanel{
 		}
 		
 		addLast(new ScrollBarPanel(tc = new myTableControl()));
-		Menu m = new Menu(new String[]{"Filter","Delete"},"With selected");
+		Menu m = new Menu(new String[]{"Goto","Filter","Delete"},"With selected");
 		tc.setMenu(m);
 		tc.db = cacheDB;
 		tc.pref = pref;
@@ -52,6 +53,10 @@ public class TablePanel extends CellPanel{
 		myMod.hasRowHeaders = false;
 		myMod.hasColumnHeaders  = true;
 		tc.setTableModel(myMod);
+	}
+	
+	public void setGotoPanel(GotoPanel gp) {
+		myGotoPanel = gp;
 	}
 	
 	public int getSelectedCache(){

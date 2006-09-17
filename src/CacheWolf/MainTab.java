@@ -55,7 +55,7 @@ public class MainTab extends mTabbedPanel {
 		
 		c = this.addCard(gotoP = new GotoPanel(myPreferences, this, detP, cDB), "Goto", null);
 		//c.iconize(new Image("ewe/HandHeld.bmp"),true);
-		
+		tbP.setGotoPanel(gotoP);
 		c = this.addCard(new SolverPanel(myPreferences), (String)lr.get(1205,"Solver"), null);
 		c.iconize(new Image("solver.gif"),true);
 		
