@@ -30,7 +30,8 @@ public class MapInfoObject{
 	public String fileNameWFL = new String();
 	public String fileName = new String();
 	public String mapName = new String();
-	private Character digSep = new Character(' ');
+	//private Character digSep = new Character(' ');
+	private String digSep = new String();
 /*
  * loads an .wfl file
  * throws FileNotFoundException and IOException (data out of range)
@@ -42,7 +43,7 @@ public class MapInfoObject{
 	public MapInfoObject() {
 		super();
 		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
-		if(testA == 4.5) digSep = new Character(','); else digSep = new Character('.');
+		if(testA == 4.5) digSep = ","; else digSep = ".";
 	}
 	/**
 	 * Method to load a .wfl-file
@@ -55,16 +56,16 @@ public class MapInfoObject{
 		try {
 			for(int i = 0; i<6;i++){
 				line = in.readLine();
-				if (digSep == ',') {line = line.replace('.',','); } // digSep == ',' musss genau so lauten. digsep.equals(',') wirft eine Exception auf PocketPC, digsep.equals(",") wirft keine Exception, funktioniert aber nicht! 
+				if (digSep.equals(",")) {line = line.replace('.',','); } // digSep == ',' musss genau so lauten. digsep.equals(',') wirft eine Exception auf PocketPC, digsep.equals(",") wirft keine Exception, funktioniert aber nicht! 
 				else line = line.replace(',','.');
 				affine[i] = Convert.toDouble(line);
 			}
 			line = in.readLine();
-			if (digSep == ',') {line = line.replace('.',','); }
+			if (digSep.equals(",")) {line = line.replace('.',','); }
 			else line = line.replace(',','.');
 			lowlat = Convert.toDouble(line);
 			line = in.readLine();
-			if (digSep == ',') {line = line.replace('.',','); }
+			if (digSep.equals(",")) {line = line.replace('.',','); }
 			else line = line.replace(',','.');
 			lowlon = Convert.toDouble(line);
 
@@ -100,7 +101,7 @@ public class MapInfoObject{
 		Convert.toString(affine[5])+"\n" +
 		Convert.toString(lowlat)+"\n" +
 		Convert.toString(lowlon)+"\n";
-		if (digSep == ',') towrite=towrite.replace(',', '.');
+		if (digSep.equals(",")) towrite=towrite.replace(',', '.');
 		outp.print(towrite);
 		outp.close();
 		this.fileName = mapsPath + "/" + mapFileName + ".png";
