@@ -168,7 +168,7 @@ public class SpiderGC{
 			wpt = (String)cachesToLoad.get(i);
 			// Get only caches not already available in the DB
 			if(searchWpt(wpt) == -1){
-				infB.setInfo("Loading: " + wpt +"(" + i + " / " + cachesToLoad.size() + ")");
+				infB.setInfo("Loading: " + wpt +"(" + (i+1) + " / " + cachesToLoad.size() + ")");
 				doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wpt +"&log=y";
 				try{
 					start = fetch(doc);
@@ -216,6 +216,7 @@ public class SpiderGC{
 				Vm.debug("Type: " + ch.type);
 				getImages(start, ch);
 				
+				getMaps(ch);
 				crw.saveCacheDetails(ch, pref.mydatadir);
 				
 				cacheDB.add(ch);
@@ -241,6 +242,17 @@ public class SpiderGC{
 			return INTR.intValue();
 		} else return -1;
 	}
+	
+	public void getMaps(CacheHolder holder){
+		if(holder.LatLon.length() > 1){
+			ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
+			pll.parse();
+			MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
+			mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
+			mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
+		}
+	}
+	
 	public void getImages(String doc, CacheHolder ch){
 		int imgCounter = 0;
 		String imgName = new String();
@@ -249,38 +261,50 @@ public class SpiderGC{
 		//In the long description
 		String longDesc = new String();
 		longDesc = getLongDesc(doc);
-		Regex rex = new Regex("(?i)<img((?s).*?)src=\"((?s).*?)\"");
-		rex.search(longDesc);
-		while(rex.didMatch()){
-			imgUrl = rex.stringMatched(2);
-			imgType = imgUrl.substring(imgUrl.lastIndexOf("."), imgUrl.lastIndexOf(".")+4);
-			imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
-			spiderImage(imgUrl, imgName+"."+imgType);
-			imgCounter++;
-			ch.Images.add(imgName+"."+imgType);
-			ch.ImagesText.add(imgName);
-			//replace img src in description!
-			rex.searchFrom(longDesc, rex.matchedTo());
-		}
-		//In the image span
-		Regex imgSpan = new Regex("<span id=\"Images\"((?s).*?)</span>");
-		imgSpan.search(doc);
-		longDesc = imgSpan.stringMatched(1);
-		//Vm.debug("Image Span: " + longDesc);
-		if(longDesc.length()>0){
-			rex = new Regex("&nbsp;<A HREF='((?s).*?)' target='_blank' style='text-decoration: underline;'>((?s).*?)</A><br>");
-			rex.search(longDesc);
-			while(rex.didMatch()){
-				//Vm.debug("Got an image match!" + rex.stringMatched(1));
-				imgUrl = rex.stringMatched(1);
+		longDesc = STRreplace.replace(longDesc, "img", "IMG");
+		longDesc = STRreplace.replace(longDesc, "src", "SRC");
+		//longDesc = STRreplace.replace(longDesc, "SRC =", "SRC=");
+		//longDesc = STRreplace.replace(longDesc, "SRC= \"", "SRC=\"");
+		//longDesc = STRreplace.replace(longDesc, "\n", " ");
+		//longDesc = STRreplace.replace(longDesc, " ", "");
+		Extractor exImgBlock = new Extractor(longDesc, "<IMG", ">", 0, false);
+		//Vm.debug("In getImages: Have longDesc" + longDesc);
+		String tst = new String();
+		tst = exImgBlock.findNext();
+		Vm.debug("Test: \n" + tst);
+		Extractor exImgSrc = new Extractor(tst, "http://", "\"", 0, true);
+		while(exImgBlock.endOfSearch() == false){
+			imgUrl = exImgSrc.findNext();
+			Vm.debug("Img Url: " +imgUrl);
+			imgUrl = "http://" + imgUrl;
+			if(imgUrl.length()>0){
 				imgType = imgUrl.substring(imgUrl.lastIndexOf("."), imgUrl.lastIndexOf(".")+4);
 				imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
-				spiderImage(imgUrl, imgName+imgType);
+				spiderImage(imgUrl, imgName+"."+imgType);
 				imgCounter++;
-				ch.Images.add(imgName+imgType);
-				ch.ImagesText.add(rex.stringMatched(2));
-				//replace img src in description!
-				rex.searchFrom(longDesc, rex.matchedTo());
+				ch.Images.add(imgName+"."+imgType);
+				ch.ImagesText.add(imgName);
+			}
+			exImgSrc.setSource(exImgBlock.findNext());
+		}
+				
+		//In the image span
+		
+		Extractor spanBlock = new Extractor(doc, "<span id=\"Images\"", "</span>", 0 , true);
+		tst = spanBlock.findNext();
+		Extractor exImgName = new Extractor(tst, "style='text-decoration: underline;'>", "</A><br>", 0 , true);
+		exImgSrc = new Extractor(tst, "&nbsp;<A HREF='http://", "' target=", 0, true);
+		while(exImgSrc.endOfSearch() == false){
+			imgUrl = exImgSrc.findNext();
+			Vm.debug("Img Url: " +imgUrl);
+			if(imgUrl.length()>0){
+				imgUrl = "http://" + imgUrl;
+				imgType = imgUrl.substring(imgUrl.lastIndexOf("."), imgUrl.lastIndexOf(".")+4);
+				imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
+				spiderImage(imgUrl, imgName+"."+imgType);
+				imgCounter++;
+				ch.Images.add(imgName+"."+imgType);
+				ch.ImagesText.add(exImgName.findNext());
 			}
 		}
 	}
@@ -413,6 +437,7 @@ public class SpiderGC{
 		block.search(doc);
 		doc = block.stringMatched(1);
 		//Vm.debug("Log Block: " + doc);
+		/*
 		Vm.debug("Setting log regex");
 		inRex = new Regex("<STRONG><IMG SRC='http://www.geocaching.com/images/icons/((?s).*?)'((?s).*?)&nbsp;((?s).*?)<A NAME=\"((?s).*?)'text-decoration: underline;'>((?s).*?)<A HREF=\"((?s).*?)'text-decoration: underline;'>((?s).*?)</A></strong>((?s).*?)\\[<A href=");
 		inRex.optimize();
@@ -423,6 +448,36 @@ public class SpiderGC{
 			//<img src='icon_smile.gif'>&nbsp;
 			reslts.add("<img src='"+ inRex.stringMatched(1) +"'>&nbsp;" + inRex.stringMatched(3)+ inRex.stringMatched(7)+ inRex.stringMatched(8));
 			inRex.searchFrom(doc, inRex.matchedTo());
+		}
+		*/
+		String singleLog = new String();
+		Extractor exSingleLog = new Extractor(doc, "<STRONG>", "[<A href=", 0, false);
+		singleLog = exSingleLog.findNext();
+		Extractor exIcon = new Extractor(singleLog, "http://www.geocaching.com/images/icons/", "' align='abs", 0, true);
+		Extractor exNameTemp = new Extractor(singleLog, "<A HREF=\"", "/A>", 0 , true);
+		String nameTemp = new String();
+		nameTemp = exNameTemp.findNext();
+		Extractor exName = new Extractor(nameTemp, ">", "<", 0 , true);
+		Extractor exDate = new Extractor(singleLog, "align='absmiddle'>&nbsp;", " by <", 0 , true);
+		Extractor exLog = new Extractor(singleLog, "found)", "<br>[", 0, true);
+		//Vm.debug("Log Block: " + singleLog);
+		while(exSingleLog.endOfSearch() == false){
+			//Vm.debug("--------------------------------------------");
+			//Vm.debug("Log Block: " + singleLog);
+			//Vm.debug("Icon: "+exIcon.findNext());
+			//Vm.debug(exName.findNext());
+			//Vm.debug(exDate.findNext());
+			//Vm.debug(exLog.findNext());
+			//Vm.debug("--------------------------------------------");
+			reslts.add("<img src='"+ exIcon.findNext() +"'>&nbsp;" + exDate.findNext()+ " " + exName.findNext()+ exLog.findNext());
+			
+			singleLog = exSingleLog.findNext();
+			exIcon.setSource(singleLog);
+			exNameTemp.setSource(singleLog);
+			nameTemp = exNameTemp.findNext();
+			exName.setSource(nameTemp);
+			exDate.setSource(singleLog);
+			exLog.setSource(singleLog);
 		}
 		return reslts;
 	}

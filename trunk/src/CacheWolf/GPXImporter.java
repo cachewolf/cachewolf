@@ -5,11 +5,8 @@ import ewesoft.xml.sax.*;
 import ewe.io.*;
 import ewe.sys.*;
 import ewe.sys.Double;
-import ewe.ui.*;
 import ewe.util.*;
-import ewe.data.PropertyList;
 import ewe.net.*;
-import java.lang.Integer.*;
 import ewe.util.zip.*;
 
 /**
