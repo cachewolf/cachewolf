@@ -1,6 +1,5 @@
 package CacheWolf;
 
-import ewe.util.*;
 import ewe.sys.*;
 
 /**
@@ -22,16 +21,28 @@ public class Extractor  {
 		*	st = The string that denotes the start of the string to extract<br>
 		*	e = The string that denotes the end of the string to extract<br>
 		*	sOff = The beginning offset from which to start the search in sTxt<br>
-		*	only = if true the string returned will inlcude st and e; if false
+		*	only = if false the string returned will inlcude st and e; if true
 		*	it will not include st and e.
 		*
 		*/
 		public Extractor(String sTxt, String st, String e, int sOff, boolean only){
 			startOffset = sOff;
 			searchText = sTxt;
+			//Vm.debug("Start " + st);
 			end = e;
+			//Vm.debug("End: " + e);
 			start = st;
 			betweenonly = only;
+		}
+		
+		/**
+		 * Mehtod to set the source text to be searched through
+		 * 
+		 */
+		public void setSource(String sTxt){
+			searchText = sTxt;
+			//Vm.debug("Searchtext: " + searchText);
+			startOffset = 0;
 		}
 		
 		/**
