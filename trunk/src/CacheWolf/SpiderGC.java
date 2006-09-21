@@ -116,7 +116,7 @@ public class SpiderGC{
 		while(distance > 0){
 			rex.search(start);
 			viewstate = rex.stringMatched(1);
-			Vm.debug("In loop");
+			//Vm.debug("In loop");
 			dummy = getListBlock(start);
 			/*
 			try{
@@ -129,7 +129,7 @@ public class SpiderGC{
 			*/
 			rexLine.search(dummy);
 			while(rexLine.didMatch()){
-				Vm.debug(getDist(rexLine.stringMatched(1)) + " / " +getWP(rexLine.stringMatched(1)));
+				//Vm.debug(getDist(rexLine.stringMatched(1)) + " / " +getWP(rexLine.stringMatched(1)));
 				found_on_page++;
 				if(getDist(rexLine.stringMatched(1)) <= distance){
 					if(indexDB.get((String)getWP(rexLine.stringMatched(1))) == null){
@@ -155,7 +155,7 @@ public class SpiderGC{
 					Vm.debug("Couldn't get the next page");
 				}
 			}
-			Vm.debug("Distance is now: " + distance);
+			//Vm.debug("Distance is now: " + distance);
 			found_on_page = 0;
 		}
 		infB.setInfo("Found " + cachesToLoad.size() + " caches");
@@ -178,42 +178,42 @@ public class SpiderGC{
 				ch.is_new = true;
 				ch.is_HTML = true;
 				ch.wayPoint = wpt;
-				Vm.debug(ch.wayPoint);
+				//Vm.debug(ch.wayPoint);
 				
 				ch.CacheLogs = getLogs(start);
 				
 				ch.LatLon = getLatLon(start);
-				Vm.debug("LatLon: " + ch.LatLon);
+				//Vm.debug("LatLon: " + ch.LatLon);
 				
 				ch.LongDescription = getLongDesc(start);
 				
 				ch.CacheName = getName(start);
-				Vm.debug("Name: " + ch.CacheName);
+				//Vm.debug("Name: " + ch.CacheName);
 				
 				ch.CacheOwner = getOwner(start);
 				
-				Vm.debug("Owner: " + ch.CacheOwner);
+				//Vm.debug("Owner: " + ch.CacheOwner);
 				ch.DateHidden = getDateHidden(start);
 				
-				Vm.debug("Hidden: " + ch.DateHidden);
+				//Vm.debug("Hidden: " + ch.DateHidden);
 				ch.Hints = getHints(start);
 				
-				Vm.debug("Hints: " + ch.Hints);
+				//Vm.debug("Hints: " + ch.Hints);
 				
 				
-				Vm.debug("Got the hints");
+				//Vm.debug("Got the hints");
 				ch.CacheSize = getSize(start);
 				
-				Vm.debug("Size: " + ch.CacheSize);
+				//Vm.debug("Size: " + ch.CacheSize);
 				ch.hard = getDiff(start);
 				
-				Vm.debug("Hard: " + ch.hard);
+				//Vm.debug("Hard: " + ch.hard);
 				ch.terrain = getTerr(start);
 				
-				Vm.debug("Terr: " + ch.terrain);
+				//Vm.debug("Terr: " + ch.terrain);
 				ch.type = getType(start);
 				
-				Vm.debug("Type: " + ch.type);
+				//Vm.debug("Type: " + ch.type);
 				getImages(start, ch);
 				
 				getMaps(ch);
@@ -271,11 +271,11 @@ public class SpiderGC{
 		//Vm.debug("In getImages: Have longDesc" + longDesc);
 		String tst = new String();
 		tst = exImgBlock.findNext();
-		Vm.debug("Test: \n" + tst);
+		//Vm.debug("Test: \n" + tst);
 		Extractor exImgSrc = new Extractor(tst, "http://", "\"", 0, true);
 		while(exImgBlock.endOfSearch() == false){
 			imgUrl = exImgSrc.findNext();
-			Vm.debug("Img Url: " +imgUrl);
+			//Vm.debug("Img Url: " +imgUrl);
 			imgUrl = "http://" + imgUrl;
 			if(imgUrl.length()>0){
 				imgType = imgUrl.substring(imgUrl.lastIndexOf("."), imgUrl.lastIndexOf(".")+4);
