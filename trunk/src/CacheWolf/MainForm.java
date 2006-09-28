@@ -46,7 +46,7 @@ public class MainForm extends Form {
 		this.resizable = true;
 		this.moveable = true;
 		if(Vm.isMobile() == true) this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
-		
+		else this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
 		// Load CacheList
 		try{
