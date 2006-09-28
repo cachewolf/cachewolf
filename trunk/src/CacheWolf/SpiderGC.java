@@ -187,7 +187,7 @@ public class SpiderGC{
 				
 				ch.LongDescription = getLongDesc(start);
 				
-				ch.CacheName = getName(start);
+				ch.CacheName = SafeXML.cleanback(getName(start));
 				//Vm.debug("Name: " + ch.CacheName);
 				
 				ch.CacheOwner = getOwner(start);
@@ -451,7 +451,7 @@ public class SpiderGC{
 		}
 		*/
 		String singleLog = new String();
-		Extractor exSingleLog = new Extractor(doc, "<STRONG>", "[<A href=", 0, false);
+		Extractor exSingleLog = new Extractor(doc, "<STRONG>", "[<A href=", 0, false); // maybe here is some change neccessary because findnext now gives the whole endstring back??? 
 		singleLog = exSingleLog.findNext();
 		Extractor exIcon = new Extractor(singleLog, "http://www.geocaching.com/images/icons/", "' align='abs", 0, true);
 		Extractor exNameTemp = new Extractor(singleLog, "<A HREF=\"", "/A>", 0 , true);
