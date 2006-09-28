@@ -62,12 +62,13 @@ public class Extractor  {
 			int idxStart = searchText.indexOf(start,startOffset);
 			int idxEnd = searchText.indexOf(end, idxStart+start.length());
 			////Vm.debug("Start: " + Convert.toString(idxStart) + " End: " + Convert.toString(idxEnd));
-			if(idxEnd == -1) idxEnd = searchText.length();
+			if(idxEnd == -1) idxEnd = searchText.length()-1; //index counts from zero length from 1
 			startOffset = idxEnd;
 			tst = new String();
 			if(idxStart > -1){
 				if(betweenonly == false){
-					tst = searchText.substring(idxStart,idxEnd+1);
+					if (idxEnd+end.length() >= searchText.length()) tst = searchText.substring(idxStart);
+					else tst = searchText.substring(idxStart,idxEnd+end.length());
 				}else{ 
 					tst = searchText.substring(idxStart+start.length(),idxEnd);
 				}
