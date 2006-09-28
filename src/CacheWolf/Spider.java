@@ -549,7 +549,7 @@ public class Spider extends TaskObject{
 						dummy2 = tempEx2.findNext();
 						dummy2 = dummy2.substring(0, dummy2.length()-1);
 						ch.LogImagesText.add(dummy2);
-						dummy = replace(dummy, imgLoc+"/A>", " [[ "+dummy2+" ]] ");
+						dummy = replace(dummy, imgLoc, " [[ "+dummy2+" ]] ");
 						imgLoc = tempEx.findNext();
 					}
 					//repoint log icons
