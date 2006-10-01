@@ -26,7 +26,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	String Time; //Time
 	String Date;
 	int Fix; //Fix
-	int numSat; //Satellites in use, -1 indicates no data
+	int numSat; //Satellites in use, -1 indicates no data, -2 that data could not be interpreted
 	double HDOP; // Horizontal dilution of precision
 	double Alt; //Altitude
 	
@@ -36,6 +36,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	boolean writeLog = false;
 	boolean doLogging = false;
 	FileWriter logFile;
+	String lastStrExamined = new String();
 	
 	
 	public CWGPSPoint()
@@ -68,12 +69,27 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	}
 	
 	/**
-	 * this method should be called, if no more data is received
-	 *
+	 * this method should be called, if COM-Port is closed
 	 */
 	public void noData(){
-		this.Fix = -1;
+		this.Fix = 0;
 		this.numSat = 0;
+	}
+	
+	/**
+	 * this method should be called, if not data is coming from COM-Port but is expected to come
+	 */
+	public void noDataError(){
+		this.Fix = -1;
+		this.numSat = -1;
+	}
+	
+	/**
+	 * this method should be called, if examine returns for several calls that it couldn't interprete the data
+	 */
+	public void noInterpretableData(){
+		this.Fix = -2;
+		this.numSat = -2;
 	}
 	
 	public void ticked(int timerId, int elapsed){
@@ -141,15 +157,18 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	/**
 	 * 
 	 * @param NMEA	string with data to examine
+	 * @return true if some data could be interpreted false otherwise
 	 */
-	public void examine(String NMEA){
+	public boolean examine(String NMEA){ 
 		int i, start, end;
 		String latDeg="0", latMin="0", latNS="N"; 
 		String lonDeg="0", lonMin="0", lonEW="E";
 		String currToken;
 		end = 0;
+		boolean interpreted = false;
+		lastStrExamined = NMEA;
 		//Vm.debug(NMEA);
-		if (writeLog && (logFlag & LOGRAW) > 0){
+		if (writeLog && (logFlag & LOGRAW) > 0){ 
 			try {
 				logFile.write(NMEA);
 				writeLog = false;
@@ -157,9 +176,9 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		}
 		while(true){
 			start = NMEA.indexOf("$GP", end);  
-			if (start == -1) return;  
+			if (start == -1) return interpreted;  
 			end = NMEA.indexOf("*", start);  
-			if ((end == -1)||(end+3 >= NMEA.length())) return;  
+			if ((end == -1)||(end+3 > NMEA.length())) return interpreted;  
 
 			
 			//Vm.debug(NMEA.substring(start,end+3));
@@ -178,25 +197,25 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					if (currToken.length()==0) continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
 					switch (i){
 						case 1: this.Time = currToken; break;
-						case 2: try {latDeg = currToken.substring(0,2); } catch (IndexOutOfBoundsException e) {}
-								try {latMin = currToken.substring(2,currToken.length()); } catch (IndexOutOfBoundsException e) {}
+						case 2: try {latDeg = currToken.substring(0,2); interpreted = true;} catch (IndexOutOfBoundsException e) {}
+								try {latMin = currToken.substring(2,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {}
 								break;
 						case 3: latNS = currToken;
 								break;
 								
-						case 4: try {lonDeg = currToken.substring(0,3); } catch (IndexOutOfBoundsException e) {}
-								try {lonMin = currToken.substring(3,currToken.length()); } catch (IndexOutOfBoundsException e) {}
+						case 4: try {lonDeg = currToken.substring(0,3); interpreted = true;} catch (IndexOutOfBoundsException e) {}
+								try {lonMin = currToken.substring(3,currToken.length()); interpreted = true; } catch (IndexOutOfBoundsException e) {}
 								break;
 						case 5: lonEW = currToken;
 								break;
-						case 6: this.Fix = Convert.toInt(currToken); break;
-						case 7: this.numSat = Convert.toInt(currToken); break;
-						case 8: try {this.HDOP = Common.parseDouble(currToken); } catch (NumberFormatException e) {} break;
-						case 9: try {this.Alt = Common.parseDouble(currToken);  } catch (NumberFormatException e) {} break;
+						case 6: this.Fix = Convert.toInt(currToken); interpreted = true; break;
+						case 7: this.numSat = Convert.toInt(currToken); interpreted = true; break;
+						case 8: try {this.HDOP = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {} break;
+						case 9: try {this.Alt = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {} break;
 					} // switch
 				} // while
-				this.set(latNS, latDeg, latMin, "0",
-						 lonEW, lonDeg, lonMin, "0", CWPoint.DMM);
+				this.set(latNS, latDeg, latMin, "0", lonEW, lonDeg, lonMin, "0", CWPoint.DMM);
+								
 			} // if
 		
 			if (currToken.equals("$GPVTG")){
@@ -206,10 +225,10 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					i++;
 					if (currToken.length()==0) continue;
 					switch (i){
-						case 1: try { this.Bear =Common.parseDouble(currToken); } catch (NumberFormatException e) {}
+						case 1: try { this.Bear =Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {}
 								if (this.Bear > 360) Vm.debug("Error bear VTG");
 								break;
-						case 7: try { this.Speed = Common.parseDouble(currToken); } catch (NumberFormatException e) {} 
+						case 7: try { this.Speed = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {} 
 								break;
 					} // switch
 				} // while
@@ -226,34 +245,39 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					//Vm.debug("zz: " + i);
 					//Vm.debug(currToken);
 					switch (i){
-						case 1: this.Time = currToken; break;
-						case 2: status = currToken;
+						case 1: this.Time = currToken; interpreted = true; break;
+						case 2: status = currToken; 
 								if (status.equals("A")) this.Fix = 1;
 								else this.Fix = 0;
+								interpreted = true;
 								break;
 						case 3: 	//Vm.debug("Here--->");
-								try {latDeg = currToken.substring(0,2); } catch (IndexOutOfBoundsException e) {}
+								try {latDeg = currToken.substring(0,2); interpreted = true;} catch (IndexOutOfBoundsException e) {}
 								//Vm.debug(":" + latDeg);
-								try {latMin = currToken.substring(2,currToken.length()); } catch (IndexOutOfBoundsException e) {}
+								try {latMin = currToken.substring(2,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {}
 								//Vm.debug(":" + latMin);
 								break;
-						case 4: latNS = currToken;
+						case 4: latNS = currToken; interpreted = true;
 								break;
-						case 5: try {lonDeg = currToken.substring(0,3); } catch (IndexOutOfBoundsException e) {}
-								try {lonMin = currToken.substring(3,currToken.length()); } catch (IndexOutOfBoundsException e) {}
+						case 5: try {lonDeg = currToken.substring(0,3); interpreted = true;} catch (IndexOutOfBoundsException e) {}
+								try {lonMin = currToken.substring(3,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {}
 								break;
 						case 6: lonEW = currToken;
+								interpreted = true;
 								break;
 						case 7: if (status.equals("A")){
-									this.Speed = Common.parseDouble(currToken)*1.854;
+									try {this.Speed = Common.parseDouble(currToken)*1.854;
+										interpreted = true; } catch (NumberFormatException e) { }
 								}
 								break;
 						case 8: if (status.equals("A") && currToken.length()> 0){
-									this.Bear = Common.parseDouble(currToken);
+									try {this.Bear = Common.parseDouble(currToken);
+									interpreted = true; } catch (NumberFormatException e) { }
 								}
 								break;
 						case 9: if (status.equals("A") && currToken.length()> 0){
-									this.Date = currToken;
+									try {this.Date = currToken;
+									interpreted = true; } catch (NumberFormatException e) { }
 								}
 								break;
 					} // switch
@@ -271,15 +295,16 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		int startPos = 1; // begin after $
 		int endPos = nmea.length() - 3;// without * an two checksum chars
 		byte checkSum = 0;
-		
+
 		for (int i= startPos; i<endPos;i++){
 			checkSum ^= nmea.charAt(i);
 		}
 		//Vm.debug(nmea.substring(3,6)+" Checksum: " + nmea.substring(endPos+1) + " Calculated: " + Convert.intToHexString(checkSum));
-		return (checkSum == Byte.parseByte(nmea.substring(endPos+1),16));
-		
+		try { return (checkSum == Byte.parseByte(nmea.substring(endPos+1),16));
+		} catch (IndexOutOfBoundsException e) {return false;
+		}
 	}
-	
+
 	  
 	
 	public void printAll(){
