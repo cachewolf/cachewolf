@@ -26,11 +26,11 @@ class SerialThread extends mThread{
 	CWGPSPoint myGPS;
 	boolean run;
 	
-	public SerialThread(SerialPortOptions spo, CWGPSPoint GPSPoint){
-		try {
+	public SerialThread(SerialPortOptions spo, CWGPSPoint GPSPoint) throws IOException {
+		try{
 			comSp = new SerialPort(spo);
 		} catch (IOException e) {
-			(new MessageBox("Error", "Error while opening COM-Port " + spo.portName, MessageBox.OKB)).execute(); //hmm should be handled in the calling routine?!
+			throw new IOException(spo.portName);
 		}
 		myGPS = GPSPoint;
 	}
@@ -515,14 +515,18 @@ public class GotoPanel extends CellPanel {
 			// start/stop GPS connection
 			if (ev.target == btnGPS){
 				if (btnGPS.getText().equals("Start")){
-					serThread = new SerialThread(pref.mySPO, gpsPosition);
-					serThread.start();
-					displayTimer = Vm.requestTimer(this, 1000);
-					if (chkLog.getState()){
-						gpsPosition.startLog(pref.mydatadir, Convert.toInt(inpLogSeconds.getText()), CWGPSPoint.LOGALL);
+					try {
+						serThread = new SerialThread(pref.mySPO, gpsPosition);
+						serThread.start();
+						displayTimer = Vm.requestTimer(this, 1000);
+						if (chkLog.getState()){
+							gpsPosition.startLog(pref.mydatadir, Convert.toInt(inpLogSeconds.getText()), CWGPSPoint.LOGALL);
+						}
+						chkLog.modify(ControlConstants.Disabled,0);
+						btnGPS.setText("Stop");
+					} catch (IOException e) {
+						(new MessageBox("Error", "Could not connect to GPS-receiver.\n Error while opening serial Port " + e.getMessage()+"\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS", MessageBox.OKB)).execute(); 
 					}
-					chkLog.modify(ControlConstants.Disabled,0);
-					btnGPS.setText("Stop");
 				}
 				else {
 					stopGPS();
