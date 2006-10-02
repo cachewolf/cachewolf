@@ -56,18 +56,20 @@ public class Extractor  {
 		
 		/**
 		*	Method to find the next occurance of a string that is enclosed by
-		*	that start (st) and end string (e).
+		*	that start (st) and end string (e). if end is not found the string
+		*	is returned til it's end.
 		*/
 		public String findNext(){
 			int idxStart = searchText.indexOf(start,startOffset);
 			int idxEnd = searchText.indexOf(end, idxStart+start.length());
 			////Vm.debug("Start: " + Convert.toString(idxStart) + " End: " + Convert.toString(idxEnd));
-			if(idxEnd == -1) idxEnd = searchText.length()-1; //index counts from zero length from 1
+			if(idxEnd == -1) idxEnd = searchText.length(); //index counts from zero length from 1 but the last char is not included in substr and substr accepts length +1 (but not length+2)
 			startOffset = idxEnd;
 			tst = new String();
 			if(idxStart > -1){
 				if(betweenonly == false){
-					if (idxEnd+end.length() >= searchText.length()) tst = searchText.substring(idxStart);
+					if (idxEnd+end.length() >= searchText.length()) 
+						 tst = searchText.substring(idxStart);
 					else tst = searchText.substring(idxStart,idxEnd+end.length());
 				}else{ 
 					tst = searchText.substring(idxStart+start.length(),idxEnd);
