@@ -20,6 +20,7 @@ public class SafeXML{
 		dummy = replace(dummy,  "\"" ,"&#34;");
 		dummy = replace(dummy,  "°","&#176;");
 		dummy = replace(dummy, "'","&apos;");
+		dummy = replace(dummy, "'", "&#180;");
 		dummy = replace(dummy, "ü","&#252;");
 		dummy = replace(dummy, "ä","&#228;");
 		dummy = replace(dummy, "ö","&#246;");
@@ -60,6 +61,7 @@ public class SafeXML{
 		dummy = replace(dummy,  "&#34;","\"");
 		dummy = replace(dummy,  "&#176;","°");
 		dummy = replace(dummy, "&apos;","'");
+		dummy = replace(dummy, "&#180;", "'");
 		dummy = replace(dummy, "&#252;","ü");
 		dummy = replace(dummy, "&#228;","ä");
 		dummy = replace(dummy, "&#246;","ö");
