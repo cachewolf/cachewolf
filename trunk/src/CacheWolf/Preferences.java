@@ -121,11 +121,11 @@ public class Preferences extends MinML{
 							else {
 								distOC = lastDistOC[code-1];
 							}
-							Extractor ex = new Extractor(" " + longs[code-1], " ", " ", 0,true);
+							Extractor ex = new Extractor(" " + longs[code-1] + " ", " ", " ", 0,true);
 							mybrWE = ex.findNext();
 							mybrDeg = ex.findNext();
 							mybrMin = ex.findNext();
-							ex = new Extractor(" " + lats[code-1], " ", " ", 0,true);
+							ex = new Extractor(" " + lats[code-1] + " ", " ", " ", 0,true);
 							mylgNS = ex.findNext();
 							mylgDeg = ex.findNext();
 							mylgMin = ex.findNext();
@@ -171,11 +171,11 @@ public class Preferences extends MinML{
 		if(name.equals("font")) fontSize = Convert.toInt(atts.getValue("size"));
 		if(name.equals("alias")) myAlias = atts.getValue("name");
 		if(name.equals("location")){
-			Extractor ex = new Extractor(" " + atts.getValue("long"), " ", " ", 0,true);
+			Extractor ex = new Extractor(" " + atts.getValue("long")+ " ", " ", " ", 0,true);
 			mybrWE = ex.findNext();
 			mybrDeg = ex.findNext();
 			mybrMin = ex.findNext();
-			ex = new Extractor(" " + atts.getValue("lat"), " ", " ", 0,true);
+			ex = new Extractor(" " + atts.getValue("lat")+ " ", " ", " ", 0,true);
 			mylgNS = ex.findNext();
 			mylgDeg = ex.findNext();
 			mylgMin = ex.findNext();
