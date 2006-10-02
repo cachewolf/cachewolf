@@ -59,7 +59,7 @@ public class ParseLatLon {
 	*/
 	public void parse(){
 		int counter = 0;
-		Extractor ex = new Extractor(" " + latlon, " ", " ", 0, true);
+		Extractor ex = new Extractor(" " + latlon + " ", " ", " ", 0, true);
 		br2 = new String(); 
 		lg2 = new String();
 		br2_buf = new String(); 
