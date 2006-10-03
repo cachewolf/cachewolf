@@ -531,7 +531,7 @@ public class GotoPanel extends CellPanel {
 			if (ev.target == btnGPS){
 				if (btnGPS.getText().equals("Start")){
 					try {
-						serThread = new SerialThread(pref.mySPO, gpsPosition, (pref.forwardGPS ? pref.forwardGpsIP : ""));
+						serThread = new SerialThread(pref.mySPO, gpsPosition, (pref.forwardGPS ? pref.forwardGpsHost : ""));
 						serThread.start();
 						displayTimer = Vm.requestTimer(this, 1000);
 						if (chkLog.getState()){
