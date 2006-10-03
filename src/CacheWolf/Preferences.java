@@ -55,6 +55,8 @@ public class Preferences extends MinML{
 	public String digSeparator = new String();
 	public boolean debug = false;
 	public SerialPortOptions mySPO = new SerialPortOptions();
+	public boolean forwardGPS = false;
+	public String forwardGpsIP = new String();
 	public int fontSize = 14;
 	
 	public Preferences(){
@@ -121,11 +123,11 @@ public class Preferences extends MinML{
 							else {
 								distOC = lastDistOC[code-1];
 							}
-							Extractor ex = new Extractor(" " + longs[code-1] + " ", " ", " ", 0,true);
+							Extractor ex = new Extractor(" " + longs[code-1], " ", " ", 0,true);
 							mybrWE = ex.findNext();
 							mybrDeg = ex.findNext();
 							mybrMin = ex.findNext();
-							ex = new Extractor(" " + lats[code-1] + " ", " ", " ", 0,true);
+							ex = new Extractor(" " + lats[code-1], " ", " ", 0,true);
 							mylgNS = ex.findNext();
 							mylgDeg = ex.findNext();
 							mylgMin = ex.findNext();
@@ -171,11 +173,11 @@ public class Preferences extends MinML{
 		if(name.equals("font")) fontSize = Convert.toInt(atts.getValue("size"));
 		if(name.equals("alias")) myAlias = atts.getValue("name");
 		if(name.equals("location")){
-			Extractor ex = new Extractor(" " + atts.getValue("long")+ " ", " ", " ", 0,true);
+			Extractor ex = new Extractor(" " + atts.getValue("long"), " ", " ", 0,true);
 			mybrWE = ex.findNext();
 			mybrDeg = ex.findNext();
 			mybrMin = ex.findNext();
-			ex = new Extractor(" " + atts.getValue("lat")+ " ", " ", " ", 0,true);
+			ex = new Extractor(" " + atts.getValue("lat"), " ", " ", 0,true);
 			mylgNS = ex.findNext();
 			mylgDeg = ex.findNext();
 			mylgMin = ex.findNext();
@@ -183,6 +185,10 @@ public class Preferences extends MinML{
 		if(name.equals("port")){
 			mySPO.portName = atts.getValue("portname");
 			mySPO.baudRate = Convert.toInt(atts.getValue("baud"));
+		}
+		if(name.equals("portforward")) {
+			forwardGPS = Convert.toBoolean(atts.getValue("active"));
+			forwardGpsIP = atts.getValue("destination");
 		}
 		//if(name.equals("logs")){
 		//	nLogs = Convert.parseInt(atts.getValue("number"));
@@ -319,7 +325,8 @@ public class Preferences extends MinML{
 			outp.print("	<datadir dir = \""+ mydatadir +"\"/>\n");
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
 			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
-			outp.print("	<tableType active = \"1\" width = \""+Convert.toString(tableWidth[1])+"\"/>\n");
+			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destination = \""+ forwardGpsIP+"\"/>\n");
+						outp.print("	<tableType active = \"1\" width = \""+Convert.toString(tableWidth[1])+"\"/>\n");
 			//outp.print("    <logs number = \""+Convert.toString(nLogs)+"\"/>\n");
 			outp.print("	<tableD active = \""+Convert.toString(tablePrefs[2])+ "\"" +
 					               " width = \""+Convert.toString(tableWidth[2])+"\"/>\n");
