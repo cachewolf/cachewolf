@@ -190,7 +190,7 @@ public class SpiderGC{
 				ch.CacheName = SafeXML.cleanback(getName(start));
 				//Vm.debug("Name: " + ch.CacheName);
 				
-				ch.CacheOwner = getOwner(start);
+				ch.CacheOwner = SafeXML.cleanback(getOwner(start));
 				
 				//Vm.debug("Owner: " + ch.CacheOwner);
 				ch.DateHidden = getDateHidden(start);
