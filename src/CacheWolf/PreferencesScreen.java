@@ -144,14 +144,18 @@ public class PreferencesScreen extends Form {
 				if(fc.execute() != FileChooser.IDCANCEL)	DataDir.setText(fc.getChosen()+"/");
 			}
 			if (ev.target == gpsB){
-				SerialPortOptions spo = new GPSPortOptions();
+				GPSPortOptions spo = new GPSPortOptions();
 				spo.portName = myPreferences.mySPO.portName;
 				spo.baudRate = myPreferences.mySPO.baudRate;
 				Editor s = spo.getEditor(SerialPortOptions.ADVANCED_EDITOR);
+				spo.forwardGpsChkB.setState(myPreferences.forwardGPS);
+				spo.inputBoxForwardIP.setText(myPreferences.forwardGpsIP);
 				Gui.setOKCancel(s);
 				if (s.execute()== Editor.IDOK) {
 					myPreferences.mySPO.portName = spo.portName; 
 					myPreferences.mySPO.baudRate = spo.baudRate;
+					myPreferences.forwardGPS = spo.forwardGpsChkB.getState();
+					myPreferences.forwardGpsIP = spo.inputBoxForwardIP.getText();
 				}
 			}
 		}

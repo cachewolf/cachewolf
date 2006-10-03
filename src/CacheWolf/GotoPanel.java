@@ -5,6 +5,7 @@ import ewe.util.Vector;
 import ewe.util.mString;
 import ewe.fx.*;
 import ewe.io.*;
+import ewe.net.Socket;
 //import ewe.io.IOException;
 //import ewe.io.SerialPort;
 //import ewe.io.SerialPortOptions;
@@ -24,13 +25,21 @@ class SerialThread extends mThread{
 	byte[] comBuff = new byte[1024];  
 	int comLength = 0;
 	CWGPSPoint myGPS;
-	boolean run;
+	boolean run, tcpForward;
+	Socket tcpConn;
 	
-	public SerialThread(SerialPortOptions spo, CWGPSPoint GPSPoint) throws IOException {
+	public SerialThread(SerialPortOptions spo, CWGPSPoint GPSPoint, String forwardIP) throws IOException {
 		try{
 			comSp = new SerialPort(spo);
 		} catch (IOException e) {
 			throw new IOException(spo.portName);
+		}
+		if (forwardIP.length()>0) { 
+			try {
+				tcpConn = new Socket(forwardIP, 23);
+				tcpForward = true;
+			} catch (ewe.net.UnknownHostException e) { tcpForward = false;
+			} catch (IOException e) { tcpForward = false;	}
 		}
 		myGPS = GPSPoint;
 	}
@@ -52,6 +61,11 @@ class SerialThread extends mThread{
 				if (comLength > 0)	{
 					noData = 0;
 					String str = mString.fromAscii(comBuff, 0, comLength); 
+					if (tcpForward) {
+						try {
+						tcpConn.write(comBuff, 0, comLength);
+						} catch (IOException e) { tcpForward = false; }
+					}
 					//Vm.debug(str);
 					if (myGPS.examine(str)) notinterpreted = 0; else notinterpreted++;
 					if (notinterpreted > 22) myGPS.noInterpretableData();
@@ -59,6 +73,7 @@ class SerialThread extends mThread{
 			}
 		} // while
 		myGPS.noData();
+		tcpConn.close();
 	}
 	
 	public void stop() {
@@ -516,7 +531,7 @@ public class GotoPanel extends CellPanel {
 			if (ev.target == btnGPS){
 				if (btnGPS.getText().equals("Start")){
 					try {
-						serThread = new SerialThread(pref.mySPO, gpsPosition);
+						serThread = new SerialThread(pref.mySPO, gpsPosition, (pref.forwardGPS ? pref.forwardGpsIP : ""));
 						serThread.start();
 						displayTimer = Vm.requestTimer(this, 1000);
 						if (chkLog.getState()){
