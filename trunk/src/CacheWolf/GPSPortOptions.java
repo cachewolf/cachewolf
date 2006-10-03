@@ -78,6 +78,9 @@ class mySerialThread extends mThread{
 public class GPSPortOptions extends SerialPortOptions {
 	TextDisplay txtOutput;
 	mButton btnTest;
+	public mInput inputBoxForwardIP;
+	mLabel  labelForwardIP;
+	public mCheckBox forwardGpsChkB;
 	mySerialThread serThread;
 	boolean gpsRunning = false;
 
@@ -92,6 +95,16 @@ public class GPSPortOptions extends SerialPortOptions {
 		ScrollBarPanel sbp = new ScrollBarPanel(txtOutput);
 		sbp.setOptions(ScrollBarPanel.AlwaysShowVerticalScrollers | ScrollBarPanel.AlwaysShowHorizontalScrollers);
 		ed.addField(ed.addLast(sbp),"out");
+		forwardGpsChkB = new mCheckBox("z");
+		ed.addField(ed.addNext(forwardGpsChkB, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "forwardGpsChkB");
+		labelForwardIP = new mLabel("Forward GPS Data to IP");
+		ed.addField(ed.addNext(labelForwardIP, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "labelForwardIP");
+		inputBoxForwardIP = new mInput("tcpForwardIP");
+		inputBoxForwardIP.setPromptControl(labelForwardIP);
+		inputBoxForwardIP.setText("192.168.178.23");
+		inputBoxForwardIP.setToolTip("All data from GPS will be sent to TCP-port 23\n and can be redirected there to a serial port\n by HW Virtual Serial Port");
+		ed.addField(ed.addLast(inputBoxForwardIP,0 , (Editor.WEST | Editor.HFILL)), "tcpForwardIP");
+		
 		gpsRunning = false;
 		return ed;
 	}
@@ -132,10 +145,12 @@ public class GPSPortOptions extends SerialPortOptions {
 	}
 	
 	public void fieldEvent(FieldTransfer xfer, Editor editor, Object event){
-		EditorEvent ev = (EditorEvent) event;
-		if (xfer.fieldName.equals("_editor_") && (ev.type == EditorEvent.CLOSED)) {
-			if (serThread != null) serThread.stop();
-		}
+		try {
+			EditorEvent ev = (EditorEvent) event;
+			if (xfer.fieldName.equals("_editor_") && (ev.type == EditorEvent.CLOSED)) {
+				if (serThread != null) serThread.stop();
+			}
+		} catch (ClassCastException e) { } // happens if event is not an EditorEvent
 		super.fieldEvent(xfer,editor,event);
 	}
 	
