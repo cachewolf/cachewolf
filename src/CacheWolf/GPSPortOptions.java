@@ -78,8 +78,8 @@ class mySerialThread extends mThread{
 public class GPSPortOptions extends SerialPortOptions {
 	TextDisplay txtOutput;
 	mButton btnTest;
-	public mInput inputBoxForwardIP;
-	mLabel  labelForwardIP;
+	public mInput inputBoxForwardHost;
+	mLabel  labelForwardHost;
 	public mCheckBox forwardGpsChkB;
 	mySerialThread serThread;
 	boolean gpsRunning = false;
@@ -97,13 +97,13 @@ public class GPSPortOptions extends SerialPortOptions {
 		ed.addField(ed.addLast(sbp),"out");
 		forwardGpsChkB = new mCheckBox("z");
 		ed.addField(ed.addNext(forwardGpsChkB, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "forwardGpsChkB");
-		labelForwardIP = new mLabel("Forward GPS Data to IP");
-		ed.addField(ed.addNext(labelForwardIP, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "labelForwardIP");
-		inputBoxForwardIP = new mInput("tcpForwardIP");
-		inputBoxForwardIP.setPromptControl(labelForwardIP);
-		inputBoxForwardIP.setText("192.168.178.23");
-		inputBoxForwardIP.setToolTip("All data from GPS will be sent to TCP-port 23\n and can be redirected there to a serial port\n by HW Virtual Serial Port");
-		ed.addField(ed.addLast(inputBoxForwardIP,0 , (Editor.WEST | Editor.HFILL)), "tcpForwardIP");
+		labelForwardHost = new mLabel("Forward GPS data to host");
+		ed.addField(ed.addNext(labelForwardHost, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "labelForwardIP");
+		inputBoxForwardHost = new mInput("tcpForwardHost");
+		inputBoxForwardHost.setPromptControl(labelForwardHost);
+		inputBoxForwardHost.setText("192.168.178.23");
+		inputBoxForwardHost.setToolTip("All data from GPS will be sent to TCP-port 23\n and can be redirected there to a serial port\n by HW Virtual Serial Port");
+		ed.addField(ed.addLast(inputBoxForwardHost,0 , (Editor.WEST | Editor.HFILL)), "tcpForwardHost");
 		
 		gpsRunning = false;
 		return ed;

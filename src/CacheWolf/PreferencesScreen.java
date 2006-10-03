@@ -149,13 +149,13 @@ public class PreferencesScreen extends Form {
 				spo.baudRate = myPreferences.mySPO.baudRate;
 				Editor s = spo.getEditor(SerialPortOptions.ADVANCED_EDITOR);
 				spo.forwardGpsChkB.setState(myPreferences.forwardGPS);
-				spo.inputBoxForwardIP.setText(myPreferences.forwardGpsIP);
+				spo.inputBoxForwardHost.setText(myPreferences.forwardGpsHost);
 				Gui.setOKCancel(s);
 				if (s.execute()== Editor.IDOK) {
 					myPreferences.mySPO.portName = spo.portName; 
 					myPreferences.mySPO.baudRate = spo.baudRate;
 					myPreferences.forwardGPS = spo.forwardGpsChkB.getState();
-					myPreferences.forwardGpsIP = spo.inputBoxForwardIP.getText();
+					myPreferences.forwardGpsHost = spo.inputBoxForwardHost.getText();
 				}
 			}
 		}

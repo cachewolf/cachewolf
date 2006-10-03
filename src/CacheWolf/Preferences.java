@@ -56,7 +56,7 @@ public class Preferences extends MinML{
 	public boolean debug = false;
 	public SerialPortOptions mySPO = new SerialPortOptions();
 	public boolean forwardGPS = false;
-	public String forwardGpsIP = new String();
+	public String forwardGpsHost = new String();
 	public int fontSize = 14;
 	
 	public Preferences(){
@@ -188,7 +188,7 @@ public class Preferences extends MinML{
 		}
 		if(name.equals("portforward")) {
 			forwardGPS = Convert.toBoolean(atts.getValue("active"));
-			forwardGpsIP = atts.getValue("destination");
+			forwardGpsHost = atts.getValue("destination");
 		}
 		//if(name.equals("logs")){
 		//	nLogs = Convert.parseInt(atts.getValue("number"));
@@ -325,7 +325,7 @@ public class Preferences extends MinML{
 			outp.print("	<datadir dir = \""+ mydatadir +"\"/>\n");
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
 			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
-			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destination = \""+ forwardGpsIP+"\"/>\n");
+			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destinationHost = \""+ forwardGpsHost+"\"/>\n");
 						outp.print("	<tableType active = \"1\" width = \""+Convert.toString(tableWidth[1])+"\"/>\n");
 			//outp.print("    <logs number = \""+Convert.toString(nLogs)+"\"/>\n");
 			outp.print("	<tableD active = \""+Convert.toString(tablePrefs[2])+ "\"" +
