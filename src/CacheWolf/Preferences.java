@@ -188,7 +188,7 @@ public class Preferences extends MinML{
 		}
 		if(name.equals("portforward")) {
 			forwardGPS = Convert.toBoolean(atts.getValue("active"));
-			forwardGpsHost = atts.getValue("destination");
+			forwardGpsHost = atts.getValue("destinationHost");
 		}
 		//if(name.equals("logs")){
 		//	nLogs = Convert.parseInt(atts.getValue("number"));
