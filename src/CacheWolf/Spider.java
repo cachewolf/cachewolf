@@ -366,7 +366,7 @@ public class Spider extends TaskObject{
 			int counter = 0;
 			for(int i = 0; i<wpts.size(); i++){
 				//parse the vector element
-				ex = new Extractor(" " + (String)wpts.get(i) + " " , " ", " ", 0, true);
+				ex = new Extractor(" " + (String)wpts.get(i), " ", " ", 0, true);
 				//Vm.debug("loopy: " + (String)wpts.get(i));
 				counter = 0;
 				while(ex.endOfSearch() != true){
