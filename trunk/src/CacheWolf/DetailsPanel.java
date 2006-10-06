@@ -283,7 +283,7 @@ public class DetailsPanel extends CellPanel{
 			if (ev.target == chkCenter){
 				int counter = 0;
 				//Vm.debug("This Cache: " + thisCache.LatLon);
-				Extractor ex = new Extractor(" " + thisCache.LatLon + " ", " ", " ", 0, true);
+				Extractor ex = new Extractor(" " + thisCache.LatLon, " ", " ", 0, true);
 				String br2 = new String(); 
 				String lg2 = new String();
 				String br2_buf = new String(); 
