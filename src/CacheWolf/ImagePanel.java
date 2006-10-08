@@ -4,6 +4,7 @@ import ewe.sys.*;
 import ewe.fx.*;
 import ewe.ui.*;
 
+
 /**
 *	Class to display the cache and log images. It creates a thumbnail view and
 *	allows the user to click on an image that will then be displayed in its original size
@@ -53,6 +54,8 @@ public class ImagePanel extends InteractivePanel{
 		String location = new String();
 		Font font = new Font("Verdana", Font.BOLD, 20);
 		FontMetrics fm = getFontMetrics();
+		
+		// load cache images
 		int stringWidth = fm.getTextWidth("Cache Images");
 		int stringHeight = fm.getHeight();
 		Image img = new Image(stringWidth*2,stringHeight+5);
@@ -77,6 +80,8 @@ public class ImagePanel extends InteractivePanel{
 			location = pref.mydatadir + (String)cache.Images.get(i);
 			try{
 				mI = new mImage(location);
+				// actuall new mImage(location); should do the following "if" but it doesn't anyhow
+				if (mI.getWidth() <= 0 || mI.getHeight() <= 0 ) throw new IllegalArgumentException(location);
 				scaleX = thumb_size;
 				scaleY = thumb_size;
 				dummyC = 0;
@@ -86,7 +91,7 @@ public class ImagePanel extends InteractivePanel{
 					dummyC = dummyC * (double)thumb_size;
 					scaleY = (int)dummyC;
 				}
-				if(mI.getWidth()<mI.getHeight()){
+				if(mI.getWidth() <= mI.getHeight()){
 					scaleY = thumb_size;
 					dummyC = (double)mI.getWidth()/(double)mI.getHeight();
 					dummyC = dummyC * (double)thumb_size;
@@ -98,7 +103,7 @@ public class ImagePanel extends InteractivePanel{
 				}
 				mI = mI.scale(scaleX,scaleY,null,0);
 				ipi = new ImagePanelImage(mI);
-				ipi.fileName = location;
+				ipi.fileName = location; // this is set only to easily identify the filename of the image clicked
 
 				ipi.setLocation(locX, locY);
 				addImage(ipi);
@@ -121,12 +126,21 @@ public class ImagePanel extends InteractivePanel{
 					locX = padding;
 					locY = locY+thumb_size+padding;
 				}
-			}catch(Exception imex){Vm.debug("Error: " + imex.toString());}
+			}catch(IllegalArgumentException imex){ // file not found, could not decode etc.
+				Locale l = Vm.getLocale();
+				LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+				MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), MessageBox.OKB); // @todo: language support
+				tmp.exec();
+			} catch (OutOfMemoryError e) { // TODO show an error icon in the panel instead of nothing
+				(new MessageBox("Error","Not enough free memory to load cache image:\n"+location,MessageBox.OKB)).exec();
+			} catch (SystemResourceException e) { // TODO show an error icon in the panel instead of nothing
+				(new MessageBox("Error","Not enough free memory to load cache image:\n"+location,MessageBox.OKB)).exec();
+			}
 		} //for
 		//Vm.debug("LocCounter: " +Convert.toString(locCounter));
 		//Vm.debug("locy before: " + Convert.toString(locY));
 		
-		
+		// load user images
 		if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
 		//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
 		//Vm.debug("locy after: " + Convert.toString(locY));
@@ -151,6 +165,7 @@ public class ImagePanel extends InteractivePanel{
 			//Vm.debug(location);
 			try{
 				mI = new mImage(location);
+				if (mI.getWidth() <= 0 || mI.getHeight() <= 0 ) throw new IllegalArgumentException(location);
 				scaleX = thumb_size;
 				scaleY = thumb_size;
 				dummyC = 0;
@@ -160,7 +175,7 @@ public class ImagePanel extends InteractivePanel{
 					dummyC = dummyC * (double)thumb_size;
 					scaleY = (int)dummyC;
 				}
-				if(mI.getWidth()<mI.getHeight()){
+				if(mI.getWidth() <= mI.getHeight()){
 					scaleY = thumb_size;
 					dummyC = (double)mI.getWidth()/(double)mI.getHeight();
 					dummyC = dummyC * (double)thumb_size;
@@ -193,8 +208,15 @@ public class ImagePanel extends InteractivePanel{
 					locX = padding;
 					locY = locY+thumb_size+padding;
 				}
-			}catch(Exception imex){
-				Vm.debug("Error: " + imex.toString());
+			}catch(IllegalArgumentException imex){ // file not found, could not decode etc.
+				Locale l = Vm.getLocale();
+				LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+				MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), MessageBox.OKB); // @todo: language support
+				tmp.exec();
+			} catch (OutOfMemoryError e) { // TODO show an error icon in the panel instead of nothing 
+				(new MessageBox("Error","Not enough free memory to load user image:\n"+location,MessageBox.OKB)).exec();
+			} catch (SystemResourceException e) { // TODO show an error icon in the panel instead of nothing
+				(new MessageBox("Error","Not enough free memory to load cache image:\n"+location,MessageBox.OKB)).exec();
 			}
 		} //for
 		
@@ -239,7 +261,10 @@ public class ImagePanel extends InteractivePanel{
 				LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 				MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht finden"), MessageBox.OKB); // @todo: language support
 				tmp.exec();
+			} catch (OutOfMemoryError e) {
+				(new MessageBox("Error","Not enough free memory to load image\n"+fn,MessageBox.OKB)).exec();
 			}
+			
 		}
 	}
 }
