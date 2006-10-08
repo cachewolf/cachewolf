@@ -27,6 +27,7 @@ class SerialThread extends mThread{
 	CWGPSPoint myGPS;
 	boolean run, tcpForward;
 	Socket tcpConn;
+	String lastError = new String();
 	
 	public SerialThread(SerialPortOptions spo, CWGPSPoint GPSPoint, String forwardIP) throws IOException {
 		try{
@@ -38,12 +39,13 @@ class SerialThread extends mThread{
 			try {
 				tcpConn = new Socket(forwardIP, 23);
 				tcpForward = true;
-			} catch (ewe.net.UnknownHostException e) { tcpForward = false;
-			} catch (IOException e) { tcpForward = false;	}
+			} catch (ewe.net.UnknownHostException e) { tcpForward = false; lastError = e.getMessage();
+			} catch (IOException e) { tcpForward = false; lastError = e.getMessage(); 
+			}
 		}
 		myGPS = GPSPoint;
 	}
-	
+
 	public void run() {
 		int noData = 0;
 		int notinterpreted = 0;
@@ -532,6 +534,9 @@ public class GotoPanel extends CellPanel {
 				if (btnGPS.getText().equals("Start")){
 					try {
 						serThread = new SerialThread(pref.mySPO, gpsPosition, (pref.forwardGPS ? pref.forwardGpsHost : ""));
+						if (pref.forwardGPS && !serThread.tcpForward) {
+							(new MessageBox("Warning", "Ignoring error:\n could not forward GPS data to host:\n"+pref.forwardGpsHost+"\n"+serThread.lastError+"\nstop and start GPS to retry",MessageBox.OKB)).exec();
+						}
 						serThread.start();
 						displayTimer = Vm.requestTimer(this, 1000);
 						if (chkLog.getState()){
