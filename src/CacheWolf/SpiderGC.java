@@ -276,20 +276,24 @@ public class SpiderGC{
 		while(exImgBlock.endOfSearch() == false){
 			imgUrl = exImgSrc.findNext();
 			//Vm.debug("Img Url: " +imgUrl);
-			imgUrl = "http://" + imgUrl;
 			if(imgUrl.length()>0){
-				imgType = imgUrl.substring(imgUrl.lastIndexOf("."), imgUrl.lastIndexOf(".")+4);
-				imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
-				spiderImage(imgUrl, imgName+"."+imgType);
-				imgCounter++;
-				ch.Images.add(imgName+"."+imgType);
-				ch.ImagesText.add(imgName);
-			}
+				imgUrl = "http://" + imgUrl;
+				try{
+					imgType = imgUrl.substring(imgUrl.lastIndexOf("."));
+					imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
+					spiderImage(imgUrl, imgName+"."+imgType);
+					imgCounter++;
+					ch.Images.add(imgName+"."+imgType);
+					ch.ImagesText.add(imgName);
+				} catch (IndexOutOfBoundsException e) { 
+					Vm.debug("IndexOutOfBoundsException not in image span"+e.toString()+"imgURL:"+imgUrl); 
+				}
+				}
 			exImgSrc.setSource(exImgBlock.findNext());
 		}
-				
+
 		//In the image span
-		
+
 		Extractor spanBlock = new Extractor(doc, "<span id=\"Images\"", "</span>", 0 , true);
 		tst = spanBlock.findNext();
 		Extractor exImgName = new Extractor(tst, "style='text-decoration: underline;'>", "</A><br>", 0 , true);
@@ -299,12 +303,16 @@ public class SpiderGC{
 			Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
-				imgType = imgUrl.substring(imgUrl.lastIndexOf("."), imgUrl.lastIndexOf(".")+4);
-				imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
-				spiderImage(imgUrl, imgName+"."+imgType);
-				imgCounter++;
-				ch.Images.add(imgName+"."+imgType);
-				ch.ImagesText.add(exImgName.findNext());
+				try{
+					imgType = imgUrl.substring(imgUrl.lastIndexOf("."));
+					imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
+					spiderImage(imgUrl, imgName+"."+imgType);
+					imgCounter++;
+					ch.Images.add(imgName+"."+imgType);
+					ch.ImagesText.add(exImgName.findNext());
+				} catch (IndexOutOfBoundsException e) { 
+					Vm.debug("IndexOutOfBoundsException in image span"+e.toString()+"imgURL:"+imgUrl); 
+				}
 			}
 		}
 	}
@@ -390,7 +398,7 @@ public class SpiderGC{
 	}
 	
 	private String getOwner(String doc){
-		inRex = new Regex("<span id=\"CacheOwner\".*?by((?s).*?)\\[<A HREF=");
+		inRex = new Regex("<span id=\"CacheOwner\".*?by ((?s).*?)\\[<A HREF=");
 		inRex.search(doc);
 		return inRex.stringMatched(1);
 	}
