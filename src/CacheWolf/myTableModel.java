@@ -204,7 +204,8 @@ public class myTableModel extends TableModel{
 									wpVal.addColumn((IImage)bug);
 								}
 								if(ch.noFindLogs > 0){
-									wpVal.addColumn((IImage)noFindLogs[ch.noFindLogs-1]);
+									if (ch.noFindLogs > noFindLogs.length) wpVal.addColumn((IImage)noFindLogs[noFindLogs.length-1]);
+									else wpVal.addColumn((IImage)noFindLogs[ch.noFindLogs-1]);
 								}
 								wpVal.addColumn(rettext);
 								rettext = wpVal;
@@ -218,7 +219,7 @@ public class myTableModel extends TableModel{
 						}catch(NumberFormatException nfe){}
 					}
 				}catch(ArrayIndexOutOfBoundsException abe){
-					rettext = "deleted";
+					rettext = "bug in progam, please report";
 				}
 			}
 		return rettext;
