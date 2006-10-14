@@ -97,7 +97,7 @@ public class MyComparer implements Comparer{
 					str02 = Convert.toString(oo2.is_filtered);
 				}
 				return str01.toLowerCase().compareTo(str02.toLowerCase());
-			} catch (ArrayIndexOutOfBoundsException e ) { // sollte eigentlich nicht vorkommen könnte auftreten von substring
+			} catch (IndexOutOfBoundsException e ) { // sollte eigentlich nicht vorkommen könnte auftreten von substring
 				return str01.toLowerCase().compareTo(str02.toLowerCase());
 			}
 

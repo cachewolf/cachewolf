@@ -498,7 +498,7 @@ public class GotoPanel extends CellPanel {
 			azimut +=180.;
 			if (azimut >360.) azimut -=360.;
 			return azimut;
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			// wird von substring geworfen wenn datum / utc nicht genug Ziffern haben
 			// NumberFormatException wird auﬂerdem von Convert.ParseInt direkt geworfen wenn
 			// nicht in Int konvertiert werden kann
