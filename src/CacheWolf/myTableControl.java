@@ -14,15 +14,15 @@ public class myTableControl extends TableControl{
 	public Vector db;
 	public Preferences pref;
 	public TablePanel tbp;
-	
+
 	public void penRightReleased(Point p){
-		p.x =0;
-		doShowMenu(p);
-                //penReleased(p);
+//		p.x =0;
+		menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
 	}
 	public void penHeld(Point p){
-		doShowMenu(p);
+		menuState.doShowMenu(p,true,null);
 	}
+	
 	public void popupMenuEvent(Object selectedItem){
 		CacheHolder ch = new CacheHolder();
 		if (selectedItem.toString().equals("Filter")){
