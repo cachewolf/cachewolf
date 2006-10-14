@@ -123,7 +123,8 @@ public class OCXMLImporter extends MinML {
 			url +="&charset=utf-8";
 			url +="&cdata=0";
 			url +="&session=0";
-			inf = new InfoBox("Opencaching download", (String)lr.get(1608,"downloading data\n from opencaching..."));
+			inf = new InfoBox("Opencaching download", (String)lr.get(1608,"downloading data\n from opencaching"));
+			inf.setPreferredSize(210, 120);
 			inf.exec();
 			//Vm.debug(url);
 			//get file
@@ -167,6 +168,8 @@ public class OCXMLImporter extends MinML {
 			// @TODO: this should be saved in the index.xml not with the profiles!
 			myPref.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
 			myPref.savePreferences();
+			CacheReaderWriter crw = new CacheReaderWriter();
+			crw.saveIndex(cacheDB, myPref.mydatadir);
 			finalMessage=(String)lr.get(1607,"Update from opencaching successful");
 		}
 		inf.close(0);
@@ -468,7 +471,7 @@ public class OCXMLImporter extends MinML {
 				}
 			}
 		} catch (IOException e) {
-			String ErrMessage = new String ("Ignoring IOException: "+e.getMessage())+ "in cache: "+holder.wayPoint; 
+			String ErrMessage = new String ("Ignoring IOException: "+e.getMessage())+ "\nwhile downloading picture:"+fileName+"\nfrom URL:"+fetchURL+"\nin cache: "+holder.wayPoint; 
 			if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect") ||
 					e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
 				ErrMessage=(String)lr.get(1618,"Ignoring error in cache ")+holder.wayPoint+(String)lr.get(1619,": could not download image from URL: ")+fetchURL;
