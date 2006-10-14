@@ -18,7 +18,7 @@ public class CacheReaderWriter {
 	*	It fills information on cache details, hints, logs, notes and
 	*	images.
 	*/
-	public void readCache(CacheHolder cache, String dir) throws Exception{
+	public void readCache(CacheHolder cache, String dir) throws IOException{
 		String dummy = new String();
 		FileReader in = new FileReader(dir+cache.wayPoint+".xml");
 		String text = new String();

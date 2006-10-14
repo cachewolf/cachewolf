@@ -3,6 +3,7 @@ package CacheWolf;
 import ewe.sys.*;
 import ewe.ui.*;
 import ewe.fx.*;
+import ewe.io.IOException;
 import ewe.util.*;
 
 /**
@@ -71,7 +72,8 @@ public class myTableControl extends TableControl{
 			Vm.debug(cmd);
 			ewe.sys.Process p = Vm.exec(cmd);
 			//p.waitFor();
-		}catch(Exception ex){
+		}catch(IOException ex){
+			(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();
 			Vm.debug("Cannot start browser! " +ex.toString());
 		}
 	}
