@@ -144,7 +144,7 @@ public class myTableModel extends TableModel{
 				if(isSelected == true) ta.fillColor = new Color(198,198,198);
 			}
 		}catch(NumberFormatException nfe){}
-		catch(ArrayIndexOutOfBoundsException abe){}
+		catch(IndexOutOfBoundsException abe){}
 		return ta;
 	}
 	

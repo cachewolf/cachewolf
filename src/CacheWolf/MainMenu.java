@@ -201,7 +201,7 @@ public class MainMenu extends MenuBar {
 				FileChooser fc = new FileChooser(FileChooser.OPEN|FileChooser.MULTI_SELECT, myPreferences.mydatadir);
 				fc.addMask("*.gpx,*.zip,*.loc");
 				fc.setTitle((String)lr.get(909,"Select file(s)"));
-				if(fc.execute() != fc.IDCANCEL){
+				if(fc.execute() != FileChooser.IDCANCEL){
 					String file = fc.getChosenFile().toString();
 					if (file.endsWith("loc")){
 						LOCXMLImporter loc = new LOCXMLImporter(cacheDB, file, myPreferences);
