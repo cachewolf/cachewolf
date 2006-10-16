@@ -361,4 +361,36 @@ public class Preferences extends MinML{
 			Vm.debug("Error: " +e.toString());
     		}
 	}
+	
+	/**
+	 * Method to log messages to a file called log.txt
+	 * It will always append to an existing file.
+	 * @param text
+	 */
+	public void log(String text){
+		Time dtm = new Time();
+		dtm.getTime();
+		dtm.setFormat("dd.MM.yyyy'/'H:m");
+		text = dtm.toString()+ ": "+ text + "\n";
+		File logFile = new File("log.txt");
+		Stream strout = null;
+		try{
+			strout = logFile.toWritableStream(true);
+			strout.write(text.getBytes());
+		}catch(Exception ex){
+			Vm.debug("Error writing to log file!");
+		}finally{
+			strout.close();
+		}
+	}
+	
+	/**
+	 * Method to delete an existing log file. Something like a "reset".
+	 * Should be used "from time to time" to make sure the log file does not grow
+	 * to a huge size!
+	 */
+	public void logInit(){
+		File logFile = new File("log.txt");
+		logFile.delete();
+	}
 }
