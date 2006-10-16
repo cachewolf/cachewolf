@@ -50,6 +50,7 @@ public class SpiderGC{
 	*	Method to start the spider
 	*/
 	public void doIt(){
+		pref.logInit();
 		//Access the page once to get a viewstate
 		String start = new String();
 		CWPoint origin = new CWPoint(pref.mylgNS + " " +pref.mylgDeg + " " + pref.mylgMin + " " + pref.mybrWE + " " +pref.mybrDeg + " " + pref.mybrMin, CWPoint.CW);
@@ -66,6 +67,7 @@ public class SpiderGC{
 		infB = new InfoBox("Status", "Logging in...");
 		infB.show();
 		try{
+			pref.log("Fetching login page");
 			start = fetch("http://www.geocaching.com/login/Default.aspx");
 		}catch(Exception ex){
 			Vm.debug("Could not fetch: gc.com start page");
@@ -80,12 +82,14 @@ public class SpiderGC{
 		}
 		//Ok now login!
 		try{
+			pref.log("Logging in");
 			doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
 			doc += "&" + URL.encodeURL("myUsername",false) +"="+ URL.encodeURL(pref.myAlias,false);
 			doc += "&" + URL.encodeURL("myPassword",false) +"="+ URL.encodeURL(passwort,false);
 			doc += "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false);
 			doc += "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false);
 			start = fetch_post("http://www.geocaching.com/login/Default.aspx", doc, "/login/default.aspx");
+			pref.log("Login successfull");
 		}catch(Exception ex){
 			Vm.debug("Could not login: gc.com start page");
 		}
@@ -102,9 +106,11 @@ public class SpiderGC{
 		//Get first page
 		infB.setInfo("Fetching first page...");
 		try{
+			pref.log("Fetching first list page");
 			start = fetch("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD) + "&f=1");
 			
 		}catch(Exception ex){
+			pref.log("Error fetching first list page");
 			Vm.debug("Could not get list");
 		}
 		String dummy = new String();
@@ -150,6 +156,7 @@ public class SpiderGC{
 				doc += "&" + URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL("ResultsPager:_ctl"+page_number,false);
 				doc += "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false);
 				try{
+					pref.log("Fetching next list page");
 					start = fetch_post("http://www.geocaching.com/seek/nearest.aspx", doc, "/seek/nearest.aspx");
 				}catch(Exception ex){
 					Vm.debug("Couldn't get the next page");
@@ -158,6 +165,7 @@ public class SpiderGC{
 			//Vm.debug("Distance is now: " + distance);
 			found_on_page = 0;
 		}
+		pref.log("Found " + cachesToLoad.size() + " caches");
 		infB.setInfo("Found " + cachesToLoad.size() + " caches");
 		// Now ready to spider each cache
 		String wpt = new String();
@@ -171,8 +179,10 @@ public class SpiderGC{
 				infB.setInfo("Loading: " + wpt +"(" + (i+1) + " / " + cachesToLoad.size() + ")");
 				doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wpt +"&log=y";
 				try{
+					pref.log("Fetching: " + wpt);
 					start = fetch(doc);
 				}catch(Exception ex){
+					pref.log("Could not fetch " + wpt);
 					Vm.debug("Couldn't get cache detail page");
 				}
 				ch.is_new = true;
@@ -180,47 +190,58 @@ public class SpiderGC{
 				ch.wayPoint = wpt;
 				//Vm.debug(ch.wayPoint);
 				
+				pref.log("Trying logs");
 				ch.CacheLogs = getLogs(start);
-				
+				pref.log("Found logs");
 				ch.LatLon = getLatLon(start);
 				//Vm.debug("LatLon: " + ch.LatLon);
-				
+				pref.log("Trying description");
 				ch.LongDescription = getLongDesc(start);
-				
+				pref.log("Got description");
+				pref.log("Getting cache name");
 				ch.CacheName = SafeXML.cleanback(getName(start));
+				pref.log("Got cache name");
 				//Vm.debug("Name: " + ch.CacheName);
-				
+				pref.log("Trying owner");
 				ch.CacheOwner = SafeXML.cleanback(getOwner(start));
-				
+				pref.log("Got owner");
 				//Vm.debug("Owner: " + ch.CacheOwner);
+				pref.log("Trying date hidden");
 				ch.DateHidden = getDateHidden(start);
-				
+				pref.log("Got date hidden");
 				//Vm.debug("Hidden: " + ch.DateHidden);
+				pref.log("Trying hints");
 				ch.Hints = getHints(start);
-				
+				pref.log("Got hints");
 				//Vm.debug("Hints: " + ch.Hints);
 				
 				
 				//Vm.debug("Got the hints");
+				pref.log("Trying size");
 				ch.CacheSize = getSize(start);
-				
+				pref.log("Got size");
 				//Vm.debug("Size: " + ch.CacheSize);
+				pref.log("Trying difficulty");
 				ch.hard = getDiff(start);
-				
+				pref.log("Got difficulty");
 				//Vm.debug("Hard: " + ch.hard);
+				pref.log("Trying terrain");
 				ch.terrain = getTerr(start);
-				
+				pref.log("Got terrain");
 				//Vm.debug("Terr: " + ch.terrain);
+				pref.log("Trying cache type");
 				ch.type = getType(start);
-				
+				pref.log("Got cahce type");
 				//Vm.debug("Type: " + ch.type);
+				pref.log("Trying images");
 				getImages(start, ch);
-				
+				pref.log("Got images");
+				pref.log("Trying maps");
 				getMaps(ch);
+				pref.log("Got maps");
 				crw.saveCacheDetails(ch, pref.mydatadir);
-				
 				cacheDB.add(ch);
-
+				crw.saveIndex(cacheDB,pref.mydatadir);
 			}
 		}
 		crw.saveIndex(cacheDB,pref.mydatadir);
@@ -334,17 +355,21 @@ public class SpiderGC{
 		}
 		connImg.setRequestorProperty("Connection", "close");
 		try{
+			pref.log("Trying to fetch image from:" + quelle);
 			sockImg = connImg.connect();
 			daten = connImg.readData(connImg.connect());
 			fos = new FileOutputStream(new File(datei));
 			fos.write(daten.toBytes());
 			fos.close();
 			sockImg.close();
-		} catch (UnknownHostException e) { 
+		} catch (UnknownHostException e) {
+			pref.log("Host not there...");
 			Vm.debug("Host not there...");
 		}catch(IOException ioex){
+			pref.log("File not found!");
 			Vm.debug("File not found!");
 		} catch (Exception ex){
+			pref.log("Some other problem while fetchiung image");
 			Vm.debug("Some kind of problem!");
 		} finally {
 			//Vm.debug("This is stupid!!");
