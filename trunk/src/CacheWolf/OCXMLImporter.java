@@ -6,8 +6,6 @@ import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
 import ewe.io.*;
 import ewe.sys.*;
-import ewe.ui.Gui;
-import ewe.ui.InputBox;
 import ewe.ui.MessageBox;
 import ewe.util.*;
 import ewe.util.zip.*;
@@ -505,7 +503,7 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		if(name.equals("picture")){ 
-			String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
+			//String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
 			getPic(picUrl,picTitle);
 			CacheReaderWriter crw = new CacheReaderWriter();
 			crw.saveCacheDetails(holder,myPref.mydatadir);

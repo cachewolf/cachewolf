@@ -7,8 +7,8 @@ import ewe.sys.*;
 
 public class Version {
 	static final String VER_MAJOR = "0.9";
-	static final String VER_MINOR = " m";
-	static final String VER_BUILD = " ";
+	static final String VER_MINOR = " n";
+	static final String VER_BUILD = " BE ";
 	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
 	
 	/**
@@ -17,7 +17,7 @@ public class Version {
 	public static String getRelease() {
 		 // habe die SVN-Nummer doch aus der Anzeige erstmal wieder herausgenommen, weil es in einem final Release doch recht seltsam aussähe.
 		 // Sinnvoll wäre daher vielleicht, eine Methode getReleaseDatail, die die SVN-Versionnummer mit angibt und z.B. im "über"-Dialog angezeigt werden könnte.
-		return VER_MAJOR + VER_MINOR + VER_BUILD ; // + " /" + VER_SVN.substring(VER_SVN.indexOf(" "), VER_SVN.lastIndexOf(" "));
+		return VER_MAJOR + VER_MINOR + VER_BUILD + " /" + VER_SVN.substring(VER_SVN.indexOf(" "), VER_SVN.lastIndexOf(" "));
 	}
 	
 	public boolean newVersionAvailable(Preferences pref){

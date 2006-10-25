@@ -2,8 +2,6 @@ package CacheWolf;
 
 import ewe.ui.*;
 import ewe.io.*;
-import ewe.fx.*;
-import ewe.util.*;
 import ewe.sys.*;
 
 /**
@@ -38,7 +36,7 @@ public class InfoScreen extends Form {
 		disp.setHtml(text);
 		ScrollBarPanel sbp = new ScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
 		this.addLast(sbp);
-		this.addLast(btCancel = new mButton((String)lr.get(3000,"Close")),this.DONTSTRETCH, this.FILL);
+		this.addLast(btCancel = new mButton((String)lr.get(3000,"Close")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 	}
 	
 	public void onEvent(Event ev){

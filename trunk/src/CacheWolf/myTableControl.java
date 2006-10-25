@@ -14,9 +14,10 @@ public class myTableControl extends TableControl{
 	public Vector db;
 	public Preferences pref;
 	public TablePanel tbp;
-
+	Locale l = Vm.getLocale();
+	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+	
 	public void penRightReleased(Point p){
-//		p.x =0;
 		menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
 	}
 	public void penHeld(Point p){
@@ -25,7 +26,7 @@ public class myTableControl extends TableControl{
 	
 	public void popupMenuEvent(Object selectedItem){
 		CacheHolder ch = new CacheHolder();
-		if (selectedItem.toString().equals("Filter")){
+		if (selectedItem.toString().equals((String)lr.get(1011,"Filter"))){
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				if(ch.is_Checked == true) {
@@ -35,7 +36,7 @@ public class myTableControl extends TableControl{
 			}
 			tbp.refreshTable();
 		}
-		if (selectedItem.toString().equals("Delete")){
+		if (selectedItem.toString().equals((String)lr.get(1012,"Delete"))){
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				if(ch.is_Checked == true) {
@@ -45,7 +46,21 @@ public class myTableControl extends TableControl{
 			}
 			tbp.refreshTable();
 		}
-		if (selectedItem.toString().equals("Goto")){
+		
+		if (selectedItem.toString().equals((String)lr.get(1014,"Update"))){
+			SpiderGC spider = new SpiderGC(pref, db);
+			spider.login();
+			//TODO prüfen, ob es sich um ein gc oder oc cache handelt. Aber wie?
+			for(int i = 0; i <	db.size(); i++){
+				ch = (CacheHolder)db.get(i);
+				if(ch.is_Checked == true) {
+					spider.spiderSingle(i);
+				}
+			}
+			tbp.refreshTable();
+		}
+		
+		if (selectedItem.toString().equals((String)lr.get(1010,"Goto"))){
 //			Point a = new Point();
 	//		a = this.getSelectedCell(a);
 		//	if(!(a == null)) ch = (CacheHolder)tbp.cacheDB.get(a.y);
@@ -69,8 +84,9 @@ public class myTableControl extends TableControl{
 			crw.readCache(ch, pref.mydatadir);
 			String cmd = "\""+pref.browser+ "\" " + ch.URL;
 			//String cmd = "\""+pref.browser+ ".exe\"" + " www.aragorn.de";
-			Vm.debug(cmd);
-			ewe.sys.Process p = Vm.exec(cmd);
+			//Vm.debug(cmd);
+			//ewe.sys.Process p = 
+			Vm.exec(cmd);
 			//p.waitFor();
 		}catch(IOException ex){
 			(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();

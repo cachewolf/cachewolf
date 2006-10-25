@@ -504,6 +504,7 @@ public class GPXImporter extends MinML {
 	* Method to iterate through cache database and look for waypoint.
 	* Returns value >= 0 if waypoint is found, else -1
 	*/
+	/*
 	private int searchWpt(Vector db, String wpt){
 		if(wpt.length()>0){
 			wpt = wpt.toUpperCase();
@@ -518,6 +519,8 @@ public class GPXImporter extends MinML {
 		} // if
 		return -1;
 	}
+	*/
+	
 	private int searchWpt(String wpt){
 		Integer INTR = (Integer)DBindex.get(wpt);
 		if(INTR != null){
@@ -537,10 +540,10 @@ public class GPXImporter extends MinML {
 		int imgCounter = 0;
 		HttpConnection connImg;
 		Socket sockImg;
-		InputStream is;
+		//InputStream is;
 		FileOutputStream fos;
-		int bytes_read;
-		byte[] buffer = new byte[9000];
+		//int bytes_read;
+		//byte[] buffer = new byte[9000];
 		ByteArray daten;
 		String cacheText = new String();
 		
@@ -586,29 +589,31 @@ public class GPXImporter extends MinML {
 				}
 				connImg.setRequestorProperty("Connection", "close");
 				imageType = dummy.substring(dummy.lastIndexOf("."), dummy.lastIndexOf(".")+4);
-				datei = pref.mydatadir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
-				//if(imageType.equals(".png") || imageType.equals(".gif") || imageType.equals(".tif") || imageType.equals(".jpg")){
-					try{
-						sockImg = connImg.connect();
-						daten = connImg.readData(connImg.connect());
-						fos = new FileOutputStream(new File(datei));
-						fos.write(daten.toBytes());
-						fos.close();
-						sockImg.close();
-						holder.Images.add(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-						//Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-						holder.ImagesText.add(dummy.substring(dummy.lastIndexOf("/")+1, dummy.lastIndexOf("/")+1+dummy.length()-dummy.lastIndexOf("/")-1));
-						//Vm.debug("adding...." +dummy.substring(dummy.lastIndexOf("/")+1, dummy.lastIndexOf("/")+1+dummy.length()-dummy.lastIndexOf("/")-1));
-					} catch (UnknownHostException e) { 
-						Vm.debug("Host not there...");
-					}catch(IOException ioex){
-						Vm.debug("File not found!");
-					} catch (Exception ex){
-						Vm.debug("Some kind of problem!");
-					} finally {
-						//Vm.debug("This is stupid!!");
-					}
-					imgCounter++;
+				if(!imageType.equals("com") && !imageType.equals("php") && !imageType.equals("exe")){
+					datei = pref.mydatadir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
+					//if(imageType.equals(".png") || imageType.equals(".gif") || imageType.equals(".tif") || imageType.equals(".jpg")){
+						try{
+							sockImg = connImg.connect();
+							daten = connImg.readData(connImg.connect());
+							fos = new FileOutputStream(new File(datei));
+							fos.write(daten.toBytes());
+							fos.close();
+							sockImg.close();
+							holder.Images.add(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
+							//Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
+							holder.ImagesText.add(dummy.substring(dummy.lastIndexOf("/")+1, dummy.lastIndexOf("/")+1+dummy.length()-dummy.lastIndexOf("/")-1));
+							//Vm.debug("adding...." +dummy.substring(dummy.lastIndexOf("/")+1, dummy.lastIndexOf("/")+1+dummy.length()-dummy.lastIndexOf("/")-1));
+						} catch (UnknownHostException e) { 
+							Vm.debug("Host not there...");
+						}catch(IOException ioex){
+							Vm.debug("File not found!");
+						} catch (Exception ex){
+							Vm.debug("Some kind of problem!");
+						} finally {
+							//Vm.debug("This is stupid!!");
+						}
+						imgCounter++;
+				}
 			}
 			dummySrc = cacheEx.findNext();
 			//Vm.debug("Dummy SRC = " + dummySrc);
@@ -635,22 +640,24 @@ public class GPXImporter extends MinML {
 			}
 			connImg.setRequestorProperty("Connection", "close");
 			imageType = dummy.substring(dummy.lastIndexOf("."), dummy.lastIndexOf(".")+4);
-			datei = pref.mydatadir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
-			try{
-				sockImg = connImg.connect();
-				daten = connImg.readData(sockImg);
-				fos = new FileOutputStream(new File(datei));
-				fos.write(daten.toBytes());
-				fos.close();
-				sockImg.close();
-				holder.Images.add(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-				holder.ImagesText.add(dummy2);
-				//Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-				//Vm.debug(dummy2);
-			}catch(IOException ioex){
-				Vm.debug("File not found!");
+			if(!imageType.equals("com") && !imageType.equals("php") && !imageType.equals("exe")){
+				datei = pref.mydatadir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
+				try{
+					sockImg = connImg.connect();
+					daten = connImg.readData(sockImg);
+					fos = new FileOutputStream(new File(datei));
+					fos.write(daten.toBytes());
+					fos.close();
+					sockImg.close();
+					holder.Images.add(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
+					holder.ImagesText.add(dummy2);
+					//Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
+					//Vm.debug(dummy2);
+				}catch(IOException ioex){
+					Vm.debug("File not found!");
+				}
+				imgCounter++;
 			}
-			imgCounter++;
 			dummy = cacheEx.findNext();
 			dummy2 = imgEx.findNext();
 		}
