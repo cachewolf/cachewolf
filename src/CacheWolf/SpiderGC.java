@@ -47,22 +47,18 @@ public class SpiderGC{
 	Hashtable indexDB = new Hashtable();
 	
 	/**
-	*	Method to start the spider
-	*/
-	public void doIt(){
+	 * Method to login the user to gc.com
+	 * It will request a password and use the alias defined in preferences
+	 */
+	public void login(){
 		pref.logInit();
 		//Access the page once to get a viewstate
 		String start = new String();
-		CWPoint origin = new CWPoint(pref.mylgNS + " " +pref.mylgDeg + " " + pref.mylgMin + " " + pref.mybrWE + " " +pref.mybrDeg + " " + pref.mybrMin, CWPoint.CW);
 		String doc = new String();
 		//Get password
 		InfoBox infB = new InfoBox("Password", "Enter password:", InfoBox.INPUT);
 		infB.execute();
 		passwort = infB.getInput();
-		infB.close(0);
-		infB = new InfoBox("Distance", "Max distance:", InfoBox.INPUT);
-		infB.execute();
-		distance = Convert.toDouble(infB.getInput());
 		infB.close(0);
 		infB = new InfoBox("Status", "Logging in...");
 		infB.show();
@@ -92,6 +88,7 @@ public class SpiderGC{
 			pref.log("Login successfull");
 		}catch(Exception ex){
 			Vm.debug("Could not login: gc.com start page");
+			pref.log("Login failed.");
 		}
 		
 		rex.search(start);
@@ -102,9 +99,113 @@ public class SpiderGC{
 		rexCookieSession.search(start);
 		cookieSession = rexCookieSession.stringMatched(1);
 		//Vm.debug(cookieSession);
+		infB.close(0);
+	}
+	
+	/**
+	 * Method to spider a single cache.
+	 * It assumes a login has already been performed!
+	 */
+	public void spiderSingle(int number){
+		CacheHolder ch = (CacheHolder)cacheDB.get(number);
+		String notes = new String();
+		String start = new String();
+		CacheReaderWriter crw = new CacheReaderWriter();
+		try{
+			crw.readCache(ch, pref.mydatadir);
+		}catch(IOException ioex){
+			pref.log("Could not load " + ch.wayPoint + "file in spiderSingle");
+		}
+		notes = ch.CacheNotes;
+		InfoBox infB = new InfoBox("Info", "Loading");
+		infB.setInfo("Loading: " + ch.wayPoint);
+		infB.show();
+		String doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + ch.wayPoint +"&log=y";
+		try{
+			pref.log("Fetching: " + ch.wayPoint);
+			start = fetch(doc);
+		}catch(Exception ex){
+			pref.log("Could not fetch " + ch.wayPoint);
+			Vm.debug("Couldn't get cache detail page");
+		}
+		ch.is_new = false;
+		ch.is_update = true;
+		ch.is_HTML = true;
+		//Vm.debug(ch.wayPoint);
 		
+		pref.log("Trying logs");
+		ch.CacheLogs = getLogs(start);
+		pref.log("Found logs");
+		ch.LatLon = getLatLon(start);
+		//Vm.debug("LatLon: " + ch.LatLon);
+		pref.log("Trying description");
+		ch.LongDescription = getLongDesc(start);
+		pref.log("Got description");
+		pref.log("Getting cache name");
+		ch.CacheName = SafeXML.cleanback(getName(start));
+		pref.log("Got cache name");
+		//Vm.debug("Name: " + ch.CacheName);
+		pref.log("Trying owner");
+		ch.CacheOwner = SafeXML.cleanback(getOwner(start));
+		pref.log("Got owner");
+		//Vm.debug("Owner: " + ch.CacheOwner);
+		pref.log("Trying date hidden");
+		ch.DateHidden = getDateHidden(start);
+		pref.log("Got date hidden");
+		//Vm.debug("Hidden: " + ch.DateHidden);
+		pref.log("Trying hints");
+		ch.Hints = getHints(start);
+		pref.log("Got hints");
+		//Vm.debug("Hints: " + ch.Hints);
+		
+		
+		//Vm.debug("Got the hints");
+		pref.log("Trying size");
+		ch.CacheSize = getSize(start);
+		pref.log("Got size");
+		//Vm.debug("Size: " + ch.CacheSize);
+		pref.log("Trying difficulty");
+		ch.hard = getDiff(start);
+		pref.log("Got difficulty");
+		//Vm.debug("Hard: " + ch.hard);
+		pref.log("Trying terrain");
+		ch.terrain = getTerr(start);
+		pref.log("Got terrain");
+		//Vm.debug("Terr: " + ch.terrain);
+		pref.log("Trying cache type");
+		ch.type = getType(start);
+		pref.log("Got cahce type");
+		//Vm.debug("Type: " + ch.type);
+		pref.log("Trying images");
+		getImages(start, ch);
+		pref.log("Got images");
+		pref.log("Trying maps");
+		getMaps(ch);
+		pref.log("Got maps");
+		ch.CacheNotes = notes;
+		crw.saveCacheDetails(ch, pref.mydatadir);
+		cacheDB.set(number, ch);
+		crw.saveIndex(cacheDB,pref.mydatadir);
+		infB.close(0);
+	}
+	
+	/**
+	*	Method to start the spider for a search around the center coordinates
+	*/
+	public void doIt(){
+		String start = new String();
+		CWPoint origin = new CWPoint(pref.mylgNS + " " +pref.mylgDeg + " " + pref.mylgMin + " " + pref.mybrWE + " " +pref.mybrDeg + " " + pref.mybrMin, CWPoint.CW);
+		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
+		String doc = new String();
+		
+		login();
+		InfoBox  infB = new InfoBox("Distance", "Max distance:", InfoBox.INPUT);
+		infB.execute();
+		distance = Convert.toDouble(infB.getInput());
+		infB.close(0);
+		infB = new InfoBox("Status", "Fetching first page...");
+		infB.show();
 		//Get first page
-		infB.setInfo("Fetching first page...");
 		try{
 			pref.log("Fetching first list page");
 			start = fetch("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD) + "&f=1");
@@ -301,13 +402,17 @@ public class SpiderGC{
 				imgUrl = "http://" + imgUrl;
 				try{
 					imgType = imgUrl.substring(imgUrl.lastIndexOf("."));
-					imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
-					spiderImage(imgUrl, imgName+"."+imgType);
-					imgCounter++;
-					ch.Images.add(imgName+"."+imgType);
-					ch.ImagesText.add(imgName);
+					if(!imgType.equals("com") && !imgType.equals("php") && !imgType.equals("exe")){
+						imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
+						pref.log("Loading image: " + imgUrl);
+						spiderImage(imgUrl, imgName+"."+imgType);
+						imgCounter++;
+						ch.Images.add(imgName+"."+imgType);
+						ch.ImagesText.add(imgName);
+					}
 				} catch (IndexOutOfBoundsException e) { 
-					Vm.debug("IndexOutOfBoundsException not in image span"+e.toString()+"imgURL:"+imgUrl); 
+					Vm.debug("IndexOutOfBoundsException not in image span"+e.toString()+"imgURL:"+imgUrl);
+					pref.log("Problem loading image");
 				}
 				}
 			exImgSrc.setSource(exImgBlock.findNext());
@@ -326,11 +431,13 @@ public class SpiderGC{
 				imgUrl = "http://" + imgUrl;
 				try{
 					imgType = imgUrl.substring(imgUrl.lastIndexOf("."));
-					imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
-					spiderImage(imgUrl, imgName+"."+imgType);
-					imgCounter++;
-					ch.Images.add(imgName+"."+imgType);
-					ch.ImagesText.add(exImgName.findNext());
+					if(!imgType.equals("com") && !imgType.equals("php") && !imgType.equals("exe")){
+						imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
+						spiderImage(imgUrl, imgName+"."+imgType);
+						imgCounter++;
+						ch.Images.add(imgName+"."+imgType);
+						ch.ImagesText.add(exImgName.findNext());
+					}
 				} catch (IndexOutOfBoundsException e) { 
 					Vm.debug("IndexOutOfBoundsException in image span"+e.toString()+"imgURL:"+imgUrl); 
 				}
@@ -653,27 +760,4 @@ public class SpiderGC{
 			}
 			return totline;
 		}
-	
-	/*
-	private static String replace(String source, String pattern, String replace){
-		if (source!=null)
-		{
-			final int len = pattern.length();
-			StringBuffer sb = new StringBuffer();
-			int found = -1;
-			int start = 0;
-		
-			while( (found = source.indexOf(pattern, start) ) != -1) {
-			    sb.append(source.substring(start, found));
-			    sb.append(replace);
-			    start = found + len;
-			}
-		
-			sb.append(source.substring(start));
-		
-			return sb.toString();
-		}
-		else return "";
-	}
-	*/
 }

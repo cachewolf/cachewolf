@@ -44,7 +44,7 @@ public class TablePanel extends CellPanel{
 		}
 		
 		addLast(new ScrollBarPanel(tc = new myTableControl()));
-		Menu m = new Menu(new String[]{"Goto","Filter","Delete"},"With selected");
+		Menu m = new Menu(new String[]{(String)lr.get(1010,"Goto"),(String)lr.get(1011,"Filter"),(String)lr.get(1012,"Delete"),(String)lr.get(1014,"Update")},(String)lr.get(1013,"With selection"));
 		tc.setMenu(m);
 		tc.db = cacheDB;
 		tc.pref = pref;
