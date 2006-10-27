@@ -1,6 +1,5 @@
 package CacheWolf;
 
-import ewe.sys.*;
 
 /**
 *	This is a powerfull class that is used very often. It is quicker than

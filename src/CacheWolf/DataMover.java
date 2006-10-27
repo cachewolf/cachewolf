@@ -52,7 +52,7 @@ public class DataMover {
 		// Select destination directory
 		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, srcPreferences.mydatadir);
 		fc.setTitle((String)lr.get(148,"Select Targetdirectory"));
-		if(fc.execute() != fc.IDCANCEL){
+		if(fc.execute() != FormBase.IDCANCEL){
 			dstDir = fc.getChosen() + "/";
 		}
 		else return;
@@ -99,7 +99,7 @@ public class DataMover {
 		// Select destination directory
 		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, srcPreferences.mydatadir);
 		fc.setTitle((String)lr.get(148,"Select Targetdirectory"));
-		if(fc.execute() != fc.IDCANCEL){
+		if(fc.execute() != FormBase.IDCANCEL){
 			dstDir = fc.getChosen() + "/";
 		}
 		else return;
