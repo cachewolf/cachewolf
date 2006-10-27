@@ -1,7 +1,6 @@
 package CacheWolf;
 
 import ewe.util.*;
-import ewe.sys.*;
 
 /**
 *	Class to tokenize (break up) the code into single tokens, so the
@@ -19,12 +18,13 @@ public class Tokenizer{
 	TokenObj thisToken;
 	
 	public Vector getStack(){
-		TokenObj to = new TokenObj();
+		/*TokenObj to = new TokenObj();
 		
 		for(int i = 0; i < TokenStack.size(); i++){
 			to = (TokenObj)TokenStack.get(i);
 			//Vm.debug("Tock: " + to.token);
 		}
+		*/
 		return TokenStack;
 	}
 	

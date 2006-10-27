@@ -54,7 +54,7 @@ public class Parser{
 		
 	}
 
-	public void Parser(Vector tck){
+	public Parser(Vector tck){
 		TokenStack = tck;
 	}
 
@@ -237,13 +237,12 @@ public class Parser{
 	
 	public boolean IsDigit(String c){
 		//java.lang.Double test;
-		double test = 0;
 		boolean code = false;
 		try {
 			//Vm.debug(""+c);
 			//Vm.sleep(500);
 			//test = java.lang.Double.valueOf(c);
-			test = Convert.parseDouble(c);
+			Convert.parseDouble(c);
 			code = true;
 		} catch (NumberFormatException e){
 			////Vm.debug("Throwing an exeption");
