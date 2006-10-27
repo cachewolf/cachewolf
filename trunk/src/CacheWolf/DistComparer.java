@@ -15,8 +15,6 @@ public class DistComparer implements Comparer{
 		CacheHolder oo1 = (CacheHolder)o1;
 		CacheHolder oo2 = (CacheHolder)o2;
 		if(oo1.is_filtered == false && oo2.is_filtered == false){
-			String str01 = new String();
-			String str02 = new String();
 			String strA = new String();
 			String strB = new String();
 			strA = oo1.distance.substring(0,oo1.distance.length()-3);

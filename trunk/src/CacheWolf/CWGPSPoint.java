@@ -6,7 +6,6 @@
  */
 package CacheWolf;
 import ewe.sys.*;
-import ewe.util.*;
 import ewe.io.*;
 
 

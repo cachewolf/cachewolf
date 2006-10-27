@@ -2,7 +2,6 @@ package CacheWolf;
 import ewe.util.*;
 import ewe.sys.*;
 import ewe.io.*;
-import ewe.sys.*;
 import com.stevesoft.ewe_pat.*;
 
 /**
@@ -62,7 +61,7 @@ public class Filter{
 	
 	public boolean foundByMe;
 	public boolean ownedByMe;
-	private boolean is_changed;
+	//private boolean is_changed;
 	public int filterKriteria = 0;
 	
 	boolean archived = false;
@@ -198,8 +197,8 @@ public class Filter{
 	*/
 	public void doFilter(Vector cacheDB, String dir){
 		byVec = mString.split(by, ',');
-		CacheHolder ch, chDetails;
-		CacheReaderWriter crw = new CacheReaderWriter();
+		CacheHolder ch;
+		//CacheReaderWriter crw = new CacheReaderWriter();
 		String dummy = new String();
 		FileReader in;
 		String text = new String();
@@ -209,7 +208,7 @@ public class Filter{
 		double dummyd1, dummyd2;
 		
 		for(int i = 0; i < cacheDB.size(); i++){
-			is_changed = false;
+			//is_changed = false;
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.is_filtered = false;
 			if(bearing.indexOf("|"+ch.bearing+"|")>=0) ch.is_filtered = true;
@@ -295,7 +294,7 @@ public class Filter{
 						jahr = Convert.parseInt(trex.findNext());
 						monat = Convert.parseInt(trex.findNext());
 						tag = Convert.parseInt(trex.findNext());
-						dca = dtm.dateDifference(dtm,new Time(tag, monat, jahr), dca);
+						dca = Time.dateDifference(dtm,new Time(tag, monat, jahr), dca);
 						//Vm.debug("tag: " +tag + " monat: " + monat + " jahr: " +jahr);
 						//Vm.debug("tag: " +dtm.day + " monat: " + dtm.month + " jahr: " +dtm.year);
 						//Vm.debug("Diff: " + dca.totalDays + " Tage + " + tage + " filt: " +ch.is_filtered);

@@ -1,7 +1,6 @@
 package CacheWolf;
 
 import ewe.ui.*;
-import ewe.io.*;
 import ewe.fx.*;
 import ewe.util.*;
 import ewe.sys.*;
@@ -42,8 +41,8 @@ public class DetailsPanel extends CellPanel{
 	public DetailsPanel(){
 		//String welcomeMessage = (String)lr.get(1,"how about that?");
 		
-		toolP.addNext(btCrWp = new mButton((String)lr.get(311,"Create Waypoint")),this.DONTSTRETCH, this.WEST);
-		toolP.addNext(btnGoto = new mButton("Goto"),this.DONTSTRETCH, this.WEST);
+		toolP.addNext(btCrWp = new mButton((String)lr.get(311,"Create Waypoint")),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		toolP.addNext(btnGoto = new mButton("Goto"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		mImage mI = new mImage("bug.gif");
 		mImage mI2 = new mImage("globe_small.gif");
 		mImage mI3 = new mImage("date_time.png");
@@ -52,45 +51,45 @@ public class DetailsPanel extends CellPanel{
 		showMap = new mButton((IImage)mI2);
 		addDateTime = new mButton((IImage)mI3);
 		addPicture = new mButton((IImage)mI4);
-		toolP.addNext(showBug,this.DONTSTRETCH, this.WEST);
+		toolP.addNext(showBug,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		showBug.modify(Control.Disabled,0);
-		toolP.addNext(showMap,this.DONTSTRETCH, this.WEST);
-		toolP.addNext(addDateTime,this.DONTSTRETCH, this.WEST);
-		toolP.addLast(addPicture,this.DONTSTRETCH, this.WEST);
+		toolP.addNext(showMap,CellConstants.DONTSTRETCH, CellConstants.WEST);
+		toolP.addNext(addDateTime,CellConstants.DONTSTRETCH, CellConstants.WEST);
+		toolP.addLast(addPicture,CellConstants.DONTSTRETCH, CellConstants.WEST);
 			
 		//showMap.modify(Control.Disabled,0);
-		this.addLast(toolP,this.DONTSTRETCH, this.WEST).setTag(SPAN,new Dimension(3,1));;
+		this.addLast(toolP,CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(3,1));;
 		
-		this.addNext(new mLabel((String)lr.get(300,"Type:")),this.DONTSTRETCH, (this.DONTFILL|this.NORTHWEST));
-		this.addLast(wayType,this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addNext(new mLabel((String)lr.get(301,"Size:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(waySize,this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		this.addNext(new mLabel((String)lr.get(300,"Type:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTHWEST));
+		this.addLast(wayType,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(new mLabel((String)lr.get(301,"Size:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(waySize,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(302,"Waypoint:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayPoint.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addNext(new mLabel((String)lr.get(302,"Waypoint:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(wayPoint.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(303,"Name:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayName.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addNext(new mLabel((String)lr.get(303,"Name:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(wayName.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(304,"Location:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayLoc.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addNext(new mLabel((String)lr.get(304,"Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(wayLoc.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(305,"Hidden on:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayHidden.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addNext(new mLabel((String)lr.get(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(wayHidden.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(306,"Owner:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayOwner.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addNext(new mLabel((String)lr.get(306,"Owner:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(wayOwner.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(307,"Status:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(wayStatus.setTag(Control.SPAN, new Dimension(2,1)),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addNext(new mLabel((String)lr.get(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(wayStatus.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(308,"Notes:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addNext(chkCenter = new mCheckBox((String)lr.get(309,"Make Center")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(chkDelete = new mCheckBox((String)lr.get(310,"Delete")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		this.addNext(new mLabel((String)lr.get(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(chkCenter = new mCheckBox((String)lr.get(309,"Make Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(chkDelete = new mCheckBox((String)lr.get(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
 		//this.addLast(sbp, this.STRETCH, this.FILL);
-		this.addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),this.STRETCH, (this.FILL|this.WEST));
+		this.addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 	}
 	
 	/**
@@ -129,7 +128,6 @@ public class DetailsPanel extends CellPanel{
 			showBug.modify(Control.Disabled,0);
 		}
 		showBug.repaintNow();
-		int size = 0;
 		if(ch.CacheSize.equals("Micro")) waySize.setInt(1);
 		if(ch.CacheSize.equals("Small")) waySize.setInt(2);
 		if(ch.CacheSize.equals("Regular")) waySize.setInt(3);
