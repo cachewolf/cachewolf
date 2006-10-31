@@ -320,7 +320,7 @@ public class Preferences extends MinML{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(datei)));
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			outp.print("<preferences>\n");
-			outp.print("	<alias name =\""+ myAlias +"\"/>\n");
+			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\"/>\n");
 			outp.print("	<location lat = \""+lat+"\" long = \""+lon+"\"/>\n");
 			outp.print("	<datadir dir = \""+ mydatadir +"\"/>\n");
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
