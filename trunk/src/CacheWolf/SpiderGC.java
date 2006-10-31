@@ -174,7 +174,7 @@ public class SpiderGC{
 		//Vm.debug("Terr: " + ch.terrain);
 		pref.log("Trying cache type");
 		ch.type = getType(start);
-		pref.log("Got cahce type");
+		pref.log("Got cache type");
 		//Vm.debug("Type: " + ch.type);
 		pref.log("Trying images");
 		getImages(start, ch);
@@ -207,16 +207,15 @@ public class SpiderGC{
 		infB.show();
 		//Get first page
 		try{
-			pref.log("Fetching first list page");
+			pref.log("Fetching first list page: http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD) + "&f=1");
 			start = fetch("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD) + "&f=1");
-			
 		}catch(Exception ex){
 			pref.log("Error fetching first list page");
 			Vm.debug("Could not get list");
 		}
 		String dummy = new String();
 		//String lineBlck = new String();
-		int page_number = 5;		
+		int page_number = 4;		
 		Regex rexLine = new Regex("<tr bgcolor=((?s).*?)</tr>");
 		int found_on_page = 0;
 		//Loop till maximum distance has been found or no more caches are in the list
@@ -249,7 +248,7 @@ public class SpiderGC{
 			if(found_on_page < 20) distance = 0;
 			if(distance > 0){
 				page_number++;
-				if(page_number >= 15) page_number = 5;
+				if(page_number >= 15) page_number = 4;
 				doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
 				doc += "&" + URL.encodeURL("lat",false) +"="+ URL.encodeURL(origin.getLatDeg(CWPoint.DD),false);
 				doc += "&" + URL.encodeURL("lon",false) +"="+ URL.encodeURL(origin.getLonDeg(CWPoint.DD),false);
@@ -290,59 +289,65 @@ public class SpiderGC{
 				ch.is_HTML = true;
 				ch.wayPoint = wpt;
 				//Vm.debug(ch.wayPoint);
-				
-				pref.log("Trying logs");
-				ch.CacheLogs = getLogs(start);
-				pref.log("Found logs");
-				ch.LatLon = getLatLon(start);
-				//Vm.debug("LatLon: " + ch.LatLon);
-				pref.log("Trying description");
-				ch.LongDescription = getLongDesc(start);
-				pref.log("Got description");
-				pref.log("Getting cache name");
-				ch.CacheName = SafeXML.cleanback(getName(start));
-				pref.log("Got cache name");
-				//Vm.debug("Name: " + ch.CacheName);
-				pref.log("Trying owner");
-				ch.CacheOwner = SafeXML.cleanback(getOwner(start));
-				pref.log("Got owner");
-				//Vm.debug("Owner: " + ch.CacheOwner);
-				pref.log("Trying date hidden");
-				ch.DateHidden = getDateHidden(start);
-				pref.log("Got date hidden");
-				//Vm.debug("Hidden: " + ch.DateHidden);
-				pref.log("Trying hints");
-				ch.Hints = getHints(start);
-				pref.log("Got hints");
-				//Vm.debug("Hints: " + ch.Hints);
-				
-				
-				//Vm.debug("Got the hints");
-				pref.log("Trying size");
-				ch.CacheSize = getSize(start);
-				pref.log("Got size");
-				//Vm.debug("Size: " + ch.CacheSize);
-				pref.log("Trying difficulty");
-				ch.hard = getDiff(start);
-				pref.log("Got difficulty");
-				//Vm.debug("Hard: " + ch.hard);
-				pref.log("Trying terrain");
-				ch.terrain = getTerr(start);
-				pref.log("Got terrain");
-				//Vm.debug("Terr: " + ch.terrain);
-				pref.log("Trying cache type");
-				ch.type = getType(start);
-				pref.log("Got cahce type");
-				//Vm.debug("Type: " + ch.type);
-				pref.log("Trying images");
-				getImages(start, ch);
-				pref.log("Got images");
-				pref.log("Trying maps");
-				getMaps(ch);
-				pref.log("Got maps");
-				crw.saveCacheDetails(ch, pref.mydatadir);
-				cacheDB.add(ch);
-				crw.saveIndex(cacheDB,pref.mydatadir);
+				try{
+					pref.log("Trying logs");
+					ch.CacheLogs = getLogs(start);
+					pref.log("Found logs");
+					ch.LatLon = getLatLon(start);
+					//Vm.debug("LatLon: " + ch.LatLon);
+					pref.log("Trying description");
+					ch.LongDescription = getLongDesc(start);
+					pref.log("Got description");
+					pref.log("Getting cache name");
+					ch.CacheName = SafeXML.cleanback(getName(start));
+					pref.log("Got cache name");
+					//Vm.debug("Name: " + ch.CacheName);
+					pref.log("Trying owner");
+					ch.CacheOwner = SafeXML.cleanback(getOwner(start));
+					pref.log("Got owner");
+					//Vm.debug("Owner: " + ch.CacheOwner);
+					pref.log("Trying date hidden");
+					ch.DateHidden = getDateHidden(start);
+					pref.log("Got date hidden");
+					//Vm.debug("Hidden: " + ch.DateHidden);
+					pref.log("Trying hints");
+					ch.Hints = getHints(start);
+					pref.log("Got hints");
+					//Vm.debug("Hints: " + ch.Hints);
+					//Vm.debug("Got the hints");
+					pref.log("Trying size");
+					ch.CacheSize = getSize(start);
+					pref.log("Got size");
+					//Vm.debug("Size: " + ch.CacheSize);
+					pref.log("Trying difficulty");
+					ch.hard = getDiff(start);
+					pref.log("Got difficulty");
+					//Vm.debug("Hard: " + ch.hard);
+					pref.log("Trying terrain");
+					ch.terrain = getTerr(start);
+					pref.log("Got terrain");
+					//Vm.debug("Terr: " + ch.terrain);
+					pref.log("Trying cache type");
+					ch.type = getType(start);
+					pref.log("Got cache type");
+					//Vm.debug("Type: " + ch.type);
+					pref.log("Trying images");
+					getImages(start, ch);
+					pref.log("Got images");
+					pref.log("Trying maps");
+					getMaps(ch);
+					pref.log("Got maps");
+					crw.saveCacheDetails(ch, pref.mydatadir);
+					cacheDB.add(ch);
+					crw.saveIndex(cacheDB,pref.mydatadir);
+				}catch(Exception ex){
+					pref.log("There was an error in the last step:");
+					pref.log("Cache was: " + wpt);
+					pref.log("Error was: " + ex.toString());
+				}finally{
+					//just continue please!
+					pref.log("Continuing with next cache.");
+				}
 			}
 		}
 		crw.saveIndex(cacheDB,pref.mydatadir);
@@ -426,7 +431,7 @@ public class SpiderGC{
 		exImgSrc = new Extractor(tst, "&nbsp;<A HREF='http://", "' target=", 0, true);
 		while(exImgSrc.endOfSearch() == false){
 			imgUrl = exImgSrc.findNext();
-			Vm.debug("Img Url: " +imgUrl);
+			//Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
 				try{
