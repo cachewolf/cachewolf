@@ -566,6 +566,8 @@ public class GPXImporter extends MinML {
 			cacheEx = new Extractor(cacheText, "<span id=\"LongDescription\">", "<STRONG>Additional Hints&nbsp;",0,true);
 			longDesc = cacheEx.findNext();
 		}
+		longDesc = STRreplace.replace(longDesc, "IMG", "img");
+		longDesc = STRreplace.replace(longDesc, "SRC", "src");
 		cacheEx = new Extractor(longDesc, "<img", ">", 0, true);
 		String dummySrc = new String();
 		dummySrc = cacheEx.findNext();

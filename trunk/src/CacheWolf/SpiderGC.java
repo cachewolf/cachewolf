@@ -132,7 +132,7 @@ public class SpiderGC{
 		ch.is_update = true;
 		ch.is_HTML = true;
 		//Vm.debug(ch.wayPoint);
-		
+		if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
 		pref.log("Trying logs");
 		ch.CacheLogs = getLogs(start);
 		pref.log("Found logs");
@@ -288,6 +288,7 @@ public class SpiderGC{
 				ch.is_new = true;
 				ch.is_HTML = true;
 				ch.wayPoint = wpt;
+				if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
 				//Vm.debug(ch.wayPoint);
 				try{
 					pref.log("Trying logs");
@@ -410,9 +411,9 @@ public class SpiderGC{
 					if(!imgType.equals("com") && !imgType.equals("php") && !imgType.equals("exe")){
 						imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
 						pref.log("Loading image: " + imgUrl);
-						spiderImage(imgUrl, imgName+"."+imgType);
+						spiderImage(imgUrl, imgName+imgType);
 						imgCounter++;
-						ch.Images.add(imgName+"."+imgType);
+						ch.Images.add(imgName+imgType);
 						ch.ImagesText.add(imgName);
 					}
 				} catch (IndexOutOfBoundsException e) { 
@@ -438,9 +439,9 @@ public class SpiderGC{
 					imgType = imgUrl.substring(imgUrl.lastIndexOf("."));
 					if(!imgType.equals("com") && !imgType.equals("php") && !imgType.equals("exe")){
 						imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
-						spiderImage(imgUrl, imgName+"."+imgType);
+						spiderImage(imgUrl, imgName+imgType);
 						imgCounter++;
-						ch.Images.add(imgName+"."+imgType);
+						ch.Images.add(imgName+imgType);
 						ch.ImagesText.add(exImgName.findNext());
 					}
 				} catch (IndexOutOfBoundsException e) { 
@@ -467,7 +468,7 @@ public class SpiderGC{
 		}
 		connImg.setRequestorProperty("Connection", "close");
 		try{
-			pref.log("Trying to fetch image from:" + quelle);
+			pref.log("Trying to fetch image from: " + quelle);
 			sockImg = connImg.connect();
 			daten = connImg.readData(connImg.connect());
 			fos = new FileOutputStream(new File(datei));
@@ -481,7 +482,7 @@ public class SpiderGC{
 			pref.log("File not found!");
 			Vm.debug("File not found!");
 		} catch (Exception ex){
-			pref.log("Some other problem while fetchiung image");
+			pref.log("Some other problem while fetching image");
 			Vm.debug("Some kind of problem!");
 		} finally {
 			//Vm.debug("This is stupid!!");
@@ -549,7 +550,7 @@ public class SpiderGC{
 	private String getLongDesc(String doc){
 		String res = new String();
 		inRex = new Regex("<span id=\"ShortDescription\">((?s).*?)</span>");
-		Regex rex2 = new Regex("<span id=\"LongDescription\">((?s).*?)</span>");
+		Regex rex2 = new Regex("<span id=\"LongDescription\">((?s).*?)<strong>Additional Hints");
 		inRex.search(doc);
 		rex2.search(doc);
 		res = inRex.stringMatched(1) + "<br>";
@@ -636,6 +637,8 @@ public class SpiderGC{
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			indexDB.put((String)ch.wayPoint, new Integer(i));
+			ch.is_new = false;
+			cacheDB.set(i, ch);
 		}
 	}
 	

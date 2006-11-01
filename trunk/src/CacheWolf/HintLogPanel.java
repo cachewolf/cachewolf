@@ -1,9 +1,6 @@
 package CacheWolf;
 
 import ewe.ui.*;
-import ewe.io.*;
-import ewe.fx.*;
-import ewe.util.*;
 import ewe.sys.*;
 
 /**
@@ -30,13 +27,13 @@ public class HintLogPanel extends CellPanel{
 		//CellPanel logpane = split.getNextPanel();
 		
 		ScrollBarPanel sbphint = new ScrollBarPanel(hint);
-		this.addLast(sbphint,this.HSTRETCH, (this.HFILL|this.WEST));
-		this.addLast(decodeButton,this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addLast(sbphint,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		this.addLast(decodeButton,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		ScrollBarPanel sbplog = new ScrollBarPanel(logs, ScrollBarPanel.NeverShowHorizontalScrollers);
-		this.addLast(sbplog,this.STRETCH, this.FILL);
-		this.addNext(prevBt,this.DONTSTRETCH, (this.HFILL|this.WEST));
-		this.addLast(moreBt,this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
+		this.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		this.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		hint.modify(Control.NotEditable,0);
 		//this.addLast(split);
 	}
@@ -44,7 +41,7 @@ public class HintLogPanel extends CellPanel{
 	public void setText(CacheHolder cache){
 		this.cache = cache;
 		Vm.showWait(true);
-		hint.setText(cache.Hints);
+		if(!cache.Hints.equals("null")) hint.setText(cache.Hints);
 		String dummy = new String();
 		int counter = 0;
 		for(int i = 0; i<cache.CacheLogs.size(); i++){

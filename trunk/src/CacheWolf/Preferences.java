@@ -99,6 +99,10 @@ public class Preferences extends MinML{
 			//Check if there are "profiles" entries. If yes display a form
 			//so the user may choose a profile.
 			if(mode == 1){
+				if(profiles[0].equals("null")) profiles[0] = "";
+				if(profiles[1].equals("null")) profiles[1] = "";
+				if(profiles[2].equals("null")) profiles[2] = "";
+				if(profiles[3].equals("null")) profiles[3] = "";
 				if(profiles[0].length()>0 ||
 				   profiles[1].length()>0 ||
 				   profiles[2].length()>0 ||
