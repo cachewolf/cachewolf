@@ -1,12 +1,8 @@
 package CacheWolf;
 
 import ewe.ui.*;
-import ewe.io.*;
-import ewesoft.xml.*;
-import ewe.util.*;
 import ewe.sys.*;
-import ewe.math.*;
-import ewe.fx.*;
+
 
 /**
 *	This form displays the list of profiles for a user to choose from,
@@ -30,7 +26,7 @@ public class ProfilesForm extends Form{
 		this.addLast(prof2 = new mButton(profiles[1]));
 		this.addLast(prof3 = new mButton(profiles[2]));
 		this.addLast(prof4 = new mButton(profiles[3]));
-		this.addLast(cancel = new mButton((String)lr.get(1300,"Cancel")));
+		this.addLast(cancel = new mButton((String)lr.get(1300,"Last Setting")));
 	}
 	
 	/**

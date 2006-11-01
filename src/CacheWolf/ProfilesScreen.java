@@ -1,6 +1,5 @@
 package CacheWolf;
 
-import ewe.io.*;
 import ewe.sys.*;
 import ewe.ui.*;
 import ewe.filechooser.*;
@@ -75,8 +74,8 @@ public class ProfilesScreen extends Form {
 		name4.setText(myPrefs.profiles[3]);
 		dir4.setText(myPrefs.profdirs[3]);
 		
-		this.addNext(cancelB = new mButton((String)lr.get(614,"Cancel")),this.DONTSTRETCH, (this.HFILL|this.WEST));
-		this.addLast(applyB = new mButton((String)lr.get(615,"Apply")),this.DONTSTRETCH, (this.HFILL|this.WEST));
+		this.addNext(cancelB = new mButton((String)lr.get(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		this.addLast(applyB = new mButton((String)lr.get(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 	}
 	
 	/**
