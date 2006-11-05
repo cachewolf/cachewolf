@@ -252,6 +252,8 @@ public class MainMenu extends MenuBar {
 				pbf.display("CMCONVERT", "Converting...", null);
 				String cwd = new String();
 				cwd = File.getProgramDirectory() + "/temp.gpx";
+				// add surrounding "
+				cwd = "\"" + cwd + "\"";
 				try{
 					//Vm.debug(File.getProgramDirectory() + "/cmconvert/cmconvert " + cwd);
 					ewe.sys.Process p = Vm.exec(File.getProgramDirectory() + "/cmconvert/cmconvert " + cwd);

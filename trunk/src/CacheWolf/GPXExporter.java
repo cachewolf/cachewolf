@@ -64,7 +64,12 @@ public class GPXExporter{
 					pll = new ParseLatLon(holder.LatLon, ".");
 					pll.parse();
 					outp.print("  <wpt lat=\""+pll.getLatDeg()+"\" lon=\""+pll.getLonDeg()+"\">\r\n");
-					tim.parse(holder.DateHidden, "M/d/y");
+					if (holder.DateHidden.length()> 0){
+						tim.parse(holder.DateHidden, "M/d/y");
+					}
+					else {
+						tim.setText("2000-01-01");
+					}
 					outp.print("    <time>"+tim.toString()+"T00:00:00.0000000-07:00</time>\r\n");
 					outp.print("    <name>"+holder.wayPoint+"</name>\r\n");
 					outp.print("    <desc>"+SafeXML.cleanGPX(holder.CacheName)+" by "+SafeXML.cleanGPX(holder.CacheOwner)+"</desc>\r\n");
@@ -113,6 +118,7 @@ public class GPXExporter{
 			outp.close();
 		}catch(Exception e){
 			Vm.debug("Problem writing to GPX file");
+			e.printStackTrace();
 		}//try
 	}
 	
