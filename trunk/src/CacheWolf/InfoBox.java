@@ -18,7 +18,7 @@ public class InfoBox extends Form{
 	public InfoBox(String title, String info){
 		this.setPreferredSize(170,50);
 		this.title = title;
-		this.addLast(msgArea = new MessageArea(""), this.STRETCH, this.FILL);
+		this.addLast(msgArea = new MessageArea(""), CellConstants.STRETCH, CellConstants.FILL);
 		msgArea.setText(info);
 	}
 	
@@ -32,15 +32,15 @@ public class InfoBox extends Form{
 		this.title = title;
 		if(type == CHECKBOX){
 			mCB = new mCheckBox(info);
-			this.addLast(mCB, this.STRETCH, this.FILL);
+			this.addLast(mCB, CellConstants.STRETCH, CellConstants.FILL);
 		}
 		if(type == INPUT){
 			mLabel mL = new mLabel(info);
-			this.addNext(mL, this.STRETCH, this.FILL);
-			this.addLast(feedback, this.STRETCH, this.FILL);
+			this.addNext(mL, CellConstants.STRETCH, CellConstants.FILL);
+			this.addLast(feedback, CellConstants.STRETCH, CellConstants.FILL);
 		}
-		this.addNext(mC, this.STRETCH, this.FILL);
-		this.addLast(mB, this.STRETCH, this.FILL);
+		this.addNext(mC, CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(mB, CellConstants.STRETCH, CellConstants.FILL);
 	}
 	
 	public void setInfo(String info){
