@@ -29,6 +29,7 @@ import ewe.io.*;
 import ewe.sys.*;
 import ewe.util.*;
 import com.stevesoft.ewe_pat.*;
+import ewe.ui.*;
 
 /**
 *	Class to spider caches from gc.com
@@ -50,15 +51,17 @@ public class SpiderGC{
 	 * Method to login the user to gc.com
 	 * It will request a password and use the alias defined in preferences
 	 */
-	public void login(){
+	public int login(){
 		pref.logInit();
 		//Access the page once to get a viewstate
 		String start = new String();
 		String doc = new String();
 		//Get password
 		InfoBox infB = new InfoBox("Password", "Enter password:", InfoBox.INPUT);
-		infB.execute();
-		passwort = infB.getInput();
+		int code = infB.execute();
+		if(code == Form.IDOK){
+			passwort = infB.getInput();
+		} else return code;
 		infB.close(0);
 		infB = new InfoBox("Status", "Logging in...");
 		infB.show();
@@ -100,6 +103,7 @@ public class SpiderGC{
 		cookieSession = rexCookieSession.stringMatched(1);
 		//Vm.debug(cookieSession);
 		infB.close(0);
+		return Form.IDOK;
 	}
 	
 	/**
@@ -198,9 +202,11 @@ public class SpiderGC{
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		String doc = new String();
 		
-		login();
+		int ok = login();
+		if(ok == Form.IDCANCEL) return;
 		InfoBox  infB = new InfoBox("Distance", "Max distance:", InfoBox.INPUT);
-		infB.execute();
+		ok = infB.execute();
+		if(ok == Form.IDCANCEL) return;
 		distance = Convert.toDouble(infB.getInput());
 		infB.close(0);
 		infB = new InfoBox("Status", "Fetching first page...");
