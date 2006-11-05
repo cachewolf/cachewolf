@@ -13,6 +13,7 @@ import ewe.util.*;
 *	ClassID = 2000
 */
 public class GPXExporter{
+//	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
 	Preferences myPreferences;
 	ProgressBarForm pbf = new ProgressBarForm();

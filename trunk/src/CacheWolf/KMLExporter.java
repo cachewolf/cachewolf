@@ -10,7 +10,7 @@ import ewe.filechooser.*;
 *   
 */
 public class KMLExporter{
-	
+//	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
 	Preferences myPreferences;
 	

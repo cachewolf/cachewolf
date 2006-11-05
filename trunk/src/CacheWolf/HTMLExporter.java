@@ -13,6 +13,7 @@ import HTML.*;
 *	to thier liking.
 */
 public class HTMLExporter{
+//	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
 	Preferences myPreferences;
 	String [] template_init_index = {
