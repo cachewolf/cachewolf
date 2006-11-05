@@ -1,7 +1,4 @@
 
-/**
- * 
- */
 package CacheWolf;
 
 
@@ -11,6 +8,7 @@ import ewe.sys.Convert;
 import com.bbn.openmap.proj.coords.*;
 import com.bbn.openmap.proj.*;
 import com.bbn.openmap.*;
+import ewe.sys.Vm;
 
 
 
@@ -257,7 +255,8 @@ public class CWPoint {
 	public String getLonDeg(int format) {
 		Double lonDeg = new Double();
 		
-		lonDeg.set(java.lang.Math.abs(this.lonDec));
+		//lonDeg.set(java.lang.Math.abs(this.lonDec));
+		lonDeg.set(this.lonDec);
 		
 		switch (format) {
 		case DD: 	return l.format(Locale.FORMAT_PARSE_NUMBER,lonDeg, "000.00000").replace(',','.');
