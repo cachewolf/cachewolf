@@ -10,7 +10,7 @@ import ewe.filechooser.*;
 *	Destinator ;-) !
 */
 public class ASCExporter{
-	
+	//TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
 	Preferences myPreferences;
 	

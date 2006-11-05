@@ -9,6 +9,7 @@ import ewe.util.*;
 *	ba Mapsource (c) by Garmin.
 */
 public class PCX5Exporter{
+//	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
 	Preferences myPreferences;
 	public static int MODE_AUTO = 0;

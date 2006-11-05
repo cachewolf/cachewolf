@@ -13,7 +13,7 @@ import ewe.filechooser.*;
 *	8.635,50.386,"Adlerhorst"
 */
 public class TomTomASCExporter{
-	
+//	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
 	Preferences myPreferences;
 	
