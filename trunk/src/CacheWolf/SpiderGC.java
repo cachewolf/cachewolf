@@ -483,15 +483,15 @@ public class SpiderGC{
 			sockImg.close();
 		} catch (UnknownHostException e) {
 			pref.log("Host not there...");
-			Vm.debug("Host not there...");
+			//Vm.debug("Host not there...");
 		}catch(IOException ioex){
 			pref.log("File not found!");
-			Vm.debug("File not found!");
+			//Vm.debug("File not found!");
 		} catch (Exception ex){
 			pref.log("Some other problem while fetching image");
-			Vm.debug("Some kind of problem!");
+			//Vm.debug("Some kind of problem!");
 		} finally {
-			//Vm.debug("This is stupid!!");
+			//Continue with the spider
 		}
 	}		
 	
