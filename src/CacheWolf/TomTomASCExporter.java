@@ -40,7 +40,7 @@ public class TomTomASCExporter{
 						pll.parse();
 						outp.print(pll.getLonDeg()+",");
 						outp.print(pll.getLatDeg()+",");
-						outp.println("\"" + holder.CacheName + "\"\r");
+						outp.println("\"" + holder.CacheName.replace(',',' ') + "\"\r");
 						symCounter++;
 					}//if holder...
 				}//for ... i < cacheDB ...			
