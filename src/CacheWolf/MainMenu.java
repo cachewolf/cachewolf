@@ -202,14 +202,26 @@ public class MainMenu extends MenuBar {
 				fc.addMask("*.gpx,*.zip,*.loc");
 				fc.setTitle((String)lr.get(909,"Select file(s)"));
 				if(fc.execute() != FileChooser.IDCANCEL){
-					String file = fc.getChosenFile().toString();
-					if (file.endsWith("loc")){
-						LOCXMLImporter loc = new LOCXMLImporter(cacheDB, file, myPreferences);
-						loc.doIt();
+					String dir = fc.getChosenDirectory().toString();
+					String files[] = fc.getAllChosen();
+					int how = GPXImporter.DOIT_ASK;
+					if (files.length > 0){
+							InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
+							iB.execute();
+							boolean doSpider = iB.mCB_state;
+							if (doSpider) how = GPXImporter.DOIT_WITHSPOILER;
+							else how = GPXImporter.DOIT_NOSPOILER;
 					}
-					else {
-						GPXImporter gpx = new GPXImporter(cacheDB, file,myPreferences);
-						gpx.doIt(GPXImporter.DOIT_ASK);
+					for (int i = 0; i < files.length; i++){ 
+						String file = dir + "/" + files[i];
+						if (file.endsWith("loc")){
+							LOCXMLImporter loc = new LOCXMLImporter(cacheDB, file, myPreferences);
+							loc.doIt();
+						}
+						else {
+							GPXImporter gpx = new GPXImporter(cacheDB, file,myPreferences);
+							gpx.doIt(how);
+						}
 					}
 				}
 				tbp.resetModel(cacheDB);
