@@ -215,6 +215,7 @@ public class SpiderGC{
 		try{
 			pref.log("Fetching first list page: http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD) + "&f=1");
 			start = fetch("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD) + "&f=1");
+			pref.log("First page: " + start);
 		}catch(Exception ex){
 			pref.log("Error fetching first list page");
 			Vm.debug("Could not get list");
@@ -658,6 +659,7 @@ public class SpiderGC{
 			//Vm.debug(address);
 			HttpConnection conn;
 			if(pref.myproxy.length() > 0){
+				pref.log("Using proxy: " + pref.myproxy + " / " +pref.myproxyport);
 				conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
 				//Vm.debug(address);
 			} else {
@@ -666,11 +668,15 @@ public class SpiderGC{
 			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 			if(cookieSession.length()>0){
 				conn.setRequestorProperty("Cookie: ", "ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
+				pref.log("Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
 			}
 			conn.setRequestorProperty("Connection", "close");
 			conn.documentIsEncoded = true;
+			pref.log("Connecting");
 			Socket sock = conn.connect();
+			pref.log("Connect ok!");
 			ByteArray daten = conn.readData(sock);
+			pref.log("Read socket ok");
 			JavaUtf8Codec codec = new JavaUtf8Codec();
 			CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 			////Vm.debug(c_data.toString());
