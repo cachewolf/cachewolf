@@ -82,6 +82,8 @@ public class GPXImporter extends MinML {
 	}
 	
 	public void doIt(int how){
+		Filter flt = new Filter();
+		flt.clearFilter(cacheDB);
 		try{
 			ewe.io.Reader r;
 			String file;
