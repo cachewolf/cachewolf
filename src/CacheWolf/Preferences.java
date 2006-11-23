@@ -10,6 +10,8 @@ import ewesoft.xml.sax.*;
 *	A class to hold the preferences that were loaded upon start up of CacheWolf.
 *	This class is also capable of parsing the prefs.xml file as well as
 *	saving the current settings of preferences.
+*  Last change:
+*    20061123 salzkammergut Added garminConn, used MyLocale
 */
 public class Preferences extends MinML{
 	
@@ -44,6 +46,8 @@ public class Preferences extends MinML{
 	public String longs[] = new String[4];
 	public String lastSyncOC[] = new String[4];
 	public String lastDistOC[] = new String[4];
+	public String garminConn="com1";  // The type of connection which GPSBABEL uses: com1 OR usb.
+	// TODO Add garminConn to user interface. For the time being this can only be set by manually editing the pref file
 		
 	public String last_sync_opencaching = new String();
 	public String distOC = new String();
@@ -60,8 +64,7 @@ public class Preferences extends MinML{
 	public int fontSize = 14;
 	
 	public Preferences(){
-		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
-		if(testA == 4.5) digSeparator = ","; else digSeparator = ".";
+		digSeparator=MyLocale.getDigSeparator();
 		//Vm.debug("Separ: " + digSeparator);
 		mySPO.bits = 8;
 		mySPO.parity = SerialPort.NOPARITY;
@@ -243,6 +246,9 @@ public class Preferences extends MinML{
 			myproxy = atts.getValue("prx");
 			myproxyport = atts.getValue("prt");
 		}
+		if (name.equals("garmin")) {
+			garminConn=atts.getValue("connection");
+		}
 		
 		if(name.equals("tableType")){ 
 			tablePrefs[1] = Convert.parseInt(atts.getValue("active"));
@@ -357,6 +363,7 @@ public class Preferences extends MinML{
 			outp.print("    <font size =\""+fontSize+"\"/>\n");
 			outp.print("	<browser name = \""+browser+"\"/>\n");
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
+			outp.print("    <garmin connection = \""+garminConn+"\"/>\n");
 			outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
 			outp.print("</preferences>");
 			outp.close();

@@ -11,6 +11,8 @@ import ewe.sys.*;
 *	Class ID = 1200
 *	@see MainForm
 *	@see MainMenu
+*   Last Change: 
+*     20061123 salzkammergut: Converted to Mylocale, added goto icon, added check for small screen width 
 */
 public class MainTab extends mTabbedPanel {
 	DescriptionPanel descP= new DescriptionPanel();
@@ -26,37 +28,39 @@ public class MainTab extends mTabbedPanel {
 
 	String lastselected = new String();
 	CacheHolder ch = new CacheHolder();
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+	//Locale l = Vm.getLocale();
+	//LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	
 	public MainTab(Vector cacheDB, Preferences pref){
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
-		}
+		MyLocale.setSIPButton();
 		myPreferences = pref;
 		cDB = cacheDB;
 		ch.wayPoint = "null";
-		Card c = this.addCard(tbP = new TablePanel(cDB, myPreferences), (String)lr.get(1200,"List"), null);
+		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
+		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
+
+		Card c = this.addCard(tbP = new TablePanel(cDB, myPreferences), MyLocale.getMsg(1200,"List"), null);
 		
-		c = this.addCard(detP, (String)lr.get(1201,"Details"), null);
+		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
 		c.iconize(new Image("details.gif"),true);
 		
-		c = this.addCard(descP, (String)lr.get(1202,"Description"), null);
+		c = this.addCard(descP, MyLocale.getMsg(1202,"Description"), null);
 		c.iconize(new Image("descr.gif"),true);
 		
-		c = this.addCard(new ScrollBarPanel(imageP = new ImagePanel(myPreferences)), (String)lr.get(1203,"Images"), null);
+		c = this.addCard(new ScrollBarPanel(imageP = new ImagePanel(myPreferences)), MyLocale.getMsg(1203,"Images"), null);
 		c.iconize(new Image("images.gif"),true);
 		
-		c = this.addCard(hintLP, (String)lr.get(1204,"Hints & Logs"), null);
+		c = this.addCard(hintLP, MyLocale.getMsg(1204,"Hints & Logs"), null);
 		c.iconize(new Image("more.gif"),true);
 
-		c = this.addCard(calcP, (String)lr.get(1206,"Calc"), null);
+		c = this.addCard(calcP, MyLocale.getMsg(1206,"Calc"), null);
 		c.iconize(new Image("ewe/HandHeld.bmp"),true);
 		
 		c = this.addCard(gotoP = new GotoPanel(myPreferences, this, detP, cDB), "Goto", null);
-		//c.iconize(new Image("ewe/HandHeld.bmp"),true);
+		c.iconize(new Image("goto.gif"),true);
 		tbP.setGotoPanel(gotoP);
-		c = this.addCard(new SolverPanel(myPreferences), (String)lr.get(1205,"Solver"), null);
+		
+		c = this.addCard(new SolverPanel(myPreferences), MyLocale.getMsg(1205,"Solver"), null);
 		c.iconize(new Image("solver.gif"),true);
 		
 		c = this.addCard(radarP, "Radar", null);
@@ -103,7 +107,7 @@ public class MainTab extends mTabbedPanel {
 					  ch = new CacheHolder();
 					  ch = (CacheHolder)cDB.get(tbP.getSelectedCache());
 					  ch.CacheStatus = detP.wayStatus.getText();
-					  if(ch.CacheStatus.equals((String)lr.get(318,"Found"))){
+					  if(ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"))){
 						  ch.is_found = true;
 					  } else {
 						  ch.is_found = false;
@@ -140,15 +144,11 @@ public class MainTab extends mTabbedPanel {
 				  }
 			  }
 			  if(this.getSelectedItem() == 1){ // DetailsPanel
-				if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-					Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
-				}
-				detP.setDetails(ch, cDB, this,myPreferences);
+				  MyLocale.setSIPButton();
+				  detP.setDetails(ch, cDB, this,myPreferences);
 			  }
 			  if(this.getSelectedItem() == 2) { // Description Panel
-				  if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-						Vm.setSIP(0);
-					}
+				  MyLocale.setSIPOff();
 				  descP.setText(ch);
 				  if(detP.dirty_new == true || detP.dirty_delete == true) {
 					  tbP.refreshTable();
@@ -173,24 +173,18 @@ public class MainTab extends mTabbedPanel {
 				  }
 			  }
 			  if(this.getSelectedItem() == 5){ // CalcPanel
-					if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-						Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
-					}
-					calcP.setFields(ch, cDB, this, detP, myPreferences);
+				  MyLocale.setSIPButton();
+				  calcP.setFields(ch, cDB, this, detP, myPreferences);
 					calcP.activateFields(CWPoint.DMM);
 				  }
 			  
 			  if(this.getSelectedItem() == 6){ // GotoPanel
-					if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-						Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
-					}
+				  MyLocale.setSIPButton();
 				  }
 
 
 			  if(this.getSelectedItem() == 7) { // Solver Panel
-				  if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-					Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
-				}
+				  MyLocale.setSIPButton();
 				  if(detP.dirty_new == true || detP.dirty_delete == true) {
 					  tbP.refreshTable();
 					  detP.dirty_new = false;
