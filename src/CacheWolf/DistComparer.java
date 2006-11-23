@@ -17,8 +17,8 @@ public class DistComparer implements Comparer{
 		if(oo1.is_filtered == false && oo2.is_filtered == false){
 			String strA = new String();
 			String strB = new String();
-			strA = oo1.distance.substring(0,oo1.distance.length()-3);
-			strB = oo2.distance.substring(0,oo2.distance.length()-3);
+			if (oo1.distance.length()>2)strA = oo1.distance.substring(0,oo1.distance.length()-3); //Bugfix 9531 if added
+			if (oo2.distance.length()>2)strB = oo2.distance.substring(0,oo2.distance.length()-3); //Bugfix 9531 if added
 			/*
 			if(l.getString(Locale.LANGUAGE_SHORT ,0,0).equals("DE")){
 				//Vm.debug(strA);
