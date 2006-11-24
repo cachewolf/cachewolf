@@ -27,6 +27,7 @@ public class MovingMap extends Form{
 	AniImage arrowRight = new AniImage("arrow_right.png");
 	AniImage posCircle = new AniImage("position.png");
 	int centerx,centery = 0;
+	boolean ignoreGps = false;
 	
 	public MovingMap(Preferences pref, Vector maps, GotoPanel gP, Vector cacheDB){
 		this.cacheDB = cacheDB;
@@ -39,50 +40,110 @@ public class MovingMap extends Form{
 		mmp = new MovingMapPanel(this, maps, gotoPanel, cacheDB);
 		this.addLast(mmp);
 	}
+
+	private int getBestMap() { // finds the map which is next (center of the map) to the gps-position / could be a good idea to seachr only maps which show the current position (use InBound)
+		// maps, gotoPanel.gpsPosition.latDec != 0, gotoPanel.gpsPosition
+		MapInfoObject mi = new MapInfoObject();
+		MapInfoObject bestMap = new MapInfoObject();
+		double minDistLat = 1000.0;
+		double minDistLon = 1000.0;
+		boolean latNearer, lonNearer;
+		int minDistMap = -1;
+		boolean better = false;
+		for (int i=0; i<maps.size() ;i++) {
+			better = false;
+			mi=(MapInfoObject)maps.get(i);
+			latNearer=java.lang.Math.abs(gotoPanel.gpsPosition.latDec - mi.center.latDec) < minDistLat ;
+			lonNearer=java.lang.Math.abs(gotoPanel.gpsPosition.lonDec - mi.center.lonDec) < minDistLon;
+			if ( latNearer && lonNearer) better = true;
+			if ( !better && (latNearer || lonNearer )) { 
+				if ( mi.center.getDistanceRad(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec) < bestMap.center.getDistanceRad(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec) ) better = true;
+					}
+			if (better) {
+				minDistLat = gotoPanel.gpsPosition.latDec - mi.center.latDec;
+				minDistLon = gotoPanel.gpsPosition.lonDec - mi.center.lonDec;
+				minDistMap = i;
+				bestMap = mi;
+				Vm.debug("better"+ i);
+			}
+		}
+		return minDistMap ;
+	}
 	
 	public void loadMap(){
 		//Create index of all world files
 		//Create form
 //		if(gotoPanel.toPoint.latDec == 0 && gotoPanel.toPoint.latDec == 0 && maps.size()>0){
-			try{
-				statusImageNoGps.setLocation(10,10);
-				statusImageNoGps.properties = AniImage.AlwaysOnTop;
-				arrowUp.setLocation(pref.myAppWidth/2, 10);
-				arrowDown.setLocation(pref.myAppWidth/2, pref.myAppHeight-20);
-				arrowLeft.setLocation(10, pref.myAppHeight/2+7);
-				arrowRight.setLocation(pref.myAppWidth-25, pref.myAppHeight/2+7);
-				arrowUp.properties = AniImage.AlwaysOnTop;
-				arrowDown.properties = AniImage.AlwaysOnTop;
-				arrowLeft.properties = AniImage.AlwaysOnTop;
-				arrowRight.properties = AniImage.AlwaysOnTop;
-				mmp.addImage(arrowUp);
-				mmp.addImage(arrowDown);
-				mmp.addImage(arrowLeft);
-				mmp.addImage(arrowRight);
-				mmp.addImage(statusImageNoGps);
-				centerx = pref.myAppWidth/2;
-				centery = pref.myAppHeight/2;
-				// GPS has been switched on
-				//This means we display the correct map if we have a fix
-				//if(gotoPanel.displayTimer != 0){
-				//Vm.debug("Und: " +gotoPanel.gpsPosition.latDec);
-				if(gotoPanel.gpsPosition.latDec != 0){
-					ListBox l = new ListBox(maps, true, gotoPanel.gpsPosition);
-					if (l.execute()==FormBase.IDOK){
-						posCircle.setLocation(pref.myAppWidth/2-10,pref.myAppHeight/2-10);
-						posCircle.properties = AniImage.AlwaysOnTop;
-						mmp.addImage(posCircle);
-						
-						mapImage = new AniImage(l.selectedMap.fileName);
-						this.title = l.selectedMap.mapName;
-						this.currentMap = l.selectedMap;
-						updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec);
-						mmp.addImage(mapImage);
-						mmp.setMap(mapImage);
-						this.repaintNow();
-					}
-					else this.currentMap = null;  
-				}else{ //Default: display the first map in the list.
+		try{
+			statusImageNoGps.setLocation(10,10);
+			statusImageNoGps.properties = AniImage.AlwaysOnTop;
+			arrowUp.setLocation(pref.myAppWidth/2, 10);
+			arrowDown.setLocation(pref.myAppWidth/2, pref.myAppHeight-20);
+			arrowLeft.setLocation(10, pref.myAppHeight/2+7);
+			arrowRight.setLocation(pref.myAppWidth-25, pref.myAppHeight/2+7);
+			arrowUp.properties = AniImage.AlwaysOnTop;
+			arrowDown.properties = AniImage.AlwaysOnTop;
+			arrowLeft.properties = AniImage.AlwaysOnTop;
+			arrowRight.properties = AniImage.AlwaysOnTop;
+			mmp.addImage(arrowUp);
+			mmp.addImage(arrowDown);
+			mmp.addImage(arrowLeft);
+			mmp.addImage(arrowRight);
+			mmp.addImage(statusImageNoGps);
+			centerx = pref.myAppWidth/2;
+			centery = pref.myAppHeight/2;
+			// GPS has been switched on
+			//This means we display the correct map if we have a fix
+			//if(gotoPanel.displayTimer != 0){
+			//Vm.debug("Und: " +gotoPanel.gpsPosition.latDec);
+			if (!maps.isEmpty()){ // are calibrated maps available at all? - geht so nicht, muss erstmal überhaupt gefüllt werden die Liste
+				ListBox l; 
+				// Position? --> gibt es Karten? --> falls ja: auswählen, falls nein: GPS-Position ignoerieren
+				// nein: alle Karten auswählen
+				try { // was wenn nur 1 Karte existiert, die nicht im GPS-Position liegt?
+					l = new ListBox(maps, gotoPanel.gpsPosition.latDec != 0, gotoPanel.gpsPosition);
+				} catch (IndexOutOfBoundsException ex) { // wird von ListBox (darin maps.get) geworfen, wenn die Liste der Maps leer istif (l.execute()==FormBase.IDOK){
+					ignoreGps = true;
+					if (gotoPanel.gpsPosition.latDec != 0) {
+						LocalResource lr = Vm.getLocale().getLocalResource("cachewolf.Languages",true);
+						(new MessageBox((String)lr.get(321, "Information"), (String)lr.get(326, "Es steht keine kalibrierte Karte für die aktuelle GPS-Position zur Verfügung, bitte wählen Sie aus allen verfügbaren Karten eine zur Anzeige aus, GPS-Signal wird ignoriert"), MessageBox.OKB)).execute();
+						l = new ListBox(maps, false, gotoPanel.gpsPosition);
+					} else l = new ListBox(maps, false, gotoPanel.gpsPosition); // cannot happen but is neccessary to compile
+				}
+/*				if (l.myExecute()== FormBase.IDOK) {
+					posCircle.setLocation(pref.myAppWidth/2-10,pref.myAppHeight/2-10);
+					posCircle.properties = AniImage.AlwaysOnTop;
+					mmp.addImage(posCircle);
+
+					mapImage = new AniImage(l.selectedMap.fileName);
+					this.title = l.selectedMap.mapName;
+					this.currentMap = l.selectedMap;
+					updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec);
+					mmp.addImage(mapImage);
+					mmp.setMap(mapImage);
+					this.repaintNow();
+				}
+*/				
+				try {
+					int bestmap=getBestMap();
+					this.currentMap = (MapInfoObject)maps.get(bestmap);
+					posCircle.setLocation(pref.myAppWidth/2-10,pref.myAppHeight/2-10);
+					posCircle.properties = AniImage.AlwaysOnTop;
+					mmp.addImage(posCircle);
+
+					mapImage = new AniImage(currentMap.fileName);
+					this.title = currentMap.mapName;
+					updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec);
+					mmp.addImage(mapImage);
+					mmp.setMap(mapImage);
+					this.repaintNow();
+				} catch (IndexOutOfBoundsException ex) { // wird von maps.get geworfen, wenn die Liste der Maps leer ist, sollte eigentlich nicht vorkommen, solange bestmaps immer eine gültige Antwort liefert
+					LocalResource lr = Vm.getLocale().getLocalResource("cachewolf.Languages",true);
+					(new MessageBox((String)lr.get(321, "Error"), (String)lr.get(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB)).execute();
+					throw new IndexOutOfBoundsException("no calibrated maps available"); 
+				}
+				
+				/* else{ //Default: display the first map in the list.
 					try {
 						MapInfoObject mo = (MapInfoObject)maps.get(0);
 						currentMap = mo;
@@ -91,19 +152,18 @@ public class MovingMap extends Form{
 						mapImage.setLocation(0,0);
 						mmp.addImage(mapImage);
 						mmp.setMap(mapImage);
-					} catch (IndexOutOfBoundsException ex) { // wird von maps.get geworfen, wenn die Liste der Maps leer ist
-						Locale l = Vm.getLocale();
-						LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
-						MessageBox tmpMB = new MessageBox((String)lr.get(321, "Error"), (String)lr.get(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB);
-						tmpMB.execute();
-					}
-				}
-			}catch (NumberFormatException ex){ // veraltet - hier vielleicht auch einen MemoryError behandlung hin?
-				Vm.debug("Problem loading map image file!");
-			}
-	//	}
+				 */					
+				} else { // catch (IndexOutOfBoundsException ex) { // wird von maps.get geworfen, wenn die Liste der Maps leer ist
+					 LocalResource lr = Vm.getLocale().getLocalResource("cachewolf.Languages",true);
+					 (new MessageBox((String)lr.get(321, "Error"), (String)lr.get(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB)).execute();
+					 throw new IndexOutOfBoundsException("no calibrated maps available"); 
+				 }
+		}catch (NumberFormatException ex){ // veraltet - hier vielleicht auch einen MemoryError behandlung hin?
+			Vm.debug("Problem loading map image file!");
+		}
+		//	}
 	}
-	
+
 	/**
 	* Method to calculate bitmap x,y of the current map using
 	* lat and lon target coordinates
@@ -271,7 +331,19 @@ class ListBox extends Form{
 		this.addLast(scb = new ScrollBarPanel(list),this.STRETCH, this.FILL);
 		this.addNext(cancelButton = new mButton("Cancel"),this.STRETCH, this.FILL);
 		this.addLast(okButton = new mButton("Select"),this.STRETCH, this.FILL);
+		
 	}
+	
+	public int myExecute() {
+		if (this.maps.size()==1) {
+			//this.selectedMap = 1;
+			this.selectedMap = new MapInfoObject();
+			this.selectedMap = (MapInfoObject) maps.get(0);
+			return FormBase.IDOK;
+		}
+		return execute();
+	}
+	
 	
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
