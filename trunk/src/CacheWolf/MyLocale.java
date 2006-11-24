@@ -14,7 +14,9 @@ import ewe.ui.Window;
  *  The methods are static, the class does not need initialisation.
  *
  *  @author salzkammergut
- *  @version 1: 20061122 Changed name to MyLocale. Added screen width & height, formatLong, SIP functions
+ *  Changes:
+ *    20061122 Changed name to MyLocale. Added screen width & height, formatLong, SIP functions
+ *    20061124 Added formatDouble
  */
 public class MyLocale {
 	private static Locale l=null;
@@ -115,6 +117,18 @@ public class MyLocale {
 		if (l==null) init();
 		return l.format(Locale.FORMAT_PARSE_NUMBER,number,fmt);
 	}
+
+	/**
+	 * Formats a Double to a given format specifier
+	 * @param number A Double containing the number to be formatted
+	 * @param fmt A string containing the format specification</br> 
+	 * @return The formatted number
+	 */
+	public static String formatDouble(ewe.sys.Double number, String fmt) {
+		if (l==null) init();
+		return l.format(Locale.FORMAT_PARSE_NUMBER,number,fmt);
+	}
+	
 	
 	/**
 	 * This function checks whether the device supports a

@@ -8,6 +8,8 @@ import ewe.fx.*;
 /**
 *	Class to display the cache database in a table.
 *	Class ID = 1000
+*   Changes:
+*     20061124 salzkammergut Bugfix 9529, Conversion to Mylocale
 */
 public class TablePanel extends CellPanel{
 	
@@ -15,15 +17,13 @@ public class TablePanel extends CellPanel{
 	myTableModel myMod;
 	int selectedCache;
 	Preferences myPreferences = new Preferences();
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	Vector cacheDB;
 	GotoPanel myGotoPanel;
 	
 	public TablePanel(Vector DB, Preferences pref){
 		cacheDB = DB;
 		myPreferences = pref;
-		String [] spName = {" ","?",(String)lr.get(1000,"D"),"T",(String)lr.get(1002,"Waypoint"),"Name",(String)lr.get(1004,"Location"),(String)lr.get(1005,"Owner"),(String)lr.get(1006,"Hidden"),(String)lr.get(1007,"Status"),(String)lr.get(1008,"Dist"),(String)lr.get(1009,"Bear")};
+		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
 		String[] jester;
 		int colWidth[];
 		int colnum = 0;
@@ -44,7 +44,7 @@ public class TablePanel extends CellPanel{
 		}
 		
 		addLast(new ScrollBarPanel(tc = new myTableControl()));
-		Menu m = new Menu(new String[]{(String)lr.get(1010,"Goto"),(String)lr.get(1011,"Filter"),(String)lr.get(1012,"Delete"),(String)lr.get(1014,"Update")},(String)lr.get(1013,"With selection"));
+		Menu m = new Menu(new String[]{MyLocale.getMsg(1010,"Goto"),MyLocale.getMsg(1011,"Filter"),MyLocale.getMsg(1012,"Delete"),MyLocale.getMsg(1014,"Update")},MyLocale.getMsg(1013,"With selection"));
 		tc.setMenu(m);
 		tc.db = cacheDB;
 		tc.pref = pref;
@@ -91,7 +91,12 @@ public class TablePanel extends CellPanel{
 	}
 	
 	public void refreshTable(){
-		String [] spName = {" ","?",(String)lr.get(1000,"D"),"T",(String)lr.get(1002,"Waypoint"),"Name",(String)lr.get(1004,"Location"),(String)lr.get(1005,"Owner"),(String)lr.get(1006,"Hidden"),(String)lr.get(1007,"Status"),(String)lr.get(1008,"Dist"),(String)lr.get(1009,"Bear")};
+/*		Auskommentiert für bug 9529 - vergessene Spaltenbreite
+        Weil bei jedem refresh ein neues TableModel Objekt erzeugt wurde, werden
+        die Spaltenbreiten vergessen.
+        Derzeit nur auskommentiert um eventuelle Nebeneffekte zu prfen.
+         
+ 		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
 		String[] jester;
 		int colWidth[];
 
@@ -114,7 +119,7 @@ public class TablePanel extends CellPanel{
 		myMod.hasRowHeaders = false;
 		myMod.hasColumnHeaders  = true;
 		tc.setTableModel(myMod);
-		myMod.updateRows();
+*/		myMod.updateRows();
 		tc.update(true);
 	}
 	
@@ -127,8 +132,6 @@ public class TablePanel extends CellPanel{
 	*/
 	public static void updateBearingDistance(Vector cacheDB, Preferences p){
 		//myPreferences = p;
-		Locale l = Vm.getLocale();
-
 
 		CWPoint fromPoint = new CWPoint(p.mylgNS, p.mylgDeg, p.mylgMin,"0",
 										p.mybrWE, p.mybrDeg, p.mybrMin,"0", CWPoint.DMM);
@@ -150,7 +153,7 @@ public class TablePanel extends CellPanel{
 			ch.degrees = fromPoint.getBearing(toPoint);
 			ch.bearing = CWPoint.getDirection(ch.degrees);
 			db.set(ch.kilom);
-			ch.distance = l.format(ewe.sys.Locale.FORMAT_PARSE_NUMBER,db,"0.00");
+			ch.distance = MyLocale.formatDouble(db,"0.00");
 			ch.distance = ch.distance + " km";
 			cacheDB.del(anz);
 			cacheDB.add(anz, ch);
