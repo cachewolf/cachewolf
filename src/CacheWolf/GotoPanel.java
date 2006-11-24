@@ -564,11 +564,12 @@ public class GotoPanel extends CellPanel {
 			}
 			//Start moving map
 			if (ev.target == btnMap){
+				Vm.showWait(true);
+				InfoBox inf = new InfoBox("Info", "   ");
+				inf.show();
 				if(mapsLoaded == false){
+					inf.setInfo("Loading maps...");
 					String dateien[];
-					InfoBox inf = new InfoBox("Info", "Loading maps...");
-					Vm.showWait(true);
-					inf.show();
 					String mapsPath = new String();
 					mapsPath = File.getProgramDirectory() + "/maps/";
 					File files = new File(mapsPath);
@@ -585,9 +586,8 @@ public class GotoPanel extends CellPanel {
 							mapsLoaded = true;
 						}catch(IOException ex){ } // TODO etwas genauer auch Fehlermeldung ausgeben? Bei vorhandenen .wfl-Datei mit ungültigen Werten Fehler ausgeben oder wie jetz einfach ignorieren?
 					}
-					inf.close(0);
-					Vm.showWait(false);
 				}
+				inf.setInfo("Loading nearest map...");
 				mmp = new MovingMap(pref, availableMaps, this, cacheDB);
 				//position test
 				//gpsPosition.latDec = 48.22103333;
@@ -598,6 +598,8 @@ public class GotoPanel extends CellPanel {
 				//serThread.start();
 				//displayTimer = Vm.requestTimer(this, 1000);
 				//end position test
+				inf.close(0);
+				Vm.showWait(false);
 				mmp.execute();
 			}
 			// create new waypoint with current GPS-position

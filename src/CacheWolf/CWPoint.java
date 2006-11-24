@@ -454,13 +454,30 @@ public class CWPoint {
 	 * @return  distance to waypoint in KM
 	 */	
 	public double getDistance (CWPoint dest){
-		float dist;
-		LatLonPoint src = new LatLonPoint(this.latDec, this.lonDec);
-		
-		dist = src.distance(new LatLonPoint(dest.latDec, dest.lonDec));
-		return Length.KM.fromRadians(dist);
+		return getDistance(dest.latDec, dest.lonDec);
 		
 	}
+
+	/**
+	 * Method to calculate the distance to a waypoint
+	 * @param dest waypoint
+	 * @return  distance to waypoint in KM
+	 */	
+	public double getDistance (double latDecD, double lonDecD){
+		return Length.KM.fromRadians(getDistanceRad(latDecD, lonDecD));
+	}
+
+	/**
+	 * Method to calculate the distance to a waypoint
+	 * @param dest waypoint
+	 * @return  distance to waypoint in KM
+	 */	
+	public double getDistanceRad (double latDecD, double lonDecD){
+		LatLonPoint src = new LatLonPoint(this.latDec, this.lonDec);
+		return src.distance(new LatLonPoint(latDecD, lonDecD));
+	}
+
+	
 
 	/**
 	 * Returns the string reprenstation of the CWPoint

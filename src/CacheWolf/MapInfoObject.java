@@ -27,6 +27,7 @@ public class MapInfoObject{
 	public double[] affine = {0,0,0,0,0,0};
 	public double lowlat = 0;
 	public double lowlon = 0;
+	public CWPoint center = new CWPoint();
 	public String fileNameWFL = new String();
 	public String fileName = new String();
 	public String mapName = new String();
@@ -82,8 +83,14 @@ public class MapInfoObject{
 		} catch (NullPointerException e) { // in.readline liefert null zurück, wenn keine Daten mehr vorhanden sind
 			throw (new IOException("not enough lines in file "+mapsPath + thisMap + ".wfl"));
 		}
+		calcCenter();
 	}
 
+	private void calcCenter() {
+	center.set((lowlat + affine[4])/2,(lowlon + affine[5])/2);
+}
+	
+	
 	/**
 	*	Method to save a world file (.wfl)
 	* @throws IOException when there was a problem writing .wfl-file
