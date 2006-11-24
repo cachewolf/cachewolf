@@ -9,6 +9,8 @@ import ewe.sys.*;
 *	Two buttons allow for navigation through the logs. 5 logs are displayed at
 *   together. This was implemented to allow for better performance on the
 *	PocketPC.
+*   Changes:
+*     20061124 salzkammergut Added </br> after each log to separate logs 
 *	Class ID=400
 */
 public class HintLogPanel extends CellPanel{
@@ -45,7 +47,7 @@ public class HintLogPanel extends CellPanel{
 		String dummy = new String();
 		int counter = 0;
 		for(int i = 0; i<cache.CacheLogs.size(); i++){
-			dummy += (String)cache.CacheLogs.get(i);
+			dummy += (String)cache.CacheLogs.get(i)+"</br>";
 			counter++;
 			if(counter >= 5 || counter >= cache.CacheLogs.size()) break;
 		}
@@ -82,7 +84,7 @@ public class HintLogPanel extends CellPanel{
 				String dummy = new String();
 				int counter = 0;
 				for(int i = crntLogPosition; i<cache.CacheLogs.size(); i++){
-					dummy += (String)cache.CacheLogs.get(i);
+					dummy += (String)cache.CacheLogs.get(i)+"</br>";
 					counter++;
 					if(counter >= minLogs) break;
 				}
@@ -100,7 +102,7 @@ public class HintLogPanel extends CellPanel{
 				}
 				int counter = 0;
 				for(int i = crntLogPosition; i<cache.CacheLogs.size(); i++){
-					dummy += (String)cache.CacheLogs.get(i);
+					dummy += (String)cache.CacheLogs.get(i)+"</br>";
 					counter++;
 					if(counter >= minLogs) break;
 				}
