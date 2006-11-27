@@ -130,6 +130,9 @@ public class OCXMLImporter extends MinML {
 			//file = "628-0-1.zip";
 			
 			//parse
+			File tmpFile = new File(myPref.mydatadir + file);
+			if (tmpFile.getLength() == 0 ) throw new IOException("no updates available");
+			
 			ZipFile zif = new ZipFile (myPref.mydatadir + file);
 			ZipEntry zipEnt;
 			Enumeration zipEnum = zif.entries();
@@ -150,11 +153,14 @@ public class OCXMLImporter extends MinML {
 			finalMessage=(String)lr.get(1614,"Error while unzipping udpate file");
 			success = false;
 		}catch (IOException e){
+			if (e.getMessage().equalsIgnoreCase("no updates available")) { finalMessage="No updates available"; success = false; }
+			else {
 			if (e.getMessage().equalsIgnoreCase("could not connect") ||
 					e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
 				finalMessage=(String)lr.get(1616,"Error: could not download udpate file from opencaching.de");
 			} else { finalMessage = "IOException: "+e.getMessage(); }
 			success = false;
+			}
 		}catch (Exception e){ // here schould be used the correct exepion
 			finalMessage=(String)lr.get(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.wayPoint;
 			success = false;
