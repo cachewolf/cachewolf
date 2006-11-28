@@ -99,7 +99,7 @@ public class ParseLatLon {
 		}
 		*/
 		lg3_buf = lg2_buf.substring(lg2_buf.indexOf(".")+1); // copy from '.'
-		lg2_buf = lg2_buf.substring(0,lg2_buf.indexOf(".")); // copy until '.'
+		lg2_buf = lg2_buf.substring(0,lg2_buf.indexOf(".")); // copy until '.' // TODO handle IndexOutOfBoundsException
 		if (lg2.indexOf("°") > 0){
 			lg2 = lg2.substring(0,lg2.length()-1); // remove °
 		}

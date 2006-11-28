@@ -460,7 +460,7 @@ public class CWPoint {
 
 	/**
 	 * Method to calculate the distance to a waypoint
-	 * @param dest waypoint
+	 * @param dest lat, lon
 	 * @return  distance to waypoint in KM
 	 */	
 	public double getDistance (double latDecD, double lonDecD){
@@ -469,8 +469,8 @@ public class CWPoint {
 
 	/**
 	 * Method to calculate the distance to a waypoint
-	 * @param dest waypoint
-	 * @return  distance to waypoint in KM
+	 * @param dest lat, lon
+	 * @return  distance to waypoint in Rad
 	 */	
 	public double getDistanceRad (double latDecD, double lonDecD){
 		LatLonPoint src = new LatLonPoint(this.latDec, this.lonDec);
