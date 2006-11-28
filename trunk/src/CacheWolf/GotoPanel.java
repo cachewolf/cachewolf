@@ -34,7 +34,7 @@ class SerialThread extends mThread{
 			comSp = new SerialPort(spo);
 		} catch (IOException e) {
 			throw new IOException(spo.portName);
-		}
+		} catch (UnsatisfiedLinkError e) {} // TODO wieder entfernen!
 		if (forwardIP.length()>0) { 
 			try {
 				tcpConn = new Socket(forwardIP, 23);
@@ -80,9 +80,39 @@ class SerialThread extends mThread{
 	
 	public void stop() {
 		run = false;
-		comSp.close();
+		if (comSp != null) comSp.close();
 	}
 }
+
+/** 
+ * Class for creating a new mThread to create timer ticks to be able to do form.close in the ticked-thread. 
+ * Using the Vm.requestTimer-Method causes "ewe.sys.EventDirectionException: This task cannot be done within 
+ * a Timer Tick." in the ewe-vm when form.close is called.  
+ */
+
+class UpdateThread extends mThread {
+	public boolean run;
+	public int calldelay;
+	public GotoPanel ticked;
+	
+	public UpdateThread (GotoPanel gp, int cd) {
+		ticked = gp;
+		calldelay = cd;
+	}
+	
+	public void run () {
+		run = true;
+		while (run) {
+			try { sleep (calldelay);} catch (InterruptedException e) {}
+		  ticked.ticked();
+		}
+	}
+	
+	public void stop() {
+		run = false;
+	}
+}
+
 
 /**
 *	Class to create the panel which handles the connection to the GPS-device<br>
@@ -125,7 +155,7 @@ public class GotoPanel extends CellPanel {
 	CellPanel LogP = new CellPanel();
 	
 	SerialThread serThread;
-	public int displayTimer = 0;
+	UpdateThread tickerThread;
 	
 	ImageControl ic; 
 	
@@ -155,12 +185,10 @@ public class GotoPanel extends CellPanel {
 	 */
 	public GotoPanel(Preferences p, MainTab mt, DetailsPanel dp, Vector db)
 	{
-		
 		pref = p;
 		mainT = mt;
 		detP = dp;
 		cacheDB = db;
-		
 
 		// Button
 		ButtonP.addNext(btnGPS = new mButton("Start"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -168,7 +196,6 @@ public class GotoPanel extends CellPanel {
 		ButtonP.addNext(btnSave = new mButton((String)lr.get(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addLast(btnMap = new mButton("Map"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		
-
 		//Format selection for coords
 		FormatP.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		FormatP.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
@@ -181,7 +208,6 @@ public class GotoPanel extends CellPanel {
 		chkUTM.setGroup(chkFormat);
 		currFormat = CWPoint.DMM;
 		chkFormat.selectIndex(currFormat);
-
 		
 		//Coords
 		CoordsP.addNext(lblGPS = new mLabel("GPS: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -347,106 +373,100 @@ public class GotoPanel extends CellPanel {
 	
 	/**
 	 * method which is called if a timer is set up  
-	 * @param timerId id of the timer, which has expired
-	 * @param elapsed ticks since last calling
+	 * 
 	 */ 
-	public void ticked(int timerId, int elapsed){
+	public void ticked() {
 		Double bearMov = new Double();
 		Double bearWayP = new Double();
 		Double dist = new Double();
 		Double speed = new Double();
 		Double sunAzimut = new Double();
 
-		if (timerId == displayTimer) {
-			if(!runMovingMap){
-				lblSats.setText(Convert.toString(gpsPosition.getSats()));
-				// display values only, if signal good
-				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()>= 0)) {
-					//gpsPosition.printAll();
-					lblPosition.setText(gpsPosition.toString(currFormat));
-					speed.set(gpsPosition.getSpeed());
-					lblSpeed.setText(l.format(Locale.FORMAT_PARSE_NUMBER,speed,"0.0") + " km/h");
-					try { 
-						sunAzimut.set(getSunAzimut(gpsPosition.Time, gpsPosition.Date, gpsPosition.latDec, gpsPosition.lonDec));
-						lblSunAzimut.setText(l.format(Locale.FORMAT_PARSE_NUMBER,sunAzimut,"0.0") + " Grad");
-					} catch (NumberFormatException e) { 
-						// irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
-						sunAzimut.set(500); // any value out of range (bigger than 360) will prevent drawArrows from drawing it 
-						lblSunAzimut.setText("---");
-					}//sunAzimut.set(getSunAzimut("141303","130906", 50.744, 7.0935));
+		//		Vm.debug("ticked");
+		int fix = gpsPosition.getFix();
+		//if(!runMovingMap){
+			lblSats.setText(Convert.toString(gpsPosition.getSats()));
+			// display values only, if signal good
+			if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
+				//gpsPosition.printAll();
+				lblPosition.setText(gpsPosition.toString(currFormat));
+				speed.set(gpsPosition.getSpeed());
+				lblSpeed.setText(l.format(Locale.FORMAT_PARSE_NUMBER,speed,"0.0") + " km/h");
+				try { 
+					sunAzimut.set(getSunAzimut(gpsPosition.Time, gpsPosition.Date, gpsPosition.latDec, gpsPosition.lonDec));
+					lblSunAzimut.setText(l.format(Locale.FORMAT_PARSE_NUMBER,sunAzimut,"0.0") + " Grad");
+				} catch (NumberFormatException e) { 
+					// irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
+					sunAzimut.set(500); // any value out of range (bigger than 360) will prevent drawArrows from drawing it 
+					lblSunAzimut.setText("---");
+				}//sunAzimut.set(getSunAzimut("141303","130906", 50.744, 7.0935));
 
-					bearMov.set(gpsPosition.getBear());
-					lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
-					bearWayP.set(gpsPosition.getBearing(toPoint));
-					lblBearWayP.setText(bearWayP.toString(0,0,0) + " Grad");
+				bearMov.set(gpsPosition.getBear());
+				lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
+				bearWayP.set(gpsPosition.getBearing(toPoint));
+				lblBearWayP.setText(bearWayP.toString(0,0,0) + " Grad");
 
-					dist.set(gpsPosition.getDistance(toPoint));
+				dist.set(gpsPosition.getDistance(toPoint));
 
-					if (dist.value >= 1){
-						lblDist.setText(l.format( Locale.FORMAT_PARSE_NUMBER,dist,"0.000")+ " km");
-					}
-					else {
-						dist.set(dist.value * 1000);
-						lblDist.setText(dist.toString(3,0,0) + " m");
-					}
-
-					drawArrows(ic,bearMov.value,bearWayP.value, sunAzimut.value);
-
-					// Set background to signal quality
-					lblSats.backGround = GREEN;
-					return;
+				if (dist.value >= 1){
+					lblDist.setText(l.format( Locale.FORMAT_PARSE_NUMBER,dist,"0.000")+ " km");
+				}
+				else {
+					dist.set(dist.value * 1000);
+					lblDist.setText(dist.toString(3,0,0) + " m");
 				}
 
-				// receiving data, but signal ist not good
-				if ((gpsPosition.getFix()== 0) && (gpsPosition.getSats()>= 0)) {
-					lblSats.backGround = YELLOW;
-					return;
-				}
-				// receiving no data
-				if (gpsPosition.getFix()== -1) {
-					if (lblSats.backGround != RED) (new MessageBox("Error", "No data from GPS\nConnection to serial port closed",MessageBox.OKB)).exec();
-					lblSats.backGround = RED;
-					stopGPS();
-					return;
-				}
-				// cannot interprete data
-				if (gpsPosition.getFix()== -2) {
-					if (lblSats.backGround != RED) (new MessageBox("Error", "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n "+gpsPosition.lastStrExamined, MessageBox.OKB)).exec();
-					lblSats.backGround = RED;
-					stopGPS();
-					return;
-				}
+				drawArrows(ic,bearMov.value,bearWayP.value, sunAzimut.value);
 
-			}else{ // In moving map mode
-				if ((gpsPosition.getFix()> 0) && (gpsPosition.getSats()>= 0)) {
-					mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
-				}
-				/* The following code does nothing, comment it out
-				// receiving data, but signal ist not good
-				if ((gpsPosition.getFix()== 0) && (gpsPosition.getSats()>= 0)) {
-					//lblSats.backGround = YELLOW;
-					//return;
-				}
-				// receiving no data
-				if (gpsPosition.getFix()== -1) {
-					//lblSats.backGround = RED;
-					//return;
-				}
-				 */
-				/*
-				if(ticker == 0) mmp.updatePosition(48.23003333, 11.63345);
-				if(ticker == 1) mmp.updatePosition(48.23651667, 11.63716667);
-				if(ticker == 2) mmp.updatePosition(48.24335, 11.64035);
-				if(ticker == 3) mmp.updatePosition(48.22103333, 11.62976667);
-				ticker++;
-				if(ticker > 3) ticker = 0;
-				 */
+				// Set background to signal quality
+				lblSats.backGround = GREEN;
+				//return;
 			}
+
+			// receiving data, but signal ist not good
+			if ((fix == 0) && (gpsPosition.getSats()>= 0)) {
+				lblSats.backGround = YELLOW;
+				//return;
+			}
+			// receiving no data
+			if (fix == -1) {
+				if (lblSats.backGround != RED) (new MessageBox("Error", "No data from GPS\nConnection to serial port closed",MessageBox.OKB)).exec();
+				lblSats.backGround = RED;
+				stopGPS();
+				//return;
+			}
+			// cannot interprete data
+			if (fix == -2) {
+				if (lblSats.backGround != RED) (new MessageBox("Error", "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n "+gpsPosition.lastStrExamined, MessageBox.OKB)).exec();
+				lblSats.backGround = RED;
+				stopGPS();
+				//return;
+			}
+
+	//	}else{ // In moving map mode
+			if (mmp != null && runMovingMap ) { // neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
+				if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
+					mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
+					mmp.setGpsStatus(MovingMap.gotFix);
+				}
+				if ((fix == 0) && (gpsPosition.getSats()== 0)) {
+					mmp.setGpsStatus(MovingMap.lostFix);
+				}
+				if (fix < 0 ) {
+					mmp.setGpsStatus(MovingMap.noGPSData);
+				}
+
+		//	}
 		}
 	}
 
-	public void stopTheTimer(){
-		Vm.cancelTimer(displayTimer);
+	public void startDisplayTimer() {
+		tickerThread = new UpdateThread(this, 1000);
+		tickerThread.start();
+	}
+	
+	public void stopDisplayTimer(){
+		if (tickerThread != null) tickerThread.stop();
 	}
 	
 	/**
@@ -508,7 +528,7 @@ public class GotoPanel extends CellPanel {
 	
 	private void stopGPS() {
 		serThread.stop();
-		Vm.cancelTimer(displayTimer);
+		stopDisplayTimer();
 		btnGPS.setText("Start");
 		gpsPosition.stopLog();
 		lblSats.backGround = this.backGround;
@@ -519,6 +539,7 @@ public class GotoPanel extends CellPanel {
 	/**
 	 * Eventhandler
 	 */
+
 	public void onEvent(Event ev){
 
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
@@ -538,7 +559,7 @@ public class GotoPanel extends CellPanel {
 							(new MessageBox("Warning", "Ignoring error:\n could not forward GPS data to host:\n"+pref.forwardGpsHost+"\n"+serThread.lastError+"\nstop and start GPS to retry",MessageBox.OKB)).exec();
 						}
 						serThread.start();
-						displayTimer = Vm.requestTimer(this, 1000);
+						startDisplayTimer();
 						if (chkLog.getState()){
 							gpsPosition.startLog(pref.mydatadir, Convert.toInt(inpLogSeconds.getText()), CWGPSPoint.LOGALL);
 						}
@@ -554,6 +575,7 @@ public class GotoPanel extends CellPanel {
 			}
 			// set current position as center and recalculate distance of caches in MainTab 
 			if (ev.target == btnCenter){
+				Vm.showWait(true);
 				pref.mylgNS = gpsPosition.getNSLetter();
 				pref.mylgDeg = gpsPosition.getLatDeg(CWPoint.DMM);
 				pref.mylgMin = gpsPosition.getLatMin(CWPoint.DMM);
@@ -561,47 +583,53 @@ public class GotoPanel extends CellPanel {
 				pref.mybrMin = gpsPosition.getLonMin(CWPoint.DMM);
 				pref.mybrWE = gpsPosition.getEWLetter();
 				mainT.updateBearDist();
+				Vm.showWait(false);
+				(new MessageBox("Info", "Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet", MessageBox.OKB)).execute();
 			}
 			//Start moving map
 			if (ev.target == btnMap){
-				Vm.showWait(true);
-				InfoBox inf = new InfoBox("Info", "   ");
-				inf.show();
-				if(mapsLoaded == false){
-					inf.setInfo("Loading maps...");
-					String dateien[];
-					String mapsPath = new String();
-					mapsPath = File.getProgramDirectory() + "/maps/";
-					File files = new File(mapsPath);
-					Extractor ext;
-					String rawFileName = new String();
-					dateien = files.list("*.png", File.LIST_FILES_ONLY);
-					for(int i = 0; i < dateien.length;i++){
-						ext = new Extractor(dateien[i], "", ".", 0, true);
-						rawFileName = ext.findNext();
-						try {
-							tempMIO = new MapInfoObject();
-							tempMIO.loadwfl(mapsPath, rawFileName);
-							availableMaps.add(tempMIO);
-							mapsLoaded = true;
-						}catch(IOException ex){ } // TODO etwas genauer auch Fehlermeldung ausgeben? Bei vorhandenen .wfl-Datei mit ungültigen Werten Fehler ausgeben oder wie jetz einfach ignorieren?
-					}
-				}
-				inf.setInfo("Loading nearest map...");
-				mmp = new MovingMap(pref, availableMaps, this, cacheDB);
-				//position test
-				//gpsPosition.latDec = 48.22103333;
-				//gpsPosition.lonDec = 11.62976667;
-				mmp.loadMap();
 				runMovingMap = true;
-				//serThread = new SerialThread(pref.mySPO, gpsPosition);
-				//serThread.start();
-				//displayTimer = Vm.requestTimer(this, 1000);
-				//end position test
-				inf.close(0);
-				Vm.showWait(false);
-				mmp.execute();
-			}
+				if (mmp != null && mmp.mmp.mapImage != null) mmp.exec();
+				else {
+					if(mapsLoaded == false){
+						Vm.showWait(true);
+						InfoBox inf = new InfoBox("Info", "Loading list of maps...");
+						inf.exec();
+						String dateien[];
+						String mapsPath = new String();
+						mapsPath = File.getProgramDirectory() + "/maps/";
+						File files = new File(mapsPath);
+						Extractor ext;
+						String rawFileName = new String();
+						dateien = files.list("*.png", File.LIST_FILES_ONLY);
+						for(int i = 0; i < dateien.length;i++){
+								ext = new Extractor(dateien[i], "", ".", 0, true);
+								rawFileName = ext.findNext();
+							try {
+								tempMIO = new MapInfoObject();
+								tempMIO.loadwfl(mapsPath, rawFileName);
+								availableMaps.add(tempMIO);
+								mapsLoaded = true;
+							}catch(IOException ex){ } // TODO etwas genauer auch Fehlermeldung ausgeben? Bei vorhandenen .wfl-Datei mit ungültigen Werten Fehler ausgeben oder wie jetz einfach ignorieren?
+						}
+						inf.close(0);
+					} // if(mapsLoaded == false)
+					mmp = new MovingMap(pref, availableMaps, this, cacheDB);
+					Vm.showWait(false);
+					mmp.loadMap();
+					mmp.exec();
+					//				mmp.updatePosition(50.733, 7.096);
+					/*				mmp.updatePosition(50.74455, 7.0935);
+				try {  Thread.sleep(2000);	} catch (InterruptedException e){ }
+				mmp.updatePosition(50.733, 7.096);
+				try {  Thread.sleep(2000);	} catch (InterruptedException e){ }
+				mmp.updatePosition(50.7, 7.0);
+				try {  Thread.sleep(2000);	} catch (InterruptedException e){ }
+				mmp.updatePosition(50.733, 7.096);
+					 */	
+				}
+
+			} // if (ev.target == btnMap
 			// create new waypoint with current GPS-position
 			if (ev.target == btnSave){
 				CacheHolder ch = new CacheHolder();
