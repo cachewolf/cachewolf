@@ -536,6 +536,26 @@ public class GotoPanel extends CellPanel {
 		chkLog.modify(0,ControlConstants.Disabled);
 	}
 	
+	public void startGps() {
+		if (serThread != null) if (serThread.isAlive()) return;
+		try {
+			serThread = new SerialThread(pref.mySPO, gpsPosition, (pref.forwardGPS ? pref.forwardGpsHost : ""));
+			if (pref.forwardGPS && !serThread.tcpForward) {
+				(new MessageBox("Warning", "Ignoring error:\n could not forward GPS data to host:\n"+pref.forwardGpsHost+"\n"+serThread.lastError+"\nstop and start GPS to retry",MessageBox.OKB)).exec();
+			}
+			serThread.start();
+			startDisplayTimer();
+			if (chkLog.getState()){
+				gpsPosition.startLog(pref.mydatadir, Convert.toInt(inpLogSeconds.getText()), CWGPSPoint.LOGALL);
+			}
+			chkLog.modify(ControlConstants.Disabled,0);
+			btnGPS.setText("Stop");
+		} catch (IOException e) {
+			(new MessageBox("Error", "Could not connect to GPS-receiver.\n Error while opening serial Port " + e.getMessage()+"\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS", MessageBox.OKB)).execute(); 
+		}
+	}
+
+	
 	/**
 	 * Eventhandler
 	 */
@@ -552,27 +572,10 @@ public class GotoPanel extends CellPanel {
 
 			// start/stop GPS connection
 			if (ev.target == btnGPS){
-				if (btnGPS.getText().equals("Start")){
-					try {
-						serThread = new SerialThread(pref.mySPO, gpsPosition, (pref.forwardGPS ? pref.forwardGpsHost : ""));
-						if (pref.forwardGPS && !serThread.tcpForward) {
-							(new MessageBox("Warning", "Ignoring error:\n could not forward GPS data to host:\n"+pref.forwardGpsHost+"\n"+serThread.lastError+"\nstop and start GPS to retry",MessageBox.OKB)).exec();
-						}
-						serThread.start();
-						startDisplayTimer();
-						if (chkLog.getState()){
-							gpsPosition.startLog(pref.mydatadir, Convert.toInt(inpLogSeconds.getText()), CWGPSPoint.LOGALL);
-						}
-						chkLog.modify(ControlConstants.Disabled,0);
-						btnGPS.setText("Stop");
-					} catch (IOException e) {
-						(new MessageBox("Error", "Could not connect to GPS-receiver.\n Error while opening serial Port " + e.getMessage()+"\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS", MessageBox.OKB)).execute(); 
-					}
+				if (btnGPS.getText().equals("Start")) startGps();
+				else stopGPS();
 				}
-				else {
-					stopGPS();
-				}
-			}
+			
 			// set current position as center and recalculate distance of caches in MainTab 
 			if (ev.target == btnCenter){
 				Vm.showWait(true);
