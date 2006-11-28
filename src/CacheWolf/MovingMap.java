@@ -304,6 +304,7 @@ public class MovingMap extends Form {
 	public void onEvent(Event ev){
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			gotoPanel.runMovingMap = false;
+			setGpsStatus(noGPS);
 			//gotoPanel.stopTheTimer();
 		}
 		super.onEvent(ev);
