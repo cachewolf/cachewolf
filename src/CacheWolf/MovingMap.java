@@ -13,10 +13,11 @@ import ewe.util.Vector;
 *	Class to handle a moving map.
 */
 public class MovingMap extends Form {
-	final static int gotFix = 4;
-	final static int lostFix = 3;
-	final static int noGPSData = 2;
-	final static int noGPS = 1; // manually disconnected or GPS-Position not wanted
+	final static int gotFix = 4; //green
+	final static int lostFix = 3; //yellow
+	final static int noGPSData = 2; // red
+	final static int noGPS = 1; // no GPS-Position marker, manually disconnected 
+	final static int ignoreGPS = -1; // ignore even changes in GPS-signal (eg. from lost fix to gotFix) this is wanted when the map is moved manually
 	
 	public int GpsStatus;
 	Preferences pref;
@@ -40,6 +41,7 @@ public class MovingMap extends Form {
 	int centerx = 0, centery = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
 	
 	boolean ignoreGps = false;
+	boolean ignoreGpsStatutsChanges = false;
 	
 	public MovingMap(Preferences pref, Vector maps, GotoPanel gP, Vector cacheDB){
 		this.cacheDB = cacheDB;
@@ -243,8 +245,9 @@ public class MovingMap extends Form {
 	}
 
 	public void setGpsStatus (int status) {
-		if ((status == GpsStatus) || ignoreGps) return;
+		if ((status == GpsStatus) || ignoreGpsStatutsChanges) return; // if ignoreGpsStatutsChanges == true than the Map is in manual-mode
 		GpsStatus = status;
+		ignoreGps = false;
 		switch (status) {
 		case noGPS: 	{ posCircle.change(null); ignoreGps = true; break; }
 		case gotFix:    { posCircle.change(statusImageHaveSignal); break; }
@@ -254,6 +257,14 @@ public class MovingMap extends Form {
 		posCircle.refreshNow();
 	}
 	
+	public void SnapToGps() {
+		ignoreGps = false;
+		ignoreGpsStatutsChanges = false;
+		lastCompareX = Integer.MAX_VALUE; // neccessary to make updateposition to test if the current map is the best one for the GPS-Position
+		lastCompareY = Integer.MAX_VALUE;
+
+	}
+
 	/** sets and displays the map
 	 * 
 	 * @param newmap
@@ -304,7 +315,8 @@ public class MovingMap extends Form {
 	public void onEvent(Event ev){
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			gotoPanel.runMovingMap = false;
-			setGpsStatus(noGPS);
+			ignoreGps = true;
+			//setGpsStatus(noGPS);
 			//gotoPanel.stopTheTimer();
 		}
 		super.onEvent(ev);
@@ -354,16 +366,16 @@ class MovingMapPanel extends InteractivePanel{
 			}
 		}
 		if (which == mm.ButtonImageGpsOn) {
-			mm.ignoreGps = false;
-			mm.lastCompareX = Integer.MAX_VALUE; // neccessary to make updateposition to test if the current map is the best one for the GPS-Position
-			mm.lastCompareY = Integer.MAX_VALUE;
-			
+			mm.gotoPanel.startGps();
+			mm.SnapToGps();
 		}
 		if(which == mm.arrowRight){
 			Point p = new Point();
 			p = mapImage.getLocation(null);
 			mapImage.move(p.x-10,p.y);
+			mm.ignoreGpsStatutsChanges = false;
 			mm.setGpsStatus(MovingMap.noGPS);   // TODO mm.posCircle.move(, y)
+			mm.ignoreGpsStatutsChanges = true;
 			// for debugging: mm.updatePosition(10, 10);
 			this.repaintNow();
 		}
@@ -371,21 +383,27 @@ class MovingMapPanel extends InteractivePanel{
 			Point p = new Point();
 			p = mapImage.getLocation(null);
 			mapImage.move(p.x+10,p.y);
+			mm.ignoreGpsStatutsChanges = false;
 			mm.setGpsStatus(MovingMap.noGPS);   // TODO mm.posCircle.move(, y)
+			mm.ignoreGpsStatutsChanges = true;
 			this.repaintNow();
 		}
 		if(which == mm.arrowDown){
 			Point p = new Point();
 			p = mapImage.getLocation(null);
 			mapImage.move(p.x,p.y-10);
+			mm.ignoreGpsStatutsChanges = false;
 			mm.setGpsStatus(MovingMap.noGPS);   // TODO mm.posCircle.move(, y)
+			mm.ignoreGpsStatutsChanges = true;
 			this.repaintNow();
 		}
 		if(which == mm.arrowUp){
 			Point p = new Point();
 			p = mapImage.getLocation(null);
 			mapImage.move(p.x,p.y+10);
+			mm.ignoreGpsStatutsChanges = false;
 			mm.setGpsStatus(MovingMap.noGPS);   // TODO mm.posCircle.move(, y)
+			mm.ignoreGpsStatutsChanges = true;
 			this.repaintNow();
 		}
 	}
