@@ -28,6 +28,7 @@ public class MapInfoObject{
 	public double lowlat = 0;
 	public double lowlon = 0;
 	public CWPoint center = new CWPoint();
+	public float sizeKm = 0; // diagonale
 	public String fileNameWFL = new String();
 	public String fileName = new String();
 	public String mapName = new String();
@@ -88,6 +89,7 @@ public class MapInfoObject{
 
 	private void calcCenter() {
 	center.set((lowlat + affine[4])/2,(lowlon + affine[5])/2);
+	sizeKm = java.lang.Math.abs((float)center.getDistance(lowlat, lowlon)) *2;
 }
 	
 	
