@@ -437,7 +437,7 @@ class mapInteractivePanel extends InteractivePanel{
 	}
 
 	private void coosInputFormat () {
-		MessageBox tmpMB = new MessageBox((String)lr.get(312,"Error"), (String)lr.get(4111,"Coordinates must be entered in the format N XX XX.XXX E XXX XX.XXX"), MessageBox.OKB);
+		MessageBox tmpMB = new MessageBox((String)lr.get(312,"Error"), (String)lr.get(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
 		tmpMB.exec();
 
 	}

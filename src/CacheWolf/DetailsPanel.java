@@ -234,6 +234,28 @@ public class DetailsPanel extends CellPanel{
 		return ret;
 	}
 	
+	private void saveWpt() {
+		//Vm.debug("Sollte speichern");
+		//CacheHolder ch = new CacheHolder();
+		thisCache.wayPoint = wayPoint.getText();
+		thisCache.CacheName = wayName.getText();
+		thisCache.LatLon = wayLoc.getText();
+		thisCache.DateHidden = wayHidden.getText();
+		thisCache.CacheOwner = wayOwner.getText();
+		thisCache.CacheStatus = wayStatus.getText();
+		thisCache.CacheNotes = wayNotes.getText();
+		thisCache.type = transSelect(wayType.getInt());
+		//cacheDB.add(ch);
+		
+		if(thisCache.CacheNotes.length()>0){
+			CacheReaderWriter crw = new CacheReaderWriter();
+			crw.saveCacheDetails(thisCache, pref.mydatadir);
+		}
+		
+		dirty_new = true;
+		mainT.selectAndActive(cacheDB.size()-1);
+	}
+	
 	/**
 	*	Method to react to a user input.
 	*/
@@ -332,25 +354,7 @@ public class DetailsPanel extends CellPanel{
 			}
 			if (ev.target == btCrWp){
 				if(btCrWp.getText().equals((String)lr.get(312,"Save"))){
-					//Vm.debug("Sollte speichern");
-					//CacheHolder ch = new CacheHolder();
-					thisCache.wayPoint = wayPoint.getText();
-					thisCache.CacheName = wayName.getText();
-					thisCache.LatLon = wayLoc.getText();
-					thisCache.DateHidden = wayHidden.getText();
-					thisCache.CacheOwner = wayOwner.getText();
-					thisCache.CacheStatus = wayStatus.getText();
-					thisCache.CacheNotes = wayNotes.getText();
-					thisCache.type = transSelect(wayType.getInt());
-					//cacheDB.add(ch);
-					
-					if(thisCache.CacheNotes.length()>0){
-						CacheReaderWriter crw = new CacheReaderWriter();
-						crw.saveCacheDetails(thisCache, pref.mydatadir);
-					}
-					
-					dirty_new = true;
-					mainT.selectAndActive(cacheDB.size()-1);
+					saveWpt();
 				}
 				if(btCrWp.getText().equals((String)lr.get(311,"Create Waypoint"))){
 					thisCache = new CacheHolder();
@@ -371,6 +375,7 @@ public class DetailsPanel extends CellPanel{
 				else btCrWp.setText((String)lr.get(312,"Save"));
 			}
 			if (ev.target == btnGoto){
+				// TODO if something changed saveWpt();
 				mainT.gotoPoint(thisCache.LatLon);
 			}
 		}

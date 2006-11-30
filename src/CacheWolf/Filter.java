@@ -1,4 +1,5 @@
 package CacheWolf;
+import ewe.ui.MessageBox;
 import ewe.util.*;
 import ewe.sys.*;
 import ewe.io.*;
@@ -139,9 +140,9 @@ public class Filter{
 			} // for segments
 			
 		}catch(FileNotFoundException fnex){
-			Vm.debug("File not found!");
+			(new MessageBox("Error", "File not found", MessageBox.OKB)).execute();
 		}catch(IOException ioex){
-			Vm.debug("Problem reading file!");
+			(new MessageBox("Error", "Problem reading file!", MessageBox.OKB)).execute();
 		}
 	}
 	

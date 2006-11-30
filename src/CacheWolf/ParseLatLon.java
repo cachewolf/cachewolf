@@ -1,4 +1,6 @@
 package CacheWolf;
+import com.stevesoft.ewe_pat.Regex;
+
 import ewe.sys.*;
 import ewe.sys.Double;
 
@@ -57,7 +59,21 @@ public class ParseLatLon {
 	* Parse a string that contains lat lon into it's lat and lon doubles. Class
 	* variable latlon must have been set befor you call this method.
 	*/
-	public void parse(){
+	public void parse() throws NumberFormatException {
+		latlon=STRreplace.replace(latlon, ",", ".");
+	
+		/* diese routine steht in map.java - gefaellt mir (pfeffer) irgendwie besser :-) - Aber vielleicht ist sie langsamer
+		Regex rex = new Regex("(N|S).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3}).*?(E|W).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3})");
+		try {
+			rex.search(latlon);
+			if(rex.didMatch()){
+				double lat = Convert.toDouble(rex.stringMatched(2)) + Convert.toDouble(rex.stringMatched(3))/60 + Convert.toDouble(rex.stringMatched(5))/60000;
+				double lon = Convert.toDouble(rex.stringMatched(7)) + Convert.toDouble(rex.stringMatched(8))/60 + Convert.toDouble(rex.stringMatched(10))/60000;
+				if(rex.stringMatched(1).equals("S") || rex.stringMatched(1).equals("s")) lat = lat * -1;
+				if(rex.stringMatched(6).equals("W") || rex.stringMatched(6).equals("w")) lon = lon * -1;	
+			} else throw new NumberFormatException("Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM");
+		*/
+		try {
 		int counter = 0;
 		Extractor ex = new Extractor(" " + latlon, " ", " ", 0, true);
 		br2 = new String(); 
@@ -114,6 +130,7 @@ public class ParseLatLon {
 		if(br2NS.trim().equals("S")) lat2 *= -1 ;
 		lon2 = Convert.toDouble(lg2) + Convert.toDouble(lg2_buf)/60 + Convert.toDouble(lg3_buf)/60000;
 		if(lg2WE.trim().equals("W")) lon2 *= -1;
+		} catch (IndexOutOfBoundsException e) { throw new NumberFormatException("Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"); }
 
 	}
 	
