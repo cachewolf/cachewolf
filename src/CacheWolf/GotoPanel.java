@@ -375,6 +375,9 @@ public class GotoPanel extends CellPanel {
 	 * method which is called if a timer is set up  
 	 * 
 	 */ 
+	/**
+	 * 
+	 */
 	public void ticked() {
 		Double bearMov = new Double();
 		Double bearWayP = new Double();
@@ -445,6 +448,14 @@ public class GotoPanel extends CellPanel {
 
 	//	}else{ // In moving map mode
 			if (mmp != null && runMovingMap ) { // neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
+//				gpsPosition.latDec = 50.75;
+//				gpsPosition.lonDec = 7.1;
+//				mmp.updatePosition(50.75, 7.1);
+//				mmp.addSymbol("test", "110.png", 50.7446, 7.0935);
+//				try {Thread.sleep(5000);} catch (InterruptedException e) {};
+//				gpsPosition.latDec = 50.74;
+//				gpsPosition.lonDec = 7.1;
+//				mmp.updatePosition(50.74, 7.1);
 				if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
 					mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
 					mmp.setGpsStatus(MovingMap.gotFix);
@@ -543,6 +554,10 @@ public class GotoPanel extends CellPanel {
 			if (pref.forwardGPS && !serThread.tcpForward) {
 				(new MessageBox("Warning", "Ignoring error:\n could not forward GPS data to host:\n"+pref.forwardGpsHost+"\n"+serThread.lastError+"\nstop and start GPS to retry",MessageBox.OKB)).exec();
 			}
+			if (gpsPosition.latDec == 0 && gpsPosition.lonDec == 0) {
+				gpsPosition.latDec = toPoint.latDec; // setze Zielpunkt als Ausgangspunkt
+				gpsPosition.lonDec = toPoint.lonDec;
+			}
 			serThread.start();
 			startDisplayTimer();
 			if (chkLog.getState()){
@@ -592,7 +607,17 @@ public class GotoPanel extends CellPanel {
 			//Start moving map
 			if (ev.target == btnMap){
 				runMovingMap = true;
-				if (mmp != null && mmp.mmp.mapImage != null) mmp.exec();
+				if (mmp != null && mmp.mmp.mapImage != null) {
+					if (serThread == null || !serThread.isAlive() ) {
+						// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
+						mmp.ignoreGps = false;
+						mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
+						mmp.ignoreGps = true;
+						mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
+					}
+					mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
+					mmp.exec();
+				}
 				else {
 					if(mapsLoaded == false){
 						Vm.showWait(true);
@@ -619,7 +644,12 @@ public class GotoPanel extends CellPanel {
 					} // if(mapsLoaded == false)
 					mmp = new MovingMap(pref, availableMaps, this, cacheDB);
 					Vm.showWait(false);
-					mmp.loadMap();
+					if (serThread == null || !serThread.isAlive() ) {
+						// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
+						mmp.loadMap(toPoint.latDec, toPoint.lonDec);
+					} else
+						mmp.loadMap(gpsPosition.latDec, gpsPosition.lonDec);
+					mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
 					mmp.exec();
 					//				mmp.updatePosition(50.733, 7.096);
 					/*				mmp.updatePosition(50.74455, 7.0935);
