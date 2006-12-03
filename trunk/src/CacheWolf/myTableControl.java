@@ -26,6 +26,25 @@ public class myTableControl extends TableControl{
 	
 	public void popupMenuEvent(Object selectedItem){
 		CacheHolder ch = new CacheHolder();
+		
+		if (selectedItem.toString().equals((String)lr.get(1015,"Select all"))){
+			for(int i = 0; i <	db.size(); i++){
+				ch = (CacheHolder)db.get(i);
+				ch.is_Checked = true;
+				db.set(i, ch);
+			}
+			tbp.refreshTable();
+		}
+		
+		if (selectedItem.toString().equals((String)lr.get(1016,"De-select all"))){
+			for(int i = 0; i <	db.size(); i++){
+				ch = (CacheHolder)db.get(i);
+				ch.is_Checked = false;
+				db.set(i, ch);
+			}
+			tbp.refreshTable();
+		}
+		
 		if (selectedItem.toString().equals((String)lr.get(1011,"Filter"))){
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
