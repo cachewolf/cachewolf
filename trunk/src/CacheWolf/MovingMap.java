@@ -5,7 +5,7 @@ import ewe.graphics.*;
 import ewe.io.IOException;
 import ewe.sys.*;
 import ewe.sys.Double;
-ewe.database.RestoreException;
+import ewe.database.RestoreException;
 import ewe.fx.*;
 import ewe.util.Vector;
 
