@@ -498,6 +498,9 @@ public class GPXImporter extends MinML {
 		if (typeText.equals("Post Reviewer Note")) return "<img src='big_smile.gif'>&nbsp;";
 		if (typeText.equals("Unarchive")) return "<img src='traffic_cone.gif'>&nbsp;";
 		if (typeText.equals("Archive (show)")) return "<img src='traffic_cone.gif'>&nbsp;";
+		if (typeText.equals("Owner Maintenance")) return "<img src='icon_maint.gif'>&nbsp;";
+		if (typeText.equals("Needs Maintenance")) return "<img src='icon_needsmaint.gif'>&nbsp;";
+		if (typeText.equals("Update Coordinates")) return "<img src='coord_update.gif'>&nbsp;";
 		//Vm.debug("Unknown Log Type:" + typeText);
 		return typeText +"&nbsp;";
 	}
