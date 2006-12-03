@@ -141,10 +141,15 @@ public class MapInfoObject{
 		Vm.debug("Bottom: " + lowlat);
 		Vm.debug("Test: " + pos.latDec);
 		Vm.debug("Left: " + affine[5]);
-		Vm.debug("Right: " + lowlon);
+		Vm.debug("Right: " + lowlon); // lowlon should be left?!
 		Vm.debug("Test: " + pos.lonDec);
 		*/
 		if(affine[4] >= pos.latDec && pos.latDec >= lowlat && affine[5] <= pos.lonDec && pos.lonDec <= lowlon) isInBound = true;
+		return isInBound;
+	}
+	public boolean inBound(double lati, double loni){
+		boolean isInBound = false;
+		if(affine[4] >= lati && lati >= lowlat && affine[5] <= loni && loni <= lowlon) isInBound = true;
 		return isInBound;
 	}
 }
