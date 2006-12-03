@@ -162,9 +162,10 @@ public class DetailsPanel extends CellPanel{
 
 		ch.wayPoint = getNewWayPointName(DB);
 		ch.type = "0";
-		ch.CacheSize = "0";
+		ch.CacheSize = "None";
 		setDetails(ch, DB, mt,p);
 		this.newWp = true;
+		cacheDB.add(thisCache);
 		mt.select(this);
 	}
 	/**
@@ -367,7 +368,7 @@ public class DetailsPanel extends CellPanel{
 					wayStatus.setText("");
 					wayNotes.setText("");
 					wayType.setInt(0);
-					waySize.setInt(0);
+					waySize.setInt(7);
 					thisCache.wayPoint = wayPoint.getText();
 					cacheDB.add(thisCache);
 				}
