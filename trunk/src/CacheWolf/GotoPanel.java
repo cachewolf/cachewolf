@@ -543,6 +543,7 @@ public class GotoPanel extends CellPanel {
 		btnGPS.setText("Start");
 		gpsPosition.stopLog();
 		lblSats.backGround = this.backGround;
+		if (mmp != null) mmp.setGpsStatus(MovingMap.noGPS);
 		this.repaintNow(); // without this the change in the background color will not be displayed
 		chkLog.modify(0,ControlConstants.Disabled);
 	}
@@ -613,7 +614,6 @@ public class GotoPanel extends CellPanel {
 						mmp.ignoreGps = false;
 						mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
 						mmp.ignoreGps = true;
-						mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
 					}
 					mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
 					mmp.exec();
