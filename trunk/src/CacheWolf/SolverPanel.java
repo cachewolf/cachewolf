@@ -19,6 +19,7 @@ public class SolverPanel extends CellPanel{
 	mTextPad mText;
 	Preferences myPreferences;
 	String currFile;
+	CacheHolder currCh;
 	
 	
 	public SolverPanel (Preferences pref){
@@ -29,6 +30,10 @@ public class SolverPanel extends CellPanel{
 		this.addNext(btnLoad= new mButton("Load"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		this.addNext(btnSave= new mButton("Save"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		this.addLast(btnSaveAs= new mButton("SaveAs"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+	}
+	
+	public void setCh(CacheHolder ch){
+		currCh = ch;
 	}
 	
 	public void onEvent(Event ev){
@@ -58,7 +63,7 @@ public class SolverPanel extends CellPanel{
 			if(ev.target == btnLoad){
 				FileChooser fc = new FileChooser(FileChooser.OPEN, myPreferences.mydatadir);
 				
-				fc.addMask("*.wl");
+				fc.addMask(currCh.wayPoint + ".wl");
 				fc.setTitle("Select File");
 				if(fc.execute() != FileChooser.IDCANCEL){
 					currFile = fc.getChosen();
@@ -84,7 +89,7 @@ public class SolverPanel extends CellPanel{
 			}
 			if((ev.target == btnSaveAs)||((ev.target == btnSave) && (currFile == null))){
 				FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
-				fc.addMask("*.wl");
+				fc.addMask(currCh.wayPoint + ".wl");
 				fc.setTitle("Select File");
 				if(fc.execute() != FileChooser.IDCANCEL){
 					File saveFile = fc.getChosenFile();

@@ -25,6 +25,7 @@ public class MainTab extends mTabbedPanel {
 	GotoPanel gotoP; 
 	RadarPanel radarP = new RadarPanel();
 	ImagePanel imageP;
+	SolverPanel solverP;
 
 	String lastselected = new String();
 	CacheHolder ch = new CacheHolder();
@@ -60,7 +61,7 @@ public class MainTab extends mTabbedPanel {
 		c.iconize(new Image("goto.gif"),true);
 		tbP.setGotoPanel(gotoP);
 		
-		c = this.addCard(new SolverPanel(myPreferences), MyLocale.getMsg(1205,"Solver"), null);
+		c = this.addCard(solverP = new SolverPanel(myPreferences), MyLocale.getMsg(1205,"Solver"), null);
 		c.iconize(new Image("solver.gif"),true);
 		
 		c = this.addCard(radarP, "Radar", null);
@@ -185,6 +186,7 @@ public class MainTab extends mTabbedPanel {
 
 			  if(this.getSelectedItem() == 7) { // Solver Panel
 				  MyLocale.setSIPButton();
+				  solverP.setCh(ch);
 				  if(detP.dirty_new == true || detP.dirty_delete == true) {
 					  tbP.refreshTable();
 					  detP.dirty_new = false;
