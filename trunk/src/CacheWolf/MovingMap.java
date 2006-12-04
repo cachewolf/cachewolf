@@ -389,9 +389,10 @@ public class MovingMap extends Form {
 			lastCompareX = Integer.MAX_VALUE; // neccessary to make updateposition to test if the current map is the best one for the GPS-Position
 			lastCompareY = Integer.MAX_VALUE;
 			if (! (mmp.mapImage == null) ) {
-				Vm.debug("free: "+Vm.getUsedMemory(false)+"used: "+Vm.getClassMemory());
+				//Vm.debug("free: "+Vm.getUsedMemory(false)+"classMemory: "+Vm.getClassMemory()+ "after garbage collection: "+Vm.getUsedMemory(false));
 				mmp.removeImage(mmp.mapImage); mmp.mapImage.free(); mmp.mapImage = null;
-				Vm.debug("free: "+Vm.getUsedMemory(false)+"used: "+Vm.getClassMemory());
+				//Vm.debug("free: "+Vm.getUsedMemory(false)+"classMemory: "+Vm.getClassMemory()+ "after garbage collection: "+Vm.getUsedMemory(false));
+				Vm.getUsedMemory(true);
 				} // give memory free before loading the new map to avoid out of memory error  
 			mmp.mapImage = new AniImage(currentMap.fileName); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
 			mmp.mapImage.setLocation(0,0);
@@ -482,7 +483,10 @@ class MovingMapPanel extends InteractivePanel{
 	}
 
 	public void chooseMap() {
-		ListBox l = new ListBox(maps, false, mm.posCircleLat, mm.posCircleLon, mm.getGotoPos());
+		CWPoint gpspos;
+		if (mm.gotoPanel.gpsPosition.Fix > 0) gpspos = new CWPoint(mm.gotoPanel.gpsPosition.latDec, mm.gotoPanel.gpsPosition.lonDec);
+		else gpspos = null;
+		ListBox l = new ListBox(maps, gpspos, mm.getGotoPos());
 		if(l.execute() == FormBase.IDOK){
 //			Vm.debug("Trying map: " + l.selectedMap.fileName);
 			mm.autoSelectMap = false;
@@ -544,26 +548,28 @@ class ListBox extends Form{
 	public boolean selected = false;
 	Vector maps;
 	
-	public ListBox(Vector maps, boolean showInBoundOnly, double latGps, double lonGps, CWPoint gotopos){
+	public ListBox(Vector maps, CWPoint Gps, CWPoint gotopos){
 		this.title = "Maps";
 		// if (Gui.screenIs(Gui.PDA_SCREEN)) this.setPreferredSize(200,100); else 
 		this.setPreferredSize(MyLocale.getScreenWidth()*3/4, MyLocale.getScreenHeight()*3/4);
 		this.maps = maps;
 		MapInfoObject map;
 		ScrollBarPanel scb;
-		if (gotopos != null) {
+		if (gotopos != null && Gps != null) {
 			list.addItem("--- Karten von akt. Position und Ziel ---");
 			for(int i = 0; i<maps.size();i++){
 				map = new MapInfoObject();
 				map = (MapInfoObject)maps.get(i);
-				if( map.inBound(latGps, lonGps) && map.inBound(gotopos) ) list.addItem(i + ": " + map.mapName);
+				if( map.inBound(Gps.latDec, Gps.lonDec) && map.inBound(gotopos) ) list.addItem(i + ": " + map.mapName);
 			}
 		}
-		list.addItem("--- Karten der aktuellen Position ---");
-		for(int i = 0; i<maps.size();i++){
-			map = new MapInfoObject();
-			map = (MapInfoObject)maps.get(i);
-			if(map.inBound(latGps, lonGps) == true) list.addItem(i + ": " + map.mapName);
+		if (Gps != null) {
+			list.addItem("--- Karten der aktuellen Position ---");
+			for(int i = 0; i<maps.size();i++){
+				map = new MapInfoObject();
+				map = (MapInfoObject)maps.get(i);
+				if(map.inBound(Gps.latDec, Gps.lonDec) == true) list.addItem(i + ": " + map.mapName);
+			}
 		}
 		if (gotopos != null) {
 			list.addItem("--- Karten des Ziels ---");
