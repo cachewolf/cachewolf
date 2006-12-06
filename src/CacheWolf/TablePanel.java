@@ -19,8 +19,10 @@ public class TablePanel extends CellPanel{
 	Preferences myPreferences = new Preferences();
 	Vector cacheDB;
 	GotoPanel myGotoPanel;
+	StatusBar statBar;
 	
-	public TablePanel(Vector DB, Preferences pref){
+	public TablePanel(Vector DB, Preferences pref, StatusBar statBar){
+		this.statBar = statBar;
 		cacheDB = DB;
 		myPreferences = pref;
 		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
@@ -121,6 +123,7 @@ public class TablePanel extends CellPanel{
 		tc.setTableModel(myMod);
 */		myMod.updateRows();
 		tc.update(true);
+		statBar.updateDisplay();
 	}
 	
 	/**

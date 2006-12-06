@@ -17,8 +17,8 @@ public class MyXMLBuilder extends MinML {
 	Vector cacheDB;
 	CacheHolder holder;
 	public XMLElement document;
-	private XMLElement current;
-	private String currentText = new String();
+	//private XMLElement current;
+	//private String currentText = new String();
 	private String path = new String();
 	
 	public MyXMLBuilder(Vector DB, String p)

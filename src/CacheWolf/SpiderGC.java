@@ -111,6 +111,7 @@ public class SpiderGC{
 	 * It assumes a login has already been performed!
 	 */
 	public void spiderSingle(int number){
+		Vm.showWait(true);
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
 		String notes = new String();
 		String start = new String();
@@ -191,12 +192,14 @@ public class SpiderGC{
 		cacheDB.set(number, ch);
 		crw.saveIndex(cacheDB,pref.mydatadir);
 		infB.close(0);
+		Vm.showWait(false);
 	}
 	
 	/**
 	*	Method to start the spider for a search around the center coordinates
 	*/
 	public void doIt(){
+		Vm.showWait(true);
 		String start = new String();
 		CWPoint origin = new CWPoint(pref.mylgNS + " " +pref.mylgDeg + " " + pref.mylgMin + " " + pref.mybrWE + " " +pref.mybrDeg + " " + pref.mybrMin, CWPoint.CW);
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
@@ -204,12 +207,18 @@ public class SpiderGC{
 		
 		int ok = login();
 		if(ok == Form.IDCANCEL) return;
-		InfoBox  infB = new InfoBox("Distance", "Max distance:", InfoBox.INPUT);
-		ok = infB.execute();
-		if(ok == Form.IDCANCEL) return;
-		distance = Convert.toDouble(infB.getInput());
-		infB.close(0);
-		infB = new InfoBox("Status", "Fetching first page...");
+		
+		OCXMLImporterScreen options = new OCXMLImporterScreen(pref, "Spider Options", OCXMLImporterScreen.IMAGESANDMAPS);
+		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
+		String dist = options.distanceInput.getText();
+		if (dist.length()== 0) return;
+		distance = Convert.toDouble(dist);
+		boolean getMaps = options.mapsCheckBox.getState();
+		boolean getImages = options.imagesCheckBox.getState();
+		options.close(0);
+		
+		
+		InfoBox infB = new InfoBox("Status", "Fetching first page...");
 		infB.show();
 		//Get first page
 		try{
@@ -339,12 +348,16 @@ public class SpiderGC{
 					ch.type = getType(start);
 					pref.log("Got cache type");
 					//Vm.debug("Type: " + ch.type);
-					pref.log("Trying images");
-					getImages(start, ch);
-					pref.log("Got images");
-					pref.log("Trying maps");
-					getMaps(ch);
-					pref.log("Got maps");
+					if(getImages){
+						pref.log("Trying images");
+						getImages(start, ch);
+						pref.log("Got images");
+					}
+					if(getMaps){
+						pref.log("Trying maps");
+						getMaps(ch);
+						pref.log("Got maps");
+					}
 					crw.saveCacheDetails(ch, pref.mydatadir);
 					cacheDB.add(ch);
 					crw.saveIndex(cacheDB,pref.mydatadir);
@@ -360,6 +373,7 @@ public class SpiderGC{
 		}
 		crw.saveIndex(cacheDB,pref.mydatadir);
 		infB.close(0);
+		Vm.showWait(false);
 		/*
 		try{
 		  PrintWriter detfile = new PrintWriter(new BufferedWriter(new FileWriter("debug.txt")));
@@ -370,6 +384,8 @@ public class SpiderGC{
 		}
 		
 		*/
+		
+		
 	}
 	private int searchWpt(String wpt){
 		Integer INTR = (Integer)indexDB.get(wpt);

@@ -20,34 +20,39 @@ public class OCXMLImporterScreen extends Form {
 	mCheckBox imagesCheckBox, mapsCheckBox, missingCheckBox;
 	Locale l = Vm.getLocale();
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+	static int IMAGESANDMAPS = 0;
+	static int ALL = 1;
 	
-	public OCXMLImporterScreen(Preferences myPreferences) {
+	public OCXMLImporterScreen(Preferences myPreferences, String title, int options) {
 		super();
 		this.myPreferences = myPreferences; // myPreferences sollte später auch diese Einstellungen speichern
-		this.title=(String)lr.get(1600,"Opencahing.de Download");
+		
 
-		this.addNext(new mLabel((String)lr.get(1601,"Distance:")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		this.title = title;
+		this.addNext(new mLabel((String)lr.get(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		distanceInput = new mInput();
 		distanceInput.setText(myPreferences.distOC);
-		this.addLast(distanceInput,this.DONTSTRETCH, (this.DONTFILL|this.WEST));	
+		this.addLast(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
 		
 		imagesCheckBox = new mCheckBox();
 		imagesCheckBox.setText((String)lr.get(1602,"Download Images"));
 		imagesCheckBox.setState(true); // @ToDo: aus Prefs
-		this.addLast(imagesCheckBox, this.DONTSTRETCH, this.DONTFILL|this.WEST);
+		this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		
 		mapsCheckBox = new mCheckBox();
 		mapsCheckBox.setText((String)lr.get(1603,"Download Maps"));
 		mapsCheckBox.setState(true); // @ToDo: aus Prefs
-		this.addLast(mapsCheckBox, this.DONTSTRETCH, this.DONTFILL|this.WEST);
+		this.addLast(mapsCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		
+		if(options == ALL){
+			missingCheckBox = new mCheckBox();
+			missingCheckBox.setText((String)lr.get(1606,"Alle erneut downloaden"));
+			missingCheckBox.setState(false); // @ToDo: aus Prefs
+			this.addLast(missingCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		}
 
-		missingCheckBox = new mCheckBox();
-		missingCheckBox.setText((String)lr.get(1606,"Alle erneut downloaden"));
-		missingCheckBox.setState(false); // @ToDo: aus Prefs
-		this.addLast(missingCheckBox, this.DONTSTRETCH, this.DONTFILL|this.WEST);
-
-		this.addNext(cancelB = new mButton((String)lr.get(1604,"Cancel")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(okB = new mButton((String)lr.get(1605,"OK")),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
+		this.addNext(cancelB = new mButton((String)lr.get(1604,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(okB = new mButton((String)lr.get(1605,"OK")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 	}
 	public void onEvent(Event ev){
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){

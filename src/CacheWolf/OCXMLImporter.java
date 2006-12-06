@@ -85,7 +85,7 @@ public class OCXMLImporter extends MinML {
 			CWPoint center = new CWPoint(myPref.mylgNS, myPref.mylgDeg, myPref.mylgMin,"0",
 					myPref.mybrWE, myPref.mybrDeg, myPref.mybrMin,"0", CWPoint.DMM);
 
-			OCXMLImporterScreen importOpt = new OCXMLImporterScreen(myPref);
+			OCXMLImporterScreen importOpt = new OCXMLImporterScreen(myPref, MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
 			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
     		Vm.showWait(true);
 			String dist = importOpt.distanceInput.getText();

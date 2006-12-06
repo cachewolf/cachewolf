@@ -36,6 +36,7 @@ public class GPXImporter extends MinML {
 	public static final int DOIT_ASK = 0;
 	public static final int DOIT_NOSPOILER = 1;
 	public static final int DOIT_WITHSPOILER = 2;
+	boolean getMaps = false;
 		
 	public GPXImporter(Vector DB, String f, Preferences p)
 	{
@@ -87,13 +88,17 @@ public class GPXImporter extends MinML {
 		try{
 			ewe.io.Reader r;
 			String file;
-			if(how == DOIT_ASK){
-				InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
-				iB.execute();
-				doSpider = iB.mCB_state;
-			}
-			if(how == DOIT_NOSPOILER) doSpider = false;
-			if(how == DOIT_WITHSPOILER) doSpider = true;
+			
+			OCXMLImporterScreen options = new OCXMLImporterScreen(pref, "Spider Options", OCXMLImporterScreen.IMAGESANDMAPS);
+			if (options.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
+			String dist = options.distanceInput.getText();
+			if (dist.length()== 0) return;
+			getMaps = options.mapsCheckBox.getState();
+			boolean getImages = options.imagesCheckBox.getState();
+			doSpider = false;
+			if(getImages){doSpider = true;}
+			options.close(0);
+			
 			//Vm.debug("State of: " + doSpider);
 			Vm.showWait(true);
 			for (int i=0; i<files.size();i++){
@@ -266,11 +271,13 @@ public class GPXImporter extends MinML {
 					//Vm.debug("Should be spidering images...");
 					if(spiderOK == true && holder.is_archived == false){
 							if(holder.LatLon.length() > 1){
-							ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
-							pll.parse();
-							MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
-							mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
-							mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
+							if(getMaps){
+								ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
+								pll.parse();
+								MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
+								mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
+								mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
+							}
 						}
 					if(holder.wayPoint.startsWith("GC")) {
 						spiderImages();

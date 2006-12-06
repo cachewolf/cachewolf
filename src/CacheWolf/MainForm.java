@@ -11,6 +11,7 @@ import ewe.fx.*;
 */
 public class MainForm extends Form {
 	
+	StatusBar statBar;
 	Vector cacheDB = new Vector();
 	double myLat, myLon;
 	String myNS = new String();
@@ -76,12 +77,15 @@ public class MainForm extends Form {
 		//Dimension dim = new Dimension();
 		//dim = this.getSize(new Dimension());
 		
-		CellPanel [] p = addToolbar();
-		p[0].defaultTags.set(INSETS,new Insets(0,1,0,1));
-		p[1].addLast(mMenu = new MainMenu(this, myPreferences, cacheDB)).setCell(DONTSTRETCH);
-		p[1].addLast(mTab = new MainTab(cacheDB, myPreferences));
-		//this.addLast(mMenu = new MainMenu(this, myPreferences, cacheDB),this.DONTSTRETCH, this.FILL);
-		//this.addLast(mTab = new MainTab(cacheDB, myPreferences),this.STRETCH, this.FILL); 
+		//CellPanel [] p = addToolbar();
+		//p[0].defaultTags.set(INSETS,new Insets(0,1,0,1));
+		//p[1].addLast(mMenu = new MainMenu(this, myPreferences, cacheDB)).setCell(DONTSTRETCH);
+		//p[1].addLast(mTab = new MainTab(cacheDB, myPreferences));
+		statBar = new StatusBar(cacheDB);
+		this.addLast(mMenu = new MainMenu(this, myPreferences, cacheDB),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		this.addLast(mTab = new MainTab(cacheDB, myPreferences,statBar),CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(statBar,CellConstants.DONTSTRETCH, CellConstants.FILL);
+		Vm.debug("Anz: " + cacheDB.size());
 		mMenu.setTablePanel(mTab.getTablePanel());
 		Vm.showWait(false);
 	}
