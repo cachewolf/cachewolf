@@ -1,9 +1,8 @@
 package CacheWolf;
 import ewe.graphics.*;
-import ewe.sys.*;
 import ewe.fx.*;
 import ewe.ui.*;
-import ewe.util.*;
+
 
 /**
 * Class creates a view on the image scaled
@@ -25,7 +24,7 @@ public class ImageDetailForm extends Form{
 		setUp(imgLoc, p);
 		this.title = "Image";
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
-		this.addLast(scp.getScrollablePanel(), this.STRETCH, this.FILL);
+		this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 	}
 	
 	public ImageDetailForm(){

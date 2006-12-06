@@ -25,22 +25,23 @@ public class Filter{
 	public static final int MYSTERY = 64;
 	public static final int LOCLESS = 128;
 	// End of type declares
-	public static final int N = 256;
-	public static final int NNE = 512;
-	public static final int NE = 1024;
-	public static final int ENE = 2048;
-	public static final int E = 4096;
-	public static final int ESE = 8192;
-	public static final int SE = 16384;
-	public static final int SSE = 32768;
-	public static final int SSW = 65536;
-	public static final int SW = 131072;
-	public static final int WSW = 262144;
-	public static final int W = 524288;
-	public static final int WNW = 1048576;
-	public static final int NW = 2097152;
-	public static final int NNW = 4194304;
-	//end of direction declraes
+	public static final int N = 1;
+	public static final int NNE = 2;
+	public static final int NE = 4;
+	public static final int ENE = 8;
+	public static final int E = 16;
+	public static final int ESE = 32;
+	public static final int SE = 64;
+	public static final int SSE = 128;
+	public static final int SSW = 256;
+	public static final int SW = 512;
+	public static final int WSW = 1024;
+	public static final int W = 2048;
+	public static final int WNW = 4096;
+	public static final int NW = 8192;
+	public static final int NNW = 16384;
+	public static final int S = 32768;
+	//end of direction declares
 	
 	
 	
@@ -59,6 +60,9 @@ public class Filter{
 	
 	public String type = new String();
 	public String bearing = new String();
+	
+	public int roseMatchPattern = 0;
+	public int typeMatchPattern = 0;
 	
 	public boolean foundByMe;
 	public boolean ownedByMe;
@@ -197,6 +201,88 @@ public class Filter{
 	*	not displaying a cache that is filtered.
 	*/
 	public void doFilter(Vector cacheDB, String dir){
+		CacheHolder ch = new CacheHolder();
+		int cacheTypePattern = 0;
+		int cacheRosePattern = 0;
+		double dummyd1, dummyd2;
+		String dummy = new String();
+		//Loop db and math once against type pattern and once against rose pattern
+		//Default is_filtered = true, means will not be displayed!
+		//If cache matches type and rose pattern then is_filtered is set to false
+		//Still in the loop check aginst diff, terr, dist, found by, found last
+		for(int i = 0; i < cacheDB.size(); i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			ch.is_filtered = true;
+			cacheTypePattern = 0;
+			if(ch.type.equals("2")) cacheTypePattern |= TRADITIONAL;
+			if(ch.type.equals("3")) cacheTypePattern |= MULTI;
+			if(ch.type.equals("4")) cacheTypePattern |= VIRTUAL;
+			if(ch.type.equals("5")) cacheTypePattern |= LETTER;
+			if(ch.type.equals("6")) cacheTypePattern |= EVENT;
+			if(ch.type.equals("8")) cacheTypePattern |= MYSTERY;
+			if(ch.type.equals("11")) cacheTypePattern |= WEBCAM;
+			if(ch.type.equals("12")) cacheTypePattern |= LOCLESS;
+			
+			cacheRosePattern = 0;
+			if(ch.bearing.equals("NW")) cacheRosePattern |= NW;
+			if(ch.bearing.equals("NNW")) cacheRosePattern |= NNW;
+			if(ch.bearing.equals("N")) cacheRosePattern |= N;
+			if(ch.bearing.equals("NNE")) cacheRosePattern |= NNE;
+			if(ch.bearing.equals("NE")) cacheRosePattern |= NE;
+			if(ch.bearing.equals("WNW")) cacheRosePattern |= WNW;
+			if(ch.bearing.equals("ENE")) cacheRosePattern |= ENE;
+			if(ch.bearing.equals("W")) cacheRosePattern |= W;
+			if(ch.bearing.equals("E")) cacheRosePattern |= E;
+			if(ch.bearing.equals("WSW")) cacheRosePattern |= WSW;
+			if(ch.bearing.equals("ESE")) cacheRosePattern |= ESE;
+			if(ch.bearing.equals("SW")) cacheRosePattern |= SW;
+			if(ch.bearing.equals("SSW")) cacheRosePattern |= SSW;
+			if(ch.bearing.equals("S")) cacheRosePattern |= S;
+			if(ch.bearing.equals("SSE")) cacheRosePattern |= SSE;
+			if(ch.bearing.equals("SE")) cacheRosePattern |= SE;
+/*			
+			Vm.debug(ch.wayPoint);
+			Vm.debug("Type Pattern: " + cacheTypePattern);
+			Vm.debug("Type Match Pattern: " + typeMatchPattern);
+			Vm.debug("AND: " + (cacheTypePattern & typeMatchPattern));
+			*/ 
+			if((cacheTypePattern & typeMatchPattern) >= 1 && (cacheRosePattern & roseMatchPattern) >= 1) ch.is_filtered = false;
+			
+			/*
+			if(dist.length()>0 && ch.is_filtered == false){
+				dummy = ch.distance.substring(0,ch.distance.length()-3);
+				dummyd1 = Common.parseDouble(dummy); 
+				dummyd2 = Common.parseDouble(dist); 
+				if(distdirec == SMALLER && dummyd2 >= dummyd1) ch.is_filtered = true;
+				if(distdirec == GREATER && dummyd2 <= dummyd1) ch.is_filtered = true;
+			}
+			
+			if(diff.length()>0 && ch.is_filtered == false){
+				dummyd1 = Common.parseDouble(ch.hard);
+				dummyd2 = Common.parseDouble(diff);
+				if(diffdirec == SMALLER && dummyd2 >= dummyd1) ch.is_filtered = true;
+				if(diffdirec == GREATER && dummyd2 <= dummyd1) ch.is_filtered = true;
+			}
+			
+			if(terr.length()>0 && ch.is_filtered == false){
+				dummyd1 = Common.parseDouble(ch.terrain);
+				dummyd2 = Common.parseDouble(terr);
+				if(terrdirec == SMALLER && dummyd2 >= dummyd1) ch.is_filtered = true;
+				if(terrdirec == GREATER && dummyd2 <= dummyd1) ch.is_filtered = true;
+			}
+			
+			if(ch.is_found == false && foundByMe == true && ch.is_filtered == false) ch.is_filtered = true;
+			if(ch.is_owned == false && ownedByMe == true && ch.is_filtered == false) ch.is_filtered = true;
+			
+			if(ch.is_archived == false && archived == true && ch.is_filtered == false) ch.is_filtered = true;
+			if(ch.is_available == false && notAvailable == true && ch.is_filtered == false) ch.is_filtered = true;
+			*/
+			cacheDB.set(i,ch);
+		} // for
+	}
+	
+	
+	public void doFilter_old(Vector cacheDB, String dir){
 		byVec = mString.split(by, ',');
 		CacheHolder ch;
 		//CacheReaderWriter crw = new CacheReaderWriter();

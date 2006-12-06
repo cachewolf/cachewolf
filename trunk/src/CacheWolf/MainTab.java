@@ -26,13 +26,12 @@ public class MainTab extends mTabbedPanel {
 	RadarPanel radarP = new RadarPanel();
 	ImagePanel imageP;
 	SolverPanel solverP;
-
 	String lastselected = new String();
 	CacheHolder ch = new CacheHolder();
 	//Locale l = Vm.getLocale();
 	//LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	
-	public MainTab(Vector cacheDB, Preferences pref){
+	public MainTab(Vector cacheDB, Preferences pref, StatusBar statBar){
 		MyLocale.setSIPButton();
 		myPreferences = pref;
 		cDB = cacheDB;
@@ -40,7 +39,7 @@ public class MainTab extends mTabbedPanel {
 		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
 		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
 
-		Card c = this.addCard(tbP = new TablePanel(cDB, myPreferences), MyLocale.getMsg(1200,"List"), null);
+		Card c = this.addCard(tbP = new TablePanel(cDB, myPreferences, statBar), MyLocale.getMsg(1200,"List"), null);
 		
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
 		c.iconize(new Image("details.gif"),true);

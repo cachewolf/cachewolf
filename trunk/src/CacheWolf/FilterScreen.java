@@ -27,6 +27,9 @@ public class FilterScreen extends Form{
 	Locale l = Vm.getLocale();
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	
+	CellPanel content = new CellPanel();
+	ScrollBarPanel scp;
+	
 	public FilterScreen(Vector DB, String d){
 		dir = d;
 		cacheDB = DB;
@@ -35,76 +38,80 @@ public class FilterScreen extends Form{
 		//Werte setzen
 		this.title = (String)lr.get(700,"Set Filter");
 		
-		this.addNext(new mLabel((String)lr.get(701,"Distance: ")),this.DONTSTRETCH, this.FILL);
-		this.addNext(distChc = new mChoice(new String[]{"<=", ">="},0),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(distIn = new mInput(),this.DONTSTRETCH, this.FILL);
+		scp = new ScrollBarPanel(content);
 		
-		this.addNext(new mLabel((String)lr.get(702,"Difficulty: ")),this.DONTSTRETCH, this.FILL);
-		this.addNext(difChc = new mChoice(new String[]{"<=", ">="},0),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(difIn = new mInput(),this.DONTSTRETCH, this.FILL);
+		content.addNext(new mLabel((String)lr.get(701,"Distance: ")),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		content.addNext(distChc = new mChoice(new String[]{"<=", ">="},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addLast(distIn = new mInput(),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		this.addNext(new mLabel("Terrain: "),this.DONTSTRETCH, this.FILL);
-		this.addNext(terrChc = new mChoice(new String[]{"<=", ">="},0),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addLast(terrIn = new mInput(),this.DONTSTRETCH, this.FILL);
+		content.addNext(new mLabel((String)lr.get(702,"Difficulty: ")),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		content.addNext(difChc = new mChoice(new String[]{"<=", ">="},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addLast(difIn = new mInput(),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		this.addNext(lastChc = new mChoice(new String[]{(String)lr.get(703,"Found"), (String)lr.get(704,"Not found")},0),this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		this.addNext(new mLabel((String)lr.get(705," last ")),this.DONTSTRETCH, this.FILL);
-		this.addLast(lastIn = new mInput(),this.DONTSTRETCH, this.FILL);
+		content.addNext(new mLabel("Terrain: "),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		content.addNext(terrChc = new mChoice(new String[]{"<=", ">="},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addLast(terrIn = new mInput(),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		this.addNext(new mLabel((String)lr.get(706,"Found by: ")),this.DONTSTRETCH, this.FILL);
-		this.addLast(foundIn = new mInput(),this.DONTSTRETCH, this.FILL);
+		content.addNext(lastChc = new mChoice(new String[]{(String)lr.get(703,"Found"), (String)lr.get(704,"Not found")},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addNext(new mLabel((String)lr.get(705," last ")),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		content.addLast(lastIn = new mInput(),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		this.addNext(archivedChk = new mCheckBox((String)lr.get(710,"Archived")), this.DONTSTRETCH, this.FILL);
-		this.addLast(notAvailableChk = new mCheckBox((String)lr.get(711,"Not available")), this.DONTSTRETCH, this.FILL);
+		content.addNext(new mLabel((String)lr.get(706,"Found by: ")),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		content.addLast(foundIn = new mInput(),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		this.addNext(foundChk = new mCheckBox((String)lr.get(703,"Found")), this.DONTSTRETCH, this.FILL);
-		this.addLast(ownedChk = new mCheckBox((String)lr.get(707,"Owned")), this.DONTSTRETCH, this.FILL);
+		content.addNext(archivedChk = new mCheckBox((String)lr.get(710,"Archived")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		content.addLast(notAvailableChk = new mCheckBox((String)lr.get(711,"Not available")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		
+		content.addNext(foundChk = new mCheckBox((String)lr.get(703,"Found")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		content.addLast(ownedChk = new mCheckBox((String)lr.get(707,"Owned")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		CellPanel ctype = new CellPanel();
-		ctype.addNext(tradChk = new mCheckBox("Traditonal"), this.DONTSTRETCH, this.FILL);
-		ctype.addNext(multiChk = new mCheckBox("Multi"), this.DONTSTRETCH, this.FILL);
-		ctype.addLast(virtualChk = new mCheckBox("Virtual"), this.DONTSTRETCH, this.FILL);
+		ctype.addNext(tradChk = new mCheckBox("Traditonal"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ctype.addNext(multiChk = new mCheckBox("Multi"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ctype.addLast(virtualChk = new mCheckBox("Virtual"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		ctype.addNext(letterChk = new mCheckBox("Letterbox"), this.DONTSTRETCH, this.FILL);
-		ctype.addNext(eventChk = new mCheckBox("Event"), this.DONTSTRETCH, this.FILL);
-		ctype.addLast(webcamChk = new mCheckBox("Webcam"), this.DONTSTRETCH, this.FILL);
+		ctype.addNext(letterChk = new mCheckBox("Letterbox"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ctype.addNext(eventChk = new mCheckBox("Event"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ctype.addLast(webcamChk = new mCheckBox("Webcam"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		ctype.addNext(mysteryChk = new mCheckBox("Mystery"), this.DONTSTRETCH, this.FILL);
-		ctype.addLast(loclessChk = new mCheckBox("Locationless"), this.DONTSTRETCH, this.FILL);
+		ctype.addNext(mysteryChk = new mCheckBox("Mystery"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ctype.addLast(loclessChk = new mCheckBox("Locationless"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		this.addLast(ctype, this.STRETCH,this.FILL);
+		content.addLast(ctype, CellConstants.STRETCH,CellConstants.FILL);
 		
 		CellPanel roseP = new CellPanel();
 		//Image img = new Image("rose.png");
 		//ImageControl ic = new ImageControl(img);
-		mLabel ic = new mLabel("");
-		roseP.addNext(NW = new mCheckBox("NW"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addNext(NNW = new mCheckBox("NNW"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addNext(N = new mCheckBox("N"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addLast(NNE = new mCheckBox("NNE"),roseP.DONTSTRETCH, roseP.FILL);
+		//mLabel ic = new mLabel("");
+		roseP.addNext(NW = new mCheckBox("NW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addNext(NNW = new mCheckBox("NNW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addNext(N = new mCheckBox("N"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addLast(NNE = new mCheckBox("NNE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		roseP.addNext(NE = new mCheckBox("NE"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addNext(WNW = new mCheckBox("WNW"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addNext(ENE = new mCheckBox("ENE"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addLast(W = new mCheckBox("W "),roseP.DONTSTRETCH, roseP.FILL);
+		roseP.addNext(NE = new mCheckBox("NE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addNext(WNW = new mCheckBox("WNW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addNext(ENE = new mCheckBox("ENE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addLast(W = new mCheckBox("W "),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		roseP.addNext(E = new mCheckBox("E "),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addNext(WSW = new mCheckBox("WSW"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addNext(ESE = new mCheckBox("ESE"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addLast(SW = new mCheckBox("SW"),roseP.DONTSTRETCH, roseP.FILL);
+		roseP.addNext(E = new mCheckBox("E "),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addNext(WSW = new mCheckBox("WSW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addNext(ESE = new mCheckBox("ESE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addLast(SW = new mCheckBox("SW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		roseP.addNext(SSW = new mCheckBox("SSW"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addNext(S = new mCheckBox("S"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addNext(SSE = new mCheckBox("SSE"),roseP.DONTSTRETCH, roseP.FILL);
-		roseP.addLast(SE = new mCheckBox("SE"),roseP.DONTSTRETCH, roseP.FILL);
+		roseP.addNext(SSW = new mCheckBox("SSW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addNext(S = new mCheckBox("S"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addNext(SSE = new mCheckBox("SSE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		roseP.addLast(SE = new mCheckBox("SE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		this.addLast(roseP, this.STRETCH,this.FILL);
+		content.addLast(roseP, CellConstants.STRETCH,CellConstants.FILL);
 		
 		CellPanel btPanel = new CellPanel();
-		btPanel.addNext(btCancel = new mButton((String)lr.get(708,"Cancel")),btPanel.STRETCH, btPanel.FILL);
-		btPanel.addNext(btApply = new mButton((String)lr.get(709,"Apply")),btPanel.STRETCH, btPanel.FILL);
-		btPanel.addLast(btRoute = new mButton("Route"),btPanel.STRETCH, btPanel.FILL);
-		this.addLast(btPanel.setTag(Control.SPAN, new Dimension(3,1)), this.STRETCH, this.FILL);
+		btPanel.addNext(btCancel = new mButton((String)lr.get(708,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
+		btPanel.addNext(btApply = new mButton((String)lr.get(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
+		btPanel.addLast(btRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
+		content.addLast(btPanel.setTag(Control.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
+		
+		this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 	}
 	
 	/**
@@ -121,7 +128,7 @@ public class FilterScreen extends Form{
 				File datei;
 				FileChooser fc = new FileChooser(FileChooser.OPEN, dir);
 				fc.setTitle((String)lr.get(712,"Select route file"));
-				if(fc.execute() != fc.IDCANCEL) {
+				if(fc.execute() != FormBase.IDCANCEL) {
 					datei = fc.getChosenFile();
 					InfoBox inf = new InfoBox("Distance?", "Dist:", InfoBox.INPUT);
 					inf.execute();
@@ -147,34 +154,35 @@ public class FilterScreen extends Form{
 				flt.by = foundIn.getText();
 				flt.notAvailable = notAvailableChk.getState();
 				flt.archived = archivedChk.getState();
-				String typ = new String();
-				if(tradChk.getState()) typ = "|2|";
-				if(multiChk.getState()) typ = typ + "|3|";
-				if(virtualChk.getState()) typ = typ + "|4|";
-				if(letterChk.getState()) typ = typ + "|5|";
-				if(eventChk.getState()) typ = typ + "|6|";
-				if(webcamChk.getState()) typ = typ + "|11|";
-				if(mysteryChk.getState()) typ = typ + "|8|";
-				if(loclessChk.getState()) typ = typ + "|12|";
-				flt.type = typ;
 				
-				String bear = new String();
-				if(N.getState()) bear = "|N|";
-				if(NNE.getState()) bear = bear + "|NNE|";
-				if(NE.getState()) bear = bear + "|NE|";
-				if(ENE.getState()) bear = bear + "|ENE|";
-				if(E.getState()) bear = bear + "|E|";
-				if(ESE.getState()) bear = bear + "|ESE|";
-				if(SE.getState()) bear = bear + "|SE|";
-				if(SSE.getState()) bear = bear + "|SSE|";
-				if(SSW.getState()) bear = bear + "|SSW|";
-				if(SW.getState()) bear = bear + "|SW|";
-				if(WSW.getState()) bear = bear + "|WSW|";
-				if(W.getState()) bear = bear + "|W|";
-				if(WNW.getState()) bear = bear + "|WNW|";
-				if(NW.getState()) bear = bear + "|NW|";
-				if(NNW.getState()) bear = bear + "|NNW|";
-				flt.bearing = bear;
+				int typeMatchPattern = 0;
+				if(tradChk.getState()) typeMatchPattern |= Filter.TRADITIONAL;
+				if(multiChk.getState()) typeMatchPattern |= Filter.MULTI;
+				if(virtualChk.getState()) typeMatchPattern |= Filter.VIRTUAL;
+				if(letterChk.getState()) typeMatchPattern |= Filter.LETTER;
+				if(eventChk.getState()) typeMatchPattern |= Filter.EVENT;
+				if(webcamChk.getState()) typeMatchPattern |= Filter.WEBCAM;
+				if(mysteryChk.getState()) typeMatchPattern |= Filter.MYSTERY;
+				if(loclessChk.getState()) typeMatchPattern |= Filter.LOCLESS;
+				flt.typeMatchPattern = typeMatchPattern;
+				int roseMatchPattern = 0;
+				if(N.getState()) roseMatchPattern |= Filter.N;
+				if(NNE.getState()) roseMatchPattern |= Filter.NNE;
+				if(NE.getState()) roseMatchPattern |= Filter.NE;
+				if(ENE.getState()) roseMatchPattern |= Filter.ENE;
+				if(E.getState()) roseMatchPattern |= Filter.E;
+				if(ESE.getState()) roseMatchPattern |= Filter.ESE;
+				if(SE.getState()) roseMatchPattern |= Filter.SE;
+				if(SSE.getState()) roseMatchPattern |= Filter.SSE;
+				if(SSW.getState()) roseMatchPattern |= Filter.SSW;
+				if(SW.getState()) roseMatchPattern |= Filter.SW;
+				if(WSW.getState()) roseMatchPattern |= Filter.WSW;
+				if(W.getState()) roseMatchPattern |= Filter.W;
+				if(WNW.getState()) roseMatchPattern |= Filter.WNW;
+				if(NW.getState()) roseMatchPattern |= Filter.NW;
+				if(NNW.getState()) roseMatchPattern |= Filter.NNW;
+				if(S.getState()) roseMatchPattern |= Filter.S;
+				flt.roseMatchPattern = roseMatchPattern;
 				if(distChc.selectedIndex == 1) flt.distdirec = Filter.SMALLER;
 				else flt.distdirec = Filter.GREATER;
 				if(difChc.selectedIndex == 1) flt.diffdirec = Filter.SMALLER;
