@@ -171,33 +171,38 @@ public class TPLExporter {
 					}catch(Exception e){
 						Vm.debug("Problem reading cache page");
 					}
-					CWPoint point = new CWPoint(holder.LatLon, CWPoint.CW);
-					Regex dec = new Regex("[,.]",myFilter.decSep);
-					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.transType(holder.type));
-					varParams.put("SHORTTYPE", CacheType.transType(holder.type).substring(0,1));
-					varParams.put("SIZE", holder.CacheSize);
-					varParams.put("SHORTSIZE", holder.CacheSize.substring(0,1));
-					varParams.put("WAYPOINT", holder.wayPoint);
-					if (myFilter.badChars != null) {
-						Regex rex = new Regex("["+myFilter.badChars+"]","");
-						varParams.put("NAME", rex.replaceAll(holder.CacheName));
+					try {
+						CWPoint point = new CWPoint(holder.LatLon, CWPoint.CW);
+						Regex dec = new Regex("[,.]",myFilter.decSep);
+						varParams = new Hashtable();
+						varParams.put("TYPE", CacheType.transType(holder.type));
+						varParams.put("SHORTTYPE", CacheType.transType(holder.type).substring(0,1));
+						varParams.put("SIZE", holder.CacheSize);
+						varParams.put("SHORTSIZE", holder.CacheSize.substring(0,1));
+						varParams.put("WAYPOINT", holder.wayPoint);
+						if (myFilter.badChars != null) {
+							Regex rex = new Regex("["+myFilter.badChars+"]","");
+							varParams.put("NAME", rex.replaceAll(holder.CacheName));
+						}
+						else {
+							varParams.put("NAME", holder.CacheName);
+						}
+						varParams.put("OWNER", holder.CacheOwner);
+						varParams.put("DIFFICULTY", dec.replaceAll(holder.hard));
+						varParams.put("TERRAIN", dec.replaceAll(holder.terrain));
+						varParams.put("DISTANCE", dec.replaceAll(holder.distance));
+						varParams.put("BEARING", holder.bearing);
+						varParams.put("LATLON", holder.LatLon);
+						varParams.put("LAT", dec.replaceAll(point.getLatDeg(CWPoint.DD)));
+						varParams.put("LON", dec.replaceAll(point.getLonDeg(CWPoint.DD)));
+						varParams.put("STATUS", holder.CacheStatus);
+						varParams.put("DATE", holder.DateHidden);
+						varParams.put("URL", holder.URL);
+						cache_index.add(varParams);
+					}catch(Exception e){
+						Vm.debug("Problem getting Parameter, Cache: " + holder.wayPoint);
+						e.printStackTrace();
 					}
-					else {
-						varParams.put("NAME", holder.CacheName);
-					}
-					varParams.put("OWNER", holder.CacheOwner);
-					varParams.put("DIFFICULTY", dec.replaceAll(holder.hard));
-					varParams.put("TERRAIN", dec.replaceAll(holder.terrain));
-					varParams.put("DISTANCE", dec.replaceAll(holder.distance));
-					varParams.put("BEARING", holder.bearing);
-					varParams.put("LATLON", holder.LatLon);
-					varParams.put("LAT", dec.replaceAll(point.getLatDeg(CWPoint.DD)));
-					varParams.put("LON", dec.replaceAll(point.getLonDeg(CWPoint.DD)));
-					varParams.put("STATUS", holder.CacheStatus);
-					varParams.put("DATE", holder.DateHidden);
-					varParams.put("URL", holder.URL);
-					cache_index.add(varParams);
 				}
 			}
 
