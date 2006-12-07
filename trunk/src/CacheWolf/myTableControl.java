@@ -48,10 +48,9 @@ public class myTableControl extends TableControl{
 		if (selectedItem.toString().equals((String)lr.get(1011,"Filter"))){
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
-				if(ch.is_Checked == true) {
-					ch.is_filtered = true;
-					db.set(i, ch);
-				}
+				ch.is_filtered = true;
+				if(ch.is_Checked == true) ch.is_filtered = false;
+				db.set(i, ch);
 			}
 			tbp.refreshTable();
 		}
