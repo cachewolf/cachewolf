@@ -25,7 +25,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem about, wolflang, sysinfo, testgps, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTomASC, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTomTomOVL, exportTPL;
-	private MenuItem filtCreate, filtApply, filtClear, filtInvert;
+	private MenuItem filtCreate, filtApply, filtClear, filtInvert, filtSelected;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete;
 	private Form father;
@@ -104,6 +104,8 @@ public class MainMenu extends MenuBar {
 		filterMenuItems[0] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")); 
 		filterMenuItems[1] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
 		filterMenuItems[2] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
+		filterMenuItems[3] = new MenuItem("-");
+		filterMenuItems[4] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
 		
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
@@ -258,6 +260,17 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == filtClear){
 				Filter flt = new Filter();
 				flt.clearFilter(cacheDB);
+				tbp.refreshTable();
+			}
+			
+			if(mev.selectedItem == filtSelected){
+				CacheHolder ch = new CacheHolder();
+				for(int i = 0; i <	cacheDB.size(); i++){
+					ch = (CacheHolder)cacheDB.get(i);
+					ch.is_filtered = true;
+					if(ch.is_Checked == true) ch.is_filtered = false;
+					cacheDB.set(i, ch);
+				}
 				tbp.refreshTable();
 			}
 			
