@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import ewe.fx.Point;
 import ewe.io.BufferedWriter;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
@@ -27,6 +28,7 @@ public class MapInfoObject{
 	public double[] affine = {0,0,0,0,0,0};
 	public double lowlat = 0;
 	public double lowlon = 0;
+	public double transLatX, transLatY, transLonX, transLonY; // this are needed for the inervers calculation from lat/lon to x/y
 	public CWPoint center = new CWPoint();
 	public float sizeKm = 0; // diagonale
 	public String fileNameWFL = new String();
@@ -43,7 +45,6 @@ public class MapInfoObject{
  */	
 	
 	public MapInfoObject() {
-		super();
 		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
 		if(testA == 4.5) digSep = ","; else digSep = ".";
 	}
@@ -51,8 +52,9 @@ public class MapInfoObject{
 	 * Method to load a .wfl-file
 	 * @throws IOException when there was a problem reading .wfl-file
 	 * @throws IOException when lat/lon were out of range
+	 * @throws ArithmeticException when affine data is not correct, e.g. it is not possible to inverse affine-transformation
 	 */
-	public void loadwfl(String mapsPath, String thisMap) throws IOException {
+	public void loadwfl(String mapsPath, String thisMap) throws IOException, ArithmeticException {
 		FileReader in = new FileReader(mapsPath + thisMap + ".wfl");
 		String line = new String();
 		try {
@@ -84,12 +86,23 @@ public class MapInfoObject{
 		} catch (NullPointerException e) { // in.readline liefert null zurück, wenn keine Daten mehr vorhanden sind
 			throw (new IOException("not enough lines in file "+mapsPath + thisMap + ".wfl"));
 		}
-		calcCenter();
+		doCalculations();
 	}
 
-	private void calcCenter() {
+	/**
+	 * calculates center, diagonal size of the map and inverse to affine transformation
+	 * @throws ArithmeticException when affine data is not correct, e.g. it is not possible to inverse affine-transformation
+	 */
+	
+	private void doCalculations() throws ArithmeticException {
 	center.set((lowlat + affine[4])/2,(lowlon + affine[5])/2);
 	sizeKm = java.lang.Math.abs((float)center.getDistance(lowlat, lowlon)) *2;
+	
+	double nenner=(-affine[1]*affine[2]+affine[0]*affine[3]);
+	transLatX = affine[3]/nenner; // nenner == 0 cannot happen as long als affine is correct
+	transLonX = -affine[2]/nenner;
+	transLatY = -affine[1]/nenner;
+	transLonY = affine[0]/nenner;
 }
 	
 	
@@ -151,5 +164,33 @@ public class MapInfoObject{
 		boolean isInBound = false;
 		if(affine[4] >= lati && lati >= lowlat && affine[5] <= loni && loni <= lowlon) isInBound = true;
 		return isInBound;
+	}
+	/**
+	* Method to calculate bitmap x,y of the current map using
+	* lat and lon target coordinates. There ist no garanty that
+	* the returned coordinates are inside of the map. They can be negative.
+	* @param lat
+	* @param lon
+	*/
+	public Point calcMapXY(double lat, double lon){
+		Point coords = new Point();
+		double b[] = new double[2];
+		b[0] = lat - affine[4];
+		b[1] = lon - affine[5];
+		double mapx=transLatX* b[0] + transLonX*b[1];
+		double mapy=transLatY* b[0] + transLonY*b[1];
+		coords.x = (int)mapx;
+		coords.y = (int)mapy;
+		//Vm.debug("mapX=mapx2: "+mapx+"="+mapx2+"; mapy=mapy2: "+mapy+"="+mapy2);
+		return coords;
+	}
+	public CWPoint calcLatLon(int x, int y) {
+		 CWPoint ll = new CWPoint();
+		 ll.latDec = (double)x * affine[0] + (double)y * affine[2] + affine[4];
+		 ll.lonDec = (double)x * affine[1] + (double)y * affine[3] + affine[5];
+		 return ll;
+	}
+	public CWPoint calcLatLon(Point p) {
+		return calcLatLon(p.x, p.y);
 	}
 }

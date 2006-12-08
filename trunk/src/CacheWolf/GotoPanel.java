@@ -34,7 +34,7 @@ class SerialThread extends mThread{
 			comSp = new SerialPort(spo);
 		} catch (IOException e) {
 			throw new IOException(spo.portName);
-		} catch (UnsatisfiedLinkError e) {} // TODO wieder entfernen!
+		} catch (UnsatisfiedLinkError e) {} // TODO in original java-vm 
 		if (forwardIP.length()>0) { 
 			try {
 				tcpConn = new Socket(forwardIP, 23);
@@ -175,6 +175,7 @@ public class GotoPanel extends CellPanel {
 	Vector availableMaps = new Vector();
 	MapInfoObject tempMIO = new MapInfoObject();
 	MovingMap mmp;
+	Track currTrack;
 	
 	/**
 	 * Create GotoPanel 
@@ -384,6 +385,7 @@ public class GotoPanel extends CellPanel {
 		Double dist = new Double();
 		Double speed = new Double();
 		Double sunAzimut = new Double();
+		Vm.debug("ticked: voher");
 
 		//		Vm.debug("ticked");
 		int fix = gpsPosition.getFix();
@@ -392,6 +394,9 @@ public class GotoPanel extends CellPanel {
 			// display values only, if signal good
 			if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
 				//gpsPosition.printAll();
+				Vm.debug("currTrack.add: voher");
+				currTrack.add(gpsPosition);
+				Vm.debug("currTrack.add: nachher");
 				lblPosition.setText(gpsPosition.toString(currFormat));
 				speed.set(gpsPosition.getSpeed());
 				lblSpeed.setText(l.format(Locale.FORMAT_PARSE_NUMBER,speed,"0.0") + " km/h");
@@ -448,6 +453,13 @@ public class GotoPanel extends CellPanel {
 
 	//	}else{ // In moving map mode
 			if (mmp != null && runMovingMap ) { // neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
+//				currTrack.add(new CWPoint(50.71343, 007.09998));
+//				mmp.ShowLastAddedPoint(currTrack);
+//				currTrack.add(new CWPoint(50.748, 7.09958));
+//				currTrack.add(new CWPoint(50.75, 7.09958));
+//				currTrack.add(new CWPoint(50.755, 7.09958));
+//				currTrack.add(new CWPoint(50.76, 7.09958));
+//				currTrack.add(new CWPoint(50.765, 7.09958));
 //				gpsPosition.latDec = 50.75;
 //				gpsPosition.lonDec = 7.1;
 //				mmp.updatePosition(50.75, 7.1);
@@ -457,6 +469,9 @@ public class GotoPanel extends CellPanel {
 //				gpsPosition.lonDec = 7.1;
 //				mmp.updatePosition(50.74, 7.1);
 				if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
+					Vm.debug("ShowLastAddedPoint: voher");
+					mmp.ShowLastAddedPoint(currTrack);
+					Vm.debug("ShowLastAddedPoint: nachher");
 					mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
 					mmp.setGpsStatus(MovingMap.gotFix);
 				}
@@ -569,6 +584,7 @@ public class GotoPanel extends CellPanel {
 		} catch (IOException e) {
 			(new MessageBox("Error", "Could not connect to GPS-receiver.\n Error while opening serial Port " + e.getMessage()+"\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS", MessageBox.OKB)).execute(); 
 		}
+		currTrack = new Track(RED);
 	}
 
 	
@@ -615,6 +631,7 @@ public class GotoPanel extends CellPanel {
 						mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
 						mmp.ignoreGps = true;
 					}
+					if (currTrack != null) mmp.addOverlaySet(currTrack);
 					mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
 					mmp.exec();
 				}
@@ -649,6 +666,7 @@ public class GotoPanel extends CellPanel {
 						mmp.loadMap(toPoint.latDec, toPoint.lonDec);
 					} else
 						mmp.loadMap(gpsPosition.latDec, gpsPosition.lonDec);
+					if (currTrack != null) mmp.addOverlaySet(currTrack);
 					mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
 					mmp.exec();
 					//				mmp.updatePosition(50.733, 7.096);
