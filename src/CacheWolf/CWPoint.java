@@ -19,8 +19,7 @@ import ewe.sys.Vm;
  * distance
  *
  */
-public class CWPoint {
-	public double latDec, lonDec;
+public class CWPoint extends TrackPoint{
 	MGRSPoint utm = new MGRSPoint();
 	boolean utmValid = false;
 	Locale l = new Locale();
@@ -38,8 +37,7 @@ public class CWPoint {
 	 * @param lon Longitude as decimal
 	 */
 	public CWPoint(double lat, double lon) {
-		this.latDec = lat;
-		this.lonDec = lon;
+		super(lat, lon);
 		this.utmValid = false;
 	}
 
@@ -48,8 +46,7 @@ public class CWPoint {
 	 */
 	
 	public CWPoint() {
-		this.latDec = 0;
-		this.lonDec = 0;
+		super(0,0);
 		this.utmValid = false;
 		
 	}
@@ -60,8 +57,7 @@ public class CWPoint {
 	 */
 
 	public CWPoint(LatLonPoint llPoint){
-		this.latDec = llPoint.getLatitude();
-		this.lonDec = llPoint.getLongitude();
+		super (llPoint.getLatitude(), llPoint.getLongitude());
 		this.utmValid = false;
 	}
 
@@ -71,8 +67,7 @@ public class CWPoint {
 	 */
 
 	public CWPoint(CWPoint cwPoint){
-		this.latDec = cwPoint.latDec;
-		this.lonDec = cwPoint.lonDec;
+		super(cwPoint.latDec, cwPoint.lonDec);
 		this.utmValid = false;
 	}
 
@@ -83,6 +78,7 @@ public class CWPoint {
 	 * @param format only CWPoint.CW is supported
 	 */
 	public CWPoint(String coord, int format) {
+		super(0,0);
 		switch (format){
 		case CW: 	ParseLatLon pll = new ParseLatLon (coord);
 					pll.parse();
