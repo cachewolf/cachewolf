@@ -64,6 +64,7 @@ public class SolverPanel extends CellPanel{
 				FileChooser fc = new FileChooser(FileChooser.OPEN, myPreferences.mydatadir);
 				
 				fc.addMask(currCh.wayPoint + ".wl");
+				fc.addMask("*.wl");
 				fc.setTitle("Select File");
 				if(fc.execute() != FileChooser.IDCANCEL){
 					currFile = fc.getChosen();
@@ -90,6 +91,7 @@ public class SolverPanel extends CellPanel{
 			if((ev.target == btnSaveAs)||((ev.target == btnSave) && (currFile == null))){
 				FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
 				fc.addMask(currCh.wayPoint + ".wl");
+				fc.addMask("*.wl");
 				fc.setTitle("Select File");
 				if(fc.execute() != FileChooser.IDCANCEL){
 					File saveFile = fc.getChosenFile();
