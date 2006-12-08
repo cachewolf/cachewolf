@@ -100,7 +100,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Filter" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterMenuItems=new MenuItem[3];
+		MenuItem[] filterMenuItems=new MenuItem[5];
 		filterMenuItems[0] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")); 
 		filterMenuItems[1] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
 		filterMenuItems[2] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
