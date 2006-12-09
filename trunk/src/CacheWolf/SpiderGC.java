@@ -256,7 +256,7 @@ public class SpiderGC{
 				if(getDist(rexLine.stringMatched(1)) <= distance){
 					if(indexDB.get((String)getWP(rexLine.stringMatched(1))) == null){
 						cachesToLoad.add(getWP(rexLine.stringMatched(1)));
-					}
+					} else pref.log(getWP(rexLine.stringMatched(1))+" already in DB");
 				} else distance = 0;
 				rexLine.searchFrom(dummy, rexLine.matchedTo());
 			}
