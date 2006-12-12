@@ -12,6 +12,7 @@ import ewe.graphics.*;
 *	Table model used to display the cache list.
 * 	Used by the table control in the first panel of
 *	CacheWolf.
+* 20061212 salzkammergut, patch to speed up scrolling, Used MyLocale
 */
 public class myTableModel extends TableModel{
 	
@@ -25,24 +26,23 @@ public class myTableModel extends TableModel{
 	myTableControl tcControl;
 	boolean sortAsc = false;
 	FontMetrics fm;
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	String nmCheck, nmQuest, nmD,nmT,nmWay,nmName,nmLoc,nmOwn,nmHid,nmStat,nmDist,nmBear = new String();
+	Image checkboxTicked,checkboxUnticked;
 	
 	public myTableModel(Vector DB, String[] colNs,int[] colWidth, myTableControl tc, FontMetrics fm){
 		super();
 		nmCheck = " ";
 		nmQuest = "?";
-		nmD = (String)lr.get(1000,"D");
-		nmT = (String)lr.get(1001,"T");
-		nmWay = (String)lr.get(1002,"Waypoint");
-		nmName = (String)lr.get(1003,"Name");
-		nmLoc = (String)lr.get(1004,"Location");
-		nmOwn = (String)lr.get(1005,"Owner");
-		nmHid = (String)lr.get(1006,"Hidden");
-		nmStat = (String)lr.get(1007,"Status");
-		nmDist = (String)lr.get(1008,"Dist");
-		nmBear = (String)lr.get(1009,"Bear");
+		nmD = MyLocale.getMsg(1000,"D");
+		nmT = MyLocale.getMsg(1001,"T");
+		nmWay = MyLocale.getMsg(1002,"Waypoint");
+		nmName = MyLocale.getMsg(1003,"Name");
+		nmLoc = MyLocale.getMsg(1004,"Location");
+		nmOwn = MyLocale.getMsg(1005,"Owner");
+		nmHid = MyLocale.getMsg(1006,"Hidden");
+		nmStat = MyLocale.getMsg(1007,"Status");
+		nmDist = MyLocale.getMsg(1008,"Dist");
+		nmBear = MyLocale.getMsg(1009,"Bear");
 		fm = this.fm;
 		tcControl = tc;
 		cacheDB = DB;
@@ -88,6 +88,8 @@ public class myTableModel extends TableModel{
 		green = new Image("green.png");
 		yellow = new Image("yellow.png");
 		bug = new mImage("bug.png");
+		checkboxTicked = new Image("checkboxTicked.png");
+		checkboxUnticked= new Image("checkboxUnticked.png");
 	}
 	
 	public void setVector(Vector DB){
@@ -163,6 +165,16 @@ public class myTableModel extends TableModel{
 		return 18;
 	}
 	
+	/**
+	 * Need to override this method with a null return to avoid
+	 * getCellData being called twice on each access to a cell.
+	 * For further reference see the Ewe source code.
+	 * @author skg
+	 */
+	public Object getCellText(int row, int col) {
+		return null;
+	}
+
 	public Object getCellData(int row, int col){
 		IconAndText wpVal = new IconAndText(); //(IImage)bug, "Test Me", fm);
 		Object rettext = new Object();
@@ -178,11 +190,14 @@ public class myTableModel extends TableModel{
 					if(ch.is_filtered == false){
 						try{
 							if(colName[col].equals(nmCheck)) {
-								mCheckBox m = new mCheckBox();
+/* Replaced mCheckBox with two images: One showing the unticked box, one showing the ticked box
+  								mCheckBox m = new mCheckBox();
 								m.setTag(0, ch.wayPoint);
 								if(ch.is_Checked == true) m.setState(true);
 								else m.setState(false);
-								rettext = m;
+								rettext = m;*/
+								if (ch.is_Checked) rettext=checkboxTicked; 
+								else rettext=checkboxUnticked;
 							}
 							if(colName[col].equals(nmQuest)) rettext = (IImage)cacheImages[Convert.parseInt(ch.type)];				
 							if(colName[col].equals(nmD)) rettext = (String)ch.hard;
@@ -229,6 +244,13 @@ public class myTableModel extends TableModel{
 		boolean retval = false;
 		// Table header hit
 		try{
+			// Check whether the click is on the checkbox image
+			if (cell.y>=0 && cell.x==0) {
+				CacheHolder ch = (CacheHolder)cacheDB.get(cell.y);
+				ch.is_Checked= !ch.is_Checked;
+				updateRows();
+				// Don't consume the event. Why ?
+			}
 			if(cell.y == -1){
 				if(sortAsc == false) sortAsc = true;
 				else sortAsc = false;

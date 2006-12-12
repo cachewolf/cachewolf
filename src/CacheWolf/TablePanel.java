@@ -9,7 +9,8 @@ import ewe.fx.*;
 *	Class to display the cache database in a table.
 *	Class ID = 1000
 *   Changes:
-*     20061124 salzkammergut Bugfix 9529, Conversion to Mylocale
+*     20061124 salzkammergut: Bugfix 9529, Conversion to Mylocale
+*     20061212 salzkammergut: Commented out line 186ff (eventually to be removed)
 */
 public class TablePanel extends CellPanel{
 	
@@ -182,6 +183,7 @@ public class TablePanel extends CellPanel{
 					}catch(NullPointerException npe){
 			}
 		}
+		/* Not needed because myTableModel contains code to handle click on checkBox image
 		if(ev instanceof ControlEvent && ev.target instanceof mCheckBox){
 			mCheckBox m = new mCheckBox();
 			m = (mCheckBox)ev.target;
@@ -195,7 +197,7 @@ public class TablePanel extends CellPanel{
 					cacheDB.set(i, ch);
 				}
 			}
-		}
+		} */
 	  super.onEvent(ev); //Make sure you call this.
 	}
 }
