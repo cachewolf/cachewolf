@@ -84,8 +84,6 @@ public class MainForm extends Form {
 		statBar = new StatusBar(cacheDB);
 		this.addLast(mMenu = new MainMenu(this, myPreferences, cacheDB),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		this.addLast(mTab = new MainTab(cacheDB, myPreferences,statBar),CellConstants.STRETCH, CellConstants.FILL);
-		this.addLast(statBar,CellConstants.DONTSTRETCH, CellConstants.FILL);
-		Vm.debug("Anz: " + cacheDB.size());
 		mMenu.setTablePanel(mTab.getTablePanel());
 		Vm.showWait(false);
 	}
