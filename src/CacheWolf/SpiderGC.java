@@ -139,7 +139,7 @@ public class SpiderGC{
 		//Vm.debug(ch.wayPoint);
 		if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
 		pref.log("Trying logs");
-		ch.CacheLogs = getLogs(start);
+		ch.CacheLogs = getLogs(start, ch);
 		pref.log("Found logs");
 		ch.LatLon = getLatLon(start);
 		//Vm.debug("LatLon: " + ch.LatLon);
@@ -152,6 +152,7 @@ public class SpiderGC{
 		//Vm.debug("Name: " + ch.CacheName);
 		pref.log("Trying owner");
 		ch.CacheOwner = SafeXML.cleanback(getOwner(start));
+		if(ch.CacheOwner.equals(pref.myAlias)) ch.is_owned = true;
 		pref.log("Got owner");
 		//Vm.debug("Owner: " + ch.CacheOwner);
 		pref.log("Trying date hidden");
@@ -187,6 +188,9 @@ public class SpiderGC{
 		pref.log("Trying maps");
 		getMaps(ch);
 		pref.log("Got maps");
+		pref.log("Getting additional waypoints");
+		getAddWaypoints(start, ch);
+		pref.log("Got additional waypoints");
 		ch.CacheNotes = notes;
 		crw.saveCacheDetails(ch, pref.mydatadir);
 		cacheDB.set(number, ch);
@@ -308,7 +312,7 @@ public class SpiderGC{
 				//Vm.debug(ch.wayPoint);
 				try{
 					pref.log("Trying logs");
-					ch.CacheLogs = getLogs(start);
+					ch.CacheLogs = getLogs(start, ch);
 					pref.log("Found logs");
 					ch.LatLon = getLatLon(start);
 					//Vm.debug("LatLon: " + ch.LatLon);
@@ -358,6 +362,9 @@ public class SpiderGC{
 						getMaps(ch);
 						pref.log("Got maps");
 					}
+					pref.log("Getting additional waypoints");
+					getAddWaypoints(start, ch);
+					pref.log("Got additional waypoints");
 					crw.saveCacheDetails(ch, pref.mydatadir);
 					cacheDB.add(ch);
 					crw.saveIndex(cacheDB,pref.mydatadir);
@@ -395,12 +402,62 @@ public class SpiderGC{
 	}
 	
 	public void getMaps(CacheHolder holder){
-		if(holder.LatLon.length() > 1){
+		if(holder.LatLon.length() > 4){
 			ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 			pll.parse();
 			MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
 			mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
 			mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
+		}
+	}
+	
+	public void getAddWaypoints(String doc, CacheHolder ch){
+		CacheHolder cx = new CacheHolder();
+		Extractor exWayBlock = new Extractor(doc, "<strong>Additional Waypoints</strong><br>", "</table>", 0, false);
+		String wayBlock = new String();
+		String rowBlock = new String();
+		wayBlock = exWayBlock.findNext();
+		Regex nameRex = new Regex("&RefDS=1\">(.*)</a>");
+		Regex koordRex = new Regex("align=\"left\">([NSns] [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3} [EWew] [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})</td>");
+		Regex descRex = new Regex("colspan=\"4\">(.*)</td>");
+		Regex typeRex = new Regex("</a> \\((.*)\\)</td>");
+		int counter = 0;
+		if(exWayBlock.endOfSearch() == false){
+			Extractor exRowBlock = new Extractor(wayBlock, "<tr", "</tr>", 0, false);
+			rowBlock = exRowBlock.findNext();
+			rowBlock = exRowBlock.findNext();
+			while(exRowBlock.endOfSearch()==false){
+				
+				nameRex.search(rowBlock);
+				koordRex.search(rowBlock);
+				typeRex.search(rowBlock);
+				cx.CacheName = nameRex.stringMatched(1);
+				cx.LatLon = koordRex.stringMatched(1);
+				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
+				
+				//Vm.debug("Name: " + nameRex.stringMatched(1));
+				//Vm.debug("K: " + koordRex.stringMatched(1));
+				/*
+				if(koordRex.didMatch()) cx.LatLon = koordRex.stringMatched(0);
+				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(0));
+				cx.wayPoint = Convert.toString(counter) + ch.wayPoint.substring(2,5);
+				rowBlock = exRowBlock.findNext();
+				cx.LongDescription = noteRex.stringMatched(0);
+				
+				
+				*/
+				rowBlock = exRowBlock.findNext();
+				descRex.search(rowBlock);
+				cx.wayPoint = Convert.toString(counter) + ch.wayPoint.substring(2,6);
+				counter++;
+				cx.LongDescription = descRex.stringMatched(1); 
+				//Vm.debug(descRex.stringMatched(1));
+				
+				cacheDB.add(cx);
+				cx = new CacheHolder();
+				
+				rowBlock = exRowBlock.findNext();
+			}
 		}
 	}
 	
@@ -414,6 +471,7 @@ public class SpiderGC{
 		longDesc = getLongDesc(doc);
 		longDesc = STRreplace.replace(longDesc, "img", "IMG");
 		longDesc = STRreplace.replace(longDesc, "src", "SRC");
+		longDesc = STRreplace.replace(longDesc, "'", "\"");
 		//longDesc = STRreplace.replace(longDesc, "SRC =", "SRC=");
 		//longDesc = STRreplace.replace(longDesc, "SRC= \"", "SRC=\"");
 		//longDesc = STRreplace.replace(longDesc, "\n", " ");
@@ -555,6 +613,9 @@ public class SpiderGC{
 	private String getLatLon(String doc){
 		inRex = new Regex("<span id=\"LatLon\"><.*?>((?s).*?)</STRONG>");
 		inRex.search(doc);
+		
+		//Vm.debug("LatLon: " + inRex.stringMatched(1));
+		
 		return inRex.stringMatched(1);
 	}
 	
@@ -600,7 +661,9 @@ public class SpiderGC{
 		return Convert.toDouble(inRex.stringMatched(1));
 	}
 	
-	private Vector getLogs(String doc){
+	private Vector getLogs(String doc, CacheHolder ch){
+		String icon = new String();
+		String name = new String();
 		Vector reslts = new Vector();
 		Regex block = new Regex("<span id=\"CacheLogs\">((?s).*?)</span>");
 		block.search(doc);
@@ -638,7 +701,10 @@ public class SpiderGC{
 			//Vm.debug(exDate.findNext());
 			//Vm.debug(exLog.findNext());
 			//Vm.debug("--------------------------------------------");
-			reslts.add("<img src='"+ exIcon.findNext() +"'>&nbsp;" + exDate.findNext()+ " " + exName.findNext()+ exLog.findNext());
+			icon = exIcon.findNext();
+			name = exName.findNext();
+			if(icon.equals("icon_smile.gif") && name.equals(pref.myAlias)) ch.is_found = true;
+			reslts.add("<img src='"+ icon +"'>&nbsp;" + exDate.findNext()+ " " + name + exLog.findNext());
 			
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
