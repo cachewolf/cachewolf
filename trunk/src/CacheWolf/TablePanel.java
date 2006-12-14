@@ -47,6 +47,7 @@ public class TablePanel extends CellPanel{
 		}
 		
 		addLast(new ScrollBarPanel(tc = new myTableControl()));
+		addLast(statBar,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		Menu m = new Menu(new String[]{MyLocale.getMsg(1010,"Goto"),MyLocale.getMsg(1011,"Filter"),MyLocale.getMsg(1012,"Delete"),MyLocale.getMsg(1014,"Update"),"-",MyLocale.getMsg(1015,"Select all"),MyLocale.getMsg(1016,"De-select all")},MyLocale.getMsg(1013,"With selection"));
 		tc.setMenu(m);
 		tc.db = cacheDB;
@@ -146,21 +147,22 @@ public class TablePanel extends CellPanel{
 		anz--;
 		CacheHolder ch = new CacheHolder();
 		CWPoint toPoint = new CWPoint();
-		
 		// Jetzt durch die CacheDaten schleifen
 		while(anz >= 0){
 			ch = new CacheHolder();
 			ch = (CacheHolder)cacheDB.get(anz);
-			toPoint.set(ch.LatLon, CWPoint.CW);
-			ewe.sys.Double db = new ewe.sys.Double();
-			ch.kilom = fromPoint.getDistance(toPoint);
-			ch.degrees = fromPoint.getBearing(toPoint);
-			ch.bearing = CWPoint.getDirection(ch.degrees);
-			db.set(ch.kilom);
-			ch.distance = MyLocale.formatDouble(db,"0.00");
-			ch.distance = ch.distance + " km";
-			cacheDB.del(anz);
-			cacheDB.add(anz, ch);
+			if(ch.LatLon.length()>4){
+				toPoint.set(ch.LatLon, CWPoint.CW);
+				ewe.sys.Double db = new ewe.sys.Double();
+				ch.kilom = fromPoint.getDistance(toPoint);
+				ch.degrees = fromPoint.getBearing(toPoint);
+				ch.bearing = CWPoint.getDirection(ch.degrees);
+				db.set(ch.kilom);
+				ch.distance = MyLocale.formatDouble(db,"0.00");
+				ch.distance = ch.distance + " km";
+				cacheDB.del(anz);
+				cacheDB.add(anz, ch);
+			}
 			anz--;
 		}
 	} //updateBearingDistance
