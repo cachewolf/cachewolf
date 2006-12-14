@@ -67,6 +67,7 @@ public class myTableControl extends TableControl{
 		
 		if (selectedItem.toString().equals((String)lr.get(1014,"Update"))){
 			SpiderGC spider = new SpiderGC(pref, db);
+			Vm.showWait(true);
 			spider.login();
 			//TODO prüfen, ob es sich um ein gc oder oc cache handelt. Aber wie?
 			for(int i = 0; i <	db.size(); i++){
@@ -75,6 +76,7 @@ public class myTableControl extends TableControl{
 					spider.spiderSingle(i);
 				}
 			}
+			Vm.showWait(false);
 			tbp.refreshTable();
 		}
 		
