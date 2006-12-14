@@ -143,11 +143,20 @@ public class Parser{
 		boolean foundCommand = false;
 		////Vm.debug("In command");
 		getToken();
+		Vm.debug(thisToken.token);
 		if(thisToken.token.equals("project")){
 			foundCommand = true;
 			if(runFlag) match("(");
 			
 			if(runFlag) match(")");
+		}
+		if(thisToken.token.equals("st")){
+			foundCommand = true;
+			runFlag = false;
+		}
+		if(thisToken.token.equals("stop")){
+			foundCommand = true;
+			runFlag = false;
 		}
 		if(thisToken.token.equals("show")){
 			foundCommand = true;
@@ -229,6 +238,8 @@ public class Parser{
 	public boolean IsAlpha(String c){
 		//check for reserved words
 		if(c.equals("show")) c = "-1";
+		if(c.equals("st")) c = "-1";
+		if(c.equals("stop")) c = "-1";
 		c = c.toUpperCase();
 		char ch = c.charAt(0);
 		if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(ch) != -1) return true;
