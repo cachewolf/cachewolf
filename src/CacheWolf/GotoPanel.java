@@ -134,7 +134,7 @@ public class GotoPanel extends CellPanel {
 	CheckBoxGroup chkFormat = new CheckBoxGroup();
 	int currFormat;
 	
-	mLabel lblPosition, lblSats, lblSpeed, lblBearMov, lblBearWayP, lblDist;
+	mLabel lblPosition, lblSats, lblSpeed, lblBearMov, lblBearWayP, lblDist, lblHDOP;
 	mLabel lblSatsText, lblSpeedText, lblDirText, lblDistText, lblSunAzimut;
 	mLabel lblGPS, lblDST, lblCurr, lblWayP;
 	mLabel lblLog;
@@ -231,25 +231,28 @@ public class GotoPanel extends CellPanel {
 		lblCurr.backGround = RED;
 		lblCurr.font = BOLD;
 
-		GotoP.addNext(lblSatsText = new mLabel("Sats: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		lblSatsText.font = BOLD;
-		GotoP.addLast(lblSats = new mLabel(Convert.toString(gpsPosition.getSats())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
+		//GotoP.addNext(lblSatsText = new mLabel("Sats: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		//lblSatsText.font = BOLD;
+		GotoP.addLast(lblSats = new mLabel("Sats: " + Convert.toString(gpsPosition.getSats())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblSats.font = BOLD;
+		GotoP.addLast(lblHDOP = new mLabel("HDOP: " + Convert.toString(gpsPosition.getHDOP())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		lblHDOP.font = BOLD;
 
-		GotoP.addLast(lblSpeed = new mLabel(Convert.toString(gpsPosition.getSpeed())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
+		
+		GotoP.addLast(lblSpeed = new mLabel(Convert.toString(gpsPosition.getSpeed())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblSpeed.font = BOLD;
 
-		GotoP.addLast(lblBearMov = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
+		GotoP.addLast(lblBearMov = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblBearMov.font = BOLD;
 
 		//things about destination
 		GotoP.addLast(lblWayP = new mLabel("WayPoint"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblWayP.backGround = BLUE;
 		lblWayP.font = BOLD;
-		GotoP.addLast(lblBearWayP = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
+		GotoP.addLast(lblBearWayP = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblBearWayP.font = BOLD;
 		
-		GotoP.addLast(lblDist = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
+		GotoP.addLast(lblDist = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblDist.font = BOLD;
 		
 		LogP.addNext(lblLog = new mLabel("Log "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -263,7 +266,7 @@ public class GotoPanel extends CellPanel {
 		LogP.addNext(lblGPS = new mLabel("Sonne: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblGPS.backGround = YELLOW;
 		
-		LogP.addNext(lblSunAzimut = new mLabel("---"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
+		LogP.addLast(lblSunAzimut = new mLabel("---"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
 		// for debuging
 		//Double sunAzimut = new Double();
 		//sunAzimut.set((getSunAzimut("060000","060806", 48.1, 11.6))); //wikipedia vergleich
@@ -276,12 +279,13 @@ public class GotoPanel extends CellPanel {
 
 		
 		//add Panels
-		this.addLast(ButtonP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(3,1));
+		this.addLast(ButtonP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(4,1));
 		this.addLast(FormatP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(4,1));
 		this.addLast(CoordsP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(2,1));
-		this.addNext(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(1,1));
-		this.addLast(GotoP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(2,5));
-		this.addNext(LogP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
+		this.addNext(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(1,1));
+		this.addLast(GotoP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTHWEST).setTag(SPAN,new Dimension(1,7));
+		this.addLast(LogP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.NORTHWEST);
+		//.setTag(SPAN,new Dimension(1,2)
 
 		// for debuging
 /*		CWGPSPoint myGPS;
@@ -390,7 +394,8 @@ public class GotoPanel extends CellPanel {
 		//		Vm.debug("ticked");
 		int fix = gpsPosition.getFix();
 		//if(!runMovingMap){
-			lblSats.setText(Convert.toString(gpsPosition.getSats()));
+			lblSats.setText("Sats: " + Convert.toString(gpsPosition.getSats()));
+			lblHDOP.setText("HDOP: " + Convert.toString(gpsPosition.getHDOP()));
 			// display values only, if signal good
 			if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
 				//gpsPosition.printAll();
