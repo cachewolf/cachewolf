@@ -114,7 +114,7 @@ public class MainTab extends mTabbedPanel {
 					  }
 					  ch.wayPoint = detP.wayPoint.getText();
 					  ch.CacheName = detP.wayName.getText();
-					  ch.LatLon = detP.wayLoc.getText();
+					  ch.LatLon = new CWPoint(detP.wayLoc.getText(),CWPoint.REGEX).toString();
 					  ch.DateHidden = detP.wayHidden.getText();
 					  ch.CacheOwner = detP.wayOwner.getText();
 					  if(myPreferences.myAlias.equals(ch.CacheOwner)) ch.is_owned = true;

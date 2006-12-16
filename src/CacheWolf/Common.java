@@ -26,7 +26,7 @@ public final class Common {
 		// Calc Minutes
 		bDbl = bDbl / java.lang.Math.pow((double)10,(double)b.length());
 		
-		return aDbl + bDbl;
+		return aDbl>0?aDbl + bDbl:aDbl - bDbl;
 	}
 	public static String rot13 (String text) {
 		String dummy = new String();
