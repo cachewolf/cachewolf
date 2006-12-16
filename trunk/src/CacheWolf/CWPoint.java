@@ -8,6 +8,8 @@ import ewe.sys.Convert;
 import com.bbn.openmap.proj.coords.*;
 import com.bbn.openmap.proj.*;
 import com.bbn.openmap.*;
+import com.stevesoft.ewe_pat.Regex;
+
 import ewe.sys.Vm;
 
 
@@ -29,7 +31,7 @@ public class CWPoint extends TrackPoint{
 	static protected final int DMS = 2;
 	static protected final int UTM = 3;
 	static protected final int CW = 4;
-
+	static protected final int REGEX = 5;
 	
 	/**
 	 * Create CWPoint by using lat and lon 
@@ -75,19 +77,11 @@ public class CWPoint extends TrackPoint{
 	/**
 	 * Create CWPoint by using coordinates in "CacheWolf" format 
 	 * @param coord  String of type N 49° 33.167 E 011° 21.608
-	 * @param format only CWPoint.CW is supported
+	 * @param format only CWPoint.CW or CWPoint.REGEX is supported
 	 */
 	public CWPoint(String coord, int format) {
 		super(0,0);
-		switch (format){
-		case CW: 	ParseLatLon pll = new ParseLatLon (coord);
-					pll.parse();
-					this.latDec = pll.lat2;
-					this.lonDec = pll.lon2;
-					break;
-		default: 	this.latDec = 0; this.lonDec = 0;
-		}
-		this.utmValid = false;
+		set(coord, format);
 	}
 
 		
@@ -162,18 +156,40 @@ public class CWPoint extends TrackPoint{
 	 * @param format only CWPoint.CW is supported
 	 */
 	public void set (String coord, int format) {
+
 		switch (format){
 		case CW: 	ParseLatLon pll = new ParseLatLon (coord);
 					pll.parse();
 					this.latDec = pll.lat2;
 					this.lonDec = pll.lon2;
-
 					break;
+
+		case REGEX: set(coord);
+					break;
+
 		default: 	this.latDec = 0; this.lonDec = 0;
 		}
 		this.utmValid = false;
 	}
 
+	/**
+	 * set lat and lon by parsing coordinates with regular expression 
+	 * @param coord  String of type N 49° 33.167 E 011° 21.608
+	 * 				 	or 			-12.3456 23.4567
+	 * 					or			32U 2345234 8902345
+	 */
+	public void set (String coord) {
+		Regex rex=new Regex("(?:^([NSns])\\s*([0-9]{1,2})[\\s°]+([0-9]{1,3})[,.]([0-9]{1,8})\\s*([EWew])\\s*([0-9]{1,3})[\\s°]+([0-9]{1,3})[,.]([0-9]{1,8})$)|(?:^([+-]?[0-9]{1,2})[,.]([0-9]{1,6})(?:(?=\\+)|(?=-)|\\s+|\\s*°\\s*)([+-]?[0-9]{1,3})[,.]([0-9]{1,6})\\s*[°]?$)|(?:^([0-9]{1,2}[C-HJ-PQ-X])\\s*([0-9]{1,7})\\s+([0-9]{1,7})$)"); 
+		rex.search(coord);
+		if (rex.stringMatched(1)!= null) { // Std format
+			set(rex.stringMatched(1), rex.stringMatched(2),rex.stringMatched(3)+ "." + rex.stringMatched(4), null,
+				rex.stringMatched(5), rex.stringMatched(6),rex.stringMatched(7)+ "." + rex.stringMatched(8), null, DMM);		
+		} else if (rex.stringMatched(9) != null){
+			// Set "N" and "E" to prevent changeing of the sign
+			set("N", rex.stringMatched(9)+ "." + rex.stringMatched(10), null, null,
+				"E", rex.stringMatched(11)+ "." + rex.stringMatched(12), null, null, DD);
+		}
+	}
 	/**
 	 * set lat and lon 
 	 * @param strLatNS "N" or "S"
@@ -184,7 +200,7 @@ public class CWPoint extends TrackPoint{
 	 * @param strLonDeg	Degrees of Longitude
 	 * @param strLonMin	Minutes of Longitude
 	 * @param strLonSec	Seconds of Longitude
-	 * @param format	Format: DD, DMM, DMS, CW, UTM
+	 * @param format	Format: DD, DMM, DMS 
 	 */
 	public void set(String strLatNS, String strLatDeg, String strLatMin, String strLatSec,
 		     String strLonEW, String strLonDeg, String strLonMin, String strLonSec,
@@ -244,6 +260,7 @@ public class CWPoint extends TrackPoint{
 		default: return "";
 		}
 	}
+	
 	/**
 	 * Get degrees of longitude in different formats
 	 * @param format	Format: DD, DMM, DMS,

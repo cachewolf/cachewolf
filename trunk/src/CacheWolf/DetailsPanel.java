@@ -240,7 +240,7 @@ public class DetailsPanel extends CellPanel{
 		//CacheHolder ch = new CacheHolder();
 		thisCache.wayPoint = wayPoint.getText();
 		thisCache.CacheName = wayName.getText();
-		thisCache.LatLon = wayLoc.getText();
+		thisCache.LatLon = new CWPoint(wayLoc.getText(),CWPoint.REGEX).toString();
 		thisCache.DateHidden = wayHidden.getText();
 		thisCache.CacheOwner = wayOwner.getText();
 		thisCache.CacheStatus = wayStatus.getText();
