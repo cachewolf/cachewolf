@@ -250,13 +250,14 @@ public class CWPoint extends TrackPoint{
 	public String getLatDeg(int format) {
 		Double latDeg = new Double();
 		
-		latDeg.set(java.lang.Math.abs(this.latDec));
+		latDeg.set(this.latDec);
 		
 		switch (format) {
 		case DD: 	return l.format(Locale.FORMAT_PARSE_NUMBER,latDeg, "00.00000").replace(',','.');
 		case CW:
 		case DMM:
-		case DMS:	return latDeg.toString(2,0,Double.TRUNCATE|Double.ZERO_FILL);
+		case DMS:	latDeg.set(Math.abs(this.latDec));
+					return latDeg.toString(2,0,Double.TRUNCATE|Double.ZERO_FILL);
 		default: return "";
 		}
 	}
@@ -268,14 +269,14 @@ public class CWPoint extends TrackPoint{
 	public String getLonDeg(int format) {
 		Double lonDeg = new Double();
 		
-		//lonDeg.set(java.lang.Math.abs(this.lonDec));
 		lonDeg.set(this.lonDec);
 		
 		switch (format) {
 		case DD: 	return l.format(Locale.FORMAT_PARSE_NUMBER,lonDeg, "000.00000").replace(',','.');
 		case CW:
 		case DMM:
-		case DMS:	return lonDeg.toString(3,0,Double.TRUNCATE|Double.ZERO_FILL);
+		case DMS:	lonDeg.set(Math.abs(this.lonDec));
+					return lonDeg.toString(3,0,Double.TRUNCATE|Double.ZERO_FILL);
 		default: 	return "";
 		}
 	}
