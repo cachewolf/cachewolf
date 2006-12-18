@@ -2,10 +2,10 @@ package CacheWolf;
 
 import ewe.ui.*;
 import ewe.util.Vector;
-import ewe.util.mString;
+//import ewe.util.mString;
 import ewe.fx.*;
 import ewe.sys.*;
-import ewe.util.*;
+//import ewe.util.*;
 import ewe.io.*;
 import ewe.filechooser.*;
 
@@ -19,13 +19,13 @@ import ewe.filechooser.*;
 *     20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
 */
 public class MainMenu extends MenuBar {
-	private MenuItem profiles, preferences,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchClr,export;
+	private MenuItem profiles, preferences,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchClr;
 	private MenuItem kalibmap,importmap;
 	private MenuItem spider, chkVersion;
-	private MenuItem about, wolflang, sysinfo, testgps, legend;
+	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTomASC, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTomTomOVL, exportTPL;
-	private MenuItem filtCreate, filtApply, filtClear, filtInvert, filtSelected;
+	private MenuItem filtCreate, filtClear, filtInvert, filtSelected;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete;
 	private Form father;
@@ -185,6 +185,7 @@ public class MainMenu extends MenuBar {
 				if(fc.execute() != FileChooser.IDCANCEL){
 					String dir = fc.getChosenDirectory().toString();
 					String files[] = fc.getAllChosen();
+					/*
 					int how = GPXImporter.DOIT_ASK;
 					if (files.length > 0){
 							InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
@@ -193,6 +194,7 @@ public class MainMenu extends MenuBar {
 							if (doSpider) how = GPXImporter.DOIT_WITHSPOILER;
 							else how = GPXImporter.DOIT_NOSPOILER;
 					}
+					*/
 					for (int i = 0; i < files.length; i++){ 
 						String file = dir + "/" + files[i];
 						if (file.endsWith("loc")){
@@ -201,7 +203,7 @@ public class MainMenu extends MenuBar {
 						}
 						else {
 							GPXImporter gpx = new GPXImporter(cacheDB, file,myPreferences);
-							gpx.doIt(how);
+							gpx.doIt(0);
 						}
 					}
 				}
