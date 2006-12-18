@@ -17,6 +17,7 @@ public class OCXMLImporterScreen extends Form {
 	Preferences myPreferences;
 	mInput distanceInput;
 	mCheckBox imagesCheckBox, mapsCheckBox, missingCheckBox;
+	mLabel distLbl;
 	static int IMAGESANDMAPS = 0;
 	static int ALL = 1;
 	
@@ -26,7 +27,7 @@ public class OCXMLImporterScreen extends Form {
 		
 
 		this.title = title;
-		this.addNext(new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(distLbl = new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		distanceInput = new mInput();
 		distanceInput.setText(myPreferences.distOC);
 		this.addLast(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
