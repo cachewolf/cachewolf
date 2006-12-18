@@ -158,12 +158,13 @@ public class CWPoint extends TrackPoint{
 	public void set (String coord, int format) {
 
 		switch (format){
-		case CW: 	ParseLatLon pll = new ParseLatLon (coord);
+/*		case CW: 	ParseLatLon pll = new ParseLatLon (coord);
 					pll.parse();
 					this.latDec = pll.lat2;
 					this.lonDec = pll.lon2;
 					break;
-
+*/
+		case CW:
 		case REGEX: set(coord);
 					break;
 
@@ -179,15 +180,43 @@ public class CWPoint extends TrackPoint{
 	 * 					or			32U 2345234 8902345
 	 */
 	public void set (String coord) {
-		Regex rex=new Regex("(?:^([NSns])\\s*([0-9]{1,2})[\\s°]+([0-9]{1,3})[,.]([0-9]{1,8})\\s*([EWew])\\s*([0-9]{1,3})[\\s°]+([0-9]{1,3})[,.]([0-9]{1,8})$)|(?:^([+-]?[0-9]{1,2})[,.]([0-9]{1,6})(?:(?=\\+)|(?=-)|\\s+|\\s*°\\s*)([+-]?[0-9]{1,3})[,.]([0-9]{1,6})\\s*[°]?$)|(?:^([0-9]{1,2}[C-HJ-PQ-X])\\s*([0-9]{1,7})\\s+([0-9]{1,7})$)"); 
+/*		(?: 
+			([NSns])\s*([0-9]{1,2})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\s* 
+			([EWewOo])\s*([0-9]{1,3})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8}) 
+			)|(?: 
+			  ([+-NnSs]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=\+)|(?=-)|\s+|\s*°\s*)([+-WwEeOo]?[0-9]{1,3})[,.]([0-9]{1,8})\s*[°]? 
+			)|(?: 
+			   ([0-9]{1,2}[C-HJ-PQ-X])\s*[EeOo]?\s*([0-9]{1,7})\s+[Nn]?\s*([0-9]{1,7}) 
+			)
+*/		
+		Regex rex=new Regex("(?:" +
+							"([NSns])\\s*([0-9]{1,2})[\\s°]+([0-9]{1,2})(?:\\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\\s*" +
+							"([EWewOo])\\s*([0-9]{1,3})[\\s°]+([0-9]{1,2})(?:\\s+([0-9]{1,2}))?[,.]([0-9]{1,8})" +
+							")|(?:" +
+							"([+-NnSs]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=\\+)|(?=-)|\\s+|\\s*°\\s*)" +
+						  	"([+-WwEeOo]?[0-9]{1,3})[,.]([0-9]{1,8})\\s*[°]?" +
+							")|(?:" +
+							"([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" +
+							")"); 
 		rex.search(coord);
 		if (rex.stringMatched(1)!= null) { // Std format
-			set(rex.stringMatched(1), rex.stringMatched(2),rex.stringMatched(3)+ "." + rex.stringMatched(4), null,
-				rex.stringMatched(5), rex.stringMatched(6),rex.stringMatched(7)+ "." + rex.stringMatched(8), null, DMM);		
-		} else if (rex.stringMatched(9) != null){
+			// Handle "E" oder "O" for longitiude
+			String strEW = rex.stringMatched(6).toUpperCase();
+			if (!strEW.equals("W")) strEW = "E";
+			if (rex.stringMatched(4)!=null){ //Seconds available
+				set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2),rex.stringMatched(3),rex.stringMatched(4) + "." + rex.stringMatched(5),
+					strEW, rex.stringMatched(7),rex.stringMatched(8),rex.stringMatched(9) + "." + rex.stringMatched(10),DMS);
+			} else {
+				set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2),rex.stringMatched(3)+ "." + rex.stringMatched(5), null,
+					strEW, rex.stringMatched(7),rex.stringMatched(8)+ "." + rex.stringMatched(10), null, DMM);
+			}
+				
+		} else if (rex.stringMatched(11) != null){ // Decimal
 			// Set "N" and "E" to prevent changeing of the sign
-			set("N", rex.stringMatched(9)+ "." + rex.stringMatched(10), null, null,
-				"E", rex.stringMatched(11)+ "." + rex.stringMatched(12), null, null, DD);
+			set("N", rex.stringMatched(11)+ "." + rex.stringMatched(12), null, null,
+				"E", rex.stringMatched(13)+ "." + rex.stringMatched(14), null, null, DD);
+		} else if (rex.stringMatched(15) != null){ // UTM
+			set(rex.stringMatched(15),rex.stringMatched(17),rex.stringMatched(16));
 		}
 	}
 	/**
@@ -512,15 +541,15 @@ public class CWPoint extends TrackPoint{
 		
 		switch (format) {
 		case DD:	return getNSLetter() + " " + getLatDeg(format) + "° "
-						+  getEWLetter() + " " + getLonDeg(format)+ "° ";
+						+  getEWLetter() + " " + getLonDeg(format)+ "°";
 		case CW:	format = DMM;	
 					return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + " "
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format);
 		case DMM:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + " "
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format);
 		case DMS:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " 
-						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\" ";
-		case UTM:	return getUTMZone()  + " N " + getUTMNorthing()+ " E " + getUTMEasting() ;
+						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
+		case UTM:	return getUTMZone()  + " E " + getUTMEasting()+ " N " + getUTMNorthing();
 
 		default: return "Unknown Format: " + format;
 
