@@ -250,6 +250,12 @@ public class CacheWolf{
 				Form mainF = new MainForm(args[0], args[1]);
 				mainF.execute();
 			}
+			if(args[0].equals("test")){
+				Test t=new Test(); 
+				t.testAll();
+				Form mainF = new MainForm();
+				mainF.execute();
+			}
 		}else{
 		  Form mainF = new MainForm();
 		  mainF.execute();
