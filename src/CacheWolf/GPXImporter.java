@@ -90,9 +90,11 @@ public class GPXImporter extends MinML {
 			String file;
 			
 			OCXMLImporterScreen options = new OCXMLImporterScreen(pref, "Spider Options", OCXMLImporterScreen.IMAGESANDMAPS);
+			options.distanceInput.modify(ewe.ui.ControlConstants.Invisible,0);
+			options.distLbl.modify(ewe.ui.ControlConstants.Invisible,0);
 			if (options.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
-			String dist = options.distanceInput.getText();
-			if (dist.length()== 0) return;
+			//String dist = options.distanceInput.getText();
+			//if (dist.length()== 0) return;
 			getMaps = options.mapsCheckBox.getState();
 			boolean getImages = options.imagesCheckBox.getState();
 			doSpider = false;
