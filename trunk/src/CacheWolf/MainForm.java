@@ -68,11 +68,13 @@ public class MainForm extends Form {
 			if(myPreferences.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}
 		
+		
 		if(myPreferences.fixSIP == true){
 			if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-				Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
+				Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
 			}
 		} else Vm.setSIP(0);
+		Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
 		
 		//Dimension dim = new Dimension();
 		//dim = this.getSize(new Dimension());
