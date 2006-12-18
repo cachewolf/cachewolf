@@ -92,6 +92,10 @@ public class MainTab extends mTabbedPanel {
 		{
 		  ////Vm.debug(ev.toString());
 		  if(ev instanceof MultiPanelEvent){
+			  if(this.getSelectedItem() == 0){
+				  Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
+				  Vm.setSIP(0);
+			  }
 			  //if(this.getSelectedItem() == 0){
 				  //Vm.debug(Convert.toString(cDB.size()));
 				  //Vm.debug("Panel 0");
@@ -127,6 +131,7 @@ public class MainTab extends mTabbedPanel {
 				  }
 			  //}
 			  if(this.getSelectedItem() != 0){
+				  Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
 				  try{
 					  ch = new CacheHolder();
 					  ch = (CacheHolder)cDB.get(tbP.getSelectedCache());
