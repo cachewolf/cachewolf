@@ -16,7 +16,7 @@ public class DetailsPanel extends CellPanel{
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	mInput wayPoint = new mInput();
 	mInput wayName = new mInput();
-	mInput wayLoc = new mInput();
+	mButton btnWayLoc = new mButton();
 	mInput wayHidden = new mInput();
 	mInput wayOwner = new mInput();
 	//mInput wayStatus = new mInput();
@@ -72,7 +72,7 @@ public class DetailsPanel extends CellPanel{
 		this.addLast(wayName.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel((String)lr.get(304,"Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(wayLoc.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		this.addLast(btnWayLoc.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel((String)lr.get(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(wayHidden.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -116,7 +116,7 @@ public class DetailsPanel extends CellPanel{
 		chkDelete.setState(false);
 		wayPoint.setText(ch.wayPoint);
 		wayName.setText(ch.CacheName);
-	    wayLoc.setText(ch.LatLon);
+	    btnWayLoc.setText(ch.LatLon);
 		wayHidden.setText(ch.DateHidden);
 		wayOwner.setText(ch.CacheOwner);
 		wayStatus.setText(ch.CacheStatus);
@@ -240,7 +240,7 @@ public class DetailsPanel extends CellPanel{
 		//CacheHolder ch = new CacheHolder();
 		thisCache.wayPoint = wayPoint.getText();
 		thisCache.CacheName = wayName.getText();
-		thisCache.LatLon = new CWPoint(wayLoc.getText(),CWPoint.REGEX).toString();
+		thisCache.LatLon = new CWPoint(btnWayLoc.getText(),CWPoint.REGEX).toString();
 		thisCache.DateHidden = wayHidden.getText();
 		thisCache.CacheOwner = wayOwner.getText();
 		thisCache.CacheStatus = wayStatus.getText();
@@ -362,7 +362,7 @@ public class DetailsPanel extends CellPanel{
 					dirty_new = true;
 					wayPoint.setText(getNewWayPointName(cacheDB));
 					wayName.setText("");
-					wayLoc.setText("N hh dd.mmm E hh dd.mmm");
+					btnWayLoc.setText("N hh dd.mmm E hh dd.mmm");
 					wayHidden.setText("");
 					wayOwner.setText("");
 					wayStatus.setText("");
@@ -379,6 +379,16 @@ public class DetailsPanel extends CellPanel{
 				// TODO if something changed saveWpt();
 				mainT.gotoPoint(thisCache.LatLon);
 			}
+			if (ev.target == btnWayLoc){
+				CWPoint coords = new CWPoint(btnWayLoc.getText(),CWPoint.CW);
+				CoordsScreen cs = new CoordsScreen();
+				cs.setFields(coords, CWPoint.CW);
+				if (cs.execute()== CoordsScreen.IDOK){
+					coords = cs.getCoords();
+					btnWayLoc.setText(coords.toString());
+				}
+			}
+
 		}
 	}
 }

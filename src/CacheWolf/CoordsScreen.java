@@ -19,7 +19,8 @@ public class CoordsScreen extends Form {
 	mChoice chcNS, chcEW;
 	mInput inpNSDeg, inpNSm, inpNSs, inpEWDeg, inpEWm, inpEWs;
 	mInput inpUTMZone, inpUTMNorthing, inpUTMEasting;
-	mButton btnCancel, btnApply;
+	mInput inpText;
+	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse;
 	CWPoint coordInp = new CWPoint();
 	CellPanel TopP = new CellPanel();
 	CellPanel BottomP = new CellPanel();
@@ -54,7 +55,7 @@ public class CoordsScreen extends Form {
 		TopP.addNext(inpEWm = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addLast(inpEWs = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
-		//Input for UTM
+		// Input for UTM
 		TopP.addNext(new mLabel((String)lr.get(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addNext(new mLabel((String)lr.get(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addLast(new mLabel((String)lr.get(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -63,12 +64,23 @@ public class CoordsScreen extends Form {
 		TopP.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addLast(inpUTMNorthing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
+		// Input for free Text
+		TopP.addNext(inpText = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		inpText.setTag(SPAN,new Dimension(3,1));
+		TopP.addLast(btnParse = new mButton((String)lr.get(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+
 		
-		// Buttons for cancel and apply
+		// Buttons for cancel and apply, copy and paste
 		TopP.addNext(btnCancel = new mButton((String)lr.get(614,"Cancel")),CellConstants.HSTRETCH, (CellConstants.HFILL));
-		btnCancel.setTag(SPAN,new Dimension(2,1));
-		TopP.addLast(btnApply = new mButton((String)lr.get(615,"Apply")),CellConstants.HSTRETCH, (CellConstants.HFILL));
-		btnApply.setTag(SPAN,new Dimension(2,1));
+		//btnCancel.setTag(SPAN,new Dimension(4,1));
+		TopP.addNext(btnApply = new mButton((String)lr.get(615,"Apply")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		//btnApply.setTag(SPAN,new Dimension(4,1));
+		TopP.addNext(btnPaste = new mButton((String)lr.get(617,"Paste")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		//btnParse.setTag(SPAN,new Dimension(4,1));
+		TopP.addLast(btnCopy = new mButton((String)lr.get(618,"Copy")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		//btnCopy.setTag(SPAN,new Dimension(4,1));
+
+
 		
 		//add Panels
 		this.addLast(TopP,CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(4,1));
@@ -137,6 +149,7 @@ public class CoordsScreen extends Form {
 			inpEWs.setText(coords.getLonSec(format));
 		}
 		chkFormat.selectIndex(format);
+		inpText.setText(coords.toString(format));
 		currFormat = format;
 		activateFields(format);
 	}
@@ -168,6 +181,32 @@ public class CoordsScreen extends Form {
 				readFields(coordInp, currFormat);
 				this.close(IDOK);
 			}
+			
+			if (ev.target == btnPaste){
+				inpText.setText(Vm.getClipboardText(""));
+			}
+			
+			if (ev.target == btnCopy){
+				currFormat = chkFormat.getSelectedIndex();
+				readFields(coordInp, currFormat);
+				Vm.setClipboardText(coordInp.toString(chkFormat.getSelectedIndex()));
+			}
+
+			if (ev.target == btnParse){
+				// try to parse coords
+				CWPoint coord = new CWPoint(inpText.getText());
+				if (coord.latDec == 0 && coord.lonDec == 0){
+					MessageBox tmpMB = new MessageBox((String)lr.get(312,"Error"), (String)lr.get(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
+					tmpMB.exec();
+				}else {
+					currFormat = chkFormat.getSelectedIndex();
+					setFields(coord,currFormat);
+					activateFields(currFormat);
+					this.repaintNow();
+				}
+			}
+				
+				
 		}
 		super.onEvent(ev);
 	}
