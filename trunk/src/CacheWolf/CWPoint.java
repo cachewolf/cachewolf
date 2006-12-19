@@ -117,6 +117,15 @@ public class CWPoint extends TrackPoint{
 	}
 
 	/**
+	 * set lat and lon by parsing coordinates with Regex 
+	 * @param coord  String like N 49° 33.167 E 011° 21.608
+	 */
+	public CWPoint(String coord) {
+		set(coord);
+	}
+
+
+	/**
 	 * Set lat and lon 
 	 * @param lat Latitude as decimal
 	 * @param lon Longitude as decimal
@@ -158,13 +167,12 @@ public class CWPoint extends TrackPoint{
 	public void set (String coord, int format) {
 
 		switch (format){
-/*		case CW: 	ParseLatLon pll = new ParseLatLon (coord);
+		case CW: 	ParseLatLon pll = new ParseLatLon (coord);
 					pll.parse();
 					this.latDec = pll.lat2;
 					this.lonDec = pll.lon2;
 					break;
-*/
-		case CW:
+
 		case REGEX: set(coord);
 					break;
 
@@ -172,6 +180,8 @@ public class CWPoint extends TrackPoint{
 		}
 		this.utmValid = false;
 	}
+	
+
 
 	/**
 	 * set lat and lon by parsing coordinates with regular expression 
@@ -198,6 +208,8 @@ public class CWPoint extends TrackPoint{
 							")|(?:" +
 							"([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" +
 							")"); 
+		this.latDec = 0;
+		this.lonDec = 0;
 		rex.search(coord);
 		if (rex.stringMatched(1)!= null) { // Std format
 			// Handle "E" oder "O" for longitiude

@@ -39,9 +39,9 @@ public class CalcPanel extends CellPanel {
 	mChoice chcNS, chcEW, chcDistUnit;
 	mInput inpNSDeg, inpNSm, inpNSs, inpEWDeg, inpEWm, inpEWs;
 	mInput inpUTMZone, inpUTMNorthing, inpUTMEasting;
-	mInput inpBearing, inpDistance;
+	mInput inpBearing, inpDistance, inpText;
 	TextDisplay txtOutput;
-	mButton btnCalc, btnClear, btnSave, btnGoto;
+	mButton btnCalc, btnClear, btnSave, btnGoto, btnParse;
 	BearingDistance bd = new BearingDistance();
 	CWPoint coordInp = new CWPoint();
 	CWPoint coordOut = new CWPoint();
@@ -92,6 +92,11 @@ public class CalcPanel extends CellPanel {
 		TopP.addNext(inpUTMZone = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addLast(inpUTMNorthing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+
+		// Input for free Text
+		TopP.addNext(inpText = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		inpText.setTag(SPAN,new Dimension(3,1));
+		TopP.addLast(btnParse = new mButton((String)lr.get(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 
 		//inpBearing and direction, unit for inpDistance
 		BottomP.addNext(new mLabel((String)lr.get(1403,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -199,6 +204,7 @@ public class CalcPanel extends CellPanel {
 			inpEWs.setText(coords.getLonSec(format));
 		}
 		chkFormat.selectIndex(format);
+		inpText.setText(coords.toString(format));
 		inpBearing.setText("0");
 		inpDistance.setText("0");
 		chcDistUnit.setInt(1);
@@ -242,6 +248,21 @@ public class CalcPanel extends CellPanel {
 				coordOut = coordInp.project(bd.degrees, bd.distance);
 				mainT.gotoPoint(coordOut.toString());
 			}
+			
+			if (ev.target == btnParse){
+				// try to parse coords
+				CWPoint coord = new CWPoint(inpText.getText());
+				if (coord.latDec == 0 && coord.lonDec == 0){
+					MessageBox tmpMB = new MessageBox((String)lr.get(312,"Error"), (String)lr.get(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
+					tmpMB.exec();
+				}else {
+					currFormat = chkFormat.getSelectedIndex();
+					setFields(coord,currFormat);
+					activateFields(currFormat);
+					this.repaintNow();
+				}
+			}
+
 
 		}
 		super.onEvent(ev);
