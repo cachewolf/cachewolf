@@ -60,8 +60,11 @@ public class MainForm extends Form {
 			mApp.addFont(newGuiFont, "gui"); 
 			mApp.fontsChanged();
 			mApp.mainApp.font = newGuiFont;
-			
+			long start, end;
+			start = Vm.getTimeStampLong();
 			LoadAXML();
+			end = Vm.getTimeStampLong();
+			Vm.debug("index.xml read: " + Convert.toString(end - start)+ " msec");
 			//updateBearingDistance();
 			TablePanel.updateBearingDistance(cacheDB,myPreferences);
 		} catch (Exception e){
@@ -122,6 +125,7 @@ public class MainForm extends Form {
 		MyXMLBuilder myB = new MyXMLBuilder(cacheDB, myPreferences.mydatadir);
 		myB.doIt();
 		//Vm.debug(Convert.toString(cacheDB.size()));
+		//CacheReaderWriter.readIndex(cacheDB, myPreferences.mydatadir);
 	}
 	
 	public void doPaint(Graphics g, Rect r){

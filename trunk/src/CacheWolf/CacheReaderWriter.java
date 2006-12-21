@@ -217,5 +217,60 @@ public class CacheReaderWriter {
 			//Vm.debug("Problem writing to index file");
 		}
 	}
+
+	/**
+	*	Method to read the index.xml file that holds the total information
+	*	on available caches in the database. The database in nothing else
+	*	than the collection of caches in a directory.
+	*/
+	public static void readIndex(Vector DB, String dir){
+		try {
+			FileReader in = new FileReader(dir + "index.xml");
+			String text = new String();
+			while ((text = in.readLine()) != null){
+				// Check for Line with cache data
+				if (text.indexOf("<CACHE ")> 0){
+					CacheHolder ch = new CacheHolder();
+					Extractor ex = new Extractor(text, " = \"", "\" ", 0, true);
+					ch.CacheName = SafeXML.cleanback(ex.findNext());
+					ch.CacheOwner = SafeXML.cleanback(ex.findNext());
+					ch.LatLon = ex.findNext();
+					ch.DateHidden = ex.findNext();
+					ch.wayPoint = ex.findNext();
+					ch.CacheStatus = ex.findNext();
+					ch.type = ex.findNext();
+					ch.hard = ex.findNext();
+					ch.terrain = ex.findNext();
+					ch.dirty = ex.findNext();
+					ch.CacheSize = ex.findNext();
+					ch.is_available = ex.findNext().equals("true") ? true : false;
+					ch.is_archived = ex.findNext().equals("true") ? true : false;
+					ch.has_bug = ex.findNext().equals("true") ? true : false;
+					ch.is_black = ex.findNext().equals("true") ? true : false;
+					ch.is_owned = ex.findNext().equals("true") ? true : false;
+					ch.is_found = ex.findNext().equals("true") ? true : false;
+					ch.is_new = ex.findNext().equals("true") ? true : false;
+					ch.is_log_update = ex.findNext().equals("true") ? true : false;
+					ch.is_update = ex.findNext().equals("true") ? true : false;
+					  // for backwards compatibility set value to true, if it is not in the file
+					ch.is_HTML = ex.findNext().equals("false") ? false : true;
+					ch.noFindLogs = Convert.toInt(ex.findNext());
+					ch.ocCacheID = ex.findNext();
+					DB.add(ch);
+				}
+			}
+			in.close();
+		} catch (FileNotFoundException e) {
+			Vm.debug("index.xml not found");
+			e.printStackTrace();
+		} catch (IOException e){
+			Vm.debug("Problem reading index.xml"); 
+			e.printStackTrace();
+		}
+		
+		
+	}
+
 	
 }
+

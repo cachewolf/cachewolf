@@ -52,13 +52,10 @@ public class MyXMLBuilder extends MinML {
 	}
 	
 	public void doIt(){
-		long start, end;
+
 		try{
 			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(path + "index.xml"));
-			start = Vm.getTimeStampLong();
 			parse(r);
-			end = Vm.getTimeStampLong();
-			Vm.debug("msec: " + Convert.toString(end - start));
 			r.close();
 			
 		}catch(Exception e){
