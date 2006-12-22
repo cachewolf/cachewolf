@@ -208,7 +208,7 @@ public class CacheReaderWriter {
 				ch = (CacheHolder)DB.get(i);
 				////Vm.debug("Saving: " + ch.CacheName);
 				if(ch.wayPoint.length()>0 && ch.LongDescription.equals("An Error Has Occured") == false){
-					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+"\" latlon = \""+ch.LatLon+"\" hidden = \""+ch.DateHidden+"\" wayp = \""+ch.wayPoint+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"" + ch.dirty + "\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\"/>\n");
+					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+"\" latlon = \""+ SafeXML.clean(ch.LatLon) +"\" hidden = \""+ch.DateHidden+"\" wayp = \""+ch.wayPoint+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"" + ch.dirty + "\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\"/>\n");
 				}
 			}
 			detfile.print("</CACHELIST>\n");
@@ -234,7 +234,7 @@ public class CacheReaderWriter {
 					Extractor ex = new Extractor(text, " = \"", "\" ", 0, true);
 					ch.CacheName = SafeXML.cleanback(ex.findNext());
 					ch.CacheOwner = SafeXML.cleanback(ex.findNext());
-					ch.LatLon = ex.findNext();
+					ch.LatLon = SafeXML.cleanback(ex.findNext());
 					ch.DateHidden = ex.findNext();
 					ch.wayPoint = ex.findNext();
 					ch.CacheStatus = ex.findNext();
