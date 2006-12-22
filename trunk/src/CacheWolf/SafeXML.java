@@ -3,6 +3,7 @@ package CacheWolf;
 /**
 *	A class to replace unsafe XML characters with characters that a user
 *	"can read", and vice versa
+* 20061222: skg Modified cleanback to speed up the new index.xml reader
 */
 public class SafeXML{
 	
@@ -54,25 +55,26 @@ public class SafeXML{
 	*/
 	public static String cleanback(String str){
 		String dummy = new String();
-		dummy = replace(str,  "&#38;", "&");
-		dummy = replace(dummy,  "&#223;", "ß");
-		dummy = replace(dummy,  "&#60;","<");
-		dummy = replace(dummy,  "&#62;",">");
-		dummy = replace(dummy,  "&#34;","\"");
-		dummy = replace(dummy,  "&#176;","°");
-		dummy = replace(dummy, "&apos;","'");
-		dummy = replace(dummy, "&#180;", "'");
-		dummy = replace(dummy, "&#252;","ü");
+		if (str.indexOf('&')<0) return str; // If nothing to replace, return immediately
+		dummy = replace(str,  "&#223;", "ß"); // Start with the mor probable values
+		dummy = replace(dummy, "&#252;","ü"); 
 		dummy = replace(dummy, "&#228;","ä");
 		dummy = replace(dummy, "&#246;","ö");
 		dummy = replace(dummy, "&#196;","Ä");
 		dummy = replace(dummy, "&#214;","Ö");
 		dummy = replace(dummy, "&#220;","Ü");
+		dummy = replace(dummy, "&apos;", "'");
+		dummy = replace(dummy, "&#180;", "'");
+		dummy = replace(dummy,  "&#38;", "&");
+		if (dummy.indexOf("&#")<0) return dummy; 
+		dummy = replace(dummy,  "&#34;", "\"");
+		dummy = replace(dummy,  "&#60;","<");
+		dummy = replace(dummy,  "&#62;",">");
+		dummy = replace(dummy,  "&#176;","°");
 		dummy = replace(dummy, "&amp;", "&");
 		dummy = replace(dummy, "&quot;", "\"");	
 		dummy = replace(dummy, "&lt;", "<");
 		dummy = replace(dummy, "&gt;", ">");
-		dummy = replace(dummy, "&apos;", "'");
 	
 		return dummy;
 	}
