@@ -24,7 +24,6 @@ import ewe.sys.Vm;
 public class CWPoint extends TrackPoint{
 	MGRSPoint utm = new MGRSPoint();
 	boolean utmValid = false;
-	Locale l = new Locale();
 
 	static protected final int DD = 0;
 	static protected final int DMM = 1;
@@ -97,6 +96,7 @@ public class CWPoint extends TrackPoint{
 	 * @param strLonSec	Seconds of Longitude
 	 * @param format	Format: DD, DMM, DMS, CW, UTM
 	 */
+	//TODO Remove ? Only used in OCXMLImporter and TablePanel when reading preferences
 	public CWPoint(String strLatNS, String strLatDeg, String strLatMin, String strLatSec,
 			     String strLonEW, String strLonDeg, String strLonMin, String strLonSec,
 			     int format) {
@@ -112,6 +112,7 @@ public class CWPoint extends TrackPoint{
 	 * @param strNorthing Northing component
 	 * @param strEasting  Easting component
 	 */
+	//TODO Remove ? Currently not used at all
 	public CWPoint ( String strZone, String strNorthing, String strEasting){
 		set(strZone, strNorthing, strEasting);
 	}
@@ -190,48 +191,49 @@ public class CWPoint extends TrackPoint{
 	 * 					or			32U 2345234 8902345
 	 */
 	public void set (String coord) {
-/*		(?: 
-			([NSns])\s*([0-9]{1,2})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\s* 
-			([EWewOo])\s*([0-9]{1,3})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8}) 
-			)|(?: 
-			  ([+-NnSs]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=\+)|(?=-)|\s+|\s*°\s*)([+-WwEeOo]?[0-9]{1,3})[,.]([0-9]{1,8})\s*[°]? 
-			)|(?: 
-			   ([0-9]{1,2}[C-HJ-PQ-X])\s*[EeOo]?\s*([0-9]{1,7})\s+[Nn]?\s*([0-9]{1,7}) 
-			)
-*/		
-		Regex rex=new Regex("(?:" +
-							"([NSns])\\s*([0-9]{1,2})[\\s°]+([0-9]{1,2})(?:\\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\\s*" +
-							"([EWewOo])\\s*([0-9]{1,3})[\\s°]+([0-9]{1,2})(?:\\s+([0-9]{1,2}))?[,.]([0-9]{1,8})" +
-							")|(?:" +
-							"([+-NnSs]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=\\+)|(?=-)|\\s+|\\s*°\\s*)" +
-						  	"([+-WwEeOo]?[0-9]{1,3})[,.]([0-9]{1,8})\\s*[°]?" +
-							")|(?:" +
-							"([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" +
-							")"); 
-		this.latDec = 0;
-		this.lonDec = 0;
-		rex.search(coord);
-		if (rex.stringMatched(1)!= null) { // Std format
-			// Handle "E" oder "O" for longitiude
-			String strEW = rex.stringMatched(6).toUpperCase();
-			if (!strEW.equals("W")) strEW = "E";
-			if (rex.stringMatched(4)!=null){ //Seconds available
-				set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2),rex.stringMatched(3),rex.stringMatched(4) + "." + rex.stringMatched(5),
-					strEW, rex.stringMatched(7),rex.stringMatched(8),rex.stringMatched(9) + "." + rex.stringMatched(10),DMS);
-			} else {
-				set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2),rex.stringMatched(3)+ "." + rex.stringMatched(5), null,
-					strEW, rex.stringMatched(7),rex.stringMatched(8)+ "." + rex.stringMatched(10), null, DMM);
-			}
-				
-		} else if (rex.stringMatched(11) != null){ // Decimal
-			// Set "N" and "E" to prevent changeing of the sign
-			set("N", rex.stringMatched(11)+ "." + rex.stringMatched(12), null, null,
-				"E", rex.stringMatched(13)+ "." + rex.stringMatched(14), null, null, DD);
-		} else if (rex.stringMatched(15) != null){ // UTM
-			set(rex.stringMatched(15),rex.stringMatched(17),rex.stringMatched(16));
-		}
-	}
-	/**
+		/*		(?: 
+					([NSns])\s*([0-9]{1,2})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\s* 
+					([EWewOo])\s*([0-9]{1,3})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8}) 
+					)|(?: 
+					  ([+-NnSs]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=\+)|(?=-)|\s+|\s*°\s*)([+-WwEeOo]?[0-9]{1,3})[,.]([0-9]{1,8})\s*[°]? 
+					)|(?: 
+					   ([0-9]{1,2}[C-HJ-PQ-X])\s*[EeOo]?\s*([0-9]{1,7})\s+[Nn]?\s*([0-9]{1,7}) 
+					)
+		*/		
+				Regex rex=new Regex("(?:" +
+									"([NSns])\\s*([0-9]{1,2})(?:°\\s*|\\s+°?\\s*)([0-9]{1,2})(?:(?:'\\s*|\\s+'?\\s*)([0-9]{1,2}))?[,.]([0-9]{1,8})\\s*\"?\\s*" +
+									"([EWewOo])\\s*([0-9]{1,3})(?:°\\s*|\\s+°?\\s*)([0-9]{1,2})(?:(?:'\\s*|\\s+'?\\s*)([0-9]{1,2}))?[,.]([0-9]{1,8})\\s*\"?" +
+									")|(?:" +
+									"(?:([NnSs])\\s*(?![+-]))?"   +     "([+-]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=[+-EeWwOo])|\\s+|\\s*°\\s*)" +
+								  	"(?:([EeWwOo])\\s*(?![+-]))?"    +     "([+-]?[0-9]{1,3})[,.]([0-9]{1,8})\\s*°?" +
+									")|(?:" +
+									"([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" +
+									")"); 
+				this.latDec = 0;
+				this.lonDec = 0;
+				rex.search(coord);
+				if (rex.stringMatched(1)!= null) { // Std format
+					// Handle "E" oder "O" for longitiude
+					String strEW = rex.stringMatched(6).toUpperCase();
+					if (!strEW.equals("W")) strEW = "E";
+					if (rex.stringMatched(4)!=null){ //Seconds available
+						set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2),rex.stringMatched(3),rex.stringMatched(4) + "." + rex.stringMatched(5),
+							strEW, rex.stringMatched(7),rex.stringMatched(8),rex.stringMatched(9) + "." + rex.stringMatched(10),DMS);
+					} else {
+						set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2),rex.stringMatched(3)+ "." + rex.stringMatched(5), null,
+							strEW, rex.stringMatched(7),rex.stringMatched(8)+ "." + rex.stringMatched(10), null, DMM);
+					}
+						
+				} else if (rex.stringMatched(12) != null){ // Decimal
+					
+					set(rex.stringMatched(11)==null?"N":rex.stringMatched(11).toUpperCase(), rex.stringMatched(12)+ "." + rex.stringMatched(13), null, null,
+						rex.stringMatched(14)==null?"E":rex.stringMatched(14).toUpperCase(), rex.stringMatched(15)+ "." + rex.stringMatched(16), null, null, DD);
+				} else if (rex.stringMatched(17) != null){ // UTM
+					set(rex.stringMatched(17),rex.stringMatched(19),rex.stringMatched(18)); //parse sequence is E N, but set needs N E
+				}
+				//else Vm.debug("CWPoint: "+coord+" could not be parsed");
+				makeValid();
+			}	/**
 	 * set lat and lon 
 	 * @param strLatNS "N" or "S"
 	 * @param strLatDeg	Degrees of Latitude
@@ -247,21 +249,34 @@ public class CWPoint extends TrackPoint{
 		     String strLonEW, String strLonDeg, String strLonMin, String strLonSec,
 		     int format) {
 		switch (format){
-		case DD: 	this.latDec = Common.parseDouble(strLatDeg);
-					this.lonDec = Common.parseDouble(strLonDeg);
-					break;
-		case DMM: 	this.latDec = Common.parseDouble(strLatDeg) + (Common.parseDouble(strLatMin)/60);
-					this.lonDec = Common.parseDouble(strLonDeg) + (Common.parseDouble(strLonMin)/60);
-					break;
-		case DMS: 	this.latDec = Common.parseDouble(strLatDeg) + (Common.parseDouble(strLatMin)/60)+(Common.parseDouble(strLatSec)/3600);;
-					this.lonDec = Common.parseDouble(strLonDeg) + (Common.parseDouble(strLonMin)/60)+(Common.parseDouble(strLonSec)/3600);
-					break;
-					
-		default: 	this.latDec = 0; this.lonDec = 0;
+			case DD: 	this.latDec = Common.parseDouble(strLatDeg);
+						this.lonDec = Common.parseDouble(strLonDeg);
+						break;
+			case DMM: 	this.latDec = Math.abs(Common.parseDouble(strLatDeg)) + Math.abs((Common.parseDouble(strLatMin)/60));
+						this.lonDec = Math.abs(Common.parseDouble(strLonDeg)) + Math.abs((Common.parseDouble(strLonMin)/60));
+						break;
+			case DMS: 	this.latDec = Math.abs(Common.parseDouble(strLatDeg)) + Math.abs((Common.parseDouble(strLatMin)/60))+Math.abs((Common.parseDouble(strLatSec)/3600));
+						this.lonDec = Math.abs(Common.parseDouble(strLonDeg)) + Math.abs((Common.parseDouble(strLonMin)/60))+Math.abs((Common.parseDouble(strLonSec)/3600));
+						break;
+			
+			default: 	this.latDec = 0; this.lonDec = 0;
 		}
-		if (strLatNS.trim().equals("S")) this.latDec *= -1;
-		if (strLonEW.trim().equals("W")) this.lonDec *= -1;
+		makeValid();
+		// To avoid changing sign twice if we have something like W -34.2345
+		if (strLatNS.trim().equals("S") && this.latDec>0) this.latDec *= -1;
+		if (strLonEW.trim().equals("W") && this.lonDec>0) this.lonDec *= -1;
 		this.utmValid = false;
+	}
+
+	/**
+	 * Constrain latitude and longitude to allowed values
+	 *
+	 */
+	private void makeValid() {
+		if (latDec>90.0) latDec=90.0;
+		if (latDec<-90.0) latDec=-90.0;
+		if (lonDec>180.0) lonDec=180.0;
+		if (lonDec<-180.0) lonDec=-180.0;
 	}
 
 	/**
@@ -289,16 +304,11 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLatDeg(int format) {
-		Double latDeg = new Double();
-		
-		latDeg.set(this.latDec);
-		
 		switch (format) {
-		case DD: 	return l.format(Locale.FORMAT_PARSE_NUMBER,latDeg, "00.00000").replace(',','.');
+		case DD: 	return MyLocale.formatDouble(this.latDec, "00.00000").replace(',','.');
 		case CW:
 		case DMM:
-		case DMS:	latDeg.set(Math.abs(this.latDec));
-					return latDeg.toString(2,0,Double.TRUNCATE|Double.ZERO_FILL);
+		case DMS:	return MyLocale.formatDouble((int) Math.abs(this.latDec),"00");
 		default: return "";
 		}
 	}
@@ -308,17 +318,12 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLonDeg(int format) {
-		Double lonDeg = new Double();
-		
-		lonDeg.set(this.lonDec);
-		
 		switch (format) {
-		case DD: 	return l.format(Locale.FORMAT_PARSE_NUMBER,lonDeg, "000.00000").replace(',','.');
+		case DD: 	return MyLocale.formatDouble(this.lonDec, "000.00000").replace(',','.');
 		case CW:
 		case DMM:
-		case DMS:	lonDeg.set(Math.abs(this.lonDec));
-					return lonDeg.toString(3,0,Double.TRUNCATE|Double.ZERO_FILL);
-		default: 	return "";
+		case DMS:	return MyLocale.formatDouble((int) Math.abs(this.lonDec),"000");
+		default: 	return ""; 
 		}
 	}
 
@@ -327,19 +332,13 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLatMin(int format) {
-		Double latMin = new Double();
-		double tmp, lat;
-		lat = this.latDec<0?-1*this.latDec:this.latDec;
-		tmp = (int)java.lang.Math.abs(lat);
-		latMin.set((lat - tmp) * 60);
-
-		
+		double latMin=(Math.abs(latDec) - (int)Math.abs(latDec))*60.0;
 		switch (format) {
-		case DD: 	return "";
-		case CW:
-		case DMM:	return l.format(Locale.FORMAT_PARSE_NUMBER,latMin, "00.000").replace(',','.');
-		case DMS:	return latMin.toString(2,0,Double.TRUNCATE|Double.ZERO_FILL);	
-		default: return "";
+			case DD: 	return "";
+			case CW:
+			case DMM:	return MyLocale.formatDouble(latMin, "00.000").replace(',','.');
+			case DMS:	return MyLocale.formatDouble((int) Math.abs(latMin),"00");
+			default: return "";
 		}
 	}
 	/**
@@ -347,18 +346,13 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLonMin(int format) {
-		Double lonMin = new Double();
-		double tmp, lon;
-		lon = this.lonDec<0?-1*this.lonDec:this.lonDec;
-		tmp = (int)java.lang.Math.abs(lon);
-		lonMin.set((lon - tmp) * 60);
-		
+		double lonMin=(Math.abs(lonDec) - (int)Math.abs(lonDec))*60.0;
 		switch (format) {
-		case DD: 	return "";
-		case CW:
-		case DMM:	return l.format(Locale.FORMAT_PARSE_NUMBER,lonMin, "00.000").replace(',','.');
-		case DMS:	return lonMin.toString(2,0,Double.TRUNCATE|Double.ZERO_FILL);
-		default: return "";
+			case DD: 	return "";
+			case CW:
+			case DMM:	return MyLocale.formatDouble(lonMin, "00.000").replace(',','.');
+			case DMS:	return MyLocale.formatDouble((int) Math.abs(lonMin),"00");
+			default: return "";
 		}
 	}
 
@@ -367,21 +361,15 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLatSec(int format) {
-		Double latSec = new Double();
-		double tmpMin, tmpSec, tmp, lat;
+		double tmpMin;
 
-		lat = this.latDec<0?-1*this.latDec:this.latDec;
-		tmp = (int)java.lang.Math.abs(lat);
-		tmpMin = (lat - tmp) * 60;
-		tmpSec = (int)java.lang.Math.abs(tmpMin);
-		latSec.set((tmpMin - tmpSec) * 60);
-		
+		tmpMin = (Math.abs(latDec) - (int)Math.abs(latDec)) * 60;
 		switch (format) {
-		case DD: 	
-		case CW:
-		case DMM: 	return "";
-		case DMS:	return l.format(Locale.FORMAT_PARSE_NUMBER,latSec, "00.0").replace(',','.');
-		default: return "";
+			case DD: 	
+			case CW:
+			case DMM: 	return "";
+			case DMS:	return MyLocale.formatDouble((tmpMin - (int)Math.abs(tmpMin)) * 60, "00.0").replace(',','.');
+			default: return "";
 		}
 	}
 
@@ -390,21 +378,15 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLonSec(int format) {
-		Double lonSec = new Double();
-		double tmpMin, tmpSec, tmp, lon;
+		double tmpMin;
 
-		lon = this.lonDec<0?-1*this.lonDec:this.lonDec;
-		tmp = (int)java.lang.Math.abs(lon);
-		tmpMin = (lon - tmp) * 60;
-		tmpSec = (int)java.lang.Math.abs(tmpMin);
-		lonSec.set((tmpMin - tmpSec) * 60);
-		
+		tmpMin = (Math.abs(lonDec) - (int)Math.abs(lonDec)) * 60;
 		switch (format) {
-		case DD: 	
-		case CW:
-		case DMM: 	return "";
-		case DMS:	return l.format(Locale.FORMAT_PARSE_NUMBER,lonSec, "00.0").replace(',','.');
-		default: return "";
+			case DD: 	
+			case CW:
+			case DMM: 	return "";
+			case DMS:	return MyLocale.formatDouble((tmpMin - (int)Math.abs(tmpMin)) * 60, "00.0").replace(',','.');
+			default: return "";
 		}
 	}
 
@@ -552,8 +534,8 @@ public class CWPoint extends TrackPoint{
 	public String toString(int format){
 		
 		switch (format) {
-		case DD:	return getNSLetter() + " " + getLatDeg(format) + "° "
-						+  getEWLetter() + " " + getLonDeg(format)+ "°";
+		case DD:	return getNSLetter() + " " + STRreplace.replace(getLatDeg(format),"-","") + "° "
+						+  getEWLetter() + " " + STRreplace.replace(getLonDeg(format),"-","")+ "°";
 		case CW:	format = DMM;	
 					return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + " "
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format);

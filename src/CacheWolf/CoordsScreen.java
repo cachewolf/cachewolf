@@ -11,8 +11,6 @@ import ewe.sys.*;
 
 
 public class CoordsScreen extends Form {
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 
 	mCheckBox chkDMM, chkDMS, chkDD, chkUTM;
 	CheckBoxGroup chkFormat = new CheckBoxGroup();
@@ -56,9 +54,9 @@ public class CoordsScreen extends Form {
 		TopP.addLast(inpEWs = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		// Input for UTM
-		TopP.addNext(new mLabel((String)lr.get(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addNext(new mLabel((String)lr.get(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addLast(new mLabel((String)lr.get(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		TopP.addNext(new mLabel(MyLocale.getMsg(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		TopP.addNext(new mLabel(MyLocale.getMsg(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		TopP.addLast(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		TopP.addNext(inpUTMZone = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -67,17 +65,17 @@ public class CoordsScreen extends Form {
 		// Input for free Text
 		TopP.addNext(inpText = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		inpText.setTag(SPAN,new Dimension(3,1));
-		TopP.addLast(btnParse = new mButton((String)lr.get(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		TopP.addLast(btnParse = new mButton(MyLocale.getMsg(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 
 		
 		// Buttons for cancel and apply, copy and paste
-		TopP.addNext(btnCancel = new mButton((String)lr.get(614,"Cancel")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		TopP.addNext(btnCancel = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnCancel.setTag(SPAN,new Dimension(4,1));
-		TopP.addNext(btnApply = new mButton((String)lr.get(615,"Apply")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		TopP.addNext(btnApply = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnApply.setTag(SPAN,new Dimension(4,1));
-		TopP.addNext(btnPaste = new mButton((String)lr.get(617,"Paste")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		TopP.addNext(btnPaste = new mButton(MyLocale.getMsg(617,"Paste")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnParse.setTag(SPAN,new Dimension(4,1));
-		TopP.addLast(btnCopy = new mButton((String)lr.get(618,"Copy")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		TopP.addLast(btnCopy = new mButton(MyLocale.getMsg(618,"Copy")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnCopy.setTag(SPAN,new Dimension(4,1));
 
 
@@ -140,11 +138,11 @@ public class CoordsScreen extends Form {
 			chcNS.setInt(coords.getNSLetter().equals("N")?0:1);
 			chcEW.setInt(coords.getEWLetter().equals("E")?0:1);
 			
-			inpNSDeg.setText(coords.getLatDeg(format));
+			inpNSDeg.setText(STRreplace.replace(coords.getLatDeg(format),"-",""));
 			inpNSm.setText(coords.getLatMin(format));
 			inpNSs.setText(coords.getLatSec(format));
 			
-			inpEWDeg.setText(coords.getLonDeg(format));
+			inpEWDeg.setText(STRreplace.replace(coords.getLonDeg(format),"-",""));
 			inpEWm.setText(coords.getLonMin(format));
 			inpEWs.setText(coords.getLonSec(format));
 		}
@@ -196,7 +194,7 @@ public class CoordsScreen extends Form {
 				// try to parse coords
 				CWPoint coord = new CWPoint(inpText.getText());
 				if (coord.latDec == 0 && coord.lonDec == 0){
-					MessageBox tmpMB = new MessageBox((String)lr.get(312,"Error"), (String)lr.get(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
+					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
 					tmpMB.exec();
 				}else {
 					currFormat = chkFormat.getSelectedIndex();

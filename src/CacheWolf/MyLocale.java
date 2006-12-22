@@ -5,6 +5,7 @@ package CacheWolf;
  */
 import ewe.fx.Rect;
 import ewe.sys.*;
+import ewe.sys.Double;
 import ewe.ui.Gui;
 import ewe.ui.Window;
 /**
@@ -129,6 +130,17 @@ public class MyLocale {
 		return l.format(Locale.FORMAT_PARSE_NUMBER,number,fmt);
 	}
 	
+	/**
+	 * Formats a Double to a given format specifier
+	 * @param number A double containing the number to be formatted
+	 * @param fmt A string containing the format specification</br> 
+	 * @return The formatted number
+	 */
+	public static String formatDouble(double number, String fmt) {
+		Double d=new Double();
+		d.set(number);
+		return formatDouble(d,fmt);
+	}
 	
 	/**
 	 * This function checks whether the device supports a
