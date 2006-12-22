@@ -71,6 +71,10 @@ public class CacheHolder {
 	  this.is_new = false;
 	  this.is_update = false;
 	  this.is_log_update = false;
+	  
+	  //name and owner
+	  this.CacheName = newCh.CacheName;
+	  this.CacheOwner = newCh.CacheOwner;
 
 	  //classification
 	  this.hard = newCh.hard;
