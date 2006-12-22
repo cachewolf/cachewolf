@@ -89,6 +89,20 @@ public final class Common {
 		}// for
 		return dummy;
 	}
+	
+	public static String stringToHex(String str){
+		StringBuffer strBuf = new StringBuffer();
+		StringBuffer strHex = new StringBuffer();
+		StringBuffer strTxt = new StringBuffer();
+		for (int i = 0; i < str.length(); i++) {
+			strHex.append(Convert.longToHexString(str.charAt(i)) + " ");
+			strTxt.append(str.charAt(i)+ "  ");
+		}
+		strBuf.append(strTxt);
+		strBuf.append("\n");
+		strBuf.append(strHex);
+		return strBuf.toString();
+	}
 
 
 }
