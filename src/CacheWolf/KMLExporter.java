@@ -63,16 +63,4 @@ public class KMLExporter{
 			}
 		} // if execute
 	}
-	private String transType(String geoNum){
-		String geo = new String("Unknown");
-		if(geoNum.equals("2")) geo = "Traditional Cache";
-		if(geoNum.equals("3")) geo = "Multi-Cache";
-		if(geoNum.equals("4")) geo = "Virtual Cache";
-		if(geoNum.equals("5")) geo = "Letterbox Hybrid";
-		if(geoNum.equals("6")) geo = "Event Cache";
-		if(geoNum.equals("11")) geo = "Webcam Cache";
-		if(geoNum.equals("8")) geo = "Mystery Cache";
-		if(geoNum.equals("12")) geo = "Locationless Cache";
-		return geo;
-	}
 }
