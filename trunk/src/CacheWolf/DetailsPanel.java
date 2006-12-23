@@ -22,7 +22,7 @@ public class DetailsPanel extends CellPanel{
 	//mInput wayStatus = new mInput();
 	mTextPad wayNotes = new mTextPad();
 	mCheckBox chkDelete, chkCenter;
-	mChoice wayType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead","Reference"},0);
+	mChoice wayType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead","Reference"},0);
 	mChoice waySize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
 	mComboBox wayStatus = new mComboBox(new String[]{"", (String)lr.get(313,"Flag 1"), (String)lr.get(314,"Flag 2"), (String)lr.get(315,"Flag 3"), (String)lr.get(316,"Flag 4"), (String)lr.get(317,"Search"), (String)lr.get(318,"Found"), (String)lr.get(319,"Not Found"), (String)lr.get(320,"Owner")},0);
 	mButton btCrWp, showBug, showMap, addDateTime, btnGoto, addPicture;
@@ -135,6 +135,7 @@ public class DetailsPanel extends CellPanel{
 		if(ch.CacheSize.equals("Other")) waySize.setInt(5);
 		if(ch.CacheSize.equals("Very Large")) waySize.setInt(6);
 		if(ch.CacheSize.equals("None")) waySize.setInt(7);
+		if(ch.CacheSize.equals("Not chosen")) waySize.setInt(7);
 		
 		if(ch.is_found == true) wayStatus.setText((String)lr.get(318,"Found"));
 	}
@@ -183,17 +184,18 @@ public class DetailsPanel extends CellPanel{
 			case 4: c_type = 3; break;
 			case 5: c_type = 4; break;
 			case 6: c_type = 5; break;
-			case 8: c_type = 6; break;
-			case 11: c_type = 7; break;
-			case 12: c_type = 8; break;
-			case 13: c_type = 9; break;
-			case 137: c_type = 10;break;
-			case 50: c_type = 11;break;
-			case 51: c_type = 12;break;
-			case 52: c_type = 13;break;
-			case 53: c_type = 14;break;
-			case 54: c_type = 15;break;
-			case 55: c_type = 16;break;
+			case 453: c_type = 6;break;
+			case 8: c_type = 7; break;
+			case 11: c_type = 8; break;
+			case 12: c_type = 9; break;
+			case 13: c_type = 10; break;
+			case 137: c_type = 11;break;
+			case 50: c_type = 12;break;
+			case 51: c_type = 13;break;
+			case 52: c_type = 14;break;
+			case 53: c_type = 15;break;
+			case 54: c_type = 16;break;
+			case 55: c_type = 17;break;
 
 			default: Vm.debug("Unknown cachetype: " + type);
 					break;
@@ -216,17 +218,18 @@ public class DetailsPanel extends CellPanel{
 			case 3: ret = "4"; break;
 			case 4: ret = "5"; break;
 			case 5: ret = "6"; break;
-			case 6: ret = "8"; break;
-			case 7: ret = "11"; break;
-			case 8: ret = "12"; break;
-			case 9: ret = "13";break;
-			case 10: ret = "137";break;
-			case 11: ret = "50";break;
-			case 12: ret = "51";break;
-			case 13: ret = "52";break;
-			case 14: ret = "53";break;
-			case 15: ret = "54";break;
-			case 16: ret = "55";break;
+			case 6: ret = "453"; break;
+			case 7: ret = "8"; break;
+			case 8: ret = "11"; break;
+			case 9: ret = "12"; break;
+			case 10: ret = "13";break;
+			case 11: ret = "137";break;
+			case 12: ret = "50";break;
+			case 13: ret = "51";break;
+			case 14: ret = "52";break;
+			case 15: ret = "53";break;
+			case 16: ret = "54";break;
+			case 17: ret = "55";break;
 
 			default: Vm.debug("Unknown cachetype: " + num);
 			break;

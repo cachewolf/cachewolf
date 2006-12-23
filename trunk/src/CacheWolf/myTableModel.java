@@ -18,7 +18,7 @@ public class myTableModel extends TableModel{
 	
 	Vector cacheDB;
 	String[] colName;
-	Image cacheImages[] = new Image[138];
+	Image cacheImages[] = new Image[454];
 	Image noFindLogs[] = new Image[4];
 	int[] breiten;
 	Image red, blue, green, yellow;
@@ -79,6 +79,7 @@ public class myTableModel extends TableModel{
 		cacheImages[109] = new Image("109.png");
 		cacheImages[110] = new Image("110.png");
 		cacheImages[137] = new Image("137.png");
+		cacheImages[453] = new Image("453.png");
 		noFindLogs[0] = new Image("no_1_log.png");
 		noFindLogs[1] = new Image("no_2_log.png");
 		noFindLogs[2] = new Image("no_3_log.png");

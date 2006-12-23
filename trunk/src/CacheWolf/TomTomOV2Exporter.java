@@ -1,4 +1,5 @@
 package CacheWolf;
+import ewe.ui.mChoice;
 import ewe.util.*;
 import ewe.io.*;
 import ewe.filechooser.*;
@@ -27,7 +28,7 @@ public class TomTomOV2Exporter{
 		int a,b,c,d,data;
 		RandomAccessFile outp;
 		File dfile; 
-		String[] wayType = {"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final", "Trailhead"};
+		String[] wayType = {"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead","Reference"};
 		String ctype = "";
 		//need directory only!!!!
 		String dummy = new String();
@@ -46,18 +47,18 @@ public class TomTomOV2Exporter{
 						case 3: ctype = "4"; break;
 						case 4: ctype = "5"; break;
 						case 5: ctype = "6"; break;
-						case 6: ctype = "8"; break;
-						case 7: ctype = "11"; break;
-						case 8: ctype = "12"; break;
-						case 9: ctype = "13"; break;
-						case 10: ctype = "137"; break;
-						case 11: ctype = "50";break;
-						case 12: ctype = "51";break;
-						case 13: ctype = "52";break;
-						case 14: ctype = "53";break;
-						case 15: ctype = "54";break;
-
-
+						case 6: ctype = "453"; break;
+						case 7: ctype = "8"; break;
+						case 8: ctype = "11"; break;
+						case 9: ctype = "12"; break;
+						case 10: ctype = "13"; break;
+						case 11: ctype = "137"; break;
+						case 12: ctype = "50";break;
+						case 13: ctype = "51";break;
+						case 14: ctype = "52";break;
+						case 15: ctype = "53";break;
+						case 16: ctype = "54";break;
+						case 17: ctype = "55";break;
 					} 
 					dfile = new File(targetDir + "/GC-" + wayType[j] + ".ov2");
 					dfile.delete();

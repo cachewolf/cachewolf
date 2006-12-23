@@ -595,7 +595,7 @@ public class SpiderGC{
 		inRex = new Regex("This is a <strong>((?s).*?)</strong> cache");
 		inRex.search(doc);
 		if(inRex.didMatch()) return inRex.stringMatched(1);
-		else return "";
+		else return "None";
 	}
 	
 	private String getHints(String doc){
