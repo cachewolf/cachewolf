@@ -6,6 +6,7 @@ package CacheWolf;
 import ewe.fx.Rect;
 import ewe.sys.*;
 import ewe.sys.Double;
+import ewe.sys.Long;
 import ewe.ui.Gui;
 import ewe.ui.Window;
 /**
@@ -114,11 +115,22 @@ public class MyLocale {
 	 * '0' before the decimal point indicates the number of digits before the decimal point.</br>
 	 * @return The formatted number
 	 */
-	public static String formatLong(ewe.sys.Long number, String fmt) {
+	public static String formatLong(Long number, String fmt) {
 		if (l==null) init();
 		return l.format(Locale.FORMAT_PARSE_NUMBER,number,fmt);
 	}
 
+	/**
+	 * Formats a long to a given format specifier
+	 * @param number A long containing the number to be formatted
+	 * @param fmt A string containing the format specification</br> 
+	 * @return The formatted number
+	 */
+	public static String formatLong(long number, String fmt) {
+		Long L=new Long();
+		L.set(number);
+		return formatLong(L,fmt);
+	}
 	/**
 	 * Formats a Double to a given format specifier
 	 * @param number A Double containing the number to be formatted

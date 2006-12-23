@@ -122,8 +122,6 @@ class UpdateThread extends mThread {
 
 
 public class GotoPanel extends CellPanel {
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 
 	public CWGPSPoint gpsPosition = new CWGPSPoint();
 	public CWPoint toPoint = new CWPoint();
@@ -193,8 +191,8 @@ public class GotoPanel extends CellPanel {
 
 		// Button
 		ButtonP.addNext(btnGPS = new mButton("Start"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		ButtonP.addNext(btnCenter = new mButton((String)lr.get(309,"Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		ButtonP.addNext(btnSave = new mButton((String)lr.get(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		ButtonP.addNext(btnCenter = new mButton(MyLocale.getMsg(309,"Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		ButtonP.addNext(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addLast(btnMap = new mButton("Map"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		
 		//Format selection for coords
@@ -214,7 +212,7 @@ public class GotoPanel extends CellPanel {
 		CoordsP.addNext(lblGPS = new mLabel("GPS: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblGPS.backGround = RED;
 		CoordsP.addLast(lblPosition = new mLabel(gpsPosition.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		CoordsP.addNext(lblDST = new mLabel((String)lr.get(1500,"DST:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		CoordsP.addNext(lblDST = new mLabel(MyLocale.getMsg(1500,"DST:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblDST.backGround = BLUE;
 		CoordsP.addLast(btnGoto = new mButton(toPoint.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 
@@ -227,7 +225,7 @@ public class GotoPanel extends CellPanel {
 		
 		//Goto
 		//things from GPS
-		GotoP.addLast(lblCurr = new mLabel((String)lr.get(1501,"Current")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		GotoP.addLast(lblCurr = new mLabel(MyLocale.getMsg(1501,"Current")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblCurr.backGround = RED;
 		lblCurr.font = BOLD;
 
@@ -404,10 +402,10 @@ public class GotoPanel extends CellPanel {
 				Vm.debug("currTrack.add: nachher");
 				lblPosition.setText(gpsPosition.toString(currFormat));
 				speed.set(gpsPosition.getSpeed());
-				lblSpeed.setText(l.format(Locale.FORMAT_PARSE_NUMBER,speed,"0.0") + " km/h");
+				lblSpeed.setText(MyLocale.formatDouble(speed,"0.0") + " km/h");
 				try { 
 					sunAzimut.set(getSunAzimut(gpsPosition.Time, gpsPosition.Date, gpsPosition.latDec, gpsPosition.lonDec));
-					lblSunAzimut.setText(l.format(Locale.FORMAT_PARSE_NUMBER,sunAzimut,"0.0") + " Grad");
+					lblSunAzimut.setText(MyLocale.formatDouble(sunAzimut,"0.0") + " Grad");
 				} catch (NumberFormatException e) { 
 					// irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
 					sunAzimut.set(500); // any value out of range (bigger than 360) will prevent drawArrows from drawing it 
@@ -422,7 +420,7 @@ public class GotoPanel extends CellPanel {
 				dist.set(gpsPosition.getDistance(toPoint));
 
 				if (dist.value >= 1){
-					lblDist.setText(l.format( Locale.FORMAT_PARSE_NUMBER,dist,"0.000")+ " km");
+					lblDist.setText(MyLocale.formatDouble(dist,"0.000")+ " km");
 				}
 				else {
 					dist.set(dist.value * 1000);
@@ -616,12 +614,7 @@ public class GotoPanel extends CellPanel {
 			// set current position as center and recalculate distance of caches in MainTab 
 			if (ev.target == btnCenter){
 				Vm.showWait(true);
-				pref.mylgNS = gpsPosition.getNSLetter();
-				pref.mylgDeg = gpsPosition.getLatDeg(CWPoint.DMM);
-				pref.mylgMin = gpsPosition.getLatMin(CWPoint.DMM);
-				pref.mybrDeg = gpsPosition.getLonDeg(CWPoint.DMM);
-				pref.mybrMin = gpsPosition.getLonMin(CWPoint.DMM);
-				pref.mybrWE = gpsPosition.getEWLetter();
+				pref.curCentrePt.set(gpsPosition);
 				mainT.updateBearDist();
 				Vm.showWait(false);
 				(new MessageBox("Info", "Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet", MessageBox.OKB)).execute();

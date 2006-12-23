@@ -13,13 +13,10 @@ public class MainForm extends Form {
 	
 	StatusBar statBar;
 	Vector cacheDB = new Vector();
-	double myLat, myLon;
-	String myNS = new String();
-	String myWE = new String();
-	Preferences myPreferences = new Preferences();
+	Preferences pref = new Preferences();
 	MainTab mTab;
 	MainMenu mMenu;
-	Locale l = Vm.getLocale();
+
 	/**
 	*	Constructor for MainForm<p>
 	*	Loads preferences and the cache index list. Then constructs a
@@ -37,7 +34,7 @@ public class MainForm extends Form {
 	}
 	
 	public MainForm(boolean dbg){
-		myPreferences.debug = dbg;
+		pref.debug = dbg;
 		doIt();
 	}
 	
@@ -55,7 +52,7 @@ public class MainForm extends Form {
 			LoadPreferences(false);
 			
 			Font defaultGuiFont = mApp.findFont("gui");
-			int sz = (myPreferences.fontSize);
+			int sz = (pref.fontSize);
 			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
 			mApp.addFont(newGuiFont, "gui"); 
 			mApp.fontsChanged();
@@ -66,13 +63,13 @@ public class MainForm extends Form {
 			end = Vm.getTimeStampLong();
 			Vm.debug("index.xml read: " + Convert.toString(end - start)+ " msec");
 			//updateBearingDistance();
-			TablePanel.updateBearingDistance(cacheDB,myPreferences);
+			TablePanel.updateBearingDistance(cacheDB,pref);
 		} catch (Exception e){
-			if(myPreferences.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
+			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}
 		
 		
-		if(myPreferences.fixSIP == true){
+		if(pref.fixSIP == true){
 			if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 				Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
 			}
@@ -87,8 +84,8 @@ public class MainForm extends Form {
 		//p[1].addLast(mMenu = new MainMenu(this, myPreferences, cacheDB)).setCell(DONTSTRETCH);
 		//p[1].addLast(mTab = new MainTab(cacheDB, myPreferences));
 		statBar = new StatusBar(cacheDB);
-		this.addLast(mMenu = new MainMenu(this, myPreferences, cacheDB),CellConstants.DONTSTRETCH, CellConstants.FILL);
-		this.addLast(mTab = new MainTab(cacheDB, myPreferences,statBar),CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(mMenu = new MainMenu(this, pref, cacheDB),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		this.addLast(mTab = new MainTab(cacheDB, pref,statBar),CellConstants.STRETCH, CellConstants.FILL);
 		mMenu.setTablePanel(mTab.getTablePanel());
 		Vm.showWait(false);
 	}
@@ -100,7 +97,7 @@ public class MainForm extends Form {
 			
 			Font defaultGuiFont = mApp.findFont("gui");
 			//int sz = (int)(defaultGuiFont.getSize()+4);
-			int sz = (myPreferences.fontSize);
+			int sz = (pref.fontSize);
 			//Vm.debug("Font size:" + myPreferences.fontSize);
 			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
 			mApp.addFont(newGuiFont, "gui"); 
@@ -108,7 +105,7 @@ public class MainForm extends Form {
 			mApp.mainApp.font = newGuiFont;
 			
 			LoadAXML();
-			Spider mySpidy = new Spider(cacheDB, myPreferences, null, Spider.SPIDERNEAREST);
+			Spider mySpidy = new Spider(cacheDB, pref, null, Spider.SPIDERNEAREST);
 			mySpidy.SpiderNearest(dist);
 			ewe.sys.Vm.exit(0);
 		} catch (Exception e){
@@ -122,15 +119,12 @@ public class MainForm extends Form {
 	*	@see	MyXMLBuilder
 	*/
 	public void LoadAXML() throws Exception{
-		//MyXMLBuilder myB = new MyXMLBuilder(cacheDB, myPreferences.mydatadir);
-		//myB.doIt();
-		//Vm.debug(Convert.toString(cacheDB.size()));
-		CacheReaderWriter.readIndex(cacheDB, myPreferences.mydatadir);
+		CacheReaderWriter.readIndex(cacheDB, pref.mydatadir);
 	}
 	
 	public void doPaint(Graphics g, Rect r){
-		myPreferences.myAppHeight = this.height;
-		myPreferences.myAppWidth = this.width;
+		pref.myAppHeight = this.height;
+		pref.myAppWidth = this.width;
 		super.doPaint(g,r);
 	}
 	
@@ -139,36 +133,24 @@ public class MainForm extends Form {
 	*	"my" variables.
 	*/
 	private void LoadPreferences(boolean from_event) throws Exception {
-		if(from_event == false) myPreferences.doIt(1);
-		else myPreferences.doIt(0);
-
-		String lg1NS = myPreferences.mylgNS;
-		String lgDeg = myPreferences.mylgDeg;
-		String lgMin = myPreferences.mylgMin;
-		String br1WE = myPreferences.mybrWE;
-		String brDeg = myPreferences.mybrDeg;
-		String brMin = myPreferences.mybrMin;
-		//Set my location
-		myLon = Common.parseDouble(lgDeg) + Common.parseDouble(lgMin)/60;
-		myLat = Common.parseDouble(brDeg) + Common.parseDouble(brMin)/60;
-		myNS = lg1NS;
-		myWE = br1WE;
+		if(from_event == false) pref.doIt(1);
+		else pref.doIt(0);
 	}
 	
 	
 	public void onEvent(Event ev){
-		if(myPreferences.dirty == true){
+		if(pref.dirty == true){
 			cacheDB.clear();
 			try{
 				LoadPreferences(true);
 				LoadAXML();
 				//updateBearingDistance();
-				TablePanel.updateBearingDistance(cacheDB,myPreferences);
+				TablePanel.updateBearingDistance(cacheDB,pref);
 				mTab.getTablePanel().refreshTable();
 			} catch (Exception e){
 				//Vm.debug(e.toString());
 			}
-			myPreferences.dirty = false;
+			pref.dirty = false;
 		}
 		super.onEvent(ev);
 	}

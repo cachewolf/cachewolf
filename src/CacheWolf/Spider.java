@@ -43,19 +43,17 @@ public class Spider extends TaskObject{
 	public static int SPIDERMULTI = 0;
 	public static int SPIDERNEAREST = 1;
 	public static int SPIDERLOC = 2;
-	public static String proxy = new String();
-	public static String port = new String();
+	public static String proxy;
+	public static String port;
 	private int SpiderType = -1;
 	private Vector caches_identified = new Vector();
 	private String caches_available = new String();
-	Vector cacheDB = new Vector();
-	Preferences myPref = new Preferences();
+	Vector cacheDB;
+	Preferences pref = new Preferences();
 	ProgressBarForm pbf = new ProgressBarForm();
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	MessageArea msgA;
 	Vector data;
-	String distance = new String();
+	String distance;
 	
 	protected void doRun(){
 		switch(SpiderType){
@@ -86,10 +84,10 @@ public class Spider extends TaskObject{
 		msgA = msg;
 		SpiderType = SpT;
 		cacheDB = DB;
-		myPref = p;
-		proxy = myPref.myproxy;
-		port = myPref.myproxyport;
-		CacheHolder ch = new CacheHolder();
+		pref = p;
+		proxy = pref.myproxy;
+		port = pref.myproxyport;
+		CacheHolder ch;
 		for(int i = 0; i<DB.size(); i++){
 			ch = (CacheHolder)DB.get(i);
 			caches_available = caches_available + ";" + ch.wayPoint;
@@ -139,7 +137,7 @@ public class Spider extends TaskObject{
 					// Create a socket to the host
 					String hostname = "www.geocaching.com";
 					int port = 80;
-					InetAddress addr = InetAddress.getByName(hostname);
+					//InetAddress addr = InetAddress.getByName(hostname);
 					Socket socket = new Socket(hostname, port);
 				
 					// Send header
@@ -211,34 +209,32 @@ public class Spider extends TaskObject{
 	*	Center point is what is currently set in preferences.
 	*/
 	public void SpiderNearest(String perip){
-			ParseLatLon pll;
-			//pbf.display((String)lr.get(800,"Collecting list"), (String)lr.get(801,"collecting..."), pForm);
-			if(msgA != null)  msgA.setText((String)lr.get(801,"collecting..."));
+			//ParseLatLon pll;
+			//pbf.display(MyLocale.getMsg(800,"Collecting list"), MyLocale.getMsg(801,"collecting..."), pForm);
+			if(msgA != null)  msgA.setText(MyLocale.getMsg(801,"collecting..."));
 			double periInt = Convert.parseDouble(perip);
 			double distDbl;
 			int cacheCounter = 0;
 			int page_number = 5; //gc.com starts with 5! for page 2...
 			// initial fetch
-			String url_for_next_page = new String();
+			//String url_for_next_page = new String();
 			String sourcePage = new String();
 			String listString = new String();
 			String v_state = new String();
-			String ev_argument = new String(); //not used?
+			//String ev_argument = new String(); //not used?
 			String ev_target = new String();
 			String cache = new String();
 			String dist = new String();
-			String document = new String();
-			String searchStr = new String();
-			String NS = new String();
-			String WE = new String();
-			if(myPref.mylgNS.equals("N")) {NS = "1";}else{NS="-1";}
-			if(myPref.mybrWE.equals("E")) {WE = "1";}else{WE="-1";}
-			searchStr = "lat_ns=" + NS;
-			searchStr += "&lat_h=" + myPref.mylgDeg;
-			searchStr += "&lat_mmss=" + myPref.mylgMin;
-			searchStr += "&long_ew=" + WE;
-			searchStr += "&long_h=" + myPref.mybrDeg;
-			searchStr += "&long_mmss=" +myPref.mybrMin;
+			//String document = new String();
+			String NS = pref.curCentrePt.getNSLetter().equals("N") ? "1" : "-1";
+			String WE = pref.curCentrePt.getEWLetter().equals("E") ? "1" : "-1";
+			String searchStr = 
+				        "lat_ns="     + NS +
+						"&lat_h="     + pref.curCentrePt.getLatDeg(CWPoint.DMM) +
+						"&lat_mmss="  + pref.curCentrePt.getLatMin(CWPoint.DMM) +
+						"&long_ew="   + WE +
+						"&long_h="    + pref.curCentrePt.getLonDeg(CWPoint.DMM) +
+						"&long_mmss=" + pref.curCentrePt.getLatMin(CWPoint.DMM);
 			boolean more = true;
 			Extractor sourceEx, listEx, listExDist, listExCache;
 			try{
@@ -263,7 +259,7 @@ public class Spider extends TaskObject{
 					while (listExDist.endOfSearch() == false) {
 						dist = dist.substring(0, dist.length()-2);
 						if(dist.indexOf(".") == -1) dist = "0." + dist;
-						if(myPref.digSeparator.equals(",")) dist = dist.replace('.',',');
+						if(pref.digSeparator.equals(",")) dist = dist.replace('.',',');
 						distDbl = 0;
 						try{
 							distDbl = Convert.parseDouble(dist);
@@ -275,8 +271,8 @@ public class Spider extends TaskObject{
 							//add to list to spider
 							caches_identified.add(cache);
 							cacheCounter++;
-							//pbf.display((String)lr.get(800,"Collecting list"), Convert.toString(cacheCounter) + (String)lr.get(802," caches identified: collecting more..."), pForm);
-							if(msgA != null)  msgA.setText(Convert.toString(cacheCounter) + (String)lr.get(802," caches identified: collecting more..."));
+							//pbf.display(MyLocale.getMsg(800,"Collecting list"), Convert.toString(cacheCounter) + MyLocale.getMsg(802," caches identified: collecting more..."), pForm);
+							if(msgA != null)  msgA.setText(Convert.toString(cacheCounter) + MyLocale.getMsg(802," caches identified: collecting more..."));
 							//more = true;
 							//Vm.debug(dist +" : " +cache);
 						} else {
@@ -295,11 +291,11 @@ public class Spider extends TaskObject{
 						if(page_number >= 15) page_number = 5;
 						String data = new String();
 						data = URL.encodeURL("lat_ns",false) + "=" + URL.encodeURL(NS,false);
-						data += "&" + URL.encodeURL("lat_h",false) +"="+ URL.encodeURL(myPref.mylgDeg,false);
-						data += "&" + URL.encodeURL("lat_mmss",false) +"="+ URL.encodeURL(myPref.mylgMin,false);
+						data += "&" + URL.encodeURL("lat_h",false) +"="+ URL.encodeURL(pref.curCentrePt.getLatDeg(CWPoint.DMM),false);
+						data += "&" + URL.encodeURL("lat_mmss",false) +"="+ URL.encodeURL(pref.curCentrePt.getLatMin(CWPoint.DMM),false);
 						data += "&" + URL.encodeURL("long_ew",false) +"="+ URL.encodeURL(WE,false);
-						data += "&" + URL.encodeURL("long_h",false) +"="+ URL.encodeURL(myPref.mybrDeg,false);
-						data += "&" + URL.encodeURL("long_mmss",false) +"="+ URL.encodeURL(myPref.mybrMin,false);
+						data += "&" + URL.encodeURL("long_h",false) +"="+ URL.encodeURL(pref.curCentrePt.getLonDeg(CWPoint.DMM),false);
+						data += "&" + URL.encodeURL("long_mmss",false) +"="+ URL.encodeURL(pref.curCentrePt.getLonMin(CWPoint.DMM),false);
 						data += "&" + URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(ev_target,false);
 						data += "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false);
 						data += "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(v_state,false);
@@ -326,8 +322,8 @@ public class Spider extends TaskObject{
 					if(shouldStop == true) break;
 				} while (more == true);
 			}//if sourcepage valid
-			//pbf.display((String)lr.get(800,"Collecting list"), Convert.toString(cacheCounter) + (String)lr.get(803," Done!"), pForm);
-			if(msgA != null) msgA.setText(Convert.toString(cacheCounter) + (String)lr.get(803," Done!"));
+			//pbf.display(MyLocale.getMsg(800,"Collecting list"), Convert.toString(cacheCounter) + MyLocale.getMsg(803," Done!"), pForm);
+			if(msgA != null) msgA.setText(Convert.toString(cacheCounter) + MyLocale.getMsg(803," Done!"));
 			if(shouldStop == false){
 				try{
 					doSpider(Convert.toString(cacheCounter), true);
@@ -341,11 +337,12 @@ public class Spider extends TaskObject{
 		*	Call this method to find out if a cache has already been
 		*	spidered.
 		*/
+		/*skg 20061223: Not used
 		private boolean isAlreadyFetched(String wp){
 			if(caches_available.indexOf(wp) == -1) return false;
 			else return true;
 		}
-		
+		*/
 		/**
 		*	Method that performs a multi point spider.
 		*	User will choose this option when identification of caches
@@ -353,45 +350,18 @@ public class Spider extends TaskObject{
 		*/
 		public void SpiderMulti(Vector wpts, String dist){
 			//first save current preference settings
-			String bfNS, bflgDeg, bflgMin, bfWE, bfbrDeg, bfbrMin = new String();
-			bfNS = myPref.mylgNS;
-			bflgDeg = myPref.mylgDeg;
-			bflgMin = myPref.mylgMin;
-			bfWE = myPref.mybrWE;
-			bfbrDeg = myPref.mybrDeg;
-			bfbrMin = myPref.mybrMin;
+			CWPoint SavedCentre=new CWPoint(pref.curCentrePt);
 			
 			//loop through the vector and perform a spidernearest
-			Extractor ex;
-			int counter = 0;
 			for(int i = 0; i<wpts.size(); i++){
-				//parse the vector element
-				ex = new Extractor(" " + (String)wpts.get(i), " ", " ", 0, true);
-				//Vm.debug("loopy: " + (String)wpts.get(i));
-				counter = 0;
-				while(ex.endOfSearch() != true){
-					if(counter == 0) myPref.mylgNS = ex.findNext().trim();
-					if(counter == 1) myPref.mylgDeg = ex.findNext();
-					if(counter == 2) myPref.mylgMin = ex.findNext();
-					if(counter == 3) myPref.mybrWE = ex.findNext().trim();
-					if(counter == 4) myPref.mybrDeg = ex.findNext();
-					if(counter == 5) myPref.mybrMin = ex.findNext();
-					counter++;
-					//Vm.debug("Target: " + myPref.mylgNS);
-					if(counter >= 10) break;
-				}
+				pref.curCentrePt.set((String)wpts.get(i)); // Can use Regex here as time is not of concern
 				if(shouldStop == true) break;
 				//do the spider
 				SpiderNearest(dist);
 			}
 			
 			//save back preferences
-			myPref.mylgNS = bfNS;
-			myPref.mylgDeg = bflgDeg;
-			myPref.mylgMin = bflgMin;
-			myPref.mybrWE = bfWE;
-			myPref.mybrDeg = bfbrDeg;
-			myPref.mybrMin = bfbrMin;
+			pref.curCentrePt.set(SavedCentre);
 		}
 		
 		/**
@@ -406,23 +376,18 @@ public class Spider extends TaskObject{
 			ParseLatLon pll;
 			Extractor cacheEx;
 			Extractor tempEx, tempEx2;
-			CacheHolder ch,ch2;
+			CacheHolder ch;
 			CacheReaderWriter crw = new CacheReaderWriter();
 			int doneCounter = 1;
 			String wp = new String();
 			String document = new String();
 			String imgLoc = new String();
-			String img = new String();
-			Vector imgVecs = new Vector();
 			String dummy = new String();
 			String dummy2 = new String();
 			String dummy3 = new String();
 			String dummy4 = new String();
 			String dummy5 = new String();
 			String dummy6 = new String();
-			String dummy7 = new String();
-			String dummy8 = new String();
-			String dummy9 = new String();
 			boolean found = false;
 			//time to add existing caches to the identified list, ommitting double entries
 			if(shouldStop == false){
@@ -450,8 +415,8 @@ public class Spider extends TaskObject{
 				//Vm.debug(caches_available);
 				
 				//Vm.debug("Do not have going in for: " + wp);
-				//pbf.display((String)lr.get(804,"Collecting Cache Details"), (String)lr.get(805,"Fetching: ") + wp + " (" +Convert.toString(doneCounter)+" of "+total+")", pForm);
-				if(msgA != null) msgA.setText((String)lr.get(805,"Fetching: ") + wp + " (" +Convert.toString(doneCounter)+" of "+total+")");
+				//pbf.display(MyLocale.getMsg(804,"Collecting Cache Details"), MyLocale.getMsg(805,"Fetching: ") + wp + " (" +Convert.toString(doneCounter)+" of "+total+")", pForm);
+				if(msgA != null) msgA.setText(MyLocale.getMsg(805,"Fetching: ") + wp + " (" +Convert.toString(doneCounter)+" of "+total+")");
 				try{
 					document = fetch("http://www.geocaching.com/seek/cache_details.aspx?wp="+wp+"&Submit6=Find&log=y");
 				}catch(Exception ex){
@@ -468,7 +433,7 @@ public class Spider extends TaskObject{
 				cacheEx = new Extractor(document, "<span id=\"CacheOwner\"><b><font size=\"2\">by ", "[<A",0,true);
 				ch.CacheOwner = cacheEx.findNext();
 				//Vm.debug(ch.CacheOwner);
-				if(ch.CacheOwner.indexOf(myPref.myAlias)>=0) ch.is_owned = true;
+				if(ch.CacheOwner.indexOf(pref.myAlias)>=0) ch.is_owned = true;
 				if(ch.is_owned == true) ch.CacheStatus = "Owner";
 				cacheEx = new Extractor(document, "<span id=\"LatLon\"><font size=\"3\">", "</STRONG><br /><STRONG></font></span>",0,true);
 				ch.LatLon = cacheEx.findNext();
@@ -492,23 +457,23 @@ public class Spider extends TaskObject{
 				cacheEx = new Extractor(document, "<span id=\"CacheLogs\">", "</span>",0,true);
 				dummy = cacheEx.findNext();
 				//is found?
-				if(myPref.myAlias.length()>0){
+				if(pref.myAlias.length()>0){
 					tempEx = new Extractor(dummy, "icon_smile.gif", "</A>",0,true);
 					dummy3 = tempEx.findNext();
 					while(tempEx.endOfSearch() == false){
-						if(dummy3.indexOf(myPref.myAlias)>0) ch.is_found = true;
+						if(dummy3.indexOf(pref.myAlias)>0) ch.is_found = true;
 						dummy3 = tempEx.findNext();
 					}
 					tempEx = new Extractor(dummy, "icon_camera.gif", "</A>",0,true);
 					dummy3 = tempEx.findNext();
 					while(tempEx.endOfSearch() == false){
-						if(dummy3.indexOf(myPref.myAlias)>0) ch.is_found = true;
+						if(dummy3.indexOf(pref.myAlias)>0) ch.is_found = true;
 						dummy3 = tempEx.findNext();
 					}
 					tempEx = new Extractor(dummy, "icon_attended.gif", "</A>",0,true);
 					dummy3 = tempEx.findNext();
 					while(tempEx.endOfSearch() == false){
-						if(dummy3.indexOf(myPref.myAlias)>0) ch.is_found = true;
+						if(dummy3.indexOf(pref.myAlias)>0) ch.is_found = true;
 						dummy3 = tempEx.findNext();
 					}
 				}
@@ -760,7 +725,6 @@ public class Spider extends TaskObject{
 				// have all the images, now spider them!
 				HttpConnection connImg;
 				Socket sockImg;
-				InputStream is;
 				FileOutputStream fos;
 				String datei = new String();
 				String imageOrig = new String();
@@ -768,12 +732,9 @@ public class Spider extends TaskObject{
 				String imageList = new String();
 				ByteArray daten;
 				int imgCounter = 0;
-				int bytes_read;
-				byte[] buffer = new byte[9000];
 				
 				// Images 
 				//Vm.debug("Have images: " + Convert.toString(ch.Images.size()));
-				OperationTimer opt = new OperationTimer();
 				for(int p = 0; p<ch.Images.size(); p++){
 					imgCounter++;
 					imageOrig = (String)ch.Images.get(p);
@@ -791,7 +752,7 @@ public class Spider extends TaskObject{
 								connImg = new HttpConnection(imageOrig);
 							}
 							imageType = imageOrig.substring(imageOrig.lastIndexOf("."), imageOrig.lastIndexOf(".")+4);
-							datei = myPref.mydatadir + ch.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
+							datei = pref.mydatadir + ch.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
 							ch.Images.set(p, ch.wayPoint + "_" + Convert.toString(imgCounter) + imageType);
 							//connImg.keepAliveMode = true;
 							connImg.setRequestorProperty("Connection", "close");
@@ -819,7 +780,7 @@ public class Spider extends TaskObject{
 					imgCounter++;
 					imageOrig = (String)ch.LogImages.get(p);
 					//Vm.debug("Fetching Log Image: " +imageOrig);
-					datei = myPref.mydatadir + ch.wayPoint + "_L_" + Convert.toString(imgCounter)+ ".jpg";
+					datei = pref.mydatadir + ch.wayPoint + "_L_" + Convert.toString(imgCounter)+ ".jpg";
 					File dateiF = new File(datei);
 					//no need to save the file if it already exists!
 					ch.LogImages.set(p, ch.wayPoint + "_L_" + Convert.toString(imgCounter) + ".jpg");
@@ -874,7 +835,7 @@ public class Spider extends TaskObject{
 					changeCache(ch);
 				}
 				
-				crw.saveCacheDetails(ch, myPref.mydatadir);	
+				crw.saveCacheDetails(ch, pref.mydatadir);	
 				ch.CacheName = SafeXML.cleanback(ch.CacheName);
 				if(ch.CacheName.equals("An Error Has Occured")){
 					ch.type = "0";
@@ -886,13 +847,13 @@ public class Spider extends TaskObject{
 				//after each spider
 				document = new String();
 				doneCounter++;
-				crw.saveIndex(cacheDB, myPref.mydatadir);
+				crw.saveIndex(cacheDB, pref.mydatadir);
 				if(!ch.CacheName.equals("An Error Has Occured") && ch.LatLon.length() > 1){
 					pll = new ParseLatLon(ch.LatLon,".");
 					pll.parse();
-					mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), myPref.myproxy, myPref.myproxyport);
-					mpl.loadTo(myPref.mydatadir + "/" + ch.wayPoint + "_map.gif", "3");
-					mpl.loadTo(myPref.mydatadir + "/" + ch.wayPoint + "_map_2.gif", "10");
+					mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
+					mpl.loadTo(pref.mydatadir + "/" + ch.wayPoint + "_map.gif", "3");
+					mpl.loadTo(pref.mydatadir + "/" + ch.wayPoint + "_map_2.gif", "10");
 				}
 				if(shouldStop == true) break;
 			} // for
@@ -933,7 +894,7 @@ public class Spider extends TaskObject{
 				retCH = (CacheHolder)cacheDB.get(i);
 				if(retCH.wayPoint.equals(waypoint)) {
 					try{
-						crw.readCache(retCH, myPref.mydatadir);
+						crw.readCache(retCH, pref.mydatadir);
 					}catch(Exception ex){};
 					return retCH;
 				}

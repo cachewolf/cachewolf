@@ -18,7 +18,10 @@ public class Preferences extends MinML{
 	public int tablePrefs[] = {1,1,1,1,1,1,1,1,1,1,1,1};
 	public int tableWidth[] = {20,20,20,20,65,135,135,100,60,50,50,50};
 	     
-	//Longitude
+	/** The currently used centre point, can be different from the profile's centrepoint */
+	public CWPoint curCentrePt=new CWPoint();
+	//TODO Remove next 8 lines
+/*	//Longitude
 	public String mylgNS = new String();
 	public String mylgDeg = new String();
 	public String mylgMin = new String();
@@ -26,12 +29,22 @@ public class Preferences extends MinML{
 	public String mybrWE = new String();
 	public String mybrDeg = new String(); 
 	public String mybrMin = new String();
+*/
+	/** Name of last used profile */
+	public String lastProfile=new String(); 
+	/** If true, the last profile is reloaded automatically without a dialogue */
+	public boolean autoReloadLastProfile=false; 
+	/** The base directory contains one subdirectory for each profile*/
+	public String baseDir = new String();
 
-	public String mydatadir = new String();  
 	public String myproxy = new String();    
 	public String myproxyport = new String();
-	
+	/** This is the login alias for geocaching.com and opencaching.de */
 	public String myAlias = new String();
+	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs) 
+	 *  It is currently not used yet */
+	public String myAlias2 = new String();
+	/** The path to the browser */
 	public String browser = new String();
 		
 	public int myAppHeight = 0;
@@ -62,7 +75,19 @@ public class Preferences extends MinML{
 	public boolean forwardGPS = false;
 	public String forwardGpsHost = new String();
 	public int fontSize = 14;
+	// Helper variables for XML parser 
+	private StringBuffer collectElement=null; 
+	private String lastName; // The string to the last XML that was processed
 	
+	private String LOGFILENAME="log.txt";
+	
+	// The following declarations may eventually be moved to a separate class
+	/** The actual directory of a profile, for new profiles this is a direct child of baseDir */
+	public String mydatadir = new String();  
+	/** The centre as read from the profile */
+	public CWPoint profileCentrePt;
+	
+
 	public Preferences(){
 		digSeparator=MyLocale.getDigSeparator();
 		//Vm.debug("Separ: " + digSeparator);
@@ -70,6 +95,9 @@ public class Preferences extends MinML{
 		mySPO.parity = SerialPort.NOPARITY;
 		mySPO.stopBits = 1;
 		mySPO.baudRate = 4800;
+		// Ensure that logfile does not grow infinitely
+		File logFile = new File(LOGFILENAME);
+		if (logFile.length()>60000) logInit();
 	}
 	
 	/**
@@ -77,13 +105,15 @@ public class Preferences extends MinML{
 	* Does not validate! if coordinates are real.
 	*/
 	public boolean existCenter(){
-		boolean test = false;
+//TODO Remove
+/*		boolean test = false;
 		String t1 = new String();
 		String t2 = new String();
 		t1 = mylgDeg+mylgMin;
 		t2 = mybrDeg+mybrMin;
 		if(t1.length() > 0 && t2.length() > 0) test = true;
 		return test;
+*/      return curCentrePt.latDec!=0.0 && curCentrePt.lonDec!=0.0; 
 	}
 	
 	/**
@@ -130,7 +160,8 @@ public class Preferences extends MinML{
 							else {
 								distOC = lastDistOC[code-1];
 							}
-							Extractor ex = new Extractor(" " + longs[code-1], " ", " ", 0,true);
+							// TODO Remove next 8 lines
+							/*Extractor ex = new Extractor(" " + longs[code-1], " ", " ", 0,true);
 							mybrWE = ex.findNext();
 							mybrDeg = ex.findNext();
 							mybrMin = ex.findNext();
@@ -138,6 +169,8 @@ public class Preferences extends MinML{
 							mylgNS = ex.findNext();
 							mylgDeg = ex.findNext();
 							mylgMin = ex.findNext();
+							*/
+							curCentrePt.set(lats[code-1]+" "+longs[code-1]);
 						   }
 					   }
 					   if(mydatadir.indexOf('.') > 0){
@@ -148,7 +181,7 @@ public class Preferences extends MinML{
 				   }
 			}
 		}catch(Exception e){
-			//Vm.debug(e.toString());
+			Vm.debug(e.toString());
 		}
 	}
 	
@@ -179,8 +212,11 @@ public class Preferences extends MinML{
 		}
 		if(name.equals("font")) fontSize = Convert.toInt(atts.getValue("size"));
 		if(name.equals("alias")) myAlias = atts.getValue("name");
+		if(name.equals("alias2")) myAlias2 = atts.getValue("name");
 		if(name.equals("location")){
-			Extractor ex = new Extractor(" " + atts.getValue("long"), " ", " ", 0,true);
+			curCentrePt.set(atts.getValue("lat")+" "+atts.getValue("long"));
+			//TODO Remove next 8 lines
+			/*Extractor ex = new Extractor(" " + atts.getValue("long"), " ", " ", 0,true);
 			mybrWE = ex.findNext();
 			mybrDeg = ex.findNext();
 			mybrMin = ex.findNext();
@@ -188,6 +224,7 @@ public class Preferences extends MinML{
 			mylgNS = ex.findNext();
 			mylgDeg = ex.findNext();
 			mylgMin = ex.findNext();
+			*/
 		}
 		if(name.equals("port")){
 			mySPO.portName = atts.getValue("portname");
@@ -241,6 +278,9 @@ public class Preferences extends MinML{
 		}
 		if(name.equals("datadir")) {
 			mydatadir = atts.getValue("dir");
+		}
+		if(name.equals("basedir")) {
+			baseDir = atts.getValue("dir");
 		}
 		if(name.equals("proxy")) {
 			myproxy = atts.getValue("prx");
@@ -306,17 +346,34 @@ public class Preferences extends MinML{
 			if (tmp != null) tableWidth[11] = Convert.parseInt(tmp);
 		}
 	}
+
+	public void characters( char ch[], int start, int length )
+	{
+		if (collectElement!=null) collectElement.append(ch,start,length); // Collect the name of the last profile
+	}	
 	
+	/**
+	* Method that gets called when the end of an element has been identified in pref.xml
+	*/
+	public void endElement(String tag){
+		if (tag.equals("lastProfile")) {
+			if (collectElement!=null) lastProfile=collectElement.toString();
+		}
+		collectElement=null;
+	}
+	
+
 	/**
 	* Method to save current preferences in the pref.xml file
 	*/
 	public void savePreferences(){
-		String lat = new String();
+		//TODO Remove next 6
+		/*String lat = new String();
 		String lon = new String();
 		lat = mylgNS+" "+ mylgDeg+ " " + mylgMin;
 		lon = mybrWE+" "+ mybrDeg + " " + mybrMin;
 		lat = STRreplace.replace(lat, ",", ".");
-		lon = STRreplace.replace(lon, ",", ".");
+		lon = STRreplace.replace(lon, ",", ".");*/
 		String datei = File.getProgramDirectory() + "/" + "pref.xml";
 		datei = datei.replace('\\', '/');
 		last_sync_opencaching = last_sync_opencaching==null?"20050801000000":last_sync_opencaching;
@@ -331,13 +388,11 @@ public class Preferences extends MinML{
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			outp.print("<preferences>\n");
 			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\"/>\n");
-			outp.print("	<location lat = \""+lat+"\" long = \""+lon+"\"/>\n");
-			outp.print("	<datadir dir = \""+ mydatadir +"\"/>\n");
+			outp.print("	<alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
 			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
 			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destinationHost = \""+ forwardGpsHost+"\"/>\n");
 						outp.print("	<tableType active = \"1\" width = \""+Convert.toString(tableWidth[1])+"\"/>\n");
-			//outp.print("    <logs number = \""+Convert.toString(nLogs)+"\"/>\n");
 			outp.print("	<tableD active = \""+Convert.toString(tablePrefs[2])+ "\"" +
 					               " width = \""+Convert.toString(tableWidth[2])+"\"/>\n");
 			outp.print("	<tableT active = \""+Convert.toString(tablePrefs[3])+ "\"" +
@@ -356,15 +411,19 @@ public class Preferences extends MinML{
 					   				  " width = \""+Convert.toString(tableWidth[10])+"\"/>\n");
 			outp.print("	<tableBear active = \""+Convert.toString(tablePrefs[11])+ "\"" +
 					   				  " width = \""+Convert.toString(tableWidth[11])+"\"/>\n");
-			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" lastsyncoc= \"" + lastSyncOC[0] + "\" lastdistoc= \"" + lastDistOC[0] + "\" />\n");
-			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] + "\" lastdistoc= \"" + lastDistOC[1] + "\" />\n");
-			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] + "\" lastdistoc= \"" + lastDistOC[2] + "\" />\n");
-			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" lastsyncoc= \"" + lastSyncOC[3] + "\" lastdistoc= \"" + lastDistOC[3] + "\" />\n");
 			outp.print("    <font size =\""+fontSize+"\"/>\n");
 			outp.print("	<browser name = \""+browser+"\"/>\n");
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
 			outp.print("    <garmin connection = \""+garminConn+"\"/>\n");
+			outp.print("    <lastProfile autoreload=\""+(autoReloadLastProfile?"yes":"no")+"\">"+lastProfile+"</lastProfile>\n"); //RB
+			// Obsolete data kept for backward compatibility
 			outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
+			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
+			outp.print("	<datadir dir = \""+ mydatadir +"\"/>\n");
+			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" lastsyncoc= \"" + lastSyncOC[0] + "\" lastdistoc= \"" + lastDistOC[0] + "\" />\n");
+			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] + "\" lastdistoc= \"" + lastDistOC[1] + "\" />\n");
+			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] + "\" lastdistoc= \"" + lastDistOC[2] + "\" />\n");
+			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" lastsyncoc= \"" + lastSyncOC[3] + "\" lastdistoc= \"" + lastDistOC[3] + "\" />\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
@@ -381,9 +440,9 @@ public class Preferences extends MinML{
 	public void log(String text){
 		Time dtm = new Time();
 		dtm.getTime();
-		dtm.setFormat("dd.MM.yyyy'/'H:m");
+		dtm.setFormat("dd.MM.yyyy'/'HH:mm");
 		text = dtm.toString()+ ": "+ text + "\n";
-		File logFile = new File("log.txt");
+		File logFile = new File(LOGFILENAME);
 		Stream strout = null;
 		try{
 			strout = logFile.toWritableStream(true);
@@ -401,7 +460,7 @@ public class Preferences extends MinML{
 	 * to a huge size!
 	 */
 	public void logInit(){
-		File logFile = new File("log.txt");
+		File logFile = new File(LOGFILENAME);
 		logFile.delete();
 	}
 }

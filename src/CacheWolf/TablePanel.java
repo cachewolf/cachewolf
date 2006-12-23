@@ -17,15 +17,15 @@ public class TablePanel extends CellPanel{
 	myTableControl tc;
 	myTableModel myMod;
 	int selectedCache;
-	Preferences myPreferences = new Preferences();
+	Preferences pref = new Preferences();
 	Vector cacheDB;
 	GotoPanel myGotoPanel;
 	StatusBar statBar;
 	
-	public TablePanel(Vector DB, Preferences pref, StatusBar statBar){
+	public TablePanel(Vector DB, Preferences p, StatusBar statBar){
 		this.statBar = statBar;
 		cacheDB = DB;
-		myPreferences = pref;
+		pref = p;
 		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
 		String[] jester;
 		int colWidth[];
@@ -51,7 +51,7 @@ public class TablePanel extends CellPanel{
 		Menu m = new Menu(new String[]{MyLocale.getMsg(1010,"Goto"),MyLocale.getMsg(1011,"Filter"),MyLocale.getMsg(1012,"Delete"),MyLocale.getMsg(1014,"Update"),"-",MyLocale.getMsg(1015,"Select all"),MyLocale.getMsg(1016,"De-select all")},MyLocale.getMsg(1013,"With selection"));
 		tc.setMenu(m);
 		tc.db = cacheDB;
-		tc.pref = pref;
+		tc.pref = p;
 		tc.tbp = this;
 		myMod = new myTableModel(cacheDB, jester, colWidth, tc, getFontMetrics());
 		myMod.hasRowHeaders = false;
@@ -88,7 +88,7 @@ public class TablePanel extends CellPanel{
 	
 	public void resetModel(Vector cacheDB) {
 		myMod.setVector(cacheDB);
-		updateBearingDistance(cacheDB, myPreferences);
+		updateBearingDistance(cacheDB, pref);
 		////Vm.debug("IS mypref loaded? " + myPreferences.mylgDeg);
 		tc.setTableModel(myMod);
 		tc.update(true);
@@ -138,32 +138,27 @@ public class TablePanel extends CellPanel{
 	public static void updateBearingDistance(Vector cacheDB, Preferences p){
 		//myPreferences = p;
 
-		CWPoint fromPoint = new CWPoint(p.mylgNS, p.mylgDeg, p.mylgMin,"0",
-										p.mybrWE, p.mybrDeg, p.mybrMin,"0", CWPoint.DMM);
+		CWPoint fromPoint = new CWPoint(p.curCentrePt); // Clone current centre to be sure
 		
 		//Vm.debug(" New location: " + fromPoint);
 		
 		int anz = cacheDB.getCount();
-		anz--;
-		CacheHolder ch = new CacheHolder();
+		CacheHolder ch;
 		CWPoint toPoint = new CWPoint();
 		// Jetzt durch die CacheDaten schleifen
-		while(anz >= 0){
-			ch = new CacheHolder();
-			ch = (CacheHolder)cacheDB.get(anz);
+		while(--anz >= 0){
+			ch = (CacheHolder)cacheDB.get(anz); // This returns a pointer to the CacheHolder object
 			if(ch.LatLon.length()>4){
-				toPoint.set(ch.LatLon, CWPoint.CW);
-				ewe.sys.Double db = new ewe.sys.Double();
+				toPoint.set(ch.LatLon, CWPoint.CW); // Fast parse with traditional parse algorithm
 				ch.kilom = fromPoint.getDistance(toPoint);
 				ch.degrees = fromPoint.getBearing(toPoint);
 				ch.bearing = CWPoint.getDirection(ch.degrees);
-				db.set(ch.kilom);
-				ch.distance = MyLocale.formatDouble(db,"0.00");
+				ch.distance = MyLocale.formatDouble(ch.kilom,"0.00");
 				ch.distance = ch.distance + " km";
-				cacheDB.del(anz);
-				cacheDB.add(anz, ch);
+// skg20061223: These two lines are superfluous as we have already updated the correct CacheHolder object
+//				cacheDB.del(anz);
+//				cacheDB.add(anz, ch);
 			}
-			anz--;
 		}
 	} //updateBearingDistance
 	
