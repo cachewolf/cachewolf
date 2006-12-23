@@ -122,10 +122,10 @@ public class MainForm extends Form {
 	*	@see	MyXMLBuilder
 	*/
 	public void LoadAXML() throws Exception{
-		MyXMLBuilder myB = new MyXMLBuilder(cacheDB, myPreferences.mydatadir);
-		myB.doIt();
+		//MyXMLBuilder myB = new MyXMLBuilder(cacheDB, myPreferences.mydatadir);
+		//myB.doIt();
 		//Vm.debug(Convert.toString(cacheDB.size()));
-		//CacheReaderWriter.readIndex(cacheDB, myPreferences.mydatadir);
+		CacheReaderWriter.readIndex(cacheDB, myPreferences.mydatadir);
 	}
 	
 	public void doPaint(Graphics g, Rect r){
