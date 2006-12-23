@@ -79,7 +79,7 @@ public class MainTab extends mTabbedPanel {
 	}
 	
 	public void updateBearDist(){
-		tbP.myPreferences = myPreferences;
+		tbP.pref = myPreferences;
 		TablePanel.updateBearingDistance(cDB,myPreferences);
 		tbP.refreshTable();
 	}

@@ -32,7 +32,7 @@ public class OCXMLImporter extends MinML {
 	Vector cacheDB;
 	InfoBox inf;
 	CacheHolder holder;
-	Preferences myPref = new Preferences();
+	Preferences pref = new Preferences();
 	Time dateOfthisSync;
 	String strData = new String();
 	int picCnt;
@@ -51,16 +51,13 @@ public class OCXMLImporter extends MinML {
 	String user;
 	
 
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
-	
 	public OCXMLImporter(Vector DB, Preferences pf)
 	{
 		cacheDB = DB;
-		myPref = pf;
-		if(myPref.last_sync_opencaching == null ||
-			myPref.last_sync_opencaching.length() < 12){
-			myPref.last_sync_opencaching = "20050801000000";
+		pref = pf;
+		if(pref.last_sync_opencaching == null ||
+			pref.last_sync_opencaching.length() < 12){
+			pref.last_sync_opencaching = "20050801000000";
 			incUpdate = false;
 		}
 		user = pf.myAlias.toLowerCase();
@@ -81,23 +78,22 @@ public class OCXMLImporter extends MinML {
 			String file = new String();
 			String url = new String();
 			
-			String lastS =  myPref.last_sync_opencaching;
-			CWPoint center = new CWPoint(myPref.mylgNS, myPref.mylgDeg, myPref.mylgMin,"0",
-					myPref.mybrWE, myPref.mybrDeg, myPref.mybrMin,"0", CWPoint.DMM);
+			String lastS =  pref.last_sync_opencaching;
+			CWPoint center = pref.curCentrePt; // No need to clone curCentrePt as center is only read
 
-			OCXMLImporterScreen importOpt = new OCXMLImporterScreen(myPref, MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
+			OCXMLImporterScreen importOpt = new OCXMLImporterScreen(pref, MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
 			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
     		Vm.showWait(true);
 			String dist = importOpt.distanceInput.getText();
 			if (dist.length()== 0) return;
 			//check, if distance is greater than before
-			if (Convert.toInt(dist) > Convert.toInt(myPref.distOC) ||
-			  myPref.downloadmissingOC  ){
+			if (Convert.toInt(dist) > Convert.toInt(pref.distOC) ||
+			  pref.downloadmissingOC  ){
 				// resysnc
 				lastS = "20050801000000";
 				incUpdate = false;
 			}
-			myPref.distOC = dist;
+			pref.distOC = dist;
 			// Clear status of caches in db
 			CacheHolder ch;
 			for(int i = 0; i<cacheDB.size();i++){
@@ -121,7 +117,7 @@ public class OCXMLImporter extends MinML {
 			url +="&charset=utf-8";
 			url +="&cdata=0";
 			url +="&session=0";
-			inf = new InfoBox("Opencaching download", (String)lr.get(1608,"downloading data\n from opencaching"));
+			inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"));
 			inf.setPreferredSize(210, 120);
 			inf.exec();
 			//Vm.debug(url);
@@ -130,10 +126,10 @@ public class OCXMLImporter extends MinML {
 			//file = "628-0-1.zip";
 			
 			//parse
-			File tmpFile = new File(myPref.mydatadir + file);
+			File tmpFile = new File(pref.mydatadir + file);
 			if (tmpFile.getLength() == 0 ) throw new IOException("no updates available");
 			
-			ZipFile zif = new ZipFile (myPref.mydatadir + file);
+			ZipFile zif = new ZipFile (pref.mydatadir + file);
 			ZipEntry zipEnt;
 			Enumeration zipEnum = zif.entries();
 			// there could be more than one file in the archive
@@ -150,19 +146,19 @@ public class OCXMLImporter extends MinML {
 			}
 			zif.close();
 		}catch (ZipException e){
-			finalMessage=(String)lr.get(1614,"Error while unzipping udpate file");
+			finalMessage=MyLocale.getMsg(1614,"Error while unzipping udpate file");
 			success = false;
 		}catch (IOException e){
 			if (e.getMessage().equalsIgnoreCase("no updates available")) { finalMessage="No updates available"; success = false; }
 			else {
 			if (e.getMessage().equalsIgnoreCase("could not connect") ||
 					e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
-				finalMessage=(String)lr.get(1616,"Error: could not download udpate file from opencaching.de");
+				finalMessage=MyLocale.getMsg(1616,"Error: could not download udpate file from opencaching.de");
 			} else { finalMessage = "IOException: "+e.getMessage(); }
 			success = false;
 			}
 		}catch (Exception e){ // here schould be used the correct exepion
-			finalMessage=(String)lr.get(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.wayPoint;
+			finalMessage=MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.wayPoint;
 			success = false;
 			Vm.debug("Parse error: " + state + " " + holder.wayPoint);
 			e.printStackTrace();
@@ -170,11 +166,11 @@ public class OCXMLImporter extends MinML {
 		Vm.showWait(false);
 		if (success) {
 			// @TODO: this should be saved in the index.xml not with the profiles!
-			myPref.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
-			myPref.savePreferences();
+			pref.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
+			pref.savePreferences();
 			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveIndex(cacheDB, myPref.mydatadir);
-			finalMessage=(String)lr.get(1607,"Update from opencaching successful");
+			crw.saveIndex(cacheDB, pref.mydatadir);
+			finalMessage=MyLocale.getMsg(1607,"Update from opencaching successful");
 		}
 		inf.close(0);
 		MessageBox mb = new MessageBox("Opencaching",finalMessage,MessageBox.OKB);
@@ -242,7 +238,7 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void startCache(String name, AttributeList atts){
-		inf.setInfo((String)lr.get(1609,"Importing Cache:")+" " + numCacheImported + "\n");
+		inf.setInfo(MyLocale.getMsg(1609,"Importing Cache:")+" " + numCacheImported + "\n");
 		if(name.equals("id")){
 			cacheID = atts.getValue("id");
 		}
@@ -272,7 +268,7 @@ public class OCXMLImporter extends MinML {
 
 	}
 	private void startCacheDesc(String name, AttributeList atts){
-		inf.setInfo((String)lr.get(1611,"Importing cache description:")+" " + numDescImported);
+		inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported);
 		if (name.equals("cachedesc")){
 			ignoreDesc = false;
 		}
@@ -289,12 +285,12 @@ public class OCXMLImporter extends MinML {
 	
 	private void startPicture(String name, AttributeList atts){
 		if(name.equals("picture")){
-			inf.setInfo((String)lr.get(1613,"Pictures:")+" " + ++picCnt);
+			inf.setInfo(MyLocale.getMsg(1613,"Pictures:")+" " + ++picCnt);
 		}
 	}
 
 	private void startCacheLog(String name, AttributeList atts){
-		inf.setInfo((String)lr.get(1612,"Importing Cachlog:")+" " + numLogImported);
+		inf.setInfo(MyLocale.getMsg(1612,"Importing Cachlog:")+" " + numLogImported);
 		if (name.equals("logtype")){
 			if(atts.getValue("id").equals("1")) logIcon = GPXImporter.typeText2Image("Found");
 			if(atts.getValue("id").equals("2")) {
@@ -335,25 +331,25 @@ public class OCXMLImporter extends MinML {
 				holder.ImagesText.clear();
 			}
 			if(holder.LatLon.length() > 1 && holder.is_archived == false &&
-					myPref.downloadMapsOC){
+					pref.downloadMapsOC){
 				
 				ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 				pll.parse();
-				MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), myPref.myproxy, myPref.myproxyport);
+				MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
 				// MapLoader tests itself if the file already exists and doesnt download if so.
-				String filename = myPref.mydatadir + "/" + holder.wayPoint + "_map.gif";
+				String filename = pref.mydatadir + "/" + holder.wayPoint + "_map.gif";
 				if (!fileExits(filename)){
-					inf.setInfo((String)lr.get(1609,"Importing Cache:")+" " + numCacheImported + "\n"+(String)lr.get(1610,"Downloading missing map")+" 1");
+					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache:")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 1");
 					mpl.loadTo(filename, "3"); }
-				filename = myPref.mydatadir + "/" + holder.wayPoint + "_map_2.gif";
+				filename = pref.mydatadir + "/" + holder.wayPoint + "_map_2.gif";
 				if (!fileExits(filename)){
-					inf.setInfo((String)lr.get(1609,"Importing Cache: ")+" " + numCacheImported + "\n"+(String)lr.get(1610,"Downloading missing map")+" 2");
+					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache: ")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 2");
 					mpl.loadTo(filename, "10"); }
 			}
 			// save all
 			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(holder,myPref.mydatadir);
-			crw.saveIndex(cacheDB,myPref.mydatadir);
+			crw.saveCacheDetails(holder,pref.mydatadir);
+			crw.saveIndex(cacheDB,pref.mydatadir);
 			return;
 		}
 		if(name.equals("id")){
@@ -401,7 +397,7 @@ public class OCXMLImporter extends MinML {
 
 		if (!ignoreDesc){
 			if (name.equals("cachedesc")){
-				if (myPref.downloadPicsOC && holder.is_HTML) {
+				if (pref.downloadPicsOC && holder.is_HTML) {
 					String fetchUrl, imgTag, imgAltText;
 					Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthält keine Anführungszeichen
 					Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
@@ -414,10 +410,10 @@ public class OCXMLImporter extends MinML {
 						fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anführungszeichen 
 						if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
 						if (fetchUrl==null) { // TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
-							(new MessageBox((String)lr.get(144, "Warning"),(String)lr.get(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.wayPoint), MessageBox.OKB)).exec();
+							(new MessageBox(MyLocale.getMsg(144, "Warning"),MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.wayPoint), MessageBox.OKB)).exec();
 							continue;
 						}
-						inf.setInfo((String)lr.get(1611,"Importing cache description:")+" " + numDescImported + "\n"+(String)lr.get(1620, "downloading embedded images: ") + numDownloaded++);
+						inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported + "\n"+MyLocale.getMsg(1620, "downloading embedded images: ") + numDownloaded++);
 						if (imgRegexAlt.search(imgTag)) {
 							imgAltText=imgRegexAlt.stringMatched(1);
 							if (imgAltText==null)	imgAltText=imgRegexAlt.stringMatched(2);
@@ -432,7 +428,7 @@ public class OCXMLImporter extends MinML {
 					}
 				}
 				CacheReaderWriter crw = new CacheReaderWriter();
-				crw.saveCacheDetails(holder,myPref.mydatadir);
+				crw.saveCacheDetails(holder,pref.mydatadir);
 				return;
 			}
 
@@ -465,12 +461,12 @@ public class OCXMLImporter extends MinML {
 		// add title
 		holder.ImagesText.add(picDesc);
 		try {
-			File ftest = new File(myPref.mydatadir + fileName);
+			File ftest = new File(pref.mydatadir + fileName);
 			if (ftest.exists()){
 				holder.Images.add(fileName);
 			}
 			else {
-				if (myPref.downloadPicsOC) {
+				if (pref.downloadPicsOC) {
 					holder.Images.add(fetch(fetchURL, fileName));
 				}
 			}
@@ -478,9 +474,9 @@ public class OCXMLImporter extends MinML {
 			String ErrMessage = new String ("Ignoring IOException: "+e.getMessage())+ "\nwhile downloading picture:"+fileName+"\nfrom URL:"+fetchURL+"\nin cache: "+holder.wayPoint; 
 			if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect") ||
 					e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
-				ErrMessage=(String)lr.get(1618,"Ignoring error in cache ")+holder.wayPoint+(String)lr.get(1619,": could not download image from URL: ")+fetchURL;
+				ErrMessage=MyLocale.getMsg(1618,"Ignoring error in cache ")+holder.wayPoint+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
 			} 
-			(new MessageBox((String)lr.get(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
+			(new MessageBox(MyLocale.getMsg(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
 			Vm.debug("Could not load Image " + fetchURL);
 			e.printStackTrace();
 		}
@@ -512,7 +508,7 @@ public class OCXMLImporter extends MinML {
 			//String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
 			getPic(picUrl,picTitle);
 			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(holder,myPref.mydatadir);
+			crw.saveCacheDetails(holder,pref.mydatadir);
 			return;
 		}
 	}
@@ -521,7 +517,7 @@ public class OCXMLImporter extends MinML {
 		if (name.equals("cachelog")){
 			holder.addLog(logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
 			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(holder,myPref.mydatadir);
+			crw.saveCacheDetails(holder,pref.mydatadir);
 			return;
 		}
 
@@ -554,8 +550,8 @@ public class OCXMLImporter extends MinML {
 
 			HttpConnection conn, fileConn;
 			
-			if(myPref.myproxy.length() > 0){
-				conn = new HttpConnection(myPref.myproxy, Convert.parseInt(myPref.myproxyport), address);
+			if(pref.myproxy.length() > 0){
+				conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
 				Vm.debug("Proxy here: " + address);
 			} else {
 				conn = new HttpConnection(address);
@@ -581,7 +577,7 @@ public class OCXMLImporter extends MinML {
 			}
 			//Vm.debug("Save: " + myPref.mydatadir + fileName);
 			//Vm.debug("Daten: " + daten.length);
-			BufferedOutputStream outp =  new BufferedOutputStream(new FileOutputStream(myPref.mydatadir + fileName));
+			BufferedOutputStream outp =  new BufferedOutputStream(new FileOutputStream(pref.mydatadir + fileName));
 			outp.write(daten.toBytes());
 			outp.close();
 			sock.close();
@@ -648,7 +644,7 @@ public class OCXMLImporter extends MinML {
 		CacheReaderWriter crw = new CacheReaderWriter();
 		ch = (CacheHolder) cacheDB.get(index);
 		try {
-			crw.readCache(ch, myPref.mydatadir);
+			crw.readCache(ch, pref.mydatadir);
 		} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
 		return ch;
 	}

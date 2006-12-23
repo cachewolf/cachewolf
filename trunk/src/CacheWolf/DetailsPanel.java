@@ -12,8 +12,6 @@ import ewe.sys.Long;
 *	Class ID = 300
 */
 public class DetailsPanel extends CellPanel{
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	mInput wayPoint = new mInput();
 	mInput wayName = new mInput();
 	mButton btnWayLoc = new mButton();
@@ -24,7 +22,7 @@ public class DetailsPanel extends CellPanel{
 	mCheckBox chkDelete, chkCenter;
 	mChoice wayType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead","Reference"},0);
 	mChoice waySize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
-	mComboBox wayStatus = new mComboBox(new String[]{"", (String)lr.get(313,"Flag 1"), (String)lr.get(314,"Flag 2"), (String)lr.get(315,"Flag 3"), (String)lr.get(316,"Flag 4"), (String)lr.get(317,"Search"), (String)lr.get(318,"Found"), (String)lr.get(319,"Not Found"), (String)lr.get(320,"Owner")},0);
+	mComboBox wayStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
 	mButton btCrWp, showBug, showMap, addDateTime, btnGoto, addPicture;
 	Vector cacheDB;
 	CacheHolder thisCache;
@@ -36,12 +34,12 @@ public class DetailsPanel extends CellPanel{
 	public boolean dirty_status = false;
 	boolean newWp = false;
 	MainTab mainT;
-	Preferences pref;
+	Preferences pref; // Test
 	
 	public DetailsPanel(){
-		//String welcomeMessage = (String)lr.get(1,"how about that?");
+		//String welcomeMessage = MyLocale.getMsg(1,"how about that?");
 		
-		toolP.addNext(btCrWp = new mButton((String)lr.get(311,"Create Waypoint")),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		toolP.addNext(btCrWp = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		toolP.addNext(btnGoto = new mButton("Goto"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		mImage mI = new mImage("bug.gif");
 		mImage mI2 = new mImage("globe_small.gif");
@@ -60,32 +58,32 @@ public class DetailsPanel extends CellPanel{
 		//showMap.modify(Control.Disabled,0);
 		this.addLast(toolP,CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(3,1));;
 		
-		this.addNext(new mLabel((String)lr.get(300,"Type:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTHWEST));
+		this.addNext(new mLabel(MyLocale.getMsg(300,"Type:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTHWEST));
 		this.addLast(wayType,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addNext(new mLabel((String)lr.get(301,"Size:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(new mLabel(MyLocale.getMsg(301,"Size:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(waySize,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(302,"Waypoint:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(new mLabel(MyLocale.getMsg(302,"Waypoint:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(wayPoint.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(303,"Name:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(new mLabel(MyLocale.getMsg(303,"Name:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(wayName.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(304,"Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(new mLabel(MyLocale.getMsg(304,"Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(btnWayLoc.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(new mLabel(MyLocale.getMsg(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(wayHidden.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(306,"Owner:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(new mLabel(MyLocale.getMsg(306,"Owner:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(wayOwner.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(new mLabel(MyLocale.getMsg(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(wayStatus.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel((String)lr.get(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addNext(chkCenter = new mCheckBox((String)lr.get(309,"Make Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(chkDelete = new mCheckBox((String)lr.get(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(new mLabel(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(chkCenter = new mCheckBox(MyLocale.getMsg(309,"Make Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(chkDelete = new mCheckBox(MyLocale.getMsg(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
 		//this.addLast(sbp, this.STRETCH, this.FILL);
@@ -98,11 +96,11 @@ public class DetailsPanel extends CellPanel{
 	public void setDetails(CacheHolder ch, Vector DB, MainTab mt, Preferences p){
 		if (this.newWp){
 			this.newWp = false;
-			btCrWp.setText((String)lr.get(312,"Save"));
+			btCrWp.setText(MyLocale.getMsg(312,"Save"));
 			return;
 		}
 		else {
-			btCrWp.setText((String)lr.get(311,"Create Waypoint"));
+			btCrWp.setText(MyLocale.getMsg(311,"Create Waypoint"));
 		}
 		pref = p;
 		mainT = mt;
@@ -137,23 +135,19 @@ public class DetailsPanel extends CellPanel{
 		if(ch.CacheSize.equals("None")) waySize.setInt(7);
 		if(ch.CacheSize.equals("Not chosen")) waySize.setInt(7);
 		
-		if(ch.is_found == true) wayStatus.setText((String)lr.get(318,"Found"));
+		if(ch.is_found == true) wayStatus.setText(MyLocale.getMsg(318,"Found"));
 	}
 	
 	private String getNewWayPointName(Vector DB){
-		String strWp;
-		Long  lgWp = new Long();
+		String strWp=null;
+		long  lgWp=1;
 		//Create new waypoint,look if not in db
-		lgWp.set(1);
-		strWp = "CW" + l.format(Locale.FORMAT_PARSE_NUMBER, lgWp, "0000");
-		CacheHolder tmpCh = new CacheHolder();
 		for(int i = 0;i < DB.size();i++){
-			tmpCh = (CacheHolder)DB.get(i);
-			if(tmpCh.wayPoint.indexOf(strWp) >=0 ){
+			strWp = "CW" + MyLocale.formatLong(lgWp, "0000");
+			if(((CacheHolder)DB.get(i)).wayPoint.indexOf(strWp) >=0 ){
 				//waypoint exists in database
-				lgWp.set(lgWp.value + 1);
-				strWp = "CW" + l.format(Locale.FORMAT_PARSE_NUMBER, lgWp, "0000");
-				i = 0;
+				lgWp++;
+				i = -1; // Because i++ will be executed next, so we start the loop with 0
 			}
 		}
 		return strWp;
@@ -296,7 +290,7 @@ public class DetailsPanel extends CellPanel{
 					MapDetailForm mdf = new MapDetailForm(thisCache.wayPoint, pref);
 					mdf.execute();
 				} catch (IllegalArgumentException e) {
-					MessageBox tmp = new MessageBox((String)lr.get(321,"Error"), (String)lr.get(322,"Kann Bild/Karte nicht finden")+": "+e.getMessage(), MessageBox.OKB);
+					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden")+": "+e.getMessage(), MessageBox.OKB);
 					tmp.exec();
 				}
 			}
@@ -305,40 +299,14 @@ public class DetailsPanel extends CellPanel{
 				is.execute();
 			}
 			if (ev.target == chkCenter){
-				int counter = 0;
-				//Vm.debug("This Cache: " + thisCache.LatLon);
-				Extractor ex = new Extractor(" " + thisCache.LatLon, " ", " ", 0, true);
-				String br2 = new String(); 
-				String lg2 = new String();
-				String br2_buf = new String(); 
-				String lg2_buf = new String();
-				String br2WE = new String();
-				String lg2NS = new String();
-				while(ex.endOfSearch() != true){
-					if(counter == 0) lg2NS = ex.findNext();
-					if(counter == 1) lg2 = ex.findNext();
-					if(counter == 2) lg2_buf = ex.findNext();
-					if(counter == 3) br2WE = ex.findNext();
-					if(counter == 4) br2 = ex.findNext();
-					if(counter == 5) br2_buf = ex.findNext();
-					counter++;
-					if(counter >= 10) break;
-				}//while
-				////Vm.debug("Extracted: " + lg2NS + " " + lg2 + " " + lg2_buf);
-				////Vm.debug("Extracted: " + br2WE + " " + br2 + " " + br2_buf);
-				pref.mylgNS = lg2NS;
-				
-				if(lg2.length() == 3) pref.mylgDeg = lg2.substring(0,2); 
-				else pref.mylgDeg = lg2;
-				
-				pref.mylgMin = lg2_buf;
-				pref.mybrWE = br2WE;
-				
-				if(br2.length() == 4) pref.mybrDeg = br2.substring(0,3); 
-				else pref.mybrDeg = br2;
-				
-				pref.mybrMin = br2_buf;
-				mainT.updateBearDist();
+				CWPoint cp=new CWPoint(thisCache.LatLon);
+				if (cp.latDec == 0 && cp.lonDec == 0){
+					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
+					tmpMB.exec();
+				} else {				
+					pref.curCentrePt.set(cp);
+					mainT.updateBearDist();
+				}
 			}
 			if (ev.target == addDateTime){
 				String note = wayNotes.getText();
@@ -357,10 +325,10 @@ public class DetailsPanel extends CellPanel{
 				thisCache.addUserImage(pref);
 			}
 			if (ev.target == btCrWp){
-				if(btCrWp.getText().equals((String)lr.get(312,"Save"))){
+				if(btCrWp.getText().equals(MyLocale.getMsg(312,"Save"))){
 					saveWpt();
 				}
-				if(btCrWp.getText().equals((String)lr.get(311,"Create Waypoint"))){
+				if(btCrWp.getText().equals(MyLocale.getMsg(311,"Create Waypoint"))){
 					thisCache = new CacheHolder();
 					dirty_new = true;
 					wayPoint.setText(getNewWayPointName(cacheDB));
@@ -375,8 +343,8 @@ public class DetailsPanel extends CellPanel{
 					thisCache.wayPoint = wayPoint.getText();
 					cacheDB.add(thisCache);
 				}
-				if(btCrWp.getText().equals((String)lr.get(312,"Save"))) btCrWp.setText((String)lr.get(311,"Create Waypoint"));
-				else btCrWp.setText((String)lr.get(312,"Save"));
+				if(btCrWp.getText().equals(MyLocale.getMsg(312,"Save"))) btCrWp.setText(MyLocale.getMsg(311,"Create Waypoint"));
+				else btCrWp.setText(MyLocale.getMsg(312,"Save"));
 			}
 			if (ev.target == btnGoto){
 				// TODO if something changed saveWpt();

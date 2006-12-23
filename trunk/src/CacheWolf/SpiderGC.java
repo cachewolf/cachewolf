@@ -205,7 +205,7 @@ public class SpiderGC{
 	public void doIt(){
 		Vm.showWait(true);
 		String start = new String();
-		CWPoint origin = new CWPoint(pref.mylgNS + " " +pref.mylgDeg + " " + pref.mylgMin + " " + pref.mybrWE + " " +pref.mybrDeg + " " + pref.mybrMin, CWPoint.CW);
+		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		String doc = new String();
 		

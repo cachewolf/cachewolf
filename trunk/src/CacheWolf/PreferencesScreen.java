@@ -13,13 +13,12 @@ import ewe.sys.*;
 *	Class ID=600
 */
 public class PreferencesScreen extends Form {
-	mButton cancelB, applyB, brwBt, gpsB;
+	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
 	mChoice NS, EW;
 	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear;
 	Preferences myPreferences = new Preferences();
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+
 	CellPanel content = new CellPanel();
 	ScrollBarPanel scp;
 	
@@ -27,13 +26,13 @@ public class PreferencesScreen extends Form {
 		scp = new ScrollBarPanel(content);
 		myPreferences = pref;
 		
-		this.title = (String)lr.get(600,"Preferences");
+		this.title = MyLocale.getMsg(600,"Preferences");
 		//this.resizable = false;
 		//this.moveable = true;
 		//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
 		
 		
-		content.addNext(new mLabel((String)lr.get(601,"Your Alias:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addNext(new mLabel(MyLocale.getMsg(601,"Your Alias:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		content.addLast(new mLabel("Browser:"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		Alias = new mInput();
@@ -47,23 +46,10 @@ public class PreferencesScreen extends Form {
 
 		// display some things only, if no profile is active
 		if (pref.currProfile == 0){
-			content.addLast(new mLabel((String)lr.get(602,"Your Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			content.addNext(NS = new mChoice(new String[]{"N", "S"},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			if(myPreferences.mylgNS.equals("N")) NS.setInt(0);
-			else NS.setInt(1);
-			content.addNext(NSDeg = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			NSDeg.setText(myPreferences.mylgDeg);
-			content.addLast(NSm = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			NSm.setText(myPreferences.mylgMin);
-			content.addNext(EW = new mChoice(new String[]{"E", "W"},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			if(myPreferences.mybrWE.equals("E")) EW.setInt(0);
-			else EW.setInt(1);
-			content.addNext(EWDeg = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			EWDeg.setText(myPreferences.mybrDeg);
-			content.addLast(EWm = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			EWm.setText(myPreferences.mybrMin);
-			content.addNext(new mLabel((String)lr.get(603,"Data Directory:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			content.addLast(brwBt = new mButton((String)lr.get(604,"Browse")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			content.addLast(new mLabel(MyLocale.getMsg(602,"Your Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			content.addLast(btnCentre = new mButton(myPreferences.curCentrePt.toString(CWPoint.CW)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+			content.addNext(new mLabel(MyLocale.getMsg(603,"Data Directory:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			content.addLast(brwBt = new mButton(MyLocale.getMsg(604,"Browse")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
 			DataDir = new mInput();
 			DataDir.setText(myPreferences.mydatadir);
 			content.addLast(DataDir.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -80,25 +66,25 @@ public class PreferencesScreen extends Form {
 		content.addLast(fontSize = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		ProxyPort.setText(myPreferences.myproxyport);
 		fontSize.setText(Convert.toString(myPreferences.fontSize));
-		content.addLast(new mLabel((String)lr.get(605,"Display Preferences")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addNext(dif = new mCheckBox((String)lr.get(606,"Difficulty")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addLast(new mLabel(MyLocale.getMsg(605,"Display Preferences")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addNext(dif = new mCheckBox(MyLocale.getMsg(606,"Difficulty")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(myPreferences.tablePrefs[2] == 1) dif.setState(true);
-		content.addNext(ter = new mCheckBox((String)lr.get(607,"Terrain")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addNext(ter = new mCheckBox(MyLocale.getMsg(607,"Terrain")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(myPreferences.tablePrefs[3] == 1) ter.setState(true);
-		content.addLast(loc = new mCheckBox((String)lr.get(608,"Location")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addLast(loc = new mCheckBox(MyLocale.getMsg(608,"Location")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(myPreferences.tablePrefs[6] == 1) loc.setState(true);
-		content.addNext(own = new mCheckBox((String)lr.get(609,"Owner")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addNext(own = new mCheckBox(MyLocale.getMsg(609,"Owner")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(myPreferences.tablePrefs[7] == 1) own.setState(true); 
-		content.addNext(hid = new mCheckBox((String)lr.get(610,"Hidden")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addNext(hid = new mCheckBox(MyLocale.getMsg(610,"Hidden")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(myPreferences.tablePrefs[8] == 1) hid.setState(true);
-		content.addLast(stat = new mCheckBox((String)lr.get(611,"Status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addLast(stat = new mCheckBox(MyLocale.getMsg(611,"Status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(myPreferences.tablePrefs[9] == 1) stat.setState(true);
-		content.addNext(dist = new mCheckBox((String)lr.get(612,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addNext(dist = new mCheckBox(MyLocale.getMsg(612,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(myPreferences.tablePrefs[10] == 1) dist.setState(true);
-		content.addLast(bear = new mCheckBox((String)lr.get(613,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addLast(bear = new mCheckBox(MyLocale.getMsg(613,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(myPreferences.tablePrefs[11] == 1) bear.setState(true);
-		content.addNext(cancelB = new mButton((String)lr.get(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addLast(applyB = new mButton((String)lr.get(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addNext(cancelB = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		content.addLast(applyB = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		
 		this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 	}
@@ -110,12 +96,7 @@ public class PreferencesScreen extends Form {
 			}
 			if (ev.target == applyB){
 				if (myPreferences.currProfile == 0){
-					myPreferences.mylgNS = NS.getText();
-					myPreferences.mylgDeg = NSDeg.getText();
-					myPreferences.mylgMin = NSm.getText();
-					myPreferences.mybrWE = EW.getText();
-					myPreferences.mybrDeg = EWDeg.getText();
-					myPreferences.mybrMin = EWm.getText();
+					myPreferences.curCentrePt.set(btnCentre.getText());
 					myPreferences.mydatadir = DataDir.getText();
 				}
 				myPreferences.fontSize = Convert.toInt(fontSize.getText());
@@ -147,7 +128,7 @@ public class PreferencesScreen extends Form {
 			}
 			if(ev.target == brwBt){
 				FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, myPreferences.mydatadir);
-				fc.setTitle((String)lr.get(616,"Select data directory"));
+				fc.setTitle(MyLocale.getMsg(616,"Select data directory"));
 				if(fc.execute() != FileChooser.IDCANCEL)	DataDir.setText(fc.getChosen()+"/");
 			}
 			if (ev.target == gpsB){
@@ -165,6 +146,16 @@ public class PreferencesScreen extends Form {
 					myPreferences.forwardGpsHost = spo.inputBoxForwardHost.getText();
 				}
 			}
+			// change destination waypoint
+			if (ev.target == btnCentre){
+				CoordsScreen cs = new CoordsScreen();
+				cs.setFields(myPreferences.curCentrePt, CWPoint.CW);
+				if (cs.execute()== CoordsScreen.IDOK){
+					myPreferences.curCentrePt.set(cs.getCoords());
+					btnCentre.setText(myPreferences.curCentrePt.toString(CWPoint.CW));
+				}
+			}
+			
 		}
 		super.onEvent(ev);
 	}
