@@ -11,8 +11,6 @@ import ewe.sys.*;
 *	Class ID = 1200
 *	@see MainForm
 *	@see MainMenu
-*   Last Change: 
-*     20061123 salzkammergut: Converted to Mylocale, added goto icon, added check for small screen width 
 */
 public class MainTab extends mTabbedPanel {
 	DescriptionPanel descP= new DescriptionPanel();
@@ -21,7 +19,7 @@ public class MainTab extends mTabbedPanel {
 	Vector cDB;
 	DetailsPanel detP = new DetailsPanel();
 	CalcPanel calcP = new CalcPanel();
-	Preferences myPreferences = new Preferences();
+	Preferences pref = new Preferences();
 	GotoPanel gotoP; 
 	RadarPanel radarP = new RadarPanel();
 	ImagePanel imageP;
@@ -31,15 +29,15 @@ public class MainTab extends mTabbedPanel {
 	//Locale l = Vm.getLocale();
 	//LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	
-	public MainTab(Vector cacheDB, Preferences pref, StatusBar statBar){
+	public MainTab(Vector cacheDB, Preferences p, StatusBar statBar){
 		MyLocale.setSIPButton();
-		myPreferences = pref;
+		pref = p;
 		cDB = cacheDB;
 		ch.wayPoint = "null";
 		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
 		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
 
-		Card c = this.addCard(tbP = new TablePanel(cDB, myPreferences, statBar), MyLocale.getMsg(1200,"List"), null);
+		Card c = this.addCard(tbP = new TablePanel(cDB, pref, statBar), MyLocale.getMsg(1200,"List"), null);
 		
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
 		c.iconize(new Image("details.gif"),true);
@@ -47,7 +45,7 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(descP, MyLocale.getMsg(1202,"Description"), null);
 		c.iconize(new Image("descr.gif"),true);
 		
-		c = this.addCard(new ScrollBarPanel(imageP = new ImagePanel(myPreferences)), MyLocale.getMsg(1203,"Images"), null);
+		c = this.addCard(new ScrollBarPanel(imageP = new ImagePanel(pref)), MyLocale.getMsg(1203,"Images"), null);
 		c.iconize(new Image("images.gif"),true);
 		
 		c = this.addCard(hintLP, MyLocale.getMsg(1204,"Hints & Logs"), null);
@@ -56,11 +54,11 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(calcP, MyLocale.getMsg(1206,"Calc"), null);
 		c.iconize(new Image("ewe/HandHeld.bmp"),true);
 		
-		c = this.addCard(gotoP = new GotoPanel(myPreferences, this, detP, cDB), "Goto", null);
+		c = this.addCard(gotoP = new GotoPanel(pref, this, detP, cDB), "Goto", null);
 		c.iconize(new Image("goto.gif"),true);
 		tbP.setGotoPanel(gotoP);
 		
-		c = this.addCard(solverP = new SolverPanel(myPreferences), MyLocale.getMsg(1205,"Solver"), null);
+		c = this.addCard(solverP = new SolverPanel(pref), MyLocale.getMsg(1205,"Solver"), null);
 		c.iconize(new Image("solver.gif"),true);
 		
 		c = this.addCard(radarP, "Radar", null);
@@ -79,8 +77,8 @@ public class MainTab extends mTabbedPanel {
 	}
 	
 	public void updateBearDist(){
-		tbP.pref = myPreferences;
-		TablePanel.updateBearingDistance(cDB,myPreferences);
+		tbP.pref = pref;
+		TablePanel.updateBearingDistance(cDB,pref);
 		tbP.refreshTable();
 	}
 	
@@ -93,35 +91,30 @@ public class MainTab extends mTabbedPanel {
 		  ////Vm.debug(ev.toString());
 		  if(ev instanceof MultiPanelEvent){
 			  if(this.getSelectedItem() == 0){
-				  Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
-				  Vm.setSIP(0);
+//				  Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
+//				  Vm.setSIP(0);
+				  MyLocale.setSIPOff();
 			  }
 			  //if(this.getSelectedItem() == 0){
 				  //Vm.debug(Convert.toString(cDB.size()));
 				  //Vm.debug("Panel 0");
-				  if(detP.dirty_new == true || detP.dirty_delete == true) {
+				  if(detP.dirty_newOrDelete) {
 					  tbP.refreshTable();
 					  //Vm.debug("Panel 0.1");
-					  detP.dirty_new = false;
-					  detP.dirty_delete = false;
+					  detP.dirty_newOrDelete = false;
 					  detP.dirty_status = false;
 				  }
-				  if(detP.dirty_status == true){
+				  if(detP.dirty_status == true){ // Details were edited
 					  //Vm.debug("Panel 0.2");
-					  ch = new CacheHolder();
 					  ch = (CacheHolder)cDB.get(tbP.getSelectedCache());
 					  ch.CacheStatus = detP.wayStatus.getText();
-					  if(ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"))){
-						  ch.is_found = true;
-					  } else {
-						  ch.is_found = false;
-					  }
+					  ch.is_found = ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"));
 					  ch.wayPoint = detP.wayPoint.getText();
 					  ch.CacheName = detP.wayName.getText();
 					  ch.LatLon = new CWPoint(detP.btnWayLoc.getText(),CWPoint.CW).toString();
 					  ch.DateHidden = detP.wayHidden.getText();
 					  ch.CacheOwner = detP.wayOwner.getText();
-					  if(myPreferences.myAlias.equals(ch.CacheOwner)) ch.is_owned = true;
+					  if(pref.myAlias.equals(ch.CacheOwner)) ch.is_owned = true;
 					  ch.CacheNotes = detP.wayNotes.getText();
 					  ch.type = detP.transSelect(detP.wayType.getInt());
 					  cDB.set(tbP.getSelectedCache(), ch);
@@ -131,15 +124,13 @@ public class MainTab extends mTabbedPanel {
 				  }
 			  //}
 			  if(this.getSelectedItem() != 0){
-				  Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
 				  try{
-					  ch = new CacheHolder();
 					  ch = (CacheHolder)cDB.get(tbP.getSelectedCache());
 					  if(ch.wayPoint.equals(lastselected) == false){
 						  CacheReaderWriter crw = new CacheReaderWriter();
 						  //OperationTimer opt = new OperationTimer();
 						  //opt.start("Reading: ");
-						  crw.readCache(ch, myPreferences.mydatadir);
+						  crw.readCache(ch, pref.mydatadir);
 						  //opt.end();
 						  ////Vm.debug(opt.toString());
 						  lastselected = ch.wayPoint;
@@ -150,36 +141,35 @@ public class MainTab extends mTabbedPanel {
 			  }
 			  if(this.getSelectedItem() == 1){ // DetailsPanel
 				  MyLocale.setSIPButton();
-				  detP.setDetails(ch, cDB, this,myPreferences);
+				  detP.setDetails(ch, cDB, this,pref);
 			  }
 			  if(this.getSelectedItem() == 2) { // Description Panel
 				  MyLocale.setSIPOff();
 				  descP.setText(ch);
-				  if(detP.dirty_new == true || detP.dirty_delete == true) {
+				  if(detP.dirty_newOrDelete) {
 					  tbP.refreshTable();
-					  detP.dirty_new = false;
-					  detP.dirty_delete = false;
+					  detP.dirty_newOrDelete = false;
 				  }
 			  }
 			  if(this.getSelectedItem() == 3) { // Picture Panel
+				  MyLocale.setSIPOff();
 				  imageP.setImages(ch);
-				  if(detP.dirty_new == true || detP.dirty_delete == true) {
+				  if(detP.dirty_newOrDelete) {
 					  tbP.refreshTable();
-					  detP.dirty_new = false;
-					  detP.dirty_delete = false;
+					  detP.dirty_newOrDelete = false;
 				  }
 			  }
 			  if(this.getSelectedItem() == 4) { // Log Hint Panel
+				  MyLocale.setSIPOff();
 				  hintLP.setText(ch);
-				  if(detP.dirty_new == true || detP.dirty_delete == true) {
+				  if(detP.dirty_newOrDelete) {
 					  tbP.refreshTable();
-					  detP.dirty_new = false;
-					  detP.dirty_delete = false;
+					  detP.dirty_newOrDelete = false;
 				  }
 			  }
 			  if(this.getSelectedItem() == 5){ // CalcPanel
 				  MyLocale.setSIPButton();
-				  calcP.setFields(ch, cDB, this, detP, myPreferences);
+				  calcP.setFields(ch, cDB, this, detP, pref);
 					calcP.activateFields(CWPoint.DMM);
 				  }
 			  
@@ -191,19 +181,18 @@ public class MainTab extends mTabbedPanel {
 			  if(this.getSelectedItem() == 7) { // Solver Panel
 				  MyLocale.setSIPButton();
 				  solverP.setCh(ch);
-				  if(detP.dirty_new == true || detP.dirty_delete == true) {
+				  if(detP.dirty_newOrDelete) {
 					  tbP.refreshTable();
-					  detP.dirty_new = false;
-					  detP.dirty_delete = false;
+					  detP.dirty_newOrDelete = false;
 				  }
 			  }
 			  if(this.getSelectedItem() == 8) { // Cache Radar Panel
-				  if(detP.dirty_new == true || detP.dirty_delete == true) {
+				  MyLocale.setSIPOff();
+				  if(detP.dirty_newOrDelete) {
 					  //tbP.refreshTable();
-					  detP.dirty_new = false;
-					  detP.dirty_delete = false;
+					  detP.dirty_newOrDelete = false;
 				  }
-				  radarP.setParam(myPreferences, cDB, ch.wayPoint);
+				  radarP.setParam(pref, cDB, ch.wayPoint);
 				  radarP.drawThePanel();
 			  }
 		  }

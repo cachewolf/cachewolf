@@ -29,7 +29,7 @@ public class DetailsPanel extends CellPanel{
 	CellPanel toolP = new CellPanel();
 	public boolean dirty_notes = false;
 	public boolean dirty_details = false;
-	public boolean dirty_new = false;
+	public boolean dirty_newOrDelete = false;
 	public boolean dirty_delete = false;
 	public boolean dirty_status = false;
 	boolean newWp = false;
@@ -108,8 +108,7 @@ public class DetailsPanel extends CellPanel{
 		thisCache = ch;
 		dirty_notes = false;
 		dirty_details = false;
-		dirty_new = false;
-		dirty_delete = false;
+		dirty_newOrDelete = false; // Cache has been created/deleted but not saved
 		chkCenter.setState(false);
 		chkDelete.setState(false);
 		wayPoint.setText(ch.wayPoint);
@@ -250,7 +249,7 @@ public class DetailsPanel extends CellPanel{
 			crw.saveCacheDetails(thisCache, pref.mydatadir);
 		}
 		
-		dirty_new = true;
+		dirty_newOrDelete = true;
 		mainT.selectAndActive(cacheDB.size()-1);
 	}
 	
@@ -283,7 +282,7 @@ public class DetailsPanel extends CellPanel{
 			if (ev.target == chkDelete){
 				//Vm.debug(thisCache.CacheName);
 				cacheDB.remove(thisCache);
-				dirty_delete = true;
+				dirty_newOrDelete = true;
 			}
 			if(ev.target == showMap){
 				try {
@@ -330,7 +329,7 @@ public class DetailsPanel extends CellPanel{
 				}
 				if(btCrWp.getText().equals(MyLocale.getMsg(311,"Create Waypoint"))){
 					thisCache = new CacheHolder();
-					dirty_new = true;
+					dirty_newOrDelete = true;
 					wayPoint.setText(getNewWayPointName(cacheDB));
 					wayName.setText("");
 					btnWayLoc.setText("N hh dd.mmm E hh dd.mmm");
