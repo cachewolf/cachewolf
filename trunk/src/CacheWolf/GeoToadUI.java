@@ -66,8 +66,8 @@ public class GeoToadUI extends Form{
 				command = "geotoad -u " + inpLogin.getText();
 				command += " -p " + inpPass.getText();
 				command += " -y " + inpDist.getText();
-				command += " -q coord \"" + pref.mylgNS + " " + pref.mylgDeg + " " + pref.mylgMin + ", ";
-				command += " " + pref.mybrWE + " " +pref.mybrDeg + " " + pref.mybrMin + "\"";
+				command += " -q coord \"" + pref.curCentrePt.getNSLetter() + " " + pref.curCentrePt.getLatDeg(CWPoint.DMM) + " " + pref.curCentrePt.getLatMin(CWPoint.DMM) + ", ";
+				command += " " + pref.curCentrePt.getEWLetter() + " " +pref.curCentrePt.getLonDeg(CWPoint.DMM) + " " + pref.curCentrePt.getLonMin(CWPoint.DMM) + "\"";
 				command += " -o " +"\"" + cwd + "/temp.gpx" + "\"";
 				try{
 					inf = new InfoBox("Geotoad:", "...spider pages");
