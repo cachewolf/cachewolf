@@ -167,17 +167,21 @@ public class CWPoint extends TrackPoint{
 	 */
 	public void set (String coord, int format) {
 
-		switch (format){
-		case CW: 	ParseLatLon pll = new ParseLatLon (coord);
-					pll.parse();
-					this.latDec = pll.lat2;
-					this.lonDec = pll.lon2;
-					break;
-
-		case REGEX: set(coord);
-					break;
-
-		default: 	this.latDec = 0; this.lonDec = 0;
+		if (coord!=null) {
+			switch (format){
+				case CW: 	ParseLatLon pll = new ParseLatLon (coord);
+							pll.parse();
+							this.latDec = pll.lat2;
+							this.lonDec = pll.lon2;
+							break;
+		
+				case REGEX: set(coord);
+							break;
+		
+				default: 	this.latDec = 0; this.lonDec = 0;
+			}
+		} else {
+			this.latDec = 0; this.lonDec = 0;
 		}
 		this.utmValid = false;
 	}
