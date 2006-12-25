@@ -13,7 +13,10 @@ import ewe.io.*;
 *	Class ID = 900
 */
 public class LoadScreen extends Form{
-	
+/* skg20061225: Commented out - needs to be deleted as it is not referenced
+ * The functionality seems to be taken over by SpiderGC
+ * 
+ 	
 	Locale l = Vm.getLocale();
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	Spider mySpidy;
@@ -169,4 +172,5 @@ public class LoadScreen extends Form{
 		}
 		super.onEvent(ev);
 	}
+*/
 }
