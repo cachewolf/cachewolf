@@ -114,12 +114,13 @@ public class MovingMap extends Form {
 			}
 		}
 		updateOverlayOnlyPos();
+		/*
 		mmp.images.moveOnTop(arrowUp);
 		mmp.images.moveOnTop(arrowDown);
 		mmp.images.moveOnTop(arrowLeft);
 		mmp.images.moveOnTop(arrowRight);
 		mmp.images.moveOnTop(ButtonImageGpsOn);
-		mmp.images.moveOnTop(ButtonImageChooseMap);
+		mmp.images.moveOnTop(ButtonImageChooseMap);*/
 	}
 	
 	private void destroyOverlay(int ov) {
@@ -217,7 +218,7 @@ public class MovingMap extends Form {
 										destroyOverlay(7);
 										destroyOverlay(8);
 									}else
-										for (int i=0; i<TrackOverlays.length; i++) {destroyOverlay(i);}
+										for (int i=0; i<TrackOverlays.length; i++) {destroyOverlay(i);} // this happens if a position jump occured
 								}}}}}}} // close all IFs
 			Vm.debug("Overlayrearanged"+TrackOverlays.toString());
 	}
@@ -253,7 +254,7 @@ public class MovingMap extends Form {
 		updateOverlayOnlyPos();
 		if (TrackOverlays[0].location.x>pref.myAppWidth || TrackOverlays[0].location.x + 3*pref.myAppWidth < 0 || // testForNeedToRearange
 				TrackOverlays[0].location.y>pref.myAppHeight || TrackOverlays[0].location.y + 3*pref.myAppHeight <0) {
-			rearangeOverlays();
+			rearangeOverlays(); // TODO Fehler: wenn ein Sprung gemacht wurde, sind werden alle Overlays gelöscht -> Information über bereits laufende Tracks gehen verloren -> vorher spüeichern.
 			addMissingOverlays(null);
 			// updateOverlayOnlyPos(); is called from addMissingOverlays 
 		}
