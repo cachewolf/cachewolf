@@ -34,7 +34,7 @@ class SerialThread extends mThread{
 			comSp = new SerialPort(spo);
 		} catch (IOException e) {
 			throw new IOException(spo.portName);
-		} catch (UnsatisfiedLinkError e) {} // TODO in original java-vm 
+		} // catch (UnsatisfiedLinkError e) {} // TODO in original java-vm 
 		if (forwardIP.length()>0) { 
 			try {
 				tcpConn = new Socket(forwardIP, 23);

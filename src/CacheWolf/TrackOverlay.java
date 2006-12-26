@@ -74,6 +74,15 @@ public class TrackOverlay extends AniImage {
 		//draw.drawLine(x, y, x, y);
 		ewe.sys.Vm.debug("showlastaddedpoint, x: "+x+"   y: "+y+"loc.x: "+location.x+"  loc.y:"+location.y);
 		draw.drawRect(x-1, y-1, 2, 2, 1);
+	//	draw._g.surfaceData.bufImg.raster.data[y*this.location.width + x] = -65536;
+		//image._awtImage.raster.data
+		//image.bufferedImage.raster.data[y*this.location.width + x]=-65536; //was dort steht wird tatsächlich angezeigt, allerdings kann ich es nicht direkt setzen :-(
+		int[] markPixels = new int[4];
+		for (int i = 0; i<markPixels.length; i++) { markPixels[i] = -65536; }
+		image.setPixels(markPixels, 0 , 400, 300, 1, 1, 0);
+		//draw.flush();
+		//ewe.ui.PenEvent.refreshTip(draw.surface);
+		//draw.setPixelRGB(x, y, -65536);
 		this.changed();
 	}
 	
@@ -101,6 +110,7 @@ public class TrackOverlay extends AniImage {
 	}
 	
 	public void paintLastAddedPoint(Track tr) {
+		draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
 		paintPoint(tr.TrackPoints[tr.num-1].latDec, tr.TrackPoints[tr.num-1].lonDec);
 	}
 	public boolean isOnScreen() { // i assume that location.width = screen.width and the same for hight
