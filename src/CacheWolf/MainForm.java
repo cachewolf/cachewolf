@@ -1,7 +1,6 @@
 package CacheWolf;
 
 import ewe.ui.*;
-import ewe.util.*;
 import ewe.sys.*;
 import ewe.fx.*;
 
@@ -12,8 +11,8 @@ import ewe.fx.*;
 public class MainForm extends Form {
 	
 	StatusBar statBar;
-	Vector cacheDB = new Vector();
-	Preferences pref = new Preferences();
+	Preferences pref = Preferences.getPrefObject(); // Singleton pattern
+	Profile profile = new Profile();
 	MainTab mTab;
 	MainMenu mMenu;
 
@@ -25,10 +24,6 @@ public class MainForm extends Form {
 	*	@see	MainMenu
 	*	@see	MainTab
 	*/
-	
-	//Build3:
-	// "," und "." in den exportern (ok)
-	// Schriftgröße bei VGA PPCs (ok: mal schauen)
 	public MainForm(){
 		doIt();
 	}
@@ -43,31 +38,27 @@ public class MainForm extends Form {
 		this.exitSystemOnClose = true;
 		this.resizable = true;
 		this.moveable = true;
-		if(Vm.isMobile() == true) this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
-		else this.setPreferredSize(800, 600);
+		if(Vm.isMobile() == true) 
+			this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
+		else 
+			this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
 		// Load CacheList
+		Vm.showWait(true);
 		try{
-			Vm.showWait(true);
-			LoadPreferences(false);
-			
-			Font defaultGuiFont = mApp.findFont("gui");
-			int sz = (pref.fontSize);
-			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
-			mApp.addFont(newGuiFont, "gui"); 
-			mApp.fontsChanged();
-			mApp.mainApp.font = newGuiFont;
-			long start, end;
-			start = Vm.getTimeStampLong();
-			LoadAXML();
-			end = Vm.getTimeStampLong();
+			pref.readPrefFile();
+			if (!pref.selectProfile(profile,true)) 
+				ewe.sys.Vm.exit(0); // User MUST select or create a profile
+			addGuiFont();
+			long start = Vm.getTimeStampLong();
+			profile.readIndex();
+			pref.profileCentrePt=profile.centre;
+			long end = Vm.getTimeStampLong();
 			Vm.debug("index.xml read: " + Convert.toString(end - start)+ " msec");
-			//updateBearingDistance();
-			TablePanel.updateBearingDistance(cacheDB,pref);
+			TablePanel.updateBearingDistance(profile.cacheDB,pref);
 		} catch (Exception e){
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}
-		
 		
 		if(pref.fixSIP == true){
 			if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
@@ -75,17 +66,9 @@ public class MainForm extends Form {
 			}
 		} else Vm.setSIP(0);
 		Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
-		
-		//Dimension dim = new Dimension();
-		//dim = this.getSize(new Dimension());
-		
-		//CellPanel [] p = addToolbar();
-		//p[0].defaultTags.set(INSETS,new Insets(0,1,0,1));
-		//p[1].addLast(mMenu = new MainMenu(this, myPreferences, cacheDB)).setCell(DONTSTRETCH);
-		//p[1].addLast(mTab = new MainTab(cacheDB, myPreferences));
-		statBar = new StatusBar(cacheDB);
-		this.addLast(mMenu = new MainMenu(this, pref, cacheDB),CellConstants.DONTSTRETCH, CellConstants.FILL);
-		this.addLast(mTab = new MainTab(cacheDB, pref,statBar),CellConstants.STRETCH, CellConstants.FILL);
+		statBar = new StatusBar(pref, profile.cacheDB);
+		this.addLast(mMenu = new MainMenu(this, pref, profile),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		this.addLast(mTab = new MainTab(pref,profile,statBar),CellConstants.STRETCH, CellConstants.FILL);
 		mMenu.setTablePanel(mTab.getTablePanel());
 		Vm.showWait(false);
 	}
@@ -93,19 +76,11 @@ public class MainForm extends Form {
 	
 	public MainForm(String what, String dist){
 		try{
-			LoadPreferences(false);
-			
-			Font defaultGuiFont = mApp.findFont("gui");
-			//int sz = (int)(defaultGuiFont.getSize()+4);
-			int sz = (pref.fontSize);
-			//Vm.debug("Font size:" + myPreferences.fontSize);
-			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
-			mApp.addFont(newGuiFont, "gui"); 
-			mApp.fontsChanged();
-			mApp.mainApp.font = newGuiFont;
-			
-			LoadAXML();
-			Spider mySpidy = new Spider(cacheDB, pref, null, Spider.SPIDERNEAREST);
+			pref.readPrefFile();
+			pref.selectProfile(profile,true);
+			addGuiFont();
+			profile.readIndex();
+			Spider mySpidy = new Spider(pref, profile,null, Spider.SPIDERNEAREST);
 			mySpidy.SpiderNearest(dist);
 			ewe.sys.Vm.exit(0);
 		} catch (Exception e){
@@ -113,13 +88,13 @@ public class MainForm extends Form {
 		}
 	}
 	
-	/**
-	*	Routine that sets up the XML reader for the cache index
-	*	list.
-	*	@see	MyXMLBuilder
-	*/
-	public void LoadAXML() throws Exception{
-		CacheReaderWriter.readIndex(cacheDB, pref.mydatadir);
+	private void addGuiFont(){
+		Font defaultGuiFont = mApp.findFont("gui");
+		int sz = (pref.fontSize);
+		Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
+		mApp.addFont(newGuiFont, "gui"); 
+		mApp.fontsChanged();
+		mApp.mainApp.font = newGuiFont;
 	}
 	
 	public void doPaint(Graphics g, Rect r){
@@ -128,24 +103,14 @@ public class MainForm extends Form {
 		super.doPaint(g,r);
 	}
 	
-	/**
-	*	Routine to load the prefernces file. Sets up the global
-	*	"my" variables.
-	*/
-	private void LoadPreferences(boolean from_event) throws Exception {
-		if(from_event == false) pref.doIt(1);
-		else pref.doIt(0);
-	}
-	
-	
 	public void onEvent(Event ev){
 		if(pref.dirty == true){
-			cacheDB.clear();
+			profile.cacheDB.clear();
 			try{
-				LoadPreferences(true);
-				LoadAXML();
-				//updateBearingDistance();
-				TablePanel.updateBearingDistance(cacheDB,pref);
+				pref.readPrefFile();
+				profile.readIndex();
+				pref.profileCentrePt=profile.centre;
+				TablePanel.updateBearingDistance(profile.cacheDB,pref);
 				mTab.getTablePanel().refreshTable();
 			} catch (Exception e){
 				//Vm.debug(e.toString());
@@ -154,6 +119,5 @@ public class MainForm extends Form {
 		}
 		super.onEvent(ev);
 	}
-	
 
 }

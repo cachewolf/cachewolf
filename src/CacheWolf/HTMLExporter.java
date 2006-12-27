@@ -15,7 +15,8 @@ import HTML.*;
 public class HTMLExporter{
 //	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
 	String [] template_init_index = {
 	 		"filename",  "index.tpl",
 	 		"case_sensitive", "true",
@@ -27,18 +28,18 @@ public class HTMLExporter{
 	 		"case_sensitive", "true",
 	 		"max_includes",   "5"
 	 	};
-	public HTMLExporter(Vector db, Preferences pref){
-		cacheDB = db;
-		myPreferences = pref;
+	public HTMLExporter(Preferences p, Profile prof){
+		pref = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 	}
 	
 	public void doIt(){
-		ProgressBarForm pbf = new ProgressBarForm();
+//		ProgressBarForm pbf = new ProgressBarForm();
 		CacheHolder holder = new CacheHolder();
-		CacheReaderWriter crw = new CacheReaderWriter();
 		//need directory only!!!!
 		String dummy = new String();
-		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, myPreferences.mydatadir);
+		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, profile.dataDir);
 		fc.setTitle("Select target directory:");
 		String targetDir;
 		if(fc.execute() != FileChooser.IDCANCEL){
@@ -69,7 +70,8 @@ public class HTMLExporter{
 				holder = (CacheHolder)cacheDB.get(i);
 				if(holder.is_black == false && holder.is_filtered == false){
 					//KHF read cachedata only if needed
-					try{crw.readCache(holder, myPreferences.mydatadir);
+					try{
+						holder.readCache( profile.dataDir);
 					}catch(Exception e){
 						//Vm.debug("Problem reading cache page");
 					}
@@ -126,7 +128,7 @@ public class HTMLExporter{
 								imgParams.put("TEXT",(String)holder.ImagesText.get(j));
 							else
 								imgParams.put("TEXT",imgFile);
-							DataMover.copy(myPreferences.mydatadir + imgFile,targetDir + imgFile);
+							DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
 							cacheImg.add(imgParams);
 						}
 						page_tpl.setParam("cacheImg", cacheImg);
@@ -140,7 +142,7 @@ public class HTMLExporter{
 								logImgParams.put("TEXT",(String)holder.LogImagesText.get(j));
 							else
 								logImgParams.put("TEXT",logImgFile);
-							DataMover.copy(myPreferences.mydatadir + logImgFile,targetDir + logImgFile);
+							DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
 							logImg.add(logImgParams);
 						}
 						page_tpl.setParam("logImg", logImg);
@@ -154,7 +156,7 @@ public class HTMLExporter{
 								usrImgParams.put("TEXT",(String)holder.UserImagesText.get(j));
 							else
 								usrImgParams.put("TEXT",usrImgFile);
-							DataMover.copy(myPreferences.mydatadir + usrImgFile,targetDir + usrImgFile);
+							DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
 							usrImg.add(usrImgParams);
 						}
 						page_tpl.setParam("userImg", usrImg);
@@ -164,18 +166,18 @@ public class HTMLExporter{
 						mapImgParams = new Hashtable();
 						String mapImgFile = new String((String)holder.wayPoint + "_map.gif");
 						// check if map file exists
-						File test = new File(myPreferences.mydatadir + mapImgFile);
+						File test = new File(profile.dataDir + mapImgFile);
 						if (test.exists()) {
 							mapImgParams.put("FILE", mapImgFile);
 							mapImgParams.put("TEXT",mapImgFile);
-							DataMover.copy(myPreferences.mydatadir + mapImgFile,targetDir + mapImgFile);
+							DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
 							mapImg.add(mapImgParams);
 							
 							mapImgParams = new Hashtable();
 							mapImgFile = (String)holder.wayPoint + "_map_2.gif";
 							mapImgParams.put("FILE", mapImgFile);
 							mapImgParams.put("TEXT",mapImgFile);
-							DataMover.copy(myPreferences.mydatadir + mapImgFile,targetDir + mapImgFile);
+							DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
 							mapImg.add(mapImgParams);
 	
 							page_tpl.setParam("mapImg", mapImg);

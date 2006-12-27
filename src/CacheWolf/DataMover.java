@@ -14,18 +14,18 @@ import ewe.sys.*;
 public class DataMover {
 
 	Vector srcDB, dstDB;
-	Preferences srcPreferences;
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+	Preferences pref;
+	Profile profile;
 	
-	public DataMover(Vector db, Preferences pref){
-		srcDB = db;
+	public DataMover(Preferences p, Profile prof){
+		profile=prof;
+		srcDB = profile.cacheDB;
 		dstDB = new Vector();
-		srcPreferences = pref;
+		pref = p;
 	}
 	public void deleteCaches(){
 		
-		MessageBox mBox = new MessageBox ((String)lr.get(144,"Warning"),(String)lr.get(145,"Cachedata will be deleted! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(145,"Cachedata will be deleted! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
 		if (mBox.execute() != MessageBox.IDOK){
 			return;
 		}
@@ -34,38 +34,35 @@ public class DataMover {
 		for(int i = 0; i<srcDB.size(); i++){
 			CacheHolder srcHolder=(CacheHolder)srcDB.get(i);
 			if(srcHolder.is_black == false && srcHolder.is_filtered == false){
-				deleteCacheFiles(srcHolder.wayPoint, srcPreferences.mydatadir);
+				deleteCacheFiles(srcHolder.wayPoint, profile.dataDir);
 				srcDB.removeElementAt(i);
 				i--;
 			}//if srcHolder...
 		}//for ... i < srcDB ...
 		// write indexfiles
-		CacheReaderWriter crw = new CacheReaderWriter();
-		crw.saveIndex(srcDB, srcPreferences.mydatadir);
+		profile.saveIndex(pref);
 	}
 
 	public void copyCaches(){
-		String dstDir;
 		int dstPos;
-
+		Profile dstProfile=new Profile();
 		
 		// Select destination directory
-		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, srcPreferences.mydatadir);
-		fc.setTitle((String)lr.get(148,"Select Targetdirectory"));
+		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.baseDir);
+		fc.setTitle(MyLocale.getMsg(148,"Select Targetdirectory"));
 		if(fc.execute() != FormBase.IDCANCEL){
-			dstDir = fc.getChosen() + "/";
+			dstProfile.dataDir = fc.getChosen() + "/";
 		}
 		else return;
-		MessageBox mBox = new MessageBox ((String)lr.get(144,"Warning"),(String)lr.get(146,"Cachedata will be copied! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(146,"Cachedata will be copied! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
 		if (mBox.execute() != MessageBox.IDOK){
 			return;
 		}
 		
 		// Read indexfile of destination, if one exists
-		File ftest = new File(dstDir + "index.xml");
+		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if(ftest.exists()){
-			MyXMLBuilder mb = new MyXMLBuilder(dstDB, dstDir);
-			mb.doIt();
+			dstProfile.readIndex();
 		}
 		// Loop through database
 		for(int i = 0; i<srcDB.size(); i++){
@@ -74,46 +71,43 @@ public class DataMover {
 				// does cache exists in destDB ?
 				dstPos = searchWpt(dstDB, srcHolder.wayPoint);
 				if (dstPos >= 0){
-					deleteCacheFiles(srcHolder.wayPoint, dstDir);
-					copyCacheFiles(srcHolder.wayPoint,srcPreferences.mydatadir, dstDir);
+					deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
+					copyCacheFiles(srcHolder.wayPoint,profile.dataDir, dstProfile.dataDir);
 					// Update database
 					dstDB.set(dstPos,srcHolder);
 				}
 				else {
-					deleteCacheFiles(srcHolder.wayPoint, dstDir);
-					copyCacheFiles(srcHolder.wayPoint,srcPreferences.mydatadir, dstDir);
+					deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
+					copyCacheFiles(srcHolder.wayPoint,profile.dataDir, dstProfile.dataDir);
 					// Update database
 					dstDB.add(srcHolder);
 				}
 			}//if srcHolder...
 		}//for ... i < srcDB ...
 		// write indexfiles
-		CacheReaderWriter crw = new CacheReaderWriter();
-		crw.saveIndex(dstDB, dstDir);
+		dstProfile.saveIndex(pref);
 	}
 	
 	public void moveCaches() {
-		String dstDir;
+		Profile dstProfile=new Profile();
 		int dstPos;
 		
 		// Select destination directory
-		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, srcPreferences.mydatadir);
-		fc.setTitle((String)lr.get(148,"Select Targetdirectory"));
+		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.baseDir);
+		fc.setTitle(MyLocale.getMsg(148,"Select Targetdirectory"));
 		if(fc.execute() != FormBase.IDCANCEL){
-			dstDir = fc.getChosen() + "/";
+			dstProfile.dataDir = fc.getChosen() + "/";
 		}
 		else return;
-		MessageBox mBox = new MessageBox ((String)lr.get(144,"Warning"),(String)lr.get(147,"Cachedata will be moved! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(147,"Cachedata will be moved! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
 		if (mBox.execute() != MessageBox.IDOK){
 			return;
 		}
 		
 		// Read indexfile of destination, if one exists
-		File ftest = new File(dstDir + "index.xml");
+		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if(ftest.exists()){
-			MyXMLBuilder mb = new MyXMLBuilder(dstDB, dstDir);
-			mb.doIt();
-		}
+			dstProfile.readIndex();		}
 		// Loop through database
 		for(int i = 0; i<srcDB.size(); i++){
 			CacheHolder srcHolder=(CacheHolder)srcDB.get(i);
@@ -121,16 +115,16 @@ public class DataMover {
 				// does cache exists in destDB ?
 				dstPos = searchWpt(dstDB, srcHolder.wayPoint);
 				if (dstPos >= 0){
-					deleteCacheFiles(srcHolder.wayPoint, dstDir);
-					moveCacheFiles(srcHolder.wayPoint,srcPreferences.mydatadir, dstDir);
+					deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
+					moveCacheFiles(srcHolder.wayPoint,profile.dataDir, dstProfile.dataDir);
 					// Update database
 					dstDB.set(dstPos,srcHolder);
 					srcDB.removeElementAt(i);
 					i--;
 				}
 				else {
-					deleteCacheFiles(srcHolder.wayPoint, dstDir);
-					moveCacheFiles(srcHolder.wayPoint,srcPreferences.mydatadir, dstDir);
+					deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
+					moveCacheFiles(srcHolder.wayPoint,profile.dataDir, dstProfile.dataDir);
 					// Update database
 					dstDB.add(srcHolder);
 					srcDB.removeElementAt(i);
@@ -139,9 +133,8 @@ public class DataMover {
 			}//if srcHolder...
 		}//for ... i < srcDB ...
 		// write indexfiles
-		CacheReaderWriter crw = new CacheReaderWriter();
-		crw.saveIndex(dstDB, dstDir);
-		crw.saveIndex(srcDB, srcPreferences.mydatadir);
+		dstProfile.saveIndex(pref);
+		profile.saveIndex(pref);
 	}
 	/**
 	* Method to iterate through cache database and look for waypoint.

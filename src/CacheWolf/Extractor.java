@@ -7,12 +7,12 @@ package CacheWolf;
 *	parts of a string in a string.
 */
 public class Extractor  {
-		int startOffset = 0;
-		String searchText = new String();
-		String start = new String();
-		String end = new String();
-		String tst = new String();
-		boolean betweenonly = false;
+		int startOffset; // No initialisation needed, done in constructor
+		String searchText;
+		String start;
+		String end;
+		String tst;
+		boolean betweenonly;
 		
 		/**
 		*	Create an extractor.

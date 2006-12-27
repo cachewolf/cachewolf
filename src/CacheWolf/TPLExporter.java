@@ -119,25 +119,26 @@ class TplFilter implements HTML.Tmpl.Filter
 
 public class TPLExporter {
 	Vector cacheDB;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
 	String tplFile;
 
-	public TPLExporter(Vector db, Preferences pref, String tpl){
-		cacheDB = db;
-		myPreferences = pref;
+	public TPLExporter(Preferences p, Profile prof, String tpl){
+		pref = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 		tplFile = tpl;
 	}
 	
 	public void doIt(){
 		CacheHolder holder;
-		CacheReaderWriter crw = new CacheReaderWriter();
 		ProgressBarForm pbf = new ProgressBarForm();
 		ewe.sys.Handle h = new ewe.sys.Handle();
 		Vector cache_index = new Vector();
 		Hashtable varParams;
 		TplFilter myFilter;
 
-		FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
+		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 		fc.setTitle("Select target file:");
 		if(fc.execute() == FileChooser.IDCANCEL) return;
 		File saveTo = fc.getChosenFile();
@@ -167,7 +168,8 @@ public class TPLExporter {
 				h.progress = (float)i/(float)counter;
 				h.changed();
 				if(holder.is_black == false && holder.is_filtered == false){
-					try{crw.readCache(holder, myPreferences.mydatadir);
+					try{
+						holder.readCache(profile.dataDir);
 					}catch(Exception e){
 						Vm.debug("Problem reading cache page");
 					}

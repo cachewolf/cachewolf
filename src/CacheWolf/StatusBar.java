@@ -11,18 +11,22 @@ import ewe.util.*;
 public class StatusBar extends CellPanel{
 	DBStats stats;
 	mLabel disp;
+	Preferences pref;
 	
-	public StatusBar(Vector db){
+	public StatusBar(Preferences p, Vector db){
+		pref=p;
 		stats = new DBStats(db);
 		this.addLast(disp = new mLabel(""),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		updateDisplay();
 	}
 	
 	public void updateDisplay(){
-		String dspString = new String();
-		dspString = MyLocale.getMsg(4500,"Tot:") + " " + stats.total() + " ";
-		dspString += MyLocale.getMsg(4501,"Dsp:") + " " + stats.visible() + " ";
-		dspString += MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound();
+		String dspString;
+		dspString = MyLocale.getMsg(4500,"Tot:") + " " + stats.total() + " " +
+					MyLocale.getMsg(4501,"Dsp:") + " " + stats.visible() + " " +
+					MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound() + "  " +
+					"Centre: " + pref.curCentrePt.toString();
+		
 		disp.setText(dspString);
 	}
 }

@@ -170,9 +170,14 @@ public class CWPoint extends TrackPoint{
 		if (coord!=null) {
 			switch (format){
 				case CW: 	ParseLatLon pll = new ParseLatLon (coord);
-							pll.parse();
-							this.latDec = pll.lat2;
-							this.lonDec = pll.lon2;
+							try {
+								pll.parse();
+								this.latDec = pll.lat2;
+								this.lonDec = pll.lon2;
+							} catch (Exception e) {
+								this.latDec = 0;
+								this.lonDec = 0;
+							}
 							break;
 		
 				case REGEX: set(coord);
@@ -272,6 +277,13 @@ public class CWPoint extends TrackPoint{
 		this.utmValid = false;
 	}
 
+	/*
+	 * Returns true if the coordinates are valid
+	 */
+	public boolean isValid() {
+		return latDec!=0 || lonDec!=0;  // Not a very good way, but will have to do for now
+	}
+	
 	/**
 	 * Constrain latitude and longitude to allowed values
 	 *

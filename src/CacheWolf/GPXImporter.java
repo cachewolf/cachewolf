@@ -16,6 +16,8 @@ import ewe.util.zip.*;
 */
 public class GPXImporter extends MinML {
 	
+	static Preferences pref;
+	Profile profile;
 	Vector cacheDB;
 	CacheHolder holder;
 	String strData, saveDir, logData, logIcon, logDate, logFinder;
@@ -24,13 +26,10 @@ public class GPXImporter extends MinML {
 	private Vector files = new Vector();
 	private boolean debugGPX = false; 
 	InfoBox infB;
-	static Preferences pref;
 	boolean spiderOK = true;
 	boolean doSpider = false;
 	boolean fromOC = false;
 	boolean nameFound = false;
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	int zaehlerGel = 0;
 	Hashtable DBindex = new Hashtable();
 	public static final int DOIT_ASK = 0;
@@ -38,13 +37,14 @@ public class GPXImporter extends MinML {
 	public static final int DOIT_WITHSPOILER = 2;
 	boolean getMaps = false;
 		
-	public GPXImporter(Vector DB, String f, Preferences p)
+	public GPXImporter(Preferences p, Profile prof, String f )
 	{
+		profile=prof;
 		pref = p;
-		cacheDB = DB;
+		cacheDB = profile.cacheDB;
 		//file = f;
 		files.add(f);
-		saveDir = pref.mydatadir;
+		saveDir = profile.dataDir;
 		//msgA = msgArea;
 		inWpt = false;
 		inCache = false;
@@ -58,7 +58,7 @@ public class GPXImporter extends MinML {
 			DBindex.put((String)ch.wayPoint, new Integer(i));
 		}//for
 	}
-	
+/*	skg: This Constructor is not referenced, therefore commented out 
 	public GPXImporter(Vector DB, String[] f,String d, Preferences p)
 	{
 		pref = p;
@@ -81,7 +81,7 @@ public class GPXImporter extends MinML {
 			DBindex.put((String)ch.wayPoint, new Integer(i));
 		}//for
 	}
-	
+*/	
 	public void doIt(int how){
 		Filter flt = new Filter();
 		flt.clearFilter(cacheDB);
@@ -117,7 +117,7 @@ public class GPXImporter extends MinML {
 						// skip over PRC-files
 						if (zipEnt.getName().endsWith("gpx")){
 							r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
-							infB = new InfoBox(zipEnt.toString(),((String)lr.get(4000,"Loaded caches") + ":" + zaehlerGel));
+							infB = new InfoBox(zipEnt.toString(),(MyLocale.getMsg(4000,"Loaded caches") + ":" + zaehlerGel));
 							infB.exec();
 							parse(r);
 							r.close();
@@ -127,15 +127,14 @@ public class GPXImporter extends MinML {
 				}
 				else {
 					r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
-					infB = new InfoBox("Info",((String)lr.get(4000,"Loaded caches") + ":" + zaehlerGel));
+					infB = new InfoBox("Info",(MyLocale.getMsg(4000,"Loaded caches") + ":" + zaehlerGel));
 					infB.show();
 					parse(r);
 					r.close();
 					infB.close(0);
 				}
 				// save Index 
-				CacheReaderWriter crw = new CacheReaderWriter();
-				crw.saveIndex(cacheDB,saveDir);
+				profile.saveIndex(pref);
 				infB.close(0);
 			}
 				Vm.showWait(false);
@@ -244,10 +243,8 @@ public class GPXImporter extends MinML {
 		if (name.equals("wpt")){
 			// Add cache Data only, if waypoint not already in database
 			//if (searchWpt(cacheDB, holder.wayPoint)== -1){
-			int index;
+			int index=searchWpt(holder.wayPoint);
 			//Vm.debug("here ?!?!?");
-			index = searchWpt(holder.wayPoint);
-			CacheReaderWriter crw = new CacheReaderWriter();
 			//Vm.debug("chould be new!!!!");
 			if (index == -1){
 				//Vm.debug("here A");
@@ -262,7 +259,7 @@ public class GPXImporter extends MinML {
 				}
 				holder.noFindLogs = z;
 				zaehlerGel++;
-				infB.setInfo( ((String)lr.get(4000,"Loaded caches") + ":" + zaehlerGel));
+				infB.setInfo( (MyLocale.getMsg(4000,"Loaded caches") + ":" + zaehlerGel));
 				holder.is_new = true;
 				cacheDB.add(holder);
 				//Vm.debug("here B");
@@ -277,8 +274,8 @@ public class GPXImporter extends MinML {
 								ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 								pll.parse();
 								MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
-								mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
-								mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
+								mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");
+								mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
 							}
 						}
 					if(holder.wayPoint.startsWith("GC")) {
@@ -302,21 +299,20 @@ public class GPXImporter extends MinML {
 						
 					}
 				}
-				crw.saveCacheDetails(holder,saveDir);
+				holder.saveCacheDetails(saveDir);
 				//crw.saveIndex(cacheDB,saveDir);
 			}
 			//Update cache data
 			else {
 				//Vm.debug("it is not new!");
-				CacheHolder oldCh = new CacheHolder();
-				oldCh = (CacheHolder) cacheDB.get(index);
+				CacheHolder oldCh= (CacheHolder) cacheDB.get(index);
 				try {
 					//Vm.debug("Try to load");
-					crw.readCache(oldCh, saveDir);
+					oldCh.readCache(saveDir);
 					//Vm.debug("Done loading");
 				} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
 				oldCh.update(holder);
-				crw.saveCacheDetails(oldCh,saveDir);
+				oldCh.saveCacheDetails(saveDir);
 				//crw.saveIndex(cacheDB,saveDir);
 			}
 			
@@ -606,7 +602,7 @@ public class GPXImporter extends MinML {
 				connImg.setRequestorProperty("Connection", "close");
 				imageType = dummy.substring(dummy.lastIndexOf("."), dummy.lastIndexOf(".")+4);
 				if(!imageType.equals("com") && !imageType.equals("php") && !imageType.equals("exe")){
-					datei = pref.mydatadir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
+					datei = profile.dataDir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
 					//if(imageType.equals(".png") || imageType.equals(".gif") || imageType.equals(".tif") || imageType.equals(".jpg")){
 						try{
 							sockImg = connImg.connect();
@@ -657,7 +653,7 @@ public class GPXImporter extends MinML {
 			connImg.setRequestorProperty("Connection", "close");
 			imageType = dummy.substring(dummy.lastIndexOf("."), dummy.lastIndexOf(".")+4);
 			if(!imageType.equals("com") && !imageType.equals("php") && !imageType.equals("exe")){
-				datei = pref.mydatadir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
+				datei = profile.dataDir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
 				try{
 					sockImg = connImg.connect();
 					daten = connImg.readData(sockImg);

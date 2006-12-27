@@ -14,21 +14,22 @@ import ewe.filechooser.*;
 public class MSARCSVExporter{
 //	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
 	
-	public MSARCSVExporter(Vector db, Preferences pref){
-		cacheDB = db;
-		myPreferences = pref;
+	public MSARCSVExporter(Preferences p, Profile prof){
+		pref = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 	}
 	
 	public void doIt(){
 		CacheHolder holder;
-		CacheReaderWriter crw = new CacheReaderWriter();
 		ParseLatLon pll;
 		int symCounter = 0;
-		FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
+		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 		fc.setTitle("Select target file:");
-		if(fc.execute() != fc.IDCANCEL){
+		if(fc.execute() != FileChooser.IDCANCEL){
 			File saveTo = fc.getChosenFile();
 			try{
 				PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(saveTo)));
@@ -38,7 +39,8 @@ public class MSARCSVExporter{
 				for(int i = 0; i<cacheDB.size(); i++){
 					holder=(CacheHolder)cacheDB.get(i);
 					if(holder.is_black == false && holder.is_filtered == false){
-						try{crw.readCache(holder, myPreferences.mydatadir);
+						try{
+							holder.readCache(profile.dataDir); // Need this for URL
 						}catch(Exception e){
 							//Vm.debug("Problem reading cache page");
 						}

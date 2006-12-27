@@ -11,11 +11,10 @@ import ewe.util.*;
 */
 public class myTableControl extends TableControl{
 
+	public Profile profile;
 	public Vector db;
 	public Preferences pref;
 	public TablePanel tbp;
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	
 	public void penRightReleased(Point p){
 		menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
@@ -25,36 +24,36 @@ public class myTableControl extends TableControl{
 	}
 	
 	public void popupMenuEvent(Object selectedItem){
-		CacheHolder ch = new CacheHolder();
+		CacheHolder ch;
 		
-		if (selectedItem.toString().equals((String)lr.get(1015,"Select all"))){
+		if (selectedItem.toString().equals(MyLocale.getMsg(1015,"Select all"))){
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				ch.is_Checked = true;
-				db.set(i, ch);
+				//db.set(i, ch);
 			}
 			tbp.refreshTable();
 		}
 		
-		if (selectedItem.toString().equals((String)lr.get(1016,"De-select all"))){
+		if (selectedItem.toString().equals(MyLocale.getMsg(1016,"De-select all"))){
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				ch.is_Checked = false;
-				db.set(i, ch);
+				//db.set(i, ch);
 			}
 			tbp.refreshTable();
 		}
 		
-		if (selectedItem.toString().equals((String)lr.get(1011,"Filter"))){
+		if (selectedItem.toString().equals(MyLocale.getMsg(1011,"Filter"))){
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				ch.is_filtered = true;
 				if(ch.is_Checked == true) ch.is_filtered = false;
-				db.set(i, ch);
+				//db.set(i, ch);
 			}
 			tbp.refreshTable();
 		}
-		if (selectedItem.toString().equals((String)lr.get(1012,"Delete"))){
+		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete"))){
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				if(ch.is_Checked == true) {
@@ -65,8 +64,8 @@ public class myTableControl extends TableControl{
 			tbp.refreshTable();
 		}
 		
-		if (selectedItem.toString().equals((String)lr.get(1014,"Update"))){
-			SpiderGC spider = new SpiderGC(pref, db);
+		if (selectedItem.toString().equals(MyLocale.getMsg(1014,"Update"))){
+			SpiderGC spider = new SpiderGC(pref, profile);
 			Vm.showWait(true);
 			spider.login();
 			//TODO prüfen, ob es sich um ein gc oder oc cache handelt. Aber wie?
@@ -80,7 +79,7 @@ public class myTableControl extends TableControl{
 			tbp.refreshTable();
 		}
 		
-		if (selectedItem.toString().equals((String)lr.get(1010,"Goto"))){
+		if (selectedItem.toString().equals(MyLocale.getMsg(1010,"Goto"))){
 //			Point a = new Point();
 	//		a = this.getSelectedCell(a);
 		//	if(!(a == null)) ch = (CacheHolder)tbp.cacheDB.get(a.y);
@@ -95,13 +94,12 @@ public class myTableControl extends TableControl{
 		Point a = new Point();
 		Point dest = new Point();
 		a = getSelectedCell(dest);
-		CacheHolder ch = new CacheHolder();
-		CacheReaderWriter crw = new CacheReaderWriter();
+		CacheHolder ch;
 
 		ch = (CacheHolder)db.get(a.y);
 		try{
 			//String cmd = "\""+pref.browser+ "\"" + " \"http://www.geocaching.com/seek/cache_details.aspx?wp="+ch.wayPoint+"&Submit6=Find&log=y\"";
-			crw.readCache(ch, pref.mydatadir);
+			ch.readCache(profile.dataDir);
 			String cmd = "\""+pref.browser+ "\" " + ch.URL;
 			//String cmd = "\""+pref.browser+ ".exe\"" + " www.aragorn.de";
 			//Vm.debug(cmd);

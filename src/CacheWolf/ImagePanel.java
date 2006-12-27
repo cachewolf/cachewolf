@@ -12,7 +12,9 @@ import ewe.ui.*;
 *	then the image will be scaled to the available screen size.
 */
 public class ImagePanel extends InteractivePanel{
-	Preferences pref = new Preferences();
+	Preferences pref;
+	Profile profile;
+	
 	int thumb_max_size = 300;
 	int thumb_min_size = 100;
 	int padding = 20;
@@ -22,8 +24,9 @@ public class ImagePanel extends InteractivePanel{
 	* Also calculates the possible sizes for the
 	* thumbnail view.
 	*/
-	public ImagePanel(Preferences p){
+	public ImagePanel(Preferences p, Profile prof){
 		pref = p;
+		profile=prof;
 	}
 	
 	/**
@@ -77,7 +80,7 @@ public class ImagePanel extends InteractivePanel{
 		int locCounter = 0;
 		ImagePanelImage ipi;
 		for(int i = 0; i<cache.Images.size(); i++){
-			location = pref.mydatadir + (String)cache.Images.get(i);
+			location = profile.dataDir + (String)cache.Images.get(i);
 			try{
 				mI = new mImage(location);
 				// actuall new mImage(location); should do the following "if" but it doesn't anyhow
@@ -161,7 +164,7 @@ public class ImagePanel extends InteractivePanel{
 		locX = padding;
 		locCounter = 0;
 		for(int i = 0; i<cache.UserImages.size(); i++){
-			location = pref.mydatadir + (String)cache.UserImages.get(i);
+			location = profile.dataDir + (String)cache.UserImages.get(i);
 			//Vm.debug(location);
 			try{
 				mI = new mImage(location);

@@ -16,6 +16,7 @@ public class SafeXML{
 	private static Hashtable iso2htmlMappings = new Hashtable(250);
 	static {
 		String[] mappingArray = new String[] {
+				"&apos;",   "'",		// Added 20061227 - not a valid HTML entity but sometimes used
 				"&quot;",   "\"",
 				"&amp;",    "&",
 				"&lt;",     "<",

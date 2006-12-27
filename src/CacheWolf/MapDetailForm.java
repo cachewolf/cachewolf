@@ -14,14 +14,15 @@ import ewe.util.*;
 public class MapDetailForm extends ImageDetailForm {
 
 	mButton btSwitch;
-	String cache = new String();
+	String cache;
 	String imgLoc = new String();
 	int status = 0;
-
-	public MapDetailForm(String cacheName, Preferences p){
-		cache = cacheName;
-		imgLoc = p.mydatadir + "/";
-		imgLoc = imgLoc + cache + "_map.gif";
+	Profile profile;
+	
+	public MapDetailForm(String cacheName, Preferences p, Profile prof){
+		profile=prof;  // keep ref for later use
+		cache=cacheName;
+		imgLoc = prof.dataDir + cacheName + "_map.gif";
 		scp = new ScrollBarPanel(ipp);
 		setUp(imgLoc, p);
 		this.title = "Maps";
@@ -37,8 +38,7 @@ public class MapDetailForm extends ImageDetailForm {
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btSwitch){
 				ipp.removeImage(ai);
-				imgLoc = pref.mydatadir + "/";
-				imgLoc = imgLoc + cache;
+				imgLoc = profile.dataDir + cache;
 				if(status == 0) {
 					imgLoc = imgLoc + "_map_2.gif";
 					status = 1;
@@ -50,9 +50,7 @@ public class MapDetailForm extends ImageDetailForm {
 					setUp(imgLoc, pref);
 					this.repaintNow();
 				} catch (IllegalArgumentException e) {
-					Locale l = Vm.getLocale();
-					LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
-					MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht finden")+": "+imgLoc, MessageBox.OKB); // @todo: language support
+					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden")+": "+imgLoc, MessageBox.OKB); // @todo: language support
 					tmp.exec();
 				}
 			}

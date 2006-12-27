@@ -39,7 +39,8 @@ import ewesoft.xml.sax.AttributeList;
 public class LOCXMLImporter extends MinML {
 	boolean debugXML = false;
 	Vector cacheDB;
-	Preferences myPref = new Preferences();
+	Preferences pref;
+	Profile profile;
 	String file;
 	CacheHolder holder;
 
@@ -47,10 +48,11 @@ public class LOCXMLImporter extends MinML {
 	String strData = new String();
 
 	
-	public LOCXMLImporter (Vector DB, String f, Preferences pf){
-		cacheDB = DB;
+	public LOCXMLImporter ( Preferences pf, Profile prof, String f ){
+		pref = pf;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 		file = f;
-		myPref = pf;
 		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
@@ -67,8 +69,7 @@ public class LOCXMLImporter extends MinML {
 						parse(r);
 						r.close();
 			// save Index 
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveIndex(cacheDB,myPref.mydatadir);
+			profile.saveIndex(pref);
 			Vm.showWait(false);
 		}catch(Exception e){
 			//Vm.debug(e.toString());
@@ -115,9 +116,8 @@ public class LOCXMLImporter extends MinML {
 				cacheDB.set(index, holder);
 			}
 			// save all
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(holder,myPref.mydatadir);
-			crw.saveIndex(cacheDB,myPref.mydatadir);
+			holder.saveCacheDetails(profile.dataDir);
+			profile.saveIndex(pref);
 			return;
 		}
 
@@ -159,10 +159,9 @@ public class LOCXMLImporter extends MinML {
 			ch.wayPoint = wpt;
 			return ch;
 		}
-		CacheReaderWriter crw = new CacheReaderWriter();
 		ch = (CacheHolder) cacheDB.get(index);
 		try {
-			crw.readCache(ch, myPref.mydatadir);
+			ch.readCache(profile.dataDir);
 		} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
 		return ch;
 	}

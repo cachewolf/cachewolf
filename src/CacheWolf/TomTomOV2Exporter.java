@@ -13,11 +13,13 @@ import ewe.sys.*;
 public class TomTomOV2Exporter{
 //	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
 	
-	public TomTomOV2Exporter(Vector db, Preferences pref){
-		cacheDB = db;
-		myPreferences = pref;
+	public TomTomOV2Exporter(Preferences p, Profile prof){
+		pref = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 	}
 	
 	public void doIt(){
@@ -32,7 +34,7 @@ public class TomTomOV2Exporter{
 		String ctype = "";
 		//need directory only!!!!
 		String dummy = new String();
-		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, myPreferences.mydatadir);
+		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, profile.dataDir);
 		fc.setTitle("Select Tomtom Map directory:");
 		String targetDir;
 		if(fc.execute() != fc.IDCANCEL){

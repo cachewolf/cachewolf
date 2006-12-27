@@ -1,14 +1,20 @@
 package CacheWolf;
+import ewe.sys.Vm;
 import ewe.ui.InputBox;
 import ewe.util.*;
 import ewe.filechooser.FileChooser;
+import ewe.io.BufferedWriter;
 import ewe.io.File;
+import ewe.io.FileReader;
+import ewe.io.FileWriter;
+import ewe.io.IOException;
+import ewe.io.PrintWriter;
 
 /**
 *	A class to hold information on a cache.<br>
 *	Not all attributes are filled at once. You will have to look at other
 *	classes and methods to get more information.
-*	@see CacheReaderWriter
+*	
 */
 public class CacheHolder {
   public String UUID = new String();
@@ -148,12 +154,12 @@ public class CacheHolder {
  	return this;
   }
   
-  public void addUserImage(Preferences pref){
+  public void addUserImage(Profile profile){
 	  File imgFile;
 	  String imgDesc, imgDestName;
 	  
 	  //Get Image and description
-		FileChooser fc = new FileChooser(FileChooser.OPEN, pref.mydatadir);
+		FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
 		fc.setTitle("Select image file:");
 		if(fc.execute() != FileChooser.IDCANCEL){
 			imgFile = fc.getChosenFile();
@@ -165,10 +171,9 @@ public class CacheHolder {
 			this.UserImages.add(imgDestName);
 			this.UserImagesText.add(imgDesc);
 			// Copy File
-			DataMover.copy(imgFile.getFullPath(),pref.mydatadir + imgDestName);
+			DataMover.copy(imgFile.getFullPath(),profile.dataDir + imgDestName);
 			// Save Data
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(this, pref.mydatadir);
+			saveCacheDetails(profile.dataDir);
 		}
   }
   public void addLog(String logEntry){
@@ -210,5 +215,185 @@ public class CacheHolder {
 		  }
 	  }
   }
+
+  
+	/**
+	*	Method to parse a specific cache.xml file.
+	*	It fills information on cache details, hints, logs, notes and
+	*	images.
+	*/
+	public void readCache(String dir) throws IOException{
+		String dummy;
+		FileReader in = new FileReader(dir+wayPoint+".xml");
+		String text= in.readAll();
+		in.close();
+		Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);		
+		LongDescription = ex.findNext();
+		ex = new Extractor(text, "<HINTS><![CDATA[", "]]></HINTS>", 0, true);
+		Hints = ex.findNext();
+		ex = new Extractor(text, "<LOGS>","</LOGS>", 0, true);
+		dummy = ex.findNext();
+		CacheLogs.clear();
+		ex = new Extractor(dummy, "<LOG><![CDATA[","]]></LOG>", 0, true);
+		
+		dummy = ex.findNext();
+		while(ex.endOfSearch()==false){
+			CacheLogs.add(dummy);
+			dummy = ex.findNext();
+		}
+		ex = new Extractor(text, "<NOTES><![CDATA[", "]]></NOTES>", 0, true);
+		CacheNotes = ex.findNext();
+		Images.clear();
+		ex = new Extractor(text, "<IMG>", "</IMG>", 0, true);
+		dummy = ex.findNext();
+		while(ex.endOfSearch() == false){
+			Images.add(dummy);
+			dummy = ex.findNext();
+		}
+		ImagesText.clear();
+		ex = new Extractor(text, "<IMGTEXT>", "</IMGTEXT>", 0, true);
+		dummy = ex.findNext();
+		while(ex.endOfSearch() == false){
+			ImagesText.add(dummy);
+			dummy = ex.findNext();
+		}
+		// Logimages
+		LogImages.clear();
+		ex = new Extractor(text, "<LOGIMG>", "</LOGIMG>", 0, true);
+		dummy = ex.findNext();
+		while(ex.endOfSearch() == false){
+			LogImages.add(dummy);
+			dummy = ex.findNext();
+		}
+		LogImagesText.clear();
+		ex = new Extractor(text, "<LOGIMGTEXT>", "</LOGIMGTEXT>", 0, true);
+		dummy = ex.findNext();
+		while(ex.endOfSearch() == false){
+			LogImagesText.add(dummy);
+			dummy = ex.findNext();
+		}
+
+		UserImages.clear();
+		ex = new Extractor(text, "<USERIMG>", "</USERIMG>", 0, true);
+		dummy = ex.findNext();
+		while(ex.endOfSearch() == false){
+			UserImages.add(dummy);
+			dummy = ex.findNext();
+		}
+		UserImagesText.clear();
+		ex = new Extractor(text, "<USERIMGTEXT>", "</USERIMGTEXT>", 0, true);
+		dummy = ex.findNext();
+		while(ex.endOfSearch() == false){
+			UserImagesText.add(dummy);
+			dummy = ex.findNext();
+		}
+
+
+		ex = new Extractor(text, "<BUGS><![CDATA[", "]]></BUGS>", 0, true);
+		Bugs = ex.findNext();
+		
+		ex = new Extractor(text, "<URL><![CDATA[", "]]></URL>", 0, true);
+		// if no URL is stored, set default URL (at this time only possible for gc.com)
+		dummy = ex.findNext();
+		if (dummy.length() > 10){
+			URL = dummy;
+		}
+		else {
+			if (wayPoint.startsWith("GC")) {
+				URL = "http://www.geocaching.com/seek/cache_details.aspx?wp="+ wayPoint + "&Submit6=Find&log=y";
+			}
+		}
+
+	}
+	
+	/**
+	*	Method to save a cache.xml file.
+	*/
+	public void saveCacheDetails(String dir){
+		PrintWriter detfile;
+		String dummy = new String();
+		//File exists?
+		boolean exists = (new File(dir + wayPoint + ".xml")).exists();
+		//yes: then delete
+		if (exists) {
+			boolean ok = (new File(dir + wayPoint + ".xml")).delete();
+			if(ok) ok = true;
+		}
+		boolean exists2 = (new File(dir + wayPoint.toLowerCase() + ".xml")).exists();
+		//yes: delete
+		if (exists2) {
+			boolean ok2 = (new File(dir + wayPoint.toLowerCase() + ".xml")).delete();
+			if(ok2) ok2=true;
+		}
+		//Vm.debug("Writing to: " +dir + "for: " + wayPoint);
+		try{
+		  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dir + wayPoint + ".xml")));
+		} catch (Exception e) {
+			Vm.debug("Problem opening details file");
+			return;
+		}
+		try{
+			if(wayPoint.length()>0){
+			  detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n");
+			  detfile.print("<CACHEDETAILS>\r\n");
+			  detfile.print("<DETAILS><![CDATA["+LongDescription+"]]></DETAILS>\r\n");
+			  detfile.print("<HINTS><![CDATA["+Hints+"]]></HINTS>\r\n");
+			  detfile.print("<LOGS>\r\n");
+			  for(int i = 0; i < CacheLogs.size(); i++){
+				  dummy = (String)CacheLogs.get(i);
+				  detfile.print("<LOG><![CDATA[\r\n");
+				  detfile.print(dummy);
+				  detfile.print("\r\n]]></LOG>\r\n");
+			  }
+			  detfile.print("</LOGS>\r\n");
+		
+			  detfile.print("<NOTES><![CDATA["+CacheNotes+"]]></NOTES>\n");
+			  detfile.print("<IMAGES>");
+			  String stbuf = new String();
+			  for(int i = 0;i<Images.size();i++){
+					stbuf = (String)Images.get(i);
+					detfile.print("    <IMG>"+stbuf+"</IMG>\n");
+			  }
+			  for(int i = 0;i<ImagesText.size();i++){
+					stbuf = (String)ImagesText.get(i);
+					detfile.print("    <IMGTEXT>"+stbuf+"</IMGTEXT>\n");
+			  }
+
+			  for(int i = 0;i<LogImages.size();i++){
+					stbuf = (String)LogImages.get(i);
+					detfile.print("    <LOGIMG>"+stbuf+"</LOGIMG>\n");
+			  }
+			  for(int i = 0;i<LogImagesText.size();i++){
+					stbuf = (String)LogImagesText.get(i);
+					detfile.print("    <LOGIMGTEXT>"+stbuf+"</LOGIMGTEXT>\n");
+			  }
+			  for(int i = 0;i<UserImages.size();i++){
+					stbuf = (String)UserImages.get(i);
+					detfile.print("    <USERIMG>"+stbuf+"</USERIMG>\n");
+			  }
+			  for(int i = 0;i<UserImagesText.size();i++){
+					stbuf = (String)UserImagesText.get(i);
+					detfile.print("    <USERIMGTEXT>"+stbuf+"</USERIMGTEXT>\n");
+			  }
+
+
+			  detfile.print("</IMAGES>\n");
+			  detfile.print("<BUGS><![CDATA[\n");
+			  detfile.print(Bugs+"\n");
+			  detfile.print("]]></BUGS>\n");
+			  detfile.print("<URL><![CDATA["+URL+"]]></URL>\r\n");
+			  detfile.print("</CACHEDETAILS>\n");
+			} // if length
+		} catch (Exception e){
+			Vm.debug("Problem writing to a details file");
+		}
+		try{
+		  detfile.close();
+		} catch (Exception e){
+		  //Vm.debug("Problem closing details file");
+		}
+	}
+	
+  
   
 }

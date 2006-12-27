@@ -17,13 +17,15 @@ public class SolverPanel extends CellPanel{
 	mButton mBtSolve;
 	mButton btnLoad, btnSave, btnSaveAs;
 	mTextPad mText;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
 	String currFile;
 	CacheHolder currCh;
 	
 	
-	public SolverPanel (Preferences pref){
-		myPreferences = pref;
+	public SolverPanel (Preferences p, Profile prof){
+		pref = p;
+		profile = prof;
 		ScrollBarPanel sbp = new ScrollBarPanel(mText = new mTextPad());
 		this.addLast(sbp);
 		this.addNext(mBtSolve= new mButton("Solve!"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -44,7 +46,7 @@ public class SolverPanel extends CellPanel{
 				String src = new String();
 				src = mText.getText();
 				src = src + "\n";
-				if (myPreferences.digSeparator.equals(","))	src = src.replace('.', ',');
+				if (pref.digSeparator.equals(","))	src = src.replace('.', ',');
 				else src = src.replace(',', '.');
 				tk.setSource(src);
 				tk.TokenIt();
@@ -61,7 +63,7 @@ public class SolverPanel extends CellPanel{
 				mText.setText(src);
 			}
 			if(ev.target == btnLoad){
-				FileChooser fc = new FileChooser(FileChooser.OPEN, myPreferences.mydatadir);
+				FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
 				
 				fc.addMask(currCh.wayPoint + ".wl");
 				fc.addMask("*.wl");
@@ -89,7 +91,7 @@ public class SolverPanel extends CellPanel{
 				}
 			}
 			if((ev.target == btnSaveAs)||((ev.target == btnSave) && (currFile == null))){
-				FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
+				FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 				fc.addMask(currCh.wayPoint + ".wl");
 				fc.addMask("*.wl");
 				fc.setTitle("Select File");

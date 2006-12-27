@@ -12,24 +12,28 @@ import ewe.filechooser.*;
 public class ASCExporter{
 	//TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
 	
-	public ASCExporter(Vector db, Preferences pref){
-		cacheDB = db;
-		myPreferences = pref;
+	public ASCExporter(Preferences p,Profile prof){
+		pref = p;
+		profile=prof;
+		cacheDB = prof.cacheDB;
 	}
 	
 	public void doIt(){
-		String str = new String();
-		String dummy = new String();
-		CacheHolder holder = new CacheHolder();
+		String str;
+		String dummy;
+		CacheHolder holder;
 		ParseLatLon pll;
-		FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
+		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 		fc.setTitle("Select target file:");
+		fc.addMask("*.csv");
+		fc.defaultExtension="csv";
 		if(fc.execute() != FileChooser.IDCANCEL){
 			File saveTo = fc.getChosenFile();
 			try{
-				PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(saveTo+".csv")));
+				PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(saveTo)));
 				for(int i = 0; i<cacheDB.size(); i++){
 					holder=(CacheHolder)cacheDB.get(i);
 					if(holder.is_black == false && holder.is_filtered == false){
@@ -43,7 +47,7 @@ public class ASCExporter{
 				}//for
 				outp.close();
 			}catch (Exception e){
-				//Vm.debug("Problem writing to ASC file!");
+				ewe.sys.Vm.debug("Problem writing to ASC file! "+e.toString());
 			}//try
 		} //if else {
 		}

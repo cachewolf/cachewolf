@@ -36,7 +36,8 @@ import ewe.ui.*;
 *	It uses a generic parse tree to parse the page and build a gpx file.
 */
 public class SpiderGC{
-	private static Preferences pref = new Preferences();
+	private static Preferences pref;
+	private Profile profile;
 	static String viewstate = new String();
 	static String passwort = new String();
 	static String cookieID = new String();
@@ -115,9 +116,8 @@ public class SpiderGC{
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
 		String notes = new String();
 		String start = new String();
-		CacheReaderWriter crw = new CacheReaderWriter();
 		try{
-			crw.readCache(ch, pref.mydatadir);
+			ch.readCache(profile.dataDir);
 		}catch(IOException ioex){
 			pref.log("Could not load " + ch.wayPoint + "file in spiderSingle");
 		}
@@ -192,9 +192,9 @@ public class SpiderGC{
 		getAddWaypoints(start, ch);
 		pref.log("Got additional waypoints");
 		ch.CacheNotes = notes;
-		crw.saveCacheDetails(ch, pref.mydatadir);
+		ch.saveCacheDetails(profile.dataDir);
 		cacheDB.set(number, ch);
-		crw.saveIndex(cacheDB,pref.mydatadir);
+		profile.saveIndex(pref);
 		infB.close(0);
 		Vm.showWait(false);
 	}
@@ -289,8 +289,7 @@ public class SpiderGC{
 		infB.setInfo("Found " + cachesToLoad.size() + " caches");
 		// Now ready to spider each cache
 		String wpt = new String();
-		CacheReaderWriter crw = new CacheReaderWriter();
-		CacheHolder ch = new CacheHolder();
+		CacheHolder ch;
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			ch = new CacheHolder();
 			wpt = (String)cachesToLoad.get(i);
@@ -365,9 +364,9 @@ public class SpiderGC{
 					pref.log("Getting additional waypoints");
 					getAddWaypoints(start, ch);
 					pref.log("Got additional waypoints");
-					crw.saveCacheDetails(ch, pref.mydatadir);
+					ch.saveCacheDetails(profile.dataDir);
 					cacheDB.add(ch);
-					crw.saveIndex(cacheDB,pref.mydatadir);
+					profile.saveIndex(pref);
 				}catch(Exception ex){
 					pref.log("There was an error in the last step:");
 					pref.log("Cache was: " + wpt);
@@ -378,7 +377,7 @@ public class SpiderGC{
 				}
 			}
 		}
-		crw.saveIndex(cacheDB,pref.mydatadir);
+		profile.saveIndex(pref);
 		infB.close(0);
 		Vm.showWait(false);
 		/*
@@ -406,8 +405,8 @@ public class SpiderGC{
 			ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 			pll.parse();
 			MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
-			mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map.gif", "3");
-			mpl.loadTo(pref.mydatadir + "/" + holder.wayPoint + "_map_2.gif", "10");
+			mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");
+			mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
 		}
 	}
 	
@@ -541,7 +540,7 @@ public class SpiderGC{
 		//byte[] buffer = new byte[9000];
 		ByteArray daten;
 		String datei = new String();
-		datei = pref.mydatadir + target;
+		datei = profile.dataDir + target;
 		if(pref.myproxy.length()>0){
 			connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), quelle);
 		}else{
@@ -717,17 +716,18 @@ public class SpiderGC{
 		return reslts;
 	}
 	
-	public SpiderGC(Preferences prf, Vector cacheDB){
-		this.cacheDB = cacheDB;
+	public SpiderGC(Preferences prf, Profile profile){
+		this.profile=profile;
+		this.cacheDB = profile.cacheDB;
 		pref = prf;
 		indexDB = new Hashtable(cacheDB.size());
-		CacheHolder ch = new CacheHolder();
+		CacheHolder ch;
 		//index the database for faster searching!
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			indexDB.put((String)ch.wayPoint, new Integer(i));
 			ch.is_new = false;
-			cacheDB.set(i, ch);
+			//cacheDB.set(i, ch);
 		}
 	}
 	
