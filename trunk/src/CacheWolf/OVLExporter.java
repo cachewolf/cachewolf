@@ -12,19 +12,21 @@ public class OVLExporter{
 //	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
 	Preferences myPreferences;
+	Profile profile;
 	
-	public OVLExporter(Vector db, Preferences pref){
-		cacheDB = db;
-		myPreferences = pref;
+	public OVLExporter(Preferences p, Profile prof){
+		myPreferences = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 	}
 	
 	public void doIt(){
 		CacheHolder holder;
 		ParseLatLon pll;
 		int symCounter = 1;
-		FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
+		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 		fc.setTitle("Select target file:");
-		if(fc.execute() != fc.IDCANCEL){
+		if(fc.execute() != FileChooser.IDCANCEL){
 			File saveTo = fc.getChosenFile();
 			try{
 				PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(saveTo)));
@@ -80,7 +82,7 @@ public class OVLExporter{
 				
 				outp.close();
 			}catch(Exception e){
-				//Vm.debug("Error writing to OVL file!");
+				Vm.debug("Error writing to OVL file! "+e.toString());
 			}
 		} // if execute
 	}

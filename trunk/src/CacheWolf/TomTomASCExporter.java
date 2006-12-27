@@ -15,18 +15,20 @@ import ewe.filechooser.*;
 public class TomTomASCExporter{
 //	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
 	
-	public TomTomASCExporter(Vector db, Preferences pref){
-		cacheDB = db;
-		myPreferences = pref;
+	public TomTomASCExporter(Preferences p, Profile prof){
+		pref = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 	}
 	
 	public void doIt(){
 		CacheHolder holder;
 		ParseLatLon pll;
 		int symCounter = 0;
-		FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
+		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 		fc.setTitle("Select target file:");
 		if(fc.execute() != fc.IDCANCEL){
 			File saveTo = fc.getChosenFile();

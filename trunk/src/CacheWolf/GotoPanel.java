@@ -144,6 +144,7 @@ public class GotoPanel extends CellPanel {
 	DetailsPanel detP;
 
 	Preferences pref;
+	Profile profile;
 	// different panels to avoid spanning
 	CellPanel FormatP = new CellPanel();
 	CellPanel ButtonP = new CellPanel();
@@ -182,12 +183,13 @@ public class GotoPanel extends CellPanel {
 	 * @param DetailsPanel 	reference to DetailsPanel
 	 * @param Vector		cacheDB
 	 */
-	public GotoPanel(Preferences p, MainTab mt, DetailsPanel dp, Vector db)
+	public GotoPanel(Preferences p, Profile prof, MainTab mt, DetailsPanel dp)
 	{
 		pref = p;
+		profile=prof;
 		mainT = mt;
 		detP = dp;
-		cacheDB = db;
+		cacheDB = profile.cacheDB;
 
 		// Button
 		ButtonP.addNext(btnGPS = new mButton("Start"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -581,7 +583,7 @@ public class GotoPanel extends CellPanel {
 			serThread.start();
 			startDisplayTimer();
 			if (chkLog.getState()){
-				gpsPosition.startLog(pref.mydatadir, Convert.toInt(inpLogSeconds.getText()), CWGPSPoint.LOGALL);
+				gpsPosition.startLog(profile.dataDir, Convert.toInt(inpLogSeconds.getText()), CWGPSPoint.LOGALL);
 			}
 			chkLog.modify(ControlConstants.Disabled,0);
 			btnGPS.setText("Stop");
@@ -684,7 +686,7 @@ public class GotoPanel extends CellPanel {
 			if (ev.target == btnSave){
 				CacheHolder ch = new CacheHolder();
 				ch.LatLon = gpsPosition.toString();
-				detP.newWaypoint(ch,cacheDB, mainT, pref);
+				detP.newWaypoint(ch,mainT, pref, profile);
 			}
 			// change destination waypoint
 			if (ev.target == btnGoto){

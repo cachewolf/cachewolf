@@ -19,7 +19,7 @@ public class DetailsPanel extends CellPanel{
 	mInput wayOwner = new mInput();
 	//mInput wayStatus = new mInput();
 	mTextPad wayNotes = new mTextPad();
-	mCheckBox chkDelete, chkCenter;
+	mButton btnDelete,btnCenter;
 	mChoice wayType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead","Reference"},0);
 	mChoice waySize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
 	mComboBox wayStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
@@ -35,6 +35,7 @@ public class DetailsPanel extends CellPanel{
 	boolean newWp = false;
 	MainTab mainT;
 	Preferences pref; // Test
+	Profile profile;
 	
 	public DetailsPanel(){
 		//String welcomeMessage = MyLocale.getMsg(1,"how about that?");
@@ -82,8 +83,8 @@ public class DetailsPanel extends CellPanel{
 		this.addLast(wayStatus.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addNext(chkCenter = new mCheckBox(MyLocale.getMsg(309,"Make Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(chkDelete = new mCheckBox(MyLocale.getMsg(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(btnCenter = new mButton(MyLocale.getMsg(309,"Make Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+//		this.addLast(btnDelete = new mButton(MyLocale.getMsg(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
 		//this.addLast(sbp, this.STRETCH, this.FILL);
@@ -93,7 +94,7 @@ public class DetailsPanel extends CellPanel{
 	/**
 	*	Set the values to display.
 	*/
-	public void setDetails(CacheHolder ch, Vector DB, MainTab mt, Preferences p){
+	public void setDetails(CacheHolder ch, MainTab mt, Preferences p, Profile prof){
 		if (this.newWp){
 			this.newWp = false;
 			btCrWp.setText(MyLocale.getMsg(312,"Save"));
@@ -103,14 +104,13 @@ public class DetailsPanel extends CellPanel{
 			btCrWp.setText(MyLocale.getMsg(311,"Create Waypoint"));
 		}
 		pref = p;
+		profile=prof;
 		mainT = mt;
-		cacheDB = DB;
+		cacheDB = profile.cacheDB;
 		thisCache = ch;
 		dirty_notes = false;
 		dirty_details = false;
 		dirty_newOrDelete = false; // Cache has been created/deleted but not saved
-		chkCenter.setState(false);
-		chkDelete.setState(false);
 		wayPoint.setText(ch.wayPoint);
 		wayName.setText(ch.CacheName);
 	    btnWayLoc.setText(ch.LatLon);
@@ -152,12 +152,12 @@ public class DetailsPanel extends CellPanel{
 		return strWp;
 	}
 	
-	public void newWaypoint(CacheHolder ch, Vector DB, MainTab mt, Preferences p){
+	public void newWaypoint(CacheHolder ch, MainTab mt, Preferences pref, Profile profile){
 
-		ch.wayPoint = getNewWayPointName(DB);
+		ch.wayPoint = getNewWayPointName(profile.cacheDB);
 		ch.type = "0";
 		ch.CacheSize = "None";
-		setDetails(ch, DB, mt,p);
+		setDetails(ch, mt,pref, profile);
 		this.newWp = true;
 		cacheDB.add(thisCache);
 		mt.select(this);
@@ -245,8 +245,7 @@ public class DetailsPanel extends CellPanel{
 		//cacheDB.add(ch);
 		
 		if(thisCache.CacheNotes.length()>0){
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(thisCache, pref.mydatadir);
+			thisCache.saveCacheDetails(profile.dataDir);
 		}
 		
 		dirty_newOrDelete = true;
@@ -265,8 +264,7 @@ public class DetailsPanel extends CellPanel{
 				if(wayNotes.getText().length() > 0){
 					////Vm.debug("Saving!!!");
 					thisCache.CacheNotes = wayNotes.getText();
-					CacheReaderWriter crw = new CacheReaderWriter();
-					crw.saveCacheDetails(thisCache, pref.mydatadir);
+					thisCache.saveCacheDetails( profile.dataDir);
 				}
 			}
 			if(ev.target != wayNotes){
@@ -279,14 +277,16 @@ public class DetailsPanel extends CellPanel{
 		*	Also possible: the user created a custom waypoint.
 		*/
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
-			if (ev.target == chkDelete){
+			if (ev.target == btnDelete){
 				//Vm.debug(thisCache.CacheName);
-				cacheDB.remove(thisCache);
-				dirty_newOrDelete = true;
+//TODO This does not work. e.g. if we do a sort we get an indexOutOfBounds exception
+// therefore temporarily disabled.  skg 20061226
+				//cacheDB.remove(thisCache);  
+				//dirty_newOrDelete = true;
 			}
 			if(ev.target == showMap){
 				try {
-					MapDetailForm mdf = new MapDetailForm(thisCache.wayPoint, pref);
+					MapDetailForm mdf = new MapDetailForm(thisCache.wayPoint, pref, profile);
 					mdf.execute();
 				} catch (IllegalArgumentException e) {
 					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden")+": "+e.getMessage(), MessageBox.OKB);
@@ -297,9 +297,9 @@ public class DetailsPanel extends CellPanel{
 				InfoScreen is = new InfoScreen(thisCache.Bugs, "Travelbugs", false, pref);
 				is.execute();
 			}
-			if (ev.target == chkCenter){
+			if (ev.target == btnCenter){
 				CWPoint cp=new CWPoint(thisCache.LatLon);
-				if (cp.latDec == 0 && cp.lonDec == 0){
+				if (!cp.isValid()){
 					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
 					tmpMB.exec();
 				} else {				
@@ -317,11 +317,10 @@ public class DetailsPanel extends CellPanel{
 				note = note + "\n";
 				wayNotes.setText(note);
 				thisCache.CacheNotes = wayNotes.getText();
-				CacheReaderWriter crw = new CacheReaderWriter();
-				crw.saveCacheDetails(thisCache, pref.mydatadir);
+				thisCache.saveCacheDetails(profile.dataDir);
 			}
 			if (ev.target == addPicture){
-				thisCache.addUserImage(pref);
+				thisCache.addUserImage(profile);
 			}
 			if (ev.target == btCrWp){
 				if(btCrWp.getText().equals(MyLocale.getMsg(312,"Save"))){

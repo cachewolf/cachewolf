@@ -19,7 +19,8 @@ public class MainTab extends mTabbedPanel {
 	Vector cDB;
 	DetailsPanel detP = new DetailsPanel();
 	CalcPanel calcP = new CalcPanel();
-	Preferences pref = new Preferences();
+	Preferences pref;
+	Profile profile;
 	GotoPanel gotoP; 
 	RadarPanel radarP = new RadarPanel();
 	ImagePanel imageP;
@@ -29,15 +30,16 @@ public class MainTab extends mTabbedPanel {
 	//Locale l = Vm.getLocale();
 	//LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	
-	public MainTab(Vector cacheDB, Preferences p, StatusBar statBar){
-		MyLocale.setSIPButton();
+	public MainTab(Preferences p, Profile prof,StatusBar statBar){
 		pref = p;
-		cDB = cacheDB;
+		profile=prof;
+		cDB = profile.cacheDB;
+		MyLocale.setSIPButton();
 		ch.wayPoint = "null";
 		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
 		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
 
-		Card c = this.addCard(tbP = new TablePanel(cDB, pref, statBar), MyLocale.getMsg(1200,"List"), null);
+		Card c = this.addCard(tbP = new TablePanel(pref, profile, statBar), MyLocale.getMsg(1200,"List"), null);
 		
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
 		c.iconize(new Image("details.gif"),true);
@@ -45,7 +47,7 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(descP, MyLocale.getMsg(1202,"Description"), null);
 		c.iconize(new Image("descr.gif"),true);
 		
-		c = this.addCard(new ScrollBarPanel(imageP = new ImagePanel(pref)), MyLocale.getMsg(1203,"Images"), null);
+		c = this.addCard(new ScrollBarPanel(imageP = new ImagePanel(pref, profile)), MyLocale.getMsg(1203,"Images"), null);
 		c.iconize(new Image("images.gif"),true);
 		
 		c = this.addCard(hintLP, MyLocale.getMsg(1204,"Hints & Logs"), null);
@@ -54,11 +56,11 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(calcP, MyLocale.getMsg(1206,"Calc"), null);
 		c.iconize(new Image("ewe/HandHeld.bmp"),true);
 		
-		c = this.addCard(gotoP = new GotoPanel(pref, this, detP, cDB), "Goto", null);
+		c = this.addCard(gotoP = new GotoPanel(pref, profile, this, detP), "Goto", null);
 		c.iconize(new Image("goto.gif"),true);
 		tbP.setGotoPanel(gotoP);
 		
-		c = this.addCard(solverP = new SolverPanel(pref), MyLocale.getMsg(1205,"Solver"), null);
+		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205,"Solver"), null);
 		c.iconize(new Image("solver.gif"),true);
 		
 		c = this.addCard(radarP, "Radar", null);
@@ -127,10 +129,9 @@ public class MainTab extends mTabbedPanel {
 				  try{
 					  ch = (CacheHolder)cDB.get(tbP.getSelectedCache());
 					  if(ch.wayPoint.equals(lastselected) == false){
-						  CacheReaderWriter crw = new CacheReaderWriter();
 						  //OperationTimer opt = new OperationTimer();
 						  //opt.start("Reading: ");
-						  crw.readCache(ch, pref.mydatadir);
+						  ch.readCache(profile.dataDir);
 						  //opt.end();
 						  ////Vm.debug(opt.toString());
 						  lastselected = ch.wayPoint;
@@ -141,7 +142,7 @@ public class MainTab extends mTabbedPanel {
 			  }
 			  if(this.getSelectedItem() == 1){ // DetailsPanel
 				  MyLocale.setSIPButton();
-				  detP.setDetails(ch, cDB, this,pref);
+				  detP.setDetails(ch, this,pref, profile);
 			  }
 			  if(this.getSelectedItem() == 2) { // Description Panel
 				  MyLocale.setSIPOff();
@@ -169,7 +170,7 @@ public class MainTab extends mTabbedPanel {
 			  }
 			  if(this.getSelectedItem() == 5){ // CalcPanel
 				  MyLocale.setSIPButton();
-				  calcP.setFields(ch, cDB, this, detP, pref);
+				  calcP.setFields(ch, this, detP, pref, profile);
 					calcP.activateFields(CWPoint.DMM);
 				  }
 			  

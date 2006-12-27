@@ -12,17 +12,19 @@ import ewe.filechooser.*;
 public class KMLExporter{
 //	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
 	
-	public KMLExporter(Vector db, Preferences pref){
-		cacheDB = db;
-		myPreferences = pref;
+	public KMLExporter(Preferences p, Profile prof){
+		pref = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 	}
 	
 	public void doIt(){
 		CacheHolder holder;
 		ParseLatLon pll;
-		FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
+		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 		fc.setTitle("Select target file:");
 		if(fc.execute() != fc.IDCANCEL){
 			File saveTo = fc.getChosenFile();

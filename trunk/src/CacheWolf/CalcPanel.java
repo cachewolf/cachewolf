@@ -31,8 +31,6 @@ class BearingDistance {
 }
 
 public class CalcPanel extends CellPanel {
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 
 	mCheckBox chkDMM, chkDMS, chkDD, chkUTM;
 	CheckBoxGroup chkFormat = new CheckBoxGroup();
@@ -50,6 +48,7 @@ public class CalcPanel extends CellPanel {
 	MainTab mainT;
 	DetailsPanel detP;
 	Preferences pref;
+	Profile profile;
 	// different panels to avoid spanning
 	CellPanel TopP = new CellPanel();
 	CellPanel BottomP = new CellPanel();
@@ -85,9 +84,9 @@ public class CalcPanel extends CellPanel {
 		TopP.addLast(inpEWs = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		//Input for UTM
-		TopP.addNext(new mLabel((String)lr.get(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addNext(new mLabel((String)lr.get(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addLast(new mLabel((String)lr.get(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		TopP.addNext(new mLabel(MyLocale.getMsg(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		TopP.addNext(new mLabel(MyLocale.getMsg(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		TopP.addLast(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		TopP.addNext(inpUTMZone = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -96,11 +95,11 @@ public class CalcPanel extends CellPanel {
 		// Input for free Text
 		TopP.addNext(inpText = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		inpText.setTag(SPAN,new Dimension(3,1));
-		TopP.addLast(btnParse = new mButton((String)lr.get(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		TopP.addLast(btnParse = new mButton(MyLocale.getMsg(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 
 		//inpBearing and direction, unit for inpDistance
-		BottomP.addNext(new mLabel((String)lr.get(1403,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		BottomP.addLast(new mLabel((String)lr.get(1404,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		BottomP.addNext(new mLabel(MyLocale.getMsg(1403,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		BottomP.addLast(new mLabel(MyLocale.getMsg(1404,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addNext(inpBearing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addNext(inpDistance = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addLast(chcDistUnit = new mChoice(new String[]{"m", "km"},0),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -110,7 +109,7 @@ public class CalcPanel extends CellPanel {
 		BottomP.addNext(btnCalc = new mButton("Calc"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addNext(btnClear = new mButton("Clear"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addNext(btnGoto = new mButton("Goto"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		BottomP.addLast(btnSave = new mButton((String)lr.get(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		BottomP.addLast(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		
 		// Output 
 		txtOutput = new TextDisplay();
@@ -171,11 +170,12 @@ public class CalcPanel extends CellPanel {
 		return;
 	}
 	
-	public void setFields(CacheHolder ch, Vector DB, MainTab mt,DetailsPanel dp, Preferences p){
+	public void setFields(CacheHolder ch, MainTab mt,DetailsPanel dp, Preferences p, Profile prof){
 		pref = p;
+		profile=prof;
 		mainT = mt;
 		detP = dp;
-		cacheDB = DB;
+		cacheDB = profile.cacheDB;
 		
 		currFormat = CWPoint.DMM;
 		if (ch.LatLon.length()== 0) coordInp.set(0,0);
@@ -239,7 +239,7 @@ public class CalcPanel extends CellPanel {
 				currFormat = chkFormat.getSelectedIndex();
 				coordOut = coordInp.project(bd.degrees, bd.distance);
 				ch.LatLon = coordOut.toString();
-				detP.newWaypoint(ch,cacheDB, mainT, pref);
+				detP.newWaypoint(ch, mainT, pref, profile);
 			}
 			
 			if (ev.target == btnGoto){
@@ -253,7 +253,7 @@ public class CalcPanel extends CellPanel {
 				// try to parse coords
 				CWPoint coord = new CWPoint(inpText.getText());
 				if (coord.latDec == 0 && coord.lonDec == 0){
-					MessageBox tmpMB = new MessageBox((String)lr.get(312,"Error"), (String)lr.get(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
+					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
 					tmpMB.exec();
 				}else {
 					currFormat = chkFormat.getSelectedIndex();

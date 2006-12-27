@@ -32,7 +32,8 @@ public class OCXMLImporter extends MinML {
 	Vector cacheDB;
 	InfoBox inf;
 	CacheHolder holder;
-	Preferences pref = new Preferences();
+	Preferences pref;
+	Profile profile;
 	Time dateOfthisSync;
 	String strData = new String();
 	int picCnt;
@@ -51,16 +52,17 @@ public class OCXMLImporter extends MinML {
 	String user;
 	
 
-	public OCXMLImporter(Vector DB, Preferences pf)
+	public OCXMLImporter(Preferences p,Profile prof)
 	{
-		cacheDB = DB;
-		pref = pf;
+		pref = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 		if(pref.last_sync_opencaching == null ||
 			pref.last_sync_opencaching.length() < 12){
 			pref.last_sync_opencaching = "20050801000000";
 			incUpdate = false;
 		}
-		user = pf.myAlias.toLowerCase();
+		user = p.myAlias.toLowerCase();
 		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
@@ -78,7 +80,7 @@ public class OCXMLImporter extends MinML {
 			String file = new String();
 			String url = new String();
 			
-			String lastS =  pref.last_sync_opencaching;
+			String lastS =  profile.last_sync_opencaching;
 			CWPoint center = pref.curCentrePt; // No need to clone curCentrePt as center is only read
 
 			OCXMLImporterScreen importOpt = new OCXMLImporterScreen(pref, MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
@@ -126,10 +128,10 @@ public class OCXMLImporter extends MinML {
 			//file = "628-0-1.zip";
 			
 			//parse
-			File tmpFile = new File(pref.mydatadir + file);
+			File tmpFile = new File(profile.dataDir + file);
 			if (tmpFile.getLength() == 0 ) throw new IOException("no updates available");
 			
-			ZipFile zif = new ZipFile (pref.mydatadir + file);
+			ZipFile zif = new ZipFile (profile.dataDir + file);
 			ZipEntry zipEnt;
 			Enumeration zipEnum = zif.entries();
 			// there could be more than one file in the archive
@@ -168,8 +170,7 @@ public class OCXMLImporter extends MinML {
 			// @TODO: this should be saved in the index.xml not with the profiles!
 			pref.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
 			pref.savePreferences();
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveIndex(cacheDB, pref.mydatadir);
+			profile.saveIndex(pref);
 			finalMessage=MyLocale.getMsg(1607,"Update from opencaching successful");
 		}
 		inf.close(0);
@@ -337,19 +338,18 @@ public class OCXMLImporter extends MinML {
 				pll.parse();
 				MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
 				// MapLoader tests itself if the file already exists and doesnt download if so.
-				String filename = pref.mydatadir + "/" + holder.wayPoint + "_map.gif";
+				String filename = profile.dataDir + "/" + holder.wayPoint + "_map.gif";
 				if (!fileExits(filename)){
 					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache:")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 1");
 					mpl.loadTo(filename, "3"); }
-				filename = pref.mydatadir + "/" + holder.wayPoint + "_map_2.gif";
+				filename = profile.dataDir + "/" + holder.wayPoint + "_map_2.gif";
 				if (!fileExits(filename)){
 					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache: ")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 2");
 					mpl.loadTo(filename, "10"); }
 			}
 			// save all
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(holder,pref.mydatadir);
-			crw.saveIndex(cacheDB,pref.mydatadir);
+			holder.saveCacheDetails(profile.dataDir);
+			profile.saveIndex(pref);
 			return;
 		}
 		if(name.equals("id")){
@@ -427,8 +427,7 @@ public class OCXMLImporter extends MinML {
 						getPic(fetchUrl, imgAltText);
 					}
 				}
-				CacheReaderWriter crw = new CacheReaderWriter();
-				crw.saveCacheDetails(holder,pref.mydatadir);
+				holder.saveCacheDetails(profile.dataDir);
 				return;
 			}
 
@@ -461,7 +460,7 @@ public class OCXMLImporter extends MinML {
 		// add title
 		holder.ImagesText.add(picDesc);
 		try {
-			File ftest = new File(pref.mydatadir + fileName);
+			File ftest = new File(profile.dataDir + fileName);
 			if (ftest.exists()){
 				holder.Images.add(fileName);
 			}
@@ -507,8 +506,7 @@ public class OCXMLImporter extends MinML {
 		if(name.equals("picture")){ 
 			//String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
 			getPic(picUrl,picTitle);
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(holder,pref.mydatadir);
+			holder.saveCacheDetails(profile.dataDir);
 			return;
 		}
 	}
@@ -516,8 +514,7 @@ public class OCXMLImporter extends MinML {
 	private void endCacheLog(String name){
 		if (name.equals("cachelog")){
 			holder.addLog(logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
-			CacheReaderWriter crw = new CacheReaderWriter();
-			crw.saveCacheDetails(holder,pref.mydatadir);
+			holder.saveCacheDetails(profile.dataDir);
 			return;
 		}
 
@@ -577,7 +574,7 @@ public class OCXMLImporter extends MinML {
 			}
 			//Vm.debug("Save: " + myPref.mydatadir + fileName);
 			//Vm.debug("Daten: " + daten.length);
-			BufferedOutputStream outp =  new BufferedOutputStream(new FileOutputStream(pref.mydatadir + fileName));
+			BufferedOutputStream outp =  new BufferedOutputStream(new FileOutputStream(profile.dataDir + fileName));
 			outp.write(daten.toBytes());
 			outp.close();
 			sock.close();
@@ -641,10 +638,9 @@ public class OCXMLImporter extends MinML {
 			ch.ocCacheID = CacheID;
 			return ch;
 		}
-		CacheReaderWriter crw = new CacheReaderWriter();
 		ch = (CacheHolder) cacheDB.get(index);
 		try {
-			crw.readCache(ch, pref.mydatadir);
+			ch.readCache(profile.dataDir);
 		} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
 		return ch;
 	}

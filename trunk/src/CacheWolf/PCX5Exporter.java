@@ -11,13 +11,16 @@ import ewe.util.*;
 public class PCX5Exporter{
 //	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
+
 	public static int MODE_AUTO = 0;
 	public static int MODE_ASK = 1;
-		
-	public PCX5Exporter(Vector db, Preferences pref){
-		cacheDB = db;
-		myPreferences = pref;
+	
+	public PCX5Exporter(Preferences p, Profile prof){
+		pref = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 	}
 
 	
@@ -30,7 +33,7 @@ public class PCX5Exporter{
 		cwd = File.getProgramDirectory();
 		File saveTo = new File(cwd + "/temp.pcx");
 		if(mode == MODE_ASK) {
-			FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
+			FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 			fc.setTitle("Select target file:");
 			if(fc.execute() != fc.IDCANCEL) saveTo = fc.getChosenFile();
 		}

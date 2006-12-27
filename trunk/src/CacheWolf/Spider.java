@@ -49,12 +49,13 @@ public class Spider extends TaskObject{
 	private Vector caches_identified = new Vector();
 	private String caches_available = new String();
 	Vector cacheDB;
-	Preferences pref = new Preferences();
+	Preferences pref;
+	Profile profile;
 	ProgressBarForm pbf = new ProgressBarForm();
 	MessageArea msgA;
 	Vector data;
 	String distance;
-	
+/** skg: 20061225 Commented out as it is not used	
 	protected void doRun(){
 		switch(SpiderType){
 			case 0: SpiderMulti(data, distance);
@@ -76,21 +77,27 @@ public class Spider extends TaskObject{
 		data = vct;
 		distance = dist;
 	}
+*/	
+	
 	/**
 	*	Initializes a spider. It also identifies which caches
 	*	are already available in the database.
+	*
+	*   This seems to be used for spidering caches in batch mode
 	*/
-	public Spider(Vector DB, Preferences p, MessageArea msg, int SpT){
+	public Spider(Preferences p, Profile prof, MessageArea msg, int SpT){
 		msgA = msg;
 		SpiderType = SpT;
-		cacheDB = DB;
+		cacheDB = profile.cacheDB;
+		profile=prof;
 		pref = p;
 		proxy = pref.myproxy;
 		port = pref.myproxyport;
 		CacheHolder ch;
-		for(int i = 0; i<DB.size(); i++){
-			ch = (CacheHolder)DB.get(i);
-			caches_available = caches_available + ";" + ch.wayPoint;
+		for(int i = 0; i<cacheDB.size(); i++){
+			ch = (CacheHolder)cacheDB.get(i);
+// TODO Change to hashTable or StringBuffer			
+			caches_available = caches_available + ";" + ch.wayPoint;  
 		}
 		//Vm.debug("Setup caches avail: " + caches_available);
 	}
@@ -348,6 +355,7 @@ public class Spider extends TaskObject{
 		*	User will choose this option when identification of caches
 		*	along a route is required.
 		*/
+		/**skg 20061225: Not used
 		public void SpiderMulti(Vector wpts, String dist){
 			//first save current preference settings
 			CWPoint SavedCentre=new CWPoint(pref.curCentrePt);
@@ -363,7 +371,8 @@ public class Spider extends TaskObject{
 			//save back preferences
 			pref.curCentrePt.set(SavedCentre);
 		}
-		
+		*/
+	
 		/**
 		*	Method that actually gathers details on a cache.
 		*	The string total is just for information purposes.
@@ -377,7 +386,6 @@ public class Spider extends TaskObject{
 			Extractor cacheEx;
 			Extractor tempEx, tempEx2;
 			CacheHolder ch;
-			CacheReaderWriter crw = new CacheReaderWriter();
 			int doneCounter = 1;
 			String wp = new String();
 			String document = new String();
@@ -752,7 +760,7 @@ public class Spider extends TaskObject{
 								connImg = new HttpConnection(imageOrig);
 							}
 							imageType = imageOrig.substring(imageOrig.lastIndexOf("."), imageOrig.lastIndexOf(".")+4);
-							datei = pref.mydatadir + ch.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
+							datei = profile.dataDir + ch.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
 							ch.Images.set(p, ch.wayPoint + "_" + Convert.toString(imgCounter) + imageType);
 							//connImg.keepAliveMode = true;
 							connImg.setRequestorProperty("Connection", "close");
@@ -780,7 +788,7 @@ public class Spider extends TaskObject{
 					imgCounter++;
 					imageOrig = (String)ch.LogImages.get(p);
 					//Vm.debug("Fetching Log Image: " +imageOrig);
-					datei = pref.mydatadir + ch.wayPoint + "_L_" + Convert.toString(imgCounter)+ ".jpg";
+					datei = profile.dataDir + ch.wayPoint + "_L_" + Convert.toString(imgCounter)+ ".jpg";
 					File dateiF = new File(datei);
 					//no need to save the file if it already exists!
 					ch.LogImages.set(p, ch.wayPoint + "_L_" + Convert.toString(imgCounter) + ".jpg");
@@ -835,7 +843,7 @@ public class Spider extends TaskObject{
 					changeCache(ch);
 				}
 				
-				crw.saveCacheDetails(ch, pref.mydatadir);	
+				ch.saveCacheDetails(profile.dataDir);	
 				ch.CacheName = SafeXML.cleanback(ch.CacheName);
 				if(ch.CacheName.equals("An Error Has Occured")){
 					ch.type = "0";
@@ -847,13 +855,13 @@ public class Spider extends TaskObject{
 				//after each spider
 				document = new String();
 				doneCounter++;
-				crw.saveIndex(cacheDB, pref.mydatadir);
+				profile.saveIndex(pref);
 				if(!ch.CacheName.equals("An Error Has Occured") && ch.LatLon.length() > 1){
 					pll = new ParseLatLon(ch.LatLon,".");
 					pll.parse();
 					mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
-					mpl.loadTo(pref.mydatadir + "/" + ch.wayPoint + "_map.gif", "3");
-					mpl.loadTo(pref.mydatadir + "/" + ch.wayPoint + "_map_2.gif", "10");
+					mpl.loadTo(profile.dataDir + "/" + ch.wayPoint + "_map.gif", "3");
+					mpl.loadTo(profile.dataDir + "/" + ch.wayPoint + "_map_2.gif", "10");
 				}
 				if(shouldStop == true) break;
 			} // for
@@ -887,14 +895,12 @@ public class Spider extends TaskObject{
 		*	cache. It returns a CacheHolder object.
 		*/
 		private CacheHolder getCache(String waypoint){
-			CacheReaderWriter crw = new CacheReaderWriter();
-			CacheHolder retCH = new CacheHolder();
+			CacheHolder retCH=null;
 			for(int i = 0; i<cacheDB.size();i++){
-				retCH = new CacheHolder();
 				retCH = (CacheHolder)cacheDB.get(i);
 				if(retCH.wayPoint.equals(waypoint)) {
 					try{
-						crw.readCache(retCH, pref.mydatadir);
+						retCH.readCache(profile.dataDir);
 					}catch(Exception ex){};
 					return retCH;
 				}

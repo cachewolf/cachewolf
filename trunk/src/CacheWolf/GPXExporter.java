@@ -15,25 +15,22 @@ import ewe.util.*;
 public class GPXExporter{
 //	TODO Exportanzahl anpassen: Bug: 7351
 	Vector cacheDB;
-	Preferences myPreferences;
+	Preferences pref;
+	Profile profile;
 	ProgressBarForm pbf = new ProgressBarForm();
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	
-	public GPXExporter(Vector db, Preferences pref){
-		cacheDB = db;
-		myPreferences = pref;
+	public GPXExporter(Preferences p, Profile prof){
+		pref = p;
+		profile=prof;
+		cacheDB = profile.cacheDB;
 	}
 	
 	public void doIt(int variant){
-		CacheHolder holder = new CacheHolder();
-		//String saveStr = new String();
-		//String latlonstr = new String();
-		String cwd = new String();
-		cwd = File.getProgramDirectory();
+		CacheHolder ch;
+		String cwd= File.getProgramDirectory();
 		File saveTo = new File(cwd + "/temp.gpx");
 		if(variant == 1) {
-			FileChooser fc = new FileChooser(FileChooser.SAVE, myPreferences.mydatadir);
+			FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 			fc.setTitle("Select target file:");
 			if(fc.execute() != FormBase.IDCANCEL) saveTo = fc.getChosenFile();
 		}
@@ -48,53 +45,50 @@ public class GPXExporter{
 			tim = tim.setFormat("yyyy-MM-dd");
 			tim = tim.setToCurrentTime();
 			outp.print(" <time>"+tim.toString()+"T00:00:00.0000000-07:00</time>\r\n");
-			CacheReaderWriter crw;
 			ParseLatLon pll;
-			String msg = new String();
+			String msg;
 			for(int i = 0; i<cacheDB.size(); i++){
 				if (i%5 == 0){
 					msg = "Export " + Convert.toString(i) + " of " + Convert.toString(cacheDB.size());
 					pbf.display("GPX Export",msg,null);
 				}
-				holder = new CacheHolder();
-				holder=(CacheHolder)cacheDB.get(i);
-				if(holder.is_black == false && holder.is_filtered == false){
+				ch=(CacheHolder)cacheDB.get(i);
+				if(ch.is_black == false && ch.is_filtered == false){
 					//KHF read cachedata only if needed 
-					crw = new CacheReaderWriter();
-					crw.readCache(holder, myPreferences.mydatadir);
-					pll = new ParseLatLon(holder.LatLon, ".");
+					ch.readCache(profile.dataDir);
+					pll = new ParseLatLon(ch.LatLon, ".");
 					pll.parse();
 					outp.print("  <wpt lat=\""+pll.getLatDeg()+"\" lon=\""+pll.getLonDeg()+"\">\r\n");
-					if (holder.DateHidden.length()> 0){
-						tim.parse(holder.DateHidden, "M/d/y");
+					if (ch.DateHidden.length()> 0){
+						tim.parse(ch.DateHidden, "M/d/y");
 					}
 					else {
 						tim.setText("2000-01-01");
 					}
 					outp.print("    <time>"+tim.toString()+"T00:00:00.0000000-07:00</time>\r\n");
-					outp.print("    <name>"+holder.wayPoint+"</name>\r\n");
-					outp.print("    <desc>"+SafeXML.cleanGPX(holder.CacheName)+" by "+SafeXML.cleanGPX(holder.CacheOwner)+"</desc>\r\n");
-					outp.print("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp="+holder.wayPoint+"&amp;Submit6=Find</url>\r\n");
-					outp.print("    <urlname>"+SafeXML.cleanGPX(holder.CacheName)+" by "+SafeXML.cleanGPX(holder.CacheOwner)+"</urlname>\r\n");
+					outp.print("    <name>"+ch.wayPoint+"</name>\r\n");
+					outp.print("    <desc>"+SafeXML.cleanGPX(ch.CacheName)+" by "+SafeXML.cleanGPX(ch.CacheOwner)+"</desc>\r\n");
+					outp.print("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp="+ch.wayPoint+"&amp;Submit6=Find</url>\r\n");
+					outp.print("    <urlname>"+SafeXML.cleanGPX(ch.CacheName)+" by "+SafeXML.cleanGPX(ch.CacheOwner)+"</urlname>\r\n");
 					outp.print("    <sym>Geocache</sym>\r\n");
-					outp.print("    <type>Geocache|"+CacheType.transType(holder.type)+"</type>\r\n");
+					outp.print("    <type>Geocache|"+CacheType.transType(ch.type)+"</type>\r\n");
 					//outp.print("    <type>Geocache|Geocache</type>\r\n");
-					String dummyAvailable = holder.is_available ? "True":"False";
-					String dummyArchived = holder.is_archived ? "True":"False";
+					String dummyAvailable = ch.is_available ? "True":"False";
+					String dummyArchived = ch.is_archived ? "True":"False";
 					outp.print("    <groundspeak:cache available=\""+ dummyAvailable + "\" archived=\"" + dummyArchived+ "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
-					outp.print("      <groundspeak:name>"+SafeXML.cleanGPX(holder.CacheName)+"</groundspeak:name>\r\n");
-					outp.print("      <groundspeak:placed_by>"+SafeXML.cleanGPX(holder.CacheOwner)+"</groundspeak:placed_by>\r\n");
-					outp.print("      <groundspeak:owner>"+SafeXML.cleanGPX(holder.CacheOwner)+"</groundspeak:owner>\r\n");
-					outp.print("      <groundspeak:type>"+CacheType.transType(holder.type)+"</groundspeak:type>\r\n");
-					outp.print("      <groundspeak:container>"+holder.CacheSize+"</groundspeak:container>\r\n");
+					outp.print("      <groundspeak:name>"+SafeXML.cleanGPX(ch.CacheName)+"</groundspeak:name>\r\n");
+					outp.print("      <groundspeak:placed_by>"+SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:placed_by>\r\n");
+					outp.print("      <groundspeak:owner>"+SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:owner>\r\n");
+					outp.print("      <groundspeak:type>"+CacheType.transType(ch.type)+"</groundspeak:type>\r\n");
+					outp.print("      <groundspeak:container>"+ch.CacheSize+"</groundspeak:container>\r\n");
 					//KHF use '.' instead of ','
-					outp.print("      <groundspeak:difficulty>"+holder.hard.replace(',','.')+"</groundspeak:difficulty>\r\n");
-					outp.print("      <groundspeak:terrain>"+holder.terrain.replace(',','.')+"</groundspeak:terrain>\r\n");
-					String dummyHTML = holder.is_HTML ? "True":"False";
+					outp.print("      <groundspeak:difficulty>"+ch.hard.replace(',','.')+"</groundspeak:difficulty>\r\n");
+					outp.print("      <groundspeak:terrain>"+ch.terrain.replace(',','.')+"</groundspeak:terrain>\r\n");
+					String dummyHTML = ch.is_HTML ? "True":"False";
 					outp.print("      <groundspeak:long_description html=\"" + dummyHTML + "\">\r\n");
-					outp.print("      "+SafeXML.cleanGPX(holder.LongDescription));
+					outp.print("      "+SafeXML.cleanGPX(ch.LongDescription));
 					outp.print("      \n</groundspeak:long_description>\r\n");
-					outp.print("	  <groundspeak:encoded_hints>"+SafeXML.cleanGPX(Common.rot13(holder.Hints))+"</groundspeak:encoded_hints>\r\n");
+					outp.print("	  <groundspeak:encoded_hints>"+SafeXML.cleanGPX(Common.rot13(ch.Hints))+"</groundspeak:encoded_hints>\r\n");
 					outp.print("      <groundspeak:logs>\r\n");
 					/*
 					for(int j = 0; j<holder.CacheLogs.size(); j++){

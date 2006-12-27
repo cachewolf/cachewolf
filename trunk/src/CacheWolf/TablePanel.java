@@ -17,14 +17,14 @@ public class TablePanel extends CellPanel{
 	myTableControl tc;
 	myTableModel myMod;
 	int selectedCache;
-	Preferences pref = new Preferences();
+	Preferences pref;
 	Vector cacheDB;
 	GotoPanel myGotoPanel;
 	StatusBar statBar;
 	
-	public TablePanel(Vector DB, Preferences p, StatusBar statBar){
+	public TablePanel(Preferences p, Profile profile, StatusBar statBar){
 		this.statBar = statBar;
-		cacheDB = DB;
+		cacheDB = profile.cacheDB;
 		pref = p;
 		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
 		String[] jester;
@@ -50,6 +50,7 @@ public class TablePanel extends CellPanel{
 		addLast(statBar,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		Menu m = new Menu(new String[]{MyLocale.getMsg(1010,"Goto"),MyLocale.getMsg(1011,"Filter"),MyLocale.getMsg(1012,"Delete"),MyLocale.getMsg(1014,"Update"),"-",MyLocale.getMsg(1015,"Select all"),MyLocale.getMsg(1016,"De-select all")},MyLocale.getMsg(1013,"With selection"));
 		tc.setMenu(m);
+		tc.profile=profile;
 		tc.db = cacheDB;
 		tc.pref = p;
 		tc.tbp = this;
@@ -92,6 +93,7 @@ public class TablePanel extends CellPanel{
 		////Vm.debug("IS mypref loaded? " + myPreferences.mylgDeg);
 		tc.setTableModel(myMod);
 		tc.update(true);
+		statBar.updateDisplay();
 	}
 	
 	public void refreshTable(){
