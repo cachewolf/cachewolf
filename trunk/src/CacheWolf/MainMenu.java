@@ -46,9 +46,9 @@ public class MainMenu extends MenuBar {
 		// subMenu for profiles, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] mnuProfile = new MenuItem[3];
-		mnuProfile[0] = mnuNewProfile = new MenuItem("New");
-		mnuProfile[1] = mnuOpenProfile = new MenuItem("Open");
-		mnuProfile[2] = mnuEditProfile = new MenuItem("Edit");
+		mnuProfile[0] = mnuNewProfile = new MenuItem(MyLocale.getMsg(1107,"New"));
+		mnuProfile[1] = mnuOpenProfile = new MenuItem(MyLocale.getMsg(1109,"Open"));
+		mnuProfile[2] = mnuEditProfile = new MenuItem(MyLocale.getMsg(1110,"Edit"));
 		Menu profileMenu = new Menu(mnuProfile,MyLocale.getMsg(121,"Profiles"));
 		
 		///////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ public class MainMenu extends MenuBar {
 				f.close(0);
 			}
 			if(mev.selectedItem == mnuOpenProfile){
-				if (pref.selectProfile(profile,true)) {
+				if (pref.selectProfile(profile,true,false)) {
 					profile.readIndex();
 					pref.profileCentrePt=profile.centre;
 					tbp.resetModel(cacheDB);
