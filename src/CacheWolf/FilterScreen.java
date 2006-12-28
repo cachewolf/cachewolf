@@ -16,7 +16,7 @@ public class FilterScreen extends Form{
 	
 	mChoice distChc, difChc, terrChc, lastChc;
 	mCheckBox foundChk, tradChk, virtualChk, eventChk;
-	mCheckBox ownedChk, multiChk, letterChk, webcamChk, mysteryChk, loclessChk;
+	mCheckBox ownedChk, multiChk, letterChk, webcamChk, mysteryChk,addiWptChk, loclessChk;
 	mInput distIn, difIn, terrIn, lastIn, foundIn;
 	Vector cacheDB;
 	mCheckBox archivedChk, notAvailableChk;
@@ -75,6 +75,7 @@ public class FilterScreen extends Form{
 		ctype.addLast(webcamChk = new mCheckBox("Webcam"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		ctype.addNext(mysteryChk = new mCheckBox("Mystery"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ctype.addNext(addiWptChk = new mCheckBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		ctype.addLast(loclessChk = new mCheckBox("Locationless"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		content.addLast(ctype, CellConstants.STRETCH,CellConstants.FILL);
@@ -164,6 +165,7 @@ public class FilterScreen extends Form{
 				if(webcamChk.getState()) typeMatchPattern |= Filter.WEBCAM;
 				if(mysteryChk.getState()) typeMatchPattern |= Filter.MYSTERY;
 				if(loclessChk.getState()) typeMatchPattern |= Filter.LOCLESS;
+				if(addiWptChk.getState()) typeMatchPattern |= Filter.ADDIWPT;
 				flt.typeMatchPattern = typeMatchPattern;
 				int roseMatchPattern = 0;
 				if(N.getState()) roseMatchPattern |= Filter.N;
