@@ -18,10 +18,10 @@ public class NewProfileForm extends Form {
 	public NewProfileForm (String baseDir) {
         super();
 		//profile=prof;
-        title = "Input name of new profile:";
-		addLast(inpDir=new mInput("New profile"),HSTRETCH,HFILL|LEFT);
-		addNext(btnCancel=new mButton("Cancel"),HSTRETCH,LEFT);
-		addLast(btnOK=new mButton("OK"),HSTRETCH,HFILL|RIGHT);
+        title = MyLocale.getMsg(1111,"Create new profile:");
+		addLast(inpDir=new mInput(MyLocale.getMsg(1112,"New profile name")),HSTRETCH,HFILL|LEFT);
+		addNext(btnCancel=new mButton(MyLocale.getMsg(708,"Cancel")),HSTRETCH,LEFT);
+		addLast(btnOK=new mButton(MyLocale.getMsg(1605,"OK")),HSTRETCH,HFILL|RIGHT);
 		this.setPreferredSize(240,50);
 		this.baseDir=baseDir;
 	}
@@ -35,12 +35,12 @@ public class NewProfileForm extends Form {
 				profileDir=inpDir.getDisplayText();
 				File f=new File(baseDir+profileDir);
 				if (f.exists()) {
-					MessageBox mb=new MessageBox("Error","Directory\n"+baseDir+profileDir+"\nexists already.",IDOK);
+					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1114,"Directory exists already."),IDOK);
 					mb.execute();
 					profileDir="";
 				} else {
 					if (!f.createDir()) {
-						MessageBox mb=new MessageBox("Error","Cannot create directory",IDOK);
+						MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1113,"Cannot create directory"),IDOK);
 						mb.execute();
 						profileDir="";
 						this.close(-1);

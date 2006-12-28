@@ -78,7 +78,7 @@ public class ProfilesScreen extends Form {
 		dir4.setText(pref.profdirs[3]);
 		content.addNext(new mLabel(""));
 		content.addNext(cancelB = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addLast(applyB = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
+		content.addLast(applyB = new mButton(MyLocale.getMsg(620,"Save")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
 		
 		this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 
@@ -111,7 +111,7 @@ public class ProfilesScreen extends Form {
 				pref.profiles[3] = name4.getText();
 				pref.profdirs[3] = dir4.getText();
 				pref.savePreferences();
-				pref.dirty = true;
+				//pref.dirty = true; No need to reload database here
 				this.close(0);
 			}
 

@@ -47,7 +47,7 @@ public class MainForm extends Form {
 		Vm.showWait(true);
 		try{
 			pref.readPrefFile();
-			if (!pref.selectProfile(profile,true)) 
+			if (!pref.selectProfile(profile,true, true)) 
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
 			addGuiFont();
 			long start = Vm.getTimeStampLong();
@@ -77,7 +77,7 @@ public class MainForm extends Form {
 	public MainForm(String what, String dist){
 		try{
 			pref.readPrefFile();
-			pref.selectProfile(profile,true);
+			pref.selectProfile(profile,true,false);
 			addGuiFont();
 			profile.readIndex();
 			Spider mySpidy = new Spider(pref, profile,null, Spider.SPIDERNEAREST);
@@ -103,18 +103,9 @@ public class MainForm extends Form {
 		super.doPaint(g,r);
 	}
 	
-	public void onEvent(Event ev){
+	public void onEvent(Event ev){ // Preferences have been changed by PreferencesScreen
 		if(pref.dirty == true){
-			profile.cacheDB.clear();
-			try{
-				pref.readPrefFile();
-				profile.readIndex();
-				pref.profileCentrePt=profile.centre;
-				TablePanel.updateBearingDistance(profile.cacheDB,pref);
-				mTab.getTablePanel().refreshTable();
-			} catch (Exception e){
-				//Vm.debug(e.toString());
-			}
+		    mTab.getTablePanel().refreshTable();
 			pref.dirty = false;
 		}
 		super.onEvent(ev);

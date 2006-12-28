@@ -54,7 +54,7 @@ public class ProfilesForm extends Form{
 	* @param oldProfiles List of names of old profiles
 	* @param selectedProfile Name of the last used profile
 	*/
-	public ProfilesForm(String baseDir, String[] oldProfiles,String selectedProfile){
+	public ProfilesForm(String baseDir, String[] oldProfiles,String selectedProfile, boolean hasNewButton){
 		super();
     	resizable =  false;
 		int w=MyLocale.getScreenWidth();
@@ -62,8 +62,12 @@ public class ProfilesForm extends Form{
 		setPreferredSize(w,240);
 	    defaultTags.set(this.INSETS,new Insets(2,2,2,2));		
 		title = MyLocale.getMsg(1301,"Select Profile:");
-		addNext(new mLabel("Choose profile or New"),DONTSTRETCH,DONTSTRETCH|LEFT);
-		addLast(btnNew=new mButton("New"),HSTRETCH,HFILL|RIGHT);
+		if (hasNewButton) {
+			addNext(new mLabel(MyLocale.getMsg(1106,"Choose profile or New")),DONTSTRETCH,DONTSTRETCH|LEFT);
+			addLast(btnNew=new mButton(MyLocale.getMsg(1107,"New")),HSTRETCH,HFILL|RIGHT);
+		} else {
+			addLast(new mLabel(MyLocale.getMsg(1108,"Choose profile")),DONTSTRETCH,DONTSTRETCH|LEFT);
+		}
 		
 		choice=new MyList();
         // First add the old style profiles (stored in pref.xml)
@@ -87,7 +91,7 @@ public class ProfilesForm extends Form{
 		choice.setServer(spMList);
 		addLast(spMList);
 		addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
-		addNext(btnOK = new mButton("OK"),DONTSTRETCH,HFILL|RIGHT);
+		addNext(btnOK = new mButton(MyLocale.getMsg(1605,"OK")),DONTSTRETCH,HFILL|RIGHT);
 		this.baseDir=baseDir;
 	}
 	

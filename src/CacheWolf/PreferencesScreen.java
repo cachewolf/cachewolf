@@ -84,7 +84,7 @@ public class PreferencesScreen extends Form {
 		if(pref.tablePrefs[11] == 1) bear.setState(true);
 		content.addNext(cancelB = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		content.addLast(applyB = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		
+	
 		this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 	}
 	
@@ -123,7 +123,7 @@ public class PreferencesScreen extends Form {
 				pref.tablePrefs[11] = (bear.getState()==true ? 1 : 0);
 				pref.autoReloadLastProfile=chkAutoLoad.getState();
 				pref.savePreferences();
-				pref.dirty = true;
+				pref.dirty = true; // Need to update table in case columns were enabled/disabled
 				this.close(0);
 			}
 			if(ev.target == brwBt){

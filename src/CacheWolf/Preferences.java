@@ -144,7 +144,7 @@ public class Preferences extends MinML{
 	 * @return True if a profile was selected
 	 */
 	
-	public boolean selectProfile(Profile prof, boolean showProfileSelector) {
+	public boolean selectProfile(Profile prof, boolean showProfileSelector, boolean hasNewButton) {
 		// If datadir is empty, ask for one
 		if (baseDir.length()==0) {
 			FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT,null);
@@ -156,7 +156,7 @@ public class Preferences extends MinML{
 		if (!baseDir.endsWith("/")) baseDir+="/";
 		//Vm.showWait(false);
 		if(showProfileSelector && !autoReloadLastProfile){ // Ask for the profile
-		   ProfilesForm f = new ProfilesForm(baseDir,profiles,lastProfile);
+		   ProfilesForm f = new ProfilesForm(baseDir,profiles,lastProfile,hasNewButton);
 		   int code = f.execute();
 		   // If no profile chosen (includes a new one), terminate
 		   if (code==-1) return false; // Cancel pressed

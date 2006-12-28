@@ -15,7 +15,7 @@ import ewe.fx.*;
 */
 public class ProfileDataForm extends Form {
 
-	private mButton btnCancel,btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur, btnOldProfiles;
+	private mButton btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur, btnOldProfiles;
 	Preferences pref;
 	Profile profile;
 	CellPanel content = new CellPanel();
@@ -28,9 +28,6 @@ public class ProfileDataForm extends Form {
 		profile=prof;
 		
     	resizable =  false;
-		/*int w=MyLocale.getScreenWidth();
-		if (w>240) w=240;
-		setPreferredSize(w,240);*/
 		content.setText("Centre");
 		content.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_RECT;
 	    //defaultTags.set(this.INSETS,new Insets(2,2,2,2));		
