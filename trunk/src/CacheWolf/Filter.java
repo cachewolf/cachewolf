@@ -24,6 +24,7 @@ public class Filter{
 	public static final int WEBCAM = 32;
 	public static final int MYSTERY = 64;
 	public static final int LOCLESS = 128;
+	public static final int ADDIWPT = 256;
 	// End of type declares
 	public static final int N = 1;
 	public static final int NNE = 2;
@@ -218,10 +219,11 @@ public class Filter{
 			if(ch.type.equals("3")) cacheTypePattern |= MULTI;
 			if(ch.type.equals("4")) cacheTypePattern |= VIRTUAL;
 			if(ch.type.equals("5")) cacheTypePattern |= LETTER;
-			if(ch.type.equals("6")) cacheTypePattern |= EVENT;
+			if(ch.type.equals("6")|| ch.type.equals("453")) cacheTypePattern |= EVENT;
 			if(ch.type.equals("8")) cacheTypePattern |= MYSTERY;
 			if(ch.type.equals("11")) cacheTypePattern |= WEBCAM;
 			if(ch.type.equals("12")) cacheTypePattern |= LOCLESS;
+			if (CacheType.isAddiWpt(ch.type)) cacheTypePattern |= ADDIWPT;
 			
 			cacheRosePattern = 0;
 			if(ch.bearing.equals("NW")) cacheRosePattern |= NW;
@@ -246,7 +248,7 @@ public class Filter{
 			Vm.debug("Type Match Pattern: " + typeMatchPattern);
 			Vm.debug("AND: " + (cacheTypePattern & typeMatchPattern));
 			*/ 
-			if((cacheTypePattern & typeMatchPattern) >= 1 && (cacheRosePattern & roseMatchPattern) >= 1) ch.is_filtered = false;
+			if((cacheTypePattern & typeMatchPattern) == 0 &&(cacheRosePattern & roseMatchPattern) == 0) ch.is_filtered = false;
 			
 			/*
 			if(dist.length()>0 && ch.is_filtered == false){

@@ -43,6 +43,15 @@ public class myTableControl extends TableControl{
 			}
 			tbp.refreshTable();
 		}
+
+		if (selectedItem.toString().equals(MyLocale.getMsg(1017,"All add. wpts"))){
+			for(int i = 0; i <	db.size(); i++){
+				ch = (CacheHolder)db.get(i);
+				if (CacheType.isAddiWpt(ch.type))ch.is_Checked = true;
+				//db.set(i, ch);
+			}
+			tbp.refreshTable();
+		}
 		
 		if (selectedItem.toString().equals(MyLocale.getMsg(1011,"Filter"))){
 			for(int i = 0; i <	db.size(); i++){

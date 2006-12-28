@@ -300,8 +300,8 @@ public class MainMenu extends MenuBar {
 				CacheHolder ch = new CacheHolder();
 				for(int i = 0; i <	cacheDB.size(); i++){
 					ch = (CacheHolder)cacheDB.get(i);
-					ch.is_filtered = true;
-					if(ch.is_Checked == true) ch.is_filtered = false;
+					ch.is_filtered = false;
+					if(ch.is_Checked == true) ch.is_filtered = true;
 					cacheDB.set(i, ch);
 				}
 				tbp.refreshTable();
