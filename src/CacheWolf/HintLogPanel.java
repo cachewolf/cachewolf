@@ -9,8 +9,6 @@ import ewe.sys.*;
 *	Two buttons allow for navigation through the logs. 5 logs are displayed at
 *   together. This was implemented to allow for better performance on the
 *	PocketPC.
-*   Changes:
-*     20061124 salzkammergut Added </br> after each log to separate logs 
 *	Class ID=400
 */
 public class HintLogPanel extends CellPanel{
@@ -27,15 +25,25 @@ public class HintLogPanel extends CellPanel{
 		//SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 		//CellPanel hintpane = split.getNextPanel();
 		//CellPanel logpane = split.getNextPanel();
+		boolean smallScreen=MyLocale.getScreenHeight()<300;
 		
 		ScrollBarPanel sbphint = new ScrollBarPanel(hint);
 		this.addLast(sbphint,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		this.addLast(decodeButton,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		if (smallScreen){
+			this.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+			this.addNext(decodeButton,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+			decodeButton.setMinimumSize(MyLocale.getScreenWidth()*2/3,10);
+			this.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
+		} else {
+			this.addLast(decodeButton,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		}
 		
 		ScrollBarPanel sbplog = new ScrollBarPanel(logs, ScrollBarPanel.NeverShowHorizontalScrollers);
 		this.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
-		this.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		this.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		if (!smallScreen){
+			this.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+			this.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		}	
 		hint.modify(Control.NotEditable,0);
 		//this.addLast(split);
 	}
