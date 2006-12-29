@@ -82,7 +82,6 @@ public class Preferences extends MinML{
 	//TODO Find all references amd move to profile.dataDir
 	//public String mydatadir = new String();  //Redundant ??
 	/** The centre as read from the profile */
-	public CWPoint profileCentrePt;
 	
     /**
      * Singleton pattern - return reference to Preferences
@@ -167,8 +166,9 @@ public class Preferences extends MinML{
 		   if (code==-1) return false; // Cancel pressed
 		   prof.clearProfile();
 		   curCentrePt.set(0,0); // No centre yet
-		   lastProfile=prof.name=f.newSelectedProfile;
-		}
+		   lastProfile=f.newSelectedProfile;
+		} 
+		prof.name=lastProfile;
 		currProfile=-1;
 		if (lastProfile.equals(profiles[0])) openOldProfile(prof, 0);
 		else if (lastProfile.equals(profiles[1])) openOldProfile(prof, 1);

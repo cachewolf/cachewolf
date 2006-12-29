@@ -72,7 +72,7 @@ public class Profile {
 			return;
 		}
 		CWPoint savedCentre=centre;
-		if (centre==null || !centre.isValid()) savedCentre=pref.profileCentrePt;
+		if (centre==null || !centre.isValid()) savedCentre=pref.curCentrePt;
 		
 		try{
 			detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
