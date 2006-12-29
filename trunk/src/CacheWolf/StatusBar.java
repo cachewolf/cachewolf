@@ -24,8 +24,11 @@ public class StatusBar extends CellPanel{
 		String dspString;
 		dspString = MyLocale.getMsg(4500,"Tot:") + " " + stats.total() + " " +
 					MyLocale.getMsg(4501,"Dsp:") + " " + stats.visible() + " " +
-					MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound() + "  " +
-					"Centre: " + pref.curCentrePt.toString();
+					MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound() + "  ";
+		// Current centre can only be displayed if screen is big
+		// Otherwise it forces a scrollbar
+		if (MyLocale.getScreenWidth()>=320) 
+			dspString+="  \u00a4 " + pref.curCentrePt.toString();
 		
 		disp.setText(dspString);
 	}

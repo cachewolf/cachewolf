@@ -191,7 +191,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == mnuOpenProfile){
 				if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
 					profile.readIndex();
-					pref.profileCentrePt=profile.centre;
+					pref.curCentrePt=profile.centre;
 					tbp.resetModel(cacheDB);
 				}
 			}

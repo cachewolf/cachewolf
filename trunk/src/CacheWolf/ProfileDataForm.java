@@ -28,21 +28,21 @@ public class ProfileDataForm extends Form {
 		profile=prof;
 		
     	resizable =  false;
-		content.setText("Centre");
+		content.setText(MyLocale.getMsg(1115,"Centre"));
 		content.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_RECT;
 	    //defaultTags.set(this.INSETS,new Insets(2,2,2,2));		
-		title = "Profile: "+profile.name;
-		content.addNext(new mLabel("Current"));
+		title = MyLocale.getMsg(1118,"Profile")+": "+profile.name;
+		content.addNext(new mLabel(MyLocale.getMsg(1116,"Current")));
 		content.addLast(btnCurrentCentre=new mButton(pref.curCentrePt.toString()),HSTRETCH,HFILL|LEFT);
 		content.addNext(new mLabel("      "),HSTRETCH,HFILL);
 		content.addNext(btnCur2Prof=new mButton("   v   "),DONTSTRETCH,DONTFILL|LEFT);
-		content.addNext(new mLabel("copy"));
+		content.addNext(new mLabel(MyLocale.getMsg(1117,"copy")));
 		content.addLast(btnProf2Cur=new mButton("   ^   "),DONTSTRETCH,DONTFILL|RIGHT);
-		content.addNext(new mLabel("Profile"));
+		content.addNext(new mLabel(MyLocale.getMsg(1118,"Profile")));
 		content.addLast(btnProfileCentre=new mButton(profile.centre.toString()),HSTRETCH,HFILL|LEFT);
 		addLast(content,HSTRETCH,HFILL);
 		addLast(new mLabel(""),VSTRETCH,FILL);
-		addLast(btnOldProfiles=new mButton("Old Profiles"),HSTRETCH,HFILL);
+		addLast(btnOldProfiles=new mButton(MyLocale.getMsg(1119,"Old Profiles")),HSTRETCH,HFILL);
 		//addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
 		addLast(btnOK = new mButton("OK"),DONTSTRETCH,HFILL|RIGHT);
 	}
