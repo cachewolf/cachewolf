@@ -47,9 +47,9 @@ public class MainForm extends Form {
 		Vm.showWait(true);
 		try{
 			pref.readPrefFile();
-			if (!pref.selectProfile(profile,true, true)) 
-				ewe.sys.Vm.exit(0); // User MUST select or create a profile
 			addGuiFont();
+			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true)) 
+				ewe.sys.Vm.exit(0); // User MUST select or create a profile
 			long start = Vm.getTimeStampLong();
 			profile.readIndex();
 			pref.profileCentrePt=profile.centre;
@@ -74,11 +74,12 @@ public class MainForm extends Form {
 	}
 
 	
-	public MainForm(String what, String dist){
+	public MainForm(String what, String dist, String profileName){
 		try{
 			pref.readPrefFile();
-			pref.selectProfile(profile,true,false);
 			addGuiFont();
+			pref.lastProfile=profileName;
+			pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_OFF,false);
 			profile.readIndex();
 			Spider mySpidy = new Spider(pref, profile,null, Spider.SPIDERNEAREST);
 			mySpidy.SpiderNearest(dist);

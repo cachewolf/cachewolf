@@ -18,7 +18,11 @@ public class Preferences extends MinML{
 	
 	public int tablePrefs[] = {1,1,1,1,1,1,1,1,1,1,1,1};
 	public int tableWidth[] = {20,20,20,20,65,135,135,100,60,50,50,50};
-	     
+	
+	static protected final int PROFILE_SELECTOR_FORCED_ON=0;
+	static protected final int PROFILE_SELECTOR_FORCED_OFF=1;
+	static protected final int PROFILE_SELECTOR_ONOROFF=2;
+	
 	/** The currently used centre point, can be different from the profile's centrepoint. This is used
 	 *  for spidering */
 	public CWPoint curCentrePt=new CWPoint();
@@ -144,7 +148,7 @@ public class Preferences extends MinML{
 	 * @return True if a profile was selected
 	 */
 	
-	public boolean selectProfile(Profile prof, boolean showProfileSelector, boolean hasNewButton) {
+	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
 		// If datadir is empty, ask for one
 		if (baseDir.length()==0) {
 			FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT,null);
@@ -155,7 +159,8 @@ public class Preferences extends MinML{
 		}
 		if (!baseDir.endsWith("/")) baseDir+="/";
 		//Vm.showWait(false);
-		if(showProfileSelector && !autoReloadLastProfile){ // Ask for the profile
+		if((showProfileSelector==PROFILE_SELECTOR_FORCED_ON) || 
+		   (showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
 		   ProfilesForm f = new ProfilesForm(baseDir,profiles,lastProfile,hasNewButton);
 		   int code = f.execute();
 		   // If no profile chosen (includes a new one), terminate
