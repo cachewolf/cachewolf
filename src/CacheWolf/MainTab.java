@@ -113,7 +113,7 @@ public class MainTab extends mTabbedPanel {
 					  ch.is_found = ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"));
 					  ch.wayPoint = detP.wayPoint.getText();
 					  ch.CacheName = detP.wayName.getText();
-					  ch.LatLon = new CWPoint(detP.btnWayLoc.getText(),CWPoint.CW).toString();
+					  ch.LatLon = new CWPoint(detP.btnChangeLatLon.getText(),CWPoint.CW).toString();
 					  ch.DateHidden = detP.wayHidden.getText();
 					  ch.CacheOwner = detP.wayOwner.getText();
 					  if(pref.myAlias.equals(ch.CacheOwner)) ch.is_owned = true;
@@ -171,7 +171,7 @@ public class MainTab extends mTabbedPanel {
 			  if(this.getSelectedItem() == 5){ // CalcPanel
 				  MyLocale.setSIPButton();
 				  calcP.setFields(ch, this, detP, pref, profile);
-					calcP.activateFields(CWPoint.DMM);
+				  //calcP.activateFields(CWPoint.DMM);
 				  }
 			  
 			  if(this.getSelectedItem() == 6){ // GotoPanel
