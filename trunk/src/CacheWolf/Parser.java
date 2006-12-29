@@ -143,7 +143,7 @@ public class Parser{
 		boolean foundCommand = false;
 		////Vm.debug("In command");
 		getToken();
-		Vm.debug(thisToken.token);
+//Vm.debug(thisToken.token);
 		if(thisToken.token.equals("project")){
 			foundCommand = true;
 			if(runFlag) match("(");
@@ -158,6 +158,26 @@ public class Parser{
 			foundCommand = true;
 			runFlag = false;
 		}
+		if(thisToken.token.equals("rot")){
+			foundCommand=true;
+			if(runFlag) match("13");
+			if(runFlag) match("(");
+			if(runFlag) match("\"");
+			getToken(); // Empty why
+			getToken();
+//ewe.sys.Vm.debug(thisToken.token);	
+			emit_buffer = emit_buffer + Common.rot13(thisToken.token);
+			getToken();
+			if(runFlag) match(")");
+			getToken();
+			if(thisToken.token.equals(";")) {
+				////Vm.debug("In thing: " + emit_buffer);
+				emit(emit_buffer);
+				emit_buffer = "# ";
+			} else scanpos--;
+			////Vm.debug("!" + ")");
+		}
+
 		if(thisToken.token.equals("show")){
 			foundCommand = true;
 			////Vm.debug("Got a show");
@@ -240,6 +260,7 @@ public class Parser{
 		if(c.equals("show")) c = "-1";
 		if(c.equals("st")) c = "-1";
 		if(c.equals("stop")) c = "-1";
+		if(c.equals("rot")) c = "-1";
 		c = c.toUpperCase();
 		char ch = c.charAt(0);
 		if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(ch) != -1) return true;
