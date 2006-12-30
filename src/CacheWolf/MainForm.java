@@ -52,7 +52,7 @@ public class MainForm extends Form {
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
 			long start = Vm.getTimeStampLong();
 			profile.readIndex();
-			pref.curCentrePt=profile.centre;
+			pref.curCentrePt.set(profile.centre);
 			long end = Vm.getTimeStampLong();
 			Vm.debug("index.xml read: " + Convert.toString(end - start)+ " msec");
 			TablePanel.updateBearingDistance(profile.cacheDB,pref);
