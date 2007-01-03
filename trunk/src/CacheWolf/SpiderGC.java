@@ -703,7 +703,10 @@ public class SpiderGC{
 			//Vm.debug("--------------------------------------------");
 			icon = exIcon.findNext();
 			name = exName.findNext();
-			if(icon.equals("icon_smile.gif") && name.equals(pref.myAlias)) ch.is_found = true;
+			if(icon.equals("icon_smile.gif") && name.equals(pref.myAlias)) {
+				ch.is_found = true;
+				ch.CacheStatus = MyLocale.getMsg(318,"Found");
+			}
 			reslts.add("<img src='"+ icon +"'>&nbsp;" + exDate.findNext()+ " " + name + exLog.findNext());
 			
 			singleLog = exSingleLog.findNext();
