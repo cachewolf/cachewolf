@@ -23,7 +23,7 @@ public class RadarPanel extends CellPanel{
 	int scaleKm = 30;
 	int centerX, centerY;
 	int height, width;
-	Image cacheImages[] = new Image[138];
+	Image cacheImages[] = new Image[454];
 	String selectedWaypoint = new String();
 	MainTab mt;
 	boolean penMoving = false;
@@ -55,6 +55,7 @@ public class RadarPanel extends CellPanel{
 		cacheImages[53] = new Image("flag.png");
 
 		cacheImages[137] = new Image("137.png");
+		cacheImages[453] = new Image("453.png");
 		this.addLast(iActP = new myInteractivePanel(), this.STRETCH, this.FILL);
 		CellPanel cp = new CellPanel();
 		cp.addNext(btMinus,this.DONTSTRETCH, (this.DONTFILL|this.WEST));
