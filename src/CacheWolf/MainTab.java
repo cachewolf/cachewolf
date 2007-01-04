@@ -3,7 +3,7 @@ package CacheWolf;
 import ewe.ui.*;
 import ewe.fx.*;
 import ewe.util.*;
-import ewe.sys.*;
+//import ewe.sys.*;
 
 /**
 *	This class creates the tabbed panel and sets the tabs to the respective
