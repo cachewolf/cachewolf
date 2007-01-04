@@ -103,6 +103,18 @@ public class myTableControl extends TableControl{
 			Vm.showWait(false);
 			tbp.refreshTable();
 		}
+		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Center"))){
+			CacheHolder thisCache = (CacheHolder)tbp.cacheDB.get(tbp.getSelectedCache());
+			CWPoint cp=new CWPoint(thisCache.LatLon);
+			if (!cp.isValid()){
+				MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
+				tmpMB.exec();
+			} else {				
+				pref.curCentrePt.set(cp);
+				TablePanel.updateBearingDistance(db, pref);
+				tbp.refreshTable();
+			}
+		}
 		
 		if (selectedItem.toString().equals(MyLocale.getMsg(1010,"Goto"))){
 //			Point a = new Point();
