@@ -65,7 +65,14 @@ public class CacheHolder {
   public boolean is_HTML = true;
   public boolean is_Checked = false;
     
-  public CacheHolder update(CacheHolder newCh){
+  
+  /**
+ * Method to update an existing cache with new data. This is
+ * necessary to avoid missing old logs.
+ * @param newCh new cache data
+ * @return CacheHolder with updated data
+ */
+public CacheHolder update(CacheHolder newCh){
 	  // flags
 	  this.is_available = newCh.is_available;
 	  this.is_archived = newCh.is_archived;
@@ -154,7 +161,11 @@ public class CacheHolder {
  	return this;
   }
   
-  public void addUserImage(Profile profile){
+  /**
+   * Adds a user image to the cache data
+   * @param profile
+   */
+	public void addUserImage(Profile profile){
 	  File imgFile;
 	  String imgDesc, imgDestName;
 	  
@@ -176,6 +187,10 @@ public class CacheHolder {
 			saveCacheDetails(profile.dataDir);
 		}
   }
+  /**
+   * Adds a new log to the cachedata 
+   * @param logEntry
+   */
   public void addLog(String logEntry){
 	  //Logs
 	  //<img src='icon_smile.gif'>&nbsp;2005-10-30 by Schatzpirat</strong><br>
@@ -392,6 +407,22 @@ public class CacheHolder {
 		} catch (Exception e){
 		  //Vm.debug("Problem closing details file");
 		}
+	}
+	
+	/**
+	 * Method foch checking if to caches belongs to each other, e.g.
+	 * an additional waypoint belongs to the main cache.
+	 * Works currently only, if the last 4 or 5 chars of the waypoint are
+	 * the same, this is the gc.com way. 
+	 * @param ch cache to check
+	 * @return true if there is a relation, false otherwise
+	 */
+	public boolean belongsTo (CacheHolder ch) {
+		
+		// avoid self referencing
+		if (this.wayPoint.equals(ch.wayPoint)) return false;
+
+		return this.wayPoint.endsWith(ch.wayPoint.substring(2));
 	}
 	
   

@@ -52,6 +52,22 @@ public class myTableControl extends TableControl{
 			}
 			tbp.refreshTable();
 		}
+
+		if (selectedItem.toString().equals(MyLocale.getMsg(1018,"Sel. add. wpts."))){
+			CacheHolder ch_addi;
+			for(int i = 0; i <	db.size(); i++){
+				ch = (CacheHolder)db.get(i);
+				if (ch.is_Checked && !CacheType.isAddiWpt(ch.type)){
+					// search addi wpts to main cache
+					for (int j = 0; j < db.size(); j++){
+						ch_addi = (CacheHolder)db.get(j);
+						if (ch_addi.belongsTo(ch))ch_addi.is_Checked = true;
+					}
+				}
+			}
+			tbp.refreshTable();
+		}
+
 		
 		if (selectedItem.toString().equals(MyLocale.getMsg(1011,"Filter"))){
 			for(int i = 0; i <	db.size(); i++){
