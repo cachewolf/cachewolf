@@ -223,7 +223,7 @@ public class SpiderGC{
 		
 		
 		InfoBox infB = new InfoBox("Status", "Fetching first page...");
-		infB.show();
+		infB.exec();
 		//Get first page
 		try{
 			pref.log("Fetching first list page: http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD) + "&f=1");
