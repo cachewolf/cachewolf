@@ -205,9 +205,17 @@ public class Filter{
 		CacheHolder ch = new CacheHolder();
 		int cacheTypePattern = 0;
 		int cacheRosePattern = 0;
+		int inDist = 0, matchDist = 0;
+		int inDiff = 0, matchDiff = 0;
+		int inTerr = 0, matchTerr = 0;
+		int inFound = 0, matchFound = 0;
+		int matchOwned = 0, inOwned = 0;
+		int matchArchived = 0, inArchived = 0;
+		int matchAvaliable = 0, inAvailable = 0;
+		
 		double dummyd1, dummyd2;
 		String dummy = new String();
-		//Loop db and math once against type pattern and once against rose pattern
+		//Loop db and match once against type pattern and once against rose pattern
 		//Default is_filtered = true, means will not be displayed!
 		//If cache matches type and rose pattern then is_filtered is set to false
 		//Still in the loop check aginst diff, terr, dist, found by, found last
@@ -242,166 +250,70 @@ public class Filter{
 			if(ch.bearing.equals("S")) cacheRosePattern |= S;
 			if(ch.bearing.equals("SSE")) cacheRosePattern |= SSE;
 			if(ch.bearing.equals("SE")) cacheRosePattern |= SE;
-/*			
-			Vm.debug(ch.wayPoint);
-			Vm.debug("Type Pattern: " + cacheTypePattern);
-			Vm.debug("Type Match Pattern: " + typeMatchPattern);
-			Vm.debug("AND: " + (cacheTypePattern & typeMatchPattern));
-			*/ 
-			if((cacheTypePattern & typeMatchPattern) == 0 &&(cacheRosePattern & roseMatchPattern) == 0) ch.is_filtered = false;
-			
-			/*
-			if(dist.length()>0 && ch.is_filtered == false){
-				dummy = ch.distance.substring(0,ch.distance.length()-3);
-				dummyd1 = Common.parseDouble(dummy); 
-				dummyd2 = Common.parseDouble(dist); 
-				if(distdirec == SMALLER && dummyd2 >= dummyd1) ch.is_filtered = true;
-				if(distdirec == GREATER && dummyd2 <= dummyd1) ch.is_filtered = true;
-			}
-			
-			if(diff.length()>0 && ch.is_filtered == false){
-				dummyd1 = Common.parseDouble(ch.hard);
-				dummyd2 = Common.parseDouble(diff);
-				if(diffdirec == SMALLER && dummyd2 >= dummyd1) ch.is_filtered = true;
-				if(diffdirec == GREATER && dummyd2 <= dummyd1) ch.is_filtered = true;
-			}
-			
-			if(terr.length()>0 && ch.is_filtered == false){
-				dummyd1 = Common.parseDouble(ch.terrain);
-				dummyd2 = Common.parseDouble(terr);
-				if(terrdirec == SMALLER && dummyd2 >= dummyd1) ch.is_filtered = true;
-				if(terrdirec == GREATER && dummyd2 <= dummyd1) ch.is_filtered = true;
-			}
-			
-			if(ch.is_found == false && foundByMe == true && ch.is_filtered == false) ch.is_filtered = true;
-			if(ch.is_owned == false && ownedByMe == true && ch.is_filtered == false) ch.is_filtered = true;
-			
-			if(ch.is_archived == false && archived == true && ch.is_filtered == false) ch.is_filtered = true;
-			if(ch.is_available == false && notAvailable == true && ch.is_filtered == false) ch.is_filtered = true;
-			*/
-			cacheDB.set(i,ch);
-		} // for
-	}
-	
-	
-	public void doFilter_old(Vector cacheDB, String dir){
-		byVec = mString.split(by, ',');
-		CacheHolder ch;
-		//CacheReaderWriter crw = new CacheReaderWriter();
-		String dummy = new String();
-		FileReader in;
-		String text = new String();
-		String logStr = new String();
-		String foundStr = new String();
-		Extractor ex, ex2;
-		double dummyd1, dummyd2;
-		
-		for(int i = 0; i < cacheDB.size(); i++){
-			//is_changed = false;
-			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered = false;
-			if(bearing.indexOf("|"+ch.bearing+"|")>=0) ch.is_filtered = true;
-			if(type.indexOf("|"+ch.type+"|") >= 0) ch.is_filtered = true;
-			
-			//Vm.debug("Dist: " + Convert.toString(distdirec));
+
 			if(dist.length()>0){
+				matchDist = 1;
+				inDist = 0;
 				dummy = ch.distance.substring(0,ch.distance.length()-3);
 				dummyd1 = Common.parseDouble(dummy); 
 				dummyd2 = Common.parseDouble(dist); 
-				if(distdirec == SMALLER && dummyd2 <= dummyd1) ch.is_filtered = true;
-				if(distdirec == GREATER && dummyd2 >= dummyd1) ch.is_filtered = true;
+				if(distdirec == SMALLER && dummyd2 <= dummyd1) inDist = 1;
+				if(distdirec == GREATER && dummyd2 >= dummyd1) inDist = 1;
 			}
 			
 			if(diff.length()>0){
+				matchDiff = 1;
+				inDiff = 0;
 				dummyd1 = Common.parseDouble(ch.hard);
 				dummyd2 = Common.parseDouble(diff);
-				if(diffdirec == SMALLER && dummyd2 <= dummyd1) ch.is_filtered = true;
-				if(diffdirec == GREATER && dummyd2 >= dummyd1) ch.is_filtered = true;
+				if(diffdirec == SMALLER && dummyd2 <= dummyd1) inDiff = 1;
+				if(diffdirec == GREATER && dummyd2 >= dummyd1) inDiff = 1;
 			}
 			
 			if(terr.length()>0){
+				matchTerr = 1;
+				inTerr = 0;
 				dummyd1 = Common.parseDouble(ch.terrain);
 				dummyd2 = Common.parseDouble(terr);
-				if(terrdirec == SMALLER && dummyd2 <= dummyd1) ch.is_filtered = true;
-				if(terrdirec == GREATER && dummyd2 >= dummyd1) ch.is_filtered = true;
+				if(terrdirec == SMALLER && dummyd2 <= dummyd1) inTerr = 1;
+				if(terrdirec == GREATER && dummyd2 >= dummyd1) inTerr = 1;
 			}
 			
-			
-			if(ch.is_found == true && foundByMe == true) ch.is_filtered = true;
-			if(ch.is_owned == true && ownedByMe == true) ch.is_filtered = true;
-			
-			if(ch.is_archived == true && archived == true) ch.is_filtered = true;
-			if(ch.is_available == false && notAvailable == true) ch.is_filtered = true;
-			
-			// now the filters that require we scan the detail cache pages
-			// found by
-			if(by.length()>0 || days.length()>0){
-				try{
-				in = new FileReader(dir+ch.wayPoint+".xml");
-				text = new String();
-				text = in.readAll();
-				in.close();
-				}catch(Exception e){
-					//Vm.debug("Error reading xml file");
-				}
+			if(foundByMe == true){
+				inFound = 0;
+				matchFound = 1;
+				if(ch.is_found) inFound = 1; 
 			}
-			if(by.length()>0){
-				ex = new Extractor(text, "<LOGS>", "</LOGS>", 0, true);
-				logStr = ex.findNext();
-				ex2 = new Extractor(logStr, "<img src='icon_smile.gif'>&nbsp;", "</", 0, true);
-				foundStr = (ex2.findNext()).toUpperCase();
-				while(ex2.endOfSearch() == false){
-					for(int p = 0; p<byVec.length;p++){
-						//Vm.debug(byVec[p]);
-						if(foundStr.indexOf(byVec[p].toUpperCase()) >= 0) ch.is_filtered = true;
-					}
-					foundStr = ex2.findNext();
-				} //while
-				
+			
+			if(ownedByMe){
+				matchOwned = 1;
+				inOwned = 0;
+				if(ch.is_owned) inOwned = 1;
 			}
-			// found or not found in the last days....
-			if(days.length()>0){
-				try{
-					int tage = Convert.parseInt(days);
-					// what is todays date?
-					Time dtm = new Time();
-					DateChange dca = new DateChange();
-					dtm.getTime();
-					
-					ex = new Extractor(text, "<LOGS>", "</LOGS>", 0, true);
-					logStr = ex.findNext();
-					Extractor annex;
-					Extractor trex;
-					int tag,monat,jahr = 0;
-					String logLogStr = new String();
-					annex = new Extractor(logStr, "<img src='icon_smile.gif'>&nbsp;", " by",0,true);
-					logLogStr = annex.findNext();
-					while(!annex.endOfSearch()){
-						logLogStr = "-" + logLogStr + "-";
-						//Vm.debug("Log: " + logLogStr + " for " + ch.wayPoint);
-						trex = new Extractor(logLogStr,"-","-",0,true);
-						jahr = Convert.parseInt(trex.findNext());
-						monat = Convert.parseInt(trex.findNext());
-						tag = Convert.parseInt(trex.findNext());
-						dca = Time.dateDifference(dtm,new Time(tag, monat, jahr), dca);
-						//Vm.debug("tag: " +tag + " monat: " + monat + " jahr: " +jahr);
-						//Vm.debug("tag: " +dtm.day + " monat: " + dtm.month + " jahr: " +dtm.year);
-						//Vm.debug("Diff: " + dca.totalDays + " Tage + " + tage + " filt: " +ch.is_filtered);
-						if(daysdirec == FOUND && dca.totalDays <= tage) ch.is_filtered = true;
-						if(daysdirec == NOTFOUND && dca.totalDays >= tage) ch.is_filtered = true;
-						//Vm.debug("filt: " + ch.is_filtered);
-						if(ch.is_filtered == true) break;
-						logLogStr = annex.findNext();
-					}
-					//if(ch.is_filtered == true) break;
-				} catch (NumberFormatException nfex){
-					//Vm.debug(nfex.toString());
-				}
+			
+			if(archived){
+				matchArchived = 1;
+				inArchived = 0;
+				if(ch.is_archived) inArchived = 1;
 			}
+			if(notAvailable){
+				matchAvaliable = 1;
+				inAvailable = 0;
+				if(ch.is_available) inAvailable = 1;
+			}
+
+			if((cacheTypePattern & typeMatchPattern) >= 1 &&
+					(cacheRosePattern & roseMatchPattern) >= 1 && 
+					(~(matchDist ^ inDist)) == -1 &&
+					(~(matchDiff ^ inDiff)) == -1 &&
+					(~(matchTerr ^ inTerr)) == -1 &&
+					(~(matchFound ^ inFound)) == -1 &&
+					(~(matchOwned ^ inOwned)) == -1 &&
+					(~(matchArchived ^ inArchived)) == -1 &&
+					(~(matchAvaliable ^ inAvailable)) == -1)
+					ch.is_filtered = false;
 			cacheDB.set(i,ch);
-		}
-		
-		//sort filtered and adapt the count in the table!
+		} // for
 	}
 	
 	/**
