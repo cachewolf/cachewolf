@@ -6,7 +6,7 @@ import ewe.fx.*;
 
 /**
 *	Mainform is responsible for building the user interface.
-*	Class ID = not required
+*	Class ID = 5000
 */
 public class MainForm extends Form {
 	
@@ -44,14 +44,19 @@ public class MainForm extends Form {
 			this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
 		// Load CacheList
-		Vm.showWait(true);
+		
 		try{
 			pref.readPrefFile();
 			addGuiFont();
 			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true)) 
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
 			long start = Vm.getTimeStampLong();
+			Vm.showWait(true);
+			InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
+			infB.exec();
 			profile.readIndex();
+			infB.close(0);
+			Vm.showWait(false);
 			pref.curCentrePt.set(profile.centre);
 			long end = Vm.getTimeStampLong();
 			Vm.debug("index.xml read: " + Convert.toString(end - start)+ " msec");
@@ -70,7 +75,7 @@ public class MainForm extends Form {
 		this.addLast(mMenu = new MainMenu(this, pref, profile),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		this.addLast(mTab = new MainTab(pref,profile,statBar),CellConstants.STRETCH, CellConstants.FILL);
 		mMenu.setTablePanel(mTab.getTablePanel());
-		Vm.showWait(false);
+		
 	}
 
 	
