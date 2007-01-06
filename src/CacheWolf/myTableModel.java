@@ -29,7 +29,7 @@ public class myTableModel extends TableModel{
 	String nmCheck, nmQuest, nmD,nmT,nmWay,nmName,nmLoc,nmOwn,nmHid,nmStat,nmDist,nmBear = new String();
 	Image checkboxTicked,checkboxUnticked;
 	
-	public myTableModel(Vector DB, String[] colNs,int[] colWidth, myTableControl tc, FontMetrics fm){
+	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
 		nmCheck = " ";
 		nmQuest = "?";
@@ -45,15 +45,15 @@ public class myTableModel extends TableModel{
 		nmBear = MyLocale.getMsg(1009,"Bear");
 		fm = this.fm;
 		tcControl = tc;
-		cacheDB = DB;
+		setColumnNamesAndWidths(); 
+		cacheDB = Global.getProfile().cacheDB;
 		this.numRows = cacheDB.size();
 		Dimension selrow = new Dimension(-1,1);
 		this.cursorSize = selrow;
-		colName = new String[colNs.length];
-		colName = colNs;
-		breiten = new int[colWidth.length];
-		breiten = colWidth;
-		this.numCols = colName.length;
+		//colName = new String[colNs.length];
+		//colName = colNs;
+		//breiten = new int[colWidth.length];
+		//breiten = colWidth;
 		cacheImages[0] = new Image("0.png");
 		//cacheImages[1] = new Image();
 		cacheImages[2] = new Image("2.png");
@@ -93,10 +93,42 @@ public class myTableModel extends TableModel{
 		checkboxUnticked= new Image("checkboxUnticked.png");
 	}
 	
-	public void setVector(Vector DB){
-		cacheDB = DB;
-		this.numRows = cacheDB.size();
+	/**
+	 * Sets the column names and widths from preferences
+	 *
+	 */
+	public void setColumnNamesAndWidths() {
+		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
+		String[] jester;
+		int colWidth[];
+		int colnum = 0;
+		Preferences pref=Global.getPref();
+		
+		for(int i = 0; i<=11; i++){
+			if(pref.tablePrefs[i] == 1) colnum++;
+		}
+		jester = new String[colnum];
+		colWidth = new int[colnum];
+		
+		int ji = 0;
+		for(int i = 0; i<=11;i++){
+			if(pref.tablePrefs[i] == 1){
+				jester[ji] = spName[i];
+				colWidth[ji] = pref.tableWidth[i];
+				ji++;
+			}
+		}
+		colName = jester;
+		breiten = colWidth;
+		this.numCols = colName.length;
+		clearCellAdjustments();
+		//remapColumns(null);
 	}
+	
+	//RBpublic void setVector(Vector DB){
+	//	cacheDB = DB;
+	//	this.numRows = cacheDB.size();
+	//}
 	
 	public void updateRows(){
 		this.numRows = cacheDB.size();
