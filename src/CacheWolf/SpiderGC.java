@@ -210,10 +210,13 @@ public class SpiderGC{
 		String doc = new String();
 		
 		int ok = login();
-		if(ok == Form.IDCANCEL) return;
+		if(ok == Form.IDCANCEL) {
+			Vm.showWait(false);
+			return;
+		}
 		
-		OCXMLImporterScreen options = new OCXMLImporterScreen(pref, "Spider Options", OCXMLImporterScreen.IMAGESANDMAPS);
-		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
+		OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options", OCXMLImporterScreen.IMAGESANDMAPS);
+		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {Vm.showWait(false);	return; }
 		String dist = options.distanceInput.getText();
 		if (dist.length()== 0) return;
 		distance = Convert.toDouble(dist);

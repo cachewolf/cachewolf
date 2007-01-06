@@ -58,8 +58,8 @@ public class Preferences extends MinML{
 	public String garminConn="com1";  // The type of connection which GPSBABEL uses: com1 OR usb.
 	// TODO Add garminConn to user interface. For the time being this can only be set by manually editing the pref file
 		
-	public String last_sync_opencaching = new String();
-	public String distOC = new String();
+	//public String last_sync_opencaching = new String();
+	//public String distOC = new String();
 	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
 	public boolean downloadMapsOC = true;
 	public boolean downloadmissingOC = false;
@@ -247,17 +247,15 @@ public class Preferences extends MinML{
 		curCentrePt.set(lats[i]+" "+longs[i]);
 		//mydatadir=profdirs[i];
 		if(lastSyncOC[i] == null || lastSyncOC[i].endsWith("null")){
-			last_sync_opencaching = "20050801000000";
+			prof.last_sync_opencaching = "20050801000000";
 		}else {
-			last_sync_opencaching = lastSyncOC[i];
+			prof.last_sync_opencaching = lastSyncOC[i];
 		}
 		if(lastDistOC[i] == null || lastDistOC[i].endsWith("null")){
-			distOC = "0";
+			prof.distOC = "0";
 		} else {
-			distOC = lastDistOC[i];
+			prof.distOC = lastDistOC[i];
 		}
-		prof.last_sync_opencaching=last_sync_opencaching;
-		prof.distOC=distOC;
 		prof.centre.set(lats[i]+" "+longs[i]);
 		prof.dataDir=profdirs[i];
 	}
@@ -273,20 +271,6 @@ public class Preferences extends MinML{
 		lastName=name;
 		String tmp;
 		if(name.equals("browser")) browser = atts.getValue("name");
-		if(name.equals("syncOC")) {
-			if (atts.getValue("date") == null || atts.getValue("date").endsWith("null")){
-				last_sync_opencaching = "20050801000000";
-			}
-			else {
-				last_sync_opencaching = atts.getValue("date");
-			}
-			if (atts.getValue("dist") == null || atts.getValue("dist").endsWith("null")){
-				distOC = "0";
-			}
-			else {
-				distOC =  atts.getValue("dist");
-			}
-		}
 		if(name.equals("fixedsip")) {
 			if(atts.getValue("state").equals("true")) {
 				fixSIP = true;
@@ -448,11 +432,11 @@ public class Preferences extends MinML{
 	public void savePreferences(){
 		String datei = File.getProgramDirectory() + "/" + "pref.xml";
 		datei = datei.replace('\\', '/');
-		last_sync_opencaching = last_sync_opencaching==null?"20050801000000":last_sync_opencaching;
-		distOC = distOC==null?"0":distOC;
+		//last_sync_opencaching = last_sync_opencaching==null?"20050801000000":last_sync_opencaching;
+		//distOC = distOC==null?"0":distOC;
 		if (currProfile > 0) {
-			lastSyncOC[currProfile -1] = last_sync_opencaching;
-			lastDistOC[currProfile - 1] = distOC;
+			lastSyncOC[currProfile -1] = Global.getProfile().last_sync_opencaching;
+			lastDistOC[currProfile - 1] = Global.getProfile().distOC;
 		}
 
 		try{
@@ -491,7 +475,7 @@ public class Preferences extends MinML{
 			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			// Obsolete data kept for backward compatibility
-			outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
+			//outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
 			//outp.print("	<datadir dir = \""+ mydatadir +"\"/>\n");
 			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" lastsyncoc= \"" + lastSyncOC[0] + "\" lastdistoc= \"" + lastDistOC[0] + "\" />\n");

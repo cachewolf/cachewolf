@@ -57,9 +57,9 @@ public class OCXMLImporter extends MinML {
 		pref = p;
 		profile=prof;
 		cacheDB = profile.cacheDB;
-		if(pref.last_sync_opencaching == null ||
-			pref.last_sync_opencaching.length() < 12){
-			pref.last_sync_opencaching = "20050801000000";
+		if(profile.last_sync_opencaching == null ||
+			profile.last_sync_opencaching.length() < 12){
+			profile.last_sync_opencaching = "20050801000000";
 			incUpdate = false;
 		}
 		user = p.myAlias.toLowerCase();
@@ -83,19 +83,19 @@ public class OCXMLImporter extends MinML {
 			String lastS =  profile.last_sync_opencaching;
 			CWPoint center = pref.curCentrePt; // No need to clone curCentrePt as center is only read
 
-			OCXMLImporterScreen importOpt = new OCXMLImporterScreen(pref, MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
+			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
 			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
     		Vm.showWait(true);
 			String dist = importOpt.distanceInput.getText();
 			if (dist.length()== 0) return;
 			//check, if distance is greater than before
-			if (Convert.toInt(dist) > Convert.toInt(pref.distOC) ||
+			if (Convert.toInt(dist) > Convert.toInt(profile.distOC) ||
 			  pref.downloadmissingOC  ){
 				// resysnc
 				lastS = "20050801000000";
 				incUpdate = false;
 			}
-			pref.distOC = dist;
+			profile.distOC = dist;
 			// Clear status of caches in db
 			CacheHolder ch;
 			for(int i = 0; i<cacheDB.size();i++){
@@ -167,9 +167,8 @@ public class OCXMLImporter extends MinML {
 		}
 		Vm.showWait(false);
 		if (success) {
-			// @TODO: this should be saved in the index.xml not with the profiles!
-			pref.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
-			pref.savePreferences();
+			profile.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
+			//pref.savePreferences();
 			profile.saveIndex(pref);
 			finalMessage=MyLocale.getMsg(1607,"Update from opencaching successful");
 		}
