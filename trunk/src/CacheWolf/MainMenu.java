@@ -30,15 +30,9 @@ public class MainMenu extends MenuBar {
 	private MenuItem orgCopy, orgMove, orgDelete;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditProfile;
 	private Form father;
-	private Preferences pref;
-	private Vector cacheDB;
 	private TablePanel tbp;
-	private Profile profile;
 	
-	public MainMenu(Form f, Preferences p, Profile prof){
-		profile=prof;
-		cacheDB = profile.cacheDB;
-		pref = p;
+	public MainMenu(Form f){
 		father = f;
 		String cwd = File.getProgramDirectory();
 
@@ -162,6 +156,9 @@ public class MainMenu extends MenuBar {
 	}
 	
 	public void onEvent(Event ev){
+		Preferences pref=Global.getPref();
+		Profile profile=Global.getProfile();
+		Vector cacheDB=profile.cacheDB;
 		if (ev instanceof MenuEvent){ //&& ev.type == MenuEvent.PRESSED
 			MenuEvent mev = (MenuEvent)ev;
 			if(mev.selectedItem == wolflang){
@@ -190,9 +187,10 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == mnuOpenProfile){
 				if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
+					profile.cacheDB.clear();
 					profile.readIndex();
 					pref.curCentrePt.set(profile.centre);
-					tbp.resetModel(cacheDB);
+					tbp.resetModel();
 				}
 			}
 			if(mev.selectedItem == mnuEditProfile){
@@ -202,6 +200,7 @@ public class MainMenu extends MenuBar {
 				f.close(0);
 			}
 			if(mev.selectedItem == preferences){
+				tbp.saveColWith(pref);
 				PreferencesScreen pfs = new PreferencesScreen(pref);
 				pfs.execute(father.getFrame(), Gui.CENTER_FRAME);
 				pref.readPrefFile();
@@ -238,12 +237,12 @@ public class MainMenu extends MenuBar {
 						}
 					}
 				}
-				tbp.resetModel(cacheDB);
+				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadOC){
 				OCXMLImporter oc = new OCXMLImporter(pref,profile);
 				oc.doIt();
-				tbp.resetModel(cacheDB);
+				tbp.resetModel();
 			}
 			if(mev.selectedItem == filtCreate){
 				FilterScreen fsc = new FilterScreen(cacheDB, pref.baseDir);
@@ -261,10 +260,10 @@ public class MainMenu extends MenuBar {
 				pcx.doIt(PCX5Exporter.MODE_AUTO);
 				ProgressBarForm pbf = new ProgressBarForm();
 				pbf.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
-				String cwd = new String();
-				cwd = File.getProgramDirectory() + "/temp.pcx";
+				String cwd = File.getProgramDirectory() + "/temp.pcx";
 				try{
 					ewe.sys.Process p = Vm.exec("gpsbabel -s -i pcx -f "+ cwd +" -o garmin -F " + pref.garminConn +":");
+					Vm.debug("gpsbabel -s -i pcx -f "+ cwd +" -o garmin -F " + pref.garminConn +":");
 					p.waitFor();
 				}catch(IOException ioex){};
 				pbf.clear();
@@ -297,7 +296,7 @@ public class MainMenu extends MenuBar {
 			}
 			
 			if(mev.selectedItem == filtSelected){
-				CacheHolder ch = new CacheHolder();
+				CacheHolder ch;
 				for(int i = 0; i <	cacheDB.size(); i++){
 					ch = (CacheHolder)cacheDB.get(i);
 					ch.is_filtered = false;
@@ -443,28 +442,9 @@ public class MainMenu extends MenuBar {
 				}
 			}
 			if(mev.selectedItem == spider){
-				//GeoToadUI gtUI = new GeoToadUI(myPreferences, File.getProgramDirectory(),cacheDB);
 				SpiderGC spGC = new SpiderGC(pref, profile);
 				spGC.doIt();
-				tbp.resetModel(cacheDB);
-				/*
-				gtUI.execute();
-				File ftest = new File(File.getProgramDirectory() + "/temp.gpx");
-				if(ftest.exists()){
-					if(gtUI.chkImport.getState()){
-						//if(chkSpoilers.getState()) inf = new InfoBox("GPX", "import + spoiler");
-						//else inf = new InfoBox("GPX", "import");
-						//inf.show();
-						GPXImporter imp = new GPXImporter(cacheDB, File.getProgramDirectory() + "/temp.gpx", myPreferences);
-						if(gtUI.chkSpoilers.getState()) {
-							imp.doIt(GPXImporter.DOIT_WITHSPOILER);
-						} else imp.doIt(GPXImporter.DOIT_NOSPOILER);
-					} else {
-						//Vm.debug("timer checking...");					
-					}
-					tbp.resetModel(cacheDB);
-				}
-				*/
+				tbp.resetModel();
 			}
 			if(mev.selectedItem == exit){
 				ewe.sys.Vm.exit(0);

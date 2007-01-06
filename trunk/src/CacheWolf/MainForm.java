@@ -11,8 +11,8 @@ import ewe.fx.*;
 public class MainForm extends Form {
 	
 	StatusBar statBar;
-	Preferences pref = Preferences.getPrefObject(); // Singleton pattern
-	Profile profile = new Profile();
+	Preferences pref = Global.getPref(); // Singleton pattern
+	Profile profile = Global.getProfile();
 	MainTab mTab;
 	MainMenu mMenu;
 
@@ -70,9 +70,9 @@ public class MainForm extends Form {
 				Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
 			}
 		} else Vm.setSIP(0);
-		Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
+		//Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
 		statBar = new StatusBar(pref, profile.cacheDB);
-		this.addLast(mMenu = new MainMenu(this, pref, profile),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		this.addLast(mMenu = new MainMenu(this),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		this.addLast(mTab = new MainTab(pref,profile,statBar),CellConstants.STRETCH, CellConstants.FILL);
 		mMenu.setTablePanel(mTab.getTablePanel());
 		
@@ -111,6 +111,7 @@ public class MainForm extends Form {
 	
 	public void onEvent(Event ev){ // Preferences have been changed by PreferencesScreen
 		if(pref.dirty == true){
+			mTab.getTablePanel().myMod.setColumnNamesAndWidths();	
 		    mTab.getTablePanel().refreshTable();
 			pref.dirty = false;
 		}

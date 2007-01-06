@@ -26,6 +26,7 @@ public class TablePanel extends CellPanel{
 		this.statBar = statBar;
 		cacheDB = profile.cacheDB;
 		pref = p;
+/*
 		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
 		String[] jester;
 		int colWidth[];
@@ -45,7 +46,7 @@ public class TablePanel extends CellPanel{
 				ji++;
 			}
 		}
-		
+*/		
 		addLast(new ScrollBarPanel(tc = new myTableControl()));
 		addLast(statBar,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		Menu m = new Menu(new String[]{MyLocale.getMsg(1010,"Goto"),MyLocale.getMsg(1019,"Center"),MyLocale.getMsg(1011,"Filter"),MyLocale.getMsg(1012,"Delete"),MyLocale.getMsg(1014,"Update"),MyLocale.getMsg(1018,"Sel. add. wpts."),"-",MyLocale.getMsg(1015,"Select all"),MyLocale.getMsg(1016,"De-select all"),MyLocale.getMsg(1017,"All add. wpts")},MyLocale.getMsg(1013,"With selection"));
@@ -54,7 +55,7 @@ public class TablePanel extends CellPanel{
 		tc.db = cacheDB;
 		tc.pref = p;
 		tc.tbp = this;
-		myMod = new myTableModel(cacheDB, jester, colWidth, tc, getFontMetrics());
+		myMod = new myTableModel(tc, getFontMetrics());
 		myMod.hasRowHeaders = false;
 		myMod.hasColumnHeaders  = true;
 		tc.setTableModel(myMod);
@@ -87,45 +88,18 @@ public class TablePanel extends CellPanel{
 		}
 	}
 	
-	public void resetModel(Vector cacheDB) {
-		myMod.setVector(cacheDB);
+	public void resetModel() {
+		//RB  myMod.setVector(cacheDB);
+		myMod.numRows = cacheDB.size();
 		updateBearingDistance(cacheDB, pref);
 		////Vm.debug("IS mypref loaded? " + myPreferences.mylgDeg);
-		tc.setTableModel(myMod);
+		// tc.setTableModel(myMod); Not needed ?
 		tc.update(true);
 		statBar.updateDisplay();
 	}
 	
 	public void refreshTable(){
-/*		Auskommentiert für bug 9529 - vergessene Spaltenbreite
-        Weil bei jedem refresh ein neues TableModel Objekt erzeugt wurde, werden
-        die Spaltenbreiten vergessen.
-        Derzeit nur auskommentiert um eventuelle Nebeneffekte zu prfen.
-         
- 		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
-		String[] jester;
-		int colWidth[];
-
-		int colnum = 0;
-		
-		for(int i = 0; i<=11; i++){
-			if(myPreferences.tablePrefs[i] == 1) colnum++;
-		}
-		jester = new String[colnum];
-		colWidth = new int[colnum];
-		int ji = 0;
-		for(int i = 0; i<=11;i++){
-			if(myPreferences.tablePrefs[i] == 1){
-				jester[ji] = spName[i];
-				colWidth[ji] = myPreferences.tableWidth[i];
-				ji++;
-			}
-		}
-		myMod = new myTableModel(cacheDB, jester, colWidth, tc, getFontMetrics());
-		myMod.hasRowHeaders = false;
-		myMod.hasColumnHeaders  = true;
-		tc.setTableModel(myMod);
-*/		myMod.updateRows();
+		myMod.updateRows();
 		tc.update(true);
 		statBar.updateDisplay();
 	}
