@@ -80,6 +80,12 @@ public class Profile {
 			if (savedCentre.isValid())
 				detfile.print("    <CENTRE lat=\""+savedCentre.getNSLetter() + " " + savedCentre.getLatDeg(CWPoint.CW) + "&deg; " + savedCentre.getLatMin(CWPoint.CW)+ "\" "+
 				                        "long=\""+savedCentre.getEWLetter() + " " + savedCentre.getLonDeg(CWPoint.CW) + "&deg; " + savedCentre.getLonMin(CWPoint.CW)+"\"/>\n");
+			if(last_sync_opencaching == null || last_sync_opencaching.endsWith("null") || last_sync_opencaching.equals("")){
+				last_sync_opencaching = "20050801000000";
+			}
+			if(distOC == null || distOC.endsWith("null") || distOC.equals("")){
+				distOC = "0";
+			}
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			for(int i = 0; i<cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
@@ -148,9 +154,9 @@ public class Profile {
 					//Vm.debug("Centre "+lat+" "+lon);
 					centre.set(lat+" "+lon,CWPoint.CW); // Fast parse
 				} else if (text.indexOf("<SYNCOC")>=0) {
-					int start=text.indexOf("date=\"")+6;
+					int start=text.indexOf("date = \"")+8;
 					last_sync_opencaching=text.substring(start,text.indexOf("\"",start));
-					start=text.indexOf("dist=\"")+6;
+					start=text.indexOf("dist = \"")+8;
 					distOC=text.substring(start,text.indexOf("\"",start));
 				}
 			}

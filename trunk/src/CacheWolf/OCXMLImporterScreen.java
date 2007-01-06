@@ -14,22 +14,22 @@ import ewe.ui.*;
  */
 public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;
-	Preferences myPreferences;
+	Preferences pref;
 	mInput distanceInput;
 	mCheckBox imagesCheckBox, mapsCheckBox, missingCheckBox;
 	mLabel distLbl;
 	static int IMAGESANDMAPS = 0;
 	static int ALL = 1;
 	
-	public OCXMLImporterScreen(Preferences myPreferences, String title, int options) {
+	public OCXMLImporterScreen(String title, int options) {
 		super();
-		this.myPreferences = myPreferences; // myPreferences sollte später auch diese Einstellungen speichern
+		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 		
 
 		this.title = title;
 		this.addNext(distLbl = new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		distanceInput = new mInput();
-		distanceInput.setText(myPreferences.distOC);
+		distanceInput.setText(Global.getProfile().distOC);
 		this.addLast(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
 		
 		imagesCheckBox = new mCheckBox();
@@ -59,9 +59,9 @@ public class OCXMLImporterScreen extends Form {
 			}
 			if (ev.target == okB){
 				    // distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
-					myPreferences.downloadMapsOC = mapsCheckBox.state;
-					myPreferences.downloadPicsOC = imagesCheckBox.state;
-					if (missingCheckBox!=null) myPreferences.downloadmissingOC = missingCheckBox.state;
+					pref.downloadMapsOC = mapsCheckBox.state;
+					pref.downloadPicsOC = imagesCheckBox.state;
+					if (missingCheckBox!=null) pref.downloadmissingOC = missingCheckBox.state;
 					// @todo: sofort speichern?
 				this.close(Form.IDOK);
 				}
