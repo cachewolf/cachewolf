@@ -112,7 +112,7 @@ public class ImagePanel extends InteractivePanel{
 				addImage(ipi);
 				//Name of picture:
 				if(cache.ImagesText.size()>i){
-					imgText = (String)cache.ImagesText.get(i);
+					imgText = SafeXML.cleanback((String)cache.ImagesText.get(i));
 					if(imgText.length()==0) imgText = "???";
 					AimgText = new AniImage();
 					AimgText = getImageText(imgText);
