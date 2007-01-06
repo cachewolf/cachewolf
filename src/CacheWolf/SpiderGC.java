@@ -448,7 +448,7 @@ public class SpiderGC{
 				*/
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
-				cx.wayPoint = Convert.toString(counter) + ch.wayPoint.substring(2,6);
+				cx.wayPoint = MyLocale.formatLong(counter, "00") + ch.wayPoint.substring(2);
 				counter++;
 				cx.LongDescription = descRex.stringMatched(1); 
 				//Vm.debug(descRex.stringMatched(1));
