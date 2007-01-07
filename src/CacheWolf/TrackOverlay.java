@@ -109,7 +109,7 @@ public class TrackOverlay extends AniImage {
 	}
 
 	public void addPixel(int x, int y, Color f) throws IndexOutOfBoundsException {
-		if (trackPixels==null) { trackPixels = new Point[1]; trackPixelsColor = new Color[1000]; } 
+		if (trackPixels==null) { trackPixels = new Point[500]; trackPixelsColor = new Color[500]; } 
 		trackPixels[numPixels] = new Point(x, y); // IndexOutOfBoundsException is handled in PaintPoint
 		trackPixelsColor[numPixels] = f.getCopy();
 		numPixels++;
@@ -144,10 +144,9 @@ public class TrackOverlay extends AniImage {
 			g.setColor(trackPixelsColor[i]);
 			g.fillRect(trackPixels[i].x-1, trackPixels[i].y-1, 3, 3);
 		}
-		g.drawText(Convert.toString(test), 10, 10);
-		g.drawRect(10 + test, 10, 10, 10);
-		//g.setPixelRGB(x, y, rgb);
-		test++;
+		//g.drawText(Convert.toString(test), 10, 10);
+		//g.drawRect(10 + test, 10, 10, 10);
+		//test++;
 	}
 }
 
