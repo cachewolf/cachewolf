@@ -225,7 +225,7 @@ public class CacheWolf{
 		//args[0]: spider
 		//args[1]: distance
 		ewe.sys.Vm.startEwe(args);
-		Gui.screenIs(Gui.PDA_SCREEN);
+/*		Gui.screenIs(Gui.PDA_SCREEN);
 		Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
 		//Gui.screenIs(Gui.PDA_SCREEN)
 		if (Vm.isMobile() && s.height >= 400) {
@@ -236,7 +236,7 @@ public class CacheWolf{
 			mApp.fontsChanged();
 			mApp.mainApp.font = newGuiFont;
 		}
-		
+*/		
 		//if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 		//	Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
 		//}
@@ -245,13 +245,11 @@ public class CacheWolf{
 			if(args[0].equals("test")){
 				Test t=new Test(); 
 				t.testAll();
-				Form mainF = new MainForm();
-				mainF.execute();
 			}
-		}else{
-		  Form mainF = new MainForm();
-		  mainF.execute();
 		}
+		Form mainF = new MainForm();
+		mainF.execute();
+		
 		
 		//Form mainF = new MainForm();
 		//mainF.execute();

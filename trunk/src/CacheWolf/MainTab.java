@@ -27,12 +27,12 @@ public class MainTab extends mTabbedPanel {
 	SolverPanel solverP;
 	String lastselected = new String();
 	CacheHolder ch = new CacheHolder();
-	//Locale l = Vm.getLocale();
-	//LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+	MainMenu mnuMain;
 	
-	public MainTab(Preferences p, Profile prof,StatusBar statBar){
-		pref = p;
-		profile=prof;
+	public MainTab(MainMenu mainMenu,StatusBar statBar){
+		mnuMain=mainMenu;
+		pref = Global.getPref();
+		profile=Global.getProfile();
 		if (!pref.tabsAtTop) tabLocation=SOUTH;
 		cDB = profile.cacheDB;
 		MyLocale.setSIPButton();
@@ -67,7 +67,7 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(radarP, "Radar", null);
 		radarP.setMainTab(this);
 		c.iconize(new Image("radar.gif"),true);
-		
+		mnuMain.allowProfileChange(true);
 	}
 	
 	public TablePanel getTablePanel(){
@@ -93,7 +93,9 @@ public class MainTab extends mTabbedPanel {
 		{
 		  ////Vm.debug(ev.toString());
 		  if(ev instanceof MultiPanelEvent){
+			  mnuMain.allowProfileChange(false);	  
 			  if(this.getSelectedItem() == 0){
+				  mnuMain.allowProfileChange(true);	  
 //				  Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
 //				  Vm.setSIP(0);
 				  MyLocale.setSIPOff();

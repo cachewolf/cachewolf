@@ -155,6 +155,16 @@ public class MainMenu extends MenuBar {
 		tbp = t;
 	}
 	
+	public void allowProfileChange(boolean profileChangeAllowed) {
+		if (profileChangeAllowed) {
+			mnuNewProfile.modifiers&=~MenuItem.Disabled;
+			mnuOpenProfile.modifiers&=~MenuItem.Disabled;
+		} else {
+			mnuNewProfile.modifiers|=MenuItem.Disabled;
+			mnuOpenProfile.modifiers|=MenuItem.Disabled;
+		}
+	}
+	
 	public void onEvent(Event ev){
 		Preferences pref=Global.getPref();
 		Profile profile=Global.getProfile();

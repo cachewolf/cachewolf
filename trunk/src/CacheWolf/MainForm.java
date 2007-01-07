@@ -38,9 +38,11 @@ public class MainForm extends Form {
 		this.exitSystemOnClose = true;
 		this.resizable = true;
 		this.moveable = true;
-		if(Vm.isMobile() == true) 
+		if(Vm.isMobile() == true) {
 			this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
-		else 
+			this.resizable = false;
+			this.moveable = false;
+		} else 
 			this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
 		// Load CacheList
@@ -50,12 +52,12 @@ public class MainForm extends Form {
 			addGuiFont();
 			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true)) 
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
-			Vm.showWait(true);
 			InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
-			infB.exec();
+			infB.show();
+			infB.waitUntilPainted(1000);
 			profile.readIndex();
 			infB.close(0);
-			Vm.showWait(false);
+			Vm.showWait(true);
 			pref.curCentrePt.set(profile.centre);
 			TablePanel.updateBearingDistance(profile.cacheDB,pref);
 		} catch (Exception e){
@@ -69,15 +71,17 @@ public class MainForm extends Form {
 		} else Vm.setSIP(0);
 		//Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
 		if (pref.showStatus) statBar = new StatusBar(pref, profile.cacheDB);
+		mMenu = new MainMenu(this);
+		mTab = new MainTab(mMenu,statBar);
 		if (pref.menuAtTop) {
-			this.addLast(mMenu = new MainMenu(this),CellConstants.DONTSTRETCH, CellConstants.FILL);
-			this.addLast(mTab = new MainTab(pref,profile,statBar),CellConstants.STRETCH, CellConstants.FILL);
+			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
+			this.addLast(mTab,CellConstants.STRETCH, CellConstants.FILL);
 		} else {
-			this.addLast(mTab = new MainTab(pref,profile,statBar),CellConstants.STRETCH, CellConstants.FILL);
-			this.addLast(mMenu = new MainMenu(this),CellConstants.DONTSTRETCH, CellConstants.FILL);
+			this.addLast(mTab,CellConstants.STRETCH, CellConstants.FILL);
+			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		}
 		mMenu.setTablePanel(mTab.getTablePanel());
-		
+		Vm.showWait(false);
 	}
 
 	
