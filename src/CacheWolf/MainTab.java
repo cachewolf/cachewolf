@@ -119,6 +119,16 @@ public class MainTab extends mTabbedPanel {
 					  if(pref.myAlias.equals(ch.CacheOwner)) ch.is_owned = true;
 					  ch.CacheNotes = detP.wayNotes.getText();
 					  ch.type = detP.transSelect(detP.wayType.getInt());
+					  // set status also on addi wpts
+					  if (ch.hasAddiWpt()){
+						  CacheHolder addiWpt;
+						  for (int i=0;i<ch.addiWpts.getCount();i++){
+							  addiWpt = (CacheHolder)ch.addiWpts.get(i);
+							  addiWpt.CacheStatus = ch.CacheStatus;
+							  addiWpt.is_found = ch.is_found;
+							  addiWpt.is_owned = ch.is_owned;
+						  }
+					  }
 					  cDB.set(tbP.getSelectedCache(), ch);
 					  detP.dirty_status = false;
 					  tbP.refreshTable();
