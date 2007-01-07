@@ -3,6 +3,8 @@ import ewe.graphics.*;
 import ewe.sys.*;
 import ewe.fx.*;
 import ewe.ui.*;
+import ewe.io.*;
+import ewe.util.*;
 
 
 /**
@@ -10,23 +12,28 @@ import ewe.ui.*;
 *	allows the user to click on an image that will then be displayed in its original size
 *	as long as the image fits the application size. If the application size is not sufficient
 *	then the image will be scaled to the available screen size.
+*   A right mouseclick on an image will open a dialogue to delete the file. 
 */
 public class ImagePanel extends InteractivePanel{
+	/** Picture to replace deleted pictures */
+	private final String NO_IMAGE="no_picture.png";
+	/** Minimum time (msec) to recognize a long pen down event (=right mouse key) */
+	private final int LONG_PEN_DOWN_DURATION=500;
+
 	Preferences pref;
 	Profile profile;
+	//private final int thumb_max_size = 300;
+	//private final int thumb_min_size = 100;
+	private final int padding = 20;
+	private int thumb_size = 0;
+	private int locX, locY, locCounter;
+	/** Start and duration of pen-pressed event to simulate right mouse key */
+	private long start, duration=0;
 	
-	int thumb_max_size = 300;
-	int thumb_min_size = 100;
-	int padding = 20;
-	int thumb_size = 0;
 	/**
 	* Constructor to create the image panel.<p>
-	* Also calculates the possible sizes for the
-	* thumbnail view.
 	*/
-	public ImagePanel(Preferences p, Profile prof){
-		pref = p;
-		profile=prof;
+	public ImagePanel(){
 	}
 	
 	/**
@@ -35,17 +42,12 @@ public class ImagePanel extends InteractivePanel{
 	* @see MainTab#onEvent(Event ev)
 	*/
 	public void setImages(CacheHolder cache){
-		String imgText = new String();
-		AniImage AimgText;
-		double dummyC = 0;
+		pref = Global.getPref();
+		profile=Global.getProfile();
 		Vm.showWait(true);
-		ImageList liste = images;
+		clearImages();
 		thumb_size = (int)((pref.myAppWidth-2*padding) / 3);
 		thumb_size = thumb_size - padding;
-		int lgr = liste.size();
-		for(int i = 0; i<lgr;i++){
-			this.removeImage((AniImage)liste.get(0));
-		}
 		int rowCounter = cache.Images.size() + cache.UserImages.size();
 		rowCounter = (int)(rowCounter/3)+1;
 		Rect r = new Rect(new Dimension(pref.myAppWidth,rowCounter*thumb_size+rowCounter*padding+padding));
@@ -53,13 +55,45 @@ public class ImagePanel extends InteractivePanel{
 		//this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
 		this.checkScrolls();
 		this.refresh();
+		addTitle(MyLocale.getMsg(340,"Cache Images:"));
+		locY = 20;
+		locX = padding;
+		addImages(cache.Images,cache.ImagesText);
+		// load user images
+		if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
+		//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
+		//Vm.debug("locy after: " + Convert.toString(locY));
+		addTitle(MyLocale.getMsg(341,"User Images:"));
+		locY = locY + 20;
+		locX = padding;
+		locCounter = 0;
+		addImages(cache.UserImages,cache.UserImagesText);
+		
+		this.refresh();
+		Vm.showWait(false);
+		//this.repaintNow();
+	}
+
+	/**
+	 * Clear the images in the panel
+	 *
+	 */
+	private void clearImages() {
+		int lgr = images.size();
+		for(int i = 0; i<lgr;i++){
+			this.removeImage((AniImage)images.get(0));
+		}
+	}
+	
+	/**
+	 * Add a title above the cache images and above the user images
+	 * @param title Title to add ("cache images" or "user images")
+	 */
+	private void addTitle(String title) {
 		AniImage aImg;
-		String location = new String();
 		Font font = new Font("Verdana", Font.BOLD, 20);
 		FontMetrics fm = getFontMetrics();
-		
-		// load cache images
-		int stringWidth = fm.getTextWidth("Cache Images");
+		int stringWidth = fm.getTextWidth(title);
 		int stringHeight = fm.getHeight();
 		Image img = new Image(stringWidth*2,stringHeight+5);
 		Graphics g = new Graphics(img);
@@ -67,20 +101,32 @@ public class ImagePanel extends InteractivePanel{
 		g.fillRect(0,0,stringWidth*2,stringHeight+5);
 		g.setColor(new Color(0,0,0));
 		g.setFont(font);
-		g.drawText("Cache Images:", 0,0);
+		g.drawText(title, 0,0);
 		g.free();
 		aImg = new AniImage(img);
 		addImage(aImg);
 		aImg.refresh();
+	}
+	
+	/**
+	 * Add the images to the panel. Can add both normal and user images
+	 * @param images Vector of images or userImages
+	 * @param imagesText Vector of image texts or user image texts
+	 */
+	private void addImages(Vector images, Vector imagesText) {
+		String location, imgText;
 		mImage mI;
-		int locX, locY;
-		int scaleX, scaleY = 0;
-		locY = 20;
-		locX = padding;
-		int locCounter = 0;
+		int scaleX, scaleY;
+		double dummyC;
 		ImagePanelImage ipi;
-		for(int i = 0; i<cache.Images.size(); i++){
-			location = profile.dataDir + (String)cache.Images.get(i);
+		AniImage AimgText;
+		
+		for(int i = 0; i<images.size(); i++){
+			location = profile.dataDir + (String)images.get(i);
+			if (!(new File(location)).exists()) {
+				location=NO_IMAGE;
+				if (!pref.showDeletedImages) continue; // Don't show the deleted Image if user does not want it
+			}
 			try{
 				mI = new mImage(location);
 				// actuall new mImage(location); should do the following "if" but it doesn't anyhow
@@ -107,18 +153,21 @@ public class ImagePanel extends InteractivePanel{
 				mI = mI.scale(scaleX,scaleY,null,0);
 				ipi = new ImagePanelImage(mI);
 				ipi.fileName = location; // this is set only to easily identify the filename of the image clicked
-
 				ipi.setLocation(locX, locY);
 				addImage(ipi);
 				//Name of picture:
-				if(cache.ImagesText.size()>i){
-					imgText = SafeXML.cleanback((String)cache.ImagesText.get(i));
+				if(imagesText.size()>i){
+					if (location.equals(NO_IMAGE))
+						imgText=MyLocale.getMsg(342,"Deleted");
+					else
+						imgText = SafeXML.cleanback((String)imagesText.get(i));
 					if(imgText.length()==0) imgText = "???";
 					AimgText = new AniImage();
 					AimgText = getImageText(imgText);
 					AimgText.setLocation(locX,locY+scaleY);
 					addImage(AimgText);
 					AimgText.refresh();
+					ipi.imageText = imgText; 
 				}
 				ipi.refresh();
 				locX = locX + thumb_size + padding;
@@ -130,103 +179,15 @@ public class ImagePanel extends InteractivePanel{
 					locY = locY+thumb_size+padding;
 				}
 			}catch(IllegalArgumentException imex){ // file not found, could not decode etc.
-				Locale l = Vm.getLocale();
-				LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
-				MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), MessageBox.OKB); // @todo: language support
+				MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), MessageBox.OKB); // @todo: language support
 				tmp.exec();
 			} catch (OutOfMemoryError e) { // TODO show an error icon in the panel instead of nothing
-				(new MessageBox("Error","Not enough free memory to load cache image:\n"+location,MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+":\n"+location,MessageBox.OKB)).exec();
 			} catch (SystemResourceException e) { // TODO show an error icon in the panel instead of nothing
-				(new MessageBox("Error","Not enough free memory to load cache image:\n"+location,MessageBox.OKB)).exec();
-			}
-		} //for
-		//Vm.debug("LocCounter: " +Convert.toString(locCounter));
-		//Vm.debug("locy before: " + Convert.toString(locY));
-		
-		// load user images
-		if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
-		//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
-		//Vm.debug("locy after: " + Convert.toString(locY));
-		stringWidth = fm.getTextWidth("User Images");
-		Image img2 = new Image(stringWidth*2,stringHeight+5);
-		Graphics g2 = new Graphics(img2);
-		g2.setColor(new Color(195,195,195));
-		g2.fillRect(0,0,stringWidth*2,stringHeight+5);
-		g2.setColor(new Color(0,0,0));
-		g2.setFont(font);
-		g2.drawText("User Images:", 0,0);
-		g2.free();
-		aImg = new AniImage(img2);
-		aImg.setLocation(0, locY);
-		addImage(aImg);
-		aImg.refresh();
-		locY = locY + 20;
-		locX = padding;
-		locCounter = 0;
-		for(int i = 0; i<cache.UserImages.size(); i++){
-			location = profile.dataDir + (String)cache.UserImages.get(i);
-			//Vm.debug(location);
-			try{
-				mI = new mImage(location);
-				if (mI.getWidth() <= 0 || mI.getHeight() <= 0 ) throw new IllegalArgumentException(location);
-				scaleX = thumb_size;
-				scaleY = thumb_size;
-				dummyC = 0;
-				if(mI.getWidth()>mI.getHeight()){
-					scaleX = thumb_size;
-					dummyC = (double)mI.getHeight()/ (double)mI.getWidth();
-					dummyC = dummyC * (double)thumb_size;
-					scaleY = (int)dummyC;
-				}
-				if(mI.getWidth() <= mI.getHeight()){
-					scaleY = thumb_size;
-					dummyC = (double)mI.getWidth()/(double)mI.getHeight();
-					dummyC = dummyC * (double)thumb_size;
-					scaleX = (int)dummyC;
-				}
-				if(mI.getWidth() <= thumb_size){
-					scaleX = mI.getWidth();
-					scaleY = mI.getHeight();
-				}
-				mI = mI.scale(scaleX,scaleY,null,0);
-				ipi = new ImagePanelImage(mI);
-				ipi.fileName = location;
-				ipi.setLocation(locX, locY);
-				addImage(ipi);
-				//Name of picture:
-				if(cache.UserImagesText.size()>i){
-					imgText = (String)cache.UserImagesText.get(i);
-					if(imgText.length()==0) imgText = "???";
-					AimgText = new AniImage();
-					AimgText = getImageText(imgText);
-					AimgText.setLocation(locX,locY+scaleY);
-					addImage(AimgText);
-					AimgText.refresh();
-				}
-				ipi.refresh();
-				locX = locX + thumb_size + padding;
-				locCounter++;
-				if(locCounter > 2) {
-					locCounter = 0;
-					locX = padding;
-					locY = locY+thumb_size+padding;
-				}
-			}catch(IllegalArgumentException imex){ // file not found, could not decode etc.
-				Locale l = Vm.getLocale();
-				LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
-				MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), MessageBox.OKB); // @todo: language support
-				tmp.exec();
-			} catch (OutOfMemoryError e) { // TODO show an error icon in the panel instead of nothing 
-				(new MessageBox("Error","Not enough free memory to load user image:\n"+location,MessageBox.OKB)).exec();
-			} catch (SystemResourceException e) { // TODO show an error icon in the panel instead of nothing
-				(new MessageBox("Error","Not enough free memory to load cache image:\n"+location,MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+location,MessageBox.OKB)).exec();
 			}
 		} //for
 		
-		
-		this.refresh();
-		Vm.showWait(false);
-		//this.repaintNow();
 	}
 	
 	private AniImage getImageText(String text){
@@ -245,29 +206,59 @@ public class ImagePanel extends InteractivePanel{
 		AniImage a = new AniImage(img);
 		return a;
 	}
+
+	
 	/**
 	* React to when a user clicks an image.
-	* Will open a new window displaying the image scaled
-	* to window size if the image is larger, otherwise
-	* the true size is displayed.
+	* If left mouse key is clicked, will open a new window displaying the image scaled
+	* to window size if the image is larger, otherwise the true size is displayed.
+	* If right mouse key is clicked, a dialogue to delete the image wil be displayed
 	*/
 	public void imageClicked(AniImage which, Point pos){
-		String fn = new String();
-		if(which instanceof ImagePanelImage){
-			ImagePanelImage ich = (ImagePanelImage)which;
-			fn = ich.fileName;
-			try {
-				ImageDetailForm iF = new ImageDetailForm(fn, pref);
-				iF.execute(null, Gui.CENTER_FRAME);
-			} catch (IllegalArgumentException e) {
-				Locale l = Vm.getLocale();
-				LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
-				MessageBox tmp = new MessageBox((String)lr.get(321,"Fehler"), (String)lr.get(322,"Kann Bild/Karte nicht finden"), MessageBox.OKB); // @todo: language support
-				tmp.exec();
-			} catch (OutOfMemoryError e) {
-				(new MessageBox("Error","Not enough free memory to load image\n"+fn,MessageBox.OKB)).exec();
+//		Vm.debug("Clicked"+pos.x+","+pos.y+" "+(((Control.currentPenEvent.modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON)?"RIGHT":"LEFT") );
+		if ((Control.currentPenEvent.modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON || duration>LONG_PEN_DOWN_DURATION) {
+			// Right button pressed - delete image to conserve space
+			if (which instanceof ImagePanelImage && !((ImagePanelImage)which).fileName.equals(NO_IMAGE)) {
+				MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(344,"Delete image")+" \""+((ImagePanelImage)which).imageText+"\"?", MessageBox.IDYES |MessageBox.IDNO);
+				if (mBox.execute() == MessageBox.IDOK){
+						//Vm.debug("Deleting "+((ImagePanelImage)which).fileName);
+						try {
+							File f=new File(((ImagePanelImage)which).fileName);
+							f.delete();
+							removeImage(which);
+						} catch(Exception e) {};
+				}
 			}
-			
+		} else { 
+			String fn = new String();
+			if(which instanceof ImagePanelImage){
+				ImagePanelImage ich = (ImagePanelImage)which;
+				fn = ich.fileName;
+				try {
+					ImageDetailForm iF = new ImageDetailForm(fn, pref);
+					iF.execute(null, Gui.CENTER_FRAME);
+				} catch (IllegalArgumentException e) {
+					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden"), MessageBox.OKB); // @todo: language support
+					tmp.exec();
+				} catch (OutOfMemoryError e) {
+					(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+fn,MessageBox.OKB)).exec();
+				}
+			}
 		}
+	}
+
+	/**
+	 * Create a "pen held down" event on hardware that does not support a right mouse key (e.g. Windows Mobile)
+	 * by measuring the time between pen down and pen up events. This is used in imageClicked to differentiate 
+	 * between left and right mouse keys.
+	 */
+	public void onPenEvent(PenEvent ev) {
+		if (ev.type==PenEvent.PEN_DOWN) {
+			start = Vm.getTimeStampLong();
+		}
+		if (ev.type==PenEvent.PEN_UP) {
+			duration=Vm.getTimeStampLong()-start;
+		}
+		super.onPenEvent(ev);
 	}
 }
