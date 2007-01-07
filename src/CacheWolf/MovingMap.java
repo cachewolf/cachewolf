@@ -2,6 +2,8 @@ package CacheWolf;
 
 import ewe.ui.*;
 import ewe.graphics.*;
+import ewe.io.File;
+import ewe.io.IOException;
 import ewe.sys.*;
 import ewe.fx.*;
 import ewe.util.Vector;
@@ -44,18 +46,81 @@ public class MovingMap extends Form {
 	boolean ignoreGps = false;
 	boolean ignoreGpsStatutsChanges = false;
 	boolean autoSelectMap = true;
+	boolean forceMapLoad = false; // only needed to force updateposition to try to load the best map again after OutOfMemoryError after an repeated click on snap-to-gps
 	
-	public MovingMap(Preferences pref, Vector maps, GotoPanel gP, Vector cacheDB){
+	public MovingMap(Preferences pref, GotoPanel gP, Vector cacheDB){
 		this.cacheDB = cacheDB;
 		gotoPanel = gP;
-		this.maps = maps;
 		this.pref = pref;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
+		this.backGround = Color.Black;
 		currentMap = new MapInfoObject();
-		mmp = new MovingMapPanel(this, maps, gotoPanel, cacheDB);
+		mmp = new MovingMapPanel(this);
 		this.addLast(mmp);
+		mmp.addImage(posCircle);
+		setGpsStatus(noGPS);
+		ButtonImageChooseMap.setLocation(10,10);
+		ButtonImageChooseMap.properties = AniImage.AlwaysOnTop;
+		ButtonImageGpsOn.setLocation(pref.myAppWidth-25, 10);
+		ButtonImageGpsOn.properties = AniImage.AlwaysOnTop;
+		arrowUp.setLocation(pref.myAppWidth/2, 10);
+		arrowDown.setLocation(pref.myAppWidth/2, pref.myAppHeight-20);
+		arrowLeft.setLocation(10, pref.myAppHeight/2+7);
+		arrowRight.setLocation(pref.myAppWidth-25, pref.myAppHeight/2+7);
+		arrowUp.properties = AniImage.AlwaysOnTop;
+		arrowDown.properties = AniImage.AlwaysOnTop;
+		arrowLeft.properties = AniImage.AlwaysOnTop;
+		arrowRight.properties = AniImage.AlwaysOnTop;
+		mmp.addImage(arrowUp);
+		mmp.addImage(arrowDown);
+		mmp.addImage(arrowLeft);
+		mmp.addImage(arrowRight);
+		mmp.addImage(ButtonImageChooseMap);
+		mmp.addImage(ButtonImageGpsOn);
+		posCircle.properties = AniImage.AlwaysOnTop;
+		loadMaps();
 	}
+
+	/**
+	 * loads the list of maps
+	 *
+	 */
+	public void loadMaps(){
+		Vm.showWait(true);
+		resetCenterOfMap();
+		InfoBox inf = new InfoBox("Info", "Loading list of maps...");
+		inf.exec();
+		maps = new Vector();
+		String dateien[];
+		String mapsPath = new String();
+		mapsPath = File.getProgramDirectory() + "/maps/";
+		File files = new File(mapsPath);
+		Extractor ext;
+		String rawFileName = new String();
+		dateien = files.list("*.png", File.LIST_FILES_ONLY);
+		MapInfoObject tempMIO;
+		for(int i = 0; i < dateien.length;i++){
+			ext = new Extractor(dateien[i], "", ".", 0, true);
+			rawFileName = ext.findNext();
+			try {
+				tempMIO = new MapInfoObject();
+				tempMIO.loadwfl(mapsPath, rawFileName);
+				maps.add(tempMIO);
+			}catch(IOException ex){ } // TODO etwas genauer auch Fehlermeldung ausgeben? Bei vorhandenen .wfl-Datei mit ungültigen Werten Fehler ausgeben oder wie jetz einfach ignorieren?
+		}
+		if (maps.isEmpty())
+			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB)).execute();
+		tempMIO = new MapInfoObject(1.0);
+		maps.add(tempMIO);
+		tempMIO = new MapInfoObject(5.0);
+		maps.add(tempMIO);
+		tempMIO = new MapInfoObject(50.0);
+		maps.add(tempMIO);
+		inf.close(0);
+		Vm.showWait(false);
+	}
+
 	public void addTrack(Track tr) {
 		if (tr == null) return;
 		if (tracks == null) tracks = new Vector();
@@ -239,7 +304,7 @@ public class MovingMap extends Form {
 	}
 	
 	public void updateOverlayPos() {
-//		if (TrackOverlays == null) return;
+		if (TrackOverlays == null) return;
 		updateOverlayOnlyPos();
 		if (TrackOverlays[0].location.x>pref.myAppWidth || TrackOverlays[0].location.x + 3*pref.myAppWidth < 0 || // testForNeedToRearange
 				TrackOverlays[0].location.y>pref.myAppHeight || TrackOverlays[0].location.y + 3*pref.myAppHeight <0) {
@@ -280,50 +345,6 @@ public class MovingMap extends Form {
 	}
 	
 	
-	/**
-	 * Constructs the map panel and initializes everything that is neccessary
-	 *
-	 */
-	public void loadMap(double lat, double lon){
-		resetCenterOfMap();
-		posCircleLat = lat;
-		posCircleLon = lon;
-		if (!maps.isEmpty()){
-			posCircle.properties = AniImage.AlwaysOnTop;
-			try {
-				int bestmap = getBestMap(posCircleLat, posCircleLon);
-				setMap((MapInfoObject)maps.get(bestmap), posCircleLat, posCircleLon);
-			} catch (IndexOutOfBoundsException ex) { // wird von maps.get geworfen, wenn die Liste der Maps leer ist, sollte eigentlich nicht vorkommen, solange bestmaps immer eine gültige Antwort liefert
-				LocalResource lr = Vm.getLocale().getLocalResource("cachewolf.Languages",true);
-				(new MessageBox((String)lr.get(321, "Error"), (String)lr.get(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB)).execute();
-			}
-		//	addOverlays(); // map must be known and must be added after map
-			mmp.addImage(posCircle);
-			setGpsStatus(noGPS);
-			ButtonImageChooseMap.setLocation(10,10);
-			ButtonImageChooseMap.properties = AniImage.AlwaysOnTop;
-			ButtonImageGpsOn.setLocation(pref.myAppWidth-25, 10);
-			ButtonImageGpsOn.properties = AniImage.AlwaysOnTop;
-			arrowUp.setLocation(pref.myAppWidth/2, 10);
-			arrowDown.setLocation(pref.myAppWidth/2, pref.myAppHeight-20);
-			arrowLeft.setLocation(10, pref.myAppHeight/2+7);
-			arrowRight.setLocation(pref.myAppWidth-25, pref.myAppHeight/2+7);
-			arrowUp.properties = AniImage.AlwaysOnTop;
-			arrowDown.properties = AniImage.AlwaysOnTop;
-			arrowLeft.properties = AniImage.AlwaysOnTop;
-			arrowRight.properties = AniImage.AlwaysOnTop;
-			mmp.addImage(arrowUp);
-			mmp.addImage(arrowDown);
-			mmp.addImage(arrowLeft);
-			mmp.addImage(arrowRight);
-			mmp.addImage(ButtonImageChooseMap);
-			mmp.addImage(ButtonImageGpsOn);
-		} else { // catch (IndexOutOfBoundsException ex) { // wird von maps.get geworfen, wenn die Liste der Maps leer ist
-			LocalResource lr = Vm.getLocale().getLocalResource("cachewolf.Languages",true);
-			(new MessageBox((String)lr.get(321, "Error"), (String)lr.get(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB)).execute();
-			throw new IndexOutOfBoundsException("no calibrated maps available"); 
-		}
-	}
 	
 	public void resetCenterOfMap() {
 		posCircleX = pref.myAppWidth/2; // maybe this could /should be repleced to windows size
@@ -431,7 +452,7 @@ public class MovingMap extends Form {
 			updateSymbolPositions();
 			if (updateOverlay && TrackOverlays != null) updateOverlayPos();
 		//}
-		mmp.repaintNow();
+		mmp.repaintNow(); // TODO test if the "if" above can be used
 		//Vm.debug("update only position");			
 	}
 	/**
@@ -442,8 +463,9 @@ public class MovingMap extends Form {
 			updateOnlyPosition(lat, lon, true);
 			if (autoSelectMap) {
 				Point mapPos = getMapXYPosition();
-				if (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width) 
-					|| 	mmp.mapImage == null ) 	{
+				if (forceMapLoad || (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width) 
+					|| 	mmp.mapImage == null )) 	{
+					forceMapLoad = false;
 					//Vm.debug("Screen not completly covered by map");
 					if (java.lang.Math.abs(lastCompareX-mapPos.x) > MyLocale.getScreenWidth()/10 || java.lang.Math.abs(lastCompareY-mapPos.y) > MyLocale.getScreenHeight()/10) {
 						// more then 1/10 of screen moved since last time we tried to find a better map
@@ -484,6 +506,7 @@ public class MovingMap extends Form {
 		lastCompareX = Integer.MAX_VALUE; // neccessary to make updateposition to test if the current map is the best one for the GPS-Position
 		lastCompareY = Integer.MAX_VALUE;
 		autoSelectMap = true;
+		forceMapLoad = true;
 //		updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.latDec); is called from GotoPanel.ticked
 	}
 
@@ -518,7 +541,8 @@ public class MovingMap extends Form {
 				//Vm.debug("free: "+Vm.getUsedMemory(false)+"classMemory: "+Vm.getClassMemory()+ "after garbage collection: "+Vm.getUsedMemory(false));
 				Vm.getUsedMemory(true); // calls the garbage collection
 				} // give memory free before loading the new map to avoid out of memory error  
-			mmp.mapImage = new AniImage(currentMap.fileName); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
+			if (currentMap.fileName.length()>0) mmp.mapImage = new AniImage(currentMap.fileName); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
+			else mmp.mapImage = new AniImage();
 			mmp.mapImage.setLocation(0,0);
 			mmp.addImage(mmp.mapImage);
 			mmp.images.moveToBack(mmp.mapImage);
@@ -583,16 +607,9 @@ public class MovingMap extends Form {
 */
 class MovingMapPanel extends InteractivePanel{
 	MovingMap mm;
-	Vector maps;
-	CellPanel gotoPanel;
 	AniImage mapImage;
-	Vector cacheDB;
-	Vector imageLayers;
-	public MovingMapPanel(MovingMap f, Vector maps, GotoPanel gP, Vector cacheDB){
-		this.cacheDB = cacheDB;
-		gotoPanel = gP;
+	public MovingMapPanel(MovingMap f){
 		this.mm = f;
-		this.maps = maps;
 	}
 	
 	/*public void addAniImage(AniImage ai, int layer) {
@@ -616,18 +633,17 @@ class MovingMapPanel extends InteractivePanel{
 		mm.updateSymbolPositions();
 		mm.updateOverlayPos();
 		this.repaintNow();
-
 	}
 
 	public void chooseMap() {
 		CWPoint gpspos;
 		if (mm.gotoPanel.gpsPosition.Fix > 0) gpspos = new CWPoint(mm.gotoPanel.gpsPosition.latDec, mm.gotoPanel.gpsPosition.lonDec);
 		else gpspos = null;
-		ListBox l = new ListBox(maps, gpspos, mm.getGotoPos());
+		ListBox l = new ListBox(mm.maps, gpspos, mm.getGotoPos());
 		if(l.execute() == FormBase.IDOK){
 //			Vm.debug("Trying map: " + l.selectedMap.fileName);
 			mm.autoSelectMap = false;
-			if (l.selectedMap.inBound(mm.posCircleLat, mm.posCircleLon)) {
+			if (l.selectedMap.inBound(mm.posCircleLat, mm.posCircleLon) || l.selectedMap.fileName.length()==0) {
 				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon);
 				mm.ignoreGpsStatutsChanges = false;
 			} else {
@@ -668,8 +684,8 @@ class MovingMapPanel extends InteractivePanel{
 			if (mm.gotoPanel.serThread == null || !mm.gotoPanel.serThread.isAlive()) {
 				mm.gotoPanel.startGps();
 				mm.addTrack(mm.gotoPanel.currTrack); // use new track when gps now started
-			} else mm.addOverlaySet(); // use existing tracks if gps was already running
-			mm.SnapToGps();
+			} //else mm.addOverlaySet(); // use existing tracks if gps was already running
+			mm.SnapToGps(); // TODO es wäre schön, wenn klick auf SnapToGPS nach einem OutOfMemoryError erneut versuchen würde, die map zu laden
 		}
 		if (which == mm.arrowRight)	{	moveMap(-10,0);	}
 		if (which == mm.arrowLeft)	{	moveMap(+10,0);	}
@@ -765,7 +781,6 @@ class ListBox extends Form{
 	public int myExecute() {
 		if (this.maps.size()==1) {
 			//this.selectedMap = 1;
-			this.selectedMap = new MapInfoObject();
 			this.selectedMap = (MapInfoObject) maps.get(0);
 			return FormBase.IDOK;
 		}
