@@ -33,6 +33,7 @@ public class MainTab extends mTabbedPanel {
 	public MainTab(Preferences p, Profile prof,StatusBar statBar){
 		pref = p;
 		profile=prof;
+		if (!pref.tabsAtTop) tabLocation=SOUTH;
 		cDB = profile.cacheDB;
 		MyLocale.setSIPButton();
 		ch.wayPoint = "null";

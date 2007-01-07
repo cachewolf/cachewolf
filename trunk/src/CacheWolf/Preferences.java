@@ -11,8 +11,6 @@ import ewe.filechooser.*;
 *	A class to hold the preferences that were loaded upon start up of CacheWolf.
 *	This class is also capable of parsing the prefs.xml file as well as
 *	saving the current settings of preferences.
-*  Last change:
-*    20061123 salzkammergut Added garminConn, used MyLocale
 */
 public class Preferences extends MinML{
 	
@@ -58,7 +56,11 @@ public class Preferences extends MinML{
 	public String lastDistOC[] = new String[4];
 	public String garminConn="com1";  // The type of connection which GPSBABEL uses: com1 OR usb.
 	// TODO Add garminConn to user interface. For the time being this can only be set by manually editing the pref file
-		
+
+	public boolean menuAtTop=true;
+	public boolean tabsAtTop=true;
+	public boolean showStatus=true;
+	
 	//public String last_sync_opencaching = new String();
 	//public String distOC = new String();
 	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
@@ -355,6 +357,11 @@ public class Preferences extends MinML{
 		if (name.equals("imagepanel")) {
 			showDeletedImages = Boolean.valueOf(atts.getValue("showdeletedimages")).booleanValue();
 		}
+		if (name.equals("screen")) {
+			menuAtTop=Boolean.valueOf(atts.getValue("menuattop")).booleanValue();
+			tabsAtTop=Boolean.valueOf(atts.getValue("tabsattop")).booleanValue();
+			showStatus=Boolean.valueOf(atts.getValue("showstatus")).booleanValue();
+		}
 	}
 
 	public void characters( char ch[], int start, int length )
@@ -422,6 +429,7 @@ public class Preferences extends MinML{
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
 			outp.print("    <garmin connection = \""+garminConn+"\"/>\n");
 			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
+			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\"/>\n");
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			// Obsolete data kept for backward compatibility

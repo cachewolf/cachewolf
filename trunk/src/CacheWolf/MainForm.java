@@ -10,7 +10,7 @@ import ewe.fx.*;
 */
 public class MainForm extends Form {
 	
-	StatusBar statBar;
+	StatusBar statBar=null;
 	Preferences pref = Global.getPref(); // Singleton pattern
 	Profile profile = Global.getProfile();
 	MainTab mTab;
@@ -68,9 +68,14 @@ public class MainForm extends Form {
 			}
 		} else Vm.setSIP(0);
 		//Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
-		statBar = new StatusBar(pref, profile.cacheDB);
-		this.addLast(mMenu = new MainMenu(this),CellConstants.DONTSTRETCH, CellConstants.FILL);
-		this.addLast(mTab = new MainTab(pref,profile,statBar),CellConstants.STRETCH, CellConstants.FILL);
+		if (pref.showStatus) statBar = new StatusBar(pref, profile.cacheDB);
+		if (pref.menuAtTop) {
+			this.addLast(mMenu = new MainMenu(this),CellConstants.DONTSTRETCH, CellConstants.FILL);
+			this.addLast(mTab = new MainTab(pref,profile,statBar),CellConstants.STRETCH, CellConstants.FILL);
+		} else {
+			this.addLast(mTab = new MainTab(pref,profile,statBar),CellConstants.STRETCH, CellConstants.FILL);
+			this.addLast(mMenu = new MainMenu(this),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		}
 		mMenu.setTablePanel(mTab.getTablePanel());
 		
 	}
