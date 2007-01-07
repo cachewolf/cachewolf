@@ -91,11 +91,12 @@ public class Profile {
 				ch = (CacheHolder)cacheDB.get(i);
 				////Vm.debug("Saving: " + ch.CacheName);
 				if(ch.wayPoint.length()>0 && ch.LongDescription.equals("An Error Has Occured") == false){
-					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+"\" latlon = \""+ SafeXML.clean(ch.LatLon) +"\" hidden = \""+ch.DateHidden+"\" wayp = \""+SafeXML.clean(ch.wayPoint)+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"" + ch.dirty + "\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\"/>\n");
+					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+"\" latlon = \""+ SafeXML.clean(ch.LatLon) +"\" hidden = \""+ch.DateHidden+"\" wayp = \""+SafeXML.clean(ch.wayPoint)+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"" + ch.dirty + "\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\" />\n");
 				}
 			}
 			detfile.print("</CACHELIST>\n");
 			detfile.close();
+			CacheHolder.buildReferences(cacheDB);
 		}catch(Exception e){
 			Vm.debug("Problem writing to index file "+e.toString());
 		}
@@ -145,6 +146,10 @@ public class Profile {
 					ch.is_HTML = ex.findNext().equals("false") ? false : true;
 					ch.noFindLogs = Convert.toInt(ex.findNext());
 					ch.ocCacheID = ex.findNext();
+					// remove "/>
+					ch.ocCacheID = SafeXML.replace(ch.ocCacheID,"\"/>", null);
+					// remove additional " if present
+					ch.ocCacheID = SafeXML.replace(ch.ocCacheID,"\"", null);
 					cacheDB.add(ch);
 				} else if (text.indexOf("<CENTRE")>=0) { // lat=  lon=
 					int start=text.indexOf("lat=\"")+5;
@@ -161,6 +166,9 @@ public class Profile {
 				}
 			}
 			in.close();
+			// Build references between caches and addi wpts
+			CacheHolder.buildReferences(cacheDB);
+			
 		} catch (FileNotFoundException e) {
 			Vm.debug("index.xml not found"); // Normal when profile is opened for first time
 			//e.printStackTrace();
