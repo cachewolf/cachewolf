@@ -50,7 +50,6 @@ public class MainForm extends Form {
 			addGuiFont();
 			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true)) 
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
-			long start = Vm.getTimeStampLong();
 			Vm.showWait(true);
 			InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
 			infB.exec();
@@ -58,8 +57,6 @@ public class MainForm extends Form {
 			infB.close(0);
 			Vm.showWait(false);
 			pref.curCentrePt.set(profile.centre);
-			long end = Vm.getTimeStampLong();
-			Vm.debug("index.xml read: " + Convert.toString(end - start)+ " msec");
 			TablePanel.updateBearingDistance(profile.cacheDB,pref);
 		} catch (Exception e){
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
