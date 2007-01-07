@@ -45,9 +45,31 @@ public class MapInfoObject{
  */	
 	
 	public MapInfoObject() {
-		double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
-		if(testA == 4.5) digSep = ","; else digSep = ".";
+		digSep = MyLocale.getDigSeparator();
+		//double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
+		//if(testA == 4.5) digSep = ","; else digSep = ".";
 	}
+	
+	/*
+	 * constructes an MapInfoObject without an associated map
+	 * but with 1 Pixel = scale meters
+	 */
+	public MapInfoObject(double scale) {
+		digSep = MyLocale.getDigSeparator();
+		mapName="empty 1 Pixel = "+scale+"meters";
+		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
+		double pixel2deg = meters2deg * scale;
+		affine[0]=0; //x2lat
+		affine[1]=pixel2deg; //x2lon
+		affine[2]=-pixel2deg; //y2lat
+		affine[3]=0; //y2lon
+		affine[4]=0; //left
+		affine[5]=1; //top
+		lowlat = 0; //bottom 
+		lowlon = 1; //right
+		doCalculations();
+	}
+	
 	/**
 	 * Method to load a .wfl-file
 	 * @throws IOException when there was a problem reading .wfl-file

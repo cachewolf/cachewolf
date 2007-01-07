@@ -168,8 +168,6 @@ public class GotoPanel extends CellPanel {
 
 	boolean mapsLoaded = false;
 	public boolean runMovingMap = false;
-	Vector availableMaps = new Vector();
-	MapInfoObject tempMIO = new MapInfoObject();
 	MovingMap mmp;
 	Track currTrack;
 
@@ -595,54 +593,17 @@ public class GotoPanel extends CellPanel {
 			//Start moving map
 			if (ev.target == btnMap){
 				runMovingMap = true;
-				if (mmp != null && mmp.mmp.mapImage != null) {
-					if (serThread == null || !serThread.isAlive() ) {
-						// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
-						mmp.ignoreGps = false;
-						mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
-						mmp.ignoreGps = true;
-					}
-					if (currTrack != null) mmp.addTrack(currTrack);
-					mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
-					mmp.exec();
+				if (mmp == null) mmp = new MovingMap(pref, this, cacheDB); // this also loads the list of maps
+				if (serThread == null || !serThread.isAlive() ) {
+					// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
+					mmp.ignoreGps = false;
+					mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
+					mmp.ignoreGps = true;
 				}
-				else {
-					if(mapsLoaded == false){
-						Vm.showWait(true);
-						InfoBox inf = new InfoBox("Info", "Loading list of maps...");
-						inf.exec();
-						String dateien[];
-						String mapsPath = new String();
-						mapsPath = File.getProgramDirectory() + "/maps/";
-						File files = new File(mapsPath);
-						Extractor ext;
-						String rawFileName = new String();
-						dateien = files.list("*.png", File.LIST_FILES_ONLY);
-						for(int i = 0; i < dateien.length;i++){
-							ext = new Extractor(dateien[i], "", ".", 0, true);
-							rawFileName = ext.findNext();
-							try {
-								tempMIO = new MapInfoObject();
-								tempMIO.loadwfl(mapsPath, rawFileName);
-								availableMaps.add(tempMIO);
-								mapsLoaded = true;
-							}catch(IOException ex){ } // TODO etwas genauer auch Fehlermeldung ausgeben? Bei vorhandenen .wfl-Datei mit ungültigen Werten Fehler ausgeben oder wie jetz einfach ignorieren?
-						}
-						inf.close(0);
-					} // if(mapsLoaded == false)
-					mmp = new MovingMap(pref, availableMaps, this, cacheDB);
-					Vm.showWait(false);
-					if (serThread == null || !serThread.isAlive() ) {
-						// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
-						mmp.loadMap(toPoint.latDec, toPoint.lonDec);
-					} else
-						mmp.loadMap(gpsPosition.latDec, gpsPosition.lonDec);
-					if (currTrack != null) mmp.addTrack(currTrack);
-					mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
-					mmp.exec();
-				}
-
-			} // if (ev.target == btnMap
+				if (currTrack != null) mmp.addTrack(currTrack);
+				mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
+				mmp.exec();
+			} 
 			// create new waypoint with current GPS-position
 			if (ev.target == btnSave){
 				CacheHolder ch = new CacheHolder();
