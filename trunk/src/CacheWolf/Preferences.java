@@ -422,7 +422,7 @@ public class Preferences extends MinML{
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
 			outp.print("    <garmin connection = \""+garminConn+"\"/>\n");
 			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
-			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>");
+			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			// Obsolete data kept for backward compatibility
 			//outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
