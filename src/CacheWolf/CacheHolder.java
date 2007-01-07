@@ -64,6 +64,8 @@ public class CacheHolder {
   public boolean is_selected = false;
   public boolean is_HTML = true;
   public boolean is_Checked = false;
+  public Vector addiWpts = new Vector();
+  public CacheHolder mainCache;
     
   
   /**
@@ -410,7 +412,7 @@ public CacheHolder update(CacheHolder newCh){
 	}
 	
 	/**
-	 * Method foch checking if to caches belongs to each other, e.g.
+	 * Method for checking if to caches belongs to each other, e.g.
 	 * an additional waypoint belongs to the main cache.
 	 * Works currently only, if the last 4 or 5 chars of the waypoint are
 	 * the same, this is the gc.com way. 
@@ -425,6 +427,45 @@ public CacheHolder update(CacheHolder newCh){
 		return this.wayPoint.endsWith(ch.wayPoint.substring(2));
 	}
 	
-  
+   
+   public boolean isAddiWpt(){
+	   return CacheType.isAddiWpt(this.type);
+   }
+   
+   public boolean hasAddiWpt() {
+	   if (this.addiWpts.getCount()>0) return true;
+	   else return false;
+   }
+   
+   public static void buildReferences(Vector cacheDB){
+	   CacheHolder ch, mainCh;
+	   Hashtable dbIndex = new Hashtable();
+	   Integer index;
+	   // Build index for faster search and clear all references
+	   for(int i = 0; i<cacheDB.size();i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			ch.addiWpts.clear();
+			ch.mainCache = null;
+			dbIndex.put((String)ch.wayPoint, new Integer(i));
+	   }
+	   // Build refeneces
+	   for(int i = 0; i<cacheDB.size();i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			if (ch.isAddiWpt()) {
+				//search main cache
+				if (ch.wayPoint.length() == 5){
+					index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(1));
+				} 
+				else {
+					index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(2));
+				}
+				if (index != null) {
+					mainCh = (CacheHolder) cacheDB.get(index.intValue());
+					mainCh.addiWpts.add(ch);
+					ch.mainCache = mainCh;
+				}// if
+			}// if
+	   }// for
+   }
   
 }

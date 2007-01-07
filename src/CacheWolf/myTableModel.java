@@ -28,6 +28,7 @@ public class myTableModel extends TableModel{
 	FontMetrics fm;
 	String nmCheck, nmQuest, nmD,nmT,nmWay,nmName,nmLoc,nmOwn,nmHid,nmStat,nmDist,nmBear = new String();
 	Image checkboxTicked,checkboxUnticked;
+	static Color RED = new Color(255,0,0);
 	
 	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
@@ -91,6 +92,7 @@ public class myTableModel extends TableModel{
 		bug = new mImage("bug.png");
 		checkboxTicked = new Image("checkboxTicked.png");
 		checkboxUnticked= new Image("checkboxUnticked.png");
+		updateRows();
 	}
 	
 	/**
@@ -131,19 +133,36 @@ public class myTableModel extends TableModel{
 	//}
 	
 	public void updateRows(){
-		this.numRows = cacheDB.size();
-		int counter = 0;
-		CacheHolder ch;
-		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
-			if(ch.is_filtered == true) counter++;
+		Vector sortDB = new Vector();
+		Vector filteredDB = new Vector();
+		CacheHolder ch, addiWpt;
+		// sort cacheDB:
+		// - addi wpts are listet behind the main cache
+		// - filtered caches are moved to the end
+		for (int i=0; i<cacheDB.size(); i++){
+			ch = (CacheHolder) cacheDB.get(i);
+			if (ch.is_filtered) {
+				filteredDB.add(ch);
+			} else {
+				if (ch.isAddiWpt()){
+					// check if main wpt is filtered
+					if (ch.mainCache.is_filtered) sortDB.add(ch);
+				} else {
+					sortDB.add(ch);
+					if (ch.hasAddiWpt()){
+						for (int j=0; j<ch.addiWpts.getCount();j++){
+							addiWpt = (CacheHolder)ch.addiWpts.get(j);
+							if (!addiWpt.is_filtered) sortDB.add(addiWpt);
+						}
+					}// if hasAddiWpt
+				} // if AddiWpt
+			} // if filtered
 		}
-		//Vm.debug("Counter: " + Convert.toString(counter));
-		if(counter > 0){
-			this.numRows = this.numRows - counter;
-			cacheDB.sort(new MyComparer("filter"), false);
-		}
-		 
+		// rebuild database
+		cacheDB.clear();
+		cacheDB.addAll(sortDB);
+		cacheDB.addAll(filteredDB);
+		this.numRows = sortDB.getCount();
 	}
 	
 	/**
@@ -211,7 +230,6 @@ public class myTableModel extends TableModel{
 	public Object getCellData(int row, int col){
 		IconAndText wpVal = new IconAndText(); //(IImage)bug, "Test Me", fm);
 		Object rettext = new Object();
-		int collector = 0;
 			if(row == -1) {
 				rettext = (String)colName[col];
 			}
@@ -232,7 +250,7 @@ public class myTableModel extends TableModel{
 								if (ch.is_Checked) rettext=checkboxTicked; 
 								else rettext=checkboxUnticked;
 							}
-							if(colName[col].equals(nmQuest)) rettext = (IImage)cacheImages[Convert.parseInt(ch.type)];				
+							if(colName[col].equals(nmQuest)) rettext = (IImage) cacheImages[Convert.parseInt(ch.type)];
 							if(colName[col].equals(nmD)) rettext = (String)ch.hard;
 							if(colName[col].equals(nmT)) rettext = (String)ch.terrain;
 							if(colName[col].equals(nmWay)){
@@ -258,7 +276,9 @@ public class myTableModel extends TableModel{
 								wpVal.addColumn(rettext);
 								rettext = wpVal;
 							}
-							if(colName[col].equals(nmLoc)) rettext = (String)ch.LatLon;
+							if(colName[col].equals(nmLoc)) {
+								rettext = (String)ch.LatLon;
+							}
 							if(colName[col].equals(nmOwn)) rettext = (String)ch.CacheOwner;
 							if(colName[col].equals(nmHid)) rettext = (String)ch.DateHidden;
 							if(colName[col].equals(nmStat)) rettext = (String)ch.CacheStatus;
@@ -281,6 +301,19 @@ public class myTableModel extends TableModel{
 			if (cell.y>=0 && cell.x==0) {
 				CacheHolder ch = (CacheHolder)cacheDB.get(cell.y);
 				ch.is_Checked= !ch.is_Checked;
+				// set the ceckbox also for addi wpts
+				if (ch.hasAddiWpt()){
+					CacheHolder addiWpt;
+					int off = 1;
+					for (int i=0;i<ch.addiWpts.getCount();i++){
+						addiWpt = (CacheHolder)ch.addiWpts.get(i);
+						addiWpt.is_Checked = ch.is_Checked;
+						if (!addiWpt.is_filtered){
+							tcControl.repaintCell(cell.y + off++, 0);
+						}
+					}
+					
+				}
 				updateRows();
 				// Don't consume the event. Why ?
 			}
@@ -339,9 +372,8 @@ public class myTableModel extends TableModel{
 	
 	private int getCacheIndex(String wp){
 		int retval = -1;
-		CacheHolder ch = new CacheHolder();
+		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = new CacheHolder();
 			ch = (CacheHolder)cacheDB.get(i);
 			if(ch.wayPoint.equals(wp)){
 				return i;
