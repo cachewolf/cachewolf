@@ -8,13 +8,13 @@ import ewe.sys.*;
 *	It holds a method to cryt and decrypt hints.
 *	Two buttons allow for navigation through the logs. 5 logs are displayed at
 *   together. This was implemented to allow for better performance on the
-*	PocketPC.
+*	PocketPC. This number can be changed in the preferences.
 *	Class ID=400
 */
 public class HintLogPanel extends CellPanel{
 	int crntLogPosition = 0;
 	CacheHolder cache;
-	
+	private final int DEFAULT_STRINGBUFFER_SIZE=8000;
 	mTextPad hint = new mTextPad();
 	//mTextPad logs = new mTextPad();
 	HtmlDisplay logs = new HtmlDisplay();
@@ -42,26 +42,33 @@ public class HintLogPanel extends CellPanel{
 		this.addLast(split);
 	}
 	
+	
 	public void setText(CacheHolder cache){
 		this.cache = cache;
-		Vm.showWait(true);
 		if(!cache.Hints.equals("null")) hint.setText(cache.Hints);
-		String dummy = new String();
-		int counter = 0;
-		for(int i = 0; i<cache.CacheLogs.size(); i++){
-			dummy += (String)cache.CacheLogs.get(i)+"</br>";
-			counter++;
-			if(counter >= Global.getPref().logsPerPage || counter >= cache.CacheLogs.size()) break;
-		}
 		crntLogPosition = 0;
-		logs.setHtml(dummy);
+		setLogs(0);
 		moreBt.modify(0,Control.Disabled);
 		prevBt.modify(0,Control.Disabled);
 //		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 //			Vm.setSIP(0);
 //		}
-		Vm.showWait(false);
 		////Vm.debug("In log: " + cache.CacheLogs);
+	}
+	
+	void setLogs(int crntLogPosition) {
+		Vm.showWait(true);
+		StringBuffer dummy = new StringBuffer(DEFAULT_STRINGBUFFER_SIZE);
+		int counter = 0;
+		int nLogs=cache.CacheLogs.size();
+		int logsPerPage=Global.getPref().logsPerPage;
+		for(int i = crntLogPosition; i<nLogs; i++){
+			dummy.append((String)cache.CacheLogs.get(i));
+			dummy.append("</br>");
+			if(++counter >= logsPerPage) break;
+		}
+		logs.setHtml(dummy.toString());
+		Vm.showWait(false);
 	}
 	
 	/**
@@ -83,32 +90,18 @@ public class HintLogPanel extends CellPanel{
 					moreBt.modify(Control.Disabled,0);
 					moreBt.repaintNow();
 				}
-				String dummy = new String();
-				int counter = 0;
-				for(int i = crntLogPosition; i<cache.CacheLogs.size(); i++){
-					dummy += (String)cache.CacheLogs.get(i)+"</br>";
-					counter++;
-					if(counter >= minLogs) break;
-				}
-				logs.setHtml(dummy);
+				setLogs(crntLogPosition);
 			} // = moreBt
 			if(ev.target == prevBt){
 				moreBt.modify(0,Control.Disabled);
 				moreBt.repaintNow();
-				String dummy = new String();
 				crntLogPosition -= minLogs;
 				if(crntLogPosition <= 0) {
 					prevBt.modify(Control.Disabled,0);
 					prevBt.repaintNow();
 					crntLogPosition = 0;
 				}
-				int counter = 0;
-				for(int i = crntLogPosition; i<cache.CacheLogs.size(); i++){
-					dummy += (String)cache.CacheLogs.get(i)+"</br>";
-					counter++;
-					if(counter >= minLogs) break;
-				}
-				logs.setHtml(dummy);
+				setLogs(crntLogPosition);
 			}
 			if(ev.target == decodeButton){
 				hint.setText(Common.rot13(hint.getText()));
