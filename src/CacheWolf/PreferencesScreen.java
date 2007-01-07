@@ -15,77 +15,117 @@ import ewe.sys.*;
 public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
 	mChoice NS, EW;
-	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize;
-	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad;
+	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS;
+	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
+	          chkTabsAtTop, chkShowStatus;
+	mTabbedPanel mTab;
+	mChoice chcGarminPort;
+	
 	Preferences pref;
-
-	CellPanel content = new CellPanel();
+	
+	CellPanel pnlGeneral = new CellPanel();
+	CellPanel pnlDisplay = new CellPanel();
 	ScrollBarPanel scp;
+	String [] garminPorts= new String[]{"com1","com2","com3","com4","usb"};
 	
 	public PreferencesScreen (Preferences p){
-		scp = new ScrollBarPanel(content);
+		mTab=new mTabbedPanel();
+		
+		//scp = new ScrollBarPanel(pnlGeneral);
 		pref = p;
 		this.title = MyLocale.getMsg(600,"Preferences");
 		//this.resizable = false;
 		//this.moveable = true;
 		//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
 		
-		
-		content.addNext(new mLabel(MyLocale.getMsg(601,"Your Alias:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addLast(new mLabel("Browser:"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		/////////////////////////////////////////////////////////
+		// First panel - General
+		/////////////////////////////////////////////////////////
+		pnlGeneral.addNext(new mLabel(MyLocale.getMsg(601,"Your Alias:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlGeneral.addNext(new mLabel("Browser:"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlGeneral.addLast(gpsB = new mButton("GPS"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		Alias = new mInput();
 		Browser = new mInput();
 		Alias.setText(pref.myAlias);
 		Browser.setText(pref.browser);
-		content.addNext(Alias,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlGeneral.addNext(Alias,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		//content.addNext(Alias.setTag(Control.SPAN, new Dimension(3,1)),content.DONTSTRETCH, (content.HFILL|content.WEST));
-		content.addNext(Browser,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addLast(gpsB = new mButton("GPS"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-
-			//content.addLast(new mLabel(MyLocale.getMsg(602,"Your Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			//content.addLast(btnCentre = new mButton(pref.curCentrePt.toString(CWPoint.CW)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-			content.addNext(new mLabel(MyLocale.getMsg(603,"Data Directory:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			content.addLast(brwBt = new mButton(MyLocale.getMsg(604,"Browse")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
-			DataDir = new mInput();
-			DataDir.setText(pref.baseDir);
-			content.addLast(DataDir.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
-			content.addLast(chkAutoLoad = new mCheckBox("Autoload last profile"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			if (pref.autoReloadLastProfile) chkAutoLoad.setState(true);
+		pnlGeneral.addNext(Browser,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlGeneral.addLast(inpGPS=new mInput(""));
+		inpGPS.modify(ControlConstants.Disabled|ControlConstants.NoFocus,0);
+		inpGPS.setText(pref.mySPO.portName+"/"+pref.mySPO.baudRate);
+		
+		pnlGeneral.addNext(new mLabel(MyLocale.getMsg(603,"Data Directory:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlGeneral.addLast(brwBt = new mButton(MyLocale.getMsg(604,"Browse")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
+		DataDir = new mInput();
+		DataDir.setText(pref.baseDir);
+		pnlGeneral.addLast(DataDir.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
+		pnlGeneral.addLast(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629,"Autoload last profile")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		if (pref.autoReloadLastProfile) chkAutoLoad.setState(true);
 			
 		//content.addNext(nLogs = new mInput(),content.DONTSTRETCH, (content.DONTFILL|content.WEST));
 		//nLogs.setText(Convert.toString(myPreferences.nLogs));
 		//content.addLast(new mLabel("Logs"), content.DONTSTRETCH, (content.DONTFILL|content.WEST));
-		content.addNext(new mLabel("Proxy"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addNext(new mLabel("Port"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addLast(new mLabel("Font"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addNext(Proxy = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlGeneral.addNext(new mLabel("Proxy"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlGeneral.addNext(new mLabel("Port"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlGeneral.addLast(new mLabel("Font"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlGeneral.addNext(Proxy = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		Proxy.setText(pref.myproxy);
-		content.addNext(ProxyPort = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		content.addLast(fontSize = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlGeneral.addNext(ProxyPort = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlGeneral.addLast(fontSize = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		ProxyPort.setText(pref.myproxyport);
 		fontSize.setText(Convert.toString(pref.fontSize));
-		content.addLast(new mLabel(MyLocale.getMsg(605,"Display Preferences")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addNext(dif = new mCheckBox(MyLocale.getMsg(606,"Difficulty")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlGeneral.addNext(new mLabel("Garmin PC Port"));
+		pnlGeneral.addNext(chcGarminPort=new mChoice(garminPorts,0));
+		chcGarminPort.selectItem(pref.garminConn);
+		pnlGeneral.addLast(new mLabel(""));
+		
+		/////////////////////////////////////////////////////////
+		// Second panel - Screen
+		/////////////////////////////////////////////////////////
+		
+		pnlDisplay.addLast(new mLabel(MyLocale.getMsg(605,"Display Preferences")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addNext(dif = new mCheckBox(MyLocale.getMsg(606,"Difficulty")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[2] == 1) dif.setState(true);
-		content.addNext(ter = new mCheckBox(MyLocale.getMsg(607,"Terrain")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addNext(ter = new mCheckBox(MyLocale.getMsg(607,"Terrain")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[3] == 1) ter.setState(true);
-		content.addLast(loc = new mCheckBox(MyLocale.getMsg(608,"Location")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addLast(loc = new mCheckBox(MyLocale.getMsg(608,"Location")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[6] == 1) loc.setState(true);
-		content.addNext(own = new mCheckBox(MyLocale.getMsg(609,"Owner")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addNext(own = new mCheckBox(MyLocale.getMsg(609,"Owner")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[7] == 1) own.setState(true); 
-		content.addNext(hid = new mCheckBox(MyLocale.getMsg(610,"Hidden")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addNext(hid = new mCheckBox(MyLocale.getMsg(610,"Hidden")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[8] == 1) hid.setState(true);
-		content.addLast(stat = new mCheckBox(MyLocale.getMsg(611,"Status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addLast(stat = new mCheckBox(MyLocale.getMsg(611,"Status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[9] == 1) stat.setState(true);
-		content.addNext(dist = new mCheckBox(MyLocale.getMsg(612,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addNext(dist = new mCheckBox(MyLocale.getMsg(612,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[10] == 1) dist.setState(true);
-		content.addLast(bear = new mCheckBox(MyLocale.getMsg(613,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addLast(bear = new mCheckBox(MyLocale.getMsg(613,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[11] == 1) bear.setState(true);
-		content.addNext(cancelB = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		content.addLast(applyB = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addLast(new mLabel(MyLocale.getMsg(623,"Images")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlDisplay.addLast(chkShowDeletedImg = new mCheckBox(MyLocale.getMsg(624,"Show deleted images")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		if (pref.showDeletedImages) chkShowDeletedImg.setState(true);
+		pnlDisplay.addLast(new mLabel(MyLocale.getMsg(625,"Screen layout (needs restart)")));
+		pnlDisplay.addNext(chkMenuAtTop = new mCheckBox(MyLocale.getMsg(626,"Menu top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		chkMenuAtTop.setState(pref.menuAtTop);
+		pnlDisplay.addNext(chkTabsAtTop = new mCheckBox(MyLocale.getMsg(627,"Tabs top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		chkTabsAtTop.setState(pref.tabsAtTop);
+		pnlDisplay.addLast(chkShowStatus = new mCheckBox(MyLocale.getMsg(628,"Show status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		chkShowStatus.setState(pref.showStatus);
+		//pnlDisplay.addLast(new mLabel(""));
+		
+		
+		mTab.addCard(pnlGeneral,MyLocale.getMsg(621,"General"),null);
+		mTab.addCard(pnlDisplay,MyLocale.getMsg(622,"Screen"),null);
+		//this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
+		
+		this.addLast(mTab);
+		addNext(cancelB = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		addLast(applyB = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+
 	
-		this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
+
+	
 	}
 	
 	public void onEvent(Event ev){
@@ -122,6 +162,11 @@ public class PreferencesScreen extends Form {
 				pref.tablePrefs[10] = (dist.getState()==true ? 1 : 0);
 				pref.tablePrefs[11] = (bear.getState()==true ? 1 : 0);
 				pref.autoReloadLastProfile=chkAutoLoad.getState();
+				pref.showDeletedImages=chkShowDeletedImg.getState();
+				pref.garminConn=chcGarminPort.getSelectedItem().toString();
+				pref.menuAtTop=chkMenuAtTop.getState();
+				pref.tabsAtTop=chkTabsAtTop.getState();
+				pref.showStatus=chkShowStatus.getState();
 				pref.savePreferences();
 				pref.dirty = true; // Need to update table in case columns were enabled/disabled
 				this.close(0);
@@ -144,6 +189,8 @@ public class PreferencesScreen extends Form {
 					pref.mySPO.baudRate = spo.baudRate;
 					pref.forwardGPS = spo.forwardGpsChkB.getState();
 					pref.forwardGpsHost = spo.inputBoxForwardHost.getText();
+					inpGPS.setText(pref.mySPO.portName+"/"+pref.mySPO.baudRate);
+
 				}
 			}
 			// change destination waypoint
