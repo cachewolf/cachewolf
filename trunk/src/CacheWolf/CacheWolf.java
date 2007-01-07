@@ -242,15 +242,6 @@ public class CacheWolf{
 		//}
 		
 		if(args.length > 0){
-			//Vm.debug("in args!!!!");
-			//Vm.sleep(500);
-			if(args[0].equals("spider")){
-				//Vm.debug("Starting cmd line mode");
-				//Vm.sleep(500);
-				// args are: spider distance profileName
-				Form mainF = new MainForm(args[0], args[1], args[2]);
-				mainF.execute();
-			}
 			if(args[0].equals("test")){
 				Test t=new Test(); 
 				t.testAll();

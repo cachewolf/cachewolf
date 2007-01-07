@@ -76,21 +76,6 @@ public class MainForm extends Form {
 	}
 
 	
-	public MainForm(String what, String dist, String profileName){
-		try{
-			pref.readPrefFile();
-			addGuiFont();
-			pref.lastProfile=profileName;
-			pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_OFF,false);
-			profile.readIndex();
-			Spider mySpidy = new Spider(pref, profile,null, Spider.SPIDERNEAREST);
-			mySpidy.SpiderNearest(dist);
-			ewe.sys.Vm.exit(0);
-		} catch (Exception e){
-			//Vm.debug(e.toString());
-		}
-	}
-	
 	private void addGuiFont(){
 		Font defaultGuiFont = mApp.findFont("gui");
 		int sz = (pref.fontSize);
