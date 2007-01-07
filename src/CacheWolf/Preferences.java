@@ -55,14 +55,13 @@ public class Preferences extends MinML{
 	public String lastSyncOC[] = new String[4];
 	public String lastDistOC[] = new String[4];
 	public String garminConn="com1";  // The type of connection which GPSBABEL uses: com1 OR usb.
-	// TODO Add garminConn to user interface. For the time being this can only be set by manually editing the pref file
-
+	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
 	public boolean menuAtTop=true;
 	public boolean tabsAtTop=true;
 	public boolean showStatus=true;
-	
-	//public String last_sync_opencaching = new String();
-	//public String distOC = new String();
+	// This setting determines how many logs are shown per page of hintlogs (default 5)
+	public final int DEFAULT_LOGS_PER_PAGE=5;
+	public int logsPerPage=DEFAULT_LOGS_PER_PAGE;
 	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
 	public boolean downloadMapsOC = true;
 	public boolean downloadmissingOC = false;
@@ -78,8 +77,7 @@ public class Preferences extends MinML{
 	private StringBuffer collectElement=null; 
 	private String lastName; // The string to the last XML that was processed
 	
-	private String LOGFILENAME="log.txt";
-	
+	private final String LOGFILENAME="log.txt";
 	// The following declarations may eventually be moved to a separate class
 	/** The actual directory of a profile, for new profiles this is a direct child of baseDir */
 	//TODO Find all references amd move to profile.dataDir
@@ -362,6 +360,9 @@ public class Preferences extends MinML{
 			tabsAtTop=Boolean.valueOf(atts.getValue("tabsattop")).booleanValue();
 			showStatus=Boolean.valueOf(atts.getValue("showstatus")).booleanValue();
 		}
+		if (name.equals("hintlogpanel")) {
+			logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
+		}
 	}
 
 	public void characters( char ch[], int start, int length )
@@ -431,6 +432,7 @@ public class Preferences extends MinML{
 			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
 			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\"/>\n");
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
+			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\"/>\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			// Obsolete data kept for backward compatibility
 			//outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");

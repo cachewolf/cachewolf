@@ -15,7 +15,7 @@ import ewe.sys.*;
 public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
 	mChoice NS, EW;
-	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS;
+	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, inpLogsPerPage;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
 	          chkTabsAtTop, chkShowStatus;
 	mTabbedPanel mTab;
@@ -64,9 +64,6 @@ public class PreferencesScreen extends Form {
 		pnlGeneral.addLast(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629,"Autoload last profile")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if (pref.autoReloadLastProfile) chkAutoLoad.setState(true);
 			
-		//content.addNext(nLogs = new mInput(),content.DONTSTRETCH, (content.DONTFILL|content.WEST));
-		//nLogs.setText(Convert.toString(myPreferences.nLogs));
-		//content.addLast(new mLabel("Logs"), content.DONTSTRETCH, (content.DONTFILL|content.WEST));
 		pnlGeneral.addNext(new mLabel("Proxy"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlGeneral.addNext(new mLabel("Port"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlGeneral.addLast(new mLabel("Font"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -84,36 +81,57 @@ public class PreferencesScreen extends Form {
 		/////////////////////////////////////////////////////////
 		// Second panel - Screen
 		/////////////////////////////////////////////////////////
-		
-		pnlDisplay.addLast(new mLabel(MyLocale.getMsg(605,"Display Preferences")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlDisplay.addNext(dif = new mCheckBox(MyLocale.getMsg(606,"Difficulty")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		Frame frmDisplay=new Frame();
+		frmDisplay.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
+		frmDisplay.addLast(new mLabel(MyLocale.getMsg(605,"Display Preferences")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmDisplay.addNext(dif = new mCheckBox(MyLocale.getMsg(606,"Difficulty")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[2] == 1) dif.setState(true);
-		pnlDisplay.addNext(ter = new mCheckBox(MyLocale.getMsg(607,"Terrain")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmDisplay.addNext(ter = new mCheckBox(MyLocale.getMsg(607,"Terrain")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[3] == 1) ter.setState(true);
-		pnlDisplay.addLast(loc = new mCheckBox(MyLocale.getMsg(608,"Location")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmDisplay.addLast(loc = new mCheckBox(MyLocale.getMsg(608,"Location")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[6] == 1) loc.setState(true);
-		pnlDisplay.addNext(own = new mCheckBox(MyLocale.getMsg(609,"Owner")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmDisplay.addNext(own = new mCheckBox(MyLocale.getMsg(609,"Owner")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[7] == 1) own.setState(true); 
-		pnlDisplay.addNext(hid = new mCheckBox(MyLocale.getMsg(610,"Hidden")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmDisplay.addNext(hid = new mCheckBox(MyLocale.getMsg(610,"Hidden")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[8] == 1) hid.setState(true);
-		pnlDisplay.addLast(stat = new mCheckBox(MyLocale.getMsg(611,"Status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmDisplay.addLast(stat = new mCheckBox(MyLocale.getMsg(611,"Status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[9] == 1) stat.setState(true);
-		pnlDisplay.addNext(dist = new mCheckBox(MyLocale.getMsg(612,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmDisplay.addNext(dist = new mCheckBox(MyLocale.getMsg(612,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[10] == 1) dist.setState(true);
-		pnlDisplay.addLast(bear = new mCheckBox(MyLocale.getMsg(613,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmDisplay.addLast(bear = new mCheckBox(MyLocale.getMsg(613,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if(pref.tablePrefs[11] == 1) bear.setState(true);
-		pnlDisplay.addLast(new mLabel(MyLocale.getMsg(623,"Images")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlDisplay.addLast(chkShowDeletedImg = new mCheckBox(MyLocale.getMsg(624,"Show deleted images")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		if (pref.showDeletedImages) chkShowDeletedImg.setState(true);
-		pnlDisplay.addLast(new mLabel(MyLocale.getMsg(625,"Screen layout (needs restart)")));
-		pnlDisplay.addNext(chkMenuAtTop = new mCheckBox(MyLocale.getMsg(626,"Menu top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		chkMenuAtTop.setState(pref.menuAtTop);
-		pnlDisplay.addNext(chkTabsAtTop = new mCheckBox(MyLocale.getMsg(627,"Tabs top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		chkTabsAtTop.setState(pref.tabsAtTop);
-		pnlDisplay.addLast(chkShowStatus = new mCheckBox(MyLocale.getMsg(628,"Show status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		chkShowStatus.setState(pref.showStatus);
-		//pnlDisplay.addLast(new mLabel(""));
+		dist.setTag(INSETS,new Insets(0,0,2,0));
+		bear.setTag(INSETS,new Insets(0,0,2,0));
+		pnlDisplay.addLast(frmDisplay,CellConstants.STRETCH,CellConstants.FILL);
 		
+		Frame frmImages=new Frame();
+		frmImages.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
+		frmImages.addNext(new mLabel(MyLocale.getMsg(623,"Images:")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmImages.addLast(chkShowDeletedImg = new mCheckBox(MyLocale.getMsg(624,"Show deleted images")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
+		chkShowDeletedImg.setTag(INSETS,new Insets(0,0,2,0));
+		if (pref.showDeletedImages) chkShowDeletedImg.setState(true);
+		pnlDisplay.addLast(frmImages,CellConstants.STRETCH,CellConstants.FILL);
+				
+		Frame frmScreen=new Frame();
+		frmScreen.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
+		frmScreen.addLast(new mLabel(MyLocale.getMsg(625,"Screen layout (needs restart):")));
+		frmScreen.addNext(chkMenuAtTop = new mCheckBox(MyLocale.getMsg(626,"Menu top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		chkMenuAtTop.setTag(INSETS,new Insets(0,0,2,0));
+		chkMenuAtTop.setState(pref.menuAtTop);
+		frmScreen.addNext(chkTabsAtTop = new mCheckBox(MyLocale.getMsg(627,"Tabs top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		chkTabsAtTop.setState(pref.tabsAtTop);
+		chkTabsAtTop.setTag(INSETS,new Insets(0,0,2,0));
+		frmScreen.addLast(chkShowStatus = new mCheckBox(MyLocale.getMsg(628,"Show status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		chkShowStatus.setState(pref.showStatus);
+		chkShowStatus.setTag(INSETS,new Insets(0,0,2,0));
+		pnlDisplay.addLast(frmScreen,CellConstants.STRETCH,CellConstants.FILL);
+		
+		Frame frmHintLog=new Frame();
+		//frmHintLog.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
+        frmHintLog.addNext(new mLabel(MyLocale.getMsg(630,"HintLogPanel:  Logs per page ")));	
+		frmHintLog.addNext(inpLogsPerPage=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.WEST);
+		inpLogsPerPage.setText(Convert.toString(pref.logsPerPage));
+		pnlDisplay.addLast(frmHintLog,CellConstants.STRETCH,CellConstants.FILL);
 		
 		mTab.addCard(pnlGeneral,MyLocale.getMsg(621,"General"),null);
 		mTab.addCard(pnlDisplay,MyLocale.getMsg(622,"Screen"),null);
@@ -139,7 +157,9 @@ public class PreferencesScreen extends Form {
 					pref.baseDir = DataDir.getText();
 				//}
 				pref.fontSize = Convert.toInt(fontSize.getText());
-				
+				if (pref.fontSize<6) pref.fontSize=12;
+				pref.logsPerPage=Convert.toInt(inpLogsPerPage.getText());
+				if (pref.logsPerPage==0) pref.logsPerPage=pref.DEFAULT_LOGS_PER_PAGE;
 				Font defaultGuiFont = mApp.findFont("gui");
 				int sz = (pref.fontSize);
 				Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 

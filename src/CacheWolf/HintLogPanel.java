@@ -22,30 +22,24 @@ public class HintLogPanel extends CellPanel{
 	mButton moreBt = new mButton(">>");
 	mButton prevBt = new mButton("<<");
 	public HintLogPanel(){
-		//SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
-		//CellPanel hintpane = split.getNextPanel();
-		//CellPanel logpane = split.getNextPanel();
-		boolean smallScreen=MyLocale.getScreenHeight()<300;
+		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
+
+		CellPanel hintpane = split.getNextPanel();
+		CellPanel logpane = split.getNextPanel();
+		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
 		
 		ScrollBarPanel sbphint = new ScrollBarPanel(hint);
-		this.addLast(sbphint,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		if (smallScreen){
-			this.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-			this.addNext(decodeButton,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-			decodeButton.setMinimumSize(MyLocale.getScreenWidth()*2/3,10);
-			this.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
-		} else {
-			this.addLast(decodeButton,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		}
+		hintpane.addLast(sbphint,CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
+		sbphint.setMinimumSize(0,0);
+		hintpane.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		hintpane.addNext(decodeButton,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		decodeButton.setMinimumSize(MyLocale.getScreenWidth()*2/3,10);
+		hintpane.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
 		
 		ScrollBarPanel sbplog = new ScrollBarPanel(logs, ScrollBarPanel.NeverShowHorizontalScrollers);
-		this.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
-		if (!smallScreen){
-			this.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-			this.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		}	
+		logpane.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
 		hint.modify(Control.NotEditable,0);
-		//this.addLast(split);
+		this.addLast(split);
 	}
 	
 	public void setText(CacheHolder cache){
@@ -57,15 +51,15 @@ public class HintLogPanel extends CellPanel{
 		for(int i = 0; i<cache.CacheLogs.size(); i++){
 			dummy += (String)cache.CacheLogs.get(i)+"</br>";
 			counter++;
-			if(counter >= 5 || counter >= cache.CacheLogs.size()) break;
+			if(counter >= Global.getPref().logsPerPage || counter >= cache.CacheLogs.size()) break;
 		}
 		crntLogPosition = 0;
 		logs.setHtml(dummy);
 		moreBt.modify(0,Control.Disabled);
 		prevBt.modify(0,Control.Disabled);
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-			Vm.setSIP(0);
-		}
+//		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
+//			Vm.setSIP(0);
+//		}
 		Vm.showWait(false);
 		////Vm.debug("In log: " + cache.CacheLogs);
 	}
@@ -78,7 +72,7 @@ public class HintLogPanel extends CellPanel{
 	*/
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
-			int minLogs = java.lang.Math.min(5, cache.CacheLogs.size());
+			int minLogs = java.lang.Math.min(Global.getPref().logsPerPage, cache.CacheLogs.size());
 			if(ev.target == moreBt){
 				prevBt.modify(0,Control.Disabled);
 				prevBt.repaintNow();
