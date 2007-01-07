@@ -42,7 +42,7 @@ class Track {
 	
 	public Track(Color f) {
 		trackColor = f;
-		TrackPoints = new TrackPoint[2000];
+		TrackPoints = new TrackPoint[5000];
 		num = 0;
 	}
 	
@@ -50,7 +50,10 @@ class Track {
 		TrackPoints[num] = new TrackPoint(lat, lon);
 		num++;
 	}
-	public void add(TrackPoint t) {
+	/*
+	 * throws IndexOutOfBoundsException when track is full
+	 */
+	public void add(TrackPoint t) { 
 		if (TrackPoints == null || t == null) return;
 		TrackPoints[num] = new TrackPoint(t);
 		num++;

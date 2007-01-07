@@ -159,6 +159,11 @@ public class OCXMLImporter extends MinML {
 			} else { finalMessage = "IOException: "+e.getMessage(); }
 			success = false;
 			}
+		}catch (IllegalArgumentException e) {
+			finalMessage=MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in opencaching.de\nplease try again later\n, state:")+" "+state+", waypoint: "+ holder.wayPoint;
+			success = false;
+			Vm.debug("Parse error: " + state + " " + holder.wayPoint);
+			e.printStackTrace();
 		}catch (Exception e){ // here schould be used the correct exepion
 			finalMessage=MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.wayPoint;
 			success = false;
@@ -263,6 +268,7 @@ public class OCXMLImporter extends MinML {
 		
 		if(name.equals("waypoints")){
 			holder.wayPoint = atts.getValue("oc");
+			if (holder.wayPoint.length()==0) throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching.de / it happens on 27-12-2006 on cache OC143E
 			return;
 		}
 
@@ -456,6 +462,7 @@ public class OCXMLImporter extends MinML {
 	
 	private void getPic(String fetchURL, String picDesc){
 		String fileName = holder.wayPoint + "_" + fetchURL.substring(fetchURL.lastIndexOf("/")+1);
+		fileName = Common.ClearForFileName(fileName);
 		// add title
 		holder.ImagesText.add(picDesc);
 		try {

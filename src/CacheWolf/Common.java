@@ -103,6 +103,10 @@ public final class Common {
 		strBuf.append(strHex);
 		return strBuf.toString();
 	}
+	public static String ClearForFileName(String str) {
+		String ret = str.replace('?', '_');
+		return ret;
+	}
 
 
 }

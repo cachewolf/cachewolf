@@ -25,6 +25,7 @@ public class MovingMap extends Form {
 	GotoPanel gotoPanel;
 	Vector cacheDB;
 	TrackOverlay[] TrackOverlays;
+	Vector tracks;
 	MapInfoObject currentMap;
 	AniImage statusImageHaveSignal = new AniImage("position_green.png");
 	AniImage statusImageNoSignal = new AniImage("position_yellow.png");
@@ -55,47 +56,38 @@ public class MovingMap extends Form {
 		mmp = new MovingMapPanel(this, maps, gotoPanel, cacheDB);
 		this.addLast(mmp);
 	}
+	public void addTrack(Track tr) {
+		if (tr == null) return;
+		if (tracks == null) tracks = new Vector();
+		if (tracks.find(tr) >= 0 ) return; // track already in list
+		tracks.add(tr);
+		addOverlaySet();
+	}
+	
+	public void addTracks(Track[] trs) {
+		if (trs==null || trs.length == 0) return;
+		for (int i=0; i<trs.length; i++) {
+			addTrack(trs[i]);
+		}
+		addOverlaySet();
+	}
+	
 	/**
 	 * adds an 3x3 set of overlays to the map-window which contain the track
 	 * 
-	 * @param tr: tr==null - use the tracks which are already in use
+	 * add tracks with addtrack(track) before
 	 */
 	
-	public void addOverlaySet(Track tr) {
-		if (tr == null && TrackOverlays == null) return; // no tracks
-		Track[] trs;
-		if (tr==null && TrackOverlays != null) trs=getTracks(); 
-		else {
-			trs=new Track[1];
-			trs[0]=tr;
-		}
+	public void addOverlaySet() {
+		if (tracks == null) return; // no tracks
 		if (TrackOverlays != null) {
 			for (int i=0; i< TrackOverlays.length; i++) {	destroyOverlay(i);	}
 		}
-		addMissingOverlays(trs);
-		repaintNow();
+		addMissingOverlays();
 	}
 	
-	public Track[] getTracks(){
-		Track[] trs=null;
-		if (TrackOverlays == null) return null;
-		// copy tracks from existing Overlays
-		for (int i=0; i<TrackOverlays.length; i++) {
-			if (TrackOverlays[i] != null) {
-				if (TrackOverlays[i].tracks != null) {
-					trs = new Track[TrackOverlays[i].tracks.size()];
-					for (int t=0; t<trs.length; t++) {
-						trs[t]=(Track)TrackOverlays[i].tracks.get(t); 
-					}
-				}
-				break;
-			}
-		}
-		return trs;
-	}
 
-	public void addMissingOverlays(Track[] trs) {
-		if (trs == null) trs=getTracks();
+	public void addMissingOverlays() {
 		Point upperleft = getMapXYPosition();
 		int ww = pref.myAppWidth;
 		int wh = pref.myAppHeight;
@@ -107,7 +99,7 @@ public class MovingMap extends Form {
 				if (TrackOverlays[i]==null) { 
 					TrackOverlays[i]= new TrackOverlay(currentMap.calcLatLon(-upperleft.x+(xi-1)*ww, -upperleft.y+(yi-1)*wh), ww, wh, currentMap); 
 					TrackOverlays[i].setLocation(0, 0);
-					TrackOverlays[i].addTracks(trs);
+					TrackOverlays[i].tracks = this.tracks;
 					TrackOverlays[i].paintTracks();
 					mmp.addImage(TrackOverlays[i]);
 				}
@@ -227,9 +219,6 @@ public class MovingMap extends Form {
 		if (TrackOverlays == null || tr == null) return;
 		for (int i=0; i<TrackOverlays.length; i++){
 			TrackOverlays[i].paintLastAddedPoint(tr);
-			//TrackOverlays[i].draw.drawRect(50, 50, 100, 100);
-			//TrackOverlays[i].image.set
-			//TrackOverlays[i].draw.flush(); doesn't helpt :-(
 		}
 	}
 
@@ -254,8 +243,8 @@ public class MovingMap extends Form {
 		updateOverlayOnlyPos();
 		if (TrackOverlays[0].location.x>pref.myAppWidth || TrackOverlays[0].location.x + 3*pref.myAppWidth < 0 || // testForNeedToRearange
 				TrackOverlays[0].location.y>pref.myAppHeight || TrackOverlays[0].location.y + 3*pref.myAppHeight <0) {
-			rearangeOverlays(); // TODO Fehler: wenn ein Sprung gemacht wurde, sind werden alle Overlays gelöscht -> Information über bereits laufende Tracks gehen verloren -> vorher spüeichern.
-			addMissingOverlays(null);
+			rearangeOverlays();
+			addMissingOverlays();
 			// updateOverlayOnlyPos(); is called from addMissingOverlays 
 		}
 	}
@@ -387,7 +376,6 @@ public class MovingMap extends Form {
 		ms.pic.setLocation(pOnScreen.x-ms.pic.getWidth()/2, pOnScreen.y-ms.pic.getHeight()/2);
 		this.mmp.addImage(ms.pic);
 		symbols.add(ms);
-//		repaintNow();
 	}
 	
 	public void setGotoPosition(double lat, double lon) {
@@ -534,7 +522,7 @@ public class MovingMap extends Form {
 			mmp.mapImage.setLocation(0,0);
 			mmp.addImage(mmp.mapImage);
 			mmp.images.moveToBack(mmp.mapImage);
-			addOverlaySet(null);
+			addOverlaySet();
 			updateOnlyPosition(lat, lon, false);
 			inf.close(0);  // this doesn't work in a ticked-thread in the ewe-vm. That's why i made a new mThread in gotoPanel for ticked
 			Vm.showWait(false);
@@ -545,7 +533,7 @@ public class MovingMap extends Form {
 				mmp.mapImage.free();
 				mmp.mapImage = null;
 			}
-			addOverlaySet(null);
+			addOverlaySet();
 			updateOnlyPosition(lat, lon, false);
 			inf.close(0);
 			Vm.showWait(false);
@@ -557,7 +545,7 @@ public class MovingMap extends Form {
 				mmp.mapImage.free();
 				mmp.mapImage = null;
 			}
-			addOverlaySet(null);
+			addOverlaySet();
 			updateOnlyPosition(lat, lon, false);
 			inf.close(0);
 			Vm.showWait(false);
@@ -569,7 +557,7 @@ public class MovingMap extends Form {
 				mmp.mapImage.free();
 				mmp.mapImage = null;
 			}
-			addOverlaySet(null);
+			addOverlaySet();
 			updateOnlyPosition(lat, lon, false);
 			inf.close(0);
 			Vm.showWait(false);
@@ -625,10 +613,6 @@ class MovingMapPanel extends InteractivePanel{
 		mm.posCircle.move(p.x+diffX, p.y+diffY);
 		mm.posCircleX = mm.posCircleX+diffX;
 		mm.posCircleY = mm.posCircleY+diffY;
-		//mm.ignoreGpsStatutsChanges = false;
-		//mm.setGpsStatus(MovingMap.noGPS);   // TODO mm.posCircle.move(, y)
-		//mm.ignoreGpsStatutsChanges = true;
-		// for debugging: mm.updatePosition(10, 10);
 		mm.updateSymbolPositions();
 		mm.updateOverlayPos();
 		this.repaintNow();
@@ -683,8 +667,8 @@ class MovingMapPanel extends InteractivePanel{
 		if (which == mm.ButtonImageGpsOn) {
 			if (mm.gotoPanel.serThread == null || !mm.gotoPanel.serThread.isAlive()) {
 				mm.gotoPanel.startGps();
-				mm.addOverlaySet(mm.gotoPanel.currTrack); // use new track when gps now started
-			} else mm.addOverlaySet(null); // use existing tracks if gps was already running
+				mm.addTrack(mm.gotoPanel.currTrack); // use new track when gps now started
+			} else mm.addOverlaySet(); // use existing tracks if gps was already running
 			mm.SnapToGps();
 		}
 		if (which == mm.arrowRight)	{	moveMap(-10,0);	}
@@ -711,12 +695,17 @@ class ListBox extends Form{
 		this.maps = maps;
 		MapInfoObject map;
 		ScrollBarPanel scb;
+		boolean[] inList = new boolean[maps.size()];
 		if (gotopos != null && Gps != null) {
 			list.addItem("--- Karten von akt. Position und Ziel ---");
 			for(int i = 0; i<maps.size();i++){
 				map = new MapInfoObject();
 				map = (MapInfoObject)maps.get(i);
-				if( map.inBound(Gps.latDec, Gps.lonDec) && map.inBound(gotopos) ) list.addItem(i + ": " + map.mapName);
+				if( map.inBound(Gps.latDec, Gps.lonDec) && map.inBound(gotopos) ) 
+					{
+					list.addItem(i + ": " + map.mapName);
+					inList[i] = true;
+					} else inList[i] = false;
 			}
 		}
 		if (Gps != null) {
@@ -724,7 +713,11 @@ class ListBox extends Form{
 			for(int i = 0; i<maps.size();i++){
 				map = new MapInfoObject();
 				map = (MapInfoObject)maps.get(i);
-				if(map.inBound(Gps.latDec, Gps.lonDec) == true) list.addItem(i + ": " + map.mapName);
+				if(map.inBound(Gps.latDec, Gps.lonDec) == true) 
+					{
+					list.addItem(i + ": " + map.mapName);
+					inList[i] = true;
+					}
 			}
 		}
 		if (gotopos != null) {
@@ -732,14 +725,17 @@ class ListBox extends Form{
 			for(int i = 0; i<maps.size();i++){
 				map = new MapInfoObject();
 				map = (MapInfoObject)maps.get(i);
-				if(map.inBound(gotopos)) list.addItem(i + ": " + map.mapName);
+				if(map.inBound(gotopos)) {
+					list.addItem(i + ": " + map.mapName);
+					inList[i] = true;
+				}
 			}
 		}
 		list.addItem("--- andere Karten ---");
 		for(int i = 0; i<maps.size();i++){
 			map = new MapInfoObject();
 			map = (MapInfoObject)maps.get(i);
-			if(!mapIsInList(i)) list.addItem(i + ": " + map.mapName);
+			if(!inList[i]) list.addItem(i + ": " + map.mapName);
 		}
 		
 		this.addLast(scb = new ScrollBarPanel(list),CellConstants.STRETCH, CellConstants.FILL);
@@ -751,7 +747,7 @@ class ListBox extends Form{
 		this.addLast(okButton,CellConstants.STRETCH, CellConstants.FILL);
 		okButton.setHotKey(0, KeyEvent.getActionKey(true));
 	}
-	private boolean mapIsInList(int mapNr){
+	private boolean mapIsInList(int mapNr){ // it is not used  anymore could be deleted
 		String testitem = new String();
 		int testitemnr;
 		for (int i=0; i<list.countListItems(); i++) {
