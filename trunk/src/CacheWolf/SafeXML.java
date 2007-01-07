@@ -435,7 +435,7 @@ public class SafeXML{
 		 *   @param  f  String to look for.
 		 *   @param  r  String to replace it with, or null to just remove it.
 		 */ 
-		private static String replace( String s, String f, String r )
+		public static String replace( String s, String f, String r )
 		{
 		   if (s == null)  return s;
 		   if (f == null)  return s;
