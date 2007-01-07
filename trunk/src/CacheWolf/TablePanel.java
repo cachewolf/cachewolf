@@ -49,7 +49,7 @@ public class TablePanel extends CellPanel{
 */		
 		addLast(new ScrollBarPanel(tc = new myTableControl()));
 		addLast(statBar,CellConstants.DONTSTRETCH, CellConstants.FILL);
-		Menu m = new Menu(new String[]{MyLocale.getMsg(1010,"Goto"),MyLocale.getMsg(1019,"Center"),MyLocale.getMsg(1011,"Filter"),MyLocale.getMsg(1012,"Delete"),MyLocale.getMsg(1014,"Update"),MyLocale.getMsg(1018,"Sel. add. wpts."),"-",MyLocale.getMsg(1015,"Select all"),MyLocale.getMsg(1016,"De-select all"),MyLocale.getMsg(1017,"All add. wpts")},MyLocale.getMsg(1013,"With selection"));
+		Menu m = new Menu(new String[]{MyLocale.getMsg(1010,"Goto"),MyLocale.getMsg(1019,"Center"),"-",MyLocale.getMsg(1011,"Filter"),MyLocale.getMsg(1012,"Delete"),MyLocale.getMsg(1014,"Update"),"-",MyLocale.getMsg(1015,"Select all"),MyLocale.getMsg(1016,"De-select all")},MyLocale.getMsg(1013,"With selection"));
 		tc.setMenu(m);
 		tc.profile=profile;
 		tc.db = cacheDB;
@@ -94,6 +94,7 @@ public class TablePanel extends CellPanel{
 		updateBearingDistance(cacheDB, pref);
 		////Vm.debug("IS mypref loaded? " + myPreferences.mylgDeg);
 		// tc.setTableModel(myMod); Not needed ?
+		myMod.updateRows();
 		tc.update(true);
 		statBar.updateDisplay();
 	}
