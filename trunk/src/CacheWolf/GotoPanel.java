@@ -13,9 +13,6 @@ import ewe.sys.*;
 import ewe.sys.Double;
 
 
-
-
-
 /**
  * Thread for reading data from COM-port
  *
@@ -28,7 +25,7 @@ class SerialThread extends mThread{
 	boolean run, tcpForward;
 	Socket tcpConn;
 	String lastError = new String();
-	
+
 	public SerialThread(SerialPortOptions spo, CWGPSPoint GPSPoint, String forwardIP) throws IOException {
 		try{
 			comSp = new SerialPort(spo);
@@ -65,7 +62,7 @@ class SerialThread extends mThread{
 					String str = mString.fromAscii(comBuff, 0, comLength); 
 					if (tcpForward) {
 						try {
-						tcpConn.write(comBuff, 0, comLength);
+							tcpConn.write(comBuff, 0, comLength);
 						} catch (IOException e) { tcpForward = false; }
 					}
 					//Vm.debug(str);
@@ -77,7 +74,7 @@ class SerialThread extends mThread{
 		myGPS.noData();
 		tcpConn.close();
 	}
-	
+
 	public void stop() {
 		run = false;
 		if (comSp != null) comSp.close();
@@ -94,20 +91,20 @@ class UpdateThread extends mThread {
 	public boolean run;
 	public int calldelay;
 	public GotoPanel ticked;
-	
+
 	public UpdateThread (GotoPanel gp, int cd) {
 		ticked = gp;
 		calldelay = cd;
 	}
-	
+
 	public void run () {
 		run = true;
 		while (run) {
 			try { sleep (calldelay);} catch (InterruptedException e) {}
-		  ticked.ticked();
+			ticked.ticked();
 		}
 	}
-	
+
 	public void stop() {
 		run = false;
 	}
@@ -115,10 +112,10 @@ class UpdateThread extends mThread {
 
 
 /**
-*	Class to create the panel which handles the connection to the GPS-device<br>
-*	Displays: current position,speed and bearing; relation to destination waypoint<br>
-*	Class ID: 1500
-*/
+ *	Class to create the panel which handles the connection to the GPS-device<br>
+ *	Displays: current position,speed and bearing; relation to destination waypoint<br>
+ *	Class ID: 1500
+ */
 
 
 public class GotoPanel extends CellPanel {
@@ -131,14 +128,14 @@ public class GotoPanel extends CellPanel {
 	mCheckBox chkDMM, chkDMS, chkDD, chkUTM;
 	CheckBoxGroup chkFormat = new CheckBoxGroup();
 	int currFormat;
-	
+
 	mLabel lblPosition, lblSats, lblSpeed, lblBearMov, lblBearWayP, lblDist, lblHDOP;
 	mLabel lblSatsText, lblSpeedText, lblDirText, lblDistText, lblSunAzimut;
 	mLabel lblGPS, lblDST, lblCurr, lblWayP;
 	mLabel lblLog;
 	mCheckBox chkLog;
 	mInput inpLogSeconds;
-	
+
 	MainTab mainT;
 	Vector cacheDB;
 	DetailsPanel detP;
@@ -152,30 +149,30 @@ public class GotoPanel extends CellPanel {
 	CellPanel roseP = new CellPanel();
 	CellPanel GotoP = new CellPanel();
 	CellPanel LogP = new CellPanel();
-	
+
 	SerialThread serThread;
 	UpdateThread tickerThread;
-	
+
 	ImageControl ic; 
-	
+
 	static Color RED = new Color(255,0,0);
 	static Color YELLOW = new Color(255,255,0);
 	static Color GREEN = new Color(0,255,0);
 	static Color BLUE = new Color(0,255,255);
-	
+
 	static Font BOLD = new Font("Arial", Font.BOLD, 14);
 
 	int centerX, centerY;
-	
+
 	int ticker = 0;
-	
+
 	boolean mapsLoaded = false;
 	public boolean runMovingMap = false;
 	Vector availableMaps = new Vector();
 	MapInfoObject tempMIO = new MapInfoObject();
 	MovingMap mmp;
 	Track currTrack;
-	
+
 	/**
 	 * Create GotoPanel 
 	 * @param Preferences 	global preferences
@@ -196,7 +193,7 @@ public class GotoPanel extends CellPanel {
 		ButtonP.addNext(btnCenter = new mButton(MyLocale.getMsg(309,"Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addNext(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addLast(btnMap = new mButton("Map"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		
+
 		//Format selection for coords
 		FormatP.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		FormatP.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
@@ -209,7 +206,7 @@ public class GotoPanel extends CellPanel {
 		chkUTM.setGroup(chkFormat);
 		currFormat = CWPoint.DMM;
 		chkFormat.selectIndex(currFormat);
-		
+
 		//Coords
 		CoordsP.addNext(lblGPS = new mLabel("GPS: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblGPS.backGround = RED;
@@ -224,7 +221,7 @@ public class GotoPanel extends CellPanel {
 		centerY = img.getHeight() / 2;
 		centerX = img.getWidth() / 2;
 		roseP.addLast(ic,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTH));
-		
+
 		//Goto
 		//things from GPS
 		GotoP.addLast(lblCurr = new mLabel(MyLocale.getMsg(1501,"Current")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -238,7 +235,7 @@ public class GotoPanel extends CellPanel {
 		GotoP.addLast(lblHDOP = new mLabel("HDOP: " + Convert.toString(gpsPosition.getHDOP())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblHDOP.font = BOLD;
 
-		
+
 		GotoP.addLast(lblSpeed = new mLabel(Convert.toString(gpsPosition.getSpeed())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblSpeed.font = BOLD;
 
@@ -251,10 +248,10 @@ public class GotoPanel extends CellPanel {
 		lblWayP.font = BOLD;
 		GotoP.addLast(lblBearWayP = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblBearWayP.font = BOLD;
-		
+
 		GotoP.addLast(lblDist = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblDist.font = BOLD;
-		
+
 		LogP.addNext(lblLog = new mLabel("Log "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		LogP.addNext(chkLog = new mCheckBox(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		LogP.addNext(inpLogSeconds = new mInput("10"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -263,23 +260,16 @@ public class GotoPanel extends CellPanel {
 		chkLog.useCross = true;
 		chkLog.setState(false);
 		inpLogSeconds.columns = 5;
-		
+
 		LogP.addNext(lblGPS = new mLabel("Sonne: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblGPS.backGround = YELLOW;
 		lblGPS.setTag(SPAN, new Dimension(2,1));
-		
+
 		LogP.addLast(lblSunAzimut = new mLabel("---"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
-		// for debuging
-		//Double sunAzimut = new Double();
-		//sunAzimut.set((getSunAzimut("060000","060806", 48.1, 11.6))); //wikipedia vergleich
-		//getSunAzimut("060000","060806", 48.1, 11.6))); //wikipedia vergleich
-		//sunAzimut.set((getSunAzimut("121336.000","130906",50.744 , 7.0933)));
-		//sunAzimut.set((getSunAzimut("121436.000","130906",50.744 , 7.0933)));
-		//lblSunAzimut.setText(l.format(Locale.FORMAT_PARSE_NUMBER,sunAzimut,"0.0") + " Grad");
 		lblSunAzimut.setText("---");
 		lblSunAzimut.font = BOLD;
 
-		
+
 		//add Panels
 		this.addLast(ButtonP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
 		this.addLast(FormatP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
@@ -289,7 +279,7 @@ public class GotoPanel extends CellPanel {
 		this.addLast(LogP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.NORTHWEST).setTag(SPAN,new Dimension(1,1));
 
 		// for debuging
-/*		CWGPSPoint myGPS;
+		/*		CWGPSPoint myGPS;
 		myGPS = new CWGPSPoint();
 		String ex = new String();
 		boolean test = false;
@@ -306,28 +296,28 @@ public class GotoPanel extends CellPanel {
 		test = myGPS.examine("$GPGSV,4,2,13,29,72,289,38,26,63,296,41,09,12,259,35,18,14,324,*79");
 		test = myGPS.examine("$GPGSV,4,3,13,19,09,025,,17,06,138,,21,06,300,,37,29,171,40*7A");
 		test = myGPS.examine("$GPGSV,4,4,13,39,29,166,38*40");
-		*/
-		
+		 */
+
 		//while (true){
-//			int notinterpreted = 0;
-//					if (myGPS.examine("@ööH @ööHö@ÖÖHHÜÄÜÖÄÄÄH")) { notinterpreted = 0;} else notinterpreted++;
-//					if (notinterpreted > 5) myGPS.noInterpretableData();
-//					// myGPS.noInterpretableData();
-//				
-//
+//		int notinterpreted = 0;
+//		if (myGPS.examine("@ööH @ööHö@ÖÖHHÜÄÜÖÄÄÄH")) { notinterpreted = 0;} else notinterpreted++;
+//		if (notinterpreted > 5) myGPS.noInterpretableData();
+//		// myGPS.noInterpretableData();
+
+
 //		}	
-		}
-	
+	}
+
 	/**
 	 * draw arrows for the directions of movement and destination waypoint
 	 * @param ctrl the control to paint on
 	 * @param moveDir degrees of movement
 	 * @param destDir degrees of destination waypoint
 	 */
-	
+
 	private void drawArrows(Control ctrl,double moveDir, double destDir, double sunAziumt){
 		Graphics g = ctrl.getGraphics();
-		
+
 		if (g != null) {
 			ctrl.repaintNow();
 			// draw only valid arrows
@@ -348,15 +338,15 @@ public class GotoPanel extends CellPanel {
 	private void drawArrow(Graphics g, double angle, Color col) {
 		double angleRad;
 		int x, y;
-		
+
 		angleRad = angle * java.lang.Math.PI / 180;
 		x = centerX + new Float(centerX * java.lang.Math.sin(angleRad)).intValue();
 		y = centerY - new Float(centerY * java.lang.Math.cos(angleRad)).intValue();
 		g.setPen(new Pen(col,Pen.SOLID,3));
 		g.drawLine(centerX,centerY,x,y);
-		
+
 	}
-	
+
 	/**
 	 * set the coords of the destination  
 	 * @param dest destination
@@ -376,14 +366,10 @@ public class GotoPanel extends CellPanel {
 		btnGoto.setText(toPoint.toString(currFormat));
 		mainT.select(this);
 	}
-	
+
 	/**
 	 * method which is called if a timer is set up  
-	 * 
 	 */ 
-	/**
-	 * 
-	 */
 	public void ticked() {
 		Double bearMov = new Double();
 		Double bearWayP = new Double();
@@ -394,101 +380,85 @@ public class GotoPanel extends CellPanel {
 
 		//		Vm.debug("ticked");
 		int fix = gpsPosition.getFix();
-		//if(!runMovingMap){
-			lblSats.setText("Sats: " + Convert.toString(gpsPosition.getSats()));
-			lblHDOP.setText("HDOP: " + Convert.toString(gpsPosition.getHDOP()));
-			// display values only, if signal good
-			if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
-				//gpsPosition.printAll();
-				Vm.debug("currTrack.add: voher");
+		lblSats.setText("Sats: " + Convert.toString(gpsPosition.getSats()));
+		lblHDOP.setText("HDOP: " + Convert.toString(gpsPosition.getHDOP()));
+		// display values only, if signal good
+		if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
+			//gpsPosition.printAll();
+			//Vm.debug("currTrack.add: voher");
+			try {
 				currTrack.add(gpsPosition);
-				Vm.debug("currTrack.add: nachher");
-				lblPosition.setText(gpsPosition.toString(currFormat));
-				speed.set(gpsPosition.getSpeed());
-				lblSpeed.setText(MyLocale.formatDouble(speed,"0.0") + " km/h");
-				try { 
-					sunAzimut.set(getSunAzimut(gpsPosition.Time, gpsPosition.Date, gpsPosition.latDec, gpsPosition.lonDec));
-					lblSunAzimut.setText(MyLocale.formatDouble(sunAzimut,"0.0") + " Grad");
-				} catch (NumberFormatException e) { 
-					// irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
-					sunAzimut.set(500); // any value out of range (bigger than 360) will prevent drawArrows from drawing it 
-					lblSunAzimut.setText("---");
-				}//sunAzimut.set(getSunAzimut("141303","130906", 50.744, 7.0935));
+			} catch (IndexOutOfBoundsException e) { // track full -> create a new one
+				currTrack = new Track(RED); 
+				currTrack.add(gpsPosition);
+				if (mmp != null) mmp.addTrack(currTrack); // TODO maybe gotoPanel should also hold a list of Tracks, because otherwise they will be destroyed if not saved in mmp before
+			}
+			//Vm.debug("currTrack.add: nachher");
+			lblPosition.setText(gpsPosition.toString(currFormat));
+			speed.set(gpsPosition.getSpeed());
+			lblSpeed.setText(MyLocale.formatDouble(speed,"0.0") + " km/h");
+			try { 
+				sunAzimut.set(getSunAzimut(gpsPosition.Time, gpsPosition.Date, gpsPosition.latDec, gpsPosition.lonDec));
+				lblSunAzimut.setText(MyLocale.formatDouble(sunAzimut,"0.0") + " Grad");
+			} catch (NumberFormatException e) { 
+				// irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
+				sunAzimut.set(500); // any value out of range (bigger than 360) will prevent drawArrows from drawing it 
+				lblSunAzimut.setText("---");
+			}//sunAzimut.set(getSunAzimut("141303","130906", 50.744, 7.0935));
 
-				bearMov.set(gpsPosition.getBear());
-				lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
-				bearWayP.set(gpsPosition.getBearing(toPoint));
-				lblBearWayP.setText(bearWayP.toString(0,0,0) + " Grad");
+			bearMov.set(gpsPosition.getBear());
+			lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
+			bearWayP.set(gpsPosition.getBearing(toPoint));
+			lblBearWayP.setText(bearWayP.toString(0,0,0) + " Grad");
 
-				dist.set(gpsPosition.getDistance(toPoint));
+			dist.set(gpsPosition.getDistance(toPoint));
 
-				if (dist.value >= 1){
-					lblDist.setText(MyLocale.formatDouble(dist,"0.000")+ " km");
-				}
-				else {
-					dist.set(dist.value * 1000);
-					lblDist.setText(dist.toString(3,0,0) + " m");
-				}
-
-				drawArrows(ic,bearMov.value,bearWayP.value, sunAzimut.value);
-
-				// Set background to signal quality
-				lblSats.backGround = GREEN;
-				//return;
+			if (dist.value >= 1){
+				lblDist.setText(MyLocale.formatDouble(dist,"0.000")+ " km");
+			}
+			else {
+				dist.set(dist.value * 1000);
+				lblDist.setText(dist.toString(3,0,0) + " m");
 			}
 
-			// receiving data, but signal ist not good
-			if ((fix == 0) && (gpsPosition.getSats()>= 0)) {
-				lblSats.backGround = YELLOW;
-				//return;
-			}
-			// receiving no data
-			if (fix == -1) {
-				if (lblSats.backGround != RED) (new MessageBox("Error", "No data from GPS\nConnection to serial port closed",MessageBox.OKB)).exec();
-				lblSats.backGround = RED;
-				stopGPS();
-				//return;
-			}
-			// cannot interprete data
-			if (fix == -2) {
-				if (lblSats.backGround != RED) (new MessageBox("Error", "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n "+gpsPosition.lastStrExamined, MessageBox.OKB)).exec();
-				lblSats.backGround = RED;
-				stopGPS();
-				//return;
-			}
+			drawArrows(ic,bearMov.value,bearWayP.value, sunAzimut.value);
 
-	//	}else{ // In moving map mode
-			if (mmp != null && runMovingMap ) { // neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
-//				currTrack.add(new CWPoint(50.71343, 007.09998));
-//				mmp.ShowLastAddedPoint(currTrack);
-//				currTrack.add(new CWPoint(50.748, 7.09958));
-//				currTrack.add(new CWPoint(50.75, 7.09958));
-//				currTrack.add(new CWPoint(50.755, 7.09958));
-//				currTrack.add(new CWPoint(50.76, 7.09958));
-//				currTrack.add(new CWPoint(50.765, 7.09958));
-//				gpsPosition.latDec = 50.75;
-//				gpsPosition.lonDec = 7.1;
-//				mmp.updatePosition(50.75, 7.1);
-//				mmp.addSymbol("test", "110.png", 50.7446, 7.0935);
-//				try {Thread.sleep(5000);} catch (InterruptedException e) {};
-//				gpsPosition.latDec = 50.74;
-//				gpsPosition.lonDec = 7.1;
-//				mmp.updatePosition(50.74, 7.1);
-				if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
-					Vm.debug("ShowLastAddedPoint: voher");
-					mmp.ShowLastAddedPoint(currTrack);
-					Vm.debug("ShowLastAddedPoint: nachher");
-					mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
-					mmp.setGpsStatus(MovingMap.gotFix);
-				}
-				if ((fix == 0) && (gpsPosition.getSats()== 0)) {
-					mmp.setGpsStatus(MovingMap.lostFix);
-				}
-				if (fix < 0 ) {
-					mmp.setGpsStatus(MovingMap.noGPSData);
-				}
+			// Set background to signal quality
+			lblSats.backGround = GREEN;
+		}
 
-		//	}
+		// receiving data, but signal ist not good
+		if ((fix == 0) && (gpsPosition.getSats()>= 0)) {
+			lblSats.backGround = YELLOW;
+		}
+		// receiving no data
+		if (fix == -1) {
+			if (lblSats.backGround != RED) (new MessageBox("Error", "No data from GPS\nConnection to serial port closed",MessageBox.OKB)).exec();
+			lblSats.backGround = RED;
+			stopGPS();
+		}
+		// cannot interprete data
+		if (fix == -2) {
+			if (lblSats.backGround != RED) (new MessageBox("Error", "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n "+gpsPosition.lastStrExamined, MessageBox.OKB)).exec();
+			lblSats.backGround = RED;
+			stopGPS();
+		}
+
+		// In moving map mode
+		if (mmp != null && runMovingMap ) { // neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
+			if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
+				Vm.debug("ShowLastAddedPoint: voher");
+				mmp.ShowLastAddedPoint(currTrack);
+				Vm.debug("ShowLastAddedPoint: nachher");
+				mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
+				mmp.setGpsStatus(MovingMap.gotFix);
+			}
+			if ((fix == 0) && (gpsPosition.getSats()== 0)) {
+				mmp.setGpsStatus(MovingMap.lostFix);
+			}
+			if (fix < 0 ) {
+				mmp.setGpsStatus(MovingMap.noGPSData);
+			}
 		}
 	}
 
@@ -496,11 +466,11 @@ public class GotoPanel extends CellPanel {
 		tickerThread = new UpdateThread(this, 1000);
 		tickerThread.start();
 	}
-	
+
 	public void stopDisplayTimer(){
 		if (tickerThread != null) tickerThread.stop();
 	}
-	
+
 	/**
 	 * @param utc in the format as it comes from gps DDMMYY
 	 * @param datum in the format as it comes from gps HHMMSS
@@ -510,7 +480,7 @@ public class GotoPanel extends CellPanel {
 	 * @throws NumberFormatException when utc / datum could not be interpreted
 	 */
 	public double getSunAzimut (String utc, String datum, double lat, double lon) {
-	//	(new MessageBox("test", "utc:"+utc+" datum: "+datum+", lat: "+lat+", len: "+lon, MessageBox.OKB)).exec();
+		//	(new MessageBox("test", "utc:"+utc+" datum: "+datum+", lat: "+lat+", len: "+lon, MessageBox.OKB)).exec();
 		try {
 			int tag, monat, jahr, stunde, minute, sekunde;
 			tag = Convert.parseInt(datum.substring(0, 2));
@@ -557,7 +527,7 @@ public class GotoPanel extends CellPanel {
 			throw new NumberFormatException();
 		}
 	}
-	
+
 	private void stopGPS() {
 		serThread.stop();
 		stopDisplayTimer();
@@ -568,7 +538,7 @@ public class GotoPanel extends CellPanel {
 		this.repaintNow(); // without this the change in the background color will not be displayed
 		chkLog.modify(0,ControlConstants.Disabled);
 	}
-	
+
 	public void startGps() {
 		if (serThread != null) if (serThread.isAlive()) return;
 		try {
@@ -593,7 +563,7 @@ public class GotoPanel extends CellPanel {
 		currTrack = new Track(RED);
 	}
 
-	
+
 	/**
 	 * Eventhandler
 	 */
@@ -612,8 +582,8 @@ public class GotoPanel extends CellPanel {
 			if (ev.target == btnGPS){
 				if (btnGPS.getText().equals("Start")) startGps();
 				else stopGPS();
-				}
-			
+			}
+
 			// set current position as center and recalculate distance of caches in MainTab 
 			if (ev.target == btnCenter){
 				Vm.showWait(true);
@@ -632,7 +602,7 @@ public class GotoPanel extends CellPanel {
 						mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
 						mmp.ignoreGps = true;
 					}
-					if (currTrack != null) mmp.addOverlaySet(currTrack);
+					if (currTrack != null) mmp.addTrack(currTrack);
 					mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
 					mmp.exec();
 				}
@@ -649,8 +619,8 @@ public class GotoPanel extends CellPanel {
 						String rawFileName = new String();
 						dateien = files.list("*.png", File.LIST_FILES_ONLY);
 						for(int i = 0; i < dateien.length;i++){
-								ext = new Extractor(dateien[i], "", ".", 0, true);
-								rawFileName = ext.findNext();
+							ext = new Extractor(dateien[i], "", ".", 0, true);
+							rawFileName = ext.findNext();
 							try {
 								tempMIO = new MapInfoObject();
 								tempMIO.loadwfl(mapsPath, rawFileName);
@@ -667,18 +637,9 @@ public class GotoPanel extends CellPanel {
 						mmp.loadMap(toPoint.latDec, toPoint.lonDec);
 					} else
 						mmp.loadMap(gpsPosition.latDec, gpsPosition.lonDec);
-					if (currTrack != null) mmp.addOverlaySet(currTrack);
+					if (currTrack != null) mmp.addTrack(currTrack);
 					mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
 					mmp.exec();
-					//				mmp.updatePosition(50.733, 7.096);
-					/*				mmp.updatePosition(50.74455, 7.0935);
-				try {  Thread.sleep(2000);	} catch (InterruptedException e){ }
-				mmp.updatePosition(50.733, 7.096);
-				try {  Thread.sleep(2000);	} catch (InterruptedException e){ }
-				mmp.updatePosition(50.7, 7.0);
-				try {  Thread.sleep(2000);	} catch (InterruptedException e){ }
-				mmp.updatePosition(50.733, 7.096);
-					 */	
 				}
 
 			} // if (ev.target == btnMap
