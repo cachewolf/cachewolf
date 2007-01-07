@@ -42,6 +42,7 @@ public class Preferences extends MinML{
 	public String myAlias2 = new String();
 	/** The path to the browser */
 	public String browser = new String();
+	public boolean showDeletedImages=true; /* Used in ImagePanel */
 		
 	public int myAppHeight = 0;
 	public int myAppWidth = 0;
@@ -181,61 +182,6 @@ public class Preferences extends MinML{
 		savePreferences();
 		return true;
 		
-/*		
-		//Check if there are "profiles" entries. If yes display a form
-		//so the user may choose a profile.
-		try{
-		if(showProfileSelector){
-			if(profiles[0].equals("null")) profiles[0] = "";
-			if(profiles[1].equals("null")) profiles[1] = "";
-			if(profiles[2].equals("null")) profiles[2] = "";
-			if(profiles[3].equals("null")) profiles[3] = "";
-			if(profiles[0].length()>0 ||
-			   profiles[1].length()>0 ||
-			   profiles[2].length()>0 ||
-			   profiles[3].length()>0){
-				   Vm.showWait(false);
-				   Form f = new ProfilesForm(profiles);
-				   int code = f.execute(); // 0 for cancel, 1-4 for profile
-				   currProfile = code;
-				   Vm.showWait(true);
-				   if(code > 0){
-					   if(profiles[code-1].length()>0){
-							mydatadir = profdirs[code-1];
-							if(lastSyncOC[code-1] == null || lastSyncOC[code-1].endsWith("null")){
-								last_sync_opencaching = "20050801000000";
-							}
-							else {
-								last_sync_opencaching = lastSyncOC[code-1];
-							}
-							if(lastDistOC[code-1] == null || lastDistOC[code-1].endsWith("null")){
-								distOC = "0";
-							}
-							else {
-								distOC = lastDistOC[code-1];
-							}
-							curCentrePt.set(lats[code-1]+" "+longs[code-1]);
-							// Copy it into profile
-							prof.last_sync_opencaching=last_sync_opencaching;
-							prof.distOC=distOC;
-							prof.centre.set(lats[code-1]+" "+longs[code-1]);
-							prof.dataDir=profdirs[code-1];
-					   }
-				   } else {
-					   // No profile selected
-					   prof.dataDir=mydatadir;
-				   }
-				   //if(mydatadir.indexOf('.') > 0){
-				   //String cwd = File.getProgramDirectory();
-				   //mydatadir = cwd + "/" + mydatadir.substring(1, mydatadir.length()-2);
-				   //Vm.debug("Datadir? " + mydatadir);
-				   //}
-			   }
-		}
-		}catch(Exception e){
-			Vm.debug(e.toString());
-		}
-*/		
 	}
 	
 	/**
@@ -406,6 +352,9 @@ public class Preferences extends MinML{
 			tmp = atts.getValue("width");
 			if (tmp != null) tableWidth[11] = Convert.parseInt(tmp);
 		}
+		if (name.equals("imagepanel")) {
+			showDeletedImages = Boolean.valueOf(atts.getValue("showdeletedimages")).booleanValue();
+		}
 	}
 
 	public void characters( char ch[], int start, int length )
@@ -473,6 +422,7 @@ public class Preferences extends MinML{
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
 			outp.print("    <garmin connection = \""+garminConn+"\"/>\n");
 			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
+			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			// Obsolete data kept for backward compatibility
 			//outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
