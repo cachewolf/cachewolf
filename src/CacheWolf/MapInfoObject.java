@@ -63,9 +63,9 @@ public class MapInfoObject{
 		affine[1]=pixel2deg; //x2lon
 		affine[2]=-pixel2deg; //y2lat
 		affine[3]=0; //y2lon
-		affine[4]=0; //left
-		affine[5]=1; //top
-		lowlat = 0; //bottom 
+		affine[4]=1; //top
+		affine[5]=0; //left
+		lowlat = 0; //buttom
 		lowlon = 1; //right
 		doCalculations();
 	}

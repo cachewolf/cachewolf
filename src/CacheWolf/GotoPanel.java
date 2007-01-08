@@ -4,6 +4,7 @@ import ewe.ui.*;
 import ewe.util.Vector;
 import ewe.util.mString;
 import ewe.fx.*;
+import ewe.graphics.AniImage;
 import ewe.io.*;
 import ewe.net.Socket;
 //import ewe.io.IOException;
@@ -602,6 +603,18 @@ public class GotoPanel extends CellPanel {
 				}
 				if (currTrack != null) mmp.addTrack(currTrack);
 				mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
+				if (mainT.tbP.myMod.cacheSelectionChanged) {
+					mainT.tbP.myMod.cacheSelectionChanged = false;
+					mmp.removeAllMapSymbolsButGoto();
+					for (int i=cacheDB.size()-1; i>=0; i--) {
+						CacheHolder ch = (CacheHolder) cacheDB.get(i);
+						if (ch.is_Checked) {
+							CWPoint tmpll = new CWPoint(ch.LatLon);
+							int ct = Convert.parseInt(ch.type);
+							mmp.addSymbol(ch.CacheName, new AniImage(myTableModel.cacheImages[ct]), tmpll.latDec, tmpll.lonDec);
+						}
+					}
+				}
 				mmp.exec();
 			} 
 			// create new waypoint with current GPS-position
