@@ -556,7 +556,8 @@ public class MovingMap extends Form {
 				} // give memory free before loading the new map to avoid out of memory error  
 			if (currentMap.fileName.length()>0) mmp.mapImage = new AniImage(currentMap.fileName); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
 			else mmp.mapImage = new AniImage();
-			mmp.mapImage.setLocation(0,0);
+			mmp.mapImage.properties = mmp.mapImage.properties | AniImage.IsMoveable; 
+			mmp.mapImage.move(0,0);
 			mmp.addImage(mmp.mapImage);
 			mmp.images.moveToBack(mmp.mapImage);
 			addOverlaySet();
@@ -607,9 +608,6 @@ public class MovingMap extends Form {
 	public void onEvent(Event ev){
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			gotoPanel.runMovingMap = false;
-		//	ignoreGps = true;
-			//setGpsStatus(noGPS);
-			//gotoPanel.stopTheTimer();
 		}
 		super.onEvent(ev);
 	}
@@ -621,34 +619,46 @@ public class MovingMap extends Form {
 class MovingMapPanel extends InteractivePanel{
 	MovingMap mm;
 	AniImage mapImage;
+	Point saveMapLoc = null;
+	boolean saveGpsIgnoreStatus;
 	public MovingMapPanel(MovingMap f){
 		this.mm = f;
-		this.autoMoveToTop = false;
+		//this.autoMoveToTop = false;
 	}
-	
-	/*public void addAniImage(AniImage ai, int layer) {
-		if (imageLayers == null) imageLayers = new Vector();
-		for (int i = images.size()-1; i >= 0, i--) {
-			if (AniImage.class.getName()==TrackOverlay.class.getName())
-			images.sort(h, comparer, descending)ort(comparer, descending))
+	public boolean imageBeginDragged(AniImage which,Point pos) {
+		if (! (which == mapImage || which instanceof TrackOverlay) ) return false;
+		saveGpsIgnoreStatus = mm.ignoreGps; 
+		mm.ignoreGps = true;
+		saveMapLoc = mapImage.getLocation(null);
+		return super.imageBeginDragged(mapImage, pos);
 		}
+
+	public boolean imageNotDragged(ImageDragContext dc,Point pos){
+		boolean ret = super.imageNotDragged(dc, pos);
+		mapMoved(mapImage.location.x - saveMapLoc.x, mapImage.location.y - saveMapLoc.y);
+		mm.ignoreGps = saveGpsIgnoreStatus;
+		return ret;
+	 
 	}
-	*/
 	public void moveMap(int diffX, int diffY) {
 		Point p = new Point();
 		if (mapImage!= null) {
 			p = mapImage.getLocation(null);
 			mapImage.move(p.x+diffX,p.y+diffY);
 		}
-		p = mm.posCircle.getLocation(null);
+		mapMoved(diffX, diffY);
+	}
+	
+	public void mapMoved(int diffX, int diffY){
+		Point p = mm.posCircle.getLocation(null);
 		mm.posCircle.move(p.x+diffX, p.y+diffY);
 		mm.posCircleX = mm.posCircleX+diffX;
 		mm.posCircleY = mm.posCircleY+diffY;
 		mm.updateSymbolPositions();
 		mm.updateOverlayPos();
 		this.repaintNow();
+		
 	}
-
 	public void chooseMap() {
 		CWPoint gpspos;
 		if (mm.gotoPanel.gpsPosition.Fix > 0) gpspos = new CWPoint(mm.gotoPanel.gpsPosition.latDec, mm.gotoPanel.gpsPosition.lonDec);
