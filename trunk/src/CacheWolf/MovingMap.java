@@ -46,7 +46,7 @@ public class MovingMap extends Form {
 	boolean ignoreGps = false;
 	boolean ignoreGpsStatutsChanges = false;
 	boolean autoSelectMap = true;
-	boolean forceMapLoad = false; // only needed to force updateposition to try to load the best map again after OutOfMemoryError after an repeated click on snap-to-gps
+	boolean forceMapLoad = true; // only needed to force updateposition to try to load the best map again after OutOfMemoryError after an repeated click on snap-to-gps
 	
 	public MovingMap(Preferences pref, GotoPanel gP, Vector cacheDB){
 		this.cacheDB = cacheDB;
@@ -117,6 +117,10 @@ public class MovingMap extends Form {
 		maps.add(tempMIO);
 		tempMIO = new MapInfoObject(50.0);
 		maps.add(tempMIO);
+		tempMIO = new MapInfoObject(250.0);
+		maps.add(tempMIO);
+		tempMIO = new MapInfoObject(1000.0);
+		maps.add(tempMIO);
 		inf.close(0);
 		Vm.showWait(false);
 	}
@@ -171,13 +175,6 @@ public class MovingMap extends Form {
 			}
 		}
 		updateOverlayOnlyPos();
-		/*
-		mmp.images.moveOnTop(arrowUp);
-		mmp.images.moveOnTop(arrowDown);
-		mmp.images.moveOnTop(arrowLeft);
-		mmp.images.moveOnTop(arrowRight);
-		mmp.images.moveOnTop(ButtonImageGpsOn);
-		mmp.images.moveOnTop(ButtonImageChooseMap);*/
 	}
 	
 	private void destroyOverlay(int ov) {
@@ -382,7 +379,7 @@ public class MovingMap extends Form {
 		if (symbols == null) return;
 		Point pOnScreen;
 		MapSymbol symb;
-		for (int i=0; i<symbols.size(); i++) {
+		for (int i=symbols.size()-1; i>=0; i--) {
 			symb = (MapSymbol)symbols.get(i);
 			pOnScreen = getXYinMap(symb.lat, symb.lon);
 			symb.pic.setLocation(pOnScreen.x-symb.pic.getWidth()/2, pOnScreen.y-symb.pic.getHeight()/2);
@@ -395,8 +392,18 @@ public class MovingMap extends Form {
 		ms.loadImage();
 		Point pOnScreen=getXYinMap(lat, lon);
 		ms.pic.setLocation(pOnScreen.x-ms.pic.getWidth()/2, pOnScreen.y-ms.pic.getHeight()/2);
-		this.mmp.addImage(ms.pic);
 		symbols.add(ms);
+		mmp.addImage(ms.pic);
+	}
+	public void addSymbol(String name, AniImage imSymb, double lat, double lon) {
+		if (symbols==null) symbols=new Vector();
+		MapSymbol ms = new MapSymbol(name, " ", lat, lon);
+		ms.pic = imSymb;
+		ms.pic.properties = AniImage.AlwaysOnTop;
+		Point pOnScreen=getXYinMap(lat, lon);
+		ms.pic.setLocation(pOnScreen.x-ms.pic.getWidth()/2, pOnScreen.y-ms.pic.getHeight()/2);
+		symbols.add(ms);
+		mmp.addImage(ms.pic);
 	}
 	
 	public void setGotoPosition(double lat, double lon) {
@@ -410,6 +417,12 @@ public class MovingMap extends Form {
 		if (symbNr == -1) return null;
 		MapSymbol ms = (MapSymbol) symbols.get(symbNr);
 		return new CWPoint(ms.lat, ms.lon);
+	}
+	
+	public void removeAllMapSymbolsButGoto(){
+		for (int i=symbols.size()-1; i>=0; i--) {
+			if (((MapSymbol)symbols.get(i)).name != "goto") removeMapSymbol(i);
+		}
 	}
 	
 	public void removeMapSymbol(String name) {
@@ -610,6 +623,7 @@ class MovingMapPanel extends InteractivePanel{
 	AniImage mapImage;
 	public MovingMapPanel(MovingMap f){
 		this.mm = f;
+		this.autoMoveToTop = false;
 	}
 	
 	/*public void addAniImage(AniImage ai, int layer) {
@@ -657,22 +671,7 @@ class MovingMapPanel extends InteractivePanel{
 				mm.posCircleY = 0;
 				mm.updateOnlyPosition(mm.currentMap.affine[4], mm.currentMap.affine[5], true);
 			}
-			//Go through cache db to paint caches that are in bounds of the map
-			/*
-				CWPoint tempPoint;
-				CacheHolder ch = new CacheHolder();
-				Graphics g = new Graphics(mapImage);
-				for(int i = 0; i < cacheDB.size();i++){
-					ch = (CacheHolder)cacheDB.get(i);
-					tempPoint = new CWPoint(ch.LatLon, CWPoint.CW);
-					if(mm.currentMap.inBound(tempPoint) == true) { //yes cache is on map!
-
-					}
-				}
-				g.free();
-			 */
 		}
-
 	}
 	
 	/**
@@ -684,8 +683,8 @@ class MovingMapPanel extends InteractivePanel{
 			if (mm.gotoPanel.serThread == null || !mm.gotoPanel.serThread.isAlive()) {
 				mm.gotoPanel.startGps();
 				mm.addTrack(mm.gotoPanel.currTrack); // use new track when gps now started
-			} //else mm.addOverlaySet(); // use existing tracks if gps was already running
-			mm.SnapToGps(); // TODO es wäre schön, wenn klick auf SnapToGPS nach einem OutOfMemoryError erneut versuchen würde, die map zu laden
+			} 
+			mm.SnapToGps();
 		}
 		if (which == mm.arrowRight)	{	moveMap(-10,0);	}
 		if (which == mm.arrowLeft)	{	moveMap(+10,0);	}

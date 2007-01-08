@@ -32,6 +32,7 @@ public class myTableControl extends TableControl{
 				ch.is_Checked = true;
 				//db.set(i, ch);
 			}
+			tbp.myMod.cacheSelectionChanged = true;
 			tbp.refreshTable();
 		}
 		
@@ -41,6 +42,7 @@ public class myTableControl extends TableControl{
 				ch.is_Checked = false;
 				//db.set(i, ch);
 			}
+			tbp.myMod.cacheSelectionChanged = true;
 			tbp.refreshTable();
 		}
 		
