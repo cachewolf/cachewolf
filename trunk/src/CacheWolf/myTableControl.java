@@ -15,6 +15,7 @@ public class myTableControl extends TableControl{
 	public Vector db;
 	public Preferences pref;
 	public TablePanel tbp;
+	public MainTab mainTabs;
 	
 	public void penRightReleased(Point p){
 		menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
@@ -115,15 +116,19 @@ public class myTableControl extends TableControl{
 		try{
 			//String cmd = "\""+pref.browser+ "\"" + " \"http://www.geocaching.com/seek/cache_details.aspx?wp="+ch.wayPoint+"&Submit6=Find&log=y\"";
 			ch.readCache(profile.dataDir);
+		}catch(IOException ex){	(new MessageBox("Error", "Cannot read cache data\n"+ex.toString()+"\n in cache: "+ch.wayPoint,MessageBox.OKB)).execute(); }
+		try {
 			String cmd = "\""+pref.browser+ "\" " + ch.URL;
 			//String cmd = "\""+pref.browser+ ".exe\"" + " www.aragorn.de";
 			//Vm.debug(cmd);
-			//ewe.sys.Process p = 
+			//ewe.sys.Process p =
+			
 			Vm.exec(cmd);
 			//p.waitFor();
-		}catch(IOException ex){
-			(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();
-			Vm.debug("Cannot start browser! " +ex.toString());
+		} catch (IOException ex) {
+			Vm.debug("Cannot start browser - opening description panel instead (" +ex.toString()+")");
+			//(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();
+			tbp.myMaintab.select(tbp.myMaintab.descP);
 		}
 	}
 }

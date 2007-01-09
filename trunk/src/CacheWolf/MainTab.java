@@ -59,7 +59,7 @@ public class MainTab extends mTabbedPanel {
 		
 		c = this.addCard(gotoP = new GotoPanel(pref, profile, this, detP), "Goto", null);
 		c.iconize(new Image("goto.gif"),true);
-		tbP.setGotoPanel(gotoP);
+		tbP.setPanels(gotoP, this);
 		
 		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205,"Solver"), null);
 		c.iconize(new Image("solver.gif"),true);
@@ -158,12 +158,7 @@ public class MainTab extends mTabbedPanel {
 				  detP.setDetails(ch, this,pref, profile);
 			  }
 			  if(this.getSelectedItem() == 2) { // Description Panel
-				  MyLocale.setSIPOff();
-				  descP.setText(ch);
-				  if(detP.dirty_newOrDelete) {
-					  tbP.refreshTable();
-					  detP.dirty_newOrDelete = false;
-				  }
+				  openDesciptionPanel(ch);
 			  }
 			  if(this.getSelectedItem() == 3) { // Picture Panel
 				  MyLocale.setSIPOff();
@@ -220,4 +215,13 @@ public class MainTab extends mTabbedPanel {
 			////Vm.debug(Convert.toString(w));
 		}
 		*/
+	public void openDesciptionPanel(CacheHolder chi) {
+		MyLocale.setSIPOff();
+		descP.setText(chi);
+		if(detP.dirty_newOrDelete) {
+			tbP.refreshTable();
+			detP.dirty_newOrDelete = false;
+		}
+	}
 }
+

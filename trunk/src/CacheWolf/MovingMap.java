@@ -35,10 +35,10 @@ public class MovingMap extends Form {
 	
 	AniImage ButtonImageChooseMap = new AniImage("choose_map.gif"); 
 	AniImage ButtonImageGpsOn = new AniImage("snap2gps.gif"); 
-	AniImage arrowUp = new AniImage("arrow_up.png");
+	/*AniImage arrowUp = new AniImage("arrow_up.png");
 	AniImage arrowDown = new AniImage("arrow_down.png");
 	AniImage arrowLeft = new AniImage("arrow_left.png");
-	AniImage arrowRight = new AniImage("arrow_right.png");
+	AniImage arrowRight = new AniImage("arrow_right.png"); */
 	AniImage posCircle = new AniImage("position_green.png");
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
 	double posCircleLat, posCircleLon;
@@ -64,7 +64,7 @@ public class MovingMap extends Form {
 		ButtonImageChooseMap.properties = AniImage.AlwaysOnTop;
 		ButtonImageGpsOn.setLocation(pref.myAppWidth-25, 10);
 		ButtonImageGpsOn.properties = AniImage.AlwaysOnTop;
-		arrowUp.setLocation(pref.myAppWidth/2, 10);
+/*		arrowUp.setLocation(pref.myAppWidth/2, 10);
 		arrowDown.setLocation(pref.myAppWidth/2, pref.myAppHeight-20);
 		arrowLeft.setLocation(10, pref.myAppHeight/2+7);
 		arrowRight.setLocation(pref.myAppWidth-25, pref.myAppHeight/2+7);
@@ -76,7 +76,7 @@ public class MovingMap extends Form {
 		mmp.addImage(arrowDown);
 		mmp.addImage(arrowLeft);
 		mmp.addImage(arrowRight);
-		mmp.addImage(ButtonImageChooseMap);
+*/		mmp.addImage(ButtonImageChooseMap);
 		mmp.addImage(ButtonImageGpsOn);
 		posCircle.properties = AniImage.AlwaysOnTop;
 		loadMaps();
@@ -124,7 +124,10 @@ public class MovingMap extends Form {
 		inf.close(0);
 		Vm.showWait(false);
 	}
-
+	public final FormFrame myExec() {
+		addOverlaySet(); // neccessary to draw points which were added when the MovingMap was not running, so that these pixels are not stored in the not-immediately-drawing-work-around
+		return exec();
+	}
 	public void addTrack(Track tr) {
 		if (tr == null) return;
 		if (tracks == null) tracks = new Vector();
@@ -460,12 +463,13 @@ public class MovingMap extends Form {
 		}
 		//Vm.debug("mapx = " + mapx);
 		//Vm.debug("mapy = " + mapy);
-		//if (java.lang.Math.abs(oldMapPos.x - mapPos.x) > 1 || java.lang.Math.abs(oldMapPos.y - mapPos.y) > 1) {
+		if (java.lang.Math.abs(oldMapPos.x - mapPos.x) > 1 || java.lang.Math.abs(oldMapPos.y - mapPos.y) > 1) {
 			if (mmp.mapImage != null) 	mmp.mapImage.move(mapPos.x,mapPos.y);
 			updateSymbolPositions();
 			if (updateOverlay && TrackOverlays != null) updateOverlayPos();
 		//}
 		mmp.repaintNow(); // TODO test if the "if" above can be used
+		}
 		//Vm.debug("update only position");			
 	}
 	/**
@@ -696,10 +700,10 @@ class MovingMapPanel extends InteractivePanel{
 			} 
 			mm.SnapToGps();
 		}
-		if (which == mm.arrowRight)	{	moveMap(-10,0);	}
+		/*if (which == mm.arrowRight)	{	moveMap(-10,0);	}
 		if (which == mm.arrowLeft)	{	moveMap(+10,0);	}
 		if (which == mm.arrowDown)	{	moveMap(0,-10);	}
-		if (which == mm.arrowUp)	{	moveMap(0,+10);	}
+		if (which == mm.arrowUp)	{	moveMap(0,+10);	} */
 	}
 }
 
