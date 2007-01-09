@@ -72,7 +72,7 @@ public class Preferences extends MinML{
 	public SerialPortOptions mySPO = new SerialPortOptions();
 	public boolean forwardGPS = false;
 	public String forwardGpsHost = new String();
-	public int fontSize = 14;
+	public int fontSize = 12;
 	// Helper variables for XML parser 
 	private StringBuffer collectElement=null; 
 	private String lastName; // The string to the last XML that was processed

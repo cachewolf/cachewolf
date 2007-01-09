@@ -118,27 +118,6 @@ public class Parser{
 		MessageStack.add(str);
 	}
 	
-	/* Replace all instances of a String in a String.
-	 *   @param  s  String to alter.
-	 *   @param  f  String to look for.
-	 *   @param  r  String to replace it with, or null to just remove it.
-	 */ 
-	public String replace( String s, String f, String r )
-	{
-	   if (s == null)  return s;
-	   if (f == null)  return s;
-	   if (r == null)  r = "";
-	
-	   int index01 = s.indexOf( f );
-	   while (index01 != -1)
-	   {
-	      s = s.substring(0,index01) + r + s.substring(index01+f.length());
-	      index01 += r.length();
-	      index01 = s.indexOf( f, index01 );
-	   }
-	   return s;
-	}
-	
 	private void parseCommand(){
 		boolean foundCommand = false;
 		////Vm.debug("In command");
@@ -196,8 +175,8 @@ public class Parser{
 				if(runFlag) result = (String)symbolTable.get(thisToken.token);
 				if(result != null){
 					result.trim();
-					result = replace(result, ".0", "");
-					result = replace(result, ",0", "");
+					result = STRreplace.replace(result, ".0", "");
+					result = STRreplace.replace(result, ",0", "");
 					emit_buffer = emit_buffer + result;
 				} else {
 					err("# Error: Variable " +thisToken.token+ " not defined");
@@ -223,8 +202,8 @@ public class Parser{
 				}
 				String stra = a.toString();
 				stra.trim();
-				stra = replace(stra, ",0", "");
-				stra = replace(stra, ".0", "");
+				stra = STRreplace.replace(stra, ",0", "");
+				stra = STRreplace.replace(stra, ".0", "");
 				emit_buffer = emit_buffer + stra;
 				
 			}

@@ -39,39 +39,18 @@ public class Reducer{
 	
 	private static String removeVow(String str){
 		String dummy = str.substring(1);
-		dummy = replace(dummy,"a", "");
-		dummy = replace(dummy,"e", "");
-		dummy = replace(dummy,"i", "");
-		dummy = replace(dummy,"o", "");
-		dummy = replace(dummy,"u", "");
-		dummy = replace(dummy,"A", "");
-		dummy = replace(dummy,"E", "");
-		dummy = replace(dummy,"I", "");
-		dummy = replace(dummy,"O", "");
-		dummy = replace(dummy,"U", "");
-		dummy = replace(dummy,",","");
+		dummy = STRreplace.replace(dummy,"a", "");
+		dummy = STRreplace.replace(dummy,"e", "");
+		dummy = STRreplace.replace(dummy,"i", "");
+		dummy = STRreplace.replace(dummy,"o", "");
+		dummy = STRreplace.replace(dummy,"u", "");
+		dummy = STRreplace.replace(dummy,"A", "");
+		dummy = STRreplace.replace(dummy,"E", "");
+		dummy = STRreplace.replace(dummy,"I", "");
+		dummy = STRreplace.replace(dummy,"O", "");
+		dummy = STRreplace.replace(dummy,"U", "");
+		dummy = STRreplace.replace(dummy,",","");
 		dummy = str.substring(0,1) + dummy;
 		return dummy;
 	}
-	
-	/** Replace all instances of a String in a String.
-		 *   @param  s  String to alter.
-		 *   @param  f  String to look for.
-		 *   @param  r  String to replace it with, or null to just remove it.
-		 */ 
-		private static String replace( String s, String f, String r )
-		{
-		   if (s == null)  return s;
-		   if (f == null)  return s;
-		   if (r == null)  r = "";
-		
-		   int index01 = s.indexOf( f );
-		   while (index01 != -1)
-		   {
-			  s = s.substring(0,index01) + r + s.substring(index01+f.length());
-			  index01 += r.length();
-			  index01 = s.indexOf( f, index01 );
-		   }
-		   return s;
-		}
 }
