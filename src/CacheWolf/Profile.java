@@ -147,9 +147,9 @@ public class Profile {
 					ch.noFindLogs = Convert.toInt(ex.findNext());
 					ch.ocCacheID = ex.findNext();
 					// remove "/>
-					ch.ocCacheID = SafeXML.replace(ch.ocCacheID,"\"/>", null);
+					ch.ocCacheID = STRreplace.replace(ch.ocCacheID,"\"/>", null);
 					// remove additional " if present
-					ch.ocCacheID = SafeXML.replace(ch.ocCacheID,"\"", null);
+					ch.ocCacheID = STRreplace.replace(ch.ocCacheID,"\"", null);
 					cacheDB.add(ch);
 				} else if (text.indexOf("<CENTRE")>=0) { // lat=  lon=
 					int start=text.indexOf("lat=\"")+5;
