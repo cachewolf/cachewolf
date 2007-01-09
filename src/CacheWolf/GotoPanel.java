@@ -446,10 +446,10 @@ public class GotoPanel extends CellPanel {
 		// In moving map mode
 		if (mmp != null && runMovingMap ) { // neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
 			if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
+				mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
 				Vm.debug("ShowLastAddedPoint: voher");
 				mmp.ShowLastAddedPoint(currTrack);
 				Vm.debug("ShowLastAddedPoint: nachher");
-				mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
 				mmp.setGpsStatus(MovingMap.gotFix);
 			}
 			if ((fix == 0) && (gpsPosition.getSats()== 0)) {
@@ -615,7 +615,7 @@ public class GotoPanel extends CellPanel {
 						}
 					}
 				}
-				mmp.exec();
+				mmp.myExec();
 			} 
 			// create new waypoint with current GPS-position
 			if (ev.target == btnSave){

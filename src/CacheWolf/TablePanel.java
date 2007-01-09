@@ -20,6 +20,7 @@ public class TablePanel extends CellPanel{
 	Preferences pref;
 	Vector cacheDB;
 	GotoPanel myGotoPanel;
+	MainTab myMaintab;
 	StatusBar statBar;
 	
 	public TablePanel(Preferences p, Profile profile, StatusBar statBar){
@@ -61,8 +62,9 @@ public class TablePanel extends CellPanel{
 		tc.setTableModel(myMod);
 	}
 	
-	public void setGotoPanel(GotoPanel gp) {
+	public void setPanels(GotoPanel gp, MainTab mt) {
 		myGotoPanel = gp;
+		myMaintab = mt;
 	}
 	
 	public int getSelectedCache(){
