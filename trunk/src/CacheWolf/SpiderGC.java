@@ -457,6 +457,7 @@ public class SpiderGC{
 				//Vm.debug(descRex.stringMatched(1));
 				
 				cacheDB.add(cx);
+				cx.saveCacheDetails(profile.dataDir);
 				cx = new CacheHolder();
 				
 				rowBlock = exRowBlock.findNext();
