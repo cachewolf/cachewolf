@@ -18,8 +18,7 @@ public class Filter{
 	public static final int GREATER = 1;
 	public static final int FOUND = 2;
 	public static final int NOTFOUND = 3;
-	
-	
+
 	public static final int TRADITIONAL = 1;
 	public static final int MULTI = 2;
 	public static final int VIRTUAL = 4;
@@ -29,6 +28,9 @@ public class Filter{
 	public static final int MYSTERY = 64;
 	public static final int LOCLESS = 128;
 	public static final int ADDIWPT = 256;
+	public static final int MEGA = 512;
+	public static final int EARTH = 1024;
+	
 	// End of type declares
 	public static final int N = 1;
 	public static final int NNE = 2;
@@ -236,6 +238,8 @@ public class Filter{
 			if(ch.type.equals("11")) cacheTypePattern |= WEBCAM;
 			if(ch.type.equals("12")) cacheTypePattern |= LOCLESS;
 			if (CacheType.isAddiWpt(ch.type)) cacheTypePattern |= ADDIWPT;
+			if(ch.type.equals("137"))cacheTypePattern |= EARTH;
+			if(ch.type.equals("453"))cacheTypePattern |= MEGA;
 			
 			cacheRosePattern = 0;
 			if(ch.bearing.equals("NW")) cacheRosePattern |= NW;

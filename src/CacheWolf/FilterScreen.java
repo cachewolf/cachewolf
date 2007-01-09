@@ -15,7 +15,7 @@ public class FilterScreen extends Form{
 	mButton btCancel, btApply,btRoute,btArea;
 	
 	mChoice distChc, difChc, terrChc, lastChc;
-	mCheckBox foundChk, tradChk, virtualChk, eventChk;
+	mCheckBox foundChk, tradChk, virtualChk, eventChk, earthChk, megaChk;
 	mCheckBox ownedChk, multiChk, letterChk, webcamChk, mysteryChk,addiWptChk, loclessChk;
 	mInput distIn, difIn, terrIn, lastIn, foundIn;
 	Vector cacheDB;
@@ -66,6 +66,8 @@ public class FilterScreen extends Form{
 		content.addLast(ownedChk = new mCheckBox((String)lr.get(707,"Owned")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		CellPanel ctype = new CellPanel();
+		
+		ctype.addLast(new mLabel("__________"));
 		ctype.addNext(tradChk = new mCheckBox("Traditonal"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		ctype.addNext(multiChk = new mCheckBox("Multi"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		ctype.addLast(virtualChk = new mCheckBox("Virtual"), CellConstants.DONTSTRETCH, CellConstants.FILL);
@@ -75,9 +77,12 @@ public class FilterScreen extends Form{
 		ctype.addLast(webcamChk = new mCheckBox("Webcam"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		ctype.addNext(mysteryChk = new mCheckBox("Mystery"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		ctype.addNext(addiWptChk = new mCheckBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ctype.addNext(earthChk = new mCheckBox("Earth"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		ctype.addLast(loclessChk = new mCheckBox("Locationless"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
+		ctype.addNext(megaChk = new mCheckBox("Mega-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ctype.addLast(addiWptChk = new mCheckBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ctype.addLast(new mLabel("__________"));
 		content.addLast(ctype, CellConstants.STRETCH,CellConstants.FILL);
 		
 		CellPanel roseP = new CellPanel();
@@ -166,6 +171,8 @@ public class FilterScreen extends Form{
 				if(mysteryChk.getState()) typeMatchPattern |= Filter.MYSTERY;
 				if(loclessChk.getState()) typeMatchPattern |= Filter.LOCLESS;
 				if(addiWptChk.getState()) typeMatchPattern |= Filter.ADDIWPT;
+				if(earthChk.getState()) typeMatchPattern |= Filter.EARTH;
+				if(megaChk.getState()) typeMatchPattern |= Filter.MEGA;
 				flt.typeMatchPattern = typeMatchPattern;
 				int roseMatchPattern = 0;
 				if(N.getState()) roseMatchPattern |= Filter.N;
