@@ -94,7 +94,7 @@ public class MovingMap extends Form {
 		maps = new Vector();
 		String dateien[];
 		String mapsPath = new String();
-		mapsPath = File.getProgramDirectory() + "/maps/";
+		mapsPath = Global.getPref().baseDir+"maps/standard";
 		File files = new File(mapsPath);
 		Extractor ext;
 		String rawFileName = new String();
