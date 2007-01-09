@@ -57,7 +57,7 @@ public class Profile {
 	
 	/**
 	*	Method to save the index.xml file that holds the total information
-	*	on available caches in the database. The database in nothing else
+	*	on available caches in the database. The database is nothing else
 	*	than the collection of caches in a directory.
 	*   
 	*   Not sure whether we need to keep 'pref' in method signature. May eventually remove it. 
@@ -86,6 +86,9 @@ public class Profile {
 			if(distOC == null || distOC.endsWith("null") || distOC.equals("")){
 				distOC = "0";
 			}
+			
+			// Bilbowolf: detfile.print("    <FILTER ....
+			
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			for(int i = 0; i<cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
