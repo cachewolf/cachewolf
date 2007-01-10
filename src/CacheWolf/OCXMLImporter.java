@@ -165,7 +165,8 @@ public class OCXMLImporter extends MinML {
 			Vm.debug("Parse error: " + state + " " + holder.wayPoint);
 			e.printStackTrace();
 		}catch (Exception e){ // here schould be used the correct exepion
-			finalMessage=MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.wayPoint;
+			if (holder != null)	finalMessage=MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.wayPoint;
+			else finalMessage=MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: <unkown>";
 			success = false;
 			Vm.debug("Parse error: " + state + " " + holder.wayPoint);
 			e.printStackTrace();
@@ -546,38 +547,37 @@ public class OCXMLImporter extends MinML {
 		
 	}
 	
-	private String fetch(String address, String fileName ) throws IOException
+	private String fetch(String addr, String fileName ) throws IOException
 	   	{
+			final int maxRedirections = 5;
 			//Vm.debug(address);
-			String redirect;
-
-			HttpConnection conn, fileConn;
-			
-			if(pref.myproxy.length() > 0){
-				conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
-				Vm.debug("Proxy here: " + address);
-			} else {
-				conn = new HttpConnection(address);
+			HttpConnection conn = null;
+			Socket sock = null;
+			int i=-1;
+			String address = new String(addr);
+			while (address != null && i <= maxRedirections ) { // allow max 5 redirections (http 302 location)
+				i++;
+				if(pref.myproxy.length() > 0){
+					conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
+					Vm.debug("Proxy here: " + address);
+				} else {
+					conn = new HttpConnection(address);
+				}
+				conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+				conn.setRequestorProperty("Connection", "close");
+				conn.documentIsEncoded = true;
+				sock = conn.connect();
+				address = conn.getRedirectTo();
+				if (address != null){
+					if (holder != null) fileName = holder.wayPoint + "_" + Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
+					else fileName = Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
+				}
 			}
-			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-			conn.setRequestorProperty("Connection", "close");
-			conn.documentIsEncoded = true;
-			Socket sock = conn.connect();
-			redirect = conn.getRedirectTo();
-			if (redirect != null){
-				//Vm.debug("Redirect: " + redirect);
-				fileConn = conn.getRedirectedConnection(redirect);
-			}
-			else {
-				fileConn = conn;
-			}
-			sock = fileConn.connect();
-			ByteArray daten = fileConn.readData(sock);
+			if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: "+addr + " only "+maxRedirections+" are allowed");
+			//Vm.debug("Redirect: " + redirect);
+			ByteArray daten = conn.readData(sock);
 			
 			//save file
-			if (redirect != null){
-				fileName = redirect.substring(redirect.lastIndexOf("/")+1);
-			}
 			//Vm.debug("Save: " + myPref.mydatadir + fileName);
 			//Vm.debug("Daten: " + daten.length);
 			BufferedOutputStream outp =  new BufferedOutputStream(new FileOutputStream(profile.dataDir + fileName));
