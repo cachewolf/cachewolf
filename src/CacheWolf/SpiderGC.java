@@ -65,7 +65,7 @@ public class SpiderGC{
 		} else return code;
 		infB.close(0);
 		infB = new InfoBox("Status", "Logging in...");
-		infB.show();
+		infB.exec();
 		try{
 			pref.log("Fetching login page");
 			start = fetch("http://www.geocaching.com/login/Default.aspx");

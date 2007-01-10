@@ -49,8 +49,13 @@ public class OCXMLImporterScreen extends Form {
 			this.addLast(missingCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
 
-		this.addNext(cancelB = new mButton(MyLocale.getMsg(1604,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(okB = new mButton(MyLocale.getMsg(1605,"OK")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		cancelB = new mButton(MyLocale.getMsg(1604,"Cancel"));
+		cancelB.setHotKey(0, IKeys.ESCAPE);
+		this.addNext(cancelB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		okB = new mButton(MyLocale.getMsg(1605,"OK"));
+		okB.setHotKey(0, IKeys.ACTION);
+		okB.setHotKey(0, IKeys.ENTER);
+		this.addLast(okB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 	}
 	public void onEvent(Event ev){
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
