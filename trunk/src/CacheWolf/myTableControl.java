@@ -102,40 +102,45 @@ public class myTableControl extends TableControl{
 		}
 		
 		if (selectedItem.toString().equals(MyLocale.getMsg(1010,"Goto"))){
-//			Point a = new Point();
-	//		a = this.getSelectedCell(a);
-		//	if(!(a == null)) ch = (CacheHolder)tbp.cacheDB.get(a.y);
 			ch = (CacheHolder)tbp.cacheDB.get(tbp.getSelectedCache());
-			
 			tbp.myGotoPanel.setDestination((ch.LatLon));
-//this.getSelectedCell(((Menu)selectedItem).curPoint)..LatLon
+		}
+		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1020,"Open online in Browser"))){
+			ch = (CacheHolder)tbp.cacheDB.get(tbp.getSelectedCache());
+			try{
+				ch.readCache(profile.dataDir);
+			}catch(IOException ex){	(new MessageBox("Error", "Cannot read cache data\n"+ex.toString()+"\n in cache: "+ch.wayPoint,MessageBox.OKB)).execute(); }
+			try {
+				String cmd = "\""+pref.browser+ "\" " + ch.URL;
+				Vm.exec(cmd);
+			} catch (IOException ex) {
+				(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();
+			}
+		}
+		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1021,"Open description"))){
+			openCacheDesc();
 		}
 
 	}
 	
-	public void  penDoubleClicked(Point where) {
-		Point a = new Point();
-		Point dest = new Point();
-		a = getSelectedCell(dest);
-		CacheHolder ch;
+	void openCacheDesc() {
+//		Point a = new Point();
+		//	Point dest = new Point();
+			//a = getSelectedCell(dest);
+			CacheHolder ch;
+			ch = (CacheHolder)tbp.cacheDB.get(tbp.getSelectedCache());
 
-		ch = (CacheHolder)db.get(a.y);
-		try{
-			//String cmd = "\""+pref.browser+ "\"" + " \"http://www.geocaching.com/seek/cache_details.aspx?wp="+ch.wayPoint+"&Submit6=Find&log=y\"";
-			ch.readCache(profile.dataDir);
-		}catch(IOException ex){	(new MessageBox("Error", "Cannot read cache data\n"+ex.toString()+"\n in cache: "+ch.wayPoint,MessageBox.OKB)).execute(); }
-		try {
-			String cmd = "\""+pref.browser+ "\" " + ch.URL;
-			//String cmd = "\""+pref.browser+ ".exe\"" + " www.aragorn.de";
-			//Vm.debug(cmd);
-			//ewe.sys.Process p =
-			
-			Vm.exec(cmd);
-			//p.waitFor();
-		} catch (IOException ex) {
-			Vm.debug("Cannot start browser - opening description panel instead (" +ex.toString()+")");
-			//(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();
+		//	ch = (CacheHolder)db.get(a.y);
+			try{
+				ch.readCache(profile.dataDir);
+			}catch(IOException ex){	
+				(new MessageBox("Error", "Cannot read cache data\n"+ex.toString()+"\n in cache: "+ch.wayPoint,MessageBox.OKB)).execute(); 
+			}
 			tbp.myMaintab.select(tbp.myMaintab.descP);
-		}
+		
+	}
+	
+	public void  penDoubleClicked(Point where) {
+		openCacheDesc();
 	}
 }
