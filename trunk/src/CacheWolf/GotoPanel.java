@@ -154,17 +154,17 @@ public class GotoPanel extends CellPanel {
 	SerialThread serThread;
 	UpdateThread tickerThread;
 
-	ImageControl ic; 
+	ImageControl icRose;
+	GotoRose compassRose;
 
-	static Color RED = new Color(255,0,0);
-	static Color YELLOW = new Color(255,255,0);
-	static Color GREEN = new Color(0,255,0);
-	static Color BLUE = new Color(0,255,255);
+	final static Color RED = new Color(255,0,0);
+	final static Color YELLOW = new Color(255,255,0);
+	final static Color GREEN = new Color(0,255,0);
+	final static Color BLUE = new Color(0,255,255);
 
-	static Font BOLD = new Font("Arial", Font.BOLD, 14);
+	final static Font BOLD = new Font("Arial", Font.BOLD, 14);
 
-	int centerX, centerY;
-
+	GotoRose rose;
 	int ticker = 0;
 
 	boolean mapsLoaded = false;
@@ -215,11 +215,9 @@ public class GotoPanel extends CellPanel {
 		CoordsP.addLast(btnGoto = new mButton(toPoint.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 
 		//Rose for bearing
-		Image img = new Image("rose.png");
-		ic = new ImageControl(img);
-		centerY = img.getHeight() / 2;
-		centerX = img.getWidth() / 2;
-		roseP.addLast(ic,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTH));
+		compassRose = new GotoRose("rose.png");
+		icRose = new ImageControl(compassRose);
+		roseP.addLast(icRose,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTH));
 
 		//Goto
 		//things from GPS
@@ -307,44 +305,6 @@ public class GotoPanel extends CellPanel {
 //		}	
 	}
 
-	/**
-	 * draw arrows for the directions of movement and destination waypoint
-	 * @param ctrl the control to paint on
-	 * @param moveDir degrees of movement
-	 * @param destDir degrees of destination waypoint
-	 */
-
-	private void drawArrows(Control ctrl,double moveDir, double destDir, double sunAziumt){
-		Graphics g = ctrl.getGraphics();
-
-		if (g != null) {
-			ctrl.repaintNow();
-			// draw only valid arrows
-			if (moveDir < 360 && moveDir > -360) drawArrow(g, moveDir, RED);
-			if (destDir < 360 && destDir > -360) drawArrow(g, destDir, BLUE);
-			if (sunAziumt < 360 && sunAziumt > -360) drawArrow(g, sunAziumt, YELLOW);
-			g.free();
-		}
-
-	}
-
-	/**
-	 * draw single arrow 
-	 * @param g handle for drawing
-	 * @param angle angle of arrow
-	 * @param col color of arrow
-	 */
-	private void drawArrow(Graphics g, double angle, Color col) {
-		double angleRad;
-		int x, y;
-
-		angleRad = angle * java.lang.Math.PI / 180;
-		x = centerX + new Float(centerX * java.lang.Math.sin(angleRad)).intValue();
-		y = centerY - new Float(centerY * java.lang.Math.cos(angleRad)).intValue();
-		g.setPen(new Pen(col,Pen.SOLID,3));
-		g.drawLine(centerX,centerY,x,y);
-
-	}
 
 	/**
 	 * set the coords of the destination  
@@ -420,7 +380,7 @@ public class GotoPanel extends CellPanel {
 				lblDist.setText(dist.toString(3,0,0) + " m");
 			}
 
-			drawArrows(ic,bearMov.value,bearWayP.value, sunAzimut.value);
+			compassRose.setDirections((float)bearMov.value,(float)bearWayP.value, (float)sunAzimut.value);
 
 			// Set background to signal quality
 			lblSats.backGround = GREEN;
@@ -634,5 +594,72 @@ public class GotoPanel extends CellPanel {
 			}
 		}
 		super.onEvent(ev);
+	}
+}
+
+/** class for displaying the compass rose
+ * including goto, sun and moving direction
+ */
+class GotoRose extends AniImage {
+	float gotoDir = -361;
+	float sunDir = -361;
+	float moveDir = -361;
+	
+	final static Color RED = new Color(255,0,0);
+	final static Color YELLOW = new Color(255,255,0);
+	final static Color GREEN = new Color(0,255,0);
+	final static Color BLUE = new Color(0,255,255);
+	/**
+	 * @param gd goto direction
+	 * @param sd sun direction
+	 * @param md moving direction
+	 */
+	public GotoRose(String fn){
+		super(fn);
+	}
+	
+	public void setDirections(float gd, float sd, float md ) {
+		gotoDir = gd;
+		sunDir = sd;
+		moveDir = md;
+		refresh();
+	}
+	
+	/**
+	 * draw arrows for the directions of movement and destination waypoint
+	 * @param ctrl the control to paint on
+	 * @param moveDir degrees of movement
+	 * @param destDir degrees of destination waypoint
+	 */
+	
+	public void doDraw(Graphics g,int options) {
+		super.doDraw(g, options);
+		drawArrows(g);
+	}
+
+	private void drawArrows(Graphics g){
+		if (g != null) {
+			// draw only valid arrows
+			if (moveDir < 360 && moveDir > -360) drawArrow(g, moveDir, RED);
+			if (gotoDir < 360 && gotoDir > -360) drawArrow(g, gotoDir, BLUE);
+			if (sunDir < 360 && sunDir> -360) drawArrow(g, sunDir, YELLOW);
+		}
+	}
+
+	/**
+	 * draw single arrow 
+	 * @param g handle for drawing
+	 * @param angle angle of arrow
+	 * @param col color of arrow
+	 */
+	private void drawArrow(Graphics g, float angle, Color col) {
+		float angleRad;
+		int x, y, centerX = location.width/2, centerY = location.height/2;
+
+		angleRad = angle * (float)java.lang.Math.PI / 180;
+		x = centerX + new Float(centerX * java.lang.Math.sin(angleRad)).intValue();
+		y = centerY - new Float(centerY * java.lang.Math.cos(angleRad)).intValue();
+		g.setPen(new Pen(col,Pen.SOLID,3));
+		g.drawLine(centerX,centerY,x,y);
 	}
 }
