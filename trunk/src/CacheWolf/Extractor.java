@@ -49,7 +49,7 @@ public class Extractor  {
 		* that is being searched through.
 		*/
 		public boolean endOfSearch(){
-			if(startOffset >= searchText.length()) return true;
+			if(searchText == null || startOffset >= searchText.length()) return true;
 			else return false;
 		}
 		
@@ -59,6 +59,7 @@ public class Extractor  {
 		*	is returned til it's end.
 		*/
 		public String findNext(){
+			if (searchText == null) return new String(); //maby null should 
 			int idxStart = searchText.indexOf(start,startOffset);
 			int idxEnd = searchText.indexOf(end, idxStart+start.length());
 			////Vm.debug("Start: " + Convert.toString(idxStart) + " End: " + Convert.toString(idxEnd));

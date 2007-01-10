@@ -71,15 +71,22 @@ public class myTableControl extends TableControl{
 			SpiderGC spider = new SpiderGC(pref, profile);
 			Vm.showWait(true);
 			spider.login();
-			//TODO prüfen, ob es sich um ein gc oder oc cache handelt. Aber wie?
+			boolean alreadySaid = false;
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				if(ch.is_Checked == true) {
-					spider.spiderSingle(i);
+					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))
+							|| (ch.mainCache != null &&	ch.mainCache.wayPoint.length() > 1 	&& ch.mainCache.wayPoint.substring(0,2).equalsIgnoreCase("GC")) ) 
+					{
+						spider.spiderSingle(i);
+					} else if (!alreadySaid) {
+						alreadySaid = true;
+						(new MessageBox("Information","Diese Funktion steht gegenwärtig nur für Geocaching.com zur Verfügung", MessageBox.OKB)).exec();
+					}
 				}
 			}
-			Vm.showWait(false);
 			tbp.refreshTable();
+			Vm.showWait(false);
 		}
 		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Center"))){
 			CacheHolder thisCache = (CacheHolder)tbp.cacheDB.get(tbp.getSelectedCache());

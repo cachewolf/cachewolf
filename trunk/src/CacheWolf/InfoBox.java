@@ -39,7 +39,10 @@ public class InfoBox extends Form{
 			this.addNext(mL, CellConstants.STRETCH, CellConstants.FILL);
 			this.addLast(feedback, CellConstants.STRETCH, CellConstants.FILL);
 		}
+		mC.setHotKey(0, IKeys.ESCAPE);
 		this.addNext(mC, CellConstants.STRETCH, CellConstants.FILL);
+		mB.setHotKey(0, IKeys.ACTION);
+		mB.setHotKey(0, IKeys.ENTER);
 		this.addLast(mB, CellConstants.STRETCH, CellConstants.FILL);
 	}
 	
