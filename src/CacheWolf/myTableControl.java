@@ -57,6 +57,7 @@ public class myTableControl extends TableControl{
 			tbp.refreshTable();
 		}
 		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete"))){
+			if ((new MessageBox("Warnung", "Alle mit Häckchen markierten Caches löschen?", MessageBox.YESB | MessageBox.NOB)).execute() != Form.IDYES) return;
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				if(ch.is_Checked == true) {
@@ -98,6 +99,7 @@ public class myTableControl extends TableControl{
 				pref.curCentrePt.set(cp);
 				TablePanel.updateBearingDistance(db, pref);
 				tbp.refreshTable();
+				(new MessageBox("Info", "Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet", MessageBox.OKB)).execute();
 			}
 		}
 		
