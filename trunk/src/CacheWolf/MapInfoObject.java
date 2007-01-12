@@ -31,6 +31,7 @@ public class MapInfoObject{
 	public double transLatX, transLatY, transLonX, transLonY; // this are needed for the inervers calculation from lat/lon to x/y
 	public CWPoint center = new CWPoint();
 	public float sizeKm = 0; // diagonale
+	public float rotationRad; // contains the rotation of the map == north direction in rad
 	public String fileNameWFL = new String();
 	public String fileName = new String();
 	public String mapName = new String();
@@ -120,11 +121,22 @@ public class MapInfoObject{
 	center.set((lowlat + affine[4])/2,(lowlon + affine[5])/2);
 	sizeKm = java.lang.Math.abs((float)center.getDistance(lowlat, lowlon)) *2;
 	
+	//calculate reverse affine
 	double nenner=(-affine[1]*affine[2]+affine[0]*affine[3]);
 	transLatX = affine[3]/nenner; // nenner == 0 cannot happen as long als affine is correct
 	transLonX = -affine[2]/nenner;
 	transLatY = -affine[1]/nenner;
 	transLonY = affine[0]/nenner;
+	
+	// calculate north direction
+	float scaleX = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLonX,2)+java.lang.Math.pow(transLonY,2));
+ //	float scaleY = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLatX,2)+java.lang.Math.pow(transLatY,2));
+	float rotationX2x=(float)transLonX*scaleX;
+	float rotationX2y=(float)transLonY*scaleX;
+	//rotationY2y=-(float)transLatY*scaleY; // lat -> y = -, y -> y = +
+	//rotationY2x=-(float)transLatX*scaleY; // uncomment an make it a field of MapInfoObject if you need translation from x to x rotated
+	rotationRad = (float)java.lang.Math.atan(rotationX2y);
+	if (rotationX2x < 0) rotationRad = (float)java.lang.Math.PI - rotationRad; 
 }
 	
 	

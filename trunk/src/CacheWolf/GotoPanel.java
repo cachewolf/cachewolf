@@ -380,8 +380,8 @@ public class GotoPanel extends CellPanel {
 				lblDist.setText(dist.toString(3,0,0) + " m");
 			}
 
-			compassRose.setDirections((float)bearMov.value,(float)bearWayP.value, (float)sunAzimut.value);
-
+			compassRose.setDirections((float)bearWayP.value, (float)sunAzimut.value, (float)bearMov.value);
+			
 			// Set background to signal quality
 			lblSats.backGround = GREEN;
 		}
@@ -406,6 +406,7 @@ public class GotoPanel extends CellPanel {
 		// In moving map mode
 		if (mmp != null && runMovingMap ) { // neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
 			if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
+				mmp.directionArrows.setDirections(-361 /*(float)bearWayP.value*/, (float)sunAzimut.value, -361 /*(float)bearMov.value*/);
 				mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
 				Vm.debug("ShowLastAddedPoint: voher");
 				mmp.ShowLastAddedPoint(currTrack);
@@ -554,7 +555,9 @@ public class GotoPanel extends CellPanel {
 			//Start moving map
 			if (ev.target == btnMap){
 				runMovingMap = true;
+				boolean runbefore=false;
 				if (mmp == null) mmp = new MovingMap(pref, this, cacheDB); // this also loads the list of maps
+				else runbefore = true;
 				if (serThread == null || !serThread.isAlive() ) {
 					// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
 					mmp.ignoreGps = false;
@@ -562,7 +565,9 @@ public class GotoPanel extends CellPanel {
 					mmp.ignoreGps = true;
 				}
 				if (currTrack != null) mmp.addTrack(currTrack);
+				if (runbefore) mmp.addOverlaySet(); // draw new trackpoints but only do so if OverlaySet needs to be updated, otherwise it is anyway newly created
 				mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
+				// update cache symbols in map
 				if (mainT.tbP.myMod.cacheSelectionChanged) {
 					mainT.tbP.myMod.cacheSelectionChanged = false;
 					mmp.removeAllMapSymbolsButGoto();
@@ -656,7 +661,7 @@ class GotoRose extends AniImage {
 		float angleRad;
 		int x, y, centerX = location.width/2, centerY = location.height/2;
 
-		angleRad = angle * (float)java.lang.Math.PI / 180;
+		angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		x = centerX + new Float(centerX * java.lang.Math.sin(angleRad)).intValue();
 		y = centerY - new Float(centerY * java.lang.Math.cos(angleRad)).intValue();
 		g.setPen(new Pen(col,Pen.SOLID,3));

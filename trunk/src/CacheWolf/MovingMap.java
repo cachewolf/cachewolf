@@ -18,7 +18,8 @@ public class MovingMap extends Form {
 	final static int noGPSData = 2; // red
 	final static int noGPS = 1; // no GPS-Position marker, manually disconnected 
 	final static int ignoreGPS = -1; // ignore even changes in GPS-signal (eg. from lost fix to gotFix) this is wanted when the map is moved manually
-
+	
+	public MapSymbol gotoPos = null;
 	public int GpsStatus;
 	Preferences pref;
 	MovingMapPanel mmp;
@@ -30,6 +31,7 @@ public class MovingMap extends Form {
 	TrackOverlay[] TrackOverlays;
 	Vector tracks;
 	MapInfoObject currentMap;
+	ArrowsOnMap directionArrows = new ArrowsOnMap();
 	AniImage statusImageHaveSignal = new AniImage("position_green.png");
 	AniImage statusImageNoSignal = new AniImage("position_yellow.png");
 	AniImage statusImageNoGps = new AniImage("position_red.png");
@@ -49,6 +51,8 @@ public class MovingMap extends Form {
 	boolean autoSelectMap = true;
 	boolean forceMapLoad = true; // only needed to force updateposition to try to load the best map again after OutOfMemoryError after an repeated click on snap-to-gps
 	CWPoint lastUpatePosition = new CWPoint();
+	boolean mapHidden = false;
+	boolean noMapsAvailable;
 
 	public MovingMap(Preferences pref, GotoPanel gP, Vector cacheDB){
 		this.cacheDB = cacheDB;
@@ -66,6 +70,9 @@ public class MovingMap extends Form {
 		ButtonImageChooseMap.properties = AniImage.AlwaysOnTop;
 		ButtonImageGpsOn.setLocation(pref.myAppWidth-25, 10);
 		ButtonImageGpsOn.properties = AniImage.AlwaysOnTop;
+		directionArrows.properties = AniImage.AlwaysOnTop;
+		directionArrows.setLocation(Global.getPref().myAppWidth/2-directionArrows.getWidth()/2, 10);
+		mmp.addImage(directionArrows);
 		/*		arrowUp.setLocation(pref.myAppWidth/2, 10);
 		arrowDown.setLocation(pref.myAppWidth/2, pref.myAppHeight-20);
 		arrowLeft.setLocation(10, pref.myAppHeight/2+7);
@@ -78,10 +85,11 @@ public class MovingMap extends Form {
 		mmp.addImage(arrowDown);
 		mmp.addImage(arrowLeft);
 		mmp.addImage(arrowRight);
-		 */		mmp.addImage(ButtonImageChooseMap);
-		 mmp.addImage(ButtonImageGpsOn);
-		 posCircle.properties = AniImage.AlwaysOnTop;
-		 loadMaps(Global.getPref().baseDir+"maps/standard/");
+		 */		
+		mmp.addImage(ButtonImageChooseMap);
+		mmp.addImage(ButtonImageGpsOn);
+		posCircle.properties = AniImage.AlwaysOnTop;
+		loadMaps(Global.getPref().baseDir+"maps/standard/");
 	}
 
 	/**
@@ -111,7 +119,10 @@ public class MovingMap extends Form {
 			}catch(IOException ex){ } // TODO etwas genauer auch Fehlermeldung ausgeben? Bei vorhandenen .wfl-Datei mit ungültigen Werten Fehler ausgeben oder wie jetz einfach ignorieren?
 		}
 		if (maps.isEmpty())
+			{
 			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB)).execute();
+			noMapsAvailable = true;
+			} else noMapsAvailable = false;
 		tempMIO = new MapInfoObject(1.0);
 		maps.add(tempMIO);
 		tempMIO = new MapInfoObject(5.0);
@@ -132,7 +143,7 @@ public class MovingMap extends Form {
 	}
 
 	public final FormFrame myExec() {
-		addOverlaySet(); // neccessary to draw points which were added when the MovingMap was not running, so that these pixels are not stored in the not-immediately-drawing-work-around
+		//addOverlaySet(); // neccessary to draw points which were added when the MovingMap was not running, so that these pixels are not stored in the not-immediately-drawing-work-around
 		return exec();
 	}
 	public void addTrack(Track tr) {
@@ -158,7 +169,7 @@ public class MovingMap extends Form {
 	 */
 
 	public void addOverlaySet() {
-		//if (tracks == null) return; // no tracks
+		if (tracks == null) return; // no tracks
 		if (TrackOverlays != null) {
 			for (int i=0; i< TrackOverlays.length; i++) {	destroyOverlay(i);	}
 		}
@@ -177,6 +188,7 @@ public class MovingMap extends Form {
 				i = yi*3+xi;
 				if (TrackOverlays[i]==null) { 
 					TrackOverlays[i]= new TrackOverlay(currentMap.calcLatLon(-upperleft.x+(xi-1)*ww, -upperleft.y+(yi-1)*wh), ww, wh, currentMap); 
+					TrackOverlays[i].properties |= mImage.IsInvisible;
 					TrackOverlays[i].move(0, 0);
 					TrackOverlays[i].tracks = this.tracks;
 					TrackOverlays[i].paintTracks();
@@ -363,7 +375,27 @@ public class MovingMap extends Form {
 		public void resetCenterOfMap() {
 			posCircleX = pref.myAppWidth/2; // maybe this could /should be repleced to windows size
 			posCircleY = pref.myAppHeight/2;
+			posCircle.properties &= ~AniImage.IsInvisible;
 			posCircle.setLocation(posCircleX-posCircle.getWidth()/2, posCircleY-posCircle.getHeight()/2);
+		}
+		
+		public void mapMoved(int diffX, int diffY) {
+			int w = posCircle.getWidth();
+			int h = posCircle.getHeight();
+			int npx = posCircleX-w/2+diffX; 
+			int npy = posCircleY-h/2+diffY;
+			if (npx+w >= 0 && npx <= this.width && npy+h >= 0 && npy < this.height)	
+				{
+				posCircle.properties &= ~AniImage.IsInvisible;
+				posCircle.move(npx, npy);
+				} else {
+					posCircle.properties |= AniImage.IsInvisible;
+					posCircle.move(0,0);
+				}
+			posCircleX = posCircleX+diffX;
+			posCircleY = posCircleY+diffY;
+			updateSymbolPositions();
+			updateOverlayPos();
 		}
 
 		/**
@@ -416,7 +448,7 @@ public class MovingMap extends Form {
 			}
 		}
 
-		public void addSymbol(String name, String filename, double lat, double lon) {
+		public MapSymbol addSymbol(String name, String filename, double lat, double lon) {
 			if (symbols==null) symbols=new Vector();
 			MapSymbol ms = new MapSymbol(name, filename, lat, lon);
 			ms.loadImage();
@@ -424,6 +456,7 @@ public class MovingMap extends Form {
 			ms.pic.setLocation(pOnScreen.x-ms.pic.getWidth()/2, pOnScreen.y-ms.pic.getHeight()/2);
 			symbols.add(ms);
 			mmp.addImage(ms.pic);
+			return ms;
 		}
 		public void addSymbol(String name, AniImage imSymb, double lat, double lon) {
 			if (symbols==null) symbols=new Vector();
@@ -438,15 +471,11 @@ public class MovingMap extends Form {
 
 		public void setGotoPosition(double lat, double lon) {
 			removeMapSymbol("goto");
-			addSymbol("goto", "goto_map.png", lat, lon); 
+			gotoPos=addSymbol("goto", "goto_map.png", lat, lon);
 		}
 
 		public CWPoint getGotoPos(){
-			int symbNr;
-			symbNr = findMapSymbol("goto");
-			if (symbNr == -1) return null;
-			MapSymbol ms = (MapSymbol) symbols.get(symbNr);
-			return new CWPoint(ms.lat, ms.lon);
+			return new CWPoint(gotoPos.lat, gotoPos.lon);
 		}
 
 		public void removeAllMapSymbolsButGoto(){
@@ -553,6 +582,7 @@ public class MovingMap extends Form {
 			lastCompareY = Integer.MAX_VALUE;
 			autoSelectMap = true;
 			forceMapLoad = true;
+			showMap();
 //			updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.latDec); is called from GotoPanel.ticked
 		}
 
@@ -589,7 +619,8 @@ public class MovingMap extends Form {
 				} // give memory free before loading the new map to avoid out of memory error  
 				if (currentMap.fileName.length()>0) mmp.mapImage = new AniImage(currentMap.fileName); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
 				else mmp.mapImage = new AniImage();
-				mmp.mapImage.properties = mmp.mapImage.properties | AniImage.IsMoveable; 
+				mmp.mapImage.properties = mmp.mapImage.properties | AniImage.IsMoveable;
+				if (mapHidden) mmp.mapImage.properties |= AniImage.IsInvisible;
 				mmp.mapImage.move(0,0);
 				mmp.addImage(mmp.mapImage);
 				mmp.images.moveToBack(mmp.mapImage);
@@ -597,6 +628,7 @@ public class MovingMap extends Form {
 				forceMapLoad = true; // forces updateOnlyPosition to redraw
 				updateOnlyPosition(lat, lon, false);
 				forceMapLoad = false;
+				directionArrows.setMap(currentMap);
 				inf.close(0);  // this doesn't work in a ticked-thread in the ewe-vm. That's why i made a new mThread in gotoPanel for ticked
 				Vm.showWait(false);
 				ignoreGps = saveIgnoreStatus;
@@ -638,6 +670,20 @@ public class MovingMap extends Form {
 				ignoreGps = saveIgnoreStatus;
 			}
 		}
+		
+		public void hideMap() {
+			if (mmp != null && mmp.mapImage != null)
+				mmp.mapImage.properties |= AniImage.IsInvisible;
+			mapHidden = true;
+			repaintNow();
+		}
+		
+		public void showMap() {
+			if (mmp != null && mmp.mapImage != null)
+				mmp.mapImage.properties &= ~AniImage.IsInvisible;
+			mapHidden = false;
+			repaintNow();
+		}
 
 
 		public void onEvent(Event ev){
@@ -659,19 +705,18 @@ public class MovingMap extends Form {
 		boolean saveGpsIgnoreStatus;
 		public MovingMapPanel(MovingMap f){
 			this.mm = f;
-			//this.autoMoveToTop = false;
 		}
 		public boolean imageBeginDragged(AniImage which,Point pos) {
-			if (! (which == mapImage || which instanceof TrackOverlay) ) return false;
+			if (!(which == null || which == mapImage || which instanceof TrackOverlay) ) return false;
 			saveGpsIgnoreStatus = mm.ignoreGps; 
 			mm.ignoreGps = true;
-			saveMapLoc = mapImage.getLocation(null);
+			saveMapLoc = pos;
 			return super.imageBeginDragged(mapImage, pos);
 		}
 
 		public boolean imageNotDragged(ImageDragContext dc,Point pos){
 			boolean ret = super.imageNotDragged(dc, pos);
-			mapMoved(mapImage.location.x - saveMapLoc.x, mapImage.location.y - saveMapLoc.y);
+			mapMoved(pos.x - saveMapLoc.x, pos.y - saveMapLoc.y);
 			mm.ignoreGps = saveGpsIgnoreStatus;
 			return ret;
 
@@ -686,15 +731,19 @@ public class MovingMap extends Form {
 		}
 
 		public void mapMoved(int diffX, int diffY){
-			Point p = mm.posCircle.getLocation(null);
-			mm.posCircle.move(p.x+diffX, p.y+diffY);
-			mm.posCircleX = mm.posCircleX+diffX;
-			mm.posCircleY = mm.posCircleY+diffY;
-			mm.updateSymbolPositions();
-			mm.updateOverlayPos();
+			mm.mapMoved(diffX, diffY);
 			this.repaintNow();
-
 		}
+		
+		public void doPaint(Graphics g,Rect area) {
+			super.doPaint(g, area);
+			if (mm.gotoPos != null) {
+			Point dest = mm.getXYinMap(mm.gotoPos.lat, mm.gotoPos.lon);
+			g.setPen(new Pen(Color.MediumBlue, Pen.SOLID, 3));
+			g.drawLine(mm.posCircleX, mm.posCircleY, dest.x, dest.y);
+			}
+		}
+		
 		public void chooseMap() {
 			CWPoint gpspos;
 			if (mm.gotoPanel.gpsPosition.Fix > 0) gpspos = new CWPoint(mm.gotoPanel.gpsPosition.latDec, mm.gotoPanel.gpsPosition.lonDec);
@@ -724,12 +773,16 @@ public class MovingMap extends Form {
 		 *	Method to react to user.
 		 */
 		public void imageClicked(AniImage which, Point pos){
-			if (which == mm.ButtonImageChooseMap){ 
-				mapsMenu = new Menu(new String[]{"Select a map manually", "Change map directory"}, "map choice");
+			if (which == mm.ButtonImageChooseMap){
+				mapsMenu = new Menu(new String[]{"Select a map manually$s", "Change map directory$c"}, "map choice");
+				if (!mm.noMapsAvailable) 
+				{
+					if (mm.mapHidden) mapsMenu.addItem("show map");
+					else mapsMenu.addItem("hide map");
+				}
 				//m.set(Menu., status)
 				mapsMenu.exec(this, new Point(which.location.x, which.location.y), this);
 			}
-			//chooseMap();	
 			if (which == mm.ButtonImageGpsOn) {
 				if (mm.gotoPanel.serThread == null || !mm.gotoPanel.serThread.isAlive()) {
 					mm.gotoPanel.startGps();
@@ -744,7 +797,7 @@ public class MovingMap extends Form {
 		if (which == mm.arrowUp)	{	moveMap(0,+10);	} */
 		}
 		public void onEvent(Event ev){
-			//if (ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this) mapsMenu.close();
+			if (mapsMenu != null && ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this) mapsMenu.close();
 			if (ev instanceof ControlEvent ) { 
 				if (ev.target == mapsMenu && ev.type == MenuEvent.SELECTED ) {
 					if (ev.type == MenuEvent.ABORTED || ev.type == MenuEvent.CANCELLED || ev.type == MenuEvent.FOCUS_OUT) mapsMenu.close();
@@ -766,10 +819,21 @@ public class MovingMap extends Form {
 								mm.forceMapLoad();
 							}
 						}
+						//dont show map
+						if (mapsMenu.getSelectedItem() != null && mapsMenu.getSelectedItem().toString().equalsIgnoreCase("hide map") )
+						{
+							mapsMenu.close();
+							mm.hideMap();
+						}
+						// show map
+						if (mapsMenu.getSelectedItem() != null && mapsMenu.getSelectedItem().toString().equalsIgnoreCase("show map") )
+						{
+							mapsMenu.close();
+							mm.showMap();
+						}
+
 					}
 				}
-
-
 			}
 			super.onEvent(ev);
 		}
@@ -915,6 +979,108 @@ public class MovingMap extends Form {
 		public void loadImage(){
 			pic = new AniImage(filename);
 			pic.properties = AniImage.AlwaysOnTop;
+		}
+	}
+
+	class ArrowsOnMap extends AniImage {
+		float gotoDir = -361;
+		float sunDir = -361;
+		float moveDir = -361;
+		
+		int minY;
+		Graphics draw;
+		private MapInfoObject map=null;
+		public boolean dirsChanged = true;
+		
+		final static Color RED = new Color(255,0,0);
+		final static Color YELLOW = new Color(255,255,0);
+		final static Color GREEN = new Color(0,255,0);
+		final static Color BLUE = new Color(0,255,255);
+		/**
+		 * @param gd goto direction
+		 * @param sd sun direction
+		 * @param md moving direction
+		 */
+		public ArrowsOnMap(){
+			super();
+			newImage();
+		//	setDirections(90, 180, -90);
+		}
+		
+		public void newImage() {
+			setImage(new Image(80,80), Color.White);
+			draw = new Graphics(image);
+		}
+		public void setMap(MapInfoObject m) {
+			map = m;
+		}
+
+		public void setDirections(float gd, float sd, float md ) {
+			if (java.lang.Math.abs(gotoDir - gd) > 1 // to save cpu-usage only update if the is a change of directions of more than 1 degree
+					|| java.lang.Math.abs(sunDir - sd) > 1
+					|| java.lang.Math.abs(moveDir - md) > 1)
+			{
+				dirsChanged = true;
+				gotoDir = gd;
+				sunDir = sd;
+				moveDir = md;
+				refresh();
+			}
+		}
+
+		/**
+		 * draw arrows for the directions of movement and destination waypoint
+		 * @param ctrl the control to paint on
+		 * @param moveDir degrees of movement
+		 * @param destDir degrees of destination waypoint
+		 */
+
+		public void doDraw(Graphics g,int options) {
+			if (map == null) return;
+			if (!dirsChanged) {
+				g.drawImage(image,mask,transparentColor,0,-minY,location.width,location.height);
+				return;
+			}
+			dirsChanged = false;
+			//super.doDraw(g, options);
+			draw.setColor(Color.White);
+			draw.fillRect(0, 0, location.width, location.height);
+			minY = Integer.MAX_VALUE;
+			drawArrows(draw);
+			draw.drawImage(image,mask,Color.DarkBlue,0,0,location.width,location.height); // this trick (note: wrong transparentColor) forces a redraw 
+			g.drawImage(image,mask,transparentColor,0,-minY,location.width,location.height);
+		}
+
+		private void drawArrows(Graphics g){
+			
+			if (g != null) {
+				// draw only valid arrows
+				if (moveDir < 360 && moveDir > -360) drawArrow(g, moveDir, RED);
+				if (gotoDir < 360 && gotoDir > -360) drawArrow(g, gotoDir, BLUE);
+				if (sunDir < 360 && sunDir> -360) drawArrow(g, sunDir, YELLOW);
+				drawArrow(g, 0, Color.DarkBlue); // north direction
+			}
+		}
+
+		/**
+		 * draw single arrow 
+		 * @param g handle for drawing
+		 * @param angle angle of arrow
+		 * @param col color of arrow
+		 */
+		private void drawArrow(Graphics g, float angle, Color col) {
+			float angleRad;
+			int x, y, centerX = location.width/2, centerY = location.height/2;
+
+			angleRad = angle * (float)java.lang.Math.PI / 180 + map.rotationRad;
+			x = centerX + new Float(centerX * java.lang.Math.sin(angleRad)).intValue();
+			y = centerY - new Float(centerY * java.lang.Math.cos(angleRad)).intValue();
+		//	g.setPen(new Pen(Color.Black,Pen.SOLID,7));
+		//	g.drawLine(centerX,centerY,x,y);
+			g.setPen(new Pen(col,Pen.SOLID,3));
+			g.drawLine(centerX,centerY,x,y);
+			if (y < minY) minY = y;
+			if (centerY < minY) minY = centerY;
 		}
 	}
 
