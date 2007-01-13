@@ -8,8 +8,6 @@ import ewe.io.FilenameFilter;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
 import ewe.sys.*;
-import ewe.ui.MessageBox;
-import ewe.ui.SplittablePanel;
 
 /**
  * @author r
@@ -31,26 +29,29 @@ public class MapInfoObject{
 	public double transLatX, transLatY, transLonX, transLonY; // this are needed for the inervers calculation from lat/lon to x/y
 	public CWPoint center = new CWPoint();
 	public float sizeKm = 0; // diagonale
+	public float zoomFactor = 1;
+	public Point shift = new Point (0,0);
+	public CWPoint OrigUpperLeft; // this is only valid after zooming 
 	public float rotationRad; // contains the rotation of the map == north direction in rad
 	public String fileNameWFL = new String();
 	public String fileName = new String();
 	public String mapName = new String();
 	//private Character digSep = new Character(' ');
 	private String digSep = new String();
-/*
- * loads an .wfl file
- * throws FileNotFoundException and IOException (data out of range)
- * @maps Path to .wfl file
- * @thisMap filename of .wfl file without ".wfl"
- * @DigSep "." or ","
- */	
-	
+	/*
+	 * loads an .wfl file
+	 * throws FileNotFoundException and IOException (data out of range)
+	 * @maps Path to .wfl file
+	 * @thisMap filename of .wfl file without ".wfl"
+	 * @DigSep "." or ","
+	 */	
+
 	public MapInfoObject() {
 		digSep = MyLocale.getDigSeparator();
 		//double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
 		//if(testA == 4.5) digSep = ","; else digSep = ".";
 	}
-	
+
 	/*
 	 * constructes an MapInfoObject without an associated map
 	 * but with 1 Pixel = scale meters
@@ -70,7 +71,7 @@ public class MapInfoObject{
 		lowlon = 1; //right
 		doCalculations();
 	}
-	
+
 	/**
 	 * Method to load a .wfl-file
 	 * @throws IOException when there was a problem reading .wfl-file
@@ -109,6 +110,7 @@ public class MapInfoObject{
 		} catch (NullPointerException e) { // in.readline liefert null zurück, wenn keine Daten mehr vorhanden sind
 			throw (new IOException("not enough lines in file "+mapsPath + thisMap + ".wfl"));
 		}
+		OrigUpperLeft = new CWPoint(affine[4], affine[5]);
 		doCalculations();
 	}
 
@@ -116,35 +118,35 @@ public class MapInfoObject{
 	 * calculates center, diagonal size of the map and inverse to affine transformation
 	 * @throws ArithmeticException when affine data is not correct, e.g. it is not possible to inverse affine-transformation
 	 */
-	
+
 	private void doCalculations() throws ArithmeticException {
-	center.set((lowlat + affine[4])/2,(lowlon + affine[5])/2);
-	sizeKm = java.lang.Math.abs((float)center.getDistance(lowlat, lowlon)) *2;
-	
-	//calculate reverse affine
-	double nenner=(-affine[1]*affine[2]+affine[0]*affine[3]);
-	transLatX = affine[3]/nenner; // nenner == 0 cannot happen as long als affine is correct
-	transLonX = -affine[2]/nenner;
-	transLatY = -affine[1]/nenner;
-	transLonY = affine[0]/nenner;
-	
-	// calculate north direction
-	float scaleX = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLonX,2)+java.lang.Math.pow(transLonY,2));
- //	float scaleY = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLatX,2)+java.lang.Math.pow(transLatY,2));
-	float rotationX2x=(float)transLonX*scaleX;
-	float rotationX2y=(float)transLonY*scaleX;
-	//rotationY2y=-(float)transLatY*scaleY; // lat -> y = -, y -> y = +
-	//rotationY2x=-(float)transLatX*scaleY; // uncomment an make it a field of MapInfoObject if you need translation from x to x rotated
-	rotationRad = (float)java.lang.Math.atan(rotationX2y);
-	if (rotationX2x < 0) rotationRad = (float)java.lang.Math.PI - rotationRad; 
-}
-	
-	
+		center.set((lowlat + affine[4])/2,(lowlon + affine[5])/2);
+		sizeKm = java.lang.Math.abs((float)center.getDistance(lowlat, lowlon)) *2;
+
+		//calculate reverse affine
+		double nenner=(-affine[1]*affine[2]+affine[0]*affine[3]);
+		transLatX = affine[3]/nenner; // nenner == 0 cannot happen as long als affine is correct
+		transLonX = -affine[2]/nenner;
+		transLatY = -affine[1]/nenner;
+		transLonY = affine[0]/nenner;
+
+		// calculate north direction
+		float scaleX = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLonX,2)+java.lang.Math.pow(transLonY,2));
+		//	float scaleY = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLatX,2)+java.lang.Math.pow(transLatY,2));
+		float rotationX2x=(float)transLonX*scaleX;
+		float rotationX2y=(float)transLonY*scaleX;
+		//rotationY2y=-(float)transLatY*scaleY; // lat -> y = -, y -> y = +
+		//rotationY2x=-(float)transLatX*scaleY; // uncomment an make it a field of MapInfoObject if you need translation from x to x rotated
+		rotationRad = (float)java.lang.Math.atan(rotationX2y);
+		if (rotationX2x < 0) rotationRad = (float)java.lang.Math.PI - rotationRad; 
+	}
+
+
 	/**
-	*	Method to save a world file (.wfl)
-	* @throws IOException when there was a problem writing .wfl-file
-	* @throws IllegalArgumentException when affine[x] for all x == 0 ("map not calibrated").
-	*/
+	 *	Method to save a world file (.wfl)
+	 * @throws IOException when there was a problem writing .wfl-file
+	 * @throws IllegalArgumentException when affine[x] for all x == 0 ("map not calibrated").
+	 */
 	public void saveWFL(String mapsPath, String mapFileName) throws IOException, IllegalArgumentException {
 		if (affine[0]==0 && affine[1]==0 && affine[2]==0 && affine[3]==0 && 
 				affine[4]==0 && affine[5]==0 ) throw (new IllegalArgumentException("map not calibrated"));
@@ -175,11 +177,39 @@ public class MapInfoObject{
 		Vm.debug("Left: " + affine[5]);
 		Vm.debug("Right: " + lowlon);
 		Vm.debug("Test: " + pos.lonDec);
-		*/
+		 */
 		if(affine[4] >= pos.latDec && pos.latDec >= lowlat && affine[5] <= pos.lonDec && pos.lonDec <= lowlon) isInBound = true;
 		return isInBound;
 	}
-	
+
+	/**
+	 * zoom in / out
+	 * @param zf zf > 1 == zoom in, zoom is relative to last zoom
+	 * @param diffX shift of map in pixels (if the map was cropped while zooming) in the not zoomed image
+	 * @param diffY
+	 */
+	public void zoom(float zf, int diffX, int diffY) {
+
+		// restore original values to calculate corret shift (upperleft)
+		affine[4] = OrigUpperLeft.latDec;
+		affine[5] = OrigUpperLeft.lonDec;
+		affine[0] = affine[0] * zoomFactor; 
+		affine[1] = affine[1] * zoomFactor; 
+		affine[2] = affine[2] * zoomFactor;
+		affine[3] = affine[3] * zoomFactor;
+		CWPoint upperleft = calcLatLon(diffX, diffY);
+		affine[4] = upperleft.latDec;
+		affine[5] = upperleft.lonDec;
+		affine[0] = affine[0] / zf / zoomFactor; 
+		affine[1] = affine[1] / zf / zoomFactor; 
+		affine[2] = affine[2] / zf / zoomFactor; 
+		affine[3] = affine[3] / zf / zoomFactor; 
+		zoomFactor = zf * zoomFactor ;
+		shift.x = diffX;
+		shift.y = diffY;
+		doCalculations(); // TODO lowlat neu berechnen?
+	}
+
 	public boolean inBound(CWGPSPoint pos){
 		boolean isInBound = false;
 		/*
@@ -190,7 +220,7 @@ public class MapInfoObject{
 		Vm.debug("Left: " + affine[5]);
 		Vm.debug("Right: " + lowlon); // lowlon should be left?!
 		Vm.debug("Test: " + pos.lonDec);
-		*/
+		 */
 		if(affine[4] >= pos.latDec && pos.latDec >= lowlat && affine[5] <= pos.lonDec && pos.lonDec <= lowlon) isInBound = true;
 		return isInBound;
 	}
@@ -200,12 +230,12 @@ public class MapInfoObject{
 		return isInBound;
 	}
 	/**
-	* Method to calculate bitmap x,y of the current map using
-	* lat and lon target coordinates. There ist no garanty that
-	* the returned coordinates are inside of the map. They can be negative.
-	* @param lat
-	* @param lon
-	*/
+	 * Method to calculate bitmap x,y of the current map using
+	 * lat and lon target coordinates. There ist no garanty that
+	 * the returned coordinates are inside of the map. They can be negative.
+	 * @param lat
+	 * @param lon
+	 */
 	public Point calcMapXY(double lat, double lon){
 		Point coords = new Point();
 		double b[] = new double[2];
@@ -218,11 +248,18 @@ public class MapInfoObject{
 		//Vm.debug("mapX=mapx2: "+mapx+"="+mapx2+"; mapy=mapy2: "+mapy+"="+mapy2);
 		return coords;
 	}
+
+	/**
+	 * gives back lat/lon from x, y in map
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public CWPoint calcLatLon(int x, int y) {
-		 CWPoint ll = new CWPoint();
-		 ll.latDec = (double)x * affine[0] + (double)y * affine[2] + affine[4];
-		 ll.lonDec = (double)x * affine[1] + (double)y * affine[3] + affine[5];
-		 return ll;
+		CWPoint ll = new CWPoint();
+		ll.latDec = (double)x * affine[0] + (double)y * affine[2] + affine[4];
+		ll.lonDec = (double)x * affine[1] + (double)y * affine[3] + affine[5];
+		return ll;
 	}
 	public CWPoint calcLatLon(Point p) {
 		return calcLatLon(p.x, p.y);
