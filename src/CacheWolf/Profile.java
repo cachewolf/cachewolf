@@ -181,6 +181,18 @@ public class Profile {
 		}
 	}
 	
+	public int getCacheIndex(String wp){
+		int retval = -1;
+		CacheHolder ch;
+		for(int i = 0; i<cacheDB.size();i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			if(ch.wayPoint.equals(wp)){
+				return i;
+			}
+		}
+		return retval;
+	}
+
 	public String toString() {
 		return "Profile: Name="+name+"\nCentre="+centre.toString()+"\ndataDir="+dataDir+"\nlastSyncOC="+
 		     last_sync_opencaching+"\ndistOC="+distOC;

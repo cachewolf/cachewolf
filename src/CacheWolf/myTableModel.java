@@ -332,7 +332,7 @@ public class myTableModel extends TableModel{
 					cacheDB.sort(new MyComparer(colName[cell.x]), sortAsc);
 					updateRows();
 					if(!(a == null)){
-						int rownum = getCacheIndex(ch.wayPoint);
+						int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
 						if(rownum >= 0){
 							tcControl.scrollToVisible(rownum, 0);
 							tcControl.clearSelectedCells(new Vector());
@@ -353,7 +353,7 @@ public class myTableModel extends TableModel{
 					cacheDB.sort(new DistComparer(), sortAsc);
 					updateRows();
 					if(!(a == null)){
-						int rownum = getCacheIndex(ch.wayPoint);
+						int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
 						if(rownum >= 0){
 							tcControl.scrollToVisible(rownum, 0);
 							tcControl.clearSelectedCells(new Vector());
@@ -372,15 +372,4 @@ public class myTableModel extends TableModel{
 		return retval;
 	}
 	
-	private int getCacheIndex(String wp){
-		int retval = -1;
-		CacheHolder ch;
-		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
-			if(ch.wayPoint.equals(wp)){
-				return i;
-			}
-		}
-		return retval;
-	}
 }
