@@ -16,6 +16,7 @@ public class Global {
 	  static public Profile getProfile() {
 		  return profile;
 	  }
-
+      // A bit of a hack to allow access from one panel to another
+	  static public MainTab mainTab;
 }
 
