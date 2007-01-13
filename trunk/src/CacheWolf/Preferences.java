@@ -41,6 +41,7 @@ public class Preferences extends MinML{
 	/** The path to the browser */
 	public String browser = new String();
 	public boolean showDeletedImages=true; /* Used in ImagePanel */
+	public boolean solverIgnoreCase=false;
 		
 	public int myAppHeight = 0;
 	public int myAppWidth = 0;
@@ -363,6 +364,9 @@ public class Preferences extends MinML{
 		if (name.equals("hintlogpanel")) {
 			logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
 		}
+		if (name.equals("solver")) {
+			solverIgnoreCase=Boolean.valueOf(atts.getValue("ignorevariablecase")).booleanValue();
+		}
 	}
 
 	public void characters( char ch[], int start, int length )
@@ -433,6 +437,7 @@ public class Preferences extends MinML{
 			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\"/>\n");
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
 			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\"/>\n");
+			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\"/>\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			// Obsolete data kept for backward compatibility
 			//outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");

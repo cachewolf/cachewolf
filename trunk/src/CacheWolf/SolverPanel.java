@@ -1,5 +1,6 @@
 package CacheWolf;
 
+
 import ewe.ui.*;
 import ewe.io.*;
 import ewe.filechooser.FileChooser;
@@ -21,6 +22,9 @@ public class SolverPanel extends CellPanel{
 	Profile profile;
 	String currFile;
 	CacheHolder currCh;
+	Tokenizer tokenizer = new Tokenizer();
+	Parser parser = new Parser();
+	Vector msgFIFO = new Vector();
 	
 	
 	public SolverPanel (Preferences p, Profile prof){
@@ -34,30 +38,20 @@ public class SolverPanel extends CellPanel{
 		this.addLast(btnSaveAs= new mButton("SaveAs"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 	}
 	
-	public void setCh(CacheHolder ch){
-		currCh = ch;
+	public void setCh(CacheHolder ch) {
+		currCh=ch;
 	}
-	
+
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == mBtSolve){
-				Tokenizer tk = new Tokenizer();
-				Parser myP = new Parser();
-				String src = new String();
-				src = mText.getText();
-				src = src + "\n";
-				if (pref.digSeparator.equals(","))	src = src.replace('.', ',');
-				else src = src.replace(',', '.');
-				tk.setSource(src);
-				tk.TokenIt();
-				myP.setTockenStack(tk.getStack());
-				//Vm.debug("Going inot parsing");
-				myP.parse();
-				Vector msg = new Vector();
-				msg = myP.getMessages();
+				msgFIFO.clear();
+				String src = mText.getText()+"\n";
+				tokenizer.tokenizeSource(src, msgFIFO); // Tokenizer sets message if an error occurred
+				if (msgFIFO.size()==0) parser.parse(tokenizer.TokenStack, msgFIFO);
 				String msgStr = new String();
-				for(int i = 0; i < msg.size(); i++){
-					msgStr = msgStr + msg.get(i) + "\n";
+				for(int i = 0; i < msgFIFO.size(); i++){
+					msgStr = msgStr + "# "+msgFIFO.get(i) + "\n";
 				}
 				src = src +"#----Output----------\n"+ msgStr + "#----------------------";
 				mText.setText(src);

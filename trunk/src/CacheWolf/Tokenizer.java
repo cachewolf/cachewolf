@@ -1,5 +1,6 @@
 package CacheWolf;
 
+
 import ewe.util.*;
 
 /**
@@ -9,152 +10,217 @@ import ewe.util.*;
 */
 public class Tokenizer{
 
-	String mySource = new String();
-	char Look;
-	int SourcePointer = 0;
-	String CurrentStream = new String();
+	/** Normally only a semicolon (;) can be used to separate commands. If this variable is set to true,
+	 * newlines also terminate a command. If a newline is preceded with a backslash (=line continuation character),
+	 * the newline does not terminate the command even if this variable is true.
+	 */
+	public boolean newLineIsSeparator=true;
+	/** instructions to tokenize */
+	String mySource;
+	/** source character */
+	char look;
+	/** pointer to next character to read */
+	int sourcePointer = 0;
+	/** (partial) token */
+	String currentStream;
 	Vector TokenStack = new Vector();
-	int CurrentLine, CurrentPos;
+	/** position of token */
+	int currentLine, currentPos;
 	TokenObj thisToken;
-	
-	public Vector getStack(){
-		/*TokenObj to = new TokenObj();
-		
-		for(int i = 0; i < TokenStack.size(); i++){
-			to = (TokenObj)TokenStack.get(i);
-			//Vm.debug("Tock: " + to.token);
-		}
-		*/
-		return TokenStack;
-	}
+	Vector messageStack;
 	
 	public Tokenizer(){
 	}
 
-	public void setSource(String src){
-		mySource = src;
-		mySource = mySource + "\n";
-		SourcePointer = 0;
-		TokenStack = new Vector();
-		//System.out.println("Source set to: " + mySource);
+    private void err(String str) throws Exception {
+    	messageStack.add("Error on line: " + currentLine + " position: " + currentPos);
+    	messageStack.add(str);
+    	throw new Exception("Error "+str);
+    }
+
+	private boolean isAlpha(char c){
+		return  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".indexOf(c)!=-1;
 	}
 	
-	private boolean IsAlpha(char c){
-		String t = new String();
-		t = t + c;
-		t = t.toUpperCase();
-		if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(t) != -1) return true;
-		else return false;
+	private boolean isDigit(char c){
+		return "0123456789".indexOf(c)!=-1;
 	}
 	
-	private boolean IsDigit(char c){
-		String t = new String();
-		t = t + c;
-		t = t.toUpperCase();
-		if("0123456789.,".indexOf(t) != -1) return true;
-		else return false;
+	private boolean isSymbol(char c){
+		return "!<>(){}*/,;^+-=".indexOf(look)!=-1;
 	}
-	
+
 	private boolean getChar(){
-		Look = mySource.charAt(SourcePointer);
-		SourcePointer++;
-		if(SourcePointer >= mySource.length()) return true; // final reached
-		else return false;
+		if(sourcePointer >= mySource.length()) return false; 
+		look = mySource.charAt(sourcePointer++);
+		currentPos++;
+		return true;
 	}
 	
-	private boolean IsSymbol(char c){
-		boolean retval = false;
-		if(c == '+') retval = true;
-		if(c == '-') retval = true;
-		if(c == '=') retval = true;
-		return retval;
+	private char lookAhead() {
+		if(sourcePointer >= mySource.length())
+			return '\n';
+		else
+			return mySource.charAt(sourcePointer);
 	}
 	
-	private void emit(){
-		//System.out.println(CurrentStream);
+	private void backUp() {
+		sourcePointer--;
+		currentPos--;
+	}
+	
+	/** Create a new token object and remember the place where it started. 
+	 *  String tokens could span several lines, so we need to remember the starting line and position.
+	 */
+	private void startToken() {
 		thisToken = new TokenObj();
-		thisToken.token = CurrentStream;
-		thisToken.line = CurrentLine;
-		thisToken.position = CurrentPos;
+		thisToken.line = currentLine;
+		thisToken.position = currentPos;
+	}
+	
+	/** Add the previously started token to the token stack */
+	private void emitToken(int tt){
+//		ewe.sys.Vm.debug(currentStream);
+		thisToken.token = currentStream;
+		thisToken.tt=tt;
 		TokenStack.add(thisToken);
-		CurrentStream = "";
+		currentStream = "";
 	}
 
 	private void streamAlphas(){
-		
-		while(getChar() == false){
-			CurrentPos++;
-			if(IsAlpha(Look) == false) break;
-			else CurrentStream += Look;
+		startToken();
+		while(getChar()){
+			if(isAlpha(look) || isDigit(look)) 
+				currentStream += look;
+			else 
+				break;
 		} 
-		SourcePointer--;
-		CurrentPos--;
-		Look = ' ';
+		String s=currentStream.toUpperCase();
+		if (s.equals("STOP") || s.equals("ST"))
+			emitToken(TokenObj.TT_STOP);
+		if (s.equals("IF"))
+			emitToken(TokenObj.TT_IF);
+		else if (s.equals("THEN"))
+			emitToken(TokenObj.TT_THEN);
+		else if (s.equals("ENDIF") || s.equals("FI"))
+			{ currentStream="ENDIF"; emitToken(TokenObj.TT_ENDIF); }
+		else
+			emitToken(TokenObj.TT_VARIABLE);
+		// We have read one character too far, so back off
+		backUp();
 	}
 	
 	private void streamDigits(){
-		while(getChar() == false){
-			CurrentPos++;
-			if(IsDigit(Look) == false) break;
-			CurrentStream += Look;
+		boolean foundDecSep=false; // To check that only one decimal point is allowed in a number
+		startToken();
+		while(getChar()){
+			if(isDigit(look) || (look=='.' && !foundDecSep)) {
+				currentStream += look;
+				if (look=='.') foundDecSep=true;
+			} else
+				break;
 		}
-		SourcePointer--;
-		CurrentPos--;
-		Look = ' ';
+		emitToken(TokenObj.TT_NUMBER);
+		// We have read one character too far, so back off
+		backUp();
 	}
 	
-	private void streamSymbols(){
-		while(getChar() == false){
-			CurrentPos++;
-			if(IsSymbol(Look) == false) break;
-			CurrentStream += Look;
-		}
-		SourcePointer--;
-		CurrentPos--;
-		Look = ' ';
-	}
-
-	private void streamString(){
-		while(getChar() == false && Look != '\"'){
-			CurrentPos++;
-			CurrentStream += Look;
-		}
-	}
-	
-	public void TokenIt(){
-		boolean inComment = false;
-		CurrentLine = 1;
-		CurrentPos = 0;
-		while(getChar() == false){
-			CurrentStream += Look;
-			CurrentPos++;
-			if(inComment == false){	
-				if(IsAlpha(Look)) {streamAlphas();emit();}
-				if(IsDigit(Look)) {streamDigits();emit();}
-				if(Look == ')') emit();
-				if(Look == '(') emit();
-				if(Look == '{') emit();
-				if(Look == '}') emit();
-				if(Look == '*') emit();
-				if(Look == '/') emit();
-				if(Look == ';') emit();
-				if(Look == '\"') emit();
-				if(Look == '^') emit();
-				if(Look == '+') {streamSymbols();emit();}
-				if(Look == '-') {streamSymbols();emit();}
-				if(Look == '=') {streamSymbols();emit();}
-				if(Look == ' ') {CurrentStream = "";}
-				if(Look == '\"') {
-					emit();
-					streamString();
-					emit();
-					CurrentStream += Look;
-					emit();
-					Look = ' ';
+	private void streamString() throws Exception {
+		startToken();
+		currentStream="";
+		do {
+			while(getChar() && look != '\"'){
+				currentStream += look;
+				// Need to count newlines inside a string spanning multiple lines so that we don't loose track
+				if (look=='\n') {
+					currentLine++;
+					currentPos=0;
 				}
 			}
-			if(Look == '\n') {CurrentStream = "";CurrentPos = 0; CurrentLine++; inComment = false;}
-			if(Look == '#') {inComment = true;}			
+			if (lookAhead()=='"') 
+				currentStream+="\""; // Two " following each other are replaced by "
+		} while (currentStream.endsWith("\""));
+		if (look!='"') {
+			// Restore start position of string for correct indication of error
+			currentLine=thisToken.line;
+			currentPos=thisToken.position;
+			err("Unterminated string");
 		}
+		emitToken(TokenObj.TT_STRING);
+		
+	}
+	
+	private void streamSymbol() {
+		startToken(); 
+		// Check for == != <= >= <> >< 
+		if (look=='=' || look=='!' || look=='<' || look=='>') {
+			getChar();
+			currentStream+=look;
+			if (currentStream.equals("=="))  { emitToken(TokenObj.TT_EQ); return;}
+			if (currentStream.equals("!=") || currentStream.equals("><") || currentStream.equals("<>")) 
+											{ emitToken(TokenObj.TT_NE); ; return;}
+			if (currentStream.equals("<=")) { emitToken(TokenObj.TT_LE); return; }
+			if (currentStream.equals(">=")) { emitToken(TokenObj.TT_GE); return; }
+			backUp(); // Not a valid comparison symbol, forget the last character
+			currentStream=currentStream.substring(0,1);
+			if (currentStream.equals("=")) emitToken(TokenObj.TT_EQ);
+			else if (currentStream.equals("<")) emitToken(TokenObj.TT_LT);
+			else if (currentStream.equals(">")) emitToken(TokenObj.TT_LT);
+			else emitToken(TokenObj.TT_SYMBOL);
+		} else
+			emitToken(TokenObj.TT_SYMBOL); 		
+	}
+
+	/** Eat up all characters until next newline as we are in a comment */
+	private void eatUpComment() {
+		while (getChar() && look !='\n');
+		currentStream=";"; // Insert a dummy ;
+		startToken(); 
+		emitToken(TokenObj.TT_SYMBOL);
+		currentStream="";
+		currentLine++;
+		currentPos=0;
+	}
+
+	private void formatString() throws Exception {
+		currentStream="";
+		startToken();
+		while (getChar() && look!=':') {
+			currentStream += look;
+			if (look!='.' && look!='0' && look!='#') err("Invalid format character");
+		}
+		emitToken(TokenObj.TT_FORMATSTR);
+	}
+	
+	public void tokenizeSource(String src, Vector msg){
+		mySource = src+"\n";
+		sourcePointer = 0;
+		TokenStack.clear();
+		messageStack=msg;
+		currentLine = 1;
+		currentPos = 0;
+		currentStream="";
+		try {
+			while(getChar()){
+				if (look==' ') continue;
+				currentStream += look;
+				if(isAlpha(look) || look=='$') streamAlphas();
+				else if(isDigit(look)) streamDigits();
+				else if(isSymbol(look)) streamSymbol();
+				else if(look == '\"') streamString();  
+				else if(look == '\n') {
+					if (newLineIsSeparator && !currentStream.equals("\\\n") && !currentStream.equals("_\n")) { 
+						currentStream=";";
+						startToken();
+						emitToken(TokenObj.TT_SYMBOL);
+					}
+					currentStream = ""; currentLine++; currentPos=0; 
+				}
+				else if(look == '#') eatUpComment();	// Ignore characters until EOL
+				else if(look == ':') formatString();
+				else if (newLineIsSeparator && (look=='\\' || look=='_')) ;
+				else err("Invalid character"); 
+			}
+		} catch (Exception e) {}
 	}
 }
