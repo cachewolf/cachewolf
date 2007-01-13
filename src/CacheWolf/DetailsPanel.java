@@ -23,7 +23,7 @@ public class DetailsPanel extends CellPanel{
 	mChoice wayType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead","Reference"},0);
 	mChoice waySize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
 	mComboBox wayStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
-	mButton btCrWp, showBug, showMap, addDateTime, btnGoto, addPicture;
+	mButton btCrWp, showBug, showMap, addDateTime, btnGoto, addPicture, btnBlack;
 	Vector cacheDB;
 	CacheHolder thisCache;
 	CellPanel toolP = new CellPanel();
@@ -33,9 +33,12 @@ public class DetailsPanel extends CellPanel{
 	public boolean dirty_delete = false;
 	public boolean dirty_status = false;
 	boolean newWp = false;
+	public boolean blackStatus = false;
 	MainTab mainT;
 	Preferences pref; // Test
 	Profile profile;
+	mImage mIsBlack;
+	mImage mNoBlack;
 	
 	public DetailsPanel(){
 		//String welcomeMessage = MyLocale.getMsg(1,"how about that?");
@@ -46,15 +49,19 @@ public class DetailsPanel extends CellPanel{
 		mImage mI2 = new mImage("globe_small.gif");
 		mImage mI3 = new mImage("date_time.png");
 		mImage mI4 = new mImage("images.gif");
+		mNoBlack = new mImage("no_black.png");
+		mIsBlack = new mImage("is_black.png");
 		showBug = new mButton((IImage)mI);
 		showMap = new mButton((IImage)mI2);
 		addDateTime = new mButton((IImage)mI3);
 		addPicture = new mButton((IImage)mI4);
+		btnBlack = new mButton((IImage)mNoBlack);
 		toolP.addNext(showBug,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		showBug.modify(Control.Disabled,0);
 		toolP.addNext(showMap,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		toolP.addNext(addDateTime,CellConstants.DONTSTRETCH, CellConstants.WEST);
-		toolP.addLast(addPicture,CellConstants.DONTSTRETCH, CellConstants.WEST);
+		toolP.addNext(addPicture,CellConstants.DONTSTRETCH, CellConstants.WEST);
+		toolP.addLast(btnBlack,CellConstants.DONTSTRETCH, CellConstants.WEST);
 			
 		//showMap.modify(Control.Disabled,0);
 		this.addLast(toolP,CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(3,1));;
@@ -119,6 +126,12 @@ public class DetailsPanel extends CellPanel{
 		wayStatus.setText(ch.CacheStatus);
 		wayNotes.setText(ch.CacheNotes);
 		wayType.setInt(transType(ch.type));
+		if(ch.is_black){
+			btnBlack.image = mIsBlack;
+		} else {
+			btnBlack.image = mNoBlack;
+		}
+		btnBlack.repaintNow();
 		if(ch.has_bug == true) {
 			showBug.modify(Control.Disabled,1);
 		} else {
@@ -321,6 +334,18 @@ public class DetailsPanel extends CellPanel{
 			}
 			if (ev.target == addPicture){
 				thisCache.addUserImage(profile);
+			}
+			if(ev.target == btnBlack){
+				if(thisCache.is_black) {
+					thisCache.is_black = false;
+					btnBlack.image = mNoBlack;
+				}
+				else {
+					thisCache.is_black = true;
+					btnBlack.image = mIsBlack;
+				}
+				blackStatus = thisCache.is_black;
+				btnBlack.repaintNow();
 			}
 			if (ev.target == btCrWp){
 				if(btCrWp.getText().equals(MyLocale.getMsg(312,"Save"))){

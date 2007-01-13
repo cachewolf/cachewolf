@@ -25,7 +25,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTomASC, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTomTomOVL, exportTPL;
-	private MenuItem filtCreate, filtClear, filtInvert, filtSelected;
+	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditProfile;
@@ -104,12 +104,13 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Filter" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterMenuItems=new MenuItem[5];
+		MenuItem[] filterMenuItems=new MenuItem[6];
 		filterMenuItems[0] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")); 
 		filterMenuItems[1] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
 		filterMenuItems[2] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
-		filterMenuItems[3] = new MenuItem("-");
-		filterMenuItems[4] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
+		filterMenuItems[3] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
+		filterMenuItems[4] = new MenuItem("-");
+		filterMenuItems[5] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
 		
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
@@ -262,6 +263,11 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == filtInvert){
 				Filter flt = new Filter();
 				flt.invertFilter(cacheDB);
+				tbp.refreshTable();
+			}
+			if(mev.selectedItem == filtBlack){
+				Filter flt = new Filter();
+				flt.showBlacklist(cacheDB);
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == exportGPS){

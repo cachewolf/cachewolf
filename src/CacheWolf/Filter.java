@@ -203,6 +203,22 @@ public class Filter{
 	}
 	
 	/**
+	 * Filters the cachelist for those caches marked is_black == true.
+	 * Only caches matching are then displayed in the table
+	 * @param cacheDB
+	 */
+	public void showBlacklist(Vector cacheDB){
+		CacheHolder ch;
+		for(int i = 0; i < cacheDB.size(); i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			ch.is_filtered = true;
+			Vm.debug(ch.CacheName + ": " +ch.is_black);
+			if(ch.is_black == true) ch.is_filtered = false; 
+			cacheDB.set(i,ch);
+		}
+	}
+	
+	/**
 	*	Apply the filter. Caches that match a criteria are flagged
 	*	is_filtered = true. The table model is responsible for displaying or
 	*	not displaying a cache that is filtered.

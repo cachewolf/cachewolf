@@ -114,6 +114,7 @@ public class MainTab extends mTabbedPanel {
 					  ch = (CacheHolder)cDB.get(tbP.getSelectedCache());
 					  ch.CacheStatus = detP.wayStatus.getText();
 					  ch.is_found = ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"));
+					  ch.is_black = detP.blackStatus;
 					  ch.wayPoint = detP.wayPoint.getText();
 					  ch.CacheName = detP.wayName.getText();
 					  ch.LatLon = new CWPoint(detP.btnWayLoc.getText(),CWPoint.CW).toString();
