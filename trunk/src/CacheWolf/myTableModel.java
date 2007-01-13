@@ -142,12 +142,12 @@ public class myTableModel extends TableModel{
 		// - filtered caches are moved to the end
 		for (int i=0; i<cacheDB.size(); i++){
 			ch = (CacheHolder) cacheDB.get(i);
-			if (ch.is_filtered) {
+			if (ch.is_filtered || ch.is_black) {
 				filteredDB.add(ch);
 			} else {
 				if (ch.isAddiWpt()){
 					// check if main wpt is filtered
-					if (ch.mainCache.is_filtered) sortDB.add(ch);
+					if(ch.mainCache != null) if (ch.mainCache.is_filtered) sortDB.add(ch);
 				} else {
 					sortDB.add(ch);
 					if (ch.hasAddiWpt()){
@@ -239,7 +239,7 @@ public class myTableModel extends TableModel{
 					CacheHolder ch = (CacheHolder)cacheDB.get(row);
 					//Vm.debug(String.valueOf(row));
 					//Vm.debug(String.valueOf(cols[col]));
-					if(ch.is_filtered == false){
+					if(ch.is_filtered == false && ch.is_black == false){
 						try{
 							if(colName[col].equals(nmCheck)) {
 /* Replaced mCheckBox with two images: One showing the unticked box, one showing the ticked box

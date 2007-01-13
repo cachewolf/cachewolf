@@ -248,8 +248,9 @@ public class CacheWolf{
 			}
 		}
 		Form mainF = new MainForm();
+		Device.preventIdleState(true);
 		mainF.execute();
-		
+		Device.preventIdleState(false);
 		
 		//Form mainF = new MainForm();
 		//mainF.execute();
