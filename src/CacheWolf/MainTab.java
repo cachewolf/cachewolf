@@ -30,6 +30,7 @@ public class MainTab extends mTabbedPanel {
 	MainMenu mnuMain;
 	
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
+		Global.mainTab=this;
 		mnuMain=mainMenu;
 		pref = Global.getPref();
 		profile=Global.getProfile();
