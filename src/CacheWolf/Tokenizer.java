@@ -51,7 +51,10 @@ public class Tokenizer{
 	}
 
 	private boolean getChar(){
-		if(sourcePointer >= mySource.length()) return false; 
+		if(sourcePointer >= mySource.length()) {
+			look='\n';
+			return false; 
+		}
 		look = mySource.charAt(sourcePointer++);
 		currentPos++;
 		return true;
@@ -128,22 +131,23 @@ public class Tokenizer{
 	private void streamString() throws Exception {
 		startToken();
 		currentStream="";
-		do {
-			while(getChar() && look != '\"'){
-				if (look=='\\') {
-					if (!getChar()) break;
-					if (look=='n') currentStream += "\n";
-					else currentStream += look;
-				} else currentStream += look;
-				// Need to count newlines inside a string spanning multiple lines so that we don't loose track
-				if (look=='\n') {
-					currentLine++;
-					currentPos=0;
-				}
+		while(getChar()){ // collect chars until next "
+			if (look=='"') {
+				if (lookAhead()!='"') break;  // " not followed by " => End of string
+				// Two " following each other are replaced by " 
+				currentStream+="\""; 
+				getChar();
+			} else if (look=='\\') {
+				if (!getChar()) break;
+				if (look=='n') currentStream += "\n";
+				else currentStream += look;
+			} else currentStream += look;
+			// Need to count newlines inside a string spanning multiple lines so that we don't loose track
+			if (look=='\n') {
+				currentLine++;
+				currentPos=0;
 			}
-			if (lookAhead()=='"') 
-				currentStream+="\""; // Two " following each other are replaced by "
-		} while (currentStream.endsWith("\""));
+		} // EOT or look=="
 		if (look!='"') {
 			// Restore start position of string for correct indication of error
 			currentLine=thisToken.line;
