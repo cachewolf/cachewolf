@@ -497,8 +497,12 @@ public class MovingMap extends Form {
 		}
 
 		public void setGotoPosition(double lat, double lon) {
-			removeMapSymbol("goto");
+			removeGotoPosition();
 			gotoPos=addSymbol("goto", "goto_map.png", lat, lon);
+		}
+		
+		public void removeGotoPosition() {
+			removeMapSymbol("goto");
 		}
 
 		public CWPoint getGotoPos(){
@@ -724,7 +728,7 @@ public class MovingMap extends Form {
 		 * @param w
 		 * @param h
 		 */
-		public void zoom(Point firstclickpoint, int w, int h) {
+		public void zoomScreenRect(Point firstclickpoint, int w, int h) {
 			Vm.showWait(true);
 			int newImageWidth = this.width * 2; // (maximal) size of the zoomed image 
 			int newImageHeight= this.height * 2;
@@ -748,14 +752,14 @@ public class MovingMap extends Form {
 			int yinunscaledimage = (int) ((firstclickpoint.y - mappos.y + h/2) / currentMap.zoomFactor + currentMap.shift.y - newImageHeight /2);
 			Rect newImageRect = new Rect(xinunscaledimage , yinunscaledimage, newImageWidth, newImageHeight);
 			if (mapImage1to1 != null && mmp.mapImage != null && mapImage1to1.image != null)
-				{
+			{
 				// try to avoid overlapping by shifting
 				if (newImageRect.x < 0) 
 					newImageRect.x = 0; // align left if left overlapping
 				if (newImageRect.y < 0) 
 					newImageRect.y = 0;
- 				if (newImageRect.x + newImageRect.width >= mapImage1to1.getWidth()) 
- 					newImageRect.x = mapImage1to1.getWidth()- newImageWidth; // align right if right overlaping
+				if (newImageRect.x + newImageRect.width >= mapImage1to1.getWidth()) 
+					newImageRect.x = mapImage1to1.getWidth()- newImageWidth; // align right if right overlaping
 				if (newImageRect.y + newImageRect.height >= mapImage1to1.getHeight()) 
 					newImageRect.y = mapImage1to1.getHeight()- newImageWidth;
 				// crop if after shifting still overlapping
@@ -763,42 +767,48 @@ public class MovingMap extends Form {
 					newImageRect.x = 0;
 				if (newImageRect.y < 0) 
 					newImageRect.y = 0;
- 				if (newImageRect.x + newImageRect.width >= mapImage1to1.getWidth()) 
- 					newImageRect.width = mapImage1to1.getWidth() - newImageRect.x;
+				if (newImageRect.x + newImageRect.width >= mapImage1to1.getWidth()) 
+					newImageRect.width = mapImage1to1.getWidth() - newImageRect.x;
 				if (newImageRect.y + newImageRect.height >= mapImage1to1.getHeight()) 
 					newImageRect.height= mapImage1to1.getHeight()- newImageRect.y;
+			}
+			zoomUnscaled(zoomFactor, newImageRect, center);
+		}
 
-				int saveprop = mmp.mapImage.properties;
-				AniImage tmp = null; // = mmp.mapImage;
-				mmp.removeImage(mmp.mapImage);
-				if (mmp.mapImage != mapImage1to1) {
-					mmp.mapImage .free();
-					mmp.mapImage = null;
-				} else tmp = mapImage1to1;
-				Vm.getUsedMemory(true);
-				try {
-					tmp = new AniImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor*currentMap.zoomFactor), (int)(newImageRect.height*zoomFactor*currentMap.zoomFactor), newImageRect, 0));
-					currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
-				} catch (OutOfMemoryError e) {Vm.debug(e.toString());}
-				Vm.getUsedMemory(true);
-				mmp.mapImage = tmp; // use old image in case of OutOfMemoryError
-				mmp.mapImage.properties = saveprop;
-				mmp.addImage(mmp.mapImage);
-				mmp.images.moveToBack(mmp.mapImage);
-				}
+/**
+ * do the actual scaling
+ * @param zoomFactor
+ * @param newImageRect Rect in the 1:1 image that contains the area to be zoomed into
+ * @param center
+ */		
+		public void zoomUnscaled (float zoomFactor, Rect newImageRect, CWPoint center) {
+			int saveprop = mmp.mapImage.properties;
+			AniImage tmp = null; // = mmp.mapImage;
+			mmp.removeImage(mmp.mapImage);
+			if (mmp.mapImage != mapImage1to1) {
+				mmp.mapImage .free();
+				mmp.mapImage = null;
+			} else tmp = mapImage1to1;
+			Vm.getUsedMemory(true);
+			try {
+				tmp = new AniImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor*currentMap.zoomFactor), (int)(newImageRect.height*zoomFactor*currentMap.zoomFactor), newImageRect, 0));
+				currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
+			} catch (OutOfMemoryError e) {(new MessageBox("Error", "Out of memory error", MessageBox.OKB)).execute();}
+			Vm.getUsedMemory(true);
+			mmp.mapImage = tmp; // use old image in case of OutOfMemoryError
+			mmp.mapImage.properties = saveprop;
+			mmp.addImage(mmp.mapImage);
+			mmp.images.moveToBack(mmp.mapImage);
 			if (mapImage1to1 != null && mmp.mapImage != null && mapImage1to1.image != null)
 			{
-				mappos = getMapPositionOnScreen();
+				Point mappos = getMapPositionOnScreen();
 				mmp.mapImage.move(mappos.x,mappos.y);
 			}
-			//updatePosition(center.latDec, center.lonDec);
 			destroyOverlaySet();
 			setCenterOfScreen(center);
 			addOverlaySet();
-			//updateSymbolPositions();
 			this.repaintNow();
 			Vm.showWait(false);
-			//CWPoint test = ScreenXY2LatLon(0, 0);
 		}
 		
 
@@ -885,7 +895,7 @@ public class MovingMap extends Form {
 			if (mm.zoomingMode && ev.type == PenEvent.PEN_UP ) {
 				paintingZoomArea = false;
 				mm.zoomingMode = false;
-				mm.zoom(saveMapLoc, lastZoomWidth, lastZoomHeight);
+				mm.zoomScreenRect(saveMapLoc, lastZoomWidth, lastZoomHeight);
 			}
 			
 			if (mm.zoomingMode && paintingZoomArea && (ev.type == PenEvent.PEN_MOVED_ON || ev.type == PenEvent.PEN_MOVE || ev.type == PenEvent.PEN_DRAG)) {
