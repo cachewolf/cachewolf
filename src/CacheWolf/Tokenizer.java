@@ -98,7 +98,7 @@ public class Tokenizer{
 		String s=currentStream.toUpperCase();
 		if (s.equals("STOP") || s.equals("ST"))
 			emitToken(TokenObj.TT_STOP);
-		if (s.equals("IF"))
+		else if (s.equals("IF"))
 			emitToken(TokenObj.TT_IF);
 		else if (s.equals("THEN"))
 			emitToken(TokenObj.TT_THEN);
@@ -130,7 +130,11 @@ public class Tokenizer{
 		currentStream="";
 		do {
 			while(getChar() && look != '\"'){
-				currentStream += look;
+				if (look=='\\') {
+					if (!getChar()) break;
+					if (look=='n') currentStream += "\n";
+					else currentStream += look;
+				} else currentStream += look;
 				// Need to count newlines inside a string spanning multiple lines so that we don't loose track
 				if (look=='\n') {
 					currentLine++;
