@@ -88,6 +88,7 @@ public class Parser{
 		}
 	}
     fnType[] functions=new fnType[]{ // in alphabetical order
+    	new fnType("abs","abs",2),	
     	new fnType("acos","acos",2),
     	new fnType("asin","asin",2),
     	new fnType("atan","atan",2),
@@ -728,6 +729,7 @@ public class Parser{
 	private void executeFunction(String funcName, int nargs, fnType funcDef) throws Exception {
 		if (!funcDef.nargsValid(nargs)) err("Invalid number of arguments");
 	         if (funcDef.alias.equals("asin")) calcStack.add(new java.lang.Double(java.lang.Math.asin(popCalcStackAsNumber(0))));
+	 	else if (funcDef.alias.equals("abs")) calcStack.add(new java.lang.Double(java.lang.Math.abs(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("acos")) calcStack.add(new java.lang.Double(java.lang.Math.acos(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("atan")) calcStack.add(new java.lang.Double(java.lang.Math.atan(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("cls")) funcCls();
