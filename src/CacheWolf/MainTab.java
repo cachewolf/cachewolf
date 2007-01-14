@@ -87,7 +87,7 @@ public class MainTab extends mTabbedPanel {
 	}
 	
 	public void gotoPoint(String LatLon) {
-		gotoP.setDestination(LatLon);
+		gotoP.setDestinationAndSwitch(LatLon);
 	}
 	
 	public void onEvent(Event ev)

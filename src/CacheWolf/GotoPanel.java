@@ -212,7 +212,7 @@ public class GotoPanel extends CellPanel {
 		CoordsP.addLast(lblPosition = new mLabel(gpsPosition.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		CoordsP.addNext(lblDST = new mLabel(MyLocale.getMsg(1500,"DST:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblDST.backGround = BLUE;
-		CoordsP.addLast(btnGoto = new mButton(toPoint.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		CoordsP.addLast(btnGoto = new mButton(getGotoBtnText()),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 
 		//Rose for bearing
 		compassRose = new GotoRose("rose.png");
@@ -312,18 +312,51 @@ public class GotoPanel extends CellPanel {
 	 */ 
 	public void setDestination(CWPoint dest){
 		toPoint.set(dest);
-		btnGoto.setText(toPoint.toString(currFormat));
-		mainT.select(this);
+		if (!toPoint.isValid()) (new MessageBox("Error", "coordinates are out of range: \n"+"latitude: "+toPoint.latDec+"\n longditue: "+toPoint.lonDec, MessageBox.OKB)).execute();
+		btnGoto.setText(getGotoBtnText());
+		updateDistance();
+	}
+	
+	public void setDestination(String LatLon) {
+		toPoint.set(LatLon);
+		setDestination(toPoint);
 	}
 
 	/**
-	 * set the coords of the destination  
+	 * set the coords of the destination and switch to gotoPanel  
 	 * @param LatLon destination
 	 */ 
-	public void setDestination(String LatLon) {
+	public void setDestinationAndSwitch(String LatLon) {
 		toPoint.set(LatLon,CWPoint.CW);
-		btnGoto.setText(toPoint.toString(currFormat));
+		setDestination(toPoint);
 		mainT.select(this);
+	}
+	
+	/**
+	 * updates distance and bearing
+	 *
+	 */
+	
+	public void updateDistance() {
+		//update distance
+		Double tmp = new Double();
+		if (gpsPosition.isValid() && toPoint.isValid() ) {
+			tmp.set(gpsPosition.getDistance(toPoint));
+			if (tmp.value >= 1){
+				lblDist.setText(MyLocale.formatDouble(tmp,"0.000")+ " km");
+			}
+			else {
+				tmp.set(tmp.value * 1000);
+				lblDist.setText(tmp.toString(3,0,0) + " m");
+			}
+		}
+		else lblDist.setText("--- km");
+		// update goto-bearing
+		tmp.set(gpsPosition.getBearing(toPoint));
+		if (tmp.value <= 360) 
+			lblBearWayP.setText(tmp.toString(0,0,0) + " Grad");
+		else lblBearWayP.setText("---" + " Grad");
+		compassRose.setWaypointDirection((float)tmp.value);
 	}
 
 	/**
@@ -331,8 +364,6 @@ public class GotoPanel extends CellPanel {
 	 */ 
 	public void ticked() {
 		Double bearMov = new Double();
-		Double bearWayP = new Double();
-		Double dist = new Double();
 		Double speed = new Double();
 		Double sunAzimut = new Double();
 		Vm.debug("ticked: voher");
@@ -367,21 +398,8 @@ public class GotoPanel extends CellPanel {
 
 			bearMov.set(gpsPosition.getBear());
 			lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
-			bearWayP.set(gpsPosition.getBearing(toPoint));
-			lblBearWayP.setText(bearWayP.toString(0,0,0) + " Grad");
-
-			dist.set(gpsPosition.getDistance(toPoint));
-
-			if (dist.value >= 1){
-				lblDist.setText(MyLocale.formatDouble(dist,"0.000")+ " km");
-			}
-			else {
-				dist.set(dist.value * 1000);
-				lblDist.setText(dist.toString(3,0,0) + " m");
-			}
-
-			compassRose.setDirections((float)bearWayP.value, (float)sunAzimut.value, (float)bearMov.value);
-			
+			compassRose.setSunMoveDirections((float)sunAzimut.value, (float)bearMov.value);
+			updateDistance();
 			// Set background to signal quality
 			lblSats.backGround = GREEN;
 		}
@@ -522,7 +540,11 @@ public class GotoPanel extends CellPanel {
 		}
 		currTrack = new Track(RED);
 	}
-
+	
+	private String getGotoBtnText() {
+		if (toPoint == null) return "not set";
+		else return toPoint.toString(currFormat);
+	}
 
 	/**
 	 * Eventhandler
@@ -535,7 +557,7 @@ public class GotoPanel extends CellPanel {
 			if (ev.target == chkFormat){
 				currFormat = chkFormat.getSelectedIndex();
 				lblPosition.setText(gpsPosition.toString(currFormat));
-				btnGoto.setText(toPoint.toString(currFormat));
+				btnGoto.setText(getGotoBtnText());
 			}
 
 			// start/stop GPS connection
@@ -561,12 +583,14 @@ public class GotoPanel extends CellPanel {
 				if (serThread == null || !serThread.isAlive() ) {
 					// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
 					mmp.ignoreGps = false;
-					mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
+					if (toPoint.isValid())	mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
+					else mmp.updatePosition(Global.getPref().curCentrePt.latDec, Global.getPref().curCentrePt.lonDec); // if not goto-point defined move map to centere point
 					mmp.ignoreGps = true;
 				}
 				if (currTrack != null) mmp.addTrack(currTrack);
 				if (runbefore) mmp.addOverlaySet(); // draw new trackpoints but only do so if OverlaySet needs to be updated, otherwise it is anyway newly created
-				mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
+				if (toPoint.isValid()) mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);
+				else mmp.removeGotoPosition();
 				// update cache symbols in map
 				if (mainT.tbP.myMod.cacheSelectionChanged) {
 					mainT.tbP.myMod.cacheSelectionChanged = false;
@@ -591,11 +615,10 @@ public class GotoPanel extends CellPanel {
 			// change destination waypoint
 			if (ev.target == btnGoto){
 				CoordsScreen cs = new CoordsScreen();
-				cs.setFields(toPoint, currFormat);
-				if (cs.execute()== CoordsScreen.IDOK){
-					toPoint = cs.getCoords();
-					btnGoto.setText(toPoint.toString(currFormat));
-				}
+				if (toPoint.isValid())	cs.setFields(toPoint, currFormat);
+				else cs.setFields(new CWPoint(0,0), currFormat);
+				if (cs.execute() == CoordsScreen.IDOK)
+					setDestination(cs.getCoords());
 			}
 		}
 		super.onEvent(ev);
@@ -623,8 +646,11 @@ class GotoRose extends AniImage {
 		super(fn);
 	}
 	
-	public void setDirections(float gd, float sd, float md ) {
-		gotoDir = gd;
+	public void setWaypointDirection(float wd) {
+		gotoDir = wd;
+	}
+	
+	public void setSunMoveDirections(float sd, float md ) {
 		sunDir = sd;
 		moveDir = md;
 		refresh();

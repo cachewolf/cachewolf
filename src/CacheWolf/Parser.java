@@ -373,8 +373,7 @@ public class Parser{
 		String coord=popCalcStackAsString();
 		if (!isValidCoord(coord)) err("Invalid coordinate: "+coord);
 		// Don't want to switch to goto panel, just set the values
-		gotoP.toPoint.set(coord);
-		gotoP.btnGoto.setText(gotoP.toPoint.toString(gotoP.currFormat));
+		gotoP.setDestination(coord);
 		if (nargs==2) { // Now set the value of the addi waypoint (it must exist already)
     		int i=Global.getProfile().getCacheIndex(waypointName);
     		if (i<0) err("Goto: Waypoint does not exist: "+waypointName);

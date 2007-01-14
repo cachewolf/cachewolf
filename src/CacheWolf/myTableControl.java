@@ -105,7 +105,7 @@ public class myTableControl extends TableControl{
 		
 		if (selectedItem.toString().equals(MyLocale.getMsg(1010,"Goto"))){
 			ch = (CacheHolder)tbp.cacheDB.get(tbp.getSelectedCache());
-			tbp.myGotoPanel.setDestination((ch.LatLon));
+			tbp.myGotoPanel.setDestinationAndSwitch((ch.LatLon));
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1020,"Open online in Browser"))){
 			ch = (CacheHolder)tbp.cacheDB.get(tbp.getSelectedCache());
