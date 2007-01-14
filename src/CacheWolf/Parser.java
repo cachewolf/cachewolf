@@ -96,7 +96,7 @@ public class Parser{
     	new fnType("clearscreen","cls",1),
     	new fnType("cos","cos",2),
     	new fnType("count","count",4),
-    	new fnType("crosstotal","ct",2),
+    	new fnType("crosstotal","ct",6),
     	new fnType("ct","ct",2),
     	new fnType("encode","encode",8),
     	new fnType("format","format",6),
@@ -108,7 +108,7 @@ public class Parser{
     	new fnType("length","len",2),
     	new fnType("mid","mid",12),
     	new fnType("project","project",8),
-    	new fnType("quersumme","ct",2),
+    	new fnType("quersumme","ct",6),
 //    	new fnType("requiresemicolon","rs",3),
     	new fnType("replace","replace",8),
     	new fnType("reverse","reverse",2),
@@ -313,16 +313,22 @@ public class Parser{
     	}
     }
     
-    private double funcCrossTotal(double a) {
-		// Cross total = Quersumme berechnen
-		String aString = Convert.toString(a); // 
-		// bei 1.8e2 nur 1.8 verwenden 
-		if (aString.toLowerCase().indexOf("e") > 0) aString = aString.substring(0, aString.toLowerCase().indexOf("e"));
-		a=0;
-		for (int i=0; i<aString.length(); i++) {
-		 a += Convert.toDouble(Convert.toString(aString.charAt(i)));	
-		}
-   	    return a;
+    private double funcCrossTotal(int nargs) throws Exception {
+    	int cycles=1;
+		if (nargs==2) cycles=(int)popCalcStackAsNumber(1);
+		double a=java.lang.Math.abs(popCalcStackAsNumber(0));
+		if (cycles<0) cycles=1;
+    	if (cycles>5) cycles=5;
+    	while (a>10 && cycles-->0) {
+	    	// Cross total = Quersumme berechnen
+			String aString = Convert.toString(a); // 
+			// bei 1.8e2 nur 1.8 verwenden 
+			if (aString.toLowerCase().indexOf("e") > 0) aString = aString.substring(0, aString.toLowerCase().indexOf("e"));
+			a=0;
+			for (int i=0; i<aString.length(); i++) {
+			 a += Convert.toDouble(Convert.toString(aString.charAt(i)));	
+			}
+    	}return a;
     }
     
     /**
@@ -743,7 +749,7 @@ public class Parser{
 	    else if (funcDef.alias.equals("cls")) funcCls();
 	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("count")) funcCount();
-	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(nargs)));
 	    else if (funcDef.alias.equals("encode")) calcStack.add(funcEncode());
 	    else if (funcDef.alias.equals("format")) calcStack.add(funcFormat(nargs));
 	    else if (funcDef.alias.equals("goto")) funcGoto(nargs);
