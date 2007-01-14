@@ -266,6 +266,7 @@ public class Parser{
 
 	private fnType getFunctionDefinition(String str) throws Exception {
     	fnType fnd=null;
+    	str=str.toLowerCase();
     	for (int i=functions.length-1; i>=0; i--) {
     		if (functions[i].funcName.startsWith(str)) {
     			if (fnd!=null) err("Ambiguous function name: "+str);
