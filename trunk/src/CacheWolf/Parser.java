@@ -150,7 +150,7 @@ public class Parser{
      * Add an error message to the message stack and raise an Exception.
     */
 	private void err(String str) throws Exception {
-    	messageStack.add("Error on line: " + thisToken.line + " position: " + thisToken.position);
+    	messageStack.add(MyLocale.getMsg(1700,"Error on line: ") + thisToken.line + "  "+MyLocale.getMsg(1701,"position: ") + thisToken.position);
     	messageStack.add(str);
     	throw new Exception("Error "+str);
     }
@@ -186,7 +186,7 @@ public class Parser{
 				result="";
 				symbolTable.put(varName,"");
 			} else
-				err ("Variable not defined: "+varName);
+				err (MyLocale.getMsg(1702,"Variable not defined: ")+varName);
 		}
 		return result;
 	}
@@ -197,7 +197,7 @@ public class Parser{
 			if (Global.getPref().digSeparator.equals(","))	str = str.replace('.', ',');
 			ret=new java.lang.Double(java.lang.Double.parseDouble(str));
 		} catch (NumberFormatException e) {
-			err("Not a valid number: " + str);
+			err(MyLocale.getMsg(1703,"Not a valid number: ") + str);
 		}
 		return ret;
 	}
@@ -233,7 +233,7 @@ public class Parser{
 			thisToken = (TokenObj)tokenStack.get(scanpos);
 			//Vm.debug(thisToken.token);
 			scanpos++;
-		} else err("Unexpected end of source");
+		} else err(MyLocale.getMsg(1704,"Unexpected end of source"));
 	}
 
 	private void getNextTokenOtherThanSemi() throws Exception {
@@ -251,7 +251,7 @@ public class Parser{
 				return;
 			}
 		}
-		err("Missing ENDIF");
+		err(MyLocale.getMsg(1705,"Missing ENDIF"));
 	}
 	private TokenObj lookAheadToken() {
 		return (TokenObj)tokenStack.get(scanpos);
@@ -261,7 +261,7 @@ public class Parser{
 		if(thisToken.token.toUpperCase().equals(str)){
 			return true;
 		} else {
-			err("Expected " + str + "  Found: "+thisToken.token);
+			err(MyLocale.getMsg(1706,"Expected ") + str + "  "+MyLocale.getMsg(1707,"Found: ")+thisToken.token);
 			return false; //Dummy as err does not return
 		}
 	}
@@ -271,11 +271,11 @@ public class Parser{
     	str=str.toLowerCase();
     	for (int i=functions.length-1; i>=0; i--) {
     		if (functions[i].funcName.startsWith(str)) {
-    			if (fnd!=null) err("Ambiguous function name: "+str);
+    			if (fnd!=null) err(MyLocale.getMsg(1708,"Ambiguous function name: ")+str);
     			fnd=functions[i];
     		}
     	}
-    	if (fnd==null) err("Unknown function: "+str);
+    	if (fnd==null) err(MyLocale.getMsg(1709,"Unknown function: ")+str);
     	return fnd;
     }
 
@@ -301,7 +301,7 @@ public class Parser{
     private void funcCount()throws Exception {
        	String s2=popCalcStackAsString();
     	String s1=popCalcStackAsString();
-    	if (s2.length()==0) err("Cannot count empty string");
+    	if (s2.length()==0) err(MyLocale.getMsg(1710,"Cannot count empty string"));
     	if (s2.length()==1) {
     		calcStack.add(new Double(funcCountChar(s1,s2.charAt(0))));
     	} else {
@@ -339,7 +339,7 @@ public class Parser{
     private String funcEncode() throws Exception {
     	String newChars=popCalcStackAsString();
     	String oldChars=popCalcStackAsString();
-    	if (newChars.length()!=oldChars.length()) err("Replacement characters strings must be of equal length");
+    	if (newChars.length()!=oldChars.length()) err(MyLocale.getMsg(1711,"Replacement characters strings must be of equal length"));
     	String s=popCalcStackAsString();
     	String encodedStr="";
     	for (int i=0; i<s.length(); i++) {
@@ -361,14 +361,14 @@ public class Parser{
     	String fmtStr="";
     	if (nargs==2)fmtStr=popCalcStackAsString().toLowerCase();
     	String coord=popCalcStackAsString();
-		if (!isValidCoord(coord)) err("Invalid coordinate: "+coord);
+		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
     	cwPt.set(coord);
     	int fmt=CWPoint.CW;
     	if (fmtStr.equals("dd")) fmt=CWPoint.DD;
     	else if (fmtStr.equals("dmm")) fmt=CWPoint.DMM;
     	else if (fmtStr.equals("dms")) fmt=CWPoint.DMS;
     	else if (fmtStr.equals("utm")) fmt=CWPoint.UTM;
-    	else if (!fmtStr.equals("cw")) err("Invalid coordinate format. Allowed are CW/DD/DMM/DMS/UTM");
+    	else if (!fmtStr.equals("cw")) err(MyLocale.getMsg(1713,"Invalid coordinate format. Allowed are CW/DD/DMM/DMS/UTM"));
     	return cwPt.toString(fmt);
     }
     
@@ -379,12 +379,12 @@ public class Parser{
 		String waypointName=null;
         if (nargs==2) waypointName=popCalcStackAsString();  
 		String coord=popCalcStackAsString();
-		if (!isValidCoord(coord)) err("Invalid coordinate: "+coord);
+		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
 		// Don't want to switch to goto panel, just set the values
 		gotoP.setDestination(coord);
 		if (nargs==2) { // Now set the value of the addi waypoint (it must exist already)
     		int i=Global.getProfile().getCacheIndex(waypointName);
-    		if (i<0) err("Goto: Waypoint does not exist: "+waypointName);
+    		if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
     		cwPt.set(coord);
     		((CacheHolder)Global.getProfile().cacheDB.get(i)).LatLon=cwPt.toString(CWPoint.CW);
     	}
@@ -407,7 +407,7 @@ public class Parser{
     	String s1=popCalcStackAsString();
     	int start=1;
     	if (nargs==3) start=(int) popCalcStackAsNumber(1);
-    	if (start>s1.length()) err("instr: Start position not in string");
+    	if (start>s1.length()) err(MyLocale.getMsg(1715,"instr: Start position not in string"));
     	if(s2.equals("")) {
     		if (s1.equals("")) 
     			return 0;
@@ -422,16 +422,16 @@ public class Parser{
     	if (nargs==2) {
         	double start=popCalcStackAsNumber(0);
     		String s=popCalcStackAsString();
-    		if (!isInteger(start)) err("mid: Integer argument expected");
-    		if (start<1 || start>s.length()) err("mid: Argument out of range");
+    		if (!isInteger(start)) err(MyLocale.getMsg(1716,"mid: Integer argument expected"));
+    		if (start<1 || start>s.length()) err(MyLocale.getMsg(1717,"mid: Argument out of range"));
     		return s.substring((int)start-1);
     	} else {
         	double len=popCalcStackAsNumber(0);
         	double start=popCalcStackAsNumber(0);
     		String s=popCalcStackAsString();
-    		if (!isInteger(start) || !isInteger(len)) err("mid: Integer argument expected");
+    		if (!isInteger(start) || !isInteger(len)) err(MyLocale.getMsg(1716,"mid: Integer argument expected"));
     		int end=(int)(start+len-1);
-    		if (start>s.length() || start<1 || end>s.length()) err("mid: Argument out of range");
+    		if (start>s.length() || start<1 || end>s.length()) err(MyLocale.getMsg(1717,"mid: Argument out of range"));
     		return s.substring((int)start-1,end);
     	}
     }
@@ -439,11 +439,11 @@ public class Parser{
     /** Project a waypoint at some angle and some distance */
     private String funcProject() throws Exception {
     	double distance=popCalcStackAsNumber(0);
-    	if (distance<0) err("Cannot project a negative distance");
+    	if (distance<0) err(MyLocale.getMsg(1718,"Cannot project a negative distance"));
     	double degrees=popCalcStackAsNumber(0);
-    	if (degrees<0 || degrees>360) err("Projection degrees must be in interval [0;360]");
+    	if (degrees<0 || degrees>360) err(MyLocale.getMsg(1719,"Projection degrees must be in interval [0;360]"));
     	String coord=popCalcStackAsString();
-		if (!isValidCoord(coord)) err("Invalid coordinate: "+coord);
+		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
     	cwPt.set(coord);
     	return cwPt.project(degrees,distance/1000.0).toString();
     }
@@ -475,7 +475,7 @@ public class Parser{
     
     private double funcSqrt() throws Exception {
     	double a=popCalcStackAsNumber(0);
-    	if (a<0) err("Cannot calculate square root of a negative number");
+    	if (a<0) err(MyLocale.getMsg(1720,"Cannot calculate square root of a negative number"));
     	return java.lang.Math.sqrt(a);
     }
     
@@ -484,15 +484,15 @@ public class Parser{
     	if (nargs==2) {
         	double start=popCalcStackAsNumber(0);
     		String s=popCalcStackAsString();
-    		if (!isInteger(start)) err("substring: Integer argument expected");
-    		if (start<0 || start>s.length()) err("substring: Argument out of range");
+    		if (!isInteger(start)) err(MyLocale.getMsg(1721,"substring: Integer argument expected"));
+    		if (start<0 || start>s.length()) err(MyLocale.getMsg(1722,"substring: Argument out of range"));
     		return s.substring((int)start);
     	} else {
         	double end=popCalcStackAsNumber(0);
         	double start=popCalcStackAsNumber(0);
     		String s=popCalcStackAsString();
-    		if (!isInteger(start) || !isInteger(end)) err("substring: Integer argument expected");
-    		if (start<0 || start>s.length() || start>end || end>s.length()) err("substring: Argument out of range");
+    		if (!isInteger(start) || !isInteger(end)) err(MyLocale.getMsg(1721,"substring: Integer argument expected"));
+    		if (start<0 || start>s.length() || start>end || end>s.length()) err(MyLocale.getMsg(1722,"substring: Argument out of range"));
     		return s.substring((int)start,(int)end);
     	}
     }
@@ -556,7 +556,7 @@ public class Parser{
 		getToken();
 		parseStringExp();
 		compOp=thisToken.tt;
-		if (compOp<TokenObj.TT_LT || compOp>TokenObj.TT_NE) err("Comparison operator expected");
+		if (compOp<TokenObj.TT_LT || compOp>TokenObj.TT_NE) err(MyLocale.getMsg(1723,"Comparison operator expected"));
 		getToken();
 		parseStringExp();
 		checkNextSymIs("THEN");
@@ -679,7 +679,7 @@ public class Parser{
 				calcStack.add(new java.lang.Double(a*b));
 			else
 				if (b==0.0) 
-					err("Division by 0");
+					err(MyLocale.getMsg(1729,"Division by 0"));
 				else 
 					calcStack.add(new java.lang.Double(a/b));
 		}
@@ -701,7 +701,7 @@ public class Parser{
 		if (thisToken.tt==TokenObj.TT_VARIABLE) {
 			if (isVariable(thisToken.token))
 				calcStack.add(getVariable(thisToken.token));
-			else if (!lookAheadToken().token.equals("(")) err("Variable not set: "+thisToken.token);
+			else if (!lookAheadToken().token.equals("(")) err(MyLocale.getMsg(1724,"Variable not set: ")+thisToken.token);
 			else {// Must be a function definition
 				funcDef=getFunctionDefinition(thisToken.token); // Does not return if function not defined or ambiguous
 				parseFunction(funcDef);
@@ -715,7 +715,7 @@ public class Parser{
 			parseStringExp();
 			checkNextSymIs(")");
 		}
-		else err("Unexpected character(s): "+thisToken.token);
+		else err(MyLocale.getMsg(1725,"Unexpected character(s): ")+thisToken.token);
 		getToken();
 	}
 	
@@ -729,7 +729,7 @@ public class Parser{
 			parseStringExp();
 			nargs=1;
 			while (thisToken.token.equals(",")) {
-				if (nargs==4) err("Too many arguments for function "+funcName);
+				if (nargs==4) err(MyLocale.getMsg(1726,"Too many arguments for function ")+funcName);
 				getToken();
 				parseStringExp(); 
 				nargs++;
@@ -741,7 +741,7 @@ public class Parser{
 	}
 	
 	private void executeFunction(String funcName, int nargs, fnType funcDef) throws Exception {
-		if (!funcDef.nargsValid(nargs)) err("Invalid number of arguments");
+		if (!funcDef.nargsValid(nargs)) err(MyLocale.getMsg(1727,"Invalid number of arguments"));
 	         if (funcDef.alias.equals("asin")) calcStack.add(new java.lang.Double(java.lang.Math.asin(popCalcStackAsNumber(0))));
 	 	else if (funcDef.alias.equals("abs")) calcStack.add(new java.lang.Double(java.lang.Math.abs(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("acos")) calcStack.add(new java.lang.Double(java.lang.Math.acos(popCalcStackAsNumber(0))));
@@ -771,7 +771,7 @@ public class Parser{
 	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("uc")) calcStack.add(popCalcStackAsString().toUpperCase());
 	    else if (funcDef.alias.equals("val")) calcStack.add(new java.lang.Double(funcVal(popCalcStackAsString())));
-	    else err("Function not yet implemented: "+funcName);
+	    else err(MyLocale.getMsg(1728,"Function not yet implemented: ")+funcName);
 	}
 	
 	public void parse(Vector tck, Vector msgStack){

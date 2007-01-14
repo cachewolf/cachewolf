@@ -33,7 +33,7 @@ public class Tokenizer{
 	}
 
     private void err(String str) throws Exception {
-    	messageStack.add("Error on line: " + currentLine + " position: " + currentPos);
+    	messageStack.add(MyLocale.getMsg(1700,"Error on line: ") + currentLine + "  "+MyLocale.getMsg(1701," position: ") + currentPos);
     	messageStack.add(str);
     	throw new Exception("Error "+str);
     }
@@ -152,7 +152,7 @@ public class Tokenizer{
 			// Restore start position of string for correct indication of error
 			currentLine=thisToken.line;
 			currentPos=thisToken.position;
-			err("Unterminated string");
+			err(MyLocale.getMsg(1730,"Unterminated string"));
 		}
 		emitToken(TokenObj.TT_STRING);
 		
@@ -195,7 +195,7 @@ public class Tokenizer{
 		startToken();
 		while (getChar() && look!=':') {
 			currentStream += look;
-			if (look!='.' && look!='0' && look!='#') err("Invalid format character");
+			if (look!='.' && look!='0' && look!='#') err(MyLocale.getMsg(1731,"Invalid format character"));
 		}
 		emitToken(TokenObj.TT_FORMATSTR);
 	}
@@ -227,7 +227,7 @@ public class Tokenizer{
 				else if(look == '#') eatUpComment();	// Ignore characters until EOL
 				else if(look == ':') formatString();
 				else if (newLineIsSeparator && (look=='\\' || look=='_')) ;
-				else err("Invalid character"); 
+				else err(MyLocale.getMsg(1732,"Invalid character")); 
 			}
 		} catch (Exception e) {}
 	}
