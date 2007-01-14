@@ -58,7 +58,7 @@ import java.lang.Double;
 *   - Global variables (starting with $) are remembered across multiple calls to parser
 *   - Global variables are initialised with "", local variables result in error if used before setting value
 *   - IF statement added
-*   - Many new functions (encode,format,goto,len,mid,substring,ucase,lcase,val,sval,reverse,project)
+*   - Many new functions (encode,format,goto,len,mid,count, substring,ucase,lcase,val,sval,replace, reverse,project)
 *   - less typing
 *   	- Function aliases
 *   	- Function names can be flexibly abbreviated, i.e. instead of crosstotal write cr or cross or crosst ...
@@ -76,9 +76,10 @@ import java.lang.Double;
 public class Parser{
 
 	private class fnType { 
-		public String funcName;
-		public String alias;
-		public int nargs;  // bitmap for number of args, i.e. 14 = 1 or 2 or 3 args; 5 = 0 or 2 args
+		public String funcName; 	 // the function name in the user input
+		public String alias;         // the funcName is mapped to this alias
+		public int nargs;            // bitmap for number of args, i.e. 14 = 1 or 2 or 3 args; 5 = 0 or 2 args
+									 // i.e. 1<<nargs ORed together
 		fnType(String funcName, String alias, int nargs) {
 			this.funcName=funcName; this.alias=alias; this.nargs=nargs;
 		}
@@ -91,6 +92,7 @@ public class Parser{
     	new fnType("asin","asin",2),
     	new fnType("atan","atan",2),
     	new fnType("cos","cos",2),
+    	new fnType("count","count",4),
     	new fnType("crosstotal","ct",2),
     	new fnType("ct","ct",2),
     	new fnType("encode","encode",8),
@@ -98,13 +100,14 @@ public class Parser{
     	new fnType("goto","goto",6),
     	new fnType("ic","ic",3),
     	new fnType("ignorecase","ic",3),
+    	new fnType("instr","instr",12),
     	new fnType("lcase","lc",2),
-    	new fnType("len","len",2),
     	new fnType("length","len",2),
     	new fnType("mid","mid",12),
     	new fnType("project","project",8),
     	new fnType("quersumme","ct",2),
 //    	new fnType("requiresemicolon","rs",3),
+    	new fnType("replace","replace",8),
     	new fnType("reverse","reverse",2),
     	new fnType("rot13","rot13",2),
 //    	new fnType("rs","rs",3),
@@ -213,8 +216,7 @@ public class Parser{
 	private String popCalcStackAsString() {
 		String s;
 		if (calcStack.get(calcStack.size()-1) instanceof Double) {
-			s = ((java.lang.Double)calcStack.get(calcStack.size()-1)).toString();
-			if (Global.getPref().digSeparator==",") s.replace(',','.'); // always show numbers with decimal point
+			s = ((java.lang.Double)calcStack.get(calcStack.size()-1)).toString().replace(',','.'); // always show numbers with decimal point;
 			if (s.endsWith(".0")) s=s.substring(0,s.length()-2);
 		} else
 			s = (String)calcStack.get(calcStack.size()-1);
@@ -275,6 +277,30 @@ public class Parser{
 ///////////////////////////////////////////
 //  FUNCTIONS
 ///////////////////////////////////////////
+    
+    private int funcCountChar(String s, char c) {
+    	int count=0;
+    	for (int i=0; i<s.length(); i++)
+    		if (s.charAt(i)==c) count++;
+    	return count;
+    }
+    
+    /** count(string1,string2) 
+     * */
+    private void funcCount()throws Exception {
+       	String s2=popCalcStackAsString();
+    	String s1=popCalcStackAsString();
+    	if (s2.length()==0) err("Cannot count empty string");
+    	if (s2.length()==1) {
+    		calcStack.add(new Double(funcCountChar(s1,s2.charAt(0))));
+    	} else {
+    		String res="";
+    		for(int i=0; i<s2.length(); i++) {
+    			res+=s2.charAt(i)+"="+funcCountChar(s1,s2.charAt(i))+" ";
+    		}
+    		calcStack.add(res);
+    	}
+    }
     
     private double funcCrossTotal(double a) {
 		// Cross total = Quersumme berechnen
@@ -356,6 +382,24 @@ public class Parser{
     	}
     }
     
+    /** VB instr function 
+     * instr([start],string1,string2)
+     * */
+    private int funcInstr(int nargs) throws Exception {
+    	String s2=popCalcStackAsString();
+    	String s1=popCalcStackAsString();
+    	int start=1;
+    	if (nargs==3) start=(int) popCalcStackAsNumber(1);
+    	if (start>s1.length()) err("instr: Start position not in string");
+    	if(s2.equals("")) {
+    		if (s1.equals("")) 
+    			return 0;
+    		else
+    			return 1;
+    	}
+    	return s1.indexOf(s2,start-1)+1;
+    }
+
     private String funcMid(int nargs) throws Exception {
     	if (nargs==2) {
         	double start=popCalcStackAsNumber(0);
@@ -386,6 +430,14 @@ public class Parser{
     	return cwPt.project(degrees,distance/1000.0).toString();
     }
 
+    private String funcReplace() throws Exception {
+    	String replaceWith=popCalcStackAsString();
+    	String whatToReplace=popCalcStackAsString();
+    	String s=popCalcStackAsString();
+        if (whatToReplace.equals("") || replaceWith.equals("")) return s;
+        return STRreplace.replace(s,whatToReplace,replaceWith);
+    }
+    
     private String funcReverse(String s) {
     	String res="";
     	for (int i=s.length()-1; i>=0; i--) res+=s.charAt(i);
@@ -664,15 +716,18 @@ public class Parser{
 	    else if (funcDef.alias.equals("acos")) calcStack.add(new java.lang.Double(java.lang.Math.acos(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("atan")) calcStack.add(new java.lang.Double(java.lang.Math.atan(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("count")) funcCount();
 	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("encode")) calcStack.add(funcEncode());
 	    else if (funcDef.alias.equals("format")) calcStack.add(funcFormat(nargs));
 	    else if (funcDef.alias.equals("goto")) funcGoto(nargs);
 	    else if (funcDef.alias.equals("ic")) funcIgnoreVariableCase(nargs);
+	    else if (funcDef.alias.equals("instr")) calcStack.add(new Double(funcInstr(nargs)));
 	    else if (funcDef.alias.equals("lc")) calcStack.add(popCalcStackAsString().toLowerCase());
 	    else if (funcDef.alias.equals("len")) calcStack.add(new Double(popCalcStackAsString().length()));
 	    else if (funcDef.alias.equals("mid")) calcStack.add(funcMid(nargs));
 	    else if (funcDef.alias.equals("project")) calcStack.add(funcProject());     
+	    else if (funcDef.alias.equals("replace")) calcStack.add(funcReplace());
 	    else if (funcDef.alias.equals("reverse")) calcStack.add(funcReverse(popCalcStackAsString()));
 	    else if (funcDef.alias.equals("rot13")) calcStack.add(Common.rot13(popCalcStackAsString()));
 //	    else if (funcDef.alias.equals("rs")) funcRequireSemicolon(nargs);
