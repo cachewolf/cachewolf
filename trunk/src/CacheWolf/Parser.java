@@ -116,6 +116,7 @@ public class Parser{
 //    	new fnType("rs","rs",3),
     	new fnType("show","show",2),
     	new fnType("sin","sin",2),
+    	new fnType("sqrt","sqrt",2),
     	new fnType("substring","substring",12),
     	new fnType("sval","sval",2),
     	new fnType("tolowercase","lc",2),
@@ -465,6 +466,13 @@ public class Parser{
 	}
 }
 */  
+    
+    private double funcSqrt() throws Exception {
+    	double a=popCalcStackAsNumber(0);
+    	if (a<0) err("Cannot calculate square root of a negative number");
+    	return java.lang.Math.sqrt(a);
+    }
+    
     /** Java-like substring */
     private String funcSubstring(int nargs) throws Exception {
     	if (nargs==2) {
@@ -751,6 +759,7 @@ public class Parser{
 //	    else if (funcDef.alias.equals("rs")) funcRequireSemicolon(nargs);
 	    else if (funcDef.alias.equals("show"));
 	    else if (funcDef.alias.equals("sin")) calcStack.add(new java.lang.Double(java.lang.Math.sin(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("sqrt")) calcStack.add(new java.lang.Double(funcSqrt())); 
 	    else if (funcDef.alias.equals("substring")) calcStack.add(funcSubstring(nargs)); 
 	    else if (funcDef.alias.equals("sval")) calcStack.add(funcSval(popCalcStackAsString()));
 	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(popCalcStackAsNumber(0))));
