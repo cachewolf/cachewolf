@@ -116,9 +116,12 @@ public class TrackOverlay extends AniImage {
 	}
 
 	public void addPixelIfNeccessary(int x, int y, Color f){
-		int ll =(numPixels<50 ? 0 : numPixels-50); // look in the last 50 added Pixels if the same Pixel is already in the list (for performance reasons dont look in the whole list)
-		for (int i=numPixels-1; i>=ll; i--) {
-			if (trackPixels[i].x == x && trackPixels[i].y == y && f.equals(trackPixelsColor[i])) return; 
+		if (trackPixels != null) {
+			int ll =(numPixels<50 ? 0 : numPixels-50); // look in the last 50 added Pixels if the same Pixel is already in the list (for performance reasons dont look in the whole list)
+			for (int i=numPixels-1; i>=ll; i--) {
+				if (trackPixels[i].x == x && trackPixels[i].y == y && f.equals(trackPixelsColor[i])) 
+					{ return; } 
+			}
 		}
 		addPixel(x, y, f);
 	}

@@ -175,16 +175,20 @@ public class MovingMap extends Form {
 	 */
 
 	public void addOverlaySet() {
+		destroyOverlaySet();
 		if (tracks == null) return; // no tracks
+		addMissingOverlays();
+	}
+	
+	public void destroyOverlaySet() {
 		if (TrackOverlays != null) {
 			for (int i=0; i< TrackOverlays.length; i++) {	destroyOverlay(i);	}
 		}
-		addMissingOverlays();
 	}
 
 
 	public void addMissingOverlays() {
-		Point upperleft = getMapXYPosition();
+		Point upperleft = getMapPositionOnScreen();
 		int ww = pref.myAppWidth;
 		int wh = pref.myAppHeight;
 		int i;
@@ -313,10 +317,10 @@ public class MovingMap extends Form {
 	}
 
 	public void updateOverlayOnlyPos() {
-		if (TrackOverlays == null) return;
+		if (TrackOverlays == null || TrackOverlays[4] == null) return;
 		//	Point upperleft = getMapXYPosition();
 		Point posOnScreen;
-		posOnScreen = getXYinMap(TrackOverlays[4].topLeft.latDec, TrackOverlays[4].topLeft.lonDec);
+		posOnScreen = getXYonScreen(TrackOverlays[4].topLeft.latDec, TrackOverlays[4].topLeft.lonDec);
 		Dimension ws = mmp.getSize(null);
 		int ww = ws.width;
 		int wh = ws.height;
@@ -385,6 +389,18 @@ public class MovingMap extends Form {
 			posCircle.setLocation(posCircleX-posCircle.getWidth()/2, posCircleY-posCircle.getHeight()/2);
 		}
 		
+		public void setCenterOfScreen (CWPoint c) {
+			moveScreenXYtoLatLon(new Point (this.width/2, this.height/2), c);
+		}
+		
+		public void moveScreenXYtoLatLon(Point s, CWPoint c) {
+			Point mappos = getMapPositionOnScreen();
+			Point onscreenpos = getXYonScreen(c.latDec, c.lonDec);
+			if (mmp != null && mmp.mapImage != null) mmp.mapImage.move(mappos.x - onscreenpos.x + s.x, mappos.y - onscreenpos.y + s.y);
+			mapMoved(s.x - onscreenpos.x, s.y - onscreenpos.y);
+			
+		}
+		
 		public void mapMoved(int diffX, int diffY) {
 			int w = posCircle.getWidth();
 			int h = posCircle.getHeight();
@@ -410,7 +426,7 @@ public class MovingMap extends Form {
 		 * but also works if mmp == null and is used to move the map to the correct point
 		 * @return
 		 */
-		public Point getMapXYPosition() {
+		public Point getMapPositionOnScreen() {
 			Point mapPos = new Point(); 
 			//if (mmp.mapImage != null) mmp.mapImage.getLocation(mapPos);
 			//else {
@@ -421,16 +437,16 @@ public class MovingMap extends Form {
 			return mapPos;
 		}
 
-		public Point getXYinMap(double lat, double lon){
+		public Point getXYonScreen(double lat, double lon){
 			Point coords = currentMap.calcMapXY(lat, lon);
-			Point mapPos = getMapXYPosition();
+			Point mapPos = getMapPositionOnScreen();
 			//		Vm.debug("getXYinMap, posCiLat: "+posCircleLat+"poscLOn: "+ posCircleLon+"gotoLat: "+ lat + "gotoLon: "+ lon+" mapPosX: "+mapPos.x+"mapposY"+mapPos.y);
 			return new Point(coords.x + mapPos.x, coords.y + mapPos.y);
 		}
 		
 		public CWPoint ScreenXY2LatLon (int x, int y){
-			Point mapPos = getMapXYPosition();
-			return currentMap.calcLatLon(x-mapPos.x, y-mapPos.y);
+			Point mapPos = getMapPositionOnScreen();
+			return currentMap.calcLatLon(x - mapPos.x, y - mapPos.y);
 		}
 		
 		public void updateSymbolPositions() {
@@ -443,7 +459,7 @@ public class MovingMap extends Form {
 			int w, h;
 			for (int i=symbols.size()-1; i>=0; i--) {
 				symb = (MapSymbol)symbols.get(i);
-				pOnScreen = getXYinMap(symb.lat, symb.lon);
+				pOnScreen = getXYonScreen(symb.lat, symb.lon);
 				w=symb.pic.getWidth();
 				h=symb.pic.getHeight();
 				if (pOnScreen.x+w >= 0 && pOnScreen.x <= ww && pOnScreen.y+h >= 0 &&  pOnScreen.y <= wh) 
@@ -463,7 +479,7 @@ public class MovingMap extends Form {
 			if (symbols==null) symbols=new Vector();
 			MapSymbol ms = new MapSymbol(name, filename, lat, lon);
 			ms.loadImage();
-			Point pOnScreen=getXYinMap(lat, lon);
+			Point pOnScreen=getXYonScreen(lat, lon);
 			ms.pic.setLocation(pOnScreen.x-ms.pic.getWidth()/2, pOnScreen.y-ms.pic.getHeight()/2);
 			symbols.add(ms);
 			mmp.addImage(ms.pic);
@@ -474,7 +490,7 @@ public class MovingMap extends Form {
 			MapSymbol ms = new MapSymbol(name, " ", lat, lon);
 			ms.pic = imSymb;
 			ms.pic.properties = AniImage.AlwaysOnTop;
-			Point pOnScreen=getXYinMap(lat, lon);
+			Point pOnScreen=getXYonScreen(lat, lon);
 			ms.pic.setLocation(pOnScreen.x-ms.pic.getWidth()/2, pOnScreen.y-ms.pic.getHeight()/2);
 			symbols.add(ms);
 			mmp.addImage(ms.pic);
@@ -522,11 +538,11 @@ public class MovingMap extends Form {
 		 */
 		public void updateOnlyPosition(double lat, double lon, boolean updateOverlay){
 			Point mapPos = new Point(0,0);
-			Point oldMapPos = getMapXYPosition();
+			Point oldMapPos = getMapPositionOnScreen();
 			if (lat != -361.0 || lon != -361.0) {
 				posCircleLat = lat;
 				posCircleLon = lon;
-				mapPos = getMapXYPosition();
+				mapPos = getMapPositionOnScreen();
 			}
 			//Vm.debug("mapx = " + mapx);
 			//Vm.debug("mapy = " + mapy);
@@ -548,7 +564,7 @@ public class MovingMap extends Form {
 			if(!ignoreGps || forceMapLoad){
 				updateOnlyPosition(lat, lon, true);
 				if (autoSelectMap || forceMapLoad) {
-					Point mapPos = getMapXYPosition();
+					Point mapPos = getMapPositionOnScreen();
 					if (forceMapLoad || (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width) 
 							|| 	mmp.mapImage == null )) 	{
 						//Vm.debug("Screen not completly covered by map");
@@ -710,35 +726,58 @@ public class MovingMap extends Form {
 		 */
 		public void zoom(Point firstclickpoint, int w, int h) {
 			Vm.showWait(true);
-			int newImageWidth = 1000;
-			int newImageHeight= 1000;
+			int newImageWidth = this.width * 2; // (maximal) size of the zoomed image 
+			int newImageHeight= this.height * 2;
 			CWPoint center = ScreenXY2LatLon(firstclickpoint.x + w/2, firstclickpoint.y+h/2);
 			float zoomFactor;
 			if (w > 0)  zoomFactor = (float)this.width / (float)w; // zoom in
-			else		zoomFactor = java.lang.Math.abs((float)w / (float)this.width);
-			
-			// calculate rect in unzoomed image in a wya that the center of the new image is the center of selected area 
+			else {
+				w = java.lang.Math.abs(w);
+				firstclickpoint.x = firstclickpoint.x - w; // make firstclickedpoint the upper left corner
+				zoomFactor = (float)w / (float)this.width;
+			}
+			if (h < 0) {
+				h = java.lang.Math.abs(h);
+				firstclickpoint.y = firstclickpoint.y - h;
+			}
+			// calculate rect in unzoomed image in a way that the center of the new image is the center of selected area but give priority to the prefered image size of the scaled image
 			newImageHeight = (int) (newImageHeight / zoomFactor / currentMap.zoomFactor);
 			newImageWidth = (int) (newImageWidth / zoomFactor / currentMap.zoomFactor);
-			Point mappos = getMapXYPosition();
-			int xinunscaledimage = (int) ((firstclickpoint.x - mappos.x) / currentMap.zoomFactor + currentMap.shift.x - newImageWidth/2);
-			int yinunscaledimage = (int) ((firstclickpoint.y - mappos.y) / currentMap.zoomFactor + currentMap.shift.y - newImageHeight/2);
+			Point mappos = getMapPositionOnScreen();
+			int xinunscaledimage = (int) ((firstclickpoint.x - mappos.x + w/2) / currentMap.zoomFactor + currentMap.shift.x - newImageWidth /2);
+			int yinunscaledimage = (int) ((firstclickpoint.y - mappos.y + h/2) / currentMap.zoomFactor + currentMap.shift.y - newImageHeight /2);
 			Rect newImageRect = new Rect(xinunscaledimage , yinunscaledimage, newImageWidth, newImageHeight);
 			if (mapImage1to1 != null && mmp.mapImage != null && mapImage1to1.image != null)
 				{
-				if (newImageRect.x < 0) newImageRect.x = 0;
-				if (newImageRect.y < 0) newImageRect.y = 0;
- 				if (newImageRect.x + newImageRect.width >= mapImage1to1.getWidth()) newImageRect.width = mapImage1to1.getWidth()-1;
-				if (newImageRect.y + newImageRect.height >= mapImage1to1.getHeight()) newImageRect.height= mapImage1to1.getHeight()-1;
-				if (newImageRect.x + newImageRect.width >= mapImage1to1.getWidth()) newImageRect.x = 0;
-				if (newImageRect.y + newImageRect.height >= mapImage1to1.getHeight()) newImageRect.y = 0;
+				// try to avoid overlapping by shifting
+				if (newImageRect.x < 0) 
+					newImageRect.x = 0; // align left if left overlapping
+				if (newImageRect.y < 0) 
+					newImageRect.y = 0;
+ 				if (newImageRect.x + newImageRect.width >= mapImage1to1.getWidth()) 
+ 					newImageRect.x = mapImage1to1.getWidth()- newImageWidth; // align right if right overlaping
+				if (newImageRect.y + newImageRect.height >= mapImage1to1.getHeight()) 
+					newImageRect.y = mapImage1to1.getHeight()- newImageWidth;
+				// crop if after shifting still overlapping
+				if (newImageRect.x < 0) 
+					newImageRect.x = 0;
+				if (newImageRect.y < 0) 
+					newImageRect.y = 0;
+ 				if (newImageRect.x + newImageRect.width >= mapImage1to1.getWidth()) 
+ 					newImageRect.width = mapImage1to1.getWidth() - newImageRect.x;
+				if (newImageRect.y + newImageRect.height >= mapImage1to1.getHeight()) 
+					newImageRect.height= mapImage1to1.getHeight()- newImageRect.y;
+
 				int saveprop = mmp.mapImage.properties;
-				AniImage tmp = mmp.mapImage;
+				AniImage tmp = null; // = mmp.mapImage;
 				mmp.removeImage(mmp.mapImage);
+				if (mmp.mapImage != mapImage1to1) {
+					mmp.mapImage .free();
+					mmp.mapImage = null;
+				} else tmp = mapImage1to1;
+				Vm.getUsedMemory(true);
 				try {
-					Vm.getUsedMemory(true);
 					tmp = new AniImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor*currentMap.zoomFactor), (int)(newImageRect.height*zoomFactor*currentMap.zoomFactor), newImageRect, 0));
-					mmp.mapImage.free();
 					currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
 				} catch (OutOfMemoryError e) {Vm.debug(e.toString());}
 				Vm.getUsedMemory(true);
@@ -749,12 +788,14 @@ public class MovingMap extends Form {
 				}
 			if (mapImage1to1 != null && mmp.mapImage != null && mapImage1to1.image != null)
 			{
-				mappos = getMapXYPosition();
+				mappos = getMapPositionOnScreen();
 				mmp.mapImage.move(mappos.x,mappos.y);
 			}
 			//updatePosition(center.latDec, center.lonDec);
+			destroyOverlaySet();
+			setCenterOfScreen(center);
 			addOverlaySet();
-			updateSymbolPositions();
+			//updateSymbolPositions();
 			this.repaintNow();
 			Vm.showWait(false);
 			//CWPoint test = ScreenXY2LatLon(0, 0);
@@ -884,7 +925,7 @@ public class MovingMap extends Form {
 		public void doPaint(Graphics g,Rect area) {
 			super.doPaint(g, area);
 			if (mm.gotoPos != null) {
-			Point dest = mm.getXYinMap(mm.gotoPos.lat, mm.gotoPos.lon);
+			Point dest = mm.getXYonScreen(mm.gotoPos.lat, mm.gotoPos.lon);
 			g.setPen(new Pen(Color.MediumBlue, Pen.SOLID, 3));
 			g.drawLine(mm.posCircleX, mm.posCircleY, dest.x, dest.y);
 			}
