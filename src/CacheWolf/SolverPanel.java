@@ -18,6 +18,7 @@ public class SolverPanel extends CellPanel{
 	mButton mBtSolve;
 	mButton btnLoad, btnSave, btnSaveAs;
 	mTextPad mText;
+	OutputPanel mOutput;
 	Preferences pref;
 	Profile profile;
 	String currFile;
@@ -25,17 +26,49 @@ public class SolverPanel extends CellPanel{
 	Tokenizer tokenizer = new Tokenizer();
 	Parser parser = new Parser();
 	Vector msgFIFO = new Vector();
+	Menu mnuContext;
+	private class OutputPanel extends mTextPad {
+		MenuItem mnuClr;
+		OutputPanel() {
+			this.modify(Control.NotEditable,0);
+			//this.modifiers=this.modifiers|WantHoldDown; 
+			setMenu(mnuContext=getClipboardMenu(new Menu(new MenuItem[]{ mnuClr=new MenuItem("Clear output") },"")));
+		} 
+		public void penRightReleased(Point p){
+			setMenu(mnuContext);
+			doShowMenu(p); // direct call (not through doMenu) is neccesary because it will exclude the whole table
+		}
+		public void penHeld(Point p){
+			setMenu(mnuContext);
+			doShowMenu(p);
+		}
+		public void popupMenuEvent(Object selectedItem){
+			if (selectedItem==mnuClr) 
+				this.setText("");
+			else 
+				super.popupMenuEvent(selectedItem);
+		}
+	}
 	
+	CellPanel programPanel, outputPanel;
 	
 	public SolverPanel (Preferences p, Profile prof){
 		pref = p;
 		profile = prof;
-		ScrollBarPanel sbp = new ScrollBarPanel(mText = new mTextPad());
-		this.addLast(sbp);
-		this.addNext(mBtSolve= new mButton("Solve!"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		this.addNext(btnLoad= new mButton("Load"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		this.addNext(btnSave= new mButton("Save"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		this.addLast(btnSaveAs= new mButton("SaveAs"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
+
+		programPanel = split.getNextPanel();
+		outputPanel = split.getNextPanel();
+		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
+
+		programPanel.addLast(new ScrollBarPanel(mText = new mTextPad()));
+		programPanel.addNext(mBtSolve= new mButton("Solve!"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		programPanel.addNext(btnLoad= new mButton("Load"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		programPanel.addNext(btnSave= new mButton("Save"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		programPanel.addLast(btnSaveAs= new mButton("SaveAs"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		outputPanel.addLast(new ScrollBarPanel(mOutput = new OutputPanel()));
+
+		this.addLast(split);
 	}
 	
 	public void setCh(CacheHolder ch) {
@@ -46,15 +79,13 @@ public class SolverPanel extends CellPanel{
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == mBtSolve){
 				msgFIFO.clear();
-				String src = mText.getText()+"\n";
-				tokenizer.tokenizeSource(src, msgFIFO); // Tokenizer sets message if an error occurred
+				tokenizer.tokenizeSource(mText.getText(), msgFIFO); // Tokenizer sets message if an error occurred
 				if (msgFIFO.size()==0) parser.parse(tokenizer.TokenStack, msgFIFO);
-				String msgStr = new String();
+				String msgStr = "";
 				for(int i = 0; i < msgFIFO.size(); i++){
-					msgStr = msgStr + "# "+msgFIFO.get(i) + "\n";
+					msgStr = msgStr + msgFIFO.get(i) + "\n";
 				}
-				src = src +"#----Output----------\n"+ msgStr + "#----------------------";
-				mText.setText(src);
+				mOutput.appendText(msgStr,true);
 			}
 			if(ev.target == btnLoad){
 				FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);

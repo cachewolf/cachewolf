@@ -91,6 +91,8 @@ public class Parser{
     	new fnType("acos","acos",2),
     	new fnType("asin","asin",2),
     	new fnType("atan","atan",2),
+    	new fnType("cls","cls",1),
+    	new fnType("clearscreen","cls",1),
     	new fnType("cos","cos",2),
     	new fnType("count","count",4),
     	new fnType("crosstotal","ct",2),
@@ -278,7 +280,13 @@ public class Parser{
 //  FUNCTIONS
 ///////////////////////////////////////////
     
-    private int funcCountChar(String s, char c) {
+	/** Clear Screen */
+	private void funcCls() {
+		// OutputPanel is private, so need to cast to base class
+		((ewe.ui.mTextPad) Global.mainTab.solverP.mOutput).setText("");
+	}
+	
+	private int funcCountChar(String s, char c) {
     	int count=0;
     	for (int i=0; i<s.length(); i++)
     		if (s.charAt(i)==c) count++;
@@ -374,6 +382,7 @@ public class Parser{
     	}
     }
     
+    /** Display or change the case sensitivity of variable names */
     private void funcIgnoreVariableCase(int nargs) throws Exception {
     	if (nargs==0) 
     		calcStack.add(""+Global.getPref().solverIgnoreCase);
@@ -400,6 +409,7 @@ public class Parser{
     	return s1.indexOf(s2,start-1)+1;
     }
 
+    /** MID function as in Basic */
     private String funcMid(int nargs) throws Exception {
     	if (nargs==2) {
         	double start=popCalcStackAsNumber(0);
@@ -430,6 +440,7 @@ public class Parser{
     	return cwPt.project(degrees,distance/1000.0).toString();
     }
 
+    /** Replace all occurrences of a string with another string */
     private String funcReplace() throws Exception {
     	String replaceWith=popCalcStackAsString();
     	String whatToReplace=popCalcStackAsString();
@@ -438,6 +449,7 @@ public class Parser{
         return STRreplace.replace(s,whatToReplace,replaceWith);
     }
     
+    /** Reverse a string */
     private String funcReverse(String s) {
     	String res="";
     	for (int i=s.length()-1; i>=0; i--) res+=s.charAt(i);
@@ -451,7 +463,8 @@ public class Parser{
 		Global.getPref().solverRequireSemicolon=(popCalcStackAsNumber(0)!=0)?true:false;
 	}
 }
-*/    
+*/  
+    /** Java-like substring */
     private String funcSubstring(int nargs) throws Exception {
     	if (nargs==2) {
         	double start=popCalcStackAsNumber(0);
@@ -469,6 +482,7 @@ public class Parser{
     	}
     }
     
+    /** Replace each character by its number A=1, B=2 etc. and put result into a string */
     private String funcSval(String s) {
        	s=s.toLowerCase();
     	String res="";
@@ -480,6 +494,7 @@ public class Parser{
     	return res;
     }
     
+    /** Replace each character by its number A=1, B=2 etc. and sum them */
     private double funcVal(String s) {
     	s=s.toLowerCase();
     	int sum=0;
@@ -715,6 +730,7 @@ public class Parser{
 	         if (funcDef.alias.equals("asin")) calcStack.add(new java.lang.Double(java.lang.Math.asin(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("acos")) calcStack.add(new java.lang.Double(java.lang.Math.acos(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("atan")) calcStack.add(new java.lang.Double(java.lang.Math.atan(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("cls")) funcCls();
 	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("count")) funcCount();
 	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(popCalcStackAsNumber(0))));
