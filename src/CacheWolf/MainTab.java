@@ -122,7 +122,7 @@ public class MainTab extends mTabbedPanel {
 					  ch.DateHidden = detP.wayHidden.getText();
 					  ch.CacheOwner = detP.wayOwner.getText();
 					  if(pref.myAlias.equals(ch.CacheOwner)) ch.is_owned = true;
-					  ch.CacheNotes = detP.wayNotes.getText();
+					  
 					  ch.type = detP.transSelect(detP.wayType.getInt());
 					  // set status also on addi wpts
 					  if (ch.hasAddiWpt()){
