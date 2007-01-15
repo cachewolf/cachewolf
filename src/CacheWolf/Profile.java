@@ -34,6 +34,10 @@ public class Profile {
 	/** Distance for opencaching caches */
 	public String distOC = new String();
 	
+	public String filterType = new String("11111111110");
+	public String filterRose = new String("1111111111111111");
+	//filter settings for archived ... owner (section) in filterscreen
+	public String filterVar = new String("0000");
 	//TODO Add the current filter settings here so that they are restored when the profile is reloaded
 	//TODO Add other settings, such as max. number of logs to spider
 	//TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
@@ -166,6 +170,8 @@ public class Profile {
 					last_sync_opencaching=text.substring(start,text.indexOf("\"",start));
 					start=text.indexOf("dist = \"")+8;
 					distOC=text.substring(start,text.indexOf("\"",start));
+				} else if (text.indexOf("<FILTER")>=0){
+//					 Bilbowolf: Pattern for storing filter <FILTER type="01001101" rose = "010010101" var = "0101" dist = "<12" diff = ">13" terr = "<1"/>
 				}
 			}
 			in.close();
