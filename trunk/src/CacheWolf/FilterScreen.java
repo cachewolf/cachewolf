@@ -60,28 +60,43 @@ public class FilterScreen extends Form{
 		content.addLast(foundIn = new mInput(),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		content.addNext(archivedChk = new mCheckBox((String)lr.get(710,"Archived")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		archivedChk.state = (Global.getProfile().filterVar.charAt(0) == '1' ? true : false);
 		content.addLast(notAvailableChk = new mCheckBox((String)lr.get(711,"Not available")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		notAvailableChk.state = (Global.getProfile().filterVar.charAt(1) == '1' ? true : false);
 		
 		content.addNext(foundChk = new mCheckBox((String)lr.get(703,"Found")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		foundChk.state = (Global.getProfile().filterVar.charAt(2) == '1' ? true : false);
 		content.addLast(ownedChk = new mCheckBox((String)lr.get(707,"Owned")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ownedChk.state = (Global.getProfile().filterVar.charAt(3) == '1' ? true : false);
 		
 		CellPanel ctype = new CellPanel();
 		
 		ctype.addLast(new mLabel("__________"));
 		ctype.addNext(tradChk = new mCheckBox("Traditonal"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		tradChk.state = (Global.getProfile().filterType.charAt(0) == '1' ? true : false);
 		ctype.addNext(multiChk = new mCheckBox("Multi"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		multiChk.state = (Global.getProfile().filterType.charAt(1) == '1' ? true : false);
 		ctype.addLast(virtualChk = new mCheckBox("Virtual"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		virtualChk.state = (Global.getProfile().filterType.charAt(2) == '1' ? true : false);
 		
 		ctype.addNext(letterChk = new mCheckBox("Letterbox"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		letterChk.state = (Global.getProfile().filterType.charAt(3) == '1' ? true : false);
 		ctype.addNext(eventChk = new mCheckBox("Event"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		eventChk.state = (Global.getProfile().filterType.charAt(4) == '1' ? true : false);
 		ctype.addLast(webcamChk = new mCheckBox("Webcam"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		webcamChk.state = (Global.getProfile().filterType.charAt(5) == '1' ? true : false);
 		
 		ctype.addNext(mysteryChk = new mCheckBox("Mystery"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		mysteryChk.state = (Global.getProfile().filterType.charAt(6) == '1' ? true : false);
 		ctype.addNext(earthChk = new mCheckBox("Earth"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		earthChk.state = (Global.getProfile().filterType.charAt(7) == '1' ? true : false);
 		ctype.addLast(loclessChk = new mCheckBox("Locationless"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		loclessChk.state = (Global.getProfile().filterType.charAt(8) == '1' ? true : false);
 		
 		ctype.addNext(megaChk = new mCheckBox("Mega-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		megaChk.state = (Global.getProfile().filterType.charAt(9) == '1' ? true : false);
 		ctype.addLast(addiWptChk = new mCheckBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		addiWptChk.state = (Global.getProfile().filterType.charAt(10) == '1' ? true : false);
 		ctype.addLast(new mLabel("__________"));
 		content.addLast(ctype, CellConstants.STRETCH,CellConstants.FILL);
 		
@@ -90,27 +105,42 @@ public class FilterScreen extends Form{
 		//ImageControl ic = new ImageControl(img);
 		//mLabel ic = new mLabel("");
 		roseP.addNext(NW = new mCheckBox("NW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		NW.state = (Global.getProfile().filterRose.charAt(0) == '1' ? true : false);
 		roseP.addNext(NNW = new mCheckBox("NNW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		NNW.state = (Global.getProfile().filterRose.charAt(1) == '1' ? true : false);
 		roseP.addNext(N = new mCheckBox("N"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		N.state = (Global.getProfile().filterRose.charAt(2) == '1' ? true : false);
 		roseP.addLast(NNE = new mCheckBox("NNE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		NNE.state = (Global.getProfile().filterRose.charAt(3) == '1' ? true : false);
 		
 		roseP.addNext(NE = new mCheckBox("NE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		NE.state = (Global.getProfile().filterRose.charAt(4) == '1' ? true : false);
 		roseP.addNext(WNW = new mCheckBox("WNW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		WNW.state = (Global.getProfile().filterRose.charAt(5) == '1' ? true : false);
 		roseP.addNext(ENE = new mCheckBox("ENE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ENE.state = (Global.getProfile().filterRose.charAt(6) == '1' ? true : false);
 		roseP.addLast(W = new mCheckBox("W "),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		W.state = (Global.getProfile().filterRose.charAt(7) == '1' ? true : false);
 		
 		roseP.addNext(E = new mCheckBox("E "),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		E.state = (Global.getProfile().filterRose.charAt(8) == '1' ? true : false);
 		roseP.addNext(WSW = new mCheckBox("WSW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		WSW.state = (Global.getProfile().filterRose.charAt(9) == '1' ? true : false);
 		roseP.addNext(ESE = new mCheckBox("ESE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		ESE.state = (Global.getProfile().filterRose.charAt(10) == '1' ? true : false);
 		roseP.addLast(SW = new mCheckBox("SW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		SW.state = (Global.getProfile().filterRose.charAt(11) == '1' ? true : false);
 		
 		roseP.addNext(SSW = new mCheckBox("SSW"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		SSW.state = (Global.getProfile().filterRose.charAt(12) == '1' ? true : false);
 		roseP.addNext(S = new mCheckBox("S"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		S.state = (Global.getProfile().filterRose.charAt(13) == '1' ? true : false);
 		roseP.addNext(SSE = new mCheckBox("SSE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		SSE.state = (Global.getProfile().filterRose.charAt(14) == '1' ? true : false);
 		roseP.addLast(SE = new mCheckBox("SE"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		SE.state = (Global.getProfile().filterRose.charAt(15) == '1' ? true : false);
 		
 		content.addLast(roseP, CellConstants.STRETCH,CellConstants.FILL);
-		
 		CellPanel btPanel = new CellPanel();
 		btPanel.addNext(btCancel = new mButton((String)lr.get(708,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
 		btPanel.addNext(btApply = new mButton((String)lr.get(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);

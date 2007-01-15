@@ -48,7 +48,7 @@ public class MainForm extends Form {
 		// Load CacheList
 		InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
 		infB.exec();
-//		infB.waitUntilPainted(1000);
+		infB.waitUntilPainted(1000);
 		try{
 			pref.readPrefFile();
 			addGuiFont();

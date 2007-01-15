@@ -11,9 +11,6 @@ import com.stevesoft.ewe_pat.*;
 */
 public class Filter{
 	
-	// Bilbowolf: Pattern for storing filter <FILTER type="01001101" rose = "010010101" var = "0101" dist = "<12" diff = ">13" terr = "<1"/>
-	
-	
 	public static final int SMALLER = -1;
 	public static final int GREATER = 1;
 	public static final int FOUND = 2;
