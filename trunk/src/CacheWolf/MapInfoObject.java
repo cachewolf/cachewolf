@@ -69,6 +69,7 @@ public class MapInfoObject{
 		affine[5]=0; //left
 		lowlat = 0; //buttom
 		lowlon = 1; //right
+		OrigUpperLeft = new CWPoint(affine[4], affine[5]);
 		doCalculations();
 	}
 
@@ -184,12 +185,11 @@ public class MapInfoObject{
 
 	/**
 	 * zoom in / out
-	 * @param zf zf > 1 == zoom in, zoom is relative to last zoom
+	 * @param zf zf > 1 == zoom in, zoom is relative to original unscaled image
 	 * @param diffX shift of map in pixels (if the map was cropped while zooming) in the not zoomed image
 	 * @param diffY
 	 */
 	public void zoom(float zf, int diffX, int diffY) {
-
 		// restore original values to calculate corret shift (upperleft)
 		affine[4] = OrigUpperLeft.latDec;
 		affine[5] = OrigUpperLeft.lonDec;
@@ -200,11 +200,11 @@ public class MapInfoObject{
 		CWPoint upperleft = calcLatLon(diffX, diffY);
 		affine[4] = upperleft.latDec;
 		affine[5] = upperleft.lonDec;
-		affine[0] = affine[0] / zf / zoomFactor; 
-		affine[1] = affine[1] / zf / zoomFactor; 
-		affine[2] = affine[2] / zf / zoomFactor; 
-		affine[3] = affine[3] / zf / zoomFactor; 
-		zoomFactor = zf * zoomFactor ;
+		affine[0] = affine[0] / zf ; 
+		affine[1] = affine[1] / zf ; 
+		affine[2] = affine[2] / zf ; 
+		affine[3] = affine[3] / zf ; 
+		zoomFactor = zf ;
 		shift.x = diffX;
 		shift.y = diffY;
 		doCalculations(); // TODO lowlat neu berechnen?
