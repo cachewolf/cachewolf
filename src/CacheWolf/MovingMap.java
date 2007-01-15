@@ -31,15 +31,17 @@ public class MovingMap extends Form {
 	TrackOverlay[] TrackOverlays;
 	Vector tracks;
 	MapInfoObject currentMap;
+	
 	AniImage mapImage1to1;
 	ArrowsOnMap directionArrows = new ArrowsOnMap();
 	AniImage statusImageHaveSignal = new AniImage("position_green.png");
 	AniImage statusImageNoSignal = new AniImage("position_yellow.png");
 	AniImage statusImageNoGps = new AniImage("position_red.png");
-
-	AniImage ButtonImageChooseMap = new AniImage("choose_map.gif"); 
-	AniImage ButtonImageGpsOn = new AniImage("snap2gps.gif");
-	AniImage ButtonImageLens = new AniImage("lupe.png");
+	AniImage bottonImageClose;
+	AniImage bottonImageChooseMap = new AniImage("choose_map.gif"); 
+	AniImage buttonImageGpsOn = new AniImage("snap2gps.gif");
+	AniImage buttonImageLens = new AniImage("lupe.png");
+	AniImage buttonImageZoom1to1 = new AniImage("zoom1to1.png");
 	/*AniImage arrowUp = new AniImage("arrow_up.png");
 	AniImage arrowDown = new AniImage("arrow_down.png");
 	AniImage arrowLeft = new AniImage("arrow_left.png");
@@ -59,26 +61,41 @@ public class MovingMap extends Form {
 
 	public MovingMap(Preferences pref, GotoPanel gP, Vector cacheDB){
 		this.cacheDB = cacheDB;
-		gotoPanel = gP;
+		this.gotoPanel = gP;
 		this.pref = pref;
+		this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
+		this.windowFlagsToClear = Window.FLAG_HAS_TITLE | Window.BDR_NOBORDER;
+		this.hasTopBar = false;
+		this.noBorder = true;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
 		this.backGround = Color.Black;
-		currentMap = new MapInfoObject();
 		mmp = new MovingMapPanel(this);
 		this.addLast(mmp);
-		mmp.addImage(posCircle);
-		setGpsStatus(noGPS);
-		ButtonImageChooseMap.setLocation(10,10);
-		ButtonImageChooseMap.properties = AniImage.AlwaysOnTop;
-		ButtonImageGpsOn.setLocation(pref.myAppWidth-25, 10);
-		ButtonImageGpsOn.properties = AniImage.AlwaysOnTop;
+		DrawnIcon closeX = new DrawnIcon(DrawnIcon.CROSS,15,15,new Color(0,0,0));
+		bottonImageClose = new AniImage(new Image(closeX.getWidth(), closeX.getHeight()));
+		Graphics tmp = new Graphics(bottonImageClose.image);
+		tmp.setColor(255, 255, 255);
+		tmp.fillRect(0, 0, closeX.getWidth(), closeX.getHeight());
+		closeX.doDraw(tmp, 0);
+		bottonImageClose.properties |= AniImage.AlwaysOnTop;
+		bottonImageClose.setLocation(Global.getPref().myAppWidth - bottonImageClose.getWidth()- 5, 5);
+		mmp.addImage(bottonImageClose);
+		buttonImageGpsOn.setLocation(pref.myAppWidth - bottonImageChooseMap.getWidth()-5, bottonImageClose.getHeight() + 10);
+		buttonImageGpsOn.properties = AniImage.AlwaysOnTop;
+		mmp.addImage(buttonImageGpsOn);
+		bottonImageChooseMap.setLocation(10,10);
+		bottonImageChooseMap.properties = AniImage.AlwaysOnTop;
+		mmp.addImage(bottonImageChooseMap);
 		directionArrows.properties = AniImage.AlwaysOnTop;
 		directionArrows.setLocation(Global.getPref().myAppWidth/2-directionArrows.getWidth()/2, 10);
 		mmp.addImage(directionArrows);
-		ButtonImageLens.setLocation(Global.getPref().myAppWidth - ButtonImageLens.getWidth()-10, Global.getPref().myAppHeight/2 - ButtonImageLens.getHeight()/2 );
-		ButtonImageLens.properties = AniImage.AlwaysOnTop;
-		mmp.addImage(ButtonImageLens);
+		buttonImageLens.setLocation(Global.getPref().myAppWidth - buttonImageLens.getWidth()-10, Global.getPref().myAppHeight/2 - buttonImageLens.getHeight()/2 );
+		buttonImageLens.properties = AniImage.AlwaysOnTop;
+		mmp.addImage(buttonImageLens);
+		buttonImageZoom1to1.setLocation(Global.getPref().myAppWidth - buttonImageZoom1to1.getWidth()-10, Global.getPref().myAppHeight/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
+		buttonImageZoom1to1.properties = AniImage.AlwaysOnTop;
+		mmp.addImage(buttonImageZoom1to1);
 		/*		arrowUp.setLocation(pref.myAppWidth/2, 10);
 		arrowDown.setLocation(pref.myAppWidth/2, pref.myAppHeight-20);
 		arrowLeft.setLocation(10, pref.myAppHeight/2+7);
@@ -92,9 +109,10 @@ public class MovingMap extends Form {
 		mmp.addImage(arrowLeft);
 		mmp.addImage(arrowRight);
 		 */		
-		mmp.addImage(ButtonImageChooseMap);
-		mmp.addImage(ButtonImageGpsOn);
+		currentMap = new MapInfoObject();
+		setGpsStatus(noGPS);
 		posCircle.properties = AniImage.AlwaysOnTop;
+		mmp.addImage(posCircle);
 		loadMaps(Global.getPref().baseDir+"maps/standard/");
 	}
 
@@ -150,6 +168,7 @@ public class MovingMap extends Form {
 
 	public final FormFrame myExec() {
 		//addOverlaySet(); // neccessary to draw points which were added when the MovingMap was not running, so that these pixels are not stored in the not-immediately-drawing-work-around
+		// doShowExec(null,null,true,Gui.NEW_WINDOW & ~Form.PageHigher);
 		return exec();
 	}
 	public void addTrack(Track tr) {
@@ -202,7 +221,7 @@ public class MovingMap extends Form {
 					TrackOverlays[i].move(0, 0);
 					TrackOverlays[i].tracks = this.tracks;
 					TrackOverlays[i].paintTracks();
-					mmp.addImage(TrackOverlays[i]);
+				//	mmp.addImage(TrackOverlays[i]);
 				}
 			}
 		}
@@ -329,9 +348,11 @@ public class MovingMap extends Form {
 			for (int xi=0; xi<3; xi++) {
 				if (posOnScreen.x +ww >=0 && posOnScreen.x <= ww && posOnScreen.y + wh >=0 && posOnScreen.y <= wh)
 				{
+					if ((TrackOverlays[yi*3+xi].properties & mImage.IsInvisible) > 0) mmp.addImage(TrackOverlays[yi*3+xi]);
 					TrackOverlays[yi*3+xi].properties &= ~mImage.IsInvisible;
 					TrackOverlays[yi*3+xi].move(posOnScreen.x+(xi-1)*ww, posOnScreen.y+(yi-1)*wh);
 				} else {
+					if ((TrackOverlays[yi*3+xi].properties & mImage.IsInvisible) == 0) mmp.removeImage(TrackOverlays[yi*3+xi]);
 					TrackOverlays[yi*3+xi].properties |= mImage.IsInvisible;
 					TrackOverlays[yi*3+xi].move(30, 30);
 				}
@@ -340,7 +361,7 @@ public class MovingMap extends Form {
 	}
 
 		public void updateOverlayPos() {
-			if (TrackOverlays == null) return;
+			if (TrackOverlays == null || TrackOverlays[4] == null) return;
 			updateOverlayOnlyPos();
 			if (TrackOverlays[0].location.x>pref.myAppWidth || TrackOverlays[0].location.x + 3*pref.myAppWidth < 0 || // testForNeedToRearange
 					TrackOverlays[0].location.y>pref.myAppHeight || TrackOverlays[0].location.y + 3*pref.myAppHeight <0) {
@@ -506,14 +527,18 @@ public class MovingMap extends Form {
 		}
 
 		public CWPoint getGotoPos(){
+			if (gotoPos == null) return null;
 			return new CWPoint(gotoPos.lat, gotoPos.lon);
 		}
 
 		public void removeAllMapSymbolsButGoto(){
-			for (int i=symbols.size()-1; i>=0; i--) {
+			if (symbols == null) return;
+			symbols.removeAllElements();
+			symbols.add(gotoPos);
+/*			for (int i=symbols.size()-1; i>=0; i--) {
 				if (((MapSymbol)symbols.get(i)).name != "goto") removeMapSymbol(i);
 			}
-		}
+	*/	}
 
 		public void removeMapSymbol(String name) {
 			int symbNr = findMapSymbol(name);
@@ -729,10 +754,9 @@ public class MovingMap extends Form {
 		 * @param h
 		 */
 		public void zoomScreenRect(Point firstclickpoint, int w, int h) {
-			Vm.showWait(true);
-			int newImageWidth = this.width * 2; // (maximal) size of the zoomed image 
-			int newImageHeight= this.height * 2;
-			CWPoint center = ScreenXY2LatLon(firstclickpoint.x + w/2, firstclickpoint.y+h/2);
+			int newImageWidth = (int) (this.width *  (this.width  < 481 ? 2 : 1.6)); // (maximal) size of the zoomed image 
+			int newImageHeight= (int) (this.height * (this.width < 481 ?  2 : 1.6)); // dont make this to big, otherwise it causes out of memory errors 
+			CWPoint center = ScreenXY2LatLon(firstclickpoint.x + w/2, firstclickpoint.y + h/2);
 			float zoomFactor;
 			if (w > 0)  zoomFactor = (float)this.width / (float)w; // zoom in
 			else {
@@ -761,7 +785,7 @@ public class MovingMap extends Form {
 				if (newImageRect.x + newImageRect.width >= mapImage1to1.getWidth()) 
 					newImageRect.x = mapImage1to1.getWidth()- newImageWidth; // align right if right overlaping
 				if (newImageRect.y + newImageRect.height >= mapImage1to1.getHeight()) 
-					newImageRect.y = mapImage1to1.getHeight()- newImageWidth;
+					newImageRect.y = mapImage1to1.getHeight()- newImageHeight;
 				// crop if after shifting still overlapping
 				if (newImageRect.x < 0) 
 					newImageRect.x = 0;
@@ -772,45 +796,63 @@ public class MovingMap extends Form {
 				if (newImageRect.y + newImageRect.height >= mapImage1to1.getHeight()) 
 					newImageRect.height= mapImage1to1.getHeight()- newImageRect.y;
 			}
-			zoomUnscaled(zoomFactor, newImageRect, center);
+			zoomFromUnscaled(zoomFactor * currentMap.zoomFactor, newImageRect, center);
 		}
 
+		public void zoom1to1() {
+			CWPoint center = ScreenXY2LatLon(this.width /2 , this.height/2);
+			zoomFromUnscaled(1, new Rect(0,0,mapImage1to1.getWidth(), mapImage1to1.getHeight()), center);
+		}
+		
 /**
  * do the actual scaling
- * @param zoomFactor
+ * @param zoomFactor relative to original image
  * @param newImageRect Rect in the 1:1 image that contains the area to be zoomed into
  * @param center
  */		
-		public void zoomUnscaled (float zoomFactor, Rect newImageRect, CWPoint center) {
-			int saveprop = mmp.mapImage.properties;
-			AniImage tmp = null; // = mmp.mapImage;
-			mmp.removeImage(mmp.mapImage);
-			if (mmp.mapImage != mapImage1to1) {
-				mmp.mapImage .free();
-				mmp.mapImage = null;
-			} else tmp = mapImage1to1;
-			Vm.getUsedMemory(true);
-			try {
-				tmp = new AniImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor*currentMap.zoomFactor), (int)(newImageRect.height*zoomFactor*currentMap.zoomFactor), newImageRect, 0));
-				currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
-			} catch (OutOfMemoryError e) {(new MessageBox("Error", "Out of memory error", MessageBox.OKB)).execute();}
-			Vm.getUsedMemory(true);
-			mmp.mapImage = tmp; // use old image in case of OutOfMemoryError
-			mmp.mapImage.properties = saveprop;
-			mmp.addImage(mmp.mapImage);
-			mmp.images.moveToBack(mmp.mapImage);
-			if (mapImage1to1 != null && mmp.mapImage != null && mapImage1to1.image != null)
-			{
-				Point mappos = getMapPositionOnScreen();
-				mmp.mapImage.move(mappos.x,mappos.y);
-			}
+		public void zoomFromUnscaled (float zoomFactor, Rect newImageRect, CWPoint center) {
+			Vm.showWait(true);
+			boolean savegpsstatus = ignoreGps;
+			if (mapImage1to1 != null) {
+				ignoreGps = true; // avoid multi-thread problems
+				int saveprop = AniImage.IsMoveable;
+				AniImage tmp = null; // = mmp.mapImage;
+				if (mmp.mapImage != null) {
+					saveprop = mmp.mapImage.properties;
+					mmp.removeImage(mmp.mapImage);
+					if (mmp.mapImage != mapImage1to1) {
+						mmp.mapImage .free();
+						mmp.mapImage = null;
+					} else tmp = mapImage1to1;
+				}
+				Vm.getUsedMemory(true);
+				try {
+					tmp = new AniImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor), (int)(newImageRect.height*zoomFactor), newImageRect, 0));
+					currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
+				} catch (OutOfMemoryError e) {
+					(new MessageBox("Error", "Out of memory error", MessageBox.OKB)).execute();}
+				Vm.getUsedMemory(true);
+				mmp.mapImage = tmp; // use unscaled or no image in case of OutOfMemoryError
+				mmp.mapImage.properties = saveprop;
+				mmp.addImage(mmp.mapImage);
+				mmp.images.moveToBack(mmp.mapImage);
+				if (mapImage1to1 != null && mmp.mapImage != null && mapImage1to1.image != null)
+				{
+					Point mappos = getMapPositionOnScreen();
+					mmp.mapImage.move(mappos.x,mappos.y);
+				}
+			} else // no map image loaded 
+				{ currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y); }
+
 			destroyOverlaySet();
+			Vm.getUsedMemory(true);
 			setCenterOfScreen(center);
 			addOverlaySet();
 			this.repaintNow();
 			Vm.showWait(false);
+			ignoreGps = savegpsstatus;
 		}
-		
+
 
 		public void onEvent(Event ev){
 			if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
@@ -830,6 +872,7 @@ public class MovingMap extends Form {
 		Point saveMapLoc = null;
 		boolean saveGpsIgnoreStatus;
 		boolean paintingZoomArea;
+		ImageList saveImageList = null;
 		int lastZoomWidth , lastZoomHeight;
 		public MovingMapPanel(MovingMap f){
 			this.mm = f;
@@ -837,53 +880,24 @@ public class MovingMap extends Form {
 		public boolean imageBeginDragged(AniImage which,Point pos) {
 			if (mm.zoomingMode == true) {
 				saveMapLoc = pos;
+				mm.ignoreGps = true;
 				return false;
 			}
 			if (!(which == null || which == mapImage || which instanceof TrackOverlay) ) return false;
 			saveGpsIgnoreStatus = mm.ignoreGps; 
 			mm.ignoreGps = true;
 			saveMapLoc = pos;
+			bringMapToTop();
 			return super.imageBeginDragged(mapImage, pos);
 		}
 		
-/*		public boolean imageDragged(ImageDragContext dc,Point where) {
-			if (mm.zoomingMode == false) return super.imageDragged(dc, where);
-			dc.
-			void updateArea(DragContext dc,boolean doImage,boolean update)
-//			-------------------------------------------------------------------
-			{
-				if (imagePos == null) imagePos = new Point().set(dc.prevPoint.x,dc.prevPoint.y);
-				if (update) getUpdateArea(imagePos,dc.curPoint,null,null,imagePos);
-				Graphics g = ib.get(updateArea.width,updateArea.height,true);
-				g.setColor(new Color(0xff,0,0));
-				g.fillRect(0,0,updateArea.width,updateArea.height);
-				g.translate(-updateArea.x,-updateArea.y);
-				if (copied == null){
-					window.repaintNow(g,updateArea);
-					if (doImage) image.draw(g,imagePos.x-cx+wx,imagePos.y-cy+wy,0);
-
-				}else{
-					g.drawImage(copied,0,0);
-					if (doImage) image.draw(g,imagePos.x-cx+wx,imagePos.y-cy+wy,0);
-				}
-				if (relativeImagePos == null) relativeImagePos = new Point();
-				relativeImagePos.set(imagePos.x-cx,imagePos.y-cy);
-				wg.drawImage(ib.image,updateArea.x,updateArea.y);
-				wg.flush();
-				g.translate(updateArea.x,updateArea.y);
-				if (clearPendingDrags) dc.clearPendingDrags();
-			}
-
-		}
-		*/
-		
-
 		public boolean imageNotDragged(ImageDragContext dc,Point pos){
 			boolean ret = super.imageNotDragged(dc, pos);
 			mapMoved(pos.x - saveMapLoc.x, pos.y - saveMapLoc.y);
 			mm.ignoreGps = saveGpsIgnoreStatus;
+			bringMaptoBack();
+			this.repaintNow();
 			return ret;
-
 		}
 		
 		public void onPenEvent(PenEvent ev) {
@@ -895,6 +909,10 @@ public class MovingMap extends Form {
 			if (mm.zoomingMode && ev.type == PenEvent.PEN_UP ) {
 				paintingZoomArea = false;
 				mm.zoomingMode = false;
+				if (java.lang.Math.abs(lastZoomWidth) < 15 || java.lang.Math.abs(lastZoomHeight) < 15)  {
+					repaintNow();
+					return; // dont make to big zoom jumps - it is most probable not an intentional zoom
+				}
 				mm.zoomScreenRect(saveMapLoc, lastZoomWidth, lastZoomHeight);
 			}
 			
@@ -916,6 +934,23 @@ public class MovingMap extends Form {
 				dr.drawRect(left, top, java.lang.Math.abs(lastZoomWidth) , java.lang.Math.abs(lastZoomHeight), 2);
 			}
 			super.onPenEvent(ev);
+		}
+		
+		private void bringMapToTop() {
+			if (mapImage == null || (mapImage.properties & AniImage.IsInvisible) > 0 ) return;
+			saveImageList = new ImageList();
+			saveImageList.copyFrom(images);
+			images.removeAllElements();
+			//images.remove(mapImage);
+			//mapImage.properties |= AniImage.AlwaysOnTop;
+			images.add(mapImage);
+		}
+		private void bringMaptoBack() {
+			//mapImage.properties &= ~AniImage.AlwaysOnTop;
+			//images.moveToBack(mapImage);
+			if (saveImageList == null) return;
+			images=saveImageList;
+			saveImageList = null;
 		}
 		
 		public void moveMap(int diffX, int diffY) {
@@ -970,7 +1005,7 @@ public class MovingMap extends Form {
 		 *	Method to react to user.
 		 */
 		public void imageClicked(AniImage which, Point pos){
-			if (which == mm.ButtonImageChooseMap){
+			if (which == mm.bottonImageChooseMap){
 				mapsMenu = new Menu(new String[]{"Select a map manually$s", "Change map directory$c"}, "map choice");
 				if (!mm.noMapsAvailable) 
 				{
@@ -980,17 +1015,25 @@ public class MovingMap extends Form {
 				//m.set(Menu., status)
 				mapsMenu.exec(this, new Point(which.location.x, which.location.y), this);
 			}
-			if (which == mm.ButtonImageGpsOn) {
+			if (which == mm.buttonImageGpsOn) {
 				if (mm.gotoPanel.serThread == null || !mm.gotoPanel.serThread.isAlive()) {
 					mm.gotoPanel.startGps();
 					mm.addTrack(mm.gotoPanel.currTrack); // use new track when gps now started
 				} 
 				mm.SnapToGps();
 			}
-			if (which == mm.ButtonImageLens) {
+			if (which == mm.buttonImageLens) {
 				mm.setZoomingMode();
 			}
-
+			if (which == mm.buttonImageZoom1to1) {
+				mm.zoom1to1();
+			}
+			if (which == mm.bottonImageClose) {
+				WindowEvent tmp = new WindowEvent();
+				tmp.type = WindowEvent.CLOSE;
+				mm.postEvent(tmp);
+			}
+				
 			/*if (which == mm.arrowRight)	{	moveMap(-10,0);	}
 		if (which == mm.arrowLeft)	{	moveMap(+10,0);	}
 		if (which == mm.arrowDown)	{	moveMap(0,-10);	}

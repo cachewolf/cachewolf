@@ -426,9 +426,7 @@ public class GotoPanel extends CellPanel {
 			if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
 				mmp.directionArrows.setDirections(-361 /*(float)bearWayP.value*/, (float)sunAzimut.value, -361 /*(float)bearMov.value*/);
 				mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
-				Vm.debug("ShowLastAddedPoint: voher");
 				mmp.ShowLastAddedPoint(currTrack);
-				Vm.debug("ShowLastAddedPoint: nachher");
 				mmp.setGpsStatus(MovingMap.gotFix);
 			}
 			if ((fix == 0) && (gpsPosition.getSats()== 0)) {

@@ -24,6 +24,7 @@ public class TrackOverlay extends AniImage {
 	public Point trackPixels[] = null;
 	public Color trackPixelsColor[] = null;
 	public int numPixels = 0;
+	final static int maxPixelsInCache = 500;
 	final static Color transparentColor = Color.White;
 	public TrackOverlay (TrackPoint topLefti, int widthi, int highti, MapInfoObject transi) {
 		topLeft = new TrackPoint(topLefti);
@@ -109,7 +110,7 @@ public class TrackOverlay extends AniImage {
 	}
 
 	public void addPixel(int x, int y, Color f) throws IndexOutOfBoundsException {
-		if (trackPixels==null) { trackPixels = new Point[500]; trackPixelsColor = new Color[500]; } 
+		if (trackPixels==null) { trackPixels = new Point[maxPixelsInCache]; trackPixelsColor = new Color[maxPixelsInCache]; } 
 		trackPixels[numPixels] = new Point(x, y); // IndexOutOfBoundsException is handled in PaintPoint
 		trackPixelsColor[numPixels] = f.getCopy();
 		numPixels++;

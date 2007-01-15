@@ -46,18 +46,16 @@ public class MainForm extends Form {
 			this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
 		// Load CacheList
-		
+		InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
+		infB.exec();
+//		infB.waitUntilPainted(1000);
 		try{
 			pref.readPrefFile();
 			addGuiFont();
 			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true)) 
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
-			InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
-			infB.exec();
-			infB.waitUntilPainted(1000);
-			profile.readIndex();
-			infB.close(0);
 			Vm.showWait(true);
+			profile.readIndex();
 			pref.curCentrePt.set(profile.centre);
 			TablePanel.updateBearingDistance(profile.cacheDB,pref);
 		} catch (Exception e){
@@ -82,6 +80,7 @@ public class MainForm extends Form {
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		}
 		mMenu.setTablePanel(mTab.getTablePanel());
+		infB.close(0);
 		Vm.showWait(false);
 	}
 
