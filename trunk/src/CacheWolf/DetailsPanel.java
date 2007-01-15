@@ -18,12 +18,12 @@ public class DetailsPanel extends CellPanel{
 	mInput wayHidden = new mInput();
 	mInput wayOwner = new mInput();
 	//mInput wayStatus = new mInput();
-	mTextPad wayNotes = new mTextPad();
+	
 	mButton btnDelete,btnCenter;
 	mChoice wayType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead","Reference"},0);
 	mChoice waySize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
 	mComboBox wayStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
-	mButton btCrWp, showBug, showMap, addDateTime, btnGoto, addPicture, btnBlack;
+	mButton btCrWp, showBug, showMap, btnGoto, addPicture, btnBlack, btNotes;
 	Vector cacheDB;
 	CacheHolder thisCache;
 	CellPanel toolP = new CellPanel();
@@ -47,19 +47,18 @@ public class DetailsPanel extends CellPanel{
 		toolP.addNext(btnGoto = new mButton("Goto"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		mImage mI = new mImage("bug.gif");
 		mImage mI2 = new mImage("globe_small.gif");
-		mImage mI3 = new mImage("date_time.png");
+		
 		mImage mI4 = new mImage("images.gif");
 		mNoBlack = new mImage("no_black.png");
 		mIsBlack = new mImage("is_black.png");
 		showBug = new mButton((IImage)mI);
 		showMap = new mButton((IImage)mI2);
-		addDateTime = new mButton((IImage)mI3);
+		
 		addPicture = new mButton((IImage)mI4);
 		btnBlack = new mButton((IImage)mNoBlack);
 		toolP.addNext(showBug,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		showBug.modify(Control.Disabled,0);
 		toolP.addNext(showMap,CellConstants.DONTSTRETCH, CellConstants.WEST);
-		toolP.addNext(addDateTime,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		toolP.addNext(addPicture,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		toolP.addLast(btnBlack,CellConstants.DONTSTRETCH, CellConstants.WEST);
 			
@@ -89,13 +88,12 @@ public class DetailsPanel extends CellPanel{
 		this.addNext(new mLabel(MyLocale.getMsg(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(wayStatus.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		btNotes = new mButton("Notes");
+		this.addLast(btNotes.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		//this.addNext(new mLabel(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		//this.addLast(btnCenter = new mButton(MyLocale.getMsg(309,"Make Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 //		this.addLast(btnDelete = new mButton(MyLocale.getMsg(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-
-		ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
-		//this.addLast(sbp, this.STRETCH, this.FILL);
-		this.addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
+		
 	}
 	
 	/**
@@ -124,7 +122,7 @@ public class DetailsPanel extends CellPanel{
 		wayHidden.setText(ch.DateHidden);
 		wayOwner.setText(ch.CacheOwner);
 		wayStatus.setText(ch.CacheStatus);
-		wayNotes.setText(ch.CacheNotes);
+		
 		wayType.setInt(transType(ch.type));
 		if(ch.is_black){
 			btnBlack.image = mIsBlack;
@@ -253,7 +251,6 @@ public class DetailsPanel extends CellPanel{
 		thisCache.DateHidden = wayHidden.getText();
 		thisCache.CacheOwner = wayOwner.getText();
 		thisCache.CacheStatus = wayStatus.getText();
-		thisCache.CacheNotes = wayNotes.getText();
 		thisCache.type = transSelect(wayType.getInt());
 		//cacheDB.add(ch);
 		
@@ -270,26 +267,18 @@ public class DetailsPanel extends CellPanel{
 	*/
 	public void onEvent(Event ev){
 		/**
-		*	User changed status or notes.
+		*	User changed status.
 		*/
-		if(ev instanceof ControlEvent && ev.type == ControlEvent.FOCUS_OUT){
-			if(ev.target == wayNotes){
-				if(wayNotes.getText().length() > 0){
-					////Vm.debug("Saving!!!");
-					thisCache.CacheNotes = wayNotes.getText();
-					thisCache.saveCacheDetails( profile.dataDir);
-				}
-			}
-			if(ev.target != wayNotes){
-				dirty_status = true;
-			}
-		}
 		/**
 		*	User wishes to either delete a cache or to set the cache as
 		*	a center location.<br>
 		*	Also possible: the user created a custom waypoint.
 		*/
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
+			if(ev.target == btNotes){
+				NotesScreen nsc = new NotesScreen(thisCache, profile);
+				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
+			}
 			if (ev.target == btnDelete){
 				//Vm.debug(thisCache.CacheName);
 //TODO This does not work. e.g. if we do a sort we get an indexOutOfBounds exception
@@ -320,18 +309,7 @@ public class DetailsPanel extends CellPanel{
 					mainT.updateBearDist();
 				}
 			}
-			if (ev.target == addDateTime){
-				String note = wayNotes.getText();
-				Time dtm = new Time();
-				dtm.getTime();
-				dtm.setFormat("E dd.MM.yyyy '/' H:m");
-				if(note.length() > 0)	note = note + "\n" + dtm.toString();
-				else 	note = note + dtm.toString();
-				note = note + "\n";
-				wayNotes.setText(note);
-				thisCache.CacheNotes = wayNotes.getText();
-				thisCache.saveCacheDetails(profile.dataDir);
-			}
+			
 			if (ev.target == addPicture){
 				thisCache.addUserImage(profile);
 			}
@@ -360,7 +338,6 @@ public class DetailsPanel extends CellPanel{
 					wayHidden.setText("");
 					wayOwner.setText("");
 					wayStatus.setText("");
-					wayNotes.setText("");
 					wayType.setInt(0);
 					waySize.setInt(7);
 					thisCache.wayPoint = wayPoint.getText();
