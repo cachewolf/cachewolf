@@ -66,6 +66,7 @@ public class MainForm extends Form {
 			if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 				//Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
 				Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
+				Device.preventIdleState(true);
 			}
 		} else Vm.setSIP(0);
 		//Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
