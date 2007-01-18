@@ -190,6 +190,9 @@ public class FilterScreen extends Form{
 				flt.by = foundIn.getText();
 				flt.notAvailable = notAvailableChk.getState();
 				flt.archived = archivedChk.getState();
+				String filterType = new String();
+				String filterVar = new String();
+				String filterRose = new String();
 				
 				int typeMatchPattern = 0;
 				if(tradChk.getState()) typeMatchPattern |= Filter.TRADITIONAL;
@@ -204,6 +207,19 @@ public class FilterScreen extends Form{
 				if(earthChk.getState()) typeMatchPattern |= Filter.EARTH;
 				if(megaChk.getState()) typeMatchPattern |= Filter.MEGA;
 				flt.typeMatchPattern = typeMatchPattern;
+				filterType = 	(tradChk.getState() == true ? "1" : "0") +
+								(multiChk.getState() == true ? "1" : "0") +
+								(virtualChk.getState() == true ? "1" : "0") +
+								(letterChk.getState() == true ? "1" : "0") +
+								(eventChk.getState() == true ? "1" : "0")+ 
+								(webcamChk.getState() == true ? "1" : "0")+
+								(multiChk.getState() == true ? "1" : "0") +
+								(mysteryChk.getState() == true ? "1" : "0")+
+								(earthChk.getState() == true ? "1" : "0")+
+								(loclessChk.getState() == true ? "1" : "0")+
+								(megaChk.getState() == true ? "1" : "0")+
+								(addiWptChk.getState() == true ? "1" : "0");
+				
 				int roseMatchPattern = 0;
 				if(N.getState()) roseMatchPattern |= Filter.N;
 				if(NNE.getState()) roseMatchPattern |= Filter.NNE;
@@ -222,6 +238,8 @@ public class FilterScreen extends Form{
 				if(NNW.getState()) roseMatchPattern |= Filter.NNW;
 				if(S.getState()) roseMatchPattern |= Filter.S;
 				flt.roseMatchPattern = roseMatchPattern;
+				filterRose = "";
+				
 				if(distChc.selectedIndex == 1) flt.distdirec = Filter.SMALLER;
 				else flt.distdirec = Filter.GREATER;
 				if(difChc.selectedIndex == 1) flt.diffdirec = Filter.SMALLER;
