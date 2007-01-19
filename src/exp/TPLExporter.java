@@ -23,13 +23,19 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     */
 
-package CacheWolf;
+package exp;
 
+import CacheWolf.CWPoint;
+import CacheWolf.CacheHolder;
+import CacheWolf.CacheType;
+import CacheWolf.Preferences;
+import CacheWolf.Profile;
+import CacheWolf.STRreplace;
 import HTML.Template;
 import ewe.filechooser.FileChooser;
 import ewe.io.*;
 import ewe.sys.*;
-import ewe.ui.ProgressBarForm;
+import ewe.ui.*;
 import ewe.util.*;
 import com.stevesoft.ewe_pat.*;
 
@@ -200,6 +206,8 @@ public class TPLExporter {
 						varParams.put("STATUS", holder.CacheStatus);
 						varParams.put("DATE", holder.DateHidden);
 						varParams.put("URL", holder.URL);
+						varParams.put("NOTES", holder.CacheNotes);
+						varParams.put("DESCRIPTION", holder.LongDescription);
 						cache_index.add(varParams);
 					}catch(Exception e){
 						Vm.debug("Problem getting Parameter, Cache: " + holder.wayPoint);

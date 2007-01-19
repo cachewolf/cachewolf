@@ -1,4 +1,5 @@
-package CacheWolf;
+package exp;
+import CacheWolf.*;
 import ewe.util.*;
 import ewe.sys.*;
 import ewe.io.*;
@@ -35,8 +36,10 @@ public class HTMLExporter{
 	}
 	
 	public void doIt(){
-//		ProgressBarForm pbf = new ProgressBarForm();
 		CacheHolder holder = new CacheHolder();
+		ProgressBarForm pbf = new ProgressBarForm();
+		Handle h = new Handle();
+
 		//need directory only!!!!
 		String dummy = new String();
 		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, profile.dataDir);
@@ -63,10 +66,15 @@ public class HTMLExporter{
 				holder = (CacheHolder)cacheDB.get(i);
 				if(holder.is_black == false && holder.is_filtered == false) counter++;
 			}
+			
+			pbf.showMainTask = false;
+			pbf.setTask(h,"Exporting ...");
+			pbf.exec();
+
 			for(int i = 0; i<counter;i++){
-				if (i%5 == 0){
-					ProgressBarForm.display("Exporting...", "Exporting " + Convert.toString(i) + " of " + counter, null);
-				}
+				h.progress = (float)(i+1)/(float)counter;
+				h.changed();
+
 				holder = (CacheHolder)cacheDB.get(i);
 				if(holder.is_black == false && holder.is_filtered == false){
 					//KHF read cachedata only if needed
@@ -215,7 +223,7 @@ public class HTMLExporter{
 			}//try
 			
 		}//if
-		ProgressBarForm.clear();
+		pbf.exit(0);
 	}
 	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field){
 		Vector navi_index;

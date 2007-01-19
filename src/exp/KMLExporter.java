@@ -1,27 +1,66 @@
-package CacheWolf;
-import ewe.util.*;
-import ewe.sys.*;
-import ewe.io.*;
-import ewe.filechooser.*;
+package exp;
+import CacheWolf.*;
 
 /**
 *	Class to export the cache database (index) to an KML-File
 *	which can be read by Google Earth   
 *   
 */
-public class KMLExporter{
-//	TODO Exportanzahl anpassen: Bug: 7351
-	Vector cacheDB;
-	Preferences pref;
-	Profile profile;
+public class KMLExporter extends Exporter {
+
+	public KMLExporter(){
+		super();
+		this.setMask("*.kml");
+		this.setHowManyParams(LAT_LON);
+	}
+
 	
 	public KMLExporter(Preferences p, Profile prof){
-		pref = p;
-		profile=prof;
-		cacheDB = profile.cacheDB;
+			super();
+			this.setMask("*.kml");
 	}
 	
-	public void doIt(){
+	public String header () {
+		StringBuffer strBuf = new StringBuffer(200);
+				
+		strBuf.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+		strBuf.append("<kml xmlns=\"http://earth.google.com/kml/2.0\">");
+		strBuf.append("<Folder>");
+		strBuf.append("<name>CacheWolf</name>");
+		strBuf.append("<open>1</open>");
+
+		return strBuf.toString();
+	}
+	
+	public String record(CacheHolder ch, String lat, String lon){
+		StringBuffer strBuf = new StringBuffer(200);
+		
+		strBuf.append("   <Placemark>\r\n");
+		strBuf.append("      <description>http://www.geocaching.com/seek/cache_details.aspx?wp="+ch.wayPoint+"</description>\r\n");
+		strBuf.append("      <name>"+ ch.wayPoint + " - " + SafeXML.clean(ch.CacheName) +"</name>\r\n");
+		strBuf.append("      <LookAt>\r\n");
+		strBuf.append("         <latitude>" + lat + "</latitude>\r\n");
+		strBuf.append("         <longitude>" + lon + "</longitude>\r\n");
+		strBuf.append("         <range>10000</range><tilt>0</tilt><heading>0</heading>\r\n");
+		strBuf.append("      </LookAt>\r\n");
+		strBuf.append("      <Point>\r\n");
+		strBuf.append("         <coordinates>"  + lon + "," + lat + "</coordinates>\r\n");
+		strBuf.append("      </Point>\r\n");
+		strBuf.append("   </Placemark>\r\n");
+
+		return strBuf.toString();
+	}
+	
+	public String trailer(){
+		StringBuffer strBuf = new StringBuffer(50);
+
+		strBuf.append("</Folder>");
+		strBuf.append("</kml>");
+
+		return strBuf.toString();
+	}
+	
+/*	public void doIt(){
 		CacheHolder holder;
 		ParseLatLon pll;
 		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
@@ -65,4 +104,4 @@ public class KMLExporter{
 			}
 		} // if execute
 	}
-}
+*/}

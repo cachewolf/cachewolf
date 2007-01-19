@@ -25,12 +25,12 @@ public class CWPoint extends TrackPoint{
 	MGRSPoint utm = new MGRSPoint();
 	boolean utmValid = false;
 
-	static protected final int DD = 0;
-	static protected final int DMM = 1;
-	static protected final int DMS = 2;
-	static protected final int UTM = 3;
-	static protected final int CW = 4;
-	static protected final int REGEX = 5;
+	public static final int DD = 0;
+	public static final int DMM = 1;
+	public static final int DMS = 2;
+	public static final int UTM = 3;
+	public static final int CW = 4;
+	public static final int REGEX = 5;
 	
 	/**
 	 * Create CWPoint by using lat and lon 
