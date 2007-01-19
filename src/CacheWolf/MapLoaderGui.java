@@ -145,7 +145,7 @@ public class MapLoaderGui extends Form {
 			radius = (float) (radiuslat < radiuslon ? radiuslon : radiuslat);
 		} else 
 		{ // calculate from center point an radius
-			ml.setTiles(center, radius, (int)scale, size, 1+ overlapping/100);
+			ml.setTiles(center, radius * 1000, (int)scale, size, 1+ overlapping/100);
 		}
 		if (overviewmap) {
 			progressBox.setInfo("downloading overview map"); 
@@ -263,21 +263,21 @@ public class MapLoaderGui extends Form {
 					(new MessageBox("Error", "'Approx. meter pro pixel' must be greater than 0 and must not contain a point", MessageBox.OKB)).execute();
 					return;
 				}
+				this.close(Form.IDOK); 
+				this.downloadTiles();
 			}
-			this.close(Form.IDOK); 
-			this.downloadTiles();
-		}
-		if (ev.target == coosBtn) {
-			CoordsScreen cs = new CoordsScreen();
-			cs.setFields(center, CWPoint.CW);
-			if (cs.execute() != CoordsScreen.IDCANCEL) {
-				center = cs.getCoords();
-				coosBtn.setText(center.toString());
+			if (ev.target == coosBtn) {
+				CoordsScreen cs = new CoordsScreen();
+				cs.setFields(center, CWPoint.CW);
+				if (cs.execute() != CoordsScreen.IDCANCEL) {
+					center = cs.getCoords();
+					coosBtn.setText(center.toString());
+				}
 			}
-		}
-		if (ev.target == forCachesChkBox) {
-			updateForCachesState();
-		}
+			if (ev.target == forCachesChkBox) {
+				updateForCachesState();
+			}
+		} // if controllEvent...
 		super.onEvent(ev);
 	}
 }
