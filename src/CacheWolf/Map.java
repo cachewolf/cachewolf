@@ -39,7 +39,7 @@ public class Map extends Form {
 	*/
 	public Map(Preferences pref){
 		this.pref = pref;
-		mapsPath = File.getProgramDirectory() + "/maps/";
+		mapsPath = File.getProgramDirectory() + "/maps/"; // TODO veraltet
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class Map extends Form {
 		//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		thisMap = mapToLoad;
-		mapsPath = File.getProgramDirectory() + "/maps/";
+		mapsPath = File.getProgramDirectory() + "/maps/"; // TDO veraltet
 		try {
 			wfl.loadwfl(mapsPath, thisMap);
 		}catch(FileNotFoundException ex){

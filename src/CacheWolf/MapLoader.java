@@ -5,6 +5,7 @@ import ewe.io.*;
 import ewe.fx.*;
 import ewe.util.*;
 import ewe.sys.*;
+import ewe.sys.Double;
 import ewe.net.*;
 
 /**
@@ -17,39 +18,148 @@ import ewe.net.*;
 // http://www.expedia.de/pub/agent.dll?qscr=mrdt&ID=3kQaz.&CenP=48.15,11.5833&Alti=2&Lang=EUR0407&Size=900,900&Offs=0,0&MapS=0&Pins=|48.15,11.5833|4|48.15,11.5833&Pins=|48.15,11.5833|1|48.15,%2011.5833||
 
 
-public class MapLoader{
+public class MapLoader {
 	String proxy = new String();
 	String port = new String();
-	String lat = new String();
-	String lon = new String();
-	String zone = new String();
-	public MapLoader(String lt, String ln, String prxy, String prt){
+	InfoBox progressInfobox;
+	
+	final static float downloadMapScaleFactorExpedia_east = 3950;
+	final static float MAPBLAST_METERS_PER_PIXEL = 1.0f/2817.947378f;
+	final static float EXPEDIA_METERS_PER_PIXEL = downloadMapScaleFactorExpedia_east * MAPBLAST_METERS_PER_PIXEL; 
+
+	int numMapsY;
+	int numMapsX;
+	double latinc;
+	double loninc;
+	CWPoint topleft;
+	CWPoint buttomright;
+	Point tilesSize;
+	int tileScale;
+
+	public MapLoader(String prxy, String prt){
 		port = prt;
 		proxy = prxy;
-		lat = lt;
-		lon = ln;
-		zone = "EUR0407";
-		try{
-			if(Convert.parseDouble(ln) <= -10) zone = "USA0409";
-		}catch(Exception ex){
-			ln = ln.replace('.',',');
-			//Vm.debug("Nach änderung: " +ln);
-			if(Convert.parseDouble(ln) <= -10) zone = "USA0409";
+		progressInfobox = null;
+	}
+	
+	/**
+	 * download maps from expedia at zoomlevel alti and save the maps and the .wfl 
+	 * in path
+	 * @param center center of all tiles
+	 * @param radius in meters
+	 * @param scale in "alti" value 1 alti =  3950 /2817.947378 = 1,046861280317350198581316446428 meters per pixel
+	 * @param size in pixels
+	 * @param overlapping 1.2 means 20% overlapping
+	 * @param path without "/" at the end
+	 * 
+	 */
+	public void setTiles (CWPoint center, float radius, int scale, Point size, float overlapping) {
+		double metersPerLat = (1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
+		double pixels =  radius * 2 / EXPEDIA_METERS_PER_PIXEL / scale;
+		numMapsY = (int) java.lang.Math.ceil(pixels * overlapping / (float)size.y);
+		numMapsX = (int) java.lang.Math.ceil(pixels * overlapping / (float)size.x);
+		latinc =  -(radius * 2 / metersPerLat) / (float)numMapsY; // = lat difference from buttom to top / number of tiles
+		loninc = ( radius * 2 / metersPerLat / java.lang.Math.cos(center.latDec/180*java.lang.Math.PI) ) / numMapsX;
+		topleft = new CWPoint(center.latDec - latinc * numMapsY / 2, center.lonDec - loninc * numMapsX /2);
+		buttomright = new CWPoint(center.latDec + latinc * numMapsY / 2, center.lonDec + loninc * numMapsX /2);
+		this.tilesSize = new Point();
+		this.tilesSize.set(size);
+		this.tileScale = scale;
+	}
+	
+	public void setTiles(CWPoint toplefti, CWPoint buttomrighti, int scale, Point size, float overlapping) {
+		//if (toplefti.latDec <= buttomrighti.latDec || toplefti.lonDec >= toplefti.lonDec) throw new IllegalArgumentException("topleft must be left and above buttom right");
+		topleft = new CWPoint(toplefti);
+		buttomright = new CWPoint(buttomrighti);
+		double metersPerLat = (1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
+		double metersPerLon = metersPerLat * java.lang.Math.cos((toplefti.latDec + buttomright.latDec)/2/180*java.lang.Math.PI);
+		double metersY = (topleft.latDec - buttomright.latDec) * metersPerLat; 
+		double pixelsY =  metersY / EXPEDIA_METERS_PER_PIXEL / scale;
+		double metersX = -(topleft.lonDec - buttomright.lonDec) * metersPerLon ; 
+		double pixelsX =  metersX / EXPEDIA_METERS_PER_PIXEL / scale;
+		numMapsY = (int) java.lang.Math.ceil(pixelsY * overlapping / (float)size.y);
+		numMapsX = (int) java.lang.Math.ceil(pixelsX * overlapping / (float)size.x);
+		latinc = -(topleft.latDec - buttomright.latDec)/ (double)numMapsY; // = lat difference from buttom to top / number of tiles
+		loninc = -(topleft.lonDec - buttomright.lonDec)/ (double)numMapsX;
+		this.tilesSize = new Point();
+		this.tilesSize.set(size);
+		this.tileScale = scale;
+	}
+
+	public void downlaodTiles(String tilesPath) {
+		int row = 0, col;
+		for (double lat = topleft.latDec; lat >= buttomright.latDec; lat += latinc) {
+			row++;
+			col = 1;
+			for (double lon = topleft.lonDec; lon <= buttomright.lonDec; lon += loninc) {
+				if (progressInfobox != null)
+					progressInfobox.setInfo("Downloading calibrated (georeferenced) \n map image from www.expedia.com \n Downloading tile row: "+row+" / "+numMapsY+" coloumn "+ col + "/"+numMapsX);
+				col++;
+				downloadMap(lat, lon, tileScale, tilesSize.x, tilesSize.y, tilesPath);
+			}
 		}
 	}
 	
-	public void loadTo(String datei, String alti){
+	public void loadTo(String a, String b) {
+		//loadTo(a, b, "50.74", "7.095");
+	}
+
+	public void setProgressInfoBox (InfoBox progrssInfoboxi) {
+		progressInfobox = progrssInfoboxi;
+	}
+	/**
+	 * calculates the Expedia Alti = scale which fits in distance to its edges
+	 * @param center
+	 * @param distance in meters
+	 */
+	public static int getExpediaAlti(CWPoint center, float distance, Point size) {
+		int scaleLatO = (int) java.lang.Math.ceil(( distance * 2 / EXPEDIA_METERS_PER_PIXEL / size.y));
+		int scaleLonO = (int) java.lang.Math.ceil(( distance * 2 / EXPEDIA_METERS_PER_PIXEL / size.x));
+		int scaleO = (scaleLatO < scaleLonO ? scaleLonO : scaleLatO);
+		//loadTo((topleft.latDec + buttomright.latDec)/2, (topleft.lonDec + buttomright.lonDec)/2, scaleO, size.x, size.y, path+"/expedia_alti"+scaleO+"_lat"+latD.toString()+"_lon"+lonD.toString());
+		return scaleO;
+	}
+	
+	public static String createExpediaFilename(double lat, double lon, int alti) {
+		Double latD = new Double(), lonD = new Double();
+		latD.decimalPlaces = 4;
+		lonD.decimalPlaces = 4;
+		latD.set(lat);
+		lonD.set(lon);
+		return "expedia_alti"+alti+"_lat"+latD.toString()+"_lon"+lonD.toString()+".gif";
+	}
+	
+	public void downloadMap(double lat, double lon, int alti, int PixelWidth, int PixelHeight, String path){
+		loadTo(lat, lon, alti, PixelWidth, PixelHeight, path+"/"+createExpediaFilename(lat, lon, alti));
+	}
+
+	public void loadTo(double lat, double lon, int alti, int PixelWidth, int PixelHeight, String datei){
 		HttpConnection connImg, conn2;
 		Socket sockImg, sock2;
 		InputStream is;
 		FileOutputStream fos;
 		ByteArray daten;
 		String quelle = new String();
-		
+		String zone;
+		if (lon <= -10) zone = "USA0409";
+		else zone = "EUR0809";
+
+		/*
+		 * information from: DownloadMouseMode.properties in project GPSylon ( in directory gpsylon_src-0.5.2\plugins\downloadmousemode\auxiliary\org\dinopolis\gpstool\plugin\downloadmousemode and DownloadMapCalculator.java in Dir gpsylon_src-0.5.2\plugins\downloadmousemode\src\org\dinopolis\gpstool\plugin\downloadmousemode 
+		 * download.map.url.expedia_east=http\://www.expedia.com/pub/agent.dll?qscr=mrdt&ID=3XNsF.&CenP={0,number,#.########},{1,number,#.########}&Lang=EUR0809&Alti={2,number,#}&Size={3,number,#},{4,number,#}&Offs=0.000000,0.000000\&BCheck=1
+		 * download.map.url.expedia_east.title=Url of Expedia Europe
+		 * download.map.scale_factor.expedia_east=3950
+		 */
+		Double latD = new Double();
+		latD.decimalPlaces = 8;
+		latD.set(lat);
+		Double lonD = new Double();
+		lonD.decimalPlaces = 8;
+		lonD.set(lon);
 		quelle = "http://www.expedia.de/pub/agent.dll?qscr=mrdt";
 		quelle = quelle + "&ID=3kQaz.";
-		quelle = quelle + "&CenP=" + lat + "," + lon;
-		quelle = quelle + "&Alti="+alti+"&Lang="+zone+"&Size=500,500&Offs=0,0&MapS=0&Pins=|" + lat + "," + lon + "|5|";
+		quelle = quelle + "&CenP=" + latD.toString() + "," + lonD.toString();
+		quelle = quelle + "&Alti="+Convert.toString(alti)+"&Lang="+zone+"&Size="+Convert.toString(PixelWidth)+","+Convert.toString(PixelHeight)+"&Offs=0,0&MapS=0"; //&Pins=|" + latD.toString() + "," + lonD.toString() + "|5|";
 		//Vm.debug(lat + "," + lon);
 		if(proxy.length()>0){
 			connImg = new HttpConnection(proxy, Convert.parseInt(port), quelle);
@@ -86,8 +196,18 @@ public class MapLoader{
 				sock2.close();
 			}
 			//Vm.debug("done");
-		}catch(Exception ex){
-			//Vm.debug("Problem loading map: " + ex.toString());
+		}catch(IOException e){
+			(new MessageBox("Error", "Error while downloading or saving map:\n"+e.getMessage(), MessageBox.OKB)).exec();
+		}
+		File dateiF = new File(datei); // change!!!
+		String tmp = dateiF.getName(); // contains the name and the extension
+		String name = tmp.substring(0, tmp.lastIndexOf("."));
+		float metersPerPixel = (float) (alti)*EXPEDIA_METERS_PER_PIXEL;
+		MapInfoObject cal = new MapInfoObject(metersPerPixel, new CWPoint(lat,lon),  PixelWidth, PixelHeight, dateiF.getPath()+"/"+name);
+		try {
+		cal.saveWFL(dateiF.getDrivePath(), name);
+		} catch (IOException e) {
+			(new MessageBox("Error", "Error saving calibration file:\n"+e.getMessage(), MessageBox.OKB)).exec();
 		}
 	}
 }

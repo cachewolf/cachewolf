@@ -20,7 +20,7 @@ import ewe.filechooser.*;
 */
 public class MainMenu extends MenuBar {
 	private MenuItem profiles, preferences,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchClr;
-	private MenuItem kalibmap,importmap;
+	private MenuItem downloadmap, kalibmap, importmap;
 	private MenuItem spider, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTomASC, exportMSARCSV;
@@ -70,9 +70,10 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for maps, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mapMenuItems = new MenuItem[2];
-		mapMenuItems[0] = importmap = new MenuItem(MyLocale.getMsg(150,"Import"));
-		mapMenuItems[1] = kalibmap = new MenuItem(MyLocale.getMsg(151,"Calibrate"));
+		MenuItem[] mapMenuItems = new MenuItem[3];
+		mapMenuItems[0] = downloadmap = new MenuItem(MyLocale.getMsg(162,"Download calibrated"));
+		mapMenuItems[1] = importmap = new MenuItem(MyLocale.getMsg(150,"Import"));
+		mapMenuItems[2] = kalibmap = new MenuItem(MyLocale.getMsg(151,"Calibrate"));
 		Menu mapsMenu = new Menu(mapMenuItems, null);
 
 		// Now we start with the horizontal menu bar "Application", "Search", "Filter", "Organize", "About"
@@ -420,6 +421,10 @@ public class MainMenu extends MenuBar {
 				profile.saveIndex(pref);
 				tbp.saveColWith(pref);
 				ewe.sys.Vm.exit(0);
+			}
+			if(mev.selectedItem == downloadmap){
+				MapLoaderGui mLG = new MapLoaderGui(cacheDB);
+				mLG.exec(); // .execute doesn't work because the tcp-socket uses another thread which cannot be startet if here .execute() is used!
 			}
 			if(mev.selectedItem == kalibmap){
 				SelectMap sM = new SelectMap();

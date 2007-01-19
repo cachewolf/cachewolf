@@ -407,7 +407,7 @@ public class SpiderGC{
 		if(holder.LatLon.length() > 4){
 			ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 			pll.parse();
-			MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
+			MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
 			mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");
 			mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
 		}

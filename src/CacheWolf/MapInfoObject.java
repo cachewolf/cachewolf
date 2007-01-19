@@ -5,6 +5,7 @@ import ewe.io.BufferedWriter;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
 import ewe.io.FilenameFilter;
+import ewe.io.File;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
 import ewe.sys.*;
@@ -56,13 +57,13 @@ public class MapInfoObject{
 	 * constructes an MapInfoObject without an associated map
 	 * but with 1 Pixel = scale meters
 	 */
-	public MapInfoObject(double scale) {
+	public MapInfoObject(double scale, double lat) {
 		digSep = MyLocale.getDigSeparator();
 		mapName="empty 1 Pixel = "+scale+"meters";
 		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		double pixel2deg = meters2deg * scale;
 		affine[0]=0; //x2lat
-		affine[1]=pixel2deg; //x2lon
+		affine[1]=pixel2deg / java.lang.Math.cos(lat); //x2lon
 		affine[2]=-pixel2deg; //y2lat
 		affine[3]=0; //y2lon
 		affine[4]=1; //top
@@ -73,6 +74,52 @@ public class MapInfoObject{
 		doCalculations();
 	}
 
+	/**
+	 * constructs an MapInfoObject with an associated map
+	 * with 1 Pixel = scale meters, center and width, hight in pixels
+	 * @param name path and filename of .wfl file without the extension (it is needed because the image will be searched in the same directory)
+	 */
+	public MapInfoObject(double scale, CWPoint center, int width, int hight, String name) {
+		digSep = MyLocale.getDigSeparator();
+		mapName = name+".wfl";
+
+		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
+		double pixel2deg = meters2deg * scale;
+		double pixel2deghorizontal = pixel2deg / java.lang.Math.cos(center.latDec*java.lang.Math.PI / 180); 
+		affine[0]=0; //x2lat
+		affine[1]=pixel2deghorizontal; //x2lon
+		affine[2]=-pixel2deg; //y2lat
+		affine[3]=0; //y2lon
+		affine[4]=center.latDec + hight / 2 *pixel2deg; //top
+		affine[5]=center.lonDec - width / 2 *pixel2deghorizontal; //left
+		lowlat = center.latDec - hight / 2 *pixel2deg; //buttom
+		lowlon = center.lonDec + width / 2 *pixel2deghorizontal; //right
+		fileNameWFL = name;
+		OrigUpperLeft = new CWPoint(affine[4], affine[5]);
+		doCalculations();
+	}
+	
+
+	/** 
+	 * @return the filename of the associated map image, "" if no file is associated, null if associated file could not be found
+	 */
+	public String getImageFilename() {
+		if (fileName == null || fileName.length() > 0) return fileName;
+		if (fileNameWFL.length() == 0) return "";
+		String n = fileNameWFL.substring(0, fileNameWFL.lastIndexOf("."));
+		File tmp;
+		String[] t = {".png", ".gif", ".jpg", ".bmp"};
+		int i;
+		for (i = 0; i<t.length; i++) {
+			tmp = new File(n+t[i]);
+			if (tmp.exists()) break;
+		}
+		
+		if (i >=t.length) fileName = null;
+		else fileName = n+t[i];
+		return fileName;
+	}
+	
 	/**
 	 * Method to load a .wfl-file
 	 * @throws IOException when there was a problem reading .wfl-file
@@ -99,7 +146,7 @@ public class MapInfoObject{
 			lowlon = Convert.toDouble(line);
 
 			fileNameWFL = mapsPath + thisMap + ".wfl";
-			fileName = mapsPath + thisMap + ".png";
+			fileName = ""; //mapsPath + thisMap + ".png";
 			mapName = thisMap;
 			in.close();
 			if(affine[4] > 90 || affine[4] < -90 || affine[5] < -180 || affine[5] > 360 ||
@@ -145,6 +192,8 @@ public class MapInfoObject{
 
 	/**
 	 *	Method to save a world file (.wfl)
+	 * @param mapsPath without "/" at the end
+	 * @param mapFileName without file extension
 	 * @throws IOException when there was a problem writing .wfl-file
 	 * @throws IllegalArgumentException when affine[x] for all x == 0 ("map not calibrated").
 	 */
@@ -163,7 +212,7 @@ public class MapInfoObject{
 		if (digSep.equals(",")) towrite=towrite.replace(',', '.');
 		outp.print(towrite);
 		outp.close();
-		this.fileName = mapsPath + "/" + mapFileName + ".png";
+		this.fileName = ""; // this will be set in getImageFilenam //mapsPath + "/" + mapFileName + ".png";
 		this.fileNameWFL = mapsPath + "/" + mapFileName + ".wfl";
 		this.mapName = mapFileName;
 	}

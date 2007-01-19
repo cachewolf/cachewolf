@@ -342,13 +342,20 @@ public class OCXMLImporter extends MinML {
 				
 				ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 				pll.parse();
-				MapLoader mpl = new MapLoader(pll.getLatDeg(),pll.getLonDeg(), pref.myproxy, pref.myproxyport);
+				MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
 				// MapLoader tests itself if the file already exists and doesnt download if so.
-				String filename = profile.dataDir + "/" + holder.wayPoint + "_map.gif";
+				String filename = Global.getPref().baseDir + "/maps/expedia/" + holder.wayPoint + "_map.gif";
+				if (!(new File(filename).getParentFile().isDirectory())) { // dir exists? 
+					if (new File(filename).getParentFile().mkdir() == false) // dir creation failed?
+					{ pref.downloadMapsOC = false;
+					(new MessageBox("Warning", "Ignoring error (stopping to download maps):\n cannot create maps directory: \n"+new File(filename).getParentFile(), MessageBox.OKB)).exec(); 
+					}
+				}
 				if (!fileExits(filename)){
 					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache:")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 1");
 					mpl.loadTo(filename, "3"); }
-				filename = profile.dataDir + "/" + holder.wayPoint + "_map_2.gif";
+				//filename = profile.dataDir + "/" + holder.wayPoint + "_map_2.gif";
+				filename = Global.getPref().baseDir + "/maps/expedia/" + holder.wayPoint + "_map_2.gif";
 				if (!fileExits(filename)){
 					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache: ")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 2");
 					mpl.loadTo(filename, "10"); }
