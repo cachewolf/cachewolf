@@ -593,12 +593,13 @@ public class GotoPanel extends CellPanel {
 				if (mainT.tbP.myMod.cacheSelectionChanged) {
 					mainT.tbP.myMod.cacheSelectionChanged = false;
 					mmp.removeAllMapSymbolsButGoto();
+					CacheHolder ch;
 					for (int i=cacheDB.size()-1; i>=0; i--) {
-						CacheHolder ch = (CacheHolder) cacheDB.get(i);
+						ch = (CacheHolder) cacheDB.get(i);
 						if (ch.is_Checked) {
-							CWPoint tmpll = new CWPoint(ch.LatLon);
+							//CWPoint tmpll = new CWPoint(ch.LatLon);
 							int ct = Convert.parseInt(ch.type);
-							mmp.addSymbol(ch.CacheName, new AniImage(myTableModel.cacheImages[ct]), tmpll.latDec, tmpll.lonDec);
+							mmp.addSymbol(ch.CacheName, new AniImage(myTableModel.cacheImages[ct]), ch.pos.latDec, ch.pos.lonDec);
 						}
 					}
 				}

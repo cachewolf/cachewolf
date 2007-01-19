@@ -139,7 +139,10 @@ public class TablePanel extends CellPanel{
 		while(--anz >= 0){
 			ch = (CacheHolder)cacheDB.get(anz); // This returns a pointer to the CacheHolder object
 			if(ch.LatLon.length()>4){
-				toPoint.set(ch.LatLon, CWPoint.CW); // Fast parse with traditional parse algorithm
+				if (ch.pos == null) { // only calculate once
+					toPoint.set(ch.LatLon, CWPoint.CW); // Fast parse with traditional parse algorithm
+					ch.pos = new CWPoint(toPoint);
+				} else toPoint = ch.pos;
 				ch.kilom = fromPoint.getDistance(toPoint);
 				ch.degrees = fromPoint.getBearing(toPoint);
 				ch.bearing = CWPoint.getDirection(ch.degrees);

@@ -21,13 +21,22 @@ public class myTableControl extends TableControl{
 		menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
 	}
 	public void penHeld(Point p){
-		menuState.doShowMenu(p,true,null);
+		menuState.doShowMenu(p,true,null); 
 	}
 	
-	public void popupMenuEvent(Object selectedItem){
-		CacheHolder ch;
+	public void onKeyEvent(KeyEvent ev) {
+		if (ev.type == KeyEvent.KEY_PRESS && ev.target == this){
+			if ( (ev.modifiers & IKeys.CONTROL) > 0 && ev.key == 'a'-'a'+1){ // <ctrl-a> gives 1, <ctrl-b> == 2
+				// select all on <ctrl-a>
+				selectAll();
+				ev.consumed = true;
+			}
+		}
+		super.onKeyEvent(ev);
+	}
 		
-		if (selectedItem.toString().equals(MyLocale.getMsg(1015,"Select all"))){
+		public void selectAll() {
+			CacheHolder ch;
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				ch.is_Checked = true;
@@ -35,6 +44,14 @@ public class myTableControl extends TableControl{
 			}
 			tbp.myMod.cacheSelectionChanged = true;
 			tbp.refreshTable();
+		}
+	
+	
+	public void popupMenuEvent(Object selectedItem){
+		CacheHolder ch;
+		
+		if (selectedItem.toString().equals(MyLocale.getMsg(1015,"Select all"))){
+			selectAll();
 		}
 		
 		if (selectedItem.toString().equals(MyLocale.getMsg(1016,"De-select all"))){

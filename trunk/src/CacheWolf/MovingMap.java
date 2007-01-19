@@ -31,6 +31,7 @@ public class MovingMap extends Form {
 	TrackOverlay[] TrackOverlays;
 	Vector tracks;
 	MapInfoObject currentMap;
+	String mapPath;
 	
 	AniImage mapImage1to1;
 	ArrowsOnMap directionArrows = new ArrowsOnMap();
@@ -58,6 +59,7 @@ public class MovingMap extends Form {
 	boolean mapHidden = false;
 	boolean noMapsAvailable;
 	boolean zoomingMode = false;
+	boolean mapsloaded = false;
 
 	public MovingMap(Preferences pref, GotoPanel gP, Vector cacheDB){
 		this.cacheDB = cacheDB;
@@ -70,6 +72,7 @@ public class MovingMap extends Form {
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
 		this.backGround = Color.Black;
+		this.mapPath = Global.getPref().baseDir+"maps/expedia/";
 		mmp = new MovingMapPanel(this);
 		this.addLast(mmp);
 		DrawnIcon closeX = new DrawnIcon(DrawnIcon.CROSS,15,15,new Color(0,0,0));
@@ -81,7 +84,7 @@ public class MovingMap extends Form {
 		bottonImageClose.properties |= AniImage.AlwaysOnTop;
 		bottonImageClose.setLocation(Global.getPref().myAppWidth - bottonImageClose.getWidth()- 5, 5);
 		mmp.addImage(bottonImageClose);
-		buttonImageGpsOn.setLocation(pref.myAppWidth - bottonImageChooseMap.getWidth()-5, bottonImageClose.getHeight() + 10);
+		buttonImageGpsOn.setLocation(pref.myAppWidth - bottonImageChooseMap.getWidth()-5, bottonImageClose.getHeight() + 20);
 		buttonImageGpsOn.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageGpsOn);
 		bottonImageChooseMap.setLocation(10,10);
@@ -113,14 +116,15 @@ public class MovingMap extends Form {
 		setGpsStatus(noGPS);
 		posCircle.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(posCircle);
-		loadMaps(Global.getPref().baseDir+"maps/standard/");
+		//loadMaps(Global.getPref().baseDir+"maps/standard/");
 	}
 
 	/**
 	 * loads the list of maps
 	 *
 	 */
-	public void loadMaps(String mapsPath){
+	public void loadMaps(String mapsPath, double lat){
+		this.mapPath = mapsPath;
 		Vm.showWait(true);
 		resetCenterOfMap();
 		InfoBox inf = new InfoBox("Info", "Loading list of maps...");
@@ -129,36 +133,46 @@ public class MovingMap extends Form {
 		//if (mmp.mapImage != null) 
 		String dateien[];
 		File files = new File(mapsPath);
-		Extractor ext;
 		String rawFileName = new String();
-		dateien = files.list("*.png", File.LIST_FILES_ONLY);
+		String[] dirstmp = files.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_DIRECTORIES_ONLY);
+		Vector dirs = new Vector(dirstmp);
+		dirs.add("."); // include the mapsPath itself
 		MapInfoObject tempMIO;
-		for(int i = 0; i < dateien.length;i++){
-			ext = new Extractor(dateien[i], "", ".", 0, true);
-			rawFileName = ext.findNext();
-			try {
-				tempMIO = new MapInfoObject();
-				tempMIO.loadwfl(mapsPath, rawFileName);
-				maps.add(tempMIO);
-			}catch(IOException ex){ } // TODO etwas genauer auch Fehlermeldung ausgeben? Bei vorhandenen .wfl-Datei mit ungültigen Werten Fehler ausgeben oder wie jetz einfach ignorieren?
+		MessageBox f = null;
+		for (int j = dirs.size()-1; j >= 0; j--) {
+			files = new File(mapsPath+"/"+dirs.get(j));
+			dateien = files.list("*.wfl", File.LIST_FILES_ONLY);
+			for(int i = 0; i < dateien.length;i++){
+				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
+				try {
+					tempMIO = new MapInfoObject();
+					tempMIO.loadwfl(mapsPath+dirs.get(j)+"/", rawFileName);
+					maps.add(tempMIO);
+				}catch(IOException ex){ 
+					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
+				}catch(ArithmeticException ex){ // affine contain not allowed values 
+					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
+				} 
+			}
 		}
 		if (maps.isEmpty())
-			{
+		{
 			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB)).execute();
 			noMapsAvailable = true;
-			} else noMapsAvailable = false;
-		tempMIO = new MapInfoObject(1.0);
+		} else noMapsAvailable = false;
+		tempMIO = new MapInfoObject(1.0, lat);
 		maps.add(tempMIO);
-		tempMIO = new MapInfoObject(5.0);
+		tempMIO = new MapInfoObject(5.0, lat);
 		maps.add(tempMIO);
-		tempMIO = new MapInfoObject(50.0);
+		tempMIO = new MapInfoObject(50.0, lat);
 		maps.add(tempMIO);
-		tempMIO = new MapInfoObject(250.0);
+		tempMIO = new MapInfoObject(250.0, lat);
 		maps.add(tempMIO);
-		tempMIO = new MapInfoObject(1000.0);
+		tempMIO = new MapInfoObject(1000.0, lat);
 		maps.add(tempMIO);
 		inf.close(0);
 		Vm.showWait(false);
+		this.mapsloaded = true;
 	}
 
 	public void forceMapLoad() {
@@ -534,7 +548,7 @@ public class MovingMap extends Form {
 		public void removeAllMapSymbolsButGoto(){
 			if (symbols == null) return;
 			symbols.removeAllElements();
-			symbols.add(gotoPos);
+			if (gotoPos != null) symbols.add(gotoPos);
 /*			for (int i=symbols.size()-1; i>=0; i--) {
 				if (((MapSymbol)symbols.get(i)).name != "goto") removeMapSymbol(i);
 			}
@@ -588,6 +602,7 @@ public class MovingMap extends Form {
 		 * Method to laod the best map for lat/lon and move the map so that the posCircle is at lat/lon
 		 */
 		public void updatePosition(double lat, double lon){
+			if (!mapsloaded) loadMaps(mapPath, lat);
 			lastUpatePosition.latDec=lat;
 			lastUpatePosition.lonDec=lon;
 			if(!ignoreGps || forceMapLoad){
@@ -673,9 +688,15 @@ public class MovingMap extends Form {
 
 					//Vm.debug("free: "+Vm.getUsedMemory(false)+"classMemory: "+Vm.getClassMemory()+ "after garbage collection: "+Vm.getUsedMemory(false));
 					Vm.getUsedMemory(true); // calls the garbage collection
-				} // give memory free before loading the new map to avoid out of memory error  
-				if (currentMap.fileName.length()>0) mmp.mapImage = new AniImage(currentMap.fileName); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
-				else mmp.mapImage = new AniImage();
+				} // give memory free before loading the new map to avoid out of memory error
+				if (currentMap.getImageFilename() == null ) {
+					mmp.mapImage = new AniImage();
+					(new MessageBox("Error", "Could not find image associated with: \n"+currentMap.fileNameWFL, MessageBox.OKB)).execute();
+				}
+				else { 
+					if (currentMap.getImageFilename().length()>0) mmp.mapImage = new AniImage(currentMap.getImageFilename()); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
+					else mmp.mapImage = new AniImage();
+				}
 				mapImage1to1 = mmp.mapImage;
 				mmp.mapImage.properties = mmp.mapImage.properties | AniImage.IsMoveable;
 				if (mapHidden) mmp.mapImage.properties |= AniImage.IsInvisible;
@@ -700,7 +721,7 @@ public class MovingMap extends Form {
 				updateOnlyPosition(lat, lon, false);
 				inf.close(0);
 				Vm.showWait(false);
-				(new MessageBox("Error", "Could not load map: "+ newmap.fileName, MessageBox.OKB)).execute();
+				(new MessageBox("Error", "Could not load map: "+ newmap.getImageFilename(), MessageBox.OKB)).execute();
 				ignoreGps = saveIgnoreStatus;
 			} catch (OutOfMemoryError e) {
 				if (mmp.mapImage != null) {
@@ -712,7 +733,7 @@ public class MovingMap extends Form {
 				updateOnlyPosition(lat, lon, false);
 				inf.close(0);
 				Vm.showWait(false);
-				(new MessageBox("Error", "Not enough memory to load map: "+ newmap.fileName+"\nYou can try to close\n all prgrams and \nrestart CacheWolf", MessageBox.OKB)).execute();
+				(new MessageBox("Error", "Not enough memory to load map: "+ newmap.getImageFilename()+"\nYou can try to close\n all prgrams and \nrestart CacheWolf", MessageBox.OKB)).execute();
 				ignoreGps = saveIgnoreStatus;
 			}catch (SystemResourceException e) {
 				if (mmp.mapImage != null) {
@@ -724,7 +745,7 @@ public class MovingMap extends Form {
 				updateOnlyPosition(lat, lon, false);
 				inf.close(0);
 				Vm.showWait(false);
-				(new MessageBox("Error", "Not enough ressources to load map: "+ newmap.fileName+"\nYou can try to close\n all prgrams and \nrestart CacheWolf", MessageBox.OKB)).execute();
+				(new MessageBox("Error", "Not enough ressources to load map: "+ newmap.getImageFilename()+"\nYou can try to close\n all prgrams and \nrestart CacheWolf", MessageBox.OKB)).execute();
 				ignoreGps = saveIgnoreStatus;
 			}
 		}
@@ -984,14 +1005,15 @@ public class MovingMap extends Form {
 			if(l.execute() == FormBase.IDOK){
 //				Vm.debug("Trying map: " + l.selectedMap.fileName);
 				mm.autoSelectMap = false;
-				if (l.selectedMap.inBound(mm.posCircleLat, mm.posCircleLon) || l.selectedMap.fileName.length()==0) {
+				if (l.selectedMap.inBound(mm.posCircleLat, mm.posCircleLon) || l.selectedMap.getImageFilename().length()==0) {
 					mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon);
 					mm.ignoreGpsStatutsChanges = false;
 				} else {
 					mm.ignoreGpsStatutsChanges = false;
 					mm.setGpsStatus(MovingMap.noGPS);
 					mm.ignoreGpsStatutsChanges = true;
-					mm.setMap(l.selectedMap, -361, -361); // don't adjust Image to lat/lon
+					mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon); // don't adjust Image to lat/lon
+					mm.setCenterOfScreen(l.selectedMap.center);
 //					Point posCXY = new Point (0,0); mm.getXYinMap(mm.posCircleLat, mm.posCircleLat);
 					//			double lat = mm.currentMap.affine[0]*posCXY.x + mm.currentMap.affine[2]*posCXY.y + mm.currentMap.affine[4]; 
 					mm.posCircleX = 0; // place map to the upper left corner of windows
@@ -1057,7 +1079,7 @@ public class MovingMap extends Form {
 							fc.addMask("*.wfl");
 							fc.setTitle((String)MyLocale.getMsg(4200,"Select map directory:"));
 							if(fc.execute() != FileChooser.IDCANCEL){
-								mm.loadMaps(fc.getChosen().toString()+"/");
+								mm.loadMaps(fc.getChosen().toString()+"/", mm.posCircleLat);
 								mm.addOverlaySet();
 								mm.forceMapLoad();
 							}

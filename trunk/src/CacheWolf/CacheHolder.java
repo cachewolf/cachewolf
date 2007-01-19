@@ -23,6 +23,7 @@ public class CacheHolder {
   public String CacheName = new String();
   public String CacheOwner = new String();
   public String LatLon = new String();
+  public CWPoint pos = null;
   public String DateHidden = new String();
   public String LastUpdate = new String();
   public String Hints = new String();
