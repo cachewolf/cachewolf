@@ -8,6 +8,7 @@ import ewe.sys.*;
 //import ewe.util.*;
 import ewe.io.*;
 import ewe.filechooser.*;
+import exp.*;
 
 /**
 *	This class creates the menu for cachewolf. It is also responsible
@@ -23,8 +24,8 @@ public class MainMenu extends MenuBar {
 	private MenuItem downloadmap, kalibmap, importmap;
 	private MenuItem spider, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
-	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTomASC, exportMSARCSV;
-	private MenuItem exportOZI, exportKML, exportTomTomOVL, exportTPL;
+	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
+	private MenuItem exportOZI, exportKML, exportTPL;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete;
@@ -48,14 +49,14 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] exitems = new MenuItem[13];
+		MenuItem[] exitems = new MenuItem[12];
 		//Vm.debug("Hi in MainMenu "+lr);
 		exitems[0] = exporthtml = new MenuItem(MyLocale.getMsg(100,"to HTML"));
 		exitems[1] = exportpcx5 = new MenuItem(MyLocale.getMsg(101,"to PCX5 Mapsource"));
 		exitems[2] = exporttop50 = new MenuItem(MyLocale.getMsg(102,"to TOP50 ASCII"));
 		exitems[3] = exportGPX = new MenuItem(MyLocale.getMsg(103,"to GPX"));
 		exitems[4] = exportASC = new MenuItem(MyLocale.getMsg(104,"to ASC"));
-		exitems[5] = exportTomTomASC = new MenuItem(MyLocale.getMsg(105,"to TomTom ASC"));
+		exitems[5] = exportTomTom = new MenuItem(MyLocale.getMsg(105,"to TomTom"));
 		exitems[6] = exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV"));
 		exitems[7] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
 		if(!(new File(cwd + "/gpsbabel.exe")).exists()) exitems[7].modifiers = MenuItem.Disabled;
@@ -63,8 +64,7 @@ public class MainMenu extends MenuBar {
 		if(!(new File(cwd + "/cmconvert/cmconvert.exe")).exists()) exitems[8].modifiers = MenuItem.Disabled;
 		exitems[9] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
 		exitems[10] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
-		exitems[11] = exportTomTomOVL = new MenuItem(MyLocale.getMsg(126,"to TomTom OV2"));
-		exitems[12] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
+		exitems[11] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
 		Menu exportMenu = new Menu(exitems, MyLocale.getMsg(107,"Export"));
 
 		///////////////////////////////////////////////////////////////////////
@@ -275,23 +275,21 @@ public class MainMenu extends MenuBar {
 				Vm.showWait(true);
 				PCX5Exporter pcx = new PCX5Exporter(pref, profile);
 				pcx.doIt(PCX5Exporter.MODE_AUTO);
-				ProgressBarForm pbf = new ProgressBarForm();
-				pbf.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
+				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
 				String cwd = File.getProgramDirectory() + "/temp.pcx";
 				try{
 					ewe.sys.Process p = Vm.exec("gpsbabel -s -i pcx -f "+ cwd +" -o garmin -F " + pref.garminConn +":");
 					Vm.debug("gpsbabel -s -i pcx -f "+ cwd +" -o garmin -F " + pref.garminConn +":");
 					p.waitFor();
 				}catch(IOException ioex){};
-				pbf.clear();
+				ProgressBarForm.clear();
 				Vm.showWait(false);
 			}
 			if(mev.selectedItem == exportCacheMate){
 				Vm.showWait(true);
 				GPXExporter htm = new GPXExporter( pref, profile);
 				htm.doIt(0);
-				ProgressBarForm pbf = new ProgressBarForm();
-				pbf.display("CMCONVERT", MyLocale.getMsg(952,"Converting..."), null);
+				ProgressBarForm.display("CMCONVERT", MyLocale.getMsg(952,"Converting..."), null);
 				String cwd = new String();
 				cwd = File.getProgramDirectory() + "/temp.gpx";
 				// add surrounding "
@@ -303,7 +301,7 @@ public class MainMenu extends MenuBar {
 				}catch(IOException ioex){
 					//Vm.debug("Scheint ein Problem zu geben");
 				};
-				pbf.clear();
+				ProgressBarForm.clear();
 				Vm.showWait(false);
 			}
 			if(mev.selectedItem == filtClear){
@@ -343,9 +341,9 @@ public class MainMenu extends MenuBar {
 				ASCExporter asc = new ASCExporter(pref,profile);
 				asc.doIt();
 			}
-			if(mev.selectedItem == exportTomTomASC){
-				TomTomASCExporter asc = new TomTomASCExporter(pref, profile);
-				asc.doIt();
+			if(mev.selectedItem == exportTomTom){
+				TomTomExporter tt = new TomTomExporter();
+				tt.doIt();
 			}
 			if(mev.selectedItem == exportMSARCSV){
 				MSARCSVExporter msar = new MSARCSVExporter(pref,profile);
@@ -362,10 +360,6 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == exportOZI){
 				OziExporter ozi = new OziExporter( pref, profile);
 				ozi.doIt();
-			}
-			if(mev.selectedItem == exportTomTomOVL){
-				TomTomOV2Exporter tomovl = new TomTomOV2Exporter( pref, profile);
-				tomovl.doIt();
 			}
 			if(mev.selectedItem == exportKML){
 				KMLExporter kml = new KMLExporter( pref, profile);
