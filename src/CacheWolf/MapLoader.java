@@ -158,8 +158,8 @@ public class MapLoader {
 		lonD.set(lon);
 		quelle = "http://www.expedia.de/pub/agent.dll?qscr=mrdt";
 		quelle = quelle + "&ID=3kQaz.";
-		quelle = quelle + "&CenP=" + latD.toString() + "," + lonD.toString();
-		quelle = quelle + "&Alti="+Convert.toString(alti)+"&Lang="+zone+"&Size="+Convert.toString(PixelWidth)+","+Convert.toString(PixelHeight)+"&Offs=0,0&MapS=0"; //&Pins=|" + latD.toString() + "," + lonD.toString() + "|5|";
+		quelle = quelle + "&CenP=" + latD.toString().replace(',', '.') + "," + lonD.toString().replace(',', '.');
+		quelle = quelle + "&Alti="+Convert.toString(alti)+"&Lang="+zone+"&Size="+Convert.toString(PixelWidth)+","+Convert.toString(PixelHeight)+"&Offs=0,0&MapS=0"; //&Pins=|" + latD.toString().replace(',', '.') + "," + lonD.toString().replace(',', '.') + "|5|";
 		//Vm.debug(lat + "," + lon);
 		if(proxy.length()>0){
 			connImg = new HttpConnection(proxy, Convert.parseInt(port), quelle);
