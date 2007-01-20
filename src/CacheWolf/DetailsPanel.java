@@ -267,6 +267,9 @@ public class DetailsPanel extends CellPanel{
 	*	Method to react to a user input.
 	*/
 	public void onEvent(Event ev){
+		if(ev instanceof ControlEvent && ev.type == ControlEvent.FOCUS_OUT){
+			dirty_status = true;
+		}
 		/**
 		*	User changed status.
 		*/
@@ -276,16 +279,10 @@ public class DetailsPanel extends CellPanel{
 		*	Also possible: the user created a custom waypoint.
 		*/
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
+			
 			if(ev.target == btNotes){
 				NotesScreen nsc = new NotesScreen(thisCache, profile);
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
-			}
-			if (ev.target == btnDelete){
-				//Vm.debug(thisCache.CacheName);
-//TODO This does not work. e.g. if we do a sort we get an indexOutOfBounds exception
-// therefore temporarily disabled.  skg 20061226
-				//cacheDB.remove(thisCache);  
-				//dirty_newOrDelete = true;
 			}
 			if(ev.target == showMap){
 				try {

@@ -91,8 +91,7 @@ public class Profile {
 				distOC = "0";
 			}
 			
-			// Bilbowolf: detfile.print("    <FILTER ....
-			
+			detfile.print("    <FILTER rose = \""+filterRose+"\" type = \""+filterType+"\"/>\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			for(int i = 0; i<cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
@@ -171,6 +170,11 @@ public class Profile {
 					start=text.indexOf("dist = \"")+8;
 					distOC=text.substring(start,text.indexOf("\"",start));
 				} else if (text.indexOf("<FILTER")>=0){
+					ex.setSource(text);
+					filterRose = ex.findNext();
+					filterType = ex.findNext();
+					Vm.debug("F1:" +filterType);
+					Vm.debug("F2: "+filterRose);
 //					 Bilbowolf: Pattern for storing filter <FILTER type="01001101" rose = "010010101" var = "0101" dist = "<12" diff = ">13" terr = "<1"/>
 				}
 			}
