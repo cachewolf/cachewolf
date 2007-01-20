@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import ewe.io.File;
 import ewe.sys.Convert;
 
 public final class Common {
@@ -103,10 +104,28 @@ public final class Common {
 		strBuf.append(strHex);
 		return strBuf.toString();
 	}
+	
 	public static String ClearForFileName(String str) {
 		String ret = str.replace('?', '_');
 		return ret;
 	}
-
-
+	
+	/**
+	 * finds the correct (existing) extension to an image filename
+	 * @param filename without extension
+	 * @return filename with extension 
+	 */
+	static public String getImageName(String name) {
+		String fileName;
+		File tmp;
+		String[] t = {".png", ".gif", ".jpg", ".bmp"};
+		int i;
+		for (i = 0; i<t.length; i++) {
+			tmp = new File(name+t[i]);
+			if (tmp.exists()) break;
+		}
+		if (i >=t.length) fileName = null;
+		else fileName = name+t[i];
+		return fileName;
+	}
 }

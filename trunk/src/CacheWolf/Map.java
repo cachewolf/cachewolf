@@ -18,8 +18,6 @@ import com.stevesoft.ewe_pat.*;
 */
 public class Map extends Form {
 	Preferences pref;
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	String mapsPath = new String();
 	String thisMap = new String();
 	public String selectedMap = new String();
@@ -27,8 +25,6 @@ public class Map extends Form {
 	mLabel infLabel = new mLabel("                          ");
 	Vector GCPs = new Vector();
 	MapInfoObject wfl = new MapInfoObject();
-//	double[] affine = {0,0,0,0,0,0};
-//	double bottomlon, bottomlat = 0; // die werden im Moment nicht verwendet, nur berechnet nicht eingelesen von .wfl-datei und auch nie benutzt
 	mButton infButton;
 	ScrollBarPanel scp;
 	AniImage mapImg;
@@ -39,7 +35,7 @@ public class Map extends Form {
 	*/
 	public Map(Preferences pref){
 		this.pref = pref;
-		mapsPath = File.getProgramDirectory() + "/maps/"; // TODO veraltet
+		mapsPath = pref.getMapManuallySavePath()+"/"; //File.getProgramDirectory() + "/maps/"; // TODO veraltet
 	}
 	
 	/**
@@ -64,25 +60,25 @@ public class Map extends Form {
 	*/
 	public Map(Preferences pref, String mapToLoad, boolean worldfileexists){
 		this.pref = pref;
-		this.title = (String)lr.get(4106,"Calibrate map:") + " " + mapToLoad;
+		this.title = MyLocale.getMsg(4106,"Calibrate map:") + " " + mapToLoad;
 		this.resizable = true;
 		this.moveable = true;
 		//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		thisMap = mapToLoad;
-		mapsPath = File.getProgramDirectory() + "/maps/"; // TDO veraltet
+		mapsPath = pref.getMapManuallySavePath()+"/"; //File.getProgramDirectory() + "/maps/"; // TDO veraltet
 		try {
 			wfl.loadwfl(mapsPath, thisMap);
 		}catch(FileNotFoundException ex){
 			Vm.debug("Cannot load world file!");
 		}catch (IOException ex) { // is thrown if lat/lon out of range
-			MessageBox tmpMB=new MessageBox((String)lr.get(312, "Error"), ex.getMessage(), MessageBox.OKB);
+			MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), ex.getMessage(), MessageBox.OKB);
 			tmpMB.execute();
 			Vm.debug("Cannot load world file!");
 		}
 		mapInteractivePanel pane = new mapInteractivePanel(this);
 		scp = new ScrollBarPanel(pane);
-		Image img = new Image(mapsPath + thisMap + ".png");
+		Image img = new Image(Common.getImageName(mapsPath + thisMap));
 		PixelBuffer pB = new PixelBuffer(img);
 		//pB = pB.scale((int)(pref.myAppWidth*0.98),(int)(pref.myAppHeight*0.98));
 		mapImg = new AniImage(pB.toDrawableImage());
@@ -90,12 +86,12 @@ public class Map extends Form {
 		scp.setPreferredSize(mapImg.getWidth(),mapImg.getHeight());
 		imageWidth = mapImg.getWidth();
 		imageHeight = mapImg.getHeight();
-		this.addLast(scp.getScrollablePanel(), this.STRETCH, this.FILL);
+		this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 		infPanel = new CellPanel();
-		infPanel.addNext(infLabel,this.STRETCH, this.FILL);
-		infButton = new mButton((String)lr.get(4107,"Done!"));
-		infPanel.addLast(infButton,this.DONTSTRETCH, this.FILL);
-		this.addLast(infPanel, this.DONTSTRETCH, this.FILL);
+		infPanel.addNext(infLabel,CellConstants.STRETCH, CellConstants.FILL);
+		infButton = new mButton(MyLocale.getMsg(4107,"Done!"));
+		infPanel.addLast(infButton,CellConstants.DONTSTRETCH, CellConstants.FILL);
+		this.addLast(infPanel, CellConstants.DONTSTRETCH, CellConstants.FILL);
 		//scp.repaintNow();
 		//this.repaintNow();
 	}
@@ -193,12 +189,11 @@ public class Map extends Form {
 	*	It will use these files to automatically georeference the files during import.
 	*/
 	public boolean importMap(){
-		Extractor ext;
 		String rawFileName = new String();
-		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, File.getProgramDirectory());
-		fc.addMask("*.png");
-		fc.setTitle((String)lr.get(4100,"Select Directory:"));
-		if(fc.execute() != fc.IDCANCEL){
+		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, Global.getPref().baseDir);
+		fc.addMask("*.png,*.gif,*.bmp,*.jpg");
+		fc.setTitle((String)MyLocale.getMsg(4100,"Select Directory:"));
+		if(fc.execute() != FormBase.IDCANCEL){
 			File inDir = fc.getChosenFile();
 			File dir = new File(mapsPath);
 			File mapFile;
@@ -211,7 +206,8 @@ public class Map extends Form {
 				//at the same time try to find associated .map files!
 				//These are georeference files targeted for OziExplorer.
 				//So lets check if we have more than 1 png file:
-				String[] files;
+				Vector files;
+				String [] filestemp;
 				String line = new String();
 				InputStream in;
 				OutputStream out;
@@ -219,17 +215,27 @@ public class Map extends Form {
 				byte[] buf;
 				int len;
 				String[] parts;
-				files = inDir.list("*.png", File.LIST_FILES_ONLY);
-				InfoBox inf = new InfoBox("Info", (String)lr.get(4109,"Loading maps...")); 
+				filestemp = inDir.list("*.png", File.LIST_FILES_ONLY);
+				files = new Vector(filestemp);
+				filestemp = inDir.list("*.jpg", File.LIST_FILES_ONLY);
+				files.addAll(filestemp);
+				filestemp = inDir.list("*.gif", File.LIST_FILES_ONLY);
+				files.addAll(filestemp);
+				filestemp = inDir.list("*.bmp", File.LIST_FILES_ONLY);
+				files.addAll(filestemp);
+				
+				InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...            \n")); 
 				Vm.showWait(true);
-				inf.show();
-				for(int i = 0; i<files.length;i++){
-					inf.setInfo((String)lr.get(4110,"Loading:")+ " " + files[i]);
+				inf.exec();
+				String currfile = null;
+				for(int i = files.size() -1 ; i >= 0;i--){
+					currfile = (String) files.get(i);
+					inf.setInfo(MyLocale.getMsg(4110,"Loading:\n")+ " " + currfile);
 					//Copy the file
 					//Vm.debug("Copy: " + inDir.getFullPath() + "/" +files[i]);
 					//Vm.debug("to: " + mapsPath + files[i]);
-					in = new FileInputStream(inDir.getFullPath() + "/" +files[i]);
-					out = new FileOutputStream(mapsPath + files[i]);
+					in = new FileInputStream(inDir.getFullPath() + "/" +currfile);
+					out = new FileOutputStream(mapsPath + currfile);
 					buf = new byte[1024];
 					while ((len = in.read(buf)) > 0) {
 					    out.write(buf, 0, len);
@@ -239,8 +245,7 @@ public class Map extends Form {
 					// here catch IOException
 					
 					//Check for a .map file
-					ext = new Extractor(files[i], "", ".", 0, true);
-					rawFileName = ext.findNext();
+					rawFileName = currfile.substring(0, currfile.lastIndexOf("."));
 					mapFile = new File(inDir.getFullPath() + "/" + rawFileName + ".map");
 					if(mapFile.exists()){
 						GCPoint gcp1 = new GCPoint();
@@ -366,10 +371,10 @@ public class Map extends Form {
 						retry = false;
 						wfl.saveWFL(mapsPath, thisMap);
 					} catch (IOException e) {
-						MessageBox tmpMB = new MessageBox((String)lr.get(321, "Error"), (String)lr.get(321, "Error writing file ") + e.getMessage()+(String)lr.get(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
+						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(321, "Error writing file ") + e.getMessage()+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
 						if (tmpMB.execute() == MessageBox.IDYES) retry = true;
 					}catch (IllegalArgumentException e) {
-						MessageBox tmpMB = new MessageBox((String)lr.get(144, "Warning"), (String)lr.get(325, "Map not calibrated")+(String)lr.get(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
+						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(325, "Map not calibrated")+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
 						if (tmpMB.execute() == MessageBox.IDYES) { retry = true; break; }
 					}
 				}

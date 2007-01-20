@@ -8,19 +8,19 @@ import ewesoft.xml.sax.*;
 import ewe.filechooser.*;
 
 /**
-*	A class to hold the preferences that were loaded upon start up of CacheWolf.
-*	This class is also capable of parsing the prefs.xml file as well as
-*	saving the current settings of preferences.
-*/
+ *	A class to hold the preferences that were loaded upon start up of CacheWolf.
+ *	This class is also capable of parsing the prefs.xml file as well as
+ *	saving the current settings of preferences.
+ */
 public class Preferences extends MinML{
-	
+
 	public int tablePrefs[] = {1,1,1,1,1,1,1,1,1,1,1,1};
 	public int tableWidth[] = {20,20,20,20,65,135,135,100,60,50,50,50};
-	
+
 	static protected final int PROFILE_SELECTOR_FORCED_ON=0;
 	static protected final int PROFILE_SELECTOR_FORCED_OFF=1;
 	static protected final int PROFILE_SELECTOR_ONOROFF=2;
-	
+
 	/** The currently used centre point, can be different from the profile's centrepoint. This is used
 	 *  for spidering */
 	public CWPoint curCentrePt=new CWPoint();
@@ -42,12 +42,12 @@ public class Preferences extends MinML{
 	public String browser = new String();
 	public boolean showDeletedImages=true; /* Used in ImagePanel */
 	public boolean solverIgnoreCase=false;
-		
+
 	public int myAppHeight = 0;
 	public int myAppWidth = 0;
 	//public int nLogs = 5;
 	public boolean dirty = false;
-	
+
 	public int currProfile = 0;
 	public String profiles[] = new String[4];
 	public String profdirs[] = new String[4];
@@ -67,37 +67,39 @@ public class Preferences extends MinML{
 	public boolean downloadMapsOC = true;
 	public boolean downloadmissingOC = false;
 	public boolean fixSIP = false;
-	
+
 	public String digSeparator = new String();
 	public boolean debug = false;
 	public SerialPortOptions mySPO = new SerialPortOptions();
 	public boolean forwardGPS = false;
 	public String forwardGpsHost = new String();
 	public int fontSize = 12;
+
+	public String mapsPath = new String("/maps/standard");
 	// Helper variables for XML parser 
 	private StringBuffer collectElement=null; 
 	private String lastName; // The string to the last XML that was processed
-	
+
 	private final String LOGFILENAME="log.txt";
 	// The following declarations may eventually be moved to a separate class
 	/** The actual directory of a profile, for new profiles this is a direct child of baseDir */
 	//TODO Find all references amd move to profile.dataDir
 	//public String mydatadir = new String();  //Redundant ??
 	/** The centre as read from the profile */
-	
-    /**
-     * Singleton pattern - return reference to Preferences
-     * @return Singleton Preferences object
-     */
-	
-	public static Preferences getPrefObject() {
-      if (_reference == null)
-          // it's ok, we can call this constructor
-          _reference = new Preferences();
-      return _reference;
-    }
 
-    private static Preferences _reference;
+	/**
+	 * Singleton pattern - return reference to Preferences
+	 * @return Singleton Preferences object
+	 */
+
+	public static Preferences getPrefObject() {
+		if (_reference == null)
+			// it's ok, we can call this constructor
+			_reference = new Preferences();
+		return _reference;
+	}
+
+	private static Preferences _reference;
 
 	/**
 	 * Constructor is private for a singleton object
@@ -114,19 +116,92 @@ public class Preferences extends MinML{
 		File logFile = new File(LOGFILENAME);
 		if (logFile.length()>60000) logInit();
 	}
-	
+
 	/**
-	* Returns true if coordinates have been set.
-	* Does not validate! if coordinates are real.
-	*/
-	public boolean existCenter(){
-		return curCentrePt.latDec!=0.0 && curCentrePt.lonDec!=0.0; 
+	 * gets the path to the calibrated maps
+	 * it first tries if there are manually imported maps
+	 * in <baseDir>/maps/standard then it tries 
+	 * the legacy dir: <program-dir>/maps
+	 * In case in both locations are no .wfl-files
+	 * it returns  <baseDir>/maps/expedia - the place where
+	 * the automatically downloaded maps are placed.
+	 * 
+	 * Later the maps-path shall be saved in the preferences
+	 */
+	public String getMapLoadPath() {
+		// here could also a list of map-types displayed...
+		// standard dir
+		File t = new File(getMapManuallySavePath());
+		String[] f = t.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_FILES_ONLY);
+		if (f != null && f.length > 0) return  baseDir + mapsPath;
+		f = t.list("*.wfl", File.LIST_DIRECTORIES_ONLY | File.LIST_ALWAYS_INCLUDE_DIRECTORIES);
+		if (f != null && f.length > 0) { // see if in a subdir of <baseDir>/maps/standard are .wfl files
+			String[] f2;
+			for (int i = 0; i< f.length; i++) {
+				t.set(null, getMapManuallySavePath()+"/"+f[i]);
+				f2 = t.list("*.wfl", File.LIST_FILES_ONLY);
+				if (f2 != null && f2.length > 0) return  getMapManuallySavePath();
+			}
+		}
+		// lagacy dir 
+		t.set(null, File.getProgramDirectory() + "/maps");
+		f = t.list("*.wfl", File.LIST_FILES_ONLY);
+		if (f != null && f.length > 0) {
+			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", MessageBox.YESB | MessageBox.NOB);
+			if (inf.execute() == MessageBox.IDYES) {
+				String sp = getMapManuallySavePath();
+				File spF = new File(sp);
+				if (!spF.exists()) spF.mkdirs();
+				String image;
+				String lagacypath = File.getProgramDirectory() + "/maps/";
+				for (int i=0; i<f.length; i++) {
+					t.set(null, lagacypath+f[i]);
+					spF.set(null, sp+"/"+f[i]);
+					t.move(spF);
+					image = Common.getImageName(lagacypath+f[i].substring(0, f[i].lastIndexOf(".")));
+					t.set(null, image);
+					spF.set(null, sp+"/"+t.getFileExt());
+					t.move(spF);
+				}
+				t.set(null, lagacypath);
+				t.delete();
+				return sp;
+			}
+			else return  File.getProgramDirectory() + "/maps";
+		}
+		// expedia dir
+		return getMapExpediaPath(); 
 	}
-	
+
 	/**
-	* Method to open and parse the pref.xml file. Results are stored in the
-	* public variables of this class.
-	*/
+	 * 
+	 * @return the path where manually imported maps should be stored
+	 * this should be adjustable in preferences...
+	 */
+	public String getMapManuallySavePath() {
+		return baseDir + mapsPath;
+	}
+
+	/**
+	 * to this path the automatically downloaded maps are saved
+	 */
+	public String getMapExpediaPath() {
+		return baseDir + "/maps/expedia";
+	}
+
+
+	/**
+	 * Returns true if coordinates have been set.
+	 * Does not validate! if coordinates are real.
+	 */
+	public boolean existCenter(){
+		return curCentrePt.latDec!=0.0 && curCentrePt.lonDec!=0.0; // TODO: use cusCentrePt.isValid() 
+	}
+
+	/**
+	 * Method to open and parse the pref.xml file. Results are stored in the
+	 * public variables of this class.
+	 */
 	public void readPrefFile(){
 		try{
 			String datei = File.getProgramDirectory() + "/" + "pref.xml";
@@ -141,14 +216,14 @@ public class Preferences extends MinML{
 				Vm.debug(e.toString());
 		}
 	}
-	
+
 	/**
 	 * Open Profile selector screen 
 	 * @param prof
 	 * @param showProfileSelector
 	 * @return True if a profile was selected
 	 */
-	
+
 	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
 		// If datadir is empty, ask for one
 		if (baseDir.length()==0) {
@@ -161,14 +236,14 @@ public class Preferences extends MinML{
 		if (!baseDir.endsWith("/")) baseDir+="/";
 		//Vm.showWait(false);
 		if((showProfileSelector==PROFILE_SELECTOR_FORCED_ON) || 
-		   (showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
-		   ProfilesForm f = new ProfilesForm(baseDir,profiles,lastProfile,hasNewButton);
-		   int code = f.execute();
-		   // If no profile chosen (includes a new one), terminate
-		   if (code==-1) return false; // Cancel pressed
-		   prof.clearProfile();
-		   curCentrePt.set(0,0); // No centre yet
-		   lastProfile=f.newSelectedProfile;
+				(showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
+			ProfilesForm f = new ProfilesForm(baseDir,profiles,lastProfile,hasNewButton);
+			int code = f.execute();
+			// If no profile chosen (includes a new one), terminate
+			if (code==-1) return false; // Cancel pressed
+			prof.clearProfile();
+			curCentrePt.set(0,0); // No centre yet
+			lastProfile=f.newSelectedProfile;
 		} 
 		prof.name=lastProfile;
 		currProfile=-1;
@@ -182,9 +257,9 @@ public class Preferences extends MinML{
 		}
 		savePreferences();
 		return true;
-		
+
 	}
-	
+
 	/**
 	 * Open an old Profile (stored in preferences)
 	 * @param i 0-3 for profiles 1-4
@@ -206,13 +281,13 @@ public class Preferences extends MinML{
 		prof.centre.set(lats[i]+" "+longs[i]);
 		prof.dataDir=profdirs[i];
 	}
-	
 
-	
-	
+
+
+
 	/**
-	* Method that gets called when a new element has been identified in pref.xml
-	*/
+	 * Method that gets called when a new element has been identified in pref.xml
+	 */
 	public void startElement(String name, AttributeList atts){
 		//Vm.debug("name = "+name);
 		lastName=name;
@@ -276,10 +351,10 @@ public class Preferences extends MinML{
 			collectElement=new StringBuffer(50);
 			if (atts.getValue("autoreload").equals("true")) autoReloadLastProfile=true;
 		}
-		
+
 		//if(name.equals("datadir")) {
-			//mydatadir = atts.getValue("dir");
-			//profile.dataDir=mydatadir;
+		//mydatadir = atts.getValue("dir");
+		//profile.dataDir=mydatadir;
 		//}
 		if(name.equals("basedir")) {
 			baseDir = atts.getValue("dir");
@@ -288,7 +363,7 @@ public class Preferences extends MinML{
 			downloadPicsOC = Boolean.valueOf(atts.getValue("downloadPics")).booleanValue();
 			downloadMapsOC = Boolean.valueOf(atts.getValue("downloadMaps")).booleanValue();
 			downloadmissingOC = Boolean.valueOf(atts.getValue("downloadmissing")).booleanValue();
-			
+
 		}
 		if(name.equals("proxy")) {
 			myproxy = atts.getValue("prx");
@@ -297,7 +372,7 @@ public class Preferences extends MinML{
 		if (name.equals("garmin")) {
 			garminConn=atts.getValue("connection");
 		}
-		
+
 		if(name.equals("tableType")){ 
 			tablePrefs[1] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
@@ -375,21 +450,21 @@ public class Preferences extends MinML{
 			collectElement.append(ch,start,length); // Collect the name of the last profile
 		}
 	}	
-	
+
 	/**
-	* Method that gets called when the end of an element has been identified in pref.xml
-	*/
+	 * Method that gets called when the end of an element has been identified in pref.xml
+	 */
 	public void endElement(String tag){
 		if (tag.equals("lastprofile")) {
 			if (collectElement!=null) lastProfile=collectElement.toString();
 		}
 		collectElement=null;
 	}
-	
+
 
 	/**
-	* Method to save current preferences in the pref.xml file
-	*/
+	 * Method to save current preferences in the pref.xml file
+	 */
 	public void savePreferences(){
 		String datei = File.getProgramDirectory() + "/" + "pref.xml";
 		datei = datei.replace('\\', '/');
@@ -410,25 +485,25 @@ public class Preferences extends MinML{
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
 			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
 			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destinationHost = \""+ forwardGpsHost+"\"/>\n");
-						outp.print("	<tableType active = \"1\" width = \""+Convert.toString(tableWidth[1])+"\"/>\n");
+			outp.print("	<tableType active = \"1\" width = \""+Convert.toString(tableWidth[1])+"\"/>\n");
 			outp.print("	<tableD active = \""+Convert.toString(tablePrefs[2])+ "\"" +
-					               " width = \""+Convert.toString(tableWidth[2])+"\"/>\n");
+					" width = \""+Convert.toString(tableWidth[2])+"\"/>\n");
 			outp.print("	<tableT active = \""+Convert.toString(tablePrefs[3])+ "\"" +
-								   " width = \""+Convert.toString(tableWidth[3])+"\"/>\n");
+					" width = \""+Convert.toString(tableWidth[3])+"\"/>\n");
 			outp.print("	<tableWay active = \"1\" width = \""+Convert.toString(tableWidth[4])+"\"/>\n");
 			outp.print("	<tableName active = \"1\" width = \""+Convert.toString(tableWidth[5])+"\"/>\n");
 			outp.print("	<tableLoc active = \""+Convert.toString(tablePrefs[6])+ "\"" +
-					   				 " width = \""+Convert.toString(tableWidth[6])+"\"/>\n");
+					" width = \""+Convert.toString(tableWidth[6])+"\"/>\n");
 			outp.print("	<tableOwn active = \""+Convert.toString(tablePrefs[7])+ "\"" +
-					   				 " width = \""+Convert.toString(tableWidth[7])+"\"/>\n");
+					" width = \""+Convert.toString(tableWidth[7])+"\"/>\n");
 			outp.print("	<tableHide active = \""+Convert.toString(tablePrefs[8])+ "\"" +
-					   				  " width = \""+Convert.toString(tableWidth[8])+"\"/>\n");
+					" width = \""+Convert.toString(tableWidth[8])+"\"/>\n");
 			outp.print("	<tableStat active = \""+Convert.toString(tablePrefs[9])+ "\"" +
-					   				  " width = \""+Convert.toString(tableWidth[9])+"\"/>\n");
+					" width = \""+Convert.toString(tableWidth[9])+"\"/>\n");
 			outp.print("	<tableDist active = \""+Convert.toString(tablePrefs[10])+ "\"" +
-					   				  " width = \""+Convert.toString(tableWidth[10])+"\"/>\n");
+					" width = \""+Convert.toString(tableWidth[10])+"\"/>\n");
 			outp.print("	<tableBear active = \""+Convert.toString(tablePrefs[11])+ "\"" +
-					   				  " width = \""+Convert.toString(tableWidth[11])+"\"/>\n");
+					" width = \""+Convert.toString(tableWidth[11])+"\"/>\n");
 			outp.print("    <font size =\""+fontSize+"\"/>\n");
 			outp.print("	<browser name = \""+browser+"\"/>\n");
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
@@ -452,9 +527,9 @@ public class Preferences extends MinML{
 		} catch (Exception e) {
 			Vm.debug("Problem saving: " +datei);
 			Vm.debug("Error: " +e.toString());
-    		}
+		}
 	}
-	
+
 	/**
 	 * Method to log messages to a file called log.txt
 	 * It will always append to an existing file.
@@ -476,7 +551,7 @@ public class Preferences extends MinML{
 			strout.close();
 		}
 	}
-	
+
 	/**
 	 * Method to delete an existing log file. Something like a "reset".
 	 * Should be used "from time to time" to make sure the log file does not grow

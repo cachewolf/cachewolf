@@ -72,7 +72,7 @@ public class MovingMap extends Form {
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
 		this.backGround = Color.Black;
-		this.mapPath = Global.getPref().baseDir+"maps/expedia/";
+		this.mapPath = Global.getPref().getMapLoadPath()+"/";
 		mmp = new MovingMapPanel(this);
 		this.addLast(mmp);
 		DrawnIcon closeX = new DrawnIcon(DrawnIcon.CROSS,15,15,new Color(0,0,0));
