@@ -173,8 +173,6 @@ public class Profile {
 					ex.setSource(text);
 					filterRose = ex.findNext();
 					filterType = ex.findNext();
-					Vm.debug("F1:" +filterType);
-					Vm.debug("F2: "+filterRose);
 //					 Bilbowolf: Pattern for storing filter <FILTER type="01001101" rose = "010010101" var = "0101" dist = "<12" diff = ">13" terr = "<1"/>
 				}
 			}
