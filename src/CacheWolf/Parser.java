@@ -92,13 +92,18 @@ public class Parser{
     	new fnType("acos","acos",2),
     	new fnType("asin","asin",2),
     	new fnType("atan","atan",2),
+      	new fnType("bearing","bearing",4),
+    	new fnType("center","center",3),
     	new fnType("cls","cls",1),
     	new fnType("clearscreen","cls",1),
     	new fnType("cos","cos",2),
     	new fnType("count","count",4),
+     	new fnType("cp","cp",1),
     	new fnType("crosstotal","ct",6),
     	new fnType("ct","ct",2),
-    	new fnType("encode","encode",8),
+     	new fnType("curpos","cp",1),
+     	new fnType("distance","distance",2),
+     	new fnType("encode","encode",8),
     	new fnType("format","format",6),
     	new fnType("goto","goto",6),
     	new fnType("ic","ic",3),
@@ -107,24 +112,26 @@ public class Parser{
     	new fnType("lcase","lc",2),
     	new fnType("length","len",2),
     	new fnType("mid","mid",12),
+     	new fnType("pc","pz",3),
+     	new fnType("profilecenter","pz",3),
+     	new fnType("profilzentrum","pz",3),
     	new fnType("project","project",8),
+     	new fnType("pz","pz",3),
     	new fnType("quersumme","ct",6),
-//    	new fnType("requiresemicolon","rs",3),
     	new fnType("replace","replace",8),
     	new fnType("reverse","reverse",2),
     	new fnType("rot13","rot13",2),
-//    	new fnType("rs","rs",3),
     	new fnType("show","show",2),
     	new fnType("sin","sin",2),
     	new fnType("sqrt","sqrt",2),
-    	new fnType("substring","substring",12),
     	new fnType("sval","sval",2),
     	new fnType("tolowercase","lc",2),
     	new fnType("touppercase","uc",2),
     	new fnType("tan","tan",2),
     	new fnType("ucase","uc",2),
-    	new fnType("val","val",2)
-    	};
+    	new fnType("val","val",2),
+     	new fnType("zentrum","center",3)
+     	    	};
 	private static int scanpos = 0;
 	CWPoint cwPt=new CWPoint();
 	Vector calcStack=new Vector();
@@ -152,10 +159,27 @@ public class Parser{
 	private void err(String str) throws Exception {
     	messageStack.add(MyLocale.getMsg(1700,"Error on line: ") + thisToken.line + "  "+MyLocale.getMsg(1701,"position: ") + thisToken.position);
     	messageStack.add(str);
+    	// move cursor to error location
+    	Global.mainTab.solverP.mText.setSelectionRange(thisToken.position-1,thisToken.line-1,thisToken.position+thisToken.token.length()-1,thisToken.line-1);
     	throw new Exception("Error "+str);
     }
     
-    /** Clears the symbol table of all non-global symbols (those not starting with $) */
+    /** Shows global symbols */
+    private void showGlobals() throws Exception {
+    	Iterator it=symbolTable.entries();
+    	while (it.hasNext()) {
+    		String varName=((String)((ewe.util.Map.MapEntry) it.next()).getKey());
+    		if (varName.startsWith("$")) {
+    			String value=(String) getVariable(varName);
+    			if (java.lang.Double.isNaN(toNumber(value)))
+    				messageStack.add(varName+" = \""+STRreplace.replace(value.toString(),"\"","\"\"")+"\"");
+    			else
+    				messageStack.add(varName+" = "+value);
+    		}
+    	}
+    }
+
+	/** Clears the symbol table of all non-global symbols (those not starting with $) */
     private void clearLocalSymbols() {
     	Iterator it=symbolTable.entries();
     	while (it.hasNext()) {
@@ -179,6 +203,18 @@ public class Parser{
     }
     
 	private Object getVariable(String varName) throws Exception {
+		if (varName.startsWith("$")) { // Potential coordinate
+			int idx=Global.getProfile().getCacheIndex(varName.substring(1));
+			if (idx!=-1) { // Found it!
+				CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(idx);
+				// Check whether coordinates are valid
+				cwPt.set(ch.LatLon);
+				if (cwPt.isValid() ) 
+					return ch.LatLon;
+				else
+					return ""; // Convert invalid coordinates (N 0 0.0 E 0 0.0) into empty string
+			}
+		}
 		Object result = symbolTable.get(Global.getPref().solverIgnoreCase?varName.toUpperCase():varName);
 		if(result == null) {
 			// If it is a global variable, add it with a default value
@@ -191,15 +227,20 @@ public class Parser{
 		return result;
 	}
 	
-	private Double getNumber(String str) throws Exception {
-		java.lang.Double ret=null;
+	private double toNumber(String str) {
 		try {
 			if (Global.getPref().digSeparator.equals(","))	str = str.replace('.', ',');
-			ret=new java.lang.Double(java.lang.Double.parseDouble(str));
+			 return java.lang.Double.parseDouble(str);
 		} catch (NumberFormatException e) {
-			err(MyLocale.getMsg(1703,"Not a valid number: ") + str);
+			 return java.lang.Double.NaN;
 		}
-		return ret;
+	}
+	
+	private Double getNumber(String str) throws Exception {
+		double ret=toNumber(str);
+		if (java.lang.Double.isNaN(ret))
+			err(MyLocale.getMsg(1703,"Not a valid number: ") + str);
+		return new java.lang.Double(ret);
 	}
 	
 	/** Get the top element of the calculation stack and try and convert it to a number if it is a string */
@@ -242,7 +283,7 @@ public class Parser{
 		} while (thisToken.token.equals(";"));	
 	}
 
-	private void skipPastEndif() throws Exception {
+	private void skipPastEndif(TokenObj ifToken) throws Exception {
 		while(scanpos < tokenStack.size()){
 			thisToken = (TokenObj)tokenStack.get(scanpos);
 			scanpos++;
@@ -251,6 +292,7 @@ public class Parser{
 				return;
 			}
 		}
+		thisToken=ifToken;
 		err(MyLocale.getMsg(1705,"Missing ENDIF"));
 	}
 	private TokenObj lookAheadToken() {
@@ -283,6 +325,17 @@ public class Parser{
 //  FUNCTIONS
 ///////////////////////////////////////////
     
+	/** Get or set the current center */
+	private void funcCenter(int nargs) throws Exception {
+		if (nargs==0) {
+			calcStack.add(Global.getPref().curCentrePt.toString());
+		} else {
+	    	String coordA=popCalcStackAsString();
+			if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
+			Global.getPref().curCentrePt.set(coordA);
+		}
+	}
+	
 	/** Clear Screen */
 	private void funcCls() {
 		// OutputPanel is private, so need to cast to base class
@@ -310,7 +363,11 @@ public class Parser{
     			res+=s2.charAt(i)+"="+funcCountChar(s1,s2.charAt(i))+" ";
     		}
     		calcStack.add(res);
-    	}
+    	} 
+    }
+    
+    private String funcCp(){
+    	return Global.mainTab.gotoP.gpsPosition.toString();
     }
     
     private double funcCrossTotal(int nargs) throws Exception {
@@ -331,6 +388,25 @@ public class Parser{
     	}return a;
     }
     
+    /** Calculate distance between 2 points */
+    private double funcDistance() throws Exception {
+    	String coordB=popCalcStackAsString();
+    	String coordA=popCalcStackAsString();
+    	cwPt.set(coordA);
+		if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
+		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
+    	return cwPt.getDistance(new CWPoint(coordB));
+    }
+    
+    /** Calculate brearing from one point to the next */
+    private double funcBearing() throws Exception {
+    	String coordB=popCalcStackAsString();
+    	String coordA=popCalcStackAsString();
+    	cwPt.set(coordA);
+		if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
+		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
+    	return cwPt.getBearing(new CWPoint(coordB));
+    }
     /**
      * Encode a string by replacing all characters in a string with their corresponding characters in
      * another string
@@ -435,6 +511,17 @@ public class Parser{
     		return s.substring((int)start-1,end);
     	}
     }
+ 
+	/** Get or set the profile center */
+	private void funcPz(int nargs) throws Exception {
+		if (nargs==0) {
+			calcStack.add(Global.getProfile().centre.toString());
+		} else {
+	    	String coordA=popCalcStackAsString();
+			if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
+			Global.getProfile().centre.set(coordA);
+		}
+	}
     
     /** Project a waypoint at some angle and some distance */
     private String funcProject() throws Exception {
@@ -464,37 +551,10 @@ public class Parser{
     	return res;
     }
     
-    /*   private void funcRequireSemicolon(int nargs) throws Exception {
-	if (nargs==0) 
-		calcStack.add(""+Global.getPref().solverRequireSemicolon);
-	else {
-		Global.getPref().solverRequireSemicolon=(popCalcStackAsNumber(0)!=0)?true:false;
-	}
-}
-*/  
-    
     private double funcSqrt() throws Exception {
     	double a=popCalcStackAsNumber(0);
     	if (a<0) err(MyLocale.getMsg(1720,"Cannot calculate square root of a negative number"));
     	return java.lang.Math.sqrt(a);
-    }
-    
-    /** Java-like substring */
-    private String funcSubstring(int nargs) throws Exception {
-    	if (nargs==2) {
-        	double start=popCalcStackAsNumber(0);
-    		String s=popCalcStackAsString();
-    		if (!isInteger(start)) err(MyLocale.getMsg(1721,"substring: Integer argument expected"));
-    		if (start<0 || start>s.length()) err(MyLocale.getMsg(1722,"substring: Argument out of range"));
-    		return s.substring((int)start);
-    	} else {
-        	double end=popCalcStackAsNumber(0);
-        	double start=popCalcStackAsNumber(0);
-    		String s=popCalcStackAsString();
-    		if (!isInteger(start) || !isInteger(end)) err(MyLocale.getMsg(1721,"substring: Integer argument expected"));
-    		if (start<0 || start>s.length() || start>end || end>s.length()) err(MyLocale.getMsg(1722,"substring: Argument out of range"));
-    		return s.substring((int)start,(int)end);
-    	}
     }
     
     /** Replace each character by its number A=1, B=2 etc. and put result into a string */
@@ -544,7 +604,10 @@ public class Parser{
 
 	private void parseSimpleCommand() throws Exception{
 		if (thisToken.tt==TokenObj.TT_STOP) throw new Exception("STOP");  // Terminate without error message
-		if (thisToken.tt==TokenObj.TT_VARIABLE && lookAheadToken().tt==TokenObj.TT_EQ) 
+		if (thisToken.token.equals("$")) {
+			showGlobals();
+			getToken();
+		} else if (thisToken.tt==TokenObj.TT_VARIABLE && lookAheadToken().tt==TokenObj.TT_EQ) 
 			parseAssign();
 		else 
 			parseStringExp();		
@@ -553,6 +616,7 @@ public class Parser{
 	private void parseIf() throws Exception{
 		int compOp;
 		boolean compRes=false;
+		TokenObj ifToken=thisToken;
 		getToken();
 		parseStringExp();
 		compOp=thisToken.tt;
@@ -597,7 +661,7 @@ public class Parser{
 			}
 			getToken();
 		} else // comparison failed
-			skipPastEndif();
+			skipPastEndif(ifToken);
 	}
 	
 	private void parseAssign() throws Exception  {
@@ -608,6 +672,21 @@ public class Parser{
 		// we can fill the data progressively during a multicache
 		if (thisToken.tt==TokenObj.TT_ENDIF || thisToken.token.equals(";")) return;
 		parseStringExp();
+		if (varName.startsWith("$")) { // Potential coordinate
+			int idx=Global.getProfile().getCacheIndex(varName.substring(1));
+			if (idx!=-1) { // Yes, is a coordinate
+				CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(idx);
+				// Check whether new coordinates are valid
+				String coord=popCalcStackAsString();
+				cwPt.set(coord);
+				if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
+					ch.LatLon=cwPt.toString(CWPoint.CW);
+				    return;
+				} else
+					err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
+			}
+			// Name starts with $ but is not a waypoint, fall through and set it as global variable
+		}
 		symbolTable.put(varName, popCalcStackAsString());
 	}
 	
@@ -746,10 +825,14 @@ public class Parser{
 	 	else if (funcDef.alias.equals("abs")) calcStack.add(new java.lang.Double(java.lang.Math.abs(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("acos")) calcStack.add(new java.lang.Double(java.lang.Math.acos(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("atan")) calcStack.add(new java.lang.Double(java.lang.Math.atan(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("bearing")) calcStack.add(new java.lang.Double(funcBearing()));
+	    else if (funcDef.alias.equals("center")) funcCenter(nargs);
 	    else if (funcDef.alias.equals("cls")) funcCls();
 	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("count")) funcCount();
+	    else if (funcDef.alias.equals("cp")) funcCp();     
 	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(nargs)));
+	    else if (funcDef.alias.equals("distance")) calcStack.add(new java.lang.Double(funcDistance()));
 	    else if (funcDef.alias.equals("encode")) calcStack.add(funcEncode());
 	    else if (funcDef.alias.equals("format")) calcStack.add(funcFormat(nargs));
 	    else if (funcDef.alias.equals("goto")) funcGoto(nargs);
@@ -759,6 +842,7 @@ public class Parser{
 	    else if (funcDef.alias.equals("len")) calcStack.add(new Double(popCalcStackAsString().length()));
 	    else if (funcDef.alias.equals("mid")) calcStack.add(funcMid(nargs));
 	    else if (funcDef.alias.equals("project")) calcStack.add(funcProject());     
+	    else if (funcDef.alias.equals("pz")) funcPz(nargs);     
 	    else if (funcDef.alias.equals("replace")) calcStack.add(funcReplace());
 	    else if (funcDef.alias.equals("reverse")) calcStack.add(funcReverse(popCalcStackAsString()));
 	    else if (funcDef.alias.equals("rot13")) calcStack.add(Common.rot13(popCalcStackAsString()));
@@ -766,7 +850,6 @@ public class Parser{
 	    else if (funcDef.alias.equals("show"));
 	    else if (funcDef.alias.equals("sin")) calcStack.add(new java.lang.Double(java.lang.Math.sin(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("sqrt")) calcStack.add(new java.lang.Double(funcSqrt())); 
-	    else if (funcDef.alias.equals("substring")) calcStack.add(funcSubstring(nargs)); 
 	    else if (funcDef.alias.equals("sval")) calcStack.add(funcSval(popCalcStackAsString()));
 	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("uc")) calcStack.add(popCalcStackAsString().toUpperCase());
