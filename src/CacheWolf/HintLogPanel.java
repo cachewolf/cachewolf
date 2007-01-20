@@ -23,11 +23,10 @@ public class HintLogPanel extends CellPanel{
 	mButton prevBt = new mButton("<<");
 	public HintLogPanel(){
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
-
 		CellPanel hintpane = split.getNextPanel();
 		CellPanel logpane = split.getNextPanel();
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
-		
+		hintpane.setCell(INITIALLY_PREFERRED_SIZE);
 		ScrollBarPanel sbphint = new ScrollBarPanel(hint);
 		hintpane.addLast(sbphint,CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		sbphint.setMinimumSize(0,0);
@@ -36,12 +35,11 @@ public class HintLogPanel extends CellPanel{
 		decodeButton.setMinimumSize(MyLocale.getScreenWidth()*2/3,10);
 		hintpane.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
 		
-		ScrollBarPanel sbplog = new ScrollBarPanel(logs, ScrollBarPanel.NeverShowHorizontalScrollers);
+		ScrollBarPanel sbplog = new ScrollBarPanel((ScrollClient)logs, ScrollBarPanel.NeverShowHorizontalScrollers);
 		logpane.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
 		hint.modify(Control.NotEditable,0);
 		this.addLast(split);
 	}
-	
 	
 	public void setText(CacheHolder cache){
 		this.cache = cache;
@@ -70,7 +68,6 @@ public class HintLogPanel extends CellPanel{
 		logs.setHtml(dummy.toString());
 		Vm.showWait(false);
 	}
-	
 	/**
 	* Method that handles user input on this panel.
 	* It handles decryption of hints and navigation through
