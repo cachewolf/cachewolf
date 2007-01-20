@@ -15,12 +15,18 @@ import ewe.util.*;
  * @author Kalle
  * Base class for exporter, handles basic things like selecting
  * outputfile, display a counter etc.
- * 
+ * A new Exporter must only override the header(), record() and 
+ * trailer() methods. The member howManyParams must be set to identify
+ * which ethod should be called  
  */
+
 public class Exporter {
+	// starts with no ui for file selection
 	final static int TMP_FILE = 0;
+	// brings up a screen to select a file
 	final static int ASK_FILE = 1;
 	
+	// selection, which method should be called
 	final static int NO_PARAMS 	= 0;
 	final static int LAT_LON 	= 1;
 	final static int COUNT 		= 2;
@@ -28,10 +34,16 @@ public class Exporter {
 	Vector cacheDB;
 	Preferences pref;
 	Profile profile;
+	// mask in file chooser
 	String mask = "*.*";
+	// file name, if no file chooser is used
 	String tmpFileName;
+	// decimal separator for lat- and lon-String
 	char decimalSeparator='.';
+	// if  true, the complete cache details are read
+	// before a call to the record method is made 
 	boolean needCacheDetails = false;
+	// selection, which method should be called
 	int howManyParams = 0;
 	
 	public Exporter() {
@@ -45,7 +57,11 @@ public class Exporter {
 		this.doIt(ASK_FILE);
 	}
 
-	
+	/**
+	 * Does the most work for exporting data
+	 * @param variant 0, if no filechooser
+	 *                1, if filechooser
+	 */
 	public void doIt(int variant){
 		File outFile;
 		String str;
@@ -124,28 +140,47 @@ public class Exporter {
 			Vm.debug("Problem writing to file! "+e.toString());
 		}//try
 	}
-	
+	/**
+	 * sets mask for filechooser
+	 * @param mask 
+	 */
 	public void setMask(String mask){
 		this.mask = mask;
 	}
-	
+	/**
+	 * sets decimal separator for lat/lon-string
+	 * @param sep
+	 */
 	public void setDecimalSeparator (char sep){
 		this.decimalSeparator = sep;
 	}
-	
+	/**
+	 *  sets needCacheDetails
+	 * @param how
+	 */
 	public void setNeedCacheDetails(boolean how){
 		this.needCacheDetails = how;
 	}
 	
+	/**
+	 * sets howManyParams
+	 * @param paramBits
+	 */
 	public void setHowManyParams(int paramBits){
 		this.howManyParams = paramBits;
 	}
-	
+	/**
+	 * sets tmpFileName
+	 * @param fName
+	 */
 	public void setTmpFileName(String fName){
 		this.tmpFileName = fName;
 	}
 
-	
+	/**
+	 * uses a filechooser to get the name of the export file
+	 * @return
+	 */
 	public File getOutputFile (){
 		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 		fc.setTitle("Select target file:");
@@ -156,27 +191,57 @@ public class Exporter {
 			return null;
 		}
 	}
-		
+	/**
+	 * this method can be overided by an exporter class
+	 * @return formated header data
+	 */	
 	public String header () {
 		return null;
 	}
-	
+
+	/**
+	 * this method can be overided by an exporter class
+	 * @param ch	cachedata
+	 * @return formated cache data
+	 */	
 	public String record(CacheHolder ch){
 		return null;
 	}
 
+	/**
+	 * this method can be overided by an exporter class
+	 * @param ch	cachedata
+	 * @param lat	
+	 * @param lon
+	 * @return formated cache data
+	 */
 	public String record(CacheHolder ch, String lat, String lon){
 		return null;
 	}
-	
+	/**
+	 * this method can be overided by an exporter class
+	 * @param ch	cachedata
+	 * @param lat	
+	 * @param lon
+	 * @param count of actual record
+	 * @return formated cache data
+	 */
 	public String record(CacheHolder ch, String lat, String lon, int count){
 		return null;
 	}
 	
+	/**
+	 * this method can be overided by an exporter class
+	 * @return formated trailer data
+	 */	
 	public String trailer(){
 		return null;
 	}
-	
+	/**
+	 * this method can be overided by an exporter class
+	 * @param total count of exported caches
+	 * @return
+	 */
 	public String trailer(int total){
 		return null;
 	}
