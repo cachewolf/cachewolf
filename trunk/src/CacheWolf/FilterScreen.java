@@ -213,7 +213,6 @@ public class FilterScreen extends Form{
 								(letterChk.getState() == true ? "1" : "0") +
 								(eventChk.getState() == true ? "1" : "0")+ 
 								(webcamChk.getState() == true ? "1" : "0")+
-								(multiChk.getState() == true ? "1" : "0") +
 								(mysteryChk.getState() == true ? "1" : "0")+
 								(earthChk.getState() == true ? "1" : "0")+
 								(loclessChk.getState() == true ? "1" : "0")+
@@ -238,8 +237,31 @@ public class FilterScreen extends Form{
 				if(NNW.getState()) roseMatchPattern |= Filter.NNW;
 				if(S.getState()) roseMatchPattern |= Filter.S;
 				flt.roseMatchPattern = roseMatchPattern;
-				filterRose = "";
-				
+				filterRose = (N.getState() == true ? "1":"0")+
+							 (NNE.getState() == true ? "1":"0")+
+							 (NE.getState() == true ? "1":"0")+
+							 (ENE.getState() == true ? "1":"0")+
+							 (E.getState() == true ? "1":"0")+
+							 (ESE.getState() == true ? "1":"0")+
+							 (SE.getState() == true ? "1":"0")+
+							 (SSE.getState() == true ? "1":"0")+
+							 (SSW.getState() == true ? "1":"0")+
+							 (SW.getState() == true ? "1":"0")+
+							 (WSW.getState() == true ? "1":"0")+
+							 (W.getState() == true ? "1":"0")+
+							 (WNW.getState() == true ? "1":"0")+
+							 (NW.getState() == true ? "1":"0")+
+							 (NNW.getState() == true ? "1":"0")+
+							 (S.getState() == true ? "1":"0");
+				Vm.showWait(true);
+				InfoBox infB = new InfoBox("Info",MyLocale.getMsg(713,"Saving filter"));
+				infB.exec();
+				Profile pfl = Global.getProfile();
+				pfl.filterRose = filterRose;
+				pfl.filterType = filterType;
+				pfl.saveIndex(Global.getPref());
+				infB.close(0);
+				Vm.showWait(false);
 				if(distChc.selectedIndex == 1) flt.distdirec = Filter.SMALLER;
 				else flt.distdirec = Filter.GREATER;
 				if(difChc.selectedIndex == 1) flt.diffdirec = Filter.SMALLER;
