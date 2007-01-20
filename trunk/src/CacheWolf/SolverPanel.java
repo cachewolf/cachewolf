@@ -49,7 +49,16 @@ public class SolverPanel extends CellPanel{
 				super.popupMenuEvent(selectedItem);
 		}
 	}
-	
+	private class InputPanel extends mTextPad {
+
+		public void  penDoubleClicked(Point where) {
+			execDirectCommand();
+		}
+	}
+	private class InpScreen extends InputBox {
+		InpScreen(String title) {super(title); }
+		String getInput() { return getInputValue();}
+	}
 	CellPanel programPanel, outputPanel;
 	
 	public SolverPanel (Preferences p, Profile prof){
@@ -61,7 +70,7 @@ public class SolverPanel extends CellPanel{
 		outputPanel = split.getNextPanel();
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
 
-		programPanel.addLast(new ScrollBarPanel(mText = new mTextPad()));
+		programPanel.addLast(new ScrollBarPanel(mText = new InputPanel()));
 		programPanel.addNext(mBtSolve= new mButton("Solve!"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		programPanel.addNext(btnLoad= new mButton("Load"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		programPanel.addNext(btnSave= new mButton("Save"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -75,17 +84,29 @@ public class SolverPanel extends CellPanel{
 		currCh=ch;
 	}
 
+	private void execDirectCommand() {
+		InpScreen boxInp=new InpScreen(MyLocale.getMsg(1733,"Input command"));
+		boxInp.input(parent.getFrame(),"",100); //,MyLocale.getScreenWidth()*4/5);
+		String s=boxInp.getInput();
+		if (s.equals("")) return;
+		processCommand(s);
+	}
+	
+    private void processCommand(String s) {
+		msgFIFO.clear();
+		tokenizer.tokenizeSource(s, msgFIFO); // Tokenizer sets message if an error occurred
+		if (msgFIFO.size()==0) parser.parse(tokenizer.TokenStack, msgFIFO);
+		String msgStr = "";
+		for(int i = 0; i < msgFIFO.size(); i++){
+			msgStr = msgStr + msgFIFO.get(i) + "\n";
+		}
+		mOutput.appendText(msgStr,true);
+    }
+	
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == mBtSolve){
-				msgFIFO.clear();
-				tokenizer.tokenizeSource(mText.getText(), msgFIFO); // Tokenizer sets message if an error occurred
-				if (msgFIFO.size()==0) parser.parse(tokenizer.TokenStack, msgFIFO);
-				String msgStr = "";
-				for(int i = 0; i < msgFIFO.size(); i++){
-					msgStr = msgStr + msgFIFO.get(i) + "\n";
-				}
-				mOutput.appendText(msgStr,true);
+				processCommand(mText.getText());
 			}
 			if(ev.target == btnLoad){
 				FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
@@ -135,4 +156,5 @@ public class SolverPanel extends CellPanel{
 			
 		}
 	}
+	
 }
