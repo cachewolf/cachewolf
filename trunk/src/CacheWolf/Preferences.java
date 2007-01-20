@@ -186,7 +186,15 @@ public class Preferences extends MinML{
 	 * to this path the automatically downloaded maps are saved
 	 */
 	public String getMapExpediaPath() {
-		return baseDir + "/maps/expedia";
+		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length());
+		String mapsDir = Global.getPref().baseDir + "/maps/expedia/" + subdir;
+		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
+			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
+			{(new MessageBox("Error", "Error: cannot create maps directory: \n"+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();
+			return null;
+			}
+		}
+		return mapsDir;
 	}
 
 

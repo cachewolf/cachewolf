@@ -110,15 +110,7 @@ public class MapLoaderGui extends Form {
 		this.addLast(mTab);
 	}
 	public String getMapsDir() {
-		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length());
-		String mapsDir = Global.getPref().baseDir + "/maps/expedia/" + subdir;
-		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
-			if (new File(mapsDir).mkdir() == false) // dir creation failed?
-			{(new MessageBox("Error", "Error: cannot create maps directory: \n"+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();
-			return null;
-			}
-		}
-		return mapsDir;
+		return Global.getPref().getMapExpediaPath();
 	}
 	public void downloadTiles() {
 		String mapsDir = getMapsDir();
@@ -193,7 +185,7 @@ public class MapLoaderGui extends Form {
 					tmpca.set(ch.LatLon);
 					ch.pos = new CWPoint(tmpca);
 				}
-				if (ch.pos.isValid()) {
+				if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0 ){ // TODO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
 					if (topleft == null) topleft = new CWPoint(ch.pos);
 					if (buttomright == null) buttomright = new CWPoint(ch.pos);
 					if (topleft.latDec < ch.pos.latDec) topleft.latDec = ch.pos.latDec;
