@@ -24,16 +24,16 @@ class SelectMap extends Form{
 	public boolean worldfileexists = false;
 	
 	public SelectMap(){
-		mapsPath = File.getProgramDirectory() + "/maps/";
+		mapsPath = Global.getPref().getMapManuallySavePath()+"/"; //  File.getProgramDirectory() + "/maps/";
 		top = new ScrollBarPanel(CMaps);
 		bot = new ScrollBarPanel(nonCMaps);
 		this.title = (String)lr.get(4101,"Maps");
-		this.addLast(new mLabel((String)lr.get(4102,"Calibrated Maps")), this.STRETCH, this.FILL);
-		this.addLast(top, this.STRETCH, this.FILL);
-		this.addLast(new mLabel((String)lr.get(4103,"Non Calibrated Maps")), this.STRETCH, this.FILL);
-		this.addLast(bot, this.STRETCH, this.FILL);
-		this.addNext(mBCancel = new mButton((String)lr.get(4104,"Cancel")),this.STRETCH, this.FILL);
-		this.addLast(mBLoad = new mButton((String)lr.get(4105,"Open")),this.STRETCH, this.FILL);
+		this.addLast(new mLabel((String)lr.get(4102,"Calibrated Maps")), CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(top, CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(new mLabel((String)lr.get(4103,"Non Calibrated Maps")), CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(bot, CellConstants.STRETCH, CellConstants.FILL);
+		this.addNext(mBCancel = new mButton((String)lr.get(4104,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(mBLoad = new mButton((String)lr.get(4105,"Open")),CellConstants.STRETCH, CellConstants.FILL);
 		InfoBox inf = new InfoBox("Info", (String)lr.get(4109,"Loading maps...")); 
 		inf.show();
 		try{

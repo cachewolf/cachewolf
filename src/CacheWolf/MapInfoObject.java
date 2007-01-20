@@ -107,17 +107,7 @@ public class MapInfoObject{
 		if (fileName == null || fileName.length() > 0) return fileName;
 		if (fileNameWFL.length() == 0) return "";
 		String n = fileNameWFL.substring(0, fileNameWFL.lastIndexOf("."));
-		File tmp;
-		String[] t = {".png", ".gif", ".jpg", ".bmp"};
-		int i;
-		for (i = 0; i<t.length; i++) {
-			tmp = new File(n+t[i]);
-			if (tmp.exists()) break;
-		}
-		
-		if (i >=t.length) fileName = null;
-		else fileName = n+t[i];
-		return fileName;
+		return Common.getImageName(n);
 	}
 	
 	/**

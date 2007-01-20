@@ -51,7 +51,7 @@ public class MapLoaderGui extends Form {
 	public MapLoaderGui(Vector cacheDBi) {
 		super();
 		cacheDB = cacheDBi;
-		this.title = MyLocale.getMsg(1700, "Download georeferenced maps"); 
+		this.title = MyLocale.getMsg(1800, "Download georeferenced maps"); 
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 		center = new CWPoint(pref.curCentrePt);
 		// tiles panel
@@ -62,13 +62,13 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addNext(forCachesChkBox);
 		pnlTiles.addNext(forSelectedChkBox);
 		pnlTiles.addLast(cachesLbl);
-		pnlTiles.addNext(distLbl = new mLabel(MyLocale.getMsg(1702,"Within a rectangle of:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlTiles.addNext(distLbl = new mLabel(MyLocale.getMsg(1802,"Within a rectangle of:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		distanceInput = new mInput();
 		int tmp = Convert.toInt((Global.getProfile().distOC));
 		distanceInput.setText(Convert.toString((tmp > 0 ? tmp : 15)));
 		pnlTiles.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlTiles.addLast(km);
-		pnlTiles.addNext(coosLbl = new mLabel(MyLocale.getMsg(1703, "around the center: ")));
+		pnlTiles.addNext(coosLbl = new mLabel(MyLocale.getMsg(1803, "around the center: ")));
 		pnlTiles.addLast(coosBtn = new mButton(center.toString()));
 		pnlTiles.addNext(scaleLbl);
 		scaleInput.setText("3");
@@ -87,7 +87,7 @@ public class MapLoaderGui extends Form {
 		okBtiles.setHotKey(0, IKeys.ENTER);
 		pnlTiles.addLast(okBtiles,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		updateForCachesState();
-		mTab.addCard(pnlTiles, MyLocale.getMsg(1704, "Tiles"), MyLocale.getMsg(1704, "Tiles"));
+		mTab.addCard(pnlTiles, MyLocale.getMsg(1804, "Tiles"), MyLocale.getMsg(1804, "Tiles"));
 
 		// per cache panel
 		pnlPerCache.addLast(new MessageArea(descString));
@@ -106,7 +106,7 @@ public class MapLoaderGui extends Form {
 		pnlPerCache.addLast(okBPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 
 
-		mTab.addCard(pnlPerCache, MyLocale.getMsg(1705, "Per cache"), MyLocale.getMsg(1705, "Per Cache"));
+		mTab.addCard(pnlPerCache, MyLocale.getMsg(1805, "Per cache"), MyLocale.getMsg(1805, "Per Cache"));
 		this.addLast(mTab);
 	}
 	public String getMapsDir() {
