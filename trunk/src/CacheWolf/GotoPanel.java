@@ -314,6 +314,10 @@ public class GotoPanel extends CellPanel {
 		toPoint.set(dest);
 		if (!toPoint.isValid()) (new MessageBox("Error", "coordinates are out of range: \n"+"latitude: "+toPoint.latDec+"\n longditue: "+toPoint.lonDec, MessageBox.OKB)).execute();
 		btnGoto.setText(getGotoBtnText());
+		if (mmp != null) { 
+			mmp.setGotoPosition(dest.latDec, dest.lonDec);
+			mmp.repaintNow();
+		}
 		updateDistance();
 	}
 	
@@ -609,6 +613,7 @@ public class GotoPanel extends CellPanel {
 			if (ev.target == btnSave){
 				CacheHolder ch = new CacheHolder();
 				ch.LatLon = gpsPosition.toString();
+				ch.pos = new CWPoint(gpsPosition);
 				detP.newWaypoint(ch,mainT, pref, profile);
 			}
 			// change destination waypoint
