@@ -55,16 +55,11 @@ public class MapLoader {
 	 */
 	public void setTiles (CWPoint center, float radius, int scale, Point size, float overlapping) {
 		double metersPerLat = (1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
-		double pixels =  radius * 2 / EXPEDIA_METERS_PER_PIXEL / scale;
-		numMapsY = (int) java.lang.Math.ceil(pixels * overlapping / (float)size.y);
-		numMapsX = (int) java.lang.Math.ceil(pixels * overlapping / (float)size.x);
-		latinc =  -(radius * 2 / metersPerLat) / (float)numMapsY; // = lat difference from buttom to top / number of tiles
-		loninc = ( radius * 2 / metersPerLat / java.lang.Math.cos(center.latDec/180*java.lang.Math.PI) ) / numMapsX;
-		topleft = new CWPoint(center.latDec - latinc * numMapsY / 2, center.lonDec - loninc * numMapsX /2);
-		buttomright = new CWPoint(center.latDec + latinc * numMapsY / 2, center.lonDec + loninc * numMapsX /2);
-		this.tilesSize = new Point();
-		this.tilesSize.set(size);
-		this.tileScale = scale;
+		double metersPerLon = metersPerLat * java.lang.Math.cos(center.latDec/180*java.lang.Math.PI);
+		topleft = new CWPoint(center.latDec + (radius / metersPerLat), center.lonDec - (radius / metersPerLon));
+		buttomright = new CWPoint(center.latDec - (radius / metersPerLat), center.lonDec + (radius / metersPerLon));
+		
+		this.setTiles(topleft, buttomright, scale, size, overlapping);
 	}
 	
 	public void setTiles(CWPoint toplefti, CWPoint buttomrighti, int scale, Point size, float overlapping) {
@@ -73,30 +68,55 @@ public class MapLoader {
 		buttomright = new CWPoint(buttomrighti);
 		double metersPerLat = (1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		double metersPerLon = metersPerLat * java.lang.Math.cos((toplefti.latDec + buttomright.latDec)/2/180*java.lang.Math.PI);
-		double metersY = (topleft.latDec - buttomright.latDec) * metersPerLat; 
-		double pixelsY =  metersY / EXPEDIA_METERS_PER_PIXEL / scale;
-		double metersX = -(topleft.lonDec - buttomright.lonDec) * metersPerLon ; 
-		double pixelsX =  metersX / EXPEDIA_METERS_PER_PIXEL / scale;
-		numMapsY = (int) java.lang.Math.ceil(pixelsY * overlapping / (float)size.y);
-		numMapsX = (int) java.lang.Math.ceil(pixelsX * overlapping / (float)size.x);
-		latinc = -(topleft.latDec - buttomright.latDec)/ (double)numMapsY; // = lat difference from buttom to top / number of tiles
-		loninc = -(topleft.lonDec - buttomright.lonDec)/ (double)numMapsX;
+		
+		double pixelsPerLat = metersPerLat / (EXPEDIA_METERS_PER_PIXEL * scale);
+		double pixelsPerLon = metersPerLon / (EXPEDIA_METERS_PER_PIXEL * scale);
+
+		//over all pixelsize without borders
+		double pixelsY = (topleft.latDec - buttomright.latDec) * pixelsPerLat; 
+		double pixelsX = -(topleft.lonDec - buttomright.lonDec) * pixelsPerLon ; 
+		
+		//border siezes around given area and overlapping between tiles
+		int borderX = (int) java.lang.Math.round((float)size.x * (overlapping - 1.0));
+		int borderY = (int) java.lang.Math.round((float)size.y * (overlapping - 1.0));
+		
+		numMapsY = (int) java.lang.Math.ceil( (pixelsY + (float)borderY) / (float)(size.y - borderY) );
+		numMapsX = (int) java.lang.Math.ceil( (pixelsX + (float)borderX) / (float)(size.x - borderX) );
+		
+		//increments calulated from pixel offset of tiles
+		latinc = (float)(size.y - borderY) / pixelsPerLat;
+		loninc = (float)(size.x - borderX) / pixelsPerLon;
+		
+		//calculation of center of first tile
+		
+		//additional size for borders and rounding
+		double oversizeX = (float)(numMapsX * (size.x - borderX) + borderX) - pixelsX;
+		double oversizeY = (float)(numMapsY * (size.y - borderY) + borderY) - pixelsY;
+		
+		//offset for upper left corner
+		double offsetLat = ( ((float)size.x - oversizeX) / 2.0 ) / pixelsPerLat;
+		double offsetLon = -( ((float)size.x - oversizeX) / 2.0 ) / pixelsPerLat;
+		
+		topleft.latDec += offsetLat;
+		topleft.lonDec += offsetLon;
+		
 		this.tilesSize = new Point();
 		this.tilesSize.set(size);
 		this.tileScale = scale;
 	}
 
 	public void downlaodTiles(String tilesPath) {
-		int row = 0, col;
-		for (double lat = topleft.latDec; lat >= buttomright.latDec; lat += latinc) {
-			row++;
-			col = 1;
-			for (double lon = topleft.lonDec; lon <= buttomright.lonDec; lon += loninc) {
+		double lat = topleft.latDec;
+		double lon = topleft.lonDec;
+		for (int row = 1; row <= numMapsY; row++) {
+			lon = topleft.lonDec;
+			for (int col = 1; col <= numMapsX; col++) {
 				if (progressInfobox != null)
 					progressInfobox.setInfo("Downloading calibrated (georeferenced) \n map image from www.expedia.com \n Downloading tile row: "+row+" / "+numMapsY+" coloumn "+ col + "/"+numMapsX);
-				col++;
 				downloadMap(lat, lon, tileScale, tilesSize.x, tilesSize.y, tilesPath);
+				lon += loninc;
 			}
+			lat += latinc;
 		}
 	}
 	
