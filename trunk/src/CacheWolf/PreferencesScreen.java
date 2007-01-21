@@ -17,7 +17,7 @@ public class PreferencesScreen extends Form {
 	mChoice NS, EW;
 	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, inpLogsPerPage;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
-	          chkTabsAtTop, chkShowStatus;
+	          chkTabsAtTop, chkShowStatus,chkHasCloseButton;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
 	
@@ -25,6 +25,7 @@ public class PreferencesScreen extends Form {
 	
 	CellPanel pnlGeneral = new CellPanel();
 	CellPanel pnlDisplay = new CellPanel();
+	CellPanel pnlMore = new CellPanel();
 	ScrollBarPanel scp;
 	String [] garminPorts= new String[]{"com1","com2","com3","com4","usb"};
 	
@@ -132,18 +133,21 @@ public class PreferencesScreen extends Form {
 		frmHintLog.addNext(inpLogsPerPage=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.WEST);
 		inpLogsPerPage.setText(Convert.toString(pref.logsPerPage));
 		pnlDisplay.addLast(frmHintLog,CellConstants.STRETCH,CellConstants.FILL);
-		
+
+		/////////////////////////////////////////////////////////
+		// Third panel - More
+		/////////////////////////////////////////////////////////
+        pnlMore.addLast(chkHasCloseButton=new mCheckBox(MyLocale.getMsg(631,"PDA has close Button")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
+        chkHasCloseButton.setState(pref.hasCloseButton);
+
 		mTab.addCard(pnlGeneral,MyLocale.getMsg(621,"General"),null);
 		mTab.addCard(pnlDisplay,MyLocale.getMsg(622,"Screen"),null);
+		mTab.addCard(pnlMore,MyLocale.getMsg(631,"More"),null);
 		//this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 		
 		this.addLast(mTab);
 		addNext(cancelB = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		addLast(applyB = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-
-	
-
-	
 	}
 	
 	public void onEvent(Event ev){
@@ -187,6 +191,7 @@ public class PreferencesScreen extends Form {
 				pref.menuAtTop=chkMenuAtTop.getState();
 				pref.tabsAtTop=chkTabsAtTop.getState();
 				pref.showStatus=chkShowStatus.getState();
+				pref.hasCloseButton=chkHasCloseButton.getState();
 				pref.savePreferences();
 				pref.dirty = true; // Need to update table in case columns were enabled/disabled
 				this.close(0);
