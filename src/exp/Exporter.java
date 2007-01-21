@@ -10,6 +10,7 @@ import ewe.io.FileWriter;
 import ewe.io.PrintWriter;
 import ewe.ui.ProgressBarForm;
 import ewe.util.*;
+import ewe.io.IOException;
 
 /**
  * @author Kalle
@@ -99,18 +100,26 @@ public class Exporter {
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();
-					if (needCacheDetails) holder.readCache(profile.dataDir);
+					try {
+						if (needCacheDetails) {
+							holder.readCache(profile.dataDir);
+						}
+					} catch (IOException e) {
+						continue;
+					}
 					switch (this.howManyParams) {
 					case NO_PARAMS: 
 						str = record(holder);
 						break;
 					case LAT_LON:	
 						coords.set(holder.LatLon, CWPoint.CW);
+						if (coords.isValid() == false) continue;
 						str = record(holder, coords.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
 						             		 coords.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 						break;
 					case LAT_LON|COUNT: 
 						coords.set(holder.LatLon, CWPoint.CW);
+						if (coords.isValid() == false) continue;
 						str = record(holder, coords.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
 											 coords.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator),
 											 i);
@@ -136,9 +145,10 @@ public class Exporter {
 			if (str != null) outp.print(str);
 			outp.close();
 			pbf.exit(0);
-		}catch (Exception e){
-			Vm.debug("Problem writing to file! "+e.toString());
-		}//try
+		} catch (IOException ioE){
+			Vm.debug("Error opening " + outFile.getName());
+		}
+		//try
 	}
 	/**
 	 * sets mask for filechooser
