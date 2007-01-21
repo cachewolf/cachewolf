@@ -127,7 +127,7 @@ public class Profile {
 			FileReader in = new FileReader(dataDir + "index.xml");
 			in.readLine(); // <?xml version= ...
 			String text=in.readLine(); // <CACHELIST>
-			if (text.indexOf("decimal")>0) fmtDec=true;
+			if (text!=null && text.indexOf("decimal")>0) fmtDec=true;
 			Extractor ex = new Extractor(null, " = \"", "\" ", 0, true);
 			while ((text = in.readLine()) != null){
 				// Check for Line with cache data
