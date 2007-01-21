@@ -94,8 +94,8 @@ public class MapLoader {
 		double oversizeY = (float)(numMapsY * (size.y - borderY) + borderY) - pixelsY;
 		
 		//offset for upper left corner
-		double offsetLat = ( ((float)size.y - oversizeY) / 2.0 ) / pixelsPerLat;
-		double offsetLon = -( ((float)size.x - oversizeX) / 2.0 ) / pixelsPerLon;
+		double offsetLat = -( ((float)size.y - oversizeY) / 2.0 ) / pixelsPerLat;
+		double offsetLon = ( ((float)size.x - oversizeX) / 2.0 ) / pixelsPerLon;
 		
 		topleft.latDec += offsetLat;
 		topleft.lonDec += offsetLon;
