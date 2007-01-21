@@ -60,6 +60,7 @@ public class Preferences extends MinML{
 	public boolean menuAtTop=true;
 	public boolean tabsAtTop=true;
 	public boolean showStatus=true;
+	public boolean hasCloseButton=true;
 	// This setting determines how many logs are shown per page of hintlogs (default 5)
 	public final int DEFAULT_LOGS_PER_PAGE=5;
 	public int logsPerPage=DEFAULT_LOGS_PER_PAGE;
@@ -446,6 +447,8 @@ public class Preferences extends MinML{
 			menuAtTop=Boolean.valueOf(atts.getValue("menuattop")).booleanValue();
 			tabsAtTop=Boolean.valueOf(atts.getValue("tabsattop")).booleanValue();
 			showStatus=Boolean.valueOf(atts.getValue("showstatus")).booleanValue();
+			if (atts.getValue("hasclosebutton")!=null)
+				hasCloseButton=Boolean.valueOf(atts.getValue("hasclosebutton")).booleanValue();
 		}
 		if (name.equals("hintlogpanel")) {
 			logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
@@ -520,7 +523,7 @@ public class Preferences extends MinML{
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
 			outp.print("    <garmin connection = \""+garminConn+"\"/>\n");
 			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
-			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\"/>\n");
+			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+"\"/>\n");
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
 			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\"/>\n");
 			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\"/>\n");
