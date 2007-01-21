@@ -125,7 +125,6 @@ public class Profile {
 			char decSep=MyLocale.getDigSeparator().charAt(0);
 			char notDecSep=decSep=='.'?',':'.';
 			FileReader in = new FileReader(dataDir + "index.xml");
-Vm.debug("Reading "+dataDir + "index.xml DecSep="+MyLocale.getDigSeparator());
 			in.readLine(); // <?xml version= ...
 			String text=in.readLine(); // <CACHELIST>
 			if (text.indexOf("decimal")>0) fmtDec=true;
