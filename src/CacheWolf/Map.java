@@ -70,7 +70,7 @@ public class Map extends Form {
 		try {
 			wfl.loadwfl(mapsPath, thisMap);
 		}catch(FileNotFoundException ex){
-			Vm.debug("Cannot load world file!");
+		//	Vm.debug("Cannot load world file!");
 		}catch (IOException ex) { // is thrown if lat/lon out of range
 			MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), ex.getMessage(), MessageBox.OKB);
 			tmpMB.execute();
@@ -195,11 +195,7 @@ public class Map extends Form {
 		fc.setTitle((String)MyLocale.getMsg(4100,"Select Directory:"));
 		if(fc.execute() != FormBase.IDCANCEL){
 			File inDir = fc.getChosenFile();
-			File dir = new File(mapsPath);
 			File mapFile;
-			if (!dir.exists()) {
-				dir.createDir();
-			}
 			try{ // TODO better chekcing for IO-Errors / Disk full etc.
 				//User selected a map, but maybe there are more png(s)
 				//copy all of them!
@@ -418,26 +414,16 @@ class mapInteractivePanel extends InteractivePanel{
 		g.free();
 		this.repaintNow();
 		f.updatePosition(pos.x, pos.y);
-		InfoBox inf = new InfoBox((String)lr.get(4108,"Coordinates:"), (String)lr.get(4108,"Coordinates:"), InfoBox.INPUT);
-		if (inf.execute()==InfoBox.IDOK) {
-			String txt = inf.feedback.getText();
-			Regex rex = new Regex("(N|S).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3}).*?(E|W).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3})");
-			try {
-				rex.search(txt);
-				if(rex.didMatch()){
-					double lat = Convert.toDouble(rex.stringMatched(2)) + Convert.toDouble(rex.stringMatched(3))/60 + Convert.toDouble(rex.stringMatched(5))/60000;
-					double lon = Convert.toDouble(rex.stringMatched(7)) + Convert.toDouble(rex.stringMatched(8))/60 + Convert.toDouble(rex.stringMatched(10))/60000;
-					if(rex.stringMatched(1).equals("S") || rex.stringMatched(1).equals("s")) lat = lat * -1;
-					if(rex.stringMatched(6).equals("W") || rex.stringMatched(6).equals("w")) lon = lon * -1;	
-					GCPoint gcp = new GCPoint(lat, lon);
+		
+		CoordsScreen cooS = new CoordsScreen(); // (String)lr.get(4108,"Coordinates:"), (String)lr.get(4108,"Coordinates:"), InfoBox.INPUT);
+		if (cooS.execute()==CoordsScreen.IDOK) {
+					GCPoint gcp = new GCPoint(cooS.getCoords());
 					gcp.bitMapX = pos.x;
 					gcp.bitMapY = pos.y;
 					f.addGCP(gcp); // throws IllegalArgumentException in case of lon/lat out of range
-				} else { coosInputFormat(); this.removeImage(aImg); }
-			} catch (IllegalArgumentException e) { // NumberFormatException is a subclass of IllagalArgumentException
-				coosInputFormat();
-				this.removeImage(aImg);
-			}
+//			} catch (IllegalArgumentException e) { // NumberFormatException is a subclass of IllagalArgumentException
+//				coosInputFormat();
+//				this.removeImage(aImg);
 		} else this.removeImage(aImg); // CANCEL pressed
 	}
 
@@ -456,6 +442,10 @@ class GCPoint extends CWPoint{
 	public int bitMapY = 0;
 	
 	public GCPoint(){
+	}
+	
+	public GCPoint(CWPoint p) {
+		super(p);
 	}
 	
 	public GCPoint(double lat, double lon){

@@ -177,7 +177,8 @@ public class CoordsScreen extends Form {
 			if (ev.target == btnApply){
 				currFormat = chkFormat.getSelectedIndex();
 				readFields(coordInp, currFormat);
-				this.close(IDOK);
+				if (coordInp.isValid()) this.close(IDOK);
+				else (new MessageBox("Error", "Please enter valid coordinates", MessageBox.OKB)).execute();
 			}
 			
 			if (ev.target == btnPaste){
