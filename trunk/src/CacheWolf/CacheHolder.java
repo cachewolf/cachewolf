@@ -440,17 +440,17 @@ public CacheHolder update(CacheHolder newCh){
    
    public static void buildReferences(Vector cacheDB){
 	   CacheHolder ch, mainCh;
-	   Hashtable dbIndex = new Hashtable();
+	   Hashtable dbIndex = new Hashtable((int)(cacheDB.size()/0.75f + 1), 0.75f); // initialize so that von rehashing is neccessary
 	   Integer index;
 	   // Build index for faster search and clear all references
-	   for(int i = 0; i<cacheDB.size();i++){
+	   for(int i = cacheDB.size() -1; i >= 0;i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.addiWpts.clear();
 			ch.mainCache = null;
 			dbIndex.put((String)ch.wayPoint, new Integer(i));
 	   }
 	   // Build refeneces
-	   for(int i = 0; i<cacheDB.size();i++){
+	   for(int i = cacheDB.size() -1; i >= 0;i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			if (ch.isAddiWpt()) {
 				//search main cache
