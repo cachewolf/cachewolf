@@ -525,16 +525,16 @@ public class MovingMap extends Form {
 		for (int i=symbols.size()-1; i>=0; i--) {
 			symb = (MapSymbol)symbols.get(i);
 			pOnScreen = getXYonScreen(symb.lat, symb.lon);
-			w=symb.pic.getWidth();
-			h=symb.pic.getHeight();
+			w=symb.getWidth();
+			h=symb.getHeight();
 			if (pOnScreen.x+w >= 0 && pOnScreen.x <= ww && pOnScreen.y+h >= 0 &&  pOnScreen.y <= wh) 
 			{
-				symb.pic.properties &= ~mImage.IsInvisible;
-				symb.pic.move(pOnScreen.x-w/2, pOnScreen.y-h/2);
+				symb.properties &= ~mImage.IsInvisible;
+				symb.move(pOnScreen.x-w/2, pOnScreen.y-h/2);
 			}
 			else 
-			{symb.pic.properties |= mImage.IsInvisible;
-			symb.pic.move(30, 30);
+			{symb.properties |= mImage.IsInvisible;
+			symb.move(30, 30);
 			}
 			//symb.pic.move(ww+1, wh+1);
 		}
@@ -545,20 +545,19 @@ public class MovingMap extends Form {
 		MapSymbol ms = new MapSymbol(name, filename, lat, lon);
 		ms.loadImage();
 		Point pOnScreen=getXYonScreen(lat, lon);
-		ms.pic.setLocation(pOnScreen.x-ms.pic.getWidth()/2, pOnScreen.y-ms.pic.getHeight()/2);
+		ms.setLocation(pOnScreen.x-ms.getWidth()/2, pOnScreen.y-ms.getHeight()/2);
 		symbols.add(ms);
-		mmp.addImage(ms.pic);
+		mmp.addImage(ms);
 		return ms;
 	}
-	public void addSymbol(String name, AniImage imSymb, double lat, double lon) {
+	public void addSymbol(String name, Image imSymb, double lat, double lon) {
 		if (symbols==null) symbols=new Vector();
-		MapSymbol ms = new MapSymbol(name, " ", lat, lon);
-		ms.pic = imSymb;
-		ms.pic.properties = AniImage.AlwaysOnTop;
+		MapSymbol ms = new MapSymbol(name, imSymb, lat, lon);
+		ms.properties = AniImage.AlwaysOnTop;
 		Point pOnScreen=getXYonScreen(lat, lon);
-		ms.pic.setLocation(pOnScreen.x-ms.pic.getWidth()/2, pOnScreen.y-ms.pic.getHeight()/2);
+		ms.setLocation(pOnScreen.x-ms.getWidth()/2, pOnScreen.y-ms.getHeight()/2);
 		symbols.add(ms);
-		mmp.addImage(ms.pic);
+		mmp.addImage(ms);
 	}
 
 	public void setGotoPosition(double lat, double lon) {
@@ -590,7 +589,7 @@ public class MovingMap extends Form {
 	}
 
 	public void removeMapSymbol(int SymNr) {
-		mmp.removeImage(((MapSymbol)symbols.get(SymNr)).pic);
+		mmp.removeImage(((MapSymbol)symbols.get(SymNr)));
 		symbols.removeElementAt(SymNr);
 	}
 
@@ -856,7 +855,7 @@ public class MovingMap extends Form {
 	public void zoom1to1() {
 		CWPoint center = ScreenXY2LatLon(this.width /2 , this.height/2);
 		if (mapImage1to1 != null) zoomFromUnscaled(1, new Rect(0,0,mapImage1to1.getWidth(), mapImage1to1.getHeight()), center);
-		else zoomFromUnscaled(1, null, center);
+		else zoomFromUnscaled(1, new Rect(0,0, 1,1), center);
 	}
 
 	/**
@@ -873,19 +872,23 @@ public class MovingMap extends Form {
 			int saveprop = AniImage.IsMoveable;
 			AniImage tmp = null; // = mmp.mapImage;
 			if (mmp.mapImage != null) {
+				tmp = mmp.mapImage;
 				saveprop = mmp.mapImage.properties;
 				mmp.removeImage(mmp.mapImage);
 				if (mmp.mapImage != mapImage1to1) {
-					mmp.mapImage .free();
+					mmp.mapImage.free();
 					mmp.mapImage = null;
 				} else tmp = mapImage1to1;
 			}
 			Vm.getUsedMemory(true);
 			try {
-				tmp = new AniImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor), (int)(newImageRect.height*zoomFactor), newImageRect, 0));
+				if (zoomFactor == 1) tmp = mapImage1to1;
+				else tmp = new AniImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor), (int)(newImageRect.height*zoomFactor), newImageRect, 0));
 				currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
 			} catch (OutOfMemoryError e) {
-				(new MessageBox("Error", "Out of memory error", MessageBox.OKB)).execute();}
+				(new MessageBox("Error", "Out of memory error", MessageBox.OKB)).execute();
+				//tmp = mapImage1to1;
+			} //if (tmp != null) currentMap.zoom();}
 			Vm.getUsedMemory(true);
 			mmp.mapImage = tmp; // use unscaled or no image in case of OutOfMemoryError
 			mmp.mapImage.properties = saveprop;
@@ -1116,9 +1119,16 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 
 	public void penHeld(Point p){
 		//	if (!menuIsActive()) doMenu(p);
+		AniImage clickedOnImage = images.findHotImage(p);
+		if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
+			
+		}
+			
+
 		if (!mm.zoomingMode) // && ev instanceof PenEvent && (
 			//( (ev.type == PenEvent.PEN_DOWN) && ((PenEvent)ev).modifiers == PenEvent.RIGHT_BUTTON)
 		{ //|| ((ev.type == PenEvent.RIGHT_BUTTON) ) )){
+			this.
 			kontextMenu = new Menu();
 			kontextMenu.addItem(gotoMenuItem);
 			kontextMenu.exec(this, new Point(p.x, p.y), this);
@@ -1304,20 +1314,25 @@ class ListBox extends Form{
 	}
 }
 
-class MapSymbol {
+class MapSymbol extends AniImage {
 	String name;
 	String filename;
 	double lat, lon;
-	AniImage pic;
 	public MapSymbol(String namei, String filenamei, double lati, double loni) {
 		name = namei;
 		filename = filenamei;
 		lat = lati;
 		lon = loni;
 	}
+	public MapSymbol(String namei, Image fromIm, double lati, double loni) {
+		name = namei;
+		setImage(fromIm);
+		lat = lati;
+		lon = loni;
+	}
 	public void loadImage(){
-		pic = new AniImage(filename);
-		pic.properties = AniImage.AlwaysOnTop;
+		setImage(new Image(filename),0); freeSource();;
+		//properties = AniImage.AlwaysOnTop;
 	}
 }
 

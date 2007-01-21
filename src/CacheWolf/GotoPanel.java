@@ -603,7 +603,7 @@ public class GotoPanel extends CellPanel {
 						if (ch.is_Checked) {
 							//CWPoint tmpll = new CWPoint(ch.LatLon);
 							int ct = Convert.parseInt(ch.type);
-							mmp.addSymbol(ch.CacheName, new AniImage(myTableModel.cacheImages[ct]), ch.pos.latDec, ch.pos.lonDec);
+							mmp.addSymbol(ch.CacheName, myTableModel.cacheImages[ct], ch.pos.latDec, ch.pos.lonDec);
 						}
 					}
 				}
