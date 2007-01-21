@@ -8,9 +8,15 @@ import ewe.sys.*;
 import java.lang.Math;;
  
 
-public class Test {
+public class Test extends mThread{
 	boolean allPassed=true; 
+	public static void main(String args[]) {
+		new Test().start();
+	}
 
+	public void run() {
+		testAll();
+	}
 	void testAll(){
 		testPerformance();
 /*		testRegex();
@@ -38,7 +44,29 @@ public class Test {
 			CWPoint cwP = new CWPoint("N 51° 27.635 E 009° 37.621", CWPoint.CW);
 		}
 		end = new Time();
-		printResult("CWPoint constructor", start, end, i);
+		printResult("CWPoint(\"N 51° 27.635 E 009° 37.621\", CWPoint.CW)", start, end, i);
+
+		// 1.000 CWPoint via constructor ohne Lat/Lon
+		start = new Time();
+		for (i=0; i<100; i++){
+			CWPoint cwP = new CWPoint();
+			cwP.set("N 51° 27.635 E 009° 37.621", CWPoint.CW);
+			
+		}
+		end = new Time();
+		printResult("cwp = new CWPoint(); cwp.set(\"N 51 27.635 E 009 37.621\", CWPoint.CW); ", start, end, i);
+
+		// 1.000 CWPoint via constructor ohne Lat/Lon
+		start = new Time();
+		CWPoint[] a = new CWPoint[10000];
+		for (i=0; i<10000; i++){
+			CWPoint cwP = new CWPoint(20, 20);
+			cwP.latDec = 41.123;
+			cwP.lonDec = 9.2388;
+			a[i] = cwP;
+		}
+		end = new Time();
+		printResult("cwp = new CWPoint(); cwP.latDec = 41.123; cwP.lonDec = 9.2388;", start, end, i);
 
 		// 1.000 CWPoint via set
 		start = new Time();
@@ -47,7 +75,7 @@ public class Test {
 			cwSet.set("N 51° 27.635 E 009° 37.621", CWPoint.CW);
 		}
 		end = new Time();
-		printResult("CWPoint set", start, end, i);
+		printResult("cwSet.set(\"N 51° 27.635 E 009° 37.621\", CWPoint.CW) CWPoint set", start, end, i);
 
 		// 1.000 filewrite
 		String fileName = new String("test.tmp");
