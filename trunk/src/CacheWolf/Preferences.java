@@ -170,7 +170,7 @@ public class Preferences extends MinML{
 			else return  File.getProgramDirectory() + "/maps";
 		}
 		// expedia dir
-		return getMapExpediaPath(); 
+		return getMapExpediaLoadPath(); 
 	}
 
 	/**
@@ -185,7 +185,7 @@ public class Preferences extends MinML{
 	/**
 	 * to this path the automatically downloaded maps are saved
 	 */
-	public String getMapExpediaPath() {
+	public String getMapExpediaSavePath() {
 		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length());
 		String mapsDir = Global.getPref().baseDir + "/maps/expedia/" + subdir;
 		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
@@ -197,6 +197,9 @@ public class Preferences extends MinML{
 		return mapsDir;
 	}
 
+	public String getMapExpediaLoadPath() {
+		return Global.getPref().baseDir + "/maps/expedia/";
+	}
 
 	/**
 	 * Returns true if coordinates have been set.

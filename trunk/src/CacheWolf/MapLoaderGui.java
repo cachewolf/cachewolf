@@ -110,7 +110,7 @@ public class MapLoaderGui extends Form {
 		this.addLast(mTab);
 	}
 	public String getMapsDir() {
-		return Global.getPref().getMapExpediaPath();
+		return Global.getPref().getMapExpediaSavePath();
 	}
 	public void downloadTiles() {
 		String mapsDir = getMapsDir();

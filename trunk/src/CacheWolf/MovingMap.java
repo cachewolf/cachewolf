@@ -154,7 +154,7 @@ public class MovingMap extends Form {
 				}catch(IOException ex){ 
 					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
 				}catch(ArithmeticException ex){ // affine contain not allowed values 
-					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
+					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+mapsPath+dirs.get(j)+"/" + rawFileName+".wfl \n"+ex.toString(), MessageBox.OKB)).exec();
 				} 
 			}
 		}
@@ -224,6 +224,8 @@ public class MovingMap extends Form {
 
 
 	public void addMissingOverlays() {
+		boolean saveGPSIgnoreStatus = ignoreGps; // avoid multi-threading problems
+		ignoreGps = true;
 		Point upperleft = getMapPositionOnScreen();
 		int ww = pref.myAppWidth;
 		int wh = pref.myAppHeight;
@@ -243,6 +245,7 @@ public class MovingMap extends Form {
 			}
 		}
 		updateOverlayOnlyPos();
+		ignoreGps = saveGPSIgnoreStatus;
 	}
 
 	private void destroyOverlay(int ov) {
@@ -708,19 +711,20 @@ public class MovingMap extends Form {
 			this.title = currentMap.mapName;
 			lastCompareX = Integer.MAX_VALUE; // neccessary to make updateposition to test if the current map is the best one for the GPS-Position
 			lastCompareY = Integer.MAX_VALUE;
-			if (! (mmp.mapImage == null) ) {
+			if (mmp.mapImage != null ) {
 				//Vm.debug("free: "+Vm.getUsedMemory(false)+"classMemory: "+Vm.getClassMemory()+ "after garbage collection: "+Vm.getUsedMemory(false));
 				mmp.removeImage(mmp.mapImage); mmp.mapImage.free(); mmp.mapImage = null; mapImage1to1 = mmp.mapImage;
 
 				//Vm.debug("free: "+Vm.getUsedMemory(false)+"classMemory: "+Vm.getClassMemory()+ "after garbage collection: "+Vm.getUsedMemory(false));
 				Vm.getUsedMemory(true); // calls the garbage collection
 			} // give memory free before loading the new map to avoid out of memory error
-			if (currentMap.getImageFilename() == null ) {
+			String ImageFilename = currentMap.getImageFilename(); 
+			if (ImageFilename == null ) {
 				mmp.mapImage = new AniImage();
 				(new MessageBox("Error", "Could not find image associated with: \n"+currentMap.fileNameWFL, MessageBox.OKB)).execute();
 			}
 			else { 
-				if (currentMap.getImageFilename().length()>0) mmp.mapImage = new AniImage(currentMap.getImageFilename()); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
+				if (ImageFilename.length() > 0) mmp.mapImage = new AniImage(ImageFilename); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
 				else mmp.mapImage = new AniImage();
 			}
 			mapImage1to1 = mmp.mapImage;
@@ -851,7 +855,8 @@ public class MovingMap extends Form {
 
 	public void zoom1to1() {
 		CWPoint center = ScreenXY2LatLon(this.width /2 , this.height/2);
-		zoomFromUnscaled(1, new Rect(0,0,mapImage1to1.getWidth(), mapImage1to1.getHeight()), center);
+		if (mapImage1to1 != null) zoomFromUnscaled(1, new Rect(0,0,mapImage1to1.getWidth(), mapImage1to1.getHeight()), center);
+		else zoomFromUnscaled(1, null, center);
 	}
 
 	/**
@@ -1142,7 +1147,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							fc.setTitle((String)MyLocale.getMsg(4200,"Select map directory:"));
 							if(fc.execute() != FileChooser.IDCANCEL){
 								mm.loadMaps(fc.getChosen().toString()+"/", mm.posCircleLat);
-								mm.addOverlaySet();
 								mm.forceMapLoad();
 							}
 						}
