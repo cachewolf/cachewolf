@@ -1,16 +1,80 @@
 package CacheWolf;
 
-import ewe.sys.Vm;
+import ewe.io.File;
+import ewe.io.IOException;
+import ewe.io.RandomAccessFile;
+import ewe.sys.*;
+
+import java.lang.Math;;
+ 
 
 public class Test {
 	boolean allPassed=true; 
 
 	void testAll(){
-		testRegex();
+		testPerformance();
+/*		testRegex();
 		if (allPassed) 
 			Vm.debug("SUCCESS: All tests passed"); 
 		else 
 			Vm.debug("FAILURE: At least one test failed"); 
+*/	}
+	void testPerformance(){
+		Time start, end;
+		int i;
+		double tmp;
+		
+		// 100.000 Sinus
+		start = new Time();
+		for (i=0; i<100000; i++){
+			tmp = Math.sin(53);
+		}
+		end = new Time();
+		printResult("sin(53)", start, end, i);
+		
+		// 1.000 CWPoint via constructor
+		start = new Time();
+		for (i=0; i<100; i++){
+			CWPoint cwP = new CWPoint("N 51° 27.635 E 009° 37.621", CWPoint.CW);
+		}
+		end = new Time();
+		printResult("CWPoint constructor", start, end, i);
+
+		// 1.000 CWPoint via set
+		start = new Time();
+		CWPoint cwSet = new CWPoint();
+		for (i=0; i<100; i++){
+			cwSet.set("N 51° 27.635 E 009° 37.621", CWPoint.CW);
+		}
+		end = new Time();
+		printResult("CWPoint set", start, end, i);
+
+		// 1.000 filewrite
+		String fileName = new String("test.tmp");
+		try {
+			RandomAccessFile out =  new RandomAccessFile(fileName,"rw");
+			start = new Time();
+			for (i=0; i<10000; i++){
+				out.writeBytes(fileName);
+			}
+			end = new Time();
+			out.close();
+			File dfile = new File(fileName);
+			dfile.delete();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		printResult("Filewrite 10 Bytes", start, end, i);
+		
+	}
+	
+	void printResult(String what, Time start, Time end, int count){
+		String VM = Vm.getPlatform();
+		long time;
+		time = end.getTime() - start.getTime();
+		
+		Vm.debug(VM + " " +  Convert.toString(time) + " msec " + Convert.toString(count) + " * " + what);
 	}
 	
 	void testPassedRegex(String pattern, String expectedResult, int format) {
