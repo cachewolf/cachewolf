@@ -76,7 +76,7 @@ public class MapLoader {
 		double pixelsY = (topleft.latDec - buttomright.latDec) * pixelsPerLat; 
 		double pixelsX = -(topleft.lonDec - buttomright.lonDec) * pixelsPerLon ; 
 		
-		//border siezes around given area and overlapping between tiles
+		//border sizes around given area and overlapping between tiles
 		int borderX = (int) java.lang.Math.round((float)size.x * (overlapping - 1.0));
 		int borderY = (int) java.lang.Math.round((float)size.y * (overlapping - 1.0));
 		
@@ -84,7 +84,7 @@ public class MapLoader {
 		numMapsX = (int) java.lang.Math.ceil( (pixelsX + (float)borderX) / (float)(size.x - borderX) );
 		
 		//increments calulated from pixel offset of tiles
-		latinc = (float)(size.y - borderY) / pixelsPerLat;
+		latinc = (float)-(size.y - borderY) / pixelsPerLat;
 		loninc = (float)(size.x - borderX) / pixelsPerLon;
 		
 		//calculation of center of first tile
@@ -94,8 +94,8 @@ public class MapLoader {
 		double oversizeY = (float)(numMapsY * (size.y - borderY) + borderY) - pixelsY;
 		
 		//offset for upper left corner
-		double offsetLat = ( ((float)size.x - oversizeX) / 2.0 ) / pixelsPerLat;
-		double offsetLon = -( ((float)size.x - oversizeX) / 2.0 ) / pixelsPerLat;
+		double offsetLat = ( ((float)size.y - oversizeY) / 2.0 ) / pixelsPerLat;
+		double offsetLon = -( ((float)size.x - oversizeX) / 2.0 ) / pixelsPerLon;
 		
 		topleft.latDec += offsetLat;
 		topleft.lonDec += offsetLon;
