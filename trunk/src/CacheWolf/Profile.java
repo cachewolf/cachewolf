@@ -72,7 +72,7 @@ public class Profile {
 		try{
 		  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dataDir + "index.xml")));
 		} catch (Exception e) {
-		  Vm.debug("Problem creating index file "+e.toString());
+		  Vm.debug("Problem creating index file "+e.toString()+"\nFilename="+dataDir + "index.xml");
 			return;
 		}
 		CWPoint savedCentre=centre;
@@ -98,6 +98,11 @@ public class Profile {
 				ch = (CacheHolder)cacheDB.get(i);
 				////Vm.debug("Saving: " + ch.CacheName);
 				if(ch.wayPoint.length()>0 && ch.LongDescription.equals("An Error Has Occured") == false){
+					if (ch.pos==null) {
+						ParseLatLon pl=new ParseLatLon(ch.LatLon);
+						pl.parse();
+						ch.pos=new CWPoint(pl.lat2,pl.lon2);
+					}
 					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
 							//"\" lat = \""+ SafeXML.clean(ch.LatLon) +
 							"\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
