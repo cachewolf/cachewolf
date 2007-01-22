@@ -130,7 +130,6 @@ public class MovingMap extends Form {
 		File files = new File(mapsPath);
 		String rawFileName = new String();
 		String[] dirstmp = files.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_DIRECTORIES_ONLY);
-		Vm.debug(dirstmp.length + dirstmp.toString() + dirstmp[0]);
 		Vector dirs = new Vector(dirstmp);
 		dirs.add("."); // include the mapsPath itself
 		MapInfoObject tempMIO;
