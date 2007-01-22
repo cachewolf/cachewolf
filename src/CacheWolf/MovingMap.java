@@ -23,7 +23,6 @@ public class MovingMap extends Form {
 	public int GpsStatus;
 	Preferences pref;
 	MovingMapPanel mmp;
-	//AniImage mapImage;
 	Vector maps;
 	Vector symbols;
 	GotoPanel gotoPanel;
@@ -44,10 +43,6 @@ public class MovingMap extends Form {
 	AniImage buttonImageLens = new AniImage("lupe.png");
 	AniImage buttonImageLensActivated = new AniImage("lupe_activated.png");
 	AniImage buttonImageZoom1to1 = new AniImage("zoom1to1.png");
-	/*AniImage arrowUp = new AniImage("arrow_up.png");
-	AniImage arrowDown = new AniImage("arrow_down.png");
-	AniImage arrowLeft = new AniImage("arrow_left.png");
-	AniImage arrowRight = new AniImage("arrow_right.png"); */
 	MapImage posCircle = new MapImage("position_green.png");
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
 	double posCircleLat, posCircleLon;
@@ -73,7 +68,8 @@ public class MovingMap extends Form {
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
 		this.backGround = Color.Black;
-		this.mapPath = Global.getPref().getMapLoadPath()+"/";
+		this.mapPath = Global.getPref().getMapLoadPath();
+
 		mmp = new MovingMapPanel(this);
 		this.addLast(mmp);
 		DrawnIcon closeX = new DrawnIcon(DrawnIcon.CROSS,15,15,new Color(0,0,0));
@@ -83,49 +79,40 @@ public class MovingMap extends Form {
 		tmp.fillRect(0, 0, closeX.getWidth(), closeX.getHeight());
 		closeX.doDraw(tmp, 0);
 		bottonImageClose.properties |= AniImage.AlwaysOnTop;
-		bottonImageClose.setLocation(Global.getPref().myAppWidth - bottonImageClose.getWidth()- 5, 5);
 		mmp.addImage(bottonImageClose);
-		buttonImageGpsOn.setLocation(pref.myAppWidth - bottonImageChooseMap.getWidth()-5, bottonImageClose.getHeight() + 20);
 		buttonImageGpsOn.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageGpsOn);
-		bottonImageChooseMap.setLocation(10,10);
 		bottonImageChooseMap.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(bottonImageChooseMap);
 		directionArrows.properties = AniImage.AlwaysOnTop;
-		directionArrows.setLocation(Global.getPref().myAppWidth/2-directionArrows.getWidth()/2, 10);
 		mmp.addImage(directionArrows);
-		buttonImageLens.setLocation(Global.getPref().myAppWidth - buttonImageLens.getWidth()-10, Global.getPref().myAppHeight/2 - buttonImageLens.getHeight()/2 );
 		buttonImageLens.properties = AniImage.AlwaysOnTop;
 		buttonImageLensActivated.setLocation(Global.getPref().myAppWidth - buttonImageLens.getWidth()-10, Global.getPref().myAppHeight/2 - buttonImageLens.getHeight()/2 );
 		buttonImageLensActivated.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageLens);
-		buttonImageZoom1to1.setLocation(Global.getPref().myAppWidth - buttonImageZoom1to1.getWidth()-10, Global.getPref().myAppHeight/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
 		buttonImageZoom1to1.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageZoom1to1);
-		/*		arrowUp.setLocation(pref.myAppWidth/2, 10);
-		arrowDown.setLocation(pref.myAppWidth/2, pref.myAppHeight-20);
-		arrowLeft.setLocation(10, pref.myAppHeight/2+7);
-		arrowRight.setLocation(pref.myAppWidth-25, pref.myAppHeight/2+7);
-		arrowUp.properties = AniImage.AlwaysOnTop;
-		arrowDown.properties = AniImage.AlwaysOnTop;
-		arrowLeft.properties = AniImage.AlwaysOnTop;
-		arrowRight.properties = AniImage.AlwaysOnTop;
-		mmp.addImage(arrowUp);
-		mmp.addImage(arrowDown);
-		mmp.addImage(arrowLeft);
-		mmp.addImage(arrowRight);
-		 */		
-//		currentMap = new MapInfoObject();
+		resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialize mapImage.screenSize
 		setGpsStatus(noGPS);
 		posCircle.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(posCircle);
 		mapsloaded = false;
 		posCircleLat = -361;
 		posCircleLon = -361; // make them invalid
-		//loadMaps(Global.getPref().baseDir+"maps/standard/");
-		MapImage.setScreenSize(pref.myAppWidth, pref.myAppHeight);
 	}
 
+	public void resizeTo(int w,int h) {
+		super.resizeTo(w, h);
+		MapImage.setScreenSize(w, h);
+		bottonImageClose.setLocation(w- bottonImageClose.getWidth()- 5, 5);
+		buttonImageGpsOn.setLocation(w- bottonImageChooseMap.getWidth()-5, bottonImageClose.getHeight() + 20);
+		bottonImageChooseMap.setLocation(10,10);
+		directionArrows.setLocation(w/2-directionArrows.getWidth()/2, 10);
+		buttonImageZoom1to1.setLocation(w - buttonImageZoom1to1.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
+		buttonImageLens.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
+		// TODO TrackOverlay-größe muss angepasst werden
+	}
+	
 	/**
 	 * loads the list of maps
 	 *
@@ -142,6 +129,7 @@ public class MovingMap extends Form {
 		File files = new File(mapsPath);
 		String rawFileName = new String();
 		String[] dirstmp = files.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_DIRECTORIES_ONLY);
+		Vm.debug(dirstmp.length + dirstmp.toString() + dirstmp[0]);
 		Vector dirs = new Vector(dirstmp);
 		dirs.add("."); // include the mapsPath itself
 		MapInfoObject tempMIO;
@@ -153,7 +141,7 @@ public class MovingMap extends Form {
 				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
 				try {
 					tempMIO = new MapInfoObject();
-					tempMIO.loadwfl(mapsPath+dirs.get(j)+"/", rawFileName);
+					tempMIO.loadwfl(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
 					maps.add(tempMIO);
 				}catch(IOException ex){ 
 					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
@@ -190,7 +178,8 @@ public class MovingMap extends Form {
 	public final FormFrame myExec() {
 		//addOverlaySet(); // neccessary to draw points which were added when the MovingMap was not running, so that these pixels are not stored in the not-immediately-drawing-work-around
 		// doShowExec(null,null,true,Gui.NEW_WINDOW & ~Form.PageHigher);
-		return exec();
+		FormFrame ret = exec();
+		return ret;
 	}
 	public void addTrack(Track tr) {
 		if (tr == null) return;
@@ -233,8 +222,9 @@ public class MovingMap extends Form {
 		if (currentMap == null || posCircleLat < -360) return;
 		boolean saveGPSIgnoreStatus = ignoreGps; // avoid multi-threading problems
 		ignoreGps = true;
-		int ww = pref.myAppWidth;
-		int wh = pref.myAppHeight;
+		Dimension ws = mmp.getSize(null);
+		int ww = ws.width;
+		int wh = ws.height;
 		Point upperleftOf4 = new Point(posCircleX, posCircleY); //ScreenXY2LatLon(0, 0); // TrackOverlay[4] == center of Trackoverlays 
 		upperleftOf4.x = upperleftOf4.x % ww;
 		upperleftOf4.y = upperleftOf4.y % wh;
@@ -570,9 +560,8 @@ public class MovingMap extends Form {
 		if (symbols == null) return;
 		Point pOnScreen;
 		MapSymbol symb;
-		Dimension ws = mmp.getSize(null);
-		int ww = ws.width;
-		int wh = ws.height;
+		int ww = this.width;
+		int wh = this.height;
 		int w, h;
 		for (int i=symbols.size()-1; i>=0; i--) {
 			symb = (MapSymbol)symbols.get(i);
@@ -974,7 +963,14 @@ public class MovingMap extends Form {
 		ignoreGps = savegpsstatus;
 	}
 
-
+/*	public void gotFocus(int how) {
+		super.gotFocus(how);
+		Dimension ws = getSize(null);
+		onWindowResize(ws.width, ws.height);
+		Vm.debug(ws.width + " h: "+ws.height);
+		this.setPreferredSize(width, height)
+	}
+*/
 	public void onEvent(Event ev){
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			gotoPanel.runMovingMap = false;
@@ -1222,7 +1218,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							fc.addMask("*.wfl");
 							fc.setTitle((String)MyLocale.getMsg(4200,"Select map directory:"));
 							if(fc.execute() != FileChooser.IDCANCEL){
-								mm.loadMaps(fc.getChosen().toString()+"/", mm.posCircleLat);
+								mm.loadMaps(fc.getChosen().toString(), mm.posCircleLat);
 								mm.forceMapLoad();
 							}
 						}
@@ -1528,21 +1524,35 @@ class ArrowsOnMap extends AniImage {
 class MapImage extends AniImage {
 	public Point locAlways = new Point(); // contains the theoretical location even if it the location is out of the screen. If the image is on the screen, it contains the same as location
 	static Dimension screenDim;
-	
+	public int widthi;
+	public int heighti;
 	public MapImage() {
 		super();
+		widthi = getWidth();
+		heighti = getHeight();
 	}
 	
 	public MapImage(String f) {
 		super(f);
+		widthi = getWidth();
+		heighti = getHeight();
 	}
 	
 	public MapImage(mImage im) {
 		super(im);
+		widthi = getWidth();
+		heighti = getHeight();
 	}
 	public static void setScreenSize(int w, int h) {
 		screenDim = new Dimension(w, h);
 	}
+	
+	public void setImage(Image im, Color c) {
+		super.setImage(im, c);
+		widthi = getWidth();
+		heighti = getHeight();
+	}
+	
 	public void setLocation (int x, int y) {
 		locAlways.x = x;
 		locAlways.y = y;
@@ -1567,10 +1577,13 @@ class MapImage extends AniImage {
 		}
 	}
 		
-	public boolean isOnScreen() { // i assume that location.width = screen.width and the same for hight
-		if ( (locAlways.x + screenDim.width > 0 && locAlways.x < screenDim.width) && 
-				(locAlways.y + screenDim.height > 0 && locAlways.y < screenDim.height) ) return true;
-		else return false;
+	public boolean isOnScreen() { 
+		if ( (locAlways.x + widthi > 0 && locAlways.x < screenDim.width) && 
+				(locAlways.y + heighti > 0 && locAlways.y < screenDim.height) ) return true;
+		else {
+			Vm.debug("la.x: " + locAlways.x + " la.y: " + locAlways + " screeD.w: " + screenDim.width + "scD.h: "+ screenDim.height);
+			return false;
+		}
 	}
 }
 	
