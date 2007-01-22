@@ -13,7 +13,7 @@ import ewe.fx.Point;
 import ewe.util.Vector;
 
 
-public class TrackOverlay extends AniImage {
+public class TrackOverlay extends MapImage {
 	TrackPoint topLeft;
 	TrackPoint bottomRight;
 	Graphics draw;
@@ -40,6 +40,8 @@ public class TrackOverlay extends AniImage {
 
 	
 	public void paintTracks() {
+		draw.setPen(new Pen(Color.LightBlue,Pen.SOLID,1));
+		draw.fillRect(1, 1, image.getWidth()-1, image.getHeight()-1);
 		if (tracks == null || tracks.size() == 0) return;
 		int tri, i;
 		Track tr;
@@ -65,7 +67,7 @@ public class TrackOverlay extends AniImage {
 		x=(int) (trans.transLatX* b[0] + trans.transLonX*b[1]);
 		y=(int) (trans.transLatY* b[0] + trans.transLonY*b[1]);
 		//draw.drawLine(x, y, x, y);
-		ewe.sys.Vm.debug("showlastaddedpoint, x: "+x+"   y: "+y+"loc.x: "+location.x+"  loc.y:"+location.y);
+		//ewe.sys.Vm.debug("showlastaddedpoint, x: "+x+"   y: "+y+"loc.x: "+location.x+"  loc.y:"+location.y);
 		draw.fillRect(x-1, y-1, 3, 3);
 		/*	if (image.bufferedImage != null) { // funktioniert gut, allerdings nur in der java-VM wenn ewe.fx.Image.bufferedImage als public definiert
 			int yd;
@@ -132,12 +134,6 @@ public class TrackOverlay extends AniImage {
 		paintPoint(tr.trackColor, tr.TrackPoints[tr.num-1].latDec, tr.TrackPoints[tr.num-1].lonDec);
 	}
 
-	public boolean isOnScreen() { // i assume that location.width = screen.width and the same for hight
-		if ( (location.x + location.width > 0 && location.x < location.width) || 
-				(location.y + location.height > 0 && location.y < location.height) ) return true;
-		else return false;
-	}
-	
 	public void doDraw(Graphics g,int options) { // this is automatically called when the image need to be (re-)drawn on the screen
 		super.doDraw(g, options);
 		imageChangesDontShow = true; // g.drawImage (in super) copies _awtImage into bufferedImage, any later changes to _awtImage dont show up until the mask or the image has changed - unfortunately bufferedImage is not accessable from outside

@@ -582,7 +582,7 @@ public class GotoPanel extends CellPanel {
 				boolean runbefore=false;
 				if (mmp == null) mmp = new MovingMap(pref, this, cacheDB); // this also loads the list of maps
 				else runbefore = true;
-				if (serThread == null || !serThread.isAlive() ) {
+				if (serThread == null || !serThread.isAlive() || !gpsPosition.isValid()) {
 					// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
 					mmp.ignoreGps = false;
 					if (toPoint.isValid())	mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
@@ -603,7 +603,7 @@ public class GotoPanel extends CellPanel {
 						if (ch.is_Checked) {
 							//CWPoint tmpll = new CWPoint(ch.LatLon);
 							int ct = Convert.parseInt(ch.type);
-							mmp.addSymbol(ch.CacheName, myTableModel.cacheImages[ct], ch.pos.latDec, ch.pos.lonDec);
+							mmp.addSymbol(ch.CacheName, ch, myTableModel.cacheImages[ct], ch.pos.latDec, ch.pos.lonDec);
 						}
 					}
 				}

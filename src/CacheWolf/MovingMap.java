@@ -30,10 +30,10 @@ public class MovingMap extends Form {
 	Vector cacheDB;
 	TrackOverlay[] TrackOverlays;
 	Vector tracks;
-	MapInfoObject currentMap;
+	MapInfoObject currentMap = null;
 	String mapPath;
 
-	AniImage mapImage1to1;
+	MapImage mapImage1to1;
 	ArrowsOnMap directionArrows = new ArrowsOnMap();
 	AniImage statusImageHaveSignal = new AniImage("position_green.png");
 	AniImage statusImageNoSignal = new AniImage("position_yellow.png");
@@ -48,7 +48,7 @@ public class MovingMap extends Form {
 	AniImage arrowDown = new AniImage("arrow_down.png");
 	AniImage arrowLeft = new AniImage("arrow_left.png");
 	AniImage arrowRight = new AniImage("arrow_right.png"); */
-	AniImage posCircle = new AniImage("position_green.png");
+	MapImage posCircle = new MapImage("position_green.png");
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
 	double posCircleLat, posCircleLon;
 
@@ -115,11 +115,15 @@ public class MovingMap extends Form {
 		mmp.addImage(arrowLeft);
 		mmp.addImage(arrowRight);
 		 */		
-		currentMap = new MapInfoObject();
+//		currentMap = new MapInfoObject();
 		setGpsStatus(noGPS);
 		posCircle.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(posCircle);
+		mapsloaded = false;
+		posCircleLat = -361;
+		posCircleLon = -361; // make them invalid
 		//loadMaps(Global.getPref().baseDir+"maps/standard/");
+		MapImage.setScreenSize(pref.myAppWidth, pref.myAppHeight);
 	}
 
 	/**
@@ -220,31 +224,36 @@ public class MovingMap extends Form {
 		if (TrackOverlays != null) {
 			for (int i=0; i< TrackOverlays.length; i++) {	destroyOverlay(i);	}
 		}
+		Vm.getUsedMemory(true); // call garbage collection
+		System.gc();
 	}
 
 
 	public void addMissingOverlays() {
+		if (currentMap == null || posCircleLat < -360) return;
 		boolean saveGPSIgnoreStatus = ignoreGps; // avoid multi-threading problems
 		ignoreGps = true;
-		Point upperleft = getMapPositionOnScreen();
 		int ww = pref.myAppWidth;
 		int wh = pref.myAppHeight;
+		Point upperleftOf4 = new Point(posCircleX, posCircleY); //ScreenXY2LatLon(0, 0); // TrackOverlay[4] == center of Trackoverlays 
+		upperleftOf4.x = upperleftOf4.x % ww;
+		upperleftOf4.y = upperleftOf4.y % wh;
 		int i;
 		if (TrackOverlays == null) TrackOverlays = new TrackOverlay[9];
 		for (int yi=0; yi<3; yi++) {
 			for (int xi=0; xi<3; xi++) {
 				i = yi*3+xi;
 				if (TrackOverlays[i]==null) { 
-					TrackOverlays[i]= new TrackOverlay(currentMap.calcLatLon(-upperleft.x+(xi-1)*ww, -upperleft.y+(yi-1)*wh), ww, wh, currentMap); 
-					TrackOverlays[i].properties |= mImage.IsInvisible;
-					TrackOverlays[i].move(0, 0);
+					TrackOverlays[i]= new TrackOverlay(ScreenXY2LatLon(upperleftOf4.x+(xi-1)*ww, upperleftOf4.y+(yi-1)*wh), ww, wh, currentMap); 
+					TrackOverlays[i].setLocation(ww+1, wh+1); // outside of the screen will hide it automatically it will get the correct position in upadteOverlayposition 
 					TrackOverlays[i].tracks = this.tracks;
 					TrackOverlays[i].paintTracks();
-					//	mmp.addImage(TrackOverlays[i]);
+					mmp.addImage(TrackOverlays[i]);
 				}
 			}
 		}
 		updateOverlayOnlyPos();
+		if (mmp.mapImage != null) mmp.images.moveToBack(mmp.mapImage);
 		ignoreGps = saveGPSIgnoreStatus;
 	}
 
@@ -256,51 +265,91 @@ public class MovingMap extends Form {
 	}
 	public void rearangeOverlays() {
 		if (TrackOverlays[1].isOnScreen()) { // oben raus
+			destroyOverlay(6);
+			destroyOverlay(7);
+			destroyOverlay(8);
+			mmp.removeImage(TrackOverlays[0]);
+			mmp.removeImage(TrackOverlays[1]);
+			mmp.removeImage(TrackOverlays[2]);
 			TrackOverlays[6]=TrackOverlays[0];
 			TrackOverlays[7]=TrackOverlays[1];
 			TrackOverlays[8]=TrackOverlays[2];
-			destroyOverlay(0);
-			destroyOverlay(1);
-			destroyOverlay(2);
+			mmp.addImage(TrackOverlays[6]);
+			mmp.addImage(TrackOverlays[7]);
+			mmp.addImage(TrackOverlays[8]);
+			TrackOverlays[0] = null;
+			TrackOverlays[1] = null;
+			TrackOverlays[2] = null;
 			destroyOverlay(3);
 			destroyOverlay(4);
 			destroyOverlay(5);
 		} else {
 			if (TrackOverlays[3].isOnScreen()) { // links raus
+				destroyOverlay(2);
+				destroyOverlay(5);
+				destroyOverlay(8);
+				mmp.removeImage(TrackOverlays[0]);
+				mmp.removeImage(TrackOverlays[3]);
+				mmp.removeImage(TrackOverlays[6]);
 				TrackOverlays[2]=TrackOverlays[0];
 				TrackOverlays[5]=TrackOverlays[3];
 				TrackOverlays[8]=TrackOverlays[6];
-				destroyOverlay(0);
+				mmp.addImage(TrackOverlays[2]);
+				mmp.addImage(TrackOverlays[5]);
+				mmp.addImage(TrackOverlays[8]);
+				TrackOverlays[0] = null;
+				TrackOverlays[3] = null;
+				TrackOverlays[6] = null;
 				destroyOverlay(1);
-				destroyOverlay(3);
 				destroyOverlay(4);
-				destroyOverlay(6);
 				destroyOverlay(7);
 			} else {
 				if (TrackOverlays[5].isOnScreen()) { // rechts raus
+					destroyOverlay(0);
+					destroyOverlay(3);
+					destroyOverlay(6);
+					mmp.removeImage(TrackOverlays[2]);
+					mmp.removeImage(TrackOverlays[5]);
+					mmp.removeImage(TrackOverlays[8]);
 					TrackOverlays[0]=TrackOverlays[2];
 					TrackOverlays[3]=TrackOverlays[5];
 					TrackOverlays[6]=TrackOverlays[8];
+					mmp.addImage(TrackOverlays[0]);
+					mmp.addImage(TrackOverlays[3]);
+					mmp.addImage(TrackOverlays[6]);
+					TrackOverlays[2] = null;
+					TrackOverlays[5] = null;
+					TrackOverlays[8] = null;
 					destroyOverlay(1);
-					destroyOverlay(2);
 					destroyOverlay(4);
-					destroyOverlay(5);
 					destroyOverlay(7);
-					destroyOverlay(8);
 				} else {
 					if (TrackOverlays[7].isOnScreen()) { // unten raus
+						destroyOverlay(0);
+						destroyOverlay(1);
+						destroyOverlay(2);
+						mmp.removeImage(TrackOverlays[6]);
+						mmp.removeImage(TrackOverlays[7]);
+						mmp.removeImage(TrackOverlays[8]);
 						TrackOverlays[0]=TrackOverlays[6];
 						TrackOverlays[1]=TrackOverlays[7];
 						TrackOverlays[2]=TrackOverlays[8];
+						mmp.addImage(TrackOverlays[0]);
+						mmp.addImage(TrackOverlays[1]);
+						mmp.addImage(TrackOverlays[2]);
+						TrackOverlays[6] = null;
+						TrackOverlays[7] = null;
+						TrackOverlays[8] = null;
 						destroyOverlay(3);
 						destroyOverlay(4);
 						destroyOverlay(5);
-						destroyOverlay(6);
-						destroyOverlay(7);
-						destroyOverlay(8);
 					} else { // it is important to test for diagonal only if the other didn't match
 						if (TrackOverlays[0].isOnScreen()) {  // links oben raus
-							destroyOverlay(0);
+							destroyOverlay(8);
+							mmp.removeImage(TrackOverlays[0]);
+							TrackOverlays[8]=TrackOverlays[0];
+							mmp.addImage(TrackOverlays[8]);
+							TrackOverlays[0] = null;
 							destroyOverlay(1);
 							destroyOverlay(2);
 							destroyOverlay(3);
@@ -308,13 +357,15 @@ public class MovingMap extends Form {
 							destroyOverlay(5);
 							destroyOverlay(6);
 							destroyOverlay(7);
-							TrackOverlays[8]=TrackOverlays[0];
 						} else {
 							if (TrackOverlays[2].isOnScreen()) { // rechts oben raus
+								destroyOverlay(6);
+								mmp.removeImage(TrackOverlays[2]);
 								TrackOverlays[6]=TrackOverlays[2];
+								mmp.addImage(TrackOverlays[6]);
+								TrackOverlays[2] = null;
 								destroyOverlay(0);
 								destroyOverlay(1);
-								destroyOverlay(2);
 								destroyOverlay(3);
 								destroyOverlay(4);
 								destroyOverlay(5);
@@ -322,18 +373,25 @@ public class MovingMap extends Form {
 								destroyOverlay(8);
 							} else {
 								if (TrackOverlays[6].isOnScreen()) { // links unten raus
+									destroyOverlay(2);
+									mmp.removeImage(TrackOverlays[6]);
 									TrackOverlays[2]=TrackOverlays[6];
+									mmp.addImage(TrackOverlays[2]);
+									TrackOverlays[6] = null;
 									destroyOverlay(0);
 									destroyOverlay(1);
 									destroyOverlay(3);
 									destroyOverlay(4);
 									destroyOverlay(5);
-									destroyOverlay(6);
 									destroyOverlay(7);
 									destroyOverlay(8);
 								} else {
 									if (TrackOverlays[8].isOnScreen()) { // rechts unten raus
+										destroyOverlay(0);
+										mmp.removeImage(TrackOverlays[8]);
 										TrackOverlays[0]=TrackOverlays[8];
+										mmp.addImage(TrackOverlays[0]);
+										TrackOverlays[8] = null;
 										destroyOverlay(1);
 										destroyOverlay(2);
 										destroyOverlay(3);
@@ -341,10 +399,11 @@ public class MovingMap extends Form {
 										destroyOverlay(5);
 										destroyOverlay(6);
 										destroyOverlay(7);
-										destroyOverlay(8);
 									}else
 										for (int i=0; i<TrackOverlays.length; i++) {destroyOverlay(i);} // this happens if a position jump occured
 								}}}}}}} // close all IFs
+		Vm.getUsedMemory(true); // call garbage collection
+		System.gc();
 		Vm.debug("Overlayrearanged"+TrackOverlays.toString());
 	}
 
@@ -364,30 +423,28 @@ public class MovingMap extends Form {
 		int ww = ws.width;
 		int wh = ws.height;
 		//Vm.sleep(100); // this is necessary because the ewe vm ist not multi-threaded and the serial thread also needs time
+		int num, x, y;
 		for (int yi=0; yi<3; yi++) {
 			for (int xi=0; xi<3; xi++) {
-				if (posOnScreen.x +ww >=0 && posOnScreen.x <= ww && posOnScreen.y + wh >=0 && posOnScreen.y <= wh)
-				{
-					if ((TrackOverlays[yi*3+xi].properties & mImage.IsInvisible) > 0) mmp.addImage(TrackOverlays[yi*3+xi]);
-					TrackOverlays[yi*3+xi].properties &= ~mImage.IsInvisible;
-					TrackOverlays[yi*3+xi].move(posOnScreen.x+(xi-1)*ww, posOnScreen.y+(yi-1)*wh);
-				} else {
-					if ((TrackOverlays[yi*3+xi].properties & mImage.IsInvisible) == 0) mmp.removeImage(TrackOverlays[yi*3+xi]);
-					TrackOverlays[yi*3+xi].properties |= mImage.IsInvisible;
-					TrackOverlays[yi*3+xi].move(30, 30);
-				}
+				num = yi*3+xi;
+				x = posOnScreen.x+(xi-1)*ww;
+				y = posOnScreen.y+(yi-1)*wh; 
+				TrackOverlays[num].setLocation(x, y);
 			}
 		}
 	}
 
 	public void updateOverlayPos() {
-		if (TrackOverlays == null || TrackOverlays[4] == null) return;
-		updateOverlayOnlyPos();
-		if (TrackOverlays[0].location.x>pref.myAppWidth || TrackOverlays[0].location.x + 3*pref.myAppWidth < 0 || // testForNeedToRearange
-				TrackOverlays[0].location.y>pref.myAppHeight || TrackOverlays[0].location.y + 3*pref.myAppHeight <0) {
-			rearangeOverlays();
-			addMissingOverlays();
-			// updateOverlayOnlyPos(); is called from addMissingOverlays 
+		if (tracks == null || tracks.size() == 0) return;
+		if (TrackOverlays == null || TrackOverlays[4] == null) addMissingOverlays();
+		else {
+			updateOverlayOnlyPos();
+			if (TrackOverlays[0].locAlways.x > 0 || TrackOverlays[2].locAlways.x < 0
+					|| TrackOverlays[0].locAlways.y > 0 || TrackOverlays[8].locAlways.y < 0) { // testForNeedToRearange
+				rearangeOverlays();
+				addMissingOverlays();
+				// updateOverlayOnlyPos(); is called from addMissingOverlays 
+			}
 		}
 	}
 
@@ -462,14 +519,7 @@ public class MovingMap extends Form {
 		int h = posCircle.getHeight();
 		int npx = posCircleX-w/2+diffX; 
 		int npy = posCircleY-h/2+diffY;
-		if (npx+w >= 0 && npx <= this.width && npy+h >= 0 && npy < this.height)	
-		{
-			posCircle.properties &= ~AniImage.IsInvisible;
-			posCircle.move(npx, npy);
-		} else {
-			posCircle.properties |= AniImage.IsInvisible;
-			posCircle.move(0,0);
-		}
+		posCircle.move(npx, npy);
 		posCircleX = posCircleX+diffX;
 		posCircleY = posCircleY+diffY;
 		updateSymbolPositions();
@@ -485,6 +535,7 @@ public class MovingMap extends Form {
 	 * @return
 	 */
 	public Point getMapPositionOnScreen() {
+		if (currentMap == null || posCircleLon < -360) return new Point(pref.myAppWidth +1, pref.myAppHeight +1); // in case no calculation is possible return somthing outside of the screen
 		Point mapPos = new Point(); 
 		//if (mmp.mapImage != null) mmp.mapImage.getLocation(mapPos);
 		//else {
@@ -502,6 +553,7 @@ public class MovingMap extends Form {
 	 * @return
 	 */
 	public Point getXYonScreen(double lat, double lon){
+		if (currentMap == null) return null;
 		Point coords = currentMap.calcMapXY(lat, lon);
 		Point mapPos = getMapPositionOnScreen();
 		//		Vm.debug("getXYinMap, posCiLat: "+posCircleLat+"poscLOn: "+ posCircleLon+"gotoLat: "+ lat + "gotoLon: "+ lon+" mapPosX: "+mapPos.x+"mapposY"+mapPos.y);
@@ -550,12 +602,12 @@ public class MovingMap extends Form {
 		mmp.addImage(ms);
 		return ms;
 	}
-	public void addSymbol(String name, Image imSymb, double lat, double lon) {
+	public void addSymbol(String name, Object mapObject, Image imSymb, double lat, double lon) {
 		if (symbols==null) symbols=new Vector();
-		MapSymbol ms = new MapSymbol(name, imSymb, lat, lon);
+		MapSymbol ms = new MapSymbol(name, mapObject, imSymb, lat, lon);
 		ms.properties = AniImage.AlwaysOnTop;
 		Point pOnScreen=getXYonScreen(lat, lon);
-		ms.setLocation(pOnScreen.x-ms.getWidth()/2, pOnScreen.y-ms.getHeight()/2);
+		if (pOnScreen != null) ms.setLocation(pOnScreen.x-ms.getWidth()/2, pOnScreen.y-ms.getHeight()/2);
 		symbols.add(ms);
 		mmp.addImage(ms);
 	}
@@ -622,7 +674,7 @@ public class MovingMap extends Form {
 		if (forceMapLoad || (java.lang.Math.abs(oldMapPos.x - mapPos.x) > 1 || java.lang.Math.abs(oldMapPos.y - mapPos.y) > 1)) {
 			if (mmp.mapImage != null) 	mmp.mapImage.move(mapPos.x,mapPos.y);
 			updateSymbolPositions();
-			if (updateOverlay && TrackOverlays != null) updateOverlayPos();
+			if (updateOverlay ) updateOverlayPos(); // && TrackOverlays != null
 			//}
 			mmp.repaintNow(); // TODO test if the "if" above can be used
 		}
@@ -632,7 +684,15 @@ public class MovingMap extends Form {
 	 * Method to laod the best map for lat/lon and move the map so that the posCircle is at lat/lon
 	 */
 	public void updatePosition(double lat, double lon){
-		if (!mapsloaded) loadMaps(mapPath, lat);
+		if (!mapsloaded) {
+			loadMaps(mapPath, lat);
+			lastCompareX = Integer.MAX_VALUE;
+			lastCompareY = Integer.MAX_VALUE;
+			setBestMap(lat, lon);
+			forceMapLoad = false;
+			return;
+
+		}
 		lastUpatePosition.latDec=lat;
 		lastUpatePosition.lonDec=lon;
 		if(!ignoreGps || forceMapLoad){
@@ -646,20 +706,23 @@ public class MovingMap extends Form {
 						// more then 1/10 of screen moved since last time we tried to find a better map
 						lastCompareX = mapPos.x;
 						lastCompareY = mapPos.y;
-//						Vm.debug("look for a bettermap");
-						int newMapN=getBestMap(lat, lon); // this is independet of the Position of the PosCircle on the windows -> may be it would be better to call it with the coos of the center of the window?, nein, es könnte stören, wenn man manuell die Karte bewegt und er ständig ne neue läd... bleibt erstmal so
-						MapInfoObject newmap ;
-						newmap = (MapInfoObject) maps.get(newMapN);
-						if (!(currentMap.mapName == newmap.mapName)) {
-							setMap(newmap, lat, lon);
-							Vm.debug("better map found");
-							// use new map
-						}
+						setBestMap(lat, lon);
 						forceMapLoad = false;
 					}
 				}
 			}
 		}
+	}
+	
+	public void setBestMap(double lat, double lon) {
+		int newMapN=getBestMap(lat, lon); // this is independet of the Position of the PosCircle on the windows -> may be it would be better to call it with the coos of the center of the window?, nein, es könnte stören, wenn man manuell die Karte bewegt und er ständig ne neue läd... bleibt erstmal so
+		MapInfoObject newmap ;
+		newmap = (MapInfoObject) maps.get(newMapN);
+		if (currentMap == null || currentMap.mapName != newmap.mapName) {
+			setMap(newmap, lat, lon);
+			Vm.debug("better map found");
+		}
+		
 	}
 
 	public void setGpsStatus (int status) {
@@ -694,7 +757,7 @@ public class MovingMap extends Form {
 	 * @param lon -361: don't adust to lat/lon
 	 */
 	public void setMap(MapInfoObject newmap, double lat, double lon) {
-		if (newmap.mapName == currentMap.mapName && !forceMapLoad) {
+		if (currentMap != null && newmap.mapName == currentMap.mapName && !forceMapLoad) {
 			updateOnlyPosition(lat, lon, true); 
 			return;
 		}
@@ -719,12 +782,12 @@ public class MovingMap extends Form {
 			} // give memory free before loading the new map to avoid out of memory error
 			String ImageFilename = currentMap.getImageFilename(); 
 			if (ImageFilename == null ) {
-				mmp.mapImage = new AniImage();
+				mmp.mapImage = new MapImage();
 				(new MessageBox("Error", "Could not find image associated with: \n"+currentMap.fileNameWFL, MessageBox.OKB)).execute();
 			}
 			else { 
-				if (ImageFilename.length() > 0) mmp.mapImage = new AniImage(ImageFilename); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
-				else mmp.mapImage = new AniImage();
+				if (ImageFilename.length() > 0) mmp.mapImage = new MapImage(ImageFilename); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
+				else mmp.mapImage = new MapImage();
 			}
 			mapImage1to1 = mmp.mapImage;
 			mmp.mapImage.properties = mmp.mapImage.properties | AniImage.IsMoveable;
@@ -870,7 +933,7 @@ public class MovingMap extends Form {
 		if (mapImage1to1 != null) {
 			ignoreGps = true; // avoid multi-thread problems
 			int saveprop = AniImage.IsMoveable;
-			AniImage tmp = null; // = mmp.mapImage;
+			MapImage tmp = null; // = mmp.mapImage;
 			if (mmp.mapImage != null) {
 				tmp = mmp.mapImage;
 				saveprop = mmp.mapImage.properties;
@@ -883,7 +946,7 @@ public class MovingMap extends Form {
 			Vm.getUsedMemory(true);
 			try {
 				if (zoomFactor == 1) tmp = mapImage1to1;
-				else tmp = new AniImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor), (int)(newImageRect.height*zoomFactor), newImageRect, 0));
+				else tmp = new MapImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor), (int)(newImageRect.height*zoomFactor), newImageRect, 0));
 				currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
 			} catch (OutOfMemoryError e) {
 				(new MessageBox("Error", "Out of memory error", MessageBox.OKB)).execute();
@@ -931,8 +994,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu mapsMenu;
 	Menu kontextMenu;
 	MenuItem gotoMenuItem;
+	MenuItem openCacheDescMenuItem;
+	CacheHolder clickedCache;
 	MovingMap mm;
-	AniImage mapImage;
+	MapImage mapImage;
 	Point saveMapLoc = null;
 	boolean saveGpsIgnoreStatus;
 	boolean paintingZoomArea;
@@ -956,14 +1021,16 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		mm.ignoreGps = true;
 		saveMapLoc = pos;
 		bringMapToTop();
-		return super.imageBeginDragged(mapImage, pos);
+		if (mapImage.isOnScreen()) return super.imageBeginDragged(mapImage, pos);
+		else return super.imageBeginDragged(null, pos);
 	}
 
 	public boolean imageNotDragged(ImageDragContext dc,Point pos){
 		boolean ret = super.imageNotDragged(dc, pos);
-		mapMoved(pos.x - saveMapLoc.x, pos.y - saveMapLoc.y);
-		mm.ignoreGps = saveGpsIgnoreStatus;
 		bringMaptoBack();
+		if (dc.image == null) moveMap(pos.x - saveMapLoc.x, pos.y - saveMapLoc.y);
+		else mapMoved(pos.x - saveMapLoc.x, pos.y - saveMapLoc.y);
+		mm.ignoreGps = saveGpsIgnoreStatus;
 		this.repaintNow();
 		return ret;
 	}
@@ -1032,7 +1099,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	public void moveMap(int diffX, int diffY) {
 		Point p = new Point();
 		if (mapImage!= null) {
-			p = mapImage.getLocation(null);
+			p = mapImage.locAlways;
 			mapImage.move(p.x+diffX,p.y+diffY);
 		}
 		mapMoved(diffX, diffY);
@@ -1119,18 +1186,17 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 
 	public void penHeld(Point p){
 		//	if (!menuIsActive()) doMenu(p);
-		AniImage clickedOnImage = images.findHotImage(p);
-		if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
-			
-		}
-			
-
 		if (!mm.zoomingMode) // && ev instanceof PenEvent && (
 			//( (ev.type == PenEvent.PEN_DOWN) && ((PenEvent)ev).modifiers == PenEvent.RIGHT_BUTTON)
-		{ //|| ((ev.type == PenEvent.RIGHT_BUTTON) ) )){
-			this.
+		{ //|| ((ev.type == PenEvent.RIGHT_BUTTON) ) )){		
 			kontextMenu = new Menu();
 			kontextMenu.addItem(gotoMenuItem);
+			AniImage clickedOnImage = images.findHotImage(p);
+			if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
+				clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
+				openCacheDescMenuItem = new MenuItem("Open "+clickedCache.CacheName);
+				kontextMenu.addItem(openCacheDescMenuItem);
+			}
 			kontextMenu.exec(this, new Point(p.x, p.y), this);
 		}
 	}
@@ -1180,6 +1246,17 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					if (kontextMenu.getSelectedItem() == gotoMenuItem) {
 						kontextMenu.close();
 						mm.gotoPanel.setDestination(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));	
+					}
+					if (kontextMenu.getSelectedItem() == openCacheDescMenuItem) {
+						//mm.onEvent(new FormEvent(FormEvent.CLOSED, mm));
+						kontextMenu.close();
+						WindowEvent close = new WindowEvent();
+						close.target = mm;
+						close.type = WindowEvent.CLOSE;
+						mm.postEvent(close);
+						mm.gotoPanel.mainT.tbP.selectAndActive(mm.cacheDB.find(clickedCache));
+						mm.gotoPanel.mainT.select(mm.gotoPanel.mainT.descP);
+						mm.gotoPanel.mainT.openDesciptionPanel(clickedCache);
 					}
 				}
 			} // if (ev.target == kontextMenu)
@@ -1315,6 +1392,7 @@ class ListBox extends Form{
 }
 
 class MapSymbol extends AniImage {
+	Object mapObject;
 	String name;
 	String filename;
 	double lat, lon;
@@ -1324,11 +1402,12 @@ class MapSymbol extends AniImage {
 		lat = lati;
 		lon = loni;
 	}
-	public MapSymbol(String namei, Image fromIm, double lati, double loni) {
+	public MapSymbol(String namei, Object mapObjecti, Image fromIm, double lati, double loni) {
 		name = namei;
-		setImage(fromIm);
 		lat = lati;
 		lon = loni;
+		mapObject = mapObjecti;
+		setImage(fromIm);
 	}
 	public void loadImage(){
 		setImage(new Image(filename),0); freeSource();;
@@ -1437,4 +1516,62 @@ class ArrowsOnMap extends AniImage {
 		if (centerY < minY) minY = centerY;
 	}
 }
+
+/** 
+ * class that can be used with any x and any y
+ * it will save taht location and make itself automatically
+ * invisible if it is not on the screen. Call setscreensize to
+ * set the screensize
+ * @author r
+ *
+ */
+class MapImage extends AniImage {
+	public Point locAlways = new Point(); // contains the theoretical location even if it the location is out of the screen. If the image is on the screen, it contains the same as location
+	static Dimension screenDim;
+	
+	public MapImage() {
+		super();
+	}
+	
+	public MapImage(String f) {
+		super(f);
+	}
+	
+	public MapImage(mImage im) {
+		super(im);
+	}
+	public static void setScreenSize(int w, int h) {
+		screenDim = new Dimension(w, h);
+	}
+	public void setLocation (int x, int y) {
+		locAlways.x = x;
+		locAlways.y = y;
+		if (isOnScreen()) { 
+			super.setLocation(x, y);
+			properties &= ~AniImage.IsInvisible;
+		} else {
+			properties |= AniImage.IsInvisible;
+			super.move(0, 0);
+		}
+	}
+	
+	public void move (int x, int y) {
+		locAlways.x = x;
+		locAlways.y = y;
+		if (isOnScreen()) { 
+			super.move(x, y);
+			properties &= ~AniImage.IsInvisible;
+		} else {
+			properties |= AniImage.IsInvisible;
+			super.move(0, 0);
+		}
+	}
+		
+	public boolean isOnScreen() { // i assume that location.width = screen.width and the same for hight
+		if ( (locAlways.x + screenDim.width > 0 && locAlways.x < screenDim.width) && 
+				(locAlways.y + screenDim.height > 0 && locAlways.y < screenDim.height) ) return true;
+		else return false;
+	}
+}
+	
 
