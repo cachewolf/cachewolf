@@ -199,7 +199,7 @@ public class Preferences extends MinML{
 	}
 
 	public String getMapExpediaLoadPath() {
-		return Global.getPref().baseDir + "/maps/expedia/";
+		return Global.getPref().baseDir + "/maps/expedia";
 	}
 
 	/**
