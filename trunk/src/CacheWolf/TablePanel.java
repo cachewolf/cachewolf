@@ -73,6 +73,10 @@ public class TablePanel extends CellPanel{
 		tc.setTableModel(myMod);
 	}
 	
+	public void gotoFirstLine() {
+		tc.scrollToVisible(0,0);
+	}
+	
 	public void setPanels(GotoPanel gp, MainTab mt) {
 		myGotoPanel = gp;
 		myMaintab = mt;

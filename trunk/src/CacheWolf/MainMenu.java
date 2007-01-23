@@ -203,6 +203,7 @@ public class MainMenu extends MenuBar {
 					profile.readIndex();
 					pref.curCentrePt.set(profile.centre);
 					tbp.resetModel();
+					Global.mainTab.tbP.gotoFirstLine();
 				}
 			}
 			if(mev.selectedItem == mnuEditProfile){
@@ -278,8 +279,8 @@ public class MainMenu extends MenuBar {
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
 				String cwd = File.getProgramDirectory() + "/temp.pcx";
 				try{
-					ewe.sys.Process p = Vm.exec("gpsbabel -s -i pcx -f "+ cwd +" -o garmin -F " + pref.garminConn +":");
-					Vm.debug("gpsbabel -s -i pcx -f "+ cwd +" -o garmin -F " + pref.garminConn +":");
+					ewe.sys.Process p = Vm.exec("gpsbabel -s -i pcx -f \""+ cwd +"\" -o garmin -F " + pref.garminConn +":");
+					Vm.debug("gpsbabel -s -i pcx -f  \""+ cwd +"\" -o garmin -F " + pref.garminConn +":");
 					p.waitFor();
 				}catch(IOException ioex){};
 				ProgressBarForm.clear();
