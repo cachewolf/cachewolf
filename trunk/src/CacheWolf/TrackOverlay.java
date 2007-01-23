@@ -24,7 +24,7 @@ public class TrackOverlay extends MapImage {
 	public Point trackPixels[] = null;
 	public Color trackPixelsColor[] = null;
 	public int numPixels = 0;
-	final static int maxPixelsInCache = 500;
+	final static int maxPixelsInCache = 100;
 	final static Color transparentColor = Color.White;
 	public TrackOverlay (TrackPoint topLefti, int widthi, int highti, MapInfoObject transi) {
 		topLeft = new TrackPoint(topLefti);
@@ -120,7 +120,7 @@ public class TrackOverlay extends MapImage {
 
 	public void addPixelIfNeccessary(int x, int y, Color f){
 		if (trackPixels != null) {
-			int ll =(numPixels<50 ? 0 : numPixels-50); // look in the last 50 added Pixels if the same Pixel is already in the list (for performance reasons dont look in the whole list)
+			int ll =(numPixels<30 ? 0 : numPixels-30); // look in the last 50 added Pixels if the same Pixel is already in the list (for performance reasons dont look in the whole list)
 			for (int i=numPixels-1; i>=ll; i--) {
 				if (trackPixels[i].x == x && trackPixels[i].y == y && f.equals(trackPixelsColor[i])) 
 					{ return; } 
