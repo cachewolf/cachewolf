@@ -142,7 +142,7 @@ public class PreferencesScreen extends Form {
 
 		mTab.addCard(pnlGeneral,MyLocale.getMsg(621,"General"),null);
 		mTab.addCard(pnlDisplay,MyLocale.getMsg(622,"Screen"),null);
-		mTab.addCard(pnlMore,MyLocale.getMsg(631,"More"),null);
+		mTab.addCard(pnlMore,MyLocale.getMsg(632,"More"),null);
 		//this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 		
 		this.addLast(mTab);

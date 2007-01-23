@@ -26,10 +26,11 @@ public class HintLogPanel extends CellPanel{
 		CellPanel hintpane = split.getNextPanel();
 		CellPanel logpane = split.getNextPanel();
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
-		hintpane.setCell(INITIALLY_PREFERRED_SIZE);
+		int initialHintHeight=Global.getPref().initialHintHeight;
+		if (initialHintHeight<0 || initialHintHeight>1000) initialHintHeight=Global.getPref().DEFAULT_INITIAL_HINT_HEIGHT;
+		hintpane.setPreferredSize(100,initialHintHeight); 
 		ScrollBarPanel sbphint = new ScrollBarPanel(hint);
 		hintpane.addLast(sbphint,CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
-		sbphint.setMinimumSize(0,0);
 		hintpane.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		hintpane.addNext(decodeButton,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		decodeButton.setMinimumSize(MyLocale.getScreenWidth()*2/3,10);
@@ -43,7 +44,10 @@ public class HintLogPanel extends CellPanel{
 	
 	public void setText(CacheHolder cache){
 		this.cache = cache;
-		if(!cache.Hints.equals("null")) hint.setText(cache.Hints);
+		if(!cache.Hints.equals("null")) 
+			hint.setText(cache.Hints);
+		else
+			hint.setText("");
 		crntLogPosition = 0;
 		setLogs(0);
 		moreBt.modify(0,Control.Disabled);
