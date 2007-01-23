@@ -41,7 +41,7 @@ public class NotesScreen extends Form{
 				String note = wayNotes.getText();
 				Time dtm = new Time();
 				dtm.getTime();
-				dtm.setFormat("E dd.MM.yyyy '/' H:m");
+				dtm.setFormat("E dd.MM.yyyy '/' HH:mm");
 				if(note.length() > 0)	note = note + "\n" + dtm.toString();
 				else 	note = note + dtm.toString();
 				note = note + "\n";
