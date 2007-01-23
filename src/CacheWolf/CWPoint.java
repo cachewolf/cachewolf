@@ -240,7 +240,6 @@ public class CWPoint extends TrackPoint{
 					set(rex.stringMatched(17),rex.stringMatched(19),rex.stringMatched(18)); //parse sequence is E N, but set needs N E
 				}
 				//else Vm.debug("CWPoint: "+coord+" could not be parsed");
-				//makeValid(); // TODO was solld as hier?
 			}	/**
 	 * set lat and lon 
 	 * @param strLatNS "N" or "S"

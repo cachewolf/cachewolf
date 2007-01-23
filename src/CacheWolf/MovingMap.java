@@ -44,6 +44,8 @@ public class MovingMap extends Form {
 	AniImage buttonImageLens = new AniImage("lupe.png");
 	AniImage buttonImageLensActivated = new AniImage("lupe_activated.png");
 	AniImage buttonImageZoom1to1 = new AniImage("zoom1to1.png");
+	AniImage DistanceImage;
+	Graphics DistanceImageGraphics;
 	MapImage posCircle = new MapImage("position_green.png");
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
 	double posCircleLat, posCircleLon;
@@ -93,6 +95,13 @@ public class MovingMap extends Form {
 		mmp.addImage(buttonImageLens);
 		buttonImageZoom1to1.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageZoom1to1);
+		//Label distLbl = new mLabel("Distance: ----,-- km");
+		DistanceImage = new AniImage();
+		DistanceImage.setImage(new Image(120, 20), Color.White); // consider the size of the font used
+		DistanceImageGraphics = new Graphics(DistanceImage.image);
+		DistanceImageGraphics.setFont(new Font("Helvetica", Font.BOLD, 16));
+		DistanceImage.properties = AniImage.AlwaysOnTop;
+		mmp.addImage(DistanceImage);
 		resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialize mapImage.screenSize
 		setGpsStatus(noGPS);
 		posCircle.properties = AniImage.AlwaysOnTop;
@@ -111,6 +120,7 @@ public class MovingMap extends Form {
 		directionArrows.setLocation(w/2-directionArrows.getWidth()/2, 10);
 		buttonImageZoom1to1.setLocation(w - buttonImageZoom1to1.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
 		buttonImageLens.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
+		DistanceImage.setLocation(w/2 - DistanceImage.location.width/2, h - DistanceImage.location.height -10);
 		// TODO TrackOverlay-größe muss angepasst werden
 	}
 	
@@ -172,6 +182,27 @@ public class MovingMap extends Form {
 		this.mapsloaded = true;
 	}
 
+	public void updateDistance() {
+		if (gotoPos == null || posCircleLat < -360) return;
+		ewe.sys.Double dd = new ewe.sys.Double();
+		dd.set((new CWPoint(gotoPos.lat, gotoPos.lon).getDistance(posCircleLat, posCircleLon)));
+		String d; 
+		if (dd.value < 1) {
+			dd.value = dd.value * 1000; 
+			dd.decimalPlaces = 0;
+			d = "Distance: " + dd.toString() + "m";} 
+		else {
+			dd.decimalPlaces = 2;
+			d = "Distance: " + dd.toString() + "km";
+		}
+		DistanceImageGraphics.setColor(DistanceImage.transparentColor);
+		DistanceImageGraphics.fillRect(0, 0, DistanceImage.location.width,DistanceImage.location.height);
+		DistanceImageGraphics.setColor(Color.MediumBlue);
+		DistanceImageGraphics.drawText(d, 0, 0);
+		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.DarkBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
+		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.White,0,0,DistanceImage.location.width,DistanceImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
+	}
+	
 	public void forceMapLoad() {
 		forceMapLoad = true;
 		updatePosition(lastUpatePosition.latDec, lastUpatePosition.lonDec); // this sets forceMapLoad to false after loading a map
@@ -602,6 +633,7 @@ public class MovingMap extends Form {
 		if (symbols==null) symbols=new Vector();
 		MapSymbol ms = new MapSymbol(name, filename, lat, lon);
 		ms.loadImage();
+		ms.properties |= AniImage.AlwaysOnTop;
 		Point pOnScreen=getXYonScreen(lat, lon);
 		ms.setLocation(pOnScreen.x-ms.getWidth()/2, pOnScreen.y-ms.getHeight()/2);
 		symbols.add(ms);
@@ -621,6 +653,7 @@ public class MovingMap extends Form {
 	public void setGotoPosition(double lat, double lon) {
 		removeGotoPosition();
 		gotoPos=addSymbol("goto", "goto_map.png", lat, lon);
+		updateDistance();
 	}
 
 	public void removeGotoPosition() {
@@ -680,6 +713,7 @@ public class MovingMap extends Form {
 		if (forceMapLoad || (java.lang.Math.abs(oldMapPos.x - mapPos.x) > 1 || java.lang.Math.abs(oldMapPos.y - mapPos.y) > 1)) {
 			if (mmp.mapImage != null) 	mmp.mapImage.move(mapPos.x,mapPos.y);
 			updateSymbolPositions();
+			updateDistance();
 			if (updateOverlay ) updateOverlayPos(); // && TrackOverlays != null
 			//}
 			mmp.repaintNow(); // TODO test if the "if" above can be used: i guess it can be used as long as the posCircle doesn't move autonom without a mapmove
@@ -1005,8 +1039,9 @@ public class MovingMap extends Form {
 class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu mapsMenu;
 	Menu kontextMenu;
-	MenuItem gotoMenuItem;
+	MenuItem gotoMenuItem = new MenuItem("Goto here$g", 0, null);
 	MenuItem openCacheDescMenuItem;
+	MenuItem newWayPointMenuItem = new MenuItem("Create new Waypoint here$n", 0, null);;
 	CacheHolder clickedCache;
 	MovingMap mm;
 	MapImage mapImage;
@@ -1018,8 +1053,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	public MovingMapPanel(MovingMap f){
 		this.mm = f;
 		set(Control.WantHoldDown, true); // want to get simulated right-clicks
-		gotoMenuItem = new MenuItem("Goto here", 0, null);
-
 	}
 
 	public boolean imageBeginDragged(AniImage which,Point pos) {
@@ -1028,7 +1061,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			mm.ignoreGps = true;
 			return false;
 		}
-		if (!(which == null || which == mapImage || which instanceof TrackOverlay) ) return false;
+		//if (!(which == null || which == mapImage || which instanceof TrackOverlay) ) return false;
 		saveGpsIgnoreStatus = mm.ignoreGps; 
 		mm.ignoreGps = true;
 		saveMapLoc = pos;
@@ -1202,15 +1235,16 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 
 	public void penHeld(Point p){
 		//	if (!menuIsActive()) doMenu(p);
-		if (!mm.zoomingMode) // && ev instanceof PenEvent && (
+		if (!mm.zoomingMode) { 
 			//( (ev.type == PenEvent.PEN_DOWN) && ((PenEvent)ev).modifiers == PenEvent.RIGHT_BUTTON)
-		{ //|| ((ev.type == PenEvent.RIGHT_BUTTON) ) )){		
+			//|| ((ev.type == PenEvent.RIGHT_BUTTON) ) )) ---> these events are not posted --> this overridering is the only solution 
 			kontextMenu = new Menu();
 			kontextMenu.addItem(gotoMenuItem);
+			kontextMenu.addItem(newWayPointMenuItem);
 			AniImage clickedOnImage = images.findHotImage(p);
 			if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
 				clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
-				openCacheDescMenuItem = new MenuItem("Open "+clickedCache.CacheName);
+				openCacheDescMenuItem = new MenuItem("Open '"+clickedCache.CacheName+"'$o");
 				kontextMenu.addItem(openCacheDescMenuItem);
 			}
 			kontextMenu.exec(this, new Point(p.x, p.y), this);
@@ -1259,11 +1293,12 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			} // if (ev.target == mapsMenu)
 			if (ev.target == kontextMenu) {
 				if ((((MenuEvent)ev).type==MenuEvent.SELECTED)) {
-					if (kontextMenu.getSelectedItem() == gotoMenuItem) {
+					MenuItem action = (MenuItem) kontextMenu.getSelectedItem(); 
+					if (action == gotoMenuItem) {
 						kontextMenu.close();
 						mm.gotoPanel.setDestination(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));	
 					}
-					if (kontextMenu.getSelectedItem() == openCacheDescMenuItem) {
+					if (action == openCacheDescMenuItem) {
 						//mm.onEvent(new FormEvent(FormEvent.CLOSED, mm));
 						kontextMenu.close();
 						WindowEvent close = new WindowEvent();
@@ -1274,6 +1309,18 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						mm.gotoPanel.mainT.select(mm.gotoPanel.mainT.descP);
 						mm.gotoPanel.mainT.openDesciptionPanel(clickedCache);
 					}
+					if (action == newWayPointMenuItem) {
+						kontextMenu.close();
+						WindowEvent close = new WindowEvent();
+						close.target = mm;
+						close.type = WindowEvent.CLOSE;
+						mm.postEvent(close);
+						CacheHolder newWP = new CacheHolder();
+						newWP.pos = mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y);
+						mm.gotoPanel.mainT.detP.newWaypoint(newWP, mm.gotoPanel.mainT);
+						
+					}
+					
 				}
 			} // if (ev.target == kontextMenu)
 		} // if (ev instanceof ControlEvent ) 

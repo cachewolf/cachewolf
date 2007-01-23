@@ -99,7 +99,7 @@ public class DetailsPanel extends CellPanel{
 	/**
 	*	Set the values to display.
 	*/
-	public void setDetails(CacheHolder ch, MainTab mt, Preferences p, Profile prof){
+	public void setDetails(CacheHolder ch, MainTab mt){
 		if (this.newWp){
 			this.newWp = false;
 			btCrWp.setText(MyLocale.getMsg(312,"Save"));
@@ -108,8 +108,8 @@ public class DetailsPanel extends CellPanel{
 		else {
 			btCrWp.setText(MyLocale.getMsg(311,"Create Waypoint"));
 		}
-		pref = p;
-		profile=prof;
+		pref = Global.getPref();
+		profile=Global.getProfile();
 		mainT = mt;
 		cacheDB = profile.cacheDB;
 		thisCache = ch;
@@ -118,7 +118,7 @@ public class DetailsPanel extends CellPanel{
 		dirty_newOrDelete = false; // Cache has been created/deleted but not saved
 		wayPoint.setText(ch.wayPoint);
 		wayName.setText(ch.CacheName);
-	    btnWayLoc.setText(ch.LatLon);
+	    btnWayLoc.setText(ch.pos.toString());
 		wayHidden.setText(ch.DateHidden);
 		wayOwner.setText(ch.CacheOwner);
 		wayStatus.setText(ch.CacheStatus);
@@ -163,12 +163,20 @@ public class DetailsPanel extends CellPanel{
 		return strWp;
 	}
 	
-	public void newWaypoint(CacheHolder ch, MainTab mt, Preferences pref, Profile profile){
-
+	/**
+	 * this is called from goto / MovingMap and so on to 
+	 * offer the user the possibility of entering an new waypoint
+	 * at a given position
+	 * 
+	 * @param ch
+	 * @param mt
+	 */
+	public void newWaypoint(CacheHolder ch, MainTab mt){
+		this.profile = Global.getProfile();
 		ch.wayPoint = getNewWayPointName(profile.cacheDB);
 		ch.type = "0";
 		ch.CacheSize = "None";
-		setDetails(ch, mt,pref, profile);
+		setDetails(ch, mt);
 		this.newWp = true;
 		cacheDB.add(thisCache);
 		mt.select(this);
