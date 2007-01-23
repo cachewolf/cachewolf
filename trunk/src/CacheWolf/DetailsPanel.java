@@ -129,6 +129,7 @@ public class DetailsPanel extends CellPanel{
 		} else {
 			btnBlack.image = mNoBlack;
 		}
+		blackStatus=ch.is_black; 
 		btnBlack.repaintNow();
 		if(ch.has_bug == true) {
 			showBug.modify(Control.Disabled,1);
@@ -144,7 +145,7 @@ public class DetailsPanel extends CellPanel{
 		if(ch.CacheSize.equals("Very Large")) waySize.setInt(6);
 		if(ch.CacheSize.equals("None")) waySize.setInt(7);
 		if(ch.CacheSize.equals("Not chosen")) waySize.setInt(7);
-		
+
 		if(ch.is_found == true) wayStatus.setText(MyLocale.getMsg(318,"Found"));
 	}
 	
