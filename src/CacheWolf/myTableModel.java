@@ -164,7 +164,6 @@ public class myTableModel extends TableModel{
 		cacheDB.addAll(sortDB);
 		cacheDB.addAll(filteredDB);
 		this.numRows = sortDB.getCount();
-		tcControl.scrollToVisible(0,0);
 	}
 	
 	/**
