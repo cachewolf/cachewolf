@@ -160,7 +160,7 @@ public class CalcPanel extends CellPanel {
 				readFields(coordInp, bd, currFormat);
 				coordOut = coordInp.project(bd.degrees, bd.distance);
 				ch.LatLon = coordOut.toString();
-				detP.newWaypoint(ch, mainT, pref, profile);
+				detP.newWaypoint(ch, mainT);
 			}
 			
 			if (ev.target == btnGoto){

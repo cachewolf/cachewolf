@@ -157,7 +157,7 @@ public class MainTab extends mTabbedPanel {
 			  }
 			  if(this.getSelectedItem() == 1){ // DetailsPanel
 				  MyLocale.setSIPButton();
-				  detP.setDetails(ch, this,pref, profile);
+				  detP.setDetails(ch, this);
 			  }
 			  if(this.getSelectedItem() == 2) { // Description Panel
 				  openDesciptionPanel(ch);

@@ -35,7 +35,7 @@ public class Map extends Form {
 	*/
 	public Map(Preferences pref){
 		this.pref = pref;
-		mapsPath = pref.getMapManuallySavePath()+"/"; //File.getProgramDirectory() + "/maps/"; // TODO veraltet
+		mapsPath = pref.getMapManuallySavePath()+"/"; //File.getProgramDirectory() + "/maps/";
 	}
 	
 	/**
