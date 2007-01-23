@@ -64,7 +64,7 @@ public class MovingMap extends Form {
 		this.cacheDB = cacheDB;
 		this.gotoPanel = gP;
 		this.pref = pref;
-		this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
+		if (pref.myAppHeight <= 640 && pref.myAppWidth <= 640)	this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
 		this.windowFlagsToClear = Window.FLAG_HAS_TITLE | Window.BDR_NOBORDER;
 		this.hasTopBar = false;
 		this.noBorder = true;
@@ -102,17 +102,22 @@ public class MovingMap extends Form {
 		DistanceImageGraphics.setFont(new Font("Helvetica", Font.BOLD, 16));
 		DistanceImage.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(DistanceImage);
-		resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialize mapImage.screenSize
+		//resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialize mapImage.screenSize
 		setGpsStatus(noGPS);
 		posCircle.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(posCircle);
 		mapsloaded = false;
 		posCircleLat = -361;
 		posCircleLon = -361; // make them invalid
+		updateDistance(); // fill Rect with transparent color
 	}
 
 	public void resizeTo(int w,int h) {
 		super.resizeTo(w, h);
+		updateFormSize(w, h);
+	}
+
+	public void updateFormSize(int w, int h) {
 		MapImage.setScreenSize(w, h);
 		bottonImageClose.setLocation(w- bottonImageClose.getWidth()- 5, 5);
 		buttonImageGpsOn.setLocation(w- bottonImageChooseMap.getWidth()-5, bottonImageClose.getHeight() + 20);
@@ -121,7 +126,7 @@ public class MovingMap extends Form {
 		buttonImageZoom1to1.setLocation(w - buttonImageZoom1to1.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
 		buttonImageLens.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
 		DistanceImage.setLocation(w/2 - DistanceImage.location.width/2, h - DistanceImage.location.height -10);
-		// TODO TrackOverlay-größe muss angepasst werden
+		if (tracks != null) addOverlaySet();
 	}
 	
 	/**
@@ -183,6 +188,8 @@ public class MovingMap extends Form {
 	}
 
 	public void updateDistance() {
+		DistanceImageGraphics.setColor(DistanceImage.transparentColor);
+		DistanceImageGraphics.fillRect(0, 0, DistanceImage.location.width,DistanceImage.location.height);
 		if (gotoPos == null || posCircleLat < -360) return;
 		ewe.sys.Double dd = new ewe.sys.Double();
 		dd.set((new CWPoint(gotoPos.lat, gotoPos.lon).getDistance(posCircleLat, posCircleLon)));
@@ -195,8 +202,6 @@ public class MovingMap extends Form {
 			dd.decimalPlaces = 2;
 			d = "Distance: " + dd.toString() + "km";
 		}
-		DistanceImageGraphics.setColor(DistanceImage.transparentColor);
-		DistanceImageGraphics.fillRect(0, 0, DistanceImage.location.width,DistanceImage.location.height);
 		DistanceImageGraphics.setColor(Color.MediumBlue);
 		DistanceImageGraphics.drawText(d, 0, 0);
 		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.DarkBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
@@ -243,6 +248,7 @@ public class MovingMap extends Form {
 			TrackOverlaySetCenterTopLeft = ScreenXY2LatLon(100, 100);
 			addMissingOverlays();
 		} catch (NullPointerException e) {} // hapens if currentmap == null or PosCircle not valid
+		catch (IllegalArgumentException e) {} // happens if screensize is still not known    ---> in both cases creation of Overlayset will be done in updateOverlayPos if tracks != null 
 	}
 
 	public void destroyOverlaySet() {
@@ -1111,15 +1117,15 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			else left = saveMapLoc.x;
 			if (lastZoomHeight < 0)top = saveMapLoc.y + lastZoomHeight;
 			else top = saveMapLoc.y;
-			this.repaintNow(dr, new Rect(left, top, java.lang.Math.abs(lastZoomWidth), java.lang.Math.abs(lastZoomHeight)));
-			dr.setColor(Color.LightGreen);
+			this.repaintNow(dr, new Rect(left, top, java.lang.Math.abs(lastZoomWidth)+2, java.lang.Math.abs(lastZoomHeight)+2));
 			lastZoomWidth = ev.x - saveMapLoc.x;
 			lastZoomHeight =  ev.y - saveMapLoc.y;
 			if (lastZoomWidth < 0) left = saveMapLoc.x + lastZoomWidth;
 			else left = saveMapLoc.x;
 			if (lastZoomHeight < 0)top = saveMapLoc.y + lastZoomHeight;
 			else top = saveMapLoc.y;
-			dr.drawRect(left, top, java.lang.Math.abs(lastZoomWidth) , java.lang.Math.abs(lastZoomHeight), 2);
+			dr.setPen(new Pen(new Color(255,0,0),Pen.SOLID,3));
+			dr.drawRect(left, top, java.lang.Math.abs(lastZoomWidth), java.lang.Math.abs(lastZoomHeight), 0); // bug in ewe: thickness parameter is ignored
 		}
 		super.onPenEvent(ev);
 	}
@@ -1601,14 +1607,16 @@ class MapImage extends AniImage {
 	
 	public MapImage(String f) {
 		super(f);
-		widthi = getWidth();
+		widthi = getWidth(); // this is necessary becaus width is not directly accessable from here and an function call each time the pos ist updated shall be avoided becaus of performance reasons
 		heighti = getHeight();
+		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
 	
 	public MapImage(mImage im) {
 		super(im);
 		widthi = getWidth();
 		heighti = getHeight();
+		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
 	public static void setScreenSize(int w, int h) {
 		screenDim = new Dimension(w, h);
@@ -1618,6 +1626,7 @@ class MapImage extends AniImage {
 		super.setImage(im, c);
 		widthi = getWidth();
 		heighti = getHeight();
+		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
 	
 	public void setLocation (int x, int y) {
