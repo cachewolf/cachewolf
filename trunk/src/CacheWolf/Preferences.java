@@ -64,6 +64,9 @@ public class Preferences extends MinML{
 	// This setting determines how many logs are shown per page of hintlogs (default 5)
 	public final int DEFAULT_LOGS_PER_PAGE=5;
 	public int logsPerPage=DEFAULT_LOGS_PER_PAGE;
+	// Initial height of hints field (set to 0 to hide them initially)
+	public final int DEFAULT_INITIAL_HINT_HEIGHT=50;
+	public int initialHintHeight=DEFAULT_INITIAL_HINT_HEIGHT; 
 	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
 	public boolean downloadMapsOC = true;
 	public boolean downloadmissingOC = false;
@@ -452,6 +455,8 @@ public class Preferences extends MinML{
 		}
 		if (name.equals("hintlogpanel")) {
 			logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
+			String strInitialHintHeight=atts.getValue("initialhintheight");
+			if (strInitialHintHeight!=null) initialHintHeight=Convert.parseInt(strInitialHintHeight);
 		}
 		if (name.equals("solver")) {
 			solverIgnoreCase=Boolean.valueOf(atts.getValue("ignorevariablecase")).booleanValue();
@@ -525,7 +530,7 @@ public class Preferences extends MinML{
 			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
 			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+"\"/>\n");
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
-			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\"/>\n");
+			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\" initialhintheight=\""+initialHintHeight+"\"/>\n");
 			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\"/>\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			// Obsolete data kept for backward compatibility
