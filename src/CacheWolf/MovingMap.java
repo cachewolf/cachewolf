@@ -130,7 +130,9 @@ public class MovingMap extends Form {
 		File files = new File(mapsPath);
 		String rawFileName = new String();
 		String[] dirstmp = files.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_DIRECTORIES_ONLY);
-		Vector dirs = new Vector(dirstmp);
+		Vector dirs;
+		if (dirstmp != null) dirs = new Vector(dirstmp);
+		else dirs = new Vector();
 		dirs.add("."); // include the mapsPath itself
 		MapInfoObject tempMIO;
 		MessageBox f = null;
@@ -680,7 +682,7 @@ public class MovingMap extends Form {
 			updateSymbolPositions();
 			if (updateOverlay ) updateOverlayPos(); // && TrackOverlays != null
 			//}
-			mmp.repaintNow(); // TODO test if the "if" above can be used
+			mmp.repaintNow(); // TODO test if the "if" above can be used: i guess it can be used as long as the posCircle doesn't move autonom without a mapmove
 		}
 		//Vm.debug("update only position");			
 	}
@@ -695,10 +697,9 @@ public class MovingMap extends Form {
 			setBestMap(lat, lon);
 			forceMapLoad = false;
 			return;
-
 		}
-		lastUpatePosition.latDec=lat;
-		lastUpatePosition.lonDec=lon;
+		lastUpatePosition.latDec = lat;
+		lastUpatePosition.lonDec = lon;
 		if(!ignoreGps || forceMapLoad){
 			updateOnlyPosition(lat, lon, true);
 			if (autoSelectMap || forceMapLoad) {
