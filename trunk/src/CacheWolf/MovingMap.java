@@ -126,6 +126,8 @@ public class MovingMap extends Form {
 		buttonImageZoom1to1.setLocation(w - buttonImageZoom1to1.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
 		buttonImageLens.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
 		DistanceImage.setLocation(w/2 - DistanceImage.location.width/2, h - DistanceImage.location.height -10);
+		if (mmp.mapImage != null) mmp.mapImage.move(mmp.mapImage.locAlways.x, mmp.mapImage.locAlways.y); // this is necessary to make a new decision if it is still on the screen (and actually mor important because MapImage only now gets to know the screen size) 
+		if (posCircle != null) posCircle.move(posCircle.locAlways.x, posCircle.locAlways.y); // this is necessary to make a new decision if it is still on the screen (and actually mor important because MapImage only now gets to know the screen size) 
 		if (tracks != null) addOverlaySet();
 	}
 	
@@ -538,7 +540,7 @@ public class MovingMap extends Form {
 	public void resetCenterOfMap() {
 		posCircleX = pref.myAppWidth/2; // maybe this could /should be repleced to windows size
 		posCircleY = pref.myAppHeight/2;
-		posCircle.properties &= ~AniImage.IsInvisible;
+		posCircle.hidden = false;
 		posCircle.setLocation(posCircleX-posCircle.getWidth()/2, posCircleY-posCircle.getHeight()/2);
 	}
 
@@ -734,6 +736,7 @@ public class MovingMap extends Form {
 			loadMaps(mapPath, lat);
 			lastCompareX = Integer.MAX_VALUE;
 			lastCompareY = Integer.MAX_VALUE;
+			autoSelectMap = true;
 			setBestMap(lat, lon);
 			forceMapLoad = false;
 			return;
@@ -836,7 +839,7 @@ public class MovingMap extends Form {
 			}
 			mapImage1to1 = mmp.mapImage;
 			mmp.mapImage.properties = mmp.mapImage.properties | AniImage.IsMoveable;
-			if (mapHidden) mmp.mapImage.properties |= AniImage.IsInvisible;
+			if (mapHidden) mmp.mapImage.hide();
 			mmp.mapImage.move(0,0);
 			mmp.addImage(mmp.mapImage);
 			mmp.images.moveToBack(mmp.mapImage);
@@ -889,14 +892,16 @@ public class MovingMap extends Form {
 
 	public void hideMap() {
 		if (mmp != null && mmp.mapImage != null)
-			mmp.mapImage.properties |= AniImage.IsInvisible;
+			mmp.mapImage.hide();
 		mapHidden = true;
 		repaintNow();
 	}
 
 	public void showMap() {
 		if (mmp != null && mmp.mapImage != null)
-			mmp.mapImage.properties &= ~AniImage.IsInvisible;
+		{ mmp.mapImage.unhide();
+		  mmp.mapImage.move(mmp.mapImage.locAlways.x, mmp.mapImage.locAlways.y); 
+		}
 		mapHidden = false;
 		repaintNow();
 	}
@@ -1000,6 +1005,7 @@ public class MovingMap extends Form {
 			Vm.getUsedMemory(true);
 			mmp.mapImage = tmp; // use unscaled or no image in case of OutOfMemoryError
 			mmp.mapImage.properties = saveprop;
+			if (mapHidden) mmp.mapImage.hide();
 			mmp.addImage(mmp.mapImage);
 			mmp.images.moveToBack(mmp.mapImage);
 			if (mapImage1to1 != null && mmp.mapImage != null && mapImage1to1.image != null)
@@ -1072,7 +1078,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		mm.ignoreGps = true;
 		saveMapLoc = pos;
 		bringMapToTop();
-		if (mapImage.isOnScreen() && !mm.mapHidden &&((mapImage.properties & AniImage.IsInvisible) == 0)) return super.imageBeginDragged(mapImage, pos);
+		if (mapImage.isOnScreen() && !mapImage.hidden ) return super.imageBeginDragged(mapImage, pos);
 		else return super.imageBeginDragged(null, pos);
 	}
 
@@ -1117,6 +1123,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			else left = saveMapLoc.x;
 			if (lastZoomHeight < 0)top = saveMapLoc.y + lastZoomHeight;
 			else top = saveMapLoc.y;
+			left -= 2;
+			top -= 2;
+			if (top < 0) top = 0;
+			if (left < 0) left = 0;
 			this.repaintNow(dr, new Rect(left, top, java.lang.Math.abs(lastZoomWidth)+2, java.lang.Math.abs(lastZoomHeight)+2));
 			lastZoomWidth = ev.x - saveMapLoc.x;
 			lastZoomHeight =  ev.y - saveMapLoc.y;
@@ -1131,22 +1141,18 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	}
 
 	private void bringMapToTop() {
-		if (mapImage == null || mm.mapHidden ||(mapImage.properties & AniImage.IsInvisible) > 0 ) {
+		if (mapImage == null || mapImage.hidden) {
 			saveImageList = null;
 			return;
 		}
 		saveImageList = new ImageList();
 		saveImageList.copyFrom(images);
 		images.removeAllElements();
-		//images.remove(mapImage);
-		//mapImage.properties |= AniImage.AlwaysOnTop;
 		images.add(mapImage);
 	}
 	private void bringMaptoBack() {
-		//mapImage.properties &= ~AniImage.AlwaysOnTop;
-		//images.moveToBack(mapImage);
 		if (saveImageList == null) return;
-		images=saveImageList;
+		images = saveImageList;
 		saveImageList = null;
 	}
 
@@ -1155,7 +1161,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		if (mapImage!= null) {
 			p = mapImage.locAlways;
 			mapImage.move(p.x+diffX,p.y+diffY);
-			if (mm.mapHidden) mapImage.properties |= AniImage.IsInvisible; // this is neccesarry because move will unhide the map if the coos show that the map is on the screen
+	//		if (mm.mapHidden) mapImage.properties |= AniImage.IsInvisible; // this is neccesarry because move will unhide the map if the coos show that the map is on the screen
 		}
 		mapMoved(diffX, diffY);
 	}
@@ -1178,7 +1184,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		CWPoint gpspos;
 		if (mm.gotoPanel.gpsPosition.Fix > 0) gpspos = new CWPoint(mm.gotoPanel.gpsPosition.latDec, mm.gotoPanel.gpsPosition.lonDec);
 		else gpspos = null;
-		ListBox l = new ListBox(mm.maps, gpspos, mm.getGotoPos());
+		ListBox l = new ListBox(mm.maps, gpspos, mm.getGotoPos(), mm.currentMap);
 		if(l.execute() == FormBase.IDOK){
 //			Vm.debug("Trying map: " + l.selectedMap.fileName);
 			mm.autoSelectMap = false;
@@ -1191,6 +1197,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				mm.ignoreGpsStatutsChanges = true;
 				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon); // don't adjust Image to lat/lon
 				mm.setCenterOfScreen(l.selectedMap.center);
+				mm.repaintNow();
 				//Point posCXY = new Point (0,0); mm.getXYinMap(mm.posCircleLat, mm.posCircleLat);
 				//double lat = mm.currentMap.affine[0]*posCXY.x + mm.currentMap.affine[2]*posCXY.y + mm.currentMap.affine[4]; 
 				//mm.posCircleX = 0; // place map to the upper left corner of windows
@@ -1345,56 +1352,74 @@ class ListBox extends Form{
 	public boolean selected = false;
 	Vector maps;
 
-	public ListBox(Vector maps, CWPoint Gps, CWPoint gotopos){
+	public ListBox(Vector maps, CWPoint Gps, CWPoint gotopos, MapInfoObject curMap){
 		this.title = "Maps";
 		// if (Gui.screenIs(Gui.PDA_SCREEN)) this.setPreferredSize(200,100); else 
 		this.setPreferredSize(MyLocale.getScreenWidth()*3/4, MyLocale.getScreenHeight()*3/4);
 		this.maps = maps;
 		MapInfoObject map;
 		ScrollBarPanel scb;
+		int oldmap = -1;
+		boolean curMapFound = false;
 		boolean[] inList = new boolean[maps.size()];
+		int row = -1;
 		if (gotopos != null && Gps != null) {
 			list.addItem("--- Karten von akt. Position und Ziel ---");
+			row++;
 			for(int i = 0; i<maps.size();i++){
 				map = new MapInfoObject();
 				map = (MapInfoObject)maps.get(i);
 				if( map.inBound(Gps.latDec, Gps.lonDec) && map.inBound(gotopos) ) 
 				{
 					list.addItem(i + ": " + map.mapName);
+					row++;
 					inList[i] = true;
+					if (map == curMap) { oldmap = row; curMapFound = true; }
 				} else inList[i] = false;
 			}
 		}
 		if (Gps != null) {
 			list.addItem("--- Karten der aktuellen Position ---");
+			row++;
 			for(int i = 0; i<maps.size();i++){
 				map = new MapInfoObject();
 				map = (MapInfoObject)maps.get(i);
-				if(map.inBound(Gps.latDec, Gps.lonDec) == true) 
+				if (map == curMap) oldmap = i;
+				if (map.inBound(Gps.latDec, Gps.lonDec) == true) 
 				{
 					list.addItem(i + ": " + map.mapName);
+					row++;
 					inList[i] = true;
+					if (!curMapFound  && map == curMap) { oldmap = row; curMapFound = true; }
 				}
 			}
 		}
 		if (gotopos != null) {
 			list.addItem("--- Karten des Ziels ---");
+			row++;
 			for(int i = 0; i<maps.size();i++){
 				map = new MapInfoObject();
 				map = (MapInfoObject)maps.get(i);
 				if(map.inBound(gotopos)) {
 					list.addItem(i + ": " + map.mapName);
+					row++;
 					inList[i] = true;
+					if (!curMapFound  && map == curMap) { oldmap = row; curMapFound = true; }
 				}
 			}
 		}
 		list.addItem("--- andere Karten ---");
+		row++;
 		for(int i = 0; i<maps.size();i++){
 			map = new MapInfoObject();
 			map = (MapInfoObject)maps.get(i);
-			if(!inList[i]) list.addItem(i + ": " + map.mapName);
+			if(!inList[i]) {
+				list.addItem(i + ": " + map.mapName);
+				row++;
+				if (!curMapFound  && map == curMap) { oldmap = row; curMapFound = true; }
+			}
 		}
-
+		list.selectItem(oldmap, true);
 		this.addLast(scb = new ScrollBarPanel(list),CellConstants.STRETCH, CellConstants.FILL);
 		cancelButton = new mButton("Cancel");
 		cancelButton.setHotKey(0, KeyEvent.getCancelKey(true));
@@ -1416,17 +1441,6 @@ class ListBox extends Form{
 		}
 		return false;
 	}
-
-
-	public int myExecute() {
-		if (this.maps.size()==1) {
-			//this.selectedMap = 1;
-			this.selectedMap = (MapInfoObject) maps.get(0);
-			return FormBase.IDOK;
-		}
-		return execute();
-	}
-
 
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
@@ -1599,6 +1613,7 @@ class MapImage extends AniImage {
 	static Dimension screenDim;
 	public int widthi;
 	public int heighti;
+	boolean hidden = false;
 	public MapImage() {
 		super();
 		widthi = getWidth();
@@ -1618,6 +1633,7 @@ class MapImage extends AniImage {
 		heighti = getHeight();
 		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
+	
 	public static void setScreenSize(int w, int h) {
 		screenDim = new Dimension(w, h);
 	}
@@ -1632,7 +1648,7 @@ class MapImage extends AniImage {
 	public void setLocation (int x, int y) {
 		locAlways.x = x;
 		locAlways.y = y;
-		if (isOnScreen()) { 
+		if (!hidden && isOnScreen()) { 
 			super.setLocation(x, y);
 			properties &= ~AniImage.IsInvisible;
 		} else {
@@ -1644,7 +1660,7 @@ class MapImage extends AniImage {
 	public void move (int x, int y) {
 		locAlways.x = x;
 		locAlways.y = y;
-		if (isOnScreen()) { 
+		if (!hidden && isOnScreen()) { 
 			super.move(x, y);
 			properties &= ~AniImage.IsInvisible;
 		} else {
@@ -1657,6 +1673,15 @@ class MapImage extends AniImage {
 		if ( (locAlways.x + widthi > 0 && locAlways.x < screenDim.width) && 
 				(locAlways.y + heighti > 0 && locAlways.y < screenDim.height) ) return true;
 		else return false;
+	}
+	
+	public void hide() {
+		hidden = true;
+		properties |= AniImage.IsInvisible;
+	}
+	public void unhide() {
+		hidden = false;
+		move(locAlways.x, locAlways.y);
 	}
 }
 
