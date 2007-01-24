@@ -580,7 +580,7 @@ public class GotoPanel extends CellPanel {
 			if (ev.target == btnMap){
 				runMovingMap = true;
 				boolean runbefore=false;
-				if (mmp == null) mmp = new MovingMap(pref, this, cacheDB); // this also loads the list of maps
+				if (mmp == null) mmp = new MovingMap(pref, this, cacheDB);
 				else runbefore = true;
 				if (serThread == null || !serThread.isAlive() || !gpsPosition.isValid()) {
 					// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
