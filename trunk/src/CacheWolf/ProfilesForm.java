@@ -108,7 +108,7 @@ public class ProfilesForm extends Form{
 		} else
 			 return "";
 	}
-	
+
 	private boolean first=true;
 	/**
 	*	The event handler to react to a users selection.

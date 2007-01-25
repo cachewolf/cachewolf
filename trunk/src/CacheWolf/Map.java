@@ -10,12 +10,12 @@ import ewe.fx.*;
 import com.stevesoft.ewe_pat.*;
 
 /**
-*	This class is the main class for mapping,
-*	 (moving map, georeferencing maps, etc)
-*	in CacheWolf.
-*	It also provides a class for importing maps
-*	This class id=4100
-*/
+ *	This class is the main class for mapping,
+ *	 (moving map, georeferencing maps, etc)
+ *	in CacheWolf.
+ *	It also provides a class for importing maps
+ *	This class id=4100
+ */
 public class Map extends Form {
 	Preferences pref;
 	String mapsPath = new String();
@@ -29,21 +29,21 @@ public class Map extends Form {
 	ScrollBarPanel scp;
 	AniImage mapImg;
 	int imageWidth, imageHeight = 0;
-	
+
 	/**
-	*	This constructor should be used when importing maps
-	*/
+	 *	This constructor should be used when importing maps
+	 */
 	public Map(Preferences pref){
 		this.pref = pref;
 		mapsPath = pref.getMapManuallySavePath()+"/"; //File.getProgramDirectory() + "/maps/";
 	}
-	
+
 	/**
-	*	When a user clicks on the map and more than three ground control points exist
-	*	then the calculated coordinate based on the affine transformation is displayed in the
-	*	info panel below the map.
-	*	It helps to identify how good the georeferencing works based on the set GCPs.
-	*/
+	 *	When a user clicks on the map and more than three ground control points exist
+	 *	then the calculated coordinate based on the affine transformation is displayed in the
+	 *	info panel below the map.
+	 *	It helps to identify how good the georeferencing works based on the set GCPs.
+	 */
 	public void updatePosition(int x, int y){
 		if(GCPs.size()>=3  || (wfl.affine[4] > 0 && wfl.affine[5] > 0)){
 			double x_ = 0;
@@ -54,10 +54,10 @@ public class Map extends Form {
 			infLabel.setText("--> " + p.getLatDeg(CWPoint.DMS) + " " +p.getLatMin(CWPoint.DMM) + " / " + p.getLonDeg(CWPoint.DMS) + " " + p.getLonMin(CWPoint.DMM));
 		}
 	}
-	
+
 	/**
-	*	This is the correct constructor for georeferencing maps.
-	*/
+	 *	This is the correct constructor for georeferencing maps.
+	 */
 	public Map(Preferences pref, String mapToLoad, boolean worldfileexists){
 		this.pref = pref;
 		this.title = MyLocale.getMsg(4106,"Calibrate map:") + " " + mapToLoad;
@@ -70,7 +70,7 @@ public class Map extends Form {
 		try {
 			wfl.loadwfl(mapsPath, thisMap);
 		}catch(FileNotFoundException ex){
-		//	Vm.debug("Cannot load world file!");
+			//	Vm.debug("Cannot load world file!");
 		}catch (IOException ex) { // is thrown if lat/lon out of range
 			MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), ex.getMessage(), MessageBox.OKB);
 			tmpMB.execute();
@@ -97,11 +97,11 @@ public class Map extends Form {
 	}
 
 	/**
-	*	Add a ground control point to the list
-	*	If the list is longer than 3 GCPs these will be evaluated
-	*	to obtain the required parameters for the affine
-	*	transformation.
-	*/
+	 *	Add a ground control point to the list
+	 *	If the list is longer than 3 GCPs these will be evaluated
+	 *	to obtain the required parameters for the affine
+	 *	transformation.
+	 */
 	public void addGCP(GCPoint GCP){
 		if (GCP.latDec>90 || GCP.latDec<-90 || GCP.lonDec>360 || GCP.lonDec<-180) throw new IllegalArgumentException("lat/lon out of range: "+GCP.toString());
 		GCPs.add(GCP);
@@ -109,18 +109,18 @@ public class Map extends Form {
 			evalGCP();
 		}
 	}
-	
+
 	/**
-	*	Returns the number of ground control points in the list. (Vector GCPs)
-	*/
+	 *	Returns the number of ground control points in the list. (Vector GCPs)
+	 */
 	public int getGCPCount(){
 		return GCPs.size();
 	}
-	
+
 	/**
-	*	Actuall method to evaluate the ground control points and identify the parameters
-	*	for thew affine transformation
-	*/
+	 *	Actuall method to evaluate the ground control points and identify the parameters
+	 *	for thew affine transformation
+	 */
 	private void evalGCP(){
 		//N 48 16.000 E 11 32.000
 		//N 48 16.000 E 11 50.000
@@ -146,7 +146,7 @@ public class Map extends Form {
 		wfl.affine[0] = beta.matrix[1][0];
 		wfl.affine[2] = beta.matrix[2][0];
 		wfl.affine[4] = beta.matrix[0][0];
-		
+
 		//Calculate parameters for longitude affine transformation (affine 1,3,5)
 		X = new Matrix(GCPs.size(),3);
 		trg = new Matrix(GCPs.size(),1);
@@ -179,183 +179,188 @@ public class Map extends Form {
 		//Vm.debug("A B C" + affine[0] + " " + affine[2] + " " + affine[4]);
 		//Vm.debug("D E F" + affine[1] + " " + affine[3] + " " + affine[5]);
 	}
-	
+
 	/**
-	*	Method to copy ("import") a png based map
-	*	into the maps folder in the CacheWolf base directory.
-	*	
-	*	If the maps directory does not exist it will create it.
-	*	If it finds .map files it will assume these are oziexplorer calibration files.
-	*	It will use these files to automatically georeference the files during import.
-	*/
-	public boolean importMap(){
+	 *	Method to copy ("import") a png based map
+	 *	into the maps folder in the CacheWolf base directory.
+	 *	
+	 *	If the maps directory does not exist it will create it.
+	 *	If it finds .map files it will assume these are oziexplorer calibration files.
+	 *	It will use these files to automatically georeference the files during import.
+	 */
+	public int importMap(){
 		String rawFileName = new String();
 		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, Global.getPref().baseDir);
 		fc.addMask("*.png,*.gif,*.bmp,*.jpg");
 		fc.setTitle((String)MyLocale.getMsg(4100,"Select Directory:"));
-		if(fc.execute() != FormBase.IDCANCEL){
-			File inDir = fc.getChosenFile();
-			File mapFile;
-			try{ // TODO better chekcing for IO-Errors / Disk full etc.
-				//User selected a map, but maybe there are more png(s)
-				//copy all of them!
-				//at the same time try to find associated .map files!
-				//These are georeference files targeted for OziExplorer.
-				//So lets check if we have more than 1 png file:
-				Vector files;
-				String [] filestemp;
-				String line = new String();
-				InputStream in;
-				OutputStream out;
-				FileReader inMap;
-				byte[] buf;
-				int len;
-				String[] parts;
-				filestemp = inDir.list("*.png", File.LIST_FILES_ONLY);
-				files = new Vector(filestemp);
-				filestemp = inDir.list("*.jpg", File.LIST_FILES_ONLY);
-				files.addAll(filestemp);
-				filestemp = inDir.list("*.gif", File.LIST_FILES_ONLY);
-				files.addAll(filestemp);
-				filestemp = inDir.list("*.bmp", File.LIST_FILES_ONLY);
-				files.addAll(filestemp);
-				
-				InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...            \n")); 
-				Vm.showWait(true);
-				inf.exec();
-				String currfile = null;
-				for(int i = files.size() -1 ; i >= 0;i--){
-					currfile = (String) files.get(i);
-					inf.setInfo(MyLocale.getMsg(4110,"Loading:\n")+ " " + currfile);
-					//Copy the file
-					//Vm.debug("Copy: " + inDir.getFullPath() + "/" +files[i]);
-					//Vm.debug("to: " + mapsPath + files[i]);
-					in = new FileInputStream(inDir.getFullPath() + "/" +currfile);
-					out = new FileOutputStream(mapsPath + currfile);
-					buf = new byte[1024];
-					while ((len = in.read(buf)) > 0) {
-					    out.write(buf, 0, len);
-					}
-					in.close();
-					out.close();
-					// here catch IOException
-					
-					//Check for a .map file
-					rawFileName = currfile.substring(0, currfile.lastIndexOf("."));
-					mapFile = new File(inDir.getFullPath() + "/" + rawFileName + ".map");
-					if(mapFile.exists()){
-						GCPoint gcp1 = new GCPoint();
-						GCPoint gcp2 = new GCPoint();
-						GCPoint gcp3 = new GCPoint();
-						GCPoint gcp4 = new GCPoint();
-						GCPoint gcpG = new GCPoint();
-						//Vm.debug("Found file: " + inDir.getFullPath() + "/" + rawFileName + ".map");
-						inMap = new FileReader(inDir.getFullPath() + "/" + rawFileName + ".map");
-						while((line = inMap.readLine()) != null){
-							if(line.equals("MMPNUM,4")){
-								
-								line = inMap.readLine();
-								parts = mString.split(line, ',');
-								gcp1.bitMapX = Convert.toInt(parts[2]);
-								gcp1.bitMapY = Convert.toInt(parts[3]);
-								if(gcp1.bitMapX == 0) gcp1.bitMapX = 1;
-								if(gcp1.bitMapY == 0) gcp1.bitMapY = 1;
-									
-								line = inMap.readLine();
-								parts = mString.split(line, ',');
-								gcp2.bitMapX = Convert.toInt(parts[2]);
-								gcp2.bitMapY = Convert.toInt(parts[3]);
-								if(gcp2.bitMapX == 0) gcp2.bitMapX = 1;
-								if(gcp2.bitMapY == 0) gcp2.bitMapY = 1;
-								
-								line = inMap.readLine();
-								parts = mString.split(line, ',');
-								gcp3.bitMapX = Convert.toInt(parts[2]);
-								gcp3.bitMapY = Convert.toInt(parts[3]);
-								if(gcp3.bitMapX == 0) gcp3.bitMapX = 1;
-								if(gcp3.bitMapY == 0) gcp3.bitMapY = 1;
-								imageWidth = gcp3.bitMapX;
-								imageHeight = gcp3.bitMapY;
-								
-								line = inMap.readLine();
-								parts = mString.split(line, ',');
-								gcp4.bitMapX = Convert.toInt(parts[2]);
-								gcp4.bitMapY = Convert.toInt(parts[3]);
-								if(gcp4.bitMapX == 0) gcp4.bitMapX = 1;
-								if(gcp4.bitMapY == 0) gcp4.bitMapY = 1;
-									
-								line = inMap.readLine();
-								parts = mString.split(line, ',');
-								if(pref.digSeparator.equals(",")) {
-									parts[3]= parts[3].replace('.', ',');
-									parts[2]= parts[2].replace('.', ',');
-								}
-								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
-								gcpG.bitMapX = gcp1.bitMapX;
-								gcpG.bitMapY = gcp1.bitMapY;
-								addGCP(gcpG);
-								
-								line = inMap.readLine();
-								parts = mString.split(line, ',');
-								if(pref.digSeparator.equals(",")) {
-									parts[3]= parts[3].replace('.', ',');
-									parts[2]= parts[2].replace('.', ',');
-								}
-								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
-								gcpG.bitMapX = gcp2.bitMapX;
-								gcpG.bitMapY = gcp2.bitMapY;
-								addGCP(gcpG);
-								
-								line = inMap.readLine();
-								parts = mString.split(line, ',');
-								if(pref.digSeparator.equals(",")) {
-									parts[3]= parts[3].replace('.', ',');
-									parts[2]= parts[2].replace('.', ',');
-								}
-								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
-								gcpG.bitMapX = gcp3.bitMapX;
-								gcpG.bitMapY = gcp3.bitMapY;
-								addGCP(gcpG);
+		int tmp = fc.execute() ; 
+		if(tmp != FileChooser.IDYES) return Form.IDCANCEL;
+		File inDir = fc.getChosenFile();
+		File mapFile;
+		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...            \n")); 
+		Vm.showWait(this, true);
+		inf.exec();
 
-								line = inMap.readLine();
-								parts = mString.split(line, ',');
-								if(pref.digSeparator.equals(",")) {
-									parts[3]= parts[3].replace('.', ',');
-									parts[2]= parts[2].replace('.', ',');
-								}
-								gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
-								gcpG.bitMapX = gcp4.bitMapX;
-								gcpG.bitMapY = gcp4.bitMapY;
-								addGCP(gcpG);
-								
-								evalGCP();
-								//Vm.debug("Saving .map file to: " + mapsPath + "/" + rawFileName + ".wfl");
-								wfl.saveWFL(mapsPath, rawFileName);
-								GCPs.clear();
-							}
-						}
-						inMap.close();
-					}
+		//User selected a map, but maybe there are more png(s)
+		//copy all of them!
+		//at the same time try to find associated .map files!
+		//These are georeference files targeted for OziExplorer.
+		//So lets check if we have more than 1 png file:
+		Vector files;
+		String [] filestemp;
+		String line = new String();
+		InputStream in;
+		OutputStream out;
+		FileReader inMap;
+		byte[] buf;
+		int len;
+		String[] parts;
+		filestemp = inDir.list("*.png", File.LIST_FILES_ONLY);
+		files = new Vector(filestemp);
+		filestemp = inDir.list("*.jpg", File.LIST_FILES_ONLY);
+		files.addAll(filestemp);
+		filestemp = inDir.list("*.gif", File.LIST_FILES_ONLY);
+		files.addAll(filestemp);
+		filestemp = inDir.list("*.bmp", File.LIST_FILES_ONLY);
+		files.addAll(filestemp);
+
+		String currfile = null;
+		for(int i = files.size() -1 ; i >= 0;i--){
+			currfile = (String) files.get(i);
+			inf.setInfo(MyLocale.getMsg(4110,"Loading:\n")+ " " + currfile);
+			//Copy the file
+			//Vm.debug("Copy: " + inDir.getFullPath() + "/" +files[i]);
+			//Vm.debug("to: " + mapsPath + files[i]);
+			try {
+				in = new FileInputStream(inDir.getFullPath() + "/" +currfile);
+				out = new FileOutputStream(mapsPath + currfile);
+				buf = new byte[1024];
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
 				}
-				inf.close(0);
-				Vm.showWait(false);
-				return true;
-			}catch(IllegalArgumentException ex){ // is thrown from Convert.toDouble and saveWFL if affine[0-5]==0 NumberFormatException is a subclass of IllegalArgumentExepction
-				MessageBox tmpMB = new MessageBox("Error", "Error while importing .map-file: "+ex.getMessage(),MessageBox.OKB);
-				tmpMB.exec();
-			}catch(IOException ex){
-				Vm.debug("Error:" + ex.toString());
+				in.close();
+				out.close();
+			} catch(IOException ex){
+				inf.addText("IO-Error while copying image \n" + ex.getMessage());
 			}
-		}
-		return false;
+
+			//Check for a .map file
+			rawFileName = currfile.substring(0, currfile.lastIndexOf("."));
+			mapFile = new File(inDir.getFullPath() + "/" + rawFileName + ".map");
+			if(mapFile.exists()){
+				GCPoint gcp1 = new GCPoint();
+				GCPoint gcp2 = new GCPoint();
+				GCPoint gcp3 = new GCPoint();
+				GCPoint gcp4 = new GCPoint();
+				GCPoint gcpG = new GCPoint();
+				//Vm.debug("Found file: " + inDir.getFullPath() + "/" + rawFileName + ".map");
+				try {
+					inMap = new FileReader(inDir.getFullPath() + "/" + rawFileName + ".map");
+					while((line = inMap.readLine()) != null){
+						if(line.equals("MMPNUM,4")){
+
+							line = inMap.readLine();
+							parts = mString.split(line, ',');
+							gcp1.bitMapX = Convert.toInt(parts[2]);
+							gcp1.bitMapY = Convert.toInt(parts[3]);
+							if(gcp1.bitMapX == 0) gcp1.bitMapX = 1;
+							if(gcp1.bitMapY == 0) gcp1.bitMapY = 1;
+
+							line = inMap.readLine();
+							parts = mString.split(line, ',');
+							gcp2.bitMapX = Convert.toInt(parts[2]);
+							gcp2.bitMapY = Convert.toInt(parts[3]);
+							if(gcp2.bitMapX == 0) gcp2.bitMapX = 1;
+							if(gcp2.bitMapY == 0) gcp2.bitMapY = 1;
+
+							line = inMap.readLine();
+							parts = mString.split(line, ',');
+							gcp3.bitMapX = Convert.toInt(parts[2]);
+							gcp3.bitMapY = Convert.toInt(parts[3]);
+							if(gcp3.bitMapX == 0) gcp3.bitMapX = 1;
+							if(gcp3.bitMapY == 0) gcp3.bitMapY = 1;
+							imageWidth = gcp3.bitMapX;
+							imageHeight = gcp3.bitMapY;
+
+							line = inMap.readLine();
+							parts = mString.split(line, ',');
+							gcp4.bitMapX = Convert.toInt(parts[2]);
+							gcp4.bitMapY = Convert.toInt(parts[3]);
+							if(gcp4.bitMapX == 0) gcp4.bitMapX = 1;
+							if(gcp4.bitMapY == 0) gcp4.bitMapY = 1;
+
+							line = inMap.readLine();
+							parts = mString.split(line, ',');
+							if(pref.digSeparator.equals(",")) {
+								parts[3]= parts[3].replace('.', ',');
+								parts[2]= parts[2].replace('.', ',');
+							}
+							gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
+							gcpG.bitMapX = gcp1.bitMapX;
+							gcpG.bitMapY = gcp1.bitMapY;
+							addGCP(gcpG);
+
+							line = inMap.readLine();
+							parts = mString.split(line, ',');
+							if(pref.digSeparator.equals(",")) {
+								parts[3]= parts[3].replace('.', ',');
+								parts[2]= parts[2].replace('.', ',');
+							}
+							gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
+							gcpG.bitMapX = gcp2.bitMapX;
+							gcpG.bitMapY = gcp2.bitMapY;
+							addGCP(gcpG);
+
+							line = inMap.readLine();
+							parts = mString.split(line, ',');
+							if(pref.digSeparator.equals(",")) {
+								parts[3]= parts[3].replace('.', ',');
+								parts[2]= parts[2].replace('.', ',');
+							}
+							gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
+							gcpG.bitMapX = gcp3.bitMapX;
+							gcpG.bitMapY = gcp3.bitMapY;
+							addGCP(gcpG);
+
+							line = inMap.readLine();
+							parts = mString.split(line, ',');
+							if(pref.digSeparator.equals(",")) {
+								parts[3]= parts[3].replace('.', ',');
+								parts[2]= parts[2].replace('.', ',');
+							}
+							gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
+							gcpG.bitMapX = gcp4.bitMapX;
+							gcpG.bitMapY = gcp4.bitMapY;
+							addGCP(gcpG);
+
+							evalGCP();
+							//Vm.debug("Saving .map file to: " + mapsPath + "/" + rawFileName + ".wfl");
+							wfl.saveWFL(mapsPath, rawFileName);
+							GCPs.clear();
+						} // if
+
+					} // while
+					if (inMap != null)	inMap.close();
+				} catch(IllegalArgumentException ex){ // is thrown from Convert.toDouble and saveWFL if affine[0-5]==0 NumberFormatException is a subclass of IllegalArgumentExepction
+					inf.addText("\nError while importing .map-file: "+ex.getMessage());
+				} catch(IOException ex){
+					inf.addText("IO-Error while reading or writing calibration file\n" + ex.getMessage());
+				} 
+			} // if map file.exists
+		} // for file
+		Vm.showWait(this, false);
+		inf.addText("\ndone.");
+		//inf.addOkButton(); doesn't work
+		return Form.IDOK;
 	}
-	
+
+
 
 	/**
-	*	Handles button pressed event
-	*	When the button is pressed a mapname.wfl file is saved in the
-	*	maps directory.
-	*/
+	 *	Handles button pressed event
+	 *	When the button is pressed a mapname.wfl file is saved in the
+	 *	maps directory.
+	 */
 	public void onEvent(Event ev){
 
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
@@ -381,10 +386,10 @@ public class Map extends Form {
 }
 
 /**
-*	Class that creates a panel and loads a map.
-*	It catches click events to display a form where the user may enter the required ccordinates
-*	The data is stored as a ground control point in the calling class: Map
-*/
+ *	Class that creates a panel and loads a map.
+ *	It catches click events to display a form where the user may enter the required ccordinates
+ *	The data is stored as a ground control point in the calling class: Map
+ */
 class mapInteractivePanel extends InteractivePanel{
 	Map f;
 	Locale l = Vm.getLocale();
@@ -414,16 +419,16 @@ class mapInteractivePanel extends InteractivePanel{
 		g.free();
 		this.repaintNow();
 		f.updatePosition(pos.x, pos.y);
-		
+
 		CoordsScreen cooS = new CoordsScreen(); // (String)lr.get(4108,"Coordinates:"), (String)lr.get(4108,"Coordinates:"), InfoBox.INPUT);
 		if (cooS.execute()==CoordsScreen.IDOK) {
-					GCPoint gcp = new GCPoint(cooS.getCoords());
-					gcp.bitMapX = pos.x;
-					gcp.bitMapY = pos.y;
-					f.addGCP(gcp); // throws IllegalArgumentException in case of lon/lat out of range
+			GCPoint gcp = new GCPoint(cooS.getCoords());
+			gcp.bitMapX = pos.x;
+			gcp.bitMapY = pos.y;
+			f.addGCP(gcp); // throws IllegalArgumentException in case of lon/lat out of range
 //			} catch (IllegalArgumentException e) { // NumberFormatException is a subclass of IllagalArgumentException
-//				coosInputFormat();
-//				this.removeImage(aImg);
+//			coosInputFormat();
+//			this.removeImage(aImg);
 		} else this.removeImage(aImg); // CANCEL pressed
 	}
 
@@ -434,20 +439,20 @@ class mapInteractivePanel extends InteractivePanel{
 	}
 }
 /**
-*	Class based on CWPoint but intended to handle bitmap x and y
-*	Used for georeferencing bitmaps.
-*/
+ *	Class based on CWPoint but intended to handle bitmap x and y
+ *	Used for georeferencing bitmaps.
+ */
 class GCPoint extends CWPoint{
 	public int bitMapX = 0;
 	public int bitMapY = 0;
-	
+
 	public GCPoint(){
 	}
-	
+
 	public GCPoint(CWPoint p) {
 		super(p);
 	}
-	
+
 	public GCPoint(double lat, double lon){
 		this.latDec = lat;
 		this.lonDec = lon;

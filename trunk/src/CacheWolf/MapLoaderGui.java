@@ -33,7 +33,7 @@ public class MapLoaderGui extends Form {
 	mInput scaleInput = new mInput ("3");
 	mInput scaleInputPerCache = new mInput ("3");
 	mLabel overlappingLbl = new mLabel("overlapping in %");
-	mInput overlappingInput = new mInput("20");
+	mInput overlappingInput = new mInput("10");
 	mCheckBox overviewChkBox = new mCheckBox("download an overview map");
 	mCheckBox overviewChkBoxPerCache = new mCheckBox("download an overview map");
 
@@ -119,7 +119,7 @@ public class MapLoaderGui extends Form {
 		progressBox.setPreferredSize(230, 150);
 		progressBox.exec();
 		Vm.showWait(true);
-		ewe.fx.Point size = new ewe.fx.Point(700,700); // Size of the downloaded maps
+		ewe.fx.Point size = new ewe.fx.Point(1000,1000); // Size of the downloaded maps
 		MapLoader ml = new MapLoader(Global.getPref().myproxy, Global.getPref().myproxyport);
 		if (forCachesChkBox.getState() || perCache) {
 			calcDownloadRect(); // calculate map boundaries from cacheDB

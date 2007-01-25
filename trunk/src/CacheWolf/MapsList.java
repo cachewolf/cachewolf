@@ -113,4 +113,11 @@ public MapInfoObject getBestMap(double lat, double lon) {
 		} // for
 		return fittingmap;
 	}
+	/*
+	public boolean isInAmap(CWPoint topleft, CWPoint buttomright) {
+		if (!latRangeList.isInRange(topleft.latDec) || !latRangeList.isInRange(buttomright.latDec)) ||
+			!lonRangeList.inInRange(topleft.lonDec) || !lonRangeList.isInRange(buttomright.lonDec)
+			return false;
+	}
+	*/
 }
