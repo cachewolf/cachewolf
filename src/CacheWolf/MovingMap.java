@@ -23,7 +23,7 @@ public class MovingMap extends Form {
 	public int GpsStatus;
 	Preferences pref;
 	MovingMapPanel mmp;
-	Vector maps;
+	MapsList maps;
 	Vector symbols;
 	GotoPanel gotoPanel;
 	Vector cacheDB;
@@ -130,62 +130,25 @@ public class MovingMap extends Form {
 		if (posCircle != null) posCircle.move(posCircle.locAlways.x, posCircle.locAlways.y); // this is necessary to make a new decision if it is still on the screen (and actually mor important because MapImage only now gets to know the screen size) 
 		if (tracks != null) addOverlaySet();
 	}
-	
+
 	/**
 	 * loads the list of maps
 	 *
 	 */
 	public void loadMaps(String mapsPath, double lat){
 		this.mapPath = mapsPath;
-		Vm.showWait(true);
+		Vm.showWait(this, true);
 		resetCenterOfMap();
 		InfoBox inf = new InfoBox("Info", "Loading list of maps...");
 		inf.exec();
-		maps = new Vector(); // forget already loaded maps
-		//if (mmp.mapImage != null) 
-		String dateien[];
-		File files = new File(mapsPath);
-		String rawFileName = new String();
-		String[] dirstmp = files.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_DIRECTORIES_ONLY);
-		Vector dirs;
-		if (dirstmp != null) dirs = new Vector(dirstmp);
-		else dirs = new Vector();
-		dirs.add("."); // include the mapsPath itself
-		MapInfoObject tempMIO;
-		MessageBox f = null;
-		for (int j = dirs.size()-1; j >= 0; j--) {
-			files = new File(mapsPath+"/"+dirs.get(j));
-			dateien = files.list("*.wfl", File.LIST_FILES_ONLY);
-			for(int i = 0; i < dateien.length;i++){
-				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
-				try {
-					tempMIO = new MapInfoObject();
-					tempMIO.loadwfl(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
-					maps.add(tempMIO);
-				}catch(IOException ex){ 
-					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
-				}catch(ArithmeticException ex){ // affine contain not allowed values 
-					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+mapsPath+dirs.get(j)+"/" + rawFileName+".wfl \n"+ex.toString(), MessageBox.OKB)).exec();
-				} 
-			}
-		}
-		if (maps.isEmpty())
-		{
+		maps = new MapsList(mapsPath);
+		if (maps.isEmpty()) {
 			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB)).execute();
 			noMapsAvailable = true;
 		} else noMapsAvailable = false;
-		tempMIO = new MapInfoObject(1.0, lat);
-		maps.add(tempMIO);
-		tempMIO = new MapInfoObject(5.0, lat);
-		maps.add(tempMIO);
-		tempMIO = new MapInfoObject(50.0, lat);
-		maps.add(tempMIO);
-		tempMIO = new MapInfoObject(250.0, lat);
-		maps.add(tempMIO);
-		tempMIO = new MapInfoObject(1000.0, lat);
-		maps.add(tempMIO);
+		maps.addEmptyMaps(lat);
 		inf.close(0);
-		Vm.showWait(false);
+		Vm.showWait(this, false);
 		this.mapsloaded = true;
 	}
 
@@ -209,7 +172,7 @@ public class MovingMap extends Form {
 		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.DarkBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
 		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.White,0,0,DistanceImage.location.width,DistanceImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
 	}
-	
+
 	public void forceMapLoad() {
 		forceMapLoad = true;
 		updatePosition(lastUpatePosition.latDec, lastUpatePosition.lonDec); // this sets forceMapLoad to false after loading a map
@@ -495,45 +458,6 @@ public class MovingMap extends Form {
 	}
 
 	/**
-	 * find the best map for lat/lon in the list of maps
-	 * currently the best map is the one, whose center is nearest to
-	 * lat/lon
-	 * @param lat
-	 * @param lon
-	 * @return
-	 */
-	private int getBestMap(double lat, double lon) { // finds the map which is next (center of the map) to the gps-position / could be a good idea to seachr only maps which show the current position (use InBound)
-		// maps, gotoPanel.gpsPosition.latDec != 0, gotoPanel.gpsPosition
-		MapInfoObject mi = new MapInfoObject();
-		MapInfoObject bestMap = new MapInfoObject();
-		double minDistLat = 1000000000000000000000000000000000000000000000.0;
-		double minDistLon = 1000000000000000000000000000000000000000000000.0;
-		boolean latNearer, lonNearer;
-		int minDistMap = -1;
-		boolean better = false;
-		for (int i=0; i<maps.size() ;i++) {
-			better = false;
-			mi=(MapInfoObject)maps.get(i);
-			latNearer=java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
-			lonNearer=java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm < minDistLon;
-			if ( latNearer && lonNearer) better = true;
-			if ( !better && (latNearer || lonNearer )) { 
-				if ( mi.center.getDistanceRad(lat, lon) < bestMap.center.getDistanceRad(lat, lon) ) better = true;
-			}
-			if (better) {
-				minDistLat = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm;
-				minDistLon = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm;
-				minDistMap = i;
-				bestMap = mi;
-				// Vm.debug("better"+ i);
-			}
-		}
-		//	tmp = secBestMap.center.getDistance(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.lonDec)/secBestMap.sizeKm; // quasi second return value 
-		return minDistMap ;
-	}
-
-
-	/**
 	 * move posCircle to the Center of the Screen
 	 *
 	 */
@@ -761,16 +685,14 @@ public class MovingMap extends Form {
 			}
 		}
 	}
-	
+
 	public void setBestMap(double lat, double lon) {
-		int newMapN=getBestMap(lat, lon); // this is independet of the Position of the PosCircle on the windows -> may be it would be better to call it with the coos of the center of the window?, nein, es könnte stören, wenn man manuell die Karte bewegt und er ständig ne neue läd... bleibt erstmal so
-		MapInfoObject newmap ;
-		newmap = (MapInfoObject) maps.get(newMapN);
+		MapInfoObject newmap = maps.getBestMap(lat, lon); 
 		if (currentMap == null || currentMap.mapName != newmap.mapName) {
 			setMap(newmap, lat, lon);
 			Vm.debug("better map found");
 		}
-		
+
 	}
 
 	public void setGpsStatus (int status) {
@@ -900,7 +822,7 @@ public class MovingMap extends Form {
 	public void showMap() {
 		if (mmp != null && mmp.mapImage != null)
 		{ mmp.mapImage.unhide();
-		  mmp.mapImage.move(mmp.mapImage.locAlways.x, mmp.mapImage.locAlways.y); 
+		mmp.mapImage.move(mmp.mapImage.locAlways.x, mmp.mapImage.locAlways.y); 
 		}
 		mapHidden = false;
 		repaintNow();
@@ -1025,14 +947,14 @@ public class MovingMap extends Form {
 		ignoreGps = savegpsstatus;
 	}
 
-/*	public void gotFocus(int how) {
+	/*	public void gotFocus(int how) {
 		super.gotFocus(how);
 		Dimension ws = getSize(null);
 		onWindowResize(ws.width, ws.height);
 		Vm.debug(ws.width + " h: "+ws.height);
 		this.setPreferredSize(width, height)
 	}
-*/
+	 */
 	public void onEvent(Event ev){
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			gotoPanel.runMovingMap = false;
@@ -1161,7 +1083,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		if (mapImage!= null) {
 			p = mapImage.locAlways;
 			mapImage.move(p.x+diffX,p.y+diffY);
-	//		if (mm.mapHidden) mapImage.properties |= AniImage.IsInvisible; // this is neccesarry because move will unhide the map if the coos show that the map is on the screen
+			//		if (mm.mapHidden) mapImage.properties |= AniImage.IsInvisible; // this is neccesarry because move will unhide the map if the coos show that the map is on the screen
 		}
 		mapMoved(diffX, diffY);
 	}
@@ -1257,7 +1179,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			AniImage clickedOnImage = images.findHotImage(p);
 			if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
 				clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
-				openCacheDescMenuItem = new MenuItem("Open '"+clickedCache.CacheName+"'$o");
+				if (clickedCache != null) openCacheDescMenuItem = new MenuItem("Open '"+clickedCache.CacheName+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
 				kontextMenu.addItem(openCacheDescMenuItem);
 			}
 			kontextMenu.exec(this, new Point(p.x, p.y), this);
@@ -1331,9 +1253,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						CacheHolder newWP = new CacheHolder();
 						newWP.pos = mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y);
 						mm.gotoPanel.mainT.detP.newWaypoint(newWP, mm.gotoPanel.mainT);
-						
+
 					}
-					
+
 				}
 			} // if (ev.target == kontextMenu)
 		} // if (ev instanceof ControlEvent ) 
@@ -1427,6 +1349,7 @@ class ListBox extends Form{
 		okButton = new mButton("Select");
 		okButton.setHotKey(0, KeyEvent.getActionKey(true));
 		this.addLast(okButton,CellConstants.STRETCH, CellConstants.FILL);
+		okButton.takeFocus(0);
 	}
 	private boolean mapIsInList(int mapNr){ // it is not used  anymore could be deleted
 		String testitem = new String();
@@ -1442,6 +1365,27 @@ class ListBox extends Form{
 		return false;
 	}
 
+	public void mapSelected() {
+		try { 
+			selectedMap = null;
+			int mapNum = 0;
+			String it = new String();
+			it = list.getText();
+			if (it != ""){
+				it = it.substring(0,it.indexOf(':'));
+				mapNum = Convert.toInt(it);
+				//	Vm.debug("Kartennummer: " + mapNum);
+				selectedMap = (MapInfoObject)maps.get(mapNum);
+				selected = true;
+				this.close(FormBase.IDOK);
+			}
+			else {
+				selected = false;
+				this.close(FormBase.IDCANCEL);
+			}
+		}catch (NegativeArraySizeException e) {} // happens in substring when a dividing line selected 
+	}
+
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == cancelButton){
@@ -1449,28 +1393,15 @@ class ListBox extends Form{
 				selected = false;
 				this.close(FormBase.IDCANCEL);
 			}
-			if (ev.target == okButton){
-				try {
-					selectedMap = null;
-					int mapNum = 0;
-					String it = new String();
-					it = list.getText();
-					if (it != ""){
-						it = it.substring(0,it.indexOf(':'));
-						mapNum = Convert.toInt(it);
-						//	Vm.debug("Kartennummer: " + mapNum);
-						selectedMap = (MapInfoObject)maps.get(mapNum);
-						selected = true;
-						this.close(FormBase.IDOK);
-					}
-					else {
-						selected = false;
-						this.close(FormBase.IDCANCEL);
-					}
-				}catch (NegativeArraySizeException e) {} // happens in substring when a dividing line selected 
+			if (ev.target == okButton || ev.target == list){ // ev.target == list is posted by mList if a selection was double clicked
+				mapSelected();
 			}
 		}
 		super.onEvent(ev);
+	}
+	
+	public void  penDoubleClicked(Point where) {
+		mapSelected();
 	}
 }
 
@@ -1619,32 +1550,32 @@ class MapImage extends AniImage {
 		widthi = getWidth();
 		heighti = getHeight();
 	}
-	
+
 	public MapImage(String f) {
 		super(f);
 		widthi = getWidth(); // this is necessary becaus width is not directly accessable from here and an function call each time the pos ist updated shall be avoided becaus of performance reasons
 		heighti = getHeight();
 		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
-	
+
 	public MapImage(mImage im) {
 		super(im);
 		widthi = getWidth();
 		heighti = getHeight();
 		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
-	
+
 	public static void setScreenSize(int w, int h) {
 		screenDim = new Dimension(w, h);
 	}
-	
+
 	public void setImage(Image im, Color c) {
 		super.setImage(im, c);
 		widthi = getWidth();
 		heighti = getHeight();
 		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
-	
+
 	public void setLocation (int x, int y) {
 		locAlways.x = x;
 		locAlways.y = y;
@@ -1656,7 +1587,7 @@ class MapImage extends AniImage {
 			super.move(0, 0);
 		}
 	}
-	
+
 	public void move (int x, int y) {
 		locAlways.x = x;
 		locAlways.y = y;
@@ -1668,13 +1599,13 @@ class MapImage extends AniImage {
 			super.move(0, 0);
 		}
 	}
-		
+
 	public boolean isOnScreen() { 
 		if ( (locAlways.x + widthi > 0 && locAlways.x < screenDim.width) && 
 				(locAlways.y + heighti > 0 && locAlways.y < screenDim.height) ) return true;
 		else return false;
 	}
-	
+
 	public void hide() {
 		hidden = true;
 		properties |= AniImage.IsInvisible;
