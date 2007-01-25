@@ -183,6 +183,7 @@ public class FilterScreen extends Form{
 				Filter flt = new Filter();
 				flt.foundByMe = foundChk.getState();
 				flt.ownedByMe = ownedChk.getState();
+				
 				flt.dist = distIn.getText();
 				flt.diff = difIn.getText();
 				flt.terr = terrIn.getText();
@@ -193,7 +194,12 @@ public class FilterScreen extends Form{
 				String filterType = new String();
 				String filterVar = new String();
 				String filterRose = new String();
-				
+				filterVar = (archivedChk.getState() == true ? "1" : "0")+
+							(notAvailableChk.getState() == true ? "1" : "0") +
+							(foundChk.getState() == true ? "1" : "0") +
+							(ownedChk.getState() == true ? "1" : "0");
+							
+							
 				int typeMatchPattern = 0;
 				if(tradChk.getState()) typeMatchPattern |= Filter.TRADITIONAL;
 				if(multiChk.getState()) typeMatchPattern |= Filter.MULTI;
@@ -253,15 +259,16 @@ public class FilterScreen extends Form{
 							 (NW.getState() == true ? "1":"0")+
 							 (NNW.getState() == true ? "1":"0")+
 							 (S.getState() == true ? "1":"0");
-				Vm.showWait(true);
+				
 				InfoBox infB = new InfoBox("Info",MyLocale.getMsg(713,"Saving filter"));
 				infB.exec();
 				Profile pfl = Global.getProfile();
 				pfl.filterRose = filterRose;
 				pfl.filterType = filterType;
+				pfl.filterVar = filterVar;
 				pfl.saveIndex(Global.getPref());
 				infB.close(0);
-				Vm.showWait(false);
+				
 				if(distChc.selectedIndex == 1) flt.distdirec = Filter.SMALLER;
 				else flt.distdirec = Filter.GREATER;
 				if(difChc.selectedIndex == 1) flt.diffdirec = Filter.SMALLER;

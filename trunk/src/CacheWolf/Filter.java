@@ -209,8 +209,11 @@ public class Filter{
 		for(int i = 0; i < cacheDB.size(); i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.is_filtered = true;
-			Vm.debug(ch.CacheName + ": " +ch.is_black);
-			if(ch.is_black == true) ch.is_filtered = false; 
+			//Vm.debug(ch.CacheName + ": " +ch.is_black);
+			if(ch.is_black == true) {
+				ch.is_filtered = false;
+				//Vm.debug("==>not filtered!");
+			}
 			cacheDB.set(i,ch);
 		}
 	}
@@ -358,6 +361,7 @@ public class Filter{
 		for(int i = 0; i < cacheDB.size(); i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.is_filtered = false;
+			if(ch.is_black) ch.is_filtered = true;
 			cacheDB.set(i, ch);
 		}
 	}

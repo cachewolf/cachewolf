@@ -37,7 +37,7 @@ public class Profile {
 	public String filterType = new String("11111111110");
 	public String filterRose = new String("1111111111111111");
 	//filter settings for archived ... owner (section) in filterscreen
-	public String filterVar = new String("0000");
+	public String filterVar = new String("1111");
 	//TODO Add the current filter settings here so that they are restored when the profile is reloaded
 	//TODO Add other settings, such as max. number of logs to spider
 	//TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
@@ -92,7 +92,7 @@ public class Profile {
 				distOC = "0";
 			}
 			
-			detfile.print("    <FILTER rose = \""+filterRose+"\" type = \""+filterType+"\"/>\n");
+			detfile.print("    <FILTER rose = \""+filterRose+"\" type = \""+filterType+"\" var = \""+filterVar+"\"/>\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			for(int i = 0; i<cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
@@ -160,6 +160,7 @@ public class Profile {
 					ch.is_archived = ex.findNext().equals("true") ? true : false;
 					ch.has_bug = ex.findNext().equals("true") ? true : false;
 					ch.is_black = ex.findNext().equals("true") ? true : false;
+					if(ch.is_black) ch.is_filtered = true;
 					ch.is_owned = ex.findNext().equals("true") ? true : false;
 					ch.is_found = ex.findNext().equals("true") ? true : false;
 					ch.is_new = ex.findNext().equals("true") ? true : false;
@@ -197,6 +198,7 @@ public class Profile {
 					ex.setSource(text);
 					filterRose = ex.findNext();
 					filterType = ex.findNext();
+					filterVar = ex.findNext();
 //					 Bilbowolf: Pattern for storing filter <FILTER type="01001101" rose = "010010101" var = "0101" dist = "<12" diff = ">13" terr = "<1"/>
 				}
 			}
