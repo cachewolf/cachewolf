@@ -437,15 +437,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == importmap){
 
 				Map map = new Map(pref);
-				boolean ok = map.importMap();
-				if(ok == true){
-					InfoBox inf = new InfoBox(MyLocale.getMsg(152,"File import"), MyLocale.getMsg(153,"Map imported successfully"));
-					inf.execute();
-				} else {
-					InfoBox inf = new InfoBox(MyLocale.getMsg(152,"File import"), MyLocale.getMsg(154,"Error importing map"));
-					inf.execute();
-				}
-				
+				map.importMap();
 			}
 			if(mev.selectedItem == chkVersion){
 				Version vers = new Version();

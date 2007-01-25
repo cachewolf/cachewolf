@@ -20,10 +20,20 @@ public class InfoBox extends Form{
 		this.title = title;
 		this.addLast(msgArea = new MessageArea(""), CellConstants.STRETCH, CellConstants.FILL);
 		msgArea.setText(info);
+		mB.setHotKey(0, IKeys.ACTION);
+		mB.setHotKey(0, IKeys.ENTER);
+		//mB.set(Control.Invisible, true);
+		//this.addLast(mB, CellConstants.STRETCH, CellConstants.FILL);
+
 	}
 	
 	public String getInput(){
 		return feedback.getText();
+	}
+	
+	public void addText(String t) {
+		msgArea.setText(msgArea.text + t);
+		this.repaintNow();
 	}
 	
 	public InfoBox(String title, String info, int ty){
@@ -51,6 +61,11 @@ public class InfoBox extends Form{
 		this.repaintNow();
 	}
 	
+/*	public void addOkButton() { unfortunately this doesn't work
+		//mB.set(Control.Invisible, false);
+		this.repaintNow();
+	}
+*/
 	public void onEvent(Event ev){
 		if(ev.target == mB){
 			if(type == CHECKBOX) mCB_state = mCB.getState();

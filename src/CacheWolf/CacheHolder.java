@@ -446,7 +446,7 @@ public CacheHolder update(CacheHolder newCh){
 	   for(int i = cacheDB.size() -1; i >= 0;i--){
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.addiWpts.clear();
-			ch.mainCache = null;
+			ch.mainCache = null; 
 			dbIndex.put((String)ch.wayPoint, new Integer(i));
 	   }
 	   // Build refeneces

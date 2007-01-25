@@ -129,7 +129,7 @@ public class TrackOverlay extends MapImage {
 		addPixel(x, y, f);
 	}
 
-	public void paintLastAddedPoint(Track tr) {
+	public void paintLastAddedPoint(Track tr) { // TODO zuer Performanceverbesserung: wenn in den letzten 60 Updates keines mer für dieses Overlay dabei war, Overlay Pixels fest schreiben, damit doDraw entlastet wird.
 		draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
 		paintPoint(tr.trackColor, tr.TrackPoints[tr.num-1].latDec, tr.TrackPoints[tr.num-1].lonDec);
 	}

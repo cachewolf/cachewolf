@@ -90,7 +90,6 @@ public class MovingMap extends Form {
 		directionArrows.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(directionArrows);
 		buttonImageLens.properties = AniImage.AlwaysOnTop;
-		buttonImageLensActivated.setLocation(Global.getPref().myAppWidth - buttonImageLens.getWidth()-10, Global.getPref().myAppHeight/2 - buttonImageLens.getHeight()/2 );
 		buttonImageLensActivated.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageLens);
 		buttonImageZoom1to1.properties = AniImage.AlwaysOnTop;
@@ -125,6 +124,7 @@ public class MovingMap extends Form {
 		directionArrows.setLocation(w/2-directionArrows.getWidth()/2, 10);
 		buttonImageZoom1to1.setLocation(w - buttonImageZoom1to1.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
 		buttonImageLens.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
+		buttonImageLensActivated.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
 		DistanceImage.setLocation(w/2 - DistanceImage.location.width/2, h - DistanceImage.location.height -10);
 		if (mmp.mapImage != null) mmp.mapImage.move(mmp.mapImage.locAlways.x, mmp.mapImage.locAlways.y); // this is necessary to make a new decision if it is still on the screen (and actually mor important because MapImage only now gets to know the screen size) 
 		if (posCircle != null) posCircle.move(posCircle.locAlways.x, posCircle.locAlways.y); // this is necessary to make a new decision if it is still on the screen (and actually mor important because MapImage only now gets to know the screen size) 
