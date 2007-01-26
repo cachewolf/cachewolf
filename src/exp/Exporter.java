@@ -69,7 +69,6 @@ public class Exporter {
 		CacheHolder holder;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
-		CWPoint coords = new CWPoint();
 
 
 		if (variant == ASK_FILE) {
@@ -111,17 +110,15 @@ public class Exporter {
 					case NO_PARAMS: 
 						str = record(holder);
 						break;
-					case LAT_LON:	
-						coords.set(holder.LatLon, CWPoint.CW);
-						if (coords.isValid() == false) continue;
-						str = record(holder, coords.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-						             		 coords.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+					case LAT_LON:
+						if (holder.pos.isValid() == false) continue;
+						str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+								     holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 						break;
 					case LAT_LON|COUNT: 
-						coords.set(holder.LatLon, CWPoint.CW);
-						if (coords.isValid() == false) continue;
-						str = record(holder, coords.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-											 coords.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+						if (holder.pos.isValid() == false) continue;
+						str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+									 holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator),
 											 i);
 						break;
 					default:

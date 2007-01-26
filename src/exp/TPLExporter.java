@@ -174,13 +174,13 @@ public class TPLExporter {
 				h.progress = (float)i/(float)counter;
 				h.changed();
 				if(holder.is_black == false && holder.is_filtered == false){
+					if (holder.pos.isValid() == false) continue;
 					try{
 						holder.readCache(profile.dataDir);
 					}catch(Exception e){
 						Vm.debug("Problem reading cache page");
 					}
 					try {
-						CWPoint point = new CWPoint(holder.LatLon, CWPoint.CW);
 						Regex dec = new Regex("[,.]",myFilter.decSep);
 						varParams = new Hashtable();
 						varParams.put("TYPE", CacheType.transType(holder.type));
@@ -201,8 +201,8 @@ public class TPLExporter {
 						varParams.put("DISTANCE", dec.replaceAll(holder.distance));
 						varParams.put("BEARING", holder.bearing);
 						varParams.put("LATLON", holder.LatLon);
-						varParams.put("LAT", dec.replaceAll(point.getLatDeg(CWPoint.DD)));
-						varParams.put("LON", dec.replaceAll(point.getLonDeg(CWPoint.DD)));
+						varParams.put("LAT", dec.replaceAll(holder.pos.getLatDeg(CWPoint.DD)));
+						varParams.put("LON", dec.replaceAll(holder.pos.getLonDeg(CWPoint.DD)));
 						varParams.put("STATUS", holder.CacheStatus);
 						varParams.put("DATE", holder.DateHidden);
 						varParams.put("URL", holder.URL);
