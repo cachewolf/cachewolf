@@ -74,7 +74,6 @@ public class TomTomExporter {
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 		int currExp, counter;
-		CWPoint coords = new CWPoint();
 		
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
@@ -101,11 +100,11 @@ public class TomTomExporter {
 						currExp++;
 						h.progress = (float)currExp/(float)counter;
 						h.changed();
-						coords.set(holder.LatLon, CWPoint.CW);
+						if (holder.pos.isValid() == false) continue;
 						if (format == TT_ASC){
-							writeRecordASCII(out, holder,coords.getLatDeg(CWPoint.DD),coords.getLonDeg(CWPoint.DD));
+							writeRecordASCII(out, holder,holder.pos.getLatDeg(CWPoint.DD),holder.pos.getLonDeg(CWPoint.DD));
 						} else {
-							writeRecordBinary(out, holder,coords.getLatDeg(CWPoint.DD),coords.getLonDeg(CWPoint.DD));
+							writeRecordBinary(out, holder,holder.pos.getLatDeg(CWPoint.DD),holder.pos.getLonDeg(CWPoint.DD));
 						}
 					}//if
 				}//for cacheDB
@@ -133,7 +132,6 @@ public class TomTomExporter {
 		CacheHolder holder;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
-		CWPoint coords = new CWPoint();
 
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
@@ -156,11 +154,11 @@ public class TomTomExporter {
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();
-					coords.set(holder.LatLon, CWPoint.CW);
+					if (holder.pos.isValid() == false) continue;
 					if (format == TT_ASC){
-						writeRecordASCII(out, holder,coords.getLatDeg(CWPoint.DD),coords.getLonDeg(CWPoint.DD));
+						writeRecordASCII(out, holder,holder.pos.getLatDeg(CWPoint.DD),holder.pos.getLonDeg(CWPoint.DD));
 					} else {
-						writeRecordBinary(out, holder,coords.getLatDeg(CWPoint.DD),coords.getLonDeg(CWPoint.DD));
+						writeRecordBinary(out, holder,holder.pos.getLatDeg(CWPoint.DD),holder.pos.getLonDeg(CWPoint.DD));
 					}
 				}//if
 			}//for
