@@ -54,7 +54,6 @@ public class MovingMap extends Form {
 	boolean ignoreGpsStatutsChanges = false;
 	boolean autoSelectMap = true;
 	boolean forceMapLoad = true; // only needed to force updateposition to try to load the best map again after OutOfMemoryError after an repeated click on snap-to-gps
-	CWPoint lastUpatePosition = new CWPoint();
 	boolean mapHidden = false;
 	boolean noMapsAvailable;
 	boolean zoomingMode = false;
@@ -109,11 +108,14 @@ public class MovingMap extends Form {
 		posCircleLat = -361;
 		posCircleLon = -361; // make them invalid
 		updateDistance(); // fill Rect with transparent color
+		scaleWanted = 1;
+		mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
 	}
 
 	public void resizeTo(int w,int h) {
 		super.resizeTo(w, h);
 		updateFormSize(w, h);
+		Vm.debug("resizeTo");
 	}
 
 	public void updateFormSize(int w, int h) {
@@ -175,7 +177,7 @@ public class MovingMap extends Form {
 
 	public void forceMapLoad() {
 		forceMapLoad = true;
-		updatePosition(lastUpatePosition.latDec, lastUpatePosition.lonDec); // this sets forceMapLoad to false after loading a map
+		updatePosition(posCircleLat, posCircleLon); // this sets forceMapLoad to false after loading a map
 	}
 
 	public final FormFrame myExec() {
@@ -586,6 +588,8 @@ public class MovingMap extends Form {
 		removeGotoPosition();
 		gotoPos=addSymbol("goto", "goto_map.png", lat, lon);
 		updateDistance();
+		forceMapLoad = true;
+		updatePosition(posCircleLat, posCircleLon);
 	}
 
 	public void removeGotoPosition() {
@@ -601,10 +605,7 @@ public class MovingMap extends Form {
 		if (symbols == null) return;
 		symbols.removeAllElements();
 		if (gotoPos != null) symbols.add(gotoPos);
-		/*			for (int i=symbols.size()-1; i>=0; i--) {
-				if (((MapSymbol)symbols.get(i)).name != "goto") removeMapSymbol(i);
-			}
-		 */	}
+	}
 
 	public void removeMapSymbol(String name) {
 		int symbNr = findMapSymbol(name);
@@ -629,17 +630,14 @@ public class MovingMap extends Form {
 	/**
 	 * Move the map so that the posCircle is at lat/lon
 	 * 
-	 * @param lat && lon == -361 -> ignore lat/lon, set map position to upperleft corner of window 
+	 * @param  
 	 */
 	public void updateOnlyPosition(double lat, double lon, boolean updateOverlay){
-
 		Point mapPos = new Point(0,0);
 		Point oldMapPos = getMapPositionOnScreen();
-		if (lat != -361.0 || lon != -361.0) {
-			posCircleLat = lat;
-			posCircleLon = lon;
-			mapPos = getMapPositionOnScreen();
-		}
+		posCircleLat = lat;
+		posCircleLon = lon;
+		mapPos = getMapPositionOnScreen();
 		//Vm.debug("mapx = " + mapx);
 		//Vm.debug("mapy = " + mapy);
 		if (forceMapLoad || (java.lang.Math.abs(oldMapPos.x - mapPos.x) > 1 || java.lang.Math.abs(oldMapPos.y - mapPos.y) > 1)) {
@@ -656,6 +654,7 @@ public class MovingMap extends Form {
 	 * Method to laod the best map for lat/lon and move the map so that the posCircle is at lat/lon
 	 */
 	public void updatePosition(double lat, double lon){
+		Vm.debug("updatepors, lat: "+lat+" lon: "+lon);
 		if (!mapsloaded) {
 			loadMaps(mapPath, lat);
 			lastCompareX = Integer.MAX_VALUE;
@@ -665,14 +664,12 @@ public class MovingMap extends Form {
 			forceMapLoad = false;
 			return;
 		}
-		lastUpatePosition.latDec = lat;
-		lastUpatePosition.lonDec = lon;
 		if(!ignoreGps || forceMapLoad){
 			updateOnlyPosition(lat, lon, true);
 			if (autoSelectMap || forceMapLoad) {
 				Point mapPos = getMapPositionOnScreen();
-				if (forceMapLoad || (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width) 
-						|| 	mmp.mapImage == null )) 	{
+				if (forceMapLoad || wantMapTest|| (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width) 
+						|| 	mmp.mapImage == null )) 	{ // if force || want || map doesn't cover the scree completly
 					//Vm.debug("Screen not completly covered by map");
 					if (forceMapLoad || (java.lang.Math.abs(lastCompareX-mapPos.x) > MyLocale.getScreenWidth()/10 || java.lang.Math.abs(lastCompareY-mapPos.y) > MyLocale.getScreenHeight()/10)) {
 						// more then 1/10 of screen moved since last time we tried to find a better map
@@ -685,14 +682,111 @@ public class MovingMap extends Form {
 			}
 		}
 	}
+	int mapChangeModus;
+	float scaleWanted;
+	boolean wantMapTest = true; // if true updateposition calls setBestMap regulary even if the currentmap covers the whole screen
+	public final static int NORMAL_KEEP_RESOLUTION = 1; // keeps the choosen resolution as long as a map is available that overlaps with the screen and with the PosCircle - it changes the resolution if no such map is available. It wil cahnge back to the wanted scale as soon as a map becomes available (through movement of the GPS-receiver)
+	public final static int HIGHEST_RESOLUTION = 2;
+	public final static int HIGHEST_RESOLUTION_GPS_DEST = 3;
 
+	/**
+	 * loads the best map for lat/lon according to mapChangeModus
+	 * lat/lon will be at the screen-pos of posCircle
+	 * when posCircle is not on the screen (shifted outside my the user)
+	 * then this routine uses the center of the screen to find the best map
+	 * but anyway the map will be adjusted (moved) relativ to posCircle
+	 * when a better map was found the called method updateposition will set
+	 * posCirleLat/-Lon to lat/lon.
+	 * 
+	 * @param lat
+	 * @param lon
+	 */
 	public void setBestMap(double lat, double lon) {
-		MapInfoObject newmap = maps.getBestMap(lat, lon); 
-		if (currentMap == null || currentMap.mapName != newmap.mapName) {
+		Object [] s = getRectForMapChange(lat, lon);
+		CWPoint cll = (CWPoint) s[0]; 
+		Rect screen = (Rect) s[1]; 
+		MapInfoObject newmap = null;
+		//if (mapChangeModus == 0) mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
+		wantMapTest = true;
+		switch (mapChangeModus) {
+		case NORMAL_KEEP_RESOLUTION: 
+			newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, scaleWanted, false);
+			if (java.lang.Math.abs(newmap.scale - scaleWanted) < maps.scaleTolerance) wantMapTest = false;
+			break;
+		case HIGHEST_RESOLUTION: newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, 0.000001f, false); break;
+		case HIGHEST_RESOLUTION_GPS_DEST: 
+			if (gotoPos!= null) newmap = maps.getMapForArea(new CWPoint(posCircleLat, posCircleLon), new CWPoint(gotoPos.lat, gotoPos.lon));
+			else newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, 0.000001f, false); 
+			break;
+		default: (new MessageBox("Error", "Programmfehler: \nillegal mapChangeModus: " + mapChangeModus, MessageBox.OKB)).execute(); break;
+		}
+		if ( newmap != null && (currentMap == null || currentMap.mapName != newmap.mapName) ) {
 			setMap(newmap, lat, lon);
 			Vm.debug("better map found");
+			return;
 		}
+	}
 
+	public void setResModus (int modus) {
+		mapChangeModus = modus;
+		if (modus == NORMAL_KEEP_RESOLUTION) scaleWanted = currentMap.scale;
+		else setBestMap(posCircleLat, posCircleLon);
+	}
+/**
+ * method to get a point on the screen which must be included in the map
+ * the map methods are looking for. If the poscircle is on the screen this will be 
+ * that point. If it is outside then the center of the screen will be used.
+ * 
+ * returns [0] = CWPoint of that point, [1] Rect describing the screen around it 
+ * @param lat
+ * @param lon
+ * @return
+ */
+	public Object[] getRectForMapChange(double lat, double lon) {
+		int w = (width != 0 ? width : pref.myAppWidth); // width == 0 happens if this routine is run before the windows is on the screen
+		int h = (height != 0 ? height : pref.myAppHeight);
+		int x, y;
+		CWPoint cll;
+		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h) {
+			x = posCircleX; // posCircle is inside the screen
+			y = posCircleY;
+			cll = new CWPoint(lat, lon);
+		} else { // when posCircle out of screen - use center of screen as point which as to be included in the map
+			cll = ScreenXY2LatLon(w/2, h/2);
+			x = w/2;
+			y = h/2;
+		}
+		Object[] ret = new Object[2];
+		ret[0] = cll;
+		ret[1] = new Rect(x, y, w, h);
+		return ret; 
+	}
+	
+	/**
+	 * 
+	 * @param betterOverview true: getmap with better overview
+	 * @return
+	 */
+	public void loadMoreDetailedMap(boolean betterOverview){
+		Object [] s = getRectForMapChange(posCircleLat, posCircleLon);
+	//	CWPoint cll = (CWPoint) s[0]; 
+		Rect screen = (Rect) s[1]; 
+		//Rect screen = new Rect(posCircleX, posCircleY, (width != 0 ? width : pref.myAppWidth), (height != 0 ? height : pref.myAppHeight));
+		MapInfoObject m = maps.getMapChangeResolution(posCircleLat, posCircleLon, screen, currentMap.scale, !betterOverview);
+		if (m != null) setMap(m, posCircleLat, posCircleLon);
+		else (new MessageBox("Error", "No "+ (betterOverview ? "less" : "more") + " deteiled map available", MessageBox.OKB)).execute();
+	}
+	
+	public void loadMapForAllCaches(){
+		Area sur = Global.getProfile().getSourroundingArea(true);
+		MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.buttomright);
+		if (newmap == null ) { // no map that includs all caches is available -> load map with lowest resolution
+			Object [] s = getRectForMapChange(posCircleLat, posCircleLon);
+			CWPoint cll = (CWPoint) s[0]; 
+			Rect screen = (Rect) s[1]; 
+			newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, Float.MAX_VALUE -1, false);
+		}
+		setMap(newmap, posCircleLat, posCircleLon);
 	}
 
 	public void setGpsStatus (int status) {
@@ -820,10 +914,7 @@ public class MovingMap extends Form {
 	}
 
 	public void showMap() {
-		if (mmp != null && mmp.mapImage != null)
-		{ mmp.mapImage.unhide();
-		mmp.mapImage.move(mmp.mapImage.locAlways.x, mmp.mapImage.locAlways.y); 
-		}
+		if (mmp != null && mmp.mapImage != null) mmp.mapImage.unhide();
 		mapHidden = false;
 		repaintNow();
 	}
@@ -900,7 +991,7 @@ public class MovingMap extends Form {
 	 * @param center
 	 */		
 	public void zoomFromUnscaled (float zoomFactor, Rect newImageRect, CWPoint center) {
-		Vm.showWait(true);
+		Vm.showWait(this, true);
 		boolean savegpsstatus = ignoreGps;
 		if (mapImage1to1 != null) {
 			ignoreGps = true; // avoid multi-thread problems
@@ -943,7 +1034,7 @@ public class MovingMap extends Form {
 		setCenterOfScreen(center);
 		addOverlaySet();
 		this.repaintNow();
-		Vm.showWait(false);
+		Vm.showWait(this, false);
 		ignoreGps = savegpsstatus;
 	}
 
@@ -971,11 +1062,32 @@ public class MovingMap extends Form {
  *	Class to display the map bitmap and to select another bitmap to display.
  */
 class MovingMapPanel extends InteractivePanel implements EventListener {
-	Menu mapsMenu;
 	Menu kontextMenu;
 	MenuItem gotoMenuItem = new MenuItem("Goto here$g", 0, null);
-	MenuItem openCacheDescMenuItem;
 	MenuItem newWayPointMenuItem = new MenuItem("Create new Waypoint here$n", 0, null);;
+	MenuItem openCacheDescMenuItem;
+
+	Menu mapsMenu;
+	MenuItem selectMapMI = new MenuItem("Select a map manually$s", 0, null);
+	MenuItem changeMapDirMI = new MenuItem("Change map directory$c", 0, null);
+	MenuItem showMapMI = new MenuItem("Show map", 0, null);
+	MenuItem hideMapMI = new MenuItem("Hide map", 0, null);
+	// automatic
+	MenuItem mapChangeModusMI = new MenuItem("Modus for automatic map change", MenuItem.Separator, null);;
+	MenuItem highestResGpsDestMI = new MenuItem("Highest res. containing dest. & cur. position", 0, null); //immer höchste Auflösung wählen, die akt. Pos. und Ziel enthalten 
+	MenuItem highestResolutionMI = new MenuItem("Highest resolution", 0, null); //immer höchste Auflösung wählen 
+	MenuItem keepManResolutionMI = new MenuItem("Keep manual resolution", 0, null); // manuell gewählte Auflösung beibehalten  
+	// manuell
+	MenuItem mapChangeResMI = new MenuItem("Change resolution manually", MenuItem.Separator, null);;
+	MenuItem AllCachesResMI = new MenuItem("Load a map containing all marked caches", 0, null); // Karte wählen, die alle markierten Caches enthält  
+	MenuItem moreDetailsMI = new MenuItem("Load a map with more details", 0, null); // detailreichere Karte laden 
+	MenuItem moreOverviewMI = new MenuItem("Load a map for a better overview", 0, null); // Karte mit mehr Übersicht wählen  
+	// move map to
+	MenuItem moveToMI = new MenuItem("Move map to an load map", MenuItem.Separator, null);;
+	MenuItem moveToDestMI = new MenuItem("move to goto point", 0, null); //* Karte zum Ziel verschieben (und ggf. entsprechende Karte laden) 
+	MenuItem moveToGpsMI = new MenuItem("move to GPS position", 0, null);   
+	MenuItem moveToCenterMI = new MenuItem("move to Center", 0, null);   
+
 	CacheHolder clickedCache;
 	MovingMap mm;
 	MapImage mapImage;
@@ -995,7 +1107,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			mm.ignoreGps = true;
 			return false;
 		}
-		//if (!(which == null || which == mapImage || which instanceof TrackOverlay) ) return false;
+		//if (!(which == null || which == mapImage || which instanceof TrackOverlay || which == mm.directionArrows) ) return false;
 		saveGpsIgnoreStatus = mm.ignoreGps; 
 		mm.ignoreGps = true;
 		saveMapLoc = pos;
@@ -1109,6 +1221,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		ListBox l = new ListBox(mm.maps, gpspos, mm.getGotoPos(), mm.currentMap);
 		if(l.execute() == FormBase.IDOK){
 //			Vm.debug("Trying map: " + l.selectedMap.fileName);
+			mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 			mm.autoSelectMap = false;
 			if (l.selectedMap.inBound(mm.posCircleLat, mm.posCircleLon) || l.selectedMap.getImageFilename().length()==0) {
 				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon);
@@ -1134,21 +1247,48 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	 */
 	public void imageClicked(AniImage which, Point pos){
 		if (which == mm.bottonImageChooseMap){
-			mapsMenu = new Menu(new String[]{"Select a map manually$s", "Change map directory$c"}, "map choice");
+			mapsMenu = new Menu();
+			mapsMenu.addItem(selectMapMI);
+			mapsMenu.addItem(changeMapDirMI);
 			if (!mm.noMapsAvailable) 
 			{
-				if (mm.mapHidden) mapsMenu.addItem("show map");
-				else mapsMenu.addItem("hide map");
+				if (mm.mapHidden) mapsMenu.addItem(showMapMI);
+				else mapsMenu.addItem(hideMapMI);
 			}
+
+			// automatic
+			highestResGpsDestMI.modifiers &= ~MenuItem.Checked;
+			highestResolutionMI.modifiers &= ~MenuItem.Checked;
+			keepManResolutionMI.modifiers &= ~MenuItem.Checked;
+			switch (mm.mapChangeModus) {
+			case MovingMap.NORMAL_KEEP_RESOLUTION: keepManResolutionMI.modifiers |= MenuItem.Checked; break;   
+			case MovingMap.HIGHEST_RESOLUTION: highestResolutionMI.modifiers |= MenuItem.Checked; break;   
+			case MovingMap.HIGHEST_RESOLUTION_GPS_DEST: highestResGpsDestMI.modifiers |= MenuItem.Checked; break;   
+			}
+			mapsMenu.addItem(mapChangeModusMI);
+			mapsMenu.addItem(highestResGpsDestMI);
+			mapsMenu.addItem(highestResolutionMI);
+			mapsMenu.addItem(keepManResolutionMI);
+			// manuell
+			mapsMenu.addItem(mapChangeResMI);
+			mapsMenu.addItem(AllCachesResMI);
+			mapsMenu.addItem(moreDetailsMI);
+			mapsMenu.addItem(moreOverviewMI);
+			// move map to
+			mapsMenu.addItem(moveToMI);
+			if (mm.gotoPos != null) moveToDestMI.modifiers &= ~MenuItem.Disabled;
+			else moveToDestMI.modifiers |= MenuItem.Disabled;
+			mapsMenu.addItem(moveToDestMI);
+			if (Global.getPref().curCentrePt.isValid()) moveToCenterMI.modifiers &= ~MenuItem.Disabled;
+			else moveToCenterMI.modifiers |= MenuItem.Disabled;
+			mapsMenu.addItem(moveToCenterMI);
+			mapsMenu.addItem(moveToGpsMI);
+			
 			//m.set(Menu., status)
 			mapsMenu.exec(this, new Point(which.location.x, which.location.y), this);
 		}
 		if (which == mm.buttonImageGpsOn) {
-			if (mm.gotoPanel.serThread == null || !mm.gotoPanel.serThread.isAlive()) {
-				mm.gotoPanel.startGps();
-				mm.addTrack(mm.gotoPanel.currTrack); // use new track when gps now started
-			} 
-			mm.SnapToGps();
+			this.snapToGps();
 		}
 		if (which == mm.buttonImageLens) {
 			mm.setZoomingMode();
@@ -1161,13 +1301,16 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			tmp.type = WindowEvent.CLOSE;
 			mm.postEvent(tmp);
 		}
-
-		/*if (which == mm.arrowRight)	{	moveMap(-10,0);	}
-		if (which == mm.arrowLeft)	{	moveMap(+10,0);	}
-		if (which == mm.arrowDown)	{	moveMap(0,-10);	}
-		if (which == mm.arrowUp)	{	moveMap(0,+10);	} */
 	}
 
+	public void snapToGps() {
+		if (mm.gotoPanel.serThread == null || !mm.gotoPanel.serThread.isAlive()) {
+			mm.gotoPanel.startGps();
+			mm.addTrack(mm.gotoPanel.currTrack); // use new track when gps now started
+		} 
+		mm.SnapToGps();
+	}
+	
 	public void penHeld(Point p){
 		//	if (!menuIsActive()) doMenu(p);
 		if (!mm.zoomingMode) { 
@@ -1194,14 +1337,14 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			if (ev.target == mapsMenu) {
 				if (ev.type == MenuEvent.ABORTED || ev.type == MenuEvent.CANCELLED || ev.type == MenuEvent.FOCUS_OUT) mapsMenu.close(); // TODO menuIsActive() benutzen? 
 				if (ev.type == MenuEvent.SELECTED ) {
+					MenuItem action = (MenuItem) mapsMenu.getSelectedItem(); 
 					if (mapsMenu.getSelectedItem() != null) {
-						if (mapsMenu.getSelectedItem().toString().equalsIgnoreCase("Select a map manually") )
-						{ 
+						//maps
+						if (action == selectMapMI)	{ 
 							mapsMenu.close();
 							chooseMap();
 						}
-						if (mapsMenu.getSelectedItem().toString().equalsIgnoreCase("Change map directory") )
-						{
+						if (action == changeMapDirMI)	{
 							mapsMenu.close();
 							FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, Global.getPref().baseDir+"/maps");
 							fc.addMask("*.wfl");
@@ -1212,17 +1355,60 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							}
 						}
 						//dont show map
-						if (mapsMenu.getSelectedItem().toString().equalsIgnoreCase("hide map") )
-						{
+						if (action == hideMapMI) {
 							mapsMenu.close();
 							mm.hideMap();
 						}
 						// show map
-						if (mapsMenu.getSelectedItem() != null && mapsMenu.getSelectedItem().toString().equalsIgnoreCase("show map") )
-						{
+						if (action == showMapMI) {
 							mapsMenu.close();
 							mm.showMap();
 						}
+						// map change modus
+						if (action == highestResGpsDestMI) {
+							mapsMenu.close();
+							mm.setResModus(MovingMap.HIGHEST_RESOLUTION_GPS_DEST);
+						}
+						if (action == highestResolutionMI) {
+							mapsMenu.close();
+							mm.setResModus(MovingMap.HIGHEST_RESOLUTION);
+						}
+						if (action == keepManResolutionMI) {
+							mapsMenu.close();
+							mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
+						}
+						// manually change map resolution
+						if (action == moreDetailsMI) {
+							mapsMenu.close();
+							mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
+							mm.loadMoreDetailedMap(false);
+						} 
+						if (action == moreOverviewMI) {
+							mapsMenu.close();
+							mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
+							mm.loadMoreDetailedMap(true);
+						}
+						if (action == AllCachesResMI) {
+							mapsMenu.close();
+							mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
+							mm.loadMapForAllCaches();
+						}
+						// moveto position
+						if (action == moveToCenterMI) {
+							mapsMenu.close();
+							mm.setCenterOfScreen(Global.getPref().curCentrePt);
+							mm.repaintNow();
+						}
+						if (action == moveToDestMI) {
+							mapsMenu.close();
+							mm.setCenterOfScreen(new CWPoint(mm.gotoPos.lat, mm.gotoPos.lon));
+							mm.repaintNow();
+						}
+						if (action == moveToGpsMI) {
+							mapsMenu.close();
+							this.snapToGps();						
+						}
+
 					}
 				}
 			} // if (ev.target == mapsMenu)
@@ -1399,7 +1585,7 @@ class ListBox extends Form{
 		}
 		super.onEvent(ev);
 	}
-	
+
 	public void  penDoubleClicked(Point where) {
 		mapSelected();
 	}
