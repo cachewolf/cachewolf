@@ -830,7 +830,7 @@ public class Parser{
 	    else if (funcDef.alias.equals("cls")) funcCls();
 	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(popCalcStackAsNumber(0))));
 	    else if (funcDef.alias.equals("count")) funcCount();
-	    else if (funcDef.alias.equals("cp")) funcCp();     
+	    else if (funcDef.alias.equals("cp")) calcStack.add(funcCp());     
 	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(nargs)));
 	    else if (funcDef.alias.equals("distance")) calcStack.add(new java.lang.Double(funcDistance()));
 	    else if (funcDef.alias.equals("encode")) calcStack.add(funcEncode());
