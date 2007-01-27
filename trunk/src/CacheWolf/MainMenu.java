@@ -274,13 +274,14 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == exportGPS){
 				Vm.showWait(true);
-				PCX5Exporter pcx = new PCX5Exporter(pref, profile);
-				pcx.doIt(PCX5Exporter.MODE_AUTO);
+				LocExporter loc = new LocExporter();
+				String tmpFileName = File.getProgramDirectory() + "/temp.loc";
+				loc.setTmpFileName(tmpFileName);
+				loc.doIt(LocExporter.MODE_AUTO);
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
-				String cwd = File.getProgramDirectory() + "/temp.pcx";
 				try{
-					ewe.sys.Process p = Vm.exec("gpsbabel -s -i pcx -f \""+ cwd +"\" -o garmin -F " + pref.garminConn +":");
-					Vm.debug("gpsbabel -s -i pcx -f  \""+ cwd +"\" -o garmin -F " + pref.garminConn +":");
+					ewe.sys.Process p = Vm.exec("gpsbabel -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
+					Vm.debug("gpsbabel -i geo -f  \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
 					p.waitFor();
 				}catch(IOException ioex){};
 				ProgressBarForm.clear();
