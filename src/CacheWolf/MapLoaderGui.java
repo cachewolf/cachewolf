@@ -32,8 +32,8 @@ public class MapLoaderGui extends Form {
 	mLabel scaleLbl = new mLabel("Approx. m per pixel:");
 	mInput scaleInput = new mInput ("3");
 	mInput scaleInputPerCache = new mInput ("3");
-	mLabel overlappingLbl = new mLabel("overlapping in %");
-	mInput overlappingInput = new mInput("10");
+	mLabel overlappingLbl = new mLabel("overlapping in pixel:");
+	mInput overlappingInput = new mInput("100");
 	mCheckBox overviewChkBox = new mCheckBox("download an overview map");
 	mCheckBox overviewChkBoxPerCache = new mCheckBox("download an overview map");
 
@@ -43,7 +43,7 @@ public class MapLoaderGui extends Form {
 	boolean onlySelected;
 	float radius;
 	float scale;
-	float overlapping;
+	int overlapping;
 	boolean overviewmap;
 	int numCaches;
 
@@ -128,7 +128,7 @@ public class MapLoaderGui extends Form {
 				progressBox.close(0);
 				return;
 			}
-			ml.setTiles(surArea.topleft, surArea.buttomright, (int)scale, size, 1+ overlapping /100);
+			ml.setTiles(surArea.topleft, surArea.buttomright, (int)scale, size, overlapping );
 			// calculate radius and center for overview map
 			center = new CWPoint((surArea.topleft.latDec + surArea.buttomright.latDec)/2, (surArea.topleft.lonDec + surArea.buttomright.lonDec)/2);
 			double radiuslat = (new CWPoint(center.latDec, surArea.buttomright.lonDec)).getDistance(surArea.buttomright);
@@ -136,7 +136,7 @@ public class MapLoaderGui extends Form {
 			radius = (float) (radiuslat < radiuslon ? radiuslon : radiuslat);
 		} else 
 		{ // calculate from center point an radius
-			ml.setTiles(center, radius * 1000, (int)scale, size, 1+ overlapping/100);
+			ml.setTiles(center, radius * 1000, (int)scale, size, overlapping);
 		}
 		if (overviewmap) {
 			progressBox.setInfo("downloading overview map"); 
@@ -207,14 +207,14 @@ public class MapLoaderGui extends Form {
 					overviewmap = overviewChkBox.getState();
 					radius = Convert.toFloat(distanceInput.getText());
 					scale = Convert.toFloat(scaleInput.getText());
-					overlapping = Convert.toFloat(overlappingInput.getText());
+					overlapping = Convert.toInt(overlappingInput.getText());
 					if (!forCachesChkBox.getState()) {
 						if (radius <= 0) { 
 							(new MessageBox("Error", "'radius' must be graeter than null", MessageBox.OKB)).execute();
 							return;
 						}
-						if (overlapping < 1 || overlapping > 99) { 
-							(new MessageBox("Error", "'overlapping' must between 1 and 99 ", MessageBox.OKB)).execute();
+						if (overlapping < 0) { 
+							(new MessageBox("Error", "'overlapping' must be greater or equal 0 ", MessageBox.OKB)).execute();
 							return;
 						}
 					}
