@@ -66,6 +66,7 @@ public class ProfileDataForm extends Form {
 				if (cs.execute()== CoordsScreen.IDOK){
 					pref.curCentrePt.set(cs.getCoords());
 					btnCurrentCentre.setText(pref.curCentrePt.toString());
+					Global.getProfile().updateBearingDistance();
 				}
 			}
 			if (ev.target == btnProfileCentre){
@@ -83,6 +84,7 @@ public class ProfileDataForm extends Form {
 			if (ev.target == btnProf2Cur){
 				pref.curCentrePt.set(profile.centre);
 				btnCurrentCentre.setText(pref.curCentrePt.toString());
+				Global.getProfile().updateBearingDistance();
 			}
 			if (ev.target == btnOldProfiles){
 				ProfilesScreen pfs = new ProfilesScreen(pref);

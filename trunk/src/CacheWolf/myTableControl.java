@@ -114,7 +114,7 @@ public class myTableControl extends TableControl{
 				tmpMB.exec();
 			} else {				
 				pref.curCentrePt.set(cp);
-				TablePanel.updateBearingDistance(db, pref);
+				profile.updateBearingDistance();
 				tbp.refreshTable();
 				(new MessageBox("Info", "Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet", MessageBox.OKB)).execute();
 			}

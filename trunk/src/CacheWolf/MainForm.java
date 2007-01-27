@@ -61,7 +61,7 @@ public class MainForm extends Form {
 			Vm.showWait(true);
 			profile.readIndex();
 			pref.curCentrePt.set(profile.centre);
-			TablePanel.updateBearingDistance(profile.cacheDB,pref);
+			profile.updateBearingDistance();
 		} catch (Exception e){
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}

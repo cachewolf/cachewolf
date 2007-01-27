@@ -106,11 +106,8 @@ public class TablePanel extends CellPanel{
 	}
 	
 	public void resetModel() {
-		//RB  myMod.setVector(cacheDB);
 		myMod.numRows = cacheDB.size();
-		updateBearingDistance(cacheDB, pref);
-		////Vm.debug("IS mypref loaded? " + myPreferences.mylgDeg);
-		// tc.setTableModel(myMod); Not needed ?
+		Global.getProfile().updateBearingDistance();
 		myMod.updateRows();
 		tc.update(true);
 		if (statBar!=null) statBar.updateDisplay();
@@ -133,43 +130,6 @@ public class TablePanel extends CellPanel{
 		tc.update(true);
 		if (statBar!=null) statBar.updateDisplay();
 	}
-	
-	/**
-	*	Method to calculate bearing and distance of a cache in the index
-	*	list.
-	*	@see	CacheHolder
-	*	@see	Extractor
-	*	@see	Navi
-	*/
-	public static void updateBearingDistance(Vector cacheDB, Preferences p){
-		//myPreferences = p;
-
-		CWPoint fromPoint = new CWPoint(p.curCentrePt); // Clone current centre to be sure
-		
-		//Vm.debug(" New location: " + fromPoint);
-		
-		int anz = cacheDB.getCount();
-		CacheHolder ch;
-		CWPoint toPoint = new CWPoint();
-		// Jetzt durch die CacheDaten schleifen
-		while(--anz >= 0){
-			ch = (CacheHolder)cacheDB.get(anz); // This returns a pointer to the CacheHolder object
-			if(ch.LatLon.length()>4){
-				if (ch.pos == null) { // only calculate once
-					toPoint.set(ch.LatLon, CWPoint.CW); // Fast parse with traditional parse algorithm
-					ch.pos = new CWPoint(toPoint);
-				} else toPoint = ch.pos;
-				ch.kilom = fromPoint.getDistance(toPoint);
-				ch.degrees = fromPoint.getBearing(toPoint);
-				ch.bearing = CWPoint.getDirection(ch.degrees);
-				ch.distance = MyLocale.formatDouble(ch.kilom,"0.00");
-				ch.distance = ch.distance + " km";
-// skg20061223: These two lines are superfluous as we have already updated the correct CacheHolder object
-//				cacheDB.del(anz);
-//				cacheDB.add(anz, ch);
-			}
-		}
-	} //updateBearingDistance
 	
 	public void onEvent(Event ev)
 	{

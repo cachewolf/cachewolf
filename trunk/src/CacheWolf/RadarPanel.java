@@ -82,7 +82,7 @@ public class RadarPanel extends CellPanel{
 		//height = (int)height * 2;
 		////Vm.debug("Height: " + Convert.toString(height));
 		////Vm.debug("App Height: " + Convert.toString(pref.myAppHeight));
-		width = (int)(pref.myAppWidth);
+		width = (int)(pref.myAppWidth)*6/5;
 		//width = (int)width * 2;
 	}
 	
@@ -106,8 +106,11 @@ public class RadarPanel extends CellPanel{
 		drawCaches();
 		iActP.repaintNow();
 		if (reCenterImage) {
+			// Hack to scroll to left origin for a defined position for subsequent
+			// scroll which centers the image
+			iActP.scroll(-1000,-1000); 
 			Dimension dispSize=getDisplayedSize(null);
-			iActP.scroll(pref.myAppWidth/10,(height-dispSize.height)/2);
+			iActP.scroll((width-dispSize.width)/2,(height-dispSize.height+btMinus.getSize(null).height)/2);
 			reCenterImage=false;
 		}
 	}
