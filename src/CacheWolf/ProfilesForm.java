@@ -92,6 +92,8 @@ public class ProfilesForm extends Form{
 		addLast(spMList);
 		addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
 		addNext(btnOK = new mButton(MyLocale.getMsg(1605,"OK")),DONTSTRETCH,HFILL|RIGHT);
+		btnOK.setHotKey(0, IKeys.ENTER);
+		btnCancel.setHotKey(0, IKeys.ESCAPE);
 		this.baseDir=baseDir;
 		choice.takeFocus(Control.ByKeyboard);
 	}
@@ -109,18 +111,12 @@ public class ProfilesForm extends Form{
 			 return "";
 	}
 
-	private boolean first=true;
 	/**
 	*	The event handler to react to a users selection.
 	*	A return value is created and passed back to the calling form
 	*	while it closes itself.
 	*/
 	public void onEvent(Event ev){
-		// Set focus on the choice control initially
-		if (ev instanceof ControlEvent && ev.type == ControlEvent.FOCUS_IN && first) {
-			first=false;  // There must be a better way to set the focus to the choice control ??!?
-			choice.takeFocus(Control.ByKeyboard);
-		}
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btnCancel){
 				close(-1);
