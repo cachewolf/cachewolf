@@ -32,7 +32,9 @@ public class MainForm extends Form {
 		pref.debug = dbg;
 		doIt();
 	}
-	protected void checkButtons() {} // Need to disable checkButtons, otherwise OK-Button is always enabled
+	protected void checkButtons() {
+		if (pref.hasCloseButton) super.checkButtons();
+	} 
 
 	public void doIt(){
 		this.title = "CacheWolf " + Version.getRelease();
@@ -43,10 +45,6 @@ public class MainForm extends Form {
 			this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
 			this.resizable = false;
 			this.moveable = false;
-			this.titleOK=new mButton("OK");
-			this.titleOK.borderWidth=0;
-			this.titleOK.foreGround=Color.White;
-			this.titleOK.backGround = Color.DarkBlue;
 			this.windowFlagsToClear=WindowConstants.FLAG_HAS_TITLE;
 		} else 
 			this.setPreferredSize(800, 600);
@@ -57,8 +55,6 @@ public class MainForm extends Form {
 		infB.waitUntilPainted(1000);
 		try{
 			pref.readPrefFile();
-			if (this.titleOK!=null && !pref.hasCloseButton)
-				this.titleOK.modify(ControlConstants.Disabled,0);
 			addGuiFont();
 			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true)) 
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
