@@ -30,7 +30,7 @@ public class MapInfoObject{
 	public double transLatX, transLatY, transLonX, transLonY; // this are needed for the inervers calculation from lat/lon to x/y
 	public CWPoint center = new CWPoint();
 	public float sizeKm = 0; // diagonale
-	public float scaleX; // in meters per pixel in horizontal direction
+	public float scale; // in meters per pixel, note: it is assumed that this scale identifying the scale of the map
 	public float zoomFactor = 1; // if the image is zoomed, direct after laoding always 1
 	public Point shift = new Point (0,0);
 	public CWPoint OrigUpperLeft; // this is only valid after zooming 
@@ -58,11 +58,11 @@ public class MapInfoObject{
 	 * constructes an MapInfoObject without an associated map
 	 * but with 1 Pixel = scale meters
 	 */
-	public MapInfoObject(double scale, double lat) {
+	public MapInfoObject(double scalei, double lat) {
 		digSep = MyLocale.getDigSeparator();
-		mapName="empty 1 Pixel = "+scale+"meters";
+		mapName="empty 1 Pixel = "+scalei+"meters";
 		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
-		double pixel2deg = meters2deg * scale;
+		double pixel2deg = meters2deg * scalei;
 		affine[0]=0; //x2lat
 		affine[1]=pixel2deg / java.lang.Math.cos(lat); //x2lon
 		affine[2]=-pixel2deg; //y2lat
@@ -80,12 +80,12 @@ public class MapInfoObject{
 	 * with 1 Pixel = scale meters, center and width, hight in pixels
 	 * @param name path and filename of .wfl file without the extension (it is needed because the image will be searched in the same directory)
 	 */
-	public MapInfoObject(double scale, CWPoint center, int width, int hight, String name) {
+	public MapInfoObject(double scalei, CWPoint center, int width, int hight, String name) {
 		digSep = MyLocale.getDigSeparator();
 		mapName = name+".wfl";
 
 		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
-		double pixel2deg = meters2deg * scale;
+		double pixel2deg = meters2deg * scalei;
 		double pixel2deghorizontal = pixel2deg / java.lang.Math.cos(center.latDec*java.lang.Math.PI / 180); 
 		affine[0]=0; //x2lat
 		affine[1]=pixel2deghorizontal; //x2lon
@@ -171,14 +171,17 @@ public class MapInfoObject{
 			transLonY = affine[0]/nenner;
 
 			// calculate north direction
-			scaleX = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLonX,2)+java.lang.Math.pow(transLonY,2));
+			float scaleXpixels = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLonX,2)+java.lang.Math.pow(transLonY,2));
 			//	float scaleY = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLatX,2)+java.lang.Math.pow(transLatY,2));
-			float rotationX2x=(float)transLonX*scaleX;
-			float rotationX2y=(float)transLonY*scaleX;
+			float rotationX2x=(float)transLonX*scaleXpixels;
+			float rotationX2y=(float)transLonY*scaleXpixels;
 			//rotationY2y=-(float)transLatY*scaleY; // lat -> y = -, y -> y = +
 			//rotationY2x=-(float)transLatX*scaleY; // uncomment an make it a field of MapInfoObject if you need translation from x to x rotated
 			rotationRad = (float)java.lang.Math.atan(rotationX2y);
 			if (rotationX2x < 0) rotationRad = (float)java.lang.Math.PI - rotationRad;
+			// calculate scale in meters per pixel
+			double metersPerLat = 1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0));
+			scale = (float) java.lang.Math.abs((affine[2] * metersPerLat)); 
 		} catch (ArithmeticException ex) { throw new ArithmeticException("Not allowed values in affine\n (matrix cannot be inverted)\n in file \n" + fileNameWFL); }
 	}
 
@@ -305,5 +308,8 @@ public class MapInfoObject{
 	}
 	public CWPoint calcLatLon(Point p) {
 		return calcLatLon(p.x, p.y);
+	}
+	public Area getArea(){
+		return new Area(new CWPoint(affine[4], affine[5]), new CWPoint(lowlat, lowlon));
 	}
 }

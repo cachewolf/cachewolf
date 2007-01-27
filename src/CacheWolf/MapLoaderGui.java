@@ -37,9 +37,8 @@ public class MapLoaderGui extends Form {
 	mCheckBox overviewChkBox = new mCheckBox("download an overview map");
 	mCheckBox overviewChkBoxPerCache = new mCheckBox("download an overview map");
 
-	Vector cacheDB;
-	CWPoint topleft, buttomright;
 	CWPoint center;
+	Vector cacheDB;
 	boolean perCache;
 	boolean onlySelected;
 	float radius;
@@ -50,10 +49,10 @@ public class MapLoaderGui extends Form {
 
 	public MapLoaderGui(Vector cacheDBi) {
 		super();
-		cacheDB = cacheDBi;
 		this.title = MyLocale.getMsg(1800, "Download georeferenced maps"); 
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 		center = new CWPoint(pref.curCentrePt);
+		cacheDB = cacheDBi;
 		// tiles panel
 		MessageArea desc = new MessageArea(descString);
 		desc.modifyAll(mTextPad.NotEditable | mTextPad.DisplayOnly | mTextPad.NoFocus, mTextPad.TakesKeyFocus);
@@ -122,18 +121,18 @@ public class MapLoaderGui extends Form {
 		ewe.fx.Point size = new ewe.fx.Point(1000,1000); // Size of the downloaded maps
 		MapLoader ml = new MapLoader(Global.getPref().myproxy, Global.getPref().myproxyport);
 		if (forCachesChkBox.getState() || perCache) {
-			calcDownloadRect(); // calculate map boundaries from cacheDB
-			if (topleft == null) {
+			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
+			if (surArea == null) {
 				(new MessageBox("Error", "No Caches are seleted", MessageBox.OKB)).execute();
 				Vm.showWait(false);
 				progressBox.close(0);
 				return;
 			}
-			ml.setTiles(topleft, buttomright, (int)scale, size, 1+ overlapping /100);
+			ml.setTiles(surArea.topleft, surArea.buttomright, (int)scale, size, 1+ overlapping /100);
 			// calculate radius and center for overview map
-			center = new CWPoint((topleft.latDec + buttomright.latDec)/2, (topleft.lonDec + buttomright.lonDec)/2);
-			double radiuslat = (new CWPoint(center.latDec, buttomright.lonDec)).getDistance(buttomright);
-			double radiuslon = (new CWPoint(buttomright.latDec, center.lonDec)).getDistance(buttomright);
+			center = new CWPoint((surArea.topleft.latDec + surArea.buttomright.latDec)/2, (surArea.topleft.lonDec + surArea.buttomright.lonDec)/2);
+			double radiuslat = (new CWPoint(center.latDec, surArea.buttomright.lonDec)).getDistance(surArea.buttomright);
+			double radiuslon = (new CWPoint(surArea.buttomright.latDec, center.lonDec)).getDistance(surArea.buttomright);
 			radius = (float) (radiuslat < radiuslon ? radiuslon : radiuslat);
 		} else 
 		{ // calculate from center point an radius
@@ -172,31 +171,6 @@ public class MapLoaderGui extends Form {
 		(new MessageBox("Expedia maps", "Downloaded and calibrated the maps successfully", MessageBox.OKB)).execute();
 	}
 
-	public void calcDownloadRect() {
-		CacheHolder ch;
-		topleft = null;
-		buttomright = null;
-		CWPoint tmpca = new CWPoint();
-		numCaches = 0;
-		for (int i=cacheDB.size()-1; i >= 0; i--) {
-			ch = (CacheHolder) cacheDB.get(i);
-			if (!onlySelected || ch.is_Checked) {
-				if (ch.pos == null) { // this can not happen
-					tmpca.set(ch.LatLon);
-					ch.pos = new CWPoint(tmpca);
-				}
-				if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0 ){ // TODO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
-					if (topleft == null) topleft = new CWPoint(ch.pos);
-					if (buttomright == null) buttomright = new CWPoint(ch.pos);
-					if (topleft.latDec < ch.pos.latDec) topleft.latDec = ch.pos.latDec;
-					if (topleft.lonDec > ch.pos.lonDec) topleft.lonDec = ch.pos.lonDec;
-					if (buttomright.latDec > ch.pos.latDec) buttomright.latDec = ch.pos.latDec;
-					if (buttomright.lonDec < ch.pos.lonDec) buttomright.lonDec = ch.pos.lonDec;
-					numCaches++;
-				}
-			}
-		}
-	}
 
 	private void updateForCachesState() {
 		int a, b;

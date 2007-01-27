@@ -231,4 +231,34 @@ public class Profile {
 		return "Profile: Name="+name+"\nCentre="+centre.toString()+"\ndataDir="+dataDir+"\nlastSyncOC="+
 		     last_sync_opencaching+"\ndistOC="+distOC;
 	}
+	public Area getSourroundingArea(boolean onlyOfSelected) {
+		if (cacheDB == null || cacheDB.size() == 0) return null;
+		CacheHolder ch;
+		CWPoint topleft = null;
+		CWPoint buttomright = null;
+		CWPoint tmpca = new CWPoint();
+		int numCaches = 0;
+		for (int i=cacheDB.size()-1; i >= 0; i--) {
+			ch = (CacheHolder) cacheDB.get(i);
+			if (!onlyOfSelected || ch.is_Checked) {
+				if (ch.pos == null) { // this can not happen
+					tmpca.set(ch.LatLon);
+					ch.pos = new CWPoint(tmpca);
+				}
+				if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0 ){ // TODO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
+					if (topleft == null) topleft = new CWPoint(ch.pos);
+					if (buttomright == null) buttomright = new CWPoint(ch.pos);
+					if (topleft.latDec < ch.pos.latDec) topleft.latDec = ch.pos.latDec;
+					if (topleft.lonDec > ch.pos.lonDec) topleft.lonDec = ch.pos.lonDec;
+					if (buttomright.latDec > ch.pos.latDec) buttomright.latDec = ch.pos.latDec;
+					if (buttomright.lonDec < ch.pos.lonDec) buttomright.lonDec = ch.pos.lonDec;
+					numCaches++;
+				}
+			}
+		}
+		if (topleft != null && buttomright != null) 
+			return new Area(topleft, buttomright);
+		else return null;
+	}
+
 }

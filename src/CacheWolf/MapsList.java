@@ -3,21 +3,24 @@ package CacheWolf;
 import ewe.io.File;
 import ewe.io.IOException;
 import ewe.ui.MessageBox;
+import ewe.util.Hashtable;
 import ewe.util.Vector;
+import ewe.fx.*;
 /**
  * class to handle a list of maps
- * it loads the list, finds the best map for a given location
+ * it loads the list, finds the best map for a given location,
  * says if a map is available for a given lat lon at a given scale
  * @author r
  *
  */
 public class MapsList extends Vector {
+	public float scaleTolerance = 0.01f; // absolute deviations from this factor are seen to have the same scale
+	public Hashtable scales2Area;
 
 	/**
 	 * loads alle the maps in mapsPath in all subDirs but not recursive, only one level 
 	 * @param mapsPath
 	 */
-
 	public MapsList(String mapsPath) {
 		super(); // forget already loaded maps
 		//if (mmp.mapImage != null) 
@@ -65,59 +68,165 @@ public class MapsList extends Vector {
 
 	/**
 	 * find the best map for lat/lon in the list of maps
-	 * currently the best map is the one, whose center is nearest to
+	 * currently the best map is the one, whose center is nearest to lat/lon
+	 * and in Area with ist scale nearest to scale.
 	 * it always return a map (if the list is not empty) 
 	 * even if the map is not inbound
 	 * lat/lon
 	 * @param lat
 	 * @param lon
+	 * @param forceScale: when true, return null if no map with specified scale could be found
 	 * @return
 	 */
-public MapInfoObject getBestMap(double lat, double lon) {
+	public MapInfoObject getBestMap(double lat, double lon, Rect screen, float scale, boolean forceScale) {
 		if (size() == 0) return null;
+		if (scales2Area != null) scales2Area.clear();
 		MapInfoObject mi;
-		MapInfoObject bestMap = (MapInfoObject)get(0);
+		MapInfoObject bestMap = null; // = (MapInfoObject)get(0);
 		double minDistLat = 1000000000000000000000000000000000000000000000.0;
 		double minDistLon = 1000000000000000000000000000000000000000000000.0;
 		boolean latNearer, lonNearer;
-		int minDistMap = -1; // return this value if you are interested in the number of the map
 		boolean better = false;
-		for (int i=0; i < size() ;i++) {
+		Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMap.scale, bestMap);
+		float lastscale = -1;
+		for (int i=size()-1; i >= 0 ;i--) { 
 			better = false;
 			mi = (MapInfoObject)get(i);
-			latNearer = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
-			lonNearer = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm < minDistLon;
-			if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
-			if ( !better && (latNearer || lonNearer )) { 
-				if ( mi.center.getDistanceRad(lat, lon) < bestMap.center.getDistanceRad(lat, lon) ) better = true;
+			if (screenArea == null || java.lang.Math.abs(mi.scale - lastscale) > scaleTolerance) {
+				screenArea = getAreaForScreen(screen, lat, lon, mi.scale, mi);
+				lastscale = mi.scale;
 			}
-			if (better) {
-				minDistLat = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm;
-				minDistLon = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm;
-				minDistMap = i;
-				bestMap = mi;
-				// Vm.debug("better"+ i);
+			if (screenArea.isOverlapping(mi.getArea()) ) { // is on screen
+				if (!forceScale || (forceScale && java.lang.Math.abs(mi.scale - scale) > scaleTolerance)) { // different scale?
+					if (!forceScale && (mi.inBound(lat, lon) && (bestMap == null || (java.lang.Math.abs(mi.scale-scale) + scaleTolerance < java.lang.Math.abs(bestMap.scale-scale))))) 
+						better = true; // inbound and higher resolution -> better
+					else {
+						if ( bestMap == null || (java.lang.Math.abs(mi.scale-scale) < java.lang.Math.abs(bestMap.scale-scale) + scaleTolerance)) {
+							latNearer = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
+							lonNearer = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm < minDistLon;
+							if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
+							else {
+								if ( (latNearer || lonNearer )) { 
+									if (bestMap == null || mi.center.getDistanceRad(lat, lon) < bestMap.center.getDistanceRad(lat, lon) ) better = true;
+								}
+							}
+						}
+					}
+					if (better) {
+						minDistLat = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm;
+						minDistLon = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm;
+						bestMap = mi;
+						// Vm.debug("better"+ i);
+					}
+				}
 			}
 		}
-		return bestMap; // return minDistMap
+		return bestMap;
 	}
-
-	public MapInfoObject getMapForRect(CWPoint topleft, CWPoint bottomright){
+	/*
+	public MapInfoObject getBestMapNotStrictScale(double lat, double lon, Area screen, float scale) {
+		MapInfoObject ret = getBestMap(lat, lon, screen, scale, true);
+		if (ret == null) ret = getBestMap(lat, lon, screen, scale, false);
+		return ret;
+	}
+	 */
+	/**
+	 * return a map which includs topleft and bottomright
+	 * if no map includes both it returns null 
+	 */
+	public MapInfoObject getMapForArea(CWPoint topleft, CWPoint bottomright){
 		MapInfoObject mi;
 		MapInfoObject fittingmap = null;
-		for (int i=0; i < size() ;i++) {
+		for (int i=size() -1; i>=0 ;i--) {
 			mi = (MapInfoObject)get(i);
 			if (mi.inBound(topleft) && mi.inBound(bottomright)) {
-				if (fittingmap == null || fittingmap.scaleX > mi.scaleX) fittingmap = mi;
+				if (fittingmap == null || fittingmap.scale > mi.scale) fittingmap = mi;
 			}
 		} // for
 		return fittingmap;
 	}
-	/*
+
+	/**
+	 * 
+	 * @param lat
+	 * @param lon
+	 * @param screen
+	 * @param curScale
+	 * @param moreDetails true: find map with more details == higher resolustion = lower scale / false find map with less details = better overview
+	 * @return
+	 */
+	public MapInfoObject getMapChangeResolution(double lat, double lon, Rect screen, float curScale, boolean moreDetails){
+		if (size() == 0) return null;
+		if (scales2Area != null) scales2Area.clear();
+		MapInfoObject mi;
+		MapInfoObject bestMap = null; // = (MapInfoObject)get(0);
+		double minDistLat = 1000000000000000000000000000000000000000000000.0;
+		double minDistLon = 1000000000000000000000000000000000000000000000.0;
+		boolean latNearer, lonNearer;
+		boolean better = false;
+		Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMap.scale, bestMap);
+		float lastscale = -1;
+		for (int i=size()-1; i >= 0 ;i--) { 
+			better = false;
+			mi = (MapInfoObject)get(i);
+			if (mi.fileNameWFL == "") continue; // exclude "maps" without image
+			if (screenArea == null || java.lang.Math.abs(mi.scale - lastscale) > scaleTolerance) {
+				screenArea = getAreaForScreen(screen, lat, lon, mi.scale, mi);
+				lastscale = mi.scale;
+			}
+			if (screenArea.isOverlapping(mi.getArea())) { // is on screen
+				if (bestMap == null || java.lang.Math.abs(mi.scale - bestMap.scale) > scaleTolerance) { // different scale then known bestMap?
+					if (mi.inBound(lat, lon) && (      // more details                                 // less details than bestmap
+							(moreDetails && (curScale > mi.scale + scaleTolerance) && (bestMap == null || mi.scale-scaleTolerance > bestMap.scale) ) // higher resolution wanted and mi has higher res and a lower res than bestmap, because we dont want to overjump one resolution step
+							|| (!moreDetails && (curScale < mi.scale - scaleTolerance) && (bestMap == null || mi.scale + scaleTolerance < bestMap.scale) ) // lower resolution wanted and mi has lower res and a higher res than bestmap, because we dont want to overjump one resolution step
+					) )	better = true;	// inbound and higher resolution if higher res wanted -> better
+				} else { // same scale as bestmap -> look if naerer 
+					latNearer = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
+					lonNearer = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm < minDistLon;
+					if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
+					else {
+						if ( (latNearer || lonNearer )) { 
+							if (bestMap == null || mi.center.getDistanceRad(lat, lon) < bestMap.center.getDistanceRad(lat, lon) ) better = true;
+						}
+					}
+				} // same scale
+				if (better) {
+					minDistLat = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm;
+					minDistLon = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm;
+					bestMap = mi;
+					// Vm.debug("better"+ i);
+				}
+			}
+		}
+		return bestMap;
+	}
+	/**
+	 * returns an area in lat/lon of the screen
+	 * @param a screen width / height and position of lat/lon on the screen
+	 * @param lat
+	 * @param lon
+	 * @param scale
+	 * @param map
+	 * @return
+	 */
+	private Area getAreaForScreen(Rect a, double lat, double lon, float scale, MapInfoObject map) {
+		Area ret = null;
+/*		if (scales2Area == null) scales2Area = new Hashtable();
+		else ret = (Area)scales2Area.get(scale);
+		if (ret != null) return ret;
+	*/	// calculate screen Area
+		Point xy = map.calcMapXY(lat, lon);
+		Point topleft = new Point(xy.x - a.x, xy.y - a.y);
+		ret = new Area(map.calcLatLon(topleft), map.calcLatLon(topleft.x+a.width, topleft.y+a.height));
+		//scales2Area.put(new Float(scale), ret);
+		return ret; 
+	}
+
+	/** for determining if a new map should be downloaded
 	public boolean isInAmap(CWPoint topleft, CWPoint buttomright) {
 		if (!latRangeList.isInRange(topleft.latDec) || !latRangeList.isInRange(buttomright.latDec)) ||
 			!lonRangeList.inInRange(topleft.lonDec) || !lonRangeList.isInRange(buttomright.lonDec)
 			return false;
 	}
-	*/
+	 */
 }

@@ -540,7 +540,7 @@ public class GotoPanel extends CellPanel {
 		} catch (IOException e) {
 			(new MessageBox("Error", "Could not connect to GPS-receiver.\n Error while opening serial Port " + e.getMessage()+"\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS", MessageBox.OKB)).execute(); 
 		}
-		currTrack = new Track(RED);
+		currTrack = new Track(RED); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
 	}
 	
 	private String getGotoBtnText() {
