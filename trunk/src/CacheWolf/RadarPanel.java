@@ -28,13 +28,13 @@ public class RadarPanel extends CellPanel{
 	MainTab mt;
 	boolean penMoving = false;
 	int x1,y1,x2,y2 = 0;
+	boolean reCenterImage=true;
 	/**
 	* Constructor for the radar panel.
 	* Loads images, sets up the interactive panel and
 	* "navigation" buttons.
 	*/
 	public RadarPanel(){
-		
 		cacheImages[0] = new Image("0.png");
 		//cacheImages[1] = new Image();
 		cacheImages[2] = new Image("2.png");
@@ -78,13 +78,17 @@ public class RadarPanel extends CellPanel{
 		selectedWaypoint = sWp;
 		pref = p;
 		cacheDB = db;
-		double dummy;
-		height = (int)(pref.myAppHeight);
+		height = (int)(pref.myAppHeight)*6/5; // add 10% each at top/bottom 
 		//height = (int)height * 2;
 		////Vm.debug("Height: " + Convert.toString(height));
 		////Vm.debug("App Height: " + Convert.toString(pref.myAppHeight));
 		width = (int)(pref.myAppWidth);
 		//width = (int)width * 2;
+	}
+	
+	// Call this after the center has changed to re-center the radar panel
+	public void recenterRadar() {
+		reCenterImage=true;
 	}
 	
 	/**
@@ -101,6 +105,11 @@ public class RadarPanel extends CellPanel{
 		drawBackground();
 		drawCaches();
 		iActP.repaintNow();
+		if (reCenterImage) {
+			Dimension dispSize=getDisplayedSize(null);
+			iActP.scroll(pref.myAppWidth/10,(height-dispSize.height)/2);
+			reCenterImage=false;
+		}
 	}
 	
 	/**
@@ -114,68 +123,57 @@ public class RadarPanel extends CellPanel{
 		int x,y = 0;
 		CacheHolder holder;
 		double degrees;
-		int rowCounter = 0;
-		for(int i = 0; i < cacheDB.size(); i++){
+		double pi180=java.lang.Math.PI / 180.0;
+		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_black == false && holder.is_filtered == false)
-			{
-				////Vm.debug(holder.wayPoint + ": " +Convert.toString(holder.degrees));
-				//degrees = (holder.degrees - 360)*-1;
-				degrees = holder.degrees * java.lang.Math.PI / 180;
+			if(!holder.is_black && !holder.is_filtered) {
+				degrees = holder.degrees * pi180;
 				x =new Float(holder.kilom/scale *  java.lang.Math.sin(degrees)).intValue();
-				y = new Float(holder.kilom/scale *  java.lang.Math.cos(degrees)).intValue();
-				y=y*-1;
-				if(centerX+x<=width && centerY+y <= height){
-					if(toggleMod == 1){ // draw waypoint names
-						Image img = new Image(fm.getTextWidth(holder.wayPoint),fm.getHeight());
-						Graphics g = new Graphics(img);
-						g.setColor(new Color(0,0,0));
-						g.fillRect(0,0,fm.getTextWidth(holder.wayPoint), fm.getHeight());
-						g.setColor(new Color(255,255,255));
-						g.drawText(holder.wayPoint, 0,0);
-						aImg = new AniImage(img);
-						aImg.setLocation(centerX+x+5,centerY+y);
-						aImg.transparentColor = new Color(0,0,0);
-						aImg.properties = mImage.IsNotHot;
-						iActP.addImage(aImg);
-					}
-					if(toggleMod == 2 && holder.CacheName.length()> 0){ // draw cache names
-						try {
-							Image img = new Image(fm.getTextWidth(holder.CacheName),fm.getHeight());
+				y = -new Float(holder.kilom/scale *  java.lang.Math.cos(degrees)).intValue();
+				if(centerX+x>=0 && centerY+y>=0 && centerX+x<=width && centerY+y <= height){
+					if (toggleMod>0) {
+						String s;
+						if (toggleMod==1)
+							s=holder.wayPoint;
+						else
+							s=holder.CacheName;
+						if (s.length()>0) { 
+							int tw;
+							Image img = new Image(tw=fm.getTextWidth(s),fm.getHeight());
 							Graphics g = new Graphics(img);
-							g.setColor(new Color(0,0,0));
-							g.fillRect(0,0,fm.getTextWidth(holder.CacheName), fm.getHeight());
-							g.setColor(new Color(255,255,255));
-							g.drawText(holder.CacheName, 0,0);
+							g.setColor(Color.Black);
+							g.fillRect(0,0,tw, fm.getHeight());
+							g.setColor(Color.White);
+							g.drawText(s, 0,0);
 							aImg = new AniImage(img);
 							aImg.setLocation(centerX+x+5,centerY+y);
-							aImg.transparentColor = new Color(0,0,0);
+							aImg.transparentColor = Color.Black;
 							aImg.properties = mImage.IsNotHot;
 							iActP.addImage(aImg);
-						} catch (Exception e) {
-							e.printStackTrace();
 						}
 					}
-					rpi = new RadarPanelImage(cacheImages[Convert.parseInt(holder.type)]);
+					Image imgCache=cacheImages[Convert.parseInt(holder.type)];
+					// If we have no image for the cache type use a question mark
+					if (imgCache==null) imgCache=cacheImages[8]; 
+					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = holder.wayPoint;
-					rpi.rownum = rowCounter;
+					rpi.rownum = i;
 					rpi.setLocation(centerX+x-7,centerY+y-7);
 					iActP.addImage(rpi);
-					if(holder.wayPoint.equals(selectedWaypoint)){
-						Image img = new Image(20, 20);
-						Graphics g = new Graphics(img);
-						g.setColor(new Color(0,0,0));
-						g.fillRect(0,0,20,20);
-						g.setColor(new Color(255,0,0));
-						g.drawEllipse(0,0, 20,20);
-						aImg = new AniImage(img);
+					if(holder.wayPoint.equals(selectedWaypoint)){ // Draw red circle around selected wpt
+						Image imgCircle = new Image(20, 20);
+						Graphics gCircle = new Graphics(imgCircle);
+						gCircle.setColor(Color.Black);
+						gCircle.fillRect(0,0,20,20);
+						gCircle.setColor(new Color(255,0,0));
+						gCircle.drawEllipse(0,0, 20,20);
+						aImg = new AniImage(imgCircle);
 						aImg.setLocation(centerX+x-9,centerY+y-9);
 						aImg.transparentColor = new Color(0,0,0);
 						aImg.properties = mImage.IsNotHot;
 						iActP.addImage(aImg);
 					}
 				}//if center...
-				rowCounter++;
 			}// if is_black...
 		}
 	}
@@ -191,7 +189,7 @@ public class RadarPanel extends CellPanel{
 		iActP.refresh();
 		Image img = new Image(width, height);
 		Graphics g = new Graphics(img);
-		g.setColor(new Color(0,0,0));
+		g.setColor(Color.Black);
 		//Vm.debug(Convert.toString(height));
 		g.fillRect(0,0,width, height);
 		
@@ -221,8 +219,14 @@ public class RadarPanel extends CellPanel{
 		}
 		g.drawLine(centerX,0,centerX,height);
 		g.drawLine(0,centerY,width,centerY);
-		
-		g.free();
+
+		// Show 1 KM radius only if we have zoomed in (useful for cities with high density of caches)
+		if (scaleKm<=20) {
+			g.setColor(new Color(255,255,0)); // Yellow for 1km circle
+			radius = radstep/5;
+			g.drawEllipse(centerX-radius/2,centerY-radius/2, radius,radius);
+			g.free();
+		}	
 		AniImage aImg = new AniImage(img);
 		//iActP.addImage(aImg);
 		iActP.backgroundImage = img;
@@ -232,15 +236,19 @@ public class RadarPanel extends CellPanel{
 	}
 	
 	public void onEvent(Event ev){
-		
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btPlus){
-				scaleKm = scaleKm - 10;
-				if(scaleKm < 10) scaleKm = 10;
+				if (scaleKm>10) scaleKm = scaleKm - 10;
+				else if (scaleKm==10) scaleKm=5;
+				else if (scaleKm==5) scaleKm=2;
+				else scaleKm=1;
 				drawThePanel();
 			}
 			if (ev.target == btMinus){
-				scaleKm = scaleKm + 10;
+				if (scaleKm==1) scaleKm=2;
+				else if(scaleKm==2) scaleKm=5;
+				else if(scaleKm==5) scaleKm=10;
+				else scaleKm = scaleKm + 10;
 				drawThePanel();
 			}
 			if (ev.target == btToggle){
