@@ -49,11 +49,11 @@ public class MapLoader {
 	 * @param radius in meters
 	 * @param scale in "alti" value 1 alti =  3950 /2817.947378 = 1,046861280317350198581316446428 meters per pixel
 	 * @param size in pixels
-	 * @param overlapping 1.2 means 20% overlapping
+	 * @param overlapping in pixels
 	 * @param path without "/" at the end
 	 * 
 	 */
-	public void setTiles (CWPoint center, float radius, int scale, Point size, float overlapping) {
+	public void setTiles (CWPoint center, float radius, int scale, Point size, int overlapping) {
 		double metersPerLat = (1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		double metersPerLon = metersPerLat * java.lang.Math.cos(center.latDec/180*java.lang.Math.PI);
 		topleft = new CWPoint(center.latDec + (radius / metersPerLat), center.lonDec - (radius / metersPerLon));
@@ -62,7 +62,7 @@ public class MapLoader {
 		this.setTiles(topleft, buttomright, scale, size, overlapping);
 	}
 	
-	public void setTiles(CWPoint toplefti, CWPoint buttomrighti, int scale, Point size, float overlapping) {
+	public void setTiles(CWPoint toplefti, CWPoint buttomrighti, int scale, Point size, int overlapping) {
 		//if (toplefti.latDec <= buttomrighti.latDec || toplefti.lonDec >= toplefti.lonDec) throw new IllegalArgumentException("topleft must be left and above buttom right");
 		topleft = new CWPoint(toplefti);
 		buttomright = new CWPoint(buttomrighti);
@@ -77,8 +77,10 @@ public class MapLoader {
 		double pixelsX = -(topleft.lonDec - buttomright.lonDec) * pixelsPerLon ; 
 		
 		//border sizes around given area and overlapping between tiles
-		int borderX = (int) java.lang.Math.round((float)size.x * (overlapping - 1.0));
-		int borderY = (int) java.lang.Math.round((float)size.y * (overlapping - 1.0));
+		//int borderX = (int) java.lang.Math.round((float)size.x * (overlapping - 1.0));
+		//int borderY = (int) java.lang.Math.round((float)size.y * (overlapping - 1.0));
+		int borderX = overlapping;
+		int borderY = overlapping;
 		
 		numMapsY = (int) java.lang.Math.ceil( (pixelsY + (float)borderY) / (float)(size.y - borderY) );
 		numMapsX = (int) java.lang.Math.ceil( (pixelsX + (float)borderX) / (float)(size.x - borderX) );
