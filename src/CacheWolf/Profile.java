@@ -93,7 +93,7 @@ public class Profile {
 				distOC = "0";
 			}
 			
-			detfile.print("    <FILTER rose = \""+filterRose+"\" type = \""+filterType+"\" var = \""+filterVar+"\"/>\n");
+			detfile.print("    <FILTER rose = \""+filterRose+"\" type = \""+filterType+"\" var = \""+filterVar+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			for(int i = 0; i<cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
