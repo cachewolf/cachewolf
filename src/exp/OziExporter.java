@@ -25,6 +25,7 @@ public class OziExporter extends Exporter{
 
 	public String record(CacheHolder ch, String lat, String lon){
 		StringBuffer strBuf = new StringBuffer(200);
+		String tmpName;
 
 		// Field 1 : Number - this is the location in the array (max 1000), must be unique, 
 		// usually start at 1 and increment. Can be set to -1 (minus 1) and the number will be auto generated.
@@ -48,11 +49,12 @@ public class OziExporter extends Exporter{
 		// Field 10 : Background Color (RGB value)
 		strBuf.append("16777215,");
 		// Field 11 : Description (max 40), no commas
-		if (ch.CacheName.length() <= 40){
-			strBuf.append(ch.CacheName + ",");
+		tmpName = simplifyString(ch.CacheName);
+		if (tmpName.length() <= 40){
+			strBuf.append(tmpName + ",");
 		}
 		else {
-			strBuf.append(ch.CacheName.substring(0,40) + ",");
+			strBuf.append(tmpName.substring(0,40) + ",");
 		}
 		// Field 12 : Pointer Direction
 		strBuf.append("0,");
