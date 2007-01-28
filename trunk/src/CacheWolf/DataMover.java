@@ -20,12 +20,11 @@ public class DataMover {
 	public DataMover(Preferences p, Profile prof){
 		profile=prof;
 		srcDB = profile.cacheDB;
-		dstDB = new Vector();
 		pref = p;
 	}
 	public void deleteCaches(){
 		
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(145,"Cachedata will be deleted! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(145,"Cachedata of ALL VISIBLE caches will be deleted! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
 		if (mBox.execute() != MessageBox.IDOK){
 			return;
 		}
@@ -33,7 +32,7 @@ public class DataMover {
 		// Loop through database
 		for(int i = 0; i<srcDB.size(); i++){
 			CacheHolder srcHolder=(CacheHolder)srcDB.get(i);
-			if(srcHolder.is_black == false && srcHolder.is_filtered == false){
+			if(srcHolder.isVisible()){
 				deleteCacheFiles(srcHolder.wayPoint, profile.dataDir);
 				srcDB.removeElementAt(i);
 				i--;
@@ -49,12 +48,13 @@ public class DataMover {
 		
 		// Select destination directory
 		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.baseDir);
-		fc.setTitle(MyLocale.getMsg(148,"Select Targetdirectory"));
+		fc.setTitle(MyLocale.getMsg(148,"Select Target directory"));
 		if(fc.execute() != FormBase.IDCANCEL){
 			dstProfile.dataDir = fc.getChosen() + "/";
 		}
 		else return;
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(146,"Cachedata will be copied! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
+		if (dstProfile.dataDir.equals(profile.dataDir)) return;
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(146,"Cachedata of ALL VISIBLE caches will be copied! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
 		if (mBox.execute() != MessageBox.IDOK){
 			return;
 		}
@@ -64,12 +64,13 @@ public class DataMover {
 		if(ftest.exists()){
 			dstProfile.readIndex();
 		}
+		dstDB=dstProfile.cacheDB;
 		// Loop through database
 		for(int i = 0; i<srcDB.size(); i++){
 			CacheHolder srcHolder=(CacheHolder)srcDB.get(i);
-			if(srcHolder.is_black == false && srcHolder.is_filtered == false){
+			if(srcHolder.isVisible()){
 				// does cache exists in destDB ?
-				dstPos = searchWpt(dstDB, srcHolder.wayPoint);
+				dstPos = dstProfile.getCacheIndex(srcHolder.wayPoint);
 				if (dstPos >= 0){
 					deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
 					copyCacheFiles(srcHolder.wayPoint,profile.dataDir, dstProfile.dataDir);
@@ -94,12 +95,13 @@ public class DataMover {
 		
 		// Select destination directory
 		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.baseDir);
-		fc.setTitle(MyLocale.getMsg(148,"Select Targetdirectory"));
+		fc.setTitle(MyLocale.getMsg(148,"Select Target directory"));
 		if(fc.execute() != FormBase.IDCANCEL){
 			dstProfile.dataDir = fc.getChosen() + "/";
 		}
 		else return;
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(147,"Cachedata will be moved! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
+		if (dstProfile.dataDir.equals(profile.dataDir)) return;
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(147,"Cachedata of ALL VISIBLE caches will be moved! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
 		if (mBox.execute() != MessageBox.IDOK){
 			return;
 		}
@@ -108,12 +110,13 @@ public class DataMover {
 		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if(ftest.exists()){
 			dstProfile.readIndex();		}
+		dstDB = dstProfile.cacheDB;
 		// Loop through database
 		for(int i = 0; i<srcDB.size(); i++){
 			CacheHolder srcHolder=(CacheHolder)srcDB.get(i);
-			if(srcHolder.is_black == false && srcHolder.is_filtered == false){
+			if(srcHolder.isVisible()){
 				// does cache exists in destDB ?
-				dstPos = searchWpt(dstDB, srcHolder.wayPoint);
+				dstPos = dstProfile.getCacheIndex(srcHolder.wayPoint);
 				if (dstPos >= 0){
 					deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
 					moveCacheFiles(srcHolder.wayPoint,profile.dataDir, dstProfile.dataDir);
@@ -135,24 +138,6 @@ public class DataMover {
 		// write indexfiles
 		dstProfile.saveIndex(pref);
 		profile.saveIndex(pref);
-	}
-	/**
-	* Method to iterate through cache database and look for waypoint.
-	* Returns true if waypoint is found, else false
-	*/
-	private int searchWpt(Vector db, String wpt){
-		if(wpt.length()>0){
-			wpt = wpt.toUpperCase();
-			CacheHolder ch = new CacheHolder();
-			//Search through complete database
-			for(int i = 0;i < db.size();i++){
-				ch = (CacheHolder)db.get(i);
-				if(ch.wayPoint.indexOf(wpt) >=0 ){
-					return i;
-				}
-			} // for
-		} // if
-		return -1;
 	}
 
 	public void deleteCacheFiles(String wpt, String dir){

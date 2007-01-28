@@ -438,6 +438,9 @@ public CacheHolder update(CacheHolder newCh){
 	   else return false;
    }
    
-
+   /** A cache is visible if it is not blacklisted and not filtered */
+   public boolean isVisible() {
+	   return !is_black && !is_filtered;
+   }
   
 }
