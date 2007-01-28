@@ -290,7 +290,7 @@ public class DetailsPanel extends CellPanel{
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			
 			if(ev.target == btNotes){
-				NotesScreen nsc = new NotesScreen(thisCache, profile);
+				NotesScreen nsc = new NotesScreen(thisCache);
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(ev.target == showMap){

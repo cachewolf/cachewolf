@@ -13,26 +13,19 @@ import ewe.filechooser.*;
 */
 public class NotesScreen extends Form{
 	mTextPad wayNotes = new mTextPad();
-	CacheHolder thisCache = new CacheHolder();
-	mButton addDateTime, btSave;
-	Profile profile;
+	CacheHolder thisCache = null;
+	mButton addDateTime = new mButton((IImage)new mImage("date_time.png"));
+	mButton btSave = new mButton(MyLocale.getMsg(127,"Save"));
+	ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
 	
-	public NotesScreen(CacheHolder ch, Profile profile){
+	public NotesScreen(CacheHolder ch){
 		this.title = "Notes";
-		this.setPreferredSize(Global.getPref().myAppWidth, Global.getPref().myAppHeight);
+		setPreferredSize(Global.getPref().myAppWidth, Global.getPref().myAppHeight);
 		thisCache = ch;
-		this.profile = profile;
-		mImage mI3 = new mImage("date_time.png");
-		addDateTime = new mButton((IImage)mI3);
-		CellPanel cp = new CellPanel();
-		btSave = new mButton("Save");
-		cp.addNext(addDateTime);
-		cp.addLast(btSave);
-		ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
 		wayNotes.setText(thisCache.CacheNotes);
-		//this.addLast(sbp, this.STRETCH, this.FILL);
-		this.addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
-		this.addLast(cp);
+		addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
+		addNext(addDateTime,CellConstants.HSTRETCH,CellConstants.HFILL);
+		addLast(btSave,CellConstants.HSTRETCH,CellConstants.HFILL);
 	}
 	
 	public void onEvent(Event ev){
@@ -49,7 +42,7 @@ public class NotesScreen extends Form{
 			}
 			if(ev.target == btSave){
 				thisCache.CacheNotes = wayNotes.getText();
-				thisCache.saveCacheDetails( profile.dataDir);
+				thisCache.saveCacheDetails( Global.getProfile().dataDir);
 				this.close(0);
 			}
 		}
