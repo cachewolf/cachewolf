@@ -291,7 +291,7 @@ public class Profile {
 			// The following call is not very clean as it mixes UI with base classes
 			// However, calling it from here allows us to recenter the
 			// radar panel with only one call
-			Global.mainTab.radarP.recenterRadar();
+			if (Global.mainTab!=null) Global.mainTab.radarP.recenterRadar();
 		} //updateBearingDistance
 
 		/**
