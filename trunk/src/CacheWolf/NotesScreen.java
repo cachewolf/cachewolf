@@ -24,8 +24,9 @@ public class NotesScreen extends Form{
 		thisCache = ch;
 		wayNotes.setText(thisCache.CacheNotes);
 		addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
-		addNext(addDateTime,CellConstants.HSTRETCH,CellConstants.HFILL);
-		addLast(btSave,CellConstants.HSTRETCH,CellConstants.HFILL);
+		titleControls=new CellPanel();
+		titleControls.addNext(addDateTime,CellConstants.HSTRETCH,CellConstants.HFILL);
+		titleControls.addLast(btSave,CellConstants.HSTRETCH,CellConstants.HFILL);
 	}
 	
 	public void onEvent(Event ev){
