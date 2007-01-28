@@ -438,35 +438,6 @@ public CacheHolder update(CacheHolder newCh){
 	   else return false;
    }
    
-   public static void buildReferences(Vector cacheDB){
-	   CacheHolder ch, mainCh;
-	   Hashtable dbIndex = new Hashtable((int)(cacheDB.size()/0.75f + 1), 0.75f); // initialize so that von rehashing is neccessary
-	   Integer index;
-	   // Build index for faster search and clear all references
-	   for(int i = cacheDB.size() -1; i >= 0;i--){
-			ch = (CacheHolder)cacheDB.get(i);
-			ch.addiWpts.clear();
-			ch.mainCache = null; 
-			dbIndex.put((String)ch.wayPoint, new Integer(i));
-	   }
-	   // Build refeneces
-	   for(int i = cacheDB.size() -1; i >= 0;i--){
-			ch = (CacheHolder)cacheDB.get(i);
-			if (ch.isAddiWpt()) {
-				//search main cache
-				if (ch.wayPoint.length() == 5){
-					index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(1));
-				} 
-				else {
-					index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(2));
-				}
-				if (index != null) {
-					mainCh = (CacheHolder) cacheDB.get(index.intValue());
-					mainCh.addiWpts.add(ch);
-					ch.mainCache = mainCh;
-				}// if
-			}// if
-	   }// for
-   }
+
   
 }

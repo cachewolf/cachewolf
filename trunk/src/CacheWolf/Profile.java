@@ -8,6 +8,7 @@ import ewe.io.IOException;
 import ewe.io.PrintWriter;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
+import ewe.util.Hashtable;
 import ewe.util.Vector;
 
 /**
@@ -111,7 +112,7 @@ public class Profile {
 			}
 			detfile.print("</CACHELIST>\n");
 			detfile.close();
-			CacheHolder.buildReferences(cacheDB);
+			buildReferences();
 		}catch(Exception e){
 			Vm.debug("Problem writing to index file "+e.toString());
 		}
@@ -204,7 +205,7 @@ public class Profile {
 			}
 			in.close();
 			// Build references between caches and addi wpts
-			CacheHolder.buildReferences(cacheDB);
+			buildReferences();
 			
 		} catch (FileNotFoundException e) {
 			Vm.debug("index.xml not found"); // Normal when profile is opened for first time
@@ -266,7 +267,6 @@ public class Profile {
 		*	list.
 		*	@see	CacheHolder
 		*	@see	Extractor
-		*	@see	Navi
 		*/
 		public void updateBearingDistance(){
 			CWPoint fromPoint = new CWPoint(Global.getPref().curCentrePt); // Clone current centre to be sure
@@ -294,4 +294,38 @@ public class Profile {
 			Global.mainTab.radarP.recenterRadar();
 		} //updateBearingDistance
 
+		/**
+		 * Method to build the reference between addi wpt
+		 * and main cache.
+		 */
+		   public void buildReferences(){
+			   CacheHolder ch, mainCh;
+			   Hashtable dbIndex = new Hashtable((int)(cacheDB.size()/0.75f + 1), 0.75f); // initialize so that von rehashing is neccessary
+			   Integer index;
+			   // Build index for faster search and clear all references
+			   for(int i = cacheDB.size() -1; i >= 0;i--){
+					ch = (CacheHolder)cacheDB.get(i);
+					ch.addiWpts.clear();
+					ch.mainCache = null; 
+					dbIndex.put((String)ch.wayPoint, new Integer(i));
+			   }
+			   // Build refeneces
+			   for(int i = cacheDB.size() -1; i >= 0;i--){
+					ch = (CacheHolder)cacheDB.get(i);
+					if (ch.isAddiWpt()) {
+						//search main cache
+						if (ch.wayPoint.length() == 5){
+							index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(1));
+						} 
+						else {
+							index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(2));
+						}
+						if (index != null) {
+							mainCh = (CacheHolder) cacheDB.get(index.intValue());
+							mainCh.addiWpts.add(ch);
+							ch.mainCache = mainCh;
+						}// if
+					}// if
+			   }// for
+		   }
 }
