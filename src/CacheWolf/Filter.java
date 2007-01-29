@@ -303,11 +303,20 @@ public class Filter{
 				if(terrdirec == GREATER && dummyd2 >= dummyd1) inTerr = 1;
 			}
 			
-			if(foundByMe == true){
-				inFound = 0;
-				matchFound = 1;
-				if(ch.is_found) inFound = 1; 
+			matchFound = 1;
+			inFound = 1;
+			if(foundByMe == false){
+				matchFound = 0;
+				if(ch.is_found == false) inFound = 0;
 			}
+			
+			/*
+			Vm.debug("Is found: " + ch.is_found);
+			Vm.debug("Params: " +matchFound + " / " +inFound);
+			Vm.debug(" Matcher: " +(~(matchFound ^ inFound)));
+			
+			Vm.debug(" Boolean: " +(foundByMe && ch.is_found));
+			*/
 			
 			if(ownedByMe){
 				matchOwned = 1;
@@ -326,16 +335,19 @@ public class Filter{
 				if(ch.is_available) inAvailable = 1;
 			}
 
+			
+			
 			if((cacheTypePattern & typeMatchPattern) >= 1 &&
 					(cacheRosePattern & roseMatchPattern) >= 1 && 
-					(~(matchDist ^ inDist)) == -1 &&
-					(~(matchDiff ^ inDiff)) == -1 &&
-					(~(matchTerr ^ inTerr)) == -1 &&
-					(~(matchFound ^ inFound)) == -1 &&
-					(~(matchOwned ^ inOwned)) == -1 &&
-					(~(matchArchived ^ inArchived)) == -1 &&
-					(~(matchAvaliable ^ inAvailable)) == -1)
+					//(~(matchDist ^ inDist)) == -2 &&
+					//(~(matchDiff ^ inDiff)) == -2 &&
+					//(~(matchTerr ^ inTerr)) == -2 &&
+					(~(matchFound ^ inFound)) == -1 )
+					//(~(matchOwned ^ inOwned)) == -2 &&
+					//(~(matchArchived ^ inArchived)) == -2 &&
+					//(~(matchAvaliable ^ inAvailable)) == -2)
 					ch.is_filtered = false;
+			if(ch.is_black) ch.is_filtered = true;
 			cacheDB.set(i,ch);
 		} // for
 	}
