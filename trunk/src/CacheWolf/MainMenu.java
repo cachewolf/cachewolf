@@ -273,7 +273,7 @@ public class MainMenu extends MenuBar {
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == exportGPS){
-				Vm.showWait(true);
+	/*			Vm.showWait(true);
 				LocExporter loc = new LocExporter();
 				String tmpFileName = File.getProgramDirectory() + "/temp.loc";
 				loc.setTmpFileName(tmpFileName);
@@ -285,7 +285,7 @@ public class MainMenu extends MenuBar {
 					p.waitFor();
 				}catch(IOException ioex){};
 				ProgressBarForm.clear();
-				Vm.showWait(false);
+		*/		Vm.showWait(false);
 			}
 			if(mev.selectedItem == exportCacheMate){
 				Vm.showWait(true);
