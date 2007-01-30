@@ -115,7 +115,6 @@ public class MovingMap extends Form {
 	public void resizeTo(int w,int h) {
 		super.resizeTo(w, h);
 		updateFormSize(w, h);
-		Vm.debug("resizeTo");
 	}
 
 	public void updateFormSize(int w, int h) {
@@ -135,7 +134,8 @@ public class MovingMap extends Form {
 
 	/**
 	 * loads the list of maps
-	 *
+	 * @param mapsPath must not have a trailing end "/"
+	 * @param lat used to create empty maps with correct conversion from lon to meters the latitude must be known
 	 */
 	public void loadMaps(String mapsPath, double lat){
 		this.mapPath = mapsPath;
@@ -143,14 +143,15 @@ public class MovingMap extends Form {
 		resetCenterOfMap();
 		InfoBox inf = new InfoBox("Info", "Loading list of maps...");
 		inf.exec();
-		maps = new MapsList(mapsPath);
+		maps = new MapsList(mapsPath); // this actually loads the maps
 		if (maps.isEmpty()) {
-			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung"), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung \n Bitte wählen Sie einen Maßstab,\n in dem der Track und die markierten Caches angezeigt werden sollen"), MessageBox.OKB)).execute();
 			noMapsAvailable = true;
 		} else noMapsAvailable = false;
 		maps.addEmptyMaps(lat);
 		inf.close(0);
 		Vm.showWait(this, false);
+		if (noMapsAvailable) mmp.chooseMap(); // let the user select an scale
 		this.mapsloaded = true;
 	}
 
@@ -169,9 +170,9 @@ public class MovingMap extends Form {
 			dd.decimalPlaces = 2;
 			d = "Distance: " + dd.toString() + "km";
 		}
-		DistanceImageGraphics.setColor(Color.MediumBlue);
+		DistanceImageGraphics.setColor(Color.DarkBlue);
 		DistanceImageGraphics.drawText(d, 0, 0);
-		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.DarkBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
+		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.LightBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
 		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.White,0,0,DistanceImage.location.width,DistanceImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
 	}
 
@@ -486,6 +487,11 @@ public class MovingMap extends Form {
 
 	}
 
+	/** call this if the map moved on the screen (by dragging)
+	 * this routine will adjust (move accordingly) all other symbols on the screen
+	 * @param diffX
+	 * @param diffY
+	 */
 	public void mapMoved(int diffX, int diffY) {
 		int w = posCircle.getWidth();
 		int h = posCircle.getHeight();
@@ -711,6 +717,7 @@ public class MovingMap extends Form {
 		switch (mapChangeModus) {
 		case NORMAL_KEEP_RESOLUTION: 
 			newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, scaleWanted, false);
+			if (newmap == null) newmap = currentMap;
 			if (java.lang.Math.abs(newmap.scale - scaleWanted) < maps.scaleTolerance) wantMapTest = false;
 			break;
 		case HIGHEST_RESOLUTION: newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, 0.000001f, false); break;
@@ -721,7 +728,7 @@ public class MovingMap extends Form {
 		default: (new MessageBox("Error", "Programmfehler: \nillegal mapChangeModus: " + mapChangeModus, MessageBox.OKB)).execute(); break;
 		}
 		if ( newmap != null && (currentMap == null || currentMap.mapName != newmap.mapName) ) {
-			setMap(newmap, lat, lon);
+			setMap(newmap, lat, lon); // TODO handling, wenn newmap == null
 			Vm.debug("better map found");
 			return;
 		}
@@ -769,10 +776,10 @@ public class MovingMap extends Form {
 	 */
 	public void loadMoreDetailedMap(boolean betterOverview){
 		Object [] s = getRectForMapChange(posCircleLat, posCircleLon);
-	//	CWPoint cll = (CWPoint) s[0]; 
+		CWPoint cll = (CWPoint) s[0]; 
 		Rect screen = (Rect) s[1]; 
 		//Rect screen = new Rect(posCircleX, posCircleY, (width != 0 ? width : pref.myAppWidth), (height != 0 ? height : pref.myAppHeight));
-		MapInfoObject m = maps.getMapChangeResolution(posCircleLat, posCircleLon, screen, currentMap.scale, !betterOverview);
+		MapInfoObject m = maps.getMapChangeResolution(cll.latDec, cll.lonDec, screen, currentMap.scale, !betterOverview);
 		if (m != null) setMap(m, posCircleLat, posCircleLon);
 		else (new MessageBox("Error", "No "+ (betterOverview ? "less" : "more") + " deteiled map available", MessageBox.OKB)).execute();
 	}
@@ -1209,7 +1216,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		super.doPaint(g, area);
 		if (mm.gotoPos != null) {
 			Point dest = mm.getXYonScreen(mm.gotoPos.lat, mm.gotoPos.lon);
-			g.setPen(new Pen(Color.MediumBlue, Pen.SOLID, 3));
+			g.setPen(new Pen(Color.DarkBlue, Pen.SOLID, 3));
 			g.drawLine(mm.posCircleX, mm.posCircleY, dest.x, dest.y);
 		}
 	}
