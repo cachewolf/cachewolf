@@ -39,7 +39,7 @@ public class myTableControl extends TableControl{
 			CacheHolder ch;
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
-				ch.is_Checked = true;
+				if (ch.is_filtered == false) ch.is_Checked = true;
 				//db.set(i, ch);
 			}
 			tbp.myMod.cacheSelectionChanged = true;
@@ -57,7 +57,7 @@ public class myTableControl extends TableControl{
 		if (selectedItem.toString().equals(MyLocale.getMsg(1016,"De-select all"))){
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
-				ch.is_Checked = false;
+				if (ch.is_filtered == false) ch.is_Checked = false;
 				//db.set(i, ch);
 			}
 			tbp.myMod.cacheSelectionChanged = true;
