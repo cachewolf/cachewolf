@@ -178,12 +178,19 @@ public class Preferences extends MinML{
 	}
 
 	/**
-	 * 
+	 * it creates the directory if it doesn't exist
 	 * @return the path where manually imported maps should be stored
 	 * this should be adjustable in preferences...
 	 */
 	public String getMapManuallySavePath() {
-		return baseDir + mapsPath;
+		String mapsDir = baseDir + mapsPath;
+		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
+			if (new File(mapsDir).mkdirs() == false) {// dir creation failed?
+				(new MessageBox("Error", "Error: cannot create maps directory: \n"+mapsDir, MessageBox.OKB)).exec();
+				return null;
+			}
+		}
+		return mapsDir;
 	}
 
 	/**
