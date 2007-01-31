@@ -35,11 +35,17 @@ public class Profile {
 	/** Distance for opencaching caches */
 	public String distOC = new String();
 	
-	public String filterType = new String("11111111110");
-	public String filterRose = new String("1111111111111111");
+	public final static String FILTERTYPE="11111111110";
+	public final static String FILTERROSE="1111111111111111";
+	public final static String FILTERVAR="11111111";
+	public String filterType = new String(FILTERTYPE);
+	public String filterRose = new String(FILTERROSE);
 	//filter settings for archived ... owner (section) in filterscreen
-	public String filterVar = new String("1111");
-	//TODO Add the current filter settings here so that they are restored when the profile is reloaded
+	public String filterVar = new String(FILTERVAR);
+	public String filterDist=new String("");
+	public String filterDiff=new String("");
+	public String filterTerr=new String("");
+	
 	//TODO Add other settings, such as max. number of logs to spider
 	//TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
 	
@@ -93,7 +99,9 @@ public class Profile {
 				distOC = "0";
 			}
 			
-			detfile.print("    <FILTER rose = \""+filterRose+"\" type = \""+filterType+"\" var = \""+filterVar+"\" />\n");
+			detfile.print("    <FILTER rose = \""+filterRose+"\" type = \""+filterType+
+					 "\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
+					 filterDiff+"\" terr = \""+filterTerr+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			for(int i = 0; i<cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
@@ -200,6 +208,9 @@ public class Profile {
 					filterRose = ex.findNext();
 					filterType = ex.findNext();
 					filterVar = ex.findNext();
+					filterDist = ex.findNext();
+					filterDiff = ex.findNext();
+					filterTerr = ex.findNext();
 //					 Bilbowolf: Pattern for storing filter <FILTER type="01001101" rose = "010010101" var = "0101" dist = "<12" diff = ">13" terr = "<1"/>
 				}
 			}

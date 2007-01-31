@@ -32,6 +32,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditProfile;
 	private Form father;
 	private TablePanel tbp;
+	private FilterScreen scnFilter=new FilterScreen();
 	
 	public MainMenu(Form f){
 		father = f;
@@ -116,13 +117,14 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterAndSearchMenuItems=new MenuItem[6];
+		MenuItem[] filterAndSearchMenuItems=new MenuItem[7];
 		filterAndSearchMenuItems[0]=filtCreate;
 		filterAndSearchMenuItems[1]=filtInvert;
 		filterAndSearchMenuItems[2]=filtClear;
-		filterAndSearchMenuItems[3]=mnuSeparator;
-		filterAndSearchMenuItems[4]=search;
-		filterAndSearchMenuItems[5]=searchClr;
+		filterAndSearchMenuItems[3]=filtBlack;
+		filterAndSearchMenuItems[4]=mnuSeparator;
+		filterAndSearchMenuItems[5]=search;
+		filterAndSearchMenuItems[6]=searchClr;
 		
 		// Depending on screen width display either filter and searach menus or the combined menu 
 		if (MyLocale.getScreenWidth()>300) {
@@ -258,8 +260,8 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == filtCreate){
-				FilterScreen fsc = new FilterScreen(cacheDB, pref.baseDir);
-				fsc.execute(father.getFrame(), Gui.CENTER_FRAME);
+				scnFilter.setData(cacheDB, pref.baseDir);
+				scnFilter.execute(father.getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == filtInvert){

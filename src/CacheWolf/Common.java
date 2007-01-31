@@ -5,8 +5,14 @@ import ewe.sys.Convert;
 
 public final class Common {
 
+	private static char digSep=MyLocale.getDigSeparator().charAt(0);
+	private static char notDigSep=MyLocale.getDigSeparator().charAt(0)=='.'?',':'.';
+	
 	public static double parseDouble(String value){
-		String a = new String();
+
+/*		The following code is EXTREMELY inefficient.
+        ============================================
+ 		String a = new String();
 		String b = new String();
 		char separator = '.';
 		double aDbl, bDbl;
@@ -25,9 +31,16 @@ public final class Common {
 		b = value.substring(value.indexOf(separator)+1);
 		bDbl = Convert.toDouble(b);
 		// Calc Minutes
-		bDbl = bDbl / java.lang.Math.pow((double)10,(double)b.length());
+		bDbl = bDbl / java.lang.Math.pow((double)10,(double)b.length()); // Using pow is BAD NEWS!!!
 		
 		return aDbl>=0?aDbl + bDbl:aDbl - bDbl;
+*/      
+		// This is at least a factor of 3 faster (returns 0 for invalid arguments)
+		try {
+			return java.lang.Double.parseDouble(value.replace(notDigSep,digSep));
+		} catch (Exception e) {
+			return 0.0;
+		}
 	}
 	public static String rot13 (String text) {
 		String dummy = new String();
