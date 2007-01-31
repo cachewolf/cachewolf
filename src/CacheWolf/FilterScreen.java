@@ -59,7 +59,7 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 1 - Bearing & Distance
 		//////////////////////////
-		addTitle(pnlBearDist,"Bearings & Distance");
+		addTitle(pnlBearDist,MyLocale.getMsg(714,"Bearings & Distance"));
 		pnlBearDist.addNext(new mLabel(MyLocale.getMsg(701,"Distance: ")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlBearDist.addNext(distChc = new mChoice(new String[]{"<=", ">="},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlBearDist.addLast(distIn = new mInput(),CellConstants.DONTSTRETCH, CellConstants.FILL);
@@ -83,17 +83,17 @@ public class FilterScreen extends Form{
 		roseP.addNext(WSW = new mCheckBox("WSW"),CellConstants.HSTRETCH, CellConstants.FILL);
 		roseP.addNext(W = new mCheckBox("W "),CellConstants.HSTRETCH, CellConstants.FILL);
 		roseP.addLast(WNW = new mCheckBox("WNW"),CellConstants.HSTRETCH, CellConstants.FILL);
-		roseP.addNext(chkDeselect=new mCheckBox("Deselect all"));
+		roseP.addNext(chkDeselect=new mCheckBox(MyLocale.getMsg(716,"Deselect all")));
 		chkDeselect.setTag(SPAN,new Dimension(2,1));
-		roseP.addLast(chkSelect=new mCheckBox("Select all"));
+		roseP.addLast(chkSelect=new mCheckBox(MyLocale.getMsg(717,"Select all")));
 		pnlBearDist.addLast(roseP, CellConstants.STRETCH,CellConstants.FILL);
 		
 		//////////////////////////
 		// Panel 2 - Cache attributes
 		//////////////////////////
-		addTitle(pnlAttributes,"Attributes");
+		addTitle(pnlAttributes,MyLocale.getMsg(720,"Attributes"));
 		mLabel lblTitleAtt; 
-		pnlAttributes.addLast(lblTitleAtt=new mLabel("Show all caches with status:"),HSTRETCH,FILL);
+		pnlAttributes.addLast(lblTitleAtt=new mLabel(MyLocale.getMsg(715,"Show all caches with status:")),HSTRETCH,FILL);
 		lblTitleAtt.setTag(SPAN,new Dimension(2,1));
 		pnlAttributes.addNext(archivedChk = new mCheckBox(MyLocale.getMsg(710,"Archived")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlAttributes.addLast(notArchivedChk = new mCheckBox("Nicht archiviert"), CellConstants.DONTSTRETCH, CellConstants.FILL);
@@ -110,7 +110,7 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 3 - Cache ratings
 		//////////////////////////
-		addTitle(pnlRatings,"Cache ratings");
+		addTitle(pnlRatings,MyLocale.getMsg(718,"Cache ratings"));
 		pnlRatings.addNext(new mLabel(MyLocale.getMsg(702,"Difficulty: ")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlRatings.addNext(difChc = new mChoice(new String[]{"<=","=", ">="},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		//pnlRatings.addLast(difIn = new mChoice(new String[]{"1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0"},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -125,7 +125,7 @@ public class FilterScreen extends Form{
 		// Panel 4 - Cache types
 		//////////////////////////
 		
-		addTitle(pnlCacheTypes,"Cache types");
+		addTitle(pnlCacheTypes,MyLocale.getMsg(719,"Cache types"));
 		pnlCacheTypes.addNext(addImg("2.png"));
 		pnlCacheTypes.addNext(tradChk = new mCheckBox("Traditonal"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
@@ -163,7 +163,7 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 5 - Cache container
 		//////////////////////////
-		addTitle(pnlContainer,"Cache container");
+		addTitle(pnlContainer,MyLocale.getMsg(720,"Cache container"));
 		pnlContainer.addLast(new mLabel("To be implemented"));
 		
 		//////////////////////////
@@ -184,18 +184,18 @@ public class FilterScreen extends Form{
 */		
 		Frame frmScreen=new Frame();
 		mLabel lblInfo; 
-		frmScreen.addLast(lblInfo=new mLabel("Note: Filters are additive, active filter=green")).setTag(SPAN,new Dimension(2,1));
+		frmScreen.addLast(lblInfo=new mLabel(MyLocale.getMsg(725,"Note: Filters are additive, active filter=green"))).setTag(SPAN,new Dimension(2,1));
 		lblInfo.setTag(INSETS,new Insets(0,0,2,0));
 		frmScreen.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
 		this.addLast(frmScreen,HSTRETCH,HFILL);
 		
 		CellPanel pnlButtons=new CellPanel();
 		pnlButtons.addLast(new mLabel("Filter"));
-		pnlButtons.addLast(btnBearing=new mButton("Bearing"));
-		pnlButtons.addLast(btnAttributes=new mButton("Attributes"));
-		pnlButtons.addLast(btnRatings=new mButton("Ratings"));
-		pnlButtons.addLast(btnTypes=new mButton("Types")); 
-		pnlButtons.addLast(btnContainer=new mButton("Container")); btnContainer.modify(Disabled,0);
+		pnlButtons.addLast(btnBearing=new mButton(MyLocale.getMsg(721,"Bearing")));
+		pnlButtons.addLast(btnAttributes=new mButton(MyLocale.getMsg(720,"Attributes")));
+		pnlButtons.addLast(btnRatings=new mButton(MyLocale.getMsg(722,"Ratings")));
+		pnlButtons.addLast(btnTypes=new mButton(MyLocale.getMsg(723,"Types"))); 
+		pnlButtons.addLast(btnContainer=new mButton(MyLocale.getMsg(724,"Container"))); btnContainer.modify(Disabled,0);
 		pnlButtons.addLast(btnSearch=new mButton("Search")); btnSearch.modify(Disabled,0);
 		addNext(pnlButtons,HSTRETCH,FILL);
 
