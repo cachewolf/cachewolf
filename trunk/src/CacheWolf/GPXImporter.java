@@ -321,6 +321,7 @@ public class GPXImporter extends MinML {
 		}
 		if (name.equals("sym")&& strData.endsWith("Found")) {
 			holder.is_found = true;
+			holder.CacheStatus = MyLocale.getMsg(318,"Found");
 			return;
 		}
 		if (name.equals("groundspeak:travelbugs")) {

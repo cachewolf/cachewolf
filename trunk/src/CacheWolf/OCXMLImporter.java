@@ -544,7 +544,10 @@ public class OCXMLImporter extends MinML {
 		}
 		if (name.equals("userid")){
 			logFinder = new String(strData);
-			if(logFinder.toLowerCase().compareTo(user) == 0) holder.is_found = true;
+			if(logFinder.toLowerCase().compareTo(user) == 0){
+				holder.is_found = true;
+				holder.CacheStatus = MyLocale.getMsg(318,"Found");
+			}
 			return;
 		}
 		if (name.equals("text")){ 
