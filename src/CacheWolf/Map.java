@@ -241,7 +241,7 @@ public class Map extends Form {
 				in.close();
 				out.close();
 			} catch(IOException ex){
-				inf.addText("IO-Error while copying image \n" + ex.getMessage());
+				inf.addText(": IO-Error while copying image \n" + ex.getMessage());
 			}
 
 			//Check for a .map file
