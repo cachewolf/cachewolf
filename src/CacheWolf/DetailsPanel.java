@@ -19,7 +19,7 @@ public class DetailsPanel extends CellPanel{
 	mInput wayOwner = new mInput();
 	//mInput wayStatus = new mInput();
 	
-	mButton btnDelete,btnCenter;
+	mButton btnDelete,btnCenter, addDateTime;
 	mChoice wayType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead","Reference"},0);
 	mChoice waySize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
 	mComboBox wayStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
@@ -54,14 +54,15 @@ public class DetailsPanel extends CellPanel{
 		showBug = new mButton((IImage)mI);
 		showMap = new mButton((IImage)mI2);
 		
+		addDateTime = new mButton((IImage)new mImage("date_time.png"));
 		addPicture = new mButton((IImage)mI4);
 		btnBlack = new mButton((IImage)mNoBlack);
 		toolP.addNext(showBug,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		showBug.modify(Control.Disabled,0);
 		toolP.addNext(showMap,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		toolP.addNext(addPicture,CellConstants.DONTSTRETCH, CellConstants.WEST);
-		toolP.addLast(btnBlack,CellConstants.DONTSTRETCH, CellConstants.WEST);
-			
+		toolP.addNext(btnBlack,CellConstants.DONTSTRETCH, CellConstants.WEST);
+		toolP.addLast(addDateTime,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		//showMap.modify(Control.Disabled,0);
 		this.addLast(toolP,CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(3,1));;
 		
@@ -316,7 +317,17 @@ public class DetailsPanel extends CellPanel{
 					mainT.updateBearDist();
 				}
 			}
-			
+			if (ev.target == addDateTime){
+				String note = thisCache.CacheNotes;
+				Time dtm = new Time();
+				dtm.getTime();
+				dtm.setFormat("E dd.MM.yyyy '/' HH:mm");
+				if(note.length() > 0)	note = note + "\n" + dtm.toString();
+				else 	note = note + dtm.toString();
+				note = note + "\n";
+				thisCache.CacheNotes = note;
+				thisCache.saveCacheDetails( Global.getProfile().dataDir);
+			}
 			if (ev.target == addPicture){
 				thisCache.addUserImage(profile);
 			}
