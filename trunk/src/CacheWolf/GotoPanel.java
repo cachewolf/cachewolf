@@ -588,7 +588,7 @@ public class GotoPanel extends CellPanel {
 					if (toPoint.isValid())	mmp.updatePosition(toPoint.latDec, toPoint.lonDec);
 					else mmp.updatePosition(Global.getPref().curCentrePt.latDec, Global.getPref().curCentrePt.lonDec); // if not goto-point defined move map to centere point
 					mmp.ignoreGps = true;
-				}
+				} else mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec); // set gps-pos if gps is on 
 				if (currTrack != null) mmp.addTrack(currTrack);
 				if (runbefore) mmp.addOverlaySet(); // draw new trackpoints but only do so if OverlaySet needs to be updated, otherwise it is anyway newly created
 				if (toPoint.isValid()) mmp.setGotoPosition(toPoint.latDec, toPoint.lonDec);

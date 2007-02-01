@@ -229,7 +229,7 @@ public class MovingMap extends Form {
 
 
 	public void addMissingOverlays() {
-		if (currentMap == null || posCircleLat < -360) return;
+		if (currentMap == null || posCircleLat < -360 || width == 0 || height == 0) return; // height == 0 happens if this is called before the form ist displayed on the screen
 		if (TrackOverlays == null) {
 			TrackOverlays = new TrackOverlay[9];
 			TrackOverlaySetCenterTopLeft = ScreenXY2LatLon(100, 100);
@@ -592,7 +592,7 @@ public class MovingMap extends Form {
 
 	public void setGotoPosition(double lat, double lon) {
 		removeGotoPosition();
-		gotoPos=addSymbol("goto", "goto_map.png", lat, lon);
+		gotoPos = addSymbol("goto", "goto_map.png", lat, lon);
 		updateDistance();
 		forceMapLoad = true;
 		updatePosition(posCircleLat, posCircleLon);
@@ -647,7 +647,7 @@ public class MovingMap extends Form {
 		//Vm.debug("mapx = " + mapx);
 		//Vm.debug("mapy = " + mapy);
 		if (forceMapLoad || (java.lang.Math.abs(oldMapPos.x - mapPos.x) > 1 || java.lang.Math.abs(oldMapPos.y - mapPos.y) > 1)) {
-			if (mmp.mapImage != null) 	mmp.mapImage.move(mapPos.x,mapPos.y);
+			if (mmp.mapImage != null) 	mmp.mapImage.move(mapPos.x, mapPos.y);
 			updateSymbolPositions();
 			updateDistance();
 			if (updateOverlay ) updateOverlayPos(); // && TrackOverlays != null
@@ -677,7 +677,7 @@ public class MovingMap extends Form {
 				if (forceMapLoad || wantMapTest|| (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width) 
 						|| 	mmp.mapImage == null )) 	{ // if force || want || map doesn't cover the scree completly
 					//Vm.debug("Screen not completly covered by map");
-					if (forceMapLoad || (java.lang.Math.abs(lastCompareX-mapPos.x) > MyLocale.getScreenWidth()/10 || java.lang.Math.abs(lastCompareY-mapPos.y) > MyLocale.getScreenHeight()/10)) {
+					if (forceMapLoad || (java.lang.Math.abs(lastCompareX-mapPos.x) > this.width/10 || java.lang.Math.abs(lastCompareY-mapPos.y) > this.height/10)) {
 						// more then 1/10 of screen moved since last time we tried to find a better map
 						lastCompareX = mapPos.x;
 						lastCompareY = mapPos.y;
@@ -688,6 +688,7 @@ public class MovingMap extends Form {
 			}
 		}
 	}
+	
 	int mapChangeModus;
 	float scaleWanted;
 	boolean wantMapTest = true; // if true updateposition calls setBestMap regulary even if the currentmap covers the whole screen
