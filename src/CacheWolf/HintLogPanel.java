@@ -1,7 +1,14 @@
 package CacheWolf;
 
 import ewe.ui.*;
+import ewe.fx.Dimension;
+import ewe.fx.Graphics;
+import ewe.fx.mImage;
+import ewe.graphics.AniImage;
+import ewe.graphics.InteractivePanel;
 import ewe.sys.*;
+import ewe.fx.Image;
+import ewe.fx.Rect;
 
 /**
 *	Class to create the panel that holds hints and logs.
@@ -18,6 +25,8 @@ public class HintLogPanel extends CellPanel{
 	mTextPad hint = new mTextPad();
 	//mTextPad logs = new mTextPad();
 	HtmlDisplay logs = new HtmlDisplay();
+	AniImage htmlTxtImage;
+	InteractivePanel htmlImagDisp = new InteractivePanel();
 	mButton decodeButton = new mButton("Decode");
 	mButton moreBt = new mButton(">>");
 	mButton prevBt = new mButton("<<");
@@ -35,10 +44,14 @@ public class HintLogPanel extends CellPanel{
 		hintpane.addNext(decodeButton,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		decodeButton.setMinimumSize(MyLocale.getScreenWidth()*2/3,10);
 		hintpane.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
-		
-		ScrollBarPanel sbplog = new ScrollBarPanel((ScrollClient)logs, ScrollBarPanel.NeverShowHorizontalScrollers);
-		logpane.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
 		hint.modify(Control.NotEditable,0);
+		
+		ScrollBarPanel sbplog = new ScrollBarPanel((ScrollClient)htmlImagDisp, ScrollBarPanel.NeverShowHorizontalScrollers);
+		//logpane.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
+		Rect r = new Rect(new Dimension (Global.getPref().myAppWidth, 20));
+		htmlImagDisp.virtualSize = r;
+		htmlImagDisp.checkScrolls();
+		logpane.addLast(sbplog.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 		this.addLast(split);
 	}
 	
@@ -69,7 +82,26 @@ public class HintLogPanel extends CellPanel{
 			dummy.append("</br>");
 			if(++counter >= logsPerPage) break;
 		}
+		if (htmlTxtImage != null) {
+			htmlImagDisp.removeImage(htmlTxtImage);
+			htmlTxtImage.free();
+			}
+		logs.resizeTo(width, 50);
 		logs.setHtml(dummy.toString());
+		int h = logs.getLineHeight() * logs.getNumLines();
+		htmlTxtImage = new AniImage(new Image(width, h));
+		htmlTxtImage.setLocation(0, 0);
+		htmlTxtImage.properties |= AniImage.IsMoveable;
+		Graphics draw = new Graphics(htmlTxtImage.image);
+		logs.resizeTo(htmlTxtImage.getWidth(), htmlTxtImage.getHeight());
+		logs.doPaint(draw, new Rect(0,0,htmlTxtImage.getWidth(), htmlTxtImage.getHeight()));
+		htmlImagDisp.addImage(htmlTxtImage);
+		Rect r = new Rect(new Dimension (width, h));
+		htmlImagDisp.virtualSize = r;
+		htmlImagDisp.checkScrolls();
+
+		htmlImagDisp.repaintNow();
+		repaintNow();
 		Vm.showWait(false);
 	}
 	/**
