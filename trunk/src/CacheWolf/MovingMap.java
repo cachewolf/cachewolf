@@ -733,6 +733,12 @@ public class MovingMap extends Form {
 			Vm.debug("better map found");
 			return;
 		}
+		if (currentMap == null && newmap == null) {
+			(new MessageBox("Information", "Für die aktuelle Position steht keine Karte zur Verfüung, bitte wählen Sie eine manuell", MessageBox.OKB)).execute();
+			posCircleLat = lat;
+			posCircleLon = lon; // choosemap calls setmap with posCircle-coos
+			mmp.chooseMap(); 
+		}
 	}
 
 	public void setResModus (int modus) {
@@ -1229,10 +1235,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		ListBox l = new ListBox(mm.maps, gpspos, mm.getGotoPos(), mm.currentMap);
 		if(l.execute() == FormBase.IDOK){
 //			Vm.debug("Trying map: " + l.selectedMap.fileName);
-			mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 			mm.autoSelectMap = false;
 			if (l.selectedMap.inBound(mm.posCircleLat, mm.posCircleLon) || l.selectedMap.getImageFilename().length()==0) {
 				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon);
+				mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 				mm.ignoreGpsStatutsChanges = false;
 			} else {
 				mm.ignoreGpsStatutsChanges = false;
@@ -1240,6 +1246,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				mm.ignoreGpsStatutsChanges = true;
 				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon); // don't adjust Image to lat/lon
 				mm.setCenterOfScreen(l.selectedMap.center);
+				mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 				mm.repaintNow();
 				//Point posCXY = new Point (0,0); mm.getXYinMap(mm.posCircleLat, mm.posCircleLat);
 				//double lat = mm.currentMap.affine[0]*posCXY.x + mm.currentMap.affine[2]*posCXY.y + mm.currentMap.affine[4]; 
