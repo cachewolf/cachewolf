@@ -255,6 +255,7 @@ public class Preferences extends MinML{
 			if (fc.execute() == FileChooser.IDCANCEL) ewe.sys.Vm.exit(0);
 			baseDir = fc.getChosenFile().toString();
 		}
+		baseDir=baseDir.replace('\\','/');
 		if (!baseDir.endsWith("/")) baseDir+="/";
 		//Vm.showWait(false);
 		if((showProfileSelector==PROFILE_SELECTOR_FORCED_ON) || 
@@ -274,9 +275,11 @@ public class Preferences extends MinML{
 		else if (lastProfile.equals(profiles[2])) openOldProfile(prof, 2);
 		else if (lastProfile.equals(profiles[3])) openOldProfile(prof, 3);
 		else { 
-			prof.dataDir=baseDir+lastProfile+"/";
+			prof.dataDir=baseDir+lastProfile;
 			//mydatadir=prof.dataDir;
 		}
+		prof.dataDir=prof.dataDir.replace('\\','/');
+		if (!prof.dataDir.endsWith("/")) prof.dataDir+='/';
 		savePreferences();
 		return true;
 
