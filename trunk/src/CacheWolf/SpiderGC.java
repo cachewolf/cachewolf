@@ -643,7 +643,7 @@ public class SpiderGC{
 		rex2.search(doc);
 		res = inRex.stringMatched(1) + "<br>";
 		res += rex2.stringMatched(1); 
-		return res;
+		return SafeXML.cleanback(res);
 	}
 	
 	private String getListBlock(String doc){

@@ -410,12 +410,14 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		if (name.equals("groundspeak:short_description")|| name.equals("summary")) {
-			holder.LongDescription =strData;
+			if (holder.is_HTML)	holder.LongDescription =SafeXML.cleanback(strData);
+			else holder.LongDescription =strData;
 			return;
 		}
 
 		if (name.equals("groundspeak:long_description")|| name.equals("description")) {
-			holder.LongDescription +=strData;
+			if (holder.is_HTML)	holder.LongDescription +=SafeXML.cleanback(strData);
+			else holder.LongDescription +=strData;
 			return;
 		}
 		if (name.equals("groundspeak:encoded_hints") || name.equals("hints")) {
