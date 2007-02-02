@@ -1244,8 +1244,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				mm.ignoreGpsStatutsChanges = false;
 				mm.setGpsStatus(MovingMap.noGPS);
 				mm.ignoreGpsStatutsChanges = true;
-				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon); // don't adjust Image to lat/lon
-				mm.setCenterOfScreen(l.selectedMap.center);
+				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon); 
+				if (mm.currentMap.fileNameWFL.length() > 0)
+					mm.setCenterOfScreen(l.selectedMap.center); // if map has an image
 				mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 				mm.repaintNow();
 				//Point posCXY = new Point (0,0); mm.getXYinMap(mm.posCircleLat, mm.posCircleLat);
