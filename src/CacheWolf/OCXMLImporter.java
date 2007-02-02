@@ -458,7 +458,8 @@ public class OCXMLImporter extends MinML {
 			}
 			
 			if (name.equals("desc")){
-				holder.LongDescription += strData;
+				if (holder.is_HTML)	holder.LongDescription +=SafeXML.cleanback(strData);
+				else holder.LongDescription +=strData;
 				return;
 			}
 			if (name.equals("hint")){
