@@ -39,7 +39,7 @@ public class NewProfileForm extends Form {
 					mb.execute();
 					profileDir="";
 				} else {
-					if (!f.createDir()) {
+					if (profileDir.indexOf("/")>=0 || profileDir.indexOf("\\")>=0 || !f.createDir()) {
 						MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1113,"Cannot create directory"),IDOK);
 						mb.execute();
 						profileDir="";
