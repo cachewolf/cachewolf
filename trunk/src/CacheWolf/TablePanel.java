@@ -113,18 +113,6 @@ public class TablePanel extends CellPanel{
 		if (statBar!=null) statBar.updateDisplay();
 	}
 	
-	public void refreshTableBlack(){
-		CacheHolder ch = new CacheHolder();
-		for (int i=0; i<cacheDB.size(); i++){
-			ch = new CacheHolder();
-			ch = (CacheHolder)cacheDB.get(i);
-			if(ch.is_black) ch.is_filtered = false;
-			else ch.is_filtered = true;
-			cacheDB.set(i, ch);
-		}
-		refreshTable();
-	}
-	
 	public void refreshTable(){
 		myMod.updateRows();
 		tc.update(true);
