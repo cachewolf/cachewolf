@@ -47,6 +47,7 @@ public class GPXExporter extends Exporter{
 		StringBuffer strBuf = new StringBuffer(1000);
 		Time tim = new Time();
 
+		tim = tim.setFormat("yyyy-MM-dd");
 		try{
 			strBuf.append("  <wpt lat=\""+lat+"\" lon=\""+lon+"\">\r\n");
 			if (ch.DateHidden.length()> 0){
