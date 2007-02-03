@@ -13,7 +13,7 @@ public class SafeXML{
 	private static final char ENTITY_START = '&';
 	private static final char ENTITY_END = ';';
 	
-	private static Hashtable iso2htmlMappings = new Hashtable(250);
+	private static Hashtable iso2htmlMappings = new Hashtable(300);
 	static {
 		String[] mappingArray = new String[] {
 				"&apos;",   "'",		// Added 20061227 - not a valid HTML entity but sometimes used
@@ -217,8 +217,24 @@ public class SafeXML{
 				"&#252;", "ü",
 				"&#253;", "ý",
 				"&#254;", "þ",
-				"&#255;", "ÿ"
-		};
+				"&#255;", "ÿ",
+				"&#8208;", "-",
+				"&#8209;", "-",
+				"&#8210;", "-",
+				"&#8211;", "-",
+				"&#8212;", "-",
+				"&#8213;", "-",
+				"&#8216;", "'",
+				"&#8217;", "'",
+				"&#8218;", "'",
+				"&#8219;", "'",
+				"&#8220;", "\"",
+				"&#8221;", "\"",
+				"&#8222;", "\"",
+				"&#8223;", "\"",
+				"&#8242;", "'",
+				"&#8243;", "\""
+				};
 		for (int i = 0; i < mappingArray.length; i = i + 2) {
 			iso2htmlMappings.put( mappingArray[i], mappingArray[i+1]);
 		}
@@ -359,32 +375,6 @@ public class SafeXML{
     } // end insertEntities
 	
 	
-	/**
-	*	This method encodes special characters into
-	*	HTML coded characters.
-	*	see here: http://www.w3.org/MarkUp/html-spec/html-spec_13.html
-	*/
-	/*public static String clean(String str){
-		String dummy = new String();
-		
-		dummy = replace(str,  "&", "&#38;"); // Must be first otherwise the & of the replaced strings will be replaced again
-		dummy = replace(dummy, "<", "&#60;");
-		dummy = replace(dummy, ">", "&#62;");
-		dummy = replace(dummy,  "\"" ,"&#34;");
-		dummy = replace(dummy,  "°","&#176;");
-		dummy = replace(dummy, "'","&apos;");
-//		dummy = replace(dummy, "'", "&#180;");
-		dummy = replace(dummy, "ü","&#252;");
-		dummy = replace(dummy, "ä","&#228;");
-		dummy = replace(dummy, "ö","&#246;");
-		dummy = replace(dummy, "Ä","&#196;");
-		dummy = replace(dummy,  "Ö","&#214;");
-		dummy = replace(dummy,  "Ü","&#220;");
-		dummy = replace(dummy,  "ß","&#223;");
-		//dummy = replace(dummy, "&","&amp;");
-		return dummy;
-	}
-*/
 	public static String cleanGPX(String str){
 		String dummy = new String();
 		
@@ -399,34 +389,4 @@ public class SafeXML{
 		return dummy;
 	}
 
-	
-	/**
-	*	This method cleans html coded characters into human
-	*	readable characters.
-	*/
-	/*public static String cleanback(String str){
-		String dummy = new String();
-		if (str.indexOf('&')<0) return str; // If nothing to replace, return immediately
-		dummy = replace(str,  "&#223;", "ß"); // Start with the mor probable values
-		dummy = replace(dummy, "&#252;","ü"); 
-		dummy = replace(dummy, "&#228;","ä");
-		dummy = replace(dummy, "&#246;","ö");
-		dummy = replace(dummy, "&#196;","Ä");
-		dummy = replace(dummy, "&#214;","Ö");
-		dummy = replace(dummy, "&#220;","Ü");
-		dummy = replace(dummy, "&apos;", "'");
-		dummy = replace(dummy, "&#180;", "'");
-		if (dummy.indexOf("&")<0) return dummy; 
-		dummy = replace(dummy, "&amp;", "&");
-		dummy = replace(dummy,  "&#38;", "&");
-		dummy = replace(dummy,  "&#34;", "\"");
-		dummy = replace(dummy,  "&#60;","<");
-		dummy = replace(dummy,  "&#62;",">");
-		dummy = replace(dummy,  "&#176;","°");
-		dummy = replace(dummy, "&quot;", "\"");	
-		dummy = replace(dummy, "&lt;", "<");
-		dummy = replace(dummy, "&gt;", ">");
-	
-		return dummy;
-	}*/
 }
