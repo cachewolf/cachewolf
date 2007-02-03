@@ -171,7 +171,7 @@ public class PreferencesScreen extends Form {
 				mApp.fontsChanged();
 				mApp.mainApp.font = newGuiFont;
 				
-				pref.myAlias = Alias.getText();
+				pref.myAlias = Alias.getText().trim();
 				pref.browser = Browser.getText();
 				//Vm.debug(myPreferences.browser);
 				pref.myproxy = Proxy.getText();
