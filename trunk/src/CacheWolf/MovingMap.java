@@ -465,8 +465,13 @@ public class MovingMap extends Form {
 	 *
 	 */
 	public void resetCenterOfMap() {
-		posCircleX = pref.myAppWidth/2; // maybe this could /should be repleced to windows size
-		posCircleY = pref.myAppHeight/2;
+		if (width != 0) {
+			posCircleX = width /2;
+			posCircleY = height /2;
+		} else {
+			posCircleX = pref.myAppWidth/2; // maybe this could /should be repleced to windows size
+			posCircleY = pref.myAppHeight/2;
+		}
 		posCircle.hidden = false;
 		posCircle.setLocation(posCircleX-posCircle.getWidth()/2, posCircleY-posCircle.getHeight()/2);
 	}
@@ -688,7 +693,7 @@ public class MovingMap extends Form {
 			}
 		}
 	}
-	
+
 	int mapChangeModus;
 	float scaleWanted;
 	boolean wantMapTest = true; // if true updateposition calls setBestMap regulary even if the currentmap covers the whole screen
@@ -746,16 +751,16 @@ public class MovingMap extends Form {
 		if (modus == NORMAL_KEEP_RESOLUTION) scaleWanted = currentMap.scale;
 		else setBestMap(posCircleLat, posCircleLon);
 	}
-/**
- * method to get a point on the screen which must be included in the map
- * the map methods are looking for. If the poscircle is on the screen this will be 
- * that point. If it is outside then the center of the screen will be used.
- * 
- * returns [0] = CWPoint of that point, [1] Rect describing the screen around it 
- * @param lat
- * @param lon
- * @return
- */
+	/**
+	 * method to get a point on the screen which must be included in the map
+	 * the map methods are looking for. If the poscircle is on the screen this will be 
+	 * that point. If it is outside then the center of the screen will be used.
+	 * 
+	 * returns [0] = CWPoint of that point, [1] Rect describing the screen around it 
+	 * @param lat
+	 * @param lon
+	 * @return
+	 */
 	public Object[] getRectForMapChange(double lat, double lon) {
 		int w = (width != 0 ? width : pref.myAppWidth); // width == 0 happens if this routine is run before the windows is on the screen
 		int h = (height != 0 ? height : pref.myAppHeight);
@@ -775,7 +780,7 @@ public class MovingMap extends Form {
 		ret[1] = new Rect(x, y, w, h);
 		return ret; 
 	}
-	
+
 	/**
 	 * 
 	 * @param betterOverview true: getmap with better overview
@@ -790,7 +795,7 @@ public class MovingMap extends Form {
 		if (m != null) setMap(m, posCircleLat, posCircleLon);
 		else (new MessageBox("Error", "No "+ (betterOverview ? "less" : "more") + " deteiled map available", MessageBox.OKB)).execute();
 	}
-	
+
 	public void loadMapForAllCaches(){
 		Area sur = Global.getProfile().getSourroundingArea(true);
 		MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.buttomright);
@@ -1116,14 +1121,17 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	}
 
 	public boolean imageBeginDragged(AniImage which,Point pos) {
-		if (mm.zoomingMode == true) {
-			saveMapLoc = pos;
-			mm.ignoreGps = true;
+		if (mm.zoomingMode == true) { // zoom
+//			saveMapLoc = pos;
+	//		saveGpsIgnoreStatus = mm.ignoreGps;
+		//	mm.ignoreGps = true;
 			return false;
 		}
+		// move (drag) map
 		//if (!(which == null || which == mapImage || which instanceof TrackOverlay || which == mm.directionArrows) ) return false;
 		saveGpsIgnoreStatus = mm.ignoreGps; 
 		mm.ignoreGps = true;
+		paintingZoomArea = true;
 		saveMapLoc = pos;
 		bringMapToTop();
 		if (mapImage.isOnScreen() && !mapImage.hidden ) return super.imageBeginDragged(mapImage, pos);
@@ -1145,16 +1153,19 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			saveMapLoc = new Point (ev.x, ev.y);
 		}
 		if (mm.zoomingMode && ev.type == PenEvent.PEN_DOWN) {
+			saveGpsIgnoreStatus = mm.ignoreGps;
+			mm.ignoreGps = true;
 			saveMapLoc = new Point (ev.x, ev.y);
 			paintingZoomArea = true;
 			mm.zoomingMode = true;
-		}
+		} 
 		if (!mm.zoomingMode && ev.type == PenEvent.PEN_DOWN && ev.modifiers == PenEvent.RIGHT_BUTTON) {
 			penHeld(new Point (ev.x, ev.y));
 		}
 		if (mm.zoomingMode && ev.type == PenEvent.PEN_UP ) {
 			paintingZoomArea = false;
 			mm.zoomingMode = false;
+			mm.ignoreGps = saveGpsIgnoreStatus;
 			removeImage(mm.buttonImageLensActivated);
 			addImage(mm.buttonImageLens);
 			if (java.lang.Math.abs(lastZoomWidth) < 15 || java.lang.Math.abs(lastZoomHeight) < 15)  {
@@ -1299,7 +1310,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			else moveToCenterMI.modifiers |= MenuItem.Disabled;
 			mapsMenu.addItem(moveToCenterMI);
 			mapsMenu.addItem(moveToGpsMI);
-			
+
 			//m.set(Menu., status)
 			mapsMenu.exec(this, new Point(which.location.x, which.location.y), this);
 		}
@@ -1326,7 +1337,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		} 
 		mm.SnapToGps();
 	}
-	
+
 	public void penHeld(Point p){
 		//	if (!menuIsActive()) doMenu(p);
 		if (!mm.zoomingMode) { 

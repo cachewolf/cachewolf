@@ -157,7 +157,7 @@ public class MapLoaderGui extends Form {
 						tmpca.set(ch.LatLon);
 						ch.pos = new CWPoint(tmpca);
 					}
-					if (ch.pos.isValid()) {
+					if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0) { // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
 						numdownloaded++;
 						progressBox.setInfo("Downloading map from expedia.de\n"+numdownloaded+" / "+numCaches+"\n for cache:\n"+ch.CacheName);
 						ml.downloadMap(ch.pos.latDec, ch.pos.lonDec, (int)scale, size.x, size.y, mapsDir);
