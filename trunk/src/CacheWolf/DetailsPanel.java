@@ -269,6 +269,7 @@ public class DetailsPanel extends CellPanel{
 			thisCache.saveCacheDetails(profile.dataDir);
 		}
 		
+		profile.buildReferences();
 		dirty_newOrDelete = true;
 		mainT.selectAndActive(cacheDB.size()-1);
 	}
