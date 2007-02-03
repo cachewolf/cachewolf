@@ -389,7 +389,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == orgCopy){
 				profile.saveIndex(pref);
 
-				DataMover dm = new DataMover(pref,profile);
+				DataMover dm = new DataMover();
 				dm.copyCaches();
 				tbp.refreshTable();
 			}
@@ -397,7 +397,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == orgMove){
 				profile.saveIndex(pref);
 
-				DataMover dm = new DataMover(pref,profile);
+				DataMover dm = new DataMover();
 				dm.moveCaches();
 				tbp.refreshTable();
 			}
@@ -405,7 +405,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == orgDelete){
 				profile.saveIndex(pref);
 
-				DataMover dm = new DataMover(pref,profile);
+				DataMover dm = new DataMover();
 				dm.deleteCaches();
 				tbp.refreshTable();
 			}
