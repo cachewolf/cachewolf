@@ -17,10 +17,10 @@ public class DataMover {
 	Preferences pref;
 	Profile profile;
 	
-	public DataMover(Preferences p, Profile prof){
-		profile=prof;
+	public DataMover(){
+		pref = Global.getPref();
+		profile=Global.getProfile();
 		srcDB = profile.cacheDB;
-		pref = p;
 	}
 	public void deleteCaches(){
 		
