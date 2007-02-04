@@ -46,6 +46,8 @@ public class MovingMap extends Form {
 	AniImage buttonImageZoom1to1 = new AniImage("zoom1to1.png");
 	AniImage DistanceImage;
 	Graphics DistanceImageGraphics;
+	AniImage ScaleImage;
+	Graphics ScaleImageGraphics;
 	MapImage posCircle = new MapImage("position_green.png");
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
 	double posCircleLat, posCircleLon;
@@ -93,13 +95,21 @@ public class MovingMap extends Form {
 		mmp.addImage(buttonImageLens);
 		buttonImageZoom1to1.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageZoom1to1);
+		//target distance
 		//Label distLbl = new mLabel("Distance: ----,-- km");
 		DistanceImage = new AniImage();
-		DistanceImage.setImage(new Image(120, 20), Color.White); // consider the size of the font used
+		DistanceImage.setImage(new Image(120, 15), Color.White); // consider the size of the font used
 		DistanceImageGraphics = new Graphics(DistanceImage.image);
-		DistanceImageGraphics.setFont(new Font("Helvetica", Font.BOLD, 16));
+		DistanceImageGraphics.setFont(new Font("Helvetica", Font.PLAIN, 13));
 		DistanceImage.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(DistanceImage);
+		//scale
+		ScaleImage = new AniImage();
+		ScaleImage.setImage(new Image(120, 15), Color.White); // consider the size of the font used
+		ScaleImageGraphics = new Graphics(ScaleImage.image);
+		ScaleImageGraphics.setFont(new Font("Helvetica", Font.PLAIN, 13));
+		ScaleImage.properties = AniImage.AlwaysOnTop;
+		mmp.addImage(ScaleImage);
 		//resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialize mapImage.screenSize
 		setGpsStatus(noGPS);
 		posCircle.properties = AniImage.AlwaysOnTop;
@@ -127,7 +137,8 @@ public class MovingMap extends Form {
 		buttonImageZoom1to1.setLocation(w - buttonImageZoom1to1.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
 		buttonImageLens.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
 		buttonImageLensActivated.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
-		DistanceImage.setLocation(w/2 - DistanceImage.location.width/2, h - DistanceImage.location.height -10);
+		DistanceImage.setLocation(0, h - DistanceImage.getHeight());
+		ScaleImage.setLocation(w - ScaleImage.getWidth(), h - ScaleImage.getHeight());
 		if (mmp.mapImage != null) mmp.mapImage.move(mmp.mapImage.locAlways.x, mmp.mapImage.locAlways.y); // this is necessary to make a new decision if it is still on the screen (and actually mor important because MapImage only now gets to know the screen size) 
 		if (posCircle != null) posCircle.move(posCircle.locAlways.x, posCircle.locAlways.y); // this is necessary to make a new decision if it is still on the screen (and actually mor important because MapImage only now gets to know the screen size) 
 		if (tracks != null) addOverlaySet();
@@ -162,23 +173,72 @@ public class MovingMap extends Form {
 		loadingMapList = false;
 	}
 
+	public void updateScale() {
+		ScaleImageGraphics.setColor(ScaleImage.transparentColor);
+		ScaleImageGraphics.fillRect(0, 0, ScaleImage.location.width,ScaleImage.location.height);
+		
+		if (currentMap != null)
+		{
+			float lineLengthMeters = 40 * currentMap.scale;
+			float digits = (float)java.lang.Math.floor( java.lang.Math.log(lineLengthMeters) / java.lang.Math.log(10.0) );
+			lineLengthMeters = (float)java.lang.Math.ceil( lineLengthMeters / (float)java.lang.Math.pow(10, digits) ) * (float)java.lang.Math.pow(10, digits);
+			int lineLengthPixels = (int)java.lang.Math.round( lineLengthMeters / currentMap.scale );
+
+			String lineLengthString;
+			int backgroundStartX = 0;
+			if (lineLengthMeters < 1000)
+			{
+				lineLengthString = Convert.toString((int) lineLengthMeters) + "m";
+				backgroundStartX = ScaleImage.location.width - lineLengthPixels - ( ((int)digits+1) * 6 ) - 14;
+			}
+			else
+			{
+				lineLengthString = Convert.toString((int) lineLengthMeters / 1000) + "km";
+				backgroundStartX = ScaleImage.location.width - lineLengthPixels - ( ((int)digits-2) * 6 ) - 19;
+			}
+			
+			ScaleImageGraphics.setColor(new Color(250,250,250));
+			ScaleImageGraphics.fillRect(backgroundStartX, 0, ScaleImage.location.width - backgroundStartX ,ScaleImage.location.height);
+
+			ScaleImageGraphics.setPen(new Pen(Color.DarkBlue,Pen.SOLID,3));
+			ScaleImageGraphics.drawLine(backgroundStartX + 2, ScaleImage.location.height / 2, backgroundStartX+2+lineLengthPixels, ScaleImage.location.height / 2);
+			ScaleImageGraphics.setColor(Color.DarkBlue);
+			ScaleImageGraphics.drawText(lineLengthString , backgroundStartX + lineLengthPixels + 5, 0);
+		}
+		
+		ScaleImageGraphics.drawImage(ScaleImage.image,null,Color.LightBlue,0,0,ScaleImage.location.width,ScaleImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
+		ScaleImageGraphics.drawImage(ScaleImage.image,null,Color.White,0,0,ScaleImage.location.width,ScaleImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
+	}
+	
 	public void updateDistance() {
 		DistanceImageGraphics.setColor(DistanceImage.transparentColor);
 		DistanceImageGraphics.fillRect(0, 0, DistanceImage.location.width,DistanceImage.location.height);
-		if (gotoPos == null || posCircleLat < -360) return;
-		ewe.sys.Double dd = new ewe.sys.Double();
-		dd.set((new CWPoint(gotoPos.lat, gotoPos.lon).getDistance(posCircleLat, posCircleLon)));
-		String d; 
-		if (dd.value < 1) {
-			dd.value = dd.value * 1000; 
-			dd.decimalPlaces = 0;
-			d = "Distance: " + dd.toString() + "m";} 
-		else {
-			dd.decimalPlaces = 2;
-			d = "Distance: " + dd.toString() + "km";
+		if (gotoPos != null && posCircleLat >= -360)
+		{
+			ewe.sys.Double dd = new ewe.sys.Double();
+			dd.set((new CWPoint(gotoPos.lat, gotoPos.lon).getDistance(posCircleLat, posCircleLon)));
+			String d;
+			int backgroundWidth = DistanceImage.location.width;
+			if (dd.value < 1) {
+				dd.value = dd.value * 1000; 
+				dd.decimalPlaces = 0;
+				d = "Dist: " + dd.toString() + "m";
+				int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
+				backgroundWidth = 6 * (digits + 1) + 36;
+				} 
+			else {
+				dd.decimalPlaces = 2;
+				d = "Dist: " + dd.toString() + "km";
+				int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
+				backgroundWidth = 6 * (digits + 3) + 45;
+			}
+			
+			DistanceImageGraphics.setColor(new Color(250,250,250));
+			DistanceImageGraphics.fillRect(0, 0, backgroundWidth ,DistanceImage.location.height);
+
+			DistanceImageGraphics.setColor(Color.DarkBlue);
+			DistanceImageGraphics.drawText(d, 2, 0);
 		}
-		DistanceImageGraphics.setColor(Color.DarkBlue);
-		DistanceImageGraphics.drawText(d, 0, 0);
 		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.LightBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
 		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.White,0,0,DistanceImage.location.width,DistanceImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
 	}
@@ -900,6 +960,7 @@ public class MovingMap extends Form {
 			updateOnlyPosition(lat, lon, false);
 			forceMapLoad = false;
 			directionArrows.setMap(currentMap);
+			updateScale();
 			inf.close(0);  // this doesn't work in a ticked-thread in the ewe-vm. That's why i made a new mThread in gotoPanel for ticked
 			Vm.showWait(false);
 			ignoreGps = saveIgnoreStatus;
@@ -1069,6 +1130,7 @@ public class MovingMap extends Form {
 		Vm.getUsedMemory(true); // call garbage collection
 		setCenterOfScreen(center);
 		addOverlaySet();
+		updateScale();
 		this.repaintNow();
 		Vm.showWait(this, false);
 		ignoreGps = savegpsstatus;
