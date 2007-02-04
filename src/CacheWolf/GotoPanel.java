@@ -616,7 +616,7 @@ public class GotoPanel extends CellPanel {
 				CacheHolder ch = new CacheHolder();
 				ch.LatLon = gpsPosition.toString();
 				ch.pos = new CWPoint(gpsPosition);
-				detP.newWaypoint(ch,mainT);
+				mainT.newWaypoint(ch);
 			}
 			// change destination waypoint
 			if (ev.target == btnGoto){

@@ -322,7 +322,7 @@ public class myTableModel extends TableModel{
 					}
 					
 				}
-				updateRows();
+				//updateRows();
 				// Don't consume the event. Why ?
 			}
 			if(cell.y == -1){

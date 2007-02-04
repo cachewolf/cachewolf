@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import ewe.sys.Vm;
 import ewe.ui.*;
 import ewe.fx.*;
 import ewe.util.*;
@@ -16,9 +17,9 @@ public class MainTab extends mTabbedPanel {
 	DescriptionPanel descP= new DescriptionPanel();
 	HintLogPanel hintLP = new HintLogPanel();
 	TablePanel tbP;
-	Vector cDB;
+	Vector cacheDB;
 	DetailsPanel detP = new DetailsPanel();
-	CalcPanel calcP = new CalcPanel();
+	CalcPanel calcP;
 	Preferences pref;
 	Profile profile;
 	GotoPanel gotoP; 
@@ -26,7 +27,7 @@ public class MainTab extends mTabbedPanel {
 	ImagePanel imageP;
 	SolverPanel solverP;
 	String lastselected = new String();
-	CacheHolder ch = new CacheHolder();
+	CacheHolder ch =null;
 	MainMenu mnuMain;
 	
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
@@ -35,12 +36,11 @@ public class MainTab extends mTabbedPanel {
 		pref = Global.getPref();
 		profile=Global.getProfile();
 		if (!pref.tabsAtTop) tabLocation=SOUTH;
-		cDB = profile.cacheDB;
+		cacheDB = profile.cacheDB;
 		MyLocale.setSIPButton();
-		ch.wayPoint = "null";
 		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
 		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
-
+		calcP = new CalcPanel(); // Init here so that Global.MainT is already set
 		Card c = this.addCard(tbP = new TablePanel(pref, profile, statBar), MyLocale.getMsg(1200,"List"), null);
 		
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
@@ -80,15 +80,48 @@ public class MainTab extends mTabbedPanel {
 		this.selectAndExpand(0);
 	}
 	
+	/** Update the distances of all caches to the center and display a message 
+	 */
 	public void updateBearDist(){
 		tbP.pref = pref;
 		profile.updateBearingDistance();
 		tbP.refreshTable();
+		(new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet").replace('~','\n'), MessageBox.OKB)).execute();
 	}
 	
 	public void gotoPoint(String LatLon) {
 		gotoP.setDestinationAndSwitch(LatLon);
 	}
+
+	public void openDesciptionPanel(CacheHolder chi) {
+        MyLocale.setSIPOff();
+        descP.setText(chi);
+    }
+	
+	
+	/**
+	 * this is called from goto / MovingMap / CalcPanel and so on to 
+	 * offer the user the possibility of entering an new waypoint
+	 * at a given position. ch must already been preset with a valid
+	 * CacheHolder object
+	 * 
+	 * @param ch
+	 */
+	public void newWaypoint(CacheHolder ch){
+		if (detP.isDirty()) detP.saveDirtyWaypoint();
+		String waypoint= ch.wayPoint = profile.getNewWayPointName();
+		ch.type = "0";
+		ch.CacheSize = "None";
+		cacheDB.add(ch);
+		Global.mainTab.tbP.myMod.updateRows();
+		Global.mainTab.tbP.setSelectedCache(profile.getCacheIndex(waypoint));
+		//Global.mainTab.tbP.refreshTable();
+		if (this.cardPanel.selectedItem==1) { // Detailpanel already selected
+			postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,0));
+		} else	
+			select(detP);
+	}
+	
 	
 	public void onEvent(Event ev)
 		{
@@ -101,130 +134,74 @@ public class MainTab extends mTabbedPanel {
 //				  Vm.setSIP(0);
 				  MyLocale.setSIPOff();
 			  }
-			  //if(this.getSelectedItem() == 0){
-				  //Vm.debug(Convert.toString(cDB.size()));
-				  //Vm.debug("Panel 0");
-				  if(detP.dirty_newOrDelete) {
-					  tbP.refreshTable();
-					  //Vm.debug("Panel 0.1");
-					  detP.dirty_newOrDelete = false;
-					  detP.dirty_status = false;
-				  }
-				  if(detP.dirty_status == true){ // Details were edited
-					  //Vm.debug("Panel 0.2");
-					  ch = (CacheHolder)cDB.get(tbP.getSelectedCache());
-					  ch.CacheStatus = detP.wayStatus.getText();
-					  ch.is_found = ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"));
-					  ch.is_black = detP.blackStatus;
-					  ch.wayPoint = detP.wayPoint.getText();
-					  ch.CacheName = detP.wayName.getText();
-					  ch.pos.set(detP.btnWayLoc.getText(),CWPoint.CW);
-					  ch.LatLon = ch.pos.toString();
-					  ch.DateHidden = detP.wayHidden.getText();
-					  ch.CacheOwner = detP.wayOwner.getText();
-					  if(pref.myAlias.equals(ch.CacheOwner)) ch.is_owned = true;
-					  
-					  ch.type = detP.transSelect(detP.wayType.getInt());
-					  // set status also on addi wpts
-					  if (ch.hasAddiWpt()){
-						  CacheHolder addiWpt;
-						  for (int i=0;i<ch.addiWpts.getCount();i++){
-							  addiWpt = (CacheHolder)ch.addiWpts.get(i);
-							  addiWpt.CacheStatus = ch.CacheStatus;
-							  addiWpt.is_found = ch.is_found;
-							  addiWpt.is_owned = ch.is_owned;
-						  }
-					  }
-					  cDB.set(tbP.getSelectedCache(), ch);
-					  detP.dirty_status = false;
-					  tbP.refreshTable();
-					  ////Vm.debug("New status updated!");
-				  }
-			  //}
+			  if(detP.isDirty()) {
+				  detP.saveDirtyWaypoint();
+			  }
 			  if(this.getSelectedItem() != 0){
-				  try{
-					  ch = (CacheHolder)cDB.get(tbP.getSelectedCache());
-					  if(ch.wayPoint.equals(lastselected) == false){
-						  //OperationTimer opt = new OperationTimer();
-						  //opt.start("Reading: ");
-						  ch.readCache(profile.dataDir);
-						  //opt.end();
-						  ////Vm.debug(opt.toString());
-						  lastselected = ch.wayPoint;
+				  if (tbP.getSelectedCache()>=cacheDB.size())
+					  ch=null;
+				  else {
+					  ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
+					  try {
+						  if(ch.wayPoint.equals(lastselected) == false){
+							  ch.readCache(profile.dataDir);
+							  lastselected = ch.wayPoint;
+						  }
+					  } catch(Exception e){
+						//Vm.debug("Error loading: "+ch.wayPoint);
 					  }
-				  } catch(Exception e){
-					//Vm.debug("Error loading: "+ch.wayPoint);
 				  }
 			  }
-			  if(this.getSelectedItem() == 1){ // DetailsPanel
-				  MyLocale.setSIPButton();
-				  detP.setDetails(ch, this);
+			  // If no cache is selected, create a new one
+			  switch (this.getSelectedItem()) {
+				  case 1:  // DetailsPanel
+					  if (ch==null) newWaypoint(ch=new CacheHolder());
+					  MyLocale.setSIPButton();
+					  detP.setDetails(ch);
+				      break;
+				  case 2: // Description Panel
+					  if (ch!=null) {
+						  MyLocale.setSIPOff();
+						  descP.setText(ch);
+					  }
+					  break;
+				  case 3: // Picture Panel
+					  if (ch!=null) {
+						  MyLocale.setSIPOff();
+						  imageP.setImages(ch);
+					  }
+					  break;
+				  case 4:  // Log Hint Panel
+					  if (ch!=null) {
+						  MyLocale.setSIPOff();
+						  hintLP.setText(ch);
+					  }
+					  break;
+				  case 5:  // CalcPanel
+					  if (ch!=null) {
+						  MyLocale.setSIPButton();
+						  calcP.setFields(ch);
+					  }
+					  break;
+				  
+				  case 6: // GotoPanel
+					  MyLocale.setSIPButton();
+				      break;
+				  case 7:  // Solver Panel
+					  MyLocale.setSIPButton();
+					  solverP.setCh(ch);
+				      break;
+				  case 8:  // Cache Radar Panel
+					  MyLocale.setSIPOff();
+					  radarP.setParam(pref, cacheDB, ch==null?"":ch.wayPoint);
+					  radarP.drawThePanel();
+				      break;
 			  }
-			  if(this.getSelectedItem() == 2) { // Description Panel
-				  openDesciptionPanel(ch);
-			  }
-			  if(this.getSelectedItem() == 3) { // Picture Panel
-				  MyLocale.setSIPOff();
-				  imageP.setImages(ch);
-				  if(detP.dirty_newOrDelete) {
-					  tbP.refreshTable();
-					  detP.dirty_newOrDelete = false;
-				  }
-			  }
-			  if(this.getSelectedItem() == 4) { // Log Hint Panel
-				  MyLocale.setSIPOff();
-				  hintLP.setText(ch);
-				  if(detP.dirty_newOrDelete) {
-					  tbP.refreshTable();
-					  detP.dirty_newOrDelete = false;
-				  }
-			  }
-			  if(this.getSelectedItem() == 5){ // CalcPanel
-				  MyLocale.setSIPButton();
-				  calcP.setFields(ch, this, detP, pref, profile);
-				  //calcP.activateFields(CWPoint.DMM);
-				  }
-			  
-			  if(this.getSelectedItem() == 6){ // GotoPanel
-				  MyLocale.setSIPButton();
-				  }
-
-
-			  if(this.getSelectedItem() == 7) { // Solver Panel
-				  MyLocale.setSIPButton();
-				  solverP.setCh(ch);
-				  if(detP.dirty_newOrDelete) {
-					  tbP.refreshTable();
-					  detP.dirty_newOrDelete = false;
-				  }
-			  }
-			  if(this.getSelectedItem() == 8) { // Cache Radar Panel
-				  MyLocale.setSIPOff();
-				  if(detP.dirty_newOrDelete) {
-					  //tbP.refreshTable();
-					  detP.dirty_newOrDelete = false;
-				  }
-				  radarP.setParam(pref, cDB, ch.wayPoint);
-				  radarP.drawThePanel();
-			  }
-		  }
-		  
+		}
 		  super.onEvent(ev); //Make sure you call this.
-		}
-		
-		/*
-		public void resizeTo(int w, int h){
-			//super.resizeTo(w,h);
-			////Vm.debug(Convert.toString(w));
-		}
-		*/
-	public void openDesciptionPanel(CacheHolder chi) {
-		MyLocale.setSIPOff();
-		descP.setText(chi);
-		if(detP.dirty_newOrDelete) {
-			tbP.refreshTable();
-			detP.dirty_newOrDelete = false;
-		}
 	}
+
+	
+	
 }
 
