@@ -267,7 +267,7 @@ public class FilterScreen extends Form{
 		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
 		addLast(btPanel.setTag(Control.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
 		setPreferredSize(240,240);
-		
+		cp.select(3);
 	}
 	
 	

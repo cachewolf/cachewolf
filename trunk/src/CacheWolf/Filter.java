@@ -13,7 +13,7 @@ import com.stevesoft.ewe_pat.*;
 public class Filter{
 	
 	private static final int SMALLER = -1;
-	private static final int EQUAL = -1;
+	private static final int EQUAL = 0;
 	private static final int GREATER = 1;
 
 	private static final int TRADITIONAL = 1;
@@ -219,19 +219,6 @@ public class Filter{
 	}
 	
 	/**
-	 * Filters the cachelist for those caches marked is_black == true.
-	 * Only caches matching are then displayed in the table
-	 * @param cacheDB
-	 */
-	public void showBlacklist(Vector cacheDB){
-		CacheHolder ch;
-		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered=!ch.is_black;
-		}
-	}
-	
-	/**
 	 * Set the filter from the filter data stored in the profile
 	 * (the filterscreen also updates the profile)
 	 */
@@ -314,6 +301,7 @@ public class Filter{
 		int cacheTypePattern;
 		int cacheRosePattern;
 		int cacheSizePattern;
+		boolean showBlackListed=Global.getPref().showBlacklisted;
 		// Values from filterscreen are parsed outside the main filter loop (fsc=FilterSCreen)
 		double dummyd1;
 		//Loop db and match once against type pattern and once against rose pattern
@@ -325,7 +313,7 @@ public class Filter{
 		// A cache is only displayed (i.e. is_filtered = false) if it meets all 9 filter criteria
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered = false;
+			ch.is_filtered = ch.is_black^showBlackListed;
 			///////////////////////////////
 			// Filter criterium 1: Cache type
 			///////////////////////////////
@@ -455,22 +443,29 @@ public class Filter{
 	/**
 	*	Invert is_filtered flag on all caches
 	*/
-	public void invertFilter(Vector cacheDB){
+	public void invertFilter(){
+		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
+		boolean showBlackListed=Global.getPref().showBlacklisted;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered=!ch.is_filtered; // skg: More efficient
+			if (ch.is_black==showBlackListed)
+				ch.is_filtered=!ch.is_filtered; // Only invert those that would be shown under blacklist filter
+			else
+				ch.is_filtered=true; // Hide all those that have the wrong is_black status
 		}
 	}
 	
 	/**
 	*	Clear the is_filtered flag from the cache database.
 	*/
-	public void clearFilter(Vector cacheDB){
+	public void clearFilter(){
+		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
+		boolean showBlackListed=Global.getPref().showBlacklisted;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered=ch.is_black || CacheType.isAddiWpt(ch.type); // Always filter blacklisted caches
+			ch.is_filtered=(ch.is_black^showBlackListed) || CacheType.isAddiWpt(ch.type); // Always filter blacklisted caches
 		}
 		Profile prof=Global.getProfile();
 		prof.filterType = new String(Profile.FILTERTYPE);
