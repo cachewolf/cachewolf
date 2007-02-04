@@ -171,6 +171,7 @@ public class GotoPanel extends CellPanel {
 	public boolean runMovingMap = false;
 	MovingMap mmp;
 	Track currTrack;
+	Color trackColor = RED;
 
 	/**
 	 * Create GotoPanel 
@@ -380,10 +381,11 @@ public class GotoPanel extends CellPanel {
 		if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
 			//gpsPosition.printAll();
 			//Vm.debug("currTrack.add: voher");
+			if (currTrack == null) currTrack = new Track(trackColor);
 			try {
 				currTrack.add(gpsPosition);
 			} catch (IndexOutOfBoundsException e) { // track full -> create a new one
-				currTrack = new Track(RED); 
+				currTrack = new Track(trackColor); 
 				currTrack.add(gpsPosition);
 				if (mmp != null) mmp.addTrack(currTrack); // TODO maybe gotoPanel should also hold a list of Tracks, because otherwise they will be destroyed if not saved in mmp before
 			}
@@ -429,9 +431,9 @@ public class GotoPanel extends CellPanel {
 		if (mmp != null && runMovingMap ) { // neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
 			if ((fix > 0) && (gpsPosition.getSats()>= 0)) {
 				mmp.directionArrows.setDirections(-361 /*(float)bearWayP.value*/, (float)sunAzimut.value, -361 /*(float)bearMov.value*/);
+				mmp.setGpsStatus(MovingMap.gotFix);
 				mmp.updatePosition(gpsPosition.latDec, gpsPosition.lonDec);
 				mmp.ShowLastAddedPoint(currTrack);
-				mmp.setGpsStatus(MovingMap.gotFix);
 			}
 			if ((fix == 0) && (gpsPosition.getSats()== 0)) {
 				mmp.setGpsStatus(MovingMap.lostFix);

@@ -132,27 +132,33 @@ public class MovingMap extends Form {
 		if (tracks != null) addOverlaySet();
 	}
 
+	boolean loadingMapList = false;
 	/**
 	 * loads the list of maps
 	 * @param mapsPath must not have a trailing end "/"
 	 * @param lat used to create empty maps with correct conversion from lon to meters the latitude must be known
 	 */
 	public void loadMaps(String mapsPath, double lat){
+		if (loadingMapList) return;
+		loadingMapList = true;
 		this.mapPath = mapsPath;
 		Vm.showWait(this, true);
 		resetCenterOfMap();
 		InfoBox inf = new InfoBox("Info", "Loading list of maps...");
 		inf.exec();
+		boolean saveGpsIgnoreStatus = ignoreGps;
+		ignoreGps = true;
 		maps = new MapsList(mapsPath); // this actually loads the maps
 		if (maps.isEmpty()) {
 			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung \n Bitte wählen Sie einen Maßstab,\n in dem der Track und die markierten Caches angezeigt werden sollen"), MessageBox.OKB)).execute();
 			noMapsAvailable = true;
 		} else noMapsAvailable = false;
 		maps.addEmptyMaps(lat);
+		ignoreGps = saveGpsIgnoreStatus;
 		inf.close(0);
 		Vm.showWait(this, false);
-		if (noMapsAvailable) mmp.chooseMap(); // let the user select an scale
 		this.mapsloaded = true;
+		loadingMapList = false;
 	}
 
 	public void updateDistance() {
@@ -665,34 +671,33 @@ public class MovingMap extends Form {
 	 * Method to laod the best map for lat/lon and move the map so that the posCircle is at lat/lon
 	 */
 	public void updatePosition(double lat, double lon){
+		if (ignoreGps || loadingMapList) return; // avoid multi-threading problems
 		Vm.debug("updatepors, lat: "+lat+" lon: "+lon);
 		if (!mapsloaded) {
 			loadMaps(mapPath, lat);
 			lastCompareX = Integer.MAX_VALUE;
 			lastCompareY = Integer.MAX_VALUE;
 			autoSelectMap = true;
-			setBestMap(lat, lon);
+			setBestMap(lat, lon, true);
 			forceMapLoad = false;
 			return;
 		}
-		if(!ignoreGps || forceMapLoad){
-			updateOnlyPosition(lat, lon, true);
-			if (autoSelectMap || forceMapLoad) {
-				Point mapPos = getMapPositionOnScreen();
-				if (forceMapLoad || wantMapTest|| (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width) 
-						|| 	mmp.mapImage == null )) 	{ // if force || want || map doesn't cover the scree completly
-					//Vm.debug("Screen not completly covered by map");
-					if (forceMapLoad || (java.lang.Math.abs(lastCompareX-mapPos.x) > this.width/10 || java.lang.Math.abs(lastCompareY-mapPos.y) > this.height/10)) {
-						// more then 1/10 of screen moved since last time we tried to find a better map
-						lastCompareX = mapPos.x;
-						lastCompareY = mapPos.y;
-						setBestMap(lat, lon);
-						forceMapLoad = false;
-					}
-				}
+		updateOnlyPosition(lat, lon, true);
+		if (!autoSelectMap) return;
+		Point mapPos = getMapPositionOnScreen();
+		boolean screenNotCompletlyCovered =  mmp.mapImage == null || (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width));
+		if (forceMapLoad || wantMapTest|| screenNotCompletlyCovered) 	{ // if force || want || map doesn't cover the scree completly
+			//Vm.debug("Screen not completly covered by map");
+			if (forceMapLoad || (java.lang.Math.abs(lastCompareX-mapPos.x) > this.width/10 || java.lang.Math.abs(lastCompareY-mapPos.y) > this.height/10)) {
+				// more then 1/10 of screen moved since last time we tried to find a better map
+				lastCompareX = mapPos.x;
+				lastCompareY = mapPos.y;
+				setBestMap(lat, lon, screenNotCompletlyCovered);
+				forceMapLoad = false;
 			}
 		}
 	}
+
 
 	int mapChangeModus;
 	float scaleWanted;
@@ -700,6 +705,7 @@ public class MovingMap extends Form {
 	public final static int NORMAL_KEEP_RESOLUTION = 1; // keeps the choosen resolution as long as a map is available that overlaps with the screen and with the PosCircle - it changes the resolution if no such map is available. It wil cahnge back to the wanted scale as soon as a map becomes available (through movement of the GPS-receiver)
 	public final static int HIGHEST_RESOLUTION = 2;
 	public final static int HIGHEST_RESOLUTION_GPS_DEST = 3;
+	boolean inBestMap = false; // to avoid multi-threading problems
 
 	/**
 	 * loads the best map for lat/lon according to mapChangeModus
@@ -712,8 +718,12 @@ public class MovingMap extends Form {
 	 * 
 	 * @param lat
 	 * @param lon
+	 * @param loadIfSameScale false: will not change the map if the better map has the same scale as the current - this is used not to change the map if it covers already the screen completely
+	 * true: willchange the map, regardless of change in scale
 	 */
-	public void setBestMap(double lat, double lon) {
+	public void setBestMap(double lat, double lon, boolean loadIfSameScale) {
+		if (inBestMap) return;                  // TODO zoomlevel berücksichtigen
+		inBestMap = true;
 		Object [] s = getRectForMapChange(lat, lon);
 		CWPoint cll = (CWPoint) s[0]; 
 		Rect screen = (Rect) s[1]; 
@@ -734,22 +744,28 @@ public class MovingMap extends Form {
 		default: (new MessageBox("Error", "Programmfehler: \nillegal mapChangeModus: " + mapChangeModus, MessageBox.OKB)).execute(); break;
 		}
 		if ( newmap != null && (currentMap == null || currentMap.mapName != newmap.mapName) ) {
-			setMap(newmap, lat, lon); // TODO handling, wenn newmap == null
+			if (loadIfSameScale || !MapsList.scaleEquals(currentMap, newmap) ) setMap(newmap, lat, lon); 
 			Vm.debug("better map found");
+			inBestMap = false;
 			return;
 		}
 		if (currentMap == null && newmap == null) {
 			(new MessageBox("Information", "Für die aktuelle Position steht keine Karte zur Verfüung, bitte wählen Sie eine manuell", MessageBox.OKB)).execute();
 			posCircleLat = lat;
 			posCircleLon = lon; // choosemap calls setmap with posCircle-coos
-			mmp.chooseMap(); 
+			while (currentMap == null) {
+				mmp.chooseMap(); // force the user to select a scale // TODO empty maps on top?
+				if (currentMap == null) (new MessageBox("Error", "Moving map cannot run without a map - please select one", MessageBox.OKB)).execute();
+			}
 		}
+		inBestMap = false;
 	}
 
 	public void setResModus (int modus) {
+		if (mapChangeModus == modus) return;
 		mapChangeModus = modus;
 		if (modus == NORMAL_KEEP_RESOLUTION) scaleWanted = currentMap.scale;
-		else setBestMap(posCircleLat, posCircleLon);
+		else setBestMap(posCircleLat, posCircleLon, true);
 	}
 	/**
 	 * method to get a point on the screen which must be included in the map
@@ -813,7 +829,7 @@ public class MovingMap extends Form {
 		GpsStatus = status;
 		ignoreGps = false;
 		switch (status) {
-		case noGPS: 	{ posCircle.change(null); ignoreGps = true; break; }
+		case noGPS: 	{ posCircle.change(null); /*ignoreGps = true; */ break; }
 		case gotFix:    { posCircle.change(statusImageHaveSignal); break; }
 		case lostFix:   { posCircle.change(statusImageNoSignal); break; }
 		case noGPSData: { posCircle.change(statusImageNoGps); break; }
@@ -1123,15 +1139,15 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	public boolean imageBeginDragged(AniImage which,Point pos) {
 		if (mm.zoomingMode == true) { // zoom
 //			saveMapLoc = pos;
-	//		saveGpsIgnoreStatus = mm.ignoreGps;
-		//	mm.ignoreGps = true;
+			//		saveGpsIgnoreStatus = mm.ignoreGps;
+			//	mm.ignoreGps = true;
 			return false;
 		}
 		// move (drag) map
 		//if (!(which == null || which == mapImage || which instanceof TrackOverlay || which == mm.directionArrows) ) return false;
 		saveGpsIgnoreStatus = mm.ignoreGps; 
 		mm.ignoreGps = true;
-		paintingZoomArea = true;
+		//paintingZoomArea = true;
 		saveMapLoc = pos;
 		bringMapToTop();
 		if (mapImage.isOnScreen() && !mapImage.hidden ) return super.imageBeginDragged(mapImage, pos);
@@ -1186,7 +1202,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			top -= 2;
 			if (top < 0) top = 0;
 			if (left < 0) left = 0;
-			this.repaintNow(dr, new Rect(left, top, java.lang.Math.abs(lastZoomWidth)+2, java.lang.Math.abs(lastZoomHeight)+2));
+			this.repaintNow(dr, new Rect(left, top, java.lang.Math.abs(lastZoomWidth)+4, java.lang.Math.abs(lastZoomHeight)+4));
 			lastZoomWidth = ev.x - saveMapLoc.x;
 			lastZoomHeight =  ev.y - saveMapLoc.y;
 			if (lastZoomWidth < 0) left = saveMapLoc.x + lastZoomWidth;
@@ -1331,10 +1347,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	}
 
 	public void snapToGps() {
-		if (mm.gotoPanel.serThread == null || !mm.gotoPanel.serThread.isAlive()) {
+		if (mm.gotoPanel.serThread == null || !mm.gotoPanel.serThread.isAlive()) 
 			mm.gotoPanel.startGps();
-			mm.addTrack(mm.gotoPanel.currTrack); // use new track when gps now started
-		} 
 		mm.SnapToGps();
 	}
 

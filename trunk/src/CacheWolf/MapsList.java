@@ -2,6 +2,7 @@ package CacheWolf;
 
 import ewe.io.File;
 import ewe.io.IOException;
+import ewe.sys.Double;
 import ewe.ui.MessageBox;
 import ewe.util.Hashtable;
 import ewe.util.Vector;
@@ -14,7 +15,7 @@ import ewe.fx.*;
  *
  */
 public class MapsList extends Vector {
-	public float scaleTolerance = 0.01f; // absolute deviations from this factor are seen to have the same scale
+	public static float scaleTolerance = 0.01f; // absolute deviations from this factor are seen to have the same scale
 	public Hashtable scales2Area;
 
 	/**
@@ -131,16 +132,46 @@ public class MapsList extends Vector {
 	}
 	 */
 	/**
-	 * return a map which includs topleft and bottomright
-	 * if no map includes both it returns null 
+	 * @return a map which includs topleft and bottomright, 
+	 * if no map includes both it returns null
+	 * @param if more than one map includes topleft and bottomright than the one will
+	 * be returned which has its center nearest to topleft. If you have gps-pos and goto-pos
+	 * as topleft and buttomright use gps as topleft.
+	 * if topleft is really topleft or if it is buttomright is not relevant.  
 	 */
+	
+	// TODO if more than one map contains both -> select the best one of them
 	public MapInfoObject getMapForArea(CWPoint topleft, CWPoint bottomright){
 		MapInfoObject mi;
 		MapInfoObject fittingmap = null;
+		boolean latNearer, lonNearer;
+		boolean better;
+		double minDistLat = 10000000000000000000000.0;
+		double minDistLon = 10000000000000000000000.0;
 		for (int i=size() -1; i>=0 ;i--) {
+			better = false;
 			mi = (MapInfoObject)get(i);
-			if (mi.inBound(topleft) && mi.inBound(bottomright)) {
-				if (fittingmap == null || fittingmap.scale > mi.scale) fittingmap = mi;
+			if (mi.inBound(topleft) && mi.inBound(bottomright)) { // both points are inside the map
+				if (fittingmap == null || fittingmap.scale > mi.scale + scaleTolerance) {
+					better = true; // mi map has a better (lower) scale than the last knwon good map
+				} else {
+					if (fittingmap != null && java.lang.Math.abs(mi.scale - fittingmap.scale) < scaleTolerance) { // same scale as bestmap till now -> test if its center is nearer to the gps-point = topleft
+						latNearer = java.lang.Math.abs(topleft.latDec- mi.center.latDec)/mi.sizeKm < minDistLat ;
+						lonNearer = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
+						if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
+						else {
+							if ( (latNearer || lonNearer )) { 
+								if (mi.center.getDistanceRad(topleft.latDec, topleft.lonDec) < fittingmap.center.getDistanceRad(topleft.latDec, topleft.lonDec) ) better = true;
+							}
+						}
+
+					}
+				}
+				if (better) {
+					fittingmap = mi;
+					minDistLat = java.lang.Math.abs(topleft.latDec - mi.center.latDec);
+					minDistLon = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec);
+				}
 			}
 		} // for
 		return fittingmap;
@@ -148,10 +179,10 @@ public class MapsList extends Vector {
 
 	/**
 	 * 
-	 * @param lat
+	 * @param lat a point to be inside the map
 	 * @param lon
 	 * @param screen
-	 * @param curScale
+	 * @param curScale reference scale to be changed
 	 * @param moreDetails true: find map with more details == higher resolustion = lower scale / false find map with less details = better overview
 	 * @return
 	 */
@@ -203,10 +234,10 @@ public class MapsList extends Vector {
 	/**
 	 * returns an area in lat/lon of the screen
 	 * @param a screen width / height and position of lat/lon on the screen
-	 * @param lat
+	 * @param lat a (reference) point on the screen
 	 * @param lon
-	 * @param scale
-	 * @param map
+	 * @param scale scale (meters per pixel) of the map for which the screen edges are wanted
+	 * @param map map for which the screen edges are wanted
 	 * @return
 	 */
 	private Area getAreaForScreen(Rect a, double lat, double lon, float scale, MapInfoObject map) {
@@ -220,6 +251,9 @@ public class MapsList extends Vector {
 		ret = new Area(map.calcLatLon(topleft), map.calcLatLon(topleft.x+a.width, topleft.y+a.height));
 		//scales2Area.put(new Float(scale), ret);
 		return ret; 
+	}
+	public static boolean scaleEquals(MapInfoObject a, MapInfoObject b) {
+		return java.lang.Math.abs(a.scale - b.scale) < scaleTolerance; 
 	}
 
 	/** for determining if a new map should be downloaded
