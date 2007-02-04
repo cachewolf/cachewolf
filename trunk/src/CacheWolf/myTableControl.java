@@ -90,16 +90,25 @@ public class myTableControl extends TableControl{
 			Vm.showWait(true);
 			spider.login();
 			boolean alreadySaid = false;
+			boolean alreadySaid2 = false;
 			for(int i = 0; i <	db.size(); i++){
 				ch = (CacheHolder)db.get(i);
 				if(ch.is_Checked == true) {
-					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))
-							|| (ch.mainCache != null &&	ch.mainCache.wayPoint.length() > 1 	&& ch.mainCache.wayPoint.substring(0,2).equalsIgnoreCase("GC")) ) 
+					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
+// Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
+// Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
+// TODO: Diese Meldungen vor dem Einloggen darstellen						
 					{
 						spider.spiderSingle(i);
-					} else if (!alreadySaid) {
+					} else if (ch.isAddiWpt() && !ch.mainCache.is_Checked) { // Is the father ticked?
+						if (!alreadySaid2) {
+							alreadySaid2=true;
+							(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).exec();
+						}
+					} else if (ch.mainCache != null &&	ch.mainCache.wayPoint.length() > 1 	&& !ch.mainCache.wayPoint.substring(0,2).equalsIgnoreCase("GC") && 
+							   !alreadySaid) {
 						alreadySaid = true;
-						(new MessageBox("Information","Diese Funktion steht gegenwärtig nur für Geocaching.com zur Verfügung", MessageBox.OKB)).exec();
+						(new MessageBox("Information",ch.wayPoint+">"+ch.mainCache.wayPoint+": Diese Funktion steht gegenwärtig nur für Geocaching.com zur Verfügung", MessageBox.OKB)).exec();
 					}
 				}
 			}
