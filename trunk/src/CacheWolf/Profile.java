@@ -35,7 +35,7 @@ public class Profile {
 	/** Distance for opencaching caches */
 	public String distOC = new String();
 	
-	public final static String FILTERTYPE="11111111110";
+	public final static String FILTERTYPE="11111111111000000";
 	public final static String FILTERROSE="1111111111111111";
 	public final static String FILTERVAR="11111111";
 	public String filterType = new String(FILTERTYPE);
@@ -107,12 +107,13 @@ public class Profile {
 				ch = (CacheHolder)cacheDB.get(i);
 				////Vm.debug("Saving: " + ch.CacheName);
 				if(ch.wayPoint.length()>0 && ch.LongDescription.equals("An Error Has Occured") == false){
-					if (ch.pos==null) {
+/* pos must always be set, so this is no longer needed
+ 					if (ch.pos==null) {
 						ParseLatLon pl=new ParseLatLon(ch.LatLon);
 						pl.parse();
 						ch.pos=new CWPoint(pl.lat2,pl.lon2);
 					}
-					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
+*/					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
 							//"\" lat = \""+ SafeXML.clean(ch.LatLon) +
 							"\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
 							"\" hidden = \""+ch.DateHidden+"\" wayp = \""+SafeXML.clean(ch.wayPoint)+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"" + ch.dirty + "\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\" />\n");
@@ -155,8 +156,10 @@ public class Profile {
 						double lon=Convert.parseDouble(ex.findNext().replace(notDecSep,decSep));
 						ch.pos=new CWPoint(lat,lon);
 						ch.LatLon=ch.pos.toString();
-					} else
+					} else {
 						ch.LatLon = SafeXML.cleanback(ex.findNext());
+						ch.pos.set(ch.LatLon,CWPoint.CW);
+					}
 					ch.DateHidden = ex.findNext();
 					ch.wayPoint = SafeXML.cleanback(ex.findNext());
 					ch.CacheStatus = ex.findNext();
@@ -283,15 +286,12 @@ public class Profile {
 			CWPoint fromPoint = new CWPoint(Global.getPref().curCentrePt); // Clone current centre to be sure
 			int anz = cacheDB.getCount();
 			CacheHolder ch;
-			CWPoint toPoint = new CWPoint();
+			CWPoint toPoint;
 			// Jetzt durch die CacheDaten schleifen
 			while(--anz >= 0){
 				ch = (CacheHolder)cacheDB.get(anz); // This returns a pointer to the CacheHolder object
 				if(ch.LatLon.length()>4){
-					if (ch.pos == null) { // only calculate once
-						toPoint.set(ch.LatLon, CWPoint.CW); // Fast parse with traditional parse algorithm
-						ch.pos = new CWPoint(toPoint);
-					} else toPoint = ch.pos;
+					toPoint = ch.pos;
 					ch.kilom = fromPoint.getDistance(toPoint);
 					ch.degrees = fromPoint.getBearing(toPoint);
 					ch.bearing = CWPoint.getDirection(ch.degrees);

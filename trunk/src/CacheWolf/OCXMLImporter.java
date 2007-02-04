@@ -386,6 +386,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if(name.equals("latitude")) {
 			holder.LatLon = GPXImporter.latdeg2min(strData) + " " + holder.LatLon;
+			holder.pos.set(holder.LatLon);
 			return;
 		}
 		if(name.equals("difficulty")) {

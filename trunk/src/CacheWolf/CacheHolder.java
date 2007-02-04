@@ -106,6 +106,7 @@ public CacheHolder update(CacheHolder newCh){
 	  
 	  //coords
 	  this.LatLon = newCh.LatLon;
+	  this.pos.set(newCh.pos);
 
 	  // check only length of the description to see, if there was an update
 	  if (this.LongDescription.length() != newCh.LongDescription.length()){
