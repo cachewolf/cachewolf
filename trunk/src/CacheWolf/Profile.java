@@ -223,7 +223,6 @@ public class Profile {
 			in.close();
 			// Build references between caches and addi wpts
 			buildReferences();
-			normalizeFilters();
 		} catch (FileNotFoundException e) {
 			Vm.debug("index.xml not found"); // Normal when profile is opened for first time
 			//e.printStackTrace();
@@ -231,6 +230,7 @@ public class Profile {
 			Vm.debug("Problem reading index.xml "+e.toString()); 
 			e.printStackTrace();
 		}
+		normalizeFilters();
 	}
 	
 	public int getCacheIndex(String wp){
@@ -245,6 +245,25 @@ public class Profile {
 		return retval;
 	}
 
+	/** Get a unique name for a new waypoint */
+	//TODO Make more efficient
+	public String getNewWayPointName(){
+		String strWp=null;
+		long  lgWp=1;
+        if (cacheDB.size()==0 )
+        	return "CW0000";
+		//Create new waypoint,look if not in db
+		for(int i = 0;i < cacheDB.size();i++){
+			strWp = "CW" + MyLocale.formatLong(lgWp, "0000");
+			if(((CacheHolder)cacheDB.get(i)).wayPoint.indexOf(strWp) >=0 ){
+				//waypoint exists in database
+				lgWp++;
+				i = -1; // Because i++ will be executed next, so we start the loop with 0
+			}
+		}
+		return strWp;
+	}
+	
 	public String toString() {
 		return "Profile: Name="+name+"\nCentre="+centre.toString()+"\ndataDir="+dataDir+"\nlastSyncOC="+
 		     last_sync_opencaching+"\ndistOC="+distOC;
