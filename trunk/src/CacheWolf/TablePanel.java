@@ -16,57 +16,19 @@ public class TablePanel extends CellPanel{
 	
 	myTableControl tc;
 	myTableModel myMod;
-	int selectedCache;
+	int selectedCache=0;
 	Preferences pref;
 	Vector cacheDB;
-	GotoPanel myGotoPanel;
 	MainTab myMaintab;
 	StatusBar statBar;
 	
-	public TablePanel(Preferences p, Profile profile, StatusBar statBar){
+	public TablePanel(Preferences p, Profile profileXX, StatusBar statBar){
+		pref = Global.getPref();
+		Profile profile=Global.getProfile();
 		this.statBar = statBar;
 		cacheDB = profile.cacheDB;
-		pref = p;
-/*
-		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
-		String[] jester;
-		int colWidth[];
-		int colnum = 0;
-		
-		for(int i = 0; i<=11; i++){
-			if(pref.tablePrefs[i] == 1) colnum++;
-		}
-		jester = new String[colnum];
-		colWidth = new int[colnum];
-		
-		int ji = 0;
-		for(int i = 0; i<=11;i++){
-			if(pref.tablePrefs[i] == 1){
-				jester[ji] = spName[i];
-				colWidth[ji] = pref.tableWidth[i];
-				ji++;
-			}
-		}
-*/		
-		addLast(new ScrollBarPanel(tc = new myTableControl()));
+		addLast(new ScrollBarPanel(tc = new myTableControl(this)));
 		if (statBar!=null) addLast(statBar,CellConstants.DONTSTRETCH, CellConstants.FILL);
-		Menu m = new Menu(new String[]{
-				MyLocale.getMsg(1021,"Open desription"),
-				MyLocale.getMsg(1010,"Goto"),
-				MyLocale.getMsg(1019,"enter"),
-				MyLocale.getMsg(1020,"open in $browser online"),
-				"-",
-				MyLocale.getMsg(1011,"Filter"),
-				MyLocale.getMsg(1012,"Delete"),
-				MyLocale.getMsg(1014,"Update"),
-				"-",
-				MyLocale.getMsg(1015,"Select all"),
-				MyLocale.getMsg(1016,"De-select all")},MyLocale.getMsg(1013,"With selection"));
-		tc.setMenu(m);
-		tc.profile=profile;
-		tc.db = cacheDB;
-		tc.pref = p;
-		tc.tbp = this;
 		myMod = new myTableModel(tc, getFontMetrics());
 		myMod.hasRowHeaders = false;
 		myMod.hasColumnHeaders  = true;
@@ -77,10 +39,15 @@ public class TablePanel extends CellPanel{
 		tc.scrollToVisible(0,0);
 	}
 	
+	/** @deprecated */
 	public void setPanels(GotoPanel gp, MainTab mt) {
-		myGotoPanel = gp;
 		myMaintab = mt;
 	}
+
+	public void setSelectedCache(int row){
+		selectedCache=row;
+	}
+	
 	
 	public int getSelectedCache(){
 		return selectedCache;
@@ -111,11 +78,12 @@ public class TablePanel extends CellPanel{
 		Filter flt = new Filter();
 		flt.setFilter();
 		flt.doFilter();
-		myMod.updateRows();
-		tc.update(true);
-		if (statBar!=null) statBar.updateDisplay();
+		refreshTable();
+		selectedCache=0;
 	}
 	
+	/** Move all filtered caches to the end of the table and redesplay table */
+	//TODO Add a sort here to restore the sort after a filter
 	public void refreshTable(){
 		myMod.updateRows();
 		tc.update(true);
@@ -124,38 +92,14 @@ public class TablePanel extends CellPanel{
 	
 	public void onEvent(Event ev)
 	{
-		////Vm.debug(ev.toString());
-		if(ev instanceof PenEvent){
-			if(ev.type == PenEvent.RIGHT_BUTTON){
-				Vm.debug("Right mouse button pressed");
-			}
-		}
 		if(ev instanceof TableEvent){
 			Point a = new Point();
 			Point dest = new Point();
 			a = tc.getSelectedCell(dest);
-			try{
+			try {
 				selectedCache = a.y;
-					}catch(NullPointerException npe){
-			}
+			} catch(NullPointerException npe){}
 		}
-		/* Not needed because myTableModel contains code to handle click on checkBox image
-		if(ev instanceof ControlEvent && ev.target instanceof mCheckBox){
-			mCheckBox m = new mCheckBox();
-			m = (mCheckBox)ev.target;
-			CacheHolder ch = new CacheHolder();
-			String tag = new String();
-			tag = (String)m.getTag(0, "nix");
-			for(int i = 0; i<cacheDB.size();i++){
-				ch = (CacheHolder)cacheDB.get(i);
-				if(ch.wayPoint.equals(tag)){
-					ch.is_Checked = m.getState();
-					cacheDB.set(i, ch);
-				}
-			}
-		} */
 	  super.onEvent(ev); //Make sure you call this.
 	}
 }
-
-
