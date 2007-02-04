@@ -144,11 +144,17 @@ public class myTableModel extends TableModel{
 			ch = (CacheHolder) cacheDB.get(i);
 			if (ch.is_filtered) {
 				filteredDB.add(ch);
-			} else {
-				if (ch.isAddiWpt()){
+			} else { // point is not filtered
+				if (ch.isAddiWpt()){ // unfiltered Addi Wpt
 					// check if main wpt is filtered
-					if(ch.mainCache != null) if (ch.mainCache.is_filtered) sortDB.add(ch);
-				} else {
+					if(ch.mainCache != null) { // parent exists
+						if (ch.mainCache.is_filtered) 
+							sortDB.add(ch); // Unfiltered Addi Wpt with filtered Main Wpt, show it on its own
+						// else Main cache is not filtered, Addi will be added below main cache further down
+					} else { //Addi without main Cache
+						sortDB.add(ch);
+					}
+				} else { // Main Wpt, not filtered. Check for Addis
 					sortDB.add(ch);
 					if (ch.hasAddiWpt()){
 						for (int j=0; j<ch.addiWpts.getCount();j++){
