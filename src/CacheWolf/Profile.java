@@ -38,8 +38,10 @@ public class Profile {
 	public final static String FILTERTYPE="11111111111000000";
 	public final static String FILTERROSE="1111111111111111";
 	public final static String FILTERVAR="11111111";
+	public final static String FILTERSIZE="111111";
 	public String filterType = new String(FILTERTYPE);
 	public String filterRose = new String(FILTERROSE);
+	public String filterSize = new String(FILTERSIZE);
 	//filter settings for archived ... owner (section) in filterscreen
 	public String filterVar = new String(FILTERVAR);
 	public String filterDist=new String("");
@@ -101,7 +103,7 @@ public class Profile {
 			
 			detfile.print("    <FILTER rose = \""+filterRose+"\" type = \""+filterType+
 					 "\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
-					 filterDiff+"\" terr = \""+filterTerr+"\" />\n");
+					 filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			for(int i = 0; i<cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
@@ -214,13 +216,14 @@ public class Profile {
 					filterDist = ex.findNext();
 					filterDiff = ex.findNext();
 					filterTerr = ex.findNext();
+					filterSize = ex.findNext();
 //					 Bilbowolf: Pattern for storing filter <FILTER type="01001101" rose = "010010101" var = "0101" dist = "<12" diff = ">13" terr = "<1"/>
 				}
 			}
 			in.close();
 			// Build references between caches and addi wpts
 			buildReferences();
-			
+			normalizeFilters();
 		} catch (FileNotFoundException e) {
 			Vm.debug("index.xml not found"); // Normal when profile is opened for first time
 			//e.printStackTrace();
@@ -339,4 +342,27 @@ public class Profile {
 					}// if
 			   }// for
 		   }
+		   
+    /** Ensure that all filters have the proper length so that the 'charAt' access in the filter
+     * do not cause nullPointer Exceptions
+     */
+    private void normalizeFilters() {
+		if (filterRose.length()<16) { 
+			filterRose=(filterRose+"1111111111111111").substring(0,16); 
+		}  
+		if (filterVar.length()<8) { 
+			filterVar=(filterVar+"11111111").substring(0,8); 
+		}  
+		if (filterType.length()<16) { 
+			filterType=(filterType+"11111111111111111").substring(0,11);
+			filterType=(filterType+"000000").substring(0,17);
+		} 
+		if (filterSize.length()<6) {
+			filterSize=(filterSize+"111111").substring(0,6);
+		}
+		if (filterDist.length()==0) filterDist="L";
+		if (filterDiff.length()==0) filterDiff="L";
+		if (filterTerr.length()==0) filterTerr="L";
+    }
+		   
 }

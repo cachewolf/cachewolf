@@ -106,25 +106,27 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Filter" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterMenuItems=new MenuItem[6];
+		MenuItem[] filterMenuItems=new MenuItem[7];
 		filterMenuItems[0] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")); 
 		filterMenuItems[1] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
 		filterMenuItems[2] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
-		filterMenuItems[3] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
-		filterMenuItems[4] = new MenuItem("-");
-		filterMenuItems[5] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
+		filterMenuItems[3] = mnuSeparator;
+		filterMenuItems[4] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
+		filterMenuItems[5] = mnuSeparator;
+		filterMenuItems[6] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
 		
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterAndSearchMenuItems=new MenuItem[7];
+		MenuItem[] filterAndSearchMenuItems=new MenuItem[8];
 		filterAndSearchMenuItems[0]=filtCreate;
 		filterAndSearchMenuItems[1]=filtInvert;
 		filterAndSearchMenuItems[2]=filtClear;
-		filterAndSearchMenuItems[3]=filtBlack;
-		filterAndSearchMenuItems[4]=mnuSeparator;
-		filterAndSearchMenuItems[5]=search;
-		filterAndSearchMenuItems[6]=searchClr;
+		filterAndSearchMenuItems[3]=mnuSeparator;
+		filterAndSearchMenuItems[4]=filtBlack;
+		filterAndSearchMenuItems[5]=mnuSeparator;
+		filterAndSearchMenuItems[6]=search;
+		filterAndSearchMenuItems[7]=searchClr;
 		
 		// Depending on screen width display either filter and searach menus or the combined menu 
 		if (MyLocale.getScreenWidth()>300) {
@@ -195,6 +197,8 @@ public class MainMenu extends MenuBar {
 					pref.lastProfile=profile.name=f.profileDir;
 					pref.savePreferences(); // Remember that this was the last profile used
 					profile.dataDir=pref.baseDir+f.profileDir+"/";
+					pref.showBlacklisted=false;
+					filtBlack.modifiers&=~MenuItem.Checked;
 					tbp.refreshTable();
 				}
 				f.close(0);
@@ -204,6 +208,8 @@ public class MainMenu extends MenuBar {
 					profile.cacheDB.clear();
 					profile.readIndex();
 					pref.curCentrePt.set(profile.centre);
+					filtBlack.modifiers&=~MenuItem.Checked;
+					pref.showBlacklisted=false;
 					tbp.resetModel();
 					Global.mainTab.tbP.gotoFirstLine();
 				}
@@ -252,11 +258,15 @@ public class MainMenu extends MenuBar {
 						}
 					}
 				}
+				pref.showBlacklisted=false;
+				filtBlack.modifiers&=~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadOC){
 				OCXMLImporter oc = new OCXMLImporter(pref,profile);
 				oc.doIt();
+				pref.showBlacklisted=false;
+				filtBlack.modifiers&=~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == filtCreate){
@@ -266,12 +276,14 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == filtInvert){
 				Filter flt = new Filter();
-				flt.invertFilter(cacheDB);
+				flt.invertFilter();
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == filtBlack){
+				filtBlack.modifiers^=MenuItem.Checked;
+				pref.showBlacklisted=!pref.showBlacklisted;
 				Filter flt = new Filter();
-				flt.showBlacklist(cacheDB);
+				flt.clearFilter();
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == exportGPS){
@@ -310,17 +322,16 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == filtClear){
 				Filter flt = new Filter();
-				flt.clearFilter(cacheDB);
+				flt.clearFilter();
 				tbp.refreshTable();
 			}
 			
 			if(mev.selectedItem == filtSelected){
 				CacheHolder ch;
-				for(int i = 0; i <	cacheDB.size(); i++){
+				for(int i = cacheDB.size()-1; i>=0; i--){
 					ch = (CacheHolder)cacheDB.get(i);
-					ch.is_filtered = false;
-					if(ch.is_Checked == true) ch.is_filtered = true;
-					cacheDB.set(i, ch);
+					ch.is_filtered = ch.is_Checked;
+					//cacheDB.set(i, ch);
 				}
 				tbp.refreshTable();
 			}
