@@ -168,20 +168,8 @@ public class myTableControl extends TableControl{
 	}
 	
 	public void penDoubleClicked(Point where) {
-		//Global.mainTab.select(Global.mainTab.descP);
-		openCacheDesc();
+		Global.mainTab.select(Global.mainTab.descP);
 	}
 
-	void openCacheDesc() {
-			CacheHolder ch;
-			ch = (CacheHolder)tbp.cacheDB.get(tbp.getSelectedCache());
-			try{
-				ch.readCache(profile.dataDir);
-			}catch(IOException ex){	
-				(new MessageBox("Error", "Cannot read cache data\n"+ex.toString()+"\n in cache: "+ch.wayPoint,MessageBox.OKB)).execute(); 
-			}
-			tbp.myMaintab.select(tbp.myMaintab.descP);
-		
-	}
 	
 }

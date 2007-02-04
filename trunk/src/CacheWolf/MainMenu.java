@@ -206,6 +206,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == mnuOpenProfile){
 				if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
 					profile.cacheDB.clear();
+					tbp.setSelectedCache(-1);
 					profile.readIndex();
 					pref.curCentrePt.set(profile.centre);
 					filtBlack.modifiers&=~MenuItem.Checked;

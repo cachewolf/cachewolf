@@ -44,7 +44,6 @@ public class CalcPanel extends CellPanel {
 	// Needed for creation of new waypoint
 	Vector cacheDB;
 	MainTab mainT;
-	DetailsPanel detP;
 	Preferences pref;
 	Profile profile;
 	// different panels to avoid spanning
@@ -55,8 +54,13 @@ public class CalcPanel extends CellPanel {
 	int currFormat;
 	mButton btnChangeLatLon;
 	
-	public CalcPanel()
-	{
+	public CalcPanel()	{
+		pref = Global.getPref();
+		profile=Global.getProfile();
+		mainT = Global.mainTab;
+		cacheDB = profile.cacheDB;
+		
+		
 		TopP.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		TopP.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		TopP.addNext(chkDMS =new mCheckBox("d°m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
@@ -113,13 +117,8 @@ public class CalcPanel extends CellPanel {
 		return;
 	}
 	
-	public void setFields(CacheHolder ch, MainTab mt,DetailsPanel dp, Preferences p, Profile prof){
-		pref = p;
-		profile=prof;
-		mainT = mt;
-		detP = dp;
-		cacheDB = profile.cacheDB;
-		
+	// ch must be not null
+	public void setFields(CacheHolder ch){
 		currFormat = CWPoint.DMM;
 		if (ch.LatLon.length()== 0) coordInp.set(0,0);
 		else coordInp.set(ch.LatLon, CWPoint.CW);
@@ -161,7 +160,7 @@ public class CalcPanel extends CellPanel {
 				coordOut = coordInp.project(bd.degrees, bd.distance);
 				ch.LatLon = coordOut.toString();
 				ch.pos.set(coordOut);
-				detP.newWaypoint(ch, mainT);
+				mainT.newWaypoint(ch);
 			}
 			
 			if (ev.target == btnGoto){
