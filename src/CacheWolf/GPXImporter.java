@@ -154,6 +154,7 @@ public class GPXImporter extends MinML {
 		if (name.equals("wpt")) {
 			holder = new CacheHolder();
 			holder.LatLon = latdeg2min(atts.getValue("lat")) + " " +londeg2min(atts.getValue("lon"));
+			holder.pos.set(Common.parseDouble(atts.getValue("lat")),Common.parseDouble(atts.getValue("lon")));
 			inWpt = true;
 			inLogs = false;
 			inBug = false;

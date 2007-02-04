@@ -142,6 +142,7 @@ public class SpiderGC{
 		ch.CacheLogs = getLogs(start, ch);
 		pref.log("Found logs");
 		ch.LatLon = getLatLon(start);
+		ch.pos.set(ch.LatLon);
 		//Vm.debug("LatLon: " + ch.LatLon);
 		pref.log("Trying description");
 		ch.LongDescription = getLongDesc(start);
@@ -317,6 +318,7 @@ public class SpiderGC{
 					ch.CacheLogs = getLogs(start, ch);
 					pref.log("Found logs");
 					ch.LatLon = getLatLon(start);
+					ch.pos.set(ch.LatLon); // Slow parse no problem
 					//Vm.debug("LatLon: " + ch.LatLon);
 					pref.log("Trying description");
 					ch.LongDescription = getLongDesc(start);
@@ -436,6 +438,7 @@ public class SpiderGC{
 				cx.CacheName = nameRex.stringMatched(1);
 				if(koordRex.didMatch()) cx.LatLon = koordRex.stringMatched(1); 
 				else cx.LatLon = "N 00° 00.000 E 000° 00.000"; 
+				cx.pos.set(cx.LatLon);
 				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
 				
 				//Vm.debug("Name: " + nameRex.stringMatched(1));

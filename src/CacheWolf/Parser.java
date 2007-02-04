@@ -208,9 +208,9 @@ public class Parser{
 			if (idx!=-1) { // Found it!
 				CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(idx);
 				// Check whether coordinates are valid
-				cwPt.set(ch.LatLon);
+				cwPt.set(ch.pos);
 				if (cwPt.isValid() ) 
-					return ch.LatLon;
+					return cwPt.toString();
 				else
 					return ""; // Convert invalid coordinates (N 0 0.0 E 0 0.0) into empty string
 			}
@@ -463,7 +463,9 @@ public class Parser{
     		int i=Global.getProfile().getCacheIndex(waypointName);
     		if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
     		cwPt.set(coord);
-    		((CacheHolder)Global.getProfile().cacheDB.get(i)).LatLon=cwPt.toString(CWPoint.CW);
+    		CacheHolder ch=((CacheHolder)Global.getProfile().cacheDB.get(i));
+    		ch.LatLon=cwPt.toString(CWPoint.CW);
+    		ch.pos.set(cwPt);
     	}
     }
     
@@ -682,6 +684,7 @@ public class Parser{
 				cwPt.set(coord);
 				if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
 					ch.LatLon=cwPt.toString(CWPoint.CW);
+					ch.pos.set(cwPt);
 				    return;
 				} else
 					err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
