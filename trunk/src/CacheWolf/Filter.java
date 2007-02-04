@@ -12,78 +12,86 @@ import com.stevesoft.ewe_pat.*;
 */
 public class Filter{
 	
-	public static final int SMALLER = -1;
-	public static final int EQUAL = -1;
-	public static final int GREATER = 1;
-	public static final int FOUND = 2;
-	public static final int NOTFOUND = 3;
+	private static final int SMALLER = -1;
+	private static final int EQUAL = -1;
+	private static final int GREATER = 1;
 
-	public static final int TRADITIONAL = 1;
-	public static final int MULTI = 2;
-	public static final int VIRTUAL = 4;
-	public static final int LETTER = 8;
-	public static final int EVENT = 16;
-	public static final int WEBCAM = 32;
-	public static final int MYSTERY = 64;
-	public static final int LOCLESS = 128;
-	public static final int ADDIWPT = 256;
-	public static final int MEGA = 512;
-	public static final int EARTH = 1024;
+	private static final int TRADITIONAL = 1;
+	private static final int MULTI = 2;
+	private static final int VIRTUAL = 4;
+	private static final int LETTER = 8;
+	private static final int EVENT = 16;
+	private static final int WEBCAM = 32;
+	private static final int MYSTERY = 64;
+	private static final int LOCLESS = 128;
+	private static final int CUSTOM = 256;
+	private static final int MEGA = 512;
+	private static final int EARTH = 1024;
+	private static final int PARKING = 2048;
+	private static final int STAGE = 4096;
+	private static final int QUESTION = 8192;
+	private static final int FINAL = 16384;
+	private static final int TRAILHEAD = 32768;
+	private static final int REFERENCE = 65536;
+	private static final int TYPE_ALL=TRADITIONAL|MULTI|VIRTUAL|LETTER|EVENT|WEBCAM|MYSTERY|LOCLESS|CUSTOM
+	                                  |MEGA|EARTH|PARKING|STAGE|QUESTION|FINAL|TRAILHEAD|REFERENCE;
+
+	private static final int N = 1;
+	private static final int NNE = 2;
+	private static final int NE = 4;
+	private static final int ENE = 8;
+	private static final int E = 16;
+	private static final int ESE = 32;
+	private static final int SE = 64;
+	private static final int SSE = 128;
+	private static final int SSW = 256;
+	private static final int SW = 512;
+	private static final int WSW = 1024;
+	private static final int W = 2048;
+	private static final int WNW = 4096;
+	private static final int NW = 8192;
+	private static final int NNW = 16384;
+	private static final int S = 32768;
+	private static final int ROSE_ALL= N|NNE|NE|ENE|E|ESE|SE|SSE|SSW|SW|WSW|W|WNW|NW|NNW|S;
+
+	private static final int MICRO=1; 
+	private static final int SMALL=2;	
+	private static final int REGULAR=4;	
+	private static final int LARGE=8;	
+	private static final int VERYLARGE=16;	
+	private static final int OTHER=32;	
+	private static final int SIZE_ALL=MICRO|SMALL|REGULAR|LARGE|VERYLARGE|OTHER;
 	
-	// End of type declares
-	public static final int N = 1;
-	public static final int NNE = 2;
-	public static final int NE = 4;
-	public static final int ENE = 8;
-	public static final int E = 16;
-	public static final int ESE = 32;
-	public static final int SE = 64;
-	public static final int SSE = 128;
-	public static final int SSW = 256;
-	public static final int SW = 512;
-	public static final int WSW = 1024;
-	public static final int W = 2048;
-	public static final int WNW = 4096;
-	public static final int NW = 8192;
-	public static final int NNW = 16384;
-	public static final int S = 32768;
-	//end of direction declares
+	private int distdirec = 0;
+	private int diffdirec = 0;
+	private int terrdirec = 0;
 	
-	
-	
-	public String dist = new String();
-	public File routeFile;
-	public int distdirec = 0;
-	public String diff = new String();
-	public int diffdirec = 0;
-	public String terr = new String();
-	public int terrdirec = 0;
-	
-	public String days = new String();
-	public int daysdirec = 0;
-	public String by = new String();
 	String[] byVec;
 	
-	public String type = new String();
-	public String bearing = new String();
 	
-	public int roseMatchPattern = 0;
-	public int typeMatchPattern = 0;
+	private int roseMatchPattern;
+	private boolean hasRoseMatchPattern;
+	private int typeMatchPattern;
+	private boolean hasTypeMatchPattern;
+	private int sizeMatchPattern;
+	private boolean hasSizeMatchPattern;
 	
-	public boolean foundByMe;
-	public boolean notFoundByMe;
+	private boolean foundByMe;
+	private boolean notFoundByMe;
 	
-	public boolean ownedByMe;
-	public boolean notOwnedByMe;
+	private boolean ownedByMe;
+	private boolean notOwnedByMe;
+
+	double fscDist;
+	double fscTerr;
+	double fscDiff;
 	
-	//private boolean is_changed;
-	public int filterKriteria = 0;
 	
-	public boolean archived = false;
-	public boolean notArchived = false;
+	private boolean archived = false;
+	private boolean notArchived = false;
 	
-	public boolean available=false;
-	public boolean notAvailable = false;
+	private boolean available=false;
+	private boolean notAvailable = false;
 	double pi180=java.lang.Math.PI / 180.0;
 	
 	/**
@@ -91,7 +99,8 @@ public class Filter{
 	*	We use a regex method to allow for different formats of waypoints:
 	*	possible is currently: DD MM.mmm
 	*/
-	public void doFilterRoute(Vector cacheDB, String dir, double distance){
+	public void doFilterRoute(File routeFile, double distance){
+		Vector cacheDB=Global.getProfile().cacheDB;
 		//load file into a vector:
 		Vector wayPoints = new Vector();
 		Regex rex = new Regex("(N|S).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3}).*?(E|W).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3})");
@@ -223,18 +232,89 @@ public class Filter{
 	}
 	
 	/**
+	 * Set the filter from the filter data stored in the profile
+	 * (the filterscreen also updates the profile)
+	 */
+	public void setFilter() {
+		Profile profile=Global.getProfile();
+		archived     = profile.filterVar.charAt(0) == '1';
+		available    = profile.filterVar.charAt(1) == '1';
+		foundByMe    = profile.filterVar.charAt(2) == '1';
+		ownedByMe    = profile.filterVar.charAt(3) == '1';
+		notArchived  = profile.filterVar.charAt(4) == '1';
+		notAvailable = profile.filterVar.charAt(5) == '1';
+		notFoundByMe = profile.filterVar.charAt(6) == '1';
+		notOwnedByMe = profile.filterVar.charAt(7) == '1';
+		typeMatchPattern=0;
+		String filterType=profile.filterType;
+		if (filterType.charAt(0) == '1') typeMatchPattern|=TRADITIONAL;
+		if (filterType.charAt(1) == '1') typeMatchPattern|=MULTI;
+		if (filterType.charAt(2) == '1') typeMatchPattern|=VIRTUAL;
+		if (filterType.charAt(3) == '1') typeMatchPattern|=LETTER;
+		if (filterType.charAt(4) == '1') typeMatchPattern|=EVENT;
+		if (filterType.charAt(5) == '1') typeMatchPattern|=WEBCAM;
+		if (filterType.charAt(6) == '1') typeMatchPattern|=MYSTERY;
+		if (filterType.charAt(7) == '1') typeMatchPattern|=EARTH;
+		if (filterType.charAt(8) == '1') typeMatchPattern|=LOCLESS;
+		if (filterType.charAt(9) == '1') typeMatchPattern|=MEGA;
+		if (filterType.charAt(10) == '1') typeMatchPattern|=CUSTOM;
+		if (filterType.charAt(11) == '1') typeMatchPattern|=PARKING;
+		if (filterType.charAt(12) == '1') typeMatchPattern|=STAGE;
+		if (filterType.charAt(13) == '1') typeMatchPattern|=QUESTION;
+		if (filterType.charAt(14) == '1') typeMatchPattern|=FINAL;
+		if (filterType.charAt(15) == '1') typeMatchPattern|=TRAILHEAD;
+		if (filterType.charAt(16) == '1') typeMatchPattern|=REFERENCE;
+		hasTypeMatchPattern= typeMatchPattern!=TYPE_ALL;
+		roseMatchPattern=0;
+		String filterRose=profile.filterRose;
+		if (filterRose.charAt(0) == '1') roseMatchPattern|=NW;
+		if (filterRose.charAt(1) == '1') roseMatchPattern|=NNW;
+		if (filterRose.charAt(2) == '1') roseMatchPattern|=N;
+		if (filterRose.charAt(3) == '1') roseMatchPattern|=NNE;
+		if (filterRose.charAt(4) == '1') roseMatchPattern|=NE;
+		if (filterRose.charAt(5) == '1') roseMatchPattern|=ENE;
+		if (filterRose.charAt(6) == '1') roseMatchPattern|=E;
+		if (filterRose.charAt(7) == '1') roseMatchPattern|=ESE;
+		if (filterRose.charAt(8) == '1') roseMatchPattern|=SE;
+		if (filterRose.charAt(9) == '1') roseMatchPattern|=SSE;
+		if (filterRose.charAt(10) == '1') roseMatchPattern|=S;
+		if (filterRose.charAt(11) == '1') roseMatchPattern|=SSW;
+		if (filterRose.charAt(12) == '1') roseMatchPattern|=SW;
+		if (filterRose.charAt(13) == '1') roseMatchPattern|=WSW;
+		if (filterRose.charAt(14) == '1') roseMatchPattern|=W;
+		if (filterRose.charAt(15) == '1') roseMatchPattern|=WNW;
+		hasRoseMatchPattern=roseMatchPattern!=ROSE_ALL;
+		sizeMatchPattern=0;
+		String filterSize=profile.filterSize;
+		if (filterSize.charAt(0) == '1') sizeMatchPattern|=MICRO;
+		if (filterSize.charAt(1) == '1') sizeMatchPattern|=SMALL;
+		if (filterSize.charAt(2) == '1') sizeMatchPattern|=REGULAR;
+		if (filterSize.charAt(3) == '1') sizeMatchPattern|=LARGE;
+		if (filterSize.charAt(4) == '1') sizeMatchPattern|=VERYLARGE;
+		if (filterSize.charAt(5) == '1') sizeMatchPattern|=OTHER;
+		hasSizeMatchPattern=sizeMatchPattern!=SIZE_ALL;
+		distdirec = profile.filterDist.charAt(0) == 'L' ? SMALLER : GREATER; 
+		fscDist = Common.parseDouble(profile.filterDist.substring(1));  // Distance
+		diffdirec = profile.filterDiff.charAt(0) == 'L' ? SMALLER : 
+					(profile.filterDiff.charAt(0) == '=' ? EQUAL : GREATER );
+		fscDiff = Common.parseDouble(profile.filterDiff.substring(1));  // Difficulty
+		terrdirec = profile.filterTerr.charAt(0) == 'L' ? SMALLER : 
+				(profile.filterTerr.charAt(0) == '=' ? EQUAL : GREATER );
+		fscTerr = Common.parseDouble(profile.filterTerr.substring(1));  // Terrain
+	}
+	
+	/**
 	*	Apply the filter. Caches that match a criteria are flagged
 	*	is_filtered = true. The table model is responsible for displaying or
 	*	not displaying a cache that is filtered.
 	*/
-	public void doFilter(Vector cacheDB, String dir){
+	public void doFilter(){
+		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
 		int cacheTypePattern;
 		int cacheRosePattern;
+		int cacheSizePattern;
 		// Values from filterscreen are parsed outside the main filter loop (fsc=FilterSCreen)
-		double fscDist=Common.parseDouble(dist);  // Distance
-		double fscTerr=Common.parseDouble(terr);  // Terrain
-		double fscDiff=Common.parseDouble(diff);  // Difficulty
 		double dummyd1;
 		//Loop db and match once against type pattern and once against rose pattern
 		//Default is_filtered = false, means will be displayed!
@@ -249,21 +329,28 @@ public class Filter{
 			///////////////////////////////
 			// Filter criterium 1: Cache type
 			///////////////////////////////
-			cacheTypePattern = 0;
-			// As each cache can only have one type, we can use else if and set the type
-			if(ch.type.equals("2")) cacheTypePattern = TRADITIONAL;
-			else if(ch.type.equals("3")) cacheTypePattern = MULTI;
-			else if(ch.type.equals("4")) cacheTypePattern = VIRTUAL;
-			else if(ch.type.equals("5")) cacheTypePattern = LETTER;
-			else if(ch.type.equals("6")|| ch.type.equals("453")) cacheTypePattern = EVENT;
-			else if(ch.type.equals("8")) cacheTypePattern = MYSTERY;
-			else if(ch.type.equals("11")) cacheTypePattern = WEBCAM;
-			else if(ch.type.equals("12")) cacheTypePattern = LOCLESS;
-			else if(ch.type.equals("137"))cacheTypePattern = EARTH;
-			else if(ch.type.equals("453"))cacheTypePattern = MEGA;
-			if (CacheType.isAddiWpt(ch.type)) cacheTypePattern |= ADDIWPT;
-			if ((cacheTypePattern & typeMatchPattern) == 0) { ch.is_filtered=true; continue; }
-			
+			if (hasTypeMatchPattern) { // Only do the checks if we have a filter
+				cacheTypePattern = 0;
+				// As each cache can only have one type, we can use else if and set the type
+				if (ch.type.equals("0")) cacheTypePattern = CUSTOM;
+				else if(ch.type.equals("2")) cacheTypePattern = TRADITIONAL;
+				else if(ch.type.equals("3")) cacheTypePattern = MULTI;
+				else if(ch.type.equals("4")) cacheTypePattern = VIRTUAL;
+				else if(ch.type.equals("5")) cacheTypePattern = LETTER;
+				else if(ch.type.equals("6")) cacheTypePattern = EVENT;
+				else if(ch.type.equals("8")) cacheTypePattern = MYSTERY;
+				else if(ch.type.equals("11")) cacheTypePattern = WEBCAM;
+				else if(ch.type.equals("12")) cacheTypePattern = LOCLESS;
+				else if(ch.type.equals("137"))cacheTypePattern = EARTH;
+				else if(ch.type.equals("453"))cacheTypePattern = MEGA;
+				else if(ch.type.equals("50"))cacheTypePattern = PARKING;
+				else if(ch.type.equals("51"))cacheTypePattern = STAGE;
+				else if(ch.type.equals("52"))cacheTypePattern = QUESTION;
+				else if(ch.type.equals("53"))cacheTypePattern = FINAL;
+				else if(ch.type.equals("54"))cacheTypePattern = TRAILHEAD;
+				else if(ch.type.equals("55"))cacheTypePattern = REFERENCE;
+				if ((cacheTypePattern & typeMatchPattern) == 0) { ch.is_filtered=true; continue; }
+			}			
 			///////////////////////////////
 			// Filter criterium 2: Bearing from centre
 			///////////////////////////////
@@ -271,29 +358,30 @@ public class Filter{
 			// By using else if we can reduce the number of comparisons from 16 to just over 8
 			// By first checking the first letter, we can reduce the average number further to
 			// just under 5
-			if (ch.bearing.startsWith("N")) {
-				if(ch.bearing.equals("NW")) cacheRosePattern = NW;
-				else if(ch.bearing.equals("NNW")) cacheRosePattern = NNW;
-				else if(ch.bearing.equals("N")) cacheRosePattern = N;
-				else if(ch.bearing.equals("NNE")) cacheRosePattern = NNE;
-				else cacheRosePattern = NE;
-			} else if (ch.bearing.startsWith("E")) {
-				if(ch.bearing.equals("ENE")) cacheRosePattern = ENE;
-				else if(ch.bearing.equals("E")) cacheRosePattern = E;
-				else cacheRosePattern = ESE;
-			} else if (ch.bearing.startsWith("S")) {
-				if(ch.bearing.equals("SW")) cacheRosePattern = SW;
-				else if(ch.bearing.equals("SSW")) cacheRosePattern = SSW;
-				else if(ch.bearing.equals("S")) cacheRosePattern = S;
-				else if(ch.bearing.equals("SSE")) cacheRosePattern = SSE;
-				else cacheRosePattern = SE;
-			} else {
-				if(ch.bearing.equals("WNW")) cacheRosePattern = WNW;
-				else if(ch.bearing.equals("W")) cacheRosePattern = W;
-				else cacheRosePattern = WSW;
-			}
-			if ((cacheRosePattern & roseMatchPattern) == 0) { ch.is_filtered=true; continue; }
-			
+			if (hasRoseMatchPattern) {
+				if (ch.bearing.startsWith("N")) {
+					if(ch.bearing.equals("NW")) cacheRosePattern = NW;
+					else if(ch.bearing.equals("NNW")) cacheRosePattern = NNW;
+					else if(ch.bearing.equals("N")) cacheRosePattern = N;
+					else if(ch.bearing.equals("NNE")) cacheRosePattern = NNE;
+					else cacheRosePattern = NE;
+				} else if (ch.bearing.startsWith("E")) {
+					if(ch.bearing.equals("ENE")) cacheRosePattern = ENE;
+					else if(ch.bearing.equals("E")) cacheRosePattern = E;
+					else cacheRosePattern = ESE;
+				} else if (ch.bearing.startsWith("S")) {
+					if(ch.bearing.equals("SW")) cacheRosePattern = SW;
+					else if(ch.bearing.equals("SSW")) cacheRosePattern = SSW;
+					else if(ch.bearing.equals("S")) cacheRosePattern = S;
+					else if(ch.bearing.equals("SSE")) cacheRosePattern = SSE;
+					else cacheRosePattern = SE;
+				} else {
+					if(ch.bearing.equals("WNW")) cacheRosePattern = WNW;
+					else if(ch.bearing.equals("W")) cacheRosePattern = W;
+					else cacheRosePattern = WSW;
+				}
+				if ((cacheRosePattern & roseMatchPattern) == 0) { ch.is_filtered=true; continue; }
+			}			
 			///////////////////////////////
 			// Filter criterium 3: Distance
 			///////////////////////////////
@@ -320,12 +408,16 @@ public class Filter{
 				if(terrdirec == EQUAL && dummyd1 != fscTerr) { ch.is_filtered=true; continue; }
 				if(terrdirec == GREATER &&  dummyd1 < fscTerr) { ch.is_filtered=true; continue; }
 			}
+//Vm.debug(ch.wayPoint+" Found"+ch.is_found+"  FoundyMe="+foundByMe+"   notFoundByMe="+notFoundByMe);
+//Vm.debug(ch.wayPoint+" Owned"+ch.is_owned+"  OwnedByMe="+ownedByMe+"   notOwnedByMe="+notOwnedByMe);
+//Vm.debug(ch.wayPoint+" Archived"+ch.is_archived+"  Archived="+archived+"   notArchived="+notArchived);
+//Vm.debug(ch.wayPoint+" Available"+ch.is_available+"  Available="+available+"   notAvailable="+notAvailable);
+//Vm.debug("Blacklisted: "+ch.is_black);
 			///////////////////////////////
 			// Filter criterium 6: Found by me
 			///////////////////////////////
 			if((ch.is_found && !foundByMe) ||
 			   (!ch.is_found && !notFoundByMe)){ ch.is_filtered=true; continue; }
-
 			///////////////////////////////
 			// Filter criterium 7: Owned by me
 			///////////////////////////////
@@ -343,6 +435,19 @@ public class Filter{
 			///////////////////////////////
 			if((ch.is_available && !available) ||
 			   (!ch.is_available && !notAvailable)) { ch.is_filtered=true; continue; }
+			///////////////////////////////
+			// Filter criterium 10: Size
+			///////////////////////////////
+			if (hasSizeMatchPattern) {
+				cacheSizePattern=0;
+				if (ch.CacheSize.startsWith("M")) cacheSizePattern = MICRO;
+				else if (ch.CacheSize.startsWith("S")) cacheSizePattern = SMALL;
+				else if (ch.CacheSize.startsWith("R")) cacheSizePattern = REGULAR;
+				else if (ch.CacheSize.startsWith("L")) cacheSizePattern = LARGE;
+				else if (ch.CacheSize.startsWith("V")) cacheSizePattern = VERYLARGE;
+				else cacheSizePattern = OTHER;
+				if ((cacheSizePattern & sizeMatchPattern) == 0) { ch.is_filtered=true; continue; }
+			}
 			
 		} // for
 	}
@@ -365,7 +470,7 @@ public class Filter{
 		CacheHolder ch;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered=ch.is_black; // Always filter blacklisted caches
+			ch.is_filtered=ch.is_black || CacheType.isAddiWpt(ch.type); // Always filter blacklisted caches
 		}
 		Profile prof=Global.getProfile();
 		prof.filterType = new String(Profile.FILTERTYPE);

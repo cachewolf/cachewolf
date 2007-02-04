@@ -260,7 +260,7 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == filtCreate){
-				scnFilter.setData(cacheDB, pref.baseDir);
+				scnFilter.setData();
 				scnFilter.execute(father.getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
 			}

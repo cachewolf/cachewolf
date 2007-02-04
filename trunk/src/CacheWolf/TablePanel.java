@@ -108,6 +108,9 @@ public class TablePanel extends CellPanel{
 	public void resetModel() {
 		myMod.numRows = cacheDB.size();
 		Global.getProfile().updateBearingDistance();
+		Filter flt = new Filter();
+		flt.setFilter();
+		flt.doFilter();
 		myMod.updateRows();
 		tc.update(true);
 		if (statBar!=null) statBar.updateDisplay();
