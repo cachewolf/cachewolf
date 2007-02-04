@@ -30,7 +30,7 @@ public class MapInfoObject{
 	public double transLatX, transLatY, transLonX, transLonY; // this are needed for the inervers calculation from lat/lon to x/y
 	public CWPoint center = new CWPoint();
 	public float sizeKm = 0; // diagonale
-	public float scale; // in meters per pixel, note: it is assumed that this scale identifying the scale of the map
+	public float scale; // in meters per pixel, note: it is assumed that this scale identifying the scale of the map, automatically adjusted when zooming
 	public float zoomFactor = 1; // if the image is zoomed, direct after laoding always 1
 	public Point shift = new Point (0,0);
 	public CWPoint OrigUpperLeft; // this is only valid after zooming 
