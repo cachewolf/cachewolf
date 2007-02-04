@@ -104,6 +104,7 @@ public class MovingMap extends Form {
 		setGpsStatus(noGPS);
 		posCircle.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(posCircle);
+		mmp.startDragResolution = 5;
 		mapsloaded = false;
 		posCircleLat = -361;
 		posCircleLon = -361; // make them invalid
