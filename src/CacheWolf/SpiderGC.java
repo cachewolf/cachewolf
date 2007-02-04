@@ -112,8 +112,9 @@ public class SpiderGC{
 	 * It assumes a login has already been performed!
 	 */
 	public void spiderSingle(int number){
-		Vm.showWait(true);
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
+		if (ch.isAddiWpt()) return;  // No point spidering an addi waypoint, comes with parent
+		Vm.showWait(true);
 		String notes = new String();
 		String start = new String();
 		try{
@@ -416,7 +417,6 @@ public class SpiderGC{
 	}
 	
 	public void getAddWaypoints(String doc, CacheHolder ch){
-		CacheHolder cx = new CacheHolder();
 		Extractor exWayBlock = new Extractor(doc, "<strong>Additional Waypoints</strong><br>", "</table>", 0, false);
 		String wayBlock = new String();
 		String rowBlock = new String();
@@ -431,6 +431,7 @@ public class SpiderGC{
 			rowBlock = exRowBlock.findNext();
 			rowBlock = exRowBlock.findNext();
 			while(exRowBlock.endOfSearch()==false){
+				CacheHolder cx = new CacheHolder();
 				
 				nameRex.search(rowBlock);
 				koordRex.search(rowBlock);
@@ -458,10 +459,12 @@ public class SpiderGC{
 				counter++;
 				cx.LongDescription = descRex.stringMatched(1); 
 				//Vm.debug(descRex.stringMatched(1));
-				
-				cacheDB.add(cx);
+				int idx=profile.getCacheIndex(cx.wayPoint);
+				if (idx<0)
+					cacheDB.add(cx);
+				else if (((CacheHolder) cacheDB.get(idx)).is_Checked) // Only spider addi waypoints that are ticked
+					((CacheHolder) cacheDB.get(idx)).update(cx);
 				cx.saveCacheDetails(profile.dataDir);
-				cx = new CacheHolder();
 				
 				rowBlock = exRowBlock.findNext();
 			}
