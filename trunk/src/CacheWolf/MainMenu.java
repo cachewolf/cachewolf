@@ -200,7 +200,7 @@ public class MainMenu extends MenuBar {
 					pref.lastProfile=profile.name=f.profileDir;
 					pref.savePreferences(); // Remember that this was the last profile used
 					profile.dataDir=pref.baseDir+f.profileDir+"/";
-					pref.showBlacklisted=false;
+					Filter.showBlacklisted=false;
 					filtBlack.modifiers&=~MenuItem.Checked;
 					tbp.refreshTable();
 				}
@@ -213,7 +213,7 @@ public class MainMenu extends MenuBar {
 					profile.readIndex();
 					pref.curCentrePt.set(profile.centre);
 					filtBlack.modifiers&=~MenuItem.Checked;
-					pref.showBlacklisted=false;
+					Filter.showBlacklisted=false;
 					tbp.resetModel();
 					Global.mainTab.tbP.gotoFirstLine();
 				}
@@ -262,14 +262,14 @@ public class MainMenu extends MenuBar {
 						}
 					}
 				}
-				pref.showBlacklisted=false;
+				Filter.showBlacklisted=false;
 				filtBlack.modifiers&=~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadOC){
 				OCXMLImporter oc = new OCXMLImporter(pref,profile);
 				oc.doIt();
-				pref.showBlacklisted=false;
+				Filter.showBlacklisted=false;
 				filtBlack.modifiers&=~MenuItem.Checked;
 				tbp.resetModel();
 			}
@@ -291,7 +291,7 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == filtBlack){
 				filtBlack.modifiers^=MenuItem.Checked;
-				pref.showBlacklisted=!pref.showBlacklisted;
+				Filter.showBlacklisted=!Filter.showBlacklisted;
 				Filter flt = new Filter();
 				flt.clearFilter();
 				tbp.refreshTable();

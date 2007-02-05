@@ -49,13 +49,13 @@ public class SearchCache {
 	*/
 	public void clearSearch(){
 		Filter flt=new Filter();
-		if (Global.getPref().filterActive) {
+		if (Filter.filterActive) {
 			flt.setFilter();
 			flt.doFilter();
 		} else {
 			flt.clearFilter();
 		}
-		if (Global.getPref().filterInverted) 
+		if (Filter.filterInverted) 
 			flt.invertFilter();
 		for(int i = cacheDB.size()-1;i >=0;i--){
 			((CacheHolder)cacheDB.get(i)).is_flaged=false;

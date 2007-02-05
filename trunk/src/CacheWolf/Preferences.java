@@ -43,12 +43,6 @@ public class Preferences extends MinML{
 	public boolean showDeletedImages=true; /* Used in ImagePanel */
 	public boolean solverIgnoreCase=false;
 
-	/** Toggle for showing blacklisted caches. Can be toggled through the Filter menu */
-	public boolean showBlacklisted=false;
-	/** Indicator whether a filter is active. Used in status bar to indicate filter status */
-	public boolean filterActive=false;
-	/** Indicator whether a filter is inverted */
-	public boolean filterInverted=false;
 	public int myAppHeight = 0;
 	public int myAppWidth = 0;
 	//public int nLogs = 5;

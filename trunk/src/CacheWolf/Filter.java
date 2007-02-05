@@ -11,6 +11,12 @@ import com.stevesoft.ewe_pat.*;
 *   @author BilboWolf (optimiert von salzkammergut)
 */
 public class Filter{
+	/** Toggle for showing blacklisted caches. Can be toggled through the Filter menu */
+	public static boolean showBlacklisted=false;
+	/** Indicator whether a filter is inverted */
+	public static boolean filterInverted=false;
+	/** Indicator whether a filter is active. Used in status bar to indicate filter status */
+	public static boolean filterActive=false;
 	
 	private static final int SMALLER = -1;
 	private static final int EQUAL = 0;
@@ -297,11 +303,11 @@ public class Filter{
 	*/
 	public void doFilter(){
 		Vector cacheDB=Global.getProfile().cacheDB;
+		if (cacheDB.size()==0) return;
 		CacheHolder ch;
 		int cacheTypePattern;
 		int cacheRosePattern;
 		int cacheSizePattern;
-		boolean showBlackListed=Global.getPref().showBlacklisted;
 		// Values from filterscreen are parsed outside the main filter loop (fsc=FilterSCreen)
 		double dummyd1;
 		//Loop db and match once against type pattern and once against rose pattern
@@ -313,7 +319,7 @@ public class Filter{
 		// A cache is only displayed (i.e. is_filtered = false) if it meets all 9 filter criteria
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered = ch.is_black^showBlackListed;
+			ch.is_filtered = ch.is_black^showBlacklisted;
 			///////////////////////////////
 			// Filter criterium 1: Cache type
 			///////////////////////////////
@@ -438,7 +444,7 @@ public class Filter{
 			}
 			
 		} // for
-		Global.getPref().filterActive=true;
+		if (hasFilter())filterActive=true;
 	}
 	
 	/**
@@ -447,7 +453,8 @@ public class Filter{
 	public void invertFilter(){
 		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
-		boolean showBlackListed=Global.getPref().showBlacklisted;
+		if (cacheDB.size()==0) return;
+		boolean showBlackListed=Filter.showBlacklisted;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
 			if (ch.is_black==showBlackListed)
@@ -455,7 +462,7 @@ public class Filter{
 			else
 				ch.is_filtered=true; // Hide all those that have the wrong is_black status
 		}
-		Global.getPref().filterInverted=true;
+		filterInverted=true;
 	}
 	
 	/**
@@ -464,23 +471,24 @@ public class Filter{
 	public void clearFilter(){
 		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
-		boolean showBlackListed=Global.getPref().showBlacklisted;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered=(ch.is_black^showBlackListed) || CacheType.isAddiWpt(ch.type); // Always filter blacklisted caches
+			ch.is_filtered=(ch.is_black^showBlacklisted) || CacheType.isAddiWpt(ch.type); // Always filter blacklisted caches
 		}
-		Global.getPref().filterActive=false;
-		Global.getPref().filterInverted=false;
-/*
-		Profile prof=Global.getProfile();
-		prof.filterType = new String(Profile.FILTERTYPE);
-		prof.filterRose = new String(Profile.FILTERROSE);
-		prof.filterVar = new String(Profile.FILTERVAR);
-		prof.filterSize = new String(Profile.FILTERSIZE);
-		prof.filterDist="L";
-		prof.filterDiff="L";
-		prof.filterTerr="L";
-*/		
+		filterActive=false;
+		filterInverted=false;
 	}
+
+	public boolean hasFilter() {
+		Profile prof=Global.getProfile();
+		return !(prof.filterType.equals(Profile.FILTERTYPE) &&
+		    prof.filterRose.equals(Profile.FILTERROSE) &&
+		    prof.filterVar.equals(Profile.FILTERVAR) &&
+		    prof.filterSize.equals(Profile.FILTERSIZE) &&
+		    prof.filterDist.equals("L") &&
+		    prof.filterDiff.equals("L") &&
+		    prof.filterTerr.equals("L"));
+	}
+
 }
 
