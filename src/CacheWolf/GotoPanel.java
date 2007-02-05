@@ -358,7 +358,6 @@ public class GotoPanel extends CellPanel {
 				pref.curCentrePt.set(myNavigation.gpsPos);
 				mainT.updateBearDist();
 				Vm.showWait(false);
-				(new MessageBox("Info", "Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet", MessageBox.OKB)).execute();
 			}
 			//Start moving map
 			if (ev.target == btnMap){
