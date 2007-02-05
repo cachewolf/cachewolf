@@ -1521,6 +1521,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				if (clickedCache != null) openCacheDescMenuItem = new MenuItem("Open '"+clickedCache.CacheName+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
 				kontextMenu.addItem(openCacheDescMenuItem);
 			}
+			saveMapLoc = p;
 			kontextMenu.exec(this, new Point(p.x, p.y), this);
 		}
 	}

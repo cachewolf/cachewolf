@@ -90,7 +90,7 @@ public class Navigate {
 		destination = new CWPoint (d);
 		if (gotoPanel != null) gotoPanel.destChanged();
 		if (movingMap != null) { // TODO make movingmap the same as gotopanel
-			movingMap.destChanged(gpsPos);
+			movingMap.destChanged(destination);
 			movingMap.repaintNow();
 		}
 	}
