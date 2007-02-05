@@ -57,5 +57,8 @@ public class SearchCache {
 		}
 		if (Global.getPref().filterInverted) 
 			flt.invertFilter();
+		for(int i = cacheDB.size()-1;i >=0;i--){
+			((CacheHolder)cacheDB.get(i)).is_flaged=false;
+		}
 	}
 }
