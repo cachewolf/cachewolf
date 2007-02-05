@@ -27,6 +27,7 @@ public class MainTab extends mTabbedPanel {
 	String lastselected = new String();
 	CacheHolder ch =null;
 	MainMenu mnuMain;
+	StatusBar statBar;
 	MovingMap mm;
 	Navigate nav;
 
@@ -37,6 +38,7 @@ public class MainTab extends mTabbedPanel {
 		profile=Global.getProfile();
 		if (!pref.tabsAtTop) tabLocation=SOUTH;
 		cacheDB = profile.cacheDB;
+		this.statBar=statBar;
 		MyLocale.setSIPButton();
 		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
 		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
@@ -153,7 +155,8 @@ public class MainTab extends mTabbedPanel {
 						//Vm.debug("Error loading: "+ch.wayPoint);
 					  }
 				  }
-			  }
+			  } else statBar.updateDisplay();
+				  
 			  // If no cache is selected, create a new one
 			  switch (this.getSelectedItem()) {
 				  case 1:  // DetailsPanel

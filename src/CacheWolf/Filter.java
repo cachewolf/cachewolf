@@ -438,6 +438,7 @@ public class Filter{
 			}
 			
 		} // for
+		Global.getPref().filterActive=true;
 	}
 	
 	/**
@@ -454,6 +455,7 @@ public class Filter{
 			else
 				ch.is_filtered=true; // Hide all those that have the wrong is_black status
 		}
+		Global.getPref().filterInverted=true;
 	}
 	
 	/**
@@ -467,14 +469,18 @@ public class Filter{
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.is_filtered=(ch.is_black^showBlackListed) || CacheType.isAddiWpt(ch.type); // Always filter blacklisted caches
 		}
+		Global.getPref().filterActive=false;
+		Global.getPref().filterInverted=false;
+/*
 		Profile prof=Global.getProfile();
 		prof.filterType = new String(Profile.FILTERTYPE);
 		prof.filterRose = new String(Profile.FILTERROSE);
 		prof.filterVar = new String(Profile.FILTERVAR);
-		prof.filterDist="";
-		prof.filterDiff="";
-		prof.filterTerr="";
-		
+		prof.filterSize = new String(Profile.FILTERSIZE);
+		prof.filterDist="L";
+		prof.filterDiff="L";
+		prof.filterTerr="L";
+*/		
 	}
 }
 
