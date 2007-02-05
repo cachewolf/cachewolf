@@ -141,7 +141,6 @@ public class myTableControl extends TableControl{
 				pref.curCentrePt.set(cp);
 				Global.mainTab.updateBearDist(); // Update the distances with a warning message
 				tbp.refreshTable();
-				(new MessageBox("Info", "Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet", MessageBox.OKB)).execute();
 			}
 		}
 		
