@@ -130,16 +130,16 @@ public class FilterScreen extends Form{
 		pnlAttributes.addLast(lblTitleAtt=new mLabel(MyLocale.getMsg(715,"Show all caches with status:")),HSTRETCH,FILL);
 		lblTitleAtt.setTag(SPAN,new Dimension(2,1));
 		pnlAttributes.addNext(chkArchived = new mCheckBox(MyLocale.getMsg(710,"Archived")), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAttributes.addLast(chkNotArchived = new mCheckBox("Nicht archiviert"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlAttributes.addLast(chkNotArchived = new mCheckBox(MyLocale.getMsg(729,"Nicht archiviert")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlAttributes.addNext(chkAvailable = new mCheckBox("Suchbar"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlAttributes.addNext(chkAvailable = new mCheckBox(MyLocale.getMsg(730,"Suchbar")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlAttributes.addLast(chkNotAvailable = new mCheckBox(MyLocale.getMsg(711,"Not available")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		pnlAttributes.addNext(chkFound = new mCheckBox(MyLocale.getMsg(703,"Found")), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAttributes.addLast(chkNotFound = new mCheckBox("Noch nicht gefunden"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlAttributes.addLast(chkNotFound = new mCheckBox(MyLocale.getMsg(731,"Noch nicht gefunden")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		pnlAttributes.addNext(chkOwned = new mCheckBox(MyLocale.getMsg(707,"Owned")), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAttributes.addLast(chkNotOwned = new mCheckBox("Anderer Besitzer"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlAttributes.addLast(chkNotOwned = new mCheckBox(MyLocale.getMsg(732,"Anderer Besitzer")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		//////////////////////////
 		// Panel 3 - Cache ratings
@@ -247,7 +247,7 @@ public class FilterScreen extends Form{
 		pnlButtons.addLast(btnAttributes=new mButton(MyLocale.getMsg(720,"Attributes")));
 		pnlButtons.addLast(btnRatings=new mButton(MyLocale.getMsg(722,"Ratings")));
 		pnlButtons.addLast(btnTypes=new mButton(MyLocale.getMsg(723,"Types"))); 
-		pnlButtons.addLast(btnAddi=new mButton("Addi Wpt")); 
+		pnlButtons.addLast(btnAddi=new mButton(MyLocale.getMsg(733,"Add. Wpt"))); 
 		pnlButtons.addLast(btnContainer=new mButton(MyLocale.getMsg(724,"Container")));
 		// Search ist für 0.9n noch deaktiviert
 		//pnlButtons.addLast(btnSearch=new mButton("Search")); btnSearch.modify(Disabled,0);
