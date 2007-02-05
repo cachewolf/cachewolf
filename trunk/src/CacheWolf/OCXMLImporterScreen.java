@@ -36,12 +36,12 @@ public class OCXMLImporterScreen extends Form {
 		imagesCheckBox.setText(MyLocale.getMsg(1602,"Download Images"));
 		imagesCheckBox.setState(true); // @ToDo: aus Prefs
 		this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
-		
+/*		
 		mapsCheckBox = new mCheckBox();
 		mapsCheckBox.setText(MyLocale.getMsg(1603,"Download Maps"));
 		mapsCheckBox.setState(true); // @ToDo: aus Prefs
 		this.addLast(mapsCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
-		
+	*/	
 		if(options == ALL){
 			missingCheckBox = new mCheckBox();
 			missingCheckBox.setText(MyLocale.getMsg(1606,"Alle erneut downloaden"));
