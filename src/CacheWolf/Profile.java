@@ -343,7 +343,8 @@ public class Profile {
 					dbIndex.put((String)ch.wayPoint, new Integer(i));
 			   }
 			   // Build refeneces
-			   for(int i = cacheDB.size() -1; i >= 0;i--){
+			   int max = cacheDB.size();
+			   for(int i =  0; i < max ;i++){
 					ch = (CacheHolder)cacheDB.get(i);
 					if (ch.isAddiWpt()) {
 						//search main cache
