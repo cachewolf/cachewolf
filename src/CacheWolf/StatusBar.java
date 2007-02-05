@@ -30,8 +30,7 @@ public class StatusBar extends CellPanel{
 					MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound() + "  ";
 		disp.setText(strStatus);
 		// Indicate that a filter is active in the status line
-		Profile prof=Global.getProfile();
-		if (Global.getPref().filterActive)
+		if (Filter.filterActive)
 			lblFlt.modify(0,Invisible); // Set the filter to "invisible"
 		else
 			lblFlt.modify(Invisible,0); // Make filter visible

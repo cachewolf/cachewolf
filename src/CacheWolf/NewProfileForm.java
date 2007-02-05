@@ -35,16 +35,18 @@ public class NewProfileForm extends Form {
 				profileDir=inpDir.getDisplayText();
 				File f=new File(baseDir+profileDir);
 				if (f.exists()) {
-					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1114,"Directory exists already."),IDOK);
+					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1114,"Directory exists already."),MBOK);
 					mb.execute();
 					profileDir="";
 				} else {
 					if (profileDir.indexOf("/")>=0 || profileDir.indexOf("\\")>=0 || !f.createDir()) {
-						MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1113,"Cannot create directory"),IDOK);
+						MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1113,"Cannot create directory"),MBOK);
 						mb.execute();
 						profileDir="";
 						this.close(-1);
 					}
+					Filter.filterActive=false;
+					Filter.filterInverted=false;
 					this.close(0);
 				}
 			}
