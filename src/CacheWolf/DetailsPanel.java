@@ -229,14 +229,15 @@ public class DetailsPanel extends CellPanel{
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
 			}
 			else if(ev.target == btnShowMap){
-				try {
+				Global.mainTab.SwitchToMovingMap(thisCache.pos);
+/*				try {
 					MapDetailForm mdf = new MapDetailForm(thisCache.wayPoint, pref, profile);
 					mdf.execute();
 				} catch (IllegalArgumentException e) {
 					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden")+": "+e.getMessage(), MessageBox.OKB);
 					tmp.exec();
 				}
-			}
+	*/		}
 			else if(ev.target == btnShowBug){
 				InfoScreen is = new InfoScreen(thisCache.Bugs, "Travelbugs", false, pref);
 				is.execute();

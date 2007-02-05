@@ -368,7 +368,7 @@ public class Parser{
     }
     
     private String funcCp(){
-    	return Global.mainTab.gotoP.gpsPosition.toString();
+    	return Global.mainTab.nav.gpsPos.toString();
     }
     
     private double funcCrossTotal(int nargs) throws Exception {
@@ -452,13 +452,13 @@ public class Parser{
     /** Implements a goto command goto(coordinate,optionalWaypointName).
      */
     private void funcGoto(int nargs) throws Exception {
-    	GotoPanel gotoP=Global.mainTab.gotoP;
+    	Navigate nav=Global.mainTab.nav;
 		String waypointName=null;
         if (nargs==2) waypointName=popCalcStackAsString();  
 		String coord=popCalcStackAsString();
 		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
 		// Don't want to switch to goto panel, just set the values
-		gotoP.setDestination(coord);
+		nav.setDestination(coord);
 		if (nargs==2) { // Now set the value of the addi waypoint (it must exist already)
     		int i=Global.getProfile().getCacheIndex(waypointName);
     		if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
