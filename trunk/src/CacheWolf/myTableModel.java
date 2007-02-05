@@ -16,7 +16,7 @@ import ewe.graphics.*;
 */
 public class myTableModel extends TableModel{
 	
-	public boolean cacheSelectionChanged = false;
+	public boolean cacheSelectionChanged = true;
 	Vector cacheDB;
 	String[] colName;
 	static Image cacheImages[] = new Image[454];

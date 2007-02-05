@@ -1,18 +1,16 @@
 package CacheWolf;
 
-import ewe.sys.Vm;
 import ewe.ui.*;
 import ewe.fx.*;
 import ewe.util.*;
-//import ewe.sys.*;
 
 /**
-*	This class creates the tabbed panel and sets the tabs to the respective
-*	other panels. Important is to have a look at the event handler!<br>
-*	Class ID = 1200
-*	@see MainForm
-*	@see MainMenu
-*/
+ *	This class creates the tabbed panel and sets the tabs to the respective
+ *	other panels. Important is to have a look at the event handler!<br>
+ *	Class ID = 1200
+ *	@see MainForm
+ *	@see MainMenu
+ */
 public class MainTab extends mTabbedPanel {
 	DescriptionPanel descP= new DescriptionPanel();
 	HintLogPanel hintLP = new HintLogPanel();
@@ -29,7 +27,9 @@ public class MainTab extends mTabbedPanel {
 	String lastselected = new String();
 	CacheHolder ch =null;
 	MainMenu mnuMain;
-	
+	MovingMap mm;
+	Navigate nav;
+
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
 		Global.mainTab=this;
 		mnuMain=mainMenu;
@@ -42,44 +42,46 @@ public class MainTab extends mTabbedPanel {
 		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
 		calcP = new CalcPanel(); // Init here so that Global.MainT is already set
 		Card c = this.addCard(tbP = new TablePanel(pref, profile, statBar), MyLocale.getMsg(1200,"List"), null);
-		
+
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
 		c.iconize(new Image("details.gif"),true);
-		
+
 		c = this.addCard(descP, MyLocale.getMsg(1202,"Description"), null);
 		c.iconize(new Image("descr.gif"),true);
-		
+
 		c = this.addCard(new ScrollBarPanel(imageP = new ImagePanel()), MyLocale.getMsg(1203,"Images"), null);
 		c.iconize(new Image("images.gif"),true);
-		
+
 		c = this.addCard(hintLP, MyLocale.getMsg(1204,"Hints & Logs"), null);
 		c.iconize(new Image("more.gif"),true);
 
 		c = this.addCard(calcP, MyLocale.getMsg(1206,"Calc"), null);
 		c.iconize(new Image("ewe/HandHeld.bmp"),true);
-		
-		c = this.addCard(gotoP = new GotoPanel(pref, profile, this, detP), "Goto", null);
+
+		nav = new Navigate();
+		c = this.addCard(gotoP = new GotoPanel(nav), "Goto", null);
 		c.iconize(new Image("goto.gif"),true);
 		tbP.setPanels(gotoP, this);
-		
+		nav.setGotoPanel(gotoP);
+
 		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205,"Solver"), null);
 		c.iconize(new Image("solver.gif"),true);
-		
+
 		c = this.addCard(radarP, "Radar", null);
 		radarP.setMainTab(this);
 		c.iconize(new Image("radar.gif"),true);
 		mnuMain.allowProfileChange(true);
 	}
-	
+
 	public TablePanel getTablePanel(){
 		return tbP;
 	}
-	
+
 	public void selectAndActive(int rownum){
 		tbP.selectAndActive(rownum);
 		this.selectAndExpand(0);
 	}
-	
+
 	/** Update the distances of all caches to the center and display a message 
 	 */
 	public void updateBearDist(){
@@ -88,7 +90,7 @@ public class MainTab extends mTabbedPanel {
 		tbP.refreshTable();
 		(new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet").replace('~','\n'), MessageBox.OKB)).execute();
 	}
-	
+
 	public void gotoPoint(String LatLon) {
 		gotoP.setDestinationAndSwitch(LatLon);
 	}
@@ -201,7 +203,15 @@ public class MainTab extends mTabbedPanel {
 		  super.onEvent(ev); //Make sure you call this.
 	}
 
-	
-	
+	public void SwitchToMovingMap(CWPoint centerTo) {
+		if (mm == null) {
+			mm = new MovingMap(nav, profile.cacheDB);
+			nav.setMovingMap(mm);
+		}
+		//mm.ignoreGps = false; // TODO genauer nachdenken multi-threading: wenn er grad eine Karte lädt o.ä., dann funktioniert folgender Befehl nicht
+		mm.updatePosition(centerTo.latDec, centerTo.lonDec);
+		mm.myExec();
+	}
 }
+
 
