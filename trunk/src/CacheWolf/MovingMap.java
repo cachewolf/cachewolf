@@ -260,13 +260,13 @@ public class MovingMap extends Form implements TimerProc {
 			CacheHolder ch;
 			for (int i=cacheDB.size()-1; i>=0; i--) {
 				ch = (CacheHolder) cacheDB.get(i);
-				if (ch.is_Checked || ch == mainT.ch) { // ch == Global.mainTab.ch: always show the gray marked cache
+				if (ch.is_Checked && ch != mainT.ch) { // ch == Global.mainTab.ch: always show the gray marked cache
 					int ct = Convert.parseInt(ch.type);
 					addSymbol(ch.CacheName, ch, myTableModel.cacheImages[ct], ch.pos.latDec, ch.pos.lonDec);
 				}
 			}
 		}
-		if (mainT.ch != null) setMarkedCache(mainT.ch);
+		setMarkedCache(mainT.ch);
 		destChanged(myNavigation.destination);
 		addTrack(myNavigation.curTrack);
 		if (tracks != null && tracks.size() > 0 && ((Track)tracks.get(0)).num > 0) 
@@ -278,9 +278,16 @@ public class MovingMap extends Form implements TimerProc {
 	CacheHolder markedCache = null;
 	public void setMarkedCache(CacheHolder ch) {
 		if (ch == markedCache) return;
-		if (markedCache != null) removeMapSymbol("selectedCache");
+		if (markedCache != null) {
+			removeMapSymbol("selectedCache");
+			if (!markedCache.is_Checked) removeMapSymbol(markedCache);
+		}
+		if (ch != null) {
+			addSymbol("selectedCache", MARK_CACHE_IMAGE, ch.pos.latDec, ch.pos.lonDec);
+			int ct = Convert.parseInt(ch.type);
+			addSymbolIfNecessary(ch.CacheName, ch, myTableModel.cacheImages[ct], ch.pos.latDec, ch.pos.lonDec);
+		}
 		markedCache = ch;
-		if (markedCache != null) addSymbol("selectedCache", MARK_CACHE_IMAGE, ch.pos.latDec, ch.pos.lonDec);
 	}
 	
 	public void addTrack(Track tr) {
@@ -681,6 +688,13 @@ public class MovingMap extends Form implements TimerProc {
 		mmp.addImage(ms);
 		return ms;
 	}
+	
+	public void addSymbolIfNecessary(String name, Object mapObject, Image imSymb, double lat, double lon) {
+		if (findMapSymbol(name) >= 0) return;
+		else addSymbol(name, mapObject, imSymb, lat, lon);
+		
+	}
+		
 	public void addSymbol(String name, Object mapObject, Image imSymb, double lat, double lon) {
 		if (symbols==null) symbols=new Vector();
 		MapSymbol ms = new MapSymbol(name, mapObject, imSymb, lat, lon);
@@ -724,6 +738,12 @@ public class MovingMap extends Form implements TimerProc {
 		if (symbNr != -1) removeMapSymbol(symbNr);
 	}
 
+	public void removeMapSymbol(Object obj) {
+		int symbNr = findMapSymbol(obj);
+		if (symbNr != -1) removeMapSymbol(symbNr);
+	}
+
+
 	public void removeMapSymbol(int SymNr) {
 		mmp.removeImage(((MapSymbol)symbols.get(SymNr)));
 		symbols.removeElementAt(SymNr);
@@ -735,6 +755,16 @@ public class MovingMap extends Form implements TimerProc {
 		for (int i = symbols.size() -1; i >= 0 ; i--) {
 			ms= (MapSymbol)symbols.get(i);
 			if (ms.name == name) return i;
+		}
+		return -1;
+	}
+	
+	public int findMapSymbol(Object obj) {
+		if (symbols == null) return -1;
+		MapSymbol ms;
+		for (int i = symbols.size() -1; i >= 0 ; i--) {
+			ms= (MapSymbol)symbols.get(i);
+			if (ms.mapObject == obj) return i;
 		}
 		return -1;
 	}
@@ -869,7 +899,7 @@ public class MovingMap extends Form implements TimerProc {
 			posCircleLon = lon; // choosemap calls setmap with posCircle-coos
 			while (currentMap == null) {
 				mmp.chooseMap(); // force the user to select a scale // TODO empty maps on top?
-				if (currentMap == null) (new MessageBox("Error", "Moving map cannot run without a map - please select one", MessageBox.OKB)).execute();
+				if (currentMap == null) (new MessageBox("Error", "Moving map cannot run without a map - please select one. \n You can select an empty map", MessageBox.OKB)).execute();
 			}
 		}
 		inBestMap = false;

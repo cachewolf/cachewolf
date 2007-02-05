@@ -104,7 +104,6 @@ public class MapLoaderGui extends Form {
 		okBPerCache.setHotKey(0, IKeys.ENTER);
 		pnlPerCache.addLast(okBPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 
-
 		mTab.addCard(pnlPerCache, MyLocale.getMsg(1805, "Per cache"), MyLocale.getMsg(1805, "Per Cache"));
 		this.addLast(mTab);
 	}
@@ -168,6 +167,7 @@ public class MapLoaderGui extends Form {
 		Vm.showWait(false);
 		ml.setProgressInfoBox(null);
 		progressBox.close(0);
+		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
 		(new MessageBox("Expedia maps", "Downloaded and calibrated the maps successfully", MessageBox.OKB)).execute();
 	}
 
