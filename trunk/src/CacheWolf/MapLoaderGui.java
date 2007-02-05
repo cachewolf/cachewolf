@@ -147,8 +147,10 @@ public class MapLoaderGui extends Form {
 			ml.downlaodTiles(mapsDir);
 		} else { // per cache
 			CacheHolder ch; 
-			CWPoint tmpca=new CWPoint();
+			CWPoint tmpca = new CWPoint();
 			int numdownloaded = 0;
+			Global.getProfile().getSourroundingArea(onlySelected); // calculate numCachesInArea
+			int numCaches = Global.getProfile().numCachesInArea;
 			for (int i=cacheDB.size()-1; i >= 0; i--) {
 				ch = (CacheHolder) cacheDB.get(i);
 				if (!this.onlySelected || ch.is_Checked) {

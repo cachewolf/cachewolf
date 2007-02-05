@@ -254,8 +254,8 @@ public class MovingMap extends Form implements TimerProc {
 		// update cache symbols in map
 		running = true;
 		MainTab mainT = Global.mainTab;
-		if (mainT.tbP.myMod.cacheSelectionChanged) {
-			mainT.tbP.myMod.cacheSelectionChanged = false;
+		if (Global.getProfile().selectionChanged) {
+			Global.getProfile().selectionChanged = false;
 			removeAllMapSymbolsButGoto();
 			CacheHolder ch;
 			for (int i=cacheDB.size()-1; i>=0; i--) {
@@ -837,7 +837,7 @@ public class MovingMap extends Form implements TimerProc {
 	
 	public void gpsStarted() {
 		addTrack(myNavigation.curTrack);
-		addOverlaySet();
+		//addOverlaySet();
 	}
 	public void gpsStoped() {
 		setGpsStatus(MovingMap.noGPS);
@@ -964,6 +964,10 @@ public class MovingMap extends Form implements TimerProc {
 
 	public void loadMapForAllCaches(){
 		Area sur = Global.getProfile().getSourroundingArea(true);
+		if (sur == null) {
+			(new MessageBox("Error", "Keine  Caches mit Häckchen ausgewählt", MessageBox.OKB)).execute();
+			return;
+		}
 		MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.buttomright);
 		if (newmap == null ) { // no map that includs all caches is available -> load map with lowest resolution
 			Object [] s = getRectForMapChange(posCircleLat, posCircleLon);
@@ -1303,7 +1307,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		//if (!(which == null || which == mapImage || which instanceof TrackOverlay || which == mm.directionArrows) ) return false;
 		saveGpsIgnoreStatus = mm.ignoreGps; 
 		mm.ignoreGps = true;
-		//paintingZoomArea = true;
 		saveMapLoc = pos;
 		bringMapToTop();
 		if (mapImage.isOnScreen() && !mapImage.hidden ) return super.imageBeginDragged(mapImage, pos);
@@ -1521,7 +1524,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				if (clickedCache != null) openCacheDescMenuItem = new MenuItem("Open '"+clickedCache.CacheName+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
 				kontextMenu.addItem(openCacheDescMenuItem);
 			}
-			saveMapLoc = p;
 			kontextMenu.exec(this, new Point(p.x, p.y), this);
 		}
 	}

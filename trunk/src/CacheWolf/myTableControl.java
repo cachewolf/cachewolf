@@ -59,15 +59,9 @@ public class myTableControl extends TableControl{
 		
 	/** Set all caches either as selected or as deselected, depending on argument */
 	private void setSelectForAll(boolean selectStatus) {
-		CacheHolder ch;
-		for(int i = cacheDB.size()-1; i >=	0; i--){
-			ch = (CacheHolder)cacheDB.get(i);
-			if (ch.is_filtered == false) ch.is_Checked = selectStatus;
-		}
-		tbp.myMod.cacheSelectionChanged = true;
+		Global.getProfile().setSelectForAll(selectStatus);
 		tbp.refreshTable();
 	}
-	
 	
 	public void popupMenuEvent(Object selectedItem){
 		CacheHolder ch;

@@ -211,7 +211,7 @@ public class GotoPanel extends CellPanel {
 		
 	}
 	
-	public void destChanged() { // called from myNavigate
+	public void destChanged(CWPoint d) { // called from myNavigate
 		btnGoto.setText(getGotoBtnText());
 		updateDistance();
 	}

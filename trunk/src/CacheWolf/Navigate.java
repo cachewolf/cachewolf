@@ -45,13 +45,13 @@ public class Navigate {
 			}
 			serThread.start();
 			startDisplayTimer();
+			curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
 			if (lograw)	gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
 			if (gotoPanel != null) gotoPanel.gpsStarted();
 			if (movingMap != null) movingMap.gpsStarted();
 		} catch (IOException e) {
 			(new MessageBox("Error", "Could not connect to GPS-receiver.\n Error while opening serial Port " + e.getMessage()+"\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS", MessageBox.OKB)).execute(); 
 		}
-		curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
 	}
 
 	public void setRawLogging(boolean on, int intervall) {
@@ -88,11 +88,8 @@ public class Navigate {
 
 	public void setDestination(CWPoint d) {
 		destination = new CWPoint (d);
-		if (gotoPanel != null) gotoPanel.destChanged();
-		if (movingMap != null) { // TODO make movingmap the same as gotopanel
-			movingMap.destChanged(destination);
-			movingMap.repaintNow();
-		}
+		if (gotoPanel != null) gotoPanel.destChanged(destination);
+		if (movingMap != null) movingMap.destChanged(destination);
 	}
 	public void ticked() {
 		int fix = gpsPos.getFix();

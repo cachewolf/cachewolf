@@ -16,7 +16,6 @@ import ewe.graphics.*;
 */
 public class myTableModel extends TableModel{
 	
-	public boolean cacheSelectionChanged = true;
 	Vector cacheDB;
 	String[] colName;
 	static Image cacheImages[] = new Image[454];
@@ -306,7 +305,7 @@ public class myTableModel extends TableModel{
 		try{
 			// Check whether the click is on the checkbox image
 			if (cell.y>=0 && cell.x==0) {
-				cacheSelectionChanged = true;
+				Global.getProfile().selectionChanged = true;
 				CacheHolder ch = (CacheHolder)cacheDB.get(cell.y);
 				ch.is_Checked= !ch.is_Checked;
 				// set the ceckbox also for addi wpts
