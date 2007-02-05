@@ -26,7 +26,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTPL;
-	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack;
+	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditProfile;
@@ -106,27 +106,30 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Filter" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterMenuItems=new MenuItem[7];
-		filterMenuItems[0] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")); 
-		filterMenuItems[1] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
-		filterMenuItems[2] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
-		filterMenuItems[3] = mnuSeparator;
-		filterMenuItems[4] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
-		filterMenuItems[5] = mnuSeparator;
-		filterMenuItems[6] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
+		MenuItem[] filterMenuItems=new MenuItem[8];
+		filterMenuItems[0] = filtApply  = new MenuItem(MyLocale.getMsg(709,"Apply")); 
+		filterMenuItems[1] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")); 
+		filterMenuItems[2] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
+		filterMenuItems[3] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
+		filterMenuItems[4] = mnuSeparator;
+		filterMenuItems[5] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
+		filterMenuItems[6] = mnuSeparator;
+		filterMenuItems[7] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
 		
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterAndSearchMenuItems=new MenuItem[8];
-		filterAndSearchMenuItems[0]=filtCreate;
-		filterAndSearchMenuItems[1]=filtInvert;
-		filterAndSearchMenuItems[2]=filtClear;
-		filterAndSearchMenuItems[3]=mnuSeparator;
-		filterAndSearchMenuItems[4]=filtBlack;
-		filterAndSearchMenuItems[5]=mnuSeparator;
-		filterAndSearchMenuItems[6]=search;
-		filterAndSearchMenuItems[7]=searchClr;
+		MenuItem[] filterAndSearchMenuItems=new MenuItem[10];
+		filterAndSearchMenuItems[0]=filtApply;
+		filterAndSearchMenuItems[1]=filtCreate;
+		filterAndSearchMenuItems[2]=filtInvert;
+		filterAndSearchMenuItems[3]=filtClear;
+		filterAndSearchMenuItems[4]=mnuSeparator;
+		filterAndSearchMenuItems[5]=filtBlack;
+		filterAndSearchMenuItems[6]=filtSelected;
+		filterAndSearchMenuItems[7]=mnuSeparator;
+		filterAndSearchMenuItems[8]=search;
+		filterAndSearchMenuItems[9]=searchClr;
 		
 		// Depending on screen width display either filter and searach menus or the combined menu 
 		if (MyLocale.getScreenWidth()>300) {
@@ -269,6 +272,12 @@ public class MainMenu extends MenuBar {
 				pref.showBlacklisted=false;
 				filtBlack.modifiers&=~MenuItem.Checked;
 				tbp.resetModel();
+			}
+			if(mev.selectedItem == filtApply){
+				Filter flt = new Filter();
+				flt.setFilter();
+				flt.doFilter();
+				tbp.refreshTable();
 			}
 			if(mev.selectedItem == filtCreate){
 				scnFilter.setData();

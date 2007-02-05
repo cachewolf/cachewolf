@@ -249,7 +249,8 @@ public class FilterScreen extends Form{
 		pnlButtons.addLast(btnTypes=new mButton(MyLocale.getMsg(723,"Types"))); 
 		pnlButtons.addLast(btnAddi=new mButton("Addi Wpt")); 
 		pnlButtons.addLast(btnContainer=new mButton(MyLocale.getMsg(724,"Container")));
-		pnlButtons.addLast(btnSearch=new mButton("Search")); btnSearch.modify(Disabled,0);
+		// Search ist für 0.9n noch deaktiviert
+		//pnlButtons.addLast(btnSearch=new mButton("Search")); btnSearch.modify(Disabled,0);
 		addNext(pnlButtons,HSTRETCH,FILL);
 
 		cp.addItem(pnlBearDist,"Bear",null);
