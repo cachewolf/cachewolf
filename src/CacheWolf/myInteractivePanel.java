@@ -17,7 +17,7 @@ public class myInteractivePanel extends InteractivePanel{
 	boolean penMoving = false;
 	int x1,y1,x2,y2 = 0;
 	static Color RED = new Color(255,0,0);
-	Font font = new Font("Verdana", Font.BOLD, 10);
+	Font font = new Font("gui", Font.BOLD, 10);
 	FontMetrics fm = getFontMetrics();
 	long timePenOn=0;
 	AniImage imgInfo;
@@ -50,17 +50,24 @@ public class myInteractivePanel extends InteractivePanel{
 	}
 	public boolean imageMovedOn(AniImage which) {
 		timePenOn=Vm.getTimeStampLong();
+		setFont(font);
 		RadarPanelImage imgRP=(RadarPanelImage) which;
 		ewe.util.Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch=(CacheHolder) cacheDB.get(imgRP.rownum);
 		String s=ch.wayPoint+"  "+ch.CacheSize+" / "+strDifficulty+"="+ch.hard+"  "+strTerrain+"="+ch.terrain;
-		int tw;
-		Image img = new Image(tw=fm.getTextWidth(s)+2,fm.getHeight()+2);
+		String s1=ch.CacheName;
+		if (s1.length()>40) s1=s1.substring(0,40);
+		int tw=fm.getTextWidth(s)+2;
+		int tw1=fm.getTextWidth(s1)+2;
+		if (tw1>tw) tw=tw1;
+		int h=fm.getHeight();
+		Image img = new Image(tw,h+h);
 		Graphics g = new Graphics(img);
 		g.setColor(new Color(0,0,255));
-		g.fillRect(0,0,tw, fm.getHeight()+2);
+		g.fillRect(0,0,tw, h+h);
 		g.setColor(Color.White);
 		g.drawText(s, 1,1);
+		g.drawText(s1,1,h);
 		imgInfo = new AniImage(img);
 		Rect r=getVisibleArea(null);
 		imgInfo.setLocation(r.x,r.y); // Place the info at top left corner
