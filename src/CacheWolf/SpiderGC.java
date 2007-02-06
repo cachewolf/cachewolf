@@ -187,7 +187,7 @@ public class SpiderGC{
 		getImages(start, ch);
 		pref.log("Got images");
 		pref.log("Trying maps");
-		getMaps(ch);
+		//getMaps(ch);
 		pref.log("Got maps");
 		pref.log("Getting additional waypoints");
 
@@ -225,7 +225,7 @@ public class SpiderGC{
 		String dist = options.distanceInput.getText();
 		if (dist.length()== 0) return;
 		distance = Convert.toDouble(dist);
-		boolean getMaps = options.mapsCheckBox.getState();
+		//boolean getMaps = options.mapsCheckBox.getState();
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
 		
@@ -366,11 +366,11 @@ public class SpiderGC{
 						getImages(start, ch);
 						pref.log("Got images");
 					}
-					if(getMaps){
+	/*				if(getMaps){
 						pref.log("Trying maps");
 						getMaps(ch);
 						pref.log("Got maps");
-					}
+					} */
 					pref.log("Getting additional waypoints");
 					getAddWaypoints(start, ch);
 					pref.log("Got additional waypoints");
@@ -410,6 +410,7 @@ public class SpiderGC{
 		} else return -1;
 	}
 	
+	/* wird nicht mehr gebraucht.
 	public void getMaps(CacheHolder holder){
 		if(holder.LatLon.length() > 4){
 			ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
@@ -419,7 +420,7 @@ public class SpiderGC{
 			//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
 		}
 	}
-	
+	*/
 	public void getAddWaypoints(String doc, CacheHolder ch){
 		Extractor exWayBlock = new Extractor(doc, "<strong>Additional Waypoints</strong><br>", "</table>", 0, false);
 		String wayBlock = new String();

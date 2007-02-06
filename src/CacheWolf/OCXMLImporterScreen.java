@@ -16,7 +16,7 @@ public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;
 	Preferences pref;
 	mInput distanceInput;
-	mCheckBox imagesCheckBox, mapsCheckBox, missingCheckBox;
+	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox;
 	mLabel distLbl;
 	static int IMAGESANDMAPS = 0;
 	static int ALL = 1;
@@ -64,10 +64,9 @@ public class OCXMLImporterScreen extends Form {
 			}
 			if (ev.target == okB){
 				    // distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
-					pref.downloadMapsOC = mapsCheckBox.state;
 					pref.downloadPicsOC = imagesCheckBox.state;
 					if (missingCheckBox!=null) pref.downloadmissingOC = missingCheckBox.state;
-					// @todo: sofort speichern?
+					// TODO: sofort speichern?
 				this.close(Form.IDOK);
 				}
 		}
