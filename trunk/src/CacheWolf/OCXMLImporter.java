@@ -353,12 +353,14 @@ public class OCXMLImporter extends MinML {
 				}
 				if (!fileExits(filename)){
 					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache:")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 1");
-					mpl.loadTo(filename, "3"); }
+					//mpl.loadTo(filename, "3"); 
+					}
 				//filename = profile.dataDir + "/" + holder.wayPoint + "_map_2.gif";
 				filename = Global.getPref().baseDir + "/maps/expedia/" + holder.wayPoint + "_map_2.gif";
 				if (!fileExits(filename)){
 					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache: ")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 2");
-					mpl.loadTo(filename, "10"); }
+					//mpl.loadTo(filename, "10"); 
+					}
 			}
 			// save all
 			holder.saveCacheDetails(profile.dataDir);

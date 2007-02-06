@@ -415,8 +415,8 @@ public class SpiderGC{
 			ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 			pll.parse();
 			MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
-			mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");
-			mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
+			//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");
+			//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
 		}
 	}
 	
