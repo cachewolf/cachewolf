@@ -95,7 +95,7 @@ public class GPXImporter extends MinML {
 			if (options.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
 			//String dist = options.distanceInput.getText();
 			//if (dist.length()== 0) return;
-			getMaps = options.mapsCheckBox.getState();
+			//getMaps = options.mapsCheckBox.getState();
 			boolean getImages = options.imagesCheckBox.getState();
 			doSpider = false;
 			if(getImages){doSpider = true;}
