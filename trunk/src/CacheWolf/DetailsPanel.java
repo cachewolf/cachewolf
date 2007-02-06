@@ -34,6 +34,7 @@ public class DetailsPanel extends CellPanel{
 	Profile profile;
 	mImage mIsBlack;
 	mImage mNoBlack;
+	mImage mI, mI_no;
 	
 	public DetailsPanel(){
 		pref = Global.getPref();
@@ -42,15 +43,16 @@ public class DetailsPanel extends CellPanel{
 		////////////////////
 		// Tools
 		////////////////////
-		pnlTools.addNext(btnNewWpt = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		pnlTools.addLast(btnNewWpt = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		pnlTools.addNext(btnGoto = new mButton("Goto"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		mImage mI = new mImage("bug.gif");
+		mI = new mImage("bug.gif");
+		mI_no = new mImage("bug_no.gif");
 		mImage mI2 = new mImage("globe_small.gif");
 		
 		mImage mI4 = new mImage("images.gif");
 		mNoBlack = new mImage("no_black.png");
 		mIsBlack = new mImage("is_black.png");
-		btnShowBug = new mButton((IImage)mI);
+		btnShowBug = new mButton((IImage)mI_no);
 		btnShowMap = new mButton((IImage)mI2);
 		
 		btnAddDateTime = new mButton((IImage)new mImage("date_time.png"));
@@ -81,7 +83,7 @@ public class DetailsPanel extends CellPanel{
 		this.addLast(inpName.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(304,"Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(btnWayLoc.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		this.addLast(btnWayLoc.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(inpHidden.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -129,8 +131,10 @@ public class DetailsPanel extends CellPanel{
 		btnBlack.repaintNow();
 		if(ch.has_bug == true) {
 			btnShowBug.modify(Control.Disabled,1);
+			btnShowBug.image = mI;
 		} else {
 			btnShowBug.modify(Control.Disabled,0);
+			btnShowBug.image = mI_no;
 		}
 		btnShowBug.repaintNow();
 		if(ch.CacheSize.equals("Micro")) chcSize.setInt(1);

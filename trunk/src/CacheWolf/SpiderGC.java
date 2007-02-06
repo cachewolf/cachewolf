@@ -112,6 +112,7 @@ public class SpiderGC{
 	 * It assumes a login has already been performed!
 	 */
 	public void spiderSingle(int number){
+
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
 		if (ch.isAddiWpt()) return;  // No point spidering an addi waypoint, comes with parent
 		Vm.showWait(true);
@@ -137,53 +138,51 @@ public class SpiderGC{
 		ch.is_new = false;
 		ch.is_update = true;
 		ch.is_HTML = true;
-		//Vm.debug(ch.wayPoint);
+		Vm.debug(ch.wayPoint);
 		if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
 		pref.log("Trying logs");
 		ch.CacheLogs = getLogs(start, ch);
 		pref.log("Found logs");
 		ch.LatLon = getLatLon(start);
 		ch.pos.set(ch.LatLon);
-		//Vm.debug("LatLon: " + ch.LatLon);
+		Vm.debug("LatLon: " + ch.LatLon);
 		pref.log("Trying description");
 		ch.LongDescription = getLongDesc(start);
 		pref.log("Got description");
 		pref.log("Getting cache name");
 		ch.CacheName = SafeXML.cleanback(getName(start));
 		pref.log("Got cache name");
-		//Vm.debug("Name: " + ch.CacheName);
+		Vm.debug("Name: " + ch.CacheName);
 		pref.log("Trying owner");
 		ch.CacheOwner = SafeXML.cleanback(getOwner(start));
-		if(ch.CacheOwner.equals(pref.myAlias)) ch.is_owned = true;
+		if(ch.CacheOwner.equals(pref.myAlias + " ")) ch.is_owned = true;
 		pref.log("Got owner");
-		//Vm.debug("Owner: " + ch.CacheOwner);
+		Vm.debug("Owner: " + ch.CacheOwner);
 		pref.log("Trying date hidden");
 		ch.DateHidden = getDateHidden(start);
 		pref.log("Got date hidden");
-		//Vm.debug("Hidden: " + ch.DateHidden);
+		Vm.debug("Hidden: " + ch.DateHidden);
 		pref.log("Trying hints");
 		ch.Hints = getHints(start);
 		pref.log("Got hints");
-		//Vm.debug("Hints: " + ch.Hints);
-		
-		
-		//Vm.debug("Got the hints");
+		Vm.debug("Hints: " + ch.Hints);
+		Vm.debug("Got the hints");
 		pref.log("Trying size");
 		ch.CacheSize = getSize(start);
 		pref.log("Got size");
-		//Vm.debug("Size: " + ch.CacheSize);
+		Vm.debug("Size: " + ch.CacheSize);
 		pref.log("Trying difficulty");
 		ch.hard = getDiff(start);
 		pref.log("Got difficulty");
-		//Vm.debug("Hard: " + ch.hard);
+		Vm.debug("Hard: " + ch.hard);
 		pref.log("Trying terrain");
 		ch.terrain = getTerr(start);
 		pref.log("Got terrain");
-		//Vm.debug("Terr: " + ch.terrain);
+		Vm.debug("Terr: " + ch.terrain);
 		pref.log("Trying cache type");
 		ch.type = getType(start);
 		pref.log("Got cache type");
-		//Vm.debug("Type: " + ch.type);
+		Vm.debug("Type: " + ch.type);
 		pref.log("Trying images");
 		getImages(start, ch);
 		pref.log("Got images");
@@ -191,10 +190,13 @@ public class SpiderGC{
 		getMaps(ch);
 		pref.log("Got maps");
 		pref.log("Getting additional waypoints");
+
 		getAddWaypoints(start, ch);
+
 		pref.log("Got additional waypoints");
 		ch.CacheNotes = notes;
 		ch.saveCacheDetails(profile.dataDir);
+		
 		cacheDB.set(number, ch);
 		profile.saveIndex(pref);
 		infB.close(0);
@@ -218,6 +220,7 @@ public class SpiderGC{
 		}
 		
 		OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options", OCXMLImporterScreen.IMAGESANDMAPS);
+		options.distanceInput.setText("");
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {Vm.showWait(false);	return; }
 		String dist = options.distanceInput.getText();
 		if (dist.length()== 0) return;
@@ -231,7 +234,7 @@ public class SpiderGC{
 		infB.exec();
 		//Get first page
 		try{
-			pref.log("Fetching first list page: http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD) + "&f=1");
+			pref.log("Fetching first list page: http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
 			start = fetch("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
 			pref.log("First page: " + start);
 		}catch(Exception ex){
@@ -330,6 +333,7 @@ public class SpiderGC{
 					//Vm.debug("Name: " + ch.CacheName);
 					pref.log("Trying owner");
 					ch.CacheOwner = SafeXML.cleanback(getOwner(start));
+					if(ch.CacheOwner.equals(pref.myAlias+" ")) ch.is_owned = true;
 					pref.log("Got owner");
 					//Vm.debug("Owner: " + ch.CacheOwner);
 					pref.log("Trying date hidden");
@@ -426,7 +430,7 @@ public class SpiderGC{
 		Regex descRex = new Regex("colspan=\"4\">(.*)</td>");
 		Regex typeRex = new Regex("</a> \\((.*)\\)</td>");
 		int counter = 0;
-		if(exWayBlock.endOfSearch() == false){
+		if(exWayBlock.endOfSearch() == false && wayBlock.indexOf("No additional waypoints to display.")<0){
 			Extractor exRowBlock = new Extractor(wayBlock, "<tr", "</tr>", 0, false);
 			rowBlock = exRowBlock.findNext();
 			rowBlock = exRowBlock.findNext();

@@ -122,9 +122,11 @@ public class MapLoader {
 		}
 	}
 	
+	/*
 	public void loadTo(String a, String b) {
 		//loadTo(a, b, "50.74", "7.095");
 	}
+	*/
 
 	public void setProgressInfoBox (InfoBox progrssInfoboxi) {
 		progressInfobox = progrssInfoboxi;
