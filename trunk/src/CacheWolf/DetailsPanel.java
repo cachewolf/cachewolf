@@ -298,6 +298,7 @@ public class DetailsPanel extends CellPanel{
 					coords = cs.getCoords();
 					thisCache.pos.set(coords);
 					btnWayLoc.setText(coords.toString());
+					thisCache.LatLon=coords.toString();
 				}
 			}
 			ev.consumed=true;
