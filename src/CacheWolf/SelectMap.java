@@ -24,7 +24,7 @@ class SelectMap extends Form{
 	public boolean worldfileexists = false;
 	
 	public SelectMap(){
-		mapsPath = Global.getPref().getMapManuallySavePath()+"/"; //  File.getProgramDirectory() + "/maps/";
+		mapsPath = Global.getPref().getMapManuallySavePath(false)+"/"; //  File.getProgramDirectory() + "/maps/";
 		top = new ScrollBarPanel(CMaps);
 		bot = new ScrollBarPanel(nonCMaps);
 		this.title = (String)lr.get(4101,"Maps");
@@ -41,7 +41,7 @@ class SelectMap extends Form{
 			File checkWFL;
 			Extractor ext;
 			String rawFileName = new String();
-			dateien = files.list("*.png", File.LIST_FILES_ONLY);
+			dateien = files.list("*.png,*.jpg,*.gif,*.bmp", File.LIST_FILES_ONLY);
 			for(int i = 0; i < dateien.length;i++){
 				ext = new Extractor(dateien[i], "", ".", 0, true);
 				rawFileName = ext.findNext();

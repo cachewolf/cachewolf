@@ -233,7 +233,7 @@ public class DetailsPanel extends CellPanel{
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
 			}
 			else if(ev.target == btnShowMap){
-				Global.mainTab.SwitchToMovingMap(thisCache.pos);
+				Global.mainTab.SwitchToMovingMap(thisCache.pos, true);
 /*				try {
 					MapDetailForm mdf = new MapDetailForm(thisCache.wayPoint, pref, profile);
 					mdf.execute();

@@ -329,7 +329,7 @@ public class GotoPanel extends CellPanel {
 			if (myNavigation.destination.isValid())	centerTo = new CWPoint(myNavigation.destination);
 			else centerTo = new CWPoint(pref.curCentrePt); // if not goto-point defined move map to centere point
 		}  
-		mainT.SwitchToMovingMap(centerTo);
+		mainT.SwitchToMovingMap(centerTo, false);
 	}
 	
 	/**

@@ -135,16 +135,16 @@ public class Preferences extends MinML{
 	public String getMapLoadPath() {
 		// here could also a list of map-types displayed...
 		// standard dir
-		File t = new File(getMapManuallySavePath());
+		File t = new File(getMapManuallySavePath(false));
 		String[] f = t.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_FILES_ONLY);
 		if (f != null && f.length > 0) return  baseDir + mapsPath;
 		f = t.list("*.wfl", File.LIST_DIRECTORIES_ONLY | File.LIST_ALWAYS_INCLUDE_DIRECTORIES);
 		if (f != null && f.length > 0) { // see if in a subdir of <baseDir>/maps/standard are .wfl files
 			String[] f2;
 			for (int i = 0; i< f.length; i++) {
-				t.set(null, getMapManuallySavePath()+"/"+f[i]);
+				t.set(null, getMapManuallySavePath(false)+"/"+f[i]);
 				f2 = t.list("*.wfl", File.LIST_FILES_ONLY);
-				if (f2 != null && f2.length > 0) return  getMapManuallySavePath();
+				if (f2 != null && f2.length > 0) return  getMapManuallySavePath(false);
 			}
 		}
 		// lagacy dir 
@@ -153,7 +153,7 @@ public class Preferences extends MinML{
 		if (f != null && f.length > 0) {
 			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", MessageBox.YESB | MessageBox.NOB);
 			if (inf.execute() == MessageBox.IDYES) {
-				String sp = getMapManuallySavePath();
+				String sp = getMapManuallySavePath(false);
 				File spF = new File(sp);
 				if (!spF.exists()) spF.mkdirs();
 				String image;
@@ -182,9 +182,9 @@ public class Preferences extends MinML{
 	 * @return the path where manually imported maps should be stored
 	 * this should be adjustable in preferences...
 	 */
-	public String getMapManuallySavePath() {
+	public String getMapManuallySavePath(boolean create) {
 		String mapsDir = baseDir + mapsPath;
-		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
+		if (create && !(new File(mapsDir).isDirectory())) { // dir exists? 
 			if (new File(mapsDir).mkdirs() == false) {// dir creation failed?
 				(new MessageBox("Error", "Error: cannot create maps directory: \n"+mapsDir, MessageBox.OKB)).exec();
 				return null;

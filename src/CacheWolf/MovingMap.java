@@ -12,7 +12,7 @@ import ewe.util.Vector;
 /**
  *	Class to handle a moving map.
  */
-public class MovingMap extends Form implements TimerProc {
+public class MovingMap extends Form {
 	final static int gotFix = 4; //green
 	final static int lostFix = 3; //yellow
 	final static int noGPSData = 2; // red
@@ -54,8 +54,8 @@ public class MovingMap extends Form implements TimerProc {
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
 	double posCircleLat, posCircleLon;
 
-	boolean ignoreGps = false;
-	boolean ignoreGpsStatutsChanges = false;
+	boolean dontUpdatePos = false; // this is only internaly used to avoid multi-threading problems
+	boolean ignoreGps = false; // ignores updateGps-calls if true
 	boolean autoSelectMap = true;
 	boolean forceMapLoad = true; // only needed to force updateposition to try to load the best map again after OutOfMemoryError after an repeated click on snap-to-gps
 	boolean mapHidden = false;
@@ -160,15 +160,15 @@ public class MovingMap extends Form implements TimerProc {
 		resetCenterOfMap();
 		InfoBox inf = new InfoBox("Info", "Loading list of maps...");
 		inf.exec();
-		boolean saveGpsIgnoreStatus = ignoreGps;
-		ignoreGps = true;
+		boolean saveGpsIgnoreStatus = dontUpdatePos;
+		dontUpdatePos = true;
 		maps = new MapsList(mapsPath); // this actually loads the maps
 		if (maps.isEmpty()) {
 			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung \n Bitte wählen Sie einen Maßstab,\n in dem der Track und die markierten Caches angezeigt werden sollen"), MessageBox.OKB)).execute();
 			noMapsAvailable = true;
 		} else noMapsAvailable = false;
 		maps.addEmptyMaps(lat);
-		ignoreGps = saveGpsIgnoreStatus;
+		dontUpdatePos = saveGpsIgnoreStatus;
 		inf.close(0);
 		Vm.showWait(this, false);
 		this.mapsloaded = true;
@@ -337,8 +337,8 @@ public class MovingMap extends Form implements TimerProc {
 			TrackOverlays = new TrackOverlay[9];
 			TrackOverlaySetCenterTopLeft = ScreenXY2LatLon(100, 100);
 		}
-		boolean saveGPSIgnoreStatus = ignoreGps; // avoid multi-threading problems
-		ignoreGps = true;
+		boolean saveGPSIgnoreStatus = dontUpdatePos; // avoid multi-threading problems
+		dontUpdatePos = true;
 		Point upperleftOf4 = getXYonScreen(TrackOverlaySetCenterTopLeft.latDec, TrackOverlaySetCenterTopLeft.lonDec); // TrackOverlay[4] == center of Trackoverlays 
 		//upperleftOf4.x = (upperleftOf4.x + 1* width) % (width * 2) - 1 * width;
 		//upperleftOf4.y = (upperleftOf4.y + 1* height) % (height * 2) - 1 * height;
@@ -357,7 +357,7 @@ public class MovingMap extends Form implements TimerProc {
 		}
 		updateOverlayOnlyPos();
 		if (mmp.mapImage != null) mmp.images.moveToBack(mmp.mapImage);
-		ignoreGps = saveGPSIgnoreStatus;
+		dontUpdatePos = saveGPSIgnoreStatus;
 	}
 
 	private void destroyOverlay(int ov) {
@@ -579,20 +579,20 @@ public class MovingMap extends Form implements TimerProc {
 		posCircle.setLocation(posCircleX-posCircle.getWidth()/2, posCircleY-posCircle.getHeight()/2);
 	}
 
-	public void movePosCircleToLatLon(CWPoint p) {
-		moveScreenXYtoLatLon(new Point(posCircleX, posCircleY), p);
+	public void movePosCircleToLatLon(CWPoint p, boolean repaint) {
+		moveScreenXYtoLatLon(new Point(posCircleX, posCircleY), p, repaint);
 	}
 
-	public void setCenterOfScreen (CWPoint c) {
-		moveScreenXYtoLatLon(new Point (this.width/2, this.height/2), c);
+	public void setCenterOfScreen (CWPoint c, boolean repaint) {
+		moveScreenXYtoLatLon(new Point (this.width/2, this.height/2), c, repaint);
 	}
 
-	public void moveScreenXYtoLatLon(Point s, CWPoint c) {
+	public void moveScreenXYtoLatLon(Point s, CWPoint c, boolean repaint) {
 		Point mappos = getMapPositionOnScreen();
 		Point onscreenpos = getXYonScreen(c.latDec, c.lonDec);
 		if (mmp != null && mmp.mapImage != null) mmp.mapImage.move(mappos.x - onscreenpos.x + s.x, mappos.y - onscreenpos.y + s.y);
 		mapMoved(s.x - onscreenpos.x, s.y - onscreenpos.y);
-
+		if (repaint) mmp.repaintNow();
 	}
 
 	/** call this if the map moved on the screen (by dragging)
@@ -682,7 +682,7 @@ public class MovingMap extends Form implements TimerProc {
 		MapSymbol ms = new MapSymbol(name, filename, lat, lon);
 		ms.loadImage();
 		ms.properties |= AniImage.AlwaysOnTop;
-		Point pOnScreen=getXYonScreen(lat, lon);
+		Point pOnScreen = getXYonScreen(lat, lon);
 		ms.setLocation(pOnScreen.x-ms.getWidth()/2, pOnScreen.y-ms.getHeight()/2);
 		symbols.add(ms);
 		mmp.addImage(ms);
@@ -795,7 +795,7 @@ public class MovingMap extends Form implements TimerProc {
 	 * Method to laod the best map for lat/lon and move the map so that the posCircle is at lat/lon
 	 */
 	public void updatePosition(double lat, double lon){
-		if (ignoreGps || loadingMapList) return; // avoid multi-threading problems
+		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
 		Vm.debug("updatepors, lat: "+lat+" lon: "+lon);
 		if (!mapsloaded) {
 			loadMaps(mapPath, lat);
@@ -823,7 +823,7 @@ public class MovingMap extends Form implements TimerProc {
 	}
 
 	public void updateGps(int fix) {
-		if (!running) return;
+		if (!running || ignoreGps) return;
 		// runMovingMap neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) { // TODO is getSats really necessary?
 			directionArrows.setDirections(-361 /*(float)bearWayP.value*/, myNavigation.sunAzimut, -361 /*(float)bearMov.value*/);
@@ -837,7 +837,6 @@ public class MovingMap extends Form implements TimerProc {
 	
 	public void gpsStarted() {
 		addTrack(myNavigation.curTrack);
-		//addOverlaySet();
 	}
 	public void gpsStoped() {
 		setGpsStatus(MovingMap.noGPS);
@@ -866,7 +865,7 @@ public class MovingMap extends Form implements TimerProc {
 	 * true: willchange the map, regardless of change in scale
 	 */
 	public void setBestMap(double lat, double lon, boolean loadIfSameScale) {
-		if (inBestMap) return;                  // TODO zoomlevel berücksichtigen
+		if (inBestMap) return;
 		inBestMap = true;
 		Object [] s = getRectForMapChange(lat, lon);
 		CWPoint cll = (CWPoint) s[0]; 
@@ -882,21 +881,24 @@ public class MovingMap extends Form implements TimerProc {
 			break;
 		case HIGHEST_RESOLUTION: newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, 0.000001f, false); break;
 		case HIGHEST_RESOLUTION_GPS_DEST: 
-			if (gotoPos!= null) newmap = maps.getMapForArea(new CWPoint(posCircleLat, posCircleLon), new CWPoint(gotoPos.lat, gotoPos.lon));
+			if (gotoPos!= null && GpsStatus != noGPS) newmap = maps.getMapForArea(new CWPoint(posCircleLat, posCircleLon), new CWPoint(gotoPos.lat, gotoPos.lon)); // TODO use home-coos if no gps? - consider start from details panel and from gotopanel
 			else newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, 0.000001f, false); 
 			break;
 		default: (new MessageBox("Error", "Programmfehler: \nillegal mapChangeModus: " + mapChangeModus, MessageBox.OKB)).execute(); break;
 		}
-		if ( newmap != null && (currentMap == null || currentMap.mapName != newmap.mapName) ) {
-			if (loadIfSameScale || !MapsList.scaleEquals(currentMap, newmap) ) setMap(newmap, lat, lon); 
-			Vm.debug("better map found");
+		if ( newmap != null && (currentMap == null || !currentMap.mapName.equals(newmap.mapName)) ) {
+			if (loadIfSameScale || !MapsList.scaleEquals(currentMap.scale / currentMap.zoomFactor, newmap) ) {
+				Vm.debug("better map found");
+				setMap(newmap, lat, lon);
+				moveScreenXYtoLatLon(new Point(screen.x, screen.y), cll, true);
+			}
 			inBestMap = false;
 			return;
 		}
 		if (currentMap == null && newmap == null) {
 			(new MessageBox("Information", "Für die aktuelle Position steht keine Karte zur Verfüung, bitte wählen Sie eine manuell", MessageBox.OKB)).execute();
-			posCircleLat = lat;
-			posCircleLon = lon; // choosemap calls setmap with posCircle-coos
+			posCircleLat = cll.latDec;
+			posCircleLon = cll.lonDec; // choosemap calls setmap with posCircle-coos
 			while (currentMap == null) {
 				mmp.chooseMap(); // force the user to select a scale // TODO empty maps on top?
 				if (currentMap == null) (new MessageBox("Error", "Moving map cannot run without a map - please select one. \n You can select an empty map", MessageBox.OKB)).execute();
@@ -928,13 +930,13 @@ public class MovingMap extends Form implements TimerProc {
 		CWPoint cll;
 		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h) {
 			x = posCircleX; // posCircle is inside the screen
-			y = posCircleY;
+			y = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn voher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
 			cll = new CWPoint(lat, lon);
 		} else { // when posCircle out of screen - use center of screen as point which as to be included in the map
 			cll = ScreenXY2LatLon(w/2, h/2);
 			x = w/2;
 			y = h/2;
-		}
+		} 
 		Object[] ret = new Object[2];
 		ret[0] = cll;
 		ret[1] = new Rect(x, y, w, h);
@@ -951,13 +953,13 @@ public class MovingMap extends Form implements TimerProc {
 		CWPoint cll = (CWPoint) s[0]; 
 		Rect screen = (Rect) s[1]; 
 		//Rect screen = new Rect(posCircleX, posCircleY, (width != 0 ? width : pref.myAppWidth), (height != 0 ? height : pref.myAppHeight));
-		MapInfoObject m = maps.getMapChangeResolution(cll.latDec, cll.lonDec, screen, currentMap.scale, !betterOverview);
+		MapInfoObject m = maps.getMapChangeResolution(cll.latDec, cll.lonDec, screen, currentMap.scale / currentMap.zoomFactor, !betterOverview);
 		if (m != null) {
-			boolean saveGpsIgnStatus = ignoreGps;
-			ignoreGps = true;
+			boolean saveGpsIgnStatus = dontUpdatePos;
+			dontUpdatePos = true;
 			setMap(m, posCircleLat, posCircleLon);
 			setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
-			ignoreGps = saveGpsIgnStatus;
+			dontUpdatePos = saveGpsIgnStatus;
 		}
 		else (new MessageBox("Error", "No "+ (betterOverview ? "less" : "more") + " deteiled map available", MessageBox.OKB)).execute();
 	}
@@ -975,19 +977,20 @@ public class MovingMap extends Form implements TimerProc {
 			Rect screen = (Rect) s[1]; 
 			newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, Float.MAX_VALUE -1, false);
 		}
-		boolean saveGpsIgnStatus = ignoreGps;
-		ignoreGps = true;
+		boolean saveGpsIgnStatus = dontUpdatePos;
+		dontUpdatePos = true;
 		setMap(newmap, posCircleLat, posCircleLon);
 		setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
-		ignoreGps = saveGpsIgnStatus;
+		dontUpdatePos = saveGpsIgnStatus;
 	}
 
 	public void setGpsStatus (int status) {
-		if ((status == GpsStatus) || ignoreGpsStatutsChanges) return; // if ignoreGpsStatutsChanges == true than the Map is in manual-mode
+		if (status == GpsStatus) return; // if ignoreGpsStatutsChanges == true than the Map is in manual-mode
 		GpsStatus = status;
+		dontUpdatePos = false;
 		ignoreGps = false;
 		switch (status) {
-		case noGPS: 	{ posCircle.change(null); /*ignoreGps = true; */ break; }
+		case noGPS: 	{ posCircle.change(null); ignoreGps = true; break; }
 		case gotFix:    { posCircle.change(statusImageHaveSignal); break; }
 		case lostFix:   { posCircle.change(statusImageNoSignal); break; }
 		case noGPSData: { posCircle.change(statusImageNoGps); break; }
@@ -997,8 +1000,8 @@ public class MovingMap extends Form implements TimerProc {
 
 	public void SnapToGps() {
 		resetCenterOfMap();
+		dontUpdatePos = false;
 		ignoreGps = false;
-		ignoreGpsStatutsChanges = false;
 		lastCompareX = Integer.MAX_VALUE; // neccessary to make updateposition to test if the current map is the best one for the GPS-Position
 		lastCompareY = Integer.MAX_VALUE;
 		autoSelectMap = true;
@@ -1014,14 +1017,14 @@ public class MovingMap extends Form implements TimerProc {
 	 * @param lon -361: don't adust to lat/lon
 	 */
 	public void setMap(MapInfoObject newmap, double lat, double lon) {
-		if (currentMap != null && newmap.mapName == currentMap.mapName && !forceMapLoad) {
+		if (currentMap != null && newmap.mapName.equals(currentMap.mapName) && !forceMapLoad) { // note: newmap.mapName == currentMap.mapName won't work because they are different String containing the same text 
 			updateOnlyPosition(lat, lon, true); 
 			return;
 		}
 		Vm.showWait(true);
 		boolean saveIgnoreStatus;
-		saveIgnoreStatus = ignoreGps;
-		ignoreGps = true;  // make updatePosition ignore calls during loading new map
+		saveIgnoreStatus = dontUpdatePos;
+		dontUpdatePos = true;  // make updatePosition ignore calls during loading new map
 		InfoBox inf;
 		inf = new InfoBox("Info", "Loading map...");
 		inf.show();
@@ -1060,7 +1063,7 @@ public class MovingMap extends Form implements TimerProc {
 			updateScale();
 			inf.close(0);  // this doesn't work in a ticked-thread in the ewe-vm. That's why i made a new mThread in gotoPanel for ticked
 			Vm.showWait(false);
-			ignoreGps = saveIgnoreStatus;
+			dontUpdatePos = saveIgnoreStatus;
 		} catch (IllegalArgumentException e) { // thrown by new AniImage() in ewe-vm if file not found;
 			if (mmp.mapImage != null) {
 				mmp.removeImage(mmp.mapImage); 
@@ -1072,7 +1075,7 @@ public class MovingMap extends Form implements TimerProc {
 			inf.close(0);
 			Vm.showWait(false);
 			(new MessageBox("Error", "Could not load map: "+ newmap.getImageFilename(), MessageBox.OKB)).execute();
-			ignoreGps = saveIgnoreStatus;
+			dontUpdatePos = saveIgnoreStatus;
 		} catch (OutOfMemoryError e) {
 			if (mmp.mapImage != null) {
 				mmp.removeImage(mmp.mapImage); 
@@ -1084,7 +1087,7 @@ public class MovingMap extends Form implements TimerProc {
 			inf.close(0);
 			Vm.showWait(false);
 			(new MessageBox("Error", "Not enough memory to load map: "+ newmap.getImageFilename()+"\nYou can try to close\n all prgrams and \nrestart CacheWolf", MessageBox.OKB)).execute();
-			ignoreGps = saveIgnoreStatus;
+			dontUpdatePos = saveIgnoreStatus;
 		}catch (SystemResourceException e) {
 			if (mmp.mapImage != null) {
 				mmp.removeImage(mmp.mapImage); 
@@ -1096,7 +1099,7 @@ public class MovingMap extends Form implements TimerProc {
 			inf.close(0);
 			Vm.showWait(false);
 			(new MessageBox("Error", "Not enough ressources to load map: "+ newmap.getImageFilename()+"\nYou can try to close\n all prgrams and \nrestart CacheWolf", MessageBox.OKB)).execute();
-			ignoreGps = saveIgnoreStatus;
+			dontUpdatePos = saveIgnoreStatus;
 		}
 	}
 
@@ -1186,9 +1189,9 @@ public class MovingMap extends Form implements TimerProc {
 	 */		
 	public void zoomFromUnscaled (float zoomFactor, Rect newImageRect, CWPoint center) {
 		Vm.showWait(this, true);
-		boolean savegpsstatus = ignoreGps;
+		boolean savegpsstatus = dontUpdatePos;
 		if (mapImage1to1 != null) {
-			ignoreGps = true; // avoid multi-thread problems
+			dontUpdatePos = true; // avoid multi-thread problems
 			int saveprop = AniImage.IsMoveable;
 			MapImage tmp = null; // = mmp.mapImage;
 			if (mmp.mapImage != null) {
@@ -1222,15 +1225,15 @@ public class MovingMap extends Form implements TimerProc {
 			}
 		} else // no map image loaded 
 		{ currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y); }
-		scaleWanted = currentMap.scale;
+		// scaleWanted = currentMap.scale; use this if you want to change automatically to a map scale that best fits the zooming
 		destroyOverlaySet();
 		Vm.getUsedMemory(true); // call garbage collection
-		setCenterOfScreen(center);
+		setCenterOfScreen(center, false);
 		addOverlaySet();
 		updateScale();
 		this.repaintNow();
 		Vm.showWait(this, false);
-		ignoreGps = savegpsstatus;
+		dontUpdatePos = savegpsstatus;
 	}
 
 	/*	public void gotFocus(int how) {
@@ -1305,8 +1308,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		}
 		// move (drag) map
 		//if (!(which == null || which == mapImage || which instanceof TrackOverlay || which == mm.directionArrows) ) return false;
-		saveGpsIgnoreStatus = mm.ignoreGps; 
-		mm.ignoreGps = true;
+		saveGpsIgnoreStatus = mm.dontUpdatePos; 
+		mm.dontUpdatePos = true;
 		saveMapLoc = pos;
 		bringMapToTop();
 		if (mapImage.isOnScreen() && !mapImage.hidden ) return super.imageBeginDragged(mapImage, pos);
@@ -1318,7 +1321,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		bringMaptoBack();
 		if (dc.image == null) moveMap(pos.x - saveMapLoc.x, pos.y - saveMapLoc.y);
 		else mapMoved(pos.x - saveMapLoc.x, pos.y - saveMapLoc.y);
-		mm.ignoreGps = saveGpsIgnoreStatus;
+		mm.dontUpdatePos = saveGpsIgnoreStatus;
 		this.repaintNow();
 		return ret;
 	}
@@ -1328,8 +1331,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			saveMapLoc = new Point (ev.x, ev.y);
 		}
 		if (mm.zoomingMode && ev.type == PenEvent.PEN_DOWN) {
-			saveGpsIgnoreStatus = mm.ignoreGps;
-			mm.ignoreGps = true;
+			saveGpsIgnoreStatus = mm.dontUpdatePos;
+			mm.dontUpdatePos = true;
 			saveMapLoc = new Point (ev.x, ev.y);
 			paintingZoomArea = true;
 			mm.zoomingMode = true;
@@ -1340,7 +1343,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		if (mm.zoomingMode && ev.type == PenEvent.PEN_UP ) {
 			paintingZoomArea = false;
 			mm.zoomingMode = false;
-			mm.ignoreGps = saveGpsIgnoreStatus;
+			mm.dontUpdatePos = saveGpsIgnoreStatus;
 			removeImage(mm.buttonImageLensActivated);
 			addImage(mm.buttonImageLens);
 			if (java.lang.Math.abs(lastZoomWidth) < 15 || java.lang.Math.abs(lastZoomHeight) < 15)  {
@@ -1425,16 +1428,14 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			if (l.selectedMap.inBound(mm.posCircleLat, mm.posCircleLon) || l.selectedMap.getImageFilename().length()==0) {
 				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon);
 				mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
-				mm.ignoreGpsStatutsChanges = false;
+				mm.ignoreGps = false;
 			} else {
-				mm.ignoreGpsStatutsChanges = false;
 				mm.setGpsStatus(MovingMap.noGPS);
-				mm.ignoreGpsStatutsChanges = true;
+				mm.ignoreGps = true;
 				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon); 
 				if (mm.currentMap.fileNameWFL.length() > 0)
-					mm.setCenterOfScreen(l.selectedMap.center); // if map has an image
+					mm.setCenterOfScreen(l.selectedMap.center, true); // if map has an image
 				mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
-				mm.repaintNow();
 				//Point posCXY = new Point (0,0); mm.getXYinMap(mm.posCircleLat, mm.posCircleLat);
 				//double lat = mm.currentMap.affine[0]*posCXY.x + mm.currentMap.affine[2]*posCXY.y + mm.currentMap.affine[4]; 
 				//mm.posCircleX = 0; // place map to the upper left corner of windows
@@ -1494,6 +1495,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		}
 		if (which == mm.buttonImageLens) {
 			mm.setZoomingMode();
+			lastZoomWidth = 0;
+			lastZoomHeight = 0;
 		}
 		if (which == mm.buttonImageZoom1to1) {
 			mm.zoom1to1();
@@ -1592,13 +1595,11 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						// moveto position
 						if (action == moveToCenterMI) {
 							mapsMenu.close();
-							mm.setCenterOfScreen(Global.getPref().curCentrePt);
-							mm.repaintNow();
+							mm.setCenterOfScreen(Global.getPref().curCentrePt, true);
 						}
 						if (action == moveToDestMI) {
 							mapsMenu.close();
-							mm.setCenterOfScreen(new CWPoint(mm.gotoPos.lat, mm.gotoPos.lon));
-							mm.repaintNow();
+							mm.setCenterOfScreen(new CWPoint(mm.gotoPos.lat, mm.gotoPos.lon), true);
 						}
 						if (action == moveToGpsMI) {
 							mapsMenu.close();
@@ -1678,7 +1679,7 @@ class ListBox extends Form{
 					list.addItem(i + ": " + map.mapName);
 					row++;
 					inList[i] = true;
-					if (map == curMap) { oldmap = row; curMapFound = true; }
+					if (map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
 				} else inList[i] = false;
 			}
 		}
@@ -1688,13 +1689,13 @@ class ListBox extends Form{
 			for(int i = 0; i<maps.size();i++){
 				map = new MapInfoObject();
 				map = (MapInfoObject)maps.get(i);
-				if (map == curMap) oldmap = i;
+				if (map.mapName.equals(curMap.mapName)) oldmap = i;
 				if (map.inBound(Gps.latDec, Gps.lonDec) == true) 
 				{
 					list.addItem(i + ": " + map.mapName);
 					row++;
 					inList[i] = true;
-					if (!curMapFound  && map == curMap) { oldmap = row; curMapFound = true; }
+					if (!curMapFound  && map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
 				}
 			}
 		}
@@ -1708,7 +1709,7 @@ class ListBox extends Form{
 					list.addItem(i + ": " + map.mapName);
 					row++;
 					inList[i] = true;
-					if (!curMapFound  && map == curMap) { oldmap = row; curMapFound = true; }
+					if (!curMapFound  && map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
 				}
 			}
 		}
@@ -1720,7 +1721,7 @@ class ListBox extends Form{
 			if(!inList[i]) {
 				list.addItem(i + ": " + map.mapName);
 				row++;
-				if (!curMapFound  && map == curMap) { oldmap = row; curMapFound = true; }
+				if (!curMapFound  && map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
 			}
 		}
 		list.selectItem(oldmap, true);
