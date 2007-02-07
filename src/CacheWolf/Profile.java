@@ -8,6 +8,8 @@ import ewe.io.IOException;
 import ewe.io.PrintWriter;
 import ewe.sys.Convert;
 import ewe.sys.Handle;
+import ewe.sys.LocalResource;
+import ewe.sys.Locale;
 import ewe.sys.Vm;
 import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
@@ -368,6 +370,9 @@ public class Profile {
 	public void buildReferences(){
 		CacheHolder ch, mainCh;
 		Hashtable dbIndex = new Hashtable((int)(cacheDB.size()/0.75f + 1), 0.75f); // initialize so that von rehashing is neccessary
+		Locale l = Vm.getLocale();
+		LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
+
 		Integer index;
 		// Build index for faster search and clear all references
 		for(int i = cacheDB.size() -1; i >= 0;i--){
@@ -395,6 +400,14 @@ public class Profile {
 				}// if
 			}// if
 		}// for
+		// sort addi wpts
+		for(int i =  0; i < max ;i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			if (ch.hasAddiWpt() && (ch.addiWpts.size()> 1)){
+				ch.addiWpts.sort(new MyComparer((String)lr.get(1002,"Waypoint")), false);
+			}
+		}
+	
 	}
 
 	/** Ensure that all filters have the proper length so that the 'charAt' access in the filter

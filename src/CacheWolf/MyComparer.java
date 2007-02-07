@@ -49,18 +49,8 @@ public class MyComparer implements Comparer{
 					str02 = oo2.terrain;
 				}
 				if(compareWhat.equals(nmWay)){
-					if (CacheType.isAddiWpt(oo1.type) && oo1.wayPoint.length()>1){
-						str01 = "GC" + oo1.wayPoint.substring(2);
-					}
-					else {
-						str01 = oo1.wayPoint;
-					}
-					if (CacheType.isAddiWpt(oo2.type) && oo2.wayPoint.length()>1){
-						str02 = "GC" + oo2.wayPoint.substring(2);
-					}
-					else {
-						str02 = oo2.wayPoint;
-					}
+					str01 = oo1.wayPoint;
+					str02 = oo2.wayPoint;
 				}
 				if(compareWhat.equals(nmName)){
 					str01 = oo1.CacheName;
