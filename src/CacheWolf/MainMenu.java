@@ -119,7 +119,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterAndSearchMenuItems=new MenuItem[10];
+		MenuItem[] filterAndSearchMenuItems=new MenuItem[11];
 		filterAndSearchMenuItems[0]=filtApply;
 		filterAndSearchMenuItems[1]=filtCreate;
 		filterAndSearchMenuItems[2]=filtInvert;
@@ -128,8 +128,9 @@ public class MainMenu extends MenuBar {
 		filterAndSearchMenuItems[5]=filtBlack;
 		filterAndSearchMenuItems[6]=filtSelected;
 		filterAndSearchMenuItems[7]=mnuSeparator;
-		filterAndSearchMenuItems[8]=search;
-		filterAndSearchMenuItems[9]=searchClr;
+		filterAndSearchMenuItems[8]=mnuSeparator;
+		filterAndSearchMenuItems[9]=search;
+		filterAndSearchMenuItems[10]=searchClr;
 		
 		// Depending on screen width display either filter and searach menus or the combined menu 
 		if (MyLocale.getScreenWidth()>300) {
@@ -292,8 +293,8 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == filtBlack){
 				filtBlack.modifiers^=MenuItem.Checked;
 				Filter.showBlacklisted=!Filter.showBlacklisted;
-				Filter flt = new Filter();
-				flt.clearFilter();
+				SearchCache ssc = new SearchCache(cacheDB);
+				ssc.clearSearch();// Clear search & restore filter status
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == exportGPS){
