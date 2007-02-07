@@ -134,7 +134,7 @@ public class GPXImporter extends MinML {
 					infB.close(0);
 				}
 				// save Index 
-				profile.saveIndex(pref);
+				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 				infB.close(0);
 			}
 				Vm.showWait(false);

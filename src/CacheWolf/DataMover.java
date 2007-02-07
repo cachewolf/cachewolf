@@ -39,7 +39,7 @@ public class DataMover {
 			}//if srcHolder...
 		}//for ... i < srcDB ...
 		// write indexfiles
-		profile.saveIndex(pref);
+		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 	}
 
 	public void copyCaches(){
@@ -86,7 +86,7 @@ public class DataMover {
 			}//if srcHolder...
 		}//for ... i < srcDB ...
 		// write indexfiles
-		dstProfile.saveIndex(pref);
+		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
 	}
 	
 	public void moveCaches() {
@@ -136,8 +136,8 @@ public class DataMover {
 			}//if srcHolder...
 		}//for ... i < srcDB ...
 		// write indexfiles
-		dstProfile.saveIndex(pref);
-		profile.saveIndex(pref);
+		dstProfile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 	}
 
 	public void deleteCacheFiles(String wpt, String dir){

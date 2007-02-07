@@ -175,7 +175,7 @@ public class OCXMLImporter extends MinML {
 		if (success) {
 			profile.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
 			//pref.savePreferences();
-			profile.saveIndex(pref);
+			profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 			finalMessage=MyLocale.getMsg(1607,"Update from opencaching successful");
 		}
 		inf.close(0);
@@ -364,7 +364,7 @@ public class OCXMLImporter extends MinML {
 			}
 			// save all
 			holder.saveCacheDetails(profile.dataDir);
-			profile.saveIndex(pref);
+			profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 			return;
 		}
 		if(name.equals("id")){

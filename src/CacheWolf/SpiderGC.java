@@ -198,7 +198,7 @@ public class SpiderGC{
 		ch.saveCacheDetails(profile.dataDir);
 		
 		cacheDB.set(number, ch);
-		profile.saveIndex(pref);
+		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 		infB.close(0);
 		Vm.showWait(false);
 	}
@@ -376,7 +376,7 @@ public class SpiderGC{
 					pref.log("Got additional waypoints");
 					ch.saveCacheDetails(profile.dataDir);
 					cacheDB.add(ch);
-					profile.saveIndex(pref);
+					profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 				}catch(Exception ex){
 					pref.log("There was an error in the last step:");
 					pref.log("Cache was: " + wpt);
@@ -387,7 +387,7 @@ public class SpiderGC{
 				}
 			}
 		}
-		profile.saveIndex(pref);
+		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 		infB.close(0);
 		Vm.showWait(false);
 		/*
