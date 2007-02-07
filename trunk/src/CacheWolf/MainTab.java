@@ -98,11 +98,11 @@ public class MainTab extends mTabbedPanel {
 	}
 
 	public void openDesciptionPanel(CacheHolder chi) {
-        MyLocale.setSIPOff();
-        descP.setText(chi);
-    }
-	
-	
+		MyLocale.setSIPOff();
+		descP.setText(chi);
+	}
+
+
 	/**
 	 * this is called from goto / MovingMap / CalcPanel and so on to 
 	 * offer the user the possibility of entering an new waypoint
@@ -125,95 +125,112 @@ public class MainTab extends mTabbedPanel {
 		} else	
 			select(detP);
 	}
-	
-	
+
+
 	public void onEvent(Event ev)
-		{
-		  ////Vm.debug(ev.toString());
-		  if(ev instanceof MultiPanelEvent){
-			  mnuMain.allowProfileChange(false);	  
-			  if(this.getSelectedItem() == 0){
-				  mnuMain.allowProfileChange(true);	  
-//				  Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
-//				  Vm.setSIP(0);
-				  MyLocale.setSIPOff();
-			  }
-			  if(detP.isDirty()) {
-				  detP.saveDirtyWaypoint();
-			  }
-			  if(this.getSelectedItem() != 0){
-				  if (tbP.getSelectedCache()>=cacheDB.size())
-					  ch=null;
-				  else {
-					  ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
-					  try {
-						  if(ch.wayPoint.equals(lastselected) == false){
-							  ch.readCache(profile.dataDir);
-							  lastselected = ch.wayPoint;
-						  }
-					  } catch(Exception e){
+	{
+		////Vm.debug(ev.toString());
+		if(ev instanceof MultiPanelEvent){
+			mnuMain.allowProfileChange(false);	  
+			if(this.getSelectedItem() == 0){
+				mnuMain.allowProfileChange(true);	  
+//				Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
+//				Vm.setSIP(0);
+				MyLocale.setSIPOff();
+			}
+			if(detP.isDirty()) {
+				detP.saveDirtyWaypoint();
+			}
+			if(this.getSelectedItem() != 0){
+				if (tbP.getSelectedCache()>=cacheDB.size())
+					ch=null;
+				else {
+					ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
+					try {
+						if(ch.wayPoint.equals(lastselected) == false){
+							ch.readCache(profile.dataDir);
+							lastselected = ch.wayPoint;
+						}
+					} catch(Exception e){
 						//Vm.debug("Error loading: "+ch.wayPoint);
-					  }
-				  }
-			  } else statBar.updateDisplay();
-				  
-			  // If no cache is selected, create a new one
-			  switch (this.getSelectedItem()) {
-				  case 1:  // DetailsPanel
-					  if (ch==null) newWaypoint(ch=new CacheHolder());
-					  MyLocale.setSIPButton();
-					  detP.setDetails(ch);
-				      break;
-				  case 2: // Description Panel
-					  if (ch!=null) {
-						  MyLocale.setSIPOff();
-						  descP.setText(ch);
-					  }
-					  break;
-				  case 3: // Picture Panel
-					  if (ch!=null) {
-						  MyLocale.setSIPOff();
-						  imageP.setImages(ch);
-					  }
-					  break;
-				  case 4:  // Log Hint Panel
-					  if (ch!=null) {
-						  MyLocale.setSIPOff();
-						  hintLP.setText(ch);
-					  }
-					  break;
-				  case 5:  // CalcPanel
-					  if (ch!=null) {
-						  MyLocale.setSIPButton();
-						  calcP.setFields(ch);
-					  }
-					  break;
-				  
-				  case 6: // GotoPanel
-					  MyLocale.setSIPButton();
-				      break;
-				  case 7:  // Solver Panel
-					  MyLocale.setSIPButton();
-					  solverP.setCh(ch);
-				      break;
-				  case 8:  // Cache Radar Panel
-					  MyLocale.setSIPOff();
-					  radarP.setParam(pref, cacheDB, ch==null?"":ch.wayPoint);
-					  radarP.drawThePanel();
-				      break;
-			  }
+					}
+				}
+			} else statBar.updateDisplay();
+
+			// If no cache is selected, create a new one
+			switch (this.getSelectedItem()) {
+			case 1:  // DetailsPanel
+				if (ch==null) newWaypoint(ch=new CacheHolder());
+				MyLocale.setSIPButton();
+				detP.setDetails(ch);
+				break;
+			case 2: // Description Panel
+				if (ch!=null) {
+					MyLocale.setSIPOff();
+					descP.setText(ch);
+				}
+				break;
+			case 3: // Picture Panel
+				if (ch!=null) {
+					MyLocale.setSIPOff();
+					imageP.setImages(ch);
+				}
+				break;
+			case 4:  // Log Hint Panel
+				if (ch!=null) {
+					MyLocale.setSIPOff();
+					hintLP.setText(ch);
+				}
+				break;
+			case 5:  // CalcPanel
+				if (ch!=null) {
+					MyLocale.setSIPButton();
+					calcP.setFields(ch);
+				}
+				break;
+
+			case 6: // GotoPanel
+				MyLocale.setSIPButton();
+				break;
+			case 7:  // Solver Panel
+				MyLocale.setSIPButton();
+				solverP.setCh(ch);
+				break;
+			case 8:  // Cache Radar Panel
+				MyLocale.setSIPOff();
+				radarP.setParam(pref, cacheDB, ch==null?"":ch.wayPoint);
+				radarP.drawThePanel();
+				break;
+			}
 		}
-		  super.onEvent(ev); //Make sure you call this.
+		super.onEvent(ev); //Make sure you call this.
 	}
 
-	public void SwitchToMovingMap(CWPoint centerTo) {
+	/**
+	 * sets posCircle Lat/Lon to centerTo
+	 * 
+	 * @param centerTo true: centers centerTo on the screen and disconnects MovingMap from GPS if Gps-pos is not on the loaded map
+	 * @param forceCenter
+	 */
+	public void SwitchToMovingMap(CWPoint centerTo, boolean forceCenter) {
 		if (mm == null) {
 			mm = new MovingMap(nav, profile.cacheDB);
 			nav.setMovingMap(mm);
-		}
-		//mm.ignoreGps = false; // TODO genauer nachdenken multi-threading: wenn er grad eine Karte lädt o.ä., dann funktioniert folgender Befehl nicht
+		} 
+		if (forceCenter) mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
 		mm.updatePosition(centerTo.latDec, centerTo.lonDec);
 		mm.myExec();
+		if (forceCenter) {
+			while (MapImage.screenDim.width == 0) { try {ewe.sys.mThread.sleep(100);} catch (InterruptedException e) {} } // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
+			mm.setCenterOfScreen(centerTo, true); // this can only be executed if mm knows its window size that's why myExec must be executed before
+/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
+				mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS if GPS-pos is not on the screen
+				mm.setResModus(MovingMap.HIGHEST_RESOLUTION);
+				mm.updatePosition(centerTo.latDec, centerTo.lonDec);
+				mm.setCenterOfScreen(centerTo, true); 
+			}
+*/			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
+		}
 	}
 }
 

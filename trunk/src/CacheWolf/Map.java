@@ -35,7 +35,7 @@ public class Map extends Form {
 	 */
 	public Map(Preferences pref){
 		this.pref = pref;
-		mapsPath = pref.getMapManuallySavePath()+"/"; //File.getProgramDirectory() + "/maps/";
+		mapsPath = pref.getMapManuallySavePath(true)+"/"; //File.getProgramDirectory() + "/maps/";
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class Map extends Form {
 		//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		thisMap = mapToLoad;
-		mapsPath = pref.getMapManuallySavePath()+"/"; //File.getProgramDirectory() + "/maps/"; // TDO veraltet
+		mapsPath = pref.getMapManuallySavePath(true)+"/"; //File.getProgramDirectory() + "/maps/"; // TDO veraltet
 		try {
 			wfl.loadwfl(mapsPath, thisMap);
 		}catch(FileNotFoundException ex){

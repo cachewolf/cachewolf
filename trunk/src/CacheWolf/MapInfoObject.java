@@ -39,7 +39,7 @@ public class MapInfoObject{
 	public String fileName = new String();
 	public String mapName = new String();
 	//private Character digSep = new Character(' ');
-	private String digSep = new String();
+	static private String digSep = MyLocale.getDigSeparator();
 	/*
 	 * loads an .wfl file
 	 * throws FileNotFoundException and IOException (data out of range)
@@ -49,9 +49,27 @@ public class MapInfoObject{
 	 */	
 
 	public MapInfoObject() {
-		digSep = MyLocale.getDigSeparator();
 		//double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
 		//if(testA == 4.5) digSep = ","; else digSep = ".";
+	}
+	
+	public MapInfoObject(MapInfoObject map) {
+		mapName = map.mapName;
+		affine[0] = map.affine[0];
+		affine[1] = map.affine[1];
+		affine[2] = map.affine[2];
+		affine[3] = map.affine[3];
+		affine[4] = map.affine[4];
+		affine[5] = map.affine[5];
+		lowlat = map.lowlat;
+		lowlon = map.lowlon;
+		OrigUpperLeft = new CWPoint (map.OrigUpperLeft);
+		zoomFactor = map.zoomFactor;
+		shift.set(map.shift);
+		fileName = new String(map.fileName);
+		fileNameWFL = new String(map.fileNameWFL);
+		mapName = new String(mapName);
+		doCalculations();
 	}
 
 	/*
@@ -59,7 +77,6 @@ public class MapInfoObject{
 	 * but with 1 Pixel = scale meters
 	 */
 	public MapInfoObject(double scalei, double lat) {
-		digSep = MyLocale.getDigSeparator();
 		mapName="empty 1 Pixel = "+scalei+"meters";
 		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		double pixel2deg = meters2deg * scalei;
@@ -81,7 +98,6 @@ public class MapInfoObject{
 	 * @param name path and filename of .wfl file without the extension (it is needed because the image will be searched in the same directory)
 	 */
 	public MapInfoObject(double scalei, CWPoint center, int width, int hight, String name) {
-		digSep = MyLocale.getDigSeparator();
 		mapName = name+".wfl";
 
 		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));

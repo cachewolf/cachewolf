@@ -70,7 +70,7 @@ public class MapsList extends Vector {
 	/**
 	 * find the best map for lat/lon in the list of maps
 	 * currently the best map is the one, whose center is nearest to lat/lon
-	 * and in Area with ist scale nearest to scale.
+	 * and in Area with its scale nearest to scale.
 	 * it always return a map (if the list is not empty) 
 	 * even if the map is not inbound
 	 * lat/lon
@@ -100,9 +100,9 @@ public class MapsList extends Vector {
 			if (screenArea.isOverlapping(mi.getArea()) ) { // is on screen
 				if (!forceScale || (forceScale && java.lang.Math.abs(mi.scale - scale) > scaleTolerance)) { // different scale?
 					if (!forceScale && (mi.inBound(lat, lon) && (bestMap == null || (java.lang.Math.abs(mi.scale-scale) + scaleTolerance < java.lang.Math.abs(bestMap.scale-scale))))) 
-						better = true; // inbound and higher resolution -> better
+						better = true; // inbound and resolution nearer at wanted resolution -> better
 					else {
-						if ( bestMap == null || (java.lang.Math.abs(mi.scale-scale) < java.lang.Math.abs(bestMap.scale-scale) + scaleTolerance)) {
+						if ( bestMap == null || (java.lang.Math.abs(mi.scale - scale) < java.lang.Math.abs(bestMap.scale - scale) + scaleTolerance)) {
 							latNearer = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
 							lonNearer = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm < minDistLon;
 							if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
@@ -122,7 +122,8 @@ public class MapsList extends Vector {
 				}
 			}
 		}
-		return bestMap;
+		if (bestMap == null) return null;
+		return new MapInfoObject(bestMap); // return a copy of the MapInfoObject so that zooming won't change the MapInfoObject in the list 
 	}
 	/*
 	public MapInfoObject getBestMapNotStrictScale(double lat, double lon, Area screen, float scale) {
@@ -140,7 +141,6 @@ public class MapsList extends Vector {
 	 * if topleft is really topleft or if it is buttomright is not relevant.  
 	 */
 	
-	// TODO if more than one map contains both -> select the best one of them
 	public MapInfoObject getMapForArea(CWPoint topleft, CWPoint bottomright){
 		MapInfoObject mi;
 		MapInfoObject fittingmap = null;
@@ -174,14 +174,15 @@ public class MapsList extends Vector {
 				}
 			}
 		} // for
-		return fittingmap;
+		if (fittingmap == null) return null;
+		return new MapInfoObject(fittingmap);
 	}
 
 	/**
 	 * 
 	 * @param lat a point to be inside the map
 	 * @param lon
-	 * @param screen
+	 * @param screen: width, height of the screen. The map must overlap the screen. xy: where is lat/lon on screen
 	 * @param curScale reference scale to be changed
 	 * @param moreDetails true: find map with more details == higher resolustion = lower scale / false find map with less details = better overview
 	 * @return
@@ -229,7 +230,8 @@ public class MapsList extends Vector {
 				}
 			}
 		}
-		return bestMap;
+		if (bestMap == null) return null;
+		return new MapInfoObject(bestMap);
 	}
 	/**
 	 * returns an area in lat/lon of the screen
@@ -254,6 +256,9 @@ public class MapsList extends Vector {
 	}
 	public static boolean scaleEquals(MapInfoObject a, MapInfoObject b) {
 		return java.lang.Math.abs(a.scale - b.scale) < scaleTolerance; 
+	}
+	public static boolean scaleEquals(float s, MapInfoObject b) {
+		return java.lang.Math.abs(s - b.scale) < scaleTolerance; 
 	}
 
 	/** for determining if a new map should be downloaded
