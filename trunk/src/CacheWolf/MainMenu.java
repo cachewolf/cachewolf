@@ -408,7 +408,7 @@ public class MainMenu extends MenuBar {
 			}
 			
 			if(mev.selectedItem == orgCopy){
-				profile.saveIndex(pref);
+				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 
 				DataMover dm = new DataMover();
 				dm.copyCaches();
@@ -416,7 +416,7 @@ public class MainMenu extends MenuBar {
 			}
 
 			if(mev.selectedItem == orgMove){
-				profile.saveIndex(pref);
+				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 
 				DataMover dm = new DataMover();
 				dm.moveCaches();
@@ -424,7 +424,7 @@ public class MainMenu extends MenuBar {
 			}
 			
 			if(mev.selectedItem == orgDelete){
-				profile.saveIndex(pref);
+				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 
 				DataMover dm = new DataMover();
 				dm.deleteCaches();
@@ -432,12 +432,12 @@ public class MainMenu extends MenuBar {
 			}
 			
 			if(mev.selectedItem == savenoxit){
-				profile.saveIndex(pref);
+				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				tbp.saveColWith(pref);
 			}
 			
 			if(mev.selectedItem == savenexit){
-				profile.saveIndex(pref);
+				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				tbp.saveColWith(pref);
 				ewe.sys.Vm.exit(0);
 			}

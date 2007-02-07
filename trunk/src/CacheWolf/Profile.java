@@ -7,7 +7,9 @@ import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
 import ewe.sys.Convert;
+import ewe.sys.Handle;
 import ewe.sys.Vm;
+import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
 import ewe.util.Vector;
 
@@ -34,7 +36,10 @@ public class Profile {
 	public String last_sync_opencaching = new String();
 	/** Distance for opencaching caches */
 	public String distOC = new String();
-
+	
+	public final static boolean SHOW_PROGRESS_BAR = true;
+	public final static boolean NO_SHOW_PROGRESS_BAR = false;
+	
 	public final static String FILTERTYPE="11111111111000000";
 	public final static String FILTERROSE="1111111111111111";
 	public final static String FILTERVAR="11111111";
@@ -77,7 +82,14 @@ public class Profile {
 	 *   
 	 *   Not sure whether we need to keep 'pref' in method signature. May eventually remove it. 
 	 */
-	public void saveIndex(Preferences pref){
+	public void saveIndex(Preferences pref, boolean showprogress){
+		ProgressBarForm pbf = new ProgressBarForm();
+		Handle h = new Handle();
+		if(showprogress){
+			pbf.showMainTask = false;
+			pbf.setTask(h,"Saving Index");
+			pbf.exec();
+		}
 		PrintWriter detfile;
 		CacheHolder ch;
 		try{
@@ -108,6 +120,10 @@ public class Profile {
 					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			for(int i = 0; i<cacheDB.size();i++){
+				if(showprogress){
+					h.progress = (float)i/(float)cacheDB.size();
+					h.changed();
+				}
 				ch = (CacheHolder)cacheDB.get(i);
 				////Vm.debug("Saving: " + ch.CacheName);
 				if(ch.wayPoint.length()>0 && ch.LongDescription.equals("An Error Has Occured") == false){
@@ -126,8 +142,11 @@ public class Profile {
 			detfile.print("</CACHELIST>\n");
 			detfile.close();
 			buildReferences();
+			if(showprogress) pbf.exit(0);
 		}catch(Exception e){
 			Vm.debug("Problem writing to index file "+e.toString());
+			detfile.close();
+			if(showprogress) pbf.exit(0);
 		}
 	}
 
