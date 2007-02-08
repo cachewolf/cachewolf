@@ -1631,11 +1631,12 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					if (action == newWayPointMenuItem) {
 						kontextMenu.close();
 						WindowEvent close = new WindowEvent();
-						close.target = mm;
+						close.target = mm; 
 						close.type = WindowEvent.CLOSE;
 						mm.postEvent(close);
 						CacheHolder newWP = new CacheHolder();
 						newWP.pos = mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y);
+						newWP.LatLon=newWP.pos.toString(); 
 						Global.mainTab.newWaypoint(newWP);
 					}
 
