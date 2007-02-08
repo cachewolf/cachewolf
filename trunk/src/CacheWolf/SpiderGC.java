@@ -186,9 +186,9 @@ public class SpiderGC{
 		pref.log("Trying images");
 		getImages(start, ch);
 		pref.log("Got images");
-		pref.log("Trying maps");
+		//pref.log("Trying maps");
 		//getMaps(ch);
-		pref.log("Got maps");
+		//pref.log("Got maps");
 		pref.log("Getting additional waypoints");
 
 		getAddWaypoints(start, ch);
@@ -276,7 +276,7 @@ public class SpiderGC{
 			if(found_on_page < 20) distance = 0;
 			if(distance > 0){
 				page_number++;
-				if(page_number >= 15) page_number = 4;
+				if(page_number >= 15) page_number = 5;
 				doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
 				doc += "&" + URL.encodeURL("lat",false) +"="+ URL.encodeURL(origin.getLatDeg(CWPoint.DD),false);
 				doc += "&" + URL.encodeURL("lon",false) +"="+ URL.encodeURL(origin.getLonDeg(CWPoint.DD),false);
