@@ -198,7 +198,7 @@ public class Preferences extends MinML{
 	 */
 	public String getMapExpediaSavePath() {
 		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length());
-		String mapsDir = Global.getPref().baseDir + "/maps/expedia/" + subdir;
+		String mapsDir = Global.getPref().baseDir + "maps/expedia/" + subdir;
 		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
 			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
 			{(new MessageBox("Error", "Error: cannot create maps directory: \n"+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();
@@ -209,15 +209,7 @@ public class Preferences extends MinML{
 	}
 
 	public String getMapExpediaLoadPath() {
-		return Global.getPref().baseDir + "/maps/expedia";
-	}
-
-	/**
-	 * Returns true if coordinates have been set.
-	 * Does not validate! if coordinates are real.
-	 */
-	public boolean existCenter(){
-		return curCentrePt.latDec!=0.0 && curCentrePt.lonDec!=0.0; // TODO: use cusCentrePt.isValid() 
+		return Global.getPref().baseDir + "maps/expedia"; // baseDir has trailing /
 	}
 
 	/**
@@ -233,9 +225,9 @@ public class Preferences extends MinML{
 			r.close();
 		}catch(Exception e){
 			if (e instanceof NullPointerException)
-				Vm.debug("NullPointerException in Element "+lastName +". Wrong attribute?");
+				log("Error reading pref.xml: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
 			else 
-				Vm.debug(e.toString());
+				log("Error reading pref.xml: ", e);
 		}
 	}
 
@@ -248,12 +240,14 @@ public class Preferences extends MinML{
 
 	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
 		// If datadir is empty, ask for one
-		if (baseDir.length()==0) {
-			FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT,null);
-			fc.title = "Select base directory for cache data";
-			// If no base directory given, terminate
-			if (fc.execute() == FileChooser.IDCANCEL) ewe.sys.Vm.exit(0);
-			baseDir = fc.getChosenFile().toString();
+		if (baseDir.length()==0 || !(new File(baseDir)).exists()) {
+			do {
+				FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT,baseDir);
+				fc.title = "Select base directory for cache data";
+				// If no base directory given, terminate
+				if (fc.execute() == FileChooser.IDCANCEL) ewe.sys.Vm.exit(0);
+				baseDir = fc.getChosenFile().toString();
+			}while (!(new File(baseDir)).exists());
 		}
 		baseDir=baseDir.replace('\\','/');
 		if (!baseDir.endsWith("/")) baseDir+="/";
@@ -471,6 +465,7 @@ public class Preferences extends MinML{
 		if (name.equals("solver")) {
 			solverIgnoreCase=Boolean.valueOf(atts.getValue("ignorevariablecase")).booleanValue();
 		}
+		if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
 	}
 
 	public void characters( char ch[], int start, int length )
@@ -551,18 +546,31 @@ public class Preferences extends MinML{
 			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] + "\" lastdistoc= \"" + lastDistOC[1] + "\" />\n");
 			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] + "\" lastdistoc= \"" + lastDistOC[2] + "\" />\n");
 			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" lastsyncoc= \"" + lastSyncOC[3] + "\" lastdistoc= \"" + lastDistOC[3] + "\" />\n");
+			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
-			Vm.debug("Problem saving: " +datei);
-			Vm.debug("Error: " +e.toString());
+			log("Problem saving: " +datei,e,true);
 		}
 	}
 
 	/**
+	 * Method to delete an existing log file. Called on every SpiderGC.
+	 * The log file is also cleared when Preferences is created and the filesize > 60KB
+	 */
+	public void logInit(){
+		File logFile = new File(LOGFILENAME);
+		logFile.delete();
+	}
+	
+	/**
 	 * Method to log messages to a file called log.txt
 	 * It will always append to an existing file.
-	 * @param text
+	 * To show the message on the console, the global variable debug must be set.
+	 * This can be done by adding
+	 * <pre><debug value="true"></pre>
+	 * to the pref.xml file
+	 * @param text to log
 	 */
 	public void log(String text){
 		Time dtm = new Time();
@@ -579,15 +587,39 @@ public class Preferences extends MinML{
 		}finally{
 			strout.close();
 		}
+		if (debug) Vm.debug(text);
 	}
 
-	/**
-	 * Method to delete an existing log file. Something like a "reset".
-	 * Should be used "from time to time" to make sure the log file does not grow
-	 * to a huge size! Called on every SpiderGC
+	/** Log an exception to the log file with or without a stack trace
+	 * 
+	 * @param text Optional message (Can be empty string)
+	 * @param e The exception
+	 * @param withStackTrace If true and the debug switch is true, the stack trace is appended to the log
+	 * The debug switch can be set by including the line <i>&lt;debug value="true"&gt;&lt;/debug&gt;</i> in the pref.xml file
+	 * or by manually setting it (i.e. in BE versions or RC versions) by including the line
+	 * <pre>Global.getPref().debug=true;</pre>
+	 * in Version.getRelease()
 	 */
-	public void logInit(){
-		File logFile = new File(LOGFILENAME);
-		logFile.delete();
+	public void log(String text,Exception e, boolean withStackTrace) {
+		String msg;
+		if (text.equals("")) msg=text; else msg=text+"\n";
+		if (e!=null) {
+			if (withStackTrace && debug) 
+				msg+=ewe.sys.Vm.getAStackTrace(e);
+			else
+				msg+=e.toString();
+		}
+		log(msg);
 	}
+	
+	/** Log an exception to the log file without a stack trace, i.e.
+	 * where a stack trace is not needed because the location/cause of the error is clear 
+	 * 
+	 * @param message Optional message (Can be empty string)
+	 * @param e The exception
+	 */
+	public void log(String message,Exception e) {
+		log (message,e,false);
+	}
+		
 }
