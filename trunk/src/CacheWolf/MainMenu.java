@@ -179,6 +179,7 @@ public class MainMenu extends MenuBar {
 		Preferences pref=Global.getPref();
 		Profile profile=Global.getProfile();
 		Vector cacheDB=profile.cacheDB;
+		Global.mainTab.updatePendingChanges();
 		if (ev instanceof MenuEvent){ //&& ev.type == MenuEvent.PRESSED
 			MenuEvent mev = (MenuEvent)ev;
 			if(mev.selectedItem == wolflang){
@@ -194,6 +195,7 @@ public class MainMenu extends MenuBar {
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == mnuNewProfile){
+				Global.mainTab.saveUnsavedChanges(true);
 				NewProfileForm f=new NewProfileForm(pref.baseDir);
 			    int code=f.execute(getFrame(), Gui.CENTER_FRAME);
 				if (code==0) { 
@@ -208,7 +210,8 @@ public class MainMenu extends MenuBar {
 				f.close(0);
 			}
 			if(mev.selectedItem == mnuOpenProfile){
-				if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
+					Global.mainTab.saveUnsavedChanges(true);
+					if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
 					profile.cacheDB.clear();
 					tbp.setSelectedCache(-1);
 					profile.readIndex();
@@ -480,6 +483,7 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == exit){
+				Global.mainTab.saveUnsavedChanges(true);
 				ewe.sys.Vm.exit(0);
 			}
 			if(mev.selectedItem == sysinfo){

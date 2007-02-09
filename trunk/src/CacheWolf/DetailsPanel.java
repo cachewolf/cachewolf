@@ -225,6 +225,7 @@ public class DetailsPanel extends CellPanel{
 	public void onEvent(Event ev){
 		if (ev instanceof DataChangeEvent ) {
 			dirty_details = true;
+			profile.hasUnsavedChanges=true;
 		}
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == btnNotes){
