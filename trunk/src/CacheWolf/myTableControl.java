@@ -89,7 +89,7 @@ public class myTableControl extends TableControl{
 					if(ch.is_Checked == true) {
 						dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
 						cacheDB.remove(ch);
-						i--;
+						i++;
 					}
 				}
 			tbp.refreshTable();
