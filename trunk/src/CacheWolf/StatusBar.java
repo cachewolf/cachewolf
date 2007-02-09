@@ -40,6 +40,6 @@ public class StatusBar extends CellPanel{
 			strCenter="  \u00a4 " + pref.curCentrePt.toString();
 		
 		lblCenter.setText(strCenter);
-		repaint();
+		relayout(true); // in case the numbers increased and need more space
 	}
 }
