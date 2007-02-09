@@ -550,7 +550,7 @@ public class CWPoint extends TrackPoint{
 	 * @return  string representation of CWPoint 
 	 */	
 	public String toString(int format){
-		if (!isValid()) return "not set";
+		if (!isValid()) return MyLocale.getMsg(999,"not set");
 		switch (format) {
 		case DD:	return getNSLetter() + " " + STRreplace.replace(getLatDeg(format),"-","") + "° "
 						+  getEWLetter() + " " + STRreplace.replace(getLonDeg(format),"-","")+ "°";
