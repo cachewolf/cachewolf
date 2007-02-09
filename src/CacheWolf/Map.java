@@ -351,6 +351,7 @@ public class Map extends Form {
 		Vm.showWait(this, false);
 		inf.addText("\ndone.");
 		//inf.addOkButton(); doesn't work
+		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
 		return Form.IDOK;
 	}
 
@@ -371,6 +372,7 @@ public class Map extends Form {
 					try {
 						retry = false;
 						wfl.saveWFL(mapsPath, thisMap);
+						if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
 					} catch (IOException e) {
 						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(321, "Error writing file ") + e.getMessage()+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
 						if (tmpMB.execute() == MessageBox.IDYES) retry = true;
