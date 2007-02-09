@@ -1669,6 +1669,7 @@ class ListBox extends Form{
 		boolean curMapFound = false;
 		boolean[] inList = new boolean[maps.size()];
 		int row = -1;
+		if (curMap == null) curMapFound = true;
 		if (gotopos != null && Gps != null) {
 			list.addItem("--- Karten von akt. Position und Ziel ---");
 			row++;
@@ -1680,7 +1681,7 @@ class ListBox extends Form{
 					list.addItem(i + ": " + map.mapName);
 					row++;
 					inList[i] = true;
-					if (map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
+					if (!curMapFound && map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
 				} else inList[i] = false;
 			}
 		}
