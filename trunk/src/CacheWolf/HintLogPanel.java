@@ -87,7 +87,15 @@ public class HintLogPanel extends CellPanel{
 			htmlTxtImage.free();
 			}
 		logs.resizeTo(width, 50);
-		logs.setHtml(dummy.toString());
+		// The cache GCP0T6 crashes the HtmlDisplay
+		// As a temporary fix
+		try {
+			logs.setHtml(dummy.toString());
+		} catch (Exception e) {
+			logs=new HtmlDisplay();
+			Global.getPref().log("Error rendering HTML",e,true);
+			logs.setPlainText("Ewe VM: Internal error displaying logs");
+		}
 		int h = logs.getLineHeight() * logs.getNumLines();
 		htmlTxtImage = new AniImage(new Image(width, h));
 		htmlTxtImage.setLocation(0, 0);
