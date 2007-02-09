@@ -92,6 +92,7 @@ public class myTableControl extends TableControl{
 						i++;
 					}
 				}
+			profile.hasUnsavedChanges=true;	
 			tbp.refreshTable();
 		}
 		
@@ -122,6 +123,7 @@ public class myTableControl extends TableControl{
                             }
                     }
             }
+			profile.hasUnsavedChanges=true;	
             tbp.refreshTable();
             Vm.showWait(false);
 		}

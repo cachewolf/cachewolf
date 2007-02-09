@@ -36,6 +36,11 @@ public class MainForm extends Form {
 		if (pref.hasCloseButton) super.checkButtons();
 	} 
 
+	protected boolean canExit(int exitCode) {
+		mTab.saveUnsavedChanges(true);
+		return true;
+	}
+	
 	public void doIt(){
 		this.title = "CacheWolf " + Version.getRelease();
 		this.exitSystemOnClose = true;

@@ -138,9 +138,7 @@ public class MainTab extends mTabbedPanel {
 //				Vm.setSIP(0);
 				MyLocale.setSIPOff();
 			}
-			if(detP.isDirty()) {
-				detP.saveDirtyWaypoint();
-			}
+			updatePendingChanges();
 			if(this.getSelectedItem() != 0){
 				if (tbP.getSelectedCache()>=cacheDB.size())
 					ch=null;
@@ -232,6 +230,32 @@ public class MainTab extends mTabbedPanel {
 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
 		}
 	}
+	
+	/** Save any changes from DetailsPanel before operating on the database */
+	public void updatePendingChanges() {
+		if(detP.isDirty()) {
+			detP.saveDirtyWaypoint();
+		}
+	}
+	
+	/** Save the index file and any pending change in DetailsPanel
+	 * 
+	 * @param askForConfirmation If true, the save can be cancelled by user
+	 */
+	public void saveUnsavedChanges(boolean askForConfirmation) {
+		boolean saveIndex=!askForConfirmation; // Definitely save it if no confirmation needed
+		updatePendingChanges(); // Updated the cacheDB with pending changes from DetailsPanel
+		if (askForConfirmation) { // Don't know whether to save, have to ask
+			if (profile.hasUnsavedChanges &&     // Only ask if there were changes 
+				(new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1207,"Your profile has unsaved changes. Do you want to save?"),MessageBox.DEFOKB|MessageBox.NOB)).execute()==MessageBox.IDOK) {
+				saveIndex=true; 
+			}
+		}
+		if (saveIndex) profile.saveIndex(Global.getPref(),false);
+	}
+
+
+	
 }
 
 

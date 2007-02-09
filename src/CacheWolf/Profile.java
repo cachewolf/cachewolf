@@ -11,6 +11,7 @@ import ewe.sys.Handle;
 import ewe.sys.LocalResource;
 import ewe.sys.Locale;
 import ewe.sys.Vm;
+import ewe.ui.*;
 import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
 import ewe.util.Vector;
@@ -51,12 +52,16 @@ public class Profile {
 	public String filterSize = new String(FILTERSIZE);
 	//filter settings for archived ... owner (section) in filterscreen
 	public String filterVar = new String(FILTERVAR);
-	public String filterDist=new String("");
-	public String filterDiff=new String("");
-	public String filterTerr=new String("");
+	public String filterDist=new String("L");
+	public String filterDiff=new String("L");
+	public String filterTerr=new String("L");
 
 	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map 
-
+	/** True if the profile has been modified and not saved
+	 * The following modifications set this flag: New profile centre, Change of waypoint data 
+	 */
+	public boolean hasUnsavedChanges = false;
+	
 	//TODO Add other settings, such as max. number of logs to spider
 	//TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
 
@@ -74,6 +79,7 @@ public class Profile {
 		dataDir="";  
 		last_sync_opencaching = "";
 		distOC = "";
+		hasUnsavedChanges=false;
 	}
 
 
@@ -150,9 +156,8 @@ public class Profile {
 			detfile.close();
 			if(showprogress) pbf.exit(0);
 		}
+		hasUnsavedChanges=false;
 	}
-
-
 
 	/**
 	 *	Method to read the index.xml file that holds the total information
@@ -255,6 +260,7 @@ public class Profile {
 			e.printStackTrace();
 		}
 		normalizeFilters();
+		hasUnsavedChanges=false;
 	}
 
 	public int getCacheIndex(String wp){
@@ -370,8 +376,6 @@ public class Profile {
 	public void buildReferences(){
 		CacheHolder ch, mainCh;
 		Hashtable dbIndex = new Hashtable((int)(cacheDB.size()/0.75f + 1), 0.75f); // initialize so that von rehashing is neccessary
-		Locale l = Vm.getLocale();
-		LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 
 		Integer index;
 		// Build index for faster search and clear all references
@@ -404,7 +408,7 @@ public class Profile {
 		for(int i =  0; i < max ;i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			if (ch.hasAddiWpt() && (ch.addiWpts.size()> 1)){
-				ch.addiWpts.sort(new MyComparer((String)lr.get(1002,"Waypoint")), false);
+				ch.addiWpts.sort(new MyComparer(MyLocale.getMsg(1002,"Waypoint")), false);
 			}
 		}
 	

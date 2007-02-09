@@ -75,11 +75,13 @@ public class ProfileDataForm extends Form {
 				if (cs.execute()== CoordsScreen.IDOK){
 					profile.centre.set(cs.getCoords());
 					btnProfileCentre.setText(profile.centre.toString());
+					profile.hasUnsavedChanges=true;
 				}
 			}
 			if (ev.target == btnCur2Prof){
 				profile.centre.set(pref.curCentrePt);
 				btnProfileCentre.setText(profile.centre.toString());
+				profile.hasUnsavedChanges=true;
 			}
 			if (ev.target == btnProf2Cur){
 				pref.curCentrePt.set(profile.centre);
