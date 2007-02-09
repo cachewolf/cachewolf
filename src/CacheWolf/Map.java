@@ -215,7 +215,7 @@ public class Map extends Form {
 		byte[] buf;
 		int len;
 		String[] parts;
-		filestemp = inDir.list("*.png", File.LIST_FILES_ONLY);
+		filestemp = inDir.list("*.png", File.LIST_FILES_ONLY); // TODO listmultiple verwenden
 		files = new Vector(filestemp);
 		filestemp = inDir.list("*.jpg", File.LIST_FILES_ONLY);
 		files.addAll(filestemp);
