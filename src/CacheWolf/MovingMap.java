@@ -62,6 +62,9 @@ public class MovingMap extends Form {
 	boolean noMapsAvailable;
 	boolean zoomingMode = false;
 	boolean mapsloaded = false;
+	
+	Point lastRepaintMapPos = null;
+	double lastDistance = -1;
 
 	public MovingMap(Navigate nav, Vector cacheDB){
 		this.cacheDB = cacheDB;
@@ -120,9 +123,11 @@ public class MovingMap extends Form {
 		mapsloaded = false;
 		posCircleLat = -361;
 		posCircleLon = -361; // make them invalid
-		updateDistance(); // fill Rect with transparent color
+		//updateDistance(); // fill Rect with transparent color
 		scaleWanted = 1;
 		mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
+		
+		lastRepaintMapPos = new Point(pref.myAppWidth +1, pref.myAppHeight +1);
 	}
 
 	public void resizeTo(int w,int h) {
@@ -212,37 +217,54 @@ public class MovingMap extends Form {
 		ScaleImageGraphics.drawImage(ScaleImage.image,null,Color.White,0,0,ScaleImage.location.width,ScaleImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
 	}
 	
-	public void updateDistance() {
+	public void updateDistance(boolean repaint) {
 		DistanceImageGraphics.setColor(DistanceImage.transparentColor);
 		DistanceImageGraphics.fillRect(0, 0, DistanceImage.location.width,DistanceImage.location.height);
 		if (gotoPos != null && posCircleLat >= -360)
 		{
-			ewe.sys.Double dd = new ewe.sys.Double();
-			dd.set((new CWPoint(gotoPos.lat, gotoPos.lon).getDistance(posCircleLat, posCircleLon)));
-			String d;
-			int backgroundWidth = DistanceImage.location.width;
-			if (dd.value < 1) {
-				dd.value = dd.value * 1000; 
-				dd.decimalPlaces = 0;
-				d = "Dist: " + dd.toString() + "m";
-				int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
-				backgroundWidth = 6 * (digits + 1) + 36;
+			double currentDistance = (new CWPoint(gotoPos.lat, gotoPos.lon).getDistance(posCircleLat, posCircleLon));
+			if (currentDistance != lastDistance)
+			{
+				lastDistance = currentDistance;
+				ewe.sys.Double dd = new ewe.sys.Double();
+				dd.set(currentDistance);
+				String d;
+				int backgroundWidth = DistanceImage.location.width;
+				if (dd.value < 1) {
+					dd.value = dd.value * 1000; 
+					dd.decimalPlaces = 0;
+					d = "Dist: " + dd.toString() + "m";
+					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
+					digits = java.lang.Math.max(0, digits);
+					backgroundWidth = 6 * (digits + 1) + 36;
 				} 
-			else {
-				dd.decimalPlaces = 2;
-				d = "Dist: " + dd.toString() + "km";
-				int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
-				backgroundWidth = 6 * (digits + 3) + 45;
-			}
-			
-			DistanceImageGraphics.setColor(new Color(250,250,250));
-			DistanceImageGraphics.fillRect(0, 0, backgroundWidth ,DistanceImage.location.height);
+				else {
+					dd.decimalPlaces = 2;
+					d = "Dist: " + dd.toString() + "km";
+					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
+					digits = java.lang.Math.max(0, digits);
+					backgroundWidth = 6 * (digits + 3) + 45;
+				}
 
-			DistanceImageGraphics.setColor(Color.DarkBlue);
-			DistanceImageGraphics.drawText(d, 2, 0);
+				DistanceImageGraphics.setColor(new Color(250,250,250));
+				DistanceImageGraphics.fillRect(0, 0, backgroundWidth ,DistanceImage.location.height);
+
+				DistanceImageGraphics.setColor(Color.DarkBlue);
+				DistanceImageGraphics.drawText(d, 2, 0);
+				
+				DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.LightBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
+				DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.White,0,0,DistanceImage.location.width,DistanceImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
+				if (repaint)
+				{
+					DistanceImage.refreshNow();
+				}
+			}
 		}
-		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.LightBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
-		DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.White,0,0,DistanceImage.location.width,DistanceImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
+		else
+		{
+			DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.LightBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
+			DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.White,0,0,DistanceImage.location.width,DistanceImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
+		}
 	}
 
 	public void forceMapLoad() {
@@ -710,7 +732,7 @@ public class MovingMap extends Form {
 		removeGotoPosition();
 		if (d == null || !d.isValid() ) return;
 		gotoPos = addSymbol("goto", "goto_map.png", d.latDec, d.lonDec);
-		updateDistance();
+		//updateDistance();
 		forceMapLoad = true;
 		updatePosition(posCircleLat, posCircleLon);
 	}
@@ -781,14 +803,19 @@ public class MovingMap extends Form {
 		Point mapPos = getMapPositionOnScreen();
 		//Vm.debug("mapx = " + mapx);
 		//Vm.debug("mapy = " + mapy);
-		//if (forceMapLoad || (java.lang.Math.abs(oldMapPos.x - mapPos.x) > 1 || java.lang.Math.abs(oldMapPos.y - mapPos.y) > 1)) { // TODO make the speed improvement work: this if doesn't work in case of a series of changes less than 1 px 
-		if (mmp.mapImage != null) 	mmp.mapImage.move(mapPos.x, mapPos.y);
-		updateSymbolPositions();
-		updateDistance();
-		if (updateOverlay ) updateOverlayPos(); // && TrackOverlays != null
-		//}
-		mmp.repaintNow(); 
-		//}
+		if (forceMapLoad || (java.lang.Math.abs(lastRepaintMapPos.x - mapPos.x) > 1 || java.lang.Math.abs(lastRepaintMapPos.y - mapPos.y) > 1)) 
+		{
+			lastRepaintMapPos = mapPos;
+			if (mmp.mapImage != null) 	mmp.mapImage.move(mapPos.x, mapPos.y);
+			updateSymbolPositions();
+			updateDistance(false);
+			if (updateOverlay ) updateOverlayPos(); // && TrackOverlays != null
+			mmp.repaintNow(); 
+		}
+		else
+		{
+			updateDistance(true);
+		}
 		//Vm.debug("update only position");			
 	}
 	/**
@@ -826,7 +853,8 @@ public class MovingMap extends Form {
 		if (!running || ignoreGps) return;
 		// runMovingMap neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) { // TODO is getSats really necessary?
-			directionArrows.setDirections(-361 /*(float)bearWayP.value*/, myNavigation.sunAzimut, -361 /*(float)bearMov.value*/);
+			directionArrows.setDirections(-361/*(float)myNavigation.gpsPos.getBearing(myNavigation.destination)*/,
+					myNavigation.sunAzimut, -361/*(float)myNavigation.gpsPos.getBear()*/);
 			setGpsStatus(MovingMap.gotFix);
 			updatePosition(myNavigation.gpsPos.latDec, myNavigation.gpsPos.lonDec);
 			ShowLastAddedPoint(myNavigation.curTrack);
