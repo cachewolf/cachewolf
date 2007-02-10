@@ -22,6 +22,7 @@ public class Navigate {
 	public SerialThread serThread = null;
 	public Preferences pref = Global.getPref();
 	public UpdateThread tickerThread;
+	public boolean gpsRunning = false;
 	boolean lograw = false;
 	int logIntervall = 10;
 
@@ -33,7 +34,7 @@ public class Navigate {
 	}
 
 	public void startGps() {
-		if (serThread != null) if (serThread.isAlive()) return;
+		if (serThread != null) if (serThread.isAlive()) return; // TODO use gpsRunning
 		try {
 			serThread = new SerialThread(pref.mySPO, gpsPos, (pref.forwardGPS ? pref.forwardGpsHost : ""));
 			if (pref.forwardGPS && !serThread.tcpForward) {
@@ -45,6 +46,7 @@ public class Navigate {
 			}
 			serThread.start();
 			startDisplayTimer();
+			gpsRunning = true;
 			curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
 			if (lograw)	gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
 			if (gotoPanel != null) gotoPanel.gpsStarted();
@@ -71,6 +73,7 @@ public class Navigate {
 		serThread.stop();
 		stopDisplayTimer();
 		gpsPos.stopLog();
+		gpsRunning = false;
 		if (gotoPanel != null) gotoPanel.gpsStoped();
 		if (movingMap != null) movingMap.gpsStoped();
 	}

@@ -37,6 +37,7 @@ public class MapsList extends Vector {
 		MessageBox f = null;
 		for (int j = dirs.size()-1; j >= 0; j--) {
 			files = new File(mapsPath+"/"+dirs.get(j));
+			ewe.sys.Vm.debug("mapd-Dirs:"+files);
 			dateien = files.list("*.wfl", File.LIST_FILES_ONLY);
 			for(int i = 0; i < dateien.length;i++){
 				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));

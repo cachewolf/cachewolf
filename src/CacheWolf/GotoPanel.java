@@ -235,7 +235,7 @@ public class GotoPanel extends CellPanel {
 		//update distance
 		Double tmp = new Double();
 		if (myNavigation.gpsPos.isValid() && myNavigation.destination.isValid() ) {
-			tmp.set(myNavigation.gpsPos.getDistance(myNavigation.destination));
+			tmp.set(myNavigation.gpsPos.getDistance(myNavigation.destination)); // TODO distance in navigate.java berechnen
 			if (tmp.value >= 1){
 				lblDist.setText(MyLocale.formatDouble(tmp,"0.000")+ " km");
 			}
