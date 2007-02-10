@@ -865,6 +865,7 @@ public class MovingMap extends Form {
 	
 	public void gpsStarted() {
 		addTrack(myNavigation.curTrack);
+		ignoreGps = false;
 	}
 	public void gpsStoped() {
 		setGpsStatus(MovingMap.noGPS);
@@ -1719,7 +1720,6 @@ class ListBox extends Form{
 			for(int i = 0; i<maps.size();i++){
 				map = new MapInfoObject();
 				map = (MapInfoObject)maps.get(i);
-				if (map.mapName.equals(curMap.mapName)) oldmap = i;
 				if (map.inBound(Gps.latDec, Gps.lonDec) == true) 
 				{
 					list.addItem(i + ": " + map.mapName);

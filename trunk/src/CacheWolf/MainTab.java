@@ -214,6 +214,7 @@ public class MainTab extends mTabbedPanel {
 		if (mm == null) {
 			mm = new MovingMap(nav, profile.cacheDB);
 			nav.setMovingMap(mm);
+			if (nav.gpsRunning) mm.gpsStarted();
 		} 
 		if (forceCenter) mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
 		mm.updatePosition(centerTo.latDec, centerTo.lonDec);
