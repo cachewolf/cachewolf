@@ -40,8 +40,9 @@ public class TrackOverlay extends MapImage {
 
 	
 	public void paintTracks() {
-		draw.setPen(new Pen(Color.LightBlue,Pen.SOLID,1));
-		draw.fillRect(1, 1, image.getWidth()-1, image.getHeight()-1);
+	// for debugging TrackOverlayPositions
+	// draw.setPen(new Pen(Color.LightBlue,Pen.SOLID,1));
+	//	draw.fillRect(1, 1, image.getWidth()-1, image.getHeight()-1);
 		if (tracks == null || tracks.size() == 0) return;
 		int tri, i;
 		Track tr;
