@@ -5,6 +5,7 @@ import ewesoft.xml.sax.*;
 import ewe.io.*;
 import ewe.sys.*;
 import ewe.sys.Double;
+import ewe.ui.MessageBox;
 import ewe.util.*;
 import ewe.net.*;
 import ewe.util.zip.*;
@@ -149,6 +150,7 @@ public class GPXImporter extends MinML {
 			// check for opencaching
 			if (atts.getValue("creator").indexOf("opencaching")> 0) fromOC = true;
 			else fromOC = false;
+			if (fromOC && doSpider) (new MessageBox("Warnung", "GPX-Dateien von Opencaching enthalten keine Informationen zu Bildern, sie werden nicht heruntergeladen. Am besten Caches von Opencaching holen per Menü /Anwendung/Download von Opencaching", MessageBox.OKB)).execute();
 			zaehlerGel = 0;
 		}
 		if (name.equals("wpt")) {
@@ -274,7 +276,7 @@ public class GPXImporter extends MinML {
 							if(getMaps){
 								ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
 								pll.parse();
-								MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
+								//MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
 								//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");
 								//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
 							}
