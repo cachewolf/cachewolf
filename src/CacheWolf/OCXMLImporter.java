@@ -478,7 +478,7 @@ public class OCXMLImporter extends MinML {
 		}
 	}
 	
-	private void getPic(String fetchURL, String picDesc){
+	private void getPic(String fetchURL, String picDesc){ // TODO handling of relativ URLs
 		String fileName = holder.wayPoint + "_" + fetchURL.substring(fetchURL.lastIndexOf("/")+1);
 		fileName = Common.ClearForFileName(fileName);
 		// add title
@@ -497,7 +497,7 @@ public class OCXMLImporter extends MinML {
 			String ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ") + holder.wayPoint + ": ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+fetchURL); 
 			if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect") ||
 					e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
-				ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+holder.wayPoint+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
+				ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+holder.CacheName + " ("+holder.wayPoint+")"+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
 			} 
 			inf.addWarning("\n"+ErrMessage);
 			//(new MessageBox(MyLocale.getMsg(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
