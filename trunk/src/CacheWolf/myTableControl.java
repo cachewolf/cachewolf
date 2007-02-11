@@ -89,10 +89,9 @@ public class myTableControl extends TableControl{
 					if(ch.is_Checked == true) {
 						dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
 						cacheDB.remove(ch);
-						i++;
 					}
 				}
-			profile.hasUnsavedChanges=true;	
+			profile.saveIndex(pref,true);	
 			tbp.refreshTable();
 		}
 		
