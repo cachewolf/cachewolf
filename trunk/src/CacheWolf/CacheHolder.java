@@ -17,28 +17,31 @@ import ewe.io.PrintWriter;
 *	
 */
 public class CacheHolder {
-  public String UUID = new String();
-  public String wayPoint = new String();
-  public String LongDescription = new String();
-  public String CacheName = new String();
-  public String CacheOwner = new String();
-  public String LatLon = new String();
+  private String NODISTANCE="? km";
+  private String NOBEARING="?";
+  private String EMPTY=""; // Needs less Memory than using 'new String()'
+  //public String UUID = EMPTY;
+  public String wayPoint = EMPTY;
+  public String LongDescription = EMPTY;
+  public String CacheName = EMPTY;
+  public String CacheOwner = EMPTY;
   public CWPoint pos = new CWPoint();
-  public String DateHidden = new String();
-  public String LastUpdate = new String();
-  public String Hints = new String();
+  public String LatLon = pos.toString();
+  public String DateHidden = EMPTY;
+  public String LastUpdate = EMPTY;
+  public String Hints = EMPTY;
   public Vector CacheLogs = new Vector(0);
-  public String CacheNotes = new String();
-  public String CacheStatus = new String("");
-  public String CacheSize = new String("None");
-  public String distance = new String();
-  public String bearing = new String();
+  public String CacheNotes = EMPTY;
+  public String CacheStatus = EMPTY;
+  public String CacheSize = "None";
+  public String distance = NODISTANCE;
+  public String bearing = NOBEARING;
   public double degrees = 0;
   public double kilom = 0;
-  public String hard = new String();
-  public String terrain =new String();
-  public String type = new String("0");
-  public String dirty = new String();
+  public String hard = EMPTY;
+  public String terrain = EMPTY;
+  public String type = "0";
+  public String dirty = EMPTY;
   public Vector Images = new Vector();
   public Vector ImagesText = new Vector();
   public Vector LogImages = new Vector();
@@ -47,9 +50,9 @@ public class CacheHolder {
   public Vector UserImagesText = new Vector();
   public Vector attributes = new Vector();
   public Vector CacheIcons = new Vector();
-  public String Bugs = new String();
-  public String URL = new String();
-  public String ocCacheID = new String();
+  public String Bugs = EMPTY;
+  public String URL = EMPTY;
+  public String ocCacheID = EMPTY;
   public int noFindLogs = 0;
   public boolean is_archived = false;
   public boolean is_available = true;
@@ -126,7 +129,7 @@ public CacheHolder update(CacheHolder newCh){
 	  //<img src='icon_smile.gif'>&nbsp;2005-10-30 by Schatzpirat</strong><br>
 	  //get Date of latest log in old cachedata
 	  Extractor extOldDate;
-	  String oldLogDate = new String();
+	  String oldLogDate = EMPTY;
 	  if(this.CacheLogs.size()>0){
 		extOldDate = new Extractor((String) this.CacheLogs.get(0), ";"," by", 0, true);
 		oldLogDate= new String(extOldDate.findNext());
@@ -136,7 +139,7 @@ public CacheHolder update(CacheHolder newCh){
 	  
 	  //Vm.debug("made it to here!");
 	  int currLog = newCh.CacheLogs.size()-1;
-	  String newLogDate = new String();
+	  String newLogDate = EMPTY;
 	  while (currLog >= 0 ){
 		  Extractor extNewDate = new Extractor((String) newCh.CacheLogs.get(currLog), ";"," by", 0, true);
 		  newLogDate = extNewDate.findNext();
@@ -151,7 +154,7 @@ public CacheHolder update(CacheHolder newCh){
 	  }//while
    	 //Check for number sukzessive DNF logs
 	 int z = 0;
-	 String loganal = new String();
+	 String loganal = EMPTY;
 	 // Vm.debug("Checking size: ");
 	 //int sz = newCh.CacheLogs.size();
 	 //Vm.debug("log size: " + sz);
@@ -348,7 +351,7 @@ public CacheHolder update(CacheHolder newCh){
 		try{
 		  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dir + wayPoint + ".xml")));
 		} catch (Exception e) {
-			Vm.debug("Problem opening details file");
+			Global.getPref().log("Problem opening details file",e,true);
 			return;
 		}
 		try{
@@ -446,8 +449,8 @@ public CacheHolder update(CacheHolder newCh){
 			bearing = CWPoint.getDirection(degrees);
 			distance = MyLocale.formatDouble(kilom,"0.00")+" km";
 	   } else {
-		   distance = "? km";
-		   bearing = "?";
+		   distance = NODISTANCE;
+		   bearing = NOBEARING;
 	   }
    }
    
