@@ -14,7 +14,7 @@ public class MyComparer implements Comparer{
 	int visibleSize;
 	Vector cacheDB;
 	
-	public MyComparer(String what){
+	public MyComparer(Vector cacheDB, String what, int visibleSize){
 		compareWhat = what;
 		nmQuest = "?";
 		nmD = MyLocale.getMsg(1000,"D");
@@ -27,9 +27,12 @@ public class MyComparer implements Comparer{
 		nmStat = MyLocale.getMsg(1007,"Status");
 		nmDist = MyLocale.getMsg(1008,"Dist");
 		nmBear = MyLocale.getMsg(1009,"Bear");
-		visibleSize=Global.mainTab.tbP.myMod.numRows;
-		cacheDB=Global.getProfile().cacheDB;
+		//visibleSize=Global.mainTab.tbP.myMod.numRows;
 		if (visibleSize<2) return;
+		for (int i=visibleSize; i<cacheDB.size(); i++) {
+			CacheHolder ch=(CacheHolder) cacheDB.get(i);
+			ch.sort="\uFFFF";
+		}
 		if (what.equals(nmQuest)) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
@@ -63,7 +66,7 @@ public class MyComparer implements Comparer{
 		} else if (what.equals(nmOwn)) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.CacheOwner;
+				ch.sort=ch.CacheOwner.toLowerCase();
 			}
 		} else if (what.equals(nmHid)) {
 			for (int i=0; i<visibleSize; i++) {
