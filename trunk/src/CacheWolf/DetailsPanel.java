@@ -296,10 +296,14 @@ public class DetailsPanel extends CellPanel{
 				CoordsScreen cs = new CoordsScreen();
 				cs.setFields(coords, CWPoint.CW);
 				if (cs.execute()== CoordsScreen.IDOK){
+					dirty_details=true;
 					coords = cs.getCoords();
 					thisCache.pos.set(coords);
 					btnWayLoc.setText(coords.toString());
 					thisCache.LatLon=coords.toString();
+					// If the current center is valid, calculate the distance and bearing to it
+					CWPoint center=Global.getPref().curCentrePt;
+					if (center.isValid()) thisCache.calcDistance(center);
 				}
 			}
 			ev.consumed=true;
@@ -313,14 +317,32 @@ public class DetailsPanel extends CellPanel{
 		  ch.is_found = ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"));
 		  ch.is_black = blackStatus;
 		  ch.wayPoint = inpWaypoint.getText().trim();
+		  // If the waypoint does not have a name, give it one
+		  if (ch.wayPoint.equals("")) { 
+			  ch.wayPoint=profile.getNewWayPointName();
+		  }
+		  //Don't allow single letter names=> Problems in updateBearingDistance
+		  // This is a hack but faster than slowing down the loop in updateBearingDistance
+		  if (ch.wayPoint.length()<2) ch.wayPoint+=" ";
 		  ch.CacheName = inpName.getText().trim();
-		  ch.LatLon = new CWPoint(btnWayLoc.getText(),CWPoint.CW).toString();
+		  ch.LatLon = ch.pos.toString();
 		  ch.DateHidden = inpHidden.getText().trim();
 		  ch.CacheOwner = inpOwner.getText().trim();
-		  ch.is_owned = pref.myAlias.equals(ch.CacheOwner);
+		  // Avoid setting is_owned if alias is empty and username is empty
+		  ch.is_owned = (!pref.myAlias.equals("") && pref.myAlias.equals(ch.CacheOwner)) || 
+				        (!pref.myAlias2.equals("") && pref.myAlias2.equals(ch.CacheOwner));
 		  ch.type = transSelect(chcType.getInt());
-		  if (CacheType.isAddiWpt(ch.type)) 
+		  if (CacheType.isAddiWpt(ch.type)) {
+			  int idx;
+			  if (ch.wayPoint.length()<5)
+				  idx=-1;
+			  else
+				  idx=profile.getCacheIndex("GC"+ ch.wayPoint.substring(ch.wayPoint.length() == 5?1:2));
+			  if (idx<0) (new MessageBox(MyLocale.getMsg(144,"Warning"),
+					  MyLocale.getMsg(734,"No main cache found for addi waypoint ")+" "+ch.wayPoint+
+					  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYY, where xx are any 2 chars and YYYY are the main cache's chars after the GC"),FormBase.OKB)).execute();
 			  profile.buildReferences();
+		  }
 		  // set status also on addi wpts
 		  if (ch.hasAddiWpt()){
 			  CacheHolder addiWpt;
