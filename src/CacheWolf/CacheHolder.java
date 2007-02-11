@@ -446,7 +446,7 @@ public CacheHolder update(CacheHolder newCh){
 			bearing = CWPoint.getDirection(degrees);
 			distance = MyLocale.formatDouble(kilom,"0.00")+" km";
 	   } else {
-		   distance = "?";
+		   distance = "? km";
 		   bearing = "?";
 	   }
    }
