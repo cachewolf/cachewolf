@@ -70,6 +70,7 @@ public class CacheHolder {
   public boolean is_Checked = false;
   public Vector addiWpts = new Vector();
   public CacheHolder mainCache;
+  public String sort;
     
   
   /**

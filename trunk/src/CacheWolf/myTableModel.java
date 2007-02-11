@@ -289,10 +289,7 @@ public class myTableModel extends TableModel{
 				Vm.showWait(true);
 				Point a = tcControl.getSelectedCell(null);
 				if(a != null) ch = (CacheHolder)cacheDB.get(a.y);
-				if(colID[cell.x]!=10)
-					cacheDB.sort(new MyComparer(colName[cell.x]), sortAsc);
-				else // Distance sort
-					cacheDB.sort(new DistComparer(), sortAsc);
+				cacheDB.sort(new MyComparer(colName[cell.x]), sortAsc);
 				updateRows();
 				if(a != null){
 					int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
