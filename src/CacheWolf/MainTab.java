@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import ewe.sys.Vm;
 import ewe.ui.*;
 import ewe.fx.*;
 import ewe.util.*;
@@ -63,7 +64,6 @@ public class MainTab extends mTabbedPanel {
 		nav = new Navigate();
 		c = this.addCard(gotoP = new GotoPanel(nav), "Goto", null);
 		c.iconize(new Image("goto.gif"),true);
-		tbP.setPanels(gotoP, this);
 		nav.setGotoPanel(gotoP);
 
 		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205,"Solver"), null);
@@ -113,17 +113,20 @@ public class MainTab extends mTabbedPanel {
 	 */
 	public void newWaypoint(CacheHolder ch){
 		if (detP.isDirty()) detP.saveDirtyWaypoint();
+		Global.getProfile().hasUnsavedChanges=true;
 		String waypoint= ch.wayPoint = profile.getNewWayPointName();
 		ch.type = "0";
 		ch.CacheSize = "None";
 		cacheDB.add(ch);
 		Global.mainTab.tbP.myMod.updateRows();
-		Global.mainTab.tbP.setSelectedCache(profile.getCacheIndex(waypoint));
+		Global.mainTab.tbP.selectRow(profile.getCacheIndex(waypoint));
 		//Global.mainTab.tbP.refreshTable();
 		if (this.cardPanel.selectedItem==1) { // Detailpanel already selected
 			postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,0));
 		} else	
 			select(detP);
+		Global.mainTab.tbP.refreshTable();
+	
 	}
 
 
@@ -140,7 +143,7 @@ public class MainTab extends mTabbedPanel {
 			}
 			updatePendingChanges();
 			if(this.getSelectedItem() != 0){
-				if (tbP.getSelectedCache()>=cacheDB.size())
+				if (tbP.getSelectedCache()>=cacheDB.size() || tbP.getSelectedCache()<0)
 					ch=null;
 				else {
 					ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
@@ -254,9 +257,6 @@ public class MainTab extends mTabbedPanel {
 		}
 		if (saveIndex) profile.saveIndex(Global.getPref(),false);
 	}
-
-
-	
 }
 
 

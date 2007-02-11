@@ -182,18 +182,9 @@ public class MainMenu extends MenuBar {
 		Global.mainTab.updatePendingChanges();
 		if (ev instanceof MenuEvent){ //&& ev.type == MenuEvent.PRESSED
 			MenuEvent mev = (MenuEvent)ev;
-			if(mev.selectedItem == wolflang){
-				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
-				is.execute(father.getFrame(), Gui.CENTER_FRAME);
-			}
-			if(mev.selectedItem == about){
-				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "info.html", MyLocale.getMsg(117,"About"),true, pref);
-				is.execute(father.getFrame(), Gui.CENTER_FRAME);
-			}
-			if(mev.selectedItem == legend){
-				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "legende.html", MyLocale.getMsg(155,"Legend"),true, pref);
-				is.execute(father.getFrame(), Gui.CENTER_FRAME);
-			}
+			///////////////////////////////////////////////////////////////////////
+			// subMenu for profiles, part of "Application" menu 
+			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == mnuNewProfile){
 				Global.mainTab.saveUnsavedChanges(true);
 				NewProfileForm f=new NewProfileForm(pref.baseDir);
@@ -213,13 +204,11 @@ public class MainMenu extends MenuBar {
 					Global.mainTab.saveUnsavedChanges(true);
 					if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
 					profile.cacheDB.clear();
-					tbp.setSelectedCache(-1);
 					profile.readIndex();
 					pref.curCentrePt.set(profile.centre);
 					filtBlack.modifiers&=~MenuItem.Checked;
 					Filter.showBlacklisted=false;
 					tbp.resetModel();
-					Global.mainTab.tbP.gotoFirstLine();
 				}
 			}
 			if(mev.selectedItem == mnuEditProfile){
@@ -228,16 +217,123 @@ public class MainMenu extends MenuBar {
 			    tbp.refreshTable();
 				f.close(0);
 			}
+			///////////////////////////////////////////////////////////////////////
+			// subMenu for export, part of "Application" menu 
+			///////////////////////////////////////////////////////////////////////
+			if(mev.selectedItem == exporthtml){
+				HTMLExporter htm = new HTMLExporter(pref, profile);
+				htm.doIt();
+			}
+			if(mev.selectedItem == exportpcx5){
+				PCX5Exporter pcx = new PCX5Exporter( pref, profile);
+				pcx.doIt(PCX5Exporter.MODE_ASK);
+			} 
+			if(mev.selectedItem == exporttop50){
+				OVLExporter ovl = new OVLExporter(pref, profile);
+				ovl.doIt();
+			}
+			if(mev.selectedItem == exportGPX){
+				GPXExporter htm = new GPXExporter(pref, profile);
+				htm.doIt(1);
+			}
+			if(mev.selectedItem == exportASC){
+				ASCExporter asc = new ASCExporter(pref,profile);
+				asc.doIt();
+			}
+			if(mev.selectedItem == exportTomTom){
+				TomTomExporter tt = new TomTomExporter();
+				tt.doIt();
+			}
+			if(mev.selectedItem == exportMSARCSV){
+				MSARCSVExporter msar = new MSARCSVExporter(pref,profile);
+				msar.doIt();
+			}
+			if(mev.selectedItem == exportGPS){
+				Vm.showWait(true);
+				LocExporter loc = new LocExporter();
+				String tmpFileName = File.getProgramDirectory() + "/temp.loc";
+				loc.setTmpFileName(tmpFileName);
+				loc.doIt(LocExporter.MODE_AUTO);
+				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
+				try{
+					ewe.sys.Process p = Vm.exec("gpsbabel -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
+					Vm.debug("gpsbabel -i geo -f  \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
+					p.waitFor();
+				}catch(IOException ioex){};
+				ProgressBarForm.clear();
+				Vm.showWait(false);
+			}
+			if(mev.selectedItem == exportCacheMate){
+				Vm.showWait(true);
+				GPXExporter htm = new GPXExporter( pref, profile);
+				htm.doIt(0);
+				ProgressBarForm.display("CMCONVERT", MyLocale.getMsg(952,"Converting..."), null);
+				String cwd = new String();
+				cwd = File.getProgramDirectory() + "/temp.gpx";
+				// add surrounding "
+				cwd = "\"" + cwd + "\"";
+				try{
+					//Vm.debug(File.getProgramDirectory() + "/cmconvert/cmconvert " + cwd);
+					ewe.sys.Process p = Vm.exec(File.getProgramDirectory() + "/cmconvert/cmconvert " + cwd);
+					p.waitFor();
+				}catch(IOException ioex){
+					//Vm.debug("Scheint ein Problem zu geben");
+				};
+				ProgressBarForm.clear();
+				Vm.showWait(false);
+			}
+			if(mev.selectedItem == exportOZI){
+				OziExporter ozi = new OziExporter( pref, profile);
+				ozi.doIt();
+			}
+			if(mev.selectedItem == exportKML){
+				KMLExporter kml = new KMLExporter( pref, profile);
+				kml.doIt();
+			}
+			if(mev.selectedItem == exportTPL){
+				FileChooser fc = new FileChooser(FileChooser.OPEN, File.getProgramDirectory());
+				fc.addMask("*.tpl");
+				fc.setTitle(MyLocale.getMsg(910,"Select Template file"));
+				if(fc.execute() != FileChooser.IDCANCEL){
+					TPLExporter tpl = new TPLExporter( pref,profile, fc.getChosenFile().toString());
+					tpl.doIt();
+				}
+			}
+			///////////////////////////////////////////////////////////////////////
+			// subMenu for maps, part of "Application" menu 
+			///////////////////////////////////////////////////////////////////////
+			if(mev.selectedItem == downloadmap){
+				MapLoaderGui mLG = new MapLoaderGui(cacheDB);
+				mLG.exec(); // .execute doesn't work because the tcp-socket uses another thread which cannot be startet if here .execute() is used!
+			}
+			if(mev.selectedItem == importmap){
+
+				Map map = new Map(pref);
+				map.importMap();
+			}
+			if(mev.selectedItem == kalibmap){
+				SelectMap sM = new SelectMap();
+				sM.execute();
+				if((sM.getSelectedMap()).length()>0){
+					try {
+						Map map = new Map(pref, sM.getSelectedMap(),sM.worldfileexists);
+						map.execute(null, Gui.CENTER_FRAME);
+					} catch (java.lang.OutOfMemoryError e) {
+						MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156,"Out of memory error, map to big"), MessageBox.OKB);
+						tmpMB.exec();
+					}
+				}
+			}
+			///////////////////////////////////////////////////////////////////////
+			// "Application" pulldown menu
+			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == preferences){
-				tbp.saveColWith(pref);
+				tbp.saveColWidth(pref);
 				PreferencesScreen pfs = new PreferencesScreen(pref);
 				pfs.execute(father.getFrame(), Gui.CENTER_FRAME);
 				pref.readPrefFile();
 			}
 			if(mev.selectedItem == loadcaches){
-				//LoadScreen lsc = new LoadScreen(cacheDB, myPreferences);
-				//lsc.execute(father.getFrame(), Gui.CENTER_FRAME);
-				//Vm.debug("Sending repaint!");
 				FileChooser fc = new FileChooser(FileChooser.OPEN|FileChooser.MULTI_SELECT, pref.baseDir);
 				fc.addMask("*.gpx,*.zip,*.loc");
 				fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
@@ -277,6 +373,45 @@ public class MainMenu extends MenuBar {
 				filtBlack.modifiers&=~MenuItem.Checked;
 				tbp.resetModel();
 			}
+			if(mev.selectedItem == spider){
+				SpiderGC spGC = new SpiderGC(pref, profile);
+				spGC.doIt();
+				tbp.resetModel();
+			}
+			if(mev.selectedItem == savenoxit){
+				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
+				tbp.saveColWidth(pref);
+			}
+			
+			if(mev.selectedItem == savenexit){
+				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
+				tbp.saveColWidth(pref);
+				ewe.sys.Vm.exit(0);
+			}
+			if(mev.selectedItem == exit){
+				Global.mainTab.saveUnsavedChanges(true);
+				ewe.sys.Vm.exit(0);
+			}
+
+			///////////////////////////////////////////////////////////////////////
+			// "Search" pulldown menu
+			///////////////////////////////////////////////////////////////////////
+			if(mev.selectedItem == search){
+				String srch = new InputBox(MyLocale.getMsg(119,"Search for:")).input("",10);
+				if (srch != null) {
+					SearchCache ssc = new SearchCache(cacheDB);
+					ssc.search(srch);
+					tbp.refreshTable();
+				}
+			}
+			if(mev.selectedItem == searchClr){
+				SearchCache ssc = new SearchCache(cacheDB);
+				ssc.clearSearch();
+				tbp.refreshTable();		
+			}
+			///////////////////////////////////////////////////////////////////////
+			// "Filter" pulldown menu
+			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == filtApply){
 				Filter flt = new Filter();
 				flt.setFilter();
@@ -293,6 +428,11 @@ public class MainMenu extends MenuBar {
 				flt.invertFilter();
 				tbp.refreshTable();
 			}
+			if(mev.selectedItem == filtClear){
+				Filter flt = new Filter();
+				flt.clearFilter();
+				tbp.refreshTable();
+			}
 			if(mev.selectedItem == filtBlack){
 				filtBlack.modifiers^=MenuItem.Checked;
 				Filter.showBlacklisted=!Filter.showBlacklisted;
@@ -300,46 +440,6 @@ public class MainMenu extends MenuBar {
 				ssc.clearSearch();// Clear search & restore filter status
 				tbp.refreshTable();
 			}
-			if(mev.selectedItem == exportGPS){
-				Vm.showWait(true);
-				LocExporter loc = new LocExporter();
-				String tmpFileName = File.getProgramDirectory() + "/temp.loc";
-				loc.setTmpFileName(tmpFileName);
-				loc.doIt(LocExporter.MODE_AUTO);
-				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
-				try{
-					ewe.sys.Process p = Vm.exec("gpsbabel -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
-					Vm.debug("gpsbabel -i geo -f  \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
-					p.waitFor();
-				}catch(IOException ioex){};
-				ProgressBarForm.clear();
-				Vm.showWait(false);
-			}
-			if(mev.selectedItem == exportCacheMate){
-				Vm.showWait(true);
-				GPXExporter htm = new GPXExporter( pref, profile);
-				htm.doIt(0);
-				ProgressBarForm.display("CMCONVERT", MyLocale.getMsg(952,"Converting..."), null);
-				String cwd = new String();
-				cwd = File.getProgramDirectory() + "/temp.gpx";
-				// add surrounding "
-				cwd = "\"" + cwd + "\"";
-				try{
-					//Vm.debug(File.getProgramDirectory() + "/cmconvert/cmconvert " + cwd);
-					ewe.sys.Process p = Vm.exec(File.getProgramDirectory() + "/cmconvert/cmconvert " + cwd);
-					p.waitFor();
-				}catch(IOException ioex){
-					//Vm.debug("Scheint ein Problem zu geben");
-				};
-				ProgressBarForm.clear();
-				Vm.showWait(false);
-			}
-			if(mev.selectedItem == filtClear){
-				Filter flt = new Filter();
-				flt.clearFilter();
-				tbp.refreshTable();
-			}
-			
 			if(mev.selectedItem == filtSelected){
 				CacheHolder ch;
 				for(int i = cacheDB.size()-1; i>=0; i--){
@@ -349,71 +449,11 @@ public class MainMenu extends MenuBar {
 				}
 				tbp.refreshTable();
 			}
-			
-			if(mev.selectedItem == exportpcx5){
-				PCX5Exporter pcx = new PCX5Exporter( pref, profile);
-				pcx.doIt(PCX5Exporter.MODE_ASK);
-			} 
-			if(mev.selectedItem == exporttop50){
-				OVLExporter ovl = new OVLExporter(pref, profile);
-				ovl.doIt();
-			}
-			if(mev.selectedItem == exporthtml){
-				HTMLExporter htm = new HTMLExporter(pref, profile);
-				htm.doIt();
-			}
-			if(mev.selectedItem == exportGPX){
-				GPXExporter htm = new GPXExporter(pref, profile);
-				htm.doIt(1);
-			}
-			if(mev.selectedItem == exportASC){
-				ASCExporter asc = new ASCExporter(pref,profile);
-				asc.doIt();
-			}
-			if(mev.selectedItem == exportTomTom){
-				TomTomExporter tt = new TomTomExporter();
-				tt.doIt();
-			}
-			if(mev.selectedItem == exportMSARCSV){
-				MSARCSVExporter msar = new MSARCSVExporter(pref,profile);
-				msar.doIt();
-			}
-			if(mev.selectedItem == search){
-				String srch = new InputBox(MyLocale.getMsg(119,"Search for:")).input("",10);
-				if (srch != null) {
-					SearchCache ssc = new SearchCache(cacheDB);
-					ssc.search(srch);
-					tbp.refreshTable();
-				}
-			}
-			if(mev.selectedItem == exportOZI){
-				OziExporter ozi = new OziExporter( pref, profile);
-				ozi.doIt();
-			}
-			if(mev.selectedItem == exportKML){
-				KMLExporter kml = new KMLExporter( pref, profile);
-				kml.doIt();
-			}
-
-			if(mev.selectedItem == exportTPL){
-				FileChooser fc = new FileChooser(FileChooser.OPEN, File.getProgramDirectory());
-				fc.addMask("*.tpl");
-				fc.setTitle(MyLocale.getMsg(910,"Select Template file"));
-				if(fc.execute() != FileChooser.IDCANCEL){
-					TPLExporter tpl = new TPLExporter( pref,profile, fc.getChosenFile().toString());
-					tpl.doIt();
-				}
-			}
-
-			if(mev.selectedItem == searchClr){
-				SearchCache ssc = new SearchCache(cacheDB);
-				ssc.clearSearch();
-				tbp.refreshTable();		
-			}
-			
+			///////////////////////////////////////////////////////////////////////
+			// "Organize" pulldown menu
+			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == orgCopy){
 				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
-
 				DataMover dm = new DataMover();
 				dm.copyCaches();
 				tbp.refreshTable();
@@ -421,7 +461,6 @@ public class MainMenu extends MenuBar {
 
 			if(mev.selectedItem == orgMove){
 				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
-
 				DataMover dm = new DataMover();
 				dm.moveCaches();
 				tbp.refreshTable();
@@ -429,62 +468,24 @@ public class MainMenu extends MenuBar {
 			
 			if(mev.selectedItem == orgDelete){
 				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
-
 				DataMover dm = new DataMover();
 				dm.deleteCaches();
 				tbp.refreshTable();
 			}
-			
-			if(mev.selectedItem == savenoxit){
-				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
-				tbp.saveColWith(pref);
+			///////////////////////////////////////////////////////////////////////
+			// "About" pulldown menu
+			///////////////////////////////////////////////////////////////////////
+			if(mev.selectedItem == about){
+				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "info.html", MyLocale.getMsg(117,"About"),true, pref);
+				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
-			
-			if(mev.selectedItem == savenexit){
-				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
-				tbp.saveColWith(pref);
-				ewe.sys.Vm.exit(0);
+			if(mev.selectedItem == legend){
+				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "legende.html", MyLocale.getMsg(155,"Legend"),true, pref);
+				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
-			if(mev.selectedItem == downloadmap){
-				MapLoaderGui mLG = new MapLoaderGui(cacheDB);
-				mLG.exec(); // .execute doesn't work because the tcp-socket uses another thread which cannot be startet if here .execute() is used!
-			}
-			if(mev.selectedItem == kalibmap){
-				SelectMap sM = new SelectMap();
-				sM.execute();
-				if((sM.getSelectedMap()).length()>0){
-					try {
-						Map map = new Map(pref, sM.getSelectedMap(),sM.worldfileexists);
-						map.execute(null, Gui.CENTER_FRAME);
-					} catch (java.lang.OutOfMemoryError e) {
-						MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156,"Out of memory error, map to big"), MessageBox.OKB);
-						tmpMB.exec();
-					}
-				}
-			}
-			if(mev.selectedItem == importmap){
-
-				Map map = new Map(pref);
-				map.importMap();
-			}
-			if(mev.selectedItem == chkVersion){
-				Version vers = new Version();
-				if(vers.newVersionAvailable(pref)){
-					InfoBox inf = new InfoBox("New Version", "New version\navailable.");// TODO Internationalisation when code has been written
-					inf.execute();
-				} else {
-					InfoBox inf = new InfoBox("Version Check", "You are at\nthe current version.");// TODO Internationalisation when code has been written
-					inf.execute();
-				}
-			}
-			if(mev.selectedItem == spider){
-				SpiderGC spGC = new SpiderGC(pref, profile);
-				spGC.doIt();
-				tbp.resetModel();
-			}
-			if(mev.selectedItem == exit){
-				Global.mainTab.saveUnsavedChanges(true);
-				ewe.sys.Vm.exit(0);
+			if(mev.selectedItem == wolflang){
+				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
+				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == sysinfo){
 				//Vm.debug("Checking system...");
@@ -504,6 +505,17 @@ public class MainMenu extends MenuBar {
 				InfoScreen is = new InfoScreen(sysstring, "System", false,pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
+			if(mev.selectedItem == chkVersion){
+				Version vers = new Version();
+				if(vers.newVersionAvailable(pref)){
+					InfoBox inf = new InfoBox("New Version", "New version\navailable.");// TODO Internationalisation when code has been written
+					inf.execute();
+				} else {
+					InfoBox inf = new InfoBox("Version Check", "You are at\nthe current version.");// TODO Internationalisation when code has been written
+					inf.execute();
+				}
+			}
+
 		}
 	}
 }
