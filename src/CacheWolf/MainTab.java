@@ -126,7 +126,7 @@ public class MainTab extends mTabbedPanel {
 		} else	
 			select(detP);
 		Global.mainTab.tbP.refreshTable();
-	
+
 	}
 
 
@@ -214,6 +214,10 @@ public class MainTab extends mTabbedPanel {
 	 * @param forceCenter
 	 */
 	public void SwitchToMovingMap(CWPoint centerTo, boolean forceCenter) {
+		if (!centerTo.isValid()) {
+			(new MessageBox("Error", "No valid coordinates", MessageBox.OKB)).execute();
+			return;
+		}
 		if (mm == null) {
 			mm = new MovingMap(nav, profile.cacheDB);
 			nav.setMovingMap(mm);
@@ -223,26 +227,28 @@ public class MainTab extends mTabbedPanel {
 		mm.updatePosition(centerTo.latDec, centerTo.lonDec);
 		mm.myExec();
 		if (forceCenter) {
-			while (MapImage.screenDim.width == 0) { try {ewe.sys.mThread.sleep(100);} catch (InterruptedException e) {} } // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
-			mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
-			mm.updatePosition(centerTo.latDec, centerTo.lonDec);
-/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
+			try {
+				while (MapImage.screenDim.width == 0) { ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run 
+				mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
+				mm.updatePosition(centerTo.latDec, centerTo.lonDec);
+				/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
 				mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS if GPS-pos is not on the screen
 				mm.setResModus(MovingMap.HIGHEST_RESOLUTION);
 				mm.updatePosition(centerTo.latDec, centerTo.lonDec);
 				mm.setCenterOfScreen(centerTo, true); 
 			}
-*/			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
+				 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
+			}catch (InterruptedException e) { (new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", MessageBox.OKB)).execute(); } 
 		}
 	}
-	
+
 	/** Save any changes from DetailsPanel before operating on the database */
 	public void updatePendingChanges() {
 		if(detP.isDirty()) {
 			detP.saveDirtyWaypoint();
 		}
 	}
-	
+
 	/** Save the index file and any pending change in DetailsPanel
 	 * 
 	 * @param askForConfirmation If true, the save can be cancelled by user
@@ -252,7 +258,7 @@ public class MainTab extends mTabbedPanel {
 		updatePendingChanges(); // Updated the cacheDB with pending changes from DetailsPanel
 		if (askForConfirmation) { // Don't know whether to save, have to ask
 			if (profile.hasUnsavedChanges &&     // Only ask if there were changes 
-				(new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1207,"Your profile has unsaved changes. Do you want to save?"),MessageBox.DEFOKB|MessageBox.NOB)).execute()==MessageBox.IDOK) {
+					(new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1207,"Your profile has unsaved changes. Do you want to save?"),MessageBox.DEFOKB|MessageBox.NOB)).execute()==MessageBox.IDOK) {
 				saveIndex=true; 
 			}
 		}

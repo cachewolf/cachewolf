@@ -25,6 +25,7 @@ public class OCXMLImporter extends MinML {
 	static protected final int STAT_CACHE_LOG = 3;
 	static protected final int STAT_PICTURE = 4;
 	
+	final static String OPENCACHING_HOST = "www.opencaching.de";
 	int state = STAT_INIT;
 	int numCacheImported, numDescImported, numLogImported= 0;
 	
@@ -46,7 +47,7 @@ public class OCXMLImporter extends MinML {
 	String picUrl = new String();
 	String picTitle =  new String();
 	String picID = new String();
-	String ocSeekUrl = new String("http://www.opencaching.de/viewcache.php?cacheid=");
+	String ocSeekUrl = new String("http://"+OPENCACHING_HOST+"/viewcache.php?cacheid=");
 	String cacheID = new String();
 	
 	String logData, logIcon, logDate, logFinder;
@@ -107,7 +108,7 @@ public class OCXMLImporter extends MinML {
 			}	
 			picCnt = 0;
 			//Build url
-			url ="http://www.opencaching.de/xml/ocxml11.php?";
+			url ="http://+" + OPENCACHING_HOST + "/xml/ocxml11.php?";
 			url += "modifiedsince=" + lastS;
 			url +="&cache=1";
 			url +="&cachedesc=1";
@@ -479,6 +480,7 @@ public class OCXMLImporter extends MinML {
 	}
 	
 	private void getPic(String fetchURL, String picDesc){ // TODO handling of relativ URLs
+		if (!fetchURL.startsWith("http://")) fetchURL = "http://" + OPENCACHING_HOST + "/"+fetchURL; // TODO this is not quite correct: actually the "base" URL must be known... but anyway a different baseURL should not happen very often  - it doesn't in my area
 		String fileName = holder.wayPoint + "_" + fetchURL.substring(fetchURL.lastIndexOf("/")+1);
 		fileName = Common.ClearForFileName(fileName);
 		// add title
