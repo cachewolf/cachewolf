@@ -347,21 +347,13 @@ public class Profile {
 	 *	@see	Extractor
 	 */
 	public void updateBearingDistance(){
-		CWPoint fromPoint = new CWPoint(Global.getPref().curCentrePt); // Clone current centre to be sure
+		CWPoint centerPoint = new CWPoint(Global.getPref().curCentrePt); // Clone current centre to be sure
 		int anz = cacheDB.getCount();
 		CacheHolder ch;
-		CWPoint toPoint;
 		// Jetzt durch die CacheDaten schleifen
 		while(--anz >= 0){
 			ch = (CacheHolder)cacheDB.get(anz); // This returns a pointer to the CacheHolder object
-			if(ch.LatLon.length()>4){
-				toPoint = ch.pos;
-				ch.kilom = fromPoint.getDistance(toPoint);
-				ch.degrees = fromPoint.getBearing(toPoint);
-				ch.bearing = CWPoint.getDirection(ch.degrees);
-				ch.distance = MyLocale.formatDouble(ch.kilom,"0.00");
-				ch.distance = ch.distance + " km";
-			}
+			ch.calcDistance(centerPoint);
 		}
 		// The following call is not very clean as it mixes UI with base classes
 		// However, calling it from here allows us to recenter the

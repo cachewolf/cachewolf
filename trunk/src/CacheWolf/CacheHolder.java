@@ -439,9 +439,16 @@ public CacheHolder update(CacheHolder newCh){
 	   else return false;
    }
    
-   /** A cache is visible if it is not blacklisted and not filtered */
-   public boolean isVisible() {
-	   return !is_black && !is_filtered;
+   public void calcDistance(CWPoint toPoint) {	
+	   if(pos.isValid()){
+			kilom = pos.getDistance(toPoint);
+			degrees = pos.getBearing(toPoint);
+			bearing = CWPoint.getDirection(degrees);
+			distance = MyLocale.formatDouble(kilom,"0.00")+" km";
+	   } else {
+		   distance = "?";
+		   bearing = "?";
+	   }
    }
-  
+   
 }
