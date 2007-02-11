@@ -289,7 +289,7 @@ public class myTableModel extends TableModel{
 				Vm.showWait(true);
 				Point a = tcControl.getSelectedCell(null);
 				if(a != null) ch = (CacheHolder)cacheDB.get(a.y);
-				cacheDB.sort(new MyComparer(colName[cell.x]), sortAsc);
+				cacheDB.sort(new MyComparer(cacheDB, colName[cell.x],numRows), sortAsc);
 				updateRows();
 				if(a != null){
 					int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);

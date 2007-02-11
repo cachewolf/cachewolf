@@ -400,7 +400,7 @@ public class Profile {
 		for(int i =  0; i < max ;i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			if (ch.hasAddiWpt() && (ch.addiWpts.size()> 1)){
-				ch.addiWpts.sort(new MyComparer(MyLocale.getMsg(1002,"Waypoint")), false);
+				ch.addiWpts.sort(new MyComparer(ch.addiWpts,MyLocale.getMsg(1002,"Waypoint"),ch.addiWpts.size()), false);
 			}
 		}
 	
