@@ -443,7 +443,7 @@ public class SpiderGC{
 				typeRex.search(rowBlock);
 				cx.CacheName = nameRex.stringMatched(1);
 				if(koordRex.didMatch()) cx.LatLon = koordRex.stringMatched(1); 
-				else cx.LatLon = "N 00° 00.000 E 000° 00.000"; 
+				else cx.LatLon = "---"; 
 				cx.pos.set(cx.LatLon);
 				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
 				
