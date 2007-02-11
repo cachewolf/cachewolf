@@ -32,7 +32,7 @@ public class DataMover {
 		// Loop through database
 		for(int i = 0; i<srcDB.size(); i++){
 			CacheHolder srcHolder=(CacheHolder)srcDB.get(i);
-			if(srcHolder.isVisible()){
+			if(srcHolder.is_filtered==false){
 				deleteCacheFiles(srcHolder.wayPoint, profile.dataDir);
 				srcDB.removeElementAt(i);
 				i--;
@@ -68,7 +68,7 @@ public class DataMover {
 		// Loop through database
 		for(int i = 0; i<srcDB.size(); i++){
 			CacheHolder srcHolder=(CacheHolder)srcDB.get(i);
-			if(srcHolder.isVisible()){
+			if(srcHolder.is_filtered==false){
 				// does cache exists in destDB ?
 				dstPos = dstProfile.getCacheIndex(srcHolder.wayPoint);
 				if (dstPos >= 0){
@@ -114,7 +114,7 @@ public class DataMover {
 		// Loop through database
 		for(int i = 0; i<srcDB.size(); i++){
 			CacheHolder srcHolder=(CacheHolder)srcDB.get(i);
-			if(srcHolder.isVisible()){
+			if(srcHolder.is_filtered==false){
 				// does cache exists in destDB ?
 				dstPos = dstProfile.getCacheIndex(srcHolder.wayPoint);
 				if (dstPos >= 0){
