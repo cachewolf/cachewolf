@@ -16,45 +16,39 @@ import ewe.graphics.*;
 */
 public class myTableModel extends TableModel{
 	
+	public static final int MAXCOLUMNS=12;
+	// Colors for Cache status (BG unless otherwise stated)
+	private static final Color COLOR_FLAGED		= new Color(255,255,0);
+	private static final Color COLOR_FOUND		= new Color(152,251,152);
+	private static final Color COLOR_OWNED		= new Color(135,206,235);
+	private static final Color COLOR_AVAILABLE	= new Color(255,69,0);
+	private static final Color COLOR_ARCHIVED	= new Color(139,37,0);
+	private static final Color COLOR_SELECTED	= new Color(198,198,198);
+	private static final Color COLOR_ARCHFND_FG	= new Color(255,0,0); // Archived && Found
+	private static final Color COLOR_ARCHFND_BG	= new Color(152,251,152);	
 	Vector cacheDB;
 	String[] colName;
+	int[] colWidth;
+	int [] colID; // The number of the column in the original sequence in the prefs file
+	int usedColumns; // Columns actually used (<=MAXCOLUMNS)
 	static Image cacheImages[] = new Image[454];
 	static Image noFindLogs[] = new Image[4];
-	int[] breiten;
 	Image red, blue, green, yellow;
 	mImage bug;
 	myTableControl tcControl;
 	boolean sortAsc = false;
 	FontMetrics fm;
-	String nmCheck, nmQuest, nmD,nmT,nmWay,nmName,nmLoc,nmOwn,nmHid,nmStat,nmDist,nmBear = new String();
 	Image checkboxTicked,checkboxUnticked;
-	static Color RED = new Color(255,0,0);
 	
 	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
-		nmCheck = " ";
-		nmQuest = "?";
-		nmD = MyLocale.getMsg(1000,"D");
-		nmT = MyLocale.getMsg(1001,"T");
-		nmWay = MyLocale.getMsg(1002,"Waypoint");
-		nmName = MyLocale.getMsg(1003,"Name");
-		nmLoc = MyLocale.getMsg(1004,"Location");
-		nmOwn = MyLocale.getMsg(1005,"Owner");
-		nmHid = MyLocale.getMsg(1006,"Hidden");
-		nmStat = MyLocale.getMsg(1007,"Status");
-		nmDist = MyLocale.getMsg(1008,"Dist");
-		nmBear = MyLocale.getMsg(1009,"Bear");
+		cacheDB = Global.getProfile().cacheDB;
 		fm = this.fm;
 		tcControl = tc;
 		setColumnNamesAndWidths(); 
-		cacheDB = Global.getProfile().cacheDB;
 		this.numRows = cacheDB.size();
 		Dimension selrow = new Dimension(-1,1);
 		this.cursorSize = selrow;
-		//colName = new String[colNs.length];
-		//colName = colNs;
-		//breiten = new int[colWidth.length];
-		//breiten = colWidth;
 		cacheImages[0] = new Image("0.png");
 		//cacheImages[1] = new Image();
 		cacheImages[2] = new Image("2.png");
@@ -101,36 +95,25 @@ public class myTableModel extends TableModel{
 	 */
 	public void setColumnNamesAndWidths() {
 		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
-		String[] jester;
-		int colWidth[];
-		int colnum = 0;
+		// [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
+		// [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing
 		Preferences pref=Global.getPref();
+		colName=new String[MAXCOLUMNS]; // Always dimension to max columns, a few columns could be wasted
+		colWidth=new int[MAXCOLUMNS];
+		colID=new int[MAXCOLUMNS];
 		
-		for(int i = 0; i<=11; i++){
-			if(pref.tablePrefs[i] == 1) colnum++;
-		}
-		jester = new String[colnum];
-		colWidth = new int[colnum];
-		
-		int ji = 0;
-		for(int i = 0; i<=11;i++){
+		usedColumns = 0;
+		for(int i = 0; i<MAXCOLUMNS;i++){
 			if(pref.tablePrefs[i] == 1){
-				jester[ji] = spName[i];
-				colWidth[ji] = pref.tableWidth[i];
-				ji++;
+				colName[usedColumns] = spName[i];
+				colWidth[usedColumns] = pref.tableWidth[i];
+				colID[usedColumns]=i;
+				usedColumns++;
 			}
 		}
-		colName = jester;
-		breiten = colWidth;
-		this.numCols = colName.length;
+		this.numCols = usedColumns;
 		clearCellAdjustments();
-		//remapColumns(null);
 	}
-	
-	//RBpublic void setVector(Vector DB){
-	//	cacheDB = DB;
-	//	this.numRows = cacheDB.size();
-	//}
 	
 	public void updateRows(){
 		Vector sortDB = new Vector();
@@ -139,7 +122,8 @@ public class myTableModel extends TableModel{
 		// sort cacheDB:
 		// - addi wpts are listet behind the main cache
 		// - filtered caches are moved to the end
-		for (int i=0; i<cacheDB.size(); i++){
+		int size=cacheDB.size();
+		for (int i=0; i<size; i++){
 			ch = (CacheHolder) cacheDB.get(i);
 			if (ch.is_filtered) {
 				filteredDB.add(ch);
@@ -176,51 +160,35 @@ public class myTableModel extends TableModel{
 	* cache list, depending on different flags set to the cache.
 	*/
 	public TableCellAttributes getCellAttributes(int row,int col,boolean  isSelected, TableCellAttributes ta){
-		try{
-			ta = super.getCellAttributes(row, col, isSelected, ta);
-			ta.alignment = ta.LEFT;
-			ta.anchor = ta.LEFT;
-			if(row >= 0){ 
-				CacheHolder ch = (CacheHolder)cacheDB.get(row);
-				// Color code:
-				// red := flagged
-				if(ch.is_flaged == true) ta.fillColor = new Color(255,255,0);
-				// green := found
-				if(ch.is_found == true) ta.fillColor = new Color(152,251,152);
-				// blue := owner
-				if(ch.is_owned == true) ta.fillColor = new Color(135,206,235);
-				if(ch.is_available == false) ta.fillColor = new Color(255,69,0);
-				if(ch.is_archived == true) ta.fillColor = new Color(139,37,0);
-				if(ch.is_available == false && ch.is_found == true){
-					//Green background
-					ta.fillColor = new Color(152,251,152);
-					//Change font color to red
-					ta.foreground = new Color(255,0,0);
-				}
-				// yellow := new
-				// check DateHidden ? <7 days : new!
-				// orange := updated (logs?)
-				// grey := selected
-				if(isSelected == true) ta.fillColor = new Color(198,198,198);
+		ta = super.getCellAttributes(row, col, isSelected, ta);
+		ta.alignment = ta.LEFT;
+		ta.anchor = ta.LEFT;
+		if(row >= 0){ 
+			CacheHolder ch = (CacheHolder)cacheDB.get(row);
+			if(isSelected == true) ta.fillColor = COLOR_SELECTED;
+			else if(ch.is_available == false && ch.is_found == true){
+				ta.fillColor = COLOR_ARCHFND_BG;   // Green BG
+				ta.foreground = COLOR_ARCHFND_FG;  // Red FG
 			}
-		}catch(NumberFormatException nfe){}
-		catch(IndexOutOfBoundsException abe){}
+			else if(ch.is_archived == true) ta.fillColor = COLOR_ARCHIVED;
+			else if(ch.is_available == false) ta.fillColor = COLOR_AVAILABLE;
+			else if(ch.is_owned == true) ta.fillColor = COLOR_OWNED;
+			else if(ch.is_found == true) ta.fillColor = COLOR_FOUND;
+			else if(ch.is_flaged == true) ta.fillColor = COLOR_FLAGED;
+		}
 		return ta;
 	}
-	
-	
-	public int calculateColWidth(int col){
-		//Vm.debug("myTableModel:: Calculating col width" + col);
-		int retval = 50;
-		if(col == -1) retval = 0;
-		try{
-			if(col >= 0) retval = breiten[col];
-		}catch(Exception ex){}
-		return retval;
-	}
-	
+
 	public int calculateRowHeight(int row){
 		return 18;
+	}
+
+	public int calculateColWidth(int col){
+		if(col == -1) 
+        	return 0;
+        else if (col<usedColumns)
+        	return colWidth[col];
+        else return 0;
 	}
 	
 	/**
@@ -234,75 +202,67 @@ public class myTableModel extends TableModel{
 	}
 
 	public Object getCellData(int row, int col){
-		IconAndText wpVal = new IconAndText(); //(IImage)bug, "Test Me", fm);
-		Object rettext = new Object();
-			if(row == -1) {
-				rettext = (String)colName[col];
-			}
-			if(row >= 0 ){
-				try{
-					CacheHolder ch = (CacheHolder)cacheDB.get(row);
-					//Vm.debug(String.valueOf(row));
-					//Vm.debug(String.valueOf(cols[col]));
-					if(ch.is_filtered == false){
-						try{
-							if(colName[col].equals(nmCheck)) {
-/* Replaced mCheckBox with two images: One showing the unticked box, one showing the ticked box
-  								mCheckBox m = new mCheckBox();
-								m.setTag(0, ch.wayPoint);
-								if(ch.is_Checked == true) m.setState(true);
-								else m.setState(false);
-								rettext = m;*/
-								if (ch.is_Checked) rettext=checkboxTicked; 
-								else rettext=checkboxUnticked;
-							}
-							if(colName[col].equals(nmQuest)) rettext = (IImage) cacheImages[Convert.parseInt(ch.type)];
-							if(colName[col].equals(nmD)) rettext = (String)ch.hard;
-							if(colName[col].equals(nmT)) rettext = (String)ch.terrain;
-							if(colName[col].equals(nmWay)){
-								rettext = (String)ch.wayPoint;
-								if(ch.is_log_update == true) wpVal = new IconAndText((IImage)blue, ch.wayPoint, fm);
-								if(ch.is_update == true) wpVal = new IconAndText((IImage)red, ch.wayPoint, fm);
-								if(ch.is_new == true) wpVal = new IconAndText((IImage)yellow, ch.wayPoint, fm);
-								if(ch.is_log_update == false &&
-								   ch.is_update == false &&
-								   ch.is_new == false) rettext = (String)ch.wayPoint;
-								else rettext = wpVal;
-							}
-							if(colName[col].equals(nmName)) {
-								rettext = (String)ch.CacheName;
-								wpVal = new IconAndText();
-								if(ch.has_bug == true){
-									wpVal.addColumn((IImage)bug);
-								}
-								if(ch.noFindLogs > 0){
-									if (ch.noFindLogs > noFindLogs.length) wpVal.addColumn((IImage)noFindLogs[noFindLogs.length-1]);
-									else wpVal.addColumn((IImage)noFindLogs[ch.noFindLogs-1]);
-								}
-								wpVal.addColumn(rettext);
-								rettext = wpVal;
-							}
-							if(colName[col].equals(nmLoc)) {
-								rettext = (String)ch.LatLon;
-							}
-							if(colName[col].equals(nmOwn)) rettext = (String)ch.CacheOwner;
-							if(colName[col].equals(nmHid)) rettext = (String)ch.DateHidden;
-							if(colName[col].equals(nmStat)) rettext = (String)ch.CacheStatus;
-							if(colName[col].equals(nmDist)) rettext = (String)ch.distance;
-							if(colName[col].equals(nmBear)) rettext = (String)ch.bearing;
-						}catch(NumberFormatException nfe){}
-					}
-				}catch(ArrayIndexOutOfBoundsException abe){
-					rettext = "bug in progam, please report";
+		if(row == -1) {
+			return (String)colName[col];
+		} else {
+			CacheHolder ch = (CacheHolder)cacheDB.get(row);
+			if(ch.is_filtered == false){
+				switch(colID[col]) { // Faster than using column names
+					case 0: // Checkbox
+						if (ch.is_Checked) 
+							return checkboxTicked; 
+						else 
+							return checkboxUnticked;
+					case 1: // Type
+						try {
+							return (IImage) cacheImages[Convert.parseInt(ch.type)];
+						} catch (NumberFormatException e) { return "?";}
+					case 2: // Difficulty;
+						return (String)ch.hard;
+					case 3: // Terrain
+						return (String)ch.terrain;
+					case 4: // Waypoint
+						if(ch.is_log_update) return new IconAndText((IImage)blue, ch.wayPoint, fm);
+						if(ch.is_update    ) return new IconAndText((IImage)red, ch.wayPoint, fm);
+						if(ch.is_new       ) return new IconAndText((IImage)yellow, ch.wayPoint, fm);
+						return (String)ch.wayPoint;
+					case 5: // Cachename
+						// Fast return for majority of case
+						if (ch.has_bug == false && ch.noFindLogs==0) return (String)ch.CacheName; 
+						// Now need more checks
+						IconAndText wpVal = new IconAndText();
+						if(ch.has_bug == true) wpVal.addColumn((IImage)bug);
+						if(ch.noFindLogs > 0){
+							if (ch.noFindLogs > noFindLogs.length) 
+								wpVal.addColumn((IImage)noFindLogs[noFindLogs.length-1]);
+							else 
+								wpVal.addColumn((IImage)noFindLogs[ch.noFindLogs-1]);
+						}
+						wpVal.addColumn((String)ch.CacheName);
+						return wpVal;
+					case 6: // Location
+						return (String)ch.LatLon;
+					case 7: // Owner
+						return (String)ch.CacheOwner;
+					case 8: // Date hidden
+						return (String)ch.DateHidden;
+					case 9: // Status
+						return (String)ch.CacheStatus;
+					case 10: // Distance
+						return (String)ch.distance;
+					case 11: // Bearing
+						return (String)ch.bearing;
 				}
 			}
-		return rettext;
+		}
+		return null;
 	}
 	
 	public boolean penPressed(Point onTable,Point cell){
 		boolean retval = false;
 		// Table header hit
 		try{
+			if (cell.y>=0) Global.mainTab.tbP.setSelectedCache(cell.y);
 			// Check whether the click is on the checkbox image
 			if (cell.y>=0 && cell.x==0) {
 				Global.getProfile().selectionChanged = true;
@@ -312,7 +272,8 @@ public class myTableModel extends TableModel{
 				if (ch.hasAddiWpt()){
 					CacheHolder addiWpt;
 					int off = 1;
-					for (int i=0;i<ch.addiWpts.getCount();i++){
+					int addiCount=ch.addiWpts.getCount();
+					for (int i=0;i<addiCount;i++){
 						addiWpt = (CacheHolder)ch.addiWpts.get(i);
 						addiWpt.is_Checked = ch.is_Checked;
 						if (!addiWpt.is_filtered){
@@ -321,57 +282,31 @@ public class myTableModel extends TableModel{
 					}
 					
 				}
-				//updateRows();
-				// Don't consume the event. Why ?
 			}
-			if(cell.y == -1){
-				if(sortAsc == false) sortAsc = true;
-				else sortAsc = false;
-				retval = true;
-				if(colName[cell.x].equals(nmDist) == false){
-					CacheHolder ch = new CacheHolder();
-					Vm.showWait(true);
-					Point a = new Point();
-					a = tcControl.getSelectedCell(a);
-					if(!(a == null)) ch = (CacheHolder)cacheDB.get(a.y);
+			if(cell.y == -1){ // Hit a header => sort the table accordingly
+				sortAsc=!sortAsc;
+				CacheHolder ch=null;
+				Vm.showWait(true);
+				Point a = tcControl.getSelectedCell(null);
+				if(a != null) ch = (CacheHolder)cacheDB.get(a.y);
+				if(colID[cell.x]!=10)
 					cacheDB.sort(new MyComparer(colName[cell.x]), sortAsc);
-					updateRows();
-					if(!(a == null)){
-						int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
-						if(rownum >= 0){
-							tcControl.scrollToVisible(rownum, 0);
-							tcControl.clearSelectedCells(new Vector());
-							for(int i= 0; i < 11; i++){
-								tcControl.addToSelection(rownum,i); 
-							}
-						}
-					}
-					Vm.showWait(false);
-				}
-				if(colName[cell.x].equals(nmDist)) {
-					CacheHolder ch = new CacheHolder();
-					Vm.showWait(true);
-					Point a = new Point();
-					Point dest = new Point();
-					a = tcControl.getSelectedCell(dest);
-					if(!(a == null)) ch = (CacheHolder)cacheDB.get(a.y);
+				else // Distance sort
 					cacheDB.sort(new DistComparer(), sortAsc);
-					updateRows();
-					if(!(a == null)){
-						int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
-						if(rownum >= 0){
-							tcControl.scrollToVisible(rownum, 0);
-							tcControl.clearSelectedCells(new Vector());
-							for(int i= 0; i < 11; i++){
-								tcControl.addToSelection(rownum,i); 
-							}
+				updateRows();
+				if(a != null){
+					int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
+					if(rownum >= 0){
+						tcControl.scrollToVisible(rownum, 0);
+						tcControl.clearSelectedCells(new Vector());
+						for(int i= 0; i < MAXCOLUMNS; i++){
+							tcControl.addToSelection(rownum,i); 
 						}
 					}
-					Vm.showWait(false);
 				}
-				updateRows();
+				Vm.showWait(false);
 				tcControl.update(true);
-				
+				retval = true;
 			}
 		}catch(NullPointerException npex){}
 		return retval;
