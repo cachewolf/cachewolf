@@ -10,93 +10,102 @@ import ewe.sys.*;
 */
 public class MyComparer implements Comparer{
 	String compareWhat;
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	String nmQuest, nmD,nmT,nmWay,nmName,nmLoc,nmOwn,nmHid,nmStat,nmDist,nmBear = new String();
+	int visibleSize;
+	Vector cacheDB;
 	
 	public MyComparer(String what){
 		compareWhat = what;
 		nmQuest = "?";
-		nmD = (String)lr.get(1000,"D");
-		nmT = (String)lr.get(1001,"T");
-		nmWay = (String)lr.get(1002,"Waypoint");
-		nmName = (String)lr.get(1003,"Name");
-		nmLoc = (String)lr.get(1004,"Location");
-		nmOwn = (String)lr.get(1005,"Owner");
-		nmHid = (String)lr.get(1006,"Hidden");
-		nmStat = (String)lr.get(1007,"Status");
-		nmDist = (String)lr.get(1008,"Dist");
-		nmBear = (String)lr.get(1009,"Bear");
+		nmD = MyLocale.getMsg(1000,"D");
+		nmT = MyLocale.getMsg(1001,"T");
+		nmWay = MyLocale.getMsg(1002,"Waypoint");
+		nmName = MyLocale.getMsg(1003,"Name");
+		nmLoc = MyLocale.getMsg(1004,"Location");
+		nmOwn = MyLocale.getMsg(1005,"Owner");
+		nmHid = MyLocale.getMsg(1006,"Hidden");
+		nmStat = MyLocale.getMsg(1007,"Status");
+		nmDist = MyLocale.getMsg(1008,"Dist");
+		nmBear = MyLocale.getMsg(1009,"Bear");
+		visibleSize=Global.mainTab.tbP.myMod.numRows;
+		cacheDB=Global.getProfile().cacheDB;
+		if (visibleSize<2) return;
+		if (what.equals(nmQuest)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				ch.sort=ch.type;
+			}
+		} else if (what.equals(nmD)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				ch.sort=ch.hard;
+			}
+		} else if (what.equals(nmT)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				ch.sort=ch.terrain;
+			}
+		} else if (what.equals(nmWay)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				ch.sort=ch.wayPoint;
+			}
+		} else if (what.equals(nmName)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				ch.sort=ch.CacheName;
+			}
+		} else if (what.equals(nmLoc)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				ch.sort=ch.LatLon;
+			}
+		} else if (what.equals(nmOwn)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				ch.sort=ch.CacheOwner;
+			}
+		} else if (what.equals(nmHid)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				// Dates are in format M/D/Y
+				int p1,p2=-1;
+				p1=ch.DateHidden.indexOf("/");
+				if (p1>0) p2=ch.DateHidden.indexOf("/",p1+1);
+				if (p1>0 && p2>0) {
+					ch.sort=ch.DateHidden.substring(p2+1)+
+					        (p1==1?"0":"")+ch.DateHidden.substring(0,p1)+
+					        (p1+2==p2?"0":"")+ch.DateHidden.substring(p1+1,p2);
+				} else
+					ch.sort="";
+			}
+		} else if (what.equals(nmStat)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				ch.sort=ch.CacheStatus;
+			}
+		} else if (what.equals(nmDist)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				int p=ch.distance.indexOf(",");
+				if (p<0) p=ch.distance.indexOf(".");
+				if (p>=0 && p<=5)
+					ch.sort="00000".substring(0,5-p)+ch.distance;
+				else
+					ch.sort=ch.distance;
+			}
+		} else if (what.equals(nmBear)) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				ch.sort=ch.bearing;
+			}
+			
+		}
 	}
 	
 	public int compare(Object o1, Object o2){
 		CacheHolder oo1 = (CacheHolder)o1;
 		CacheHolder oo2 = (CacheHolder)o2;
-		if(oo1.is_filtered == false && oo2.is_filtered == false){
-			String str01 = new String();
-			String str02 = new String();
-			try{
-				if(compareWhat.equals(nmQuest)){
-					str01 = oo1.type;
-					str02 = oo2.type;
-				}
-				if(compareWhat.equals(nmD)){
-					str01 = oo1.hard;
-					str02 = oo2.hard;
-				}
-				if(compareWhat.equals(nmT)){
-					str01 = oo1.terrain;
-					str02 = oo2.terrain;
-				}
-				if(compareWhat.equals(nmWay)){
-					str01 = oo1.wayPoint;
-					str02 = oo2.wayPoint;
-				}
-				if(compareWhat.equals(nmName)){
-					str01 = oo1.CacheName;
-					str02 = oo2.CacheName;
-				}
-				if(compareWhat.equals(nmLoc)){
-					str01 = oo1.LatLon;
-					str02 = oo2.LatLon;
-				}
-				if(compareWhat.equals(nmOwn)){
-					str01 = oo1.CacheOwner;
-					str02 = oo2.CacheOwner;
-				}
-				if(compareWhat.equals(nmHid)){
-					if (oo1.DateHidden.length() > 9) {
-						str01 = oo1.DateHidden.substring(6,10);   // year
-						str01 += oo1.DateHidden.substring(0,2);   // month
-						str01 += oo1.DateHidden.substring(3,5); } // day 
-					if (oo2.DateHidden.length() > 9) {
-						str02 = oo2.DateHidden.substring(6,10);   // year
-						str02 += oo2.DateHidden.substring(0,2);   // month
-						str02 += oo2.DateHidden.substring(3,5); } // day
-				}
-				if(compareWhat.equals(nmStat)){
-					str01 = oo1.CacheStatus;
-					str02 = oo2.CacheStatus;
-				}
-				if(compareWhat.equals(nmBear)){
-					str01 = oo1.bearing;
-					str02 = oo2.bearing;
-				}
-				if(compareWhat.equals("filter")){
-					str01 = Convert.toString(oo1.is_filtered);
-					str02 = Convert.toString(oo2.is_filtered);
-				}
-				return str01.toLowerCase().compareTo(str02.toLowerCase());
-			} catch (IndexOutOfBoundsException e ) { // sollte eigentlich nicht vorkommen könnte auftreten von substring
-				return str01.toLowerCase().compareTo(str02.toLowerCase());
-			}
-
-		} else{
-			int retval = 0;
-			if(oo1.is_filtered == false && oo2.is_filtered == true) retval = -1;
-			if(oo1.is_filtered == true && oo2.is_filtered == false) retval = 1;
-
-			return retval;
-		}
+		return oo1.sort.compareTo(oo2.sort);
 	}
 }
