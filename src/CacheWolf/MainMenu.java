@@ -203,12 +203,17 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == mnuOpenProfile){
 					Global.mainTab.saveUnsavedChanges(true);
 					if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
-					profile.cacheDB.clear();
-					profile.readIndex();
-					pref.curCentrePt.set(profile.centre);
-					filtBlack.modifiers&=~MenuItem.Checked;
-					Filter.showBlacklisted=false;
-					tbp.resetModel();
+						tbp.myMod.numRows=0;
+						profile.cacheDB.clear();
+						InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
+						infB.exec();
+						infB.waitUntilPainted(1000);
+						profile.readIndex();
+						pref.curCentrePt.set(profile.centre);
+						filtBlack.modifiers&=~MenuItem.Checked;
+						Filter.showBlacklisted=false;
+						infB.close(0);
+						tbp.resetModel();
 				}
 			}
 			if(mev.selectedItem == mnuEditProfile){
