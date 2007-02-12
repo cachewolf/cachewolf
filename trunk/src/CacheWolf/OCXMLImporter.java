@@ -108,7 +108,7 @@ public class OCXMLImporter extends MinML {
 			}	
 			picCnt = 0;
 			//Build url
-			url ="http://+" + OPENCACHING_HOST + "/xml/ocxml11.php?";
+			url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?";
 			url += "modifiedsince=" + lastS;
 			url +="&cache=1";
 			url +="&cachedesc=1";
