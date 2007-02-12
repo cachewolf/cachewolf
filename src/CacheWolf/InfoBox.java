@@ -70,6 +70,8 @@ public class InfoBox extends Form{
 		case PROGRESS_WITH_WARNINGS:
 			msgArea = new TextMessage(info);
 			msgArea.autoWrap = autoWrap;
+			msgArea.alignment = Gui.CENTER;
+			msgArea.anchor = Gui.CENTER;
 			msgArea.setPreferredSize(150, 50);
 			this.addLast(msgArea.getScrollablePanel(), CellConstants.HEXPAND | CellConstants.HGROW, CellConstants.HEXPAND | CellConstants.HGROW);
 			warnings = new TextMessage("");
