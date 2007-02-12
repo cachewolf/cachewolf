@@ -100,6 +100,7 @@ public class TablePanel extends CellPanel{
 		flt.setFilter();
 		flt.doFilter();
 		refreshTable();
+		tc.scrollToVisible(0,0);
 	}
 	
 	/** Move all filtered caches to the end of the table and redesplay table */
