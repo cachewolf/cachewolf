@@ -4,6 +4,8 @@ import ewe.io.File;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
+import ewe.ui.IKeys;
+import ewe.ui.KeyEvent;
 import ewe.ui.MessageBox;
 import ewe.ui.mButton;
 import ewe.ui.mInput;
@@ -20,8 +22,12 @@ public class NewProfileForm extends Form {
 		//profile=prof;
         title = MyLocale.getMsg(1111,"Create new profile:");
 		addLast(inpDir=new mInput(MyLocale.getMsg(1112,"New profile name")),HSTRETCH,HFILL|LEFT);
-		addNext(btnCancel=new mButton(MyLocale.getMsg(708,"Cancel")),HSTRETCH,LEFT);
-		addLast(btnOK=new mButton(MyLocale.getMsg(1605,"OK")),HSTRETCH,HFILL|RIGHT);
+		btnCancel = new mButton(MyLocale.getMsg(708,"Cancel"));
+		btnCancel.setHotKey(0, IKeys.ESCAPE);
+		addNext(btnCancel,HSTRETCH,LEFT);
+		btnOK = new mButton(MyLocale.getMsg(1605,"OK"));
+		btnOK.setHotKey(0, IKeys.ENTER);
+		addLast(btnOK,HSTRETCH,HFILL|RIGHT);
 		this.setPreferredSize(240,50);
 		this.baseDir=baseDir;
 	}
