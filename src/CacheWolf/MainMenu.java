@@ -112,9 +112,9 @@ public class MainMenu extends MenuBar {
 		filterMenuItems[2] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
 		filterMenuItems[3] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
 		filterMenuItems[4] = mnuSeparator;
-		filterMenuItems[5] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
+		filterMenuItems[5] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
 		filterMenuItems[6] = mnuSeparator;
-		filterMenuItems[7] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
+		filterMenuItems[7] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
 		
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
@@ -125,9 +125,9 @@ public class MainMenu extends MenuBar {
 		filterAndSearchMenuItems[2]=filtInvert;
 		filterAndSearchMenuItems[3]=filtClear;
 		filterAndSearchMenuItems[4]=mnuSeparator;
-		filterAndSearchMenuItems[5]=filtBlack;
-		filterAndSearchMenuItems[6]=filtSelected;
-		filterAndSearchMenuItems[7]=mnuSeparator;
+		filterAndSearchMenuItems[5]=filtSelected;
+		filterAndSearchMenuItems[6]=mnuSeparator;
+		filterAndSearchMenuItems[7]=filtBlack;
 		filterAndSearchMenuItems[8]=mnuSeparator;
 		filterAndSearchMenuItems[9]=search;
 		filterAndSearchMenuItems[10]=searchClr;
@@ -433,20 +433,21 @@ public class MainMenu extends MenuBar {
 				flt.clearFilter();
 				tbp.refreshTable();
 			}
+			if(mev.selectedItem == filtSelected){ // incremental filter
+				CacheHolder ch;
+				for(int i = cacheDB.size()-1; i>=0; i--){
+					ch = (CacheHolder)cacheDB.get(i);
+					// This is an incremental filter, i.e. it keeps the existing filter
+					// status and only adds the marked caches to the filtered set
+					ch.is_filtered = ch.is_Checked || ch.is_filtered;
+				}
+				tbp.refreshTable();
+			}
 			if(mev.selectedItem == filtBlack){
 				filtBlack.modifiers^=MenuItem.Checked;
 				Filter.showBlacklisted=!Filter.showBlacklisted;
 				SearchCache ssc = new SearchCache(cacheDB);
 				ssc.clearSearch();// Clear search & restore filter status
-				tbp.refreshTable();
-			}
-			if(mev.selectedItem == filtSelected){
-				CacheHolder ch;
-				for(int i = cacheDB.size()-1; i>=0; i--){
-					ch = (CacheHolder)cacheDB.get(i);
-					ch.is_filtered = ch.is_Checked;
-					//cacheDB.set(i, ch);
-				}
 				tbp.refreshTable();
 			}
 			///////////////////////////////////////////////////////////////////////
