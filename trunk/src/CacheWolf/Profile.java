@@ -127,21 +127,16 @@ public class Profile {
 					"\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
 					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
-			for(int i = 0; i<cacheDB.size();i++){
+			int size=cacheDB.size();
+			for(int i = 0; i<size;i++){
 				if(showprogress){
-					h.progress = (float)i/(float)cacheDB.size();
+					h.progress = (float)i/(float)size;
 					h.changed();
 				}
 				ch = (CacheHolder)cacheDB.get(i);
 				////Vm.debug("Saving: " + ch.CacheName);
 				if(ch.wayPoint.length()>0 && ch.LongDescription.equals("An Error Has Occured") == false){
-					/* pos must always be set, so this is no longer needed
- 					if (ch.pos==null) {
-						ParseLatLon pl=new ParseLatLon(ch.LatLon);
-						pl.parse();
-						ch.pos=new CWPoint(pl.lat2,pl.lon2);
-					}
-					 */					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
+					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
 							 //"\" lat = \""+ SafeXML.clean(ch.LatLon) +
 							 "\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
 							 "\" hidden = \""+ch.DateHidden+"\" wayp = \""+SafeXML.clean(ch.wayPoint)+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"" + ch.dirty + "\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\" />\n");
@@ -149,7 +144,7 @@ public class Profile {
 			}
 			detfile.print("</CACHELIST>\n");
 			detfile.close();
-			buildReferences();
+			buildReferences(); //TODO Why is this needed here?
 			if(showprogress) pbf.exit(0);
 		}catch(Exception e){
 			Vm.debug("Problem writing to index file "+e.toString());
@@ -253,11 +248,10 @@ public class Profile {
 			// Build references between caches and addi wpts
 			buildReferences();
 		} catch (FileNotFoundException e) {
-			Vm.debug("index.xml not found"); // Normal when profile is opened for first time
+			Global.getPref().log("index.xml not found in directory "+dataDir); // Normal when profile is opened for first time
 			//e.printStackTrace();
 		} catch (IOException e){
-			Vm.debug("Problem reading index.xml "+e.toString()); 
-			e.printStackTrace();
+			Global.getPref().log("Problem reading index.xml in dir: "+dataDir,e,true); 
 		}
 		normalizeFilters();
 		hasUnsavedChanges=false;
@@ -314,7 +308,7 @@ public class Profile {
 		if (cacheDB == null || cacheDB.size() == 0) return null;
 		CacheHolder ch;
 		CWPoint topleft = null;
-		CWPoint buttomright = null;
+		CWPoint bottomright = null;
 		CWPoint tmpca = new CWPoint();
 		numCachesInArea = 0;
 		for (int i=cacheDB.size()-1; i >= 0; i--) {
@@ -326,17 +320,17 @@ public class Profile {
 				}
 				if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0 ){ // TODO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
 					if (topleft == null) topleft = new CWPoint(ch.pos);
-					if (buttomright == null) buttomright = new CWPoint(ch.pos);
+					if (bottomright == null) bottomright = new CWPoint(ch.pos);
 					if (topleft.latDec < ch.pos.latDec) topleft.latDec = ch.pos.latDec;
 					if (topleft.lonDec > ch.pos.lonDec) topleft.lonDec = ch.pos.lonDec;
-					if (buttomright.latDec > ch.pos.latDec) buttomright.latDec = ch.pos.latDec;
-					if (buttomright.lonDec < ch.pos.lonDec) buttomright.lonDec = ch.pos.lonDec;
+					if (bottomright.latDec > ch.pos.latDec) bottomright.latDec = ch.pos.latDec;
+					if (bottomright.lonDec < ch.pos.lonDec) bottomright.lonDec = ch.pos.lonDec;
 					numCachesInArea++;
 				}
 			}
 		}
-		if (topleft != null && buttomright != null) 
-			return new Area(topleft, buttomright);
+		if (topleft != null && bottomright != null) 
+			return new Area(topleft, bottomright);
 		else return null;
 	}
 
@@ -374,10 +368,11 @@ public class Profile {
 		for(int i = cacheDB.size() -1; i >= 0;i--){
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.addiWpts.clear();
-			ch.mainCache = null; 
-			dbIndex.put((String)ch.wayPoint, new Integer(i));
+			ch.mainCache = null;
+			if (ch.wayPoint.startsWith("GC")) // Only put potential master caches into the index
+				dbIndex.put((String)ch.wayPoint, new Integer(i));
 		}
-		// Build refeneces
+		// Build references
 		int max = cacheDB.size();
 		for(int i =  0; i < max ;i++){
 			ch = (CacheHolder)cacheDB.get(i);
@@ -400,7 +395,13 @@ public class Profile {
 		for(int i =  0; i < max ;i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			if (ch.hasAddiWpt() && (ch.addiWpts.size()> 1)){
-				ch.addiWpts.sort(new MyComparer(ch.addiWpts,MyLocale.getMsg(1002,"Waypoint"),ch.addiWpts.size()), false);
+				//ch.addiWpts.sort(new MyComparer(ch.addiWpts,MyLocale.getMsg(1002,"Waypoint"),ch.addiWpts.size()), false);
+				ch.addiWpts.sort(
+					new ewe.util.Comparer() {	
+						public int compare(Object o1, Object o2){
+							return ((CacheHolder) o1).wayPoint.compareTo(((CacheHolder)o2).wayPoint);
+						}
+					},false );
 			}
 		}
 	
