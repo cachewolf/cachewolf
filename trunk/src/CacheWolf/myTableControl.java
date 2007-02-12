@@ -77,7 +77,9 @@ public class myTableControl extends TableControl{
 		if (selectedItem.toString().equals(MyLocale.getMsg(1011,"Filter"))){
 			for(int i = cacheDB.size()-1; i >=0; i--){
 				ch = (CacheHolder)cacheDB.get(i);
-				ch.is_filtered = !ch.is_Checked;
+				// incremental filter. Keeps status of all marked caches and
+				// adds unmarked caches to filtered list
+				ch.is_filtered = !ch.is_Checked || ch.is_filtered;
 			}
 			tbp.refreshTable();
 		}
