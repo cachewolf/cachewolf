@@ -208,7 +208,9 @@ public class MainMenu extends MenuBar {
 						InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
 						infB.exec();
 						infB.waitUntilPainted(1000);
+						Vm.showWait(infB, true);
 						profile.readIndex();
+						Vm.showWait(infB, false);
 						pref.curCentrePt.set(profile.centre);
 						filtBlack.modifiers&=~MenuItem.Checked;
 						Filter.showBlacklisted=false;

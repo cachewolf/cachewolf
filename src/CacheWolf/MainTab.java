@@ -214,34 +214,39 @@ public class MainTab extends mTabbedPanel {
 	 * @param forceCenter
 	 */
 	public void SwitchToMovingMap(CWPoint centerTo, boolean forceCenter) {
-		if (!centerTo.isValid()) {
-			(new MessageBox("Error", "No valid coordinates", MessageBox.OKB)).execute();
-			return;
-		}
-		if (mm == null) {
-			mm = new MovingMap(nav, profile.cacheDB);
-			nav.setMovingMap(mm);
-			if (nav.gpsRunning) mm.gpsStarted();
-		} 
-		if (forceCenter) mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
-		mm.updatePosition(centerTo.latDec, centerTo.lonDec);
-		mm.myExec();
-		if (forceCenter) {
-			try {
-				int i = 0;
-				while (MapImage.screenDim.width == 0 && i < 10*60) { i++; ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
-				if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displaed - this is most likely a bug - plaese report it on www.geoclub.de", MessageBox.OKB)).execute(); return;}
-				mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
-				mm.updatePosition(centerTo.latDec, centerTo.lonDec);
-				/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
+		try {
+			if (!centerTo.isValid()) {
+				(new MessageBox("Error", "No valid coordinates", MessageBox.OKB)).execute();
+				return;
+			}
+			if (mm == null) {
+				mm = new MovingMap(nav, profile.cacheDB);
+				nav.setMovingMap(mm);
+			} 
+			if (forceCenter) mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
+			mm.updatePosition(centerTo.latDec, centerTo.lonDec);
+			mm.myExec();
+			if (forceCenter) {
+				try {
+					int i = 0;
+					while (MapImage.screenDim.width == 0 && i < 10*60) { i++; ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
+					if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displaed - this is most likely a bug - plaese report it on www.geoclub.de", MessageBox.OKB)).execute(); return;}
+					mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
+					mm.updatePosition(centerTo.latDec, centerTo.lonDec);
+					/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
 				mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS if GPS-pos is not on the screen
 				mm.setResModus(MovingMap.HIGHEST_RESOLUTION);
 				mm.updatePosition(centerTo.latDec, centerTo.lonDec);
 				mm.setCenterOfScreen(centerTo, true); 
 			}
-				 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
-			}catch (InterruptedException e) { (new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", MessageBox.OKB)).execute(); } 
-		}
+					 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
+				}catch (InterruptedException e) {
+					Global.getPref().log("Error starting mavoing map (1): " + e.getMessage(), e, true);
+					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", MessageBox.OKB)).execute(); } 
+			}
+		} catch (Exception e) { 
+			Global.getPref().log("Error starting mavoing map (2): " + e.getMessage(), e, true);
+			(new MessageBox("Error", "Error starting mavoing map: " + e.getMessage(), MessageBox.OKB)).execute(); }
 	}
 
 	/** Save any changes from DetailsPanel before operating on the database */
