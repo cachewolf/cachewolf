@@ -7,15 +7,15 @@ import ewe.io.IOException;
 import ewe.util.*;
 
 /**
-*	Implements the user interaction of the list view. Works together with myTableModel and TablePanel
-*/
+ *	Implements the user interaction of the list view. Works together with myTableModel and TablePanel
+ */
 public class myTableControl extends TableControl{
 
 	public Preferences pref;
 	public Profile profile;
 	public Vector cacheDB;
 	public TablePanel tbp;
-	
+
 	myTableControl(TablePanel tablePanel) {
 		Menu m = new Menu(new String[]{
 				MyLocale.getMsg(1021,"Open description"),
@@ -36,16 +36,16 @@ public class myTableControl extends TableControl{
 		pref = Global.getPref();
 		tbp =tablePanel;
 	}
-	
+
 	public void penRightReleased(Point p){
 		if (cacheDB.size()>0) // No context menu when DB is empty
-		   menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
+			menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
 	}
 	public void penHeld(Point p){
 		if (cacheDB.size()>0) // No context menu when DB is empty
-		   menuState.doShowMenu(p,true,null); 
+			menuState.doShowMenu(p,true,null); 
 	}
-	
+
 	public void onKeyEvent(KeyEvent ev) {
 		if (ev.type == KeyEvent.KEY_PRESS && ev.target == this){
 			if ( (ev.modifiers & IKeys.CONTROL) > 0 && ev.key == 1){ // <ctrl-a> gives 1, <ctrl-b> == 2
@@ -53,27 +53,31 @@ public class myTableControl extends TableControl{
 				setSelectForAll(true);
 				ev.consumed = true;
 			}
+			if (ev.key == IKeys.HOME) cursorTo(0,cursor.x+listMode,true);
+			if (ev.key == IKeys.END) cursorTo(model.numRows-1,cursor.x+listMode,true);
+			if (ev.key == IKeys.PAGE_DOWN)cursorTo(java.lang.Math.min(cursor.y+ getOnScreen(null).height, model.numRows),cursor.x+listMode,true);
+			if (ev.key == IKeys.PAGE_UP) cursorTo(java.lang.Math.max(cursor.y-getOnScreen(null).height, 0),cursor.x+listMode,true);
 		}
 		super.onKeyEvent(ev);
 	}
-		
+
 	/** Set all caches either as selected or as deselected, depending on argument */
 	private void setSelectForAll(boolean selectStatus) {
 		Global.getProfile().setSelectForAll(selectStatus);
 		tbp.refreshTable();
 	}
-	
+
 	public void popupMenuEvent(Object selectedItem){
 		CacheHolder ch;
-		
+
 		if (selectedItem.toString().equals(MyLocale.getMsg(1015,"Select all"))){
 			setSelectForAll(true);
 		}
-		
+
 		if (selectedItem.toString().equals(MyLocale.getMsg(1016,"De-select all"))){
 			setSelectForAll(false);
 		}
-		
+
 		if (selectedItem.toString().equals(MyLocale.getMsg(1011,"Filter"))){
 			for(int i = cacheDB.size()-1; i >=0; i--){
 				ch = (CacheHolder)cacheDB.get(i);
@@ -85,48 +89,48 @@ public class myTableControl extends TableControl{
 		}
 		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete"))){
 			if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), MessageBox.YESB | MessageBox.NOB)).execute() != Form.IDYES) return;
-				DataMover dm=new DataMover();
-				for(int i = cacheDB.size()-1; i >=0; i--){
-					ch = (CacheHolder)cacheDB.get(i);
-					if(ch.is_Checked == true) {
-						dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
-						cacheDB.remove(ch);
-					}
+			DataMover dm=new DataMover();
+			for(int i = cacheDB.size()-1; i >=0; i--){
+				ch = (CacheHolder)cacheDB.get(i);
+				if(ch.is_Checked == true) {
+					dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
+					cacheDB.remove(ch);
 				}
+			}
 			profile.saveIndex(pref,true);	
 			tbp.refreshTable();
 		}
-		
+
 		if (selectedItem.toString().equals(MyLocale.getMsg(1014,"Update"))){
-            SpiderGC spider = new SpiderGC(pref, profile);
-            Vm.showWait(true);
-            spider.login();
-            boolean alreadySaid = false;
-            boolean alreadySaid2 = false;
-            for(int i = 0; i <	cacheDB.size(); i++){
-                    ch = (CacheHolder)cacheDB.get(i);
-                    if(ch.is_Checked == true) {
-                            if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
-//Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
-//Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
-//TODO: Diese Meldungen vor dem Einloggen darstellen						
-		{
-                                    spider.spiderSingle(i);
-                            } else if (ch.isAddiWpt() && !ch.mainCache.is_Checked) { // Is the father ticked?
-                            		if (!alreadySaid2) {
-                                            alreadySaid2=true;
-                                            (new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).exec();
-                                    }
-                            } else if (ch.mainCache != null &&	ch.mainCache.wayPoint.length() > 1 	&& !ch.mainCache.wayPoint.substring(0,2).equalsIgnoreCase("GC") && 
-                                               !alreadySaid) {
-                                    alreadySaid = true;
-                                    (new MessageBox("Information",ch.wayPoint+">"+ch.mainCache.wayPoint+": Diese Funktion steht gegenwärtig nur für Geocaching.com zur Verfügung", MessageBox.OKB)).exec();
-                            }
-                    }
-            }
+			SpiderGC spider = new SpiderGC(pref, profile);
+			Vm.showWait(true);
+			spider.login();
+			boolean alreadySaid = false;
+			boolean alreadySaid2 = false;
+			for(int i = 0; i <	cacheDB.size(); i++){
+				ch = (CacheHolder)cacheDB.get(i);
+				if(ch.is_Checked == true) {
+					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
+//						Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
+//						Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
+//						TODO: Diese Meldungen vor dem Einloggen darstellen						
+					{
+						spider.spiderSingle(i);
+					} else if (ch.isAddiWpt() && !ch.mainCache.is_Checked) { // Is the father ticked?
+						if (!alreadySaid2) {
+							alreadySaid2=true;
+							(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).exec();
+						}
+					} else if (ch.mainCache != null &&	ch.mainCache.wayPoint.length() > 1 	&& !ch.mainCache.wayPoint.substring(0,2).equalsIgnoreCase("GC") && 
+							!alreadySaid) {
+						alreadySaid = true;
+						(new MessageBox("Information",ch.wayPoint+">"+ch.mainCache.wayPoint+": Diese Funktion steht gegenwärtig nur für Geocaching.com zur Verfügung", MessageBox.OKB)).exec();
+					}
+				}
+			}
 			profile.hasUnsavedChanges=true;	
-            tbp.refreshTable();
-            Vm.showWait(false);
+			tbp.refreshTable();
+			Vm.showWait(false);
 		}
 		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Center"))){
 			CacheHolder thisCache = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
@@ -140,7 +144,7 @@ public class myTableControl extends TableControl{
 				tbp.refreshTable();
 			}
 		}
-		
+
 		if (selectedItem.toString().equals(MyLocale.getMsg(1010,"Goto"))){
 			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			Global.mainTab.gotoPoint(ch.LatLon);
@@ -162,10 +166,10 @@ public class myTableControl extends TableControl{
 		}
 
 	}
-	
+
 	public void penDoubleClicked(Point where) {
 		Global.mainTab.select(Global.mainTab.descP);
 	}
 
-	
+
 }
