@@ -31,6 +31,7 @@ public class Navigate {
 	}
 	public void setMovingMap (MovingMap mm) {
 		movingMap = mm;
+		if (gpsRunning) mm.gpsStarted();
 	}
 
 	public void startGps() {
