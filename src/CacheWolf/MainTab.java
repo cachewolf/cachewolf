@@ -228,7 +228,9 @@ public class MainTab extends mTabbedPanel {
 		mm.myExec();
 		if (forceCenter) {
 			try {
-				while (MapImage.screenDim.width == 0) { ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run 
+				int i = 0;
+				while (MapImage.screenDim.width == 0 && i < 10*60) { i++; ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
+				if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displaed - this is most likely a bug - plaese report it on www.geoclub.de", MessageBox.OKB)).execute(); return;}
 				mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
 				mm.updatePosition(centerTo.latDec, centerTo.lonDec);
 				/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
