@@ -446,7 +446,7 @@ public CacheHolder update(CacheHolder newCh){
    public void calcDistance(CWPoint toPoint) {	
 	   if(pos.isValid()){
 			kilom = pos.getDistance(toPoint);
-			degrees = pos.getBearing(toPoint);
+			degrees = toPoint.getBearing(pos);
 			bearing = CWPoint.getDirection(degrees);
 			distance = MyLocale.formatDouble(kilom,"0.00")+" km";
 	   } else {
