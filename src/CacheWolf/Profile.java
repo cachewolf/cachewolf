@@ -43,7 +43,7 @@ public class Profile {
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
 	
-	public final static String FILTERTYPE="11111111111000000";
+	public final static String FILTERTYPE="11111111111111111";
 	public final static String FILTERROSE="1111111111111111";
 	public final static String FILTERVAR="11111111";
 	public final static String FILTERSIZE="111111";
@@ -417,9 +417,8 @@ public class Profile {
 		if (filterVar.length()<8) { 
 			filterVar=(filterVar+"11111111").substring(0,8); 
 		}  
-		if (filterType.length()<16) { 
-			filterType=(filterType+"11111111111111111").substring(0,11);
-			filterType=(filterType+"000000").substring(0,17);
+		if (filterType.length()<17) { 
+			filterType=(filterType+"11111111111111111111111").substring(0,17);
 		} 
 		if (filterSize.length()<6) {
 			filterSize=(filterSize+"111111").substring(0,6);

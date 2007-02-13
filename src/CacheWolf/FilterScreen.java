@@ -288,7 +288,6 @@ public class FilterScreen extends Form{
 			chcDist.select(0);
 			inpDist.setText("");
 		}
-		// If filter has been corrupted, pad it to 11 characters
 		String fltRose=prof.filterRose;
 		chkNW.state   = fltRose.charAt(0) == '1';
 		chkNNW.state  = fltRose.charAt(1) == '1';
@@ -441,16 +440,29 @@ public class FilterScreen extends Form{
 
 		// Panel 5 - Addi Waypoints
 		if (chkParking.state || chkStage.state || chkQuestion.state || 
-			chkFinal.state || chkTrailhead.state || chkReference.state )
+			chkFinal.state || chkTrailhead.state || chkReference.state ) { // At least one tick
 			btnAddi.backGround=COLOR_FILTERACTIVE;
-		else
-			btnAddi.backGround=COLOR_FILTERINACTIVE;
+			addiWptChk.state=true;
+			if (chkParking.state && chkStage.state &&  chkQuestion.state && 
+				chkFinal.state && chkTrailhead.state && chkReference.state ) { // All ticked?
+				addiWptChk.bgColor=Color.White;
+				btnAddi.backGround=COLOR_FILTERINACTIVE;
+			} else {	
+				addiWptChk.bgColor=Color.LightGray;
+			}
+		} else { // All not ticked
+			btnAddi.backGround=COLOR_FILTERACTIVE;
+			addiWptChk.bgColor=Color.White;
+			addiWptChk.state=false;
+		}
 		btnAddi.repaint();
 
 		// Panel 4 - Cache types
+		boolean allAddis=(chkParking.state && chkStage.state &&  chkQuestion.state && 
+		chkFinal.state && chkTrailhead.state && chkReference.state) ;
 		if (!(chkTrad.state && chkMulti.state && 	chkVirtual.state && chkLetter.state &&
 		      chkEvent.state && chkWebcam.state && chkMystery.state && chkEarth.state &&
-		      chkLocless.state && chkMega.state && chkCustom.state) ) 
+		      chkLocless.state && chkMega.state && chkCustom.state && allAddis) ) 
 			btnTypes.backGround=COLOR_FILTERACTIVE;
 		else
 			btnTypes.backGround=COLOR_FILTERINACTIVE;
@@ -462,23 +474,6 @@ public class FilterScreen extends Form{
 			btnTypes.backGround=COLOR_FILTERALL;
 		btnTypes.repaint();
 
-		// Panel 5 - Addi Waypoints
-		if (chkParking.state || chkStage.state || chkQuestion.state || 
-			chkFinal.state || chkTrailhead.state || chkReference.state ) { // At least one tick
-			btnAddi.backGround=COLOR_FILTERACTIVE;
-			addiWptChk.state=true;
-			if (chkParking.state && chkStage.state &&  chkQuestion.state && 
-				chkFinal.state && chkTrailhead.state && chkReference.state ) { // All ticked?
-				addiWptChk.bgColor=Color.White;
-			} else {	
-				addiWptChk.bgColor=Color.LightGray;
-			}
-		} else { // All not ticked
-			btnAddi.backGround=COLOR_FILTERINACTIVE;
-			addiWptChk.bgColor=Color.White;
-			addiWptChk.state=false;
-		}
-		btnAddi.repaint();
 			
 		// Panel 6 - Cache container
 		if (!(chkMicro.state && chkSmall.state && chkRegular.state && 
@@ -595,17 +590,6 @@ public class FilterScreen extends Form{
 				} else { 
 					pfl.filterTerr="G"+inpTerr.getText();
 				}
-/*				if(lastChc.selectedIndex == 0) 
-					flt.daysdirec = Filter.FOUND;
-				else 
-					flt.daysdirec = Filter.NOTFOUND;
-*/
-				// Need to think about saving it here. If yes, we also need to save filter when we clear it.
-				// Maybe better to auto-save index upon exit
-				//InfoBox infB = new InfoBox("Info",MyLocale.getMsg(713,"Saving filter"));
-				//infB.exec();
-				//pfl.saveIndex(Global.getPref());
-				//infB.close(0);
 				Filter flt = new Filter();
 				flt.setFilter();
 				flt.doFilter();

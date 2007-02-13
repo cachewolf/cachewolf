@@ -304,6 +304,10 @@ public class Filter{
 	public void doFilter(){
 		Vector cacheDB=Global.getProfile().cacheDB;
 		if (cacheDB.size()==0) return;
+		if (!hasFilter()) { // If the filter was completely reset, we can just clear it
+			clearFilter();
+			return;
+		}
 		CacheHolder ch;
 		int cacheTypePattern;
 		int cacheRosePattern;
@@ -444,7 +448,7 @@ public class Filter{
 			}
 			
 		} // for
-		if (hasFilter())filterActive=true;
+		filterActive=true;
 	}
 	
 	/**
@@ -473,7 +477,7 @@ public class Filter{
 		CacheHolder ch;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered=(ch.is_black^showBlacklisted) || CacheType.isAddiWpt(ch.type); // Always filter blacklisted caches
+			ch.is_filtered=(ch.is_black^showBlacklisted) ; // Always filter blacklisted caches
 		}
 		filterActive=false;
 		filterInverted=false;
