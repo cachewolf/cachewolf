@@ -109,6 +109,7 @@ public class HintLogPanel extends CellPanel{
 		htmlImagDisp.addImage(htmlTxtImage);
 		Rect r = new Rect(new Dimension (width, h));
 		htmlImagDisp.virtualSize = r;
+		htmlImagDisp.origin = new Point();
 		htmlImagDisp.checkScrolls();
 
 		htmlImagDisp.repaintNow();
