@@ -25,21 +25,21 @@ public class Preferences extends MinML{
 	 *  for spidering */
 	public CWPoint curCentrePt=new CWPoint();
 	/** Name of last used profile */
-	public String lastProfile=new String(); 
+	public String lastProfile=""; 
 	/** If true, the last profile is reloaded automatically without a dialogue */
 	public boolean autoReloadLastProfile=false; 
 	/** The base directory contains one subdirectory for each profile*/
-	public String baseDir = new String();  // TODO Set this initially to mydataDir ??
+	public String baseDir = "";  // TODO Set this initially to mydataDir ??
 
-	public String myproxy = new String();    
-	public String myproxyport = new String();
+	public String myproxy = "";    
+	public String myproxyport = "";
 	/** This is the login alias for geocaching.com and opencaching.de */
-	public String myAlias = new String();
+	public String myAlias = "";
 	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs) 
 	 *  It is currently not used yet */
-	public String myAlias2 = new String();
+	public String myAlias2 = "";
 	/** The path to the browser */
-	public String browser = new String();
+	public String browser = "";
 	public boolean showDeletedImages=true; /* Used in ImagePanel */
 	public boolean solverIgnoreCase=false;
 
@@ -49,12 +49,12 @@ public class Preferences extends MinML{
 	public boolean dirty = false;
 
 	public int currProfile = 0;
-	public String profiles[] = new String[4];
-	public String profdirs[] = new String[4];
-	public String lats[] = new String[4];
-	public String longs[] = new String[4];
-	public String lastSyncOC[] = new String[4];
-	public String lastDistOC[] = new String[4];
+	public String profiles[] = {"","","",""};
+	public String profdirs[] = {"","","",""};
+	public String lats[] = {"","","",""};
+	public String longs[] = {"","","",""};
+	public String lastSyncOC[] = {"","","",""};
+	public String lastDistOC[] = {"","","",""};
 	public String garminConn="com1";  // The type of connection which GPSBABEL uses: com1 OR usb.
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
 	public boolean menuAtTop=true;
@@ -84,7 +84,7 @@ public class Preferences extends MinML{
 	private StringBuffer collectElement=null; 
 	private String lastName; // The string to the last XML that was processed
 
-	private final String LOGFILENAME="log.txt";
+	private final String LOGFILENAME=File.getProgramDirectory()+"/log.txt";
 	// The following declarations may eventually be moved to a separate class
 	/** The actual directory of a profile, for new profiles this is a direct child of baseDir */
 	//TODO Find all references amd move to profile.dataDir
@@ -186,7 +186,7 @@ public class Preferences extends MinML{
 		String mapsDir = baseDir + mapsPath;
 		if (create && !(new File(mapsDir).isDirectory())) { // dir exists? 
 			if (new File(mapsDir).mkdirs() == false) {// dir creation failed?
-				(new MessageBox("Error", "Error: cannot create maps directory: \n"+mapsDir, MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+mapsDir, MessageBox.OKB)).exec();
 				return null;
 			}
 		}
@@ -201,7 +201,7 @@ public class Preferences extends MinML{
 		String mapsDir = Global.getPref().baseDir + "maps/expedia/" + subdir;
 		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
 			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
-			{(new MessageBox("Error", "Error: cannot create maps directory: \n"+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();
+			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();
 			return null;
 			}
 		}
@@ -243,7 +243,7 @@ public class Preferences extends MinML{
 		if (baseDir.length()==0 || !(new File(baseDir)).exists()) {
 			do {
 				FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT,baseDir);
-				fc.title = "Select base directory for cache data";
+				fc.title = MyLocale.getMsg(170,"Select base directory for cache data");
 				// If no base directory given, terminate
 				if (fc.execute() == FileChooser.IDCANCEL) ewe.sys.Vm.exit(0);
 				baseDir = fc.getChosenFile().toString();
@@ -252,16 +252,23 @@ public class Preferences extends MinML{
 		baseDir=baseDir.replace('\\','/');
 		if (!baseDir.endsWith("/")) baseDir+="/";
 		//Vm.showWait(false);
-		if((showProfileSelector==PROFILE_SELECTOR_FORCED_ON) || 
-				(showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
-			ProfilesForm f = new ProfilesForm(baseDir,profiles,lastProfile,hasNewButton);
-			int code = f.execute();
-			// If no profile chosen (includes a new one), terminate
-			if (code==-1) return false; // Cancel pressed
-			prof.clearProfile();
-			curCentrePt.set(0,0); // No centre yet
-			lastProfile=f.newSelectedProfile;
-		} 
+		boolean profileExists=true;  // Assume that the profile exists
+		do {	
+			if(!profileExists || (showProfileSelector==PROFILE_SELECTOR_FORCED_ON) || 
+					(showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
+				ProfilesForm f = new ProfilesForm(baseDir,profiles,lastProfile,!profileExists || hasNewButton);
+				int code = f.execute();
+				// If no profile chosen (includes a new one), terminate
+				if (code==-1) return false; // Cancel pressed
+				prof.clearProfile();
+				curCentrePt.set(0,0); // No centre yet
+				lastProfile=f.newSelectedProfile;
+			}
+			profileExists=(new File(baseDir+lastProfile)).exists();
+			if (!profileExists) (new MessageBox(MyLocale.getMsg(144,"Warning"),
+					           MyLocale.getMsg(171,"Profile does not exist: ")+lastProfile,MessageBox.MBOK)).execute();
+		} while (profileExists==false);
+		// Now we are sure that baseDir exists and basDir+profile exists
 		prof.name=lastProfile;
 		currProfile=-1;
 		if (lastProfile.equals(profiles[0])) openOldProfile(prof, 0);
