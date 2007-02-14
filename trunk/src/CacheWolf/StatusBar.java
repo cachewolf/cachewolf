@@ -3,6 +3,7 @@ package CacheWolf;
 import ewe.sys.Vm;
 import ewe.ui.*;
 import ewe.util.*;
+import ewe.fx.*;
 
 /**
  * Class ID = 4500
@@ -13,13 +14,22 @@ public class StatusBar extends CellPanel{
 	DBStats stats;
 	mLabel disp,lblFlt,lblCenter;
 	Preferences pref;
+	mButton btnFlt;
+	mImage imgFlt;
 	
 	public StatusBar(Preferences p, Vector db){
 		pref=p;
 		stats = new DBStats(db);
 		addNext(disp = new mLabel(""),CellConstants.DONTSTRETCH, CellConstants.FILL);
-		addNext(lblFlt= new mLabel("Flt"),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); lblFlt.backGround=new ewe.fx.Color(0,255,0);
+		disp.setToolTip("Total # of caches (GC&OC)\nTotal # visible\nTotal # found");
+		addNext(btnFlt= new mButton(imgFlt=new mImage("filter.png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); 
+		btnFlt.backGround=new ewe.fx.Color(0,255,0); 
+		btnFlt.setPreferredSize(20,13);
+		btnFlt.borderWidth=0; imgFlt.transparentColor=Color.White;
+		btnFlt.setToolTip("Filter status");
+//		addNext(lblFlt= new mLabel("Flt"),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); lblFlt.backGround=new ewe.fx.Color(0,255,0);
 		addLast(lblCenter=new mLabel(""),CellConstants.STRETCH, WEST|CellConstants.FILL);
+		lblCenter.setToolTip("Current center");
 		updateDisplay();
 	}
 	
@@ -31,9 +41,9 @@ public class StatusBar extends CellPanel{
 		disp.setText(strStatus);
 		// Indicate that a filter is active in the status line
 		if (Filter.filterActive)
-			lblFlt.modify(0,Invisible); // Set the filter to "invisible"
+			btnFlt.backGround=new Color(0,255,0);
 		else
-			lblFlt.modify(Invisible,0); // Make filter visible
+			btnFlt.backGround=null;
 		// Current centre can only be displayed if screen is big
 		// Otherwise it forces a scrollbar
 		if (MyLocale.getScreenWidth()>=320) 
@@ -41,5 +51,21 @@ public class StatusBar extends CellPanel{
 		
 		lblCenter.setText(strCenter);
 		relayout(true); // in case the numbers increased and need more space
+	}
+	
+	public void onEvent(Event ev) {
+		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
+			if (ev.target == btnFlt){
+				Filter flt = new Filter();
+				if (Filter.filterActive) {
+					flt.clearFilter();
+				} else {
+					flt.setFilter();
+					flt.doFilter();
+				}
+				Global.mainTab.tbP.refreshTable();
+			}
+		}
+		super.onEvent(ev);
 	}
 }
