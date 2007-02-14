@@ -37,6 +37,7 @@ public class myTableModel extends TableModel{
 	mImage bug;
 	myTableControl tcControl;
 	boolean sortAsc = false;
+	int sortedBy = -1;
 	FontMetrics fm;
 	Image checkboxTicked,checkboxUnticked;
 	
@@ -284,11 +285,13 @@ public class myTableModel extends TableModel{
 				}
 			}
 			if(cell.y == -1){ // Hit a header => sort the table accordingly
-				sortAsc=!sortAsc;
 				CacheHolder ch=null;
 				Vm.showWait(true);
 				Point a = tcControl.getSelectedCell(null);
 				if(a != null) ch = (CacheHolder)cacheDB.get(a.y);
+				if (cell.x == sortedBy) sortAsc=!sortAsc;
+				else sortAsc = false;
+				sortedBy = cell.x;
 				cacheDB.sort(new MyComparer(cacheDB, colName[cell.x],numRows), sortAsc);
 				updateRows();
 				if(a != null){

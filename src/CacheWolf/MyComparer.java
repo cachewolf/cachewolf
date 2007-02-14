@@ -51,12 +51,12 @@ public class MyComparer implements Comparer{
 		} else if (what.equals(nmWay)) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.wayPoint;
+				ch.sort=ch.wayPoint.toUpperCase();
 			}
 		} else if (what.equals(nmName)) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.CacheName;
+				ch.sort=ch.CacheName.toLowerCase();
 			}
 		} else if (what.equals(nmLoc)) {
 			for (int i=0; i<visibleSize; i++) {
