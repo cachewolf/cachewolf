@@ -728,11 +728,12 @@ public class MovingMap extends Form {
 	}
 
 	public void destChanged(CWPoint d) {
-		if(!running || d.equals(gotoPos)) return;
+		if(!running || (d == null && gotoPos == null) || 
+				(d != null && gotoPos != null && d.latDec == gotoPos.lat && d.lonDec == gotoPos.lon)) return;
 		removeGotoPosition();
 		if (d == null || !d.isValid() ) return;
 		gotoPos = addSymbol("goto", "goto_map.png", d.latDec, d.lonDec);
-		//updateDistance();
+		//updateDistance(); - this is called from updatePosition
 		forceMapLoad = true;
 		updatePosition(posCircleLat, posCircleLon);
 	}

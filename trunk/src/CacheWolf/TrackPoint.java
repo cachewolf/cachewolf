@@ -31,6 +31,9 @@ public class TrackPoint  {
 		latDec = lat;
 		lonDec = lon;
 	}
+	public boolean equals(TrackPoint tp) {
+		return latDec == tp.latDec && lonDec == tp.lonDec;
+	}
 
 }
 
