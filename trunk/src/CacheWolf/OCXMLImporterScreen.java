@@ -41,6 +41,7 @@ public class OCXMLImporterScreen extends Form {
 			foundCheckBox = new mCheckBox();
 			foundCheckBox.setText(MyLocale.getMsg(1622,"Include found caches"));
 			foundCheckBox.setState(false);
+			this.addLast(foundCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
 /*		
 		mapsCheckBox = new mCheckBox();
