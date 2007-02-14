@@ -55,6 +55,9 @@ public class Profile {
 	public String filterDist=new String("L");
 	public String filterDiff=new String("L");
 	public String filterTerr=new String("L");
+	// Saved filterstatus - is only refreshed from class Filter when Profile is saved
+	public boolean filterActive=false;
+	public boolean filterInverted=false;
 
 	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map 
 	/** True if the profile has been modified and not saved
@@ -82,15 +85,21 @@ public class Profile {
 		hasUnsavedChanges=false;
 	}
 
-
 	/**
 	 *	Method to save the index.xml file that holds the total information
 	 *	on available caches in the database. The database is nothing else
 	 *	than the collection of caches in a directory.
 	 *   
 	 *   Not sure whether we need to keep 'pref' in method signature. May eventually remove it. 
+	 *   
+	 *   Saves the index with the filter settings from Filter
 	 */
 	public void saveIndex(Preferences pref, boolean showprogress){
+		saveIndex(pref,showprogress, Filter.filterActive,Filter.filterInverted);
+	}
+
+	/** Save index with filter settings given */ 
+	public void saveIndex(Preferences pref, boolean showprogress, boolean saveFilterActive, boolean saveFilterInverted){
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 		if(showprogress){
@@ -123,7 +132,8 @@ public class Profile {
 				distOC = "0";
 			}
 
-			detfile.print("    <FILTER rose = \""+filterRose+"\" type = \""+filterType+
+			detfile.print("    <FILTER status = \""+(saveFilterActive?"T":"F")+(saveFilterInverted?"T":"F")+ 
+					"\" rose = \""+filterRose+"\" type = \""+filterType+
 					"\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
 					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
@@ -234,7 +244,13 @@ public class Profile {
 					distOC=text.substring(start,text.indexOf("\"",start));
 				} else if (text.indexOf("<FILTER")>=0){
 					ex.setSource(text);
-					filterRose = ex.findNext();
+					String temp=ex.findNext(); // Filter status is now first, need to deal with old versions which don't have filter status
+					if (temp.length()==2) {
+						filterActive=temp.charAt(0)=='T';
+						filterInverted=temp.charAt(1)=='T';
+						filterRose = ex.findNext();
+					} else 
+						filterRose = temp;
 					filterType = ex.findNext();
 					filterVar = ex.findNext();
 					filterDist = ex.findNext();
@@ -255,6 +271,20 @@ public class Profile {
 		}
 		normalizeFilters();
 		hasUnsavedChanges=false;
+	}
+	
+	/** Restore the filter to the values stored in this profile 
+	 *  Called from Main Form and MainMenu 
+	 *  The values of Filter.isActive and Filter.isInactive are set by the filter 
+	 **/
+	void restoreFilter() {
+		Filter flt=new Filter();
+		if (filterActive) {
+			flt.setFilter();
+			flt.doFilter();
+		}
+		if (filterInverted) 
+			flt.invertFilter();
 	}
 
 	public int getCacheIndex(String wp){
