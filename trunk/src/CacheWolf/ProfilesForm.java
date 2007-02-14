@@ -92,6 +92,7 @@ public class ProfilesForm extends Form{
 		addLast(spMList);
 		addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
 		addNext(btnOK = new mButton(MyLocale.getMsg(1605,"OK")),DONTSTRETCH,HFILL|RIGHT);
+		if (choice.getListItems().length==0) btnOK.modify(Disabled,0);
 		btnOK.setHotKey(0, IKeys.ENTER);
 		btnCancel.setHotKey(0, IKeys.ESCAPE);
 		this.baseDir=baseDir;
@@ -124,8 +125,10 @@ public class ProfilesForm extends Form{
 			if (ev.target == btnOK || ev.target == choice){
 				Filter.filterActive=false;
 				Filter.filterInverted=false;
-				newSelectedProfile=choice.getSelectedItem().toString();
-				close(1);
+				if (choice.getSelectedItem()!=null) {
+					newSelectedProfile=choice.getSelectedItem().toString();
+					close(1);
+				}
 			}
 			if (ev.target == btnNew){
 				newSelectedProfile=createNewProfile();
