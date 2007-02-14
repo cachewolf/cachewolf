@@ -118,6 +118,7 @@ public class SpiderGC{
 		Vm.showWait(true);
 		String notes = new String();
 		String start = new String();
+		String origLong = new String();
 		try{
 			ch.readCache(profile.dataDir);
 		}catch(IOException ioex){
@@ -133,56 +134,65 @@ public class SpiderGC{
 			start = fetch(doc);
 		}catch(Exception ex){
 			pref.log("Could not fetch " + ch.wayPoint);
-			Vm.debug("Couldn't get cache detail page");
+			//Vm.debug("Couldn't get cache detail page");
 		}
 		ch.is_new = false;
-		ch.is_update = true;
+		ch.is_update = false;
 		ch.is_HTML = true;
-		Vm.debug(ch.wayPoint);
+		ch.is_available = true;
+		ch.is_archived = false;
+		//Vm.debug(ch.wayPoint);
+		
 		if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
+		if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
 		pref.log("Trying logs");
+		int logsz = ch.CacheLogs.size();
 		ch.CacheLogs = getLogs(start, ch);
+		ch.is_log_update = false;
+		if(ch.CacheLogs.size()>logsz) ch.is_log_update = true;
 		pref.log("Found logs");
 		ch.LatLon = getLatLon(start);
 		ch.pos.set(ch.LatLon);
-		Vm.debug("LatLon: " + ch.LatLon);
+		//Vm.debug("LatLon: " + ch.LatLon);
 		pref.log("Trying description");
+		origLong = ch.LongDescription;
 		ch.LongDescription = getLongDesc(start);
+		if(!ch.LongDescription.equals(origLong)) ch.is_update = true;
 		pref.log("Got description");
 		pref.log("Getting cache name");
 		ch.CacheName = SafeXML.cleanback(getName(start));
 		pref.log("Got cache name");
-		Vm.debug("Name: " + ch.CacheName);
+		//Vm.debug("Name: " + ch.CacheName);
 		pref.log("Trying owner");
 		ch.CacheOwner = SafeXML.cleanback(getOwner(start));
 		if(ch.CacheOwner.equals(pref.myAlias + " ")) ch.is_owned = true;
 		pref.log("Got owner");
-		Vm.debug("Owner: " + ch.CacheOwner);
+		//Vm.debug("Owner: " + ch.CacheOwner);
 		pref.log("Trying date hidden");
 		ch.DateHidden = getDateHidden(start);
 		pref.log("Got date hidden");
-		Vm.debug("Hidden: " + ch.DateHidden);
+		//Vm.debug("Hidden: " + ch.DateHidden);
 		pref.log("Trying hints");
 		ch.Hints = getHints(start);
 		pref.log("Got hints");
-		Vm.debug("Hints: " + ch.Hints);
-		Vm.debug("Got the hints");
+		//Vm.debug("Hints: " + ch.Hints);
+		//Vm.debug("Got the hints");
 		pref.log("Trying size");
 		ch.CacheSize = getSize(start);
 		pref.log("Got size");
-		Vm.debug("Size: " + ch.CacheSize);
+		//Vm.debug("Size: " + ch.CacheSize);
 		pref.log("Trying difficulty");
 		ch.hard = getDiff(start);
 		pref.log("Got difficulty");
-		Vm.debug("Hard: " + ch.hard);
+		//Vm.debug("Hard: " + ch.hard);
 		pref.log("Trying terrain");
 		ch.terrain = getTerr(start);
 		pref.log("Got terrain");
-		Vm.debug("Terr: " + ch.terrain);
+		//Vm.debug("Terr: " + ch.terrain);
 		pref.log("Trying cache type");
 		ch.type = getType(start);
 		pref.log("Got cache type");
-		Vm.debug("Type: " + ch.type);
+		//Vm.debug("Type: " + ch.type);
 		pref.log("Trying images");
 		getImages(start, ch);
 		pref.log("Got images");
@@ -219,13 +229,14 @@ public class SpiderGC{
 			return;
 		}
 		
-		OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options", OCXMLImporterScreen.IMAGESANDMAPS);
+		OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options", OCXMLImporterScreen.INCLUDEFOUND);
 		options.distanceInput.setText("");
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {Vm.showWait(false);	return; }
 		String dist = options.distanceInput.getText();
 		if (dist.length()== 0) return;
 		distance = Convert.toDouble(dist);
 		//boolean getMaps = options.mapsCheckBox.getState();
+		boolean getFound = options.foundCheckBox.getState();
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
 		
@@ -234,7 +245,9 @@ public class SpiderGC{
 		infB.exec();
 		//Get first page
 		try{
-			pref.log("Fetching first list page: http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
+			String ln = new String("Fetching first list page: http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
+			if(getFound) ln = ln + "&f=1";
+			pref.log("First page: " + start);
 			start = fetch("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
 			pref.log("First page: " + start);
 		}catch(Exception ex){
@@ -314,8 +327,11 @@ public class SpiderGC{
 				}
 				ch.is_new = true;
 				ch.is_HTML = true;
+				ch.is_available = true;
+				ch.is_archived = false;
 				ch.wayPoint = wpt;
 				if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
+				if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
 				//Vm.debug(ch.wayPoint);
 				try{
 					pref.log("Trying logs");
@@ -326,6 +342,7 @@ public class SpiderGC{
 					//Vm.debug("LatLon: " + ch.LatLon);
 					pref.log("Trying description");
 					ch.LongDescription = getLongDesc(start);
+					
 					pref.log("Got description");
 					pref.log("Getting cache name");
 					ch.CacheName = SafeXML.cleanback(getName(start));
@@ -718,7 +735,7 @@ public class SpiderGC{
 			//Vm.debug("--------------------------------------------");
 			icon = exIcon.findNext();
 			name = exName.findNext();
-			if(icon.equals("icon_smile.gif") && name.equals(pref.myAlias)) {
+			if((icon.equals("icon_smile.gif") || icon.equals("icon_camera.gif")) && name.equals(pref.myAlias)) {
 				ch.is_found = true;
 				ch.CacheStatus = MyLocale.getMsg(318,"Found");
 			}
@@ -732,6 +749,15 @@ public class SpiderGC{
 			exDate.setSource(singleLog);
 			exLog.setSource(singleLog);
 		}
+		int z = 0;
+		String loganal = new String();
+		while(z < ch.CacheLogs.size() && z < 5){
+			loganal = (String)ch.CacheLogs.get(z);
+			if(loganal.indexOf("icon_sad")>0) {
+				z++;
+			}else break;
+		}
+		ch.noFindLogs = z;
 		return reslts;
 	}
 	
