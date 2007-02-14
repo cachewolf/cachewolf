@@ -172,13 +172,12 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 	
 	// I copied it here because the original has a bug when scrolling
 	// added the support for scrolling / draggin only vertically
+	// rewrite to support for images bigger than the canvas
 	// the return value is never used
 //	============================================================
 	public boolean imageDragged(ImageDragContext dc,Point where)
 //	============================================================
 	{
-		ReactiveImage ri = null;
-		if (dc.image instanceof ReactiveImage) ri = (ReactiveImage)dc.image;
 		dc.curPoint = new Point(where.x,where.y);
 		AniImage moving = dc.image;
 		Rect r = getDim(null);
@@ -217,4 +216,27 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 		else refresh(dc.image,null);//updateImage(dc.image);
 		return(true);
 	}
+	public void onKeyEvent(KeyEvent ev) {
+		if (ev.type == KeyEvent.KEY_PRESS) {
+			if (ev.key == IKeys.DOWN) {
+				 doScroll(IScroll.Vertical, IScroll.ScrollHigher, 1);
+				 refresh();
+			}
+			if (ev.key == IKeys.UP) {
+				 doScroll(IScroll.Vertical, IScroll.ScrollLower, 1);
+				 refresh();
+			}
+			if (ev.key == IKeys.PAGE_DOWN) {
+				 doScroll(IScroll.Vertical, IScroll.PageHigher, 1);
+				 refresh();
+			}
+			if (ev.key == IKeys.PAGE_UP) {
+				 doScroll(IScroll.Vertical, IScroll.PageLower, 1);
+				 refresh();
+			}
+		}
+	}
+
+	
+	
 }
