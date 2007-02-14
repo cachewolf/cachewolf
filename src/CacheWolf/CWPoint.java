@@ -124,7 +124,9 @@ public class CWPoint extends TrackPoint{
 	public CWPoint(String coord) {
 		set(coord);
 	}
-
+	public boolean equals (CWPoint p) {
+		return super.equals(p);
+	}
 
 	/**
 	 * Set lat and lon 
