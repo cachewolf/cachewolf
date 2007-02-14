@@ -8,7 +8,6 @@ import ewe.sys.*;
 *	This class shows the long description on a cache.
 */
 public class DescriptionPanel extends CellPanel{
-	mTextPad myPad = new mTextPad();
 	HtmlDisplay disp = new HtmlDisplay();
 	mButton btnPlus, btnMinus;
 	CacheHolder currCache;
