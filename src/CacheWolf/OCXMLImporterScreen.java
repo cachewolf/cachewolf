@@ -16,10 +16,11 @@ public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;
 	Preferences pref;
 	mInput distanceInput;
-	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox;
+	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox;
 	mLabel distLbl;
 	static int IMAGESANDMAPS = 0;
 	static int ALL = 1;
+	static int INCLUDEFOUND = 2;
 	
 	public OCXMLImporterScreen(String title, int options) {
 		super();
@@ -36,6 +37,11 @@ public class OCXMLImporterScreen extends Form {
 		imagesCheckBox.setText(MyLocale.getMsg(1602,"Download Images"));
 		imagesCheckBox.setState(true); // @ToDo: aus Prefs
 		this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		if(options == INCLUDEFOUND){
+			foundCheckBox = new mCheckBox();
+			foundCheckBox.setText(MyLocale.getMsg(1622,"Include found caches"));
+			foundCheckBox.setState(false);
+		}
 /*		
 		mapsCheckBox = new mCheckBox();
 		mapsCheckBox.setText(MyLocale.getMsg(1603,"Download Maps"));
