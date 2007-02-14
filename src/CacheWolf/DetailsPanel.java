@@ -32,9 +32,10 @@ public class DetailsPanel extends CellPanel{
 	private boolean blackStatus = false;
 	Preferences pref; // Test
 	Profile profile;
-	mImage mIsBlack;
-	mImage mNoBlack;
-	mImage mI, mI_no;
+	mImage imgBlack;
+	mImage imgBlackNo;
+	mImage imgShowBug, imgShowBugNo,imgNewWpt,imgGoto;
+	mImage imgShowMaps,imgAddImages;
 	
 	public DetailsPanel(){
 		pref = Global.getPref();
@@ -43,28 +44,37 @@ public class DetailsPanel extends CellPanel{
 		////////////////////
 		// Tools
 		////////////////////
-		pnlTools.addLast(btnNewWpt = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		pnlTools.addNext(btnGoto = new mButton("Goto"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		mI = new mImage("bug.gif");
-		mI_no = new mImage("bug_no.gif");
-		mImage mI2 = new mImage("globe_small.gif");
-		
-		mImage mI4 = new mImage("images.gif");
-		mNoBlack = new mImage("no_black.png");
-		mIsBlack = new mImage("is_black.png");
-		btnShowBug = new mButton((IImage)mI_no);
-		btnShowMap = new mButton((IImage)mI2);
-		
-		btnAddDateTime = new mButton((IImage)new mImage("date_time.png"));
-		btnAddPicture = new mButton((IImage)mI4);
-		btnBlack = new mButton((IImage)mNoBlack);
-		pnlTools.addNext(btnShowBug,CellConstants.DONTSTRETCH, CellConstants.WEST);
+		// Button 1: New Waypoint
+		pnlTools.addNext(btnNewWpt = new mButton(imgNewWpt=new mImage("newwpt.png"))); 
+		btnNewWpt.setToolTip(MyLocale.getMsg(311,"Create Waypoint"));
+		PenEvent.wantPenMoved(btnNewWpt,PenEvent.WANT_PEN_MOVED_ONOFF,true);
+		imgNewWpt.transparentColor=new Color(255,0,0);
+		// Button 2: Goto
+		pnlTools.addNext(btnGoto = new mButton(imgGoto=new mImage("goto.png")));//Goto.gif funzt manchmal nicht
+		imgGoto.transparentColor=Color.White;
+		btnGoto.setToolTip(MyLocale.getMsg(345,"Goto these coordinates"));
+		// Button 3: Travelbugs
+		imgShowBug = new mImage("bug.gif");
+		imgShowBugNo = new mImage("bug_no.gif");
+		pnlTools.addNext(btnShowBug = new mButton(imgShowBugNo)); 
 		btnShowBug.modify(Control.Disabled,0);
-		pnlTools.addNext(btnShowMap,CellConstants.DONTSTRETCH, CellConstants.WEST);
-		pnlTools.addNext(btnAddPicture,CellConstants.DONTSTRETCH, CellConstants.WEST);
-		pnlTools.addNext(btnBlack,CellConstants.DONTSTRETCH, CellConstants.WEST);
-		pnlTools.addLast(btnAddDateTime,CellConstants.DONTSTRETCH, CellConstants.WEST);
+		btnShowBug.setToolTip(MyLocale.getMsg(346,"Show travelbugs"));
+		// Button 4: Show Map
+		pnlTools.addNext(btnShowMap = new mButton(imgShowMaps = new mImage("globe_small.gif"))); 
+		btnShowMap.setToolTip(MyLocale.getMsg(347,"Show map"));
+		// Button 5: Add images
+		pnlTools.addNext(btnAddPicture = new mButton(imgAddImages = new mImage("images.gif"))); 
+		btnAddPicture.setToolTip(MyLocale.getMsg(348,"Add user pictures"));
+		// Button 6: Toggle blacklist status
+		imgBlackNo = new mImage("no_black.png"); imgBlackNo.transparentColor=Color.Black;
+		imgBlack = new mImage("is_black.png"); imgBlack.transparentColor=Color.White;
+		pnlTools.addNext(btnBlack=new mButton(imgBlackNo)); 
+		btnBlack.setToolTip(MyLocale.getMsg(349,"Toggle Blacklist status"));
+		// Button 7: Date/time stamp
+		pnlTools.addLast(btnAddDateTime = new mButton(new mImage("date_time.png"))); 
+		btnAddDateTime.setToolTip(MyLocale.getMsg(350,"Add timestamp to notes"));
 		//showMap.modify(Control.Disabled,0);
+		pnlTools.stretchFirstRow=true;
 		this.addLast(pnlTools,CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(3,1));;
 		
 		////////////////////
@@ -123,18 +133,18 @@ public class DetailsPanel extends CellPanel{
 		
 		chcType.setInt(transType(ch.type));
 		if(ch.is_black){
-			btnBlack.image = mIsBlack;
+			btnBlack.image = imgBlack;
 		} else {
-			btnBlack.image = mNoBlack;
+			btnBlack.image = imgBlackNo;
 		}
 		blackStatus=ch.is_black; 
 		btnBlack.repaintNow();
 		if(ch.has_bug == true) {
 			btnShowBug.modify(Control.Disabled,1);
-			btnShowBug.image = mI;
+			btnShowBug.image = imgShowBug;
 		} else {
 			btnShowBug.modify(Control.Disabled,0);
-			btnShowBug.image = mI_no;
+			btnShowBug.image = imgShowBugNo;
 		}
 		btnShowBug.repaintNow();
 		if(ch.CacheSize.equals("Micro")) chcSize.setInt(1);
@@ -275,11 +285,11 @@ public class DetailsPanel extends CellPanel{
 			else if(ev.target == btnBlack){
 				if(thisCache.is_black) {
 					thisCache.is_black = false;
-					btnBlack.image = mNoBlack;
+					btnBlack.image = imgBlackNo;
 				}
 				else {
 					thisCache.is_black = true;
-					btnBlack.image = mIsBlack;
+					btnBlack.image = imgBlack;
 				}
 				blackStatus = thisCache.is_black;
 				btnBlack.repaintNow();
