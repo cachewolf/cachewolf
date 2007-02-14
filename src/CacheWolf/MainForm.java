@@ -67,9 +67,7 @@ public class MainForm extends Form {
 			profile.readIndex();
 			pref.curCentrePt.set(profile.centre);
 			profile.updateBearingDistance();
-			Filter flt=new Filter();
-			flt.setFilter();
-			flt.doFilter();
+			profile.restoreFilter();
 		} catch (Exception e){
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}

@@ -85,8 +85,8 @@ public class DataMover {
 				}
 			}//if srcHolder...
 		}//for ... i < srcDB ...
-		// write indexfiles
-		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+		// write indexfiles and keep the filter status
+		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR,dstProfile.filterActive,dstProfile.filterInverted);
 	}
 	
 	public void moveCaches() {
@@ -136,7 +136,7 @@ public class DataMover {
 			}//if srcHolder...
 		}//for ... i < srcDB ...
 		// write indexfiles
-		dstProfile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR,dstProfile.filterActive,dstProfile.filterInverted);
 		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 	}
 

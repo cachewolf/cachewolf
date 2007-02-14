@@ -215,6 +215,7 @@ public class MainMenu extends MenuBar {
 						filtBlack.modifiers&=~MenuItem.Checked;
 						Filter.showBlacklisted=false;
 						infB.close(0);
+						profile.restoreFilter(); // Restore the isActive & isInverted status of the filter
 						tbp.resetModel();
 				}
 			}
@@ -497,19 +498,20 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == sysinfo){
 				//Vm.debug("Checking system...");
-				String sysstring = new String();
+				String sysstring;
 				Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
 				Font f = mApp.guiFont;
-				sysstring += "Platform: " + Vm.getPlatform() + "<br>";
-				sysstring += "Locale lang is: " + MyLocale.getLocaleLanguage() + "<br>";
-				sysstring += "Locale country is: " + MyLocale.getLocaleCountry() + "<br>";
-				sysstring += "Decimal seperator is: \"" + pref.digSeparator + "\"<br>";
-				sysstring += "Device is PDA: " + Vm.isMobile()+ "<br>";
-				sysstring += "Screen: " + MyLocale.getScreenWidth() + " x " + MyLocale.getScreenHeight() + "<br>";
-				sysstring += "Font size: " + f.getSize() + "<br>";
-				sysstring += "Entries in DB: " +cacheDB.size() + "<br>";
-				sysstring += "File seperator is: \"" + Vm.getProperty("file.separator","def")+ "\"<br>";
-				sysstring += "Programme directory is " + File.getProgramDirectory()+"<br>";
+				sysstring =  "Profile: " + profile.dataDir + "<br>" +
+							 "Platform: " + Vm.getPlatform() + "<br>" +
+							 "Locale lang is: " + MyLocale.getLocaleLanguage() + "<br>" +
+							 "Locale country is: " + MyLocale.getLocaleCountry() + "<br>"+
+							 "Decimal separator is: \"" + pref.digSeparator + "\"<br>" +
+							 "Device is PDA: " + Vm.isMobile()+ "<br>" +
+							 "Screen: " + MyLocale.getScreenWidth() + " x " + MyLocale.getScreenHeight() + "<br>"+
+							 "Font size: " + f.getSize() + "<br>" +
+							 "Entries in DB: " +cacheDB.size() + "<br>"+
+							 "File separator is: \"" + Vm.getProperty("file.separator","def")+ "\"<br>"+
+							 "Programme directory is " + File.getProgramDirectory()+"<br>";
 				InfoScreen is = new InfoScreen(sysstring, "System", false,pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
