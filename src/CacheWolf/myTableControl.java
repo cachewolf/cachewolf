@@ -57,6 +57,8 @@ public class myTableControl extends TableControl{
 			if (ev.key == IKeys.END) cursorTo(model.numRows-1,cursor.x+listMode,true);
 			if (ev.key == IKeys.PAGE_DOWN) cursorTo(java.lang.Math.min(cursor.y+ getOnScreen(null).height-1, model.numRows-1),cursor.x+listMode,true); // I don't know why this doesn't work: tbp.doScroll(IScroll.Vertical, IScroll.PageHigher, 1);
 			if (ev.key == IKeys.PAGE_UP) cursorTo(java.lang.Math.max(cursor.y-getOnScreen(null).height+1, 0),cursor.x+listMode,true);
+			if (ev.key == IKeys.ACTION || ev.key == IKeys.ENTER) Global.mainTab.select(Global.mainTab.descP);
+
 		}
 		super.onKeyEvent(ev);
 	}
