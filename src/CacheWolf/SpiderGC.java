@@ -148,6 +148,15 @@ public class SpiderGC{
 		pref.log("Trying logs");
 		int logsz = ch.CacheLogs.size();
 		ch.CacheLogs = getLogs(start, ch);
+		int z = 0;
+		String loganal = new String();
+		while(z < ch.CacheLogs.size() && z < 5){
+			loganal = (String)ch.CacheLogs.get(z);
+			if(loganal.indexOf("icon_sad")>0) {
+				z++;
+			}else break;
+		}
+		ch.noFindLogs = z;
 		ch.is_log_update = false;
 		if(ch.CacheLogs.size()>logsz) ch.is_log_update = true;
 		pref.log("Found logs");
@@ -336,6 +345,15 @@ public class SpiderGC{
 				try{
 					pref.log("Trying logs");
 					ch.CacheLogs = getLogs(start, ch);
+					int z = 0;
+					String loganal = new String();
+					while(z < ch.CacheLogs.size() && z < 5){
+						loganal = (String)ch.CacheLogs.get(z);
+						if(loganal.indexOf("icon_sad")>0) {
+							z++;
+						}else break;
+					}
+					ch.noFindLogs = z;
 					pref.log("Found logs");
 					ch.LatLon = getLatLon(start);
 					ch.pos.set(ch.LatLon); // Slow parse no problem
@@ -427,17 +445,10 @@ public class SpiderGC{
 		} else return -1;
 	}
 	
-	/* wird nicht mehr gebraucht.
-	public void getMaps(CacheHolder holder){
-		if(holder.LatLon.length() > 4){
-			ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
-			pll.parse();
-			MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
-			//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");
-			//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
-		}
+	public void getBugs(){	
+		
 	}
-	*/
+	
 	public void getAddWaypoints(String doc, CacheHolder ch){
 		Extractor exWayBlock = new Extractor(doc, "<strong>Additional Waypoints</strong><br>", "</table>", 0, false);
 		String wayBlock = new String();
@@ -463,18 +474,6 @@ public class SpiderGC{
 				else cx.LatLon = "---"; 
 				cx.pos.set(cx.LatLon);
 				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
-				
-				//Vm.debug("Name: " + nameRex.stringMatched(1));
-				//Vm.debug("K: " + koordRex.stringMatched(1));
-				/*
-				if(koordRex.didMatch()) cx.LatLon = koordRex.stringMatched(0);
-				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(0));
-				cx.wayPoint = Convert.toString(counter) + ch.wayPoint.substring(2,5);
-				rowBlock = exRowBlock.findNext();
-				cx.LongDescription = noteRex.stringMatched(0);
-				
-				
-				*/
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
 				cx.wayPoint = MyLocale.formatLong(counter, "00") + ch.wayPoint.substring(2);
@@ -482,6 +481,7 @@ public class SpiderGC{
 				cx.LongDescription = descRex.stringMatched(1); 
 				//Vm.debug(descRex.stringMatched(1));
 				int idx=profile.getCacheIndex(cx.wayPoint);
+				cx.is_found = ch.is_found;
 				if (idx<0)
 					cacheDB.add(cx);
 				else if (((CacheHolder) cacheDB.get(idx)).is_Checked) // Only spider addi waypoints that are ticked
@@ -749,15 +749,6 @@ public class SpiderGC{
 			exDate.setSource(singleLog);
 			exLog.setSource(singleLog);
 		}
-		int z = 0;
-		String loganal = new String();
-		while(z < ch.CacheLogs.size() && z < 5){
-			loganal = (String)ch.CacheLogs.get(z);
-			if(loganal.indexOf("icon_sad")>0) {
-				z++;
-			}else break;
-		}
-		ch.noFindLogs = z;
 		return reslts;
 	}
 	
