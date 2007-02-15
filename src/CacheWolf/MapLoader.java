@@ -150,7 +150,7 @@ public class MapLoader {
 		lonD.decimalPlaces = 4;
 		latD.set(lat);
 		lonD.set(lon);
-		return "expedia_alti"+alti+"_lat"+latD.toString().replace(',', '.')+"_lon"+lonD.toString()+".gif";
+		return "expedia_alti"+alti+"_lat"+latD.toString().replace(',', '.')+"_lon"+lonD.toString().replace(',', '.')+".gif";
 	}
 	
 	public void downloadMap(double lat, double lon, int alti, int PixelWidth, int PixelHeight, String path){
