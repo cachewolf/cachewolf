@@ -39,12 +39,10 @@ class SelectMap extends Form{
 		try{
 			File files = new File(mapsPath);
 			File checkWFL;
-			Extractor ext;
 			String rawFileName = new String();
 			dateien = files.listMultiple("*.png,*.jpg,*.gif,*.bmp", File.LIST_FILES_ONLY);
 			for(int i = 0; i < dateien.length;i++){
-				ext = new Extractor(dateien[i], "", ".", 0, true);
-				rawFileName = ext.findNext();
+				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
 				checkWFL = new File(mapsPath + rawFileName + ".wfl");
 				
 				if(checkWFL.exists()){
