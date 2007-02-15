@@ -223,9 +223,9 @@ public class myTableModel extends TableModel{
 					case 3: // Terrain
 						return (String)ch.terrain;
 					case 4: // Waypoint
-						if(ch.is_log_update) return new IconAndText((IImage)blue, ch.wayPoint, fm);
 						if(ch.is_update    ) return new IconAndText((IImage)red, ch.wayPoint, fm);
 						if(ch.is_new       ) return new IconAndText((IImage)yellow, ch.wayPoint, fm);
+						if(ch.is_log_update) return new IconAndText((IImage)blue, ch.wayPoint, fm);
 						return (String)ch.wayPoint;
 					case 5: // Cachename
 						// Fast return for majority of case
