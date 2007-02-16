@@ -39,10 +39,10 @@ public class Profile {
 	public String last_sync_opencaching = new String();
 	/** Distance for opencaching caches */
 	public String distOC = new String();
-	
+
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
-	
+
 	public final static String FILTERTYPE="11111111111111111";
 	public final static String FILTERROSE="1111111111111111";
 	public final static String FILTERVAR="11111111";
@@ -64,7 +64,7 @@ public class Profile {
 	 * The following modifications set this flag: New profile centre, Change of waypoint data 
 	 */
 	public boolean hasUnsavedChanges = false;
-	
+
 	//TODO Add other settings, such as max. number of logs to spider
 	//TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
 
@@ -77,7 +77,7 @@ public class Profile {
 
 	public void clearProfile() {
 		cacheDB.clear();
-		centre.set(0,0);
+		centre.set(-361,-361);
 		name="";
 		dataDir="";  
 		last_sync_opencaching = "";
@@ -147,9 +147,9 @@ public class Profile {
 				////Vm.debug("Saving: " + ch.CacheName);
 				if(ch.wayPoint.length()>0 && ch.LongDescription.equals("An Error Has Occured") == false){
 					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
-							 //"\" lat = \""+ SafeXML.clean(ch.LatLon) +
-							 "\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
-							 "\" hidden = \""+ch.DateHidden+"\" wayp = \""+SafeXML.clean(ch.wayPoint)+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"" + ch.dirty + "\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\" />\n");
+							//"\" lat = \""+ SafeXML.clean(ch.LatLon) +
+							"\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
+							"\" hidden = \""+ch.DateHidden+"\" wayp = \""+SafeXML.clean(ch.wayPoint)+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"" + ch.dirty + "\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\" />\n");
 				}
 			}
 			detfile.print("</CACHELIST>\n");
@@ -272,7 +272,7 @@ public class Profile {
 		normalizeFilters();
 		hasUnsavedChanges=false;
 	}
-	
+
 	/** Restore the filter to the values stored in this profile 
 	 *  Called from Main Form and MainMenu 
 	 *  The values of Filter.isActive and Filter.isInactive are set by the filter 
@@ -341,6 +341,7 @@ public class Profile {
 		CWPoint bottomright = null;
 		CWPoint tmpca = new CWPoint();
 		numCachesInArea = 0;
+		boolean isAddi = false;
 		for (int i=cacheDB.size()-1; i >= 0; i--) {
 			ch = (CacheHolder) cacheDB.get(i);
 			if (!onlyOfSelected || ch.is_Checked) {
@@ -349,13 +350,16 @@ public class Profile {
 					ch.pos = new CWPoint(tmpca);
 				}
 				if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0 ){ // TODO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
-					if (topleft == null) topleft = new CWPoint(ch.pos);
-					if (bottomright == null) bottomright = new CWPoint(ch.pos);
-					if (topleft.latDec < ch.pos.latDec) topleft.latDec = ch.pos.latDec;
-					if (topleft.lonDec > ch.pos.lonDec) topleft.lonDec = ch.pos.lonDec;
-					if (bottomright.latDec > ch.pos.latDec) bottomright.latDec = ch.pos.latDec;
-					if (bottomright.lonDec < ch.pos.lonDec) bottomright.lonDec = ch.pos.lonDec;
-					numCachesInArea++;
+					isAddi = ch.isAddiWpt();
+				if (!isAddi || (isAddi && ch.pos.getDistance(ch.mainCache.pos) < 1000)) { // test for plausiblity of coordinates of Additional Waypoints: more then 1000 km away from main Waypoint is unplausible -> ignore it
+						if (topleft == null) topleft = new CWPoint(ch.pos);
+						if (bottomright == null) bottomright = new CWPoint(ch.pos);
+						if (topleft.latDec < ch.pos.latDec) topleft.latDec = ch.pos.latDec;
+						if (topleft.lonDec > ch.pos.lonDec) topleft.lonDec = ch.pos.lonDec;
+						if (bottomright.latDec > ch.pos.latDec) bottomright.latDec = ch.pos.latDec;
+						if (bottomright.lonDec < ch.pos.lonDec) bottomright.lonDec = ch.pos.lonDec;
+						numCachesInArea++;
+					}
 				}
 			}
 		}
@@ -427,14 +431,14 @@ public class Profile {
 			if (ch.hasAddiWpt() && (ch.addiWpts.size()> 1)){
 				//ch.addiWpts.sort(new MyComparer(ch.addiWpts,MyLocale.getMsg(1002,"Waypoint"),ch.addiWpts.size()), false);
 				ch.addiWpts.sort(
-					new ewe.util.Comparer() {	
-						public int compare(Object o1, Object o2){
-							return ((CacheHolder) o1).wayPoint.compareTo(((CacheHolder)o2).wayPoint);
-						}
-					},false );
+						new ewe.util.Comparer() {	
+							public int compare(Object o1, Object o2){
+								return ((CacheHolder) o1).wayPoint.compareTo(((CacheHolder)o2).wayPoint);
+							}
+						},false );
 			}
 		}
-	
+
 	}
 
 	/** Ensure that all filters have the proper length so that the 'charAt' access in the filter
