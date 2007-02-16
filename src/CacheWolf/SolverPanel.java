@@ -32,7 +32,7 @@ public class SolverPanel extends CellPanel{
 		OutputPanel() {
 			this.modify(Control.NotEditable,0);
 			//this.modifiers=this.modifiers|WantHoldDown; 
-			setMenu(mnuContext=getClipboardMenu(new Menu(new MenuItem[]{ mnuClr=new MenuItem("Clear output") },"")));
+			setMenu(mnuContext=getClipboardMenu(new Menu(new MenuItem[]{ mnuClr=new MenuItem(MyLocale.getMsg(1734,"Clear output")) },"")));
 		} 
 		public void penRightReleased(Point p){
 			setMenu(mnuContext);
@@ -71,10 +71,10 @@ public class SolverPanel extends CellPanel{
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
 
 		programPanel.addLast(new ScrollBarPanel(mText = new InputPanel()));
-		programPanel.addNext(mBtSolve= new mButton("Solve!"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		programPanel.addNext(btnLoad= new mButton("Load"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		programPanel.addNext(btnSave= new mButton("Save"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		programPanel.addLast(btnSaveAs= new mButton("SaveAs"),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		programPanel.addNext(mBtSolve= new mButton(MyLocale.getMsg(1735,"Solve!")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		programPanel.addNext(btnLoad= new mButton(MyLocale.getMsg(1736,"Load")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		programPanel.addNext(btnSave= new mButton(MyLocale.getMsg(1737,"Save")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		programPanel.addLast(btnSaveAs= new mButton(MyLocale.getMsg(1738,"SaveAs")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		outputPanel.addLast(new ScrollBarPanel(mOutput = new OutputPanel()));
 
 		this.addLast(split);

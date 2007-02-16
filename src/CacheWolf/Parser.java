@@ -102,7 +102,7 @@ public class Parser{
     	new fnType("crosstotal","ct",6),
     	new fnType("ct","ct",2),
      	new fnType("curpos","cp",1),
-     	new fnType("distance","distance",2),
+     	new fnType("distance","distance",4),
      	new fnType("encode","encode",8),
     	new fnType("format","format",6),
     	new fnType("goto","goto",6),
@@ -393,9 +393,10 @@ public class Parser{
     private double funcDistance() throws Exception {
     	String coordB=popCalcStackAsString();
     	String coordA=popCalcStackAsString();
-    	cwPt.set(coordA);
-		if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
+		// Attention: isValidCoord has sideeffect of setting cwPt
+    	if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
 		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
+    	cwPt.set(coordA);
     	return cwPt.getDistance(new CWPoint(coordB));
     }
     
@@ -403,10 +404,10 @@ public class Parser{
     private double funcBearing() throws Exception {
     	String coordB=popCalcStackAsString();
     	String coordA=popCalcStackAsString();
-    	cwPt.set(coordA);
-		if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
+ 		if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
 		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
-    	return cwPt.getBearing(new CWPoint(coordB));
+	   	cwPt.set(coordA);
+	   	return cwPt.getBearing(new CWPoint(coordB));
     }
     /**
      * Encode a string by replacing all characters in a string with their corresponding characters in
@@ -466,6 +467,7 @@ public class Parser{
     		CacheHolder ch=((CacheHolder)Global.getProfile().cacheDB.get(i));
     		ch.LatLon=cwPt.toString(CWPoint.CW);
     		ch.pos.set(cwPt);
+    		ch.calcDistance(Global.getPref().curCentrePt); // Update distance/bearing 
     	}
     }
     
@@ -685,6 +687,7 @@ public class Parser{
 				if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
 					ch.LatLon=cwPt.toString(CWPoint.CW);
 					ch.pos.set(cwPt);
+					ch.calcDistance(Global.getPref().curCentrePt); // Update distance and bearing
 				    return;
 				} else
 					err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
