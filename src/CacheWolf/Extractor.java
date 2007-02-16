@@ -13,7 +13,8 @@ public class Extractor  {
 		String end;
 		String tst;
 		boolean betweenonly;
-		
+		public static boolean INCLUDESTARTEND = false;
+		public static boolean EXCLUDESTARTEND = true;
 		/**
 		*	Create an extractor.
 		*	sTxt = The string to search through.<br>

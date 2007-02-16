@@ -197,6 +197,8 @@ public class SpiderGC{
 		pref.log("Trying terrain");
 		ch.terrain = getTerr(start);
 		pref.log("Got terrain");
+		ch.Bugs = getBugs(start);
+		if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
 		//Vm.debug("Terr: " + ch.terrain);
 		pref.log("Trying cache type");
 		ch.type = getType(start);
@@ -401,11 +403,8 @@ public class SpiderGC{
 						getImages(start, ch);
 						pref.log("Got images");
 					}
-	/*				if(getMaps){
-						pref.log("Trying maps");
-						getMaps(ch);
-						pref.log("Got maps");
-					} */
+					ch.Bugs = getBugs(start);
+					if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
 					pref.log("Getting additional waypoints");
 					getAddWaypoints(start, ch);
 					pref.log("Got additional waypoints");
@@ -445,8 +444,20 @@ public class SpiderGC{
 		} else return -1;
 	}
 	
-	public void getBugs(){	
-		
+	public String getBugs(String doc){	
+		Extractor exBlock = new Extractor(doc, "Inventory","What is a Travel Bug?",0,Extractor.EXCLUDESTARTEND);
+		String bugBlock = exBlock.findNext();
+		Vm.debug("Bugblock: "+bugBlock);
+		Extractor exBug = new Extractor(bugBlock, "'>", "</a></strong></td>",0,Extractor.EXCLUDESTARTEND);
+		String bug = new String();
+		String result = new String();
+		while(exBug.endOfSearch() == false){
+			bug= exBug.findNext();
+			if(bug.length()>0) result = result + "<b>Name:</b> "+ bug + "<br><hr>";
+			Vm.debug("B: " + bug);
+			Vm.debug("End? " + exBug.endOfSearch());
+		}
+		return result;
 	}
 	
 	public void getAddWaypoints(String doc, CacheHolder ch){
