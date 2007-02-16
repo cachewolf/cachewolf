@@ -1689,7 +1689,8 @@ class ListBox extends Form{
 	public ListBox(Vector maps, CWPoint Gps, CWPoint gotopos, MapInfoObject curMap){
 		this.title = "Maps";
 		// if (Gui.screenIs(Gui.PDA_SCREEN)) this.setPreferredSize(200,100); else 
-		this.setPreferredSize(MyLocale.getScreenWidth()*3/4, MyLocale.getScreenHeight()*3/4);
+		// set width to screenwidth *3/4 but to at least 240 if the screen is big engough for 240px width
+		this.setPreferredSize(java.lang.Math.max(MyLocale.getScreenWidth()*3/4, java.lang.Math.min(240, MyLocale.getScreenWidth()) ), MyLocale.getScreenHeight()*3/4);
 		this.maps = maps;
 		MapInfoObject map;
 		ScrollBarPanel scb;
