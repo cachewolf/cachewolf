@@ -80,7 +80,7 @@ public class MainTab extends mTabbedPanel {
 	}
 
 	public void selectAndActive(int rownum){
-		tbP.selectAndActive(rownum);
+		tbP.selectRow(rownum);
 		this.selectAndExpand(0);
 	}
 
@@ -93,12 +93,17 @@ public class MainTab extends mTabbedPanel {
 		(new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet").replace('~','\n'), MessageBox.OKB)).execute();
 	}
 
-	public void gotoPoint(String LatLon) {
-		gotoP.setDestinationAndSwitch(LatLon);
+	public void gotoPoint(String LatLon) { // TODO übergabe nicht als String
+		gotoP.setDestinationAndSwitch(LatLon); 
 	}
 
 	public void openDesciptionPanel(CacheHolder chi) {
 		MyLocale.setSIPOff();
+		int row = profile.getCacheIndex(chi.wayPoint);
+		tbP.selectRow(row);
+		//tbP.tc.scrollToVisible(row, 0);
+		//tbP.selectRow(row);
+		select(descP);
 		descP.setText(chi);
 	}
 
@@ -118,14 +123,14 @@ public class MainTab extends mTabbedPanel {
 		ch.type = "0";
 		ch.CacheSize = "None";
 		cacheDB.add(ch);
-		Global.mainTab.tbP.myMod.updateRows();
-		Global.mainTab.tbP.selectRow(profile.getCacheIndex(waypoint));
+		tbP.myMod.updateRows();
+		tbP.selectRow(profile.getCacheIndex(waypoint));
 		//Global.mainTab.tbP.refreshTable();
 		if (this.cardPanel.selectedItem==1) { // Detailpanel already selected
 			postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,0));
 		} else	
 			select(detP);
-		Global.mainTab.tbP.refreshTable();
+		tbP.refreshTable();
 
 	}
 

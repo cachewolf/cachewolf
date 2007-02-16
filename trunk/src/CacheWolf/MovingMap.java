@@ -1654,8 +1654,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						close.type = WindowEvent.CLOSE;
 						mm.postEvent(close);
 						MainTab mainT = Global.mainTab;
-						mainT.tbP.selectAndActive(mm.cacheDB.find(clickedCache));
-						mainT.select(Global.mainTab.descP);
 						mainT.openDesciptionPanel(clickedCache);
 					}
 					if (action == newWayPointMenuItem) {
