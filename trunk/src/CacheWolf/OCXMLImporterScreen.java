@@ -39,8 +39,8 @@ public class OCXMLImporterScreen extends Form {
 		this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		if(options == INCLUDEFOUND){
 			foundCheckBox = new mCheckBox();
-			foundCheckBox.setText(MyLocale.getMsg(1622,"Include found caches"));
-			foundCheckBox.setState(false);
+			foundCheckBox.setText(MyLocale.getMsg(1622,"Exclude found caches"));
+			foundCheckBox.setState(true);
 			this.addLast(foundCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
 /*		
