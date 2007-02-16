@@ -216,14 +216,14 @@ public class myTableModel extends TableModel{
 							return checkboxUnticked;
 					case 1: // Type
 						try {
-							return (IImage) cacheImages[Convert.parseInt(ch.type)];
+							return (IImage) cacheImages[Convert.parseInt(ch.type)]; // TODO save in cacheholder as int
 						} catch (NumberFormatException e) { return "?";}
 					case 2: // Difficulty;
 						return (String)ch.hard;
 					case 3: // Terrain
 						return (String)ch.terrain;
 					case 4: // Waypoint
-						if(ch.is_update    ) return new IconAndText((IImage)red, ch.wayPoint, fm);
+						if(ch.is_update    ) return new IconAndText((IImage)red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
 						if(ch.is_new       ) return new IconAndText((IImage)yellow, ch.wayPoint, fm);
 						if(ch.is_log_update) return new IconAndText((IImage)blue, ch.wayPoint, fm);
 						return (String)ch.wayPoint;
@@ -297,12 +297,13 @@ public class myTableModel extends TableModel{
 				if(a != null){
 					int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
 					if(rownum >= 0){
-						tcControl.scrollToVisible(rownum, 0);
+						tcControl.cursorTo(rownum, 0, true);
+	/*					tcControl.scrollToVisible(rownum, 0);
 						tcControl.clearSelectedCells(new Vector());
 						for(int i= 0; i < MAXCOLUMNS; i++){
 							tcControl.addToSelection(rownum,i); 
 						}
-					}
+		*/			}
 				}
 				Vm.showWait(false);
 				tcControl.update(true);

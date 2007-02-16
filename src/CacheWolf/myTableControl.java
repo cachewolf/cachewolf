@@ -35,6 +35,7 @@ public class myTableControl extends TableControl{
 		cacheDB = profile.cacheDB;
 		pref = Global.getPref();
 		tbp =tablePanel;
+		allowDragSelection = false; // allow only one row to be selected at one time
 	}
 
 	public void penRightReleased(Point p){
