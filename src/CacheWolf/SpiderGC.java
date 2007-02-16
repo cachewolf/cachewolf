@@ -248,6 +248,7 @@ public class SpiderGC{
 		distance = Convert.toDouble(dist);
 		//boolean getMaps = options.mapsCheckBox.getState();
 		boolean getFound = options.foundCheckBox.getState();
+		Vm.debug("Get found? "+getFound);
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
 		
@@ -256,10 +257,9 @@ public class SpiderGC{
 		infB.exec();
 		//Get first page
 		try{
-			String ln = new String("Fetching first list page: http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
+			String ln = new String("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
 			if(getFound) ln = ln + "&f=1";
-			pref.log("First page: " + start);
-			start = fetch("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
+			start = fetch(ln);
 			pref.log("First page: " + start);
 		}catch(Exception ex){
 			pref.log("Error fetching first list page");
