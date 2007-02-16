@@ -84,7 +84,10 @@ public class OCXMLImporter extends MinML {
 
 			String lastS =  profile.last_sync_opencaching;
 			CWPoint center = pref.curCentrePt; // No need to clone curCentrePt as center is only read
-
+			if (!center.isValid()) {
+				(new MessageBox("Error", "Coordinates for center must be set", MessageBox.OKB)).execute();
+				return;
+			}
 			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
 			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
 			Vm.showWait(true);

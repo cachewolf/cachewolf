@@ -228,9 +228,13 @@ public class SpiderGC{
 	*	Method to start the spider for a search around the center coordinates
 	*/
 	public void doIt(){
+		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
+		if (!origin.isValid()) {
+			(new MessageBox("Error", "Coordinates for center must be set", MessageBox.OKB)).execute();
+			return;
+		}
 		Vm.showWait(true);
 		String start = new String();
-		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		String doc = new String();
 		
