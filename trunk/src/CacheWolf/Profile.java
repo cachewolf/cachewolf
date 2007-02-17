@@ -43,7 +43,7 @@ public class Profile {
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
 
-	public final static String FILTERTYPE="11111111111111111";
+	public final static String FILTERTYPE="111111111111111111";
 	public final static String FILTERROSE="1111111111111111";
 	public final static String FILTERVAR="11111111";
 	public final static String FILTERSIZE="111111";
@@ -252,12 +252,14 @@ public class Profile {
 					} else 
 						filterRose = temp;
 					filterType = ex.findNext();
+					//Need this to stay "downward" compatible. New type introduced
+					if(filterType.length()<=17) filterType = filterType + "1";
+					Vm.debug("fil len: " +filterType.length());
 					filterVar = ex.findNext();
 					filterDist = ex.findNext();
 					filterDiff = ex.findNext();
 					filterTerr = ex.findNext();
 					filterSize = ex.findNext();
-//					Bilbowolf: Pattern for storing filter <FILTER type="01001101" rose = "010010101" var = "0101" dist = "<12" diff = ">13" terr = "<1"/>
 				}
 			}
 			in.close();
