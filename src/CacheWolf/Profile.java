@@ -43,6 +43,8 @@ public class Profile {
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
 
+	// When extending the filter check "normalizeFilters"
+	// which ensures backward compatibility. Normally no change should be needed
 	public final static String FILTERTYPE="111111111111111111";
 	public final static String FILTERROSE="1111111111111111";
 	public final static String FILTERVAR="11111111";
@@ -253,8 +255,9 @@ public class Profile {
 						filterRose = temp;
 					filterType = ex.findNext();
 					//Need this to stay "downward" compatible. New type introduced
-					if(filterType.length()<=17) filterType = filterType + "1";
-					Vm.debug("fil len: " +filterType.length());
+					//if(filterType.length()<=17) filterType = filterType + "1";
+					//Vm.debug("fil len: " +filterType.length());
+					//This is handled by "normalizeFilters" which is called at the end.
 					filterVar = ex.findNext();
 					filterDist = ex.findNext();
 					filterDiff = ex.findNext();
@@ -447,17 +450,18 @@ public class Profile {
 	 * do not cause nullPointer Exceptions
 	 */
 	private void normalizeFilters() {
-		if (filterRose.length()<16) { 
-			filterRose=(filterRose+"1111111111111111").substring(0,16); 
+		String manyOnes="11111111111111111111111111111";
+		if (filterRose.length()<FILTERROSE.length()) { 
+			filterRose=(filterRose+manyOnes).substring(0,FILTERROSE.length()); 
 		}  
-		if (filterVar.length()<8) { 
-			filterVar=(filterVar+"11111111").substring(0,8); 
+		if (filterVar.length()<FILTERVAR.length()) { 
+			filterVar=(filterVar+manyOnes).substring(0,FILTERVAR.length()); 
 		}  
-		if (filterType.length()<17) { 
-			filterType=(filterType+"11111111111111111111111").substring(0,17);
+		if (filterType.length()<FILTERTYPE.length()) { 
+			filterType=(filterType+manyOnes).substring(0,FILTERTYPE.length());
 		} 
-		if (filterSize.length()<6) {
-			filterSize=(filterSize+"111111").substring(0,6);
+		if (filterSize.length()<FILTERSIZE.length()) {
+			filterSize=(filterSize+manyOnes).substring(0,FILTERSIZE.length());
 		}
 		if (filterDist.length()==0) filterDist="L";
 		if (filterDiff.length()==0) filterDiff="L";
