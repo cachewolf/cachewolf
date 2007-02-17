@@ -23,7 +23,7 @@ public class FilterScreen extends Form{
 	private mCheckBox chkFound, chkNotFound, chkTrad, chkVirtual, chkEvent, chkEarth, chkMega,
 					  chkOwned, chkNotOwned, chkMulti, chkLetter, chkWebcam, chkMystery, chkLocless,
 	                  chkCustom,chkParking,	chkStage, chkQuestion, chkFinal, chkTrailhead, chkReference,
-					  chkMicro,chkSmall,chkRegular,chkLarge,chkVeryLarge,chkOther,
+					  chkMicro,chkSmall,chkRegular,chkLarge,chkVeryLarge,chkOther,chkCito,
 	                  chkArchived,chkNotArchived, chkAvailable,chkNotAvailable,
 					  chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
 					  chkSSW, chkSW, chkWSW, chkW, chkWNW, chkDeselect,chkSelect;
@@ -190,13 +190,16 @@ public class FilterScreen extends Form{
 		pnlCacheTypes.addNext(addImg("453.png"));
 		pnlCacheTypes.addLast(chkMega = new mCheckBox("Mega-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
+		pnlCacheTypes.addNext(addImg("13.png"));
+		pnlCacheTypes.addNext(chkCito = new mCheckBox("Cito-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		
 		//pnlCacheTypes.addLast(addiWptChk = new mCheckBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		//pnlCacheTypes.addLast(new mLabel(""));
 		pnlCacheTypes.addNext(addImg("0.png"));
-		pnlCacheTypes.addNext(chkCustom = new mCheckBox("Custom"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlCacheTypes.addLast(chkCustom = new mCheckBox("Custom"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		pnlCacheTypes.addNext(addImg("110.png"));
-		pnlCacheTypes.addLast(addiWptChk = new myChkBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlCacheTypes.addNext(addiWptChk = new myChkBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		//addiWptChk.modify(0,NotAnEditor);
 		//////////////////////////
@@ -368,6 +371,8 @@ public class FilterScreen extends Form{
 		chkLocless.state    = fltType.charAt(8) == '1';
 		chkMega.state       = fltType.charAt(9) == '1';
 		chkCustom.state     = fltType.charAt(10) == '1';
+		chkCito.state       = fltType.charAt(17) == '1';
+		
 		// Note addiWptState is set by setColors
 		
 		//////////////////////////
@@ -462,7 +467,7 @@ public class FilterScreen extends Form{
 		chkFinal.state && chkTrailhead.state && chkReference.state) ;
 		if (!(chkTrad.state && chkMulti.state && 	chkVirtual.state && chkLetter.state &&
 		      chkEvent.state && chkWebcam.state && chkMystery.state && chkEarth.state &&
-		      chkLocless.state && chkMega.state && chkCustom.state && allAddis) ) 
+		      chkLocless.state && chkMega.state && chkCito.state && chkCustom.state && allAddis) ) 
 			btnTypes.backGround=COLOR_FILTERACTIVE;
 		else
 			btnTypes.backGround=COLOR_FILTERINACTIVE;
@@ -470,7 +475,7 @@ public class FilterScreen extends Form{
 			      chkEvent.state || chkWebcam.state || chkMystery.state || chkEarth.state ||
 			      chkLocless.state || chkMega.state || chkCustom.state || chkParking.state 
 			      || chkStage.state || chkQuestion.state || 
-					chkFinal.state || chkTrailhead.state || chkReference.state )) 
+					chkFinal.state || chkTrailhead.state || chkCito.state || chkReference.state )) 
 			btnTypes.backGround=COLOR_FILTERALL;
 		btnTypes.repaint();
 
@@ -544,7 +549,8 @@ public class FilterScreen extends Form{
 								(chkQuestion.state? "1" : "0") +
 								(chkFinal.state   ? "1" : "0") +
 								(chkTrailhead.state ? "1" : "0") +
-								(chkReference.state ? "1" : "0");
+								(chkReference.state ? "1" : "0")+
+								(chkCito.state ? "1" : "0");
 				
 				pfl.filterRose = (chkNW.state  ? "1":"0")+
 							 (chkNNW.state ? "1":"0")+

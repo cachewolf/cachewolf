@@ -39,8 +39,9 @@ public class Filter{
 	private static final int FINAL = 16384;
 	private static final int TRAILHEAD = 32768;
 	private static final int REFERENCE = 65536;
+	private static final int CITO = 131072;
 	private static final int TYPE_ALL=TRADITIONAL|MULTI|VIRTUAL|LETTER|EVENT|WEBCAM|MYSTERY|LOCLESS|CUSTOM
-	                                  |MEGA|EARTH|PARKING|STAGE|QUESTION|FINAL|TRAILHEAD|REFERENCE;
+	                                  |MEGA|EARTH|PARKING|STAGE|QUESTION|FINAL|TRAILHEAD|REFERENCE|CITO;
 
 	private static final int N = 1;
 	private static final int NNE = 2;
@@ -257,6 +258,7 @@ public class Filter{
 		if (filterType.charAt(14) == '1') typeMatchPattern|=FINAL;
 		if (filterType.charAt(15) == '1') typeMatchPattern|=TRAILHEAD;
 		if (filterType.charAt(16) == '1') typeMatchPattern|=REFERENCE;
+		if (filterType.charAt(17) == '1') typeMatchPattern|=CITO;
 		hasTypeMatchPattern= typeMatchPattern!=TYPE_ALL;
 		roseMatchPattern=0;
 		String filterRose=profile.filterRose;
@@ -347,6 +349,7 @@ public class Filter{
 				else if(ch.type.equals("53"))cacheTypePattern = FINAL;
 				else if(ch.type.equals("54"))cacheTypePattern = TRAILHEAD;
 				else if(ch.type.equals("55"))cacheTypePattern = REFERENCE;
+				else if(ch.type.equals("13"))cacheTypePattern = CITO;
 				if ((cacheTypePattern & typeMatchPattern) == 0) { ch.is_filtered=true; continue; }
 			}			
 			///////////////////////////////
