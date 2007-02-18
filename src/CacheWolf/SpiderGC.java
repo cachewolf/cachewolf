@@ -504,9 +504,9 @@ public class SpiderGC{
 				koordRex.search(rowBlock);
 				typeRex.search(rowBlock);
 				cx.CacheName = nameRex.stringMatched(1);
-				if(koordRex.didMatch()) cx.LatLon = koordRex.stringMatched(1); 
-				else cx.LatLon = "---"; 
-				cx.pos.set(cx.LatLon);
+				if(koordRex.didMatch()) cx.pos.set(koordRex.stringMatched(1)); 
+				cx.LatLon = ch.pos.toString(); 
+				//cx.pos.set(cx.LatLon);
 				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
@@ -530,9 +530,9 @@ public class SpiderGC{
 	
 	public void getImages(String doc, CacheHolder ch){
 		int imgCounter = 0;
-		String imgName = new String();
-		String imgType = new String();
-		String imgUrl = new String();
+		String imgName;
+		String imgType;
+		String imgUrl;
 		//In the long description
 		String longDesc = new String();
 		longDesc = getLongDesc(doc);
@@ -545,7 +545,7 @@ public class SpiderGC{
 		//longDesc = STRreplace.replace(longDesc, " ", "");
 		Extractor exImgBlock = new Extractor(longDesc, "<IMG", ">", 0, false);
 		//Vm.debug("In getImages: Have longDesc" + longDesc);
-		String tst = new String();
+		String tst;
 		tst = exImgBlock.findNext();
 		//Vm.debug("Test: \n" + tst);
 		Extractor exImgSrc = new Extractor(tst, "http://", "\"", 0, true);
@@ -555,8 +555,8 @@ public class SpiderGC{
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
 				try{
-					imgType = imgUrl.substring(imgUrl.lastIndexOf("."));
-					if(!imgType.equals("com") && !imgType.equals("php") && !imgType.equals("exe")){
+					imgType = imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase();
+					if(!imgType.startsWith("com") && !imgType.startsWith("php") && !imgType.startsWith("exe")){
 						imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
 						pref.log("Loading image: " + imgUrl);
 						spiderImage(imgUrl, imgName+imgType);
@@ -584,8 +584,8 @@ public class SpiderGC{
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
 				try{
-					imgType = imgUrl.substring(imgUrl.lastIndexOf("."));
-					if(!imgType.equals("com") && !imgType.equals("php") && !imgType.equals("exe")){
+					imgType = imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase();
+					if(!imgType.startsWith("com") && !imgType.startsWith("php") && !imgType.startsWith("exe")){
 						imgName = ch.wayPoint + "_" + Convert.toString(imgCounter);
 						spiderImage(imgUrl, imgName+imgType);
 						imgCounter++;

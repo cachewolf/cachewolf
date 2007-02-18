@@ -96,6 +96,10 @@ public class InfoBox extends Form{
 		this.repaintNow();
 	}
 
+	public String getInfo(){
+		return msgArea.getText();
+	}
+
 	public void addWarning (String w) {
 		warnings.setText(warnings.text + w);
 	}
