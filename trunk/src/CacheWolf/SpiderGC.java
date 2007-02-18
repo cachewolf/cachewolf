@@ -174,8 +174,8 @@ public class SpiderGC{
 		pref.log("Got cache name");
 		//Vm.debug("Name: " + ch.CacheName);
 		pref.log("Trying owner");
-		ch.CacheOwner = SafeXML.cleanback(getOwner(start));
-		if(ch.CacheOwner.equals(pref.myAlias + " ")) ch.is_owned = true;
+		ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
+		if(ch.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equals(pref.myAlias2))) ch.is_owned = true;
 		pref.log("Got owner");
 		//Vm.debug("Owner: " + ch.CacheOwner);
 		pref.log("Trying date hidden");
@@ -374,8 +374,8 @@ public class SpiderGC{
 					pref.log("Got cache name");
 					//Vm.debug("Name: " + ch.CacheName);
 					pref.log("Trying owner");
-					ch.CacheOwner = SafeXML.cleanback(getOwner(start));
-					if(ch.CacheOwner.equals(pref.myAlias+" ")) ch.is_owned = true;
+					ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
+					if(ch.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equals(pref.myAlias2))) ch.is_owned = true;
 					pref.log("Got owner");
 					//Vm.debug("Owner: " + ch.CacheOwner);
 					pref.log("Trying date hidden");
@@ -770,7 +770,8 @@ public class SpiderGC{
 			//Vm.debug("--------------------------------------------");
 			icon = exIcon.findNext();
 			name = exName.findNext();
-			if((icon.equals("icon_smile.gif") || icon.equals("icon_camera.gif")) && name.equals(pref.myAlias)) {
+			if((icon.equals("icon_smile.gif") || icon.equals("icon_camera.gif")) && 
+				(name.equals(pref.myAlias) || (pref.myAlias2.length()>0 && name.equals(pref.myAlias2))) )  {
 				ch.is_found = true;
 				ch.CacheStatus = MyLocale.getMsg(318,"Found");
 			}
