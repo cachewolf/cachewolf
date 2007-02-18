@@ -47,6 +47,7 @@ public class SpiderGC{
 	Vector cacheDB;
 	Vector cachesToLoad = new Vector();
 	Hashtable indexDB = new Hashtable();
+	InfoBox infB;
 	
 	/**
 	 * Method to login the user to gc.com
@@ -125,7 +126,7 @@ public class SpiderGC{
 			pref.log("Could not load " + ch.wayPoint + "file in spiderSingle");
 		}
 		notes = ch.CacheNotes;
-		InfoBox infB = new InfoBox("Info", "Loading");
+		infB = new InfoBox("Info", "Loading");
 		infB.setInfo("Loading: " + ch.wayPoint);
 		infB.show();
 		String doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + ch.wayPoint +"&log=y";
@@ -257,7 +258,7 @@ public class SpiderGC{
 		options.close(0);
 		
 		
-		InfoBox infB = new InfoBox("Status", "Fetching first page...");
+		infB = new InfoBox("Status", "Fetching first page...");
 		infB.exec();
 		//Get first page
 		try{
@@ -449,18 +450,36 @@ public class SpiderGC{
 	}
 	
 	public String getBugs(String doc){	
-		Extractor exBlock = new Extractor(doc, "Inventory","What is a Travel Bug?",0,Extractor.EXCLUDESTARTEND);
+		Extractor exBlock = new Extractor(doc, ">&nbsp;Inventory</td>","What is a Travel Bug?",0,Extractor.EXCLUDESTARTEND);
 		String bugBlock = exBlock.findNext();
 		Vm.debug("Bugblock: "+bugBlock);
-		Extractor exBug = new Extractor(bugBlock, "'>", "</a></strong></td>",0,Extractor.EXCLUDESTARTEND);
-		String bug = new String();
-		String result = new String();
+		Extractor exBug = new Extractor(bugBlock, "<a href='", "</a></strong></td>",0,Extractor.EXCLUDESTARTEND);
+		String link,bug,linkPlusBug,bugDetails;
+		String result = "";
+		String oldInfoBox=infB.getInfo();
 		while(exBug.endOfSearch() == false){
-			bug= exBug.findNext();
-			if(bug.length()>0) result = result + "<b>Name:</b> "+ bug + "<br><hr>";
-			Vm.debug("B: " + bug);
-			Vm.debug("End? " + exBug.endOfSearch());
+			linkPlusBug= exBug.findNext();
+			int idx=linkPlusBug.indexOf("'>");
+			if (idx<0) break; // No link/bug pair found
+			link=linkPlusBug.substring(0,idx);
+			bug=linkPlusBug.substring(idx+2);
+			if(bug.length()>0) { // Found a bug, get its details
+				result = result + "<b>Name:</b> "+ bug + "<br>";
+				try{
+					infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
+					pref.log("Fetching bug details: "+bug);
+					bugDetails = fetch(link);
+				}catch(Exception ex){
+					pref.log("Could not fetch bug details");
+					bugDetails="";
+				}
+				Extractor exDetails = new Extractor(bugDetails, "<span id=\"BugDetail_BugGoal\">", "</span>",0,Extractor.EXCLUDESTARTEND);
+				result+=exDetails.findNext()+"<hr>";
+			}
+			//Vm.debug("B: " + bug);
+			//Vm.debug("End? " + exBug.endOfSearch());
 		}
+		infB.setInfo(oldInfoBox);
 		return result;
 	}
 	
