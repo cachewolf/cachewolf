@@ -498,8 +498,9 @@ public class SpiderGC{
 				int idx=profile.getCacheIndex(cx.wayPoint);
 				cx.is_found = ch.is_found;
 				if (idx<0)
-					cacheDB.add(cx);
-				else if (((CacheHolder) cacheDB.get(idx)).is_Checked) // Only spider addi waypoints that are ticked
+					cacheDB.add(cx); // Addi is not in database
+				else if (((CacheHolder) cacheDB.get(idx)).is_Checked && // Only re-spider existing addi waypoints that are ticked
+						!((CacheHolder) cacheDB.get(idx)).is_filtered) // and are visible (i.e.  not filtered)
 					((CacheHolder) cacheDB.get(idx)).update(cx);
 				cx.saveCacheDetails(profile.dataDir);
 				
