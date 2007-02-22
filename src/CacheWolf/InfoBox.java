@@ -15,6 +15,11 @@ public class InfoBox extends Form{
 	public final static int DISPLAY_ONLY = 3;
 	public final static int PROGRESS_WITH_WARNINGS = 4;
 	private int type = 0;
+	/** This variable is set to true if the user closed the Info window by
+	 *  clicking the "close" button. It can be used to check if a lengthy task needs to be
+	 *  aborted (i.e. spidering)
+	 */
+	public boolean isClosed=false;
 
 	public InfoBox(String title, String info){
 		this(title, info, DISPLAY_ONLY);
@@ -123,4 +128,10 @@ public class InfoBox extends Form{
 		}
 		super.onEvent(ev);
 	}
+	
+	protected boolean canExit(int exitCode) {
+		isClosed=true;
+		return true;
+	}
+	
 }

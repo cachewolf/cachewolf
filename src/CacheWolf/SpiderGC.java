@@ -38,10 +38,10 @@ import ewe.ui.*;
 public class SpiderGC{
 	private static Preferences pref;
 	private Profile profile;
-	static String viewstate = new String();
-	static String passwort = new String();
-	static String cookieID = new String();
-	static String cookieSession = new String();
+	static String viewstate = "";
+	static String passwort = "";
+	static String cookieID = "";
+	static String cookieSession = "";
 	static double distance = 0;
 	Regex inRex = new Regex();
 	Vector cacheDB;
@@ -56,70 +56,77 @@ public class SpiderGC{
 	public int login(){
 		pref.logInit();
 		//Access the page once to get a viewstate
-		String start = new String();
-		String doc = new String();
+		String start = "";
+		String doc = "";
 		//Get password
 		InfoBox infB = new InfoBox("Password", "Enter password:", InfoBox.INPUT);
 		int code = infB.execute();
-		if(code == Form.IDOK){
-			passwort = infB.getInput();
-		} else return code;
+		passwort = infB.getInput();
 		infB.close(0);
+		if(code != Form.IDOK)
+			return code;
 		infB = new InfoBox("Status", "Logging in...");
 		infB.exec();
 		try{
 			pref.log("Fetching login page");
 			start = fetch("http://www.geocaching.com/login/Default.aspx");
 		}catch(Exception ex){
-			Vm.debug("Could not fetch: gc.com start page");
+			pref.log("Could not fetch: gc.com start page",ex);
 		}
-		Regex rexCookieID = new Regex("Set-Cookie: userid=(.*?);.*");
-		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
-		Regex rexCookieSession = new Regex("Set-Cookie: ASP.NET_SessionId=(.*?);.*");
-		rex.search(start);
-		if(rex.didMatch()){
+		if (!infB.isClosed) {
+			Regex rexCookieID = new Regex("Set-Cookie: userid=(.*?);.*");
+			Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
+			Regex rexCookieSession = new Regex("Set-Cookie: ASP.NET_SessionId=(.*?);.*");
+			rex.search(start);
+			if(rex.didMatch()){
+				viewstate = rex.stringMatched(1);
+				//Vm.debug("ViewState: " + viewstate);
+			}
+			//Ok now login!
+			try{
+				pref.log("Logging in");
+				doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
+				doc += "&" + URL.encodeURL("myUsername",false) +"="+ URL.encodeURL(pref.myAlias,false);
+				doc += "&" + URL.encodeURL("myPassword",false) +"="+ URL.encodeURL(passwort,false);
+				doc += "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false);
+				doc += "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false);
+				start = fetch_post("http://www.geocaching.com/login/Default.aspx", doc, "/login/default.aspx");
+				pref.log("Login successfull");
+			}catch(Exception ex){
+				Vm.debug("Could not login: gc.com start page");
+				pref.log("Login failed.");
+			}
+			
+			rex.search(start);
 			viewstate = rex.stringMatched(1);
-			//Vm.debug("ViewState: " + viewstate);
+			rexCookieID.search(start);
+			cookieID = rexCookieID.stringMatched(1);
+			//Vm.debug(cookieID);
+			rexCookieSession.search(start);
+			cookieSession = rexCookieSession.stringMatched(1);
+			//Vm.debug(cookieSession);
 		}
-		//Ok now login!
-		try{
-			pref.log("Logging in");
-			doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
-			doc += "&" + URL.encodeURL("myUsername",false) +"="+ URL.encodeURL(pref.myAlias,false);
-			doc += "&" + URL.encodeURL("myPassword",false) +"="+ URL.encodeURL(passwort,false);
-			doc += "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false);
-			doc += "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false);
-			start = fetch_post("http://www.geocaching.com/login/Default.aspx", doc, "/login/default.aspx");
-			pref.log("Login successfull");
-		}catch(Exception ex){
-			Vm.debug("Could not login: gc.com start page");
-			pref.log("Login failed.");
-		}
-		
-		rex.search(start);
-		viewstate = rex.stringMatched(1);
-		rexCookieID.search(start);
-		cookieID = rexCookieID.stringMatched(1);
-		//Vm.debug(cookieID);
-		rexCookieSession.search(start);
-		cookieSession = rexCookieSession.stringMatched(1);
-		//Vm.debug(cookieSession);
+		boolean loginAborted=infB.isClosed;
 		infB.close(0);
-		return Form.IDOK;
+		if (loginAborted)
+			return Form.IDCANCEL;
+		else
+			return Form.IDOK;
 	}
 	
 	/**
 	 * Method to spider a single cache.
 	 * It assumes a login has already been performed!
+	 * @return True if spider was successful, false if spider was cancelled by closing the infobox
 	 */
-	public void spiderSingle(int number){
+	public boolean spiderSingle(int number){
 
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
-		if (ch.isAddiWpt()) return;  // No point spidering an addi waypoint, comes with parent
-		Vm.showWait(true);
-		String notes = new String();
-		String start = new String();
-		String origLong = new String();
+		if (ch.isAddiWpt()) return false;  // No point spidering an addi waypoint, comes with parent
+		//Vm.showWait(true); Already done in myTableControl
+		String notes = "";
+		String start = "";
+		String origLong = "";
 		try{
 			ch.readCache(profile.dataDir);
 		}catch(IOException ioex){
@@ -128,7 +135,7 @@ public class SpiderGC{
 		notes = ch.CacheNotes;
 		infB = new InfoBox("Info", "Loading");
 		infB.setInfo("Loading: " + ch.wayPoint);
-		infB.show();
+		infB.exec();
 		String doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + ch.wayPoint +"&log=y";
 		try{
 			pref.log("Fetching: " + ch.wayPoint);
@@ -137,92 +144,98 @@ public class SpiderGC{
 			pref.log("Could not fetch " + ch.wayPoint);
 			//Vm.debug("Couldn't get cache detail page");
 		}
-		ch.is_new = false;
-		ch.is_update = false;
-		ch.is_HTML = true;
-		ch.is_available = true;
-		ch.is_archived = false;
-		//Vm.debug(ch.wayPoint);
-		
-		if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
-		if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
-		pref.log("Trying logs");
-		int logsz = ch.CacheLogs.size();
-		ch.CacheLogs = getLogs(start, ch);
-		int z = 0;
-		String loganal = new String();
-		while(z < ch.CacheLogs.size() && z < 5){
-			loganal = (String)ch.CacheLogs.get(z);
-			if(loganal.indexOf("icon_sad")>0) {
-				z++;
-			}else break;
+		if (!infB.isClosed) { // Only analyse the cache data if user has not closed the progress window
+			ch.is_new = false;
+			ch.is_update = false;
+			ch.is_HTML = true;
+			ch.is_available = true;
+			ch.is_archived = false;
+			//Vm.debug(ch.wayPoint);
+			
+			if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
+			if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
+			pref.log("Trying logs");
+			int logsz = ch.CacheLogs.size();
+			ch.CacheLogs = getLogs(start, ch);
+			int z = 0;
+			String loganal = "";
+			while(z < ch.CacheLogs.size() && z < 5){
+				loganal = (String)ch.CacheLogs.get(z);
+				if(loganal.indexOf("icon_sad")>0) {
+					z++;
+				}else break;
+			}
+			ch.noFindLogs = z;
+			ch.is_log_update = false;
+			if(ch.CacheLogs.size()>logsz) ch.is_log_update = true;
+			pref.log("Found logs");
+			ch.LatLon = getLatLon(start);
+			ch.pos.set(ch.LatLon);
+			//Vm.debug("LatLon: " + ch.LatLon);
+			pref.log("Trying description");
+			origLong = ch.LongDescription;
+			ch.LongDescription = getLongDesc(start);
+			if(!ch.LongDescription.equals(origLong)) ch.is_update = true;
+			pref.log("Got description");
+			pref.log("Getting cache name");
+			ch.CacheName = SafeXML.cleanback(getName(start));
+			pref.log("Got cache name");
+			//Vm.debug("Name: " + ch.CacheName);
+			pref.log("Trying owner");
+			ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
+			if(ch.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equals(pref.myAlias2))) ch.is_owned = true;
+			pref.log("Got owner");
+			//Vm.debug("Owner: " + ch.CacheOwner);
+			pref.log("Trying date hidden");
+			ch.DateHidden = getDateHidden(start);
+			pref.log("Got date hidden");
+			//Vm.debug("Hidden: " + ch.DateHidden);
+			pref.log("Trying hints");
+			ch.Hints = getHints(start);
+			pref.log("Got hints");
+			//Vm.debug("Hints: " + ch.Hints);
+			//Vm.debug("Got the hints");
+			pref.log("Trying size");
+			ch.CacheSize = getSize(start);
+			pref.log("Got size");
+			//Vm.debug("Size: " + ch.CacheSize);
+			pref.log("Trying difficulty");
+			ch.hard = getDiff(start);
+			pref.log("Got difficulty");
+			//Vm.debug("Hard: " + ch.hard);
+			pref.log("Trying terrain");
+			ch.terrain = getTerr(start);
+			pref.log("Got terrain");
+			if (!infB.isClosed) ch.Bugs = getBugs(start);
+			if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
+			//Vm.debug("Terr: " + ch.terrain);
+			pref.log("Trying cache type");
+			ch.type = getType(start);
+			pref.log("Got cache type");
+			//Vm.debug("Type: " + ch.type);
+			pref.log("Trying images");
+			getImages(start, ch);
+			pref.log("Got images");
+			//pref.log("Trying maps");
+			//getMaps(ch);
+			//pref.log("Got maps");
+			pref.log("Getting additional waypoints");
+	
+			getAddWaypoints(start, ch);
+	
+			pref.log("Got additional waypoints");
+			ch.CacheNotes = notes;
+			if (!infB.isClosed) {
+				ch.saveCacheDetails(profile.dataDir);
+				
+				cacheDB.set(number, ch);
+			}
 		}
-		ch.noFindLogs = z;
-		ch.is_log_update = false;
-		if(ch.CacheLogs.size()>logsz) ch.is_log_update = true;
-		pref.log("Found logs");
-		ch.LatLon = getLatLon(start);
-		ch.pos.set(ch.LatLon);
-		//Vm.debug("LatLon: " + ch.LatLon);
-		pref.log("Trying description");
-		origLong = ch.LongDescription;
-		ch.LongDescription = getLongDesc(start);
-		if(!ch.LongDescription.equals(origLong)) ch.is_update = true;
-		pref.log("Got description");
-		pref.log("Getting cache name");
-		ch.CacheName = SafeXML.cleanback(getName(start));
-		pref.log("Got cache name");
-		//Vm.debug("Name: " + ch.CacheName);
-		pref.log("Trying owner");
-		ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
-		if(ch.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equals(pref.myAlias2))) ch.is_owned = true;
-		pref.log("Got owner");
-		//Vm.debug("Owner: " + ch.CacheOwner);
-		pref.log("Trying date hidden");
-		ch.DateHidden = getDateHidden(start);
-		pref.log("Got date hidden");
-		//Vm.debug("Hidden: " + ch.DateHidden);
-		pref.log("Trying hints");
-		ch.Hints = getHints(start);
-		pref.log("Got hints");
-		//Vm.debug("Hints: " + ch.Hints);
-		//Vm.debug("Got the hints");
-		pref.log("Trying size");
-		ch.CacheSize = getSize(start);
-		pref.log("Got size");
-		//Vm.debug("Size: " + ch.CacheSize);
-		pref.log("Trying difficulty");
-		ch.hard = getDiff(start);
-		pref.log("Got difficulty");
-		//Vm.debug("Hard: " + ch.hard);
-		pref.log("Trying terrain");
-		ch.terrain = getTerr(start);
-		pref.log("Got terrain");
-		ch.Bugs = getBugs(start);
-		if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
-		//Vm.debug("Terr: " + ch.terrain);
-		pref.log("Trying cache type");
-		ch.type = getType(start);
-		pref.log("Got cache type");
-		//Vm.debug("Type: " + ch.type);
-		pref.log("Trying images");
-		getImages(start, ch);
-		pref.log("Got images");
-		//pref.log("Trying maps");
-		//getMaps(ch);
-		//pref.log("Got maps");
-		pref.log("Getting additional waypoints");
-
-		getAddWaypoints(start, ch);
-
-		pref.log("Got additional waypoints");
-		ch.CacheNotes = notes;
-		ch.saveCacheDetails(profile.dataDir);
-		
-		cacheDB.set(number, ch);
-		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); //TODO This could be done at the end in the context menu
+		boolean ret=!infB.isClosed; // If the infoBox was closed before getting here, we return false
 		infB.close(0);
-		Vm.showWait(false);
+		//Vm.showWait(false); In myTableControl
+		return ret;
 	}
 	
 	/**
@@ -235,9 +248,9 @@ public class SpiderGC{
 			return;
 		}
 		Vm.showWait(true);
-		String start = new String();
+		String start = "";
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
-		String doc = new String();
+		String doc = "";
 		
 		int ok = login();
 		if(ok == Form.IDCANCEL) {
@@ -270,13 +283,14 @@ public class SpiderGC{
 			pref.log("Error fetching first list page");
 			Vm.debug("Could not get list");
 		}
-		String dummy = new String();
-		//String lineBlck = new String();
+		String dummy = "";
+		//String lineBlck = "";
 		int page_number = 4;		
 		Regex rexLine = new Regex("<tr bgcolor=((?s).*?)</tr>");
 		int found_on_page = 0;
 		//Loop till maximum distance has been found or no more caches are in the list
 		while(distance > 0){
+			if (infB.isClosed) break;
 			rex.search(start);
 			viewstate = rex.stringMatched(1);
 			//Vm.debug("In loop");
@@ -323,11 +337,12 @@ public class SpiderGC{
 			found_on_page = 0;
 		}
 		pref.log("Found " + cachesToLoad.size() + " caches");
-		infB.setInfo("Found " + cachesToLoad.size() + " caches");
+		if (!infB.isClosed) infB.setInfo("Found " + cachesToLoad.size() + " caches");
 		// Now ready to spider each cache
-		String wpt = new String();
+		String wpt = "";
 		CacheHolder ch;
 		for(int i = 0; i<cachesToLoad.size(); i++){
+			if (infB.isClosed) break;
 			ch = new CacheHolder();
 			wpt = (String)cachesToLoad.get(i);
 			// Get only caches not already available in the DB
@@ -353,7 +368,7 @@ public class SpiderGC{
 					pref.log("Trying logs");
 					ch.CacheLogs = getLogs(start, ch);
 					int z = 0;
-					String loganal = new String();
+					String loganal = "";
 					while(z < ch.CacheLogs.size() && z < 5){
 						loganal = (String)ch.CacheLogs.get(z);
 						if(loganal.indexOf("icon_sad")>0) {
@@ -408,6 +423,7 @@ public class SpiderGC{
 						getImages(start, ch);
 						pref.log("Got images");
 					}
+					if (infB.isClosed) break;
 					ch.Bugs = getBugs(start);
 					if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
 					pref.log("Getting additional waypoints");
@@ -458,6 +474,7 @@ public class SpiderGC{
 		String result = "";
 		String oldInfoBox=infB.getInfo();
 		while(exBug.endOfSearch() == false){
+			if (infB.isClosed) break; // Allow user to cancel by closing progress form
 			linkPlusBug= exBug.findNext();
 			int idx=linkPlusBug.indexOf("'>");
 			if (idx<0) break; // No link/bug pair found
@@ -485,8 +502,8 @@ public class SpiderGC{
 	
 	public void getAddWaypoints(String doc, CacheHolder ch){
 		Extractor exWayBlock = new Extractor(doc, "<strong>Additional Waypoints</strong><br>", "</table>", 0, false);
-		String wayBlock = new String();
-		String rowBlock = new String();
+		String wayBlock = "";
+		String rowBlock = "";
 		wayBlock = exWayBlock.findNext();
 		Regex nameRex = new Regex("&RefDS=1\">(.*)</a>");
 		Regex koordRex = new Regex("align=\"left\">([NSns] [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3} [EWew] [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})</td>");
@@ -534,7 +551,7 @@ public class SpiderGC{
 		String imgType;
 		String imgUrl;
 		//In the long description
-		String longDesc = new String();
+		String longDesc = "";
 		longDesc = getLongDesc(doc);
 		longDesc = STRreplace.replace(longDesc, "img", "IMG");
 		longDesc = STRreplace.replace(longDesc, "src", "SRC");
@@ -566,7 +583,7 @@ public class SpiderGC{
 					}
 				} catch (IndexOutOfBoundsException e) { 
 					Vm.debug("IndexOutOfBoundsException not in image span"+e.toString()+"imgURL:"+imgUrl);
-					pref.log("Problem loading image");
+					pref.log("Problem loading image. imgURL:"+imgUrl);
 				}
 				}
 			exImgSrc.setSource(exImgBlock.findNext());
@@ -593,7 +610,7 @@ public class SpiderGC{
 						ch.ImagesText.add(exImgName.findNext());
 					}
 				} catch (IndexOutOfBoundsException e) { 
-					Vm.debug("IndexOutOfBoundsException in image span"+e.toString()+"imgURL:"+imgUrl); 
+					pref.log("IndexOutOfBoundsException in image span. imgURL:"+imgUrl,e); 
 				}
 			}
 		}
@@ -607,7 +624,7 @@ public class SpiderGC{
 		//int bytes_read;
 		//byte[] buffer = new byte[9000];
 		ByteArray daten;
-		String datei = new String();
+		String datei = "";
 		datei = profile.dataDir + target;
 		if(pref.myproxy.length()>0){
 			connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), quelle);
@@ -699,7 +716,7 @@ public class SpiderGC{
 	}
 	
 	private String getLongDesc(String doc){
-		String res = new String();
+		String res = "";
 		inRex = new Regex("<span id=\"ShortDescription\">((?s).*?)</span>");
 		Regex rex2 = new Regex("<span id=\"LongDescription\">((?s).*?)<strong>Additional Hints");
 		inRex.search(doc);
@@ -729,8 +746,8 @@ public class SpiderGC{
 	}
 	
 	private Vector getLogs(String doc, CacheHolder ch){
-		String icon = new String();
-		String name = new String();
+		String icon = "";
+		String name = "";
 		Vector reslts = new Vector();
 		Regex block = new Regex("<span id=\"CacheLogs\">((?s).*?)</span>");
 		block.search(doc);
@@ -749,12 +766,12 @@ public class SpiderGC{
 			inRex.searchFrom(doc, inRex.matchedTo());
 		}
 		*/
-		String singleLog = new String();
+		String singleLog = "";
 		Extractor exSingleLog = new Extractor(doc, "<STRONG>", "[<A href=", 0, false); // maybe here is some change neccessary because findnext now gives the whole endstring back??? 
 		singleLog = exSingleLog.findNext();
 		Extractor exIcon = new Extractor(singleLog, "http://www.geocaching.com/images/icons/", "' align='abs", 0, true);
 		Extractor exNameTemp = new Extractor(singleLog, "<A HREF=\"", "/A>", 0 , true);
-		String nameTemp = new String();
+		String nameTemp = "";
 		nameTemp = exNameTemp.findNext();
 		Extractor exName = new Extractor(nameTemp, ">", "<", 0 , true);
 		Extractor exDate = new Extractor(singleLog, "align='absmiddle'>&nbsp;", " by <", 0 , true);
@@ -846,8 +863,8 @@ public class SpiderGC{
 	private static String fetch_post(String address, String document, String path) throws IOException 
 	   	{
 			
-			//String line = new String();
-			String totline = new String();
+			//String line = "";
+			String totline = "";
 			if(pref.myproxy.length()==0){
 				try {
 					/*
