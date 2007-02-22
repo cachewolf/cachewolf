@@ -71,7 +71,7 @@ class mySerialThread extends mThread{
 
 	public void stop() {
 		run = false;
-		comSp.close();
+		if (comSp != null) comSp.close(); //compSp == null can happen if a exception occured
 	}
 }
 
