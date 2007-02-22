@@ -292,6 +292,7 @@ public class DetailsPanel extends CellPanel{
 					btnBlack.image = imgBlack;
 				}
 				blackStatus = thisCache.is_black;
+				thisCache.setAttributesToAddiWpts();
 				btnBlack.repaintNow();
 			}
 			else if (ev.target == btnNewWpt){
