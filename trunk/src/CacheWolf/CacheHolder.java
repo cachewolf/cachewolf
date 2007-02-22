@@ -87,6 +87,9 @@ public CacheHolder update(CacheHolder newCh){
 	  if (this.is_owned == false) this.is_owned = newCh.is_owned;
 	  // update is_found if not already found
 	  if (this.is_found == false) this.is_found = newCh.is_found;
+	  // no else, because status can change.
+	  if (this.is_found == true) this.CacheStatus = MyLocale.getMsg(318,"Found");
+	  
 	  
 	  this.is_new = false;
 	  this.is_update = false;
@@ -452,6 +455,27 @@ public CacheHolder update(CacheHolder newCh){
 	   } else {
 		   distance = NODISTANCE;
 		   bearing = NOBEARING;
+	   }
+   }
+
+   public void setAttributesFromMainCache(CacheHolder mainCh){
+	   this.CacheOwner = mainCh.CacheOwner;
+	   this.CacheStatus = mainCh.CacheStatus;
+	   this.is_archived = mainCh.is_archived;
+	   this.is_available = mainCh.is_available;
+	   this.is_black = mainCh.is_black;
+	   this.is_owned = mainCh.is_owned;
+	   this.is_new = mainCh.is_new;
+	   this.is_found = mainCh.is_found;
+   }
+   
+   public void setAttributesToAddiWpts(){
+	   if (this.hasAddiWpt()){
+		   CacheHolder addiWpt;
+		   for (int i= this.addiWpts.getCount() - 1;  i>=0; i--){
+			    addiWpt = (CacheHolder) this.addiWpts.get(i);
+			    addiWpt.setAttributesFromMainCache(this);
+		   }
 	   }
    }
    

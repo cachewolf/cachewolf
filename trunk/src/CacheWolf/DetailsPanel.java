@@ -354,15 +354,7 @@ public class DetailsPanel extends CellPanel{
 			  profile.buildReferences();
 		  }
 		  // set status also on addi wpts
-		  if (ch.hasAddiWpt()){
-			  CacheHolder addiWpt;
-			  for (int i=0;i<ch.addiWpts.getCount();i++){
-				  addiWpt = (CacheHolder)ch.addiWpts.get(i);
-				  addiWpt.CacheStatus = ch.CacheStatus;
-				  addiWpt.is_found = ch.is_found;
-				  addiWpt.is_owned = ch.is_owned;
-			  }
-		  }
+		  ch.setAttributesToAddiWpts();
 		  if (dirty_notes) ch.saveCacheDetails(profile.dataDir);
 		  dirty_notes=false;
 		  dirty_details=false;
