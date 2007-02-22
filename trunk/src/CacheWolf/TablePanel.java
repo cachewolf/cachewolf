@@ -106,6 +106,14 @@ public class TablePanel extends CellPanel{
 		tc.scrollToVisible(0,0);
 	}
 	
+	/**
+	 * Similar to refreshTable but not so "heavy".
+	 * Is used when user changes settings in preferences.
+	 */
+	public void refreshControl(){
+		tc.update(true);
+	}
+	
 	/** Move all filtered caches to the end of the table and redesplay table */
 	//TODO Add a sort here to restore the sort after a filter
 	public void refreshTable(){

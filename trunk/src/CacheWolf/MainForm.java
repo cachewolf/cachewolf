@@ -113,8 +113,9 @@ public class MainForm extends Form {
 	
 	public void onEvent(Event ev){ // Preferences have been changed by PreferencesScreen
 		if(pref.dirty == true){
-			mTab.getTablePanel().myMod.setColumnNamesAndWidths();	
-		    mTab.getTablePanel().refreshTable();
+			mTab.getTablePanel().myMod.setColumnNamesAndWidths();
+			mTab.getTablePanel().refreshControl();
+		    //mTab.getTablePanel().refreshTable();
 			pref.dirty = false;
 		}
 		super.onEvent(ev);
