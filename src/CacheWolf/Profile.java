@@ -427,6 +427,7 @@ public class Profile {
 					mainCh = (CacheHolder) cacheDB.get(index.intValue());
 					mainCh.addiWpts.add(ch);
 					ch.mainCache = mainCh;
+					ch.setAttributesFromMainCache(mainCh);
 				}// if
 			}// if
 		}// for
