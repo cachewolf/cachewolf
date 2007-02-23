@@ -76,7 +76,7 @@ public class MovingMap extends Form {
 		this.noBorder = true;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
-		this.backGround = Color.Black;
+		this.backGround = new Color(254,254,254); // background must not be black because black is interpreted as transparent and transparent images above (eg trackoverlay) want be drawn in windows-VM, so be care, don|t use white either
 		this.mapPath = Global.getPref().getMapLoadPath();
 
 		mmp = new MovingMapPanel(this);
@@ -1529,7 +1529,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			lastZoomHeight = 0;
 		}
 		if (which == mm.buttonImageZoom1to1) {
-			mm.zoom1to1();
+			mm.zoom1to1(); 
 		}
 		if (which == mm.bottonImageClose) {
 			WindowEvent tmp = new WindowEvent();
@@ -1897,8 +1897,10 @@ class ArrowsOnMap extends AniImage {
 
 	public void doDraw(Graphics g,int options) {
 		if (map == null) return;
-		if (!dirsChanged) {
-			g.drawImage(image,mask,transparentColor,0,-minY,location.width,location.height);
+		drawArrows(g);
+		return;
+/*		if (!dirsChanged) {
+			g.drawImage(image,mask,transparentColor,0,-minY,location.width,location.height); // the transparency with a transparent color doesn't work in ewe-vm for pocketpc, it works in java-vm, ewe-vm on pocketpc2003 
 			return;
 		}
 		dirsChanged = false;
@@ -1909,7 +1911,7 @@ class ArrowsOnMap extends AniImage {
 		drawArrows(draw);
 		draw.drawImage(image,mask,Color.DarkBlue,0,0,location.width,location.height); // this trick (note: wrong transparentColor) forces a redraw 
 		g.drawImage(image,mask,transparentColor,0,-minY,location.width,location.height);
-	}
+*/	}
 
 	private void drawArrows(Graphics g){
 
@@ -1955,26 +1957,19 @@ class ArrowsOnMap extends AniImage {
 class MapImage extends AniImage {
 	public Point locAlways = new Point(); // contains the theoretical location even if it the location is out of the screen. If the image is on the screen, it contains the same as location
 	static Dimension screenDim;
-	public int widthi;
-	public int heighti;
 	boolean hidden = false;
 	public MapImage() {
 		super();
-		widthi = getWidth();
-		heighti = getHeight();
+		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
 
 	public MapImage(String f) {
 		super(f);
-		widthi = getWidth(); // this is necessary becaus width is not directly accessable from here and an function call each time the pos ist updated shall be avoided becaus of performance reasons
-		heighti = getHeight();
 		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
 
 	public MapImage(mImage im) {
 		super(im);
-		widthi = getWidth();
-		heighti = getHeight();
 		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
 
@@ -1984,8 +1979,6 @@ class MapImage extends AniImage {
 
 	public void setImage(Image im, Color c) {
 		super.setImage(im, c);
-		widthi = getWidth();
-		heighti = getHeight();
 		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
 
@@ -2014,8 +2007,8 @@ class MapImage extends AniImage {
 	}
 
 	public boolean isOnScreen() { 
-		if ( (locAlways.x + widthi > 0 && locAlways.x < screenDim.width) && 
-				(locAlways.y + heighti > 0 && locAlways.y < screenDim.height) ) return true;
+		if ( (locAlways.x + location.width > 0 && locAlways.x < screenDim.width) && 
+				(locAlways.y + location.height > 0 && locAlways.y < screenDim.height) ) return true;
 		else return false;
 	}
 
