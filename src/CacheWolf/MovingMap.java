@@ -911,7 +911,11 @@ public class MovingMap extends Form {
 			break;
 		case HIGHEST_RESOLUTION: newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, 0.000001f, false); break;
 		case HIGHEST_RESOLUTION_GPS_DEST: 
-			if (gotoPos!= null && GpsStatus != noGPS) newmap = maps.getMapForArea(new CWPoint(posCircleLat, posCircleLon), new CWPoint(gotoPos.lat, gotoPos.lon)); // TODO use home-coos if no gps? - consider start from details panel and from gotopanel
+			if (gotoPos!= null && GpsStatus != noGPS && posCircleLat>= -90 && posCircleLat <= 90 && posCircleLon >= -360 && posCircleLon <= 360) {
+				newmap = maps.getMapForArea(new CWPoint(posCircleLat, posCircleLon), new CWPoint(gotoPos.lat, gotoPos.lon)); // TODO use home-coos if no gps? - consider start from details panel and from gotopanel
+				if (newmap == null) newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, 10000000000000000000000000000000000f, false); // use map with most available overview if no map containing PosCircle and GotoPos is available
+			}
+			//	either Goto-Pos or GPS-Pos not set
 			else newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, 0.000001f, false); 
 			break;
 		default: (new MessageBox("Error", "Programmfehler: \nillegal mapChangeModus: " + mapChangeModus, MessageBox.OKB)).execute(); break;
@@ -926,7 +930,7 @@ public class MovingMap extends Form {
 			return;
 		}
 		if (currentMap == null && newmap == null) {
-			(new MessageBox("Information", "Für die aktuelle Position steht keine Karte zur Verfüung, bitte wählen Sie eine manuell", MessageBox.OKB)).execute();
+			(new MessageBox("Information", "Für die aktuelle Position steht keine Karte zur Verfüng, bitte wählen Sie eine manuell", MessageBox.OKB)).execute();
 			posCircleLat = cll.latDec;
 			posCircleLon = cll.lonDec; // choosemap calls setmap with posCircle-coos
 			while (currentMap == null) {
