@@ -522,7 +522,7 @@ public class SpiderGC{
 				typeRex.search(rowBlock);
 				cx.CacheName = nameRex.stringMatched(1);
 				if(koordRex.didMatch()) cx.pos.set(koordRex.stringMatched(1)); 
-				cx.LatLon = ch.pos.toString(); 
+				cx.LatLon = cx.pos.toString(); 
 				//cx.pos.set(cx.LatLon);
 				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
 				rowBlock = exRowBlock.findNext();
