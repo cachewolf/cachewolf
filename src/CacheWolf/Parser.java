@@ -123,6 +123,7 @@ public class Parser{
     	new fnType("rot13","rot13",2),
     	new fnType("show","show",2),
     	new fnType("sin","sin",2),
+    	new fnType("skeleton","skeleton",2),
     	new fnType("sqrt","sqrt",2),
     	new fnType("sval","sval",2),
     	new fnType("tolowercase","lc",2),
@@ -557,6 +558,36 @@ public class Parser{
     	return res;
     }
     
+    /** Create a skeleton for multis */
+    private void funcSkeleton(String waypointName) throws Exception {
+   		int i=Global.getProfile().getCacheIndex(waypointName);
+		if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
+   	    CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(i);
+		CacheHolder addiWpt;
+		StringBuffer op=new StringBuffer(1000);
+   	    if (ch.hasAddiWpt()){
+			for (int j=0; j<ch.addiWpts.getCount();j++){
+				addiWpt = (CacheHolder)ch.addiWpts.get(j);
+				op.append("IF $");
+				op.append(addiWpt.wayPoint);
+				op.append("=\"\" THEN\n   $");
+				op.append(addiWpt.wayPoint);
+				op.append("=\"\" # Pos=");
+				op.append(addiWpt.pos.toString());
+				op.append("\n   \"Punkt ");
+				op.append(addiWpt.wayPoint.substring(0,2));
+				op.append(" [");
+				op.append(addiWpt.CacheName);
+				op.append("] = \" $");
+				op.append(addiWpt.wayPoint);
+				op.append("\n   goto($");
+				op.append(addiWpt.wayPoint);
+				op.append("); STOP\nENDIF\n");
+			}
+			Global.mainTab.solverP.mText.appendText(op.toString(),true);
+		}// if hasAddiWpt
+    }
+    
     private double funcSqrt() throws Exception {
     	double a=popCalcStackAsNumber(0);
     	if (a<0) err(MyLocale.getMsg(1720,"Cannot calculate square root of a negative number"));
@@ -604,7 +635,6 @@ public class Parser{
 			else 
 				parseSimpleCommand();
 			checkNextSymIs(";");
-			while (calcStack.size()>0) messageStack.add(popCalcStackAsString());
 		}
 	}
 
@@ -618,8 +648,10 @@ public class Parser{
 			getToken();
 		} else if (thisToken.tt==TokenObj.TT_VARIABLE && lookAheadToken().tt==TokenObj.TT_EQ) 
 			parseAssign();
-		else 
-			parseStringExp();		
+		else {
+			parseStringExp();
+			while (calcStack.size()>0) messageStack.add(popCalcStackAsString());
+		}
 	}
 	
 	private void parseIf() throws Exception{
@@ -860,6 +892,7 @@ public class Parser{
 //	    else if (funcDef.alias.equals("rs")) funcRequireSemicolon(nargs);
 	    else if (funcDef.alias.equals("show"));
 	    else if (funcDef.alias.equals("sin")) calcStack.add(new java.lang.Double(java.lang.Math.sin(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("skeleton")) funcSkeleton(popCalcStackAsString());
 	    else if (funcDef.alias.equals("sqrt")) calcStack.add(new java.lang.Double(funcSqrt())); 
 	    else if (funcDef.alias.equals("sval")) calcStack.add(funcSval(popCalcStackAsString()));
 	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(popCalcStackAsNumber(0))));
