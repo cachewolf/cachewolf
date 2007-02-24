@@ -377,7 +377,7 @@ public class Parser{
 		double a=java.lang.Math.abs(popCalcStackAsNumber(0));
 		if (cycles<0) cycles=1;
     	if (cycles>5) cycles=5;
-    	while (a>10 && cycles-->0) {
+    	while (a>=10 && cycles-->0) {
 	    	// Cross total = Quersumme berechnen
 			String aString = Convert.toString(a); // 
 			// bei 1.8e2 nur 1.8 verwenden 
