@@ -165,11 +165,11 @@ public class Parser{
     }
     
     /** Shows global symbols */
-    private void showGlobals() throws Exception {
+    private void showVars(boolean globals) throws Exception {
     	Iterator it=symbolTable.entries();
     	while (it.hasNext()) {
     		String varName=((String)((ewe.util.Map.MapEntry) it.next()).getKey());
-    		if (varName.startsWith("$")) {
+    		if (globals == varName.startsWith("$")) {
     			String value=(String) getVariable(varName);
     			if (java.lang.Double.isNaN(toNumber(value)))
     				messageStack.add(varName+" = \""+STRreplace.replace(value.toString(),"\"","\"\"")+"\"");
@@ -183,8 +183,9 @@ public class Parser{
     private void clearLocalSymbols() {
     	Iterator it=symbolTable.entries();
     	while (it.hasNext()) {
-    		if (((String)((ewe.util.Map.MapEntry) it.next()).getKey()).startsWith("$")) 
-    			symbolTable.remove(it);
+    		ewe.util.Map.MapEntry sym=(ewe.util.Map.MapEntry) it.next();
+    		if (!((String)sym.getKey()).startsWith("$")) 
+    			symbolTable.remove(sym.getKey());
     	}
     }
     
@@ -220,7 +221,7 @@ public class Parser{
 			// If it is a global variable, add it with a default value
 			if (varName.startsWith("$")) {
 				result="";
-				symbolTable.put(varName,"");
+				symbolTable.put(Global.getPref().solverIgnoreCase?varName.toUpperCase():varName,"");
 			} else
 				err (MyLocale.getMsg(1702,"Variable not defined: ")+varName);
 		}
@@ -397,7 +398,7 @@ public class Parser{
     	if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
 		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
     	cwPt.set(coordA);
-    	return cwPt.getDistance(new CWPoint(coordB));
+    	return cwPt.getDistance(new CWPoint(coordB))*1000.0;
     }
     
     /** Calculate brearing from one point to the next */
@@ -609,8 +610,11 @@ public class Parser{
 
 	private void parseSimpleCommand() throws Exception{
 		if (thisToken.tt==TokenObj.TT_STOP) throw new Exception("STOP");  // Terminate without error message
-		if (thisToken.token.equals("$")) {
-			showGlobals();
+		if (thisToken.token.equals("$")) { // Show all global variables
+			showVars(true);
+			getToken();
+		} else if (thisToken.token.equals("?")) { // Show all local variables
+			showVars(false);
 			getToken();
 		} else if (thisToken.tt==TokenObj.TT_VARIABLE && lookAheadToken().tt==TokenObj.TT_EQ) 
 			parseAssign();
@@ -694,7 +698,7 @@ public class Parser{
 			}
 			// Name starts with $ but is not a waypoint, fall through and set it as global variable
 		}
-		symbolTable.put(varName, popCalcStackAsString());
+		symbolTable.put(Global.getPref().solverIgnoreCase?varName.toUpperCase():varName, popCalcStackAsString());
 	}
 	
 	private void parseStringExp()throws Exception {

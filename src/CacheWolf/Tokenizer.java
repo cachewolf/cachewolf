@@ -47,7 +47,7 @@ public class Tokenizer{
 	}
 	
 	private boolean isSymbol(char c){
-		return "!<>(){}*/,;^+-=".indexOf(look)!=-1;
+		return "?!<>(){}*/,;^+-=".indexOf(c)!=-1;
 	}
 
 	private boolean getChar(){
