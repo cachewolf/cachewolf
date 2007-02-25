@@ -7,6 +7,7 @@ import ewe.sys.*;
 import ewe.ui.*;
 import ewe.graphics.*;
 import ewe.fx.*;
+
 import com.stevesoft.ewe_pat.*;
 
 /**
@@ -197,7 +198,10 @@ public class Map extends Form {
 		if(tmp != FileChooser.IDYES) return Form.IDCANCEL;
 		File inDir = fc.getChosenFile();
 		File mapFile;
-		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...            \n")); 
+		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...            \n"), InfoBox.PROGRESS_WITH_WARNINGS, false); 
+		inf.setPreferredSize(220, 300);
+		inf.setInfoHeight(100);
+		inf.relayout(false);
 		Vm.showWait(this, true);
 		inf.exec();
 
@@ -209,8 +213,8 @@ public class Map extends Form {
 		Vector files;
 		String [] filestemp;
 		String line = new String();
-		InputStream in;
-		OutputStream out;
+		InputStream in = null;
+		OutputStream out = null;
 		FileReader inMap;
 		byte[] buf;
 		int len;
@@ -225,29 +229,50 @@ public class Map extends Form {
 		files.addAll(filestemp);
 
 		String currfile = null;
-		for(int i = files.size() -1 ; i >= 0;i--){
+		String curInFullPath;
+		String curOutFullPath;
+		int num = files.size();
+		for(int i =  num -1 ; i >= 0;i--){
 			currfile = (String) files.get(i);
-			inf.setInfo(MyLocale.getMsg(4110,"Loading:\n")+ " " + currfile);
+			inf.setInfo(MyLocale.getMsg(4110,"Loading: ")+ "\n" + currfile + "\n("+(num-i)+"/"+num+")");
 			//Copy the file
 			//Vm.debug("Copy: " + inDir.getFullPath() + "/" +files[i]);
 			//Vm.debug("to: " + mapsPath + files[i]);
+			curInFullPath = inDir.getFullPath() + "/" +currfile;
+			curOutFullPath = mapsPath + currfile;
+			boolean imageerror = false;
 			try {
-				in = new FileInputStream(inDir.getFullPath() + "/" +currfile);
-				out = new FileOutputStream(mapsPath + currfile);
-				buf = new byte[1024];
+				in = new FileInputStream(curInFullPath);
+				buf = new byte[1024*10];
+				boolean first = true;
+				ByteArray header = new ByteArray(buf);
 				while ((len = in.read(buf)) > 0) {
+					if (first) {
+						first = false;
+						header.copyFrom(buf, 0, len);
+						ImageInfo tmpII = Image.getImageInfo(header,null);
+						imageWidth = tmpII.width;
+						imageHeight = tmpII.height;
+						out = new FileOutputStream(curOutFullPath); // only create outfile if geImageInfo didn't throw an exception so do it only here not directly after opening input stream
+					}
 					out.write(buf, 0, len);
 				}
-				in.close();
-				out.close();
 			} catch(IOException ex){
-				inf.addText(": IO-Error while copying image \n" + ex.getMessage());
+				imageerror = true;
+				inf.addWarning("\nIO-Error while copying image from: " + curInFullPath + " to: " + curOutFullPath + " error: " + ex.getMessage());
+			} catch (IllegalArgumentException e) { // thrown from Image.getImageInfo when it could not interprete the header (e.g. bmp with 32 bits per pixel)
+				imageerror = true;
+				inf.addWarning("\nError: could not decode image: " + curInFullPath + " - image not copied");
+			} finally {
+				try {
+					if (in != null) in.close();
+					if (out  != null) out.close(); 
+				} catch (Throwable e) {}
 			}
-
 			//Check for a .map file
 			rawFileName = currfile.substring(0, currfile.lastIndexOf("."));
 			mapFile = new File(inDir.getFullPath() + "/" + rawFileName + ".map");
-			if(mapFile.exists()){
+			if(!imageerror && mapFile.exists()){
 				GCPoint gcp1 = new GCPoint();
 				GCPoint gcp2 = new GCPoint();
 				GCPoint gcp3 = new GCPoint();
@@ -351,14 +376,17 @@ public class Map extends Form {
 					} // while
 					if (inMap != null)	inMap.close();
 				} catch(IllegalArgumentException ex){ // is thrown from Convert.toDouble and saveWFL if affine[0-5]==0 NumberFormatException is a subclass of IllegalArgumentExepction
-					inf.addText("\nError while importing .map-file: "+ex.getMessage());
+					inf.addWarning("\nError while importing .map-file: "+ex.getMessage());
 				} catch(IOException ex){
-					inf.addText("IO-Error while reading or writing calibration file\n" + ex.getMessage());
+					inf.addWarning("\nIO-Error while reading or writing calibration file\n" + ex.getMessage());
 				} 
-			} // if map file.exists
+			} else { // if map file.exists
+				if (!imageerror) inf.addWarning("\nNo calibration file found for: " + currfile + " - you can calibrate it manually");
+			}
 		} // for file
 		Vm.showWait(this, false);
 		inf.addText("\ndone.");
+		inf.addOkButton();
 		//inf.addOkButton(); doesn't work
 		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
 		return Form.IDOK;

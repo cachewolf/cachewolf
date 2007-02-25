@@ -100,7 +100,10 @@ public class InfoBox extends Form{
 		msgArea.setText(info);
 		this.repaintNow();
 	}
-
+	
+	public void setInfoHeight(int heighti) {
+		msgArea.setPreferredSize(getPreferredSize(null).width, heighti);
+	}
 	public String getInfo(){
 		return msgArea.getText();
 	}
