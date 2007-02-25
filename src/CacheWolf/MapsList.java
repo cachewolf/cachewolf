@@ -15,7 +15,7 @@ import ewe.fx.*;
  *
  */
 public class MapsList extends Vector {
-	public static float scaleTolerance = 0.01f; // absolute deviations from this factor are seen to have the same scale
+	public static float scaleTolerance = 1.15f; // absolute deviations from this factor are seen to have the same scale
 	public Hashtable scales2Area;
 
 	/**
@@ -94,16 +94,16 @@ public class MapsList extends Vector {
 		for (int i=size()-1; i >= 0 ;i--) { 
 			better = false;
 			mi = (MapInfoObject)get(i);
-			if (screenArea == null || java.lang.Math.abs(mi.scale - lastscale) > scaleTolerance) {
+			if (screenArea == null || !scaleEquals(lastscale, mi) ) {
 				screenArea = getAreaForScreen(screen, lat, lon, mi.scale, mi);
 				lastscale = mi.scale;
 			}
 			if (screenArea.isOverlapping(mi.getArea()) ) { // is on screen
-				if (!forceScale || (forceScale && java.lang.Math.abs(mi.scale - scale) > scaleTolerance)) { // different scale?
-					if (!forceScale && (mi.inBound(lat, lon) && (bestMap == null || (java.lang.Math.abs(mi.scale-scale) + scaleTolerance < java.lang.Math.abs(bestMap.scale-scale)) || !bestMap.inBound(lat, lon)))) 
+				if (!forceScale || (forceScale && !scaleEquals(scale, mi))) { // different scale?
+					if (!forceScale && (mi.inBound(lat, lon) && (bestMap == null || scaleNearer(mi.scale, bestMap.scale, scale) || !bestMap.inBound(lat, lon)))) 
 						better = true; // inbound and resolution nearer at wanted resolution or old one is on screen but lat/long not inbound-> better
 					else {
-						if ( bestMap == null || (java.lang.Math.abs(mi.scale - scale) < java.lang.Math.abs(bestMap.scale - scale) + scaleTolerance)) {
+						if ( bestMap == null || scaleNearerOrEuqal(mi.scale, bestMap.scale, scale)) {
 							latNearer = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
 							lonNearer = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm < minDistLon;
 							if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
@@ -153,10 +153,10 @@ public class MapsList extends Vector {
 			better = false;
 			mi = (MapInfoObject)get(i);
 			if (mi.inBound(topleft) && mi.inBound(bottomright)) { // both points are inside the map
-				if (fittingmap == null || fittingmap.scale > mi.scale + scaleTolerance) {
+				if (fittingmap == null || fittingmap.scale > mi.scale * scaleTolerance) {
 					better = true; // mi map has a better (lower) scale than the last knwon good map
 				} else {
-					if (fittingmap != null && java.lang.Math.abs(mi.scale - fittingmap.scale) < scaleTolerance) { // same scale as bestmap till now -> test if its center is nearer to the gps-point = topleft
+					if (fittingmap != null && scaleEquals(mi, fittingmap)) { // same scale as bestmap till now -> test if its center is nearer to the gps-point = topleft
 						latNearer = java.lang.Math.abs(topleft.latDec- mi.center.latDec)/mi.sizeKm < minDistLat ;
 						lonNearer = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
 						if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
@@ -203,15 +203,15 @@ public class MapsList extends Vector {
 			better = false;
 			mi = (MapInfoObject)get(i);
 			if (mi.fileNameWFL == "") continue; // exclude "maps" without image // TODO make this a boolean in MapInfoObject
-			if (screenArea == null || java.lang.Math.abs(mi.scale - lastscale) > scaleTolerance) {
+			if (screenArea == null || !scaleEquals(lastscale, mi)) {
 				screenArea = getAreaForScreen(screen, lat, lon, mi.scale, mi);
 				lastscale = mi.scale;
 			}
 			if (screenArea.isOverlapping(mi.getArea())) { // is on screen
-				if (bestMap == null || java.lang.Math.abs(mi.scale - bestMap.scale) > scaleTolerance) { // different scale then known bestMap?
-					if (mi.inBound(lat, lon) && (      // more details                                 // less details than bestmap
-							(moreDetails && (curScale > mi.scale + scaleTolerance) && (bestMap == null || mi.scale-scaleTolerance > bestMap.scale) ) // higher resolution wanted and mi has higher res and a lower res than bestmap, because we dont want to overjump one resolution step
-							|| (!moreDetails && (curScale < mi.scale - scaleTolerance) && (bestMap == null || mi.scale + scaleTolerance < bestMap.scale) ) // lower resolution wanted and mi has lower res and a higher res than bestmap, because we dont want to overjump one resolution step
+				if (bestMap == null || !scaleEquals(mi, bestMap)) { // different scale than known bestMap?
+					if (mi.inBound(lat, lon) && (      // more details wanted and this map has more details?                                // less details than bestmap
+							(moreDetails && (curScale > mi.scale * scaleTolerance) && (bestMap == null || mi.scale > bestMap.scale * scaleTolerance ) ) // higher resolution wanted and mi has higher res and a lower res than bestmap, because we dont want to overjump one resolution step
+							|| (!moreDetails && (curScale *  scaleTolerance < mi.scale) && (bestMap == null || mi.scale * scaleTolerance < bestMap.scale) ) // lower resolution wanted and mi has lower res and a higher res than bestmap, because we dont want to overjump one resolution step
 					) )	better = true;	// inbound and higher resolution if higher res wanted -> better
 				} else { // same scale as bestmap -> look if naerer 
 					latNearer = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
@@ -256,10 +256,57 @@ public class MapsList extends Vector {
 		return ret; 
 	}
 	public static boolean scaleEquals(MapInfoObject a, MapInfoObject b) {
-		return java.lang.Math.abs(a.scale - b.scale) < scaleTolerance; 
+		//return java.lang.Math.abs(a.scale - b.scale) < scaleTolerance;
+		return a.scale/b.scale < scaleTolerance || b.scale/a.scale < scaleTolerance;
 	}
 	public static boolean scaleEquals(float s, MapInfoObject b) {
-		return java.lang.Math.abs(s - b.scale) < scaleTolerance; 
+		//return java.lang.Math.abs(s - b.scale) < scaleTolerance;
+		return s/b.scale < scaleTolerance || b.scale/s < scaleTolerance;
+	}
+	
+	/**
+	 * 
+	 * @param test
+	 * @param old
+	 * @param wanted
+	 * @return true if test is nearer to wanted than old, false if the change in the scale is lower than scaleTolerance
+	 */
+	public static boolean scaleNearer(float test, float old, float wanted) {
+		float testa, wanta, wantb, olda;
+		if (test > wanted) { // ensure that first term is greater than 1
+			testa = test;
+			wanta = wanted;
+		} else {
+			testa = wanted;
+			wanta = test;
+		}
+		if (old > wanted) { // ensure that second term is greater than 1 
+			olda = old;
+			wantb = wanted;
+		} else {
+			olda = wanted;
+			wantb = old;
+		}
+		return testa/wanta * scaleTolerance < olda/wantb; 
+	}
+
+	public static boolean scaleNearerOrEuqal(float test, float old, float wanted) {
+		float testa, wanta, wantb, olda;
+		if (test > wanted) { // ensure that first term is greater than 1
+			testa = test;
+			wanta = wanted;
+		} else {
+			testa = wanted;
+			wanta = test;
+		}
+		if (old > wanted) { // ensure that second term is greater than 1 
+			olda = old;
+			wantb = wanted;
+		} else {
+			olda = wanted;
+			wantb = old;
+		}
+		return testa/wanta < olda/wantb * scaleTolerance ; 
 	}
 
 	/** for determining if a new map should be downloaded

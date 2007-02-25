@@ -907,7 +907,7 @@ public class MovingMap extends Form {
 		case NORMAL_KEEP_RESOLUTION: 
 			newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, scaleWanted, false);
 			if (newmap == null) newmap = currentMap;
-			if (java.lang.Math.abs(newmap.scale - scaleWanted) < maps.scaleTolerance) wantMapTest = false;
+			if (MapsList.scaleEquals(scaleWanted, newmap)) wantMapTest = false;
 			break;
 		case HIGHEST_RESOLUTION: newmap = maps.getBestMap(cll.latDec, cll.lonDec, screen, 0.000001f, false); break;
 		case HIGHEST_RESOLUTION_GPS_DEST: 
