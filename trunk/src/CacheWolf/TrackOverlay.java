@@ -266,6 +266,21 @@ public class TrackOverlay extends MapImage {
 // imageMayChange = true; // hilft auch nicht :-(
 
 /*
+ * In der ewe-VM für PocketPC-ARM funktioniert die Festlegung einer 
+ * transparenten Farbe nicht (Hintergrund wird weiß statt durchsichtig)
+ * deswegen (und weil in ewe-VM effizienter) Umstellung auf Transparenzmaske
+ * statt transparenter Farbe
+ * TODO Dies ist in Java-VM allerdings extrem Speicher fressend -> evtl abfragen 
+static int fixMask(WObject image,WObject col,int isMask):
+	in Maske: 0 an durchsichtiger Stelle, sonst ff
+	in Image: ffffff an durchsichtiger Stelle
+
+	in java-VM
+	in Maske: ffffffff in image.mask, wenn nicht durchsichtig
+	          ff000000 an durchsichtiger Stelle
+	image.doCheckMask erzeugt ein Image mit 0 an den durchsichtigen Stellen, die dadurch definiert sind, dass im image 0xffffff und in (mask & 0xffffff == 0) steht.
+*/
+/*
  * this class is only needed to have a fast access to the list of pixels
  * which are added but aniimage.draw will not lead to a change on the screen
  * so that these pixels will be drawn seperately by doDraw
