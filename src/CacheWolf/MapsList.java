@@ -72,7 +72,7 @@ public class MapsList extends Vector {
 	 * find the best map for lat/lon in the list of maps
 	 * currently the best map is the one, whose center is nearest to lat/lon
 	 * and in Area with its scale nearest to scale.
-	 * it always return a map (if the list is not empty) 
+	 * it always returns a map (if the list is not empty) 
 	 * even if the map is not inbound
 	 * lat/lon
 	 * @param lat
@@ -100,8 +100,8 @@ public class MapsList extends Vector {
 			}
 			if (screenArea.isOverlapping(mi.getArea()) ) { // is on screen
 				if (!forceScale || (forceScale && java.lang.Math.abs(mi.scale - scale) > scaleTolerance)) { // different scale?
-					if (!forceScale && (mi.inBound(lat, lon) && (bestMap == null || (java.lang.Math.abs(mi.scale-scale) + scaleTolerance < java.lang.Math.abs(bestMap.scale-scale))))) 
-						better = true; // inbound and resolution nearer at wanted resolution -> better
+					if (!forceScale && (mi.inBound(lat, lon) && (bestMap == null || (java.lang.Math.abs(mi.scale-scale) + scaleTolerance < java.lang.Math.abs(bestMap.scale-scale)) || !bestMap.inBound(lat, lon)))) 
+						better = true; // inbound and resolution nearer at wanted resolution or old one is on screen but lat/long not inbound-> better
 					else {
 						if ( bestMap == null || (java.lang.Math.abs(mi.scale - scale) < java.lang.Math.abs(bestMap.scale - scale) + scaleTolerance)) {
 							latNearer = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
@@ -202,7 +202,7 @@ public class MapsList extends Vector {
 		for (int i=size()-1; i >= 0 ;i--) { 
 			better = false;
 			mi = (MapInfoObject)get(i);
-			if (mi.fileNameWFL == "") continue; // exclude "maps" without image
+			if (mi.fileNameWFL == "") continue; // exclude "maps" without image // TODO make this a boolean in MapInfoObject
 			if (screenArea == null || java.lang.Math.abs(mi.scale - lastscale) > scaleTolerance) {
 				screenArea = getAreaForScreen(screen, lat, lon, mi.scale, mi);
 				lastscale = mi.scale;
