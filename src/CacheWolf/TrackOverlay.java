@@ -28,23 +28,31 @@ public class TrackOverlay extends MapImage {
 	public Color trackPixelsColor[] = null;
 	public int numPixels = 0;
 	final static int maxPixelsInCache = 100;
-	final static Color transparentColorForOverlay = Color.White; // onlz for use when transparent color is used
+	final static Color transparentColorForOverlay = Color.White; // only for use when transparent color is used
+	static boolean useTransparentColor;
 	public TrackOverlay (TrackPoint topLefti, int widthi, int highti, MapInfoObject transi) {
 		super();
 		topLeft = new TrackPoint(topLefti);
 		trans = transi;
 		bottomRight = calcLatLonInImage(widthi, highti);
-		Image maski = new Image(widthi, highti);
-		drawMask = new Graphics(maski);
-		drawMask.setColor(Color.White);
-		drawMask.fillRect(0, 0, maski.getWidth(), maski.getHeight());
-		setImage(new Image(widthi, highti), maski); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in ewe-vm and doesn't consume more memory than a transparency color
-		maski.free(); //setimage produces an inverted copy of the mask
-		maski = null;
+		if (ewe.sys.Vm.getPlatform().equalsIgnoreCase("java")) {
+			useTransparentColor = true; 
+			setImage(new Image(widthi, highti), transparentColorForOverlay); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in ewe-vm and doesn't consume more memory than a transparency color (ewe 1.49)
+		} else {
+			useTransparentColor = false; // momentanously this it not used, but this is only because ewe treats areas as opaque which has a non white color in the image, so that the mask doesn't need to be changed
+			Image maski = new Image(widthi, highti);
+			drawMask = new Graphics(maski);
+			drawMask.setColor(Color.White);
+			drawMask.fillRect(0, 0, maski.getWidth(), maski.getHeight());
+			setImage(new Image(widthi, highti), maski); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in ewe-vm and doesn't consume more memory than a transparency color (ewe 1.49)
+			maski.free(); //setimage produces an inverted copy of the mask
+			maski = null;
+		}
 		//properties = AlwaysOnTop; // arrows are above, so dont set it.
 		draw = new Graphics(image);
 		draw.setDrawOp(Graphics.DRAW_OVER);
-		draw.setColor(Color.White);
+		if (useTransparentColor) draw.setColor(transparentColorForOverlay);
+		else draw.setColor(Color.White);
 		draw.fillRect(0, 0, widthi, highti);
 		//int[] markImage = {0x00ff0000, 0x00ff0000, 0x00ff0000, 0x00ff0000};
 		//int[] markMaskOpaque = {0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff};
@@ -66,7 +74,7 @@ public class TrackOverlay extends MapImage {
 		properties &= ~HasChanged;
 	}
 
-	
+
 	public void paintTracks() {
 	// for debugging TrackOverlayPositions
 	// draw.setPen(new Pen(Color.LightBlue,Pen.SOLID,1));
@@ -80,7 +88,8 @@ public class TrackOverlay extends MapImage {
 		Track tr;
 		for (tri=tracks.size()-1; tri >= 0; tri--) {
 			tr = (Track)tracks.get(tri);
-			draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
+			//draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
+			draw.setColor(tr.trackColor);
 			if (tr.num > 0) {
 				for (i=0; i < tr.num; i++) {
 					paintPoint(tr.trackColor, tr.TrackPoints[i].latDec, tr.TrackPoints[i].lonDec);
@@ -89,13 +98,13 @@ public class TrackOverlay extends MapImage {
 		}
 	}
 
-		/**
-		 * 
-		 * @param f
-		 * @param lat
-		 * @param lon
-		 * @return true if point was on this overlay
-		 */
+	/**
+	 * 
+	 * @param f
+	 * @param lat
+	 * @param lon
+	 * @return true if point was on this overlay
+	 */
 	public boolean paintPoint(Color f, double lat, double lon){
 		if (lat<bottomRight.latDec || lat > topLeft.latDec || lon<topLeft.lonDec || lon>bottomRight.lonDec) return false;
 		//ewe.sys.Vm.debug("showlastaddedpoint, lat: "+lat+"   lon: "+lon);
@@ -123,7 +132,7 @@ public class TrackOverlay extends MapImage {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * this method forces ewe to transfer the drawn points
 	 * from _awtImage to bufferedImage, which is drawn to the screen
@@ -136,7 +145,7 @@ public class TrackOverlay extends MapImage {
 		imageChangesDontShow = false;
 		removeAllPixels();
 	}
-	
+
 	private void removeAllPixels() {
 		numPixels = 0;
 		trackPixels = null;
@@ -173,17 +182,18 @@ public class TrackOverlay extends MapImage {
 			int ll =(numPixels<30 ? 0 : numPixels-30); // look in the last 50 added Pixels if the same Pixel is already in the list (for performance reasons dont look in the whole list)
 			for (int i=numPixels-1; i>=ll; i--) {
 				if (trackPixels[i].x == x && trackPixels[i].y == y && f.equals(trackPixelsColor[i])) 
-					{ return; } 
+				{ return; } 
 			}
 		}
 		addPixel(x, y, f);
 	}
-	
+
 	public static final int FIXATE_IF_NO_PIXELS_NUM = 60;
 	private int notOnThisOverlaySince = 0;
-	
+
 	public void paintLastAddedPoint(Track tr) { 
-		draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
+		//draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
+		draw.setColor(tr.trackColor);
 		if (paintPoint(tr.trackColor, tr.TrackPoints[tr.num-1].latDec, tr.TrackPoints[tr.num-1].lonDec)) notOnThisOverlaySince = 0;
 		else notOnThisOverlaySince++;
 		if (notOnThisOverlaySince > FIXATE_IF_NO_PIXELS_NUM) { // zur Performanceverbesserung: wenn in den letzten 60 Updates keines mehr für dieses Overlay dabei war, Overlay Pixels fest schreiben, damit doDraw entlastet wird.
@@ -192,7 +202,7 @@ public class TrackOverlay extends MapImage {
 		}
 
 	}
-	
+
 	public void doDraw(Graphics g,int options) { // this is automatically called when the image need to be (re-)drawn on the screen
 		super.doDraw(g, options);
 		imageChangesDontShow = true; // g.drawImage (in super) copies _awtImage into bufferedImage, any later changes to _awtImage dont show up until the mask or the image has changed - unfortunately bufferedImage is not accessable from outside
@@ -231,19 +241,19 @@ public class TrackOverlay extends MapImage {
  *  und beim Aufruf von doDraw wird wieder die ursprüngliche transparentColor verwendet
  *  
  */
-// was alles nicht funktioniert:
+//was alles nicht funktioniert:
 //drawmask.setDrawOp(Graphics.DRAW_OVER);
-//	drawmask.drawRect(x-1, y-1, 2, 2, 1);
+//drawmask.drawRect(x-1, y-1, 2, 2, 1);
 //this.setImage(image, mask);
-// nächster Versuch: image.bufferedImage in ewe.fx.Image public definieren !!!
+//nächster Versuch: image.bufferedImage in ewe.fx.Image public definieren !!!
 //image.rgb
-//	draw._g.surfaceData.bufImg.raster.data[y*this.location.width + x] = -65536; := image._awtImage
-//	((Image)image).eImage(colorOrMask)._awtImage.raster.data[0]=0;
-//	image
-//	((BufferedImage)(image).se.^.bufferedImage.raster.data[y*this.location.width + x]=-65536; //was dort steht wird tatsächlich angezeigt, allerdings kann ich es nicht direkt setzen :-(
+//draw._g.surfaceData.bufImg.raster.data[y*this.location.width + x] = -65536; := image._awtImage
+//((Image)image).eImage(colorOrMask)._awtImage.raster.data[0]=0;
+//image
+//((BufferedImage)(image).se.^.bufferedImage.raster.data[y*this.location.width + x]=-65536; //was dort steht wird tatsächlich angezeigt, allerdings kann ich es nicht direkt setzen :-(
 //int[] markPixels = new int[4];
 //for (int i = 0; i<markPixels.length; i++) { markPixels[i] = -65536; }
-// image.transparent = null; hilft auhc nicht
+//image.transparent = null; hilft auhc nicht
 //image.mask = null;
 //image.bufferedImage = null;
 //image.setPixels(markPixels, 0 , x-20, y, 2, 2, 0); // dadrin sollte bufferedImage = null gesetzt werden, wird es aber nicht :-(
@@ -251,7 +261,7 @@ public class TrackOverlay extends MapImage {
 //Image mark = new Image(2,2);
 //new Graphics(mark).drawImage(image, null, transparentColor, x-40, y, 2, 2);
 //mark.draw(draw, x-50, y, Graphics.DRAW_OVER); // options (Graphics.DRAW_OVER) are ignored anyway
-// image.bufferedImage = null; // this solves the problem
+//image.bufferedImage = null; // this solves the problem
 //toCursor(null);
 //this.draw(draw);
 //image=(BufferedImage)this.toNativeImage(transparentColor);
@@ -261,9 +271,9 @@ public class TrackOverlay extends MapImage {
 //ewe.ui.PenEvent.refreshTip(draw.surface);
 //draw.setPixelRGB(x, y, -65536);
 //this.changed(); hilft auch nicht
-// this.refresh(); // hilft nicht :-(
-//	lastDrawn.x = lastDrawn.x -10; hilft auch nicht
-// imageMayChange = true; // hilft auch nicht :-(
+//this.refresh(); // hilft nicht :-(
+//lastDrawn.x = lastDrawn.x -10; hilft auch nicht
+//imageMayChange = true; // hilft auch nicht :-(
 
 /*
  * In der ewe-VM für PocketPC-ARM funktioniert die Festlegung einer 
@@ -279,7 +289,7 @@ static int fixMask(WObject image,WObject col,int isMask):
 	in Maske: ffffffff in image.mask, wenn nicht durchsichtig
 	          ff000000 an durchsichtiger Stelle
 	image.doCheckMask erzeugt ein Image mit 0 an den durchsichtigen Stellen, die dadurch definiert sind, dass im image 0xffffff und in (mask & 0xffffff == 0) steht.
-*/
+ */
 /*
  * this class is only needed to have a fast access to the list of pixels
  * which are added but aniimage.draw will not lead to a change on the screen
