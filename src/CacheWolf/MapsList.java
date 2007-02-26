@@ -257,11 +257,13 @@ public class MapsList extends Vector {
 	}
 	public static boolean scaleEquals(MapInfoObject a, MapInfoObject b) {
 		//return java.lang.Math.abs(a.scale - b.scale) < scaleTolerance;
-		return a.scale/b.scale < scaleTolerance || b.scale/a.scale < scaleTolerance;
+		if (a.scale > b.scale) return a.scale / b.scale < scaleTolerance; 
+		else return b.scale / a.scale < scaleTolerance;
 	}
 	public static boolean scaleEquals(float s, MapInfoObject b) {
 		//return java.lang.Math.abs(s - b.scale) < scaleTolerance;
-		return s/b.scale < scaleTolerance || b.scale/s < scaleTolerance;
+		if (s > b.scale) return s / b.scale < scaleTolerance;
+		else return b.scale / s < scaleTolerance;
 	}
 	
 	/**
