@@ -60,7 +60,7 @@ public class GotoPanel extends CellPanel {
 	final static Color RED = new Color(255,0,0);
 	final static Color YELLOW = new Color(255,255,0);
 	final static Color GREEN = new Color(0,255,0);
-	final static Color BLUE = new Color(0,255,255);
+	final static Color BLUE = new Color(0,0,255);
 
 	final static Font BOLD = new Font("Arial", Font.BOLD, 14);
 
@@ -106,7 +106,7 @@ public class GotoPanel extends CellPanel {
 		lblGPS.backGround = RED;
 		CoordsP.addLast(lblPosition = new mLabel(myNavigation.gpsPos.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		CoordsP.addNext(lblDST = new mLabel(MyLocale.getMsg(1500,"DST:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		lblDST.backGround = BLUE;
+		lblDST.backGround = new Color(0,0,255);
 		CoordsP.addLast(btnGoto = new mButton(getGotoBtnText()),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 
 		//Rose for bearing
@@ -122,9 +122,9 @@ public class GotoPanel extends CellPanel {
 
 		//GotoP.addNext(lblSatsText = new mLabel("Sats: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		//lblSatsText.font = BOLD;
-		GotoP.addLast(lblSats = new mLabel("Sats: " + Convert.toString(myNavigation.gpsPos.getSats())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		GotoP.addLast(lblSats = new mLabel("Sats:    " + Convert.toString(myNavigation.gpsPos.getSats())),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblSats.font = BOLD;
-		GotoP.addLast(lblHDOP = new mLabel("HDOP: " + Convert.toString(myNavigation.gpsPos.getHDOP())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		GotoP.addLast(lblHDOP = new mLabel("HDOP:    " + Convert.toString(myNavigation.gpsPos.getHDOP())),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblHDOP.font = BOLD;
 
 
@@ -136,7 +136,7 @@ public class GotoPanel extends CellPanel {
 
 		//things about destination
 		GotoP.addLast(lblWayP = new mLabel("WayPoint"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		lblWayP.backGround = BLUE;
+		lblWayP.backGround = Color.DarkBlue;
 		lblWayP.font = BOLD;
 		GotoP.addLast(lblBearWayP = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblBearWayP.font = BOLD;
@@ -270,7 +270,8 @@ public class GotoPanel extends CellPanel {
 			speed.set(myNavigation.gpsPos.getSpeed());
 			lblSpeed.setText(MyLocale.formatDouble(speed,"0.0") + " km/h");
 			sunAzimut.set((double)myNavigation.sunAzimut);
-			lblSunAzimut.setText(MyLocale.formatDouble(sunAzimut,"0.0") + " Grad");
+			if (sunAzimut.value >= -360) lblSunAzimut.setText(MyLocale.formatDouble(sunAzimut,"0.0") + " Grad");
+			else lblSunAzimut.setText("--- Grad");
 			bearMov.set(myNavigation.gpsPos.getBear());
 			lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
 			compassRose.setSunMoveDirections((float)sunAzimut.value, (float)bearMov.value);
@@ -430,7 +431,7 @@ class GotoRose extends AniImage {
 		if (g != null) {
 			// draw only valid arrows
 			if (moveDir < 360 && moveDir > -360) drawArrow(g, moveDir, RED);
-			if (gotoDir < 360 && gotoDir > -360) drawArrow(g, gotoDir, BLUE);
+			if (gotoDir < 360 && gotoDir > -360) drawArrow(g, gotoDir, Color.DarkBlue);
 			if (sunDir < 360 && sunDir> -360) drawArrow(g, sunDir, YELLOW);
 		}
 	}

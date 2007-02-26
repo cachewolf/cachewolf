@@ -282,7 +282,7 @@ public class MovingMap extends Form {
 			CacheHolder ch;
 			for (int i=cacheDB.size()-1; i>=0; i--) {
 				ch = (CacheHolder) cacheDB.get(i);
-				if (ch.is_Checked && ch != mainT.ch) { // ch == Global.mainTab.ch: always show the gray marked cache
+				if (ch.is_Checked && ch != mainT.ch) {
 					int ct = Convert.parseInt(ch.type);
 					addSymbol(ch.CacheName, ch, myTableModel.cacheImages[ct], ch.pos.latDec, ch.pos.lonDec);
 				}
@@ -292,7 +292,7 @@ public class MovingMap extends Form {
 		destChanged(myNavigation.destination);
 		addTrack(myNavigation.curTrack);
 		if (tracks != null && tracks.size() > 0 && ((Track)tracks.get(0)).num > 0) 
-			addOverlaySet(); // show points wich where added when MavingMap was not running
+			addOverlaySet(); // show points which where added when MavingMap was not running
 		FormFrame ret = exec();
 		return ret;
 	}
@@ -854,8 +854,8 @@ public class MovingMap extends Form {
 		if (!running || ignoreGps) return;
 		// runMovingMap neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) { // TODO is getSats really necessary?
-			directionArrows.setDirections(-361/*(float)myNavigation.gpsPos.getBearing(myNavigation.destination)*/,
-					myNavigation.sunAzimut, -361/*(float)myNavigation.gpsPos.getBear()*/);
+			directionArrows.setDirections((float)myNavigation.gpsPos.getBearing(myNavigation.destination),
+					myNavigation.sunAzimut, (float)myNavigation.gpsPos.getBear());
 			setGpsStatus(MovingMap.gotFix);
 			updatePosition(myNavigation.gpsPos.latDec, myNavigation.gpsPos.lonDec);
 			ShowLastAddedPoint(myNavigation.curTrack);
@@ -1854,12 +1854,17 @@ class ArrowsOnMap extends AniImage {
 	int minY;
 	Graphics draw;
 	private MapInfoObject map=null;
-	public boolean dirsChanged = true;
 
-	final static Color RED = new Color(255,0,0);
-	final static Color YELLOW = new Color(255,255,0);
-	final static Color GREEN = new Color(0,255,0);
-	final static Color BLUE = new Color(0,255,255);
+	final static Color moveDirColor = new Color(255,0,0); // RED 
+	final static Color sunDirColor = new Color(255,255,0); // Yellow
+	//final static Color GREEN = new Color(0,255,0);
+	final static Color gotoDirColor = new Color(0,0,128); // dark blue
+	final static Color northDirColor = new Color(0,0,255); // Blue
+	Point[] sunDirArrow = null;
+	Point[] gotoDirArrow = null;
+	Point[] moveDirArrow = null;
+	Point[] northDirArrow = null;
+	
 	/**
 	 * @param gd goto direction
 	 * @param sd sun direction
@@ -1877,6 +1882,7 @@ class ArrowsOnMap extends AniImage {
 	}
 	public void setMap(MapInfoObject m) {
 		map = m;
+		makeArrows();
 	}
 
 	public void setDirections(float gd, float sd, float md ) {
@@ -1884,11 +1890,11 @@ class ArrowsOnMap extends AniImage {
 				|| java.lang.Math.abs(sunDir - sd) > 1
 				|| java.lang.Math.abs(moveDir - md) > 1)
 		{
-			dirsChanged = true;
+			//dirsChanged = false;
 			gotoDir = gd;
 			sunDir = sd;
 			moveDir = md;
-			refresh();
+			makeArrows();
 		}
 	}
 
@@ -1900,7 +1906,7 @@ class ArrowsOnMap extends AniImage {
 	 */
 
 	public void doDraw(Graphics g,int options) {
-		if (map == null) return;
+		if (map == null || g == null) return;
 		drawArrows(g);
 		return;
 /*		if (!dirsChanged) {
@@ -1917,39 +1923,60 @@ class ArrowsOnMap extends AniImage {
 		g.drawImage(image,mask,transparentColor,0,-minY,location.width,location.height);
 */	}
 
-	private void drawArrows(Graphics g){
-
-		if (g != null) {
+	private void makeArrows(){
 			// draw only valid arrows
-			if (moveDir < 360 && moveDir > -360) drawArrow(g, moveDir, RED);
-			if (gotoDir < 360 && gotoDir > -360) drawArrow(g, gotoDir, BLUE);
-			if (sunDir < 360 && sunDir> -360) drawArrow(g, sunDir, YELLOW);
-			drawArrow(g, 0, Color.DarkBlue); // north direction
+			if (moveDir < 360 && moveDir > -360) {
+				if (moveDirArrow == null) moveDirArrow = new Point[2];
+				makeArrow(moveDirArrow, moveDir);
+			} else moveDirArrow = null;
+			if (gotoDir < 360 && gotoDir > -360) {
+				if (gotoDirArrow == null) gotoDirArrow = new Point[2];
+				makeArrow(gotoDirArrow, gotoDir);
+			} else gotoDirArrow = null;
+			if (sunDir < 360 && sunDir> -360) {
+				if (sunDirArrow == null ) sunDirArrow = new Point[2];
+				makeArrow(sunDirArrow, sunDir);
+			} else sunDirArrow = null;
+			if (java.lang.Math.abs(map.rotationRad) > 1.5 / 180 * java.lang.Math.PI)	{ // show northth arrow only if it has more than 1.5 degree deviation from vertical direction
+				if (northDirArrow == null) northDirArrow = new Point[2];
+				makeArrow(northDirArrow, 0); // north direction
+			} else northDirArrow = null;
 		}
-	}
 
 	/**
-	 * draw single arrow 
+	 * make (calculate) Pixel array for a single arrow 
 	 * @param g handle for drawing
 	 * @param angle angle of arrow
 	 * @param col color of arrow
 	 */
-	private void drawArrow(Graphics g, float angle, Color col) {
+	private void makeArrow(Point[] arrow, float angle) {
+		if (map == null) return;
 		float angleRad;
-		int x, y, centerX = location.width/2, centerY = location.height/2;
-
+		int centerX = location.width/2, centerY = location.height/2;
+		if (arrow[0] == null) arrow[0] = new Point();
+		if (arrow[1] == null) arrow[1] = new Point();
+		arrow[0].x = centerX;
+		arrow[0].y = centerY;
 		angleRad = angle * (float)java.lang.Math.PI / 180 + map.rotationRad;
-		x = centerX + new Float(centerX * java.lang.Math.sin(angleRad)).intValue();
-		y = centerY - new Float(centerY * java.lang.Math.cos(angleRad)).intValue();
+		arrow[1].x = centerX + new Float(centerX * java.lang.Math.sin(angleRad)).intValue();
+		arrow[1].y = centerY - new Float(centerY * java.lang.Math.cos(angleRad)).intValue();
 		//	g.setPen(new Pen(Color.Black,Pen.SOLID,7));
 		//	g.drawLine(centerX,centerY,x,y);
+	}
+
+	public void drawArrows(Graphics g) {
+		drawArrow(g, sunDirArrow, sunDirColor);
+		drawArrow(g, moveDirArrow, moveDirColor);
+		drawArrow(g, gotoDirArrow, gotoDirColor);
+		drawArrow(g, northDirArrow, northDirColor);
+	}
+	
+	public void drawArrow(Graphics g, Point[] arrow, Color col) {
+		if (arrow == null) return;
 		g.setPen(new Pen(col,Pen.SOLID,3));
-		g.drawLine(centerX,centerY,x,y);
-		if (y < minY) minY = y;
-		if (centerY < minY) minY = centerY;
+		g.drawLine(arrow[0].x, arrow[0].y, arrow[1].x,arrow[1].y);
 	}
 }
-
 /** 
  * class that can be used with any x and any y
  * it will save taht location and make itself automatically

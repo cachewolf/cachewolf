@@ -39,7 +39,7 @@ public class TrackOverlay extends MapImage {
 			useTransparentColor = true; 
 			setImage(new Image(widthi, highti), transparentColorForOverlay); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in ewe-vm and doesn't consume more memory than a transparency color (ewe 1.49)
 		} else {
-			useTransparentColor = false; // momentanously this it not used, but this is only because ewe treats areas as opaque which has a non white color in the image, so that the mask doesn't need to be changed
+			useTransparentColor = false; // // momentanously this it not used, but this is only because ewe treats areas as opaque which has a non white color in the image, so that the mask doesn't need to be changed
 			Image maski = new Image(widthi, highti);
 			drawMask = new Graphics(maski);
 			drawMask.setColor(Color.White);
@@ -97,6 +97,7 @@ public class TrackOverlay extends MapImage {
 			}
 		}
 	}
+	
 
 	/**
 	 * 
