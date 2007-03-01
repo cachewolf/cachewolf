@@ -53,7 +53,9 @@ public class DBStats {
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_found == true) counter++;
+			if(holder.is_found == true) {
+				if(holder.wayPoint.startsWith("GC") || holder.wayPoint.startsWith("OC")) counter++;
+			}
 		}
 		return counter;
 	}
