@@ -184,7 +184,7 @@ public class Navigate {
  */
 class SerialThread extends mThread{
 	SerialPort comSp;   
-	byte[] comBuff = new byte[1024];  
+	byte[] comBuff = new byte[1024*10]; // when some action takes a long time (eg. loading or zooming a map), a lot of data can be in the buffer, read that at once
 	int comLength = 0;
 	CWGPSPoint myGPS;
 	boolean run, tcpForward;
