@@ -326,7 +326,7 @@ public class GotoPanel extends CellPanel {
 		if (myNavigation.isGpsPosValid()) centerTo = new CWPoint(myNavigation.gpsPos); // set gps-pos if gps is on
 		else {
 			// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
-			centerTo = new CWPoint(myNavigation.destination);
+			//centerTo = new CWPoint(myNavigation.destination);
 			if (myNavigation.destination.isValid())	centerTo = new CWPoint(myNavigation.destination);
 			else centerTo = new CWPoint(pref.curCentrePt); // if not goto-point defined move map to centere point
 		}  
