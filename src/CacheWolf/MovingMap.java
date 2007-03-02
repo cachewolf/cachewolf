@@ -599,7 +599,7 @@ public class MovingMap extends Form {
 			posCircleY = pref.myAppHeight/2;
 		}
 		posCircle.hidden = false;
-		posCircle.setLocation(posCircleX-posCircle.getWidth()/2, posCircleY-posCircle.getHeight()/2);
+		posCircle.move(posCircleX-posCircle.getWidth()/2, posCircleY-posCircle.getHeight()/2); // posCircle.setLocation caused a problem -> hiding the posCircle in some situation
 	}
 
 	public void movePosCircleToLatLon(CWPoint p, boolean repaint) {
@@ -1042,7 +1042,8 @@ public class MovingMap extends Form {
 		autoSelectMap = true;
 		forceMapLoad = true;
 		showMap();
-//		updatePosition(gotoPanel.gpsPosition.latDec, gotoPanel.gpsPosition.latDec); is called from GotoPanel.ticked
+		if (myNavigation.gpsPos.Fix <=0) updatePosition(posCircleLat, posCircleLon);
+		else updateGps(myNavigation.gpsPos.getFix());
 	}
 
 	/** sets and displays the map
