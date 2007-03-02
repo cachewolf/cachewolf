@@ -165,6 +165,7 @@ public class MovingMap extends Form {
 		resetCenterOfMap();
 		InfoBox inf = new InfoBox("Info", "Loading list of maps...");
 		inf.exec();
+		inf.waitUntilPainted(100);
 		boolean saveGpsIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;
 		maps = new MapsList(mapsPath); // this actually loads the maps
@@ -289,10 +290,10 @@ public class MovingMap extends Form {
 			}
 		}
 		setMarkedCache(mainT.ch);
-		destChanged(myNavigation.destination);
 		addTrack(myNavigation.curTrack);
 		if (tracks != null && tracks.size() > 0 && ((Track)tracks.get(0)).num > 0) 
 			addOverlaySet(); // show points which where added when MavingMap was not running
+		destChanged(myNavigation.destination);
 		FormFrame ret = exec();
 		return ret;
 	}
@@ -735,7 +736,7 @@ public class MovingMap extends Form {
 		gotoPos = addSymbol("goto", "goto_map.png", d.latDec, d.lonDec);
 		//updateDistance(); - this is called from updatePosition
 		forceMapLoad = true;
-		updatePosition(posCircleLat, posCircleLon);
+		if (this.width != 0) updatePosition(posCircleLat, posCircleLon); // dirty hack: if this.width == 0, then the symbols are not on the screen and get hidden by updateSymbolPositions
 	}
 
 	public void removeGotoPosition() {
@@ -1062,6 +1063,7 @@ public class MovingMap extends Form {
 		InfoBox inf;
 		inf = new InfoBox("Info", "Loading map...");
 		inf.show();
+		inf.waitUntilPainted(100);
 		try {
 			this.currentMap = newmap; 
 			this.title = currentMap.mapName;
@@ -1822,7 +1824,7 @@ class ListBox extends Form{
 	}
 }
 
-class MapSymbol extends AniImage {
+class MapSymbol extends AniImage { // TODO make this implement MapImage, so that it will be invisible automatically if not on screen. When doing so, test if setgoto-pos -> open map from gotopanel shows the map symbols (directly after starting CW)
 	Object mapObject;
 	String name;
 	String filename;
