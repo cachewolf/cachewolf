@@ -40,7 +40,11 @@ public class myTableModel extends TableModel{
 	int sortedBy = -1;
 	FontMetrics fm;
 	Image checkboxTicked,checkboxUnticked;
-	
+	/** This is the modifier (Shift & Control key status) for Pen Events
+	 * it is set in myTableControl.onEvent */
+	public int penEventModifiers; 
+	/** The row of the last click where the shift key was pressed */
+	private int lastRow=-1;
 	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
 		cacheDB = Global.getProfile().cacheDB;
@@ -261,27 +265,24 @@ public class myTableModel extends TableModel{
 	
 	public boolean penPressed(Point onTable,Point cell){
 		boolean retval = false;
-		// Table header hit
 		try{
 			if (cell.y>=0) Global.mainTab.tbP.setSelectedCache(cell.y);
 			// Check whether the click is on the checkbox image
 			if (cell.y>=0 && cell.x==0) {
 				Global.getProfile().selectionChanged = true;
-				CacheHolder ch = (CacheHolder)cacheDB.get(cell.y);
-				ch.is_Checked= !ch.is_Checked;
-				// set the ceckbox also for addi wpts
-				if (ch.hasAddiWpt()){
-					CacheHolder addiWpt;
-					int off = 1;
-					int addiCount=ch.addiWpts.getCount();
-					for (int i=0;i<addiCount;i++){
-						addiWpt = (CacheHolder)ch.addiWpts.get(i);
-						addiWpt.is_Checked = ch.is_Checked;
-						if (!addiWpt.is_filtered){
-							tcControl.repaintCell(cell.y + off++, 0);
-						}
+				if ((penEventModifiers & IKeys.SHIFT)>0) {
+					if (lastRow!=-1) { // Second row being marked with shift key pressed
+						if (lastRow<cell.y)
+							toggleSelect(lastRow,cell.y);
+						else
+							toggleSelect(cell.y,lastRow);
+						lastRow=-1;
+					} else { // Remember this row as start of range, but don't toggle yet
+						lastRow=cell.y;
 					}
-					
+				} else { // Single row marked
+					toggleSelect(cell.y,cell.y);
+					lastRow=-1;
 				}
 			}
 			if(cell.y == -1){ // Hit a header => sort the table accordingly
@@ -313,4 +314,32 @@ public class myTableModel extends TableModel{
 		return retval;
 	}
 	
+	/** Toggle the select status for a group of caches
+	 * If from==to, the addi Waypoints are also toggled if the cache is a main waypoint
+	 * If from!=to, each cache is toggled irrespective of its type (main or addi)
+	 * @param from index of first cache to toggle
+	 * @param to index of last cache to toggle
+	 */
+	void toggleSelect(int from, int to) {
+		CacheHolder ch;
+		boolean singleRow= from == to;
+		for (int j=from; j<=to; j++) {
+			ch=(CacheHolder) cacheDB.get(j);
+			ch.is_Checked= !ch.is_Checked; 
+			tcControl.repaintCell(j, 0);
+			// set the ceckbox also for addi wpts
+			if (ch.hasAddiWpt() && singleRow){
+				CacheHolder addiWpt;
+				int addiCount=ch.addiWpts.getCount();
+				for (int i=0;i<addiCount;i++){
+					addiWpt = (CacheHolder)ch.addiWpts.get(i);
+					addiWpt.is_Checked = ch.is_Checked;
+					if (!addiWpt.is_filtered){
+						tcControl.repaintCell(cacheDB.find(addiWpt), 0);
+					}
+				}
+				
+			}
+		}		
+	}
 }

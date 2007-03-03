@@ -174,6 +174,8 @@ public class myTableControl extends TableControl{
 	public void penDoubleClicked(Point where) {
 		Global.mainTab.select(Global.mainTab.descP);
 	}
-
-
+	public void onEvent(Event ev) {
+	    if (ev instanceof PenEvent) Global.mainTab.tbP.myMod.penEventModifiers=((PenEvent)ev).modifiers;
+		super.onEvent(ev);
+	}
 }
