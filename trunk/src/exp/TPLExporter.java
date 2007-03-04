@@ -28,6 +28,7 @@ package exp;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
+import CacheWolf.Global;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.STRreplace;
@@ -140,9 +141,6 @@ public class TPLExporter {
 		CacheHolder holder;
 		ProgressBarForm pbf = new ProgressBarForm();
 		ewe.sys.Handle h = new ewe.sys.Handle();
-		Vector cache_index = new Vector();
-		Hashtable varParams;
-		TplFilter myFilter;
 
 		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
 		fc.setTitle("Select target file:");
@@ -157,16 +155,22 @@ public class TPLExporter {
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
 		pbf.exec();
-		
-		Hashtable args = new Hashtable();
-		myFilter = new TplFilter();
-		//args.put("debug", "true");
-		args.put("filename", tplFile);
-		args.put("case_sensitive", "true");
-		args.put("loop_context_vars", Boolean.TRUE);
-		args.put("max_includes", new Integer(5));
-		args.put("filter", myFilter);
+		Vm.gc(); // all this doesn't really work :-(
+		System.runFinalization();
+		Vm.gc();
+		//Vm.debug("v: "+Vm.countObjects(true));
 		try {
+			Vector cache_index = new Vector(); // declare variables inside try {} -> in case of OutOfMemoryError, they can be garbage collected - anyhow it doesn't work :-(
+			Hashtable varParams;
+			TplFilter myFilter;
+			Hashtable args = new Hashtable(); 
+			myFilter = new TplFilter();
+			//args.put("debug", "true");
+			args.put("filename", tplFile);
+			args.put("case_sensitive", "true");
+			args.put("loop_context_vars", Boolean.TRUE);
+			args.put("max_includes", new Integer(5));
+			args.put("filter", myFilter);
 			Template tpl = new Template(args);
 
 			for(int i = 0; i<counter;i++){
@@ -179,6 +183,7 @@ public class TPLExporter {
 						holder.readCache(profile.dataDir);
 					}catch(Exception e){
 						Vm.debug("Problem reading cache page");
+						Global.getPref().log("Exception in TplExporter = Problem reading cache page, Cache: " + holder.wayPoint, e, true);
 					}
 					try {
 						Regex dec = new Regex("[,.]",myFilter.decSep);
@@ -212,6 +217,7 @@ public class TPLExporter {
 					}catch(Exception e){
 						Vm.debug("Problem getting Parameter, Cache: " + holder.wayPoint);
 						e.printStackTrace();
+						Global.getPref().log("Exception in TplExporter = Problem getting Parameter, Cache: " + holder.wayPoint, e, true);
 					}
 				}
 			}
@@ -226,6 +232,15 @@ public class TPLExporter {
 			detfile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			Global.getPref().log("Exception in TplExporter", e, true);
+		} catch (OutOfMemoryError e) {
+			//Global.getPref().log("OutOfMemeory in TplExporter", e, true);
+			Vm.gc(); // this doesn't help :-(
+			System.runFinalization();
+			Vm.gc(); // this doesn't help :-( - I don't know why :-(
+			//Vm.debug("n: "+Vm.countObjects(true));
+			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimize memory needed for TPL-Export\nWe recommend to restart CacheWolf now", MessageBox.OKB)).execute();
+			//Vm.debug("n: "+Vm.countObjects(true));
 		}
 		pbf.exit(0);
 	}
