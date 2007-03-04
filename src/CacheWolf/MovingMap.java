@@ -350,7 +350,7 @@ public class MovingMap extends Form {
 			for (int i=0; i< TrackOverlays.length; i++) {	destroyOverlay(i);	}
 		}
 		Vm.getUsedMemory(true); // call garbage collection
-		System.gc();
+		Vm.gc();
 	}
 
 
@@ -540,8 +540,7 @@ public class MovingMap extends Form {
 											TrackOverlaySetCenterTopLeft = ScreenXY2LatLon(100, 100);
 										} // this happens if a position jump occured
 								}}}}}}} // close all IFs
-		Vm.getUsedMemory(true); // call garbage collection
-		System.gc();
+		Vm.gc(); // call garbage collection
 		Vm.debug("Overlayrearanged"+TrackOverlays.toString());
 	}
 
