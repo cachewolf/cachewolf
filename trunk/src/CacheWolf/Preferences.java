@@ -607,7 +607,7 @@ public class Preferences extends MinML{
 	 * <pre>Global.getPref().debug=true;</pre>
 	 * in Version.getRelease()
 	 */
-	public void log(String text,Exception e, boolean withStackTrace) {
+	public void log(String text,Throwable e, boolean withStackTrace) {
 		String msg;
 		if (text.equals("")) msg=text; else msg=text+"\n";
 		if (e!=null) {
