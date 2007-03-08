@@ -20,6 +20,8 @@ public class LocExporter extends Exporter{
 	}
 	
 	public String record(CacheHolder ch){
+		// filter out not valid coords
+		if (!ch.pos.isValid()) return null;
 		StringBuffer strBuf = new StringBuffer(200);
 		strBuf.append("<waypoint>\r\n   <name id=\"");
 		strBuf.append(simplifyString(ch.wayPoint));
