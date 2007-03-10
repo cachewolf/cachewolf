@@ -43,21 +43,23 @@ public class TablePanel extends CellPanel{
 	
 	public void setSelectedCache(int row){ // TODO as far as i know selectedCh can be removed at all, use tc.cursor.y instead
 		selectedCh=null;
-		if (row>=0)  {
+		selectedIdx=-1;
+		if (row>=0 && row<cacheDB.size())  {
 			selectedCh=(CacheHolder) cacheDB.get(row);
+			selectedIdx=row;
 		} 		
-		selectedIdx=row;
 	
 	}
 	
 	/** Mark the row as selected so that myTableModel can color it grey */
 	public void selectRow(int row) {
 		setSelectedCache(row);
-	/*	tc.clearSelectedCells(null);
-		for(int i= 0; i < myMod.MAXCOLUMNS; i++){
-			tc.addToSelection(row,i); 
-		}
-	*/	tc.cursorTo(row, tc.cursor.x+tc.listMode, true);
+		//tc.cursorTo(row, tc.cursor.x+tc.listMode, true);
+		tc.scrollToVisible(row,0);
+		tc.clearSelection(null);
+		tc.addToSelection(row,0); 
+		tc.addToSelection(row,myMod.MAXCOLUMNS-1); 
+		//tc.paintSelectedCells();
 	}
 	
 	/** Returns the index of the currently selected cache or -1 of the cache is no longer visible
@@ -96,14 +98,14 @@ public class TablePanel extends CellPanel{
 	*/
 	
 	public void resetModel() {
-		setSelectedCache(-1);
+		setSelectedCache(0);
 		myMod.numRows = cacheDB.size();
 		Global.getProfile().updateBearingDistance();
 		Filter flt = new Filter();
 		flt.setFilter();
 		flt.doFilter();
-		refreshTable();
 		tc.scrollToVisible(0,0);
+		refreshTable();
 	}
 	
 	/**
