@@ -41,7 +41,7 @@ public class TablePanel extends CellPanel{
 		tc.setTableModel(myMod);
 	}
 	
-	public void setSelectedCache(int row){ // TODO as far as i know selectedCh can be removed at all, use tc.cursor.y instead
+	public void setSelectedCache(int row){ 
 		selectedCh=null;
 		selectedIdx=-1;
 		if (row>=0 && row<cacheDB.size())  {
@@ -72,6 +72,8 @@ public class TablePanel extends CellPanel{
 		// If cacheDB has entries, but all are filtered, return -1
 		if (((CacheHolder)cacheDB.get(0)).is_filtered) return -1;
 		// Now we have at least one visible cache
+		// Check whether selected cache was deleted or filtered 
+		if (selectedIdx>=Global.mainTab.tbP.myMod.numRows) return Global.mainTab.tbP.myMod.numRows-1;
 		// We had a previously selected cache, check whether it is now filtered
 		if (selectedCh==null || selectedCh.is_filtered) return 0; // Return first visible cache
 		// Check whether the order of the list has changed because of sort/filter/search operations
