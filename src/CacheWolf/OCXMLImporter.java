@@ -397,6 +397,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if(name.equals("userid")) {
 			holder.CacheOwner = strData;
+			if(holder.CacheOwner.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && holder.CacheOwner.equalsIgnoreCase(pref.myAlias2))) holder.is_owned = true;
 			return;
 		}
 

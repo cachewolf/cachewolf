@@ -390,7 +390,7 @@ public class SpiderGC{
 					//Vm.debug("Name: " + ch.CacheName);
 					pref.log("Trying owner");
 					ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
-					if(ch.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equals(pref.myAlias2))) ch.is_owned = true;
+					if(ch.CacheOwner.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equalsIgnoreCase(pref.myAlias2))) ch.is_owned = true;
 					pref.log("Got owner");
 					//Vm.debug("Owner: " + ch.CacheOwner);
 					pref.log("Trying date hidden");

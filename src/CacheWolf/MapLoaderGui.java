@@ -31,7 +31,7 @@ public class MapLoaderGui extends Form {
 	mButton coosBtn;
 	mLabel scaleLbl = new mLabel("Approx. m per pixel:");
 	mInput scaleInput = new mInput ("3");
-	mInput scaleInputPerCache = new mInput ("3");
+	mInput scaleInputPerCache = new mInput ("1");
 	mLabel overlappingLbl = new mLabel("overlapping in pixel:");
 	mInput overlappingInput = new mInput("100");
 	mCheckBox overviewChkBox = new mCheckBox("download an overview map");
@@ -70,7 +70,7 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addNext(coosLbl = new mLabel(MyLocale.getMsg(1803, "around the center: ")));
 		pnlTiles.addLast(coosBtn = new mButton(center.toString()));
 		pnlTiles.addNext(scaleLbl);
-		scaleInput.setText("3");
+		scaleInput.setText("5");
 		this.focusFirst();
 		pnlTiles.addLast(scaleInput);
 		//	pnlTiles.addLast(resolutionLbl);
