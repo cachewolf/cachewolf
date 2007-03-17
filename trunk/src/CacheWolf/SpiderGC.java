@@ -34,8 +34,11 @@ import ewe.ui.*;
 /**
 *	Class to spider caches from gc.com
 *	It uses a generic parse tree to parse the page and build a gpx file.
+*	ClassID (for cachewolf.languages.cfg = 5500
 */
 public class SpiderGC{
+	
+	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
 	private Profile profile;
 	static String viewstate = "";
@@ -72,6 +75,7 @@ public class SpiderGC{
 			start = fetch("http://www.geocaching.com/login/Default.aspx");
 		}catch(Exception ex){
 			pref.log("Could not fetch: gc.com start page",ex);
+			return ERR_LOGIN;
 		}
 		if (!infB.isClosed) {
 			Regex rexCookieID = new Regex("Set-Cookie: userid=(.*?);.*");
@@ -95,6 +99,8 @@ public class SpiderGC{
 			}catch(Exception ex){
 				Vm.debug("Could not login: gc.com start page");
 				pref.log("Login failed.");
+				infB.close(0);
+				return ERR_LOGIN;
 			}
 			
 			rex.search(start);
@@ -257,7 +263,11 @@ public class SpiderGC{
 			Vm.showWait(false);
 			return;
 		}
-		
+		if(ok == ERR_LOGIN){
+			Vm.showWait(false);
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed!"), MessageBox.OKB)).execute();
+			return;
+		}
 		OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options", OCXMLImporterScreen.INCLUDEFOUND);
 		options.distanceInput.setText("");
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {Vm.showWait(false);	return; }
@@ -265,23 +275,27 @@ public class SpiderGC{
 		if (dist.length()== 0) return;
 		distance = Convert.toDouble(dist);
 		//boolean getMaps = options.mapsCheckBox.getState();
-		boolean getFound = options.foundCheckBox.getState();
-		Vm.debug("Get found? "+getFound);
+		boolean doNotgetFound = options.foundCheckBox.getState();
+		Vm.debug("Do not get found? "+doNotgetFound);
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
 		
 		
-		infB = new InfoBox("Status", "Fetching first page...");
+		infB = new InfoBox("Status", MyLocale.getMsg(5502,"Fetching first page..."));
 		infB.exec();
 		//Get first page
 		try{
 			String ln = new String("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
-			if(getFound) ln = ln + "&f=1";
+			if(doNotgetFound) ln = ln + "&f=1";
 			start = fetch(ln);
-			pref.log("First page: " + start);
+			pref.log("Got first page: " + ln);
 		}catch(Exception ex){
+			infB.close(0);
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), MessageBox.OKB)).execute();
 			pref.log("Error fetching first list page");
 			Vm.debug("Could not get list");
+			Vm.showWait(false);
+			return;
 		}
 		String dummy = "";
 		//String lineBlck = "";
@@ -304,7 +318,10 @@ public class SpiderGC{
 					Vm.debug("Problem opening details file");
 				}
 			*/
-			rexLine.search(dummy);
+			try{
+				rexLine.search(dummy);
+			}catch(NullPointerException nex){}
+			
 			while(rexLine.didMatch()){
 				//Vm.debug(getDist(rexLine.stringMatched(1)) + " / " +getWP(rexLine.stringMatched(1)));
 				found_on_page++;
@@ -323,21 +340,27 @@ public class SpiderGC{
 				doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
 				doc += "&" + URL.encodeURL("lat",false) +"="+ URL.encodeURL(origin.getLatDeg(CWPoint.DD),false);
 				doc += "&" + URL.encodeURL("lon",false) +"="+ URL.encodeURL(origin.getLonDeg(CWPoint.DD),false);
-				doc += "&f=1";
+				//if(doNotgetFound) doc += "&f=1";
 				doc += "&" + URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL("ResultsPager:_ctl"+page_number,false);
 				doc += "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false);
 				try{
-					pref.log("Fetching next list page");
+					start = "";
+					pref.log("Fetching next list page:" + doc);
 					start = fetch_post("http://www.geocaching.com/seek/nearest.aspx", doc, "/seek/nearest.aspx");
 				}catch(Exception ex){
 					Vm.debug("Couldn't get the next page");
+					pref.log("Error getting next page");
+				}finally{
+					
 				}
 			}
 			//Vm.debug("Distance is now: " + distance);
 			found_on_page = 0;
 		}
+		
 		pref.log("Found " + cachesToLoad.size() + " caches");
 		if (!infB.isClosed) infB.setInfo("Found " + cachesToLoad.size() + " caches");
+		
 		// Now ready to spider each cache
 		String wpt = "";
 		CacheHolder ch;
@@ -349,114 +372,111 @@ public class SpiderGC{
 			if(searchWpt(wpt) == -1){
 				infB.setInfo("Loading: " + wpt +"(" + (i+1) + " / " + cachesToLoad.size() + ")");
 				doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wpt +"&log=y";
+				start = "";
 				try{
 					pref.log("Fetching: " + wpt);
 					start = fetch(doc);
 				}catch(Exception ex){
-					pref.log("Could not fetch " + wpt);
+					pref.log("Could not fetch detail page for: " + wpt);
 					Vm.debug("Couldn't get cache detail page");
-				}
-				ch.is_new = true;
-				ch.is_HTML = true;
-				ch.is_available = true;
-				ch.is_archived = false;
-				ch.wayPoint = wpt;
-				if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
-				if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
-				//Vm.debug(ch.wayPoint);
-				try{
-					pref.log("Trying logs");
-					ch.CacheLogs = getLogs(start, ch);
-					int z = 0;
-					String loganal = "";
-					while(z < ch.CacheLogs.size() && z < 5){
-						loganal = (String)ch.CacheLogs.get(z);
-						if(loganal.indexOf("icon_sad")>0) {
-							z++;
-						}else break;
-					}
-					ch.noFindLogs = z;
-					pref.log("Found logs");
-					ch.LatLon = getLatLon(start);
-					ch.pos.set(ch.LatLon); // Slow parse no problem
-					//Vm.debug("LatLon: " + ch.LatLon);
-					pref.log("Trying description");
-					ch.LongDescription = getLongDesc(start);
-					
-					pref.log("Got description");
-					pref.log("Getting cache name");
-					ch.CacheName = SafeXML.cleanback(getName(start));
-					pref.log("Got cache name");
-					//Vm.debug("Name: " + ch.CacheName);
-					pref.log("Trying owner");
-					ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
-					if(ch.CacheOwner.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equalsIgnoreCase(pref.myAlias2))) ch.is_owned = true;
-					pref.log("Got owner");
-					//Vm.debug("Owner: " + ch.CacheOwner);
-					pref.log("Trying date hidden");
-					ch.DateHidden = getDateHidden(start);
-					pref.log("Got date hidden");
-					//Vm.debug("Hidden: " + ch.DateHidden);
-					pref.log("Trying hints");
-					ch.Hints = getHints(start);
-					pref.log("Got hints");
-					//Vm.debug("Hints: " + ch.Hints);
-					//Vm.debug("Got the hints");
-					pref.log("Trying size");
-					ch.CacheSize = getSize(start);
-					pref.log("Got size");
-					//Vm.debug("Size: " + ch.CacheSize);
-					pref.log("Trying difficulty");
-					ch.hard = getDiff(start);
-					pref.log("Got difficulty");
-					//Vm.debug("Hard: " + ch.hard);
-					pref.log("Trying terrain");
-					ch.terrain = getTerr(start);
-					pref.log("Got terrain");
-					//Vm.debug("Terr: " + ch.terrain);
-					pref.log("Trying cache type");
-					ch.type = getType(start);
-					pref.log("Got cache type");
-					//Vm.debug("Type: " + ch.type);
-					if(getImages){
-						pref.log("Trying images");
-						getImages(start, ch);
-						pref.log("Got images");
-					}
-					if (infB.isClosed) break;
-					ch.Bugs = getBugs(start);
-					if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
-					pref.log("Getting additional waypoints");
-					getAddWaypoints(start, ch);
-					pref.log("Got additional waypoints");
-					ch.saveCacheDetails(profile.dataDir);
-					cacheDB.add(ch);
-					profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
-				}catch(Exception ex){
-					pref.log("There was an error in the last step:");
-					pref.log("Cache was: " + wpt);
-					pref.log("Error was: " + ex.toString());
 				}finally{
-					//just continue please!
-					pref.log("Continuing with next cache.");
+					//	just continue please!
+					pref.log("Trying for details.");
+				}
+				if(start != null && start.length()!=0){
+					pref.log("Fetch doc ok... going into details.");
+					ch.is_new = true;
+					ch.is_HTML = true;
+					ch.is_available = true;
+					ch.is_archived = false;
+					ch.wayPoint = wpt;
+					if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
+					if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
+					//Vm.debug(ch.wayPoint);
+					try{
+						pref.log("Trying logs");
+						ch.CacheLogs = getLogs(start, ch);
+						int z = 0;
+						String loganal = "";
+						while(z < ch.CacheLogs.size() && z < 5){
+							loganal = (String)ch.CacheLogs.get(z);
+							if(loganal.indexOf("icon_sad")>0) {
+								z++;
+							}else break;
+						}
+						ch.noFindLogs = z;
+						pref.log("Found logs");
+						ch.LatLon = getLatLon(start);
+						ch.pos.set(ch.LatLon); // Slow parse no problem
+						//Vm.debug("LatLon: " + ch.LatLon);
+						pref.log("Trying description");
+						ch.LongDescription = getLongDesc(start);
+						
+						pref.log("Got description");
+						pref.log("Getting cache name");
+						ch.CacheName = SafeXML.cleanback(getName(start));
+						pref.log("Got cache name");
+						//Vm.debug("Name: " + ch.CacheName);
+						pref.log("Trying owner");
+						ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
+						if(ch.CacheOwner.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equalsIgnoreCase(pref.myAlias2))) ch.is_owned = true;
+						pref.log("Got owner");
+						//Vm.debug("Owner: " + ch.CacheOwner);
+						pref.log("Trying date hidden");
+						ch.DateHidden = getDateHidden(start);
+						pref.log("Got date hidden");
+						//Vm.debug("Hidden: " + ch.DateHidden);
+						pref.log("Trying hints");
+						ch.Hints = getHints(start);
+						pref.log("Got hints");
+						//Vm.debug("Hints: " + ch.Hints);
+						//Vm.debug("Got the hints");
+						pref.log("Trying size");
+						ch.CacheSize = getSize(start);
+						pref.log("Got size");
+						//Vm.debug("Size: " + ch.CacheSize);
+						pref.log("Trying difficulty");
+						ch.hard = getDiff(start);
+						pref.log("Got difficulty");
+						//Vm.debug("Hard: " + ch.hard);
+						pref.log("Trying terrain");
+						ch.terrain = getTerr(start);
+						pref.log("Got terrain");
+						//Vm.debug("Terr: " + ch.terrain);
+						pref.log("Trying cache type");
+						ch.type = getType(start);
+						pref.log("Got cache type");
+						//Vm.debug("Type: " + ch.type);
+						if(getImages){
+							pref.log("Trying images");
+							getImages(start, ch);
+							pref.log("Got images");
+						}
+						if (infB.isClosed) break;
+						ch.Bugs = getBugs(start);
+						if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
+						pref.log("Getting additional waypoints");
+						getAddWaypoints(start, ch);
+						pref.log("Got additional waypoints");
+						ch.saveCacheDetails(profile.dataDir);
+						cacheDB.add(ch);
+						profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+					}catch(Exception ex){
+						pref.log("There was an error in the last step:");
+						pref.log("Cache was: " + wpt);
+						pref.log("Error was: " + ex.toString());
+						//ch.is_incomplete = true;
+						//cacheDB.add(ch);
+						//profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+					}finally{
+						//just continue please!
+						pref.log("Continuing with next cache.");
+					}
 				}
 			}
 		}
-		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 		infB.close(0);
 		Vm.showWait(false);
-		/*
-		try{
-		  PrintWriter detfile = new PrintWriter(new BufferedWriter(new FileWriter("debug.txt")));
-		  detfile.print(start);
-		  detfile.close();
-		} catch (Exception e) {
-			Vm.debug("Problem opening details file");
-		}
-		
-		*/
-		
-		
 	}
 	private int searchWpt(String wpt){
 		Integer INTR = (Integer)indexDB.get(wpt);
@@ -825,34 +845,43 @@ public class SpiderGC{
 	*	it will be a gc.com address. This method is used to obtain
 	*	the result of a search for caches screen.
 	*/
-	private static String fetch(String address) throws IOException
-	   	{
-			//Vm.debug(address);
-			HttpConnection conn;
-			if(pref.myproxy.length() > 0){
-				pref.log("Using proxy: " + pref.myproxy + " / " +pref.myproxyport);
-				conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
+	private static String fetch(String address)
+	   	{	
+			CharArray c_data;
+			String data = new String();
+			try{
 				//Vm.debug(address);
-			} else {
-				conn = new HttpConnection(address);
+				HttpConnection conn;
+				if(pref.myproxy.length() > 0){
+					pref.log("Using proxy: " + pref.myproxy + " / " +pref.myproxyport);
+					conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
+					//Vm.debug(address);
+				} else {
+					conn = new HttpConnection(address);
+				}
+				conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+				if(cookieSession.length()>0){
+					conn.setRequestorProperty("Cookie: ", "ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
+					pref.log("Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
+				}
+				conn.setRequestorProperty("Connection", "close");
+				conn.documentIsEncoded = true;
+				pref.log("Connecting");
+				Socket sock = conn.connect();
+				pref.log("Connect ok!");
+				ByteArray daten = conn.readData(sock);
+				pref.log("Read socket ok");
+				JavaUtf8Codec codec = new JavaUtf8Codec();
+				c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+				data = c_data.toString();
+				////Vm.debug(c_data.toString());
+				sock.close();
+			}catch(IOException ioex){
+				pref.log("IOException in fetch");
+			}finally{
+				//continue
 			}
-			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-			if(cookieSession.length()>0){
-				conn.setRequestorProperty("Cookie: ", "ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
-				pref.log("Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
-			}
-			conn.setRequestorProperty("Connection", "close");
-			conn.documentIsEncoded = true;
-			pref.log("Connecting");
-			Socket sock = conn.connect();
-			pref.log("Connect ok!");
-			ByteArray daten = conn.readData(sock);
-			pref.log("Read socket ok");
-			JavaUtf8Codec codec = new JavaUtf8Codec();
-			CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-			////Vm.debug(c_data.toString());
-			sock.close();
-			return c_data.toString();
+			return data;
 		}
 	
 	/**

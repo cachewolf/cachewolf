@@ -66,6 +66,7 @@ public class CacheHolder {
   public boolean is_log_update = false;
   public boolean is_update = false;
   public boolean is_selected = false;
+  public boolean is_incomplete=false;
   public boolean is_HTML = true;
   public boolean is_Checked = false;
   public Vector addiWpts = new Vector();

@@ -240,7 +240,6 @@ public class CacheWolf{
 		//if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 		//	Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
 		//}
-		
 		if(args.length > 0){
 			if(args[0].equals("test")){
 				Test t=new Test(); 

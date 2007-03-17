@@ -33,7 +33,7 @@ public class myTableModel extends TableModel{
 	int usedColumns; // Columns actually used (<=MAXCOLUMNS)
 	static Image cacheImages[] = new Image[454];
 	static Image noFindLogs[] = new Image[4];
-	Image red, blue, green, yellow;
+	Image red, blue, green, yellow, skull;
 	mImage bug;
 	myTableControl tcControl;
 	boolean sortAsc = false;
@@ -88,6 +88,7 @@ public class myTableModel extends TableModel{
 		blue = new Image("blue.png");
 		green = new Image("green.png");
 		yellow = new Image("yellow.png");
+		skull = new Image("skull.png");
 		bug = new mImage("bug.png");
 		checkboxTicked = new Image("checkboxTicked.png");
 		checkboxUnticked= new Image("checkboxUnticked.png");
@@ -227,6 +228,7 @@ public class myTableModel extends TableModel{
 					case 3: // Terrain
 						return (String)ch.terrain;
 					case 4: // Waypoint
+						if(ch.is_incomplete) return new IconAndText((IImage)skull, ch.wayPoint, fm);
 						if(ch.is_update    ) return new IconAndText((IImage)red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
 						if(ch.is_new       ) return new IconAndText((IImage)yellow, ch.wayPoint, fm);
 						if(ch.is_log_update) return new IconAndText((IImage)blue, ch.wayPoint, fm);
