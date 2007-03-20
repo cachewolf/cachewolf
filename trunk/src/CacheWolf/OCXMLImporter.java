@@ -181,9 +181,9 @@ public class OCXMLImporter extends MinML {
 		if (success) {
 			profile.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
 			//pref.savePreferences();
-			profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 			finalMessage = MyLocale.getMsg(1607,"Update from opencaching successful");
 		}
+		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 		inf.setInfo(finalMessage);
 		inf.addOkButton();
 		//inf.close(0);
@@ -381,8 +381,8 @@ public class OCXMLImporter extends MinML {
 			} */
 
 			// save all
-			holder.saveCacheDetails(profile.dataDir);
-			profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+			holder.saveCacheDetails(profile.dataDir); 
+			// profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); // this is done after .xml is completly processed
 			return;
 		}
 		if(name.equals("id")){
@@ -445,7 +445,7 @@ public class OCXMLImporter extends MinML {
 						fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anführungszeichen 
 						if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
 						if (fetchUrl==null) { // TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
-							(new MessageBox(MyLocale.getMsg(144, "Warning"),MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.wayPoint), MessageBox.OKB)).exec();
+							inf.addWarning(MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.wayPoint));
 							continue;
 						}
 						inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported + "\n"+MyLocale.getMsg(1620, "downloading embedded images: ") + numDownloaded++);
@@ -669,7 +669,7 @@ public class OCXMLImporter extends MinML {
 	}
 
 
-	private CacheHolder getHolder(String CacheID){
+	private CacheHolder getHolder(String CacheID){ // TODO move this into profile.java
 		int index;
 		CacheHolder ch;
 
