@@ -54,7 +54,7 @@ public class TablePanel extends CellPanel{
 	/** Mark the row as selected so that myTableModel can color it grey */
 	public void selectRow(int row) {
 		setSelectedCache(row);
-		//tc.cursorTo(row, tc.cursor.x+tc.listMode, true);
+		tc.cursorTo(row, tc.cursor.x+tc.listMode, true);
 		tc.scrollToVisible(row,0);
 		tc.clearSelection(null);
 		tc.addToSelection(row,0); 
