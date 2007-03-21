@@ -16,7 +16,7 @@ import ewe.io.PrintWriter;
 *	classes and methods to get more information.
 *	
 */
-public class CacheHolder {
+public class CacheHolder implements Cloneable{
   private String NODISTANCE="? km";
   private String NOBEARING="?";
   private String EMPTY=""; // Needs less Memory than using 'new String()'
@@ -173,6 +173,61 @@ public CacheHolder update(CacheHolder newCh){
  	return this;
   }
   
+	public Object clone(){
+		CacheHolder cx = new CacheHolder();
+		cx.CacheName = CacheName;
+		cx.CacheOwner = CacheOwner;
+		cx.LatLon = LatLon;
+		cx.DateHidden = DateHidden;
+		cx.wayPoint = 	wayPoint;
+		cx.CacheStatus=CacheStatus;
+		cx.type=type;
+		cx.hard=hard;
+		cx.terrain=terrain;
+		cx.dirty=dirty;
+		cx.CacheSize=CacheSize;
+		cx.is_available=is_available;
+		cx.is_archived=is_archived;
+		cx.has_bug=has_bug;
+		cx.is_black=is_black;
+		cx.is_filtered=is_filtered;
+		cx.is_owned=is_owned;
+		cx.is_found=is_found;
+		cx.is_new=is_new;
+		cx.is_log_update=is_log_update;
+		cx.is_update=is_update;
+		cx.is_HTML=is_HTML;
+		cx.noFindLogs=noFindLogs;
+		cx.ocCacheID=ocCacheID;
+		cx.is_incomplete=is_incomplete;
+		cx.ocCacheID=ocCacheID;
+		cx.ocCacheID=ocCacheID;
+		return cx;
+	}
+
+	/**
+	 * Method to clear all attributes of the cache.
+	 * 
+	 */
+	public void freeMEM(){
+		LongDescription = EMPTY;
+		LastUpdate = EMPTY;
+		Hints = EMPTY;
+		CacheLogs = null;
+		CacheNotes = EMPTY;
+		Images = null;
+		ImagesText = null;
+		LogImages = null;
+		LogImagesText = null;
+		UserImages = null;
+		UserImagesText = null;
+		attributes = null;
+		CacheIcons = null;
+		Bugs = EMPTY;
+		URL = EMPTY;
+		ocCacheID = EMPTY;
+	}
+	
   /**
    * Adds a user image to the cache data
    * @param profile

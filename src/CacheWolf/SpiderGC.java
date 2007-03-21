@@ -248,6 +248,12 @@ public class SpiderGC{
 	*	Method to start the spider for a search around the center coordinates
 	*/
 	public void doIt(){
+		String dummy = "";
+		Regex rexLine;
+		String ln;
+		String wpt = "";
+		String loganal;
+		CacheHolder ch;
 		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
 		if (!origin.isValid()) {
 			(new MessageBox("Error", "Coordinates for center must be set", MessageBox.OKB)).execute();
@@ -285,7 +291,7 @@ public class SpiderGC{
 		infB.exec();
 		//Get first page
 		try{
-			String ln = new String("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
+			ln = new String("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
 			if(doNotgetFound) ln = ln + "&f=1";
 			start = fetch(ln);
 			pref.log("Got first page: " + ln);
@@ -297,10 +303,10 @@ public class SpiderGC{
 			Vm.showWait(false);
 			return;
 		}
-		String dummy = "";
+		dummy = "";
 		//String lineBlck = "";
 		int page_number = 4;		
-		Regex rexLine = new Regex("<tr bgcolor=((?s).*?)</tr>");
+		rexLine = new Regex("<tr bgcolor=((?s).*?)</tr>");
 		int found_on_page = 0;
 		//Loop till maximum distance has been found or no more caches are in the list
 		while(distance > 0){
@@ -340,7 +346,7 @@ public class SpiderGC{
 				doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
 				doc += "&" + URL.encodeURL("lat",false) +"="+ URL.encodeURL(origin.getLatDeg(CWPoint.DD),false);
 				doc += "&" + URL.encodeURL("lon",false) +"="+ URL.encodeURL(origin.getLonDeg(CWPoint.DD),false);
-				//if(doNotgetFound) doc += "&f=1";
+				if(doNotgetFound) doc += "&f=1";
 				doc += "&" + URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL("ResultsPager:_ctl"+page_number,false);
 				doc += "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false);
 				try{
@@ -362,11 +368,11 @@ public class SpiderGC{
 		if (!infB.isClosed) infB.setInfo("Found " + cachesToLoad.size() + " caches");
 		
 		// Now ready to spider each cache
-		String wpt = "";
-		CacheHolder ch;
+		profile.openIndex(pref);
+		ch = new CacheHolder();
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			if (infB.isClosed) break;
-			ch = new CacheHolder();
+			
 			wpt = (String)cachesToLoad.get(i);
 			// Get only caches not already available in the DB
 			if(searchWpt(wpt) == -1){
@@ -397,7 +403,7 @@ public class SpiderGC{
 						pref.log("Trying logs");
 						ch.CacheLogs = getLogs(start, ch);
 						int z = 0;
-						String loganal = "";
+						loganal = "";
 						while(z < ch.CacheLogs.size() && z < 5){
 							loganal = (String)ch.CacheLogs.get(z);
 							if(loganal.indexOf("icon_sad")>0) {
@@ -452,22 +458,27 @@ public class SpiderGC{
 							getImages(start, ch);
 							pref.log("Got images");
 						}
-						if (infB.isClosed) break;
+						if (infB.isClosed) {
+							
+							break;
+						}
 						ch.Bugs = getBugs(start);
 						if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
 						pref.log("Getting additional waypoints");
-						getAddWaypoints(start, ch);
+						//getAddWaypoints(start, ch);
 						pref.log("Got additional waypoints");
 						ch.saveCacheDetails(profile.dataDir);
-						cacheDB.add(ch);
-						profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+						profile.writeIndexLine(ch);
+						//profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+						ch = new CacheHolder();
 					}catch(Exception ex){
 						pref.log("There was an error in the last step:");
 						pref.log("Cache was: " + wpt);
 						pref.log("Error was: " + ex.toString());
-						//ch.is_incomplete = true;
-						//cacheDB.add(ch);
+						ch.is_incomplete = true;
+						profile.writeIndexLine(ch);
 						//profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+						ch = new CacheHolder();
 					}finally{
 						//just continue please!
 						pref.log("Continuing with next cache.");
@@ -475,6 +486,7 @@ public class SpiderGC{
 				}
 			}
 		}
+		profile.closeIndex();
 		infB.close(0);
 		Vm.showWait(false);
 	}
@@ -553,13 +565,14 @@ public class SpiderGC{
 				//Vm.debug(descRex.stringMatched(1));
 				int idx=profile.getCacheIndex(cx.wayPoint);
 				cx.is_found = ch.is_found;
-				if (idx<0)
-					cacheDB.add(cx); // Addi is not in database
-				else if (((CacheHolder) cacheDB.get(idx)).is_Checked && // Only re-spider existing addi waypoints that are ticked
+				if (idx<0){
+					cacheDB.add(cx.clone()); // Addi is not in database
+					cx = null;
+					Vm.gc();
+				}else if (((CacheHolder) cacheDB.get(idx)).is_Checked && // Only re-spider existing addi waypoints that are ticked
 						!((CacheHolder) cacheDB.get(idx)).is_filtered) // and are visible (i.e.  not filtered)
 					((CacheHolder) cacheDB.get(idx)).update(cx);
 				cx.saveCacheDetails(profile.dataDir);
-				
 				rowBlock = exRowBlock.findNext();
 			}
 		}
