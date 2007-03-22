@@ -148,94 +148,100 @@ public class SpiderGC{
 			start = fetch(doc);
 		}catch(Exception ex){
 			pref.log("Could not fetch " + ch.wayPoint);
+			ch.is_incomplete = true;
+			cacheDB.set(number, ch);
 			//Vm.debug("Couldn't get cache detail page");
 		}
 		if (!infB.isClosed) { // Only analyse the cache data if user has not closed the progress window
-			ch.is_new = false;
-			ch.is_update = false;
-			ch.is_HTML = true;
-			ch.is_available = true;
-			ch.is_archived = false;
-			//Vm.debug(ch.wayPoint);
-			
-			if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
-			if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
-			pref.log("Trying logs");
-			int logsz = ch.CacheLogs.size();
-			ch.CacheLogs = getLogs(start, ch);
-			int z = 0;
-			String loganal = "";
-			while(z < ch.CacheLogs.size() && z < 5){
-				loganal = (String)ch.CacheLogs.get(z);
-				if(loganal.indexOf("icon_sad")>0) {
-					z++;
-				}else break;
-			}
-			ch.noFindLogs = z;
-			ch.is_log_update = false;
-			if(ch.CacheLogs.size()>logsz) ch.is_log_update = true;
-			pref.log("Found logs");
-			ch.LatLon = getLatLon(start);
-			ch.pos.set(ch.LatLon);
-			//Vm.debug("LatLon: " + ch.LatLon);
-			pref.log("Trying description");
-			origLong = ch.LongDescription;
-			ch.LongDescription = getLongDesc(start);
-			if(!ch.LongDescription.equals(origLong)) ch.is_update = true;
-			pref.log("Got description");
-			pref.log("Getting cache name");
-			ch.CacheName = SafeXML.cleanback(getName(start));
-			pref.log("Got cache name");
-			//Vm.debug("Name: " + ch.CacheName);
-			pref.log("Trying owner");
-			ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
-			if(ch.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equals(pref.myAlias2))) ch.is_owned = true;
-			pref.log("Got owner");
-			//Vm.debug("Owner: " + ch.CacheOwner);
-			pref.log("Trying date hidden");
-			ch.DateHidden = getDateHidden(start);
-			pref.log("Got date hidden");
-			//Vm.debug("Hidden: " + ch.DateHidden);
-			pref.log("Trying hints");
-			ch.Hints = getHints(start);
-			pref.log("Got hints");
-			//Vm.debug("Hints: " + ch.Hints);
-			//Vm.debug("Got the hints");
-			pref.log("Trying size");
-			ch.CacheSize = getSize(start);
-			pref.log("Got size");
-			//Vm.debug("Size: " + ch.CacheSize);
-			pref.log("Trying difficulty");
-			ch.hard = getDiff(start);
-			pref.log("Got difficulty");
-			//Vm.debug("Hard: " + ch.hard);
-			pref.log("Trying terrain");
-			ch.terrain = getTerr(start);
-			pref.log("Got terrain");
-			if (!infB.isClosed) ch.Bugs = getBugs(start);
-			if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
-			//Vm.debug("Terr: " + ch.terrain);
-			pref.log("Trying cache type");
-			ch.type = getType(start);
-			pref.log("Got cache type");
-			//Vm.debug("Type: " + ch.type);
-			pref.log("Trying images");
-			getImages(start, ch);
-			pref.log("Got images");
-			//pref.log("Trying maps");
-			//getMaps(ch);
-			//pref.log("Got maps");
-			pref.log("Getting additional waypoints");
-	
-			getAddWaypoints(start, ch);
-	
-			pref.log("Got additional waypoints");
-			ch.CacheNotes = notes;
-			if (!infB.isClosed) {
-				ch.saveCacheDetails(profile.dataDir);
+			try{
+				ch.is_new = false;
+				ch.is_update = false;
+				ch.is_HTML = true;
+				ch.is_available = true;
+				ch.is_archived = false;
+				ch.is_incomplete = false;
+				//Vm.debug(ch.wayPoint);
 				
-				cacheDB.set(number, ch);
-			}
+				if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
+				if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
+				pref.log("Trying logs");
+				int logsz = ch.CacheLogs.size();
+				ch.CacheLogs = getLogs(start, ch);
+				int z = 0;
+				String loganal = "";
+				while(z < ch.CacheLogs.size() && z < 5){
+					loganal = (String)ch.CacheLogs.get(z);
+					if(loganal.indexOf("icon_sad")>0) {
+						z++;
+					}else break;
+				}
+				ch.noFindLogs = z;
+				ch.is_log_update = false;
+				if(ch.CacheLogs.size()>logsz) ch.is_log_update = true;
+				pref.log("Found logs");
+				ch.LatLon = getLatLon(start);
+				ch.pos.set(ch.LatLon);
+				//Vm.debug("LatLon: " + ch.LatLon);
+				pref.log("Trying description");
+				origLong = ch.LongDescription;
+				ch.LongDescription = getLongDesc(start);
+				if(!ch.LongDescription.equals(origLong)) ch.is_update = true;
+				pref.log("Got description");
+				pref.log("Getting cache name");
+				ch.CacheName = SafeXML.cleanback(getName(start));
+				pref.log("Got cache name");
+				//Vm.debug("Name: " + ch.CacheName);
+				pref.log("Trying owner");
+				ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
+				if(ch.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equals(pref.myAlias2))) ch.is_owned = true;
+				pref.log("Got owner");
+				//Vm.debug("Owner: " + ch.CacheOwner);
+				pref.log("Trying date hidden");
+				ch.DateHidden = getDateHidden(start);
+				pref.log("Got date hidden");
+				//Vm.debug("Hidden: " + ch.DateHidden);
+				pref.log("Trying hints");
+				ch.Hints = getHints(start);
+				pref.log("Got hints");
+				//Vm.debug("Hints: " + ch.Hints);
+				//Vm.debug("Got the hints");
+				pref.log("Trying size");
+				ch.CacheSize = getSize(start);
+				pref.log("Got size");
+				//Vm.debug("Size: " + ch.CacheSize);
+				pref.log("Trying difficulty");
+				ch.hard = getDiff(start);
+				pref.log("Got difficulty");
+				//Vm.debug("Hard: " + ch.hard);
+				pref.log("Trying terrain");
+				ch.terrain = getTerr(start);
+				pref.log("Got terrain");
+				if (!infB.isClosed) ch.Bugs = getBugs(start);
+				if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
+				//Vm.debug("Terr: " + ch.terrain);
+				pref.log("Trying cache type");
+				ch.type = getType(start);
+				pref.log("Got cache type");
+				//Vm.debug("Type: " + ch.type);
+				pref.log("Trying images");
+				getImages(start, ch);
+				pref.log("Got images");
+				//pref.log("Trying maps");
+				//getMaps(ch);
+				//pref.log("Got maps");
+				pref.log("Getting additional waypoints");
+		
+				getAddWaypoints(start, ch.wayPoint, ch.is_found);
+		
+				pref.log("Got additional waypoints");
+				ch.CacheNotes = notes;
+				if (!infB.isClosed) {
+					ch.saveCacheDetails(profile.dataDir);
+					
+					cacheDB.set(number, ch);
+				}
+			}catch(Exception ex){}
+			finally{}
 		}
 		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); //TODO This could be done at the end in the context menu
 		boolean ret=!infB.isClosed; // If the infoBox was closed before getting here, we return false
@@ -344,9 +350,9 @@ public class SpiderGC{
 				page_number++;
 				if(page_number >= 15) page_number = 5;
 				doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
-				doc += "&" + URL.encodeURL("lat",false) +"="+ URL.encodeURL(origin.getLatDeg(CWPoint.DD),false);
-				doc += "&" + URL.encodeURL("lon",false) +"="+ URL.encodeURL(origin.getLonDeg(CWPoint.DD),false);
-				if(doNotgetFound) doc += "&f=1";
+				//doc += "&" + URL.encodeURL("lat",false) +"="+ URL.encodeURL(origin.getLatDeg(CWPoint.DD),false);
+				//doc += "&" + URL.encodeURL("lon",false) +"="+ URL.encodeURL(origin.getLonDeg(CWPoint.DD),false);
+				//if(doNotgetFound) doc += "&f=1";
 				doc += "&" + URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL("ResultsPager:_ctl"+page_number,false);
 				doc += "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false);
 				try{
@@ -465,19 +471,24 @@ public class SpiderGC{
 						ch.Bugs = getBugs(start);
 						if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
 						pref.log("Getting additional waypoints");
-						//getAddWaypoints(start, ch);
+						getAddWaypoints(start, ch.wayPoint, ch.is_found);
 						pref.log("Got additional waypoints");
+						if(doNotgetFound) {
+							if(!ch.is_found) profile.writeIndexLine(ch);
+						} else profile.writeIndexLine(ch);
 						ch.saveCacheDetails(profile.dataDir);
 						profile.writeIndexLine(ch);
-						//profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+						
 						ch = new CacheHolder();
 					}catch(Exception ex){
 						pref.log("There was an error in the last step:");
 						pref.log("Cache was: " + wpt);
 						pref.log("Error was: " + ex.toString());
 						ch.is_incomplete = true;
-						profile.writeIndexLine(ch);
-						//profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+						if(doNotgetFound) {
+							if(!ch.is_found) profile.writeIndexLine(ch);
+						} else profile.writeIndexLine(ch);
+						
 						ch = new CacheHolder();
 					}finally{
 						//just continue please!
@@ -532,7 +543,7 @@ public class SpiderGC{
 		return result;
 	}
 	
-	public void getAddWaypoints(String doc, CacheHolder ch){
+	public void getAddWaypoints(String doc, String wayPoint, boolean is_found){
 		Extractor exWayBlock = new Extractor(doc, "<strong>Additional Waypoints</strong><br>", "</table>", 0, false);
 		String wayBlock = "";
 		String rowBlock = "";
@@ -559,14 +570,14 @@ public class SpiderGC{
 				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
-				cx.wayPoint = MyLocale.formatLong(counter, "00") + ch.wayPoint.substring(2);
+				cx.wayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
 				counter++;
 				cx.LongDescription = descRex.stringMatched(1); 
 				//Vm.debug(descRex.stringMatched(1));
 				int idx=profile.getCacheIndex(cx.wayPoint);
-				cx.is_found = ch.is_found;
+				cx.is_found = is_found;
 				if (idx<0){
-					cacheDB.add(cx.clone()); // Addi is not in database
+					profile.writeIndexLine(cx);
 					cx = null;
 					Vm.gc();
 				}else if (((CacheHolder) cacheDB.get(idx)).is_Checked && // Only re-spider existing addi waypoints that are ticked
