@@ -437,9 +437,9 @@ public class Profile {
 					tmpca.set(ch.LatLon);
 					ch.pos = new CWPoint(tmpca);
 				}
-				if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0 ){ // TODO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
+				if (ch.pos.isValid() ){ // done: && ch.pos.latDec != 0 && ch.pos.lonDec != 0 TO-DO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
 					isAddi = ch.isAddiWpt();
-				if (!isAddi || (isAddi && ch.pos.getDistance(ch.mainCache.pos) < 1000)) { // test for plausiblity of coordinates of Additional Waypoints: more then 1000 km away from main Waypoint is unplausible -> ignore it
+				if (!isAddi || (isAddi && ch.mainCache != null && ch.pos.getDistance(ch.mainCache.pos) < 1000)) { // test for plausiblity of coordinates of Additional Waypoints: more then 1000 km away from main Waypoint is unplausible -> ignore it // && ch.mainCache != null is only necessary because the data base may be corrupted
 						if (topleft == null) topleft = new CWPoint(ch.pos);
 						if (bottomright == null) bottomright = new CWPoint(ch.pos);
 						if (topleft.latDec < ch.pos.latDec) topleft.latDec = ch.pos.latDec;
