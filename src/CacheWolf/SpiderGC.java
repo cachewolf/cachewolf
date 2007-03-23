@@ -160,6 +160,10 @@ public class SpiderGC{
 				ch.is_available = true;
 				ch.is_archived = false;
 				ch.is_incomplete = false;
+				ch.CacheLogs.clear();
+				ch.addiWpts.clear();
+				ch.Images.clear();
+				ch.ImagesText.clear();
 				//Vm.debug(ch.wayPoint);
 				
 				if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
