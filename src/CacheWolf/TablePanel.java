@@ -55,10 +55,10 @@ public class TablePanel extends CellPanel{
 	public void selectRow(int row) {
 		setSelectedCache(row);
 		tc.cursorTo(row, tc.cursor.x+tc.listMode, true);
-		tc.scrollToVisible(row,0);
-		tc.clearSelection(null);
+		//tc.scrollToVisible(row,0);
+		/*tc.clearSelection(null);
 		tc.addToSelection(row,0); 
-		tc.addToSelection(row,myMod.MAXCOLUMNS-1); 
+		tc.addToSelection(row,myMod.MAXCOLUMNS-1);*/ 
 		//tc.paintSelectedCells();
 	}
 	
