@@ -160,7 +160,7 @@ public CacheHolder update(CacheHolder newCh){
    	 //Check for number sukzessive DNF logs
 	 int z = 0;
 	 String loganal = EMPTY;
-	 // Vm.debug("Checking size: ");
+	 //Vm.debug("Checking size: ");
 	 //int sz = newCh.CacheLogs.size();
 	 //Vm.debug("log size: " + sz);
  	 while(z < newCh.CacheLogs.size() && z < 5){
