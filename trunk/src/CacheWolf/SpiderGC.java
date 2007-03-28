@@ -234,15 +234,17 @@ public class SpiderGC{
 				//getMaps(ch);
 				//pref.log("Got maps");
 				pref.log("Getting additional waypoints");
-		
+				
 				getAddWaypoints(start, ch.wayPoint, ch.is_found);
 		
 				pref.log("Got additional waypoints");
 				ch.CacheNotes = notes;
 				if (!infB.isClosed) {
 					ch.saveCacheDetails(profile.dataDir);
-					
+					pref.log("Saving to:" + profile.dataDir);
 					cacheDB.set(number, ch);
+					profile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+					
 				}
 			}catch(Exception ex){}
 			finally{}
@@ -258,6 +260,7 @@ public class SpiderGC{
 	*	Method to start the spider for a search around the center coordinates
 	*/
 	public void doIt(){
+		String postStr = new String();
 		String dummy = "";
 		Regex rexLine;
 		String ln;
@@ -350,6 +353,8 @@ public class SpiderGC{
 			}
 			infB.setInfo("Found " + cachesToLoad.size() + " caches");
 			if(found_on_page < 20) distance = 0;
+			postStr = "http://www.geocaching.com/seek/nearest.aspx?" + origin.getLatDeg(CWPoint.DD) + "&" + origin.getLonDeg(CWPoint.DD);
+			if(doNotgetFound) postStr = postStr + "&f=1";
 			if(distance > 0){
 				page_number++;
 				if(page_number >= 15) page_number = 5;
@@ -362,7 +367,7 @@ public class SpiderGC{
 				try{
 					start = "";
 					pref.log("Fetching next list page:" + doc);
-					start = fetch_post("http://www.geocaching.com/seek/nearest.aspx", doc, "/seek/nearest.aspx");
+					start = fetch_post(postStr, doc, "/seek/nearest.aspx");
 				}catch(Exception ex){
 					Vm.debug("Couldn't get the next page");
 					pref.log("Error getting next page");
@@ -378,7 +383,7 @@ public class SpiderGC{
 		if (!infB.isClosed) infB.setInfo("Found " + cachesToLoad.size() + " caches");
 		
 		// Now ready to spider each cache
-		profile.openIndex(pref);
+		
 		ch = new CacheHolder();
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			if (infB.isClosed) break;
@@ -477,11 +482,12 @@ public class SpiderGC{
 						pref.log("Getting additional waypoints");
 						getAddWaypoints(start, ch.wayPoint, ch.is_found);
 						pref.log("Got additional waypoints");
+						
 						if(doNotgetFound) {
 							if(!ch.is_found) profile.writeIndexLine(ch);
 						} else profile.writeIndexLine(ch);
+						
 						ch.saveCacheDetails(profile.dataDir);
-						profile.writeIndexLine(ch);
 						
 						ch = new CacheHolder();
 					}catch(Exception ex){
@@ -568,6 +574,7 @@ public class SpiderGC{
 				koordRex.search(rowBlock);
 				typeRex.search(rowBlock);
 				cx.CacheName = nameRex.stringMatched(1);
+				//Vm.debug("Addi: " + cx.CacheName);
 				if(koordRex.didMatch()) cx.pos.set(koordRex.stringMatched(1)); 
 				cx.LatLon = cx.pos.toString(); 
 				//cx.pos.set(cx.LatLon);
@@ -580,10 +587,16 @@ public class SpiderGC{
 				//Vm.debug(descRex.stringMatched(1));
 				int idx=profile.getCacheIndex(cx.wayPoint);
 				cx.is_found = is_found;
+				//Vm.debug("IDX: " + idx);
 				if (idx<0){
-					profile.writeIndexLine(cx);
-					cx = null;
-					Vm.gc();
+					if(profile.byPassIndexActive) {
+						profile.writeIndexLine(cx);
+						//Vm.debug("Using index bypass");
+					}
+					else {
+						cacheDB.add(cx);
+						//Vm.debug("Adding to cachedb");
+					}
 				}else if (((CacheHolder) cacheDB.get(idx)).is_Checked && // Only re-spider existing addi waypoints that are ticked
 						!((CacheHolder) cacheDB.get(idx)).is_filtered) // and are visible (i.e.  not filtered)
 					((CacheHolder) cacheDB.get(idx)).update(cx);
@@ -859,12 +872,14 @@ public class SpiderGC{
 		pref = prf;
 		indexDB = new Hashtable(cacheDB.size());
 		CacheHolder ch;
+		profile.openIndex(pref);
 		//index the database for faster searching!
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			indexDB.put((String)ch.wayPoint, new Integer(i));
 			ch.is_new = false;
 			//cacheDB.set(i, ch);
+			profile.writeIndexLine(ch);
 		}
 	}
 	

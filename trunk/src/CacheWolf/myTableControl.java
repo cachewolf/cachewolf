@@ -134,6 +134,9 @@ public class myTableControl extends TableControl{
 					}
 				}
 				profile.hasUnsavedChanges=true;	
+				profile.closeIndex();
+				cacheDB.clear();
+				profile.readIndex();
 				tbp.refreshTable();
 			}
 			Vm.showWait(false);
