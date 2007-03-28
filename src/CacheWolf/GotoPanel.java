@@ -137,6 +137,7 @@ public class GotoPanel extends CellPanel {
 		//things about destination
 		GotoP.addLast(lblWayP = new mLabel("WayPoint"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblWayP.backGround = Color.DarkBlue;
+		lblWayP.foreGround = Color.White;
 		lblWayP.font = BOLD;
 		GotoP.addLast(lblBearWayP = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblBearWayP.font = BOLD;
@@ -396,6 +397,8 @@ class GotoRose extends AniImage {
 	final static Color YELLOW = new Color(255,255,0);
 	final static Color GREEN = new Color(0,255,0);
 	final static Color BLUE = new Color(0,255,255);
+	final static Color ORANGE = new Color(255,128,0);
+
 	/**
 	 * @param gd goto direction
 	 * @param sd sun direction
@@ -428,11 +431,37 @@ class GotoRose extends AniImage {
 	}
 
 	private void drawArrows(Graphics g){
-		if (g != null) {
+		if (g != null)
+		{
+			// select moveDirColor according to difference to gotoDir
+			Color moveDirColor = RED;
+			
+			if (gotoDir < 360 && gotoDir > -360 && moveDir < 360 && moveDir > -360)
+			{
+				float diff = java.lang.Math.abs(moveDir - gotoDir);
+				while (diff > 360)
+				{
+					diff -= 360.0f;
+				}
+				if (diff > 180)
+				{
+					diff = 360.0f - diff;
+				}
+				
+				if (diff <= 10)
+				{
+					moveDirColor = GREEN;
+				}
+				else if (diff <= 20)
+				{
+					moveDirColor = ORANGE;
+				}
+			}
+
 			// draw only valid arrows
-			if (moveDir < 360 && moveDir > -360) drawArrow(g, moveDir, RED);
-			if (gotoDir < 360 && gotoDir > -360) drawArrow(g, gotoDir, Color.DarkBlue);
-			if (sunDir < 360 && sunDir> -360) drawArrow(g, sunDir, YELLOW);
+			if (gotoDir < 360 && gotoDir > -360) drawArrow(g, gotoDir, Color.DarkBlue, 1.0f);
+			if (moveDir < 360 && moveDir > -360) drawArrow(g, moveDir, moveDirColor, 1.0f);
+			if (sunDir < 360 && sunDir > -360) drawArrow(g, sunDir, YELLOW, 0.75f);
 		}
 	}
 
@@ -442,13 +471,13 @@ class GotoRose extends AniImage {
 	 * @param angle angle of arrow
 	 * @param col color of arrow
 	 */
-	private void drawArrow(Graphics g, float angle, Color col) {
+	private void drawArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad;
 		int x, y, centerX = location.width/2, centerY = location.height/2;
 
 		angleRad = (angle) * (float)java.lang.Math.PI / 180;
-		x = centerX + new Float(centerX * java.lang.Math.sin(angleRad)).intValue();
-		y = centerY - new Float(centerY * java.lang.Math.cos(angleRad)).intValue();
+		x = centerX + new Float(centerX * java.lang.Math.sin(angleRad) * scale).intValue();
+		y = centerY - new Float(centerY * java.lang.Math.cos(angleRad) * scale).intValue();
 		g.setPen(new Pen(col,Pen.SOLID,3));
 		g.drawLine(centerX,centerY,x,y);
 	}
