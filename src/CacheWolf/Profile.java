@@ -10,10 +10,7 @@ import ewe.io.PrintWriter;
 import ewe.io.Stream;
 import ewe.sys.Convert;
 import ewe.sys.Handle;
-import ewe.sys.LocalResource;
-import ewe.sys.Locale;
 import ewe.sys.Vm;
-import ewe.ui.*;
 import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
 import ewe.util.Vector;
@@ -68,6 +65,7 @@ public class Profile {
 	 * The following modifications set this flag: New profile centre, Change of waypoint data 
 	 */
 	public boolean hasUnsavedChanges = false;
+	public boolean byPassIndexActive = false;
 
 	//TODO Add other settings, such as max. number of logs to spider
 	//TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
@@ -113,7 +111,7 @@ public class Profile {
 		boolean saveFilterInverted = Filter.filterInverted;
 		PrintWriter detfile;
 		try{
-			detfile = new PrintWriter(new BufferedWriter(new FileWriter(dataDir + "index.xml")));
+			detfile = new PrintWriter(new BufferedWriter(new FileWriter(dataDir + "indextemp.xml")));
 		} catch (Exception e) {
 			Vm.debug("Problem creating index file "+e.toString()+"\nFilename="+dataDir + "index.xml");
 			return;
@@ -138,6 +136,7 @@ public class Profile {
 					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			detfile.close();
+			byPassIndexActive = true;
 		}catch(Exception e){
 			Vm.debug("Problem writing to index file "+e.toString());
 			detfile.close();
@@ -150,7 +149,7 @@ public class Profile {
 	 */
 	public void writeIndexLine(CacheHolder ch){
 		Stream strout = null;
-		File index = new File(dataDir + "index.xml");
+		File index = new File(dataDir + "indextemp.xml");
 		String cachedata = "    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
 				"\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
 				"\" hidden = \""+ch.DateHidden+"\" wayp = \""+SafeXML.clean(ch.wayPoint)+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"" + ch.dirty + "\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\" is_INCOMPLETE = \""+Convert.toString(ch.is_incomplete)+"\" />\n";
@@ -172,13 +171,19 @@ public class Profile {
 	 */
 	public void closeIndex(){
 		Stream strout = null;
-		File index = new File(dataDir + "index.xml");
+		File index = new File(dataDir + "indextemp.xml");
 		try{
 			//append data!
 			strout = index.toWritableStream(true);
 			byte[] data = "</CACHELIST>\n".getBytes(); 
 			strout.write(data);
 			strout.close();
+			File old = new File(dataDir + "index.xml");
+			old.delete();
+			index.rename("index.xml");
+			File indextemp = new File(dataDir + "indextemp.xml");
+			indextemp.delete();
+			byPassIndexActive = false;
 		}catch(Exception ex){};
 	}
 	

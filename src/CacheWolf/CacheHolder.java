@@ -16,7 +16,7 @@ import ewe.io.PrintWriter;
 *	classes and methods to get more information.
 *	
 */
-public class CacheHolder implements Cloneable{
+public class CacheHolder {
   private String NODISTANCE="? km";
   private String NOBEARING="?";
   private String EMPTY=""; // Needs less Memory than using 'new String()'
