@@ -1857,7 +1857,7 @@ class ArrowsOnMap extends AniImage {
 	Graphics draw;
 	private MapInfoObject map=null;
 
-	final static Color moveDirColor = new Color(255,0,0); // RED 
+	Color moveDirColor = new Color(255,0,0); // RED 
 	final static Color sunDirColor = new Color(255,255,0); // Yellow
 	//final static Color GREEN = new Color(0,255,0);
 	final static Color gotoDirColor = new Color(0,0,128); // dark blue
@@ -1929,20 +1929,45 @@ class ArrowsOnMap extends AniImage {
 			// draw only valid arrows
 			if (moveDir < 360 && moveDir > -360) {
 				if (moveDirArrow == null) moveDirArrow = new Point[2];
-				makeArrow(moveDirArrow, moveDir);
+				makeArrow(moveDirArrow, moveDir, 1.0f);
 			} else moveDirArrow = null;
 			if (gotoDir < 360 && gotoDir > -360) {
 				if (gotoDirArrow == null) gotoDirArrow = new Point[2];
-				makeArrow(gotoDirArrow, gotoDir);
+				makeArrow(gotoDirArrow, gotoDir, 1.0f);
 			} else gotoDirArrow = null;
 			if (sunDir < 360 && sunDir> -360) {
 				if (sunDirArrow == null ) sunDirArrow = new Point[2];
-				makeArrow(sunDirArrow, sunDir);
+				makeArrow(sunDirArrow, sunDir, 0.75f);
 			} else sunDirArrow = null;
 			if (java.lang.Math.abs(map.rotationRad) > 1.5 / 180 * java.lang.Math.PI)	{ // show northth arrow only if it has more than 1.5 degree deviation from vertical direction
 				if (northDirArrow == null) northDirArrow = new Point[2];
-				makeArrow(northDirArrow, 0); // north direction
+				makeArrow(northDirArrow, 0, 1.0f); // north direction
 			} else northDirArrow = null;
+			
+			//select moveDirColor according to difference to gotoDir
+			moveDirColor = new Color(255,0,0); // red
+			
+			if (moveDirArrow != null && gotoDirArrow != null)
+			{
+				float diff = java.lang.Math.abs(moveDir - gotoDir);
+				while (diff > 360)
+				{
+					diff -= 360.0f;
+				}
+				if (diff > 180)
+				{
+					diff = 360.0f - diff;
+				}
+				
+				if (diff <= 10)
+				{
+					moveDirColor = new Color(0,255,0);// green
+				}
+				else if (diff <= 20)
+				{
+					moveDirColor = new Color(255,128,0);// orange
+				}
+			}
 		}
 
 	/**
@@ -1951,8 +1976,9 @@ class ArrowsOnMap extends AniImage {
 	 * @param angle angle of arrow
 	 * @param col color of arrow
 	 */
-	private void makeArrow(Point[] arrow, float angle) {
+	private void makeArrow(Point[] arrow, float angle, float scale) {
 		if (map == null) return;
+
 		float angleRad;
 		int centerX = location.width/2, centerY = location.height/2;
 		if (arrow[0] == null) arrow[0] = new Point();
@@ -1960,17 +1986,17 @@ class ArrowsOnMap extends AniImage {
 		arrow[0].x = centerX;
 		arrow[0].y = centerY;
 		angleRad = angle * (float)java.lang.Math.PI / 180 + map.rotationRad;
-		arrow[1].x = centerX + new Float(centerX * java.lang.Math.sin(angleRad)).intValue();
-		arrow[1].y = centerY - new Float(centerY * java.lang.Math.cos(angleRad)).intValue();
+		arrow[1].x = centerX + new Float(centerX * java.lang.Math.sin(angleRad) * scale).intValue();
+		arrow[1].y = centerY - new Float(centerY * java.lang.Math.cos(angleRad) * scale).intValue();
 		//	g.setPen(new Pen(Color.Black,Pen.SOLID,7));
 		//	g.drawLine(centerX,centerY,x,y);
 	}
 
 	public void drawArrows(Graphics g) {
-		drawArrow(g, sunDirArrow, sunDirColor);
-		drawArrow(g, moveDirArrow, moveDirColor);
-		drawArrow(g, gotoDirArrow, gotoDirColor);
 		drawArrow(g, northDirArrow, northDirColor);
+		drawArrow(g, gotoDirArrow, gotoDirColor);
+		drawArrow(g, moveDirArrow, moveDirColor);
+		drawArrow(g, sunDirArrow, sunDirColor);
 	}
 	
 	public void drawArrow(Graphics g, Point[] arrow, Color col) {
