@@ -1959,11 +1959,15 @@ class ArrowsOnMap extends AniImage {
 					diff = 360.0f - diff;
 				}
 				
-				if (diff <= 10)
+				if (diff <= 5.0)
+				{
+					moveDirColor = new Color(0,128,0);// darkgreen
+				}
+				else if (diff <= 22.5)
 				{
 					moveDirColor = new Color(0,255,0);// green
 				}
-				else if (diff <= 20)
+				else if (diff <= 45.0)
 				{
 					moveDirColor = new Color(255,128,0);// orange
 				}
