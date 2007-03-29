@@ -398,6 +398,7 @@ class GotoRose extends AniImage {
 	final static Color GREEN = new Color(0,255,0);
 	final static Color BLUE = new Color(0,255,255);
 	final static Color ORANGE = new Color(255,128,0);
+	final static Color DARKGREEN = new Color(0,128,0);
 
 	/**
 	 * @param gd goto direction
@@ -448,11 +449,15 @@ class GotoRose extends AniImage {
 					diff = 360.0f - diff;
 				}
 				
-				if (diff <= 10)
+				if (diff <= 5.0)
+				{
+					moveDirColor = DARKGREEN;
+				}
+				else if (diff <= 22.5)
 				{
 					moveDirColor = GREEN;
 				}
-				else if (diff <= 20)
+				else if (diff <= 45.0)
 				{
 					moveDirColor = ORANGE;
 				}
