@@ -135,8 +135,9 @@ public class myTableControl extends TableControl{
 				}
 				profile.hasUnsavedChanges=true;	
 				profile.closeIndex();
-				cacheDB.clear();
-				profile.readIndex();
+				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+//				cacheDB.clear();
+//				profile.readIndex();
 				tbp.refreshTable();
 			}
 			Vm.showWait(false);
