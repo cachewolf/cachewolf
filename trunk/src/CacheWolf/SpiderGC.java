@@ -243,13 +243,10 @@ public class SpiderGC{
 					ch.saveCacheDetails(profile.dataDir);
 					pref.log("Saving to:" + profile.dataDir);
 					cacheDB.set(number, ch);
-					profile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
-					
 				}
 			}catch(Exception ex){}
 			finally{}
 		}
-		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); //TODO This could be done at the end in the context menu
 		boolean ret=!infB.isClosed; // If the infoBox was closed before getting here, we return false
 		infB.close(0);
 		//Vm.showWait(false); In myTableControl
