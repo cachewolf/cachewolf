@@ -112,6 +112,9 @@ public class myTableControl extends TableControl{
 			if (spider.login()==Form.IDOK) {
 				boolean alreadySaid = false;
 				boolean alreadySaid2 = false;
+				boolean test = true;
+				InfoBox infB = new InfoBox("Info", "Loading");
+				infB.exec();
 				for(int i = 0; i <	cacheDB.size(); i++){
 					ch = (CacheHolder)cacheDB.get(i);
 					if(ch.is_Checked == true) {
@@ -120,7 +123,13 @@ public class myTableControl extends TableControl{
 	//						Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 	//						TODO: Diese Meldungen vor dem Einloggen darstellen						
 						{
-							if (!spider.spiderSingle(i)) break;
+					    infB.setInfo("Loading: " + ch.wayPoint);
+						
+						test = spider.spiderSingle(i, infB); 
+						if (!test) {
+							infB.close(0);
+							break;
+						}
 						} else if (ch.isAddiWpt() && !ch.mainCache.is_Checked) { // Is the father ticked?
 							if (!alreadySaid2) {
 								alreadySaid2=true;
@@ -133,11 +142,14 @@ public class myTableControl extends TableControl{
 						}
 					}
 				}
+				infB.close(0);
 				profile.hasUnsavedChanges=true;	
 				profile.closeIndex();
 				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 //				cacheDB.clear();
 //				profile.readIndex();
+				profile.restoreFilter();
+				profile.updateBearingDistance();
 				tbp.refreshTable();
 			}
 			Vm.showWait(false);

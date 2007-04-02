@@ -264,7 +264,7 @@ public class MainMenu extends MenuBar {
 				loc.doIt(LocExporter.MODE_AUTO);
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
 				try{
-					ewe.sys.Process p = Vm.exec("gpsbabel -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
+					ewe.sys.Process p = Vm.exec("gpsbabel -s -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
 					Vm.debug("gpsbabel -i geo -f  \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
 					p.waitFor();
 				}catch(IOException ioex){};
@@ -386,6 +386,8 @@ public class MainMenu extends MenuBar {
 				spGC.doIt();
 				cacheDB.clear();
 				profile.readIndex();
+				profile.restoreFilter();
+				profile.updateBearingDistance();
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == savenoxit){

@@ -97,7 +97,7 @@ public class SpiderGC{
 				start = fetch_post("http://www.geocaching.com/login/Default.aspx", doc, "/login/default.aspx");
 				pref.log("Login successfull");
 			}catch(Exception ex){
-				Vm.debug("Could not login: gc.com start page");
+				//Vm.debug("Could not login: gc.com start page");
 				pref.log("Login failed.");
 				infB.close(0);
 				return ERR_LOGIN;
@@ -125,8 +125,8 @@ public class SpiderGC{
 	 * It assumes a login has already been performed!
 	 * @return True if spider was successful, false if spider was cancelled by closing the infobox
 	 */
-	public boolean spiderSingle(int number){
-
+	public boolean spiderSingle(int number, InfoBox infB){
+		this.infB = infB;
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
 		if (ch.isAddiWpt()) return false;  // No point spidering an addi waypoint, comes with parent
 		//Vm.showWait(true); Already done in myTableControl
@@ -139,9 +139,8 @@ public class SpiderGC{
 			pref.log("Could not load " + ch.wayPoint + "file in spiderSingle");
 		}
 		notes = ch.CacheNotes;
-		infB = new InfoBox("Info", "Loading");
-		infB.setInfo("Loading: " + ch.wayPoint);
-		infB.exec();
+		
+		
 		String doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + ch.wayPoint +"&log=y";
 		try{
 			pref.log("Fetching: " + ch.wayPoint);
@@ -244,11 +243,12 @@ public class SpiderGC{
 					pref.log("Saving to:" + profile.dataDir);
 					cacheDB.set(number, ch);
 				}
-			}catch(Exception ex){}
+			}catch(Exception ex){
+				pref.log("Exception in spider: " +ex.toString());
+			}
 			finally{}
 		}
 		boolean ret=!infB.isClosed; // If the infoBox was closed before getting here, we return false
-		infB.close(0);
 		//Vm.showWait(false); In myTableControl
 		return ret;
 	}
@@ -292,7 +292,7 @@ public class SpiderGC{
 		distance = Convert.toDouble(dist);
 		//boolean getMaps = options.mapsCheckBox.getState();
 		boolean doNotgetFound = options.foundCheckBox.getState();
-		Vm.debug("Do not get found? "+doNotgetFound);
+		//Vm.debug("Do not get found? "+doNotgetFound);
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
 		
@@ -309,7 +309,7 @@ public class SpiderGC{
 			infB.close(0);
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), MessageBox.OKB)).execute();
 			pref.log("Error fetching first list page");
-			Vm.debug("Could not get list");
+			//Vm.debug("Could not get list");
 			Vm.showWait(false);
 			return;
 		}
@@ -366,7 +366,7 @@ public class SpiderGC{
 					pref.log("Fetching next list page:" + doc);
 					start = fetch_post(postStr, doc, "/seek/nearest.aspx");
 				}catch(Exception ex){
-					Vm.debug("Couldn't get the next page");
+					//Vm.debug("Couldn't get the next page");
 					pref.log("Error getting next page");
 				}finally{
 					
@@ -396,7 +396,7 @@ public class SpiderGC{
 					start = fetch(doc);
 				}catch(Exception ex){
 					pref.log("Could not fetch detail page for: " + wpt);
-					Vm.debug("Couldn't get cache detail page");
+					//Vm.debug("Couldn't get cache detail page");
 				}finally{
 					//	just continue please!
 					pref.log("Trying for details.");
@@ -518,7 +518,7 @@ public class SpiderGC{
 	public String getBugs(String doc){	
 		Extractor exBlock = new Extractor(doc, ">&nbsp;Inventory</td>","What is a Travel Bug?",0,Extractor.EXCLUDESTARTEND);
 		String bugBlock = exBlock.findNext();
-		Vm.debug("Bugblock: "+bugBlock);
+		//Vm.debug("Bugblock: "+bugBlock);
 		Extractor exBug = new Extractor(bugBlock, "<a href='", "</a></strong></td>",0,Extractor.EXCLUDESTARTEND);
 		String link,bug,linkPlusBug,bugDetails;
 		String result = "";
@@ -640,7 +640,7 @@ public class SpiderGC{
 						ch.ImagesText.add(imgName);
 					}
 				} catch (IndexOutOfBoundsException e) { 
-					Vm.debug("IndexOutOfBoundsException not in image span"+e.toString()+"imgURL:"+imgUrl);
+					//Vm.debug("IndexOutOfBoundsException not in image span"+e.toString()+"imgURL:"+imgUrl);
 					pref.log("Problem loading image. imgURL:"+imgUrl);
 				}
 				}
