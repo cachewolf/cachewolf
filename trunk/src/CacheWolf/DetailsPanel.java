@@ -328,6 +328,7 @@ public class DetailsPanel extends CellPanel{
 		  ch.is_found = ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"));
 		  ch.is_black = blackStatus;
 		  ch.wayPoint = inpWaypoint.getText().trim();
+		  ch.CacheSize = chcSize.getText();
 		  // If the waypoint does not have a name, give it one
 		  if (ch.wayPoint.equals("")) { 
 			  ch.wayPoint=profile.getNewWayPointName();
