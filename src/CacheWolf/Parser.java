@@ -470,6 +470,7 @@ public class Parser{
     		ch.LatLon=cwPt.toString(CWPoint.CW);
     		ch.pos.set(cwPt);
     		ch.calcDistance(Global.getPref().curCentrePt); // Update distance/bearing 
+    	    Global.getProfile().selectionChanged=true; // Tell moving map to updated displayed waypoints
     	}
     }
     
@@ -724,6 +725,7 @@ public class Parser{
 					ch.LatLon=cwPt.toString(CWPoint.CW);
 					ch.pos.set(cwPt);
 					ch.calcDistance(Global.getPref().curCentrePt); // Update distance and bearing
+		    	    Global.getProfile().selectionChanged=true; // Tell moving map to updated displayed waypoints
 				    return;
 				} else
 					err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
