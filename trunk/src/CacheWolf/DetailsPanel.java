@@ -357,7 +357,7 @@ public class DetailsPanel extends CellPanel{
 		  }
 		  // set status also on addi wpts
 		  ch.setAttributesToAddiWpts();
-		  if (dirty_notes) ch.saveCacheDetails(profile.dataDir);
+		  ch.saveCacheDetails(profile.dataDir);
 		  dirty_notes=false;
 		  dirty_details=false;
 		  
