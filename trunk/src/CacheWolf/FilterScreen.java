@@ -17,7 +17,7 @@ public class FilterScreen extends Form{
 	private static final Color COLOR_FILTERALL=new Color(255,0,0); // Red
     	
 	private mButton btnCancel, btnApply,btnRoute,
-					btnBearing,btnTypes,btnAttributes,btnRatings,btnContainer,btnSearch,btnAddi;
+					btnBearing,btnTypes,btnAttributes,btnRatings,btnContainer,btnSearch,btnAddi, btnSelect,btnDeselect;
 	
 	private mChoice chcDist, chcDiff, chcTerr;
 	private mCheckBox chkFound, chkNotFound, chkTrad, chkVirtual, chkEvent, chkEarth, chkMega,
@@ -26,7 +26,7 @@ public class FilterScreen extends Form{
 					  chkMicro,chkSmall,chkRegular,chkLarge,chkVeryLarge,chkOther,chkCito,
 	                  chkArchived,chkNotArchived, chkAvailable,chkNotAvailable,
 					  chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
-					  chkSSW, chkSW, chkWSW, chkW, chkWNW, chkDeselect,chkSelect;
+					  chkSSW, chkSW, chkWSW, chkW, chkWNW;
 	
 	private mInput inpDist, inpTerr, inpDiff;
 	
@@ -117,9 +117,9 @@ public class FilterScreen extends Form{
 		pnlRose.addNext(chkWSW = new mCheckBox("WSW"),CellConstants.HSTRETCH, CellConstants.FILL);
 		pnlRose.addNext(chkW = new mCheckBox("W "),CellConstants.HSTRETCH, CellConstants.FILL);
 		pnlRose.addLast(chkWNW = new mCheckBox("WNW"),CellConstants.HSTRETCH, CellConstants.FILL);
-		pnlRose.addNext(chkDeselect=new mCheckBox(MyLocale.getMsg(716,"Deselect all")));
-		chkDeselect.setTag(SPAN,new Dimension(2,1));
-		pnlRose.addLast(chkSelect=new mCheckBox(MyLocale.getMsg(717,"Select all")));
+		pnlRose.addNext(btnDeselect=new mButton(MyLocale.getMsg(716,"Deselect all")),CellConstants.HSTRETCH, CellConstants.FILL);
+		btnDeselect.setTag(SPAN,new Dimension(2,1));
+		pnlRose.addLast(btnSelect=new mButton(MyLocale.getMsg(717,"Select all")),CellConstants.HSTRETCH, CellConstants.FILL);
 		pnlBearDist.addLast(pnlRose, CellConstants.STRETCH,CellConstants.FILL);
 		
 		//////////////////////////
@@ -619,20 +619,18 @@ public class FilterScreen extends Form{
 			else if (ev.target == btnAddi)cp.select(4);
 			else if (ev.target == btnContainer)cp.select(5);
 			else if (ev.target == btnSearch)cp.select(6);
-			else if (ev.target == chkDeselect) {
+			else if (ev.target == btnDeselect) {
 				chkNW.state= chkNNW.state  = chkN.state    = chkNNE.state  = 
 				chkNE.state   = chkENE.state  = chkE.state    = chkESE.state  = 
 				chkSE.state   = chkSSE.state  = chkS.state    = chkSSW.state  = 
 				chkSW.state   = chkWSW.state  = chkW.state    = chkWNW.state = false; 
-				chkDeselect.state=false;
 				repaint();
 					
-			} else if (ev.target == chkSelect) {
+			} else if (ev.target == btnSelect) {
 				chkNW.state= chkNNW.state  = chkN.state    = chkNNE.state  = 
 				chkNE.state   = chkENE.state  = chkE.state    = chkESE.state  = 
 				chkSE.state   = chkSSE.state  = chkS.state    = chkSSW.state  = 
 				chkSW.state   = chkWSW.state  = chkW.state    = chkWNW.state = true; 
-				chkSelect.state=false;
 				repaint();	
 			}
 		}
