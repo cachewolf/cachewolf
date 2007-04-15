@@ -398,7 +398,7 @@ class GotoRose extends AniImage {
 	final static Color GREEN = new Color(0,255,0);
 	final static Color BLUE = new Color(0,255,255);
 	final static Color ORANGE = new Color(255,128,0);
-	final static Color DARKGREEN = new Color(0,128,0);
+	final static Color DARKGREEN = new Color(0,192,0);
 
 	/**
 	 * @param gd goto direction
