@@ -1584,7 +1584,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						}
 						if (action == changeMapDirMI)	{
 							mapsMenu.close();
-							FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, Global.getPref().baseDir+"/maps");
+							FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, Global.getPref().baseDir+"maps");
 							fc.addMask("*.wfl");
 							fc.setTitle((String)MyLocale.getMsg(4200,"Select map directory:"));
 							if(fc.execute() != FileChooser.IDCANCEL){

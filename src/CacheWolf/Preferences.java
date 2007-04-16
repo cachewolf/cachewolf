@@ -79,7 +79,7 @@ public class Preferences extends MinML{
 	public String forwardGpsHost = new String();
 	public int fontSize = 12;
 
-	public String mapsPath = new String("/maps/standard");
+	public String mapsPath = "maps/standard";
 	// Helper variables for XML parser 
 	private StringBuffer collectElement=null; 
 	private String lastName; // The string to the last XML that was processed
@@ -544,6 +544,7 @@ public class Preferences extends MinML{
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
 			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\" initialhintheight=\""+initialHintHeight+"\"/>\n");
 			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\"/>\n");
+			//outp.print("    <maps ")
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			// Obsolete data kept for backward compatibility
 			//outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
