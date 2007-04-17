@@ -210,7 +210,7 @@ public class Tokenizer{
 		currentStream="";
 		try {
 			while(getChar()){
-				if (look==' ') continue;
+				if (look==' ' || look=='\u00A0') continue;
 				currentStream += look;
 				if(isAlpha(look) || look=='$') streamAlphas();
 				else if(isDigit(look)) streamDigits();
