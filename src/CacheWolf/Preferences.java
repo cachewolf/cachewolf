@@ -121,6 +121,20 @@ public class Preferences extends MinML{
 		if (logFile.length()>60000) logInit();
 	}
 
+	private String customMapsPath=null; // The maps path set by the user
+	
+	/**
+	 * Gibt den vom Benutzer gesetzten Pfad zu den Maps
+	 * @return custom Maps Path, null wenn nicht gesetzt
+	 */
+	public String getCustomMapsPath() {
+	   return customMapsPath;	
+	}
+	
+	void saveCustomMapsPath(String mapspath) {
+		customMapsPath=mapsPath;
+	}
+	
 	/**
 	 * gets the path to the calibrated maps
 	 * it first tries if there are manually imported maps
@@ -472,6 +486,9 @@ public class Preferences extends MinML{
 		if (name.equals("solver")) {
 			solverIgnoreCase=Boolean.valueOf(atts.getValue("ignorevariablecase")).booleanValue();
 		}
+		if (name.equals("mapspath")) {
+			customMapsPath=atts.getValue("dir");
+		}
 		if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
 	}
 
@@ -549,7 +566,7 @@ public class Preferences extends MinML{
 			// Obsolete data kept for backward compatibility
 			//outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
-			//outp.print("	<datadir dir = \""+ mydatadir +"\"/>\n");
+			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath +"\"/>\n");
 			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" lastsyncoc= \"" + lastSyncOC[0] + "\" lastdistoc= \"" + lastDistOC[0] + "\" />\n");
 			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] + "\" lastdistoc= \"" + lastDistOC[1] + "\" />\n");
 			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] + "\" lastdistoc= \"" + lastDistOC[2] + "\" />\n");
