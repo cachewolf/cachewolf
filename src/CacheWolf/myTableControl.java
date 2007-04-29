@@ -108,7 +108,7 @@ public class myTableControl extends TableControl{
 
 		if (selectedItem.toString().equals(MyLocale.getMsg(1014,"Update"))){
 			SpiderGC spider = new SpiderGC(pref, profile, false);
-			Vm.debug("ByPass? " + profile.byPassIndexActive);
+			//Vm.debug("ByPass? " + profile.byPassIndexActive);
 			Vm.showWait(true);
 			if (spider.login()==Form.IDOK) {
 				boolean alreadySaid = false;
