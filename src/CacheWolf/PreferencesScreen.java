@@ -27,7 +27,7 @@ public class PreferencesScreen extends Form {
 	CellPanel pnlDisplay = new CellPanel();
 	CellPanel pnlMore = new CellPanel();
 	ScrollBarPanel scp;
-	String [] garminPorts= new String[]{"com1","com2","com3","com4","usb"};
+	String [] garminPorts= new String[]{"com1","com2","com3","com4","com5","com6","com7","usb"};
 	
 	public PreferencesScreen (Preferences p){
 		mTab=new mTabbedPanel();
