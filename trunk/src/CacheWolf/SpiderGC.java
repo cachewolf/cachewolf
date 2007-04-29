@@ -588,11 +588,11 @@ public class SpiderGC{
 				if (idx<0){
 					if(profile.byPassIndexActive) {
 						profile.writeIndexLine(cx);
-						Vm.debug("Using index bypass");
+						//Vm.debug("Using index bypass");
 					}
 					else {
 						cacheDB.add(cx);
-						Vm.debug("Adding to cachedb");
+						//Vm.debug("Adding to cachedb");
 					}
 				}else if (((CacheHolder) cacheDB.get(idx)).is_Checked && // Only re-spider existing addi waypoints that are ticked
 						!((CacheHolder) cacheDB.get(idx)).is_filtered) // and are visible (i.e.  not filtered)
