@@ -149,6 +149,7 @@ public class Profile {
 	 */
 	public void writeIndexLine(CacheHolder ch){
 		Stream strout = null;
+		Vm.debug("Datadir:" + dataDir);
 		File index = new File(dataDir + "indextemp.xml");
 		String cachedata = "    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
 				"\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
@@ -158,7 +159,10 @@ public class Profile {
 			strout = index.toWritableStream(true);
 			byte[] data = cachedata.getBytes(); 
 			strout.write(data);
-		}catch(Exception ex){}
+			Vm.debug("Line: " + cachedata);
+		}catch(Exception ex){
+			Vm.debug("Problem writing to index");
+		}
 		finally{
 			strout.close();
 		}

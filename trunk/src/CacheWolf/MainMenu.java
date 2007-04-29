@@ -382,7 +382,7 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == spider){
-				SpiderGC spGC = new SpiderGC(pref, profile);
+				SpiderGC spGC = new SpiderGC(pref, profile, true);
 				spGC.doIt();
 				cacheDB.clear();
 				profile.readIndex();
