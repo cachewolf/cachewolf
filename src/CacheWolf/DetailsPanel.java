@@ -326,6 +326,12 @@ public class DetailsPanel extends CellPanel{
 		  ch = (CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache());
 		  ch.CacheStatus = chcStatus.getText();
 		  ch.is_found = ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"));
+		  ch.is_owned = ch.CacheStatus.equals(MyLocale.getMsg(320,"Owner"));
+		  // Avoid setting is_owned if alias is empty and username is empty
+		  if(ch.is_owned == false){
+		  ch.is_owned = (!pref.myAlias.equals("") && pref.myAlias.equals(ch.CacheOwner)) || 
+				        (!pref.myAlias2.equals("") && pref.myAlias2.equals(ch.CacheOwner));
+		  }
 		  ch.is_black = blackStatus;
 		  ch.wayPoint = inpWaypoint.getText().trim();
 		  ch.CacheSize = chcSize.getText();
@@ -340,9 +346,6 @@ public class DetailsPanel extends CellPanel{
 		  ch.LatLon = ch.pos.toString();
 		  ch.DateHidden = inpHidden.getText().trim();
 		  ch.CacheOwner = inpOwner.getText().trim();
-		  // Avoid setting is_owned if alias is empty and username is empty
-		  ch.is_owned = (!pref.myAlias.equals("") && pref.myAlias.equals(ch.CacheOwner)) || 
-				        (!pref.myAlias2.equals("") && pref.myAlias2.equals(ch.CacheOwner));
 		  ch.type = transSelect(chcType.getInt());
 		  if (CacheType.isAddiWpt(ch.type)) {
 			  int idx;
