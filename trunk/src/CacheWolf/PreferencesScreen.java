@@ -17,15 +17,17 @@ public class PreferencesScreen extends Form {
 	mChoice NS, EW;
 	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, inpLogsPerPage;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
-	          chkTabsAtTop, chkShowStatus,chkHasCloseButton;
+	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
+	mLabel lblGarmin;
 	
 	Preferences pref;
 	
 	CellPanel pnlGeneral = new CellPanel();
 	CellPanel pnlDisplay = new CellPanel();
 	CellPanel pnlMore = new CellPanel();
+	Frame frmGarmin = new Frame();
 	ScrollBarPanel scp;
 	String [] garminPorts= new String[]{"com1","com2","com3","com4","com5","com6","com7","usb"};
 	
@@ -74,9 +76,18 @@ public class PreferencesScreen extends Form {
 		pnlGeneral.addLast(fontSize = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		ProxyPort.setText(pref.myproxyport);
 		fontSize.setText(Convert.toString(pref.fontSize));
-		pnlGeneral.addNext(new mLabel("Garmin PC Port"));
-		pnlGeneral.addNext(chcGarminPort=new mChoice(garminPorts,0));
+		// Garmin and GPSBabel
+		frmGarmin.addNext(lblGarmin=new mLabel(MyLocale.getMsg(173,"Garmin:  PC Port:")),DONTSTRETCH,LEFT);
+		lblGarmin.setTag(INSETS,new Insets(4,0,0,0));
+		frmGarmin.addNext(chcGarminPort=new mChoice(garminPorts,0),DONTSTRETCH,LEFT);
+		chcGarminPort.setTag(INSETS,new Insets(4,0,0,0));
 		chcGarminPort.selectItem(pref.garminConn);
+		frmGarmin.addLast(chkSynthShort=new mCheckBox(MyLocale.getMsg(174,"Short Names")),STRETCH,RIGHT);
+		chkSynthShort.setTag(INSETS,new Insets(4,0,0,0));
+		chkSynthShort.setState(!pref.garminGPSBabelOptions.equals(""));
+		frmGarmin.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_TOP;
+		frmGarmin.setTag(INSETS,new Insets(4,0,0,0));
+		pnlGeneral.addLast(frmGarmin);
 		pnlGeneral.addLast(new mLabel(""));
 		
 		/////////////////////////////////////////////////////////
@@ -188,6 +199,7 @@ public class PreferencesScreen extends Form {
 				pref.autoReloadLastProfile=chkAutoLoad.getState();
 				pref.showDeletedImages=chkShowDeletedImg.getState();
 				pref.garminConn=chcGarminPort.getSelectedItem().toString();
+				pref.garminGPSBabelOptions=chkSynthShort.state?"-s":"";
 				pref.menuAtTop=chkMenuAtTop.getState();
 				pref.tabsAtTop=chkTabsAtTop.getState();
 				pref.showStatus=chkShowStatus.getState();

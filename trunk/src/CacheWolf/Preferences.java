@@ -56,6 +56,7 @@ public class Preferences extends MinML{
 	public String lastSyncOC[] = {"","","",""};
 	public String lastDistOC[] = {"","","",""};
 	public String garminConn="com1";  // The type of connection which GPSBABEL uses: com1 OR usb.
+	public String garminGPSBabelOptions=""; // Additional options for GPSBabel, i.e. -s to synthethize short names
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
 	public boolean menuAtTop=true;
 	public boolean tabsAtTop=true;
@@ -411,8 +412,8 @@ public class Preferences extends MinML{
 		}
 		if (name.equals("garmin")) {
 			garminConn=atts.getValue("connection");
+			garminGPSBabelOptions=atts.getValue("GPSBabelOptions");
 		}
-
 		if(name.equals("tableType")){ 
 			tablePrefs[1] = Convert.parseInt(atts.getValue("active"));
 			tmp = atts.getValue("width");
@@ -555,7 +556,7 @@ public class Preferences extends MinML{
 			outp.print("    <font size =\""+fontSize+"\"/>\n");
 			outp.print("	<browser name = \""+browser+"\"/>\n");
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
-			outp.print("    <garmin connection = \""+garminConn+"\"/>\n");
+			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" />\n");
 			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
 			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+"\"/>\n");
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
