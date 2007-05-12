@@ -92,6 +92,7 @@ public class MainForm extends Form {
 		}
 		mMenu.setTablePanel(mTab.getTablePanel());
 		infB.close(0);
+		mTab.tbP.selectFirstRow();
 		Vm.showWait(false);
 	}
 
