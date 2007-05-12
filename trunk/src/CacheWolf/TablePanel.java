@@ -54,12 +54,21 @@ public class TablePanel extends CellPanel{
 	/** Mark the row as selected so that myTableModel can color it grey */
 	public void selectRow(int row) {
 		setSelectedCache(row);
+		tc.scrollToVisible(row,0);
 		tc.cursorTo(row, tc.cursor.x+tc.listMode, true);
-		//tc.scrollToVisible(row,0);
 		/*tc.clearSelection(null);
 		tc.addToSelection(row,0); 
 		tc.addToSelection(row,myMod.MAXCOLUMNS-1);*/ 
 		//tc.paintSelectedCells();
+	}
+	
+	/** Highlight the first row in grey. It can be unhighlighted by clicking */
+	public void selectFirstRow() {
+		myMod.cursorSize=new Dimension(-1,1);
+		if (cacheDB.size()>0) {
+			tc.addToSelection(0,0); 
+			tc.addToSelection(0,myMod.MAXCOLUMNS-1);
+		}
 	}
 	
 	/** Returns the index of the currently selected cache or -1 of the cache is no longer visible
