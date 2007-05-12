@@ -412,7 +412,8 @@ public class Preferences extends MinML{
 		}
 		if (name.equals("garmin")) {
 			garminConn=atts.getValue("connection");
-			garminGPSBabelOptions=atts.getValue("GPSBabelOptions");
+			tmp = atts.getValue("GPSBabelOptions");
+			if (tmp != null) garminGPSBabelOptions=tmp;
 		}
 		if(name.equals("tableType")){ 
 			tablePrefs[1] = Convert.parseInt(atts.getValue("active"));
