@@ -95,7 +95,7 @@ public class SpiderGC{
 				doc += "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false);
 				doc += "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false);
 				start = fetch_post("http://www.geocaching.com/login/Default.aspx", doc, "/login/default.aspx");
-				pref.log("Login successfull");
+				pref.log("Login successful");
 			}catch(Exception ex){
 				//Vm.debug("Could not login: gc.com start page");
 				pref.log("Login failed.");
@@ -260,7 +260,7 @@ public class SpiderGC{
 		String postStr = new String();
 		String dummy = "";
 		Regex rexLine;
-		String ln;
+		String ln=null;
 		String wpt = "";
 		String loganal;
 		CacheHolder ch;
@@ -301,10 +301,11 @@ public class SpiderGC{
 		infB.exec();
 		//Get first page
 		try{
-			ln = new String("http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD));
+			ln = "http://www.geocaching.com/seek/nearest.aspx?lat=" + origin.getLatDeg(CWPoint.DD) + "&lon=" +origin.getLonDeg(CWPoint.DD);
 			if(doNotgetFound) ln = ln + "&f=1";
+			pref.log("Getting first page: "+ln);
 			start = fetch(ln);
-			pref.log("Got first page: " + ln);
+			pref.log("Got first page");
 		}catch(Exception ex){
 			infB.close(0);
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), MessageBox.OKB)).execute();
@@ -917,7 +918,7 @@ public class SpiderGC{
 				////Vm.debug(c_data.toString());
 				sock.close();
 			}catch(IOException ioex){
-				pref.log("IOException in fetch");
+				pref.log("IOException in fetch", ioex);
 			}finally{
 				//continue
 			}
