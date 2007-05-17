@@ -652,8 +652,8 @@ public class SpiderGC{
 
 		Extractor spanBlock = new Extractor(doc, "<span id=\"Images\"", "</span>", 0 , true);
 		tst = spanBlock.findNext();
-		Extractor exImgName = new Extractor(tst, "style='text-decoration: underline;'>", "</A><br>", 0 , true);
-		exImgSrc = new Extractor(tst, "&nbsp;<A HREF='http://", "' target=", 0, true);
+		Extractor exImgName = new Extractor(tst, "align=absmiddle border=0>", "</a><br/>", 0 , true);
+		exImgSrc = new Extractor(tst, "<A HREF='http://", "' rel='lightbox'", 0, true);
 		while(exImgSrc.endOfSearch() == false){
 			imgUrl = exImgSrc.findNext();
 			//Vm.debug("Img Url: " +imgUrl);
