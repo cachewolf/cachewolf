@@ -624,6 +624,7 @@ public class FilterScreen extends Form{
 				chkNE.state   = chkENE.state  = chkE.state    = chkESE.state  = 
 				chkSE.state   = chkSSE.state  = chkS.state    = chkSSW.state  = 
 				chkSW.state   = chkWSW.state  = chkW.state    = chkWNW.state = false; 
+				setColors();
 				repaint();
 					
 			} else if (ev.target == btnSelect) {
@@ -631,6 +632,7 @@ public class FilterScreen extends Form{
 				chkNE.state   = chkENE.state  = chkE.state    = chkESE.state  = 
 				chkSE.state   = chkSSE.state  = chkS.state    = chkSSW.state  = 
 				chkSW.state   = chkWSW.state  = chkW.state    = chkWNW.state = true; 
+				setColors();
 				repaint();	
 			}
 		}
