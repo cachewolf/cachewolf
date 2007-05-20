@@ -311,8 +311,8 @@ public class OCXMLImporter extends MinML {
 			switch (logtype) {
 			case 1: 
 				logIcon = GPXImporter.typeText2Image("Found"); 
-				if (logFinder.equalsIgnoreCase(user)) { // see also endCacheLog
-					holder.is_found = true;
+				if (logFinder.equalsIgnoreCase(user) || logFinder.equalsIgnoreCase(pref.myAlias2)) { // see also endCacheLog
+					holder.is_found = true; 
 					holder.CacheStatus = MyLocale.getMsg(318,"Found");
 				}
 				break;
@@ -419,11 +419,11 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		if(name.equals("datehidden")) {
-			String Date = new String();
-			Date = strData.substring(5,7); // month
-			Date += "/" + strData.substring(8,10); // day
-			Date += "/" + strData.substring(0,4); // year
-			holder.DateHidden = Date;
+			//String Date = new String();
+			//Date = strData.substring(5,7); // month
+			//Date += "/" + strData.substring(8,10); // day
+			//Date += "/" + strData.substring(0,4); // year
+			holder.DateHidden = strData.substring(0,10); //Date;
 			return;
 		}
 	}
@@ -565,11 +565,14 @@ public class OCXMLImporter extends MinML {
 
 		if (name.equals("date"))  {
 			logDate = new String(strData);
+			if (holder.is_found) {
+				holder.CacheStatus=strData.substring(0,10);
+			}
 			return;
 		}
 		if (name.equals("userid")){
 			logFinder = new String(strData);
-			if(logFinder.toLowerCase().compareTo(user) == 0 && logtype == 1){
+			if((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(pref.myAlias2)) && logtype == 1){
 				holder.is_found = true; // see startCacheLog - in the current .xml this is set by startCacheLog but we sequence in the xml from opencaching might change, so I leave this also here
 				holder.CacheStatus = MyLocale.getMsg(318,"Found");
 			}

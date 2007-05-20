@@ -71,16 +71,7 @@ public class MyComparer implements Comparer{
 		} else if (what.equals(nmHid)) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				// Dates are in format M/D/Y
-				int p1,p2=-1;
-				p1=ch.DateHidden.indexOf("/");
-				if (p1>0) p2=ch.DateHidden.indexOf("/",p1+1);
-				if (p1>0 && p2>0) {
-					ch.sort=ch.DateHidden.substring(p2+1)+
-					        (p1==1?"0":"")+ch.DateHidden.substring(0,p1)+
-					        (p1+2==p2?"0":"")+ch.DateHidden.substring(p1+1,p2);
-				} else
-					ch.sort="";
+				ch.sort=ch.DateHidden;
 			}
 		} else if (what.equals(nmStat)) {
 			for (int i=0; i<visibleSize; i++) {
