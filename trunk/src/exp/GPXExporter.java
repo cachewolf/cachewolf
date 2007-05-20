@@ -51,7 +51,7 @@ public class GPXExporter extends Exporter{
 		try{
 			strBuf.append("  <wpt lat=\""+lat+"\" lon=\""+lon+"\">\r\n");
 			if (ch.DateHidden.length()> 0){
-				tim.parse(ch.DateHidden, "M/d/y");
+				tim.parse(ch.DateHidden, "y-M-d");
 			}
 			else {
 				tim.setText("2000-01-01");

@@ -289,7 +289,9 @@ public class Profile {
 						ch.LatLon = SafeXML.cleanback(ex.findNext());
 						ch.pos.set(ch.LatLon,CWPoint.CW);
 					}
-					ch.DateHidden = ex.findNext();
+					ch.DateHidden = ex.findNext(); 
+					// Convert the US format to YYYY-MM-DD if necessary
+					if (ch.DateHidden.indexOf('/')>-1) ch.DateHidden=DateFormat.MDY2YMD(ch.DateHidden);
 					ch.wayPoint = SafeXML.cleanback(ex.findNext());
 					ch.CacheStatus = ex.findNext();
 					ch.type = ex.findNext();

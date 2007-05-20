@@ -23,6 +23,7 @@ public class DetailsPanel extends CellPanel{
 	mChoice chcSize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
 	mComboBox chcStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
 	mButton btnNewWpt, btnShowBug, btnShowMap, btnGoto, btnAddPicture, btnBlack, btnNotes, btnSave, btnCancel;
+	mButton btnFoundDate,btnHiddenDate;
 	Vector cacheDB;
 	CacheHolder thisCache;
 	CellPanel pnlTools = new CellPanel(); 
@@ -96,13 +97,21 @@ public class DetailsPanel extends CellPanel{
 		this.addLast(btnWayLoc.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(inpHidden.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		
+		CellPanel ip=new CellPanel();
+		ip.addNext(inpHidden,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		ip.addLast(btnHiddenDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL);
+		this.addLast(ip,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
+		inpHidden.modifyAll(DisplayOnly,0);
 		
 		this.addNext(new mLabel(MyLocale.getMsg(306,"Owner:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(inpOwner.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(chcStatus.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		CellPanel cp=new CellPanel();
+		cp.addNext(chcStatus,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		cp.addLast(btnFoundDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL);
+		this.addLast(cp,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
 		
 		btnNotes = new mButton("Notes");
 		this.addLast(btnNotes.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -129,8 +138,13 @@ public class DetailsPanel extends CellPanel{
 	    btnWayLoc.setText(ch.pos.toString());
 		inpHidden.setText(ch.DateHidden);
 		inpOwner.setText(ch.CacheOwner);
-		chcStatus.setText(ch.CacheStatus);
-		
+		if (ch.CacheStatus.length()>=10 && ch.CacheStatus.charAt(4)=='-')
+			chcStatus.setText(MyLocale.getMsg(318,"Found")+" "+ch.CacheStatus);
+		else {
+			chcStatus.setText(ch.CacheStatus);
+			// If the cache status contains a date, do not overwrite it with 'found' message
+			if(ch.is_found == true) chcStatus.setText(MyLocale.getMsg(318,"Found"));
+		}
 		chcType.setInt(transType(ch.type));
 		if(ch.is_black){
 			btnBlack.image = imgBlack;
@@ -155,8 +169,6 @@ public class DetailsPanel extends CellPanel{
 		if(ch.CacheSize.equals("Very Large")) chcSize.setInt(6);
 		if(ch.CacheSize.equals("None")) chcSize.setInt(7);
 		if(ch.CacheSize.equals("Not chosen")) chcSize.setInt(7);
-
-		if(ch.is_found == true) chcStatus.setText(MyLocale.getMsg(318,"Found"));
 	}
 	
 	
@@ -317,6 +329,35 @@ public class DetailsPanel extends CellPanel{
 					if (center.isValid()) thisCache.calcDistance(center);
 				}
 			}
+			else if (ev.target==btnFoundDate) {
+				DateChooser.dayFirst=true;
+				DateChooser dc=new DateChooser(Vm.getLocale());
+				dc.title=MyLocale.getMsg(328,"Date found"); 
+				dc.setPreferredSize(240,240);
+				if (dc.execute()==ewe.ui.FormBase.IDOK) {
+				  chcStatus.setText(MyLocale.getMsg(318,"Found")+" "+Convert.toString(dc.year)+"-"+MyLocale.formatLong(dc.month,"00")+"-"+MyLocale.formatLong(dc.day,"00"));
+				  dirty_details=true;
+				}
+			}
+			else if (ev.target==btnHiddenDate) {
+				DateChooser.dayFirst=true;
+				DateChooser dc=new DateChooser(Vm.getLocale());
+				dc.title=MyLocale.getMsg(329,"Hidden date"); 
+				dc.setPreferredSize(240,240);
+				if (inpHidden.getText().length()==10)
+				try {
+					dc.setDate(new Time(
+						Convert.parseInt(inpHidden.getText().substring(8)),
+					    Convert.parseInt(inpHidden.getText().substring(5,7)),
+						Convert.parseInt(inpHidden.getText().substring(0,4))));
+				} catch (NumberFormatException e) {
+					dc.reset(new Time());
+				}
+				if (dc.execute()==ewe.ui.FormBase.IDOK) {
+				  inpHidden.setText(Convert.toString(dc.year)+"-"+MyLocale.formatLong(dc.month,"00")+"-"+MyLocale.formatLong(dc.day,"00"));
+				  dirty_details=true;
+				}
+			}
 			ev.consumed=true;
 		}
 	}
@@ -324,13 +365,18 @@ public class DetailsPanel extends CellPanel{
 	public void saveDirtyWaypoint() {
 		CacheHolder ch;
 		  ch = (CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache());
-		  ch.CacheStatus = chcStatus.getText();
-		  ch.is_found = ch.CacheStatus.equals(MyLocale.getMsg(318,"Found"));
+		  // Strip the found message if the status contains a date
+		  if (chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found")) && 
+				  chcStatus.getText().length()==MyLocale.getMsg(318,"Found").length()+11)
+			  ch.CacheStatus = chcStatus.getText().substring(MyLocale.getMsg(318,"Found").length()+1);
+		  else	  
+			  ch.CacheStatus = chcStatus.getText();
+		  ch.is_found = chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found"));
 		  ch.is_owned = ch.CacheStatus.equals(MyLocale.getMsg(320,"Owner"));
 		  // Avoid setting is_owned if alias is empty and username is empty
 		  if(ch.is_owned == false){
-		  ch.is_owned = (!pref.myAlias.equals("") && pref.myAlias.equals(ch.CacheOwner)) || 
-				        (!pref.myAlias2.equals("") && pref.myAlias2.equals(ch.CacheOwner));
+			  ch.is_owned = (!pref.myAlias.equals("") && pref.myAlias.equals(ch.CacheOwner)) || 
+					        (!pref.myAlias2.equals("") && pref.myAlias2.equals(ch.CacheOwner));
 		  }
 		  ch.is_black = blackStatus;
 		  ch.wayPoint = inpWaypoint.getText().trim();

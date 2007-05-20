@@ -231,6 +231,11 @@ public class GPXImporter extends MinML {
 			}
 			if (name.equals("groundspeak:finder")|| name.equals("geocacher")){
 				logFinder = new String(strData);
+				if(logIcon.equals("<img src='icon_smile.gif'>&nbsp;") && 
+				  (logFinder.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && logFinder.equalsIgnoreCase(pref.myAlias2)))) {
+					holder.CacheStatus=logDate;
+					holder.is_found=true;
+				}
 				return;
 			}
 			if (name.equals("groundspeak:text") || name.equals("text")){ 
@@ -262,7 +267,7 @@ public class GPXImporter extends MinML {
 				}
 				holder.noFindLogs = z;
 				zaehlerGel++;
-				infB.setInfo( (MyLocale.getMsg(4000,"Loaded caches") + ":" + zaehlerGel));
+				if (zaehlerGel % 5==1) infB.setInfo( (MyLocale.getMsg(4000,"Loaded caches") + ":" + zaehlerGel));
 				holder.is_new = true;
 				cacheDB.add(holder);
 				//Vm.debug("here B");
@@ -341,11 +346,11 @@ public class GPXImporter extends MinML {
 		}
 		
 		if (name.equals("time") && inWpt) {
-			String Date = new String();
-			Date = strData.substring(5,7); // month
-			Date += "/" + strData.substring(8,10); // day
-			Date += "/" + strData.substring(0,4); // year
-			holder.DateHidden = Date;
+			//String Date = new String();
+			//Date = strData.substring(5,7); // month
+			//Date += "/" + strData.substring(8,10); // day
+			//Date += "/" + strData.substring(0,4); // year
+			holder.DateHidden = strData.substring(0,10); //Date;
 			return;
 		}
 		// cache information

@@ -200,7 +200,7 @@ public class SpiderGC{
 				pref.log("Got owner");
 				//Vm.debug("Owner: " + ch.CacheOwner);
 				pref.log("Trying date hidden");
-				ch.DateHidden = getDateHidden(start);
+				ch.DateHidden = DateFormat.MDY2YMD(getDateHidden(start));
 				pref.log("Got date hidden");
 				//Vm.debug("Hidden: " + ch.DateHidden);
 				pref.log("Trying hints");
@@ -846,12 +846,13 @@ public class SpiderGC{
 			//Vm.debug("--------------------------------------------");
 			icon = exIcon.findNext();
 			name = exName.findNext();
+			String d=DateFormat.logdate2YMD(exDate.findNext());
 			if((icon.equals("icon_smile.gif") || icon.equals("icon_camera.gif")) && 
 				(name.equals(pref.myAlias) || (pref.myAlias2.length()>0 && name.equals(pref.myAlias2))) )  {
 				ch.is_found = true;
-				ch.CacheStatus = MyLocale.getMsg(318,"Found");
+				ch.CacheStatus = d;
 			}
-			reslts.add("<img src='"+ icon +"'>&nbsp;" + exDate.findNext()+ " " + name + exLog.findNext());
+			reslts.add("<img src='"+ icon +"'>&nbsp;" + d + " " + name + exLog.findNext());
 			
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
