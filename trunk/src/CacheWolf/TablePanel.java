@@ -54,12 +54,12 @@ public class TablePanel extends CellPanel{
 	/** Mark the row as selected so that myTableModel can color it grey */
 	public void selectRow(int row) {
 		setSelectedCache(row);
-		tc.scrollToVisible(row,0);
-		tc.cursorTo(row, tc.cursor.x+tc.listMode, true);
-		/*tc.clearSelection(null);
 		tc.addToSelection(row,0); 
-		tc.addToSelection(row,myMod.MAXCOLUMNS-1);*/ 
-		//tc.paintSelectedCells();
+		tc.addToSelection(row,myMod.MAXCOLUMNS-1);
+		// Ensure that the highlighted row is visible (e.g. when coming from radar panel)
+		tc.scrollToVisible(row,0);
+		// Next line needed for key scrolling 
+		tc.cursorTo(row, tc.cursor.x+tc.listMode, true);
 	}
 	
 	/** Highlight the first row in grey. It can be unhighlighted by clicking */
