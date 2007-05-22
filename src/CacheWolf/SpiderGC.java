@@ -88,7 +88,7 @@ public class SpiderGC{
 			}
 			//Ok now login!
 			try{
-				pref.log("Logging in");
+				pref.log("Logging in as "+pref.myAlias);
 				doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
 				doc += "&" + URL.encodeURL("myUsername",false) +"="+ URL.encodeURL(pref.myAlias,false);
 				doc += "&" + URL.encodeURL("myPassword",false) +"="+ URL.encodeURL(passwort,false);
@@ -269,24 +269,21 @@ public class SpiderGC{
 			(new MessageBox("Error", "Coordinates for center must be set", MessageBox.OKB)).execute();
 			return;
 		}
-		Vm.showWait(true);
 		String start = "";
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		String doc = "";
 		
 		int ok = login();
 		if(ok == Form.IDCANCEL) {
-			Vm.showWait(false);
 			return;
 		}
 		if(ok == ERR_LOGIN){
-			Vm.showWait(false);
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed!"), MessageBox.OKB)).execute();
 			return;
 		}
 		OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options", OCXMLImporterScreen.INCLUDEFOUND);
 		options.distanceInput.setText("");
-		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {Vm.showWait(false);	return; }
+		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
 		String dist = options.distanceInput.getText();
 		if (dist.length()== 0) return;
 		distance = Convert.toDouble(dist);
@@ -296,7 +293,7 @@ public class SpiderGC{
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
 		
-		
+		Vm.showWait(true);
 		infB = new InfoBox("Status", MyLocale.getMsg(5502,"Fetching first page..."));
 		infB.exec();
 		//Get first page
