@@ -63,11 +63,13 @@ public class ImagePanel extends InteractivePanel{
 		if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
 		//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
 		//Vm.debug("locy after: " + Convert.toString(locY));
-		addTitle(MyLocale.getMsg(341,"User Images:"));
-		locY = locY + 20;
-		locX = padding;
-		locCounter = 0;
-		addImages(cache.UserImages,cache.UserImagesText);
+		if (cache.UserImages.getCount()> 0){
+			addTitle(MyLocale.getMsg(341,"User Images:"));
+			locY = locY + 20;
+			locX = padding;
+			locCounter = 0;
+			addImages(cache.UserImages,cache.UserImagesText);
+		}
 		
 		this.refresh();
 		Vm.showWait(false);
