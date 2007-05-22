@@ -884,7 +884,7 @@ public class SpiderGC{
 	*	it will be a gc.com address. This method is used to obtain
 	*	the result of a search for caches screen.
 	*/
-	private static String fetch(String address)
+	public static String fetch(String address)
 	   	{	
 			CharArray c_data;
 			String data = new String();

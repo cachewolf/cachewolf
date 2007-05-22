@@ -37,6 +37,7 @@ public class GPXImporter extends MinML {
 	public static final int DOIT_NOSPOILER = 1;
 	public static final int DOIT_WITHSPOILER = 2;
 	boolean getMaps = false;
+	SpiderGC imgSpider;
 		
 	public GPXImporter(Preferences p, Profile prof, String f )
 	{
@@ -99,7 +100,10 @@ public class GPXImporter extends MinML {
 			//getMaps = options.mapsCheckBox.getState();
 			boolean getImages = options.imagesCheckBox.getState();
 			doSpider = false;
-			if(getImages){doSpider = true;}
+			if(getImages){
+				doSpider = true;
+				imgSpider = new SpiderGC(pref, profile, false);
+			}
 			options.close(0);
 			
 			//Vm.debug("State of: " + doSpider);
@@ -287,7 +291,8 @@ public class GPXImporter extends MinML {
 							}
 						}
 					if(holder.wayPoint.startsWith("GC")) {
-						spiderImages();
+						//spiderImages();
+						spiderImagesUsingSpider();
 						//Rename image sources
 						String text = new String();
 						String orig = new String();
@@ -548,171 +553,18 @@ public class GPXImporter extends MinML {
 			return INTR.intValue();
 		} else return -1;
 	}
-	
-	private void spiderImages(){
-		//Vm.debug("Spider now: " + holder.wayPoint);
-		Extractor cacheEx;
+	private void spiderImagesUsingSpider(){
 		String addr = new String();
-		String longDesc = new String();
-		String dummy = new String();
-		String dummy2 = new String();
-		String imageType = new String();
-		String datei = new String();
-		int imgCounter = 0;
-		HttpConnection connImg;
-		Socket sockImg;
-		//InputStream is;
-		FileOutputStream fos;
-		//int bytes_read;
-		//byte[] buffer = new byte[9000];
-		ByteArray daten;
 		String cacheText = new String();
 		
+		// just to be sure to have a spider object
+		if (imgSpider == null) imgSpider = new SpiderGC(pref, profile, false);
+		
 		addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.wayPoint ;
-		try{
 			//Vm.debug(addr + "|");
-			cacheText = fetch(addr);
-		}catch(IOException iox){
-			Vm.debug("Error fetching cache page from gc.com");
-			Vm.debug(iox.toString());
-			spiderOK = false;
-			cacheText = "";
-		}
-		cacheText = replace(cacheText, "<strong>", "<STRONG>");
-		// Images in the cache long description
-		cacheEx = new Extractor(cacheText, "<span id=\"ShortDescription\">", "<STRONG>Additional Hints&nbsp;",0,true);
-		longDesc = cacheEx.findNext();
-		//Vm.debug(longDesc);
-		if(longDesc.length() == 0) {
-			cacheEx = new Extractor(cacheText, "<span id=\"LongDescription\">", "<STRONG>Additional Hints&nbsp;",0,true);
-			longDesc = cacheEx.findNext();
-		}
-		longDesc = STRreplace.replace(longDesc, "IMG", "img");
-		longDesc = STRreplace.replace(longDesc, "SRC", "src");
-		cacheEx = new Extractor(longDesc, "<img", ">", 0, true);
-		String dummySrc = new String();
-		dummySrc = cacheEx.findNext();
-		dummySrc = replace(dummySrc, "SRC", "src");
-		dummySrc =dummySrc.replace('\'', '\"');
-		Extractor dummySrcExt;
-		while(cacheEx.endOfSearch() == false){
-			dummySrcExt = new Extractor(dummySrc, "src=\"", "\"",0,true);
-			dummy = dummySrcExt.findNext();
-			if(dummy.length() == 0){
-				dummySrcExt = new Extractor(dummySrc, "src = \"", "\"",0,true);
-				dummy = dummySrcExt.findNext();
-			}
-			//Vm.debug("Trying for: " + holder.wayPoint + " / " + dummySrc);
-			//Vm.debug("Url = " + dummy);
-			if(dummy.length()>0){
-				if(pref.myproxy.length()>0){
-					connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), dummy);
-				}else{
-					connImg = new HttpConnection(dummy);
-				}
-				connImg.setRequestorProperty("Connection", "close");
-				imageType = dummy.substring(dummy.lastIndexOf("."), dummy.lastIndexOf(".")+4);
-				if(!imageType.equals("com") && !imageType.equals("php") && !imageType.equals("exe")){
-					datei = profile.dataDir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
-					//if(imageType.equals(".png") || imageType.equals(".gif") || imageType.equals(".tif") || imageType.equals(".jpg")){
-						try{
-							sockImg = connImg.connect();
-							daten = connImg.readData(connImg.connect());
-							fos = new FileOutputStream(new File(datei));
-							fos.write(daten.toBytes());
-							fos.close();
-							sockImg.close();
-							holder.Images.add(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-							//Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-							holder.ImagesText.add(dummy.substring(dummy.lastIndexOf("/")+1, dummy.lastIndexOf("/")+1+dummy.length()-dummy.lastIndexOf("/")-1));
-							//Vm.debug("adding...." +dummy.substring(dummy.lastIndexOf("/")+1, dummy.lastIndexOf("/")+1+dummy.length()-dummy.lastIndexOf("/")-1));
-						} catch (UnknownHostException e) { 
-							Vm.debug("Host not there...");
-						}catch(IOException ioex){
-							Vm.debug("File not found!");
-						} catch (Exception ex){
-							Vm.debug("Some kind of problem!");
-						} finally {
-							//Vm.debug("This is stupid!!");
-						}
-						imgCounter++;
-				}
-			}
-			dummySrc = cacheEx.findNext();
-			//Vm.debug("Dummy SRC = " + dummySrc);
-			dummySrc = replace(dummySrc, "SRC", "src");
-			dummySrc =dummySrc.replace('\'', '\"');
-		}
-		
-		// Images in the image span
-		cacheEx = new Extractor(cacheText, "<span id=\"Images\"", "</span>",0,true);
-		longDesc = cacheEx.findNext();
-		//Vm.debug("In image span: " + longDesc);
-		cacheEx = new Extractor(longDesc, ";<A HREF='http://img.geocaching.com/cache/", "' target='_blank'", 0, true);
-		dummy = cacheEx.findNext();
-		//Vm.debug("And this is the target: " + dummy);
-		Extractor imgEx = new Extractor(longDesc, "style='text-decoration: underline;'>","</A>",0,true);
-		dummy2 = imgEx.findNext();
-		while(cacheEx.endOfSearch() == false){
-			dummy = "http://img.geocaching.com/cache/"+dummy;
-			//Vm.debug("Target= " +dummy);
-			if(pref.myproxy.length()>0){
-				connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), dummy);
-			}else{
-				connImg = new HttpConnection(dummy);
-			}
-			connImg.setRequestorProperty("Connection", "close");
-			imageType = dummy.substring(dummy.lastIndexOf("."), dummy.lastIndexOf(".")+4);
-			if(!imageType.equals("com") && !imageType.equals("php") && !imageType.equals("exe")){
-				datei = profile.dataDir + holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType;
-				try{
-					sockImg = connImg.connect();
-					daten = connImg.readData(sockImg);
-					fos = new FileOutputStream(new File(datei));
-					fos.write(daten.toBytes());
-					fos.close();
-					sockImg.close();
-					holder.Images.add(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-					holder.ImagesText.add(dummy2);
-					//Vm.debug(holder.wayPoint + "_" + Convert.toString(imgCounter)+ imageType);
-					//Vm.debug(dummy2);
-				}catch(IOException ioex){
-					Vm.debug("File not found!");
-				}
-				imgCounter++;
-			}
-			dummy = cacheEx.findNext();
-			dummy2 = imgEx.findNext();
-		}
-		
+		cacheText = SpiderGC.fetch(addr);
+		imgSpider.getImages(cacheText, holder);
 	}
-	
-	private static String fetch(String address) throws IOException
-	   	{
-			HttpConnection conn;
-			if(pref.myproxy.length() > 0){
-				conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
-				//Vm.debug(address);
-			} else {
-				conn = new HttpConnection(address);
-			}
-			
-			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-			
-			conn.setRequestorProperty("Connection", "close");
-			
-			conn.documentIsEncoded = true;
-			
-			Socket sock = conn.connect();
-			
-			ByteArray daten = conn.readData(sock);
-			
-			JavaUtf8Codec codec = new JavaUtf8Codec();
-			CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-			//Vm.debug(c_data.toString());
-			sock.close();
-			return c_data.toString();
-		}
 	
 	public static String replace(String source, String pattern, String replace){
 		if (source!=null)
