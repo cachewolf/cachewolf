@@ -20,7 +20,7 @@ public class GPXImporter extends MinML {
 	static Preferences pref;
 	Profile profile;
 	Vector cacheDB;
-	CacheHolder holder;
+	CacheHolderDetail holder;
 	String strData, saveDir, logData, logIcon, logDate, logFinder;
 	boolean inWpt, inCache, inLogs, inBug;
 	public XMLElement document;
@@ -158,7 +158,7 @@ public class GPXImporter extends MinML {
 			zaehlerGel = 0;
 		}
 		if (name.equals("wpt")) {
-			holder = new CacheHolder();
+			holder = new CacheHolderDetail();
 			holder.LatLon = latdeg2min(atts.getValue("lat")) + " " +londeg2min(atts.getValue("lon"));
 			holder.pos.set(Common.parseDouble(atts.getValue("lat")),Common.parseDouble(atts.getValue("lon")));
 			inWpt = true;
@@ -273,7 +273,7 @@ public class GPXImporter extends MinML {
 				zaehlerGel++;
 				if (zaehlerGel % 5==1) infB.setInfo( (MyLocale.getMsg(4000,"Loaded caches") + ":" + zaehlerGel));
 				holder.is_new = true;
-				cacheDB.add(holder);
+				cacheDB.add(new CacheHolder(holder));
 				//Vm.debug("here B");
 				//if(doSpider == true && fromOC == false){
 				// don't spider additional waypoints, so check
@@ -294,9 +294,9 @@ public class GPXImporter extends MinML {
 						//spiderImages();
 						spiderImagesUsingSpider();
 						//Rename image sources
-						String text = new String();
-						String orig = new String();
-						String imgName = new String();
+						String text;
+						String orig;
+						String imgName;
 						orig = holder.LongDescription;
 						Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
 						text = ex.findNext();
@@ -318,7 +318,7 @@ public class GPXImporter extends MinML {
 			//Update cache data
 			else {
 				//Vm.debug("it is not new!");
-				CacheHolder oldCh= (CacheHolder) cacheDB.get(index);
+				CacheHolderDetail oldCh= new CacheHolderDetail((CacheHolder) cacheDB.get(index));
 				try {
 					//Vm.debug("Try to load");
 					oldCh.readCache(saveDir);
@@ -554,8 +554,8 @@ public class GPXImporter extends MinML {
 		} else return -1;
 	}
 	private void spiderImagesUsingSpider(){
-		String addr = new String();
-		String cacheText = new String();
+		String addr;
+		String cacheText;
 		
 		// just to be sure to have a spider object
 		if (imgSpider == null) imgSpider = new SpiderGC(pref, profile, false);

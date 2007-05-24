@@ -25,7 +25,7 @@ public class DetailsPanel extends CellPanel{
 	mButton btnNewWpt, btnShowBug, btnShowMap, btnGoto, btnAddPicture, btnBlack, btnNotes, btnSave, btnCancel;
 	mButton btnFoundDate,btnHiddenDate;
 	Vector cacheDB;
-	CacheHolder thisCache;
+	CacheHolderDetail thisCache;
 	CellPanel pnlTools = new CellPanel(); 
 	
 	private boolean dirty_notes = false;
@@ -129,7 +129,7 @@ public class DetailsPanel extends CellPanel{
 	/**
 	*	Set the values to display.
 	*/
-	public void setDetails(CacheHolder ch){
+	public void setDetails(CacheHolderDetail ch){
 		thisCache = ch;
 		dirty_notes = false;
 		dirty_details = false;
@@ -363,36 +363,52 @@ public class DetailsPanel extends CellPanel{
 	}
 	
 	public void saveDirtyWaypoint() {
-		CacheHolder ch;
-		  ch = (CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache());
+		// We have to update two objects: thisCache (a CacheHolderDetail) which contains 
+		// the full cache which will be written to the cache.xml file AND
+		// the CacheHolder object which sits in cacheDB
 		  // Strip the found message if the status contains a date
-		  if (chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found")) && 
+		if (chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found")) && 
 				  chcStatus.getText().length()==MyLocale.getMsg(318,"Found").length()+11)
-			  ch.CacheStatus = chcStatus.getText().substring(MyLocale.getMsg(318,"Found").length()+1);
+			  thisCache.CacheStatus = chcStatus.getText().substring(MyLocale.getMsg(318,"Found").length()+1);
 		  else	  
-			  ch.CacheStatus = chcStatus.getText();
-		  ch.is_found = chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found"));
-		  ch.is_owned = ch.CacheStatus.equals(MyLocale.getMsg(320,"Owner"));
+			  thisCache.CacheStatus = chcStatus.getText();
+		  thisCache.is_found = chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found"));
+		  thisCache.CacheOwner = inpOwner.getText().trim();
+		  thisCache.is_owned = thisCache.CacheStatus.equals(MyLocale.getMsg(320,"Owner"));
 		  // Avoid setting is_owned if alias is empty and username is empty
-		  if(ch.is_owned == false){
-			  ch.is_owned = (!pref.myAlias.equals("") && pref.myAlias.equals(ch.CacheOwner)) || 
-					        (!pref.myAlias2.equals("") && pref.myAlias2.equals(ch.CacheOwner));
+		  if(thisCache.is_owned == false){
+			  thisCache.is_owned = (!pref.myAlias.equals("") && pref.myAlias.equals(thisCache.CacheOwner)) || 
+					        (!pref.myAlias2.equals("") && pref.myAlias2.equals(thisCache.CacheOwner));
 		  }
-		  ch.is_black = blackStatus;
-		  ch.wayPoint = inpWaypoint.getText().trim();
-		  ch.CacheSize = chcSize.getText();
+		  thisCache.is_black = blackStatus;
+		  thisCache.wayPoint = inpWaypoint.getText().trim();
+		  thisCache.CacheSize = chcSize.getText();
 		  // If the waypoint does not have a name, give it one
-		  if (ch.wayPoint.equals("")) { 
-			  ch.wayPoint=profile.getNewWayPointName();
+		  if (thisCache.wayPoint.equals("")) { 
+			  thisCache.wayPoint=profile.getNewWayPointName();
 		  }
 		  //Don't allow single letter names=> Problems in updateBearingDistance
 		  // This is a hack but faster than slowing down the loop in updateBearingDistance
-		  if (ch.wayPoint.length()<2) ch.wayPoint+=" ";
-		  ch.CacheName = inpName.getText().trim();
-		  ch.LatLon = ch.pos.toString();
-		  ch.DateHidden = inpHidden.getText().trim();
-		  ch.CacheOwner = inpOwner.getText().trim();
-		  ch.type = transSelect(chcType.getInt());
+		  if (thisCache.wayPoint.length()<2) thisCache.wayPoint+=" ";
+		  thisCache.CacheName = inpName.getText().trim();
+		  thisCache.LatLon = thisCache.pos.toString();
+		  thisCache.DateHidden = inpHidden.getText().trim();
+		  thisCache.type = transSelect(chcType.getInt());
+		  thisCache.saveCacheDetails(profile.dataDir);
+		  // Now update the table
+		  CacheHolder ch = (CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache());
+		  ch.CacheStatus=thisCache.CacheStatus;
+		  ch.is_found=thisCache.is_found;
+		  ch.is_owned=thisCache.is_owned;
+		  ch.is_black=thisCache.is_black;
+		  ch.wayPoint=thisCache.wayPoint;
+		  ch.CacheSize=thisCache.CacheSize;
+		  ch.wayPoint=thisCache.wayPoint;
+		  ch.CacheName=thisCache.CacheName;
+		  ch.LatLon=thisCache.LatLon;
+		  ch.DateHidden=thisCache.DateHidden;
+		  ch.CacheOwner=thisCache.CacheOwner;
+		  ch.type=thisCache.type;
 		  if (CacheType.isAddiWpt(ch.type)) {
 			  int idx;
 			  if (ch.wayPoint.length()<5)
@@ -406,7 +422,6 @@ public class DetailsPanel extends CellPanel{
 		  }
 		  // set status also on addi wpts
 		  ch.setAttributesToAddiWpts();
-		  ch.saveCacheDetails(profile.dataDir);
 		  dirty_notes=false;
 		  dirty_details=false;
 		  

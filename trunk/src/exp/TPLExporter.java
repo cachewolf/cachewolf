@@ -27,6 +27,7 @@ package exp;
 
 import CacheWolf.CWPoint;
 import CacheWolf.CacheHolder;
+import CacheWolf.CacheHolderDetail;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.Preferences;
@@ -138,7 +139,8 @@ public class TPLExporter {
 	}
 	
 	public void doIt(){
-		CacheHolder holder;
+		CacheHolderDetail holder;
+		CacheHolder ch;
 		ProgressBarForm pbf = new ProgressBarForm();
 		ewe.sys.Handle h = new ewe.sys.Handle();
 
@@ -149,8 +151,8 @@ public class TPLExporter {
 		
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_black == false && holder.is_filtered == false) counter++;
+			ch = (CacheHolder)cacheDB.get(i);
+			if(ch.is_black == false && ch.is_filtered == false) counter++;
 		}
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
@@ -174,11 +176,12 @@ public class TPLExporter {
 			Template tpl = new Template(args);
 
 			for(int i = 0; i<counter;i++){
-				holder = (CacheHolder)cacheDB.get(i);
+				ch = (CacheHolder)cacheDB.get(i);
 				h.progress = (float)i/(float)counter;
 				h.changed();
-				if(holder.is_black == false && holder.is_filtered == false){
-					if (holder.pos.isValid() == false) continue;
+				if(ch.is_black == false && ch.is_filtered == false){
+					if (ch.pos.isValid() == false) continue;
+					holder=new CacheHolderDetail(ch);
 					try{
 						holder.readCache(profile.dataDir);
 					}catch(Exception e){

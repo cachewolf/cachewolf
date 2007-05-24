@@ -10,7 +10,7 @@ import ewe.sys.*;
 public class DescriptionPanel extends CellPanel{
 	HtmlDisplay disp = new HtmlDisplay();
 	mButton btnPlus, btnMinus;
-	CacheHolder currCache;
+	CacheHolderDetail currCache;
 	
 	CellPanel buttonP = new CellPanel();
 	CellPanel descP = new CellPanel();
@@ -28,7 +28,7 @@ public class DescriptionPanel extends CellPanel{
 	/**
 	*	Set the text to display. Text should be HTML formated.
 	*/
-	public void setText(CacheHolder cache){
+	public void setText(CacheHolderDetail cache){
 		if (currCache != cache){
 			Vm.showWait(true);
 			if (cache.is_HTML)	disp.setHtml(cache.LongDescription);

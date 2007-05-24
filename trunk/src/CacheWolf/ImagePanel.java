@@ -41,7 +41,7 @@ public class ImagePanel extends InteractivePanel{
 	* Gets called immediatly before panel is displayed
 	* @see MainTab#onEvent(Event ev)
 	*/
-	public void setImages(CacheHolder cache){
+	public void setImages(CacheHolderDetail cache){
 		pref = Global.getPref();
 		profile=Global.getProfile();
 		Vm.showWait(true);

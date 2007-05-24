@@ -238,7 +238,7 @@ public class Profile {
 				}
 				ch = (CacheHolder)cacheDB.get(i);
 				////Vm.debug("Saving: " + ch.CacheName);
-				if(ch.wayPoint.length()>0 && ch.LongDescription.equals("An Error Has Occured") == false){
+				if(ch.wayPoint.length()>0) { //TODO && ch.LongDescription.equals("An Error Has Occured") == false){
 					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
 							//"\" lat = \""+ SafeXML.clean(ch.LatLon) +
 							"\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+

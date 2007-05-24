@@ -65,7 +65,8 @@ public class Exporter {
 	public void doIt(int variant){
 		File outFile;
 		String str;
-		CacheHolder holder;
+		CacheHolder ch;
+		CacheHolderDetail holder;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
@@ -84,8 +85,8 @@ public class Exporter {
 		int counter = 0;
 		int expCount = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_black == false && holder.is_filtered == false) counter++;
+			ch = (CacheHolder)cacheDB.get(i);
+			if(ch.is_black == false && ch.is_filtered == false) counter++;
 		}
 
 		try{
@@ -93,8 +94,9 @@ public class Exporter {
 			str = this.header();
 			if (str != null) outp.print(str);
 			for(int i = 0; i<cacheDB.size(); i++){
-				holder=(CacheHolder)cacheDB.get(i);
-				if(holder.is_black == false && holder.is_filtered == false){
+				ch=(CacheHolder)cacheDB.get(i);
+				if(ch.is_black == false && ch.is_filtered == false){
+					holder=new CacheHolderDetail(ch);
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();
@@ -210,7 +212,7 @@ public class Exporter {
 	 * @param ch	cachedata
 	 * @return formated cache data
 	 */	
-	public String record(CacheHolder ch){
+	public String record(CacheHolderDetail chD){
 		return null;
 	}
 
@@ -221,7 +223,7 @@ public class Exporter {
 	 * @param lon
 	 * @return formated cache data
 	 */
-	public String record(CacheHolder ch, String lat, String lon){
+	public String record(CacheHolderDetail ch, String lat, String lon){
 		return null;
 	}
 	/**
