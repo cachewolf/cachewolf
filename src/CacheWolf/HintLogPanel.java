@@ -23,7 +23,7 @@ import ewe.fx.Rect;
  */
 public class HintLogPanel extends CellPanel{
 	int crntLogPosition = 0;
-	CacheHolder cache;
+	CacheHolderDetail cache;
 	private final int DEFAULT_STRINGBUFFER_SIZE=8000;
 	mTextPad hint = new mTextPad();
 	//mTextPad logs = new mTextPad();
@@ -58,7 +58,7 @@ public class HintLogPanel extends CellPanel{
 		this.addLast(split);
 	}
 
-	public void setText(CacheHolder cache){
+	public void setText(CacheHolderDetail cache){
 		this.cache = cache;
 		if(!cache.Hints.equals("null")) 
 			hint.setText(cache.Hints);

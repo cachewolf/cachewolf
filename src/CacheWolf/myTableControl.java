@@ -174,11 +174,12 @@ public class myTableControl extends TableControl{
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1020,"Open online in Browser"))){
 			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
+			CacheHolderDetail chD=new CacheHolderDetail(ch);
 			try{
-				ch.readCache(profile.dataDir);
+				chD.readCache(profile.dataDir);
 			}catch(IOException ex){	(new MessageBox(MyLocale.getMsg(321,"Error"), "Cannot read cache data\n"+ex.toString()+"\nCache: "+ch.wayPoint,MessageBox.OKB)).execute(); }
 			try {
-				String cmd = "\""+pref.browser+ "\" \"" + ch.URL+"\"";
+				String cmd = "\""+pref.browser+ "\" \"" + chD.URL+"\"";
 				Vm.exec(cmd);
 			} catch (IOException ex) {
 				(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();

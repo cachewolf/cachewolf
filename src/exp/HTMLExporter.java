@@ -36,7 +36,8 @@ public class HTMLExporter{
 	}
 	
 	public void doIt(){
-		CacheHolder holder = new CacheHolder();
+		CacheHolderDetail holder;
+		CacheHolder ch;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
@@ -63,8 +64,8 @@ public class HTMLExporter{
 			//Generate index page
 			int counter = 0;
 			for(int i = 0; i<cacheDB.size();i++){
-				holder = (CacheHolder)cacheDB.get(i);
-				if(holder.is_black == false && holder.is_filtered == false) counter++;
+				ch = (CacheHolder)cacheDB.get(i);
+				if(ch.is_black == false && ch.is_filtered == false) counter++;
 			}
 			
 			pbf.showMainTask = false;
@@ -75,8 +76,9 @@ public class HTMLExporter{
 				h.progress = (float)(i+1)/(float)counter;
 				h.changed();
 
-				holder = (CacheHolder)cacheDB.get(i);
-				if(holder.is_black == false && holder.is_filtered == false){
+				ch = (CacheHolder)cacheDB.get(i);
+				if(ch.is_black == false && ch.is_filtered == false){
+					holder=new CacheHolderDetail(ch);
 					//KHF read cachedata only if needed
 					try{
 						holder.readCache( profile.dataDir);

@@ -130,118 +130,119 @@ public class SpiderGC{
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
 		if (ch.isAddiWpt()) return false;  // No point spidering an addi waypoint, comes with parent
 		//Vm.showWait(true); Already done in myTableControl
+		CacheHolderDetail chD=new CacheHolderDetail(ch);
 		String notes = "";
 		String start = "";
 		String origLong = "";
 		try{
-			ch.readCache(profile.dataDir);
+			chD.readCache(profile.dataDir);
 		}catch(IOException ioex){
-			pref.log("Could not load " + ch.wayPoint + "file in spiderSingle");
+			pref.log("Could not load " + chD.wayPoint + "file in spiderSingle");
 		}
-		notes = ch.CacheNotes;
+		//notes = chD.CacheNotes;
 		
 		
-		String doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + ch.wayPoint +"&log=y";
+		String doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + chD.wayPoint +"&log=y";
 		try{
-			pref.log("Fetching: " + ch.wayPoint);
+			pref.log("Fetching: " + chD.wayPoint);
 			start = fetch(doc);
 		}catch(Exception ex){
-			pref.log("Could not fetch " + ch.wayPoint);
-			ch.is_incomplete = true;
-			cacheDB.set(number, ch);
+			pref.log("Could not fetch " + chD.wayPoint);
+			chD.is_incomplete = true;
+			//Redundant: cacheDB.set(number, ch);
 			//Vm.debug("Couldn't get cache detail page");
 		}
 		if (!infB.isClosed) { // Only analyse the cache data if user has not closed the progress window
 			try{
-				ch.is_new = false;
-				ch.is_update = false;
-				ch.is_HTML = true;
-				ch.is_available = true;
-				ch.is_archived = false;
-				ch.is_incomplete = false;
-				ch.CacheLogs.clear();
-				ch.addiWpts.clear();
-				ch.Images.clear();
-				ch.ImagesText.clear();
-				//Vm.debug(ch.wayPoint);
+				chD.is_new = false;
+				chD.is_update = false;
+				chD.is_HTML = true;
+				chD.is_available = true;
+				chD.is_archived = false;
+				chD.is_incomplete = false;
+				chD.CacheLogs.clear();
+				chD.addiWpts.clear();
+				chD.Images.clear();
+				chD.ImagesText.clear();
+				//Vm.debug(chD.wayPoint);
 				
-				if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
-				if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
+				if(start.indexOf("This cache is temporarily unavailable") >= 0) chD.is_available = false;
+				if(start.indexOf("This cache has been archived") >= 0) chD.is_archived = true;
 				pref.log("Trying logs");
-				int logsz = ch.CacheLogs.size();
-				ch.CacheLogs = getLogs(start, ch);
+				int logsz = chD.CacheLogs.size();
+				chD.CacheLogs = getLogs(start, chD);
 				int z = 0;
 				String loganal = "";
-				while(z < ch.CacheLogs.size() && z < 5){
-					loganal = (String)ch.CacheLogs.get(z);
+				while(z < chD.CacheLogs.size() && z < 5){
+					loganal = (String)chD.CacheLogs.get(z);
 					if(loganal.indexOf("icon_sad")>0) {
 						z++;
 					}else break;
 				}
-				ch.noFindLogs = z;
-				ch.is_log_update = false;
-				if(ch.CacheLogs.size()>logsz) ch.is_log_update = true;
+				chD.noFindLogs = z;
+				chD.is_log_update = false;
+				if(chD.CacheLogs.size()>logsz) chD.is_log_update = true;
 				pref.log("Found logs");
-				ch.LatLon = getLatLon(start);
-				ch.pos.set(ch.LatLon);
-				//Vm.debug("LatLon: " + ch.LatLon);
+				chD.LatLon = getLatLon(start);
+				chD.pos.set(chD.LatLon);
+				//Vm.debug("LatLon: " + chD.LatLon);
 				pref.log("Trying description");
-				origLong = ch.LongDescription;
-				ch.LongDescription = getLongDesc(start);
-				if(!ch.LongDescription.equals(origLong)) ch.is_update = true;
+				origLong = chD.LongDescription;
+				chD.LongDescription = getLongDesc(start);
+				if(!chD.LongDescription.equals(origLong)) chD.is_update = true;
 				pref.log("Got description");
 				pref.log("Getting cache name");
-				ch.CacheName = SafeXML.cleanback(getName(start));
+				chD.CacheName = SafeXML.cleanback(getName(start));
 				pref.log("Got cache name");
-				//Vm.debug("Name: " + ch.CacheName);
+				//Vm.debug("Name: " + chD.CacheName);
 				pref.log("Trying owner");
-				ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
-				if(ch.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equals(pref.myAlias2))) ch.is_owned = true;
+				chD.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
+				if(chD.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equals(pref.myAlias2))) chD.is_owned = true;
 				pref.log("Got owner");
-				//Vm.debug("Owner: " + ch.CacheOwner);
+				//Vm.debug("Owner: " + chD.CacheOwner);
 				pref.log("Trying date hidden");
-				ch.DateHidden = DateFormat.MDY2YMD(getDateHidden(start));
+				chD.DateHidden = DateFormat.MDY2YMD(getDateHidden(start));
 				pref.log("Got date hidden");
-				//Vm.debug("Hidden: " + ch.DateHidden);
+				//Vm.debug("Hidden: " + chD.DateHidden);
 				pref.log("Trying hints");
-				ch.Hints = getHints(start);
+				chD.Hints = getHints(start);
 				pref.log("Got hints");
-				//Vm.debug("Hints: " + ch.Hints);
+				//Vm.debug("Hints: " + chD.Hints);
 				//Vm.debug("Got the hints");
 				pref.log("Trying size");
-				ch.CacheSize = getSize(start);
+				chD.CacheSize = getSize(start);
 				pref.log("Got size");
-				//Vm.debug("Size: " + ch.CacheSize);
+				//Vm.debug("Size: " + chD.CacheSize);
 				pref.log("Trying difficulty");
-				ch.hard = getDiff(start);
+				chD.hard = getDiff(start);
 				pref.log("Got difficulty");
-				//Vm.debug("Hard: " + ch.hard);
+				//Vm.debug("Hard: " + chD.hard);
 				pref.log("Trying terrain");
-				ch.terrain = getTerr(start);
+				chD.terrain = getTerr(start);
 				pref.log("Got terrain");
-				if (!infB.isClosed) ch.Bugs = getBugs(start);
-				if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
-				//Vm.debug("Terr: " + ch.terrain);
+				if (!infB.isClosed) chD.Bugs = getBugs(start);
+				chD.has_bug = chD.Bugs.length()>0;
+				//Vm.debug("Terr: " + chD.terrain);
 				pref.log("Trying cache type");
-				ch.type = getType(start);
+				chD.type = getType(start);
 				pref.log("Got cache type");
-				//Vm.debug("Type: " + ch.type);
+				//Vm.debug("Type: " + chD.type);
 				pref.log("Trying images");
-				getImages(start, ch);
+				getImages(start, chD);
 				pref.log("Got images");
 				//pref.log("Trying maps");
 				//getMaps(ch);
 				//pref.log("Got maps");
 				pref.log("Getting additional waypoints");
 				
-				getAddWaypoints(start, ch.wayPoint, ch.is_found);
+				getAddWaypoints(start, chD.wayPoint, chD.is_found);
 		
 				pref.log("Got additional waypoints");
-				ch.CacheNotes = notes;
+				//chD.CacheNotes = notes;
 				if (!infB.isClosed) {
-					ch.saveCacheDetails(profile.dataDir);
+					chD.saveCacheDetails(profile.dataDir);
 					pref.log("Saving to:" + profile.dataDir);
-					cacheDB.set(number, ch);
+					cacheDB.set(number, new CacheHolder(ch)); // TODO Could copy into existing object
 				}
 			}catch(Exception ex){
 				pref.log("Exception in spider: " +ex.toString());
@@ -263,7 +264,7 @@ public class SpiderGC{
 		String ln=null;
 		String wpt = "";
 		String loganal;
-		CacheHolder ch;
+		CacheHolderDetail chD;
 		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
 		if (!origin.isValid()) {
 			(new MessageBox("Error", "Coordinates for center must be set", MessageBox.OKB)).execute();
@@ -379,7 +380,7 @@ public class SpiderGC{
 		
 		// Now ready to spider each cache
 		
-		ch = new CacheHolder();
+		chD = new CacheHolderDetail();
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			if (infB.isClosed) break;
 			
@@ -401,100 +402,100 @@ public class SpiderGC{
 				}
 				if(start != null && start.length()!=0){
 					pref.log("Fetch doc ok... going into details.");
-					ch.is_new = true;
-					ch.is_HTML = true;
-					ch.is_available = true;
-					ch.is_archived = false;
-					ch.wayPoint = wpt;
-					if(start.indexOf("This cache is temporarily unavailable") >= 0) ch.is_available = false;
-					if(start.indexOf("This cache has been archived") >= 0) ch.is_archived = true;
-					//Vm.debug(ch.wayPoint);
+					chD.is_new = true;
+					chD.is_HTML = true;
+					chD.is_available = true;
+					chD.is_archived = false;
+					chD.wayPoint = wpt;
+					if(start.indexOf("This cache is temporarily unavailable") >= 0) chD.is_available = false;
+					if(start.indexOf("This cache has been archived") >= 0) chD.is_archived = true;
+					//Vm.debug(chD.wayPoint);
 					try{
 						pref.log("Trying logs");
-						ch.CacheLogs = getLogs(start, ch);
+						chD.CacheLogs = getLogs(start, chD);
 						int z = 0;
 						loganal = "";
-						while(z < ch.CacheLogs.size() && z < 5){
-							loganal = (String)ch.CacheLogs.get(z);
+						while(z < chD.CacheLogs.size() && z < 5){
+							loganal = (String)chD.CacheLogs.get(z);
 							if(loganal.indexOf("icon_sad")>0) {
 								z++;
 							}else break;
 						}
-						ch.noFindLogs = z;
+						chD.noFindLogs = z;
 						pref.log("Found logs");
-						ch.LatLon = getLatLon(start);
-						ch.pos.set(ch.LatLon); // Slow parse no problem
-						//Vm.debug("LatLon: " + ch.LatLon);
+						chD.LatLon = getLatLon(start);
+						chD.pos.set(chD.LatLon); // Slow parse no problem
+						//Vm.debug("LatLon: " + chD.LatLon);
 						pref.log("Trying description");
-						ch.LongDescription = getLongDesc(start);
+						chD.LongDescription = getLongDesc(start);
 						
 						pref.log("Got description");
 						pref.log("Getting cache name");
-						ch.CacheName = SafeXML.cleanback(getName(start));
+						chD.CacheName = SafeXML.cleanback(getName(start));
 						pref.log("Got cache name");
-						//Vm.debug("Name: " + ch.CacheName);
+						//Vm.debug("Name: " + chD.CacheName);
 						pref.log("Trying owner");
-						ch.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
-						if(ch.CacheOwner.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && ch.CacheOwner.equalsIgnoreCase(pref.myAlias2))) ch.is_owned = true;
+						chD.CacheOwner = SafeXML.cleanback(getOwner(start)).trim();
+						if(chD.CacheOwner.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equalsIgnoreCase(pref.myAlias2))) chD.is_owned = true;
 						pref.log("Got owner");
-						//Vm.debug("Owner: " + ch.CacheOwner);
+						//Vm.debug("Owner: " + chD.CacheOwner);
 						pref.log("Trying date hidden");
-						ch.DateHidden = getDateHidden(start);
+						chD.DateHidden = getDateHidden(start);
 						pref.log("Got date hidden");
-						//Vm.debug("Hidden: " + ch.DateHidden);
+						//Vm.debug("Hidden: " + chD.DateHidden);
 						pref.log("Trying hints");
-						ch.Hints = getHints(start);
+						chD.Hints = getHints(start);
 						pref.log("Got hints");
-						//Vm.debug("Hints: " + ch.Hints);
+						//Vm.debug("Hints: " + chD.Hints);
 						//Vm.debug("Got the hints");
 						pref.log("Trying size");
-						ch.CacheSize = getSize(start);
+						chD.CacheSize = getSize(start);
 						pref.log("Got size");
-						//Vm.debug("Size: " + ch.CacheSize);
+						//Vm.debug("Size: " + chD.CacheSize);
 						pref.log("Trying difficulty");
-						ch.hard = getDiff(start);
+						chD.hard = getDiff(start);
 						pref.log("Got difficulty");
-						//Vm.debug("Hard: " + ch.hard);
+						//Vm.debug("Hard: " + chD.hard);
 						pref.log("Trying terrain");
-						ch.terrain = getTerr(start);
+						chD.terrain = getTerr(start);
 						pref.log("Got terrain");
-						//Vm.debug("Terr: " + ch.terrain);
+						//Vm.debug("Terr: " + chD.terrain);
 						pref.log("Trying cache type");
-						ch.type = getType(start);
+						chD.type = getType(start);
 						pref.log("Got cache type");
-						//Vm.debug("Type: " + ch.type);
+						//Vm.debug("Type: " + chD.type);
 						if(getImages){
 							pref.log("Trying images");
-							getImages(start, ch);
+							getImages(start, chD);
 							pref.log("Got images");
 						}
 						if (infB.isClosed) {
 							
 							break;
 						}
-						ch.Bugs = getBugs(start);
-						if(ch.Bugs.length()>0) ch.has_bug = true; else ch.has_bug = false;
+						chD.Bugs = getBugs(start);
+						if(chD.Bugs.length()>0) chD.has_bug = true; else chD.has_bug = false;
 						pref.log("Getting additional waypoints");
-						getAddWaypoints(start, ch.wayPoint, ch.is_found);
+						getAddWaypoints(start, chD.wayPoint, chD.is_found);
 						pref.log("Got additional waypoints");
 						
 						if(doNotgetFound) {
-							if(!ch.is_found) profile.writeIndexLine(ch);
-						} else profile.writeIndexLine(ch);
+							if(!chD.is_found) profile.writeIndexLine(chD);
+						} else profile.writeIndexLine(chD);
 						
-						ch.saveCacheDetails(profile.dataDir);
+						chD.saveCacheDetails(profile.dataDir);
 						
-						ch = new CacheHolder();
+						chD = new CacheHolderDetail();
 					}catch(Exception ex){
 						pref.log("There was an error in the last step:");
 						pref.log("Cache was: " + wpt);
 						pref.log("Error was: " + ex.toString());
-						ch.is_incomplete = true;
+						chD.is_incomplete = true;
 						if(doNotgetFound) {
-							if(!ch.is_found) profile.writeIndexLine(ch);
-						} else profile.writeIndexLine(ch);
+							if(!chD.is_found) profile.writeIndexLine(chD);
+						} else profile.writeIndexLine(chD);
 						
-						ch = new CacheHolder();
+						chD = new CacheHolderDetail();
 					}finally{
 						//just continue please!
 						pref.log("Continuing with next cache.");
@@ -563,7 +564,7 @@ public class SpiderGC{
 			rowBlock = exRowBlock.findNext();
 			rowBlock = exRowBlock.findNext();
 			while(exRowBlock.endOfSearch()==false){
-				CacheHolder cx = new CacheHolder();
+				CacheHolderDetail cx = new CacheHolderDetail();
 				
 				nameRex.search(rowBlock);
 				koordRex.search(rowBlock);
@@ -594,14 +595,15 @@ public class SpiderGC{
 					}
 				}else if (((CacheHolder) cacheDB.get(idx)).is_Checked && // Only re-spider existing addi waypoints that are ticked
 						!((CacheHolder) cacheDB.get(idx)).is_filtered) // and are visible (i.e.  not filtered)
-					((CacheHolder) cacheDB.get(idx)).update(cx);
+					cacheDB.set(idx,new CacheHolder(
+					    new CacheHolderDetail(((CacheHolder) cacheDB.get(idx))).update(cx)));
 				cx.saveCacheDetails(profile.dataDir);
 				rowBlock = exRowBlock.findNext();
 			}
 		}
 	}
 	
-	public void getImages(String doc, CacheHolder ch){
+	public void getImages(String doc, CacheHolderDetail ch){
 		int imgCounter = 0;
 		String imgName;
 		String imgType;
@@ -801,7 +803,7 @@ public class SpiderGC{
 		return Convert.toDouble(inRex.stringMatched(1));
 	}
 	
-	private Vector getLogs(String doc, CacheHolder ch){
+	private Vector getLogs(String doc, CacheHolderDetail ch){
 		String icon = "";
 		String name = "";
 		Vector reslts = new Vector();

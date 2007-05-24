@@ -32,7 +32,7 @@ public class OCXMLImporter extends MinML {
 	boolean debugGPX = false;
 	Vector cacheDB;
 	InfoBox inf;
-	CacheHolder holder;
+	CacheHolderDetail holder;
 	Preferences pref;
 	Profile profile;
 	Time dateOfthisSync;
@@ -672,17 +672,17 @@ public class OCXMLImporter extends MinML {
 	}
 
 
-	private CacheHolder getHolder(String CacheID){ // TODO move this into profile.java
+	private CacheHolderDetail getHolder(String wpt){// See also LOCXMLImporter
 		int index;
-		CacheHolder ch;
-
-		index = searchID(CacheID);
+		CacheHolderDetail ch;
+		
+		index = searchWpt(wpt);
 		if (index == -1){
-			ch = new CacheHolder();
-			ch.ocCacheID = CacheID;
+			ch = new CacheHolderDetail();
+			ch.wayPoint = wpt;
 			return ch;
 		}
-		ch = (CacheHolder) cacheDB.get(index);
+		ch = new CacheHolderDetail((CacheHolder) cacheDB.get(index));
 		try {
 			ch.readCache(profile.dataDir);
 		} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};

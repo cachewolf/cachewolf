@@ -21,7 +21,7 @@ public class DBStats {
 	 * @return
 	 */
 	public int visible(){
-		CacheHolder holder = new CacheHolder();
+		CacheHolder holder;
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = (CacheHolder)cacheDB.get(i);
@@ -37,7 +37,7 @@ public class DBStats {
 	 * @return
 	 */
 	public int total(){
-		CacheHolder holder = new CacheHolder();
+		CacheHolder holder;
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = (CacheHolder)cacheDB.get(i);
@@ -49,7 +49,7 @@ public class DBStats {
 	}
 	
 	public int totalFound(){
-		CacheHolder holder = new CacheHolder();
+		CacheHolder holder;
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = (CacheHolder)cacheDB.get(i);

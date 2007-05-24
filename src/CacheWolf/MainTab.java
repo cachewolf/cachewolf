@@ -26,7 +26,8 @@ public class MainTab extends mTabbedPanel {
 	ImagePanel imageP;
 	SolverPanel solverP;
 	String lastselected = new String();
-	CacheHolder ch =null;
+	CacheHolder ch=null;
+	CacheHolderDetail chD =null;
 	MainMenu mnuMain;
 	StatusBar statBar;
 	MovingMap mm;
@@ -79,14 +80,14 @@ public class MainTab extends mTabbedPanel {
 		return tbP;
 	}
 
-	public void selectAndActive(int rownum){
+	public void selectAndActive(int rownum){// Called from myInteractivePanel.imageClicked
 		tbP.selectRow(rownum);
 		this.selectAndExpand(0);
 	}
 
 	/** Update the distances of all caches to the center and display a message 
 	 */
-	public void updateBearDist(){
+	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
 		tbP.pref = pref;
 		profile.updateBearingDistance();
 		tbP.refreshTable();
@@ -104,7 +105,7 @@ public class MainTab extends mTabbedPanel {
 		//tbP.tc.scrollToVisible(row, 0);
 		//tbP.selectRow(row);
 		select(descP);
-		descP.setText(chi);
+		//descP.setText(chi);
 	}
 
 
@@ -137,24 +138,25 @@ public class MainTab extends mTabbedPanel {
 
 	public void onEvent(Event ev)
 	{
-		////Vm.debug(ev.toString());
+		//Vm.debug(ev.toString()+"/"+this.getSelectedItem());
 		if(ev instanceof MultiPanelEvent){
 			mnuMain.allowProfileChange(false);	  
-			if(this.getSelectedItem() == 0){
+			if(this.getSelectedItem() == 0){// List view selected
 				mnuMain.allowProfileChange(true);	  
 //				Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
 //				Vm.setSIP(0);
 				MyLocale.setSIPOff();
 			}
 			updatePendingChanges();
-			if(this.getSelectedItem() != 0){
-				if (tbP.getSelectedCache()>=cacheDB.size() || tbP.getSelectedCache()<0)
-					ch=null;
-				else {
+			if(this.getSelectedItem() != 0){// any panel other than list view
+				if (tbP.getSelectedCache()>=cacheDB.size() || tbP.getSelectedCache()<0) {
+					ch=null; chD=null;
+				} else {
 					ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
 					try {
 						if(ch.wayPoint.equals(lastselected) == false){
-							ch.readCache(profile.dataDir);
+							chD=new CacheHolderDetail(ch);
+							chD.readCache(profile.dataDir);
 							lastselected = ch.wayPoint;
 						}
 					} catch(Exception e){
@@ -162,36 +164,37 @@ public class MainTab extends mTabbedPanel {
 					}
 				}
 			} else statBar.updateDisplay();
-
 			// If no cache is selected, create a new one
 			switch (this.getSelectedItem()) {
 			case 1:  // DetailsPanel
-				if (ch==null) newWaypoint(ch=new CacheHolder());
+				if (chD==null) { // Empty DB - show a dummy detail
+					newWaypoint(chD=new CacheHolderDetail()); 
+				}
 				MyLocale.setSIPButton();
-				detP.setDetails(ch);
+				detP.setDetails(chD);
 				break;
 			case 2: // Description Panel
-				if (ch!=null) {
+				if (chD!=null) {
 					MyLocale.setSIPOff();
-					descP.setText(ch);
+					descP.setText(chD);
 				}
 				break;
 			case 3: // Picture Panel
-				if (ch!=null) {
+				if (chD!=null) {
 					MyLocale.setSIPOff();
-					imageP.setImages(ch);
+					imageP.setImages(chD);
 				}
 				break;
 			case 4:  // Log Hint Panel
-				if (ch!=null) {
+				if (chD!=null) {
 					MyLocale.setSIPOff();
-					hintLP.setText(ch);
+					hintLP.setText(chD);
 				}
 				break;
 			case 5:  // CalcPanel
-				if (ch!=null) {
+				if (chD!=null) {
 					MyLocale.setSIPButton();
-					calcP.setFields(ch);
+					calcP.setFields(chD);
 				}
 				break;
 
@@ -200,11 +203,11 @@ public class MainTab extends mTabbedPanel {
 				break;
 			case 7:  // Solver Panel
 				MyLocale.setSIPButton();
-				solverP.setCh(ch);
+				solverP.setCh(chD);
 				break;
 			case 8:  // Cache Radar Panel
 				MyLocale.setSIPOff();
-				radarP.setParam(pref, cacheDB, ch==null?"":ch.wayPoint);
+				radarP.setParam(pref, cacheDB, chD==null?"":chD.wayPoint);
 				radarP.drawThePanel();
 				break;
 			}

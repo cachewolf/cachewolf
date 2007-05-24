@@ -22,7 +22,7 @@ public class MSARCSVExporter extends Exporter {
 		return "Name;Breitengrad;L\u00E4ngengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink\r";
 	}
 
-	public String record(CacheHolder ch, String lat, String lon) {
+	public String record(CacheHolderDetail ch, String lat, String lon) {
 		StringBuffer str = new StringBuffer(200);
 		str.append("\"" + ch.wayPoint + " - " + ch.CacheName + "\";");
 		str.append(lat + ";" + lon +";");

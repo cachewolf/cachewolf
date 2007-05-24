@@ -13,12 +13,12 @@ import ewe.filechooser.*;
 */
 public class NotesScreen extends Form{
 	mTextPad wayNotes = new mTextPad();
-	CacheHolder thisCache = null;
+	CacheHolderDetail thisCache = null;
 	mButton addDateTime = new mButton((IImage)new mImage("date_time.png"));
 	mButton btSave = new mButton(MyLocale.getMsg(127,"Save"));
 	ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
 	
-	public NotesScreen(CacheHolder ch){
+	public NotesScreen(CacheHolderDetail ch){
 		this.title = "Notes";
 		setPreferredSize(Global.getPref().myAppWidth, Global.getPref().myAppHeight);
 		thisCache = ch;
