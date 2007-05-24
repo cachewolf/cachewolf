@@ -15,7 +15,7 @@ import ewe.fx.*;
 */
 public class ProfileDataForm extends Form {
 
-	private mButton btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur, btnOldProfiles;
+	private mButton btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur;
 	Preferences pref;
 	Profile profile;
 	CellPanel content = new CellPanel();
@@ -42,7 +42,6 @@ public class ProfileDataForm extends Form {
 		content.addLast(btnProfileCentre=new mButton(profile.centre.toString()),HSTRETCH,HFILL|LEFT);
 		addLast(content,HSTRETCH,HFILL);
 		addLast(new mLabel(""),VSTRETCH,FILL);
-		addLast(btnOldProfiles=new mButton(MyLocale.getMsg(1119,"Old Profiles")),HSTRETCH,HFILL);
 		//addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
 		addLast(btnOK = new mButton("OK"),DONTSTRETCH,HFILL|RIGHT);
 	}
@@ -87,10 +86,6 @@ public class ProfileDataForm extends Form {
 				pref.curCentrePt.set(profile.centre);
 				btnCurrentCentre.setText(pref.curCentrePt.toString());
 				Global.getProfile().updateBearingDistance();
-			}
-			if (ev.target == btnOldProfiles){
-				ProfilesScreen pfs = new ProfilesScreen(pref);
-				pfs.execute();
 			}
 		}
 		super.onEvent(ev);
