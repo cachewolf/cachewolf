@@ -54,7 +54,7 @@ public class ProfilesForm extends Form{
 	* @param oldProfiles List of names of old profiles
 	* @param selectedProfile Name of the last used profile
 	*/
-	public ProfilesForm(String baseDir, String[] oldProfiles,String selectedProfile, boolean hasNewButton){
+	public ProfilesForm(String baseDir, String selectedProfile, boolean hasNewButton){
 		super();
     	resizable =  false;
 		int w=MyLocale.getScreenWidth();
@@ -70,12 +70,6 @@ public class ProfilesForm extends Form{
 		}
 		
 		choice=new MyList();
-        // First add the old style profiles (stored in pref.xml)
-        if (oldProfiles[0].length()>0) choice.addItem(oldProfiles[0]);
-        if (oldProfiles[1].length()>0) choice.addItem(oldProfiles[1]);
-        if (oldProfiles[2].length()>0) choice.addItem(oldProfiles[2]);
-        if (oldProfiles[3].length()>0) choice.addItem(oldProfiles[3]);
-        if (choice.itemsSize()>0) choice.addItem("-");
 		// Get all subdirectories in the base directory
 		File fileBaseDir=new File(baseDir);
 		String[] existingProfiles=fileBaseDir.list("*",FileBase.LIST_DIRECTORIES_ONLY);

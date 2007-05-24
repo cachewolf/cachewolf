@@ -48,13 +48,6 @@ public class Preferences extends MinML{
 	//public int nLogs = 5;
 	public boolean dirty = false;
 
-	public int currProfile = 0;
-	public String profiles[] = {"","","",""};
-	public String profdirs[] = {"","","",""};
-	public String lats[] = {"","","",""};
-	public String longs[] = {"","","",""};
-	public String lastSyncOC[] = {"","","",""};
-	public String lastDistOC[] = {"","","",""};
 	public String garminConn="com1";  // The type of connection which GPSBABEL uses: com1 OR usb.
 	public String garminGPSBabelOptions=""; // Additional options for GPSBabel, i.e. -s to synthethize short names
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
@@ -271,7 +264,7 @@ public class Preferences extends MinML{
 		do {	
 			if(!profileExists || (showProfileSelector==PROFILE_SELECTOR_FORCED_ON) || 
 					(showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
-				ProfilesForm f = new ProfilesForm(baseDir,profiles,lastProfile,!profileExists || hasNewButton);
+				ProfilesForm f = new ProfilesForm(baseDir,lastProfile,!profileExists || hasNewButton);
 				int code = f.execute();
 				// If no profile chosen (includes a new one), terminate
 				if (code==-1) return false; // Cancel pressed
@@ -285,46 +278,13 @@ public class Preferences extends MinML{
 		} while (profileExists==false);
 		// Now we are sure that baseDir exists and basDir+profile exists
 		prof.name=lastProfile;
-		currProfile=-1;
-		if (lastProfile.equals(profiles[0])) openOldProfile(prof, 0);
-		else if (lastProfile.equals(profiles[1])) openOldProfile(prof, 1);
-		else if (lastProfile.equals(profiles[2])) openOldProfile(prof, 2);
-		else if (lastProfile.equals(profiles[3])) openOldProfile(prof, 3);
-		else { 
-			prof.dataDir=baseDir+lastProfile;
-			//mydatadir=prof.dataDir;
-		}
+		prof.dataDir=baseDir+lastProfile;
 		prof.dataDir=prof.dataDir.replace('\\','/');
 		if (!prof.dataDir.endsWith("/")) prof.dataDir+='/';
 		savePreferences();
 		return true;
 
 	}
-
-	/**
-	 * Open an old Profile (stored in preferences)
-	 * @param i 0-3 for profiles 1-4
-	 */
-	private void openOldProfile(Profile prof, int i) {
-		currProfile=i+1;
-		curCentrePt.set(lats[i]+" "+longs[i]);
-		//mydatadir=profdirs[i];
-		if(lastSyncOC[i] == null || lastSyncOC[i].endsWith("null")){
-			prof.last_sync_opencaching = "20050801000000";
-		}else {
-			prof.last_sync_opencaching = lastSyncOC[i];
-		}
-		if(lastDistOC[i] == null || lastDistOC[i].endsWith("null")){
-			prof.distOC = "0";
-		} else {
-			prof.distOC = lastDistOC[i];
-		}
-		prof.centre.set(lats[i]+" "+longs[i]);
-		prof.dataDir=profdirs[i];
-	}
-
-
-
 
 	/**
 	 * Method that gets called when a new element has been identified in pref.xml
@@ -352,41 +312,6 @@ public class Preferences extends MinML{
 		if(name.equals("portforward")) {
 			forwardGPS = Convert.toBoolean(atts.getValue("active"));
 			forwardGpsHost = atts.getValue("destinationHost");
-		}
-		//if(name.equals("logs")){
-		//	nLogs = Convert.parseInt(atts.getValue("number"));
-		//}
-		if(name.equals("profile1")){
-			profiles[0] = atts.getValue("name");
-			profdirs[0] = atts.getValue("dir");
-			lats[0] = atts.getValue("lat");
-			longs[0] = atts.getValue("lon");
-			lastSyncOC[0] = atts.getValue("lastsyncoc");
-			lastDistOC[0] = atts.getValue("lastdistoc");
-		}
-		if(name.equals("profile2")){
-			profiles[1] = atts.getValue("name");
-			profdirs[1] = atts.getValue("dir");
-			lats[1] = atts.getValue("lat");
-			longs[1] = atts.getValue("lon");
-			lastSyncOC[1] = atts.getValue("lastsyncoc");
-			lastDistOC[1] = atts.getValue("lastdistoc");
-		}
-		if(name.equals("profile3")){
-			profiles[2] = atts.getValue("name");
-			profdirs[2] = atts.getValue("dir");
-			lats[2] = atts.getValue("lat");
-			longs[2] = atts.getValue("lon");
-			lastSyncOC[2] = atts.getValue("lastsyncoc");
-			lastDistOC[2] = atts.getValue("lastdistoc");
-		}
-		if(name.equals("profile4")){
-			profiles[3] = atts.getValue("name");
-			profdirs[3] = atts.getValue("dir");
-			lats[3] = atts.getValue("lat");
-			longs[3] = atts.getValue("lon");
-			lastSyncOC[3] = atts.getValue("lastsyncoc");
-			lastDistOC[3] = atts.getValue("lastdistoc");
 		}
 		if (name.equals("lastprofile")) {
 			collectElement=new StringBuffer(50);
@@ -518,12 +443,6 @@ public class Preferences extends MinML{
 	public void savePreferences(){
 		String datei = File.getProgramDirectory() + "/" + "pref.xml";
 		datei = datei.replace('\\', '/');
-		//last_sync_opencaching = last_sync_opencaching==null?"20050801000000":last_sync_opencaching;
-		//distOC = distOC==null?"0":distOC;
-		if (currProfile > 0) {
-			lastSyncOC[currProfile -1] = Global.getProfile().last_sync_opencaching;
-			lastDistOC[currProfile - 1] = Global.getProfile().distOC;
-		}
 
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(datei)));
@@ -569,10 +488,6 @@ public class Preferences extends MinML{
 			//outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath +"\"/>\n");
-			outp.print("	<profile1 name = \""+profiles[0]+"\" lat = \""+ lats[0] +"\" lon = \""+ longs[0] +"\" dir = \""+ profdirs[0] +"\" lastsyncoc= \"" + lastSyncOC[0] + "\" lastdistoc= \"" + lastDistOC[0] + "\" />\n");
-			outp.print("	<profile2 name = \""+profiles[1]+"\" lat = \""+ lats[1] +"\" lon = \""+ longs[1] +"\" dir = \""+ profdirs[1] +"\" lastsyncoc= \"" + lastSyncOC[1] + "\" lastdistoc= \"" + lastDistOC[1] + "\" />\n");
-			outp.print("	<profile3 name = \""+profiles[2]+"\" lat = \""+ lats[2] +"\" lon = \""+ longs[2] +"\" dir = \""+ profdirs[2] +"\" lastsyncoc= \"" + lastSyncOC[2] + "\" lastdistoc= \"" + lastDistOC[2] + "\" />\n");
-			outp.print("	<profile4 name = \""+profiles[3]+"\" lat = \""+ lats[3] +"\" lon = \""+ longs[3] +"\" dir = \""+ profdirs[3] +"\" lastsyncoc= \"" + lastSyncOC[3] + "\" lastdistoc= \"" + lastDistOC[3] + "\" />\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			outp.print("</preferences>");
 			outp.close();
