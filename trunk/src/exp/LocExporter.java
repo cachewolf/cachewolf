@@ -1,5 +1,6 @@
 package exp;
 import CacheWolf.*;
+import ewe.sys.Vm;
 import ewe.util.Hashtable;
 
 /**
@@ -19,7 +20,7 @@ public class LocExporter extends Exporter{
 		return "<?xml version=\"1.0\"?><loc version=\"1.0\" src=\"EasyGPS\">\r\n";
 	}
 	
-	public String record(CacheHolder ch){
+	public String record(CacheHolderDetail ch){
 		// filter out not valid coords
 		if (!ch.pos.isValid()) return null;
 		StringBuffer strBuf = new StringBuffer(200);
