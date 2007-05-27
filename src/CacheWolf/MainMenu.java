@@ -29,7 +29,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete;
-	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditProfile;
+	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
 	private TablePanel tbp;
 	private FilterScreen scnFilter=new FilterScreen();
@@ -44,7 +44,7 @@ public class MainMenu extends MenuBar {
 		MenuItem[] mnuProfile = new MenuItem[3];
 		mnuProfile[0] = mnuNewProfile = new MenuItem(MyLocale.getMsg(1107,"New"));
 		mnuProfile[1] = mnuOpenProfile = new MenuItem(MyLocale.getMsg(1109,"Open"));
-		mnuProfile[2] = mnuEditProfile = new MenuItem(MyLocale.getMsg(1110,"Edit"));
+		mnuProfile[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Center"));
 		Menu profileMenu = new Menu(mnuProfile,MyLocale.getMsg(121,"Profiles"));
 		
 		///////////////////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ public class MainMenu extends MenuBar {
 						tbp.resetModel();
 				}
 			}
-			if(mev.selectedItem == mnuEditProfile){
+			if(mev.selectedItem == mnuEditCenter){
 				ProfileDataForm f=new ProfileDataForm(pref,profile);
 			    int code=f.execute(getFrame(), Gui.CENTER_FRAME);
 			    tbp.refreshTable();
