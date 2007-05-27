@@ -145,7 +145,6 @@ public class myTableControl extends TableControl{
 				}
 				infB.close(0);
 				profile.hasUnsavedChanges=true;	
-				profile.closeIndex();
 				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 //				cacheDB.clear();
 //				profile.readIndex();
