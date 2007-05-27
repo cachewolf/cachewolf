@@ -306,6 +306,7 @@ public class DetailsPanel extends CellPanel{
 				blackStatus = thisCache.is_black;
 				thisCache.setAttributesToAddiWpts();
 				btnBlack.repaintNow();
+				dirty_details=true;
 			}
 			else if (ev.target == btnNewWpt){
 				Global.mainTab.newWaypoint(new CacheHolder());
