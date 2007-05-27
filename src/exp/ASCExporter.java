@@ -19,7 +19,7 @@ public class ASCExporter extends Exporter{
 		this();
 	}
 	
-	public String record (CacheHolder holder, String lat, String lon){
+	public String record (CacheHolderDetail holder, String lat, String lon){
 		StringBuffer strBuf = new StringBuffer(100);
 		String dummy;
 		dummy = holder.CacheName;

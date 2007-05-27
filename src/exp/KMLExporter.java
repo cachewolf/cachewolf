@@ -32,7 +32,7 @@ public class KMLExporter extends Exporter {
 		return strBuf.toString();
 	}
 	
-	public String record(CacheHolder ch, String lat, String lon){
+	public String record(CacheHolderDetail ch, String lat, String lon){
 		StringBuffer strBuf = new StringBuffer(200);
 		
 		strBuf.append("   <Placemark>\r\n");

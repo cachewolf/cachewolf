@@ -108,7 +108,7 @@ public class Exporter {
 						continue;
 					}
 					switch (this.howManyParams) {
-					case NO_PARAMS: 
+					case NO_PARAMS:
 						str = record(holder);
 						break;
 					case LAT_LON:
