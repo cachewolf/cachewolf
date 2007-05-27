@@ -1,0 +1,107 @@
+#============================================================
+# spider.def - Definition file for reading caches from GC.COM
+# Version 1.0 - 20070526 skg
+#============================================================
+# A suffix of Rex indicates a regular expression
+# A suffix of ExStart indicates the start of an Extractor search pattern
+# A suffix of ExEnd indicates the end of an Extractor search pattern
+#
+# Important:
+# * When entering spaces into a string ensure to escape them or write them as \\u0020
+# * Be sure that you have no hidden spaces at the end of a line or the patterns will not match!
+#------------------------------------------------------------
+loginPage          = http://www.geocaching.com/login/Default.aspx
+nextPage           = /login/default.aspx
+#--------------------------------------
+#Section1: First page with list of caches
+#--------------------------------------
+firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
+firstPage2         = &lon=
+# Regex to search for cachenames 
+lineRex            = <tr bgcolor=((?s).*?)</tr>
+listBlockRex       = <table id="dlResults"((?s).*?)</table>
+distRex            = <br\ />(.*?)(km|mi)</td>
+waypointRex        = </a> \\((.*?)\\)<br>
+showOnlyFound      = &f=1
+nextListPage       = /seek/nearest.aspx
+
+#--------------------------------------
+#Section2: Get cachepage by name
+#--------------------------------------
+getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
+fetchAllLogs       = &log=y
+cacheUnavailable   = This\ cache\ is\ temporarily\ unavailable
+cacheArchived      = This cache\ has\ been\ archived
+latLonRex          = <span\ id="LatLon"><.*?>((?s).*?)</STRONG>
+shortDescRex       = <span\ id="ShortDescription">((?s).*?)</span>
+longDescRex        = <span\ id="LongDescription">((?s).*?)<strong>Additional\ Hints
+cacheNameRex       = <span\ id="CacheName">((?s).*?)</span>
+cacheOwnerRex      = <span\ id="CacheOwner".*?by ((?s).*?)\\[<A\ HREF=
+dateHiddenRex      = <span\ id="DateHidden">((?s).*?)</span>
+hintsRex           = <span\ id="Hints"\ class="displayMe">((?s).*?)</span>
+sizeRex            = This\ is\ a\ <strong>((?s).*?)</strong>\ cache
+difficultyRex      = <span\ id="Difficulty">.*?alt="(.*?)\ out\ of
+terrainRex         = <span\ id="Terrain">.*?alt="(.*?)\ out\ of
+cacheTypeRex       = <img\ src="../images/WptTypes/(.*?)\\.gif
+
+#--------------------------------------
+#Section2a: Logs
+#--------------------------------------
+# blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
+blockRex           = <span\ id="CacheLogs">((?s).*?)</span>
+# singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
+singleLogExStart   = <STRONG>
+singleLogExEnd     = [<A\ href=
+# iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
+iconExStart        = http://www.geocaching.com/images/icons/
+iconExEnd          = '\ align='abs
+nameTempExStart    = <A\ HREF="
+nameTempExEnd      = /A>
+# Name extrahiert aus nameTemp
+nameExStart        = >
+nameExEnd          = <
+dateExStart        = align='absmiddle'>&nbsp;
+dateExEnd          = \ by\ <
+logExStart         = found)
+logExEnd           = <br>[
+# Die Icons, die einen erfolgreichen Fund signalisieren
+icon_smile         = icon_smile.gif
+icon_camera        = icon_camera.gif
+
+#--------------------------------------
+#Section2b: Bugs
+#--------------------------------------
+# blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
+blockExStart       = >&nbsp;Inventory</td>
+blockExEnd         = What\ is\ a\ Travel\ Bug?
+# bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
+bugExStart         = <a\ href='
+bugExEnd           = </a></strong></td>
+bugDetailsStart    = id="BugDetail_BugGoal">
+bugDetailsEnd      = </span>
+
+#--------------------------------------
+#Section2c: Images
+#--------------------------------------
+# imgBlockEx searches for images in the long description
+imgBlockExStart    = <IMG
+imgBlockExEnd      = >
+# imgSpanEx searches for images in the image section
+imgSpanExStart     = <span\ id="Images"
+imgSpanExEnd       = </span>
+imgNameExStart     = align=absmiddle\ border=0>
+imgNameExEnd       = </a><br/>
+imgSrcExStart      = <A\ HREF='http://
+imgSrcExEnd        = '\ rel='lightbox'
+
+#--------------------------------------
+#Section2d: Additional waypoints
+#--------------------------------------
+wayBlockExStart    = <strong>Additional\ Waypoints</strong><br>
+wayBlockExEnd      = </table>
+nameRex            = &RefDS=1">(.*)</a>
+koordRex           = align="left">([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})</td>
+descRex            = colspan="4">(.*)</td>
+typeRex            = </a>\ \\((.*)\\)</td>
+rowBlockExStart    = <tr
+rowBlockExEnd      = </tr>
