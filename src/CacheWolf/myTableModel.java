@@ -170,17 +170,19 @@ public class myTableModel extends TableModel{
 		ta.alignment = ta.LEFT;
 		ta.anchor = ta.LEFT;
 		if(row >= 0){ 
-			CacheHolder ch = (CacheHolder)cacheDB.get(row);
-			if(isSelected == true) ta.fillColor = COLOR_SELECTED;
-			else if(ch.is_available == false && ch.is_found == true){
-				ta.fillColor = COLOR_ARCHFND_BG;   // Green BG
-				ta.foreground = COLOR_ARCHFND_FG;  // Red FG
-			}
-			else if(ch.is_archived == true) ta.fillColor = COLOR_ARCHIVED;
-			else if(ch.is_available == false) ta.fillColor = COLOR_AVAILABLE;
-			else if(ch.is_owned == true) ta.fillColor = COLOR_OWNED;
-			else if(ch.is_found == true) ta.fillColor = COLOR_FOUND;
-			else if(ch.is_flaged == true) ta.fillColor = COLOR_FLAGED;
+			try {
+			   CacheHolder ch = (CacheHolder)cacheDB.get(row);
+				if(isSelected == true) ta.fillColor = COLOR_SELECTED;
+				else if(ch.is_available == false && ch.is_found == true){
+					ta.fillColor = COLOR_ARCHFND_BG;   // Green BG
+					ta.foreground = COLOR_ARCHFND_FG;  // Red FG
+				}
+				else if(ch.is_archived == true) ta.fillColor = COLOR_ARCHIVED;
+				else if(ch.is_available == false) ta.fillColor = COLOR_AVAILABLE;
+				else if(ch.is_owned == true) ta.fillColor = COLOR_OWNED;
+				else if(ch.is_found == true) ta.fillColor = COLOR_FOUND;
+				else if(ch.is_flaged == true) ta.fillColor = COLOR_FLAGED;
+			} catch (Exception e) {};
 		}
 		return ta;
 	}
@@ -211,56 +213,58 @@ public class myTableModel extends TableModel{
 		if(row == -1) {
 			return (String)colName[col];
 		} else {
-			CacheHolder ch = (CacheHolder)cacheDB.get(row);
-			if(ch.is_filtered == false){
-				switch(colID[col]) { // Faster than using column names
-					case 0: // Checkbox
-						if (ch.is_Checked) 
-							return checkboxTicked; 
-						else 
-							return checkboxUnticked;
-					case 1: // Type
-						try {
-							return (IImage) cacheImages[Convert.parseInt(ch.type)]; // TODO save in cacheholder as int
-						} catch (NumberFormatException e) { return "?";}
-					case 2: // Difficulty;
-						return (String)ch.hard;
-					case 3: // Terrain
-						return (String)ch.terrain;
-					case 4: // Waypoint
-						if(ch.is_incomplete) return new IconAndText((IImage)skull, ch.wayPoint, fm);
-						if(ch.is_update    ) return new IconAndText((IImage)red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
-						if(ch.is_new       ) return new IconAndText((IImage)yellow, ch.wayPoint, fm);
-						if(ch.is_log_update) return new IconAndText((IImage)blue, ch.wayPoint, fm);
-						return (String)ch.wayPoint;
-					case 5: // Cachename
-						// Fast return for majority of case
-						if (ch.has_bug == false && ch.noFindLogs==0) return (String)ch.CacheName; 
-						// Now need more checks
-						IconAndText wpVal = new IconAndText();
-						if(ch.has_bug == true) wpVal.addColumn((IImage)bug);
-						if(ch.noFindLogs > 0){
-							if (ch.noFindLogs > noFindLogs.length) 
-								wpVal.addColumn((IImage)noFindLogs[noFindLogs.length-1]);
+			try { // Access to row can fail if many caches are deleted
+				CacheHolder ch = (CacheHolder)cacheDB.get(row);
+				if(ch.is_filtered == false){
+					switch(colID[col]) { // Faster than using column names
+						case 0: // Checkbox
+							if (ch.is_Checked) 
+								return checkboxTicked; 
 							else 
-								wpVal.addColumn((IImage)noFindLogs[ch.noFindLogs-1]);
-						}
-						wpVal.addColumn((String)ch.CacheName);
-						return wpVal;
-					case 6: // Location
-						return (String)ch.LatLon;
-					case 7: // Owner
-						return (String)ch.CacheOwner;
-					case 8: // Date hidden
-						return (String)ch.DateHidden;
-					case 9: // Status
-						return (String)ch.CacheStatus;
-					case 10: // Distance
-						return (String)ch.distance;
-					case 11: // Bearing
-						return (String)ch.bearing;
-				}
-			}
+								return checkboxUnticked;
+						case 1: // Type
+							try {
+								return (IImage) cacheImages[Convert.parseInt(ch.type)]; // TODO save in cacheholder as int
+							} catch (NumberFormatException e) { return "?";}
+						case 2: // Difficulty;
+							return (String)ch.hard;
+						case 3: // Terrain
+							return (String)ch.terrain;
+						case 4: // Waypoint
+							if(ch.is_incomplete) return new IconAndText((IImage)skull, ch.wayPoint, fm);
+							if(ch.is_update    ) return new IconAndText((IImage)red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
+							if(ch.is_new       ) return new IconAndText((IImage)yellow, ch.wayPoint, fm);
+							if(ch.is_log_update) return new IconAndText((IImage)blue, ch.wayPoint, fm);
+							return (String)ch.wayPoint;
+						case 5: // Cachename
+							// Fast return for majority of case
+							if (ch.has_bug == false && ch.noFindLogs==0) return (String)ch.CacheName; 
+							// Now need more checks
+							IconAndText wpVal = new IconAndText();
+							if(ch.has_bug == true) wpVal.addColumn((IImage)bug);
+							if(ch.noFindLogs > 0){
+								if (ch.noFindLogs > noFindLogs.length) 
+									wpVal.addColumn((IImage)noFindLogs[noFindLogs.length-1]);
+								else 
+									wpVal.addColumn((IImage)noFindLogs[ch.noFindLogs-1]);
+							}
+							wpVal.addColumn((String)ch.CacheName);
+							return wpVal;
+						case 6: // Location
+							return (String)ch.LatLon;
+						case 7: // Owner
+							return (String)ch.CacheOwner;
+						case 8: // Date hidden
+							return (String)ch.DateHidden;
+						case 9: // Status
+							return (String)ch.CacheStatus;
+						case 10: // Distance
+							return (String)ch.distance;
+						case 11: // Bearing
+							return (String)ch.bearing;
+					} // Switch
+				} // if
+			} catch (Exception e) { return null; }
 		}
 		return null;
 	}
