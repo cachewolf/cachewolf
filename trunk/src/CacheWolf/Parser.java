@@ -231,8 +231,11 @@ public class Parser{
 	
 	private double toNumber(String str) {
 		try {
-			if (Global.getPref().digSeparator.equals(","))	str = str.replace('.', ',');
-			 return java.lang.Double.parseDouble(str);
+			if (Global.getPref().digSeparator.equals(","))	
+				str = str.replace('.', ',');
+			else
+				str = str.replace(',','.');
+			return java.lang.Double.parseDouble(str);
 		} catch (NumberFormatException e) {
 			 return java.lang.Double.NaN;
 		}
@@ -376,19 +379,22 @@ public class Parser{
     private double funcCrossTotal(int nargs) throws Exception {
     	int cycles=1;
 		if (nargs==2) cycles=(int)popCalcStackAsNumber(1);
-		double a=java.lang.Math.abs(popCalcStackAsNumber(0));
+		String aString=popCalcStackAsString().replace('-','0').trim();
+		double a=0;
 		if (cycles<0) cycles=1;
     	if (cycles>5) cycles=5;
-    	while (a>=10 && cycles-->0) {
+    	while (cycles-->0) {
 	    	// Cross total = Quersumme berechnen
-			String aString = Convert.toString(a); // 
-			// bei 1.8e2 nur 1.8 verwenden 
-			if (aString.toLowerCase().indexOf("e") > 0) aString = aString.substring(0, aString.toLowerCase().indexOf("e"));
 			a=0;
 			for (int i=0; i<aString.length(); i++) {
-			 a += Convert.toDouble(Convert.toString(aString.charAt(i)));	
+			   if (aString.charAt(i)>='0' && aString.charAt(i)<='9')
+			      a += aString.charAt(i)-'0';
+			   else
+				  break; // break at first non numeric character 
 			}
-    	}return a;
+			aString=Convert.toString(a);
+    	} 
+    	return a;
     }
     
     /** Calculate distance between 2 points */
@@ -548,7 +554,7 @@ public class Parser{
     	String replaceWith=popCalcStackAsString();
     	String whatToReplace=popCalcStackAsString();
     	String s=popCalcStackAsString();
-        if (whatToReplace.equals("") || replaceWith.equals("")) return s;
+        if (whatToReplace.equals("")) return s;
         return STRreplace.replace(s,whatToReplace,replaceWith);
     }
     
