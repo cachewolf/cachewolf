@@ -31,6 +31,8 @@ public class DetailsPanel extends CellPanel{
 	private boolean dirty_notes = false;
 	private boolean dirty_details = false;
 	private boolean blackStatus = false;
+	private boolean blackStatusChanged=false;
+	
 	Preferences pref; // Test
 	Profile profile;
 	mImage imgBlack;
@@ -124,6 +126,9 @@ public class DetailsPanel extends CellPanel{
 	public boolean isDirty() {
 		return dirty_notes || dirty_details;
 	}
+	public boolean hasBlackStatusChanged() {
+		return blackStatusChanged;
+	}
 	
 	
 	/**
@@ -152,6 +157,7 @@ public class DetailsPanel extends CellPanel{
 			btnBlack.image = imgBlackNo;
 		}
 		blackStatus=ch.is_black; 
+		blackStatusChanged=false;
 		btnBlack.repaintNow();
 		if(ch.has_bug == true) {
 			btnShowBug.modify(Control.Disabled,1);
@@ -307,6 +313,7 @@ public class DetailsPanel extends CellPanel{
 				thisCache.setAttributesToAddiWpts();
 				btnBlack.repaintNow();
 				dirty_details=true;
+				blackStatusChanged=true;
 			}
 			else if (ev.target == btnNewWpt){
 				Global.mainTab.newWaypoint(new CacheHolder());
@@ -369,7 +376,7 @@ public class DetailsPanel extends CellPanel{
 		// the CacheHolder object which sits in cacheDB
 		  // Strip the found message if the status contains a date
 		if (chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found")) && 
-				  chcStatus.getText().length()==MyLocale.getMsg(318,"Found").length()+11)
+				  chcStatus.getText().length()>=MyLocale.getMsg(318,"Found").length()+11)
 			  thisCache.CacheStatus = chcStatus.getText().substring(MyLocale.getMsg(318,"Found").length()+1);
 		  else	  
 			  thisCache.CacheStatus = chcStatus.getText();
