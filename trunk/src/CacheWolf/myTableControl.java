@@ -95,6 +95,7 @@ public class myTableControl extends TableControl{
 		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete"))){
 			if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), MessageBox.YESB | MessageBox.NOB)).execute() != Form.IDYES) return;
 			DataMover dm=new DataMover();
+			Vm.showWait(true);
 			for(int i = cacheDB.size()-1; i >=0; i--){
 				ch = (CacheHolder)cacheDB.get(i);
 				if(ch.is_Checked == true) {
@@ -102,6 +103,7 @@ public class myTableControl extends TableControl{
 					cacheDB.remove(ch);
 				}
 			}
+			Vm.showWait(false);
 			profile.saveIndex(pref,true);	
 			tbp.refreshTable();
 		}
