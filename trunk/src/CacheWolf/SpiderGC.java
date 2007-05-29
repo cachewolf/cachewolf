@@ -750,9 +750,9 @@ public class SpiderGC{
 	 */
 	public void getImages(String doc, CacheHolderDetail chD){
 		int imgCounter = 0;
-		String imgName;
-		String imgType;
-		String imgUrl;
+		String imgName, oldImgName, imgType, imgUrl;
+		Vector spideredUrls=new Vector(15);
+		int idxUrl; // Index of already spidered Url in list of spideredUrls
 		//========
 		//In the long description
 		//========
@@ -773,14 +773,24 @@ public class SpiderGC{
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
 				try{
-					imgType = imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase();
-					if(!imgType.startsWith("com") && !imgType.startsWith("php") && !imgType.startsWith("exe")){
+					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+					// imgType is now max 4 chars, starting with .
+					if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
+						// Check whether image was already spidered for this cache
+						idxUrl=spideredUrls.find(imgUrl);
 						imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
-						pref.log("Loading image: " + imgUrl);
-						spiderImage(imgUrl, imgName+imgType);
+						if (idxUrl<0) { // New image
+							pref.log("Loading image: " + imgUrl);
+							spiderImage(imgUrl, imgName+imgType);
+							chD.Images.add(imgName+imgType);
+							spideredUrls.add(imgUrl);
+						} else { // Image already spidered as wayPoint_'idxUrl'
+							pref.log("Already loaded image: " + imgUrl);
+							oldImgName = chD.wayPoint + "_" + Convert.toString(idxUrl);
+							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
+						}
+						chD.ImagesText.add(imgName); // Keep the image name
 						imgCounter++;
-						chD.Images.add(imgName+imgType);
-						chD.ImagesText.add(imgName);
 					}
 				} catch (IndexOutOfBoundsException e) { 
 					//Vm.debug("IndexOutOfBoundsException not in image span"+e.toString()+"imgURL:"+imgUrl);
@@ -802,13 +812,24 @@ public class SpiderGC{
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
 				try{
-					imgType = imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase();
-					if(!imgType.startsWith("com") && !imgType.startsWith("php") && !imgType.startsWith("exe")){
+					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+					// imgType is now max 4 chars, starting with .
+					if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
+						// Check whether image was already spidered for this cache
+						idxUrl=spideredUrls.find(imgUrl);
 						imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
-						spiderImage(imgUrl, imgName+imgType);
+						if (idxUrl<0) { // New image
+							pref.log("Loading image: " + imgUrl);
+							spiderImage(imgUrl, imgName+imgType);
+							chD.Images.add(imgName+imgType);
+						} else { // Image already spidered as wayPoint_ 'idxUrl'
+							pref.log("Already loaded image: " + imgUrl);
+							oldImgName = chD.wayPoint + "_" + Convert.toString(idxUrl);
+							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
+						}
+						chD.ImagesText.add(exImgName.findNext()); // Keep the image description
+						chD.ImagesText.add(imgName); 
 						imgCounter++;
-						chD.Images.add(imgName+imgType);
-						chD.ImagesText.add(exImgName.findNext());
 					}
 				} catch (IndexOutOfBoundsException e) { 
 					pref.log("IndexOutOfBoundsException in image span. imgURL:"+imgUrl,e); 
