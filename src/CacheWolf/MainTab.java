@@ -166,6 +166,22 @@ public class MainTab extends mTabbedPanel {
 			} else statBar.updateDisplay();
 			// If no cache is selected, create a new one
 			switch (this.getSelectedItem()) {
+			case 0:
+				if (detP.hasBlackStatusChanged()) {
+					// Restore the filter status (this automatically sets the status for blacklisted caches)
+					//TODO This is not very elegant (see also SearchCache)
+					Filter flt=new Filter();
+					if (Filter.filterActive) {
+						flt.setFilter();
+						flt.doFilter();
+					} else {
+						flt.clearFilter();
+					}
+					if (Filter.filterInverted) 
+						flt.invertFilter();
+					tbP.refreshTable();
+				}
+				break;
 			case 1:  // DetailsPanel
 				if (chD==null) { // Empty DB - show a dummy detail
 					newWaypoint(chD=new CacheHolderDetail()); 
