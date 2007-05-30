@@ -8,7 +8,7 @@ import ewe.sys.*;
 
 public class Version {
 	static final String VER_MAJOR = "0.9n";
-	static final String VER_MINOR = "";
+	static final String VER_MINOR = " patch 1";
 	static final String VER_BUILD = " RC ";
 	static final String VER_SVN ="$LastChangedRevision$"; //the  number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
 	
