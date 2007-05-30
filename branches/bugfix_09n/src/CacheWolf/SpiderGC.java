@@ -751,18 +751,15 @@ public class SpiderGC{
 	}
 	
 	private String getLatLon(String doc){
-		inRex = new Regex("<span id=\"LatLon\"><.*?>((?s).*?)</STRONG>");
+		inRex = new Regex("<span id=\"LatLon\"><b>((?s).*?)</b></span>");
 		inRex.search(doc);
-		
-		//Vm.debug("LatLon: " + inRex.stringMatched(1));
-		
 		return inRex.stringMatched(1);
 	}
 	
 	private String getOwner(String doc){
-		inRex = new Regex("<span id=\"CacheOwner\".*?by ((?s).*?)\\[<A HREF=");
+		inRex = new Regex("<span id=\"CacheOwner\">by <a href=((?s).*?)>((?s).*?)</a></span></b>");
 		inRex.search(doc);
-		return inRex.stringMatched(1);
+		return inRex.stringMatched(2);
 	}
 	
 	private String getName(String doc){
