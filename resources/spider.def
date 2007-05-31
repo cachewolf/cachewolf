@@ -1,6 +1,7 @@
 #============================================================
 # spider.def - Definition file for reading caches from GC.COM
 # Version 1.0 - 20070526 skg
+# Version 2.0 - 20070531 nach GC Änderungen
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -32,11 +33,11 @@ getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
 cacheUnavailable   = This\ cache\ is\ temporarily\ unavailable
 cacheArchived      = This cache\ has\ been\ archived
-latLonRex          = <span\ id="LatLon"><.*?>((?s).*?)</STRONG>
+latLonRex          = <span\ id="LatLon"><b>((?s).*?)</b></span>
 shortDescRex       = <span\ id="ShortDescription">((?s).*?)</span>
 longDescRex        = <span\ id="LongDescription">((?s).*?)<strong>Additional\ Hints
 cacheNameRex       = <span\ id="CacheName">((?s).*?)</span>
-cacheOwnerRex      = <span\ id="CacheOwner".*?by ((?s).*?)\\[<A\ HREF=
+cacheOwnerRex      = <span\ id="CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span></b>
 dateHiddenRex      = <span\ id="DateHidden">((?s).*?)</span>
 hintsRex           = <span\ id="Hints"\ class="displayMe">((?s).*?)</span>
 sizeRex            = This\ is\ a\ <strong>((?s).*?)</strong>\ cache
