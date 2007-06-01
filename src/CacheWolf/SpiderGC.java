@@ -514,7 +514,7 @@ public class SpiderGC{
 	}
 	
 	public String getBugs(String doc){	
-		Extractor exBlock = new Extractor(doc, ">&nbsp;Inventory</td>","What is a Travel Bug?",0,Extractor.EXCLUDESTARTEND);
+		Extractor exBlock = new Extractor(doc, ">&nbsp;<b>Inventory</b>","What is a Travel Bug?",0,Extractor.EXCLUDESTARTEND);
 		String bugBlock = exBlock.findNext();
 		//Vm.debug("Bugblock: "+bugBlock);
 		Extractor exBug = new Extractor(bugBlock, "<a href='", "</a></strong></td>",0,Extractor.EXCLUDESTARTEND);
