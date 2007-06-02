@@ -1,4 +1,4 @@
-    /*
+/*
     CacheWolf is a software for PocketPC, Win and Linux that 
     enables paperless caching. 
     It supports the sites geocaching.com and opencaching.de
@@ -355,6 +355,8 @@ public class SpiderGC{
 				chD.is_available = true;
 				chD.is_archived = false;
 				chD.is_incomplete = false;
+				// Save size of logs to be able to check whether any new logs were added
+				int logsz = chD.CacheLogs.size();
 				chD.CacheLogs.clear();
 				chD.addiWpts.clear();
 				chD.Images.clear();
@@ -420,7 +422,6 @@ public class SpiderGC{
 				// Logs
 				//==========
 				pref.log("Trying logs");
-				int logsz = chD.CacheLogs.size();
 				chD.CacheLogs = getLogs(completeWebPage, chD);
 				// Count the number of not-found logs
 				int countNoFoundLogs = 0;
