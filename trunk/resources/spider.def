@@ -3,6 +3,7 @@
 # Version 1.0 - 20070526 skg
 # Version 2.0 - 20070531 nach GC Änderungen
 # Version 2.1 - 20070601 TB Anpassung an GC Änderung
+# Version 2.2 - 20070607 firstLine ergänzt. Damit funktionieren jetzt auch die nächsten Seiten.
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -25,6 +26,7 @@ listBlockRex       = <table id="dlResults"((?s).*?)</table>
 distRex            = <br\ />(.*?)(km|mi)</td>
 waypointRex        = </a> \\((.*?)\\)<br>
 showOnlyFound      = &f=1
+firstLine          = http://www.geocaching.com/seek/nearest.aspx?
 nextListPage       = /seek/nearest.aspx
 
 #--------------------------------------
