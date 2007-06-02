@@ -732,7 +732,7 @@ public class SpiderGC{
 	}
 	
 	private String getSize(String doc){
-		inRex = new Regex("This is a <strong>((?s).*?)</strong> cache");
+		inRex = new Regex("alt=\"Size: ((?s).*?)\" title=\"Size:");
 		inRex.search(doc);
 		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "None";
