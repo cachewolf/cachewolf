@@ -63,7 +63,7 @@ public class SpiderGC{
 		try {
 			if (p==null) {
 				p=new Properties();
-				p.load(new FileInputStream("spider.def"));
+				p.load(new FileInputStream(File.getProgramDirectory()+"/spider.def"));
 			}
 		} catch (Exception ex) {
 			p=null;
