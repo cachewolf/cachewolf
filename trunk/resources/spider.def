@@ -3,7 +3,8 @@
 # Version 1.0 - 20070526 skg
 # Version 2.0 - 20070531 nach GC Änderungen
 # Version 2.1 - 20070601 TB Anpassung an GC Änderung
-# Version 2.2 - 20070607 firstLine ergänzt. Damit funktionieren jetzt auch die nächsten Seiten.
+# Version 2.2 - 20070602 firstLine ergänzt. Damit funktionieren jetzt auch die nächsten Seiten.
+# Version 2.3 - 20070602 sizeRex an GC Änderungen angepasst
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -43,7 +44,7 @@ cacheNameRex       = <span\ id="CacheName">((?s).*?)</span>
 cacheOwnerRex      = <span\ id="CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span></b>
 dateHiddenRex      = <span\ id="DateHidden">((?s).*?)</span>
 hintsRex           = <span\ id="Hints"\ class="displayMe">((?s).*?)</span>
-sizeRex            = This\ is\ a\ <strong>((?s).*?)</strong>\ cache
+sizeRex            = alt="Size:\ ((?s).*?)"\ title="Size:
 difficultyRex      = <span\ id="Difficulty">.*?alt="(.*?)\ out\ of
 terrainRex         = <span\ id="Terrain">.*?alt="(.*?)\ out\ of
 cacheTypeRex       = <img\ src="../images/WptTypes/(.*?)\\.gif
