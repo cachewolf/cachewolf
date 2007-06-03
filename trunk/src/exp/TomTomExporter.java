@@ -178,7 +178,20 @@ public class TomTomExporter {
 			outp.writeBytes(",");
 			outp.writeBytes(lat);
 			outp.writeBytes(",");
-			outp.writeBytes("\"" + ch.CacheName.replace(',',' ') + "\"\r\n");
+			//outp.writeBytes("\"" + ch.CacheName.replace(',',' ') + "\"\r\n");
+			outp.writeBytes("\"");
+			outp.writeBytes(ch.wayPoint);
+			outp.writeBytes(" - ");
+			outp.writeBytes(ch.CacheName.replace(',',' '));
+			outp.writeBytes(" by ");
+			outp.writeBytes(ch.CacheOwner);
+			outp.writeBytes("- ");             
+			outp.writeBytes(ch.hard);
+			outp.writeBytes("/");
+			outp.writeBytes(ch.terrain);
+			outp.writeBytes(" - ");
+			outp.writeBytes(ch.CacheSize);
+			outp.writeBytes("\"\r\n");
 		} catch (IOException e) {
 			Vm.debug("Error writing to file");
 			e.printStackTrace();
