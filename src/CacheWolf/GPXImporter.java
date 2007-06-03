@@ -30,6 +30,7 @@ public class GPXImporter extends MinML {
 	boolean spiderOK = true;
 	boolean doSpider = false;
 	boolean fromOC = false;
+	boolean fromTC = false;
 	boolean nameFound = false;
 	int zaehlerGel = 0;
 	Hashtable DBindex = new Hashtable();
@@ -154,6 +155,9 @@ public class GPXImporter extends MinML {
 			// check for opencaching
 			if (atts.getValue("creator").indexOf("opencaching")> 0) fromOC = true;
 			else fromOC = false;
+			if (atts.getValue("creator").startsWith("TerraCaching")) fromTC = true;
+			else fromTC = false;
+
 			if (fromOC && doSpider) (new MessageBox("Warnung", "GPX-Dateien von Opencaching enthalten keine Informationen zu Bildern, sie werden nicht heruntergeladen. Am besten Caches von Opencaching holen per Menü /Anwendung/Download von Opencaching", MessageBox.OKB)).execute();
 			zaehlerGel = 0;
 		}
@@ -167,6 +171,12 @@ public class GPXImporter extends MinML {
 			nameFound = false;
 			return;
 		}
+		
+		if (name.equals("link")&& inWpt){
+			holder.URL = atts.getValue("href");
+			return;
+		}
+
 		if (name.equals("groundspeak:cache")) {
 			inCache = true;
 			if (atts.getValue("available").equals("True"))
@@ -193,6 +203,11 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		
+		if (name.equals("terra:terracache")) {
+			inCache=true;
+		}
+
+		
 		if (name.equals("groundspeak:long_description")) {
 			if (atts.getValue("html").toLowerCase().equals("true"))
 				holder.is_HTML= true;
@@ -200,12 +215,12 @@ public class GPXImporter extends MinML {
 				holder.is_HTML = false;
 			
 		}
-		if (name.equals("description")) {
-			//set HTML always to true if from oc.de
+		if (name.equals("description") || name.equals("terra:description") ) {
+			//set HTML always to true if from oc.de or TC
 			holder.is_HTML= true;
 		}
 
-		if (name.equals("groundspeak:logs") || name.equals("log")) {
+		if (name.equals("groundspeak:logs") || name.equals("log") || name.equals("terra:logs")) {
 			inLogs = true;
 			return;
 		}
@@ -225,15 +240,15 @@ public class GPXImporter extends MinML {
 		
 		// logs
 		if (inLogs){
-			if (name.equals("groundspeak:date")|| name.equals("time"))  {
+			if (name.equals("groundspeak:date")|| name.equals("time")|| name.equals("terra:date"))  {
 				logDate = new String(strData.substring(0,10));
 				return;
 			}
-			if (name.equals("groundspeak:type") || name.equals("type")){
+			if (name.equals("groundspeak:type") || name.equals("type") || name.equals("terra:type")){
 				logIcon = new String(typeText2Image(strData));
 				return;
 			}
-			if (name.equals("groundspeak:finder")|| name.equals("geocacher")){
+			if (name.equals("groundspeak:finder")|| name.equals("geocacher")|| name.equals("terra:user")){
 				logFinder = new String(strData);
 				if(logIcon.equals("<img src='icon_smile.gif'>&nbsp;") && 
 				  (logFinder.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && logFinder.equalsIgnoreCase(pref.myAlias2)))) {
@@ -242,11 +257,11 @@ public class GPXImporter extends MinML {
 				}
 				return;
 			}
-			if (name.equals("groundspeak:text") || name.equals("text")){ 
+			if (name.equals("groundspeak:text") || name.equals("text") || name.equals("terra:entry")){ 
 				logData = new String(strData);
 				return;
 			}
-			if (name.equals("groundspeak:log") || name.equals("log") ) {
+			if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log") ) {
 				holder.CacheLogs.add(logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
 				return;
 			}
@@ -290,7 +305,7 @@ public class GPXImporter extends MinML {
 								//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
 							}
 						}
-					if(holder.wayPoint.startsWith("GC")) {
+					if(holder.wayPoint.startsWith("GC")|| fromTC) {
 						//spiderImages();
 						spiderImagesUsingSpider();
 						//Rename image sources
@@ -338,13 +353,11 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		if (name.equals("groundspeak:travelbugs")) {
+			holder.has_bug = true;
 			inBug = false;
 			return;
 		}
-		if (name.equals("groundspeak:travelbug")) {
-			holder.has_bug = true;
-			return;
-		}
+
 		if (name.equals("groundspeak:name")&& inBug) {
 			holder.Bugs += "<b>Name:</b> " + strData + "<br><hr>";  
 			return;
@@ -359,7 +372,7 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		// cache information
-		if (name.equals("groundspeak:cache") || name.equals("geocache")) {
+		if (name.equals("groundspeak:cache") || name.equals("geocache")|| name.equals("terra:terracache")) {
 			inCache = false;
 		}
 		
@@ -397,24 +410,24 @@ public class GPXImporter extends MinML {
 		}
 
 		
-		if (name.equals("groundspeak:name")&& inCache) {
+		if ((name.equals("groundspeak:name")|| name.equals("terra:name")) && inCache) {
 			holder.CacheName = strData;
 			return;
 		}
-		if (name.equals("groundspeak:owner") || name.equals("owner")) {
+		if (name.equals("groundspeak:owner") || name.equals("owner")||name.equals("terra:owner")) {
 			holder.CacheOwner = strData;
 			if(pref.myAlias.equals(strData)) holder.is_owned = true;
 			return;
 		}
-		if (name.equals("groundspeak:difficulty") || name.equals("difficulty")) {
+		if (name.equals("groundspeak:difficulty") || name.equals("difficulty") || name.equals("terra:mental_challenge")) {
 			holder.hard = strData.replace('.',',');
 			return;
 		}
-		if (name.equals("groundspeak:terrain")|| name.equals("terrain")) {
+		if (name.equals("groundspeak:terrain")|| name.equals("terrain")|| name.equals("terra:physical_challenge")) {
 			holder.terrain = strData.replace('.',',');
 			return;
 		}
-		if ((name.equals("groundspeak:type") || name.equals("type"))&& inCache){
+		if ((name.equals("groundspeak:type") || name.equals("type")|| name.equals("terra:style"))&& inCache){
 			holder.type= CacheType.typeText2Number(strData);
 			return;
 		}
@@ -422,19 +435,31 @@ public class GPXImporter extends MinML {
 			holder.CacheSize = strData;
 			return;
 		}
+		
+		if (name.equals("terra:size")){
+			holder.CacheSize = TCSizetoText(strData);
+		}
+
 		if (name.equals("groundspeak:short_description")|| name.equals("summary")) {
 			if (holder.is_HTML)	holder.LongDescription =SafeXML.cleanback(strData);
 			else holder.LongDescription =strData;
 			return;
 		}
 
-		if (name.equals("groundspeak:long_description")|| name.equals("description")) {
+		if (name.equals("groundspeak:long_description")|| name.equals("description")|| name.equals("terra:description")) {
 			if (holder.is_HTML)	holder.LongDescription +=SafeXML.cleanback(strData);
 			else holder.LongDescription +=strData;
 			return;
 		}
 		if (name.equals("groundspeak:encoded_hints") || name.equals("hints")) {
 			holder.Hints = Common.rot13(strData);
+			return;
+		}
+		
+		if (name.equals("terra:hint")) {
+			// remove "&lt;br&gt;<br>" from the end
+			int indexTrash = strData.indexOf("&lt;br&gt;<br>");
+			if (indexTrash > 0)	holder.Hints = Common.rot13(strData.substring(0,indexTrash));
 			return;
 		}
 
@@ -506,9 +531,9 @@ public class GPXImporter extends MinML {
 	}
 
 	public static String typeText2Image(String typeText){
-		if (typeText.equals("Found it")||typeText.equals("Found")) return "<img src='icon_smile.gif'>&nbsp;";
-		if (typeText.equals("Didn't find it")||typeText.equals("Not Found")) return "<img src='icon_sad.gif'>&nbsp;";
-		if (typeText.equals("Write note")||typeText.equals("Note")
+		if (typeText.equals("Found it")||typeText.equals("Found")||typeText.equals("find")) return "<img src='icon_smile.gif'>&nbsp;";
+		if (typeText.equals("Didn't find it")||typeText.equals("Not Found")||typeText.equals("no_find")) return "<img src='icon_sad.gif'>&nbsp;";
+		if (typeText.equals("Write note")||typeText.equals("Note")||typeText.equals("note")
 			||typeText.equals("Not Attempted")||typeText.equals("Other")) return "<img src='icon_note.gif'>&nbsp;";
 		if (typeText.equals("Enable Listing")) return "<img src='icon_enabled.gif'>&nbsp;";
 		if (typeText.equals("Temporarily Disable Listing")) return "<img src='icon_disabled.gif'>&nbsp;";
@@ -524,6 +549,16 @@ public class GPXImporter extends MinML {
 		if (typeText.equals("Update Coordinates")) return "<img src='coord_update.gif'>&nbsp;";
 		//Vm.debug("Unknown Log Type:" + typeText);
 		return typeText +"&nbsp;";
+	}
+	
+	public static String TCSizetoText(String size){
+		if (size.equals("1")) return "Micro";
+		if (size.equals("2")) return "Medium";
+		if (size.equals("3")) return "Regular";
+		if (size.equals("4")) return "Large";
+		if (size.equals("5")) return "Very Large";
+
+		return "None";
 	}
 
 	/**
@@ -560,10 +595,15 @@ public class GPXImporter extends MinML {
 		// just to be sure to have a spider object
 		if (imgSpider == null) imgSpider = new SpiderGC(pref, profile, false);
 		
-		addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.wayPoint ;
+		if (fromTC) {
+			imgSpider.getImages(holder.LongDescription, holder);
+		}
+		else {
+			addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.wayPoint ;
 			//Vm.debug(addr + "|");
-		cacheText = SpiderGC.fetch(addr);
-		imgSpider.getImages(cacheText, holder);
+			cacheText = SpiderGC.fetch(addr);
+			imgSpider.getImages(cacheText, holder);
+		}
 	}
 	
 	public static String replace(String source, String pattern, String replace){

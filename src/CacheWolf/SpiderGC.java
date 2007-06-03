@@ -758,7 +758,8 @@ public class SpiderGC{
 		//In the long description
 		//========
 		String longDesc = "";
-		longDesc = getLongDesc(doc);
+		if (chD.wayPoint.startsWith("TC")) longDesc = doc;
+		else longDesc = getLongDesc(doc);
 		longDesc = STRreplace.replace(longDesc, "img", "IMG");
 		longDesc = STRreplace.replace(longDesc, "src", "SRC");
 		longDesc = STRreplace.replace(longDesc, "'", "\"");
