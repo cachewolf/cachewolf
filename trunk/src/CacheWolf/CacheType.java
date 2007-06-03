@@ -144,8 +144,8 @@ public class CacheType {
 	}
 
 	public static String typeText2Number(String typeText){
-		if (typeText.equals("Traditional Cache") || typeText.equals("Traditional")) return "2";
-		if (typeText.equals("Multi-cache") || typeText.equals("Multi")) return "3";
+		if (typeText.equals("Traditional Cache") || typeText.equals("Traditional")|| typeText.equals("Classic")) return "2";
+		if (typeText.equals("Multi-cache") || typeText.equals("Multi") || typeText.equals("Offset")) return "3";
 		if (typeText.equals("Virtual Cache") || typeText.equals("Virtual")) return "4";
 		if (typeText.equals("Letterbox Hybrid")) return "5";
 		if (typeText.equals("Event Cache") || typeText.equals("Event")) return "6";
