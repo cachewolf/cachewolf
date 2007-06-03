@@ -770,7 +770,7 @@ public class SpiderGC{
 		//Vm.debug("Test: \n" + tst);
 		Extractor exImgSrc = new Extractor(tst, "http://", "\"", 0, true);
 		while(exImgBlock.endOfSearch() == false){
-			imgUrl = exImgSrc.findNext();
+			imgUrl = exImgSrc.findNext().toLowerCase();
 			//Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
@@ -809,7 +809,7 @@ public class SpiderGC{
 		Extractor exImgName = new Extractor(tst,p.getProperty("imgNameExStart"),p.getProperty("imgNameExEnd"), 0 , true);
 		exImgSrc = new Extractor(tst,p.getProperty("imgSrcExStart"),p.getProperty("imgSrcExEnd"), 0, true);
 		while(exImgSrc.endOfSearch() == false){
-			imgUrl = exImgSrc.findNext();
+			imgUrl = exImgSrc.findNext().toLowerCase();
 			//Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
@@ -830,7 +830,6 @@ public class SpiderGC{
 							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
 						}
 						chD.ImagesText.add(exImgName.findNext()); // Keep the image description
-						chD.ImagesText.add(imgName); 
 						imgCounter++;
 					}
 				} catch (IndexOutOfBoundsException e) { 
