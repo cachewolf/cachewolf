@@ -281,6 +281,13 @@ public class Parser{
 			scanpos++;
 		} else err(MyLocale.getMsg(1704,"Unexpected end of source"));
 	}
+	
+	private TokenObj peekToken() {
+		if(scanpos < tokenStack.size()){
+			return (TokenObj)tokenStack.get(scanpos);
+		} else
+			return new TokenObj();
+	}
 
 	private void getNextTokenOtherThanSemi() throws Exception {
 		do {
@@ -666,35 +673,51 @@ public class Parser{
 		boolean compRes=false;
 		TokenObj ifToken=thisToken;
 		getToken();
-		parseStringExp();
-		compOp=thisToken.tt;
-		if (compOp<TokenObj.TT_LT || compOp>TokenObj.TT_NE) err(MyLocale.getMsg(1723,"Comparison operator expected"));
-		getToken();
-		parseStringExp();
-		checkNextSymIs("THEN");
-		getNextTokenOtherThanSemi();
-		// If the first expression is a string, compare as string.
-		if (calcStack.get(calcStack.size()-2) instanceof String) {
-			String b=popCalcStackAsString();
-			String a=popCalcStackAsString();
-			switch (compOp) {
-				case TokenObj.TT_EQ: compRes=a.equals(b); break;
-				case TokenObj.TT_NE: compRes=!a.equals(b); break;
-				case TokenObj.TT_LT: compRes=a.compareTo(b)<0; break;
-				case TokenObj.TT_GT: compRes=a.compareTo(b)>0; break;
-				case TokenObj.TT_LE: compRes=a.compareTo(b)<=0; break;
-				case TokenObj.TT_GE: compRes=a.compareTo(b)>=0; break;
-			}
-		} else { // First expression is a number, compare as numbers
-			double b=popCalcStackAsNumber(0);
-			double a=popCalcStackAsNumber(0);
-			switch (compOp) {
-				case TokenObj.TT_EQ: compRes=a==b; break;
-				case TokenObj.TT_NE: compRes=a!=b; break;
-				case TokenObj.TT_LT: compRes=a<b; break;
-				case TokenObj.TT_GT: compRes=a>b; break;
-				case TokenObj.TT_LE: compRes=a<=b; break;
-				case TokenObj.TT_GE: compRes=a>=b; break;
+		// Check for "IF varName THEN" construct to check whether a variable is defined
+		if (thisToken.tt==TokenObj.TT_VARIABLE && peekToken().token.toUpperCase().equals("THEN")) {
+			String varName=thisToken.token;
+			getToken(); //THEN
+			Object result = symbolTable.get(Global.getPref().solverIgnoreCase?varName.toUpperCase():varName);
+			if(result == null) { // Var not found check whether it is a waypoint
+				if (varName.startsWith("$")) { // Could be a cachename
+					varName=varName.substring(1);
+					compRes=Global.getProfile().getCacheIndex(varName)!=-1;
+				} else 
+					compRes=false;
+			} else // Found the variable, it must have a value
+				compRes=true;
+			getNextTokenOtherThanSemi();
+		} else { // Normal: IF expression THEN
+			parseStringExp();
+			compOp=thisToken.tt;
+			if (compOp<TokenObj.TT_LT || compOp>TokenObj.TT_NE) err(MyLocale.getMsg(1723,"Comparison operator expected"));
+			getToken();
+			parseStringExp();
+			checkNextSymIs("THEN");
+			getNextTokenOtherThanSemi();
+			// If the first expression is a string, compare as string.
+			if (calcStack.get(calcStack.size()-2) instanceof String) {
+				String b=popCalcStackAsString();
+				String a=popCalcStackAsString();
+				switch (compOp) {
+					case TokenObj.TT_EQ: compRes=a.equals(b); break;
+					case TokenObj.TT_NE: compRes=!a.equals(b); break;
+					case TokenObj.TT_LT: compRes=a.compareTo(b)<0; break;
+					case TokenObj.TT_GT: compRes=a.compareTo(b)>0; break;
+					case TokenObj.TT_LE: compRes=a.compareTo(b)<=0; break;
+					case TokenObj.TT_GE: compRes=a.compareTo(b)>=0; break;
+				}
+			} else { // First expression is a number, compare as numbers
+				double b=popCalcStackAsNumber(0);
+				double a=popCalcStackAsNumber(0);
+				switch (compOp) {
+					case TokenObj.TT_EQ: compRes=a==b; break;
+					case TokenObj.TT_NE: compRes=a!=b; break;
+					case TokenObj.TT_LT: compRes=a<b; break;
+					case TokenObj.TT_GT: compRes=a>b; break;
+					case TokenObj.TT_LE: compRes=a<=b; break;
+					case TokenObj.TT_GE: compRes=a>=b; break;
+				}
 			}
 		}
 		if (compRes) { // comparison resulted in TRUE
