@@ -123,7 +123,7 @@ public class Parser{
     	new fnType("rot13","rot13",2),
     	new fnType("show","show",2),
     	new fnType("sin","sin",2),
-    	new fnType("skeleton","skeleton",2),
+    	new fnType("skeleton","skeleton",3),
     	new fnType("sqrt","sqrt",2),
     	new fnType("sval","sval",2),
     	new fnType("tolowercase","lc",2),
@@ -572,34 +572,68 @@ public class Parser{
     	return res;
     }
     
-    /** Create a skeleton for multis */
-    private void funcSkeleton(String waypointName) throws Exception {
-   		int i=Global.getProfile().getCacheIndex(waypointName);
-		if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
-   	    CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(i);
-		CacheHolder addiWpt;
-		StringBuffer op=new StringBuffer(1000);
-   	    if (ch.hasAddiWpt()){
-			for (int j=0; j<ch.addiWpts.getCount();j++){
-				addiWpt = (CacheHolder)ch.addiWpts.get(j);
-				op.append("IF $");
-				op.append(addiWpt.wayPoint);
-				op.append("=\"\" THEN\n   $");
-				op.append(addiWpt.wayPoint);
-				op.append("=\"\" # Pos=");
-				op.append(addiWpt.pos.toString());
-				op.append("\n   \"Punkt ");
-				op.append(addiWpt.wayPoint.substring(0,2));
-				op.append(" [");
-				op.append(addiWpt.CacheName);
-				op.append("] = \" $");
-				op.append(addiWpt.wayPoint);
-				op.append("\n   goto($");
-				op.append(addiWpt.wayPoint);
-				op.append("); STOP\nENDIF\n");
+    /** Create a skeleton for multis. This function can be called in three ways:<br>
+     *  <pre>sk("waypointname")  Create skeleton for a give waypointname (must have addi wpts)
+     *  sk()                Create skeleton for current cache (must have addi wpts) 
+     *  sk(number)          Create skeleton for number variables 
+     *  sk("letter")        Create skeleton for number of variables up to and including letter</pre>  
+     */
+    private void funcSkeleton(int nargs) throws Exception {
+   		String waypointName=Global.mainTab.lastselected;
+    	if (nargs==1) waypointName=popCalcStackAsString();
+    	int nVars=(int)Common.parseDouble(waypointName);
+    	// Check for case 4, i.e. sk("K")
+    	if (nVars==0 && waypointName.length()==1) nVars=((int)waypointName.toUpperCase().charAt(0)-(int)'A')+1;
+    	if (nVars>0 && nVars<100) { // e.g. sk(3)  or  sk("C") 
+			StringBuffer op=new StringBuffer(1000);
+    		// Write A=\n B=\n    etc.
+			for (int i=0; i<nVars; i++) op.append((char)(((int)'A')+i)+"=\n");
+			op.append("N0=\nE0=\n\ncls()\n");
+			for (int i=0; i<nVars; i++) {
+				op.append("IF "+((char)(((int)'A')+i))+ " THEN\n");
+				op.append("   N"+(char)(((int)'1')+i)+"=N"+(char)(((int)'0')+i)+"\n");
+				op.append("   E"+(char)(((int)'1')+i)+"=E"+(char)(((int)'0')+i)+"\n");
+				op.append("   NEXT=\"N \" N"+(char)(((int)'1')+i)+"\" E \" E"+(char)(((int)'1')+i)+"\n");
+				op.append("   STAGE=\"STAGE"+(char)(((int)'1')+i)+"\"\n");
+				op.append("\nENDIF\n"); //"STAGE1=" NEXT
 			}
+			op.append("IF NEXT THEN\n");
+			op.append("   STAGE \"=\" NEXT\n");
+			op.append("   goto(NEXT);\n");
+			op.append("ENDIF\n\n");
 			Global.mainTab.solverP.mText.appendText(op.toString(),true);
-		}// if hasAddiWpt
+    	} else {
+	    	int i=Global.getProfile().getCacheIndex(waypointName);
+			if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
+	   	    CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(i);
+			CacheHolder addiWpt;
+			StringBuffer op=new StringBuffer(1000);
+	   	    if (ch.hasAddiWpt()){
+				for (int j=0; j<ch.addiWpts.getCount();j++){
+					addiWpt = (CacheHolder)ch.addiWpts.get(j);
+					op.append("IF $");
+					op.append(addiWpt.wayPoint);
+					op.append("=\"\" THEN\n   $");
+					op.append(addiWpt.wayPoint);
+					op.append("=\"\"");
+					//op.append(addiWpt.pos.toString());
+					op.append("\n   \"\"\n   \"Punkt ");
+					op.append(addiWpt.wayPoint.substring(0,2));
+					op.append(" [");
+					op.append(addiWpt.CacheName);
+					op.append("] = \" $");
+					op.append(addiWpt.wayPoint);
+					CacheHolderDetail chD=new CacheHolderDetail(addiWpt);
+					chD.readCache(Global.getProfile().dataDir);
+					if (chD.LongDescription.trim().length()>0)
+						op.append("\n   \""+STRreplace.replace(chD.LongDescription,"\"","\"\"")+"\"");
+					op.append("\n   goto($");
+					op.append(addiWpt.wayPoint);
+					op.append("); STOP\nENDIF\n\n");
+				}
+				Global.mainTab.solverP.mText.appendText(op.toString(),true);
+			}// if hasAddiWpt
+    	}
     }
     
     private double funcSqrt() throws Exception {
@@ -923,7 +957,7 @@ public class Parser{
 //	    else if (funcDef.alias.equals("rs")) funcRequireSemicolon(nargs);
 	    else if (funcDef.alias.equals("show"));
 	    else if (funcDef.alias.equals("sin")) calcStack.add(new java.lang.Double(java.lang.Math.sin(popCalcStackAsNumber(0))));
-	    else if (funcDef.alias.equals("skeleton")) funcSkeleton(popCalcStackAsString());
+	    else if (funcDef.alias.equals("skeleton")) funcSkeleton(nargs);
 	    else if (funcDef.alias.equals("sqrt")) calcStack.add(new java.lang.Double(funcSqrt())); 
 	    else if (funcDef.alias.equals("sval")) calcStack.add(funcSval(popCalcStackAsString()));
 	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(popCalcStackAsNumber(0))));
