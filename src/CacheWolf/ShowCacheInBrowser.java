@@ -108,15 +108,15 @@ public class ShowCacheInBrowser {
 						s.append(chD.LongDescription.substring(start,pos));
 						imgRex.searchFrom(chD.LongDescription,pos);
 						String imgUrl=imgRex.stringMatched(1);
-						Vm.debug("imgUrl "+imgUrl);
+						//Vm.debug("imgUrl "+imgUrl);
 						if (imgUrl.lastIndexOf('.')>0) {
 							String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 							// If we have an image which we stored when spidering, we can display it
 							if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
 								s.append("<img src=\"file://"+
 								   Global.getProfile().dataDir+chD.Images.get(imageNo)+"\">");
+								imageNo++;
 							}
-							imageNo++;
 						}
 						start=chD.LongDescription.indexOf(">",pos);
 						if (start>=0) start++;
@@ -188,7 +188,7 @@ public class ShowCacheInBrowser {
 			//detfile.print(tpl.output());
 			detfile.close();
 			try {
-				String s = "\""+Global.getPref().browser+"\" \"file:"+saveTo+"\"";
+				String s = "\""+Global.getPref().browser+"\" \"file://"+saveTo+"\"";
 
 				Vm.exec(s,"",0,false); //Global.getPref().browser+" \"file:"+saveTo+"\"");
 				Global.getPref().log("Executing: "+s); //Global.getPref().browser+" \""+saveTo+"\"");
