@@ -20,8 +20,10 @@ public class myTableControl extends TableControl{
 		Menu m = new Menu(new String[]{
 				MyLocale.getMsg(1021,"Open description"),
 				MyLocale.getMsg(1010,"Goto"),
-				MyLocale.getMsg(1019,"enter"),
-				MyLocale.getMsg(1020,"open in $browser online"),
+				MyLocale.getMsg(1019,"Enter"),
+				"-",
+				MyLocale.getMsg(1020,"Open in $browser online"),
+				MyLocale.getMsg(1018,"Open in browser offline"),
 				"-",
 				MyLocale.getMsg(1011,"Filter"),
 				MyLocale.getMsg(1012,"Delete"),
@@ -31,6 +33,8 @@ public class myTableControl extends TableControl{
 				MyLocale.getMsg(1016,"De-select all")},
 				MyLocale.getMsg(1013,"With selection"));
 		setMenu(m);
+		if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
+		   ((MenuItem)m.items.get(5)).modifiers|=MenuItem.Disabled;
 		profile=Global.getProfile();
 		cacheDB = profile.cacheDB;
 		pref = Global.getPref();
@@ -185,6 +189,10 @@ public class myTableControl extends TableControl{
 			} catch (IOException ex) {
 				(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();
 			}
+		}
+		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1018,"Open in browser offline"))) {
+			ShowCacheInBrowser sc=new ShowCacheInBrowser();
+			sc.showCache(new CacheHolderDetail((CacheHolder)cacheDB.get(tbp.getSelectedCache())));
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1021,"Open description"))){
 			penDoubleClicked(null);

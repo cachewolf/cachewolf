@@ -133,6 +133,36 @@ public class CacheType {
 		return geo;
 	}
 	
+	/**
+	 * Returns the image name of a given internal type
+	 * @param type Type of cache
+	 * @return The image name of the cache
+	 */
+	public static String type2pic(int type) {
+		switch(type) {
+			case CW_TRADITIONAL:	return CW_PIC_TRADITIONAL;
+			case CW_MULTI:			return CW_PIC_MULTI;
+			case CW_VIRTUAL:		return CW_PIC_VIRTUAL;
+			case CW_LETTERBOX:		return CW_PIC_LETTERBOX;
+			case CW_EVENT:			return CW_PIC_EVENT;
+			case CW_QUIZ:			return CW_PIC_QUIZ;
+			case CW_UNKNOWN:		return CW_PIC_UNKNOWN;
+			case CW_MOVING:			return CW_PIC_MOVING;
+			case CW_DRIVE_IN:		return CW_PIC_DRIVE_IN;
+			case CW_WEBCAM:			return CW_PIC_WEBCAM;
+			case CW_LOCATIONLESS:	return CW_PIC_LOCATIONLESS;
+			case CW_CITO:			return CW_PIC_CITO;
+			case CW_MEGA_EVENT:		return CW_PIC_MEGA_EVENT;
+			case CW_PARKING:		return CW_PIC_PARKING;
+			case CW_STAGE_OF_MULTI:	return CW_PIC_STAGE_OF_MULTI;
+			case CW_QUESTION:		return CW_PIC_QUESTION;
+			case CW_FINAL:			return CW_PIC_FINAL;
+			case CW_TRAILHEAD:		return CW_PIC_TRAILHEAD;
+			case CW_REFERENCE:		return CW_PIC_REFERENCE;
+			default:		return "no_picture.png";
+		}
+	}
+
 	public static boolean isAddiWpt(String type){
 		if (type.equals("50")) return true;
 		if (type.equals("51")) return true;
