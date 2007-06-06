@@ -22,7 +22,6 @@ public class SolverPanel extends CellPanel{
 	Preferences pref;
 	Profile profile;
 	String currFile;
-	CacheHolder currChD;
 	Tokenizer tokenizer = new Tokenizer();
 	Parser parser = new Parser();
 	Vector msgFIFO = new Vector();
@@ -96,11 +95,6 @@ public class SolverPanel extends CellPanel{
 		this.addLast(split);
 	}
 	
-	public void setCh(CacheHolderDetail chD) {
-		currChD=chD;
-		setInstructions(chD.Solver);
-	}
-
 	private void execDirectCommand() {
 		InpScreen boxInp=new InpScreen(MyLocale.getMsg(1733,"Input command"));
 		boxInp.input(parent.getFrame(),"",100); //,MyLocale.getScreenWidth()*4/5);

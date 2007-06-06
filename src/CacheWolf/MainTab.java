@@ -27,7 +27,7 @@ public class MainTab extends mTabbedPanel {
 	SolverPanel solverP;
 	String lastselected = new String();
 	CacheHolder ch=null;
-	CacheHolderDetail chD =null;
+	CacheHolderDetail chD =null, chMain=null;
 	MainMenu mnuMain;
 	StatusBar statBar;
 	MovingMap mm;
@@ -131,6 +131,7 @@ public class MainTab extends mTabbedPanel {
 			postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,0));
 		} else	
 			select(detP);
+		solverP.setInstructions("");
 		tbP.refreshTable();
 
 	}
@@ -219,7 +220,17 @@ public class MainTab extends mTabbedPanel {
 				break;
 			case 7:  // Solver Panel
 				MyLocale.setSIPButton();
-				solverP.setCh(chD);
+				if (chD.isAddiWpt()) { 
+					chMain=new CacheHolderDetail(chD.mainCache);
+					try {
+						chMain.readCache(profile.dataDir);
+					} catch(Exception e){pref.log("Error reading cache",e);}
+					//Vm.debug("mainT: AddiWaypoint:"+chD.wayPoint+", MainWp:"+chMain.wayPoint);
+					solverP.setInstructions(chMain.Solver);
+				} else {
+					//Vm.debug("mainT: Waypoint:"+chD.wayPoint);
+					solverP.setInstructions(chD.Solver);
+				}
 				break;
 			case 8:  // Cache Radar Panel
 				MyLocale.setSIPOff();
@@ -278,9 +289,15 @@ public class MainTab extends mTabbedPanel {
 		if(detP.isDirty()) {
 			detP.saveDirtyWaypoint();
 		}
-		if (solverP.isDirty()) {
-			chD.Solver=solverP.getInstructions();
-			chD.saveCacheDetails(Global.getProfile().dataDir);
+		if (chD!=null && solverP.isDirty()) {
+			if (chMain==null) {
+				chD.Solver=solverP.getInstructions();
+				chD.saveCacheDetails(Global.getProfile().dataDir);
+			} else {
+				chMain.Solver=solverP.getInstructions();
+				chMain.saveCacheDetails(Global.getProfile().dataDir);
+				chMain=null;
+			}
 		}
 	}
 
