@@ -235,11 +235,6 @@ public class GPXImporter extends MinML {
 			}
 			if (name.equals("groundspeak:finder")|| name.equals("geocacher")){
 				logFinder = new String(strData);
-				if(logIcon.equals("<img src='icon_smile.gif'>&nbsp;") && 
-				  (logFinder.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && logFinder.equalsIgnoreCase(pref.myAlias2)))) {
-					holder.CacheStatus=logDate;
-					holder.is_found=true;
-				}
 				return;
 			}
 			if (name.equals("groundspeak:text") || name.equals("text")){ 
@@ -248,6 +243,11 @@ public class GPXImporter extends MinML {
 			}
 			if (name.equals("groundspeak:log") || name.equals("log") ) {
 				holder.CacheLogs.add(logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
+				if(logIcon.equals("<img src='icon_smile.gif'>&nbsp;") && 
+						  (logFinder.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && logFinder.equalsIgnoreCase(pref.myAlias2)))) {
+							holder.CacheStatus=logDate;
+							holder.is_found=true;
+				}
 				return;
 			}
 		}
