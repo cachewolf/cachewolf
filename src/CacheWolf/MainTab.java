@@ -278,6 +278,10 @@ public class MainTab extends mTabbedPanel {
 		if(detP.isDirty()) {
 			detP.saveDirtyWaypoint();
 		}
+		if (solverP.isDirty()) {
+			chD.Solver=solverP.getInstructions();
+			chD.saveCacheDetails(Global.getProfile().dataDir);
+		}
 	}
 
 	/** Save the index file and any pending change in DetailsPanel
