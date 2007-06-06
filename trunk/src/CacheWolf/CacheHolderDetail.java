@@ -27,10 +27,11 @@ public class CacheHolderDetail extends CacheHolder {
 	  public Vector CacheIcons = new Vector();
 	  public String Bugs = EMPTY;
 	  public String URL = EMPTY;
+	  public String Solver = EMPTY;
 	  
 	 public CacheHolderDetail() {
 	 }
-	 public CacheHolderDetail(String wpt) {super(wpt); }
+	 //public CacheHolderDetail(String wpt) {super(wpt); }
 	 public CacheHolderDetail(CacheHolder ch) {
 		 super(ch);
 	 }
@@ -131,6 +132,7 @@ public class CacheHolderDetail extends CacheHolder {
 			}else break;
 		 }
 		 noFindLogs = z;
+		 this.Solver=newCh.Solver;
 	 	return this;
 	  }
 	  
@@ -291,7 +293,8 @@ public class CacheHolderDetail extends CacheHolder {
 					URL = "http://www.geocaching.com/seek/cache_details.aspx?wp="+ wayPoint + "&Submit6=Find&log=y";
 				}
 			}
-
+			ex = new Extractor(text, "<SOLVER><![CDATA[", "]]></SOLVER>", 0, true);
+			Solver=ex.findNext();
 		}
 		
 		/**
@@ -370,6 +373,7 @@ public class CacheHolderDetail extends CacheHolder {
 				  detfile.print(Bugs+"\n");
 				  detfile.print("]]></BUGS>\n");
 				  detfile.print("<URL><![CDATA["+URL+"]]></URL>\r\n");
+				  detfile.print("<SOLVER><![CDATA["+Solver+"]]></SOLVER>\r\n");
 				  detfile.print("</CACHEDETAILS>\n");
 				} // if length
 			} catch (Exception e){

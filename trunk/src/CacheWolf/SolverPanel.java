@@ -22,11 +22,26 @@ public class SolverPanel extends CellPanel{
 	Preferences pref;
 	Profile profile;
 	String currFile;
-	CacheHolder currCh;
+	CacheHolder currChD;
 	Tokenizer tokenizer = new Tokenizer();
 	Parser parser = new Parser();
 	Vector msgFIFO = new Vector();
 	Menu mnuContext;
+	private boolean dirty=false;
+	
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	public String getInstructions() {
+		return mText.getText();
+	}
+	public void setInstructions(String text) {
+		mText.setText(text);
+		mText.repaint();
+	}
+	
+	
 	private class OutputPanel extends mTextPad {
 		MenuItem mnuClr;
 		OutputPanel() {
@@ -72,16 +87,18 @@ public class SolverPanel extends CellPanel{
 
 		programPanel.addLast(new ScrollBarPanel(mText = new InputPanel()));
 		programPanel.addNext(mBtSolve= new mButton(MyLocale.getMsg(1735,"Solve!")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		programPanel.addNext(btnLoad= new mButton(MyLocale.getMsg(1736,"Load")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		/*programPanel.addNext(btnLoad= new mButton(MyLocale.getMsg(1736,"Load")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		programPanel.addNext(btnSave= new mButton(MyLocale.getMsg(1737,"Save")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		programPanel.addLast(btnSaveAs= new mButton(MyLocale.getMsg(1738,"SaveAs")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		*/
 		outputPanel.addLast(new ScrollBarPanel(mOutput = new OutputPanel()));
 
 		this.addLast(split);
 	}
 	
-	public void setCh(CacheHolder ch) {
-		currCh=ch;
+	public void setCh(CacheHolderDetail chD) {
+		currChD=chD;
+		setInstructions(chD.Solver);
 	}
 
 	private void execDirectCommand() {
@@ -104,11 +121,12 @@ public class SolverPanel extends CellPanel{
     }
 	
 	public void onEvent(Event ev){
+		if (ev.target==mText) {dirty=true; }
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == mBtSolve){
 				processCommand(mText.getText());
 			}
-			if(ev.target == btnLoad){
+/*			if(ev.target == btnLoad){
 				FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
 				
 				fc.addMask(currCh.wayPoint + ".wl");
@@ -153,7 +171,7 @@ public class SolverPanel extends CellPanel{
 					}
 				}
 			}
-			
+*/			
 		}
 	}
 	
