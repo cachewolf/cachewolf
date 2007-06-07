@@ -190,7 +190,7 @@ public class ShowCacheInBrowser {
 			try {
 				String s = "\""+Global.getPref().browser+"\" \"file://"+saveTo+"\"";
 
-				Vm.exec(s,"",0,false); //Global.getPref().browser+" \"file:"+saveTo+"\"");
+				Vm.exec(s); //Global.getPref().browser+" \"file:"+saveTo+"\"");
 				Global.getPref().log("Executing: "+s); //Global.getPref().browser+" \""+saveTo+"\"");
 			} catch (Exception ioex) {
 			}
