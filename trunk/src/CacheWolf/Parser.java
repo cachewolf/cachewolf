@@ -45,6 +45,7 @@ number -> valid number
 package CacheWolf;
 
 import ewe.util.*;
+import com.stevesoft.ewe_pat.*;
 import ewe.sys.*;
 import java.lang.Double;
 
@@ -573,42 +574,49 @@ public class Parser{
     }
     
     /** Create a skeleton for multis. This function can be called in three ways:<br>
-     *  <pre>sk("waypointname")  Create skeleton for a give waypointname (must have addi wpts)
-     *  sk()                Create skeleton for current cache (must have addi wpts) 
+     *  <pre>sk()                Create skeleton for current cache (must have addi wpts) 
      *  sk(number)          Create skeleton for number variables 
-     *  sk("letter")        Create skeleton for number of variables up to and including letter</pre>  
      */
     private void funcSkeleton(int nargs) throws Exception {
    		String waypointName=Global.mainTab.lastselected;
-    	if (nargs==1) waypointName=popCalcStackAsString();
-    	int nVars=(int)Common.parseDouble(waypointName);
-    	// Check for case 4, i.e. sk("K")
-    	if (nVars==0 && waypointName.length()==1) nVars=((int)waypointName.toUpperCase().charAt(0)-(int)'A')+1;
-    	if (nVars>0 && nVars<100) { // e.g. sk(3)  or  sk("C") 
-			StringBuffer op=new StringBuffer(1000);
-    		// Write A=\n B=\n    etc.
-			for (int i=0; i<nVars; i++) op.append((char)(((int)'A')+i)+"=\n");
-			op.append("N0=\nE0=\n\ncls()\n");
-			for (int i=0; i<nVars; i++) {
-				op.append("IF "+((char)(((int)'A')+i))+ " THEN\n");
-				op.append("   N"+(char)(((int)'1')+i)+"=N"+(char)(((int)'0')+i)+"\n");
-				op.append("   E"+(char)(((int)'1')+i)+"=E"+(char)(((int)'0')+i)+"\n");
-				op.append("   NEXT=\"N \" N"+(char)(((int)'1')+i)+"\" E \" E"+(char)(((int)'1')+i)+"\n");
-				op.append("   STAGE=\"STAGE"+(char)(((int)'1')+i)+"\"\n");
-				op.append("\nENDIF\n"); //"STAGE1=" NEXT
-			}
-			op.append("IF NEXT THEN\n");
-			op.append("   STAGE \"=\" NEXT\n");
-			op.append("   goto(NEXT);\n");
-			op.append("ENDIF\n\n");
+    	int ci=Global.getProfile().getCacheIndex(waypointName);
+    	if (ci<0) return;
+    	// If it is an addi, find its main cache
+    	if (((CacheHolder) Global.getProfile().cacheDB.get(ci)).isAddiWpt()) {
+    		waypointName=((CacheHolder) Global.getProfile().cacheDB.get(ci)).mainCache.wayPoint;
+    	}
+   		int nStages=-1;
+    	if (nargs==1) {
+    		nStages=(int)popCalcStackAsNumber(-1.0);
+    	}
+    	// Remove the sk command from the instructions
+    	Regex rex=new Regex("sk\\(.*?\\)","");
+    	Global.mainTab.solverP.mText.setText(rex.replaceFirst(Global.mainTab.solverP.mText.getText()));
+		StringBuffer op=new StringBuffer(1000);
+    	// Check for sk(number)
+    	if (nStages>0 && nStages<30) { // e.g. sk(3)
+			/*IF $01xxxx="" THEN
+			   $01xxxx=""
+			   "Station 1 = " $01xxxx
+			   goto($01xxxx); STOP
+			ENDIF*/
+			for (int i=0; i<nStages; i++) {
+				String stage=MyLocale.formatLong(i+1,"00");
+				String stageWpt="$"+stage+waypointName.substring(2);
+				op.append("IF "+stageWpt+"=\"\" THEN\n");
+				op.append("  "+stageWpt+" = \"\"\n");
+				op.append("  \"Stage "+(i+1)+" = \" "+stageWpt+"\n");
+				op.append("  goto("+stageWpt+"); STOP\n");
+				op.append("ENDIF\n");
+			}		
 			Global.mainTab.solverP.mText.appendText(op.toString(),true);
     	} else {
 	    	int i=Global.getProfile().getCacheIndex(waypointName);
 			if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
 	   	    CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(i);
 			CacheHolder addiWpt;
-			StringBuffer op=new StringBuffer(1000);
 	   	    if (ch.hasAddiWpt()){
+	   	    	op.append("cls()\n");
 				for (int j=0; j<ch.addiWpts.getCount();j++){
 					addiWpt = (CacheHolder)ch.addiWpts.get(j);
 					op.append("IF $");
@@ -617,7 +625,7 @@ public class Parser{
 					op.append(addiWpt.wayPoint);
 					op.append("=\"\"");
 					//op.append(addiWpt.pos.toString());
-					op.append("\n   \"\"\n   \"Punkt ");
+					op.append("\n   \"Punkt ");
 					op.append(addiWpt.wayPoint.substring(0,2));
 					op.append(" [");
 					op.append(addiWpt.CacheName);
