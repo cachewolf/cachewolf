@@ -531,7 +531,7 @@ public class SpiderGC{
 		Regex rex2 = new Regex(p.getProperty("longDescRex"));
 		inRex.search(doc);
 		rex2.search(doc);
-		res = inRex.stringMatched(1) + "<br>";
+		res = ((inRex.stringMatched(1)==null)?"":inRex.stringMatched(1)) + "<br>";
 		res += rex2.stringMatched(1); 
 		return SafeXML.cleanback(res);
 	}
