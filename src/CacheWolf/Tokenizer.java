@@ -50,6 +50,22 @@ public class Tokenizer{
 		return "?!<>(){}*/,;^+-=".indexOf(c)!=-1;
 	}
 
+	/**
+	 * Convert Unicode version of special chars to normal
+	 * @param c Char to convert
+	 * @return Converted char
+	 */
+	private char standardizeSourceChar(char c) {
+		if (c=='\u00A0' || (c>='\u2002' && c<='\u200b')) c=' ';
+		if (c>='\u2010' && c<='\u2015') c='-';
+		if (c>='\u201c' && c<='\u201f') c='"';
+		if (c=='[') c='(';
+		if (c==']') c=')';
+		if (c=='\u00f7' || c=='\u2044') c='/';
+		if (c=='\u2024') c='.';
+		return c;
+	}
+
 	private boolean getChar(){
 		if(sourcePointer >= mySource.length()) {
 			look='\n';
@@ -63,8 +79,10 @@ public class Tokenizer{
 	private char lookAhead() {
 		if(sourcePointer >= mySource.length())
 			return '\n';
-		else
-			return mySource.charAt(sourcePointer);
+		else {
+			char c=standardizeSourceChar(mySource.charAt(sourcePointer));
+			return c;
+		}
 	}
 	
 	private void backUp() {
@@ -117,6 +135,7 @@ public class Tokenizer{
 		boolean foundDecSep=false; // To check that only one decimal point is allowed in a number
 		startToken();
 		while(getChar()){
+			look=standardizeSourceChar(look);
 			if(isDigit(look) || (look=='.' && !foundDecSep)) {
 				currentStream += look;
 				if (look=='.') foundDecSep=true;
@@ -194,6 +213,7 @@ public class Tokenizer{
 		currentStream="";
 		startToken();
 		while (getChar() && look!=':') {
+			look=standardizeSourceChar(look);
 			currentStream += look;
 			if (look!='.' && look!='0' && look!='#') err(MyLocale.getMsg(1731,"Invalid format character"));
 		}
@@ -210,12 +230,13 @@ public class Tokenizer{
 		currentStream="";
 		try {
 			while(getChar()){
-				if (look==' ' || look=='\u00A0') continue;
+				look=standardizeSourceChar(look);
+				if (look==' ') continue;
 				currentStream += look;
 				if(isAlpha(look) || look=='$') streamAlphas();
 				else if(isDigit(look)) streamDigits();
 				else if(isSymbol(look)) streamSymbol();
-				else if(look == '\"') streamString();  
+				else if(look == '"') streamString();  
 				else if(look == '\n') {
 					if (newLineIsSeparator && !currentStream.equals("\\\n") && !currentStream.equals("_\n")) { 
 						currentStream=";";
