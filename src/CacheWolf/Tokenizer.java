@@ -35,6 +35,7 @@ public class Tokenizer{
     private void err(String str) throws Exception {
     	messageStack.add(MyLocale.getMsg(1700,"Error on line: ") + currentLine + "  "+MyLocale.getMsg(1701," position: ") + currentPos);
     	messageStack.add(str);
+    	if (Global.mainTab.solverP.mText.setSelectionRange(0,currentLine-1,currentPos,currentLine-1))Global.mainTab.solverP.mText.repaintNow();
     	throw new Exception("Error "+str);
     }
 
