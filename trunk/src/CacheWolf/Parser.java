@@ -162,7 +162,7 @@ public class Parser{
     	messageStack.add(MyLocale.getMsg(1700,"Error on line: ") + thisToken.line + "  "+MyLocale.getMsg(1701,"position: ") + thisToken.position);
     	messageStack.add(str);
     	// move cursor to error location
-    	Global.mainTab.solverP.mText.setSelectionRange(thisToken.position-1,thisToken.line-1,thisToken.position+thisToken.token.length()-1,thisToken.line-1);
+    	if (Global.mainTab.solverP.mText.setSelectionRange(0,thisToken.line-1,thisToken.position+thisToken.token.length()-1,thisToken.line-1))Global.mainTab.solverP.mText.repaintNow();
     	throw new Exception("Error "+str);
     }
     
