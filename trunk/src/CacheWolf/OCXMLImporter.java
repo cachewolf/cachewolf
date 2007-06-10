@@ -32,7 +32,8 @@ public class OCXMLImporter extends MinML {
 	boolean debugGPX = false;
 	Vector cacheDB;
 	InfoBox inf;
-	CacheHolderDetail holder;
+	CacheHolder ch;
+	CacheHolderDetail chD;
 	Preferences pref;
 	Profile profile;
 	Time dateOfthisSync;
@@ -65,11 +66,11 @@ public class OCXMLImporter extends MinML {
 			incUpdate = false;
 		}
 		user = p.myAlias.toLowerCase();
-		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			DBindexWpt.put((String)ch.wayPoint, new Integer(i));
-			DBindexID.put((String)ch.ocCacheID, new Integer(i));
+			if (!ch.ocCacheID.equals(""))
+				DBindexID.put((String)ch.ocCacheID, new Integer(i));
 		}//for
 
 	}
@@ -102,7 +103,6 @@ public class OCXMLImporter extends MinML {
 			}
 			profile.distOC = dist;
 			// Clear status of caches in db
-			CacheHolder ch;
 			for(int i = 0; i<cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
 				ch.is_update = false;
@@ -111,19 +111,19 @@ public class OCXMLImporter extends MinML {
 			}	
 			picCnt = 0;
 			//Build url
-			url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?";
-			url += "modifiedsince=" + lastS;
-			url +="&cache=1";
-			url +="&cachedesc=1";
-			url +="&picture=1";
-			url +="&cachelog=1";
-			url +="&removedobject=0";
-			url +="&lat=" + center.getLatDeg(CWPoint.DD);
-			url +="&lon=" + center.getLonDeg(CWPoint.DD);
-			url +="&distance=" + dist;
-			url +="&charset=utf-8";
-			url +="&cdata=0";
-			url +="&session=0";
+			url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
+				+ "modifiedsince=" + lastS
+				+ "&cache=1"
+				+ "&cachedesc=1"
+				+ "&picture=1"
+				+ "&cachelog=1"
+				+ "&removedobject=0"
+				+ "&lat=" + center.getLatDeg(CWPoint.DD)
+				+ "&lon=" + center.getLonDeg(CWPoint.DD)
+				+ "&distance=" + dist
+				+ "&charset=utf-8"
+				+ "&cdata=0"
+				+ "&session=0";
 			inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
 			inf.setPreferredSize(220, 300);
 			inf.relayout(false);
@@ -166,15 +166,15 @@ public class OCXMLImporter extends MinML {
 				success = false;
 			}
 		}catch (IllegalArgumentException e) {
-			finalMessage = MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in opencaching.de\nplease try again later\n, state:")+" "+state+", waypoint: "+ holder.wayPoint;
+			finalMessage = MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in opencaching.de\nplease try again later\n, state:")+" "+state+", waypoint: "+ chD.wayPoint;
 			success = false;
-			Vm.debug("Parse error: " + state + " " + holder.wayPoint);
+			Vm.debug("Parse error: " + state + " " + chD.wayPoint);
 			e.printStackTrace();
 		}catch (Exception e){ // here schould be used the correct exepion
-			if (holder != null)	finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.wayPoint;
+			if (chD != null)	finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ chD.wayPoint;
 			else finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: <unkown>";
 			success = false;
-			Vm.debug("Parse error: " + state + " " + holder.wayPoint);
+			Vm.debug("Parse error: " + state + " Exception:" + e.toString()+"   "+chD.ocCacheID);
 			e.printStackTrace();
 		}
 		Vm.showWait(false);
@@ -257,27 +257,27 @@ public class OCXMLImporter extends MinML {
 			cacheID = atts.getValue("id");
 		}
 		if(name.equals("type")){
-			holder.type = CacheType.transOCType(atts.getValue("id"));
+			chD.type = CacheType.transOCType(atts.getValue("id"));
 			return;
 		}
 		if(name.equals("status")){
-			if(atts.getValue("id").equals("1")) holder.is_available = true;
-			if(atts.getValue("id").equals("2")) holder.is_available = false;
+			if(atts.getValue("id").equals("1")) chD.is_available = true;
+			if(atts.getValue("id").equals("2")) chD.is_available = false;
 			if(atts.getValue("id").equals("3")) {
-				holder.is_archived = true;
-				holder.is_available = false;
+				chD.is_archived = true;
+				chD.is_available = false;
 			}
-			if(atts.getValue("id").equals("4")) holder.is_available = false;
+			if(atts.getValue("id").equals("4")) chD.is_available = false;
 			return;
 		}
 		if(name.equals("size")){
-			holder.CacheSize = transSize(atts.getValue("id"));
+			chD.CacheSize = transSize(atts.getValue("id"));
 			return;
 		}
 
 		if(name.equals("waypoints")){
-			holder.wayPoint = atts.getValue("oc");
-			if (holder.wayPoint.length()==0) throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching.de / it happens on 27-12-2006 on cache OC143E
+			chD.wayPoint = atts.getValue("oc");
+			if (chD.wayPoint.length()==0) throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching.de / it happens on 27-12-2006 on cache OC143E
 			return;
 		}
 
@@ -289,11 +289,11 @@ public class OCXMLImporter extends MinML {
 		}
 
 		if (name.equals("desc")){
-			holder.is_HTML = atts.getValue("html").equals("1")?true:false;
+			chD.is_HTML = atts.getValue("html").equals("1")?true:false;
 		}
 
 		if (name.equals("language") && !atts.getValue("id").equals("DE")){
-			if (holder.LongDescription.length()> 0) ignoreDesc = true; // TODO "DE" in preferences adjustable
+			if (chD.LongDescription.length()> 0) ignoreDesc = true; // TODO "DE" in preferences adjustable
 			else ignoreDesc = false;
 		}
 	}
@@ -312,12 +312,12 @@ public class OCXMLImporter extends MinML {
 			case 1: 
 				logIcon = GPXImporter.typeText2Image("Found"); 
 				if (logFinder.equalsIgnoreCase(user) || logFinder.equalsIgnoreCase(pref.myAlias2)) { // see also endCacheLog
-					holder.is_found = true; 
-					holder.CacheStatus = MyLocale.getMsg(318,"Found");
+					chD.is_found = true; 
+					chD.CacheStatus = MyLocale.getMsg(318,"Found");
 				}
 				break;
 			case 2:	logIcon = GPXImporter.typeText2Image("Not Found"); 
-			holder.noFindLogs += 1;
+			chD.noFindLogs += 1;
 			break;
 			case 3: logIcon = GPXImporter.typeText2Image("Note");
 			}
@@ -333,25 +333,25 @@ public class OCXMLImporter extends MinML {
 	private void endCache(String name){
 		if (name.equals("cache")){
 			int index;
-			index = searchWpt(holder.wayPoint);
+			index = searchWpt(chD.wayPoint);
 			if (index == -1){
-				holder.is_new = true;
-				cacheDB.add(holder);
-				DBindexWpt.put((String)holder.wayPoint, new Integer(cacheDB.size()-1));
-				DBindexID.put((String)holder.ocCacheID, new Integer(cacheDB.size()-1));
+				chD.is_new = true;
+				cacheDB.add(new CacheHolder(chD));
+				DBindexWpt.put((String)chD.wayPoint, new Integer(cacheDB.size()-1));
+				DBindexID.put((String)chD.ocCacheID, new Integer(cacheDB.size()-1));
 			}
 			// update (overwrite) data
 			else {
-				holder.is_new = false;
-				cacheDB.set(index, holder);
+				chD.is_new = false;
+				cacheDB.set(index, new CacheHolder(chD));
 				// save ocCacheID, in case, the previous data is from GPX
-				DBindexID.put((String)holder.ocCacheID, new Integer(index));
+				DBindexID.put((String)chD.ocCacheID, new Integer(index));
 			}
 			// clear data (picture, logs) if we do a complete Update
 			if (incUpdate == false){
-				holder.CacheLogs.clear();
-				holder.Images.clear();
-				holder.ImagesText.clear();
+				chD.CacheLogs.clear();
+				chD.Images.clear();
+				chD.ImagesText.clear();
 			}
 			/*			if(holder.LatLon.length() > 1 && holder.is_archived == false &&
 					pref.downloadMapsOC){
@@ -381,49 +381,46 @@ public class OCXMLImporter extends MinML {
 			} */
 
 			// save all
-			holder.saveCacheDetails(profile.dataDir); 
+			chD.saveCacheDetails(profile.dataDir); 
 			// profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); // this is done after .xml is completly processed
 			return;
 		}
-		if(name.equals("id")){
-			holder = getHolder(strData);
-			holder.URL = ocSeekUrl + cacheID;
+		if(name.equals("id")){ // </id>
+			chD = getHolder(strData); // Allocate a new CacheHolder object
+			chD.ocCacheID=strData;
+			chD.URL = ocSeekUrl + cacheID;
 			return;
 		}
 
 		if(name.equals("name")){
-			holder.CacheName = strData;
+			chD.CacheName = strData;
 			return;
 		}
 		if(name.equals("userid")) {
-			holder.CacheOwner = strData;
-			if(holder.CacheOwner.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && holder.CacheOwner.equalsIgnoreCase(pref.myAlias2))) holder.is_owned = true;
+			chD.CacheOwner = strData;
+			if(chD.CacheOwner.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equalsIgnoreCase(pref.myAlias2))) chD.is_owned = true;
 			return;
 		}
 
 		if(name.equals("longitude")){
-			holder.LatLon = GPXImporter.londeg2min(strData);
+			chD.LatLon = GPXImporter.londeg2min(strData);
 			return;
 		}
 		if(name.equals("latitude")) {
-			holder.LatLon = GPXImporter.latdeg2min(strData) + " " + holder.LatLon;
-			holder.pos.set(holder.LatLon);
+			chD.LatLon = GPXImporter.latdeg2min(strData) + " " + chD.LatLon;
+			chD.pos.set(chD.LatLon);
 			return;
 		}
 		if(name.equals("difficulty")) {
-			holder.hard = strData;
+			chD.hard = strData;
 			return;
 		}
 		if(name.equals("terrain")) {
-			holder.terrain = strData;
+			chD.terrain = strData;
 			return;
 		}
 		if(name.equals("datehidden")) {
-			//String Date = new String();
-			//Date = strData.substring(5,7); // month
-			//Date += "/" + strData.substring(8,10); // day
-			//Date += "/" + strData.substring(0,4); // year
-			holder.DateHidden = strData.substring(0,10); //Date;
+			chD.DateHidden = strData.substring(0,10); //Date;
 			return;
 		}
 	}
@@ -432,7 +429,7 @@ public class OCXMLImporter extends MinML {
 
 		if (!ignoreDesc){
 			if (name.equals("cachedesc")){
-				if (pref.downloadPicsOC && holder.is_HTML) {
+				if (pref.downloadPicsOC && chD.is_HTML) {
 					String fetchUrl, imgTag, imgAltText;
 					Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthält keine Anführungszeichen
 					Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
@@ -440,12 +437,12 @@ public class OCXMLImporter extends MinML {
 					imgRegexUrl.setIgnoreCase(true);
 					int descIndex=0;
 					int numDownloaded=1;
-					while (imgRegexUrl.searchFrom(holder.LongDescription, descIndex)) { // "img" found
+					while (imgRegexUrl.searchFrom(chD.LongDescription, descIndex)) { // "img" found
 						imgTag=imgRegexUrl.stringMatched(1); // (1) enthält das gesamte <img ...>-tag
 						fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anführungszeichen 
 						if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
 						if (fetchUrl==null) { // TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
-							inf.addWarning(MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.wayPoint));
+							inf.addWarning(MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+chD.wayPoint));
 							continue;
 						}
 						inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported + "\n"+MyLocale.getMsg(1620, "downloading embedded images: ") + numDownloaded++);
@@ -462,30 +459,30 @@ public class OCXMLImporter extends MinML {
 						getPic(fetchUrl, imgAltText);
 					}
 				}
-				holder.saveCacheDetails(profile.dataDir);
+				chD.saveCacheDetails(profile.dataDir);
 				return;
 			}
 
 
 			if (name.equals("cacheid")){
 				// load cachedata
-				holder = getHolder(strData);
-				holder.is_update = true;
+				chD = getHolder(strData);
+				chD.is_update = true;
 				return;
 			}
 
 			if (name.equals("shortdesc")){
-				holder.LongDescription = strData;
+				chD.LongDescription = strData;
 				return;
 			}
 
-			if (name.equals("desc")){
-				if (holder.is_HTML)	holder.LongDescription +=SafeXML.cleanback(strData);
-				else holder.LongDescription +=strData;
+			if (name.equals("desc")){ // </desc>
+				if (chD.is_HTML)	chD.LongDescription +=SafeXML.cleanback(strData);
+				else chD.LongDescription +=strData;
 				return;
 			}
 			if (name.equals("hint")){
-				holder.Hints = Common.rot13(strData);
+				chD.Hints = Common.rot13(strData);
 				return;
 			}
 		}
@@ -493,25 +490,25 @@ public class OCXMLImporter extends MinML {
 
 	private void getPic(String fetchURL, String picDesc){ // TODO handling of relativ URLs
 		if (!fetchURL.startsWith("http://")) fetchURL = "http://" + OPENCACHING_HOST + "/"+fetchURL; // TODO this is not quite correct: actually the "base" URL must be known... but anyway a different baseURL should not happen very often  - it doesn't in my area
-		String fileName = holder.wayPoint + "_" + fetchURL.substring(fetchURL.lastIndexOf("/")+1);
+		String fileName = chD.wayPoint + "_" + fetchURL.substring(fetchURL.lastIndexOf("/")+1);
 		fileName = Common.ClearForFileName(fileName);
 		// add title
-		holder.ImagesText.add(picDesc);
+		chD.ImagesText.add(picDesc);
 		try {
 			File ftest = new File(profile.dataDir + fileName);
 			if (ftest.exists()){
-				holder.Images.add(fileName);
+				chD.Images.add(fileName);
 			}
 			else {
 				if (pref.downloadPicsOC) {
-					holder.Images.add(fetch(fetchURL, fileName));
+					chD.Images.add(fetch(fetchURL, fileName));
 				}
 			}
 		} catch (IOException e) {
-			String ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ") + holder.wayPoint + ": ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+fetchURL); 
+			String ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ") + chD.wayPoint + ": ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+fetchURL); 
 			if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect") ||
 					e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
-				ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+holder.CacheName + " ("+holder.wayPoint+")"+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
+				ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+chD.CacheName + " ("+chD.wayPoint+")"+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
 			} 
 			inf.addWarning("\n"+ErrMessage);
 			//(new MessageBox(MyLocale.getMsg(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
@@ -539,42 +536,42 @@ public class OCXMLImporter extends MinML {
 		}
 		if(name.equals("object")){
 			// get cachedata
-			holder = getHolder(strData);
+			chD = getHolder(strData);
 			return;
 		}
 		if(name.equals("picture")){ 
 			//String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
 			getPic(picUrl,picTitle);
-			holder.saveCacheDetails(profile.dataDir);
+			chD.saveCacheDetails(profile.dataDir);
 			return;
 		}
 	}
 
 	private void endCacheLog(String name){
-		if (name.equals("cachelog")){
-			holder.addLog(logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
-			holder.saveCacheDetails(profile.dataDir);
+		if (name.equals("cachelog")){ // </cachelog>
+			chD.addLog(logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
+			chD.saveCacheDetails(profile.dataDir);
 			return;
 		}
 
-		if (name.equals("cacheid")){
+		if (name.equals("cacheid")){ // </cacheid>
 			// load cachedata
-			holder = getHolder(strData);
+			chD = getHolder(strData);
 			return;
 		}
 
 		if (name.equals("date"))  {
 			logDate = new String(strData);
-			if (holder.is_found) {
-				holder.CacheStatus=strData.substring(0,10);
+			if (chD.is_found) {
+				chD.CacheStatus=strData.substring(0,10);
 			}
 			return;
 		}
 		if (name.equals("userid")){
 			logFinder = new String(strData);
 			if((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(pref.myAlias2)) && logtype == 1){
-				holder.is_found = true; // see startCacheLog - in the current .xml this is set by startCacheLog but we sequence in the xml from opencaching might change, so I leave this also here
-				holder.CacheStatus = MyLocale.getMsg(318,"Found");
+				chD.is_found = true; // see startCacheLog - in the current .xml this is set by startCacheLog but we sequence in the xml from opencaching might change, so I leave this also here
+				chD.CacheStatus = MyLocale.getMsg(318,"Found");
 			}
 			return;
 		}
@@ -607,7 +604,7 @@ public class OCXMLImporter extends MinML {
 			sock = conn.connect();
 			address = conn.getRedirectTo();
 			if (address != null){
-				if (holder != null) fileName = holder.wayPoint + "_" + Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
+				if (chD != null) fileName = chD.wayPoint + "_" + Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
 				else fileName = Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
 			}
 		}
@@ -674,19 +671,19 @@ public class OCXMLImporter extends MinML {
 
 	private CacheHolderDetail getHolder(String wpt){// See also LOCXMLImporter
 		int index;
-		CacheHolderDetail ch;
 		
 		index = searchWpt(wpt);
+		if (index==-1) index = searchID(wpt);
 		if (index == -1){
-			ch = new CacheHolderDetail();
-			ch.wayPoint = wpt;
-			return ch;
+			chD = new CacheHolderDetail();
+			//chD.wayPoint = wpt;
+			return chD;
 		}
-		ch = new CacheHolderDetail((CacheHolder) cacheDB.get(index));
+		chD = new CacheHolderDetail((CacheHolder) cacheDB.get(index));
 		try {
-			ch.readCache(profile.dataDir);
+			chD.readCache(profile.dataDir);
 		} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
-		return ch;
+		return chD;
 	}
 
 
