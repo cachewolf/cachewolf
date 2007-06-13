@@ -114,6 +114,7 @@ public class myTableControl extends TableControl{
 
 		if (selectedItem.toString().equals(MyLocale.getMsg(1014,"Update"))){
 			SpiderGC spider = new SpiderGC(pref, profile, false);
+			OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
 			//Vm.debug("ByPass? " + profile.byPassIndexActive);
 			Vm.showWait(true);
 			if (spider.login()==Form.IDOK) {
@@ -125,14 +126,18 @@ public class myTableControl extends TableControl{
 				for(int i = 0; i <	cacheDB.size(); i++){
 					ch = (CacheHolder)cacheDB.get(i);
 					if(ch.is_Checked == true) {
-						if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
+						if ( ch.wayPoint.length()>1)
+
+//						if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
 	//						Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
 	//						Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 	//						TODO: Diese Meldungen vor dem Einloggen darstellen						
 						{
 					    infB.setInfo("Loading: " + ch.wayPoint);
-						
-						test = spider.spiderSingle(i, infB); 
+					    if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))
+					    	test = spider.spiderSingle(i, infB);
+					    else
+					    	test = ocSync.syncSingle(i, infB);
 						if (!test) {
 							infB.close(0);
 							break;
