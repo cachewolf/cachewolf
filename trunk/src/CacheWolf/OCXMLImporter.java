@@ -74,6 +74,92 @@ public class OCXMLImporter extends MinML {
 		}//for
 
 	}
+	
+	public boolean syncSingle(int number, InfoBox infB) {
+		String finalMessage = new String();
+		boolean success=true;
+
+		CacheHolder ch = (CacheHolder)cacheDB.get(number);
+		CacheHolderDetail chD=new CacheHolderDetail(ch);
+
+		try{
+			BufferedReader r;
+			String file = new String();
+			String url = new String();
+
+			picCnt = 0;
+			//Build url
+			url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
+				+ "modifiedsince=" + "20050801000000"
+				+ "&cache=1"
+				+ "&cachedesc=1"
+				+ "&picture=1"
+				+ "&cachelog=1"
+				+ "&removedobject=0"
+				+ "&wp=" + ch.wayPoint
+				+ "&charset=utf-8"
+				+ "&cdata=0"
+				+ "&session=0";
+			inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
+//			inf = infB;
+			inf.setPreferredSize(220, 300);
+			inf.relayout(false);
+			inf.exec();
+			//Vm.debug(url);
+			//get file
+			file = fetch(url, "dummy");
+			//file = "628-0-1.zip";
+
+			//parse
+			File tmpFile = new File(profile.dataDir + file);
+			if (tmpFile.getLength() == 0 ) throw new IOException("no updates available");
+
+			ZipFile zif = new ZipFile (profile.dataDir + file);
+			ZipEntry zipEnt;
+			Enumeration zipEnum = zif.entries();
+			// there could be more than one file in the archive
+			inf.setInfo("...unzipping update file"); 
+			while (zipEnum.hasMoreElements())
+			{
+				zipEnt = (ZipEntry) zipEnum.nextElement();
+				// skip over PRC-files and empty files
+				if (zipEnt.getSize()> 0 && zipEnt.getName().endsWith("xml")){
+					r = new BufferedReader (new InputStreamReader(zif.getInputStream(zipEnt), IO.JAVA_UTF8_CODEC));
+					parse(r);
+					r.close();
+				}
+			}
+			zif.close();
+		}catch (ZipException e){
+			finalMessage = MyLocale.getMsg(1614,"Error while unzipping udpate file");
+			success = false;
+		}catch (IOException e){
+			if (e.getMessage().equalsIgnoreCase("no updates available")) { finalMessage = "No updates available"; success = false; }
+			else {
+				if (e.getMessage().equalsIgnoreCase("could not connect") ||
+						e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
+					finalMessage = MyLocale.getMsg(1616,"Error: could not download udpate file from opencaching.de");
+				} else { finalMessage = "IOException: "+e.getMessage(); }
+				success = false;
+			}
+		}catch (IllegalArgumentException e) {
+			finalMessage = MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in opencaching.de\nplease try again later\n, state:")+" "+state+", waypoint: "+ chD.wayPoint;
+			success = false;
+			Vm.debug("Parse error: " + state + " " + chD.wayPoint);
+			e.printStackTrace();
+		}catch (Exception e){ // here schould be used the correct exepion
+			if (chD != null)	finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ chD.wayPoint;
+			else finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: <unkown>";
+			success = false;
+			Vm.debug("Parse error: " + state + " Exception:" + e.toString()+"   "+chD.ocCacheID);
+			e.printStackTrace();
+		}
+		inf.setInfo(finalMessage);
+		if (success) inf.close(0);
+		else 		 inf.addOkButton();
+
+		return success;
+	}
 
 	public void doIt(){
 		String finalMessage = new String();
