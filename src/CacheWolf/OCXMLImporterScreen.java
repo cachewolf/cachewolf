@@ -18,9 +18,12 @@ public class OCXMLImporterScreen extends Form {
 	mInput distanceInput;
 	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox;
 	mLabel distLbl;
+	mLabel distUnit;
 	static int IMAGESANDMAPS = 0;
 	static int ALL = 1;
 	static int INCLUDEFOUND = 2;
+	static int SINGLE = 3;
+
 	
 	public OCXMLImporterScreen(String title, int options) {
 		super();
@@ -28,10 +31,13 @@ public class OCXMLImporterScreen extends Form {
 		
 
 		this.title = title;
-		this.addNext(distLbl = new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		distanceInput = new mInput();
-		distanceInput.setText(Global.getProfile().distOC);
-		this.addLast(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
+		if (options != SINGLE) {
+			this.addNext(distLbl = new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			distanceInput = new mInput();
+			distanceInput.setText(Global.getProfile().distOC);
+			this.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			this.addLast(distUnit = new mLabel(" km"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		}
 		
 		imagesCheckBox = new mCheckBox();
 		imagesCheckBox.setText(MyLocale.getMsg(1602,"Download Images"));
