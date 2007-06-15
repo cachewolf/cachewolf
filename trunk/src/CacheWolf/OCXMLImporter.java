@@ -41,6 +41,7 @@ public class OCXMLImporter extends MinML {
 	int picCnt;
 	boolean incUpdate = true; // complete or incremental Update
 	boolean ignoreDesc = false;
+	boolean askForOptions = true;
 	Hashtable DBindexWpt = new Hashtable();
 	Hashtable DBindexID = new Hashtable();
 
@@ -76,205 +77,177 @@ public class OCXMLImporter extends MinML {
 	}
 	
 	public boolean syncSingle(int number, InfoBox infB) {
-		String finalMessage = new String();
 		boolean success=true;
 
-		CacheHolder ch = (CacheHolder)cacheDB.get(number);
-		CacheHolderDetail chD=new CacheHolderDetail(ch);
+		ch = (CacheHolder)cacheDB.get(number);
+		chD= new CacheHolderDetail(ch);
 
-		try{
-			BufferedReader r;
-			String file = new String();
-			String url = new String();
-
-			picCnt = 0;
-			//Build url
-			url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
-				+ "modifiedsince=" + "20050801000000"
-				+ "&cache=1"
-				+ "&cachedesc=1"
-				+ "&picture=1"
-				+ "&cachelog=1"
-				+ "&removedobject=0"
-				+ "&wp=" + ch.wayPoint
-				+ "&charset=utf-8"
-				+ "&cdata=0"
-				+ "&session=0";
-			inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
-//			inf = infB;
-			inf.setPreferredSize(220, 300);
-			inf.relayout(false);
-			inf.exec();
-			//Vm.debug(url);
-			//get file
-			file = fetch(url, "dummy");
-			//file = "628-0-1.zip";
-
-			//parse
-			File tmpFile = new File(profile.dataDir + file);
-			if (tmpFile.getLength() == 0 ) throw new IOException("no updates available");
-
-			ZipFile zif = new ZipFile (profile.dataDir + file);
-			ZipEntry zipEnt;
-			Enumeration zipEnum = zif.entries();
-			// there could be more than one file in the archive
-			inf.setInfo("...unzipping update file"); 
-			while (zipEnum.hasMoreElements())
-			{
-				zipEnt = (ZipEntry) zipEnum.nextElement();
-				// skip over PRC-files and empty files
-				if (zipEnt.getSize()> 0 && zipEnt.getName().endsWith("xml")){
-					r = new BufferedReader (new InputStreamReader(zif.getInputStream(zipEnt), IO.JAVA_UTF8_CODEC));
-					parse(r);
-					r.close();
-				}
-			}
-			zif.close();
-		}catch (ZipException e){
-			finalMessage = MyLocale.getMsg(1614,"Error while unzipping udpate file");
-			success = false;
-		}catch (IOException e){
-			if (e.getMessage().equalsIgnoreCase("no updates available")) { finalMessage = "No updates available"; success = false; }
-			else {
-				if (e.getMessage().equalsIgnoreCase("could not connect") ||
-						e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
-					finalMessage = MyLocale.getMsg(1616,"Error: could not download udpate file from opencaching.de");
-				} else { finalMessage = "IOException: "+e.getMessage(); }
-				success = false;
-			}
-		}catch (IllegalArgumentException e) {
-			finalMessage = MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in opencaching.de\nplease try again later\n, state:")+" "+state+", waypoint: "+ chD.wayPoint;
-			success = false;
-			Vm.debug("Parse error: " + state + " " + chD.wayPoint);
-			e.printStackTrace();
-		}catch (Exception e){ // here schould be used the correct exepion
-			if (chD != null)	finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ chD.wayPoint;
-			else finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: <unkown>";
-			success = false;
-			Vm.debug("Parse error: " + state + " Exception:" + e.toString()+"   "+chD.ocCacheID);
-			e.printStackTrace();
+		if (askForOptions) {
+			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.SINGLE);
+			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return false; }
+			askForOptions = false;
 		}
-		inf.setInfo(finalMessage);
-		if (success) inf.close(0);
-		else 		 inf.addOkButton();
 
+		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
+		inf.setPreferredSize(220, 300);
+		inf.relayout(false);
+		inf.exec();
+
+		
+		String lastS = ch.lastSyncOC;
+		if (lastS.length() < 14) lastS = "20050801000000";
+
+		dateOfthisSync = new Time();
+		dateOfthisSync.parse(lastS, "yyyyMMddHHmmss");
+	
+
+		String url = new String();
+		picCnt = 0;
+		//Build url
+		url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
+			+ "modifiedsince=" + lastS
+			+ "&cache=1"
+			+ "&cachedesc=1"
+			+ "&picture=1"
+			+ "&cachelog=1"
+			+ "&removedobject=0"
+			+ "&wp=" + ch.wayPoint
+			+ "&charset=utf-8"
+			+ "&cdata=0"
+			+ "&session=0";
+		success = syncOC(url);
+		inf.close(0);
 		return success;
 	}
 
 	public void doIt(){
-		String finalMessage = new String();
 		boolean success=true;
-		try{
-			BufferedReader r;
-			String file = new String();
-			String url = new String();
+		String finalMessage;
 
-			String lastS =  profile.last_sync_opencaching;
-			CWPoint center = pref.curCentrePt; // No need to clone curCentrePt as center is only read
-			if (!center.isValid()) {
-				(new MessageBox("Error", "Coordinates for center must be set", MessageBox.OKB)).execute();
-				return;
-			}
-			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
-			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
-			Vm.showWait(true);
-			String dist = importOpt.distanceInput.getText();
-			if (dist.length()== 0) return;
-			//check, if distance is greater than before
-			if (Convert.toInt(dist) > Convert.toInt(profile.distOC) ||
-					pref.downloadmissingOC  ){
-				// resysnc
-				lastS = "20050801000000";
-				incUpdate = false;
-			}
-			profile.distOC = dist;
-			// Clear status of caches in db
-			for(int i = 0; i<cacheDB.size();i++){
-				ch = (CacheHolder)cacheDB.get(i);
-				ch.is_update = false;
-				ch.is_new = false;
-				ch.is_log_update = false;
-			}	
-			picCnt = 0;
-			//Build url
-			url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
-				+ "modifiedsince=" + lastS
-				+ "&cache=1"
-				+ "&cachedesc=1"
-				+ "&picture=1"
-				+ "&cachelog=1"
-				+ "&removedobject=0"
-				+ "&lat=" + center.getLatDeg(CWPoint.DD)
-				+ "&lon=" + center.getLonDeg(CWPoint.DD)
-				+ "&distance=" + dist
-				+ "&charset=utf-8"
-				+ "&cdata=0"
-				+ "&session=0";
-			inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
-			inf.setPreferredSize(220, 300);
-			inf.relayout(false);
-			inf.exec();
-			//Vm.debug(url);
-			//get file
-			file = fetch(url, "dummy");
-			//file = "628-0-1.zip";
+		
+		String url = new String();
 
-			//parse
-			File tmpFile = new File(profile.dataDir + file);
-			if (tmpFile.getLength() == 0 ) throw new IOException("no updates available");
-
-			ZipFile zif = new ZipFile (profile.dataDir + file);
-			ZipEntry zipEnt;
-			Enumeration zipEnum = zif.entries();
-			// there could be more than one file in the archive
-			inf.setInfo("...unzipping update file"); 
-			while (zipEnum.hasMoreElements())
-			{
-				zipEnt = (ZipEntry) zipEnum.nextElement();
-				// skip over PRC-files and empty files
-				if (zipEnt.getSize()> 0 && zipEnt.getName().endsWith("xml")){
-					r = new BufferedReader (new InputStreamReader(zif.getInputStream(zipEnt), IO.JAVA_UTF8_CODEC));
-					parse(r);
-					r.close();
-				}
-			}
-			zif.close();
-		}catch (ZipException e){
-			finalMessage = MyLocale.getMsg(1614,"Error while unzipping udpate file");
-			success = false;
-		}catch (IOException e){
-			if (e.getMessage().equalsIgnoreCase("no updates available")) { finalMessage = "No updates available"; success = false; }
-			else {
-				if (e.getMessage().equalsIgnoreCase("could not connect") ||
-						e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
-					finalMessage = MyLocale.getMsg(1616,"Error: could not download udpate file from opencaching.de");
-				} else { finalMessage = "IOException: "+e.getMessage(); }
-				success = false;
-			}
-		}catch (IllegalArgumentException e) {
-			finalMessage = MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in opencaching.de\nplease try again later\n, state:")+" "+state+", waypoint: "+ chD.wayPoint;
-			success = false;
-			Vm.debug("Parse error: " + state + " " + chD.wayPoint);
-			e.printStackTrace();
-		}catch (Exception e){ // here schould be used the correct exepion
-			if (chD != null)	finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ chD.wayPoint;
-			else finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: <unkown>";
-			success = false;
-			Vm.debug("Parse error: " + state + " Exception:" + e.toString()+"   "+chD.ocCacheID);
-			e.printStackTrace();
+		String lastS =  profile.last_sync_opencaching;
+		CWPoint center = pref.curCentrePt; // No need to clone curCentrePt as center is only read
+		if (!center.isValid()) {
+			(new MessageBox("Error", "Coordinates for center must be set", MessageBox.OKB)).execute();
+			return;
 		}
+		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
+		if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
+		Vm.showWait(true);
+		String dist = importOpt.distanceInput.getText();
+		if (dist.length()== 0) return;
+		//check, if distance is greater than before
+		if (Convert.toInt(dist) > Convert.toInt(profile.distOC) ||
+				pref.downloadmissingOC  ){
+			// resysnc
+			lastS = "20050801000000";
+			incUpdate = false;
+		}
+		profile.distOC = dist;
+		// Clear status of caches in db
+		for(int i = 0; i<cacheDB.size();i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			ch.is_update = false;
+			ch.is_new = false;
+			ch.is_log_update = false;
+		}	
+		picCnt = 0;
+		//Build url
+		url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
+			+ "modifiedsince=" + lastS
+			+ "&cache=1"
+			+ "&cachedesc=1"
+			+ "&picture=1"
+			+ "&cachelog=1"
+			+ "&removedobject=0"
+			+ "&lat=" + center.getLatDeg(CWPoint.DD)
+			+ "&lon=" + center.getLonDeg(CWPoint.DD)
+			+ "&distance=" + dist
+			+ "&charset=utf-8"
+			+ "&cdata=0"
+			+ "&session=0";
+		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
+		inf.setPreferredSize(220, 300);
+		inf.relayout(false);
+		inf.exec();
+
+		success = syncOC(url);
 		Vm.showWait(false);
 		if (success) {
 			profile.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
 			//pref.savePreferences();
 			finalMessage = MyLocale.getMsg(1607,"Update from opencaching successful");
+			inf.setInfo(finalMessage);
 		}
 		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
-		inf.setInfo(finalMessage);
 		inf.addOkButton();
-		//inf.close(0);
-//		MessageBox mb = new MessageBox("Opencaching",finalMessage,MessageBox.OKB);
-		//	mb.execute();
+	}
+	
+	private boolean syncOC(String url) {
+		String finalMessage = new String();
+		boolean success=true;
+		File tmpFile = null;
+		BufferedReader r;
+		String file = new String();
+
+		//inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
+		
+		picCnt = 0;
+		try{
+			file = fetch(url, "dummy");
+
+			//parse
+			tmpFile = new File(profile.dataDir + file);
+			if (tmpFile.getLength() == 0 ) {
+				throw new IOException("no updates available");
+			}
+
+			ZipFile zif = new ZipFile (profile.dataDir + file);
+			ZipEntry zipEnt;
+			Enumeration zipEnum = zif.entries();
+			inf.setInfo("...unzipping update file"); 
+			while (zipEnum.hasMoreElements())
+			{
+				zipEnt = (ZipEntry) zipEnum.nextElement();
+				// skip over PRC-files and empty files
+				if (zipEnt.getSize()> 0 && zipEnt.getName().endsWith("xml")){
+					r = new BufferedReader (new InputStreamReader(zif.getInputStream(zipEnt), IO.JAVA_UTF8_CODEC));
+					parse(r);
+					r.close();
+				}
+			}
+			zif.close();
+		}catch (ZipException e){
+			finalMessage = MyLocale.getMsg(1614,"Error while unzipping udpate file");
+			success = false;
+		}catch (IOException e){
+			if (e.getMessage().equalsIgnoreCase("no updates available")) { finalMessage = "No updates available"; success = false; }
+			else {
+				if (e.getMessage().equalsIgnoreCase("could not connect") ||
+						e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
+					finalMessage = MyLocale.getMsg(1616,"Error: could not download udpate file from opencaching.de");
+				} else { finalMessage = "IOException: "+e.getMessage(); }
+				success = false;
+			}
+		}catch (IllegalArgumentException e) {
+			finalMessage = MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in opencaching.de\nplease try again later\n, state:")+" "+state+", waypoint: "+ chD.wayPoint;
+			success = false;
+			Vm.debug("Parse error: " + state + " " + chD.wayPoint);
+			e.printStackTrace();
+		}catch (Exception e){ // here schould be used the correct exepion
+			if (chD != null)	finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ chD.wayPoint;
+			else finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: <unkown>";
+			success = false;
+			Vm.debug("Parse error: " + state + " Exception:" + e.toString()+"   "+chD.ocCacheID);
+			e.printStackTrace();
+		} finally {
+			if (tmpFile != null) tmpFile.delete();
+		}
+		inf.setInfo(finalMessage);
+
+		return success;
 	}
 
 	public void startElement(String name, AttributeList atts){
@@ -418,6 +391,7 @@ public class OCXMLImporter extends MinML {
 
 	private void endCache(String name){
 		if (name.equals("cache")){
+			chD.lastSyncOC = dateOfthisSync.format("yyyyMMddHHmmss");
 			int index;
 			index = searchWpt(chD.wayPoint);
 			if (index == -1){
@@ -439,32 +413,6 @@ public class OCXMLImporter extends MinML {
 				chD.Images.clear();
 				chD.ImagesText.clear();
 			}
-			/*			if(holder.LatLon.length() > 1 && holder.is_archived == false &&
-					pref.downloadMapsOC){
-
-				ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
-				pll.parse();
-
- 				MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
-				// MapLoader tests itself if the file already exists and doesnt download if so.
-				String filename = Global.getPref().baseDir + "/maps/expedia/" + holder.wayPoint + "_map.gif";
-				if (!(new File(filename).getParentFile().isDirectory())) { // dir exists? 
-					if (new File(filename).getParentFile().mkdir() == false) // dir creation failed?
-					{ pref.downloadMapsOC = false;
-					(new MessageBox("Warning", "Ignoring error (stopping to download maps):\n cannot create maps directory: \n"+new File(filename).getParentFile(), MessageBox.OKB)).exec(); 
-					}
-				}
-				if (!fileExits(filename)){
-					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache:")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 1");
-					//mpl.loadTo(filename, "3"); 
-					}
-				//filename = profile.dataDir + "/" + holder.wayPoint + "_map_2.gif";
-				filename = Global.getPref().baseDir + "/maps/expedia/" + holder.wayPoint + "_map_2.gif";
-				if (!fileExits(filename)){
-					inf.setInfo(MyLocale.getMsg(1609,"Importing Cache: ")+" " + numCacheImported + "\n"+MyLocale.getMsg(1610,"Downloading missing map")+" 2");
-					//mpl.loadTo(filename, "10"); 
-					}
-			} */
 
 			// save all
 			chD.saveCacheDetails(profile.dataDir); 

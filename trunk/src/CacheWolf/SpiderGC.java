@@ -54,6 +54,7 @@ public class SpiderGC{
 	Vector cachesToLoad = new Vector();
 	Hashtable indexDB;
 	InfoBox infB;
+	private boolean loggedIn = false;
 	private static Properties p=null; 
 	
 	public SpiderGC(Preferences prf, Profile profile, boolean bypass){
@@ -79,6 +80,7 @@ public class SpiderGC{
 	 */
 	public int login(){
 		pref.logInit();
+		loggedIn = false;
 		//Access the page once to get a viewstate
 		String start,doc,loginPage;
 		//Get password
@@ -138,8 +140,10 @@ public class SpiderGC{
 		infB.close(0);
 		if (loginAborted)
 			return Form.IDCANCEL;
-		else
+		else {
+			loggedIn = true;
 			return Form.IDOK;
+		}
 	}
 	
 	/**
@@ -157,6 +161,11 @@ public class SpiderGC{
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
 		if (ch.isAddiWpt()) return false;  // No point re-spidering an addi waypoint, comes with parent
 
+		// check if we need to login
+		if (!loggedIn){
+			if (this.login()==Form.IDOK) loggedIn = true;
+			else return false;
+		}
 		CacheHolderDetail chD=new CacheHolderDetail(ch);
 		try{
 			// Get all existing details of the cache

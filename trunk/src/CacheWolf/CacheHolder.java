@@ -57,6 +57,7 @@ public boolean is_HTML = true;
 public Vector addiWpts = new Vector();
 public CacheHolder mainCache;
 public String sort;
+public String lastSyncOC = EMPTY;
 
 CacheHolder() {}
 CacheHolder(String wpt) {this.wayPoint=wpt; }
@@ -97,6 +98,7 @@ CacheHolder(CacheHolder ch) {
 	this.has_bug = ch.has_bug;
 	this.is_HTML = ch.is_HTML;
 	this.sort=ch.sort;
+	this.lastSyncOC = ch.lastSyncOC;
 	
 }
 
