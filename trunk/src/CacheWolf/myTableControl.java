@@ -125,32 +125,32 @@ public class myTableControl extends TableControl{
 			for(int i = 0; i <	cacheDB.size(); i++){
 				ch = (CacheHolder)cacheDB.get(i);
 				if(ch.is_Checked == true) {
-					if ( ch.wayPoint.length()>1)
-
+					if ( ch.wayPoint.length()>1 && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC") 
+							 					 || ch.wayPoint.substring(0,2).equalsIgnoreCase("OC")))
 //						if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
 //						Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
 //						Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 //						TODO: Diese Meldungen vor dem Einloggen darstellen						
 					{
-				    infB.setInfo("Loading: " + ch.wayPoint);
-				    if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))
-				    	test = spider.spiderSingle(i, infB);
-				    else if ((ch.wayPoint.substring(0,2).equalsIgnoreCase("OC"))) 
-				    		test = ocSync.syncSingle(i, infB);
-				    	else {
-							alreadySaid = true;
-							(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", MessageBox.OKB)).exec();
-				    	}
-					if (!test) {
-						infB.close(0);
-						break;
-					}
-					} else if (ch.isAddiWpt() && !ch.mainCache.is_Checked) { // Is the father ticked?
-						if (!alreadySaid2) {
+					    infB.setInfo("Loading: " + ch.wayPoint);
+					    if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))   
+					    	test = spider.spiderSingle(i, infB);
+					    else  
+					    	test = ocSync.syncSingle(i, infB);
+						if (!test) {
+							infB.close(0);
+							break;
+						}
+					} else { 
+						if (ch.isAddiWpt() && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
 							alreadySaid2=true;
 							(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).exec();
 						}
-					} 
+						if (!ch.isAddiWpt() && !alreadySaid) {
+							alreadySaid = true;
+							(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", MessageBox.OKB)).exec();
+			    		}
+					}
 				}
 
 				infB.close(0);
@@ -158,10 +158,10 @@ public class myTableControl extends TableControl{
 				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 //				cacheDB.clear();
 //				profile.readIndex();
-				profile.restoreFilter();
-				profile.updateBearingDistance();
-				tbp.refreshTable();
 			}
+			profile.restoreFilter();
+			profile.updateBearingDistance();
+			tbp.refreshTable();
 			Vm.showWait(false);
 		}
 		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Center"))){
