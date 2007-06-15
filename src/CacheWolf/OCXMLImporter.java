@@ -83,7 +83,7 @@ public class OCXMLImporter extends MinML {
 		chD= new CacheHolderDetail(ch);
 
 		if (askForOptions) {
-			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.SINGLE);
+			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.IMAGES);
 			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return false; }
 			askForOptions = false;
 		}
@@ -133,7 +133,8 @@ public class OCXMLImporter extends MinML {
 			(new MessageBox("Error", "Coordinates for center must be set", MessageBox.OKB)).execute();
 			return;
 		}
-		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.ALL);
+		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),
+																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES);
 		if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
 		Vm.showWait(true);
 		String dist = importOpt.distanceInput.getText();

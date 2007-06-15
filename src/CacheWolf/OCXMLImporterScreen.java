@@ -19,43 +19,43 @@ public class OCXMLImporterScreen extends Form {
 	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox;
 	mLabel distLbl;
 	mLabel distUnit;
-	static int IMAGESANDMAPS = 0;
-	static int ALL = 1;
-	static int INCLUDEFOUND = 2;
-	static int SINGLE = 3;
+	static int DIST = 1;
+	static int IMAGES = 2;
+	static int ALL = 4;
+	static int INCLUDEFOUND = 8;
 
 	
 	public OCXMLImporterScreen(String title, int options) {
 		super();
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 		
+		switch (options){
+		
+		}
 
 		this.title = title;
-		if (options != SINGLE) {
+		if ((options & DIST) > 0) {
 			this.addNext(distLbl = new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			distanceInput = new mInput();
 			distanceInput.setText(Global.getProfile().distOC);
 			this.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			this.addLast(distUnit = new mLabel(" km"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
-		
-		imagesCheckBox = new mCheckBox();
-		imagesCheckBox.setText(MyLocale.getMsg(1602,"Download Images"));
-		imagesCheckBox.setState(true); // @ToDo: aus Prefs
-		this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
-		if(options == INCLUDEFOUND){
+
+		if ((options & IMAGES) > 0) {
+			imagesCheckBox = new mCheckBox();
+			imagesCheckBox.setText(MyLocale.getMsg(1602,"Download Images"));
+			imagesCheckBox.setState(true); // @ToDo: aus Prefs
+			this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		}
+		if((options & INCLUDEFOUND) > 0){
 			foundCheckBox = new mCheckBox();
 			foundCheckBox.setText(MyLocale.getMsg(1622,"Exclude found caches"));
 			foundCheckBox.setState(true);
 			this.addLast(foundCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
-/*		
-		mapsCheckBox = new mCheckBox();
-		mapsCheckBox.setText(MyLocale.getMsg(1603,"Download Maps"));
-		mapsCheckBox.setState(true); // @ToDo: aus Prefs
-		this.addLast(mapsCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
-	*/	
-		if(options == ALL){
+
+		if((options & ALL) > 0){
 			missingCheckBox = new mCheckBox();
 			missingCheckBox.setText(MyLocale.getMsg(1606,"Alle erneut downloaden"));
 			missingCheckBox.setState(false); // @ToDo: aus Prefs
