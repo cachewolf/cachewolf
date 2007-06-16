@@ -26,12 +26,13 @@ public class MainTab extends mTabbedPanel {
 	ImagePanel imageP;
 	SolverPanel solverP;
 	String lastselected = new String();
-	CacheHolder ch=null;
+	CacheHolder ch=null,chNew=null;
 	CacheHolderDetail chD =null, chMain=null;
 	MainMenu mnuMain;
 	StatusBar statBar;
 	MovingMap mm;
 	Navigate nav;
+	boolean cacheChanged;
 
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
 		Global.mainTab=this;
@@ -139,8 +140,8 @@ public class MainTab extends mTabbedPanel {
 
 	public void onEvent(Event ev)
 	{
-		//Vm.debug(ev.toString()+"/"+this.getSelectedItem());
-		if(ev instanceof MultiPanelEvent){
+		if(ev instanceof MultiPanelEvent){ 
+			// A panel is selected.
 			mnuMain.allowProfileChange(false);	  
 			if(this.getSelectedItem() == 0){// List view selected
 				mnuMain.allowProfileChange(true);	  
@@ -148,25 +149,33 @@ public class MainTab extends mTabbedPanel {
 //				Vm.setSIP(0);
 				MyLocale.setSIPOff();
 			}
-			updatePendingChanges();
-			if(this.getSelectedItem() != 0){// any panel other than list view
-				if (tbP.getSelectedCache()>=cacheDB.size() || tbP.getSelectedCache()<0) {
-					ch=null; chD=null;
-				} else {
-					ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
-					try {
-						if(ch.wayPoint.equals(lastselected) == false){
-							chD=new CacheHolderDetail(ch);
-							chD.readCache(profile.dataDir);
-							lastselected = ch.wayPoint;
-						}
-					} catch(Exception e){
-						//Vm.debug("Error loading: "+ch.wayPoint);
-					}
+			// Get current cacheHolder
+			if (tbP.getSelectedCache()>=cacheDB.size() || tbP.getSelectedCache()<0) {
+				chNew=null; chD=null;
+			}
+			else
+				chNew = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
+			// Is it the same as the last one?
+			cacheChanged=chNew!=ch;
+			if (cacheChanged) { // new object not same reference as old
+				updatePendingChanges(); // Save dirty data
+	            ch=chNew;		
+	            chD=null;
+			}
+			// Only load the details if we leave the list view and the details
+			// have not already been loaded
+			if(this.getSelectedItem() != 0 && chD==null){// any panel other than list view without detail
+				try {
+					chD=new CacheHolderDetail(ch);
+					chD.readCache(profile.dataDir);//Vm.debug("MainTab:readCache "+chD.wayPoint+"/S:"+chD.Solver);
+					//lastselected = ch.wayPoint;
+				} catch(Exception e){
+					//Vm.debug("Error loading: "+ch.wayPoint);
 				}
-			} else statBar.updateDisplay();
-			// If no cache is selected, create a new one
-			switch (this.getSelectedItem()) {
+			}
+			// We are in list view, update the status display
+			else statBar.updateDisplay();
+			switch (this.getSelectedItem()) {// Switch by panel number
 			case 0:
 				if (detP.hasBlackStatusChanged()) {
 					// Restore the filter status (this automatically sets the status for blacklisted caches)
@@ -220,16 +229,17 @@ public class MainTab extends mTabbedPanel {
 				break;
 			case 7:  // Solver Panel
 				MyLocale.setSIPButton();
-				if (chD.isAddiWpt()) { 
-					chMain=new CacheHolderDetail(chD.mainCache);
-					try {
-						chMain.readCache(profile.dataDir);
-					} catch(Exception e){pref.log("Error reading cache",e);}
-					//Vm.debug("mainT: AddiWaypoint:"+chD.wayPoint+", MainWp:"+chMain.wayPoint);
-					solverP.setInstructions(chMain.Solver);
-				} else {
-					//Vm.debug("mainT: Waypoint:"+chD.wayPoint);
-					solverP.setInstructions(chD.Solver);
+				if (chD!=null) {
+					if (chD.isAddiWpt()) { 
+						chMain=new CacheHolderDetail(chD.mainCache);
+						try {
+							chMain.readCache(profile.dataDir);//Vm.debug("mainT:readCache "+chD.wayPoint+"=>Main=>"+chMain.wayPoint+"/S:"+chMain.Solver);
+						} catch(Exception e){pref.log("Error reading cache",e);}
+						solverP.setInstructions(chMain.Solver);
+					} else {
+						//Vm.debug("mainT: Waypoint:"+chD.wayPoint);
+						solverP.setInstructions(chD.Solver);
+					}
 				}
 				break;
 			case 8:  // Cache Radar Panel
@@ -292,10 +302,12 @@ public class MainTab extends mTabbedPanel {
 		if (chD!=null && solverP.isDirty()) {
 			if (chMain==null) {
 				chD.Solver=solverP.getInstructions();
-				chD.saveCacheDetails(Global.getProfile().dataDir);
+				chD.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chD.wayPoint+"/S:"+chD.Solver);
+				solverP.setInstructions("");
 			} else {
 				chMain.Solver=solverP.getInstructions();
-				chMain.saveCacheDetails(Global.getProfile().dataDir);
+				chMain.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
+				solverP.setInstructions("");
 				chMain=null;
 			}
 		}

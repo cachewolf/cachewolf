@@ -38,6 +38,7 @@ public class SolverPanel extends CellPanel{
 	public void setInstructions(String text) {
 		mText.setText(text);
 		mText.repaint();
+		dirty=false;
 	}
 	
 	
