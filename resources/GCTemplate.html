@@ -64,6 +64,11 @@ td { font-size:small;  }
 	Difficulty: <tmpl_var DIFFICULTY> 	Terrain: <tmpl_var TERRAIN>
 	<FONT face="Verdana" size="-2">&nbsp;&nbsp;&nbsp;(ratings out of 5 stars. 1 is easiest, 5 is hardest)</FONT><br/>
 	Container: <strong><tmpl_var SIZE></strong><br/><br/>
+</div>
+<div style="float:right;margin:0; margin-top:10px"><FONT face="Verdana" size="4"><strong><tmpl_var WAYPOINT></strong></FONT><br/></div>
+
+<div style="float:left">
+	<div style="float:left;">
 	<table cellpadding=0>
 		<tr><td>Waypoint:</td><td> <tmpl_var WAYPOINT></td></tr>
 		<tr><td>Hidden:</td><td> <tmpl_var DATE></td></tr>
@@ -71,8 +76,12 @@ td { font-size:small;  }
 		<tr><td>Bearing:</td><td> <tmpl_var BEARING></td></tr>
 		<tr><td>Status:</td><td> <tmpl_var STATUS></td></tr>
 	</table>
+	</div>
+	<div style="float:right;">
+		<tmpl_loop ATTRIBUTES><tmpl_var IMAGE><tmpl_var BR><!--<tmpl_var INFO>-->
+		</tmpl_loop>
+	</div>
 </div>
-<div style="float:right;margin:0; margin-top:10px"><FONT face="Verdana" size="4"><strong><tmpl_var WAYPOINT></strong></FONT></div>
 <div style="float:left">
 	<hr>
 <tmpl_if UNAVAILABLE>	

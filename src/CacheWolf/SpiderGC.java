@@ -471,6 +471,14 @@ public class SpiderGC{
 				getAddWaypoints(completeWebPage, chD.wayPoint, chD.is_found);
 				pref.log("Got additional waypoints");
 
+				//==========
+				// Attributes
+				//==========
+				pref.log("Getting attributes");
+				getAttributes(completeWebPage, chD);
+				pref.log("Got attributes");
+
+
 
 			}catch(Exception ex){
 				pref.log("Error reading cache: "+chD.wayPoint);
@@ -941,7 +949,19 @@ public class SpiderGC{
 		}
 	}
 	
-
+	private void getAttributes(String doc, CacheHolderDetail chD) {
+		Extractor attBlock = new Extractor(doc,p.getProperty("attBlockExStart"),p.getProperty("attBlockExEnd"), 0 , true);
+		String atts = attBlock.findNext();
+		Extractor attEx = new Extractor(atts,p.getProperty("attExStart"),p.getProperty("attExEnd"), 0 , true);
+		String attribute=attEx.findNext();
+		chD.attributes.clear();
+		while (attEx.endOfSearch()==false) {
+			chD.attributes.add(attribute);
+			attribute=attEx.findNext();
+		}
+	}
+	
+	
 	/**
 	*	Performs an initial fetch to a given address. In this case
 	*	it will be a gc.com address. This method is used to obtain

@@ -92,6 +92,25 @@ public class ShowCacheInBrowser {
 						tpl.setParam("STATUS",MyLocale.getMsg(318,"Found")+" "+chD.CacheStatus);
 					else
 						tpl.setParam("STATUS", chD.CacheStatus);
+					
+					// Cache attributes
+					if (chD.attributes.getCount()>0) {
+						Vector attVect=new Vector(chD.attributes.getCount()+1);
+						for (int i=0; i<chD.attributes.getCount(); i++) {
+							Hashtable atts=new Hashtable();
+							atts.put("IMAGE","<img src=\"file://"+
+									   Attribute.getImageDir()+chD.attributes.getName(i)+
+									   "\" border=0 alt=\""+chD.attributes.getInfo(i)+"\">");
+							if (i % 5 ==4) 
+								atts.put("BR","<br/>");
+							else
+								atts.put("BR","");
+							atts.put("INFO",chD.attributes.getInfo(i));
+							attVect.add(atts);
+						}
+						tpl.setParam("ATTRIBUTES",attVect);
+					}
+					
 					tpl.setParam("DATE", chD.DateHidden);
 //					tpl.setParam("URL", ch.URL);
 					if (chD.Bugs!=null && chD.Bugs.trim().length()>0) tpl.setParam("BUGS",chD.Bugs);
@@ -148,9 +167,14 @@ public class ShowCacheInBrowser {
 							logs.put("LOG",log);
 							logs.put("LOGTYPE","");
 						} else {
-							int posBr=log.indexOf("<br>");
-							logs.put("LOG",log.substring(posBr));
-							logs.put("LOGTYPE",log.substring(0,posGt)+" border='0'"+log.substring(posGt,posBr+4));
+							int posBr=log.indexOf("<br>"); 
+							if(posBr<0) {
+								logs.put("LOG",log);
+								logs.put("LOGTYPE","");
+							} else {
+								logs.put("LOG",log.substring(posBr));
+								logs.put("LOGTYPE",log.substring(0,posGt)+" border='0'"+log.substring(posGt,posBr+4));
+							}
 						}
 						logs.put("I","'log"+new Integer(i).toString()+"'");
 						logVect.add(logs);
