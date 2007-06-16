@@ -221,7 +221,7 @@ public class SpiderGC{
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed!"), MessageBox.OKB)).execute();
 			return;
 		}
-		OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options",	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST);
+		OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options",	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES);
 		options.distanceInput.setText("");
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
 		String dist = options.distanceInput.getText();

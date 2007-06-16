@@ -77,7 +77,7 @@ public class OCXMLImporterScreen extends Form {
 			}
 			if (ev.target == okB){
 				    // distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
-					pref.downloadPicsOC = imagesCheckBox.state;
+					if (imagesCheckBox!=null) pref.downloadPicsOC = imagesCheckBox.state;
 					if (missingCheckBox!=null) pref.downloadmissingOC = missingCheckBox.state;
 					// TODO: sofort speichern?
 				this.close(Form.IDOK);
