@@ -32,7 +32,6 @@ public class MainTab extends mTabbedPanel {
 	StatusBar statBar;
 	MovingMap mm;
 	Navigate nav;
-	boolean cacheChanged;
 
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
 		Global.mainTab=this;
@@ -152,12 +151,14 @@ public class MainTab extends mTabbedPanel {
 			// Get current cacheHolder
 			if (tbP.getSelectedCache()>=cacheDB.size() || tbP.getSelectedCache()<0) {
 				chNew=null; chD=null;
+				lastselected="";
 			}
-			else
+			else {
 				chNew = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
+				lastselected=chNew.wayPoint;  // Used in Parser.Skeleton
+			}
 			// Is it the same as the last one?
-			cacheChanged=chNew!=ch;
-			if (cacheChanged) { // new object not same reference as old
+			if (chNew!=ch) { // new object not same reference as old
 				updatePendingChanges(); // Save dirty data
 	            ch=chNew;		
 	            chD=null;
@@ -168,7 +169,6 @@ public class MainTab extends mTabbedPanel {
 				try {
 					chD=new CacheHolderDetail(ch);
 					chD.readCache(profile.dataDir);//Vm.debug("MainTab:readCache "+chD.wayPoint+"/S:"+chD.Solver);
-					//lastselected = ch.wayPoint;
 				} catch(Exception e){
 					//Vm.debug("Error loading: "+ch.wayPoint);
 				}
