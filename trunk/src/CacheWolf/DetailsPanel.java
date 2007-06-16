@@ -27,6 +27,7 @@ public class DetailsPanel extends CellPanel{
 	Vector cacheDB;
 	CacheHolderDetail thisCache;
 	CellPanel pnlTools = new CellPanel(); 
+	AttributesViewer attV;
 	
 	private boolean dirty_notes = false;
 	private boolean dirty_details = false;
@@ -120,6 +121,9 @@ public class DetailsPanel extends CellPanel{
 		//this.addNext(new mLabel(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		//this.addLast(btnCenter = new mButton(MyLocale.getMsg(309,"Make Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 //		this.addLast(btnDelete = new mButton(MyLocale.getMsg(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		attV=new AttributesViewer();
+		this.addLast(attV);
+		
 		
 	}
 	
@@ -134,32 +138,32 @@ public class DetailsPanel extends CellPanel{
 	/**
 	*	Set the values to display.
 	*/
-	public void setDetails(CacheHolderDetail ch){
-		thisCache = ch;
+	public void setDetails(CacheHolderDetail chD){
+		thisCache = chD;
 		dirty_notes = false;
 		dirty_details = false;
-		inpWaypoint.setText(ch.wayPoint);
-		inpName.setText(ch.CacheName);
-	    btnWayLoc.setText(ch.pos.toString());
-		inpHidden.setText(ch.DateHidden);
-		inpOwner.setText(ch.CacheOwner);
-		if (ch.CacheStatus.length()>=10 && ch.CacheStatus.charAt(4)=='-')
-			chcStatus.setText(MyLocale.getMsg(318,"Found")+" "+ch.CacheStatus);
+		inpWaypoint.setText(chD.wayPoint);
+		inpName.setText(chD.CacheName);
+	    btnWayLoc.setText(chD.pos.toString());
+		inpHidden.setText(chD.DateHidden);
+		inpOwner.setText(chD.CacheOwner);
+		if (chD.CacheStatus.length()>=10 && chD.CacheStatus.charAt(4)=='-')
+			chcStatus.setText(MyLocale.getMsg(318,"Found")+" "+chD.CacheStatus);
 		else {
-			chcStatus.setText(ch.CacheStatus);
+			chcStatus.setText(chD.CacheStatus);
 			// If the cache status contains a date, do not overwrite it with 'found' message
-			if(ch.is_found == true) chcStatus.setText(MyLocale.getMsg(318,"Found"));
+			if(chD.is_found == true) chcStatus.setText(MyLocale.getMsg(318,"Found"));
 		}
-		chcType.setInt(transType(ch.type));
-		if(ch.is_black){
+		chcType.setInt(transType(chD.type));
+		if(chD.is_black){
 			btnBlack.image = imgBlack;
 		} else {
 			btnBlack.image = imgBlackNo;
 		}
-		blackStatus=ch.is_black; 
+		blackStatus=chD.is_black; 
 		blackStatusChanged=false;
 		btnBlack.repaintNow();
-		if(ch.has_bug == true) {
+		if(chD.has_bug == true) {
 			btnShowBug.modify(Control.Disabled,1);
 			btnShowBug.image = imgShowBug;
 		} else {
@@ -167,14 +171,15 @@ public class DetailsPanel extends CellPanel{
 			btnShowBug.image = imgShowBugNo;
 		}
 		btnShowBug.repaintNow();
-		if(ch.CacheSize.equals("Micro")) chcSize.setInt(1);
-		if(ch.CacheSize.equals("Small")) chcSize.setInt(2);
-		if(ch.CacheSize.equals("Regular")) chcSize.setInt(3);
-		if(ch.CacheSize.equals("Large")) chcSize.setInt(4);
-		if(ch.CacheSize.equals("Other")) chcSize.setInt(5);
-		if(ch.CacheSize.equals("Very Large")) chcSize.setInt(6);
-		if(ch.CacheSize.equals("None")) chcSize.setInt(7);
-		if(ch.CacheSize.equals("Not chosen")) chcSize.setInt(7);
+		if(chD.CacheSize.equals("Micro")) chcSize.setInt(1);
+		if(chD.CacheSize.equals("Small")) chcSize.setInt(2);
+		if(chD.CacheSize.equals("Regular")) chcSize.setInt(3);
+		if(chD.CacheSize.equals("Large")) chcSize.setInt(4);
+		if(chD.CacheSize.equals("Other")) chcSize.setInt(5);
+		if(chD.CacheSize.equals("Very Large")) chcSize.setInt(6);
+		if(chD.CacheSize.equals("None")) chcSize.setInt(7);
+		if(chD.CacheSize.equals("Not chosen")) chcSize.setInt(7);
+		attV.showImages(chD.attributes);
 	}
 	
 	

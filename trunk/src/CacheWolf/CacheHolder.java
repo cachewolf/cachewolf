@@ -59,9 +59,11 @@ public CacheHolder mainCache;
 public String sort;
 public String lastSyncOC = EMPTY;
 
-CacheHolder() {}
-CacheHolder(String wpt) {this.wayPoint=wpt; }
-CacheHolder(CacheHolder ch) {
+//static int nObjects=0;
+CacheHolder() {//nObjects++;Vm.debug("CacheHolder() nO="+nObjects);
+}
+
+CacheHolder(CacheHolder ch) {//nObjects++;Vm.debug("CacheHolder(ch) nO="+nObjects);
 	this.CacheStatus=ch.CacheStatus;
 	this.wayPoint = ch.wayPoint;
 	this.CacheName = ch.CacheName;
@@ -143,9 +145,10 @@ public boolean isAddiWpt() {
 		   }
 	   }
    }
-
-//public void finalize() {
-//   Vm.debug("Destroying CacheHolderBase "+wayPoint);
-//}
-
+/*
+public void finalize() {nObjects--;
+   Vm.debug("Destroying CacheHolder "+wayPoint);
+   Vm.debug("CacheHolder: "+nObjects+" objects left");
+}
+*/
 }

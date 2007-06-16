@@ -23,7 +23,7 @@ public class CacheHolderDetail extends CacheHolder {
 	  public Vector LogImagesText = new Vector();
 	  public Vector UserImages = new Vector();
 	  public Vector UserImagesText = new Vector();
-	  public Vector attributes = new Vector();
+	  public Attributes attributes=new Attributes();
 	  public Vector CacheIcons = new Vector();
 	  public String Bugs = EMPTY;
 	  public String URL = EMPTY;
@@ -221,6 +221,10 @@ public class CacheHolderDetail extends CacheHolder {
 			LongDescription = ex.findNext();
 			ex = new Extractor(text, "<HINTS><![CDATA[", "]]></HINTS>", 0, true);
 			Hints = ex.findNext();
+			// Attributes
+			ex = new Extractor(text,"<ATTRIBUTES>","</ATTRIBUTES>",0,true);
+			attributes.XmlAttributesEnd(ex.findNext());
+			
 			ex = new Extractor(text, "<LOGS>","</LOGS>", 0, true);
 			dummy = ex.findNext();
 			CacheLogs.clear();
@@ -328,6 +332,7 @@ public class CacheHolderDetail extends CacheHolder {
 				  detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n");
 				  detfile.print("<CACHEDETAILS>\r\n");
 				  detfile.print("<DETAILS><![CDATA["+LongDescription+"]]></DETAILS>\r\n");
+				  detfile.print(attributes.XmlAttributesWrite());
 				  detfile.print("<HINTS><![CDATA["+Hints+"]]></HINTS>\r\n");
 				  detfile.print("<LOGS>\r\n");
 				  for(int i = 0; i < CacheLogs.size(); i++){
