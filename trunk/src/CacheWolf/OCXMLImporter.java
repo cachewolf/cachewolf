@@ -82,16 +82,18 @@ public class OCXMLImporter extends MinML {
 		ch = (CacheHolder)cacheDB.get(number);
 		chD= new CacheHolderDetail(ch);
 
+		if (infB.isClosed) return false; 
 		if (askForOptions) {
 			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.IMAGES);
 			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return false; }
 			askForOptions = false;
 		}
 
+		// this is only a dummy-InfoBox for capturing the output
 		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
-		inf.setPreferredSize(220, 300);
-		inf.relayout(false);
-		inf.exec();
+//		inf.setPreferredSize(220, 300);
+//		inf.relayout(false);
+//		inf.exec();
 
 		
 		String lastS = ch.lastSyncOC;
@@ -117,7 +119,7 @@ public class OCXMLImporter extends MinML {
 			+ "&session=0";
 		success = syncOC(url);
 		inf.close(0);
-		return success;
+		return true;
 	}
 
 	public void doIt(){
