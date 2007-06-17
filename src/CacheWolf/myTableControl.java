@@ -133,14 +133,16 @@ public class myTableControl extends TableControl{
 //						TODO: Diese Meldungen vor dem Einloggen darstellen						
 					{
 					    infB.setInfo("Loading: " + ch.wayPoint);
+					    infB.redisplay();
 					    if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))   
 					    	test = spider.spiderSingle(i, infB);
 					    else  
 					    	test = ocSync.syncSingle(i, infB);
-						if (!test) {
+					    if (!test) {
 							infB.close(0);
 							break;
-						}
+						} else 
+							profile.hasUnsavedChanges=true;	
 					} else { 
 						if (ch.isAddiWpt() && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
 							alreadySaid2=true;
@@ -153,12 +155,12 @@ public class myTableControl extends TableControl{
 					}
 				}
 
-				infB.close(0);
-				profile.hasUnsavedChanges=true;	
-				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 //				cacheDB.clear();
 //				profile.readIndex();
 			}
+			infB.close(0);
+//			profile.hasUnsavedChanges=true;	
+			profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 			profile.restoreFilter();
 			profile.updateBearingDistance();
 			tbp.refreshTable();
