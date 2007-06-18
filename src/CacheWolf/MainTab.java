@@ -59,6 +59,9 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(hintLP, MyLocale.getMsg(1204,"Hints & Logs"), null);
 		c.iconize(new Image("more.gif"),true);
 
+		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205,"Solver"), null);
+		c.iconize(new Image("solver.gif"),true);
+
 		c = this.addCard(calcP, MyLocale.getMsg(1206,"Calc"), null);
 		c.iconize(new Image("ewe/HandHeld.bmp"),true);
 
@@ -66,9 +69,6 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(gotoP = new GotoPanel(nav), "Goto", null);
 		c.iconize(new Image("goto.gif"),true);
 		nav.setGotoPanel(gotoP);
-
-		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205,"Solver"), null);
-		c.iconize(new Image("solver.gif"),true);
 
 		c = this.addCard(radarP, "Radar", null);
 		radarP.setMainTab(this);
@@ -157,12 +157,15 @@ public class MainTab extends mTabbedPanel {
 				chNew = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
 				lastselected=chNew.wayPoint;  // Used in Parser.Skeleton
 			}
-			// Is it the same as the last one?
-			if (chNew!=ch) { // new object not same reference as old
-				updatePendingChanges(); // Save dirty data
-	            ch=chNew;		
-	            chD=null;
+			// Are we back in Listview
+			if(this.getSelectedItem() == 0) {
+				updatePendingChanges(); // Save dirty data from Details/Solver
+				// Is it the same as the last one?
 			}
+		    if (chNew!=ch) { // new object not same reference as old
+	            chD=null; // Throw away the details, not longer valid
+			}
+            ch=chNew;		
 			// Only load the details if we leave the list view and the details
 			// have not already been loaded
 			if(this.getSelectedItem() != 0 && chD==null){// any panel other than list view without detail
@@ -217,17 +220,7 @@ public class MainTab extends mTabbedPanel {
 					hintLP.setText(chD);
 				}
 				break;
-			case 5:  // CalcPanel
-				if (chD!=null) {
-					MyLocale.setSIPButton();
-					calcP.setFields(chD);
-				}
-				break;
-
-			case 6: // GotoPanel
-				MyLocale.setSIPButton();
-				break;
-			case 7:  // Solver Panel
+			case 5:  // Solver Panel
 				MyLocale.setSIPButton();
 				if (chD!=null) {
 					if (chD.isAddiWpt()) { 
@@ -241,6 +234,16 @@ public class MainTab extends mTabbedPanel {
 						solverP.setInstructions(chD.Solver);
 					}
 				}
+				break;
+			case 6:  // CalcPanel
+				if (chD!=null) {
+					MyLocale.setSIPButton();
+					calcP.setFields(chD);
+				}
+				break;
+
+			case 7: // GotoPanel
+				MyLocale.setSIPButton();
 				break;
 			case 8:  // Cache Radar Panel
 				MyLocale.setSIPOff();
@@ -303,11 +306,11 @@ public class MainTab extends mTabbedPanel {
 			if (chMain==null) {
 				chD.Solver=solverP.getInstructions();
 				chD.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chD.wayPoint+"/S:"+chD.Solver);
-				solverP.setInstructions("");
+				solverP.clearDirty();
 			} else {
 				chMain.Solver=solverP.getInstructions();
 				chMain.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
-				solverP.setInstructions("");
+				solverP.clearDirty();
 				chMain=null;
 			}
 		}

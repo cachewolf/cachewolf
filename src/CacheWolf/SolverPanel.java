@@ -31,6 +31,9 @@ public class SolverPanel extends CellPanel{
 	public boolean isDirty() {
 		return dirty;
 	}
+	public void clearDirty() {
+		dirty=false;
+	}
 	
 	public String getInstructions() {
 		return mText.getText();
