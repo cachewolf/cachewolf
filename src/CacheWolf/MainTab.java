@@ -158,10 +158,10 @@ public class MainTab extends mTabbedPanel {
 				lastselected=chNew.wayPoint;  // Used in Parser.Skeleton
 			}
 			// Are we back in Listview
-			if(this.getSelectedItem() == 0) {
+			//if(this.getSelectedItem() == 0) {
 				updatePendingChanges(); // Save dirty data from Details/Solver
 				// Is it the same as the last one?
-			}
+			//}
 		    if (chNew!=ch) { // new object not same reference as old
 	            chD=null; // Throw away the details, not longer valid
 			}
