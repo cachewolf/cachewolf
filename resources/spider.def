@@ -28,7 +28,7 @@ listBlockRex       = <table id="dlResults"((?s).*?)</table>
 distRex            = <br\ />(.*?)(km|mi)</td>
 waypointRex        = </a> \\((.*?)\\)<br>
 showOnlyFound      = &f=1
-firstLine          = http://www.geocaching.com/seek/nearest.aspx
+firstLine          = http://www.geocaching.com/seek/nearest.aspx?
 nextListPage       = /seek/nearest.aspx
 
 #--------------------------------------
