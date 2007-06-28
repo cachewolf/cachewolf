@@ -29,6 +29,8 @@ public class HTMLExporter{
 	 		"case_sensitive", "true",
 	 		"max_includes",   "5"
 	 	};
+	public final static String expName = "HTML";
+
 	public HTMLExporter(Preferences p, Profile prof){
 		pref = p;
 		profile=prof;
@@ -43,11 +45,12 @@ public class HTMLExporter{
 
 		//need directory only!!!!
 		String dummy = new String();
-		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, profile.dataDir);
+		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.getExportPath(expName));
 		fc.setTitle("Select target directory:");
 		String targetDir;
 		if(fc.execute() != FileChooser.IDCANCEL){
 			targetDir = fc.getChosen() + "/";
+			pref.setExportPath(expName, targetDir);
 			Vector cache_index = new Vector();
 			Vector cacheImg = new Vector();
 			Vector logImg = new Vector();

@@ -14,6 +14,7 @@ public class TomTomExporter {
 	public final static int TT_OV2 = 1;
 	public final static int TT_WPT_TEXT = 0;
 	public final static int TT_WPT_NUM = 1;
+	public final static String expName = "TomTom";
 
 	Vector cacheDB;
 	Preferences pref;
@@ -44,16 +45,19 @@ public class TomTomExporter {
 		TomTomExporterScreen infoScreen = new TomTomExporterScreen("TomTomExport");
 		if (infoScreen.execute() == Form.IDCANCEL) return;
 		fileFormat = infoScreen.getFormat();
+
+		dirName = pref.getExportPath(expName);
 		
 		if (infoScreen.oneFilePerType()==true){
-			FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, profile.dataDir);
+			FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, dirName);
 			fc.setTitle("Select target dir:");
 			if(fc.execute() == FileChooser.IDCANCEL) return;
 			dirName = fc.getChosen();
+			pref.setExportPath(expName, dirName);
 			prefix = infoScreen.getPrefix();
 			writeOneFilePerType(fileFormat, dirName, prefix);
 		} else{
-			FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
+			FileChooser fc = new FileChooser(FileChooser.SAVE, dirName);
 			fc.setTitle("Select target file:");
 	
 			if (fileFormat == TT_ASC) fc.addMask("*.asc");
@@ -61,6 +65,7 @@ public class TomTomExporter {
 			
 			if(fc.execute() == FileChooser.IDCANCEL) return;
 			fileName = fc.getChosen();
+			pref.setExportPathFromFileName(expName, fileName);
 			writeSingleFile(fileFormat, fileName);
 		}
 	}

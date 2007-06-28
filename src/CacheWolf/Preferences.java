@@ -6,6 +6,8 @@ import ewe.ui.*;
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
 import ewe.filechooser.*;
+import ewe.util.*;
+import ewe.util.Map.MapEntry;
 
 /**
  *	A class to hold the preferences that were loaded upon start up of CacheWolf.
@@ -85,6 +87,8 @@ public class Preferences extends MinML{
 	//public String mydatadir = new String();  //Redundant ??
 	/** The centre as read from the profile */
 
+	// Hashtable for storing the last export path
+	private Hashtable exporterPaths = new Hashtable();
 	/**
 	 * Singleton pattern - return reference to Preferences
 	 * @return Singleton Preferences object
@@ -417,6 +421,10 @@ public class Preferences extends MinML{
 			customMapsPath=atts.getValue("dir");
 		}
 		if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
+		
+		if (name.equals("expPath")){
+			exporterPaths.put(atts.getValue("key"),atts.getValue("value"));
+		}
 	}
 
 	public void characters( char ch[], int start, int length )
@@ -489,6 +497,13 @@ public class Preferences extends MinML{
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath +"\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
+			// save last path of different exporters
+			Iterator itPath = exporterPaths.entries();
+			MapEntry entry;
+			while(itPath.hasNext()){
+				entry = (MapEntry) itPath.next();
+				outp.print("    <expPath key = \"" + entry.getKey().toString() + "\" value = \"" + entry.getValue().toString().replace('\\', '/') + "\"/>\n");
+			}
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
@@ -564,4 +579,21 @@ public class Preferences extends MinML{
 		log (message,e,false);
 	}
 		
+	public void setExportPath(String exporter,String path){
+		exporterPaths.put(exporter, path);
+	}
+
+	public void setExportPathFromFileName(String exporter,String filename){
+		File tmpfile = new File (filename);
+		exporterPaths.put(exporter, tmpfile.getPath());
+	}
+
+	public String getExportPath(String exporter){
+		String dir = (String) exporterPaths.get(exporter);
+		if (dir == null){
+			dir = Global.getProfile().dataDir;
+		}
+		return dir;
+	}
+
 }

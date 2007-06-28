@@ -130,12 +130,16 @@ public class TPLExporter {
 	Preferences pref;
 	Profile profile;
 	String tplFile;
+	String expName;
 
 	public TPLExporter(Preferences p, Profile prof, String tpl){
 		pref = p;
 		profile=prof;
 		cacheDB = profile.cacheDB;
 		tplFile = tpl;
+		File tmpFile = new File(tpl);
+		expName = tmpFile.getName();
+		expName = expName.substring(0, expName.indexOf("."));
 	}
 	
 	public void doIt(){
@@ -144,11 +148,11 @@ public class TPLExporter {
 		ProgressBarForm pbf = new ProgressBarForm();
 		ewe.sys.Handle h = new ewe.sys.Handle();
 
-		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
+		FileChooser fc = new FileChooser(FileChooser.SAVE, pref.getExportPath(expName));
 		fc.setTitle("Select target file:");
 		if(fc.execute() == FileChooser.IDCANCEL) return;
 		File saveTo = fc.getChosenFile();
-		
+		pref.setExportPath(expName, saveTo.getPath());
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
