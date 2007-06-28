@@ -46,11 +46,17 @@ public class Exporter {
 	// selection, which method should be called
 	int howManyParams = 0;
 	
+	//name of exporter for saving pathname
+	String expName;
+	
 	public Exporter() {
 		profile = Global.getProfile();
 		pref = Global.getPref();
 		cacheDB = profile.cacheDB;
 		howManyParams = LAT_LON;
+		expName = this.getClass().getName(); 
+		// remove package
+		expName = expName.substring(expName.indexOf(".") + 1);
 	}
 	
 	public void doIt(){
@@ -190,11 +196,14 @@ public class Exporter {
 	 * @return
 	 */
 	public File getOutputFile (){
-		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
+		File file;
+		FileChooser fc = new FileChooser(FileChooser.SAVE, pref.getExportPath(expName));
 		fc.setTitle("Select target file:");
 		fc.addMask(mask);
 		if(fc.execute() != FileChooser.IDCANCEL){
-			return  fc.getChosenFile();
+			file = fc.getChosenFile();
+			pref.setExportPath(expName, file.getPath());
+			return file;
 		} else {
 			return null;
 		}
