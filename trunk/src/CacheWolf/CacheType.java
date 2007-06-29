@@ -38,6 +38,7 @@ public class CacheType {
 	static protected final int GC_WEBCAM = 11;
 	static protected final int GC_LOCATIONLESS = 12;
 	static protected final int GC_CITO = 13;
+	static protected final int GC_EARTH = 137;
 	static protected final int GC_MEGA_EVENT = 453;
 	// additional waypoints have no numbers in GPX Files, so lets use our own.
 	static protected final int GC_AW_PARKING = 50;
@@ -73,6 +74,7 @@ public class CacheType {
 	static protected final int CW_WEBCAM = 11;
 	static protected final int CW_LOCATIONLESS = 12;
 	static protected final int CW_CITO = 13;
+	static protected final int CW_EARTH = 137;
 	static protected final int CW_MEGA_EVENT = 453;
 	static protected final int CW_PARKING = 50;
 	static protected final int CW_STAGE_OF_MULTI = 51;
@@ -101,6 +103,7 @@ public class CacheType {
 	static protected final String CW_PIC_LETTERBOX = "5.png";
 	static protected final String CW_PIC_LOCATIONLESS = "12.png";
 	static protected final String CW_PIC_CITO = "13.png";
+	static protected final String CW_PIC_EARTH = "137.png";
 	static protected final String CW_PIC_MEGA_EVENT = "453.png";
 	static protected final String CW_PIC_PARKING = "pkg.png";
 	static protected final String CW_PIC_STAGE_OF_MULTI = "stage.png";
@@ -123,6 +126,7 @@ public class CacheType {
 		if(geoNum.equals("8")) geo = "Unknown Cache";
 		if(geoNum.equals("12")) geo = "Locationless Cache";
 		if(geoNum.equals("13")) geo = "Cache In Trash Out Event";
+		if(geoNum.equals("137")) geo = "Earthcache";
 		if(geoNum.equals("453")) geo = "Mega Event Cache";
 		if(geoNum.equals("50")) geo = "Parking Area";
 		if(geoNum.equals("51")) geo = "Stages of a Multicache";
@@ -152,6 +156,7 @@ public class CacheType {
 			case CW_WEBCAM:			return CW_PIC_WEBCAM;
 			case CW_LOCATIONLESS:	return CW_PIC_LOCATIONLESS;
 			case CW_CITO:			return CW_PIC_CITO;
+			case CW_EARTH:			return CW_PIC_EARTH;
 			case CW_MEGA_EVENT:		return CW_PIC_MEGA_EVENT;
 			case CW_PARKING:		return CW_PIC_PARKING;
 			case CW_STAGE_OF_MULTI:	return CW_PIC_STAGE_OF_MULTI;
