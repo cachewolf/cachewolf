@@ -314,7 +314,7 @@ public class SpiderGC{
 		dummy = "";
 		//String lineBlck = "";
 		int page_number = 4;		
-		rexLine = new Regex("<tr bgcolor=((?s).*?)</tr>");
+		rexLine = new Regex("images/icons/compass((?s).*?)</tr>");
 		int found_on_page = 0;
 		//Loop till maximum distance has been found or no more caches are in the list
 		while(distance > 0){
