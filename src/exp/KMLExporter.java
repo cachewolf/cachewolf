@@ -1,4 +1,7 @@
 package exp;
+import ewe.fx.Color;
+import ewe.io.File;
+import ewe.sys.Convert;
 import CacheWolf.*;
 
 /**
@@ -7,6 +10,11 @@ import CacheWolf.*;
 *   
 */
 public class KMLExporter extends Exporter {
+	private static final String COLOR_FOUND = "ff98fb98"; 
+	private static final String COLOR_OWNED = "ffffaa55"; 
+	private static final String COLOR_AVAILABLE = "ffffffff";
+	private static final String COLOR_ARCHIVED = "ff0000ff";
+
 
 	public KMLExporter(){
 		super();
@@ -23,11 +31,11 @@ public class KMLExporter extends Exporter {
 	public String header () {
 		StringBuffer strBuf = new StringBuffer(200);
 				
-		strBuf.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-		strBuf.append("<kml xmlns=\"http://earth.google.com/kml/2.0\">");
-		strBuf.append("<Folder>");
-		strBuf.append("<name>CacheWolf</name>");
-		strBuf.append("<open>1</open>");
+		strBuf.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
+		strBuf.append("<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n");
+		strBuf.append("<Folder>\r\n");
+		strBuf.append("<name>CacheWolf</name>\r\n");
+		strBuf.append("<open>1</open>\r\n");
 
 		return strBuf.toString();
 	}
@@ -46,62 +54,36 @@ public class KMLExporter extends Exporter {
 		strBuf.append("      <Point>\r\n");
 		strBuf.append("         <coordinates>"  + lon + "," + lat + "</coordinates>\r\n");
 		strBuf.append("      </Point>\r\n");
+		strBuf.append("      <Style>\r\n");
+		strBuf.append("      <IconStyle>\r\n");
+		strBuf.append("         <Icon>\r\n");
+		strBuf.append("            <href>"+ File.getProgramDirectory()+ "/" + CacheType.type2pic(Convert.parseInt(ch.type))+ "</href>\r\n");
+		strBuf.append("         </Icon>\r\n");
+		strBuf.append("      </IconStyle>\r\n");
+		strBuf.append("      <LabelStyle>\r\n");
+		strBuf.append("         <color>" + getColor(ch) + "</color>\r\n");
+		strBuf.append("      </LabelStyle>\r\n");
+		strBuf.append("      </Style>\r\n");
 		strBuf.append("   </Placemark>\r\n");
-
+	
 		return strBuf.toString();
 	}
 	
 	public String trailer(){
 		StringBuffer strBuf = new StringBuffer(50);
 
-		strBuf.append("</Folder>");
-		strBuf.append("</kml>");
+		strBuf.append("</Folder>\r\n");
+		strBuf.append("</kml>\r\n");
 
 		return strBuf.toString();
 	}
 	
-/*	public void doIt(){
-		CacheHolder holder;
-		ParseLatLon pll;
-		FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
-		fc.setTitle("Select target file:");
-		if(fc.execute() != fc.IDCANCEL){
-			File saveTo = fc.getChosenFile();
-			try{
-				PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(saveTo)));
-				//Create Header for KML-File
-				outp.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-				outp.println("<kml xmlns=\"http://earth.google.com/kml/2.0\">");
-				outp.println("<Folder>");
-				outp.println("<name>CacheWolf</name>");
-				outp.println("<open>1</open>");
-				//loop through database
-				for(int i = 0; i<cacheDB.size(); i++){
-					holder=(CacheHolder)cacheDB.get(i);
-					if(holder.is_black == false && holder.is_filtered == false){
-						pll = new ParseLatLon(holder.LatLon,".");
-						pll.parse();
-						outp.println("   <Placemark>");
-						outp.println("      <description>http://www.geocaching.com/seek/cache_details.aspx?wp="+holder.wayPoint+"</description>");
-						outp.println("      <name>"+ holder.wayPoint + " - " + SafeXML.clean(holder.CacheName) +"</name>");
-						outp.println("      <LookAt>");
-						outp.println("         <latitude>" + pll.getLatDeg() + "</latitude>");
-						outp.println("         <longitude>" + pll.getLonDeg() + "</longitude>");
-						outp.println("         <range>10000</range><tilt>0</tilt><heading>0</heading>");
-						outp.println("      </LookAt>");
-						outp.println("      <Point>");
-						outp.println("         <coordinates>"  + pll.getLonDeg() + "," + pll.getLatDeg() + "</coordinates>");
-						outp.println("      </Point>");
-						outp.println("   </Placemark>");
-					}//if holder...
-				}//for ... i < cacheDB ...			
-				// footer
-				outp.println("</Folder>");
-				outp.println("</kml>");
-				outp.close();
-			}catch(Exception e){
-				//Vm.debug("Error writing to OVL file!");
-			}
-		} // if execute
+	private String getColor(CacheHolderDetail ch){
+		if (ch.is_found) return COLOR_FOUND;
+		if (ch.is_owned) return COLOR_OWNED;
+		if (ch.is_archived) return COLOR_ARCHIVED;
+		
+		return COLOR_AVAILABLE;
 	}
-*/}
+	
+}
