@@ -39,7 +39,8 @@ public class DetailsPanel extends CellPanel{
 	mImage imgBlack;
 	mImage imgBlackNo;
 	mImage imgShowBug, imgShowBugNo,imgNewWpt,imgGoto;
-	mImage imgShowMaps,imgAddImages;
+	mImage imgShowMaps,imgAddImages,imgNotes;
+	mLabel lblDiff, lblTerr;
 	
 	public DetailsPanel(){
 		pref = Global.getPref();
@@ -74,7 +75,10 @@ public class DetailsPanel extends CellPanel{
 		imgBlack = new mImage("is_black.png"); imgBlack.transparentColor=Color.White;
 		pnlTools.addNext(btnBlack=new mButton(imgBlackNo)); 
 		btnBlack.setToolTip(MyLocale.getMsg(349,"Toggle Blacklist status"));
-		// Button 7: Date/time stamp
+		// Button 7: Notes
+		pnlTools.addNext(btnNotes=new mButton(imgNotes=new mImage("notes.gif"))); imgNotes.transparentColor=Color.DarkBlue;
+		btnNotes.setToolTip(MyLocale.getMsg(351,"Add/Edit notes"));
+		// Button 8: Date/time stamp
 		pnlTools.addLast(btnAddDateTime = new mButton(new mImage("date_time.png"))); 
 		btnAddDateTime.setToolTip(MyLocale.getMsg(350,"Add timestamp to notes"));
 		//showMap.modify(Control.Disabled,0);
@@ -86,9 +90,12 @@ public class DetailsPanel extends CellPanel{
 		////////////////////
 
 		this.addNext(new mLabel(MyLocale.getMsg(300,"Type:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTHWEST));
-		this.addLast(chcType,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(chcType,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(lblDiff=new mLabel(MyLocale.getMsg(1000,"D")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
+		
 		this.addNext(new mLabel(MyLocale.getMsg(301,"Size:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(chcSize,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addNext(chcSize,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(lblTerr=new mLabel(MyLocale.getMsg(1001,"T")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(302,"Waypoint:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(inpWaypoint.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -116,8 +123,8 @@ public class DetailsPanel extends CellPanel{
 		cp.addLast(btnFoundDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL);
 		this.addLast(cp,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
 		
-		btnNotes = new mButton("Notes");
-		this.addLast(btnNotes.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		//btnNotes = new mButton("Notes");
+		//this.addLast(btnNotes.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		//this.addNext(new mLabel(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		//this.addLast(btnCenter = new mButton(MyLocale.getMsg(309,"Make Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 //		this.addLast(btnDelete = new mButton(MyLocale.getMsg(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -180,6 +187,8 @@ public class DetailsPanel extends CellPanel{
 		if(chD.CacheSize.equals("None")) chcSize.setInt(7);
 		if(chD.CacheSize.equals("Not chosen")) chcSize.setInt(7);
 		attV.showImages(chD.attributes);
+		lblTerr.setText((chD.terrain.length()>0) ? (MyLocale.getMsg(1001,"T")+": "+chD.terrain) : "");
+		lblDiff.setText((chD.hard.length()>0)    ? (MyLocale.getMsg(1000,"D")+": "+chD.hard) : ""); 
 	}
 	
 	
