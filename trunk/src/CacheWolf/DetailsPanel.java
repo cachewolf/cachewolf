@@ -19,7 +19,7 @@ public class DetailsPanel extends CellPanel{
 	mInput inpHidden = new mInput();
 	mInput inpOwner = new mInput();
 	mButton btnDelete,btnCenter, btnAddDateTime;
-	mChoice chcType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Parking", "Stage", "Question", "Final","Trailhead","Reference"},0);
+	mChoice chcType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Addi: Parking", "Addi: Stage", "Addi: Question", "Addi: Final","Addi: Trailhead","Addi: Reference"},0);
 	mChoice chcSize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
 	mComboBox chcStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
 	mButton btnNewWpt, btnShowBug, btnShowMap, btnGoto, btnAddPicture, btnBlack, btnNotes, btnSave, btnCancel;
@@ -268,6 +268,19 @@ public class DetailsPanel extends CellPanel{
 		if (ev instanceof DataChangeEvent ) {
 			dirty_details = true;
 			profile.hasUnsavedChanges=true;
+			if (ev.target==chcType) {
+				if (CacheType.isAddiWpt(transSelect(chcType.getInt())) && 
+					(Global.mainTab.mainCache.startsWith("GC")||Global.mainTab.mainCache.startsWith("OC")) &&
+					inpWaypoint.getText().startsWith("CW")) {
+						Global.mainTab.lastselected=Global.mainTab.mainCache;
+						int wptNo=-1;
+						String waypoint;
+						do {
+							waypoint=MyLocale.formatLong(++wptNo,"00")+Global.mainTab.mainCache.substring(2);
+						} while (Global.getProfile().getCacheIndex(waypoint)>=0);
+						inpWaypoint.setText(waypoint);
+				}
+			}
 		}
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == btnNotes){
@@ -430,16 +443,21 @@ public class DetailsPanel extends CellPanel{
 		  ch.LatLon=thisCache.LatLon;
 		  ch.DateHidden=thisCache.DateHidden;
 		  ch.CacheOwner=thisCache.CacheOwner;
+		  String oldType=ch.type;
 		  ch.type=thisCache.type;
-		  if (CacheType.isAddiWpt(ch.type)) {
-			  int idx;
-			  if (ch.wayPoint.length()<5)
-				  idx=-1;
-			  else
-				  idx=profile.getCacheIndex("GC"+ ch.wayPoint.substring(ch.wayPoint.length() == 5?1:2));
-			  if (idx<0) (new MessageBox(MyLocale.getMsg(144,"Warning"),
-					  MyLocale.getMsg(734,"No main cache found for addi waypoint ")+" "+ch.wayPoint+
-					  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYY, where xx are any 2 chars and YYYY are the main cache's chars after the GC"),FormBase.OKB)).execute();
+		  // If the type has changed from/to an addi waypoint, rebuild the references
+		  if (CacheType.isAddiWpt(ch.type)!=CacheType.isAddiWpt(oldType)) {
+			  // If we changed the type to addi, check that a parent exists
+			  if (CacheType.isAddiWpt(ch.type)) {
+				  int idx;
+				  if (ch.wayPoint.length()<5)
+					  idx=-1;
+				  else
+					  idx=profile.getCacheIndex("GC"+ ch.wayPoint.substring(ch.wayPoint.length() == 5?1:2));
+				  if (idx<0) (new MessageBox(MyLocale.getMsg(144,"Warning"),
+						  MyLocale.getMsg(734,"No main cache found for addi waypoint ")+" "+ch.wayPoint+
+						  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYY, where xx are any 2 chars and YYYY are the main cache's chars after the GC"),FormBase.OKB)).execute();
+			  }
 			  profile.buildReferences();
 		  }
 		  // set status also on addi wpts

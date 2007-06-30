@@ -32,6 +32,7 @@ public class MainTab extends mTabbedPanel {
 	StatusBar statBar;
 	MovingMap mm;
 	Navigate nav;
+	String mainCache="";
 
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
 		Global.mainTab=this;
@@ -118,6 +119,7 @@ public class MainTab extends mTabbedPanel {
 	 * @param ch
 	 */
 	public void newWaypoint(CacheHolder ch){
+		mainCache=lastselected;
 		if (detP.isDirty()) detP.saveDirtyWaypoint();
 		Global.getProfile().hasUnsavedChanges=true;
 		String waypoint= ch.wayPoint = profile.getNewWayPointName();
@@ -139,13 +141,13 @@ public class MainTab extends mTabbedPanel {
 
 	public void onEvent(Event ev)
 	{
-		if(ev instanceof MultiPanelEvent){ 
+    	if(ev instanceof MultiPanelEvent){
 			// A panel is selected.
 			mnuMain.allowProfileChange(false);	  
 			if(this.getSelectedItem() == 0){// List view selected
 				mnuMain.allowProfileChange(true);	  
-//				Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
-//				Vm.setSIP(0);
+	//			Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
+	//			Vm.setSIP(0);
 				MyLocale.setSIPOff();
 			}
 			// Get current cacheHolder
@@ -165,7 +167,7 @@ public class MainTab extends mTabbedPanel {
 		    if (chNew!=ch) { // new object not same reference as old
 	            chD=null; // Throw away the details, not longer valid
 			}
-            ch=chNew;		
+	        ch=chNew;		
 			// Only load the details if we leave the list view and the details
 			// have not already been loaded
 			if(this.getSelectedItem() != 0 && chD==null){// any panel other than list view without detail
