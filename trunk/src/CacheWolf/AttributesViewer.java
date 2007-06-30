@@ -6,18 +6,21 @@ import ewe.sys.*;
 import ewe.ui.*;
 
 public class AttributesViewer extends CellPanel {
-	private final static int ICONS_PER_ROW=5;
+	private final static int ICONS_PER_ROW=6;
+	private final static int ICONROWS=2;
 	private static int TILESIZE=32;
 	private mLabel mInfo;
 
 	private class attInteractivePanel extends InteractivePanel {
 		public boolean imageMovedOn(AniImage which) {
-			mInfo.setText(((attAniImage)which).info);
-			mInfo.repaintNow();
+			if (!((attAniImage)which).info.startsWith("*")) { // If text starts with * we have no explanation yet
+				mInfo.setText(((attAniImage)which).info);
+				mInfo.repaintNow();
+			}
 			return true;
 		}
 		public boolean imageMovedOff(AniImage which) {
-			mInfo.setText("Attributes:");
+			mInfo.setText(MyLocale.getMsg(2600,"Attributes:"));
 			mInfo.repaintNow();
 			return true;
 		}
@@ -31,9 +34,9 @@ public class AttributesViewer extends CellPanel {
 	}
 	
 	public AttributesViewer (){
-		Rect r = new Rect(0,0,TILESIZE * 5,TILESIZE * 2); // As on GC: 5 wide, 2 high
+		Rect r = new Rect(0,0,TILESIZE * ICONS_PER_ROW,TILESIZE * ICONROWS); // As on GC: 6 wide, 2 high
 		iap.virtualSize = r;
-		iap.setFixedSize(TILESIZE * 5,TILESIZE * 2);
+		iap.setFixedSize(TILESIZE * ICONS_PER_ROW,TILESIZE * ICONROWS);
 		addLast(mInfo=new mLabel("Attributes:"),HSTRETCH,HFILL);
 		addLast(iap,CellConstants.HSTRETCH,CellConstants.FILL);
 	}
