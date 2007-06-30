@@ -8,7 +8,7 @@ import ewe.ui.*;
 public class AttributesViewer extends CellPanel {
 	private final static int ICONS_PER_ROW=6;
 	private final static int ICONROWS=2;
-	private static int TILESIZE=32;
+	private static int TILESIZE=22;
 	private mLabel mInfo;
 
 	private class attInteractivePanel extends InteractivePanel {
@@ -20,7 +20,7 @@ public class AttributesViewer extends CellPanel {
 			return true;
 		}
 		public boolean imageMovedOff(AniImage which) {
-			mInfo.setText(MyLocale.getMsg(2600,"Attributes:"));
+			mInfo.setText("");
 			mInfo.repaintNow();
 			return true;
 		}
@@ -37,8 +37,8 @@ public class AttributesViewer extends CellPanel {
 		Rect r = new Rect(0,0,TILESIZE * ICONS_PER_ROW,TILESIZE * ICONROWS); // As on GC: 6 wide, 2 high
 		iap.virtualSize = r;
 		iap.setFixedSize(TILESIZE * ICONS_PER_ROW,TILESIZE * ICONROWS);
-		addLast(mInfo=new mLabel(MyLocale.getMsg(2600,"Attributes:")),HSTRETCH,HFILL);
 		addLast(iap,CellConstants.HSTRETCH,CellConstants.FILL);
+		addLast(mInfo=new mLabel(""),HSTRETCH,HFILL);
 	}
 	private InteractivePanel iap=new attInteractivePanel();
 	

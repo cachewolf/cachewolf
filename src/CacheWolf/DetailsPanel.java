@@ -90,12 +90,16 @@ public class DetailsPanel extends CellPanel{
 		////////////////////
 
 		this.addNext(new mLabel(MyLocale.getMsg(300,"Type:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTHWEST));
-		this.addNext(chcType,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(lblDiff=new mLabel(MyLocale.getMsg(1000,"D")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
+		CellPanel line1Panel = new CellPanel();
+		line1Panel.addNext(chcType,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		line1Panel.addLast(lblDiff=new mLabel(MyLocale.getMsg(1000,"D")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
+		this.addLast(line1Panel,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(301,"Size:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addNext(chcSize,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(lblTerr=new mLabel(MyLocale.getMsg(1001,"T")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
+		CellPanel line2Panel = new CellPanel();
+		line2Panel.addNext(chcSize,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		line2Panel.addLast(lblTerr=new mLabel(MyLocale.getMsg(1001,"T")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
+		this.addLast(line2Panel,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(302,"Waypoint:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(inpWaypoint.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
