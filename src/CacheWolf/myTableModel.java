@@ -100,7 +100,7 @@ public class myTableModel extends TableModel{
 	 *
 	 */
 	public void setColumnNamesAndWidths() {
-		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),"T",MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
+		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),MyLocale.getMsg(1001,"T"),MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
 		// [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
 		// [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing
 		Preferences pref=Global.getPref();
