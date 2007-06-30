@@ -21,6 +21,7 @@ public class NotesScreen extends Form{
 	public NotesScreen(CacheHolderDetail ch){
 		this.title = "Notes";
 		setPreferredSize(Global.getPref().myAppWidth, Global.getPref().myAppHeight);
+		this.resizeOnSIP = true;
 		thisCache = ch;
 		wayNotes.setText(thisCache.CacheNotes);
 		addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
