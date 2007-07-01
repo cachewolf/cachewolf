@@ -918,7 +918,11 @@ public class SpiderGC{
 			rowBlock = exRowBlock.findNext();
 			while(exRowBlock.endOfSearch()==false){
 				CacheHolderDetail cx = new CacheHolderDetail();
-				
+				cx.wayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
+				counter++;
+				try{ // If addi exists, try to read it to preserve the notes
+					cx.readCache(profile.dataDir);
+				} catch (Exception ex) {};	
 				nameRex.search(rowBlock);
 				koordRex.search(rowBlock);
 				typeRex.search(rowBlock);
@@ -930,8 +934,6 @@ public class SpiderGC{
 				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
-				cx.wayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
-				counter++;
 				cx.LongDescription = descRex.stringMatched(1); 
 				//Vm.debug(descRex.stringMatched(1));
 				int idx=profile.getCacheIndex(cx.wayPoint);
