@@ -8,7 +8,7 @@ import ewe.ui.*;
 public class AttributesViewer extends CellPanel {
 	private final static int ICONS_PER_ROW=6;
 	private final static int ICONROWS=2;
-	private static int TILESIZE=22;
+	private static int TILESIZE=Attribute.getImageWidth()+2;
 	private mLabel mInfo;
 
 	private class attInteractivePanel extends InteractivePanel {

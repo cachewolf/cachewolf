@@ -19,7 +19,7 @@ public class Attribute {
 	 * The attribute names are identical to the image names.
 	 * Internally the first image name has number 0, the next number 1 and so on.
 	 */
-	private String [] attributeNames= {
+	private static String [] attributeNames= {
 			"error.gif",			//00 Unknown attribute
 			"available-no.gif", 	//01 not 24-7
 			"available-yes.gif", 	//02 available 24-7
@@ -31,8 +31,8 @@ public class Attribute {
 			"cactus-yes.gif",		//08
 			"campfires-no.gif", 	//09 no campfires
 			"campfires-yes.gif", 	//10 campfires allowed
-			"camping-no.gif", 		//11
-			"camping-yes.gif", 		//12
+			"camping-no.gif", 		//11 No camping
+			"camping-yes.gif", 		//12 Camping allowed
 			"cliff-no.gif", 		//13
 			"cliff-yes.gif", 		//14 falling-rocks nearby
 			"climbing-no.gif", 		//15 no difficult climbing
@@ -107,22 +107,38 @@ public class Attribute {
 			"wheelchair-yes.gif", 	//84 wheelchair accessible
 			"winter-no.gif", 		//85 not available for winter
 			"winter-yes.gif"}; 		//86 available in winter
-	private mImage [] attributeImages=new mImage[87];
+	private static mImage [] attributeImages=new mImage[87];
 	private static String IMAGEDIR=File.getProgramDirectory()+"\\Attributes\\";
 	
 	public static String getImageDir() {
 		return IMAGEDIR; 
 	}
     
-    
+    /**
+     * Returns the image name for a give attribute number
+     * @return Image Name
+     */
 	public String getImageName(){
 		if (attNo>attributeNames.length)
 			return "error.gif";
 		else return attributeNames[attNo];
 	}
 	
+	/**
+	 * Returns the text description of the image
+	 * @return Text description of Image
+	 */
 	public String getInfo(){
 		return MyLocale.getMsg(2500+attNo,"No attribute info found");
+	}
+	
+	/**
+	 * Returns the width of the attribute icons
+	 * @return The width of the images 
+	 */
+	public static int getImageWidth() {
+		initErrorImg();
+		return attributeImages[0].image.getWidth();
 	}
 	
     /**
@@ -154,9 +170,13 @@ public class Attribute {
     	return 0; // Error
     }
 
+    private static void initErrorImg() {
+		if (attributeImages[0]==null) attributeImages[0]=new mImage(IMAGEDIR+"error.gif");
+    }
+    
     { // Static initialisation of error image
-		attributeImages[0]=new mImage(IMAGEDIR+"error.gif");
-	}
+    	initErrorImg();
+    }
 
 	
 }
