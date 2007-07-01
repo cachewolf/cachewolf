@@ -6,7 +6,7 @@ import ewe.graphics.*;
 import ewe.util.*;
 
 public class Attributes {
-	private static int MAXATTRIBS=12;
+	public final static int MAXATTRIBS=12;
 	/**
 	 * The number of attributes for this cache (=number of array elements in use in attribs)
 	 */

@@ -6,9 +6,9 @@ import ewe.sys.*;
 import ewe.ui.*;
 
 public class AttributesViewer extends CellPanel {
-	private final static int ICONS_PER_ROW=6;
-	private final static int ICONROWS=2;
 	private static int TILESIZE=Attribute.getImageWidth()+2;
+	private final static int ICONS_PER_ROW=MyLocale.getScreenWidth()/TILESIZE<Attributes.MAXATTRIBS ? MyLocale.getScreenWidth()/TILESIZE : Attributes.MAXATTRIBS;
+	private final static int ICONROWS=(Attributes.MAXATTRIBS+ICONS_PER_ROW-1)/ICONS_PER_ROW;
 	private mLabel mInfo;
 
 	private class attInteractivePanel extends InteractivePanel {
