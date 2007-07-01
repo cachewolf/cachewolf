@@ -7,6 +7,7 @@
 # Version 2.3 - 20070602 sizeRex an GC Änderungen angepasst
 # Version 2.4 - 20070616 neu: Attribute
 # Version 2.5 - 20070629 Anpassungen an Listenänderung bei GC
+# Version 2.6 - 20070701 Bugfix: Wenn Zentrum exakt in Cachekoordinaten liegt wurde der Cache nicht gespidert
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -24,8 +25,8 @@ nextPage           = /login/default.aspx
 firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
 firstPage2         = &lon=
 # Regex to search for cachenames 
-lineRex            = images/icons/compass((?s).*?)</tr>
 listBlockRex       = <table id="dlResults"((?s).*?)</table>
+lineRex            = (?:images/icons/compass|<td\ valign="top"\ align="left"><br\ />)((?s).*?)</tr>
 distRex            = <br\ />(.*?)(km|mi)</td>
 waypointRex        = </a> \\((.*?)\\)<br>
 showOnlyFound      = &f=1
