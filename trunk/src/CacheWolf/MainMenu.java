@@ -41,11 +41,19 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for profiles, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mnuProfile = new MenuItem[3];
+		MenuItem[] mnuProfile = new MenuItem[2];
 		mnuProfile[0] = mnuNewProfile = new MenuItem(MyLocale.getMsg(1107,"New"));
 		mnuProfile[1] = mnuOpenProfile = new MenuItem(MyLocale.getMsg(1109,"Open"));
-		mnuProfile[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Center"));
 		Menu profileMenu = new Menu(mnuProfile,MyLocale.getMsg(121,"Profiles"));
+		
+		///////////////////////////////////////////////////////////////////////
+		// subMenu for import, part of "Application" menu below
+		///////////////////////////////////////////////////////////////////////
+		MenuItem[] mnuImport = new MenuItem[3];
+		mnuImport[0] = loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")); //TODO internationalization
+		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download von opencaching.de")); 
+		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider von geocaching.com")); 
+		Menu importMenu = new Menu(mnuImport, MyLocale.getMsg(175,"Import"));
 		
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
@@ -81,19 +89,18 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Application" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem [] appMenuItems=new MenuItem[12];
-		appMenuItems[0] = profiles 	 = new MenuItem(MyLocale.getMsg(121,"Profiles"), 0, profileMenu); 
+		MenuItem [] appMenuItems=new MenuItem[11];
+		appMenuItems[0] = profiles 	 = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu); 
 		appMenuItems[1] = preferences = new MenuItem(MyLocale.getMsg(108,"Preferences")); 
-		appMenuItems[2] = loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")); //TODO internationalization
-		appMenuItems[3] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download von opencaching.de")); 
-		appMenuItems[4] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider von geocaching.com")); 
-		appMenuItems[5] = new MenuItem(MyLocale.getMsg(149,"Maps"),0,mapsMenu);
-		appMenuItems[6] = mnuSeparator = new MenuItem("-");
-		appMenuItems[7] = new MenuItem(MyLocale.getMsg(107,"Export"),0,exportMenu);
-		appMenuItems[8] = mnuSeparator;
-		appMenuItems[9] = savenoxit = new MenuItem(MyLocale.getMsg(127,"Save")); 
-		appMenuItems[10] = savenexit = new MenuItem(MyLocale.getMsg(110,"Save & Exit")); 
-		appMenuItems[11] = exit = new MenuItem(MyLocale.getMsg(111,"Exit"));
+		appMenuItems[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Center"));
+		appMenuItems[3] = mnuSeparator = new MenuItem("-");
+		appMenuItems[4] = new MenuItem(MyLocale.getMsg(175,"Import"),0,importMenu);
+		appMenuItems[5] = new MenuItem(MyLocale.getMsg(107,"Export"),0,exportMenu);
+		appMenuItems[6] = new MenuItem(MyLocale.getMsg(149,"Maps"),0,mapsMenu);
+		appMenuItems[7] = mnuSeparator;
+		appMenuItems[8] = savenoxit = new MenuItem(MyLocale.getMsg(127,"Save")); 
+		appMenuItems[9] = savenexit = new MenuItem(MyLocale.getMsg(110,"Save & Exit")); 
+		appMenuItems[10] = exit = new MenuItem(MyLocale.getMsg(111,"Exit"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(120,"Application"),new Menu(appMenuItems,null)));
 		
 		///////////////////////////////////////////////////////////////////////
