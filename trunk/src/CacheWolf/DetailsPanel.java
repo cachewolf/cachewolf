@@ -369,12 +369,23 @@ public class DetailsPanel extends CellPanel{
 				}
 			}
 			else if (ev.target==btnFoundDate) {
-				DateChooser.dayFirst=true;
-				DateChooser dc=new DateChooser(Vm.getLocale());
+				//DateChooser.dayFirst=true;
+				DateTimeChooser dc=new DateTimeChooser(Vm.getLocale());
 				dc.title=MyLocale.getMsg(328,"Date found"); 
 				dc.setPreferredSize(240,240);
+				String foundDate=chcStatus.getText();
+				if (foundDate.startsWith(MyLocale.getMsg(318,"Found")+" ")) foundDate=foundDate.substring(MyLocale.getMsg(318,"Found").length()+1);
+				Time t=new Time();
+				try {
+					t.parse(foundDate,"y-M-d H:m");
+				} catch(IllegalArgumentException e) {
+					try {
+						t.parse(foundDate,"y-M-d");
+					} catch(IllegalArgumentException e1) {}
+				};
+				dc.reset(t);
 				if (dc.execute()==ewe.ui.FormBase.IDOK) {
-				  chcStatus.setText(MyLocale.getMsg(318,"Found")+" "+Convert.toString(dc.year)+"-"+MyLocale.formatLong(dc.month,"00")+"-"+MyLocale.formatLong(dc.day,"00"));
+				  chcStatus.setText(MyLocale.getMsg(318,"Found")+" "+Convert.toString(dc.year)+"-"+MyLocale.formatLong(dc.month,"00")+"-"+MyLocale.formatLong(dc.day,"00")+" "+dc.time);
 				  dirty_details=true;
 				}
 			}
