@@ -269,7 +269,7 @@ public class SpiderGC{
 				lineRex.search(dummy);
 			}catch(NullPointerException nex){}
 			while(lineRex.didMatch()){
-				//Vm.debug(getDist(rexLine.stringMatched(1)) + " / " +getWP(rexLine.stringMatched(1)));
+				//Vm.debug(getDist(lineRex.stringMatched(1)) + " / " +getWP(lineRex.stringMatched(1)));
 				found_on_page++;
 				if(getDist(lineRex.stringMatched(1)) <= distance){
 					if(indexDB.get((String)getWP(lineRex.stringMatched(1))) == null){
@@ -510,7 +510,7 @@ public class SpiderGC{
 	private double getDist(String doc){
 		inRex = new Regex(p.getProperty("distRex"));
 		inRex.search(doc);
-		if(doc.indexOf("Here") > 0) return(0);
+		if(doc.indexOf("Here") >= 0) return(0);
 		if(pref.digSeparator.equals(",")) return Convert.toDouble(inRex.stringMatched(1).replace('.',','));
 		return Convert.toDouble(inRex.stringMatched(1));
 	}
