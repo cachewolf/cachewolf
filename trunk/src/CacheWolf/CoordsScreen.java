@@ -22,8 +22,7 @@ public class CoordsScreen extends Form {
 	CWPoint coordInp = new CWPoint();
 	CellPanel TopP = new CellPanel();
 	CellPanel BottomP = new CellPanel();
-
-	
+	int exitKeys[]={75009};
 	int currFormat;
 	
 	public CoordsScreen()
@@ -35,10 +34,10 @@ public class CoordsScreen extends Form {
 		TopP.addNext(chkDMS =new mCheckBox("d°m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
 		TopP.addLast(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 
-		chkDD.setGroup(chkFormat);
-		chkDMM.setGroup(chkFormat);
-		chkDMS.setGroup(chkFormat);
-		chkUTM.setGroup(chkFormat);
+		chkDD.setGroup(chkFormat); chkDD.exitKeys=exitKeys;
+		chkDMM.setGroup(chkFormat);chkDMM.exitKeys=exitKeys;
+		chkDMS.setGroup(chkFormat);chkDMS.exitKeys=exitKeys;
+		chkUTM.setGroup(chkFormat);chkUTM.exitKeys=exitKeys;
 
 		// Input for degrees
 		TopP.addNext(chcNS = new mChoice(new String[]{"N", "S"},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -77,34 +76,41 @@ public class CoordsScreen extends Form {
 		//btnParse.setTag(SPAN,new Dimension(4,1));
 		TopP.addLast(btnCopy = new mButton(MyLocale.getMsg(618,"Copy")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnCopy.setTag(SPAN,new Dimension(4,1));
-
-
-		
+		chcNS.exitKeys=exitKeys; chcEW.exitKeys=exitKeys;
 		//add Panels
 		this.addLast(TopP,CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(4,1));
 //		this.addLast(BottomP,CellConstants.VSTRETCH, CellConstants.VFILL|CellConstants.WEST).setTag(SPAN,new Dimension(4,1));
-		
+		chcNS.takeFocus(Control.ByKeyboard);
 	}
 	
 	public void activateFields(int format){
-		// first enable all fields
-		this.modifyAll(0,ControlConstants.Disabled);
-		
+		inpEWDeg.wantReturn=false; inpEWm.wantReturn=false; inpEWs.wantReturn=false; inpUTMNorthing.wantReturn=false;
 		switch (format){
-		case CWPoint.DD: 	inpNSm.modify(ControlConstants.Disabled,0);inpEWm.modify(ControlConstants.Disabled,0);
-				 	inpNSs.modify(ControlConstants.Disabled,0);inpEWs.modify(ControlConstants.Disabled,0);
-		case CWPoint.CW:
-		case CWPoint.DMM: 	inpNSs.modify(ControlConstants.Disabled,0);inpEWs.modify(ControlConstants.Disabled,0);
-		case CWPoint.DMS: 	inpUTMZone.modify(ControlConstants.Disabled,0);
-					inpUTMNorthing.modify(ControlConstants.Disabled,0);
-					inpUTMEasting.modify(ControlConstants.Disabled,0);
-					break;
-		case CWPoint.UTM: 	inpNSDeg.modify(ControlConstants.Disabled,0);inpEWDeg.modify(ControlConstants.Disabled,0);
-					inpNSm.modify(ControlConstants.Disabled,0);inpEWm.modify(ControlConstants.Disabled,0);
-	 				inpNSs.modify(ControlConstants.Disabled,0);inpEWs.modify(ControlConstants.Disabled,0);
-	 				chcNS.modify(ControlConstants.Disabled,0);
-	 				chcEW.modify(ControlConstants.Disabled,0);
-	 				break;
+			case CWPoint.DD:
+				enable(chcNS); enable(inpNSDeg); disable(inpNSm); disable(inpNSs);
+				enable(chcEW); enable(inpEWDeg); disable(inpEWm); disable(inpEWs);
+				inpEWDeg.wantReturn=true;
+				disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
+				break;
+			case CWPoint.CW:
+			case CWPoint.DMM: 	
+				enable(chcNS); enable(inpNSDeg); enable(inpNSm); disable(inpNSs);
+				enable(chcEW); enable(inpEWDeg); enable(inpEWm); disable(inpEWs);
+				inpEWm.wantReturn=true;
+				disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
+				break;
+			case CWPoint.DMS: 	
+				enable(chcNS); enable(inpNSDeg); enable(inpNSm); enable(inpNSs);
+				enable(chcEW); enable(inpEWDeg); enable(inpEWm); enable(inpEWs);
+				inpEWs.wantReturn=true;
+				disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
+				break;
+			case CWPoint.UTM: 	
+				disable(chcNS); disable(inpNSDeg); disable(inpNSm); disable(inpNSs);
+				disable(chcEW); disable(inpEWDeg); disable(inpEWm); disable(inpEWs);
+				enable(inpUTMZone); enable(inpUTMNorthing); enable(inpUTMEasting);
+				inpUTMNorthing.wantReturn=true;
+	 			break;
 		}
 		
 		this.stretchLastColumn = true;
@@ -112,6 +118,9 @@ public class CoordsScreen extends Form {
 		this.repaintNow();
 	}
 
+	private void enable(Control c) {c.modify(ControlConstants.TakesKeyFocus,ControlConstants.Disabled); }
+	private void disable(Control c) {c.modify(ControlConstants.Disabled,ControlConstants.TakesKeyFocus); }
+	
 	public void readFields(CWPoint coords, int format){
 		String NS, EW;
 		if (format == CWPoint.UTM)
@@ -160,8 +169,19 @@ public class CoordsScreen extends Form {
 	public void onEvent(Event ev){
 
 		//Vm.debug(ev.toString());
-
+		// Ensure that the Enter key moves to the appropriate field
+		// for Checkboxes and Choice controls this is done via the exitKeys
+		// For input fields we use the wantReturn field
+		if(ev instanceof ControlEvent && ev.type == ControlEvent.EXITED){
+			if (((ControlEvent)ev).target==chkDD || ((ControlEvent)ev).target==chkDMM ||
+			    ((ControlEvent)ev).target==chkDMS) Gui.takeFocus(chcNS,Control.ByKeyboard);	
+			if (((ControlEvent)ev).target==chkUTM) Gui.takeFocus(inpUTMZone,Control.ByKeyboard);
+			if (((ControlEvent)ev).target==chcNS) Gui.takeFocus(inpNSDeg,Control.ByKeyboard);
+			if (((ControlEvent)ev).target==chcEW) Gui.takeFocus(inpEWDeg,Control.ByKeyboard);
+		}
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
+			if (((ControlEvent)ev).target==inpEWDeg || ((ControlEvent)ev).target==inpEWm ||
+					((ControlEvent)ev).target==inpEWs || ((ControlEvent)ev).target==inpUTMNorthing) Gui.takeFocus(btnApply,Control.ByKeyboard);	
 			if (ev.target == chkFormat){
 				readFields(coordInp, currFormat);
 				currFormat = chkFormat.getSelectedIndex();
@@ -204,8 +224,6 @@ public class CoordsScreen extends Form {
 					this.repaintNow();
 				}
 			}
-				
-				
 		}
 		super.onEvent(ev);
 	}
