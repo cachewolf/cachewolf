@@ -29,6 +29,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete;
+	public MenuItem orgCacheTour;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
 	private TablePanel tbp;
@@ -150,10 +151,12 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organize" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organizeMenuItems=new MenuItem[3];
+		MenuItem[] organizeMenuItems=new MenuItem[5];
 		organizeMenuItems[0] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
 		organizeMenuItems[1] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
 		organizeMenuItems[2] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
+		organizeMenuItems[3] = mnuSeparator;
+		organizeMenuItems[4] = orgCacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organize"),new Menu(organizeMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
@@ -496,6 +499,10 @@ public class MainMenu extends MenuBar {
 				dm.deleteCaches();
 				tbp.refreshTable();
 			}
+			if(mev.selectedItem == orgCacheTour){
+				orgCacheTour.modifiers^=MenuItem.Checked;
+				Global.mainForm.toggleCacheListVisible();			
+			}
 			///////////////////////////////////////////////////////////////////////
 			// "About" pulldown menu
 			///////////////////////////////////////////////////////////////////////
@@ -533,14 +540,15 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == chkVersion){
 				Version vers = new Version();
 				if(vers.newVersionAvailable(pref)){
-					InfoBox inf = new InfoBox("New Version", "New version\navailable.");// TODO Internationalisation when code has been written
+					InfoBox inf = new InfoBox(MyLocale.getMsg(176,"New Version"), MyLocale.getMsg(177,"New version\navailable."));
 					inf.execute();
 				} else {
-					InfoBox inf = new InfoBox("Version Check", "You are at\nthe current version.");// TODO Internationalisation when code has been written
+					InfoBox inf = new InfoBox(MyLocale.getMsg(178,"Version Check"), MyLocale.getMsg(179,"You are at\nthe current version."));
 					inf.execute();
 				}
 			}
 
 		}
 	}
+	
 }

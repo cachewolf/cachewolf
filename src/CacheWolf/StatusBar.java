@@ -16,12 +16,18 @@ public class StatusBar extends CellPanel{
 	Preferences pref;
 	mButton btnFlt;
 	mImage imgFlt;
+	mButton btnCacheTour;
+	mImage imgCacheTour; 
 	
 	public StatusBar(Preferences p, Vector db){
 		pref=p;
+		addNext(btnCacheTour=new mButton(imgCacheTour=new mImage("cachetour.png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		imgCacheTour.transparentColor=Color.White;
+		btnCacheTour.setPreferredSize(20,13);btnCacheTour.borderWidth=0; 
+		btnCacheTour.setToolTip(MyLocale.getMsg(197,"Show/Hide cachetour"));
 		stats = new DBStats(db);
 		addNext(disp = new mLabel(""),CellConstants.DONTSTRETCH, CellConstants.FILL);
-		disp.setToolTip("Total # of caches (GC&OC)\nTotal # visible\nTotal # found");
+		disp.setToolTip(MyLocale.getMsg(196,"Total # of caches (GC&OC)\nTotal # visible\nTotal # found"));
 		addNext(btnFlt= new mButton(imgFlt=new mImage("filter.png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); 
 		btnFlt.backGround=new ewe.fx.Color(0,255,0); 
 		btnFlt.setPreferredSize(20,13);
@@ -29,7 +35,7 @@ public class StatusBar extends CellPanel{
 		btnFlt.setToolTip("Filter status");
 //		addNext(lblFlt= new mLabel("Flt"),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); lblFlt.backGround=new ewe.fx.Color(0,255,0);
 		addLast(lblCenter=new mLabel(""),CellConstants.STRETCH, WEST|CellConstants.FILL);
-		lblCenter.setToolTip("Current center");
+		lblCenter.setToolTip(MyLocale.getMsg(195,"Current center"));
 		updateDisplay();
 	}
 	
@@ -64,6 +70,9 @@ public class StatusBar extends CellPanel{
 					flt.doFilter();
 				}
 				Global.mainTab.tbP.refreshTable();
+			}
+			if (ev.target == btnCacheTour){
+				Global.mainForm.toggleCacheListVisible();			
 			}
 		}
 		super.onEvent(ev);

@@ -18,5 +18,6 @@ public class Global {
 	  }
       // A bit of a hack to allow access from one panel to another
 	  static public MainTab mainTab;
+	  static public MainForm mainForm;
 }
 
