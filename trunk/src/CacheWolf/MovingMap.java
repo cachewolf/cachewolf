@@ -1299,7 +1299,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu kontextMenu;
 	MenuItem gotoMenuItem = new MenuItem("Goto here$g", 0, null);
 	MenuItem newWayPointMenuItem = new MenuItem("Create new Waypoint here$n", 0, null);;
-	MenuItem openCacheDescMenuItem;
+	MenuItem openCacheDescMenuItem,addCachetoListMenuItem;
 
 	Menu mapsMenu;
 	MenuItem selectMapMI = new MenuItem("Select a map manually$s", 0, null);
@@ -1560,8 +1560,12 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			AniImage clickedOnImage = images.findHotImage(p);
 			if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
 				clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
-				if (clickedCache != null) openCacheDescMenuItem = new MenuItem("Open '"+clickedCache.CacheName+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+				if (clickedCache != null) openCacheDescMenuItem = new MenuItem("Open '"+(clickedCache.CacheName.length()>0?clickedCache.CacheName:clickedCache.wayPoint)+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
 				kontextMenu.addItem(openCacheDescMenuItem);
+				if (clickedCache !=null && Global.mainForm.cacheListVisible) { 
+					addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
+					kontextMenu.addItem(addCachetoListMenuItem);
+				}
 			}
 			kontextMenu.exec(this, new Point(p.x, p.y), this);
 		}
@@ -1672,6 +1676,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						newWP.pos = mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y);
 						newWP.LatLon=newWP.pos.toString(); 
 						Global.mainTab.newWaypoint(newWP);
+					}
+					if (action == addCachetoListMenuItem) {
+						kontextMenu.close();
+						Global.mainForm.cacheList.addCache(clickedCache.wayPoint);
 					}
 
 				}
