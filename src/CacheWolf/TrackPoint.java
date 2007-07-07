@@ -48,11 +48,12 @@ class Track {
 		TrackPoints = new TrackPoint[5000];
 		num = 0;
 	}
-	
+/*===== add is currently not used	
 	public void add(double lat, double lon) {
 		TrackPoints[num] = new TrackPoint(lat, lon);
 		num++;
 	}
+=====*/	
 	/*
 	 * throws IndexOutOfBoundsException when track is full
 	 */
@@ -61,7 +62,7 @@ class Track {
 		TrackPoints[num] = new TrackPoint(t);
 		num++;
 	}
-
+/*===== loadTrack/saveTrack are currently not used
 	public void loadTrack(String filename){ // TODO untested!
 		byte [] all = ewe.sys.Vm.readResource(null,filename);
 		if (all == null) return; // TODO error handling
@@ -86,5 +87,7 @@ class Track {
 	}catch (IOException e) {
 		(new MessageBox("Error", "Error reading trackfile:\n"+e.toString(), MessageBox.OKB)).execute();}
 	}
+=====*/
+
 }
 

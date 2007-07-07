@@ -17,14 +17,20 @@ public class Attributes {
 	private Attribute attribs[]=new Attribute[MAXATTRIBS];
 
 	public Attributes() { 
-//		attribs[0]=new Attribute("camping-no.gif"); attribs[1]=new Attribute("dogs-yes.gif"); attribs[2]=new Attribute("onehour-yes.gif"); count=3; //TODO REMOVE THIS
 	}
 
-	public int getCount(){
+	/**
+	 * Get the number of attributes in the list
+	 * @return number of attributes
+	 */public int getCount(){
 		return count;
 	}
 	
-	public void clear() {
+	/**
+	 * Clear the attributes list
+	 *
+	 */
+	 public void clear() {
 		count=0;
 	}
 	
@@ -63,20 +69,39 @@ public class Attributes {
 		return sb.toString();
 	}
 	
+	/**
+	 * Add a new attributes
+	 * @param attributeName
+	 */
 	public void add(String attributeName){
 		if (count<attribs.length) attribs[count++]=new Attribute(attributeName);
     }
 
+	/**
+	 * Get the name of the i'th attribute in the list
+	 * @param i The number of the attribute to retrieve
+	 * @return The name of the attribute (e.g. horses-no.gif)
+	 */
 	public String getName(int i) {
 		if (i>=0 && i<count) return attribs[i].getImageName();
 		return "error.gif";
 	}
 	
+	/**
+	 * Get the image corresponding to an attribute
+	 * @param i The number of the attribute for which the image is to be retrieved
+	 * @return The mImage of the attribute
+	 */
 	public mImage getImage(int i) {
 		if (i>=0 && i<count) return attribs[i].getImage();
 		return new Attribute().getImage();
 	}
 
+	/**
+	 * Get the infotext for an attribute
+	 * @param i The number of the attribute for which the infotext is to be retrieved
+	 * @return The infotext of the attribute
+	 */
 	public String getInfo(int i) {
 		if (i>=0 && i<count) return attribs[i].getInfo();
 		return "No info";
