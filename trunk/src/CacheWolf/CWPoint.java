@@ -107,26 +107,15 @@ public class CWPoint extends TrackPoint{
 	
 	
 	/**
-	 * Create CWPoint using UTM coordinates  
-	 * @param strZone UTM-zone, e.g. 32U
-	 * @param strNorthing Northing component
-	 * @param strEasting  Easting component
-	 */
-	//TODO Remove ? Currently not used at all
-	public CWPoint ( String strZone, String strNorthing, String strEasting){
-		set(strZone, strNorthing, strEasting);
-	}
-
-	/**
 	 * set lat and lon by parsing coordinates with Regex 
 	 * @param coord  String like N 49° 33.167 E 011° 21.608
 	 */
 	public CWPoint(String coord) {
 		set(coord);
 	}
-	public boolean equals (CWPoint p) {
+	/*public boolean equals (CWPoint p) {
 		return super.equals(p);
-	}
+	}*/
 
 	/**
 	 * Set lat and lon 
@@ -285,16 +274,6 @@ public class CWPoint extends TrackPoint{
 				lonDec <= 360 && lonDec >= -360;
 	}
 	
-	/**
-	 * Constrain latitude and longitude to allowed values
-	 *
-	 */
-	private void makeValid() {
-		if (latDec>90.0) latDec=90.0;
-		if (latDec<-90.0) latDec=-90.0;
-		if (lonDec>180.0) lonDec=180.0;
-		if (lonDec<-180.0) lonDec=-180.0;
-	}
 
 	/**
 	 * set lat and lon by using UTM coordinates  
