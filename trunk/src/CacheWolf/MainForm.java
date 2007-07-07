@@ -9,6 +9,10 @@ import ewe.fx.*;
 *	Class ID = 5000
 */
 public class MainForm extends Form {
+	// The next three declares are for the cachelist
+	boolean cacheListVisible=false;
+    CacheList cacheList;
+    SplittablePanel split;
 	
 	StatusBar statBar=null;
 	Preferences pref = Global.getPref(); // Singleton pattern
@@ -42,6 +46,7 @@ public class MainForm extends Form {
 	}
 	
 	public void doIt(){
+		Global.mainForm=this;
 		this.title = "CacheWolf " + Version.getRelease();
 		this.exitSystemOnClose = true;
 		this.resizable = true;
@@ -83,16 +88,25 @@ public class MainForm extends Form {
 		if (pref.showStatus) statBar = new StatusBar(pref, profile.cacheDB);
 		mMenu = new MainMenu(this);
 		mTab = new MainTab(mMenu,statBar);
+		split=new SplittablePanel(PanelSplitter.HORIZONTAL);
+		split.theSplitter.thickness=0; split.theSplitter.modify(Invisible,0);
+		CellPanel pnlCacheList = split.getNextPanel();
+		CellPanel pnlMainTab = split.getNextPanel(); 
+		split.setSplitter(PanelSplitter.MIN_SIZE|PanelSplitter.BEFORE,PanelSplitter.HIDDEN|PanelSplitter.BEFORE,PanelSplitter.CLOSED);
+		pnlCacheList.addLast(cacheList=new CacheList(),STRETCH,FILL);
+		pnlMainTab.addLast(mTab,STRETCH,FILL);
+		mTab.dontAutoScroll=true;
 		if (pref.menuAtTop) {
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
-			this.addLast(mTab,CellConstants.STRETCH, CellConstants.FILL);
+			this.addLast(split,STRETCH,FILL);
 		} else {
-			this.addLast(mTab,CellConstants.STRETCH, CellConstants.FILL);
+			this.addLast(split,STRETCH,FILL);
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		}
 		mMenu.setTablePanel(mTab.getTablePanel());
 		infB.close(0);
 		mTab.tbP.selectFirstRow();
+		//mTab.tbP.tc.paintSelection();
 		Vm.showWait(false);
 	}
 
@@ -122,4 +136,22 @@ public class MainForm extends Form {
 		super.onEvent(ev);
 	}
 
+	public void toggleCacheListVisible() {
+		cacheListVisible=!cacheListVisible;
+		if (cacheListVisible) {
+			// Make the splitterbar visible with a width of 6 
+			split.theSplitter.modify(0,Invisible);
+			split.theSplitter.resizeTo(6,split.theSplitter.getRect().height);
+			Global.mainForm.mMenu.orgCacheTour.modifiers|=MenuItem.Checked;
+		} else {
+			// Hide the splitterbar and set width to 0
+			split.theSplitter.modify(Invisible,0);
+			split.theSplitter.resizeTo(0,split.theSplitter.getRect().height);
+			Global.mainForm.mMenu.orgCacheTour.modifiers&=~MenuItem.Checked;
+		}
+		split.theSplitter.doOpenClose(cacheListVisible);
+		Global.mainForm.mMenu.repaint();
+		
+	}
+	
 }

@@ -213,4 +213,51 @@ public class myTableControl extends TableControl{
 	    if (ev instanceof PenEvent) Global.mainTab.tbP.myMod.penEventModifiers=((PenEvent)ev).modifiers;
 		super.onEvent(ev);
 	}
+    ///////////////////////////////////////////////////
+	//  Allow the caches to be dragged into a cachelist
+    ///////////////////////////////////////////////////
+	
+	IconAndText imgDrag;
+	String wayPoint;
+	
+	public void startDragging(DragContext dc) {//TODO Dragging of header widths
+		 Vector cacheDB=Global.getProfile().cacheDB;
+		 Point p=cellAtPoint(dc.start.x,dc.start.y,null);
+		 wayPoint=null;
+		 if (p.y>=0) { 
+			 CacheHolder ch=(CacheHolder)cacheDB.get(p.y);
+			 wayPoint=ch.wayPoint;
+			 //Vm.debug("Waypoint : "+ch.wayPoint);
+			 imgDrag=new IconAndText();
+			 imgDrag.addColumn((IImage) Global.mainTab.tbP.myMod.cacheImages[Convert.parseInt(ch.type)]);
+			 imgDrag.addColumn(ch.wayPoint);
+			 dc.dragData=dc.startImageDrag(imgDrag,new Point(8,8),this);
+		 } else super.startDragging(dc);
+	 }
+
+	 public void stopDragging(DragContext dc) {
+		 if (wayPoint!=null) {
+			 //Vm.debug("Stop  Dragging"+dc.curPoint.x+"/"+dc.curPoint.y);
+			 dc.stopImageDrag(true);
+			 Point p = Gui.getPosInParent(this,getWindow());
+			 p.x += dc.curPoint.x;
+			 p.y += dc.curPoint.y;
+			 Control c = getWindow().findChild(p.x,p.y);
+		     if (c instanceof mList && c.text.equals("CacheList")) {
+		    	 if (Global.mainForm.cacheList.addCache(wayPoint)) {
+		    		 c.repaintNow();
+		    		 ((mList) c).makeItemVisible(((mList)c).itemsSize()-1);
+		    	 }
+		     }
+			 //Vm.debug("Control "+c.toString()+"/"+c.text);
+		 }else super.stopDragging(dc);
+	 }
+	 
+	 public void dragged(DragContext dc) {
+	 	if (wayPoint!=null)
+		   dc.imageDrag();
+	 	else
+	 		super.dragged(dc);
+	 }
+
 }

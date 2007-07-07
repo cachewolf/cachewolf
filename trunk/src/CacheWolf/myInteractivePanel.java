@@ -1,6 +1,7 @@
 package CacheWolf;
 import ewe.graphics.*;
 import ewe.ui.*;
+import ewe.util.Vector;
 import ewe.sys.*;
 import ewe.fx.*;
 import ewe.graphics.*;
@@ -23,6 +24,7 @@ public class myInteractivePanel extends InteractivePanel{
 	AniImage imgInfo;
 	String strDifficulty=MyLocale.getMsg(1120,"Diff");
 	String strTerrain=MyLocale.getMsg(1121,"Terr");
+	AniImage imgDrag; // Allows the dragging of the cache into the cachelist
 	
 	private void clearInfo() {
 		removeImage(imgInfo);
@@ -74,7 +76,8 @@ public class myInteractivePanel extends InteractivePanel{
 		imgInfo.properties = mImage.IsNotHot;
 		addImage(imgInfo);
 		refreshOnScreen(imgInfo);
-		return true;
+		imgDrag=which;
+	return true;
 	}
 	public boolean imageMovedOff(AniImage which) {
 		clearInfo();
@@ -82,41 +85,92 @@ public class myInteractivePanel extends InteractivePanel{
 	}
 	public void onPenEvent(PenEvent ev) {
 		super.onPenEvent(ev);
-		if (ev.type==PenEvent.PEN_UP) clearInfo();
-	}
-	/*
-	public void onEvent(Event ev){
-		BufferedGraphics bfg;
-		Graphics g;
-		if(ev instanceof PenEvent && ev.type == PenEvent.PEN_DRAG){
-			PenEvent pev = (PenEvent)ev;
-			if(penMoving == false){
-				penMoving = true;
-				x1 = pev.x;
-				y1 = pev.y;
-				x2 = x1;
-				y2 = y1;
-				Vm.debug("Pen starting");
-			} else {
-				bfg = new BufferedGraphics(this.getGraphics(), new Rect(new Dimension(50,50)));
-				g = bfg.getGraphics();
-				g.setDrawOp(Graphics.DRAW_XOR);
-				g.setPen(new Pen(RED,Pen.SOLID,1));
-				g.drawRect(x1,y1,20,20);
-				bfg.release();
-				x2 = pev.x;
-				y2 = pev.y;
-				bfg = new BufferedGraphics(this.getGraphics(), new Rect(new Dimension(50,50)));
-				g = bfg.getGraphics();
-				g.setDrawOp(Graphics.DRAW_XOR);
-				g.setPen(new Pen(RED,Pen.SOLID,1));
-				g.drawRect(x1,y1,x2-x1,y2-y1);
-				bfg.release();
-				Vm.debug("Pen moving");
-			}
-			
+		if (ev.type==PenEvent.PEN_UP) {
+			clearInfo();
+			// The next line is needed due to a bug in EWE (it does not call penReleased)
+			if (isDragging) penReleased(new Point(ev.x,ev.y));
 		}
-		super.onEvent(ev);
 	}
-	*/
+	
+    ///////////////////////////////////////////////////
+	//  Allow the caches to be dragged into a cachelist
+    ///////////////////////////////////////////////////
+	
+	String wayPoint;
+	
+	public void startDragging(DragContext dc) {
+		Vector cacheDB=Global.getProfile().cacheDB;
+//Vm.debug("myIAP startDrag "+dc.start.x+"/"+dc.start.y+"  "+ch.wayPoint);
+		 int idx=Global.getProfile().getCacheIndex(wayPoint); 
+		if (idx>=0) {
+			 CacheHolder ch=(CacheHolder) cacheDB.get(idx);
+			 //wayPoint=ch.wayPoint;
+			 //Vm.debug("Waypoint : "+ch.wayPoint);
+			 IconAndText icnDrag=new IconAndText();
+			 icnDrag.addColumn((IImage) Global.mainTab.tbP.myMod.cacheImages[Convert.parseInt(ch.type)]);
+			 icnDrag.addColumn(ch.wayPoint);
+			 dc.dragData=dc.startImageDrag(icnDrag,new Point(8,8),this);
+			 if (dc instanceof ImageDragContext) Vm.debug(">>>>Is Image drag");
+		}
+	 }
+
+	 public void stopDragging(DragContext dc) {}
+	 public void draggingStarted(ImageDragContext dc) {}
+	 public void draggingStopped(ImageDragContext dc) {}
+	 
+	 public boolean imageBeginDragged(AniImage which,Point pos) {
+		clearInfo();
+		wayPoint=null;
+		AniImage dragImage=null;
+		if (which instanceof RadarPanelImage) {
+			RadarPanelImage imgRP=(RadarPanelImage) which;
+			ewe.util.Vector cacheDB=Global.getProfile().cacheDB;
+			CacheHolder ch=(CacheHolder) cacheDB.get(imgRP.rownum);
+			wayPoint=ch.wayPoint;
+			
+			int tw,th;
+			Image img = new Image(tw=fm.getTextWidth(wayPoint+15),th=fm.getHeight()>15?fm.getHeight():15);
+			Graphics g = new Graphics(img);
+			g.setColor(Color.White);
+			g.fillRect(0,0,tw, th);
+			g.setColor(new Color(255,0,0));
+			g.drawText(wayPoint, 15,1);
+			g.drawImage(which.image,0,0);
+			dragImage=new AniImage(img);
+			dragImage.properties|=AniImage.IsMoveable;
+			dragImage.setLocation(pos.x,pos.y);
+		}
+		return super.imageBeginDragged(dragImage,pos);
+	 }
+
+	 public boolean imageDragged(ImageDragContext drag, Point pos) {
+		 	if (drag.image!=null) {
+/*			    Point p = Gui.getPosInParent(this,getWindow());
+			 	p.x += pos.x-origin.x;
+			 	p.y += pos.y-origin.y;
+			 	Control c = getWindow().findChild(p.x,p.y);
+*/
+				drag.clearPendingDrags();
+		 	}
+		 	return super.imageDragged(drag,pos);
+	 }
+	 
+	 public boolean imageNotDragged(ImageDragContext drag, Point pos) {
+		if (drag.image!=null) {
+			images.remove(drag.image);
+			drag.image=null;
+			refresh();
+		}			
+		 Point p = Gui.getPosInParent(this,getWindow());
+		 p.x += drag.curPoint.x-origin.x;
+		 p.y += drag.curPoint.y-origin.y;
+		 Control c = getWindow().findChild(p.x,p.y);
+	     if (c instanceof mList && c.text.equals("CacheList")) {
+	    	 if (Global.mainForm.cacheList.addCache(wayPoint)) {
+	    		 c.repaintNow();
+	    		 ((mList) c).makeItemVisible(((mList)c).itemsSize()-1);
+	    	 }
+	     }
+		 return false; 
+	 }
 }
