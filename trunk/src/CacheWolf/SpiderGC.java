@@ -169,7 +169,11 @@ public class SpiderGC{
 		CacheHolderDetail chD=new CacheHolderDetail(ch);
 		try{
 			// Get all existing details of the cache
-			chD.readCache(profile.dataDir);
+			try {
+				chD.readCache(profile.dataDir);
+			} catch (IOException ioex) {
+				pref.log("No .XML file found for cache "+chD.wayPoint);
+			};
 			// Read the cache data from GC.COM and compare to old data
 			ret=getCacheByWaypointName(chD,true,true,false,true);
 			// Save the spidered data 
@@ -178,8 +182,8 @@ public class SpiderGC{
 				chD.saveCacheDetails(profile.dataDir);
 				cacheDB.set(number, new CacheHolder(chD)); // TODO Could copy into existing object
 			}
-		}catch(IOException ioex){
-			pref.log("Could not load " + chD.wayPoint + "file in spiderSingle");
+		}catch(Exception ex){
+			pref.log("Error spidering " + chD.wayPoint + " in spiderSingle");
 		}
 		return ret;
 	} // spiderSingle
