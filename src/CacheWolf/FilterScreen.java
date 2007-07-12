@@ -125,7 +125,7 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 2 - Cache attributes
 		//////////////////////////
-		addTitle(pnlAttributes,MyLocale.getMsg(720,"Attributes"));
+		addTitle(pnlAttributes,MyLocale.getMsg(720,"Status"));
 		mLabel lblTitleAtt; 
 		pnlAttributes.addLast(lblTitleAtt=new mLabel(MyLocale.getMsg(715,"Show all caches with status:")),HSTRETCH,FILL);
 		lblTitleAtt.setTag(SPAN,new Dimension(2,1));
