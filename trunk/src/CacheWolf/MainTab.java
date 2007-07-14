@@ -120,6 +120,15 @@ public class MainTab extends mTabbedPanel {
 	 */
 	public void newWaypoint(CacheHolder ch){
 		mainCache=lastselected;
+		int selectedIndex = profile.getCacheIndex( lastselected );
+		if (selectedIndex >= 0)
+		{
+			CacheHolder selectedCache = (CacheHolder) profile.cacheDB.get( selectedIndex );
+			if ( selectedCache.isAddiWpt() )
+			{
+				mainCache = selectedCache.mainCache.wayPoint;
+			}			
+		}
 		if (detP.isDirty()) detP.saveDirtyWaypoint();
 		Global.getProfile().hasUnsavedChanges=true;
 		String waypoint= ch.wayPoint = profile.getNewWayPointName();
