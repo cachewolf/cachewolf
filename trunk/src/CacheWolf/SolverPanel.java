@@ -26,22 +26,19 @@ public class SolverPanel extends CellPanel{
 	Parser parser = new Parser();
 	Vector msgFIFO = new Vector();
 	Menu mnuContext;
-	private boolean dirty=false;
+	private String originalInstructions="";
 	
 	public boolean isDirty() {
-		return dirty;
-	}
-	public void clearDirty() {
-		dirty=false;
+		return !originalInstructions.equals(getInstructions());
 	}
 	
 	public String getInstructions() {
 		return mText.getText();
 	}
 	public void setInstructions(String text) {
+		originalInstructions=text;
 		mText.setText(text);
 		mText.repaint();
-		dirty=false;
 	}
 	
 	
@@ -119,7 +116,6 @@ public class SolverPanel extends CellPanel{
     }
 	
 	public void onEvent(Event ev){
-		if (ev.target==mText) {dirty=true; }
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == mBtSolve){
 				processCommand(mText.getText());

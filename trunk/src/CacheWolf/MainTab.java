@@ -317,11 +317,9 @@ public class MainTab extends mTabbedPanel {
 			if (chMain==null) {
 				chD.Solver=solverP.getInstructions();
 				chD.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chD.wayPoint+"/S:"+chD.Solver);
-				solverP.clearDirty();
 			} else {
 				chMain.Solver=solverP.getInstructions();
 				chMain.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
-				solverP.clearDirty();
 				chMain=null;
 			}
 		}
