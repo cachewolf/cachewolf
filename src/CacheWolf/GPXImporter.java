@@ -339,6 +339,7 @@ public class GPXImporter extends MinML {
 				} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
 				oldCh.update(holder);
 				oldCh.saveCacheDetails(saveDir);
+				cacheDB.set(index, oldCh);
 				//crw.saveIndex(cacheDB,saveDir);
 			}
 			
