@@ -106,8 +106,10 @@ public class Attribute {
 			"wheelchair-no.gif", 	//83 not wheelchair accessible
 			"wheelchair-yes.gif", 	//84 wheelchair accessible
 			"winter-no.gif", 		//85 not available for winter
-			"winter-yes.gif"}; 		//86 available in winter
-	private static mImage [] attributeImages=new mImage[87];
+			"winter-yes.gif", 		//86 available in winter
+ 	        "firstaid-yes.gif",     //87 needs maintenance
+ 	        "firstaid-no.gif"};     //88 does not need maintenance
+	private static mImage [] attributeImages=new mImage[89];
 	private static String IMAGEDIR=File.getProgramDirectory()+"\\Attributes\\";
 	
 	public static String getImageDir() {
