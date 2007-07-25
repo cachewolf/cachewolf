@@ -965,25 +965,6 @@ public class SpiderGC{
 			chD.attributes.add(attribute);
 			attribute=attEx.findNext();
 		}
-		// Temporary fix to collect attribute descriptions
-		// Like "horses-no.gif,no horses\n"
-		Extractor attInfo=new Extractor(atts,"Alt=\"","\"",0,true);
-		String info=attInfo.findNext();
-		File attInfoFile=new File(File.getProgramDirectory()+"\\attributes.txt");
-		Stream strout = null;
-		int i=0;
-		try {
-			strout = attInfoFile.toWritableStream(true);
-			while (attInfo.endOfSearch()==false) {
-				strout.write((chD.attributes.getName(i++)+","+info+"\n").getBytes());
-				info=attInfo.findNext();
-			}
-			strout.close();
-		} catch (IOException ex) { 
-			return;
-		} finally {
-			if (strout!=null) strout.close();
-		}
 	}
 	
 	
