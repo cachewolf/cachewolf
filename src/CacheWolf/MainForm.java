@@ -47,7 +47,7 @@ public class MainForm extends Form {
 	
 	public void doIt(){
 		Global.mainForm=this;
-		this.title = "CacheWolf " + Version.getRelease();
+		//this.title = "CacheWolf " + Version.getRelease();
 		this.exitSystemOnClose = true;
 		this.resizable = true;
 		this.moveable = true;
@@ -73,6 +73,7 @@ public class MainForm extends Form {
 			pref.curCentrePt.set(profile.centre);
 			profile.updateBearingDistance();
 			profile.restoreFilter();
+			setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 		} catch (Exception e){
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}
