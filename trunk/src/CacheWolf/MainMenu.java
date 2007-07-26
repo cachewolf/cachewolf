@@ -207,6 +207,7 @@ public class MainMenu extends MenuBar {
 					Filter.showBlacklisted=false;
 					filtBlack.modifiers&=~MenuItem.Checked;
 					tbp.refreshTable();
+					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 				}
 				f.close(0);
 			}
@@ -224,6 +225,7 @@ public class MainMenu extends MenuBar {
 						pref.curCentrePt.set(profile.centre);
 						filtBlack.modifiers&=~MenuItem.Checked;
 						Filter.showBlacklisted=false;
+						Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 						infB.close(0);
 						profile.restoreFilter(); // Restore the isActive & isInverted status of the filter
 						tbp.resetModel();
