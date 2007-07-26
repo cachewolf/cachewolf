@@ -114,8 +114,8 @@ public class SpiderGC{
 			try{
 				pref.log("Logging in as "+pref.myAlias);
 				doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
-					+ "&" + URL.encodeURL("myUsername",false) +"="+ URL.encodeURL(pref.myAlias,false)
-				    + "&" + URL.encodeURL("myPassword",false) +"="+ URL.encodeURL(passwort,false)
+					+ "&" + URL.encodeURL("myUsername",false) +"="+ encodeUTF8(new String(Utils.encodeJavaUtf8String(pref.myAlias)))
+				    + "&" + URL.encodeURL("myPassword",false) +"="+ encodeUTF8(new String(Utils.encodeJavaUtf8String(passwort)))
 				    + "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false)
 				    + "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false);
 				start = fetch_post(loginPage, doc, p.getProperty("nextPage"));  // /login/default.aspx
@@ -1108,4 +1108,39 @@ public class SpiderGC{
 			}
 			return totline;
 		}
+	
+	final static String hex = ewe.util.TextEncoder.hex;
+	
+	public String encodeUTF8(String username) {
+		char [] what = ewe.sys.Vm.getStringChars(username);
+		int max = what.length;
+		char [] dest = new char[6*max]; // Assume each char is a UTF char and encoded into 6 chars
+		char d = 0;
+		for (int i = 0; i<max; i++){
+			char c = what[i];
+			if (c == ' ') c = '+';
+			else if (c<='\u00FF') { 
+				if(c <= ' ' || c == '+' || c == '&' || c == '%' || c == '=' || 
+				   c == '|' || c == '{' || c == '}' || c>'\u007F'){
+					dest[d++] = '%';
+					dest[d++] = hex.charAt((c >> 4) & 0xf);
+					dest[d++] = hex.charAt(c & 0xf);
+					continue;
+				}
+			
+			} else {
+				dest[d++] = '%';
+				dest[d++] = hex.charAt((c >> 12) & 0xf);
+				dest[d++] = hex.charAt((c >> 8) & 0xf);
+				dest[d++] = '%';
+				dest[d++] = hex.charAt((c >> 4) & 0xf);
+				dest[d++] = hex.charAt(c & 0xf);
+				continue;
+			}
+			dest[d++] = c;
+		}
+		return new String(dest,0,d);
+	}
+	
+	
 }
