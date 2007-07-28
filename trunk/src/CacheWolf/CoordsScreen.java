@@ -61,11 +61,12 @@ public class CoordsScreen extends Form {
 		TopP.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addLast(inpUTMNorthing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
-		// Input for free Text
+		TopP.addLast(new mLabel(MyLocale.getMsg(1405,"To load coordinates from GC, enter GCxxxxx below")),CellConstants.HSTRETCH, (CellConstants.HFILL)).setTag(SPAN,new Dimension(4,1));
+			// Input for free Text
 		TopP.addNext(inpText = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		inpText.toolTip=MyLocale.getMsg(1406,"Enter coordinates in any format or GCxxxxx");
 		inpText.setTag(SPAN,new Dimension(3,1));
 		TopP.addLast(btnParse = new mButton(MyLocale.getMsg(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
-
 		
 		// Buttons for cancel and apply, copy and paste
 		TopP.addNext(btnCancel = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.HSTRETCH, (CellConstants.HFILL));
@@ -213,7 +214,13 @@ public class CoordsScreen extends Form {
 
 			if (ev.target == btnParse){
 				// try to parse coords
-				CWPoint coord = new CWPoint(inpText.getText());
+				CWPoint coord;
+				if (inpText.getText().trim().startsWith("GC")) {
+					SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile(), false);
+					coord = new CWPoint(spider.getCacheCoordinates(inpText.getText().trim()));
+				} else {	
+					coord = new CWPoint(inpText.getText());
+				}
 				if (coord.latDec == 0 && coord.lonDec == 0){
 					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
 					tmpMB.exec();
