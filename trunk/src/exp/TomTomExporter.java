@@ -21,15 +21,6 @@ public class TomTomExporter {
 	Profile profile;
 
 	
-	String[][] wayType = {{"Custom","0"},{"Traditional","2"},
-						{"Multi","3"}, {"Virtual","4"},
-						{"Letterbox","5"},{"Event","6"},
-						{"Mega Event","453"}, {"Mystery","8"},
-						{"Webcam","11"},{"Locationless","12"},
-						{"CITO","13"},{"Earthcache","137"},
-						{"Parking","50"},{"Stage","51"},
-						{"Question","52"},{"Final","53"},
-						{"Trailhead","54"},{"Reference","55"}};
 
 	
 	public TomTomExporter() {
@@ -94,14 +85,14 @@ public class TomTomExporter {
 		ext = format==TT_ASC?".asc":".ov2";
 		try{
 			//loop through type
-			for(int j = 0; j < wayType.length; j++){
-				fileName = dirName + "/" + prefix + wayType[j][TT_WPT_TEXT]+ ext;
+			for(int j = 0; j < CacheType.wayType.length; j++){
+				fileName = dirName + "/" + prefix + CacheType.wayType[j][TT_WPT_TEXT]+ ext;
 				dfile = new File(fileName);
 				dfile.delete();
 				out =  new RandomAccessFile(fileName,"rw");
 				for(int i = 0; i<cacheDB.size(); i++){
 					holder=(CacheHolder)cacheDB.get(i);
-					if(holder.type.equals(wayType[j][TT_WPT_NUM]) && holder.is_black == false && holder.is_filtered == false){
+					if(holder.type.equals(CacheType.wayType[j][TT_WPT_NUM]) && holder.is_black == false && holder.is_filtered == false){
 						currExp++;
 						h.progress = (float)currExp/(float)counter;
 						h.changed();
@@ -119,7 +110,7 @@ public class TomTomExporter {
 				if (dfile.length()==0) {
 					dfile.delete();
 				} else {
-					copyIcon(j, dirName + "/" + prefix + wayType[j][TT_WPT_TEXT]); 
+					copyIcon(j, dirName + "/" + prefix + CacheType.wayType[j][TT_WPT_TEXT]); 
 				}
 			}//for wayType
 			pbf.exit(0);
@@ -271,7 +262,7 @@ public class TomTomExporter {
 			int len;
 			String entName; 
 			
-			entName = "TomTomIcons/"+ "GC-" + wayType[intWayType][TT_WPT_TEXT] + ".bmp";
+			entName = "TomTomIcons/"+ "GC-" + CacheType.wayType[intWayType][TT_WPT_TEXT] + ".bmp";
 			zipEnt = zif.getEntry(entName);
 			if (zipEnt == null) return;
 			
@@ -284,10 +275,10 @@ public class TomTomExporter {
 		    fos.close();
 		    fis.close();
 		} catch (ZipException e) {
-			Vm.debug("Problem copying Icon" + "GC-" + wayType[intWayType][TT_WPT_TEXT] + ".bmp" );
+			Vm.debug("Problem copying Icon" + "GC-" + CacheType.wayType[intWayType][TT_WPT_TEXT] + ".bmp" );
 			e.printStackTrace();
 		} catch (IOException e) {
-			Vm.debug("Problem copying Icon" + "GC-" + wayType[intWayType][TT_WPT_TEXT] + ".bmp" );
+			Vm.debug("Problem copying Icon" + "GC-" + CacheType.wayType[intWayType][TT_WPT_TEXT] + ".bmp" );
 			e.printStackTrace();
 		}
 

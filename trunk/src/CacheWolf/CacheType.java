@@ -114,6 +114,20 @@ public class CacheType {
 	
 	//fields
 	int type = 0;
+	
+	// array with names and types for exporters
+	public final static int WPT_TEXT = 0;
+	public final static int WPT_NUM = 1;
+
+	public static String[][] wayType = {{"Custom","0"},{"Traditional","2"},
+			{"Multi","3"}, {"Virtual","4"},
+			{"Letterbox","5"},{"Event","6"},
+			{"Mega Event","453"}, {"Mystery","8"},
+			{"Webcam","11"},{"Locationless","12"},
+			{"CITO","13"},{"Earthcache","137"},
+			{"Parking","50"},{"Stage","51"},
+			{"Question","52"},{"Final","53"},
+			{"Trailhead","54"},{"Reference","55"}};
 
 	public static String transType(String geoNum){
 		String geo = new String("Unknown");
