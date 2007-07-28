@@ -189,6 +189,33 @@ public class SpiderGC{
 	} // spiderSingle
 	
 	/**
+	 * Fetch the coordinates of a waypoint from GC
+	 * @param wayPoint the name of the waypoint
+	 * @return the cache coordinates
+	 */
+	public String getCacheCoordinates(String wayPoint) {
+		String completeWebPage;
+		InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
+		infB.exec();
+		if (p==null) {
+			infB.close(0);
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), "Could not load 'spider.def'", MessageBox.OKB)).execute();
+			return "";
+		}
+		if (login()!=Form.IDOK) return "";
+		String doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wayPoint;
+		try{
+			pref.log("Fetching: " + wayPoint);
+			completeWebPage = fetch(doc);
+		}catch(Exception ex){
+			pref.log("Could not fetch " + wayPoint,ex);
+			return "";
+		}
+		infB.close(0);
+		return getLatLon(completeWebPage);	
+	}
+	
+	/**
 	*	Method to start the spider for a search around the center coordinates
 	*/
 	public void doIt(){
@@ -539,6 +566,7 @@ public class SpiderGC{
 	private String getLatLon(String doc){
 		inRex = new Regex(p.getProperty("latLonRex"));
 		inRex.search(doc);
+		if (!inRex.didMatch()) return "";
 		return inRex.stringMatched(1);
 	}
 	
