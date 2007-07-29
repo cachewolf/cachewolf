@@ -10,7 +10,7 @@ public class Version {
 	static final String VER_MAJOR = "BE";
 	static final String VER_MINOR = "";
 	static final String VER_BUILD = " ";
-	static final String VER_SVN ="$LastChangedRevision$"; //the  number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
+	static final String VER_SVN ="$LastChangedRevision$"; // the  number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
 	
 	/**
 	 * @return
