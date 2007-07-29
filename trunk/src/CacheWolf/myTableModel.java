@@ -188,7 +188,7 @@ public class myTableModel extends TableModel{
 	}
 
 	public int calculateRowHeight(int row){
-		return 18;
+		return charHeight+3;
 	}
 
 	public int calculateColWidth(int col){
