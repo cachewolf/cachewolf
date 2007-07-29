@@ -14,6 +14,7 @@ import ewe.sys.Vm;
 import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
 import ewe.util.Vector;
+import ewe.util.*;
 
 /**
  * This class holds a profile, i.e. a group of caches with a centre location
@@ -173,6 +174,7 @@ public class Profile {
 	 *	than the collection of caches in a directory.
 	 */
 	public void readIndex(){
+		
 		try {
 			selectionChanged = true;
 			boolean fmtDec=false;
@@ -183,6 +185,10 @@ public class Profile {
 			String text=in.readLine(); // <CACHELIST>
 			if (text!=null && text.indexOf("decimal")>0) fmtDec=true;
 			Extractor ex = new Extractor(null, " = \"", "\" ", 0, true);
+			
+			//OperationTimer optt = new OperationTimer();
+			//optt.start("Reading...");
+			
 			while ((text = in.readLine()) != null){
 				// Check for Line with cache data
 				if (text.indexOf("<CACHE ")>=0){
@@ -271,6 +277,13 @@ public class Profile {
 				}
 			}
 			in.close();
+			
+			//optt.end();
+			//long times[];
+			//times = optt.getTimes();
+			//Vm.debug("Reading ended: " + times[0]);
+			
+			
 			// Build references between caches and addi wpts
 			buildReferences();
 		} catch (FileNotFoundException e) {
