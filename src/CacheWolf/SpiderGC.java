@@ -119,7 +119,11 @@ public class SpiderGC{
 				    + "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false)
 				    + "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false);
 				start = fetch_post(loginPage, doc, p.getProperty("nextPage"));  // /login/default.aspx
-				pref.log("Login successful");
+				if(start.indexOf("You are logged in as") > 0) pref.log("Login successful");
+				else {
+					pref.log("Login failed.");
+					return ERR_LOGIN;
+				}
 			}catch(Exception ex){
 				//Vm.debug("Could not login: gc.com start page");
 				pref.log("Login failed.", ex);

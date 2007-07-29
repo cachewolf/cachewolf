@@ -261,6 +261,3 @@ public class CacheWolf{
 // or the local files "JavaDoc" directory
 // Javadoc Main Page: http://java.sun.com/j2se/javadoc/index.jsp
 // javadoc -classpath ewe.jar -d "cachewolf doc" cachewolf/*.java
-//page conunter:
-// select * from mos_content where id = 13
-// update mos_content set hits = 0 where id = 13
