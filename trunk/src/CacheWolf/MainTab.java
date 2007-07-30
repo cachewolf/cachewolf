@@ -25,15 +25,17 @@ public class MainTab extends mTabbedPanel {
 	RadarPanel radarP = new RadarPanel();
 	ImagePanel imageP;
 	SolverPanel solverP;
-	String lastselected = new String();
-	CacheHolder ch=null,chNew=null;
+	String lastselected = "";
+	CacheHolder ch=null;
 	CacheHolderDetail chD =null, chMain=null;
 	MainMenu mnuMain;
 	StatusBar statBar;
 	MovingMap mm;
 	Navigate nav;
 	String mainCache="";
-
+	int oldCard=0;
+	boolean cacheDirty=false;
+	
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
 		Global.mainTab=this;
 		mnuMain=mainMenu;
@@ -86,6 +88,152 @@ public class MainTab extends mTabbedPanel {
 		this.selectAndExpand(0);
 	}
 
+
+	public void onEvent(Event ev)
+	{
+		if(ev instanceof MultiPanelEvent){
+			// Check whether a profile change is allowed, if not disable the relevant options
+			checkProfileChange();
+			// Perform clean up actions for the panel we are leaving
+			onLeavingPanel(oldCard);
+			// Prepare actions for the panel we are about to enter
+			onEnteringPanel(getSelectedItem());
+			oldCard=getSelectedItem();
+		}
+		super.onEvent(ev); //Make sure you call this.
+		// If we are in Listview update status
+		if (this.getSelectedItem()==0) statBar.updateDisplay();
+	}
+
+	/**
+	 * Code to execute when leaving a panel (oldCard is the panel number)
+	 *
+	 */
+	private void onLeavingPanel(int panelNo) {
+		if (panelNo==0) { // Leaving the list view
+			// Get the cache for the current line (ch)
+			// Get the details for the current line (chD)
+			// If it is Addi get details of main Wpt (chMain)
+			chMain=null;
+			cacheDirty=false;
+			if (tbP.getSelectedCache()>=cacheDB.size() || tbP.getSelectedCache()<0) {
+				ch=null; chD=null; 
+				lastselected="";
+			} else {
+				ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
+				lastselected=ch.wayPoint;  // Used in Parser.Skeleton
+				try {
+					chD=new CacheHolderDetail(ch);
+					chD.readCache(profile.dataDir);//Vm.debug("MainTab:readCache "+chD.wayPoint+"/S:"+chD.Solver);
+				} catch(Exception e){
+					//Vm.debug("Error loading: "+ch.wayPoint);
+				}
+			}
+		}
+		if (panelNo==1) { // Leaving the Details Panel
+			// Update chD with Details
+			if(detP.isDirty()) {
+				cacheDirty=true;
+				detP.saveDirtyWaypoint();
+			}
+		}
+		if (panelNo==5) { // Leaving the Solver Panel
+			// Update chD or chMain with Solver
+			// If chMain is set (i.e. if it is an addi Wpt) save it immediately
+			if (chD!=null && solverP.isDirty()) {
+				cacheDirty=true;
+				if (chMain==null) {
+					chD.Solver=solverP.getInstructions();
+				} else {
+					chMain.Solver=solverP.getInstructions();
+					chMain.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
+					chMain=null;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Code to execute when entering a panel (getSelectedItem() is the panel number)
+	 *
+	 */
+	private void onEnteringPanel(int panelNo) {
+		switch (panelNo) {// Switch by panel number
+		case 0:
+			// If Solver or Details has changed, save Cache
+			updatePendingChanges();
+			if (detP.hasBlackStatusChanged()) {
+				// Restore the filter status (this automatically sets the status for blacklisted caches)
+				//TODO This is not very elegant (see also SearchCache)
+				Filter flt=new Filter();
+				if (Filter.filterActive) {
+					flt.setFilter();
+					flt.doFilter();
+				} else {
+					flt.clearFilter();
+				}
+				if (Filter.filterInverted) 
+					flt.invertFilter();
+				tbP.refreshTable();
+			}
+			break;
+		case 1:  // DetailsPanel
+			if (chD==null) { // Empty DB - show a dummy detail
+				newWaypoint(chD=new CacheHolderDetail()); 
+			}
+			MyLocale.setSIPButton();
+			detP.setDetails(chD);
+			break;
+		case 2: // Description Panel
+			if (chD!=null) {
+				MyLocale.setSIPOff();
+				descP.setText(chD);
+			}
+			break;
+		case 3: // Picture Panel
+			if (chD!=null) {
+				MyLocale.setSIPOff();
+				imageP.setImages(chD);
+			}
+			break;
+		case 4:  // Log Hint Panel
+			if (chD!=null) {
+				MyLocale.setSIPOff();
+				hintLP.setText(chD);
+			}
+			break;
+		case 5:  // Solver Panel
+			MyLocale.setSIPButton();
+			if (chD!=null) {
+				if (chD.isAddiWpt()) { 
+					chMain=new CacheHolderDetail(chD.mainCache);
+					try {
+						chMain.readCache(profile.dataDir); //Vm.debug("mainT:readCache "+chD.wayPoint+"=>Main=>"+chMain.wayPoint+"/S:"+chMain.Solver);
+					} catch(Exception e){pref.log("Error reading cache",e);}
+					solverP.setInstructions(chMain.Solver);
+				} else {
+					//Vm.debug("mainT: Waypoint:"+chD.wayPoint);
+					solverP.setInstructions(chD.Solver);
+				}
+			}
+			break;
+		case 6:  // CalcPanel
+			if (chD!=null) {
+				MyLocale.setSIPButton();
+				calcP.setFields(chD);
+			}
+			break;
+		case 7: // GotoPanel
+			MyLocale.setSIPButton();
+			break;
+		case 8:  // Cache Radar Panel
+			MyLocale.setSIPOff();
+			radarP.setParam(pref, cacheDB, chD==null?"":chD.wayPoint);
+			radarP.drawThePanel();
+			break;
+		}
+	}
+	
 	/** Update the distances of all caches to the center and display a message 
 	 */
 	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
@@ -111,7 +259,7 @@ public class MainTab extends mTabbedPanel {
 
 
 	/**
-	 * this is called from goto / MovingMap / CalcPanel and so on to 
+	 * this is called from goto / MovingMap / CalcPanel / DetailsPanel and so on to 
 	 * offer the user the possibility of entering an new waypoint
 	 * at a given position. ch must already been preset with a valid
 	 * CacheHolder object
@@ -119,17 +267,17 @@ public class MainTab extends mTabbedPanel {
 	 * @param ch
 	 */
 	public void newWaypoint(CacheHolder ch){
+		onLeavingPanel(oldCard);
+		onEnteringPanel(0); oldCard=0;
 		mainCache=lastselected;
 		int selectedIndex = profile.getCacheIndex( lastselected );
-		if (selectedIndex >= 0)
-		{
+		if (selectedIndex >= 0) {
 			CacheHolder selectedCache = (CacheHolder) profile.cacheDB.get( selectedIndex );
-			if ( selectedCache.isAddiWpt() )
-			{
+			if ( selectedCache.isAddiWpt() ) {
 				mainCache = selectedCache.mainCache.wayPoint;
 			}			
 		}
-		if (detP.isDirty()) detP.saveDirtyWaypoint();
+		//if (detP.isDirty()) detP.saveDirtyWaypoint();
 		Global.getProfile().hasUnsavedChanges=true;
 		String waypoint= ch.wayPoint = profile.getNewWayPointName();
 		ch.type = "0";
@@ -147,125 +295,7 @@ public class MainTab extends mTabbedPanel {
 
 	}
 
-
-	public void onEvent(Event ev)
-	{
-    	if(ev instanceof MultiPanelEvent){
-			// A panel is selected.
-			mnuMain.allowProfileChange(false);	  
-			if(this.getSelectedItem() == 0){// List view selected
-				mnuMain.allowProfileChange(true);	  
-	//			Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,0);
-	//			Vm.setSIP(0);
-				MyLocale.setSIPOff();
-			}
-			// Get current cacheHolder
-			if (tbP.getSelectedCache()>=cacheDB.size() || tbP.getSelectedCache()<0) {
-				chNew=null; chD=null;
-				lastselected="";
-			}
-			else {
-				chNew = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
-				lastselected=chNew.wayPoint;  // Used in Parser.Skeleton
-			}
-			// Are we back in Listview
-			//if(this.getSelectedItem() == 0) {
-				updatePendingChanges(); // Save dirty data from Details/Solver
-				// Is it the same as the last one?
-			//}
-		    if (chNew!=ch) { // new object not same reference as old
-	            chD=null; // Throw away the details, not longer valid
-			}
-	        ch=chNew;		
-			// Only load the details if we leave the list view and the details
-			// have not already been loaded
-			if(this.getSelectedItem() != 0 && chD==null){// any panel other than list view without detail
-				try {
-					chD=new CacheHolderDetail(ch);
-					chD.readCache(profile.dataDir);//Vm.debug("MainTab:readCache "+chD.wayPoint+"/S:"+chD.Solver);
-				} catch(Exception e){
-					//Vm.debug("Error loading: "+ch.wayPoint);
-				}
-			}
-			// We are in list view, update the status display
-			else statBar.updateDisplay();
-			switch (this.getSelectedItem()) {// Switch by panel number
-			case 0:
-				if (detP.hasBlackStatusChanged()) {
-					// Restore the filter status (this automatically sets the status for blacklisted caches)
-					//TODO This is not very elegant (see also SearchCache)
-					Filter flt=new Filter();
-					if (Filter.filterActive) {
-						flt.setFilter();
-						flt.doFilter();
-					} else {
-						flt.clearFilter();
-					}
-					if (Filter.filterInverted) 
-						flt.invertFilter();
-					tbP.refreshTable();
-				}
-				break;
-			case 1:  // DetailsPanel
-				if (chD==null) { // Empty DB - show a dummy detail
-					newWaypoint(chD=new CacheHolderDetail()); 
-				}
-				MyLocale.setSIPButton();
-				detP.setDetails(chD);
-				break;
-			case 2: // Description Panel
-				if (chD!=null) {
-					MyLocale.setSIPOff();
-					descP.setText(chD);
-				}
-				break;
-			case 3: // Picture Panel
-				if (chD!=null) {
-					MyLocale.setSIPOff();
-					imageP.setImages(chD);
-				}
-				break;
-			case 4:  // Log Hint Panel
-				if (chD!=null) {
-					MyLocale.setSIPOff();
-					hintLP.setText(chD);
-				}
-				break;
-			case 5:  // Solver Panel
-				MyLocale.setSIPButton();
-				if (chD!=null) {
-					if (chD.isAddiWpt()) { 
-						chMain=new CacheHolderDetail(chD.mainCache);
-						try {
-							chMain.readCache(profile.dataDir);//Vm.debug("mainT:readCache "+chD.wayPoint+"=>Main=>"+chMain.wayPoint+"/S:"+chMain.Solver);
-						} catch(Exception e){pref.log("Error reading cache",e);}
-						solverP.setInstructions(chMain.Solver);
-					} else {
-						//Vm.debug("mainT: Waypoint:"+chD.wayPoint);
-						solverP.setInstructions(chD.Solver);
-					}
-				}
-				break;
-			case 6:  // CalcPanel
-				if (chD!=null) {
-					MyLocale.setSIPButton();
-					calcP.setFields(chD);
-				}
-				break;
-
-			case 7: // GotoPanel
-				MyLocale.setSIPButton();
-				break;
-			case 8:  // Cache Radar Panel
-				MyLocale.setSIPOff();
-				radarP.setParam(pref, cacheDB, chD==null?"":chD.wayPoint);
-				radarP.drawThePanel();
-				break;
-			}
-		}
-		super.onEvent(ev); //Make sure you call this.
-	}
-
+	
 	/**
 	 * sets posCircle Lat/Lon to centerTo
 	 * 
@@ -289,7 +319,7 @@ public class MainTab extends mTabbedPanel {
 				try {
 					int i = 0;
 					while (MapImage.screenDim.width == 0 && i < 10*60) { i++; ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
-					if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displaed - this is most likely a bug - plaese report it on www.geoclub.de", MessageBox.OKB)).execute(); return;}
+					if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", MessageBox.OKB)).execute(); return;}
 					mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
 					mm.updatePosition(centerTo.latDec, centerTo.lonDec);
 					/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
@@ -304,34 +334,24 @@ public class MainTab extends mTabbedPanel {
 					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", MessageBox.OKB)).execute(); } 
 			}
 		} catch (Exception e) { 
-			Global.getPref().log("Error starting mavoing map (2): " + e.getMessage(), e, true);
-			(new MessageBox("Error", "Error starting mavoing map: " + e.getMessage(), MessageBox.OKB)).execute(); }
+			Global.getPref().log("Error starting moving map (2): " + e.getMessage(), e, true);
+			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), MessageBox.OKB)).execute(); }
 	}
 
-	/** Save any changes from DetailsPanel before operating on the database */
-	public void updatePendingChanges() {
-		if(detP.isDirty()) {
-			detP.saveDirtyWaypoint();
-		}
-		if (chD!=null && solverP.isDirty()) {
-			if (chMain==null) {
-				chD.Solver=solverP.getInstructions();
-				chD.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chD.wayPoint+"/S:"+chD.Solver);
-			} else {
-				chMain.Solver=solverP.getInstructions();
-				chMain.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
-				chMain=null;
-			}
+	void updatePendingChanges() {
+		if (cacheDirty) {
+			chD.saveCacheDetails(Global.getProfile().dataDir);
+			//Vm.debug("mainT: Saveing "+chD.wayPoint);
 		}
 	}
-
-	/** Save the index file and any pending change in DetailsPanel
+	
+	/** Save the index file
 	 * 
 	 * @param askForConfirmation If true, the save can be cancelled by user
 	 */
 	public void saveUnsavedChanges(boolean askForConfirmation) {
 		boolean saveIndex=!askForConfirmation; // Definitely save it if no confirmation needed
-		updatePendingChanges(); // Updated the cacheDB with pending changes from DetailsPanel
+		updatePendingChanges();
 		if (askForConfirmation) { // Don't know whether to save, have to ask
 			if (profile.hasUnsavedChanges &&     // Only ask if there were changes 
 					(new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1207,"Your profile has unsaved changes. Do you want to save?"),MessageBox.DEFOKB|MessageBox.NOB)).execute()==MessageBox.IDOK) {
@@ -340,6 +360,15 @@ public class MainTab extends mTabbedPanel {
 		}
 		if (saveIndex) profile.saveIndex(Global.getPref(),false);
 	}
+	
+	private void checkProfileChange() {
+		// A panel is selected. Could be the same panel twice
+		mnuMain.allowProfileChange(false);	  
+		if(this.getSelectedItem() == 0){// List view selected
+			mnuMain.allowProfileChange(true);	  
+			MyLocale.setSIPOff();
+		}
+	}
 }
-
+// 
 
