@@ -146,11 +146,11 @@ public class myTableControl extends TableControl{
 					} else { 
 						if (ch.isAddiWpt() && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
 							alreadySaid2=true;
-							(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).exec();
+							(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).execute();
 						}
 						if (!ch.isAddiWpt() && !alreadySaid) {
 							alreadySaid = true;
-							(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", MessageBox.OKB)).exec();
+							(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", MessageBox.OKB)).execute();
 			    		}
 					}
 				}
@@ -171,7 +171,7 @@ public class myTableControl extends TableControl{
 			CWPoint cp=new CWPoint(thisCache.LatLon);
 			if (!cp.isValid()){
 				MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
-				tmpMB.exec();
+				tmpMB.execute();
 			} else {				
 				pref.curCentrePt.set(cp);
 				Global.mainTab.updateBearDist(); // Update the distances with a warning message
