@@ -145,9 +145,9 @@ public class CacheType {
 		if(geoNum.equals("50")) geo = "Parking Area";
 		if(geoNum.equals("51")) geo = "Stages of a Multicache";
 		if(geoNum.equals("52")) geo = "Question to Answer";
-		if(geoNum.equals("53")) geo = "Final Coordinates";
+		if(geoNum.equals("53")) geo = "Final Location";
 		if(geoNum.equals("54")) geo = "Trailhead";
-		if(geoNum.equals("55")) geo = "Reference";
+		if(geoNum.equals("55")) geo = "Reference Point";
 		return geo;
 	}
 	
