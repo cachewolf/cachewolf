@@ -110,7 +110,7 @@ public class Attribute {
  	        "firstaid-yes.gif",     //87 needs maintenance
  	        "firstaid-no.gif"};     //88 does not need maintenance
 	private static mImage [] attributeImages=new mImage[89];
-	private static String IMAGEDIR=File.getProgramDirectory()+"\\Attributes\\";
+	private static String IMAGEDIR=File.getProgramDirectory()+"/attributes/";
 	
 	public static String getImageDir() {
 		return IMAGEDIR; 
