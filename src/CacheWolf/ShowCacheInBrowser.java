@@ -135,6 +135,7 @@ public class ShowCacheInBrowser {
 								s.append("<img src=\"file://"+
 								   Global.getProfile().dataDir+chD.Images.get(imageNo)+"\">");
 								imageNo++;
+								if (imageNo >= chD.Images.getCount())break;
 							}
 						}
 						start=chD.LongDescription.indexOf(">",pos);
