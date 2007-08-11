@@ -121,7 +121,8 @@ public class SpiderGC{
 				start = fetch_post(loginPage, doc, p.getProperty("nextPage"));  // /login/default.aspx
 				if(start.indexOf("You are logged in as") > 0) pref.log("Login successful");
 				else {
-					pref.log("Login failed.");
+					pref.log("Login failed. Wrong Account or Password?");
+					infB.close(0);
 					return ERR_LOGIN;
 				}
 			}catch(Exception ex){
@@ -742,7 +743,7 @@ public class SpiderGC{
 				chD.is_found = true;
 				chD.CacheStatus = d;
 			}
-			reslts.add("<img src='"+ icon +"'>&nbsp;" + d + " " + name + exLog.findNext());
+			reslts.add("<img src='"+ icon +"'>&nbsp;" + d + " " + name +"<br>"+ exLog.findNext());
 			
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
@@ -814,8 +815,8 @@ public class SpiderGC{
 		String longDesc = "";
 		if (chD.wayPoint.startsWith("TC")) longDesc = doc;
 		else longDesc = getLongDesc(doc);
-		longDesc = STRreplace.replace(longDesc, "img", "IMG");
-		longDesc = STRreplace.replace(longDesc, "src", "SRC");
+		longDesc = STRreplace.replace(longDesc, "<img", "<IMG");
+		longDesc = STRreplace.replace(longDesc, "src=", "SRC=");
 		longDesc = STRreplace.replace(longDesc, "'", "\"");
 		Extractor exImgBlock = new Extractor(longDesc,p.getProperty("imgBlockExStart"),p.getProperty("imgBlockExEnd"), 0, false);
 		//Vm.debug("In getImages: Have longDesc" + longDesc);
@@ -1174,5 +1175,6 @@ public class SpiderGC{
 		}
 		return new String(dest,0,d);
 	}
-	
+
+
 }

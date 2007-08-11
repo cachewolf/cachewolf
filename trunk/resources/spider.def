@@ -8,6 +8,7 @@
 # Version 2.4 - 20070616 neu: Attribute
 # Version 2.5 - 20070629 Anpassungen an Listenänderung bei GC
 # Version 2.6 - 20070701 Bugfix: Wenn Zentrum exakt in Cachekoordinaten liegt wurde der Cache nicht gespidert
+# Version 2.7 - 20070811 Bugfix fuer verschluesselte Logs
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -70,7 +71,7 @@ nameExStart        = >
 nameExEnd          = <
 dateExStart        = align='absmiddle'>&nbsp;
 dateExEnd          = \ by\ <
-logExStart         = found)
+logExStart         = found)<br>
 logExEnd           = <br>[
 # Die Icons, die einen erfolgreichen Fund signalisieren
 icon_smile         = icon_smile.gif
