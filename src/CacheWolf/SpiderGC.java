@@ -824,7 +824,7 @@ public class SpiderGC{
 		//Vm.debug("Test: \n" + tst);
 		Extractor exImgSrc = new Extractor(tst, "http://", "\"", 0, true);
 		while(exImgBlock.endOfSearch() == false){
-			imgUrl = exImgSrc.findNext().toLowerCase();
+			imgUrl = exImgSrc.findNext();
 			//Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
@@ -836,7 +836,7 @@ public class SpiderGC{
 						idxUrl=spideredUrls.find(imgUrl);
 						imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
 						if (idxUrl<0) { // New image
-							pref.log("Loading image: " + imgUrl);
+							pref.log("Loading image: " + imgUrl+" as "+imgName);
 							spiderImage(imgUrl, imgName+imgType);
 							chD.Images.add(imgName+imgType);
 							spideredUrls.add(imgUrl);
@@ -863,7 +863,7 @@ public class SpiderGC{
 		Extractor exImgName = new Extractor(tst,p.getProperty("imgNameExStart"),p.getProperty("imgNameExEnd"), 0 , true);
 		exImgSrc = new Extractor(tst,p.getProperty("imgSrcExStart"),p.getProperty("imgSrcExEnd"), 0, true);
 		while(exImgSrc.endOfSearch() == false){
-			imgUrl = exImgSrc.findNext().toLowerCase();
+			imgUrl = exImgSrc.findNext();
 			//Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
@@ -1174,6 +1174,5 @@ public class SpiderGC{
 		}
 		return new String(dest,0,d);
 	}
-	
 	
 }
