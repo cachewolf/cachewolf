@@ -143,7 +143,7 @@ public class GPXImporter extends MinML {
 			}
 				Vm.showWait(false);
 			}catch(Exception e){
-				//Vm.debug(e.toString());
+				e.printStackTrace();
 				Vm.showWait(false);
 			}
 	}
@@ -319,6 +319,7 @@ public class GPXImporter extends MinML {
 							imgName = (String)holder.ImagesText.get(num);
 							holder.LongDescription = replace(holder.LongDescription, text, "[[Image: " + imgName + "]]");
 							num++;
+							if (num >= holder.ImagesText.getCount())break;
 							text = ex.findNext();
 						}
 					}
