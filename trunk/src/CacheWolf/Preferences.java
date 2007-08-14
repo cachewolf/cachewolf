@@ -115,6 +115,8 @@ public class Preferences extends MinML{
 		mySPO.parity = SerialPort.NOPARITY;
 		mySPO.stopBits = 1;
 		mySPO.baudRate = 4800;
+		if ( ((ewe.fx.Rect) (Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) fontSize = 16;
+		else fontSize = 12;
 		// Ensure that logfile does not grow infinitely. Not really needed as every spider resets it
 		File logFile = new File(LOGFILENAME);
 		if (logFile.length()>60000) logInit();
