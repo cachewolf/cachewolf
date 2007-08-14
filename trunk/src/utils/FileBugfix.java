@@ -16,7 +16,9 @@ public class FileBugfix extends File{
 	
 	public String[] list(final String mask,final int listAndSortOptions)
 	{
-		return super.listMultiple(mask+",*.xyzq3246wwee345rrtzih6ljbkoih", listAndSortOptions); // with only one "*" listmultiple calls list
+		if ((listAndSortOptions & FileBase.LIST_FILES_ONLY) > 0)
+		  return super.listMultiple(mask+",*.xyzq3246wwee345rrtzih6ljbkoih", listAndSortOptions); // with only one "*" listmultiple calls list
+		else return super.list(mask, listAndSortOptions);
 		/*
 		 * super.list has on some systems (linux, but also Windows Mobile 2003) a bug 
 		 * in ewe 1.49: 
