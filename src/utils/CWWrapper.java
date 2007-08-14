@@ -11,7 +11,7 @@ import ewe.sys.*;
  */
 public class CWWrapper {
 	
-	public static exec(String str) throws IOException{
+	public static void exec(String str) throws ewe.io.IOException{
 		String plattform = Vm.getPlatform();
 		if(plattform.equals("WinCE")){
 			Vm.exec(str, "", 0, true);
