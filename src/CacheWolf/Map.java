@@ -210,8 +210,6 @@ public class Map extends Form {
 		//at the same time try to find associated .map files!
 		//These are georeference files targeted for OziExplorer.
 		//So lets check if we have more than 1 png file:
-		Vector files;
-		String [] filestemp;
 		String line = new String();
 		InputStream in = null;
 		OutputStream out = null;
@@ -219,21 +217,14 @@ public class Map extends Form {
 		byte[] buf;
 		int len;
 		String[] parts;
-		filestemp = inDir.list("*.png", File.LIST_FILES_ONLY); // TODO listmultiple verwenden
-		files = new Vector(filestemp);
-		filestemp = inDir.list("*.jpg", File.LIST_FILES_ONLY);
-		files.addAll(filestemp);
-		filestemp = inDir.list("*.gif", File.LIST_FILES_ONLY);
-		files.addAll(filestemp);
-		filestemp = inDir.list("*.bmp", File.LIST_FILES_ONLY);
-		files.addAll(filestemp);
+		String [] files = inDir.listMultiple("*.png,*.jpg,*.gif,*.bmp", File.LIST_FILES_ONLY);
 
 		String currfile = null;
 		String curInFullPath;
 		String curOutFullPath;
-		int num = files.size();
+		int num = files.length;
 		for(int i =  num -1 ; i >= 0;i--){
-			currfile = (String) files.get(i);
+			currfile = (String) files[i];
 			inf.setInfo(MyLocale.getMsg(4110,"Loading: ")+ "\n" + currfile + "\n("+(num-i)+"/"+num+")");
 			//Copy the file
 			//Vm.debug("Copy: " + inDir.getFullPath() + "/" +files[i]);
