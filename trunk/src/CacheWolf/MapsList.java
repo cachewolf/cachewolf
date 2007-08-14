@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import utils.FileBugfix;
 import ewe.io.File;
 import ewe.io.IOException;
 import ewe.sys.Double;
@@ -26,9 +27,9 @@ public class MapsList extends Vector {
 		super(); // forget already loaded maps
 		//if (mmp.mapImage != null) 
 		String dateien[];
-		File files = new File(mapsPath);
+		File files = new FileBugfix(mapsPath);
 		String rawFileName = new String();
-		String[] dirstmp = files.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_DIRECTORIES_ONLY);
+		String[] dirstmp = files.list(null, File.LIST_DIRECTORIES_ONLY);
 		Vector dirs;
 		if (dirstmp != null) dirs = new Vector(dirstmp);
 		else dirs = new Vector();
@@ -36,10 +37,11 @@ public class MapsList extends Vector {
 		MapInfoObject tempMIO;
 		MessageBox f = null;
 		for (int j = dirs.size()-1; j >= 0; j--) {
-			files = new File(mapsPath+"/"+dirs.get(j));
+			files = new FileBugfix(mapsPath+"/"+dirs.get(j));
 			//ewe.sys.Vm.debug("mapd-Dirs:"+files);
-			dateien = files.list("*.wfl", File.LIST_FILES_ONLY);
+			dateien = files.listMultiple("*.wfl,892z3rihugkdfhgflhldghoeighoig8", File.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems and "*" doesn't on others -> use null (for all files) and filter yourself
 			for(int i = 0; i < dateien.length;i++){
+				// if (!dateien[i].endsWith(".wfl")) continue;
 				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
 				try {
 					tempMIO = new MapInfoObject();

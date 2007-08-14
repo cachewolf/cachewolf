@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.io.*;
 import ewe.ui.*;
@@ -142,7 +143,7 @@ public class DataMover {
 
 	public void deleteCacheFiles(String wpt, String dir){
 		// delete files in dstDir to clean up trash
-		String tmp[] = new File(dir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		String tmp[] = new FileBugfix(dir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < tmp.length;i++){
 			File tmpFile = new File(dir + tmp[i]);
 			tmpFile.delete();
@@ -150,7 +151,7 @@ public class DataMover {
 	}
 
 	public void moveCacheFiles(String wpt, String srcDir, String dstDir){
-		String srcFiles[] = new File(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
 			File srcFile = new File(srcDir + srcFiles[i]);
 			File dstFile = new File(dstDir + srcFiles[i]);
@@ -159,7 +160,7 @@ public class DataMover {
 	}
 
 	public void copyCacheFiles(String wpt, String srcDir, String dstDir){
-		String srcFiles[] = new File(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
 			copy(srcDir + srcFiles[i],dstDir + srcFiles[i]);
 		}

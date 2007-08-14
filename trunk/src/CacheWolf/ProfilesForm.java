@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import utils.FileBugfix;
 import ewe.ui.*;
 import ewe.io.*;
 import ewesoft.xml.*;
@@ -71,7 +72,7 @@ public class ProfilesForm extends Form{
 		
 		choice=new MyList();
 		// Get all subdirectories in the base directory
-		File fileBaseDir=new File(baseDir);
+		File fileBaseDir=new FileBugfix(baseDir);
 		String[] existingProfiles=fileBaseDir.list("*",FileBase.LIST_DIRECTORIES_ONLY);
         // Now add these subdirectories to the list of profiles but
         // exclude the "maps" directory which will contain the moving maps

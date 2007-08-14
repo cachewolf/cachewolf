@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import utils.FileBugfix;
 import ewe.io.*;
 import ewe.sys.*;
 import ewe.ui.*;
@@ -147,7 +148,7 @@ public class Preferences extends MinML{
 	public String getMapLoadPath() {
 		// here could also a list of map-types displayed...
 		// standard dir
-		File t = new File(getMapManuallySavePath(false));
+		File t = new FileBugfix(getMapManuallySavePath(false));
 		String[] f = t.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_FILES_ONLY);
 		if (f != null && f.length > 0) return  baseDir + mapsPath;
 		f = t.list("*.wfl", File.LIST_DIRECTORIES_ONLY | File.LIST_ALWAYS_INCLUDE_DIRECTORIES);
