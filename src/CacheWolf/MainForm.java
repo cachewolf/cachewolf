@@ -52,10 +52,10 @@ public class MainForm extends Form {
 		this.resizable = true;
 		this.moveable = true;
 		if(Vm.isMobile() == true) {
-			this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
+			this.windowFlagsToSet = Window.FLAG_FULL_SCREEN; // TODO use FLAG_MAXIMIZE_ON_PDA ?
 			this.resizable = false;
 			this.moveable = false;
-			this.windowFlagsToClear=WindowConstants.FLAG_HAS_TITLE;
+			this.windowFlagsToClear=WindowConstants.FLAG_HAS_TITLE; //TODO don't clear this to use original windows haedline ?
 		} else 
 			this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
