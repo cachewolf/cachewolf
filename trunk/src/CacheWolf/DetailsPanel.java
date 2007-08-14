@@ -467,13 +467,15 @@ public class DetailsPanel extends CellPanel{
 				  int idx;
 				  if (ch.wayPoint.length()<5)
 					  idx=-1;
-				  else
+				  else {
 					  idx=profile.getCacheIndex("GC"+ ch.wayPoint.substring(ch.wayPoint.length() == 5?1:2));
-				  if (idx<0) (new MessageBox(MyLocale.getMsg(144,"Warning"),
-						  MyLocale.getMsg(734,"No main cache found for addi waypoint ")+" "+ch.wayPoint+
-						  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYY, where xx are any 2 chars and YYYY are the main cache's chars after the GC"),FormBase.OKB)).execute();
+					  if (idx<0) idx=profile.getCacheIndex("OC"+ ch.wayPoint.substring(ch.wayPoint.length() == 5?1:2));
+					  if (idx<0) (new MessageBox(MyLocale.getMsg(144,"Warning"),
+							  MyLocale.getMsg(734,"No main cache found for addi waypoint ")+" "+ch.wayPoint+
+							  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYY, where xx are any 2 chars and YYYY are the main cache's chars after the GC"),FormBase.OKB)).execute();
+				  }
+				  profile.buildReferences();
 			  }
-			  profile.buildReferences();
 		  }
 		  // set status also on addi wpts
 		  ch.setAttributesToAddiWpts();
