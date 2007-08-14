@@ -426,7 +426,7 @@ public class Profile {
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.addiWpts.clear();
 			ch.mainCache = null;
-			if (ch.wayPoint.startsWith("GC")) // Only put potential master caches into the index
+			// if (ch.wayPoint.startsWith("GC")) // Only put potential master caches into the index
 				dbIndex.put((String)ch.wayPoint, new Integer(i));
 		}
 		// Build references
@@ -440,6 +440,14 @@ public class Profile {
 				} 
 				else {
 					index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(2));
+				}
+				if (index == null) { // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
+					if (ch.wayPoint.length() == 5){
+						index = (Integer) dbIndex.get("OC"+ ch.wayPoint.substring(1));
+					} 
+					else {
+						index = (Integer) dbIndex.get("OC"+ ch.wayPoint.substring(2));
+					}
 				}
 				if (index != null) {
 					mainCh = (CacheHolder) cacheDB.get(index.intValue());
