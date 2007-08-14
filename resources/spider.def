@@ -9,6 +9,7 @@
 # Version 2.5 - 20070629 Anpassungen an Listenänderung bei GC
 # Version 2.6 - 20070701 Bugfix: Wenn Zentrum exakt in Cachekoordinaten liegt wurde der Cache nicht gespidert
 # Version 2.7 - 20070811 Bugfix fuer verschluesselte Logs
+# Version 2.8 - 20070814 Findet jetzt auch Addi Wpts in eigenen Caches
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -106,7 +107,7 @@ imgSrcExEnd        = '\ rel='lightbox'
 #--------------------------------------
 #Section2d: Additional waypoints
 #--------------------------------------
-wayBlockExStart    = <strong>Additional\ Waypoints</strong><br>
+wayBlockExStart    = <strong>Additional\ Waypoints</strong>
 wayBlockExEnd      = </table>
 nameRex            = &RefDS=1">(.*)</a>
 koordRex           = align="left">([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})</td>
