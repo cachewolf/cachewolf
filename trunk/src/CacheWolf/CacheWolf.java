@@ -217,8 +217,9 @@ import ewe.fx.*;
 
 import ewe.sys.*;
 
-public class CacheWolf{
-
+public class CacheWolf extends Editor{
+	
+	
 	public static void main(String args[])
 	{
 		//start with parameters:
@@ -237,24 +238,23 @@ public class CacheWolf{
 			mApp.mainApp.font = newGuiFont;
 		}
 */		
-		//if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-		//	Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
-		//}
+		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
+			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
+		}
+		
 		if(args.length > 0){
 			if(args[0].equals("test")){
 				Test t=new Test(); 
 				t.testAll();
 			}
 		}
-		Form mainF = new MainForm();
+		Editor mainF = new MainForm();
 		Device.preventIdleState(true);
 		mainF.execute();
 		Device.preventIdleState(false);
-		
-		//Form mainF = new MainForm();
-		//mainF.execute();
 		ewe.sys.Vm.exit(0);
 	}
+	
 }
 
 // for javadoc see: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#exampleresult
