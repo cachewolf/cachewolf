@@ -8,7 +8,7 @@ import ewe.fx.*;
 *	Mainform is responsible for building the user interface.
 *	Class ID = 5000
 */
-public class MainForm extends Form {
+public class MainForm extends Editor {
 	// The next three declares are for the cachelist
 	boolean cacheListVisible=false;
     CacheList cacheList;
@@ -46,13 +46,15 @@ public class MainForm extends Form {
 	}
 	
 	public void doIt(){
+		CellPanel [] p = addToolbar();
 		Global.mainForm=this;
 		//this.title = "CacheWolf " + Version.getRelease();
 		this.exitSystemOnClose = true;
 		this.resizable = true;
 		this.moveable = true;
 		if(Vm.isMobile() == true) {
-			this.windowFlagsToSet = Window.FLAG_FULL_SCREEN; // TODO use FLAG_MAXIMIZE_ON_PDA ?
+
+			//this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
 			this.resizable = false;
 			this.moveable = false;
 			this.windowFlagsToClear=WindowConstants.FLAG_HAS_TITLE; //TODO don't clear this to use original windows haedline ?
@@ -62,7 +64,7 @@ public class MainForm extends Form {
 		// Load CacheList
 		InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
 		infB.exec();
-		infB.waitUntilPainted(1000);
+		infB.waitUntilPainted(100);
 		try{
 			pref.readPrefFile();
 			addGuiFont();
@@ -78,6 +80,7 @@ public class MainForm extends Form {
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}
 		
+		
 		if(pref.fixSIP == true){
 			if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 				//Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
@@ -85,8 +88,8 @@ public class MainForm extends Form {
 				Device.preventIdleState(true);
 			}
 		} else Vm.setSIP(0);
-		//Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
-		if (pref.showStatus) statBar = new StatusBar(pref, profile.cacheDB);
+		
+        if (pref.showStatus) statBar = new StatusBar(pref, profile.cacheDB);
 		mMenu = new MainMenu(this);
 		mTab = new MainTab(mMenu,statBar);
 		split=new SplittablePanel(PanelSplitter.HORIZONTAL);
@@ -96,7 +99,12 @@ public class MainForm extends Form {
 		split.setSplitter(PanelSplitter.MIN_SIZE|PanelSplitter.BEFORE,PanelSplitter.HIDDEN|PanelSplitter.BEFORE,PanelSplitter.CLOSED);
 		pnlCacheList.addLast(cacheList=new CacheList(),STRETCH,FILL);
 		pnlMainTab.addLast(mTab,STRETCH,FILL);
+		
 		mTab.dontAutoScroll=true;
+		p[0].addLast(mMenu);
+		//p[0].addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
+		p[1].addLast(split,STRETCH,FILL);
+		/*
 		if (pref.menuAtTop) {
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 			this.addLast(split,STRETCH,FILL);
@@ -104,6 +112,7 @@ public class MainForm extends Form {
 			this.addLast(split,STRETCH,FILL);
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		}
+		*/
 		mMenu.setTablePanel(mTab.getTablePanel());
 		infB.close(0);
 		mTab.tbP.selectFirstRow();
