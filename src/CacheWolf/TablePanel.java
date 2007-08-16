@@ -42,13 +42,13 @@ public class TablePanel extends CellPanel{
 	}
 	
 	public void setSelectedCache(int row){ 
-		selectedCh=null;
+	/*	selectedCh=null;
 		selectedIdx=-1;
 		if (row>=0 && row<cacheDB.size())  {
 			selectedCh=(CacheHolder) cacheDB.get(row);
 			selectedIdx=row;
 		} 		
-	
+	*/
 	}
 	
 	/** Mark the row as selected so that myTableModel can color it grey */
@@ -60,6 +60,18 @@ public class TablePanel extends CellPanel{
 		tc.scrollToVisible(row,0);
 		// Next line needed for key scrolling 
 		tc.cursorTo(row, tc.cursor.x+tc.listMode, true);
+// <<<<<<< .mine
+		//tc.scrollToVisible(row,0);
+		//tc.clearSelection(null);
+		//tc.addToSelection(row,0); 
+		//tc.addToSelection(row,myMod.MAXCOLUMNS-1); 
+		//tc.scrollToVisible(row,0);
+		/*tc.clearSelection(null);
+		tc.addToSelection(row,0); 
+		tc.addToSelection(row,myMod.MAXCOLUMNS-1);*/ 
+		//tc.paintSelectedCells();
+//=======
+//>>>>>>> .r820
 	}
 	
 	/** Highlight the first row in grey. It can be unhighlighted by clicking */
@@ -76,6 +88,8 @@ public class TablePanel extends CellPanel{
 	 * @return index of selected cache (-1 if not visible)
 	 */
 	public int getSelectedCache(){
+		return tc.cursor.y;
+		/*
 		// If cacheDB is empty return -1, cannot select a cache
 		if (cacheDB.size()==0) return -1;
 		// If cacheDB has entries, but all are filtered, return -1
@@ -88,7 +102,7 @@ public class TablePanel extends CellPanel{
 		// Check whether the order of the list has changed because of sort/filter/search operations
 		if (cacheDB.get(selectedIdx)==selectedCh) return selectedIdx;
 		// The position has changed, return the new position
-		return cacheDB.find(selectedCh);
+		return cacheDB.find(selectedCh); */
 	}
 	
 	public void saveColWidth(Preferences pref){

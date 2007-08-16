@@ -1,14 +1,5 @@
 package CacheWolf;
-import ewe.sys.Vm;
-import ewe.ui.InputBox;
-import ewe.util.*;
-import ewe.filechooser.FileChooser;
-import ewe.io.BufferedWriter;
-import ewe.io.File;
-import ewe.io.FileReader;
-import ewe.io.FileWriter;
-import ewe.io.IOException;
-import ewe.io.PrintWriter;
+import ewe.util.Vector;
 
 /**
 *	A class to hold information on a cache.<br>

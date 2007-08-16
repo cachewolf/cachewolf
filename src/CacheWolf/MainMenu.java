@@ -108,7 +108,7 @@ public class MainMenu extends MenuBar {
 		// Create the "Search" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] searchMenuItems=new MenuItem[2];
-		searchMenuItems[0] = search = new MenuItem(MyLocale.getMsg(112,"Search")); 
+		searchMenuItems[0] = search = new MenuItem(MyLocale.getMsg(112,"Search$"+(char)6)); // char 6 = ctrl +f 
 		searchMenuItems[1] = searchClr = new MenuItem(MyLocale.getMsg(113,"Clear search"));
 		
 		///////////////////////////////////////////////////////////////////////
@@ -184,7 +184,15 @@ public class MainMenu extends MenuBar {
 			mnuOpenProfile.modifiers|=MenuItem.Disabled;
 		}
 	}
-	
+
+	public static void search() {
+		String srch = new InputBox(MyLocale.getMsg(119,"Search for:")).input("",10);
+		if (srch != null) {
+			SearchCache ssc = new SearchCache(Global.getProfile().cacheDB);
+			ssc.search(srch);
+			Global.mainTab.tbP.refreshTable();
+		}
+	}
 	public void onEvent(Event ev){
 		Preferences pref=Global.getPref();
 		Profile profile=Global.getProfile();
@@ -425,12 +433,7 @@ public class MainMenu extends MenuBar {
 			// "Search" pulldown menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == search){
-				String srch = new InputBox(MyLocale.getMsg(119,"Search for:")).input("",10);
-				if (srch != null) {
-					SearchCache ssc = new SearchCache(cacheDB);
-					ssc.search(srch);
-					tbp.refreshTable();
-				}
+				search();
 			}
 			if(mev.selectedItem == searchClr){
 				SearchCache ssc = new SearchCache(cacheDB);
