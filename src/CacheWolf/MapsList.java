@@ -27,7 +27,7 @@ public class MapsList extends Vector {
 		super(); // forget already loaded maps
 		//if (mmp.mapImage != null) 
 		String dateien[];
-		File files = new FileBugfix(mapsPath);
+		FileBugfix files = new FileBugfix(mapsPath);
 		String rawFileName = new String();
 		String[] dirstmp = files.list(null, File.LIST_DIRECTORIES_ONLY);
 		Vector dirs;
@@ -39,7 +39,7 @@ public class MapsList extends Vector {
 		for (int j = dirs.size()-1; j >= 0; j--) {
 			files = new FileBugfix(mapsPath+"/"+dirs.get(j));
 			//ewe.sys.Vm.debug("mapd-Dirs:"+files);
-			dateien = files.listMultiple("*.wfl,892z3rihugkdfhgflhldghoeighoig8", File.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems and "*" doesn't on others -> use null (for all files) and filter yourself
+			dateien = files.list("*.wfl", File.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
 			for(int i = 0; i < dateien.length;i++){
 				// if (!dateien[i].endsWith(".wfl")) continue;
 				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));

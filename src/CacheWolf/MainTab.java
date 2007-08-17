@@ -48,7 +48,8 @@ public class MainTab extends mTabbedPanel {
 		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
 		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
 		calcP = new CalcPanel(); // Init here so that Global.MainT is already set
-		Card c = this.addCard(tbP = new TablePanel(pref, profile, statBar), MyLocale.getMsg(1200,"List"), null);
+		tbP = new TablePanel(pref, profile, statBar);
+		Card c = this.addCard(new TableForm(tbP), MyLocale.getMsg(1200,"List"), null);
 
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
 		c.iconize(new Image("details.gif"),true);

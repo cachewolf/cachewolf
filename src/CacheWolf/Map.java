@@ -348,7 +348,7 @@ public class Map extends Form {
 							gcpG.bitMapX = gcp4.bitMapX;
 							gcpG.bitMapY = gcp4.bitMapY;
 							addGCP(gcpG);
-							
+							/* already read from image file itself
 							// get dimensions of image
 							while ( (line = inMap.readLine()) != null){
 								if (line.startsWith("IWH")){
@@ -357,7 +357,7 @@ public class Map extends Form {
 									imageHeight = Convert.toInt(parts[3]);
 								}
 							}
-
+							 */
 							evalGCP();
 							//Vm.debug("Saving .map file to: " + mapsPath + "/" + rawFileName + ".wfl");
 							wfl.saveWFL(mapsPath, rawFileName);
