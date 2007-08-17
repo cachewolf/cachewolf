@@ -377,7 +377,7 @@ public class GotoPanel extends CellPanel {
 				CoordsScreen cs = new CoordsScreen();
 				if (myNavigation.destination.isValid())	cs.setFields(myNavigation.destination, currFormat);
 				else cs.setFields(new CWPoint(0,0), currFormat);
-				if (cs.execute() == CoordsScreen.IDOK)
+				if (cs.execute(null, Gui.TOP) == CoordsScreen.IDOK)
 					setDestination(cs.getCoords());
 			}
 		}
