@@ -10,6 +10,7 @@
 # Version 2.6 - 20070701 Bugfix: Wenn Zentrum exakt in Cachekoordinaten liegt wurde der Cache nicht gespidert
 # Version 2.7 - 20070811 Bugfix fuer verschluesselte Logs
 # Version 2.8 - 20070814 Findet jetzt auch Addi Wpts in eigenen Caches
+# Version 2.9 - 20070817 Bessere Unterscheidung zwischen Werbung vs.normalen Caches + Caches ohne Richtung/Entfenung
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -28,7 +29,7 @@ firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
 firstPage2         = &lon=
 # Regex to search for cachenames 
 listBlockRex       = <table id="dlResults"((?s).*?)</table>
-lineRex            = (?:images/icons/compass|<td\ valign="top"\ align="left"><br\ />)((?s).*?)</tr>
+lineRex            = <tr\ bgcolor='#.{6}'>(?:(?s).*?)<td\ valign="top"\ align="left">((?s).*?)</tr>
 distRex            = <br\ />(.*?)(km|mi)</td>
 waypointRex        = </a> \\((.*?)\\)<br>
 showOnlyFound      = &f=1
