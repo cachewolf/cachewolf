@@ -54,8 +54,8 @@ public class TablePanel extends CellPanel{
 	/** Mark the row as selected so that myTableModel can color it grey */
 	public void selectRow(int row) {
 		setSelectedCache(row);
-		tc.addToSelection(row,0); 
-		tc.addToSelection(row,myMod.MAXCOLUMNS-1);
+//		tc.addToSelection(row,0); 
+//		tc.addToSelection(row,myMod.MAXCOLUMNS-1);
 		// Ensure that the highlighted row is visible (e.g. when coming from radar panel)
 		tc.scrollToVisible(row,0);
 		// Next line needed for key scrolling 
@@ -78,8 +78,9 @@ public class TablePanel extends CellPanel{
 	public void selectFirstRow() {
 		myMod.cursorSize=new Dimension(-1,1);
 		if (cacheDB.size()>0) {
-			tc.addToSelection(0,0); 
-			tc.addToSelection(0,myMod.MAXCOLUMNS-1);
+			tc.cursorTo(0, -1, true);
+//			tc.addToSelection(0,0); 
+//			tc.addToSelection(0,myMod.MAXCOLUMNS-1);
 		}
 	}
 	

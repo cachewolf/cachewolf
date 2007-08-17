@@ -46,20 +46,21 @@ public class MainForm extends Editor {
 	}
 	
 	public void doIt(){
-		CellPanel [] p = addToolbar();
+	//	CellPanel [] p = addToolbar();
 		Global.mainForm=this;
 		//this.title = "CacheWolf " + Version.getRelease();
 		this.exitSystemOnClose = true;
 		this.resizable = true;
 		this.moveable = true;
+		this.windowFlagsToSet = Window.FLAG_MAXIMIZE_ON_PDA;
 		if(Vm.isMobile() == true) {
-
 			//this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
 			this.resizable = false;
 			this.moveable = false;
-			this.windowFlagsToClear=WindowConstants.FLAG_HAS_TITLE; //TODO don't clear this to use original windows haedline ?
-		} else 
-			this.setPreferredSize(800, 600);
+			this.windowFlagsToClear = WindowConstants.FLAG_HAS_TITLE; //TODO don't clear this to use original windows haedline ?
+		}
+		Rect screen = ((ewe.fx.Rect) (Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0)));
+		if ( screen.height >= 600 && screen.width >= 800) this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
 		// Load CacheList
 		InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
@@ -101,9 +102,10 @@ public class MainForm extends Editor {
 		pnlMainTab.addLast(mTab,STRETCH,FILL);
 		
 		mTab.dontAutoScroll=true;
-		p[0].addLast(mMenu);
+		//p[0].addLast(mMenu);
 		//p[0].addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
-		p[1].addLast(split,STRETCH,FILL);
+		//p[1].addLast(split,STRETCH,FILL);
+		this.addLast(split,STRETCH,FILL);
 		/*
 		if (pref.menuAtTop) {
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
