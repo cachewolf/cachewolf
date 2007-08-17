@@ -54,10 +54,8 @@ public class MainForm extends Editor {
 		this.moveable = true;
 		this.windowFlagsToSet = Window.FLAG_MAXIMIZE_ON_PDA;
 		if(Vm.isMobile() == true) {
-			//this.windowFlagsToSet = Window.FLAG_FULL_SCREEN;
 			this.resizable = false;
 			this.moveable = false;
-			this.windowFlagsToClear = WindowConstants.FLAG_HAS_TITLE; //TODO don't clear this to use original windows haedline ?
 		}
 		Rect screen = ((ewe.fx.Rect) (Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0)));
 		if ( screen.height >= 600 && screen.width >= 800) this.setPreferredSize(800, 600);
