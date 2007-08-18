@@ -316,10 +316,10 @@ public class GPXImporter extends MinML {
 						int num = 0;
 						while(ex.endOfSearch() == false && spiderOK == true){
 							//Vm.debug("Replacing: " + text);
+							if (num >= holder.ImagesText.getCount())break;
 							imgName = (String)holder.ImagesText.get(num);
 							holder.LongDescription = replace(holder.LongDescription, text, "[[Image: " + imgName + "]]");
 							num++;
-							if (num >= holder.ImagesText.getCount())break;
 							text = ex.findNext();
 						}
 					}
