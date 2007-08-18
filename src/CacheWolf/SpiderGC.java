@@ -314,7 +314,7 @@ public class SpiderGC{
 		dummy = "";
 		//String lineBlck = "";
 		int page_number = 4;		
-		rexLine = new Regex("images/icons/compass((?s).*?)</tr>");
+		rexLine = new Regex("<tr bgcolor='#.{6}'>(?:(?s).*?)<td valign="top" align="left">((?s).*?)</tr>");
 		int found_on_page = 0;
 		//Loop till maximum distance has been found or no more caches are in the list
 		while(distance > 0){
@@ -549,7 +549,7 @@ public class SpiderGC{
 	}
 	
 	public void getAddWaypoints(String doc, String wayPoint, boolean is_found){
-		Extractor exWayBlock = new Extractor(doc, "<strong>Additional Waypoints</strong><br>", "</table>", 0, false);
+		Extractor exWayBlock = new Extractor(doc, "<strong>Additional Waypoints</strong>", "</table>", 0, false);
 		String wayBlock = "";
 		String rowBlock = "";
 		wayBlock = exWayBlock.findNext();
@@ -794,6 +794,7 @@ public class SpiderGC{
 		inRex = new Regex("<br />(.*?)(km|mi)</td>");
 		inRex.search(doc);
 		if(doc.indexOf("Here") > 0) return(0);
+		if (!inRex.didMatch()) return 0;
 		if(pref.digSeparator.equals(",")) return Convert.toDouble(inRex.stringMatched(1).replace('.',','));
 		return Convert.toDouble(inRex.stringMatched(1));
 	}
