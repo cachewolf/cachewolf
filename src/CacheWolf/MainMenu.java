@@ -28,7 +28,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem exportOZI, exportKML, exportTPL;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
-	private MenuItem orgCopy, orgMove, orgDelete;
+	private MenuItem orgCopy, orgMove, orgDelete, orgTravelbugs;
 	public MenuItem orgCacheTour;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
@@ -151,12 +151,13 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organize" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organizeMenuItems=new MenuItem[5];
+		MenuItem[] organizeMenuItems=new MenuItem[6];
 		organizeMenuItems[0] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
 		organizeMenuItems[1] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
 		organizeMenuItems[2] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
 		organizeMenuItems[3] = mnuSeparator;
 		organizeMenuItems[4] = orgCacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
+		organizeMenuItems[5] = mnuSeparator;
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organize"),new Menu(organizeMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
@@ -175,16 +176,6 @@ public class MainMenu extends MenuBar {
 		tbp = t;
 	}
 	
-	public void allowProfileChange(boolean profileChangeAllowed) {
-		if (profileChangeAllowed) {
-			mnuNewProfile.modifiers&=~MenuItem.Disabled;
-			mnuOpenProfile.modifiers&=~MenuItem.Disabled;
-		} else {
-			mnuNewProfile.modifiers|=MenuItem.Disabled;
-			mnuOpenProfile.modifiers|=MenuItem.Disabled;
-		}
-	}
-
 	public static void search() {
 		String srch = new InputBox(MyLocale.getMsg(119,"Search for:")).input("",10);
 		if (srch != null) {

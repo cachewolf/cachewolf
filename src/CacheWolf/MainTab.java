@@ -77,7 +77,6 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(radarP, "Radar", null);
 		radarP.setMainTab(this);
 		c.iconize(new Image("radar.gif"),true);
-		mnuMain.allowProfileChange(true);
 	}
 
 	public TablePanel getTablePanel(){
@@ -93,8 +92,6 @@ public class MainTab extends mTabbedPanel {
 	public void onEvent(Event ev)
 	{
 		if(ev instanceof MultiPanelEvent){
-			// Check whether a profile change is allowed, if not disable the relevant options
-			checkProfileChange();
 			// Perform clean up actions for the panel we are leaving
 			onLeavingPanel(oldCard);
 			// Prepare actions for the panel we are about to enter
@@ -362,14 +359,6 @@ public class MainTab extends mTabbedPanel {
 		if (saveIndex) profile.saveIndex(Global.getPref(),false);
 	}
 	
-	private void checkProfileChange() {
-		// A panel is selected. Could be the same panel twice
-		mnuMain.allowProfileChange(false);	  
-		if(this.getSelectedItem() == 0){// List view selected
-			mnuMain.allowProfileChange(true);	  
-			MyLocale.setSIPOff();
-		}
-	}
 }
 // 
 
