@@ -215,11 +215,12 @@ public class CoordsScreen extends Form {
 			if (ev.target == btnParse){
 				// try to parse coords
 				CWPoint coord;
-				if (inpText.getText().trim().startsWith("GC")) {
+				String inp=inpText.getText().trim().toUpperCase();
+				if (inp.startsWith("GC")) {
 					SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile(), false);
-					coord = new CWPoint(spider.getCacheCoordinates(inpText.getText().trim()));
+					coord = new CWPoint(spider.getCacheCoordinates(inp));
 				} else {	
-					coord = new CWPoint(inpText.getText());
+					coord = new CWPoint(inp);
 				}
 				if (coord.latDec == 0 && coord.lonDec == 0){
 					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
