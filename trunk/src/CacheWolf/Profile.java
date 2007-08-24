@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import HTML.Tmpl.Element.If;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileNotFoundException;
@@ -12,8 +13,6 @@ import ewe.sys.Convert;
 import ewe.sys.Handle;
 import ewe.sys.Vm;
 import ewe.ui.ProgressBarForm;
-import ewe.util.Hashtable;
-import ewe.util.Vector;
 import ewe.util.*;
 
 /**
@@ -113,6 +112,14 @@ public class Profile {
 		}
 		PrintWriter detfile;
 		CacheHolder ch;
+		try {
+			File backup=new File(dataDir+"index.bak");
+			if (backup.exists()) backup.delete();
+			File index=new File(dataDir+"index.xml");
+			index.rename("index.bak");
+		} catch (Exception ex) {
+			pref.log("Error deleting backup or renaming index.xml");
+		}
 		try{
 			detfile = new PrintWriter(new BufferedWriter(new FileWriter(dataDir + "index.xml")));
 		} catch (Exception e) {
