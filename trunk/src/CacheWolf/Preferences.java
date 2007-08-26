@@ -17,9 +17,6 @@ import ewe.util.Map.MapEntry;
  */
 public class Preferences extends MinML{
 
-	public int tablePrefs[] = {1,1,1,1,1,1,1,1,1,1,1,1};
-	public int tableWidth[] = {20,20,20,25,92,177,144,83,60,105,50,104,50};
-
 	static protected final int PROFILE_SELECTOR_FORCED_ON=0;
 	static protected final int PROFILE_SELECTOR_FORCED_OFF=1;
 	static protected final int PROFILE_SELECTOR_ONOROFF=2;
@@ -48,7 +45,8 @@ public class Preferences extends MinML{
 
 	public int myAppHeight = 0;
 	public int myAppWidth = 0;
-	//public int nLogs = 5;
+	public final int DEFAULT_MAX_LOGS_TO_SPIDER=250;
+	public int maxLogsToSpider = DEFAULT_MAX_LOGS_TO_SPIDER;
 	public boolean dirty = false;
 
 	public String garminConn="com1";  // The type of connection which GPSBABEL uses: com1 OR usb.
@@ -334,10 +332,6 @@ public class Preferences extends MinML{
 			if (atts.getValue("autoreload").equals("true")) autoReloadLastProfile=true;
 		}
 
-		//if(name.equals("datadir")) {
-		//mydatadir = atts.getValue("dir");
-		//profile.dataDir=mydatadir;
-		//}
 		if(name.equals("basedir")) {
 			baseDir = atts.getValue("dir");
 		}
@@ -347,6 +341,10 @@ public class Preferences extends MinML{
 			downloadmissingOC = Boolean.valueOf(atts.getValue("downloadmissing")).booleanValue();
 
 		}
+		if (name.equals("listview")) {
+			listColMap=atts.getValue("colmap");
+			listColWidth=atts.getValue("colwidths");	
+		}
 		if(name.equals("proxy")) {
 			myproxy = atts.getValue("prx");
 			myproxyport = atts.getValue("prt");
@@ -355,61 +353,6 @@ public class Preferences extends MinML{
 			garminConn=atts.getValue("connection");
 			tmp = atts.getValue("GPSBabelOptions");
 			if (tmp != null) garminGPSBabelOptions=tmp;
-		}
-		if(name.equals("tableType")){ 
-			tablePrefs[1] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[1] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableD")){
-			tablePrefs[2] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[2] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableT")){
-			tablePrefs[3] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[3] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableWay")) {
-			tablePrefs[4] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[4] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableName")){
-			tablePrefs[5] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[5] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableLoc")){
-			tablePrefs[6] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[6] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableOwn")){
-			tablePrefs[7] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[7] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableHide")){
-			tablePrefs[8] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[8] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableStat")){
-			tablePrefs[9] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[9] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableDist")){
-			tablePrefs[10] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[10] = Convert.parseInt(tmp);
-		}
-		if(name.equals("tableBear")){
-			tablePrefs[11] = Convert.parseInt(atts.getValue("active"));
-			tmp = atts.getValue("width");
-			if (tmp != null) tableWidth[11] = Convert.parseInt(tmp);
 		}
 		if (name.equals("imagepanel")) {
 			showDeletedImages = Boolean.valueOf(atts.getValue("showdeletedimages")).booleanValue();
@@ -425,6 +368,8 @@ public class Preferences extends MinML{
 			logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
 			String strInitialHintHeight=atts.getValue("initialhintheight");
 			if (strInitialHintHeight!=null) initialHintHeight=Convert.parseInt(strInitialHintHeight);
+			String strMaxLogsToSpider=atts.getValue("maxspiderlogs");
+			if (strMaxLogsToSpider!=null) maxLogsToSpider=Convert.parseInt(strInitialHintHeight);
 		}
 		if (name.equals("solver")) {
 			solverIgnoreCase=Boolean.valueOf(atts.getValue("ignorevariablecase")).booleanValue();
@@ -444,8 +389,7 @@ public class Preferences extends MinML{
 		}
 	}
 
-	public void characters( char ch[], int start, int length )
-	{
+	public void characters( char ch[], int start, int length ) {
 		if (collectElement!=null) {
 			collectElement.append(ch,start,length); // Collect the name of the last profile
 		}
@@ -473,44 +417,24 @@ public class Preferences extends MinML{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(datei)));
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			outp.print("<preferences>\n");
+			outp.print("	<basedir dir = \""+ baseDir +"\"/>\n");
+			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
 			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\"/>\n");
 			outp.print("	<alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
-			outp.print("	<basedir dir = \""+ baseDir +"\"/>\n");
+			outp.print("	<browser name = \""+browser+"\"/>\n");
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
 			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
 			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destinationHost = \""+ forwardGpsHost+"\"/>\n");
-			outp.print("	<tableType active = \"1\" width = \""+Convert.toString(tableWidth[1])+"\"/>\n");
-			outp.print("	<tableD active = \""+Convert.toString(tablePrefs[2])+ "\"" +
-					" width = \""+Convert.toString(tableWidth[2])+"\"/>\n");
-			outp.print("	<tableT active = \""+Convert.toString(tablePrefs[3])+ "\"" +
-					" width = \""+Convert.toString(tableWidth[3])+"\"/>\n");
-			outp.print("	<tableWay active = \"1\" width = \""+Convert.toString(tableWidth[4])+"\"/>\n");
-			outp.print("	<tableName active = \"1\" width = \""+Convert.toString(tableWidth[5])+"\"/>\n");
-			outp.print("	<tableLoc active = \""+Convert.toString(tablePrefs[6])+ "\"" +
-					" width = \""+Convert.toString(tableWidth[6])+"\"/>\n");
-			outp.print("	<tableOwn active = \""+Convert.toString(tablePrefs[7])+ "\"" +
-					" width = \""+Convert.toString(tableWidth[7])+"\"/>\n");
-			outp.print("	<tableHide active = \""+Convert.toString(tablePrefs[8])+ "\"" +
-					" width = \""+Convert.toString(tableWidth[8])+"\"/>\n");
-			outp.print("	<tableStat active = \""+Convert.toString(tablePrefs[9])+ "\"" +
-					" width = \""+Convert.toString(tableWidth[9])+"\"/>\n");
-			outp.print("	<tableDist active = \""+Convert.toString(tablePrefs[10])+ "\"" +
-					" width = \""+Convert.toString(tableWidth[10])+"\"/>\n");
-			outp.print("	<tableBear active = \""+Convert.toString(tablePrefs[11])+ "\"" +
-					" width = \""+Convert.toString(tableWidth[11])+"\"/>\n");
 			outp.print("    <font size =\""+fontSize+"\"/>\n");
-			outp.print("	<browser name = \""+browser+"\"/>\n");
-			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
-			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" />\n");
-			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
 			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+"\"/>\n");
+			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
+			outp.print("    <listview colmap=\""+listColMap+"\" colwidths=\""+listColWidth+"\" />\n");
+			outp.print("    <travelbugs colmap=\""+travelbugColMap+"\" colwidths=\""+travelbugColWidth+"\" shownonlogged=\""+travelbugShowOnlyNonLogged+"\" />\n");
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
-			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\" initialhintheight=\""+initialHintHeight+"\"/>\n");
+			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\" initialhintheight=\""+initialHintHeight+"\"  maxspiderlogs=\""+maxLogsToSpider+"\" />\n");
 			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\"/>\n");
-			//outp.print("    <maps ")
+			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" />\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
-			// Obsolete data kept for backward compatibility
-			//outp.print("	<syncOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC +  "\"/>\n");
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath +"\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
@@ -521,7 +445,6 @@ public class Preferences extends MinML{
 				entry = (MapEntry) itPath.next();
 				outp.print("    <expPath key = \"" + entry.getKey().toString() + "\" value = \"" + entry.getValue().toString().replace('\\', '/') + "\"/>\n");
 			}
-			outp.print("  <travelbugs colmap=\""+travelbugColMap+"\" colwidths=\""+travelbugColWidth+"\" shownonlogged=\""+travelbugShowOnlyNonLogged+"\" />\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {

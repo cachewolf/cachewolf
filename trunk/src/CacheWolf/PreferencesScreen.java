@@ -15,7 +15,8 @@ import ewe.sys.*;
 public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
 	mChoice NS, EW;
-	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, inpLogsPerPage;
+	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
+	       inpLogsPerPage,inpMaxLogsToSpider;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
 	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort;
 	mTabbedPanel mTab;
@@ -98,12 +99,6 @@ public class PreferencesScreen extends Form {
 		// Second panel - Screen
 		/////////////////////////////////////////////////////////
 		
-/*		CellPanel pnlFont=new CellPanel();
-		pnlFont.addNext(new mLabel("Font"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlFont.addLast(fontSize = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		fontSize.setText(Convert.toString(pref.fontSize));
-		pnlDisplay.addLast(pnlFont);
-*/		
 		Frame frmScreen=new Frame();
 		frmScreen.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER;
 		mLabel lblTitle;
@@ -139,17 +134,19 @@ public class PreferencesScreen extends Form {
 		pnlDisplay.addLast(frmImages,CellConstants.STRETCH,CellConstants.FILL);
 
 		Frame frmHintLog=new Frame();
-		frmHintLog.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
-        mLabel lblHlP;
-		frmHintLog.addNext(lblHlP=new mLabel(MyLocale.getMsg(630,"HintLogPanel:  Logs per page ")));	
-		frmHintLog.addLast(inpLogsPerPage=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.WEST);
+		//frmHintLog.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
+		frmHintLog.addNext(new mLabel(MyLocale.getMsg(630,"HintLogPanel:  Logs per page ")),CellConstants.DONTSTRETCH,CellConstants.DONTFILL);	
+		frmHintLog.addLast(inpLogsPerPage=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.EAST);
 		inpLogsPerPage.setText(Convert.toString(pref.logsPerPage));
 		inpLogsPerPage.setPreferredSize(40,-1);
-		inpLogsPerPage.setTag(INSETS,new Insets(0,0,2,0));
-		lblHlP.setTag(INSETS,new Insets(6,0,2,0));
+		//inpLogsPerPage.setTag(INSETS,new Insets(0,0,2,0));
+		//lblHlP.setTag(INSETS,new Insets(6,0,2,0));
+		frmHintLog.addNext(new mLabel(MyLocale.getMsg(633,"Max. logs to spider")),CellConstants.DONTSTRETCH,CellConstants.DONTFILL);	
+		frmHintLog.addLast(inpMaxLogsToSpider=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.EAST);
+		inpMaxLogsToSpider.setText(Convert.toString(pref.maxLogsToSpider));
+		inpMaxLogsToSpider.setPreferredSize(40,-1);
 		pnlDisplay.addLast(frmHintLog,CellConstants.STRETCH,CellConstants.FILL);
 
-		pnlDisplay.addLast(new mLabel(""));
 		/////////////////////////////////////////////////////////
 		// Third panel - More
 		/////////////////////////////////////////////////////////
@@ -159,46 +156,31 @@ public class PreferencesScreen extends Form {
 		Proxy.setText(pref.myproxy);
 		pnlProxy.addNext(new mLabel("Port"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlProxy.addNext(ProxyPort = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		ProxyPort.setText(pref.myproxyport);
 		pnlProxy.addLast(new mLabel("")).setTag(SPAN,new Dimension(2,1));
 		pnlMore.addLast(pnlProxy,HSTRETCH,HFILL);
 		
-		ProxyPort.setText(pref.myproxyport);
-		Frame frmDisplay=new Frame();
-		frmDisplay.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
-		frmDisplay.addLast(new mLabel(MyLocale.getMsg(605,"Display Preferences")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		frmDisplay.addNext(dif = new mCheckBox(MyLocale.getMsg(606,"Difficulty")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		if(pref.tablePrefs[2] == 1) dif.setState(true);
-		frmDisplay.addNext(ter = new mCheckBox(MyLocale.getMsg(607,"Terrain")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		if(pref.tablePrefs[3] == 1) ter.setState(true);
-		frmDisplay.addLast(loc = new mCheckBox(MyLocale.getMsg(608,"Location")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		if(pref.tablePrefs[6] == 1) loc.setState(true);
-		frmDisplay.addNext(own = new mCheckBox(MyLocale.getMsg(609,"Owner")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		if(pref.tablePrefs[7] == 1) own.setState(true); 
-		frmDisplay.addNext(hid = new mCheckBox(MyLocale.getMsg(610,"Hidden")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		if(pref.tablePrefs[8] == 1) hid.setState(true);
-		frmDisplay.addLast(stat = new mCheckBox(MyLocale.getMsg(611,"Status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		if(pref.tablePrefs[9] == 1) stat.setState(true);
-		frmDisplay.addNext(dist = new mCheckBox(MyLocale.getMsg(612,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		if(pref.tablePrefs[10] == 1) dist.setState(true);
-		frmDisplay.addLast(bear = new mCheckBox(MyLocale.getMsg(613,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		if(pref.tablePrefs[11] == 1) bear.setState(true);
-		dist.setTag(INSETS,new Insets(0,0,2,0));
-		bear.setTag(INSETS,new Insets(0,0,2,0));
-		pnlMore.addLast(frmDisplay,CellConstants.STRETCH,CellConstants.FILL);
-
 		/////////////////////////////////////////////////////////
-		// Fourth panel - Travelbugs
+		// Fourth/Fifth panel - Listview and Travelbugs
 		/////////////////////////////////////////////////////////
 
-		
         mTab.addCard(pnlGeneral,MyLocale.getMsg(621,"General"),null);
 		mTab.addCard(pnlDisplay,MyLocale.getMsg(622,"Screen"),null);
 		mTab.addCard(pnlMore,MyLocale.getMsg(632,"More"),null);
-		/*mTab.addCard(tccList=new TableColumnChooser(new String[] {
-				"checkbox","type","difficulty","terrain",
-				"waypoint","name","coords","owner",
-				"date hidden","status","distance","bearing"},pref.listColMap),"List",null);
-		*/
+		mTab.addCard(tccList=new TableColumnChooser(new String[] {
+				MyLocale.getMsg(599,"checkbox"),
+				MyLocale.getMsg(598,"type"),
+				MyLocale.getMsg(606,"Difficulty"),
+				MyLocale.getMsg(607,"Terrain"),
+				MyLocale.getMsg(597,"waypoint"),
+				MyLocale.getMsg(596,"name"),
+				MyLocale.getMsg(608,"Location"),
+				MyLocale.getMsg(609,"Owner"),
+				MyLocale.getMsg(610,"Hidden"),
+				MyLocale.getMsg(611,"Status"),
+				MyLocale.getMsg(612,"Distance"),
+				MyLocale.getMsg(613,"Bearing")},pref.listColMap),MyLocale.getMsg(595,"List"),null);
+
 		Card c=mTab.addCard(tccBugs=new TableColumnChooser(new String[] {
 				MyLocale.getMsg(6000,"Guid"),
 				MyLocale.getMsg(6001,"Name"),
@@ -232,8 +214,11 @@ public class PreferencesScreen extends Form {
 				//}
 				pref.fontSize = Convert.toInt(fontSize.getText());
 				if (pref.fontSize<6) pref.fontSize=12;
-				pref.logsPerPage=Convert.toInt(inpLogsPerPage.getText());
+				pref.logsPerPage=Common.parseInt(inpLogsPerPage.getText());
 				if (pref.logsPerPage==0) pref.logsPerPage=pref.DEFAULT_LOGS_PER_PAGE;
+				pref.maxLogsToSpider=Common.parseInt(inpMaxLogsToSpider.getText());
+				if (pref.maxLogsToSpider==0) pref.maxLogsToSpider=pref.DEFAULT_MAX_LOGS_TO_SPIDER;
+				
 				Font defaultGuiFont = mApp.findFont("gui");
 				int sz = (pref.fontSize);
 				Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
@@ -247,14 +232,6 @@ public class PreferencesScreen extends Form {
 				pref.myproxy = Proxy.getText();
 				pref.myproxyport = ProxyPort.getText();
 				//myPreferences.nLogs = Convert.parseInt(nLogs.getText());
-				pref.tablePrefs[2] = (dif.getState()==true ? 1 : 0);
-				pref.tablePrefs[3] = (ter.getState()==true ? 1 : 0);
-				pref.tablePrefs[6] = (loc.getState()==true ? 1 : 0);
-				pref.tablePrefs[7] = (own.getState()==true ? 1 : 0);
-				pref.tablePrefs[8] = (hid.getState()==true ? 1 : 0);
-				pref.tablePrefs[9] = (stat.getState()==true ? 1 : 0);
-				pref.tablePrefs[10] = (dist.getState()==true ? 1 : 0);
-				pref.tablePrefs[11] = (bear.getState()==true ? 1 : 0);
 				pref.autoReloadLastProfile=chkAutoLoad.getState();
 				pref.showDeletedImages=chkShowDeletedImg.getState();
 				pref.garminConn=chcGarminPort.getSelectedItem().toString();
@@ -264,6 +241,8 @@ public class PreferencesScreen extends Form {
 				pref.showStatus=chkShowStatus.getState();
 				pref.hasCloseButton=chkHasCloseButton.getState();
 				pref.travelbugColMap=tccBugs.getSelectedCols();
+				pref.listColMap=tccList.getSelectedCols();
+				Global.mainTab.tbP.myMod.setColumnNamesAndWidths();
 				pref.savePreferences();
 				pref.dirty = true; // Need to update table in case columns were enabled/disabled
 				this.close(0);

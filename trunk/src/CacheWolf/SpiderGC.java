@@ -72,6 +72,7 @@ public class SpiderGC{
 			// We don't display an error message box here, as the call to 
 			// spiderSingle or doIt will do this
 		}
+		MAXLOGS=pref.maxLogsToSpider;
 	}
 	
 	private boolean existsSpiderDef() {

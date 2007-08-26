@@ -26,25 +26,32 @@ public class myTableModel extends TableModel{
 	private static final Color COLOR_SELECTED	= new Color(198,198,198);
 	private static final Color COLOR_ARCHFND_FG	= new Color(255,0,0); // Archived && Found
 	private static final Color COLOR_ARCHFND_BG	= new Color(152,251,152);	
-	Vector cacheDB;
-	String[] colName;
-	int[] colWidth;
-	int [] colID; // The number of the column in the original sequence in the prefs file
-	int usedColumns; // Columns actually used (<=MAXCOLUMNS)
-	static Image cacheImages[] = new Image[454];
-	static Image noFindLogs[] = new Image[4];
-	Image red, blue, green, yellow, skull;
-	mImage bug;
-	myTableControl tcControl;
-	boolean sortAsc = false;
-	int sortedBy = -1;
-	FontMetrics fm;
-	Image checkboxTicked,checkboxUnticked;
+	private Vector cacheDB;
+	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
+	 * the element j (as per the list below) is visible in column i. 
+	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
+	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing
+	 */
+	private int[] colMap;
+	/** The column widths corresponding to the list of columns above */
+	private int[] colWidth;
+	private String [] colName = {" ","?",MyLocale.getMsg(1000,"D"),MyLocale.getMsg(1001,"T"),MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
+	
+	public static Image cacheImages[] = new Image[454]; // Images are used by TableControl
+	private static Image noFindLogs[] = new Image[4];
+	private Image red, blue, green, yellow, skull;
+	private Image checkboxTicked,checkboxUnticked;
+	private mImage bug;
+	private boolean sortAsc = false;
+	private int sortedBy = -1;
+	private FontMetrics fm;
 	/** This is the modifier (Shift & Control key status) for Pen Events
 	 * it is set in myTableControl.onEvent */
 	public int penEventModifiers; 
 	/** The row of the last click where the shift key was pressed */
 	private int lastRow=-1;
+	private myTableControl tcControl;
+	
 	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
 		cacheDB = Global.getProfile().cacheDB;
@@ -100,27 +107,34 @@ public class myTableModel extends TableModel{
 	 *
 	 */
 	public void setColumnNamesAndWidths() {
-		String [] spName = {" ","?",MyLocale.getMsg(1000,"D"),MyLocale.getMsg(1001,"T"),MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
-		// [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
-		// [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing
-		Preferences pref=Global.getPref();
-		colName=new String[MAXCOLUMNS]; // Always dimension to max columns, a few columns could be wasted
-		colWidth=new int[MAXCOLUMNS];
-		colID=new int[MAXCOLUMNS];
-		
-		usedColumns = 0;
-		for(int i = 0; i<MAXCOLUMNS;i++){
-			if(pref.tablePrefs[i] == 1){
-				colName[usedColumns] = spName[i];
-				colWidth[usedColumns] = pref.tableWidth[i];
-				colID[usedColumns]=i;
-				usedColumns++;
-			}
-		}
-		this.numCols = usedColumns;
+		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,11,0);
+		colWidth=TableColumnChooser.str2Array(Global.getPref().listColWidth,10,1024,50);
+		numCols=colMap.length;
 		clearCellAdjustments();
+		// If the displayed columns include the checkbox, we use the full menu
+		if ((","+Global.getPref().listColMap+",").indexOf(",0,")>=0)
+			tcControl.setMenuFull();
+		else
+			tcControl.setMenuSmall();
 	}
 	
+	/**
+	 * Return the column widths as a comma delimited string for storing in the preferences
+	 * @return
+	 */
+	public String getColWidths() {
+		// Update the list with the current widths
+		for (int col=0; col<numCols; col++) {
+			colWidth[colMap[col]]=getColWidth(col);
+		}
+		// Convert to string
+		StringBuffer sb=new StringBuffer(40);
+		for (int i=0; i<colWidth.length; i++) {
+			if (sb.length()!=0) sb.append(',');
+			sb.append(colWidth[i]);
+		}
+		return sb.toString();
+	}
 	public void updateRows(){
 		Vector sortDB = new Vector();
 		Vector filteredDB = new Vector();
@@ -194,8 +208,8 @@ public class myTableModel extends TableModel{
 	public int calculateColWidth(int col){
 		if(col == -1) 
         	return 0;
-        else if (col<usedColumns)
-        	return colWidth[col];
+        else if (col<numCols)
+        	return colWidth[colMap[col]];
         else return 0;
 	}
 	
@@ -211,12 +225,12 @@ public class myTableModel extends TableModel{
 
 	public Object getCellData(int row, int col){
 		if(row == -1) {
-			return (String)colName[col];
+			return (String)colName[colMap[col]];
 		} else {
 			try { // Access to row can fail if many caches are deleted
 				CacheHolder ch = (CacheHolder)cacheDB.get(row);
 				if(ch.is_filtered == false){
-					switch(colID[col]) { // Faster than using column names
+					switch(colMap[col]) { // Faster than using column names
 						case 0: // Checkbox
 							if (ch.is_Checked) 
 								return checkboxTicked; 
@@ -348,4 +362,5 @@ public class myTableModel extends TableModel{
 			}
 		}		
 	}
+	
 }

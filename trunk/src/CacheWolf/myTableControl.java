@@ -15,26 +15,31 @@ public class myTableControl extends TableControl{
 	public Profile profile;
 	public Vector cacheDB;
 	public TablePanel tbp;
+	private Menu mFull = new Menu(new String[]{
+			MyLocale.getMsg(1021,"Open description"),
+			MyLocale.getMsg(1010,"Goto"),
+			MyLocale.getMsg(1019,"Enter"),
+			"-",
+			MyLocale.getMsg(1020,"Open in $browser online"),
+			MyLocale.getMsg(1018,"Open in browser offline"),
+			"-",
+			MyLocale.getMsg(1011,"Filter"),
+			MyLocale.getMsg(1012,"Delete"),
+			MyLocale.getMsg(1014,"Update"),
+			"-",
+			MyLocale.getMsg(1015,"Select all"),
+			MyLocale.getMsg(1016,"De-select all")},
+			MyLocale.getMsg(1013,"With selection"));
+	private Menu mSmall = new Menu(new String[]{
+			MyLocale.getMsg(1021,"Open description"),
+			MyLocale.getMsg(1010,"Goto"),
+			MyLocale.getMsg(1019,"Enter"),
+			"-",
+			MyLocale.getMsg(1020,"Open in $browser online"),
+			MyLocale.getMsg(1018,"Open in browser offline")},
+			MyLocale.getMsg(1013,"With selection"));
 
 	myTableControl(TablePanel tablePanel) {
-		Menu m = new Menu(new String[]{
-				MyLocale.getMsg(1021,"Open description"),
-				MyLocale.getMsg(1010,"Goto"),
-				MyLocale.getMsg(1019,"Enter"),
-				"-",
-				MyLocale.getMsg(1020,"Open in $browser online"),
-				MyLocale.getMsg(1018,"Open in browser offline"),
-				"-",
-				MyLocale.getMsg(1011,"Filter"),
-				MyLocale.getMsg(1012,"Delete"),
-				MyLocale.getMsg(1014,"Update"),
-				"-",
-				MyLocale.getMsg(1015,"Select all"),
-				MyLocale.getMsg(1016,"De-select all")},
-				MyLocale.getMsg(1013,"With selection"));
-		setMenu(m);
-		if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
-		   ((MenuItem)m.items.get(5)).modifiers|=MenuItem.Disabled;
 		profile=Global.getProfile();
 		cacheDB = profile.cacheDB;
 		pref = Global.getPref();
@@ -42,6 +47,20 @@ public class myTableControl extends TableControl{
 		allowDragSelection = false; // allow only one row to be selected at one time
 	}
 
+	/** Full menu when listview includes checkbox */
+	public void setMenuFull() {
+		setMenu(mFull);
+		if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
+		   ((MenuItem)mFull.items.get(5)).modifiers|=MenuItem.Disabled;
+	}
+	
+	/** Small menu when listview does not include checkbox */
+	public void setMenuSmall() {
+		setMenu(mSmall);
+		if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
+			   ((MenuItem)mSmall.items.get(5)).modifiers|=MenuItem.Disabled;
+	}
+	
 	public void penRightReleased(Point p){
 		if (cacheDB.size()>0) // No context menu when DB is empty
 			menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
