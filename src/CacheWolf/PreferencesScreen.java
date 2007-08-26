@@ -16,7 +16,7 @@ public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
 	mChoice NS, EW;
 	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
-	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
+	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword,inpLanguage;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
 	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort;
 	mTabbedPanel mTab;
@@ -160,6 +160,10 @@ public class PreferencesScreen extends Form {
 		ProxyPort.setText(pref.myproxyport);
 		pnlProxy.addLast(new mLabel("")).setTag(SPAN,new Dimension(2,1));
 		pnlMore.addLast(pnlProxy,HSTRETCH,HFILL);
+		pnlMore.addNext(new mLabel(MyLocale.getMsg(592,"Language (needs restart)")),DONTSTRETCH,DONTFILL|WEST);
+		pnlMore.addLast(inpLanguage=new mInput(MyLocale.language),DONTSTRETCH,DONTFILL|WEST);
+		inpLanguage.setPreferredSize(20,-1);
+		inpLanguage.setToolTip(MyLocale.getMsg(591,""));
 		
 		/////////////////////////////////////////////////////////
 		// Fourth/Fifth panel - Listview and Travelbugs
@@ -229,6 +233,7 @@ public class PreferencesScreen extends Form {
 				
 				pref.myAlias = Alias.getText().trim();
 				SpiderGC.passwort=pref.password= inpPassword.getText().trim();
+				MyLocale.saveLanguage(MyLocale.language=inpLanguage.getText().toUpperCase().trim());
 				pref.browser = Browser.getText();
 				//Vm.debug(myPreferences.browser);
 				pref.myproxy = Proxy.getText();

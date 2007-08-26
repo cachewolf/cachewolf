@@ -4,6 +4,11 @@ package CacheWolf;
  * 
  */
 import ewe.fx.Rect;
+import ewe.io.BufferedReader;
+import ewe.io.BufferedWriter;
+import ewe.io.File;
+import ewe.io.FileReader;
+import ewe.io.FileWriter;
 import ewe.sys.*;
 import ewe.sys.Double;
 import ewe.sys.Long;
@@ -25,9 +30,17 @@ public class MyLocale {
 	private static LocalResource lr=null;
 	private static Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
 	private static String digSeparator=null;
+	/** Read a non-standard language from the file language. If it is empty,
+	 * the default language is used.
+	 */
+	public static String language=getLanguage();
 	
 	private static void init() {
-		 l = Vm.getLocale();
+		 if ( language.length()==0) // Was a non-standard language specified
+			 l = Vm.getLocale();
+		 else {
+			 l=new Locale(Locale.createID(language,"",0));
+		 }
 		 lr = l.getLocalResource("cachewolf.Languages",true);
 
 		 double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
@@ -188,5 +201,43 @@ public class MyLocale {
 			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
 		}
 	}
+	
+	/*=================================================================
+	 * During initialisation the file "language" in the program directory
+	 * is read to check whether the user wishes to ovverride the default
+	 * language. This language cannot be stored in the pref.xml file, due
+	 * to an initialisation conflict (pref.xml needs MyLocale). A better
+	 * solution may be to read the override language from the command line,
+	 * but I do not know how to specify command line parameters on a PDA
+	 ==================================================================*/
+	/**
+	 * Read the language file and return the specified language (or empty
+	 * string if none specified).
+	 * @return Language (e.g. DE, EN etc.) or ""
+	 */
+	private static String getLanguage() {
+		try {
+			BufferedReader bufread=new BufferedReader(new FileReader(File.getProgramDirectory() + "/" + "language"));
+			language=bufread.readLine();
+			bufread.close();
+		} catch (Exception ex) {
+			language="";
+		}
+		if (language==null) language="";
+		return language;
+	}
+	
+	/**
+	 * Write the override language 
+	 * @param language The language to write
+	 */
+	public static void saveLanguage(String language) {
+		try{
+			BufferedWriter out = new BufferedWriter(new FileWriter(File.getProgramDirectory() + "/" + "language"));
+			out.write(language);
+			out.close();
+		}catch (Exception e){ Vm.debug("Exception "+e);}
+	}
+	
 }
 

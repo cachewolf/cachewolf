@@ -45,6 +45,11 @@ public class Preferences extends MinML{
 	public boolean showDeletedImages=true; /* Used in ImagePanel */
 	public boolean solverIgnoreCase=false;
 
+	/**
+	 * Forced language. If specified it overrides the default language.
+	 * Example: To run CW in English language on a German PC specify "EN" here.
+	 */
+	public String language="";
 	public int myAppHeight = 0;
 	public int myAppWidth = 0;
 	public final int DEFAULT_MAX_LOGS_TO_SPIDER=250;
