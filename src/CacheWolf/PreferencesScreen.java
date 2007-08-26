@@ -16,7 +16,7 @@ public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
 	mChoice NS, EW;
 	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
-	       inpLogsPerPage,inpMaxLogsToSpider;
+	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
 	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort;
 	mTabbedPanel mTab;
@@ -71,8 +71,9 @@ public class PreferencesScreen extends Form {
 		Alias = new mInput();
 		Alias.setText(pref.myAlias);
 		pnlBrowser.addNext(Alias,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlBrowser.addLast(new mLabel("")).setTag(SPAN,new Dimension(2,1));
-		
+		pnlBrowser.addNext(new mLabel(MyLocale.getMsg(594,"Pwd")));
+		pnlBrowser.addLast(inpPassword=new mInput(pref.password),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		inpPassword.setToolTip(MyLocale.getMsg(593,"Password is optional here.\nEnter only if you want to store it in pref.xml"));
 		pnlGeneral.addLast(pnlBrowser,HSTRETCH,HFILL);
 		
 		pnlGeneral.addNext(gpsB = new mButton("GPS"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -227,6 +228,7 @@ public class PreferencesScreen extends Form {
 				mApp.mainApp.font = newGuiFont;
 				
 				pref.myAlias = Alias.getText().trim();
+				SpiderGC.passwort=pref.password= inpPassword.getText().trim();
 				pref.browser = Browser.getText();
 				//Vm.debug(myPreferences.browser);
 				pref.myproxy = Proxy.getText();

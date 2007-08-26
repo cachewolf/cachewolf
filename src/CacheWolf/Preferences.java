@@ -35,6 +35,8 @@ public class Preferences extends MinML{
 	public String myproxyport = "";
 	/** This is the login alias for geocaching.com and opencaching.de */
 	public String myAlias = "";
+	/** Optional password */
+	public String password="";
 	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs) 
 	 *  It is currently not used yet */
 	public String myAlias2 = "";
@@ -314,8 +316,13 @@ public class Preferences extends MinML{
 			}
 		}
 		if(name.equals("font")) fontSize = Convert.toInt(atts.getValue("size"));
-		if(name.equals("alias")) myAlias = atts.getValue("name");
-		if(name.equals("alias2")) myAlias2 = atts.getValue("name");
+		if(name.equals("alias")) {
+			myAlias = SafeXML.cleanback(atts.getValue("name"));
+			tmp = SafeXML.cleanback(atts.getValue("password"));
+			if (tmp != null) password=tmp;
+			SpiderGC.passwort=password;
+		}
+		if(name.equals("alias2")) SafeXML.cleanback(myAlias2 = atts.getValue("name"));
 		if(name.equals("location")){
 			curCentrePt.set(atts.getValue("lat")+" "+atts.getValue("long"));
 		}
@@ -419,7 +426,7 @@ public class Preferences extends MinML{
 			outp.print("<preferences>\n");
 			outp.print("	<basedir dir = \""+ baseDir +"\"/>\n");
 			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
-			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\"/>\n");
+			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
 			outp.print("	<alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
 			outp.print("	<browser name = \""+browser+"\"/>\n");
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
