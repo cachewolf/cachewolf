@@ -381,7 +381,7 @@ public class Preferences extends MinML{
 			String strInitialHintHeight=atts.getValue("initialhintheight");
 			if (strInitialHintHeight!=null) initialHintHeight=Convert.parseInt(strInitialHintHeight);
 			String strMaxLogsToSpider=atts.getValue("maxspiderlogs");
-			if (strMaxLogsToSpider!=null) maxLogsToSpider=Convert.parseInt(strInitialHintHeight);
+			if (strMaxLogsToSpider!=null) maxLogsToSpider=Convert.parseInt(strMaxLogsToSpider);
 		}
 		if (name.equals("solver")) {
 			solverIgnoreCase=Boolean.valueOf(atts.getValue("ignorevariablecase")).booleanValue();
