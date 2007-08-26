@@ -74,9 +74,18 @@ public class SpiderGC{
 		}
 	}
 	
+	private boolean existsSpiderDef() {
+		if (p==null) {
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5504,"Could not load 'spider.def'"), MessageBox.OKB)).execute();
+			return false;
+		}
+		return true;
+	}
 	/**
 	 * Method to login the user to gc.com
 	 * It will request a password and use the alias defined in preferences
+	 * If the login page cannot be fetched, the password is cleared.
+	 * If the login fails, an appropriate message is displayed.
 	 */
 	public int login(){
 		pref.logInit();
@@ -84,24 +93,27 @@ public class SpiderGC{
 		//Access the page once to get a viewstate
 		String start,doc,loginPage;
 		//Get password
-		InfoBox infB = new InfoBox("Password", "Enter password:", InfoBox.INPUT);
+		InfoBox infB = new InfoBox(MyLocale.getMsg(5506,"Password"), MyLocale.getMsg(5505,"Enter Password"), InfoBox.INPUT);
 		infB.feedback.setText(passwort); // Remember the PWD for next time
 		int code = infB.execute();
 		passwort = infB.getInput();
 		infB.close(0);
-		if(code != Form.IDOK)
-			return code;
-		infB = new InfoBox("Status", "Logging in...");
+		if(code != Form.IDOK) return code;
+		
+		// Now start the login proper
+		infB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
 		infB.exec();
 		try{
 			pref.log("Fetching login page");
 			start = fetch(loginPage=p.getProperty("loginPage"));   //http://www.geocaching.com/login/Default.aspx
 		}catch(Exception ex){
-			pref.log("Could not fetch: gc.com start page",ex);
+			infB.close(0);
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page"), MessageBox.OKB)).execute();
+			pref.log("Could not fetch: gc.com login page",ex);
 			passwort="";
 			return ERR_LOGIN;
 		}
-		if (!infB.isClosed) {
+		if (!infB.isClosed) { // If user has not aborted, we continue
 			Regex rexCookieID = new Regex("Set-Cookie: userid=(.*?);.*");
 			Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 			Regex rexCookieSession = new Regex("Set-Cookie: ASP.NET_SessionId=(.*?);.*");
@@ -109,7 +121,8 @@ public class SpiderGC{
 			if(rex.didMatch()){
 				viewstate = rex.stringMatched(1);
 				//Vm.debug("ViewState: " + viewstate);
-			}
+			} else
+				pref.log("Viewstate not found before login");
 			//Ok now login!
 			try{
 				pref.log("Logging in as "+pref.myAlias);
@@ -119,26 +132,37 @@ public class SpiderGC{
 				    + "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false)
 				    + "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false);
 				start = fetch_post(loginPage, doc, p.getProperty("nextPage"));  // /login/default.aspx
-				if(start.indexOf("You are logged in as") > 0) pref.log("Login successful");
+				if(start.indexOf(p.getProperty("loginSuccess")) > 0) pref.log("Login successful");
 				else {
 					pref.log("Login failed. Wrong Account or Password?");
 					infB.close(0);
+				    (new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), MessageBox.OKB)).execute();
 					return ERR_LOGIN;
 				}
 			}catch(Exception ex){
-				//Vm.debug("Could not login: gc.com start page");
 				pref.log("Login failed.", ex);
 				infB.close(0);
+			    (new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), MessageBox.OKB)).execute();
 				return ERR_LOGIN;
 			}
 			
 			rex.search(start);
+			if (!rex.didMatch()) {
+				pref.log("Viewstate not found");
+			}
 			viewstate = rex.stringMatched(1);
 			rexCookieID.search(start);
+			if (!rexCookieID.didMatch()) {
+				pref.log("CookieID not found");
+			} 
 			cookieID = rexCookieID.stringMatched(1);
 			//Vm.debug(cookieID);
 			rexCookieSession.search(start);
-			cookieSession = rexCookieSession.stringMatched(1);
+			if (!rexCookieSession.didMatch()) {
+				pref.log("CookieSession not found");
+				cookieSession="";
+			} else
+				cookieSession = rexCookieSession.stringMatched(1);
 			//Vm.debug(cookieSession);
 		}
 		boolean loginAborted=infB.isClosed;
@@ -159,17 +183,14 @@ public class SpiderGC{
 	public boolean spiderSingle(int number, InfoBox infB){
 		boolean ret=false;
 		this.infB = infB;
-		if (p==null) {
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), "Could not load 'spider.def'", MessageBox.OKB)).execute();
-			return false;
-		}
+		if (!existsSpiderDef()) return false;
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
 		if (ch.isAddiWpt()) return false;  // No point re-spidering an addi waypoint, comes with parent
 
 		// check if we need to login
 		if (!loggedIn){
-			if (this.login()==Form.IDOK) loggedIn = true;
-			else return false;
+			if (this.login()!=Form.IDOK) return false;
+			// loggedIn is already set by this.login()
 		}
 		CacheHolderDetail chD=new CacheHolderDetail(ch);
 		try{
@@ -202,17 +223,16 @@ public class SpiderGC{
 		String completeWebPage;
 		InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
 		infB.exec();
-		if (p==null) {
-			infB.close(0);
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), "Could not load 'spider.def'", MessageBox.OKB)).execute();
-			return "";
-		}
+		// Check whether spider definitions could be loaded, if not issue appropriate message and terminate
+		if (!existsSpiderDef()) return "";
+		// Try to login. If login fails, issue appropriate message and terminate
 		if (login()!=Form.IDOK) return "";
-		String doc = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wayPoint;
+		String doc = p.getProperty("waypoint") + wayPoint;
 		try{
 			pref.log("Fetching: " + wayPoint);
 			completeWebPage = fetch(doc);
 		}catch(Exception ex){
+			infB.close(0);
 			pref.log("Could not fetch " + wayPoint,ex);
 			return "";
 		}
@@ -227,13 +247,10 @@ public class SpiderGC{
 		String postStr, dummy, ln, wpt;
 		Regex lineRex;
 		CacheHolderDetail chD;
-		if (p==null) {
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), "Could not load 'spider.def'", MessageBox.OKB)).execute();
-			return;
-		}
+		if (!existsSpiderDef()) return;
 		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
 		if (!origin.isValid()) {
-			(new MessageBox("Error", "Coordinates for center must be set", MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for center must be set"), MessageBox.OKB)).execute();
 			return;
 		}
 		// Prepare an index of caches for faster searching
@@ -249,15 +266,9 @@ public class SpiderGC{
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		String doc = "";
 		
-		int ok = login();
-		if(ok == Form.IDCANCEL) {
-			return;
-		}
-		if(ok == ERR_LOGIN){
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed!"), MessageBox.OKB)).execute();
-			return;
-		}
-		OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options",	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES);
+		if(login() != Form.IDOK) return;
+	
+		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES);
 		options.distanceInput.setText("");
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
 		String dist = options.distanceInput.getText();
@@ -281,10 +292,10 @@ public class SpiderGC{
 			start = fetch(ln);
 			pref.log("Got first page");
 		}catch(Exception ex){
+			pref.log("Error fetching first list page",ex,true);
+			Vm.showWait(false);
 			infB.close(0);
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), MessageBox.OKB)).execute();
-			pref.log("Error fetching first list page",ex);
-			Vm.showWait(false);
 			return;
 		}
 		dummy = "";
@@ -314,7 +325,7 @@ public class SpiderGC{
 				} else distance = 0;
 				lineRex.searchFrom(dummy, lineRex.matchedTo());
 			}
-			infB.setInfo("Found " + cachesToLoad.size() + " caches");
+			infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
 			if(found_on_page < 20) distance = 0;
 			postStr = p.getProperty("firstLine") + origin.getLatDeg(CWPoint.DD) + "&" + origin.getLonDeg(CWPoint.DD);
 			if(doNotgetFound) postStr = postStr + p.getProperty("showOnlyFound");
@@ -340,7 +351,8 @@ public class SpiderGC{
 		}
 		
 		pref.log("Found " + cachesToLoad.size() + " caches");
-		if (!infB.isClosed) infB.setInfo("Found " + cachesToLoad.size() + " caches");
+		if (!infB.isClosed) infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
+
 		//=======
 		// Now ready to spider each cache in the list
 		//=======
@@ -350,7 +362,7 @@ public class SpiderGC{
 			wpt = (String)cachesToLoad.get(i);
 			// Get only caches not already available in the DB
 			if(searchWpt(wpt) == -1){
-				infB.setInfo("Loading: " + wpt +"(" + (i+1) + " / " + cachesToLoad.size() + ")");
+				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +"(" + (i+1) + " / " + cachesToLoad.size() + ")");
 				chD = new CacheHolderDetail();
 				chD.wayPoint=wpt;
 				if (!getCacheByWaypointName(chD,false,getImages,doNotgetFound,true)) break;
@@ -389,7 +401,7 @@ public class SpiderGC{
 		}catch(Exception ex){
 			pref.log("Could not fetch " + chD.wayPoint,ex);
 			chD.is_incomplete = true;
-			return !infB.isClosed;
+			return !infB.isClosed; // Only return false (which terminates the loop over all caches) if infB is closed
 		}
 		// Only analyse the cache data and fetch pictures if user has not closed the progress window
 		if (!infB.isClosed) { 
@@ -488,8 +500,8 @@ public class SpiderGC{
 				// Bugs
 				//==========
 				// As there may be several bugs, we check whether the user has aborted
-				if (!infB.isClosed) chD.Bugs = getBugs(completeWebPage);
-				chD.has_bug = chD.Bugs.length()>0;
+				if (!infB.isClosed) getBugs(chD,completeWebPage);
+				chD.has_bug = chD.Travelbugs.size()>0;
 				
 				//==========
 				// Images
@@ -560,6 +572,7 @@ public class SpiderGC{
 	private String getWP(String doc){
 		inRex = new Regex(p.getProperty("waypointRex"));
 		inRex.search(doc);
+		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
 	
@@ -571,7 +584,7 @@ public class SpiderGC{
 	private String getLatLon(String doc){
 		inRex = new Regex(p.getProperty("latLonRex"));
 		inRex.search(doc);
-		if (!inRex.didMatch()) return "";
+		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
 	
@@ -599,6 +612,7 @@ public class SpiderGC{
 	private String getName(String doc){
 		inRex = new Regex(p.getProperty("cacheNameRex"));
 		inRex.search(doc);
+		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
 	
@@ -610,6 +624,7 @@ public class SpiderGC{
 	private String getOwner(String doc){
 		inRex = new Regex(p.getProperty("cacheOwnerRex"));
 		inRex.search(doc);
+		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
 	
@@ -621,6 +636,7 @@ public class SpiderGC{
 	private String getDateHidden(String doc){
 		inRex = new Regex(p.getProperty("dateHiddenRex"));
 		inRex.search(doc);
+		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
 	
@@ -632,6 +648,7 @@ public class SpiderGC{
 	private String getHints(String doc){
 		inRex = new Regex(p.getProperty("hintsRex"));
 		inRex.search(doc);
+		if (!inRex.didMatch()) return "";
 		return inRex.stringMatched(1);
 	}
 	
@@ -723,11 +740,11 @@ public class SpiderGC{
 		//Vm.debug("Log Block: " + singleLog);
 		int nLogs=0;
 		while(exSingleLog.endOfSearch() == false){
-			nLogs++;
-			if (nLogs>MAXLOGS) {
+			if (nLogs>=MAXLOGS) {
 				reslts.add("<br\\>More than "+MAXLOGS+" logs.<br\\>");
 				break;
 			}
+			nLogs++;
 			//Vm.debug("--------------------------------------------");
 			//Vm.debug("Log Block: " + singleLog);
 			//Vm.debug("Icon: "+exIcon.findNext());
@@ -762,14 +779,14 @@ public class SpiderGC{
 	 * @param doc The previously fetched cachepage
 	 * @return A HTML formatted string with bug names and there purpose
 	 */
-	public String getBugs(String doc){	
+	public void getBugs(CacheHolderDetail chD, String doc){	
 		Extractor exBlock = new Extractor(doc,p.getProperty("blockExStart"),p.getProperty("blockExEnd") ,0,Extractor.EXCLUDESTARTEND);
 		String bugBlock = exBlock.findNext();
 		//Vm.debug("Bugblock: "+bugBlock);
 		Extractor exBug = new Extractor(bugBlock,p.getProperty("bugExStart"),p.getProperty("bugExEnd"),0,Extractor.EXCLUDESTARTEND);
 		String link,bug,linkPlusBug,bugDetails;
-		String result = "";
 		String oldInfoBox=infB.getInfo();
+		chD.Travelbugs.clear();
 		while(exBug.endOfSearch() == false){
 			if (infB.isClosed) break; // Allow user to cancel by closing progress form
 			linkPlusBug= exBug.findNext();
@@ -778,23 +795,24 @@ public class SpiderGC{
 			link=linkPlusBug.substring(0,idx);
 			bug=linkPlusBug.substring(idx+2);
 			if(bug.length()>0) { // Found a bug, get its details
-				result = result + "<b>Name:</b> "+ bug + "<br>";
+				Travelbug tb=new Travelbug(bug);
 				try{
-					infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
+					infB.setInfo(oldInfoBox+MyLocale.getMsg(5514,"\nGetting bug: ")+bug);
 					pref.log("Fetching bug details: "+bug);
 					bugDetails = fetch(link);
+					Extractor exDetails = new Extractor(bugDetails,p.getProperty("bugDetailsStart"),p.getProperty("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
+					tb.setMission(exDetails.findNext());
+					Extractor exGuid = new Extractor(bugDetails,"details.aspx?guid=","\" id=\"Form1",0,Extractor.EXCLUDESTARTEND); // TODO Replace with spider.def see also further down
+					tb.setGuid(exGuid.findNext());
+					chD.Travelbugs.add(tb);
 				}catch(Exception ex){
 					pref.log("Could not fetch bug details");
-					bugDetails="";
 				}
-				Extractor exDetails = new Extractor(bugDetails,p.getProperty("bugDetailsStart"),p.getProperty("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
-				result+=exDetails.findNext()+"<hr>";
 			}
 			//Vm.debug("B: " + bug);
 			//Vm.debug("End? " + exBug.endOfSearch());
 		}
 		infB.setInfo(oldInfoBox);
-		return result;
 	}
 	
 	/**
@@ -1010,7 +1028,7 @@ public class SpiderGC{
 	public static String fetch(String address)
 	   	{	
 			CharArray c_data;
-			String data = new String();
+			String data="";
 			try{
 				//Vm.debug(address);
 				HttpConnection conn;
@@ -1101,7 +1119,7 @@ public class SpiderGC{
 					conn.setPostData(codec.encodeText(document.toCharArray(),0,document.length(),true,null));
 					conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
 					if(cookieSession.length()>0){
-						conn.setRequestorProperty("Cookie: ", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
+						if (cookieSession!=null) conn.setRequestorProperty("Cookie: ", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
 					}
 					conn.setRequestorProperty("Connection", "close");
 					Socket sock = conn.connect();
@@ -1175,6 +1193,67 @@ public class SpiderGC{
 		}
 		return new String(dest,0,d);
 	}
+	
+	/**
+	 * Load the bug id for a given name. This method is not ideal, as there are
+	 * sometimes several bugs with identical names but different IDs. Normally
+	 * the bug GUID is used which can be obtained from the cache page.<br>
+	 * Note that each bug has both an ID and a GUID.
+	 * @param name The name (or partial name) of a travelbug
+	 * @return the id of the bug
+	 */
+	public String getBugId(String name) {
+		String bugList;
+		if (!existsSpiderDef()) return "";
+		try{
+			//infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
+			pref.log("Fetching bugId: "+name);
+			bugList = fetch(p.getProperty("getBugByName")+STRreplace.replace(SafeXML.clean(name)," ","+"));
+		}catch(Exception ex){
+			pref.log("Could not fetch bug list");
+			bugList="";
+		}
+		if (bugList.equals("") || bugList.indexOf(p.getProperty("bugNotFound"))>=0) {
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), MessageBox.OKB)).execute();
+			return "";
+		}
+		if (bugList.indexOf(p.getProperty("bugTotalRecords"))<0) {
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6021,"More than one travelbug found. Specify name more precisely."), MessageBox.OKB)).execute();
+			return "";
+		}
+		Extractor exGuid = new Extractor(bugList,p.getProperty("bugGuidExStart"),p.getProperty("bugGuidExEnd"),0,Extractor.EXCLUDESTARTEND); // TODO Replace with spider.def
+		return exGuid.findNext();
+	}
+
+	/**
+	 * Fetch a bug's mission for a given GUID or ID. If the guid String is longer 
+	 * than 10 characters it is assumed to be a GUID, otherwise it is an ID.
+	 * @param guid the guid or id of the travelbug
+	 * @return The mission
+	 */
+	public String getBugMissionByGuid(String guid) {
+		String bugDetails;
+		if (!existsSpiderDef()) return "";
+		try{
+			//infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
+			pref.log("Fetching bug detailsById: "+guid);
+			if (guid.length()>10)
+				bugDetails = fetch(p.getProperty("getBugByGuid")+guid);
+			else
+				bugDetails = fetch(p.getProperty("getBugById")+guid);
+		}catch(Exception ex){
+			pref.log("Could not fetch bug details");
+			bugDetails="";
+		}
+		if (bugDetails.indexOf(p.getProperty("bugNotFound"))>=0) {
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), MessageBox.OKB)).execute();
+			return "";
+		}
+		Extractor exDetails = new Extractor(bugDetails,p.getProperty("bugDetailsStart"),p.getProperty("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
+		return exDetails.findNext();
+	}
+
+
 
 
 }
