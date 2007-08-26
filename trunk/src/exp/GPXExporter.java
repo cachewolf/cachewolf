@@ -61,27 +61,34 @@ public class GPXExporter extends Exporter{
 			strBuf.append("    <desc>"+SafeXML.cleanGPX(ch.CacheName)+" by "+SafeXML.cleanGPX(ch.CacheOwner)+"</desc>\r\n");
 			strBuf.append("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp="+ch.wayPoint+"&amp;Submit6=Find</url>\r\n");
 			strBuf.append("    <urlname>"+SafeXML.cleanGPX(ch.CacheName)+" by "+SafeXML.cleanGPX(ch.CacheOwner)+"</urlname>\r\n");
-			strBuf.append("    <sym>Geocache</sym>\r\n");
-			strBuf.append("    <type>Geocache|"+CacheType.transType(ch.type)+"</type>\r\n");
-			String dummyAvailable = ch.is_available ? "True":"False";
-			String dummyArchived = ch.is_archived ? "True":"False";
-			strBuf.append("    <groundspeak:cache available=\""+ dummyAvailable + "\" archived=\"" + dummyArchived+ "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
-			strBuf.append("      <groundspeak:name>"+SafeXML.cleanGPX(ch.CacheName)+"</groundspeak:name>\r\n");
-			strBuf.append("      <groundspeak:placed_by>"+SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:placed_by>\r\n");
-			strBuf.append("      <groundspeak:owner>"+SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:owner>\r\n");
-			strBuf.append("      <groundspeak:type>"+CacheType.transType(ch.type)+"</groundspeak:type>\r\n");
-			strBuf.append("      <groundspeak:container>"+ch.CacheSize+"</groundspeak:container>\r\n");
-			strBuf.append("      <groundspeak:difficulty>"+ch.hard.replace(',','.')+"</groundspeak:difficulty>\r\n");
-			strBuf.append("      <groundspeak:terrain>"+ch.terrain.replace(',','.')+"</groundspeak:terrain>\r\n");
-			String dummyHTML = ch.is_HTML ? "True":"False";
-			strBuf.append("      <groundspeak:long_description html=\"" + dummyHTML + "\">\r\n");
-			strBuf.append("      "+SafeXML.cleanGPX(ch.LongDescription));
-			strBuf.append("      \n</groundspeak:long_description>\r\n");
-			strBuf.append("	  <groundspeak:encoded_hints>"+SafeXML.cleanGPX(Common.rot13(ch.Hints))+"</groundspeak:encoded_hints>\r\n");
-			strBuf.append("      <groundspeak:logs>\r\n");
-			strBuf.append("      </groundspeak:logs>\r\n");
-			strBuf.append("      <groundspeak:travelbugs />\r\n");
-			strBuf.append("    </groundspeak:cache>\r\n");
+			if (!ch.isAddiWpt()){
+				strBuf.append("    <sym>Geocache</sym>\r\n");
+				strBuf.append("    <type>Geocache|"+CacheType.transType(ch.type)+"</type>\r\n");
+				String dummyAvailable = ch.is_available ? "True":"False";
+				String dummyArchived = ch.is_archived ? "True":"False";
+				strBuf.append("    <groundspeak:cache available=\""+ dummyAvailable + "\" archived=\"" + dummyArchived+ "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
+				strBuf.append("      <groundspeak:name>"+SafeXML.cleanGPX(ch.CacheName)+"</groundspeak:name>\r\n");
+				strBuf.append("      <groundspeak:placed_by>"+SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:placed_by>\r\n");
+				strBuf.append("      <groundspeak:owner>"+SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:owner>\r\n");
+				strBuf.append("      <groundspeak:type>"+CacheType.transType(ch.type)+"</groundspeak:type>\r\n");
+				strBuf.append("      <groundspeak:container>"+ch.CacheSize+"</groundspeak:container>\r\n");
+				strBuf.append("      <groundspeak:difficulty>"+ch.hard.replace(',','.')+"</groundspeak:difficulty>\r\n");
+				strBuf.append("      <groundspeak:terrain>"+ch.terrain.replace(',','.')+"</groundspeak:terrain>\r\n");
+				String dummyHTML = ch.is_HTML ? "True":"False";
+				strBuf.append("      <groundspeak:long_description html=\"" + dummyHTML + "\">\r\n");
+				strBuf.append("      "+SafeXML.cleanGPX(ch.LongDescription));
+				strBuf.append("      \n</groundspeak:long_description>\r\n");
+				strBuf.append("	  <groundspeak:encoded_hints>"+SafeXML.cleanGPX(Common.rot13(ch.Hints))+"</groundspeak:encoded_hints>\r\n");
+				strBuf.append("      <groundspeak:logs>\r\n");
+				strBuf.append("      </groundspeak:logs>\r\n");
+				strBuf.append("      <groundspeak:travelbugs />\r\n");
+				strBuf.append("    </groundspeak:cache>\r\n");
+			}else {
+				// there is no HTML in the description of addi wpts
+				strBuf.append("    <cmt>"+ch.LongDescription+"</cmt>\r\n");
+				strBuf.append("    <sym>"+CacheType.transType(ch.type)+"</sym>\r\n");
+				strBuf.append("    <type>Waypoint|"+CacheType.transType(ch.type)+"</type>\r\n");
+			}
 			strBuf.append("  </wpt>\r\n");
 		}catch(Exception e){
 			e.printStackTrace();
