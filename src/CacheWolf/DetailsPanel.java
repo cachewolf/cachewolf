@@ -62,7 +62,7 @@ public class DetailsPanel extends CellPanel{
 		imgShowBug = new mImage("bug.gif");
 		imgShowBugNo = new mImage("bug_no.gif");
 		pnlTools.addNext(btnShowBug = new mButton(imgShowBugNo)); 
-		btnShowBug.modify(Control.Disabled,0);
+		//btnShowBug.modify(Control.Disabled,0);
 		btnShowBug.setToolTip(MyLocale.getMsg(346,"Show travelbugs"));
 		// Button 4: Show Map
 		pnlTools.addNext(btnShowMap = new mButton(imgShowMaps = new mImage("globe_small.gif"))); 
@@ -175,10 +175,10 @@ public class DetailsPanel extends CellPanel{
 		blackStatusChanged=false;
 		btnBlack.repaintNow();
 		if(chD.has_bug == true) {
-			btnShowBug.modify(Control.Disabled,1);
+			//btnShowBug.modify(Control.Disabled,1);
 			btnShowBug.image = imgShowBug;
 		} else {
-			btnShowBug.modify(Control.Disabled,0);
+			//btnShowBug.modify(Control.Disabled,0);
 			btnShowBug.image = imgShowBugNo;
 		}
 		btnShowBug.repaintNow();
@@ -303,8 +303,10 @@ public class DetailsPanel extends CellPanel{
 				}
 	*/		}
 			else if(ev.target == btnShowBug){
-				InfoScreen is = new InfoScreen(thisCache.Bugs, "Travelbugs", false, pref);
-				is.execute();
+				//InfoScreen is = new InfoScreen(thisCache.Travelbugs.toHtml(), "Travelbugs", false, pref);
+				//is.execute();
+				TravelbugInCacheScreen ts = new TravelbugInCacheScreen(thisCache.Travelbugs.toHtml(), "Travelbugs");
+				ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 			}
 			else if (ev.target == btnCenter){
 				CWPoint cp=new CWPoint(thisCache.LatLon);
@@ -458,6 +460,7 @@ public class DetailsPanel extends CellPanel{
 		  ch.LatLon=thisCache.LatLon;
 		  ch.DateHidden=thisCache.DateHidden;
 		  ch.CacheOwner=thisCache.CacheOwner;
+		  ch.has_bug=thisCache.has_bug;
 		  String oldType=ch.type;
 		  ch.type=thisCache.type;
 		  // If the type has changed from/to an addi waypoint, rebuild the references
@@ -485,4 +488,88 @@ public class DetailsPanel extends CellPanel{
 		  Global.mainTab.tbP.refreshTable();
 		  ////Vm.debug("New status updated!");
 	}
+
+	private class TravelbugInCacheScreen extends Form {
+		
+		private DispPanel disp = new DispPanel();
+		private mButton btCancel;
+		private TravelbugJourneyList tbjList;
+		
+		TravelbugInCacheScreen(String text, String title) {
+			this.setTitle(title);
+			this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
+			disp.setHtml(text);
+			ScrollBarPanel sbp = new ScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
+			this.addLast(sbp);
+			this.addLast(btCancel = new mButton(MyLocale.getMsg(3000,"Close")),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		}
+
+		public void onEvent(Event ev){
+			if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
+				if (ev.target == btCancel){
+					this.close(0);
+				}
+			}
+		}
+
+		// Subclassed HtmlDisplay with Pop-up menu
+		private class DispPanel extends HtmlDisplay {
+			MenuItem mnuPickupTB, mnuDropTB;
+			MenuItem[] TBMenuItems=new MenuItem[2];
+			Menu mnuPopup;
+			DispPanel() {
+				TBMenuItems[0]= mnuPickupTB = new MenuItem(MyLocale.getMsg(6016,"Pick up Travelbug"));
+				TBMenuItems[1]= mnuDropTB = new MenuItem(MyLocale.getMsg(6017,"Drop Travelbug"));
+				mnuPopup=new Menu(TBMenuItems,"");
+			} 
+			public void penRightReleased(Point p){
+				setMenu(mnuPopup);
+				doShowMenu(p); // direct call (not through doMenu) is neccesary because it will exclude the whole table
+			}
+			public void penHeld(Point p){
+				setMenu(mnuPopup);
+				doShowMenu(p);
+			}
+			public void popupMenuEvent(Object selectedItem){
+				if (selectedItem==mnuPickupTB) { 
+					Travelbug tb=TravelbugPickup.pickupTravelbug(thisCache.Travelbugs);	
+					if (tb!=null) {
+						dirty_details=true;
+						// Get the list of my travelbugs
+						tbjList=new TravelbugJourneyList();
+						tbjList.readTravelbugsFile();
+						// Add the tb to this list
+						tbjList.addTbPickup(tb,Global.getProfile().name,thisCache.wayPoint);
+						tbjList.saveTravelbugsFile();
+						tbjList=null;
+						setHtml(thisCache.Travelbugs.toHtml());
+						repaint();
+						thisCache.has_bug=thisCache.Travelbugs.size()>0;						
+					}
+				} else if (selectedItem==mnuDropTB) {
+					tbjList=new TravelbugJourneyList();
+					tbjList.readTravelbugsFile();
+					TravelbugList tbl=tbjList.getMyTravelbugs();
+					TravelbugScreen tbs=new TravelbugScreen(tbl,MyLocale.getMsg(6017,"Drop a travelbug"),false);
+					tbs.execute();
+					if (tbs.selectedItem>=0) {
+						Travelbug tb=tbl.getTB(tbs.selectedItem);
+						thisCache.Travelbugs.add(tb);
+						tbjList.addTbDrop(tb,Global.getProfile().name,thisCache.wayPoint);
+					}
+					tbjList.saveTravelbugsFile();
+					tbjList=null;
+					thisCache.has_bug=thisCache.Travelbugs.size()>0;
+					setHtml(thisCache.Travelbugs.toHtml());
+					repaint();
+					dirty_details=true;
+				} else 
+					super.popupMenuEvent(selectedItem);
+			}
+		}
+
+	
+	}
+
+
 }

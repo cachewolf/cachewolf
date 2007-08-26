@@ -42,6 +42,15 @@ public final class Common {
 			return 0.0;
 		}
 	}
+	
+	public static int parseInt(String value){
+		try {
+			return java.lang.Integer.parseInt(value);
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
 	public static String rot13 (String text) {
 		String dummy = new String();
 		for(int i = 0; i < text.length(); i++){
