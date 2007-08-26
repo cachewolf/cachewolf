@@ -107,13 +107,11 @@ public class TablePanel extends CellPanel{
 	}
 	
 	public void saveColWidth(Preferences pref){
-		int j=0;
-		for (int i = 0; i<myMod.MAXCOLUMNS; i++){
-			if(pref.tablePrefs[i] == 1){
-				pref.tableWidth[i] = myMod.getColWidth(j++);
-			}
+		String colWidths=myMod.getColWidths();
+		if (!colWidths.equals(pref.listColWidth)) {
+			pref.listColWidth=colWidths;
+			pref.savePreferences();
 		}
-		pref.savePreferences();
 	}
 	
 	/*

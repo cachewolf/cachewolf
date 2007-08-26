@@ -428,6 +428,7 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == exit){
 				Global.mainTab.saveUnsavedChanges(true);
+				tbp.saveColWidth(pref);
 				ewe.sys.Vm.exit(0);
 			}
 
