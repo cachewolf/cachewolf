@@ -113,7 +113,7 @@ public class ShowCacheInBrowser {
 					
 					tpl.setParam("DATE", chD.DateHidden);
 //					tpl.setParam("URL", ch.URL);
-					if (chD.Bugs!=null && chD.Bugs.trim().length()>0) tpl.setParam("BUGS",chD.Bugs);
+					if (chD.Travelbugs.size()>0) tpl.setParam("BUGS",chD.Travelbugs.toHtml());
 					if (chD.CacheNotes!=null && chD.CacheNotes.trim().length()>0) tpl.setParam("NOTES", STRreplace.replace(chD.CacheNotes,"\n","<br/>\n"));
 					if (chD.Solver!=null && chD.Solver.trim().length()>0) tpl.setParam("SOLVER", STRreplace.replace(chD.Solver,"\n","<br/>\n"));
 					// Look for images

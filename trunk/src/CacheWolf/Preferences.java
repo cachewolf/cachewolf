@@ -1,5 +1,5 @@
 package CacheWolf;
-
+//TODO Option to generate backup when saving index.xml
 import utils.FileBugfix;
 import ewe.io.*;
 import ewe.sys.*;
@@ -18,7 +18,7 @@ import ewe.util.Map.MapEntry;
 public class Preferences extends MinML{
 
 	public int tablePrefs[] = {1,1,1,1,1,1,1,1,1,1,1,1};
-	public int tableWidth[] = {20,20,20,20,65,135,135,100,60,50,50,50};
+	public int tableWidth[] = {20,20,20,25,92,177,144,83,60,105,50,104,50};
 
 	static protected final int PROFILE_SELECTOR_FORCED_ON=0;
 	static protected final int PROFILE_SELECTOR_FORCED_OFF=1;
@@ -69,13 +69,22 @@ public class Preferences extends MinML{
 	public boolean downloadmissingOC = false;
 	public boolean fixSIP = false;
 
-	public String digSeparator = new String();
+	public String digSeparator = "";
 	public boolean debug = false;
 	public SerialPortOptions mySPO = new SerialPortOptions();
 	public boolean forwardGPS = false;
-	public String forwardGpsHost = new String();
+	public String forwardGpsHost = "";
 	public int fontSize = 12;
-
+	
+	public String listColMap="0,1,2,3,4,5,6,7,8,9,10,11";
+	public String listColWidth="15,20,20,25,92,177,144,83,60,105,50,104";
+	/** The columns which are to be displayed in TravelbugsJourneyScreen. See also TravelbugJourney */
+	public String travelbugColMap="1,4,5,6,8,9,10,7";
+	/** The column widths for the travelbug journeys. */
+	public String travelbugColWidth="212,136,62,90,50,56,90,38,50,50,94,50";
+	/** If this flag is true, only non-logged travelbug journeys will be shown */
+	public boolean travelbugShowOnlyNonLogged=false;
+	
 	public String mapsPath = "maps/standard";
 	// Helper variables for XML parser 
 	private StringBuffer collectElement=null; 
@@ -428,6 +437,11 @@ public class Preferences extends MinML{
 		if (name.equals("expPath")){
 			exporterPaths.put(atts.getValue("key"),atts.getValue("value"));
 		}
+		if (name.equals("travelbugs")) {
+			travelbugColMap=atts.getValue("colmap");
+			travelbugColWidth=atts.getValue("colwidths");	
+			travelbugShowOnlyNonLogged=Boolean.valueOf(atts.getValue("shownonlogged")).booleanValue();
+		}
 	}
 
 	public void characters( char ch[], int start, int length )
@@ -507,6 +521,7 @@ public class Preferences extends MinML{
 				entry = (MapEntry) itPath.next();
 				outp.print("    <expPath key = \"" + entry.getKey().toString() + "\" value = \"" + entry.getValue().toString().replace('\\', '/') + "\"/>\n");
 			}
+			outp.print("  <travelbugs colmap=\""+travelbugColMap+"\" colwidths=\""+travelbugColWidth+"\" shownonlogged=\""+travelbugShowOnlyNonLogged+"\" />\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {

@@ -358,7 +358,9 @@ public class GPXImporter extends MinML {
 		}
 
 		if (name.equals("groundspeak:name")&& inBug) {
-			holder.Bugs += "<b>Name:</b> " + strData + "<br><hr>";
+			Travelbug tb=new Travelbug(strData);
+			holder.Travelbugs.add(tb);
+			//holder.Bugs += "<b>Name:</b> " + strData + "<br><hr>";
 			holder.has_bug = true;
 			return;
 		}

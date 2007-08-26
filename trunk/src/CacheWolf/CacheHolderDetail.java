@@ -25,7 +25,8 @@ public class CacheHolderDetail extends CacheHolder {
 	  public Vector UserImagesText = new Vector();
 	  public Attributes attributes=new Attributes();
 	  public Vector CacheIcons = new Vector();
-	  public String Bugs = EMPTY;
+	  public TravelbugList Travelbugs=new TravelbugList();
+	  //public String Bugs = EMPTY; Superceded by Travelbugs
 	  public String URL = EMPTY;
 	  public String Solver = EMPTY;
 	  
@@ -69,7 +70,7 @@ public class CacheHolderDetail extends CacheHolder {
 		  
 		  //travelbugs: overriding is OK, since GPX-File contains all actual travelbugs
 		  this.has_bug = newCh.has_bug;
-		  this.Bugs = newCh.Bugs;
+		  this.Travelbugs = newCh.Travelbugs;
 		  
 		  // URL
 		  this.URL = newCh.URL;
@@ -282,9 +283,14 @@ public class CacheHolderDetail extends CacheHolder {
 				dummy = ex.findNext();
 			}
 
-
-			ex = new Extractor(text, "<BUGS><![CDATA[", "]]></BUGS>", 0, true);
-			Bugs = ex.findNext();
+			ex = new Extractor(text, "<TRAVELBUGS>", "</TRAVELBUGS>", 0, false);
+			dummy=ex.findNext();
+			if (ex.endOfSearch()) {
+				ex = new Extractor(text, "<BUGS><![CDATA[", "]]></BUGS>", 0, true);
+				String Bugs = ex.findNext();
+				Travelbugs.addFromHTML(Bugs);
+			} else
+				Travelbugs.addFromXML(dummy);
 			
 			ex = new Extractor(text, "<URL><![CDATA[", "]]></URL>", 0, true);
 			// if no URL is stored, set default URL (at this time only possible for gc.com)
@@ -374,9 +380,10 @@ public class CacheHolderDetail extends CacheHolder {
 
 
 				  detfile.print("</IMAGES>\n");
-				  detfile.print("<BUGS><![CDATA[\n");
-				  detfile.print(Bugs+"\n");
-				  detfile.print("]]></BUGS>\n");
+				  //detfile.print("<BUGS><![CDATA[\n");
+				  //detfile.print(Bugs+"\n");
+				  //detfile.print("]]></BUGS>\n");
+				  detfile.print(Travelbugs.toXML());
 				  detfile.print("<URL><![CDATA["+URL+"]]></URL>\r\n");
 				  detfile.print("<SOLVER><![CDATA["+Solver+"]]></SOLVER>\r\n");
 				  detfile.print("</CACHEDETAILS>\n");
