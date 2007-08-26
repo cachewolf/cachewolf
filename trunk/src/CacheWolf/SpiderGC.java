@@ -741,10 +741,6 @@ public class SpiderGC{
 		//Vm.debug("Log Block: " + singleLog);
 		int nLogs=0;
 		while(exSingleLog.endOfSearch() == false){
-			if (nLogs>=MAXLOGS) {
-				reslts.add("<br\\>More than "+MAXLOGS+" logs.<br\\>");
-				break;
-			}
 			nLogs++;
 			//Vm.debug("--------------------------------------------");
 			//Vm.debug("Log Block: " + singleLog);
@@ -761,7 +757,7 @@ public class SpiderGC{
 				chD.is_found = true;
 				chD.CacheStatus = d;
 			}
-			reslts.add("<img src='"+ icon +"'>&nbsp;" + d + " " + name +"<br>"+ exLog.findNext());
+			if (nLogs<=MAXLOGS) reslts.add("<img src='"+ icon +"'>&nbsp;" + d + " " + name +"<br>"+ exLog.findNext());
 			
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
@@ -770,6 +766,12 @@ public class SpiderGC{
 			exName.setSource(nameTemp);
 			exDate.setSource(singleLog);
 			exLog.setSource(singleLog);
+			// We cannot simply stop if we have reached MAXLOGS just in case we are waiting for
+			// a log by our alias that happened earlier. 
+			if (nLogs>=MAXLOGS && chD.is_found) break;
+		}
+		if (nLogs>MAXLOGS) {
+			reslts.add("<br>More than "+MAXLOGS+" logs.<br>");
 		}
 		return reslts;
 	}
