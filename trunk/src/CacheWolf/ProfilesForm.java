@@ -73,7 +73,7 @@ public class ProfilesForm extends Form{
 		choice=new MyList();
 		// Get all subdirectories in the base directory
 		File fileBaseDir=new FileBugfix(baseDir);
-		String[] existingProfiles=fileBaseDir.list("*",FileBase.LIST_DIRECTORIES_ONLY);
+		String[] existingProfiles=fileBaseDir.list("*.*",FileBase.LIST_DIRECTORIES_ONLY);
         // Now add these subdirectories to the list of profiles but
         // exclude the "maps" directory which will contain the moving maps
         for (int i=0; i<existingProfiles.length; i++) 

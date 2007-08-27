@@ -34,11 +34,13 @@ public class FileBugfix extends File{
 		String masks [] = mString.split(mask,c);
 		String dirs [] = new String[0];
 		if ((listAndSortOptions & LIST_FILES_ONLY) == 0)
-			dirs = super.list(null,LIST_DIRECTORIES_ONLY);
+			dirs = super.list(null,LIST_DIRECTORIES_ONLY); // add dirs if not only asked for files
 		if ((listAndSortOptions & LIST_DIRECTORIES_ONLY) == 0)
-			found = super.list(null,File.LIST_FILES_ONLY|listAndSortOptions);
-		else
-			found = dirs;
+			found = super.list(null,File.LIST_FILES_ONLY|listAndSortOptions); // add files if not dirs only
+		else {
+			found = dirs; // if dirs only -> aplpy masks to the dirs
+			dirs = new String[0];
+		}
 
 		ewe.util.FileComparer [] fcs = new ewe.util.FileComparer[masks.length];
 
