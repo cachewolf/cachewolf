@@ -107,6 +107,10 @@ public class SpiderGC{
 		try{
 			pref.log("Fetching login page");
 			start = fetch(loginPage=p.getProperty("loginPage"));   //http://www.geocaching.com/login/Default.aspx
+		}catch (NullPointerException ex) {
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5497,"Error missing tag in spider.def: "+"loginPage"), MessageBox.OKB)).execute();
+			pref.log("Error missing tag in spider.def: "+"loginPage",ex);
+			return ERR_LOGIN;
 		}catch(Exception ex){
 			infB.close(0);
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page"), MessageBox.OKB)).execute();
@@ -140,6 +144,10 @@ public class SpiderGC{
 				    (new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), MessageBox.OKB)).execute();
 					return ERR_LOGIN;
 				}
+			}catch (NullPointerException ex) {
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5497,"Error missing tag in spider.def: "+ "loginSuccess"), MessageBox.OKB)).execute();
+				pref.log("Error missing tag in spider.def: loginSuccess",ex);
+				return ERR_LOGIN;
 			}catch(Exception ex){
 				pref.log("Login failed.", ex);
 				infB.close(0);
