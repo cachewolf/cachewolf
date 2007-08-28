@@ -109,7 +109,7 @@ public class SpiderGC{
 			start = fetch(loginPage=p.getProperty("loginPage"));   //http://www.geocaching.com/login/Default.aspx
 		}catch (NullPointerException ex) {
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5497,"Error missing tag in spider.def") + ": loginPage", MessageBox.OKB)).execute();
-			pref.log("Error missing tag in spider.def: "+"loginPage",ex);
+			pref.log("Error missing tag in spider.def: loginPage",ex);
 			return ERR_LOGIN;
 		}catch(Exception ex){
 			infB.close(0);
@@ -172,7 +172,7 @@ public class SpiderGC{
 				cookieSession="";
 			} else
 				cookieSession = rexCookieSession.stringMatched(1);
-			//Vm.debug(cookieSession);
+			//Vm.debug("cookieSession = " + cookieSession);
 		}
 		boolean loginAborted=infB.isClosed;
 		infB.close(0);
@@ -1050,9 +1050,9 @@ public class SpiderGC{
 				} else {
 					conn = new HttpConnection(address);
 				}
-				conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+				conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 				if(cookieSession.length()>0){
-					conn.setRequestorProperty("Cookie: ", "ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
+					conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
 					pref.log("Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
 				}
 				conn.setRequestorProperty("Connection", "close");
@@ -1064,8 +1064,8 @@ public class SpiderGC{
 				pref.log("Read socket ok");
 				JavaUtf8Codec codec = new JavaUtf8Codec();
 				c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-				data = c_data.toString();
-				////Vm.debug(c_data.toString());
+				data += c_data.toString();
+				//Vm.debug("SpiderGC.fetch() result = " + data);
 				sock.close();
 			}catch(IOException ioex){
 				pref.log("IOException in fetch", ioex);
@@ -1126,11 +1126,11 @@ public class SpiderGC{
 					//Vm.debug(address + " / " + document);
 					//document = document + "\r\n";
 					//conn.setPostData(document.toCharArray());
-					conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+					conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 					conn.setPostData(codec.encodeText(document.toCharArray(),0,document.length(),true,null));
 					conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
 					if(cookieSession.length()>0){
-						if (cookieSession!=null) conn.setRequestorProperty("Cookie: ", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
+						if (cookieSession!=null) conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
 					}
 					conn.setRequestorProperty("Connection", "close");
 					Socket sock = conn.connect();
@@ -1152,11 +1152,11 @@ public class SpiderGC{
 				//Vm.debug(address + " / " + document);
 				//document = document + "\r\n";
 				//conn.setPostData(document.toCharArray());
-				conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+				conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 				conn.setPostData(codec.encodeText(document.toCharArray(),0,document.length(),true,null));
 				conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
 				if(cookieSession.length()>0){
-					conn.setRequestorProperty("Cookie: ", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
+					conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
 				}
 				conn.setRequestorProperty("Connection", "close");
 				Socket sock = conn.connect();
