@@ -29,8 +29,6 @@ public class GotoPanel extends CellPanel {
 	public Navigate myNavigation;
 	mButton btnGPS, btnCenter,btnSave;
 	mButton btnGoto, btnMap;
-	mCheckBox chkDMM, chkDMS, chkDD, chkUTM;
-	CheckBoxGroup chkFormat = new CheckBoxGroup();
 	int currFormat;
 
 	mLabel lblPosition, lblSats, lblSpeed, lblBearMov, lblBearWayP, lblDist, lblHDOP;
@@ -47,7 +45,6 @@ public class GotoPanel extends CellPanel {
 	Preferences pref;
 	Profile profile;
 	// different panels to avoid spanning
-	CellPanel FormatP = new CellPanel();
 	CellPanel ButtonP = new CellPanel();
 	CellPanel CoordsP = new CellPanel();
 	CellPanel roseP = new CellPanel();
@@ -66,6 +63,9 @@ public class GotoPanel extends CellPanel {
 
 	GotoRose rose;
 	int ticker = 0;
+	
+	Menu mnuContext;
+	MenuItem miDMM, miDMS, miDD, miUTM;
 
 	/**
 	 * Create GotoPanel 
@@ -88,25 +88,31 @@ public class GotoPanel extends CellPanel {
 		ButtonP.addNext(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addLast(btnMap = new mButton("Map"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
-		//Format selection for coords
-		FormatP.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		FormatP.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		FormatP.addNext(chkDMS =new mCheckBox("d°m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
-		FormatP.addLast(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-
-		chkDD.setGroup(chkFormat);
-		chkDMM.setGroup(chkFormat);
-		chkDMS.setGroup(chkFormat);
-		chkUTM.setGroup(chkFormat);
+		//Format selection for coords		
+		//context menu
+		mnuContext = new Menu();
+		mnuContext.addItem(miDD = new MenuItem("d.d°"));
+		miDD.modifiers &= ~MenuItem.Checked;
+		mnuContext.addItem(miDMM = new MenuItem("d°m.m\'"));
+		miDMM.modifiers |= MenuItem.Checked;
+		mnuContext.addItem(miDMS = new MenuItem("d°m\'s\""));
+		miDMS.modifiers &= ~MenuItem.Checked;
+		mnuContext.addItem(miUTM = new MenuItem("UTM"));
+		miUTM.modifiers &= ~MenuItem.Checked;
 		currFormat = CWPoint.DMM;
-		chkFormat.selectIndex(currFormat);
 
 		//Coords
 		CoordsP.addNext(lblGPS = new mLabel("GPS: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblGPS.backGround = RED;
+		lblGPS.setMenu(mnuContext);
+		lblGPS.modifyAll(Control.WantHoldDown, 0);
 		CoordsP.addLast(lblPosition = new mLabel(myNavigation.gpsPos.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		lblPosition.setMenu(mnuContext);
+		lblPosition.modifyAll(Control.WantHoldDown, 0);
 		CoordsP.addNext(lblDST = new mLabel(MyLocale.getMsg(1500,"DST:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblDST.backGround = new Color(0,0,255);
+		lblDST.setMenu(mnuContext);
+		lblDST.modifyAll(Control.WantHoldDown, 0);
 		CoordsP.addLast(btnGoto = new mButton(getGotoBtnText()),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 
 		//Rose for bearing
@@ -165,7 +171,6 @@ public class GotoPanel extends CellPanel {
 
 		//add Panels
 		this.addLast(ButtonP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
-		this.addLast(FormatP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
 		this.addLast(CoordsP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(2,1));
 		this.addNext(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(1,1));
 		this.addLast(GotoP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTHWEST).setTag(SPAN,new Dimension(1,2));
@@ -339,15 +344,44 @@ public class GotoPanel extends CellPanel {
 	 */
 
 	public void onEvent(Event ev){
+		if (ev instanceof MenuEvent) { 
+			if (ev.type == MenuEvent.SELECTED ) {
+				MenuItem action = (MenuItem) mnuContext.getSelectedItem(); 
+				if (mnuContext.getSelectedItem() != null) {
+					if (action == miDD) {
+						mnuContext.close();
+						currFormat = CWPoint.DD;
+					}
+					if (action == miDMM) {
+						mnuContext.close();
+						currFormat = CWPoint.DMM;
+					}
+					if (action == miDMS) {
+						mnuContext.close();
+						currFormat = CWPoint.DMS;
+					}
+					if (action == miUTM) {
+						mnuContext.close();
+						currFormat = CWPoint.UTM;
+					}
+					miDD.modifiers &= ~MenuItem.Checked;
+					miDMM.modifiers &= ~MenuItem.Checked;
+					miDMS.modifiers &= ~MenuItem.Checked;
+					miUTM.modifiers &= ~MenuItem.Checked;
+					switch (currFormat) {
+					case CWPoint.DD: miDD.modifiers |= MenuItem.Checked; break;   
+					case CWPoint.DMM: miDMM.modifiers |= MenuItem.Checked; break;   
+					case CWPoint.DMS: miDMS.modifiers |= MenuItem.Checked; break;   
+					case CWPoint.UTM: miUTM.modifiers |= MenuItem.Checked; break;
+					}
+
+					lblPosition.setText(myNavigation.gpsPos.toString(currFormat));
+					btnGoto.setText(getGotoBtnText());
+				}
+			}
+		}
 
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
-			// display coords in another format
-			if (ev.target == chkFormat){
-				currFormat = chkFormat.getSelectedIndex();
-				lblPosition.setText(myNavigation.gpsPos.toString(currFormat));
-				btnGoto.setText(getGotoBtnText());
-			}
-
 			// start/stop GPS connection
 			if (ev.target == btnGPS){
 				if (btnGPS.getText().equals("Start")) startGps();
