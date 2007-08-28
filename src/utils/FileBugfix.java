@@ -27,6 +27,14 @@ public class FileBugfix extends File{
 		 * listmultiple doesn't have this bug 
 		 */
 	}
+	public String [] listMultiple(final String compositeMask,final int listAndSortOptions) {
+		/* super.listMultiple in ewe 1.49
+		 * usually works correct, but when called with Option Dirs_Only, it gives the dirs 
+		 * twice (once filtered by mask, once all)
+		 */
+		return listBugFixed (compositeMask, listAndSortOptions);
+	}
+	
 	public String[] listBugFixed(final String compositeMask,final int listAndSortOptions) {
 		String mask = (compositeMask == null) ? "*.*" : compositeMask; 
 		String[] found; //the following code is mainly copoed from FileBase.listmultiple to avoid recursion it is not called
@@ -39,7 +47,7 @@ public class FileBugfix extends File{
 			found = super.list(null,File.LIST_FILES_ONLY|listAndSortOptions); // add files if not dirs only
 		else {
 			found = dirs; // if dirs only -> aplpy masks to the dirs
-			dirs = new String[0];
+			dirs = new String[0]; // this line is missing in ewe FileBase.listmultiple -> doubled dirs when using listmultiple with the option dirs_only
 		}
 
 		ewe.util.FileComparer [] fcs = new ewe.util.FileComparer[masks.length];

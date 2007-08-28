@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import utils.FileBugfix;
 import ewe.util.*;
 import ewe.io.*;
 import ewe.filechooser.*;
@@ -37,7 +38,7 @@ class SelectMap extends Form{
 		InfoBox inf = new InfoBox("Info", (String)lr.get(4109,"Loading maps...")); 
 		inf.show();
 		try{
-			File files = new File(mapsPath);
+			File files = new FileBugfix(mapsPath);
 			File checkWFL;
 			String rawFileName = new String();
 			dateien = files.listMultiple("*.png,*.jpg,*.gif,*.bmp", File.LIST_FILES_ONLY);
