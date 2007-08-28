@@ -5,9 +5,10 @@ package CacheWolf;
  * Class for handling a list of areas covered by a list of maps.
  * this is needed to determine if a new map should be downloaded or
  * if a map for the requested area already exists
- * 
+ *
  * @author pfeffer
  *
+ */
  public class AreaList extends ewe.util.LinkedListElement { // in java since v1.2 I would use java.util.TreeSet
 /*
 	 public AreaList(int s) {super(s);}
@@ -63,10 +64,10 @@ package CacheWolf;
 		 Area ret;
 		 for (int i=size()-1; i>=0; i--) {
 			 ret = ((Area)get(i));
-			 if(ret.isInBound(p)) return ret; 
+			 if(ret.isInBound(p)) return ret;
 		 }
 		 return null;
 	 }
 
- }
 */
+ }
