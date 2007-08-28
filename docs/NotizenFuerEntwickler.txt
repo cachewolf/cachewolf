@@ -1,33 +1,31 @@
-Notizen für Entwickler:
+ï»¿Notizen fÃ¼r Entwickler:
 
 1. Zugriff auf globale Objekte:
-	Preferences pref = Global.getPref();	// Präferenzen
+	Preferences pref = Global.getPref();	// PrÃ¤ferenzen
 	Profile profile=Global.getProfile();	// Das aktuelle Profil
-	MainTab mainTab;						// Das mainTab Objekt (Enthält alle Ansichten)
-	
+	MainTab mainTab;						// Das mainTab Objekt (EnthÃ¤lt alle Ansichten)
+
 2. Aufzeichnung von internen Fehlern in der log.txt:
 	Die Datei log.txt wird bei jedem Spidervorgang neu generiert.
-	Für die Aufzeichnung von Fehlern (oder auch nur Ablaufverfolgungen wie z.B. in SpiderGC)
-	stehen folgende Routinen zur Verfügung (alle in Preferences.java)
-	
+	FÃ¼r die Aufzeichnung von Fehlern (oder auch nur Ablaufverfolgungen wie z.B. in SpiderGC)
+	stehen folgende Routinen zur VerfÃ¼gung (alle in Preferences.java)
+
 	public void log(String text)					// Beliebige Fehlermeldung mit Zeitstempel
 	public void log(String message,Exception e) 	// Exception mit Zeitstempel (nutzt obige Funktion)
 	public void log(String text,Throwable e, 		// Exception mit Zeitstempel und Stacktrace
-		boolean withStackTrace) 
-	
+		boolean withStackTrace)
+
 	Beispiel:
 	Global.getPref().log("Fehler bei xxx");
-	
+
 3. Debug-Schalter:
-	Es besteht die Möglichkeit über einen undokumentierten Schalter in der pref.xml 
+	Es besteht die MÃ¶glichkeit Ã¼ber einen undokumentierten Schalter in der pref.xml
 	"schlafenden" Debug-Code bei Probleme selektiv zu aktivieren. Dazu ist in der pref.xml
-	die Zeile 
+	die Zeile
 		<debug value="true">
-	einzufügen.
+	einzufÃ¼gen.
 	Der Wert der debug Variablen kann dann wie folgt abgefragt werden:
 		if(Global.getPref().debug) {
-			// Code der nur ausgeführt wird wenn debug Schalter gesetzt
-			// z.B. ausführlichere Fehlermeldung
+			// Code der nur ausgefÃ¼hrt wird wenn debug Schalter gesetzt
+			// z.B. ausfÃ¼hrlichere Fehlermeldung
 		}
-
-
