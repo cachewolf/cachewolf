@@ -1,6 +1,6 @@
-Short documentation for the export via templates
+ï»¿Short documentation for the export via templates
 
-Comment 
+Comment
 <#-- TomTom ASC or POI -->
 Anything between "<#--" and "-->" is handled as a comment
 
@@ -34,7 +34,7 @@ DIFFICULTY
 TERRAIN
 DISTANCE: Distance calculated in cachelist
 BEARING: Bearing calculated in cachelist
-LATON: Coordinates in long format, e.g. N 50° 31.234 E 008° 45.267
+LATON: Coordinates in long format, e.g. N 50Â° 31.234 E 008Â° 45.267
 LAT: Latitude in decimal format, e.g. 50.20147
 LON: Longitude in decimal format, e.g. 008.58132
 STATUS
@@ -51,7 +51,7 @@ Example:
 <tmpl_par name="newline" value="CRLF">
 <#-- decimal seperator: . or , -->
 <tmpl_par name="decsep" value=",">
-Name;Breitengrad;Längengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink<br />
+Name;Breitengrad;LÃ¤ngengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink<br />
 <tmpl_loop cache_index>
 "<tmpl_var name=SHORTTYPE>-<tmpl_var name=SHORTSIZE>-<tmpl_var name=DIFFICULTY>-<tmpl_var name=TERRAIN> <tmpl_var name=NAME>";<tmpl_var name=LAT>;<tmpl_var name=LON>;"<tmpl_var name=TYPE>";"<tmpl_var name=SIZE>";"<tmpl_var name=WAYPOINT>";"<tmpl_var name=DATE>";"<tmpl_var name=URL>"<br />
 </tmpl_loop>

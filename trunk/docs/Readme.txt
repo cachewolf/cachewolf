@@ -1,6 +1,6 @@
-﻿Wie bekomme ich eine brandaktuelle Version des CacheWolf? 
+﻿Wie bekomme ich eine brandaktuelle Version des CacheWolf?
 
-Die Sourcen von CacheWolf sind in einem Subversion-Repository bei www.berlios.de (Details siehe https://developer.berlios.de/svn/?group_id=2211) vorhanden, hierauf kann jeder lesend zugreifen. Schreibrechte werden auf Anfrage erteilt. Nachfolgend ist beschrieben, wie man sich die aktuelle Entwicklerversion besorgen kann und zum Laufen benommt. 
+Die Sourcen von CacheWolf sind in einem Subversion-Repository bei www.berlios.de (Details siehe https://developer.berlios.de/svn/?group_id=2211) vorhanden, hierauf kann jeder lesend zugreifen. Schreibrechte werden auf Anfrage erteilt. Nachfolgend ist beschrieben, wie man sich die aktuelle Entwicklerversion besorgen kann und zum Laufen benommt.
 
 CacheWolf wurde für und mit Ewe (http://www.ewesoft.com/) in Java programmiert. Ewe bietet für viele Plattformen sogenannte virtuelle Maschienen an, außerdem können für Ewe geschriebene Programme auf allen Plattformen laufen, die eine Java-Laufzeitumgebung haben (nicht zu verwechseln mit dem "Handy-Java" J2ME).
 
@@ -37,4 +37,3 @@ runjewel.sh habe ich mir selbst aus runJewel.bat erzeugt.
  Es gibt dann die Unterverzeichnisse com, ewesoft und HTML
 - Script buildexe.bat bzw. ./buildexe.sh aufrufen, es wird ein Verzeichnis CacheWolf erzeugt mit Unterverzeichnissen für die unterschiedlichen Plattformen.
 - mit dem Script runjewel können Änderungen an der Datei cwberlios.jnf vorgenommen werden.
-

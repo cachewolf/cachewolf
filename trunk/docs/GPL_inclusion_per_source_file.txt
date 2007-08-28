@@ -1,8 +1,8 @@
     /*
-    CacheWolf is a software for PocketPC, Win and Linux that 
-    enables paperless caching. 
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
     It supports the sites geocaching.com and opencaching.de
-    
+
     Copyright (C) 2006  CacheWolf development team
     See http://developer.berlios.de/projects/cachewolf/
     for more information.
