@@ -1,8 +1,8 @@
 /*
-    CacheWolf is a software for PocketPC, Win and Linux that 
-    enables paperless caching. 
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
     It supports the sites geocaching.com and opencaching.de
-    
+
     Copyright (C) 2006  CacheWolf development team
     See http://developer.berlios.de/projects/cachewolf/
     for more information.
@@ -30,17 +30,19 @@ import ewe.sys.*;
 import ewe.util.*;
 import com.stevesoft.ewe_pat.*;
 import ewe.ui.*;
+import ewe.data.Property;
+import ewe.data.PropertyList;
 
 /**
 *	Class to spider caches from gc.com
 */
 public class SpiderGC{
-	
+
 	/**
 	 * The maximum number of logs that will be stored
 	 */
 	public static int MAXLOGS=250;
-	
+
 	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
 	private Profile profile;
@@ -55,8 +57,8 @@ public class SpiderGC{
 	Hashtable indexDB;
 	InfoBox infB;
 	private boolean loggedIn = false;
-	private static Properties p=null; 
-	
+	private static Properties p=null;
+
 	public SpiderGC(Preferences prf, Profile profile, boolean bypass){
 		this.profile=profile;
 		this.cacheDB = profile.cacheDB;
@@ -69,12 +71,12 @@ public class SpiderGC{
 		} catch (Exception ex) {
 			p=null;
 			pref.log("Failed to load spider.def",ex);
-			// We don't display an error message box here, as the call to 
+			// We don't display an error message box here, as the call to
 			// spiderSingle or doIt will do this
 		}
 		MAXLOGS=pref.maxLogsToSpider;
 	}
-	
+
 	private boolean existsSpiderDef() {
 		if (p==null) {
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5504,"Could not load 'spider.def'"), MessageBox.OKB)).execute();
@@ -100,7 +102,7 @@ public class SpiderGC{
 		passwort = infB.getInput();
 		infB.close(0);
 		if(code != Form.IDOK) return code;
-		
+
 		// Now start the login proper
 		infB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
 		infB.exec();
@@ -154,7 +156,7 @@ public class SpiderGC{
 			    (new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), MessageBox.OKB)).execute();
 				return ERR_LOGIN;
 			}
-			
+
 			rex.search(start);
 			if (!rex.didMatch()) {
 				pref.log("Viewstate not found");
@@ -163,7 +165,7 @@ public class SpiderGC{
 			rexCookieID.search(start);
 			if (!rexCookieID.didMatch()) {
 				pref.log("CookieID not found");
-			} 
+			}
 			cookieID = rexCookieID.stringMatched(1);
 			//Vm.debug(cookieID);
 			rexCookieSession.search(start);
@@ -183,7 +185,7 @@ public class SpiderGC{
 			return Form.IDOK;
 		}
 	}
-	
+
 	/**
 	 * Method to spider a single cache.
 	 * It assumes a login has already been performed!
@@ -211,7 +213,7 @@ public class SpiderGC{
 			};
 			// Read the cache data from GC.COM and compare to old data
 			ret=getCacheByWaypointName(chD,true,true,false,true);
-			// Save the spidered data 
+			// Save the spidered data
 			if (ret) {
 				pref.log("Saving to:" + profile.dataDir);
 				chD.saveCacheDetails(profile.dataDir);
@@ -222,7 +224,7 @@ public class SpiderGC{
 		}
 		return ret;
 	} // spiderSingle
-	
+
 	/**
 	 * Fetch the coordinates of a waypoint from GC
 	 * @param wayPoint the name of the waypoint
@@ -246,9 +248,9 @@ public class SpiderGC{
 			return "";
 		}
 		infB.close(0);
-		return getLatLon(completeWebPage);	
+		return getLatLon(completeWebPage);
 	}
-	
+
 	/**
 	*	Method to start the spider for a search around the center coordinates
 	*/
@@ -274,9 +276,9 @@ public class SpiderGC{
 		String start = "";
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		String doc = "";
-		
+
 		if(login() != Form.IDOK) return;
-	
+
 		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES);
 		options.distanceInput.setText("");
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
@@ -286,7 +288,7 @@ public class SpiderGC{
 		boolean doNotgetFound = options.foundCheckBox.getState();
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
-		
+
 		//=======
 		// Prepare list of all caches that are to be spidered
 		//=======
@@ -309,7 +311,7 @@ public class SpiderGC{
 		}
 		dummy = "";
 		//String lineBlck = "";
-		int page_number = 4;		
+		int page_number = 4;
 		lineRex = new Regex(p.getProperty("lineRex")); //"<tr bgcolor=((?s).*?)</tr>"
 		int found_on_page = 0;
 		//Loop till maximum distance has been found or no more caches are in the list
@@ -358,7 +360,7 @@ public class SpiderGC{
 			//Vm.debug("Distance is now: " + distance);
 			found_on_page = 0;
 		}
-		
+
 		pref.log("Found " + cachesToLoad.size() + " caches");
 		if (!infB.isClosed) infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
 
@@ -367,18 +369,18 @@ public class SpiderGC{
 		//=======
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			if (infB.isClosed) break;
-			
+
 			wpt = (String)cachesToLoad.get(i);
 			// Get only caches not already available in the DB
 			if(searchWpt(wpt) == -1){
-				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +"(" + (i+1) + " / " + cachesToLoad.size() + ")");
+				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + cachesToLoad.size() + ")");
 				chD = new CacheHolderDetail();
 				chD.wayPoint=wpt;
 				if (!getCacheByWaypointName(chD,false,getImages,doNotgetFound,true)) break;
 				if (!chD.is_found || !doNotgetFound ) {
 					chD.saveCacheDetails(profile.dataDir);
 					cacheDB.add(new CacheHolder(chD)); // TODO Could copy into existing object
-				}					
+				}
 			}
 		}
 		infB.close(0);
@@ -390,9 +392,9 @@ public class SpiderGC{
 	 * Read a complete cachepage from geocaching.com including all logs. This is used both when
 	 * updating already existing caches (via spiderSingle) and when spidering around a centre. It
 	 * is also used when reading a GPX file and fetching the images.
-	 * 
+	 *
 	 * This is the workhorse function of the spider.
-	 * 
+	 *
 	 * @param CacheHolderDetail chD The element wayPoint must be set to the name of a waypoint
 	 * @param boolean isUpdate True if an existing cache is being updated, false if it is a new cache
 	 * @param boolean fetchImages True if the pictures are to be fetched
@@ -413,7 +415,7 @@ public class SpiderGC{
 			return !infB.isClosed; // Only return false (which terminates the loop over all caches) if infB is closed
 		}
 		// Only analyse the cache data and fetch pictures if user has not closed the progress window
-		if (!infB.isClosed) { 
+		if (!infB.isClosed) {
 			try{
 				chD.is_new = !isUpdate;
 				chD.is_update = false;
@@ -427,7 +429,7 @@ public class SpiderGC{
 				chD.addiWpts.clear();
 				chD.Images.clear();
 				chD.ImagesText.clear();
-				
+
 				if(completeWebPage.indexOf(p.getProperty("cacheUnavailable")) >= 0) chD.is_available = false;
 				if(completeWebPage.indexOf(p.getProperty("cacheArchived")) >= 0) chD.is_archived = true;
 				//==========
@@ -436,13 +438,13 @@ public class SpiderGC{
 				chD.LatLon = getLatLon(completeWebPage);
 				chD.pos.set(chD.LatLon);
 				if (pref.debug) pref.log("LatLon: " + chD.LatLon);
-				
+
 				pref.log("Trying description");
 				origLongDesc = chD.LongDescription;
 				chD.LongDescription = getLongDesc(completeWebPage);
 				if(isUpdate && !chD.LongDescription.equals(origLongDesc)) chD.is_update = true;
 				pref.log("Got description");
-				
+
 				pref.log("Getting cache name");
 				chD.CacheName = SafeXML.cleanback(getName(completeWebPage));
 				pref.log("Got cache name");
@@ -453,12 +455,12 @@ public class SpiderGC{
 				if(chD.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equals(pref.myAlias2))) chD.is_owned = true;
 				pref.log("Got owner");
 				if (pref.debug) pref.log("Owner: " + chD.CacheOwner +"; is_owned = "+chD.is_owned+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
-				
+
 				pref.log("Trying date hidden");
 				chD.DateHidden = DateFormat.MDY2YMD(getDateHidden(completeWebPage));
 				pref.log("Got date hidden");
 				if (pref.debug) pref.log("Hidden: " + chD.DateHidden);
-				
+
 				pref.log("Trying hints");
 				chD.Hints = getHints(completeWebPage);
 				pref.log("Got hints");
@@ -468,12 +470,12 @@ public class SpiderGC{
 				chD.CacheSize = getSize(completeWebPage);
 				pref.log("Got size");
 				if (pref.debug) pref.log("Size: " + chD.CacheSize);
-				
+
 				pref.log("Trying difficulty");
 				chD.hard = getDiff(completeWebPage);
 				pref.log("Got difficulty");
 				if (pref.debug) pref.log("Hard: " + chD.hard);
-				
+
 				pref.log("Trying terrain");
 				chD.terrain = getTerr(completeWebPage);
 				pref.log("Got terrain");
@@ -483,7 +485,7 @@ public class SpiderGC{
 				chD.type = getType(completeWebPage);
 				pref.log("Got cache type");
 				if (pref.debug) pref.log("Type: " + chD.type);
-				
+
 				//==========
 				// Logs
 				//==========
@@ -503,15 +505,15 @@ public class SpiderGC{
 				if(isUpdate && chD.CacheLogs.size()>logsz) chD.is_log_update = true;
 				pref.log("Found logs");
 				// If the switch is set to not store found caches and we found the cache => return
-				if (chD.is_found && doNotGetFound) return !infB.isClosed; 
-				
+				if (chD.is_found && doNotGetFound) return !infB.isClosed;
+
 				//==========
 				// Bugs
 				//==========
 				// As there may be several bugs, we check whether the user has aborted
 				if (!infB.isClosed) getBugs(chD,completeWebPage);
 				chD.has_bug = chD.Travelbugs.size()>0;
-				
+
 				//==========
 				// Images
 				//==========
@@ -523,7 +525,7 @@ public class SpiderGC{
 				//==========
 				// Addi waypoints
 				//==========
-				
+
 				pref.log("Getting additional waypoints");
 				getAddWaypoints(completeWebPage, chD.wayPoint, chD.is_found);
 				pref.log("Got additional waypoints");
@@ -546,7 +548,7 @@ public class SpiderGC{
 		boolean ret=!infB.isClosed; // If the infoBox was closed before getting here, we return false
 		return ret;
 	} // getCacheByWaypointName
-	
+
 	/**
 	 * Check whether a waypoint is in the database
 	 * @param wpt Name of waypoint to check
@@ -558,7 +560,7 @@ public class SpiderGC{
 			return INTR.intValue();
 		} else return -1;
 	}
-	
+
 	/**
 	 * Get the Distance to the centre
 	 * @param doc A previously fetched cachepage
@@ -576,7 +578,7 @@ public class SpiderGC{
 	/**
 	 * Get the waypoint name
 	 * @param doc A previously fetched cachepage
-	 * @return Name of waypoint to add to list 
+	 * @return Name of waypoint to add to list
 	 */
 	private String getWP(String doc){
 		inRex = new Regex(p.getProperty("waypointRex"));
@@ -584,7 +586,7 @@ public class SpiderGC{
 		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
-	
+
 	/**
 	 * Get the coordinates of the cache
 	 * @param doc A previously fetched cachepage
@@ -596,7 +598,7 @@ public class SpiderGC{
 		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
-	
+
 	/**
 	 * Get the long description
 	 * @param doc A previously fetched cachepage
@@ -609,10 +611,10 @@ public class SpiderGC{
 		inRex.search(doc);
 		rex2.search(doc);
 		res = ((inRex.stringMatched(1)==null)?"":inRex.stringMatched(1)) + "<br>";
-		res += rex2.stringMatched(1); 
+		res += rex2.stringMatched(1);
 		return res; // SafeXML.cleanback(res);
 	}
-	
+
 	/**
 	 * Get the cache name
 	 * @param doc A previously fetched cachepage
@@ -624,7 +626,7 @@ public class SpiderGC{
 		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
-	
+
 	/**
 	 * Get the cache owner
 	 * @param doc A previously fetched cachepage
@@ -636,7 +638,7 @@ public class SpiderGC{
 		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
-	
+
 	/**
 	 * Get the date when the cache was hidden
 	 * @param doc A previously fetched cachepage
@@ -648,7 +650,7 @@ public class SpiderGC{
 		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
 	}
-	
+
 	/**
 	 * Get the hints
 	 * @param doc A previously fetched cachepage
@@ -660,7 +662,7 @@ public class SpiderGC{
 		if (!inRex.didMatch()) return "";
 		return inRex.stringMatched(1);
 	}
-	
+
 	/**
 	 * Get the cache size
 	 * @param doc A previously fetched cachepage
@@ -672,11 +674,11 @@ public class SpiderGC{
 		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "None";
 	}
-	
+
 	/**
 	 * Get the Difficulty
 	 * @param doc A previously fetched cachepage
-	 * @return The cache difficulty 
+	 * @return The cache difficulty
 	 */
 	private String getDiff(String doc){
 		inRex = new Regex(p.getProperty("difficultyRex"));
@@ -684,7 +686,7 @@ public class SpiderGC{
 		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "";
 	}
-	
+
 	/**
 	 * Get the terrain rating
 	 * @param doc A previously fetched cachepage
@@ -710,7 +712,7 @@ public class SpiderGC{
 	}
 
 	/**
-	 * Get the logs 
+	 * Get the logs
 	 * @param doc A previously fetched cachepage
 	 * @param chD Cache Details
 	 * @return A HTML string containing the logs
@@ -737,7 +739,7 @@ public class SpiderGC{
 		}
 		*/
 		String singleLog = "";
-		Extractor exSingleLog = new Extractor(doc,p.getProperty("singleLogExStart"), p.getProperty("singleLogExEnd"), 0, false); // maybe here is some change neccessary because findnext now gives the whole endstring back??? 
+		Extractor exSingleLog = new Extractor(doc,p.getProperty("singleLogExStart"), p.getProperty("singleLogExEnd"), 0, false); // maybe here is some change neccessary because findnext now gives the whole endstring back???
 		singleLog = exSingleLog.findNext();
 		Extractor exIcon = new Extractor(singleLog,p.getProperty("iconExStart"), p.getProperty("iconExEnd"), 0, true);
 		Extractor exNameTemp = new Extractor(singleLog,p.getProperty("nameTempExStart"), p.getProperty("nameTempExEnd"), 0 , true);
@@ -760,13 +762,13 @@ public class SpiderGC{
 			icon = exIcon.findNext();
 			name = exName.findNext();
 			String d=DateFormat.logdate2YMD(exDate.findNext());
-			if((icon.equals(p.getProperty("icon_smile")) || icon.equals(p.getProperty("icon_camera"))) && 
+			if((icon.equals(p.getProperty("icon_smile")) || icon.equals(p.getProperty("icon_camera"))) &&
 				(name.equals(pref.myAlias) || (pref.myAlias2.length()>0 && name.equals(pref.myAlias2))) )  {
 				chD.is_found = true;
 				chD.CacheStatus = d;
 			}
 			if (nLogs<=MAXLOGS) reslts.add("<img src='"+ icon +"'>&nbsp;" + d + " " + name +"<br>"+ exLog.findNext());
-			
+
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
 			exNameTemp.setSource(singleLog);
@@ -775,7 +777,7 @@ public class SpiderGC{
 			exDate.setSource(singleLog);
 			exLog.setSource(singleLog);
 			// We cannot simply stop if we have reached MAXLOGS just in case we are waiting for
-			// a log by our alias that happened earlier. 
+			// a log by our alias that happened earlier.
 			if (nLogs>=MAXLOGS && chD.is_found) break;
 		}
 		if (nLogs>MAXLOGS) {
@@ -783,14 +785,14 @@ public class SpiderGC{
 		}
 		return reslts;
 	}
-	
+
 	/**
 	 * Read the travelbug names from a previously fetched Cache page and then
 	 * read the travelbug purpose for each travelbug
 	 * @param doc The previously fetched cachepage
 	 * @return A HTML formatted string with bug names and there purpose
 	 */
-	public void getBugs(CacheHolderDetail chD, String doc){	
+	public void getBugs(CacheHolderDetail chD, String doc){
 		Extractor exBlock = new Extractor(doc,p.getProperty("blockExStart"),p.getProperty("blockExEnd") ,0,Extractor.EXCLUDESTARTEND);
 		String bugBlock = exBlock.findNext();
 		//Vm.debug("Bugblock: "+bugBlock);
@@ -825,9 +827,9 @@ public class SpiderGC{
 		}
 		infB.setInfo(oldInfoBox);
 	}
-	
+
 	/**
-	 * Get the images for a previously fetched cache page. Images are extracted 
+	 * Get the images for a previously fetched cache page. Images are extracted
 	 * from two areas: The long description and the pictures section (including
 	 * the spoiler)
 	 * @param doc The previously fetched cachepage
@@ -878,7 +880,7 @@ public class SpiderGC{
 						chD.ImagesText.add(imgName); // Keep the image name
 						imgCounter++;
 					}
-				} catch (IndexOutOfBoundsException e) { 
+				} catch (IndexOutOfBoundsException e) {
 					//Vm.debug("IndexOutOfBoundsException not in image span"+e.toString()+"imgURL:"+imgUrl);
 					pref.log("Problem loading image. imgURL:"+imgUrl);
 				}
@@ -916,13 +918,13 @@ public class SpiderGC{
 						chD.ImagesText.add(exImgName.findNext()); // Keep the image description
 						imgCounter++;
 					}
-				} catch (IndexOutOfBoundsException e) { 
-					pref.log("IndexOutOfBoundsException in image span. imgURL:"+imgUrl,e); 
+				} catch (IndexOutOfBoundsException e) {
+					pref.log("IndexOutOfBoundsException in image span. imgURL:"+imgUrl,e);
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Read an image from the server
 	 * @param imgUrl The Url of the image
@@ -961,7 +963,7 @@ public class SpiderGC{
 		} finally {
 			//Continue with the spider
 		}
-	}		
+	}
 
 	/**
 	 * Read all additional waypoints from a previously fetched cachepage.
@@ -989,19 +991,19 @@ public class SpiderGC{
 				counter++;
 				try{ // If addi exists, try to read it to preserve the notes
 					cx.readCache(profile.dataDir);
-				} catch (Exception ex) {};	
+				} catch (Exception ex) {};
 				nameRex.search(rowBlock);
 				koordRex.search(rowBlock);
 				typeRex.search(rowBlock);
 				cx.CacheName = nameRex.stringMatched(1);
 				//Vm.debug("Addi: " + cx.CacheName);
-				if(koordRex.didMatch()) cx.pos.set(koordRex.stringMatched(1)); 
-				cx.LatLon = cx.pos.toString(); 
+				if(koordRex.didMatch()) cx.pos.set(koordRex.stringMatched(1));
+				cx.LatLon = cx.pos.toString();
 				//cx.pos.set(cx.LatLon);
 				if(typeRex.didMatch()) cx.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
-				cx.LongDescription = descRex.stringMatched(1); 
+				cx.LongDescription = descRex.stringMatched(1);
 				//Vm.debug(descRex.stringMatched(1));
 				int idx=profile.getCacheIndex(cx.wayPoint);
 				cx.is_found = is_found;
@@ -1017,7 +1019,7 @@ public class SpiderGC{
 			}
 		}
 	}
-	
+
 	private void getAttributes(String doc, CacheHolderDetail chD) {
 		Extractor attBlock = new Extractor(doc,p.getProperty("attBlockExStart"),p.getProperty("attBlockExEnd"), 0 , true);
 		String atts = attBlock.findNext();
@@ -1029,15 +1031,15 @@ public class SpiderGC{
 			attribute=attEx.findNext();
 		}
 	}
-	
-	
+
+
 	/**
 	*	Performs an initial fetch to a given address. In this case
 	*	it will be a gc.com address. This method is used to obtain
 	*	the result of a search for caches screen.
 	*/
 	public static String fetch(String address)
-	   	{	
+	   	{
 			CharArray c_data;
 			String data="";
 			try{
@@ -1064,6 +1066,29 @@ public class SpiderGC{
 				pref.log("Read socket ok");
 				JavaUtf8Codec codec = new JavaUtf8Codec();
 				c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+
+				/*
+				 * prepend the response headers to the document
+				 * like non-linux Ewe does
+				 *
+				 * @TODO directly use the properties in the
+				 * code which calls this method instead
+				 */
+				PropertyList pl = conn.documentProperties;
+				if (pl != null) {
+					StringBuffer sb = new StringBuffer();
+					boolean gotany = false;
+
+					for (int i = 0; i < pl.size(); i++) {
+						Property p = (Property)pl.get(i);
+						if (p.value != null) {
+							sb.append(p.name + ": " + p.value + "\r\n");
+							gotany = true;
+						}
+					}
+					if (gotany)
+						data += sb.toString() + "\r\n";
+				}
 				data += c_data.toString();
 				//Vm.debug("SpiderGC.fetch() result = " + data);
 				sock.close();
@@ -1074,15 +1099,15 @@ public class SpiderGC{
 			}
 			return data;
 		}
-	
+
 	/**
 	*	After a fetch to gc.com the next fetches have to use the post method.
 	*	This method does exactly that. Actually this method is generic in the sense
 	*	that it can be used to post to a URL using http post.
 	*/
-	private static String fetch_post(String address, String document, String path) throws IOException 
+	private static String fetch_post(String address, String document, String path) throws IOException
 	   	{
-			
+
 			//String line = "";
 			String totline = "";
 			if(pref.myproxy.length()==0){
@@ -1134,14 +1159,38 @@ public class SpiderGC{
 					}
 					conn.setRequestorProperty("Connection", "close");
 					Socket sock = conn.connect();
-					
+
 					//Vm.debug("getting stuff!");
 					ByteArray daten = conn.readData(sock);
 					//Vm.debug("coming back!");
 					CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 					sock.close();
 					//Vm.debug(c_data.toString());
-					totline =  c_data.toString();
+					totline = "";
+
+					/*
+					 * prepend the response headers to the document
+					 * like non-linux Ewe does
+					 *
+					 * @TODO directly use the properties in the
+					 * code which calls this method instead
+					 */
+					PropertyList pl = conn.documentProperties;
+					if (pl != null) {
+						StringBuffer sb = new StringBuffer();
+						boolean gotany = false;
+
+						for (int i = 0; i < pl.size(); i++) {
+							Property p = (Property)pl.get(i);
+							if (p.value != null) {
+								sb.append(p.name + ": " + p.value + "\r\n");
+								gotany = true;
+							}
+						}
+						if (gotany)
+							totline += sb.toString() + "\r\n";
+					}
+					totline += c_data.toString();
 				} catch (Exception e) {
 				}
 			} else {
@@ -1160,20 +1209,44 @@ public class SpiderGC{
 				}
 				conn.setRequestorProperty("Connection", "close");
 				Socket sock = conn.connect();
-				
+
 				//Vm.debug("getting stuff!");
 				ByteArray daten = conn.readData(sock);
 				//Vm.debug("coming back!");
 				CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 				sock.close();
 				//Vm.debug(c_data.toString());
-				totline =  c_data.toString();
+				totline = "";
+
+				/*
+				 * prepend the response headers to the document
+				 * like non-linux Ewe does
+				 *
+				 * @TODO directly use the properties in the
+				 * code which calls this method instead
+				 */
+				PropertyList pl = conn.documentProperties;
+				if (pl != null) {
+					StringBuffer sb = new StringBuffer();
+					boolean gotany = false;
+
+					for (int i = 0; i < pl.size(); i++) {
+						Property p = (Property)pl.get(i);
+						if (p.value != null) {
+							sb.append(p.name + ": " + p.value + "\r\n");
+							gotany = true;
+						}
+					}
+					if (gotany)
+						totline += sb.toString() + "\r\n";
+				}
+				totline += c_data.toString();
 			}
 			return totline;
 		}
-	
+
 	final static String hex = ewe.util.TextEncoder.hex;
-	
+
 	public String encodeUTF8(String username) {
 		char [] what = ewe.sys.Vm.getStringChars(username);
 		int max = what.length;
@@ -1182,15 +1255,15 @@ public class SpiderGC{
 		for (int i = 0; i<max; i++){
 			char c = what[i];
 			if (c == ' ') c = '+';
-			else if (c<='\u00FF') { 
-				if(c <= ' ' || c == '+' || c == '&' || c == '%' || c == '=' || 
+			else if (c<='\u00FF') {
+				if(c <= ' ' || c == '+' || c == '&' || c == '%' || c == '=' ||
 				   c == '|' || c == '{' || c == '}' || c>'\u007F'){
 					dest[d++] = '%';
 					dest[d++] = hex.charAt((c >> 4) & 0xf);
 					dest[d++] = hex.charAt(c & 0xf);
 					continue;
 				}
-			
+
 			} else {
 				dest[d++] = '%';
 				dest[d++] = hex.charAt((c >> 12) & 0xf);
@@ -1204,7 +1277,7 @@ public class SpiderGC{
 		}
 		return new String(dest,0,d);
 	}
-	
+
 	/**
 	 * Load the bug id for a given name. This method is not ideal, as there are
 	 * sometimes several bugs with identical names but different IDs. Normally
@@ -1237,7 +1310,7 @@ public class SpiderGC{
 	}
 
 	/**
-	 * Fetch a bug's mission for a given GUID or ID. If the guid String is longer 
+	 * Fetch a bug's mission for a given GUID or ID. If the guid String is longer
 	 * than 10 characters it is assumed to be a GUID, otherwise it is an ID.
 	 * @param guid the guid or id of the travelbug
 	 * @return The mission
@@ -1263,8 +1336,4 @@ public class SpiderGC{
 		Extractor exDetails = new Extractor(bugDetails,p.getProperty("bugDetailsStart"),p.getProperty("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
 		return exDetails.findNext();
 	}
-
-
-
-
 }
