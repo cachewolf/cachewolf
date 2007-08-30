@@ -307,13 +307,16 @@ public class myTableModel extends TableModel{
 			}
 			if(cell.y == -1){ // Hit a header => sort the table accordingly
 				CacheHolder ch=null;
+				// cell.x is the physical column but we have to sort by the
+				// column it is mapped into
+				int mappedCol=colMap[cell.x];
 				Vm.showWait(true);
 				Point a = tcControl.getSelectedCell(null);
 				if(a != null) ch = (CacheHolder)cacheDB.get(a.y);
-				if (cell.x == sortedBy) sortAsc=!sortAsc;
+				if (mappedCol == sortedBy) sortAsc=!sortAsc;
 				else sortAsc = false;
-				sortedBy = cell.x;
-				cacheDB.sort(new MyComparer(cacheDB, colName[cell.x],numRows), sortAsc);
+				sortedBy = mappedCol;
+				cacheDB.sort(new MyComparer(cacheDB, colName[mappedCol],numRows), sortAsc);
 				updateRows();
 				if(a != null){
 					int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
