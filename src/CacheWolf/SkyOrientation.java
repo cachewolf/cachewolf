@@ -2,6 +2,15 @@ package CacheWolf;
 
 import ewe.sys.Convert;
 
+/** Class to caculate positions of luminaries
+ * all methods are static
+ * usage:
+ * call utc2juliandate and then getLuminaryDir
+ * in ressources/cachewolf.languages messege numbers from 6100
+ * 
+ * @author Pfeffer
+ *
+ */
 public class SkyOrientation {
 
 	public final static int SUN = 0;
@@ -14,14 +23,16 @@ public class SkyOrientation {
 	public static final int CASSIOPEIA = CASSIOPEIA_GAMMA;
 	public static final int DENEB = 5;
 	public static final int CYGNUS = DENEB; // Cygnus = Schwan
+	public static final int MIMOSA = 6; // second brightest star in Southern Cross
+	public static final int SOUTHERN_CROSS = MIMOSA; // SOUTHERN_CROSS = Kreus des Südens = Crux australia
 	
 	public static final CWPoint[] STARS = {
 		// (Deklination, Rektaszension)
 		/*ALIOTH*/		new CWPoint(55. +57./60. + 36./3600., (12. + 54./60. + 2./3600.)*15.), // ALIOTH: Rektaszension 12 h 54 m 2 s Deklination +55 Grad 57' 36"
 		/*ALNILAM*/		new CWPoint(-1. -12./60. -7./3600., (5.+36./60. + 13./3600.)*15.), // (-1. -12./60. -7./3600., (5. + 36./60. + 13./3600.)*15.) <- wikipedia // -1.19748, 5.60978 * 15.) <- www.... // (-1. -11./60. -52./3600., (5. + 36./60. + 35./3600.)*15.)  <- Stellarium 
 		/*Cassiopeia*/	new CWPoint(60. + 43./60. + 0.3/3600., (0 + 56./60. +42.5/3600.)*15.), // CASSIOPALA_GAMMA 00h 56m 42.50s, 60 Grad 43' 00.3" <-- wikipedia, Stellarium: 57m 11s, 60 Grad 45' 29"
-		/*Deneb*/		new CWPoint(45. + 16./60. + 49.2/3600., (20 + 41./60. +25.6/3600.)*15.) // im Schwan (Sommerdreieck) Quelle: Stellarium
-		// Krez des Südens
+		/*Deneb*/		new CWPoint(45. + 16./60. + 49.2/3600., (20 + 41./60. +25.6/3600.)*15.), // im Schwan (Sommerdreieck) Quelle: Stellarium
+		/*Mimosa*/		new CWPoint(-59. - 41./60. - 19./3600., (12 + 47./60. +43.2/3600.)*15.) // im Schwan (Sommerdreieck) Quelle: Stellarium
 		// Sirius
 	};
 	
@@ -31,7 +42,8 @@ public class SkyOrientation {
 		MyLocale.getMsg(6102, "Grater Bear"),
 		MyLocale.getMsg(6103, "Orion"),
 		MyLocale.getMsg(6104, "Cassiopeia"), 
-		MyLocale.getMsg(6105, "Cygnus")
+		MyLocale.getMsg(6105, "Cygnus"),
+		MyLocale.getMsg(6106, "Southern Cross")
 	};
 
 	public static String [] LUMINARY_DESC = { // TODO MyLocale.getMsg(xxx, "Sun"),
@@ -40,13 +52,24 @@ public class SkyOrientation {
 		MyLocale.getMsg(6122, "Alioth in Greater Bear"),
 		MyLocale.getMsg(6123, "Alnilam in Orion"),
 		MyLocale.getMsg(6124, "Cassiopeia Gamma"), 
-		MyLocale.getMsg(6125, "Deneb in Cygnus")
+		MyLocale.getMsg(6125, "Deneb in Cygnus"),
+		MyLocale.getMsg(6126, "Becrux in Southern Cross")
 	};
 
+	/**
+	 * Get the friendly name of the luminary
+	 * @param luminary
+	 * @return
+	 */
 	public static String getLuminaryName(int luminary) {
 		return LUMINARY_NAMES[luminary]; 
 	}
 	
+	/**
+	 * Get a more exact description of the luminary 
+	 * @param lu
+	 * @return
+	 */
 	public static String getLuminaryDesc(int lu) {
 		return LUMINARY_DESC[lu];
 	}
@@ -98,6 +121,14 @@ public class SkyOrientation {
 		}
 	}
 
+	/**
+	 * old version, gives the same as the new one
+	 * @param utc
+	 * @param datum
+	 * @param lat
+	 * @param lon
+	 * @return
+	 */
 	public static float getSunAzimut (String utc, String datum, double lat, double lon) {
 		//	(new MessageBox("test", "utc:"+utc+" datum: "+datum+", lat: "+lat+", len: "+lon, MessageBox.OKB)).exec();
 		try {
