@@ -471,6 +471,7 @@ public class Preferences extends MinML{
 	public void logInit(){
 		File logFile = new File(LOGFILENAME);
 		logFile.delete();
+		log("CW Version "+Version.getRelease());
 	}
 	
 	/**
