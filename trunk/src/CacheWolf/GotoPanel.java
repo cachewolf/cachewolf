@@ -33,7 +33,7 @@ public class GotoPanel extends CellPanel {
 
 	mLabel lblPosition, lblSats, lblSpeed, lblBearMov, lblBearWayP, lblDist, lblHDOP;
 	mLabel lblSatsText, lblSpeedText, lblDirText, lblDistText, lblSunAzimut;
-	mLabel lblGPS, lblDST, lblCurr, lblWayP;
+	mLabel lblGPS, lblDST, lblCurr, lblWayP, lblLuminary;
 	mLabel lblLog;
 	mCheckBox chkLog;
 	mInput inpLogSeconds;
@@ -64,9 +64,11 @@ public class GotoPanel extends CellPanel {
 	GotoRose rose;
 	int ticker = 0;
 	
-	Menu mnuContext;
+	Menu mnuContextFormt;
 	MenuItem miDMM, miDMS, miDD, miUTM;
-
+	
+	Menu mnuContextRose;
+	MenuItem miLuminary[] = new MenuItem[SkyOrientation.LUMINARY_NAMES.length];
 	/**
 	 * Create GotoPanel 
 	 * @param Preferences 	global preferences
@@ -90,34 +92,44 @@ public class GotoPanel extends CellPanel {
 
 		//Format selection for coords		
 		//context menu
-		mnuContext = new Menu();
-		mnuContext.addItem(miDD = new MenuItem("d.d°"));
+		mnuContextFormt = new Menu();
+		mnuContextFormt.addItem(miDD = new MenuItem("d.d°"));
 		miDD.modifiers &= ~MenuItem.Checked;
-		mnuContext.addItem(miDMM = new MenuItem("d°m.m\'"));
+		mnuContextFormt.addItem(miDMM = new MenuItem("d°m.m\'"));
 		miDMM.modifiers |= MenuItem.Checked;
-		mnuContext.addItem(miDMS = new MenuItem("d°m\'s\""));
+		mnuContextFormt.addItem(miDMS = new MenuItem("d°m\'s\""));
 		miDMS.modifiers &= ~MenuItem.Checked;
-		mnuContext.addItem(miUTM = new MenuItem("UTM"));
+		mnuContextFormt.addItem(miUTM = new MenuItem("UTM"));
 		miUTM.modifiers &= ~MenuItem.Checked;
 		currFormat = CWPoint.DMM;
+
+		// Create context menu for compass rose: select luminary for orientation
+		mnuContextRose = new Menu();
+		for (int i=0; i<SkyOrientation.LUMINARY_NAMES.length; i++) {
+			mnuContextRose.addItem(miLuminary[i] = new MenuItem(SkyOrientation.getLuminaryName(i)));
+			if (i == myNavigation.luminary) miLuminary[i].modifiers |= MenuItem.Checked;
+			else miLuminary[i].modifiers &= MenuItem.Checked;
+		}
 
 		//Coords
 		CoordsP.addNext(lblGPS = new mLabel("GPS: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblGPS.backGround = RED;
-		lblGPS.setMenu(mnuContext);
+		lblGPS.setMenu(mnuContextFormt);
 		lblGPS.modifyAll(Control.WantHoldDown, 0);
 		CoordsP.addLast(lblPosition = new mLabel(myNavigation.gpsPos.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		lblPosition.setMenu(mnuContext);
+		lblPosition.setMenu(mnuContextFormt);
 		lblPosition.modifyAll(Control.WantHoldDown, 0);
 		CoordsP.addNext(lblDST = new mLabel(MyLocale.getMsg(1500,"DST:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblDST.backGround = new Color(0,0,255);
-		lblDST.setMenu(mnuContext);
+		lblDST.setMenu(mnuContextFormt);
 		lblDST.modifyAll(Control.WantHoldDown, 0);
 		CoordsP.addLast(btnGoto = new mButton(getGotoBtnText()),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 
 		//Rose for bearing
 		compassRose = new GotoRose("rose.png");
 		icRose = new ImageControl(compassRose);
+		icRose.setMenu(mnuContextRose);
+		icRose.modifyAll(Control.WantHoldDown, 0); // this is necessary in order to make PenHold on a PDA work as right click
 		roseP.addLast(icRose,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTH));
 
 		//Goto
@@ -160,9 +172,9 @@ public class GotoPanel extends CellPanel {
 		chkLog.setState(false);
 		inpLogSeconds.columns = 5;
 
-		LogP.addNext(lblGPS = new mLabel("Sonne: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		lblGPS.backGround = YELLOW;
-		lblGPS.setTag(SPAN, new Dimension(2,1));
+		LogP.addNext(lblLuminary = new mLabel(SkyOrientation.getLuminaryName(myNavigation.luminary)),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		lblLuminary.backGround = YELLOW;
+		lblLuminary.setTag(SPAN, new Dimension(2,1));
 
 		LogP.addLast(lblSunAzimut = new mLabel("---"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
 		lblSunAzimut.setText("---");
@@ -275,7 +287,7 @@ public class GotoPanel extends CellPanel {
 			lblPosition.setText(myNavigation.gpsPos.toString(currFormat));
 			speed.set(myNavigation.gpsPos.getSpeed());
 			lblSpeed.setText(MyLocale.formatDouble(speed,"0.0") + " km/h");
-			sunAzimut.set((double)myNavigation.sunAzimut);
+			sunAzimut.set(myNavigation.skyOrientationDir.lonDec);
 			if (sunAzimut.value >= -360) lblSunAzimut.setText(MyLocale.formatDouble(sunAzimut,"0.0") + " Grad");
 			else lblSunAzimut.setText("--- Grad");
 			bearMov.set(myNavigation.gpsPos.getBear());
@@ -346,22 +358,22 @@ public class GotoPanel extends CellPanel {
 	public void onEvent(Event ev){
 		if (ev instanceof MenuEvent) { 
 			if (ev.type == MenuEvent.SELECTED ) {
-				MenuItem action = (MenuItem) mnuContext.getSelectedItem(); 
-				if (mnuContext.getSelectedItem() != null) {
+				MenuItem action = (MenuItem) mnuContextFormt.getSelectedItem(); 
+				if (action != null) {
 					if (action == miDD) {
-						mnuContext.close();
+						mnuContextFormt.close();
 						currFormat = CWPoint.DD;
 					}
 					if (action == miDMM) {
-						mnuContext.close();
+						mnuContextFormt.close();
 						currFormat = CWPoint.DMM;
 					}
 					if (action == miDMS) {
-						mnuContext.close();
+						mnuContextFormt.close();
 						currFormat = CWPoint.DMS;
 					}
 					if (action == miUTM) {
-						mnuContext.close();
+						mnuContextFormt.close();
 						currFormat = CWPoint.UTM;
 					}
 					miDD.modifiers &= ~MenuItem.Checked;
@@ -377,6 +389,16 @@ public class GotoPanel extends CellPanel {
 
 					lblPosition.setText(myNavigation.gpsPos.toString(currFormat));
 					btnGoto.setText(getGotoBtnText());
+				} // end lat-lon-format context menu
+				action = (MenuItem) mnuContextRose.getSelectedItem();
+				if (action != null) {
+					for (int i=0; i<miLuminary.length; i++) {
+						if (action == miLuminary[i]) {
+							myNavigation.setLuminary(i);
+							miLuminary[i].modifiers |= MenuItem.Checked;
+							lblLuminary.setText(SkyOrientation.getLuminaryName(myNavigation.luminary));
+						} else miLuminary[i].modifiers &= ~MenuItem.Checked;
+					}
 				}
 			}
 		}
