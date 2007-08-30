@@ -855,7 +855,7 @@ public class MovingMap extends Form {
 		// runMovingMap neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp 
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) { // TODO is getSats really necessary?
 			directionArrows.setDirections((float)myNavigation.gpsPos.getBearing(myNavigation.destination),
-					myNavigation.sunAzimut, (float)myNavigation.gpsPos.getBear());
+					(float)myNavigation.skyOrientationDir.lonDec, (float)myNavigation.gpsPos.getBear());
 			setGpsStatus(MovingMap.gotFix);
 			updatePosition(myNavigation.gpsPos.latDec, myNavigation.gpsPos.lonDec);
 			ShowLastAddedPoint(myNavigation.curTrack);
