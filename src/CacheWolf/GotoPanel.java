@@ -645,6 +645,7 @@ class GotoRose extends AniImage {
 				
 				if (moveDir < 360 && moveDir > -360) {
 					drawDoubleArrow(g, 360 - moveDir, BLUE, RED, 1.0f);
+					if (moveDirColor == RED) moveDirColor = Color.DarkBlue;
 					if (gotoDir < 360 && gotoDir > -360) drawThinArrow(g, gotoDir - moveDir, moveDirColor, 1.0f);
 					if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir - moveDir, YELLOW, 0.75f);					
 				}				
