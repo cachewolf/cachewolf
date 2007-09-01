@@ -22,6 +22,7 @@ public class CacheList extends CellPanel {
     /** The extension for cachelists (CL) */ 
     private final String EXTENSION="CL";
 	private final String TITLE=MyLocale.getMsg(188,"CACHETOUR: NEW");
+	private static int applyCount=0; // Counts the number of times we apply the list
     CacheList() {
 		this.setPreferredSize(100,-1); 
 		this.equalWidths=true;
@@ -168,8 +169,11 @@ public class CacheList extends CellPanel {
 				int activeTab=Global.mainTab.cardPanel.selectedItem;
 				if (activeTab==0) 
 					Global.mainTab.tbP.tc.repaint();
-				else
+				else {
+					// We need to change to the list view first to load a new cache
+					Global.mainTab.onEvent(new MultiPanelEvent(0,Global.mainTab,0));
 					Global.mainTab.onEvent(new MultiPanelEvent(0,Global.mainTab,activeTab));
+				}
 			}
 		}
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
@@ -227,31 +231,48 @@ public class CacheList extends CellPanel {
 					lstCaches.select(sel+1);
 				}
 			} else if (ev.target==btnFilter) {
-				Vector cacheDB=Global.getProfile().cacheDB;
-				CacheHolder ch;
-				// Start by setting all caches to filtered
-				for(int i = cacheDB.size()-1; i >=0 ; i--){
-					ch = (CacheHolder)cacheDB.get(i);
-					ch.is_filtered=true ; // ignore blacklist attribute
-					ch.sort="\uFFFF";
-				}
-				// Now "unfilter" the caches in our list
-				for (int i = cacheList.size()-1; i>=0; i--) {
-					ch = (CacheHolder)cacheList.get(i);
-					ch.is_filtered=false;
-					ch.sort=MyLocale.formatLong(i,"00000");
-				}
-				// The sort command places all filtered caches at the end
-				cacheDB.sort(new mySort(),false);
-				Filter.filterActive=true;
-				Filter.filterInverted=false;
-				updateScreen();
-			}
+				applyCacheList();			}
 		}
 		changeUpDownButtonStatus();
 	}
 
-
+	/** Apply the cache list */
+	public void applyCacheList() {
+		Vector cacheDB=Global.getProfile().cacheDB;
+		CacheHolder ch;
+		String apply="\uFFFF"+Convert.toString(applyCount++);
+		// Start by setting all caches to filtered
+		for(int i = cacheDB.size()-1; i >=0 ; i--){
+			ch = (CacheHolder)cacheDB.get(i);
+			ch.is_filtered=true ; // ignore blacklist attribute
+			ch.sort=apply;
+		}
+		// Now "unfilter" the caches in our list
+		for (int i = cacheList.size()-1; i>=0; i--) {
+			ch = (CacheHolder)cacheList.get(i);
+			/* If the cache was reloaded from a GPX file since we dragged it into the list,
+			   the pointer ch points to a CacheHolder object that is no longer part of cacheDB.
+			   In this case we need to search the cacheDB for an object with the name of ch.wayPoint
+			   and use that object. To speed up this process and avoid having to search the whole
+			   cacheDB for each entry in cacheList, we simply compare the sort field of ch to apply.
+			*/
+			if (!ch.sort.equals(apply)) {
+				int idx=Global.getProfile().getCacheIndex(ch.wayPoint);
+				if (idx==-1) continue;
+				ch=null;
+				ch=(CacheHolder) cacheDB.get(idx);
+			}
+			ch.is_filtered=false;
+			ch.sort=MyLocale.formatLong(i,"00000");
+		}
+		// The sort command places all filtered caches at the end
+		cacheDB.sort(new mySort(),false);
+		Filter.filterActive=true;
+		Filter.filterInverted=false;
+		updateScreen();
+		
+	}
+	
 	/** Add a cache (and its addis) to the list 
 	 * @return true if the cache is not already in lstCaches */
 	public boolean addCache(String wayPoint) {

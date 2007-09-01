@@ -36,7 +36,33 @@ public class CacheHolderDetail extends CacheHolder {
 	 public CacheHolderDetail(CacheHolder ch) {
 		 super(ch);
 	 }
-	  
+
+	 public void setLongDescription(String longDescription) {
+	 	if (!LongDescription.equals(longDescription)) is_update=true;
+	 	LongDescription = longDescription;
+	 }
+	 
+	 public void setHints(String hints) {
+	 	if (!Hints.equals(hints)) is_update=true;
+	 	Hints = hints;
+	 }
+	 
+	 public void setCacheLogs(Vector logs) {
+		  // Number of logs has changed, set the log_update flag
+		 if (logs.size()!=CacheLogs.size()) is_log_update=true;
+		 CacheLogs=logs;
+		 // Count the number of not-found logs
+		int countNoFoundLogs = 0;
+		String loganal = "";
+		while(countNoFoundLogs < CacheLogs.size() && countNoFoundLogs < 5){
+			loganal = (String)CacheLogs.get(countNoFoundLogs);
+			if(loganal.indexOf("icon_sad")>0) {
+				countNoFoundLogs++;
+			}else break;
+		}
+		noFindLogs = countNoFoundLogs;
+	 }
+	 
 	  /**
 	 * Method to update an existing cache with new data. This is
 	 * necessary to avoid missing old logs.
@@ -44,59 +70,22 @@ public class CacheHolderDetail extends CacheHolder {
 	 * @return CacheHolder with updated data
 	 */
 	public CacheHolderDetail update(CacheHolderDetail newCh){
+		  super.update(newCh);
 		  // flags
-		  this.is_available = newCh.is_available;
-		  this.is_archived = newCh.is_archived;
-		  // update is_owned only if not the owner ????
-		  if (this.is_owned == false) this.is_owned = newCh.is_owned;
-		  // update is_found if not already found
-		  if (this.is_found == false) this.is_found = newCh.is_found;
-		  // no else, because status can change.
 		  if (this.is_found == true) this.CacheStatus = MyLocale.getMsg(318,"Found");
-		  
-		  
-		  this.is_new = false;
-		  this.is_update = false;
-		  this.is_log_update = false;
-		  
-		  //name and owner
-		  this.CacheName = newCh.CacheName;
-		  this.CacheOwner = newCh.CacheOwner;
 
-		  //classification
-		  this.hard = newCh.hard;
-		  this.terrain = newCh.terrain;
-		  this.type = newCh.type;
-		  
 		  //travelbugs: overriding is OK, since GPX-File contains all actual travelbugs
-		  this.has_bug = newCh.has_bug;
+		  this.has_bug = newCh.Travelbugs.size()>0;
 		  this.Travelbugs = newCh.Travelbugs;
 		  
 		  // URL
 		  this.URL = newCh.URL;
 		  
-		  //coords
-		  this.LatLon = newCh.LatLon;
-		  this.pos.set(newCh.pos);
-
-		  // check only length of the description to see, if there was an update
-		  if (this.LongDescription.length() != newCh.LongDescription.length()){
-			  this.is_update = true;
-		  }
-		  // same for hints
-		  if (this.Hints.length() != newCh.Hints.length()){
-			  this.is_update = true;
-		  }
+		  setLongDescription(newCh.LongDescription);
+		  setHints(newCh.Hints);
+		  setCacheLogs(newCh.CacheLogs);
 		  
-		  // description & hints
-		  this.is_HTML = newCh.is_HTML;
-		  this.LongDescription = newCh.LongDescription;
-		  this.Hints = newCh.Hints;
-
-		  //Logs
-		  //<img src='icon_smile.gif'>&nbsp;2005-10-30 by Schatzpirat</strong><br>
-		  //get Date of latest log in old cachedata
-		  Extractor extOldDate;
+/*		  Extractor extOldDate;
 		  String oldLogDate = EMPTY;
 		  if(this.CacheLogs.size()>0){
 			extOldDate = new Extractor((String) this.CacheLogs.get(0), ";"," by", 0, true);
@@ -120,20 +109,12 @@ public class CacheHolderDetail extends CacheHolder {
 			  }
 			  else currLog--;
 		  }//while
-	   	 //Check for number sukzessive DNF logs
-		 int z = 0;
-		 String loganal = EMPTY;
-		 //Vm.debug("Checking size: ");
-		 //int sz = newCh.CacheLogs.size();
-		 //Vm.debug("log size: " + sz);
-	 	 while(z < newCh.CacheLogs.size() && z < 5){
-			loganal = (String)newCh.CacheLogs.get(z);
-			if(loganal.indexOf("icon_sad")>0) {
-				z++;
-			}else break;
-		 }
-		 noFindLogs = z;
-		 this.Solver=newCh.Solver;
+		  
+		  //Logs
+		  //<img src='icon_smile.gif'>&nbsp;2005-10-30 by Schatzpirat</strong><br>
+		  //get Date of latest log in old cachedata
+*/
+		  if (newCh.Solver.length()>0) this.Solver=newCh.Solver;
 	 	return this;
 	  }
 	  
