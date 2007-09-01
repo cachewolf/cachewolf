@@ -64,6 +64,8 @@ public class GotoPanel extends CellPanel {
 	
 	Menu mnuContextRose;
 	MenuItem miLuminary[] = new MenuItem[SkyOrientation.LUMINARY_NAMES.length];
+	MenuItem miNorthCentered;
+	
 	/**
 	 * Create GotoPanel 
 	 * @param Preferences 	global preferences
@@ -126,6 +128,11 @@ public class GotoPanel extends CellPanel {
 		icRose.setMenu(mnuContextRose);
 		icRose.modifyAll(Control.WantHoldDown, 0); // this is necessary in order to make PenHold on a PDA work as right click
 		roseP.addLast(icRose,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTH));
+		
+		mnuContextRose.addItem(new MenuItem("", MenuItem.Separator, null));
+		mnuContextRose.addItem(miNorthCentered = new MenuItem(MyLocale.getMsg(1503,"North Centered")));
+		if (compassRose.isNorthCentered()) miNorthCentered.modifiers |= MenuItem.Checked;
+		else miNorthCentered.modifiers &= MenuItem.Checked;
 
 		//log
 		LogP.addNext(lblLog = new mLabel("Log "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -334,6 +341,17 @@ public class GotoPanel extends CellPanel {
 							compassRose.setLuminaryName(SkyOrientation.getLuminaryName(myNavigation.luminary));
 						} else miLuminary[i].modifiers &= ~MenuItem.Checked;
 					}
+					if (action == miNorthCentered) {
+						if (compassRose.isNorthCentered()) {
+							compassRose.setNorthCentered(false);
+							miNorthCentered.modifiers &= ~MenuItem.Checked;							
+						}
+						else
+						{
+							compassRose.setNorthCentered(true);
+							miNorthCentered.modifiers |= MenuItem.Checked;
+						}
+					}
 				}
 			}
 		}
@@ -394,6 +412,8 @@ class GotoRose extends AniImage {
 	
 	FontMetrics fm;
 	
+	boolean northCentered = true;
+	
 	final static Color RED = new Color(255,0,0);
 	final static Color YELLOW = new Color(255,255,0);
 	final static Color GREEN = new Color(0,255,0);
@@ -443,7 +463,13 @@ class GotoRose extends AniImage {
 	 */
 	
 	public void doDraw(Graphics g,int options) {
-		super.doDraw(g, options);
+		if (northCentered) {
+			super.doDraw(g, options);
+		}
+		else {
+			g.setColor(Color.White);
+			g.fillRect(0, 0, location.width, location.height);
+		}
 		Font font = new Font("Verdana", Font.BOLD, 12);
 		g.setFont(font);
 		fm = g.getFontMetrics(font);
@@ -586,11 +612,12 @@ class GotoRose extends AniImage {
 					diff = 360.0f - diff;
 				}
 				
-				if (diff <= 5.0)
+				/*if (diff <= 5.0)
 				{
 					moveDirColor = DARKGREEN;
 				}
-				else if (diff <= 22.5)
+				else*/
+				if (diff <= 22.5)
 				{
 					moveDirColor = GREEN;
 				}
@@ -601,10 +628,21 @@ class GotoRose extends AniImage {
 			}
 
 			// draw only valid arrows
-			if (gotoDir < 360 && gotoDir > -360) drawThickArrow(g, gotoDir, Color.DarkBlue, 1.0f);
-			if (moveDir < 360 && moveDir > -360) drawThinArrow(g, moveDir, moveDirColor, 1.0f);
-			if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir, YELLOW, 0.75f);
-			//drawDoubleArrow(g, 0, BLUE, RED, 1.0f);
+			if (northCentered) {
+				if (gotoDir < 360 && gotoDir > -360) drawThickArrow(g, gotoDir, Color.DarkBlue, 1.0f);
+				if (moveDir < 360 && moveDir > -360) drawThinArrow(g, moveDir, moveDirColor, 1.0f);
+				if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir, YELLOW, 0.75f);
+			}
+			else {
+				//moveDir centered
+				g.setPen(new Pen(RED,Pen.SOLID,3));
+				g.drawLine(location.width/2, 0, location.width/2, location.height);
+				if (moveDir < 360 && moveDir > -360) {
+					drawDoubleArrow(g, 360 - moveDir, BLUE, RED, 1.0f);
+					if (gotoDir < 360 && gotoDir > -360) drawThinArrow(g, gotoDir - moveDir, moveDirColor, 1.0f);
+					if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir - moveDir, YELLOW, 0.75f);					
+				}				
+			}
 		}
 	}
 
@@ -732,5 +770,14 @@ class GotoRose extends AniImage {
 		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
 		g.setBrush(new Brush(col, Brush.SOLID));
 		g.fillPolygon(pointsX, pointsY, 4);
+	}
+	
+	public void setNorthCentered(boolean nc) {
+		northCentered = nc;
+		refresh();
+	}
+	
+	public boolean isNorthCentered() {
+		return northCentered;
 	}
 }

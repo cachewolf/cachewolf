@@ -1300,6 +1300,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	MenuItem gotoMenuItem = new MenuItem("Goto here$g", 0, null);
 	MenuItem newWayPointMenuItem = new MenuItem("Create new Waypoint here$n", 0, null);;
 	MenuItem openCacheDescMenuItem,addCachetoListMenuItem;
+	
+	MenuItem miLuminary[];
 
 	Menu mapsMenu;
 	MenuItem selectMapMI = new MenuItem("Select a map manually$s", 0, null);
@@ -1555,16 +1557,27 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			//( (ev.type == PenEvent.PEN_DOWN) && ((PenEvent)ev).modifiers == PenEvent.RIGHT_BUTTON)
 			//|| ((ev.type == PenEvent.RIGHT_BUTTON) ) )) ---> these events are not posted --> this overridering is the only solution 
 			kontextMenu = new Menu();
-			kontextMenu.addItem(gotoMenuItem);
-			kontextMenu.addItem(newWayPointMenuItem);
-			AniImage clickedOnImage = images.findHotImage(p);
-			if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
-				clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
-				if (clickedCache != null) openCacheDescMenuItem = new MenuItem("Open '"+(clickedCache.CacheName.length()>0?clickedCache.CacheName:clickedCache.wayPoint)+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
-				kontextMenu.addItem(openCacheDescMenuItem);
-				if (clickedCache !=null && Global.mainForm.cacheListVisible) { 
-					addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
-					kontextMenu.addItem(addCachetoListMenuItem);
+			if ( !(mm.directionArrows.onHotArea(p.x, p.y)) ) {
+				kontextMenu.addItem(gotoMenuItem);
+				kontextMenu.addItem(newWayPointMenuItem);
+				AniImage clickedOnImage = images.findHotImage(p);
+				if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
+					clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
+					if (clickedCache != null) openCacheDescMenuItem = new MenuItem("Open '"+(clickedCache.CacheName.length()>0?clickedCache.CacheName:clickedCache.wayPoint)+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+					kontextMenu.addItem(openCacheDescMenuItem);
+					if (clickedCache !=null && Global.mainForm.cacheListVisible) { 
+						addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
+						kontextMenu.addItem(addCachetoListMenuItem);
+					}
+				}
+			}
+			else {			
+				miLuminary = new MenuItem[SkyOrientation.LUMINARY_NAMES.length];
+
+				for (int i=0; i<SkyOrientation.LUMINARY_NAMES.length; i++) {
+					kontextMenu.addItem(miLuminary[i] = new MenuItem(SkyOrientation.getLuminaryName(i)));
+					if (i == mm.myNavigation.luminary) miLuminary[i].modifiers |= MenuItem.Checked;
+					else miLuminary[i].modifiers &= MenuItem.Checked;
 				}
 			}
 			kontextMenu.exec(this, new Point(p.x, p.y), this);
@@ -1681,7 +1694,14 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						kontextMenu.close();
 						Global.mainForm.cacheList.addCache(clickedCache.wayPoint);
 					}
-
+					for (int i=0; i<miLuminary.length; i++) {
+						if (action == miLuminary[i]) {
+							kontextMenu.close();
+							mm.myNavigation.setLuminary(i);
+							mm.updateGps(mm.myNavigation.gpsPos.getFix());
+							miLuminary[i].modifiers |= MenuItem.Checked;
+						} else miLuminary[i].modifiers &= ~MenuItem.Checked;
+					}
 				}
 			} // if (ev.target == kontextMenu)
 		} // if (ev instanceof ControlEvent ) 
