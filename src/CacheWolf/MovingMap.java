@@ -53,6 +53,7 @@ public class MovingMap extends Form {
 	public static final String MARK_CACHE_IMAGE = "mark_cache.png";
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
 	double posCircleLat, posCircleLon;
+	FontMetrics fm;
 
 	boolean dontUpdatePos = false; // this is only internaly used to avoid multi-threading problems
 	boolean ignoreGps = false; // ignores updateGps-calls if true
@@ -101,18 +102,19 @@ public class MovingMap extends Form {
 		buttonImageZoom1to1.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageZoom1to1);
 		//target distance
-		//Label distLbl = new mLabel("Distance: ----,-- km");
+		Font font = new Font("Helvetica", Font.PLAIN, 13);
+		fm = getFontMetrics(font);
 		DistanceImage = new AniImage();
 		DistanceImage.setImage(new Image(120, 15), Color.White); // consider the size of the font used
 		DistanceImageGraphics = new Graphics(DistanceImage.image);
-		DistanceImageGraphics.setFont(new Font("Helvetica", Font.PLAIN, 13));
+		DistanceImageGraphics.setFont(font);
 		DistanceImage.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(DistanceImage);
 		//scale
 		ScaleImage = new AniImage();
 		ScaleImage.setImage(new Image(120, 15), Color.White); // consider the size of the font used
 		ScaleImageGraphics = new Graphics(ScaleImage.image);
-		ScaleImageGraphics.setFont(new Font("Helvetica", Font.PLAIN, 13));
+		ScaleImageGraphics.setFont(font);
 		ScaleImage.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(ScaleImage);
 		//resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialize mapImage.screenSize
@@ -193,17 +195,16 @@ public class MovingMap extends Form {
 			int lineLengthPixels = (int)java.lang.Math.round( lineLengthMeters / currentMap.scale );
 
 			String lineLengthString;
-			int backgroundStartX = 0;
 			if (lineLengthMeters < 1000)
 			{
 				lineLengthString = Convert.toString((int) lineLengthMeters) + "m";
-				backgroundStartX = ScaleImage.location.width - lineLengthPixels - ( ((int)digits+1) * 6 ) - 14;
 			}
 			else
 			{
 				lineLengthString = Convert.toString((int) lineLengthMeters / 1000) + "km";
-				backgroundStartX = ScaleImage.location.width - lineLengthPixels - ( ((int)digits-2) * 6 ) - 19;
 			}
+			
+			int backgroundStartX = ScaleImage.location.width - (lineLengthPixels + fm.getTextWidth(lineLengthString) + 7);
 			
 			ScaleImageGraphics.setColor(new Color(250,250,250));
 			ScaleImageGraphics.fillRect(backgroundStartX, 0, ScaleImage.location.width - backgroundStartX ,ScaleImage.location.height);
@@ -230,22 +231,21 @@ public class MovingMap extends Form {
 				ewe.sys.Double dd = new ewe.sys.Double();
 				dd.set(currentDistance);
 				String d;
-				int backgroundWidth = DistanceImage.location.width;
 				if (dd.value < 1) {
 					dd.value = dd.value * 1000; 
 					dd.decimalPlaces = 0;
 					d = "Dist: " + dd.toString() + "m";
 					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
 					digits = java.lang.Math.max(0, digits);
-					backgroundWidth = 6 * (digits + 1) + 36;
 				} 
 				else {
 					dd.decimalPlaces = 2;
 					d = "Dist: " + dd.toString() + "km";
 					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
 					digits = java.lang.Math.max(0, digits);
-					backgroundWidth = 6 * (digits + 3) + 45;
 				}
+				
+				int backgroundWidth = fm.getTextWidth(d) + 4;
 
 				DistanceImageGraphics.setColor(new Color(250,250,250));
 				DistanceImageGraphics.fillRect(0, 0, backgroundWidth ,DistanceImage.location.height);
