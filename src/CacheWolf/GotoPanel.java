@@ -148,7 +148,7 @@ public class GotoPanel extends CellPanel {
 		this.addLast(ButtonP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
 		this.addLast(CoordsP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(2,1));
 		this.addLast(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
-		this.addLast(LogP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.NORTHWEST).setTag(SPAN,new Dimension(1,1));
+		//this.addLast(LogP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.NORTHWEST).setTag(SPAN,new Dimension(1,1));
 
 		// for debuging
 		/*		CWGPSPoint myGPS;
@@ -635,8 +635,14 @@ class GotoRose extends AniImage {
 			}
 			else {
 				//moveDir centered
+				int radius = (int)((float)(java.lang.Math.min(location.width, location.height) / 2) * 0.75f);
+				
 				g.setPen(new Pen(RED,Pen.SOLID,3));
-				g.drawLine(location.width/2, 0, location.width/2, location.height);
+				g.drawLine(location.width/2, location.height/2 - radius, location.width/2, location.height/2 + radius);
+				
+				g.setPen(new Pen(new Color(150,150,150),Pen.SOLID,3));
+				g.drawEllipse(location.width/2 - radius, location.height/2 - radius, 2 * radius, 2 * radius );
+				
 				if (moveDir < 360 && moveDir > -360) {
 					drawDoubleArrow(g, 360 - moveDir, BLUE, RED, 1.0f);
 					if (gotoDir < 360 && gotoDir > -360) drawThinArrow(g, gotoDir - moveDir, moveDirColor, 1.0f);
