@@ -13,8 +13,6 @@ import ewe.net.Socket;
 import ewe.sys.*;
 import ewe.sys.Double;
 
-
-
 /**
  *	Class to create the panel which handles the connection to the GPS-device<br>
  *	Displays: current position,speed and bearing; relation to destination waypoint<br>
@@ -31,10 +29,9 @@ public class GotoPanel extends CellPanel {
 	mButton btnGoto, btnMap;
 	int currFormat;
 
-	mLabel lblPosition, lblSats, lblSpeed, lblBearMov, lblBearWayP, lblDist, lblHDOP;
-	mLabel lblSatsText, lblSpeedText, lblDirText, lblDistText, lblSunAzimut;
-	mLabel lblGPS, lblDST, lblCurr, lblWayP, lblLuminary;
+	mLabel lblGPS, lblPosition, lblDST;
 	mLabel lblLog;
+	Color gpsStatus;
 	mCheckBox chkLog;
 	mInput inpLogSeconds;
 
@@ -48,7 +45,6 @@ public class GotoPanel extends CellPanel {
 	CellPanel ButtonP = new CellPanel();
 	CellPanel CoordsP = new CellPanel();
 	CellPanel roseP = new CellPanel();
-	CellPanel GotoP = new CellPanel();
 	CellPanel LogP = new CellPanel();
 
 	ImageControl icRose;
@@ -61,7 +57,6 @@ public class GotoPanel extends CellPanel {
 
 	final static Font BOLD = new Font("Arial", Font.BOLD, 14);
 
-	GotoRose rose;
 	int ticker = 0;
 	
 	Menu mnuContextFormt;
@@ -132,37 +127,7 @@ public class GotoPanel extends CellPanel {
 		icRose.modifyAll(Control.WantHoldDown, 0); // this is necessary in order to make PenHold on a PDA work as right click
 		roseP.addLast(icRose,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTH));
 
-		//Goto
-		//things from GPS
-		GotoP.addLast(lblCurr = new mLabel(MyLocale.getMsg(1501,"Current")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		lblCurr.backGround = RED;
-		lblCurr.font = BOLD;
-
-		//GotoP.addNext(lblSatsText = new mLabel("Sats: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		//lblSatsText.font = BOLD;
-		GotoP.addLast(lblSats = new mLabel("Sats:    " + Convert.toString(myNavigation.gpsPos.getSats())),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		lblSats.font = BOLD;
-		GotoP.addLast(lblHDOP = new mLabel("HDOP:    " + Convert.toString(myNavigation.gpsPos.getHDOP())),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		lblHDOP.font = BOLD;
-
-
-		GotoP.addLast(lblSpeed = new mLabel(Convert.toString(myNavigation.gpsPos.getSpeed())),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		lblSpeed.font = BOLD;
-
-		GotoP.addLast(lblBearMov = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		lblBearMov.font = BOLD;
-
-		//things about destination
-		GotoP.addLast(lblWayP = new mLabel("WayPoint"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		lblWayP.backGround = Color.DarkBlue;
-		lblWayP.foreGround = Color.White;
-		lblWayP.font = BOLD;
-		GotoP.addLast(lblBearWayP = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		lblBearWayP.font = BOLD;
-
-		GotoP.addLast(lblDist = new mLabel("0"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		lblDist.font = BOLD;
-
+		//log
 		LogP.addNext(lblLog = new mLabel("Log "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		LogP.addNext(chkLog = new mCheckBox(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		LogP.addNext(inpLogSeconds = new mInput("10"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -172,20 +137,10 @@ public class GotoPanel extends CellPanel {
 		chkLog.setState(false);
 		inpLogSeconds.columns = 5;
 
-		LogP.addNext(lblLuminary = new mLabel(SkyOrientation.getLuminaryName(myNavigation.luminary)),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		lblLuminary.backGround = YELLOW;
-		lblLuminary.setTag(SPAN, new Dimension(2,1));
-
-		LogP.addLast(lblSunAzimut = new mLabel("---"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.NORTH));
-		lblSunAzimut.setText("---");
-		lblSunAzimut.font = BOLD;
-
-
 		//add Panels
 		this.addLast(ButtonP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
 		this.addLast(CoordsP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(2,1));
-		this.addNext(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(1,1));
-		this.addLast(GotoP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTHWEST).setTag(SPAN,new Dimension(1,2));
+		this.addLast(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
 		this.addLast(LogP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.NORTHWEST).setTag(SPAN,new Dimension(1,1));
 
 		// for debuging
@@ -251,24 +206,11 @@ public class GotoPanel extends CellPanel {
 	
 	public void updateDistance() {
 		//update distance
-		Double tmp = new Double();
+		float distance = -1.0f;
 		if (myNavigation.gpsPos.isValid() && myNavigation.destination.isValid() ) {
-			tmp.set(myNavigation.gpsPos.getDistance(myNavigation.destination)); // TODO distance in navigate.java berechnen
-			if (tmp.value >= 1){
-				lblDist.setText(MyLocale.formatDouble(tmp,"0.000")+ " km");
-			}
-			else {
-				tmp.set(tmp.value * 1000);
-				lblDist.setText(tmp.toString(3,0,0) + " m");
-			}
+			distance = (float)myNavigation.gpsPos.getDistance(myNavigation.destination);
 		}
-		else lblDist.setText("--- km");
-		// update goto-bearing
-		tmp.set(myNavigation.gpsPos.getBearing(myNavigation.destination));
-		if (tmp.value <= 360) 
-			lblBearWayP.setText(tmp.toString(0,0,0) + " Grad");
-		else lblBearWayP.setText("---" + " Grad");
-		compassRose.setWaypointDirection((float)tmp.value);
+		compassRose.setWaypointDirectionDist((float)myNavigation.gpsPos.getBearing(myNavigation.destination), distance);
 	}
 
 	/**
@@ -279,39 +221,32 @@ public class GotoPanel extends CellPanel {
 		Double speed = new Double();
 		Double sunAzimut = new Double();
 		Vm.debug("ticked: voher");
-		lblSats.setText("Sats: " + Convert.toString(myNavigation.gpsPos.getSats()));
-		lblHDOP.setText("HDOP: " + Convert.toString(myNavigation.gpsPos.getHDOP()));
+		compassRose.setGpsStatus(fix, myNavigation.gpsPos.getSats(), myNavigation.gpsPos.getHDOP());
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) {
 			// display values only, if signal good
 			//Vm.debug("currTrack.add: nachher");
 			lblPosition.setText(myNavigation.gpsPos.toString(currFormat));
-			speed.set(myNavigation.gpsPos.getSpeed());
-			lblSpeed.setText(MyLocale.formatDouble(speed,"0.0") + " km/h");
 			sunAzimut.set(myNavigation.skyOrientationDir.lonDec);
-			if (sunAzimut.value >= -360) lblSunAzimut.setText(MyLocale.formatDouble(sunAzimut,"0.0") + " Grad");
-			else lblSunAzimut.setText("--- Grad");
 			bearMov.set(myNavigation.gpsPos.getBear());
-			lblBearMov.setText(bearMov.toString(0,0,0) + " Grad");
-			compassRose.setSunMoveDirections((float)sunAzimut.value, (float)bearMov.value);
 			updateDistance();
+			compassRose.setSunMoveDirections((float)sunAzimut.value, (float)bearMov.value, (float)speed.value);
 			// Set background to signal quality
-			lblSats.backGround = GREEN;
 		}
 
 		// receiving data, but signal ist not good
 		if ((fix == 0) && (myNavigation.gpsPos.getSats()>= 0)) {
-			lblSats.backGround = YELLOW;
+			gpsStatus = YELLOW;
 		}
 		// receiving no data
 		if (fix == -1) {
-			if (lblSats.backGround != RED) (new MessageBox("Error", "No data from GPS\nConnection to serial port closed",MessageBox.OKB)).exec();
-			lblSats.backGround = RED;
+			if (gpsStatus != RED) (new MessageBox("Error", "No data from GPS\nConnection to serial port closed",MessageBox.OKB)).exec();
+			gpsStatus = RED;
 			myNavigation.stopGps();
 		}
 		// cannot interprete data
 		if (fix == -2) {
-			if (lblSats.backGround != RED) (new MessageBox("Error", "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n "+myNavigation.gpsPos.lastStrExamined, MessageBox.OKB)).exec();
-			lblSats.backGround = RED;
+			if (gpsStatus != RED) (new MessageBox("Error", "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n "+myNavigation.gpsPos.lastStrExamined, MessageBox.OKB)).exec();
+			gpsStatus = RED;
 			myNavigation.stopGps(); // TODO automatic in myNavigate?
 		}
 	}
@@ -328,7 +263,7 @@ public class GotoPanel extends CellPanel {
 
 	public void gpsStoped() {
 		btnGPS.setText("Start");
-		lblSats.backGround = this.backGround;
+		gpsStatus = this.backGround;
 		chkLog.modify(0,ControlConstants.Disabled);
 		this.repaintNow(); // without this the change in the background color will not be displayed
 	}
@@ -396,7 +331,7 @@ public class GotoPanel extends CellPanel {
 						if (action == miLuminary[i]) {
 							myNavigation.setLuminary(i);
 							miLuminary[i].modifiers |= MenuItem.Checked;
-							lblLuminary.setText(SkyOrientation.getLuminaryName(myNavigation.luminary));
+							compassRose.setLuminaryName(SkyOrientation.getLuminaryName(myNavigation.luminary));
 						} else miLuminary[i].modifiers &= ~MenuItem.Checked;
 					}
 				}
@@ -448,6 +383,16 @@ class GotoRose extends AniImage {
 	float gotoDir = -361;
 	float sunDir = -361;
 	float moveDir = -361;
+	float distance = -1;
+	
+	int m_fix = -1;
+	int m_sats = -1;
+	double m_hdop = -1;
+	float m_speed = -1;
+	
+	String m_Luminary = MyLocale.getMsg(6100, "Sun");
+	
+	FontMetrics fm;
 	
 	final static Color RED = new Color(255,0,0);
 	final static Color YELLOW = new Color(255,255,0);
@@ -465,15 +410,30 @@ class GotoRose extends AniImage {
 		super(fn);
 	}
 	
-	public void setWaypointDirection(float wd) {
+	public void setWaypointDirectionDist(float wd, float dist) {
 		gotoDir = wd;
+		distance = dist;
 	}
 	
-	public void setSunMoveDirections(float sd, float md ) {
+	public void setSunMoveDirections(float sd, float md, float speed ) {
 		sunDir = sd;
 		moveDir = md;
+		m_speed = speed;
 		refresh();
 	}
+	
+	public void setGpsStatus(int fix, int sats, double hdop) {
+		m_fix = fix;
+		m_sats = sats;
+		m_hdop = hdop;
+		refresh();
+	}
+	
+	public void setLuminaryName(String Luminary) {
+		m_Luminary = Luminary;
+		refresh();
+	}
+
 	
 	/**
 	 * draw arrows for the directions of movement and destination waypoint
@@ -484,7 +444,128 @@ class GotoRose extends AniImage {
 	
 	public void doDraw(Graphics g,int options) {
 		super.doDraw(g, options);
+		Font font = new Font("Verdana", Font.BOLD, 12);
+		g.setFont(font);
+		fm = g.getFontMetrics(font);
 		drawArrows(g);
+		drawWayPointData(g);
+		drawGpsData(g);
+		drawLuminaryData(g);
+		drawGpsStatus(g);
+	}
+		
+	private void drawWayPointData(Graphics g){
+		String strTemp = "WayPoint";
+		g.setColor(Color.DarkBlue);
+		g.fillRect(0, 0, fm.getTextWidth(strTemp) + 4 ,fm.getHeight());
+		g.setColor(Color.White);		
+		g.drawText(strTemp, 2, 0);
+		
+		g.setColor(Color.Black);		
+		
+		Double tmp = new Double();
+		strTemp = "";
+		if ( distance >= 0.0f ) {
+			tmp.set(distance);
+			if (tmp.value >= 1){
+				strTemp = MyLocale.formatDouble(tmp,"0.000")+ " km";
+			}
+			else {
+				tmp.set(tmp.value * 1000);
+				strTemp = tmp.toString(3,0,0) + " m";
+			}
+		}
+		else strTemp = "--- km";
+		g.drawText(strTemp, 2, 12);
+		
+		tmp.set(gotoDir);
+		if ((tmp.value <= 360) && (tmp.value >= -360))
+			strTemp = tmp.toString(0,0,0) + " " + MyLocale.getMsg(1502,"deg");
+		else strTemp = "---" + " " + MyLocale.getMsg(1502,"deg");
+		g.drawText(strTemp, 2, 24);
+	}
+	
+	private void drawGpsData(Graphics g){
+		g.setColor(RED);
+		
+		String strHeadline = MyLocale.getMsg(1501,"Current");
+		
+		Double tmp = new Double();
+
+		tmp.set(m_speed);
+		String strSpeed = "- km/h";
+		if (m_speed >= 0) {
+			if (m_speed >= 100) {
+				strSpeed = MyLocale.formatDouble(tmp,"0") + " km/h";				
+			}
+			else {
+				strSpeed = MyLocale.formatDouble(tmp,"0.0") + " km/h";
+			}
+		}
+		
+		tmp.set(moveDir);
+		String strMoveDir = "---" + " " + MyLocale.getMsg(1502,"deg");
+		if ((tmp.value <= 360) && (tmp.value >= -360))
+			strMoveDir = tmp.toString(0,0,0) + " " + MyLocale.getMsg(1502,"deg");
+
+		int textWidth = java.lang.Math.max(fm.getTextWidth(strSpeed), fm.getTextWidth(strMoveDir));
+		textWidth = java.lang.Math.max(textWidth, fm.getTextWidth(strHeadline));
+		
+		int startX = location.width - (textWidth + 4);
+		g.fillRect(startX, 0, location.width - startX ,12);
+		
+		g.setColor(Color.Black);		
+		g.drawText(strHeadline, startX + 2, 0);		
+		g.drawText(strSpeed, startX + 2, 12);
+		g.drawText(strMoveDir, startX + 2, 24);
+	}
+	
+	private void drawLuminaryData(Graphics g){
+		g.setColor(YELLOW);
+
+		String strSunDir = "---" + " " + MyLocale.getMsg(1502,"deg");
+		if (sunDir < 360 && sunDir > -360) {
+			Double tmp = new Double();
+			tmp.set(sunDir);
+			strSunDir = tmp.toString(0,0,0) + " " + MyLocale.getMsg(1502,"deg");
+		}
+
+		int textWidth = java.lang.Math.max(fm.getTextWidth(m_Luminary), fm.getTextWidth(strSunDir));
+		int startY = location.height - 24;
+		g.fillRect(0, startY, textWidth + 4, location.height - startY);
+
+		g.setColor(Color.Black);		
+		g.drawText(m_Luminary, 2, startY);
+		g.drawText(strSunDir, 2, startY + 12);
+	}
+	
+	private void drawGpsStatus(Graphics g){
+		if ((m_fix > 0) && (m_sats >= 0)) {
+			// Set background to signal quality
+			g.setColor(GREEN);
+		}
+		else
+		// receiving data, but signal ist not good
+		if ((m_fix == 0) && (m_sats >= 0)) {
+			g.setColor(YELLOW);
+		}
+		else {
+			g.setColor(RED);
+		}
+
+		String strSats = "Sats: -";
+		if (m_sats >= 0) strSats = "Sats: " + Convert.toString(m_sats);
+		String strHdop = "HDOP: -";
+		if (m_hdop >= 0) strHdop = "HDOP: " + Convert.toString(m_hdop);
+
+		int textWidth = java.lang.Math.max(fm.getTextWidth(strSats), fm.getTextWidth(strHdop));
+		int startX = location.width - (textWidth + 4);
+		int startY = location.height - 24;
+		g.fillRect(startX, startY, location.width - startX ,location.height - startY);
+
+		g.setColor(Color.Black);
+		g.drawText(strSats, startX + 2, startY);
+		g.drawText(strHdop, startX + 2, startY + 12);
 	}
 
 	private void drawArrows(Graphics g){
@@ -535,10 +616,11 @@ class GotoRose extends AniImage {
 	private void drawArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad;
 		int x, y, centerX = location.width/2, centerY = location.height/2;
+		int arrowLength = java.lang.Math.min(centerX, centerY); 
 
 		angleRad = (angle) * (float)java.lang.Math.PI / 180;
-		x = centerX + new Float(centerX * java.lang.Math.sin(angleRad) * scale).intValue();
-		y = centerY - new Float(centerY * java.lang.Math.cos(angleRad) * scale).intValue();
+		x = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad) * scale).intValue();
+		y = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad) * scale).intValue();
 		g.setPen(new Pen(col,Pen.SOLID,3));
 		g.drawLine(centerX,centerY,x,y);
 	}
