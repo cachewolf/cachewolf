@@ -397,7 +397,7 @@ class GotoRose extends AniImage {
 	final static Color RED = new Color(255,0,0);
 	final static Color YELLOW = new Color(255,255,0);
 	final static Color GREEN = new Color(0,255,0);
-	final static Color BLUE = new Color(0,255,255);
+	final static Color BLUE = new Color(0,0,255);
 	final static Color ORANGE = new Color(255,128,0);
 	final static Color DARKGREEN = new Color(0,192,0);
 
@@ -601,9 +601,10 @@ class GotoRose extends AniImage {
 			}
 
 			// draw only valid arrows
-			if (gotoDir < 360 && gotoDir > -360) drawArrow(g, gotoDir, Color.DarkBlue, 1.0f);
-			if (moveDir < 360 && moveDir > -360) drawArrow(g, moveDir, moveDirColor, 1.0f);
-			if (sunDir < 360 && sunDir > -360) drawArrow(g, sunDir, YELLOW, 0.75f);
+			if (gotoDir < 360 && gotoDir > -360) drawThickArrow(g, gotoDir, Color.DarkBlue, 1.0f);
+			if (moveDir < 360 && moveDir > -360) drawThinArrow(g, moveDir, moveDirColor, 1.0f);
+			if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir, YELLOW, 0.75f);
+			//drawDoubleArrow(g, 0, BLUE, RED, 1.0f);
 		}
 	}
 
@@ -613,7 +614,7 @@ class GotoRose extends AniImage {
 	 * @param angle angle of arrow
 	 * @param col color of arrow
 	 */
-	private void drawArrow(Graphics g, float angle, Color col, float scale) {
+	private void drawSimpleArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad;
 		int x, y, centerX = location.width/2, centerY = location.height/2;
 		int arrowLength = java.lang.Math.min(centerX, centerY); 
@@ -623,5 +624,113 @@ class GotoRose extends AniImage {
 		y = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad) * scale).intValue();
 		g.setPen(new Pen(col,Pen.SOLID,3));
 		g.drawLine(centerX,centerY,x,y);
+	}
+	
+	private void drawSunArrow(Graphics g, float angle, Color col, float scale) {
+		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
+		int centerX = location.width/2, centerY = location.height/2;
+		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float halfArrowWidth = arrowLength * 0.08f;
+		float circlePos = arrowLength * 0.7f;
+		int circleRadius = (int)(arrowLength * 0.1f);
+
+		int pointX = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
+		int pointY = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
+		int circleX = centerX + new Float(circlePos * java.lang.Math.sin(angleRad)).intValue();
+		int circleY = centerY - new Float(circlePos * java.lang.Math.cos(angleRad)).intValue();
+
+		int[] pointsX = new int[4];
+		int[] pointsY = new int[4];
+
+		pointsX[0] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
+		pointsY[0] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
+		pointsX[1] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI / 2.0)).intValue();
+		pointsY[1] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI / 2.0)).intValue();
+		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI)).intValue();
+		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI)).intValue();
+		pointsX[3] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 2.0)).intValue();
+		pointsY[3] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 2.0)).intValue();
+		
+//		g.setPen(new Pen(col,Pen.SOLID,3));
+//		g.drawLine(centerX,centerY,pointX,pointY);
+		
+		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
+		g.setBrush(new Brush(col, Brush.SOLID));
+		g.fillPolygon(pointsX, pointsY, 4);
+		g.fillEllipse(circleX - circleRadius, circleY - circleRadius, 2 * circleRadius, 2 * circleRadius);
+	}
+	
+	private void drawThinArrow(Graphics g, float angle, Color col, float scale) {
+		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
+		int centerX = location.width/2, centerY = location.height/2;
+		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float halfOpeningAngle = (float)(java.lang.Math.PI * 0.03);
+		float sideLineLength = arrowLength * 0.75f;
+		
+		int[] pointsX = new int[4];
+		int[] pointsY = new int[4];
+
+		pointsX[0] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
+		pointsY[0] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
+		pointsX[1] = centerX + new Float(sideLineLength * java.lang.Math.sin(angleRad + halfOpeningAngle)).intValue();
+		pointsY[1] = centerY - new Float(sideLineLength * java.lang.Math.cos(angleRad + halfOpeningAngle)).intValue();
+		pointsX[2] = centerX;
+		pointsY[2] = centerY;
+		pointsX[3] = centerX + new Float(sideLineLength * java.lang.Math.sin(angleRad - halfOpeningAngle)).intValue();
+		pointsY[3] = centerY - new Float(sideLineLength * java.lang.Math.cos(angleRad - halfOpeningAngle)).intValue();
+		
+		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
+		g.setBrush(new Brush(col, Brush.SOLID));
+		g.fillPolygon(pointsX, pointsY, 4);
+	}
+	
+	private void drawDoubleArrow(Graphics g, float angle, Color colFront, Color colRear, float scale) {
+		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
+		int centerX = location.width/2, centerY = location.height/2;
+		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float halfArrowWidth = arrowLength * 0.1f;
+		
+		int[] pointsX = new int[3];
+		int[] pointsY = new int[3];
+
+		pointsX[0] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
+		pointsY[0] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
+		pointsX[1] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI / 2.0)).intValue();
+		pointsY[1] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI / 2.0)).intValue();
+		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 2.0)).intValue();
+		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 2.0)).intValue();
+		
+		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
+		g.setBrush(new Brush(colFront, Brush.SOLID));
+		g.fillPolygon(pointsX, pointsY, 3);
+		
+		pointsX[0] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad + java.lang.Math.PI)).intValue();
+		pointsY[0] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad + java.lang.Math.PI)).intValue();
+		
+		g.setBrush(new Brush(colRear, Brush.SOLID));
+		g.fillPolygon(pointsX, pointsY, 3);
+	}
+	
+	private void drawThickArrow(Graphics g, float angle, Color col, float scale) {
+		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
+		int centerX = location.width/2, centerY = location.height/2;
+		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float halfArrowWidth = arrowLength * 0.1f;
+		
+		int[] pointsX = new int[4];
+		int[] pointsY = new int[4];
+
+		pointsX[0] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
+		pointsY[0] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
+		pointsX[1] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI / 2.0)).intValue();
+		pointsY[1] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI / 2.0)).intValue();
+		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI)).intValue();
+		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI)).intValue();
+		pointsX[3] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 2.0)).intValue();
+		pointsY[3] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 2.0)).intValue();
+		
+		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
+		g.setBrush(new Brush(col, Brush.SOLID));
+		g.fillPolygon(pointsX, pointsY, 4);
 	}
 }
