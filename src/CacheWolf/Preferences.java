@@ -90,6 +90,8 @@ public class Preferences extends MinML{
 	/** If this flag is true, only non-logged travelbug journeys will be shown */
 	public boolean travelbugShowOnlyNonLogged=false;
 	
+	public boolean northCenteredGoto = true;
+	
 	public String mapsPath = "maps/standard";
 	// Helper variables for XML parser 
 	private StringBuffer collectElement=null; 
@@ -399,6 +401,9 @@ public class Preferences extends MinML{
 			travelbugColWidth=atts.getValue("colwidths");	
 			travelbugShowOnlyNonLogged=Boolean.valueOf(atts.getValue("shownonlogged")).booleanValue();
 		}
+		if (name.equals("gotopanel")) {
+			northCenteredGoto = Boolean.valueOf(atts.getValue("northcentered")).booleanValue();
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -448,6 +453,7 @@ public class Preferences extends MinML{
 			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" />\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
+			outp.print("    <gotopanel northcentered=\""+northCenteredGoto+"\" />\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath +"\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			// save last path of different exporters

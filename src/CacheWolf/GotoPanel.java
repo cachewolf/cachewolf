@@ -412,7 +412,7 @@ class GotoRose extends AniImage {
 	
 	FontMetrics fm;
 	
-	boolean northCentered = true;
+	boolean northCentered = Global.getPref().northCenteredGoto;
 	
 	final static Color RED = new Color(255,0,0);
 	final static Color YELLOW = new Color(255,255,0);
@@ -774,6 +774,10 @@ class GotoRose extends AniImage {
 	
 	public void setNorthCentered(boolean nc) {
 		northCentered = nc;
+		if (northCentered != Global.getPref().northCenteredGoto) {
+			Global.getPref().northCenteredGoto = northCentered;
+			Global.getPref().savePreferences();
+		}
 		refresh();
 	}
 	
