@@ -95,8 +95,7 @@ public class MainTab extends mTabbedPanel {
 			// Perform clean up actions for the panel we are leaving
 			onLeavingPanel(oldCard);
 			// Prepare actions for the panel we are about to enter
-			onEnteringPanel(getSelectedItem());
-			oldCard=getSelectedItem();
+			onEnteringPanel(oldCard=((MultiPanelEvent)ev).selectedIndex);
 		}
 		super.onEvent(ev); //Make sure you call this.
 		// If we are in Listview update status

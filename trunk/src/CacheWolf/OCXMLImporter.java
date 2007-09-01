@@ -54,6 +54,7 @@ public class OCXMLImporter extends MinML {
 	String logData, logIcon, logDate, logFinder;
 	int logtype;
 	String user;
+	double longitude;
 
 
 	public OCXMLImporter(Preferences p,Profile prof)
@@ -440,12 +441,12 @@ public class OCXMLImporter extends MinML {
 		}
 
 		if(name.equals("longitude")){
-			chD.LatLon = GPXImporter.londeg2min(strData);
+			longitude = Common.parseDouble(strData);
 			return;
 		}
 		if(name.equals("latitude")) {
-			chD.LatLon = GPXImporter.latdeg2min(strData) + " " + chD.LatLon;
-			chD.pos.set(chD.LatLon);
+			chD.pos.set(Common.parseDouble(strData),longitude);
+			chD.LatLon = chD.pos.toString();
 			return;
 		}
 		if(name.equals("difficulty")) {

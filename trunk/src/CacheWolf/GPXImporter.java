@@ -39,7 +39,8 @@ public class GPXImporter extends MinML {
 	public static final int DOIT_WITHSPOILER = 2;
 	boolean getMaps = false;
 	SpiderGC imgSpider;
-		
+	StringBuffer strBuf;
+	
 	public GPXImporter(Preferences p, Profile prof, String f )
 	{
 		profile=prof;
@@ -53,7 +54,6 @@ public class GPXImporter extends MinML {
 		inCache = false;
 		inLogs = false;
 		inBug =false;
-		strData = new String();
 		//index db for faster search
 		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
@@ -148,7 +148,7 @@ public class GPXImporter extends MinML {
 			}
 	}
 	public void startElement(String name, AttributeList atts){
-		strData ="";
+		strBuf=new StringBuffer(300);
 		if (name.equals("gpx")){
 			// check for opencaching
 			if (atts.getValue("creator").indexOf("opencaching")> 0) fromOC = true;
@@ -161,8 +161,8 @@ public class GPXImporter extends MinML {
 		}
 		if (name.equals("wpt")) {
 			holder = new CacheHolderDetail();
-			holder.LatLon = latdeg2min(atts.getValue("lat")) + " " +londeg2min(atts.getValue("lon"));
 			holder.pos.set(Common.parseDouble(atts.getValue("lat")),Common.parseDouble(atts.getValue("lon")));
+			holder.LatLon=holder.pos.toString();
 			inWpt = true;
 			inLogs = false;
 			inBug = false;
@@ -234,6 +234,7 @@ public class GPXImporter extends MinML {
 	}
 	
 	public void endElement(String name){
+		strData=strBuf.toString();
 		//Vm.debug("Ende: " + name);
 		
 		// logs
@@ -468,69 +469,10 @@ public class GPXImporter extends MinML {
 
 	}
 	public void characters(char[] ch,int start,int length){
-		String chars = new String(ch,start,length);
-		strData += chars;
-		if (debugGPX) Vm.debug("Char: " + chars);
+		strBuf.append(ch,start,length);
+		if (debugGPX) Vm.debug("Char: " + strBuf.toString());
 	}
 	
-	public static String latdeg2min(String lat){
-		String res = new String();
-		String deg = new String();
-		String min = new String();
-		Double minDouble = new Double();
-		
-		// Get degrees
-		if (lat.indexOf('.') < 0) lat = lat + ".0";
-		deg = lat.substring(0, lat.indexOf('.'));
-		if (deg.substring(0,1).equals("-")){
-			res = "S " + replace(deg, "-","") + "° ";
-		}
-		else  res = "N " + deg + "° ";
-
-		// Get minutes
-		min = lat.substring(lat.indexOf('.')+1);
-		minDouble.set(Common.parseDouble("0." +min)*60);
-		minDouble.decimalPlaces = 3;
-				
-		// and back to string
-		min = minDouble.toString().replace(',','.');
-		// add leading '0'
-		if (min.indexOf('.') == 1) min = "0" + min;
-		// Build return string
-		res += min;
-		return res;
-	}
-	public static String londeg2min(String lon){
-		String res = new String();
-		String deg = new String();
-		String min = new String();
-		Double minDouble = new Double();
-		
-		
-		// Get degrees
-		if (lon.indexOf('.') < 0) lon = lon + ".0";
-		deg = lon.substring(0, lon.indexOf('.'));
-		if (deg.substring(0,1).equals("-")){
-			res = "W ";
-			deg = replace(deg, "-","");
-		} else  res = "E ";
-		// fill up leading '0'
-		for (int i=deg.length();i<3;i++)
-			res += "0";
-		res += deg + "° ";
-		// Get minutes
-		min = lon.substring(lon.indexOf('.')+1);
-		minDouble.set(Common.parseDouble("0."+ min) * 60);
-		minDouble.decimalPlaces = 3;
-				
-		// and back to string
-		min = minDouble.toString().replace(',','.');
-		// add leading '0'
-		if (min.indexOf('.') == 1) min = "0" + min;
-		// Build return string
-		res += min;
-		return res;
-	}
 
 	public static String typeText2Image(String typeText){
 		if (typeText.equals("Found it")||typeText.equals("Found")||typeText.equals("find")) return "<img src='icon_smile.gif'>&nbsp;";
@@ -598,7 +540,7 @@ public class GPXImporter extends MinML {
 		if (imgSpider == null) imgSpider = new SpiderGC(pref, profile, false);
 		
 		if (fromTC) {
-			imgSpider.getImages(holder.LongDescription, holder);
+				imgSpider.getImages(holder.LongDescription, holder);
 		}
 		else {
 			addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.wayPoint ;

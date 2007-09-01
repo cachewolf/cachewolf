@@ -90,8 +90,8 @@ public class LOCXMLImporter extends MinML {
 			return;
 		}
 		if (name.equals("coord")){
-			holder.LatLon = GPXImporter.latdeg2min(atts.getValue("lat")) + " " + GPXImporter.londeg2min(atts.getValue("lon"));
 			holder.pos.set(Common.parseDouble(atts.getValue("lat")),Common.parseDouble(atts.getValue("lon")));
+			holder.LatLon = holder.pos.toString();
 			return;
 		}
 
