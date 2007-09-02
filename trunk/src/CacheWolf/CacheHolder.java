@@ -1,4 +1,5 @@
 package CacheWolf;
+import ewe.sys.Convert;
 import ewe.sys.Vm;
 import ewe.util.Vector;
 
@@ -87,6 +88,8 @@ public String lastSyncOC = EMPTY;
  *  the sort is always done on this field to speed up the sorting process 
  */
 public String sort;
+private static StringBuffer sb=new StringBuffer(530); // Used in toXML()
+
 //static int nObjects=0;
 CacheHolder() {//nObjects++;Vm.debug("CacheHolder() nO="+nObjects);
 }
@@ -132,6 +135,40 @@ public void update(CacheHolder ch) {
 	this.is_HTML = ch.is_HTML;
 	this.sort=ch.sort;
 	this.lastSyncOC = ch.lastSyncOC;
+}
+
+/** Return a XML string containing all the cache data for storing in index.xml */
+public String toXML() {
+	sb.delete(0,sb.length());
+	sb.append("    <CACHE name = \"");
+	sb.append(SafeXML.clean(CacheName));
+	sb.append("\" owner = \"");		sb.append(SafeXML.clean(CacheOwner));
+	sb.append("\" lat = \""); 		sb.append(pos.latDec ); 
+	sb.append("\" lon = \"");		sb.append(pos.lonDec);
+	sb.append("\" hidden = \"");	sb.append(DateHidden);
+	sb.append("\" wayp = \"");		sb.append(SafeXML.clean(wayPoint));
+	sb.append("\" status = \"");	sb.append(CacheStatus);
+	sb.append("\" type = \"");		sb.append(type);
+	sb.append("\" dif = \"");		sb.append(hard);
+	sb.append("\" terrain = \"" );	sb.append(terrain ); 
+	sb.append("\" filtered = \"" ); sb.append(is_filtered); // This was 'dirty', but dirty is not used
+	sb.append("\" size = \"");		sb.append(CacheSize);
+	sb.append("\" online = \"" );	sb.append(is_available); 
+	sb.append("\" archived = \"" );	sb.append(is_archived); 
+	sb.append("\" has_bug = \"" ); 	sb.append(has_bug); 
+	sb.append("\" black = \"" ); 	sb.append(is_black); 
+	sb.append("\" owned = \"" ); 	sb.append(is_owned); 
+	sb.append("\" found = \"" ); 	sb.append(is_found); 
+	sb.append("\" is_new = \"" );	sb.append(is_new);
+	sb.append("\" is_log_update = \"" );sb.append(is_log_update); 
+	sb.append("\" is_update = \"" );sb.append(is_update); 
+	sb.append("\" is_HTML = \"" ); 	sb.append(is_HTML); 
+	sb.append("\" DNFLOGS = \"" ); 	sb.append(noFindLogs ); 
+	sb.append("\" ocCacheID = \"" );sb.append(ocCacheID ); 
+	sb.append("\" is_INCOMPLETE = \"");sb.append(is_incomplete); 
+	sb.append("\" lastSyncOC = \"" );sb.append(lastSyncOC ); 
+	sb.append("\" />\n");
+	return sb.toString();
 }
 
 public void setLatLon(String latLon) {
