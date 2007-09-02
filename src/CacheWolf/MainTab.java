@@ -48,8 +48,7 @@ public class MainTab extends mTabbedPanel {
 		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
 		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
 		calcP = new CalcPanel(); // Init here so that Global.MainT is already set
-		tbP = new TablePanel(pref, profile, statBar);
-		Card c = this.addCard(new TableForm(tbP), MyLocale.getMsg(1200,"List"), null);
+		Card c = this.addCard(tbP=new TablePanel(pref, profile, statBar), MyLocale.getMsg(1200,"List"), null);
 
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
 		c.iconize(new Image("details.gif"),true);
@@ -77,6 +76,7 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(radarP, "Radar", null);
 		radarP.setMainTab(this);
 		c.iconize(new Image("radar.gif"),true);
+		mnuMain.allowProfileChange(true);
 	}
 
 	public TablePanel getTablePanel(){
@@ -89,17 +89,19 @@ public class MainTab extends mTabbedPanel {
 	}
 
 
-	public void onEvent(Event ev)
-	{
+	public void onEvent(Event ev) {
 		if(ev instanceof MultiPanelEvent){
+			// Check whether a profile change is allowed, if not disable the relevant options
+			checkProfileChange();
 			// Perform clean up actions for the panel we are leaving
 			onLeavingPanel(oldCard);
 			// Prepare actions for the panel we are about to enter
-			onEnteringPanel(oldCard=((MultiPanelEvent)ev).selectedIndex);
+			onEnteringPanel(((MultiPanelEvent)ev).selectedIndex);
+			oldCard=((MultiPanelEvent)ev).selectedIndex;
 		}
 		super.onEvent(ev); //Make sure you call this.
 		// If we are in Listview update status
-		if (this.getSelectedItem()==0) statBar.updateDisplay();
+		if (this.getSelectedItem()==0 && statBar!=null) statBar.updateDisplay();
 	}
 
 	/**
@@ -161,16 +163,7 @@ public class MainTab extends mTabbedPanel {
 			updatePendingChanges();
 			if (detP.hasBlackStatusChanged()) {
 				// Restore the filter status (this automatically sets the status for blacklisted caches)
-				//TODO This is not very elegant (see also SearchCache)
-				Filter flt=new Filter();
-				if (Filter.filterActive) {
-					flt.setFilter();
-					flt.doFilter();
-				} else {
-					flt.clearFilter();
-				}
-				if (Filter.filterInverted) 
-					flt.invertFilter();
+				Global.getProfile().restoreFilter();
 				tbP.refreshTable();
 			}
 			break;
@@ -237,7 +230,7 @@ public class MainTab extends mTabbedPanel {
 		tbP.pref = pref;
 		profile.updateBearingDistance();
 		tbP.refreshTable();
-		(new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet").replace('~','\n'), MessageBox.OKB)).execute();
+		//(new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet").replace('~','\n'), MessageBox.OKB)).execute();
 	}
 
 	public void gotoPoint(String LatLon) { // TODO übergabe nicht als String
@@ -358,6 +351,14 @@ public class MainTab extends mTabbedPanel {
 		if (saveIndex) profile.saveIndex(Global.getPref(),false);
 	}
 	
+	private void checkProfileChange() {
+		// A panel is selected. Could be the same panel twice
+		mnuMain.allowProfileChange(false);	  
+		if(this.getSelectedItem() == 0){// List view selected
+			mnuMain.allowProfileChange(true);	  
+			MyLocale.setSIPOff();
+		}
+	}
 }
 // 
 

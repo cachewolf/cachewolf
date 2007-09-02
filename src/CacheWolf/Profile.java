@@ -57,7 +57,7 @@ public class Profile {
 	public String filterDiff=new String("L");
 	public String filterTerr=new String("L");
 	// Saved filterstatus - is only refreshed from class Filter when Profile is saved
-	public boolean filterActive=false;
+	public int filterActive=Filter.FILTER_INACTIVE;
 	public boolean filterInverted=false;
 
 	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map 
@@ -102,7 +102,7 @@ public class Profile {
 
 	
 	/** Save index with filter settings given */ 
-	public void saveIndex(Preferences pref, boolean showprogress, boolean saveFilterActive, boolean saveFilterInverted){
+	public void saveIndex(Preferences pref, boolean showprogress, int saveFilterActive, boolean saveFilterInverted){
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 		if(showprogress){
@@ -143,7 +143,7 @@ public class Profile {
 				distOC = "0";
 			}
 
-			detfile.print("    <FILTER status = \""+(saveFilterActive?"T":"F")+(saveFilterInverted?"T":"F")+ 
+			detfile.print("    <FILTER status = \""+saveFilterActive+(saveFilterInverted?"T":"F")+ 
 					"\" rose = \""+filterRose+"\" type = \""+filterType+
 					"\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
 					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" />\n");
@@ -157,11 +157,12 @@ public class Profile {
 				ch = (CacheHolder)cacheDB.get(i);
 				////Vm.debug("Saving: " + ch.CacheName);
 				if(ch.wayPoint.length()>0) { //TODO && ch.LongDescription.equals("An Error Has Occured") == false){
-					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
+/*					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
 							//"\" lat = \""+ SafeXML.clean(ch.LatLon) +
 							"\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
 							"\" hidden = \""+ch.DateHidden+"\" wayp = \""+SafeXML.clean(ch.wayPoint)+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"false" + // ch.dirty + dirty is not used, so we save it as false 
 							"\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\" is_INCOMPLETE = \""+Convert.toString(ch.is_incomplete)+ "\" lastSyncOC = \"" + ch.lastSyncOC + "\" />\n");
+*/					detfile.print(ch.toXML());
 				}
 			}
 			detfile.print("</CACHELIST>\n");
@@ -221,8 +222,8 @@ public class Profile {
 					ch.type = ex.findNext();
 					ch.hard = ex.findNext();
 					ch.terrain = ex.findNext();
-					//ch.dirty =  ch.dirty is not used 
-					ex.findNext(); // Need to skip dirty
+					// The next item was 'dirty' but this is no longer used.
+					ch.is_filtered = ex.findNext().equals("true") ? true : false; 
 					ch.CacheSize = ex.findNext();
 					ch.is_available = ex.findNext().equals("true") ? true : false;
 					ch.is_archived = ex.findNext().equals("true") ? true : false;
@@ -268,7 +269,11 @@ public class Profile {
 					ex.setSource(text);
 					String temp=ex.findNext(); // Filter status is now first, need to deal with old versions which don't have filter status
 					if (temp.length()==2) {
-						filterActive=temp.charAt(0)=='T';
+						// Compatibility with previous versions
+						if (temp.charAt(0)=='T') 
+							filterActive=Filter.FILTER_ACTIVE;
+						else
+							filterActive=Common.parseInt(temp.substring(0,1));
 						filterInverted=temp.charAt(1)=='T';
 						filterRose = ex.findNext();
 					} else 
@@ -311,12 +316,14 @@ public class Profile {
 	 **/
 	void restoreFilter() {
 		Filter flt=new Filter();
-		if (filterActive) {
+		if (filterActive==Filter.FILTER_ACTIVE) {
 			flt.setFilter();
 			flt.doFilter();
+			if (filterInverted) 
+				flt.invertFilter();
+		} else if (filterActive==Filter.FILTER_CACHELIST) {
+			flt.filterActive=filterActive;
 		}
-		if (filterInverted) 
-			flt.invertFilter();
 	}
 
 	public int getCacheIndex(String wp){

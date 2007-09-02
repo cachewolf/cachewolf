@@ -51,7 +51,7 @@ public class NewProfileForm extends Form {
 						profileDir="";
 						this.close(-1);
 					}
-					Filter.filterActive=false;
+					Filter.filterActive=Filter.FILTER_INACTIVE;
 					Filter.filterInverted=false;
 					this.close(0);
 				}

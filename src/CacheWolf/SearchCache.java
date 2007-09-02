@@ -48,15 +48,7 @@ public class SearchCache {
 	* cache database. Restore to the state of the filter
 	*/
 	public void clearSearch(){
-		Filter flt=new Filter();
-		if (Filter.filterActive) {
-			flt.setFilter();
-			flt.doFilter();
-		} else {
-			flt.clearFilter();
-		}
-		if (Filter.filterInverted) 
-			flt.invertFilter();
+		Global.getProfile().restoreFilter();
 		for(int i = cacheDB.size()-1;i >=0;i--){
 			((CacheHolder)cacheDB.get(i)).is_flaged=false;
 		}
