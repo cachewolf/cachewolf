@@ -23,7 +23,6 @@ public class RadarPanel extends CellPanel{
 	int scaleKm = 30;
 	int centerX, centerY;
 	int height, width;
-	Image cacheImages[] = new Image[454];
 	String selectedWaypoint = new String();
 	MainTab mt;
 	boolean penMoving = false;
@@ -35,27 +34,6 @@ public class RadarPanel extends CellPanel{
 	* "navigation" buttons.
 	*/
 	public RadarPanel(){
-		cacheImages[0] = new Image("0.png");
-		//cacheImages[1] = new Image();
-		cacheImages[2] = new Image("2.png");
-		cacheImages[3] = new Image("3.png");
-		cacheImages[4] = new Image("4.png");
-		cacheImages[5] = new Image("5.png");
-		cacheImages[6] = new Image("6.png");
-		cacheImages[8] = new Image("8.png");
-		//cacheImages[9] = new Image();
-		//cacheImages[10] = new Image();
-		cacheImages[11] = new Image("11.png");
-		cacheImages[12] = new Image("12.png");
-		cacheImages[13] = new Image("13.png");
-		//additional waypoints, begin with 50
-		cacheImages[50] = new Image("pkg.png");
-		cacheImages[51] = new Image("stage.png");
-		cacheImages[52] = new Image("puzzle.png");
-		cacheImages[53] = new Image("flag.png");
-
-		cacheImages[137] = new Image("137.png");
-		cacheImages[453] = new Image("453.png");
 		this.addLast(iActP = new myInteractivePanel(), this.STRETCH, this.FILL);
 		CellPanel cp = new CellPanel();
 		cp.addNext(btMinus,this.DONTSTRETCH, (this.DONTFILL|this.WEST));
@@ -155,9 +133,9 @@ public class RadarPanel extends CellPanel{
 							iActP.addImage(aImg);
 						}
 					}
-					Image imgCache=cacheImages[Convert.parseInt(holder.type)];
+					Image imgCache=myTableModel.cacheImages[Convert.parseInt(holder.type)];
 					// If we have no image for the cache type use a question mark
-					if (imgCache==null) imgCache=cacheImages[8]; 
+					if (imgCache==null) imgCache=myTableModel.cacheImages[8]; 
 					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = holder.wayPoint;
 					rpi.rownum = i;
