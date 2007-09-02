@@ -241,6 +241,7 @@ public class CacheList extends CellPanel {
 	public void applyCacheList() {
 		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
+		int wrongBlackStatus=0;
 		String apply="\uFFFF"+Convert.toString(applyCount++);
 		// Start by setting all caches to filtered
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
@@ -263,15 +264,21 @@ public class CacheList extends CellPanel {
 				ch=null;
 				ch=(CacheHolder) cacheDB.get(idx);
 			}
-			ch.is_filtered=false;
-			ch.sort=MyLocale.formatLong(i,"00000");
+			if (ch.is_black!=Filter.showBlacklisted) 
+				wrongBlackStatus++;
+			else {
+				ch.is_filtered=false;
+				ch.sort=MyLocale.formatLong(i,"00000");
+			}
 		}
 		// The sort command places all filtered caches at the end
 		cacheDB.sort(new mySort(),false);
 		Filter.filterActive=Filter.FILTER_CACHELIST;
 		Filter.filterInverted=false;
-		updateScreen();
-		
+		updateScreen(cacheList.size()-wrongBlackStatus);
+		if (wrongBlackStatus>0)
+			(new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(4600,"Some cache(s) cannot be shown because of wrong blacklist status"), MessageBox.OKB)).execute();
+
 	}
 	
 	/** Add a cache (and its addis) to the list 
@@ -314,8 +321,8 @@ public class CacheList extends CellPanel {
 			return false;
 	}
 	
-	void updateScreen() {
-		Global.mainTab.tbP.myMod.numRows=cacheList.size();
+	void updateScreen(int numRows) {
+		Global.mainTab.tbP.myMod.numRows=numRows;
 		// Check whether the currently selected cache is still visible
 		//selectRow(getSelectedCache());
 		Global.mainTab.tbP.tc.update(true); // Update and repaint

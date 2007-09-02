@@ -42,11 +42,11 @@ public class MainForm extends Editor {
 
 	protected boolean canExit(int exitCode) {
 		mTab.saveUnsavedChanges(true);
-		return true;
+		return pref.hasCloseButton;
 	}
 	
 	public void doIt(){
-	//	CellPanel [] p = addToolbar();
+		//CellPanel [] p = addToolbar();
 		Global.mainForm=this;
 		//this.title = "CacheWolf " + Version.getRelease();
 		this.exitSystemOnClose = true;
@@ -54,6 +54,7 @@ public class MainForm extends Editor {
 		this.moveable = true;
 		this.windowFlagsToSet = Window.FLAG_MAXIMIZE_ON_PDA;
 		if(Vm.isMobile() == true) {
+			//this.windowFlagsToSet |=Window.FLAG_FULL_SCREEN;
 			this.resizable = false;
 			this.moveable = false;
 		}
@@ -100,11 +101,7 @@ public class MainForm extends Editor {
 		pnlMainTab.addLast(mTab,STRETCH,FILL);
 		
 		mTab.dontAutoScroll=true;
-		//p[0].addLast(mMenu);
-		//p[0].addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
-		//p[1].addLast(split,STRETCH,FILL);
-		this.addLast(split,STRETCH,FILL);
-		/*
+		
 		if (pref.menuAtTop) {
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 			this.addLast(split,STRETCH,FILL);
@@ -112,7 +109,6 @@ public class MainForm extends Editor {
 			this.addLast(split,STRETCH,FILL);
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		}
-		*/
 		mMenu.setTablePanel(mTab.getTablePanel());
 		infB.close(0);
 		mTab.tbP.selectFirstRow();
@@ -152,12 +148,12 @@ public class MainForm extends Editor {
 			// Make the splitterbar visible with a width of 6 
 			split.theSplitter.modify(0,Invisible);
 			split.theSplitter.resizeTo(6,split.theSplitter.getRect().height);
-			Global.mainForm.mMenu.orgCacheTour.modifiers|=MenuItem.Checked;
+			Global.mainForm.mMenu.filtCacheTour.modifiers|=MenuItem.Checked;
 		} else {
 			// Hide the splitterbar and set width to 0
 			split.theSplitter.modify(Invisible,0);
 			split.theSplitter.resizeTo(0,split.theSplitter.getRect().height);
-			Global.mainForm.mMenu.orgCacheTour.modifiers&=~MenuItem.Checked;
+			Global.mainForm.mMenu.filtCacheTour.modifiers&=~MenuItem.Checked;
 		}
 		split.theSplitter.doOpenClose(cacheListVisible);
 		Global.mainForm.mMenu.repaint();

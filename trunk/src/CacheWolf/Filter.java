@@ -11,12 +11,16 @@ import com.stevesoft.ewe_pat.*;
 *   @author BilboWolf (optimiert von salzkammergut)
 */
 public class Filter{
+	public static final int FILTER_INACTIVE=0;
+	public static final int FILTER_ACTIVE=1;
+	public static final int FILTER_CACHELIST=2;
+	
 	/** Toggle for showing blacklisted caches. Can be toggled through the Filter menu */
 	public static boolean showBlacklisted=false;
 	/** Indicator whether a filter is inverted */
 	public static boolean filterInverted=false;
 	/** Indicator whether a filter is active. Used in status bar to indicate filter status */
-	public static boolean filterActive=false;
+	public static int filterActive=FILTER_INACTIVE;
 	
 	private static final int SMALLER = -1;
 	private static final int EQUAL = 0;
@@ -451,7 +455,7 @@ public class Filter{
 			}
 			
 		} // for
-		filterActive=true;
+		filterActive=FILTER_ACTIVE;
 	}
 	
 	/**
@@ -482,7 +486,7 @@ public class Filter{
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.is_filtered=(ch.is_black^showBlacklisted) ; // Always filter blacklisted caches
 		}
-		filterActive=false;
+		filterActive=FILTER_INACTIVE;
 		filterInverted=false;
 	}
 

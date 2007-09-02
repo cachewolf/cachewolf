@@ -29,7 +29,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete;
-	public MenuItem orgCacheTour,orgTravelbugs;
+	public MenuItem filtCacheTour,orgTravelbugs;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
 	private TablePanel tbp;
@@ -114,7 +114,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Filter" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterMenuItems=new MenuItem[8];
+		MenuItem[] filterMenuItems=new MenuItem[10];
 		filterMenuItems[0] = filtApply  = new MenuItem(MyLocale.getMsg(709,"Apply")); 
 		filterMenuItems[1] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")); 
 		filterMenuItems[2] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
@@ -123,11 +123,13 @@ public class MainMenu extends MenuBar {
 		filterMenuItems[5] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
 		filterMenuItems[6] = mnuSeparator;
 		filterMenuItems[7] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
+		filterMenuItems[8] = mnuSeparator;
+		filterMenuItems[9] = filtCacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
 		
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterAndSearchMenuItems=new MenuItem[11];
+		MenuItem[] filterAndSearchMenuItems=new MenuItem[13];
 		filterAndSearchMenuItems[0]=filtApply;
 		filterAndSearchMenuItems[1]=filtCreate;
 		filterAndSearchMenuItems[2]=filtInvert;
@@ -139,6 +141,8 @@ public class MainMenu extends MenuBar {
 		filterAndSearchMenuItems[8]=mnuSeparator;
 		filterAndSearchMenuItems[9]=search;
 		filterAndSearchMenuItems[10]=searchClr;
+		filterAndSearchMenuItems[11] = mnuSeparator;
+		filterAndSearchMenuItems[12] = filtCacheTour;
 		
 		// Depending on screen width display either filter and searach menus or the combined menu 
 		if (MyLocale.getScreenWidth()>300) {
@@ -151,14 +155,12 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organize" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organizeMenuItems=new MenuItem[7];
+		MenuItem[] organizeMenuItems=new MenuItem[5];
 		organizeMenuItems[0] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
 		organizeMenuItems[1] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
 		organizeMenuItems[2] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
 		organizeMenuItems[3] = mnuSeparator;
-		organizeMenuItems[4] = orgCacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
-		organizeMenuItems[5] = mnuSeparator;
-		organizeMenuItems[6] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
+		organizeMenuItems[4] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organize"),new Menu(organizeMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
@@ -482,7 +484,13 @@ public class MainMenu extends MenuBar {
 				Filter.showBlacklisted=!Filter.showBlacklisted;
 				SearchCache ssc = new SearchCache(cacheDB);
 				ssc.clearSearch();// Clear search & restore filter status
+				Filter flt=new Filter();
+				flt.clearFilter();
 				tbp.refreshTable();
+			}
+			if(mev.selectedItem == filtCacheTour){
+				filtCacheTour.modifiers^=MenuItem.Checked;
+				Global.mainForm.toggleCacheListVisible();			
 			}
 			///////////////////////////////////////////////////////////////////////
 			// "Organize" pulldown menu
@@ -506,10 +514,6 @@ public class MainMenu extends MenuBar {
 				DataMover dm = new DataMover();
 				dm.deleteCaches();
 				tbp.refreshTable();
-			}
-			if(mev.selectedItem == orgCacheTour){
-				orgCacheTour.modifiers^=MenuItem.Checked;
-				Global.mainForm.toggleCacheListVisible();			
 			}
 			if(mev.selectedItem == orgTravelbugs){
 				TravelbugJourneyScreen tbs=new TravelbugJourneyScreen();

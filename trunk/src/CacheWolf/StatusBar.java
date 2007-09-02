@@ -46,8 +46,10 @@ public class StatusBar extends CellPanel{
 					MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound() + "  ";
 		disp.setText(strStatus);
 		// Indicate that a filter is active in the status line
-		if (Filter.filterActive)
+		if (Filter.filterActive==Filter.FILTER_ACTIVE)
 			btnFlt.backGround=new Color(0,255,0);
+		else if (Filter.filterActive==Filter.FILTER_CACHELIST)
+			btnFlt.backGround=new Color(0,0,255);
 		else
 			btnFlt.backGround=null;
 		// Current centre can only be displayed if screen is big
@@ -63,11 +65,11 @@ public class StatusBar extends CellPanel{
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btnFlt){
 				Filter flt = new Filter();
-				if (Filter.filterActive) {
-					flt.clearFilter();
-				} else {
+				if (Filter.filterActive==Filter.FILTER_INACTIVE) {
 					flt.setFilter();
 					flt.doFilter();
+				} else {
+					flt.clearFilter();
 				}
 				Global.mainTab.tbP.refreshTable();
 			}
