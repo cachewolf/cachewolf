@@ -162,16 +162,17 @@ public class CacheList extends CellPanel {
 				int lstCacheIdx=lstCaches.getSelectedIndex(0);
 				CacheHolder ch=(CacheHolder)cacheList.get(lstCacheIdx);
 				int idx=Global.getProfile().cacheDB.find(ch);
-				// Select the cache also in the main list view
-				Global.mainTab.tbP.selectRow(idx);
 				// Ensure that the main view is updated with the selected cache, i.e.
 				// DetailsPanel, HintLog, Pictures etc.
 				int activeTab=Global.mainTab.cardPanel.selectedItem;
-				if (activeTab==0) 
+				if (activeTab==0) { 
+					// Select the cache also in the main list view
+					Global.mainTab.tbP.selectRow(idx);
 					Global.mainTab.tbP.tc.repaint();
-				else {
+				} else {
 					// We need to change to the list view first to load a new cache
 					Global.mainTab.onEvent(new MultiPanelEvent(0,Global.mainTab,0));
+					Global.mainTab.tbP.selectRow(idx);
 					Global.mainTab.onEvent(new MultiPanelEvent(0,Global.mainTab,activeTab));
 				}
 			}
@@ -267,7 +268,7 @@ public class CacheList extends CellPanel {
 		}
 		// The sort command places all filtered caches at the end
 		cacheDB.sort(new mySort(),false);
-		Filter.filterActive=true;
+		Filter.filterActive=Filter.FILTER_CACHELIST;
 		Filter.filterInverted=false;
 		updateScreen();
 		
