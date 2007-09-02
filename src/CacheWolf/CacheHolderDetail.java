@@ -367,6 +367,7 @@ public class CacheHolderDetail extends CacheHolder {
 				  detfile.print(Travelbugs.toXML());
 				  detfile.print("<URL><![CDATA["+URL+"]]></URL>\r\n");
 				  detfile.print("<SOLVER><![CDATA["+Solver+"]]></SOLVER>\r\n");
+				  detfile.print(toXML()); // This will allow restoration of index.xml
 				  detfile.print("</CACHEDETAILS>\n");
 				} // if length
 			} catch (Exception e){
