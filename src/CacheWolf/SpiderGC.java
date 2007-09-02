@@ -155,8 +155,8 @@ public class SpiderGC{
 			//Vm.debug(cookieID);
 			rexCookieSession.search(start);
 			if (!rexCookieSession.didMatch()) {
-				pref.log("CookieSession not found");
-				cookieSession="";
+				pref.log("CookieSession not found Using old one.");
+				//cookieSession="";
 			} else
 				cookieSession = rexCookieSession.stringMatched(1);
 			//Vm.debug("cookieSession = " + cookieSession);
@@ -1048,7 +1048,8 @@ public class SpiderGC{
 				if(cookieSession.length()>0){
 					conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
 					pref.log("Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
-				}
+				} else 
+					pref.log("No Cookie found");
 				conn.setRequestorProperty("Connection", "close");
 				conn.documentIsEncoded = true;
 				pref.log("Connecting");
