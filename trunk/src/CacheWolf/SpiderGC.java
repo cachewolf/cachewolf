@@ -793,7 +793,7 @@ public class SpiderGC{
 			if(bug.length()>0) { // Found a bug, get its details
 				Travelbug tb=new Travelbug(bug);
 				try{
-					infB.setInfo(oldInfoBox+MyLocale.getMsg(5514,"\nGetting bug: ")+bug);
+					infB.setInfo(oldInfoBox+MyLocale.getMsg(5514,"\nGetting bug: ")+SafeXML.cleanback(bug));
 					pref.log("Fetching bug details: "+bug);
 					bugDetails = fetch(link);
 					Extractor exDetails = new Extractor(bugDetails,p.getProp("bugDetailsStart"),p.getProp("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
