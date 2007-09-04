@@ -239,12 +239,14 @@ public class myTableControl extends TableControl{
 	
 	IconAndText imgDrag;
 	String wayPoint;
+	int row;
 	
 	public void startDragging(DragContext dc) {//TODO Dragging of header widths
 		 Vector cacheDB=Global.getProfile().cacheDB;
 		 Point p=cellAtPoint(dc.start.x,dc.start.y,null);
 		 wayPoint=null;
 		 if (p.y>=0) { 
+			 row=p.y;
 			 CacheHolder ch=(CacheHolder)cacheDB.get(p.y);
 			 wayPoint=ch.wayPoint;
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
@@ -269,6 +271,7 @@ public class myTableControl extends TableControl{
 		    		 ((mList) c).makeItemVisible(((mList)c).itemsSize()-1);
 		    	 }
 		     }
+		     Global.mainTab.tbP.selectRow(row);
 			 //Vm.debug("Control "+c.toString()+"/"+c.text);
 		 }else super.stopDragging(dc);
 	 }

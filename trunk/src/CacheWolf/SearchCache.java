@@ -40,6 +40,7 @@ public class SearchCache {
 				} else
 					ch.is_flaged=true;
 			} // for
+		     Global.mainTab.tbP.selectRow(0);
 		} // if
 	}
 	
@@ -48,9 +49,11 @@ public class SearchCache {
 	* cache database. Restore to the state of the filter
 	*/
 	public void clearSearch(){
-		Global.getProfile().restoreFilter();
 		for(int i = cacheDB.size()-1;i >=0;i--){
 			((CacheHolder)cacheDB.get(i)).is_flaged=false;
 		}
+		Global.getProfile().filterActive=Filter.filterActive; //TODO This is a hack. Need to tidy this up
+		Global.getProfile().filterInverted=Filter.filterInverted;
+		Global.getProfile().restoreFilter();
 	}
 }
