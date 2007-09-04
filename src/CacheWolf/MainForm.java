@@ -102,6 +102,8 @@ public class MainForm extends Editor {
 		
 		mTab.dontAutoScroll=true;
 		
+		this.addLast(split,STRETCH,FILL);
+		/*
 		if (pref.menuAtTop) {
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 			this.addLast(split,STRETCH,FILL);
@@ -109,6 +111,7 @@ public class MainForm extends Editor {
 			this.addLast(split,STRETCH,FILL);
 			this.addLast(mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		}
+		*/
 		mMenu.setTablePanel(mTab.getTablePanel());
 		infB.close(0);
 		mTab.tbP.selectFirstRow();
