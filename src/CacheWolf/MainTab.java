@@ -116,7 +116,7 @@ public class MainTab extends mTabbedPanel {
 			// If it is Addi get details of main Wpt (chMain)
 			chMain=null;
 			cacheDirty=false;
-			if (tbP.getSelectedCache()>=cacheDB.size() || tbP.getSelectedCache()<0) {
+			if (tbP.getSelectedCache()>=Global.mainTab.tbP.myMod.numRows) {
 				ch=null; chD=null; 
 				lastselected="";
 			} else {
