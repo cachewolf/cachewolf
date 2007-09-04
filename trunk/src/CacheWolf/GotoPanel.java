@@ -612,14 +612,14 @@ class GotoRose extends AniImage {
 					diff = 360.0f - diff;
 				}
 				
-				/*if (diff <= 5.0)
-				{
-					moveDirColor = DARKGREEN;
-				}
-				else*/
-				if (diff <= 22.5)
+				if (diff <= 12.25)
 				{
 					moveDirColor = GREEN;
+				}
+				else
+				if (diff <= 22.5)
+				{
+					moveDirColor = DARKGREEN;
 				}
 				else if (diff <= 45.0)
 				{
@@ -630,7 +630,7 @@ class GotoRose extends AniImage {
 			// draw only valid arrows
 			if (northCentered) {
 				if (gotoDir < 360 && gotoDir > -360) drawThickArrow(g, gotoDir, Color.DarkBlue, 1.0f);
-				if (moveDir < 360 && moveDir > -360) drawThinArrow(g, moveDir, moveDirColor, 1.0f);
+				if (moveDir < 360 && moveDir > -360) drawThinArrow(g, moveDir, RED, moveDirColor, 1.0f);
 				if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir, YELLOW, 0.75f);
 			}
 			else {
@@ -642,11 +642,12 @@ class GotoRose extends AniImage {
 				
 				g.setPen(new Pen(new Color(150,150,150),Pen.SOLID,3));
 				g.drawEllipse(location.width/2 - radius, location.height/2 - radius, 2 * radius, 2 * radius );
-				
+
 				if (moveDir < 360 && moveDir > -360) {
-					drawDoubleArrow(g, 360 - moveDir, BLUE, RED, 1.0f);
+					//drawDoubleArrow(g, 360 - moveDir, BLUE, new Color(175,0,0), 1.0f);
+					drawRose(g, 360 - moveDir, BLUE, new Color(175,175,175), 1.0f);
 					if (moveDirColor == RED) moveDirColor = Color.DarkBlue;
-					if (gotoDir < 360 && gotoDir > -360) drawThinArrow(g, gotoDir - moveDir, moveDirColor, 1.0f);
+					if (gotoDir < 360 && gotoDir > -360) drawThinArrow(g, gotoDir - moveDir, Color.DarkBlue, moveDirColor, 1.0f);
 					if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir - moveDir, YELLOW, 0.75f);					
 				}				
 			}
@@ -705,7 +706,7 @@ class GotoRose extends AniImage {
 		g.fillEllipse(circleX - circleRadius, circleY - circleRadius, 2 * circleRadius, 2 * circleRadius);
 	}
 	
-	private void drawThinArrow(Graphics g, float angle, Color col, float scale) {
+	private void drawThinArrow(Graphics g, float angle, Color col, Color colPoint, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
 		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
@@ -715,18 +716,22 @@ class GotoRose extends AniImage {
 		int[] pointsX = new int[4];
 		int[] pointsY = new int[4];
 
-		pointsX[0] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
-		pointsY[0] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
-		pointsX[1] = centerX + new Float(sideLineLength * java.lang.Math.sin(angleRad + halfOpeningAngle)).intValue();
-		pointsY[1] = centerY - new Float(sideLineLength * java.lang.Math.cos(angleRad + halfOpeningAngle)).intValue();
-		pointsX[2] = centerX;
-		pointsY[2] = centerY;
-		pointsX[3] = centerX + new Float(sideLineLength * java.lang.Math.sin(angleRad - halfOpeningAngle)).intValue();
-		pointsY[3] = centerY - new Float(sideLineLength * java.lang.Math.cos(angleRad - halfOpeningAngle)).intValue();
+		pointsX[0] = centerX + new Float(sideLineLength * java.lang.Math.sin(angleRad - halfOpeningAngle)).intValue();
+		pointsY[0] = centerY - new Float(sideLineLength * java.lang.Math.cos(angleRad - halfOpeningAngle)).intValue();
+		pointsX[1] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
+		pointsY[1] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
+		pointsX[2] = centerX + new Float(sideLineLength * java.lang.Math.sin(angleRad + halfOpeningAngle)).intValue();
+		pointsY[2] = centerY - new Float(sideLineLength * java.lang.Math.cos(angleRad + halfOpeningAngle)).intValue();
+		pointsX[3] = centerX;
+		pointsY[3] = centerY;
 		
 		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
 		g.setBrush(new Brush(col, Brush.SOLID));
 		g.fillPolygon(pointsX, pointsY, 4);
+		if (colPoint != null) {
+			g.setBrush(new Brush(colPoint, Brush.SOLID));
+			g.fillPolygon(pointsX, pointsY, 3);			
+		}
 	}
 	
 	private void drawDoubleArrow(Graphics g, float angle, Color colFront, Color colRear, float scale) {
@@ -753,6 +758,40 @@ class GotoRose extends AniImage {
 		pointsY[0] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad + java.lang.Math.PI)).intValue();
 		
 		g.setBrush(new Brush(colRear, Brush.SOLID));
+		g.fillPolygon(pointsX, pointsY, 3);
+	}
+	
+	private void drawRose(Graphics g, float angle, Color colFront, Color colRear, float scale) {
+		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
+		int centerX = location.width/2, centerY = location.height/2;
+		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float halfArrowWidth = arrowLength * 0.12f;
+		
+		int[] pointsX = new int[8];
+		int[] pointsY = new int[8];
+
+		pointsX[0] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 4.0)).intValue();
+		pointsY[0] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 4.0)).intValue();
+		pointsX[1] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
+		pointsY[1] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
+		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI / 4.0)).intValue();
+		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI / 4.0)).intValue();
+		pointsX[3] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad + java.lang.Math.PI / 2.0)).intValue();
+		pointsY[3] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad + java.lang.Math.PI / 2.0)).intValue();
+		pointsX[4] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + 3.0 * java.lang.Math.PI / 4.0)).intValue();
+		pointsY[4] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + 3.0 * java.lang.Math.PI / 4.0)).intValue();
+		pointsX[5] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad + java.lang.Math.PI)).intValue();
+		pointsY[5] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad + java.lang.Math.PI)).intValue();
+		pointsX[6] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - 3.0 * java.lang.Math.PI / 4.0)).intValue();
+		pointsY[6] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - 3.0 * java.lang.Math.PI / 4.0)).intValue();
+		pointsX[7] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad - java.lang.Math.PI / 2.0)).intValue();
+		pointsY[7] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad - java.lang.Math.PI / 2.0)).intValue();
+		
+		g.setPen(new Pen(colRear,Pen.SOLID,1));
+		g.setBrush(new Brush(colRear, Brush.SOLID));
+		g.fillPolygon(pointsX, pointsY, 8);
+		
+		g.setBrush(new Brush(colFront, Brush.SOLID));
 		g.fillPolygon(pointsX, pointsY, 3);
 	}
 	
