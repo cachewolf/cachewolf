@@ -636,16 +636,17 @@ class GotoRose extends AniImage {
 			else {
 				//moveDir centered
 				int radius = (int)((float)(java.lang.Math.min(location.width, location.height) / 2) * 0.75f);
-				
-				g.setPen(new Pen(RED,Pen.SOLID,3));
-				g.drawLine(location.width/2, location.height/2 - radius, location.width/2, location.height/2 + radius);
-				
+
 				g.setPen(new Pen(new Color(150,150,150),Pen.SOLID,3));
 				g.drawEllipse(location.width/2 - radius, location.height/2 - radius, 2 * radius, 2 * radius );
 
 				if (moveDir < 360 && moveDir > -360) {
 					//drawDoubleArrow(g, 360 - moveDir, BLUE, new Color(175,0,0), 1.0f);
 					drawRose(g, 360 - moveDir, BLUE, new Color(175,175,175), 1.0f);
+					
+					g.setPen(new Pen(RED,Pen.SOLID,3));
+					g.drawLine(location.width/2, location.height/2 - radius, location.width/2, location.height/2 + radius);
+					
 					if (moveDirColor == RED) moveDirColor = Color.DarkBlue;
 					if (gotoDir < 360 && gotoDir > -360) drawThinArrow(g, gotoDir - moveDir, Color.DarkBlue, moveDirColor, 1.0f);
 					if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir - moveDir, YELLOW, 0.75f);					
