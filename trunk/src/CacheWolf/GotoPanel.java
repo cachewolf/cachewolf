@@ -420,6 +420,8 @@ class GotoRose extends AniImage {
 	final static Color BLUE = new Color(0,0,255);
 	final static Color ORANGE = new Color(255,128,0);
 	final static Color DARKGREEN = new Color(0,192,0);
+	final static Color CYAN = new Color(0,255,255);
+	final static Color MAGENTA = new Color(255,0,255);
 
 	/**
 	 * @param gd goto direction
@@ -607,23 +609,26 @@ class GotoRose extends AniImage {
 				{
 					diff -= 360.0f;
 				}
-				if (diff > 180)
+				if (diff > 180.0f)
 				{
 					diff = 360.0f - diff;
 				}
 				
-				if (diff <= 12.25)
+				if (diff <= 12.25f)
 				{
 					moveDirColor = GREEN;
 				}
-				else
-				if (diff <= 22.5)
+				else if (diff <= 22.5f)
 				{
-					moveDirColor = DARKGREEN;
+					moveDirColor = CYAN;
 				}
-				else if (diff <= 45.0)
+				else if (diff <= 45.0f)
 				{
 					moveDirColor = ORANGE;
+				}
+				else if (diff <= 90.0f)
+				{
+					moveDirColor = MAGENTA;
 				}
 			}
 
@@ -642,7 +647,7 @@ class GotoRose extends AniImage {
 
 				if (moveDir < 360 && moveDir > -360) {
 					//drawDoubleArrow(g, 360 - moveDir, BLUE, new Color(175,0,0), 1.0f);
-					drawRose(g, 360 - moveDir, BLUE, new Color(175,175,175), 1.0f);
+					drawRose(g, 360 - moveDir, new Color(100,100,100), new Color(200,200,200), 1.0f);
 					
 					g.setPen(new Pen(RED,Pen.SOLID,3));
 					g.drawLine(location.width/2, location.height/2 - radius, location.width/2, location.height/2 + radius);
