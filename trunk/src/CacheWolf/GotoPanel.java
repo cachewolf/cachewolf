@@ -652,7 +652,6 @@ class GotoRose extends AniImage {
 					g.setPen(new Pen(RED,Pen.SOLID,3));
 					g.drawLine(location.width/2, location.height/2 - radius, location.width/2, location.height/2 + radius);
 					
-					if (moveDirColor == RED) moveDirColor = Color.DarkBlue;
 					if (gotoDir < 360 && gotoDir > -360) drawThinArrow(g, gotoDir - moveDir, Color.DarkBlue, moveDirColor, 1.0f);
 					if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir - moveDir, YELLOW, 0.75f);					
 				}				
