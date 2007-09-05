@@ -34,12 +34,12 @@ public class RadarPanel extends CellPanel{
 	* "navigation" buttons.
 	*/
 	public RadarPanel(){
-		this.addLast(iActP = new myInteractivePanel(), this.STRETCH, this.FILL);
+		this.addLast(iActP = new myInteractivePanel(), CellConstants.STRETCH, CellConstants.FILL);
 		CellPanel cp = new CellPanel();
-		cp.addNext(btMinus,this.DONTSTRETCH, (this.DONTFILL|this.WEST));
-		cp.addNext(btToggle,this.HSTRETCH, this.FILL);
-		cp.addLast(btPlus,this.DONTSTRETCH, (this.DONTFILL|this.EAST));
-		this.addLast(cp, this.HSTRETCH, this.FILL);
+		cp.addNext(btMinus,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		cp.addNext(btToggle,CellConstants.HSTRETCH, CellConstants.FILL);
+		cp.addLast(btPlus,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
+		this.addLast(cp, CellConstants.HSTRETCH, CellConstants.FILL);
 	}
 	
 	public void setMainTab(MainTab tb){

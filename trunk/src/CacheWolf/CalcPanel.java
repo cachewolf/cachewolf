@@ -84,7 +84,7 @@ public class CalcPanel extends CellPanel {
 			inpBearing.setPreferredSize(fm.getTextWidth("99999999"),fm.getHeight()*4/3);
 			inpDistance.setPreferredSize(fm.getTextWidth("99999999"),fm.getHeight()*4/3);
 		}
-		BottomP.addLast(chcDistUnit = new mChoice(new String[]{"m", "km"},0),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST)).setTag(this.INSETS,new ewe.fx.Insets(0,2,0,0));
+		BottomP.addLast(chcDistUnit = new mChoice(new String[]{"m", "km"},0),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST)).setTag(CellConstants.INSETS,new ewe.fx.Insets(0,2,0,0));
 		chcDistUnit.setInt(0);
 		
 		// Buttons for calc and save

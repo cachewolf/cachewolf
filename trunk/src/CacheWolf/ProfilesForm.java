@@ -61,7 +61,7 @@ public class ProfilesForm extends Form{
 		int w=MyLocale.getScreenWidth();
 		if (w>240) w=240;
 		setPreferredSize(w,240);
-	    defaultTags.set(this.INSETS,new Insets(2,2,2,2));		
+	    defaultTags.set(CellConstants.INSETS,new Insets(2,2,2,2));		
 		title = MyLocale.getMsg(1301,"Select Profile:");
 		if (hasNewButton) {
 			addNext(new mLabel(MyLocale.getMsg(1106,"Choose profile or New")),DONTSTRETCH,DONTSTRETCH|LEFT);

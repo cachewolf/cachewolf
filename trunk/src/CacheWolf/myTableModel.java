@@ -181,8 +181,8 @@ public class myTableModel extends TableModel{
 	*/
 	public TableCellAttributes getCellAttributes(int row,int col,boolean  isSelected, TableCellAttributes ta){
 		ta = super.getCellAttributes(row, col, isSelected, ta);
-		ta.alignment = ta.LEFT;
-		ta.anchor = ta.LEFT;
+		ta.alignment = CellConstants.LEFT;
+		ta.anchor = CellConstants.LEFT;
 		if(row >= 0){ 
 			try {
 			   CacheHolder ch = (CacheHolder)cacheDB.get(row);
