@@ -95,10 +95,8 @@ public class myTableControl extends TableControl{
 		Global.getProfile().setSelectForAll(selectStatus);
 		tbp.refreshTable();
 	}
-
 	public void popupMenuEvent(Object selectedItem){
 		CacheHolder ch;
-
 		if (selectedItem.toString().equals(MyLocale.getMsg(1015,"Select all"))){
 			setSelectForAll(true);
 		}
@@ -195,7 +193,7 @@ public class myTableControl extends TableControl{
 			} else {				
 				pref.curCentrePt.set(cp);
 				Global.mainTab.updateBearDist(); // Update the distances with a warning message
-				tbp.refreshTable();
+				//tbp.refreshTable();
 			}
 		}
 
@@ -229,8 +227,24 @@ public class myTableControl extends TableControl{
 	public void penDoubleClicked(Point where) {
 		Global.mainTab.select(Global.mainTab.descP);
 	}
+	
+	int rowRightMouseClick=-1;
 	public void onEvent(Event ev) {
-	    if (ev instanceof PenEvent) Global.mainTab.tbP.myMod.penEventModifiers=((PenEvent)ev).modifiers;
+	    if (ev instanceof PenEvent) {
+			// Ensure that row is selected on right mouse key to show the correct
+	    	// cache details
+	    	if (ev.type==PenEvent.PEN_DOWN && (((PenEvent)ev).modifiers&PenEvent.RIGHT_BUTTON)!=0) { 
+				Point p=cellAtPoint(((PenEvent)ev).x,((PenEvent)ev).y,null);
+				rowRightMouseClick=p.y;
+				// The selection of the row on right mouse click ist delayed
+				// until the menu has been drawn to speed up the refreshing of the screen
+			}
+			Global.mainTab.tbP.myMod.penEventModifiers=((PenEvent)ev).modifiers;
+	    }
+	    if (ev instanceof ControlEvent && ev.type==ControlEvent.POPUP_CLOSED) {
+			// Delayed switch to new row on right mouse click when pop-up menu has been opened
+			Global.mainTab.tbP.selectRow(rowRightMouseClick);
+	    }
 		super.onEvent(ev);
 	}
     ///////////////////////////////////////////////////
