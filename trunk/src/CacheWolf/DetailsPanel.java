@@ -110,22 +110,21 @@ public class DetailsPanel extends CellPanel{
 		this.addNext(new mLabel(MyLocale.getMsg(304,"Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(btnWayLoc.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
-		this.addNext(new mLabel(MyLocale.getMsg(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		
-		CellPanel ip=new CellPanel();
-		ip.addNext(inpHidden,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		ip.addLast(btnHiddenDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL);
-		this.addLast(ip,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
-		inpHidden.modifyAll(DisplayOnly,0);
-		
-		this.addNext(new mLabel(MyLocale.getMsg(306,"Owner:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(inpOwner.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		
 		this.addNext(new mLabel(MyLocale.getMsg(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		CellPanel cp=new CellPanel();
 		cp.addNext(chcStatus,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		cp.addLast(btnFoundDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL);
 		this.addLast(cp,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
+		
+		this.addNext(new mLabel(MyLocale.getMsg(306,"Owner:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		this.addLast(inpOwner.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		
+		this.addNext(new mLabel(MyLocale.getMsg(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		CellPanel ip=new CellPanel();
+		ip.addNext(inpHidden,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		ip.addLast(btnHiddenDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL);
+		this.addLast(ip,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
+		inpHidden.modifyAll(DisplayOnly,0);
 		
 		//btnNotes = new mButton("Notes");
 		//this.addLast(btnNotes.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
