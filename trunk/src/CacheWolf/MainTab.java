@@ -1,5 +1,9 @@
 package CacheWolf;
 
+import CacheWolf.navi.GotoPanel;
+import CacheWolf.navi.MapImage;
+import CacheWolf.navi.MovingMap;
+import CacheWolf.navi.Navigate;
 import ewe.sys.Vm;
 import ewe.ui.*;
 import ewe.fx.*;
@@ -17,7 +21,7 @@ public class MainTab extends mTabbedPanel {
 	HintLogPanel hintLP = new HintLogPanel();
 	TablePanel tbP;
 	Vector cacheDB;
-	DetailsPanel detP = new DetailsPanel();
+	public DetailsPanel detP = new DetailsPanel();
 	CalcPanel calcP;
 	Preferences pref;
 	Profile profile;
@@ -26,11 +30,11 @@ public class MainTab extends mTabbedPanel {
 	ImagePanel imageP;
 	SolverPanel solverP;
 	String lastselected = "";
-	CacheHolder ch=null;
+	public CacheHolder ch=null;
 	CacheHolderDetail chD =null, chMain=null;
 	MainMenu mnuMain;
 	StatusBar statBar;
-	MovingMap mm;
+	public MovingMap mm;
 	Navigate nav;
 	String mainCache="";
 	int oldCard=0;

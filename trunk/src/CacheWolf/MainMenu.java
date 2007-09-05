@@ -1,5 +1,8 @@
 package CacheWolf;
 
+import CacheWolf.navi.Map;
+import CacheWolf.navi.MapLoaderGui;
+import CacheWolf.navi.SelectMap;
 import ewe.ui.*;
 import ewe.util.Vector;
 //import ewe.util.mString;

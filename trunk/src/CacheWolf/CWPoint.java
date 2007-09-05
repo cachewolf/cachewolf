@@ -5,6 +5,8 @@ package CacheWolf;
 import ewe.sys.Double;
 import ewe.sys.Locale;
 import ewe.sys.Convert;
+import CacheWolf.navi.TrackPoint;
+
 import com.bbn.openmap.proj.coords.*;
 import com.bbn.openmap.proj.*;
 import com.bbn.openmap.*;
@@ -22,8 +24,8 @@ import ewe.sys.Vm;
  *
  */
 public class CWPoint extends TrackPoint{
-	MGRSPoint utm = new MGRSPoint();
-	boolean utmValid = false;
+	public MGRSPoint utm = new MGRSPoint();
+	public boolean utmValid = false;
 
 	public static final int DD = 0;
 	public static final int DMM = 1;
