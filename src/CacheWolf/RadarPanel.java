@@ -36,9 +36,9 @@ public class RadarPanel extends CellPanel{
 	public RadarPanel(){
 		this.addLast(iActP = new myInteractivePanel(), CellConstants.STRETCH, CellConstants.FILL);
 		CellPanel cp = new CellPanel();
-		cp.addNext(btMinus,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		cp.addNext(btMinus,CellConstants.HSTRETCH, (CellConstants.FILL|CellConstants.WEST));
 		cp.addNext(btToggle,CellConstants.HSTRETCH, CellConstants.FILL);
-		cp.addLast(btPlus,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
+		cp.addLast(btPlus,CellConstants.HSTRETCH, (CellConstants.FILL|CellConstants.EAST));
 		this.addLast(cp, CellConstants.HSTRETCH, CellConstants.FILL);
 	}
 	
