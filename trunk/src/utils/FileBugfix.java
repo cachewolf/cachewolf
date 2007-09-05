@@ -6,7 +6,7 @@ package utils;
 import ewe.io.*;
 import ewe.util.FileComparer;
 import ewe.util.mString;
-
+import CacheWolf.*;
 /**
  * @author pfeffer
  * class to fix a bug in ewe.io.File, which occurs only on some systems (e.g. linux): the mask "*.xyz" doesn't work
