@@ -91,10 +91,10 @@ public String sort;
 private static StringBuffer sb=new StringBuffer(530); // Used in toXML()
 
 //static int nObjects=0;
-CacheHolder() {//nObjects++;Vm.debug("CacheHolder() nO="+nObjects);
+public CacheHolder() {//nObjects++;Vm.debug("CacheHolder() nO="+nObjects);
 }
 
-CacheHolder(CacheHolder ch) {//nObjects++;Vm.debug("CacheHolder(ch) nO="+nObjects);
+public CacheHolder(CacheHolder ch) {//nObjects++;Vm.debug("CacheHolder(ch) nO="+nObjects);
 	update(ch);
 }
 

@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.navi.Area;
 import HTML.Tmpl.Element.If;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
@@ -372,7 +373,7 @@ public class Profile {
 	} 
 
 
-	int numCachesInArea; // only valid after calling getSourroundingArea
+	public int numCachesInArea; // only valid after calling getSourroundingArea
 	public Area getSourroundingArea(boolean onlyOfSelected) {
 		if (cacheDB == null || cacheDB.size() == 0) return null;
 		CacheHolder ch;

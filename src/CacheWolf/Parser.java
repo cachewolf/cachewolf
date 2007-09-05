@@ -45,6 +45,8 @@ number -> valid number
 package CacheWolf;
 
 import ewe.util.*;
+import CacheWolf.navi.Navigate;
+
 import com.stevesoft.ewe_pat.*;
 import ewe.sys.*;
 import java.lang.Double;

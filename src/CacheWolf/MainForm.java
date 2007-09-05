@@ -10,8 +10,8 @@ import ewe.fx.*;
 */
 public class MainForm extends Editor {
 	// The next three declares are for the cachelist
-	boolean cacheListVisible=false;
-    CacheList cacheList;
+	public boolean cacheListVisible=false;
+    public CacheList cacheList;
     SplittablePanel split;
 	
 	StatusBar statBar=null;
