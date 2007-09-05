@@ -110,7 +110,7 @@ public class SpiderGC{
 		}
 		if (!infB.isClosed) { // If user has not aborted, we continue
 			Regex rexCookieID = new Regex("Set-Cookie: userid=(.*?);.*");
-			Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
+			Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*?)\" />");
 			Regex rexCookieSession = new Regex("Set-Cookie: ASP.NET_SessionId=(.*?);.*");
 			rex.search(start);
 			if(rex.didMatch()){
