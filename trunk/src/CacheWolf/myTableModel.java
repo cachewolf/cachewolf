@@ -127,6 +127,7 @@ public class myTableModel extends TableModel{
 		for (int col=0; col<numCols; col++) {
 			colWidth[colMap[col]]=getColWidth(col);
 		}
+		clearCellAdjustments();
 		// Convert to string
 		StringBuffer sb=new StringBuffer(40);
 		for (int i=0; i<colWidth.length; i++) {
