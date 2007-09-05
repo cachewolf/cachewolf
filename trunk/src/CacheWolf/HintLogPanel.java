@@ -35,8 +35,8 @@ public class HintLogPanel extends CellPanel{
 	mButton prevBt = new mButton("<<");
 	public HintLogPanel(){
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
-		CellPanel hintpane = split.getNextPanel();
 		CellPanel logpane = split.getNextPanel();
+		CellPanel hintpane = split.getNextPanel();
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
 		int initialHintHeight=Global.getPref().initialHintHeight;
 		if (initialHintHeight<0 || initialHintHeight>1000) initialHintHeight=Global.getPref().DEFAULT_INITIAL_HINT_HEIGHT;
