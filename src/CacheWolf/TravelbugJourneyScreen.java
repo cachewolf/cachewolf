@@ -322,8 +322,8 @@ class tbListTableModel extends TableModel {
 	
 	public TableCellAttributes getCellAttributes(int row,int col,boolean isSelected,TableCellAttributes ta) {
 		ta=super.getCellAttributes(row,col,isSelected,ta);
-		ta.alignment = ta.LEFT;
-		ta.anchor = ta.LEFT;
+		ta.alignment = CellConstants.LEFT;
+		ta.anchor = CellConstants.LEFT;
 		// Color the elements red, if we have not yet logged
 		if (row>=0)
 		switch (columnMap[col]) {

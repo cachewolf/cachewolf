@@ -153,7 +153,7 @@ public class DateTimeChooser extends Editor {
 			}else if (ev.target == monthChooser){
 				month = (int)((ewe.sys.Long)(((TableEvent)ev).cellData)).value;
 				newDate();
-				monthName = locale.getString(locale.SHORT_MONTH,month,0);
+				monthName = locale.getString(Locale.SHORT_MONTH,month,0);
 				toControls("monthName");
 				if (autoAdvance && !didAll) {
 					panels.select("year");
@@ -189,7 +189,7 @@ public class DateTimeChooser extends Editor {
 				toControls("time");
 			}
 		}
-		if (ev.type == ev.CANCELLED) exit(IDCANCEL);
+		if (ev.type == ControlEvent.CANCELLED) exit(IDCANCEL);
 		else super.onControlEvent(ev);
 	}
 	
@@ -201,7 +201,7 @@ public class DateTimeChooser extends Editor {
 		String s = Time.toString(t,t instanceof TimeOfDay ? t.getFormat() : locale.getString(Locale.SHORT_DATE_FORMAT,0,0),locale);
 		day = t.day; month = t.month; year = t.year; hour=t.hour; minute=t.minute;
 		time=MyLocale.formatLong(hour,"00")+":"+MyLocale.formatLong(minute,"00");
-		monthName = locale.getString(locale.SHORT_MONTH,t.month,0);
+		monthName = locale.getString(Locale.SHORT_MONTH,t.month,0);
 		toControls("day,month,year,monthName,time"); 
 	}
 	
@@ -267,7 +267,7 @@ class monthChooserTableModel extends InputPanelTableModel {
 	public TableCellAttributes getCellAttributes(int row,int col,boolean isSelected,TableCellAttributes ta) {
 		ta.flat = true;
 		ta = super.getCellAttributes(row,col,isSelected,ta);
-		ta.borderStyle = fixBorder(table.BDR_OUTLINE|table.BF_BOTTOM|table.BF_RIGHT,row,col,true);
+		ta.borderStyle = fixBorder(UIConstants.BDR_OUTLINE|UIConstants.BF_BOTTOM|UIConstants.BF_RIGHT,row,col,true);
 		if (getMonthFor(row,col) == chosenMonth && !isSelected){
 			ta.fillColor = new Color(0x80,0x80,0xff);
 		}
@@ -275,7 +275,7 @@ class monthChooserTableModel extends InputPanelTableModel {
 	}
 
 	public Object getCellText(int row,int col) {
-		return locale.getString(locale.SHORT_MONTH,getMonthFor(row,col),0);
+		return locale.getString(Locale.SHORT_MONTH,getMonthFor(row,col),0);
 	}
 
 	public Object getCellData(int row,int col) {
@@ -300,7 +300,7 @@ class dayChooserTableModel extends InputPanelTableModel {
 		//ewe.sys.Vm.debug(month+","+year);
 		numDays = Time.numberOfDays(month,year);
 		Time t = new Time(1,month,year);
-		firstDayIndex = t.indexOfDayInWeek(t.dayOfWeek,locale)-1;
+		firstDayIndex = Time.indexOfDayInWeek(t.dayOfWeek,locale)-1;
 		//ewe.sys.Vm.debug(""+firstDayIndex+", "+numDays);
 		int oldDay = chosenDay;
 		chosenDay = day;
@@ -331,7 +331,7 @@ class dayChooserTableModel extends InputPanelTableModel {
 	public TableCellAttributes getCellAttributes(int row,int col,boolean isSelected,TableCellAttributes ta) {
 		ta.flat = true;
 		ta = super.getCellAttributes(row,col,isSelected,ta);
-		ta.borderStyle = fixBorder(table.BDR_OUTLINE|table.BF_BOTTOM|table.BF_RIGHT,row,col,true);
+		ta.borderStyle = fixBorder(UIConstants.BDR_OUTLINE|UIConstants.BF_BOTTOM|UIConstants.BF_RIGHT,row,col,true);
 		if (getDayFor(row,col) == chosenDay && !isSelected){
 			ta.fillColor = new Color(0x80,0x80,0xff);
 		}
@@ -344,7 +344,7 @@ class dayChooserTableModel extends InputPanelTableModel {
 		numCols = 7;
 		hasColumnHeaders = true;
 		hasRowHeaders = false;
-		for (int i = 1; i<=7; i++) days.add(l.getString(l.SHORT_DAY_OF_WEEK,i,0));
+		for (int i = 1; i<=7; i++) days.add(l.getString(Locale.SHORT_DAY_OF_WEEK,i,0));
 	
 		fillToEqualHeights = fillToEqualWidths = true;
 	}
