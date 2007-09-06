@@ -32,7 +32,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete;
-	public MenuItem filtCacheTour,orgTravelbugs;
+	public MenuItem filtCacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
 	private TablePanel tbp;
@@ -53,11 +53,14 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for import, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mnuImport = new MenuItem[3];
+		MenuItem[] mnuImport = new MenuItem[5];
 		mnuImport[0] = loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")); //TODO internationalization
 		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download von opencaching.de")); 
 		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider von geocaching.com")); 
+		mnuImport[3] = mnuSeparator = new MenuItem("-"); 
+		mnuImport[4] = mnuForceLogin      = new MenuItem("Always login to GC"); 
 		Menu importMenu = new Menu(mnuImport, MyLocale.getMsg(175,"Import"));
+		if (Global.getPref().forceLogin) mnuForceLogin.modifiers^=MenuItem.Checked;
 		
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
@@ -97,7 +100,7 @@ public class MainMenu extends MenuBar {
 		appMenuItems[0] = profiles 	 = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu); 
 		appMenuItems[1] = preferences = new MenuItem(MyLocale.getMsg(108,"Preferences")); 
 		appMenuItems[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Center"));
-		appMenuItems[3] = mnuSeparator = new MenuItem("-");
+		appMenuItems[3] = mnuSeparator;
 		appMenuItems[4] = new MenuItem(MyLocale.getMsg(175,"Import"),0,importMenu);
 		appMenuItems[5] = new MenuItem(MyLocale.getMsg(107,"Export"),0,exportMenu);
 		appMenuItems[6] = new MenuItem(MyLocale.getMsg(149,"Maps"),0,mapsMenu);
@@ -191,6 +194,10 @@ public class MainMenu extends MenuBar {
 			mnuOpenProfile.modifiers|=MenuItem.Disabled;
 		}
 	}
+	
+	public void setForceLogin() {
+		mnuForceLogin.modifiers=Global.getPref().forceLogin ? Global.mainTab.mnuMain.modifiers|MenuItem.Checked : Global.mainTab.mnuMain.modifiers&~MenuItem.Checked;
+	}
 
 	public static void search() {
 		String srch = new InputBox(MyLocale.getMsg(119,"Search for:")).input("",10);
@@ -251,6 +258,62 @@ public class MainMenu extends MenuBar {
 			    int code=f.execute(getFrame(), Gui.CENTER_FRAME);
 			    tbp.refreshTable();
 				f.close(0);
+			}
+			///////////////////////////////////////////////////////////////////////
+			// subMenu for import, part of "Application" menu 
+			///////////////////////////////////////////////////////////////////////
+			if(mev.selectedItem == spider){
+				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				spGC.doIt();
+				cacheDB.clear();
+				profile.readIndex();
+				profile.restoreFilter();
+				profile.updateBearingDistance();
+				tbp.resetModel();
+			}
+			if(mev.selectedItem == loadcaches){
+				FileChooser fc = new FileChooser(FileChooser.OPEN|FileChooser.MULTI_SELECT, pref.baseDir);
+				fc.addMask("*.gpx,*.zip,*.loc");
+				fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
+				if(fc.execute() != FileChooser.IDCANCEL){
+					String dir = fc.getChosenDirectory().toString();
+					String files[] = fc.getAllChosen();
+					/*
+					int how = GPXImporter.DOIT_ASK;
+					if (files.length > 0){
+							InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
+							iB.execute();
+							boolean doSpider = iB.mCB_state;
+							if (doSpider) how = GPXImporter.DOIT_WITHSPOILER;
+							else how = GPXImporter.DOIT_NOSPOILER;
+					}
+					*/
+					for (int i = 0; i < files.length; i++){ 
+						String file = dir + "/" + files[i];
+						if (file.endsWith("loc")){
+							LOCXMLImporter loc = new LOCXMLImporter(pref, profile, file);
+							loc.doIt();
+						}
+						else {
+							GPXImporter gpx = new GPXImporter(pref, profile, file);
+							gpx.doIt(0);
+						}
+					}
+				}
+				Filter.showBlacklisted=false;
+				filtBlack.modifiers&=~MenuItem.Checked;
+				tbp.resetModel();
+			}
+			if(mev.selectedItem == loadOC){
+				OCXMLImporter oc = new OCXMLImporter(pref,profile);
+				oc.doIt();
+				Filter.showBlacklisted=false;
+				filtBlack.modifiers&=~MenuItem.Checked;
+				tbp.resetModel();
+			}
+			if(mev.selectedItem == mnuForceLogin) {
+				mnuForceLogin.modifiers^=MenuItem.Checked;
+				Global.getPref().forceLogin=(mnuForceLogin.modifiers&MenuItem.Checked)!=0;
 			}
 			///////////////////////////////////////////////////////////////////////
 			// subMenu for export, part of "Application" menu 
@@ -371,55 +434,6 @@ public class MainMenu extends MenuBar {
 				PreferencesScreen pfs = new PreferencesScreen(pref);
 				pfs.execute(father.getFrame(), Gui.CENTER_FRAME);
 				pref.readPrefFile();
-			}
-			if(mev.selectedItem == loadcaches){
-				FileChooser fc = new FileChooser(FileChooser.OPEN|FileChooser.MULTI_SELECT, pref.baseDir);
-				fc.addMask("*.gpx,*.zip,*.loc");
-				fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
-				if(fc.execute() != FileChooser.IDCANCEL){
-					String dir = fc.getChosenDirectory().toString();
-					String files[] = fc.getAllChosen();
-					/*
-					int how = GPXImporter.DOIT_ASK;
-					if (files.length > 0){
-							InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
-							iB.execute();
-							boolean doSpider = iB.mCB_state;
-							if (doSpider) how = GPXImporter.DOIT_WITHSPOILER;
-							else how = GPXImporter.DOIT_NOSPOILER;
-					}
-					*/
-					for (int i = 0; i < files.length; i++){ 
-						String file = dir + "/" + files[i];
-						if (file.endsWith("loc")){
-							LOCXMLImporter loc = new LOCXMLImporter(pref, profile, file);
-							loc.doIt();
-						}
-						else {
-							GPXImporter gpx = new GPXImporter(pref, profile, file);
-							gpx.doIt(0);
-						}
-					}
-				}
-				Filter.showBlacklisted=false;
-				filtBlack.modifiers&=~MenuItem.Checked;
-				tbp.resetModel();
-			}
-			if(mev.selectedItem == loadOC){
-				OCXMLImporter oc = new OCXMLImporter(pref,profile);
-				oc.doIt();
-				Filter.showBlacklisted=false;
-				filtBlack.modifiers&=~MenuItem.Checked;
-				tbp.resetModel();
-			}
-			if(mev.selectedItem == spider){
-				SpiderGC spGC = new SpiderGC(pref, profile, true);
-				spGC.doIt();
-				cacheDB.clear();
-				profile.readIndex();
-				profile.restoreFilter();
-				profile.updateBearingDistance();
-				tbp.resetModel();
 			}
 			if(mev.selectedItem == savenoxit){
 				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
