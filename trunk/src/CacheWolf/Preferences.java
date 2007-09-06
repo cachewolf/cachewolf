@@ -81,6 +81,7 @@ public class Preferences extends MinML{
 	public String forwardGpsHost = "";
 	public int fontSize = 12;
 	
+	public boolean forceLogin=true;
 	public String listColMap="0,1,2,3,4,5,6,7,8,9,10,11";
 	public String listColWidth="15,20,20,25,92,177,144,83,60,105,50,104";
 	/** The columns which are to be displayed in TravelbugsJourneyScreen. See also TravelbugJourney */
@@ -404,6 +405,9 @@ public class Preferences extends MinML{
 		if (name.equals("gotopanel")) {
 			northCenteredGoto = Boolean.valueOf(atts.getValue("northcentered")).booleanValue();
 		}
+		if (name.equals("spider")) {
+			forceLogin = Boolean.valueOf(atts.getValue("forcelogin")).booleanValue();
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -453,6 +457,7 @@ public class Preferences extends MinML{
 			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" />\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
+			outp.print("    <spider forcelogin=\""+forceLogin+"\"/>/n");
 			outp.print("    <gotopanel northcentered=\""+northCenteredGoto+"\" />\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath +"\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set

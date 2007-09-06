@@ -43,6 +43,7 @@ public class SpiderGC{
 	 */
 	public static int MAXLOGS=250; // Can be pre-set from preferences
 	public static String passwort = ""; // Can be pre-set from preferences
+	public static boolean loggedIn = false;
 
 	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
@@ -56,7 +57,6 @@ public class SpiderGC{
 	private Vector cachesToLoad = new Vector();
 	private Hashtable indexDB;
 	private InfoBox infB;
-	private boolean loggedIn = false;
 	private static myProperties p=null;
 
 	public SpiderGC(Preferences prf, Profile profile, boolean bypass){
@@ -218,8 +218,10 @@ public class SpiderGC{
 		String completeWebPage;
 		// Check whether spider definitions could be loaded, if not issue appropriate message and terminate
 		// Try to login. If login fails, issue appropriate message and terminate
-		if (login()!=Form.IDOK) {
-			return "";
+		if (!loggedIn || Global.getPref().forceLogin) {
+			if (login()!=Form.IDOK) {
+				return "";
+			}
 		}
 		InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
 		infB.exec();
@@ -264,9 +266,11 @@ public class SpiderGC{
 		String start = "";
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		String doc = "";
-
-		if(login() != Form.IDOK) return;
-
+		
+		if (!loggedIn || Global.getPref().forceLogin) {
+			if(login() != Form.IDOK) return;
+		}
+		
 		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES);
 		options.distanceInput.setText("");
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
