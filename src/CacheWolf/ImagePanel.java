@@ -122,7 +122,7 @@ public class ImagePanel extends InteractivePanel{
 		double dummyC;
 		ImagePanelImage ipi;
 		AniImage AimgText;
-		
+		locCounter=0;
 		for(int i = 0; i<images.size(); i++){
 			location = profile.dataDir + (String)images.get(i);
 			if (!(new File(location)).exists()) {
