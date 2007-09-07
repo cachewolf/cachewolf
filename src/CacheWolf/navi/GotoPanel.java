@@ -421,6 +421,7 @@ class GotoRose extends AniImage {
 	String m_Luminary = MyLocale.getMsg(6100, "Sun");
 	
 	FontMetrics fm;
+	int lineHeight;
 	
 	boolean northCentered = Global.getPref().northCenteredGoto;
 	
@@ -485,6 +486,7 @@ class GotoRose extends AniImage {
 		Font font = new Font("Verdana", Font.BOLD, 12);
 		g.setFont(font);
 		fm = g.getFontMetrics(font);
+		lineHeight = fm.getHeight() + 1;
 		drawArrows(g);
 		drawWayPointData(g);
 		drawGpsData(g);
@@ -495,7 +497,7 @@ class GotoRose extends AniImage {
 	private void drawWayPointData(Graphics g){
 		String strTemp = "WayPoint";
 		g.setColor(Color.DarkBlue);
-		g.fillRect(0, 0, fm.getTextWidth(strTemp) + 4 ,fm.getHeight());
+		g.fillRect(0, 0, fm.getTextWidth(strTemp) + 4, lineHeight);
 		g.setColor(Color.White);		
 		g.drawText(strTemp, 2, 0);
 		
@@ -514,13 +516,13 @@ class GotoRose extends AniImage {
 			}
 		}
 		else strTemp = "--- km";
-		g.drawText(strTemp, 2, 12);
+		g.drawText(strTemp, 2, lineHeight);
 		
 		tmp.set(gotoDir);
 		if ((tmp.value <= 360) && (tmp.value >= -360))
 			strTemp = tmp.toString(0,0,0) + " " + MyLocale.getMsg(1502,"deg");
 		else strTemp = "---" + " " + MyLocale.getMsg(1502,"deg");
-		g.drawText(strTemp, 2, 24);
+		g.drawText(strTemp, 2, 2*lineHeight);
 	}
 	
 	private void drawGpsData(Graphics g){
@@ -550,12 +552,12 @@ class GotoRose extends AniImage {
 		textWidth = java.lang.Math.max(textWidth, fm.getTextWidth(strHeadline));
 		
 		int startX = location.width - (textWidth + 4);
-		g.fillRect(startX, 0, location.width - startX ,12);
+		g.fillRect(startX, 0, location.width - startX, lineHeight);
 		
 		g.setColor(Color.Black);		
 		g.drawText(strHeadline, startX + 2, 0);		
-		g.drawText(strSpeed, startX + 2, 12);
-		g.drawText(strMoveDir, startX + 2, 24);
+		g.drawText(strSpeed, startX + 2, lineHeight);
+		g.drawText(strMoveDir, startX + 2, 2*lineHeight);
 	}
 	
 	private void drawLuminaryData(Graphics g){
@@ -569,12 +571,12 @@ class GotoRose extends AniImage {
 		}
 
 		int textWidth = java.lang.Math.max(fm.getTextWidth(m_Luminary), fm.getTextWidth(strSunDir));
-		int startY = location.height - 24;
+		int startY = location.height - 2*lineHeight;
 		g.fillRect(0, startY, textWidth + 4, location.height - startY);
 
 		g.setColor(Color.Black);		
 		g.drawText(m_Luminary, 2, startY);
-		g.drawText(strSunDir, 2, startY + 12);
+		g.drawText(strSunDir, 2, startY + lineHeight);
 	}
 	
 	private void drawGpsStatus(Graphics g){
@@ -598,12 +600,12 @@ class GotoRose extends AniImage {
 
 		int textWidth = java.lang.Math.max(fm.getTextWidth(strSats), fm.getTextWidth(strHdop));
 		int startX = location.width - (textWidth + 4);
-		int startY = location.height - 24;
+		int startY = location.height - 2*lineHeight;
 		g.fillRect(startX, startY, location.width - startX ,location.height - startY);
 
 		g.setColor(Color.Black);
 		g.drawText(strSats, startX + 2, startY);
-		g.drawText(strHdop, startX + 2, startY + 12);
+		g.drawText(strHdop, startX + 2, startY + lineHeight);
 	}
 
 	private void drawArrows(Graphics g){
