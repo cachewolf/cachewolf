@@ -1339,6 +1339,32 @@ public class SpiderGC{
 			return "";
 		}
 	}
+	
+	/**
+	 * Fetch a bug's mission for a given tracking number
+	 * @param trackNr the tracking number of the travelbug
+	 * @return The mission
+	 */
+	public String getBugMissionByTrackNr(String trackNr) {
+		String bugDetails;
+		try{
+			pref.log("Fetching bug detailsByTrackNr: "+trackNr);
+			bugDetails = fetch(p.getProp("getBugByTrackNr")+trackNr);
+		}catch(Exception ex){
+			pref.log("Could not fetch bug details");
+			bugDetails="";
+		}
+		try {
+			if (bugDetails.indexOf(p.getProp("bugNotFound"))>=0) {
+//				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), MessageBox.OKB)).execute();
+				return "";
+			}
+			Extractor exDetails = new Extractor(bugDetails,p.getProp("bugDetailsStart"),p.getProp("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
+			return exDetails.findNext();
+		} catch (Exception ex) {
+			return "";
+		}
+	}
 
 	private class myProperties extends Properties {
 		myProperties() {

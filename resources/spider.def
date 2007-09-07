@@ -11,7 +11,8 @@
 # Version 2.7 - 20070811 Bugfix fuer verschluesselte Logs
 # Version 2.8 - 20070814 Findet jetzt auch Addi Wpts in eigenen Caches
 # Version 2.9 - 20070817 Bessere Unterscheidung zwischen Werbung vs.normalen Caches + Caches ohne Richtung/Entfenung
-# Version 1.10 - 20070825 Travelbug support
+# Version 2.10 - 20070825 Travelbug support
+# Version 2.11 - 20070907 get travelbug mission by tracking number
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -96,6 +97,7 @@ bugDetailsEnd      = </span>
 getBugByName       = http://www.geocaching.com/track/search.aspx?k=
 getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
 getBugById         = http://www.geocaching.com/track/details.aspx?id=
+getBugByTrackNr    = http://www.geocaching.com/track/details.aspx?tracker=
 bugGuidExStart     = www.geocaching.com/track/details.aspx?id=
 bugGuidExEnd       = "
 bugNotFound        = No\ results\ were\ found\ for\ your\ search
