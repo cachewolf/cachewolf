@@ -242,6 +242,7 @@ public class GotoPanel extends CellPanel {
 			// display values only, if signal good
 			//Vm.debug("currTrack.add: nachher");
 			lblPosition.setText(myNavigation.gpsPos.toString(currFormat));
+			speed.set(myNavigation.gpsPos.getSpeed());
 			sunAzimut.set(myNavigation.skyOrientationDir.lonDec);
 			bearMov.set(myNavigation.gpsPos.getBear());
 			updateDistance();
