@@ -30,10 +30,12 @@ Der Inhalt des Verziechnisses ist bei mir unter Linux wie folgt:
 runjewel.sh habe ich mir selbst aus runJewel.bat erzeugt.
 
 - In dem Verzeichnis lib die folgenden Dateien rekursiv auspacken (.jar-Files sind zip-Dateien, falls der Entpacker muckt, einfach temporär in .zip umbenennen)
- - ewesoft.zip
- - EwesoftRegex.zip
- - HTML.zip
- - openmap.jar
- Es gibt dann die Unterverzeichnisse com, ewesoft und HTML
+  - ewesoft.zip
+  - EwesoftRegex.zip
+  - HTML.zip
+  - openmap.jar
+  Es gibt dann die Unterverzeichnisse com, ewesoft und HTML
 - Script buildexe.bat bzw. ./buildexe.sh aufrufen, es wird ein Verzeichnis CacheWolf erzeugt mit Unterverzeichnissen für die unterschiedlichen Plattformen.
 - mit dem Script runjewel können Änderungen an der Datei cwberlios.jnf vorgenommen werden.
+
+An weiteren Dateien neben CacheWolf.ewe werden im Programmverzeichnis noch *.def, *.tpl und attributes/*.gif aus dem Verzeichnis „resources“ benötigt.
