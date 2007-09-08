@@ -277,7 +277,7 @@ class tbListTableModel extends TableModel {
 		//shadeAlternateRows=true;
 		cursorSize=new Dimension(12,1);
 		clipData=true;
-		fm=this.fm;
+		fm=getFontMetrics();
 		// A red dot indicates that the journey has not been completely logged
 		imgRed = new Image("red.png");
 	}
