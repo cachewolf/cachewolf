@@ -94,9 +94,9 @@ public class MainForm extends Editor {
 		mTab = new MainTab(mMenu,statBar);
 		split=new SplittablePanel(PanelSplitter.HORIZONTAL);
 		split.theSplitter.thickness=0; split.theSplitter.modify(Invisible,0);
-		CellPanel pnlCacheList = split.getNextPanel();
 		CellPanel pnlMainTab = split.getNextPanel(); 
-		split.setSplitter(PanelSplitter.MIN_SIZE|PanelSplitter.BEFORE,PanelSplitter.HIDDEN|PanelSplitter.BEFORE,PanelSplitter.CLOSED);
+		CellPanel pnlCacheList = split.getNextPanel(); // ewe sends the key events to the first panel even when it is hidden -> to avoid an exception cachetour must be the second panel
+		split.setSplitter(PanelSplitter.MIN_SIZE|PanelSplitter.AFTER,PanelSplitter.HIDDEN|PanelSplitter.AFTER,PanelSplitter.CLOSED);
 		pnlCacheList.addLast(cacheList=new CacheList(),STRETCH,FILL);
 		pnlMainTab.addLast(mTab,STRETCH,FILL);
 		
