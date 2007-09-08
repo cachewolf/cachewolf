@@ -110,9 +110,9 @@ public class SpiderGC{
 			return ERR_LOGIN;
 		}
 		if (!infB.isClosed) { // If user has not aborted, we continue
-			Regex rexCookieID = new Regex("Set-Cookie: userid=(.*?);.*");
+			Regex rexCookieID = new Regex("(?i)Set-Cookie: userid=(.*?);.*");
 			Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*?)\" />");
-			Regex rexCookieSession = new Regex("Set-Cookie: ASP.NET_SessionId=(.*?);.*");
+			Regex rexCookieSession = new Regex("(?i)Set-Cookie: ASP.NET_SessionId=(.*?);.*");
 			rex.search(start);
 			if(rex.didMatch()){
 				viewstate = rex.stringMatched(1);
@@ -128,7 +128,7 @@ public class SpiderGC{
 				    + "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false)
 				    + "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false);
 				start = fetch_post(loginPage, doc, nextPage);  // /login/default.aspx
-				if(start.indexOf(loginSuccess) > 0) 
+				if(start.indexOf(loginSuccess) > 0)
 					pref.log("Login successful");
 				else {
 					pref.log("Login failed. Wrong Account or Password?");
@@ -202,7 +202,7 @@ public class SpiderGC{
 			if (ret) {
 				pref.log("Saving to:" + profile.dataDir);
 				chD.saveCacheDetails(profile.dataDir);
-				((CacheHolder) cacheDB.get(number)).update(chD); 
+				((CacheHolder) cacheDB.get(number)).update(chD);
 			}
 		}catch(Exception ex){
 			pref.log("Error spidering " + chD.wayPoint + " in spiderSingle");
@@ -267,11 +267,11 @@ public class SpiderGC{
 		String start = "";
 		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
 		String doc = "";
-		
+
 		if (!loggedIn || Global.getPref().forceLogin) {
 			if(login() != Form.IDOK) return;
 		}
-		
+
 		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES);
 		options.distanceInput.setText("");
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
@@ -493,7 +493,7 @@ public class SpiderGC{
 				pref.log("Trying logs");
 				chD.setCacheLogs(getLogs(completeWebPage, chD));
 				pref.log("Found logs");
-				
+
 				// If the switch is set to not store found caches and we found the cache => return
 				if (chD.is_found && doNotGetFound) return !infB.isClosed;
 
@@ -835,7 +835,7 @@ public class SpiderGC{
 		String longDesc = "";
 		try {
 			if (chD.wayPoint.startsWith("TC")) longDesc = doc;
-			else 
+			else
 				longDesc = getLongDesc(doc);
 			longDesc = STRreplace.replace(longDesc, "<img", "<IMG");
 			longDesc = STRreplace.replace(longDesc, "src=", "SRC=");
@@ -1002,7 +1002,7 @@ public class SpiderGC{
 				cxD.setLongDescription(descRex.stringMatched(1));
 				cxD.is_found = is_found;
 				cxD.saveCacheDetails(profile.dataDir);
-				
+
 				int idx=profile.getCacheIndex(cxD.wayPoint);
 				if (idx<0){
 					cacheDB.add(new CacheHolder(cxD));
@@ -1053,7 +1053,7 @@ public class SpiderGC{
 				if(cookieSession.length()>0){
 					conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
 					pref.log("Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
-				} else 
+				} else
 					pref.log("No Cookie found");
 				conn.setRequestorProperty("Connection", "close");
 				conn.documentIsEncoded = true;
@@ -1340,7 +1340,7 @@ public class SpiderGC{
 			return "";
 		}
 	}
-	
+
 	/**
 	 * Fetch a bug's mission for a given tracking number
 	 * @param trackNr the tracking number of the travelbug
@@ -1385,6 +1385,6 @@ public class SpiderGC{
 			}
 			return s;
 		}
-		
+
 	}
 }
