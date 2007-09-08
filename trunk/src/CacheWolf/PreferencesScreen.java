@@ -74,6 +74,7 @@ public class PreferencesScreen extends Form {
 		pnlBrowser.addNext(new mLabel(MyLocale.getMsg(594,"Pwd")));
 		pnlBrowser.addLast(inpPassword=new mInput(pref.password),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		inpPassword.setToolTip(MyLocale.getMsg(593,"Password is optional here.\nEnter only if you want to store it in pref.xml"));
+		inpPassword.isPassword=true;
 		pnlGeneral.addLast(pnlBrowser,HSTRETCH,HFILL);
 		
 		pnlGeneral.addNext(gpsB = new mButton("GPS"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));

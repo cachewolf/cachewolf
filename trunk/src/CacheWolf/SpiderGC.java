@@ -89,6 +89,7 @@ public class SpiderGC{
 		//Get password
 		InfoBox infB = new InfoBox(MyLocale.getMsg(5506,"Password"), MyLocale.getMsg(5505,"Enter Password"), InfoBox.INPUT);
 		infB.feedback.setText(passwort); // Remember the PWD for next time
+		infB.feedback.isPassword=true;
 		int code = infB.execute();
 		passwort = infB.getInput();
 		infB.close(0);
