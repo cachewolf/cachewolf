@@ -1,5 +1,4 @@
 package CacheWolf;
-//TODO Option to generate backup when saving index.xml
 import utils.FileBugfix;
 import ewe.io.*;
 import ewe.sys.*;
@@ -17,101 +16,18 @@ import ewe.util.Map.MapEntry;
  */
 public class Preferences extends MinML{
 
-	static protected final int PROFILE_SELECTOR_FORCED_ON=0;
-	static protected final int PROFILE_SELECTOR_FORCED_OFF=1;
-	static protected final int PROFILE_SELECTOR_ONOROFF=2;
-
-	/** The currently used centre point, can be different from the profile's centrepoint. This is used
-	 *  for spidering */
-	public CWPoint curCentrePt=new CWPoint();
-	/** Name of last used profile */
-	public String lastProfile=""; 
-	/** If true, the last profile is reloaded automatically without a dialogue */
-	public boolean autoReloadLastProfile=false; 
-	/** The base directory contains one subdirectory for each profile*/
-	public String baseDir = "";  // TODO Set this initially to mydataDir ??
-
-	public String myproxy = "";    
-	public String myproxyport = "";
-	/** This is the login alias for geocaching.com and opencaching.de */
-	public String myAlias = "";
-	/** Optional password */
-	public String password="";
-	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs) 
-	 *  It is currently not used yet */
-	public String myAlias2 = "";
-	/** The path to the browser */
-	public String browser = "";
-	public boolean showDeletedImages=true; /* Used in ImagePanel */
-	public boolean solverIgnoreCase=false;
-
-	/**
-	 * Forced language. If specified it overrides the default language.
-	 * Example: To run CW in English language on a German PC specify "EN" here.
-	 */
-	public String language="";
-	public int myAppHeight = 0;
-	public int myAppWidth = 0;
 	public final int DEFAULT_MAX_LOGS_TO_SPIDER=250;
-	public int maxLogsToSpider = DEFAULT_MAX_LOGS_TO_SPIDER;
-	public boolean dirty = false;
-
-	public String garminConn="com1";  // The type of connection which GPSBABEL uses: com1 OR usb.
-	public String garminGPSBabelOptions=""; // Additional options for GPSBabel, i.e. -s to synthethize short names
-	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
-	public boolean menuAtTop=true;
-	public boolean tabsAtTop=true;
-	public boolean showStatus=true;
-	public boolean hasCloseButton=true;
-	// This setting determines how many logs are shown per page of hintlogs (default 5)
 	public final int DEFAULT_LOGS_PER_PAGE=5;
-	public int logsPerPage=DEFAULT_LOGS_PER_PAGE;
-	// Initial height of hints field (set to 0 to hide them initially)
 	public final int DEFAULT_INITIAL_HINT_HEIGHT=50;
-	public int initialHintHeight=DEFAULT_INITIAL_HINT_HEIGHT; 
-	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
-	public boolean downloadMapsOC = true;
-	public boolean downloadmissingOC = false;
-	public boolean fixSIP = false;
 
-	public String digSeparator = "";
-	public boolean debug = false;
-	public SerialPortOptions mySPO = new SerialPortOptions();
-	public boolean forwardGPS = false;
-	public String forwardGpsHost = "";
-	public int fontSize = 12;
-	
-	public boolean forceLogin=true;
-	public String listColMap="0,1,2,3,4,5,6,7,8,9,10,11";
-	public String listColWidth="15,20,20,25,92,177,144,83,60,105,50,104";
-	/** The columns which are to be displayed in TravelbugsJourneyScreen. See also TravelbugJourney */
-	public String travelbugColMap="1,4,5,6,8,9,10,7";
-	/** The column widths for the travelbug journeys. */
-	public String travelbugColWidth="212,136,62,90,50,56,90,38,50,50,94,50";
-	/** If this flag is true, only non-logged travelbug journeys will be shown */
-	public boolean travelbugShowOnlyNonLogged=false;
-	
-	public boolean northCenteredGoto = true;
-	
-	public String mapsPath = "maps/standard";
-	// Helper variables for XML parser 
-	private StringBuffer collectElement=null; 
-	private String lastName; // The string to the last XML that was processed
+	//////////////////////////////////////////////////////////////////////////////////////
+    // Constructor
+	//////////////////////////////////////////////////////////////////////////////////////
 
-	private final String LOGFILENAME=File.getProgramDirectory()+"/log.txt";
-	// The following declarations may eventually be moved to a separate class
-	/** The actual directory of a profile, for new profiles this is a direct child of baseDir */
-	//TODO Find all references amd move to profile.dataDir
-	//public String mydatadir = new String();  //Redundant ??
-	/** The centre as read from the profile */
-
-	// Hashtable for storing the last export path
-	private Hashtable exporterPaths = new Hashtable();
 	/**
 	 * Singleton pattern - return reference to Preferences
 	 * @return Singleton Preferences object
 	 */
-
 	public static Preferences getPrefObject() {
 		if (_reference == null)
 			// it's ok, we can call this constructor
@@ -123,127 +39,124 @@ public class Preferences extends MinML{
 
 	/**
 	 * Constructor is private for a singleton object
-	 *
 	 */
 	private Preferences(){
 		digSeparator=MyLocale.getDigSeparator();
-		//Vm.debug("Separ: " + digSeparator);
 		mySPO.bits = 8;
 		mySPO.parity = SerialPort.NOPARITY;
 		mySPO.stopBits = 1;
 		mySPO.baudRate = 4800;
-		if ( ((ewe.fx.Rect) (Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) fontSize = 16;
-		else fontSize = 12;
-		// Ensure that logfile does not grow infinitely. Not really needed as every spider resets it
-		File logFile = new File(LOGFILENAME);
-		if (logFile.length()>60000) logInit();
+		if ( ((ewe.fx.Rect) (Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) 
+			 fontSize = 16;
+		else 
+			 fontSize = 12;
 	}
 
-	private String customMapsPath=null; // The maps path set by the user
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Public fields stored in pref.xml
+	//////////////////////////////////////////////////////////////////////////////////////
 	
-	/**
-	 * Gibt den vom Benutzer gesetzten Pfad zu den Maps
-	 * @return custom Maps Path, null wenn nicht gesetzt
+	/** The base directory contains one subdirectory for each profile*/
+	public String baseDir = "";  
+	/** Name of last used profile */
+	public String lastProfile=""; 
+	/** If true, the last profile is reloaded automatically without a dialogue */
+	public boolean autoReloadLastProfile=false; 
+	/** This is the login alias for geocaching.com and opencaching.de */
+	public String myAlias = "";
+	/** Optional password */
+	public String password="";
+	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs) 
+	 *  It is currently not used yet */
+	public String myAlias2 = "";
+	/** The path to the browser */
+	public String browser = "";
+	/** Name of proxy for spidering */
+	public String myproxy = "";    
+	/** Proxyport when spidering */
+	public String myproxyport = "";
+	/** Serial port name and baudrate */
+	public SerialPortOptions mySPO = new SerialPortOptions();
+	/** True if the GPS data should be forwarded to an IP address */
+	public boolean forwardGPS = false;
+	/** IP address for forwarding GPS data */
+	public String forwardGpsHost = "";
+	/** The default font size */
+	public int fontSize = 12;
+	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
+	/** True if the menu is to be displayed at the top of the screen */
+	public boolean menuAtTop=true;
+	/** True if the tabs are to be displayed at the top of the screen */
+	public boolean tabsAtTop=true;
+	/** True if the status bar is to be displayed (hidden if false) */
+	public boolean showStatus=true;
+	/** True if the application can be closed by clicking on the close button in the top line.
+	 * This can be set to avoid accidental closing of the application */
+	public boolean hasCloseButton=true;
+	/** True if the SIP is always visible */
+	public boolean fixSIP = false;
+	/** The list of visible columns in the list view */
+	public String listColMap="0,1,2,3,4,5,6,7,8,9,10,11";
+	/** The widths for each column in list view */
+	public String listColWidth="15,20,20,25,92,177,144,83,60,105,50,104";
+	/** The columns which are to be displayed in TravelbugsJourneyScreen. See also TravelbugJourney */
+	public String travelbugColMap="1,4,5,6,8,9,10,7";
+	/** The column widths for the travelbug journeys. */
+	public String travelbugColWidth="212,136,62,90,50,56,90,38,50,50,94,50";
+	/** If this flag is true, only non-logged travelbug journeys will be shown */
+	public boolean travelbugShowOnlyNonLogged=false;
+	/** If this is true, deleted images are shown with a ? in the imagepanel */
+	public boolean showDeletedImages=true; 
+	/** This setting determines how many logs are shown per page of hintlogs (default 5) */
+	public int logsPerPage=DEFAULT_LOGS_PER_PAGE;
+	/** Initial height of hints field (set to 0 to hide them initially) */
+	public int initialHintHeight=DEFAULT_INITIAL_HINT_HEIGHT; 
+	/** Maximum logs to spider */ 
+	public int maxLogsToSpider = DEFAULT_MAX_LOGS_TO_SPIDER;
+	/** True if the Solver should ignore the case of variables */
+	public boolean solverIgnoreCase=true;
+	/** The type of connection which GPSBABEL uses: com1 OR usb. */
+	public String garminConn="com1";  
+	/** Additional options for GPSBabel, i.e. -s to synthethize short names */
+	public String garminGPSBabelOptions=""; 
+	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
+	public boolean downloadMapsOC = true;
+	public boolean downloadmissingOC = false;
+	/** The currently used centre point, can be different from the profile's centrepoint. This is used
+	 *  for spidering */
+	public CWPoint curCentrePt=new CWPoint();
+	/** True if a login screen is displayed on each spider operation */
+	public boolean forceLogin=true;
+	/** True if the goto panel is North centered */
+	public boolean northCenteredGoto = true;
+	/** If not null, a customs map path has been specified by the user */
+	private String customMapsPath=null; 
+
+	//////////////////////////////////////////////
+	/** The debug switch (Can be used to activate dormant code) by adding
+	 * the line: <pre><debug value="true"></pre>
+	 * to the pref.xml file.
 	 */
-	public String getCustomMapsPath() {
-	   return customMapsPath;	
-	}
+	public boolean debug = false;
+	//////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Public fields not stored in pref.xml
+	//////////////////////////////////////////////////////////////////////////////////////
 	
-	void saveCustomMapsPath(String mapspath) {
-		customMapsPath=mapsPath;
-	}
+	/** The height of the application */
+	public int myAppHeight = 0;
+	/** The width of the application */
+	public int myAppWidth = 0;
+	/** True if the preferences were changed and need to be saved */
+	public boolean dirty = false;
+	/** The decimal separator (from MyLocale) */
+	public String digSeparator = "";
 	
-	/**
-	 * gets the path to the calibrated maps
-	 * it first tries if there are manually imported maps
-	 * in <baseDir>/maps/standard then it tries 
-	 * the legacy dir: <program-dir>/maps
-	 * In case in both locations are no .wfl-files
-	 * it returns  <baseDir>/maps/expedia - the place where
-	 * the automatically downloaded maps are placed.
-	 * 
-	 * Later the maps-path shall be saved in the preferences
-	 */
-	public String getMapLoadPath() {
-		// here could also a list of map-types displayed...
-		// standard dir
-		File t = new FileBugfix(getMapManuallySavePath(false));
-		String[] f = t.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_FILES_ONLY);
-		if (f != null && f.length > 0) return  baseDir + mapsPath;
-		f = t.list("*.wfl", File.LIST_DIRECTORIES_ONLY | File.LIST_ALWAYS_INCLUDE_DIRECTORIES);
-		if (f != null && f.length > 0) { // see if in a subdir of <baseDir>/maps/standard are .wfl files
-			String[] f2;
-			for (int i = 0; i< f.length; i++) {
-				t.set(null, getMapManuallySavePath(false)+"/"+f[i]);
-				f2 = t.list("*.wfl", File.LIST_FILES_ONLY);
-				if (f2 != null && f2.length > 0) return  getMapManuallySavePath(false);
-			}
-		}
-		// lagacy dir 
-		t.set(null, File.getProgramDirectory() + "/maps");
-		f = t.list("*.wfl", File.LIST_FILES_ONLY);
-		if (f != null && f.length > 0) {
-			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", MessageBox.YESB | MessageBox.NOB);
-			if (inf.execute() == MessageBox.IDYES) {
-				String sp = getMapManuallySavePath(false);
-				File spF = new File(sp);
-				if (!spF.exists()) spF.mkdirs();
-				String image;
-				String lagacypath = File.getProgramDirectory() + "/maps/";
-				for (int i=0; i<f.length; i++) {
-					t.set(null, lagacypath+f[i]);
-					spF.set(null, sp+"/"+f[i]);
-					t.move(spF);
-					image = Common.getImageName(lagacypath+f[i].substring(0, f[i].lastIndexOf(".")));
-					t.set(null, image);
-					spF.set(null, sp+"/"+t.getFileExt());
-					t.move(spF);
-				}
-				t.set(null, lagacypath);
-				t.delete();
-				return sp;
-			}
-			else return  File.getProgramDirectory() + "/maps";
-		}
-		// expedia dir
-		return getMapExpediaLoadPath(); 
-	}
-
-	/**
-	 * it creates the directory if it doesn't exist
-	 * @return the path where manually imported maps should be stored
-	 * this should be adjustable in preferences...
-	 */
-	public String getMapManuallySavePath(boolean create) {
-		String mapsDir = baseDir + mapsPath;
-		if (create && !(new File(mapsDir).isDirectory())) { // dir exists? 
-			if (new File(mapsDir).mkdirs() == false) {// dir creation failed?
-				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+mapsDir, MessageBox.OKB)).exec();
-				return null;
-			}
-		}
-		return mapsDir;
-	}
-
-	/**
-	 * to this path the automatically downloaded maps are saved
-	 */
-	public String getMapExpediaSavePath() {
-		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length());
-		String mapsDir = Global.getPref().baseDir + "maps/expedia/" + subdir;
-		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
-			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
-			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();
-			return null;
-			}
-		}
-		return mapsDir;
-	}
-
-	public String getMapExpediaLoadPath() {
-		return Global.getPref().baseDir + "maps/expedia"; // baseDir has trailing /
-	}
-
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Read pref.xml file
+	//////////////////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * Method to open and parse the pref.xml file. Results are stored in the
 	 * public variables of this class.
@@ -263,52 +176,9 @@ public class Preferences extends MinML{
 		}
 	}
 
-	/**
-	 * Open Profile selector screen 
-	 * @param prof
-	 * @param showProfileSelector
-	 * @return True if a profile was selected
-	 */
-
-	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
-		// If datadir is empty, ask for one
-		if (baseDir.length()==0 || !(new File(baseDir)).exists()) {
-			do {
-				FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT,baseDir);
-				fc.title = MyLocale.getMsg(170,"Select base directory for cache data");
-				// If no base directory given, terminate
-				if (fc.execute() == FileChooser.IDCANCEL) ewe.sys.Vm.exit(0);
-				baseDir = fc.getChosenFile().toString();
-			}while (!(new File(baseDir)).exists());
-		}
-		baseDir=baseDir.replace('\\','/');
-		if (!baseDir.endsWith("/")) baseDir+="/";
-		//Vm.showWait(false);
-		boolean profileExists=true;  // Assume that the profile exists
-		do {	
-			if(!profileExists || (showProfileSelector==PROFILE_SELECTOR_FORCED_ON) || 
-					(showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
-				ProfilesForm f = new ProfilesForm(baseDir,lastProfile,!profileExists || hasNewButton);
-				int code = f.execute();
-				// If no profile chosen (includes a new one), terminate
-				if (code==-1) return false; // Cancel pressed
-				prof.clearProfile();
-				curCentrePt.set(0,0); // No centre yet
-				lastProfile=f.newSelectedProfile;
-			}
-			profileExists=(new File(baseDir+lastProfile)).exists();
-			if (!profileExists) (new MessageBox(MyLocale.getMsg(144,"Warning"),
-					           MyLocale.getMsg(171,"Profile does not exist: ")+lastProfile,MessageBox.MBOK)).execute();
-		} while (profileExists==false);
-		// Now we are sure that baseDir exists and basDir+profile exists
-		prof.name=lastProfile;
-		prof.dataDir=baseDir+lastProfile;
-		prof.dataDir=prof.dataDir.replace('\\','/');
-		if (!prof.dataDir.endsWith("/")) prof.dataDir+='/';
-		savePreferences();
-		return true;
-
-	}
+	/** Helper variables for XML parser */ 
+	private StringBuffer collectElement=null; 
+	private String lastName; // The string to the last XML that was processed
 
 	/**
 	 * Method that gets called when a new element has been identified in pref.xml
@@ -426,7 +296,10 @@ public class Preferences extends MinML{
 		collectElement=null;
 	}
 
-
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Write pref.xml file
+	//////////////////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * Method to save current preferences in the pref.xml file
 	 */
@@ -475,6 +348,174 @@ public class Preferences extends MinML{
 		}
 	}
 
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Maps
+	//////////////////////////////////////////////////////////////////////////////////////
+
+	public String mapsPath = "maps/standard";
+	
+	/**
+	 * Gibt den vom Benutzer gesetzten Pfad zu den Maps
+	 * @return custom Maps Path, null wenn nicht gesetzt
+	 */
+	public String getCustomMapsPath() {
+	   return customMapsPath;	
+	}
+	
+	void saveCustomMapsPath(String mapspath) {
+		customMapsPath=mapsPath;
+	}
+	
+	/**
+	 * gets the path to the calibrated maps
+	 * it first tries if there are manually imported maps
+	 * in <baseDir>/maps/standard then it tries 
+	 * the legacy dir: <program-dir>/maps
+	 * In case in both locations are no .wfl-files
+	 * it returns  <baseDir>/maps/expedia - the place where
+	 * the automatically downloaded maps are placed.
+	 * 
+	 * Later the maps-path shall be saved in the preferences
+	 */
+	public String getMapLoadPath() {
+		// here could also a list of map-types displayed...
+		// standard dir
+		File t = new FileBugfix(getMapManuallySavePath(false));
+		String[] f = t.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_FILES_ONLY);
+		if (f != null && f.length > 0) return  baseDir + mapsPath;
+		f = t.list("*.wfl", File.LIST_DIRECTORIES_ONLY | File.LIST_ALWAYS_INCLUDE_DIRECTORIES);
+		if (f != null && f.length > 0) { // see if in a subdir of <baseDir>/maps/standard are .wfl files
+			String[] f2;
+			for (int i = 0; i< f.length; i++) {
+				t.set(null, getMapManuallySavePath(false)+"/"+f[i]);
+				f2 = t.list("*.wfl", File.LIST_FILES_ONLY);
+				if (f2 != null && f2.length > 0) return  getMapManuallySavePath(false);
+			}
+		}
+		// lagacy dir 
+		t.set(null, File.getProgramDirectory() + "/maps");
+		f = t.list("*.wfl", File.LIST_FILES_ONLY);
+		if (f != null && f.length > 0) {
+			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", MessageBox.YESB | MessageBox.NOB);
+			if (inf.execute() == MessageBox.IDYES) {
+				String sp = getMapManuallySavePath(false);
+				File spF = new File(sp);
+				if (!spF.exists()) spF.mkdirs();
+				String image;
+				String lagacypath = File.getProgramDirectory() + "/maps/";
+				for (int i=0; i<f.length; i++) {
+					t.set(null, lagacypath+f[i]);
+					spF.set(null, sp+"/"+f[i]);
+					t.move(spF);
+					image = Common.getImageName(lagacypath+f[i].substring(0, f[i].lastIndexOf(".")));
+					t.set(null, image);
+					spF.set(null, sp+"/"+t.getFileExt());
+					t.move(spF);
+				}
+				t.set(null, lagacypath);
+				t.delete();
+				return sp;
+			}
+			else return  File.getProgramDirectory() + "/maps";
+		}
+		// expedia dir
+		return getMapExpediaLoadPath(); 
+	}
+
+	/**
+	 * it creates the directory if it doesn't exist
+	 * @return the path where manually imported maps should be stored
+	 * this should be adjustable in preferences...
+	 */
+	public String getMapManuallySavePath(boolean create) {
+		String mapsDir = baseDir + mapsPath;
+		if (create && !(new File(mapsDir).isDirectory())) { // dir exists? 
+			if (new File(mapsDir).mkdirs() == false) {// dir creation failed?
+				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+mapsDir, MessageBox.OKB)).exec();
+				return null;
+			}
+		}
+		return mapsDir;
+	}
+
+	/**
+	 * to this path the automatically downloaded maps are saved
+	 */
+	public String getMapExpediaSavePath() {
+		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length());
+		String mapsDir = Global.getPref().baseDir + "maps/expedia/" + subdir;
+		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
+			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
+			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();
+			return null;
+			}
+		}
+		return mapsDir;
+	}
+
+	public String getMapExpediaLoadPath() {
+		return Global.getPref().baseDir + "maps/expedia"; // baseDir has trailing /
+	}
+	
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Profile Selector
+	//////////////////////////////////////////////////////////////////////////////////////
+	
+	static protected final int PROFILE_SELECTOR_FORCED_ON=0;
+	static protected final int PROFILE_SELECTOR_FORCED_OFF=1;
+	static protected final int PROFILE_SELECTOR_ONOROFF=2;
+
+	/**
+	 * Open Profile selector screen 
+	 * @param prof
+	 * @param showProfileSelector
+	 * @return True if a profile was selected
+	 */
+	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
+		// If datadir is empty, ask for one
+		if (baseDir.length()==0 || !(new File(baseDir)).exists()) {
+			do {
+				FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT,baseDir);
+				fc.title = MyLocale.getMsg(170,"Select base directory for cache data");
+				// If no base directory given, terminate
+				if (fc.execute() == FileChooser.IDCANCEL) ewe.sys.Vm.exit(0);
+				baseDir = fc.getChosenFile().toString();
+			}while (!(new File(baseDir)).exists());
+		}
+		baseDir=baseDir.replace('\\','/');
+		if (!baseDir.endsWith("/")) baseDir+="/";
+		boolean profileExists=true;  // Assume that the profile exists
+		do {	
+			if(!profileExists || (showProfileSelector==PROFILE_SELECTOR_FORCED_ON) || 
+					(showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
+				ProfilesForm f = new ProfilesForm(baseDir,lastProfile,!profileExists || hasNewButton);
+				int code = f.execute();
+				// If no profile chosen (includes a new one), terminate
+				if (code==-1) return false; // Cancel pressed
+				prof.clearProfile();
+				curCentrePt.set(0,0); // No centre yet
+				lastProfile=f.newSelectedProfile;
+			}
+			profileExists=(new File(baseDir+lastProfile)).exists();
+			if (!profileExists) (new MessageBox(MyLocale.getMsg(144,"Warning"),
+					           MyLocale.getMsg(171,"Profile does not exist: ")+lastProfile,MessageBox.MBOK)).execute();
+		} while (profileExists==false);
+		// Now we are sure that baseDir exists and basDir+profile exists
+		prof.name=lastProfile;
+		prof.dataDir=baseDir+lastProfile;
+		prof.dataDir=prof.dataDir.replace('\\','/');
+		if (!prof.dataDir.endsWith("/")) prof.dataDir+='/';
+		savePreferences();
+		return true;
+	}
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Log functions
+	//////////////////////////////////////////////////////////////////////////////////////
+
+	/** Log file is in program directory and called log.txt */
+	private final String LOGFILENAME=File.getProgramDirectory()+"/log.txt";
+	
 	/**
 	 * Method to delete an existing log file. Called on every SpiderGC.
 	 * The log file is also cleared when Preferences is created and the filesize > 60KB
@@ -544,6 +585,13 @@ public class Preferences extends MinML{
 		log (message,e,false);
 	}
 		
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Exporter path functions
+	//////////////////////////////////////////////////////////////////////////////////////
+
+	/** Hashtable for storing the last export path */
+	private Hashtable exporterPaths = new Hashtable();
+
 	public void setExportPath(String exporter,String path){
 		exporterPaths.put(exporter, path);
 	}
