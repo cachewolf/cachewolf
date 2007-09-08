@@ -38,4 +38,4 @@ runjewel.sh habe ich mir selbst aus runJewel.bat erzeugt.
 - Script buildexe.bat bzw. ./buildexe.sh aufrufen, es wird ein Verzeichnis CacheWolf erzeugt mit Unterverzeichnissen für die unterschiedlichen Plattformen.
 - mit dem Script runjewel können Änderungen an der Datei cwberlios.jnf vorgenommen werden.
 
-An weiteren Dateien neben CacheWolf.ewe werden im Programmverzeichnis noch *.def, *.tpl und attributes/*.gif aus dem Verzeichnis „resources“ benötigt.
+An weiteren Dateien neben CacheWolf.ewe werden im Programmverzeichnis noch *.def, *.tpl und attributes/*.gif aus dem Verzeichnis „resources“ benötigt. Wahlweise kann man stattdessen auch resources/attributes-big/*.gif in «Programmverzeichnis»/attributes/ packen.
