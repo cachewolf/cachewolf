@@ -158,7 +158,7 @@ public class CacheList extends CellPanel {
 	
 	public void onEvent(Event ev) {
 		if (ev instanceof MenuEvent && ev.type==MenuEvent.SELECTED) {
-			if (lstCaches.itemsSize()>0) {
+			if (lstCaches.itemsSize()>0 && !needsInit) {
 				int lstCacheIdx=lstCaches.getSelectedIndex(0);
 				CacheHolder ch=(CacheHolder)cacheList.get(lstCacheIdx);
 				int idx=Global.getProfile().cacheDB.find(ch);
