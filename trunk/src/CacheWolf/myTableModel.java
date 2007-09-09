@@ -59,8 +59,8 @@ public class myTableModel extends TableModel{
 		tcControl = tc;
 		setColumnNamesAndWidths(); 
 		this.numRows = cacheDB.size();
-		Dimension selrow = new Dimension(-1,1);
-		this.cursorSize = selrow;
+		//Dimension selrow = new Dimension(-1,1);
+		//this.cursorSize = selrow;
 		cacheImages[0] = new Image("0.png");
 		//cacheImages[1] = new Image();
 		cacheImages[2] = new Image("2.png");
@@ -286,8 +286,8 @@ public class myTableModel extends TableModel{
 	
 	public boolean penPressed(Point onTable,Point cell){
 		boolean retval = false;
+		if (cell==null) return false;
 		try{
-			if (cell.y>=0) Global.mainTab.tbP.setSelectedCache(cell.y);
 			// Check whether the click is on the checkbox image
 			if (cell.y>=0 && cell.x==0) {
 				Global.getProfile().selectionChanged = true;
@@ -334,7 +334,7 @@ public class myTableModel extends TableModel{
 				tcControl.update(true);
 				retval = true;
 			}
-		}catch(NullPointerException npex){}
+		} catch(NullPointerException npex){Global.getPref().log("NPE in myTableModel.Penpressed");}
 		return retval;
 	}
 	

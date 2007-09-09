@@ -295,7 +295,7 @@ public class CacheList extends CellPanel {
 	 * @return true if the cache is not already in lstCaches */
 	public boolean addCache(String wayPoint) {
 		// Check whether this is the first cache being added
-		if (needsInit)  {lstCaches.deleteItem(0);lstCaches.deleteItem(0);  needsInit=false; }
+		if (needsInit)  {lstCaches.deleteItem(0);lstCaches.deleteItem(0);  needsInit=false; lstCaches.repaint(); }
 		int idx=Global.getProfile().getCacheIndex(wayPoint);
 		if (idx==-1) return false;
 		CacheHolder ch=(CacheHolder) Global.getProfile().cacheDB.get(idx);

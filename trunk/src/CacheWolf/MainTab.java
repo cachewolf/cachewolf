@@ -120,7 +120,7 @@ public class MainTab extends mTabbedPanel {
 			// If it is Addi get details of main Wpt (chMain)
 			chMain=null;
 			cacheDirty=false;
-			if (tbP.getSelectedCache()>=Global.mainTab.tbP.myMod.numRows) {
+			if (tbP.getSelectedCache()>=Global.mainTab.tbP.myMod.numRows || tbP.getSelectedCache()<0) {
 				ch=null; chD=null; 
 				lastselected="";
 			} else {
@@ -234,7 +234,8 @@ public class MainTab extends mTabbedPanel {
 	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
 		tbP.pref = pref;
 		profile.updateBearingDistance();
-		tbP.refreshTable();
+		//tbP.refreshTable();
+		tbP.tc.repaint();
 		//(new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet").replace('~','\n'), MessageBox.OKB)).execute();
 	}
 
