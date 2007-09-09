@@ -95,6 +95,13 @@ public class myTableControl extends TableControl{
 		Global.getProfile().setSelectForAll(selectStatus);
 		tbp.refreshTable();
 	}
+	
+	 
+	/** always select a whole row */
+	public boolean isSelected(int row,int col) {
+		return row==selection.y;
+	}
+	
 	public void popupMenuEvent(Object selectedItem){
 		CacheHolder ch;
 		if (selectedItem.toString().equals(MyLocale.getMsg(1015,"Select all"))){
@@ -256,7 +263,7 @@ public class myTableControl extends TableControl{
 	String wayPoint;
 	int row;
 	
-	public void startDragging(DragContext dc) {//TODO Dragging of header widths
+	public void startDragging(DragContext dc) {
 		 Vector cacheDB=Global.getProfile().cacheDB;
 		 Point p=cellAtPoint(dc.start.x,dc.start.y,null);
 		 wayPoint=null;
@@ -297,5 +304,4 @@ public class myTableControl extends TableControl{
 	 	else
 	 		super.dragged(dc);
 	 }
-
 }

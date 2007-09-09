@@ -119,6 +119,16 @@ public class CacheList extends CellPanel {
 		// Alternative method of deleting a cache from the list through
 		// Keyboard interface
 		public void onKeyEvent(KeyEvent ev) {
+			/* This is a bit of a hack. By default Ewe sends key events to 
+			 * this panel. So if the list has not had anything dragged into it,
+			 * we redirect the focus to the list view, assuming that that is where
+			 * the key event needs to go.
+			 */
+			if (needsInit) {
+				Gui.takeFocus(Global.mainTab.tbP.tc, Control.ByKeyboard);
+				ev.target=Global.mainTab.tbP.tc;
+				postEvent(ev);
+			}
 			if (ev.type == KeyEvent.KEY_PRESS && ev.target == this){
 				if (ev.key == IKeys.DELETE && cacheList.size()>0) {
 			    	 idx=getSelectedIndex(0);
