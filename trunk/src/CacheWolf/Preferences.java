@@ -330,7 +330,7 @@ public class Preferences extends MinML{
 			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" />\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
-			outp.print("    <spider forcelogin=\""+forceLogin+"\"/>/n");
+			outp.print("    <spider forcelogin=\""+forceLogin+"\"/>\n");
 			outp.print("    <gotopanel northcentered=\""+northCenteredGoto+"\" />\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath +"\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
