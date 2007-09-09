@@ -309,4 +309,21 @@ public class myTableControl extends TableControl{
 	 	else
 	 		super.dragged(dc);
 	 }
+
+	 public void cursorTo(int row,int col,boolean selectNew) {
+		if (row != -2 && col != -2 && !canSelect(row,col)) return;
+		cursor.set(col,row);
+		if (selectNew){
+			clearSelectedCells(oldExtendedSelection);
+			paintCells(null,oldExtendedSelection);
+			if (row != -2 && col != -2){
+				if (scrollToVisible(row,col)) repaintNow();
+				addToSelection(Rect.buff.set(0,row,model.numCols,1),true);
+				fireSelectionEvent(TableEvent.FLAG_SELECTED_BY_ARROWKEY);
+				clickedFlags = TableEvent.FLAG_SELECTED_BY_ARROWKEY;
+				if (clickMode) clicked(row,col);
+				clickedFlags = 0;
+			}
+		}
+	 }
 }
