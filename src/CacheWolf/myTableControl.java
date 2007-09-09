@@ -244,8 +244,11 @@ public class myTableControl extends TableControl{
 	    	// cache details
 	    	if (ev.type==PenEvent.PEN_DOWN && (((PenEvent)ev).modifiers&PenEvent.RIGHT_BUTTON)!=0) { 
 				Point p=cellAtPoint(((PenEvent)ev).x,((PenEvent)ev).y,null);
-				rowRightMouseClick=p.y;
-				// The selection of the row on right mouse click ist delayed
+				if (p==null)
+					rowRightMouseClick=-1;
+				else
+					rowRightMouseClick=p.y;
+				// The selection of the row on right mouse click is delayed
 				// until the menu has been drawn to speed up the refreshing of the screen
 			}
 			Global.mainTab.tbP.myMod.penEventModifiers=((PenEvent)ev).modifiers;
