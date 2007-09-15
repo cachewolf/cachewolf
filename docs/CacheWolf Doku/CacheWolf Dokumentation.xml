@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+<!ENTITY __Installation__f6afn1eo SYSTEM "Installation.xml">
+<!ENTITY __DerersteStart__f6anus0g SYSTEM "Der%20erste%20Start.xml">
+<!ENTITY __ansichten__f6anvxip SYSTEM "ansichten.xml">
+]>
+<book>
+  <title>CacheWolf Dokumentation</title>
+
+  &__Installation__f6afn1eo;
+
+  &__DerersteStart__f6anus0g;
+
+  &__ansichten__f6anvxip;
+</book>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter>
+  <title>Ansichten</title>
+
+  <xi:include href="ansichten_liste.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+</chapter>

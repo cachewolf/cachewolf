@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter>
+  <chapterinfo>
+    <date>7.9.2007</date>
+
+    <releaseinfo>In Bearbeitung</releaseinfo>
+
+    <edition>CacheWolf 1.0</edition>
+
+    <author>
+      <surname>Marc Schnitzler</surname>
+    </author>
+
+    <revhistory>
+      <revision>
+        <revnumber>0.1</revnumber>
+
+        <date>7. September 2007</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>Erster Entwurf, kopiert www.cachewolf.de</para>
+        </revdescription>
+      </revision>
+    </revhistory>
+  </chapterinfo>
+
+  <title>Der erste Start</title>
+
+  <section>
+    <title>Programmstart</title>
+
+    <para>Wenn man CacheWolf zum ersten Mal startet, erscheint erst folgendes
+    Bild:</para>
+
+    <para><warning>
+        <para>Bild fehlt</para>
+      </warning>kurz darauf der Dateidialog</para>
+
+    <para><warning>
+        <para>Bild fehlt</para>
+      </warning>Dieser fordert dich nun auf, ein Basisverzeichnis auszuwählen
+    für die noch kommenden Cache-Daten. Die Idee dahinter ist folgende: In
+    diesem Verzeichnis kannst du beliebig viele Unterordner anlegen; jeder
+    dieser ordner ist ein eigenes Profil (kommt noch!) innerhalb des
+    Cachewolf.</para>
+
+    <tip>
+      <para>Auf einem PocketPC kannst du dieses Verzeichnis auf die
+      Speicherkarte legen (den CW am besten auf dem Gerät oder der Flash-Disk
+      ablegen).</para>
+    </tip>
+
+    <para>Wähle nun ein Verzeichnis aus und bestätige mit <literal>Select
+    Folder</literal></para>
+  </section>
+
+  <section>
+    <title>Einstellen der Präferenzen</title>
+
+    <para>Es erscheint nun ein bisher leeres Fenster, die
+    Listenansicht:</para>
+
+    <para>Keine Angst, wir füllen dieses gleich... </para>
+
+    <para>Doch zuerst einmal wähle den Menüpunkt <literal>Anwendung -
+    Präferenzen</literal>, hier stellen wir nun ein paar grundsätzliche Dinge
+    ein: </para>
+  </section>
+
+  <section>
+    <title>Cachedaten bekommen</title>
+
+    <para></para>
+
+    <section>
+      <title>Import einer GPX - Datei</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Import einer LOC - Datei</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Direktes herunterladen (spidern)</title>
+
+      <para></para>
+    </section>
+  </section>
+</chapter>
