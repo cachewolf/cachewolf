@@ -4,7 +4,6 @@ import ewe.ui.*;
 import ewe.util.Vector;
 import ewe.sys.*;
 import ewe.fx.*;
-import ewe.graphics.*;
 
 /**
 *	This class allows handling of a user click on a cache
@@ -25,6 +24,7 @@ public class myInteractivePanel extends InteractivePanel{
 	String strDifficulty=MyLocale.getMsg(1120,"Diff");
 	String strTerrain=MyLocale.getMsg(1121,"Terr");
 	AniImage imgDrag; // Allows the dragging of the cache into the cachelist
+	boolean canScroll=true;
 	
 	private void clearInfo() {
 		removeImage(imgInfo);
@@ -99,9 +99,10 @@ public class myInteractivePanel extends InteractivePanel{
 	String wayPoint;
 	
 	public void startDragging(DragContext dc) {
+		if (!Global.mainForm.cacheListVisible) return;
 		Vector cacheDB=Global.getProfile().cacheDB;
-//Vm.debug("myIAP startDrag "+dc.start.x+"/"+dc.start.y+"  "+ch.wayPoint);
-		 int idx=Global.getProfile().getCacheIndex(wayPoint); 
+//Vm.debug("myIAP startDrag "+dc.start.x+"/"+dc.start.y);
+		int idx=Global.getProfile().getCacheIndex(wayPoint); 
 		if (idx>=0) {
 			 CacheHolder ch=(CacheHolder) cacheDB.get(idx);
 			 //wayPoint=ch.wayPoint;
@@ -111,14 +112,19 @@ public class myInteractivePanel extends InteractivePanel{
 			 icnDrag.addColumn(ch.wayPoint);
 			 dc.dragData=dc.startImageDrag(icnDrag,new Point(8,8),this);
 			 if (dc instanceof ImageDragContext) Vm.debug(">>>>Is Image drag");
+			 canScroll=false;
 		}
 	 }
 
-	 public void stopDragging(DragContext dc) {}
+	 public void stopDragging(DragContext dc) {		 
+		canScroll=true;
+	 }
 	 public void draggingStarted(ImageDragContext dc) {}
 	 public void draggingStopped(ImageDragContext dc) {}
 	 
 	 public boolean imageBeginDragged(AniImage which,Point pos) {
+		if (!Global.mainForm.cacheListVisible) return false;
+		canScroll=false;
 		clearInfo();
 		wayPoint=null;
 		AniImage dragImage=null;
@@ -172,5 +178,15 @@ public class myInteractivePanel extends InteractivePanel{
 	    	 }
 	     }
 		 return false; 
+	 }
+	 
+	 public boolean canScreenScroll() {
+		 return canScroll;
+	 }
+	 public boolean scroll(int dx,int dy,Point moved) {
+		 if (canScroll)
+			 return super.scroll(dx,dy,moved);
+		 else
+			 return false;
 	 }
 }
