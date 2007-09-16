@@ -62,5 +62,11 @@ public class ImageDetailForm extends Form{
 			throw(t);
 		}
 	}
+	public void onEvent(Event ev) {
+		if (ev instanceof ControlEvent && ev.type==ControlEvent.EXITED) {
+			ev.consumed=true;
+			this.close(0);
+		} else super.onEvent(ev);
+	}
 }
 
