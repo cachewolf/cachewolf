@@ -123,19 +123,37 @@ public class myTableControl extends TableControl{
 			tbp.refreshTable();
 		}
 		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete"))){
-			if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), MessageBox.YESB | MessageBox.NOB)).execute() != Form.IDYES) return;
-			DataMover dm=new DataMover();
 			Vm.showWait(true);
+			// Count # of caches to delete
+			int count=0;
 			for(int i = cacheDB.size()-1; i >=0; i--){
-				ch = (CacheHolder)cacheDB.get(i);
-				if(ch.is_Checked == true) {
-					dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
-					cacheDB.remove(ch);
+				if ( ((CacheHolder)cacheDB.get(i)).is_Checked) count++;
+			}
+			if (count>0) {
+				if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), MessageBox.YESB | MessageBox.NOB)).execute() != Form.IDYES) return;
+				DataMover dm=new DataMover();
+				myProgressBarForm pbf = new myProgressBarForm();
+				Handle h = new Handle();
+				pbf.setTask(h,MyLocale.getMsg(1012, "Delete selected"));
+				pbf.exec();
+				int nDeleted=0;
+				int size=cacheDB.size();
+				for(int i = 0; i <size; i++){
+					ch = (CacheHolder)cacheDB.get(i);
+					if(ch.is_Checked == true) {
+						nDeleted++;
+						h.progress = ((float)nDeleted)/(float)count;
+						h.changed();
+						dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
+						cacheDB.remove(ch);
+						if (pbf.isClosed) break;
+					}
 				}
+				pbf.exit(0);
+				profile.saveIndex(pref,true);	
+				tbp.refreshTable();
 			}
 			Vm.showWait(false);
-			profile.saveIndex(pref,true);	
-			tbp.refreshTable();
 		}
 
 		if (selectedItem.toString().equals(MyLocale.getMsg(1014,"Update"))){
@@ -325,5 +343,16 @@ public class myTableControl extends TableControl{
 				clickedFlags = 0;
 			}
 		}
+	 }
+	 
+	 class myProgressBarForm extends ProgressBarForm {
+
+		 boolean isClosed=false;
+		 
+		 protected boolean canExit(int exitCode) {
+			isClosed=true;
+			return true;
+		 }
+		 
 	 }
 }
