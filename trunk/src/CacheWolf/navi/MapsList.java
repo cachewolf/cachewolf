@@ -45,11 +45,11 @@ public class MapsList extends Vector {
 				// if (!dateien[i].endsWith(".wfl")) continue;
 				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
 				try {
-					tempMIO = new MapInfoObject();
 					if (dirs.get(j).equals(".")) // the notation dir/./filename doesn't work on all platforms anyhow
-						tempMIO.loadwfl(mapsPath+"/", rawFileName);
-					else tempMIO.loadwfl(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
+						tempMIO = new MapInfoObject(mapsPath+"/", rawFileName);
+					else tempMIO = new MapInfoObject(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
 					add(tempMIO);
+					ewe.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
 				}catch(IOException ex){ 
 					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
 				}catch(ArithmeticException ex){ // affine contain not allowed values 
@@ -103,9 +103,9 @@ public class MapsList extends Vector {
 				screenArea = getAreaForScreen(screen, lat, lon, mi.scale, mi);
 				lastscale = mi.scale;
 			}
-			if (screenArea.isOverlapping(mi.getArea()) ) { // is on screen
+			if (screenArea.isOverlapping(mi) ) { // is on screen
 				if (!forceScale || (forceScale && !scaleEquals(scale, mi))) { // different scale?
-					if (!forceScale && (mi.inBound(lat, lon) && (bestMap == null || scaleNearer(mi.scale, bestMap.scale, scale) || !bestMap.inBound(lat, lon)))) 
+					if (!forceScale && (mi.isInBound(lat, lon) && (bestMap == null || scaleNearer(mi.scale, bestMap.scale, scale) || !bestMap.isInBound(lat, lon)))) 
 						better = true; // inbound and resolution nearer at wanted resolution or old one is on screen but lat/long not inbound-> better
 					else {
 						if ( bestMap == null || scaleNearerOrEuqal(mi.scale, bestMap.scale, scale)) {
@@ -157,7 +157,7 @@ public class MapsList extends Vector {
 		for (int i=size() -1; i>=0 ;i--) {
 			better = false;
 			mi = (MapInfoObject)get(i);
-			if (mi.inBound(topleft) && mi.inBound(bottomright)) { // both points are inside the map
+			if (mi.isInBound(topleft) && mi.isInBound(bottomright)) { // both points are inside the map
 				if (fittingmap == null || fittingmap.scale > mi.scale * scaleTolerance) {
 					better = true; // mi map has a better (lower) scale than the last knwon good map
 				} else {
@@ -212,9 +212,9 @@ public class MapsList extends Vector {
 				screenArea = getAreaForScreen(screen, lat, lon, mi.scale, mi);
 				lastscale = mi.scale;
 			}
-			if (screenArea.isOverlapping(mi.getArea())) { // is on screen
+			if (screenArea.isOverlapping(mi)) { // is on screen
 				if (bestMap == null || !scaleEquals(mi, bestMap)) { // different scale than known bestMap?
-					if (mi.inBound(lat, lon) && (      // more details wanted and this map has more details?                                // less details than bestmap
+					if (mi.isInBound(lat, lon) && (      // more details wanted and this map has more details?                                // less details than bestmap
 							(moreDetails && (curScale > mi.scale * scaleTolerance) && (bestMap == null || mi.scale > bestMap.scale * scaleTolerance ) ) // higher resolution wanted and mi has higher res and a lower res than bestmap, because we dont want to overjump one resolution step
 							|| (!moreDetails && (curScale *  scaleTolerance < mi.scale) && (bestMap == null || mi.scale * scaleTolerance < bestMap.scale) ) // lower resolution wanted and mi has lower res and a higher res than bestmap, because we dont want to overjump one resolution step
 					) )	better = true;	// inbound and higher resolution if higher res wanted -> better
