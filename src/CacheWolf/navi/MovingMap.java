@@ -1471,7 +1471,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		if(l.execute() == FormBase.IDOK){
 //			Vm.debug("Trying map: " + l.selectedMap.fileName);
 			mm.autoSelectMap = false;
-			if (l.selectedMap.inBound(mm.posCircleLat, mm.posCircleLon) || l.selectedMap.getImageFilename().length()==0) {
+			if (l.selectedMap.isInBound(mm.posCircleLat, mm.posCircleLon) || l.selectedMap.getImageFilename().length()==0) {
 				mm.setMap(l.selectedMap, mm.posCircleLat, mm.posCircleLon);
 				mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 				mm.ignoreGps = false;
@@ -1722,7 +1722,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
  *	Class to display maps to choose from
  */
 class ListBox extends Form{
-	public MapInfoObject selectedMap = new MapInfoObject();
+	public MapInfoObject selectedMap; // = new MapInfoObject();
 	mButton cancelButton, okButton;
 	mList list = new mList(4,1,false);
 	public boolean selected = false;
@@ -1745,9 +1745,8 @@ class ListBox extends Form{
 			list.addItem("--- Karten von akt. Position und Ziel ---");
 			row++;
 			for(int i = 0; i<maps.size();i++){
-				map = new MapInfoObject();
-				map = (MapInfoObject)maps.get(i);
-				if( map.inBound(Gps.latDec, Gps.lonDec) && map.inBound(gotopos) ) 
+				map = new MapInfoObject((MapInfoObject)maps.get(i));
+				if( map.isInBound(Gps.latDec, Gps.lonDec) && map.isInBound(gotopos) ) 
 				{
 					list.addItem(i + ": " + map.mapName);
 					row++;
@@ -1760,9 +1759,8 @@ class ListBox extends Form{
 			list.addItem("--- Karten der aktuellen Position ---");
 			row++;
 			for(int i = 0; i<maps.size();i++){
-				map = new MapInfoObject();
-				map = (MapInfoObject)maps.get(i);
-				if (map.inBound(Gps.latDec, Gps.lonDec) == true) 
+				map = new MapInfoObject((MapInfoObject)maps.get(i));
+				if (map.isInBound(Gps.latDec, Gps.lonDec) == true) 
 				{
 					list.addItem(i + ": " + map.mapName);
 					row++;
@@ -1775,9 +1773,8 @@ class ListBox extends Form{
 			list.addItem("--- Karten des Ziels ---");
 			row++;
 			for(int i = 0; i<maps.size();i++){
-				map = new MapInfoObject();
-				map = (MapInfoObject)maps.get(i);
-				if(map.inBound(gotopos)) {
+				map = new MapInfoObject((MapInfoObject)maps.get(i));
+				if(map.isInBound(gotopos)) {
 					list.addItem(i + ": " + map.mapName);
 					row++;
 					inList[i] = true;
@@ -1788,8 +1785,7 @@ class ListBox extends Form{
 		list.addItem("--- andere Karten ---");
 		row++;
 		for(int i = 0; i<maps.size();i++){
-			map = new MapInfoObject();
-			map = (MapInfoObject)maps.get(i);
+			map = new MapInfoObject((MapInfoObject)maps.get(i));
 			if(!inList[i]) {
 				list.addItem(i + ": " + map.mapName);
 				row++;
