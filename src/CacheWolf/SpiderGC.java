@@ -751,7 +751,7 @@ public class SpiderGC{
 			name = exName.findNext();
 			String d=DateFormat.logdate2YMD(exDate.findNext());
 			if((icon.equals(p.getProp("icon_smile")) || icon.equals(p.getProp("icon_camera"))) &&
-				(name.equals(pref.myAlias) || (pref.myAlias2.length()>0 && name.equals(pref.myAlias2))) )  {
+				(name.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && name.equalsIgnoreCase(pref.myAlias2))) )  {
 				chD.is_found = true;
 				chD.CacheStatus = d;
 			}
