@@ -13,20 +13,14 @@ import CacheWolf.Common;
 import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
-import CacheWolf.Matrix;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 
-import com.stevesoft.ewe_pat.*;
-
 /**
- *	This class is the main class for mapping,
- *	 (moving map, georeferencing maps, etc)
- *	in CacheWolf.
- *	It also provides a class for importing maps
- *	This class id=4100
+ *	This class is for importing and manually georeferencing maps
+ *	This class id=4100 for cachewolf-languages
  */
-public class Map extends Form {
+public class MapImporter extends Form {
 	Preferences pref;
 	String mapsPath = new String();
 	String thisMap = new String();
@@ -43,7 +37,7 @@ public class Map extends Form {
 	/**
 	 *	This constructor should be used when importing maps
 	 */
-	public Map(Preferences pref){
+	public MapImporter(Preferences pref){
 		this.pref = pref;
 		mapsPath = pref.getMapManuallySavePath(true)+"/"; //File.getProgramDirectory() + "/maps/";
 	}
@@ -55,12 +49,8 @@ public class Map extends Form {
 	 *	It helps to identify how good the georeferencing works based on the set GCPs.
 	 */
 	public void updatePosition(int x, int y){
-		if(GCPs.size()>=3  || (wfl.affine[4] > 0 && wfl.affine[5] > 0)){
-			double x_ = 0;
-			double y_ = 0;
-			x_ = wfl.affine[0]*x + wfl.affine[2]*y + wfl.affine[4];
-			y_ = wfl.affine[1]*x + wfl.affine[3]*y + wfl.affine[5];
-			CWPoint p = new CWPoint(x_ , y_);
+		if(GCPs.size()>=3  || (wfl.topleft.isValid())){
+			CWPoint p = wfl.calcLatLon(x,y);
 			infLabel.setText("--> " + p.getLatDeg(CWPoint.DMS) + " " +p.getLatMin(CWPoint.DMM) + " / " + p.getLonDeg(CWPoint.DMS) + " " + p.getLonMin(CWPoint.DMM));
 		}
 	}
@@ -68,7 +58,7 @@ public class Map extends Form {
 	/**
 	 *	This is the correct constructor for georeferencing maps.
 	 */
-	public Map(Preferences pref, String mapToLoad, boolean worldfileexists){
+	public MapImporter(Preferences pref, String mapToLoad, boolean worldfileexists){
 		this.pref = pref;
 		this.title = MyLocale.getMsg(4106,"Calibrate map:") + " " + mapToLoad;
 		this.resizable = true;
@@ -116,79 +106,10 @@ public class Map extends Form {
 		if (GCP.latDec>90 || GCP.latDec<-90 || GCP.lonDec>360 || GCP.lonDec<-180) throw new IllegalArgumentException("lat/lon out of range: "+GCP.toString());
 		GCPs.add(GCP);
 		if(GCPs.size() >= 3){
-			evalGCP();
+			wfl.evalGCP(GCPs, imageWidth, imageHeight);
 		}
 	}
 
-	/**
-	 *	Returns the number of ground control points in the list. (Vector GCPs)
-	 */
-	public int getGCPCount(){
-		return GCPs.size();
-	}
-
-	/**
-	 *	Actuall method to evaluate the ground control points and identify the parameters
-	 *	for thew affine transformation
-	 */
-	private void evalGCP(){
-		//N 48 16.000 E 11 32.000
-		//N 48 16.000 E 11 50.000
-		//N 48 9.000 E 11 32.000
-		GCPoint gcp = new GCPoint();
-		//Calculate parameters for latitutde affine transformation (affine 0,2,4)
-		Matrix X = new Matrix(GCPs.size(),3);
-		Matrix trg = new Matrix(GCPs.size(),1);
-		for(int i = 0; i < GCPs.size();i++){
-			gcp = (GCPoint)GCPs.get(i);
-			X.matrix[i][0] = 1; X.matrix[i][1] = gcp.bitMapX; X.matrix[i][2] = gcp.bitMapY;
-			trg.matrix[i][0] = gcp.latDec;
-		}
-		Matrix Xtran = new Matrix(X);
-		Xtran.Transpose();
-		Matrix XtranX = new Matrix(Xtran);
-		XtranX.Multiply(X);
-		Matrix XtranXinv = new Matrix(XtranX);
-		XtranXinv.Inverse();
-		Matrix beta = new Matrix(XtranXinv);
-		beta.Multiply(Xtran);
-		beta.Multiply(trg);
-		wfl.affine[0] = beta.matrix[1][0];
-		wfl.affine[2] = beta.matrix[2][0];
-		wfl.affine[4] = beta.matrix[0][0];
-
-		//Calculate parameters for longitude affine transformation (affine 1,3,5)
-		X = new Matrix(GCPs.size(),3);
-		trg = new Matrix(GCPs.size(),1);
-		for(int i = 0; i < GCPs.size();i++){
-			gcp = (GCPoint)GCPs.get(i);
-			X.matrix[i][0] = 1;
-			X.matrix[i][1] = gcp.bitMapX;
-			X.matrix[i][2] = gcp.bitMapY;
-			trg.matrix[i][0] = gcp.lonDec;
-		}
-		Xtran = new Matrix(X);
-		Xtran.Transpose();
-		XtranX = new Matrix(Xtran);
-		XtranX.Multiply(X);
-		XtranXinv = new Matrix(XtranX);
-		XtranXinv.Inverse();
-		beta = new Matrix(XtranXinv);
-		beta.Multiply(Xtran);
-		beta.Multiply(trg);
-		wfl.affine[1] = beta.matrix[1][0];
-		wfl.affine[3] = beta.matrix[2][0];
-		wfl.affine[5] = beta.matrix[0][0];
-		double x_ = 0;
-		double y_ = 0;
-		x_ = wfl.affine[0]*imageWidth+ wfl.affine[2]*imageHeight + wfl.affine[4];
-		y_ = wfl.affine[1]*imageWidth + wfl.affine[3]*imageHeight + wfl.affine[5];
-		CWPoint p = new CWPoint(x_ , y_);
-		wfl.lowlon = p.lonDec;
-		wfl.lowlat = p.latDec;
-		//Vm.debug("A B C" + affine[0] + " " + affine[2] + " " + affine[4]);
-		//Vm.debug("D E F" + affine[1] + " " + affine[3] + " " + affine[5]);
-	}
 
 	/**
 	 *	Method to copy ("import") a png based map
@@ -367,7 +288,7 @@ public class Map extends Form {
 								}
 							}
 							 */
-							evalGCP();
+							wfl.evalGCP(GCPs, imageWidth, imageHeight);
 							//Vm.debug("Saving .map file to: " + mapsPath + "/" + rawFileName + ".wfl");
 							wfl.saveWFL(mapsPath, rawFileName);
 							GCPs.clear();
@@ -430,10 +351,10 @@ public class Map extends Form {
  *	The data is stored as a ground control point in the calling class: Map
  */
 class mapInteractivePanel extends InteractivePanel{
-	Map f;
+	MapImporter f;
 	Locale l = Vm.getLocale();
 	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
-	public mapInteractivePanel(Map f){
+	public mapInteractivePanel(MapImporter f){
 		this.f = f;
 	}
 
@@ -464,37 +385,7 @@ class mapInteractivePanel extends InteractivePanel{
 			GCPoint gcp = new GCPoint(cooS.getCoords());
 			gcp.bitMapX = pos.x;
 			gcp.bitMapY = pos.y;
-			f.addGCP(gcp); // throws IllegalArgumentException in case of lon/lat out of range
-//			} catch (IllegalArgumentException e) { // NumberFormatException is a subclass of IllagalArgumentException
-//			coosInputFormat();
-//			this.removeImage(aImg);
+			f.addGCP(gcp); 
 		} else this.removeImage(aImg); // CANCEL pressed
-	}
-
-	private void coosInputFormat () {
-		MessageBox tmpMB = new MessageBox((String)lr.get(312,"Error"), (String)lr.get(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
-		tmpMB.exec();
-
-	}
-}
-/**
- *	Class based on CWPoint but intended to handle bitmap x and y
- *	Used for georeferencing bitmaps.
- */
-class GCPoint extends CWPoint{
-	public int bitMapX = 0;
-	public int bitMapY = 0;
-
-	public GCPoint(){
-	}
-
-	public GCPoint(CWPoint p) {
-		super(p);
-	}
-
-	public GCPoint(double lat, double lon){
-		this.latDec = lat;
-		this.lonDec = lon;
-		this.utmValid = false;
 	}
 }
