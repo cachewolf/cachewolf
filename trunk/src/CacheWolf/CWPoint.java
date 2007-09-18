@@ -276,6 +276,14 @@ public class CWPoint extends TrackPoint{
 				lonDec <= 360 && lonDec >= -360;
 	}
 	
+	/**
+	 * mark the Point as invalid
+	 *
+	 */
+	public void makeInvalid() {
+		latDec = -361;
+		lonDec = 91;
+	}
 
 	/**
 	 * set lat and lon by using UTM coordinates  
