@@ -1342,6 +1342,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	int lastZoomWidth , lastZoomHeight;
 	public MovingMapPanel(MovingMap f){
 		this.mm = f;
+		miLuminary = new MenuItem[SkyOrientation.LUMINARY_NAMES.length];
+		for (int i=0; i<SkyOrientation.LUMINARY_NAMES.length; i++) {
+			miLuminary[i] = new MenuItem(SkyOrientation.getLuminaryName(i));
+		}
 		set(Control.WantHoldDown, true); // want to get simulated right-clicks
 	}
 
@@ -1580,10 +1584,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				}
 			}
 			else {			
-				miLuminary = new MenuItem[SkyOrientation.LUMINARY_NAMES.length];
-
 				for (int i=0; i<SkyOrientation.LUMINARY_NAMES.length; i++) {
-					kontextMenu.addItem(miLuminary[i] = new MenuItem(SkyOrientation.getLuminaryName(i)));
+					kontextMenu.addItem(miLuminary[i]);
 					if (i == mm.myNavigation.luminary) miLuminary[i].modifiers |= MenuItem.Checked;
 					else miLuminary[i].modifiers &= MenuItem.Checked;
 				}
