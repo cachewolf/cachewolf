@@ -138,7 +138,7 @@ public class myTableControl extends TableControl{
 				pbf.exec();
 				int nDeleted=0;
 				int size=cacheDB.size();
-				for(int i = 0; i <size; i++){
+				for(int i = size-1; i >=0; i--){// Start Counting down, as the size decreases with each deleted cache
 					ch = (CacheHolder)cacheDB.get(i);
 					if(ch.is_Checked == true) {
 						nDeleted++;
