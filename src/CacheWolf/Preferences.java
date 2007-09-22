@@ -75,6 +75,8 @@ public class Preferences extends MinML{
 	public String myproxy = "";    
 	/** Proxyport when spidering */
 	public String myproxyport = "";
+	/** Flag whether proxy is to be used */
+	public boolean proxyActive=false;
 	/** Serial port name and baudrate */
 	public SerialPortOptions mySPO = new SerialPortOptions();
 	/** True if the GPS data should be forwarded to an IP address */
@@ -233,6 +235,8 @@ public class Preferences extends MinML{
 		if(name.equals("proxy")) {
 			myproxy = atts.getValue("prx");
 			myproxyport = atts.getValue("prt");
+			tmp = atts.getValue("active");
+			if (tmp != null) proxyActive=Boolean.valueOf(tmp).booleanValue();
 		}
 		if (name.equals("garmin")) {
 			garminConn=atts.getValue("connection");
@@ -316,7 +320,7 @@ public class Preferences extends MinML{
 			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
 			outp.print("	<alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
 			outp.print("	<browser name = \""+browser+"\"/>\n");
-			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\"/>\n");
+			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\" active = \""+ proxyActive +"\" />\n");
 			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
 			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destinationHost = \""+ forwardGpsHost+"\"/>\n");
 			outp.print("    <font size =\""+fontSize+"\"/>\n");
