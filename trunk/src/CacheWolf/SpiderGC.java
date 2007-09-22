@@ -383,7 +383,7 @@ public class SpiderGC{
 				if (!getCacheByWaypointName(chD,false,getImages,doNotgetFound,true)) break;
 				if (!chD.is_found || !doNotgetFound ) {
 					chD.saveCacheDetails(profile.dataDir);
-					cacheDB.add(new CacheHolder(chD)); // TODO Could copy into existing object
+					cacheDB.add(new CacheHolder(chD)); 
 				}
 			}
 		}
@@ -939,7 +939,7 @@ public class SpiderGC{
 		ByteArray daten;
 		String datei = "";
 		datei = profile.dataDir + target;
-		if(pref.myproxy.length()>0){
+		if(pref.myproxy.length()>0 && pref.proxyActive){
 			connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), imgUrl);
 		}else{
 			connImg = new HttpConnection(imgUrl);
@@ -1042,7 +1042,7 @@ public class SpiderGC{
 			try{
 				//Vm.debug(address);
 				HttpConnection conn;
-				if(pref.myproxy.length() > 0){
+				if(pref.myproxy.length() > 0 && pref.proxyActive){
 					pref.log("Using proxy: " + pref.myproxy + " / " +pref.myproxyport);
 					conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
 					//Vm.debug(address);
@@ -1108,7 +1108,7 @@ public class SpiderGC{
 
 			//String line = "";
 			String totline = "";
-			if(pref.myproxy.length()==0){
+			if(!pref.proxyActive){
 				try {
 					/*
 					// Create a socket to the host

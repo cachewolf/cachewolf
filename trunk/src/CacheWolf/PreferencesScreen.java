@@ -18,7 +18,7 @@ public class PreferencesScreen extends Form {
 	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword,inpLanguage;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
-	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort;
+	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort,chkProxyActive;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
 	mLabel lblGarmin;
@@ -154,12 +154,14 @@ public class PreferencesScreen extends Form {
 		/////////////////////////////////////////////////////////
 		CellPanel pnlProxy=new CellPanel();
 		pnlProxy.addNext(new mLabel("Proxy"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlProxy.addLast(Proxy = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlProxy.addLast(Proxy = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST)).setTag(SPAN,new Dimension(2,1));
 		Proxy.setText(pref.myproxy);
 		pnlProxy.addNext(new mLabel("Port"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlProxy.addNext(ProxyPort = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlProxy.addLast(ProxyPort = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ProxyPort.setText(pref.myproxyport);
-		pnlProxy.addLast(new mLabel("")).setTag(SPAN,new Dimension(2,1));
+		pnlProxy.addNext(new mLabel(""),HSTRETCH,HFILL);
+		pnlProxy.addLast(chkProxyActive=new mCheckBox(MyLocale.getMsg(634,"use Proxy")));
+		chkProxyActive.setState(pref.proxyActive);
 		pnlMore.addLast(pnlProxy,HSTRETCH,HFILL);
 		pnlMore.addNext(new mLabel(MyLocale.getMsg(592,"Language (needs restart)")),DONTSTRETCH,DONTFILL|WEST);
 		pnlMore.addLast(inpLanguage=new mInput(MyLocale.language),DONTSTRETCH,DONTFILL|WEST);
@@ -239,6 +241,7 @@ public class PreferencesScreen extends Form {
 				//Vm.debug(myPreferences.browser);
 				pref.myproxy = Proxy.getText();
 				pref.myproxyport = ProxyPort.getText();
+				pref.proxyActive=chkProxyActive.getState();
 				//myPreferences.nLogs = Convert.parseInt(nLogs.getText());
 				pref.autoReloadLastProfile=chkAutoLoad.getState();
 				pref.showDeletedImages=chkShowDeletedImg.getState();
