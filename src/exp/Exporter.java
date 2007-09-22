@@ -243,7 +243,7 @@ public class Exporter {
 	 * @param count of actual record
 	 * @return formated cache data
 	 */
-	public String record(CacheHolder ch, String lat, String lon, int count){
+	public String record(CacheHolderDetail ch, String lat, String lon, int count){
 		return null;
 	}
 	
