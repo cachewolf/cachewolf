@@ -1,6 +1,6 @@
 package CacheWolf;
 
-import CacheWolf.navi.Map;
+import CacheWolf.navi.MapImporter;
 import CacheWolf.navi.MapLoaderGui;
 import CacheWolf.navi.SelectMap;
 import ewe.ui.*;
@@ -410,7 +410,7 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == importmap){
 
-				Map map = new Map(pref);
+				MapImporter map = new MapImporter(pref);
 				map.importMap();
 			}
 			if(mev.selectedItem == kalibmap){
@@ -418,7 +418,7 @@ public class MainMenu extends MenuBar {
 				sM.execute();
 				if((sM.getSelectedMap()).length()>0){
 					try {
-						Map map = new Map(pref, sM.getSelectedMap(),sM.worldfileexists);
+						MapImporter map = new MapImporter(pref, sM.getSelectedMap(),sM.worldfileexists);
 						map.execute(null, Gui.CENTER_FRAME);
 					} catch (java.lang.OutOfMemoryError e) {
 						MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156,"Out of memory error, map to big"), MessageBox.OKB);
