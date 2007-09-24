@@ -4,6 +4,7 @@ import ewe.util.*;
 import ewe.sys.*;
 import ewe.io.*;
 import com.stevesoft.ewe_pat.*;
+import CacheWolf.imp.*;
 
 /**
 *	Class that actually filters the cache database.<br>
@@ -119,40 +120,46 @@ public class Filter{
 		CacheHolder ch;
 		double lat,lon, calcDistance = 0;
 		try{
-			FileReader in = new FileReader(routeFile);
-			String line; 
-			while((line = in.readLine()) != null){
-				rex.search(line);
-				/*
-				Vm.debug(line);
-				Vm.debug(rex.stringMatched(1));
-				Vm.debug(rex.stringMatched(2));
-				Vm.debug(rex.stringMatched(3));
-				Vm.debug(rex.stringMatched(5));
-				
-				Vm.debug(rex.stringMatched(6));
-				Vm.debug(rex.stringMatched(7));
-				Vm.debug(rex.stringMatched(8));
-				Vm.debug(rex.stringMatched(10));
-				Vm.debug(" ");
-				*/
-				// parse the route file
-				if(rex.didMatch()){
-					lat = Convert.toDouble(rex.stringMatched(2)) + Convert.toDouble(rex.stringMatched(3))/60 + Convert.toDouble(rex.stringMatched(5))/60000;
-					lon = Convert.toDouble(rex.stringMatched(7)) + Convert.toDouble(rex.stringMatched(8))/60 + Convert.toDouble(rex.stringMatched(10))/60000;
-				
-					if(rex.stringMatched(1).equals("S") || rex.stringMatched(1).equals("s")) lat = -lat;
-					if(rex.stringMatched(6).equals("W") || rex.stringMatched(6).equals("w")) lon = -lon;	
-				
-					cwp = new CWPoint(lat, lon);
+			if((routeFile.getFullPath()).indexOf(".kml") > 0){
+				KMLImporter kml = new KMLImporter(routeFile.getFullPath());
+				kml.importFile();
+				wayPoints = kml.getPoints();
+			} else {
+				FileReader in = new FileReader(routeFile);
+				String line; 
+				while((line = in.readLine()) != null){
+					rex.search(line);
+					/*
+					Vm.debug(line);
+					Vm.debug(rex.stringMatched(1));
+					Vm.debug(rex.stringMatched(2));
+					Vm.debug(rex.stringMatched(3));
+					Vm.debug(rex.stringMatched(5));
 					
-					wayPoints.add(cwp);
+					Vm.debug(rex.stringMatched(6));
+					Vm.debug(rex.stringMatched(7));
+					Vm.debug(rex.stringMatched(8));
+					Vm.debug(rex.stringMatched(10));
+					Vm.debug(" ");
+					*/
+					// parse the route file
+					if(rex.didMatch()){
+						lat = Convert.toDouble(rex.stringMatched(2)) + Convert.toDouble(rex.stringMatched(3))/60 + Convert.toDouble(rex.stringMatched(5))/60000;
+						lon = Convert.toDouble(rex.stringMatched(7)) + Convert.toDouble(rex.stringMatched(8))/60 + Convert.toDouble(rex.stringMatched(10))/60000;
+					
+						if(rex.stringMatched(1).equals("S") || rex.stringMatched(1).equals("s")) lat = -lat;
+						if(rex.stringMatched(6).equals("W") || rex.stringMatched(6).equals("w")) lon = -lon;	
+					
+						cwp = new CWPoint(lat, lon);
+						
+						wayPoints.add(cwp);
+					}
 				}
 			}
 			//initialize database
 			for(int i = cacheDB.size()-1; i >=0 ; i--){
 				ch = (CacheHolder)cacheDB.get(i);
-				ch.is_filtered = true;
+				ch.in_range = false;
 				//cacheDB.set(i, ch);
 			}
 			// for each segment of the route...
@@ -170,13 +177,16 @@ public class Filter{
 					calcDistance = calcDistance * 1.852;
 					//Vm.debug("Distcalc: " + calcDistance + "Cache: " +ch.CacheName + " / z is = " + z);
 					if(calcDistance <= distance) {
-						Vm.debug("Distcalc: " + calcDistance + "Cache: " +ch.CacheName + " / z is = " + z);
-						ch.is_filtered = false;
+						//Vm.debug("Distcalc: " + calcDistance + "Cache: " +ch.CacheName + " / z is = " + z);
+						ch.in_range = true;
 					}
 					//cacheDB.set(i, ch);
 				} // for database
 			} // for segments
-			
+			for(int i = cacheDB.size()-1; i >=0 ; i--){
+				ch = (CacheHolder)cacheDB.get(i);
+				if(ch.is_filtered == false && ch.in_range == false) ch.is_filtered = true;
+			}
 		}catch(FileNotFoundException fnex){
 			(new MessageBox("Error", "File not found", MessageBox.OKB)).execute();
 		}catch(IOException ioex){

@@ -80,6 +80,8 @@ public boolean has_bug = false;
 public boolean is_HTML = true;
 /** List of additional waypoints associated with this waypoint */
 public Vector addiWpts = new Vector();
+/** in range is used by the route filter to identify caches in range of a segment*/
+public boolean in_range = false;
 /** If this is an additional waypoint, this links back to the main waypoint */
 public CacheHolder mainCache;
 /** The date this cache was last synced with OC in format yyyyMMddHHmmss */
