@@ -226,6 +226,10 @@ public class MapLoaderGui extends Form {
 							(new MessageBox("Error", "'overlapping' must be greater or equal 0 ", MessageBox.OKB)).execute();
 							return;
 						}
+						if (!center.isValid() && !forCachesChkBox.getState()) {
+							(new MessageBox("Error", "Please enter the 'center' around which the maps shall be downloaded", MessageBox.OKB)).execute();
+							return;
+						}
 					}
 				} else { // per cache
 					perCache = true;
