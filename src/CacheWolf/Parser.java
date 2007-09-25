@@ -96,7 +96,7 @@ public class Parser{
     	new fnType("asin","asin",2),
     	new fnType("atan","atan",2),
       	new fnType("bearing","bearing",4),
-     	new fnType("centre","center",3)
+     	new fnType("centre","center",3),
     	new fnType("center","center",3),
     	new fnType("cls","cls",1),
     	new fnType("clearscreen","cls",1),
