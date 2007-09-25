@@ -35,7 +35,7 @@ public class StatusBar extends CellPanel{
 		btnFlt.setToolTip("Filter status");
 //		addNext(lblFlt= new mLabel("Flt"),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); lblFlt.backGround=new ewe.fx.Color(0,255,0);
 		addLast(lblCenter=new mLabel(""),CellConstants.STRETCH, WEST|CellConstants.FILL);
-		lblCenter.setToolTip(MyLocale.getMsg(195,"Current center"));
+		lblCenter.setToolTip(MyLocale.getMsg(195,"Current centre"));
 		updateDisplay();
 	}
 	

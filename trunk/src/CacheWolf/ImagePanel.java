@@ -17,7 +17,7 @@ import ewe.util.*;
 public class ImagePanel extends InteractivePanel{
 	/** Picture to replace deleted pictures */
 	private final String NO_IMAGE="no_picture.png";
-	/** Minimum time (msec) to recognize a long pen down event (=right mouse key) */
+	/** Minimum time (msec) to recognise a long pen down event (=right mouse key) */
 	private final int LONG_PEN_DOWN_DURATION=500;
 
 	Preferences pref;

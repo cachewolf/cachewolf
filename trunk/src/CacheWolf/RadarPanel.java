@@ -6,7 +6,7 @@ import ewe.sys.*;
 import ewe.graphics.*;
 
 /**
-*	The radar panel. Displays the caches around a center point.<br>
+*	The radar panel. Displays the caches around a centre point.<br>
 *	Handles scaling as well as toggling the different views in the radar panel.<br>
 *	Also handles clicking on a cache.<br>
 *	Class ID=500
@@ -64,7 +64,7 @@ public class RadarPanel extends CellPanel{
 		//width = (int)width * 2;
 	}
 	
-	// Call this after the center has changed to re-center the radar panel
+	// Call this after the centre has changed to re-center the radar panel
 	public void recenterRadar() {
 		reCenterImage=true;
 	}

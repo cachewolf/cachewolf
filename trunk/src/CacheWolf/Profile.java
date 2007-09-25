@@ -43,7 +43,7 @@ public class Profile {
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
 
-	// When extending the filter check "normalizeFilters"
+	// When extending the filter check "normaliseFilters"
 	// which ensures backward compatibility. Normally no change should be needed
 	public final static String FILTERTYPE="111111111111111111";
 	public final static String FILTERROSE="1111111111111111";
@@ -283,7 +283,7 @@ public class Profile {
 					//Need this to stay "downward" compatible. New type introduced
 					//if(filterType.length()<=17) filterType = filterType + "1";
 					//Vm.debug("fil len: " +filterType.length());
-					//This is handled by "normalizeFilters" which is called at the end.
+					//This is handled by "normaliseFilters" which is called at the end.
 					filterVar = ex.findNext();
 					filterDist = ex.findNext();
 					filterDiff = ex.findNext();
@@ -307,7 +307,7 @@ public class Profile {
 		} catch (IOException e){
 			Global.getPref().log("Problem reading index.xml in dir: "+dataDir,e,true); 
 		}
-		normalizeFilters();
+		normaliseFilters();
 		hasUnsavedChanges=false;
 	}
 
@@ -435,7 +435,7 @@ public class Profile {
 	 */
 	public void buildReferences(){
 		CacheHolder ch, mainCh;
-		Hashtable dbIndex = new Hashtable((int)(cacheDB.size()/0.75f + 1), 0.75f); // initialize so that von rehashing is neccessary
+		Hashtable dbIndex = new Hashtable((int)(cacheDB.size()/0.75f + 1), 0.75f); // initialise so that von rehashing is neccessary
 
 		Integer index;
 		// Build index for faster search and clear all references
@@ -493,7 +493,7 @@ public class Profile {
 	/** Ensure that all filters have the proper length so that the 'charAt' access in the filter
 	 * do not cause nullPointer Exceptions
 	 */
-	private void normalizeFilters() {
+	private void normaliseFilters() {
 		String manyOnes="11111111111111111111111111111";
 		if (filterRose.length()<FILTERROSE.length()) { 
 			filterRose=(filterRose+manyOnes).substring(0,FILTERROSE.length()); 

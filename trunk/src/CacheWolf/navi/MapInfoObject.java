@@ -91,7 +91,7 @@ public class MapInfoObject extends Area {
 
 	/**
 	 * constructs an MapInfoObject with an associated map
-	 * with 1 Pixel = scale meters, center and width, hight in pixels
+	 * with 1 Pixel = scale meters, centre and width, hight in pixels
 	 * @param name path and filename of .wfl file without the extension (it is needed because the image will be searched in the same directory)
 	 */
 	public MapInfoObject(double scalei, CWPoint center, int width, int hight, String name) {
@@ -242,7 +242,7 @@ public class MapInfoObject extends Area {
 	}
 
 	/**
-	 * calculates center, diagonal size of the map and inverse to affine transformation
+	 * calculates centre, diagonal size of the map and inverse to affine transformation
 	 * @throws ArithmeticException when affine data is not correct, e.g. it is not possible to inverse affine-transformation
 	 */
 

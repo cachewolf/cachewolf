@@ -30,13 +30,13 @@ public String LatLon = pos.toString();
 public String DateHidden = EMPTY;
 /** The size of the cache (as per GC cache sizes Micro, Small, ....) */
 public String CacheSize = "None";
-/** The distance from the center in km */
+/** The distance from the centre in km */
 public double kilom = 0;
 /** The formatted distance such as "x.xx km" */
 public String distance = NODISTANCE;
-/** The bearing N, NNE, NE, ENE ... from the current center to this point */
+/** The bearing N, NNE, NE, ENE ... from the current centre to this point */
 public String bearing = NOBEARING;
-/** The angle (0=North, 180=South) from the current center to this point */
+/** The angle (0=North, 180=South) from the current centre to this point */
 public double degrees = 0;
 /** The difficulty of the cache from 1 to 5 in .5 incements */ 
 public String hard = EMPTY;

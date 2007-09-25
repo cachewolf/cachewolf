@@ -246,7 +246,7 @@ public class TPLExporter {
 			System.runFinalization();
 			Vm.gc(); // this doesn't help :-( - I don't know why :-(
 			//Vm.debug("n: "+Vm.countObjects(true));
-			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimize memory needed for TPL-Export\nWe recommend to restart CacheWolf now", MessageBox.OKB)).execute();
+			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now", MessageBox.OKB)).execute();
 			//Vm.debug("n: "+Vm.countObjects(true));
 		}
 		pbf.exit(0);

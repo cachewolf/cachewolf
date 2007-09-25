@@ -4,7 +4,7 @@ package CacheWolf;
 import ewe.util.*;
 
 /**
-*	Class to tokenize (break up) the code into single tokens, so the
+*	Class to tokenise (break up) the code into single tokens, so the
 *	parser my do its job.
 *	@see Parser
 */
@@ -15,7 +15,7 @@ public class Tokenizer{
 	 * the newline does not terminate the command even if this variable is true.
 	 */
 	public boolean newLineIsSeparator=true;
-	/** instructions to tokenize */
+	/** instructions to tokenise */
 	String mySource;
 	/** source character */
 	char look;
@@ -56,7 +56,7 @@ public class Tokenizer{
 	 * @param c Char to convert
 	 * @return Converted char
 	 */
-	private char standardizeSourceChar(char c) {
+	private char standardiseSourceChar(char c) {
 		if (c=='\u00A0' || (c>='\u2002' && c<='\u200b')) c=' ';
 		if (c>='\u2010' && c<='\u2015') c='-';
 		if (c>='\u201c' && c<='\u201f') c='"';
@@ -81,7 +81,7 @@ public class Tokenizer{
 		if(sourcePointer >= mySource.length())
 			return '\n';
 		else {
-			char c=standardizeSourceChar(mySource.charAt(sourcePointer));
+			char c=standardiseSourceChar(mySource.charAt(sourcePointer));
 			return c;
 		}
 	}
@@ -136,7 +136,7 @@ public class Tokenizer{
 		boolean foundDecSep=false; // To check that only one decimal point is allowed in a number
 		startToken();
 		while(getChar()){
-			look=standardizeSourceChar(look);
+			look=standardiseSourceChar(look);
 			if(isDigit(look) || (look=='.' && !foundDecSep)) {
 				currentStream += look;
 				if (look=='.') foundDecSep=true;
@@ -214,7 +214,7 @@ public class Tokenizer{
 		currentStream="";
 		startToken();
 		while (getChar() && look!=':') {
-			look=standardizeSourceChar(look);
+			look=standardiseSourceChar(look);
 			currentStream += look;
 			if (look!='.' && look!='0' && look!='#') err(MyLocale.getMsg(1731,"Invalid format character"));
 		}
@@ -231,7 +231,7 @@ public class Tokenizer{
 		currentStream="";
 		try {
 			while(getChar()){
-				look=standardizeSourceChar(look);
+				look=standardiseSourceChar(look);
 				if (look==' ') continue;
 				currentStream += look;
 				if(isAlpha(look) || look=='$') streamAlphas();

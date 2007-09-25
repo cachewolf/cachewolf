@@ -244,7 +244,7 @@ public class SpiderGC{
 	}
 
 	/**
-	*	Method to start the spider for a search around the center coordinates
+	*	Method to start the spider for a search around the centre coordinates
 	*/
 	public void doIt(){
 		String postStr, dummy, ln, wpt;
@@ -252,7 +252,7 @@ public class SpiderGC{
 		CacheHolderDetail chD;
 		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
 		if (!origin.isValid()) {
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for center must be set"), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), MessageBox.OKB)).execute();
 			return;
 		}
 		// Prepare an index of caches for faster searching

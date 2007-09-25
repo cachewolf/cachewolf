@@ -212,7 +212,7 @@ public class myTableControl extends TableControl{
 			tbp.refreshTable();
 			Vm.showWait(false);
 		}
-		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Center"))){
+		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Centre"))){
 			CacheHolder thisCache = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			CWPoint cp=new CWPoint(thisCache.LatLon);
 			if (!cp.isValid()){

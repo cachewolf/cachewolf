@@ -75,7 +75,7 @@ public class MapsList extends Vector {
 
 	/**
 	 * find the best map for lat/lon in the list of maps
-	 * currently the best map is the one, whose center is nearest to lat/lon
+	 * currently the best map is the one, whose centre is nearest to lat/lon
 	 * and in Area with its scale nearest to scale.
 	 * it always returns a map (if the list is not empty) 
 	 * even if the map is not inbound
@@ -142,7 +142,7 @@ public class MapsList extends Vector {
 	 * @return a map which includs topleft and bottomright, 
 	 * if no map includes both it returns null
 	 * @param if more than one map includes topleft and bottomright than the one will
-	 * be returned which has its center nearest to topleft. If you have gps-pos and goto-pos
+	 * be returned which has its centre nearest to topleft. If you have gps-pos and goto-pos
 	 * as topleft and buttomright use gps as topleft.
 	 * if topleft is really topleft or if it is buttomright is not relevant.  
 	 */
@@ -161,7 +161,7 @@ public class MapsList extends Vector {
 				if (fittingmap == null || fittingmap.scale > mi.scale * scaleTolerance) {
 					better = true; // mi map has a better (lower) scale than the last knwon good map
 				} else {
-					if (fittingmap != null && scaleEquals(mi, fittingmap)) { // same scale as bestmap till now -> test if its center is nearer to the gps-point = topleft
+					if (fittingmap != null && scaleEquals(mi, fittingmap)) { // same scale as bestmap till now -> test if its centre is nearer to the gps-point = topleft
 						latNearer = java.lang.Math.abs(topleft.latDec- mi.center.latDec)/mi.sizeKm < minDistLat ;
 						lonNearer = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
 						if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated

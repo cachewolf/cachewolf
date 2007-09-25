@@ -125,7 +125,7 @@ public class MovingMap extends Form {
 		ScaleImageGraphics.setFont(font);
 		ScaleImage.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(ScaleImage);
-		//resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialize mapImage.screenSize
+		//resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialise mapImage.screenSize
 		setGpsStatus(noGPS);
 		posCircle.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(posCircle);
@@ -594,7 +594,7 @@ public class MovingMap extends Form {
 	}
 
 	/**
-	 * move posCircle to the Center of the Screen
+	 * move posCircle to the Centre of the Screen
 	 *
 	 */
 	public void resetCenterOfMap() {
@@ -832,7 +832,7 @@ public class MovingMap extends Form {
 	 */
 	public void updatePosition(double lat, double lon){
 		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
-		Vm.debug("updatepors, lat: "+lat+" lon: "+lon);
+		Vm.debug("updatepos, lat: "+lat+" lon: "+lon);
 		if (!mapsloaded) {
 			loadMaps(mapPath, lat);
 			lastCompareX = Integer.MAX_VALUE;
@@ -892,7 +892,7 @@ public class MovingMap extends Form {
 	 * loads the best map for lat/lon according to mapChangeModus
 	 * lat/lon will be at the screen-pos of posCircle
 	 * when posCircle is not on the screen (shifted outside my the user)
-	 * then this routine uses the center of the screen to find the best map
+	 * then this routine uses the centre of the screen to find the best map
 	 * but anyway the map will be adjusted (moved) relativ to posCircle
 	 * when a better map was found the called method updateposition will set
 	 * posCirleLat/-Lon to lat/lon.
@@ -958,7 +958,7 @@ public class MovingMap extends Form {
 	/**
 	 * method to get a point on the screen which must be included in the map
 	 * the map methods are looking for. If the poscircle is on the screen this will be 
-	 * that point. If it is outside then the center of the screen will be used.
+	 * that point. If it is outside then the centre of the screen will be used.
 	 * 
 	 * returns [0] = CWPoint of that point, [1] Rect describing the screen around it 
 	 * @param lat
@@ -972,9 +972,9 @@ public class MovingMap extends Form {
 		CWPoint cll;
 		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h) {
 			x = posCircleX; // posCircle is inside the screen
-			y = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn voher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
+			y = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn vorher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
 			cll = new CWPoint(lat, lon);
-		} else { // when posCircle out of screen - use center of screen as point which as to be included in the map
+		} else { // when posCircle out of screen - use centre of screen as point which as to be included in the map
 			cll = ScreenXY2LatLon(w/2, h/2);
 			x = w/2;
 			y = h/2;
@@ -1056,7 +1056,7 @@ public class MovingMap extends Form {
 	/** sets and displays the map
 	 * 
 	 * @param newmap
-	 * @param lat move map so that lat/lon is in the center / -361: don't adust to lat/lon
+	 * @param lat move map so that lat/lon is in the centre / -361: don't adust to lat/lon
 	 * @param lon -361: don't adust to lat/lon
 	 */
 	public void setMap(MapInfoObject newmap, double lat, double lon) {
@@ -1188,7 +1188,7 @@ public class MovingMap extends Form {
 			h = java.lang.Math.abs(h);
 			firstclickpoint.y = firstclickpoint.y - h;
 		}
-		// calculate rect in unzoomed image in a way that the center of the new image is the center of selected area but give priority to the prefered image size of the scaled image
+		// calculate rect in unzoomed image in a way that the centre of the new image is the centre of selected area but give priority to the prefered image size of the scaled image
 		newImageHeight = (int) (newImageHeight / zoomFactor / currentMap.zoomFactor);
 		newImageWidth = (int) (newImageWidth / zoomFactor / currentMap.zoomFactor);
 		Point mappos = getMapPositionOnScreen();
@@ -1330,7 +1330,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	MenuItem moveToMI = new MenuItem("Move map to an load map", MenuItem.Separator, null);;
 	MenuItem moveToDestMI = new MenuItem("move to goto point", 0, null); //* Karte zum Ziel verschieben (und ggf. entsprechende Karte laden) 
 	MenuItem moveToGpsMI = new MenuItem("move to GPS position", 0, null);   
-	MenuItem moveToCenterMI = new MenuItem("move to Center", 0, null);   
+	MenuItem moveToCenterMI = new MenuItem("move to Centre", 0, null);   
 
 	CacheHolder clickedCache;
 	MovingMap mm;
