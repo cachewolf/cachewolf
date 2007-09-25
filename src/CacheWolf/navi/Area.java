@@ -86,7 +86,7 @@ public class Area {
 				 return AT_LEFT_EDGE;
 			 return NOT_ON_EDGE;
 	 }
-	 
+	 /*
 	 public String getEasyFindString() {
 		 String ul = getEasyFindString(topleft, 60);
 		 String br = getEasyFindString(buttomright, 60);
@@ -97,22 +97,23 @@ public class Area {
 		 ewe.sys.Vm.debug(ul+"\n"+br+"\n i:"+i);
 		 return ul.substring(0, i);
 	 }
-	 
+	 */
 	 /**
 	  * 
 	  * @param prec number of digits to return, min 2, max: 63
 	  * @return
 	  */
+	 /*
 	 public static String getEasyFindString(CWPoint p, int prec) {
 		 double longinrange = p.lonDec;
 		 if (longinrange > 180) longinrange -= 180;
 		 Double kw = new Double(((p.latDec+90)/180) * (double) (1l << (prec)));
-		 Long lat = new Double(((p.latDec+90)/180) * (double) (1l << (prec))).longValue(); // TODO handle negative values
+		 long lat = new Double(((p.latDec+90)/180) * (double) (1l << (prec))).longValue(); // TODO handle negative values
 		 lat = kw.longValue();
 		 kw = (double) (1l << (prec));
 		 
 		 kw = new Double(((longinrange+180)/360) * (2 ^ (prec -1)));
-		 Long lon = new Double(((longinrange+180)/360) * (double) (1l << (prec))).longValue(); // 180 = 10110100
+		 long lon = new Double(((longinrange+180)/360) * (double) (1l << (prec))).longValue(); // 180 = 10110100
 		 String ret = "";
 		 Long tmp;
 		 for (int i=prec-1; i>=0;  i--) {
@@ -130,6 +131,7 @@ public class Area {
 			 for (i=0) 
 			 break;
 		 }
-	*/	 return ret;
+	*/	/* return ret;
 	 }
+*/
 }

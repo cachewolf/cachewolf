@@ -49,7 +49,7 @@ public class MapsList extends Vector {
 						tempMIO = new MapInfoObject(mapsPath+"/", rawFileName);
 					else tempMIO = new MapInfoObject(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
 					add(tempMIO);
-					ewe.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
+			//		ewe.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
 				}catch(IOException ex){ 
 					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
 				}catch(ArithmeticException ex){ // affine contain not allowed values 
