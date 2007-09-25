@@ -129,7 +129,7 @@ public class DetailsPanel extends CellPanel{
 		//btnNotes = new mButton("Notes");
 		//this.addLast(btnNotes.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		//this.addNext(new mLabel(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		//this.addLast(btnCenter = new mButton(MyLocale.getMsg(309,"Make Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		//this.addLast(btnCenter = new mButton(MyLocale.getMsg(309,"Make Centre")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 //		this.addLast(btnDelete = new mButton(MyLocale.getMsg(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		attV=new AttributesViewer();
 		this.addLast(attV);
@@ -364,9 +364,9 @@ public class DetailsPanel extends CellPanel{
 					thisCache.pos.set(coords);
 					btnWayLoc.setText(coords.toString());
 					thisCache.LatLon=coords.toString();
-					// If the current center is valid, calculate the distance and bearing to it
-					CWPoint center=Global.getPref().curCentrePt;
-					if (center.isValid()) thisCache.calcDistance(center);
+					// If the current centre is valid, calculate the distance and bearing to it
+					CWPoint centre=Global.getPref().curCentrePt;
+					if (centre.isValid()) thisCache.calcDistance(centre);
 				}
 			}
 			else if (ev.target==btnFoundDate) {

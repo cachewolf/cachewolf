@@ -92,14 +92,14 @@ public class MainMenu extends MenuBar {
 		mapMenuItems[2] = kalibmap = new MenuItem(MyLocale.getMsg(151,"Calibrate"));
 		Menu mapsMenu = new Menu(mapMenuItems, null);
 
-		// Now we start with the horizontal menu bar "Application", "Search", "Filter", "Organize", "About"
+		// Now we start with the horizontal menu bar "Application", "Search", "Filter", "Organise", "About"
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Application" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem [] appMenuItems=new MenuItem[11];
 		appMenuItems[0] = profiles 	 = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu); 
 		appMenuItems[1] = preferences = new MenuItem(MyLocale.getMsg(108,"Preferences")); 
-		appMenuItems[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Center"));
+		appMenuItems[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Centre"));
 		appMenuItems[3] = mnuSeparator;
 		appMenuItems[4] = new MenuItem(MyLocale.getMsg(175,"Import"),0,importMenu);
 		appMenuItems[5] = new MenuItem(MyLocale.getMsg(107,"Export"),0,exportMenu);
@@ -159,15 +159,15 @@ public class MainMenu extends MenuBar {
 		}
 		
 		///////////////////////////////////////////////////////////////////////
-		// Create the "Organize" pulldown menu
+		// Create the "Organise" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organizeMenuItems=new MenuItem[5];
-		organizeMenuItems[0] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
-		organizeMenuItems[1] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
-		organizeMenuItems[2] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
-		organizeMenuItems[3] = mnuSeparator;
-		organizeMenuItems[4] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
-		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organize"),new Menu(organizeMenuItems,null)));
+		MenuItem[] organiseMenuItems=new MenuItem[5];
+		organiseMenuItems[0] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
+		organiseMenuItems[1] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
+		organiseMenuItems[2] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
+		organiseMenuItems[3] = mnuSeparator;
+		organiseMenuItems[4] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
+		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organise"),new Menu(organiseMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
 		// Create the "About" pulldown menu
@@ -510,7 +510,7 @@ public class MainMenu extends MenuBar {
 				Global.mainForm.toggleCacheListVisible();			
 			}
 			///////////////////////////////////////////////////////////////////////
-			// "Organize" pulldown menu
+			// "Organise" pulldown menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == orgCopy){
 				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);

@@ -92,7 +92,7 @@ public class GotoPanel extends CellPanel {
 
 		// Button
 		ButtonP.addNext(btnGPS = new mButton("Start"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		ButtonP.addNext(btnCenter = new mButton(MyLocale.getMsg(309,"Center")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		ButtonP.addNext(btnCenter = new mButton(MyLocale.getMsg(309,"Centre")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addNext(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addLast(btnMap = new mButton("Map"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
@@ -236,7 +236,7 @@ public class GotoPanel extends CellPanel {
 		Double bearMov = new Double();
 		Double speed = new Double();
 		Double sunAzimut = new Double();
-		Vm.debug("ticked: voher");
+		//Vm.debug("ticked: before");
 		compassRose.setGpsStatus(fix, myNavigation.gpsPos.getSats(), myNavigation.gpsPos.getHDOP());
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) {
 			// display values only, if signal good
@@ -373,7 +373,7 @@ public class GotoPanel extends CellPanel {
 				else myNavigation.stopGps();
 			}
 
-			// set current position as center and recalculate distance of caches in MainTab 
+			// set current position as centre and recalculate distance of caches in MainTab 
 			if (ev.target == btnCenter){
 				Vm.showWait(true);
 				pref.curCentrePt.set(myNavigation.gpsPos);

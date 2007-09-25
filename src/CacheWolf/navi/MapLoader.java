@@ -48,7 +48,7 @@ public class MapLoader {
 	/**
 	 * download maps from expedia at zoomlevel alti and save the maps and the .wfl 
 	 * in path
-	 * @param center center of all tiles
+	 * @param center centre of all tiles
 	 * @param radius in meters
 	 * @param scale in "alti" value 1 alti =  3950 /2817.947378 = 1,046861280317350198581316446428 meters per pixel
 	 * @param size in pixels
@@ -92,7 +92,7 @@ public class MapLoader {
 		latinc = (float)-(size.y - borderY) / pixelsPerLat;
 		loninc = (float)(size.x - borderX) / pixelsPerLon;
 		
-		//calculation of center of first tile
+		//calculation of centre of first tile
 		
 		//additional size for borders and rounding
 		double oversizeX = (float)(numMapsX * (size.x - borderX) + borderX) - pixelsX;

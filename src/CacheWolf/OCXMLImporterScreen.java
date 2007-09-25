@@ -10,7 +10,7 @@ import ewe.ui.*;
  * @author pfeffer
  * This Class is the Dialog for Download from Opencaching.de 
  * is called from OCXMLImporter
- * 20061209 Bugfix: Checking for uninitialized missingCheckBox
+ * 20061209 Bugfix: Checking for uninitialised missingCheckBox
  */
 public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;

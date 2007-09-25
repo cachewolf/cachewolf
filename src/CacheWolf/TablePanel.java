@@ -22,7 +22,7 @@ public class TablePanel extends CellPanel{
 	 * selectedIdx=-1 if no caches are visible (i.e. database empty or filtered). In 
 	 * this case selectedch is "null".
 	 * Otherwise selectedIdx points to a visible cache.
-	 * When the cacheDB is reorganized (by sort/filter/search), the selected cache
+	 * When the cacheDB is reorganised (by sort/filter/search), the selected cache
 	 * may end up at a new index.
 	 */
 	int selectedIdx=0;

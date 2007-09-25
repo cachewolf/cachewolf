@@ -119,7 +119,7 @@ public class Preferences extends MinML{
 	public boolean solverIgnoreCase=true;
 	/** The type of connection which GPSBABEL uses: com1 OR usb. */
 	public String garminConn="com1";  
-	/** Additional options for GPSBabel, i.e. -s to synthethize short names */
+	/** Additional options for GPSBabel, i.e. -s to synthethise short names */
 	public String garminGPSBabelOptions=""; 
 	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
 	public boolean downloadMapsOC = true;

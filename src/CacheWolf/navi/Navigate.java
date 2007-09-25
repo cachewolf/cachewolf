@@ -110,7 +110,7 @@ public class Navigate {
 		int fix = gpsPos.getFix();
 		if (fix > 0 && (gpsPos.getSats()>= 0)) {
 			//gpsPosition.printAll();
-			//Vm.debug("currTrack.add: voher");
+			//Vm.debug("currTrack.add: before");
 			if (curTrack == null) curTrack = new Track(trackColor);
 			try {
 				curTrack.add(gpsPos);

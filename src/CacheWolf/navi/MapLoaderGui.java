@@ -74,7 +74,7 @@ public class MapLoaderGui extends Form {
 		distanceInput.setText(Convert.toString((tmp > 0 ? tmp : 15)));
 		pnlTiles.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlTiles.addLast(km);
-		pnlTiles.addNext(coosLbl = new mLabel(MyLocale.getMsg(1803, "around the center: ")));
+		pnlTiles.addNext(coosLbl = new mLabel(MyLocale.getMsg(1803, "around the centre: ")));
 		pnlTiles.addLast(coosBtn = new mButton(center.toString()));
 		pnlTiles.addNext(scaleLbl);
 		scaleInput.setText("5");
@@ -135,13 +135,13 @@ public class MapLoaderGui extends Form {
 				return;
 			}
 			ml.setTiles(surArea.topleft, surArea.buttomright, (int)scale, size, overlapping );
-			// calculate radius and center for overview map
+			// calculate radius and centre for overview map
 			center = new CWPoint((surArea.topleft.latDec + surArea.buttomright.latDec)/2, (surArea.topleft.lonDec + surArea.buttomright.lonDec)/2);
 			double radiuslat = (new CWPoint(center.latDec, surArea.buttomright.lonDec)).getDistance(surArea.buttomright);
 			double radiuslon = (new CWPoint(surArea.buttomright.latDec, center.lonDec)).getDistance(surArea.buttomright);
 			radius = (float) (radiuslat < radiuslon ? radiuslon : radiuslat);
 		} else 
-		{ // calculate from center point an radius
+		{ // calculate from centre point an radius
 			ml.setTiles(center, radius * 1000, (int)scale, size, overlapping);
 		}
 		if (overviewmap) {
@@ -188,7 +188,7 @@ public class MapLoaderGui extends Form {
 			a = 0;
 			b = Control.Disabled;
 		}
-		else { // use center and distance input
+		else { // use centre and distance input
 			a = Control.Disabled;
 			b = 0;
 		}
@@ -227,7 +227,7 @@ public class MapLoaderGui extends Form {
 							return;
 						}
 						if (!center.isValid() && !forCachesChkBox.getState()) {
-							(new MessageBox("Error", "Please enter the 'center' around which the maps shall be downloaded", MessageBox.OKB)).execute();
+							(new MessageBox("Error", "Please enter the 'centre' around which the maps shall be downloaded", MessageBox.OKB)).execute();
 							return;
 						}
 					}

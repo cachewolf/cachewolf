@@ -9,7 +9,7 @@ import ewe.util.*;
 import ewe.sys.*;
 
 /**
-* Class to create the solver panel. Calls the parser and tokenizer and handles
+* Class to create the solver panel. Calls the parser and tokeniser and handles
 *	the parser results.
 *	@see Parser
 *	@see Tokenizer
@@ -22,7 +22,7 @@ public class SolverPanel extends CellPanel{
 	Preferences pref;
 	Profile profile;
 	String currFile;
-	Tokenizer tokenizer = new Tokenizer();
+	Tokenizer tokeniser = new Tokenizer();
 	Parser parser = new Parser();
 	Vector msgFIFO = new Vector();
 	Menu mnuContext;
@@ -106,8 +106,8 @@ public class SolverPanel extends CellPanel{
 	
     private void processCommand(String s) {
 		msgFIFO.clear();
-		tokenizer.tokenizeSource(s, msgFIFO); // Tokenizer sets message if an error occurred
-		if (msgFIFO.size()==0) parser.parse(tokenizer.TokenStack, msgFIFO);
+		tokeniser.tokenizeSource(s, msgFIFO); // Tokeniser sets message if an error occurred
+		if (msgFIFO.size()==0) parser.parse(tokeniser.TokenStack, msgFIFO);
 		String msgStr = "";
 		for(int i = 0; i < msgFIFO.size(); i++){
 			msgStr = msgStr + msgFIFO.get(i) + "\n";

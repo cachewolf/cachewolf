@@ -156,7 +156,7 @@ public class Filter{
 					}
 				}
 			}
-			//initialize database
+			//initialise database
 			for(int i = cacheDB.size()-1; i >=0 ; i--){
 				ch = (CacheHolder)cacheDB.get(i);
 				ch.in_range = false;

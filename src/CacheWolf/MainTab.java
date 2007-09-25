@@ -229,7 +229,7 @@ public class MainTab extends mTabbedPanel {
 		}
 	}
 	
-	/** Update the distances of all caches to the center and display a message 
+	/** Update the distances of all caches to the centre and display a message 
 	 */
 	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
 		tbP.pref = pref;

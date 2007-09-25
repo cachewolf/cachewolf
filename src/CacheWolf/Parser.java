@@ -96,6 +96,7 @@ public class Parser{
     	new fnType("asin","asin",2),
     	new fnType("atan","atan",2),
       	new fnType("bearing","bearing",4),
+     	new fnType("centre","center",3)
     	new fnType("center","center",3),
     	new fnType("cls","cls",1),
     	new fnType("clearscreen","cls",1),
@@ -117,6 +118,7 @@ public class Parser{
     	new fnType("mid","mid",12),
      	new fnType("pc","pz",3),
      	new fnType("profilecenter","pz",3),
+     	new fnType("profilecentre","pz",3),
      	new fnType("profilzentrum","pz",3),
     	new fnType("project","project",8),
      	new fnType("pz","pz",3),
@@ -340,7 +342,7 @@ public class Parser{
 //  FUNCTIONS
 ///////////////////////////////////////////
     
-	/** Get or set the current center */
+	/** Get or set the current centre */
 	private void funcCenter(int nargs) throws Exception {
 		if (nargs==0) {
 			calcStack.add(Global.getPref().curCentrePt.toString());
@@ -536,7 +538,7 @@ public class Parser{
     	}
     }
  
-	/** Get or set the profile center */
+	/** Get or set the profile centre */
 	private void funcPz(int nargs) throws Exception {
 		if (nargs==0) {
 			calcStack.add(Global.getProfile().centre.toString());
