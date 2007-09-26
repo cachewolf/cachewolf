@@ -1330,8 +1330,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	// manuell
 	MenuItem mapChangeResMI = new MenuItem("Change resolution manually", MenuItem.Separator, null);;
 	MenuItem AllCachesResMI = new MenuItem("Load a map containing all marked caches", 0, null); // Karte wählen, die alle markierten Caches enthält  
-	MenuItem moreDetailsMI = new MenuItem("Load a map with more details", 0, null); // detailreichere Karte laden 
-	MenuItem moreOverviewMI = new MenuItem("Load a map for a better overview", 0, null); // Karte mit mehr Übersicht wählen  
+	MenuItem moreDetailsMI = new MenuItem("Load a map with more details", new IconAndText(new mImage("lupe_more_details.png"), "Load a map with more details", null, Graphics.RIGHT)); // laod a map with more details 
+	MenuItem moreOverviewMI = new MenuItem("Load a map for a better overview", new IconAndText(new mImage("lupe_better_overview.png"), "Load a map for a better overview", null, Graphics.RIGHT)); // Load a map for a better overview --> lesser details  
 	// move map to
 	MenuItem moveToMI = new MenuItem("Move map to an load map", MenuItem.Separator, null);;
 	MenuItem moveToDestMI = new MenuItem("move to goto point", 0, null); //* Karte zum Ziel verschieben (und ggf. entsprechende Karte laden) 
