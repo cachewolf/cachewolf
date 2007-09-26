@@ -52,6 +52,8 @@ public class MovingMap extends Form {
 	AniImage buttonImageGpsOn = new AniImage("snap2gps.gif");
 	AniImage buttonImageLens = new AniImage("lupe.png");
 	AniImage buttonImageLensActivated = new AniImage("lupe_activated.png");
+	AniImage buttonImageLensActivatedZoomIn = new AniImage("lupe_activated_zin.png");
+	AniImage buttonImageLensActivatedZoomOut = new AniImage("lupe_activated_zout.png");
 	AniImage buttonImageZoom1to1 = new AniImage("zoom1to1.png");
 	AniImage DistanceImage;
 	Graphics DistanceImageGraphics;
@@ -106,6 +108,8 @@ public class MovingMap extends Form {
 		mmp.addImage(directionArrows);
 		buttonImageLens.properties = AniImage.AlwaysOnTop;
 		buttonImageLensActivated.properties = AniImage.AlwaysOnTop;
+		buttonImageLensActivatedZoomIn.properties = AniImage.AlwaysOnTop;
+		buttonImageLensActivatedZoomOut.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageLens);
 		buttonImageZoom1to1.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageZoom1to1);
@@ -153,7 +157,9 @@ public class MovingMap extends Form {
 		directionArrows.setLocation(w/2-directionArrows.getWidth()/2, 10);
 		buttonImageZoom1to1.setLocation(w - buttonImageZoom1to1.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
 		buttonImageLens.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
-		buttonImageLensActivated.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
+		buttonImageLensActivated.setLocation(w - buttonImageLensActivated.getWidth()-10, h/2 - buttonImageLensActivated.getHeight()/2 );
+		buttonImageLensActivatedZoomIn.setLocation(w - buttonImageLensActivatedZoomIn.getWidth()-10, h/2 - buttonImageLensActivatedZoomIn.getHeight()/2 );
+		buttonImageLensActivatedZoomOut.setLocation(w - buttonImageLensActivatedZoomOut.getWidth()-10, h/2 - buttonImageLensActivatedZoomOut.getHeight()/2 );
 		DistanceImage.setLocation(0, h - DistanceImage.getHeight());
 		ScaleImage.setLocation(w - ScaleImage.getWidth(), h - ScaleImage.getHeight());
 		if (mmp.mapImage != null) mmp.mapImage.move(mmp.mapImage.locAlways.x, mmp.mapImage.locAlways.y); // this is necessary to make a new decision if it is still on the screen (and actually mor important because MapImage only now gets to know the screen size) 
@@ -1414,6 +1420,18 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			top -= 2;
 			if (top < 0) top = 0;
 			if (left < 0) left = 0;
+			if ((lastZoomWidth <= 0) && (ev.x - saveMapLoc.x > 0)) { // changed from zooming out to zooming in 
+				removeImage(mm.buttonImageLensActivated);
+				removeImage(mm.buttonImageLensActivatedZoomOut);
+				addImage(mm.buttonImageLensActivatedZoomIn);
+				this.repaintNow(dr, new Rect(mm.buttonImageLensActivatedZoomIn.location.x, mm.buttonImageLensActivatedZoomIn.location.y, mm.buttonImageLensActivatedZoomIn.getWidth(), mm.buttonImageLensActivatedZoomIn.getHeight()));
+			}
+			if ((lastZoomWidth >= 0) && (ev.x - saveMapLoc.x < 0)) { // changed from zooming out to zooming in 
+				removeImage(mm.buttonImageLensActivated);
+				removeImage(mm.buttonImageLensActivatedZoomIn);
+				addImage(mm.buttonImageLensActivatedZoomOut);
+				this.repaintNow(dr, new Rect(mm.buttonImageLensActivatedZoomOut.location.x, mm.buttonImageLensActivatedZoomOut.location.y, mm.buttonImageLensActivatedZoomOut.getWidth(), mm.buttonImageLensActivatedZoomOut.getHeight()));
+			}
 			this.repaintNow(dr, new Rect(left, top, java.lang.Math.abs(lastZoomWidth)+4, java.lang.Math.abs(lastZoomHeight)+4));
 			lastZoomWidth = ev.x - saveMapLoc.x;
 			lastZoomHeight =  ev.y - saveMapLoc.y;
