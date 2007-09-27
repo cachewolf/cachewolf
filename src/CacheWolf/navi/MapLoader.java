@@ -117,7 +117,7 @@ public class MapLoader {
 			lon = topleft.lonDec;
 			for (int col = 1; col <= numMapsX; col++) {
 				if (progressInfobox != null)
-					progressInfobox.setInfo("Downloading calibrated (georeferenced) \n map image from www.expedia.com \n Downloading tile row: "+row+" / "+numMapsY+" coloumn "+ col + "/"+numMapsX);
+					progressInfobox.setInfo("Downloading calibrated (georeferenced) \n map image from www.expedia.com \n Downloading tile \n row "+row+" / "+numMapsY+" column "+ col + " / "+numMapsX);
 				downloadMap(lat, lon, tileScale, tilesSize.x, tilesSize.y, tilesPath);
 				lon += loninc;
 			}
