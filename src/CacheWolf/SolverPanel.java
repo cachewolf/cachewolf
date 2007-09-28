@@ -16,7 +16,7 @@ import ewe.sys.*;
 */
 public class SolverPanel extends CellPanel{
 	mButton mBtSolve;
-	mButton btnLoad, btnSave, btnSaveAs;
+	mButton btnLoad, btnSave, btnSaveAs,btnWolfLang;
 	mTextPad mText;
 	OutputPanel mOutput;
 	Preferences pref;
@@ -85,8 +85,9 @@ public class SolverPanel extends CellPanel{
 		outputPanel = split.getNextPanel();
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
 
-		programPanel.addLast(new ScrollBarPanel(mText = new InputPanel()));
-		programPanel.addNext(mBtSolve= new mButton(MyLocale.getMsg(1735,"Solve!")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		programPanel.addLast(new ScrollBarPanel(mText = new InputPanel())).setTag(SPAN, new Dimension(2,1));
+		programPanel.addNext(mBtSolve= new mButton(MyLocale.getMsg(1735,"Solve!")),CellConstants.HSTRETCH, CellConstants.HFILL);
+		programPanel.addLast(btnWolfLang= new mButton(MyLocale.getMsg(118,"WolfLanguage")),CellConstants.HSTRETCH, CellConstants.HFILL);
 		/*programPanel.addNext(btnLoad= new mButton(MyLocale.getMsg(1736,"Load")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		programPanel.addNext(btnSave= new mButton(MyLocale.getMsg(1737,"Save")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		programPanel.addLast(btnSaveAs= new mButton(MyLocale.getMsg(1738,"SaveAs")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -119,6 +120,10 @@ public class SolverPanel extends CellPanel{
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == mBtSolve){
 				processCommand(mText.getText());
+			}
+			if (ev.target==btnWolfLang) {
+				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
+				is.execute(parent.getFrame(), Gui.CENTER_FRAME);
 			}
 /*			if(ev.target == btnLoad){
 				FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
