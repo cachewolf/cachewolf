@@ -25,15 +25,15 @@ public class StatusBar extends CellPanel{
 		imgCacheTour.transparentColor=Color.White;
 		btnCacheTour.setPreferredSize(20,13);btnCacheTour.borderWidth=0; 
 		btnCacheTour.setToolTip(MyLocale.getMsg(197,"Show/Hide cachetour"));
-		stats = new DBStats(db);
-		addNext(disp = new mLabel(""),CellConstants.DONTSTRETCH, CellConstants.FILL);
-		disp.setToolTip(MyLocale.getMsg(196,"Total # of caches (GC&OC)\nTotal # visible\nTotal # found"));
 		addNext(btnFlt= new mButton(imgFlt=new mImage("filter.png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); 
 		btnFlt.backGround=new ewe.fx.Color(0,255,0); 
 		btnFlt.setPreferredSize(20,13);
 		btnFlt.borderWidth=0; imgFlt.transparentColor=Color.White;
 		btnFlt.setToolTip("Filter status");
 //		addNext(lblFlt= new mLabel("Flt"),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); lblFlt.backGround=new ewe.fx.Color(0,255,0);
+		stats = new DBStats(db);
+		addNext(disp = new mLabel(""),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		disp.setToolTip(MyLocale.getMsg(196,"Total # of caches (GC&OC)\nTotal # visible\nTotal # found"));
 		addLast(lblCenter=new mLabel(""),CellConstants.STRETCH, WEST|CellConstants.FILL);
 		lblCenter.setToolTip(MyLocale.getMsg(195,"Current centre"));
 		updateDisplay();
