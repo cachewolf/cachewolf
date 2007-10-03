@@ -312,11 +312,14 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLatDeg(int format) {
+		double latdeg = latDec;
+		double lonMin=(Math.abs(latDec) - (int)Math.abs(latDec))*60.0;
+		if (java.lang.Math.round(lonMin)*1000 == 60000) latdeg += 1;
 		switch (format) {
 		case DD: 	return MyLocale.formatDouble(this.latDec, "00.00000").replace(',','.');
 		case CW:
 		case DMM:
-		case DMS:	return MyLocale.formatDouble((int) Math.abs(this.latDec),"00");
+		case DMS:	return MyLocale.formatDouble((int) Math.abs(latdeg),"00");
 		default: return "";
 		}
 	}
@@ -326,11 +329,14 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLonDeg(int format) {
+		double longdeg = lonDec;
+		double lonMin=(Math.abs(lonDec) - (int)Math.abs(lonDec))*60.0;
+		if (java.lang.Math.round(lonMin)*1000 == 60000) longdeg += 1;
 		switch (format) {
 		case DD: 	return MyLocale.formatDouble(this.lonDec, "000.00000").replace(',','.');
 		case CW:
 		case DMM:
-		case DMS:	return MyLocale.formatDouble((int) Math.abs(this.lonDec),"000");
+		case DMS:	return MyLocale.formatDouble((int) Math.abs(longdeg),"000");
 		default: 	return ""; 
 		}
 	}
@@ -341,6 +347,7 @@ public class CWPoint extends TrackPoint{
 	 */
 	public String getLatMin(int format) {
 		double latMin=(Math.abs(latDec) - (int)Math.abs(latDec))*60.0;
+		if (java.lang.Math.round(latMin)*1000 == 60000) latMin = 0; // TODO this caluclation is doubled from getLatdeg
 		switch (format) {
 			case DD: 	return "";
 			case CW:
@@ -355,6 +362,7 @@ public class CWPoint extends TrackPoint{
 	 */
 	public String getLonMin(int format) {
 		double lonMin=(Math.abs(lonDec) - (int)Math.abs(lonDec))*60.0;
+		if (java.lang.Math.round(lonMin)*1000 == 60000) lonMin = 0;
 		switch (format) {
 			case DD: 	return "";
 			case CW:
