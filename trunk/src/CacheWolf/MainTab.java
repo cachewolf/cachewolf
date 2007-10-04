@@ -82,7 +82,7 @@ public class MainTab extends mTabbedPanel {
 		radarP.setMainTab(this);
 		c.iconize(new Image("radar.gif"),true);
 		mnuMain.allowProfileChange(true);
-		if (pref.noTabs) top.modify(ShrinkToNothing,0);//TODO
+//		if (pref.noTabs) top.modify(ShrinkToNothing,0);//TODO
 	}
 
 	public TablePanel getTablePanel(){
