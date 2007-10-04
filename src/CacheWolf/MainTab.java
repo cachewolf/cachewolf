@@ -82,6 +82,7 @@ public class MainTab extends mTabbedPanel {
 		radarP.setMainTab(this);
 		c.iconize(new Image("radar.gif"),true);
 		mnuMain.allowProfileChange(true);
+		if (pref.noTabs) top.modify(ShrinkToNothing,0);//TODO
 	}
 
 	public TablePanel getTablePanel(){
@@ -283,7 +284,7 @@ public class MainTab extends mTabbedPanel {
 		tbP.selectRow(profile.getCacheIndex(waypoint));
 		//Global.mainTab.tbP.refreshTable();
 		if (this.cardPanel.selectedItem==1) { // Detailpanel already selected
-			postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,0));
+			postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,1));
 		} else	
 			select(detP);
 		solverP.setInstructions("");
