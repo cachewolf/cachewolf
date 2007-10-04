@@ -49,7 +49,7 @@ public class myTableModel extends TableModel{
 	 * it is set in myTableControl.onEvent */
 	public int penEventModifiers; 
 	/** The row of the last click where the shift key was pressed */
-	private int lastRow=-1;
+//	private int lastRow=-1;
 	private myTableControl tcControl;
 	
 	public myTableModel(myTableControl tc, FontMetrics fm){
@@ -292,18 +292,15 @@ public class myTableModel extends TableModel{
 			if (cell.y>=0 && cell.x==0) {
 				Global.getProfile().selectionChanged = true;
 				if ((penEventModifiers & IKeys.SHIFT)>0) {
-					if (lastRow!=-1) { // Second row being marked with shift key pressed
-						if (lastRow<cell.y)
-							toggleSelect(lastRow,cell.y);
+					if (tcControl.cursor.y >= 0) { // Second row being marked with shift key pressed
+						if (tcControl.cursor.y<cell.y)
+							toggleSelect(tcControl.cursor.y,cell.y);
 						else
-							toggleSelect(cell.y,lastRow);
-						lastRow=-1;
+							toggleSelect(cell.y,tcControl.cursor.y);
 					} else { // Remember this row as start of range, but don't toggle yet
-						lastRow=cell.y;
 					}
 				} else { // Single row marked
 					toggleSelect(cell.y,cell.y);
-					lastRow=-1;
 				}
 			}
 			if(cell.y == -1){ // Hit a header => sort the table accordingly
@@ -365,6 +362,10 @@ public class myTableModel extends TableModel{
 				
 			}
 		}		
+	}
+	public void select(int row,int col,boolean selectOn) {
+		//super.select(row, col, selectOn);
+		tcControl.cursorTo(row, col, true);
 	}
 	
 }

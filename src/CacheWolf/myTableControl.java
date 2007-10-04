@@ -256,25 +256,9 @@ public class myTableControl extends TableControl{
 		Global.mainTab.select(Global.mainTab.descP);
 	}
 	
-	int rowRightMouseClick=-1;
 	public void onEvent(Event ev) {
-	    if (ev instanceof PenEvent) {
-			// Ensure that row is selected on right mouse key to show the correct
-	    	// cache details
-	    	if (ev.type==PenEvent.PEN_DOWN && (((PenEvent)ev).modifiers&PenEvent.RIGHT_BUTTON)!=0) { 
-				Point p=cellAtPoint(((PenEvent)ev).x,((PenEvent)ev).y,null);
-				if (p==null)
-					rowRightMouseClick=-1;
-				else
-					rowRightMouseClick=p.y;
-				// The selection of the row on right mouse click is delayed
-				// until the menu has been drawn to speed up the refreshing of the screen
-			}
+	    if (ev instanceof PenEvent && (ev.type == PenEvent.PEN_DOWN) ){
 			Global.mainTab.tbP.myMod.penEventModifiers=((PenEvent)ev).modifiers;
-	    }
-	    if (ev instanceof ControlEvent && ev.type==ControlEvent.POPUP_CLOSED) {
-			// Delayed switch to new row on right mouse click when pop-up menu has been opened
-			Global.mainTab.tbP.selectRow(rowRightMouseClick);
 	    }
 		super.onEvent(ev);
 	}
