@@ -202,10 +202,16 @@ public class MapLoader {
 		try{
 			File dateiF = new File(datei);
 			if(!dateiF.exists()){
-				sockImg = connImg.connect();
-				//Vm.debug("Redirect: " + connImg.getRedirectTo());
-				quelle = connImg.getRedirectTo();
-				sockImg.close();
+				int i=0;
+				quelle = null;
+				while (quelle == null && i < 5) { // this is necessary because expedia sometimes doesn't directly anser with the redirect to the map-image, but give a page in between. Solved the problem by retrying see also: http://www.geoclub.de/viewtopic.php?p=305071#305071
+					sockImg = connImg.connect();
+					//Vm.debug("Redirect: " + i + connImg.getRedirectTo());
+					quelle = connImg.getRedirectTo();
+					sockImg.close();
+					i++;
+				}
+				if (i > 4) throw new IOException("loadTo: failed to download map: didn't get http-redirect");
 				if(proxy.length()>0){
 					connImg = new HttpConnection(proxy, Convert.parseInt(port), quelle);
 				}else{
