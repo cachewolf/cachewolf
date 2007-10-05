@@ -598,11 +598,13 @@ public class Preferences extends MinML{
 
 	public void setExportPath(String exporter,String path){
 		exporterPaths.put(exporter, path);
+		savePreferences();
 	}
 
 	public void setExportPathFromFileName(String exporter,String filename){
 		File tmpfile = new File (filename);
 		exporterPaths.put(exporter, tmpfile.getPath());
+		savePreferences();
 	}
 
 	public String getExportPath(String exporter){

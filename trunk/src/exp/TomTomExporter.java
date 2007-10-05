@@ -237,21 +237,19 @@ public class TomTomExporter {
 	}
 
 	public void writeIntBinary(RandomAccessFile outp, int data){
-		int a,b,c,d;
-		d = 0;
-		c = data / 65536;
-		b = (data - c *65536) / 256;
-		a = (data - c * 65536 - b * 256);
-
+		
+		ByteArray buf = new ByteArray();
+		buf.appendInt(data);
 		try {
-			outp.writeByte((byte)a);
-			outp.writeByte((byte)b);
-			outp.writeByte((byte)c);
-			outp.writeByte((byte)d);
+			outp.writeByte(buf.data[3]);
+			outp.writeByte(buf.data[2]);
+			outp.writeByte(buf.data[1]);
+			outp.writeByte(buf.data[0]);
 		} catch (IOException e) {
 			Vm.debug("Error writing to file");
 			e.printStackTrace();
 		}
+
 		return;
 	}
 	
