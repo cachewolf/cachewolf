@@ -55,6 +55,7 @@ public class ImagePanel extends InteractivePanel{
 		//this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
 		this.checkScrolls();
 		this.refresh();
+		locY=0;
 		addTitle(MyLocale.getMsg(340,"Cache Images:"));
 		locY = 20;
 		locX = padding;
@@ -106,6 +107,7 @@ public class ImagePanel extends InteractivePanel{
 		g.drawText(title, 0,0);
 		g.free();
 		aImg = new AniImage(img);
+		aImg.setLocation(0, locY);
 		addImage(aImg);
 		aImg.refresh();
 	}
