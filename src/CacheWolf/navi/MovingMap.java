@@ -1318,25 +1318,25 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	MenuItem miLuminary[];
 
 	Menu mapsMenu;
-	MenuItem selectMapMI = new MenuItem("Select a map manually$s", 0, null);
-	MenuItem changeMapDirMI = new MenuItem("Change map directory$c", 0, null);
-	MenuItem showMapMI = new MenuItem("Show map", 0, null);
-	MenuItem hideMapMI = new MenuItem("Hide map", 0, null);
+	MenuItem selectMapMI = new MenuItem("Select a map manually$s", new IconAndText(new mImage("map_open.png"), "Select a map manually", null, Graphics.RIGHT));
+	MenuItem changeMapDirMI = new MenuItem("Change map directory$c", new IconAndText(new mImage("map_cd.png"), "Change map directory", null, Graphics.RIGHT));
+	MenuItem showMapMI = new MenuItem("Show map", new IconAndText(new mImage("map_on.png"), "Show map", null, Graphics.RIGHT));
+	MenuItem hideMapMI = new MenuItem("Hide map", new IconAndText(new mImage("map_off.png"), "Hide map", null, Graphics.RIGHT));
 	// automatic
 	MenuItem mapChangeModusMI = new MenuItem("Modus for automatic map change", MenuItem.Separator, null);;
-	MenuItem highestResGpsDestMI = new MenuItem("Highest res. containing dest. & cur. position", 0, null); //immer höchste Auflösung wählen, die akt. Pos. und Ziel enthalten 
-	MenuItem highestResolutionMI = new MenuItem("Highest resolution", 0, null); //immer höchste Auflösung wählen 
-	MenuItem keepManResolutionMI = new MenuItem("Keep manual resolution", 0, null); // manuell gewählte Auflösung beibehalten  
+	MenuItem highestResGpsDestMI = new MenuItem("Highest res. containing dest. & cur. position", new IconAndText(new mImage("res_gps_goto.png"), "Highest res. containing dest. & cur. position", null, Graphics.RIGHT)); //immer höchste Auflösung wählen, die akt. Pos. und Ziel enthalten 
+	MenuItem highestResolutionMI = new MenuItem("Highest resolution", new IconAndText(new mImage("res_high.png"), "Highest resolution", null, Graphics.RIGHT)); //immer höchste Auflösung wählen 
+	MenuItem keepManResolutionMI = new MenuItem("Keep manual resolution", new IconAndText(new mImage("res_manuell.png"), "Keep manual resolution", null, Graphics.RIGHT)); // manuell gewählte Auflösung beibehalten  
 	// manuell
 	MenuItem mapChangeResMI = new MenuItem("Change resolution manually", MenuItem.Separator, null);;
-	MenuItem AllCachesResMI = new MenuItem("Load a map containing all marked caches", 0, null); // Karte wählen, die alle markierten Caches enthält  
-	MenuItem moreDetailsMI = new MenuItem("Load a map with more details", new IconAndText(new mImage("lupe_more_details.png"), "Load a map with more details", null, Graphics.RIGHT)); // laod a map with more details 
-	MenuItem moreOverviewMI = new MenuItem("Load a map for a better overview", new IconAndText(new mImage("lupe_better_overview.png"), "Load a map for a better overview", null, Graphics.RIGHT)); // Load a map for a better overview --> lesser details  
+	MenuItem AllCachesResMI = new MenuItem("Load a map containing all marked caches",  new IconAndText(new mImage("loupe_all.png"), "Load a map containing all marked caches", null, Graphics.RIGHT));   
+	MenuItem moreDetailsMI = new MenuItem("Load a map with more details", new IconAndText(new mImage("loupe_more_details.png"), "Load a map with more details", null, Graphics.RIGHT)); // laod a map with more details 
+	MenuItem moreOverviewMI = new MenuItem("Load a map for a better overview", new IconAndText(new mImage("loupe_better_overview.png"), "Load a map for a better overview", null, Graphics.RIGHT)); // Load a map for a better overview --> lesser details  
 	// move map to
 	MenuItem moveToMI = new MenuItem("Move map to an load map", MenuItem.Separator, null);;
-	MenuItem moveToDestMI = new MenuItem("move to goto point", 0, null); //* Karte zum Ziel verschieben (und ggf. entsprechende Karte laden) 
-	MenuItem moveToGpsMI = new MenuItem("move to GPS position", 0, null);   
-	MenuItem moveToCenterMI = new MenuItem("move to Centre", 0, null);   
+	MenuItem moveToDestMI = new MenuItem("Move to goto point", new IconAndText(new mImage("move2goto.png"), "Move to goto point", null, Graphics.RIGHT)); //* Karte zum Ziel verschieben (und ggf. entsprechende Karte laden) 
+	MenuItem moveToGpsMI = new MenuItem("Move to GPS position", new IconAndText(new mImage("move2gps.png"), "Move to GPS position", null, Graphics.RIGHT));   
+	MenuItem moveToCenterMI = new MenuItem("Move to centre", new IconAndText(new mImage("move2center.png"), "Move to centre", null, Graphics.RIGHT));   
 
 	CacheHolder clickedCache;
 	MovingMap mm;
