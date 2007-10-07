@@ -105,8 +105,11 @@ public void update(CacheHolder ch) {
 	this.wayPoint = ch.wayPoint;
 	this.CacheName = ch.CacheName;
 	this.CacheOwner = ch.CacheOwner;
-	this.pos = ch.pos;
-	this.LatLon = ch.LatLon;
+	// Don't overwrite valid coordinates with invalid ones
+	if (ch.pos.isValid() || !this.pos.isValid()) {
+		this.pos = ch.pos;
+		this.LatLon = ch.LatLon;
+	}
 	this.DateHidden = ch.DateHidden;
 	this.CacheSize = ch.CacheSize;
 	this.kilom = ch.kilom;
