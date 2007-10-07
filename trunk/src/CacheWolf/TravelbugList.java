@@ -33,13 +33,27 @@ public class TravelbugList extends MinML{
 		tbList.add(tb);
 	}
 	
-	/** Trmove a travelbug from the list */
+	/** Remove a travelbug from the list */
 	public void remove(int i) {
 		tbList.removeElementAt(i);
+	}
+
+	/** Replace a travelbug in the list */
+	public void replace(int i, Travelbug tb) {
+		tbList.set(i, tb);
 	}
 	
 	/** Construct an empty travelbug list */
 	public TravelbugList() {
+	}
+	
+	/** Find a travelbug in the list. 
+	 *  Return null if not found */
+	public Travelbug find(String name) {
+		name=name.trim();
+		for (int i=size()-1; i>=0; i--)
+			if (name.equals(getTB(i).getName().trim())) return getTB(i);
+		return null;
 	}
 	
 	/** Convert the old representation to a new one. In the old representation,

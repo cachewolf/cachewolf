@@ -23,10 +23,10 @@ public class Travelbug {
 
 	/** Construct a travelbug with id, name and mission */
 	public Travelbug(String guid, String name, String mission) {
-		this.guid = guid;
-		this.name = name;
-		this.mission = mission;
-		this.trackingNo="";
+		setGuid(guid);
+		setName(name);
+		setMission(mission);
+		setTrackingNo("");
 	}
 	
 	public String getGuid() {
@@ -42,7 +42,7 @@ public class Travelbug {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = SafeXML.cleanback(name);
 	}
 
 	public String getTrackingNo() {

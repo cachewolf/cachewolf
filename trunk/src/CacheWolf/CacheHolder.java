@@ -101,8 +101,11 @@ public CacheHolder(CacheHolder ch) {//nObjects++;Vm.debug("CacheHolder(ch) nO="+
 }
 
 public void update(CacheHolder ch) {
-	this.CacheStatus=ch.CacheStatus;
-	this.wayPoint = ch.wayPoint;
+	// Don't overwrite an existing found date
+	if (!this.is_found) {
+		this.CacheStatus=ch.CacheStatus;
+		this.is_found = ch.is_found;
+	}this.wayPoint = ch.wayPoint;
 	this.CacheName = ch.CacheName;
 	this.CacheOwner = ch.CacheOwner;
 	// Don't overwrite valid coordinates with invalid ones
@@ -122,7 +125,6 @@ public void update(CacheHolder ch) {
 	this.is_archived = ch.is_archived;
 	this.is_available = ch.is_available;
 	this.is_owned = ch.is_owned;
-	this.is_found = ch.is_found;
 	this.is_filtered = ch.is_filtered;
 	this.is_log_update = ch.is_log_update;
 	this.is_update = ch.is_update;

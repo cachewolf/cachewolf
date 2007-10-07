@@ -65,17 +65,26 @@ public class CacheHolderDetail extends CacheHolder {
 	 
 	  /**
 	 * Method to update an existing cache with new data. This is
-	 * necessary to avoid missing old logs.
+	 * necessary to avoid missing old logs. Called from GPX Importer
 	 * @param newCh new cache data
 	 * @return CacheHolder with updated data
 	 */
 	public CacheHolderDetail update(CacheHolderDetail newCh){
 		  super.update(newCh);
 		  // flags
-		  if (this.is_found == true) this.CacheStatus = MyLocale.getMsg(318,"Found");
+		  if (this.is_found == true && this.CacheStatus.equals("")) this.CacheStatus = MyLocale.getMsg(318,"Found");
 
-		  //travelbugs: overriding is OK, since GPX-File contains all actual travelbugs
+		  //travelbugs:GPX-File contains all actual travelbugs but not the missions
+		  //  we need to check whether the travelbug is already in the existing list
 		  this.has_bug = newCh.Travelbugs.size()>0;
+		  for (int i=newCh.Travelbugs.size()-1; i>=0; i--) {
+			 Travelbug tb=newCh.Travelbugs.getTB(i);  
+		     Travelbug oldTB=this.Travelbugs.find(tb.getName());
+		     // If the bug is already in the cache, we keep it
+		     if (oldTB!=null)
+		    	 newCh.Travelbugs.replace(i,oldTB);
+		    
+		  }
 		  this.Travelbugs = newCh.Travelbugs;
 		  
 		  // URL
