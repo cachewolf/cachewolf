@@ -244,8 +244,11 @@ public class MainTab extends mTabbedPanel {
 		gotoP.setDestinationAndSwitch(LatLon); 
 	}
 
-	public void openDesciptionPanel(CacheHolder chi) {
+	public void openDescriptionPanel(CacheHolder chi) {
 		MyLocale.setSIPOff();
+		// To change cache we need to be in panel 0
+		onLeavingPanel(oldCard);
+		onEnteringPanel(0); oldCard=0;
 		int row = profile.getCacheIndex(chi.wayPoint);
 		tbP.selectRow(row);
 		//tbP.tc.scrollToVisible(row, 0);
