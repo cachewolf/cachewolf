@@ -13,6 +13,7 @@
 # Version 2.9 - 20070817 Bessere Unterscheidung zwischen Werbung vs.normalen Caches + Caches ohne Richtung/Entfenung
 # Version 2.10 - 20070825 Travelbug support
 # Version 2.11 - 20070907 get travelbug mission by tracking number
+# Version 3.0 - 20071010 adaption to new GC-design
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -35,7 +36,7 @@ firstPage2         = &lon=
 listBlockRex       = <table id="dlResults"((?s).*?)</table>
 lineRex            = <tr\ bgcolor='#.{6}'>(?:(?s).*?)<td\ valign="top"\ align="left">((?s).*?)</tr>
 distRex            = <br\ />(.*?)(km|mi)</td>
-waypointRex        = </a> \\((.*?)\\)<br>
+waypointRex        = \\(GC(.*?)\\)<br\ />
 showOnlyFound      = &f=1
 firstLine          = http://www.geocaching.com/seek/nearest.aspx?
 nextListPage       = /seek/nearest.aspx
@@ -47,11 +48,11 @@ getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
 cacheUnavailable   = This\ cache\ is\ temporarily\ unavailable
 cacheArchived      = This cache\ has\ been\ archived
-latLonRex          = <span\ id="LatLon"><b>((?s).*?)</b></span>
+latLonRex          = <span\ id="LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = <span\ id="ShortDescription">((?s).*?)</span>
 longDescRex        = <span\ id="LongDescription">((?s).*?)<strong>Additional\ Hints
 cacheNameRex       = <span\ id="CacheName">((?s).*?)</span>
-cacheOwnerRex      = <span\ id="CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span></b>
+cacheOwnerRex      = <span\ id="CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span>
 dateHiddenRex      = <span\ id="DateHidden">((?s).*?)</span>
 hintsRex           = <span\ id="Hints"\ class="displayMe">((?s).*?)</span>
 sizeRex            = alt="Size:\ ((?s).*?)"\ title="Size:

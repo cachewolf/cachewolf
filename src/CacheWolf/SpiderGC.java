@@ -49,6 +49,7 @@ public class SpiderGC{
 	private static Preferences pref;
 	private Profile profile;
 	private static String viewstate = "";
+	private static String eventvalidation = "";
 	private static String cookieID = "";
 	private static String cookieSession = "";
 	private static double distance = 0;
@@ -111,14 +112,21 @@ public class SpiderGC{
 		}
 		if (!infB.isClosed) { // If user has not aborted, we continue
 			Regex rexCookieID = new Regex("(?i)Set-Cookie: userid=(.*?);.*");
-			Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*?)\" />");
+			Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
+			Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*?)\" />");
 			Regex rexCookieSession = new Regex("(?i)Set-Cookie: ASP.NET_SessionId=(.*?);.*");
-			rex.search(start);
-			if(rex.didMatch()){
-				viewstate = rex.stringMatched(1);
+			rexViewstate.search(start);
+			if(rexViewstate.didMatch()){
+				viewstate = rexViewstate.stringMatched(1);
 				//Vm.debug("ViewState: " + viewstate);
 			} else
 				pref.log("Viewstate not found before login");
+			rexEventvalidation.search(start);
+			if(rexEventvalidation.didMatch()){
+				eventvalidation = rexEventvalidation.stringMatched(1);
+				//Vm.debug("EVENTVALIDATION: " + eventvalidation);
+			} else
+				pref.log("Eventvalidation not found before login");
 			//Ok now login!
 			try{
 				pref.log("Logging in as "+pref.myAlias);
@@ -126,7 +134,8 @@ public class SpiderGC{
 					+ "&" + URL.encodeURL("myUsername",false) +"="+ encodeUTF8(new String(Utils.encodeJavaUtf8String(pref.myAlias)))
 				    + "&" + URL.encodeURL("myPassword",false) +"="+ encodeUTF8(new String(Utils.encodeJavaUtf8String(passwort)))
 				    + "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false)
-				    + "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false);
+				    + "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false)
+	     		    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
 				start = fetch_post(loginPage, doc, nextPage);  // /login/default.aspx
 				if(start.indexOf(loginSuccess) > 0)
 					pref.log("Login successful");
@@ -143,11 +152,11 @@ public class SpiderGC{
 				return ERR_LOGIN;
 			}
 
-			rex.search(start);
-			if (!rex.didMatch()) {
+			rexViewstate.search(start);
+			if (!rexViewstate.didMatch()) {
 				pref.log("Viewstate not found");
 			}
-			viewstate = rex.stringMatched(1);
+			viewstate = rexViewstate.stringMatched(1);
 			rexCookieID.search(start);
 			if (!rexCookieID.didMatch()) {
 				pref.log("CookieID not found");
@@ -265,7 +274,8 @@ public class SpiderGC{
 			ch.is_new = false;
 		}
 		String start = "";
-		Regex rex = new Regex("name=\"__VIEWSTATE\" value=\"(.*)\" />");
+		Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*)\" />");
+		Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*)\" />");
 		String doc = "";
 
 		if (!loggedIn || Global.getPref().forceLogin) {
@@ -317,8 +327,10 @@ public class SpiderGC{
 			//Loop till maximum distance has been found or no more caches are in the list
 			while(distance > 0){
 				if (infB.isClosed) break;
-				rex.search(start);
-				viewstate = rex.stringMatched(1);
+				rexViewstate.search(start);
+				viewstate = rexViewstate.stringMatched(1);
+				rexEventvalidation.search(start);
+				eventvalidation = rexEventvalidation.stringMatched(1);
 				//Vm.debug("In loop");
 				Regex listBlockRex = new Regex(p.getProp("listBlockRex")); // "<table id=\"dlResults\"((?s).*?)</table>"
 				listBlockRex.search(start);
@@ -343,10 +355,10 @@ public class SpiderGC{
 				if(distance > 0){
 					page_number++;
 					if(page_number >= 15) page_number = 5;
-					doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
-					//if(doNotgetFound) doc += "&f=1";
-					    + "&" + URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL("ResultsPager:_ctl"+page_number,false)
-					    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false);
+					doc = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL("pgrTop$_ctl16",false)
+					    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
+					    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
+					    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
 					try{
 						start = "";
 						pref.log("Fetching next list page:" + doc);
@@ -572,7 +584,7 @@ public class SpiderGC{
 		inRex = new Regex(p.getProp("waypointRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) return "???";
-		return inRex.stringMatched(1);
+		return "GC"+inRex.stringMatched(1);
 	}
 
 	/**
