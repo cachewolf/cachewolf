@@ -289,18 +289,18 @@ public class myTableModel extends TableModel{
 		if (cell==null) return false;
 		try{
 			// Check whether the click is on the checkbox image
-			if (cell.y>=0 && cell.x==0) {
+			if (cell.y>=0 && colMap[cell.x]==0) {
 				Global.getProfile().selectionChanged = true;
 				if ((penEventModifiers & IKeys.SHIFT)>0) {
 					if (tcControl.cursor.y >= 0) { // Second row being marked with shift key pressed
 						if (tcControl.cursor.y<cell.y)
-							toggleSelect(tcControl.cursor.y,cell.y);
+							toggleSelect(tcControl.cursor.y,cell.y,cell.x);
 						else
-							toggleSelect(cell.y,tcControl.cursor.y);
+							toggleSelect(cell.y,tcControl.cursor.y,cell.x);
 					} else { // Remember this row as start of range, but don't toggle yet
 					}
 				} else { // Single row marked
-					toggleSelect(cell.y,cell.y);
+					toggleSelect(cell.y,cell.y,cell.x);
 				}
 			}
 			if(cell.y == -1){ // Hit a header => sort the table accordingly
@@ -340,14 +340,15 @@ public class myTableModel extends TableModel{
 	 * If from!=to, each cache is toggled irrespective of its type (main or addi)
 	 * @param from index of first cache to toggle
 	 * @param to index of last cache to toggle
+	 * @param x is column of checkbox (does not have to be 0)
 	 */
-	void toggleSelect(int from, int to) {
+	void toggleSelect(int from, int to, int x) {
 		CacheHolder ch;
 		boolean singleRow= from == to;
 		for (int j=from; j<=to; j++) {
 			ch=(CacheHolder) cacheDB.get(j);
 			ch.is_Checked= !ch.is_Checked; 
-			tcControl.repaintCell(j, 0);
+			tcControl.repaintCell(j, x);
 			// set the ceckbox also for addi wpts
 			if (ch.hasAddiWpt() && singleRow){
 				CacheHolder addiWpt;
@@ -356,7 +357,7 @@ public class myTableModel extends TableModel{
 					addiWpt = (CacheHolder)ch.addiWpts.get(i);
 					addiWpt.is_Checked = ch.is_Checked;
 					if (!addiWpt.is_filtered){
-						tcControl.repaintCell(cacheDB.find(addiWpt), 0);
+						tcControl.repaintCell(cacheDB.find(addiWpt), x);
 					}
 				}
 				
