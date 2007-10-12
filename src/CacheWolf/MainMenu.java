@@ -314,6 +314,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == mnuForceLogin) {
 				mnuForceLogin.modifiers^=MenuItem.Checked;
 				Global.getPref().forceLogin=(mnuForceLogin.modifiers&MenuItem.Checked)!=0;
+				Global.getPref().savePreferences();
 			}
 			///////////////////////////////////////////////////////////////////////
 			// subMenu for export, part of "Application" menu 
