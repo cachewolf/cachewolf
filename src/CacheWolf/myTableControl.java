@@ -160,8 +160,6 @@ public class myTableControl extends TableControl{
 			SpiderGC spider = new SpiderGC(pref, profile, false);
 			OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
 			//Vm.debug("ByPass? " + profile.byPassIndexActive);
-			if (!spider.loggedIn || Global.getPref().forceLogin) spider.login();
-			if (!spider.loggedIn) return;
 			Vm.showWait(true);
 			boolean alreadySaid = false;
 			boolean alreadySaid2 = false;
