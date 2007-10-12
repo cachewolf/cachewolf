@@ -121,35 +121,40 @@ public class SpiderGC{
 				//Vm.debug("ViewState: " + viewstate);
 			} else
 				pref.log("Viewstate not found before login");
-			rexEventvalidation.search(start);
-			if(rexEventvalidation.didMatch()){
-				eventvalidation = rexEventvalidation.stringMatched(1);
-				//Vm.debug("EVENTVALIDATION: " + eventvalidation);
-			} else
-				pref.log("Eventvalidation not found before login");
-			//Ok now login!
-			try{
-				pref.log("Logging in as "+pref.myAlias);
-				doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
+			
+			if(start.indexOf(loginSuccess) > 0)
+				pref.log("Already logged in");
+			else {
+				rexEventvalidation.search(start);
+				if(rexEventvalidation.didMatch()){
+					eventvalidation = rexEventvalidation.stringMatched(1);
+					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
+				} else
+					pref.log("Eventvalidation not found before login");
+				//Ok now login!
+				try{
+					pref.log("Logging in as "+pref.myAlias);
+					doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
 					+ "&" + URL.encodeURL("myUsername",false) +"="+ encodeUTF8(new String(Utils.encodeJavaUtf8String(pref.myAlias)))
-				    + "&" + URL.encodeURL("myPassword",false) +"="+ encodeUTF8(new String(Utils.encodeJavaUtf8String(passwort)))
-				    + "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false)
-				    + "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false)
-	     		    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
-				start = fetch_post(loginPage, doc, nextPage);  // /login/default.aspx
-				if(start.indexOf(loginSuccess) > 0)
-					pref.log("Login successful");
-				else {
-					pref.log("Login failed. Wrong Account or Password?");
+					+ "&" + URL.encodeURL("myPassword",false) +"="+ encodeUTF8(new String(Utils.encodeJavaUtf8String(passwort)))
+					+ "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false)
+					+ "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false)
+					+ "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
+					start = fetch_post(loginPage, doc, nextPage);  // /login/default.aspx
+					if(start.indexOf(loginSuccess) > 0)
+						pref.log("Login successful");
+					else {
+						pref.log("Login failed. Wrong Account or Password?");
+						infB.close(0);
+						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), MessageBox.OKB)).execute();
+						return ERR_LOGIN;
+					}
+				}catch(Exception ex){
+					pref.log("Login failed.", ex);
 					infB.close(0);
-				    (new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), MessageBox.OKB)).execute();
+					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), MessageBox.OKB)).execute();
 					return ERR_LOGIN;
 				}
-			}catch(Exception ex){
-				pref.log("Login failed.", ex);
-				infB.close(0);
-			    (new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), MessageBox.OKB)).execute();
-				return ERR_LOGIN;
 			}
 
 			rexViewstate.search(start);
