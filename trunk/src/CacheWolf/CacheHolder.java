@@ -101,8 +101,15 @@ public CacheHolder(CacheHolder ch) {//nObjects++;Vm.debug("CacheHolder(ch) nO="+
 }
 
 public void update(CacheHolder ch) {
-	// Don't overwrite an existing found date
-	if (!this.is_found) {
+	/* Here we have to distinguish several cases:
+	   this.is_found       this                ch               Update 'this'
+	   --------------------------------------------------------------------
+	   false               empty               yyyy-mm-dd       yes
+	   true                "Found"             yyyy-mm-dd       yes
+	   true                yyyy-mm-dd          yyyy-mm-dd       no (or yes)
+	   true                yyyy-mm-dd hh:mm    yyyy-mm-dd       no
+	*/
+	if (!this.is_found || this.CacheStatus.indexOf(":")<0) {
 		this.CacheStatus=ch.CacheStatus;
 		this.is_found = ch.is_found;
 	}this.wayPoint = ch.wayPoint;
