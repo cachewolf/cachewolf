@@ -187,8 +187,8 @@ public class myTableControl extends TableControl{
 							break;
 						} else 
 							profile.hasUnsavedChanges=true;	
-					} else { 
-						if (ch.isAddiWpt() && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
+					} else {
+						if (ch.isAddiWpt() && ch.mainCache!=null && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
 							alreadySaid2=true;
 							(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).execute();
 						}

@@ -14,6 +14,7 @@
 # Version 2.10 - 20070825 Travelbug support
 # Version 2.11 - 20070907 get travelbug mission by tracking number
 # Version 3.0 - 20071010 adaption to new GC-design
+# Version 3.1 - 20091013 Use the given prefix for addi waypoints
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -129,6 +130,8 @@ descRex            = colspan="4">(.*)</td>
 typeRex            = </a>\ \\((.*)\\)</td>
 rowBlockExStart    = <tr
 rowBlockExEnd      = </tr>
+prefixExStart      = <td\ valign=\"top\"\ align=\"left\">
+prefixExEnd        = </td>
 
 #--------------------------------------
 #Section2e: Attributes
