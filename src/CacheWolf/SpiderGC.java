@@ -332,10 +332,25 @@ public class SpiderGC{
 			//Loop till maximum distance has been found or no more caches are in the list
 			while(distance > 0){
 				if (infB.isClosed) break;
+		
 				rexViewstate.search(start);
-				viewstate = rexViewstate.stringMatched(1);
+				if(rexViewstate.didMatch()){
+					viewstate = rexViewstate.stringMatched(1);
+					//Vm.debug("ViewState: " + viewstate);
+				} else {
+					viewstate = "";
+					pref.log("Viewstate not found");
+				}
+				
 				rexEventvalidation.search(start);
-				eventvalidation = rexEventvalidation.stringMatched(1);
+				if(rexEventvalidation.didMatch()){
+					eventvalidation = rexEventvalidation.stringMatched(1);
+					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
+				} else {
+					eventvalidation = "";
+					pref.log("Eventvalidation not found");					
+				}
+
 				//Vm.debug("In loop");
 				Regex listBlockRex = new Regex(p.getProp("listBlockRex")); // "<table id=\"dlResults\"((?s).*?)</table>"
 				listBlockRex.search(start);
