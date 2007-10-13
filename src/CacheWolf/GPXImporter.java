@@ -444,7 +444,7 @@ public class GPXImporter extends MinML {
 		}
 
 		if (name.equals("groundspeak:short_description")|| name.equals("summary")) {
-			if (holder.is_HTML)	holder.LongDescription =SafeXML.cleanback(strData);
+			if (holder.is_HTML)	holder.LongDescription =SafeXML.cleanback(strData)+"<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
 			else holder.LongDescription =strData;
 			return;
 		}
