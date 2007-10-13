@@ -1018,6 +1018,11 @@ public class SpiderGC{
 			rowBlock = exRowBlock.findNext();
 			while(exRowBlock.endOfSearch()==false){
 				CacheHolderDetail cxD = new CacheHolderDetail();
+				Extractor exPrefix=new Extractor(rowBlock,p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
+				String prefix=exPrefix.findNext();
+				if (prefix.length()==2)
+					cxD.wayPoint=prefix+wayPoint.substring(2);
+				else	
 				cxD.wayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
 				counter++;
 				try{ // If addi exists, try to read it to preserve the notes
@@ -1041,8 +1046,10 @@ public class SpiderGC{
 				}else {
 					CacheHolder cx=(CacheHolder) cacheDB.get(idx);
 					if (cx.is_Checked && // Only re-spider existing addi waypoints that are ticked
-				 	   !cx.is_filtered) // and are visible (i.e.  not filtered)
+				 	   !cx.is_filtered) { // and are visible (i.e.  not filtered)
 					   cx.update(cxD);
+					   cx.is_Checked=true;
+					}
 				}
 				rowBlock = exRowBlock.findNext();
 			}
