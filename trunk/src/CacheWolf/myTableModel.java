@@ -39,7 +39,7 @@ public class myTableModel extends TableModel{
 	
 	public static Image cacheImages[] = new Image[454]; // Images are used by TableControl
 	private static Image noFindLogs[] = new Image[4];
-	private Image red, blue, green, yellow, skull;
+	private mImage red, blue, yellow, skull; // green
 	private Image checkboxTicked,checkboxUnticked;
 	private mImage bug;
 	private boolean sortAsc = false;
@@ -91,12 +91,12 @@ public class myTableModel extends TableModel{
 		noFindLogs[1] = new Image("no_2_log.png");
 		noFindLogs[2] = new Image("no_3_log.png");
 		noFindLogs[3] = new Image("no_4_log.png");
-		red = new Image("red.png");
-		blue = new Image("blue.png");
-		green = new Image("green.png");
-		yellow = new Image("yellow.png");
-		skull = new Image("skull.png");
-		bug = new mImage("bug.png");
+		red = new mImage("red.png"); red.transparentColor=Color.White;
+		blue = new mImage("blue.png"); blue.transparentColor=Color.White;
+		//green = new mImage("green.png");green.transparentColor=Color.White;
+		yellow = new mImage("yellow.png");yellow.transparentColor=Color.White;
+		skull = new mImage("skull.png");skull.transparentColor=Color.DarkBlue;
+		bug = new mImage("bug.png");bug.transparentColor=Color.DarkBlue;
 		checkboxTicked = new Image("checkboxTicked.png");
 		checkboxUnticked= new Image("checkboxUnticked.png");
 		updateRows();
@@ -246,17 +246,17 @@ public class myTableModel extends TableModel{
 						case 3: // Terrain
 							return (String)ch.terrain;
 						case 4: // Waypoint
-							if(ch.is_incomplete) return new IconAndText((IImage)skull, ch.wayPoint, fm);
-							if(ch.is_update    ) return new IconAndText((IImage)red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
-							if(ch.is_new       ) return new IconAndText((IImage)yellow, ch.wayPoint, fm);
-							if(ch.is_log_update) return new IconAndText((IImage)blue, ch.wayPoint, fm);
+							if(ch.is_incomplete) return new IconAndText(skull, ch.wayPoint, fm);
+							if(ch.is_update    ) return new IconAndText(red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
+							if(ch.is_new       ) return new IconAndText(yellow, ch.wayPoint, fm);
+							if(ch.is_log_update) return new IconAndText(blue, ch.wayPoint, fm);
 							return (String)ch.wayPoint;
 						case 5: // Cachename
 							// Fast return for majority of case
 							if (ch.has_bug == false && ch.noFindLogs==0) return (String)ch.CacheName; 
 							// Now need more checks
 							IconAndText wpVal = new IconAndText();
-							if(ch.has_bug == true) wpVal.addColumn((IImage)bug);
+							if(ch.has_bug == true) wpVal.addColumn(bug);
 							if(ch.noFindLogs > 0){
 								if (ch.noFindLogs > noFindLogs.length) 
 									wpVal.addColumn((IImage)noFindLogs[noFindLogs.length-1]);
