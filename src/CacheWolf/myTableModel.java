@@ -247,8 +247,8 @@ public class myTableModel extends TableModel{
 							return (String)ch.terrain;
 						case 4: // Waypoint
 							if(ch.is_incomplete) return new IconAndText(skull, ch.wayPoint, fm);
-							if(ch.is_update    ) return new IconAndText(red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
 							if(ch.is_new       ) return new IconAndText(yellow, ch.wayPoint, fm);
+							if(ch.is_update    ) return new IconAndText(red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
 							if(ch.is_log_update) return new IconAndText(blue, ch.wayPoint, fm);
 							return (String)ch.wayPoint;
 						case 5: // Cachename
