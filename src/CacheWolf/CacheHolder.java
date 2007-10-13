@@ -187,7 +187,7 @@ public String toXML() {
 
 public void setLatLon(String latLon) {
 	latLon=latLon.trim();
-	if (!latLon.equals(LatLon)) is_update=true;
+	if (!latLon.equals(LatLon.trim())) is_update=true;
 	LatLon = latLon;
 	pos.set(latLon);
 }

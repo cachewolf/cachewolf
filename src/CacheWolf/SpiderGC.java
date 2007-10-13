@@ -455,13 +455,14 @@ public class SpiderGC{
 			try{
 				chD.is_new = !isUpdate;
 				chD.is_update = false;
+				chD.is_log_update=false;
 				chD.is_HTML = true;
 				chD.is_available = true;
 				chD.is_archived = false;
 				chD.is_incomplete = false;
 				// Save size of logs to be able to check whether any new logs were added
-				int logsz = chD.CacheLogs.size();
-				chD.CacheLogs.clear();
+				//int logsz = chD.CacheLogs.size();
+				//chD.CacheLogs.clear();
 				chD.addiWpts.clear();
 				chD.Images.clear();
 				chD.ImagesText.clear();
@@ -787,7 +788,7 @@ public class SpiderGC{
 				chD.is_found = true;
 				chD.CacheStatus = d;
 			}
-			if (nLogs<=MAXLOGS) reslts.add("<img src='"+ icon +"'>&nbsp;" + d + " " + name +"<br>"+ exLog.findNext());
+			if (nLogs<=MAXLOGS) reslts.add("<img src='"+ icon +"'>&nbsp;" + d + " by " + name +"<br>"+ exLog.findNext());
 
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
@@ -1020,14 +1021,22 @@ public class SpiderGC{
 				CacheHolderDetail cxD = new CacheHolderDetail();
 				Extractor exPrefix=new Extractor(rowBlock,p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
 				String prefix=exPrefix.findNext();
+				String adWayPoint;
 				if (prefix.length()==2)
-					cxD.wayPoint=prefix+wayPoint.substring(2);
+					adWayPoint=prefix+wayPoint.substring(2);
 				else	
-				cxD.wayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
+				    adWayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
 				counter++;
-				try{ // If addi exists, try to read it to preserve the notes
-					cxD.readCache(profile.dataDir);
-				} catch (Exception ex) {};
+				int idx=profile.getCacheIndex(adWayPoint);
+				if (idx>=0) {
+					cxD=new CacheHolderDetail((CacheHolder) cacheDB.get(idx));
+					try{ // If addi exists, try to read it to preserve the notes
+						cxD.readCache(profile.dataDir);
+					} catch (Exception ex) {};
+				} else {
+					cxD=new CacheHolderDetail(); cxD.wayPoint=adWayPoint;
+				}
+				cxD.is_update=false; cxD.is_new=false;
 				nameRex.search(rowBlock);
 				koordRex.search(rowBlock);
 				typeRex.search(rowBlock);
@@ -1039,9 +1048,8 @@ public class SpiderGC{
 				cxD.setLongDescription(descRex.stringMatched(1));
 				cxD.is_found = is_found;
 				cxD.saveCacheDetails(profile.dataDir);
-
-				int idx=profile.getCacheIndex(cxD.wayPoint);
 				if (idx<0){
+					cxD.is_new=true; cxD.is_update=false;
 					cacheDB.add(new CacheHolder(cxD));
 				}else {
 					CacheHolder cx=(CacheHolder) cacheDB.get(idx);

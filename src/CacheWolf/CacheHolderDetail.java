@@ -38,8 +38,18 @@ public class CacheHolderDetail extends CacheHolder {
 	 }
 
 	 public void setLongDescription(String longDescription) {
-	 	if (!LongDescription.equals(longDescription)) is_update=true;
+	 	if (LongDescription.equals("")) is_new=true;
+	 	else if (!stripControlChars(LongDescription).equals(stripControlChars(longDescription))) is_update=true;
 	 	LongDescription = longDescription;
+	 }
+	 
+	 private String stripControlChars(String desc) {
+		 StringBuffer sb=new StringBuffer(desc.length());
+		 for (int i=0; i<desc.length(); i++) {
+			char c=desc.charAt(i);
+			if (c>' ') sb.append(c);
+		 }
+		 return sb.toString();
 	 }
 	 
 	 public void setHints(String hints) {
@@ -49,9 +59,19 @@ public class CacheHolderDetail extends CacheHolder {
 	 
 	 public void setCacheLogs(Vector logs) {
 		  // Number of logs has changed, set the log_update flag
-		 if (logs.size()!=CacheLogs.size()) is_log_update=true;
-		 CacheLogs=logs;
-		 // Count the number of not-found logs
+		 //if (logs.size()!=CacheLogs.size()) is_log_update=true;
+		 int size=logs.size();
+		 for (int i=0; i<size; i++) { // Loop over all new logs
+			 addLog((String)logs.elementAt(i));
+		 }
+		 //CacheLogs=logs;
+		 countNotFoundLogs();
+	 }
+
+	 /**
+	  *  Count the number of not-found logs
+	  */
+	 public void countNotFoundLogs() {
 		int countNoFoundLogs = 0;
 		String loganal = "";
 		while(countNoFoundLogs < CacheLogs.size() && countNoFoundLogs < 5){
@@ -162,14 +182,14 @@ public class CacheHolderDetail extends CacheHolder {
 		  //<img src='icon_smile.gif'>&nbsp;2005-10-30 by Schatzpirat</strong><br>
 		  //get Date of latest log in old cachedata
 		  Extractor extOldDate;
-		  String oldLogDate = new String();
+		  String oldLogDate = "";
 		  if(this.CacheLogs.size()>0){
-			extOldDate = new Extractor((String) this.CacheLogs.get(0), ";"," by", 0, true);
-			oldLogDate= new String(extOldDate.findNext());
+			extOldDate = new Extractor((String) this.CacheLogs.get(0), ";"," ", 0, true);
+			oldLogDate= extOldDate.findNext();
 		  }
 
 		  String newLogDate;
-		  Extractor extNewDate = new Extractor(logEntry, ";"," by", 0, true);
+		  Extractor extNewDate = new Extractor(logEntry, ";"," ", 0, true);
 		  newLogDate = extNewDate.findNext();
 		  if (newLogDate.compareTo(oldLogDate)> 0){
 	  		  // oldest log from new cachedata is younger than stored data
@@ -181,12 +201,17 @@ public class CacheHolderDetail extends CacheHolder {
 			  return;
 		  }
 		  if (newLogDate.compareTo(oldLogDate)== 0){
-			  // logdate is equal, so check, if finder is equal
+			  // logdate is equal, so check, if date&finder is equal
 			  String newLogFinder, oldLogFinder;
-			  Extractor extOldFinder = new Extractor((String) this.CacheLogs.get(0), "by ","<", 0, true);
+			  Extractor extOldFinder = new Extractor((String) this.CacheLogs.get(0), ";","<", 0, true);
 			  oldLogFinder = extOldFinder.findNext().toLowerCase();
+			  // Check whether the last old log was inserted without a " by " between date and finder
+			  if (oldLogFinder.indexOf(" by")<0) {
+				  int i=oldLogFinder.indexOf(" ");
+				  if (i>0) oldLogFinder=oldLogFinder.substring(0,i)+" by"+oldLogFinder.substring(i);
+			  }
 			  
-			  Extractor extNewFinder = new Extractor(logEntry, "by ","<", 0, true);
+			  Extractor extNewFinder = new Extractor(logEntry, ";","<", 0, true);
 			  newLogFinder = extNewFinder.findNext().toLowerCase();
 			  
 			  if (newLogFinder.compareTo(oldLogFinder)!= 0){
