@@ -20,7 +20,7 @@ public class GPXImporter extends MinML {
 	static Preferences pref;
 	Profile profile;
 	Vector cacheDB;
-	CacheHolderDetail holder;
+	CacheHolderDetail chD;
 	String strData, saveDir, logData, logIcon, logDate, logFinder;
 	boolean inWpt, inCache, inLogs, inBug;
 	public XMLElement document;
@@ -160,9 +160,9 @@ public class GPXImporter extends MinML {
 			zaehlerGel = 0;
 		}
 		if (name.equals("wpt")) {
-			holder = new CacheHolderDetail();
-			holder.pos.set(Common.parseDouble(atts.getValue("lat")),Common.parseDouble(atts.getValue("lon")));
-			holder.LatLon=holder.pos.toString();
+			chD = new CacheHolderDetail();
+			chD.pos.set(Common.parseDouble(atts.getValue("lat")),Common.parseDouble(atts.getValue("lon")));
+			chD.LatLon=chD.pos.toString();
 			inWpt = true;
 			inLogs = false;
 			inBug = false;
@@ -171,20 +171,20 @@ public class GPXImporter extends MinML {
 		}
 		
 		if (name.equals("link")&& inWpt){
-			holder.URL = atts.getValue("href");
+			chD.URL = atts.getValue("href");
 			return;
 		}
 
 		if (name.equals("groundspeak:cache")) {
 			inCache = true;
 			if (atts.getValue("available").equals("True"))
-				holder.is_available = true;
+				chD.is_available = true;
 			else 
-				holder.is_available = false;
+				chD.is_available = false;
 			if (atts.getValue("archived").equals("True"))
-				holder.is_archived = true;
+				chD.is_archived = true;
 			else
-				holder.is_archived = false;
+				chD.is_archived = false;
 			return;
 		}
 
@@ -192,12 +192,12 @@ public class GPXImporter extends MinML {
 			inCache=true;
 			// get status
 			String status = new String(atts.getValue("status"));
-			holder.is_available = false;
-			holder.is_archived = false;
-			if (status.equals("Available")) holder.is_available = true;
-			if (status.equals("Unavailable")) holder.is_available = false;
-			if (status.equals("Draft")) holder.is_available = false;
-			if (status.equals("Archived")) holder.is_archived = true;
+			chD.is_available = false;
+			chD.is_archived = false;
+			if (status.equals("Available")) chD.is_available = true;
+			if (status.equals("Unavailable")) chD.is_available = false;
+			if (status.equals("Draft")) chD.is_available = false;
+			if (status.equals("Archived")) chD.is_archived = true;
 			return;
 		}
 		
@@ -208,14 +208,14 @@ public class GPXImporter extends MinML {
 		
 		if (name.equals("groundspeak:long_description")) {
 			if (atts.getValue("html").toLowerCase().equals("true"))
-				holder.is_HTML= true;
+				chD.is_HTML= true;
 			else 
-				holder.is_HTML = false;
+				chD.is_HTML = false;
 			
 		}
 		if (name.equals("description") || name.equals("terra:description") ) {
 			//set HTML always to true if from oc.de or TC
-			holder.is_HTML= true;
+			chD.is_HTML= true;
 		}
 
 		if (name.equals("groundspeak:logs") || name.equals("log") || name.equals("terra:logs")) {
@@ -256,11 +256,11 @@ public class GPXImporter extends MinML {
 				return;
 			}
 			if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log") ) {
-				holder.CacheLogs.add(logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
+				chD.CacheLogs.add(logIcon + logDate + " by " + logFinder + "<br>" + logData + "<br>");
 				if(logIcon.equals("<img src='icon_smile.gif'>&nbsp;") && 
 						  (logFinder.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && logFinder.equalsIgnoreCase(pref.myAlias2)))) {
-							holder.CacheStatus=logDate;
-							holder.is_found=true;
+							chD.CacheStatus=logDate;
+							chD.is_found=true;
 				}
 				return;
 			}
@@ -269,57 +269,42 @@ public class GPXImporter extends MinML {
 		if (name.equals("wpt")){
 			// Add cache Data only, if waypoint not already in database
 			//if (searchWpt(cacheDB, holder.wayPoint)== -1){
-			int index=searchWpt(holder.wayPoint);
+			int index=searchWpt(chD.wayPoint);
 			//Vm.debug("here ?!?!?");
 			//Vm.debug("chould be new!!!!");
 			if (index == -1){
-				//Vm.debug("here A");
-				String loganal = new String();
-				//Check for number sukzessive DNF logs
-				int z = 0;
-				while(z < holder.CacheLogs.size() && z < 5){
-					loganal = (String)holder.CacheLogs.get(z);
-					if(loganal.indexOf("icon_sad")>0) {
-						z++;
-					}else break;
-				}
-				holder.noFindLogs = z;
-				zaehlerGel++;
-				if (zaehlerGel % 5==1) infB.setInfo( (MyLocale.getMsg(4000,"Loaded caches") + ":" + zaehlerGel));
-				holder.is_new = true;
-				cacheDB.add(new CacheHolder(holder));
-				//Vm.debug("here B");
-				//if(doSpider == true && fromOC == false){
+				chD.countNotFoundLogs();
+				chD.is_new = true;
+				cacheDB.add(new CacheHolder(chD));
 				// don't spider additional waypoints, so check
 				// if waypoint starts with "GC"
 				if(doSpider == true) {
-					//Vm.debug("Should be spidering images...");
-					if(spiderOK == true && holder.is_archived == false){
-							if(holder.LatLon.length() > 1){
+					if(spiderOK == true && chD.is_archived == false){
+							if(chD.LatLon.length() > 1){
 							if(getMaps){
-								ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
+								ParseLatLon pll = new ParseLatLon(chD.LatLon,".");
 								pll.parse();
 								//MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
 								//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");
 								//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
 							}
 						}
-					if(holder.wayPoint.startsWith("GC")|| fromTC) {
+					if(chD.wayPoint.startsWith("GC")|| fromTC) {
 						//spiderImages();
 						spiderImagesUsingSpider();
 						//Rename image sources
 						String text;
 						String orig;
 						String imgName;
-						orig = holder.LongDescription;
+						orig = chD.LongDescription;
 						Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
 						text = ex.findNext();
 						int num = 0;
 						while(ex.endOfSearch() == false && spiderOK == true){
 							//Vm.debug("Replacing: " + text);
-							if (num >= holder.ImagesText.getCount())break;
-							imgName = (String)holder.ImagesText.get(num);
-							holder.LongDescription = replace(holder.LongDescription, text, "[[Image: " + imgName + "]]");
+							if (num >= chD.ImagesText.getCount())break;
+							imgName = (String)chD.ImagesText.get(num);
+							chD.LongDescription = replace(chD.LongDescription, text, "[[Image: " + imgName + "]]");
 							num++;
 							text = ex.findNext();
 						}
@@ -327,7 +312,7 @@ public class GPXImporter extends MinML {
 						
 					}
 				}
-				holder.saveCacheDetails(saveDir);
+				chD.saveCacheDetails(saveDir);
 				//crw.saveIndex(cacheDB,saveDir);
 			}
 			//Update cache data
@@ -339,7 +324,7 @@ public class GPXImporter extends MinML {
 					oldCh.readCache(saveDir);
 					//Vm.debug("Done loading");
 				} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
-				oldCh.update(holder);
+				oldCh.update(chD);
 				oldCh.saveCacheDetails(saveDir);
 				cacheDB.set(index, new CacheHolder(oldCh));
 				//crw.saveIndex(cacheDB,saveDir);
@@ -349,8 +334,8 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		if (name.equals("sym")&& strData.endsWith("Found")) {
-			holder.is_found = true;
-			holder.CacheStatus = MyLocale.getMsg(318,"Found");
+			chD.is_found = true;
+			chD.CacheStatus = MyLocale.getMsg(318,"Found");
 			return;
 		}
 		if (name.equals("groundspeak:travelbugs")) {
@@ -360,9 +345,9 @@ public class GPXImporter extends MinML {
 
 		if (name.equals("groundspeak:name")&& inBug) {
 			Travelbug tb=new Travelbug(strData);
-			holder.Travelbugs.add(tb);
+			chD.Travelbugs.add(tb);
 			//holder.Bugs += "<b>Name:</b> " + strData + "<br><hr>";
-			holder.has_bug = true;
+			chD.has_bug = true;
 			return;
 		}
 		
@@ -371,7 +356,7 @@ public class GPXImporter extends MinML {
 			//Date = strData.substring(5,7); // month
 			//Date += "/" + strData.substring(8,10); // day
 			//Date += "/" + strData.substring(0,4); // year
-			holder.DateHidden = strData.substring(0,10); //Date;
+			chD.DateHidden = strData.substring(0,10); //Date;
 			return;
 		}
 		// cache information
@@ -380,7 +365,7 @@ public class GPXImporter extends MinML {
 		}
 		
 		if (name.equals("name") && inWpt && !inCache) {
-			holder.wayPoint = strData;
+			chD.wayPoint = strData;
 			//msgA.setText("import " + strData);
 			return;
 		}
@@ -389,80 +374,80 @@ public class GPXImporter extends MinML {
 		// fill name with contents of <desc>, in case of gc.com the name is
 		// later replaced by the contents of <groundspeak:name> which is shorter
 		if (name.equals("desc")&& inWpt ) {
-			holder.CacheName = strData;
+			chD.CacheName = strData;
 			//Vm.debug("CacheName: " + strData);
 			//msgA.setText("import " + strData);
 			return;
 		}
 		if (name.equals("url")&& inWpt){
-			holder.URL = strData;
+			chD.URL = strData;
 			return;
 		}
 		
 		// Text for additional waypoints, no HTML
 		if (name.equals("cmt")&& inWpt){
-			holder.LongDescription = strData;
-			holder.is_HTML = false;
+			chD.LongDescription = strData;
+			chD.is_HTML = false;
 			return;
 		}
 		
 		// aditional wapypoint
 		if (name.equals("type")&& inWpt && !inCache && strData.startsWith("Waypoint")){
-			holder.type= CacheType.typeText2Number(strData);
-			holder.CacheSize = "None";
+			chD.type= CacheType.typeText2Number(strData);
+			chD.CacheSize = "None";
 		}
 
 		
 		if ((name.equals("groundspeak:name")|| name.equals("terra:name")) && inCache) {
-			holder.CacheName = strData;
+			chD.CacheName = strData;
 			return;
 		}
 		if (name.equals("groundspeak:owner") || name.equals("owner")||name.equals("terra:owner")) {
-			holder.CacheOwner = strData;
-			if(pref.myAlias.equals(strData)) holder.is_owned = true;
+			chD.CacheOwner = strData;
+			if(pref.myAlias.equals(strData)) chD.is_owned = true;
 			return;
 		}
 		if (name.equals("groundspeak:difficulty") || name.equals("difficulty") || name.equals("terra:mental_challenge")) {
-			holder.hard = strData.replace('.',',');
+			chD.hard = strData.replace('.',',');
 			return;
 		}
 		if (name.equals("groundspeak:terrain")|| name.equals("terrain")|| name.equals("terra:physical_challenge")) {
-			holder.terrain = strData.replace('.',',');
+			chD.terrain = strData.replace('.',',');
 			return;
 		}
 		if ((name.equals("groundspeak:type") || name.equals("type")|| name.equals("terra:style"))&& inCache){
-			holder.type= CacheType.typeText2Number(strData);
+			chD.type= CacheType.typeText2Number(strData);
 			return;
 		}
 		if (name.equals("groundspeak:container")|| name.equals("container")){
-			holder.CacheSize = strData;
+			chD.CacheSize = strData;
 			return;
 		}
 		
 		if (name.equals("terra:size")){
-			holder.CacheSize = TCSizetoText(strData);
+			chD.CacheSize = TCSizetoText(strData);
 		}
 
 		if (name.equals("groundspeak:short_description")|| name.equals("summary")) {
-			if (holder.is_HTML)	holder.LongDescription =SafeXML.cleanback(strData)+"<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
-			else holder.LongDescription =strData;
+			if (chD.is_HTML)	chD.LongDescription =SafeXML.cleanback(strData)+"<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
+			else chD.LongDescription =strData+"\n";
 			return;
 		}
 
 		if (name.equals("groundspeak:long_description")|| name.equals("description")|| name.equals("terra:description")) {
-			if (holder.is_HTML)	holder.LongDescription +=SafeXML.cleanback(strData);
-			else holder.LongDescription +=strData;
+			if (chD.is_HTML)	chD.LongDescription +=SafeXML.cleanback(strData);
+			else chD.LongDescription +=strData;
 			return;
 		}
 		if (name.equals("groundspeak:encoded_hints") || name.equals("hints")) {
-			holder.Hints = Common.rot13(strData);
+			chD.Hints = Common.rot13(strData);
 			return;
 		}
 		
 		if (name.equals("terra:hint")) {
 			// remove "&lt;br&gt;<br>" from the end
 			int indexTrash = strData.indexOf("&lt;br&gt;<br>");
-			if (indexTrash > 0)	holder.Hints = Common.rot13(strData.substring(0,indexTrash));
+			if (indexTrash > 0)	chD.Hints = Common.rot13(strData.substring(0,indexTrash));
 			return;
 		}
 
@@ -540,13 +525,13 @@ public class GPXImporter extends MinML {
 		if (imgSpider == null) imgSpider = new SpiderGC(pref, profile, false);
 		
 		if (fromTC) {
-				imgSpider.getImages(holder.LongDescription, holder);
+				imgSpider.getImages(chD.LongDescription, chD);
 		}
 		else {
-			addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.wayPoint ;
+			addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + chD.wayPoint ;
 			//Vm.debug(addr + "|");
 			cacheText = SpiderGC.fetch(addr);
-			imgSpider.getImages(cacheText, holder);
+			imgSpider.getImages(cacheText, chD);
 		}
 	}
 	
