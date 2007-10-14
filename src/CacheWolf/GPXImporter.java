@@ -256,8 +256,8 @@ public class GPXImporter extends MinML {
 				return;
 			}
 			if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log") ) {
-				chD.CacheLogs.add(logIcon + logDate + " by " + logFinder + "<br>" + logData + "<br>");
-				if(logIcon.equals("<img src='icon_smile.gif'>&nbsp;") && 
+				chD.CacheLogs.add(new Log(logIcon,logDate,logFinder,logData));
+				if(logIcon.equals("icon_smile.gif") && 
 						  (logFinder.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && logFinder.equalsIgnoreCase(pref.myAlias2)))) {
 							chD.CacheStatus=logDate;
 							chD.is_found=true;
@@ -273,7 +273,7 @@ public class GPXImporter extends MinML {
 			//Vm.debug("here ?!?!?");
 			//Vm.debug("chould be new!!!!");
 			if (index == -1){
-				chD.countNotFoundLogs();
+				chD.noFindLogs=chD.CacheLogs.countNotFoundLogs();
 				chD.is_new = true;
 				cacheDB.add(new CacheHolder(chD));
 				// don't spider additional waypoints, so check
@@ -460,24 +460,24 @@ public class GPXImporter extends MinML {
 	
 
 	public static String typeText2Image(String typeText){
-		if (typeText.equals("Found it")||typeText.equals("Found")||typeText.equals("find")) return "<img src='icon_smile.gif'>&nbsp;";
-		if (typeText.equals("Didn't find it")||typeText.equals("Not Found")||typeText.equals("no_find")) return "<img src='icon_sad.gif'>&nbsp;";
+		if (typeText.equals("Found it")||typeText.equals("Found")||typeText.equals("find")) return "icon_smile.gif";
+		if (typeText.equals("Didn't find it")||typeText.equals("Not Found")||typeText.equals("no_find")) return "icon_sad.gif";
 		if (typeText.equals("Write note")||typeText.equals("Note")||typeText.equals("note")
-			||typeText.equals("Not Attempted")||typeText.equals("Other")) return "<img src='icon_note.gif'>&nbsp;";
-		if (typeText.equals("Enable Listing")) return "<img src='icon_enabled.gif'>&nbsp;";
-		if (typeText.equals("Temporarily Disable Listing")) return "<img src='icon_disabled.gif'>&nbsp;";
-		if (typeText.equals("Webcam Photo Taken")) return "<img src='11.png'>&nbsp;";
-		if (typeText.equals("Attended")) return "<img src='icon_attended.gif'>&nbsp;";
-		if (typeText.equals("Publish Listing")) return "<img src='green.png'>&nbsp;";
-		if (typeText.equals("Will Attend")) return "<img src='icon_rsvp.gif'>&nbsp;";
-		if (typeText.equals("Post Reviewer Note")) return "<img src='big_smile.gif'>&nbsp;";
-		if (typeText.equals("Unarchive")) return "<img src='traffic_cone.gif'>&nbsp;";
-		if (typeText.equals("Archive (show)")) return "<img src='traffic_cone.gif'>&nbsp;";
-		if (typeText.equals("Owner Maintenance")) return "<img src='icon_maint.gif'>&nbsp;";
-		if (typeText.equals("Needs Maintenance")) return "<img src='icon_needsmaint.gif'>&nbsp;";
-		if (typeText.equals("Update Coordinates")) return "<img src='coord_update.gif'>&nbsp;";
+			||typeText.equals("Not Attempted")||typeText.equals("Other")) return "icon_note.gif";
+		if (typeText.equals("Enable Listing")) return "icon_enabled.gif";
+		if (typeText.equals("Temporarily Disable Listing")) return "icon_disabled.gif";
+		if (typeText.equals("Webcam Photo Taken")) return "11.png";
+		if (typeText.equals("Attended")) return "icon_attended.gif";
+		if (typeText.equals("Publish Listing")) return "green.png";
+		if (typeText.equals("Will Attend")) return "icon_rsvp.gif";
+		if (typeText.equals("Post Reviewer Note")) return "big_smile.gif";
+		if (typeText.equals("Unarchive")) return "traffic_cone.gif";
+		if (typeText.equals("Archive (show)")) return "traffic_cone.gif";
+		if (typeText.equals("Owner Maintenance")) return "icon_maint.gif";
+		if (typeText.equals("Needs Maintenance")) return "icon_needsmaint.gif";
+		if (typeText.equals("Update Coordinates")) return "coord_update.gif";
 		//Vm.debug("Unknown Log Type:" + typeText);
-		return typeText +"&nbsp;";
+		return typeText;
 	}
 	
 	public static String TCSizetoText(String size){

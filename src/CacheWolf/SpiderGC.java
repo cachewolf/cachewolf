@@ -738,27 +738,13 @@ public class SpiderGC{
 	 * @param chD Cache Details
 	 * @return A HTML string containing the logs
 	 */
-	private Vector getLogs(String doc, CacheHolderDetail chD) throws Exception{
+	private LogList getLogs(String doc, CacheHolderDetail chD) throws Exception{
 		String icon = "";
 		String name = "";
-		Vector reslts = new Vector();
+		LogList reslts = new LogList();
 		Regex blockRex = new Regex(p.getProp("blockRex"));
 		blockRex.search(doc);
 		doc = blockRex.stringMatched(1);
-		//Vm.debug("Log Block: " + doc);
-		/*
-		Vm.debug("Setting log regex");
-		inRex = new Regex("<STRONG><IMG SRC='http://www.geocaching.com/images/icons/((?s).*?)'((?s).*?)&nbsp;((?s).*?)<A NAME=\"((?s).*?)'text-decoration: underline;'>((?s).*?)<A HREF=\"((?s).*?)'text-decoration: underline;'>((?s).*?)</A></strong>((?s).*?)\\[<A href=");
-		inRex.optimize();
-		inRex.search(doc);
-		Vm.debug("Log regex run...");
-		while(inRex.didMatch()){
-			Vm.debug("Logs:" + inRex.stringMatched(1) + " / " + inRex.stringMatched(3)+ " / " + inRex.stringMatched(7)+ " / " + inRex.stringMatched(8));
-			//<img src='icon_smile.gif'>&nbsp;
-			reslts.add("<img src='"+ inRex.stringMatched(1) +"'>&nbsp;" + inRex.stringMatched(3)+ inRex.stringMatched(7)+ inRex.stringMatched(8));
-			inRex.searchFrom(doc, inRex.matchedTo());
-		}
-		*/
 		String singleLog = "";
 		Extractor exSingleLog = new Extractor(doc,p.getProp("singleLogExStart"), p.getProp("singleLogExEnd"), 0, false); // maybe here is some change neccessary because findnext now gives the whole endstring back???
 		singleLog = exSingleLog.findNext();
@@ -788,7 +774,7 @@ public class SpiderGC{
 				chD.is_found = true;
 				chD.CacheStatus = d;
 			}
-			if (nLogs<=MAXLOGS) reslts.add("<img src='"+ icon +"'>&nbsp;" + d + " by " + name +"<br>"+ exLog.findNext());
+			if (nLogs<=MAXLOGS) reslts.add(new Log(icon,d,name,exLog.findNext()));
 
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
@@ -802,7 +788,7 @@ public class SpiderGC{
 			if (nLogs>=MAXLOGS && chD.is_found) break;
 		}
 		if (nLogs>MAXLOGS) {
-			reslts.add("<br>More than "+MAXLOGS+" logs.<br>");
+			reslts.add(Log.maxLog());
 		}
 		return reslts;
 	}

@@ -162,7 +162,7 @@ public class ShowCacheInBrowser {
 					Vector logVect=new Vector(chD.CacheLogs.size());
 					for (int i=0; i<chD.CacheLogs.size(); i++) {
 						Hashtable logs=new Hashtable();
-						String log=STRreplace.replace((String)chD.CacheLogs.get(i),"http://www.geocaching.com/images/icons/","");
+						String log=STRreplace.replace(chD.CacheLogs.getLog(i).toHtml(),"http://www.geocaching.com/images/icons/","");
 						int posGt=log.indexOf('>'); // Find the icon which defines the type of log
 						if (posGt<0) {
 							logs.put("LOG",log);
