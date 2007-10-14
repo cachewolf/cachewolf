@@ -127,7 +127,7 @@ public class HTMLExporter{
 						page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(holder.Hints));
 						dummy = new String();
 						for(int j = 0; j<holder.CacheLogs.size(); j++){
-							dummy = dummy + (String)holder.CacheLogs.get(j)+"<br>";
+							dummy = dummy + holder.CacheLogs.getLog(j).toHtml()+"<br>";
 						}
 						page_tpl.setParam("LOGS", dummy);
 						page_tpl.setParam("NOTES", STRreplace.replace(holder.CacheNotes, "\n","<br>"));

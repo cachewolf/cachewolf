@@ -587,8 +587,8 @@ public class OCXMLImporter extends MinML {
 
 	private void endCacheLog(String name){
 		if (name.equals("cachelog")){ // </cachelog>
-			chD.addLog(logIcon + logDate + " by " + logFinder + "</strong><br>" + logData + "<br>");
-			chD.saveCacheDetails(profile.dataDir);
+			chD.CacheLogs.merge(new Log(logIcon,logDate,logFinder,logData));
+			//chD.saveCacheDetails(profile.dataDir);
 			return;
 		}
 
