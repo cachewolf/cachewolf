@@ -63,6 +63,7 @@ public class LogList {
 			add(newLog);
 			return size;
 		}
+		int firstLog=i;
 		// Check whether we have any logs with same date by same user
 		String newLogger=newLog.getLogger();
 		String newIcon=newLog.getIcon();
@@ -79,11 +80,13 @@ public class LogList {
 			}
 			i++;
 		}
-		if (i==size)
+		if (i==size) {
 			add(newLog);
-		else
-			logList.insertElementAt(newLog, i);
-		return i;
+			return i;
+		} else {
+			logList.insertElementAt(newLog, firstLog);
+			return firstLog;
+		}
 	}
 
 	 /**
