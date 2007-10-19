@@ -966,7 +966,15 @@ public class SpiderGC{
 		connImg.setRequestorProperty("Connection", "close");
 		try{
 			pref.log("Trying to fetch image from: " + imgUrl);
-			sockImg = connImg.connect();
+			String redirect=null;
+			do {
+				sockImg = connImg.connect();
+				redirect=connImg.getRedirectTo();
+				if (redirect!=null) {
+					connImg=connImg.getRedirectedConnection(redirect);
+					pref.log("Redirect to "+redirect);
+				}
+			} while(redirect!=null);
 			daten = connImg.readData(connImg.connect());
 			fos = new FileOutputStream(new File(datei));
 			fos.write(daten.toBytes());
