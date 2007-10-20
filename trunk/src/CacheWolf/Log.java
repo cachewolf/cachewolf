@@ -18,16 +18,21 @@ public class Log {
 	 */
 	Log(String logLine) {
 //		<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
-		int ic1=logLine.indexOf("<img src='");
-		int ic2=logLine.indexOf("'",ic1+10);
-		icon=logLine.substring(ic1+10,ic2);
-		int d1=logLine.indexOf(";");
-		date=logLine.substring(d1+1,d1+11);
-		int l1=d1+12;
-		if (logLine.substring(l1,l1+3).equals("by ")) l1+=3;
-		int l2=logLine.indexOf("<br>",l1);
-		logger=logLine.substring(l1,l2);
-		message=logLine.substring(l2+4);
+		try {
+			int ic1=logLine.indexOf("<img src='");
+			int ic2=logLine.indexOf("'",ic1+10);
+			icon=logLine.substring(ic1+10,ic2);
+			int d1=logLine.indexOf(";");
+			date=logLine.substring(d1+1,d1+11);
+			int l1=d1+12;
+			if (logLine.substring(l1,l1+3).equals("by ")) l1+=3;
+			int l2=logLine.indexOf("<br>",l1);
+			logger=logLine.substring(l1,l2);
+			message=logLine.substring(l2+4);
+		} catch (Exception ex) {
+			icon=MAXLOGICON;
+			date="1900-00-00";
+		}
 	}
 	
 	Log(String icon, String date, String logger, String message) {
@@ -78,7 +83,7 @@ public class Log {
 	/** Return HTML representation of log for display on screen */
 	public String toHtml(){
 //		<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
-		if (icon.equals(MAXLOGICON)) return "Too many logs";
+		if (icon.equals(MAXLOGICON)) return "<hr>"+MyLocale.getMsg(736,"Too many logs")+"<hr>";
 		StringBuffer s=new StringBuffer(300);
 		s.append("<img src='");
 		s.append(icon);
