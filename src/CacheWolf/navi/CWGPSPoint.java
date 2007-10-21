@@ -31,6 +31,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	public String Date;
 	public int Fix; //Fix
 	public int numSat; //Satellites in use, -1 indicates no data, -2 that data could not be interpreted
+	public int numSatsInView; //Satellites in view
 	public double HDOP; // Horizontal dilution of precision
 	public double Alt; //Altitude
 
@@ -52,6 +53,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		this.Date="";
 		this.Fix = 0;
 		this.numSat = 0;
+		this.numSatsInView = 0;
 		this.Alt = 0;
 		this.HDOP = 0;
 	}
@@ -78,6 +80,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	public void noData(){
 		this.Fix = 0;
 		this.numSat = 0;
+		this.HDOP = 0;
 	}
 
 	/**
@@ -86,6 +89,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	public void noDataError(){
 		this.Fix = -1;
 		this.numSat = -1;
+		this.HDOP = -1;
 	}
 
 	/**
@@ -94,6 +98,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	public void noInterpretableData(){
 		this.Fix = -2;
 		this.numSat = -2;
+		this.HDOP = -2;
 	}
 
 	public void ticked(int timerId, int elapsed){
@@ -148,6 +153,10 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 
 	public int getSats(){
 		return this.numSat;
+	}
+
+	public int getSatsInView(){
+		return this.numSatsInView;
 	}
 
 	public double getAlt(){
@@ -292,6 +301,21 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 								lonEW, lonDeg, lonMin, "0", CWPoint.DMM);				
 					}
 				} // if
+
+				if (currToken.equals("$GPGSV")){
+					//Vm.debug("In $$GPGSV");
+					i = 0;
+					while(ex.endOfSearch() != true){
+						currToken = ex.findNext();
+						i++;
+						if (currToken.length()==0) continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
+						switch (i){
+						case 3: this.numSatsInView = Convert.toInt(currToken); interpreted = true; break;
+						} // switch
+					} // while
+					if (Fix > 0) this.set(latNS, latDeg, latMin, "0", lonEW, lonDeg, lonMin, "0", CWPoint.DMM);
+				} // if
+				
 				//Vm.debug("End of examine");
 			} //while
 		} catch (Exception e) {
@@ -321,15 +345,16 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 
 
 	public void printAll(){
-		Vm.debug("Latitude:  " + this.getLatDeg(DD));
-		Vm.debug("Longitude: " + this.getLonDeg(DD));
-		Vm.debug("Speed:     " + this.Speed);
-		Vm.debug("Bearing:   " + this.Bear);
-		Vm.debug("Time:      " + this.Time);
-		Vm.debug("Fix:       " + this.Fix);
-		Vm.debug("Sats:      " + this.numSat);
-		Vm.debug("HDOP:      " + this.HDOP);
-		Vm.debug("Alt:       " + this.Alt);
+		Vm.debug("Latitude:     " + this.getLatDeg(DD));
+		Vm.debug("Longitude:    " + this.getLonDeg(DD));
+		Vm.debug("Speed:        " + this.Speed);
+		Vm.debug("Bearing:      " + this.Bear);
+		Vm.debug("Time:         " + this.Time);
+		Vm.debug("Fix:          " + this.Fix);
+		Vm.debug("Sats:         " + this.numSat);
+		Vm.debug("Sats in view: " + this.numSatsInView);
+		Vm.debug("HDOP:         " + this.HDOP);
+		Vm.debug("Alt:          " + this.Alt);
 		Vm.debug("----------------");
 	}
 }

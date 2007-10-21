@@ -237,7 +237,7 @@ public class GotoPanel extends CellPanel {
 		Double speed = new Double();
 		Double sunAzimut = new Double();
 		//Vm.debug("ticked: before");
-		compassRose.setGpsStatus(fix, myNavigation.gpsPos.getSats(), myNavigation.gpsPos.getHDOP());
+		compassRose.setGpsStatus(fix, myNavigation.gpsPos.getSats(), myNavigation.gpsPos.getSatsInView(), myNavigation.gpsPos.getHDOP());
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) {
 			// display values only, if signal good
 			//Vm.debug("currTrack.add: nachher");
@@ -415,6 +415,7 @@ class GotoRose extends AniImage {
 	
 	int m_fix = -1;
 	int m_sats = -1;
+	int m_satsInView = 0;
 	double m_hdop = -1;
 	float m_speed = -1;
 	
@@ -455,9 +456,10 @@ class GotoRose extends AniImage {
 		refresh();
 	}
 	
-	public void setGpsStatus(int fix, int sats, double hdop) {
+	public void setGpsStatus(int fix, int sats, int satsInView, double hdop) {
 		m_fix = fix;
 		m_sats = sats;
+		m_satsInView = satsInView;
 		m_hdop = hdop;
 		refresh();
 	}
@@ -594,7 +596,9 @@ class GotoRose extends AniImage {
 		}
 
 		String strSats = "Sats: -";
-		if (m_sats >= 0) strSats = "Sats: " + Convert.toString(m_sats);
+		if (m_sats >= 0) {
+			strSats = "Sats: " + Convert.toString(m_sats) + "/" + Convert.toString(m_satsInView);
+		}
 		String strHdop = "HDOP: -";
 		if (m_hdop >= 0) strHdop = "HDOP: " + Convert.toString(m_hdop);
 
