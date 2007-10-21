@@ -312,14 +312,11 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLatDeg(int format) {
-		double latdeg = latDec;
-		double lonMin=(Math.abs(latDec) - (int)Math.abs(latDec))*60.0;
-		if (java.lang.Math.round(lonMin)*1000 == 60000) latdeg += 1;
 		switch (format) {
 		case DD: 	return MyLocale.formatDouble(this.latDec, "00.00000").replace(',','.');
 		case CW:
 		case DMM:
-		case DMS:	return MyLocale.formatDouble((int) Math.abs(latdeg),"00");
+		case DMS:	return getDMS(latDec,0,format);
 		default: return "";
 		}
 	}
@@ -329,14 +326,11 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLonDeg(int format) {
-		double longdeg = lonDec;
-		double lonMin=(Math.abs(lonDec) - (int)Math.abs(lonDec))*60.0;
-		if (java.lang.Math.round(lonMin)*1000 == 60000) longdeg += 1;
 		switch (format) {
 		case DD: 	return MyLocale.formatDouble(this.lonDec, "000.00000").replace(',','.');
 		case CW:
 		case DMM:
-		case DMS:	return MyLocale.formatDouble((int) Math.abs(longdeg),"000");
+		case DMS:	return getDMS(lonDec,0,format);
 		default: 	return ""; 
 		}
 	}
@@ -346,30 +340,15 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLatMin(int format) {
-		double latMin=(Math.abs(latDec) - (int)Math.abs(latDec))*60.0;
-		if (java.lang.Math.round(latMin)*1000 == 60000) latMin = 0; // TODO this caluclation is doubled from getLatdeg
-		switch (format) {
-			case DD: 	return "";
-			case CW:
-			case DMM:	return MyLocale.formatDouble(latMin, "00.000").replace(',','.');
-			case DMS:	return MyLocale.formatDouble((int) Math.abs(latMin),"00");
-			default: return "";
-		}
+		return getDMS(latDec,1,format);
 	}
+
 	/**
 	 * Get minutes of longitude in different formats
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLonMin(int format) {
-		double lonMin=(Math.abs(lonDec) - (int)Math.abs(lonDec))*60.0;
-		if (java.lang.Math.round(lonMin)*1000 == 60000) lonMin = 0;
-		switch (format) {
-			case DD: 	return "";
-			case CW:
-			case DMM:	return MyLocale.formatDouble(lonMin, "00.000").replace(',','.');
-			case DMS:	return MyLocale.formatDouble((int) Math.abs(lonMin),"00");
-			default: return "";
-		}
+		return getDMS(lonDec,1,format);	
 	}
 
 	/**
@@ -377,16 +356,7 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLatSec(int format) {
-		double tmpMin;
-
-		tmpMin = (Math.abs(latDec) - (int)Math.abs(latDec)) * 60;
-		switch (format) {
-			case DD: 	
-			case CW:
-			case DMM: 	return "";
-			case DMS:	return MyLocale.formatDouble((tmpMin - (int)Math.abs(tmpMin)) * 60, "00.0").replace(',','.');
-			default: return "";
-		}
+		return getDMS(latDec,2,format);
 	}
 
 	/**
@@ -394,18 +364,51 @@ public class CWPoint extends TrackPoint{
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLonSec(int format) {
-		double tmpMin;
-
-		tmpMin = (Math.abs(lonDec) - (int)Math.abs(lonDec)) * 60;
-		switch (format) {
-			case DD: 	
-			case CW:
-			case DMM: 	return "";
-			case DMS:	return MyLocale.formatDouble((tmpMin - (int)Math.abs(tmpMin)) * 60, "00.0").replace(',','.');
-			default: return "";
-		}
+		return getDMS(lonDec,2,format);
 	}
 
+	/**
+	 * Returns the degrees or minutes or seconds (depending on parameter what) formatted as a string
+	 * To determine the degrees, we need to calculate the minutes (and seconds) just in case rounding errors
+	 * propagate. Equally we need to know the seconds to determine the minutes value.
+	 * @param deg The coordinate in degrees
+	 * @param what 0=deg, 1=min, 2=sec
+	 * @param format DD,CW,DMM,DMS
+	 * @return 
+	 */
+	private String getDMS(double deg, int what, int format) {
+		deg=Math.abs(deg);
+		long iDeg=(int) deg;
+		double tmpMin, tmpSec;
+		tmpMin= (deg - iDeg)*60.0;
+		switch(format) {
+			case DD: return "";
+			case CW:
+			case DMM: 	
+			    // Need to check if minutes would round up to 60
+				if (java.lang.Math.round(tmpMin*1000.0) == 60000) { tmpMin =0;  iDeg++; }
+				if (what==0)
+					return MyLocale.formatLong(iDeg, "00");
+				else
+					return MyLocale.formatDouble(tmpMin, "00.000").replace(',','.');
+				
+			case DMS:
+				tmpSec= (tmpMin - (int)tmpMin) * 60.0;
+				tmpMin=(int) tmpMin;
+				// Check if seconds round up to 60 
+				if (java.lang.Math.round(tmpSec*10.0) == 600) { tmpSec = 0; tmpMin=tmpMin+1.0; }
+				// Check if minutes round up to 60
+				if (java.lang.Math.round(tmpMin) == 60) { tmpMin = 0; iDeg++; }
+				switch (what) {
+					case 0: return MyLocale.formatLong(iDeg, "00");
+					case 1: return MyLocale.formatDouble(tmpMin, "00");
+					case 2: return MyLocale.formatDouble(tmpSec, "00.0").replace(',','.');
+				}
+		
+		}
+		return ""; // Dummy to keep compiler happy
+	}
+	
 	/**
 	 * Get "N" or "S" letter for latitude
 	 */
