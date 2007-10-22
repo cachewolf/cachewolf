@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.navi.Navigate;
 import ewe.ui.*;
 import ewe.fx.Dimension;
 import ewe.sys.*;
@@ -18,7 +19,7 @@ public class CoordsScreen extends Form {
 	mInput inpNSDeg, inpNSm, inpNSs, inpEWDeg, inpEWm, inpEWs;
 	mInput inpUTMZone, inpUTMNorthing, inpUTMEasting;
 	mInput inpText;
-	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse;
+	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse, btnGps;
 	CWPoint coordInp = new CWPoint();
 	CellPanel TopP = new CellPanel();
 	CellPanel BottomP = new CellPanel();
@@ -59,8 +60,9 @@ public class CoordsScreen extends Form {
 
 		TopP.addNext(inpUTMZone = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		TopP.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addLast(inpUTMNorthing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-
+		TopP.addNext(inpUTMNorthing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		TopP.addLast(btnGps = new mButton("GPS"),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		
 		TopP.addLast(new mLabel(MyLocale.getMsg(1405,"To load coordinates from GC, enter GCxxxxx below")),CellConstants.HSTRETCH, (CellConstants.HFILL)).setTag(SPAN,new Dimension(4,1));
 			// Input for free Text
 		TopP.addNext(inpText = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -231,6 +233,14 @@ public class CoordsScreen extends Form {
 					activateFields(currFormat);
 					this.repaintNow();
 				}
+			}
+			
+			if (ev.target == btnGps){
+				Navigate nav=Global.mainTab.nav;
+				CWPoint coord = nav.gpsPos;
+				currFormat = chkFormat.getSelectedIndex();
+				setFields(coord,currFormat);
+				activateFields(currFormat);
 			}
 		}
 		super.onEvent(ev);
