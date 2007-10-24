@@ -166,27 +166,19 @@ public class myTableControl extends TableControl{
 			boolean test = true;
 			InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
 			infB.exec();
+			
+			Vector cachesToUpdate = new Vector();
 			for(int i = 0; i <	cacheDB.size(); i++){
 				ch = (CacheHolder)cacheDB.get(i);
 				if(ch.is_Checked == true) {
 					if ( ch.wayPoint.length()>1 && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC") 
-							 					 || ch.wayPoint.substring(0,2).equalsIgnoreCase("OC")))
+							|| ch.wayPoint.substring(0,2).equalsIgnoreCase("OC")))
 //						if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
 //						Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
 //						Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 //						TODO: Diese Meldungen vor dem Einloggen darstellen						
 					{
-					    infB.setInfo("Loading: " + ch.wayPoint);
-					    infB.redisplay();
-					    if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))   
-					    	test = spider.spiderSingle(i, infB);
-					    else  
-					    	test = ocSync.syncSingle(i, infB);
-					    if (!test) {
-							infB.close(0);
-							break;
-						} else 
-							profile.hasUnsavedChanges=true;	
+						cachesToUpdate.add(new Integer(i));
 					} else {
 						if (ch.isAddiWpt() && ch.mainCache!=null && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
 							alreadySaid2=true;
@@ -195,9 +187,27 @@ public class myTableControl extends TableControl{
 						if (!ch.isAddiWpt() && !alreadySaid) {
 							alreadySaid = true;
 							(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", MessageBox.OKB)).execute();
-			    		}
+						}
 					}
+
 				}
+			}
+
+			for(int j = 0; j <	cachesToUpdate.size(); j++){
+				int i = (Integer)cachesToUpdate.get(j);
+				ch = (CacheHolder)cacheDB.get(i);
+				infB.setInfo("Loading: " + ch.wayPoint);
+				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
+				infB.redisplay();
+				if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))   
+					test = spider.spiderSingle(i, infB);
+				else  
+					test = ocSync.syncSingle(i, infB);
+				if (!test) {
+					infB.close(0);
+					break;
+				} else 
+					profile.hasUnsavedChanges=true;	
 
 //				cacheDB.clear();
 //				profile.readIndex();
