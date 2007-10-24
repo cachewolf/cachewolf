@@ -14,7 +14,8 @@
 # Version 2.10 - 20070825 Travelbug support
 # Version 2.11 - 20070907 get travelbug mission by tracking number
 # Version 3.0 - 20071010 adaption to new GC-design
-# Version 3.1 - 20091013 Use the given prefix for addi waypoints
+# Version 3.1 - 20071013 Use the given prefix for addi waypoints
+# Version 3.2 - 20071024 longer end sequence for longDescRex
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -51,7 +52,7 @@ cacheUnavailable   = This\ cache\ is\ temporarily\ unavailable
 cacheArchived      = This cache\ has\ been\ archived
 latLonRex          = <span\ id="LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = <span\ id="ShortDescription">((?s).*?)</span>
-longDescRex        = <span\ id="LongDescription">((?s).*?)<strong>Additional\ Hints
+longDescRex        = <span\ id="LongDescription">((?s).*?)<strong>Additional\ Hints&nbsp;\\(</strong>
 cacheNameRex       = <span\ id="CacheName">((?s).*?)</span>
 cacheOwnerRex      = <span\ id="CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span>
 dateHiddenRex      = <span\ id="DateHidden">((?s).*?)</span>
