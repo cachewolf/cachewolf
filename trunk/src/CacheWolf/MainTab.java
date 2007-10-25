@@ -283,8 +283,12 @@ public class MainTab extends mTabbedPanel {
 		}
 		//if (detP.isDirty()) detP.saveDirtyWaypoint();
 		Global.getProfile().hasUnsavedChanges=true;
-		ch.wayPoint = profile.getNewWayPointName();
+		detP.setIsNew(true);
 		if (ch.type == null || ch.type == "") ch.type = "0";
+		if (CacheType.isAddiWpt(ch.type)) {
+			ch.wayPoint = profile.getNewAddiWayPointName(mainCache);
+			profile.setAddiRef(ch);
+		} else ch.wayPoint = profile.getNewWayPointName();
 		ch.CacheSize = "None";
 		chD = ch.getCacheDetails(true);
 		this.ch = ch;
