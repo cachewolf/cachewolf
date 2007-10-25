@@ -1793,6 +1793,7 @@ class ListBox extends Form{
 					if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
 					else { map = ml.getMap();}
 				} catch (IOException ex) {continue; } // could not read .wfl-file
+				if( map.isInBound(Gps.latDec, Gps.lonDec) ) 
 				{
 					list.addItem(i + ": " + map.mapName);
 					row++;
