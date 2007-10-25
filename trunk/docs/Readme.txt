@@ -13,28 +13,19 @@ Java-Version
 - Checkout der aktuellen Sourcen aus dem Repository (z.B. http://svn.berlios.de/svnroot/repos/cachewolf/trunk)
 - Das Verzeichnis kann lokal umbenannt werden, z.B. in CacheWolf
 - Es sollte bereits ein Verzeichnis bin/CacheWolf geben, falls nicht, bitte anlegen
-- Die Linux-Scripte mit einem chmod 755 *.sh ausführbar machen
 - Script compile.bat (WinXP) bzw. ./compile.sh (Linux) ausführen. Es gibt etwa 10 Warnings.
 - Script getRes.bat bzw. ./getRes.sh ausführen. Damit werden u.a. die Image-Dateien in das Work-Verzeichnis kopiert
 - Script runwolf.bat bzw. ./runwolf.sh ausführen. Damit wird der CacheWolf im Work-Verzeichnis gestartet. Das Datenverzeichnis sollte man irgendwo anders hinlegen, z.B. parallel zum CacheWolf-Verzeichnis.
 
 Ausführbare Versionen erzeugen, z.B. für WinXP oder PPC
 - Parallel zum CacheWolf-Verzeichnis ein Verzeichnis Ewe/programs anlegen, die Dateien finden sich im Ewe-Developer-SDK. Da dieses Verzeichnis von den Scripten relativ (also per ../Ewe/programs) angesprochen wird, auf genaue Einhaltung der Namen achten.
-Der Inhalt des Verziechnisses ist bei mir unter Linux wie folgt:
--rw-r--r-- 1 kalle kalle      29 2006-07-28 20:43 Ewesoft-Jewel.cfg
--rw-r--r-- 1 kalle kalle 3830895 2005-12-19 19:27 JavaEwe.zip
--rw-r--r-- 1 kalle kalle 2748046 2005-12-19 16:52 JewelData.jar
--rw-r--r-- 1 kalle kalle  254444 2005-11-26 23:53 Jewel.ewe
--rw-r--r-- 1 kalle kalle      47 2005-01-20 18:44 RunJewel.bat
--rwxr-xr-x 1 kalle kalle      47 2006-07-24 21:30 runjewel.sh
-runjewel.sh habe ich mir selbst aus runJewel.bat erzeugt.
-
-- In dem Verzeichnis lib die folgenden Dateien rekursiv auspacken (.jar-Files sind zip-Dateien, falls der Entpacker muckt, einfach temporär in .zip umbenennen)
-  - ewesoft.zip
-  - EwesoftRegex.zip
-  - HTML.zip
-  - openmap.jar
-  Es gibt dann die Unterverzeichnisse com, ewesoft und HTML
+  Der Inhalt des Verziechnisses ist bei mir unter Linux wie folgt:
+  -rw-r--r-- 1 kalle kalle      29 2006-07-28 20:43 Ewesoft-Jewel.cfg
+  -rw-r--r-- 1 kalle kalle 3830895 2005-12-19 19:27 JavaEwe.zip
+  -rw-r--r-- 1 kalle kalle 2748046 2005-12-19 16:52 JewelData.jar
+  -rw-r--r-- 1 kalle kalle  254444 2005-11-26 23:53 Jewel.ewe
+  -rw-r--r-- 1 kalle kalle      47 2005-01-20 18:44 RunJewel.bat
+  -rwxr-xr-x 1 kalle kalle      47 2006-07-24 21:30 runjewel.sh
 - Script buildexe.bat bzw. ./buildexe.sh aufrufen, es wird ein Verzeichnis CacheWolf erzeugt mit Unterverzeichnissen für die unterschiedlichen Plattformen.
 - mit dem Script runjewel können Änderungen an der Datei cwberlios.jnf vorgenommen werden.
 
