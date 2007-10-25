@@ -16,6 +16,7 @@ public class NotesScreen extends Form{
 	CacheHolderDetail thisCache = null;
 	mButton addDateTime = new mButton((IImage)new mImage("date_time.png"));
 	mButton btSave = new mButton(MyLocale.getMsg(127,"Save"));
+	mButton cancelBtn = new mButton("Cancel");
 	ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
 	
 	public NotesScreen(CacheHolderDetail ch){
@@ -27,6 +28,7 @@ public class NotesScreen extends Form{
 		addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		titleControls=new CellPanel();
 		titleControls.addNext(addDateTime,CellConstants.HSTRETCH,CellConstants.HFILL);
+		titleControls.addNext(cancelBtn,CellConstants.HSTRETCH,CellConstants.HFILL);
 		titleControls.addLast(btSave,CellConstants.HSTRETCH,CellConstants.HFILL);
 	}
 	
@@ -46,6 +48,23 @@ public class NotesScreen extends Form{
 				thisCache.CacheNotes = wayNotes.getText();
 				thisCache.saveCacheDetails( Global.getProfile().dataDir);
 				this.close(0);
+			}
+			if(ev.target == cancelBtn){
+				if ( (!thisCache.CacheNotes.equals(wayNotes.getText())) ) {
+					if ( (new MessageBox("Warning", "You will loose any changes made to the notes. Do you want to continue?"
+							, MessageBox.YESB|MessageBox.NOB)).execute() == MessageBox.IDYES) {
+						this.close(0);
+					}
+				} else this.close(0); // no changes -> exit without asking
+			} 
+			if(ev.target == titleOK){
+				if ( (!thisCache.CacheNotes.equals(wayNotes.getText())) ) {
+					if ( (new MessageBox("Warning", "Save changes made to the notes?"
+							, MessageBox.YESB|MessageBox.NOB)).execute() == MessageBox.IDYES) {
+						thisCache.CacheNotes = wayNotes.getText();
+						thisCache.saveCacheDetails( Global.getProfile().dataDir);
+					}
+				}
 			}
 		}
 		super.onEvent(ev);

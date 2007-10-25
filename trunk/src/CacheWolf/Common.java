@@ -8,34 +8,14 @@ public final class Common {
 	private static char digSep=MyLocale.getDigSeparator().charAt(0);
 	private static char notDigSep=MyLocale.getDigSeparator().charAt(0)=='.'?',':'.';
 	
+	/**
+	 * get double value from string. It interpretes "." and "," as decimal separator
+	 * when the string cannot be interpreted, return 0.
+	 * @param value
+	 * @return
+	 */
 	public static double parseDouble(String value){
-
-/*		The following code is EXTREMELY inefficient.
-        ============================================
- 		String a = new String();
-		String b = new String();
-		char separator = '.';
-		double aDbl, bDbl;
-		
-		
-		if (value.indexOf('.') < 0) {
-			if (value.indexOf(',') < 0) value = value + ".0"; // no separartor
-			else separator = ',';
-		}
-		else separator = '.';
-		
-		a = value.substring(0, value.indexOf(separator));
-		aDbl = Convert.toDouble(a);
-
-		
-		b = value.substring(value.indexOf(separator)+1);
-		bDbl = Convert.toDouble(b);
-		// Calc Minutes
-		bDbl = bDbl / java.lang.Math.pow((double)10,(double)b.length()); // Using pow is BAD NEWS!!!
-		
-		return aDbl>=0?aDbl + bDbl:aDbl - bDbl;
-*/      
-		// This is at least a factor of 3 faster (returns 0 for invalid arguments)
+		// returns 0 for invalid arguments
 		try {
 			return java.lang.Double.parseDouble(value.replace(notDigSep,digSep));
 		} catch (Exception e) {
@@ -150,4 +130,16 @@ public final class Common {
 		else fileName = name+t[i];
 		return fileName;
 	}
+	/** get the extension of a filename, including "."
+	 * remark: ewe.io.File.getFileExtension return name + extension
+	 * @param fn
+	 * @return
+	 */
+	public static String getFilenameExtension (String fn) {
+		if (fn == null || fn.length() == 0) return "";
+		int dot = fn.lastIndexOf(".");
+		if (dot < 0) return "";
+		return fn.substring(dot, fn.length());
+	}
+
 }

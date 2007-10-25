@@ -235,7 +235,7 @@ public class myTableControl extends TableControl{
 
 		if (selectedItem.toString().equals(MyLocale.getMsg(1010,"Goto"))){
 			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
-			Global.mainTab.gotoPoint(ch.LatLon);
+			Global.mainTab.gotoPoint(ch.pos);
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1020,"Open online in Browser"))){
 			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());

@@ -36,7 +36,7 @@ public class MainTab extends mTabbedPanel {
 	StatusBar statBar;
 	public MovingMap mm;
 	Navigate nav;
-	String mainCache="";
+	public String mainCache="";
 	int oldCard=0;
 	boolean cacheDirty=false;
 	
@@ -128,8 +128,9 @@ public class MainTab extends mTabbedPanel {
 				ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
 				lastselected=ch.wayPoint;  // Used in Parser.Skeleton
 				try {
-					chD=new CacheHolderDetail(ch);
-					chD.readCache(profile.dataDir);//Vm.debug("MainTab:readCache "+chD.wayPoint+"/S:"+chD.Solver);
+					chD = ch.getCacheDetails(true);
+					//chD=new CacheHolderDetail(ch);
+					//chD.readCache(profile.dataDir);//Vm.debug("MainTab:readCache "+chD.wayPoint+"/S:"+chD.Solver);
 				} catch(Exception e){
 					//Vm.debug("Error loading: "+ch.wayPoint);
 				}
@@ -140,6 +141,9 @@ public class MainTab extends mTabbedPanel {
 			if(detP.isDirty()) {
 				cacheDirty=true;
 				detP.saveDirtyWaypoint();
+				tbP.myMod.updateRows();
+				tbP.selectRow(profile.getCacheIndex(detP.thisCache.wayPoint));
+				tbP.refreshTable();
 			}
 		}
 		if (panelNo==5) { // Leaving the Solver Panel
@@ -178,13 +182,11 @@ public class MainTab extends mTabbedPanel {
 				newWaypoint(chD=new CacheHolderDetail()); 
 			}
 			MyLocale.setSIPButton();
-			detP.setDetails(chD);
+			detP.setDetails(ch);
 			break;
 		case 2: // Description Panel
-			if (chD!=null) {
 				MyLocale.setSIPOff();
 				descP.setText(chD);
-			}
 			break;
 		case 3: // Picture Panel
 			if (chD!=null) {
@@ -205,7 +207,7 @@ public class MainTab extends mTabbedPanel {
 					chMain=new CacheHolderDetail(chD.mainCache);
 					try {
 						chMain.readCache(profile.dataDir); //Vm.debug("mainT:readCache "+chD.wayPoint+"=>Main=>"+chMain.wayPoint+"/S:"+chMain.Solver);
-					} catch(Exception e){pref.log("Error reading cache",e);}
+					} catch(Exception e){pref.log("Error reading cache .xml",e);}
 					solverP.setInstructions(chMain.Solver);
 				} else {
 					//Vm.debug("mainT: Waypoint:"+chD.wayPoint);
@@ -233,15 +235,17 @@ public class MainTab extends mTabbedPanel {
 	/** Update the distances of all caches to the centre and display a message 
 	 */
 	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
+		MessageBox info = new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \n werden neu berechnet...").replace('~','\n'), 0);
+		info.exec();
 		tbP.pref = pref;
 		profile.updateBearingDistance();
 		//tbP.refreshTable();
+		info.close(0);
 		tbP.tc.repaint();
-		//(new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \nvom aktuellen Standpunkt aus \nneu berechnet").replace('~','\n'), MessageBox.OKB)).execute();
 	}
 
-	public void gotoPoint(String LatLon) { // TODO übergabe nicht als String
-		gotoP.setDestinationAndSwitch(LatLon); 
+	public void gotoPoint(CWPoint where) { 
+		gotoP.setDestinationAndSwitch(where); 
 	}
 
 	public void openDescriptionPanel(CacheHolder chi) {
@@ -268,7 +272,7 @@ public class MainTab extends mTabbedPanel {
 	 */
 	public void newWaypoint(CacheHolder ch){
 		onLeavingPanel(oldCard);
-		onEnteringPanel(0); oldCard=0;
+		updatePendingChanges(); // was: onEnteringPanel(0); oldCard=0;
 		mainCache=lastselected;
 		int selectedIndex = profile.getCacheIndex( lastselected );
 		if (selectedIndex >= 0) {
@@ -279,19 +283,21 @@ public class MainTab extends mTabbedPanel {
 		}
 		//if (detP.isDirty()) detP.saveDirtyWaypoint();
 		Global.getProfile().hasUnsavedChanges=true;
-		String waypoint= ch.wayPoint = profile.getNewWayPointName();
-		ch.type = "0";
+		ch.wayPoint = profile.getNewWayPointName();
+		if (ch.type == null || ch.type == "") ch.type = "0";
 		ch.CacheSize = "None";
+		chD = ch.getCacheDetails(true);
+		this.ch = ch;
 		cacheDB.add(ch);
-		tbP.myMod.updateRows();
-		tbP.selectRow(profile.getCacheIndex(waypoint));
+		//tbP.myMod.updateRows();
+		//tbP.selectRow(profile.getCacheIndex(waypoint));
 		//Global.mainTab.tbP.refreshTable();
 		if (this.cardPanel.selectedItem==1) { // Detailpanel already selected
 			postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,1));
 		} else	
 			select(detP);
-		solverP.setInstructions("");
-		tbP.refreshTable();
+		solverP.setInstructions(""); // TODO save them first, don't delete them when the new one is an addi
+		//tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
 	}
 

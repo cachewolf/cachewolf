@@ -1,5 +1,6 @@
 package CacheWolf.navi;
 
+import ewe.util.CharArray;
 import CacheWolf.CWPoint;
 
 public class Area {
@@ -86,52 +87,51 @@ public class Area {
 				 return AT_LEFT_EDGE;
 			 return NOT_ON_EDGE;
 	 }
-	 /*
+	 
+	 /**
+	  * get an easy find string for this area
+	  * @return
+	  */
 	 public String getEasyFindString() {
-		 String ul = getEasyFindString(topleft, 60);
-		 String br = getEasyFindString(buttomright, 60);
+		 String ul = getEasyFindString(topleft, 30);
+		 String br = getEasyFindString(buttomright, 30);
 		 int i;
 		 for (i=0; i<br.length(); i++ ) {
 			 if (ul.charAt(i) != br.charAt(i)) break;
 		 }
-		 ewe.sys.Vm.debug(ul+"\n"+br+"\n i:"+i);
+		 //ewe.sys.Vm.debug(ul+"\n"+br+"\n i:"+i);
 		 return ul.substring(0, i);
 	 }
-	 */
+	 
 	 /**
-	  * 
-	  * @param prec number of digits to return, min 2, max: 63
+	  * get an easy find string for a given point with precision prec
+	  * @param prec number of digits to return, min 2, max: 30
 	  * @return
 	  */
-	 /*
 	 public static String getEasyFindString(CWPoint p, int prec) {
 		 double longinrange = p.lonDec;
 		 if (longinrange > 180) longinrange -= 180;
-		 Double kw = new Double(((p.latDec+90)/180) * (double) (1l << (prec)));
-		 long lat = new Double(((p.latDec+90)/180) * (double) (1l << (prec))).longValue(); // TODO handle negative values
-		 lat = kw.longValue();
-		 kw = (double) (1l << (prec));
+		 Double kw = new Double(((p.latDec+90)/180) * (double) (1 << (prec)));
+		 int lat = new Double(((p.latDec+90)/180) * (double) (1 << (prec))).intValue(); // TODO handle negative values
+		 lat = kw.intValue();
+		 //kw = (double) (1 << (prec));
 		 
 		 kw = new Double(((longinrange+180)/360) * (2 ^ (prec -1)));
-		 long lon = new Double(((longinrange+180)/360) * (double) (1l << (prec))).longValue(); // 180 = 10110100
+		 int lon = new Double(((longinrange+180)/360) * (double) (1 << (prec))).intValue(); // 180 = 10110100
 		 String ret = "";
-		 Long tmp;
+		 int tmp;
 		 for (int i=prec-1; i>=0;  i--) {
-			 tmp = (1l << i);
-			 tmp = (lat & (1l << i));
-			 tmp = ((lat & (1l << i)) >> i);
-			 tmp = ((lon & (1l << i)) >> i) + (((lat & (1l << i) ) << 1) >> i);
-			 ret += tmp.toString();
+			 tmp = (1 << i);
+			 tmp = (lat & (1 << i));
+			 tmp = ((lat & (1 << i)) >> i);
+			 tmp = ((lon & (1 << i)) >> i) + (((lat & (1 << i) ) << 1) >> i);
+			 ret += Integer.toString(tmp);
 		 }
-/*		 Area cmp = new Area(new CWPoint (90,0), new CWPoint(-90,180));
-		 if (cmp.isInBound(this)) ret += "0";
-		 else ret += "1";
-		 int i;
-		 while (true) {
-			 for (i=0) 
-			 break;
-		 }
-	*/	/* return ret;
+		 return ret;
 	 }
-*/
+	 
+	 static public boolean containsRoughly(String boundingbox, String q) {
+		 if (boundingbox.length() <= q.length() ) return q.startsWith(boundingbox);
+		 else return boundingbox.startsWith(q);
+	 }
 }

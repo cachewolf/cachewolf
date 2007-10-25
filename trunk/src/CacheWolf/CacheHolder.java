@@ -1,6 +1,8 @@
 package CacheWolf;
+import ewe.io.IOException;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
+import ewe.ui.MessageBox;
 import ewe.util.Vector;
 
 /**
@@ -86,6 +88,7 @@ public boolean in_range = false;
 public CacheHolder mainCache;
 /** The date this cache was last synced with OC in format yyyyMMddHHmmss */
 public String lastSyncOC = EMPTY;
+public CacheHolderDetail details = null;
 /** When sorting the cacheDB this field is used. The relevant field is copied here and
  *  the sort is always done on this field to speed up the sorting process 
  */
@@ -233,6 +236,69 @@ public boolean isAddiWpt() {
 		   }
 	   }
    }
+   
+   /**
+    * True if ch and this belong to the same main cache. 
+    * @param ch
+    * @return
+    */
+   public boolean hasSameMainCache(CacheHolder ch) {
+	   if (this == ch) return true;
+	   if (ch == null) return false;
+	   if ((!this.isAddiWpt()) && (!ch.isAddiWpt())) return false;
+	   CacheHolder main1, main2;
+	   if (this.isAddiWpt()) main1 = this.mainCache;  else main1 = this;
+	   if (ch.isAddiWpt()) main2 = ch.mainCache; else main2 = ch; 
+	   return main1 == main2;
+   }
+   
+   /** 
+    * Call this method to get the long-description and so on.
+    * If the according .xml-file is already read, it will return
+    * that one, otherwise it will be loaded.
+    * To avoid memory problems this routine loads not for more caches than maxDetails
+    * the details. If maxdetails is reached, it will remove from RAM the details 
+    * of the 5 caches that were loaded most long ago.
+    * 
+    * @return the respective CacheHolderDetail, null if according xml-file could not be read
+    */
+   
+   public CacheHolderDetail getCacheDetails(boolean maybenew) {
+	   if (details != null) {
+		   details.update(this);
+		   return details;
+	   }
+	   if (cachesWithLoadedDetails.size() >= maxDetails) removeOldestDetails();
+	   details = new CacheHolderDetail(this);
+	   try {
+		   details.readCache(Global.getProfile().dataDir);
+	   } catch (IOException e) {
+		   if (maybenew) details.update(this);
+		   else {
+			   (new MessageBox("Error", "Could not read cache details for cache: "+this.wayPoint, MessageBox.OKB)).execute();
+			   return null;
+		   } 
+	   }
+	   cachesWithLoadedDetails.add(this);
+	   return details;
+   }
+   
+   public void releaseCacheDetails() {
+	   details = null;
+	   cachesWithLoadedDetails.remove(this);
+   }
+   
+   final static int maxDetails = 50; 
+   static Vector cachesWithLoadedDetails = new Vector(maxDetails);
+   
+   public static void removeOldestDetails() { // TODO save changes if requested?
+	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
+	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
+	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
+	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
+	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
+   }
+   
 /*
 public void finalize() {nObjects--;
    Vm.debug("Destroying CacheHolder "+wayPoint);

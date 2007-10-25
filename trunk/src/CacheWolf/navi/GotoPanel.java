@@ -2,6 +2,7 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.CacheHolder;
+import CacheWolf.CacheType;
 import CacheWolf.CoordsScreen;
 import CacheWolf.DetailsPanel;
 import CacheWolf.Global;
@@ -210,8 +211,8 @@ public class GotoPanel extends CellPanel {
 	 * set the coords of the destination and switch to gotoPanel  
 	 * @param LatLon destination
 	 */ 
-	public void setDestinationAndSwitch(String LatLon) {
-		myNavigation.setDestination(LatLon);
+	public void setDestinationAndSwitch(CWPoint where) {
+		myNavigation.setDestination(where);
 		mainT.select(this);
 	}
 	
@@ -389,6 +390,7 @@ public class GotoPanel extends CellPanel {
 				CacheHolder ch = new CacheHolder();
 				ch.LatLon = myNavigation.gpsPos.toString();
 				ch.pos = new CWPoint(myNavigation.gpsPos);
+			//	ch.type = "51"; // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
 				mainT.newWaypoint(ch);
 			}
 			// change destination waypoint

@@ -344,10 +344,11 @@ public class Profile {
 	public String getNewWayPointName(){
 		String strWp=null;
 		long  lgWp=1;
-		if (cacheDB.size()==0 )
+		int s = cacheDB.size(); 
+		if (s ==0 )
 			return "CW0000";
 		//Create new waypoint,look if not in db
-		for(int i = 0;i < cacheDB.size();i++){
+		for(int i = 0;i < s;i++){
 			strWp = "CW" + MyLocale.formatLong(lgWp, "0000");
 			if(((CacheHolder)cacheDB.get(i)).wayPoint.indexOf(strWp) >=0 ){
 				//waypoint exists in database
@@ -357,6 +358,31 @@ public class Profile {
 		}
 		return strWp;
 	}
+	
+	public String getNewAddiWayPointName(String forcache) {
+		int wptNo=-1;
+		String waypoint;
+		do {
+			waypoint=MyLocale.formatLong(++wptNo,"00")+forcache.substring(2);
+		} while (Global.getProfile().getCacheIndex(waypoint)>=0);
+		return waypoint;
+	}
+
+	/**
+	 * Call this after getNewAddiWayPointName to set the references between main and addi correctly
+	 * @param ch
+	 */
+	public void setAddiRef(CacheHolder ch) {
+		String mainwpt = ch.wayPoint.substring(ch.wayPoint.length()-4);
+		int mainindex = getCacheIndex("GC"+mainwpt);
+		if (mainindex < 0) mainindex = getCacheIndex("OC"+mainwpt);
+		if (mainindex < 0) mainindex = getCacheIndex("CW"+mainwpt);
+		if (mainindex < 0) throw new IllegalArgumentException("no main cache found for: " + ch.wayPoint);
+		CacheHolder mainch = (CacheHolder)cacheDB.get(mainindex);
+		mainch.addiWpts.add(ch);
+		ch.mainCache = mainch;
+	}
+
 
 	public String toString() {
 		return "Profile: Name="+name+"\nCentre="+centre.toString()+"\ndataDir="+dataDir+"\nlastSyncOC="+
@@ -452,20 +478,12 @@ public class Profile {
 			ch = (CacheHolder)cacheDB.get(i);
 			if (ch.isAddiWpt()) {
 				//search main cache
-				if (ch.wayPoint.length() == 5){
-					index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(1));
-				} 
-				else {
-					index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(2));
-				}
-				if (index == null) { // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
-					if (ch.wayPoint.length() == 5){
-						index = (Integer) dbIndex.get("OC"+ ch.wayPoint.substring(1));
-					} 
-					else {
-						index = (Integer) dbIndex.get("OC"+ ch.wayPoint.substring(2));
-					}
-				}
+				index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(ch.wayPoint.length()-4));
+				if (index == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
+					index = (Integer) dbIndex.get("OC"+ ch.wayPoint.substring(ch.wayPoint.length()-4));
+				if (index == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
+					index = (Integer) dbIndex.get("CW"+ ch.wayPoint.substring(ch.wayPoint.length()-4));
+				
 				if (index != null) {
 					mainCh = (CacheHolder) cacheDB.get(index.intValue());
 					mainCh.addiWpts.add(ch);
@@ -489,7 +507,8 @@ public class Profile {
 		}
 
 	}
-
+	
+	
 	/** Ensure that all filters have the proper length so that the 'charAt' access in the filter
 	 * do not cause nullPointer Exceptions
 	 */

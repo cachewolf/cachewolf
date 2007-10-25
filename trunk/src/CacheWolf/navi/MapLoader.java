@@ -168,6 +168,17 @@ public class MapLoader {
 		ByteArray daten;
 		String quelle = new String();
 		String zone;
+		// prepare MapInfoObject and get fileprefix
+		File dateiF = new File(datei); // change!!!
+		String tmp = dateiF.getName(); // contains the name and the extension
+		String name = tmp.substring(0, tmp.lastIndexOf("."));
+		float metersPerPixel = (float) (alti)*EXPEDIA_METERS_PER_PIXEL;
+		MapInfoObject cal = new MapInfoObject(metersPerPixel, new CWPoint(lat,lon),  PixelWidth, PixelHeight, name);
+		String pref = cal.getFfPrefix();
+		cal.mapName = pref + cal.mapName;
+		cal.fileNameWFL = pref + cal.fileNameWFL;
+		datei = dateiF.getPath()+"/"+ pref + tmp;
+		// download image
 		if (lon <= -10) zone = "USA0409";
 		else zone = "EUR0809";
 
@@ -200,7 +211,7 @@ public class MapLoader {
 		connImg.setRequestorProperty("Cookie", "jscript=1; path=/;");
 		connImg.documentIsEncoded = true;
 		try{
-			File dateiF = new File(datei);
+			dateiF = new File(datei);
 			if(!dateiF.exists()){
 				int i=0;
 				quelle = null;
@@ -232,13 +243,8 @@ public class MapLoader {
 		}catch(IOException e){
 			(new MessageBox("Error", "Error while downloading or saving map:\n"+e.getMessage(), MessageBox.OKB)).exec();
 		}
-		File dateiF = new File(datei); // change!!!
-		String tmp = dateiF.getName(); // contains the name and the extension
-		String name = tmp.substring(0, tmp.lastIndexOf("."));
-		float metersPerPixel = (float) (alti)*EXPEDIA_METERS_PER_PIXEL;
-		MapInfoObject cal = new MapInfoObject(metersPerPixel, new CWPoint(lat,lon),  PixelWidth, PixelHeight, dateiF.getPath()+"/"+name);
 		try {
-		cal.saveWFL(dateiF.getDrivePath(), name);
+		cal.saveWFL(dateiF.getDrivePath(), cal.fileNameWFL);
 		} catch (IOException e) {
 			(new MessageBox("Error", "Error saving calibration file:\n"+e.getMessage(), MessageBox.OKB)).exec();
 		}
