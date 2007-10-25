@@ -28,15 +28,31 @@ public class DescriptionPanel extends CellPanel{
 	/**
 	*	Set the text to display. Text should be HTML formated.
 	*/
+	String description = null;
 	public void setText(CacheHolderDetail cache){
-		if (currCache != cache){
-			Vm.showWait(true);
-			if (cache.is_HTML)	disp.setHtml(cache.LongDescription);
-			else				disp.setPlainText(cache.LongDescription);
-			disp.scrollTo(0,false);
-			Vm.showWait(false);
-			currCache = cache;
+		if (currCache == cache) return;
+		int scrollto = 0;
+		if (cache.hasSameMainCache(currCache)) scrollto = disp.getTopLine();
+		String desc;
+		if (cache == null) desc = "";
+		else {
+			if (cache.isAddiWpt()) {
+				if (cache.LongDescription != null && cache.LongDescription.length() > 0)
+					 desc = cache.LongDescription + "<br>\n"+cache.mainCache.getCacheDetails(true).LongDescription;
+				else desc = cache.mainCache.getCacheDetails(true).LongDescription;
+
+			} else // not an addi-wpt
+				desc = cache.LongDescription;
 		}
+		if (!desc.equals(description)) {
+			Vm.showWait(true); 
+			if (cache.is_HTML)	disp.setHtml(desc);
+			else				disp.setPlainText(desc);
+			disp.scrollTo(scrollto,false);
+			description = desc;
+			Vm.showWait(false);
+		}
+		currCache = cache;
 	}
 	
 	private void redraw() {

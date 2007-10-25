@@ -1093,11 +1093,12 @@ public class MovingMap extends Form {
 			String ImageFilename = currentMap.getImageFilename(); 
 			if (ImageFilename == null ) {
 				mmp.mapImage = new MapImage();
+				maps.remove(currentMap);
 				(new MessageBox("Error", "Could not find image associated with: \n"+currentMap.fileNameWFL, MessageBox.OKB)).execute();
 			}
 			else { 
 				if (ImageFilename.length() > 0) mmp.mapImage = new MapImage(ImageFilename); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
-				else mmp.mapImage = new MapImage();
+				else mmp.mapImage = new MapImage(); // no image associated with the calibration info ("empty map")
 			}
 			mapImage1to1 = mmp.mapImage;
 			mmp.mapImage.properties = mmp.mapImage.properties | AniImage.IsMoveable;
@@ -1145,7 +1146,7 @@ public class MovingMap extends Form {
 				mmp.mapImage = null; mapImage1to1 = mmp.mapImage;
 			}
 			addOverlaySet();
-			updateOnlyPosition(lat, lon, false);
+			updateOnlyPosition(lat, lon, false); // TODO this doesn't work correctly if the resolution changed, I guess because the pixels of PosCircle will be interpreted from the new resolution, but should be interpreted using the old resolution to test: select a map with a much greater value of m per pixel manually 
 			inf.close(0);
 			Vm.showWait(false);
 			(new MessageBox("Error", "Not enough ressources to load map: "+ newmap.getImageFilename()+"\nYou can try to close\n all prgrams and \nrestart CacheWolf", MessageBox.OKB)).execute();
@@ -1755,6 +1756,8 @@ class ListBox extends Form{
 		this.setPreferredSize(java.lang.Math.max(MyLocale.getScreenWidth()*3/4, java.lang.Math.min(240, MyLocale.getScreenWidth()) ), MyLocale.getScreenHeight()*3/4);
 		this.maps = maps;
 		MapInfoObject map;
+		MapListEntry ml;
+		String cmp;
 		ScrollBarPanel scb;
 		int oldmap = -1;
 		boolean curMapFound = false;
@@ -1764,8 +1767,13 @@ class ListBox extends Form{
 		if (gotopos != null && Gps != null) {
 			list.addItem("--- Karten von akt. Position und Ziel ---");
 			row++;
+			cmp = "FF1"+(new Area(new CWPoint(Gps.latDec, Gps.lonDec), gotopos)).getEasyFindString();
 			for(int i = 0; i<maps.size();i++){
-				map = new MapInfoObject((MapInfoObject)maps.get(i));
+				ml = (MapListEntry)maps.get(i);
+				try {
+					if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
+					else { map = ml.getMap();}
+				} catch (IOException ex) {continue; } // could not read .wfl-file
 				if( map.isInBound(Gps.latDec, Gps.lonDec) && map.isInBound(gotopos) ) 
 				{
 					list.addItem(i + ": " + map.mapName);
@@ -1778,9 +1786,13 @@ class ListBox extends Form{
 		if (Gps != null) {
 			list.addItem("--- Karten der aktuellen Position ---");
 			row++;
+			cmp = "FF1"+Area.getEasyFindString(new CWPoint(Gps.latDec, Gps.lonDec), 30);
 			for(int i = 0; i<maps.size();i++){
-				map = new MapInfoObject((MapInfoObject)maps.get(i));
-				if (map.isInBound(Gps.latDec, Gps.lonDec) == true) 
+				ml = (MapListEntry)maps.get(i);
+				try {
+					if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
+					else { map = ml.getMap();}
+				} catch (IOException ex) {continue; } // could not read .wfl-file
 				{
 					list.addItem(i + ": " + map.mapName);
 					row++;
@@ -1792,8 +1804,13 @@ class ListBox extends Form{
 		if (gotopos != null) {
 			list.addItem("--- Karten des Ziels ---");
 			row++;
+			cmp = "FF1"+Area.getEasyFindString(gotopos, 30);
 			for(int i = 0; i<maps.size();i++){
-				map = new MapInfoObject((MapInfoObject)maps.get(i));
+				ml = (MapListEntry)maps.get(i);
+				try {
+					if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
+					else { map = ml.getMap();}
+				} catch (IOException ex) {continue; } // could not read .wfl-file
 				if(map.isInBound(gotopos)) {
 					list.addItem(i + ": " + map.mapName);
 					row++;
@@ -1805,11 +1822,11 @@ class ListBox extends Form{
 		list.addItem("--- andere Karten ---");
 		row++;
 		for(int i = 0; i<maps.size();i++){
-			map = new MapInfoObject((MapInfoObject)maps.get(i));
+			ml = (MapListEntry)maps.get(i);
 			if(!inList[i]) {
-				list.addItem(i + ": " + map.mapName);
+				list.addItem(i + ": " + ml.filename);
 				row++;
-				if (!curMapFound  && map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
+				if (!curMapFound && ml.filename.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
 			}
 		}
 		list.selectItem(oldmap, true);
@@ -1846,9 +1863,13 @@ class ListBox extends Form{
 				it = it.substring(0,it.indexOf(':'));
 				mapNum = Convert.toInt(it);
 				//	Vm.debug("Kartennummer: " + mapNum);
-				selectedMap = (MapInfoObject)maps.get(mapNum);
+				try {
+				selectedMap = ((MapListEntry)maps.get(mapNum)).getMap();
 				selected = true;
 				this.close(FormBase.IDOK);
+				} catch (IOException e) {
+					(new MessageBox("Error", "Cannot load wfl-file: \n" + ((MapListEntry)maps.get(mapNum)).filename, MessageBox.OKB)).execute();
+				}
 			}
 			else {
 				selected = false;

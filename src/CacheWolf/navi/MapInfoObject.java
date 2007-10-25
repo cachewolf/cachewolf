@@ -385,6 +385,16 @@ public class MapInfoObject extends Area {
 		return calcLatLon(p.x, p.y);
 	}
 	
+	/**
+	 * Get the prefix used for easy and fast finding of the best map
+	 * The filname of the .wfl and respective image should start with this
+	 * prefix in order to make finding the best map much faster 
+	 * @return
+	 */
+	public String getFfPrefix() {
+		return "FF1"+getEasyFindString()+"E-";
+	}
+	
 /*	public Area getArea(){
 		return new Area(new CWPoint(topleft), new CWPoint(buttomright));
 	} */
