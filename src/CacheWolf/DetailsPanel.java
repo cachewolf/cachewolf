@@ -34,6 +34,7 @@ public class DetailsPanel extends CellPanel{
 	private boolean dirty_details = false;
 	private boolean blackStatus = false;
 	private boolean blackStatusChanged=false;
+	private boolean isNewWpt = false;
 	
 	Preferences pref; // Test
 	Profile profile;
@@ -138,8 +139,12 @@ public class DetailsPanel extends CellPanel{
 		
 	}
 	
+	public void setIsNew(boolean isnew) {
+		isNewWpt = isnew;
+	}
+	
 	public boolean isDirty() {
-		return dirty_notes || dirty_details;
+		return dirty_notes || dirty_details || isNewWpt;
 	}
 	public boolean hasBlackStatusChanged() {
 		return blackStatusChanged;
@@ -175,6 +180,7 @@ public class DetailsPanel extends CellPanel{
 		blackStatus=ch.is_black; 
 		blackStatusChanged=false;
 		btnBlack.repaintNow();
+		createWptName();
 		if(ch.has_bug == true) {
 			//btnShowBug.modify(Control.Disabled,1);
 			btnShowBug.image = imgShowBug;
@@ -298,7 +304,7 @@ public class DetailsPanel extends CellPanel{
 		}
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == btnNotes){
-				dirty_notes=true;
+				dirty_notes=true; // TODO I think this is redundant, because the notes are saved seperately by the notes screen itself
 				NotesScreen nsc = new NotesScreen(thisCache.getCacheDetails(true));
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
 			}
@@ -496,6 +502,7 @@ public class DetailsPanel extends CellPanel{
 		  ch.setAttributesToAddiWpts();
 		  dirty_notes=false;
 		  dirty_details=false;
+		  setIsNew(false);
 		  
 		  // Global.mainTab.tbP.refreshTable(); this is done in mainTab.onLeavingPanel
 		  ////Vm.debug("New status updated!");

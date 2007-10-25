@@ -359,6 +359,11 @@ public class Profile {
 		return strWp;
 	}
 	
+	/**
+	 * 
+	 * @param forcache maincache
+	 * @return
+	 */
 	public String getNewAddiWayPointName(String forcache) {
 		int wptNo=-1;
 		String waypoint;
