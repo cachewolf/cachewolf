@@ -639,7 +639,7 @@ public class OCXMLImporter extends MinML {
 			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 			conn.setRequestorProperty("Connection", "close");
 			conn.documentIsEncoded = true;
-			sock = conn.connect();
+			sock = conn.connect(); // TODO I guess here an IOException ocurs when a proxy is used
 			address = conn.getRedirectTo();
 			if (address != null){
 				if (chD != null) fileName = chD.wayPoint + "_" + Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
