@@ -194,7 +194,7 @@ public class myTableControl extends TableControl{
 			}
 
 			for(int j = 0; j <	cachesToUpdate.size(); j++){
-				int i = (Integer)cachesToUpdate.get(j);
+				int i = ((Integer)cachesToUpdate.get(j)).intValue();
 				ch = (CacheHolder)cacheDB.get(i);
 				infB.setInfo("Loading: " + ch.wayPoint);
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
