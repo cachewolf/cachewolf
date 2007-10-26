@@ -378,7 +378,7 @@ public class Profile {
 	 * @param ch
 	 */
 	public void setAddiRef(CacheHolder ch) {
-		String mainwpt = ch.wayPoint.substring(ch.wayPoint.length()-4);
+		String mainwpt = ch.wayPoint.substring(2);
 		int mainindex = getCacheIndex("GC"+mainwpt);
 		if (mainindex < 0) mainindex = getCacheIndex("OC"+mainwpt);
 		if (mainindex < 0) mainindex = getCacheIndex("CW"+mainwpt);
