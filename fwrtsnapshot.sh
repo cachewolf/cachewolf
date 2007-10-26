@@ -2,7 +2,7 @@
 # $Id$
 
 v=$(svn info | sed -n '/Revision: /s///p')
-echo '/VER_SVN =/s/\$.*\$/$LastChangedRevision: '$v' $/\nwq' | \
+printf '/VER_SVN =/s/\$.*\$/$LastChangedRevision: %s $/\nwq\n' $v | \
     ed -s src/CacheWolf/Version.java
 javac -cp ./lib/CompileEwe.zip:./lib/  -d ./bin/ -deprecation -nowarn ./src/CacheWolf/*.java ./src/CacheWolf/*/*.java ./src/exp/*.java ./src/utils/*.java
 /usr/local/bin/ewecl programs/Jewel.ewe -c cwberlios.jnf
@@ -11,6 +11,7 @@ mkdir -p published/attributes
 mv programs/CacheWolf/* published/
 chmod 755 published/*
 chmod 644 published/*/*
+printf '1,$g/ 12M/s///\nwq\n' | ed -s published/Jar/CacheWolf.bat
 install -c -m 644 work/CacheWolf.ewe published/
 install -c -m 644 resources/*.{def,html,tpl,zip} published/
 install -c -m 644 resources/attributes-big/*.gif published/attributes/
