@@ -39,7 +39,7 @@ public class Log {
 		this.icon=icon;
 		this.date=date;
 		this.logger=logger;
-		this.message=message;
+		this.message=message.trim();
 	}
 	
 	public static Log maxLog() {
@@ -68,7 +68,7 @@ public class Log {
 		return message;
 	}
 	public void setMessage(String message) {
-		this.message = message;
+		this.message = message.trim();
 	}
 
 	/** Return XML representation of log for storing in cache.xml */
