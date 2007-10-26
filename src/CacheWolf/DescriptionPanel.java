@@ -38,7 +38,7 @@ public class DescriptionPanel extends CellPanel{
 		else {
 			if (cache.isAddiWpt()) {
 				if (cache.LongDescription != null && cache.LongDescription.length() > 0)
-					 desc = cache.LongDescription + "<br>\n"+cache.mainCache.getCacheDetails(true).LongDescription;
+					 desc = cache.LongDescription + "<hr>\n"+cache.mainCache.getCacheDetails(true).LongDescription;
 				else desc = cache.mainCache.getCacheDetails(true).LongDescription;
 
 			} else // not an addi-wpt
