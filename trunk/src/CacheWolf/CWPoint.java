@@ -330,7 +330,7 @@ public class CWPoint extends TrackPoint{
 		case DD: 	return MyLocale.formatDouble(this.lonDec, "000.00000").replace(',','.');
 		case CW:
 		case DMM:
-		case DMS:	return getDMS(lonDec,0,format);
+		case DMS:	return (lonDec<100.0?"0":"")+getDMS(lonDec,0,format);
 		default: 	return ""; 
 		}
 	}
