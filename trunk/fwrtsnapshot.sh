@@ -16,7 +16,7 @@ install -c -m 644 resources/*.{def,html,tpl,zip} published/
 install -c -m 644 resources/attributes-big/*.gif published/attributes/
 (cd published && \
     find *.{def,html,tpl,zip} attributes/*.gif -type f | sort | \
-    /usr/local/bin/cpio -oC512 -Hustar -Mdist | gzip -n9 >datfiles.tgz && \
+    /usr/local/bin/cpio -oC512 -Hustar -Mdist >datfiles.tar && \
     rm -rf *.{def,html,tpl,zip} attributes && \
     chmod 644 datfiles.tgz)
 mkdir -p ~/public_html/CacheWolf-BE/r$v
