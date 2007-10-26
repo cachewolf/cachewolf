@@ -12,6 +12,7 @@ Multiple commands per line separated by ;<br>
 $a is global variable.<br>
 Format numerical expression:<br>
 Example: 3.14159:000.00:<br>
+<i>Format chars:</i> 0 . # where # stands for any number of decimal chars<br> 
 <br>
 <u><b> Showing values</b></u><br>
  "some text" " more text":<br>
@@ -30,6 +31,9 @@ Example: 3.14159:000.00:<br>
 <i> Example: a = cos(1);<br>
  or a = atan(b);</i><br>
 <br>
+<b><u>Numeric functions</u></b><br>
+ct(number) # crosstotal<br>
+q(number) # Quersumme/crosstotal<br><br>
 <b><u>Text functions</u></b>[s is a string]<br>
 length(s)<br>
 mid(s,startpos,length)<br> 
@@ -45,13 +49,18 @@ val(s)<i> # A=1, B=2, ... Z=26;  Add all</i><br>
 sval(s)<i> # A=1, B=2, ... Z=26</i><br>
 rot13(s)<br><br>
 <b><u>Coordinate</u></b><br>
+bearing(coordinate1,coordinate2)<br>
+center() # get current center<br>
+center(coordinate)<br>
+cp() # get current GPS position<br>
+distance(coordinate1,coordinate2)<br>  
 format(coordinate,fmt) <br>
   <i>where fmt="CW" or "UTM" or "DMS" or "DD"</i><br>
-project(coordinate,angle,distance)<br>
 goto(coordinate)<br>
-goto(coordinate,waypointname)<br><br>
+goto(coordinate,waypointname)<br>
+project(coordinate,angle,distance)<br><br>
 <b><u>Generate program for Multis (with/without addi Wpts)</u></b><br>
-skeleton(waypointname)   also<br><br>
+skeleton() # current cache   also<br>
 skeleton(numberOfStages)<br><br>
 <b><u>IF THEN ENDIF</u></b><br>
 IF condition THEN statement; statement .... ENDIF<br><br>
