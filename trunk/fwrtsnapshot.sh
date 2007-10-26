@@ -1,6 +1,7 @@
 #!/bin/sh
 # $Id$
 
+set -x
 v=$(svn info | sed -n '/Revision: /s///p')
 printf '/VER_SVN =/s/\$.*\$/$LastChangedRevision: %s $/\nwq\n' $v | \
     ed -s src/CacheWolf/Version.java
