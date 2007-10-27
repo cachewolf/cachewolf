@@ -465,23 +465,9 @@ public class DetailsPanel extends CellPanel{
 		  thisCache.type = transSelect(chcType.getInt());
 		 // thisCache.saveCacheDetails(profile.dataDir); // this is redundant, because all changes affecting the details are immediately saved
 		  // Now update the table
-		  CacheHolder ch = thisCache; //(CacheHolder)cacheDB.get(dbIndex);
+		  CacheHolder ch = thisCache; // TODO variable ch is redundant
 		  
-	/*	  ch.CacheStatus=thisCache.CacheStatus;
-		  ch.is_found=thisCache.is_found;
-		  ch.is_owned=thisCache.is_owned;
-		  ch.is_black=thisCache.is_black;
-		  ch.wayPoint=thisCache.wayPoint;
-		  ch.CacheSize=thisCache.CacheSize;
-		  ch.wayPoint=thisCache.wayPoint;
-		  ch.CacheName=thisCache.CacheName;
-		  ch.LatLon=thisCache.LatLon;
-		  ch.DateHidden=thisCache.DateHidden;
-		  ch.CacheOwner=thisCache.CacheOwner;
-		  ch.has_bug=thisCache.has_bug;
-		  ch.type=thisCache.type;
-*/		  // If the type has changed from/to an addi waypoint, rebuild the references
-		  if (CacheType.isAddiWpt(ch.type)!=CacheType.isAddiWpt(oldType)) {
+	  if (CacheType.isAddiWpt(ch.type)!=CacheType.isAddiWpt(oldType)) {
 			  // If we changed the type to addi, check that a parent exists
 			  if (CacheType.isAddiWpt(ch.type)) {
 				  int idx;
