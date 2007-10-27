@@ -195,6 +195,7 @@ public class DataMover {
 			 this.title=title;
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
+			srcHolder.releaseCacheDetails();
 			deleteCacheFiles(srcHolder.wayPoint,profile.dataDir);
 			srcDB.removeElementAt(i);
 		 }
@@ -206,6 +207,7 @@ public class DataMover {
 			 this.dstProfile=dstProfile;
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
+			srcHolder.releaseCacheDetails();
 			// does cache exists in destDB ?
 			int dstPos = dstProfile.getCacheIndex(srcHolder.wayPoint);
 			if (dstPos >= 0){
@@ -230,6 +232,7 @@ public class DataMover {
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
 			// does cache exists in destDB ?
+			srcHolder.releaseCacheDetails();
 			int dstPos = dstProfile.getCacheIndex(srcHolder.wayPoint);
 			if (dstPos >= 0){
 				deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
