@@ -588,7 +588,8 @@ public class OCXMLImporter extends MinML {
 	private void endCacheLog(String name){
 		if (name.equals("cachelog")){ // </cachelog>
 			chD.CacheLogs.merge(new Log(logIcon,logDate,logFinder,logData));
-			//chD.saveCacheDetails(profile.dataDir);
+			//TODO Optimize this. Currently the cache needs to be saved after every log as we don't know whether the next log is for the same cache.
+			chD.saveCacheDetails(profile.dataDir);
 			return;
 		}
 
