@@ -146,6 +146,8 @@ public class myTableControl extends TableControl{
 						h.changed();
 						dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
 						cacheDB.remove(ch);
+						ch.releaseCacheDetails();
+						ch=null;
 						if (pbf.isClosed) break;
 					}
 				}
