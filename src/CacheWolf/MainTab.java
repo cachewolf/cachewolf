@@ -114,7 +114,7 @@ public class MainTab extends mTabbedPanel {
 	 * Code to execute when leaving a panel (oldCard is the panel number)
 	 *
 	 */
-	private void onLeavingPanel(int panelNo) {
+	private void onLeavingPanel(int panelNo) {//Vm.debug("Leaving "+panelNo);
 		if (panelNo==0) { // Leaving the list view
 			// Get the cache for the current line (ch)
 			// Get the details for the current line (chD)
@@ -141,9 +141,11 @@ public class MainTab extends mTabbedPanel {
 			if(detP.isDirty()) {
 				cacheDirty=true;
 				detP.saveDirtyWaypoint();
-				tbP.myMod.updateRows();
+				tbP.myMod.updateRows();// This sorts the waypoint (if it is new) into the right position
 				tbP.selectRow(profile.getCacheIndex(detP.thisCache.wayPoint));
-				tbP.refreshTable();
+				//was tbP.refreshTable();
+				tbP.tc.update(true); // Update and repaint
+				if (statBar!=null) statBar.updateDisplay();
 			}
 		}
 		if (panelNo==5) { // Leaving the Solver Panel
@@ -166,7 +168,7 @@ public class MainTab extends mTabbedPanel {
 	 * Code to execute when entering a panel (getSelectedItem() is the panel number)
 	 *
 	 */
-	private void onEnteringPanel(int panelNo) {
+	private void onEnteringPanel(int panelNo) {//Vm.debug("Entering "+panelNo);
 		switch (panelNo) {// Switch by panel number
 		case 0:
 			// If Solver or Details has changed, save Cache
@@ -179,7 +181,7 @@ public class MainTab extends mTabbedPanel {
 			break;
 		case 1:  // DetailsPanel
 			if (chD==null) { // Empty DB - show a dummy detail
-				newWaypoint(chD=new CacheHolderDetail()); 
+				newWaypoint(ch=new CacheHolder()); 
 			}
 			MyLocale.setSIPButton();
 			detP.setDetails(ch);
@@ -204,11 +206,11 @@ public class MainTab extends mTabbedPanel {
 			MyLocale.setSIPButton();
 			if (chD!=null) {
 				if (chD.isAddiWpt()) { 
-					chMain=new CacheHolderDetail(chD.mainCache);
-					try {
+					chMain=chD.mainCache.getCacheDetails(true);//new CacheHolderDetail(chD.mainCache);
+/*					try {
 						chMain.readCache(profile.dataDir); //Vm.debug("mainT:readCache "+chD.wayPoint+"=>Main=>"+chMain.wayPoint+"/S:"+chMain.Solver);
 					} catch(Exception e){pref.log("Error reading cache .xml",e);}
-					solverP.setInstructions(chMain.Solver);
+*/					solverP.setInstructions(chMain.Solver);
 				} else {
 					//Vm.debug("mainT: Waypoint:"+chD.wayPoint);
 					solverP.setInstructions(chD.Solver);
@@ -271,6 +273,7 @@ public class MainTab extends mTabbedPanel {
 	 * @param ch
 	 */
 	public void newWaypoint(CacheHolder ch){
+		//When creating a new waypoint, simulate a change to the list view
 		onLeavingPanel(oldCard);
 		updatePendingChanges(); // was: onEnteringPanel(0); oldCard=0;
 		mainCache=lastselected;
@@ -281,25 +284,32 @@ public class MainTab extends mTabbedPanel {
 				mainCache = selectedCache.mainCache.wayPoint;
 			}			
 		}
-		//if (detP.isDirty()) detP.saveDirtyWaypoint();
 		Global.getProfile().hasUnsavedChanges=true;
 		detP.setIsNew(true);
-		if (ch.type == null || ch.type == "") ch.type = "0";
-		if (CacheType.isAddiWpt(ch.type)) {
+		if (ch.type == null || ch.type.equals("")) ch.type = "0";
+		if (CacheType.isAddiWpt(ch.type) && mainCache!=null && mainCache.length()>2) {
 			ch.wayPoint = profile.getNewAddiWayPointName(mainCache);
 			profile.setAddiRef(ch);
-		} else ch.wayPoint = profile.getNewWayPointName();
+		} else { 
+			ch.wayPoint = profile.getNewWayPointName();
+			ch.type="0";
+			lastselected=ch.wayPoint;
+		}
 		ch.CacheSize = "None";
 		chD = ch.getCacheDetails(true);
 		this.ch = ch;
 		cacheDB.add(ch);
+		tbP.myMod.numRows++;
+		detP.setDetails(ch);
+		oldCard=1;
 		//tbP.myMod.updateRows();
-		//tbP.selectRow(profile.getCacheIndex(waypoint));
-		//Global.mainTab.tbP.refreshTable();
+		tbP.selectRow(cacheDB.find(ch));
+		//tbP.refreshTable();
 		if (this.cardPanel.selectedItem==1) { // Detailpanel already selected
-			postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,1));
-		} else	
+			//postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,1));
+		} else {	
 			select(detP);
+		}
 		solverP.setInstructions(""); // TODO save them first, don't delete them when the new one is an addi
 		//tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
@@ -351,7 +361,6 @@ public class MainTab extends mTabbedPanel {
 	void updatePendingChanges() {
 		if (cacheDirty) {
 			chD.saveCacheDetails(Global.getProfile().dataDir);
-			//Vm.debug("mainT: Saveing "+chD.wayPoint);
 		}
 	}
 	

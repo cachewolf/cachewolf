@@ -45,7 +45,7 @@ public class TablePanel extends CellPanel{
 	public void selectRow(int row) {
 		// Ensure that the highlighted row is visible (e.g. when coming from radar panel)
 		// Next line needed for key scrolling 
-		tc.cursorTo(row, tc.cursor.x+tc.listMode, true); 
+		tc.cursorTo(row, 0, true); //tc.cursor.x+tc.listMode
 	}
 	
 	/** Highlight the first row in grey. It can be unhighlighted by clicking */
