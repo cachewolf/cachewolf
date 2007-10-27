@@ -61,6 +61,10 @@ public class TablePanel extends CellPanel{
 	 * @return index of selected cache (-1 if not visible)
 	 */
 	public int getSelectedCache(){
+		// If the selected Cache is no longer visible (e.g. after applying a filter)
+		// select the last row
+		if (tc.cursor.y>=myMod.numRows)
+			return myMod.numRows-1;
 		return tc.cursor.y;
 	}
 	
