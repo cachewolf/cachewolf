@@ -302,15 +302,8 @@ public class MainTab extends mTabbedPanel {
 		tbP.myMod.numRows++;
 		detP.setDetails(ch);
 		oldCard=1;
-		//tbP.myMod.updateRows();
-		tbP.selectRow(cacheDB.find(ch));
-		//tbP.refreshTable();
-		if (this.cardPanel.selectedItem==1) { // Detailpanel already selected
-			//postEvent(new MultiPanelEvent(MultiPanelEvent.SELECTED,detP,1));
-		} else {	
-			select(detP);
-		}
-		solverP.setInstructions(""); // TODO save them first, don't delete them when the new one is an addi
+		if (this.cardPanel.selectedItem !=1) select(detP);
+		solverP.setInstructions("");
 		//tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
 	}
