@@ -122,7 +122,7 @@ public class SAXException extends Exception {
   // Internal state.
   //////////////////////////////////////////////////////////////////////
 
-  private String message;
+  //private String message;
   private Exception exception;
 
 }
