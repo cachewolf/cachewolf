@@ -202,15 +202,15 @@ public class SpiderGC{
 			if (this.login()!=Form.IDOK) return false;
 			// loggedIn is already set by this.login()
 		}
-		CacheHolderDetail chD=new CacheHolderDetail(ch);
+		CacheHolderDetail chD=ch.getCacheDetails(true); //new CacheHolderDetail(ch);
 		try{
-			// Get all existing details of the cache
+/*			// Get all existing details of the cache
 			try {
 				chD.readCache(profile.dataDir);
 			} catch (IOException ioex) {
 				pref.log("No .XML file found for cache "+chD.wayPoint);
 			};
-			// Read the cache data from GC.COM and compare to old data
+*/			// Read the cache data from GC.COM and compare to old data
 			ret=getCacheByWaypointName(chD,true,true,false,true);
 			// Save the spidered data
 			if (ret) {
