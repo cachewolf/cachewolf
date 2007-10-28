@@ -449,6 +449,7 @@ public class DetailsPanel extends CellPanel{
 					        (!pref.myAlias2.equals("") && pref.myAlias2.equals(thisCache.CacheOwner));
 		  }
 		  thisCache.is_black = blackStatus;
+		  String oldWaypoint=thisCache.wayPoint;
 		  thisCache.wayPoint = inpWaypoint.getText().trim();
 		  thisCache.CacheSize = chcSize.getText();
 		  // If the waypoint does not have a name, give it one
@@ -467,7 +468,14 @@ public class DetailsPanel extends CellPanel{
 		  // Now update the table
 		  CacheHolder ch = thisCache; // TODO variable ch is redundant
 		  
-	  if (CacheType.isAddiWpt(ch.type)!=CacheType.isAddiWpt(oldType)) {
+	  /* The references have to be rebuilt if:
+	   *   - the cachetype changed from addi->normal or normal->addi
+	   *   - the old cachetype or the new cachetype were 'addi' and 
+	   *     the waypointname has changed 
+	   */
+	  if (CacheType.isAddiWpt(ch.type)!=CacheType.isAddiWpt(oldType) ||
+		 ((CacheType.isAddiWpt(ch.type) || CacheType.isAddiWpt(oldType)) &&
+		 !thisCache.wayPoint.equals(oldWaypoint))) {
 			  // If we changed the type to addi, check that a parent exists
 			  if (CacheType.isAddiWpt(ch.type)) {
 				  int idx;
