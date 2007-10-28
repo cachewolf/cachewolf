@@ -295,7 +295,11 @@ public boolean isAddiWpt() {
 	   for (int i=0; i<Global.getPref().deleteDetails; i++)
 		   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
    }
-   
+ 
+   public static void removeAllDetails() {
+	   for (int i=cachesWithLoadedDetails.size()-1; i>=0; i--)
+		   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
+   }
 /*
 public void finalize() {nObjects--;
    Vm.debug("Destroying CacheHolder "+wayPoint);
