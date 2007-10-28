@@ -23,4 +23,4 @@ rm -rf published/dat
 chmod 644 published/datfiles.tar
 mkdir -p ~/public_html/CacheWolf-BE/r$v
 mv published/* ~/public_html/CacheWolf-BE/r$v/
-rm -rf published
+rm -rf bin published
