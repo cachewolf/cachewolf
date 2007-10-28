@@ -92,6 +92,7 @@ public class Preferences extends MinML{
 	public boolean tabsAtTop=true;
 	/** True if the status bar is to be displayed (hidden if false) */
 	public boolean showStatus=true;
+	//public boolean noTabs=false;
 	/** True if the application can be closed by clicking on the close button in the top line.
 	 * This can be set to avoid accidental closing of the application */
 	public boolean hasCloseButton=true;
@@ -133,7 +134,11 @@ public class Preferences extends MinML{
 	public boolean northCenteredGoto = true;
 	/** If not null, a customs map path has been specified by the user */
 	private String customMapsPath=null; 
-
+	/** Number of CacheHolder details that are kept in memory */
+	public int maxDetails=50;
+	/** Number of details to delete when maxDetails have been stored in cachesWithLoadedDetails */
+	public int deleteDetails=5;
+	
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
 	 * the line: <pre><debug value="true"></pre>
@@ -282,6 +287,12 @@ public class Preferences extends MinML{
 		if (name.equals("spider")) {
 			forceLogin = Boolean.valueOf(atts.getValue("forcelogin")).booleanValue();
 		}
+		if (name.equals("details")) {
+			maxDetails=Common.parseInt(atts.getValue("cacheSize"));
+			deleteDetails=Common.parseInt(atts.getValue("delete"));
+			if (maxDetails<2) maxDetails=2;
+			if (deleteDetails<1) deleteDetails=1;
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -336,6 +347,7 @@ public class Preferences extends MinML{
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
 			outp.print("    <spider forcelogin=\""+forceLogin+"\"/>\n");
 			outp.print("    <gotopanel northcentered=\""+northCenteredGoto+"\" />\n");
+			outp.print("    <details cacheSize=\""+maxDetails+"\" delete=\""+deleteDetails+"\"/>\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath +"\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			// save last path of different exporters

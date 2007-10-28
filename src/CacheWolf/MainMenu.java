@@ -556,21 +556,25 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == sysinfo){
 				//Vm.debug("Checking system...");
-				String sysstring;
+				StringBuffer sb=new StringBuffer(400);
 				Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
 				Font f = mApp.guiFont;
-				sysstring =  "Profile: " + profile.dataDir + "<br>" +
-							 "Platform: " + Vm.getPlatform() + "<br>" +
-							 "Locale lang is: " + MyLocale.getLocaleLanguage() + "<br>" +
-							 "Locale country is: " + MyLocale.getLocaleCountry() + "<br>"+
-							 "Decimal separator is: \"" + pref.digSeparator + "\"<br>" +
-							 "Device is PDA: " + Vm.isMobile()+ "<br>" +
-							 "Screen: " + MyLocale.getScreenWidth() + " x " + MyLocale.getScreenHeight() + "<br>"+
-							 "Font size: " + f.getSize() + "<br>" +
-							 "Entries in DB: " +cacheDB.size() + "<br>"+
-							 "File separator is: \"" + Vm.getProperty("file.separator","def")+ "\"<br>"+
-							 "Programme directory is " + File.getProgramDirectory()+"<br>";
-				InfoScreen is = new InfoScreen(sysstring, "System", false,pref);
+				sb.append("Profile: "); 				sb.append(profile.dataDir);
+				sb.append("<br>Platform: "); 			sb.append(Vm.getPlatform());
+				sb.append("<br>Locale lang is: ");		sb.append(MyLocale.getLocaleLanguage()); 
+				sb.append("<br>Locale country is: "); 	sb.append(MyLocale.getLocaleCountry()); 
+				sb.append("<br>Decimal separator is: \""); sb.append(pref.digSeparator);
+				sb.append("\"<br>Device is PDA: ");		sb.append(Vm.isMobile());
+				sb.append("<br>Screen: ");				sb.append(MyLocale.getScreenWidth()); 
+					sb.append(" x ");	 sb.append(MyLocale.getScreenHeight()); 
+				sb.append("<br>Font size: ");			sb.append(f.getSize());
+				sb.append("<br>Entries in DB: ");		sb.append(cacheDB.size());
+				sb.append("<br>File separator is: \""); sb.append(Vm.getProperty("file.separator","def")); 
+				sb.append("\"<br>Programme directory is "); sb.append(File.getProgramDirectory());
+				sb.append("<br>Number of details in RAM is "); sb.append(CacheHolder.cachesWithLoadedDetails.size());
+				sb.append(" Max.: ");					sb.append(Global.getPref().maxDetails);
+				sb.append("<br>");
+				InfoScreen is = new InfoScreen(sb.toString(), "System", false,pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == chkVersion){

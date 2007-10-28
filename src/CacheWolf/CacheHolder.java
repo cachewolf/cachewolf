@@ -268,7 +268,7 @@ public boolean isAddiWpt() {
 		   details.update(this);
 		   return details;
 	   }
-	   if (cachesWithLoadedDetails.size() >= maxDetails) removeOldestDetails();
+	   if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails) removeOldestDetails();
 	   details = new CacheHolderDetail(this);
 	   try {
 		   details.readCache(Global.getProfile().dataDir);
@@ -288,15 +288,12 @@ public boolean isAddiWpt() {
 	   cachesWithLoadedDetails.remove(this);
    }
    
-   final static int maxDetails = 50; 
-   static Vector cachesWithLoadedDetails = new Vector(maxDetails);
+   //final static int maxDetails = 50; 
+   static Vector cachesWithLoadedDetails = new Vector(Global.getPref().maxDetails);
    
    public static void removeOldestDetails() { // TODO save changes if requested?
-	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
-	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
-	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
-	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
-	   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
+	   for (int i=0; i<Global.getPref().deleteDetails; i++)
+		   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
    }
    
 /*
