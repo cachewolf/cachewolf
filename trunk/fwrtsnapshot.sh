@@ -5,7 +5,7 @@ set -x
 v=$(svn info | sed -n '/Revision: /s///p')
 printf '/VER_SVN =/s/\$.*\$/$LastChangedRevision: %s $/\nwq\n' $v | \
     ed -s src/CacheWolf/Version.java
-javac -cp ./lib/CompileEwe.zip:./lib/  -d ./bin/ -deprecation -nowarn ./src/CacheWolf/*.java ./src/CacheWolf/*/*.java ./src/exp/*.java ./src/utils/*.java
+javac -target 1.1 -encoding windows-1252 -cp ./lib/CompileEwe.zip:./lib/  -d ./bin/ -deprecation -nowarn ./src/CacheWolf/*.java ./src/CacheWolf/*/*.java ./src/exp/*.java ./src/utils/*.java
 /usr/local/bin/ewecl programs/Jewel.ewe -c cwberlios.jnf
 rm -rf published
 mkdir -p published/dat/attributes
