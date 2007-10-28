@@ -237,6 +237,7 @@ public class MainMenu extends MenuBar {
 					Global.mainTab.saveUnsavedChanges(true);
 					if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
 						tbp.myMod.numRows=0;
+						CacheHolder.removeAllDetails();
 						profile.cacheDB.clear();
 						InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
 						infB.exec();

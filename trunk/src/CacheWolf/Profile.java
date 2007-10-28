@@ -79,6 +79,7 @@ public class Profile {
 	}
 
 	public void clearProfile() {
+		CacheHolder.removeAllDetails();
 		cacheDB.clear();
 		centre.set(-361,-361);
 		name="";
