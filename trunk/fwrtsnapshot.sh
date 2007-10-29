@@ -8,6 +8,10 @@ printf '/VER_SVN =/s/\$.*\$/$LastChangedRevision: %s $/\nwq\n' $v | \
 javac -source 1.3 -target 1.1 -encoding windows-1252 -cp ./lib/CompileEwe.zip:./lib/  -d ./bin/ -deprecation -nowarn ./src/CacheWolf/*.java ./src/CacheWolf/*/*.java ./src/exp/*.java ./src/utils/*.java
 /usr/local/bin/ewecl programs/Jewel.ewe -c cwberlios.jnf
 rm -rf published
+if test '!' -e programs/CacheWolf/Jar/CacheWolf.bat; then
+	rm -rf bin
+	exit 1
+fi
 mkdir -p published/dat/attributes
 mv programs/CacheWolf/* published/
 chmod 755 published/*
