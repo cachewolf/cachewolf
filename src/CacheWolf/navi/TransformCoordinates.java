@@ -12,6 +12,11 @@ import java.lang.Math;
  * and http://www.geoclub.de/files/GPS_nach_GK.xls
  * The only difference to the excel-model is that shifting is done before rotation
  * this makes calculations easier, without changing the output.
+ * 
+ * Now, that this is completed: there is a much more precise method right now published
+ * by the Bundesamt für Kartographie und Geodäsie for whole Germany: see:
+ *  * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007dokumentation.pdf
+ *  * http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (BeTA, 2007) to ETRS89
  * @author Robert Arnold
  *
  */
