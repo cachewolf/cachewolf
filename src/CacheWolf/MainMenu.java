@@ -265,6 +265,7 @@ public class MainMenu extends MenuBar {
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == spider){
 				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doIt();
 				cacheDB.clear();
 				profile.readIndex();
