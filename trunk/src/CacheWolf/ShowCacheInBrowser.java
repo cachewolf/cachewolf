@@ -122,7 +122,7 @@ public class ShowCacheInBrowser {
 					int start=0;
 					int pos;
 					int imageNo=0;
-					Regex imgRex = new Regex("src=(?:[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
+					Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
 					while (start>=0 && (pos=chD.LongDescription.indexOf("<img",start))>0) {
 						s.append(chD.LongDescription.substring(start,pos));
 						imgRex.searchFrom(chD.LongDescription,pos);
@@ -135,11 +135,11 @@ public class ShowCacheInBrowser {
 								s.append("<img src=\"file://"+
 								   Global.getProfile().dataDir+chD.Images.get(imageNo)+"\">");
 								imageNo++;
-								if (imageNo >= chD.Images.getCount())break;
 							}
 						}
 						start=chD.LongDescription.indexOf(">",pos);
 						if (start>=0) start++;
+						if (imageNo >= chD.Images.getCount())break;
 					}
 					if (start>=0) s.append(chD.LongDescription.substring(start));
 					tpl.setParam("DESCRIPTION", s.toString());
