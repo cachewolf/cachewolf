@@ -6,6 +6,7 @@ import ewe.sys.Double;
 import ewe.sys.Locale;
 import ewe.sys.Convert;
 import CacheWolf.navi.TrackPoint;
+import CacheWolf.navi.TransformCoordinates;
 
 import com.bbn.openmap.proj.coords.*;
 import com.bbn.openmap.proj.*;
@@ -445,6 +446,10 @@ public class CWPoint extends TrackPoint{
 	public String getUTMEasting() {
 		checkUTMvalid();
 		return Convert.toString((long)utm.easting).replace(',','.');
+	}
+	
+	public String getGermanGkCoordinates() {
+		return TransformCoordinates.wgs84ToGkGermany(this).toString(0, "R:", " H:");
 	}
 	
 	/**
