@@ -31,8 +31,12 @@ public class Log {
 			logger=logLine.substring(l1,l2);
 			message=logLine.substring(l2+4);
 		} catch (Exception ex) {
-			Global.getPref().log("Error parsing log: "+logLine);
-			icon=INVALIDLOGICON;
+			if (logLine.indexOf("<img")<0) { // Have we reached the line that states max logs reached 
+				icon=MAXLOGICON; 
+			} else {
+				Global.getPref().log("Error parsing log: "+logLine);
+				icon=INVALIDLOGICON;
+			}	
 			date="1900-00-00";
 			logger=message="";
 		}
