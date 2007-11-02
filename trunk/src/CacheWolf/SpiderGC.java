@@ -789,7 +789,9 @@ public class SpiderGC{
 		}
 		if (nLogs>MAXLOGS) {
 			reslts.add(Log.maxLog());
-		}
+			pref.log("Too many logs. MAXLOGS reached ("+MAXLOGS+")");
+		} else
+			pref.log(nLogs+" logs found");
 		return reslts;
 	}
 
