@@ -555,7 +555,9 @@ public class Preferences extends MinML{
 		Time dtm = new Time();
 		dtm.getTime();
 		dtm.setFormat("dd.MM.yyyy'/'HH:mm");
-		text = dtm.toString()+ ": "+ text + "\n";
+		text = dtm.toString()+ ": "+ text;
+		if (debug) Vm.debug(text);
+		text=text+"\n";
 		File logFile = new File(LOGFILENAME);
 		Stream strout = null;
 		try{
@@ -566,7 +568,6 @@ public class Preferences extends MinML{
 		}finally{
 			strout.close();
 		}
-		if (debug) Vm.debug(text);
 	}
 
 	/** Log an exception to the log file with or without a stack trace
