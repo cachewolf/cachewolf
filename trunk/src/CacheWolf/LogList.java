@@ -28,7 +28,7 @@ public class LogList {
 
 	/** Add a Log to the list */
 	public void add(Log log) {
-		logList.add(log);
+		if (log.getIcon()!=null) logList.add(log); // Don't add invalid logs
 	}
 	
 	/** Remove a Log from the list */

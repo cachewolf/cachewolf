@@ -2,6 +2,7 @@ package CacheWolf;
 
 public class Log {
 	private static String MAXLOGICON="MAXLOG";
+	private static String INVALIDLOGICON=null;
 	/** The icon which describes the log e.g. icon_sad */
 	private String icon;
 	/** The date in format yyyy-mm-dd */
@@ -30,8 +31,10 @@ public class Log {
 			logger=logLine.substring(l1,l2);
 			message=logLine.substring(l2+4);
 		} catch (Exception ex) {
-			icon=MAXLOGICON;
+			Global.getPref().log("Error parsing log: "+logLine);
+			icon=INVALIDLOGICON;
 			date="1900-00-00";
+			logger=message="";
 		}
 	}
 	
