@@ -14,6 +14,7 @@ import ewe.io.IOException;
 import ewe.io.PrintWriter;
 import ewe.sys.*;
 
+
 /**
  * class to read, save and do the calculations for calibrated and calibrating maps
  * @author pfeffer
@@ -419,5 +420,10 @@ class GCPoint extends CWPoint{
 		this.latDec = lat;
 		this.lonDec = lon;
 		this.utmValid = false;
+	}
+	public GCPoint(CWPoint ll, Point px) {
+		super(ll);
+		bitMapX = px.x;
+		bitMapY = px.y;
 	}
 }
