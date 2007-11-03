@@ -134,4 +134,8 @@ public class Area {
 		 if (boundingbox.length() <= q.length() ) return q.startsWith(boundingbox);
 		 else return boundingbox.startsWith(q);
 	 }
+	 
+	 public String toString() {
+		 return topleft.toString() + ", " + buttomright.toString();
+	 }
 }

@@ -21,10 +21,16 @@ import java.lang.Math;
  *
  */
 public class TransformCoordinates {
-	
+
+	public static final int EPSG_WGS84 = 4326; 
+	public static final int EPSG_GK2 = 31466; 
+	public static final int EPSG_GK3 = 31467; 
+	public static final int EPSG_GK4 = 31468; 
+	public static final int EPSG_GK5 = 31469; 
+
 	private static final Ellipsoid BESSEL = new Ellipsoid(6377397.155, 6356078.962);
 	private static final Ellipsoid WGS84 = new Ellipsoid(6378137.000, 6356752.314);
-	
+
 
 	//	 taken from http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 4 = Deutschland Nord"
 	private static final TransformParameters GK_NORD_GERMANY_TO_WGS84 = new TransformParameters(590.5, 69.5, 411.6, 0.796, 0.052, 3.601, 8.300, false);
@@ -45,7 +51,7 @@ public class TransformCoordinates {
 	private static final TransformParameters GK_NRW_GERMANY_TO_WGS84 = new TransformParameters(566.1, 116.3, 390.1, -1.11, -0.24, 3.76, 12.6, false);
 	/** use this for NRW in Germany. Deviations less than 34 cm */
 	public static final TransformParameters GK_NRW_GERMANY =  GK_NRW_GERMANY_TO_WGS84; 
-	
+
 	// taken from http://www.lverma.nrw.de/produkte/druckschriften/verwaltungsvorschriften/images/gps/TrafopsNRW.pdf for NRW this transform has deviations lower than 113cm.
 	// these matches to  http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 3 = Deutschland 1995"
 	private static final TransformParameters GK_GERMANY_1995_TO_WGS84 = new TransformParameters(582, 105, 414, -1.04, -0.35, +3.08, 8.3, false);
@@ -60,11 +66,33 @@ public class TransformCoordinates {
 	// take from http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 2 = Deutschland 2001"
 	private static final TransformParameters GK_GERMANY_2001_TO_WGS84 = new TransformParameters(598.1, 73.7, 418.2, -0.202, -0.045, 2.455, 6.700, false);
 	/** Use this for Germany if there is no more specific available. maximal deviations unknown */
-	public static final TransformParameters GK_GERMANY_2001 =  GK_GERMANY_2001_TO_WGS84; 
+	public static final TransformParameters GK_GERMANY_2001 =  GK_GERMANY_2001_TO_WGS84;
 
-	
 
 	private TransformCoordinates() {} // as all members are static, so avoid instantiation
+
+	public static boolean isGermanGk(int epsgcode) {
+		boolean ret = false;
+		switch (epsgcode) {
+		case EPSG_GK2:
+		case EPSG_GK3:
+		case EPSG_GK4:
+		case EPSG_GK5: ret = true; 
+		}
+		return ret;
+	}
+
+	public static boolean isSupported(int epsgcode) {
+		boolean ret = false;
+		switch (epsgcode) {
+		case EPSG_WGS84:
+		case EPSG_GK2:
+		case EPSG_GK3:
+		case EPSG_GK4:
+		case EPSG_GK5: ret = true; 
+		}
+		return ret;
+	}
 	
 	/**
 	 * This is the most abstract method: If you don't know 
@@ -76,7 +104,7 @@ public class TransformCoordinates {
 	public static CWPoint gkGermanyToWgs84(GkPoint gk) {
 		return  gkToWgs84(gk, GK_GERMANY_2001); 	//TODO use more lokalized transformparameters, which can be obtained from the Landesvermessungsämter
 	}
-	
+
 	/**
 	 * This is the most abstract method: If you don't know 
 	 * when to use another one (if you are in need to do so, you will
@@ -116,7 +144,7 @@ public class TransformCoordinates {
 		CWPoint wgsll = Xyz2Latlon(wgs84xyz, WGS84);
 		return wgsll;
 	}
-	
+
 	private static XyzCoordinates latLon2xyz(CWPoint ll, double alt, Ellipsoid ellipsoid) {
 		if (!ll.isValid()) throw new IllegalArgumentException("latLon2xyz: invalid lat-lon");
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
@@ -127,7 +155,7 @@ public class TransformCoordinates {
 		ret.z = (N * Math.pow(ellipsoid.b, 2) / Math.pow(ellipsoid.a , 2) + alt) * Math.sin(ll.latDec /180*Math.PI);
 		return ret;
 	}
-	
+
 	private static XyzCoordinates transform(XyzCoordinates from, TransformParameters transParams) {
 		Matrix coos = new Matrix(3, 1);
 		coos.matrix[0][0] = from.x;
@@ -138,9 +166,9 @@ public class TransformCoordinates {
 		shift.matrix[0][0] = transParams.dx;
 		shift.matrix[1][0] = transParams.dy;
 		shift.matrix[2][0] = transParams.dz;
-		
+
 		coos.add(shift);
-		
+
 		Matrix rotate = new Matrix(3,3);
 		rotate.matrix[0][0] = 1;
 		rotate.matrix[1][1] = 1;
@@ -151,14 +179,14 @@ public class TransformCoordinates {
 		rotate.matrix[1][2] = transParams.ex;
 		rotate.matrix[2][0] = - rotate.matrix[0][2];
 		rotate.matrix[2][1] = - rotate.matrix[1][2];
-		
+
 		rotate.Multiply(coos);
 		coos = rotate;
 		coos.MultiplyByScalar(transParams.s); // scale
-		
+
 		return new XyzCoordinates(coos.matrix[0][0], coos.matrix[1][0], coos.matrix[2][0]);
 	}
-	
+
 	private static CWPoint Xyz2Latlon(XyzCoordinates from, Ellipsoid ellipsoid) {
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
 		double s = Math.sqrt( Math.pow(from.x,2) + Math.pow(from.y,2));
@@ -173,7 +201,7 @@ public class TransformCoordinates {
 		//ret.alt = h;
 		return ret;
 	}
-	
+
 	/**
 	 * Project latlon to Gauß-Krüger-Coordinates on ellipsoid
 	 * @param latlon
@@ -194,7 +222,7 @@ public class TransformCoordinates {
 		double N = ellipsoid.a/ Math.sqrt(1- e2 * Math.pow(Math.sin(B),2));
 		double nue = Math.sqrt(Math.pow(ellipsoid.a, 2) / Math.pow(ellipsoid.b, 2)* e2 * Math.pow(Math.cos(B), 2));
 		double t = Math.tan(B);
-		
+
 		double n1 = (ellipsoid.a-ellipsoid.b)/(ellipsoid.a+ellipsoid.b);
 		double n2 = (ellipsoid.a+ellipsoid.b)/2 * (1+ Math.pow(n1, 2)/4 + Math.pow(n1, 4)/64);
 		double n3 = n1 * -3/2 + Math.pow(n1, 3) * 9/16  - Math.pow(n1, 5) * 3/32;
@@ -202,11 +230,11 @@ public class TransformCoordinates {
 		double n5 = Math.pow(n1, 3) * -35/48 + Math.pow(n1, 5) * 105/256;
 		double n6 = Math.pow(n1, 4) * 315/512;
 		double arclength = n2 * (B + n3 * Math.sin(B*2) + n4 * Math.sin(B*4) + n5 * Math.sin(B*6) + n6 * Math.sin(B*8));
-		
+
 		double h1 = t/2 * N * Math.pow(Math.cos(B), 2) * l*l;
 		double h2 = t/24 * N * Math.pow(Math.cos(B),4) * (5 - t*t + 9 * nue*nue + 4*Math.pow(nue, 4)) * Math.pow(l,4);
 		double northing = arclength + h1 + h2;
-		
+
 		double r1 = N * Math.cos(B) * l;
 		double r2 = N/6 * Math.pow(Math.cos(B), 3) * (1-t*t+nue*nue)*l*l*l;
 		double easting = r1 + r2 + stripe / stripewidth * 1000000 + 500000;
@@ -215,7 +243,7 @@ public class TransformCoordinates {
 		ret.northing = northing;
 		return ret;
 	}
-	
+
 	/**
 	 * Converts Gauß-Krüger-coordinates into lat/lon on the respective ellipsoid
 	 * @param gkp
@@ -227,7 +255,7 @@ public class TransformCoordinates {
 		double Y0 = Math.floor(gkp.easting / 1000000);
 		double L0 = Y0 * stripewidth; // decimal degree of the center of the stripe
 		double y = gkp.easting - 1000000 * Y0 - 500000;
-		
+
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
 		// note: n1-n6 are similiar to the n1-n6 in projectLatlon2GK, but some term have different factors
 		double n1 = (ellipsoid.a-ellipsoid.b)/(ellipsoid.a+ellipsoid.b);
@@ -239,15 +267,15 @@ public class TransformCoordinates {
 
 		double B0 = gkp.northing / n2;
 		double Bf = B0 + n3 * Math.sin(B0*2) + n4 * Math.sin(B0*4) + n5 * Math.sin(B0*6) + n6 * Math.sin(B0*8);
-		
+
 		double Nf = ellipsoid.a / Math.sqrt (1- e2 * Math.pow(Math.sin(Bf), 2));
 		double nuef = Math.sqrt(ellipsoid.a * ellipsoid.a / ellipsoid.b / ellipsoid.b * e2 * Math.pow(Math.cos(Bf), 2));
 		double tf = Math.tan(Bf);
-		
+
 		double la1 = tf / 2 / Nf/Nf * (-1-nuef*nuef) * y*y;
 		double la2 = tf /24 / Math.pow(Nf, 4) * (5 + 3*tf*tf + 6*nuef*nuef - 6*tf*tf * nuef*nuef - 4*Math.pow(nuef, 4) - 9*tf*tf*Math.pow(nuef, 4)) * Math.pow(y, 4);
-	// these deal this less than the overall calculation precision double la3 = tf /720 / Math.pow(Nf, 6) * (-61 - 90*tf*tf - 45*Math.pow(tf,4) - 107*nuef*nuef + 162*tf*tf * Math.pow(nuef, 2) + 45*Math.pow(tf,4)*tf*Math.pow(nuef, 2)) * Math.pow(y, 6);
-	// these deal this less than the overall calculation precision double la4 = tf /40320 / Math.pow(Nf, 8) * (1385+3663*tf*tf - 4095*Math.pow(tf,4) + 1575*Math.pow(nuef, 6)) * Math.pow(y, 8);
+		// these deal this less than the overall calculation precision double la3 = tf /720 / Math.pow(Nf, 6) * (-61 - 90*tf*tf - 45*Math.pow(tf,4) - 107*nuef*nuef + 162*tf*tf * Math.pow(nuef, 2) + 45*Math.pow(tf,4)*tf*Math.pow(nuef, 2)) * Math.pow(y, 6);
+		// these deal this less than the overall calculation precision double la4 = tf /40320 / Math.pow(Nf, 8) * (1385+3663*tf*tf - 4095*Math.pow(tf,4) + 1575*Math.pow(nuef, 6)) * Math.pow(y, 8);
 		double lat = (Bf + la1 + la2) * 180 / Math.PI;
 
 		double lo1 = 1 / Nf / Math.cos(Bf) * y;
@@ -255,7 +283,7 @@ public class TransformCoordinates {
 		double lon = L0 + (lo1 + lo2) * 180/Math.PI;
 		return new CWPoint(lat, lon);
 	}
-	
+
 }
 
 class XyzCoordinates {
@@ -282,7 +310,7 @@ class TransformParameters {
 	ex, ey, ez,
 	// scale as multiplicator
 	s;
-	
+
 	/**
 	 * 
 	 * @param d shift in meter
@@ -298,7 +326,7 @@ class TransformParameters {
 		s = 1/(1 - si * Math.pow(10, -6));
 		if (invert) invert();
 	}
-	
+
 	public TransformParameters(TransformParameters tp, boolean invert) {
 		dx = tp.dx;	dy = tp.dy;	dz = tp.dz;
 		ex = tp.ex;	ey = tp.ey;	ez = tp.ez;

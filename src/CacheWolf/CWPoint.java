@@ -34,6 +34,9 @@ public class CWPoint extends TrackPoint{
 	public static final int UTM = 3;
 	public static final int CW = 4;
 	public static final int REGEX = 5;
+	public static final int LAT_LON = 6;
+	public static final int LON_LAT = 7;
+	
 	
 	/**
 	 * Create CWPoint by using lat and lon 
@@ -451,6 +454,10 @@ public class CWPoint extends TrackPoint{
 	public String getGermanGkCoordinates() {
 		return TransformCoordinates.wgs84ToGkGermany(this).toString(0, "R:", " H:");
 	}
+
+	public String getGermanGkCoordinates(int decimalplaces, String pref, String seperator) {
+		return TransformCoordinates.wgs84ToGkGermany(this).toString(decimalplaces, pref, seperator);
+	}
 	
 	/**
 	 * Method to calculate a projected waypoint
@@ -569,7 +576,22 @@ public class CWPoint extends TrackPoint{
 		case DMS:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " 
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
 		case UTM:	return getUTMZone()  + " E " + getUTMEasting()+ " N " + getUTMNorthing();
-
+		case LON_LAT:
+			Double latD = new Double();
+			latD.decimalPlaces = 8;
+			latD.set(latDec);
+			Double lonD = new Double();
+			lonD.decimalPlaces = 8;
+			lonD.set(lonDec);
+			return latD.toString().replace(',', '.') + "," + lonD.toString().replace(',', '.');
+		case LAT_LON:
+			Double latD2 = new Double();
+			latD2.decimalPlaces = 8;
+			latD2.set(latDec);
+			Double lonD2 = new Double();
+			lonD2.decimalPlaces = 8;
+			lonD2.set(lonDec);
+			return  lonD2.toString().replace(',', '.') + "," + latD2.toString().replace(',', '.');
 		default: return "Unknown Format: " + format;
 
 		}

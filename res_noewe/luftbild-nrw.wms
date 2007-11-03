@@ -1,0 +1,14 @@
+Name: Luftbild NRW
+MainUrl: http://www.gis2.nrw.de/wmsconnector/wms/luftbild?SERVICE=WMS
+LayersName: Luftbild NRW
+VersionUrlPart: VERSION=1.1.0
+CoordinateReferenceSystemCacheWolf: 31466
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31466
+RequestUrlPart: REQUEST=GetMap
+LayersUrlPart: LAYERS=Orthophoto%20Str.%202,Orthophoto%20Str.%203
+StylesUrlPart: STYLES=
+ImageFormatUrlPart: FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 52.7691 E 5.673
+BoundingBoxButtomRightWGS84: N 49.9944 E 10.142
+MinScale: 0.1795783591567183
+MaxScale: 5.611823723647454
