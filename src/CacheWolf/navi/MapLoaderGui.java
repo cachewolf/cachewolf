@@ -26,7 +26,8 @@ public class MapLoaderGui extends Form {
 	CellPanel pnlTiles = new CellPanel();
 	CellPanel pnlPerCache = new CellPanel();
 
-	final String descString = "Download georeferenced maps from expedia.com";
+	final String descString = "Download georeferenced maps\n Select online service:";
+	mChoice mapServiceChoice;
 	mCheckBox forCachesChkBox = new mCheckBox("for");
 	mChoice forSelectedChkBox = new mChoice(new String[] {"all", "selected"}, 0);
 	mChoice forSelectedChkBoxPerCache = new mChoice(new String[] {"all", "selected"}, 1);
@@ -44,6 +45,7 @@ public class MapLoaderGui extends Form {
 	mCheckBox overviewChkBox = new mCheckBox("download an overview map");
 	mCheckBox overviewChkBoxPerCache = new mCheckBox("download an overview map");
 
+	MapLoader mapLoader;
 	CWPoint center;
 	Vector cacheDB;
 	boolean perCache;
@@ -60,11 +62,15 @@ public class MapLoaderGui extends Form {
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 		center = new CWPoint(pref.curCentrePt);
 		cacheDB = cacheDBi;
-		// tiles panel
-		MessageArea desc = new MessageArea(descString);
+		mapLoader = new MapLoader(Global.getPref().myproxy, Global.getPref().myproxyport);
+		
+		mapServiceChoice = new mChoice(mapLoader.getAvailableOnlineMapServices(), 0);
+		MessageArea desc = new MessageArea(descString); 
 		desc.modifyAll(mTextPad.NotEditable | mTextPad.DisplayOnly | mTextPad.NoFocus, mTextPad.TakesKeyFocus);
 		desc.borderStyle = mTextPad.BDR_NOBORDER;
-		pnlTiles.addLast(desc);
+		this.addLast(desc);
+		this.addLast(mapServiceChoice);
+		// tiles panel
 		pnlTiles.addNext(forCachesChkBox);
 		pnlTiles.addNext(forSelectedChkBox);
 		pnlTiles.addLast(cachesLbl);
@@ -96,7 +102,6 @@ public class MapLoaderGui extends Form {
 		mTab.addCard(pnlTiles, MyLocale.getMsg(1804, "Tiles"), MyLocale.getMsg(1804, "Tiles"));
 
 		// per cache panel
-		pnlPerCache.addLast(new MessageArea(descString));
 		pnlPerCache.addNext(new mLabel("Download one map for"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 		pnlPerCache.addNext(forSelectedChkBoxPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 		pnlPerCache.addLast(new mLabel("caches"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
@@ -115,17 +120,21 @@ public class MapLoaderGui extends Form {
 		this.addLast(mTab);
 	}
 	public String getMapsDir() {
-		return Global.getPref().getMapExpediaSavePath();
+		String ret = Global.getPref().getMapDownloadSavePath(mapLoader.currentOnlineMapService.getName());
+		Global.getPref().saveCustomMapsPath(ret);
+		return ret;
 	}
 	public void downloadTiles() {
 		String mapsDir = getMapsDir();
 		if (mapsDir == null) return;
-		InfoBox progressBox = new InfoBox("Downloading georeferenced maps", "Downloading georeferenced maps\n from www.expedia.com");
-		progressBox.setPreferredSize(230, 150);
+		InfoBox progressBox = new InfoBox("Downloading georeferenced maps", "Downloading georeferenced maps\n \n \n \n \n", InfoBox.PROGRESS_WITH_WARNINGS);
+		progressBox.setPreferredSize(220, 300);
+		progressBox.setInfoHeight(180);
+		progressBox.relayout(false);
 		progressBox.exec();
+		mapLoader.setProgressInfoBox(progressBox);
 		Vm.showWait(true);
 		ewe.fx.Point size = new ewe.fx.Point(1000,1000); // Size of the downloaded maps
-		MapLoader ml = new MapLoader(Global.getPref().myproxy, Global.getPref().myproxyport);
 		if (forCachesChkBox.getState() || perCache) {
 			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
 			if (surArea == null) {
@@ -134,24 +143,19 @@ public class MapLoaderGui extends Form {
 				progressBox.close(0);
 				return;
 			}
-			ml.setTiles(surArea.topleft, surArea.buttomright, (int)scale, size, overlapping );
-			// calculate radius and centre for overview map
-			center = new CWPoint((surArea.topleft.latDec + surArea.buttomright.latDec)/2, (surArea.topleft.lonDec + surArea.buttomright.lonDec)/2);
-			double radiuslat = (new CWPoint(center.latDec, surArea.buttomright.lonDec)).getDistance(surArea.buttomright);
-			double radiuslon = (new CWPoint(surArea.buttomright.latDec, center.lonDec)).getDistance(surArea.buttomright);
-			radius = (float) (radiuslat < radiuslon ? radiuslon : radiuslat);
+			mapLoader.setTiles(surArea.topleft, surArea.buttomright, scale, size, overlapping );
 		} else 
 		{ // calculate from centre point an radius
-			ml.setTiles(center, radius * 1000, (int)scale, size, overlapping);
+			mapLoader.setTiles(center, radius * 1000, scale, size, overlapping);
 		}
 		if (overviewmap) {
 			progressBox.setInfo("downloading overview map"); 
-			int expediaAlti = MapLoader.getExpediaAlti(center, radius * 1000, size);
-			ml.downloadMap(center.latDec, center.lonDec, expediaAlti, size.x, size.y, mapsDir);
+			float scale = MapLoader.getScale(center, radius * 1000, size);
+			mapLoader.downloadMap(center, scale, size, mapsDir);
 		}
 		if (!perCache){  // download tiles
-			ml.setProgressInfoBox(progressBox);
-			ml.downlaodTiles(mapsDir);
+			mapLoader.setProgressInfoBox(progressBox);
+			mapLoader.downlaodTiles(mapsDir);
 		} else { // per cache
 			CacheHolder ch; 
 			CWPoint tmpca = new CWPoint();
@@ -167,17 +171,20 @@ public class MapLoaderGui extends Form {
 					}
 					if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0) { // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
 						numdownloaded++;
-						progressBox.setInfo("Downloading map from expedia.de\n"+numdownloaded+" / "+numCaches+"\n for cache:\n"+ch.CacheName);
-						ml.downloadMap(ch.pos.latDec, ch.pos.lonDec, (int)scale, size.x, size.y, mapsDir);
+						progressBox.setInfo("Downloading map '"+mapLoader.currentOnlineMapService.getName()+"'\n"+numdownloaded+" / "+numCaches+"\n for cache:\n"+ch.CacheName);
+						mapLoader.downloadMap(ch.pos, scale, size, mapsDir);
 					}
 				}
 			}
 		}
 		Vm.showWait(false);
-		ml.setProgressInfoBox(null);
-		progressBox.close(0);
+		progressBox.addWarning("Finished downloading and calibration of maps");
+		progressBox.addOkButton();
+		progressBox.waitUntilClosed();
+		mapLoader.setProgressInfoBox(null);
+		//progressBox.close(0);
 		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
-		(new MessageBox("Expedia maps", "Downloaded and calibrated the maps successfully", MessageBox.OKB)).execute();
+	//	(new MessageBox("Download maps", "Downloaded and calibrated the maps successfully", MessageBox.OKB)).execute();
 	}
 
 
@@ -209,6 +216,7 @@ public class MapLoaderGui extends Form {
 				this.close(Form.IDCANCEL);
 			}
 			if (ev.target == okBtiles || ev.target == okBPerCache){
+				mapLoader.setCurrentMapService(mapServiceChoice.selectedIndex);
 				if (ev.target == okBtiles) { // get tiles
 					perCache = false;
 					if (forSelectedChkBox.getSelectedItem().toString().equalsIgnoreCase("all")) onlySelected = false;
@@ -238,10 +246,10 @@ public class MapLoaderGui extends Form {
 					overviewmap = overviewChkBoxPerCache.getState();
 					scale = Convert.toFloat(scaleInputPerCache.getText());
 				}
-				if (scale < 1 || scale != java.lang.Math.floor(scale)) {
+		/*		if (scale < 1 || scale != java.lang.Math.floor(scale)) {
 					(new MessageBox("Error", "'Approx. meter pro pixel' must be greater than 0 and must not contain a point", MessageBox.OKB)).execute();
 					return;
-				}
+				} */
 				this.close(Form.IDOK); 
 				this.downloadTiles();
 			}

@@ -32,8 +32,6 @@ public class MapInfoObject extends Area {
 	// lat of lower right corner of image
 
 	public double[] affine = {0,0,0,0};
-	//public double lowlat = 0;
-	//public double lowlon = 0;
 	public double transLatX, transLatY, transLonX, transLonY; // this are needed for the inervers calculation from lat/lon to x/y
 	public CWPoint center = new CWPoint();
 	public float sizeKm = 0; // diagonale
@@ -42,8 +40,11 @@ public class MapInfoObject extends Area {
 	public Point shift = new Point (0,0);
 	public CWPoint OrigUpperLeft; // this is only valid after zooming 
 	public float rotationRad; // contains the rotation of the map == north direction in rad
+	/** full path to the respective worldfile, including ".wfl"*/
 	public String fileNameWFL = new String();
-	public String fileName = new String();
+	/** filename wihout directory */
+//	public String fileName = new String();
+	/** name of the map, introduced to allow 'maps' without an image (empty maps) */ 
 	public String mapName = new String();
 	//private Character digSep = new Character(' ');
 	static private String digSep = MyLocale.getDigSeparator();
@@ -52,7 +53,7 @@ public class MapInfoObject extends Area {
 		//double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
 		//if(testA == 4.5) digSep = ","; else digSep = ".";
 	}
-	
+
 	public MapInfoObject(MapInfoObject map) {
 		super (map.topleft, map.buttomright);
 		mapName = map.mapName;
@@ -63,7 +64,7 @@ public class MapInfoObject extends Area {
 		OrigUpperLeft = new CWPoint (map.OrigUpperLeft);
 		zoomFactor = map.zoomFactor;
 		shift.set(map.shift);
-		fileName = new String(map.fileName);
+		//	fileName = new String(map.fileName);
 		fileNameWFL = new String(map.fileNameWFL);
 		mapName = new String(mapName);
 		doCalculations();
@@ -86,8 +87,8 @@ public class MapInfoObject extends Area {
 		topleft.lonDec=0; //left
 		buttomright.latDec = 0; //buttom
 		buttomright.lonDec = 1; //right
-		*/OrigUpperLeft = new CWPoint(topleft);
-		doCalculations();
+		 */OrigUpperLeft = new CWPoint(topleft);
+		 doCalculations();
 	}
 
 	/**
@@ -113,22 +114,35 @@ public class MapInfoObject extends Area {
 		OrigUpperLeft = new CWPoint(topleft);
 		doCalculations();
 	}
-	
+
 	public MapInfoObject(String mapsPath, String thisMap) throws IOException, ArithmeticException {
 		super();
 		loadwfl(mapsPath, thisMap);
+	}
+
+	/**
+	 * 
+	 * @param path
+	 * @param n without ".wfl"
+	 * @return name of the map including fast-find-prefix
+	 */
+	public String setName(String path, String n) {
+		String pref = getFfPrefix();
+		mapName = pref + n;
+		fileNameWFL = path + pref + mapName + ".wfl";
+		return mapName;
 	}
 
 	/** 
 	 * @return the filename of the associated map image, "" if no file is associated, null if associated file could not be found
 	 */
 	public String getImageFilename() {
-		if (fileName == null || fileName.length() > 0) return fileName;
-		if (fileNameWFL.length() == 0) return "";
+		// if (fileName == null || fileName.length() > 0) return fileName; 
+		if (fileNameWFL.length() == 0) return ""; // no image associated (empty map)
 		String n = fileNameWFL.substring(0, fileNameWFL.lastIndexOf("."));
 		return Common.getImageName(n);
 	}
-	
+
 	/**
 	 * Method to load a .wfl-file
 	 * @param mapsPath path to the map inclunding / at the end
@@ -165,7 +179,7 @@ public class MapInfoObject extends Area {
 			buttomright.lonDec = Convert.toDouble(line);
 
 			fileNameWFL = mapsPath + thisMap + ".wfl";
-			fileName = ""; //mapsPath + thisMap + ".png";
+//			fileName = ""; //mapsPath + thisMap + ".png";
 			mapName = thisMap;
 			in.close();
 			if( !topleft.isValid() ) {
@@ -235,7 +249,7 @@ public class MapInfoObject extends Area {
 		affine[1] = beta.matrix[1][0];
 		affine[3] = beta.matrix[2][0];
 		topleft.lonDec = beta.matrix[0][0];
-		
+
 		buttomright = calcLatLon(imageWidth, imageHeight);
 		doCalculations();
 		//Vm.debug("A B C" + affine[0] + " " + affine[2] + " " + affine[4]);
@@ -274,6 +288,11 @@ public class MapInfoObject extends Area {
 		} catch (ArithmeticException ex) { throw new ArithmeticException("Not allowed values in affine\n (matrix cannot be inverted)\n in file \n" + fileNameWFL); }
 	}
 
+	public void saveWFL() throws IOException, IllegalArgumentException {
+		File dateiF = new File(fileNameWFL);
+		String tmp = dateiF.getDrivePath(); // contains the name and the extension
+		saveWFL(tmp, mapName);
+	}
 
 	/**
 	 *	Method to save a world file (.wfl)
@@ -297,14 +316,14 @@ public class MapInfoObject extends Area {
 		if (digSep.equals(",")) towrite=towrite.replace(',', '.');
 		outp.print(towrite);
 		outp.close();
-		this.fileName = ""; // this will be set in getImageFilenam //mapsPath + "/" + mapFileName + ".png";
+//		this.fileName = ""; // this will be set in getImageFilenam //mapsPath + "/" + mapFileName + ".png";
 		this.fileNameWFL = mapsPath + "/" + mapFileName + ".wfl";
 		this.mapName = mapFileName;
 	}
 
 //	public boolean inBound(CWPoint pos){
 	//	boolean isInBound = false;
-		/*
+	/*
 		Vm.debug(mapName);
 		Vm.debug("Top: " + affine[4]);
 		Vm.debug("Bottom: " + lowlat);
@@ -312,8 +331,8 @@ public class MapInfoObject extends Area {
 		Vm.debug("Left: " + affine[5]);
 		Vm.debug("Right: " + lowlon);
 		Vm.debug("Test: " + pos.lonDec);
-		 */
-//		if(topleft.latDec >= pos.latDec && pos.latDec >= buttomright.latDec && topleft.lonDec <= pos.lonDec && pos.lonDec <= buttomright.lonDec) isInBound = true;
+	 */
+//	if(topleft.latDec >= pos.latDec && pos.latDec >= buttomright.latDec && topleft.lonDec <= pos.lonDec && pos.lonDec <= buttomright.lonDec) isInBound = true;
 	//	return isInBound;
 	//}
 
@@ -344,12 +363,12 @@ public class MapInfoObject extends Area {
 		doCalculations(); // TODO lowlat neu berechnen?
 	}
 
-/*	public boolean inBound(double lati, double loni){
+	/*	public boolean inBound(double lati, double loni){
 		boolean isInBound = false;
 		if(topleft.latDec >= lati && lati >= buttomright.latDec && topleft.lonDec <= loni && loni <= buttomright.lonDec) isInBound = true;
 		return isInBound;
 	}
-	*/
+	 */
 	/**
 	 * Method to calculate bitmap x,y of the current map using
 	 * lat and lon target coordinates. There ist no garanty that
@@ -385,7 +404,7 @@ public class MapInfoObject extends Area {
 	public CWPoint calcLatLon(Point p) {
 		return calcLatLon(p.x, p.y);
 	}
-	
+
 	/**
 	 * Get the prefix used for easy and fast finding of the best map
 	 * The filname of the .wfl and respective image should start with this
@@ -395,35 +414,31 @@ public class MapInfoObject extends Area {
 	public String getFfPrefix() {
 		return "FF1"+getEasyFindString()+"E-";
 	}
-	
-/*	public Area getArea(){
-		return new Area(new CWPoint(topleft), new CWPoint(buttomright));
-	} */
 }
 
-/**
- *	Class based on CWPoint but intended to handle bitmap x and y
- *	Used for georeferencing bitmaps.
- */
-class GCPoint extends CWPoint{
-	public int bitMapX = 0;
-	public int bitMapY = 0;
+	/**
+	 *	Class based on CWPoint but intended to handle bitmap x and y
+	 *	Used for georeferencing bitmaps.
+	 */
+	class GCPoint extends CWPoint{
+		public int bitMapX = 0;
+		public int bitMapY = 0;
 
-	public GCPoint(){
-	}
+		public GCPoint(){
+		}
 
-	public GCPoint(CWPoint p) {
-		super(p);
-	}
+		public GCPoint(CWPoint p) {
+			super(p);
+		}
 
-	public GCPoint(double lat, double lon){
-		this.latDec = lat;
-		this.lonDec = lon;
-		this.utmValid = false;
+		public GCPoint(double lat, double lon){
+			this.latDec = lat;
+			this.lonDec = lon;
+			this.utmValid = false;
+		}
+		public GCPoint(CWPoint ll, Point px) {
+			super(ll);
+			bitMapX = px.x;
+			bitMapY = px.y;
+		}
 	}
-	public GCPoint(CWPoint ll, Point px) {
-		super(ll);
-		bitMapX = px.x;
-		bitMapY = px.y;
-	}
-}

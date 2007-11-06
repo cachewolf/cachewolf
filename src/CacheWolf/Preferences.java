@@ -368,7 +368,7 @@ public class Preferences extends MinML{
     // Maps
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	public String mapsPath = "maps/standard";
+	private static final String mapsPath = "maps/standard";
 	
 	/**
 	 * Gibt den vom Benutzer gesetzten Pfad zu den Maps
@@ -378,8 +378,11 @@ public class Preferences extends MinML{
 	   return customMapsPath;	
 	}
 	
-	void saveCustomMapsPath(String mapspath) {
-		customMapsPath=mapsPath;
+	public void saveCustomMapsPath(String mapspath_) {
+		if (!customMapsPath.equals(mapspath_)) {
+			customMapsPath=new String(mapspath_);
+			savePreferences();
+		}
 	}
 	
 	/**
@@ -391,25 +394,33 @@ public class Preferences extends MinML{
 	 * it returns  <baseDir>/maps/expedia - the place where
 	 * the automatically downloaded maps are placed.
 	 * 
-	 * Later the maps-path shall be saved in the preferences
+	 * 
 	 */
 	public String getMapLoadPath() {
+		saveCustomMapsPath(getMapLoadPathInternal());
+		return getCustomMapsPath();
+	}
+	private String getMapLoadPathInternal() {
 		// here could also a list of map-types displayed...
 		// standard dir
-		File t = new FileBugfix(getMapManuallySavePath(false));
+		String ret = getCustomMapsPath(); 
+		if (ret != null) return ret; 
+		ret = getMapManuallySavePath(false);
+		File t = new FileBugfix(ret);
 		String[] f = t.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_FILES_ONLY);
 		if (f != null && f.length > 0) return  baseDir + mapsPath;
 		f = t.list("*.wfl", File.LIST_DIRECTORIES_ONLY | File.LIST_ALWAYS_INCLUDE_DIRECTORIES);
 		if (f != null && f.length > 0) { // see if in a subdir of <baseDir>/maps/standard are .wfl files
 			String[] f2;
 			for (int i = 0; i< f.length; i++) {
-				t.set(null, getMapManuallySavePath(false)+"/"+f[i]);
+				t.set(null, ret+"/"+f[i]);
 				f2 = t.list("*.wfl", File.LIST_FILES_ONLY);
-				if (f2 != null && f2.length > 0) return  getMapManuallySavePath(false);
+				if (f2 != null && f2.length > 0) return  ret;
 			}
 		}
 		// lagacy dir 
-		t.set(null, File.getProgramDirectory() + "/maps");
+		ret = File.getProgramDirectory() + "/maps";
+		t.set(null, ret);
 		f = t.list("*.wfl", File.LIST_FILES_ONLY);
 		if (f != null && f.length > 0) {
 			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", MessageBox.YESB | MessageBox.NOB);
@@ -418,7 +429,7 @@ public class Preferences extends MinML{
 				File spF = new File(sp);
 				if (!spF.exists()) spF.mkdirs();
 				String image;
-				String lagacypath = File.getProgramDirectory() + "/maps/";
+				String lagacypath = ret;
 				for (int i=0; i<f.length; i++) {
 					t.set(null, lagacypath+f[i]);
 					spF.set(null, sp+"/"+f[i]);
@@ -432,7 +443,7 @@ public class Preferences extends MinML{
 				t.delete();
 				return sp;
 			}
-			else return  File.getProgramDirectory() + "/maps";
+			else return  ret;
 		}
 		// expedia dir
 		return getMapExpediaLoadPath(); 
@@ -457,9 +468,9 @@ public class Preferences extends MinML{
 	/**
 	 * to this path the automatically downloaded maps are saved
 	 */
-	public String getMapExpediaSavePath() {
+	public String getMapDownloadSavePath(String mapkind) {
 		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length());
-		String mapsDir = Global.getPref().baseDir + "maps/expedia/" + subdir;
+		String mapsDir = Global.getPref().baseDir + "maps/" + Common.ClearForFileName(mapkind)+ "/" + subdir;
 		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
 			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
 			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();

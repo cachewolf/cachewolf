@@ -30,4 +30,16 @@ public class GkPoint {
 		e.decimalPlaces = decimalplaces;
 		return prefix + e.toString().replace(',', '.') + seperator + n.toString().replace(',', '.');
 	}
+	
+	/**
+	 * shift the point
+	 * @param meters positiv to north (east), negativ to south (west)
+	 * @param direction 0 north-south, 1 east-west
+	 */
+	public void shift(double meters, int direction) {
+		switch (direction) { // TODO this works corectly only within an 3 degrees stripe
+			case 0: northing += meters; return;
+			case 1: easting += meters; return;
+		}
+	}
 }

@@ -138,4 +138,8 @@ public class Area {
 	 public String toString() {
 		 return topleft.toString() + ", " + buttomright.toString();
 	 }
+	 
+	 public CWPoint getCenter() {
+		 return new CWPoint((topleft.latDec + buttomright.latDec)/2, (topleft.lonDec + buttomright.lonDec)/2);
+	 }
 }

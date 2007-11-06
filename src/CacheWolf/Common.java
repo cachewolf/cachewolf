@@ -109,6 +109,7 @@ public final class Common {
 	
 	public static String ClearForFileName(String str) {
 		String ret = str.replace('?', '_');
+		ret = str.replace(' ', '-');
 		return ret;
 	}
 	
@@ -140,6 +141,14 @@ public final class Common {
 		int dot = fn.lastIndexOf(".");
 		if (dot < 0) return "";
 		return fn.substring(dot, fn.length());
+	}
+	
+	public static String DoubleToString(double d, int decimalplaces) {
+		ewe.sys.Double e = new ewe.sys.Double();
+		e.set(d);
+		e.decimalPlaces = decimalplaces;
+		return e.toString().replace(',', '.');
+
 	}
 
 }

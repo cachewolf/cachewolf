@@ -38,7 +38,7 @@ public class MovingMap extends Form {
 	CWPoint TrackOverlaySetCenterTopLeft;
 	Vector tracks;
 	MapInfoObject currentMap = null;
-	String mapPath;
+	//String mapPath;
 	Navigate myNavigation;
 	boolean running = false;
 
@@ -88,7 +88,7 @@ public class MovingMap extends Form {
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
 		this.backGround = new Color(254,254,254); // background must not be black because black is interpreted as transparent and transparent images above (eg trackoverlay) want be drawn in windows-VM, so be care, don|t use white either
-		this.mapPath = Global.getPref().getMapLoadPath();
+		//this.mapPath = Global.getPref().getMapLoadPath();
 
 		mmp = new MovingMapPanel(this);
 		this.addLast(mmp);
@@ -176,7 +176,7 @@ public class MovingMap extends Form {
 	public void loadMaps(String mapsPath, double lat){
 		if (loadingMapList) return;
 		loadingMapList = true;
-		this.mapPath = mapsPath;
+		//this.mapPath = mapsPath;
 		Vm.showWait(this, true);
 		resetCenterOfMap();
 		InfoBox inf = new InfoBox("Info", "Loading list of maps...");
@@ -840,7 +840,7 @@ public class MovingMap extends Form {
 		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
 		Vm.debug("updatepos, lat: "+lat+" lon: "+lon);
 		if (!mapsloaded) {
-			loadMaps(mapPath, lat);
+			loadMaps(Global.getPref().getMapLoadPath(), lat);
 			lastCompareX = Integer.MAX_VALUE;
 			lastCompareY = Integer.MAX_VALUE;
 			autoSelectMap = true;
@@ -1634,7 +1634,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							fc.addMask("*.wfl");
 							fc.setTitle((String)MyLocale.getMsg(4200,"Select map directory:"));
 							if(fc.execute() != FileChooser.IDCANCEL){
-								mm.loadMaps(fc.getChosen().toString(), mm.posCircleLat);
+								Global.getPref().saveCustomMapsPath(fc.getChosen().toString());
+								mm.loadMaps(Global.getPref().getMapLoadPath(), mm.posCircleLat);
 								mm.forceMapLoad();
 							}
 						}
