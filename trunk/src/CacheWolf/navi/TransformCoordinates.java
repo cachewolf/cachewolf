@@ -13,6 +13,9 @@ import java.lang.Math;
  * The only difference to the excel-model is that shifting is done before rotation
  * this makes calculations easier, without changing the output.
  * 
+ * For verification data see: 
+ *  * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007testdaten.csv
+ *  * http://www.lverma.nrw.de/produkte/raumbezug/koordinatentransformation/Koordinatentransformation.htm
  * Now, that this is completed: there is a much more precise method right now published
  * by the Bundesamt für Kartographie und Geodäsie for whole Germany: see:
  *  * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007dokumentation.pdf
@@ -31,22 +34,26 @@ public class TransformCoordinates {
 	private static final Ellipsoid BESSEL = new Ellipsoid(6377397.155, 6356078.962);
 	public static final Ellipsoid WGS84 = new Ellipsoid(6378137.000, 6356752.314);
 
+	//	 taken from http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (North) to ETRS89
 
 	//	 taken from http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 4 = Deutschland Nord"
+
 	private static final TransformParameters GK_NORD_GERMANY_TO_WGS84 = new TransformParameters(590.5, 69.5, 411.6, 0.796, 0.052, 3.601, 8.300, false);
-	/** use this for nord Germany, maximum deviation unknown */
+	/** use this for nord Germany, maximum sub meter, valid in the former BRD (west germany) in 52°20' N ... 55°00' N */
 	public static final TransformParameters GK_NORD_GERMANY =  GK_NORD_GERMANY_TO_WGS84; 
 
-	//	 taken from http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 3 = Mitte Deutschland"
+	//	 taken from http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (Middle) to ETRS89
 	private static final TransformParameters GK_MID_GERMANY_TO_WGS84 = new TransformParameters(584.8, 67.0, 400.3, -0.105, -0.013, 2.378, 10.290, false);
-	/** use this for mid Germany, maximum deviation unknown */
+	/** use this for mid-Germany, maximum sub meter, valid in the former BRD (west germany) in 50°20' N ... 52°20' N */
 	public static final TransformParameters GK_MID_GERMANY =  GK_MID_GERMANY_TO_WGS84; 
 
-	//	 taken from http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 5 = Deutschland Süd"
+	//	 taken from http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (South) to ETRS89
 	private static final TransformParameters GK_SOUTH_GERMANY_TO_WGS84 = new TransformParameters(597.1, 71.4, 412.1, -0.894, -0.068, 1.563, 7.580, false);
-	/** use this for south Germany, maximum deviation unknown */
+	/** use this for south Germany, maximum sub meter, valid in the former BRD (west germany) in 47°00' N ... 50°20' N */
 	public static final TransformParameters GK_SOUTH_GERMANY =  GK_SOUTH_GERMANY_TO_WGS84; 
 
+	private static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637)); 
+	
 	// taken from http://www.lverma.nrw.de/produkte/druckschriften/verwaltungsvorschriften/images/gps/TrafopsNRW.pdf for NRW this transform has deviations lower than 34cm.
 	private static final TransformParameters GK_NRW_GERMANY_TO_WGS84 = new TransformParameters(566.1, 116.3, 390.1, -1.11, -0.24, 3.76, 12.6, false);
 	/** use this for NRW in Germany. Deviations less than 34 cm */
@@ -108,12 +115,18 @@ public class TransformCoordinates {
 	/**
 	 * This is the most abstract method: If you don't know 
 	 * when to use another one (if you are in need to do so, you will
-	 * know), use this one.
+	 * know), use this one. This routine chooses automatically the best known
+	 * transformation parameters. Currently the maximam deviation is 1m for the
+	 * former BRD and 1.13m for the former GDR 
 	 * @param gk
 	 * @return
 	 */
 	public static GkPoint wgs84ToGkGermany(CWPoint ll) {
-		return  wgs84ToGk(ll, GK_GERMANY_2001); 	//TODO use more lokalized transformparameters, which can be obtained from the Landesvermessungsämter
+		if (FORMER_GDR.isInBound(ll)) wgs84ToGk(ll, GK_GERMANY_2001); // exlcude former GDR from the splitting germany in north/middel/south
+		if (ll.latDec <= 55 && ll.latDec >= 52.33333334 ) return  wgs84ToGk(ll, GK_NORD_GERMANY);
+		if (ll.latDec <= 52.33333334  && ll.latDec >= 50.33333334 ) return  wgs84ToGk(ll, GK_MID_GERMANY);
+		if (ll.latDec <= 50.33333334  && ll.latDec >= 47) return  wgs84ToGk(ll, GK_MID_GERMANY);
+		return  wgs84ToGk(ll, GK_GERMANY_2001); 	
 	}
 
 	/**

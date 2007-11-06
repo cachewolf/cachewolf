@@ -379,7 +379,7 @@ public class Preferences extends MinML{
 	}
 	
 	public void saveCustomMapsPath(String mapspath_) {
-		if (!customMapsPath.equals(mapspath_)) {
+		if (customMapsPath == null || !customMapsPath.equals(mapspath_)) {
 			customMapsPath=new String(mapspath_);
 			savePreferences();
 		}
