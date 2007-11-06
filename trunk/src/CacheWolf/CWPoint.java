@@ -281,6 +281,19 @@ public class CWPoint extends TrackPoint{
 	}
 	
 	/**
+	 * shift the point
+	 * @param meters positiv to north (east), negativ to south (west)
+	 * @param direction 0 north-south, 1 east-west
+	 */
+	public void shift(double meters, int direction) {
+		double meters2deglon = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
+		switch (direction) { // TODO use ellipsoid distance calculations for better accuracy
+			case 0: latDec += meters *  meters2deglon; return;
+			case 1: lonDec += meters * (meters2deglon / Math.cos(latDec / 180 * Math.PI));return;
+		}
+	}
+
+	/**
 	 * mark the Point as invalid
 	 *
 	 */
@@ -577,21 +590,9 @@ public class CWPoint extends TrackPoint{
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
 		case UTM:	return getUTMZone()  + " E " + getUTMEasting()+ " N " + getUTMNorthing();
 		case LON_LAT:
-			Double latD = new Double();
-			latD.decimalPlaces = 8;
-			latD.set(latDec);
-			Double lonD = new Double();
-			lonD.decimalPlaces = 8;
-			lonD.set(lonDec);
-			return latD.toString().replace(',', '.') + "," + lonD.toString().replace(',', '.');
+			return Common.DoubleToString(lonDec, 8) +  "," + Common.DoubleToString(latDec, 8);
 		case LAT_LON:
-			Double latD2 = new Double();
-			latD2.decimalPlaces = 8;
-			latD2.set(latDec);
-			Double lonD2 = new Double();
-			lonD2.decimalPlaces = 8;
-			lonD2.set(lonDec);
-			return  lonD2.toString().replace(',', '.') + "," + latD2.toString().replace(',', '.');
+			return Common.DoubleToString(latDec, 8) +  "," + Common.DoubleToString(lonDec, 8);
 		default: return "Unknown Format: " + format;
 
 		}

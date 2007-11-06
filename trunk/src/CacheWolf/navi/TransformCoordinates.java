@@ -29,7 +29,7 @@ public class TransformCoordinates {
 	public static final int EPSG_GK5 = 31469; 
 
 	private static final Ellipsoid BESSEL = new Ellipsoid(6377397.155, 6356078.962);
-	private static final Ellipsoid WGS84 = new Ellipsoid(6378137.000, 6356752.314);
+	public static final Ellipsoid WGS84 = new Ellipsoid(6378137.000, 6356752.314);
 
 
 	//	 taken from http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 4 = Deutschland Nord"
@@ -296,7 +296,7 @@ class XyzCoordinates {
 }
 
 class Ellipsoid {
-	double a, b;
+	public double a, b;
 	public Ellipsoid(double ai, double bi) {
 		a = ai;
 		b = bi;
