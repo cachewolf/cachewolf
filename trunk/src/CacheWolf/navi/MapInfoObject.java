@@ -442,3 +442,4 @@ public class MapInfoObject extends Area {
 			bitMapY = px.y;
 		}
 	}
+	
