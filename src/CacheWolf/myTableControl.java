@@ -172,7 +172,7 @@ public class myTableControl extends TableControl{
 			Vector cachesToUpdate = new Vector();
 			for(int i = 0; i <	cacheDB.size(); i++){
 				ch = (CacheHolder)cacheDB.get(i);
-				if(ch.is_Checked == true) {
+				if(ch.is_Checked == true && !ch.is_filtered) {
 					if ( ch.wayPoint.length()>1 && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC") 
 							|| ch.wayPoint.substring(0,2).equalsIgnoreCase("OC")))
 //						if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
