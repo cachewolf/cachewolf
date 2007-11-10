@@ -134,13 +134,19 @@ public class SpiderGC{
 				//Ok now login!
 				try{
 					pref.log("Logging in as "+pref.myAlias);
-					doc = URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
-					+ "&" + URL.encodeURL("myUsername",false) +"="+ encodeUTF8(new String(Utils.encodeJavaUtf8String(pref.myAlias)))
-					+ "&" + URL.encodeURL("myPassword",false) +"="+ encodeUTF8(new String(Utils.encodeJavaUtf8String(passwort)))
-					+ "&" + URL.encodeURL("cookie",false) +"="+ URL.encodeURL("on",false)
-					+ "&" + URL.encodeURL("Button1",false) +"="+ URL.encodeURL("Login",false)
-					+ "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
-					start = fetch_post(loginPage, doc, nextPage);  // /login/default.aspx
+					StringBuffer sb=new StringBuffer(1000);
+					sb.append(URL.encodeURL("__VIEWSTATE",false));	sb.append("="); sb.append(URL.encodeURL(viewstate,false));
+					sb.append("&"); sb.append(URL.encodeURL("myUsername",false));
+					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
+					sb.append("&"); sb.append(URL.encodeURL("myPassword",false));
+					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
+					sb.append("&"); sb.append(URL.encodeURL("cookie",false));
+					sb.append("="); sb.append(URL.encodeURL("on",false));
+					sb.append("&"); sb.append(URL.encodeURL("Button1",false));
+					sb.append("="); sb.append(URL.encodeURL("Login",false));
+					sb.append("&"); sb.append(URL.encodeURL("__EVENTVALIDATION",false));
+					sb.append("="); sb.append(URL.encodeURL(eventvalidation,false));
+					start = fetch_post(loginPage, sb.toString(), nextPage);  // /login/default.aspx
 					if(start.indexOf(loginSuccess) > 0)
 						pref.log("Login successful");
 					else {
@@ -441,131 +447,140 @@ public class SpiderGC{
 	 */
 	private boolean getCacheByWaypointName(CacheHolderDetail chD, boolean isUpdate, boolean fetchImages, boolean doNotGetFound, boolean fetchAllLogs) {
 		String completeWebPage;
-		try{
-			String doc = p.getProp("getPageByName") + chD.wayPoint +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
-			pref.log("Fetching: " + chD.wayPoint);
-			completeWebPage = fetch(doc);
-		}catch(Exception ex){
-			pref.log("Could not fetch " + chD.wayPoint,ex);
-			chD.is_incomplete = true;
-			return !infB.isClosed; // Only return false (which terminates the loop over all caches) if infB is closed
-		}
-		// Only analyse the cache data and fetch pictures if user has not closed the progress window
-		if (!infB.isClosed) {
+		int spiderTrys=0;
+		int MAX_SPIDER_TRYS=3;
+		while (spiderTrys++<MAX_SPIDER_TRYS) {
 			try{
-				chD.is_new = !isUpdate;
-				chD.is_update = false;
-				chD.is_log_update=false;
-				chD.is_HTML = true;
-				chD.is_available = true;
-				chD.is_archived = false;
-				chD.is_incomplete = false;
-				// Save size of logs to be able to check whether any new logs were added
-				//int logsz = chD.CacheLogs.size();
-				//chD.CacheLogs.clear();
-				chD.addiWpts.clear();
-				chD.Images.clear();
-				chD.ImagesText.clear();
-
-				if(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0) chD.is_available = false;
-				if(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0) chD.is_archived = true;
-				//==========
-				// General Cache Data
-				//==========
-				chD.setLatLon(getLatLon(completeWebPage));
-				if (pref.debug) pref.log("LatLon: " + chD.LatLon);
-
-				pref.log("Trying description");
-				chD.setLongDescription(getLongDesc(completeWebPage));
-				pref.log("Got description");
-
-				pref.log("Getting cache name");
-				chD.CacheName = SafeXML.cleanback(getName(completeWebPage));
-				pref.log("Got cache name");
-				if (pref.debug) pref.log("Name: " + chD.CacheName);
-
-				pref.log("Trying owner");
-				chD.CacheOwner = SafeXML.cleanback(getOwner(completeWebPage)).trim();
-				if(chD.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equals(pref.myAlias2))) chD.is_owned = true;
-				pref.log("Got owner");
-				if (pref.debug) pref.log("Owner: " + chD.CacheOwner +"; is_owned = "+chD.is_owned+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
-
-				pref.log("Trying date hidden");
-				chD.DateHidden = DateFormat.MDY2YMD(getDateHidden(completeWebPage));
-				pref.log("Got date hidden");
-				if (pref.debug) pref.log("Hidden: " + chD.DateHidden);
-
-				pref.log("Trying hints");
-				chD.setHints(getHints(completeWebPage));
-				pref.log("Got hints");
-				if (pref.debug) pref.log("Hints: " + chD.Hints);
-
-				pref.log("Trying size");
-				chD.CacheSize = getSize(completeWebPage);
-				pref.log("Got size");
-				if (pref.debug) pref.log("Size: " + chD.CacheSize);
-
-				pref.log("Trying difficulty");
-				chD.hard = getDiff(completeWebPage);
-				pref.log("Got difficulty");
-				if (pref.debug) pref.log("Hard: " + chD.hard);
-
-				pref.log("Trying terrain");
-				chD.terrain = getTerr(completeWebPage);
-				pref.log("Got terrain");
-				if (pref.debug) pref.log("Terr: " + chD.terrain);
-
-				pref.log("Trying cache type");
-				chD.type = getType(completeWebPage);
-				pref.log("Got cache type");
-				if (pref.debug) pref.log("Type: " + chD.type);
-
-				//==========
-				// Logs
-				//==========
-				pref.log("Trying logs");
-				chD.setCacheLogs(getLogs(completeWebPage, chD));
-				pref.log("Found logs");
-
-				// If the switch is set to not store found caches and we found the cache => return
-				if (chD.is_found && doNotGetFound) return !infB.isClosed;
-
-				//==========
-				// Bugs
-				//==========
-				// As there may be several bugs, we check whether the user has aborted
-				if (!infB.isClosed) getBugs(chD,completeWebPage);
-				chD.has_bug = chD.Travelbugs.size()>0;
-
-				//==========
-				// Images
-				//==========
-				if(fetchImages){
-					pref.log("Trying images");
-					getImages(completeWebPage, chD);
-					pref.log("Got images");
-				}
-				//==========
-				// Addi waypoints
-				//==========
-
-				pref.log("Getting additional waypoints");
-				getAddWaypoints(completeWebPage, chD.wayPoint, chD.is_found);
-				pref.log("Got additional waypoints");
-
-				//==========
-				// Attributes
-				//==========
-				pref.log("Getting attributes");
-				getAttributes(completeWebPage, chD);
-				pref.log("Got attributes");
-				if (chD.is_new) chD.is_update=false;
+				String doc = p.getProp("getPageByName") + chD.wayPoint +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
+				pref.log("Fetching: " + chD.wayPoint);
+				completeWebPage = fetch(doc);
 			}catch(Exception ex){
-				pref.log("Error reading cache: "+chD.wayPoint);
-				pref.log("Exception in getCacheByWaypointName: ",ex);
+				pref.log("Could not fetch " + chD.wayPoint,ex);
+				chD.is_incomplete = true;
+				return !infB.isClosed; // Only return false (which terminates the loop over all caches) if infB is closed
 			}
-			finally{}
-		}
+			// Only analyse the cache data and fetch pictures if user has not closed the progress window
+			if (!infB.isClosed) {
+				try{
+					chD.is_new = !isUpdate;
+					chD.is_update = false;
+					chD.is_log_update=false;
+					chD.is_HTML = true;
+					chD.is_available = true;
+					chD.is_archived = false;
+					chD.is_incomplete = false;
+					// Save size of logs to be able to check whether any new logs were added
+					//int logsz = chD.CacheLogs.size();
+					//chD.CacheLogs.clear();
+					chD.addiWpts.clear();
+					chD.Images.clear();
+					chD.ImagesText.clear();
+	
+					if(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0) chD.is_available = false;
+					if(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0) chD.is_archived = true;
+					//==========
+					// General Cache Data
+					//==========
+					chD.setLatLon(getLatLon(completeWebPage));
+					if (pref.debug) pref.log("LatLon: " + chD.LatLon);
+					if (chD.LatLon.equals("???")) {
+						pref.log(">>>> Failed to spider Cache. Retry.");
+						continue; // Restart the spider
+					}
+					pref.log("Trying description");
+					chD.setLongDescription(getLongDesc(completeWebPage));
+					pref.log("Got description");
+	
+					pref.log("Getting cache name");
+					chD.CacheName = SafeXML.cleanback(getName(completeWebPage));
+					pref.log("Got cache name");
+					if (pref.debug) pref.log("Name: " + chD.CacheName);
+	
+					pref.log("Trying owner");
+					chD.CacheOwner = SafeXML.cleanback(getOwner(completeWebPage)).trim();
+					if(chD.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equals(pref.myAlias2))) chD.is_owned = true;
+					pref.log("Got owner");
+					if (pref.debug) pref.log("Owner: " + chD.CacheOwner +"; is_owned = "+chD.is_owned+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
+	
+					pref.log("Trying date hidden");
+					chD.DateHidden = DateFormat.MDY2YMD(getDateHidden(completeWebPage));
+					pref.log("Got date hidden");
+					if (pref.debug) pref.log("Hidden: " + chD.DateHidden);
+	
+					pref.log("Trying hints");
+					chD.setHints(getHints(completeWebPage));
+					pref.log("Got hints");
+					if (pref.debug) pref.log("Hints: " + chD.Hints);
+	
+					pref.log("Trying size");
+					chD.CacheSize = getSize(completeWebPage);
+					pref.log("Got size");
+					if (pref.debug) pref.log("Size: " + chD.CacheSize);
+	
+					pref.log("Trying difficulty");
+					chD.hard = getDiff(completeWebPage);
+					pref.log("Got difficulty");
+					if (pref.debug) pref.log("Hard: " + chD.hard);
+	
+					pref.log("Trying terrain");
+					chD.terrain = getTerr(completeWebPage);
+					pref.log("Got terrain");
+					if (pref.debug) pref.log("Terr: " + chD.terrain);
+	
+					pref.log("Trying cache type");
+					chD.type = getType(completeWebPage);
+					pref.log("Got cache type");
+					if (pref.debug) pref.log("Type: " + chD.type);
+	
+					//==========
+					// Logs
+					//==========
+					pref.log("Trying logs");
+					chD.setCacheLogs(getLogs(completeWebPage, chD));
+					pref.log("Found logs");
+	
+					// If the switch is set to not store found caches and we found the cache => return
+					if (chD.is_found && doNotGetFound) return !infB.isClosed;
+	
+					//==========
+					// Bugs
+					//==========
+					// As there may be several bugs, we check whether the user has aborted
+					if (!infB.isClosed) getBugs(chD,completeWebPage);
+					chD.has_bug = chD.Travelbugs.size()>0;
+	
+					//==========
+					// Images
+					//==========
+					if(fetchImages){
+						pref.log("Trying images");
+						getImages(completeWebPage, chD);
+						pref.log("Got images");
+					}
+					//==========
+					// Addi waypoints
+					//==========
+	
+					pref.log("Getting additional waypoints");
+					getAddWaypoints(completeWebPage, chD.wayPoint, chD.is_found);
+					pref.log("Got additional waypoints");
+	
+					//==========
+					// Attributes
+					//==========
+					pref.log("Getting attributes");
+					getAttributes(completeWebPage, chD);
+					pref.log("Got attributes");
+					if (chD.is_new) chD.is_update=false;
+					break;
+				}catch(Exception ex){
+					pref.log("Error reading cache: "+chD.wayPoint);
+					pref.log("Exception in getCacheByWaypointName: ",ex);
+				}
+				finally{}
+			}
+		} // spiderTrys
+		if (spiderTrys==MAX_SPIDER_TRYS) pref.log(">>> Failed to spider cache. Number of retrys exhausted.");
 		boolean ret=!infB.isClosed; // If the infoBox was closed before getting here, we return false
 		return ret;
 	} // getCacheByWaypointName
@@ -1288,36 +1303,22 @@ public class SpiderGC{
 
 	final static String hex = ewe.util.TextEncoder.hex;
 
-	public String encodeUTF8(String username) {
-		char [] what = ewe.sys.Vm.getStringChars(username);
+	public String encodeUTF8URL(byte[] what) {
 		int max = what.length;
 		char [] dest = new char[6*max]; // Assume each char is a UTF char and encoded into 6 chars
 		char d = 0;
 		for (int i = 0; i<max; i++){
-			char c = what[i];
+			char c = (char) what[i];
 			if (c == ' ') c = '+';
-			else if (c<='\u00FF') {
-				if(c <= ' ' || c == '+' || c == '&' || c == '%' || c == '=' ||
-				   c == '|' || c == '{' || c == '}' || c>'\u007F'){
+			else if (c <= ' ' || c == '+' || c == '&' || c == '%' || c == '=' ||
+				   c == '|' || c == '{' || c == '}' || c>0x7f ){
 					dest[d++] = '%';
 					dest[d++] = hex.charAt((c >> 4) & 0xf);
 					dest[d++] = hex.charAt(c & 0xf);
-					continue;
-				}
-
-			} else {
-				dest[d++] = '%';
-				dest[d++] = hex.charAt((c >> 12) & 0xf);
-				dest[d++] = hex.charAt((c >> 8) & 0xf);
-				dest[d++] = '%';
-				dest[d++] = hex.charAt((c >> 4) & 0xf);
-				dest[d++] = hex.charAt(c & 0xf);
-				continue;
-			}
-			dest[d++] = c;
+			} else dest[d++] = c;
 		}
 		return new String(dest,0,d);
-	}
+	}	
 
 	/**
 	 * Load the bug id for a given name. This method is not ideal, as there are
