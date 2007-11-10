@@ -52,8 +52,6 @@ public class MapLoader {
 		FileBugfix files = new FileBugfix(".");
 		String FileName;
 		OnlineMapService tempOMS;
-		tempOMS = new ExpediaMapService();
-		onlineMapServices.add(tempOMS);
 		MessageBox f = null; 
 		dateien = files.list("*.wms", File.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
 		for(int i = 0; i < dateien.length;i++){
@@ -65,7 +63,8 @@ public class MapLoader {
 				if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading web map service definition file \n"+ex.toString(), MessageBox.OKB)).exec();
 			}
 		}
-
+		tempOMS = new ExpediaMapService();
+		onlineMapServices.add(tempOMS);
 	}
 
 	public String[] getAvailableOnlineMapServices(){
@@ -171,7 +170,11 @@ public class MapLoader {
 				if (progressInfobox != null)
 					progressInfobox.setInfo("Downloading calibrated (georeferenced) \n map image \n '" + currentOnlineMapService.getName()+"' \n Downloading tile \n row "+row+" / "+numMapsY+" column "+ col + " / "+numMapsX);
 				center.set(lat, lon);
-				downloadMap(center, tileScale, tilesSize, tilesPath);
+				try {
+					downloadMap(center, tileScale, tilesSize, tilesPath);
+				} catch (Exception e) {
+					this.progressInfobox.addWarning("Tile " + row + "/" + col + ": Ignoring error: " + e.getMessage()+"\n");
+				}
 				if (progressInfobox.isClosed) return;
 				lon += loninc;
 			}
@@ -210,17 +213,13 @@ public class MapLoader {
 		}
 	}
 
-	public void downloadMap(CWPoint center, float scale, Point pixelsize, String path){
-		try {
-			MapInfoObject mio = currentOnlineMapService.getMapInfoObject(center, scale, pixelsize);
-			String filename = createFilename(mio.getCenter(), mio.scale);
-			String imagename = mio.setName(path, filename) + currentOnlineMapService.getImageFileExt();
-			String url = currentOnlineMapService.getUrlForCenterScale(center, scale, pixelsize);
-			downloadUrl(url, path+"/"+imagename);
-			mio.saveWFL();
-		} catch (Exception e) {
-			this.progressInfobox.addWarning("Ignoring error during map download, saving or calibration:\n" + e.getMessage()+"\n");
-		}
+	public void downloadMap(CWPoint center, float scale, Point pixelsize, String path) throws Exception {
+		MapInfoObject mio = currentOnlineMapService.getMapInfoObject(center, scale, pixelsize);
+		String filename = createFilename(mio.getCenter(), mio.scale);
+		String imagename = mio.setName(path, filename) + currentOnlineMapService.getImageFileExt();
+		String url = currentOnlineMapService.getUrlForCenterScale(center, scale, pixelsize);
+		downloadUrl(url, path+"/"+imagename);
+		mio.saveWFL();
 	}
 
 	public String createFilename(CWPoint center, float scale) {
@@ -236,7 +235,7 @@ public class MapLoader {
 	 * and sometimes doesn't send a redirect on the first try 
 	 * @param datei path and name of file to save to
 	 */
-	public void downloadUrl(String url, String datei){
+	public void downloadUrl(String url, String datei) throws IOException {
 		HttpConnection connImg; // TODO move proxy-handling in a global http-class
 		Socket sockImg;
 		FileOutputStream fos;
@@ -287,7 +286,7 @@ public class MapLoader {
 			}
 			//Vm.debug("done");
 		}catch(IOException e){
-			(new MessageBox("Error", "Error while downloading or saving map:\n"+e.getMessage(), MessageBox.OKB)).exec();
+			throw new IOException("Error while downloading or saving map:\n" + e.getMessage());
 		}
 //		(new MessageBox("Error", "Error saving calibration file:\n"+e.getMessage(), MessageBox.OKB)).exec();
 
@@ -299,6 +298,10 @@ class OnlineMapService {
 	String MainUrl; //http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS
 	/** including "." */
 	String imageFileExt; // ".gif", ".jpg"...
+	float recommendedScale;
+	double minscale;
+	double maxscale;
+	Area boundingBox;
 
 	/** 
 	 * This method is used in case the online map service provides only certain steps of 
@@ -390,9 +393,8 @@ class WebMapService extends OnlineMapService {
 	String requestUrlPart;
 	String imageFormatUrlPart; // FORMAT=image/png
 	String stylesUrlPart; // STYLES=
-	Area boundingBox;
-	double minscale;
-	double maxscale;
+	double minscaleWMS;
+	double maxscaleWMS;
 
 	public String getName() {
 		if (layersName == null || layersName.length() == 0)	return name;
@@ -445,10 +447,13 @@ class WebMapService extends OnlineMapService {
 		if (!topleft.isValid()) topleft.set(90, -180);
 		if (!buttomright.isValid()) buttomright.set(-90, 180);
 		boundingBox = new Area (topleft, buttomright);
-		minscale = Convert.toDouble(wms.getProperty("MinScale", "0").trim());
-		maxscale = Convert.toDouble(wms.getProperty("MaxScale", Convert.toString(java.lang.Double.MAX_VALUE)).trim());
+		minscaleWMS = Convert.toDouble(wms.getProperty("MinScale", "0").trim());
+		maxscaleWMS = Convert.toDouble(wms.getProperty("MaxScale", Convert.toString(java.lang.Double.MAX_VALUE)).trim());
+		minscale = minscaleWMS / Math.sqrt(2); // in WMS scale is measured diagonal while in CacheWolf it is measured vertical
+		maxscale = maxscaleWMS / Math.sqrt(2);
 		imageFileExt = wms.getProperty("ImageFileExtension", "").trim();
 		if (imageFileExt == "") throw new IllegalArgumentException("WebMapService: property >ImageFileExtension:< missing in file:\n" + filename);
+		recommendedScale = Convert.toFloat(wms.getProperty("RecommendedScale", "5").trim());
 	}
 
 	public String getUrlForBoundingBox(Area maparea, Point pixelsize) {
@@ -459,7 +464,7 @@ class WebMapService extends OnlineMapService {
 		double scaleh = maparea.buttomright.getDistance(buttomleft) * 1000 / pixelsize.x; 
 		double scalev = maparea.topleft.getDistance(topright) * 1000 / pixelsize.y; 
 		double scale = Math.sqrt(scaleh * scaleh + scalev * scalev); // meters per pixel measured diagonal
-		if ( scale < minscale || scale > maxscale) throw new IllegalArgumentException("scale not support by online map service: " + scale + ", supported scale range: " + minscale + " - " + maxscale);
+		if ( scale < minscaleWMS || scale > maxscaleWMS) throw new IllegalArgumentException("scale " + scale / Math.sqrt(2)+ " not supported by online map service, supported scale range: " + minscale + " - " + maxscale + " (measured in meters per pixel vertically)");
 		int crs = 0;
 		String bbox = "BBOX=";
 		if (TransformCoordinates.isGermanGk(coordinateReferenceSystem[0])) {
@@ -556,6 +561,10 @@ class ExpediaMapService extends OnlineMapService {
 		name = "Expedia";
 		MainUrl = "Rhttp://www.expedia.de/pub/agent.dll?qscr=mrdt&ID=3kQaz."; //"Rhttp://" forces doenloadUrl to retry the URL until it gets an http-redirect and then downloads from there 
 		imageFileExt = ".gif";
+		recommendedScale = 5;
+		minscale = getMetersPerPixel(0.00000000000000000000001f);
+		maxscale = getMetersPerPixel((float)new CWPoint(0,0).getDistance(new CWPoint(0,180)) * 2 * 1000 / 1000); // whole world * 1000 because of km -> m. /1000 because we have 1000x1000 Pixel usually
+		boundingBox = new Area(new CWPoint(90,-180), new CWPoint(-90,180));
 	}
 
 	public float getMetersPerPixel(float scale) {

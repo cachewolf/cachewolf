@@ -65,6 +65,11 @@ BoundingBoxButtomRightWGS84:	N 49.9944 E 10.142
 # taken from the getCapabilities request "<Layer><ScaleHint min="
 MinScale:	0.1795783591567183
 MaxScale:	5.611823723647454
-# set this according to ImageFormatUrlPart (must start with "."
+# Plaes recommend a scale for this WMS. This scale will appear in the
+# map download dialog as default. Scale is measured in meters per pixel
+# vertical, so, multiply it by 1.41 (=sqrt(2)) to get the scale as measured
+# above in MinScale and MaxScale
+RecommendedScale:	0.5
+# set this according to ImageFormatUrlPart (must start with ".")
 ImageFileExtension: .png
 
