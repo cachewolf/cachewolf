@@ -30,12 +30,12 @@ public class myTableModel extends TableModel{
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
 	 * the element j (as per the list below) is visible in column i. 
 	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
-	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing
+	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size
 	 */
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
 	private int[] colWidth;
-	private String [] colName = {" ","?",MyLocale.getMsg(1000,"D"),MyLocale.getMsg(1001,"T"),MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear")};
+	private String [] colName = {" ","?",MyLocale.getMsg(1000,"D"),MyLocale.getMsg(1001,"T"),MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S")};//TODO
 	
 	public static Image cacheImages[] = new Image[454]; // Images are used by TableControl
 	private static Image noFindLogs[] = new Image[4];
@@ -45,6 +45,7 @@ public class myTableModel extends TableModel{
 	private boolean sortAsc = false;
 	private int sortedBy = -1;
 	private FontMetrics fm;
+	private mImage picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge;
 	/** This is the modifier (Shift & Control key status) for Pen Events
 	 * it is set in myTableControl.onEvent */
 	public int penEventModifiers; 
@@ -99,6 +100,11 @@ public class myTableModel extends TableModel{
 		bug = new mImage("bug.png");bug.transparentColor=Color.DarkBlue;
 		checkboxTicked = new Image("checkboxTicked.png");
 		checkboxUnticked= new Image("checkboxUnticked.png");
+		picSizeMicro=new mImage("sizeMicro.png"); picSizeMicro.transparentColor=Color.White;
+		picSizeSmall=new mImage("sizeSmall.png"); picSizeSmall.transparentColor=Color.White;
+		picSizeReg=new mImage("sizeReg.png"); picSizeReg.transparentColor=Color.White;
+		picSizeLarge=new mImage("sizeLarge.png"); picSizeLarge.transparentColor=Color.White;
+		picSizeVLarge=new mImage("sizeVLarge.png"); picSizeVLarge.transparentColor=Color.White;
 		updateRows();
 	}
 	
@@ -107,8 +113,8 @@ public class myTableModel extends TableModel{
 	 *
 	 */
 	public void setColumnNamesAndWidths() {
-		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,11,0);
-		colWidth=TableColumnChooser.str2Array(Global.getPref().listColWidth,10,1024,50);
+		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,12,0, -1);
+		colWidth=TableColumnChooser.str2Array(Global.getPref().listColWidth,10,1024,50, colMap.length);
 		numCols=colMap.length;
 		clearCellAdjustments();
 		// If the displayed columns include the checkbox, we use the full menu
@@ -277,6 +283,15 @@ public class myTableModel extends TableModel{
 							return (String)ch.distance;
 						case 11: // Bearing
 							return (String)ch.bearing;
+						case 12: // Size
+							switch (ch.CacheSize.charAt(0)) {
+								case 'M': return picSizeMicro;
+								case 'S': return picSizeSmall;
+								case 'R': return picSizeReg;
+								case 'L': return picSizeLarge;
+								case 'V': return picSizeVLarge;
+								default: return "?";
+							}
 					} // Switch
 				} // if
 			} catch (Exception e) { return null; }
