@@ -46,6 +46,10 @@ public class MapLoaderGui extends Form {
 	mCheckBox overviewChkBoxPerCache = new mCheckBox("download an overview map");
 
 	MapLoader mapLoader;
+	String[] unsortedMapServices;
+	String[] sortedmapServices;
+	int[] sortingMapServices;
+	boolean[] inbound;
 	CWPoint center;
 	Vector cacheDB;
 	boolean perCache;
@@ -63,8 +67,11 @@ public class MapLoaderGui extends Form {
 		center = new CWPoint(pref.curCentrePt);
 		cacheDB = cacheDBi;
 		mapLoader = new MapLoader(Global.getPref().myproxy, Global.getPref().myproxyport);
-		
-		mapServiceChoice = new mChoice(mapLoader.getAvailableOnlineMapServices(), 0);
+
+		// sort the items in the list of services in a way that services which cover the current center point.
+		unsortedMapServices = mapLoader.getAvailableOnlineMapServices();
+		sortMapServices();
+		mapServiceChoice = new mChoice(sortedmapServices, 0);
 		MessageArea desc = new MessageArea(descString); 
 		desc.modifyAll(mTextPad.NotEditable | mTextPad.DisplayOnly | mTextPad.NoFocus, mTextPad.TakesKeyFocus);
 		desc.borderStyle = mTextPad.BDR_NOBORDER;
@@ -83,7 +90,9 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addNext(coosLbl = new mLabel(MyLocale.getMsg(1803, "around the centre: ")));
 		pnlTiles.addLast(coosBtn = new mButton(center.toString()));
 		pnlTiles.addNext(scaleLbl);
-		scaleInput.setText("5");
+		mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
+		scaleInput.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
+		scaleInputPerCache.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
 		this.focusFirst();
 		pnlTiles.addLast(scaleInput);
 		//	pnlTiles.addLast(resolutionLbl);
@@ -119,17 +128,53 @@ public class MapLoaderGui extends Form {
 		mTab.addCard(pnlPerCache, MyLocale.getMsg(1805, "Per cache"), MyLocale.getMsg(1805, "Per Cache"));
 		this.addLast(mTab);
 	}
+
+	/**
+	 * sort the map services in order to have the services, which cover
+	 * the current center first in the list 
+	 * this sets inbound[], sortedMapServices[] and sortingmapServices[]
+	 *
+	 */	
+	private void sortMapServices() {
+		sortingMapServices = new int[unsortedMapServices.length];
+		inbound = new boolean[unsortedMapServices.length];
+		int j=0;
+		for (int i=0; i < sortingMapServices.length; i++) {
+			if( ((OnlineMapService)mapLoader.onlineMapServices.get(i)).boundingBox.isInBound(center)) {
+				sortingMapServices[j] = i;
+				j++;
+				inbound[i] = true;
+			} else inbound[i] = false;
+		}
+		sortedmapServices = new String[unsortedMapServices.length];
+		for (int i=0; i < sortedmapServices.length; i++) {
+			if (!inbound[i]) { 
+				sortingMapServices[j] = i;
+				j++;
+			}
+			sortedmapServices[i] = ((OnlineMapService)mapLoader.onlineMapServices.get(sortingMapServices[i])).getName();
+		}
+	}
+	
+	private int getSortedMapServiceIndex(int originalindex) {
+		for (int i = 0; i < sortingMapServices.length; i++) {
+			if (sortingMapServices[i] == originalindex) return i;
+		}
+		throw new IllegalStateException("getSortedMapServiceIndex: index " + originalindex + "not found");
+	}
+
 	public String getMapsDir() {
 		String ret = Global.getPref().getMapDownloadSavePath(mapLoader.currentOnlineMapService.getName());
 		Global.getPref().saveCustomMapsPath(ret);
 		return ret;
 	}
+
 	public void downloadTiles() {
 		String mapsDir = getMapsDir();
 		if (mapsDir == null) return;
 		InfoBox progressBox = new InfoBox("Downloading georeferenced maps", "Downloading georeferenced maps\n \n \n \n \n", InfoBox.PROGRESS_WITH_WARNINGS);
 		progressBox.setPreferredSize(220, 300);
-		progressBox.setInfoHeight(180);
+		progressBox.setInfoHeight(160);
 		progressBox.relayout(false);
 		progressBox.exec();
 		mapLoader.setProgressInfoBox(progressBox);
@@ -151,7 +196,11 @@ public class MapLoaderGui extends Form {
 		if (overviewmap) {
 			progressBox.setInfo("downloading overview map"); 
 			float scale = MapLoader.getScale(center, radius * 1000, size);
-			mapLoader.downloadMap(center, scale, size, mapsDir);
+			try {
+				mapLoader.downloadMap(center, scale, size, mapsDir);
+			} catch (Exception e) {
+				progressBox.addWarning("Overview map: Ignoring error: " + e.getMessage()+"\n");
+			}
 		}
 		if (!perCache){  // download tiles
 			mapLoader.setProgressInfoBox(progressBox);
@@ -172,7 +221,11 @@ public class MapLoaderGui extends Form {
 					if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0) { // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
 						numdownloaded++;
 						progressBox.setInfo("Downloading map '"+mapLoader.currentOnlineMapService.getName()+"'\n"+numdownloaded+" / "+numCaches+"\n for cache:\n"+ch.CacheName);
-						mapLoader.downloadMap(ch.pos, scale, size, mapsDir);
+						try {
+							mapLoader.downloadMap(ch.pos, scale, size, mapsDir);
+						} catch (Exception e) {
+							progressBox.addWarning("Cache: " + ch.CacheName + "(" + ch.wayPoint + ") Ignoring error: " + e.getMessage()+"\n");
+						}
 					}
 				}
 			}
@@ -184,7 +237,7 @@ public class MapLoaderGui extends Form {
 		mapLoader.setProgressInfoBox(null);
 		//progressBox.close(0);
 		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
-	//	(new MessageBox("Download maps", "Downloaded and calibrated the maps successfully", MessageBox.OKB)).execute();
+		//	(new MessageBox("Download maps", "Downloaded and calibrated the maps successfully", MessageBox.OKB)).execute();
 	}
 
 
@@ -216,7 +269,7 @@ public class MapLoaderGui extends Form {
 				this.close(Form.IDCANCEL);
 			}
 			if (ev.target == okBtiles || ev.target == okBPerCache){
-				mapLoader.setCurrentMapService(mapServiceChoice.selectedIndex);
+				mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 				if (ev.target == okBtiles) { // get tiles
 					perCache = false;
 					if (forSelectedChkBox.getSelectedItem().toString().equalsIgnoreCase("all")) onlySelected = false;
@@ -246,10 +299,10 @@ public class MapLoaderGui extends Form {
 					overviewmap = overviewChkBoxPerCache.getState();
 					scale = Convert.toFloat(scaleInputPerCache.getText());
 				}
-		/*		if (scale < 1 || scale != java.lang.Math.floor(scale)) {
-					(new MessageBox("Error", "'Approx. meter pro pixel' must be greater than 0 and must not contain a point", MessageBox.OKB)).execute();
+				if (scale < mapLoader.currentOnlineMapService.minscale || scale > mapLoader.currentOnlineMapService.maxscale) {
+					(new MessageBox("Error", "The selected online map service provides map in the scale from " + mapLoader.currentOnlineMapService.minscale + " to "+ mapLoader.currentOnlineMapService.maxscale +"\n please adjust 'Approx. meter pro pixel' accordingly", MessageBox.OKB)).execute();
 					return;
-				} */
+				}
 				this.close(Form.IDOK); 
 				this.downloadTiles();
 			}
@@ -259,12 +312,20 @@ public class MapLoaderGui extends Form {
 				if (cs.execute() != CoordsScreen.IDCANCEL) {
 					center = cs.getCoords();
 					coosBtn.setText(center.toString());
+					int tmp = sortingMapServices[mapServiceChoice.selectedIndex];
+					sortMapServices();
+					mapServiceChoice.set(sortedmapServices, (!inbound[tmp] ? 0 : getSortedMapServiceIndex((tmp))));
 				}
 			}
 			if (ev.target == forCachesChkBox) {
 				updateForCachesState();
 			}
-		} // if controllEvent...
+		} // end of "if controllEvent..."
+		if (ev instanceof DataChangeEvent && ev.target == mapServiceChoice) {
+			mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
+			scaleInput.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
+			scaleInputPerCache.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
+		}
 		super.onEvent(ev);
 	}
 }
