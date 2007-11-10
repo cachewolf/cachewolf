@@ -159,9 +159,9 @@ public class TravelbugJourneyScreen extends Form  {
 		modTbJourneyList.numRows=tblMyTravelbugJourneys.size();
 		// Get the columns to display and their widths from preferences
 		modTbJourneyList.columnMap=
-			TableColumnChooser.str2Array(Global.getPref().travelbugColMap,0,11,0);
+			TableColumnChooser.str2Array(Global.getPref().travelbugColMap,0,11,0, -1);
 		modTbJourneyList.colWidth=
-			TableColumnChooser.str2Array(Global.getPref().travelbugColWidth,10,1024,50);
+			TableColumnChooser.str2Array(Global.getPref().travelbugColWidth,10,1024,50, -1);
 		modTbJourneyList.numCols=modTbJourneyList.columnMap.length;
 		
 		modTbJourneyList.select(0,12,true);

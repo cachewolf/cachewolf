@@ -11,8 +11,8 @@ import ewe.util.*;
 public class TableColumnChooser extends CellPanel {
 
 	String [] colNames;
-	Vector shownCols=new Vector(13);
-	Vector hiddenCols=new Vector(13);
+	Vector shownCols=new Vector(14);
+	Vector hiddenCols=new Vector(14);
 	private mButton btnDown,btnUp,btnLeft,btnRight;
 	private myList lstShown,lstHidden;
 	
@@ -187,17 +187,19 @@ public class TableColumnChooser extends CellPanel {
 	 * Converts a comma delimited string into an integer array.
 	 * Each value is checked and has to be between min and max, If not it is
 	 * replaced with default
+	 * @param minSize TODO
 	 */ 
-	public static int[] str2Array(String configString, int min, int max, int def) {
+	public static int[] str2Array(String configString, int min, int max, int def, int minSize) {
 		Vector strConfigVector=new Vector(14);
 		SubString.split(configString,',',strConfigVector);
 		int i;
 		int nElem=strConfigVector.size();
-		int []res=new int[nElem];
+		int []res=new int[nElem>minSize?nElem:minSize];
 		for (i=0; i<nElem; i++) {
 			res[i]=Common.parseInt((String)strConfigVector.elementAt(i));
 			if (res[i]<min || res[i]>max) res[i]=def;
 		}
+		for (i=nElem+1; i<minSize; i++) res[i]=def;
 		return res;
 	}
 	
