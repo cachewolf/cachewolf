@@ -103,6 +103,105 @@ public CacheHolder(CacheHolder ch) {//nObjects++;Vm.debug("CacheHolder(ch) nO="+
 	update(ch);
 }
 
+static char decSep,notDecSep;
+static {
+	decSep=MyLocale.getDigSeparator().charAt(0);
+	notDecSep=decSep=='.'?',':'.';
+}
+
+public CacheHolder(String xmlString) {
+	int start,end;
+	try {
+		start=xmlString.indexOf('"'); end=xmlString.indexOf('"',start+1);
+		CacheName = SafeXML.cleanback(xmlString.substring(start+1,end));
+		
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		CacheOwner = SafeXML.cleanback(xmlString.substring(start+1,end));
+
+		// Assume coordinates are in decimal format
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		double lat=Convert.parseDouble(xmlString.substring(start+1,end).replace(notDecSep,decSep));
+
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		double lon=Convert.parseDouble(xmlString.substring(start+1,end).replace(notDecSep,decSep));
+		pos=new CWPoint(lat,lon);
+		LatLon=pos.toString();
+
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		DateHidden = xmlString.substring(start+1,end); 
+		// Convert the US format to YYYY-MM-DD if necessary
+		if (DateHidden.indexOf('/')>-1) DateHidden=DateFormat.MDY2YMD(DateHidden);
+		
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		wayPoint = SafeXML.cleanback(xmlString.substring(start+1,end));
+
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		CacheStatus = xmlString.substring(start+1,end);
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		type = xmlString.substring(start+1,end);
+		
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		hard = xmlString.substring(start+1,end);
+
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		terrain = xmlString.substring(start+1,end);
+		
+		// The next item was 'dirty' but this is no longer used.
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_filtered = xmlString.substring(start+1,end).equals("true"); 
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		CacheSize = xmlString.substring(start+1,end);
+
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_available = xmlString.substring(start+1,end).equals("true");
+
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_archived = xmlString.substring(start+1,end).equals("true");
+		
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		has_bug = xmlString.substring(start+1,end).equals("true");
+		
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_black = xmlString.substring(start+1,end).equals("true");
+		if(is_black) is_filtered = true;
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_owned = xmlString.substring(start+1,end).equals("true");
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_found = xmlString.substring(start+1,end).equals("true");
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_new = xmlString.substring(start+1,end).equals("true");
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_log_update = xmlString.substring(start+1,end).equals("true");
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_update = xmlString.substring(start+1,end).equals("true");
+	
+		// for backwards compatibility set value to true, if it is not in the file
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_HTML = xmlString.substring(start+1,end).equals("false");
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		noFindLogs = Convert.toInt(xmlString.substring(start+1,end));
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		ocCacheID = xmlString.substring(start+1,end);
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		is_incomplete = xmlString.substring(start+1,end).equals("true");
+	
+		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+		lastSyncOC = xmlString.substring(start+1,end);
+	} catch (Exception ex) {
+		
+	}
+}
+
 public void update(CacheHolder ch) {
 	/* Here we have to distinguish several cases:
 	   this.is_found       this                ch               Update 'this'
