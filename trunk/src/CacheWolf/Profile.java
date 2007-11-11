@@ -197,56 +197,11 @@ public class Profile {
 			if (text!=null && text.indexOf("decimal")>0) fmtDec=true;
 			Extractor ex = new Extractor(null, " = \"", "\" ", 0, true);
 			
-			//OperationTimer optt = new OperationTimer();
-			//optt.start("Reading...");
-			
+			//ewe.sys.Time startT=new ewe.sys.Time();
 			while ((text = in.readLine()) != null){
 				// Check for Line with cache data
 				if (text.indexOf("<CACHE ")>=0){
-					ex.setSource(text);
-					CacheHolder ch = new CacheHolder();
-					ch.CacheName = SafeXML.cleanback(ex.findNext());
-					ch.CacheOwner = SafeXML.cleanback(ex.findNext());
-					if (fmtDec) {
-						double lat=Convert.parseDouble(ex.findNext().replace(notDecSep,decSep));
-						double lon=Convert.parseDouble(ex.findNext().replace(notDecSep,decSep));
-						ch.pos=new CWPoint(lat,lon);
-						ch.LatLon=ch.pos.toString();
-					} else {
-						ch.LatLon = SafeXML.cleanback(ex.findNext());
-						ch.pos.set(ch.LatLon,CWPoint.CW);
-					}
-					ch.DateHidden = ex.findNext(); 
-					// Convert the US format to YYYY-MM-DD if necessary
-					if (ch.DateHidden.indexOf('/')>-1) ch.DateHidden=DateFormat.MDY2YMD(ch.DateHidden);
-					ch.wayPoint = SafeXML.cleanback(ex.findNext());
-					ch.CacheStatus = ex.findNext();
-					ch.type = ex.findNext();
-					ch.hard = ex.findNext();
-					ch.terrain = ex.findNext();
-					// The next item was 'dirty' but this is no longer used.
-					ch.is_filtered = ex.findNext().equals("true") ? true : false; 
-					ch.CacheSize = ex.findNext();
-					ch.is_available = ex.findNext().equals("true") ? true : false;
-					ch.is_archived = ex.findNext().equals("true") ? true : false;
-					ch.has_bug = ex.findNext().equals("true") ? true : false;
-					ch.is_black = ex.findNext().equals("true") ? true : false;
-					if(ch.is_black) ch.is_filtered = true;
-					ch.is_owned = ex.findNext().equals("true") ? true : false;
-					ch.is_found = ex.findNext().equals("true") ? true : false;
-					ch.is_new = ex.findNext().equals("true") ? true : false;
-					ch.is_log_update = ex.findNext().equals("true") ? true : false;
-					ch.is_update = ex.findNext().equals("true") ? true : false;
-					// for backwards compatibility set value to true, if it is not in the file
-					ch.is_HTML = ex.findNext().equals("false") ? false : true;
-					ch.noFindLogs = Convert.toInt(ex.findNext());
-					ch.ocCacheID = ex.findNext();
-					ch.is_incomplete = ex.findNext().equals("true") ? true : false;
-					ch.lastSyncOC = ex.findNext();
-					// remove "/>
-					ch.ocCacheID = STRreplace.replace(ch.ocCacheID,"\"/>", null);
-					// remove additional " if present
-					ch.ocCacheID = STRreplace.replace(ch.ocCacheID,"\"", null);
+					CacheHolder ch=new CacheHolder(text);
 					cacheDB.add(ch);
 				} else if (text.indexOf("<CENTRE")>=0) { // lat=  lon=
 					if (fmtDec) {
@@ -293,13 +248,10 @@ public class Profile {
 				}
 			}
 			in.close();
-			
-			//optt.end();
-			//long times[];
-			//times = optt.getTimes();
-			//Vm.debug("Reading ended: " + times[0]);
-			
-			
+			//ewe.sys.Time endT=new ewe.sys.Time();
+			//Vm.debug("Time="+((((endT.hour*60+endT.minute)*60+endT.second)*1000+endT.millis)-(((startT.hour*60+startT.minute)*60+startT.second)*1000+startT.millis)));
+			//Vm.debug("Start:"+startT.format("H:mm:ss.SSS"));
+			//Vm.debug("End  :"+endT.format("H:mm:ss.SSS"));	
 			// Build references between caches and addi wpts
 			buildReferences();
 		} catch (FileNotFoundException e) {
