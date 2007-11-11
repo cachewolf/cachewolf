@@ -1,0 +1,17 @@
+Name:	Bayern TK50
+MainUrl:	http://www.geodaten.bayern.de/ogc/getogc.cgi?
+LayersName: 
+ServiceTypeUrlPart:	SERVICE=WMS 
+VersionUrlPart:	VERSION=1.1.1 
+CoordinateReferenceSystemCacheWolf:	31468 
+CoordinateReferenceSystemUrlPart:	SRS=EPSG:31468
+RequestUrlPart:	REQUEST=GetMap
+LayersUrlPart:	LAYERS=TK50
+StylesUrlPart:	STYLES=
+ImageFormatUrlPart:	FORMAT=image/png
+BoundingBoxTopLeftWGS84:	N 50.6100606 E 9.1024741
+BoundingBoxButtomRightWGS84:	N 47.0828299 E 13.9781535
+MinScale:	0.01
+MaxScale:	40
+RecommendedScale:	5.0
+ImageFileExtension: .png
