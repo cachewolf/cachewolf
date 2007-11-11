@@ -184,7 +184,7 @@ public CacheHolder(String xmlString) {
 	
 		// for backwards compatibility set value to true, if it is not in the file
 		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-		is_HTML = xmlString.substring(start+1,end).equals("false");
+		is_HTML = !xmlString.substring(start+1,end).equals("false");
 	
 		start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 		noFindLogs = Convert.toInt(xmlString.substring(start+1,end));
