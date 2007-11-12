@@ -303,6 +303,11 @@ public class MapLoaderGui extends Form {
 					(new MessageBox("Error", "The selected online map service provides map in the scale from " + mapLoader.currentOnlineMapService.minscale + " to "+ mapLoader.currentOnlineMapService.maxscale +"\n please adjust 'Approx. meter pro pixel' accordingly", MessageBox.OKB)).execute();
 					return;
 				}
+				if (!mapLoader.currentOnlineMapService.getName().equalsIgnoreCase("expedia") &&
+						scale > 0.5) {
+					int a = (new MessageBox("Error", "Momentanously the calibration of downloaded maps from a WMS has a maximam deviation of about 1 percent of the map size in meters. That's why I strongly recommend to use it only up to a scale of 0.5. In this case the deviation will be lower than 5m. Do you whish to continue anyway?", MessageBox.YESB | MessageBox.NOB)).execute();
+					if (a == MessageBox.NOB) return;
+				}
 				this.close(Form.IDOK); 
 				this.downloadTiles();
 			}
