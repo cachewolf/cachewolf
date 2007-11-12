@@ -465,11 +465,11 @@ public class CWPoint extends TrackPoint{
 	}
 	
 	public String getGermanGkCoordinates() {
-		return TransformCoordinates.wgs84ToGermanGK(this).toString(0, "R:", " H:");
+		return TransformCoordinates.wgs84ToGermanGk(this).toString(0, "R:", " H:");
 	}
 
 	public String getGermanGkCoordinates(int decimalplaces, String pref, String seperator) {
-		return TransformCoordinates.wgs84ToGermanGK(this).toString(decimalplaces, pref, seperator);
+		return TransformCoordinates.wgs84ToGermanGk(this).toString(decimalplaces, pref, seperator);
 	}
 	
 	/**
