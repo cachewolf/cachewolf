@@ -109,7 +109,8 @@ public final class Common {
 	
 	public static String ClearForFileName(String str) {
 		String ret = str.replace('?', '_');
-		ret = str.replace(' ', '-');
+		ret = ret.replace(' ', '-');
+		ret = ret.replace(':', '-');
 		return ret;
 	}
 	

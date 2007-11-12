@@ -2,6 +2,7 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
+import CacheWolf.Global;
 import CacheWolf.HttpConnection;
 import CacheWolf.InfoBox;
 import CacheWolf.Preferences;
@@ -43,13 +44,19 @@ public class MapLoader {
 	Point tilesSize;
 	float tileScale;
 
-	public MapLoader(String prxy, String prt){
+	/**
+	 * 
+	 * @param prxy
+	 * @param prt
+	 * @param wmspath without trailing "/"
+	 */
+	public MapLoader(String prxy, String prt, String wmspath){
 		port = prt;
 		proxy = prxy;
 		progressInfobox = null;
 		onlineMapServices = new Vector();
 		String dateien[];
-		FileBugfix files = new FileBugfix(".");
+		FileBugfix files = new FileBugfix(wmspath);
 		String FileName;
 		OnlineMapService tempOMS;
 		MessageBox f = null; 
@@ -57,7 +64,7 @@ public class MapLoader {
 		for(int i = 0; i < dateien.length;i++){
 			FileName = dateien[i];
 			try {
-				tempOMS = new WebMapService(FileName);
+				tempOMS = new WebMapService(wmspath + "/" + FileName);
 				onlineMapServices.add(tempOMS);
 			}catch(Exception ex){ 
 				if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading web map service definition file \n"+ex.toString(), MessageBox.OKB)).exec();
@@ -295,6 +302,7 @@ public class MapLoader {
 
 class OnlineMapService {
 	String name;
+	String mapType;
 	String MainUrl; //http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS
 	/** including "." */
 	String imageFileExt; // ".gif", ".jpg"...
@@ -325,6 +333,9 @@ class OnlineMapService {
 	 */
 	public String getName() {
 		return name;
+	}
+	public String getMapType() {
+		return mapType;
 	}
 	/**
 	 * Overload this and return the URL to the map image, don't call super
@@ -384,7 +395,6 @@ class OnlineMapService {
 }
 
 class WebMapService extends OnlineMapService {
-	String layersName;
 	String layersUrlPart; //
 	String versionUrlPart; // VERSION=1.1.0
 	String serviceTypeUrlPart; //"SERVICE=WMS" 
@@ -395,11 +405,6 @@ class WebMapService extends OnlineMapService {
 	String stylesUrlPart; // STYLES=
 	double minscaleWMS;
 	double maxscaleWMS;
-
-	public String getName() {
-		if (layersName == null || layersName.length() == 0)	return name;
-		return name + "_" + layersName;
-	}
 
 	/**
 	 * 
@@ -416,7 +421,7 @@ class WebMapService extends OnlineMapService {
 		if (name == "") throw new IllegalArgumentException("WebMapService: property >Name:< missing in file:\n" + filename);
 		MainUrl = wms.getProperty("MainUrl", "").trim();;
 		if (MainUrl == "") throw new IllegalArgumentException("WebMapService: property >MainUrl:< missing in file:\n" + filename);
-		layersName = wms.getProperty("LayersName", "missing layersname").trim();
+		mapType = wms.getProperty("MapType", "maptype_unknown").trim();
 		serviceTypeUrlPart = wms.getProperty("ServiceTypeUrlPart", "SERVICE=WMS").trim();
 		layersUrlPart = wms.getProperty("LayersUrlPart", "").trim();;
 		versionUrlPart = wms.getProperty("VersionUrlPart", "").trim();;
@@ -447,15 +452,37 @@ class WebMapService extends OnlineMapService {
 		if (!topleft.isValid()) topleft.set(90, -180);
 		if (!buttomright.isValid()) buttomright.set(-90, 180);
 		boundingBox = new Area (topleft, buttomright);
-		minscaleWMS = Convert.toDouble(wms.getProperty("MinScale", "0").trim());
-		maxscaleWMS = Convert.toDouble(wms.getProperty("MaxScale", Convert.toString(java.lang.Double.MAX_VALUE)).trim());
+		minscaleWMS = Common.parseDouble(wms.getProperty("MinScale", "0").trim());
+		maxscaleWMS = Common.parseDouble(wms.getProperty("MaxScale", Convert.toString(java.lang.Double.MAX_VALUE)).trim());
 		minscale = minscaleWMS / Math.sqrt(2); // in WMS scale is measured diagonal while in CacheWolf it is measured vertical
 		maxscale = maxscaleWMS / Math.sqrt(2);
 		imageFileExt = wms.getProperty("ImageFileExtension", "").trim();
 		if (imageFileExt == "") throw new IllegalArgumentException("WebMapService: property >ImageFileExtension:< missing in file:\n" + filename);
-		recommendedScale = Convert.toFloat(wms.getProperty("RecommendedScale", "5").trim());
+		recommendedScale = (float) Common.parseDouble(wms.getProperty("RecommendedScale", "5").trim());
 	}
 
+	private static final int TOPLEFT_INDEX = 0;
+	private static final int BUTTOMRIGHT_INDEX = 1;
+	private static final int TOPRIGHT_INDEX = 2;
+	private static final int BUTTOMLEFT_INDEX = 3;
+	/**
+	 * 
+	 * @param maparea
+	 * @return [0] = topleft, [1] = buttomright, [2] = topright, [3] = buttomleft
+	 */
+	private GkPoint[] getGkArea(Area maparea) {
+		GkPoint[] ret = new GkPoint[4];
+	//	CWPoint topright = new CWPoint(maparea.topleft.latDec, maparea.buttomright.lonDec);
+	//	CWPoint buttomleft = new CWPoint(maparea.buttomright.latDec, maparea.topleft.lonDec);
+		int crs = getCrs(maparea.topleft);
+		ret[TOPLEFT_INDEX] = TransformCoordinates.wgs84ToGermanGk(maparea.topleft, coordinateReferenceSystem[crs]);
+		ret[BUTTOMRIGHT_INDEX] = TransformCoordinates.wgs84ToGermanGk(maparea.buttomright, coordinateReferenceSystem[crs]);
+		ret[TOPRIGHT_INDEX] = new GkPoint(ret[BUTTOMRIGHT_INDEX].getGkEasting(), ret[TOPLEFT_INDEX].northing);
+		ret[BUTTOMLEFT_INDEX] = new GkPoint(ret[TOPLEFT_INDEX].getGkEasting(), ret[BUTTOMRIGHT_INDEX].northing);
+		//ret[2] = TransformCoordinates.wgs84ToGermanGk(topright, coordinateReferenceSystem[crs]);
+		//ret[3] = TransformCoordinates.wgs84ToGermanGk(buttomleft, coordinateReferenceSystem[crs]);
+		return ret;	
+	}
 	public String getUrlForBoundingBox(Area maparea, Point pixelsize) {
 		if (!boundingBox.isOverlapping(maparea)) throw new IllegalArgumentException("area: " + maparea.toString() + " not covered by service: " + name + ", service area: " + boundingBox.toString());
 		// http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetMap&SRS=EPSG:31466&BBOX=2577567.0149,5607721.7566,2578567.0077,5608721.7602&WIDTH=500&HEIGHT=500&LAYERS=Raster:TK25_KMF:Farbkombination&STYLES=&FORMAT=image/png
@@ -469,6 +496,9 @@ class WebMapService extends OnlineMapService {
 		String bbox = "BBOX=";
 		if (TransformCoordinates.isGermanGk(coordinateReferenceSystem[0])) {
 			crs = getCrs(buttomleft);
+			GkPoint[] gk = getGkArea(maparea);
+			buttomleft = TransformCoordinates.germanGkToWgs84(gk[BUTTOMLEFT_INDEX]);
+			topright = TransformCoordinates.germanGkToWgs84(gk[TOPRIGHT_INDEX]);
 			bbox += TransformCoordinates.wgs84ToGermanGk(buttomleft, coordinateReferenceSystem[crs]).toString(3, "", ",");
 			bbox += "," + TransformCoordinates.wgs84ToGermanGk(topright, coordinateReferenceSystem[crs]).toString(3, "", ",");
 		} else if (coordinateReferenceSystem[0] == TransformCoordinates.EPSG_WGS84) 
@@ -477,7 +507,8 @@ class WebMapService extends OnlineMapService {
 		String ret = MainUrl + "SERVICE=WMS" + "&"+ versionUrlPart + "&" + requestUrlPart + "&" + 
 		coordinateReferenceSystemUrlPart[crs] + "&" + bbox + 
 		"&WIDTH=" + pixelsize.x + "&HEIGHT=" + pixelsize.y + "&" + 
-		layersUrlPart + "&" + stylesUrlPart + "&" + imageFormatUrlPart; 
+		layersUrlPart + "&" + stylesUrlPart + "&" + imageFormatUrlPart;
+		Vm.debug(ret);
 		return ret;
 	}
 
@@ -492,7 +523,7 @@ class WebMapService extends OnlineMapService {
 	private int getCrs(CWPoint p) {
 		int crs = 0;
 		if (coordinateReferenceSystem.length > 1) {
-			GkPoint gkbl = TransformCoordinates.wgs84ToGermanGK(p); // TODO: think / read about what to do if buttom left and top right ae not in the same Gauß-Krüger stripe?
+			GkPoint gkbl = TransformCoordinates.wgs84ToGermanGk(p); // TODO: think / read about what to do if buttom left and top right ae not in the same Gauß-Krüger stripe?
 			crs = TransformCoordinates.whichEpsg(coordinateReferenceSystem, gkbl);
 			if (crs < 0) throw new IllegalArgumentException("getUrlForBoundingBox: Point: " + gkbl.toString() + "no matching Gauß-Krüger-Stripe in the EPSG-code list in the .wms");
 		}
@@ -509,23 +540,29 @@ class WebMapService extends OnlineMapService {
 		CWPoint topleft = new CWPoint(maparea.topleft);
 		CWPoint buttomright = new CWPoint(maparea.buttomright);
 		double metersperpixalhorizontal = ( buttomright.getDistance(buttomleft) + topleft.getDistance(topright))/2 * 1000 / pixelsize.x; 
-		double metersperpixalvertical = ( buttomright.getDistance(topright) + topleft.getDistance(buttomright))/2 * 1000 / pixelsize.y;
+		double metersperpixalvertical = ( buttomright.getDistance(topright) + topleft.getDistance(buttomleft))/2 * 1000 / pixelsize.y;
 		if (TransformCoordinates.isGermanGk(coordinateReferenceSystem[0])) {
-			int crs = getCrs(buttomleft); 
-			GkPoint buttomleftgk = TransformCoordinates.wgs84ToGermanGk(buttomleft, coordinateReferenceSystem[crs]);
-			GkPoint toprightgk = TransformCoordinates.wgs84ToGermanGk(topright, coordinateReferenceSystem[crs]);
-			// bounding box in WMS is defined around the pixels, not exactly on the pixels --> the bounding box must be reduced on all edges by half a pixel
-			buttomleftgk.shift(metersperpixalhorizontal / 2, 1);
-			buttomleftgk.shift(metersperpixalvertical / 2, 0);
-			toprightgk.shift(-metersperpixalhorizontal / 2, 1);
-			toprightgk.shift(-metersperpixalvertical / 2, 0);
-			GkPoint topleftgk = new GkPoint(buttomleftgk.getGkEasting(), toprightgk.northing);
-			GkPoint buttomrightgk = new GkPoint(toprightgk.getGkEasting(), buttomleftgk.northing);
-
+			GkPoint[] gk = getGkArea(maparea);
+			GkPoint topleftgk = gk[TOPLEFT_INDEX]; //TransformCoordinates.wgs84ToGermanGk(topleft, coordinateReferenceSystem[crs]);
+			GkPoint buttomrightgk = gk[BUTTOMRIGHT_INDEX]; //TransformCoordinates.wgs84ToGermanGk(buttomright, coordinateReferenceSystem[crs]);
+/*			// bounding box in WMS is defined around the pixels, not exactly on the pixels --> the bounding box must be reduced on all edges by half a pixel
+			topleftgk.shift(metersperpixalhorizontal / 2, 1);
+			topleftgk.shift(-metersperpixalvertical / 2, 0);
+			buttomrightgk.shift(-metersperpixalhorizontal / 2, 1);
+			buttomrightgk.shift(metersperpixalvertical / 2, 0);
+*/
+			GkPoint buttomleftgk = gk[BUTTOMLEFT_INDEX]; // new GkPoint(topleftgk.getGkEasting(), buttomrightgk.northing);
+			GkPoint toprightgk = gk[TOPRIGHT_INDEX]; //new GkPoint(buttomrightgk.getGkEasting(), topleftgk.northing);
+			Vm.debug("\n" + maparea.topleft.toString(CWPoint.LAT_LON));
+			//Vm.debug(TransformCoordinates.germanGkToWgs84(TransformCoordinates.wgs84ToGermanGk(maparea.topleft)).toString(CWPoint.LAT_LON));
 			topleft = TransformCoordinates.germanGkToWgs84(topleftgk);
 			buttomright = TransformCoordinates.germanGkToWgs84(buttomrightgk);
 			buttomleft = TransformCoordinates.germanGkToWgs84(buttomleftgk);
 			topright = TransformCoordinates.germanGkToWgs84(toprightgk);
+			Vm.debug(topleft.toString(CWPoint.LAT_LON));
+			Vm.debug(buttomright.toString(CWPoint.LAT_LON));
+			Vm.debug(topright.toString(CWPoint.LAT_LON));
+			Vm.debug(buttomleft.toString(CWPoint.LAT_LON));
 		} else if (coordinateReferenceSystem[0] == TransformCoordinates.EPSG_WGS84) {
 			// bounding box in WMS is defined around the pixels, not exactly on the pixels --> the bounding box must be reduced on all edges by half a pixel
 			topleft.shift(metersperpixalhorizontal / 2, 1);
@@ -542,6 +579,10 @@ class WebMapService extends OnlineMapService {
 
 		MapInfoObject ret = new MapInfoObject();
 		ret.evalGCP(georef, pixelsize.x, pixelsize.y);
+		Vm.debug("\n nach kal\n" + ret.calcLatLon(0, 0).toString(CWPoint.LAT_LON));
+		Vm.debug(ret.calcLatLon(pixelsize.x, pixelsize.y).toString(CWPoint.LAT_LON));
+		Vm.debug(ret.calcLatLon(pixelsize.x, 0).toString(CWPoint.LAT_LON));
+		Vm.debug(ret.calcLatLon(0, pixelsize.y).toString(CWPoint.LAT_LON));
 		return ret;
 	}
 }
@@ -561,6 +602,7 @@ class ExpediaMapService extends OnlineMapService {
 		name = "Expedia";
 		MainUrl = "Rhttp://www.expedia.de/pub/agent.dll?qscr=mrdt&ID=3kQaz."; //"Rhttp://" forces doenloadUrl to retry the URL until it gets an http-redirect and then downloads from there 
 		imageFileExt = ".gif";
+		mapType = "expedia";
 		recommendedScale = 5;
 		minscale = getMetersPerPixel(0.00000000000000000000001f);
 		maxscale = getMetersPerPixel((float)new CWPoint(0,0).getDistance(new CWPoint(0,180)) * 2 * 1000 / 1000); // whole world * 1000 because of km -> m. /1000 because we have 1000x1000 Pixel usually

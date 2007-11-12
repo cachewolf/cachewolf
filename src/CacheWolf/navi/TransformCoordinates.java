@@ -53,7 +53,7 @@ public class TransformCoordinates {
 	/** use this for south Germany, maximum deviation sub meter, valid in the former BRD (west germany) in 47°00' N ... 50°20' N */
 	public static final TransformParameters GK_SOUTH_GERMANY =  GK_SOUTH_GERMANY_TO_WGS84; 
 
-	private static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637)); 
+	public static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637)); 
 	
 	// taken from http://www.lverma.nrw.de/produkte/druckschriften/verwaltungsvorschriften/images/gps/TrafopsNRW.pdf for NRW this transform has deviations lower than 34cm.
 	private static final TransformParameters GK_NRW_GERMANY_TO_WGS84 = new TransformParameters(566.1, 116.3, 390.1, -1.11, -0.24, 3.76, 12.6, false);
@@ -110,7 +110,14 @@ public class TransformCoordinates {
 	 * @return
 	 */
 	public static CWPoint germanGkToWgs84(GkPoint gk) {
-		return  gkToWgs84(gk, GK_GERMANY_2001); 	//TODO use more lokalized transformparameters, which can be obtained from the Landesvermessungsämter
+/*		if (gk.northing <= 6089288.064 && gk.northing >= 5585291.767 && // these coordinates are transformed ones from the invers routine
+				( gk.getStripe() == 4 && gk.getGkEasting() >= 4404124.247 && gk.getGkEasting() <= 4679300.398) ||
+				( gk.getStripe() == 5 && gk.getGkEasting() >= 5211904.597 && gk.getGkEasting() <= 5466056.603)
+			) return gkToWgs84(gk, GK_GERMANY_2001);
+		if (gk.northing <= 6097247.910 && gk.northing >= 5800464.725 )return gkToWgs84(gk, GK_NORD_GERMANY);
+		if (gk.northing <= 5800464.725 && gk.northing >= 5577963.555 )return gkToWgs84(gk, GK_NORD_GERMANY);
+		if (gk.northing <= 5577963.555 && gk.northing >= 5207294.028 )return gkToWgs84(gk, GK_NORD_GERMANY);
+	*/	return  gkToWgs84(gk, GK_GERMANY_2001); 	//TODO use more lokalized transformparameters, which can be obtained from the Landesvermessungsämter
 	}
 
 	/**
@@ -123,16 +130,16 @@ public class TransformCoordinates {
 	 * @param gk
 	 * @return
 	 */
-	public static GkPoint wgs84ToGermanGK(CWPoint ll) {
+	public static GkPoint wgs84ToGermanGk(CWPoint ll) {
 		return  wgs84ToGk(ll, getGermanGkTransformParameters(ll)); 	
 	}
 	
 	public static TransformParameters getGermanGkTransformParameters(CWPoint ll) {
-		if (FORMER_GDR.isInBound(ll)) return GK_GERMANY_2001; // exlcude former GDR from the splitting germany in north/middel/south
+	/*	if (FORMER_GDR.isInBound(ll)) return GK_GERMANY_2001; // exlcude former GDR from the splitting germany in north/middel/south
 		if (ll.latDec <= 55 && ll.latDec >= 52.33333334 ) return  GK_NORD_GERMANY;
 		if (ll.latDec <= 52.33333334  && ll.latDec >= 50.33333334 ) return  GK_MID_GERMANY;
 		if (ll.latDec <= 50.33333334  && ll.latDec >= 47) return  GK_MID_GERMANY;
-		return GK_GERMANY_2001;
+	*/	return GK_GERMANY_2001;
 	}
 	
 	/**
