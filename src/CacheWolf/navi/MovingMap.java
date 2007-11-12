@@ -1598,11 +1598,13 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				AniImage clickedOnImage = images.findHotImage(p);
 				if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
 					clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
-					if (clickedCache != null) openCacheDescMenuItem = new MenuItem("Open '"+(clickedCache.CacheName.length()>0?clickedCache.CacheName:clickedCache.wayPoint)+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
-					kontextMenu.addItem(openCacheDescMenuItem);
-					if (clickedCache !=null && Global.mainForm.cacheListVisible) { 
-						addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
-						kontextMenu.addItem(addCachetoListMenuItem);
+					if (clickedCache != null) {
+						openCacheDescMenuItem = new MenuItem("Open '"+(clickedCache.CacheName.length()>0?clickedCache.CacheName:clickedCache.wayPoint)+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+						kontextMenu.addItem(openCacheDescMenuItem);
+						if (Global.mainForm.cacheListVisible) { 
+							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
+							kontextMenu.addItem(addCachetoListMenuItem);
+						}
 					}
 				}
 			}
