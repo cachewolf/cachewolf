@@ -187,6 +187,7 @@ public class MovingMap extends Form {
 		maps = new MapsList(mapsPath); // this actually loads the maps
 		if (maps.isEmpty()) {
 			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung \n Bitte wählen Sie einen Maßstab,\n in dem der Track und die markierten Caches angezeigt werden sollen"), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung \n Sie können eine herunter laden im Hauptmenü: Anwendung/Karten/kalibrierte herunterladen"), MessageBox.OKB)).execute();
 			noMapsAvailable = true;
 		} else noMapsAvailable = false;
 		maps.addEmptyMaps(lat);
@@ -944,9 +945,12 @@ public class MovingMap extends Form {
 			return;
 		}
 		if (currentMap == null && newmap == null) {
-			(new MessageBox("Information", "Für die aktuelle Position steht keine Karte zur Verfüng, bitte wählen Sie eine manuell", MessageBox.OKB)).execute();
+			// (new MessageBox("Information", "Für die aktuelle Position steht keine Karte zur Verfüng, bitte wählen Sie eine manuell", MessageBox.OKB)).execute();
 			posCircleLat = cll.latDec;
 			posCircleLon = cll.lonDec; // choosemap calls setmap with posCircle-coos
+			try {
+				setMap( ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(), lat, lon); // beware: "-4" only works if the empty maps were added last see MapsList.addEmptyMaps
+			} catch (IOException e) { (new MessageBox("Error", "setBestMap: problem in: setMap( ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(), lat, lon) lat/lon:" + lat+"/"+lon, MessageBox.OKB)).exec(); }
 			while (currentMap == null) {
 				mmp.chooseMap(); // force the user to select a scale // TODO empty maps on top?
 				if (currentMap == null) (new MessageBox("Error", "Moving map cannot run without a map - please select one. \n You can select an empty map", MessageBox.OKB)).execute();

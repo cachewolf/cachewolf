@@ -73,7 +73,7 @@ public class MapsList extends Vector {
 		MapListEntry tempMIO; 
 		tempMIO = new MapListEntry(1.0, lat);
 		add(tempMIO);
-		tempMIO = new MapListEntry(5.0, lat);
+		tempMIO = new MapListEntry(5.0, lat); // this one ( the 4th last) is automatically used when no real map is available, see MovingMap.setBestMap 
 		add(tempMIO);
 		tempMIO = new MapListEntry(50.0, lat);
 		add(tempMIO);
