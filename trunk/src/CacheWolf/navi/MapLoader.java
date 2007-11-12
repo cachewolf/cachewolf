@@ -213,7 +213,7 @@ public class MapLoader {
 			String filename = createFilename(mio.getCenter(), mio.scale);
 			String imagename = mio.setName(path, filename) + currentOnlineMapService.getImageFileExt();
 			String url = currentOnlineMapService.getUrlForBoundingBox(surArea, pixelsize);
-			downloadUrl(url, path+"/"+imagename);
+			downloadImage(url, path+"/"+imagename);
 			mio.saveWFL();
 		} catch (Exception e) {
 			this.progressInfobox.addWarning("Ignoring error during map download, saving or calibration:\n" + e.getMessage()+"\n");
@@ -225,7 +225,7 @@ public class MapLoader {
 		String filename = createFilename(mio.getCenter(), mio.scale);
 		String imagename = mio.setName(path, filename) + currentOnlineMapService.getImageFileExt();
 		String url = currentOnlineMapService.getUrlForCenterScale(center, scale, pixelsize);
-		downloadUrl(url, path+"/"+imagename);
+		downloadImage(url, path+"/"+imagename);
 		mio.saveWFL();
 	}
 
@@ -242,7 +242,7 @@ public class MapLoader {
 	 * and sometimes doesn't send a redirect on the first try 
 	 * @param datei path and name of file to save to
 	 */
-	public void downloadUrl(String url, String datei) throws IOException {
+	public void downloadImage(String url, String datei) throws IOException {
 		HttpConnection connImg; // TODO move proxy-handling in a global http-class
 		Socket sockImg;
 		FileOutputStream fos;
@@ -285,6 +285,13 @@ public class MapLoader {
 					i++;
 				}
 				if (i > 4) throw new IOException("loadTo: failed to download map: didn't get http-redirect");
+				String ct = (String)connImg.documentProperties.getValue("content-type", "");
+				if (!ct.substring(0, 5).equalsIgnoreCase("image") )  {
+					String tmp = connImg.readText(sockImg, null).toString(); // TODO if the content is binary will will get an Exception in InfoBox, trying to display the content
+					tmp = tmp.substring(0, (tmp.length() < 1000 ? tmp.length() : 1000));
+					sockImg.close();
+					throw new IOException("downloadImage: content-type: " + ct + " is not an image, begin of content: " + tmp); 
+				}
 				daten = connImg.readData(sockImg);
 				fos = new FileOutputStream(dateiF);
 				fos.write(daten.toBytes());
