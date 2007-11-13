@@ -110,6 +110,21 @@ Stream bytesToPost;
 Object originalPostData;
 
 /**
+ * Set these when the class is instantiated the first time.
+ * afterwards you don't need to set proxy parameters anymore
+ */
+
+private static String proxy = Global.getPref().myproxy;
+private static int proxyPort = Common.parseInt(Global.getPref().myproxyport);
+private static boolean useProxy = Global.getPref().proxyActive;
+
+public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {
+	proxy = proxyi;
+	proxyPort = proxyporti;
+	useProxy = useproxyi;
+}
+
+/**
  * This returns true if post data has been set for this connection.
  */
 public boolean hasPostData()
@@ -268,23 +283,29 @@ public HttpConnection(String host, int port, String document)
 public HttpConnection(String url)
 //===================================================================
 {
-	url = ewe.io.File.fixupPath(url);
-	//ewe.sys.Vm.debug("url: "+url);
-	port = 80;
-	String uu = url.toLowerCase();
-	if (uu.startsWith("http://")){
-		uu = url.replace('\\','/');
-		host = uu.substring(7);
-		int first = host.indexOf('/');
-		if (first == -1) document = "/";
-		else {
-			document = host.substring(first);
-			host = host.substring(0,first);
-		}
-		int colon = host.indexOf(':');
-		if (colon != -1){
-			port = ewe.sys.Convert.toInt(host.substring(colon+1));
-			host = host.substring(0,colon);
+	if (useProxy) { 
+		host = proxy;
+		port = proxyPort;
+		document = url;
+	} else {
+		url = ewe.io.File.fixupPath(url);
+		//ewe.sys.Vm.debug("url: "+url);
+		port = 80;
+		String uu = url.toLowerCase();
+		if (uu.startsWith("http://")){
+			uu = url.replace('\\','/');
+			host = uu.substring(7);
+			int first = host.indexOf('/');
+			if (first == -1) document = "/";
+			else {
+				document = host.substring(first);
+				host = host.substring(0,first);
+			}
+			int colon = host.indexOf(':');
+			if (colon != -1){
+				port = ewe.sys.Convert.toInt(host.substring(colon+1));
+				host = host.substring(0,colon);
+			}
 		}
 	}
 }

@@ -256,12 +256,7 @@ public class MapLoader {
 			forceredirect = false;
 			realurl = url;
 		}
-		if(proxy.length()>0){
-			connImg = new HttpConnection(proxy, Convert.parseInt(port), realurl);
-			//Vm.debug("Loading quelle: " + quelle);
-		}else{
-			connImg = new HttpConnection(realurl);
-		}
+		connImg = new HttpConnection(realurl);
 		connImg.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 		connImg.setRequestorProperty("Connection", "close");
 		connImg.setRequestorProperty("Cookie", "jscript=1; path=/;");
