@@ -1,6 +1,8 @@
-Name:	Bayern TK50
+TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
+GetCapabilitiesUrl:	http://www.geodaten.bayern.de/ogc/getogc.cgi?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
+Name:	de.by Topo 50
+MapType:	topo
 MainUrl:	http://www.geodaten.bayern.de/ogc/getogc.cgi?
-LayersName: 
 ServiceTypeUrlPart:	SERVICE=WMS 
 VersionUrlPart:	VERSION=1.1.1 
 CoordinateReferenceSystemCacheWolf:	31468 
