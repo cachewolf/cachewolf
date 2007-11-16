@@ -1,6 +1,7 @@
 # For an example and explantion please see readme_wms.txt, which
 # you can find in the program directory of CacheWolf. There
 # you always get the newest information about .wms format.
+# plaese include this hint in any .wms you create
 #
 # Please include the two lines (TakenFromUrl: and GetCapabilitiesUrl:)
 # and fill in accordingly in any .wms file you make. They
@@ -8,10 +9,8 @@
 # for someone who wants to make his own changes to your file.
 # 
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
-GetCapabilitiesUrl:	http://www.gis2.nrw.de/wmsconnector/wms/luftbild?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS	
-TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl:	http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
-Name:   de.nrw Topo 25
+Name:   de.nrw topo 25
 MapType:	topo
 MainUrl:   http://www.geoserver.nrw.de:80/GeoOgcWms1.3/servlet/TK25?
 ServiceTypeUrlPart:	SERVICE=WMS
@@ -25,6 +24,8 @@ ImageFormatUrlPart:	FORMAT=image/png
 BoundingBoxTopLeftWGS84:	N 52.7691 E 05.673
 BoundingBoxButtomRightWGS84:	N 49.9944 E 010.142
 MinScale:   0.0
-MaxScale:   11.667
+# the hintscale delivered from the getCapilibitiesUrl is a little bit higher (11.667) but this leads sometimes to empty maps
+# I tested that 11.0485 is probably the real MaxScale
+MaxScale:   11.0485
 RecommendedScale:	3
 ImageFileExtension:	.png
