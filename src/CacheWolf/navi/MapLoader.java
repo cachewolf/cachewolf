@@ -193,33 +193,6 @@ public class MapLoader {
 		progressInfobox = progrssInfoboxi;
 	}
 
-	/*
-	public static String createExpediaFilename(double lat, double lon, int alti) {
-		Double latD = new Double(), lonD = new Double();
-		latD.decimalPlaces = 4;
-		lonD.decimalPlaces = 4;
-		latD.set(lat);
-		lonD.set(lon);
-		return "expedia_alti"+alti+"_lat"+latD.toString().replace(',', '.')+"_lon"+lonD.toString().replace(',', '.')+".gif";
-	}
-	public void downloadMap(double lat, double lon, int alti, int PixelWidth, int PixelHeight, String path){
-		loadTo(lat, lon, alti, PixelWidth, PixelHeight, path+"/"+createExpediaFilename(lat, lon, alti));
-	}
-	 */
-
-	public void downloadMap(Area surArea, Point pixelsize, String path){
-		try {
-			MapInfoObject mio = currentOnlineMapService.getMapInfoObject(surArea, pixelsize);
-			String filename = createFilename(mio.getCenter(), mio.scale);
-			String imagename = mio.setName(path, filename) + currentOnlineMapService.getImageFileExt();
-			String url = currentOnlineMapService.getUrlForBoundingBox(surArea, pixelsize);
-			downloadImage(url, path+"/"+imagename);
-			mio.saveWFL();
-		} catch (Exception e) {
-			this.progressInfobox.addWarning("Ignoring error during map download, saving or calibration:\n" + e.getMessage()+"\n");
-		}
-	}
-
 	public void downloadMap(CWPoint center, float scale, Point pixelsize, String path) throws Exception {
 		MapInfoObject mio = currentOnlineMapService.getMapInfoObject(center, scale, pixelsize);
 		String filename = createFilename(mio.getCenter(), mio.scale);
@@ -341,7 +314,7 @@ class OnlineMapService {
 	}
 	/**
 	 * Overload this and return the URL to the map image, don't call super
-	 * Alternatively overload getUrlForBoundingBox
+	 * Alternatively overload getUrlForBoundingBoxInternal
 	 * You must overload either this method or getUrlForBoundingBox
 	 * @param center
 	 * @param scale
@@ -350,28 +323,30 @@ class OnlineMapService {
 	 */
 	public String getUrlForCenterScale(CWPoint center, float scale, Point pixelsize) {
 		Area bbox = CenterScaleToArea(center, scale, pixelsize);
-		String url = getUrlForBoundingBox(bbox, pixelsize);
+		String url = getUrlForBoundingBoxInternal(bbox, pixelsize);
 		return url;
 	}
 
-	public String getUrlForBoundingBox(Area surArea, Point pixelsize) {
-		CWPoint center = new CWPoint((surArea.topleft.latDec + surArea.buttomright.latDec)/2, (surArea.topleft.lonDec + surArea.buttomright.lonDec)/2);
-		double radiuslat = (new CWPoint(center.latDec, surArea.buttomright.lonDec)).getDistance(surArea.buttomright);
-		double radiuslon = (new CWPoint(surArea.buttomright.latDec, center.lonDec)).getDistance(surArea.buttomright);
-		float radius, scale;
-		if (radiuslat <= radiuslon) {
-			radius = (float) radiuslon;
-			scale = (float) (radiuslon / (double) pixelsize.x);
-		} else {
-			radius = (float) radiuslat;
-			scale = (float) (radiuslat / (double) pixelsize.y);
-		}
-		String ret = getUrlForCenterScale(center, scale, pixelsize);
-		//int expediaAlti = ((ExpediaMapService)currentOnlineMapService).getZoomlevel(center, radius * 1000, pixelsize);
-		return ret;
-		//throw new IllegalArgumentException("OnlineMapService: getUrlForBoundingBox:\n This method must be overloaded in order to be able to use it");
+	/**
+	 * This is made protected and named "...Internal" because a lot of services
+	 * don't work correctly when a map is requested, that is not exactly quadratic
+	 * --> alway use getUrlForCenter...
+	 * @param surArea
+	 * @param pixelsize
+	 * @return
+	 */
+	protected String getUrlForBoundingBoxInternal(Area surArea, Point pixelsize) {
+		return null;
 	}
 
+	/**
+	 * overload this if your map service uses a special projection
+	 * an return an Area that is quadratic in that projection
+	 * @param center
+	 * @param scale
+	 * @param pixelsize
+	 * @return
+	 */
 	public Area CenterScaleToArea(CWPoint center, float scale, Point pixelsize) {
 		Area bbox = new Area();
 		double halfdiagonal = Math.sqrt(pixelsize.x * pixelsize.x + pixelsize.y * pixelsize.y)/2 * scale / 1000;
@@ -379,13 +354,21 @@ class OnlineMapService {
 		bbox.buttomright = center.project(135, halfdiagonal);
 		return bbox;
 	}
-	public MapInfoObject getMapInfoObject(Area maparea, Point pixelsize) {
-		throw new IllegalArgumentException("OnlineMapService: getMapInfoObject(Area maparea, Point pixelsize):\n This method must be overloaded in order to be able to use it");
-	}
 
+	
+	protected MapInfoObject getMapInfoObjectInternal(Area maparea, Point pixelsize) {
+		throw new IllegalArgumentException("OnlineMapService: getMapInfoObjectInternal(Area maparea, Point pixelsize):\n This method must be overloaded in order to be able to use it");
+	}
+	
+	/**
+	 * Overload this (don't call super()) or alternatively overload getMapInfoObjectInternal
+	 * @param center
+	 * @param scale
+	 * @param pixelsize
+	 * @return
+	 */
 	public MapInfoObject getMapInfoObject(CWPoint center, float scale, Point pixelsize) {
-		return getMapInfoObject(CenterScaleToArea(center, scale, pixelsize), pixelsize);
-		//throw new IllegalArgumentException("OnlineMapService: (CWPoint center, double zoomlevel, Point pixelsize):\n This method must be overloaded in order to be able to use it");
+		return getMapInfoObjectInternal(CenterScaleToArea(center, scale, pixelsize), pixelsize);
 	}
 
 	public String toString() {
@@ -498,7 +481,7 @@ class WebMapService extends OnlineMapService {
 		return bbox;
 	}
 
-	public String getUrlForBoundingBox(Area maparea, Point pixelsize) {
+	protected String getUrlForBoundingBoxInternal(Area maparea, Point pixelsize) {
 		if (!boundingBox.isOverlapping(maparea)) throw new IllegalArgumentException("area: " + maparea.toString() + " not covered by service: " + name + ", service area: " + boundingBox.toString());
 		// http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetMap&SRS=EPSG:31466&BBOX=2577567.0149,5607721.7566,2578567.0077,5608721.7602&WIDTH=500&HEIGHT=500&LAYERS=Raster:TK25_KMF:Farbkombination&STYLES=&FORMAT=image/png
 		CWPoint buttomleft = new CWPoint (maparea.buttomright.latDec, maparea.topleft.lonDec);
@@ -545,7 +528,7 @@ class WebMapService extends OnlineMapService {
 		return crs;
 	}
 
-	public MapInfoObject getMapInfoObject(Area maparea, Point pixelsize) {
+	protected MapInfoObject getMapInfoObjectInternal(Area maparea, Point pixelsize) {
 		if (!boundingBox.isOverlapping(maparea)) throw new IllegalArgumentException("area: " + maparea.toString() + " not covered by service: " + name + ", service area: " + boundingBox.toString());
 		Vector georef = new Vector(4);
 
