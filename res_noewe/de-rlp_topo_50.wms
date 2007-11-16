@@ -1,0 +1,20 @@
+# please refer to readme_wms.txt for an explantion of this file format
+TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
+GetCapabilitiesUrl:	http://geodaten.service24.rlp.de/cgi/wms.cgi?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
+Name:	de.rlp topo 50
+MapType:	topo
+MainUrl:	http://geodaten.service24.rlp.de/cgi/wms.cgi?
+ServiceTypeUrlPart:	SERVICE=WMS 
+VersionUrlPart:	VERSION=1.1.1 
+CoordinateReferenceSystemCacheWolf:   31466 31467
+CoordinateReferenceSystemUrlPart:   SRS=EPSG:31466 SRS=EPSG:31467
+RequestUrlPart:   REQUEST=GetMap
+LayersUrlPart:   LAYERS=rlp%3Atk50
+StylesUrlPart:   STYLES=
+ImageFormatUrlPart:   FORMAT=image/png
+BoundingBoxTopLeftWGS84:   N 50.400 E 6.000
+BoundingBoxButtomRightWGS84:   N 49.300 E 8.200
+MinScale:   7.001
+MaxScale:   15.0
+RecommendedScale:	5.0
+ImageFileExtension: .png 
