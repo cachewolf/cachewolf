@@ -17,10 +17,19 @@ public final class Common {
 	public static double parseDouble(String value){
 		// returns 0 for invalid arguments
 		try {
-			return java.lang.Double.parseDouble(value.replace(notDigSep,digSep));
+			return parseDoubleException (value);
 		} catch (Exception e) {
 			return 0.0;
 		}
+	}
+
+	/**
+	 * throws some exception if the string could not be converted to double
+	 * @param value
+	 * @return
+	 */
+	public static double parseDoubleException (String value) {
+			return java.lang.Double.parseDouble(value.replace(notDigSep,digSep));
 	}
 	
 	public static int parseInt(String value){

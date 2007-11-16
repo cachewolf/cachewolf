@@ -28,6 +28,12 @@ public class MapImage extends AniImage {
 		if (screenDim == null) screenDim = new Dimension(0,0);
 	}
 
+	/**
+	 * Best you call this routine before you make any instance of MapImage
+	 * If the windows size changes after instantiation call  screenDimChanged()
+	 * for every symbol.
+	 * 
+	 */
 	public static void setScreenSize(int w, int h) {
 		screenDim = new Dimension(w, h);
 	}
@@ -66,6 +72,13 @@ public class MapImage extends AniImage {
 				(locAlways.y + location.height > 0 && locAlways.y < screenDim.height) ) return true;
 		else return false;
 	}
+
+	public void screenDimChanged() {
+		move(locAlways.x, locAlways.y);
+		//if (!hidden && isOnScreen()) properties &= ~AniImage.IsInvisible;
+		//else properties |= AniImage.IsInvisible;
+	}
+
 
 	public void hide() {
 		hidden = true;

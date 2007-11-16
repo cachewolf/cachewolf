@@ -99,12 +99,12 @@ public class MapsList extends Vector {
 	 * it always returns a map (if the list is not empty) as long as it overlaps the screen
 	 * @param forceScale: when true, return null if no map with specified scale could be found
 	 */
-	public MapInfoObject getBestMap(double lat, double lon, Rect screen, float scale, boolean forceScale) {
+	public MapInfoObject getBestMap(CWPoint ll, Rect screen, float scale, boolean forceScale) {
 		if (size() == 0) return null;
 		long start = new Time().getTime();
 		InfoBox progressBox = null;
 		boolean showprogress = false;
-		String cmp = "FF1"+Area.getEasyFindString(new CWPoint(lat, lon), 30);
+		String cmp = "FF1"+Area.getEasyFindString(ll, 30);
 		MapListEntry ml;
 		MapInfoObject mi;
 		MapInfoObject bestMap = null; // = (MapInfoObject)get(0);
@@ -131,28 +131,28 @@ public class MapsList extends Vector {
 			better = false;
 //			mi = (MapInfoObject)get(i);
 			if (screenArea == null || !scaleEquals(lastscale, mi) ) {
-				screenArea = getAreaForScreen(screen, lat, lon, mi.scale, mi);
+				screenArea = getAreaForScreen(screen, ll, mi.scale, mi);
 				lastscale = mi.scale;
 			}
 			if (screenArea.isOverlapping(mi) ) { // is on screen
 				if (!forceScale || (forceScale && !scaleEquals(scale, mi))) { // different scale?
-					if (!forceScale && (mi.isInBound(lat, lon) && (bestMap == null || scaleNearer(mi.scale, bestMap.scale, scale) || !bestMap.isInBound(lat, lon)))) 
+					if (!forceScale && (mi.isInBound(ll) && (bestMap == null || scaleNearer(mi.scale, bestMap.scale, scale) || !bestMap.isInBound(ll)))) 
 						better = true; // inbound and resolution nearer at wanted resolution or old one is on screen but lat/long not inbound-> better
 					else {
 						if ( bestMap == null || scaleNearerOrEuqal(mi.scale, bestMap.scale, scale)) {
-							latNearer = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
-							lonNearer = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm < minDistLon;
+							latNearer = java.lang.Math.abs(ll.latDec - mi.center.latDec)/mi.sizeKm < minDistLat ;
+							lonNearer = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
 							if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
 							else {
 								if ( (latNearer || lonNearer )) { 
-									if (bestMap == null || mi.center.getDistanceRad(lat, lon) < bestMap.center.getDistanceRad(lat, lon) ) better = true;
+									if (bestMap == null || mi.center.getDistanceRad(ll) < bestMap.center.getDistanceRad(ll) ) better = true;
 								}
 							}
 						}
 					}
 					if (better) {
-						minDistLat = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm;
-						minDistLon = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm;
+						minDistLat = java.lang.Math.abs(ll.latDec - mi.center.latDec)/mi.sizeKm;
+						minDistLon = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm;
 						bestMap = mi;
 						// Vm.debug("better"+ i);
 					}
@@ -218,7 +218,7 @@ public class MapsList extends Vector {
 						if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
 						else {
 							if ( (latNearer || lonNearer )) { 
-								if (mi.center.getDistanceRad(topleft.latDec, topleft.lonDec) < fittingmap.center.getDistanceRad(topleft.latDec, topleft.lonDec) ) better = true;
+								if (mi.center.getDistanceRad(topleft) < fittingmap.center.getDistanceRad(topleft) ) better = true;
 							}
 						}
 
@@ -248,7 +248,7 @@ public class MapsList extends Vector {
 	 * @param moreDetails true: find map with more details == higher resolustion = lower scale / false find map with less details = better overview
 	 * @return
 	 */
-	public MapInfoObject getMapChangeResolution(double lat, double lon, Rect screen, float curScale, boolean moreDetails){
+	public MapInfoObject getMapChangeResolution(CWPoint ll, Rect screen, float curScale, boolean moreDetails){
 		if (size() == 0) return null;
 		long start = new Time().getTime();
 		InfoBox progressBox = null;
@@ -262,7 +262,7 @@ public class MapsList extends Vector {
 		boolean better = false;
 		Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMap.scale, bestMap);
 		float lastscale = -1;
-		String cmp = "FF1"+Area.getEasyFindString(new CWPoint(lat, lon), 30);
+		String cmp = "FF1"+Area.getEasyFindString(ll, 30);
 		for (int i=size()-1; i >= 0 ;i--) { 
 			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 				showprogress = true;      
@@ -279,28 +279,28 @@ public class MapsList extends Vector {
 			} catch (IOException ex) {continue; } // could not read .wfl-file
 			if (mi.fileNameWFL == "") continue; // exclude "maps" without image // TODO make this a boolean in MapInfoObject
 			if (screenArea == null || !scaleEquals(lastscale, mi)) {
-				screenArea = getAreaForScreen(screen, lat, lon, mi.scale, mi);
+				screenArea = getAreaForScreen(screen, ll, mi.scale, mi);
 				lastscale = mi.scale;
 			}
 			if (screenArea.isOverlapping(mi)) { // is on screen
 				if (bestMap == null || !scaleEquals(mi, bestMap)) { // different scale than known bestMap?
-					if (mi.isInBound(lat, lon) && (      // more details wanted and this map has more details?                                // less details than bestmap
+					if (mi.isInBound(ll) && (      // more details wanted and this map has more details?                                // less details than bestmap
 							(moreDetails && (curScale > mi.scale * scaleTolerance) && (bestMap == null || mi.scale > bestMap.scale * scaleTolerance ) ) // higher resolution wanted and mi has higher res and a lower res than bestmap, because we dont want to overjump one resolution step
 							|| (!moreDetails && (curScale *  scaleTolerance < mi.scale) && (bestMap == null || mi.scale * scaleTolerance < bestMap.scale) ) // lower resolution wanted and mi has lower res and a higher res than bestmap, because we dont want to overjump one resolution step
 					) )	better = true;	// inbound and higher resolution if higher res wanted -> better
 				} else { // same scale as bestmap -> look if naerer 
-					latNearer = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm < minDistLat ;
-					lonNearer = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm < minDistLon;
+					latNearer = java.lang.Math.abs(ll.latDec - mi.center.latDec)/mi.sizeKm < minDistLat ;
+					lonNearer = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
 					if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
 					else {
 						if ( (latNearer || lonNearer )) { 
-							if (bestMap == null || mi.center.getDistanceRad(lat, lon) < bestMap.center.getDistanceRad(lat, lon) ) better = true;
+							if (bestMap == null || mi.center.getDistanceRad(ll) < bestMap.center.getDistanceRad(ll) ) better = true;
 						}
 					}
 				} // same scale
 				if (better) {
-					minDistLat = java.lang.Math.abs(lat - mi.center.latDec)/mi.sizeKm;
-					minDistLon = java.lang.Math.abs(lon - mi.center.lonDec)/mi.sizeKm;
+					minDistLat = java.lang.Math.abs(ll.latDec - mi.center.latDec)/mi.sizeKm;
+					minDistLon = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm;
 					bestMap = mi;
 					// Vm.debug("better"+ i);
 				}
@@ -322,9 +322,9 @@ public class MapsList extends Vector {
 	 * @param map map for which the screen edges are wanted
 	 * @return
 	 */
-	private Area getAreaForScreen(Rect a, double lat, double lon, float scale, MapInfoObject map) {
+	private Area getAreaForScreen(Rect a, CWPoint ll, float scale, MapInfoObject map) {
 		Area ret = null;
-		Point xy = map.calcMapXY(lat, lon);
+		Point xy = map.calcMapXY(ll);
 		Point topleft = new Point(xy.x - a.x, xy.y - a.y);
 		ret = new Area(map.calcLatLon(topleft), map.calcLatLon(topleft.x+a.width, topleft.y+a.height));
 		return ret; 

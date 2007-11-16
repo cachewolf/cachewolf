@@ -110,14 +110,14 @@ public class TransformCoordinates {
 	 * @return
 	 */
 	public static CWPoint germanGkToWgs84(GkPoint gk) {
-/*		if (gk.northing <= 6089288.064 && gk.northing >= 5585291.767 && // these coordinates are transformed ones from the invers routine
+		if (gk.northing <= 6089288.064 && gk.northing >= 5585291.767 && // these coordinates are transformed ones from the invers routine
 				( gk.getStripe() == 4 && gk.getGkEasting() >= 4404124.247 && gk.getGkEasting() <= 4679300.398) ||
 				( gk.getStripe() == 5 && gk.getGkEasting() >= 5211904.597 && gk.getGkEasting() <= 5466056.603)
 			) return gkToWgs84(gk, GK_GERMANY_2001);
 		if (gk.northing <= 6097247.910 && gk.northing >= 5800464.725 )return gkToWgs84(gk, GK_NORD_GERMANY);
 		if (gk.northing <= 5800464.725 && gk.northing >= 5577963.555 )return gkToWgs84(gk, GK_NORD_GERMANY);
 		if (gk.northing <= 5577963.555 && gk.northing >= 5207294.028 )return gkToWgs84(gk, GK_NORD_GERMANY);
-	*/	return  gkToWgs84(gk, GK_GERMANY_2001); 	//TODO use more lokalized transformparameters, which can be obtained from the Landesvermessungsämter
+		return  gkToWgs84(gk, GK_GERMANY_2001); 	//TODO use more lokalized transformparameters, which can be obtained from the Landesvermessungsämter
 	}
 
 	/**
@@ -134,12 +134,12 @@ public class TransformCoordinates {
 		return  wgs84ToGk(ll, getGermanGkTransformParameters(ll)); 	
 	}
 	
-	public static TransformParameters getGermanGkTransformParameters(CWPoint ll) {
-	/*	if (FORMER_GDR.isInBound(ll)) return GK_GERMANY_2001; // exlcude former GDR from the splitting germany in north/middel/south
+	public static TransformParameters getGermanGkTransformParameters(TrackPoint ll) {
+		if (FORMER_GDR.isInBound(ll)) return GK_GERMANY_2001; // exlcude former GDR from the splitting germany in north/middel/south
 		if (ll.latDec <= 55 && ll.latDec >= 52.33333334 ) return  GK_NORD_GERMANY;
 		if (ll.latDec <= 52.33333334  && ll.latDec >= 50.33333334 ) return  GK_MID_GERMANY;
 		if (ll.latDec <= 50.33333334  && ll.latDec >= 47) return  GK_MID_GERMANY;
-	*/	return GK_GERMANY_2001;
+		return GK_GERMANY_2001;
 	}
 	
 	/**
@@ -181,7 +181,7 @@ public class TransformCoordinates {
 	 * @param stripe stripe to force to, otherwise -1 will determine the stripe automatically
 	 * @return
 	 */ // TODO find out what about the Krassowski in former GDR?
-	public static GkPoint wgs84ToGk(CWPoint ll, TransformParameters gk2wgs84, int stripe, int stripewidth) {
+	public static GkPoint wgs84ToGk(TrackPoint ll, TransformParameters gk2wgs84, int stripe, int stripewidth) {
 		XyzCoordinates wgsxyz = latLon2xyz(ll, 0, WGS84);
 		XyzCoordinates gkxyz = transform(wgsxyz, new TransformParameters(gk2wgs84, true));
 		CWPoint gkll = xyz2Latlon(gkxyz, BESSEL);
@@ -211,7 +211,7 @@ public class TransformCoordinates {
 	 * @return
 	 * @throws IllegalArgumentException if EPSG code is not german GK or unsupported
 	 */
-	public static GkPoint wgs84ToGermanGk(CWPoint wgs84, int epsgcode) throws IllegalArgumentException {
+	public static GkPoint wgs84ToGermanGk(TrackPoint wgs84, int epsgcode) throws IllegalArgumentException {
 		return wgs84ToGk(wgs84, getGermanGkTransformParameters(wgs84), getGermanGkStripeEpsg(epsgcode), 3);
 	}
 	
@@ -227,7 +227,7 @@ public class TransformCoordinates {
 		return stripe; 
 	}
 	
-	private static XyzCoordinates latLon2xyz(CWPoint ll, double alt, Ellipsoid ellipsoid) {
+	private static XyzCoordinates latLon2xyz(TrackPoint ll, double alt, Ellipsoid ellipsoid) {
 		if (!ll.isValid()) throw new IllegalArgumentException("latLon2xyz: invalid lat-lon");
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
 		double N = ellipsoid.a/ Math.sqrt(1 - e2 * Math.pow(Math.sin(ll.latDec / 180*Math.PI), 2));
@@ -379,13 +379,6 @@ class XyzCoordinates {
 	}
 }
 
-class Ellipsoid {
-	public double a, b;
-	public Ellipsoid(double ai, double bi) {
-		a = ai;
-		b = bi;
-	}
-}
 
 class TransformParameters {
 	// shift parameter in meter
