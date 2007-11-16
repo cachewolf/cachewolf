@@ -6,6 +6,7 @@
 # e.g. "de-ni_topo_25", meaning germany (de), Niedersachen (ni), topographical map, original scale 1:50000.
 # Please don't use capital letter or special characters (only "a-z0-9" and "-_" are allowed) 
 # in the filename in order to avoid problems on different platforms
+# Please include in every .wms you create a reference to this explanation file
 #
 # For a list of WMS Services available in Germany see: http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 # This example is made up from there "Digitales Orthophoto" under section "Nordrhein-Westfalen"
