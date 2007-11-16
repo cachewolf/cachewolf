@@ -165,9 +165,7 @@ public class TrackOverlay extends MapImage {
 
 	public TrackPoint calcLatLonInImage (double x, double y) {
 		// see trans.calcLatLon(p);
-		TrackPoint ll = new TrackPoint(); 
-		ll.latDec = (double)x * trans.affine[0] + (double)y * trans.affine[2] + topLeft.latDec;
-		ll.lonDec = (double)x * trans.affine[1] + (double)y * trans.affine[3] + topLeft.lonDec;
+		TrackPoint ll = new TrackPoint(trans.calcLatLon((int)x, (int)y)); 
 		return ll;
 	}
 

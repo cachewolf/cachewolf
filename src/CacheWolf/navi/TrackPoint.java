@@ -33,6 +33,15 @@ public class TrackPoint  {
 	public boolean equals(TrackPoint tp) {
 		return latDec == tp.latDec && lonDec == tp.lonDec;
 	}
+	
+	/**
+	 * Returns true if the coordinates are valid
+	 */
+	public boolean isValid() {
+		return 	latDec <= 90.0 && latDec >= -90.0 &&
+				lonDec <= 360 && lonDec >= -360;
+	}
+
 
 }
 

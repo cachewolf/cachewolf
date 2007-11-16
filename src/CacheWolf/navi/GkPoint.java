@@ -13,6 +13,10 @@ public class GkPoint {
 
 	public GkPoint() { super(); }
 	
+	public GkPoint(GkPoint p) {
+		set(p.easting, p.northing, p.stripe, p.stripewidth);
+	}
+	
 	/**
 	 * e containing the number of the stripe
 	 * @param e

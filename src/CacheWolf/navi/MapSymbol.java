@@ -1,23 +1,23 @@
 package CacheWolf.navi;
 
+import CacheWolf.CWPoint;
 import ewe.fx.*;
 import ewe.graphics.*;
 
-public class MapSymbol extends AniImage { // TODO make this implement MapImage, so that it will be invisible automatically if not on screen. When doing so, test if setgoto-pos -> open map from gotopanel shows the map symbols (directly after starting CW)
+public class MapSymbol extends MapImage { // TODO make this implement MapImage, so that it will be invisible automatically if not on screen. When doing so, test if setgoto-pos -> open map from gotopanel shows the map symbols (directly after starting CW)
 	Object mapObject;
 	String name;
 	String filename;
-	double lat, lon;
-	public MapSymbol(String namei, String filenamei, double lati, double loni) {
+	CWPoint where;
+	
+	public MapSymbol(String namei, String filenamei, CWPoint where_) {
 		name = namei;
 		filename = filenamei;
-		lat = lati;
-		lon = loni;
+		where = where_;
 	}
-	public MapSymbol(String namei, Object mapObjecti, Image fromIm, double lati, double loni) {
+	public MapSymbol(String namei, Object mapObjecti, Image fromIm, CWPoint where_) {
 		name = namei;
-		lat = lati;
-		lon = loni;
+		where = where_;
 		mapObject = mapObjecti;
 		setImage(fromIm);
 	}

@@ -326,7 +326,7 @@ public class MainTab extends mTabbedPanel {
 				nav.setMovingMap(mm);
 			} 
 			if (forceCenter) mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
-			mm.updatePosition(centerTo.latDec, centerTo.lonDec);
+			mm.updatePosition(centerTo);
 			mm.myExec();
 			if (forceCenter) {
 				try {
@@ -334,7 +334,7 @@ public class MainTab extends mTabbedPanel {
 					while (MapImage.screenDim.width == 0 && i < 10*60) { i++; ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
 					if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", MessageBox.OKB)).execute(); return;}
 					mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
-					mm.updatePosition(centerTo.latDec, centerTo.lonDec);
+					mm.updatePosition(centerTo);
 					/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
 				mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS if GPS-pos is not on the screen
 				mm.setResModus(MovingMap.HIGHEST_RESOLUTION);

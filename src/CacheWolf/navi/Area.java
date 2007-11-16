@@ -24,7 +24,7 @@ public class Area {
 		 buttomright = new CWPoint(br);
 	 }
 
-	 public boolean isInBound(CWPoint p) {
+	 public boolean isInBound(TrackPoint p) {
 		 if (topleft.latDec >= p.latDec && topleft.lonDec <= p.lonDec 
 				 && buttomright.latDec <= p.latDec && buttomright.lonDec >= p.lonDec) return true;
 		 else return false;

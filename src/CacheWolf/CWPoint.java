@@ -272,13 +272,6 @@ public class CWPoint extends TrackPoint{
 		this.utmValid = false;
 	}
 
-	/*
-	 * Returns true if the coordinates are valid
-	 */
-	public boolean isValid() {
-		return 	latDec <= 90.0 && latDec >= -90.0 &&
-				lonDec <= 360 && lonDec >= -360;
-	}
 	
 	/**
 	 * shift the point
@@ -485,7 +478,7 @@ public class CWPoint extends TrackPoint{
 		c = (float)(distance/1.852);
 		c = (float)(java.lang.Math.PI/(180*60))*c;
 		az = (float)((degrees/180)*java.lang.Math.PI);
-
+		// c = (float) (distance * 1000 / ((TransformCoordinates.WGS84.a + TransformCoordinates.WGS84.b) / 2)); 
 		LatLonPoint lldst = llsrc.getPoint(c,az);
 		
 		return new CWPoint(lldst);
@@ -557,6 +550,10 @@ public class CWPoint extends TrackPoint{
 	public double getDistanceRad (double latDecD, double lonDecD){
 		LatLonPoint src = new LatLonPoint(this.latDec, this.lonDec);
 		return src.distance(new LatLonPoint(latDecD, lonDecD));
+	}
+	
+	public double getDistanceRad (CWPoint ll) {
+		return getDistance(ll.latDec, ll.lonDec);
 	}
 
 	
