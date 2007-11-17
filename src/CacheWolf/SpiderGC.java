@@ -1309,8 +1309,7 @@ public class SpiderGC{
 		char d = 0;
 		for (int i = 0; i<max; i++){
 			char c = (char) what[i];
-			if (c == ' ') c = '+';
-			else if (c <= ' ' || c == '+' || c == '&' || c == '%' || c == '=' ||
+			if (c <= ' ' || c == '+' || c == '&' || c == '%' || c == '=' ||
 				   c == '|' || c == '{' || c == '}' || c>0x7f ){
 					dest[d++] = '%';
 					dest[d++] = hex.charAt((c >> 4) & 0xf);
