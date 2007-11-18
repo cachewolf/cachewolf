@@ -188,18 +188,25 @@ public class MapLoader {
 	public void setProgressInfoBox (InfoBox progrssInfoboxi) {
 		progressInfobox = progrssInfoboxi;
 	}
-
+	/**
+	 * 
+	 * @param center
+	 * @param scale
+	 * @param pixelsize
+	 * @param path must include trailing "/"
+	 * @throws Exception
+	 */
 	public void downloadMap(CWPoint center, float scale, Point pixelsize, String path) throws Exception {
 		MapInfoObject mio = currentOnlineMapService.getMapInfoObject(center, scale, pixelsize);
 		String filename = createFilename(mio.getCenter(), mio.scale);
 		String imagename = mio.setName(path, filename) + currentOnlineMapService.getImageFileExt();
 		String url = currentOnlineMapService.getUrlForCenterScale(center, scale, pixelsize);
-		downloadImage(url, path+"/"+imagename);
+		downloadImage(url, path+imagename);
 		mio.saveWFL();
 	}
 
 	public String createFilename(CWPoint center, float scale) {
-		String filename = Common.ClearForFileName(currentOnlineMapService.getName()+"_s"+Common.DoubleToString(scale, 1)
+		String filename = Common.ClearForFileName(currentOnlineMapService.getNameForFileSystem()+"_s"+Common.DoubleToString(scale, 1)
 				+ "_c" + center.toString(CWPoint.LAT_LON).replace(',', '-'));
 		return filename;
 	}
@@ -272,8 +279,12 @@ public class MapLoader {
 }
 
 class OnlineMapService {
+	/** Friendly name of the service */
 	String name;
+	/** Type of map (used as directory name when downloading maps. We currently have "topo" and "photo" defined as map types */
 	String mapType;
+	/** Esentially the same as name, but used for the file system. It will be part of the names of the downloaded images */ 
+	String filename;
 	String MainUrl; //http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS
 	/** including "." */
 	String imageFileExt; // ".gif", ".jpg"...
@@ -305,6 +316,17 @@ class OnlineMapService {
 	public String getName() {
 		return name;
 	}
+
+	/** 
+	 * This method is called to get a name of the 
+	 * online map service which will be part of the filename
+	 * used for the downloaded image
+	 * @return friendly service name
+	 */
+	public String getNameForFileSystem() {
+		return filename;
+	}
+
 	public String getMapType() {
 		return mapType;
 	}
@@ -390,11 +412,13 @@ class WebMapService extends OnlineMapService {
 	 * @throws IOException
 	 * @throws IllegalArgumentException
 	 */
-	public WebMapService (String filename) throws IOException, IllegalArgumentException{
-		FileInputStream in = new FileInputStream(filename);
+	public WebMapService (String filename_) throws IOException, IllegalArgumentException{
+		FileInputStream in = new FileInputStream(filename_);
 		Properties wms = new Properties();
 		wms.load(in);
 		in.close();
+		String tmp = File.getFileExt(filename_);
+		this.filename = File.getFileExt(tmp).substring(0, tmp.lastIndexOf('.'));
 		name = wms.getProperty("Name", "").trim();
 		if (name == "") throw new IllegalArgumentException("WebMapService: property >Name:< missing in file:\n" + filename);
 		MainUrl = wms.getProperty("MainUrl", "").trim();;
@@ -403,7 +427,7 @@ class WebMapService extends OnlineMapService {
 		serviceTypeUrlPart = wms.getProperty("ServiceTypeUrlPart", "SERVICE=WMS").trim();
 		layersUrlPart = wms.getProperty("LayersUrlPart", "").trim();;
 		versionUrlPart = wms.getProperty("VersionUrlPart", "").trim();;
-		String tmp = wms.getProperty("CoordinateReferenceSystemCacheWolf", "").trim();
+		tmp = wms.getProperty("CoordinateReferenceSystemCacheWolf", "").trim();
 		if (tmp.equals("")) throw new IllegalArgumentException("WebMapService: no CoordinateReferenceSystemCacheWolf given");
 		String[] tmp2 = mString.split(tmp, ' ');
 		coordinateReferenceSystem = new int[tmp2.length];
@@ -594,6 +618,7 @@ class ExpediaMapService extends OnlineMapService {
 
 	public ExpediaMapService() {
 		name = "Expedia";
+		filename = "expedia";
 		MainUrl = "Rhttp://www.expedia.de/pub/agent.dll?qscr=mrdt&ID=3kQaz."; //"Rhttp://" forces doenloadUrl to retry the URL until it gets an http-redirect and then downloads from there 
 		imageFileExt = ".gif";
 		mapType = "expedia";
