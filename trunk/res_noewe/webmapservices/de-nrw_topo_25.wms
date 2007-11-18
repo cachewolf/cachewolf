@@ -10,7 +10,7 @@
 # 
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl:	http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
-Name:   de.nrw topo 25
+Name:   de.nrw Topo 25
 MapType:	topo
 MainUrl:	http://www.geoserver.nrw.de:80/GeoOgcWms1.3/servlet/TK25?
 ServiceTypeUrlPart:	SERVICE=WMS

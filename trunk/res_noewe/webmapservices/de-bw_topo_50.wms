@@ -1,6 +1,6 @@
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl:	http://www.lv-bw.de/dv/capabilities.xml?login=dv&pw=anonymous&REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
-Name:	de.bw topo 50
+Name:	de.bw Topo 50
 MapType:	topo
 MainUrl:	http://www.lv-bw.de/dv/service/getrds2.asp?login=dv&pw=anonymous&
 ServiceTypeUrlPart:	SERVICE=WMS 
