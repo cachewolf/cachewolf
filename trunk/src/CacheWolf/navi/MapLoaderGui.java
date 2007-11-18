@@ -66,7 +66,7 @@ public class MapLoaderGui extends Form {
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 		center = new CWPoint(pref.curCentrePt);
 		cacheDB = cacheDBi;
-		mapLoader = new MapLoader(Global.getPref().myproxy, Global.getPref().myproxyport, File.getProgramDirectory());
+		mapLoader = new MapLoader(File.getProgramDirectory()+"/"+"webmapservices");
 
 		// sort the items in the list of services in a way that services which cover the current center point.
 		unsortedMapServices = mapLoader.getAvailableOnlineMapServices();
