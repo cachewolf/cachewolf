@@ -137,7 +137,7 @@ public class MapInfoObject extends Area {
 
 	/**
 	 * 
-	 * @param path
+	 * @param path including trailing "/"
 	 * @param n without ".wfl"
 	 * @return name of the map including fast-find-prefix
 	 */
