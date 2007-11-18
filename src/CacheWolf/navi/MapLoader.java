@@ -29,8 +29,6 @@ import utils.FileBugfix;
 
 
 public class MapLoader {
-	String proxy = new String();
-	String port = new String();
 	InfoBox progressInfobox;
 
 	Vector onlineMapServices = new Vector();
@@ -50,9 +48,7 @@ public class MapLoader {
 	 * @param prt
 	 * @param wmspath without trailing "/"
 	 */
-	public MapLoader(String prxy, String prt, String wmspath){
-		port = prt;
-		proxy = prxy;
+	public MapLoader(String wmspath){
 		progressInfobox = null;
 		onlineMapServices = new Vector();
 		String dateien[];
