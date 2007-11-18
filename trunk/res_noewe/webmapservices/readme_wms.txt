@@ -1,9 +1,9 @@
 # This is an example and explantion of an wms definition file.
 # copy and rename this file to the extension .wms
-# You can add your own .wms file to the program directory of
-# cachwolf and the new service will be available in the download maps dialog
+# You can add your own .wms file to this directory 
+# and the new service will be available in the download maps dialog
 # name the file this way: <internet domain of the covered region, replace "." by "-" and inverse the order>_<type of map>_<original scale>.wms
-# e.g. "de-ni_topo_25", meaning germany (de), Niedersachen (ni), topographical map, original scale 1:50000.
+# e.g. "de-ni_topo_50", meaning germany (de), Niedersachen (ni), topographical map, original scale 1:50000.
 # Please don't use capital letter or special characters (only "a-z0-9" and "-_" are allowed) 
 # in the filename in order to avoid problems on different platforms
 # Please include in every .wms you create a reference to this explanation file
@@ -31,6 +31,7 @@ GetCapabilitiesUrl:	http://www.gis2.nrw.de/wmsconnector/wms/luftbild?REQUEST=Get
 # "en Airial photo" or "de.th Topo 1:50"
 Name:	de.nrw Luftbild
 # taken from getCapabilieties answer: <HTTP><GET><OnlineResource xlink:href=
+# note: if it doesn't work, please try adding an "?" to the URL got from there
 MainUrl:	http://www.gis2.nrw.de/wmsconnector/wms/luftbild? 
 # if this service delivers topografical maps, fill in here "topo"
 # if it delivers aerial photographs fill in "photo".
@@ -52,7 +53,7 @@ VersionUrlPart:	VERSION=1.1.0
 # In case the wms server accepts coordinates in more than one Gauß-Krüger stripe
 # you can list the epsg codes here, seperated by a space. CacheWolf will
 # automatically make use of the correct stripe. 
-# The Strings in the UrlPart must match the corresponding number here
+# The sequens of strings in the UrlPart must match sequence of the corresponding numbers here.
 # Sometimes the wms-Server provides only one stripe, in spite of the fact, that
 # the map it provides is not completely within this stripe. In this case
 # just list only this epsg code. CacheWolf will automatically calculate the
