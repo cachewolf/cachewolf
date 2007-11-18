@@ -9,4 +9,5 @@ rm ./work/*.ico
 cp resources/*.* work
 cp res_noewe/*.* work
 cp resources/attributes/*.* work/attributes
+cp res_noewe/webmapservices/*.* work/webmapservices/*.*
 mv work/cachewolf.Languages.cfg work/_config/cachewolf.Languages.cfg
