@@ -1,7 +1,7 @@
 # please refere to readme_wms.txt for an explantion of this file format
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl:	http://www.geodaten.bayern.de/ogc/getogc.cgi?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
-Name:	de.by topo 50
+Name:	de.by Topo 50
 MapType:	topo
 MainUrl:	http://www.geodaten.bayern.de/ogc/getogc.cgi?
 ServiceTypeUrlPart:	SERVICE=WMS 
