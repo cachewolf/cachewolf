@@ -15,14 +15,17 @@ if test '!' -e programs/CacheWolf/Jar/CacheWolf.bat; then
 	exit 1
 fi
 mkdir -p published/dat/attributes
+mkdir -p published/dat/webmapservices
 mv programs/CacheWolf/* published/
 chmod 755 published/*
 chmod 644 published/*/*
 chmod 755 published/dat/attributes
+chmod 755 published/dat/webmapservices
 printf '1,$g/ 12M/s///\nwq\n' | ed -s published/Jar/CacheWolf.bat
 install -c -m 644 work/CacheWolf.ewe published/
 install -c -m 644 res_noewe/* published/dat/
 install -c -m 644 resources/attributes-big/*.gif published/dat/attributes/
+install -c -m 644 res_noewe/webmapservices/* published/dat/webmapservices/
 (cd published/dat && find * -type f | sort | \
     /usr/local/bin/cpio -oC512 -Hustar -Mdist >../datfiles.tar)
 rm -rf published/dat
