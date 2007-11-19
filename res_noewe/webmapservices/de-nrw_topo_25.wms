@@ -27,5 +27,5 @@ MinScale:   0.0
 # the hintscale delivered from the getCapilibitiesUrl is a little bit higher (11.667) but this leads sometimes to empty maps
 # I tested that 11.0485 is probably the real MaxScale
 MaxScale:   11.0485
-RecommendedScale:	3
+RecommendedScale:	2.5
 ImageFileExtension:	.png
