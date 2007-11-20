@@ -127,7 +127,7 @@ public class HTMLExporter{
 						page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(holder.Hints));
 						dummy = new String();
 						for(int j = 0; j<holder.CacheLogs.size(); j++){
-							dummy = dummy + holder.CacheLogs.getLog(j).toHtml()+"<br>";
+							dummy = dummy + STRreplace.replace(holder.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null)+"<br>";
 						}
 						page_tpl.setParam("LOGS", dummy);
 						page_tpl.setParam("NOTES", STRreplace.replace(holder.CacheNotes, "\n","<br>"));

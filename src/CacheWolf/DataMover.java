@@ -176,7 +176,7 @@ public class DataMover {
 		    fis.close();
 	    }
 	    catch (Exception ex){
-	    	Vm.debug("Filecopy failed");
+	    	Vm.debug("Filecopy failed: "+sFileSrc+"=>"+sFileDst);
 	    }
 	}
 
