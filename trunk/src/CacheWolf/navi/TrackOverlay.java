@@ -22,6 +22,7 @@ public class TrackOverlay extends MapImage {
 	Graphics drawMask;
 	int test;
 	MapInfoObject trans; 
+	Point pixelShift;
 	public Vector tracks;
 	boolean imageChangesDontShow = false;
 	public Point trackPixels[] = null;
@@ -34,8 +35,7 @@ public class TrackOverlay extends MapImage {
 		super();
 		topLeft = new TrackPoint(topLefti);
 		trans = new MapInfoObject(transi);
-		Point pixelShift = trans.calcMapXY(topLeft);
-		trans.zoom(1, pixelShift.x, pixelShift.y);
+		pixelShift = trans.calcMapXY(topLeft);
 		bottomRight = trans.calcLatLon(widthi, highti);
 		if (ewe.sys.Vm.getPlatform().equalsIgnoreCase("java")) {
 			useTransparentColor = true; 
@@ -112,8 +112,8 @@ public class TrackOverlay extends MapImage {
 		if (where.latDec < bottomRight.latDec || where.latDec > topLeft.latDec || where.lonDec < topLeft.lonDec || where.lonDec > bottomRight.lonDec) return false;
 		//ewe.sys.Vm.debug("showlastaddedpoint, lat: "+lat+"   lon: "+lon);
 		Point p = trans.calcMapXY(where);
-		int x = p.x;
-		int y = p.y;
+		int x = p.x - pixelShift.x;
+		int y = p.y - pixelShift.y;
 		//draw.drawLine(x, y, x, y);
 		//ewe.sys.Vm.debug("showlastaddedpoint, x: "+x+"   y: "+y+"loc.x: "+location.x+"  loc.y:"+location.y);
 		draw.fillRect(x-1, y-1, 3, 3);
