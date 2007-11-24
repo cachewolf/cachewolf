@@ -49,7 +49,10 @@ public class MapLoader {
 	 * @param wmspath without trailing "/"
 	 */
 	public MapLoader(String wmspath){
-		progressInfobox = null;
+		long start = new Time().getTime();
+		InfoBox progressBox = null;
+		boolean showprogress = false;
+
 		onlineMapServices = new Vector();
 		String dateien[];
 		FileBugfix files = new FileBugfix(wmspath);
@@ -60,6 +63,13 @@ public class MapLoader {
 		for(int i = 0; i < dateien.length;i++){
 			FileName = dateien[i];
 			try {
+				if (!showprogress && ((i & 0) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
+					showprogress = true;      
+					progressBox = new InfoBox("Info", "Loading online map services");
+					progressBox.exec(); 
+					progressBox.waitUntilPainted(500);
+					ewe.sys.Vm.showWait(true);
+				}
 				tempOMS = new WebMapService(wmspath + "/" + FileName);
 				onlineMapServices.add(tempOMS);
 			}catch(Exception ex){ 
@@ -68,6 +78,10 @@ public class MapLoader {
 		}
 		tempOMS = new ExpediaMapService();
 		onlineMapServices.add(tempOMS);
+		if (progressBox != null) {
+			progressBox.close(0);
+			ewe.sys.Vm.showWait(false);
+		}
 	}
 
 	public String[] getAvailableOnlineMapServices(){
