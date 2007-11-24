@@ -161,7 +161,7 @@ public class MovingMap extends Form {
 		DistanceImage.setLocation(0, h - DistanceImage.getHeight());
 		ScaleImage.setLocation(w - ScaleImage.getWidth(), h - ScaleImage.getHeight());
 		if (mmp.mapImage != null) mmp.mapImage.screenDimChanged(); 
-		if (posCircle != null) posCircle.screenDimChanged(); 
+		if (posCircle != null) posCircle.screenDimChanged();
 		if (tracks != null) addOverlaySet();
 		for (int i = symbols.size() -1; i >= 0; i-- ) {
 			((MapSymbol)symbols.get(i)).screenDimChanged();

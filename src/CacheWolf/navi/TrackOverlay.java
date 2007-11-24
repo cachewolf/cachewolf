@@ -33,8 +33,10 @@ public class TrackOverlay extends MapImage {
 	public TrackOverlay (TrackPoint topLefti, int widthi, int highti, MapInfoObject transi) {
 		super();
 		topLeft = new TrackPoint(topLefti);
-		trans = transi;
-		bottomRight = calcLatLonInImage(widthi, highti);
+		trans = new MapInfoObject(transi);
+		Point pixelShift = trans.calcMapXY(topLeft);
+		trans.zoom(1, pixelShift.x, pixelShift.y);
+		bottomRight = trans.calcLatLon(widthi, highti);
 		if (ewe.sys.Vm.getPlatform().equalsIgnoreCase("java")) {
 			useTransparentColor = true; 
 			setImage(new Image(widthi, highti), transparentColorForOverlay); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in ewe-vm and doesn't consume more memory than a transparency color (ewe 1.49)
@@ -92,7 +94,7 @@ public class TrackOverlay extends MapImage {
 			draw.setColor(tr.trackColor);
 			if (tr.num > 0) {
 				for (i=0; i < tr.num; i++) {
-					paintPoint(tr.trackColor, tr.TrackPoints[i].latDec, tr.TrackPoints[i].lonDec);
+					paintPoint(tr.trackColor, tr.TrackPoints[i]);
 				}
 			}
 		}
@@ -106,15 +108,12 @@ public class TrackOverlay extends MapImage {
 	 * @param lon
 	 * @return true if point was on this overlay
 	 */
-	public boolean paintPoint(Color f, double lat, double lon){
-		if (lat<bottomRight.latDec || lat > topLeft.latDec || lon<topLeft.lonDec || lon>bottomRight.lonDec) return false;
+	public boolean paintPoint(Color f, TrackPoint where){
+		if (where.latDec < bottomRight.latDec || where.latDec > topLeft.latDec || where.lonDec < topLeft.lonDec || where.lonDec > bottomRight.lonDec) return false;
 		//ewe.sys.Vm.debug("showlastaddedpoint, lat: "+lat+"   lon: "+lon);
-		double b[] = new double[2];
-		int x, y;
-		b[0] = lat - topLeft.latDec; // see calcXYinImage (TrackPoint p) 
-		b[1] = lon - topLeft.lonDec; 
-		x=(int) (trans.transLatX* b[0] + trans.transLonX*b[1]);
-		y=(int) (trans.transLatY* b[0] + trans.transLonY*b[1]);
+		Point p = trans.calcMapXY(where);
+		int x = p.x;
+		int y = p.y;
 		//draw.drawLine(x, y, x, y);
 		//ewe.sys.Vm.debug("showlastaddedpoint, x: "+x+"   y: "+y+"loc.x: "+location.x+"  loc.y:"+location.y);
 		draw.fillRect(x-1, y-1, 3, 3);
@@ -153,22 +152,7 @@ public class TrackOverlay extends MapImage {
 		trackPixelsColor = null;
 	}
 
-	public Point calcXYinImage (TrackPoint p) {
-		double b[] = new double[2]; // see method paintPoint it should actually call this method but it doesn't because of speed raesons
-		int x, y;
-		b[0] = p.latDec - topLeft.latDec;
-		b[1] = p.lonDec - topLeft.lonDec;
-		x=(int) (trans.transLatX* b[0] + trans.transLonX*b[1]);
-		y=(int) (trans.transLatY* b[0] + trans.transLonY*b[1]);
-		return new Point(x,y);
-	}
-
-	public TrackPoint calcLatLonInImage (double x, double y) {
-		// see trans.calcLatLon(p);
-		TrackPoint ll = new TrackPoint(trans.calcLatLon((int)x, (int)y)); 
-		return ll;
-	}
-
+	
 	public void addPixel(int x, int y, Color f) throws IndexOutOfBoundsException {
 		if (trackPixels==null) { trackPixels = new Point[maxPixelsInCache]; trackPixelsColor = new Color[maxPixelsInCache]; } 
 		trackPixels[numPixels] = new Point(x, y); // IndexOutOfBoundsException is handled in PaintPoint
@@ -193,7 +177,7 @@ public class TrackOverlay extends MapImage {
 	public void paintLastAddedPoint(Track tr) { 
 		//draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
 		draw.setColor(tr.trackColor);
-		if (paintPoint(tr.trackColor, tr.TrackPoints[tr.num-1].latDec, tr.TrackPoints[tr.num-1].lonDec)) notOnThisOverlaySince = 0;
+		if (paintPoint(tr.trackColor, tr.TrackPoints[tr.num-1])) notOnThisOverlaySince = 0;
 		else notOnThisOverlaySince++;
 		if (notOnThisOverlaySince > FIXATE_IF_NO_PIXELS_NUM) { // zur Performanceverbesserung: wenn in den letzten 60 Updates keines mehr für dieses Overlay dabei war, Overlay Pixels fest schreiben, damit doDraw entlastet wird.
 			fixate();

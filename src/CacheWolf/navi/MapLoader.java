@@ -418,7 +418,7 @@ class WebMapService extends OnlineMapService {
 		wms.load(in);
 		in.close();
 		String tmp = File.getFileExt(filename_);
-		this.filename = File.getFileExt(tmp).substring(0, tmp.lastIndexOf('.'));
+		this.filename = tmp.substring(0, tmp.lastIndexOf('.'));
 		name = wms.getProperty("Name", "").trim();
 		if (name == "") throw new IllegalArgumentException("WebMapService: property >Name:< missing in file:\n" + filename);
 		MainUrl = wms.getProperty("MainUrl", "").trim();;

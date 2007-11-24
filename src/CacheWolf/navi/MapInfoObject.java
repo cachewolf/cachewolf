@@ -42,7 +42,7 @@ public class MapInfoObject extends Area {
 
 	private double[] affine = {0,0,0,0};
 	private CWPoint affineTopleft = new CWPoint();;
-	public double transLatX, transLatY, transLonX, transLonY; // this are needed for the inervers calculation from lat/lon to x/y
+	private double transLatX, transLatY, transLonX, transLonY; // this are needed for the inervers calculation from lat/lon to x/y
 	public CWPoint center = new CWPoint();
 	public float sizeKm = 0; // diagonale
 	public float scale; // in meters per pixel, note: it is assumed that this scale identifying the scale of the map, automatically adjusted when zooming
