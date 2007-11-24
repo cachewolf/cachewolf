@@ -1035,6 +1035,7 @@ public class MovingMap extends Form {
 		case lostFix:   { posCircle.change(statusImageNoSignal); break; }
 		case noGPSData: { posCircle.change(statusImageNoGps); break; }
 		}
+		mapMoved(0, 0); // positions the posCircle correctly accourding to its size (which can change when the image changes, e.g. from null to something else 
 		posCircle.refreshNow();
 	}
 
