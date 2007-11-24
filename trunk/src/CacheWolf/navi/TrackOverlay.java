@@ -34,9 +34,9 @@ public class TrackOverlay extends MapImage {
 	public TrackOverlay (TrackPoint topLefti, int widthi, int highti, MapInfoObject transi) {
 		super();
 		topLeft = new TrackPoint(topLefti);
-		trans = new MapInfoObject(transi);
+		trans = transi;
 		pixelShift = trans.calcMapXY(topLeft);
-		bottomRight = trans.calcLatLon(widthi, highti);
+		bottomRight = trans.calcLatLon(widthi + pixelShift.x, highti + pixelShift.y);
 		if (ewe.sys.Vm.getPlatform().equalsIgnoreCase("java")) {
 			useTransparentColor = true; 
 			setImage(new Image(widthi, highti), transparentColorForOverlay); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in ewe-vm and doesn't consume more memory than a transparency color (ewe 1.49)
