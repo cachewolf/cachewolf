@@ -9,76 +9,61 @@ import ewe.sys.*;
 *	@see DistComparer
 */
 public class MyComparer implements Comparer{
-	String compareWhat;
-	String nmQuest, nmD,nmT,nmWay,nmName,nmLoc,nmOwn,nmHid,nmStat,nmDist,nmBear = new String();
-	int visibleSize;
 	Vector cacheDB;
 	
-	public MyComparer(Vector cacheDB, String what, int visibleSize){
-		compareWhat = what;
-		nmQuest = "?";
-		nmD = MyLocale.getMsg(1000,"D");
-		nmT = MyLocale.getMsg(1001,"T");
-		nmWay = MyLocale.getMsg(1002,"Waypoint");
-		nmName = MyLocale.getMsg(1003,"Name");
-		nmLoc = MyLocale.getMsg(1004,"Location");
-		nmOwn = MyLocale.getMsg(1005,"Owner");
-		nmHid = MyLocale.getMsg(1006,"Hidden");
-		nmStat = MyLocale.getMsg(1007,"Status");
-		nmDist = MyLocale.getMsg(1008,"Dist");
-		nmBear = MyLocale.getMsg(1009,"Bear");
+	public MyComparer(Vector cacheDB, int colToCompare, int visibleSize){
 		//visibleSize=Global.mainTab.tbP.myMod.numRows;
 		if (visibleSize<2) return;
 		for (int i=visibleSize; i<cacheDB.size(); i++) {
 			CacheHolder ch=(CacheHolder) cacheDB.get(i);
 			ch.sort="\uFFFF";
 		}
-		if (what.equals(nmQuest)) {
+		if (colToCompare==1) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.type;
 			}
-		} else if (what.equals(nmD)) {
+		} else if (colToCompare==2) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.hard;
 			}
-		} else if (what.equals(nmT)) {
+		} else if (colToCompare==3) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.terrain;
 			}
-		} else if (what.equals(nmWay)) {
+		} else if (colToCompare==4) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.wayPoint.toUpperCase();
 			}
-		} else if (what.equals(nmName)) {
+		} else if (colToCompare==5) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.CacheName.toLowerCase();
 			}
-		} else if (what.equals(nmLoc)) {
+		} else if (colToCompare==6) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.LatLon;
 			}
-		} else if (what.equals(nmOwn)) {
+		} else if (colToCompare==7) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.CacheOwner.toLowerCase();
 			}
-		} else if (what.equals(nmHid)) {
+		} else if (colToCompare==8) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.DateHidden;
 			}
-		} else if (what.equals(nmStat)) {
+		} else if (colToCompare==9) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.CacheStatus;
 			}
-		} else if (what.equals(nmDist)) {
+		} else if (colToCompare==10) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				int p=ch.distance.indexOf(",");
@@ -88,10 +73,24 @@ public class MyComparer implements Comparer{
 				else
 					ch.sort=ch.distance;
 			}
-		} else if (what.equals(nmBear)) {
+		} else if (colToCompare==11) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				ch.sort=ch.bearing;
+			}
+			
+		} else if (colToCompare==12) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				if (ch.CacheSize.length()==0) ch.sort="?";
+				else switch (ch.CacheSize.charAt(0)) {
+					case 'M': ch.sort="1"; break;
+					case 'S': ch.sort="2"; break;
+					case 'R': ch.sort="3"; break;
+					case 'L': ch.sort="4"; break; 
+					case 'V': ch.sort="5"; break;
+					default: ch.sort="?";
+				}
 			}
 			
 		}

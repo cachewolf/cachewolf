@@ -52,6 +52,7 @@ public class myTableModel extends TableModel{
 	/** The row of the last click where the shift key was pressed */
 //	private int lastRow=-1;
 	private myTableControl tcControl;
+	public boolean showExtraWptInfo=true;
 	
 	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
@@ -231,71 +232,71 @@ public class myTableModel extends TableModel{
 	}
 
 	public Object getCellData(int row, int col){
-		if(row == -1) {
-			return (String)colName[colMap[col]];
-		} else {
-			try { // Access to row can fail if many caches are deleted
-				CacheHolder ch = (CacheHolder)cacheDB.get(row);
-				if(ch.is_filtered == false){
-					switch(colMap[col]) { // Faster than using column names
-						case 0: // Checkbox
-							if (ch.is_Checked) 
-								return checkboxTicked; 
-							else 
-								return checkboxUnticked;
-						case 1: // Type
-							try {
-								return (IImage) cacheImages[Convert.parseInt(ch.type)]; // TODO save in cacheholder as int
-							} catch (NumberFormatException e) { return "?";}
-						case 2: // Difficulty;
-							return (String)ch.hard;
-						case 3: // Terrain
-							return (String)ch.terrain;
-						case 4: // Waypoint
+		if(row == -1) return colName[colMap[col]];
+		try { // Access to row can fail if many caches are deleted
+			CacheHolder ch = (CacheHolder)cacheDB.get(row);
+			if(ch.is_filtered == false){
+				switch(colMap[col]) { // Faster than using column names
+					case 0: // Checkbox
+						if (ch.is_Checked) 
+							return checkboxTicked; 
+						else 
+							return checkboxUnticked;
+					case 1: // Type
+						try {
+							return (IImage) cacheImages[Convert.parseInt(ch.type)]; // TODO save in cacheholder as int
+						} catch (NumberFormatException e) { return "?";}
+					case 2: // Difficulty;
+						return ch.hard;
+					case 3: // Terrain
+						return ch.terrain;
+					case 4: // Waypoint
+						if (showExtraWptInfo) {
 							if(ch.is_incomplete) return new IconAndText(skull, ch.wayPoint, fm);
 							if(ch.is_new       ) return new IconAndText(yellow, ch.wayPoint, fm);
 							if(ch.is_update    ) return new IconAndText(red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
 							if(ch.is_log_update) return new IconAndText(blue, ch.wayPoint, fm);
-							return (String)ch.wayPoint;
-						case 5: // Cachename
-							// Fast return for majority of case
-							if (ch.has_bug == false && ch.noFindLogs==0) return (String)ch.CacheName; 
-							// Now need more checks
-							IconAndText wpVal = new IconAndText();
-							if(ch.has_bug == true) wpVal.addColumn(bug);
-							if(ch.noFindLogs > 0){
-								if (ch.noFindLogs > noFindLogs.length) 
-									wpVal.addColumn((IImage)noFindLogs[noFindLogs.length-1]);
-								else 
-									wpVal.addColumn((IImage)noFindLogs[ch.noFindLogs-1]);
-							}
-							wpVal.addColumn((String)ch.CacheName);
-							return wpVal;
-						case 6: // Location
-							return (String)ch.LatLon;
-						case 7: // Owner
-							return (String)ch.CacheOwner;
-						case 8: // Date hidden
-							return (String)ch.DateHidden;
-						case 9: // Status
-							return (String)ch.CacheStatus;
-						case 10: // Distance
-							return (String)ch.distance;
-						case 11: // Bearing
-							return (String)ch.bearing;
-						case 12: // Size
-							switch (ch.CacheSize.charAt(0)) {
-								case 'M': return picSizeMicro;
-								case 'S': return picSizeSmall;
-								case 'R': return picSizeReg;
-								case 'L': return picSizeLarge;
-								case 'V': return picSizeVLarge;
-								default: return "?";
-							}
-					} // Switch
-				} // if
-			} catch (Exception e) { return null; }
-		}
+						}
+						return ch.wayPoint;
+					case 5: // Cachename
+						// Fast return for majority of case
+						if (ch.has_bug == false && ch.noFindLogs==0) return ch.CacheName; 
+						// Now need more checks
+						IconAndText wpVal = new IconAndText();
+						if(ch.has_bug == true) wpVal.addColumn(bug);
+						if(ch.noFindLogs > 0){
+							if (ch.noFindLogs > noFindLogs.length) 
+								wpVal.addColumn(noFindLogs[noFindLogs.length-1]);
+							else 
+								wpVal.addColumn(noFindLogs[ch.noFindLogs-1]);
+						}
+						wpVal.addColumn(ch.CacheName);
+						return wpVal;
+					case 6: // Location
+						return ch.LatLon;
+					case 7: // Owner
+						return ch.CacheOwner;
+					case 8: // Date hidden
+						return ch.DateHidden;
+					case 9: // Status
+						return ch.CacheStatus;
+					case 10: // Distance
+						return ch.distance;
+					case 11: // Bearing
+						return ch.bearing;
+					case 12: // Size
+						if (ch.CacheSize.length()==0) return "?";
+						switch (ch.CacheSize.charAt(0)) {
+							case 'M': return picSizeMicro;
+							case 'S': return picSizeSmall;
+							case 'R': return picSizeReg;
+							case 'L': return picSizeLarge;
+							case 'V': return picSizeVLarge;
+							default: return "?";
+						}
+				} // Switch
+			} // if
+		} catch (Exception e) { return null; }
 		return null;
 	}
 	
@@ -329,7 +330,7 @@ public class myTableModel extends TableModel{
 				if (mappedCol == sortedBy) sortAsc=!sortAsc;
 				else sortAsc = false;
 				sortedBy = mappedCol;
-				cacheDB.sort(new MyComparer(cacheDB, colName[mappedCol],numRows), sortAsc);
+				cacheDB.sort(new MyComparer(cacheDB, mappedCol,numRows), sortAsc);
 				updateRows();
 				if(a != null){
 					int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
