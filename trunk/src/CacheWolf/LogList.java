@@ -102,5 +102,14 @@ public class LogList {
 		return countNoFoundLogs;
 	 }
 	
-
+	 /**
+	  * Count the number of OC Recommendations
+	  * @return Number of OC recommendations
+	  */
+	 public int countRecommendations() {
+		 int nRec=0;
+		 for (int i=size()-1; i>=0; i--)
+			 if (getLog(i).getRecommendation()) nRec++;
+		 return nRec;
+	 }
 }
