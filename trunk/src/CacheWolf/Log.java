@@ -11,16 +11,21 @@ public class Log {
 	private String logger;
 	/** The logged message */
 	private String message;
+	/** true, if the logger recommended the cache */
+	private boolean recommended = false;
 	
 	/** Create a log from a single line in format<br>
-	 * <pre><img src='ICON'>&nbsp;DATE LOGGER<br>MESSAGE
+	 * <pre>RECOMMENDED="1"<img src='ICON'>&nbsp;DATE LOGGER<br>MESSAGE
 	 * or <img src='ICON'>&nbsp;DATE by LOGGER<br>MESSAGE</pre>
 	 * @param logLine
 	 */
 	Log(String logLine) {
-//		<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
+//		RECOMMENDED="1"<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
 		try {
-			int ic1=logLine.indexOf("<img src='");
+			int ic1=logLine.indexOf("RECOMMENDED=\"1\"");
+			if (ic1 >= 0) 
+				recommended = true; else recommended = false;
+			ic1=logLine.indexOf("<img src='");
 			int ic2=logLine.indexOf("'",ic1+10);
 			icon=logLine.substring(ic1+10,ic2);
 			int d1=logLine.indexOf(";");
@@ -29,7 +34,7 @@ public class Log {
 			if (logLine.substring(l1,l1+3).equals("by ")) l1+=3;
 			int l2=logLine.indexOf("<br>",l1);
 			logger=logLine.substring(l1,l2);
-			message=logLine.substring(l2+4);
+			message=logLine.substring(l2+4, logLine.indexOf("]]>", l1));
 		} catch (Exception ex) {
 			if (logLine.indexOf("<img")<0) { // Have we reached the line that states max logs reached 
 				icon=MAXLOGICON; 
@@ -43,10 +48,15 @@ public class Log {
 	}
 	
 	Log(String icon, String date, String logger, String message) {
+		this(icon, date, logger, message, false);
+	}
+	
+	Log(String icon, String date, String logger, String message, boolean recommended_) {
 		this.icon=icon;
 		this.date=date;
 		this.logger=logger;
 		this.message=message.trim();
+		this.recommended = recommended_;
 	}
 	
 	public static Log maxLog() {
@@ -77,13 +87,20 @@ public class Log {
 	public void setMessage(String message) {
 		this.message = message.trim();
 	}
+	public void setRecommandation (boolean recommended_) {
+		recommended = recommended_;
+	}
 
 	/** Return XML representation of log for storing in cache.xml */
 	public String toXML(){
 		StringBuffer s=new StringBuffer(400);
-		s.append("<LOG><![CDATA[");
+		s.append("<LOG>");
+		if (recommended)
+			s.append("RECOMMENDED=\"1\"");
+		s.append("<![CDATA[");
 		s.append(toHtml());
-		s.append("]]></LOG>\r\n");
+		s.append("]]>)");
+		s.append("</LOG>\r\n");
 		return s.toString();
 	}
 	
@@ -92,9 +109,9 @@ public class Log {
 //		<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
 		if (icon.equals(MAXLOGICON)) return "<hr>"+MyLocale.getMsg(736,"Too many logs")+"<hr>";
 		StringBuffer s=new StringBuffer(300);
-		s.append("<img src='");
-		s.append(icon);
-		s.append("'>&nbsp;");
+		s.append("<img src='"+icon+"'>");
+		if (recommended) s.append("<img src='recommendedlog.gif'>");
+		s.append("&nbsp;");
 		s.append(date);
 		s.append(" by ");
 		s.append(logger);

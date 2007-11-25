@@ -216,7 +216,7 @@ public class myTableControl extends TableControl{
 			}
 			infB.close(0);
 //			profile.hasUnsavedChanges=true;	
-			profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+			profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 			profile.restoreFilter();
 			profile.updateBearingDistance();
 			tbp.refreshTable();

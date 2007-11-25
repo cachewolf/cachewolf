@@ -29,10 +29,6 @@ public class OCXMLImporterScreen extends Form {
 		super();
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 		
-		switch (options){
-		
-		}
-
 		this.title = title;
 		if ((options & DIST) > 0) {
 			this.addNext(distLbl = new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
