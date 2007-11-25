@@ -29,6 +29,9 @@ public class CacheHolderDetail extends CacheHolder {
 	  //public String Bugs = EMPTY; Superceded by Travelbugs
 	  public String URL = EMPTY;
 	  public String Solver = EMPTY;
+	  /** For faster cache import (from opencaching) changes are only written when the details are freed from memory 
+	   * If you want to save the changes automatically when the details are unloaded, set this to true */ 
+	  public boolean saveChanges = false;
 	  
 	 public CacheHolderDetail() {
 	 }
@@ -234,7 +237,6 @@ public class CacheHolderDetail extends CacheHolder {
 		*/
 		public void saveCacheDetails(String dir){
 			PrintWriter detfile;
-			String dummy = new String();
 			//File exists?
 			boolean exists = (new File(dir + wayPoint + ".xml")).exists();
 			//yes: then delete
@@ -316,6 +318,7 @@ public class CacheHolderDetail extends CacheHolder {
 			} catch (Exception e){
 			  //Vm.debug("Problem closing details file");
 			}
+			saveChanges = false;
 		}
 		
 		/**
