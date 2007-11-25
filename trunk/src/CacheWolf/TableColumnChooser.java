@@ -190,7 +190,7 @@ public class TableColumnChooser extends CellPanel {
 	 * @param minSize TODO
 	 */ 
 	public static int[] str2Array(String configString, int min, int max, int def, int minSize) {
-		Vector strConfigVector=new Vector(14);
+		Vector strConfigVector=new Vector(18);
 		SubString.split(configString,',',strConfigVector);
 		int i;
 		int nElem=strConfigVector.size();

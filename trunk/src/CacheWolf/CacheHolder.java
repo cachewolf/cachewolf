@@ -80,8 +80,8 @@ public int noFindLogs = 0;
 public int numRecommended = 0;
 /** Number of logs since start of recommendations system */
 public int numLogsSinceRecommendation = 0;
-/** Recommendation score: calculated as rations  numRecommended / numLogsSinceRecommendation  */
-public float recommendationScore = 0;
+/** Recommendation score: calculated as ratio  numRecommended / numLogsSinceRecommendation * 100 */
+public int recommendationScore = 0;
 /** True if this cache has travelbugs */
 public boolean has_bug = false;
 /** True if the cache description is stored in HTML format */

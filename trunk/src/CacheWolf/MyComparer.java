@@ -92,7 +92,22 @@ public class MyComparer implements Comparer{
 					default: ch.sort="?";
 				}
 			}
-			
+		} else if (colToCompare==13) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				if (ch.wayPoint.startsWith("OC"))
+					ch.sort=MyLocale.formatLong((long)ch.numRecommended,"00000");
+				else
+					ch.sort="\uFFFF";
+			}			
+		} else if (colToCompare==14) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch=(CacheHolder) cacheDB.get(i);
+				if (ch.wayPoint.startsWith("OC"))
+					ch.sort=MyLocale.formatLong((long)ch.recommendationScore,"00000");
+				else
+					ch.sort="\uFFFF";
+			}			
 		}
 	}
 	
