@@ -76,6 +76,12 @@ public boolean is_Checked = false;
 public String ocCacheID = EMPTY;
 /** The number of times this cache has not been found (max. 5) */
 public int noFindLogs = 0;
+/** Number of recommendations (from the opencaching logs) */
+public int numRecommended = 0;
+/** Number of logs since start of recommendations system */
+public int numLogsSinceRecommendation = 0;
+/** Recommendation score: calculated as rations  numRecommended / numLogsSinceRecommendation  */
+public float recommendationScore = 0;
 /** True if this cache has travelbugs */
 public boolean has_bug = false;
 /** True if the cache description is stored in HTML format */
