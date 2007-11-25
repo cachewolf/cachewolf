@@ -170,6 +170,7 @@ public class Profile {
 			detfile.print("</CACHELIST>\n");
 			detfile.close();
 			buildReferences(); //TODO Why is this needed here?
+			CacheHolder.saveAllModifiedDetails();
 			if(showprogress) pbf.exit(0);
 		}catch(Exception e){
 			Vm.debug("Problem writing to index file "+e.toString());

@@ -154,7 +154,7 @@ public class CacheHolderDetail extends CacheHolder {
 			ex = new Extractor(text, "<LOGS>","</LOGS>", 0, true);
 			dummy = ex.findNext();
 			CacheLogs.clear();
-			ex = new Extractor(dummy, "<LOG><![CDATA[","]]></LOG>", 0, true);
+			ex = new Extractor(dummy, "<LOG>","</LOG>", 0, true);
 			
 			dummy = ex.findNext();
 			while(ex.endOfSearch()==false){

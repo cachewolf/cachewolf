@@ -52,6 +52,7 @@ public class OCXMLImporter extends MinML {
 	String cacheID = new String();
 
 	String logData, logIcon, logDate, logFinder;
+	boolean loggerRecommended;
 	int logtype;
 	String user;
 	double longitude;
@@ -76,18 +77,30 @@ public class OCXMLImporter extends MinML {
 		}//for
 
 	}
-	
+	/**
+	 * 
+	 * @param number
+	 * @param infB
+	 * @return true, if some change was made to the cacheDB
+	 */
+	/** true, if not the last syncdate shall be used, but the caches shall be reloaded
+	 * only used in syncSingle */
+	boolean reload;
 	public boolean syncSingle(int number, InfoBox infB) {
 		boolean success=true;
 
 		ch = (CacheHolder)cacheDB.get(number);
-		chD= new CacheHolderDetail(ch);
+		chD= new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
 
-		if (infB.isClosed) return false; 
+		if (infB.isClosed) {
+			if (askForOptions) return false; 
+			else return true;
+		}
 		if (askForOptions) {
-			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.IMAGES);
+			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.ALL);
 			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return false; }
 			askForOptions = false;
+			reload = importOpt.missingCheckBox.getState();
 		}
 
 		// this is only a dummy-InfoBox for capturing the output
@@ -96,10 +109,12 @@ public class OCXMLImporter extends MinML {
 //		inf.relayout(false);
 //		inf.exec();
 
-		
-		String lastS = ch.lastSyncOC;
-		if (lastS.length() < 14) lastS = "20050801000000";
-
+		String lastS; 
+		if (reload)  lastS = "20050801000000";
+		else {
+			if (ch.lastSyncOC.length() < 14) lastS = "20050801000000";
+			else lastS = ch.lastSyncOC;
+		}
 		dateOfthisSync = new Time();
 		dateOfthisSync.parse(lastS, "yyyyMMddHHmmss");
 	
@@ -385,6 +400,7 @@ public class OCXMLImporter extends MinML {
 			break;
 			case 3: logIcon = GPXImporter.typeText2Image("Note");
 			}
+			loggerRecommended = atts.getValue("recommended").equals("1");
 			return;
 		}
 
@@ -588,8 +604,7 @@ public class OCXMLImporter extends MinML {
 
 	private void endCacheLog(String name){
 		if (name.equals("cachelog")){ // </cachelog>
-			chD.CacheLogs.merge(new Log(logIcon,logDate,logFinder,logData));
-			//TODO Optimize this. Currently the cache needs to be saved after every log as we don't know whether the next log is for the same cache.
+			chD.CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended));
 			chD.saveChanges = true; //chD.saveCacheDetails(profile.dataDir);
 			return;
 		}
