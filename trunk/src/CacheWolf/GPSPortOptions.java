@@ -81,6 +81,9 @@ public class GPSPortOptions extends SerialPortOptions {
 	public mInput inputBoxForwardHost;
 	mLabel  labelForwardHost;
 	public mCheckBox forwardGpsChkB;
+	public mInput inputBoxLogTimer;
+	mLabel  labelLogTimer;
+	public mCheckBox logGpsChkB;
 	mySerialThread serThread;
 	boolean gpsRunning = false;
 
@@ -104,6 +107,15 @@ public class GPSPortOptions extends SerialPortOptions {
 		inputBoxForwardHost.setText("192.168.178.23");
 		inputBoxForwardHost.setToolTip("All data from GPS will be sent to TCP-port 23\n and can be redirected there to a serial port\n by HW Virtual Serial Port");
 		ed.addField(ed.addLast(inputBoxForwardHost,0 , (Editor.WEST | Editor.HFILL)), "tcpForwardHost");
+		logGpsChkB = new mCheckBox("z");
+		ed.addField(ed.addNext(logGpsChkB, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "logGpsChkB");
+		labelLogTimer = new mLabel("Interval in sec for logging");
+		ed.addField(ed.addNext(labelLogTimer, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "labelLogTimer");
+		inputBoxLogTimer = new mInput("GPSLogTimer");
+		inputBoxLogTimer.setPromptControl(labelLogTimer);
+		inputBoxLogTimer.setText("10");
+		ed.addField(ed.addLast(inputBoxLogTimer,0 , (Editor.WEST | Editor.HFILL)), "GPSLogTimer");
+
 		
 		gpsRunning = false;
 		return ed;

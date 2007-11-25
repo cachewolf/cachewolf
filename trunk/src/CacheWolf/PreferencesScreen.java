@@ -272,14 +272,17 @@ public class PreferencesScreen extends Form {
 				Editor s = spo.getEditor(SerialPortOptions.ADVANCED_EDITOR);
 				spo.forwardGpsChkB.setState(pref.forwardGPS);
 				spo.inputBoxForwardHost.setText(pref.forwardGpsHost);
+				spo.logGpsChkB.setState(pref.logGPS);
+				spo.inputBoxLogTimer.setText(pref.logGPSTimer);
 				Gui.setOKCancel(s);
 				if (s.execute()== Editor.IDOK) {
 					pref.mySPO.portName = spo.portName; 
 					pref.mySPO.baudRate = spo.baudRate;
 					pref.forwardGPS = spo.forwardGpsChkB.getState();
 					pref.forwardGpsHost = spo.inputBoxForwardHost.getText();
+					pref.logGPS = spo.logGpsChkB.getState();
+					pref.logGPSTimer = spo.inputBoxLogTimer.getText();
 					inpGPS.setText(pref.mySPO.portName+"/"+pref.mySPO.baudRate);
-
 				}
 			}
 			// change destination waypoint

@@ -83,6 +83,10 @@ public class Preferences extends MinML{
 	public boolean forwardGPS = false;
 	/** IP address for forwarding GPS data */
 	public String forwardGpsHost = "";
+	/** True if the GPS data should be logged to a file */
+	public boolean logGPS = false;
+	/** Timer for logging GPS data */
+	public String logGPSTimer = "";
 	/** The default font size */
 	public int fontSize = 12;
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
@@ -219,6 +223,10 @@ public class Preferences extends MinML{
 			forwardGPS = Convert.toBoolean(atts.getValue("active"));
 			forwardGpsHost = atts.getValue("destinationHost");
 		}
+		if(name.equals("portlog")) {
+			logGPS = Convert.toBoolean(atts.getValue("active"));
+			logGPSTimer = atts.getValue("logTimer");
+		}
 		if (name.equals("lastprofile")) {
 			collectElement=new StringBuffer(50);
 			if (atts.getValue("autoreload").equals("true")) autoReloadLastProfile=true;
@@ -334,6 +342,7 @@ public class Preferences extends MinML{
 			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\" active = \""+ proxyActive +"\" />\n");
 			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
 			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destinationHost = \""+ forwardGpsHost+"\"/>\n");
+			outp.print("	<portlog active= \""+ Convert.toString(logGPS)+"\" logTimer = \""+ logGPSTimer +"\"/>\n");
 			outp.print("    <font size =\""+fontSize+"\"/>\n");
 			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+"\"/>\n");
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");

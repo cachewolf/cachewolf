@@ -182,13 +182,13 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 			end = 0;
 			lastStrExamined = NMEA;
 			//Vm.debug(NMEA);
-			if (writeLog && (logFlag & LOGRAW) > 0){ 
+/*			if (writeLog && (logFlag & LOGRAW) > 0){ 
 				try {
 					logFile.write(NMEA);
 					writeLog = false;
 				} catch (IOException e) {}
 			}
-			while(true){
+*/			while(true){
 				start = NMEA.indexOf("$GP", end);  
 				if (start == -1) return interpreted;  
 				end = NMEA.indexOf("*", start);  
@@ -200,6 +200,14 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					//Vm.debug("checksum wrong");
 					continue;
 				}
+				// Write log after finding valid NMEA sequence 
+				if (writeLog && (logFlag & LOGRAW) > 0){ 
+					try {
+						logFile.write(NMEA.substring(start,end+3)+"\n");
+						writeLog = false;
+					} catch (IOException e) {}
+				}
+
 				Extractor ex = new Extractor ("," + NMEA.substring(start,end), ",",",",0,true);
 				currToken = ex.findNext();
 				if (currToken.equals("$GPGGA")){
