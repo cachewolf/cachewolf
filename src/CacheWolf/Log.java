@@ -1,6 +1,6 @@
 package CacheWolf;
 
-public class Log {
+public class Log {//static int nObj=0;
 	private static String MAXLOGICON="MAXLOG";
 	private static String INVALIDLOGICON=null;
 	/** The icon which describes the log e.g. icon_sad */
@@ -19,7 +19,7 @@ public class Log {
 	 * or <img src='ICON'>&nbsp;DATE by LOGGER<br>MESSAGE</pre>
 	 * @param logLine
 	 */
-	Log(String logLine) {
+	Log(String logLine) {//nObj++;ewe.sys.Vm.debug("Log: "+nObj+" objects");
 //		RECOMMENDED="1"<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
 		try {
 			int ic1=logLine.indexOf("RECOMMENDED=\"1\"");
@@ -47,7 +47,7 @@ public class Log {
 		}
 	}
 	
-	Log(String icon, String date, String logger, String message) {
+	Log(String icon, String date, String logger, String message) {//nObj++;ewe.sys.Vm.debug("Log: "+nObj+" objects");
 		this(icon, date, logger, message, false);
 	}
 	
@@ -59,7 +59,7 @@ public class Log {
 		this.recommended = recommended_;
 	}
 	
-	public static Log maxLog() {
+	public static Log maxLog() {//nObj++;ewe.sys.Vm.debug("Log: "+nObj+" objects");
 		return new Log(MAXLOGICON,"1900-00-00","","");
 	}
 	
@@ -87,8 +87,11 @@ public class Log {
 	public void setMessage(String message) {
 		this.message = message.trim();
 	}
-	public void setRecommandation (boolean recommended_) {
+	public void setRecommendation (boolean recommended_) {
 		recommended = recommended_;
+	}
+	public boolean getRecommendation () {
+		return recommended;
 	}
 
 	/** Return XML representation of log for storing in cache.xml */
@@ -119,4 +122,8 @@ public class Log {
 		s.append(message.trim());
 		return s.toString();
 	}
+/*	public void finalize() {nObj--;
+	   ewe.sys.Vm.debug("Log: "+nObj+" objects left");
+	}
+*/	
 }
