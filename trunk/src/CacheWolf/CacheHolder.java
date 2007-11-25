@@ -400,7 +400,7 @@ public boolean isAddiWpt() {
    }
    
    public void releaseCacheDetails() {
-	   if (details != null && details.saveChanges) 
+	   if (details != null && details.hasUnsavedChanges) 
 		   details.saveCacheDetails(Global.getProfile().dataDir);
 	   details = null;
 	   cachesWithLoadedDetails.remove(this);
@@ -432,7 +432,7 @@ public boolean isAddiWpt() {
 	   CacheHolderDetail chD;
 	   for (int i=cachesWithLoadedDetails.size()-1; i>=0; i--) {
 		   chD = ((CacheHolder)(cachesWithLoadedDetails.get(i))).getCacheDetails(false);
-		   if (chD.saveChanges) 
+		   if (chD.hasUnsavedChanges) 
 			   chD.saveCacheDetails(Global.getProfile().dataDir);
 		   	
 	   }
