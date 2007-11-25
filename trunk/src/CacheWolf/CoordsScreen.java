@@ -242,7 +242,7 @@ public class CoordsScreen extends Form {
 				} else {	
 					coord = new CWPoint(inp);
 				}
-				if (coord.latDec == 0 && coord.lonDec == 0){
+				if (coord.latDec == -91 && coord.lonDec == -361){
 					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
 					tmpMB.exec();
 				}else {
