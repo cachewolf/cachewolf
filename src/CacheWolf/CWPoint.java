@@ -478,17 +478,25 @@ public class CWPoint extends TrackPoint{
 	/**
 	 * Get GK northing
 	 */
-	public String getGKNorthing(){
+	public String getGKNorthing(int decimalplaces){
 		double gkNorthing = TransformCoordinates.wgs84ToGermanGk(this).getNorthing();
-		return Convert.toString((long)gkNorthing).replace(',','.');		
+		
+		ewe.sys.Double n = new ewe.sys.Double();
+		n.set(gkNorthing);
+		n.decimalPlaces = decimalplaces;
+		return n.toString().replace(',', '.');
 	}
 
 	/**
 	 * Get GK easting
 	 */
-	public String getGKEasting() {
+	public String getGKEasting(int decimalplaces) {
 		double gkEasting = TransformCoordinates.wgs84ToGermanGk(this).getGkEasting();
-		return Convert.toString((long)gkEasting).replace(',','.');		
+		
+		ewe.sys.Double e = new ewe.sys.Double();
+		e.set(gkEasting);
+		e.decimalPlaces = decimalplaces;
+		return e.toString().replace(',', '.');
 	}
 	
 	public String getGermanGkCoordinates() {
