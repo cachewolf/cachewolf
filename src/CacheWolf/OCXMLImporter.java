@@ -435,7 +435,7 @@ public class OCXMLImporter extends MinML {
 			}
 
 			// save all
-			chD.saveChanges = true; // this makes CachHolder save the details in case that they are unloaded from memory
+			chD.hasUnsavedChanges = true; // this makes CachHolder save the details in case that they are unloaded from memory
 			// chD.saveCacheDetails(profile.dataDir); 
 			// profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); // this is done after .xml is completly processed
 			return;
@@ -514,7 +514,7 @@ public class OCXMLImporter extends MinML {
 						getPic(fetchUrl, imgAltText);
 					}
 				}
-				chD.saveChanges = true; //saveCacheDetails(profile.dataDir);
+				chD.hasUnsavedChanges = true; //saveCacheDetails(profile.dataDir);
 				return;
 			}
 
@@ -597,7 +597,7 @@ public class OCXMLImporter extends MinML {
 		if(name.equals("picture")){ 
 			//String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
 			getPic(picUrl,picTitle);
-			chD.saveChanges = true; //saveCacheDetails(profile.dataDir);
+			chD.hasUnsavedChanges = true; //saveCacheDetails(profile.dataDir);
 			return;
 		}
 	}
@@ -605,7 +605,7 @@ public class OCXMLImporter extends MinML {
 	private void endCacheLog(String name){
 		if (name.equals("cachelog")){ // </cachelog>
 			chD.CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended));
-			chD.saveChanges = true; //chD.saveCacheDetails(profile.dataDir);
+			chD.hasUnsavedChanges = true; //chD.saveCacheDetails(profile.dataDir);
 			return;
 		}
 
