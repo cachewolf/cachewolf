@@ -16,7 +16,7 @@ import ewe.graphics.*;
 */
 public class myTableModel extends TableModel{
 	
-	public static final int MAXCOLUMNS=12;
+	public static final int MAXCOLUMNS=14;
 	// Colors for Cache status (BG unless otherwise stated)
 	private static final Color COLOR_FLAGED		= new Color(255,255,0);
 	private static final Color COLOR_FOUND		= new Color(152,251,152);
@@ -30,12 +30,17 @@ public class myTableModel extends TableModel{
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
 	 * the element j (as per the list below) is visible in column i. 
 	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
-	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size
+	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend.
+	 * [14] OC index
 	 */
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
 	private int[] colWidth;
-	private String [] colName = {" ","?",MyLocale.getMsg(1000,"D"),MyLocale.getMsg(1001,"T"),MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S")};//TODO
+	private String [] colName = {" ","?",MyLocale.getMsg(1000,"D"),MyLocale.getMsg(1001,"T"),
+			MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),
+			MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),
+			MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S"),
+			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX")};
 	
 	public static Image cacheImages[] = new Image[454]; // Images are used by TableControl
 	private static Image noFindLogs[] = new Image[4];
@@ -114,7 +119,7 @@ public class myTableModel extends TableModel{
 	 *
 	 */
 	public void setColumnNamesAndWidths() {
-		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,12,0, -1);
+		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,14,0, -1);
 		colWidth=TableColumnChooser.str2Array(Global.getPref().listColWidth,10,1024,50, colMap.length);
 		numCols=colMap.length;
 		clearCellAdjustments();
@@ -294,6 +299,14 @@ public class myTableModel extends TableModel{
 							case 'V': return picSizeVLarge;
 							default: return "?";
 						}
+					case 13: // OC number of recommendations
+						if (ch.wayPoint.startsWith("OC"))
+							return (new Integer(ch.numRecommended)).toString();
+						return null;
+					case 14: // OC rating	
+						if (ch.wayPoint.startsWith("OC"))
+							return (new Integer(ch.recommendationScore)).toString();
+						return null;
 				} // Switch
 			} // if
 		} catch (Exception e) { return null; }
