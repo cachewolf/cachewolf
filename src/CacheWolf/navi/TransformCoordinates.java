@@ -115,8 +115,8 @@ public class TransformCoordinates {
 				( gk.getStripe() == 5 && gk.getGkEasting() >= 5211904.597 && gk.getGkEasting() <= 5466056.603)
 			) return gkToWgs84(gk, GK_GERMANY_2001);
 		if (gk.northing <= 6097247.910 && gk.northing >= 5800464.725 )return gkToWgs84(gk, GK_NORD_GERMANY);
-		if (gk.northing <= 5800464.725 && gk.northing >= 5577963.555 )return gkToWgs84(gk, GK_NORD_GERMANY);
-		if (gk.northing <= 5577963.555 && gk.northing >= 5207294.028 )return gkToWgs84(gk, GK_NORD_GERMANY);
+		if (gk.northing <= 5800464.725 && gk.northing >= 5577963.555 )return gkToWgs84(gk, GK_MID_GERMANY);
+		if (gk.northing <= 5577963.555 && gk.northing >= 5207294.028 )return gkToWgs84(gk, GK_SOUTH_GERMANY);
 		return  gkToWgs84(gk, GK_GERMANY_2001); 	//TODO use more lokalized transformparameters, which can be obtained from the Landesvermessungsämter
 	}
 
@@ -138,7 +138,7 @@ public class TransformCoordinates {
 		if (FORMER_GDR.isInBound(ll)) return GK_GERMANY_2001; // exlcude former GDR from the splitting germany in north/middel/south
 		if (ll.latDec <= 55 && ll.latDec >= 52.33333334 ) return  GK_NORD_GERMANY;
 		if (ll.latDec <= 52.33333334  && ll.latDec >= 50.33333334 ) return  GK_MID_GERMANY;
-		if (ll.latDec <= 50.33333334  && ll.latDec >= 47) return  GK_MID_GERMANY;
+		if (ll.latDec <= 50.33333334  && ll.latDec >= 47) return  GK_SOUTH_GERMANY;
 		return GK_GERMANY_2001;
 	}
 	
