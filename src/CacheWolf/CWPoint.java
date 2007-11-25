@@ -6,6 +6,7 @@ import ewe.sys.Double;
 import ewe.sys.Locale;
 import ewe.sys.Convert;
 import CacheWolf.navi.TrackPoint;
+import CacheWolf.navi.GkPoint;
 import CacheWolf.navi.TransformCoordinates;
 
 import com.bbn.openmap.proj.coords.*;
@@ -32,10 +33,11 @@ public class CWPoint extends TrackPoint{
 	public static final int DMM = 1;
 	public static final int DMS = 2;
 	public static final int UTM = 3;
-	public static final int CW = 4;
-	public static final int REGEX = 5;
-	public static final int LAT_LON = 6;
-	public static final int LON_LAT = 7;
+	public static final int GK = 4;
+	public static final int CW = 5;
+	public static final int REGEX = 6;
+	public static final int LAT_LON = 7;
+	public static final int LON_LAT = 8;
 	
 	
 	/**
@@ -316,6 +318,19 @@ public class CWPoint extends TrackPoint{
 			this.lonDec = ll.getLongitude();
 		} else {this.latDec = 91; this.lonDec = 361; }
 	}
+	
+	/**
+	 * set lat and lon by using GK coordinates  
+	 * @param strEasting  Easting component
+	 * @param strNorthing Northing component
+	 */
+	public void set ( String strEasting, String strNorthing ){
+		GkPoint gk = new GkPoint(Common.parseDouble(strEasting), Common.parseDouble(strNorthing));
+		
+		this. latDec = TransformCoordinates.germanGkToWgs84(gk).latDec;
+		this. lonDec = TransformCoordinates.germanGkToWgs84(gk).lonDec;
+		this.utmValid = false;
+	}
 
 	/**
 	 * Get degrees of latitude in different formats
@@ -397,11 +412,11 @@ public class CWPoint extends TrackPoint{
 			case DMM: 	
 			    // Need to check if minutes would round up to 60
 				if (java.lang.Math.round(tmpMin*1000.0) == 60000) { tmpMin =0;  iDeg++; }
-				if (what==0)
-					return MyLocale.formatLong(iDeg, "00");
-				else
-					return MyLocale.formatDouble(tmpMin, "00.000").replace(',','.');
-				
+				switch (what) {
+					case 0: return MyLocale.formatLong(iDeg, "00");
+					case 1: return MyLocale.formatDouble(tmpMin, "00.000").replace(',','.');
+					case 2: return "";
+				}
 			case DMS:
 				tmpSec= (tmpMin - (int)tmpMin) * 60.0;
 				tmpMin=(int) tmpMin;
@@ -414,7 +429,6 @@ public class CWPoint extends TrackPoint{
 					case 1: return MyLocale.formatDouble(tmpMin, "00");
 					case 2: return MyLocale.formatDouble(tmpSec, "00.0").replace(',','.');
 				}
-		
 		}
 		return ""; // Dummy to keep compiler happy
 	}
@@ -455,6 +469,22 @@ public class CWPoint extends TrackPoint{
 	public String getUTMEasting() {
 		checkUTMvalid();
 		return Convert.toString((long)utm.easting).replace(',','.');
+	}
+	
+	/**
+	 * Get GK northing
+	 */
+	public String getGKNorthing(){
+		double gkNorthing = TransformCoordinates.wgs84ToGermanGk(this).getNorthing();
+		return Convert.toString((long)gkNorthing).replace(',','.');		
+	}
+
+	/**
+	 * Get GK easting
+	 */
+	public String getGKEasting() {
+		double gkEasting = TransformCoordinates.wgs84ToGermanGk(this).getGkEasting();
+		return Convert.toString((long)gkEasting).replace(',','.');		
 	}
 	
 	public String getGermanGkCoordinates() {
@@ -590,6 +620,8 @@ public class CWPoint extends TrackPoint{
 			return Common.DoubleToString(lonDec, 8) +  "," + Common.DoubleToString(latDec, 8);
 		case LAT_LON:
 			return Common.DoubleToString(latDec, 8) +  "," + Common.DoubleToString(lonDec, 8);
+		case GK:
+			return getGermanGkCoordinates();
 		default: return "Unknown Format: " + format;
 
 		}

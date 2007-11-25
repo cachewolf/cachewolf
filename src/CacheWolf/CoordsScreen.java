@@ -13,7 +13,7 @@ import ewe.sys.*;
 
 public class CoordsScreen extends Form {
 
-	mCheckBox chkDMM, chkDMS, chkDD, chkUTM;
+	mCheckBox chkDMM, chkDMS, chkDD, chkUTM, chkGK;
 	CheckBoxGroup chkFormat = new CheckBoxGroup();
 	mChoice chcNS, chcEW;
 	mInput inpNSDeg, inpNSm, inpNSs, inpEWDeg, inpEWm, inpEWs;
@@ -21,8 +21,8 @@ public class CoordsScreen extends Form {
 	mInput inpText;
 	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse, btnGps;
 	CWPoint coordInp = new CWPoint();
-	CellPanel TopP = new CellPanel();
-	CellPanel BottomP = new CellPanel();
+	CellPanel topLinePanel = new CellPanel();
+	CellPanel mainPanel = new CellPanel();
 	int exitKeys[]={75009};
 	int currFormat;
 	
@@ -30,59 +30,62 @@ public class CoordsScreen extends Form {
 	{
 		this.setTitle("");
 		//Radiobuttons for format
-		TopP.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		TopP.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		TopP.addNext(chkDMS =new mCheckBox("d°m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
-		TopP.addLast(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		topLinePanel.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		topLinePanel.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		topLinePanel.addNext(chkDMS =new mCheckBox("d°m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
+		topLinePanel.addNext(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		topLinePanel.addLast(chkGK =new mCheckBox("GK"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 
 		chkDD.setGroup(chkFormat); chkDD.exitKeys=exitKeys;
 		chkDMM.setGroup(chkFormat);chkDMM.exitKeys=exitKeys;
 		chkDMS.setGroup(chkFormat);chkDMS.exitKeys=exitKeys;
 		chkUTM.setGroup(chkFormat);chkUTM.exitKeys=exitKeys;
+		chkGK.setGroup(chkFormat);chkGK.exitKeys=exitKeys;
+		
+		this.addLast(topLinePanel,CellConstants.DONTSTRETCH, CellConstants.WEST);
 
 		// Input for degrees
-		TopP.addNext(chcNS = new mChoice(new String[]{"N", "S"},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(chcNS = new mChoice(new String[]{"N", "S"},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		chcNS.setInt(0);
-		TopP.addNext(inpNSDeg = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addNext(inpNSm = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addLast(inpNSs = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(inpNSDeg = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(inpNSm = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addLast(inpNSs = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		
-		TopP.addNext(chcEW = new mChoice(new String[]{"E", "W"},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(chcEW = new mChoice(new String[]{"E", "W"},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		chcEW.setInt(0);
-		TopP.addNext(inpEWDeg = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addNext(inpEWm = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addLast(inpEWs = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(inpEWDeg = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(inpEWm = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addLast(inpEWs = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		// Input for UTM
-		TopP.addNext(new mLabel(MyLocale.getMsg(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addNext(new mLabel(MyLocale.getMsg(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addLast(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(new mLabel(MyLocale.getMsg(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(new mLabel(MyLocale.getMsg(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addLast(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
-		TopP.addNext(inpUTMZone = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addNext(inpUTMNorthing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		TopP.addLast(btnGps = new mButton("GPS"),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		mainPanel.addNext(inpUTMZone = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addNext(inpUTMNorthing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		mainPanel.addLast(btnGps = new mButton("GPS"),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		
-		TopP.addLast(new mLabel(MyLocale.getMsg(1405,"To load coordinates from GC, enter GCxxxxx below")),CellConstants.HSTRETCH, (CellConstants.HFILL)).setTag(SPAN,new Dimension(4,1));
+		mainPanel.addLast(new mLabel(MyLocale.getMsg(1405,"To load coordinates from GC, enter GCxxxxx below")),CellConstants.HSTRETCH, (CellConstants.HFILL)).setTag(SPAN,new Dimension(4,1));
 			// Input for free Text
-		TopP.addNext(inpText = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		mainPanel.addNext(inpText = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		inpText.toolTip=MyLocale.getMsg(1406,"Enter coordinates in any format or GCxxxxx");
 		inpText.setTag(SPAN,new Dimension(3,1));
-		TopP.addLast(btnParse = new mButton(MyLocale.getMsg(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		mainPanel.addLast(btnParse = new mButton(MyLocale.getMsg(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		
 		// Buttons for cancel and apply, copy and paste
-		TopP.addNext(btnCancel = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		mainPanel.addNext(btnCancel = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnCancel.setTag(SPAN,new Dimension(4,1));
-		TopP.addNext(btnApply = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		mainPanel.addNext(btnApply = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnApply.setTag(SPAN,new Dimension(4,1));
-		TopP.addNext(btnPaste = new mButton(MyLocale.getMsg(617,"Paste")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		mainPanel.addNext(btnPaste = new mButton(MyLocale.getMsg(617,"Paste")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnParse.setTag(SPAN,new Dimension(4,1));
-		TopP.addLast(btnCopy = new mButton(MyLocale.getMsg(618,"Copy")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		mainPanel.addLast(btnCopy = new mButton(MyLocale.getMsg(618,"Copy")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnCopy.setTag(SPAN,new Dimension(4,1));
 		chcNS.exitKeys=exitKeys; chcEW.exitKeys=exitKeys;
 		//add Panels
-		this.addLast(TopP,CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(4,1));
-//		this.addLast(BottomP,CellConstants.VSTRETCH, CellConstants.VFILL|CellConstants.WEST).setTag(SPAN,new Dimension(4,1));
+		this.addLast(mainPanel,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		chcNS.takeFocus(Control.ByKeyboard);
 	}
 	
@@ -114,6 +117,12 @@ public class CoordsScreen extends Form {
 				enable(inpUTMZone); enable(inpUTMNorthing); enable(inpUTMEasting);
 				inpUTMNorthing.wantReturn=true;
 	 			break;
+			case CWPoint.GK: 	
+				disable(chcNS); disable(inpNSDeg); disable(inpNSm); disable(inpNSs);
+				disable(chcEW); disable(inpEWDeg); disable(inpEWm); disable(inpEWs);
+				disable(inpUTMZone); enable(inpUTMNorthing); enable(inpUTMEasting);
+				inpUTMNorthing.wantReturn=true;
+	 			break;
 		}
 		
 		this.stretchLastColumn = true;
@@ -129,6 +138,9 @@ public class CoordsScreen extends Form {
 		if (format == CWPoint.UTM)
 			coords.set(inpUTMZone.getText(), 
 					   inpUTMNorthing.getText(), inpUTMEasting.getText());
+		else if (format == CWPoint.GK) {
+			coords.set(inpUTMEasting.getText(), inpUTMNorthing.getText());			
+		}
 		else {
 			NS = chcNS.getInt()== 0?"N":"S";
 			EW = chcEW.getInt()== 0?"E":"W";
@@ -145,6 +157,11 @@ public class CoordsScreen extends Form {
 			inpUTMZone.setText(coords.getUTMZone());
 			inpUTMNorthing.setText(coords.getUTMNorthing());
 			inpUTMEasting.setText((coords.getUTMEasting()));
+		}
+		else if (format == CWPoint.GK){
+			inpUTMZone.setText("");
+			inpUTMNorthing.setText(coords.getGKNorthing());
+			inpUTMEasting.setText((coords.getGKEasting()));
 		}
 		else {
 			chcNS.setInt(coords.getNSLetter().equals("N")?0:1);
@@ -179,6 +196,7 @@ public class CoordsScreen extends Form {
 			if (((ControlEvent)ev).target==chkDD || ((ControlEvent)ev).target==chkDMM ||
 			    ((ControlEvent)ev).target==chkDMS) Gui.takeFocus(chcNS,Control.ByKeyboard);	
 			if (((ControlEvent)ev).target==chkUTM) Gui.takeFocus(inpUTMZone,Control.ByKeyboard);
+			if (((ControlEvent)ev).target==chkGK) Gui.takeFocus(inpUTMEasting,Control.ByKeyboard);
 			if (((ControlEvent)ev).target==chcNS) Gui.takeFocus(inpNSDeg,Control.ByKeyboard);
 			if (((ControlEvent)ev).target==chcEW) Gui.takeFocus(inpEWDeg,Control.ByKeyboard);
 		}

@@ -70,7 +70,7 @@ public class GotoPanel extends CellPanel {
 	int ticker = 0;
 	
 	Menu mnuContextFormt;
-	MenuItem miDMM, miDMS, miDD, miUTM;
+	MenuItem miDMM, miDMS, miDD, miUTM, miGK;
 	
 	Menu mnuContextRose;
 	MenuItem miLuminary[] = new MenuItem[SkyOrientation.LUMINARY_NAMES.length];
@@ -108,6 +108,8 @@ public class GotoPanel extends CellPanel {
 		miDMS.modifiers &= ~MenuItem.Checked;
 		mnuContextFormt.addItem(miUTM = new MenuItem("UTM"));
 		miUTM.modifiers &= ~MenuItem.Checked;
+		mnuContextFormt.addItem(miGK = new MenuItem("GK"));
+		miGK.modifiers &= ~MenuItem.Checked;
 		currFormat = CWPoint.DMM;
 
 		// Create context menu for compass rose: select luminary for orientation
@@ -329,15 +331,21 @@ public class GotoPanel extends CellPanel {
 						mnuContextFormt.close();
 						currFormat = CWPoint.UTM;
 					}
+					if (action == miGK) {
+						mnuContextFormt.close();
+						currFormat = CWPoint.GK;
+					}
 					miDD.modifiers &= ~MenuItem.Checked;
 					miDMM.modifiers &= ~MenuItem.Checked;
 					miDMS.modifiers &= ~MenuItem.Checked;
 					miUTM.modifiers &= ~MenuItem.Checked;
+					miGK.modifiers &= ~MenuItem.Checked;
 					switch (currFormat) {
 					case CWPoint.DD: miDD.modifiers |= MenuItem.Checked; break;   
 					case CWPoint.DMM: miDMM.modifiers |= MenuItem.Checked; break;   
 					case CWPoint.DMS: miDMS.modifiers |= MenuItem.Checked; break;   
 					case CWPoint.UTM: miUTM.modifiers |= MenuItem.Checked; break;
+					case CWPoint.GK: miGK.modifiers |= MenuItem.Checked; break;
 					}
 
 					lblPosition.setText(myNavigation.gpsPos.toString(currFormat));

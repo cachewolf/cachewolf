@@ -88,6 +88,14 @@ public class GkPoint {
 		return easting;
 	}
 	
+	/**
+	 * easting measured in meters from stripe middle
+	 * @return
+	 */
+	public double getNorthing() {
+		return northing;
+	}
+	
 	
 	public String toString() {
 		return toString(0, "R: ", " H: ");
