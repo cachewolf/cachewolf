@@ -185,6 +185,7 @@ public class OCXMLImporter extends MinML {
 			finalMessage = MyLocale.getMsg(1607,"Update from opencaching successful");
 			inf.setInfo(finalMessage);
 		}
+		CacheHolder.saveAllModifiedDetails();
 		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 		inf.addOkButton();
 	}
@@ -388,10 +389,6 @@ public class OCXMLImporter extends MinML {
 		}
 
 	}
-	private boolean fileExits(String filename) {
-		File myfile = new File(filename);
-		return myfile.exists();
-	}
 
 	private void endCache(String name){
 		if (name.equals("cache")){
@@ -400,7 +397,10 @@ public class OCXMLImporter extends MinML {
 			index = searchWpt(chD.wayPoint);
 			if (index == -1){
 				chD.is_new = true;
-				cacheDB.add(new CacheHolder(chD));
+				CacheHolder ch = new CacheHolder(chD);
+				ch.details = chD;
+				cacheDB.add(ch);
+				ch.detailsAdded();
 				DBindexWpt.put((String)chD.wayPoint, new Integer(cacheDB.size()-1));
 				DBindexID.put((String)chD.ocCacheID, new Integer(cacheDB.size()-1));
 			}
@@ -419,7 +419,8 @@ public class OCXMLImporter extends MinML {
 			}
 
 			// save all
-			chD.saveCacheDetails(profile.dataDir); 
+			chD.saveChanges = true; // this makes CachHolder save the details in case that they are unloaded from memory
+			// chD.saveCacheDetails(profile.dataDir); 
 			// profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); // this is done after .xml is completly processed
 			return;
 		}
@@ -497,7 +498,7 @@ public class OCXMLImporter extends MinML {
 						getPic(fetchUrl, imgAltText);
 					}
 				}
-				chD.saveCacheDetails(profile.dataDir);
+				chD.saveChanges = true; //saveCacheDetails(profile.dataDir);
 				return;
 			}
 
@@ -580,7 +581,7 @@ public class OCXMLImporter extends MinML {
 		if(name.equals("picture")){ 
 			//String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
 			getPic(picUrl,picTitle);
-			chD.saveCacheDetails(profile.dataDir);
+			chD.saveChanges = true; //saveCacheDetails(profile.dataDir);
 			return;
 		}
 	}
@@ -589,7 +590,7 @@ public class OCXMLImporter extends MinML {
 		if (name.equals("cachelog")){ // </cachelog>
 			chD.CacheLogs.merge(new Log(logIcon,logDate,logFinder,logData));
 			//TODO Optimize this. Currently the cache needs to be saved after every log as we don't know whether the next log is for the same cache.
-			chD.saveCacheDetails(profile.dataDir);
+			chD.saveChanges = true; //chD.saveCacheDetails(profile.dataDir);
 			return;
 		}
 
@@ -712,17 +713,16 @@ public class OCXMLImporter extends MinML {
 		int index;
 		
 		index = searchWpt(wpt);
-		if (index==-1) index = searchID(wpt);
-		if (index == -1){
+		if (index ==-1) index = searchID(wpt);
+		if (index == -1) {
 			chD = new CacheHolderDetail();
-			//chD.wayPoint = wpt;
 			return chD;
 		}
-		chD = new CacheHolderDetail((CacheHolder) cacheDB.get(index));
-		try {
+		chD = ((CacheHolder) cacheDB.get(index)).getCacheDetails(true);
+/*		try {
 			chD.readCache(profile.dataDir);
 		} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
-		return chD;
+	*/	return chD;
 	}
 
 

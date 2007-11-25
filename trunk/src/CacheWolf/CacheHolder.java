@@ -364,10 +364,9 @@ public boolean isAddiWpt() {
    
    public CacheHolderDetail getCacheDetails(boolean maybenew) {
 	   if (details != null) {
-		   details.update(this);
+		   details.update(this); // TODO is this logic? what happens if the details were changed and getDetails() is called afterwards all changes will be lost?!
 		   return details;
 	   }
-	   if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails) removeOldestDetails();
 	   details = new CacheHolderDetail(this);
 	   try {
 		   details.readCache(Global.getProfile().dataDir);
@@ -378,19 +377,37 @@ public boolean isAddiWpt() {
 			   return null;
 		   } 
 	   }
-	   cachesWithLoadedDetails.add(this);
+	   detailsAdded();
 	   return details;
    }
    
+   /**
+    * Call this after you added the cache with details to the 
+    * cacheDB <br> It is assumed that that details is set
+    * for an example see OCXMLImporter.endCache()
+    *
+    */
+   public void detailsAdded() {
+	   if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails) removeOldestDetails();
+	   cachesWithLoadedDetails.add(this);
+	   
+   }
+   
    public void releaseCacheDetails() {
+	   if (details != null && details.saveChanges) 
+		   details.saveCacheDetails(Global.getProfile().dataDir);
 	   details = null;
 	   cachesWithLoadedDetails.remove(this);
+   }
+   
+   public void cacheAdded(CacheHolderDetail chd) {
+	   
    }
    
    //final static int maxDetails = 50; 
    static Vector cachesWithLoadedDetails = new Vector(Global.getPref().maxDetails);
    
-   public static void removeOldestDetails() { // TODO save changes if requested?
+   public static void removeOldestDetails() {
 	   for (int i=0; i<Global.getPref().deleteDetails; i++)
 		   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
    }
@@ -399,7 +416,23 @@ public boolean isAddiWpt() {
 	   for (int i=cachesWithLoadedDetails.size()-1; i>=0; i--)
 		   ((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
    }
-/*
+   
+   /**
+    * when importing caches you can set details.saveChanges = true
+    * when the import ist finished call this method to save the pending changes
+    *
+    */
+   public static void saveAllModifiedDetails() {
+	   CacheHolderDetail chD;
+	   for (int i=cachesWithLoadedDetails.size()-1; i>=0; i--) {
+		   chD = ((CacheHolder)(cachesWithLoadedDetails.get(i))).getCacheDetails(false);
+		   if (chD.saveChanges) 
+			   chD.saveCacheDetails(Global.getProfile().dataDir);
+		   	
+	   }
+   }
+
+   /*
 public void finalize() {nObjects--;
    Vm.debug("Destroying CacheHolder "+wayPoint);
    Vm.debug("CacheHolder: "+nObjects+" objects left");
