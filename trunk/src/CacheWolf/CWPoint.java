@@ -215,6 +215,8 @@ public class CWPoint extends TrackPoint{
 								  	"(?:([EeWwOo])\\s*(?![+-]))?"    +     "([+-]?[0-9]{1,3})[,.]([0-9]{1,8})\\s*[°\uC2B0]?" +
 									")|(?:" +
 									"([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" +
+									")|(?:" +
+									"[Rr]:?\\s*([0-9]{1,7})\\s+[Hh]:?\\s*([0-9]{1,7})" +
 									")"); 
 				this.latDec = -91; // return unset / unvalid values if parsing was not successfull
 				this.lonDec = -361;
@@ -237,6 +239,8 @@ public class CWPoint extends TrackPoint{
 						rex.stringMatched(14)==null?"E":rex.stringMatched(14).toUpperCase(), rex.stringMatched(15)+ "." + rex.stringMatched(16), null, null, DD);
 				} else if (rex.stringMatched(17) != null){ // UTM
 					set(rex.stringMatched(17),rex.stringMatched(19),rex.stringMatched(18)); //parse sequence is E N, but set needs N E
+				} else if (rex.stringMatched(20) != null){ // GK
+					set(rex.stringMatched(20),rex.stringMatched(21));
 				}
 				//else Vm.debug("CWPoint: "+coord+" could not be parsed");
 			}	/**
