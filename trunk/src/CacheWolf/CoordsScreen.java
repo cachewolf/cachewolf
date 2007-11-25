@@ -160,8 +160,8 @@ public class CoordsScreen extends Form {
 		}
 		else if (format == CWPoint.GK){
 			inpUTMZone.setText("");
-			inpUTMNorthing.setText(coords.getGKNorthing());
-			inpUTMEasting.setText((coords.getGKEasting()));
+			inpUTMNorthing.setText(coords.getGKNorthing(0));
+			inpUTMEasting.setText((coords.getGKEasting(0)));
 		}
 		else {
 			chcNS.setInt(coords.getNSLetter().equals("N")?0:1);
