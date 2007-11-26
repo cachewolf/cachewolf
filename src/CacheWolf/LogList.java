@@ -128,7 +128,7 @@ public class LogList {
 		 recommendationRating = getScore(numRecommended, foundsSinceRecommendation);
 	 }
 	 
-	 public static int getScore(int numrecommends, int numfoudlogs) {
-		 return Math.round(((numrecommends * numrecommends +1 ) / (numfoudlogs / 10 +1))*100);
+	 public static int getScore(int numrecommends, int numfoundlogs) {
+		 return Math.round((((float)numrecommends * (float)numrecommends +1f ) / ((float)numfoundlogs / 10f +1f))*100f);
 	 }
 }
