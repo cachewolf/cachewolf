@@ -101,15 +101,34 @@ public class LogList {
 		}
 		return countNoFoundLogs;
 	 }
-	
+
+	 /** only valid after calling calcRecommendations() */
+	 int numRecommended = 0;
+	 /** only valid after calling calcRecommendations() */
+	 int foundsSinceRecommendation = 0;
+	 /** only valid after calling calcRecommendations() */
+	 int recommendationRating = 0;
+	 
 	 /**
-	  * Count the number of OC Recommendations
-	  * @return Number of OC recommendations
+	  * call this to 
+	  *
 	  */
-	 public int countRecommendations() {
-		 int nRec=0;
-		 for (int i=size()-1; i>=0; i--)
-			 if (getLog(i).getRecommendation()) nRec++;
-		 return nRec;
+	 public void calcRecommendations() {
+		 numRecommended = 0;
+		 foundsSinceRecommendation = 0;
+		 Log l;
+		 int s = size();
+		 int i;
+		 for (i= 0 ; i < s; i++){
+			 l = getLog(i);
+			 if (l.getDate().compareTo("2007-01-14") < 0) break; // this is the date when the recommendation system was introdueced in opencaching.de see: http://www.geoclub.de/viewtopic.php?t=14901&highlight=formel
+			 if (l.isRecomended()) numRecommended++;
+			 if (l.isFoundLog()) foundsSinceRecommendation++; 
+		 }
+		 recommendationRating = getScore(numRecommended, foundsSinceRecommendation);
+	 }
+	 
+	 public static int getScore(int numrecommends, int numfoudlogs) {
+		 return Math.round(((numrecommends * numrecommends +1 ) / (numfoudlogs / 10 +1))*100);
 	 }
 }

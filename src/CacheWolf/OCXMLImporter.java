@@ -77,20 +77,21 @@ public class OCXMLImporter extends MinML {
 		}//for
 
 	}
+
+	/** true, if not the last syncdate shall be used, but the caches shall be reloaded
+	 * only used in syncSingle */
+	boolean reload;
 	/**
 	 * 
 	 * @param number
 	 * @param infB
 	 * @return true, if some change was made to the cacheDB
 	 */
-	/** true, if not the last syncdate shall be used, but the caches shall be reloaded
-	 * only used in syncSingle */
-	boolean reload;
 	public boolean syncSingle(int number, InfoBox infB) {
 		boolean success=true;
 
 		ch = (CacheHolder)cacheDB.get(number);
-		chD= new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
+		chD= null; //new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
 
 		if (infB.isClosed) {
 			if (askForOptions) return false; 
@@ -200,8 +201,6 @@ public class OCXMLImporter extends MinML {
 			finalMessage = MyLocale.getMsg(1607,"Update from opencaching successful");
 			inf.setInfo(finalMessage);
 		}
-		CacheHolder.saveAllModifiedDetails();
-		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 		inf.addOkButton();
 	}
 	
@@ -265,6 +264,14 @@ public class OCXMLImporter extends MinML {
 		} finally {
 			if (tmpFile != null) tmpFile.delete();
 		}
+		/*
+		for (int i=cacheDB.size()-1; i >=0; i--) {
+			ch = (CacheHolder)cacheDB.get(i);
+			if (ch.wayPoint.toUpperCase().startsWith("OC")) { //TODO only handle changed caches
+				ch.calcRecommendationScore();
+			}
+		} */
+		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 		inf.setInfo(finalMessage);
 
 		return success;

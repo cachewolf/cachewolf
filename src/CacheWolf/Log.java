@@ -1,6 +1,6 @@
 package CacheWolf;
 
-public class Log {//static int nObj=0;
+public class Log {
 	private static String MAXLOGICON="MAXLOG";
 	private static String INVALIDLOGICON=null;
 	/** The icon which describes the log e.g. icon_sad */
@@ -19,7 +19,7 @@ public class Log {//static int nObj=0;
 	 * or <img src='ICON'>&nbsp;DATE by LOGGER<br>MESSAGE</pre>
 	 * @param logLine
 	 */
-	Log(String logLine) {//nObj++;ewe.sys.Vm.debug("Log: "+nObj+" objects");
+	Log(String logLine) {
 //		RECOMMENDED="1"<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
 		try {
 			int ic1=logLine.indexOf("RECOMMENDED=\"1\"");
@@ -47,7 +47,7 @@ public class Log {//static int nObj=0;
 		}
 	}
 	
-	Log(String icon, String date, String logger, String message) {//nObj++;ewe.sys.Vm.debug("Log: "+nObj+" objects");
+	Log(String icon, String date, String logger, String message) {
 		this(icon, date, logger, message, false);
 	}
 	
@@ -59,7 +59,7 @@ public class Log {//static int nObj=0;
 		this.recommended = recommended_;
 	}
 	
-	public static Log maxLog() {//nObj++;ewe.sys.Vm.debug("Log: "+nObj+" objects");
+	public static Log maxLog() {
 		return new Log(MAXLOGICON,"1900-00-00","","");
 	}
 	
@@ -87,13 +87,17 @@ public class Log {//static int nObj=0;
 	public void setMessage(String message) {
 		this.message = message.trim();
 	}
-	public void setRecommendation (boolean recommended_) {
+	public void setRecommandation (boolean recommended_) {
 		recommended = recommended_;
 	}
-	public boolean getRecommendation () {
+	public boolean isRecomended() {
 		return recommended;
 	}
-
+	
+	public boolean isFoundLog() {
+		return icon.equals(GPXImporter.typeText2Image("Found"));
+	}
+	
 	/** Return XML representation of log for storing in cache.xml */
 	public String toXML(){
 		StringBuffer s=new StringBuffer(400);
@@ -122,8 +126,4 @@ public class Log {//static int nObj=0;
 		s.append(message.trim());
 		return s.toString();
 	}
-/*	public void finalize() {nObj--;
-	   ewe.sys.Vm.debug("Log: "+nObj+" objects left");
-	}
-*/	
 }

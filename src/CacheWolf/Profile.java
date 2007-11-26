@@ -112,6 +112,7 @@ public class Profile {
 			pbf.setTask(h,"Saving Index");
 			pbf.exec();
 		}
+		CacheHolder.saveAllModifiedDetails(); // this must be called first as it makes some calculations
 		PrintWriter detfile;
 		CacheHolder ch;
 		try {
@@ -170,7 +171,6 @@ public class Profile {
 			detfile.print("</CACHELIST>\n");
 			detfile.close();
 			buildReferences(); //TODO Why is this needed here?
-			CacheHolder.saveAllModifiedDetails();
 			if(showprogress) pbf.exit(0);
 		}catch(Exception e){
 			Vm.debug("Problem writing to index file "+e.toString());
