@@ -79,8 +79,8 @@ public class CacheHolder {
 	public int noFindLogs = 0;
 	/** Number of recommendations (from the opencaching logs) */
 	public int numRecommended = 0;
-	/** Number of logs since start of recommendations system */
-	public int numLogsSinceRecommendation = 0;
+	/** Number of Founds since start of recommendations system */
+	public int numFoundsSinceRecommendation = 0;
 	/** Recommendation score: calculated as rations  numRecommended / numLogsSinceRecommendation * 100 */
 	public int recommendationScore = 0;
 	/** True if this cache has travelbugs */
@@ -208,8 +208,8 @@ public class CacheHolder {
 			numRecommended = Convert.toInt(xmlString.substring(start+1,end));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			numLogsSinceRecommendation = Convert.toInt(xmlString.substring(start+1,end));
-			recommendationScore = LogList.getScore(numRecommended, numLogsSinceRecommendation);
+			numFoundsSinceRecommendation = Convert.toInt(xmlString.substring(start+1,end));
+			recommendationScore = LogList.getScore(numRecommended, numFoundsSinceRecommendation);
 		} catch (Exception ex) {
 
 		}
@@ -217,7 +217,7 @@ public class CacheHolder {
 
 	public void update(CacheHolder ch) {
 		this.recommendationScore = ch.recommendationScore;
-		this.numLogsSinceRecommendation = ch.numLogsSinceRecommendation;
+		this.numFoundsSinceRecommendation = ch.numFoundsSinceRecommendation;
 		this.numRecommended = ch.numRecommended;
 		/* Here we have to distinguish several cases:
 	   this.is_found       this                ch               Update 'this'
@@ -280,21 +280,21 @@ public class CacheHolder {
 			if (chD != null) {
 				chD.CacheLogs.calcRecommendations();
 				recommendationScore = chD.CacheLogs.recommendationRating;
-				numLogsSinceRecommendation = chD.CacheLogs.foundsSinceRecommendation;
+				numFoundsSinceRecommendation = chD.CacheLogs.foundsSinceRecommendation;
 				numRecommended = chD.CacheLogs.numRecommended;
 			} else { // cache doesn't have details
 				recommendationScore = -1;
-				numLogsSinceRecommendation = -1;
+				numFoundsSinceRecommendation = -1;
 				numRecommended = -1;
 			}
 		} else {
 			recommendationScore = -1;
-			numLogsSinceRecommendation = -1;
+			numFoundsSinceRecommendation = -1;
 			numRecommended = -1;
 		}
 		if (details != null) {
 		details.recommendationScore = recommendationScore;
-		details.numLogsSinceRecommendation = numLogsSinceRecommendation;
+		details.numFoundsSinceRecommendation = numFoundsSinceRecommendation;
 		details.numRecommended = numRecommended;
 		}
 	}
@@ -331,7 +331,7 @@ public class CacheHolder {
 		sb.append("\" is_INCOMPLETE = \"");sb.append(is_incomplete); 
 		sb.append("\" lastSyncOC = \"" );sb.append(lastSyncOC ); 
 		sb.append("\" num_recommended = \"");sb.append(Convert.formatInt(numRecommended)); 
-		sb.append("\" num_found = \"" );sb.append(Convert.formatInt(numLogsSinceRecommendation));
+		sb.append("\" num_found = \"" );sb.append(Convert.formatInt(numFoundsSinceRecommendation));
 		sb.append("\" />\n");
 		return sb.toString();
 	}
