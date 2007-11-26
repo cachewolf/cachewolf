@@ -96,7 +96,7 @@ public class Preferences extends MinML{
 	public boolean tabsAtTop=true;
 	/** True if the status bar is to be displayed (hidden if false) */
 	public boolean showStatus=true;
-	public boolean noTabs=false;
+	//public boolean noTabs=false;
 	/** True if the application can be closed by clicking on the close button in the top line.
 	 * This can be set to avoid accidental closing of the application */
 	public boolean hasCloseButton=true;
@@ -244,6 +244,7 @@ public class Preferences extends MinML{
 		if (name.equals("listview")) {
 			listColMap=atts.getValue("colmap");
 			listColWidth=atts.getValue("colwidths")+",30,30"; // append default values for older versions	
+			if((new StringTokenizer(listColWidth,",")).countTokens()<15) listColWidth+=",30,30"; // for older versions
 		}
 		if(name.equals("proxy")) {
 			myproxy = atts.getValue("prx");
