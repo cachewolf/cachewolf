@@ -121,7 +121,9 @@ public class CacheHolder {
 		try {
 			start=xmlString.indexOf('"'); end=xmlString.indexOf('"',start+1);
 			CacheName = SafeXML.cleanback(xmlString.substring(start+1,end));
-
+			
+			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+            CacheOwner = SafeXML.cleanback(xmlString.substring(start+1,end));
 			// Assume coordinates are in decimal format
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 			double lat=Convert.parseDouble(xmlString.substring(start+1,end).replace(notDecSep,decSep));
@@ -272,10 +274,10 @@ public class CacheHolder {
 	 */
 	public void calcRecommendationScore() {
 		if (wayPoint.toLowerCase().startsWith("oc") ) {
-			if (getCacheDetails(false) != null) {
-				CacheHolderDetail chD;
-				if (this instanceof CacheHolderDetail)	chD = (CacheHolderDetail)this;
-				else chD = details;
+			CacheHolderDetail chD;
+			if (this instanceof CacheHolderDetail)	chD = (CacheHolderDetail)this;
+			else chD = getCacheDetails(true, false);
+			if (chD != null) {
 				chD.CacheLogs.calcRecommendations();
 				recommendationScore = chD.CacheLogs.recommendationRating;
 				numLogsSinceRecommendation = chD.CacheLogs.foundsSinceRecommendation;
@@ -405,11 +407,24 @@ public class CacheHolder {
 	 * To avoid memory problems this routine loads not for more caches than maxDetails
 	 * the details. If maxdetails is reached, it will remove from RAM the details 
 	 * of the 5 caches that were loaded most long ago.
+	 */
+	public CacheHolderDetail getCacheDetails(boolean maybenew) {
+		return getCacheDetails(maybenew, true);
+	}
+	
+	/** 
+	 * Call this method to get the long-description and so on.
+	 * If the according .xml-file is already read, it will return
+	 * that one, otherwise it will be loaded.
+	 * To avoid memory problems this routine loads not for more caches than maxDetails
+	 * the details. If maxdetails is reached, it will remove from RAM the details 
+	 * of the 5 caches that were loaded most long ago.
 	 * 
+	 * @param alarmuser if true an error message will be displayed to the user, if the details could not be read
 	 * @return the respective CacheHolderDetail, null if according xml-file could not be read
 	 */
-
-	public CacheHolderDetail getCacheDetails(boolean maybenew) {
+		
+	public CacheHolderDetail getCacheDetails(boolean maybenew, boolean alarmuser) {
 		if (details != null) {
 			details.update(this); // TODO is this logic? what happens if the details were changed and getDetails() is called afterwards all changes will be lost?!
 			return details;
@@ -420,7 +435,7 @@ public class CacheHolder {
 		} catch (IOException e) {
 			if (maybenew) details.update(this);
 			else {
-				(new MessageBox("Error", "Could not read cache details for cache: "+this.wayPoint, MessageBox.OKB)).execute();
+				if (alarmuser) (new MessageBox("Error", "Could not read cache details for cache: "+this.wayPoint, MessageBox.OKB)).execute();
 				return null;
 			} 
 		}
