@@ -301,11 +301,11 @@ public class myTableModel extends TableModel{
 						}
 					case 13: // OC number of recommendations
 						if (ch.wayPoint.startsWith("OC"))
-							return (new Integer(ch.numRecommended)).toString();
+							return Convert.formatInt(ch.numRecommended);
 						return null;
 					case 14: // OC rating	
 						if (ch.wayPoint.startsWith("OC"))
-							return (new Integer(ch.recommendationScore)).toString();
+							return Convert.formatInt(ch.recommendationScore);
 						return null;
 				} // Switch
 			} // if
