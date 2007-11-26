@@ -205,10 +205,10 @@ public class CacheHolder {
 			lastSyncOC = xmlString.substring(start+1,end);
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			numLogsSinceRecommendation = Convert.toInt(xmlString.substring(start+1,end));
+			numRecommended = Convert.toInt(xmlString.substring(start+1,end));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			numRecommended = Convert.toInt(xmlString.substring(start+1,end));
+			numLogsSinceRecommendation = Convert.toInt(xmlString.substring(start+1,end));
 			recommendationScore = LogList.getScore(numRecommended, numLogsSinceRecommendation);
 		} catch (Exception ex) {
 

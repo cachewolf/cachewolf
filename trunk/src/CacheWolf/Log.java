@@ -87,9 +87,7 @@ public class Log {
 	public void setMessage(String message) {
 		this.message = message.trim();
 	}
-	public void setRecommandation (boolean recommended_) {
-		recommended = recommended_;
-	}
+
 	public boolean isRecomended() {
 		return recommended;
 	}
