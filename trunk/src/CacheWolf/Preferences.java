@@ -49,7 +49,7 @@ public class Preferences extends MinML{
 		if ( ((ewe.fx.Rect) (Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) 
 			 fontSize = 16;
 		else 
-			 fontSize = 12;
+			 fontSize = 11;
 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ public class Preferences extends MinML{
 	/** Timer for logging GPS data */
 	public String logGPSTimer = "";
 	/** The default font size */
-	public int fontSize = 12;
+	public int fontSize = 11;
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
 	/** True if the menu is to be displayed at the top of the screen */
 	public boolean menuAtTop=true;
