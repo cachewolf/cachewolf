@@ -160,8 +160,14 @@ public class CoordsScreen extends Form {
 		}
 		else if (format == CWPoint.GK){
 			inpUTMZone.setText("");
-			inpUTMNorthing.setText(coords.getGKNorthing(0));
-			inpUTMEasting.setText((coords.getGKEasting(0)));
+			if (coords.isValid()){
+				inpUTMNorthing.setText(coords.getGKNorthing(0));
+				inpUTMEasting.setText((coords.getGKEasting(0)));				
+			}
+			else {
+				inpUTMNorthing.setText("0");
+				inpUTMEasting.setText("0");
+			}
 		}
 		else {
 			chcNS.setInt(coords.getNSLetter().equals("N")?0:1);
@@ -255,10 +261,12 @@ public class CoordsScreen extends Form {
 			
 			if (ev.target == btnGps){
 				Navigate nav=Global.mainTab.nav;
-				CWPoint coord = nav.gpsPos;
-				currFormat = chkFormat.getSelectedIndex();
-				setFields(coord,currFormat);
-				activateFields(currFormat);
+				if (nav.gpsPos.isValid()){
+					CWPoint coord = nav.gpsPos;
+					currFormat = chkFormat.getSelectedIndex();
+					setFields(coord,currFormat);
+					activateFields(currFormat);
+				}
 			}
 		}
 		super.onEvent(ev);

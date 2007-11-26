@@ -224,7 +224,7 @@ public class PreferencesScreen extends Form {
 					pref.baseDir = DataDir.getText();
 				//}
 				pref.fontSize = Convert.toInt(fontSize.getText());
-				if (pref.fontSize<6) pref.fontSize=12;
+				if (pref.fontSize<6) pref.fontSize=11;
 				pref.logsPerPage=Common.parseInt(inpLogsPerPage.getText());
 				if (pref.logsPerPage==0) pref.logsPerPage=pref.DEFAULT_LOGS_PER_PAGE;
 				pref.maxLogsToSpider=Common.parseInt(inpMaxLogsToSpider.getText());
