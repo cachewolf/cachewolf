@@ -167,7 +167,7 @@ public class OCXMLImporter extends MinML {
 		}
 		profile.distOC = dist;
 		// Clear status of caches in db
-		for(int i = 0; i<cacheDB.size();i++){
+		for(int i = cacheDB.size()-1; i>=0 ;i--){
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.is_update = false;
 			ch.is_new = false;
@@ -198,7 +198,11 @@ public class OCXMLImporter extends MinML {
 		if (success) {
 			profile.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
 			//pref.savePreferences();
-			finalMessage = MyLocale.getMsg(1607,"Update from opencaching successful");
+			finalMessage = MyLocale.getMsg(1607,"Update from opencaching successful"); 
+			inf.addWarning("\nNumber of"+
+			"\n...caches new/updated: " + numCacheImported +
+			"\n...cache descriptions new/updated: " + numDescImported +
+			"\n...logs new/updated: " + numLogImported);
 			inf.setInfo(finalMessage);
 		}
 		inf.addOkButton();
@@ -424,8 +428,9 @@ public class OCXMLImporter extends MinML {
 				ch.details = chD;
 				cacheDB.add(ch);
 				ch.detailsAdded();
-				DBindexWpt.put((String)chD.wayPoint, new Integer(cacheDB.size()-1));
-				DBindexID.put((String)chD.ocCacheID, new Integer(cacheDB.size()-1));
+				Integer indexInt = new Integer(cacheDB.size()-1);
+				DBindexWpt.put((String)chD.wayPoint, indexInt);
+				DBindexID.put((String)chD.ocCacheID, indexInt);
 			}
 			// update (overwrite) data
 			else {
@@ -654,12 +659,7 @@ public class OCXMLImporter extends MinML {
 		String address = new String(addr);
 		while (address != null && i <= maxRedirections ) { // allow max 5 redirections (http 302 location)
 			i++;
-			if(pref.myproxy.length() > 0){
-				conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
-				Vm.debug("Proxy here: " + address);
-			} else {
-				conn = new HttpConnection(address);
-			}
+			conn = new HttpConnection(address);
 			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 			conn.setRequestorProperty("Connection", "close");
 			conn.documentIsEncoded = true;
@@ -677,7 +677,7 @@ public class OCXMLImporter extends MinML {
 		//save file
 		//Vm.debug("Save: " + myPref.mydatadir + fileName);
 		//Vm.debug("Daten: " + daten.length);
-		BufferedOutputStream outp =  new BufferedOutputStream(new FileOutputStream(profile.dataDir + fileName));
+		FileOutputStream outp =  new FileOutputStream(profile.dataDir + fileName);
 		outp.write(daten.toBytes());
 		outp.close();
 		sock.close();
