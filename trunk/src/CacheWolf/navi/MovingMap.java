@@ -1001,7 +1001,7 @@ public class MovingMap extends Form {
 			setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 			dontUpdatePos = saveGpsIgnStatus;
 		}
-		else (new MessageBox("Error", "No "+ (betterOverview ? "less" : "more") + " deteiled map available", MessageBox.OKB)).execute();
+		else (new MessageBox("Error", "No "+ (betterOverview ? "less" : "more") + " detailed map available", MessageBox.OKB)).execute();
 	}
 
 	public void loadMapForAllCaches(){

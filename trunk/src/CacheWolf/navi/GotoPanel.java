@@ -133,9 +133,10 @@ public class GotoPanel extends CellPanel {
 		lblDST.setMenu(mnuContextFormt);
 		lblDST.modifyAll(Control.WantHoldDown, 0);
 		CoordsP.addLast(btnGoto = new mButton(getGotoBtnText()),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-
+		
 		//Rose for bearing
-		compassRose = new GotoRose("rose.png");
+//		compassRose = new GotoRose("rose.png");
+		compassRose = new GotoRose();
 		icRose = new ImageControl(compassRose);
 		icRose.setMenu(mnuContextRose);
 		icRose.modifyAll(Control.WantHoldDown, 0); // this is necessary in order to make PenHold on a PDA work as right click
@@ -190,6 +191,15 @@ public class GotoPanel extends CellPanel {
 
 
 //		}	
+	}
+	
+	public void resizeTo(int width, int height){
+		super.resizeTo(width, height);
+		Rect btnGotoRect = btnGoto.getRect();
+		int roseHeight = height - btnGotoRect.y - btnGotoRect.height - 40;
+		roseP.resizeTo(width, roseHeight);
+		icRose.resizeTo(width, roseHeight);
+		compassRose.resize(width, roseHeight);
 	}
 
 
@@ -431,8 +441,11 @@ class GotoRose extends AniImage {
 	
 	String m_Luminary = MyLocale.getMsg(6100, "Sun");
 	
+	Font mainFont;
 	FontMetrics fm;
 	int lineHeight;
+	
+	int roseRadius;
 	
 	boolean northCentered = Global.getPref().northCenteredGoto;
 	
@@ -452,6 +465,10 @@ class GotoRose extends AniImage {
 	 */
 	public GotoRose(String fn){
 		super(fn);
+	}
+	
+	public GotoRose(){
+		super();
 	}
 	
 	public void setWaypointDirectionDist(float wd, float dist) {
@@ -488,17 +505,28 @@ class GotoRose extends AniImage {
 	 */
 	
 	public void doDraw(Graphics g,int options) {
+		g.setColor(Color.White);
+		g.fillRect(0, 0, location.width, location.height);
+
+		int fontSize = java.lang.Math.min(location.width, location.height) / 15;
+		mainFont = new Font("Verdana", Font.BOLD, fontSize);
+		g.setFont(mainFont);
+		fm = g.getFontMetrics(mainFont);
+		lineHeight = fm.getHeight() + 1;
+		roseRadius = java.lang.Math.min((location.width * 3) / 4, location.height) / 2;
+
 		if (northCentered) {
-			super.doDraw(g, options);
+			//scale(location.width, location.height, null, 0);
+			//super.doDraw(g, options);
+			drawFullRose(g, 0, new Color(255,255,255), new Color(200,200,200), new Color(255,255,255), new Color(200,200,200), new Color(150,150,150), new Color(75,75,75), 1.0f, true, true);
 		}
 		else {
-			g.setColor(Color.White);
-			g.fillRect(0, 0, location.width, location.height);
+			int radius = (int)((float)roseRadius * 0.75f);
+
+			g.setPen(new Pen(new Color(150,150,150),Pen.SOLID,3));
+			g.drawEllipse(location.width/2 - radius, location.height/2 - radius, 2 * radius, 2 * radius );
 		}
-		Font font = new Font("Verdana", Font.BOLD, 12);
-		g.setFont(font);
-		fm = g.getFontMetrics(font);
-		lineHeight = fm.getHeight() + 1;
+		
 		drawArrows(g);
 		drawWayPointData(g);
 		drawGpsData(g);
@@ -666,15 +694,12 @@ class GotoRose extends AniImage {
 			}
 			else {
 				//moveDir centered
-				int radius = (int)((float)(java.lang.Math.min(location.width, location.height) / 2) * 0.75f);
-
-				g.setPen(new Pen(new Color(150,150,150),Pen.SOLID,3));
-				g.drawEllipse(location.width/2 - radius, location.height/2 - radius, 2 * radius, 2 * radius );
-
 				if (moveDir < 360 && moveDir > -360) {
 					//drawDoubleArrow(g, 360 - moveDir, BLUE, new Color(175,0,0), 1.0f);
-					drawRose(g, 360 - moveDir, new Color(100,100,100), new Color(200,200,200), 1.0f);
+					//drawRose(g, 360 - moveDir, new Color(100,100,100), new Color(200,200,200), 1.0f);
+					drawFullRose(g, 360 - moveDir, new Color(255,255,255), new Color(200,200,200), new Color(150,150,150), new Color(200,200,200), new Color(200,200,200), new Color(75,75,75), 1.0f, false, false);
 					
+					int radius = (int)((float)roseRadius * 0.75f);
 					g.setPen(new Pen(RED,Pen.SOLID,3));
 					g.drawLine(location.width/2, location.height/2 - radius, location.width/2, location.height/2 + radius);
 					
@@ -694,7 +719,7 @@ class GotoRose extends AniImage {
 	private void drawSimpleArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad;
 		int x, y, centerX = location.width/2, centerY = location.height/2;
-		int arrowLength = java.lang.Math.min(centerX, centerY); 
+		int arrowLength = roseRadius; 
 
 		angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		x = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad) * scale).intValue();
@@ -706,7 +731,7 @@ class GotoRose extends AniImage {
 	private void drawSunArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float arrowLength = (float)roseRadius * scale;
 		float halfArrowWidth = arrowLength * 0.08f;
 		float circlePos = arrowLength * 0.7f;
 		int circleRadius = (int)(arrowLength * 0.1f);
@@ -740,7 +765,7 @@ class GotoRose extends AniImage {
 	private void drawThinArrow(Graphics g, float angle, Color col, Color colPoint, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float arrowLength = (float)roseRadius * scale;
 		float halfOpeningAngle = (float)(java.lang.Math.PI * 0.03);
 		float sideLineLength = arrowLength * 0.75f;
 		
@@ -768,7 +793,7 @@ class GotoRose extends AniImage {
 	private void drawDoubleArrow(Graphics g, float angle, Color colFront, Color colRear, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float arrowLength = (float)roseRadius * scale;
 		float halfArrowWidth = arrowLength * 0.1f;
 		
 		int[] pointsX = new int[3];
@@ -795,7 +820,7 @@ class GotoRose extends AniImage {
 	private void drawRose(Graphics g, float angle, Color colFront, Color colRear, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float arrowLength = (float)roseRadius * scale;
 		float halfArrowWidth = arrowLength * 0.12f;
 		
 		int[] pointsX = new int[8];
@@ -826,10 +851,75 @@ class GotoRose extends AniImage {
 		g.fillPolygon(pointsX, pointsY, 3);
 	}
 	
+	private void drawFullRose(Graphics g, float angle, Color colLeft, Color colRight, Color colNorthLeft, Color colNorthRight,
+			Color colBorder, Color colText, float scale, boolean bDrawText, boolean bDrawEightArrows) {
+		float subScale1 = 1.0f;
+		float subScale2 = 0.9f;
+		float innerScale = 0.15f;
+		if(bDrawEightArrows){
+			innerScale = 0.12f;
+			drawRosePart(g,  45 + angle, colLeft, colRight, colBorder, colText, scale * subScale2, innerScale, "NE", bDrawText);
+			drawRosePart(g, 135 + angle, colLeft, colRight, colBorder, colText, scale * subScale2, innerScale, "SE", bDrawText);
+			drawRosePart(g, 225 + angle, colLeft, colRight, colBorder, colText, scale * subScale2, innerScale, "SW", bDrawText);
+			drawRosePart(g, 315 + angle, colLeft, colRight, colBorder, colText, scale * subScale2, innerScale, "NW", bDrawText);	
+		}
+
+		drawRosePart(g,   0 + angle, colNorthLeft, colNorthRight, colBorder, colText, scale * subScale1, innerScale, "N", bDrawText);
+		drawRosePart(g,  90 + angle, colLeft, colRight, colBorder, colText, scale * subScale1, innerScale, "E", bDrawText);
+		drawRosePart(g, 180 + angle, colLeft, colRight, colBorder, colText, scale * subScale1, innerScale, "S", bDrawText);
+		drawRosePart(g, 270 + angle, colLeft, colRight, colBorder, colText, scale * subScale1, innerScale, "W", bDrawText);
+	}
+	
+	private void drawRosePart(Graphics g, float angle, Color colLeft, Color colRight, Color colBorder, Color colText, float scale, float innerScale, String strDir, boolean bDrawText) {
+		float angleRad = angle * (float)java.lang.Math.PI / 180;
+		float angleRadText = (angle + 7.5f) * (float)java.lang.Math.PI / 180;
+		int centerX = location.width/2, centerY = location.height/2;
+				
+		float arrowLength = (float)roseRadius * scale;
+		float halfArrowWidth = arrowLength * innerScale;
+		
+		int[] pointsX = new int[3];
+		int[] pointsY = new int[3];
+
+		pointsX[0] = centerX;
+		pointsY[0] = centerY;
+		pointsX[1] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
+		pointsY[1] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
+		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 4.0)).intValue();
+		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 4.0)).intValue();
+				
+		g.setPen(new Pen(colBorder,Pen.SOLID,1));
+		g.setBrush(new Brush(colLeft, Brush.SOLID));
+		g.fillPolygon(pointsX, pointsY, 3);
+
+		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI / 4.0)).intValue();
+		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI / 4.0)).intValue();
+		
+		g.setBrush(new Brush(colRight, Brush.SOLID));
+		g.fillPolygon(pointsX, pointsY, 3);
+					
+		if (bDrawText){
+			int tempFontSize = new Float(scale * (float)mainFont.getSize()).intValue();
+			Font tempFont = new Font(mainFont.getName(), Font.BOLD, tempFontSize);
+			g.setFont(tempFont);
+			FontMetrics tempFm = g.getFontMetrics(tempFont);
+			float stringHeight = tempFm.getHeight();
+			float stringWidth = tempFm.getTextWidth( strDir );
+			float stringGap = (float)java.lang.Math.sqrt(stringHeight*stringHeight + stringWidth*stringWidth);
+
+			float stringPosition = arrowLength - stringGap / 2.0f;
+			g.setColor(colText);
+			g.drawText(strDir, centerX + new Float(stringPosition * java.lang.Math.sin(angleRadText) - stringWidth / 2.0f).intValue(),
+					           centerY - new Float(stringPosition * java.lang.Math.cos(angleRadText) + stringHeight / 2.0f).intValue());
+			
+			g.setFont(mainFont);
+		}
+	}
+	
 	private void drawThickArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)java.lang.Math.min(centerX, centerY) * scale;
+		float arrowLength = (float)roseRadius * scale;
 		float halfArrowWidth = arrowLength * 0.1f;
 		
 		int[] pointsX = new int[4];
