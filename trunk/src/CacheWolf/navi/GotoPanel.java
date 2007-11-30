@@ -195,9 +195,9 @@ public class GotoPanel extends CellPanel {
 	
 	public void resizeTo(int width, int height){
 		super.resizeTo(width, height);
-		Rect btnGotoRect = btnGoto.getRect();
-		int roseHeight = height - btnGotoRect.y - btnGotoRect.height - 40;
-		roseP.resizeTo(width, roseHeight);
+		Rect coordsRect = CoordsP.getRect();
+		int roseHeight = height - coordsRect.y - coordsRect.height;
+		roseP.resizeTo(width, roseHeight); 
 		icRose.resizeTo(width, roseHeight);
 		compassRose.resize(width, roseHeight);
 	}
