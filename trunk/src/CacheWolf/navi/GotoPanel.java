@@ -199,8 +199,10 @@ public class GotoPanel extends CellPanel {
 		int roseHeight = height - coordsRect.y - coordsRect.height;
 		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 			//some space for the SIP button
-			Rect screen = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
-			roseHeight -= screen.height / 14;
+			if ( (Vm.getParameter(Vm.VM_FLAGS) & (Vm.VM_FLAG_SIP_BUTTON_ON_SCREEN)) == (Vm.VM_FLAG_SIP_BUTTON_ON_SCREEN) ){
+				Rect screen = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
+				roseHeight -= screen.height / 14;				
+			}
 		}
 		roseP.resizeTo(width, roseHeight); 
 		icRose.resizeTo(width, roseHeight);
