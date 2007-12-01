@@ -1,4 +1,6 @@
 package exp;
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.*;
 import ewe.util.*;
 import ewe.sys.*;
@@ -81,13 +83,7 @@ public class HTMLExporter{
 
 				ch = (CacheHolder)cacheDB.get(i);
 				if(ch.is_black == false && ch.is_filtered == false){
-					holder=new CacheHolderDetail(ch);
-					//KHF read cachedata only if needed
-					try{
-						holder.readCache( profile.dataDir);
-					}catch(Exception e){
-						//Vm.debug("Problem reading cache page");
-					}
+					holder=ch.getCacheDetails(false,true);
 					varParams = new Hashtable();
 					varParams.put("TYPE", CacheType.transType(holder.type));
 					varParams.put("SIZE", holder.CacheSize);
@@ -116,7 +112,7 @@ public class HTMLExporter{
 						page_tpl.setParam("LATLON", holder.LatLon);
 						page_tpl.setParam("STATUS", holder.CacheStatus);
 						if (holder.is_HTML)
-							page_tpl.setParam("DESCRIPTION", holder.LongDescription);
+							page_tpl.setParam("DESCRIPTION", modifyLongDesc(holder,targetDir));
 						else {
 							String dummyText = new String();
 							dummyText = STRreplace.replace(holder.LongDescription, "\n", "<br>");
@@ -131,20 +127,6 @@ public class HTMLExporter{
 						}
 						page_tpl.setParam("LOGS", dummy);
 						page_tpl.setParam("NOTES", STRreplace.replace(holder.CacheNotes, "\n","<br>"));
-						// Cache Images
-						cacheImg.clear();
-						for(int j = 0; j<holder.Images.size(); j++){
-							imgParams = new Hashtable();
-							String imgFile = new String((String)holder.Images.get(j));
-							imgParams.put("FILE", imgFile);
-							if (j < holder.ImagesText.size())
-								imgParams.put("TEXT",(String)holder.ImagesText.get(j));
-							else
-								imgParams.put("TEXT",imgFile);
-							DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
-							cacheImg.add(imgParams);
-						}
-						page_tpl.setParam("cacheImg", cacheImg);
 						// Log images
 						logImg.clear();
 						for(int j = 0; j<holder.LogImages.size(); j++){
@@ -230,6 +212,41 @@ public class HTMLExporter{
 		}//if
 		pbf.exit(0);
 	}
+	
+	/**
+	 * Modify the image links in the long description so that they point to image files in the local directory
+	 * Also copy the image file to the target directory so that it can be displayed.
+	 * @param chD CacheHolderDetail
+	 * @return The modified long description
+	 */
+	private String modifyLongDesc(CacheHolderDetail chD, String targetDir) {
+		StringBuffer s=new StringBuffer(chD.LongDescription.length());
+		int start=0;
+		int pos;
+		int imageNo=0;
+		Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
+		while (start>=0 && (pos=chD.LongDescription.indexOf("<img",start))>0) {
+			s.append(chD.LongDescription.substring(start,pos));
+			imgRex.searchFrom(chD.LongDescription,pos);
+			String imgUrl=imgRex.stringMatched(1);
+			//Vm.debug("imgUrl "+imgUrl);
+			if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
+				String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+				// If we have an image which we stored when spidering, we can display it
+				if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
+					s.append("<img src=\""+chD.Images.get(imageNo)+"\">");
+					DataMover.copy(profile.dataDir + chD.Images.get(imageNo),targetDir + chD.Images.get(imageNo));
+					imageNo++;
+				}
+			}
+			start=chD.LongDescription.indexOf(">",pos);
+			if (start>=0) start++;
+			if (imageNo >= chD.Images.getCount())break;
+		}
+		if (start>=0) s.append(chD.LongDescription.substring(start));
+		return s.toString();
+	}
+	
 	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field){
 		Vector navi_index;
 		PrintWriter detfile; 
@@ -378,6 +395,44 @@ public class HTMLExporter{
 			list.set(i,currEntry);
 		}
 		return topIndex;
+	}
+
+	/**
+	 * @author Kalle
+	 * Comparer for sorting the vector for the index.html file
+	 */
+	private class HTMLComparer implements Comparer {
+		String compareWhat;
+
+		public HTMLComparer (String what){
+			this.compareWhat = what;
+		}
+		
+		public int compare(Object o1, Object o2){
+			Hashtable hash1 = (Hashtable)o1;
+			Hashtable hash2 = (Hashtable)o2;
+			String str1, str2;
+			double dbl1, dbl2;
+
+			str1 = hash1.get(compareWhat).toString().toLowerCase();
+			str2 = hash2.get(compareWhat).toString().toLowerCase();
+			
+			if (this.compareWhat.equals("WAYPOINT")){
+				str1 = hash1.get(compareWhat).toString().substring(2).toLowerCase();
+				str2 = hash2.get(compareWhat).toString().substring(2).toLowerCase();
+			}
+			
+			if (this.compareWhat.equals("DISTANCE")){
+				dbl1 = Common.parseDouble(str1.substring(0,str1.length()-3));
+				dbl2 = Common.parseDouble(str2.substring(0,str2.length()-3));
+				if (dbl1 > dbl2) return 1;
+				if (dbl1 < dbl2) return -1;
+				else return 0;
+			}
+			else {
+				return str1.compareTo(str2);
+			}
+		}
 	}
 
 	
