@@ -426,7 +426,8 @@ public class CacheHolder {
 		
 	public CacheHolderDetail getCacheDetails(boolean maybenew, boolean alarmuser) {
 		if (details != null) {
-			details.update(this); // TODO is this logic? what happens if the details were changed and getDetails() is called afterwards all changes will be lost?!
+			if (details.hasUnsavedChanges) this.update(details);
+			else details.update(this);
 			return details;
 		}
 		details = new CacheHolderDetail(this);

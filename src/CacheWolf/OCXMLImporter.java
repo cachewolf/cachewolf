@@ -123,12 +123,13 @@ public class OCXMLImporter extends MinML {
 		String url = new String();
 		picCnt = 0;
 		//Build url
-		url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
+		url = "http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
 			+ "modifiedsince=" + lastS
 			+ "&cache=1"
-			+ "&cachedesc=1"
-			+ "&picture=1"
-			+ "&cachelog=1"
+			+ "&cachedesc=1";
+		if (pref.downloadPicsOC) url += "&picture=1";
+		else url += "&picture=0";
+		url += "&cachelog=1"
 			+ "&removedobject=0"
 			+ "&wp=" + ch.wayPoint
 			+ "&charset=utf-8"
@@ -175,12 +176,13 @@ public class OCXMLImporter extends MinML {
 		}	
 		picCnt = 0;
 		//Build url
-		url ="http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
+		url = "http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
 			+ "modifiedsince=" + lastS
 			+ "&cache=1"
-			+ "&cachedesc=1"
-			+ "&picture=1"
-			+ "&cachelog=1"
+			+ "&cachedesc=1";
+		if (pref.downloadPicsOC) url += "&picture=1";
+		else url += "&picture=0";
+		url += "&cachelog=1"
 			+ "&removedobject=0"
 			+ "&lat=" + centre.getLatDeg(CWPoint.DD)
 			+ "&lon=" + centre.getLonDeg(CWPoint.DD)
