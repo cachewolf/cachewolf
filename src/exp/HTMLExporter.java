@@ -58,7 +58,8 @@ public class HTMLExporter{
 			Vector logImg = new Vector();
 			Vector mapImg = new Vector();
 			Vector usrImg = new Vector();
-			
+			Vector logIcons = new Vector(15);
+			String icon;
 
 			Hashtable varParams;
 			Hashtable imgParams;
@@ -121,20 +122,37 @@ public class HTMLExporter{
 						}
 						page_tpl.setParam("HINTS", holder.Hints);
 						page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(holder.Hints));
-						dummy = new String();
+						StringBuffer sb=new StringBuffer(2000);
 						for(int j = 0; j<holder.CacheLogs.size(); j++){
-							dummy = dummy + STRreplace.replace(holder.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null)+"<br>";
+							sb.append(STRreplace.replace(holder.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
+							sb.append("<br>");
+							icon=holder.CacheLogs.getLog(j).getIcon();
+							if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
 						}
-						page_tpl.setParam("LOGS", dummy);
-						page_tpl.setParam("NOTES", STRreplace.replace(holder.CacheNotes, "\n","<br>"));
+						page_tpl.setParam("LOGS", sb.toString());
+						page_tpl.setParam("NOTES", STRreplace.replace(holder.CacheNotes, "\n","<br>")); 
+						// Cache Images
+						cacheImg.clear();
+						for(int j = 0; j<holder.Images.size(); j++){
+							imgParams = new Hashtable();
+							String imgFile = new String((String)holder.Images.get(j));
+							imgParams.put("FILE", imgFile);
+							if (j < holder.ImagesText.size())
+								imgParams.put("TEXT",(String)holder.ImagesText.get(j));
+							else
+								imgParams.put("TEXT",imgFile);
+							DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
+							cacheImg.add(imgParams);
+						}
+						page_tpl.setParam("cacheImg", cacheImg);
 						// Log images
 						logImg.clear();
 						for(int j = 0; j<holder.LogImages.size(); j++){
 							logImgParams = new Hashtable();
-							String logImgFile = new String((String)holder.LogImages.get(j));
+							String logImgFile = (String) holder.LogImages.get(j);
 							logImgParams.put("FILE", logImgFile);
 							if (j < holder.LogImagesText.size())
-								logImgParams.put("TEXT",(String)holder.LogImagesText.get(j));
+								logImgParams.put("TEXT",holder.LogImagesText.get(j));
 							else
 								logImgParams.put("TEXT",logImgFile);
 							DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
@@ -187,6 +205,13 @@ public class HTMLExporter{
 					}
 				}//if is black, filtered
 			}
+			// Copy the log-icons to the destination directory
+			for (int j=0; j<logIcons.size(); j++) {
+				icon=(String) logIcons.elementAt(j);
+				DataMover.copy(File.getProgramDirectory() + "/"+icon,targetDir + icon);
+				
+			}
+			DataMover.copy(File.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif");
 			try{
 				Template tpl = new Template(template_init_index);
 				tpl.setParam("cache_index", cache_index);
@@ -235,7 +260,8 @@ public class HTMLExporter{
 				// If we have an image which we stored when spidering, we can display it
 				if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
 					s.append("<img src=\""+chD.Images.get(imageNo)+"\">");
-					DataMover.copy(profile.dataDir + chD.Images.get(imageNo),targetDir + chD.Images.get(imageNo));
+					// The actual immages are copied elswhere
+					//DataMover.copy(profile.dataDir + chD.Images.get(imageNo),targetDir + chD.Images.get(imageNo));
 					imageNo++;
 				}
 			}
