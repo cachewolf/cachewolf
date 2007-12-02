@@ -32,6 +32,10 @@ Notes:<br>
 </td></tr>
 <tr style = "font-family:sans-serif;font-size:12;"><td>
 Pictures:<br>
+Cache:<br>
+<tmpl_loop cacheImg>
+<a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
+</tmpl_loop>
 User:<br>
 <tmpl_loop userImg>
 <a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
