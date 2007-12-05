@@ -646,6 +646,10 @@ public class MovingMap extends Form {
 		posCircle.move(npx, npy);
 		posCircleX = posCircleX+diffX;
 		posCircleY = posCircleY+diffY;
+		if (posCircle.where.isValid()){
+			dontUpdatePos = false;
+			updatePosition(posCircle.where);
+		}
 		updateSymbolPositions();
 		updateOverlayPos();
 	}
@@ -876,7 +880,7 @@ public class MovingMap extends Form {
 		setGpsStatus(MovingMap.noGPS);
 	}
 
-	int mapChangeModus;
+	int mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
 	float scaleWanted;
 	boolean wantMapTest = true; // if true updateposition calls setBestMap regulary even if the currentmap covers the whole screen
 	public final static int NORMAL_KEEP_RESOLUTION = 1; // keeps the choosen resolution as long as a map is available that overlaps with the screen and with the PosCircle - it changes the resolution if no such map is available. It wil cahnge back to the wanted scale as soon as a map becomes available (through movement of the GPS-receiver)
@@ -968,7 +972,7 @@ public class MovingMap extends Form {
 		int h = (height != 0 ? height : pref.myAppHeight);
 		int x, y;
 		CWPoint cll;
-		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h) {
+		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h && ll.isValid()) {
 			x = posCircleX; // posCircle is inside the screen
 			y = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn vorher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
 			cll = new CWPoint(ll);
