@@ -40,66 +40,38 @@ public final class Common {
 		}
 	}
 
-	public static String rot13 (String text) {
-		String dummy = new String();
-		for(int i = 0; i < text.length(); i++){
-		  switch (text.charAt(i)){
-			case 'A': dummy = dummy + "N"; break;
-			case 'B': dummy = dummy + "O"; break;
-			case 'C': dummy = dummy + "P"; break;
-			case 'D': dummy = dummy + "Q"; break;
-			case 'E': dummy = dummy + "R"; break;
-			case 'F': dummy = dummy + "S"; break;
-			case 'G': dummy = dummy + "T"; break;
-			case 'H': dummy = dummy + "U"; break;
-			case 'I': dummy = dummy + "V"; break;
-			case 'J': dummy = dummy + "W"; break;
-			case 'K': dummy = dummy + "X"; break;
-			case 'L': dummy = dummy + "Y"; break;
-			case 'M': dummy = dummy + "Z"; break;
-			case 'N': dummy = dummy + "A"; break;
-			case 'O': dummy = dummy + "B"; break;
-			case 'P': dummy = dummy + "C"; break;
-			case 'Q': dummy = dummy + "D"; break;
-			case 'R': dummy = dummy + "E"; break;
-			case 'S': dummy = dummy + "F"; break;
-			case 'T': dummy = dummy + "G"; break;
-			case 'U': dummy = dummy + "H"; break;
-			case 'V': dummy = dummy + "I"; break;
-			case 'W': dummy = dummy + "J"; break;
-			case 'X': dummy = dummy + "K"; break;
-			case 'Y': dummy = dummy + "L"; break;
-			case 'Z': dummy = dummy + "M"; break;
-			case 'a': dummy = dummy + "n"; break;
-			case 'b': dummy = dummy + "o"; break;
-			case 'c': dummy = dummy + "p"; break;
-			case 'd': dummy = dummy + "q"; break;
-			case 'e': dummy = dummy + "r"; break;
-			case 'f': dummy = dummy + "s"; break;
-			case 'g': dummy = dummy + "t"; break;
-			case 'h': dummy = dummy + "u"; break;
-			case 'i': dummy = dummy + "v"; break;
-			case 'j': dummy = dummy + "w"; break;
-			case 'k': dummy = dummy + "x"; break;
-			case 'l': dummy = dummy + "y"; break;
-			case 'm': dummy = dummy + "z"; break;
-			case 'n': dummy = dummy + "a"; break;
-			case 'o': dummy = dummy + "b"; break;
-			case 'p': dummy = dummy + "c"; break;
-			case 'q': dummy = dummy + "d"; break;
-			case 'r': dummy = dummy + "e"; break;
-			case 's': dummy = dummy + "f"; break;
-			case 't': dummy = dummy + "g"; break;
-			case 'u': dummy = dummy + "h"; break;
-			case 'v': dummy = dummy + "i"; break;
-			case 'w': dummy = dummy + "j"; break;
-			case 'x': dummy = dummy + "k"; break;
-			case 'y': dummy = dummy + "l"; break;
-			case 'z': dummy = dummy + "m"; break;
-			default: dummy = dummy + text.charAt(i);
-		  }//switch
+	/**
+	 * (De)codes the given text with rot13.
+	 * Text in [] won't be (de)coded.
+	 * @param text will be (de)coded in rot13
+	 * @return rot13 of text
+	 */
+	public static String rot13(String text) {
+		char[] dummy = new char[text.length()];
+		boolean convert = true;
+		char c;
+		for (int i = 0; i < text.length(); i++) {
+			c = text.charAt(i);
+
+			if (convert && ((c >= 'a' && c <= 'm') || (c >= 'A' && c <= 'M'))) {
+				dummy[i] = (char) (c + 13);
+			} 
+			else if (convert && ((c >= 'n' && c <= 'z') || (c >= 'N' && c <= 'Z'))) {
+				dummy[i] = (char) (c - 13);
+			} 
+			else if (c == '[') {
+				convert = false;
+				dummy[i] = '[';
+			} 
+			else if (c == ']') {
+				convert = true;
+				dummy[i] = ']';
+			} 
+			else {
+				dummy[i] = c;
+			}
 		}// for
-		return dummy;
+		return new String(dummy);
 	}
 	
 	public static String stringToHex(String str){
