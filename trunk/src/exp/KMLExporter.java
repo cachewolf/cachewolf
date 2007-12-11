@@ -103,10 +103,11 @@ public class KMLExporter extends Exporter {
 
 					for(int i = 0; i<tmp.size(); i++){
 						ch = (CacheHolder) tmp.get(i);
+						if (ch.isAddiWpt()) continue;
 						expCount++;
 						h.progress = (float)expCount/(float)counter;
 						h.changed();
-						if (ch.isAddiWpt()) continue;
+						
 						holder=new CacheHolderDetail(ch);
 						try {
 							holder.readCache(profile.dataDir);
