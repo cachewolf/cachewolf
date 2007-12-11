@@ -11,6 +11,10 @@ import CacheWolf.*;
 */
 public class GPXExporter extends Exporter{
 	
+	private final static String STRING_TRUE = "True";
+	private final static String STRING_FALSE = "False";
+	private final static String DEFAULT_DATE = "2000-01-01";
+	
 	public GPXExporter(){
 		super();
 		this.setMask("*.gpx");
@@ -45,49 +49,43 @@ public class GPXExporter extends Exporter{
 	
 	public String record(CacheHolderDetail ch, String lat, String lon) {
 		StringBuffer strBuf = new StringBuffer(1000);
-		Time tim = new Time();
 
-		tim = tim.setFormat("yyyy-MM-dd");
 		try{
 			strBuf.append("  <wpt lat=\""+lat+"\" lon=\""+lon+"\">\r\n");
-			if (ch.DateHidden.length()> 0){
-				tim.parse(ch.DateHidden, "y-M-d");
-			}
-			else {
-				tim.setText("2000-01-01");
-			}
-			strBuf.append("    <time>"+tim.toString()+"T00:00:00.0000000-07:00</time>\r\n");
-			strBuf.append("    <name>"+ch.wayPoint+"</name>\r\n");
-			strBuf.append("    <desc>"+SafeXML.cleanGPX(ch.CacheName)+" by "+SafeXML.cleanGPX(ch.CacheOwner)+"</desc>\r\n");
-			strBuf.append("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp="+ch.wayPoint+"&amp;Submit6=Find</url>\r\n");
-			strBuf.append("    <urlname>"+SafeXML.cleanGPX(ch.CacheName)+" by "+SafeXML.cleanGPX(ch.CacheOwner)+"</urlname>\r\n");
+		
+			String tim = ch.DateHidden.length()>0 ? ch.DateHidden : DEFAULT_DATE;
+			strBuf.append("    <time>").append(tim.toString()).append("T00:00:00.0000000-07:00</time>\r\n");
+			strBuf.append("    <name>").append(ch.wayPoint).append("</name>\r\n");
+			strBuf.append("    <desc>").append(SafeXML.cleanGPX(ch.CacheName)).append(" by ").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</desc>\r\n");
+			strBuf.append("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp=").append(ch.wayPoint).append("&amp;Submit6=Find</url>\r\n");
+			strBuf.append("    <urlname>").append(SafeXML.cleanGPX(ch.CacheName)).append(" by ").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</urlname>\r\n");
 			if (!ch.isAddiWpt()){
 				strBuf.append("    <sym>Geocache</sym>\r\n");
-				strBuf.append("    <type>Geocache|"+CacheType.transType(ch.type)+"</type>\r\n");
-				String dummyAvailable = ch.is_available ? "True":"False";
-				String dummyArchived = ch.is_archived ? "True":"False";
-				strBuf.append("    <groundspeak:cache available=\""+ dummyAvailable + "\" archived=\"" + dummyArchived+ "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
-				strBuf.append("      <groundspeak:name>"+SafeXML.cleanGPX(ch.CacheName)+"</groundspeak:name>\r\n");
-				strBuf.append("      <groundspeak:placed_by>"+SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:placed_by>\r\n");
-				strBuf.append("      <groundspeak:owner>"+SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:owner>\r\n");
-				strBuf.append("      <groundspeak:type>"+CacheType.transType(ch.type)+"</groundspeak:type>\r\n");
-				strBuf.append("      <groundspeak:container>"+ch.CacheSize+"</groundspeak:container>\r\n");
-				strBuf.append("      <groundspeak:difficulty>"+ch.hard.replace(',','.')+"</groundspeak:difficulty>\r\n");
-				strBuf.append("      <groundspeak:terrain>"+ch.terrain.replace(',','.')+"</groundspeak:terrain>\r\n");
-				String dummyHTML = ch.is_HTML ? "True":"False";
-				strBuf.append("      <groundspeak:long_description html=\"" + dummyHTML + "\">\r\n");
-				strBuf.append("      "+SafeXML.cleanGPX(ch.LongDescription));
+				strBuf.append("    <type>Geocache|").append(CacheType.transType(ch.type)).append("</type>\r\n");
+				String dummyAvailable = ch.is_available ? STRING_TRUE:STRING_FALSE;
+				String dummyArchived = ch.is_archived ? STRING_TRUE:STRING_FALSE;
+				strBuf.append("    <groundspeak:cache available=\"").append( dummyAvailable ).append( "\" archived=\"" ).append( dummyArchived).append( "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
+				strBuf.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.CacheName)).append("</groundspeak:name>\r\n");
+				strBuf.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</groundspeak:placed_by>\r\n");
+				strBuf.append("      <groundspeak:owner>").append(SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:owner>\r\n");
+				strBuf.append("      <groundspeak:type>").append(CacheType.transType(ch.type)).append("</groundspeak:type>\r\n");
+				strBuf.append("      <groundspeak:container>").append(ch.CacheSize).append("</groundspeak:container>\r\n");
+				strBuf.append("      <groundspeak:difficulty>").append(ch.hard.replace(',','.')).append("</groundspeak:difficulty>\r\n");
+				strBuf.append("      <groundspeak:terrain>").append(ch.terrain.replace(',','.')).append("</groundspeak:terrain>\r\n");
+				String dummyHTML = ch.is_HTML ? STRING_TRUE:STRING_FALSE;
+				strBuf.append("      <groundspeak:long_description html=\"" ).append( dummyHTML ).append( "\">\r\n");
+				strBuf.append("      ").append(SafeXML.cleanGPX(ch.LongDescription));
 				strBuf.append("      \n</groundspeak:long_description>\r\n");
-				strBuf.append("	  <groundspeak:encoded_hints>"+SafeXML.cleanGPX(Common.rot13(ch.Hints))+"</groundspeak:encoded_hints>\r\n");
+				strBuf.append("	  <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.Hints))).append("</groundspeak:encoded_hints>\r\n");
 				strBuf.append("      <groundspeak:logs>\r\n");
 				strBuf.append("      </groundspeak:logs>\r\n");
 				strBuf.append("      <groundspeak:travelbugs />\r\n");
 				strBuf.append("    </groundspeak:cache>\r\n");
 			}else {
 				// there is no HTML in the description of addi wpts
-				strBuf.append("    <cmt>"+ch.LongDescription+"</cmt>\r\n");
-				strBuf.append("    <sym>"+CacheType.transType(ch.type)+"</sym>\r\n");
-				strBuf.append("    <type>Waypoint|"+CacheType.transType(ch.type)+"</type>\r\n");
+				strBuf.append("    <cmt>").append(ch.LongDescription).append("</cmt>\r\n");
+				strBuf.append("    <sym>").append(CacheType.transType(ch.type)).append("</sym>\r\n");
+				strBuf.append("    <type>Waypoint|").append(CacheType.transType(ch.type)).append("</type>\r\n");
 			}
 			strBuf.append("  </wpt>\r\n");
 		}catch(Exception e){
