@@ -199,104 +199,104 @@ public class Preferences extends MinML{
 		lastName=name;
 		String tmp;
 		if(name.equals("browser")) browser = atts.getValue("name");
-		if(name.equals("fixedsip")) {
+		else if(name.equals("fixedsip")) {
 			if(atts.getValue("state").equals("true")) {
 				fixSIP = true;
 			}
 		}
-		if(name.equals("font")) fontSize = Convert.toInt(atts.getValue("size"));
-		if(name.equals("alias")) {
+		else if(name.equals("font")) fontSize = Convert.toInt(atts.getValue("size"));
+		else if(name.equals("alias")) {
 			myAlias = SafeXML.cleanback(atts.getValue("name"));
 			tmp = SafeXML.cleanback(atts.getValue("password"));
 			if (tmp != null) password=tmp;
 			SpiderGC.passwort=password;
 		}
-		if(name.equals("alias2")) SafeXML.cleanback(myAlias2 = atts.getValue("name"));
-		if(name.equals("location")){
+		else if(name.equals("alias2")) SafeXML.cleanback(myAlias2 = atts.getValue("name"));
+		else if(name.equals("location")){
 			curCentrePt.set(atts.getValue("lat")+" "+atts.getValue("long"));
 		}
-		if(name.equals("port")){
+		else if(name.equals("port")){
 			mySPO.portName = atts.getValue("portname");
 			mySPO.baudRate = Convert.toInt(atts.getValue("baud"));
 		}
-		if(name.equals("portforward")) {
+		else if(name.equals("portforward")) {
 			forwardGPS = Convert.toBoolean(atts.getValue("active"));
 			forwardGpsHost = atts.getValue("destinationHost");
 		}
-		if(name.equals("portlog")) {
+		else if(name.equals("portlog")) {
 			logGPS = Convert.toBoolean(atts.getValue("active"));
 			logGPSTimer = atts.getValue("logTimer");
 		}
-		if (name.equals("lastprofile")) {
+		else if (name.equals("lastprofile")) {
 			collectElement=new StringBuffer(50);
 			if (atts.getValue("autoreload").equals("true")) autoReloadLastProfile=true;
 		}
 
-		if(name.equals("basedir")) {
+		else if(name.equals("basedir")) {
 			baseDir = atts.getValue("dir");
 		}
-		if (name.equals("opencaching")) {
+		else if (name.equals("opencaching")) {
 			downloadPicsOC = Boolean.valueOf(atts.getValue("downloadPics")).booleanValue();
 			downloadMapsOC = Boolean.valueOf(atts.getValue("downloadMaps")).booleanValue();
 			downloadmissingOC = Boolean.valueOf(atts.getValue("downloadmissing")).booleanValue();
 
 		}
-		if (name.equals("listview")) {
+		else if (name.equals("listview")) {
 			listColMap=atts.getValue("colmap");
 			listColWidth=atts.getValue("colwidths")+",30,30"; // append default values for older versions	
 			if((new StringTokenizer(listColWidth,",")).countTokens()<15) listColWidth+=",30,30"; // for older versions
 		}
-		if(name.equals("proxy")) {
+		else if(name.equals("proxy")) {
 			myproxy = atts.getValue("prx");
 			myproxyport = atts.getValue("prt");
 			tmp = atts.getValue("active");
 			if (tmp != null) proxyActive=Boolean.valueOf(tmp).booleanValue();
 		}
-		if (name.equals("garmin")) {
+		else if (name.equals("garmin")) {
 			garminConn=atts.getValue("connection");
 			tmp = atts.getValue("GPSBabelOptions");
 			if (tmp != null) garminGPSBabelOptions=tmp;
 		}
-		if (name.equals("imagepanel")) {
+		else if (name.equals("imagepanel")) {
 			showDeletedImages = Boolean.valueOf(atts.getValue("showdeletedimages")).booleanValue();
 		}
-		if (name.equals("screen")) {
+		else if (name.equals("screen")) {
 			menuAtTop=Boolean.valueOf(atts.getValue("menuattop")).booleanValue();
 			tabsAtTop=Boolean.valueOf(atts.getValue("tabsattop")).booleanValue();
 			showStatus=Boolean.valueOf(atts.getValue("showstatus")).booleanValue();
 			if (atts.getValue("hasclosebutton")!=null)
 				hasCloseButton=Boolean.valueOf(atts.getValue("hasclosebutton")).booleanValue();
 		}
-		if (name.equals("hintlogpanel")) {
+		else if (name.equals("hintlogpanel")) {
 			logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
 			String strInitialHintHeight=atts.getValue("initialhintheight");
 			if (strInitialHintHeight!=null) initialHintHeight=Convert.parseInt(strInitialHintHeight);
 			String strMaxLogsToSpider=atts.getValue("maxspiderlogs");
 			if (strMaxLogsToSpider!=null) maxLogsToSpider=Convert.parseInt(strMaxLogsToSpider);
 		}
-		if (name.equals("solver")) {
+		else if (name.equals("solver")) {
 			solverIgnoreCase=Boolean.valueOf(atts.getValue("ignorevariablecase")).booleanValue();
 		}
-		if (name.equals("mapspath")) {
+		else if (name.equals("mapspath")) {
 			customMapsPath=atts.getValue("dir");
 		}
-		if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
+		else if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
 		
-		if (name.equals("expPath")){
+		else if (name.equals("expPath")){
 			exporterPaths.put(atts.getValue("key"),atts.getValue("value"));
 		}
-		if (name.equals("travelbugs")) {
+		else if (name.equals("travelbugs")) {
 			travelbugColMap=atts.getValue("colmap");
 			travelbugColWidth=atts.getValue("colwidths");	
 			travelbugShowOnlyNonLogged=Boolean.valueOf(atts.getValue("shownonlogged")).booleanValue();
 		}
-		if (name.equals("gotopanel")) {
+		else if (name.equals("gotopanel")) {
 			northCenteredGoto = Boolean.valueOf(atts.getValue("northcentered")).booleanValue();
 		}
-		if (name.equals("spider")) {
+		else if (name.equals("spider")) {
 			forceLogin = Boolean.valueOf(atts.getValue("forcelogin")).booleanValue();
 		}
-		if (name.equals("details")) {
+		else if (name.equals("details")) {
 			maxDetails=Common.parseInt(atts.getValue("cacheSize"));
 			deleteDetails=Common.parseInt(atts.getValue("delete"));
 			if (maxDetails<2) maxDetails=2;
