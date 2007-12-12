@@ -41,8 +41,18 @@ public class MyLocale {
 		 else {
 			 l=new Locale(Locale.createID(language,"",0));
 		 }
-		 lr = l.getLocalResource("cachewolf.Languages",true);
-
+		 ewe.io.TreeConfigFile tcf = ewe.io.TreeConfigFile.getConfigFile(getLocaleLanguage().toUpperCase() + ".cfg");
+		 if (tcf != null){			 
+			 lr = tcf.getLocalResourceObject(l,"cachewolf.Languages");
+		 }
+		 else {
+			 lr = new LocalResource(){
+					public Object get(int id,Object data){return data;}
+					public Object get(String id,Object data){return data;}
+				};
+			 Vm.out().println("languages/" + getLocaleLanguage().toUpperCase() + ".cfg couldn't loaded. Set to default-language!");
+		 }
+		 
 		 double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
 		 if(testA == 4.5) digSeparator = ","; else digSeparator = ".";
 	}
