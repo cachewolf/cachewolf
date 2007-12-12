@@ -41,7 +41,7 @@ public class MyLocale {
 		 else {
 			 l=new Locale(Locale.createID(language,"",0));
 		 }
-		 ewe.io.TreeConfigFile tcf = ewe.io.TreeConfigFile.getConfigFile(getLocaleLanguage().toUpperCase() + ".cfg");
+		 ewe.io.TreeConfigFile tcf = ewe.io.TreeConfigFile.getConfigFile("languages/" + getLocaleLanguage().toUpperCase() + ".cfg");
 		 if (tcf != null){			 
 			 lr = tcf.getLocalResourceObject(l,"cachewolf.Languages");
 		 }
