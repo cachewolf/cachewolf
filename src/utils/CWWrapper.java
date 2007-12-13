@@ -11,23 +11,29 @@ import ewe.sys.*;
  */
 public class CWWrapper {
 	
-	public static void exec(String str) throws ewe.io.IOException{
+	/**
+	 * It doesn't work at all on Loox N520 with WM 5 :-(
+	 * @param cmd
+	 * @param args
+	 * @throws ewe.io.IOException
+	 */
+	public static void exec(String cmd, String args) throws ewe.io.IOException{
 		String plattform = Vm.getPlatform();
 		if(plattform.equals("WinCE")){
-			Vm.exec(str, "", 0, true);
+			Vm.exec(cmd, args, 0, false);
 		}
 		if(plattform.equals("Win32")){
-			Vm.exec(str, "", 0, true);
+			Vm.exec(cmd, args, 0, false);
 		}
 		if(plattform.equals("Unix")){
 			String[] strarr = new String[1];
-			strarr[0] = str;
+			strarr[0] = "\"" + cmd + "\" "+args;
 			String[] dummy = new String[1];
 			Vm.exec(strarr, dummy);
 		}
 		if(plattform.equals("Java")){
-			ewe.sys.Process p = Vm.exec(str);
-			p.waitFor();
+			ewe.sys.Process p = Vm.exec("\"" + cmd + "\" "+args, null);
+//			p.waitFor();
 		}
 	}
 }

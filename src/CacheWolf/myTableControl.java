@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import utils.CWWrapper;
 import ewe.sys.*;
 import ewe.ui.*;
 import ewe.fx.*;
@@ -241,20 +242,19 @@ public class myTableControl extends TableControl{
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1020,"Open online in Browser"))){
 			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
-			CacheHolderDetail chD=new CacheHolderDetail(ch);
-			try{
-				chD.readCache(profile.dataDir);
-			}catch(IOException ex){	(new MessageBox(MyLocale.getMsg(321,"Error"), "Cannot read cache data\n"+ex.toString()+"\nCache: "+ch.wayPoint,MessageBox.OKB)).execute(); }
+			CacheHolderDetail chD=ch.getCacheDetails(false, true);
 			try {
-				String cmd = "\""+pref.browser+ "\" \"" + chD.URL+"\"";
-				Vm.exec(cmd);
+				if (chD != null) {
+					//String cmd = "\""+pref.browser+ "\" \"" + chD.URL+"\"";
+					CWWrapper.exec(pref.browser, chD.URL); // maybe this works on some PDAs?
+				}
 			} catch (IOException ex) {
 				(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();
 			}
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1018,"Open in browser offline"))) {
 			ShowCacheInBrowser sc=new ShowCacheInBrowser();
-			sc.showCache(new CacheHolderDetail((CacheHolder)cacheDB.get(tbp.getSelectedCache())));
+			sc.showCache(((CacheHolder)cacheDB.get(tbp.getSelectedCache())).getCacheDetails(false, true));
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1021,"Open description"))){
 			penDoubleClicked(null);

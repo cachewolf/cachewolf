@@ -57,16 +57,11 @@ public class ShowCacheInBrowser {
 	}
 	
 	public void showCache(CacheHolderDetail chD) {
+		if (chD == null) return;
 		try {
 			Template tpl = new Template(args);
 			if(!chD.is_filtered){
 				Vm.showWait(true);
-				try{
-					chD.readCache(Global.getProfile().dataDir);
-				}catch(Exception e){
-					Vm.debug("Problem reading cache page");
-					Global.getPref().log("Problem reading Cache page");
-				}
 				try {
 					if (chD.wayPoint.startsWith("OC"))
 						tpl.setParam("TYPE", "\"./"+CacheType.transOCType(chD.type)+".gif\"");
