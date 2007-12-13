@@ -30,7 +30,7 @@ install -c -m 644 work/CacheWolf.ewe published/
 install -c -m 644 res_noewe/* published/dat/
 install -c -m 644 resources/attributes-big/*.gif published/dat/attributes/
 install -c -m 644 res_noewe/webmapservices/* published/dat/webmapservices/
-install -c -m 644 res_noewe/webmapservices/* published/dat/languages/
+install -c -m 644 res_noewe/languages/* published/dat/languages/
 (cd published/dat && find * -type f | sort | \
     /usr/local/bin/cpio -oC512 -Hustar -Mdist >../datfiles.tar)
 rm -rf published/dat
