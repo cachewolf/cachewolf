@@ -19,8 +19,6 @@ public class InfoScreen extends Form {
 	
 	public InfoScreen(String datei, String tit, boolean readFromFile, Preferences p){
 		pref = p;
-		Locale l = Vm.getLocale();
-		LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 		String text = new String();
 		this.setTitle(tit);
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
@@ -36,7 +34,7 @@ public class InfoScreen extends Form {
 		disp.setHtml(text);
 		ScrollBarPanel sbp = new ScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
 		this.addLast(sbp);
-		this.addLast(btCancel = new mButton((String)lr.get(3000,"Close")),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		this.addLast(btCancel = new mButton(MyLocale.getMsg(3000,"Close")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 	}
 	
 	public void onEvent(Event ev){

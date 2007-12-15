@@ -352,8 +352,6 @@ public class MapImporter extends Form {
  */
 class mapInteractivePanel extends InteractivePanel{
 	MapImporter f;
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	public mapInteractivePanel(MapImporter f){
 		this.f = f;
 	}
