@@ -2,6 +2,7 @@ package CacheWolf.navi;
 
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
+import CacheWolf.MyLocale;
 import utils.FileBugfix;
 import ewe.util.*;
 import ewe.io.*;
@@ -17,8 +18,6 @@ public class SelectMap extends Form{
 	ScrollBarPanel top;
 	ScrollBarPanel bot;
 	mButton mBCancel, mBLoad;
-	Locale l = Vm.getLocale();
-	LocalResource lr = l.getLocalResource("cachewolf.Languages",true);
 	String mapsPath = new String();
 	mList nonCMaps = new mList(3,1,false);
 	mList CMaps = new mList(3,1,false);
@@ -30,14 +29,14 @@ public class SelectMap extends Form{
 		mapsPath = Global.getPref().getMapManuallySavePath(false)+"/"; //  File.getProgramDirectory() + "/maps/";
 		top = new ScrollBarPanel(CMaps);
 		bot = new ScrollBarPanel(nonCMaps);
-		this.title = (String)lr.get(4101,"Maps");
-		this.addLast(new mLabel((String)lr.get(4102,"Calibrated Maps")), CellConstants.STRETCH, CellConstants.FILL);
+		this.title = MyLocale.getMsg(4101,"Maps");
+		this.addLast(new mLabel(MyLocale.getMsg(4102,"Calibrated Maps")), CellConstants.STRETCH, CellConstants.FILL);
 		this.addLast(top, CellConstants.STRETCH, CellConstants.FILL);
-		this.addLast(new mLabel((String)lr.get(4103,"Non Calibrated Maps")), CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(new mLabel(MyLocale.getMsg(4103,"Non Calibrated Maps")), CellConstants.STRETCH, CellConstants.FILL);
 		this.addLast(bot, CellConstants.STRETCH, CellConstants.FILL);
-		this.addNext(mBCancel = new mButton((String)lr.get(4104,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
-		this.addLast(mBLoad = new mButton((String)lr.get(4105,"Open")),CellConstants.STRETCH, CellConstants.FILL);
-		InfoBox inf = new InfoBox("Info", (String)lr.get(4109,"Loading maps...")); 
+		this.addNext(mBCancel = new mButton(MyLocale.getMsg(4104,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(mBLoad = new mButton(MyLocale.getMsg(4105,"Open")),CellConstants.STRETCH, CellConstants.FILL);
+		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...")); 
 		inf.show();
 		try{
 			File files = new FileBugfix(mapsPath);
