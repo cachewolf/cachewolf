@@ -216,28 +216,40 @@ public class CacheHolder {
 	}
 
 	public void update(CacheHolder ch) {
+		update(ch, false);
+	}
+	public void update(CacheHolder ch, boolean overwrite) {
 		this.recommendationScore = ch.recommendationScore;
 		this.numFoundsSinceRecommendation = ch.numFoundsSinceRecommendation;
 		this.numRecommended = ch.numRecommended;
-		/* Here we have to distinguish several cases:
+		if (overwrite) {
+			this.CacheStatus=ch.CacheStatus;
+			this.is_found = ch.is_found;
+			this.pos = ch.pos;
+			this.LatLon = ch.LatLon;
+		} else {
+			/* Here we have to distinguish several cases:
 	   this.is_found       this                ch               Update 'this'
 	   --------------------------------------------------------------------
 	   false               empty               yyyy-mm-dd       yes
 	   true                "Found"             yyyy-mm-dd       yes
 	   true                yyyy-mm-dd          yyyy-mm-dd       no (or yes)
 	   true                yyyy-mm-dd hh:mm    yyyy-mm-dd       no
-		 */
-		if (!this.is_found || this.CacheStatus.indexOf(":")<0) {
-			this.CacheStatus=ch.CacheStatus;
-			this.is_found = ch.is_found;
-		}this.wayPoint = ch.wayPoint;
+			 */
+			if (!this.is_found || this.CacheStatus.indexOf(":")<0) {
+				this.CacheStatus=ch.CacheStatus;
+				this.is_found = ch.is_found;
+			}
+			// Don't overwrite valid coordinates with invalid ones
+			if (ch.pos.isValid() || !this.pos.isValid()) {
+				this.pos = ch.pos;
+				this.LatLon = ch.LatLon;
+			}
+		}
+		this.wayPoint = ch.wayPoint;
 		this.CacheName = ch.CacheName;
 		this.CacheOwner = ch.CacheOwner;
-		// Don't overwrite valid coordinates with invalid ones
-		if (ch.pos.isValid() || !this.pos.isValid()) {
-			this.pos = ch.pos;
-			this.LatLon = ch.LatLon;
-		}
+
 		this.DateHidden = ch.DateHidden;
 		this.CacheSize = ch.CacheSize;
 		this.kilom = ch.kilom;

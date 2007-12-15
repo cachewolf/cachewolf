@@ -99,20 +99,16 @@ public class Exporter {
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 			str = this.header();
 			if (str != null) outp.print(str);
+			holder=new CacheHolderDetail();
 			for(int i = 0; i<cacheDB.size(); i++){
 				ch=(CacheHolder)cacheDB.get(i);
 				if(ch.is_black == false && ch.is_filtered == false){
-					holder=new CacheHolderDetail(ch);
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();
-					try {
-						if (needCacheDetails) {
-							holder.readCache(profile.dataDir);
-						}
-					} catch (IOException e) {
-						continue;
-					}
+					if (needCacheDetails) holder = ch.getCacheDetails(false, false);
+					else holder.update(ch);
+					if (needCacheDetails && holder == null) continue;
 					switch (this.howManyParams) {
 					case NO_PARAMS:
 						str = record(holder);
