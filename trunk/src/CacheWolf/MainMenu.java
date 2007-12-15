@@ -28,7 +28,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem spider, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
-	private MenuItem exportOZI, exportKML, exportTPL;
+	private MenuItem exportOZI, exportKML, exportTPL, exportMagellan;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete,orgRebuild;
@@ -65,7 +65,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] exitems = new MenuItem[12];
+		MenuItem[] exitems = new MenuItem[13];
 		//Vm.debug("Hi in MainMenu "+lr);
 		exitems[0] = exporthtml = new MenuItem(MyLocale.getMsg(100,"to HTML"));
 		exitems[1] = exportpcx5 = new MenuItem(MyLocale.getMsg(101,"to PCX5 Mapsource"));
@@ -80,7 +80,9 @@ public class MainMenu extends MenuBar {
 		if(!(new File(cwd + "/cmconvert/cmconvert.exe")).exists()) exitems[8].modifiers = MenuItem.Disabled;
 		exitems[9] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
 		exitems[10] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
-		exitems[11] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
+		exitems[11] = exportMagellan = new MenuItem(MyLocale.getMsg(132,"to Magellan"));
+		exitems[12] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
+		
 		Menu exportMenu = new Menu(exitems, MyLocale.getMsg(107,"Export"));
 
 		///////////////////////////////////////////////////////////////////////
@@ -404,6 +406,10 @@ public class MainMenu extends MenuBar {
 					TPLExporter tpl = new TPLExporter( pref,profile, fc.getChosenFile().toString());
 					tpl.doIt();
 				}
+			}
+			if(mev.selectedItem == exportMagellan) {
+				MagellanExporter mag = new MagellanExporter( pref, profile);
+				mag.doIt();
 			}
 			///////////////////////////////////////////////////////////////////////
 			// subMenu for maps, part of "Application" menu 
