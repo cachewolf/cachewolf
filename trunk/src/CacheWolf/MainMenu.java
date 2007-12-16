@@ -128,7 +128,7 @@ public class MainMenu extends MenuBar {
 		filterMenuItems[2] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
 		filterMenuItems[3] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
 		filterMenuItems[4] = mnuSeparator;
-		filterMenuItems[5] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Selected"));
+		filterMenuItems[5] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Filter selected"));
 		filterMenuItems[6] = mnuSeparator;
 		filterMenuItems[7] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
 		filterMenuItems[8] = mnuSeparator;
