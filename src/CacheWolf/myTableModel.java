@@ -323,9 +323,9 @@ public class myTableModel extends TableModel{
 				if ((penEventModifiers & IKeys.SHIFT)>0) {
 					if (tcControl.cursor.y >= 0) { // Second row being marked with shift key pressed
 						if (tcControl.cursor.y<cell.y)
-							toggleSelect(tcControl.cursor.y,cell.y,cell.x);
+							toggleSelect(tcControl.cursor.y+1,cell.y,cell.x);
 						else
-							toggleSelect(cell.y,tcControl.cursor.y,cell.x);
+							toggleSelect(cell.y,tcControl.cursor.y-1,cell.x);
 					} else { // Remember this row as start of range, but don't toggle yet
 					}
 				} else { // Single row marked
