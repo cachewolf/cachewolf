@@ -162,7 +162,7 @@ public class MovingMap extends Form {
 		ScaleImage.setLocation(w - ScaleImage.getWidth(), h - ScaleImage.getHeight());
 		if (mmp.mapImage != null) mmp.mapImage.screenDimChanged(); 
 		if (posCircle != null) posCircle.screenDimChanged();
-		if (tracks != null) addOverlaySet();
+		if (tracks != null) rebuildOverlaySet();
 		for (int i = symbols.size() -1; i >= 0; i-- ) {
 			((MapSymbol)symbols.get(i)).screenDimChanged();
 		}
@@ -308,7 +308,7 @@ public class MovingMap extends Form {
 		setMarkedCache(mainT.ch);
 		addTrack(myNavigation.curTrack);
 		if (tracks != null && tracks.size() > 0 && ((Track)tracks.get(0)).num > 0) 
-			addOverlaySet(); // show points which where added when MavingMap was not running
+			rebuildOverlaySet(); // show points which where added when MavingMap was not running
 		destChanged(myNavigation.destination);
 		FormFrame ret = exec();
 		return ret;
@@ -334,7 +334,7 @@ public class MovingMap extends Form {
 		if (tracks == null) tracks = new Vector();
 		if (tracks.find(tr) >= 0 ) return; // track already in list
 		tracks.add(tr);
-		addOverlaySet();
+		rebuildOverlaySet();
 	}
 
 	public void addTracks(Track[] trs) {
@@ -342,7 +342,7 @@ public class MovingMap extends Form {
 		for (int i=0; i<trs.length; i++) {
 			addTrack(trs[i]);
 		}
-		addOverlaySet();
+		rebuildOverlaySet();
 	}
 
 	/**
@@ -352,7 +352,6 @@ public class MovingMap extends Form {
 	 */
 
 	public void addOverlaySet() {
-		destroyOverlaySet();
 		if (tracks == null) return; // no tracks
 		try {
 			TrackOverlaySetCenterTopLeft = ScreenXY2LatLon(100, 100);
@@ -369,6 +368,10 @@ public class MovingMap extends Form {
 		Vm.gc();
 	}
 
+	public void rebuildOverlaySet() {
+		destroyOverlaySet();
+		addOverlaySet();
+	}
 
 	public void addMissingOverlays() {
 		if (currentMap == null || (!posCircle.where.isValid()) || width == 0 || height == 0) return; // height == 0 happens if this is called before the form ist displayed on the screen
@@ -1103,7 +1106,7 @@ public class MovingMap extends Form {
 			mmp.mapImage.move(0,0);
 			mmp.addImage(mmp.mapImage);
 			mmp.images.moveToBack(mmp.mapImage);
-			addOverlaySet();
+			rebuildOverlaySet();
 			forceMapLoad = true; // forces updateOnlyPosition to redraw
 			updateOnlyPosition(where, false);
 			forceMapLoad = false;
@@ -1118,7 +1121,7 @@ public class MovingMap extends Form {
 				mmp.mapImage.free();
 				mmp.mapImage = null; mapImage1to1 = mmp.mapImage;
 			}
-			addOverlaySet();
+			rebuildOverlaySet();
 			updateOnlyPosition(where, false);
 			inf.close(0);
 			Vm.showWait(false);
@@ -1130,7 +1133,7 @@ public class MovingMap extends Form {
 				mmp.mapImage.free();
 				mmp.mapImage = null; mapImage1to1 = mmp.mapImage;
 			}
-			addOverlaySet();
+			rebuildOverlaySet();
 			updateOnlyPosition(where, false);
 			inf.close(0);
 			Vm.showWait(false);
@@ -1142,7 +1145,7 @@ public class MovingMap extends Form {
 				mmp.mapImage.free();
 				mmp.mapImage = null; mapImage1to1 = mmp.mapImage;
 			}
-			addOverlaySet();
+			rebuildOverlaySet();
 			updateOnlyPosition(where, false); // TODO this doesn't work correctly if the resolution changed, I guess because the pixels of PosCircle will be interpreted from the new resolution, but should be interpreted using the old resolution to test: select a map with a much greater value of m per pixel manually 
 			inf.close(0);
 			Vm.showWait(false);
