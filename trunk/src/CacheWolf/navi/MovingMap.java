@@ -1185,15 +1185,17 @@ public class MovingMap extends Form {
 		int newImageHeight= (int) (this.height * (this.width < 481 ?  2 : 1.6)); // dont make this to big, otherwise it causes out of memory errors 
 		CWPoint center = ScreenXY2LatLon(firstclickpoint.x + w/2, firstclickpoint.y + h/2);
 		float zoomFactor;
-		if (w > 0)  zoomFactor = (float)this.width / (float)w; // zoom in
-		else {
-			w = java.lang.Math.abs(w);
-			firstclickpoint.x = firstclickpoint.x - w; // make firstclickedpoint the upper left corner
-			zoomFactor = (float)w / (float)this.width;
-		}
 		if (h < 0) {
 			h = java.lang.Math.abs(h);
 			firstclickpoint.y = firstclickpoint.y - h;
+		}
+		if (w > 0) { // zoom in
+			zoomFactor = java.lang.Math.min((float)this.width / (float)w, (float)this.height / (float)h);
+		}
+		else { // zoom out
+			w = java.lang.Math.abs(w);
+			firstclickpoint.x = firstclickpoint.x - w; // make firstclickedpoint the upper left corner
+			zoomFactor = java.lang.Math.max((float)w / (float)this.width, (float)h / (float)this.height);
 		}
 		// calculate rect in unzoomed image in a way that the centre of the new image is the centre of selected area but give priority to the prefered image size of the scaled image
 		newImageHeight = (int) (newImageHeight / zoomFactor / currentMap.zoomFactor);
