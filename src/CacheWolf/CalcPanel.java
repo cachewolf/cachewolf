@@ -32,7 +32,7 @@ class BearingDistance {
 
 public class CalcPanel extends CellPanel {
 
-	mCheckBox chkDMM, chkDMS, chkDD, chkUTM;
+	mCheckBox chkDMM, chkDMS, chkDD, chkUTM, chkGK;
 	CheckBoxGroup chkFormat = new CheckBoxGroup();
 	mChoice chcDistUnit;
 	mInput inpBearing, inpDistance, inpText;
@@ -64,15 +64,17 @@ public class CalcPanel extends CellPanel {
 		TopP.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		TopP.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		TopP.addNext(chkDMS =new mCheckBox("d°m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
-		TopP.addLast(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		TopP.addNext(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		TopP.addLast(chkGK =new mCheckBox("GK"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 
 		chkDD.setGroup(chkFormat);
 		chkDMM.setGroup(chkFormat);
 		chkDMS.setGroup(chkFormat);
 		chkUTM.setGroup(chkFormat);
+		chkGK.setGroup(chkFormat);
 		chkFormat.setInt(CWPoint.DMM);
 		btnChangeLatLon=new mButton();
-		TopP.addLast(btnChangeLatLon.setTag(SPAN,new Dimension(4,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		TopP.addLast(btnChangeLatLon,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		//inpBearing and direction, unit for inpDistance
 		BottomP.addNext(new mLabel(MyLocale.getMsg(1403,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addLast(new mLabel(MyLocale.getMsg(1404,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -132,7 +134,7 @@ public class CalcPanel extends CellPanel {
 		chkFormat.selectIndex(format);
 		inpBearing.setText("0");
 		inpDistance.setText("0");
-		chcDistUnit.setInt(1);
+		chcDistUnit.setInt(0);
 	}
 
 
@@ -160,6 +162,7 @@ public class CalcPanel extends CellPanel {
 				coordOut = coordInp.project(bd.degrees, bd.distance);
 				ch.LatLon = coordOut.toString();
 				ch.pos.set(coordOut);
+				ch.type = "51"; // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
 				mainT.newWaypoint(ch);
 			}
 			
