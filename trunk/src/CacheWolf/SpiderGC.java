@@ -965,7 +965,7 @@ public class SpiderGC{
 	 * @param imgUrl The Url of the image
 	 * @param target The bytes of the image
 	 */
-	private void spiderImage(String imgUrl, String target){
+	private void spiderImage(String imgUrl, String target){ // TODO implement a fetch(URL, filename) in HttpConnection and use that one
 		HttpConnection connImg;
 		Socket sockImg;
 		//InputStream is;
@@ -975,11 +975,7 @@ public class SpiderGC{
 		ByteArray daten;
 		String datei = "";
 		datei = profile.dataDir + target;
-		if(pref.myproxy.length()>0 && pref.proxyActive){
-			connImg = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), imgUrl);
-		}else{
-			connImg = new HttpConnection(imgUrl);
-		}
+		connImg = new HttpConnection(imgUrl);
 		connImg.setRequestorProperty("Connection", "close");
 		try{
 			pref.log("Trying to fetch image from: " + imgUrl);
@@ -991,8 +987,8 @@ public class SpiderGC{
 					connImg=connImg.getRedirectedConnection(redirect);
 					pref.log("Redirect to "+redirect);
 				}
-			} while(redirect!=null);
-			daten = connImg.readData(connImg.connect());
+			} while(redirect!=null); // TODO this can end up in an endless loop if trying to load from a malicous site 
+			daten = connImg.readData(sockImg);
 			fos = new FileOutputStream(new File(datei));
 			fos.write(daten.toBytes());
 			fos.close();
