@@ -139,7 +139,7 @@ public class Preferences extends MinML{
 	/** If not null, a customs map path has been specified by the user */
 	private String customMapsPath=null; 
 	/** Number of CacheHolder details that are kept in memory */
-	public int maxDetails=50;
+	public int maxDetails=1000;
 	/** Number of details to delete when maxDetails have been stored in cachesWithLoadedDetails */
 	public int deleteDetails=5;
 	
