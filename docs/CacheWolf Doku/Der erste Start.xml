@@ -25,6 +25,21 @@
           <para>Erster Entwurf, kopiert www.cachewolf.de</para>
         </revdescription>
       </revision>
+
+      <revision>
+        <revnumber>0.2</revnumber>
+
+        <date>14. November 2007</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>Alles Relevante für diesen Abschnitt von cachewolf.de
+          kopiert</para>
+        </revdescription>
+      </revision>
     </revhistory>
   </chapterinfo>
 
@@ -36,16 +51,24 @@
     <para>Wenn man CacheWolf zum ersten Mal startet, erscheint erst folgendes
     Bild:</para>
 
-    <para><warning>
-        <para>Bild fehlt</para>
-      </warning>kurz darauf der Dateidialog</para>
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/lade_liste.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
 
-    <para><warning>
-        <para>Bild fehlt</para>
-      </warning>Dieser fordert dich nun auf, ein Basisverzeichnis auszuwählen
-    für die noch kommenden Cache-Daten. Die Idee dahinter ist folgende: In
-    diesem Verzeichnis kannst du beliebig viele Unterordner anlegen; jeder
-    dieser ordner ist ein eigenes Profil (kommt noch!) innerhalb des
+    <para>kurz darauf der Dateidialog</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/basisverzeichnis.gif" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para>Dieser fordert dich nun auf, ein Basisverzeichnis auszuwählen für
+    die noch kommenden Cache-Daten. Die Idee dahinter ist folgende: In diesem
+    Verzeichnis kannst du beliebig viele Unterordner anlegen; jeder dieser
+    ordner ist ein eigenes Profil (kommt noch!) innerhalb des
     Cachewolf.</para>
 
     <tip>
@@ -59,39 +82,206 @@
   </section>
 
   <section>
-    <title>Einstellen der Präferenzen</title>
+    <title id="editPrefs">Einstellen der Präferenzen</title>
 
     <para>Es erscheint nun ein bisher leeres Fenster, die
     Listenansicht:</para>
 
-    <para>Keine Angst, wir füllen dieses gleich... </para>
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/cw_empty.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para>Keine Angst, wir füllen dieses gleich...</para>
 
     <para>Doch zuerst einmal wähle den Menüpunkt <literal>Anwendung -
     Präferenzen</literal>, hier stellen wir nun ein paar grundsätzliche Dinge
-    ein: </para>
+    ein:</para>
+
+    <para></para>
+
+    <section>
+      <title>Einstellung Allgemein</title>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/pref_1.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+    </section>
+
+    <section>
+      <title>Einstellung Ansicht</title>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/pref_2.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+    </section>
+
+    <section>
+      <title>Einstellung Mehr</title>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/pref_3.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+    </section>
+
+    <section>
+      <title>Einstellung Liste</title>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/pref_4.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+    </section>
+
+    <section>
+      <title>Einstellung T-Bugs</title>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/pref_5.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+    </section>
   </section>
 
   <section>
     <title>Cachedaten bekommen</title>
 
-    <para></para>
+    <para>Programm läuft, Präferenzen eingestellt? Gut! Jetzt müssen wir noch
+    an Cache–Daten kommen. CacheWolf liesst GPX Dateien ein. Diese können
+    entweder von <ulink url="http://www.geocaching.com">Geocaching.com</ulink>
+    oder von <ulink url="http://www.opencaching.de">Opencaching.de</ulink>
+    kommen.</para>
 
     <section>
-      <title>Import einer GPX - Datei</title>
+      <title>Geocaching.com</title>
 
-      <para></para>
+      <para>Es gibt verschiedene Möglichkeiten an die Daten bei geocaching.com
+      zu kommen: Entweder durch den Import einer GPX Datei, einer LOC Datei
+      oder direkt durch herunterladen von der geocaching.com Webseite
+      (spidern).</para>
+
+      <section>
+        <title>Import einer GPX Datei</title>
+
+        <para>Um an Geocaching.com GPX-Dateien zu kommen, muss man leider
+        Premium–Mitglied sein. Diese Dateien werden per Mail verschickt. Die
+        Dateien können einfach in ein Verzeichnis abgelegt werden. Die Dateien
+        müssen nicht entpackt werden.</para>
+
+        <para>Den Import startest Du durch anwählen von "<literal>Anwendung
+        -&gt; Import -&gt; Importiere GPX</literal>". Du kannst eine Datei
+        oder mit der Verwendung der Umschalt - Taste mehrere Dateien
+        auswählen.</para>
+
+        <para>Nach der Wahl der Datei, die du importieren möchtest, bekommst
+        du die Frage, ob Du auch Bilder und herunterladen möchtest:</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/gpx_import_bilder.jpg" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Aktivierst du diese Option(en), solltest du eine bestehende
+        Verbindung ins Internet haben. Hast Du die Option "Bilder" angekreuzt
+        wird CacheWolf beim Einlesen der GPX–Datei auf der Cacheseite
+        nachschauen, ob Bilder in der Beschreibung bzw. ob Spoilerbilder
+        vorhanden sind. Diese werden heruntergeladen. Das Herunterladen von
+        Bildern benötigt etwas Zeit.</para>
+
+        <para><note>
+            <para>Leider werden von geocaching.com in der GPX - Datei nur die
+            "Additional Waypoints" mitgeschickt, die auch eine gültige
+            Koordinate haben. Das Dilemma ist aber, dass bei den meisten
+            Multis, diese Koordinaten erst ermittelt werden müssen.
+            Normalerweise stellt dies noch immer kein Problem dar; aber einige
+            Geocacher beschreiben die einzelnen Stationen innerhalb der
+            "Additional Waypoints", da diese aber keine Koordinaten haben und
+            nicht in der GPX Datei nicht mitgeschickt werden, fehlen vitale
+            Informationen. Dem kann aber abgeholfen werden: CacheWolf bietet
+            die Möglichkeit, einzelne Caches aktualisieren zu können und hier
+            werden auch die Additional Waypoints direkt von der Cacheseite
+            geladen, die keine Koordinaten haben.</para>
+
+            <para></para>
+          </note><warning>
+            <para>link zur popup beschreibung in der listenansicht. (in der
+            note)</para>
+          </warning></para>
+      </section>
+
+      <section>
+        <title>Import einer LOC Datei</title>
+
+        <para>Der Import von LOC-Dateien geschieht auch über den Menüpunkt
+        "Importiere GPX". In den LOC-Dateien sind allerdings sehr wenig
+        Informationen enthalten, insbesondere fehlt die Beschreibung des
+        Caches.</para>
+
+        <warning>
+          <para>nicht ausführlich genug</para>
+        </warning>
+      </section>
+
+      <section>
+        <title>Direktes herunterladen (spidern)</title>
+
+        <para><warning>
+            <para>Spider beschreiben</para>
+          </warning></para>
+      </section>
     </section>
 
     <section>
-      <title>Import einer LOC - Datei</title>
+      <title>Opencaching.de</title>
 
       <para></para>
-    </section>
 
-    <section>
-      <title>Direktes herunterladen (spidern)</title>
+      <orderedlist>
+        <listitem>
+          <para>Einlesen einer bereits heruntergeladenen GPX-Datei:</para>
 
-      <para></para>
+          <para>Auf der Seite von Opencaching.de hat man die Option eine
+          GPX–Datei herunterzuladen. Diese Option befindet sich am Ende der
+          Suchergebnisseite. Die ZIP-Datei einfach in irgendein Verzeichnis
+          kopieren. Der GPX–Import erkennt automatisch dieses Format. Es ist
+          nicht notwendig die Datei zu entpacken! Bei opencaching.de werden in
+          der aktuellen Version alle Bilder geladen.</para>
+        </listitem>
+
+        <listitem>
+          <para>Direkter Download von opencaching.de:</para>
+
+          <para>Mit der Funktion "<literal>Anwendung -&gt; Import -&gt;
+          Download von opencaching.de</literal>" öffnet sich ein Dialog, der
+          die Eingabe vom Abstand um das im Profil eingestellte Zentrum
+          ermöglicht:</para>
+
+          <para><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="pics/spider_options.jpg" />
+              </imageobject>
+            </inlinemediaobject></para>
+
+          <para>Innerhalb eines Kreises in diesem Abstand werden alle Caches
+          (je nach Option mit allen in der Cachbeschreibung anzeigezeigten
+          Bildern heruntergeladen und automatisch importiert. Dabei merkt sich
+          CacheWolf automatisch das Datum, an dem zu letzt heruntergeladen
+          wurde. Bei einem erneuten Aufruf mit dem gleichen Zentrum und dem
+          gleichen Abstand werden dann nur die Hinzufügungen und Änderungen
+          heruntergeladen und eingelesen. Diese Funktion ist bei Opencaching
+          kostenlos, selbst eine Anmeldung ist dort nicht erforderlich.</para>
+        </listitem>
+      </orderedlist>
     </section>
   </section>
 </chapter>
