@@ -4,6 +4,7 @@
 <!ENTITY __Installation__f6afn1eo SYSTEM "Installation.xml">
 <!ENTITY __DerersteStart__f6anus0g SYSTEM "Der%20erste%20Start.xml">
 <!ENTITY __ansichten__f6anvxip SYSTEM "ansichten.xml">
+<!ENTITY __Menüstruktur__f8znfvl8 SYSTEM "Menüstruktur.xml">
 ]>
 <book>
   <title>CacheWolf Dokumentation</title>
@@ -13,4 +14,6 @@
   &__DerersteStart__f6anus0g;
 
   &__ansichten__f6anvxip;
+
+  &__Menüstruktur__f8znfvl8;
 </book>

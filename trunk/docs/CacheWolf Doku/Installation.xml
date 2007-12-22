@@ -3,7 +3,7 @@
   <chapterinfo>
     <date>7.9.2007</date>
 
-    <releaseinfo>Review für Freigabe</releaseinfo>
+    <releaseinfo>In Bearbeitung</releaseinfo>
 
     <edition>CacheWolf 1.0</edition>
 
@@ -46,7 +46,7 @@
 
       <para>Hier ist die Installation sehr einfach. Einfach die .zip-Datei in
       ein Verzeichnis Deiner Wahl entpacken. Durch einen Doppelklick auf das
-      CacheWolf Icon startet das Programm. </para>
+      CacheWolf Icon startet das Programm.</para>
     </section>
 
     <section>
@@ -57,9 +57,9 @@
       oder über die Linux-eigene Paketverwaltung (SuSE: YaST, Debian:
       apt-get,...).</para>
 
-      <para> Über die Kommandozeile startest du das Programm mittels:
-      <literal>java -jar "/Pfadzucachewolf/CacheWolf.jar" &amp;</literal>
-      </para>
+      <para>Über die Kommandozeile startest du das Programm mittels:
+      <literal>java -jar "/Pfadzucachewolf/CacheWolf.jar"
+      &amp;</literal></para>
     </section>
 
     <section>
@@ -81,30 +81,30 @@
         <para>Aus der FAQ:</para>
 
         <para>Frage 3: Welche Version von CacheWolf ist die richtige für mein
-        Pocket PC? </para>
+        Pocket PC?</para>
 
-        <para>Antwort: Diese Frage ist leider nicht so einfach zu beantworten.
-        </para>
+        <para>Antwort: Diese Frage ist leider nicht so einfach zu
+        beantworten.</para>
 
         <para>Auf dieser Seite www.pocketpc-users.de gibt es eine sehr gute
-        Beschreibung. </para>
+        Beschreibung.</para>
 
-        <para>Vielleicht hilft aber folgende (kurze) Zusammenfassung: </para>
+        <para>Vielleicht hilft aber folgende (kurze) Zusammenfassung:</para>
 
         <para>* Hast Du ein Pocket PC 2000 Gerät, dann benutzt es
         wahrscheinlich einen ARM (kompatiblen) Prozessor. Es gibt allerdings
-        Ausnahmen, die einen SH3 oder MIPS Prozessor nutzen. </para>
+        Ausnahmen, die einen SH3 oder MIPS Prozessor nutzen.</para>
 
         <para>* Pocket PC 2002 und 2003 Geräte nutzen ausschließ einen ARM
-        (kompatiblen) Prozessor. </para>
+        (kompatiblen) Prozessor.</para>
 
         <para>* Hast Du eine Gerät, daß Du in der zweiten Hälfte 2004 gekauft
         hast, dann solltest Du die "PocketPC" Version von CacheWolf
         installieren. Beispiele (von Nutzern): PocketPCArm: XDA Trion,
         ASUS632,Yakumo Delta GPS, Loox N520, Compaq IPAQ 6915, Medion
         MDPPC250, FSC Loox N560, Dell Axim X51V, Yakumo DeltaX5BT, Acer N35
-        PocketPC: Loox N520, Mio Digi Walker P550 Zaurus: Sharp SL-C1000
-        </para>
+        PocketPC: Loox N520, Mio Digi Walker P550 Zaurus: Sharp
+        SL-C1000</para>
 
         <para>Sagt dir das alles gar nichts probier einfach die Versionen
         durch - eine wird auf jeden Fall funktionieren!</para>
