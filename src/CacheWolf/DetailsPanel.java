@@ -490,6 +490,8 @@ public class DetailsPanel extends CellPanel{
 							  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYY, where xx are any 2 chars and YYYY are the main cache's chars after the GC"),FormBase.OKB)).execute();
 				  }
 				  profile.buildReferences(); // TODO this takes quite long -> use profile.setAddiRef instead
+			  } else {
+				  profile.buildReferences(); // we have to do this to release the link between the two caches  
 			  }
 		  }
 		  // set status also on addi wpts
