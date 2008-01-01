@@ -71,7 +71,8 @@ public class MainTab extends mTabbedPanel {
 		c.iconize(new Image("solver.gif"),true);
 
 		c = this.addCard(calcP, MyLocale.getMsg(1206,"Calc"), null);
-		c.iconize(new Image("ewe/HandHeld.bmp"),true);
+		mImage imgCalc=new mImage("ewe/HandHeld.bmp"); imgCalc.transparentColor=new Color(0,255,0);
+		c.iconize(imgCalc,true);
 
 		nav = new Navigate();
 		c = this.addCard(gotoP = new GotoPanel(nav), "Goto", null);
