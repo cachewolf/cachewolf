@@ -97,8 +97,8 @@ public class RadarPanel extends CellPanel{
 	* Private method to draw the caches.
 	*/
 	private void drawCaches(){
-		Font font = new Font("Verdana", Font.BOLD, 10);
-		FontMetrics fm = getFontMetrics();
+		Font font = new Font("Gui", Font.BOLD,Global.getPref().fontSize);
+		FontMetrics fm = getFontMetrics(font);
 		AniImage aImg;
 		RadarPanelImage rpi;
 		int x,y = 0;
@@ -122,6 +122,7 @@ public class RadarPanel extends CellPanel{
 							int tw;
 							Image img = new Image(tw=fm.getTextWidth(s),fm.getHeight());
 							Graphics g = new Graphics(img);
+							g.setFont(font);
 							g.setColor(Color.Black);
 							g.fillRect(0,0,tw, fm.getHeight());
 							g.setColor(Color.White);

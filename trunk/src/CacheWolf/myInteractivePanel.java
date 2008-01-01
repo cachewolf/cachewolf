@@ -17,8 +17,8 @@ public class myInteractivePanel extends InteractivePanel{
 	boolean penMoving = false;
 	int x1,y1,x2,y2 = 0;
 	static Color RED = new Color(255,0,0);
-	Font font = new Font("gui", Font.BOLD, 10);
-	FontMetrics fm = getFontMetrics();
+	Font font = new Font("gui", Font.BOLD,Global.getPref().fontSize);
+	FontMetrics fm = getFontMetrics(font);
 	long timePenOn=0;
 	AniImage imgInfo;
 	String strDifficulty=MyLocale.getMsg(1120,"Diff");
@@ -65,6 +65,7 @@ public class myInteractivePanel extends InteractivePanel{
 		int h=fm.getHeight();
 		Image img = new Image(tw,h+h);
 		Graphics g = new Graphics(img);
+		g.setFont(font);
 		g.setColor(new Color(0,0,255));
 		g.fillRect(0,0,tw, h+h);
 		g.setColor(Color.White);
@@ -111,7 +112,7 @@ public class myInteractivePanel extends InteractivePanel{
 			 icnDrag.addColumn((IImage) Global.mainTab.tbP.myMod.cacheImages[Convert.parseInt(ch.type)]);
 			 icnDrag.addColumn(ch.wayPoint);
 			 dc.dragData=dc.startImageDrag(icnDrag,new Point(8,8),this);
-			 if (dc instanceof ImageDragContext) Vm.debug(">>>>Is Image drag");
+			 //if (dc instanceof ImageDragContext) Vm.debug(">>>>Is Image drag");
 			 canScroll=false;
 		}
 	 }
@@ -137,6 +138,7 @@ public class myInteractivePanel extends InteractivePanel{
 			int tw,th;
 			Image img = new Image(tw=fm.getTextWidth(wayPoint+15),th=fm.getHeight()>15?fm.getHeight():15);
 			Graphics g = new Graphics(img);
+			g.setFont(font);
 			g.setColor(Color.White);
 			g.fillRect(0,0,tw, th);
 			g.setColor(new Color(255,0,0));
