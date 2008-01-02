@@ -3,10 +3,15 @@ package exp;
 import CacheWolf.*;
 import ewe.sys.*;
 import ewe.filechooser.FileChooser;
+import ewe.io.BufferedReader;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
+import ewe.io.FileNotFoundException;
+import ewe.io.FileReader;
 import ewe.io.FileWriter;
+import ewe.io.LineNumberReader;
 import ewe.io.PrintWriter;
+import ewe.io.StringStream;
 import ewe.ui.ProgressBarForm;
 import ewe.util.*;
 import ewe.io.IOException;
@@ -51,10 +56,50 @@ public class MagellanExporter {
 		expName = expName.substring(expName.indexOf(".") + 1);
 	}
 
+	public void doIt() {
+		File configFile = new File("magellan.cfg");
+		if (configFile.exists()) {
+			FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.getExportPath(expName+"Dir"));
+			fc.setTitle(MyLocale.getMsg(2104, "Choose directory for exporting .gs files"));
+			String targetDir;
+			if(fc.execute() != FileChooser.IDCANCEL){
+				targetDir = fc.getChosen() + "/";
+				pref.setExportPath(expName+"Dir", targetDir);
+
+				CWPoint centre = profile.centre;
+				try {
+					LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader(configFile)));
+					String line, fileName, coordinate;
+					while ((line = reader.readLine()) != null)  {
+						StringTokenizer tokenizer = new StringTokenizer(line,"=");
+						fileName = targetDir + tokenizer.nextToken().trim() + ".gs";
+						coordinate = tokenizer.nextToken().trim();
+						CWPoint point = new CWPoint(coordinate);
+						DistanceComparer dc = new DistanceComparer(point);
+						cacheDB.sort(dc, false);
+						doIt(fileName);
+					}
+					reader.close();
+				} catch (FileNotFoundException e) {
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n" + e.getMessage()));
+					info.show();
+				} catch (IOException e) {
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n" + e.getMessage()));
+					info.show();
+				} finally {
+					cacheDB.sort(new DistanceComparer(centre),false);
+				}
+			}
+		}
+		else {
+			doIt(null);
+		}
+	}
+	
 	/**
 	 * Does the most work for exporting data
 	 */
-	public void doIt() {
+	public void doIt(String baseFileName) {
 		File outFile;
 		String fileBaseName;
 		String str = null;
@@ -63,9 +108,13 @@ public class MagellanExporter {
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
-		outFile = getOutputFile();
-		if (outFile == null)
-			return;
+		if (baseFileName == null) {
+			outFile = getOutputFile();
+			if (outFile == null)
+				return;
+		} else {
+			outFile = new File(baseFileName);
+		}
 
 		fileBaseName = outFile.getFullPath();
 		// cut .gs
@@ -137,7 +186,7 @@ public class MagellanExporter {
 		File file;
 		FileChooser fc = new FileChooser(FileChooser.SAVE, pref
 				.getExportPath(expName));
-		fc.setTitle("Select target file:");
+		fc.setTitle(MyLocale.getMsg(2102, "Select target file:"));
 		fc.addMask(mask);
 		if (fc.execute() != FileChooser.IDCANCEL) {
 			file = fc.getChosenFile();
@@ -156,6 +205,14 @@ public class MagellanExporter {
 	 * @return formated cache data
 	 */
 	public String record(CacheHolderDetail chD) {
+		/*
+		static protected final int GC_AW_PARKING = 50;
+		static protected final int GC_AW_STAGE_OF_MULTI = 51;
+		static protected final int GC_AW_QUESTION = 52;
+		static protected final int GC_AW_FINAL = 53;
+		static protected final int GC_AW_TRAILHEAD = 54;
+		static protected final int GC_AW_REFERENCE = 55;
+		*/
 		StringBuffer sb = new StringBuffer();
 		sb.append("$PMGNGEO,");
 		sb.append(chD.pos.getLatDeg(CWPoint.DMM));
@@ -166,26 +223,53 @@ public class MagellanExporter {
 		sb.append(chD.pos.getLonMin(CWPoint.DMM));
 		sb.append(",");
 		sb.append("E,");
-		sb.append("0000,");
-		sb.append("F,"); // or "M" ?
+		sb.append("0000,"); // Height
+		sb.append("M,"); // in meter
 		sb.append(chD.wayPoint);
 		sb.append(",");
-		sb.append(removeCommas(chD.CacheName));
+		String add = "";
+		if (chD.isAddiWpt()) {
+			if (chD.type.equals("50")) {
+				add = "Pa:";
+			} else if (chD.type.equals("51")) {
+				add = "St:";
+			} else if (chD.type.equals("52")) {
+				add = "Qu:"; 
+			} else if (chD.type.equals("53")) {	
+				add = "Fi:";
+			} else if (chD.type.equals("54")) {
+				add = "Tr:";
+			} else if (chD.type.equals("55")) {	
+				add = "Re:";
+			}
+			sb.append(add).append(removeCommas(chD.CacheName));
+		} else {
+			sb.append(removeCommas(chD.CacheName));
+		}		
 		sb.append(",");
 		sb.append(removeCommas(chD.CacheOwner));
 		sb.append(",");
 		sb.append(removeCommas(Common.rot13(chD.Hints)));
 		sb.append(",");
-		// Rewrite Unknown Caches
-		if (!chD.type.equals("8")) {
+		
+		if (!add.equals("")) { // Set Picture in Explorist to Virtual
+			sb.append("Virtual Cache");
+		} else if (!chD.type.equals("8")) { // Rewrite Unknown Caches
 			sb.append(CacheType.transType(chD.type));
 		} else {
 			sb.append("Mystery Cache");
 		}
 		sb.append(",");
-		sb.append(""); // UNKNOWN // Time
+		sb.append(toGsDateFormat(chD.DateHidden));  // created - DDMMYYY, YYY = year - 1900
 		sb.append(",");
-		sb.append(""); // UNKNOWN // TIME
+		String lastFound = "0000";
+		for (int i = 0; i < chD.CacheLogs.size(); i++) {
+			if (chD.CacheLogs.getLog(i).isFoundLog() && chD.CacheLogs.getLog(i).getDate().compareTo(lastFound) > 0 ) {
+				lastFound = chD.CacheLogs.getLog(i).getDate();
+			}
+		}
+		
+		sb.append(toGsDateFormat(lastFound)); // lastFound - DDMMYYY, YYY = year - 1900
 		sb.append(",");
 		sb.append(removeCommas(chD.hard));
 		sb.append(",");
@@ -211,4 +295,19 @@ public class MagellanExporter {
 	private String removeCommas(String input) {
 		return input.replace(',', '.');
 	}
+	
+	/**
+	 * change the Dateformat from "yyyy-mm-dd" to ddmmyyy, where yyy is years after 1900 
+	 * @param input Date in yyyy-mm-dd
+ 	 * @return Date in ddmmyyy
+	 */
+	private String toGsDateFormat(String input) {
+		if (input.length() >= 10) {
+			return input.substring(8, 10) + input.substring(5, 7) + "1" + input.substring(2, 4);
+		} 
+		else {
+			return "";
+		}
+	}
+	
 }
