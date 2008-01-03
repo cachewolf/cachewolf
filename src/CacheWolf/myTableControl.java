@@ -51,15 +51,15 @@ public class myTableControl extends TableControl{
 	/** Full menu when listview includes checkbox */
 	public void setMenuFull() {
 		setMenu(mFull);
-		if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
-		   ((MenuItem)mFull.items.get(5)).modifiers|=MenuItem.Disabled;
+//		if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
+//		   ((MenuItem)mFull.items.get(5)).modifiers|=MenuItem.Disabled;
 	}
 	
 	/** Small menu when listview does not include checkbox */
 	public void setMenuSmall() {
 		setMenu(mSmall);
-		if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
-			   ((MenuItem)mSmall.items.get(5)).modifiers|=MenuItem.Disabled;
+		//if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
+		//	   ((MenuItem)mSmall.items.get(5)).modifiers|=MenuItem.Disabled;
 	}
 	
 	public void penRightReleased(Point p){

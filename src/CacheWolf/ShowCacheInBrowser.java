@@ -15,7 +15,8 @@ import HTML.Template;
 
 
 public class ShowCacheInBrowser {
-	String saveTo=File.getProgramDirectory()+"/temp.html";
+	String pd=File.getProgramDirectory();
+	String saveTo=pd+"/temp.html";
 	static Hashtable diff=null;
 	static Hashtable terr=null;
 	static Hashtable args=null;
@@ -23,8 +24,8 @@ public class ShowCacheInBrowser {
 	ShowCacheInBrowser() {
 		if (diff==null) {
 			diff=new Hashtable(15);
-			String y="<img src=\"./y.png\" border=0>";
-			String y2="<img src=\"./y2.png\" border=0>";
+			String y="<img src=\"file://" + pd + "/y.png\" border=0>";
+			String y2="<img src=\"file://" + pd + "/y2.png\" border=0>";
 			diff.put("1",y);
 			diff.put("1.5",y+y2);
 			diff.put("2",y+y);
@@ -36,8 +37,8 @@ public class ShowCacheInBrowser {
 			diff.put("5",y+y+y+y+y);
 	
 			terr=new Hashtable(15);
-			String g="<img src=\"./g.png\" border=0>";
-			String g2="<img src=\"./g2.png\" border=0>";
+			String g="<img src=\"file://" + pd + "/g.png\" border=0>";
+			String g2="<img src=\"file://" + pd + "/g2.png\" border=0>";
 			terr.put("1",g);
 			terr.put("1.5",g+g2);
 			terr.put("2",g+g);
@@ -49,7 +50,7 @@ public class ShowCacheInBrowser {
 			terr.put("5",g+g+g+g+g);
 			
 			args = new Hashtable();
-			args.put("filename", File.getProgramDirectory()+"/GCTemplate.html");
+			args.put("filename", pd+"/GCTemplate.html");
 			args.put("case_sensitive", "true");
 			args.put("loop_context_vars", Boolean.TRUE);
 			args.put("max_includes", new Integer(5));
@@ -64,9 +65,9 @@ public class ShowCacheInBrowser {
 				Vm.showWait(true);
 				try {
 					if (chD.wayPoint.startsWith("OC"))
-						tpl.setParam("TYPE", "\"./"+CacheType.transOCType(chD.type)+".gif\"");
+						tpl.setParam("TYPE", "\"file://"+File.getProgramDirectory()+"/"+CacheType.transOCType(chD.type)+".gif\"");
 					else	
-						tpl.setParam("TYPE", "\"./"+chD.type+".gif\"");
+						tpl.setParam("TYPE", "\"file://"+File.getProgramDirectory()+"/"+chD.type+".gif\"");
 					tpl.setParam("SIZE", chD.CacheSize);
 					tpl.setParam("WAYPOINT", chD.wayPoint);
 					tpl.setParam("CACHE_NAME", chD.CacheName);
