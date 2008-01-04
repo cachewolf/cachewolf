@@ -88,12 +88,22 @@ public class TrackOverlay extends MapImage {
 		if (tracks == null || tracks.size() == 0) return;
 		int tri, i;
 		Track tr;
-		for (tri=tracks.size()-1; tri >= 0; tri--) {
+		int numberOfTracks = tracks.size();
+		int numberOfPoints = ((Track)tracks.get(numberOfTracks - 1)).num;
+		if (numberOfTracks > 1){
+			numberOfPoints += (numberOfTracks - 1) * ((Track)tracks.get(0)).num;
+		}
+		int n = 0;
+		
+		for (tri=0; tri < numberOfTracks; tri++) {
 			tr = (Track)tracks.get(tri);
 			//draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
 			draw.setColor(tr.trackColor);
 			if (tr.num > 0) {
 				for (i=0; i < tr.num; i++) {
+					n++;
+					if  ((numberOfPoints - n > 30*60) && ((n & 1) == 0)) continue;
+					if  ((numberOfPoints - n > 60*60) && ((n & 2) == 0)) continue;
 					paintPoint(tr.trackColor, tr.TrackPoints[i]);
 				}
 			}
