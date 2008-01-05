@@ -14,14 +14,14 @@ import ewe.filechooser.*;
 import exp.*;
 
 /**
-*	This class creates the menu for cachewolf. It is also responsible
-*	for reacting to user inputs in the menu.<br>
-*	This class id=100
-*	@see MainForm
-*	@see MainTab
-*   Last change:
-*     20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
-*/
+ *	This class creates the menu for cachewolf. It is also responsible
+ *	for reacting to user inputs in the menu.<br>
+ *	This class id=100
+ *	@see MainForm
+ *	@see MainTab
+ *   Last change:
+ *     20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
+ */
 public class MainMenu extends MenuBar {
 	private MenuItem profiles, preferences,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap;
@@ -37,7 +37,7 @@ public class MainMenu extends MenuBar {
 	private Form father;
 	private TablePanel tbp;
 	private FilterScreen scnFilter=new FilterScreen();
-	
+
 	public MainMenu(Form f){
 		father = f;
 		String cwd = File.getProgramDirectory();
@@ -49,7 +49,7 @@ public class MainMenu extends MenuBar {
 		mnuProfile[0] = mnuNewProfile = new MenuItem(MyLocale.getMsg(1107,"New"));
 		mnuProfile[1] = mnuOpenProfile = new MenuItem(MyLocale.getMsg(1109,"Open"));
 		Menu profileMenu = new Menu(mnuProfile,MyLocale.getMsg(121,"Profiles"));
-		
+
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for import, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ public class MainMenu extends MenuBar {
 		mnuImport[4] = mnuForceLogin      = new MenuItem("Always login to GC"); 
 		Menu importMenu = new Menu(mnuImport, MyLocale.getMsg(175,"Import"));
 		if (Global.getPref().forceLogin) mnuForceLogin.modifiers^=MenuItem.Checked;
-		
+
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ public class MainMenu extends MenuBar {
 		exitems[10] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
 		exitems[11] = exportMagellan = new MenuItem(MyLocale.getMsg(132,"to Magellan"));
 		exitems[12] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
-		
+
 		Menu exportMenu = new Menu(exitems, MyLocale.getMsg(107,"Export"));
 
 		///////////////////////////////////////////////////////////////////////
@@ -111,14 +111,14 @@ public class MainMenu extends MenuBar {
 		appMenuItems[9] = savenexit = new MenuItem(MyLocale.getMsg(110,"Save & Exit")); 
 		appMenuItems[10] = exit = new MenuItem(MyLocale.getMsg(111,"Exit"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(120,"Application"),new Menu(appMenuItems,null)));
-		
+
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Search" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] searchMenuItems=new MenuItem[2];
 		searchMenuItems[0] = search = new MenuItem(MyLocale.getMsg(112,"Search$"+(char)6)); // char 6 = ctrl +f 
 		searchMenuItems[1] = searchClr = new MenuItem(MyLocale.getMsg(113,"Clear search"));
-		
+
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Filter" pulldown menu
 		///////////////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ public class MainMenu extends MenuBar {
 		filterMenuItems[7] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
 		filterMenuItems[8] = mnuSeparator;
 		filterMenuItems[9] = filtCacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
-		
+
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
 		///////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ public class MainMenu extends MenuBar {
 		filterAndSearchMenuItems[10]=searchClr;
 		filterAndSearchMenuItems[11] = mnuSeparator;
 		filterAndSearchMenuItems[12] = filtCacheTour;
-		
+
 		// Depending on screen width display either filter and searach menus or the combined menu 
 		if (MyLocale.getScreenWidth()>300) {
 			this.addMenu(new PullDownMenu(MyLocale.getMsg(112,"Search"),new Menu(searchMenuItems,null)));
@@ -159,7 +159,7 @@ public class MainMenu extends MenuBar {
 		} else {
 			this.addMenu(new PullDownMenu(MyLocale.getMsg(159,"Filter"),new Menu(filterAndSearchMenuItems,null)));
 		}
-		
+
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organise" pulldown menu
 		///////////////////////////////////////////////////////////////////////
@@ -183,11 +183,11 @@ public class MainMenu extends MenuBar {
 		aboutMenuItems[4] = chkVersion = new MenuItem(MyLocale.getMsg(158,"Version Check"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(117,"About"),new Menu(aboutMenuItems,null)));
 	}
-	
+
 	public void setTablePanel(TablePanel t){
 		tbp = t;
 	}
-	
+
 	public void allowProfileChange(boolean profileChangeAllowed) {
 		if (profileChangeAllowed) {
 			mnuNewProfile.modifiers&=~MenuItem.Disabled;
@@ -197,7 +197,7 @@ public class MainMenu extends MenuBar {
 			mnuOpenProfile.modifiers|=MenuItem.Disabled;
 		}
 	}
-	
+
 	public void setForceLogin() {
 		mnuForceLogin.modifiers=Global.getPref().forceLogin ? Global.mainTab.mnuMain.modifiers|MenuItem.Checked : Global.mainTab.mnuMain.modifiers&~MenuItem.Checked;
 	}
@@ -223,7 +223,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == mnuNewProfile){
 				Global.mainTab.saveUnsavedChanges(true);
 				NewProfileForm f=new NewProfileForm(pref.baseDir);
-			    int code=f.execute(getFrame(), Gui.CENTER_FRAME);
+				int code=f.execute(getFrame(), Gui.CENTER_FRAME);
 				if (code==0) { 
 					profile.clearProfile(); 
 					pref.lastProfile=profile.name=f.profileDir;
@@ -237,30 +237,30 @@ public class MainMenu extends MenuBar {
 				f.close(0);
 			}
 			if(mev.selectedItem == mnuOpenProfile){
-					Global.mainTab.saveUnsavedChanges(true);
-					if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
-						tbp.myMod.numRows=0;
-						CacheHolder.removeAllDetails();
-						profile.cacheDB.clear();
-						InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
-						infB.exec();
-						infB.waitUntilPainted(1000);
-						Vm.showWait(infB, true);
-						profile.readIndex();
-						Vm.showWait(infB, false);
-						pref.curCentrePt.set(profile.centre);
-						filtBlack.modifiers&=~MenuItem.Checked;
-						Filter.showBlacklisted=false;
-						Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
-						infB.close(0);
-						profile.restoreFilter(); // Restore the isActive & isInverted status of the filter
-						tbp.resetModel();
+				Global.mainTab.saveUnsavedChanges(true);
+				if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
+					tbp.myMod.numRows=0;
+					CacheHolder.removeAllDetails();
+					profile.cacheDB.clear();
+					InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
+					infB.exec();
+					infB.waitUntilPainted(1000);
+					Vm.showWait(infB, true);
+					profile.readIndex();
+					Vm.showWait(infB, false);
+					pref.curCentrePt.set(profile.centre);
+					filtBlack.modifiers&=~MenuItem.Checked;
+					Filter.showBlacklisted=false;
+					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
+					infB.close(0);
+					profile.restoreFilter(); // Restore the isActive & isInverted status of the filter
+					tbp.resetModel();
 				}
 			}
 			if(mev.selectedItem == mnuEditCenter){
 				ProfileDataForm f=new ProfileDataForm(pref,profile);
-			    int code=f.execute(getFrame(), Gui.CENTER_FRAME);
-			    tbp.refreshTable();
+				int code=f.execute(getFrame(), Gui.CENTER_FRAME);
+				tbp.refreshTable();
 				f.close(0);
 			}
 			///////////////////////////////////////////////////////////////////////
@@ -292,7 +292,7 @@ public class MainMenu extends MenuBar {
 							if (doSpider) how = GPXImporter.DOIT_WITHSPOILER;
 							else how = GPXImporter.DOIT_NOSPOILER;
 					}
-					*/
+					 */
 					for (int i = 0; i < files.length; i++){ 
 						String file = dir + "/" + files[i];
 						if (file.endsWith("loc")){
@@ -449,7 +449,7 @@ public class MainMenu extends MenuBar {
 				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				tbp.saveColWidth(pref);
 			}
-			
+
 			if(mev.selectedItem == savenexit){
 				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				tbp.saveColWidth(pref);
@@ -535,7 +535,7 @@ public class MainMenu extends MenuBar {
 				dm.moveCaches();
 				tbp.refreshTable();
 			}
-			
+
 			if(mev.selectedItem == orgDelete){
 				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
@@ -581,30 +581,22 @@ public class MainMenu extends MenuBar {
 				sb.append("<br>Decimal separator is: \""); sb.append(pref.digSeparator);
 				sb.append("\"<br>Device is PDA: ");		sb.append(Vm.isMobile());
 				sb.append("<br>Screen: ");				sb.append(MyLocale.getScreenWidth()); 
-					sb.append(" x ");	 sb.append(MyLocale.getScreenHeight()); 
+				sb.append(" x ");	 sb.append(MyLocale.getScreenHeight()); 
 				sb.append("<br>Font size: ");			sb.append(f.getSize());
 				sb.append("<br>Entries in DB: ");		sb.append(cacheDB.size());
 				sb.append("<br>File separator is: \""); sb.append(Vm.getProperty("file.separator","def")); 
 				sb.append("\"<br>Programme directory is "); sb.append(File.getProgramDirectory());
 				sb.append("<br>Number of details in RAM is "); sb.append(CacheHolder.cachesWithLoadedDetails.size());
 				sb.append(" Max.: ");					sb.append(Global.getPref().maxDetails);
-				sb.append("<br>CacheWolf version: ");		sb.append(vers.getRelease());
+				sb.append("<br>CacheWolf version: ");		sb.append(vers.getReleaseDetailed());
 				sb.append("<br>");
 				InfoScreen is = new InfoScreen(sb.toString(), "System", false,pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == chkVersion){
-				Version vers = new Version();
-				if(vers.newVersionAvailable(pref)){
-					InfoBox inf = new InfoBox(MyLocale.getMsg(176,"New Version"), MyLocale.getMsg(177,"New version\navailable."));
-					inf.execute();
-				} else {
-					InfoBox inf = new InfoBox(MyLocale.getMsg(178,"Version Check"), MyLocale.getMsg(179,"You are at\nthe current version."));
-					inf.execute();
-				}
+				(new InfoBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage())).execute();
 			}
-
 		}
 	}
-	
+
 }
