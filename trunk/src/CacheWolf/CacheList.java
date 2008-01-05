@@ -124,7 +124,7 @@ public class CacheList extends CellPanel {
 			 * we redirect the focus to the list view, assuming that that is where
 			 * the key event needs to go.
 			 */
-			if (needsInit) {
+			if (needsInit && ev.target==this) {
 				Gui.takeFocus(Global.mainTab.tbP.tc, Control.ByKeyboard);
 				ev.target=Global.mainTab.tbP.tc;
 				postEvent(ev);
