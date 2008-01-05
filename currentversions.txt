@@ -4,14 +4,14 @@ T0VersionMinor: 9
 T0Revision: 0
 
 # ReleaseCandidate
-T1VersionMajor: 1
-T1VersionMinor: 0
-T1SvnRevision: 1100
+T1VersionMajor: 0
+T1VersionMinor: 9
+T1SvnRevision: 800
 
 # InDevelopmentStable
-T2VersionMajor: 1
-T2VersionMinor: 0
-T2SvnRevision: 1110
+T2VersionMajor: 0
+T2VersionMinor: 9
+T2SvnRevision: 1000
 
 # InDevelopmentNewest
 T3VersionMajor: 1
