@@ -122,6 +122,8 @@ public class Preferences extends MinML{
 	public int maxLogsToSpider = DEFAULT_MAX_LOGS_TO_SPIDER;
 	/** True if the Solver should ignore the case of variables */
 	public boolean solverIgnoreCase=true;
+	/** True if the solver expects arguments for trigonometric functions in degrees */
+	public boolean solverDegMode=true;
 	/** The type of connection which GPSBABEL uses: com1 OR usb. */
 	public String garminConn="com1";  
 	/** Additional options for GPSBabel, i.e. -s to synthethise short names */
@@ -276,6 +278,8 @@ public class Preferences extends MinML{
 		}
 		else if (name.equals("solver")) {
 			solverIgnoreCase=Boolean.valueOf(atts.getValue("ignorevariablecase")).booleanValue();
+			tmp = atts.getValue("degMode");
+			if (tmp != null) solverDegMode=Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("mapspath")) {
 			customMapsPath=atts.getValue("dir");
@@ -351,7 +355,7 @@ public class Preferences extends MinML{
 			outp.print("    <travelbugs colmap=\""+travelbugColMap+"\" colwidths=\""+travelbugColWidth+"\" shownonlogged=\""+travelbugShowOnlyNonLogged+"\" />\n");
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
 			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\" initialhintheight=\""+initialHintHeight+"\"  maxspiderlogs=\""+maxLogsToSpider+"\" />\n");
-			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\"/>\n");
+			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\" degMode=\""+solverDegMode+"\" />\n");
 			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" />\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");

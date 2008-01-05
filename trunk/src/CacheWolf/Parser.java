@@ -74,7 +74,7 @@ import java.lang.Double;
 *     1) Add its name and alias and allowed number of args to array functions
 *     2) Add a new private method in the "functions" section
 *     3) Add call to private method in executeFunction 
-*   @author salzkammergut January 2007
+*   @author salzkammergut Januay 2007
 */ 
 public class Parser{
 
@@ -193,6 +193,9 @@ public class Parser{
     		if (!((String)sym.getKey()).startsWith("$")) 
     			symbolTable.remove(sym.getKey());
     	}
+    	Double pi=new Double(java.lang.Math.PI);
+    	symbolTable.put("PI",pi);
+    	symbolTable.put("pi",pi); // To make it easier for the user we also add a lowercase version of pi
     }
     
 	private boolean isVariable(String varName) {
@@ -341,6 +344,22 @@ public class Parser{
 ///////////////////////////////////////////
 //  FUNCTIONS
 ///////////////////////////////////////////
+	
+	/** If we are in DEGree mode, convert the argument to RADiants, if not leave it unchanged */
+	private double convertInput(double arg) {
+		if (Global.getPref().solverDegMode)
+			return arg*java.lang.Math.PI/180.0;
+		else
+			return arg;
+	}
+	
+	/** If we are in DEGree mode, convert the argument to degrees */
+	private double convertOutput(double arg) {
+		if (Global.getPref().solverDegMode)
+			return arg/java.lang.Math.PI*180.0;
+		else
+			return arg;
+	}
     
 	/** Get or set the current centre */
 	private void funcCenter(int nargs) throws Exception {
@@ -427,7 +446,7 @@ public class Parser{
  		if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
 		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
 	   	cwPt.set(coordA);
-	   	return cwPt.getBearing(new CWPoint(coordB));
+	   	return convertOutput(cwPt.getBearing(new CWPoint(coordB))*java.lang.Math.PI/180.0);
     }
     /**
      * Encode a string by replacing all characters in a string with their corresponding characters in
@@ -553,8 +572,8 @@ public class Parser{
     private String funcProject() throws Exception {
     	double distance=popCalcStackAsNumber(0);
     	if (distance<0) err(MyLocale.getMsg(1718,"Cannot project a negative distance"));
-    	double degrees=popCalcStackAsNumber(0);
-    	if (degrees<0 || degrees>360) err(MyLocale.getMsg(1719,"Projection degrees must be in interval [0;360]"));
+    	double degrees=convertInput(popCalcStackAsNumber(0));
+    	if (degrees<0 || degrees>2*java.lang.Math.PI) err(MyLocale.getMsg(1719,"Projection degrees must be in interval [0;360]"));
     	String coord=popCalcStackAsString();
 		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
     	cwPt.set(coord);
@@ -605,7 +624,7 @@ public class Parser{
 			   goto($01xxxx); STOP
 			ENDIF*/
 			for (int i=0; i<nStages; i++) {
-				String stage=MyLocale.formatLong(i+1,"00");
+				String stage=MyLocale.formatLong(i,"00");
 				String stageWpt="$"+stage+waypointName.substring(2);
 				op.append("IF "+stageWpt+"=\"\" THEN\n");
 				op.append("  "+stageWpt+" = \"\"\n");
@@ -636,7 +655,9 @@ public class Parser{
 					op.append("] = \" $");
 					op.append(addiWpt.wayPoint);
 					CacheHolderDetail chD=new CacheHolderDetail(addiWpt);
-					chD.readCache(Global.getProfile().dataDir);
+					try {
+						chD.readCache(Global.getProfile().dataDir);
+					} catch( Exception ex) {};
 					if (chD.LongDescription.trim().length()>0)
 						op.append("\n   \""+STRreplace.replace(chD.LongDescription,"\"","\"\"")+"\"");
 					op.append("\n   goto($");
@@ -941,14 +962,14 @@ public class Parser{
 	
 	private void executeFunction(String funcName, int nargs, fnType funcDef) throws Exception {
 		if (!funcDef.nargsValid(nargs)) err(MyLocale.getMsg(1727,"Invalid number of arguments"));
-	         if (funcDef.alias.equals("asin")) calcStack.add(new java.lang.Double(java.lang.Math.asin(popCalcStackAsNumber(0))));
+	         if (funcDef.alias.equals("asin")) calcStack.add(new java.lang.Double(convertOutput(java.lang.Math.asin(popCalcStackAsNumber(0)))));
 	 	else if (funcDef.alias.equals("abs")) calcStack.add(new java.lang.Double(java.lang.Math.abs(popCalcStackAsNumber(0))));
-	    else if (funcDef.alias.equals("acos")) calcStack.add(new java.lang.Double(java.lang.Math.acos(popCalcStackAsNumber(0))));
-	    else if (funcDef.alias.equals("atan")) calcStack.add(new java.lang.Double(java.lang.Math.atan(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("acos")) calcStack.add(new java.lang.Double(convertOutput(java.lang.Math.acos(popCalcStackAsNumber(0)))));
+	    else if (funcDef.alias.equals("atan")) calcStack.add(new java.lang.Double(convertOutput(java.lang.Math.atan(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("bearing")) calcStack.add(new java.lang.Double(funcBearing()));
 	    else if (funcDef.alias.equals("center")) funcCenter(nargs);
 	    else if (funcDef.alias.equals("cls")) funcCls();
-	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(convertInput(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("count")) funcCount();
 	    else if (funcDef.alias.equals("cp")) calcStack.add(funcCp());     
 	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(nargs)));
@@ -968,11 +989,11 @@ public class Parser{
 	    else if (funcDef.alias.equals("rot13")) calcStack.add(Common.rot13(popCalcStackAsString()));
 //	    else if (funcDef.alias.equals("rs")) funcRequireSemicolon(nargs);
 	    else if (funcDef.alias.equals("show"));
-	    else if (funcDef.alias.equals("sin")) calcStack.add(new java.lang.Double(java.lang.Math.sin(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("sin")) calcStack.add(new java.lang.Double(java.lang.Math.sin(convertInput(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("skeleton")) funcSkeleton(nargs);
 	    else if (funcDef.alias.equals("sqrt")) calcStack.add(new java.lang.Double(funcSqrt())); 
 	    else if (funcDef.alias.equals("sval")) calcStack.add(funcSval(popCalcStackAsString()));
-	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(popCalcStackAsNumber(0))));
+	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(convertInput(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("uc")) calcStack.add(popCalcStackAsString().toUpperCase());
 	    else if (funcDef.alias.equals("val")) calcStack.add(new java.lang.Double(funcVal(popCalcStackAsString())));
 	    else err(MyLocale.getMsg(1728,"Function not yet implemented: ")+funcName);
