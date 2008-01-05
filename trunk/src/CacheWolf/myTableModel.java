@@ -265,7 +265,7 @@ public class myTableModel extends TableModel{
 						return ch.wayPoint;
 					case 5: // Cachename
 						// Fast return for majority of case
-						if (ch.has_bug == false && ch.noFindLogs==0) return ch.CacheName; 
+						if (!showExtraWptInfo || (ch.has_bug == false && ch.noFindLogs==0)) return ch.CacheName; 
 						// Now need more checks
 						IconAndText wpVal = new IconAndText();
 						if(ch.has_bug == true) wpVal.addColumn(bug);
@@ -337,6 +337,14 @@ public class myTableModel extends TableModel{
 				// cell.x is the physical column but we have to sort by the
 				// column it is mapped into
 				int mappedCol=colMap[cell.x];
+				if (mappedCol==0) { // Click on Tickbox header
+					// Hide/unhide the additional information about a waypoint such as 
+					// travelbugs/number of notfound logs/yellow circle/red circle etc.
+					// This helps on small PDA screens
+					showExtraWptInfo=!showExtraWptInfo; 
+					this.table.repaint();
+					return true;
+				}
 				Vm.showWait(true);
 				Point a = tcControl.getSelectedCell(null);
 				if(a != null) ch = (CacheHolder)cacheDB.get(a.y);
