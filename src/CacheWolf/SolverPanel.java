@@ -81,6 +81,11 @@ public class SolverPanel extends CellPanel{
 		return Global.getPref().solverDegMode ? "DEG" : "RAD";
 	}
 	
+	public void showSolverMode() {
+		btnDegRad.setText(getSolverDegMode());
+		btnDegRad.repaint();
+	}
+	
 	public SolverPanel (Preferences p, Profile prof){
 		pref = p;
 		profile = prof;

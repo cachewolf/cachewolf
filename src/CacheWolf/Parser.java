@@ -51,6 +51,7 @@ import com.stevesoft.ewe_pat.*;
 import ewe.sys.*;
 import java.lang.Double;
 
+
 /**
 *	The wolf language parser. New version - January 2007
 *   
@@ -106,6 +107,9 @@ public class Parser{
     	new fnType("crosstotal","ct",6),
     	new fnType("ct","ct",2),
      	new fnType("curpos","cp",1),
+     	new fnType("d2r","deg2rad",2),
+     	new fnType("deg","deg",1),
+     	new fnType("deg2rad","deg2rad",2),
      	new fnType("distance","distance",4),
      	new fnType("encode","encode",8),
     	new fnType("format","format",6),
@@ -123,6 +127,9 @@ public class Parser{
     	new fnType("project","project",8),
      	new fnType("pz","pz",3),
     	new fnType("quersumme","ct",6),
+    	new fnType("r2d","rad2deg",2),
+    	new fnType("rad","rad",1),
+    	new fnType("rad2deg","rad2deg",2),
     	new fnType("replace","replace",8),
     	new fnType("reverse","reverse",2),
     	new fnType("rot13","rot13",2),
@@ -332,7 +339,10 @@ public class Parser{
     	fnType fnd=null;
     	str=str.toLowerCase();
     	for (int i=functions.length-1; i>=0; i--) {
-    		if (functions[i].funcName.startsWith(str)) {
+    		// Return the function if there is an exact match
+    		if (functions[i].funcName.equals(str)) return functions[i];
+    		if (functions[i].funcName.startsWith(str)) { // Partial match?
+        		// Only one partial match allowed
     			if (fnd!=null) err(MyLocale.getMsg(1708,"Ambiguous function name: ")+str);
     			fnd=functions[i];
     		}
@@ -361,7 +371,17 @@ public class Parser{
 			return arg;
 	}
     
-	/** Get or set the current centre */
+    /** Calculate brearing from one point to the next */
+    private double funcBearing() throws Exception {
+    	String coordB=popCalcStackAsString();
+    	String coordA=popCalcStackAsString();
+ 		if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
+		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
+	   	cwPt.set(coordA);
+	   	return convertOutput(cwPt.getBearing(new CWPoint(coordB))*java.lang.Math.PI/180.0);
+    }
+
+    /** Get or set the current centre */
 	private void funcCenter(int nargs) throws Exception {
 		if (nargs==0) {
 			calcStack.add(Global.getPref().curCentrePt.toString());
@@ -428,7 +448,18 @@ public class Parser{
     	return a;
     }
     
-    /** Calculate distance between 2 points */
+    private void funcDeg(boolean arg) {
+    	Global.getPref().solverDegMode=arg;
+    	Global.mainTab.solverP.showSolverMode();
+    }
+    
+    /** Convert degrees into Radiants */
+    private double funcDeg2Rad() throws Exception {
+    	double a=popCalcStackAsNumber(0);
+    	return a/180.0*java.lang.Math.PI;
+    }
+    	
+    	/** Calculate distance between 2 points */
     private double funcDistance() throws Exception {
     	String coordB=popCalcStackAsString();
     	String coordA=popCalcStackAsString();
@@ -439,15 +470,6 @@ public class Parser{
     	return cwPt.getDistance(new CWPoint(coordB))*1000.0;
     }
     
-    /** Calculate brearing from one point to the next */
-    private double funcBearing() throws Exception {
-    	String coordB=popCalcStackAsString();
-    	String coordA=popCalcStackAsString();
- 		if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
-		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
-	   	cwPt.set(coordA);
-	   	return convertOutput(cwPt.getBearing(new CWPoint(coordB))*java.lang.Math.PI/180.0);
-    }
     /**
      * Encode a string by replacing all characters in a string with their corresponding characters in
      * another string
@@ -580,6 +602,12 @@ public class Parser{
     	return cwPt.project(degrees,distance/1000.0).toString();
     }
 
+    /** Convert Radiants into degrees */
+    private double funcRad2Deg() throws Exception {
+    	double a=popCalcStackAsNumber(0);
+    	return a*180.0/java.lang.Math.PI;
+    }
+    
     /** Replace all occurrences of a string with another string */
     private String funcReplace() throws Exception {
     	String replaceWith=popCalcStackAsString();
@@ -973,6 +1001,8 @@ public class Parser{
 	    else if (funcDef.alias.equals("count")) funcCount();
 	    else if (funcDef.alias.equals("cp")) calcStack.add(funcCp());     
 	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(nargs)));
+	    else if (funcDef.alias.equals("deg")) funcDeg(true);     
+	    else if (funcDef.alias.equals("deg2rad")) calcStack.add(new java.lang.Double(funcDeg2Rad())); 
 	    else if (funcDef.alias.equals("distance")) calcStack.add(new java.lang.Double(funcDistance()));
 	    else if (funcDef.alias.equals("encode")) calcStack.add(funcEncode());
 	    else if (funcDef.alias.equals("format")) calcStack.add(funcFormat(nargs));
@@ -984,6 +1014,8 @@ public class Parser{
 	    else if (funcDef.alias.equals("mid")) calcStack.add(funcMid(nargs));
 	    else if (funcDef.alias.equals("project")) calcStack.add(funcProject());     
 	    else if (funcDef.alias.equals("pz")) funcPz(nargs);     
+	    else if (funcDef.alias.equals("rad")) funcDeg(false);     
+	    else if (funcDef.alias.equals("rad2deg")) calcStack.add(new java.lang.Double(funcRad2Deg())); 
 	    else if (funcDef.alias.equals("replace")) calcStack.add(funcReplace());
 	    else if (funcDef.alias.equals("reverse")) calcStack.add(funcReverse(popCalcStackAsString()));
 	    else if (funcDef.alias.equals("rot13")) calcStack.add(Common.rot13(popCalcStackAsString()));
