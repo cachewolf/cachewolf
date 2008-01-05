@@ -573,7 +573,6 @@ public class MainMenu extends MenuBar {
 				StringBuffer sb=new StringBuffer(400);
 				Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
 				Font f = mApp.guiFont;
-				Version vers = new Version();
 				sb.append("Profile: "); 				sb.append(profile.dataDir);
 				sb.append("<br>Platform: "); 			sb.append(Vm.getPlatform());
 				sb.append("<br>Locale lang is: ");		sb.append(MyLocale.getLocaleLanguage()); 
@@ -588,13 +587,15 @@ public class MainMenu extends MenuBar {
 				sb.append("\"<br>Programme directory is "); sb.append(File.getProgramDirectory());
 				sb.append("<br>Number of details in RAM is "); sb.append(CacheHolder.cachesWithLoadedDetails.size());
 				sb.append(" Max.: ");					sb.append(Global.getPref().maxDetails);
-				sb.append("<br>CacheWolf version: ");		sb.append(vers.getReleaseDetailed());
+				sb.append("<br>CacheWolf version: ");		sb.append(Version.getReleaseDetailed());
 				sb.append("<br>");
 				InfoScreen is = new InfoScreen(sb.toString(), "System", false,pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == chkVersion){
-				(new InfoBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage())).execute();
+				Vm.showWait(true);
+				(new MessageBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage(), MessageBox.OKB)).execute();
+				Vm.showWait(false);
 			}
 		}
 	}
