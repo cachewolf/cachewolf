@@ -27,6 +27,7 @@ public class SolverPanel extends CellPanel{
 	Vector msgFIFO = new Vector();
 	Menu mnuContext;
 	private String originalInstructions="";
+	mButton btnDegRad; 
 	
 	public boolean isDirty() {
 		return !originalInstructions.equals(getInstructions());
@@ -76,6 +77,10 @@ public class SolverPanel extends CellPanel{
 	}
 	CellPanel programPanel, outputPanel;
 	
+	private String getSolverDegMode() {
+		return Global.getPref().solverDegMode ? "DEG" : "RAD";
+	}
+	
 	public SolverPanel (Preferences p, Profile prof){
 		pref = p;
 		profile = prof;
@@ -86,8 +91,16 @@ public class SolverPanel extends CellPanel{
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
 
 		programPanel.addLast(new ScrollBarPanel(mText = new InputPanel())).setTag(SPAN, new Dimension(2,1));
-		programPanel.addNext(mBtSolve= new mButton(MyLocale.getMsg(1735,"Solve!")),CellConstants.HSTRETCH, CellConstants.HFILL);
-		programPanel.addLast(btnWolfLang= new mButton(MyLocale.getMsg(118,"WolfLanguage")),CellConstants.HSTRETCH, CellConstants.HFILL);
+		CellPanel pnlStatButtons=new CellPanel();
+		pnlStatButtons.addNext(btnDegRad=new mButton(getSolverDegMode()),CellConstants.DONTSTRETCH,CellConstants.DONTFILL);
+		btnDegRad.backGround=Color.Sand;
+		btnDegRad.borderStyle=btnDegRad.borderWidth=0;
+		CellPanel pnlButtons=new CellPanel();
+		pnlButtons.addNext(mBtSolve= new mButton(MyLocale.getMsg(1735,"Solve!")),CellConstants.HSTRETCH, CellConstants.HFILL);
+		pnlButtons.addLast(btnWolfLang= new mButton(MyLocale.getMsg(118,"WolfLanguage")),CellConstants.HSTRETCH, CellConstants.HFILL);
+		pnlButtons.equalWidths=true;
+		pnlStatButtons.addLast(pnlButtons,CellConstants.HSTRETCH,CellConstants.HFILL);
+		programPanel.addLast(pnlStatButtons,HSTRETCH,HFILL);
 		/*programPanel.addNext(btnLoad= new mButton(MyLocale.getMsg(1736,"Load")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		programPanel.addNext(btnSave= new mButton(MyLocale.getMsg(1737,"Save")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		programPanel.addLast(btnSaveAs= new mButton(MyLocale.getMsg(1738,"SaveAs")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -124,6 +137,10 @@ public class SolverPanel extends CellPanel{
 			if (ev.target==btnWolfLang) {
 				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
 				is.execute(parent.getFrame(), Gui.CENTER_FRAME);
+			}
+			if (ev.target==btnDegRad) {
+				Global.getPref().solverDegMode=!Global.getPref().solverDegMode;
+				btnDegRad.setText(getSolverDegMode());
 			}
 /*			if(ev.target == btnLoad){
 				FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
