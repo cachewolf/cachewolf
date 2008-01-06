@@ -18,7 +18,7 @@ public class PreferencesScreen extends Form {
 	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword,inpLanguage;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
-	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort,chkProxyActive;
+	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort,chkProxyActive, chkDescShowImg;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
 	mLabel lblGarmin;
@@ -129,10 +129,16 @@ public class PreferencesScreen extends Form {
 		
 		Frame frmImages=new Frame();
 		frmImages.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_TOP|CellPanel.BF_BOTTOM;
-		frmImages.addNext(new mLabel(MyLocale.getMsg(623,"Images:")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		frmImages.addLast(chkShowDeletedImg = new mCheckBox(MyLocale.getMsg(624,"Show deleted images")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
-		chkShowDeletedImg.setTag(INSETS,new Insets(0,0,2,0));
+		//frmImages.addNext(new mLabel(MyLocale.getMsg(623,"Images:")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmImages.addLast(chkShowDeletedImg = new mCheckBox(MyLocale.getMsg(624,"Show deleted images")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		chkShowDeletedImg.setTag(INSETS,new Insets(2,0,0,0));
 		if (pref.showDeletedImages) chkShowDeletedImg.setState(true);
+		//mLabel dummy;
+		//frmImages.addNext(dummy=new mLabel(""),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST|CellConstants.NORTH));
+		//dummy.setTag(INSETS,new Insets(0,0,2,0));
+		frmImages.addLast(chkDescShowImg = new mCheckBox("Bilder in Beschreibung anzeigen"),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST|CellConstants.NORTH));
+		chkDescShowImg.setTag(INSETS,new Insets(0,0,2,0));
+		if (pref.descShowImg) chkDescShowImg.setState(true);
 		pnlDisplay.addLast(frmImages,CellConstants.STRETCH,CellConstants.FILL);
 
 		Frame frmHintLog=new Frame();
@@ -257,6 +263,7 @@ public class PreferencesScreen extends Form {
 				pref.hasCloseButton=chkHasCloseButton.getState();
 				pref.travelbugColMap=tccBugs.getSelectedCols();
 				pref.listColMap=tccList.getSelectedCols();
+				pref.descShowImg=chkDescShowImg.getState();
 				Global.mainTab.tbP.myMod.setColumnNamesAndWidths();
 				pref.savePreferences();
 				pref.dirty = true; // Need to update table in case columns were enabled/disabled

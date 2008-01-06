@@ -124,6 +124,8 @@ public class Preferences extends MinML{
 	public boolean solverIgnoreCase=true;
 	/** True if the solver expects arguments for trigonometric functions in degrees */
 	public boolean solverDegMode=true;
+	/** True if the description panel should show images */
+	public boolean descShowImg=true;
 	/** The type of connection which GPSBABEL uses: com1 OR usb. */
 	public String garminConn="com1";  
 	/** Additional options for GPSBabel, i.e. -s to synthethise short names */
@@ -262,6 +264,9 @@ public class Preferences extends MinML{
 		else if (name.equals("imagepanel")) {
 			showDeletedImages = Boolean.valueOf(atts.getValue("showdeletedimages")).booleanValue();
 		}
+		else if (name.equals("descpanel")) {
+			descShowImg = Boolean.valueOf(atts.getValue("showimages")).booleanValue();
+		} 
 		else if (name.equals("screen")) {
 			menuAtTop=Boolean.valueOf(atts.getValue("menuattop")).booleanValue();
 			tabsAtTop=Boolean.valueOf(atts.getValue("tabsattop")).booleanValue();
@@ -353,6 +358,7 @@ public class Preferences extends MinML{
 			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
 			outp.print("    <listview colmap=\""+listColMap+"\" colwidths=\""+listColWidth+"\" />\n");
 			outp.print("    <travelbugs colmap=\""+travelbugColMap+"\" colwidths=\""+travelbugColWidth+"\" shownonlogged=\""+travelbugShowOnlyNonLogged+"\" />\n");
+			outp.print("    <descpanel showimages=\""+descShowImg+"\" />\n");
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
 			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\" initialhintheight=\""+initialHintHeight+"\"  maxspiderlogs=\""+maxLogsToSpider+"\" />\n");
 			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\" degMode=\""+solverDegMode+"\" />\n");

@@ -1,5 +1,7 @@
 package CacheWolf;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import ewe.ui.*;
 import ewe.fx.*;
 import ewe.sys.*;
@@ -15,10 +17,12 @@ public class DescriptionPanel extends CellPanel{
 	CellPanel buttonP = new CellPanel();
 	CellPanel descP = new CellPanel();
 	
+	private String desc;
+
 	public DescriptionPanel(){
 		buttonP.addNext(btnPlus = new mButton("+"),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		buttonP.addLast(btnMinus = new mButton("-"),CellConstants.HSTRETCH, (CellConstants.HFILL));
-		ScrollBarPanel sbp = new ScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
+		ScrollBarPanel sbp = new ScrollBarPanel(disp, 0);
 		descP.addLast(sbp);
 		this.addLast(descP);
 		this.addLast(buttonP,CellConstants.HSTRETCH,CellConstants.HFILL);
@@ -33,7 +37,6 @@ public class DescriptionPanel extends CellPanel{
 		if (currCache == cache) return;
 		int scrollto = 0;
 		if (cache.hasSameMainCache(currCache)) scrollto = disp.getTopLine();
-		String desc;
 		if (cache == null) desc = "";
 		else {
 			if (cache.isAddiWpt()) {
@@ -45,9 +48,40 @@ public class DescriptionPanel extends CellPanel{
 				desc = cache.LongDescription;
 		}
 		if (!desc.equals(description)) {
+			//disp.getDecoderProperties().setBoolean("allowImages",true);
 			Vm.showWait(true); 
-			if (cache.is_HTML)	disp.setHtml(desc);
-			else				disp.setPlainText(desc);
+			if (cache.is_HTML) {
+				if (Global.getPref().descShowImg) {
+					StringBuffer s=new StringBuffer(desc.length()+cache.Images.size()*100);
+					int start=0;
+					int pos;
+					int imageNo=0;
+					Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
+					while (start>=0 && (pos=desc.indexOf("<img",start))>0) {
+						s.append(desc.substring(start,pos));
+						imgRex.searchFrom(desc,pos);
+						String imgUrl=imgRex.stringMatched(1);
+						//Vm.debug("imgUrl "+imgUrl);
+						if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
+							String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+							// If we have an image which we stored when spidering, we can display it
+							if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
+								s.append("<img src=\""+
+								   Global.getProfile().dataDir+cache.Images.get(imageNo)+"\">");
+								imageNo++;
+							}
+						}
+						start=desc.indexOf(">",pos);
+						if (start>=0) start++;
+						if (imageNo >= cache.Images.getCount())break;
+					}
+					if (start>=0) s.append(desc.substring(start));
+					desc=s.toString();
+				}
+				disp.setHtml(desc);
+			}
+			else
+				disp.setPlainText(desc);
 			disp.scrollTo(scrollto,false);
 			description = desc;
 			Vm.showWait(false);
@@ -60,7 +94,7 @@ public class DescriptionPanel extends CellPanel{
 
 		Vm.showWait(true);
 		currLine = disp.getTopLine();
-		if (currCache.is_HTML)	disp.setHtml(currCache.LongDescription);
+		if (currCache.is_HTML)	disp.setHtml(desc);
 		else				disp.setPlainText(currCache.LongDescription);
 		disp.scrollTo(currLine,false);
 		Vm.showWait(false);
