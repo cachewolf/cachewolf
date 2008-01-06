@@ -270,12 +270,15 @@ public class Profile {
 	 *  The values of Filter.isActive and Filter.isInactive are set by the filter 
 	 **/
 	void restoreFilter() {
+		boolean inverted=filterInverted; // Save it as doFilter will clear filterInverted
 		Filter flt=new Filter();
 		if (filterActive==Filter.FILTER_ACTIVE) {
 			flt.setFilter();
 			flt.doFilter();
-			if (filterInverted) 
+			if (inverted) {
 				flt.invertFilter();
+				filterInverted=true; // Needed because previous line inverts filterInverted
+			}
 		} else if (filterActive==Filter.FILTER_CACHELIST) {
 			//flt.filterActive=filterActive;
 		}
