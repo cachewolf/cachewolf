@@ -79,9 +79,7 @@ public class TablePanel extends CellPanel{
 	public void resetModel() {
 		myMod.numRows = cacheDB.size();
 		Global.getProfile().updateBearingDistance();
-		Filter flt = new Filter();
-		flt.setFilter();
-		flt.doFilter();
+		Global.getProfile().restoreFilter(); // Restore the isActive & isInverted status of the filter
 		tc.scrollToVisible(0,0);
 		refreshTable();
 	}

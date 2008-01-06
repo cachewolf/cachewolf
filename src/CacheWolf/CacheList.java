@@ -283,8 +283,9 @@ public class CacheList extends CellPanel {
 		}
 		// The sort command places all filtered caches at the end
 		cacheDB.sort(new mySort(),false);
-		Filter.filterActive=Filter.FILTER_CACHELIST;
-		Filter.filterInverted=false;
+		Global.getProfile().filterActive=Filter.FILTER_CACHELIST;
+		Global.getProfile().filterInverted=false;
+		Global.getProfile().hasUnsavedChanges=true;
 		updateScreen(cacheList.size()-wrongBlackStatus);
 		if (wrongBlackStatus>0)
 			(new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(4600,"Some cache(s) cannot be shown because of wrong blacklist status"), MessageBox.OKB)).execute();

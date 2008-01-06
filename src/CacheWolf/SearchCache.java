@@ -54,8 +54,8 @@ public class SearchCache {
 			ch.is_flaged=false;
 			ch.is_filtered=(ch.is_black^Filter.showBlacklisted) ;
 		}
-		Global.getProfile().filterActive=Filter.filterActive; //TODO This is a hack. Need to tidy this up
-		Global.getProfile().filterInverted=Filter.filterInverted;
+		//Global.getProfile().filterActive=Filter.filterActive; //TODO This is a hack. Need to tidy this up
+		//Global.getProfile().filterInverted=Filter.filterInverted;
 		Global.getProfile().restoreFilter();
 	}
 }

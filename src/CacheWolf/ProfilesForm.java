@@ -118,8 +118,8 @@ public class ProfilesForm extends Form{
 				close(-1);
 			}
 			if (ev.target == btnOK || ev.target == choice){
-				Filter.filterActive=Filter.FILTER_INACTIVE;
-				Filter.filterInverted=false;
+				Global.getProfile().filterActive=Filter.FILTER_INACTIVE;
+				Global.getProfile().filterInverted=false;
 				if (choice.getSelectedItem()!=null) {
 					newSelectedProfile=choice.getSelectedItem().toString();
 					close(1);

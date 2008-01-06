@@ -98,13 +98,13 @@ public class Profile {
 	 *   
 	 *   Saves the index with the filter settings from Filter
 	 */
-	public void saveIndex(Preferences pref, boolean showprogress){
-		saveIndex(pref,showprogress, Filter.filterActive,Filter.filterInverted);
-	}
+//	public void saveIndex(Preferences pref, boolean showprogress){
+//		saveIndex(pref,showprogress, Filter.filterActive,Filter.filterInverted);
+//	}
 
 	
 	/** Save index with filter settings given */ 
-	public void saveIndex(Preferences pref, boolean showprogress, int saveFilterActive, boolean saveFilterInverted){
+	public void saveIndex(Preferences pref, boolean showprogress) { 
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 		if(showprogress){
@@ -146,7 +146,7 @@ public class Profile {
 				distOC = "0";
 			}
 
-			detfile.print("    <FILTER status = \""+saveFilterActive+(saveFilterInverted?"T":"F")+ 
+			detfile.print("    <FILTER status = \""+filterActive+(filterInverted?"T":"F")+ 
 					"\" rose = \""+filterRose+"\" type = \""+filterType+
 					"\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
 					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" />\n");
@@ -277,7 +277,7 @@ public class Profile {
 			if (filterInverted) 
 				flt.invertFilter();
 		} else if (filterActive==Filter.FILTER_CACHELIST) {
-			flt.filterActive=filterActive;
+			//flt.filterActive=filterActive;
 		}
 	}
 

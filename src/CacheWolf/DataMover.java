@@ -54,7 +54,7 @@ public class DataMover {
 		}
 		processCaches(new Copier(MyLocale.getMsg(141, "Copy"),dstProfile));
 		// write indexfiles and keep the filter status
-		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR,dstProfile.filterActive,dstProfile.filterInverted);
+		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
 	}
 	
 	public void moveCaches() {
@@ -78,7 +78,7 @@ public class DataMover {
 		}
 		processCaches(new Mover(MyLocale.getMsg(142, "Move"),dstProfile));
 		// write indexfiles
-		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR,dstProfile.filterActive,dstProfile.filterInverted);
+		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR); 
 		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 	}
 	

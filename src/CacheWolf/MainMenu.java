@@ -253,7 +253,6 @@ public class MainMenu extends MenuBar {
 					Filter.showBlacklisted=false;
 					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 					infB.close(0);
-					profile.restoreFilter(); // Restore the isActive & isInverted status of the filter
 					tbp.resetModel();
 				}
 			}
@@ -272,8 +271,6 @@ public class MainMenu extends MenuBar {
 				spGC.doIt();
 				cacheDB.clear();
 				profile.readIndex();
-				profile.restoreFilter();
-				profile.updateBearingDistance();
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadcaches){

@@ -372,6 +372,7 @@ public class MainTab extends mTabbedPanel {
 			}
 		}
 		if (saveIndex) profile.saveIndex(Global.getPref(),false);
+		Global.getPref().savePreferences();
 	}
 	
 	private void checkProfileChange() {
