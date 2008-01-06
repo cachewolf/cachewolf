@@ -254,6 +254,7 @@ public class MainMenu extends MenuBar {
 					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 					infB.close(0);
 					tbp.resetModel();
+					Global.getProfile().hasUnsavedChanges=false;
 				}
 			}
 			if(mev.selectedItem == mnuEditCenter){
