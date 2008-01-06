@@ -484,7 +484,7 @@ public class Filter{
 			else
 				ch.is_filtered=true; // Hide all those that have the wrong is_black status
 		}
-		Global.getProfile().filterInverted=true;
+		Global.getProfile().filterInverted=!Global.getProfile().filterInverted;
 		Global.getProfile().hasUnsavedChanges=true;
 	}
 	
