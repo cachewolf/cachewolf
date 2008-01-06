@@ -75,6 +75,7 @@ public class MainForm extends Editor {
 			pref.curCentrePt.set(profile.centre);
 			profile.updateBearingDistance();
 			profile.restoreFilter();
+			profile.hasUnsavedChanges=false;
 			setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 		} catch (Exception e){
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
