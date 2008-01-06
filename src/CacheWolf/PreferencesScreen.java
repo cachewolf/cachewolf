@@ -136,7 +136,7 @@ public class PreferencesScreen extends Form {
 		//mLabel dummy;
 		//frmImages.addNext(dummy=new mLabel(""),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST|CellConstants.NORTH));
 		//dummy.setTag(INSETS,new Insets(0,0,2,0));
-		frmImages.addLast(chkDescShowImg = new mCheckBox("Bilder in Beschreibung anzeigen"),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST|CellConstants.NORTH));
+		frmImages.addLast(chkDescShowImg = new mCheckBox(MyLocale.getMsg(638,"Show pictures in description")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST|CellConstants.NORTH));
 		chkDescShowImg.setTag(INSETS,new Insets(0,0,2,0));
 		if (pref.descShowImg) chkDescShowImg.setState(true);
 		pnlDisplay.addLast(frmImages,CellConstants.STRETCH,CellConstants.FILL);
