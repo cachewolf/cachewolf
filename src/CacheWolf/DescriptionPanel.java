@@ -67,7 +67,8 @@ public class DescriptionPanel extends CellPanel{
 							// If we have an image which we stored when spidering, we can display it
 							if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
 								s.append("<img src=\""+
-								   Global.getProfile().dataDir+cache.Images.get(imageNo)+"\">");
+								   //Global.getProfile().dataDir+
+								   cache.Images.get(imageNo)+"\">");
 								imageNo++;
 							}
 						}
@@ -78,7 +79,12 @@ public class DescriptionPanel extends CellPanel{
 					if (start>=0) s.append(desc.substring(start));
 					desc=s.toString();
 				}
-				disp.setHtml(desc);
+				//disp.setHtml(desc);
+				disp.startHtml();
+				disp.getDecoderProperties().set("documentroot",Global.getProfile().dataDir);
+				disp.addHtml(desc,new ewe.sys.Handle());
+				disp.endHtml();
+				
 			}
 			else
 				disp.setPlainText(desc);
