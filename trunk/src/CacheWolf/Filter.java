@@ -19,9 +19,9 @@ public class Filter{
 	/** Toggle for showing blacklisted caches. Can be toggled through the Filter menu */
 	public static boolean showBlacklisted=false;
 	/** Indicator whether a filter is inverted */
-	public static boolean filterInverted=false;
+	//public static boolean filterInverted=false;
 	/** Indicator whether a filter is active. Used in status bar to indicate filter status */
-	public static int filterActive=FILTER_INACTIVE;
+	//public static int filterActive=FILTER_INACTIVE;
 	
 	private static final int SMALLER = -1;
 	private static final int EQUAL = 0;
@@ -97,7 +97,6 @@ public class Filter{
 	double fscDist;
 	double fscTerr;
 	double fscDiff;
-	
 	
 	private boolean archived = false;
 	private boolean notArchived = false;
@@ -465,7 +464,9 @@ public class Filter{
 			}
 			
 		} // for
-		filterActive=FILTER_ACTIVE;
+		Global.getProfile().filterActive=FILTER_ACTIVE;
+		Global.getProfile().filterInverted=false;
+		Global.getProfile().hasUnsavedChanges=true;
 	}
 	
 	/**
@@ -483,7 +484,8 @@ public class Filter{
 			else
 				ch.is_filtered=true; // Hide all those that have the wrong is_black status
 		}
-		filterInverted=true;
+		Global.getProfile().filterInverted=true;
+		Global.getProfile().hasUnsavedChanges=true;
 	}
 	
 	/**
@@ -496,8 +498,9 @@ public class Filter{
 			ch = (CacheHolder)cacheDB.get(i);
 			ch.is_filtered=(ch.is_black^showBlacklisted) ; // Always filter blacklisted caches
 		}
-		filterActive=FILTER_INACTIVE;
-		filterInverted=false;
+		Global.getProfile().filterActive=FILTER_INACTIVE;
+		Global.getProfile().filterInverted=false;
+		Global.getProfile().hasUnsavedChanges=true;
 	}
 
 	public boolean hasFilter() {
