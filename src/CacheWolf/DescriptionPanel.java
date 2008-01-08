@@ -5,6 +5,7 @@ import com.stevesoft.ewe_pat.Regex;
 import ewe.ui.*;
 import ewe.fx.*;
 import ewe.sys.*;
+import ewe.util.Vector;
 
 /**
 *	This class shows the long description on a cache.
@@ -52,7 +53,13 @@ public class DescriptionPanel extends CellPanel{
 			Vm.showWait(true); 
 			if (cache.is_HTML) {
 				if (Global.getPref().descShowImg) {
-					StringBuffer s=new StringBuffer(desc.length()+cache.Images.size()*100);
+					Vector Images;
+					if (cache.isAddiWpt()) {
+						Images = cache.mainCache.getCacheDetails(true).Images;
+					} else {
+						Images = cache.Images;						
+					}					
+					StringBuffer s=new StringBuffer(desc.length()+Images.size()*100);
 					int start=0;
 					int pos;
 					int imageNo=0;
@@ -68,13 +75,13 @@ public class DescriptionPanel extends CellPanel{
 							if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
 								s.append("<img src=\""+
 								   //Global.getProfile().dataDir+
-								   cache.Images.get(imageNo)+"\">");
+								   Images.get(imageNo)+"\">");
 								imageNo++;
 							}
 						}
 						start=desc.indexOf(">",pos);
 						if (start>=0) start++;
-						if (imageNo >= cache.Images.getCount())break;
+						if (imageNo >= Images.getCount())break;
 					}
 					if (start>=0) s.append(desc.substring(start));
 					desc=s.toString();
