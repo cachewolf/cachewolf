@@ -356,7 +356,7 @@ public class Parser{
 ///////////////////////////////////////////
 	
 	/** If we are in DEGree mode, convert the argument to RADiants, if not leave it unchanged */
-	private double convertInput(double arg) {
+	private double makeRadiant(double arg) {
 		if (Global.getPref().solverDegMode)
 			return arg*java.lang.Math.PI/180.0;
 		else
@@ -364,7 +364,7 @@ public class Parser{
 	}
 	
 	/** If we are in DEGree mode, convert the argument to degrees */
-	private double convertOutput(double arg) {
+	private double makeDegree(double arg) {
 		if (Global.getPref().solverDegMode)
 			return arg/java.lang.Math.PI*180.0;
 		else
@@ -378,7 +378,9 @@ public class Parser{
  		if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
 		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
 	   	cwPt.set(coordA);
-	   	return convertOutput(cwPt.getBearing(new CWPoint(coordB))*java.lang.Math.PI/180.0);
+	   	double angleDeg=cwPt.getBearing(new CWPoint(coordB));
+	   	// getBearing returns a result in degrees
+	   	return Global.getPref().solverDegMode ? angleDeg : angleDeg * java.lang.Math.PI/180.0;
     }
 
     /** Get or set the current centre */
@@ -594,8 +596,14 @@ public class Parser{
     private String funcProject() throws Exception {
     	double distance=popCalcStackAsNumber(0);
     	if (distance<0) err(MyLocale.getMsg(1718,"Cannot project a negative distance"));
-    	double degrees=convertInput(popCalcStackAsNumber(0));
-    	if (degrees<0 || degrees>2*java.lang.Math.PI) err(MyLocale.getMsg(1719,"Projection degrees must be in interval [0;360]"));
+    	double degrees=popCalcStackAsNumber(0);
+    	// If we are not in degree mode, arg is in radiants ==> convert it
+    	if (!Global.getPref().solverDegMode) degrees=degrees * 180.0 / java.lang.Math.PI; 
+    	if (degrees<0 || degrees>360) 
+    		if (Global.getPref().solverDegMode) 
+    			err(MyLocale.getMsg(1719,"Projection degrees must be in interval [0;360]"));
+    		else
+    			err(MyLocale.getMsg(1739,"Projection degrees must be in interval [0;2*PI]"));
     	String coord=popCalcStackAsString();
 		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
     	cwPt.set(coord);
@@ -990,14 +998,14 @@ public class Parser{
 	
 	private void executeFunction(String funcName, int nargs, fnType funcDef) throws Exception {
 		if (!funcDef.nargsValid(nargs)) err(MyLocale.getMsg(1727,"Invalid number of arguments"));
-	         if (funcDef.alias.equals("asin")) calcStack.add(new java.lang.Double(convertOutput(java.lang.Math.asin(popCalcStackAsNumber(0)))));
+	         if (funcDef.alias.equals("asin")) calcStack.add(new java.lang.Double(makeDegree(java.lang.Math.asin(popCalcStackAsNumber(0)))));
 	 	else if (funcDef.alias.equals("abs")) calcStack.add(new java.lang.Double(java.lang.Math.abs(popCalcStackAsNumber(0))));
-	    else if (funcDef.alias.equals("acos")) calcStack.add(new java.lang.Double(convertOutput(java.lang.Math.acos(popCalcStackAsNumber(0)))));
-	    else if (funcDef.alias.equals("atan")) calcStack.add(new java.lang.Double(convertOutput(java.lang.Math.atan(popCalcStackAsNumber(0)))));
+	    else if (funcDef.alias.equals("acos")) calcStack.add(new java.lang.Double(makeDegree(java.lang.Math.acos(popCalcStackAsNumber(0)))));
+	    else if (funcDef.alias.equals("atan")) calcStack.add(new java.lang.Double(makeDegree(java.lang.Math.atan(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("bearing")) calcStack.add(new java.lang.Double(funcBearing()));
 	    else if (funcDef.alias.equals("center")) funcCenter(nargs);
 	    else if (funcDef.alias.equals("cls")) funcCls();
-	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(convertInput(popCalcStackAsNumber(0)))));
+	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(makeRadiant(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("count")) funcCount();
 	    else if (funcDef.alias.equals("cp")) calcStack.add(funcCp());     
 	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(nargs)));
@@ -1021,11 +1029,11 @@ public class Parser{
 	    else if (funcDef.alias.equals("rot13")) calcStack.add(Common.rot13(popCalcStackAsString()));
 //	    else if (funcDef.alias.equals("rs")) funcRequireSemicolon(nargs);
 	    else if (funcDef.alias.equals("show"));
-	    else if (funcDef.alias.equals("sin")) calcStack.add(new java.lang.Double(java.lang.Math.sin(convertInput(popCalcStackAsNumber(0)))));
+	    else if (funcDef.alias.equals("sin")) calcStack.add(new java.lang.Double(java.lang.Math.sin(makeRadiant(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("skeleton")) funcSkeleton(nargs);
 	    else if (funcDef.alias.equals("sqrt")) calcStack.add(new java.lang.Double(funcSqrt())); 
 	    else if (funcDef.alias.equals("sval")) calcStack.add(funcSval(popCalcStackAsString()));
-	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(convertInput(popCalcStackAsNumber(0)))));
+	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(makeRadiant(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("uc")) calcStack.add(popCalcStackAsString().toUpperCase());
 	    else if (funcDef.alias.equals("val")) calcStack.add(new java.lang.Double(funcVal(popCalcStackAsString())));
 	    else err(MyLocale.getMsg(1728,"Function not yet implemented: ")+funcName);
