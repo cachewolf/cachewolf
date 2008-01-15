@@ -135,6 +135,7 @@ public class SolverPanel extends CellPanel{
     }
 	
 	public void onEvent(Event ev){
+		if (ev instanceof DataChangeEvent) Global.mainTab.cacheDirty=true;
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == mBtSolve){
 				processCommand(mText.getText());

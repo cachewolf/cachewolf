@@ -363,6 +363,11 @@ public class MainTab extends mTabbedPanel {
 	 * @param askForConfirmation If true, the save can be cancelled by user
 	 */
 	public void saveUnsavedChanges(boolean askForConfirmation) {
+		if (oldCard!=0) {
+			onLeavingPanel(oldCard);
+			onEnteringPanel(0);
+			oldCard=0;
+		}
 		boolean saveIndex=!askForConfirmation; // Definitely save it if no confirmation needed
 		updatePendingChanges();
 		if (askForConfirmation) { // Don't know whether to save, have to ask
