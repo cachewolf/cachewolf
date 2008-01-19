@@ -100,13 +100,13 @@ public class SpiderGC{
 		infB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
 		infB.exec();
 		try{
-			pref.log("Fetching login page");
+			pref.log("[login]:Fetching login page");
 			//Access the page once to get a viewstate
 			start = fetch(loginPage);   //http://www.geocaching.com/login/Default.aspx
 		} catch(Exception ex){
 			infB.close(0);
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page"), MessageBox.OKB)).execute();
-			pref.log("Could not fetch: gc.com login page",ex);
+			pref.log("[login]:Could not fetch: gc.com login page",ex);
 			passwort="";
 			return ERR_LOGIN;
 		}
@@ -120,20 +120,20 @@ public class SpiderGC{
 				viewstate = rexViewstate.stringMatched(1);
 				//Vm.debug("ViewState: " + viewstate);
 			} else
-				pref.log("Viewstate not found before login");
+				pref.log("[login]:Viewstate not found before login");
 			
 			if(start.indexOf(loginSuccess) > 0)
-				pref.log("Already logged in");
+				pref.log("[login]:Already logged in");
 			else {
 				rexEventvalidation.search(start);
 				if(rexEventvalidation.didMatch()){
 					eventvalidation = rexEventvalidation.stringMatched(1);
 					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
 				} else
-					pref.log("Eventvalidation not found before login");
+					pref.log("[login]:Eventvalidation not found before login");
 				//Ok now login!
 				try{
-					pref.log("Logging in as "+pref.myAlias);
+					pref.log("[login]:Logging in as "+pref.myAlias);
 					StringBuffer sb=new StringBuffer(1000);
 					sb.append(URL.encodeURL("__VIEWSTATE",false));	sb.append("="); sb.append(URL.encodeURL(viewstate,false));
 					sb.append("&"); sb.append(URL.encodeURL("myUsername",false));
@@ -148,15 +148,15 @@ public class SpiderGC{
 					sb.append("="); sb.append(URL.encodeURL(eventvalidation,false));
 					start = fetch_post(loginPage, sb.toString(), nextPage);  // /login/default.aspx
 					if(start.indexOf(loginSuccess) > 0)
-						pref.log("Login successful");
+						pref.log("[login]:Login successful");
 					else {
-						pref.log("Login failed. Wrong Account or Password?");
+						pref.log("[login]:Login failed. Wrong Account or Password?");
 						infB.close(0);
 						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), MessageBox.OKB)).execute();
 						return ERR_LOGIN;
 					}
 				}catch(Exception ex){
-					pref.log("Login failed.", ex);
+					pref.log("[login]:Login failed with exception.", ex);
 					infB.close(0);
 					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), MessageBox.OKB)).execute();
 					return ERR_LOGIN;
@@ -165,18 +165,18 @@ public class SpiderGC{
 
 			rexViewstate.search(start);
 			if (!rexViewstate.didMatch()) {
-				pref.log("Viewstate not found");
+				pref.log("[login]:Viewstate not found");
 			}
 			viewstate = rexViewstate.stringMatched(1);
 			rexCookieID.search(start);
 			if (!rexCookieID.didMatch()) {
-				pref.log("CookieID not found");
-			}
-			cookieID = rexCookieID.stringMatched(1);
+				pref.log("[login]:CookieID not found. Using old one.");
+			} else
+				cookieID = rexCookieID.stringMatched(1);
 			//Vm.debug(cookieID);
 			rexCookieSession.search(start);
 			if (!rexCookieSession.didMatch()) {
-				pref.log("CookieSession not found Using old one.");
+				pref.log("[login]:CookieSession not found. Using old one.");
 				//cookieSession="";
 			} else
 				cookieSession = rexCookieSession.stringMatched(1);
@@ -275,6 +275,8 @@ public class SpiderGC{
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), MessageBox.OKB)).execute();
 			return;
 		}
+		if (System.getProperty("os.name")!=null)pref.log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"));
+		if (System.getProperty("java.vendor")!=null)pref.log("Java: "+System.getProperty("java.vendor")+"/"+System.getProperty("java.version"));
 		// Prepare an index of caches for faster searching
 		indexDB = new Hashtable(cacheDB.size());
 		CacheHolder ch;
@@ -482,7 +484,8 @@ public class SpiderGC{
 					// General Cache Data
 					//==========
 					chD.setLatLon(getLatLon(completeWebPage));
-					if (pref.debug) pref.log("LatLon: " + chD.LatLon);
+					pref.log("LatLon: " + chD.LatLon);
+					if (pref.debug) pref.log("chD.pos: " + chD.pos.toString());
 					if (chD.LatLon.equals("???")) {
 						pref.log(">>>> Failed to spider Cache. Retry.");
 						continue; // Restart the spider
@@ -493,44 +496,44 @@ public class SpiderGC{
 	
 					pref.log("Getting cache name");
 					chD.CacheName = SafeXML.cleanback(getName(completeWebPage));
-					pref.log("Got cache name");
-					if (pref.debug) pref.log("Name: " + chD.CacheName);
-	
+					if (pref.debug) pref.log("Name: " + chD.CacheName); else pref.log("Got name");
+						
 					pref.log("Trying owner");
 					chD.CacheOwner = SafeXML.cleanback(getOwner(completeWebPage)).trim();
 					if(chD.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equals(pref.myAlias2))) chD.is_owned = true;
-					pref.log("Got owner");
 					if (pref.debug) pref.log("Owner: " + chD.CacheOwner +"; is_owned = "+chD.is_owned+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
-	
+					else pref.log("Got owner");
+
+						
 					pref.log("Trying date hidden");
 					chD.DateHidden = DateFormat.MDY2YMD(getDateHidden(completeWebPage));
-					pref.log("Got date hidden");
 					if (pref.debug) pref.log("Hidden: " + chD.DateHidden);
-	
+					else pref.log("Got date hidden");
+					
 					pref.log("Trying hints");
 					chD.setHints(getHints(completeWebPage));
-					pref.log("Got hints");
 					if (pref.debug) pref.log("Hints: " + chD.Hints);
-	
+					else pref.log("Got hints");
+					
 					pref.log("Trying size");
 					chD.CacheSize = getSize(completeWebPage);
-					pref.log("Got size");
 					if (pref.debug) pref.log("Size: " + chD.CacheSize);
+					else pref.log("Got size");
 	
 					pref.log("Trying difficulty");
 					chD.hard = getDiff(completeWebPage);
-					pref.log("Got difficulty");
 					if (pref.debug) pref.log("Hard: " + chD.hard);
+					else pref.log("Got difficulty");
 	
 					pref.log("Trying terrain");
 					chD.terrain = getTerr(completeWebPage);
-					pref.log("Got terrain");
 					if (pref.debug) pref.log("Terr: " + chD.terrain);
+					else pref.log("Got terrain");
 	
 					pref.log("Trying cache type");
 					chD.type = getType(completeWebPage);
-					pref.log("Got cache type");
 					if (pref.debug) pref.log("Type: " + chD.type);
+					else pref.log("Got cache type");
 	
 					//==========
 					// Logs
@@ -1089,214 +1092,92 @@ public class SpiderGC{
 	*	it will be a gc.com address. This method is used to obtain
 	*	the result of a search for caches screen.
 	*/
-	public static String fetch(String address)
-	   	{
-			CharArray c_data;
-			String data="";
-			try{
-				//Vm.debug(address);
-				HttpConnection conn;
-				if(pref.myproxy.length() > 0 && pref.proxyActive){
-					pref.log("Using proxy: " + pref.myproxy + " / " +pref.myproxyport);
-					conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
-					//Vm.debug(address);
-				} else {
-					conn = new HttpConnection(address);
-				}
-				conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-				if(cookieSession.length()>0){
-					conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
-					pref.log("Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
-				} else
-					pref.log("No Cookie found");
-				conn.setRequestorProperty("Connection", "close");
-				conn.documentIsEncoded = true;
-				pref.log("Connecting");
-				Socket sock = conn.connect();
-				pref.log("Connect ok!");
-				ByteArray daten = conn.readData(sock);
-				pref.log("Read socket ok");
-				JavaUtf8Codec codec = new JavaUtf8Codec();
-				c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-
-				/*
-				 * prepend the response headers to the document
-				 * like non-linux Ewe does
-				 *
-				 * @TODO directly use the properties in the
-				 * code which calls this method instead
-				 */
-				PropertyList pl = conn.documentProperties;
-				if (pl != null) {
-					StringBuffer sb = new StringBuffer();
-					boolean gotany = false;
-
-					for (int i = 0; i < pl.size(); i++) {
-						Property p = (Property)pl.get(i);
-						if (p.value != null) {
-							sb.append(p.name + ": " + p.value + "\r\n");
-							gotany = true;
-						}
-					}
-					if (gotany)
-						data += sb.toString() + "\r\n";
-				}
-				data += c_data.toString();
-				//Vm.debug("SpiderGC.fetch() result = " + data);
-				sock.close();
-			}catch(IOException ioex){
-				pref.log("IOException in fetch", ioex);
-			}finally{
-				//continue
-			}
-			return data;
+	public static String fetch(String address) {
+		CharArray c_data;
+		try{
+			HttpConnection conn;
+			if(pref.myproxy.length() > 0 && pref.proxyActive){
+				pref.log("[fetch]:Using proxy: " + pref.myproxy + " / " +pref.myproxyport);
+			} 
+			conn = new HttpConnection(address);
+			conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+			if(cookieSession.length()>0){
+				conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
+				pref.log("[fetch]:Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
+			} else
+				pref.log("[fetch]:No Cookie found");
+			conn.setRequestorProperty("Connection", "close");
+			conn.documentIsEncoded = true;
+			if (pref.debug) pref.log("[fetch]:Connecting");
+			Socket sock = conn.connect();
+			if (pref.debug) pref.log("[fetch]:Connect ok!");
+			ByteArray daten = conn.readData(sock);
+			if (pref.debug) pref.log("[fetch]:Read data ok");
+			JavaUtf8Codec codec = new JavaUtf8Codec();
+			c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+			sock.close();
+			return getResponseHeaders(conn)+ c_data.toString();
+		}catch(IOException ioex){
+			pref.log("IOException in fetch", ioex);
+		}finally{
+			//continue
 		}
+		return "";
+	}
 
 	/**
 	*	After a fetch to gc.com the next fetches have to use the post method.
 	*	This method does exactly that. Actually this method is generic in the sense
 	*	that it can be used to post to a URL using http post.
 	*/
-	private static String fetch_post(String address, String document, String path) throws IOException
-	   	{
-
-			//String line = "";
-			String totline = "";
-			if(!pref.proxyActive){
-				try {
-					/*
-					// Create a socket to the host
-					String hostname = "www.geocaching.com";
-					int port = 80;
-					InetAddress addr = InetAddress.getByName(hostname);
-					Socket socket = new Socket(hostname, port);
-					// Send header
-					//String path = "/seek/nearest.aspx";
-					BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF8"));
-					BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-					wr.write("POST "+path+" HTTP/1.1\r\n");
-					wr.write("Host: www.geocaching.com\r\n");
-					if(cookieSession.length()>0){
-						wr.write("Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
-					}
-					Vm.debug("Doc length: " + document.length());
-					wr.write("Content-Length: "+document.length()+"\r\n");
-					wr.write("Content-Type: application/x-www-form-urlencoded\r\n");
-					wr.write("Connection: close\r\n");
-					wr.write("\r\n");
-					// Send data
-					wr.write(document);
-					wr.write("\r\n");
-					wr.flush();
-					//Vm.debug("Sent the data!");
-					// Get response
-					while ((line = rd.readLine()) != null) {
-						totline += line + "\n";
-					}
-					wr.close();
-					rd.close();
-					*/
-					HttpConnection conn;
-					conn = new HttpConnection(address);
-					JavaUtf8Codec codec = new JavaUtf8Codec();
-					conn.documentIsEncoded = true;
-					//Vm.debug(address + " / " + document);
-					//document = document + "\r\n";
-					//conn.setPostData(document.toCharArray());
-					conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-					conn.setPostData(codec.encodeText(document.toCharArray(),0,document.length(),true,null));
-					conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
-					if(cookieSession.length()>0){
-						if (cookieSession!=null) conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
-					}
-					conn.setRequestorProperty("Connection", "close");
-					Socket sock = conn.connect();
-
-					//Vm.debug("getting stuff!");
-					ByteArray daten = conn.readData(sock);
-					//Vm.debug("coming back!");
-					CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-					sock.close();
-					//Vm.debug(c_data.toString());
-					totline = "";
-
-					/*
-					 * prepend the response headers to the document
-					 * like non-linux Ewe does
-					 *
-					 * @TODO directly use the properties in the
-					 * code which calls this method instead
-					 */
-					PropertyList pl = conn.documentProperties;
-					if (pl != null) {
-						StringBuffer sb = new StringBuffer();
-						boolean gotany = false;
-
-						for (int i = 0; i < pl.size(); i++) {
-							Property p = (Property)pl.get(i);
-							if (p.value != null) {
-								sb.append(p.name + ": " + p.value + "\r\n");
-								gotany = true;
-							}
-						}
-						if (gotany)
-							totline += sb.toString() + "\r\n";
-					}
-					totline += c_data.toString();
-				} catch (Exception e) {
-				}
+	private static String fetch_post(String address, String document, String path) throws IOException {
+		HttpConnection conn;
+		try {
+			conn = new HttpConnection(address);
+			JavaUtf8Codec codec = new JavaUtf8Codec();
+			conn.documentIsEncoded = true;
+			conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+			conn.setPostData(codec.encodeText(document.toCharArray(),0,document.length(),true,null));
+			conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
+			if(cookieSession.length()>0){
+				conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
+				pref.log("[fetch]:Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
 			} else {
-				HttpConnection conn;
-				conn = new HttpConnection(pref.myproxy, Convert.parseInt(pref.myproxyport), address);
-				JavaUtf8Codec codec = new JavaUtf8Codec();
-				conn.documentIsEncoded = true;
-				//Vm.debug(address + " / " + document);
-				//document = document + "\r\n";
-				//conn.setPostData(document.toCharArray());
-				conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-				conn.setPostData(codec.encodeText(document.toCharArray(),0,document.length(),true,null));
-				conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
-				if(cookieSession.length()>0){
-					conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
-				}
-				conn.setRequestorProperty("Connection", "close");
-				Socket sock = conn.connect();
-
-				//Vm.debug("getting stuff!");
-				ByteArray daten = conn.readData(sock);
-				//Vm.debug("coming back!");
-				CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-				sock.close();
-				//Vm.debug(c_data.toString());
-				totline = "";
-
-				/*
-				 * prepend the response headers to the document
-				 * like non-linux Ewe does
-				 *
-				 * @TODO directly use the properties in the
-				 * code which calls this method instead
-				 */
-				PropertyList pl = conn.documentProperties;
-				if (pl != null) {
-					StringBuffer sb = new StringBuffer();
-					boolean gotany = false;
-
-					for (int i = 0; i < pl.size(); i++) {
-						Property p = (Property)pl.get(i);
-						if (p.value != null) {
-							sb.append(p.name + ": " + p.value + "\r\n");
-							gotany = true;
-						}
-					}
-					if (gotany)
-						totline += sb.toString() + "\r\n";
-				}
-				totline += c_data.toString();
+				pref.log("[fetch]:No Cookie found");
 			}
-			return totline;
-		}
+			conn.setRequestorProperty("Connection", "close");
+			if (pref.debug) pref.log("[fetch]:Connecting");
+			Socket sock = conn.connect();
+			if (pref.debug) pref.log("[fetch]:Connect ok!");
+			ByteArray daten = conn.readData(sock);
+			if (pref.debug) pref.log("[fetch]:Read data ok");
+			CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+			sock.close();
+			return getResponseHeaders(conn)+c_data.toString();
+		} catch (Exception e) {	}
+		return "";
+	}
 
+	private static String getResponseHeaders(HttpConnection conn) {
+		PropertyList pl = conn.documentProperties;
+		if (pl != null) {
+			StringBuffer sb = new StringBuffer(1000);
+			boolean gotany = false;
+
+			for (int i = 0; i < pl.size(); i++) {
+				Property p = (Property)pl.get(i);
+				if (p.value != null) {
+					sb.append(p.name).append(": ").append(p.value).append("\r\n");
+					gotany = true;
+				}
+			}
+			if (gotany)
+				return sb.toString() + "\r\n";
+		}
+		return "";
+	}
+	
+	
 	final static String hex = ewe.util.TextEncoder.hex;
 
 	public String encodeUTF8URL(byte[] what) {
