@@ -464,6 +464,15 @@ public class Filter{
 			}
 			
 		} // for
+		// Ensure that for all main caches that are filtered, the addis are also filtered independently of 
+		// the filter status of the addi
+		for(int i = cacheDB.size()-1; i >=0 ; i--){
+			ch = (CacheHolder)cacheDB.get(i);
+			if (ch.mainCache!=null) {
+				// We have found an addi, filte it if its parent is filtered
+				ch.is_filtered|=ch.mainCache.is_filtered;
+			}
+		}
 		Global.getProfile().filterActive=FILTER_ACTIVE;
 		Global.getProfile().filterInverted=false;
 		Global.getProfile().hasUnsavedChanges=true;
