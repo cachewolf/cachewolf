@@ -370,9 +370,28 @@ public class SpiderGC{
 					//Vm.debug(getDist(lineRex.stringMatched(1)) + " / " +getWP(lineRex.stringMatched(1)));
 					found_on_page++;
 					if(getDist(lineRex.stringMatched(1)) <= distance){
-						if(indexDB.get((String)getWP(lineRex.stringMatched(1))) == null){
-							cachesToLoad.add(getWP(lineRex.stringMatched(1)));
-						} else pref.log(getWP(lineRex.stringMatched(1))+" already in DB");
+						String waypoint=getWP(lineRex.stringMatched(1));
+						Integer nr;
+						if((nr=(Integer)indexDB.get(waypoint)) == null){
+							cachesToLoad.add(waypoint);
+						} else {
+							pref.log(waypoint+" already in DB");
+							ch=(CacheHolder) cacheDB.get(nr.intValue());
+							// If the <strike> tag is used, the cache is marked as unavailable or archived
+							boolean is_archived_GC=lineRex.stringMatched(1).indexOf("<strike><font color=\"red\">")!=-1;
+							boolean is_available_GC=lineRex.stringMatched(1).indexOf("<strike>")==-1;
+							if (ch.is_archived!=is_archived_GC) { // Update the database with the cache status
+								pref.log("Updating status of "+waypoint+" to "+(is_archived_GC?"archived":"not archived"));
+								ch.is_archived=is_archived_GC;
+								chD=ch.getCacheDetails(true,false);
+								ch.detailsAdded();
+							} else if (ch.is_available!=is_available_GC) { // Update the database with the cache status
+								pref.log("Updating status of "+waypoint+" to "+(is_available_GC?"available":"not available"));
+								ch.is_available=is_available_GC;
+								chD=ch.getCacheDetails(true,false);
+								ch.detailsAdded();
+							}
+						}
 					} else distance = 0;
 					lineRex.searchFrom(dummy, lineRex.matchedTo());
 				}
