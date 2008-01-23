@@ -77,7 +77,7 @@ public class MapImporter extends Form {
 			Vm.debug("Cannot load world file!");
 		}
 		mapInteractivePanel pane = new mapInteractivePanel(this);
-		scp = new ScrollBarPanel(pane);
+		scp = new CacheWolf.MyScrollBarPanel(pane);
 		Image img = new Image(Common.getImageName(mapsPath + thisMap));
 		PixelBuffer pB = new PixelBuffer(img);
 		//pB = pB.scale((int)(pref.myAppWidth*0.98),(int)(pref.myAppHeight*0.98));

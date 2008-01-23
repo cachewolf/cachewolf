@@ -27,8 +27,8 @@ public class SelectMap extends Form{
 	
 	public SelectMap(){
 		mapsPath = Global.getPref().getMapManuallySavePath(false)+"/"; //  File.getProgramDirectory() + "/maps/";
-		top = new ScrollBarPanel(CMaps);
-		bot = new ScrollBarPanel(nonCMaps);
+		top = new CacheWolf.MyScrollBarPanel(CMaps);
+		bot = new CacheWolf.MyScrollBarPanel(nonCMaps);
 		this.title = MyLocale.getMsg(4101,"Maps");
 		this.addLast(new mLabel(MyLocale.getMsg(4102,"Calibrated Maps")), CellConstants.STRETCH, CellConstants.FILL);
 		this.addLast(top, CellConstants.STRETCH, CellConstants.FILL);
