@@ -20,7 +20,7 @@ public class ImageDetailForm extends Form{
 	ScrollBarPanel scp;
 	
 	public ImageDetailForm(String imgLoc, Preferences p){
-		scp = new ScrollBarPanel(ipp);
+		scp = new MyScrollBarPanel(ipp);
 		setUp(imgLoc, p);
 		this.title = "Image";
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);

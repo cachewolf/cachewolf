@@ -64,7 +64,7 @@ public class MainTab extends mTabbedPanel {
 		c = this.addCard(descP, MyLocale.getMsg(1202,"Description"), null);
 		c.iconize(new Image("descr"+imagesize+".gif"),true);
 
-		c = this.addCard(new ScrollBarPanel(imageP = new ImagePanel()), MyLocale.getMsg(1203,"Images"), null);
+		c = this.addCard(new MyScrollBarPanel(imageP = new ImagePanel()), MyLocale.getMsg(1203,"Images"), null);
 		c.iconize(new Image("images"+imagesize+".gif"),true);
 
 		c = this.addCard(hintLP, MyLocale.getMsg(1204,"Hints & Logs"), null);

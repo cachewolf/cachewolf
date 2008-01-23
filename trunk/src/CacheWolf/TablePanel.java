@@ -33,7 +33,7 @@ public class TablePanel extends CellPanel{
 		Profile profile=Global.getProfile();
 		this.statBar = statBar;
 		cacheDB = profile.cacheDB;
-		addLast(new ScrollBarPanel(tc = new myTableControl(this)));
+		addLast(new MyScrollBarPanel(tc = new myTableControl(this)));
 		if (statBar!=null) addLast(statBar,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		myMod = new myTableModel(tc, getFontMetrics());
 		myMod.hasRowHeaders = false;

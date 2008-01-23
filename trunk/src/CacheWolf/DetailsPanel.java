@@ -514,7 +514,7 @@ public class DetailsPanel extends CellPanel{
 			this.setTitle(title);
 			this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 			disp.setHtml(text);
-			ScrollBarPanel sbp = new ScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
+			ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
 			this.addLast(sbp);
 			this.addLast(btCancel = new mButton(MyLocale.getMsg(3000,"Close")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		}

@@ -27,7 +27,7 @@ public class TableColumnChooser extends CellPanel {
         addNext(new mLabel(""));
         addLast(new mLabel(MyLocale.getMsg(6051,"Don't show column")));
         
-        addNext(new ScrollBarPanel(lstShown=new myList(6,shownCols),ScrollBarPanel.AlwaysShowVerticalScrollers));
+        addNext(new MyScrollBarPanel(lstShown=new myList(6,shownCols),ScrollBarPanel.AlwaysShowVerticalScrollers));
         CellPanel cpMid=new CellPanel();
         cpMid.addLast(new mLabel(""));
         mImage imgRight=new mImage("ewe/rightarrowsmall.bmp");imgRight.transparentColor=Color.White;
@@ -37,7 +37,7 @@ public class TableColumnChooser extends CellPanel {
         cpMid.addLast(btnLeft=new mButton(imgLeft));
         cpMid.addLast(new mLabel(""));
         addNext(cpMid,VSTRETCH,VFILL);
-        addLast(new ScrollBarPanel(lstHidden=new myList(6,hiddenCols),ScrollBarPanel.AlwaysShowVerticalScrollers));
+        addLast(new MyScrollBarPanel(lstHidden=new myList(6,hiddenCols),ScrollBarPanel.AlwaysShowVerticalScrollers));
         
         CellPanel pnlButtons=new CellPanel();
 		mImage imgDown=new mImage("ewe/downarrowsmall.bmp"); imgDown.transparentColor=Color.White;

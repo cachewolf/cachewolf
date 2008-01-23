@@ -95,7 +95,7 @@ public class SolverPanel extends CellPanel{
 		outputPanel = split.getNextPanel();
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
 
-		programPanel.addLast(new ScrollBarPanel(mText = new InputPanel())).setTag(SPAN, new Dimension(2,1));
+		programPanel.addLast(new MyScrollBarPanel(mText = new InputPanel())).setTag(SPAN, new Dimension(2,1));
 		CellPanel pnlStatButtons=new CellPanel();
 		pnlStatButtons.addNext(btnDegRad=new mButton(getSolverDegMode()),CellConstants.DONTSTRETCH,CellConstants.DONTFILL);
 		btnDegRad.backGround=Color.Sand;

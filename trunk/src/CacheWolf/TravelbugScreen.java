@@ -22,7 +22,7 @@ public class TravelbugScreen extends Form {
 		this.setTitle(title);
 		this.setPreferredSize(240, -1);
 		disp=new myList(tbl,allowNew);
-		ScrollBarPanel sbp = new ScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
+		ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
 		this.addLast(sbp);
 		this.addNext(btCancel = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		this.addLast(btAccept = new mButton("OK"),CellConstants.DONTSTRETCH, CellConstants.FILL);

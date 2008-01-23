@@ -95,7 +95,7 @@ public class GPSPortOptions extends SerialPortOptions {
 		btnTest = new mButton("Test$u");
 		ed.addField(ed.addLast(btnTest.setCell(Editor.DONTSTRETCH)),"test");
 		txtOutput = new TextDisplay();
-		ScrollBarPanel sbp = new ScrollBarPanel(txtOutput);
+		ScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
 		sbp.setOptions(ScrollBarPanel.AlwaysShowVerticalScrollers | ScrollBarPanel.AlwaysShowHorizontalScrollers);
 		ed.addField(ed.addLast(sbp),"out");
 		forwardGpsChkB = new mCheckBox("z");

@@ -32,7 +32,7 @@ public class InfoScreen extends Form {
 			}
 		} else text = datei;
 		disp.setHtml(text);
-		ScrollBarPanel sbp = new ScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
+		ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
 		this.addLast(sbp);
 		this.addLast(btCancel = new mButton(MyLocale.getMsg(3000,"Close")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 	}
