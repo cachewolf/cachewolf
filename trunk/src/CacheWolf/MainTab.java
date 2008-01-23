@@ -50,38 +50,41 @@ public class MainTab extends mTabbedPanel {
 		this.statBar=statBar;
 		MyLocale.setSIPButton();
 		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
-		if (MyLocale.getScreenWidth() <= 240) this.dontExpandTabs=true;
+		int sw = MyLocale.getScreenWidth();
+		if ( sw <= 240) this.dontExpandTabs=true;
+		String imagesize="";
+		if (Vm.isMobile() && sw >= 400) imagesize="_32x32";  
 		calcP = new CalcPanel(); // Init here so that Global.MainT is already set
 		tbP = new TablePanel(pref, profile, statBar);
 		Card c = this.addCard(new TableForm(tbP), MyLocale.getMsg(1200,"List"), null);
-
+		
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
-		c.iconize(new Image("details.gif"),true);
+		c.iconize(new Image("details"+imagesize+".gif"),true);
 
 		c = this.addCard(descP, MyLocale.getMsg(1202,"Description"), null);
-		c.iconize(new Image("descr.gif"),true);
+		c.iconize(new Image("descr"+imagesize+".gif"),true);
 
 		c = this.addCard(new ScrollBarPanel(imageP = new ImagePanel()), MyLocale.getMsg(1203,"Images"), null);
-		c.iconize(new Image("images.gif"),true);
+		c.iconize(new Image("images"+imagesize+".gif"),true);
 
 		c = this.addCard(hintLP, MyLocale.getMsg(1204,"Hints & Logs"), null);
-		c.iconize(new Image("more.gif"),true);
+		c.iconize(new Image("more"+imagesize+".gif"),true);
 
 		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205,"Solver"), null);
-		c.iconize(new Image("solver.gif"),true);
+		c.iconize(new Image("solver"+imagesize+".gif"),true);
 
 		c = this.addCard(calcP, MyLocale.getMsg(1206,"Calc"), null);
-		mImage imgCalc=new mImage("ewe/HandHeld.bmp"); imgCalc.transparentColor=new Color(0,255,0);
+		mImage imgCalc=new mImage("projecttab"+imagesize+".gif"); imgCalc.transparentColor=new Color(0,255,0);
 		c.iconize(imgCalc,true);
 
 		nav = new Navigate();
 		c = this.addCard(gotoP = new GotoPanel(nav), "Goto", null);
-		c.iconize(new Image("goto.gif"),true);
+		c.iconize(new Image("goto"+imagesize+".gif"),true);
 		nav.setGotoPanel(gotoP);
 
 		c = this.addCard(radarP, "Radar", null);
 		radarP.setMainTab(this);
-		c.iconize(new Image("radar.gif"),true);
+		c.iconize(new Image("radar"+imagesize+".gif"),true);
 		mnuMain.allowProfileChange(true);
 //		if (pref.noTabs) top.modify(ShrinkToNothing,0);//TODO
 	}
