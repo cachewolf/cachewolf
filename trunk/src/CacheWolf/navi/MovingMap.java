@@ -1836,7 +1836,7 @@ class ListBox extends Form{
 			}
 		}
 		list.selectItem(oldmap, true);
-		this.addLast(scb = new ScrollBarPanel(list),CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(scb = new CacheWolf.MyScrollBarPanel(list),CellConstants.STRETCH, CellConstants.FILL);
 		cancelButton = new mButton("Cancel");
 		cancelButton.setHotKey(0, KeyEvent.getCancelKey(true));
 		this.addNext(cancelButton,CellConstants.STRETCH, CellConstants.FILL);
