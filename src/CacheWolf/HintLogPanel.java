@@ -41,7 +41,7 @@ public class HintLogPanel extends CellPanel{
 		int initialHintHeight=Global.getPref().initialHintHeight;
 		if (initialHintHeight<0 || initialHintHeight>1000) initialHintHeight=Global.getPref().DEFAULT_INITIAL_HINT_HEIGHT;
 		hintpane.setPreferredSize(100,initialHintHeight); 
-		ScrollBarPanel sbphint = new ScrollBarPanel(hint);
+		ScrollBarPanel sbphint = new MyScrollBarPanel(hint);
 		hintpane.addLast(sbphint,CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		hintpane.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		hintpane.addNext(decodeButton,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -49,7 +49,7 @@ public class HintLogPanel extends CellPanel{
 		hintpane.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
 		hint.modify(Control.NotEditable,0);
 
-		ScrollBarPanel sbplog = new ScrollBarPanel((ScrollClient)htmlImagDisp, ScrollBarPanel.NeverShowHorizontalScrollers);
+		ScrollBarPanel sbplog = new MyScrollBarPanel((ScrollClient)htmlImagDisp, ScrollBarPanel.NeverShowHorizontalScrollers);
 		//logpane.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
 		Rect r = new Rect(new Dimension (Global.getPref().myAppWidth-sbplog.vbar.getRect().width, 20));
 		htmlImagDisp.virtualSize = r;

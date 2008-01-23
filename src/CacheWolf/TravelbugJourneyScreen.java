@@ -77,7 +77,7 @@ public class TravelbugJourneyScreen extends Form  {
 		title="Travelbugs"+cache;
 		tcTbJourneyList=new tbListControl();
 		tcTbJourneyList.setTableModel(modTbJourneyList=new tbListTableModel());
-		tablepane.addLast(new ScrollBarPanel(tcTbJourneyList,ScrollBarPanel.AlwaysShowVerticalScrollers),STRETCH,FILL);
+		tablepane.addLast(new MyScrollBarPanel(tcTbJourneyList,ScrollBarPanel.AlwaysShowVerticalScrollers),STRETCH,FILL);
 	
 		lowerpane = split.getNextPanel();
 		

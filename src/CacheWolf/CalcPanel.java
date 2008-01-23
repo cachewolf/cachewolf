@@ -97,7 +97,7 @@ public class CalcPanel extends CellPanel {
 		
 		// Output 
 		txtOutput = new TextDisplay(3,1); // Need to limit size for small screens
-		ScrollBarPanel sbp = new ScrollBarPanel(txtOutput);
+		ScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
 		BottomP.addLast(sbp.setTag(Control.SPAN, new Dimension(4,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		
 		//add Panels

@@ -31,7 +31,7 @@ public class PreferencesScreen extends Form {
 	CellPanel pnlMore = new CellPanel();
 	CellPanel pnlTB = new CellPanel();
 	Frame frmGarmin = new Frame();
-	ScrollBarPanel scp;
+	ScrollBarPanel scp; // TODO not neede any more?
 	String [] garminPorts= new String[]{"com1","com2","com3","com4","com5","com6","com7","usb"};
 	
 	public PreferencesScreen (Preferences p){

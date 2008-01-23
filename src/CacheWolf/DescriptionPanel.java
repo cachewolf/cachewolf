@@ -23,7 +23,8 @@ public class DescriptionPanel extends CellPanel{
 	public DescriptionPanel(){
 		buttonP.addNext(btnPlus = new mButton("+"),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		buttonP.addLast(btnMinus = new mButton("-"),CellConstants.HSTRETCH, (CellConstants.HFILL));
-		ScrollBarPanel sbp = new ScrollBarPanel(disp, 0);
+		ScrollBarPanel sbp = new MyScrollBarPanel(disp, 0);
+		//sbp.setScrollBarSize(40,40, 20);
 		descP.addLast(sbp);
 		this.addLast(descP);
 		this.addLast(buttonP,CellConstants.HSTRETCH,CellConstants.HFILL);

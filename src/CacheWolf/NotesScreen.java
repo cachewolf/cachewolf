@@ -17,7 +17,7 @@ public class NotesScreen extends Form{
 	mButton addDateTime = new mButton((IImage)new mImage("date_time.png"));
 	mButton btSave = new mButton(MyLocale.getMsg(127,"Save"));
 	mButton cancelBtn = new mButton("Cancel");
-	ScrollBarPanel sbp = new ScrollBarPanel(wayNotes);
+	ScrollBarPanel sbp = new MyScrollBarPanel(wayNotes);
 	
 	public NotesScreen(CacheHolderDetail ch){
 		this.title = "Notes";
