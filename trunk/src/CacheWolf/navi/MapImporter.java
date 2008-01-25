@@ -180,10 +180,10 @@ public class MapImporter extends Form {
 				}
 			} catch(IOException ex){
 				imageerror = true;
-				inf.addWarning("\nIO-Error while copying image from: " + curInFullPath + " to: " + curOutFullPath + " error: " + ex.getMessage());
+				inf.addWarning("\n"+MyLocale.getMsg(4112, "IO-Error while copying image from: ") + curInFullPath + MyLocale.getMsg(4113, " to: ") + curOutFullPath + MyLocale.getMsg(4114, " error: ") + ex.getMessage());
 			} catch (IllegalArgumentException e) { // thrown from Image.getImageInfo when it could not interprete the header (e.g. bmp with 32 bits per pixel)
 				imageerror = true;
-				inf.addWarning("\nError: could not decode image: " + curInFullPath + " - image not copied");
+				inf.addWarning("\n"+MyLocale.getMsg(4115, "Error: could not decode image: ") + curInFullPath + MyLocale.getMsg(4116, " - image not copied"));
 			} finally {
 				try {
 					if (in != null) in.close();
@@ -297,16 +297,16 @@ public class MapImporter extends Form {
 					} // while
 					if (inMap != null)	inMap.close();
 				} catch(IllegalArgumentException ex){ // is thrown from Convert.toDouble and saveWFL if affine[0-5]==0 NumberFormatException is a subclass of IllegalArgumentExepction
-					inf.addWarning("\nError while importing .map-file: "+ex.getMessage());
+					inf.addWarning("\n"+MyLocale.getMsg(4117, "Error while importing .map-file: ")+ex.getMessage());
 				} catch(IOException ex){
-					inf.addWarning("\nIO-Error while reading or writing calibration file\n" + ex.getMessage());
+					inf.addWarning("\n"+MyLocale.getMsg(4118, "IO-Error while reading or writing calibration file")+"\n" + ex.getMessage());
 				} 
 			} else { // if map file.exists
-				if (!imageerror) inf.addWarning("\nNo calibration file found for: " + currfile + " - you can calibrate it manually");
+				if (!imageerror) inf.addWarning("\n"+MyLocale.getMsg(4119, "No calibration file found for: ") + currfile + " - you can calibrate it manually");
 			}
 		} // for file
 		Vm.showWait(this, false);
-		inf.addText("\ndone.");
+		inf.addText("\n"+MyLocale.getMsg(4120, "done."));
 		inf.addOkButton();
 		//inf.addOkButton(); doesn't work
 		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
