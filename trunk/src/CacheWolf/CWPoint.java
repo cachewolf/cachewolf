@@ -216,7 +216,7 @@ public class CWPoint extends TrackPoint{
 									")|(?:" +
 									"([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" +
 									")|(?:" +
-									"[Rr]:?\\s*([0-9]{1,7})\\s+[Hh]:?\\s*([0-9]{1,7})" +
+									"[Rr]:?\\s*([+-]?[0-9]{1,7})\\s+[Hh]:?\\s*([+-]?[0-9]{1,7})" +
 									")"); 
 				this.latDec = -91; // return unset / unvalid values if parsing was not successfull
 				this.lonDec = -361;
