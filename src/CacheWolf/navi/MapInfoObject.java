@@ -25,7 +25,9 @@ import java.lang.Math;
 
 
 /**
- * class to read, save and do the calculations for calibrated and calibrating maps
+ * class to read, save and do the calculations for calibrated and 
+ * calibrating maps
+ * start offset for language file: 4300
  * @author pfeffer
  *
  */
@@ -89,7 +91,7 @@ public class MapInfoObject extends Area {
 	 */
 	public MapInfoObject(double scalei, double lat) {
 		super(new CWPoint(1,0), new CWPoint(0,1));
-		mapName="empty 1 Pixel = "+scalei+"meters";
+		mapName=MyLocale.getMsg(4300, "empty 1 Pixel = ") + scalei + MyLocale.getMsg(4301,"meters");
 		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		double pixel2deg = meters2deg * scalei;
 		affine[0]=0; //x2lat
@@ -197,10 +199,10 @@ public class MapInfoObject extends Area {
 			if( !buttomright.isValid() ) {
 				affine[0] = 0; affine[1] = 0; affine[2] = 0; affine[3] = 0; 
 				topleft.makeInvalid();
-				throw (new IOException("Lat/Lon out of range while reading "+mapsPath + thisMap + ".wfl"));
+				throw (new IOException(MyLocale.getMsg(4301, "Lat/Lon out of range while reading ")+mapsPath + thisMap + ".wfl"));
 			}
 		} catch (NullPointerException e) { // in.readline liefert null zurück, wenn keine Daten mehr vorhanden sind
-			throw (new IOException("not enough lines in file "+mapsPath + thisMap + ".wfl"));
+			throw (new IOException(MyLocale.getMsg(4303, "not enough lines in file ")+mapsPath + thisMap + ".wfl"));
 		}
 		doCalculations();
 		origAffineUpperLeft = new CWPoint(affineTopleft);
@@ -219,7 +221,7 @@ public class MapInfoObject extends Area {
 		//N 48 16.000 E 11 32.000
 		//N 48 16.000 E 11 50.000
 		//N 48 9.000 E 11 32.000
-		if (GCPs.size() < 3 ) throw new IllegalArgumentException("not enough points to calibrate the map");
+		if (GCPs.size() < 3 ) throw new IllegalArgumentException(MyLocale.getMsg(4304, "not enough points to calibrate the map"));
 		GCPoint gcp = new GCPoint();
 		//Calculate parameters for latitutde affine transformation (affine 0,2,4)
 		Matrix X = new Matrix(GCPs.size(),3);
@@ -311,12 +313,12 @@ public class MapInfoObject extends Area {
 			// double metersPerLat = 1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0));
 			CWPoint buttomleftimage = topleft.project(rotationRad * 180 / Math.PI + 180, heightkm);
 			CWPoint buttomleftimage2 = calcLatLon(0, heightpixel);
-			double kw = buttomleftimage.getDistance(buttomleftimage2);
-			double kw2 = buttomleftimage.getBearing(buttomleftimage2);
-			Vm.debug("project test: " + buttomleftimage.getDistance(topleft));
+			//double kw = buttomleftimage.getDistance(buttomleftimage2);
+			//double kw2 = buttomleftimage.getBearing(buttomleftimage2);
+			//Vm.debug("project test: " + buttomleftimage.getDistance(topleft));
 			// double heightpixel = calcMapXY(buttomleftimage).y / Math.cos(rotationRad); 
 			scale = (float) (heightkm * 1000 / heightpixel); 
-		} catch (ArithmeticException ex) { throw new ArithmeticException("Not allowed values in affine\n (matrix cannot be inverted)\n in file \n" + fileNameWFL); }
+		} catch (ArithmeticException ex) { throw new ArithmeticException(MyLocale.getMsg(4305, "Not allowed values in affine\n (matrix cannot be inverted)\n in file \n") + fileNameWFL); }
 	}
 
 	public void saveWFL() throws IOException, IllegalArgumentException {
@@ -334,17 +336,19 @@ public class MapInfoObject extends Area {
 	 */
 	public void saveWFL(String mapsPath, String mapFileName) throws IOException, IllegalArgumentException {
 		if (affine[0]==0 && affine[1]==0 && affine[2]==0 && affine[3]==0 && 
-				!topleft.isValid()) throw (new IllegalArgumentException("map not calibrated"));
+				!topleft.isValid()) throw (new IllegalArgumentException(MyLocale.getMsg(4306, "map not calibrated")));
 		PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(mapsPath + "/" + mapFileName + ".wfl")));
-		String towrite=Convert.toString(affine[0])+"\n" +
-		Convert.toString(affine[1])+"\n" +
-		Convert.toString(affine[2])+"\n" + 
-		Convert.toString(affine[3])+"\n" + 
-		Convert.toString(affineTopleft.latDec)+"\n" +
-		Convert.toString(affineTopleft.lonDec)+"\n" +
-		Convert.toString(buttomright.latDec)+"\n" +
-		Convert.toString(buttomright.lonDec)+"\n" + 
-		((coordTrans == 0 || coordTrans == TransformCoordinates.EPSG_WGS84) ? "" : Convert.toString(coordTrans)+"\n");
+		StringBuffer towriteB=new StringBuffer(400);
+		towriteB.append(Convert.toString(affine[0])).append("\n");
+		towriteB.append(Convert.toString(affine[1])).append("\n");
+		towriteB.append(Convert.toString(affine[2])).append("\n");
+		towriteB.append(Convert.toString(affine[3])).append("\n");
+		towriteB.append(Convert.toString(affineTopleft.latDec)).append("\n");
+		towriteB.append(Convert.toString(affineTopleft.lonDec)).append("\n");
+		towriteB.append(Convert.toString(buttomright.latDec)).append("\n");
+		towriteB.append(Convert.toString(buttomright.lonDec)).append("\n");
+		towriteB.append(((coordTrans == 0 || coordTrans == TransformCoordinates.EPSG_WGS84) ? "" : Convert.toString(coordTrans)+"\n"));
+		String towrite = towriteB.toString();
 		if (digSep.equals(",")) towrite=towrite.replace(',', '.');
 		outp.print(towrite);
 		outp.close();
