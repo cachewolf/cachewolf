@@ -311,8 +311,8 @@ public class MapInfoObject extends Area {
 			double gamma = beta - rotationRad;
 			double heightkm = diagonal * Math.cos(gamma);
 			// double metersPerLat = 1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0));
-			CWPoint buttomleftimage = topleft.project(rotationRad * 180 / Math.PI + 180, heightkm);
-			CWPoint buttomleftimage2 = calcLatLon(0, heightpixel);
+			//CWPoint buttomleftimage = topleft.project(rotationRad * 180 / Math.PI + 180, heightkm);
+			//CWPoint buttomleftimage2 = calcLatLon(0, heightpixel);
 			//double kw = buttomleftimage.getDistance(buttomleftimage2);
 			//double kw2 = buttomleftimage.getBearing(buttomleftimage2);
 			//Vm.debug("project test: " + buttomleftimage.getDistance(topleft));

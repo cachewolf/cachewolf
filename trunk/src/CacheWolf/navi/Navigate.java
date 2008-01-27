@@ -2,6 +2,7 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Global;
+import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import ewe.fx.Color;
 import ewe.io.IOException;
@@ -13,6 +14,13 @@ import ewe.sys.mThread;
 import ewe.ui.MessageBox;
 import ewe.util.mString;
 
+/**
+ * Non-Gui Class to handle all things regarding navigation
+ * (GPS, Sun direction etc.)
+ * start offset in localisation file: 4400 
+ * @author Pfeffer
+ *
+ */
 public class Navigate {
 	public CWPoint destination = new CWPoint();
 	public CWGPSPoint gpsPos = new CWGPSPoint();
@@ -43,7 +51,10 @@ public class Navigate {
 		try {
 			serThread = new SerialThread(pref.mySPO, gpsPos, (pref.forwardGPS ? pref.forwardGpsHost : ""));
 			if (pref.forwardGPS && !serThread.tcpForward) {
-				(new MessageBox("Warning", "Ignoring error:\n could not forward GPS data to host:\n"+pref.forwardGpsHost+"\n"+serThread.lastError+"\nstop and start GPS to retry",MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(4400, "Warning"), 
+						MyLocale.getMsg(4401, "Ignoring error:\n could not forward GPS data to host:\n")
+						+ pref.forwardGpsHost+"\n" + serThread.lastError
+						+ MyLocale.getMsg(4402, "\nstop and start GPS to retry"), MessageBox.OKB)).exec();
 			}
 			if (gpsPos.latDec == 0 && gpsPos.lonDec == 0) { // TODO use isValid() // TODO raus damit?
 				gpsPos.latDec = destination.latDec; // setze Zielpunkt als Ausgangspunkt
@@ -57,7 +68,11 @@ public class Navigate {
 			if (gotoPanel != null) gotoPanel.gpsStarted();
 			if (movingMap != null) movingMap.gpsStarted();
 		} catch (IOException e) {
-			(new MessageBox("Error", "Could not connect to GPS-receiver.\n Error while opening serial Port " + e.getMessage()+"\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS", MessageBox.OKB)).execute(); 
+			(new MessageBox(MyLocale.getMsg(4403, "Error"), 
+					MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ") 
+					+ e.getMessage()
+					+ MyLocale.getMsg(4405, "\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS"), 
+					MessageBox.OKB)).execute(); 
 		}
 	}
 
@@ -123,7 +138,7 @@ public class Navigate {
 				SkyOrientation.getSunAzimut(gpsPos.Time, gpsPos.Date, gpsPos.latDec, gpsPos.lonDec);
 				double jd = SkyOrientation.utc2juliandate(gpsPos.Time, gpsPos.Date);
 				skyOrientationDir = SkyOrientation.getLuminaryDir(luminary, jd, gpsPos);
-				ewe.sys.Vm.debug("neu: "+ skyOrientationDir.lonDec+ "jd: " + jd);
+				// ewe.sys.Vm.debug("neu: "+ skyOrientationDir.lonDec+ "jd: " + jd);
 			} catch (NumberFormatException e) { // irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
 				skyOrientationDir.set(-361, -361); // any value out of range (bigger than 360) will prevent drawArrows from drawing it 
 			}

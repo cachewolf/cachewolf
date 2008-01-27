@@ -38,7 +38,7 @@ public class SkyOrientation {
 		// Sirius
 	};
 	
-	public static String [] LUMINARY_NAMES = { // TODO MyLocale.getMsg(xxx, "Sun"),
+	public static String [] LUMINARY_NAMES = { 
 		MyLocale.getMsg(6100, "Sun"), 
 		MyLocale.getMsg(6101, "Moon"), 
 		MyLocale.getMsg(6102, "Grater Bear"),
@@ -48,7 +48,7 @@ public class SkyOrientation {
 		MyLocale.getMsg(6106, "Southern Cross")
 	};
 
-	public static String [] LUMINARY_DESC = { // TODO MyLocale.getMsg(xxx, "Sun"),
+	public static String [] LUMINARY_DESC = {
 		MyLocale.getMsg(6100, "Sun"), 
 		MyLocale.getMsg(6101, "Moon"), 
 		MyLocale.getMsg(6122, "Alioth in Greater Bear"),
@@ -171,12 +171,12 @@ public class SkyOrientation {
 			// null = Sueden auf Null = Norden umrechnen
 			azimut +=180.;
 			if (azimut >360.) azimut -=360.;
-			ewe.sys.Vm.debug("sunAzimut1: " + azimut);
-			ewe.sys.Vm.debug("sun Elevation: " +getSunAzimut2 (utc, datum, lat, lon).latDec);
-			CWPoint MoonDir = getMoonDir(jd, new CWPoint(lat, lon));
-			ewe.sys.Vm.debug("Moon Elevation: " + MoonDir.latDec + "Moon Azimut: " + MoonDir.lonDec);
-			CWPoint OrionDir = getAlnilamDir(jd, new CWPoint(lat, lon));
-			ewe.sys.Vm.debug("Alnilam (Orion) Elevation: " + OrionDir.latDec + "Alnilam (Orion) Azimut: " + OrionDir.lonDec );
+			//ewe.sys.Vm.debug("sunAzimut1: " + azimut);
+			//ewe.sys.Vm.debug("sun Elevation: " +getSunAzimut2 (utc, datum, lat, lon).latDec);
+			//CWPoint MoonDir = getMoonDir(jd, new CWPoint(lat, lon));
+			//ewe.sys.Vm.debug("Moon Elevation: " + MoonDir.latDec + "Moon Azimut: " + MoonDir.lonDec);
+			//CWPoint OrionDir = getAlnilamDir(jd, new CWPoint(lat, lon));
+			//ewe.sys.Vm.debug("Alnilam (Orion) Elevation: " + OrionDir.latDec + "Alnilam (Orion) Azimut: " + OrionDir.lonDec );
 			
 			return azimut;
 		} catch (IndexOutOfBoundsException e) {
