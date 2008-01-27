@@ -2,6 +2,7 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Matrix;
+import CacheWolf.MyLocale;
 
 import java.lang.Math;
 
@@ -22,7 +23,9 @@ import ewe.database.GetSearchCriteria;
  * by the Bundesamt für Kartographie und Geodäsie for whole Germany: see:
  *  * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007dokumentation.pdf
  *  * http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (BeTA, 2007) to ETRS89
- * @author Robert Arnold
+ *  
+ *  Start offset in languages file: 4900
+ * @author Pfeffer
  *
  */
 public class TransformCoordinates {
@@ -222,7 +225,7 @@ public class TransformCoordinates {
 		case EPSG_GK3: stripe = 3; break;
 		case EPSG_GK4: stripe = 4; break;
 		case EPSG_GK5: stripe = 5; break;
-		default: throw new IllegalArgumentException("wgs84ToGermanGk: epsgcode: " + epsgcode + "is not a german Gauß-Krüger coordinate");
+		default: throw new IllegalArgumentException("wgs84ToGermanGk: epsgcode: " + epsgcode + MyLocale.getMsg(4900, " is not a german Gauss-Krueger coordinate"));
 		}
 		return stripe; 
 	}

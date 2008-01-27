@@ -86,7 +86,7 @@ public class MovingMap extends Form {
 		this.hasTopBar = false;
 		this.noBorder = true;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
-		this.title = "Moving Map";
+		this.title = "Moving Map"; 
 		this.backGround = new Color(254,254,254); // background must not be black because black is interpreted as transparent and transparent images above (eg trackoverlay) want be drawn in windows-VM, so be care, don|t use white either
 		//this.mapPath = Global.getPref().getMapLoadPath();
 
@@ -180,18 +180,18 @@ public class MovingMap extends Form {
 		//this.mapPath = mapsPath;
 		Vm.showWait(this, true);
 		resetCenterOfMap();
-		InfoBox inf = new InfoBox("Info", "Loading list of maps...");
+		InfoBox inf = new InfoBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(4203, "Loading list of maps..."));
 		inf.exec();
 		inf.waitUntilPainted(100);
 		boolean saveGpsIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;
 		maps = new MapsList(mapsPath); // this actually loads the maps
 		if (maps.isEmpty()) {
-			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung \n Bitte wählen Sie einen Maßstab,\n in dem der Track und die markierten Caches angezeigt werden sollen"), MessageBox.OKB)).execute();
-			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(326, "Es steht keine kalibrierte Karte zur Verfügung \n Sie können eine herunter laden im Hauptmenü: Anwendung/Karten/kalibrierte herunterladen"), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4204, "No georeferenced map available \n Please choose a scale \n to show the track and the caches"), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4205, "No georeferenced map available  \n you can get one by the menu: Application/Maps/download calibrated"), MessageBox.OKB)).execute();
 			noMapsAvailable = true;
 		} else noMapsAvailable = false;
-		maps.addEmptyMaps(lat);
+		maps.addEmptyMaps(lat); // the empty maps must be added last, otherwise in method setBestMap, when no mapt is available, a malfunction will happen, see there
 		dontUpdatePos = saveGpsIgnoreStatus;
 		inf.close(0);
 		Vm.showWait(this, false);
@@ -250,13 +250,13 @@ public class MovingMap extends Form {
 				if (dd.value < 1) {
 					dd.value = dd.value * 1000; 
 					dd.decimalPlaces = 0;
-					d = "Dist: " + dd.toString() + "m";
+					d = MyLocale.getMsg(4206, "Dist: ") + dd.toString() + "m";
 					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
 					digits = java.lang.Math.max(0, digits);
 				} 
 				else {
 					dd.decimalPlaces = 2;
-					d = "Dist: " + dd.toString() + "km";
+					d = MyLocale.getMsg(4206, "Dist: ") + dd.toString() + "km";
 					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
 					digits = java.lang.Math.max(0, digits);
 				}
@@ -835,7 +835,7 @@ public class MovingMap extends Form {
 	 */
 	public void updatePosition(CWPoint where){
 		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
-		Vm.debug("updatepos, lat: "+where.latDec+" lon: "+where.lonDec);
+		//Vm.debug("updatepos, lat: "+where.latDec+" lon: "+where.lonDec);
 		if (!mapsloaded) {
 			loadMaps(Global.getPref().getMapLoadPath(), where.latDec);
 			lastCompareX = Integer.MAX_VALUE;
@@ -929,11 +929,11 @@ public class MovingMap extends Form {
 			//	either Goto-Pos or GPS-Pos not set
 			else newmap = maps.getBestMap(cll, screen, 0.000001f, false); 
 			break;
-		default: (new MessageBox("Error", "Programmfehler: \nillegal mapChangeModus: " + mapChangeModus, MessageBox.OKB)).execute(); break;
+		default: (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4208, "Bug: \nillegal mapChangeModus: ") + mapChangeModus, MessageBox.OKB)).execute(); break;
 		}
 		if ( newmap != null && (currentMap == null || !currentMap.mapName.equals(newmap.mapName)) ) {
 			if (loadIfSameScale || !MapsList.scaleEquals(currentMap.scale / currentMap.zoomFactor, newmap) ) {
-				Vm.debug("better map found");
+				//Vm.debug("better map found");
 				setMap(newmap, where);
 				moveScreenXYtoLatLon(new Point(screen.x, screen.y), cll, true);
 			}
@@ -945,10 +945,10 @@ public class MovingMap extends Form {
 			posCircle.where.set(cll); // choosemap calls setmap with posCircle-coos
 			try {
 				setMap( ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(), where); // beware: "-4" only works if the empty maps were added last see MapsList.addEmptyMaps
-			} catch (IOException e) { (new MessageBox("Error", "setBestMap: problem in: setMap( ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(), lat, lon) lat/lon:" + where.toString(), MessageBox.OKB)).exec(); }
-			while (currentMap == null) {
-				mmp.chooseMap(); // force the user to select a scale // TODO empty maps on top?
-				if (currentMap == null) (new MessageBox("Error", "Moving map cannot run without a map - please select one. \n You can select an empty map", MessageBox.OKB)).execute();
+			} catch (IOException e) { (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4209, "setBestMap: problem in: setMap( ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(), lat, lon) lat/lon:") + where.toString(), MessageBox.OKB)).exec(); }
+			while (currentMap == null) { // this actually cannot happen, but maybe in case of an inconstistent code change (esp. regarding empty maps)
+				mmp.chooseMap(); // force the user to select a scale 
+				 if (currentMap == null) (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4210, "Moving map cannot run without a map - please select one. \n You can select an empty map"), MessageBox.OKB)).execute();
 			}
 		}
 		inBestMap = false;
@@ -1008,13 +1008,16 @@ public class MovingMap extends Form {
 			setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 			dontUpdatePos = saveGpsIgnStatus;
 		}
-		else (new MessageBox("Error", "No "+ (betterOverview ? "less" : "more") + " detailed map available", MessageBox.OKB)).execute();
+		else (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4211, "No ") + 
+				(betterOverview ? MyLocale.getMsg(4212, "less") : MyLocale.getMsg(4213, "more") ) + 
+				MyLocale.getMsg(4214, " detailed map available"), 
+				MessageBox.OKB)).execute();
 	}
 
 	public void loadMapForAllCaches(){
 		Area sur = Global.getProfile().getSourroundingArea(true);
 		if (sur == null) {
-			(new MessageBox("Error", "Keine  Caches mit Häckchen ausgewählt", MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit Häckchen ausgewählt"), MessageBox.OKB)).execute();
 			return;
 		}
 		MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.buttomright);
@@ -1075,7 +1078,7 @@ public class MovingMap extends Form {
 		saveIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;  // make updatePosition ignore calls during loading new map
 		InfoBox inf;
-		inf = new InfoBox("Info", "Loading map...");
+		inf = new InfoBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4216, "Loading map..."));
 		inf.show();
 		inf.waitUntilPainted(100);
 		try {
@@ -1094,7 +1097,7 @@ public class MovingMap extends Form {
 			if (ImageFilename == null ) {
 				mmp.mapImage = new MapImage();
 				maps.remove(currentMap);
-				(new MessageBox("Error", "Could not find image associated with: \n"+currentMap.fileNameWFL, MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4217, "Could not find image associated with: \n")+currentMap.fileNameWFL, MessageBox.OKB)).execute();
 			}
 			else { 
 				if (ImageFilename.length() > 0) mmp.mapImage = new MapImage(ImageFilename); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
@@ -1125,7 +1128,7 @@ public class MovingMap extends Form {
 			updateOnlyPosition(where, false);
 			inf.close(0);
 			Vm.showWait(false);
-			(new MessageBox("Error", "Could not load map: "+ newmap.getImageFilename(), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4218, "Could not load map: \n")+ newmap.getImageFilename(), MessageBox.OKB)).execute();
 			dontUpdatePos = saveIgnoreStatus;
 		} catch (OutOfMemoryError e) {
 			if (mmp.mapImage != null) {
@@ -1137,7 +1140,10 @@ public class MovingMap extends Form {
 			updateOnlyPosition(where, false);
 			inf.close(0);
 			Vm.showWait(false);
-			(new MessageBox("Error", "Not enough memory to load map: "+ newmap.getImageFilename()+"\nYou can try to close\n all prgrams and \nrestart CacheWolf", MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4219, "Not enough memory to load map: \n") 
+					+ newmap.getImageFilename()
+					+ MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"), 
+					MessageBox.OKB)).execute();
 			dontUpdatePos = saveIgnoreStatus;
 		}catch (SystemResourceException e) {
 			if (mmp.mapImage != null) {
@@ -1149,7 +1155,10 @@ public class MovingMap extends Form {
 			updateOnlyPosition(where, false); // TODO this doesn't work correctly if the resolution changed, I guess because the pixels of PosCircle will be interpreted from the new resolution, but should be interpreted using the old resolution to test: select a map with a much greater value of m per pixel manually 
 			inf.close(0);
 			Vm.showWait(false);
-			(new MessageBox("Error", "Not enough ressources to load map: "+ newmap.getImageFilename()+"\nYou can try to close\n all prgrams and \nrestart CacheWolf", MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4221, "Not enough ressources to load map: ")
+					+ newmap.getImageFilename()
+					+ MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"), 
+					MessageBox.OKB)).execute();
 			dontUpdatePos = saveIgnoreStatus;
 		}
 	}
@@ -1262,7 +1271,8 @@ public class MovingMap extends Form {
 				else tmp = new MapImage(mapImage1to1.scale((int) (newImageRect.width*zoomFactor), (int)(newImageRect.height*zoomFactor), newImageRect, 0));
 				currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
 			} catch (OutOfMemoryError e) {
-				(new MessageBox("Error", "Out of memory error", MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(4207, "Error"), 
+						MyLocale.getMsg(4222, "Out of memory error"), MessageBox.OKB)).execute();
 				//tmp = mapImage1to1;
 			} //if (tmp != null) currentMap.zoom();}
 			Vm.getUsedMemory(true);
@@ -1314,32 +1324,32 @@ public class MovingMap extends Form {
  */
 class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu kontextMenu;
-	MenuItem gotoMenuItem = new MenuItem("Goto here$g", 0, null);
-	MenuItem newWayPointMenuItem = new MenuItem("Create new Waypoint here$n", 0, null);;
+	MenuItem gotoMenuItem = new MenuItem(MyLocale.getMsg(4230, "Goto here$g"), 0, null);
+	MenuItem newWayPointMenuItem = new MenuItem(MyLocale.getMsg(4232, "Create new Waypoint here$n"), 0, null);;
 	MenuItem openCacheDescMenuItem,addCachetoListMenuItem;
 	
 	MenuItem miLuminary[];
 
 	Menu mapsMenu;
-	MenuItem selectMapMI = new MenuItem("Select a map manually$s", new IconAndText(new mImage("map_open.png"), "Select a map manually", null, Graphics.RIGHT));
-	MenuItem changeMapDirMI = new MenuItem("Change map directory$c", new IconAndText(new mImage("map_cd.png"), "Change map directory", null, Graphics.RIGHT));
-	MenuItem showMapMI = new MenuItem("Show map", new IconAndText(new mImage("map_on.png"), "Show map", null, Graphics.RIGHT));
-	MenuItem hideMapMI = new MenuItem("Hide map", new IconAndText(new mImage("map_off.png"), "Hide map", null, Graphics.RIGHT));
+	MenuItem selectMapMI = new MenuItem(MyLocale.getMsg(4234, "Select a map manually$s"), new IconAndText(new mImage("map_open.png"), MyLocale.getMsg(4235, "Select a map manually"), null, Graphics.RIGHT));
+	MenuItem changeMapDirMI = new MenuItem(MyLocale.getMsg(4236, "Change map directory$c"), new IconAndText(new mImage("map_cd.png"), MyLocale.getMsg(4237, "Change map directory"), null, Graphics.RIGHT));
+	MenuItem showMapMI = new MenuItem(MyLocale.getMsg(4238, "Show map"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4239, "Show map"), null, Graphics.RIGHT));
+	MenuItem hideMapMI = new MenuItem(MyLocale.getMsg(4240, "Hide map"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4241, "Hide map"), null, Graphics.RIGHT));
 	// automatic
-	MenuItem mapChangeModusMI = new MenuItem("Modus for automatic map change", MenuItem.Separator, null);;
-	MenuItem highestResGpsDestMI = new MenuItem("Highest res. containing dest. & cur. position", new IconAndText(new mImage("res_gps_goto.png"), "Highest res. containing dest. & cur. position", null, Graphics.RIGHT)); //immer höchste Auflösung wählen, die akt. Pos. und Ziel enthalten 
-	MenuItem highestResolutionMI = new MenuItem("Highest resolution", new IconAndText(new mImage("res_high.png"), "Highest resolution", null, Graphics.RIGHT)); //immer höchste Auflösung wählen 
-	MenuItem keepManResolutionMI = new MenuItem("Keep manual resolution", new IconAndText(new mImage("res_manuell.png"), "Keep manual resolution", null, Graphics.RIGHT)); // manuell gewählte Auflösung beibehalten  
+	MenuItem mapChangeModusMI = new MenuItem(MyLocale.getMsg(4242, "Modus for automatic map change"), MenuItem.Separator, null);;
+	MenuItem highestResGpsDestMI = new MenuItem(MyLocale.getMsg(4244, "Highest res. containing dest. & cur. position"), new IconAndText(new mImage("res_gps_goto.png"), MyLocale.getMsg(4245, "Highest res. containing dest. & cur. position"), null, Graphics.RIGHT)); //immer höchste Auflösung wählen, die akt. Pos. und Ziel enthalten 
+	MenuItem highestResolutionMI = new MenuItem(MyLocale.getMsg(4246, "Highest resolution"), new IconAndText(new mImage("res_high.png"), MyLocale.getMsg(4247, "Highest resolution"), null, Graphics.RIGHT)); //immer höchste Auflösung wählen 
+	MenuItem keepManResolutionMI = new MenuItem(MyLocale.getMsg(4248, "Keep manual resolution"), new IconAndText(new mImage("res_manuell.png"), MyLocale.getMsg(4249, "Keep manual resolution"), null, Graphics.RIGHT)); // manuell gewählte Auflösung beibehalten  
 	// manuell
-	MenuItem mapChangeResMI = new MenuItem("Change resolution manually", MenuItem.Separator, null);;
-	MenuItem AllCachesResMI = new MenuItem("Load a map containing all marked caches",  new IconAndText(new mImage("loupe_all.png"), "Load a map containing all marked caches", null, Graphics.RIGHT));   
-	MenuItem moreDetailsMI = new MenuItem("Load a map with more details", new IconAndText(new mImage("loupe_more_details.png"), "Load a map with more details", null, Graphics.RIGHT)); // laod a map with more details 
-	MenuItem moreOverviewMI = new MenuItem("Load a map for a better overview", new IconAndText(new mImage("loupe_better_overview.png"), "Load a map for a better overview", null, Graphics.RIGHT)); // Load a map for a better overview --> lesser details  
+	MenuItem mapChangeResMI = new MenuItem(MyLocale.getMsg(4250, "Change resolution manually"), MenuItem.Separator, null);;
+	MenuItem AllCachesResMI = new MenuItem(MyLocale.getMsg(4252, "Load a map containing all marked caches"),  new IconAndText(new mImage("loupe_all.png"), MyLocale.getMsg(4253, "Load a map containing all marked caches"), null, Graphics.RIGHT));   
+	MenuItem moreDetailsMI = new MenuItem(MyLocale.getMsg(4254, "Load a map with more details"), new IconAndText(new mImage("loupe_more_details.png"), MyLocale.getMsg(4255, "Load a map with more details"), null, Graphics.RIGHT)); // laod a map with more details 
+	MenuItem moreOverviewMI = new MenuItem(MyLocale.getMsg(4256, "Load a map for a better overview"), new IconAndText(new mImage("loupe_better_overview.png"), MyLocale.getMsg(4257, "Load a map for a better overview"), null, Graphics.RIGHT)); // Load a map for a better overview --> lesser details  
 	// move map to
-	MenuItem moveToMI = new MenuItem("Move map to an load map", MenuItem.Separator, null);;
-	MenuItem moveToDestMI = new MenuItem("Move to goto point", new IconAndText(new mImage("move2goto.png"), "Move to goto point", null, Graphics.RIGHT)); //* Karte zum Ziel verschieben (und ggf. entsprechende Karte laden) 
-	MenuItem moveToGpsMI = new MenuItem("Move to GPS position", new IconAndText(new mImage("move2gps.png"), "Move to GPS position", null, Graphics.RIGHT));   
-	MenuItem moveToCenterMI = new MenuItem("Move to centre", new IconAndText(new mImage("move2center.png"), "Move to centre", null, Graphics.RIGHT));   
+	MenuItem moveToMI = new MenuItem(MyLocale.getMsg(4258, "Move map to and load map"), MenuItem.Separator, null);;
+	MenuItem moveToDestMI = new MenuItem(MyLocale.getMsg(4260, "Move to goto point"), new IconAndText(new mImage("move2goto.png"), MyLocale.getMsg(4261, "Move to goto point"), null, Graphics.RIGHT)); //* Karte zum Ziel verschieben (und ggf. entsprechende Karte laden) 
+	MenuItem moveToGpsMI = new MenuItem(MyLocale.getMsg(4262, "Move to GPS position"), new IconAndText(new mImage("move2gps.png"), MyLocale.getMsg(4263, "Move to GPS position"), null, Graphics.RIGHT));   
+	MenuItem moveToCenterMI = new MenuItem(MyLocale.getMsg(4264, "Move to centre"), new IconAndText(new mImage("move2center.png"), MyLocale.getMsg(4265, "Move to centre"), null, Graphics.RIGHT));   
 
 	CacheHolder clickedCache;
 	MovingMap mm;
@@ -1597,7 +1607,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
 					clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
 					if (clickedCache != null) {
-						openCacheDescMenuItem = new MenuItem("Open '"+(clickedCache.CacheName.length()>0?clickedCache.CacheName:clickedCache.wayPoint)+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(4270, "Open")+" '"+(clickedCache.CacheName.length()>0 ? clickedCache.CacheName : clickedCache.wayPoint)+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
 						kontextMenu.addItem(openCacheDescMenuItem);
 						if (Global.mainForm.cacheListVisible) { 
 							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
@@ -1755,7 +1765,7 @@ class ListBox extends Form{
 	Vector maps;
 
 	public ListBox(Vector maps, CWPoint Gps, CWPoint gotopos, MapInfoObject curMap){
-		this.title = "Maps";
+		this.title = MyLocale.getMsg(4271, "Maps");
 		// if (Gui.screenIs(Gui.PDA_SCREEN)) this.setPreferredSize(200,100); else 
 		// set width to screenwidth *3/4 but to at least 240 if the screen is big engough for 240px width
 		this.setPreferredSize(java.lang.Math.max(MyLocale.getScreenWidth()*3/4, java.lang.Math.min(240, MyLocale.getScreenWidth()) ), MyLocale.getScreenHeight()*3/4);
@@ -1770,7 +1780,7 @@ class ListBox extends Form{
 		int row = -1;
 		if (curMap == null) curMapFound = true;
 		if (gotopos != null && Gps != null) {
-			list.addItem("--- Karten von akt. Position und Ziel ---");
+			list.addItem(MyLocale.getMsg(4272, "--- Maps containing GPS and goto pos. ---"));
 			row++;
 			cmp = "FF1"+(new Area(new CWPoint(Gps.latDec, Gps.lonDec), gotopos)).getEasyFindString();
 			for(int i = 0; i<maps.size();i++){
@@ -1789,7 +1799,7 @@ class ListBox extends Form{
 			}
 		}
 		if (Gps != null) {
-			list.addItem("--- Karten der aktuellen Position ---");
+			list.addItem(MyLocale.getMsg(4273, "--- Maps containing curr. position ---"));
 			row++;
 			cmp = "FF1"+Area.getEasyFindString(new CWPoint(Gps.latDec, Gps.lonDec), 30);
 			for(int i = 0; i<maps.size();i++){
@@ -1808,7 +1818,7 @@ class ListBox extends Form{
 			}
 		}
 		if (gotopos != null) {
-			list.addItem("--- Karten des Ziels ---");
+			list.addItem(MyLocale.getMsg(4274, "--- Karten des Ziels ---"));
 			row++;
 			cmp = "FF1"+Area.getEasyFindString(gotopos, 30);
 			for(int i = 0; i<maps.size();i++){
@@ -1825,7 +1835,7 @@ class ListBox extends Form{
 				}
 			}
 		}
-		list.addItem("--- andere Karten ---");
+		list.addItem(MyLocale.getMsg(4275, "--- andere Karten ---"));
 		row++;
 		for(int i = 0; i<maps.size();i++){
 			ml = (MapListEntry)maps.get(i);
@@ -1837,10 +1847,10 @@ class ListBox extends Form{
 		}
 		list.selectItem(oldmap, true);
 		this.addLast(scb = new CacheWolf.MyScrollBarPanel(list),CellConstants.STRETCH, CellConstants.FILL);
-		cancelButton = new mButton("Cancel");
+		cancelButton = new mButton(MyLocale.getMsg(4276, "Cancel"));
 		cancelButton.setHotKey(0, KeyEvent.getCancelKey(true));
 		this.addNext(cancelButton,CellConstants.STRETCH, CellConstants.FILL);
-		okButton = new mButton("Select");
+		okButton = new mButton(MyLocale.getMsg(4277, "Select"));
 		okButton.setHotKey(0, KeyEvent.getActionKey(true));
 		this.addLast(okButton,CellConstants.STRETCH, CellConstants.FILL);
 		okButton.takeFocus(0);
@@ -1874,7 +1884,8 @@ class ListBox extends Form{
 				selected = true;
 				this.close(FormBase.IDOK);
 				} catch (IOException e) {
-					(new MessageBox("Error", "Cannot load wfl-file: \n" + ((MapListEntry)maps.get(mapNum)).filename, MessageBox.OKB)).execute();
+					(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4278, "Cannot load wfl-file: \n") 
+							+ ((MapListEntry)maps.get(mapNum)).filename, MessageBox.OKB)).execute();
 				}
 			}
 			else {
