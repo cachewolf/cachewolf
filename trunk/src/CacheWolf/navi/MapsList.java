@@ -3,6 +3,7 @@ package CacheWolf.navi;
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
 import CacheWolf.InfoBox;
+import CacheWolf.MyLocale;
 import utils.FileBugfix;
 import ewe.io.CompressedRandomStream;
 import ewe.io.File;
@@ -20,7 +21,7 @@ import ewe.fx.*;
  * class to handle a list of maps
  * it loads the list, finds the best map for a given location,
  * says if a map is available for a given lat lon at a given scale
- * @author r
+ * start offset for language file: 4700
  *
  */
 public class MapsList extends Vector {
@@ -60,7 +61,7 @@ public class MapsList extends Vector {
 					add(tempMIO);
 					//ewe.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
 				}catch(Exception ex){ // TODO exception ist, glaub ich evtl überflüssig 
-					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
+					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), MessageBox.OKB)).exec();
 				} /* catch(ArithmeticException ex){ // affine contain not allowed values 
 					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
 				} */
@@ -118,7 +119,7 @@ public class MapsList extends Vector {
 		for (int i=size()-1; i >= 0 ;i--) {
 			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 				showprogress = true;      
-				progressBox = new InfoBox("Info", "Searching for best map");
+				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
 				progressBox.waitUntilPainted(100);
 				ewe.sys.Vm.showWait(true);
@@ -197,7 +198,7 @@ public class MapsList extends Vector {
 		for (int i=size() -1; i>=0 ;i--) {
 			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 				showprogress = true;      
-				progressBox = new InfoBox("Info", "Searching for best map");
+				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
 				progressBox.waitUntilPainted(100);
 				ewe.sys.Vm.showWait(true);
@@ -266,7 +267,7 @@ public class MapsList extends Vector {
 		for (int i=size()-1; i >= 0 ;i--) { 
 			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 				showprogress = true;      
-				progressBox = new InfoBox("Info", "Searching for best map");
+				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
 				progressBox.waitUntilPainted(100);
 				ewe.sys.Vm.showWait(true);
@@ -441,10 +442,10 @@ class MapListEntry /*implements Comparable */ {
 				sortEntryBBox = "FF1"+map.getEasyFindString();
 				ewe.sys.Vm.debug(sortEntryBBox + ": "+filename);
 				if (rename == 0) { // never asked before
-					if ( (new MessageBox("Optmisiation", "Cachewolf can make loading maps much faster by adding a identification mark to the filename. Do you want me to do this now?\n It can take several minutes", 
+					if ( (new MessageBox(MyLocale.getMsg(4702,"Optimisation"), MyLocale.getMsg(4703,"Cachewolf can make loading maps much faster by adding a identification mark to the filename. Do you want me to do this now?\n It can take several minutes"), 
 							MessageBox.YESB | MessageBox.NOB)).execute() == MessageBox.IDYES)
 					{
-						renameProgressInfoB = new InfoBox("Info", "\nRenaming file:    \n");
+						renameProgressInfoB = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4704,"\nRenaming file:")+"    \n");
 						renameProgressInfoB.exec();
 						renameProgressInfoB.waitUntilPainted(100);
 						rename = 1; // rename
@@ -452,21 +453,21 @@ class MapListEntry /*implements Comparable */ {
 				}
 				if (rename == 1) {
 					renameCounter++;
-					renameProgressInfoB.setInfo("\nRenaming file: " + renameCounter+"\n");
+					renameProgressInfoB.setInfo(MyLocale.getMsg(4704,"\nRenaming file:")+" " + renameCounter+"\n");
 					String f = path+filename+".wfl";
 					String to = sortEntryBBox+"E-"+filename+".wfl";
 					if (!new File(f).rename(to))
-						(new MessageBox("Error", "Failed to rename:\n"+f+".wfl"+"\nto:\n"+to, MessageBox.OKB)).exec();
+						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, MessageBox.OKB)).exec();
 					f = Common.getImageName(path+filename);
 					to = sortEntryBBox+"E-"+filename+Common.getFilenameExtension(f);
 					if (!new File(f).rename(to)) 
-						(new MessageBox("Error", "Failed to rename:\n"+f+".wfl"+"\nto:\n"+to, MessageBox.OKB)).exec();
+						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, MessageBox.OKB)).exec();
 					filename = sortEntryBBox+"E-"+filename;
 					map.mapName = sortEntryBBox+"E-"+map.mapName;
 					map.fileNameWFL = path + filename + ".wfl";
 				}
 			} catch (IOException ioex) { // this should not happen
-				(new MessageBox("Error", "Error while reading: "+path+filename+": "+ ioex.getMessage(), MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4706,"Error while reading:")+" "+path+filename+": "+ ioex.getMessage(), MessageBox.OKB)).exec();
 			}
 		}
 	}

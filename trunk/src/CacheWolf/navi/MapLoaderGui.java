@@ -17,6 +17,7 @@ import ewe.util.Vector;
  * @author pfeffer
  * This Class is the Dialog for Download calibrated from expedia.com
  * is called from 
+ *  * start offset for language file: 1800
  */
 
 public class MapLoaderGui extends Form {
@@ -26,24 +27,24 @@ public class MapLoaderGui extends Form {
 	CellPanel pnlTiles = new CellPanel();
 	CellPanel pnlPerCache = new CellPanel();
 
-	final String descString = "Download georeferenced maps\n Select online service:";
+	final String descString = MyLocale.getMsg(1802,"Download georeferenced maps\n Select online service:");
 	mChoice mapServiceChoice;
-	mCheckBox forCachesChkBox = new mCheckBox("for");
-	mChoice forSelectedChkBox = new mChoice(new String[] {"all", "selected"}, 0);
-	mChoice forSelectedChkBoxPerCache = new mChoice(new String[] {"all", "selected"}, 1);
-	mLabel cachesLbl = new mLabel("caches");
+	mCheckBox forCachesChkBox = new mCheckBox(MyLocale.getMsg(1803,"for"));
+	mChoice forSelectedChkBox = new mChoice(new String[] {MyLocale.getMsg(1804,"all"), MyLocale.getMsg(1805,"selected")}, 0);
+	mChoice forSelectedChkBoxPerCache = new mChoice(new String[] {MyLocale.getMsg(1804,"all"), MyLocale.getMsg(1805,"selected")}, 1);
+	mLabel cachesLbl = new mLabel(MyLocale.getMsg(1806,"caches"));
 	mInput distanceInput;
 	mLabel distLbl;
 	mLabel km = new mLabel("km");
 	mLabel coosLbl;
 	mButton coosBtn;
-	mLabel scaleLbl = new mLabel("Approx. m per pixel:");
+	mLabel scaleLbl = new mLabel(MyLocale.getMsg(1807,"Approx. m per pixel:"));
 	mInput scaleInput = new mInput ("3");
 	mInput scaleInputPerCache = new mInput ("1");
-	mLabel overlappingLbl = new mLabel("overlapping in pixel:");
+	mLabel overlappingLbl = new mLabel(MyLocale.getMsg(1808,"overlapping in pixel:"));
 	mInput overlappingInput = new mInput("100");
-	mCheckBox overviewChkBox = new mCheckBox("download an overview map");
-	mCheckBox overviewChkBoxPerCache = new mCheckBox("download an overview map");
+	mCheckBox overviewChkBox = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
+	mCheckBox overviewChkBoxPerCache = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
 
 	MapLoader mapLoader;
 	String[] unsortedMapServices;
@@ -81,13 +82,13 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addNext(forCachesChkBox);
 		pnlTiles.addNext(forSelectedChkBox);
 		pnlTiles.addLast(cachesLbl);
-		pnlTiles.addNext(distLbl = new mLabel(MyLocale.getMsg(1802,"Within a rectangle of:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlTiles.addNext(distLbl = new mLabel(MyLocale.getMsg(1810,"Within a rectangle of:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		distanceInput = new mInput();
 		int tmp = Convert.toInt((Global.getProfile().distOC));
 		distanceInput.setText(Convert.toString((tmp > 0 ? tmp : 15)));
 		pnlTiles.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlTiles.addLast(km);
-		pnlTiles.addNext(coosLbl = new mLabel(MyLocale.getMsg(1803, "around the centre: ")));
+		pnlTiles.addNext(coosLbl = new mLabel(MyLocale.getMsg(1811, "around the centre:")+" "));
 		pnlTiles.addLast(coosBtn = new mButton(center.toString()));
 		pnlTiles.addNext(scaleLbl);
 		mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
@@ -108,13 +109,13 @@ public class MapLoaderGui extends Form {
 		okBtiles.setHotKey(0, IKeys.ENTER);
 		pnlTiles.addLast(okBtiles,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		updateForCachesState();
-		mTab.addCard(pnlTiles, MyLocale.getMsg(1804, "Tiles"), MyLocale.getMsg(1804, "Tiles"));
+		mTab.addCard(pnlTiles, MyLocale.getMsg(1812, "Tiles"), MyLocale.getMsg(1812, "Tiles"));
 
 		// per cache panel
-		pnlPerCache.addNext(new mLabel("Download one map for"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
+		pnlPerCache.addNext(new mLabel(MyLocale.getMsg(1813, "Download one map for")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 		pnlPerCache.addNext(forSelectedChkBoxPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
-		pnlPerCache.addLast(new mLabel("caches"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
-		pnlPerCache.addNext(new mLabel("Approx. m per pixel"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
+		pnlPerCache.addLast(new mLabel(MyLocale.getMsg(1806, "caches")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
+		pnlPerCache.addNext(new mLabel(MyLocale.getMsg(1807, "Approx. m per pixel")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 		pnlPerCache.addLast(scaleInputPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 
 		cancelBPerCache = new mButton(MyLocale.getMsg(1604,"Cancel"));
@@ -125,7 +126,7 @@ public class MapLoaderGui extends Form {
 		okBPerCache.setHotKey(0, IKeys.ENTER);
 		pnlPerCache.addLast(okBPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 
-		mTab.addCard(pnlPerCache, MyLocale.getMsg(1805, "Per cache"), MyLocale.getMsg(1805, "Per Cache"));
+		mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
 		this.addLast(mTab);
 	}
 
@@ -160,7 +161,7 @@ public class MapLoaderGui extends Form {
 		for (int i = 0; i < sortingMapServices.length; i++) {
 			if (sortingMapServices[i] == originalindex) return i;
 		}
-		throw new IllegalStateException("getSortedMapServiceIndex: index " + originalindex + "not found");
+		throw new IllegalStateException(MyLocale.getMsg(1818, "getSortedMapServiceIndex: index")+" " + originalindex + MyLocale.getMsg(1819, "not found"));
 	}
 
 	public String getMapsDir() {
@@ -172,7 +173,7 @@ public class MapLoaderGui extends Form {
 	public void downloadTiles() {
 		String mapsDir = getMapsDir();
 		if (mapsDir == null) return;
-		InfoBox progressBox = new InfoBox("Downloading georeferenced maps", "Downloading georeferenced maps\n \n \n \n \n", InfoBox.PROGRESS_WITH_WARNINGS);
+		InfoBox progressBox = new InfoBox(MyLocale.getMsg(1815, "Downloading georeferenced maps"), MyLocale.getMsg(1816, "Downloading georeferenced maps\n \n \n \n \n"), InfoBox.PROGRESS_WITH_WARNINGS);
 		progressBox.setPreferredSize(220, 300);
 		progressBox.setInfoHeight(160);
 		progressBox.relayout(false);
@@ -183,7 +184,7 @@ public class MapLoaderGui extends Form {
 		if (forCachesChkBox.getState() || perCache) {
 			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
 			if (surArea == null) {
-				(new MessageBox("Error", "No Caches are seleted", MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are seleted"), MessageBox.OKB)).execute();
 				Vm.showWait(false);
 				progressBox.close(0);
 				return;
@@ -194,12 +195,12 @@ public class MapLoaderGui extends Form {
 			mapLoader.setTiles(center, radius * 1000, scale, size, overlapping);
 		}
 		if (overviewmap) {
-			progressBox.setInfo("downloading overview map"); 
+			progressBox.setInfo(MyLocale.getMsg(1824, "downloading overview map")); 
 			float scale = MapLoader.getScale(center, radius * 1000, size);
 			try {
 				mapLoader.downloadMap(center, scale, size, mapsDir);
 			} catch (Exception e) {
-				progressBox.addWarning("Overview map: Ignoring error: " + e.getMessage()+"\n");
+				progressBox.addWarning(MyLocale.getMsg(1825, "Overview map: Ignoring error:")+" " + e.getMessage()+"\n");
 			}
 		}
 		if (!perCache){  // download tiles
@@ -220,18 +221,18 @@ public class MapLoaderGui extends Form {
 					}
 					if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0) { // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
 						numdownloaded++;
-						progressBox.setInfo("Downloading map '"+mapLoader.currentOnlineMapService.getName()+"'\n"+numdownloaded+" / "+numCaches+"\n for cache:\n"+ch.CacheName);
+						progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '")+mapLoader.currentOnlineMapService.getName()+"'\n"+numdownloaded+" / "+numCaches+MyLocale.getMsg(1821, "\n for cache:\n")+ch.CacheName);
 						try {
 							mapLoader.downloadMap(ch.pos, scale, size, mapsDir);
 						} catch (Exception e) {
-							progressBox.addWarning("Cache: " + ch.CacheName + "(" + ch.wayPoint + ") Ignoring error: " + e.getMessage()+"\n");
+							progressBox.addWarning(MyLocale.getMsg(1822, "Cache:")+" " + ch.CacheName + "(" + ch.wayPoint + ") "+MyLocale.getMsg(1823, "Ignoring error:")+" " + e.getMessage()+"\n");
 						}
 					}
 				}
 			}
 		}
 		Vm.showWait(false);
-		progressBox.addWarning("Finished downloading and calibration of maps");
+		progressBox.addWarning(MyLocale.getMsg(1826, "Finished downloading and calibration of maps"));
 		progressBox.addOkButton();
 		progressBox.waitUntilClosed();
 		mapLoader.setProgressInfoBox(null);
@@ -272,7 +273,7 @@ public class MapLoaderGui extends Form {
 				mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 				if (ev.target == okBtiles) { // get tiles
 					perCache = false;
-					if (forSelectedChkBox.getSelectedItem().toString().equalsIgnoreCase("all")) onlySelected = false;
+					if (forSelectedChkBox.getSelectedItem().toString().equalsIgnoreCase(MyLocale.getMsg(1804, "all"))) onlySelected = false;
 					else onlySelected = true;
 					overviewmap = overviewChkBox.getState();
 					radius = Convert.toFloat(distanceInput.getText());
@@ -280,27 +281,27 @@ public class MapLoaderGui extends Form {
 					overlapping = Convert.toInt(overlappingInput.getText());
 					if (!forCachesChkBox.getState()) {
 						if (radius <= 0) { 
-							(new MessageBox("Error", "'radius' must be graeter than null", MessageBox.OKB)).execute();
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be graeter than 0"), MessageBox.OKB)).execute();
 							return;
 						}
 						if (overlapping < 0) { 
-							(new MessageBox("Error", "'overlapping' must be greater or equal 0 ", MessageBox.OKB)).execute();
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1828, "'overlapping' must be greater or equal 0"), MessageBox.OKB)).execute();
 							return;
 						}
 						if (!center.isValid() && !forCachesChkBox.getState()) {
-							(new MessageBox("Error", "Please enter the 'centre' around which the maps shall be downloaded", MessageBox.OKB)).execute();
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1829, "Please enter the 'centre' around which the maps shall be downloaded"), MessageBox.OKB)).execute();
 							return;
 						}
 					}
 				} else { // per cache
 					perCache = true;
-					if (forSelectedChkBoxPerCache.getSelectedItem().toString().equalsIgnoreCase("all")) onlySelected = false;
+					if (forSelectedChkBoxPerCache.getSelectedItem().toString().equalsIgnoreCase(MyLocale.getMsg(1804, "all"))) onlySelected = false;
 					else onlySelected = true;
 					overviewmap = overviewChkBoxPerCache.getState();
 					scale = Convert.toFloat(scaleInputPerCache.getText());
 				}
 				if (scale < mapLoader.currentOnlineMapService.minscale || scale > mapLoader.currentOnlineMapService.maxscale) {
-					(new MessageBox("Error", "The selected online map service provides map in the scale from " + mapLoader.currentOnlineMapService.minscale + " to "+ mapLoader.currentOnlineMapService.maxscale +"\n please adjust 'Approx. meter pro pixel' accordingly", MessageBox.OKB)).execute();
+					(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1830, "The selected online map service provides map in the scale from")+" " + mapLoader.currentOnlineMapService.minscale + MyLocale.getMsg(1831, " to")+" "+ mapLoader.currentOnlineMapService.maxscale +MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), MessageBox.OKB)).execute();
 					return;
 				}
 				this.close(Form.IDOK); 

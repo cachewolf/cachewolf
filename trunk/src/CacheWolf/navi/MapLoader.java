@@ -5,6 +5,7 @@ import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.HttpConnection;
 import CacheWolf.InfoBox;
+import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import ewe.ui.*;
 import ewe.io.*;
@@ -20,6 +21,7 @@ import utils.FileBugfix;
 
 /**
  *
+ * start offset for language file: 4800
  */
 
 //Um Karten zu holen!
@@ -65,7 +67,7 @@ public class MapLoader {
 			try {
 				if (!showprogress && ((i & 0) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 					showprogress = true;      
-					progressBox = new InfoBox("Info", "Loading online map services");
+					progressBox = new InfoBox(MyLocale.getMsg(327, "Info"), MyLocale.getMsg(4800, "Loading online map services"));
 					progressBox.exec(); 
 					progressBox.waitUntilPainted(500);
 					ewe.sys.Vm.showWait(true);
@@ -73,7 +75,7 @@ public class MapLoader {
 				tempOMS = new WebMapService(wmspath + "/" + FileName);
 				onlineMapServices.add(tempOMS);
 			}catch(Exception ex){ 
-				if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading web map service definition file \n"+ex.toString(), MessageBox.OKB)).exec();
+				if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4801, "Ignoring error while \n reading web map service definition file \n")+ex.toString(), MessageBox.OKB)).exec();
 			}
 		}
 		tempOMS = new ExpediaMapService();
@@ -185,12 +187,12 @@ public class MapLoader {
 			lon = topleft.lonDec;
 			for (int col = 1; col <= numMapsX; col++) {
 				if (progressInfobox != null)
-					progressInfobox.setInfo("Downloading calibrated (georeferenced) \n map image \n '" + currentOnlineMapService.getName()+"' \n Downloading tile \n row "+row+" / "+numMapsY+" column "+ col + " / "+numMapsX);
+					progressInfobox.setInfo(MyLocale.getMsg(4802, "Downloading calibrated (georeferenced) \n map image \n '") + currentOnlineMapService.getName()+MyLocale.getMsg(4803, "' \n Downloading tile \n row")+" "+row+" / "+numMapsY+MyLocale.getMsg(4804, " column")+" "+ col + " / "+numMapsX);
 				center.set(lat, lon);
 				try {
 					downloadMap(center, tileScale, tilesSize, tilesPath);
 				} catch (Exception e) {
-					this.progressInfobox.addWarning("Tile " + row + "/" + col + ": Ignoring error: " + e.getMessage()+"\n");
+					this.progressInfobox.addWarning(MyLocale.getMsg(4805, "Tile")+" " + row + "/" + col + MyLocale.getMsg(4806, ": Ignoring error:")+" " + e.getMessage()+"\n");
 				}
 				if (progressInfobox.isClosed) return;
 				lon += loninc;
@@ -269,13 +271,13 @@ public class MapLoader {
 					}
 					i++;
 				}
-				if (i > 4) throw new IOException("loadTo: failed to download map: didn't get http-redirect");
+				if (i > 4) throw new IOException(MyLocale.getMsg(4807, "loadTo: failed to download map: didn't get http-redirect"));
 				String ct = (String)connImg.documentProperties.getValue("content-type", "");
 				if (!ct.substring(0, 5).equalsIgnoreCase("image") )  {
 					String tmp = connImg.readText(sockImg, null).toString(); // TODO if the content is binary will will get an Exception in InfoBox, trying to display the content
 					tmp = tmp.substring(0, (tmp.length() < 1000 ? tmp.length() : 1000));
 					sockImg.close();
-					throw new IOException("downloadImage: content-type: " + ct + " is not an image, begin of content: " + tmp); 
+					throw new IOException(MyLocale.getMsg(4808, "downloadImage: content-type:")+" " + ct + MyLocale.getMsg(4809, " is not an image, begin of content:")+" " + tmp); 
 				}
 				daten = connImg.readData(sockImg);
 				fos = new FileOutputStream(dateiF);
@@ -285,7 +287,7 @@ public class MapLoader {
 			}
 			//Vm.debug("done");
 		}catch(IOException e){
-			throw new IOException("Error while downloading or saving map:\n" + e.getMessage());
+			throw new IOException(MyLocale.getMsg(4810, "Error while downloading or saving map:\n") + e.getMessage());
 		}
 //		(new MessageBox("Error", "Error saving calibration file:\n"+e.getMessage(), MessageBox.OKB)).exec();
 
@@ -389,7 +391,7 @@ class OnlineMapService {
 
 	
 	protected MapInfoObject getMapInfoObjectInternal(Area maparea, Point pixelsize) {
-		throw new IllegalArgumentException("OnlineMapService: getMapInfoObjectInternal(Area maparea, Point pixelsize):\n This method must be overloaded in order to be able to use it");
+		throw new IllegalArgumentException(MyLocale.getMsg(4811, "OnlineMapService: getMapInfoObjectInternal(Area maparea, Point pixelsize):\n This method must be overloaded in order to be able to use it"));
 	}
 	
 	/**
@@ -434,29 +436,29 @@ class WebMapService extends OnlineMapService {
 		String tmp = File.getFileExt(filename_);
 		this.filename = tmp.substring(0, tmp.lastIndexOf('.'));
 		name = wms.getProperty("Name", "").trim();
-		if (name == "") throw new IllegalArgumentException("WebMapService: property >Name:< missing in file:\n" + filename);
+		if (name == "") throw new IllegalArgumentException(MyLocale.getMsg(4812, "WebMapService: property >Name:< missing in file:\n") + filename);
 		MainUrl = wms.getProperty("MainUrl", "").trim();;
-		if (MainUrl == "") throw new IllegalArgumentException("WebMapService: property >MainUrl:< missing in file:\n" + filename);
+		if (MainUrl == "") throw new IllegalArgumentException(MyLocale.getMsg(4813, "WebMapService: property >MainUrl:< missing in file:\n") + filename);
 		mapType = wms.getProperty("MapType", "maptype_unknown").trim();
 		serviceTypeUrlPart = wms.getProperty("ServiceTypeUrlPart", "SERVICE=WMS").trim();
 		layersUrlPart = wms.getProperty("LayersUrlPart", "").trim();;
 		versionUrlPart = wms.getProperty("VersionUrlPart", "").trim();;
 		tmp = wms.getProperty("CoordinateReferenceSystemCacheWolf", "").trim();
-		if (tmp.equals("")) throw new IllegalArgumentException("WebMapService: no CoordinateReferenceSystemCacheWolf given");
+		if (tmp.equals("")) throw new IllegalArgumentException(MyLocale.getMsg(4814, "WebMapService: no CoordinateReferenceSystemCacheWolf given"));
 		String[] tmp2 = mString.split(tmp, ' ');
 		coordinateReferenceSystem = new int[tmp2.length];
 		for (int i = 0; i < tmp2.length; i++) {
 			coordinateReferenceSystem[i] = Convert.toInt(tmp2[i].trim());
-			if (!TransformCoordinates.isSupported(coordinateReferenceSystem[i])) throw new IllegalArgumentException("Coordinate reference system not supported by CacheWolf:\n" + coordinateReferenceSystem[i]);
+			if (!TransformCoordinates.isSupported(coordinateReferenceSystem[i])) throw new IllegalArgumentException(MyLocale.getMsg(4815, "Coordinate reference system not supported by CacheWolf:\n") + coordinateReferenceSystem[i]);
 		}
 		tmp = wms.getProperty("CoordinateReferenceSystemUrlPart", "").trim();
-		if (tmp == "") throw new IllegalArgumentException("CoordinateReferenceSystemUrlPart: property >MainUrl:< missing in file:\n" + filename);
+		if (tmp == "") throw new IllegalArgumentException(MyLocale.getMsg(4816, "WebMapService: property >CoordinateReferenceSystemUrlPart:< missing in file:\n") + filename);
 		tmp2 = mString.split(tmp, ' ');
-		if (tmp2.length != coordinateReferenceSystem.length) throw new IllegalArgumentException("number of String in CoordinateReferenceSystemUrlPart ("+tmp2.length+") must match the number of codes in CoordinateReferenceSystemCacheWolf ("+coordinateReferenceSystem.length+") use normal space as separator");
+		if (tmp2.length != coordinateReferenceSystem.length) throw new IllegalArgumentException(MyLocale.getMsg(4817, "number of strings in CoordinateReferenceSystemUrlPart (")+tmp2.length+MyLocale.getMsg(4818, ") must match the number of codes in CoordinateReferenceSystemCacheWolf (")+coordinateReferenceSystem.length+MyLocale.getMsg(4819, ") use normal space as separator"));
 		coordinateReferenceSystemUrlPart = new String[tmp2.length];
 		for (int i = 0; i < tmp2.length; i++) {
 			coordinateReferenceSystemUrlPart[i] = tmp2[i].trim();
-			if (coordinateReferenceSystemUrlPart[i] == "") throw new IllegalArgumentException("CoordinateReferenceSystemUrlPart: property >MainUrl:< missing in file:\n" + filename);
+			if (coordinateReferenceSystemUrlPart[i] == "") throw new IllegalArgumentException(MyLocale.getMsg(4820, "WebMapService: property >CoordinateReferenceSystemUrlPart:< incorrect in file:\n") + filename);
 		}
 		requestUrlPart = wms.getProperty("RequestUrlPart", "REQUEST=GetMap").trim();
 		imageFormatUrlPart = wms.getProperty("ImageFormatUrlPart", "").trim();
@@ -473,7 +475,7 @@ class WebMapService extends OnlineMapService {
 		minscale = minscaleWMS / Math.sqrt(2); // in WMS scale is measured diagonal while in CacheWolf it is measured vertical
 		maxscale = maxscaleWMS / Math.sqrt(2);
 		imageFileExt = wms.getProperty("ImageFileExtension", "").trim();
-		if (imageFileExt == "") throw new IllegalArgumentException("WebMapService: property >ImageFileExtension:< missing in file:\n" + filename);
+		if (imageFileExt == "") throw new IllegalArgumentException(MyLocale.getMsg(4821, "WebMapService: property >ImageFileExtension:< missing in file:\n") + filename);
 		recommendedScale = (float) Common.parseDouble(wms.getProperty("RecommendedScale", "5").trim());
 	}
 
@@ -516,14 +518,14 @@ class WebMapService extends OnlineMapService {
 	}
 
 	protected String getUrlForBoundingBoxInternal(Area maparea, Point pixelsize) {
-		if (!boundingBox.isOverlapping(maparea)) throw new IllegalArgumentException("area: " + maparea.toString() + " not covered by service: " + name + ", service area: " + boundingBox.toString());
+		if (!boundingBox.isOverlapping(maparea)) throw new IllegalArgumentException(MyLocale.getMsg(4822, "area:")+" " + maparea.toString() + MyLocale.getMsg(4823, " not covered by service:")+" " + name + MyLocale.getMsg(4824, ", service area:")+" " + boundingBox.toString());
 		// http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetMap&SRS=EPSG:31466&BBOX=2577567.0149,5607721.7566,2578567.0077,5608721.7602&WIDTH=500&HEIGHT=500&LAYERS=Raster:TK25_KMF:Farbkombination&STYLES=&FORMAT=image/png
 		CWPoint buttomleft = new CWPoint (maparea.buttomright.latDec, maparea.topleft.lonDec);
 		CWPoint topright = new CWPoint (maparea.topleft.latDec, maparea.buttomright.lonDec);
 		double scaleh = maparea.buttomright.getDistance(buttomleft) * 1000 / pixelsize.x; 
 		double scalev = maparea.topleft.getDistance(topright) * 1000 / pixelsize.y; 
 		double scale = Math.sqrt(scaleh * scaleh + scalev * scalev); // meters per pixel measured diagonal
-		if ( scale < minscaleWMS || scale > maxscaleWMS ) throw new IllegalArgumentException("scale " + scale / Math.sqrt(2)+ " not supported by online map service, supported scale range: " + minscale + " - " + maxscale + " (measured in meters per pixel vertically)");
+		if ( scale < minscaleWMS || scale > maxscaleWMS ) throw new IllegalArgumentException(MyLocale.getMsg(4825, "scale")+" " + scale / Math.sqrt(2)+ MyLocale.getMsg(4826, " not supported by online map service, supported scale range:")+" " + minscale + " - " + maxscale + MyLocale.getMsg(4827, " (measured in meters per pixel vertically)"));
 		int crs = 0;
 		String bbox = "BBOX=";
 		if (TransformCoordinates.isGermanGk(coordinateReferenceSystem[0])) {
@@ -535,7 +537,7 @@ class WebMapService extends OnlineMapService {
 			bbox += "," + TransformCoordinates.wgs84ToGermanGk(topright, coordinateReferenceSystem[crs]).toString(2, "", ",");
 		} else if (coordinateReferenceSystem[0] == TransformCoordinates.EPSG_WGS84) 
 			bbox += buttomleft.toString(CWPoint.LON_LAT)  + "," + topright.toString(CWPoint.LON_LAT);
-		else throw new IllegalArgumentException("Coordinate system not supported by cachewolf: " + coordinateReferenceSystem.toString());
+		else throw new IllegalArgumentException(MyLocale.getMsg(4828, "Coordinate system not supported by cachewolf:")+" " + coordinateReferenceSystem.toString());
 		String ret = MainUrl + "SERVICE=WMS" + "&"+ versionUrlPart + "&" + requestUrlPart + "&" + 
 		coordinateReferenceSystemUrlPart[crs] + "&" + bbox + 
 		"&WIDTH=" + pixelsize.x + "&HEIGHT=" + pixelsize.y + "&" + 
@@ -557,13 +559,13 @@ class WebMapService extends OnlineMapService {
 		if (coordinateReferenceSystem.length > 1) {
 			GkPoint gkbl = TransformCoordinates.wgs84ToGermanGk(p); // TODO: think / read about what to do if buttom left and top right ae not in the same Gauß-Krüger stripe?
 			crs = TransformCoordinates.whichEpsg(coordinateReferenceSystem, gkbl);
-			if (crs < 0) throw new IllegalArgumentException("getUrlForBoundingBox: Point: " + gkbl.toString() + "no matching Gauß-Krüger-Stripe in the EPSG-code list in the .wms");
+			if (crs < 0) throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:")+" " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gauß-Krüger-Stripe in the EPSG-code list in the .wms"));
 		}
 		return crs;
 	}
 
 	protected MapInfoObject getMapInfoObjectInternal(Area maparea, Point pixelsize) {
-		if (!boundingBox.isOverlapping(maparea)) throw new IllegalArgumentException("area: " + maparea.toString() + " not covered by service: " + name + ", service area: " + boundingBox.toString());
+		if (!boundingBox.isOverlapping(maparea)) throw new IllegalArgumentException(MyLocale.getMsg(4822, "area:")+" " + maparea.toString() + MyLocale.getMsg(4823, " not covered by service:")+" " + name + MyLocale.getMsg(4824, ", service area:")+" " + boundingBox.toString());
 		Vector georef = new Vector(4);
 
 		// calculate a rectangle in the according coordinate reference system
@@ -599,7 +601,7 @@ class WebMapService extends OnlineMapService {
 			buttomright.shift(metersperpixalhorizontal, 0);
 			topright = new CWPoint (topleft.latDec, buttomright.lonDec);
 			buttomleft = new CWPoint (buttomright.latDec, topleft.lonDec);
-		} else throw new IllegalArgumentException("getMapInfoObject: Coordinate system not supported by cachewolf: " + coordinateReferenceSystem);
+		} else throw new IllegalArgumentException(MyLocale.getMsg(4831, "getMapInfoObject: Coordinate system not supported by cachewolf:")+" " + coordinateReferenceSystem);
 		georef.add(new GCPoint(topleft, new Point(0, 0)));
 		georef.add(new GCPoint(buttomright, new Point(pixelsize.x, pixelsize.y)));
 		georef.add(new GCPoint(topright, new Point(pixelsize.x, 0)));

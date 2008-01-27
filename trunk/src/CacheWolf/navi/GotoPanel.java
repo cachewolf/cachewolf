@@ -92,10 +92,10 @@ public class GotoPanel extends CellPanel {
 		cacheDB = profile.cacheDB;
 
 		// Button
-		ButtonP.addNext(btnGPS = new mButton("Start"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		ButtonP.addNext(btnGPS = new mButton(MyLocale.getMsg(1504,"Start")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addNext(btnCenter = new mButton(MyLocale.getMsg(309,"Centre")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addNext(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		ButtonP.addLast(btnMap = new mButton("Map"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		ButtonP.addLast(btnMap = new mButton(MyLocale.getMsg(1506,"Map")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		//Format selection for coords		
 		//context menu
@@ -147,21 +147,10 @@ public class GotoPanel extends CellPanel {
 		if (compassRose.isNorthCentered()) miNorthCentered.modifiers |= MenuItem.Checked;
 		else miNorthCentered.modifiers &= MenuItem.Checked;
 
-		//log
-		LogP.addNext(lblLog = new mLabel("Log "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		LogP.addNext(chkLog = new mCheckBox(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		LogP.addNext(inpLogSeconds = new mInput("10"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		LogP.addLast(new mLabel("sec"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-
-		chkLog.useCross = true;
-		chkLog.setState(false);
-		inpLogSeconds.columns = 5;
-
 		//add Panels
 		this.addLast(ButtonP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
 		this.addLast(CoordsP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(2,1));
 		this.addLast(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
-		//this.addLast(LogP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.NORTHWEST).setTag(SPAN,new Dimension(1,1));
 
 		// for debuging
 		/*		CWGPSPoint myGPS;
@@ -216,7 +205,7 @@ public class GotoPanel extends CellPanel {
 	 */ 
 	public void setDestination(CWPoint dest){
 		myNavigation.setDestination(dest);
-		if (!myNavigation.destination.isValid()) (new MessageBox("Error", "Coordinates are out of range: \n"+"latitude: "+myNavigation.destination.latDec+"\n longditue: "+myNavigation.destination.lonDec, MessageBox.OKB)).execute();
+		if (!myNavigation.destination.isValid()) (new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(1507,"Coordinates are out of range:") +"\n"+MyLocale.getMsg(1508,"latitude")+": "+myNavigation.destination.latDec+"\n "+MyLocale.getMsg(1509,"longditue")+": "+myNavigation.destination.lonDec, MessageBox.OKB)).execute();
 		
 	}
 	
@@ -276,13 +265,13 @@ public class GotoPanel extends CellPanel {
 		}
 		// receiving no data
 		if (fix == -1) {
-			if (gpsStatus != RED) (new MessageBox("Error", "No data from GPS\nConnection to serial port closed",MessageBox.OKB)).exec();
+			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1510, "No data from GPS\nConnection to serial port closed"),MessageBox.OKB)).exec();
 			gpsStatus = RED;
 			myNavigation.stopGps();
 		}
 		// cannot interprete data
 		if (fix == -2) {
-			if (gpsStatus != RED) (new MessageBox("Error", "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n "+myNavigation.gpsPos.lastStrExamined, MessageBox.OKB)).exec();
+			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511, "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n")+myNavigation.gpsPos.lastStrExamined, MessageBox.OKB)).exec();
 			gpsStatus = RED;
 			myNavigation.stopGps(); // TODO automatic in myNavigate?
 		}
@@ -290,7 +279,7 @@ public class GotoPanel extends CellPanel {
 
 	public void gpsStarted() {
 		chkLog.modify(ControlConstants.Disabled,0);
-		btnGPS.setText("Stop");
+		btnGPS.setText(MyLocale.getMsg(1505,"Stop"));
 	}
 	
 	public void startGps() {
@@ -299,7 +288,7 @@ public class GotoPanel extends CellPanel {
 	}
 
 	public void gpsStoped() {
-		btnGPS.setText("Start");
+		btnGPS.setText(MyLocale.getMsg(1504,"Start"));
 		gpsStatus = this.backGround;
 		chkLog.modify(0,ControlConstants.Disabled);
 		this.repaintNow(); // without this the change in the background color will not be displayed
@@ -307,7 +296,7 @@ public class GotoPanel extends CellPanel {
 
 	
 	private String getGotoBtnText() {
-		if (myNavigation.destination == null) return "not set";
+		if (myNavigation.destination == null) return MyLocale.getMsg(999,"Not set");
 		else return myNavigation.destination.toString(currFormat);
 	}
 	
@@ -395,7 +384,7 @@ public class GotoPanel extends CellPanel {
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			// start/stop GPS connection
 			if (ev.target == btnGPS){
-				if (btnGPS.getText().equals("Start")) startGps();
+				if (btnGPS.getText().equals(MyLocale.getMsg(1504, "Start"))) startGps();
 				else myNavigation.stopGps();
 			}
 
@@ -542,7 +531,7 @@ class GotoRose extends AniImage {
 	}
 		
 	private void drawWayPointData(Graphics g){
-		String strTemp = "WayPoint";
+		String strTemp = MyLocale.getMsg(1512, "Waypoint");
 		g.setColor(Color.DarkBlue);
 		g.fillRect(0, 0, fm.getTextWidth(strTemp) + 4, lineHeight);
 		g.setColor(Color.White);		
