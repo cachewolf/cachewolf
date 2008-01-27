@@ -65,24 +65,26 @@ public class DescriptionPanel extends CellPanel{
 					int pos;
 					int imageNo=0;
 					Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
-					while (start>=0 && (pos=desc.indexOf("<img",start))>0) {
-						s.append(desc.substring(start,pos));
-						imgRex.searchFrom(desc,pos);
-						String imgUrl=imgRex.stringMatched(1);
-						//Vm.debug("imgUrl "+imgUrl);
-						if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
-							String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
-							// If we have an image which we stored when spidering, we can display it
-							if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
-								s.append("<img src=\""+
-								   //Global.getProfile().dataDir+
-								   Images.get(imageNo)+"\">");
-								imageNo++;
+					if (Images.getCount() > 0) {
+						while (start>=0 && (pos=desc.indexOf("<img",start))>0) {
+							s.append(desc.substring(start,pos));
+							imgRex.searchFrom(desc,pos);
+							String imgUrl=imgRex.stringMatched(1);
+							//Vm.debug("imgUrl "+imgUrl);
+							if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
+								String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+								// If we have an image which we stored when spidering, we can display it
+								if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
+									s.append("<img src=\""+
+											//Global.getProfile().dataDir+
+											Images.get(imageNo)+"\">");
+									imageNo++;
+								}
 							}
+							start=desc.indexOf(">",pos);
+							if (start>=0) start++;
+							if (imageNo >= Images.getCount())break;
 						}
-						start=desc.indexOf(">",pos);
-						if (start>=0) start++;
-						if (imageNo >= Images.getCount())break;
 					}
 					if (start>=0) s.append(desc.substring(start));
 					desc=s.toString();
