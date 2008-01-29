@@ -40,10 +40,7 @@ public class GotoPanel extends CellPanel {
 	int currFormat;
 
 	mLabel lblGPS, lblPosition, lblDST;
-	mLabel lblLog;
 	Color gpsStatus;
-	mCheckBox chkLog;
-	mInput inpLogSeconds;
 
 	MainTab mainT;
 	Vector cacheDB;
@@ -55,7 +52,6 @@ public class GotoPanel extends CellPanel {
 	CellPanel ButtonP = new CellPanel();
 	CellPanel CoordsP = new CellPanel();
 	CellPanel roseP = new CellPanel();
-	CellPanel LogP = new CellPanel();
 
 	ImageControl icRose;
 	GotoRose compassRose;
@@ -278,7 +274,6 @@ public class GotoPanel extends CellPanel {
 	}
 
 	public void gpsStarted() {
-		chkLog.modify(ControlConstants.Disabled,0);
 		btnGPS.setText(MyLocale.getMsg(1505,"Stop"));
 	}
 	
@@ -290,7 +285,6 @@ public class GotoPanel extends CellPanel {
 	public void gpsStoped() {
 		btnGPS.setText(MyLocale.getMsg(1504,"Start"));
 		gpsStatus = this.backGround;
-		chkLog.modify(0,ControlConstants.Disabled);
 		this.repaintNow(); // without this the change in the background color will not be displayed
 	}
 
