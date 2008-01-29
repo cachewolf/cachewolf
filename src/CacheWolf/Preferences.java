@@ -287,7 +287,7 @@ public class Preferences extends MinML{
 			if (tmp != null) solverDegMode=Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("mapspath")) {
-			customMapsPath=atts.getValue("dir");
+			customMapsPath=atts.getValue("dir").replace('\\', '/');
 		}
 		else if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
 		
@@ -368,7 +368,7 @@ public class Preferences extends MinML{
 			outp.print("    <spider forcelogin=\""+forceLogin+"\"/>\n");
 			outp.print("    <gotopanel northcentered=\""+northCenteredGoto+"\" />\n");
 			outp.print("    <details cacheSize=\""+maxDetails+"\" delete=\""+deleteDetails+"\"/>\n");
-			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath +"\"/>\n");
+			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath.replace('\\','/') +"\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			// save last path of different exporters
 			Iterator itPath = exporterPaths.entries();
@@ -391,8 +391,8 @@ public class Preferences extends MinML{
 	private static final String mapsPath = "maps/standard";
 	
 	/**
-	 * Gibt den vom Benutzer gesetzten Pfad zu den Maps
-	 * @return custom Maps Path, null wenn nicht gesetzt
+	 * custom = set by the user
+	 * @return custom Maps Path, null if not set
 	 */
 	public String getCustomMapsPath() {
 	   return customMapsPath;	
@@ -400,7 +400,7 @@ public class Preferences extends MinML{
 	
 	public void saveCustomMapsPath(String mapspath_) {
 		if (customMapsPath == null || !customMapsPath.equals(mapspath_)) {
-			customMapsPath=new String(mapspath_);
+			customMapsPath=new String(mapspath_).replace('\\', '/');
 			savePreferences();
 		}
 	}
@@ -427,7 +427,7 @@ public class Preferences extends MinML{
 		if (ret != null) return ret; 
 		ret = getMapManuallySavePath(false);
 		File t = new FileBugfix(ret);
-		String[] f = t.list("*.wfl", File.LIST_ALWAYS_INCLUDE_DIRECTORIES | File.LIST_FILES_ONLY);
+		String[] f = t.list("*.wfl", File.LIST_FILES_ONLY);
 		if (f != null && f.length > 0) return  baseDir + mapsPath;
 		f = t.list("*.wfl", File.LIST_DIRECTORIES_ONLY | File.LIST_ALWAYS_INCLUDE_DIRECTORIES);
 		if (f != null && f.length > 0) { // see if in a subdir of <baseDir>/maps/standard are .wfl files
@@ -470,7 +470,7 @@ public class Preferences extends MinML{
 	}
 
 	/**
-	 * it creates the directory if it doesn't exist
+	 * @param create if true the directory if it doesn't exist will be created
 	 * @return the path where manually imported maps should be stored
 	 * this should be adjustable in preferences...
 	 */
@@ -489,7 +489,7 @@ public class Preferences extends MinML{
 	 * to this path the automatically downloaded maps are saved
 	 */
 	public String getMapDownloadSavePath(String mapkind) {
-		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length());
+		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length()).replace('\\', '/');
 		String mapsDir = Global.getPref().baseDir + "maps/" + Common.ClearForFileName(mapkind)+ "/" + subdir;
 		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
 			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
@@ -501,7 +501,7 @@ public class Preferences extends MinML{
 	}
 
 	public String getMapExpediaLoadPath() {
-		return Global.getPref().baseDir + "maps/expedia"; // baseDir has trailing /
+		return Global.getPref().baseDir.replace('\\', '/') + "maps/expedia"; // baseDir has trailing /
 	}
 	
     //////////////////////////////////////////////////////////////////////////////////////
