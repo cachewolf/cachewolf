@@ -151,6 +151,10 @@ public class SpiderGC{
 						pref.log("[login]:Login successful");
 					else {
 						pref.log("[login]:Login failed. Wrong Account or Password?");
+						if (pref.debug) {
+							pref.log("[login.LoginUrl]:"+sb.toString());
+							pref.log("[login.Answer]:"+start);
+						}
 						infB.close(0);
 						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), MessageBox.OKB)).execute();
 						return ERR_LOGIN;
@@ -1103,6 +1107,8 @@ public class SpiderGC{
 			chD.attributes.add(attribute);
 			attribute=attEx.findNext();
 		}
+		//chD.attributesYes = chD.attributes.attributesYes;
+		//chD.attributesNo = chD.attributes.attributesNo;
 	}
 
 
