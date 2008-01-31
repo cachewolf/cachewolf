@@ -130,6 +130,8 @@ public class Preferences extends MinML{
 	public String garminConn="com1";  
 	/** Additional options for GPSBabel, i.e. -s to synthethise short names */
 	public String garminGPSBabelOptions=""; 
+	/** Max. length for Garmin waypoint names (for etrex which can only accept 6 chars) */
+	public int garminMaxLen=0;
 	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
 	public boolean downloadMapsOC = true;
 	public boolean downloadmissingOC = false;
@@ -260,6 +262,8 @@ public class Preferences extends MinML{
 			garminConn=atts.getValue("connection");
 			tmp = atts.getValue("GPSBabelOptions");
 			if (tmp != null) garminGPSBabelOptions=tmp;
+			tmp = atts.getValue("MaxWaypointLength");
+			if (tmp != null) garminMaxLen=Convert.toInt(atts.getValue("MaxWaypointLength"));
 		}
 		else if (name.equals("imagepanel")) {
 			showDeletedImages = Boolean.valueOf(atts.getValue("showdeletedimages")).booleanValue();
@@ -362,7 +366,7 @@ public class Preferences extends MinML{
 			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
 			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\" initialhintheight=\""+initialHintHeight+"\"  maxspiderlogs=\""+maxLogsToSpider+"\" />\n");
 			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\" degMode=\""+solverDegMode+"\" />\n");
-			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" />\n");
+			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" MaxWaypointLength = \""+garminMaxLen+"\" />\n");
 			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
 			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
 			outp.print("    <spider forcelogin=\""+forceLogin+"\"/>\n");

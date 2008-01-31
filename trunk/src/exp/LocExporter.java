@@ -36,7 +36,14 @@ public class LocExporter extends Exporter{
 		if (!chD.pos.isValid()) return null;
 		StringBuffer strBuf = new StringBuffer(200);
 		strBuf.append("<waypoint>\r\n   <name id=\"");
-		strBuf.append(simplifyString(chD.wayPoint));
+		String wptName=simplifyString(chD.wayPoint);
+		if (Global.getPref().garminMaxLen==0)
+			strBuf.append(wptName);
+		else {
+			try {
+				strBuf.append(wptName.substring(wptName.length()-Global.getPref().garminMaxLen));
+			} catch (Exception ex){ pref.log("Invalid value for garmin.MaxWaypointLength"); }
+		}
 		strBuf.append("\"><![CDATA[");
 		strBuf.append(simplifyString(chD.CacheName));
 		strBuf.append("]]></name>\r\n   <coord lat=\"");
