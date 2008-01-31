@@ -281,7 +281,11 @@ public class myTableControl extends TableControl{
 	int row;
 	
 	public void startDragging(DragContext dc) {
-		 Vector cacheDB=Global.getProfile().cacheDB;
+		if (!Global.mainForm.cacheListVisible) {
+			dc.cancelled=true;
+			return;
+		}
+		Vector cacheDB=Global.getProfile().cacheDB;
 		 Point p=cellAtPoint(dc.start.x,dc.start.y,null);
 		 wayPoint=null;
 		 if (p.y>=0) { 
@@ -297,7 +301,7 @@ public class myTableControl extends TableControl{
 	 }
 
 	 public void stopDragging(DragContext dc) {
-		 if (wayPoint!=null) {
+		 if (wayPoint!=null && !dc.cancelled) {
 			 //Vm.debug("Stop  Dragging"+dc.curPoint.x+"/"+dc.curPoint.y);
 			 dc.stopImageDrag(true);
 			 Point p = Gui.getPosInParent(this,getWindow());
