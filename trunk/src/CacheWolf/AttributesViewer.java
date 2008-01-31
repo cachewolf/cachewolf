@@ -6,12 +6,12 @@ import ewe.sys.*;
 import ewe.ui.*;
 
 public class AttributesViewer extends CellPanel {
-	private static int TILESIZE=Attribute.getImageWidth()+2;
-	private final static int ICONS_PER_ROW=MyLocale.getScreenWidth()/TILESIZE<Attributes.MAXATTRIBS ? MyLocale.getScreenWidth()/TILESIZE : Attributes.MAXATTRIBS;
-	private final static int ICONROWS=(Attributes.MAXATTRIBS+ICONS_PER_ROW-1)/ICONS_PER_ROW;
-	private mLabel mInfo;
+	protected static int TILESIZE=Attribute.getImageWidth()+2;
+	protected final static int ICONS_PER_ROW=MyLocale.getScreenWidth()/TILESIZE<Attributes.MAXATTRIBS ? MyLocale.getScreenWidth()/TILESIZE : Attributes.MAXATTRIBS;
+	protected final static int ICONROWS=(Attributes.MAXATTRIBS+ICONS_PER_ROW-1)/ICONS_PER_ROW;
+	protected mLabel mInfo;
 
-	private class attInteractivePanel extends InteractivePanel {
+	protected class attInteractivePanel extends InteractivePanel {
 		public boolean imageMovedOn(AniImage which) {
 			if (!((attAniImage)which).info.startsWith("*")) { // If text starts with * we have no explanation yet
 				mInfo.setText(((attAniImage)which).info);
@@ -26,7 +26,7 @@ public class AttributesViewer extends CellPanel {
 		}
 	}
 	
-	private class attAniImage extends AniImage {
+	protected class attAniImage extends AniImage {
 		public String info;
 		attAniImage (mImage img) {
 			super(img);
@@ -40,7 +40,11 @@ public class AttributesViewer extends CellPanel {
 		addLast(iap,CellConstants.HSTRETCH,CellConstants.FILL);
 		addLast(mInfo=new mLabel(""),HSTRETCH,HFILL);
 	}
-	private InteractivePanel iap=new attInteractivePanel();
+	public AttributesViewer ( boolean dontinitialize ){
+		// this is only to prevent automatic constructor calling [ AttributesViewer () ]
+		// from AttributesSelector
+	}
+	protected InteractivePanel iap=new attInteractivePanel();
 	
 	public void showImages(Attributes att) {
 		iap.images.clear();

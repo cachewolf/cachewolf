@@ -17,9 +17,9 @@ public class FilterScreen extends Form{
 	private static final Color COLOR_FILTERALL=new Color(255,0,0); // Red
     	
 	private mButton btnCancel, btnApply,btnRoute,
-					btnBearing,btnTypes,btnAttributes,btnRatings,btnContainer,btnSearch,btnAddi, btnSelect,btnDeselect;
+					btnBearing,btnTypes,btnAttributes,btnRatings,btnContainer,btnSearch,btnAddi, btnSelect,btnDeselect,btnCacheAttributes;
 	
-	private mChoice chcDist, chcDiff, chcTerr;
+	private mChoice chcDist, chcDiff, chcTerr, chcAttrib;
 	private mCheckBox chkFound, chkNotFound, chkTrad, chkVirtual, chkEvent, chkEarth, chkMega,
 					  chkOwned, chkNotOwned, chkMulti, chkLetter, chkWebcam, chkMystery, chkLocless,
 	                  chkCustom,chkParking,	chkStage, chkQuestion, chkFinal, chkTrailhead, chkReference,
@@ -29,6 +29,8 @@ public class FilterScreen extends Form{
 					  chkSSW, chkSW, chkWSW, chkW, chkWNW;
 	
 	private mInput inpDist, inpTerr, inpDiff;
+
+	AttributesSelector attV;
 	
 	private CellPanel pnlBearDist=new CellPanel();
 	private CellPanel pnlAttributes=new CellPanel();
@@ -39,6 +41,7 @@ public class FilterScreen extends Form{
 	private CellPanel pnlRose = new CellPanel();
 	private CellPanel pnlButtons=new CellPanel();
 	private CellPanel pnlAddi=new CellPanel();
+	private CellPanel pnlCacheAttributes=new CellPanel();
 	private CardPanel cp=new CardPanel();
 
 	// A subclassed checkbox with a "third" state (=grey background).
@@ -236,6 +239,19 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		addTitle(pnlSearch,"Search");
 		pnlSearch.addLast(new mLabel("To be implemented"));
+
+
+		//////////////////////////
+		// Panel 8 - Cache attributes
+		//////////////////////////
+		
+		addTitle(pnlCacheAttributes,MyLocale.getMsg(737,"Attributes"));
+		pnlCacheAttributes.addNext(new mLabel(MyLocale.getMsg(739,"Filter on")+":"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlCacheAttributes.addLast(chcAttrib = new mChoice(new String[]{MyLocale.getMsg(740,"all"), MyLocale.getMsg(741,"one"), MyLocale.getMsg(742,"none")},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+
+		attV=new AttributesSelector();
+		pnlCacheAttributes.addLast(attV, CellConstants.STRETCH|CellConstants.LEFT|CellConstants.BORDER, CellConstants.STRETCH);
+		attV.setSelectionMasks( 0l, 0l );
 		
 		Frame frmScreen=new Frame();
 		mLabel lblInfo; 
@@ -252,6 +268,7 @@ public class FilterScreen extends Form{
 		pnlButtons.addLast(btnTypes=new mButton(MyLocale.getMsg(723,"Types"))); 
 		pnlButtons.addLast(btnAddi=new mButton(MyLocale.getMsg(733,"Add. Wpt"))); 
 		pnlButtons.addLast(btnContainer=new mButton(MyLocale.getMsg(724,"Container")));
+		pnlButtons.addLast(btnCacheAttributes=new mButton(MyLocale.getMsg(738,"Attributes")));
 		// Search ist für 0.9n noch deaktiviert
 		//pnlButtons.addLast(btnSearch=new mButton("Search")); btnSearch.modify(Disabled,0);
 		addNext(pnlButtons,HSTRETCH,FILL);
@@ -263,6 +280,7 @@ public class FilterScreen extends Form{
 		cp.addItem(pnlAddi,"Addi",null);
 		cp.addItem(pnlContainer,"Size",null);
 		cp.addItem(pnlSearch,"Search",null);
+		cp.addItem(pnlCacheAttributes,"Attr",null);
 		addLast(cp);
 
 		CellPanel btPanel = new CellPanel();
@@ -270,7 +288,7 @@ public class FilterScreen extends Form{
 		btPanel.addNext(btnApply = new mButton(MyLocale.getMsg(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
 		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
 		addLast(btPanel.setTag(Control.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
-		setPreferredSize(240,240);
+		setPreferredSize(240,260);
 		cp.select(3);
 	}
 	
@@ -400,6 +418,12 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 7 - Search
 		//////////////////////////
+
+		//////////////////////////
+		// Panel 8 - Cache attributes
+		//////////////////////////
+		attV.setSelectionMasks( prof.filterAttrYes, prof.filterAttrNo );
+		chcAttrib.select(prof.filterAttrChoice);
 		
 		// Adjust colors of buttons depending on which filters are active
 		setColors();
@@ -492,6 +516,14 @@ public class FilterScreen extends Form{
 		btnContainer.repaint();
 			
 		// Panel 7 - Search
+
+		// Panel 8 - Cache attributes
+		if ( attV.selectionMaskYes == 0l && attV.selectionMaskNo == 0l)
+			btnCacheAttributes.backGround=COLOR_FILTERINACTIVE;
+		else
+			btnCacheAttributes.backGround=COLOR_FILTERACTIVE;
+		btnCacheAttributes.repaint();
+
 		
 	}
 	
@@ -596,6 +628,9 @@ public class FilterScreen extends Form{
 				} else { 
 					pfl.filterTerr="G"+inpTerr.getText();
 				}
+				pfl.filterAttrYes = attV.selectionMaskYes;
+				pfl.filterAttrNo = attV.selectionMaskNo;
+				pfl.filterAttrChoice = chcAttrib.selectedIndex;
 				Filter flt = new Filter();
 				flt.setFilter();
 				flt.doFilter();
@@ -619,6 +654,7 @@ public class FilterScreen extends Form{
 			else if (ev.target == btnAddi)cp.select(4);
 			else if (ev.target == btnContainer)cp.select(5);
 			else if (ev.target == btnSearch)cp.select(6);
+			else if (ev.target == btnCacheAttributes)cp.select(7);
 			else if (ev.target == btnDeselect) {
 				chkNW.state= chkNNW.state  = chkN.state    = chkNNE.state  = 
 				chkNE.state   = chkENE.state  = chkE.state    = chkESE.state  = 

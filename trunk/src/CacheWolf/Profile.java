@@ -61,6 +61,10 @@ public class Profile {
 	public int filterActive=Filter.FILTER_INACTIVE;
 	public boolean filterInverted=false;
 
+	public long filterAttrYes = 0l;
+	public long filterAttrNo = 0l;
+	public int filterAttrChoice = 0;
+
 	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map 
 	/** True if the profile has been modified and not saved
 	 * The following modifications set this flag: New profile centre, Change of waypoint data 
@@ -149,7 +153,7 @@ public class Profile {
 			detfile.print("    <FILTER status = \""+filterActive+(filterInverted?"T":"F")+ 
 					"\" rose = \""+filterRose+"\" type = \""+filterType+
 					"\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
-					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" />\n");
+					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" attributesYes = \""+filterAttrYes+"\" attributesNo = \""+filterAttrNo+"\" attributesChoice = \""+filterAttrChoice+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			int size=cacheDB.size();
 			for(int i = 0; i<size;i++){
@@ -246,6 +250,15 @@ public class Profile {
 					filterDiff = ex.findNext();
 					filterTerr = ex.findNext();
 					filterSize = ex.findNext();
+					String attr = ex.findNext();
+					if (attr != null && !attr.equals(""))
+						filterAttrYes = Convert.parseLong(attr);
+					attr = ex.findNext();
+					if (attr != null && !attr.equals(""))
+						filterAttrNo = Convert.parseLong(attr);
+					attr = ex.findNext();
+					if (attr != null && !attr.equals(""))
+						filterAttrChoice = Convert.parseInt(attr);
 				}
 			}
 			in.close();

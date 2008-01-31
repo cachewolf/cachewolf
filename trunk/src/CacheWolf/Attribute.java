@@ -15,11 +15,13 @@ public class Attribute {
 	
 	private int attNo;
 
+	public int getAttrNr () { return attNo; }
+
 	/**
 	 * The attribute names are identical to the image names.
 	 * Internally the first image name has number 0, the next number 1 and so on.
 	 */
-	private static String [] attributeNames= {
+	public static final String [] attributeNames= {
 			"error.gif",			//00 Unknown attribute
 			"available-no.gif", 	//01 not 24-7
 			"available-yes.gif", 	//02 available 24-7
@@ -107,8 +109,9 @@ public class Attribute {
 			"wheelchair-yes.gif", 	//84 wheelchair accessible
 			"winter-no.gif", 		//85 not available for winter
 			"winter-yes.gif", 		//86 available in winter
- 	        "firstaid-yes.gif",     //87 needs maintenance
- 	        "firstaid-no.gif"};     //88 does not need maintenance
+			"firstaid-no.gif",              //87 does not need maintenance
+			"firstaid-yes.gif"              //88 needs maintenance
+	};
 	private static mImage [] attributeImages=new mImage[89];
 	private static String IMAGEDIR=File.getProgramDirectory()+"/attributes/";
 	

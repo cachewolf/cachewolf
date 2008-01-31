@@ -102,6 +102,9 @@ public class CacheHolder {
 	public String sort;
 	private static StringBuffer sb=new StringBuffer(530); // Used in toXML()
 
+	public long attributesYes = 0;
+	public long attributesNo  = 0;
+
 //	static int nObjects=0;
 	public CacheHolder() {//nObjects++;Vm.debug("CacheHolder() nO="+nObjects);
 	}
@@ -210,6 +213,15 @@ public class CacheHolder {
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 			numFoundsSinceRecommendation = Convert.toInt(xmlString.substring(start+1,end));
 			recommendationScore = LogList.getScore(numRecommended, numFoundsSinceRecommendation);
+
+			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+			if (start > -1 && end > -1) {
+				attributesYes = Convert.parseLong(xmlString.substring(start+1,end));
+
+				start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
+				if (start > -1 && end > -1)
+					attributesNo = Convert.parseLong(xmlString.substring(start+1,end));
+			}
 		} catch (Exception ex) {
 
 		}
@@ -279,6 +291,9 @@ public class CacheHolder {
 		this.is_HTML = ch.is_HTML;
 		this.sort=ch.sort;
 		this.lastSyncOC = ch.lastSyncOC;
+
+		this.attributesYes = ch.attributesYes;
+		this.attributesNo = ch.attributesNo;
 	}
 	/**
 	 * Call it only when necessary, it takes time, because all logs must be parsed
@@ -344,6 +359,8 @@ public class CacheHolder {
 		sb.append("\" lastSyncOC = \"" );sb.append(lastSyncOC ); 
 		sb.append("\" num_recommended = \"");sb.append(Convert.formatInt(numRecommended)); 
 		sb.append("\" num_found = \"" );sb.append(Convert.formatInt(numFoundsSinceRecommendation));
+		sb.append("\" attributesYes = \"" ); sb.append(Convert.formatLong(attributesYes));
+		sb.append("\" attributesNo = \"" ); sb.append(Convert.formatLong(attributesNo));
 		sb.append("\" />\n");
 		return sb.toString();
 	}

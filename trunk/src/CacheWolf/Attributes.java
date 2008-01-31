@@ -16,6 +16,9 @@ public class Attributes {
 	 */
 	private Attribute attribs[]=new Attribute[MAXATTRIBS];
 
+	public long attributesYes;
+	public long attributesNo;
+
 	public Attributes() { 
 	}
 
@@ -32,6 +35,8 @@ public class Attributes {
 	 */
 	 public void clear() {
 		count=0;
+		attributesYes=0;
+		attributesNo=0;
 	}
 	
     ////////////////////////////////////////////////
@@ -74,7 +79,14 @@ public class Attributes {
 	 * @param attributeName
 	 */
 	public void add(String attributeName){
-		if (count<attribs.length) attribs[count++]=new Attribute(attributeName);
+		if (count<attribs.length) {
+			Attribute attr = new Attribute(attributeName);
+			attribs[count++] = attr;
+			if (attributeName.endsWith("-yes.gif"))
+				attributesYes |= (1l << ( (long)(Math.ceil((long)attr.getAttrNr() / 2.0) - 1.0) ) );
+			else
+				attributesNo |= (1l << ( (long)(Math.ceil((long)attr.getAttrNr() / 2.0) - 1.0) ) );
+		}
     }
 
 	/**

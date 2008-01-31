@@ -104,6 +104,10 @@ public class Filter{
 	private boolean available=false;
 	private boolean notAvailable = false;
 	double pi180=java.lang.Math.PI / 180.0;
+
+	private long attributesYesPattern = 0;
+	private long attributesNoPattern = 0;
+	private int attributesChoice = 0;
 	
 	/**
 	*	Apply a route filter. Each waypoint is on a seperate line.
@@ -309,6 +313,9 @@ public class Filter{
 		terrdirec = profile.filterTerr.charAt(0) == 'L' ? SMALLER : 
 				(profile.filterTerr.charAt(0) == '=' ? EQUAL : GREATER );
 		fscTerr = Common.parseDouble(profile.filterTerr.substring(1));  // Terrain
+		attributesYesPattern = profile.filterAttrYes;
+		attributesNoPattern = profile.filterAttrNo;
+		attributesChoice = profile.filterAttrChoice;
 	}
 	
 	/**
@@ -462,7 +469,39 @@ public class Filter{
 				else cacheSizePattern = OTHER;
 				if ((cacheSizePattern & sizeMatchPattern) == 0) { ch.is_filtered=true; continue; }
 			}
-			
+			///////////////////////////////
+			// Filter criterium 11: Attributes
+			///////////////////////////////
+			if ( (attributesYesPattern != 0 || attributesNoPattern != 0) && ch.mainCache == null) {
+				if (attributesChoice == 0) {
+					// AND-condition:
+					if (
+						(ch.attributesYes & attributesYesPattern) != attributesYesPattern
+						|| (ch.attributesNo & attributesNoPattern) != attributesNoPattern )
+					{
+						ch.is_filtered=true;
+						continue;
+					}
+				} else if (attributesChoice == 1) {
+					// OR-condition:
+					if (
+						(ch.attributesYes & attributesYesPattern) == 0
+						&& (ch.attributesNo & attributesNoPattern) == 0 )
+					{
+						ch.is_filtered=true;
+						continue;
+					}
+				} else {
+					// NOT-condition:
+					if (
+						(ch.attributesYes & attributesYesPattern) != 0
+						|| (ch.attributesNo & attributesNoPattern) != 0 )
+					{
+						ch.is_filtered=true;
+						continue;
+					}
+				}
+			}
 		} // for
 		// Ensure that for all main caches that are filtered, the addis are also filtered independently of 
 		// the filter status of the addi
@@ -520,7 +559,9 @@ public class Filter{
 		    prof.filterSize.equals(Profile.FILTERSIZE) &&
 		    prof.filterDist.equals("L") &&
 		    prof.filterDiff.equals("L") &&
-		    prof.filterTerr.equals("L"));
+		    prof.filterTerr.equals("L") &&
+		    prof.filterAttrYes == 0l &&
+		    prof.filterAttrNo == 0l);
 	}
 
 }
