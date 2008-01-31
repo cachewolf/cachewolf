@@ -34,7 +34,8 @@ public class SearchCache {
 				ch = (CacheHolder)cacheDB.get(i);
 				if (ch.is_filtered) break; // Reached end of visible records
 				if(ch.wayPoint.toUpperCase().indexOf(searchStr) <0 && 
-				   ch.CacheName.toUpperCase().indexOf(searchStr) <0){
+				   ch.CacheName.toUpperCase().indexOf(searchStr) <0 && 
+				   ch.CacheStatus.toUpperCase().indexOf(searchStr)<0){
 					ch.is_flaged = false;
 					ch.is_filtered = true;
 				} else
