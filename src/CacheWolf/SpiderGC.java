@@ -1107,8 +1107,8 @@ public class SpiderGC{
 			chD.attributes.add(attribute);
 			attribute=attEx.findNext();
 		}
-		//chD.attributesYes = chD.attributes.attributesYes;
-		//chD.attributesNo = chD.attributes.attributesNo;
+		chD.attributesYes = chD.attributes.attributesYes;
+		chD.attributesNo = chD.attributes.attributesNo;
 	}
 
 
