@@ -282,7 +282,9 @@ public class DetailsPanel extends CellPanel{
 		if (CacheType.isAddiWpt(transSelect(chcType.getInt())) && 
 				(Global.mainTab.mainCache.startsWith("GC")||Global.mainTab.mainCache.startsWith("OC")||Global.mainTab.mainCache.startsWith("CW")) &&
 				wpt.startsWith("CW")) {
-			// for what was this?: Global.mainTab.lastselected=Global.mainTab.mainCache;
+			// for what was this?:
+			Global.mainTab.lastselected=Global.mainTab.mainCache; //I don't know exactly, but it's needed for creating a series of Addis
+			
 			inpWaypoint.setText(Global.getProfile().getNewAddiWayPointName(Global.mainTab.mainCache));
 		} 
 		if (!CacheType.isAddiWpt(transSelect(chcType.getInt())) && !(wpt.startsWith("GC") 
