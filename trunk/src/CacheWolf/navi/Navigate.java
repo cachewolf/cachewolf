@@ -73,6 +73,11 @@ public class Navigate {
 					+ e.getMessage()
 					+ MyLocale.getMsg(4405, "\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS"), 
 					MessageBox.OKB)).execute(); 
+		} catch (UnsatisfiedLinkError e) {
+			(new MessageBox(MyLocale.getMsg(4403, "Error"), 
+					MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ") 
+					+ MyLocale.getMsg(4406, "Please copy jave_ewe.dll into the directory of the cachewolf program"), 
+					MessageBox.OKB)).execute(); 
 		}
 	}
 
