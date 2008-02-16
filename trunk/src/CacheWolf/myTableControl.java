@@ -281,14 +281,14 @@ public class myTableControl extends TableControl{
 	int row;
 	
 	public void startDragging(DragContext dc) {
-		if (!Global.mainForm.cacheListVisible) {
-			dc.cancelled=true;
-			return;
-		}
 		Vector cacheDB=Global.getProfile().cacheDB;
 		 Point p=cellAtPoint(dc.start.x,dc.start.y,null);
 		 wayPoint=null;
 		 if (p.y>=0) { 
+			if (!Global.mainForm.cacheListVisible) {
+				dc.cancelled=true;
+				return;
+			}
 			 row=p.y;
 			 CacheHolder ch=(CacheHolder)cacheDB.get(p.y);
 			 wayPoint=ch.wayPoint;
