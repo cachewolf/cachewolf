@@ -210,7 +210,7 @@ public class myTableModel extends TableModel{
 				else if(ch.is_found == true) ta.fillColor = COLOR_FOUND;
 				else if(ch.is_flaged == true) ta.fillColor = COLOR_FLAGED;
 			} catch (Exception e) {};
-		}
+		} else if (row==-1 && colMap[col]==0 && Filter.showBlacklisted) ta.fillColor=Color.Black;
 		return ta;
 	}
 
