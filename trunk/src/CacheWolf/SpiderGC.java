@@ -304,7 +304,7 @@ public class SpiderGC{
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
 		String dist = options.distanceInput.getText();
 		if (dist.length()== 0) return;
-		distance = Convert.toDouble(dist);
+		distance = Common.parseDouble(dist);
 		boolean doNotgetFound = options.foundCheckBox.getState();
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
