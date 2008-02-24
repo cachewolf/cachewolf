@@ -25,11 +25,11 @@ import exp.*;
 public class MainMenu extends MenuBar {
 	private MenuItem profiles, preferences,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap;
-	private MenuItem spider, chkVersion;
+	private MenuItem spider, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTPL, exportMagellan;
-	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtBlack, filtApply;
+	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete,orgRebuild;
 	public MenuItem filtCacheTour,orgTravelbugs, mnuForceLogin;
@@ -53,12 +53,13 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for import, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mnuImport = new MenuItem[5];
+		MenuItem[] mnuImport = new MenuItem[6];
 		mnuImport[0] = loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")); //TODO internationalization
 		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download von opencaching.de")); 
 		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider von geocaching.com")); 
-		mnuImport[3] = mnuSeparator = new MenuItem("-"); 
-		mnuImport[4] = mnuForceLogin      = new MenuItem("Always login to GC"); 
+		mnuImport[3] = update      = new MenuItem(MyLocale.getMsg(1014,"Update cache data"));
+		mnuImport[4] = mnuSeparator = new MenuItem("-"); 
+		mnuImport[5] = mnuForceLogin      = new MenuItem("Always login to GC"); 
 		Menu importMenu = new Menu(mnuImport, MyLocale.getMsg(175,"Import"));
 		if (Global.getPref().forceLogin) mnuForceLogin.modifiers^=MenuItem.Checked;
 
@@ -122,35 +123,37 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Filter" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterMenuItems=new MenuItem[10];
+		MenuItem[] filterMenuItems=new MenuItem[11];
 		filterMenuItems[0] = filtApply  = new MenuItem(MyLocale.getMsg(709,"Apply")); 
 		filterMenuItems[1] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")); 
 		filterMenuItems[2] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
 		filterMenuItems[3] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
 		filterMenuItems[4] = mnuSeparator;
 		filterMenuItems[5] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Filter selected"));
-		filterMenuItems[6] = mnuSeparator;
-		filterMenuItems[7] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
-		filterMenuItems[8] = mnuSeparator;
-		filterMenuItems[9] = filtCacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
+		filterMenuItems[6] = filtNonSelected = new MenuItem(MyLocale.getMsg(1011,"Filter out non selected"));
+		filterMenuItems[7] = mnuSeparator;
+		filterMenuItems[8] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
+		filterMenuItems[9] = mnuSeparator;
+		filterMenuItems[10] = filtCacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
 
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterAndSearchMenuItems=new MenuItem[13];
+		MenuItem[] filterAndSearchMenuItems=new MenuItem[14];
 		filterAndSearchMenuItems[0]=filtApply;
 		filterAndSearchMenuItems[1]=filtCreate;
 		filterAndSearchMenuItems[2]=filtInvert;
 		filterAndSearchMenuItems[3]=filtClear;
 		filterAndSearchMenuItems[4]=mnuSeparator;
 		filterAndSearchMenuItems[5]=filtSelected;
-		filterAndSearchMenuItems[6]=mnuSeparator;
-		filterAndSearchMenuItems[7]=filtBlack;
-		filterAndSearchMenuItems[8]=mnuSeparator;
-		filterAndSearchMenuItems[9]=search;
-		filterAndSearchMenuItems[10]=searchClr;
-		filterAndSearchMenuItems[11] = mnuSeparator;
-		filterAndSearchMenuItems[12] = filtCacheTour;
+		filterAndSearchMenuItems[6]=filtNonSelected;
+		filterAndSearchMenuItems[7]=mnuSeparator;
+		filterAndSearchMenuItems[8]=filtBlack;
+		filterAndSearchMenuItems[9]=mnuSeparator;
+		filterAndSearchMenuItems[10]=search;
+		filterAndSearchMenuItems[11]=searchClr;
+		filterAndSearchMenuItems[12] = mnuSeparator;
+		filterAndSearchMenuItems[13] = filtCacheTour;
 
 		// Depending on screen width display either filter and searach menus or the combined menu 
 		if (MyLocale.getScreenWidth()>300) {
@@ -314,6 +317,8 @@ public class MainMenu extends MenuBar {
 				filtBlack.modifiers&=~MenuItem.Checked;
 				tbp.resetModel();
 			}
+			if (mev.selectedItem == update) 
+				updateSelectedCaches();
 			if(mev.selectedItem == mnuForceLogin) {
 				mnuForceLogin.modifiers^=MenuItem.Checked;
 				Global.getPref().forceLogin=(mnuForceLogin.modifiers&MenuItem.Checked)!=0;
@@ -504,6 +509,16 @@ public class MainMenu extends MenuBar {
 				}
 				tbp.refreshTable();
 			}
+			if (mev.selectedItem == filtNonSelected){
+				CacheHolder ch;
+				for(int i = cacheDB.size()-1; i >=0; i--){
+					ch = (CacheHolder)cacheDB.get(i);
+					// incremental filter. Keeps status of all marked caches and
+					// adds unmarked caches to filtered list
+					ch.is_filtered = !ch.is_Checked || ch.is_filtered;
+				}
+				tbp.refreshTable();
+			}
 			if(mev.selectedItem == filtBlack){
 				filtBlack.modifiers^=MenuItem.Checked;
 				Filter.showBlacklisted=!Filter.showBlacklisted;
@@ -598,4 +613,75 @@ public class MainMenu extends MenuBar {
 		}
 	}
 
+	private void updateSelectedCaches() {
+		Preferences pref=Global.getPref();
+		Profile profile=Global.getProfile();
+		Vector cacheDB=profile.cacheDB;
+		CacheHolder ch;
+		
+		SpiderGC spider = new SpiderGC(pref, profile, false);
+		OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
+		//Vm.debug("ByPass? " + profile.byPassIndexActive);
+		Vm.showWait(true);
+		boolean alreadySaid = false;
+		boolean alreadySaid2 = false;
+		boolean test = true;
+		InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
+		infB.exec();
+		
+		Vector cachesToUpdate = new Vector();
+		for(int i = 0; i <	cacheDB.size(); i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			if(ch.is_Checked == true && !ch.is_filtered) {
+				if ( ch.wayPoint.length()>1 && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC") 
+						|| ch.wayPoint.substring(0,2).equalsIgnoreCase("OC")))
+//					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
+//					Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
+//					Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
+//					TODO: Diese Meldungen vor dem Einloggen darstellen						
+				{
+					cachesToUpdate.add(new Integer(i));
+				} else {
+					if (ch.isAddiWpt() && ch.mainCache!=null && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
+						alreadySaid2=true;
+						(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).execute();
+					}
+					if (!ch.isAddiWpt() && !alreadySaid) {
+						alreadySaid = true;
+						(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", MessageBox.OKB)).execute();
+					}
+				}
+
+			}
+		}
+
+		for(int j = 0; j <	cachesToUpdate.size(); j++){
+			int i = ((Integer)cachesToUpdate.get(j)).intValue();
+			ch = (CacheHolder)cacheDB.get(i);
+			infB.setInfo("Loading: " + ch.wayPoint);
+			infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
+			infB.redisplay();
+			if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))   
+				test = spider.spiderSingle(i, infB);
+			else  
+				test = ocSync.syncSingle(i, infB);
+			if (!test) {
+				infB.close(0);
+				break;
+			} else 
+				profile.hasUnsavedChanges=true;	
+
+//			cacheDB.clear();
+//			profile.readIndex();
+		}
+		infB.close(0);
+//		profile.hasUnsavedChanges=true;	
+		profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
+		profile.restoreFilter();
+		profile.updateBearingDistance();
+		tbp.refreshTable();
+		Vm.showWait(false);
+		
+	}
+	
 }

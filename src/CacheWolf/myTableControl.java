@@ -24,9 +24,7 @@ public class myTableControl extends TableControl{
 			MyLocale.getMsg(1020,"Open in $browser online"),
 			MyLocale.getMsg(1018,"Open in browser offline"),
 			"-",
-			MyLocale.getMsg(1011,"Filter"),
-			MyLocale.getMsg(1012,"Delete"),
-			MyLocale.getMsg(1014,"Update"),
+			MyLocale.getMsg(1012,"Delete selected"),
 			"-",
 			MyLocale.getMsg(1015,"Select all"),
 			MyLocale.getMsg(1016,"De-select all")},
@@ -114,15 +112,6 @@ public class myTableControl extends TableControl{
 			setSelectForAll(false);
 		}
 
-		if (selectedItem.toString().equals(MyLocale.getMsg(1011,"Filter"))){
-			for(int i = cacheDB.size()-1; i >=0; i--){
-				ch = (CacheHolder)cacheDB.get(i);
-				// incremental filter. Keeps status of all marked caches and
-				// adds unmarked caches to filtered list
-				ch.is_filtered = !ch.is_Checked || ch.is_filtered;
-			}
-			tbp.refreshTable();
-		}
 		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete"))){
 			Vm.showWait(true);
 			// Count # of caches to delete
@@ -159,70 +148,6 @@ public class myTableControl extends TableControl{
 			Vm.showWait(false);
 		}
 
-		if (selectedItem.toString().equals(MyLocale.getMsg(1014,"Update"))){
-			SpiderGC spider = new SpiderGC(pref, profile, false);
-			OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
-			//Vm.debug("ByPass? " + profile.byPassIndexActive);
-			Vm.showWait(true);
-			boolean alreadySaid = false;
-			boolean alreadySaid2 = false;
-			boolean test = true;
-			InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
-			infB.exec();
-			
-			Vector cachesToUpdate = new Vector();
-			for(int i = 0; i <	cacheDB.size(); i++){
-				ch = (CacheHolder)cacheDB.get(i);
-				if(ch.is_Checked == true && !ch.is_filtered) {
-					if ( ch.wayPoint.length()>1 && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC") 
-							|| ch.wayPoint.substring(0,2).equalsIgnoreCase("OC")))
-//						if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
-//						Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
-//						Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
-//						TODO: Diese Meldungen vor dem Einloggen darstellen						
-					{
-						cachesToUpdate.add(new Integer(i));
-					} else {
-						if (ch.isAddiWpt() && ch.mainCache!=null && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
-							alreadySaid2=true;
-							(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).execute();
-						}
-						if (!ch.isAddiWpt() && !alreadySaid) {
-							alreadySaid = true;
-							(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", MessageBox.OKB)).execute();
-						}
-					}
-
-				}
-			}
-
-			for(int j = 0; j <	cachesToUpdate.size(); j++){
-				int i = ((Integer)cachesToUpdate.get(j)).intValue();
-				ch = (CacheHolder)cacheDB.get(i);
-				infB.setInfo("Loading: " + ch.wayPoint);
-				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
-				infB.redisplay();
-				if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))   
-					test = spider.spiderSingle(i, infB);
-				else  
-					test = ocSync.syncSingle(i, infB);
-				if (!test) {
-					infB.close(0);
-					break;
-				} else 
-					profile.hasUnsavedChanges=true;	
-
-//				cacheDB.clear();
-//				profile.readIndex();
-			}
-			infB.close(0);
-//			profile.hasUnsavedChanges=true;	
-			profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
-			profile.restoreFilter();
-			profile.updateBearingDistance();
-			tbp.refreshTable();
-			Vm.showWait(false);
-		}
 		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Centre"))){
 			CacheHolder thisCache = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			CWPoint cp=new CWPoint(thisCache.LatLon);
