@@ -209,6 +209,7 @@ public class CacheList extends CellPanel {
 				fc.setTitle(MyLocale.getMsg(191,"Select File"));
 				if(fc.execute() != FileChooser.IDCANCEL){
 					currFile = fc.getChosen();
+					if (currFile.indexOf('.')==0 || !currFile.toUpperCase().endsWith("."+EXTENSION)) currFile+="."+EXTENSION;
 					saveToFile(currFile);
 				}
 			} else if (ev.target==btnUp) {
@@ -301,6 +302,8 @@ public class CacheList extends CellPanel {
 		if (idx==-1) return false;
 		CacheHolder ch=(CacheHolder) Global.getProfile().cacheDB.get(idx);
 		boolean cachesAdded=false;
+		// Add main cache
+		cachesAdded|=addCache(ch);
 		// Add addis if user wants it
 		if (chkAddAddis.state && ch.hasAddiWpt()) {
 			CacheHolder addiWpt;
@@ -309,8 +312,6 @@ public class CacheList extends CellPanel {
 				if (!addiWpt.is_filtered) cachesAdded|=addCache(addiWpt);
 			}
 		}
-		// Add main cache
-		cachesAdded|=addCache(ch);
 		// Update screen if any cache was added
 		if (cachesAdded) {	
 			lstCaches.select(lstCaches.itemsSize()-1);
