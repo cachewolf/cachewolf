@@ -42,7 +42,6 @@ public class myTableModel extends TableModel{
 			MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S"),
 			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX")};
 	
-	public static Image cacheImages[] = new Image[454]; // Images are used by TableControl
 	private static Image noFindLogs[] = new Image[4];
 	private mImage red, blue, yellow, skull; // green
 	private Image checkboxTicked,checkboxUnticked;
@@ -68,32 +67,6 @@ public class myTableModel extends TableModel{
 		this.numRows = cacheDB.size();
 		//Dimension selrow = new Dimension(-1,1);
 		//this.cursorSize = selrow;
-		cacheImages[0] = new Image("0.png");
-		//cacheImages[1] = new Image();
-		cacheImages[2] = new Image("2.png");
-		cacheImages[3] = new Image("3.png");
-		cacheImages[4] = new Image("4.png");
-		cacheImages[5] = new Image("5.png");
-		cacheImages[6] = new Image("6.png");
-		cacheImages[8] = new Image("8.png");
-		//cacheImages[9] = new Image();
-		//cacheImages[10] = new Image();
-		cacheImages[11] = new Image("11.png");
-		cacheImages[12] = new Image("12.png");
-		cacheImages[13] = new Image("13.png");
-		//additional waypoints, begin with 50
-		cacheImages[50] = new Image("pkg.png");
-		cacheImages[51] = new Image("stage.png");
-		cacheImages[52] = new Image("puzzle.png");
-		cacheImages[53] = new Image("flag.png");
-		cacheImages[54] = new Image("trailhead.png");
-		cacheImages[55] = new Image("waypoint.png");
-
-		cacheImages[108] = new Image("108.png");
-		cacheImages[109] = new Image("109.png");
-		cacheImages[110] = new Image("110.png");
-		cacheImages[137] = new Image("137.png");
-		cacheImages[453] = new Image("453.png");
 		noFindLogs[0] = new Image("no_1_log.png");
 		noFindLogs[1] = new Image("no_2_log.png");
 		noFindLogs[2] = new Image("no_3_log.png");
@@ -248,9 +221,7 @@ public class myTableModel extends TableModel{
 						else 
 							return checkboxUnticked;
 					case 1: // Type
-						try {
-							return (IImage) cacheImages[Convert.parseInt(ch.type)]; // TODO save in cacheholder as int
-						} catch (NumberFormatException e) { return "?";}
+						return (IImage) CacheType.cache2Img(ch.type);
 					case 2: // Difficulty;
 						return ch.hard;
 					case 3: // Terrain

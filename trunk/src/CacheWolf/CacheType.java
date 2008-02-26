@@ -3,6 +3,9 @@
  */
 package CacheWolf;
 
+import ewe.fx.IImage;
+import ewe.fx.Image;
+import ewe.sys.Convert;
 import ewe.sys.Vm;
 
 
@@ -28,6 +31,38 @@ import ewe.sys.Vm;
 */
 
 public class CacheType {
+	public static Image cacheImages[] = new Image[454]; // Images are used by TableControl
+	public static int WHERIGO=200; // The cache we mapped the wherigo to
+	static {
+		cacheImages[0] = new Image("0.png");
+		//cacheImages[1] = new Image();
+		cacheImages[2] = new Image("2.png");
+		cacheImages[3] = new Image("3.png");
+		cacheImages[4] = new Image("4.png");
+		cacheImages[5] = new Image("5.png");
+		cacheImages[6] = new Image("6.png");
+		cacheImages[8] = new Image("8.png");
+		//cacheImages[9] = new Image();
+		//cacheImages[10] = new Image();
+		cacheImages[11] = new Image("11.png");
+		cacheImages[12] = new Image("12.png");
+		cacheImages[13] = new Image("13.png");
+		//additional waypoints, begin with 50
+		cacheImages[50] = new Image("pkg.png");
+		cacheImages[51] = new Image("stage.png");
+		cacheImages[52] = new Image("puzzle.png");
+		cacheImages[53] = new Image("flag.png");
+		cacheImages[54] = new Image("trailhead.png");
+		cacheImages[55] = new Image("waypoint.png");
+
+		cacheImages[108] = new Image("108.png");
+		cacheImages[109] = new Image("109.png");
+		cacheImages[110] = new Image("110.png");
+		cacheImages[137] = new Image("137.png");
+		cacheImages[WHERIGO] = new Image("1858.png");  // Fudge as whereigo is really 1858
+		cacheImages[453] = new Image("453.png");
+	}
+
 	//Types from gc.com
 	static protected final int GC_TRADITIONAL = 2;
 	static protected final int GC_MULTI = 3;
@@ -76,6 +111,7 @@ public class CacheType {
 	static protected final int CW_CITO = 13;
 	static protected final int CW_EARTH = 137;
 	static protected final int CW_MEGA_EVENT = 453;
+	static protected final int CW_WHERIGO = 1858;
 	static protected final int CW_PARKING = 50;
 	static protected final int CW_STAGE_OF_MULTI = 51;
 	static protected final int CW_QUESTION = 52;
@@ -105,6 +141,7 @@ public class CacheType {
 	static protected final String CW_PIC_CITO = "13.png";
 	static protected final String CW_PIC_EARTH = "137.png";
 	static protected final String CW_PIC_MEGA_EVENT = "453.png";
+	static protected final String CW_PIC_WHERIGO = "1858.png";
 	static protected final String CW_PIC_PARKING = "pkg.png";
 	static protected final String CW_PIC_STAGE_OF_MULTI = "stage.png";
 	static protected final String CW_PIC_QUESTION = "puzzle.png";
@@ -127,7 +164,7 @@ public class CacheType {
 			{"CITO","13"},{"Earthcache","137"},
 			{"Parking","50"},{"Stage","51"},
 			{"Question","52"},{"Final","53"},
-			{"Trailhead","54"},{"Reference","55"}};
+			{"Trailhead","54"},{"Reference","55"},{"WhereIGo","1858"}};
 
 	public static String transType(String geoNum){
 		String geo = new String("Unknown");
@@ -142,6 +179,7 @@ public class CacheType {
 		if(geoNum.equals("13")) geo = "Cache In Trash Out Event";
 		if(geoNum.equals("137")) geo = "Earthcache";
 		if(geoNum.equals("453")) geo = "Mega Event Cache";
+		if(geoNum.equals("1858")) geo = "WhereIGo Cache";
 		if(geoNum.equals("50")) geo = "Parking Area";
 		if(geoNum.equals("51")) geo = "Stages of a Multicache";
 		if(geoNum.equals("52")) geo = "Question to Answer";
@@ -172,6 +210,7 @@ public class CacheType {
 			case CW_CITO:			return CW_PIC_CITO;
 			case CW_EARTH:			return CW_PIC_EARTH;
 			case CW_MEGA_EVENT:		return CW_PIC_MEGA_EVENT;
+			case CW_WHERIGO:	    return CW_PIC_WHERIGO;
 			case CW_PARKING:		return CW_PIC_PARKING;
 			case CW_STAGE_OF_MULTI:	return CW_PIC_STAGE_OF_MULTI;
 			case CW_QUESTION:		return CW_PIC_QUESTION;
@@ -204,6 +243,7 @@ public class CacheType {
 		if (typeText.equals("Cache In Trash Out Event")) return "13";
 		if (typeText.equals("Earthcache") || typeText.equals("Earth")) return "137";
 		if (typeText.equals("Mega-Event Cache")) return "453";
+		if (typeText.equals("Wherigo Cache")) return "1858";
 		if (typeText.equals("Waypoint|Parking Area")) return "50";
 		if (typeText.equals("Waypoint|Stages of a Multicache")) return "51";
 		if (typeText.equals("Waypoint|Question to Answer")) return "52";
@@ -246,7 +286,14 @@ public class CacheType {
 			//no match found? return custom type!
 			return "0";
 		}
-	
-	
+
+		
+	public static Image cache2Img(String cacheType) {
+		int ct=Convert.parseInt(cacheType);
+		if (ct==1858)
+			return cacheImages[WHERIGO];
+		else	
+			return cacheImages[ct]; // TODO save in cacheholder as int
+	}
 
 }

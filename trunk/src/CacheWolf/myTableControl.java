@@ -219,7 +219,7 @@ public class myTableControl extends TableControl{
 			 wayPoint=ch.wayPoint;
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 imgDrag=new IconAndText();
-			 imgDrag.addColumn((IImage) Global.mainTab.tbP.myMod.cacheImages[Convert.parseInt(ch.type)]);
+			 imgDrag.addColumn((IImage) CacheType.cache2Img(ch.type));
 			 imgDrag.addColumn(ch.wayPoint);
 			 dc.dragData=dc.startImageDrag(imgDrag,new Point(8,8),this);
 		 } else super.startDragging(dc);

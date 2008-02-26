@@ -134,9 +134,9 @@ public class RadarPanel extends CellPanel{
 							iActP.addImage(aImg);
 						}
 					}
-					Image imgCache=myTableModel.cacheImages[Convert.parseInt(holder.type)];
+					Image imgCache=CacheType.cache2Img(holder.type);
 					// If we have no image for the cache type use a question mark
-					if (imgCache==null) imgCache=myTableModel.cacheImages[8]; 
+					if (imgCache==null) imgCache=CacheType.cacheImages[8]; 
 					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = holder.wayPoint;
 					rpi.rownum = i;
