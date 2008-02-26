@@ -109,7 +109,7 @@ public class myInteractivePanel extends InteractivePanel{
 			 //wayPoint=ch.wayPoint;
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 IconAndText icnDrag=new IconAndText();
-			 icnDrag.addColumn((IImage) Global.mainTab.tbP.myMod.cacheImages[Convert.parseInt(ch.type)]);
+			 icnDrag.addColumn((IImage) CacheType.cache2Img(ch.type));
 			 icnDrag.addColumn(ch.wayPoint);
 			 dc.dragData=dc.startImageDrag(icnDrag,new Point(8,8),this);
 			 //if (dc instanceof ImageDragContext) Vm.debug(">>>>Is Image drag");

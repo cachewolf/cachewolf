@@ -2,6 +2,7 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.CacheHolder;
+import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MainTab;
@@ -300,8 +301,7 @@ public class MovingMap extends Form {
 			for (int i=cacheDB.size()-1; i>=0; i--) {
 				ch = (CacheHolder) cacheDB.get(i);
 				if (ch.is_Checked && !ch.is_filtered && ch != mainT.ch) {
-					int ct = Convert.parseInt(ch.type);
-					if (ch.pos.isValid()) addSymbol(ch.CacheName, ch, myTableModel.cacheImages[ct], ch.pos);
+					if (ch.pos.isValid()) addSymbol(ch.CacheName, ch, CacheType.cache2Img(ch.type), ch.pos);
 				}
 			}
 		}
@@ -323,8 +323,7 @@ public class MovingMap extends Form {
 		}
 		if (ch != null) {
 			addSymbol("selectedCache", MARK_CACHE_IMAGE, ch.pos);
-			int ct = Convert.parseInt(ch.type);
-			addSymbolIfNecessary(ch.CacheName, ch, myTableModel.cacheImages[ct], ch.pos);
+			addSymbolIfNecessary(ch.CacheName, ch, CacheType.cache2Img(ch.type), ch.pos);
 		}
 		markedCache = ch;
 	}
