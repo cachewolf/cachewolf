@@ -45,7 +45,7 @@ public class Profile {
 
 	// When extending the filter check "normaliseFilters"
 	// which ensures backward compatibility. Normally no change should be needed
-	public final static String FILTERTYPE="111111111111111111";
+	public final static String FILTERTYPE="1111111111111111111";
 	public final static String FILTERROSE="1111111111111111";
 	public final static String FILTERVAR="11111111";
 	public final static String FILTERSIZE="111111";
