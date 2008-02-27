@@ -26,7 +26,7 @@ public class FilterScreen extends Form{
 					  chkMicro,chkSmall,chkRegular,chkLarge,chkVeryLarge,chkOther,chkCito,
 	                  chkArchived,chkNotArchived, chkAvailable,chkNotAvailable,
 					  chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
-					  chkSSW, chkSW, chkWSW, chkW, chkWNW;
+					  chkSSW, chkSW, chkWSW, chkW, chkWNW,chkWherigo;
 	
 	private mInput inpDist, inpTerr, inpDiff;
 
@@ -201,6 +201,9 @@ public class FilterScreen extends Form{
 		pnlCacheTypes.addNext(addImg("0.png"));
 		pnlCacheTypes.addLast(chkCustom = new mCheckBox("Custom"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
+		pnlCacheTypes.addNext(addImg("1858.png"));
+		pnlCacheTypes.addNext(chkWherigo = new myChkBox("WherIGo"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+
 		pnlCacheTypes.addNext(addImg("110.png"));
 		pnlCacheTypes.addNext(addiWptChk = new myChkBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
@@ -245,7 +248,7 @@ public class FilterScreen extends Form{
 		// Panel 8 - Cache attributes
 		//////////////////////////
 		
-		addTitle(pnlCacheAttributes,MyLocale.getMsg(737,"Attributes"));
+		if (MyLocale.getScreenHeight()>240) addTitle(pnlCacheAttributes,MyLocale.getMsg(737,"Attributes"));
 		pnlCacheAttributes.addNext(new mLabel(MyLocale.getMsg(739,"Filter on")+":"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlCacheAttributes.addLast(chcAttrib = new mChoice(new String[]{MyLocale.getMsg(740,"all"), MyLocale.getMsg(741,"one"), MyLocale.getMsg(742,"none")},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
@@ -390,6 +393,7 @@ public class FilterScreen extends Form{
 		chkMega.state       = fltType.charAt(9) == '1';
 		chkCustom.state     = fltType.charAt(10) == '1';
 		chkCito.state       = fltType.charAt(17) == '1';
+		chkWherigo.state    = fltType.charAt(18) == '1';
 		
 		// Note addiWptState is set by setColors
 		
@@ -491,7 +495,7 @@ public class FilterScreen extends Form{
 		chkFinal.state && chkTrailhead.state && chkReference.state) ;
 		if (!(chkTrad.state && chkMulti.state && 	chkVirtual.state && chkLetter.state &&
 		      chkEvent.state && chkWebcam.state && chkMystery.state && chkEarth.state &&
-		      chkLocless.state && chkMega.state && chkCito.state && chkCustom.state && allAddis) ) 
+		      chkLocless.state && chkMega.state && chkCito.state && chkWherigo.state && chkCustom.state && allAddis) ) 
 			btnTypes.backGround=COLOR_FILTERACTIVE;
 		else
 			btnTypes.backGround=COLOR_FILTERINACTIVE;
@@ -499,7 +503,7 @@ public class FilterScreen extends Form{
 			      chkEvent.state || chkWebcam.state || chkMystery.state || chkEarth.state ||
 			      chkLocless.state || chkMega.state || chkCustom.state || chkParking.state 
 			      || chkStage.state || chkQuestion.state || 
-					chkFinal.state || chkTrailhead.state || chkCito.state || chkReference.state )) 
+					chkFinal.state || chkTrailhead.state || chkCito.state || chkWherigo.state || chkReference.state )) 
 			btnTypes.backGround=COLOR_FILTERALL;
 		btnTypes.repaint();
 
@@ -582,8 +586,8 @@ public class FilterScreen extends Form{
 								(chkFinal.state   ? "1" : "0") +
 								(chkTrailhead.state ? "1" : "0") +
 								(chkReference.state ? "1" : "0")+
-								(chkCito.state ? "1" : "0");
-				
+								(chkCito.state ? "1" : "0")+
+								(chkWherigo.state ? "1" : "0");
 				pfl.filterRose = (chkNW.state  ? "1":"0")+
 							 (chkNNW.state ? "1":"0")+
 							 (chkN.state   ? "1":"0")+
