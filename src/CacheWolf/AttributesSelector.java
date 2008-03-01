@@ -25,7 +25,7 @@ public class AttributesSelector extends AttributesViewer {
 		showAttributePalette();
 	}
 
-	protected class attAniImage extends AttributesViewer.attAniImage {
+	protected class attAniImage extends AniImage {
 		public String info;
 		public String attrName;
 		public String value;
@@ -35,7 +35,7 @@ public class AttributesSelector extends AttributesViewer {
 			super(img);
 		}
 		attAniImage (attAniImage cp, String val) {
-			super(null);
+			//super(null);
 			mImage rawImg=new mImage(Attribute.getImageDir() + cp.attrName + val );
 			setMImage (rawImg.getHeight()!=20 ? rawImg.scale(20,20,null,Image.FOR_DISPLAY) : rawImg  );
 			value = val;
@@ -47,7 +47,7 @@ public class AttributesSelector extends AttributesViewer {
 		}
 	}
 	
-	protected class attInteractivePanel extends AttributesViewer.attInteractivePanel {
+	protected class attInteractivePanel extends InteractivePanel {
 				public boolean imageMovedOn(AniImage which) {
 			if (!((attAniImage)which).info.startsWith("*")) { // If text starts with * we have no explanation yet
 				mInfo.setText(((attAniImage)which).info);
@@ -93,13 +93,6 @@ public class AttributesSelector extends AttributesViewer {
 		iap.images.clear();
 		int width = 170;
 		int height = 180;
-		if (getParent() != null) {
-			//iap.setFixedSize(getParent().getSize(null).width-10, getParent().getSize(null).height-20);
-			width = getParent().getSize(null).width-10;
-			height = getParent().getSize(null).height-40;
-			iap.virtualSize = new Rect(0,0,width,height);
-			iap.setPreferredSize(width,height);
-		}
 		int x = 2; int y = 2;
 		long bitMask = 0;
 		String attrName;
