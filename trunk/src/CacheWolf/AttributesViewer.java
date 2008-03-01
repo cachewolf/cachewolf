@@ -40,10 +40,6 @@ public class AttributesViewer extends CellPanel {
 		addLast(iap,CellConstants.HSTRETCH,CellConstants.FILL);
 		addLast(mInfo=new mLabel(""),HSTRETCH,HFILL);
 	}
-	public AttributesViewer ( boolean dontinitialize ){
-		// this is only to prevent automatic constructor calling [ AttributesViewer () ]
-		// from AttributesSelector
-	}
 	protected InteractivePanel iap=new attInteractivePanel();
 	
 	public void showImages(Attributes att) {
@@ -57,6 +53,9 @@ public class AttributesViewer extends CellPanel {
 		iap.repaintNow();
 	}
 	
+	public void clear() {
+		iap.images.clear();
+	}
 /*	public void resizeTo(int width, int height) {
 		super.resizeTo(width,height);
 	}

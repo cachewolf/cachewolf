@@ -11,7 +11,6 @@ public class AttributesSelector extends AttributesViewer {
 	public long selectionMaskNo = 0;
 
 	public AttributesSelector() {
-		super( true /* senseless, but hey - its java :D */);
 		//Rect r = new Rect(0,0,TILESIZE * ICONS_PER_ROW,TILESIZE * ICONROWS); // As on GC: 6 wide, 2 high
 		iap.virtualSize = new Rect(0,0,200,200);
 		iap.setPreferredSize(170, 155);

@@ -28,7 +28,7 @@ public class DescriptionPanel extends CellPanel{
 		descP.addLast(sbp);
 		this.addLast(descP);
 		this.addLast(buttonP,CellConstants.HSTRETCH,CellConstants.HFILL);
-
+		clear();
 	}
 	
 	/**
@@ -103,6 +103,10 @@ public class DescriptionPanel extends CellPanel{
 			Vm.showWait(false);
 		}
 		currCache = cache;
+	}
+	
+	public void clear() {
+		disp.setPlainText("loading ...");
 	}
 	
 	private void redraw() {

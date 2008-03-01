@@ -139,6 +139,10 @@ public class DetailsPanel extends CellPanel{
 		
 	}
 	
+	public void clear() {
+		attV.clear();
+	}
+
 	public void setIsNew(boolean isnew) {
 		isNewWpt = isnew;
 	}

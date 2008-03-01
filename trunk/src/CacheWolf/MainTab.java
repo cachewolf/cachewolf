@@ -98,8 +98,19 @@ public class MainTab extends mTabbedPanel {
 		this.selectAndExpand(0);
 	}
 
-
+	public void clearDetails() {
+		imageP.clearImages(); // Remove all images
+		descP.clear(); // write "loading ..."
+		detP.clear(); // Clear only the attributes
+		hintLP.clear(); // Remove the logs
+		solverP.setInstructions("loading ...");
+	}	
+	
 	public void onEvent(Event ev) {
+		// This section clears old data when a new line is selected in the table
+		if (ev instanceof TableEvent) {
+			clearDetails();
+		}
 		if(ev instanceof MultiPanelEvent){
 			// Check whether a profile change is allowed, if not disable the relevant options
 			checkProfileChange();
