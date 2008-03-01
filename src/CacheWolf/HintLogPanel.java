@@ -56,6 +56,7 @@ public class HintLogPanel extends CellPanel{
 		htmlImagDisp.checkScrolls();
 		logpane.addLast(sbplog.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 		this.addLast(split);
+		clear();
 	}
 
 	public void setText(CacheHolderDetail cache){
@@ -74,6 +75,12 @@ public class HintLogPanel extends CellPanel{
 		////Vm.debug("In log: " + cache.CacheLogs);
 	}
 
+	public void clear() {
+		if (htmlTxtImage != null) {
+			htmlImagDisp.removeImage(htmlTxtImage);
+			htmlTxtImage.free();		
+		}
+	}
 	void setLogs(int crntLogPosition) {
 		Vm.showWait(true);
 		StringBuffer dummy = new StringBuffer(DEFAULT_STRINGBUFFER_SIZE);
@@ -85,10 +92,7 @@ public class HintLogPanel extends CellPanel{
 			dummy.append("</br>");
 			if(++counter >= logsPerPage) break;
 		}
-		if (htmlTxtImage != null) {
-			htmlImagDisp.removeImage(htmlTxtImage);
-			htmlTxtImage.free();
-		}
+		clear();
 		logs.resizeTo(width, 50);
 		// The cache GCP0T6 crashes the HtmlDisplay
 		// As a temporary fix

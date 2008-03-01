@@ -36,42 +36,45 @@ public class ImagePanel extends InteractivePanel{
 	public ImagePanel(){
 	}
 	
+	static CacheHolderDetail oldCache=null;
 	/**
 	* Method to set the individual cache images.
 	* Gets called immediatly before panel is displayed
 	* @see MainTab#onEvent(Event ev)
 	*/
 	public void setImages(CacheHolderDetail cache){
-		pref = Global.getPref();
-		profile=Global.getProfile();
-		Vm.showWait(true);
-		clearImages();
-		thumb_size = (int)((pref.myAppWidth-2*padding) / 3);
-		thumb_size = thumb_size - padding;
-		int rowCounter = cache.Images.size() + cache.UserImages.size();
-		rowCounter = (int)(rowCounter/3)+1;
-		Rect r = new Rect(new Dimension(pref.myAppWidth,rowCounter*thumb_size+rowCounter*padding+padding));
-		this.virtualSize = r;
-		//this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
-		this.checkScrolls();
-		this.refresh();
-		locY=0;
-		addTitle(MyLocale.getMsg(340,"Cache Images:"));
-		locY = 20;
-		locX = padding;
-		addImages(cache.Images,cache.ImagesText);
-		// load user images
-		if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
-		//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
-		//Vm.debug("locy after: " + Convert.toString(locY));
-		if (cache.UserImages.getCount()> 0){
-			addTitle(MyLocale.getMsg(341,"User Images:"));
-			locY = locY + 20;
+		if (cache!=oldCache) {
+			pref = Global.getPref();
+			profile=Global.getProfile();
+			Vm.showWait(true);
+			clearImages();
+			thumb_size = (int)((pref.myAppWidth-2*padding) / 3);
+			thumb_size = thumb_size - padding;
+			int rowCounter = cache.Images.size() + cache.UserImages.size();
+			rowCounter = (int)(rowCounter/3)+1;
+			Rect r = new Rect(new Dimension(pref.myAppWidth,rowCounter*thumb_size+rowCounter*padding+padding));
+			this.virtualSize = r;
+			//this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
+			this.checkScrolls();
+			this.refresh();
+			locY=0;
+			addTitle(MyLocale.getMsg(340,"Cache Images:"));
+			locY = 20;
 			locX = padding;
-			locCounter = 0;
-			addImages(cache.UserImages,cache.UserImagesText);
-		}
-		
+			addImages(cache.Images,cache.ImagesText);
+			// load user images
+			if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
+			//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
+			//Vm.debug("locy after: " + Convert.toString(locY));
+			if (cache.UserImages.getCount()> 0){
+				addTitle(MyLocale.getMsg(341,"User Images:"));
+				locY = locY + 20;
+				locX = padding;
+				locCounter = 0;
+				addImages(cache.UserImages,cache.UserImagesText);
+			}
+			oldCache=cache;
+		} // cache!=oldCache	
 		this.refresh();
 		Vm.showWait(false);
 		//this.repaintNow();
@@ -81,7 +84,8 @@ public class ImagePanel extends InteractivePanel{
 	 * Clear the images in the panel
 	 *
 	 */
-	private void clearImages() {
+	public void clearImages() {
+		oldCache=null;
 		int lgr = images.size();
 		for(int i = 0; i<lgr;i++){
 			this.removeImage((AniImage)images.get(0));
