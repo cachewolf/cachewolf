@@ -4,7 +4,6 @@ import ewe.ui.*;
 import ewe.fx.*;
 import ewe.util.*;
 import ewe.sys.*;
-import ewe.sys.Long;
 
 /**
 *	Class to create the panel to show the cache details.<br>
@@ -19,7 +18,7 @@ public class DetailsPanel extends CellPanel{
 	mInput inpHidden = new mInput();
 	mInput inpOwner = new mInput();
 	mButton btnDelete,btnCenter, btnAddDateTime;
-	mChoice chcType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "Addi: Parking", "Addi: Stage", "Addi: Question", "Addi: Final","Addi: Trailhead","Addi: Reference"},0);
+	mChoice chcType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "wherIGo", "Addi: Parking", "Addi: Stage", "Addi: Question", "Addi: Final","Addi: Trailhead","Addi: Reference"},0);
 	mChoice chcSize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
 	mComboBox chcStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
 	mButton btnNewWpt, btnShowBug, btnShowMap, btnGoto, btnAddPicture, btnBlack, btnNotes, btnSave, btnCancel;
@@ -224,16 +223,17 @@ public class DetailsPanel extends CellPanel{
 			case 6: c_type = 5; break;
 			case 453: c_type = 6;break;
 			case 8: c_type = 7; break;
-			case 11: c_type = 8; break;
+			case 11: c_type = 8; break; //Earth
 			case 12: c_type = 9; break;
 			case 13: c_type = 10; break;
 			case 137: c_type = 11;break;
-			case 50: c_type = 12;break;
-			case 51: c_type = 13;break;
-			case 52: c_type = 14;break;
-			case 53: c_type = 15;break;
-			case 54: c_type = 16;break;
-			case 55: c_type = 17;break;
+			case 1858: c_type = 12; break;
+			case 50: c_type = 13;break;
+			case 51: c_type = 14;break;
+			case 52: c_type = 15;break;
+			case 53: c_type = 16;break;
+			case 54: c_type = 17;break;
+			case 55: c_type = 18;break;
 
 			default: Vm.debug("Unknown cachetype: " + type);
 					break;
@@ -262,12 +262,13 @@ public class DetailsPanel extends CellPanel{
 			case 9: ret = "12"; break;
 			case 10: ret = "13";break;
 			case 11: ret = "137";break;
-			case 12: ret = "50";break;
-			case 13: ret = "51";break;
-			case 14: ret = "52";break;
-			case 15: ret = "53";break;
-			case 16: ret = "54";break;
-			case 17: ret = "55";break;
+			case 12: ret = "1858"; break;
+			case 13: ret = "50";break;
+			case 14: ret = "51";break;
+			case 15: ret = "52";break;
+			case 16: ret = "53";break;
+			case 17: ret = "54";break;
+			case 18: ret = "55";break;
 
 			default: Vm.debug("Unknown cachetype: " + num);
 			break;
