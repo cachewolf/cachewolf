@@ -76,7 +76,7 @@ public class myTableModel extends TableModel{
 		//green = new mImage("green.png");green.transparentColor=Color.White;
 		yellow = new mImage("yellow.png");yellow.transparentColor=Color.White;
 		skull = new mImage("skull.png");skull.transparentColor=Color.DarkBlue;
-		bug = new mImage("bug.png");bug.transparentColor=Color.DarkBlue;
+		bug = new mImage("bug_table.png");bug.transparentColor=Color.DarkBlue;
 		checkboxTicked = new Image("checkboxTicked.png");
 		checkboxUnticked= new Image("checkboxUnticked.png");
 		picSizeMicro=new mImage("sizeMicro.png"); picSizeMicro.transparentColor=Color.White;
