@@ -974,15 +974,15 @@ public class MovingMap extends Form {
 		int h = (height != 0 ? height : pref.myAppHeight);
 		int x, y;
 		CWPoint cll;
-		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h && ll.isValid()) {
-			x = posCircleX; // posCircle is inside the screen
-			y = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn vorher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
-			cll = new CWPoint(ll);
-		} else { // when posCircle out of screen - use centre of screen as point which as to be included in the map
+		
+		if (currentMap != null) {
 			cll = ScreenXY2LatLon(w/2, h/2);
-			x = w/2;
-			y = h/2;
-		} 
+		} else {
+			cll = new CWPoint(ll);
+		}
+		x = w/2;
+		y = h/2;
+
 		Object[] ret = new Object[2];
 		ret[0] = cll;
 		ret[1] = new Rect(x, y, w, h);
@@ -1003,7 +1003,7 @@ public class MovingMap extends Form {
 		if (m != null) {
 			boolean saveGpsIgnStatus = dontUpdatePos;
 			dontUpdatePos = true;
-			setMap(m, posCircle.where);
+			setMap(m, cll);
 			setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 			dontUpdatePos = saveGpsIgnStatus;
 		}
@@ -1110,7 +1110,7 @@ public class MovingMap extends Form {
 			mmp.images.moveToBack(mmp.mapImage);
 			rebuildOverlaySet();
 			forceMapLoad = true; // forces updateOnlyPosition to redraw
-			updateOnlyPosition(where, false);
+			updateAfterMapChange(where);
 			forceMapLoad = false;
 			directionArrows.setMap(currentMap);
 			updateScale();
@@ -1160,6 +1160,32 @@ public class MovingMap extends Form {
 					MessageBox.OKB)).execute();
 			dontUpdatePos = saveIgnoreStatus;
 		}
+	}
+	
+	private void updateAfterMapChange(CWPoint newCenter) {
+		if (!posCircle.where.isValid()) {
+			posCircle.where.set(newCenter);
+		}
+		Point circlePosOnMap = currentMap.calcMapXY(posCircle.where);
+		Point centerOnMap = currentMap.calcMapXY(newCenter);
+		int w = (width != 0 ? width : pref.myAppWidth); // width == 0 happens if this routine is run before the windows is on the screen
+		int h = (height != 0 ? height : pref.myAppHeight);
+		int mapPosX = w/2 - centerOnMap.x;
+		int mapPosY = h/2 - centerOnMap.y;
+		int newPosCircleX = mapPosX + circlePosOnMap.x;
+		int newPosCircleY = mapPosY + circlePosOnMap.y;
+		
+		if (mmp != null && mmp.mapImage != null) mmp.mapImage.move(mapPosX, mapPosY);
+		
+		int wCircle = posCircle.getWidth();
+		int hCircle = posCircle.getHeight();
+		int npx = newPosCircleX-wCircle/2; 
+		int npy = newPosCircleY-hCircle/2;
+		posCircle.move(npx, npy);
+		posCircleX = newPosCircleX;
+		posCircleY = newPosCircleY;
+		
+		updateOnlyPosition(posCircle.where, true);
 	}
 
 	public void hideMap() {
