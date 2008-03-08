@@ -110,7 +110,7 @@ public class SolverPanel extends CellPanel{
 		programPanel.addNext(btnSave= new mButton(MyLocale.getMsg(1737,"Save")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		programPanel.addLast(btnSaveAs= new mButton(MyLocale.getMsg(1738,"SaveAs")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		*/
-		outputPanel.addLast(new ScrollBarPanel(mOutput = new OutputPanel()));
+		outputPanel.addLast(new MyScrollBarPanel(mOutput = new OutputPanel()));
 
 		this.addLast(split);
 	}

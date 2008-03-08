@@ -36,13 +36,35 @@ public class PreferencesScreen extends Form {
 	
 	public PreferencesScreen (Preferences p){
 		mTab=new mTabbedPanel();
-		setPreferredSize(240,240);
-		//scp = new ScrollBarPanel(pnlGeneral);
+		
 		pref = p;
 		this.title = MyLocale.getMsg(600,"Preferences");
 		//this.resizable = false;
 		//this.moveable = true;
 		//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
+
+		// set dialog-width according to fontsize
+		int sw = MyLocale.getScreenWidth();
+		if((pref.fontSize <= 13)||(sw <= 240)){
+			setPreferredSize(240,240);
+		}
+		else if(pref.fontSize <= 17){
+			setPreferredSize(300,250);
+		}
+		else if(pref.fontSize <= 21){
+			setPreferredSize(350,300);
+		}
+		else if(pref.fontSize <= 24){
+			setPreferredSize(400,350);
+		}
+		else if(pref.fontSize <= 28){
+			setPreferredSize(450,400);
+		}
+		else{
+			setPreferredSize(500,450);
+		}
+		
+		//scp = new ScrollBarPanel(pnlGeneral);
 		
 		/////////////////////////////////////////////////////////
 		// First panel - General

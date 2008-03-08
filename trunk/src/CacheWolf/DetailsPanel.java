@@ -50,37 +50,41 @@ public class DetailsPanel extends CellPanel{
 		////////////////////
 		// Tools
 		////////////////////
+		// Use larger Button-Icons on VGA-mobiles
+		int sw = MyLocale.getScreenWidth();
+		String imagesize="";
+		if (Vm.isMobile() && sw >= 400) imagesize="_32x32";  
 		// Button 1: New Waypoint
-		pnlTools.addNext(btnNewWpt = new mButton(imgNewWpt=new mImage("newwpt.png"))); 
+		pnlTools.addNext(btnNewWpt = new mButton(imgNewWpt=new mImage("newwpt"+imagesize+".png"))); 
 		btnNewWpt.setToolTip(MyLocale.getMsg(311,"Create Waypoint"));
 		PenEvent.wantPenMoved(btnNewWpt,PenEvent.WANT_PEN_MOVED_ONOFF,true);
 		imgNewWpt.transparentColor=new Color(255,0,0);
 		// Button 2: Goto
-		pnlTools.addNext(btnGoto = new mButton(imgGoto=new mImage("goto.png")));//Goto.gif funzt manchmal nicht
+		pnlTools.addNext(btnGoto = new mButton(imgGoto=new mImage("goto"+imagesize+".png")));//Goto.gif funzt manchmal nicht
 		imgGoto.transparentColor=Color.White;
 		btnGoto.setToolTip(MyLocale.getMsg(345,"Goto these coordinates"));
 		// Button 3: Travelbugs
-		imgShowBug = new mImage("bug.gif");
-		imgShowBugNo = new mImage("bug_no.gif");
+		imgShowBug = new mImage("bug"+imagesize+".gif");
+		imgShowBugNo = new mImage("bug_no"+imagesize+".gif");
 		pnlTools.addNext(btnShowBug = new mButton(imgShowBugNo)); 
 		//btnShowBug.modify(Control.Disabled,0);
 		btnShowBug.setToolTip(MyLocale.getMsg(346,"Show travelbugs"));
 		// Button 4: Show Map
-		pnlTools.addNext(btnShowMap = new mButton(imgShowMaps = new mImage("globe_small.gif"))); 
+		pnlTools.addNext(btnShowMap = new mButton(imgShowMaps = new mImage("globe_small"+imagesize+".gif"))); 
 		btnShowMap.setToolTip(MyLocale.getMsg(347,"Show map"));
 		// Button 5: Add images
-		pnlTools.addNext(btnAddPicture = new mButton(imgAddImages = new mImage("images.gif"))); 
+		pnlTools.addNext(btnAddPicture = new mButton(imgAddImages = new mImage("images"+imagesize+".gif"))); 
 		btnAddPicture.setToolTip(MyLocale.getMsg(348,"Add user pictures"));
 		// Button 6: Toggle blacklist status
-		imgBlackNo = new mImage("no_black.png"); imgBlackNo.transparentColor=Color.Black;
-		imgBlack = new mImage("is_black.png"); imgBlack.transparentColor=Color.White;
+		imgBlackNo = new mImage("no_black"+imagesize+".png"); imgBlackNo.transparentColor=Color.Black;
+		imgBlack = new mImage("is_black"+imagesize+".png"); imgBlack.transparentColor=Color.White;
 		pnlTools.addNext(btnBlack=new mButton(imgBlackNo)); 
 		btnBlack.setToolTip(MyLocale.getMsg(349,"Toggle Blacklist status"));
 		// Button 7: Notes
-		pnlTools.addNext(btnNotes=new mButton(imgNotes=new mImage("notes.gif"))); imgNotes.transparentColor=Color.DarkBlue;
+		pnlTools.addNext(btnNotes=new mButton(imgNotes=new mImage("notes"+imagesize+".gif"))); imgNotes.transparentColor=Color.DarkBlue;
 		btnNotes.setToolTip(MyLocale.getMsg(351,"Add/Edit notes"));
 		// Button 8: Date/time stamp
-		pnlTools.addLast(btnAddDateTime = new mButton(new mImage("date_time.png"))); 
+		pnlTools.addLast(btnAddDateTime = new mButton(new mImage("date_time"+imagesize+".png"))); 
 		btnAddDateTime.setToolTip(MyLocale.getMsg(350,"Add timestamp to notes"));
 		//showMap.modify(Control.Disabled,0);
 		pnlTools.stretchFirstRow=true;
