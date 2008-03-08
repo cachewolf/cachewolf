@@ -5,10 +5,11 @@ import ewe.graphics.*;
 import ewe.sys.*;
 import ewe.ui.*;
 
-public class AttributesSelector extends AttributesViewer {
+public class AttributesSelector extends Panel {
 	protected static int TILESIZE=22; // Here we always use the small icons thus tilesize=22
 	public long selectionMaskYes = 0;
 	public long selectionMaskNo = 0;
+	protected mLabel mInfo;
 
 	public AttributesSelector() {
 		//Rect r = new Rect(0,0,TILESIZE * ICONS_PER_ROW,TILESIZE * ICONROWS); // As on GC: 6 wide, 2 high

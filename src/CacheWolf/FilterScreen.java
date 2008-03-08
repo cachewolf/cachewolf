@@ -284,14 +284,17 @@ public class FilterScreen extends Form{
 		cp.addItem(pnlContainer,"Size",null);
 		cp.addItem(pnlSearch,"Search",null);
 		cp.addItem(pnlCacheAttributes,"Attr",null);
-		addLast(cp);
+		addLast(cp,VSTRETCH,FILL);
 
-		CellPanel btPanel = new CellPanel();
+		Panel btPanel = new Panel();
 		btPanel.addNext(btnCancel = new mButton(MyLocale.getMsg(708,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
 		btPanel.addNext(btnApply = new mButton(MyLocale.getMsg(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
 		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
 		addLast(btPanel.setTag(Control.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
-		setPreferredSize(240,260);
+		if (MyLocale.getScreenHeight()>240)
+			setPreferredSize(240,260);
+		else
+			setPreferredSize(240,240);
 		cp.select(3);
 	}
 	
