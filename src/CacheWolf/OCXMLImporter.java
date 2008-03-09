@@ -10,6 +10,7 @@ import ewe.ui.MessageBox;
 import ewe.util.*;
 import ewe.util.zip.*;
 import ewe.net.*;
+import ewe.sys.Double;
 
 /**
  *	Class to import Data from opencaching.de. 
@@ -159,6 +160,10 @@ public class OCXMLImporter extends MinML {
 		Vm.showWait(true);
 		String dist = importOpt.distanceInput.getText();
 		if (dist.length()== 0) return;
+		
+		Double distDouble = new Double();
+		distDouble.value = Common.parseDouble(dist);
+		dist = distDouble.toString(0, 3, 0);
 		//check, if distance is greater than before
 		if (Convert.toInt(dist) > Convert.toInt(profile.distOC) ||
 				pref.downloadmissingOC  ){

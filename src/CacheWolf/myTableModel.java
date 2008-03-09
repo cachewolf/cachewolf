@@ -318,7 +318,7 @@ public class myTableModel extends TableModel{
 				}
 				Vm.showWait(true);
 				Point a = tcControl.getSelectedCell(null);
-				if(a != null) ch = (CacheHolder)cacheDB.get(a.y);
+				if((a != null) && (a.y >= 0) && (a.y < cacheDB.size())) ch = (CacheHolder)cacheDB.get(a.y);
 				if (mappedCol == sortedBy) sortAsc=!sortAsc;
 				else sortAsc = false;
 				sortedBy = mappedCol;
