@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter>
+  <chapterinfo>
+    <date>2.1.2008</date>
+
+    <releaseinfo>In Bearbeitung</releaseinfo>
+
+    <edition>CacheWolf 1.0</edition>
+
+    <author>
+      <surname>Marc Schnitzler</surname>
+    </author>
+
+    <revhistory>
+      <revision>
+        <revnumber>0.1</revnumber>
+
+        <date>2. Januar 2008</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>Erster Entwurf</para>
+        </revdescription>
+      </revision>
+    </revhistory>
+  </chapterinfo>
+
+  <title>Die Menüs</title>
+
+  <section>
+    <title>Anwendung</title>
+
+    <para></para>
+
+    <section>
+      <title id="profil">Profil</title>
+
+      <para>Dieser Menüpunkt erlaubt die Anlage eines neuen Profils, oder das
+      aktuelle Profil zu wechseln. Bei <literal>Profil -&gt; Laden</literal>
+      wird die gleiche Maske gezeigt, wie beim Start von Cachewolf.</para>
+
+      <para>Profile sind im Prinzip nichts anderes, wie ein Verzeichnis
+      unterhalb des Basisverzeichnisses, dass Du beim ersten Start (siehe:
+      <xref linkend="start" />) von Cachewolf angelegt hast. In dem
+      Profilverzeichnis befindet sich eine Datei mit Namen index.xml. Diese
+      Datei enthält, neben der Liste der Caches, die in diesem Verzeichnis
+      gespeichert sind, Angaben zum gesetzten Zentrum und die
+      Filtereinstellungen (für dieses Profil).</para>
+    </section>
+
+    <section>
+      <title>Preferenzen</title>
+
+      <para>Mit diesem Menüpunkt gelangt man zur Einstellung der Präferenzen.
+      Dieses wurde hier: <xref linkend="editPrefs" /> beschrieben.</para>
+    </section>
+
+    <section>
+      <title>Zentrum</title>
+
+      <para>Unter diesem Menüpunkt kann das Zentrum gesetzt werden. Das
+      Zentrum wird in der Listenansicht (siehe: <xref linkend="liste" />) und
+      im Radar (siehe: <xref linkend="radar" />) genutzt, um Entfernungen zu
+      berechnen und anzuzeigen.</para>
+
+      <para>Nach der Menüauswahl erscheint das nachfolgende Fenster:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/zentrum.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>Die Koordinaten, die neben <literal>Aktuell</literal> stehen, sind
+      die Koordinaten, die Cachewolf gerade als Zentrumskoordinaten betrachtet
+      (offensichtlich). Die Koordinaten, die neben <literal>Profil</literal>
+      stehen sind gespeichert, d.h. beim nächsten Start von Cachewolf werden
+      diese Koordinaten als Zentrumskoordinaten gesetzt. Durch einen Klick auf
+      die Pfeile nach Unten, bzw. Oben kann man die Koordinaten hin und her
+      kopieren.</para>
+
+      <para>Durch einen Klick auf die Koordinaten selbst gelangt man zu
+      nachfolgendem Fenster:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/coordsparser.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para></para>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Import</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Export</title>
+
+      <para></para>
+
+      <section>
+        <title id="zu_garmin" xreflabel="Export zu Garmin">Zu Garmin</title>
+
+        <para>Dieser Menüeintrag ist nur dann Aktiv, wenn GPSBabel in dem
+        CacheWolf Verzeichnis gefunden wurde.</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Karten</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Speichern</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Speichern &amp; Beenden</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Beenden</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Suchen</title>
+
+    <para></para>
+
+    <section>
+      <title>Suchen</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Suche aufheben</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Filter</title>
+
+    <para></para>
+
+    <section>
+      <title>Anwenden</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Erzeugen</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Umkehren</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Aufheben</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Auswahl filtern</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Zeige Blacklist</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Cachetour</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Verwalten</title>
+
+    <para></para>
+
+    <section>
+      <title id="tbugs_verwalten">Travelbugs verwalten</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Über</title>
+
+    <para></para>
+  </section>
+</chapter>

@@ -40,13 +40,27 @@
           kopiert</para>
         </revdescription>
       </revision>
+
+      <revision>
+        <revnumber>0.??</revnumber>
+
+        <date>1. März 2008</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>xx% fertig.</para>
+        </revdescription>
+      </revision>
     </revhistory>
   </chapterinfo>
 
   <title>Der erste Start</title>
 
   <section>
-    <title>Programmstart</title>
+    <title id="start">Programmstart</title>
 
     <para>Wenn man CacheWolf zum ersten Mal startet, erscheint erst folgendes
     Bild:</para>
@@ -68,8 +82,8 @@
     <para>Dieser fordert dich nun auf, ein Basisverzeichnis auszuwählen für
     die noch kommenden Cache-Daten. Die Idee dahinter ist folgende: In diesem
     Verzeichnis kannst du beliebig viele Unterordner anlegen; jeder dieser
-    ordner ist ein eigenes Profil (kommt noch!) innerhalb des
-    Cachewolf.</para>
+    ordner ist ein eigenes Profil (siehe: <xref linkend="profil" />) innerhalb
+    des Cachewolf.</para>
 
     <tip>
       <para>Auf einem PocketPC kannst du dieses Verzeichnis auf die
@@ -89,13 +103,13 @@
 
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/cw_empty.jpg" />
+          <imagedata fileref="pics/cw_empty.jpg" width="600" />
         </imageobject>
       </inlinemediaobject></para>
 
     <para>Keine Angst, wir füllen dieses gleich...</para>
 
-    <para>Doch zuerst einmal wähle den Menüpunkt <literal>Anwendung -
+    <para>Doch zuerst einmal wähle den Menüpunkt <literal>Anwendung -&gt;
     Präferenzen</literal>, hier stellen wir nun ein paar grundsätzliche Dinge
     ein:</para>
 
@@ -109,6 +123,63 @@
             <imagedata fileref="pics/pref_1.jpg" />
           </imageobject>
         </inlinemediaobject></para>
+
+      <para>Dieser Tab enthält einige Einstellungen. Was die Einstellung für
+      Profile bewirkt, ist hier <xref linkend="start" /> schon beschrieben
+      worden. Wenn, der Hacken bei <literal>Profil auto. laden</literal>
+      gesetzt wurde, erscheint beim nächsten und alle weiteren Starts von
+      CacheWolf der Profil-Abfrageschirm</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/startup.jpg" />
+          </imageobject>
+        </inlinemediaobject> </para>
+
+      <para>nicht mehr.</para>
+
+      <para>Bei Browser kannst Du einen Link zu dem Browserprogramm Deiner
+      Wahl einfügen.</para>
+
+      <example>
+        <title>Link zum Browser</title>
+
+        <para>Der Internet Explorer unter Windows: <literal>C:\Documents and
+        Settings\USER\Application Data\Microsoft\Internet Explorer\Quick
+        Launch</literal></para>
+      </example>
+
+      <para>Unter <literal>Dein Alias</literal> und <literal>Passwt</literal>
+      kannst Du Deine Zugangsdaten zu <literal>geocaching.com</literal>
+      hinterlegen. <emphasis role="bold">Achtung!</emphasis> Dein Passwort
+      wird nicht verschlüsselt hinterlegt. Im Zweifel solltest Du Dein
+      Passwort hier nicht eingeben. CacheWolf wird beim nächsten einloggen
+      nach Deinem Passwort fragen.</para>
+
+      <para>Mit CacheWolf ist es möglich Caches direkt an Deinen GPS Empfänger
+      zu senden (siehe auch <xref linkend="zu_garmin" />). Unter
+      <literal>GPSBabel</literal> läßt sich der Port einstellen, der von
+      GPSBabel beim Export genutzt werden soll. Der gesetzte Hacken bei
+      Kurznamen sorgt dafür, das nicht die Waypointnamen an den Empfänger
+      geschickt werden sondern der etwas verkürzte Cachename (Biespiel: Grosse
+      Dose wird zu Grsse Dse).</para>
+
+      <para>Durch einen Klick auf den <literal>GPS</literal> Button wird der
+      Schirm zur Einstellung des GPS Empfängers angezeigt:</para>
+
+      <section>
+        <title>GPS Einstelungen</title>
+
+        <para></para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/GPS.jpg" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para></para>
+      </section>
     </section>
 
     <section>
@@ -119,6 +190,22 @@
             <imagedata fileref="pics/pref_2.jpg" />
           </imageobject>
         </inlinemediaobject></para>
+
+      <para>In diesem Tab kannst Du weitere Look &amp; Feel Einstellungen in
+      CacheWolf vornehmen.</para>
+
+      <para>Bei <literal>Font</literal> stellst Du die allgemeine
+      Schriftgrösse ein, die CacheWolf benutzt. Der Hacken bei <literal>PDA
+      hat Schliessen Button</literal> hat zur Folge, dass auf dem PDA rechts
+      oben im CacheWolf Fenster ein "X" erscheint. Klickst Du auf dieses "X"
+      wird CacheWolf beendet, und aus dem Speicher entfernt.</para>
+
+      <para>Der Hacken neben <literal>Menü oben</literal> setzt die
+      Menüeinträge im PDA oben, ansonsten erscheinen diese unten :-) Das Selbe
+      gilt für <literal>Tabs oben</literal>. Ein Hacken hier setzt die Tabs in
+      den Ansichten oben. Der Hacken bei <literal>Status</literal> bewirkt,
+      dass CacheWolf eine Statusleiste in der Listenansicht (siehe <xref
+      linkend="liste" />) anzeigt.</para>
     </section>
 
     <section>
@@ -129,6 +216,30 @@
             <imagedata fileref="pics/pref_3.jpg" />
           </imageobject>
         </inlinemediaobject></para>
+
+      <para>In diesem Tab können Proxydaten eingegeben werden. Durch setzen
+      des Hackens bei "Proxy verwenden" werden diese Daten beim nächsten
+      Zugriff ins Internet genutzt.</para>
+
+      <para>CacheWolf kennt aktuell drei Sprachen:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>DE = Deutsch,</para>
+        </listitem>
+
+        <listitem>
+          <para>EN = Englisch,</para>
+        </listitem>
+
+        <listitem>
+          <para>NL = Niederländisch.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Um die Sprache zu ändern muss das Zweibuchstabenkürzel eingegeben
+      werden. Nach einem Neustart wird die eingestellte Sprache
+      benutzt.</para>
     </section>
 
     <section>
@@ -139,16 +250,32 @@
             <imagedata fileref="pics/pref_4.jpg" />
           </imageobject>
         </inlinemediaobject></para>
+
+      <para>In diesem Tab kannst Du einstellen, welche Spalten, in welcher
+      Reihenfolge in der Listenansicht (siehe <xref linkend="liste" />)
+      angezeigt werden sollen.</para>
+
+      <tip>
+        <para>Weniger Spalten beschleunigen das Scrollen auf dem PDA.</para>
+      </tip>
     </section>
 
     <section>
       <title>Einstellung T-Bugs</title>
+
+      <para>CacheWolf besitzt eine integrierte Travelbug - Verwaltung (siehe
+      <xref linkend="tbugs_verwalten" />).</para>
+
+      <para>In diesem Tab kannst Du einstellen, welche Spalten, in welcher
+      Reihenfolge in der Travelbugtabelle angezeigt werden sollen.</para>
 
       <para><inlinemediaobject>
           <imageobject>
             <imagedata fileref="pics/pref_5.jpg" />
           </imageobject>
         </inlinemediaobject></para>
+
+      <para></para>
     </section>
   </section>
 
@@ -210,13 +337,9 @@
             Informationen. Dem kann aber abgeholfen werden: CacheWolf bietet
             die Möglichkeit, einzelne Caches aktualisieren zu können und hier
             werden auch die Additional Waypoints direkt von der Cacheseite
-            geladen, die keine Koordinaten haben.</para>
-
-            <para></para>
-          </note><warning>
-            <para>link zur popup beschreibung in der listenansicht. (in der
-            note)</para>
-          </warning></para>
+            geladen, die keine Koordinaten haben (siehe <xref
+            linkend="list_popup" />).</para>
+          </note></para>
       </section>
 
       <section>
