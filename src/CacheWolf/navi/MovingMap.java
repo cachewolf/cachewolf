@@ -974,15 +974,15 @@ public class MovingMap extends Form {
 		int h = (height != 0 ? height : pref.myAppHeight);
 		int x, y;
 		CWPoint cll;
-		
-		if (currentMap != null) {
-			cll = ScreenXY2LatLon(w/2, h/2);
-		} else {
+		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h && ll.isValid()) {
+			x = posCircleX; // posCircle is inside the screen
+			y = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn vorher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
 			cll = new CWPoint(ll);
-		}
-		x = w/2;
-		y = h/2;
-
+		} else { // when posCircle out of screen - use centre of screen as point which as to be included in the map
+			cll = ScreenXY2LatLon(w/2, h/2);
+			x = w/2;
+			y = h/2;
+		} 
 		Object[] ret = new Object[2];
 		ret[0] = cll;
 		ret[1] = new Rect(x, y, w, h);
@@ -995,10 +995,17 @@ public class MovingMap extends Form {
 	 * @return
 	 */
 	public void loadMoreDetailedMap(boolean betterOverview){
-		Object [] s = getRectForMapChange(posCircle.where);
-		CWPoint cll = (CWPoint) s[0]; 
-		Rect screen = (Rect) s[1]; 
-		//Rect screen = new Rect(posCircleX, posCircleY, (width != 0 ? width : pref.myAppWidth), (height != 0 ? height : pref.myAppHeight));
+		int w = (width != 0 ? width : pref.myAppWidth); // width == 0 happens if this routine is run before the windows is on the screen
+		int h = (height != 0 ? height : pref.myAppHeight);
+		Rect screen = new Rect(w/2, h/2, w, h);
+
+		CWPoint cll;
+		if (currentMap != null) {
+			cll = ScreenXY2LatLon(w/2, h/2);
+		} else {
+			cll = new CWPoint(posCircle.where);
+		}
+		
 		MapInfoObject m = maps.getMapChangeResolution(cll, screen, currentMap.scale / currentMap.zoomFactor, !betterOverview);
 		if (m != null) {
 			boolean saveGpsIgnStatus = dontUpdatePos;
