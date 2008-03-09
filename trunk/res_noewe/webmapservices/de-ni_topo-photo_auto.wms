@@ -17,6 +17,6 @@ ImageFormatUrlPart:	FORMAT=image/png
 BoundingBoxTopLeftWGS84:	N 53.99192 E 006.62073
 BoundingBoxButtomRightWGS84:	N 51.27316 E 011.58000
 MinScale:	0.267412
-MaxScale:	59899.495094
+MaxScale:	59899.495
 RecommendedScale:	5.0
 ImageFileExtension: .png

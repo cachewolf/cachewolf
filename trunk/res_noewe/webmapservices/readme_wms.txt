@@ -80,6 +80,8 @@ StylesUrlPart:	STYLES=
 ImageFormatUrlPart:	FORMAT=image/png
 # Limits of the service in WGS84 coordinates. 
 # You can use any format here, which is accepted by the input coordinates dialog in cachewolf
+# remark: more than 8 digits after the decimal seperator will cause the
+# program to not recognize it
 # taken from getCapabilieties answer: <BoundingBox SRS="EPSG:4326", dont forget to add "N"/"S" and "E"/"W"
 BoundingBoxTopLeftWGS84:	N 52.7691 E 5.673
 BoundingBoxButtomRightWGS84:	N 49.9944 E 10.142
@@ -88,8 +90,8 @@ BoundingBoxButtomRightWGS84:	N 49.9944 E 10.142
 # the map download dialog as that scale is measured vertically 
 # (multiply it ba sqrt(2) and you get the scale used here
 # taken from the getCapabilities request "<Layer><ScaleHint min="
-MinScale:	0.1795783591567183
-MaxScale:	5.611823723647454
+MinScale:	0.17957836
+MaxScale:	5.61182372
 # Plaes recommend a scale for this WMS. This scale will appear in the
 # map download dialog as default. Scale is measured in meters per pixel
 # vertical, so, multiply it by 1.41 (=sqrt(2)) to get the scale as measured
