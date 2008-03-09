@@ -1,7 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter>
+  <chapterinfo>
+    <date>7.9.2007</date>
+
+    <releaseinfo>In Bearbeitung</releaseinfo>
+
+    <edition>CacheWolf 1.0</edition>
+
+    <author>
+      <surname>Marc Schnitzler</surname>
+    </author>
+
+    <revhistory>
+      <revision>
+        <revnumber>0.1</revnumber>
+
+        <date>7. September 2007</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>Erster Entwurf</para>
+        </revdescription>
+      </revision>
+    </revhistory>
+  </chapterinfo>
+
   <title>Ansichten</title>
 
-  <xi:include href="ansichten_liste.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <section>
+    <title id="liste">Liste</title>
+
+    <para></para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/ansicht_liste.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para></para>
+
+    <section>
+      <title id="list_popup">Popup Menü in der Listenansicht</title>
+
+      <para>Durch einen "Rechtsklick" (oder Klick &amp; Hold auf dem PDA) mit
+      der Maus auf die Tabelle in der Listenansicht erscheint folgendes
+      Menü:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/list_popup.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Tourenplaner</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Details</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Beschreibung</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Bilder</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Hints &amp; Logs</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Löser</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Rechner</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Goto</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title id="radar">Radar</title>
+
+    <para></para>
+  </section>
 </chapter>
