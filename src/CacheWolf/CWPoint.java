@@ -75,7 +75,7 @@ public class CWPoint extends TrackPoint{
 	 * @param CWPoint LatLonPoint
 	 */
 
-	public CWPoint(CWPoint cwPoint){
+	public CWPoint(TrackPoint cwPoint){
 		super(cwPoint.latDec, cwPoint.lonDec);
 		this.utmValid = false;
 	}
@@ -152,7 +152,7 @@ public class CWPoint extends TrackPoint{
 	 * @param CWPoint cwPointt
 	 */
 
-	public void set (CWPoint cwPoint){
+	public void set (TrackPoint cwPoint){
 		this.latDec = cwPoint.latDec;
 		this.lonDec = cwPoint.lonDec;
 		this.utmValid = false;
@@ -329,7 +329,7 @@ public class CWPoint extends TrackPoint{
 	 * @param strNorthing Northing component
 	 */
 	public void set ( String strEasting, String strNorthing ){
-		GkPoint gk = new GkPoint(Common.parseDouble(strEasting), Common.parseDouble(strNorthing));
+		GkPoint gk = new GkPoint(Common.parseDouble(strEasting), Common.parseDouble(strNorthing), GkPoint.GERMAN_GK);
 		
 		this. latDec = TransformCoordinates.germanGkToWgs84(gk).latDec;
 		this. lonDec = TransformCoordinates.germanGkToWgs84(gk).lonDec;
@@ -491,7 +491,7 @@ public class CWPoint extends TrackPoint{
 	 * Get GK easting
 	 */
 	public String getGKEasting(int decimalplaces) {
-		double gkEasting = TransformCoordinates.wgs84ToGermanGk(this).getGkEasting();
+		double gkEasting = TransformCoordinates.wgs84ToGermanGk(this).getGkEasting(GkPoint.GERMAN_GK);
 		
 		ewe.sys.Double e = new ewe.sys.Double();
 		e.set(gkEasting);
@@ -500,11 +500,11 @@ public class CWPoint extends TrackPoint{
 	}
 	
 	public String getGermanGkCoordinates() {
-		return TransformCoordinates.wgs84ToGermanGk(this).toString(0, "R:", " H:");
+		return TransformCoordinates.wgs84ToGermanGk(this).toString(0, "R:", " H:", GkPoint.GERMAN_GK);
 	}
 
-	public String getGermanGkCoordinates(int decimalplaces, String pref, String seperator) {
-		return TransformCoordinates.wgs84ToGermanGk(this).toString(decimalplaces, pref, seperator);
+	public String getGermanGkCoordinates(int decimalplaces, String pref, String seperator, int region) {
+		return TransformCoordinates.wgs84ToGermanGk(this).toString(decimalplaces, pref, seperator, region);
 	}
 	
 	/**

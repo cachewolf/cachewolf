@@ -44,23 +44,23 @@ public class TransformCoordinatesProperties extends Properties {
 	 * @return
 	 */
 	public static TrackPoint fromWgs84(TrackPoint ll, int epsgCode) {
-		TrackPoint ret;
+		TrackPoint ret = null;
 		switch (epsgCode) {
 		case TransformCoordinates.EPSG_WGS84:
 		case TransformCoordinates.EPSG_ETRS89:
 			ret = ll;
-			break;
-		case TransformCoordinates.EPSG_GK2:
-		case TransformCoordinates.EPSG_GK3:
-		case TransformCoordinates.EPSG_GK4:
-		case TransformCoordinates.EPSG_GK5:
-			GkPoint xy = TransformCoordinates.wgs84ToGermanGk(ll, epsgCode);
-			ret = new CWPoint(xy.northing, xy.getGkEasting());
-			break;
-		default: throw new IllegalArgumentException(
-				MyLocale.getMsg(4923, "fromWgs84: EPSG code ") 
-				+ epsgCode 
-				+ MyLocale.getMsg(4921, " not supported"));
+		}
+		if (ret == null) {
+			int region = TransformCoordinates.getGkRegion(epsgCode);
+			if (region > 0) {
+				GkPoint xy = TransformCoordinates.wgs84ToGaussKrueger(ll, epsgCode);
+				ret = xy.toTrackPoint(region);
+			} else {
+				throw new IllegalArgumentException(
+						MyLocale.getMsg(4923, "fromWgs84: EPSG code ") 
+						+ epsgCode 
+						+ MyLocale.getMsg(4921, " not supported"));
+			}
 		}
 		return ret;
 	}
@@ -72,23 +72,24 @@ public class TransformCoordinatesProperties extends Properties {
 	 * @return
 	 */
 	public static CWPoint toWgs84(CWPoint p, int epsgCode) {
-		CWPoint ret;
+		CWPoint ret = null;
 		switch (epsgCode) {
 		case TransformCoordinates.EPSG_WGS84:
 		case TransformCoordinates.EPSG_ETRS89:
 			ret = p;
 			break;
-		case TransformCoordinates.EPSG_GK2:
-		case TransformCoordinates.EPSG_GK3:
-		case TransformCoordinates.EPSG_GK4:
-		case TransformCoordinates.EPSG_GK5:
-			GkPoint xy = new GkPoint(p.lonDec, p.latDec);
-			ret = TransformCoordinates.germanGkToWgs84(xy);
-			break;
-		default: throw new IllegalArgumentException(
-				MyLocale.getMsg(4924, "ToWgs84: EPSG code ")
-				+ epsgCode
-				+ MyLocale.getMsg(4921, " not supported"));
+		}
+		if (ret == null) {
+			int region = TransformCoordinates.getGkRegion(epsgCode);
+			if (region > 0) {
+				GkPoint xy = new GkPoint(p.lonDec, p.latDec, TransformCoordinates.getGkRegion(epsgCode));
+				ret = TransformCoordinates.GkToWgs84(xy, region);
+			} else {
+				throw new IllegalArgumentException(
+						MyLocale.getMsg(4924, "ToWgs84: EPSG code ")
+						+ epsgCode
+						+ MyLocale.getMsg(4921, " not supported"));
+			}
 		}
 		return ret;
 	}

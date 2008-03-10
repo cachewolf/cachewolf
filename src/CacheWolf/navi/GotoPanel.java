@@ -318,7 +318,23 @@ public class GotoPanel extends CellPanel {
 					if (action == miDD) {
 						mnuContextFormt.close();
 						currFormat = CWPoint.DD;
-					}
+						CWPoint wgs = new CWPoint(39, 11.1);
+						//wgs.set("N 40 26 14.80 E 17 49 32.58");
+						wgs.toString();
+						TransformCoordinates.wgs84ToGaussKrueger(wgs, 3003);
+						GkPoint t = new GkPoint();
+						t.set(1623333.54, 4793630.70, 6, 3);
+						wgs = TransformCoordinates.GkToWgs84(t, GkPoint.ITALIAN_GB); 
+						Vm.debug(wgs.toString());
+						Vm.debug(t.toString(0, "R: ", ", ", GkPoint.ITALIAN_GB));
+						Vm.debug(TransformCoordinates.wgs84ToGaussKrueger(wgs, 3003).toString(0, "R: ", ", ", GkPoint.ITALIAN_GB));
+
+						t.set(1628333.54, 4798630.70, 6, 3);
+						wgs = TransformCoordinates.GkToWgs84(t, GkPoint.ITALIAN_GB); 
+						Vm.debug(wgs.toString());
+						Vm.debug(t.toString(0, "R: ", ", ", GkPoint.ITALIAN_GB));
+						Vm.debug(TransformCoordinates.wgs84ToGaussKrueger(wgs, 3003).toString(0, "R: ", ", ", GkPoint.ITALIAN_GB));
+						}
 					if (action == miDMM) {
 						mnuContextFormt.close();
 						currFormat = CWPoint.DMM;
