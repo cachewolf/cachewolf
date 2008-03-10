@@ -35,11 +35,15 @@ public class TransformCoordinates {
 	public static final int EPSG_GK2 = 31466; 
 	public static final int EPSG_GK3 = 31467; 
 	public static final int EPSG_GK4 = 31468; 
-	public static final int EPSG_GK5 = 31469; 
+	public static final int EPSG_GK5 = 31469;
+	/** Gauß-Boaga, Monte Mario, Roma 1940, IT_ROMA1940 */
+	public static final int EPSG_ITALIAN_GB_EW1 = 3003; 
+	public static final int EPSG_ITALIAN_GB_EW2 = 3004;
 	
-	private static final Ellipsoid BESSEL = new Ellipsoid(6377397.155, 6356078.962);
-	public static final Ellipsoid WGS84 = new Ellipsoid(6378137.000, 6356752.314);
-
+	private static final Ellipsoid BESSEL = new Ellipsoid(6377397.155, 6356078.962, true);
+	public static final Ellipsoid WGS84 = new Ellipsoid(6378137.000, 6356752.314, true);
+	public static final Ellipsoid HAYFORD1909 = new Ellipsoid(6378388, 297, false);
+	
 	//	 taken from http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (North) to ETRS89
 	//	 they are the same as http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 4 = Deutschland Nord"
 	private static final TransformParameters GK_NORD_GERMANY_TO_WGS84 = new TransformParameters(590.5, 69.5, 411.6, 0.796, 0.052, 3.601, 8.300, false);
@@ -79,9 +83,23 @@ public class TransformCoordinates {
 	/** Use this for Germany if there is no more specific available. maximal deviations unknown */
 	public static final TransformParameters GK_GERMANY_2001 =  GK_GERMANY_2001_TO_WGS84;
 
+	/** The italian variant of Gauß-Krüger (Gauß-Boaga) */
+	// taken from http://crs.bkg.bund.de/crs-eu/ -> italy -> ROMA40 (change the sign of the rotation parameters!)
+	public static final TransformParameters GB_ITALIAN_PENINSULAR_TO_WGS84 =  new TransformParameters(-104.1, -49.1, -9.9, -0.971, 2.917, -0.714, -11.68, false);;
+	//static final Area ITALY_PENINSULAR = new Area(new CWPoint());
+	public static final TransformParameters GB_ITALIAN_SARDINIA_TO_WGS84 =  new TransformParameters(-168.6, -34.0, 38.6, 0.374, 0.679, 1.379, -9.48, false);;
+	static final Area ITALY_SARDINIA = new Area(new CWPoint(42, 6), new CWPoint(38, 11));
+	static final Area ITALY_SARDINIA_GK = new Area(wgs84ToGaussKrueger(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toTrackPoint(GkPoint.ITALIAN_GB),
+			wgs84ToGaussKrueger(ITALY_SARDINIA.buttomright, EPSG_ITALIAN_GB_EW1).toTrackPoint(GkPoint.ITALIAN_GB));
+
+	public static final TransformParameters GB_ITALIAN_SICILIA_TO_WGS84 =  new TransformParameters(-50.2, -50.4, 84.8, 0.690, 2.012, -0.459, -28.08, false);;
+	static final Area ITALY_SICILIA = new Area(new CWPoint(39, 12), new CWPoint(36.3, 15.6));
+	static final Area ITALY_SICILIA_GK = new Area(wgs84ToGaussKrueger(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toTrackPoint(GkPoint.ITALIAN_GB),
+			wgs84ToGaussKrueger(ITALY_SICILIA.buttomright, EPSG_ITALIAN_GB_EW2).toTrackPoint(GkPoint.ITALIAN_GB));
 
 	private TransformCoordinates() {} // as all members are static, so avoid instantiation
 
+	/* replaced by getGkRegion
 	public static boolean isGermanGk(int epsgcode) {
 		boolean ret = false;
 		switch (epsgcode) {
@@ -92,7 +110,27 @@ public class TransformCoordinates {
 		}
 		return ret;
 	}
-
+	*/
+	
+	/**
+	 * 
+	 * @param epsgcode
+	 * @return region code as needed for GkPoint, -1 if not Gauß-Krüger or not supported
+	 */
+	public static int getGkRegion(int epsgcode) {
+		int ret;
+		switch (epsgcode) {
+		case EPSG_GK2:
+		case EPSG_GK3:
+		case EPSG_GK4:
+		case EPSG_GK5: ret = GkPoint.GERMAN_GK; break;
+		case EPSG_ITALIAN_GB_EW1:
+		case EPSG_ITALIAN_GB_EW2: ret = GkPoint.ITALIAN_GB; break;
+		default: ret = -1;
+		}
+		return ret;
+	}
+	
 	public static boolean isSupported(int epsgcode) {
 		boolean ret = false;
 		switch (epsgcode) {
@@ -100,7 +138,10 @@ public class TransformCoordinates {
 		case EPSG_GK2:
 		case EPSG_GK3:
 		case EPSG_GK4:
-		case EPSG_GK5: ret = true; 
+		case EPSG_GK5: 
+		case EPSG_ITALIAN_GB_EW1:
+		case EPSG_ITALIAN_GB_EW2:
+			ret = true; 
 		}
 		return ret;
 	}
@@ -114,27 +155,54 @@ public class TransformCoordinates {
 	 */
 	public static CWPoint germanGkToWgs84(GkPoint gk) {
 		if (gk.northing <= 6089288.064 && gk.northing >= 5585291.767 && // these coordinates are transformed ones from the invers routine
-				( gk.getStripe() == 4 && gk.getGkEasting() >= 4404124.247 && gk.getGkEasting() <= 4679300.398) ||
-				( gk.getStripe() == 5 && gk.getGkEasting() >= 5211904.597 && gk.getGkEasting() <= 5466056.603)
-			) return gkToWgs84(gk, GK_GERMANY_2001);
-		if (gk.northing <= 6097247.910 && gk.northing >= 5800464.725 )return gkToWgs84(gk, GK_NORD_GERMANY);
-		if (gk.northing <= 5800464.725 && gk.northing >= 5577963.555 )return gkToWgs84(gk, GK_MID_GERMANY);
-		if (gk.northing <= 5577963.555 && gk.northing >= 5207294.028 )return gkToWgs84(gk, GK_SOUTH_GERMANY);
-		return  gkToWgs84(gk, GK_GERMANY_2001); 	//TODO use more lokalized transformparameters, which can be obtained from the Landesvermessungsämter
+				( gk.getStripe() == 4 && gk.getGkEasting(GkPoint.GERMAN_GK) >= 4404124.247 && gk.getGkEasting(GkPoint.GERMAN_GK) <= 4679300.398) ||
+				( gk.getStripe() == 5 && gk.getGkEasting(GkPoint.GERMAN_GK) >= 5211904.597 && gk.getGkEasting(GkPoint.GERMAN_GK) <= 5466056.603)
+			) return gkToWgs84(gk, BESSEL, GK_GERMANY_2001, 1);
+		if (gk.northing <= 6097247.910 && gk.northing >= 5800464.725 )return gkToWgs84(gk, BESSEL, GK_NORD_GERMANY, 1);
+		if (gk.northing <= 5800464.725 && gk.northing >= 5577963.555 )return gkToWgs84(gk, BESSEL, GK_MID_GERMANY, 1);
+		if (gk.northing <= 5577963.555 && gk.northing >= 5207294.028 )return gkToWgs84(gk, BESSEL, GK_SOUTH_GERMANY, 1);
+		return  gkToWgs84(gk, BESSEL, GK_GERMANY_2001, 1);
+	}
+	public static CWPoint italianGkToWgs84(GkPoint gk) {
+		if (ITALY_SARDINIA_GK.isInBound(gk.toTrackPoint(GkPoint.ITALIAN_GB))) return gkToWgs84(gk, HAYFORD1909, GB_ITALIAN_SARDINIA_TO_WGS84, 0.9996);
+		if (ITALY_SICILIA_GK.isInBound(gk.toTrackPoint(GkPoint.ITALIAN_GB))) return gkToWgs84(gk, HAYFORD1909, GB_ITALIAN_SICILIA_TO_WGS84, 0.9996);
+		else return gkToWgs84(gk, HAYFORD1909, GB_ITALIAN_PENINSULAR_TO_WGS84, 0.9996);
 	}
 
+	public static CWPoint GkToWgs84(GkPoint gk, int region) {
+		switch (region) {
+		case GkPoint.GERMAN_GK: return germanGkToWgs84(gk);
+		case GkPoint.ITALIAN_GB: return italianGkToWgs84(gk);
+		}
+		throw new IllegalArgumentException("GkToWgs84: region: " + region + " not supported");
+	}
+	
 	/**
 	 * This is the most abstract method: If you don't know 
 	 * when to use another one (if you are in need to do so, you will
 	 * know), use this one. This routine chooses automatically the best known
-	 * transformation parameters. Currently the maximam deviation is 1m for the
+	 * transformation parameters. Currently the maximal deviation is 1m for the
 	 * former BRD and 1.13m for the former GDR 
 	 * It also chooses automatically the correct stripe
 	 * @param gk
 	 * @return
 	 */
 	public static GkPoint wgs84ToGermanGk(CWPoint ll) {
-		return  wgs84ToGk(ll, getGermanGkTransformParameters(ll)); 	
+		return  wgs84ToGk(ll, GkPoint.GERMAN_GK); 	
+	}
+
+	/**
+	 * 
+	 * @param ll
+	 * @param region e.g. GkPoint.GERMAN_GK 
+	 * @return
+	 */
+	public static GkPoint wgs84ToGk(TrackPoint ll, int region) {
+		switch (region) {
+		case GkPoint.GERMAN_GK:	return  wgs84ToGk(ll, BESSEL, getGermanGkTransformParameters(ll), -1, 3, 0, 1); 	
+		case GkPoint.ITALIAN_GB:return  wgs84ToGk(ll, HAYFORD1909, getItalianGkTransformParameters(ll), -1, 6, 3, 0.9996); 	
+		default: throw new IllegalArgumentException("wgs84ToGk(CWPoint, int): region: " + region + "not supported");
+		}
 	}
 	
 	public static TransformParameters getGermanGkTransformParameters(TrackPoint ll) {
@@ -144,17 +212,12 @@ public class TransformCoordinates {
 		if (ll.latDec <= 50.33333334  && ll.latDec >= 47) return  GK_SOUTH_GERMANY;
 		return GK_GERMANY_2001;
 	}
-	
-	/**
-	 * Standard Gauß-Krüger: stripewidth = 3, stripe automatically chosen
-	 * @param ll
-	 * @param gk2wgs84
-	 * @return
-	 */
-	public static GkPoint wgs84ToGk(CWPoint ll, TransformParameters gk2wgs84) {
-		return wgs84ToGk(ll, gk2wgs84, -1, 3);
+
+	public static TransformParameters getItalianGkTransformParameters(TrackPoint ll) {
+		if (ITALY_SARDINIA.isInBound(ll)) return GB_ITALIAN_SARDINIA_TO_WGS84;
+		if (ITALY_SICILIA.isInBound(ll)) return GB_ITALIAN_SICILIA_TO_WGS84;
+		else return GB_ITALIAN_PENINSULAR_TO_WGS84;
 	}
-	
 	
 	/**
 	 * This function returns the position in the list of the given epsg code list
@@ -167,7 +230,7 @@ public class TransformCoordinates {
 		int stripe = gk.getStripe();
 		int i;
 		for (i = 0; i < epsgcodes.length; i++) {
-			if (getGermanGkStripeEpsg(epsgcodes[i]) == stripe) break;
+			if (getGkStripeEpsg(epsgcodes[i]) == stripe) break;
 		}
 		if (i >= epsgcodes.length) return -1;
 		return i;
@@ -175,7 +238,7 @@ public class TransformCoordinates {
 	
 	/**
 	 * Call this routine to convert from wgs84 into German Gauß-Krüger-Coordinates 
-	 * using the Gauß-Krüger Projection and the Bessel ellipsoid
+	 * using the Gauß-Krüger Projection and the ellipsoid forgk
 	 * If you want the Gauß-Krüger-Coordinates in a certain stripe, provide the
 	 * stripe and stripe width, otherwise set stripe to -1, then the stripe 
 	 * will be automatically determined
@@ -184,12 +247,14 @@ public class TransformCoordinates {
 	 * @param stripe stripe to force to, otherwise -1 will determine the stripe automatically
 	 * @return
 	 */ // TODO find out what about the Krassowski in former GDR?
-	public static GkPoint wgs84ToGk(TrackPoint ll, TransformParameters gk2wgs84, int stripe, int stripewidth) {
+	public static GkPoint wgs84ToGk(TrackPoint ll, Ellipsoid forgk, TransformParameters gk2wgs84, int stripe, int stripewidth, int degreeOfStripe0, double scale) {
 		XyzCoordinates wgsxyz = latLon2xyz(ll, 0, WGS84);
-		XyzCoordinates gkxyz = transform(wgsxyz, new TransformParameters(gk2wgs84, true));
-		CWPoint gkll = xyz2Latlon(gkxyz, BESSEL);
-		if (stripe == -1)	return projectLatlon2GkStripeauto(gkll, BESSEL, stripewidth);
-		else return projectLatlon2GK(gkll, BESSEL, stripewidth, stripe); 
+		XyzCoordinates gkxyz = transform(wgsxyz, new TransformParameters(gk2wgs84, true)); // TODO: remove this instantiation, because it is slow
+		CWPoint gkll = xyz2Latlon(gkxyz, forgk);
+		//ewe.sys.Vm.debug("wgs84-ll: " + new CWPoint(ll).toString(CWPoint.DMS));
+		//ewe.sys.Vm.debug("gkll: " + gkll.toString(CWPoint.DMS));
+		if (stripe == -1)	return projectLatlon2GkStripeauto(gkll, forgk, stripewidth, degreeOfStripe0, scale);
+		else return projectLatlon2GK(gkll, forgk, stripewidth, stripe, degreeOfStripe0, scale); 
 	}
 	/**
 	 * Call this method to convert any Gauß-Krüger coordinates into
@@ -198,33 +263,39 @@ public class TransformCoordinates {
 	 * @param GK2WGS84 Gauß-Krüger-to-WGS84 transformation parameters
 	 * @return
 	 */
-	public static CWPoint gkToWgs84(GkPoint gk, TransformParameters gk2wgs84) {
-		CWPoint gkll = gk2LatLon(gk, BESSEL, 3);
-		XyzCoordinates wgsxyz = latLon2xyz(gkll, 0, BESSEL);
+	public static CWPoint gkToWgs84(GkPoint gk, Ellipsoid gkon, TransformParameters gk2wgs84, double scale) {
+		CWPoint gkll = gk2LatLon(gk, gkon, scale);
+		XyzCoordinates wgsxyz = latLon2xyz(gkll, 0, gkon);
 		XyzCoordinates wgs84xyz = transform(wgsxyz, gk2wgs84);
 		CWPoint wgsll = xyz2Latlon(wgs84xyz, WGS84);
 		return wgsll;
 	}
 	
 	/**
-	 * this routine gives the correct german Gauß-Krüger coordinates
+	 * this routine gives the correct Gauß-Krüger coordinates
 	 * in the stripe specified by EPSG-Code
 	 * @param wgs84
 	 * @param epsgcode
 	 * @return
-	 * @throws IllegalArgumentException if EPSG code is not german GK or unsupported
+	 * @throws IllegalArgumentException if EPSG code is not supported GK or unsupported
 	 */
-	public static GkPoint wgs84ToGermanGk(TrackPoint wgs84, int epsgcode) throws IllegalArgumentException {
-		return wgs84ToGk(wgs84, getGermanGkTransformParameters(wgs84), getGermanGkStripeEpsg(epsgcode), 3);
+	public static GkPoint wgs84ToGaussKrueger(TrackPoint wgs84, int epsgcode) throws IllegalArgumentException {
+		switch (getGkRegion(epsgcode)) {
+		case GkPoint.GERMAN_GK: return wgs84ToGk(wgs84, BESSEL, getGermanGkTransformParameters(wgs84), getGkStripeEpsg(epsgcode), 3, 0, 1);
+		case GkPoint.ITALIAN_GB: return wgs84ToGk(wgs84, HAYFORD1909, getItalianGkTransformParameters(wgs84), getGkStripeEpsg(epsgcode), 6, 3, 0.9996);
+		}
+		throw new IllegalArgumentException("wgs84ToGaussKrueger: epsg-code: " + epsgcode + "not supported");
 	}
 	
-	private static int getGermanGkStripeEpsg(int epsgcode) {
+	private static int getGkStripeEpsg(int epsgcode) {
 		int stripe;
 		switch (epsgcode) {
 		case EPSG_GK2: stripe = 2; break;
 		case EPSG_GK3: stripe = 3; break;
 		case EPSG_GK4: stripe = 4; break;
 		case EPSG_GK5: stripe = 5; break;
+		case EPSG_ITALIAN_GB_EW1: stripe = 1; break;
+		case EPSG_ITALIAN_GB_EW2: stripe = 2; break;
 		default: throw new IllegalArgumentException("wgs84ToGermanGk: epsgcode: " + epsgcode + MyLocale.getMsg(4900, " is not a german Gauss-Krueger coordinate"));
 		}
 		return stripe; 
@@ -278,8 +349,8 @@ public class TransformCoordinates {
 		double T = Math.atan( from.z * ellipsoid.a / (s * ellipsoid.b));
 		double B = Math.atan( (from.z + e2 * Math.pow(ellipsoid.a, 2) / ellipsoid.b * Math.pow(Math.sin(T), 3) )/(s - e2 * ellipsoid.a * Math.pow(Math.cos(T),3)));
 		double L = Math.atan(from.y / from.x);
-		double N = ellipsoid.a / Math.sqrt(1 - e2 * Math.pow(Math.sin(B),2));
-		double h = s / Math.cos(B)- N;
+		// not used: double N = ellipsoid.a / Math.sqrt(1 - e2 * Math.pow(Math.sin(B),2));
+		// not used: double h = s / Math.cos(B)- N;
 		CWPoint ret = new CWPoint();
 		ret.latDec = B * 180/Math.PI;
 		ret.lonDec = L * 180/Math.PI;
@@ -287,15 +358,16 @@ public class TransformCoordinates {
 		return ret;
 	}
 
-	private static GkPoint projectLatlon2GkStripeauto(CWPoint latlon, Ellipsoid ellipsoid, int stripewidth) {
+	private static GkPoint projectLatlon2GkStripeauto(CWPoint latlon, Ellipsoid ellipsoid, int stripewidth, float degreeOfStripe0, double scale) {
 		if (!latlon.isValid()) throw new IllegalArgumentException("projectLatlon2GK: lat-lon not valid");
-		CWPoint ll = new CWPoint(latlon); // copy the point, in order to avoid modifying the parameter latlon
-		if (ll.lonDec < 0) ll.lonDec += 360;
+		double lonDec = latlon.lonDec;
+		lonDec -= degreeOfStripe0;
+		if (lonDec < 0) lonDec += 360;
 		int stripe;
 		for (stripe = 0; stripe <= 360; stripe += stripewidth) {
-			if (Math.abs(ll.lonDec - stripe) <= ((float)stripewidth) / 2) break;
+			if (Math.abs(lonDec - stripe) <= ((float)stripewidth) / 2) break;
 		}
-		return projectLatlon2GK(latlon, ellipsoid, stripewidth, stripe / stripewidth);
+		return projectLatlon2GK(latlon, ellipsoid, stripewidth, stripe / stripewidth, degreeOfStripe0, scale);
 	}
 
 	/**
@@ -304,9 +376,9 @@ public class TransformCoordinates {
 	 * @param ellipsoid
 	 * @return
 	 */
-	private static GkPoint projectLatlon2GK(CWPoint latlon, Ellipsoid ellipsoid, int stripewidth, int stripe) {
+	private static GkPoint projectLatlon2GK(CWPoint latlon, Ellipsoid ellipsoid, int stripewidth, int stripe, float degreeOfStripe0, double scale) {
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
-		double l = (latlon.lonDec - stripe * stripewidth) /180*Math.PI; // TODO see is int to double works
+		double l = (latlon.lonDec - degreeOfStripe0 - stripe * stripewidth) /180*Math.PI;
 		double B = latlon.latDec /180*Math.PI;
 		double N = ellipsoid.a/ Math.sqrt(1- e2 * Math.pow(Math.sin(B),2));
 		double nue = Math.sqrt(Math.pow(ellipsoid.a, 2) / Math.pow(ellipsoid.b, 2)* e2 * Math.pow(Math.cos(B), 2));
@@ -322,13 +394,13 @@ public class TransformCoordinates {
 
 		double h1 = t/2 * N * Math.pow(Math.cos(B), 2) * l*l;
 		double h2 = t/24 * N * Math.pow(Math.cos(B),4) * (5 - t*t + 9 * nue*nue + 4*Math.pow(nue, 4)) * Math.pow(l,4);
-		double northing = arclength + h1 + h2;
+		double northing = (arclength + h1 + h2) * scale;
 
 		double r1 = N * Math.cos(B) * l;
 		double r2 = N/6 * Math.pow(Math.cos(B), 3) * (1-t*t+nue*nue)*l*l*l;
-		double easting = r1 + r2;		//+ stripe / stripewidth * 1000000 + 500000;
+		double easting = (r1 + r2) * scale;		//+ stripe / stripewidth * 1000000 + 500000;
 		GkPoint ret = new GkPoint();
-		ret.set(easting, northing, stripe, stripewidth);
+		ret.set(easting, northing, stripe, stripewidth, degreeOfStripe0);
 		return ret;
 	}
 
@@ -339,9 +411,9 @@ public class TransformCoordinates {
 	 * @param stripewidth width in degree of the stripe of the Gauß-Krüger-System (3 degreee usually used in Gauß-Krüger, 6 degree usually in UTM)
 	 * @return
 	 */
-	private static CWPoint gk2LatLon (GkPoint gkp, Ellipsoid ellipsoid, int stripewidth) {
+	private static CWPoint gk2LatLon (GkPoint gkp, Ellipsoid ellipsoid, double scale) {
 		double L0 = gkp.getStripeLon(); // decimal degree of the center of the stripe
-		double y = gkp.getRawEasting();
+		double y = gkp.getRawEasting()/scale;
 
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
 		// note: n1-n6 are similiar to the n1-n6 in projectLatlon2GK, but some term have different factors
@@ -352,7 +424,7 @@ public class TransformCoordinates {
 		double n5 = Math.pow(n1, 3) * 151/96 - Math.pow(n1, 5) * 417/128;
 		double n6 = Math.pow(n1, 4) * 1097/512;
 
-		double B0 = gkp.northing / n2;
+		double B0 = (gkp.northing / scale) / n2;
 		double Bf = B0 + n3 * Math.sin(B0*2) + n4 * Math.sin(B0*4) + n5 * Math.sin(B0*6) + n6 * Math.sin(B0*8);
 
 		double Nf = ellipsoid.a / Math.sqrt (1- e2 * Math.pow(Math.sin(Bf), 2));
@@ -394,7 +466,7 @@ class TransformParameters {
 	/**
 	 * 
 	 * @param d shift in meter
-	 * @param exi rotation in seconds
+	 * @param exi rotation in seconds (change the sign of the values from http://crs.bkg.bund.de/crs-eu/ )
 	 * @param si deviation of scale multiplied by 10^6 
 	 * @param invert
 	 */

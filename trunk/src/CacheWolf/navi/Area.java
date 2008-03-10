@@ -19,7 +19,7 @@ public class Area {
 		 buttomright = new CWPoint();
 	 }
 
-	 public Area(CWPoint tl, CWPoint br){
+	 public Area(TrackPoint tl, TrackPoint br){
 		 topleft = new CWPoint(tl);
 		 buttomright = new CWPoint(br);
 	 }
