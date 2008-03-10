@@ -1,0 +1,46 @@
+# For an explanation of this file format see readme_wms.txt in this directory
+TakenFromUrl:	http://www.rete.toscana.it/sett/territorio/carto/repertorio/geoscopio_wms/
+GetCapabilitiesUrl:		http://web.rete.toscana.it/sgrwms/com.rt.wms.RTmap?ServiceName=_rt_wms_cartografia&service=WMS&request=GetCapabilities
+Name:	it.tosc Topo auto detail
+# taken from getCapabilieties answer: <HTTP><GET><OnlineResource xlink:href=
+# note: if it doesn't work, please try adding an "?" to the URL got from there
+MainUrl:	http://web.rete.toscana.it:80/sgrwms/com.rt.wms.RTmap/_rt_wms_cartografia?
+MapType: topo
+ServiceTypeUrlPart:	SERVICE=WMS 
+# taken from the getCapabilities request: <WMT_MS_Capabilities version=
+VersionUrlPart:	VERSION=1.1.0 
+CoordinateReferenceSystemCacheWolf:	3003
+# this usually will match the number above
+CoordinateReferenceSystemUrlPart:	SRS=EPSG:3003
+# Post not supported by Cachewolf --> dont change this
+RequestUrlPart:	REQUEST=GetMap
+# comma seperated (without spaces) list of layers to combine
+# all of supported layers you get from the getCapabilities request <Layer><Name>
+# these names are to be used. Special characters must be URL-encode
+LayersUrlPart:	LAYERS=rst25k_igm
+# if the WMS supports different rendering styles, select the one you need here
+# comma seperated (without spaces) list of style commands for map rendering (do not delete this item even if it is empty
+StylesUrlPart:	STYLES=Default,Default,Default,Default,Default,Default,Default,Default
+# format, dont forget to set ImageFileExtension accordingly
+# you get a list of supported image formats from getCapabilieties answer: <GetMap><Format>
+ImageFormatUrlPart:	FORMAT=image/png
+# Limits of the service in WGS84 coordinates. 
+# You can use any format here, which is accepted by the input coordinates dialog in cachewolf
+# taken from getCapabilieties answer: <BoundingBox SRS="EPSG:4326", dont forget to add "N"/"S" and "E"/"W"
+BoundingBoxTopLeftWGS84:	N 44.50080520 E 9.64254863
+BoundingBoxButtomRightWGS84:	N 42.16874557 E 12.46235998
+# scale range that the service supports in meters per pixel (measured diagonal)
+# Please don't wonder that they do mot match the scale given in
+# the map download dialog as that scale is measured vertically 
+# (multiply it ba sqrt(2) and you get the scale used here
+# taken from the getCapabilities request "<Layer><ScaleHint min="
+MinScale:	0
+MaxScale:	100000000000000000000
+# Plaese recommend a scale for this WMS. This scale will appear in the
+# map download dialog as default. Scale is measured in meters per pixel
+# vertical, so, multiply it by 1.41 (=sqrt(2)) to get the scale as measured
+# above in MinScale and MaxScale
+RecommendedScale:	5
+# set this according to ImageFormatUrlPart (must start with ".")
+ImageFileExtension: .png
+

@@ -45,7 +45,7 @@ ServiceTypeUrlPart:	SERVICE=WMS
 # taken from the getCapabilities request: <WMT_MS_Capabilities version=
 VersionUrlPart:	VERSION=1.1.0 
 # The EPSG-Code, supported by cachewolf: german gauß-krüger (31466, 31467, 31468, 
-# 31469) and WGS84 (4326)
+# 31469), italian Gauß-Boaga (3003 and 3004) and WGS84 (4326)
 # You get a list of supported coordinate systems from the WMS in the getCapabilieties 
 # answer under <Layer><SRS> or <CRS>
 # Plases feel free to ask for another coordinate system to be supported by cachewolf 
