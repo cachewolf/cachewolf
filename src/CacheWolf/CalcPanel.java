@@ -86,7 +86,7 @@ public class CalcPanel extends CellPanel {
 			inpBearing.setPreferredSize(fm.getTextWidth("99999999"),fm.getHeight()*4/3);
 			inpDistance.setPreferredSize(fm.getTextWidth("99999999"),fm.getHeight()*4/3);
 		}
-		BottomP.addLast(chcDistUnit = new mChoice(new String[]{"m", "km"},0),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST)).setTag(CellConstants.INSETS,new ewe.fx.Insets(0,2,0,0));
+		BottomP.addLast(chcDistUnit = new mChoice(new String[]{"m", "km", MyLocale.getMsg(1407,"steps"), MyLocale.getMsg(1408,"feet"), MyLocale.getMsg(1409,"yards"), MyLocale.getMsg(1410,"miles")},0),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST)).setTag(CellConstants.INSETS,new ewe.fx.Insets(0,2,0,0));
 		chcDistUnit.setInt(0);
 		
 		// Buttons for calc and save
@@ -110,12 +110,38 @@ public class CalcPanel extends CellPanel {
 		coords.set(btnChangeLatLon.getText());
 		currFormat = chkFormat.getSelectedIndex();
 		degKm.degrees = Common.parseDouble(inpBearing.getText());
-		if (chcDistUnit.getInt() == 0)
+		
+		double rawDistance = Common.parseDouble(inpDistance.getText());
+		switch ( chcDistUnit.getInt() ) {
+		case 0:
 			// meter
-			degKm.distance = Common.parseDouble(inpDistance.getText()) / 1000;
-		else 
+			degKm.distance = rawDistance / 1000.0;
+			break;
+		case 1:
 			// kilometer
-			degKm.distance = Common.parseDouble(inpDistance.getText());
+			degKm.distance = rawDistance;
+			break;
+		case 2:
+			// steps
+			degKm.distance = rawDistance * 0.00063;
+			break;
+		case 3:
+			// feet
+			degKm.distance = rawDistance * 0.0003048;
+			break;
+		case 4:
+			// yards
+			degKm.distance = rawDistance * 0.0009144;
+			break;
+		case 5:
+			// miles
+			degKm.distance = rawDistance * 1.609344;
+			break;
+		default:
+			// meter
+			degKm.distance = rawDistance / 1000.0;
+			break;
+		}
 		return;
 	}
 	
