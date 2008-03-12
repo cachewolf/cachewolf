@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter>
   <chapterinfo>
-    <date>7.9.2007</date>
+    <title>Der erste Start</title>
 
-    <releaseinfo>In Bearbeitung</releaseinfo>
+    <date>12.3.2008</date>
 
-    <edition>CacheWolf 1.0</edition>
+    <releaseinfo>CacheWolf 1.0</releaseinfo>
 
     <author>
       <surname>Marc Schnitzler</surname>
@@ -42,16 +42,16 @@
       </revision>
 
       <revision>
-        <revnumber>0.??</revnumber>
+        <revnumber>0.99</revnumber>
 
-        <date>1. März 2008</date>
+        <date>12. März 2008</date>
 
         <author>
           <surname>Marc Schnitzler</surname>
         </author>
 
         <revdescription>
-          <para>xx% fertig.</para>
+          <para>Kapitel fertig.</para>
         </revdescription>
       </revision>
     </revhistory>
@@ -134,7 +134,7 @@
           <imageobject>
             <imagedata fileref="pics/startup.jpg" />
           </imageobject>
-        </inlinemediaobject> </para>
+        </inlinemediaobject></para>
 
       <para>nicht mehr.</para>
 
@@ -178,7 +178,14 @@
             </imageobject>
           </inlinemediaobject></para>
 
-        <para></para>
+        <para>Am besten jetzt auf <literal>Update Ports</literal> klicken.
+        Damit ermittelt CacheWolf welche Ports auf dem PDA zur verfügung
+        stehen. Danach den Port des GPS Empfängers einstellen. Bei
+        <literal>Baud</literal> die Geschwindigkeit des Empfängers einstellen;
+        4800 passt in der Regel. Durch einen Klick auf <literal>Test</literal>
+        kannst Du überprüfen, ob eine Verbindung zum Empfänger besteht. Vorher
+        bitte sicherstellen, dass der Empfänger angeschaltet ist. Mit
+        <literal>OK</literal> die Einstellungen bestätigen.</para>
       </section>
     </section>
 
@@ -349,18 +356,35 @@
         "Importiere GPX". In den LOC-Dateien sind allerdings sehr wenig
         Informationen enthalten, insbesondere fehlt die Beschreibung des
         Caches.</para>
-
-        <warning>
-          <para>nicht ausführlich genug</para>
-        </warning>
       </section>
 
       <section>
         <title>Direktes herunterladen (spidern)</title>
 
-        <para><warning>
-            <para>Spider beschreiben</para>
-          </warning></para>
+        <para>Durch anwählen von <literal>Anwendung -&gt; Import -&gt; Spider
+        von geocaching.com</literal> wirst Du zuerst aufgefordert Dein
+        Passwort einzugeben. Dies ist das gleiche Passwort, wie Du für Dein
+        Account bei geocaching.com nutzt. Dein Alias hast Du ja bereits in den
+        Präferenzen eingetragen. Nach der Eingabe Deines Passwortes loggt sich
+        CacheWolf auf der geocaching.com Homepage ein und präsentiert dann die
+        SPideroptionen:</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/spider_gc.jpg" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Unter <literal>max. Abstand</literal> wird die Entfernung zum
+        aktuellem Zentrum eingestellt (siehe <xref linkend="zentrum" />).
+        Cachewolf wird alle Caches im Umkreis von dem Zentrum herunterladen.
+        Wird der Hacken bei <literal>Bilder downloaden</literal> gesetzt, wird
+        Cachewolf die Bilder in der Cachebeschreibung als auch die
+        Spoilerbilder herunterladen. </para>
+
+        <para>Mit <literal>OK</literal> wird der Spider gestartet. Je nach
+        Entfernung und Cachedichte wird das Spidern nun einige Zeit in
+        Anspruch nehmen.</para>
       </section>
     </section>
 
@@ -399,10 +423,11 @@
           (je nach Option mit allen in der Cachbeschreibung anzeigezeigten
           Bildern heruntergeladen und automatisch importiert. Dabei merkt sich
           CacheWolf automatisch das Datum, an dem zu letzt heruntergeladen
-          wurde. Bei einem erneuten Aufruf mit dem gleichen Zentrum und dem
-          gleichen Abstand werden dann nur die Hinzufügungen und Änderungen
-          heruntergeladen und eingelesen. Diese Funktion ist bei Opencaching
-          kostenlos, selbst eine Anmeldung ist dort nicht erforderlich.</para>
+          wurde. Bei einem erneuten Aufruf mit dem gleichen Zentrum (siehe
+          <xref linkend="zentrum" />) und dem gleichen Abstand werden dann nur
+          die Hinzufügungen und Änderungen heruntergeladen und eingelesen.
+          Diese Funktion ist bei Opencaching kostenlos, selbst eine Anmeldung
+          ist dort nicht erforderlich.</para>
         </listitem>
       </orderedlist>
     </section>
