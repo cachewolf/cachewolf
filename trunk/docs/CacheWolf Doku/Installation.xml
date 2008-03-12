@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter>
   <chapterinfo>
-    <date>7.9.2007</date>
+    <title>Installation</title>
 
-    <releaseinfo>In Bearbeitung</releaseinfo>
+    <date>12.3.2008</date>
 
-    <edition>CacheWolf 1.0</edition>
+    <releaseinfo>CacheWolf 1.0</releaseinfo>
 
     <author>
       <surname>Marc Schnitzler</surname>
@@ -23,6 +23,20 @@
 
         <revdescription>
           <para>Erster Entwurf, kopiert www.cachewolf.de</para>
+        </revdescription>
+      </revision>
+
+      <revision>
+        <revnumber>0.99</revnumber>
+
+        <date>12.3.2008</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>Kapitel fertig</para>
         </revdescription>
       </revision>
     </revhistory>

@@ -59,7 +59,7 @@
     </section>
 
     <section>
-      <title>Zentrum</title>
+      <title id="zentrum">Zentrum</title>
 
       <para>Unter diesem Menüpunkt kann das Zentrum gesetzt werden. Das
       Zentrum wird in der Listenansicht (siehe: <xref linkend="liste" />) und
