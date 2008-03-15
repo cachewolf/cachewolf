@@ -97,6 +97,7 @@ public class HTMLExporter{
 					varParams.put("BEARING", holder.bearing);
 					varParams.put("LATLON", holder.LatLon);
 					varParams.put("STATUS", holder.CacheStatus);
+					varParams.put("DATE", holder.DateHidden);
 					cache_index.add(varParams);
 					//We can generate the individual page here!
 					try{
@@ -112,6 +113,7 @@ public class HTMLExporter{
 						page_tpl.setParam("BEARING", holder.bearing);
 						page_tpl.setParam("LATLON", holder.LatLon);
 						page_tpl.setParam("STATUS", holder.CacheStatus);
+						page_tpl.setParam("DATE", holder.DateHidden);
 						if (holder.is_HTML)
 							page_tpl.setParam("DESCRIPTION", modifyLongDesc(holder,targetDir));
 						else {
