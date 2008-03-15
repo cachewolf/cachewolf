@@ -36,23 +36,24 @@ public class DescriptionPanel extends CellPanel{
 	*/
 	String description = null;
 	public void setText(CacheHolderDetail cache){
+		boolean isHtml=cache.is_HTML;
 		if (currCache == cache) return;
 		int scrollto = 0;
 		if (cache.hasSameMainCache(currCache)) scrollto = disp.getTopLine();
 		if (cache == null) desc = "";
 		else {
 			if (cache.isAddiWpt()) {
+				isHtml=true;
 				if (cache.LongDescription != null && cache.LongDescription.length() > 0)
 					 desc = cache.LongDescription + "<hr>\n"+cache.mainCache.getCacheDetails(true).LongDescription;
 				else desc = cache.mainCache.getCacheDetails(true).LongDescription;
-
 			} else // not an addi-wpt
 				desc = cache.LongDescription;
 		}
 		if (!desc.equals(description)) {
 			//disp.getDecoderProperties().setBoolean("allowImages",true);
 			Vm.showWait(true); 
-			if (cache.is_HTML) {
+			if (isHtml) {
 				if (Global.getPref().descShowImg) {
 					Vector Images;
 					if (cache.isAddiWpt()) {
