@@ -2,6 +2,7 @@ package CacheWolf;
 
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
+import ewe.fx.Color;
 import ewe.io.*;
 import ewe.sys.*;
 import ewe.sys.Double;
@@ -87,6 +88,7 @@ public class GPXImporter extends MinML {
 */	
 	public void doIt(int how){
 		Filter flt = new Filter();
+		boolean wasFiltered = (profile.filterActive==Filter.FILTER_ACTIVE);
 		flt.clearFilter();
 		try{
 			ewe.io.Reader r;
@@ -146,6 +148,10 @@ public class GPXImporter extends MinML {
 				e.printStackTrace();
 				Vm.showWait(false);
 			}
+		if(wasFiltered){
+			flt.setFilter();
+			flt.doFilter();
+		}
 	}
 	public void startElement(String name, AttributeList atts){
 		strBuf=new StringBuffer(300);
