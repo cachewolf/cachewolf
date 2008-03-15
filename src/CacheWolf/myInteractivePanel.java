@@ -40,6 +40,7 @@ public class myInteractivePanel extends InteractivePanel{
 			String fn = new String();
 			if(which instanceof RadarPanelImage){
 				RadarPanelImage ich = (RadarPanelImage)which;
+				Global.mainTab.clearDetails();				
 				mt.selectAndActive(ich.rownum);
 			}
 		} else {

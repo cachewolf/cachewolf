@@ -156,8 +156,10 @@ public class MainTab extends mTabbedPanel {
 			if(detP.isDirty()) {
 				cacheDirty=true;
 				detP.saveDirtyWaypoint();
-				tbP.myMod.updateRows();// This sorts the waypoint (if it is new) into the right position
-				tbP.selectRow(profile.getCacheIndex(detP.thisCache.wayPoint));
+				if (detP.isNew()) {
+					tbP.myMod.updateRows();// This sorts the waypoint (if it is new) into the right position
+					tbP.selectRow(profile.getCacheIndex(detP.thisCache.wayPoint));
+				}
 				//was tbP.refreshTable();
 				tbP.tc.update(true); // Update and repaint
 				if (statBar!=null) statBar.updateDisplay();

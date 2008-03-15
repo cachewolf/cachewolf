@@ -192,8 +192,6 @@ public class myTableControl extends TableControl{
 	}
 	
 	public void onEvent(Event ev) {
-		// If we changed the cache (e.g. via radar panel, we have to clear the details */
-		if (ev instanceof TableEvent) Global.mainTab.clearDetails();
 		if (ev instanceof PenEvent && (ev.type == PenEvent.PEN_DOWN) ){
 			Global.mainTab.tbP.myMod.penEventModifiers=((PenEvent)ev).modifiers;
 	    } 

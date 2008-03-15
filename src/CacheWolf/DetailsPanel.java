@@ -150,6 +150,10 @@ public class DetailsPanel extends CellPanel{
 		isNewWpt = isnew;
 	}
 	
+	public boolean isNew() {
+		return isNewWpt;
+	}
+	
 	public boolean isDirty() {
 		return dirty_notes || dirty_details || isNewWpt;
 	}
