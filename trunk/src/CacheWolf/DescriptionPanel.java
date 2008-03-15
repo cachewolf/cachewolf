@@ -34,23 +34,25 @@ public class DescriptionPanel extends CellPanel{
 	/**
 	*	Set the text to display. Text should be HTML formated.
 	*/
-	String description = null;
+	//String description = null;
 	public void setText(CacheHolderDetail cache){
 		boolean isHtml=cache.is_HTML;
-		if (currCache == cache) return;
+		//if (currCache == cache) return;
 		int scrollto = 0;
 		if (cache.hasSameMainCache(currCache)) scrollto = disp.getTopLine();
 		if (cache == null) desc = "";
 		else {
 			if (cache.isAddiWpt()) {
-				isHtml=true;
+				CacheHolderDetail mainCache=cache.mainCache.getCacheDetails(true);
+				isHtml=mainCache.is_HTML;
 				if (cache.LongDescription != null && cache.LongDescription.length() > 0)
-					 desc = cache.LongDescription + "<hr>\n"+cache.mainCache.getCacheDetails(true).LongDescription;
-				else desc = cache.mainCache.getCacheDetails(true).LongDescription;
+					 desc = cache.LongDescription + (isHtml?"<hr>\n":"\n")+mainCache.LongDescription;
+				else 
+					desc = mainCache.LongDescription;
 			} else // not an addi-wpt
 				desc = cache.LongDescription;
 		}
-		if (!desc.equals(description)) {
+		//if (!desc.equals(description)) {
 			//disp.getDecoderProperties().setBoolean("allowImages",true);
 			Vm.showWait(true); 
 			if (isHtml) {
@@ -97,12 +99,15 @@ public class DescriptionPanel extends CellPanel{
 				disp.endHtml();
 				
 			}
-			else
+			else {
+				disp.startHtml(); // To clear the old HTML display
+				disp.endHtml();
 				disp.setPlainText(desc);
+			}
 			disp.scrollTo(scrollto,false);
-			description = desc;
+			//description = desc;
 			Vm.showWait(false);
-		}
+		//}
 		currCache = cache;
 	}
 	

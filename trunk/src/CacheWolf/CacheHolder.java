@@ -425,7 +425,14 @@ public class CacheHolder {
 		if ((!this.isAddiWpt()) && (!ch.isAddiWpt())) return false;
 		CacheHolder main1, main2;
 		if (this.isAddiWpt()) main1 = this.mainCache;  else main1 = this;
-		if (ch.isAddiWpt()) main2 = ch.mainCache; else main2 = ch; 
+		if (ch instanceof CacheHolderDetail) {
+			if (ch.isAddiWpt()) 
+				main2=ch.mainCache;
+			else 
+				return main1.wayPoint.equals(ch.wayPoint);
+		} else { // ch instanceof CacheHolder 
+			if (ch.isAddiWpt()) main2 = ch.mainCache; else main2 = ch; 
+		}
 		return main1 == main2;
 	}
 
