@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import utils.FileBugfix;
 import ewe.ui.*;
 import ewe.io.*;
 import ewe.fx.*;
@@ -14,9 +15,9 @@ import ewe.sys.*;
 */
 public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
-	mChoice NS, EW;
+	mChoice NS, EW, inpLanguage;
 	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
-	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword,inpLanguage;
+	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
 	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort,chkProxyActive, chkDescShowImg;
 	mTabbedPanel mTab;
@@ -192,9 +193,19 @@ public class PreferencesScreen extends Form {
 		chkProxyActive.setState(pref.proxyActive);
 		pnlMore.addLast(pnlProxy,HSTRETCH,HFILL);
 		pnlMore.addNext(new mLabel(MyLocale.getMsg(592,"Language (needs restart)")),DONTSTRETCH,DONTFILL|WEST);
-		pnlMore.addLast(inpLanguage=new mInput(MyLocale.language),DONTSTRETCH,DONTFILL|WEST);
-		inpLanguage.setPreferredSize(20,-1);
-		inpLanguage.setToolTip(MyLocale.getMsg(591,""));
+		String[] tmp = (new FileBugfix(FileBugfix.getProgramDirectory()+"/languages").list("*.cfg", File.LIST_FILES_ONLY)); //"*.xyz" doesn't work on some systems -> use FileBugFix
+		if (tmp == null) tmp = new String[0];
+		String [] langs = new String[tmp.length +1];
+		langs[0] = "auto";
+		int curlang = 0;
+		for (int i = 0; i < tmp.length; i++) {
+			langs[i+1] = tmp[i].substring(0, tmp[i].lastIndexOf('.'));
+			if (langs[i+1].equalsIgnoreCase(MyLocale.language)) curlang = i+1 ;
+		}
+		//ewe.sys.Vm.copyArray(tmp, 0, langs, 1, tmp.length);
+		pnlMore.addLast(inpLanguage=new mChoice(langs, curlang),DONTSTRETCH,DONTFILL|WEST);
+		//inpLanguage.setPreferredSize(20,-1);
+		inpLanguage.setToolTip(MyLocale.getMsg(591,"Select \"auto\" for system language or select your preferred language, e.g. DE or EN"));
 		
 		/////////////////////////////////////////////////////////
 		// Fourth/Fifth panel - Listview and Travelbugs
