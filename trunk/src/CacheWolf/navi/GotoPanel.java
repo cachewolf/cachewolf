@@ -295,15 +295,25 @@ public class GotoPanel extends CellPanel {
 	}
 	
 	public void switchToMovingMap() {
-		CWPoint centerTo;
+		CWPoint centerTo = null;
 		if (myNavigation.isGpsPosValid()) centerTo = new CWPoint(myNavigation.gpsPos); // set gps-pos if gps is on
 		else {
 			// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
 			//centerTo = new CWPoint(myNavigation.destination);
 			if (myNavigation.destination.isValid())	centerTo = new CWPoint(myNavigation.destination);
-			else centerTo = new CWPoint(pref.curCentrePt); // if not goto-point defined move map to centere point
-		}  
-		mainT.SwitchToMovingMap(centerTo, false);
+			else {
+				if (mainT.ch != null && mainT.ch.pos.isValid()) centerTo = new CWPoint(mainT.ch.pos);
+				else {
+					if (pref.curCentrePt.isValid()) centerTo = new CWPoint(pref.curCentrePt);
+					else {
+					}
+				}
+			}
+		}
+		if (centerTo != null && centerTo.isValid())
+			mainT.SwitchToMovingMap(centerTo, false);
+		else
+		(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS"), MessageBox.OKB)).execute(); 
 	}
 	
 	/**

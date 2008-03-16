@@ -164,9 +164,11 @@ public class MovingMap extends Form {
 		if (mmp.mapImage != null) mmp.mapImage.screenDimChanged(); 
 		if (posCircle != null) posCircle.screenDimChanged();
 		if (tracks != null) rebuildOverlaySet();
-		for (int i = symbols.size() -1; i >= 0; i-- ) {
-			((MapSymbol)symbols.get(i)).screenDimChanged();
-		}
+		if (symbols != null) { // TODO: see if the rest of the code works with symbols = null
+			for (int i = symbols.size() -1; i >= 0; i-- ) {
+				((MapSymbol)symbols.get(i)).screenDimChanged();
+			}
+}
 	}
 
 	boolean loadingMapList = false;
