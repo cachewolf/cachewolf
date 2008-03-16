@@ -27,6 +27,7 @@ package CacheWolf;
 import ewe.net.*;
 import ewe.io.*;
 import ewe.sys.*;
+import ewe.sys.Double;
 import ewe.util.*;
 import com.stevesoft.ewe_pat.*;
 import ewe.ui.*;
@@ -299,12 +300,18 @@ public class SpiderGC{
 			if(login() != Form.IDOK) return;
 		}
 
-		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES);
-		options.distanceInput.setText("");
+		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
 		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
 		String dist = options.distanceInput.getText();
 		if (dist.length()== 0) return;
 		distance = Common.parseDouble(dist);
+		
+		//save last radius to profile
+		Double distDouble = new Double();
+		distDouble.value = distance;
+		dist = distDouble.toString(0, 1, 0).replace(',', '.');
+		profile.distGC = dist;
+
 		boolean doNotgetFound = options.foundCheckBox.getState();
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);

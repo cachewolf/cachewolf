@@ -163,7 +163,7 @@ public class OCXMLImporter extends MinML {
 		
 		Double distDouble = new Double();
 		distDouble.value = Common.parseDouble(dist);
-		dist = distDouble.toString(0, 3, 0);
+		dist = distDouble.toString(0, 1, 0).replace(',', '.');
 		//check, if distance is greater than before
 		if (Convert.toInt(dist) > Convert.toInt(profile.distOC) ||
 				pref.downloadmissingOC  ){

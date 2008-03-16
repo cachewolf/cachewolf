@@ -85,6 +85,7 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addNext(distLbl = new mLabel(MyLocale.getMsg(1810,"Within a rectangle of:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		distanceInput = new mInput();
 		int tmp = Convert.toInt((Global.getProfile().distOC));
+		tmp = java.lang.Math.max(tmp, Convert.toInt((Global.getProfile().distGC)));
 		distanceInput.setText(Convert.toString((tmp > 0 ? tmp : 15)));
 		pnlTiles.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlTiles.addLast(km);
