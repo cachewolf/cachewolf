@@ -46,53 +46,53 @@ public class TransformCoordinates {
 	
 	//	 taken from http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (North) to ETRS89
 	//	 they are the same as http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 4 = Deutschland Nord"
-	private static final TransformParameters GK_NORD_GERMANY_TO_WGS84 = new TransformParameters(590.5, 69.5, 411.6, 0.796, 0.052, 3.601, 8.300, false);
+	private static final TransformParameters GK_NORD_GERMANY_TO_WGS84 = new TransformParameters(590.5, 69.5, 411.6, 0.796, 0.052, 3.601, 8.300);
 	/** use this for nord Germany, maximum deviation sub meter, valid in the former BRD (west germany) in 52°20' N ... 55°00' N */
 	public static final TransformParameters GK_NORD_GERMANY =  GK_NORD_GERMANY_TO_WGS84; 
 
 	//	 taken from http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (Middle) to ETRS89
-	private static final TransformParameters GK_MID_GERMANY_TO_WGS84 = new TransformParameters(584.8, 67.0, 400.3, -0.105, -0.013, 2.378, 10.290, false);
+	private static final TransformParameters GK_MID_GERMANY_TO_WGS84 = new TransformParameters(584.8, 67.0, 400.3, -0.105, -0.013, 2.378, 10.290);
 	/** use this for mid-Germany, maximum deviation sub meter, valid in the former BRD (west germany) in 50°20' N ... 52°20' N */
 	public static final TransformParameters GK_MID_GERMANY =  GK_MID_GERMANY_TO_WGS84; 
 
 	//	 taken from http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (South) to ETRS89
-	private static final TransformParameters GK_SOUTH_GERMANY_TO_WGS84 = new TransformParameters(597.1, 71.4, 412.1, -0.894, -0.068, 1.563, 7.580, false);
+	private static final TransformParameters GK_SOUTH_GERMANY_TO_WGS84 = new TransformParameters(597.1, 71.4, 412.1, -0.894, -0.068, 1.563, 7.580);
 	/** use this for south Germany, maximum deviation sub meter, valid in the former BRD (west germany) in 47°00' N ... 50°20' N */
 	public static final TransformParameters GK_SOUTH_GERMANY =  GK_SOUTH_GERMANY_TO_WGS84; 
 
 	public static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637)); 
 	
 	// taken from http://www.lverma.nrw.de/produkte/druckschriften/verwaltungsvorschriften/images/gps/TrafopsNRW.pdf for NRW this transform has deviations lower than 34cm.
-	private static final TransformParameters GK_NRW_GERMANY_TO_WGS84 = new TransformParameters(566.1, 116.3, 390.1, -1.11, -0.24, 3.76, 12.6, false);
+	private static final TransformParameters GK_NRW_GERMANY_TO_WGS84 = new TransformParameters(566.1, 116.3, 390.1, -1.11, -0.24, 3.76, 12.6);
 	/** use this for NRW in Germany. Deviations less than 34 cm */
 	public static final TransformParameters GK_NRW_GERMANY =  GK_NRW_GERMANY_TO_WGS84; 
 
 	// taken from http://www.lverma.nrw.de/produkte/druckschriften/verwaltungsvorschriften/images/gps/TrafopsNRW.pdf for NRW this transform has deviations lower than 113cm.
 	// these matches to  http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 3 = Deutschland 1995"
-	private static final TransformParameters GK_GERMANY_1995_TO_WGS84 = new TransformParameters(582, 105, 414, -1.04, -0.35, +3.08, 8.3, false);
+	private static final TransformParameters GK_GERMANY_1995_TO_WGS84 = new TransformParameters(582, 105, 414, -1.04, -0.35, +3.08, 8.3);
 	/** Use this for Germany if there is no more specific available. Deviations less than 113 cm */
 	public static final TransformParameters GK_GERMANY_1995 =  GK_GERMANY_1995_TO_WGS84; 
 
 	// taken from http://www.geodatenzentrum.de/geodaten/gdz_home1.gdz_home_start?gdz_home_para1=Technische%A0Hinweise&gdz_home_para2=Technische%A0Hinweise&gdz_home_menu_nr=10&gdz_home_menu_nr2=1&gdz_home_para3=/auftrag/html/gdz_tech_geo_deu.htm&gdz_home_spr=deu&gdz_home_para0=0
-	private static final TransformParameters GK_GERMANY_BKG_TO_WGS84 = new TransformParameters(586, 87, 409, -0.52, -0.15, 2.82, 9, false);
+	private static final TransformParameters GK_GERMANY_BKG_TO_WGS84 = new TransformParameters(586, 87, 409, -0.52, -0.15, 2.82, 9);
 	/** Use this for Germany if there is no more specific available. Deviations unknown. Data source: Bundesamt für Kartographie und Geodäsie, taken from website on: 1-11-2007 */
 	public static final TransformParameters GK_GERMANY_BKG =  GK_GERMANY_BKG_TO_WGS84; 
 
 	// take from http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 2 = Deutschland 2001"
-	private static final TransformParameters GK_GERMANY_2001_TO_WGS84 = new TransformParameters(598.1, 73.7, 418.2, -0.202, -0.045, 2.455, 6.700, false);
+	private static final TransformParameters GK_GERMANY_2001_TO_WGS84 = new TransformParameters(598.1, 73.7, 418.2, -0.202, -0.045, 2.455, 6.700);
 	/** Use this for Germany if there is no more specific available. maximal deviations unknown */
 	public static final TransformParameters GK_GERMANY_2001 =  GK_GERMANY_2001_TO_WGS84;
 
 	/** The italian variant of Gauß-Krüger (Gauß-Boaga) */
 	// taken from http://crs.bkg.bund.de/crs-eu/ -> italy -> ROMA40 (change the sign of the rotation parameters!)
-	public static final TransformParameters GB_ITALIAN_PENINSULAR_TO_WGS84 =  new TransformParameters(-104.1, -49.1, -9.9, -0.971, 2.917, -0.714, -11.68, false);;
+	public static final TransformParameters GB_ITALIAN_PENINSULAR_TO_WGS84 =  new TransformParameters(-104.1, -49.1, -9.9, -0.971, 2.917, -0.714, -11.68);
 	//static final Area ITALY_PENINSULAR = new Area(new CWPoint());
-	public static final TransformParameters GB_ITALIAN_SARDINIA_TO_WGS84 =  new TransformParameters(-168.6, -34.0, 38.6, 0.374, 0.679, 1.379, -9.48, false);;
+	public static final TransformParameters GB_ITALIAN_SARDINIA_TO_WGS84 =  new TransformParameters(-168.6, -34.0, 38.6, 0.374, 0.679, 1.379, -9.48);
 	static final Area ITALY_SARDINIA = new Area(new CWPoint(42, 6), new CWPoint(38, 11));
 	static final Area ITALY_SARDINIA_GK = new Area(wgs84ToGaussKrueger(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toTrackPoint(GkPoint.ITALIAN_GB),
 			wgs84ToGaussKrueger(ITALY_SARDINIA.buttomright, EPSG_ITALIAN_GB_EW1).toTrackPoint(GkPoint.ITALIAN_GB));
 
-	public static final TransformParameters GB_ITALIAN_SICILIA_TO_WGS84 =  new TransformParameters(-50.2, -50.4, 84.8, 0.690, 2.012, -0.459, -28.08, false);;
+	public static final TransformParameters GB_ITALIAN_SICILIA_TO_WGS84 =  new TransformParameters(-50.2, -50.4, 84.8, 0.690, 2.012, -0.459, -28.08);
 	static final Area ITALY_SICILIA = new Area(new CWPoint(39, 12), new CWPoint(36.3, 15.6));
 	static final Area ITALY_SICILIA_GK = new Area(wgs84ToGaussKrueger(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toTrackPoint(GkPoint.ITALIAN_GB),
 			wgs84ToGaussKrueger(ITALY_SICILIA.buttomright, EPSG_ITALIAN_GB_EW2).toTrackPoint(GkPoint.ITALIAN_GB));
@@ -249,7 +249,7 @@ public class TransformCoordinates {
 	 */ // TODO find out what about the Krassowski in former GDR?
 	public static GkPoint wgs84ToGk(TrackPoint ll, Ellipsoid forgk, TransformParameters gk2wgs84, int stripe, int stripewidth, int degreeOfStripe0, double scale) {
 		XyzCoordinates wgsxyz = latLon2xyz(ll, 0, WGS84);
-		XyzCoordinates gkxyz = transform(wgsxyz, new TransformParameters(gk2wgs84, true)); // TODO: remove this instantiation, because it is slow
+		XyzCoordinates gkxyz = transform(wgsxyz, gk2wgs84.inverted); 
 		CWPoint gkll = xyz2Latlon(gkxyz, forgk);
 		//ewe.sys.Vm.debug("wgs84-ll: " + new CWPoint(ll).toString(CWPoint.DMS));
 		//ewe.sys.Vm.debug("gkll: " + gkll.toString(CWPoint.DMS));
@@ -468,17 +468,24 @@ class TransformParameters {
 	 * @param d shift in meter
 	 * @param exi rotation in seconds (change the sign of the values from http://crs.bkg.bund.de/crs-eu/ )
 	 * @param si deviation of scale multiplied by 10^6 
-	 * @param invert
+	 * @param addinverted
 	 */
-	public TransformParameters(double dxi, double dyi, double dzi, double exi, double eyi, double ezi, double si, boolean invert) {
+	public TransformParameters(double dxi, double dyi, double dzi, double exi, double eyi, double ezi, double si) {
+		set (dxi, dyi, dzi, exi, eyi, ezi, si, true);
+	}
+		
+	protected void set(double dxi, double dyi, double dzi, double exi, double eyi, double ezi, double si, boolean addinverted) {
 		dx = dxi; dy = dyi; dz = dzi; 
 		ex = exi * Math.PI/180/3600;
 		ey = eyi * Math.PI/180/3600; 
 		ez = ezi * Math.PI/180/3600;
 		s = 1/(1 - si * Math.pow(10, -6));
-		if (invert) invert();
+		if (addinverted) {
+			inverted = new TransformParameters(this, false);
+			inverted.invert();
+		} else inverted = null;
 	}
-
+	
 	public TransformParameters(TransformParameters tp, boolean invert) {
 		dx = tp.dx;	dy = tp.dy;	dz = tp.dz;
 		ex = tp.ex;	ey = tp.ey;	ez = tp.ez;
@@ -491,6 +498,7 @@ class TransformParameters {
 		ex *= -1; ey *= -1;	ez *= -1;
 		s = 1/s;
 	}
+	public TransformParameters inverted = null;
 }
 
 
