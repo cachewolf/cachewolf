@@ -119,7 +119,7 @@ public class MapsList extends Vector {
 		for (int i=size()-1; i >= 0 ;i--) {
 			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 				showprogress = true;      
-				progressBox = new InfoBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(4701,"Searching for best map"));
+				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
 				progressBox.waitUntilPainted(100);
 				ewe.sys.Vm.showWait(true);
@@ -198,7 +198,7 @@ public class MapsList extends Vector {
 		for (int i=size() -1; i>=0 ;i--) {
 			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 				showprogress = true;      
-				progressBox = new InfoBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(4701,"Searching for best map"));
+				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
 				progressBox.waitUntilPainted(100);
 				ewe.sys.Vm.showWait(true);
@@ -267,7 +267,7 @@ public class MapsList extends Vector {
 		for (int i=size()-1; i >= 0 ;i--) { 
 			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 				showprogress = true;      
-				progressBox = new InfoBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(4701,"Searching for best map"));
+				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
 				progressBox.waitUntilPainted(100);
 				ewe.sys.Vm.showWait(true);
@@ -445,7 +445,7 @@ class MapListEntry /*implements Comparable */ {
 					if ( (new MessageBox(MyLocale.getMsg(4702,"Optimisation"), MyLocale.getMsg(4703,"Cachewolf can make loading maps much faster by adding a identification mark to the filename. Do you want me to do this now?\n It can take several minutes"), 
 							MessageBox.YESB | MessageBox.NOB)).execute() == MessageBox.IDYES)
 					{
-						renameProgressInfoB = new InfoBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(4704,"\nRenaming file:")+"    \n");
+						renameProgressInfoB = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4704,"\nRenaming file:")+"    \n");
 						renameProgressInfoB.exec();
 						renameProgressInfoB.waitUntilPainted(100);
 						rename = 1; // rename
@@ -467,7 +467,7 @@ class MapListEntry /*implements Comparable */ {
 					map.fileNameWFL = path + filename + ".wfl";
 				}
 			} catch (IOException ioex) { // this should not happen
-				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4707,"Error while reading:")+" "+path+filename+": "+ ioex.getMessage(), MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4706,"Error while reading:")+" "+path+filename+": "+ ioex.getMessage(), MessageBox.OKB)).exec();
 			}
 		}
 	}

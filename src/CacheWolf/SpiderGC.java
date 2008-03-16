@@ -163,7 +163,7 @@ public class SpiderGC{
 				}catch(Exception ex){
 					pref.log("[login]:Login failed with exception.", ex);
 					infB.close(0);
-					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5515,"Login failed. Error loading page after login."), MessageBox.OKB)).execute();
+					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), MessageBox.OKB)).execute();
 					return ERR_LOGIN;
 				}
 			}

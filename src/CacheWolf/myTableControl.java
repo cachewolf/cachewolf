@@ -19,10 +19,10 @@ public class myTableControl extends TableControl{
 	private Menu mFull = new Menu(new String[]{
 			MyLocale.getMsg(1021,"Open description"),
 			MyLocale.getMsg(1010,"Goto"),
-			MyLocale.getMsg(1019,"Set as centre"),
+			MyLocale.getMsg(1019,"Enter"),
 			"-",
-			MyLocale.getMsg(1020,"Open online in browser"),
-			MyLocale.getMsg(1018,"Open offline in browser"),
+			MyLocale.getMsg(1020,"Open in $browser online"),
+			MyLocale.getMsg(1018,"Open in browser offline"),
 			"-",
 			MyLocale.getMsg(1012,"Delete selected"),
 			"-",
@@ -32,10 +32,10 @@ public class myTableControl extends TableControl{
 	private Menu mSmall = new Menu(new String[]{
 			MyLocale.getMsg(1021,"Open description"),
 			MyLocale.getMsg(1010,"Goto"),
-			MyLocale.getMsg(1019,"Set as centre"),
+			MyLocale.getMsg(1019,"Enter"),
 			"-",
-			MyLocale.getMsg(1020,"Open online in browser"),
-			MyLocale.getMsg(1018,"Open offline in browser")},
+			MyLocale.getMsg(1020,"Open in $browser online"),
+			MyLocale.getMsg(1018,"Open in browser offline")},
 			MyLocale.getMsg(1013,"With selection"));
 
 	myTableControl(TablePanel tablePanel) {
@@ -115,7 +115,7 @@ public class myTableControl extends TableControl{
 			setSelectForAll(false);
 		}
 
-		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete selected"))){
+		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete"))){
 			Vm.showWait(true);
 			// Count # of caches to delete
 			int count=0;
@@ -123,7 +123,7 @@ public class myTableControl extends TableControl{
 				if ( ((CacheHolder)cacheDB.get(i)).is_Checked) count++;
 			}
 			if (count>0) {
-				if ((new MessageBox(MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), MessageBox.YESB | MessageBox.NOB)).execute() != Form.IDYES) return;
+				if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), MessageBox.YESB | MessageBox.NOB)).execute() != Form.IDYES) return;
 				DataMover dm=new DataMover();
 				myProgressBarForm pbf = new myProgressBarForm();
 				Handle h = new Handle();
@@ -151,7 +151,7 @@ public class myTableControl extends TableControl{
 			Vm.showWait(false);
 		}
 
-		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Set as centre"))){
+		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Centre"))){
 			CacheHolder thisCache = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			CWPoint cp=new CWPoint(thisCache.LatLon);
 			if (!cp.isValid()){
@@ -168,7 +168,7 @@ public class myTableControl extends TableControl{
 			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			Global.mainTab.gotoPoint(ch.pos);
 		}
-		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1020,"Open online in browser"))){
+		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1020,"Open online in Browser"))){
 			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			CacheHolderDetail chD=ch.getCacheDetails(false, true);
 			try {
@@ -180,7 +180,7 @@ public class myTableControl extends TableControl{
 				(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();
 			}
 		}
-		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1018,"Open offline in browser"))) {
+		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1018,"Open in browser offline"))) {
 			ShowCacheInBrowser sc=new ShowCacheInBrowser();
 			sc.showCache(((CacheHolder)cacheDB.get(tbp.getSelectedCache())).getCacheDetails(false, true));
 		}

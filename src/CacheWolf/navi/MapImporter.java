@@ -128,7 +128,7 @@ public class MapImporter extends Form {
 		if(tmp != FileChooser.IDYES) return Form.IDCANCEL;
 		File inDir = fc.getChosenFile();
 		File mapFile;
-		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...")+"            \n", InfoBox.PROGRESS_WITH_WARNINGS, false); 
+		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...            \n"), InfoBox.PROGRESS_WITH_WARNINGS, false); 
 		inf.setPreferredSize(220, 300);
 		inf.setInfoHeight(100);
 		inf.relayout(false);
@@ -332,7 +332,7 @@ public class MapImporter extends Form {
 						wfl.saveWFL(mapsPath, thisMap);
 						if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
 					} catch (IOException e) {
-						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(323, "Error writing file ") + e.getMessage()+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
+						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(321, "Error writing file ") + e.getMessage()+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
 						if (tmpMB.execute() == MessageBox.IDYES) retry = true;
 					}catch (IllegalArgumentException e) {
 						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(325, "Map not calibrated")+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
