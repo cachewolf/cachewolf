@@ -501,7 +501,7 @@ public class DetailsPanel extends CellPanel{
 					  if (idx<0) idx=profile.getCacheIndex("CW"+ ch.wayPoint.substring(ch.wayPoint.length() == 5?1:2));
 					  if (idx<0) (new MessageBox(MyLocale.getMsg(144,"Warning"),
 							  MyLocale.getMsg(734,"No main cache found for addi waypoint ")+" "+ch.wayPoint+
-							  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYYY, where xx are any 2 chars and YYYYY are the 4..5 main cache's chars after the GC"),FormBase.OKB)).execute();
+							  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYYY, where xx are any 2 chars and YYYYY are the 4..5 main cache's chars after the GC/OC"),FormBase.OKB)).execute();
 				  }
 				  profile.buildReferences(); // TODO this takes quite long -> use profile.setAddiRef instead
 			  } else {

@@ -185,7 +185,7 @@ public class MapLoaderGui extends Form {
 		if (forCachesChkBox.getState() || perCache) {
 			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
 			if (surArea == null) {
-				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are seleted"), MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are selected"), MessageBox.OKB)).execute();
 				Vm.showWait(false);
 				progressBox.close(0);
 				return;
@@ -282,7 +282,7 @@ public class MapLoaderGui extends Form {
 					overlapping = Convert.toInt(overlappingInput.getText());
 					if (!forCachesChkBox.getState()) {
 						if (radius <= 0) { 
-							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be graeter than 0"), MessageBox.OKB)).execute();
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be greater than 0"), MessageBox.OKB)).execute();
 							return;
 						}
 						if (overlapping < 0) { 

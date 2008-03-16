@@ -19,7 +19,7 @@ public class myTableControl extends TableControl{
 	private Menu mFull = new Menu(new String[]{
 			MyLocale.getMsg(1021,"Open description"),
 			MyLocale.getMsg(1010,"Goto"),
-			MyLocale.getMsg(1019,"Enter"),
+			MyLocale.getMsg(1019,"Set as centre"),
 			"-",
 			MyLocale.getMsg(1020,"Open online in browser"),
 			MyLocale.getMsg(1018,"Open offline in browser"),
@@ -32,7 +32,7 @@ public class myTableControl extends TableControl{
 	private Menu mSmall = new Menu(new String[]{
 			MyLocale.getMsg(1021,"Open description"),
 			MyLocale.getMsg(1010,"Goto"),
-			MyLocale.getMsg(1019,"Enter"),
+			MyLocale.getMsg(1019,"Set as centre"),
 			"-",
 			MyLocale.getMsg(1020,"Open online in browser"),
 			MyLocale.getMsg(1018,"Open offline in browser")},
@@ -151,7 +151,7 @@ public class myTableControl extends TableControl{
 			Vm.showWait(false);
 		}
 
-		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Enter"))){
+		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Set as centre"))){
 			CacheHolder thisCache = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			CWPoint cp=new CWPoint(thisCache.LatLon);
 			if (!cp.isValid()){

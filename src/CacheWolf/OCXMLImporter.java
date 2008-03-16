@@ -106,7 +106,7 @@ public class OCXMLImporter extends MinML {
 		}
 
 		// this is only a dummy-InfoBox for capturing the output
-		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
+		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching.de"), InfoBox.PROGRESS_WITH_WARNINGS, false);
 //		inf.setPreferredSize(220, 300);
 //		inf.relayout(false);
 //		inf.exec();
@@ -195,7 +195,7 @@ public class OCXMLImporter extends MinML {
 			+ "&charset=utf-8"
 			+ "&cdata=0"
 			+ "&session=0";
-		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
+		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching.de"), InfoBox.PROGRESS_WITH_WARNINGS, false);
 		inf.setPreferredSize(220, 300);
 		inf.relayout(false);
 		inf.exec();
@@ -222,7 +222,7 @@ public class OCXMLImporter extends MinML {
 		BufferedReader r;
 		String file = new String();
 
-		//inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
+		//inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching.de"), InfoBox.PROGRESS_WITH_WARNINGS, false);
 		
 		picCnt = 0;
 		try{
