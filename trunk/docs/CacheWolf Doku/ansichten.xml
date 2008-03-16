@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter>
   <chapterinfo>
+    <title>Ansichten</title>
+
     <date>7.9.2007</date>
 
     <releaseinfo>In Bearbeitung</releaseinfo>
@@ -36,7 +38,7 @@
         </author>
 
         <revdescription>
-          <para>ca. 30% erledigt.</para>
+          <para>ca. 80% erledigt (fehlen noch Löser und Tourenplaner).</para>
         </revdescription>
       </revision>
     </revhistory>
@@ -67,7 +69,7 @@
         </imageobject>
       </inlinemediaobject></para>
 
-    <para>Nur in dieser Ansicht wird das Menü </para>
+    <para>Nur in dieser Ansicht wird das Menü</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -248,7 +250,7 @@
         </listitem>
 
         <listitem>
-          <para>Nichtmarkierte ausfiltern: </para>
+          <para>Nichtmarkierte ausfiltern:</para>
         </listitem>
 
         <listitem>
@@ -281,7 +283,28 @@
   <section>
     <title>Tourenplaner</title>
 
-    <para></para>
+    <para>Der Tourenplaner läßt sich entweder über die Listenansicht
+    (<inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/touricon.jpg" />
+        </imageobject>
+      </inlinemediaobject>) öffnen.</para>
+
+    <informaltable>
+      <tgroup cols="2">
+        <tbody>
+          <row>
+            <entry><inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="pics/tourenplaner.jpg" />
+                </imageobject>
+              </inlinemediaobject></entry>
+
+            <entry valign="top"><para></para></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
   </section>
 
   <section>
@@ -367,7 +390,7 @@
     gespeichert! Am Interessantesten dürfte das Feld neben
     <literal>Status</literal> sein. Durch einen Klick auf das Datumsfeld kann
     das Gefunden Datum gesetzt werden (Datum wird durch ein Klick auf das
-    grüne Häckchen gesetzt). </para>
+    grüne Häckchen gesetzt).</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -375,7 +398,7 @@
         </imageobject>
       </inlinemediaobject></para>
 
-    <para>Ebenso wird die Uhrzeit gespeichert. </para>
+    <para>Ebenso wird die Uhrzeit gespeichert.</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -410,35 +433,524 @@
   <section>
     <title>Bilder</title>
 
-    <para></para>
+    <para>Falls Bilder in der Cachebeschreibung vorhanden sind, werden diese
+    in der Bilder–Ansicht als „Thumbnails” dargestellt. Ein Klick auf ein Bild
+    öffnet ein neues Fenster. In diesem Fenster wird das Bild so dargestellt,
+    dass es in das vorhandene Fenster passt. Nochmal auf das Bild klicken und
+    es wird in der Originalauflösung dargestellt. Falls vorhanden, steht die
+    Bildbeschreibung unter dem jeweiligen Bild.</para>
+
+    <para>Bilder können durch rechte Maustaste gelöscht werden (z.B. um am PDA
+    Platz zu sparen). In den Präferenzen ist einstellbar ob gelöschte Bilder
+    durch ein rotes ? ersetzt werden oder überhaupt nicht angezeigt
+    werden.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/bilder.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
   </section>
 
   <section>
     <title>Hints &amp; Logs</title>
 
-    <para></para>
+    <para>In der Hints &amp; Logs-Ansicht werden im oberen Teil des
+    Bildschirms (falls vorhanden) 5 Logeinträge gezeigt. Falls mehr als 5 Logs
+    vorhanden sind, kann man mit den &gt;&gt; und &lt;&lt; Knöpfen in den
+    Einträgen vorwärts und rückwärts blättern. Die Anzahl der anzuzeigenden
+    Logs kann in den Präferenzen auch auf einen anderen Wert als 5 eingestellt
+    werden.</para>
+
+    <para>Den mit ROT13 verschlüsselten Hint (Lösungshinweise zum Cache) im
+    unteren Teil des Bildschirms kann man mit „Decode" entschlüsseln.</para>
+
+    <para>Der Balken zwischen Hint und Logs kann durch Ziehen verschoben
+    werden um so je nach Bedarf für Hint oder Logs mehr Platz zu schaffen.
+    Durch Doppelklicken auf den Balken kann der Hintbereich bzw.der Logbereich
+    maximiert werden.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/hint_log.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
   </section>
 
   <section>
     <title>Löser</title>
 
+    <para>Der Löser wurde geschaffen, um die bei uns beliebten
+    "Rechne-Dir-einen-Wolf"-Multis zu erleichtern. Er hat viele Funktionen,
+    die das Lösen von umfangreichen Berechnungen vereinfachen.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/loeser.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para>Der Solver hat zwei Bereiche: Der obere (weisse) dient zur Eingabe
+    von Befehlen, der untere (graue) stellt die Ausgabe dar.</para>
+
+    <para>Der Knopf 'Rechne!' führt die Befehle im oberen Bereich aus und
+    stellt das Ergebnis im unteren Bereich dar. Die anderen Knöpfe dienen zum
+    Laden bzw. Speichern von Befehlsfolgen.</para>
+
+    <para>Die Größe der Bereiche kann durch Ziehen des Steges zwischen den
+    Bereichen angepaßt werden. Ein Doppelklick auf den Steg maximiert jeweils
+    den oberen oder unteren Teil.</para>
+
+    <para>Wenn nur ein Befehl ausgeführt werden soll, kann es schneller sein
+    durch Doppelklick auf das obere Fenster die Direkteingabe
+    aufzurufen.</para>
+
+    <para>Der Ausgabebereich kann auf zwei Arten gelöscht werden: Durch den
+    Befehl cls(), über das Kontextmenü (=rechte Maustaste).</para>
+
+    <para>Um die Tipparbeit (insbesondere unterwegs) auf ein Minimum zu
+    reduzieren:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>müssen Funktionsnamen nicht mehr ausgeschrieben werden. Es
+        genügt wenn so viele Zeichen angegeben werden, wie notwendig um die
+        Funktion eindeutig zu bestimmen. Beispiel: Statt crosstotal reicht
+        auch cr</para>
+
+        <para>Hinweis: Die mindestens anzugebenden Buchstaben sind bei den
+        weiter unten beschriebenen Funktionen unterstrichen wie z.B.
+        quersumme</para>
+      </listitem>
+
+      <listitem>
+        <para>sind einige Funktionen auch unter mehrfachen Namen ansprechbar
+        (alias). So kann statt crosstotal auch Quersumme geschrieben werden,
+        bzw. wegen oben auch kurz q</para>
+      </listitem>
+
+      <listitem>
+        <para>kann die Funktion show weggelassen werden (sie ist aber noch
+        erlaubt)</para>
+      </listitem>
+
+      <listitem>
+        <para>ist das Semikolon als Befehlsende nicht mehr notwending ausser
+        wenn mehrere Befehle auf einer Zeile stehen sollen. Fortsetzungszeilen
+        können durch _ oder \ erzwungen werden (sollte aber kaum notwendig
+        sein).</para>
+      </listitem>
+
+      <listitem>
+        <para>kann umgeschaltet werden ob Variablennamen Case-sensitiv sein
+        sollen. Funktionsname sind nicht case-sensitiv, d.h. die
+        Gross-/Kleinschreibung ist egal: Quersumme oder quersumme liefert das
+        gleiche Ergebnis. Bei Variablen ist aber standardmäßig A nicht gleich
+        a, also Vorsicht!</para>
+      </listitem>
+    </itemizedlist>
+
     <para></para>
+
+    <table frame="box" rules="all">
+      <caption>Zuweisungen</caption>
+
+      <thead>
+        <tr align="center">
+          <th>Befehl</th>
+
+          <th>Beschreibung</th>
+
+          <th>Beispiel</th>
+
+          <th>Ergebnis</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>var = value;</td>
+
+          <td>Variablen einen Wert (value) zuweisen</td>
+
+          <td>a = 5 WP="N 47 13.876 E 11 23.547"</td>
+
+          <td>Keine Anzeige bei Zuweisung</td>
+        </tr>
+
+        <tr>
+          <td></td>
+
+          <td>Zuweisung und Anzeige</td>
+
+          <td>e=7; e</td>
+
+          <td>7</td>
+        </tr>
+
+        <tr>
+          <td></td>
+
+          <td>Mehrere Zuweisungen in einer Zeile</td>
+
+          <td>c=4; d=5; c</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>show()</td>
+
+          <td>Werte anzeigen</td>
+
+          <td>"N 34 12." show(a) "12" # oder auch "N 34 12." a "12"</td>
+
+          <td>N 34 12.512 N 34 12.512</td>
+        </tr>
+
+        <tr>
+          <td>: :</td>
+
+          <td>Formatierung: Nach einem numerischen Ausdruck können zwischen
+          zwei : die Formatierungszeichen 0 # und . verwendet werden. 0 steht
+          für eine Ziffer, # für beliebig viele Ziffern</td>
+
+          <td>3.31:000: 3.56:0.0: 3.5671:0.#:</td>
+
+          <td>003 3.6 3.5671</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <para><emphasis role="bold">Globale Variable</emphasis></para>
+
+    <para>Der Löser unterscheidet zwischen lokalen und globalen Variablen.
+    Globale Variable merken sich ihren Wert zwischen mehrfachem Klick auf den
+    'Rechne!' Knopf, lokale Variable hingegen nicht. Globale Variable habe als
+    erstes Zeichen ein $. Beispiel:</para>
+
+    <para><literal>$S=$S+1; "STAGE " $S</literal></para>
+
+    <para>Wenn diese Befehle mit dreimaligem Klick auf 'Rechne!' ausgeführt
+    werden, ergibt es folgende Ausgabe:</para>
+
+    <para><literal>STAGE 1 STAGE 2 STAGE 3</literal></para>
+
+    <para>Ein weiterer Unterschied ist, daß globale Variable mit der leeren
+    Zeichenkette vorbelegt werden. Lokale Variable werden nicht initialisiert.
+    Wenn eine lokale Variable verwendet wird, ohne daß ihr zuvor ein Wert
+    zugewiesen wurde, ergibt das einen Fehler. Beispiel:</para>
+
+    <para><literal>A=B</literal></para>
+
+    <para>ergibt</para>
+
+    <para><literal>Fehler in Zeile:1 Spalte:1 Variable hat keinen Wert:
+    B</literal></para>
+
+    <para>Alle Wegpunkte sind standardmäßig auch als globale Variable
+    ansprechbar, sowohl schreibend als auch lesend. Beispiel:</para>
+
+    <para><literal>$GCZ10H $OCABCD="N 47 23.456 W 1 25.987"</literal></para>
+
+    <para>zeigt die Koordinate des Wegpunktes GCZ10H an und setzt den Wegpunkt
+    OCABCD auf eine neue Koordinate.</para>
+
+    <table frame="box" rules="all">
+      <caption>Basisoperationen</caption>
+
+      <thead>
+        <tr align="center">
+          <th>Befehl</th>
+
+          <th>Beschreibung</th>
+
+          <th>Beispiel</th>
+
+          <th>Ergebnis</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>+</td>
+
+          <td>Addition</td>
+
+          <td>b = a + 1;</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>-</td>
+
+          <td>Subtraktion</td>
+
+          <td>b = a - 42;</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>/</td>
+
+          <td>Division</td>
+
+          <td>b = a / 3;</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>*</td>
+
+          <td>Multiplikation</td>
+
+          <td>b = a * 7;</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>(, )</td>
+
+          <td>Klammern zur Gruppierung</td>
+
+          <td>d = a * (b + c);</td>
+
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table frame="box" rules="all">
+      <caption>Trigonometrie</caption>
+
+      <thead>
+        <tr align="center">
+          <th>Befehl</th>
+
+          <th>Beschreibung</th>
+
+          <th>Beispiel</th>
+
+          <th>Ergebnis</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td><emphasis role="underline">cos</emphasis>()</td>
+
+          <td>Cosinus</td>
+
+          <td>b = cos(a);</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <td><emphasis role="underline">si</emphasis>n()</td>
+
+          <td>Sinus</td>
+
+          <td>b = sin(a);</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <td><emphasis role="underline">ta</emphasis>n()</td>
+
+          <td>Tangens</td>
+
+          <td>b = tan(a);</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <td><emphasis role="underline">ac</emphasis>os()</td>
+
+          <td>Arcosinus</td>
+
+          <td>b = acos(a);</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <td><emphasis role="underline">as</emphasis>in()</td>
+
+          <td>Asinus</td>
+
+          <td>b = asin(a);</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <td><emphasis role="underline">at</emphasis>an()</td>
+
+          <td>Atangens</td>
+
+          <td>b = atan(a);</td>
+
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table frame="box" rules="all">
+      <caption>Zeichenketten Funktionen</caption>
+
+      <thead>
+        <tr align="center">
+          <th>Befehl</th>
+
+          <th>Beschreibung</th>
+
+          <th>Beispiel</th>
+
+          <th>Ergebnis</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td></td>
+
+          <td></td>
+
+          <td></td>
+
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table frame="box" rules="all">
+      <caption>Koordinaten Funktionen</caption>
+
+      <thead>
+        <tr align="center">
+          <th>Befehl</th>
+
+          <th>Beschreibung</th>
+
+          <th>Beispiel</th>
+
+          <th>Ergebnis</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td></td>
+
+          <td></td>
+
+          <td></td>
+
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table frame="box" rules="all">
+      <caption>Diverse</caption>
+
+      <thead>
+        <tr align="center">
+          <th>Befehl</th>
+
+          <th>Beschreibung</th>
+
+          <th>Beispiel</th>
+
+          <th>Ergebnis</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td></td>
+
+          <td></td>
+
+          <td></td>
+
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
   </section>
 
   <section>
     <title>Rechner</title>
 
-    <para></para>
+    <para>Die Rechneransicht erlaubt die Projektion und Umwandlung von
+    Koordinaten. Projezierte Koordinaten lassen sich gleich als neuer Wegpunkt
+    in der Datenbank abspeichern. Umwandeln kann man zwischen UTM und
+    verschiedenen Formaten von Grad, Minute und Sekunde.</para>
+
+    <para>Über den Goto Button kann sich auch direkt zu den errechneten
+    Koordinaten führen lassen.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/rechner.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
   </section>
 
   <section>
-    <title>Goto</title>
+    <title id="goto">Goto</title>
 
-    <para></para>
+    <para>Sofern ein GPS Empfänger angeschlossen ist und die GPS Einstellungen
+    in den Präferenzen gesetzt sind kann man mit der Hilfe dieser Ansicht sich
+    zu einem Cache navigieren lassen.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/goto.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para>Die Navigation wird gestartet und beendet durch einen Klick auf den
+    “Start”-Knopf. Neue Zielkoordinaten können über den Knopf “Neuer Wegpunkt”
+    eingegeben werden. Soll die aktuell gemessene Position als Zentrum genutzt
+    werden (für Radar und die Entfernungsberechnung in der Listenansicht)
+    klickt man auf den “Zentrum”-Knopf. Hat man GPS-Empfang erscheinen eine
+    rote, eine blaue und eine gelbe Linie in der Kompassrose. Die rote Linie
+    zeigt die aktuelle Richtung (sofern man sich bewegt) und die blaue Linie
+    die Richtung zur Zielkoordinate. Liegen blaue und rote Linie übereinander
+    bewegt man sich direkt auf den Cache zu. Die gelbe Linie zeigt die
+    Richtung der Sonne. Hält man also den PDA mit der gelben Linien auf die
+    Sonne zeigt die blaue Linie direkt auf den Cache!</para>
   </section>
 
   <section>
     <title id="radar">Radar</title>
+
+    <para>Der Radar ist sehr nützlich, um eine Cachetour zu planen. Jeder
+    Kreis entspricht einem Sprung von 10km. Durch „-„ und „+” kann man auf das
+    Zentrum hinein- und herauszommen. Durch einen Klick auf „Toggle“ werden
+    neben den Cachesymbolen die Wegpunktnamen ebenfalls angezeigt. Ein
+    erneuter Klick auf „Toggle” zeigt den Cachenamen an. Infos werden auch
+    gezeigt, wenn man mit der Maus über ein Cachesymbol fährt. </para>
+
+    <para>Der rote Kreis zeigt den aktuell in der Listenansicht gewählten
+    Cache. Man kann auf ein anderes Cachesymbol klicken: Die Ansicht wechselt
+    dann wieder auf die Listenansicht, in dem der gewählte Cache markiert
+    ist.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/radar.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
 
     <para></para>
   </section>

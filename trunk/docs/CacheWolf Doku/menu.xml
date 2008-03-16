@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter>
   <chapterinfo>
+    <title>Die Menüs</title>
+
     <date>2.1.2008</date>
 
     <releaseinfo>In Bearbeitung</releaseinfo>
@@ -23,6 +25,20 @@
 
         <revdescription>
           <para>Erster Entwurf</para>
+        </revdescription>
+      </revision>
+
+      <revision>
+        <revnumber>0.2</revnumber>
+
+        <date>16.3.2008</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>Etwas mehr geschafft...</para>
         </revdescription>
       </revision>
     </revhistory>
@@ -118,7 +134,152 @@
     <section>
       <title id="karten">Karten</title>
 
+      <para>Mit CacheWolf (ab der Version 0.9m) ist es möglich, Karten zu
+      importieren und zu kalibrieren. Diese werden dann als Moving Map genutzt
+      (siehe <xref lang="" linkend="goto" />).</para>
+
+      <sidebar>
+        <para>Eine Moving Map unterscheidet sich von den typischen mobilen
+        Navigationssystemen (die heute häufig auf PDAs im Auto genutzt werden)
+        dadurch, dass dem Computer keinerlei Information über Strassen und
+        Wege vorliegen. Der Computer kann "nur" von einer GPS Koordinate auf
+        die x/y Koordinaten der Karte umrechnen und kann dadurch auf der Karte
+        darstellen, wo man sich befindet.</para>
+      </sidebar>
+
       <para></para>
+
+      <section>
+        <title>Kalibrierte herunterladen</title>
+
+        <para>Über diese Funktion lassen sich georeferenzierte Karten direkt
+        aus dem Internat laden. Hierbei können zwei grundsätzlich
+        unterschiedliche Quellen genutzt werden. Expedia schon in früheren
+        Versionen angeboten. Mit der 1.0 werden nun WMS Quellen ebenfalls
+        angeboten.</para>
+
+        <sidebar>
+          <para>Ein Web Map Service (WMS) ist ein Web Service, der auf den WMS
+          Implementation Specifications beruht, einer Schnittstelle, um Karten
+          zu generieren. <citation>Expedia</citation></para>
+        </sidebar>
+
+        <para>Siehe die Datei <literal>readme_wms.txt</literal> im Verzeichnis
+        <literal>webmapservices</literal>, um eigene WMS Quellen
+        einzubinden.</para>
+
+        <para>Mit der 1.0 werden Quellen für Karten folgender Bundesländer
+        angeboten:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Deutschland TOPO 1000</para>
+          </listitem>
+
+          <listitem>
+            <para>Deutschland TOPO 500</para>
+          </listitem>
+
+          <listitem>
+            <para>Deutschland TOPO 200</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Bayern</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Baden-Würtemberg</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Rheinland Pfalz</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Mecklenburg Vorpommern</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Sachsen</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Sachsen Anhalt</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Nordrhein Westphalen</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Baden-Würtemberg</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Für einige Bundesländer sind ebenfalls Luftbildaufnahmen
+        verfügbar.</para>
+
+        <para>Nach dem Klick auf diese Menüoption erscheint folgendes
+        Fenster:</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/georef_laden.jpg" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Hier muss man nun unterscheiden, was genau man haben möchte. Mit
+        dem Reiter "Tiles" werden aneinander hängende Kacheln geladen. Wie
+        viele wird bestimmt durch die Auswahl "all caches", bzw. "selected
+        caches" in Verbindung mit dem gesetzten Hacken bei
+        <literal>for</literal>. Wählt man "all" wird CacheWolf ein Rechteck
+        berechnen, der alle Caches umfasst und dann Kacheln gemäß der
+        eingestellten Genauigkeit (<literal>Approx. m per pixel</literal>)
+        bilden und herunterladen. Die Angabe bei overlapping in pixel legt
+        fest, wie viel die einzelnen Kacheln sich überlappen, sprich bei 0
+        liegen die Kachelkanten genau aneinander, ansonsten überschneiden sie
+        sich.</para>
+
+        <para>Statt die Kachel für alle Caches zu laden kann man auch sagen,
+        dass ein Rechteck um eine gesetzte Mitte (<literal>around the
+        center</literal>) heruntergeladen werden soll.</para>
+
+        <para>Der Hacken bei <literal>download an overview map</literal> wird
+        CacheWolf veranlassen eine Kachel zu ermitteln und herunterzuladen,
+        die das gesamte Rechteck umschliesst.</para>
+
+        <para>Die eben beschriebene Kachelmethode kann sehr viele Daten
+        (Dateien) generieren. In Gebieten, wo Caches weit auseinander liegen
+        erzeugt man hierdurch einen ziemlichen Überhang an Daten. Daher
+        besteht auch die Möglichkeit, Karten je Cache zu laden:</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/georef_per_cache.jpg" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Auch hier besteht die Möglichkeit eine Karte je Cache in der
+        Datenbank oder nur für die, die in der Listenansicht (einen Häckchen
+        wurde gesetzt) selektiert wurden.</para>
+
+        <para>Durch ein Klick auf <literal>OK</literal> beginnt der Download.
+        Je nach dem, wie die Parameter eingestellt wurden kann der Download
+        etwas Zeit in Anspruch nehmen.</para>
+      </section>
+
+      <section>
+        <title>Importieren</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Kalibrieren</title>
+
+        <para></para>
+      </section>
     </section>
 
     <section>
