@@ -23,6 +23,7 @@ public class OCXMLImporterScreen extends Form {
 	static int IMAGES = 2;
 	static int ALL = 4;
 	static int INCLUDEFOUND = 8;
+	static int ISGC = 16;
 
 	
 	public OCXMLImporterScreen(String title, int options) {
@@ -33,7 +34,19 @@ public class OCXMLImporterScreen extends Form {
 		if ((options & DIST) > 0) {
 			this.addNext(distLbl = new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			distanceInput = new mInput();
-			distanceInput.setText(Global.getProfile().distOC);
+			String dist1;
+			String dist2;
+			if ((options & ISGC) > 0) {
+				dist1 = Global.getProfile().distGC;
+				dist2 = Global.getProfile().distOC;
+			} else {
+				dist1 = Global.getProfile().distOC;
+				dist2 = Global.getProfile().distGC;
+			}
+			if ( dist1.equals("") || dist1.equals("0") || dist1.equals("0.0") ) {
+				dist1 = dist2;
+			}
+			distanceInput.setText(dist1);
 			this.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			this.addLast(distUnit = new mLabel(" km"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}

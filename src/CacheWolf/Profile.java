@@ -39,6 +39,8 @@ public class Profile {
 	public String last_sync_opencaching = new String();
 	/** Distance for opencaching caches */
 	public String distOC = new String();
+	/** Distance for geocaching caches */
+	public String distGC = new String();
 
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
@@ -90,6 +92,7 @@ public class Profile {
 		dataDir="";  
 		last_sync_opencaching = "";
 		distOC = "";
+		distGC = "";
 		hasUnsavedChanges=false;
 	}
 
@@ -147,7 +150,10 @@ public class Profile {
 				last_sync_opencaching = "20050801000000";
 			}
 			if(distOC == null || distOC.endsWith("null") || distOC.equals("")){
-				distOC = "0";
+				distOC = "0.0";
+			}
+			if(distGC == null || distGC.endsWith("null") || distGC.equals("")){
+				distGC = "0.0";
 			}
 
 			detfile.print("    <FILTER status = \""+filterActive+(filterInverted?"T":"F")+ 
@@ -155,6 +161,7 @@ public class Profile {
 					"\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
 					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" attributesYes = \""+filterAttrYes+"\" attributesNo = \""+filterAttrNo+"\" attributesChoice = \""+filterAttrChoice+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
+			detfile.print("    <SPIDERGC dist = \""+distGC+"\"/>\n");
 			int size=cacheDB.size();
 			for(int i = 0; i<size;i++){
 				if(showprogress){
@@ -227,6 +234,9 @@ public class Profile {
 					last_sync_opencaching=text.substring(start,text.indexOf("\"",start));
 					start=text.indexOf("dist = \"")+8;
 					distOC=text.substring(start,text.indexOf("\"",start));
+				} else if (text.indexOf("<SPIDERGC")>=0) {
+					int start=text.indexOf("dist = \"")+8;
+					distGC=text.substring(start,text.indexOf("\"",start));
 				} else if (text.indexOf("<FILTER")>=0){
 					ex.setSource(text);
 					String temp=ex.findNext(); // Filter status is now first, need to deal with old versions which don't have filter status
@@ -361,7 +371,7 @@ public class Profile {
 
 	public String toString() {
 		return "Profile: Name="+name+"\nCentre="+centre.toString()+"\ndataDir="+dataDir+"\nlastSyncOC="+
-		last_sync_opencaching+"\ndistOC="+distOC;
+		last_sync_opencaching+"\ndistOC="+distOC+"\ndistGC="+distGC;
 	}
 
 	public void setSelectForAll(boolean selectStatus) {
