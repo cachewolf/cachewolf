@@ -35,7 +35,7 @@ public class myTableControl extends TableControl{
 			MyLocale.getMsg(1019,"Enter"),
 			"-",
 			MyLocale.getMsg(1020,"Open online in browser"),
-			MyLocale.getMsg(1018,"Open offline in browser"),
+			MyLocale.getMsg(1018,"Open offline in browser")},
 			MyLocale.getMsg(1013,"With selection"));
 
 	myTableControl(TablePanel tablePanel) {
