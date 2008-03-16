@@ -534,28 +534,30 @@ class tbListControl extends TableControl {
 			TravelbugJourney tbj=tblMyTravelbugJourneys.getTBJourney(selectedRow);
 			SpiderGC spider=new SpiderGC(Global.getPref(),Global.getProfile(),false);
 			Vm.showWait(true);
-			String strBugMission = "";
-			// First check whether ID is set
-			if (tbj.getTb().getGuid().length()==0) {
-				//if not, try to get mission by tracking number
+			
+			//if we have an ID, get mission by ID
+			if (tbj.getTb().getGuid().length()!=0) {
+				tbj.getTb().setMission(spider.getBugMissionByGuid(tbj.getTb().getGuid()));
+			} else {
+				//try to get mission and name by tracking number
+				boolean suceeded = false;
 				if (tbj.getTb().getTrackingNo().length() != 0) {
-					strBugMission = spider.getBugMissionByTrackNr(tbj.getTb().getTrackingNo());
+					suceeded = spider.getBugMissionAndNameByTrackNr(tbj.getTb());
 				}
 				//if this has't worked, try to get ID by name
-				if (strBugMission.length() == 0) {
+				if (!suceeded) {
 					tbj.getTb().setGuid(spider.getBugId(tbj.getTb().getName().trim()));
+					//if we have an ID now, get mission by ID
+					if (tbj.getTb().getGuid().length()!=0) {
+						tbj.getTb().setMission(spider.getBugMissionByGuid(tbj.getTb().getGuid()));
+					}
 				}
- 			}
-			// If we have an ID, we can get the mission
-			if ( (strBugMission.length() == 0) && (tbj.getTb().getGuid().length()!=0)) { 
-				strBugMission = spider.getBugMissionByGuid(tbj.getTb().getGuid());
 			}
-			if (strBugMission.length() != 0) {
-				tbj.getTb().setMission(strBugMission);
-			}			
+			
 			Vm.showWait(false);
 			tcTbJourneyList.repaint();
 			txtMission.setHtml(tbj.getTb().getMission());
+			inpName.setText(tbj.getTb().getName());
 			lblId.setText(tbj.getTb().getGuid());
 			lowerpane.repaint();
 		}
