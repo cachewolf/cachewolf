@@ -28,7 +28,7 @@
     </revhistory>
   </chapterinfo>
 
-  <title>Die Menüs</title>
+  <title id="menue">Die Menüs</title>
 
   <section>
     <title>Anwendung</title>
@@ -116,7 +116,7 @@
     </section>
 
     <section>
-      <title>Karten</title>
+      <title id="karten">Karten</title>
 
       <para></para>
     </section>
@@ -159,7 +159,7 @@
   </section>
 
   <section>
-    <title>Filter</title>
+    <title id="filter">Filter</title>
 
     <para></para>
 
@@ -207,9 +207,33 @@
   </section>
 
   <section>
-    <title>Verwalten</title>
+    <title id="verwalten">Verwalten</title>
 
     <para></para>
+
+    <section>
+      <title>Kopieren</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Verschieben</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Löschen</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Index neu erstellen</title>
+
+      <para></para>
+    </section>
 
     <section>
       <title id="tbugs_verwalten">Travelbugs verwalten</title>

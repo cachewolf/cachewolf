@@ -25,15 +25,41 @@
           <para>Erster Entwurf</para>
         </revdescription>
       </revision>
+
+      <revision>
+        <revnumber>0.3</revnumber>
+
+        <date>16.03.2008</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>ca. 30% erledigt.</para>
+        </revdescription>
+      </revision>
     </revhistory>
   </chapterinfo>
 
   <title>Ansichten</title>
 
+  <para>CacheWolf bietet verschiedene "Ansichten". Diese werden über die
+  Reiter zur Verfügung gestellt:</para>
+
+  <para><inlinemediaobject>
+      <imageobject>
+        <imagedata fileref="pics/ansichten.jpg" />
+      </imageobject>
+    </inlinemediaobject></para>
+
   <section>
     <title id="liste">Liste</title>
 
-    <para></para>
+    <para>Die Listenansicht zeigt tabellarisch die Caches im ausgewählten
+    Profil an. Welche Spalten scihtbar sind läßt sich in den Präferenzen
+    einstellen (siehe <xref linkend="einstellungListe" />). Ein Doppelklick
+    auf eine Zeile öffnet die Beschreibung zu dem Cache.</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -41,7 +67,136 @@
         </imageobject>
       </inlinemediaobject></para>
 
-    <para></para>
+    <para>Nur in dieser Ansicht wird das Menü </para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/menu.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para>angeboten! Die einzelnen Funktionen im Menü werden hier <xref
+    linkend="menue" /> beschrieben.</para>
+
+    <para>Ebenfalls nur in dieser Ansicht verfügbar ist die
+    Statusleiste:</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/statusleiste.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para>Über diese Leiste läßt sich die Tourenverwaltung <inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/touricon.jpg" />
+        </imageobject>
+      </inlinemediaobject> öffnen. Der Tourenplaner wird weiter unten
+    beschrieben. Der aktuelle Filter <inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/filtericon.gif" />
+        </imageobject>
+      </inlinemediaobject> läßt ein- und auschalten. Der Filter <xref
+    linkend="filter" /> wird hier ausführlich beschrieben.</para>
+
+    <para>Durch einen Klick auf den Spaltenkopf wird die Tabelle neu sortiert.
+    Zuerst aufsteigend und dann absteigend, oder andersherum, je nachdem "wo"
+    man angefangen hat. Die Spaltenbreite läßt sich ebefalls verändern.</para>
+
+    <para><emphasis role="bold">In der Listenansicht können einzelne Zeilen
+    mit Farben hinterlegt sein:</emphasis></para>
+
+    <itemizedlist>
+      <listitem>
+        <para>helles Rot bedeutet, der Cache ist nicht suchbar,</para>
+      </listitem>
+
+      <listitem>
+        <para>dunkles Rot bedeutet, der Cache wurde archiviert,</para>
+      </listitem>
+
+      <listitem>
+        <para>blaue Zeilen kennzeichnen eigene Caches,</para>
+      </listitem>
+
+      <listitem>
+        <para>grüne Zeilen kennzeichnen Caches, die man gefunden hat,</para>
+      </listitem>
+
+      <listitem>
+        <para>gelbe Zeilen kennzeichnen Caches, die der Suche
+        entsprechen.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/farbbsp1.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para><emphasis role="bold">Punkte vor dem Wegpunktnamen informieren über
+    folgende Sachverhalte:</emphasis></para>
+
+    <itemizedlist>
+      <listitem>
+        <para>ein gelber Punkt kennzeichnet den Cache als „neu” nach einer
+        Datenaktualisierung durch einen GPX–Import oder durch spidern,</para>
+      </listitem>
+
+      <listitem>
+        <para>ein roter Punkt bedeutet, dass es in der Cachebeschreibung ein
+        Update gegeben hat,</para>
+      </listitem>
+
+      <listitem>
+        <para>ein blauer Punkt bedeutet, dass neue Logeinträge vorhanden
+        sind.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/farbbsp2.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para><emphasis role="bold">DNF (did not find = nicht gefunden)
+    Farbcodierung:</emphasis></para>
+
+    <para>Vor einzelnen Cache Namen können Farbbalken erscheinen. Diese zeigen
+    an, wie häufig in Folge der Cache nicht gefunden wurde, wenn der letzte
+    Logeintrag ein DNF war:</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/dnfzeile.png" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/no_1_log.png" />
+        </imageobject>
+      </inlinemediaobject> Letzter Logeintrag ist ein DNF</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/no_2_log.png" />
+        </imageobject>
+      </inlinemediaobject> Letzten beiden Logeinträge sind DNFs</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/no_3_log.png" />
+        </imageobject>
+      </inlinemediaobject> Letzten drei Logeinträge sind DNFs</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/no_4_log.png" />
+        </imageobject>
+      </inlinemediaobject> Letzten vier oder mehr Logeinträge sind DNFs</para>
 
     <section>
       <title id="list_popup">Popup Menü in der Listenansicht</title>
@@ -56,7 +211,70 @@
           </imageobject>
         </inlinemediaobject></para>
 
-      <para></para>
+      <orderedlist>
+        <listitem>
+          <para><literal>Beschreibung öffnen</literal> öffnet die
+          <literal>Details</literal> Ansicht für den ausgewählten Cache in der
+          <literal>Listen</literal> Ansicht.</para>
+        </listitem>
+
+        <listitem>
+          <para><literal>Gehe zu diesem</literal> öffnet die
+          <literal>Goto</literal> Ansicht für den gewählten Cache. Dabei wird
+          als Zielkoordinate die Koordinate des Caches übernommen.</para>
+        </listitem>
+
+        <listitem>
+          <para><literal>Diesen als Zentrum setzen</literal> sortiert die
+          Listenansicht neu; dabei werden die Entfernungen zu den restlichen
+          Caches neu berechnet.</para>
+        </listitem>
+
+        <listitem>
+          <para><literal>Im Browser online öffnen</literal>: Die originale
+          Cachebeschreibung wird von geocaching.com oder opencaching.de
+          gezeigt. Braucht eine on-line Verbindung. Die Daten in Cachewolf
+          werden hierbei nicht aktualisiert! In der Java Version wird dies
+          nicht funktionieren, da aktuell ein Bug in der EWE VM vorhanden
+          ist.</para>
+        </listitem>
+
+        <listitem>
+          <para><literal>Im Browser offline öffnen</literal>: Die
+          Cachebeschreibung wird in dem Browser (der in den Präferenzen
+          eingestellt wurde) dargestellt. In der Java Version wird dies nicht
+          funktionieren, da aktuell ein Bug in der EWE VM vorhanden
+          ist.</para>
+        </listitem>
+
+        <listitem>
+          <para>Nichtmarkierte ausfiltern: </para>
+        </listitem>
+
+        <listitem>
+          <para><literal>Markierte löschen</literal>: Es werden alle Caches
+          gelöscht, die mit einem Häkchen versehen sind.</para>
+        </listitem>
+
+        <listitem>
+          <para><literal>Markierte aktualisieren</literal>: Alle Caches, die
+          mit einem Häkchen versehen sind werden aktualisiert indem Cachewolf
+          eine Verbindung zu geocaching.com aufbaut. Hinweis: Arbeitest Du
+          sonst mit GPX - Dateien, dann benutze diese Funktionalität, um an
+          die Additional Waypoints zu gelangen, die keine Koordinaten haben
+          (und somit nicht in der GPX Datei vorhanden).</para>
+        </listitem>
+
+        <listitem>
+          <para><literal>Alle wählen:</literal> Alle Caches werden mit einem
+          Häkchen vesehen.</para>
+        </listitem>
+
+        <listitem>
+          <para><literal>Alle abwählen</literal>: Die Häkchen werden von allen
+          Caches entfernt.</para>
+        </listitem>
+      </orderedlist>
     </section>
   </section>
 
@@ -69,13 +287,124 @@
   <section>
     <title>Details</title>
 
-    <para></para>
+    <para>Die Details–Seite zeigt einige Eckdaten zu dem gewählten
+    Cache:.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/ansicht_details.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para>Weitere Funktionalität wird durch die Felder im oberen Rand der
+    Ansicht angeboten:</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/new_cache.jpg" />
+        </imageobject>
+      </inlinemediaobject> Mit diesem Button kann ein neuer Wegpunkt angelegt
+    werden.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/goto.jpg" />
+        </imageobject>
+      </inlinemediaobject> Mit diesem Button wird die <literal>Goto</literal>
+    Ansicht geöffnet. Die Zielkoordinaten sind dann bereits auf die
+    Koordinaten des Caches gesetzt.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/tb.jpg" />
+        </imageobject>
+      </inlinemediaobject> Sind Travelbugs in diesem Cache vorhanden (kein
+    roter Strich!) kann man die Beschreibungen zu den TBs öffnen.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/welt.jpg" />
+        </imageobject>
+      </inlinemediaobject> Mit der Weltkugel wird eine Karte geöffnet, auf dem
+    die Lage des Caches eingezeichnet ist. Die Kartenansicht wird im
+    nachfolgenden Kapitel ausführlich beschrieben.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/pics.jpg" />
+        </imageobject>
+      </inlinemediaobject> Mit diesem Button können eigene Bilder zum Cache
+    hinzugefügt werden. Dies dürfte für diejenigen Interessant sein, die ihre
+    Cachereisen archivieren. Zum Thema archivieren gibt es hier <xref
+    linkend="verwalten" /> mehr.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/black.jpg" />
+        </imageobject>
+      </inlinemediaobject> Vielleicht gibt es Caches die einfach "nerven".
+    Durch einen Klick auf diesen Button wird dieser Cache auf die "Blacklist"
+    gesetzt. Somit erscheint er dann nicht mehr in der Listenansicht. Dies ist
+    nicht das gleiche wie löschen, denn gelöschte Caches würden bei der
+    nächsten Aktualisierung wieder erscheinen.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/notes.jpg" />
+        </imageobject>
+      </inlinemediaobject> Durch einen Klick auf diesen Button wird ein
+    Notizenfenster geöffnet. Die Notizen werden mit dem Cache
+    gespeichert.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/time.jpg" />
+        </imageobject>
+      </inlinemediaobject> Durch einen Klick auf diesen Button wird zu den
+    Notizen die Uhrzeit und das Datum des PDAs hinzugefügt.</para>
+
+    <para>Änderungen in den Textfeldern oder in den Auswahlfeldern werden
+    gespeichert! Am Interessantesten dürfte das Feld neben
+    <literal>Status</literal> sein. Durch einen Klick auf das Datumsfeld kann
+    das Gefunden Datum gesetzt werden (Datum wird durch ein Klick auf das
+    grüne Häckchen gesetzt). </para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/calender.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para>Ebenso wird die Uhrzeit gespeichert. </para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/gefunden_am.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <section>
+      <title>Die Kartenansicht</title>
+
+      <para></para>
+    </section>
   </section>
 
   <section>
     <title>Beschreibung</title>
 
-    <para></para>
+    <para>Die Beschreibung erfolgt weitesgehend in HTML. Bilder werden falls
+    möglich ebenfalls angezeigt.. Ansonsten können die Bilder in der
+    Bilderansicht (nächster Reiter) anschauen.</para>
+
+    <para><inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/ansicht_beschreibung.jpg" />
+        </imageobject>
+      </inlinemediaobject></para>
+
+    <para>Mit <literal>+</literal> und <literal>-</literal> läßt sich die
+    Schriftgröße vergrößern und verkleinern.</para>
   </section>
 
   <section>
