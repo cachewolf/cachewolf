@@ -1318,6 +1318,36 @@ public class SpiderGC{
 			return "";
 		}
 	}
+	
+	/**
+	 * Fetch a bug's mission and namefor a given tracking number
+	 * @param TB the travelbug
+	 * @return true if suceeded
+	 */
+	public boolean getBugMissionAndNameByTrackNr(Travelbug TB) {
+		String bugDetails;
+		String trackNr = TB.getTrackingNo();
+		try{
+			pref.log("Fetching bug detailsByTrackNr: "+trackNr);
+			bugDetails = fetch(p.getProp("getBugByTrackNr")+trackNr);
+		}catch(Exception ex){
+			pref.log("Could not fetch bug details");
+			bugDetails="";
+		}
+		try {
+			if (bugDetails.indexOf(p.getProp("bugNotFound"))>=0) {
+//				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), MessageBox.OKB)).execute();
+				return false;
+			}
+			Extractor exDetails = new Extractor(bugDetails,p.getProp("bugDetailsStart"),p.getProp("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
+			TB.setMission( exDetails.findNext() );
+			Extractor exName = new Extractor(bugDetails,p.getProp("bugNameStart"),p.getProp("bugNameEnd"),0,Extractor.EXCLUDESTARTEND);
+			TB.setName( exName.findNext() );
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
+	}
 
 	private class myProperties extends Properties {
 		myProperties() {

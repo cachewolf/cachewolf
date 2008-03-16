@@ -16,6 +16,7 @@
 # Version 3.0 - 20071010 adaption to new GC-design
 # Version 3.1 - 20071013 Use the given prefix for addi waypoints
 # Version 3.2 - 20071024 longer end sequence for longDescRex
+# Version 3.3 - 20080316 get travelbug name by tracking number
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -105,6 +106,9 @@ bugGuidExStart     = www.geocaching.com/track/details.aspx?id=
 bugGuidExEnd       = "
 bugNotFound        = No\ results\ were\ found\ for\ your\ search
 bugTotalRecords    = Total\ Records:\ <b>1</b>
+bugNameStart       = <span id="lbHeading">
+bugNameEnd         = </span>
+
 
 #--------------------------------------
 #Section2c: Images
