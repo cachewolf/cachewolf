@@ -267,7 +267,7 @@ public class GotoPanel extends CellPanel {
 		}
 		// cannot interprete data
 		if (fix == -2) {
-			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511, "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n")+myNavigation.gpsPos.lastStrExamined, MessageBox.OKB)).exec();
+			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511, "Cannot interpret data from GPS\n possible reasons:\n wrong port,\n wrong baudrate,\n not NMEA 0183 protocol\nConnection to serial port closed\nLast string tried to parse:\n")+myNavigation.gpsPos.lastStrExamined, MessageBox.OKB)).exec();
 			gpsStatus = RED;
 			myNavigation.stopGps(); // TODO automatic in myNavigate?
 		}
@@ -290,7 +290,7 @@ public class GotoPanel extends CellPanel {
 
 	
 	private String getGotoBtnText() {
-		if (myNavigation.destination == null) return MyLocale.getMsg(999,"Not set");
+		if (myNavigation.destination == null) return MyLocale.getMsg(999,"not set");
 		else return myNavigation.destination.toString(currFormat);
 	}
 	

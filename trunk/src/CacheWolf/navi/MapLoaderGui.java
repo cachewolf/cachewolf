@@ -38,7 +38,7 @@ public class MapLoaderGui extends Form {
 	mLabel km = new mLabel("km");
 	mLabel coosLbl;
 	mButton coosBtn;
-	mLabel scaleLbl = new mLabel(MyLocale.getMsg(1807,"Approx. m per pixel:"));
+	mLabel scaleLbl = new mLabel(MyLocale.getMsg(1807,"Approx. m per pixel")+":");
 	mInput scaleInput = new mInput ("3");
 	mInput scaleInputPerCache = new mInput ("1");
 	mLabel overlappingLbl = new mLabel(MyLocale.getMsg(1808,"overlapping in pixel:"));
@@ -127,7 +127,7 @@ public class MapLoaderGui extends Form {
 		okBPerCache.setHotKey(0, IKeys.ENTER);
 		pnlPerCache.addLast(okBPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 
-		mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
+		mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "per cache"), MyLocale.getMsg(1814, "per cache"));
 		this.addLast(mTab);
 	}
 

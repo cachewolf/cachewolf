@@ -17,7 +17,7 @@ public class Rebuild {
 		
 		myProgressBarForm pbf = new myProgressBarForm();
 		Handle h = new Handle();
-		pbf.setTask(h,MyLocale.getMsg(209,"Rebuilding index"));
+		pbf.setTask(h,MyLocale.getMsg(209,"Rebuilding Index"));
 		pbf.exec();
 
 		FileBugfix file=new FileBugfix(Global.getProfile().dataDir);
@@ -54,8 +54,8 @@ public class Rebuild {
 				if (pbf.isClosed) break;
 			}
 			(new MessageBox(MyLocale.getMsg(327, "Information"), 
-					  MyLocale.getMsg(210,"Caches nicht in index.xml: ")+orphans+
-					  MyLocale.getMsg(211,"\nDavon hinzugefügt: ")+nAdded
+					  MyLocale.getMsg(210,"Caches not in index.xml: ")+orphans+
+					  MyLocale.getMsg(211,"\nAdded these: ")+nAdded
 					, MessageBox.OKB)).execute();
 			prof.buildReferences();
 			prof.saveIndex(Global.getPref(),true);

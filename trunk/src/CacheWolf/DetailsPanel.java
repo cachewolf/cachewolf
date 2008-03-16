@@ -134,7 +134,6 @@ public class DetailsPanel extends CellPanel{
 		//btnNotes = new mButton("Notes");
 		//this.addLast(btnNotes.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		//this.addNext(new mLabel(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		//this.addLast(btnCenter = new mButton(MyLocale.getMsg(309,"Make Centre")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 //		this.addLast(btnDelete = new mButton(MyLocale.getMsg(310,"Delete")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		attV=new AttributesViewer();
 		this.addLast(attV);
@@ -329,7 +328,7 @@ public class DetailsPanel extends CellPanel{
 					MapDetailForm mdf = new MapDetailForm(thisCache.wayPoint, pref, profile);
 					mdf.execute();
 				} catch (IllegalArgumentException e) {
-					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden")+": "+e.getMessage(), MessageBox.OKB);
+					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(322,"Cannot find image/map")+": "+e.getMessage(), MessageBox.OKB);
 					tmp.exec();
 				}
 	*/		}
@@ -502,7 +501,7 @@ public class DetailsPanel extends CellPanel{
 					  if (idx<0) idx=profile.getCacheIndex("CW"+ ch.wayPoint.substring(ch.wayPoint.length() == 5?1:2));
 					  if (idx<0) (new MessageBox(MyLocale.getMsg(144,"Warning"),
 							  MyLocale.getMsg(734,"No main cache found for addi waypoint ")+" "+ch.wayPoint+
-							  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYY, where xx are any 2 chars and YYYY are the main cache's chars after the GC"),FormBase.OKB)).execute();
+							  "\n"+MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYYY, where xx are any 2 chars and YYYYY are the 4..5 main cache's chars after the GC"),FormBase.OKB)).execute();
 				  }
 				  profile.buildReferences(); // TODO this takes quite long -> use profile.setAddiRef instead
 			  } else {
@@ -580,7 +579,7 @@ public class DetailsPanel extends CellPanel{
 					tbjList=new TravelbugJourneyList();
 					tbjList.readTravelbugsFile();
 					TravelbugList tbl=tbjList.getMyTravelbugs();
-					TravelbugScreen tbs=new TravelbugScreen(tbl,MyLocale.getMsg(6017,"Drop a travelbug"),false);
+					TravelbugScreen tbs=new TravelbugScreen(tbl,MyLocale.getMsg(6017,"Drop Travelbug"),false);
 					tbs.execute();
 					if (tbs.selectedItem>=0) {
 						Travelbug tb=tbl.getTB(tbs.selectedItem);

@@ -81,10 +81,10 @@ public class MagellanExporter {
 					}
 					reader.close();
 				} catch (FileNotFoundException e) {
-					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n" + e.getMessage()));
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n") + e.getMessage());
 					info.show();
 				} catch (IOException e) {
-					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n" + e.getMessage()));
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n") + e.getMessage());
 					info.show();
 				} finally {
 					cacheDB.sort(new DistanceComparer(centre),false);

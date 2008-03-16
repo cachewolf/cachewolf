@@ -228,7 +228,7 @@ public class PreferencesScreen extends Form {
 				MyLocale.getMsg(612,"Distance"),
 				MyLocale.getMsg(613,"Bearing"),
 				MyLocale.getMsg(635,"Size"),
-				MyLocale.getMsg(636,"OC Empfehlungen"),
+				MyLocale.getMsg(636,"OC Recommends"),
 				MyLocale.getMsg(637,"OC Index")},pref.listColMap),MyLocale.getMsg(595,"List"),null);
 
 		Card c=mTab.addCard(tccBugs=new TableColumnChooser(new String[] {

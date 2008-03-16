@@ -402,7 +402,7 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void startCacheLog(String name, AttributeList atts){
-		inf.setInfo(MyLocale.getMsg(1612,"Importing Cachlog:")+" " + numLogImported);
+		inf.setInfo(MyLocale.getMsg(1612,"Importing cache log:")+" " + numLogImported);
 		if (name.equals("logtype")){
 			logtype = Convert.toInt(atts.getValue("id"));
 			switch (logtype) {
@@ -516,7 +516,7 @@ public class OCXMLImporter extends MinML {
 						fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anführungszeichen 
 						if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
 						if (fetchUrl==null) { // TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
-							inf.addWarning(MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+chD.wayPoint));
+							inf.addWarning(MyLocale.getMsg(1617, "Ignoring error in HTML cache description: \"<img\" without \"src=\" in cache ")+chD.wayPoint);
 							continue;
 						}
 						inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported + "\n"+MyLocale.getMsg(1620, "downloading embedded images: ") + numDownloaded++);
