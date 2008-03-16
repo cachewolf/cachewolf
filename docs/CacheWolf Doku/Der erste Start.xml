@@ -250,7 +250,7 @@
     </section>
 
     <section>
-      <title>Einstellung Liste</title>
+      <title id="einstellungListe">Einstellung Liste</title>
 
       <para><inlinemediaobject>
           <imageobject>
@@ -380,7 +380,7 @@
         Cachewolf wird alle Caches im Umkreis von dem Zentrum herunterladen.
         Wird der Hacken bei <literal>Bilder downloaden</literal> gesetzt, wird
         Cachewolf die Bilder in der Cachebeschreibung als auch die
-        Spoilerbilder herunterladen. </para>
+        Spoilerbilder herunterladen.</para>
 
         <para>Mit <literal>OK</literal> wird der Spider gestartet. Je nach
         Entfernung und Cachedichte wird das Spidern nun einige Zeit in
