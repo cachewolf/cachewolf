@@ -183,7 +183,7 @@ public class MovingMap extends Form {
 		//this.mapPath = mapsPath;
 		Vm.showWait(this, true);
 		resetCenterOfMap();
-		InfoBox inf = new InfoBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(4203, "Loading list of maps..."));
+		InfoBox inf = new InfoBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4203, "Loading list of maps..."));
 		inf.exec();
 		inf.waitUntilPainted(100);
 		boolean saveGpsIgnoreStatus = dontUpdatePos;
@@ -1025,7 +1025,7 @@ public class MovingMap extends Form {
 	public void loadMapForAllCaches(){
 		Area sur = Global.getProfile().getSourroundingArea(true);
 		if (sur == null) {
-			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit Häckchen ausgewählt"), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4215, "Did not select any caches"), MessageBox.OKB)).execute();
 			return;
 		}
 		MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.buttomright);
@@ -1370,7 +1370,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	MenuItem showMapMI = new MenuItem(MyLocale.getMsg(4238, "Show map"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4239, "Show map"), null, Graphics.RIGHT));
 	MenuItem hideMapMI = new MenuItem(MyLocale.getMsg(4240, "Hide map"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4241, "Hide map"), null, Graphics.RIGHT));
 	// automatic
-	MenuItem mapChangeModusMI = new MenuItem(MyLocale.getMsg(4242, "Modus for automatic map change"), MenuItem.Separator, null);;
+	MenuItem mapChangeModusMI = new MenuItem(MyLocale.getMsg(4242, "Mode for automatic map change"), MenuItem.Separator, null);;
 	MenuItem highestResGpsDestMI = new MenuItem(MyLocale.getMsg(4244, "Highest res. containing dest. & cur. position"), new IconAndText(new mImage("res_gps_goto.png"), MyLocale.getMsg(4245, "Highest res. containing dest. & cur. position"), null, Graphics.RIGHT)); //immer höchste Auflösung wählen, die akt. Pos. und Ziel enthalten 
 	MenuItem highestResolutionMI = new MenuItem(MyLocale.getMsg(4246, "Highest resolution"), new IconAndText(new mImage("res_high.png"), MyLocale.getMsg(4247, "Highest resolution"), null, Graphics.RIGHT)); //immer höchste Auflösung wählen 
 	MenuItem keepManResolutionMI = new MenuItem(MyLocale.getMsg(4248, "Keep manual resolution"), new IconAndText(new mImage("res_manuell.png"), MyLocale.getMsg(4249, "Keep manual resolution"), null, Graphics.RIGHT)); // manuell gewählte Auflösung beibehalten  
@@ -1852,7 +1852,7 @@ class ListBox extends Form{
 			}
 		}
 		if (gotopos != null) {
-			list.addItem(MyLocale.getMsg(4274, "--- Karten des Ziels ---"));
+			list.addItem(MyLocale.getMsg(4274, "--- maps of target area ---"));
 			row++;
 			cmp = "FF1"+Area.getEasyFindString(gotopos, 30);
 			for(int i = 0; i<maps.size();i++){
@@ -1869,7 +1869,7 @@ class ListBox extends Form{
 				}
 			}
 		}
-		list.addItem(MyLocale.getMsg(4275, "--- andere Karten ---"));
+		list.addItem(MyLocale.getMsg(4275, "--- other maps ---"));
 		row++;
 		for(int i = 0; i<maps.size();i++){
 			ml = (MapListEntry)maps.get(i);

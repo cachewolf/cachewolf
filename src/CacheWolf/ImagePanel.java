@@ -187,7 +187,7 @@ public class ImagePanel extends InteractivePanel{
 					locY = locY+thumb_size+padding;
 				}
 			}catch(IllegalArgumentException imex){ // file not found, could not decode etc.
-				MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), MessageBox.OKB); // @todo: language support
+				MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(326,"Cannot load image/map")+":\n"+imex.getMessage(), MessageBox.OKB); // @todo: language support
 				tmp.exec();
 			} catch (OutOfMemoryError e) { // TODO show an error icon in the panel instead of nothing
 				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+":\n"+location,MessageBox.OKB)).exec();
@@ -246,7 +246,7 @@ public class ImagePanel extends InteractivePanel{
 					ImageDetailForm iF = new ImageDetailForm(fn, pref);
 					iF.execute(null, Gui.CENTER_FRAME);
 				} catch (IllegalArgumentException e) {
-					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden"), MessageBox.OKB); // @todo: language support
+					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(322,"Cannot find image/map"), MessageBox.OKB); // @todo: language support
 					tmp.exec();
 				} catch (OutOfMemoryError e) {
 					(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+fn,MessageBox.OKB)).exec();

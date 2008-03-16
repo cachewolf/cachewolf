@@ -55,8 +55,8 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] mnuImport = new MenuItem[6];
 		mnuImport[0] = loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")); //TODO internationalization
-		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download von opencaching.de")); 
-		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider von geocaching.com")); 
+		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download from opencaching.de")); 
+		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider from geocaching.com")); 
 		mnuImport[3] = update      = new MenuItem(MyLocale.getMsg(1014,"Update cache data"));
 		mnuImport[4] = mnuSeparator = new MenuItem("-"); 
 		mnuImport[5] = mnuForceLogin      = new MenuItem("Always login to GC"); 
@@ -100,7 +100,7 @@ public class MainMenu extends MenuBar {
 		// Create the "Application" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem [] appMenuItems=new MenuItem[11];
-		appMenuItems[0] = profiles 	 = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu); 
+		appMenuItems[0] = profiles 	 = new MenuItem(MyLocale.getMsg(121,"Profiles"), 0, profileMenu); 
 		appMenuItems[1] = preferences = new MenuItem(MyLocale.getMsg(108,"Preferences")); 
 		appMenuItems[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Centre"));
 		appMenuItems[3] = mnuSeparator;
@@ -117,7 +117,7 @@ public class MainMenu extends MenuBar {
 		// Create the "Search" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] searchMenuItems=new MenuItem[2];
-		searchMenuItems[0] = search = new MenuItem(MyLocale.getMsg(112,"Search$"+(char)6)); // char 6 = ctrl +f 
+		searchMenuItems[0] = search = new MenuItem(MyLocale.getMsg(112,"Search")+"$");
 		searchMenuItems[1] = searchClr = new MenuItem(MyLocale.getMsg(113,"Clear search"));
 
 		///////////////////////////////////////////////////////////////////////
@@ -434,7 +434,7 @@ public class MainMenu extends MenuBar {
 						MapImporter map = new MapImporter(pref, sM.getSelectedMap(),sM.worldfileexists);
 						map.execute(null, Gui.CENTER_FRAME);
 					} catch (java.lang.OutOfMemoryError e) {
-						MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156,"Out of memory error, map to big"), MessageBox.OKB);
+						MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156,"Out of memory error, map too big"), MessageBox.OKB);
 						tmpMB.exec();
 					}
 				}

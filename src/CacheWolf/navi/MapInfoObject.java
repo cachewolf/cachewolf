@@ -91,7 +91,7 @@ public class MapInfoObject extends Area {
 	 */
 	public MapInfoObject(double scalei, double lat) {
 		super(new CWPoint(1,0), new CWPoint(0,1));
-		mapName=MyLocale.getMsg(4300, "empty 1 Pixel = ") + scalei + MyLocale.getMsg(4301,"meters");
+		mapName=MyLocale.getMsg(4300, "empty 1 Pixel = ") + scalei + MyLocale.getMsg(4307,"meters");
 		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		double pixel2deg = meters2deg * scalei;
 		affine[0]=0; //x2lat

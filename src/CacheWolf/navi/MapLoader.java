@@ -67,7 +67,7 @@ public class MapLoader {
 			try {
 				if (!showprogress && ((i & 0) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 					showprogress = true;      
-					progressBox = new InfoBox(MyLocale.getMsg(327, "Info"), MyLocale.getMsg(4800, "Loading online map services"));
+					progressBox = new InfoBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(4800, "Loading online map services"));
 					progressBox.exec(); 
 					progressBox.waitUntilPainted(500);
 					ewe.sys.Vm.showWait(true);
@@ -578,7 +578,7 @@ class WebMapService extends OnlineMapService {
 			int region = TransformCoordinates.getGkRegion(coordinateReferenceSystem[0]);
 			GkPoint gkbl = TransformCoordinates.wgs84ToGk(p, region); // TODO: think / read about what to do if buttom left and top right ae not in the same Gauß-Krüger stripe?
 			crs = TransformCoordinates.whichEpsg(coordinateReferenceSystem, gkbl);
-			if (crs < 0) throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:")+" " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gauß-Krüger-Stripe in the EPSG-code list in the .wms"));
+			if (crs < 0) throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:")+" " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gauss-Krueger-Stripe in the EPSG-code list in the .wms"));
 		}
 		return crs;
 	}

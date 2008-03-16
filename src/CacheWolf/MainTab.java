@@ -254,7 +254,7 @@ public class MainTab extends mTabbedPanel {
 	/** Update the distances of all caches to the centre and display a message 
 	 */
 	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
-		MessageBox info = new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \n werden neu berechnet...").replace('~','\n'), 0);
+		MessageBox info = new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Distances in list view \n are recalculated now..."), 0);
 		info.exec();
 		tbP.pref = pref;
 		profile.updateBearingDistance();
@@ -388,7 +388,7 @@ public class MainTab extends mTabbedPanel {
 		updatePendingChanges();
 		if (askForConfirmation) { // Don't know whether to save, have to ask
 			if (profile.hasUnsavedChanges &&     // Only ask if there were changes 
-					(new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1207,"Your profile has unsaved changes. Do you want to save?"),MessageBox.DEFOKB|MessageBox.NOB)).execute()==MessageBox.IDOK) {
+					(new MessageBox(MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(1207,"Your profile has unsaved changes. Do you want to save?"),MessageBox.DEFOKB|MessageBox.NOB)).execute()==MessageBox.IDOK) {
 				saveIndex=true; 
 			}
 		}
@@ -405,5 +405,3 @@ public class MainTab extends mTabbedPanel {
 		}
 	}
 }
-// 
-
