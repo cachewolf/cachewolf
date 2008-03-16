@@ -128,21 +128,21 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 2 - Cache attributes
 		//////////////////////////
-		addTitle(pnlAttributes,MyLocale.getMsg(728,"Status"));
+		addTitle(pnlAttributes,MyLocale.getMsg(720,"Status"));
 		mLabel lblTitleAtt; 
 		pnlAttributes.addLast(lblTitleAtt=new mLabel(MyLocale.getMsg(715,"Show all caches with status:")),HSTRETCH,FILL);
 		lblTitleAtt.setTag(SPAN,new Dimension(2,1));
 		pnlAttributes.addNext(chkArchived = new mCheckBox(MyLocale.getMsg(710,"Archived")), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAttributes.addLast(chkNotArchived = new mCheckBox(MyLocale.getMsg(729,"Not archived")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlAttributes.addLast(chkNotArchived = new mCheckBox(MyLocale.getMsg(729,"Nicht archiviert")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlAttributes.addNext(chkAvailable = new mCheckBox(MyLocale.getMsg(730,"Searchable")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlAttributes.addNext(chkAvailable = new mCheckBox(MyLocale.getMsg(730,"Suchbar")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlAttributes.addLast(chkNotAvailable = new mCheckBox(MyLocale.getMsg(711,"Not available")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		pnlAttributes.addNext(chkFound = new mCheckBox(MyLocale.getMsg(703,"Found")), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAttributes.addLast(chkNotFound = new mCheckBox(MyLocale.getMsg(731,"Not yet found")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlAttributes.addLast(chkNotFound = new mCheckBox(MyLocale.getMsg(731,"Noch nicht gefunden")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		pnlAttributes.addNext(chkOwned = new mCheckBox(MyLocale.getMsg(707,"Owned")), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAttributes.addLast(chkNotOwned = new mCheckBox(MyLocale.getMsg(732,"Other owner")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlAttributes.addLast(chkNotOwned = new mCheckBox(MyLocale.getMsg(732,"Anderer Besitzer")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		//////////////////////////
 		// Panel 3 - Cache ratings

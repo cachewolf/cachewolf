@@ -41,7 +41,7 @@ public class NewProfileForm extends Form {
 				profileDir=inpDir.getDisplayText();
 				File f=new File(baseDir+profileDir);
 				if (f.exists()) {
-					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1114,"Directory already exists"),MBOK);
+					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1114,"Directory exists already."),MBOK);
 					mb.execute();
 					profileDir="";
 				} else {

@@ -11,7 +11,7 @@ public class TravelbugPickup {
 	 */
 	public static Travelbug pickupTravelbug(TravelbugList tbl) {
 		Travelbug tb=null;
-		TravelbugScreen tbs=new TravelbugScreen(tbl,MyLocale.getMsg(6016,"Pick up Travelbug"),true);
+		TravelbugScreen tbs=new TravelbugScreen(tbl,MyLocale.getMsg(6016,"Pick up travelbug"),true);
 		tbs.execute(); // Select TB to pick up
 		if (tbs.selectedItem>=0) { // Was a TB selected ?
 			// If the returned item is bigger than number of bugs in cache

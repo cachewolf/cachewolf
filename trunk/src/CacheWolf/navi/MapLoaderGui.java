@@ -38,7 +38,7 @@ public class MapLoaderGui extends Form {
 	mLabel km = new mLabel("km");
 	mLabel coosLbl;
 	mButton coosBtn;
-	mLabel scaleLbl = new mLabel(MyLocale.getMsg(1807,"Approx. m per pixel")+":");
+	mLabel scaleLbl = new mLabel(MyLocale.getMsg(1807,"Approx. m per pixel:"));
 	mInput scaleInput = new mInput ("3");
 	mInput scaleInputPerCache = new mInput ("1");
 	mLabel overlappingLbl = new mLabel(MyLocale.getMsg(1808,"overlapping in pixel:"));
@@ -127,7 +127,7 @@ public class MapLoaderGui extends Form {
 		okBPerCache.setHotKey(0, IKeys.ENTER);
 		pnlPerCache.addLast(okBPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 
-		mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "per cache"), MyLocale.getMsg(1814, "per cache"));
+		mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
 		this.addLast(mTab);
 	}
 
@@ -185,7 +185,7 @@ public class MapLoaderGui extends Form {
 		if (forCachesChkBox.getState() || perCache) {
 			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
 			if (surArea == null) {
-				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are selected"), MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are seleted"), MessageBox.OKB)).execute();
 				Vm.showWait(false);
 				progressBox.close(0);
 				return;
@@ -282,7 +282,7 @@ public class MapLoaderGui extends Form {
 					overlapping = Convert.toInt(overlappingInput.getText());
 					if (!forCachesChkBox.getState()) {
 						if (radius <= 0) { 
-							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be greater than 0"), MessageBox.OKB)).execute();
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be graeter than 0"), MessageBox.OKB)).execute();
 							return;
 						}
 						if (overlapping < 0) { 

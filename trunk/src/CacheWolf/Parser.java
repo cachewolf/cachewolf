@@ -170,7 +170,7 @@ public class Parser{
      * Add an error message to the message stack and raise an Exception.
     */
 	private void err(String str) throws Exception {
-    	messageStack.add(MyLocale.getMsg(1700,"Error on line: ") + thisToken.line + " "+MyLocale.getMsg(1701," position: ") + thisToken.position);
+    	messageStack.add(MyLocale.getMsg(1700,"Error on line: ") + thisToken.line + "  "+MyLocale.getMsg(1701,"position: ") + thisToken.position);
     	messageStack.add(str);
     	// move cursor to error location
     	if (Global.mainTab.solverP.mText.setSelectionRange(0,thisToken.line-1,thisToken.position+thisToken.token.length()-1,thisToken.line-1))Global.mainTab.solverP.mText.repaintNow();

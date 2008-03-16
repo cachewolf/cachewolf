@@ -66,7 +66,7 @@ public class OCXMLImporterScreen extends Form {
 
 		if((options & ALL) > 0){
 			missingCheckBox = new mCheckBox();
-			missingCheckBox.setText(MyLocale.getMsg(1606,"Re-download all"));
+			missingCheckBox.setText(MyLocale.getMsg(1606,"Alle erneut downloaden"));
 			missingCheckBox.setState(false); // @ToDo: aus Prefs
 			this.addLast(missingCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}

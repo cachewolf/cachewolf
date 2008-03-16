@@ -107,7 +107,7 @@ public class PreferencesScreen extends Form {
 		inpGPS.setText(pref.mySPO.portName+"/"+pref.mySPO.baudRate);
 		
 		// Garmin and GPSBabel
-		frmGarmin.addNext(lblGarmin=new mLabel(MyLocale.getMsg(173,"GPSBabel:")),DONTSTRETCH,LEFT);
+		frmGarmin.addNext(lblGarmin=new mLabel(MyLocale.getMsg(173,"Garmin:  PC Port:")),DONTSTRETCH,LEFT);
 		lblGarmin.setTag(INSETS,new Insets(4,0,0,0));
 		frmGarmin.addNext(chcGarminPort=new mChoice(garminPorts,0),DONTSTRETCH,LEFT);
 		chcGarminPort.setTag(INSETS,new Insets(4,0,0,0));
@@ -205,7 +205,7 @@ public class PreferencesScreen extends Form {
 		//ewe.sys.Vm.copyArray(tmp, 0, langs, 1, tmp.length);
 		pnlMore.addLast(inpLanguage=new mChoice(langs, curlang),DONTSTRETCH,DONTFILL|WEST);
 		//inpLanguage.setPreferredSize(20,-1);
-		inpLanguage.setToolTip(MyLocale.getMsg(591,"Select \"auto\" for system language or select your preferred language, e.g. DE, EN, NL"));
+		inpLanguage.setToolTip(MyLocale.getMsg(591,"Select \"auto\" for system language or select your preferred language, e.g. DE or EN"));
 		
 		/////////////////////////////////////////////////////////
 		// Fourth/Fifth panel - Listview and Travelbugs
@@ -228,7 +228,7 @@ public class PreferencesScreen extends Form {
 				MyLocale.getMsg(612,"Distance"),
 				MyLocale.getMsg(613,"Bearing"),
 				MyLocale.getMsg(635,"Size"),
-				MyLocale.getMsg(636,"OC Recommends"),
+				MyLocale.getMsg(636,"OC Empfehlungen"),
 				MyLocale.getMsg(637,"OC Index")},pref.listColMap),MyLocale.getMsg(595,"List"),null);
 
 		Card c=mTab.addCard(tccBugs=new TableColumnChooser(new String[] {
