@@ -21,13 +21,24 @@ public class StatusBar extends CellPanel{
 	
 	public StatusBar(Preferences p, Vector db){
 		pref=p;
-		addNext(btnCacheTour=new mButton(imgCacheTour=new mImage("cachetour.png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		int sw = MyLocale.getScreenWidth();
+		boolean MobileVGA = (Vm.isMobile() && sw >= 400);
+		String imagesize="";
+		if(MobileVGA) imagesize="_vga";  
+		addNext(btnCacheTour=new mButton(imgCacheTour=new mImage("cachetour"+imagesize+".png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
 		imgCacheTour.transparentColor=Color.White;
-		btnCacheTour.setPreferredSize(20,13);btnCacheTour.borderWidth=0; 
+		if(MobileVGA)
+			btnCacheTour.setPreferredSize(28,20);
+		else
+			btnCacheTour.setPreferredSize(20,13);
+		btnCacheTour.borderWidth=0; 
 		btnCacheTour.setToolTip(MyLocale.getMsg(197,"Show/Hide cachetour"));
-		addNext(btnFlt= new mButton(imgFlt=new mImage("filter.png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); 
+		addNext(btnFlt= new mButton(imgFlt=new mImage("filter" + imagesize + ".png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); 
 		btnFlt.backGround=new ewe.fx.Color(0,255,0); 
-		btnFlt.setPreferredSize(20,13);
+		if(MobileVGA)
+			btnFlt.setPreferredSize(28,20);
+		else
+			btnFlt.setPreferredSize(20,13);
 		btnFlt.borderWidth=0; imgFlt.transparentColor=Color.White;
 		btnFlt.setToolTip("Filter status");
 //		addNext(lblFlt= new mLabel("Flt"),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); lblFlt.backGround=new ewe.fx.Color(0,255,0);
