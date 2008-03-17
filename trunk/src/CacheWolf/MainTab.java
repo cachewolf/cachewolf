@@ -53,7 +53,7 @@ public class MainTab extends mTabbedPanel {
 		int sw = MyLocale.getScreenWidth();
 		if ( sw <= 240) this.dontExpandTabs=true;
 		String imagesize="";
-		if (Vm.isMobile() && sw >= 400) imagesize="_32x32";  
+		if (Vm.isMobile() && sw >= 400) imagesize="_vga";  
 		calcP = new CalcPanel(); // Init here so that Global.MainT is already set
 		tbP = new TablePanel(pref, profile, statBar);
 		Card c = this.addCard(new TableForm(tbP), MyLocale.getMsg(1200,"List"), null);

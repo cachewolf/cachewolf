@@ -291,10 +291,24 @@ public class FilterScreen extends Form{
 		btPanel.addNext(btnApply = new mButton(MyLocale.getMsg(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
 		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
 		addLast(btPanel.setTag(Control.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
-		if (MyLocale.getScreenHeight()>240)
-			setPreferredSize(240,260);
-		else
-			setPreferredSize(240,240);
+		int sw = MyLocale.getScreenWidth(); int sh = MyLocale.getScreenHeight(); 
+		Preferences pref = Global.getPref();int fs = pref.fontSize;
+		int psx; int psy;
+		if((sw>300) && (sh>300)){
+			// larger screens: size according to fontsize
+			psx=240;psy=260;
+			if(fs > 12){psx=300;psy=330;}
+			if(fs > 17){psx=400;psy=340;}
+			if(fs > 23){psx=500;psy=350;}
+			setPreferredSize(psx,psy);
+		}
+		else{
+			// small screens: fixed size
+			if (sh>240)
+				setPreferredSize(240,260);
+			else
+				setPreferredSize(240,240);
+		}
 		cp.select(3);
 	}
 	

@@ -47,13 +47,24 @@ public class InfoBox extends Form{
 
 	public InfoBox(String title, String info, int ty){
 		this(title, info, ty, true);
-		this.setPreferredSize(170, 50);
+//		this.setPreferredSize(170, 50);
 		relayout(false);
 	}
 
 	public InfoBox(String title, String info, int ty, boolean autoWrap) {
 		type = ty;
-		this.setPreferredSize(150,50);
+//		this.setPreferredSize(150,50);
+		// Resize InfoBox with Fontsize
+		Preferences pref=Global.getPref();
+		int fs = pref.fontSize;
+		int sw = MyLocale.getScreenWidth();
+		int psx; int psy;
+		psx=170;psy=50;
+		if((fs > 11) && (sw >= 200)){psx=200;psy=70;}
+		if((fs > 16) && (sw >= 250)){psx=250;psy=90;}
+		if((fs > 21) && (sw >= 300)){psx=300;psy=110;}
+		if((fs > 24) && (sw >= 350)){psx=350;psy=130;}
+		this.setPreferredSize(psx, psy);
 		this.title = title;
 		switch (type) {
 		case CHECKBOX: 
@@ -77,7 +88,7 @@ public class InfoBox extends Form{
 			msgArea.autoWrap = autoWrap;
 			msgArea.alignment = Gui.CENTER;
 			msgArea.anchor = Gui.CENTER;
-			msgArea.setPreferredSize(150, 50);
+			msgArea.setPreferredSize(psx-20, psy);
 			this.addLast(msgArea.getScrollablePanel(), CellConstants.HEXPAND | CellConstants.HGROW, CellConstants.HEXPAND | CellConstants.HGROW);
 			warnings = new TextMessage("");
 			warnings.autoWrap = autoWrap;
@@ -103,6 +114,9 @@ public class InfoBox extends Form{
 	
 	public void setInfoHeight(int heighti) {
 		msgArea.setPreferredSize(getPreferredSize(null).width, heighti);
+	}
+	public void setInfoWidth(int widthi) {
+		msgArea.setPreferredSize(widthi,getPreferredSize(null).height);
 	}
 	public String getInfo(){
 		return msgArea.getText();

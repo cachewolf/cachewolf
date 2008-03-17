@@ -53,7 +53,7 @@ public class DetailsPanel extends CellPanel{
 		// Use larger Button-Icons on VGA-mobiles
 		int sw = MyLocale.getScreenWidth();
 		String imagesize="";
-		if (Vm.isMobile() && sw >= 400) imagesize="_32x32";  
+		if (Vm.isMobile() && sw >= 400) imagesize="_vga";  
 		// Button 1: New Waypoint
 		pnlTools.addNext(btnNewWpt = new mButton(imgNewWpt=new mImage("newwpt"+imagesize+".png"))); 
 		btnNewWpt.setToolTip(MyLocale.getMsg(311,"Create Waypoint"));
@@ -84,7 +84,7 @@ public class DetailsPanel extends CellPanel{
 		pnlTools.addNext(btnNotes=new mButton(imgNotes=new mImage("notes"+imagesize+".gif"))); imgNotes.transparentColor=Color.DarkBlue;
 		btnNotes.setToolTip(MyLocale.getMsg(351,"Add/Edit notes"));
 		// Button 8: Date/time stamp
-		pnlTools.addLast(btnAddDateTime = new mButton(new mImage("date_time"+imagesize+".png"))); 
+		pnlTools.addLast(btnAddDateTime = new mButton(new mImage("date_time"+imagesize+".gif"))); 
 		btnAddDateTime.setToolTip(MyLocale.getMsg(350,"Add timestamp to notes"));
 		//showMap.modify(Control.Disabled,0);
 		pnlTools.stretchFirstRow=true;
@@ -118,7 +118,7 @@ public class DetailsPanel extends CellPanel{
 		this.addNext(new mLabel(MyLocale.getMsg(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		CellPanel cp=new CellPanel();
 		cp.addNext(chcStatus,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		cp.addLast(btnFoundDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL);
+		cp.addLast(btnFoundDate=new mButton(new mImage("calendar"+imagesize+".png")),DONTSTRETCH,DONTFILL);
 		this.addLast(cp,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(306,"Owner:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -127,7 +127,7 @@ public class DetailsPanel extends CellPanel{
 		this.addNext(new mLabel(MyLocale.getMsg(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		CellPanel ip=new CellPanel();
 		ip.addNext(inpHidden,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		ip.addLast(btnHiddenDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL);
+		ip.addLast(btnHiddenDate=new mButton(new mImage("calendar"+imagesize+".png")),DONTSTRETCH,DONTFILL);
 		this.addLast(ip,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
 		inpHidden.modifyAll(DisplayOnly,0);
 		

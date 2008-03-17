@@ -658,7 +658,7 @@ public class MainMenu extends MenuBar {
 		for(int j = 0; j <	cachesToUpdate.size(); j++){
 			int i = ((Integer)cachesToUpdate.get(j)).intValue();
 			ch = (CacheHolder)cacheDB.get(i);
-			infB.setInfo("Loading: " + ch.wayPoint);
+//			infB.setInfo("Loading: " + ch.wayPoint);
 			infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
 			infB.redisplay();
 			if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))   

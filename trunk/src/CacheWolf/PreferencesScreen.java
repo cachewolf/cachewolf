@@ -46,7 +46,8 @@ public class PreferencesScreen extends Form {
 
 		// set dialog-width according to fontsize
 		int sw = MyLocale.getScreenWidth();
-		if((pref.fontSize <= 13)||(sw <= 240)){
+		int sh = MyLocale.getScreenHeight();
+		if((pref.fontSize <= 13)||(sw <= 240)||(sh <= 240)){
 			setPreferredSize(240,240);
 		}
 		else if(pref.fontSize <= 17){
