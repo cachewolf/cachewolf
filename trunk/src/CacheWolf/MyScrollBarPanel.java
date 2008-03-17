@@ -2,6 +2,7 @@ package CacheWolf;
 
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.ScrollClient;
+import ewe.ui.ScrollablePanel;
 
 /**
  * Always use this class instead of ewe.ui.ScrollBarPanel
@@ -21,5 +22,8 @@ public class MyScrollBarPanel extends ScrollBarPanel {
 	{
 		this(client,0);
 	}
-
+	public ScrollablePanel getScrollablePanel()
+	{
+		return new MyScrollBarPanel(getScrollClient());
+	}
 }
