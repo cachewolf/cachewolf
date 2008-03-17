@@ -36,7 +36,7 @@ public class MyLocale {
 	public static String language=getLanguage();
 	
 	private static void init() {
-		 if ( language.length()==0) // Was a non-standard language specified
+		 if ( ( language.length()==0 ) || ( language.equalsIgnoreCase("auto") ) ) // Was a non-standard language specified
 			 l = Vm.getLocale();
 		 else {
 			 l=new Locale(Locale.createID(language,"",0));
