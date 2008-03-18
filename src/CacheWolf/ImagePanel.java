@@ -52,7 +52,7 @@ public class ImagePanel extends InteractivePanel{
 			thumb_size = thumb_size - padding;
 			int rowCounter = cache.Images.size() + cache.UserImages.size();
 			rowCounter = (int)(rowCounter/3)+1;
-			Rect r = new Rect(new Dimension(pref.myAppWidth,rowCounter*thumb_size+rowCounter*padding+padding));
+			Rect r = new Rect(0, 0, pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+padding);
 			this.virtualSize = r;
 			//this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
 			this.checkScrolls();
@@ -159,7 +159,10 @@ public class ImagePanel extends InteractivePanel{
 					scaleY = mI.getHeight();
 				}
 				mI = mI.scale(scaleX,scaleY,null,0);
+				mI.freeSource();
 				ipi = new ImagePanelImage(mI);
+				ipi.freeSource();
+				//mI.free(); --> this only works in java-VM, in ewe it will delete the image, so leave it commented out
 				ipi.fileName = location; // this is set only to easily identify the filename of the image clicked
 				ipi.setLocation(locX, locY);
 				addImage(ipi);
