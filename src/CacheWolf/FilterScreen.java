@@ -290,6 +290,7 @@ public class FilterScreen extends Form{
 		btPanel.addNext(btnCancel = new mButton(MyLocale.getMsg(708,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
 		btPanel.addNext(btnApply = new mButton(MyLocale.getMsg(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
 		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
+		btnRoute.modify(Control.Disabled,0);
 		addLast(btPanel.setTag(Control.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
 		int sw = MyLocale.getScreenWidth(); int sh = MyLocale.getScreenHeight(); 
 		Preferences pref = Global.getPref();int fs = pref.fontSize;
