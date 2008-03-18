@@ -66,7 +66,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] exitems = new MenuItem[13];
+		MenuItem[] exitems = new MenuItem[12];
 		//Vm.debug("Hi in MainMenu "+lr);
 		exitems[0] = exporthtml = new MenuItem(MyLocale.getMsg(100,"to HTML"));
 		exitems[1] = exportpcx5 = new MenuItem(MyLocale.getMsg(101,"to PCX5 Mapsource"));
@@ -77,12 +77,12 @@ public class MainMenu extends MenuBar {
 		exitems[6] = exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV"));
 		exitems[7] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
 		if(!(new File(cwd + "/gpsbabel.exe")).exists()) exitems[7].modifiers = MenuItem.Disabled;
-		exitems[8] = exportCacheMate = new MenuItem(MyLocale.getMsg(123,"to Cachemate"));
-		if(!(new File(cwd + "/cmconvert/cmconvert.exe")).exists()) exitems[8].modifiers = MenuItem.Disabled;
-		exitems[9] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
-		exitems[10] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
-		exitems[11] = exportMagellan = new MenuItem(MyLocale.getMsg(132,"to Magellan"));
-		exitems[12] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
+		//exitems[8] = exportCacheMate = new MenuItem(MyLocale.getMsg(123,"to Cachemate"));
+		//if(!(new File(cwd + "/cmconvert/cmconvert.exe")).exists()) exitems[8].modifiers = MenuItem.Disabled;
+		exitems[8] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
+		exitems[9] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
+		exitems[10] = exportMagellan = new MenuItem(MyLocale.getMsg(132,"to Magellan"));
+		exitems[11] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
 
 		Menu exportMenu = new Menu(exitems, MyLocale.getMsg(107,"Export"));
 
