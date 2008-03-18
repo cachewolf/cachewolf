@@ -83,7 +83,7 @@ public class GPXExporter extends Exporter{
 				strBuf.append("    </groundspeak:cache>\r\n");
 			}else {
 				// there is no HTML in the description of addi wpts
-				strBuf.append("    <cmt>").append(ch.LongDescription).append("</cmt>\r\n");
+				strBuf.append("    <cmt>").append(SafeXML.cleanGPX(ch.LongDescription)).append("</cmt>\r\n");
 				strBuf.append("    <sym>").append(CacheType.transType(ch.type)).append("</sym>\r\n");
 				strBuf.append("    <type>Waypoint|").append(CacheType.transType(ch.type)).append("</type>\r\n");
 			}
