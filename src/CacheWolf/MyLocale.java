@@ -13,6 +13,7 @@ import ewe.sys.*;
 import ewe.sys.Double;
 import ewe.sys.Long;
 import ewe.ui.Gui;
+import ewe.ui.MessageBox;
 import ewe.ui.Window;
 /**
  *  This class handles internationalisation and some other local stuff like
@@ -39,7 +40,12 @@ public class MyLocale {
 		 if ( ( language.length()==0 ) || ( language.equalsIgnoreCase("auto") ) ) // Was a non-standard language specified
 			 l = Vm.getLocale();
 		 else {
-			 l=new Locale(Locale.createID(language,"",0));
+			 int tmp = Locale.createID(language,"",0);
+			 if (tmp > -1) l=new Locale(tmp);
+			 else { // language not found
+				 (new MessageBox("Error", "Language " + language + " not found - using standard language", MessageBox.OKB)).execute(); // don't copy this messagebox into a language file, because it is only used if no languages file can be accessed
+				 l = Vm.getLocale(); 
+			 }
 		 }
 		 ewe.io.TreeConfigFile tcf = ewe.io.TreeConfigFile.getConfigFile("languages/" + getLocaleLanguage().toUpperCase() + ".cfg");
 		 if (tcf != null){			 
@@ -50,7 +56,7 @@ public class MyLocale {
 					public Object get(int id,Object data){return data;}
 					public Object get(String id,Object data){return data;}
 				};
-			 Vm.out().println("languages/" + getLocaleLanguage().toUpperCase() + ".cfg couldn't loaded. Set to default-language!");
+				(new MessageBox("Error", "Language file languages/" + getLocaleLanguage().toUpperCase() + ".cfg couldn't be loaded - using hard coded messages", MessageBox.OKB)).execute();
 		 }
 		 
 		 double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
