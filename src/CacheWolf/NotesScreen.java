@@ -14,12 +14,17 @@ import ewe.filechooser.*;
 public class NotesScreen extends Form{
 	mTextPad wayNotes = new mTextPad();
 	CacheHolderDetail thisCache = null;
-	mButton addDateTime = new mButton((IImage)new mImage("date_time.png"));
+	mButton addDateTime;
 	mButton btSave = new mButton(MyLocale.getMsg(127,"Save"));
 	mButton cancelBtn = new mButton("Cancel");
 	ScrollBarPanel sbp = new MyScrollBarPanel(wayNotes);
 	
 	public NotesScreen(CacheHolderDetail ch){
+		int sw = MyLocale.getScreenWidth();
+		String imagesize = "";
+		if (Vm.isMobile() && sw >= 400) imagesize="_vga";
+		addDateTime = new mButton((IImage)new mImage("date_time"+imagesize+".gif"));
+		
 		this.title = "Notes";
 		setPreferredSize(Global.getPref().myAppWidth, Global.getPref().myAppHeight);
 		this.resizeOnSIP = true;
