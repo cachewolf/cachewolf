@@ -72,7 +72,7 @@ public class MainMenu extends MenuBar {
 		exitems[1] = exportpcx5 = new MenuItem(MyLocale.getMsg(101,"to PCX5 Mapsource"));
 		exitems[2] = exporttop50 = new MenuItem(MyLocale.getMsg(102,"to TOP50 ASCII"));
 		exitems[3] = exportGPX = new MenuItem(MyLocale.getMsg(103,"to GPX"));
-		exitems[4] = exportASC = new MenuItem(MyLocale.getMsg(104,"to ASC"));
+		exitems[4] = exportASC = new MenuItem(MyLocale.getMsg(104,"to CSV"));
 		exitems[5] = exportTomTom = new MenuItem(MyLocale.getMsg(105,"to TomTom"));
 		exitems[6] = exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV"));
 		exitems[7] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
