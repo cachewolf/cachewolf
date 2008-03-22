@@ -17,6 +17,7 @@
 # Version 3.1 - 20071013 Use the given prefix for addi waypoints
 # Version 3.2 - 20071024 longer end sequence for longDescRex
 # Version 3.3 - 20080316 get travelbug name by tracking number
+# Version 3.4 - 20080227 Image comments added
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -123,6 +124,8 @@ imgNameExStart     = align=absmiddle\ border=0>
 imgNameExEnd       = </a><br/>
 imgSrcExStart      = <A\ HREF='http://
 imgSrcExEnd        = '\ rel='lightbox'
+imgCommentExStart  = </a><br/>
+imgCommentExEnd    = <A\ HREF
 
 #--------------------------------------
 #Section2d: Additional waypoints

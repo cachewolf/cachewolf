@@ -507,6 +507,7 @@ public class SpiderGC{
 					chD.addiWpts.clear();
 					chD.Images.clear();
 					chD.ImagesText.clear();
+					chD.ImagesInfo.clear();
 	
 					if(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0) chD.is_available = false;
 					if(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0) chD.is_archived = true;
@@ -894,9 +895,9 @@ public class SpiderGC{
 	 */
 	public void getImages(String doc, CacheHolderDetail chD){
 		int imgCounter = 0;
-		String imgName, oldImgName, imgType, imgUrl;
+		String imgName, oldImgName, imgType, imgUrl, imgComment;
 		Vector spideredUrls=new Vector(15);
-		Extractor exImgBlock;
+		Extractor exImgBlock,exImgComment;
 		int idxUrl; // Index of already spidered Url in list of spideredUrls
 		//========
 		//In the long description
@@ -942,6 +943,7 @@ public class SpiderGC{
 							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
 						}
 						chD.ImagesText.add(imgName); // Keep the image name
+						chD.ImagesInfo.add(null); // Need to stay in synch with ImagesText
 						imgCounter++;
 					}
 				} catch (IndexOutOfBoundsException e) {
@@ -960,11 +962,13 @@ public class SpiderGC{
 			tst = spanBlock.findNext();
 			exImgName = new Extractor(tst,p.getProp("imgNameExStart"),p.getProp("imgNameExEnd"), 0 , true);
 			exImgSrc = new Extractor(tst,p.getProp("imgSrcExStart"),p.getProp("imgSrcExEnd"), 0, true);
+			exImgComment = new Extractor(tst,p.getProp("imgCommentExStart"),p.getProp("imgCommentExEnd"), 0, true);
 		} catch (Exception ex) { // Missing property in spider .def
 			return;
 		}
 		while(exImgSrc.endOfSearch() == false){
 			imgUrl = exImgSrc.findNext();
+			imgComment = exImgComment.findNext(); 
 			//Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
@@ -986,6 +990,12 @@ public class SpiderGC{
 							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
 						}
 						chD.ImagesText.add(exImgName.findNext()); // Keep the image description
+						while (imgComment.startsWith("<br>")) imgComment=imgComment.substring(4);
+						while (imgComment.endsWith("<BR>")) imgComment=imgComment.substring(0,imgComment.length()-4);
+						if (imgComment.length()==0)
+							chD.ImagesInfo.add(null);
+						else
+							chD.ImagesInfo.add(imgComment);
 						imgCounter++;
 					}
 				} catch (IndexOutOfBoundsException e) {
@@ -1015,6 +1025,7 @@ public class SpiderGC{
 							chD.Images.add(imgName+imgType);
 							spideredUrls.add(imgUrl);
 							chD.ImagesText.add(imgName); // Keep the image name
+							chD.ImagesInfo.add(null);
 							imgCounter++;
 						}
 					}
