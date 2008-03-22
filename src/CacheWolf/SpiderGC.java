@@ -928,6 +928,7 @@ public class SpiderGC{
 					// imgType is now max 4 chars, starting with .
 					if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
 						// Check whether image was already spidered for this cache
+						if (imgUrl.indexOf('%')>=0) imgUrl=URL.decodeURL(imgUrl);
 						idxUrl=spideredUrls.find(imgUrl);
 						imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
 						if (idxUrl<0) { // New image
@@ -972,6 +973,7 @@ public class SpiderGC{
 					// imgType is now max 4 chars, starting with .
 					if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
 						// Check whether image was already spidered for this cache
+						if (imgUrl.indexOf('%')>=0) imgUrl=URL.decodeURL(imgUrl);
 						idxUrl=spideredUrls.find(imgUrl);
 						imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
 						if (idxUrl<0) { // New image
@@ -991,8 +993,39 @@ public class SpiderGC{
 				}
 			}
 		}
+		//========
+		//Final sweep to check for images in hrefs
+		//========
+		Extractor exFinal = new Extractor(longDesc, "http://", "\"", 0, true);
+		while(exFinal.endOfSearch() == false){
+			imgUrl = exFinal.findNext();
+			if(imgUrl.length()>0){
+				imgUrl = "http://" + imgUrl;
+				try{
+					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+					// imgType is now max 4 chars, starting with .
+					if( imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")){
+						// Check whether image was already spidered for this cache
+						if (imgUrl.indexOf('%')>=0) imgUrl=URL.decodeURL(imgUrl);
+						idxUrl=spideredUrls.find(imgUrl);
+						if (idxUrl<0) { // New image
+							imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
+							pref.log("Loading image: " + imgUrl+" as "+imgName);
+							spiderImage(imgUrl, imgName+imgType);
+							chD.Images.add(imgName+imgType);
+							spideredUrls.add(imgUrl);
+							chD.ImagesText.add(imgName); // Keep the image name
+							imgCounter++;
+						}
+					}
+				} catch (IndexOutOfBoundsException e) {
+					pref.log("Problem loading image. imgURL:"+imgUrl);
+				}
+			}
+		}
 	}
 
+	
 	/**
 	 * Read an image from the server
 	 * @param imgUrl The Url of the image
@@ -1010,6 +1043,8 @@ public class SpiderGC{
 		datei = profile.dataDir + target;
 		connImg = new HttpConnection(imgUrl);
 		connImg.setRequestorProperty("Connection", "close");
+		//connImg.setRequestorProperty("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.12) Gecko/20080201 Firefox/2.0.0.12");
+		//connImg.setRequestorProperty("Accept","text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
 		try{
 			pref.log("Trying to fetch image from: " + imgUrl);
 			String redirect=null;
