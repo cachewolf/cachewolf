@@ -19,6 +19,7 @@ public class CacheHolderDetail extends CacheHolder {
 	  public String CacheNotes = EMPTY;
 	  public Vector Images = new Vector();
 	  public Vector ImagesText = new Vector();
+	  public Vector ImagesInfo = new Vector();
 	  public Vector LogImages = new Vector();
 	  public Vector LogImagesText = new Vector();
 	  public Vector UserImages = new Vector();
@@ -174,7 +175,14 @@ public class CacheHolderDetail extends CacheHolder {
 			ex = new Extractor(text, "<IMGTEXT>", "</IMGTEXT>", 0, true);
 			dummy = ex.findNext();
 			while(ex.endOfSearch() == false){
-				ImagesText.add(dummy);
+				int pos=dummy.indexOf("<DESC>");
+				if (pos>0) {
+					ImagesText.add(dummy.substring(0,pos));
+					ImagesInfo.add(dummy.substring(pos+6,dummy.indexOf("</DESC>")));
+				} else {
+					ImagesText.add(dummy);
+					ImagesInfo.add(null);
+				}
 				dummy = ex.findNext();
 			}
 			// Logimages
@@ -271,7 +279,7 @@ public class CacheHolderDetail extends CacheHolder {
 				  detfile.print("</LOGS>\r\n");
 			
 				  detfile.print("<NOTES><![CDATA["+CacheNotes+"]]></NOTES>\n");
-				  detfile.print("<IMAGES>");
+				  detfile.print("<IMAGES>\n");
 				  String stbuf = new String();
 				  for(int i = 0;i<Images.size();i++){
 						stbuf = (String)Images.get(i);
@@ -279,7 +287,10 @@ public class CacheHolderDetail extends CacheHolder {
 				  }
 				  for(int i = 0;i<ImagesText.size();i++){
 						stbuf = (String)ImagesText.get(i);
-						detfile.print("    <IMGTEXT>"+stbuf+"</IMGTEXT>\n");
+						if (ImagesInfo.get(i)==null)
+							detfile.print("    <IMGTEXT>"+stbuf+"</IMGTEXT>\n");
+						else 
+							detfile.print("    <IMGTEXT>"+stbuf+"<DESC>"+ImagesInfo.get(i)+"</DESC></IMGTEXT>\n");
 				  }
 
 				  for(int i = 0;i<LogImages.size();i++){
@@ -337,6 +348,15 @@ public class CacheHolderDetail extends CacheHolder {
 			return this.wayPoint.endsWith(ch.wayPoint.substring(2));
 		}
 		
+		/**
+		 * Return true if this cache has additional info for some pictures
+		 * @return true if cache has additional info, false otherwise
+		 */
+		public boolean hasImageInfo() {
+			for (int i=ImagesInfo.size()-1; i>=0; i--)
+				if (ImagesInfo.get(i)!=null) return true;
+			return false;
+		}
 
 //	   public void finalize() {
 //		   super.finalize();

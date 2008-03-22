@@ -56,6 +56,7 @@ public class DescriptionPanel extends CellPanel{
 			//disp.getDecoderProperties().setBoolean("allowImages",true);
 			Vm.showWait(true); 
 			if (isHtml) {
+				int imageNo=0;
 				if (Global.getPref().descShowImg) {
 					Vector Images;
 					if (cache.isAddiWpt()) {
@@ -66,7 +67,6 @@ public class DescriptionPanel extends CellPanel{
 					StringBuffer s=new StringBuffer(desc.length()+Images.size()*100);
 					int start=0;
 					int pos;
-					int imageNo=0;
 					Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
 					if (Images.getCount() > 0) {
 						while (start>=0 && (pos=desc.indexOf("<img",start))>0) {
@@ -92,6 +92,9 @@ public class DescriptionPanel extends CellPanel{
 					if (start>=0) s.append(desc.substring(start));
 					desc=s.toString();
 				}
+				if (cache.hasImageInfo()) {
+					desc+=getPicDesc(imageNo,cache);
+				}
 				//disp.setHtml(desc);
 				disp.startHtml();
 				disp.getDecoderProperties().set("documentroot",Global.getProfile().dataDir);
@@ -109,6 +112,26 @@ public class DescriptionPanel extends CellPanel{
 			Vm.showWait(false);
 		//}
 		currCache = cache;
+	}
+	
+	/**
+	 * Get the descriptions for the pictures (if they exist)
+	 * @param imagesShown images already shown as part of long description (don't show again)
+	 * @param chD
+	 */
+	private String getPicDesc(int imagesShown,CacheHolderDetail chD) {
+		StringBuffer sb=new StringBuffer(1000);
+		sb.append("<hr><font size=\"+1\" color=\"red\">").append(MyLocale.getMsg(202,"IMAGES").toUpperCase()).append("</font>");
+		sb.append("<br><br>");
+		for (int i=imagesShown; i<chD.ImagesInfo.size(); i++) {
+			sb.append(chD.ImagesText.get(i)).append("<br>");
+			// Show the additional text if there is one
+			if (chD.ImagesInfo.get(i)!=null) sb.append("<font color='blue'>").append(chD.ImagesInfo.get(i)).append("</font>");
+			// Only show the image if images are enabled
+			if (Global.getPref().descShowImg) sb.append("<img src=\""+chD.Images.get(i)+"\"><br>");
+			sb.append("<br><br><hr>");
+		}
+		return sb.toString();
 	}
 	
 	public void clear() {
