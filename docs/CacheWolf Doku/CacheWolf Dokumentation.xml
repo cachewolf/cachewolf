@@ -9,6 +9,17 @@
 <book>
   <title>CacheWolf Dokumentation</title>
 
+  <bookinfo>
+    <edition>1.0</edition>
+
+    <productnumber>1.0</productnumber>
+
+    <pubdate>Veröffentlicht am 11.12.2008</pubdate>
+
+    <releaseinfo>Dieses Dokument in der Ausgabe 1.0 bezieht sich auf die
+    CacheWolf Version 1.0.</releaseinfo>
+  </bookinfo>
+
   &__Installation__f6afn1eo;
 
   &__DerersteStart__f6anus0g;

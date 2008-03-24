@@ -56,6 +56,20 @@
           Map).</para>
         </revdescription>
       </revision>
+
+      <revision>
+        <revnumber>0.99</revnumber>
+
+        <date>24.03.2008</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>Kapitel fertig.</para>
+        </revdescription>
+      </revision>
     </revhistory>
   </chapterinfo>
 
@@ -298,12 +312,12 @@
   <section>
     <title>Tourenplaner</title>
 
-    <para>Der Tourenplaner läßt sich entweder über die Listenansicht
-    (<inlinemediaobject>
+    <para>Der Tourenplaner läßt sich in der Listenansicht mit einem Klick auf
+    <inlinemediaobject>
         <imageobject>
           <imagedata fileref="pics/touricon.jpg" />
         </imageobject>
-      </inlinemediaobject>) öffnen.</para>
+      </inlinemediaobject> öffnen.</para>
 
     <informaltable>
       <tgroup cols="2">
@@ -315,7 +329,21 @@
                 </imageobject>
               </inlinemediaobject></entry>
 
-            <entry valign="top"><para></para></entry>
+            <entry valign="top"><para>Mit dem Tourenplaner läßt sich aus der
+            Listenansicht oder dem Radar arbeiten. Caches könne durch
+            hineinziehen hinzugefügt, durch herausziehen aus der Liste
+            entfernt werden.</para><para>Durch einen klick auf die Icons unten
+            läßt sich eine neue Liste erzeugen, eine vorhandene öffnen, eine
+            aktuelle Liste unter einem bestimmten Namen speichern oder eine
+            existierende und gerade offene Liste speichern.</para><para>Mit
+            Liste anwenden wird die Listenansicht gefiltert und es sind nur
+            die Caches aus dem Tourenplaner vorhanden.</para><para>Hat man den
+            Tourenplaner und das Radar offen wird die Cachemarkierung im Radar
+            verändert, wenn man auf ein Cache in der Listenansicht klickt
+            (oder mit den Pfeilatsten die Auswahl verändert). Gleiches
+            passiert in der Listenansicht; dann wird jeweils der Cache
+            markiert, der gerade auch im Tourenplaner markiert
+            ist.</para></entry>
           </row>
         </tbody>
       </tgroup>
@@ -323,7 +351,7 @@
   </section>
 
   <section>
-    <title>Details</title>
+    <title id="detailansicht">Details</title>
 
     <para>Die Details–Seite zeigt einige Eckdaten zu dem gewählten
     Cache:.</para>
@@ -364,8 +392,8 @@
           <imagedata fileref="pics/welt.jpg" />
         </imageobject>
       </inlinemediaobject> Mit der Weltkugel wird eine Karte geöffnet, auf dem
-    die Lage des Caches eingezeichnet ist. Die Kartenansicht wird im
-    nachfolgenden Kapitel ausführlich beschrieben.</para>
+    die Lage des Caches eingezeichnet ist. Die Kartenansicht wird im Kapitel
+    <xref lang="" linkend="moving_map" /> ausführlich beschrieben.</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -420,12 +448,6 @@
           <imagedata fileref="pics/gefunden_am.jpg" />
         </imageobject>
       </inlinemediaobject></para>
-
-    <section>
-      <title>Die Kartenansicht</title>
-
-      <para></para>
-    </section>
   </section>
 
   <section>
@@ -1303,7 +1325,7 @@ ENDIF</programlisting>
     Berechungen für komplexe Multis vorbereitet werden, ohne im Feld große
     Änderungen vornehmen zu müssen. Weitere Informationen dazu unter <ulink
     url="http://www.cachewolf.de/wiki/pmwiki.php/Main/Beispiele#SolverAlternative">Beispiele</ulink>
-    (auf www.cachewolf.de). </para>
+    (auf www.cachewolf.de).</para>
 
     <para>Erlaubte Vergleichsoperatoren sind:</para>
 
@@ -1417,9 +1439,113 @@ ENDIF</programlisting>
     <para>Der Map Button verdient ein eigenes Kapitel.</para>
 
     <section>
-      <title>Map (auch Karte)</title>
+      <title id="moving_map">Map (auch Karte, bzw. die Moving Map)</title>
 
-      <para></para>
+      <para>Durch einen klick auf <literal>Map</literal> oder
+      <literal>Karte</literal> wird ein neues Fenster geöffnet in dem eine
+      Karte angezeigt wird. Welche Karte gezeigt wird hängt von drei Faktoren
+      ab:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Hast du den Globus aus aus der Detailansicht (siehe <xref
+          lang="" linkend="detailansicht" />) geklickt wird eine Karte
+          dargestellt auf dem die Position des gewählten Caches (siehe <xref
+          lang="" linkend="liste" />) gezeigt wird.</para>
+        </listitem>
+
+        <listitem>
+          <para>Hast Du, ohne dass ein Cache gewählt wurde aus der Goto
+          Ansicht diese Funktion gewählt wird eine Karte zentriert auf das
+          aktuelle Zentrum gezeigt.</para>
+        </listitem>
+
+        <listitem>
+          <para>Es wird keine Karte angezeigt, wenn keine vorhanden ist. Wie
+          Du an Karten herankommst wird hier <xref linkend="karten" />
+          beschrieben.</para>
+        </listitem>
+      </orderedlist>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/moving_map.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>Durch klicken und verschieben mit der Maus lässt sich die geladene
+      Karte verschieben. Hast Du eine Karte sehr weit verschoben, wird eine
+      aktueller Karte (so fern vorhanden) nachgeladen und angezeigt.</para>
+
+      <para>Durch klicken auf das gelbe Dreieck öffnet sich ein umfangreiches
+      Menü:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/karten_popup.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>Grundsätzlich ist das Menü selbsterklärend. Die ersten beiden
+      Menüpunkte verdienen aber etwas Erklärung:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Mit <literal>Karte manuell auswählen</literal> kann eine
+          bestimmte Karte geladen werden. Durch einen klick auf diesen
+          Menüpunkt bekommt man eine Auswahlliste sämtlicher Karten, die
+          Cachewolf im aktuellen maps Verzeichnis gefunden hat.</para>
+        </listitem>
+
+        <listitem>
+          <para>Cachewolf sucht grundsätzlich in einem "maps" Verzeichnis im
+          Profilbasisverzeichnis nach geeigneten Karten. Innerhalb des maps
+          Verzeichnis können noch die Verzeichnisse expedia, standard und topo
+          vorhanden sein. Mit der Funktion <literal>Kartenverzeichnis
+          wechseln</literal> kann ein anderes beliebiges Verzeichnis gewählt
+          werden.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Durch einen klick auf GPS (mit den grünen Pfeilen) läßt sich der
+      GPS Empfang einschalten und die Karte so verschieben, dass der aktuelle
+      Standpunkt in der Mitte des Bildschirmes liegt. Ist der GPS-Empfang
+      eingeschaltet und ein Fix ist vorhanden, dann zeigt ein grüner Kreis in
+      der Mitte des Schirms immer auf die eigene aktuelle Position, auch wenn
+      man sich bewegt. Wenn man sich bewegt wird die Karte so verschoben, dass
+      die eigene Position immer in der Mitte des Schirms mit grünen Kreis
+      angezeigt wird. Wenn kein Fix vorhanden ist, zeigt ein gelber Kreis die
+      letzte bekannte Position an. Wenn ein Fehler mit GPS-Empfänger
+      aufgetreten ist, wird der Kreis rot und eine Fehlermeldung poppt
+      auf.</para>
+
+      <para>Durch Klick auf die Lupe, kann man in die Karte hinein- und
+      herauszoomen. Man kann ein Rechteck aufziehen, auf das gezoomt werden
+      soll. Zieht man das Rechteck von links-oben nach rechts-unten auf, so
+      wird in das Rechteck hineingezoomt. Zieht man das Rechteck von
+      rechts-oben nach links-unten auf, so wird herausgezoomt, wobei der
+      gegenwärtige Bildschirm auf den aufgezogenen Rahmen verkleinert
+      wird.</para>
+
+      <para>Mit Klick auf 1:1 kann der ursprüngliche Maßstab der Karte wieder
+      hergestellt werden.Drückt man lange oder mit der rechten Maustaste
+      irgendwo in die Karte, öffnet sich ein Kontextmenü. Wenn man auf einen
+      Cache geklickt hat, so kann man die entsprechende Cachebeschreibung
+      öffnen.</para>
+
+      <para>Drückt man lange oder mit der rechten Maustaste irgendwo in die
+      Karte, öffnet sich ein Kontextmenü:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/karten_kontext.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>Die Menüeinträge sind,denke ich, selbsterklärend.</para>
+
+      <para>Wenn man auf einen Cache geklickt hat, so kann man die
+      entsprechende Cachebeschreibung öffnen.</para>
     </section>
   </section>
 
