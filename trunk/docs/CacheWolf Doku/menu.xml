@@ -154,9 +154,9 @@
 
         <para>Über diese Funktion lassen sich georeferenzierte Karten direkt
         aus dem Internat laden. Hierbei können zwei grundsätzlich
-        unterschiedliche Quellen genutzt werden. Expedia schon in früheren
-        Versionen angeboten. Mit der 1.0 werden nun WMS Quellen ebenfalls
-        angeboten.</para>
+        unterschiedliche Quellen genutzt werden. Expedia wurde schon in
+        früheren Versionen angeboten. Mit der 1.0 werden nun WMS Quellen
+        ebenfalls angeboten.</para>
 
         <sidebar>
           <para>Ein Web Map Service (WMS) ist ein Web Service, der auf den WMS
@@ -272,13 +272,32 @@
       <section>
         <title>Importieren</title>
 
-        <para></para>
+        <para>Der Import von Karten erfolgt durch die Auswahl eines
+        Verzeichnisses, in dem sich Karten im Format (PNG, JPG, GIF, BMP)
+        befinden (Leider werden die Karten selbst in dem Verzeichnis nicht
+        angezeigt). Wenn sich ebenfalls .map Deteien in dem Verzeichjnis
+        befinden, wird CacheWolf diese Dateien zum Kalibrieren der
+        gleichnamigen Kartendatei verwenden. </para>
+
+        <para><example>
+            <title>Kartendatei mit zugehörige .map Datei</title>
+
+            <para>Kartendatei: 01x01.png .map Datei: 01x01.map</para>
+          </example></para>
+
+        <para>Mit einer .map Datei meinen wir eine Datei im OziExplorer
+        format: <ulink
+        url="http://www.rus-roads.ru/gps/help_ozi/map_file_format.html">http://www.rus-roads.ru/gps/help_ozi/map_file_format.html</ulink></para>
       </section>
 
       <section>
         <title>Kalibrieren</title>
 
-        <para></para>
+        <para>Zum Kalibrieren einer Karte muss man für mindestens drei Punkte
+        auf der Karte die GPS Koordinaten (WGS84, DMM) kennen. CacheWolf kann
+        aber auch mit mehr Koordinaten arbeiten; dadurch wird die Kalibrierung
+        genauer. Durch klick auf Anwendung -&gt; Karten -&gt; Kalibrieren
+        erhält man folgendes Bild:</para>
       </section>
     </section>
 
