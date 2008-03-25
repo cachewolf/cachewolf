@@ -598,7 +598,7 @@ public class Preferences extends MinML{
 		try{
 			strout = logFile.toWritableStream(true);
 			strout.write(text.getBytes());
-			Vm.debug(text);
+			//Vm.debug(text); Not needed - put <debug value="true"> into pref.xml
 		}catch(Exception ex){
 			Vm.debug("Error writing to log file!");
 		}finally{
