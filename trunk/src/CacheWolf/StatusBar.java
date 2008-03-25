@@ -67,7 +67,7 @@ public class StatusBar extends CellPanel{
 		// Current centre can only be displayed if screen is big
 		// Otherwise it forces a scrollbar
 		// This can happen even on bigger screens with big fonts
-		if ((MyLocale.getScreenWidth()>=320) && !(MobileVGA && (pref.fontSize <= 20))) 
+		if ((MyLocale.getScreenWidth()>=320) && !(MobileVGA && (pref.fontSize > 20))) 
 			strCenter="  \u00a4 " + pref.curCentrePt.toString();
 		
 		lblCenter.setText(strCenter);
