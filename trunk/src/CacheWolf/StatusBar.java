@@ -17,12 +17,13 @@ public class StatusBar extends CellPanel{
 	mButton btnFlt;
 	mImage imgFlt;
 	mButton btnCacheTour;
-	mImage imgCacheTour; 
+	mImage imgCacheTour;
+	boolean MobileVGA;
 	
 	public StatusBar(Preferences p, Vector db){
 		pref=p;
 		int sw = MyLocale.getScreenWidth();
-		boolean MobileVGA = (Vm.isMobile() && sw >= 400);
+		MobileVGA = (Vm.isMobile() && sw >= 400);
 		String imagesize="";
 		if(MobileVGA) imagesize="_vga";  
 		addNext(btnCacheTour=new mButton(imgCacheTour=new mImage("cachetour"+imagesize+".png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
@@ -65,7 +66,8 @@ public class StatusBar extends CellPanel{
 			btnFlt.backGround=null;
 		// Current centre can only be displayed if screen is big
 		// Otherwise it forces a scrollbar
-		if (MyLocale.getScreenWidth()>=320) 
+		// This can happen even on bigger screens with big fonts
+		if ((MyLocale.getScreenWidth()>=320) && !(MobileVGA && (pref.fontSize <= 20))) 
 			strCenter="  \u00a4 " + pref.curCentrePt.toString();
 		
 		lblCenter.setText(strCenter);
