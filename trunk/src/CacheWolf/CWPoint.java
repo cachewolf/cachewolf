@@ -198,6 +198,8 @@ public class CWPoint extends TrackPoint{
 	 * 					or			32U 2345234 8902345
 	 */
 	public void set (String coord) {
+	//replace non-breaking-spaces by normal spaces
+	coord = coord.replace((char)0xA0, ' ');
 		/*		(?: 
 					([NSns])\s*([0-9]{1,2})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\s* 
 					([EWewOo])\s*([0-9]{1,3})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8}) 
