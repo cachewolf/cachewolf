@@ -1,6 +1,4 @@
-
 package CacheWolf;
-
 
 import ewe.sys.Double;
 import ewe.sys.Locale;
@@ -15,9 +13,6 @@ import com.bbn.openmap.*;
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.sys.Vm;
-
-
-
 
 /**
  * Class for getting an setting coords in different formats
@@ -211,6 +206,7 @@ public class CWPoint extends TrackPoint{
 		*/		
 				Regex rex=new Regex("(?:" +
 									"([NSns])\\s*([0-9]{1,2})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?\\s*" +
+									"[,./_;+:-]*\\s*" + // allow N xx xx.xxx / E xxx xx.xxx
 									"([EWewOo])\\s*([0-9]{1,3})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?" +
 									")|(?:" +
 									"(?:([NnSs])\\s*(?![+-]))?"   +     "([+-]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=[+-EeWwOo])|\\s+|\\s*[°\uC2B0]\\s*)" +
