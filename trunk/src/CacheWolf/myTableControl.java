@@ -53,6 +53,10 @@ public class myTableControl extends TableControl{
 //		   ((MenuItem)mFull.items.get(5)).modifiers|=MenuItem.Disabled;
 	}
 	
+	public Menu getMenuFull() {
+		return mFull;
+	}
+
 	/** Small menu when listview does not include checkbox */
 	public void setMenuSmall() {
 		setMenu(mSmall);
@@ -282,4 +286,8 @@ public class myTableControl extends TableControl{
 		 }
 		 
 	 }
+
+	public Menu getMenuSmall() {
+		return mSmall;
+	}
 }
