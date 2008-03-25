@@ -226,6 +226,7 @@ public class OCXMLImporter extends MinML {
 		
 		picCnt = 0;
 		try{
+			chD = null;
 			file = fetch(url, "dummy");
 
 			//parse
@@ -451,6 +452,7 @@ public class OCXMLImporter extends MinML {
 				chD.CacheLogs.clear();
 				chD.Images.clear();
 				chD.ImagesText.clear();
+				chD.ImagesInfo.clear();
 			}
 
 			// save all
@@ -562,32 +564,44 @@ public class OCXMLImporter extends MinML {
 		}
 	}
 
-	private void getPic(String fetchURL, String picDesc){ // TODO handling of relativ URLs
-		if (!fetchURL.startsWith("http://")) fetchURL = "http://" + OPENCACHING_HOST + "/"+fetchURL; // TODO this is not quite correct: actually the "base" URL must be known... but anyway a different baseURL should not happen very often  - it doesn't in my area
+	private String createPicFilename(String fetchURL) {
 		String fileName = chD.wayPoint + "_" + fetchURL.substring(fetchURL.lastIndexOf("/")+1);
-		fileName = Common.ClearForFileName(fileName);
-		// add title
-		chD.ImagesText.add(picDesc);
+		return Common.ClearForFileName(fileName);
+	}
+	
+	private void getPic(String fetchURL, String picDesc) { // TODO handling of relativ URLs
 		try {
-			File ftest = new File(profile.dataDir + fileName);
-			if (ftest.exists()){
-				chD.Images.add(fileName);
-			}
-			else {
-				if (pref.downloadPicsOC) {
-					chD.Images.add(fetch(fetchURL, fileName));
+			if (!fetchURL.startsWith("http://")) fetchURL = new URL(new URL("http://" + OPENCACHING_HOST+"/"), fetchURL).toString();
+			// if (!fetchURL.startsWith("http://")) fetchURL = "http://" + OPENCACHING_HOST + "/" + fetchURL; // TODO use URL.relative or so.. this is not quite correct: actually the "base" URL must be known... but anyway a different baseURL should not happen very often  - it doesn't in my area
+			String fileName = createPicFilename(fetchURL);
+			// add title
+			chD.ImagesText.add(picDesc);
+			chD.ImagesInfo.add(null); // need to stay in sync with ImagesText
+			try {
+				File ftest = new File(profile.dataDir + fileName);
+				if (ftest.exists()){
+					chD.Images.add(fileName);
 				}
+				else {
+					if (pref.downloadPicsOC) {
+						chD.Images.add(fetch(fetchURL, fileName));
+					}
+				}
+			} catch (IOException e) {
+				String ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ") + chD.wayPoint + ": ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+fetchURL); 
+				if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect") ||
+						e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
+					ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+chD.CacheName + " ("+chD.wayPoint+")"+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
+				} 
+				inf.addWarning("\n"+ErrMessage);
+				//(new MessageBox(MyLocale.getMsg(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
+				pref.log(ErrMessage);
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			String ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ") + chD.wayPoint + ": ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+fetchURL); 
-			if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect") ||
-					e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
-				ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+chD.CacheName + " ("+chD.wayPoint+")"+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
-			} 
+		} catch (MalformedURLException e) {
+			String ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ") + chD.wayPoint + ": ignoring MalformedUrlException: " + e.getMessage()+ " while downloading from URL:" + fetchURL); 
 			inf.addWarning("\n"+ErrMessage);
-			//(new MessageBox(MyLocale.getMsg(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
-			Vm.debug("Could not load Image " + fetchURL);
-			e.printStackTrace();
+			pref.log(ErrMessage);
 		}
 
 	}
@@ -658,28 +672,12 @@ public class OCXMLImporter extends MinML {
 
 	private String fetch(String addr, String fileName ) throws IOException
 	{
-		final int maxRedirections = 5;
-		//Vm.debug(address);
-		HttpConnection conn = null;
-		Socket sock = null;
-		int i=-1;
-		String address = new String(addr);
-		while (address != null && i <= maxRedirections ) { // allow max 5 redirections (http 302 location)
-			i++;
-			conn = new HttpConnection(address);
-			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-			conn.setRequestorProperty("Connection", "close");
-			conn.documentIsEncoded = true;
-			sock = conn.connect(); // TODO I guess here an IOException ocurs when a proxy is used
-			address = conn.getRedirectTo();
-			if (address != null){
-				if (chD != null) fileName = chD.wayPoint + "_" + Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
-				else fileName = Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
-			}
-		}
-		if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: "+addr + " only "+maxRedirections+" are allowed");
 		//Vm.debug("Redirect: " + redirect);
-		ByteArray daten = conn.readData(sock);
+		CharArray realurl = new CharArray();
+		ByteArray daten = UrlFetcher.fetchByteArray(addr, realurl);
+		String address = realurl.toString();
+		if (chD != null) fileName = chD.wayPoint + "_" + Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
+		// else fileName = Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
 
 		//save file
 		//Vm.debug("Save: " + myPref.mydatadir + fileName);
@@ -687,7 +685,6 @@ public class OCXMLImporter extends MinML {
 		FileOutputStream outp =  new FileOutputStream(profile.dataDir + fileName);
 		outp.write(daten.toBytes());
 		outp.close();
-		sock.close();
 		return fileName;
 	}
 
