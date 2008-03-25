@@ -23,7 +23,7 @@ import exp.*;
  *     20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
  */
 public class MainMenu extends MenuBar {
-	private MenuItem profiles, preferences,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchClr;
+	private MenuItem profiles, preferences,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchAll,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap;
 	private MenuItem spider, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
@@ -116,9 +116,10 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Search" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] searchMenuItems=new MenuItem[2];
+		MenuItem[] searchMenuItems=new MenuItem[3];
 		searchMenuItems[0] = search = new MenuItem(MyLocale.getMsg(112,"Search$"+(char)6)); // char 6 = ctrl +f 
-		searchMenuItems[1] = searchClr = new MenuItem(MyLocale.getMsg(113,"Clear search"));
+		searchMenuItems[1] = searchAll = new MenuItem(MyLocale.getMsg(133,"Search All"));
+		searchMenuItems[2] = searchClr = new MenuItem(MyLocale.getMsg(113,"Clear search"));
 
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Filter" pulldown menu
@@ -469,6 +470,12 @@ public class MainMenu extends MenuBar {
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == search){
 				search();
+			}
+			if(mev.selectedItem == searchAll){
+				SearchCache ssc = new SearchCache(cacheDB);
+				ssc.clearSearch();
+				tbp.refreshTable();		
+                search();
 			}
 			if(mev.selectedItem == searchClr){
 				SearchCache ssc = new SearchCache(cacheDB);
