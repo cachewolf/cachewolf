@@ -375,25 +375,6 @@ public class MainMenu extends MenuBar {
 				ProgressBarForm.clear();
 				Vm.showWait(false);
 			}
-			if(mev.selectedItem == exportCacheMate){
-				Vm.showWait(true);
-				GPXExporter htm = new GPXExporter( pref, profile);
-				htm.doIt(0);
-				ProgressBarForm.display("CMCONVERT", MyLocale.getMsg(952,"Converting..."), null);
-				String cwd = new String();
-				cwd = File.getProgramDirectory() + "/temp.gpx";
-				// add surrounding "
-				cwd = "\"" + cwd + "\"";
-				try{
-					//Vm.debug(File.getProgramDirectory() + "/cmconvert/cmconvert " + cwd);
-					ewe.sys.Process p = Vm.exec(File.getProgramDirectory() + "/cmconvert/cmconvert " + cwd);
-					p.waitFor();
-				}catch(IOException ioex){
-					//Vm.debug("Scheint ein Problem zu geben");
-				};
-				ProgressBarForm.clear();
-				Vm.showWait(false);
-			}
 			if(mev.selectedItem == exportOZI){
 				OziExporter ozi = new OziExporter( pref, profile);
 				ozi.doIt();
