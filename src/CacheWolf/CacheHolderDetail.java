@@ -285,12 +285,13 @@ public class CacheHolderDetail extends CacheHolder {
 						stbuf = (String)Images.get(i);
 						detfile.print("    <IMG>"+stbuf+"</IMG>\n");
 				  }
+				  int iis = ImagesInfo.size();
 				  for(int i = 0;i<ImagesText.size();i++){
 						stbuf = (String)ImagesText.get(i);
-						if (ImagesInfo.get(i)==null)
-							detfile.print("    <IMGTEXT>"+stbuf+"</IMGTEXT>\n");
-						else 
+						if (iis < i && ImagesInfo.get(i) != null)
 							detfile.print("    <IMGTEXT>"+stbuf+"<DESC>"+ImagesInfo.get(i)+"</DESC></IMGTEXT>\n");
+						else 
+							detfile.print("    <IMGTEXT>"+stbuf+"</IMGTEXT>\n");
 				  }
 
 				  for(int i = 0;i<LogImages.size();i++){
@@ -322,12 +323,12 @@ public class CacheHolderDetail extends CacheHolder {
 				  detfile.print("</CACHEDETAILS>\n");
 				} // if length
 			} catch (Exception e){
-				Vm.debug("Problem writing to a details file");
+				Global.getPref().log("Problem waypoint " + wayPoint + " writing to a details file: " + e.getMessage());
 			}
 			try{
 			  detfile.close();
 			} catch (Exception e){
-			  //Vm.debug("Problem closing details file");
+				Global.getPref().log("Problem waypoint " + wayPoint + " writing to a details file: " + e.getMessage());
 			}
 			hasUnsavedChanges = false;
 		}

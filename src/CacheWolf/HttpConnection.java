@@ -27,6 +27,8 @@ import ewe.util.mString;
 /**
 Use this class to create an HttpConnection with a Web Server and to read
 in the data for the connection.<p>
+This a a modified version of XXX. This version automatically makes use of a proxy server
+if once for all proxy is set.
 To use this do the following:
 <ol>
 <li>Create an HttpConnection object with a URL or specify the host, port and document to get.
