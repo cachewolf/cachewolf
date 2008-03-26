@@ -390,11 +390,11 @@ public class MapInfoObject extends Area {
 		if (coordTrans != 0) t = TransformCoordinatesProperties.fromWgs84(ll, coordTrans);
 		else t = ll;
 		Point coords = new Point();
-		double b[] = new double[2];
-		b[0] = t.latDec - affineTopleft.latDec;
-		b[1] = t.lonDec - affineTopleft.lonDec;
-		double mapx = transLatX* b[0] + transLonX*b[1];
-		double mapy = transLatY* b[0] + transLonY*b[1];
+		double b0, b1;
+		b0 = t.latDec - affineTopleft.latDec;
+		b1 = t.lonDec - affineTopleft.lonDec;
+		double mapx = transLatX * b0 + transLonX * b1;
+		double mapy = transLatY * b0 + transLonY * b1;
 		coords.x = (int)Math.round(mapx);
 		coords.y = (int)Math.round(mapy);
 		//Vm.debug("mapX=mapx2: "+mapx+"="+mapx2+"; mapy=mapy2: "+mapy+"="+mapy2);
