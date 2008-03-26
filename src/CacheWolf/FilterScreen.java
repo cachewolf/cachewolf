@@ -1,9 +1,7 @@
 package CacheWolf;
 import ewe.ui.*;
 import ewe.io.*;
-import ewe.graphics.*;
 import ewe.fx.*;
-import ewe.util.*;
 import ewe.sys.*;
 import ewe.filechooser.*;
 
@@ -260,7 +258,7 @@ public class FilterScreen extends Form{
 		mLabel lblInfo; 
 		frmScreen.addLast(lblInfo=new mLabel(MyLocale.getMsg(725,"Note: Filters are additive, active filter=green"))).setTag(SPAN,new Dimension(2,1));
 		lblInfo.setTag(INSETS,new Insets(0,0,2,0));
-		frmScreen.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
+		frmScreen.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_BOTTOM;
 		this.addLast(frmScreen,HSTRETCH,HFILL);
 		
 		CellPanel pnlButtons=new CellPanel();
@@ -290,8 +288,8 @@ public class FilterScreen extends Form{
 		btPanel.addNext(btnCancel = new mButton(MyLocale.getMsg(708,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
 		btPanel.addNext(btnApply = new mButton(MyLocale.getMsg(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
 		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
-		btnRoute.modify(Control.Disabled,0);
-		addLast(btPanel.setTag(Control.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
+		btnRoute.modify(ControlConstants.Disabled,0);
+		addLast(btPanel.setTag(CellConstants.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
 		int sw = MyLocale.getScreenWidth(); int sh = MyLocale.getScreenHeight(); 
 		Preferences pref = Global.getPref();int fs = pref.fontSize;
 		int psx; int psy;
@@ -561,7 +559,7 @@ public class FilterScreen extends Form{
 			else if (ev.target == btnRoute){
 				
 				File datei;
-				FileChooser fc = new FileChooser(FileChooser.OPEN, Global.getProfile().dataDir);
+				FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.getProfile().dataDir);
 				fc.setTitle(MyLocale.getMsg(712,"Select route file"));
 				if(fc.execute() != FormBase.IDCANCEL) {
 					datei = fc.getChosenFile();

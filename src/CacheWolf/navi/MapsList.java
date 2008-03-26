@@ -5,16 +5,12 @@ import CacheWolf.Common;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import utils.FileBugfix;
-import ewe.io.CompressedRandomStream;
 import ewe.io.File;
+import ewe.io.FileBase;
 import ewe.io.IOException;
-import ewe.sys.Double;
 import ewe.sys.Time;
+import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
-import ewe.util.Comparable;
-import ewe.util.Comparer;
-import ewe.util.Hashtable;
-import ewe.util.StandardComparer;
 import ewe.util.Vector;
 import ewe.fx.*;
 /**
@@ -37,7 +33,7 @@ public class MapsList extends Vector {
 		String dateien[];
 		FileBugfix files = new FileBugfix(mapsPath);
 		String rawFileName = new String();
-		String[] dirstmp = files.list(null, File.LIST_DIRECTORIES_ONLY);
+		String[] dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY);
 		Vector dirs;
 		if (dirstmp != null) dirs = new Vector(dirstmp);
 		else dirs = new Vector();
@@ -50,7 +46,7 @@ public class MapsList extends Vector {
 		for (int j = dirs.size()-1; j >= 0; j--) {
 			files = new FileBugfix(mapsPath+"/"+dirs.get(j));
 			//ewe.sys.Vm.debug("mapd-Dirs:"+files);
-			dateien = files.list("*.wfl", File.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
+			dateien = files.list("*.wfl", FileBase.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
 			for(int i = 0; i < dateien.length;i++){
 				// if (!dateien[i].endsWith(".wfl")) continue;
 				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
@@ -61,7 +57,7 @@ public class MapsList extends Vector {
 					add(tempMIO);
 					//ewe.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
 				}catch(Exception ex){ // TODO exception ist, glaub ich evtl überflüssig 
-					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), MessageBox.OKB)).exec();
+					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), FormBase.OKB)).exec();
 				} /* catch(ArithmeticException ex){ // affine contain not allowed values 
 					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
 				} */
@@ -443,7 +439,7 @@ class MapListEntry /*implements Comparable */ {
 				ewe.sys.Vm.debug(sortEntryBBox + ": "+filename);
 				if (rename == 0) { // never asked before
 					if ( (new MessageBox(MyLocale.getMsg(4702,"Optimisation"), MyLocale.getMsg(4703,"Cachewolf can make loading maps much faster by adding a identification mark to the filename. Do you want me to do this now?\n It can take several minutes"), 
-							MessageBox.YESB | MessageBox.NOB)).execute() == MessageBox.IDYES)
+							FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES)
 					{
 						renameProgressInfoB = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4704,"\nRenaming file:")+"    \n");
 						renameProgressInfoB.exec();
@@ -457,17 +453,17 @@ class MapListEntry /*implements Comparable */ {
 					String f = path+filename+".wfl";
 					String to = sortEntryBBox+"E-"+filename+".wfl";
 					if (!new File(f).rename(to))
-						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, MessageBox.OKB)).exec();
+						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
 					f = Common.getImageName(path+filename);
 					to = sortEntryBBox+"E-"+filename+Common.getFilenameExtension(f);
 					if (!new File(f).rename(to)) 
-						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, MessageBox.OKB)).exec();
+						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
 					filename = sortEntryBBox+"E-"+filename;
 					map.mapName = sortEntryBBox+"E-"+map.mapName;
 					map.fileNameWFL = path + filename + ".wfl";
 				}
 			} catch (IOException ioex) { // this should not happen
-				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4706,"Error while reading:")+" "+path+filename+": "+ ioex.getMessage(), MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4706,"Error while reading:")+" "+path+filename+": "+ ioex.getMessage(), FormBase.OKB)).exec();
 			}
 		}
 	}

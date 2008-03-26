@@ -1,7 +1,7 @@
 package CacheWolf;
 
 import ewe.fx.mImage;
-import ewe.io.File;
+import ewe.io.FileBase;
 
 /**
  * This class represents a single attribute
@@ -113,7 +113,7 @@ public class Attribute {
 			"firstaid-yes.gif"              //88 needs maintenance
 	};
 	private static mImage [] attributeImages=new mImage[89];
-	private static String IMAGEDIR=File.getProgramDirectory()+"/attributes/";
+	private static String IMAGEDIR=FileBase.getProgramDirectory()+"/attributes/";
 	
 	public static String getImageDir() {
 		return IMAGEDIR; 

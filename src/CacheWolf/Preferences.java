@@ -46,7 +46,7 @@ public class Preferences extends MinML{
 		mySPO.parity = SerialPort.NOPARITY;
 		mySPO.stopBits = 1;
 		mySPO.baudRate = 4800;
-		if ( ((ewe.fx.Rect) (Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) 
+		if ( ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) 
 			 fontSize = 16;
 		else 
 			 fontSize = 11;
@@ -180,7 +180,7 @@ public class Preferences extends MinML{
 	 */
 	public void readPrefFile(){
 		try{
-			String datei = File.getProgramDirectory() + "/" + "pref.xml";
+			String datei = FileBase.getProgramDirectory() + "/" + "pref.xml";
 			datei = datei.replace('\\', '/');
 			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(datei));
 			parse(r);
@@ -341,7 +341,7 @@ public class Preferences extends MinML{
 	 * Method to save current preferences in the pref.xml file
 	 */
 	public void savePreferences(){
-		String datei = File.getProgramDirectory() + "/" + "pref.xml";
+		String datei = FileBase.getProgramDirectory() + "/" + "pref.xml";
 		datei = datei.replace('\\', '/');
 
 		try{
@@ -431,24 +431,24 @@ public class Preferences extends MinML{
 		if (ret != null) return ret; 
 		ret = getMapManuallySavePath(false);
 		File t = new FileBugfix(ret);
-		String[] f = t.list("*.wfl", File.LIST_FILES_ONLY);
+		String[] f = t.list("*.wfl", FileBase.LIST_FILES_ONLY);
 		if (f != null && f.length > 0) return  baseDir + mapsPath;
-		f = t.list("*.wfl", File.LIST_DIRECTORIES_ONLY | File.LIST_ALWAYS_INCLUDE_DIRECTORIES);
+		f = t.list("*.wfl", FileBase.LIST_DIRECTORIES_ONLY | FileBase.LIST_ALWAYS_INCLUDE_DIRECTORIES);
 		if (f != null && f.length > 0) { // see if in a subdir of <baseDir>/maps/standard are .wfl files
 			String[] f2;
 			for (int i = 0; i< f.length; i++) {
 				t.set(null, ret+"/"+f[i]);
-				f2 = t.list("*.wfl", File.LIST_FILES_ONLY);
+				f2 = t.list("*.wfl", FileBase.LIST_FILES_ONLY);
 				if (f2 != null && f2.length > 0) return  ret;
 			}
 		}
 		// lagacy dir 
-		ret = File.getProgramDirectory() + "/maps";
+		ret = FileBase.getProgramDirectory() + "/maps";
 		t.set(null, ret);
-		f = t.list("*.wfl", File.LIST_FILES_ONLY);
+		f = t.list("*.wfl", FileBase.LIST_FILES_ONLY);
 		if (f != null && f.length > 0) {
-			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", MessageBox.YESB | MessageBox.NOB);
-			if (inf.execute() == MessageBox.IDYES) {
+			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", FormBase.YESB | FormBase.NOB);
+			if (inf.execute() == FormBase.IDYES) {
 				String sp = getMapManuallySavePath(false);
 				File spF = new File(sp);
 				if (!spF.exists()) spF.mkdirs();
@@ -482,7 +482,7 @@ public class Preferences extends MinML{
 		String mapsDir = baseDir + mapsPath;
 		if (create && !(new File(mapsDir).isDirectory())) { // dir exists? 
 			if (new File(mapsDir).mkdirs() == false) {// dir creation failed?
-				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+mapsDir, MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+mapsDir, FormBase.OKB)).exec();
 				return null;
 			}
 		}
@@ -497,7 +497,7 @@ public class Preferences extends MinML{
 		String mapsDir = Global.getPref().baseDir + "maps/" + Common.ClearForFileName(mapkind)+ "/" + subdir;
 		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
 			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
-			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();
+			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new File(mapsDir).getParentFile(), FormBase.OKB)).exec();
 			return null;
 			}
 		}
@@ -526,10 +526,10 @@ public class Preferences extends MinML{
 		// If datadir is empty, ask for one
 		if (baseDir.length()==0 || !(new File(baseDir)).exists()) {
 			do {
-				FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT,baseDir);
+				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT,baseDir);
 				fc.title = MyLocale.getMsg(170,"Select base directory for cache data");
 				// If no base directory given, terminate
-				if (fc.execute() == FileChooser.IDCANCEL) ewe.sys.Vm.exit(0);
+				if (fc.execute() == FormBase.IDCANCEL) ewe.sys.Vm.exit(0);
 				baseDir = fc.getChosenFile().toString();
 			}while (!(new File(baseDir)).exists());
 		}
@@ -549,7 +549,7 @@ public class Preferences extends MinML{
 			}
 			profileExists=(new File(baseDir+lastProfile)).exists();
 			if (!profileExists) (new MessageBox(MyLocale.getMsg(144,"Warning"),
-					           MyLocale.getMsg(171,"Profile does not exist: ")+lastProfile,MessageBox.MBOK)).execute();
+					           MyLocale.getMsg(171,"Profile does not exist: ")+lastProfile,FormBase.MBOK)).execute();
 		} while (profileExists==false);
 		// Now we are sure that baseDir exists and basDir+profile exists
 		prof.name=lastProfile;
@@ -565,7 +565,7 @@ public class Preferences extends MinML{
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	/** Log file is in program directory and called log.txt */
-	private final String LOGFILENAME=File.getProgramDirectory()+"/log.txt";
+	private final String LOGFILENAME=FileBase.getProgramDirectory()+"/log.txt";
 	
 	/**
 	 * Method to delete an existing log file. Called on every SpiderGC.

@@ -1,12 +1,5 @@
 package CacheWolf.navi;
 
-import ewe.io.BufferedWriter;
-import ewe.io.FileWriter;
-import ewe.io.IOException;
-import ewe.io.PrintWriter;
-import ewe.ui.MessageBox;
-import ewe.util.Utils;
-
 /**
  * this is not CWPoint because it should be as small as possible
  * @author pfeffer

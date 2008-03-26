@@ -3,7 +3,6 @@
  */
 package CacheWolf;
 
-import ewe.sys.Vm;
 import ewe.ui.*;
 
 /**
@@ -82,14 +81,14 @@ public class OCXMLImporterScreen extends Form {
 	public void onEvent(Event ev){
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == cancelB){
-				this.close(Form.IDCANCEL);
+				this.close(FormBase.IDCANCEL);
 			}
 			if (ev.target == okB){
 				    // distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
 					if (imagesCheckBox!=null) pref.downloadPicsOC = imagesCheckBox.state;
 					if (missingCheckBox!=null) pref.downloadmissingOC = missingCheckBox.state;
 					// TODO: sofort speichern?
-				this.close(Form.IDOK);
+				this.close(FormBase.IDOK);
 				}
 		}
 		super.onEvent(ev);

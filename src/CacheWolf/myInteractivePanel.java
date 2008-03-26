@@ -37,7 +37,7 @@ public class myInteractivePanel extends InteractivePanel{
 		long timePenOff=Vm.getTimeStampLong();
 		// If the pen rested more than 500 msec, we only display the info and don't treat it as a click
 		if (timePenOff-timePenOn<500 || !Vm.isMobile()) { 
-			String fn = new String();
+			new String();
 			if(which instanceof RadarPanelImage){
 				RadarPanelImage ich = (RadarPanelImage)which;
 				Global.mainTab.clearDetails();				
@@ -110,7 +110,7 @@ public class myInteractivePanel extends InteractivePanel{
 			 //wayPoint=ch.wayPoint;
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 IconAndText icnDrag=new IconAndText();
-			 icnDrag.addColumn((IImage) CacheType.cache2Img(ch.type));
+			 icnDrag.addColumn(CacheType.cache2Img(ch.type));
 			 icnDrag.addColumn(ch.wayPoint);
 			 dc.dragData=dc.startImageDrag(icnDrag,new Point(8,8),this);
 			 //if (dc instanceof ImageDragContext) Vm.debug(">>>>Is Image drag");
@@ -146,7 +146,7 @@ public class myInteractivePanel extends InteractivePanel{
 			g.drawText(wayPoint, 15,1);
 			g.drawImage(which.image,0,0);
 			dragImage=new AniImage(img);
-			dragImage.properties|=AniImage.IsMoveable;
+			dragImage.properties|=mImage.IsMoveable;
 			dragImage.setLocation(pos.x,pos.y);
 		}
 		return super.imageBeginDragged(dragImage,pos);

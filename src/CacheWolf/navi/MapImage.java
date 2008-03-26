@@ -48,9 +48,9 @@ public class MapImage extends AniImage {
 		locAlways.y = y;
 		if (!hidden && isOnScreen()) { 
 			super.setLocation(x, y);
-			properties &= ~AniImage.IsInvisible;
+			properties &= ~mImage.IsInvisible;
 		} else {
-			properties |= AniImage.IsInvisible;
+			properties |= mImage.IsInvisible;
 			super.move(0, 0);
 		}
 	}
@@ -60,9 +60,9 @@ public class MapImage extends AniImage {
 		locAlways.y = y;
 		if (!hidden && isOnScreen()) { 
 			super.move(x, y);
-			properties &= ~AniImage.IsInvisible;
+			properties &= ~mImage.IsInvisible;
 		} else {
-			properties |= AniImage.IsInvisible;
+			properties |= mImage.IsInvisible;
 			super.move(0, 0);
 		}
 	}
@@ -82,7 +82,7 @@ public class MapImage extends AniImage {
 
 	public void hide() {
 		hidden = true;
-		properties |= AniImage.IsInvisible;
+		properties |= mImage.IsInvisible;
 	}
 	public void unhide() {
 		hidden = false;

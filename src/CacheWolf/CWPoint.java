@@ -1,7 +1,5 @@
 package CacheWolf;
 
-import ewe.sys.Double;
-import ewe.sys.Locale;
 import ewe.sys.Convert;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.GkPoint;
@@ -11,8 +9,6 @@ import com.bbn.openmap.proj.coords.*;
 import com.bbn.openmap.proj.*;
 import com.bbn.openmap.*;
 import com.stevesoft.ewe_pat.Regex;
-
-import ewe.sys.Vm;
 
 /**
  * Class for getting an setting coords in different formats

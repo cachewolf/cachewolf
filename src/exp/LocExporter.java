@@ -1,6 +1,7 @@
 package exp;
 import CacheWolf.*;
 import ewe.io.File;
+import ewe.io.FileBase;
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
 
@@ -21,7 +22,7 @@ public class LocExporter extends Exporter{
 		super();
 		this.setMask("*.loc");
 		this.setHowManyParams(NO_PARAMS);
-		if ((new File(File.getProgramDirectory()+"/garminmap.xml")).exists()) {
+		if ((new File(FileBase.getProgramDirectory()+"/garminmap.xml")).exists()) {
 			gm=new GarminMap();
 			gm.readGarminMap();
 		}
@@ -80,7 +81,7 @@ public class LocExporter extends Exporter{
 		String lastName;
 		public void readGarminMap(){
 			try{
-				String datei = File.getProgramDirectory() + "/garminmap.xml";
+				String datei = FileBase.getProgramDirectory() + "/garminmap.xml";
 				ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(datei));
 				parse(r);
 				r.close();

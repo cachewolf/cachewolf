@@ -1,6 +1,6 @@
 package exp;
 import CacheWolf.*;
-import ewe.io.File;
+import ewe.io.FileBase;
 
 /**
 *	Class to export the cache database into an ascii file that may be imported
@@ -13,7 +13,7 @@ public class PCX5Exporter extends Exporter{
 	public PCX5Exporter(Preferences p, Profile prof){
 		super();
 		this.setMask("*.wpt");
-		this.setTmpFileName(File.getProgramDirectory() + "/temp.pcx");
+		this.setTmpFileName(FileBase.getProgramDirectory() + "/temp.pcx");
 		this.setHowManyParams(NO_PARAMS);
 	}
 	

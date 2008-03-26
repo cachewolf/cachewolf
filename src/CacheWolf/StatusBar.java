@@ -89,7 +89,7 @@ public class StatusBar extends CellPanel{
 			if (ev.target == btnCacheTour){
 				Global.mainForm.toggleCacheListVisible();			
 			}
-			Gui.takeFocus(Global.mainTab.tbP.tc, Control.ByKeyboard);
+			Gui.takeFocus(Global.mainTab.tbP.tc, ControlConstants.ByKeyboard);
 		}
 		super.onEvent(ev);
 	}

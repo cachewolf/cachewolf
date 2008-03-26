@@ -32,9 +32,9 @@ import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import CacheWolf.STRreplace;
 import HTML.Template;
 import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.io.*;
 import ewe.sys.*;
 import ewe.ui.*;
@@ -148,9 +148,9 @@ public class TPLExporter {
 		ProgressBarForm pbf = new ProgressBarForm();
 		ewe.sys.Handle h = new ewe.sys.Handle();
 
-		FileChooser fc = new FileChooser(FileChooser.SAVE, pref.getExportPath(expName));
+		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
 		fc.setTitle("Select target file:");
-		if(fc.execute() == FileChooser.IDCANCEL) return;
+		if(fc.execute() == FormBase.IDCANCEL) return;
 		File saveTo = fc.getChosenFile();
 		pref.setExportPath(expName, saveTo.getPath());
 		int counter = 0;
@@ -246,7 +246,7 @@ public class TPLExporter {
 			System.runFinalization();
 			Vm.gc(); // this doesn't help :-( - I don't know why :-(
 			//Vm.debug("n: "+Vm.countObjects(true));
-			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now", MessageBox.OKB)).execute();
+			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now", FormBase.OKB)).execute();
 			//Vm.debug("n: "+Vm.countObjects(true));
 		}
 		pbf.exit(0);

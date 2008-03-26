@@ -45,12 +45,11 @@ public class HTMLExporter{
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
-		//need directory only!!!!
-		String dummy = new String();
-		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.getExportPath(expName));
+		new String();
+		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getExportPath(expName));
 		fc.setTitle("Select target directory:");
 		String targetDir;
-		if(fc.execute() != FileChooser.IDCANCEL){
+		if(fc.execute() != FormBase.IDCANCEL){
 			targetDir = fc.getChosen() + "/";
 			pref.setExportPath(expName, targetDir);
 			Vector cache_index = new Vector();
@@ -140,7 +139,7 @@ public class HTMLExporter{
 							String imgFile = new String((String)holder.Images.get(j));
 							imgParams.put("FILE", imgFile);
 							if (j < holder.ImagesText.size())
-								imgParams.put("TEXT",(String)holder.ImagesText.get(j));
+								imgParams.put("TEXT",holder.ImagesText.get(j));
 							else
 								imgParams.put("TEXT",imgFile);
 							DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
@@ -168,7 +167,7 @@ public class HTMLExporter{
 							String usrImgFile = new String((String)holder.UserImages.get(j));
 							usrImgParams.put("FILE", usrImgFile);
 							if (j < holder.UserImagesText.size())
-								usrImgParams.put("TEXT",(String)holder.UserImagesText.get(j));
+								usrImgParams.put("TEXT",holder.UserImagesText.get(j));
 							else
 								usrImgParams.put("TEXT",usrImgFile);
 							DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
@@ -179,7 +178,7 @@ public class HTMLExporter{
 						// Map images
 						mapImg.clear();
 						mapImgParams = new Hashtable();
-						String mapImgFile = new String((String)holder.wayPoint + "_map.gif");
+						String mapImgFile = new String(holder.wayPoint + "_map.gif");
 						// check if map file exists
 						File test = new File(profile.dataDir + mapImgFile);
 						if (test.exists()) {
@@ -189,7 +188,7 @@ public class HTMLExporter{
 							mapImg.add(mapImgParams);
 							
 							mapImgParams = new Hashtable();
-							mapImgFile = (String)holder.wayPoint + "_map_2.gif";
+							mapImgFile = holder.wayPoint + "_map_2.gif";
 							mapImgParams.put("FILE", mapImgFile);
 							mapImgParams.put("TEXT",mapImgFile);
 							DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
@@ -210,10 +209,10 @@ public class HTMLExporter{
 			// Copy the log-icons to the destination directory
 			for (int j=0; j<logIcons.size(); j++) {
 				icon=(String) logIcons.elementAt(j);
-				DataMover.copy(File.getProgramDirectory() + "/"+icon,targetDir + icon);
+				DataMover.copy(FileBase.getProgramDirectory() + "/"+icon,targetDir + icon);
 				
 			}
-			DataMover.copy(File.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif");
+			DataMover.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif");
 			try{
 				Template tpl = new Template(template_init_index);
 				tpl.setParam("cache_index", cache_index);
@@ -276,7 +275,6 @@ public class HTMLExporter{
 	}
 	
 	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field){
-		Vector navi_index;
 		PrintWriter detfile; 
 		
 		list.sort(new HTMLComparer(field),false);

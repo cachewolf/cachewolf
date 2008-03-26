@@ -1,13 +1,14 @@
 package CacheWolf;
 
 import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
-import ewe.sys.Vm;
+import ewe.ui.FormBase;
 import ewe.ui.InputBox;
 import ewe.util.Vector;
 
@@ -115,9 +116,9 @@ public class CacheHolderDetail extends CacheHolder {
 		  String imgDesc, imgDestName;
 		  
 		  //Get Image and description
-			FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
+			FileChooser fc = new FileChooser(FileChooserBase.OPEN, profile.dataDir);
 			fc.setTitle("Select image file:");
-			if(fc.execute() != FileChooser.IDCANCEL){
+			if(fc.execute() != FormBase.IDCANCEL){
 				imgFile = fc.getChosenFile();
 				imgDesc = new InputBox("Description").input("",10);
 				//Create Destination Filename

@@ -72,7 +72,7 @@ public class MapImporter extends Form {
 		}catch(FileNotFoundException ex){
 			//	Vm.debug("Cannot load world file!");
 		}catch (IOException ex) { // is thrown if lat/lon out of range
-			MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), ex.getMessage(), MessageBox.OKB);
+			MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), ex.getMessage(), FormBase.OKB);
 			tmpMB.execute();
 			Vm.debug("Cannot load world file!");
 		}
@@ -121,11 +121,11 @@ public class MapImporter extends Form {
 	 */
 	public int importMap(){
 		String rawFileName = new String();
-		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, Global.getPref().baseDir);
+		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().baseDir);
 		fc.addMask("*.png,*.gif,*.bmp,*.jpg");
-		fc.setTitle((String)MyLocale.getMsg(4100,"Select Directory:"));
+		fc.setTitle(MyLocale.getMsg(4100,"Select Directory:"));
 		int tmp = fc.execute() ; 
-		if(tmp != FileChooser.IDYES) return Form.IDCANCEL;
+		if(tmp != FormBase.IDYES) return FormBase.IDCANCEL;
 		File inDir = fc.getChosenFile();
 		File mapFile;
 		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...            \n"), InfoBox.PROGRESS_WITH_WARNINGS, false); 
@@ -147,14 +147,14 @@ public class MapImporter extends Form {
 		byte[] buf;
 		int len;
 		String[] parts;
-		String [] files = inDir.listMultiple("*.png,*.jpg,*.gif,*.bmp", File.LIST_FILES_ONLY);
+		String [] files = inDir.listMultiple("*.png,*.jpg,*.gif,*.bmp", FileBase.LIST_FILES_ONLY);
 
 		String currfile = null;
 		String curInFullPath;
 		String curOutFullPath;
 		int num = files.length;
 		for(int i =  num -1 ; i >= 0;i--){
-			currfile = (String) files[i];
+			currfile = files[i];
 			inf.setInfo(MyLocale.getMsg(4110,"Loading: ")+ "\n" + currfile + "\n("+(num-i)+"/"+num+")");
 			//Copy the file
 			//Vm.debug("Copy: " + inDir.getFullPath() + "/" +files[i]);
@@ -310,7 +310,7 @@ public class MapImporter extends Form {
 		inf.addOkButton();
 		//inf.addOkButton(); doesn't work
 		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
-		return Form.IDOK;
+		return FormBase.IDOK;
 	}
 
 
@@ -332,11 +332,11 @@ public class MapImporter extends Form {
 						wfl.saveWFL(mapsPath, thisMap);
 						if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
 					} catch (IOException e) {
-						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(321, "Error writing file ") + e.getMessage()+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
-						if (tmpMB.execute() == MessageBox.IDYES) retry = true;
+						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(321, "Error writing file ") + e.getMessage()+MyLocale.getMsg(324, " - retry?"), FormBase.YESB | FormBase.NOB);
+						if (tmpMB.execute() == FormBase.IDYES) retry = true;
 					}catch (IllegalArgumentException e) {
-						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(325, "Map not calibrated")+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
-						if (tmpMB.execute() == MessageBox.IDYES) { retry = true; break; }
+						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(325, "Map not calibrated")+MyLocale.getMsg(324, " - retry?"), FormBase.YESB | FormBase.NOB);
+						if (tmpMB.execute() == FormBase.IDYES) { retry = true; break; }
 					}
 				}
 				if (!retry) close(0);
@@ -379,7 +379,7 @@ class mapInteractivePanel extends InteractivePanel{
 		f.updatePosition(pos.x, pos.y);
 
 		CoordsScreen cooS = new CoordsScreen(); // (String)lr.get(4108,"Coordinates:"), (String)lr.get(4108,"Coordinates:"), InfoBox.INPUT);
-		if (cooS.execute()==CoordsScreen.IDOK) {
+		if (cooS.execute()==FormBase.IDOK) {
 			GCPoint gcp = new GCPoint(cooS.getCoords());
 			gcp.bitMapX = pos.x;
 			gcp.bitMapY = pos.y;

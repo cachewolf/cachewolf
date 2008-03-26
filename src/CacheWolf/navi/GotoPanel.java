@@ -2,7 +2,6 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheType;
 import CacheWolf.CoordsScreen;
 import CacheWolf.DetailsPanel;
 import CacheWolf.Global;
@@ -12,11 +11,8 @@ import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import ewe.ui.*;
 import ewe.util.Vector;
-import ewe.util.mString;
 import ewe.fx.*;
 import ewe.graphics.AniImage;
-import ewe.io.*;
-import ewe.net.Socket;
 //import ewe.io.IOException;
 //import ewe.io.SerialPort;
 //import ewe.io.SerialPortOptions;
@@ -120,14 +116,14 @@ public class GotoPanel extends CellPanel {
 		CoordsP.addNext(lblGPS = new mLabel("GPS: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblGPS.backGround = RED;
 		lblGPS.setMenu(mnuContextFormt);
-		lblGPS.modifyAll(Control.WantHoldDown, 0);
+		lblGPS.modifyAll(ControlConstants.WantHoldDown, 0);
 		CoordsP.addLast(lblPosition = new mLabel(myNavigation.gpsPos.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		lblPosition.setMenu(mnuContextFormt);
-		lblPosition.modifyAll(Control.WantHoldDown, 0);
+		lblPosition.modifyAll(ControlConstants.WantHoldDown, 0);
 		CoordsP.addNext(lblDST = new mLabel(MyLocale.getMsg(1500,"DST:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblDST.backGround = new Color(0,0,255);
 		lblDST.setMenu(mnuContextFormt);
-		lblDST.modifyAll(Control.WantHoldDown, 0);
+		lblDST.modifyAll(ControlConstants.WantHoldDown, 0);
 		CoordsP.addLast(btnGoto = new mButton(getGotoBtnText()),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		//Rose for bearing
@@ -135,7 +131,7 @@ public class GotoPanel extends CellPanel {
 		compassRose = new GotoRose();
 		icRose = new ImageControl(compassRose);
 		icRose.setMenu(mnuContextRose);
-		icRose.modifyAll(Control.WantHoldDown, 0); // this is necessary in order to make PenHold on a PDA work as right click
+		icRose.modifyAll(ControlConstants.WantHoldDown, 0); // this is necessary in order to make PenHold on a PDA work as right click
 		roseP.addLast(icRose,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTH));
 		
 		mnuContextRose.addItem(new MenuItem("", MenuItem.Separator, null));
@@ -184,8 +180,8 @@ public class GotoPanel extends CellPanel {
 		int roseHeight = height - coordsRect.y - coordsRect.height;
 		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 			//some space for the SIP button
-			if ( (Vm.getParameter(Vm.VM_FLAGS) & (Vm.VM_FLAG_SIP_BUTTON_ON_SCREEN)) == (Vm.VM_FLAG_SIP_BUTTON_ON_SCREEN) ){
-				Rect screen = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
+			if ( (Vm.getParameter(VmConstants.VM_FLAGS) & (VmConstants.VM_FLAG_SIP_BUTTON_ON_SCREEN)) == (VmConstants.VM_FLAG_SIP_BUTTON_ON_SCREEN) ){
+				Rect screen = (Rect)Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new Rect(),0);
 				roseHeight -= screen.height / 14;				
 			}
 		}
@@ -201,7 +197,7 @@ public class GotoPanel extends CellPanel {
 	 */ 
 	public void setDestination(CWPoint dest){
 		myNavigation.setDestination(dest);
-		if (!myNavigation.destination.isValid()) (new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(1507,"Coordinates are out of range:") +"\n"+MyLocale.getMsg(1508,"latitude")+": "+myNavigation.destination.latDec+"\n "+MyLocale.getMsg(1509,"longditue")+": "+myNavigation.destination.lonDec, MessageBox.OKB)).execute();
+		if (!myNavigation.destination.isValid()) (new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(1507,"Coordinates are out of range:") +"\n"+MyLocale.getMsg(1508,"latitude")+": "+myNavigation.destination.latDec+"\n "+MyLocale.getMsg(1509,"longditue")+": "+myNavigation.destination.lonDec, FormBase.OKB)).execute();
 		
 	}
 	
@@ -261,13 +257,13 @@ public class GotoPanel extends CellPanel {
 		}
 		// receiving no data
 		if (fix == -1) {
-			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1510, "No data from GPS\nConnection to serial port closed"),MessageBox.OKB)).exec();
+			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1510, "No data from GPS\nConnection to serial port closed"),FormBase.OKB)).exec();
 			gpsStatus = RED;
 			myNavigation.stopGps();
 		}
 		// cannot interprete data
 		if (fix == -2) {
-			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511, "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n")+myNavigation.gpsPos.lastStrExamined, MessageBox.OKB)).exec();
+			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511, "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n")+myNavigation.gpsPos.lastStrExamined, FormBase.OKB)).exec();
 			gpsStatus = RED;
 			myNavigation.stopGps(); // TODO automatic in myNavigate?
 		}
@@ -313,7 +309,7 @@ public class GotoPanel extends CellPanel {
 		if (centerTo != null && centerTo.isValid())
 			mainT.SwitchToMovingMap(centerTo, false);
 		else
-		(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS"), MessageBox.OKB)).execute(); 
+		(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS"), FormBase.OKB)).execute(); 
 	}
 	
 	/**
@@ -432,7 +428,7 @@ public class GotoPanel extends CellPanel {
 				CoordsScreen cs = new CoordsScreen();
 				if (myNavigation.destination.isValid())	cs.setFields(myNavigation.destination, currFormat);
 				else cs.setFields(new CWPoint(0,0), currFormat);
-				if (cs.execute(null, Gui.TOP) == CoordsScreen.IDOK)
+				if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK)
 					setDestination(cs.getCoords());
 			}
 		}
@@ -537,7 +533,7 @@ class GotoRose extends AniImage {
 			drawFullRose(g, 0, new Color(255,255,255), new Color(200,200,200), new Color(255,255,255), new Color(200,200,200), new Color(150,150,150), new Color(75,75,75), 1.0f, true, true);
 		}
 		else {
-			int radius = (int)((float)roseRadius * 0.75f);
+			int radius = (int)(roseRadius * 0.75f);
 
 			g.setPen(new Pen(new Color(150,150,150),Pen.SOLID,3));
 			g.drawEllipse(location.width/2 - radius, location.height/2 - radius, 2 * radius, 2 * radius );
@@ -715,7 +711,7 @@ class GotoRose extends AniImage {
 					//drawRose(g, 360 - moveDir, new Color(100,100,100), new Color(200,200,200), 1.0f);
 					drawFullRose(g, 360 - moveDir, new Color(255,255,255), new Color(200,200,200), new Color(150,150,150), new Color(200,200,200), new Color(200,200,200), new Color(75,75,75), 1.0f, false, false);
 					
-					int radius = (int)((float)roseRadius * 0.75f);
+					int radius = (int)(roseRadius * 0.75f);
 					g.setPen(new Pen(RED,Pen.SOLID,3));
 					g.drawLine(location.width/2, location.height/2 - radius, location.width/2, location.height/2 + radius);
 					
@@ -747,13 +743,11 @@ class GotoRose extends AniImage {
 	private void drawSunArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)roseRadius * scale;
+		float arrowLength = roseRadius * scale;
 		float halfArrowWidth = arrowLength * 0.08f;
 		float circlePos = arrowLength * 0.7f;
 		int circleRadius = (int)(arrowLength * 0.1f);
 
-		int pointX = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
-		int pointY = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
 		int circleX = centerX + new Float(circlePos * java.lang.Math.sin(angleRad)).intValue();
 		int circleY = centerY - new Float(circlePos * java.lang.Math.cos(angleRad)).intValue();
 
@@ -781,7 +775,7 @@ class GotoRose extends AniImage {
 	private void drawThinArrow(Graphics g, float angle, Color col, Color colPoint, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)roseRadius * scale;
+		float arrowLength = roseRadius * scale;
 		float halfOpeningAngle = (float)(java.lang.Math.PI * 0.03);
 		float sideLineLength = arrowLength * 0.75f;
 		
@@ -809,7 +803,7 @@ class GotoRose extends AniImage {
 	private void drawDoubleArrow(Graphics g, float angle, Color colFront, Color colRear, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)roseRadius * scale;
+		float arrowLength = roseRadius * scale;
 		float halfArrowWidth = arrowLength * 0.1f;
 		
 		int[] pointsX = new int[3];
@@ -836,7 +830,7 @@ class GotoRose extends AniImage {
 	private void drawRose(Graphics g, float angle, Color colFront, Color colRear, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)roseRadius * scale;
+		float arrowLength = roseRadius * scale;
 		float halfArrowWidth = arrowLength * 0.12f;
 		
 		int[] pointsX = new int[8];
@@ -891,7 +885,7 @@ class GotoRose extends AniImage {
 		float angleRadText = (angle + 7.5f) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
 				
-		float arrowLength = (float)roseRadius * scale;
+		float arrowLength = roseRadius * scale;
 		float halfArrowWidth = arrowLength * innerScale;
 		
 		int[] pointsX = new int[3];
@@ -915,7 +909,7 @@ class GotoRose extends AniImage {
 		g.fillPolygon(pointsX, pointsY, 3);
 					
 		if (bDrawText){
-			int tempFontSize = new Float(scale * (float)mainFont.getSize()).intValue();
+			int tempFontSize = new Float(scale * mainFont.getSize()).intValue();
 			Font tempFont = new Font(mainFont.getName(), Font.BOLD, tempFontSize);
 			g.setFont(tempFont);
 			FontMetrics tempFm = g.getFontMetrics(tempFont);
@@ -935,7 +929,7 @@ class GotoRose extends AniImage {
 	private void drawThickArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = (float)roseRadius * scale;
+		float arrowLength = roseRadius * scale;
 		float halfArrowWidth = arrowLength * 0.1f;
 		
 		int[] pointsX = new int[4];

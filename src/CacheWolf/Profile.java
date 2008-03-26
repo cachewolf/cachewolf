@@ -1,7 +1,6 @@
 package CacheWolf;
 
 import CacheWolf.navi.Area;
-import HTML.Tmpl.Element.If;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileNotFoundException;
@@ -9,7 +8,6 @@ import ewe.io.FileReader;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
-import ewe.io.Stream;
 import ewe.sys.Convert;
 import ewe.sys.Handle;
 import ewe.sys.Vm;
@@ -455,7 +453,7 @@ public class Profile {
 			ch.addiWpts.clear();
 			ch.mainCache = null;
 			// if (ch.wayPoint.startsWith("GC")) // Only put potential master caches into the index
-				dbIndex.put((String)ch.wayPoint, new Integer(i));
+				dbIndex.put(ch.wayPoint, new Integer(i));
 		}
 		// Build references
 		int max = cacheDB.size();

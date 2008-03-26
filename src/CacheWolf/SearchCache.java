@@ -1,6 +1,5 @@
 package CacheWolf;
 import ewe.util.*;
-import ewe.sys.*;
 
 /**
 *	A class to perform a search on the cache database.

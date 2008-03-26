@@ -91,30 +91,30 @@ public class GPSPortOptions extends SerialPortOptions {
 	public Editor getEditor(int whichEditor){
 		Editor ed;
 		ed = super.getEditor(0);
-		ed.addField(ed.addNext(new mButton("Scan$u")).setCell(Editor.DONTSTRETCH),"scan");
+		ed.addField(ed.addNext(new mButton("Scan$u")).setCell(CellConstants.DONTSTRETCH),"scan");
 		btnTest = new mButton("Test$u");
-		ed.addField(ed.addLast(btnTest.setCell(Editor.DONTSTRETCH)),"test");
+		ed.addField(ed.addLast(btnTest.setCell(CellConstants.DONTSTRETCH)),"test");
 		txtOutput = new TextDisplay();
 		ScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
-		sbp.setOptions(ScrollBarPanel.AlwaysShowVerticalScrollers | ScrollBarPanel.AlwaysShowHorizontalScrollers);
+		sbp.setOptions(ScrollablePanel.AlwaysShowVerticalScrollers | ScrollablePanel.AlwaysShowHorizontalScrollers);
 		ed.addField(ed.addLast(sbp),"out");
 		forwardGpsChkB = new mCheckBox("z");
-		ed.addField(ed.addNext(forwardGpsChkB, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "forwardGpsChkB");
+		ed.addField(ed.addNext(forwardGpsChkB, CellConstants.DONTSTRETCH, (CellConstants.WEST | CellConstants.DONTFILL)), "forwardGpsChkB");
 		labelForwardHost = new mLabel("Forward GPS data to host");
-		ed.addField(ed.addNext(labelForwardHost, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "labelForwardIP");
+		ed.addField(ed.addNext(labelForwardHost, CellConstants.DONTSTRETCH, (CellConstants.WEST | CellConstants.DONTFILL)), "labelForwardIP");
 		inputBoxForwardHost = new mInput("tcpForwardHost");
 		inputBoxForwardHost.setPromptControl(labelForwardHost);
 		inputBoxForwardHost.setText("192.168.178.23");
 		inputBoxForwardHost.setToolTip("All data from GPS will be sent to TCP-port 23\n and can be redirected there to a serial port\n by HW Virtual Serial Port");
-		ed.addField(ed.addLast(inputBoxForwardHost,0 , (Editor.WEST | Editor.HFILL)), "tcpForwardHost");
+		ed.addField(ed.addLast(inputBoxForwardHost,0 , (CellConstants.WEST | CellConstants.HFILL)), "tcpForwardHost");
 		logGpsChkB = new mCheckBox("z");
-		ed.addField(ed.addNext(logGpsChkB, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "logGpsChkB");
+		ed.addField(ed.addNext(logGpsChkB, CellConstants.DONTSTRETCH, (CellConstants.WEST | CellConstants.DONTFILL)), "logGpsChkB");
 		labelLogTimer = new mLabel("Interval in sec for logging");
-		ed.addField(ed.addNext(labelLogTimer, Editor.DONTSTRETCH, (Editor.WEST | Editor.DONTFILL)), "labelLogTimer");
+		ed.addField(ed.addNext(labelLogTimer, CellConstants.DONTSTRETCH, (CellConstants.WEST | CellConstants.DONTFILL)), "labelLogTimer");
 		inputBoxLogTimer = new mInput("GPSLogTimer");
 		inputBoxLogTimer.setPromptControl(labelLogTimer);
 		inputBoxLogTimer.setText("10");
-		ed.addField(ed.addLast(inputBoxLogTimer,0 , (Editor.WEST | Editor.HFILL)), "GPSLogTimer");
+		ed.addField(ed.addLast(inputBoxLogTimer,0 , (CellConstants.WEST | CellConstants.HFILL)), "GPSLogTimer");
 
 		
 		gpsRunning = false;
@@ -173,7 +173,6 @@ public class GPSPortOptions extends SerialPortOptions {
 		long now;
 		
 		gpsPort = new SerialPort(port, baud);
-		if (gpsPort == null) return false;
 		
 		//try to read some data
 		now = new Time().getTime();
@@ -197,7 +196,6 @@ public class GPSPortOptions extends SerialPortOptions {
 		long now;
 		
 		gpsPort = new SerialPort(port, baud);
-		if (gpsPort == null) return false;
 		
 		//try to read some data
 		now = new Time().getTime();

@@ -129,6 +129,6 @@ public class LogList {
 	 }
 	 
 	 public static int getScore(int numrecommends, int numfoundlogs) {
-		 return Math.round((((float)numrecommends * (float)numrecommends +1f ) / ((float)numfoundlogs / 10f +1f))*100f);
+		 return Math.round((((float)numrecommends * (float)numrecommends +1f ) / (numfoundlogs / 10f +1f))*100f);
 	 }
 }

@@ -335,7 +335,7 @@ public class MainTab extends mTabbedPanel {
 	public void SwitchToMovingMap(CWPoint centerTo, boolean forceCenter) {
 		try {
 			if (!centerTo.isValid()) {
-				(new MessageBox("Error", "No valid coordinates", MessageBox.OKB)).execute();
+				(new MessageBox("Error", "No valid coordinates", FormBase.OKB)).execute();
 				return;
 			}
 			if (mm == null) {
@@ -349,7 +349,7 @@ public class MainTab extends mTabbedPanel {
 				try {
 					int i = 0;
 					while (MapImage.screenDim.width == 0 && i < 10*60) { i++; ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
-					if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", MessageBox.OKB)).execute(); return;}
+					if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", FormBase.OKB)).execute(); return;}
 					mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
 					mm.updatePosition(centerTo);
 					/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
@@ -361,11 +361,11 @@ public class MainTab extends mTabbedPanel {
 					 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
 				}catch (InterruptedException e) {
 					Global.getPref().log("Error starting mavoing map (1): " + e.getMessage(), e, true);
-					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", MessageBox.OKB)).execute(); } 
+					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", FormBase.OKB)).execute(); } 
 			}
 		} catch (Exception e) { 
 			Global.getPref().log("Error starting moving map (2): " + e.getMessage(), e, true);
-			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), MessageBox.OKB)).execute(); }
+			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), FormBase.OKB)).execute(); }
 	}
 
 	void updatePendingChanges() {
@@ -388,7 +388,7 @@ public class MainTab extends mTabbedPanel {
 		updatePendingChanges();
 		if (askForConfirmation) { // Don't know whether to save, have to ask
 			if (profile.hasUnsavedChanges &&     // Only ask if there were changes 
-					(new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1207,"Your profile has unsaved changes. Do you want to save?"),MessageBox.DEFOKB|MessageBox.NOB)).execute()==MessageBox.IDOK) {
+					(new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1207,"Your profile has unsaved changes. Do you want to save?"),FormBase.DEFOKB|FormBase.NOB)).execute()==FormBase.IDOK) {
 				saveIndex=true; 
 			}
 		}

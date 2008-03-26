@@ -206,7 +206,7 @@ public class DateTimeChooser extends Editor {
 	public void setDate(Time t) {
 		dateSet = t;
 		if (!t.isValid()) t = new Time();
-		String s = Time.toString(t,t instanceof TimeOfDay ? t.getFormat() : locale.getString(Locale.SHORT_DATE_FORMAT,0,0),locale);
+		Time.toString(t,t instanceof TimeOfDay ? t.getFormat() : locale.getString(Locale.SHORT_DATE_FORMAT,0,0),locale);
 		day = t.day; month = t.month; year = t.year; hour=t.hour; minute=t.minute;
 		time=MyLocale.formatLong(hour,"00")+":"+MyLocale.formatLong(minute,"00");
 		monthName = locale.getString(Locale.SHORT_MONTH,t.month,0);
@@ -472,7 +472,7 @@ class timeChooserTableModel extends InputPanelTableModel {
 	}
 
 	public Object getCellData(int row,int col) {
-		return (String)getCellText(row,col);
+		return getCellText(row,col);
 	}
 
 	public TableCellAttributes getCellAttributes(int row,int col,boolean isSelected,TableCellAttributes ta) {

@@ -2,6 +2,7 @@ package CacheWolf;
 
 import ewe.io.FileReader;
 import ewe.sys.Handle;
+import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.ui.ProgressBarForm;
 import utils.FileBugfix;
@@ -56,13 +57,13 @@ public class Rebuild {
 			(new MessageBox(MyLocale.getMsg(327, "Information"), 
 					  MyLocale.getMsg(210,"Caches nicht in index.xml: ")+orphans+
 					  MyLocale.getMsg(211,"\nDavon hinzugefügt: ")+nAdded
-					, MessageBox.OKB)).execute();
+					, FormBase.OKB)).execute();
 			prof.buildReferences();
 			prof.saveIndex(Global.getPref(),true);
 		}
 		if (orphans!=nAdded && (new MessageBox(MyLocale.getMsg(327, "Information"),
 					MyLocale.getMsg(212,"Delete all .xml files not in index.xml and associated pictures"), 
-					MessageBox.YESB | MessageBox.NOB)).execute()==MessageBox.YESB) {
+					FormBase.YESB | FormBase.NOB)).execute()==FormBase.YESB) {
 			h = new Handle();
 			pbf.setTask(h,MyLocale.getMsg(213,"Deleting orphans"));
 			DataMover dm=new DataMover();

@@ -1,6 +1,5 @@
 package CacheWolf;
 import ewe.util.*;
-import ewe.sys.*;
 
 /**
 *	This class handles the sorting for most of the sorting tasks. If a cache is 
@@ -96,7 +95,7 @@ public class MyComparer implements Comparer{
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				if (ch.wayPoint.startsWith("OC"))
-					ch.sort=MyLocale.formatLong((long)ch.numRecommended,"00000");
+					ch.sort=MyLocale.formatLong(ch.numRecommended,"00000");
 				else
 					ch.sort="\uFFFF";
 			}			
@@ -104,7 +103,7 @@ public class MyComparer implements Comparer{
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
 				if (ch.wayPoint.startsWith("OC"))
-					ch.sort=MyLocale.formatLong((long)ch.recommendationScore,"00000");
+					ch.sort=MyLocale.formatLong(ch.recommendationScore,"00000");
 				else
 					ch.sort="\uFFFF";
 			}			

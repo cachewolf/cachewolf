@@ -2,20 +2,17 @@ package CacheWolf;
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.io.BufferedWriter;
-import ewe.io.File;
+import ewe.io.FileBase;
 import ewe.io.FileWriter;
-import ewe.io.IOException;
 import ewe.io.PrintWriter;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
-import ewe.ui.InputBox;
 import ewe.util.*;
-import ewe.util.Hashtable;
 import HTML.Template;
 
 
 public class ShowCacheInBrowser {
-	String pd=File.getProgramDirectory();
+	String pd=FileBase.getProgramDirectory();
 	String saveTo=pd+"/temp.html";
 	static Hashtable diff=null;
 	static Hashtable terr=null;
@@ -65,9 +62,9 @@ public class ShowCacheInBrowser {
 				Vm.showWait(true);
 				try {
 					if (chD.wayPoint.startsWith("OC"))
-						tpl.setParam("TYPE", "\"file://"+File.getProgramDirectory()+"/"+CacheType.transOCType(chD.type)+".gif\"");
+						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+CacheType.transOCType(chD.type)+".gif\"");
 					else	
-						tpl.setParam("TYPE", "\"file://"+File.getProgramDirectory()+"/"+chD.type+".gif\"");
+						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+chD.type+".gif\"");
 					tpl.setParam("SIZE", chD.CacheSize);
 					tpl.setParam("WAYPOINT", chD.wayPoint);
 					tpl.setParam("CACHE_NAME", chD.CacheName);

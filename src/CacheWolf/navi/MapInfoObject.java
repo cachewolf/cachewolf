@@ -4,23 +4,15 @@ import CacheWolf.CWPoint;
 import CacheWolf.Common;
 import CacheWolf.Matrix;
 import CacheWolf.MyLocale;
-import CacheWolf.Profile;
-import ewe.data.PropertyList;
-import ewe.fx.PixelBuffer;
 import ewe.fx.Point;
-import ewe.io.Base64Encoder;
 import ewe.io.BufferedWriter;
 import ewe.io.FileInputStream;
-import ewe.io.FileReader;
 import ewe.io.FileWriter;
-import ewe.io.FilenameFilter;
 import ewe.io.File;
 import ewe.io.IOException;
-import ewe.io.InputStream;
 import ewe.io.InputStreamReader;
 import ewe.io.PrintWriter;
 import ewe.sys.*;
-import ewe.util.Properties;
 import java.lang.Math;
 
 
@@ -417,8 +409,8 @@ public class MapInfoObject extends Area {
 	 */
 	public CWPoint calcLatLon(int x, int y) {
 		CWPoint ll = new CWPoint();
-		ll.latDec = (double)x * affine[0] + (double)y * affine[2] + affineTopleft.latDec;
-		ll.lonDec = (double)x * affine[1] + (double)y * affine[3] + affineTopleft.lonDec;
+		ll.latDec = x * affine[0] + y * affine[2] + affineTopleft.latDec;
+		ll.lonDec = x * affine[1] + y * affine[3] + affineTopleft.lonDec;
 		if (coordTrans != 0)
 			ll = TransformCoordinatesProperties.toWgs84(ll, coordTrans);
 		return ll;

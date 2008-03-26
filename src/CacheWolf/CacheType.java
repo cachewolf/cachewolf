@@ -3,7 +3,6 @@
  */
 package CacheWolf;
 
-import ewe.fx.IImage;
 import ewe.fx.Image;
 import ewe.sys.Convert;
 import ewe.sys.Vm;

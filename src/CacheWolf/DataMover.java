@@ -1,8 +1,8 @@
 package CacheWolf;
 
-import CacheWolf.myTableControl.myProgressBarForm;
 import utils.FileBugfix;
 import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.io.*;
 import ewe.ui.*;
 import ewe.util.Vector;
@@ -26,8 +26,8 @@ public class DataMover {
 	}
 	public void deleteCaches(){
 		
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(145,"Cachedata of ALL VISIBLE caches will be deleted! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
-		if (mBox.execute() != MessageBox.IDOK){
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(145,"Cachedata of ALL VISIBLE caches will be deleted! Continue?"), FormBase.IDYES |FormBase.IDNO);
+		if (mBox.execute() != FormBase.IDOK){
 			return;
 		}
 		processCaches(new Deleter(MyLocale.getMsg(143, "Delete")));
@@ -36,14 +36,13 @@ public class DataMover {
 	}
 
 	public void copyCaches(){
-		int dstPos;
 		Profile dstProfile=new Profile();
 		
 		dstProfile.dataDir=selectTargetDir();
 		if (dstProfile.dataDir.equals(profile.dataDir) ||
 			dstProfile.dataDir.equals("")) return;
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(146,"Cachedata of ALL VISIBLE caches will be copied! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
-		if (mBox.execute() != MessageBox.IDOK){
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(146,"Cachedata of ALL VISIBLE caches will be copied! Continue?"), FormBase.IDYES |FormBase.IDNO);
+		if (mBox.execute() != FormBase.IDOK){
 			return;
 		}
 		
@@ -59,15 +58,13 @@ public class DataMover {
 	
 	public void moveCaches() {
 		Profile dstProfile=new Profile();
-		int dstPos;
-		
 		// Select destination directory
 		dstProfile.dataDir=selectTargetDir();
 		if (dstProfile.dataDir.equals(profile.dataDir) ||
 			dstProfile.dataDir.equals("")) return;
 		
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(147,"Cachedata of ALL VISIBLE caches will be moved! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
-		if (mBox.execute() != MessageBox.IDOK){
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(147,"Cachedata of ALL VISIBLE caches will be moved! Continue?"), FormBase.IDYES |FormBase.IDNO);
+		if (mBox.execute() != FormBase.IDOK){
 			return;
 		}
 		
@@ -128,7 +125,7 @@ public class DataMover {
 	
 	public String selectTargetDir() {
 		// Select destination directory
-		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.baseDir);
+		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.baseDir);
 		fc.setTitle(MyLocale.getMsg(148,"Select Target directory"));
 		if(fc.execute() != FormBase.IDCANCEL){
 			return fc.getChosen() + "/";

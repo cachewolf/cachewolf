@@ -2,7 +2,7 @@ package CacheWolf;
 
 import ewe.io.IOException;
 import ewe.sys.Convert;
-import ewe.sys.Vm;
+import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.Vector;
 
@@ -472,7 +472,7 @@ public class CacheHolder {
 		} catch (IOException e) {
 			if (maybenew) details.update(this);
 			else {
-				if (alarmuser) (new MessageBox("Error", "Could not read cache details for cache: "+this.wayPoint, MessageBox.OKB)).execute();
+				if (alarmuser) (new MessageBox("Error", "Could not read cache details for cache: "+this.wayPoint, FormBase.OKB)).execute();
 				return null;
 			} 
 		}

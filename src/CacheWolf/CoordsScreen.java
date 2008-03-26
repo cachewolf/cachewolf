@@ -86,7 +86,7 @@ public class CoordsScreen extends Form {
 		chcNS.exitKeys=exitKeys; chcEW.exitKeys=exitKeys;
 		//add Panels
 		this.addLast(mainPanel,CellConstants.DONTSTRETCH, CellConstants.WEST);
-		chcNS.takeFocus(Control.ByKeyboard);
+		chcNS.takeFocus(ControlConstants.ByKeyboard);
 	}
 	
 	public void activateFields(int format){
@@ -200,15 +200,15 @@ public class CoordsScreen extends Form {
 		// For input fields we use the wantReturn field
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.EXITED){
 			if (((ControlEvent)ev).target==chkDD || ((ControlEvent)ev).target==chkDMM ||
-			    ((ControlEvent)ev).target==chkDMS) Gui.takeFocus(chcNS,Control.ByKeyboard);	
-			if (((ControlEvent)ev).target==chkUTM) Gui.takeFocus(inpUTMZone,Control.ByKeyboard);
-			if (((ControlEvent)ev).target==chkGK) Gui.takeFocus(inpUTMEasting,Control.ByKeyboard);
-			if (((ControlEvent)ev).target==chcNS) Gui.takeFocus(inpNSDeg,Control.ByKeyboard);
-			if (((ControlEvent)ev).target==chcEW) Gui.takeFocus(inpEWDeg,Control.ByKeyboard);
+			    ((ControlEvent)ev).target==chkDMS) Gui.takeFocus(chcNS,ControlConstants.ByKeyboard);	
+			if (((ControlEvent)ev).target==chkUTM) Gui.takeFocus(inpUTMZone,ControlConstants.ByKeyboard);
+			if (((ControlEvent)ev).target==chkGK) Gui.takeFocus(inpUTMEasting,ControlConstants.ByKeyboard);
+			if (((ControlEvent)ev).target==chcNS) Gui.takeFocus(inpNSDeg,ControlConstants.ByKeyboard);
+			if (((ControlEvent)ev).target==chcEW) Gui.takeFocus(inpEWDeg,ControlConstants.ByKeyboard);
 		}
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (((ControlEvent)ev).target==inpEWDeg || ((ControlEvent)ev).target==inpEWm ||
-					((ControlEvent)ev).target==inpEWs || ((ControlEvent)ev).target==inpUTMNorthing) Gui.takeFocus(btnApply,Control.ByKeyboard);	
+					((ControlEvent)ev).target==inpEWs || ((ControlEvent)ev).target==inpUTMNorthing) Gui.takeFocus(btnApply,ControlConstants.ByKeyboard);	
 			if (ev.target == chkFormat){
 				readFields(coordInp, currFormat);
 				currFormat = chkFormat.getSelectedIndex();
@@ -225,7 +225,7 @@ public class CoordsScreen extends Form {
 				currFormat = chkFormat.getSelectedIndex();
 				readFields(coordInp, currFormat);
 				if (coordInp.isValid()) this.close(IDOK);
-				else (new MessageBox("Error", "Please enter valid coordinates", MessageBox.OKB)).execute();
+				else (new MessageBox("Error", "Please enter valid coordinates", FormBase.OKB)).execute();
 			}
 			
 			if (ev.target == btnPaste){
@@ -249,7 +249,7 @@ public class CoordsScreen extends Form {
 					coord = new CWPoint(inp);
 				}
 				if (coord.latDec == -91 && coord.lonDec == -361){
-					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
+					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 					tmpMB.exec();
 				}else {
 					currFormat = chkFormat.getSelectedIndex();

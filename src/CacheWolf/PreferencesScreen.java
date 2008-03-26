@@ -72,13 +72,13 @@ public class PreferencesScreen extends Form {
 		// First panel - General
 		/////////////////////////////////////////////////////////
 		Frame frmDataDir=new Frame();
-		frmDataDir.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
+		frmDataDir.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_BOTTOM;
 		frmDataDir.addNext(new mLabel(MyLocale.getMsg(603,"Data Directory:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		//frmDataDir.setTag(INSETS,new Insets(10,10,10,10));
 		frmDataDir.addLast(brwBt = new mButton(MyLocale.getMsg(604,"Browse")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
 		DataDir = new mInput();
 		DataDir.setText(pref.baseDir);
-		frmDataDir.addLast(DataDir.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
+		frmDataDir.addLast(DataDir.setTag(CellConstants.SPAN, new Dimension(3,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
 		frmDataDir.addLast(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629,"Autoload last profile")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if (pref.autoReloadLastProfile) chkAutoLoad.setState(true);
 		chkAutoLoad.setTag(INSETS,new Insets(0,0,2,0));
@@ -116,7 +116,7 @@ public class PreferencesScreen extends Form {
 		frmGarmin.addLast(chkSynthShort=new mCheckBox(MyLocale.getMsg(174,"Short Names")),STRETCH,RIGHT);
 		chkSynthShort.setTag(INSETS,new Insets(4,0,0,0));
 		chkSynthShort.setState(!pref.garminGPSBabelOptions.equals(""));
-		frmGarmin.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_TOP;
+		frmGarmin.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_TOP;
 		frmGarmin.setTag(INSETS,new Insets(4,0,0,0));
 		pnlGeneral.addLast(frmGarmin);
 		pnlGeneral.addLast(new mLabel(""));
@@ -126,10 +126,9 @@ public class PreferencesScreen extends Form {
 		/////////////////////////////////////////////////////////
 		
 		Frame frmScreen=new Frame();
-		frmScreen.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER;
-		mLabel lblTitle;
+		frmScreen.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER;
 		CellPanel pnlScreen=new CellPanel();
-		pnlScreen.addNext(lblTitle=new mLabel(MyLocale.getMsg(625,"Screen (needs restart):")));
+		pnlScreen.addNext(new mLabel(MyLocale.getMsg(625,"Screen (needs restart):")));
 		pnlScreen.addNext(new mLabel("Font"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlScreen.addLast(fontSize = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		fontSize.maxLength=2;
@@ -152,7 +151,7 @@ public class PreferencesScreen extends Form {
 		pnlDisplay.addLast(frmScreen,CellConstants.HSTRETCH,CellConstants.FILL);
 		
 		Frame frmImages=new Frame();
-		frmImages.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_TOP|CellPanel.BF_BOTTOM;
+		frmImages.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_TOP|UIConstants.BF_BOTTOM;
 		//frmImages.addNext(new mLabel(MyLocale.getMsg(623,"Images:")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		frmImages.addLast(chkShowDeletedImg = new mCheckBox(MyLocale.getMsg(624,"Show deleted images")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		chkShowDeletedImg.setTag(INSETS,new Insets(2,0,0,0));
@@ -194,7 +193,7 @@ public class PreferencesScreen extends Form {
 		chkProxyActive.setState(pref.proxyActive);
 		pnlMore.addLast(pnlProxy,HSTRETCH,HFILL);
 		pnlMore.addNext(new mLabel(MyLocale.getMsg(592,"Language (needs restart)")),DONTSTRETCH,DONTFILL|WEST);
-		String[] tmp = (new FileBugfix(FileBugfix.getProgramDirectory()+"/languages").list("*.cfg", File.LIST_FILES_ONLY)); //"*.xyz" doesn't work on some systems -> use FileBugFix
+		String[] tmp = (new FileBugfix(FileBase.getProgramDirectory()+"/languages").list("*.cfg", FileBase.LIST_FILES_ONLY)); //"*.xyz" doesn't work on some systems -> use FileBugFix
 		if (tmp == null) tmp = new String[0];
 		String [] langs = new String[tmp.length +1];
 		langs[0] = "auto";
@@ -232,7 +231,7 @@ public class PreferencesScreen extends Form {
 				MyLocale.getMsg(636,"OC Empfehlungen"),
 				MyLocale.getMsg(637,"OC Index")},pref.listColMap),MyLocale.getMsg(595,"List"),null);
 
-		Card c=mTab.addCard(tccBugs=new TableColumnChooser(new String[] {
+		mTab.addCard(tccBugs=new TableColumnChooser(new String[] {
 				MyLocale.getMsg(6000,"Guid"),
 				MyLocale.getMsg(6001,"Name"),
 				MyLocale.getMsg(6002,"track#"),
@@ -245,8 +244,6 @@ public class PreferencesScreen extends Form {
 				MyLocale.getMsg(6009,"To Wpt"),
 				MyLocale.getMsg(6010,"To Date"),
 				MyLocale.getMsg(6011,"To Log")},pref.travelbugColMap),"T-bugs",null);
-		//c.iconize(new Image("bug.gif"));
-		//this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 		
 		this.addLast(mTab);
 		addNext(cancelB = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -304,9 +301,9 @@ public class PreferencesScreen extends Form {
 				this.close(0);
 			}
 			if(ev.target == brwBt){
-				FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.baseDir);
+				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.baseDir);
 				fc.setTitle(MyLocale.getMsg(616,"Select directory"));
-				if(fc.execute() != FileChooser.IDCANCEL)	DataDir.setText(fc.getChosen()+"/");
+				if(fc.execute() != FormBase.IDCANCEL)	DataDir.setText(fc.getChosen()+"/");
 			}
 			if (ev.target == gpsB){
 				GPSPortOptions spo = new GPSPortOptions();
@@ -318,7 +315,7 @@ public class PreferencesScreen extends Form {
 				spo.logGpsChkB.setState(pref.logGPS);
 				spo.inputBoxLogTimer.setText(pref.logGPSTimer);
 				Gui.setOKCancel(s);
-				if (s.execute()== Editor.IDOK) {
+				if (s.execute()== FormBase.IDOK) {
 					pref.mySPO.portName = spo.portName; 
 					pref.mySPO.baudRate = spo.baudRate;
 					pref.forwardGPS = spo.forwardGpsChkB.getState();

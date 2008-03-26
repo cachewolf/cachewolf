@@ -80,7 +80,7 @@ public class SpiderGC{
 	 */
 	public int login(){
 		loggedIn = false;
-		String start,doc,loginPage,loginSuccess,nextPage;
+		String start,loginPage,loginSuccess,nextPage;
 		try {
 			loginPage=p.getProp("loginPage");
 			loginSuccess=p.getProp("loginSuccess");
@@ -95,7 +95,7 @@ public class SpiderGC{
 		int code = infB.execute();
 		passwort = infB.getInput();
 		infB.close(0);
-		if(code != Form.IDOK) return code;
+		if(code != FormBase.IDOK) return code;
 
 		// Now start the login proper
 		infB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
@@ -106,7 +106,7 @@ public class SpiderGC{
 			start = fetch(loginPage);   //http://www.geocaching.com/login/Default.aspx
 		} catch(Exception ex){
 			infB.close(0);
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page"), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page"), FormBase.OKB)).execute();
 			pref.log("[login]:Could not fetch: gc.com login page",ex);
 			passwort="";
 			return ERR_LOGIN;
@@ -157,13 +157,13 @@ public class SpiderGC{
 							pref.log("[login.Answer]:"+start);
 						}
 						infB.close(0);
-						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), MessageBox.OKB)).execute();
+						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), FormBase.OKB)).execute();
 						return ERR_LOGIN;
 					}
 				}catch(Exception ex){
 					pref.log("[login]:Login failed with exception.", ex);
 					infB.close(0);
-					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), MessageBox.OKB)).execute();
+					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), FormBase.OKB)).execute();
 					return ERR_LOGIN;
 				}
 			}
@@ -190,10 +190,10 @@ public class SpiderGC{
 		boolean loginAborted=infB.isClosed;
 		infB.close(0);
 		if (loginAborted)
-			return Form.IDCANCEL;
+			return FormBase.IDCANCEL;
 		else {
 			loggedIn = true;
-			return Form.IDOK;
+			return FormBase.IDOK;
 		}
 	}
 
@@ -210,7 +210,7 @@ public class SpiderGC{
 
 		// check if we need to login
 		if (!loggedIn){
-			if (this.login()!=Form.IDOK) return false;
+			if (this.login()!=FormBase.IDOK) return false;
 			// loggedIn is already set by this.login()
 		}
 		CacheHolderDetail chD=ch.getCacheDetails(true); //new CacheHolderDetail(ch);
@@ -245,7 +245,7 @@ public class SpiderGC{
 		// Check whether spider definitions could be loaded, if not issue appropriate message and terminate
 		// Try to login. If login fails, issue appropriate message and terminate
 		if (!loggedIn || Global.getPref().forceLogin) {
-			if (login()!=Form.IDOK) {
+			if (login()!=FormBase.IDOK) {
 				return "";
 			}
 		}
@@ -277,7 +277,7 @@ public class SpiderGC{
 		CacheHolderDetail chD;
 		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
 		if (!origin.isValid()) {
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), FormBase.OKB)).execute();
 			return;
 		}
 		if (System.getProperty("os.name")!=null)pref.log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"));
@@ -288,7 +288,7 @@ public class SpiderGC{
 		//index the database for faster searching!
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			indexDB.put((String)ch.wayPoint, new Integer(i));
+			indexDB.put(ch.wayPoint, new Integer(i));
 			ch.is_new = false;
 		}
 		String start = "";
@@ -297,11 +297,11 @@ public class SpiderGC{
 		String doc = "";
 
 		if (!loggedIn || Global.getPref().forceLogin) {
-			if(login() != Form.IDOK) return;
+			if(login() != FormBase.IDOK) return;
 		}
 
 		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
-		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
+		if (options.execute() == FormBase.IDCANCEL) {return; }
 		String dist = options.distanceInput.getText();
 		if (dist.length()== 0) return;
 		distance = Common.parseDouble(dist);
@@ -333,7 +333,7 @@ public class SpiderGC{
 			pref.log("Error fetching first list page",ex,true);
 			Vm.showWait(false);
 			infB.close(0);
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), FormBase.OKB)).execute();
 			return;
 		}
 		dummy = "";
@@ -1206,7 +1206,7 @@ public class SpiderGC{
 	*	This method does exactly that. Actually this method is generic in the sense
 	*	that it can be used to post to a URL using http post.
 	*/
-	private static String fetch_post(String address, String document, String path) throws IOException {
+	private static String fetch_post(String address, String document, String path) {
 		HttpConnection conn;
 		try {
 			conn = new HttpConnection(address);
@@ -1292,11 +1292,11 @@ public class SpiderGC{
 		}
 		try {
 			if (bugList.equals("") || bugList.indexOf(p.getProp("bugNotFound"))>=0) {
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), FormBase.OKB)).execute();
 				return "";
 			}
 			if (bugList.indexOf(p.getProp("bugTotalRecords"))<0) {
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6021,"More than one travelbug found. Specify name more precisely."), MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6021,"More than one travelbug found. Specify name more precisely."), FormBase.OKB)).execute();
 				return "";
 			}
 			Extractor exGuid = new Extractor(bugList,p.getProp("bugGuidExStart"),p.getProp("bugGuidExEnd"),0,Extractor.EXCLUDESTARTEND); // TODO Replace with spider.def
@@ -1327,7 +1327,7 @@ public class SpiderGC{
 		}
 		try {
 			if (bugDetails.indexOf(p.getProp("bugNotFound"))>=0) {
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), FormBase.OKB)).execute();
 				return "";
 			}
 			Extractor exDetails = new Extractor(bugDetails,p.getProp("bugDetailsStart"),p.getProp("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
@@ -1397,16 +1397,16 @@ public class SpiderGC{
 		myProperties() {
 			super();
 			try {
-				load(new FileInputStream(File.getProgramDirectory()+"/spider.def"));
+				load(new FileInputStream(FileBase.getProgramDirectory()+"/spider.def"));
 			} catch (Exception ex) {
 				pref.log("Failed to load spider.def",ex);
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5504,"Could not load 'spider.def'"), MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5504,"Could not load 'spider.def'"), FormBase.OKB)).execute();
 			}
 		}
 		public String getProp(String key) throws Exception {
 			String s=super.getProperty(key);
 			if (s==null) {
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5497,"Error missing tag in spider.def") + ": "+key, MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5497,"Error missing tag in spider.def") + ": "+key, FormBase.OKB)).execute();
 				throw new Exception("Missing tag in spider.def: "+key);
 			}
 			return s;

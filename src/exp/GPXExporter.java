@@ -1,6 +1,6 @@
 package exp;
 import ewe.sys.*;
-import ewe.io.File;
+import ewe.io.FileBase;
 import CacheWolf.*;
 /**
 *	Class to export the cache database to a GPX file with gc.com
@@ -20,7 +20,7 @@ public class GPXExporter extends Exporter{
 		this.setMask("*.gpx");
 		this.setNeedCacheDetails(true);
 		this.setHowManyParams(LAT_LON);
-		this.setTmpFileName(File.getProgramDirectory() + "/temp.gpx");
+		this.setTmpFileName(FileBase.getProgramDirectory() + "/temp.gpx");
 	}
 	
 	public GPXExporter(Preferences p, Profile prof){
@@ -28,7 +28,7 @@ public class GPXExporter extends Exporter{
 		this.setMask("*.gpx");
 		this.setNeedCacheDetails(true);
 		this.setHowManyParams(LAT_LON);
-		this.setTmpFileName(File.getProgramDirectory() + "/temp.gpx");
+		this.setTmpFileName(FileBase.getProgramDirectory() + "/temp.gpx");
 	}
 	
 	public String header() {

@@ -2,6 +2,7 @@ package exp;
 
 import ewe.io.BufferedWriter;
 import ewe.io.File;
+import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
@@ -221,7 +222,7 @@ public class KMLExporter extends Exporter {
 
 	public void copyIcons(String dir){
 		try {
-			ZipFile zif = new ZipFile (File.getProgramDirectory() + "/POIIcons.zip");
+			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + "/POIIcons.zip");
 			ZipEntry zipEnt;
 			int len;
 			String entName, fileName; 
@@ -231,7 +232,7 @@ public class KMLExporter extends Exporter {
 				entName = "GoogleEarthIcons/" + fileName;
 				zipEnt = zif.getEntry(entName);
 				if (zipEnt == null) continue;
-			    byte[] buff = new byte[ (int) zipEnt.getSize() ];
+			    byte[] buff = new byte[ zipEnt.getSize() ];
 			    InputStream  fis = zif.getInputStream(zipEnt);
 			    FileOutputStream fos = new FileOutputStream( dir + "/" + fileName);
 			    while( 0 < (len = fis.read( buff )) )

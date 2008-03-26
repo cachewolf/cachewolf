@@ -6,12 +6,7 @@ import ewe.fx.Color;
 import ewe.fx.Graphics;
 import ewe.fx.IImage;
 import ewe.fx.Image;
-import ewe.fx.Pen;
-import ewe.graphics.AniImage;
-import ewe.sys.Convert;
 import ewe.fx.Point;
-import ewe.fx.Mask;
-
 import ewe.util.Vector;
 
 

@@ -4,10 +4,7 @@ import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import utils.FileBugfix;
-import ewe.util.*;
 import ewe.io.*;
-import ewe.filechooser.*;
-import ewe.sys.*;
 import ewe.ui.*;
 
 /**
@@ -42,7 +39,7 @@ public class SelectMap extends Form{
 			File files = new FileBugfix(mapsPath);
 			File checkWFL;
 			String rawFileName = new String();
-			dateien = files.listMultiple("*.png,*.jpg,*.gif,*.bmp", File.LIST_FILES_ONLY);
+			dateien = files.listMultiple("*.png,*.jpg,*.gif,*.bmp", FileBase.LIST_FILES_ONLY);
 			for(int i = 0; i < dateien.length;i++){
 				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
 				checkWFL = new File(mapsPath + rawFileName + ".wfl");
@@ -68,7 +65,7 @@ public class SelectMap extends Form{
 				this.close(0);
 			}
 		}
-		if(ev instanceof ListEvent && ev.type == ListEvent.SELECTED){
+		if(ev instanceof ListEvent && ev.type == MenuEvent.SELECTED){
 			if(ev.target == nonCMaps){
 				selectedMap = nonCMaps.getText();
 				CMaps.deleteSelection();

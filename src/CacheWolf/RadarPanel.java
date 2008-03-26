@@ -2,7 +2,6 @@ package CacheWolf;
 import ewe.ui.*;
 import ewe.util.*;
 import ewe.fx.*;
-import ewe.sys.*;
 import ewe.graphics.*;
 
 /**
@@ -56,11 +55,11 @@ public class RadarPanel extends CellPanel{
 		selectedWaypoint = sWp;
 		pref = p;
 		cacheDB = db;
-		height = (int)(pref.myAppHeight)*6/5; // add 10% each at top/bottom 
+		height = (pref.myAppHeight)*6/5; // add 10% each at top/bottom 
 		//height = (int)height * 2;
 		////Vm.debug("Height: " + Convert.toString(height));
 		////Vm.debug("App Height: " + Convert.toString(pref.myAppHeight));
-		width = (int)(pref.myAppWidth)*6/5;
+		width = (pref.myAppWidth)*6/5;
 		//width = (int)width * 2;
 	}
 	
@@ -181,18 +180,18 @@ public class RadarPanel extends CellPanel{
 		} else {
 			scale = (double)scaleKm / (double)width;
 		}
-		centerX = (int)(width / 2);
-		centerY = (int)(height / 2);
+		centerX = (width / 2);
+		centerY = (height / 2);
 		//centerY = (int)(centerY-centerY*0.15);
 		g.setColor(new Color(0,255,0));
 		int radstep= 0, steps=0, radius = 0;
 		
 		if(width > height){
 			radstep = (int)(10 / scale);
-			steps = (int)(width / radstep);
+			steps = (width / radstep);
 		}else{
 			radstep = (int)(10 / scale);
-			steps = (int)(height / radstep);
+			steps = (height / radstep);
 		}
 		for(int i = 1; i <= steps; i++){
 			radius = (radstep * i)*2;
@@ -212,7 +211,7 @@ public class RadarPanel extends CellPanel{
 		AniImage aImg = new AniImage(img);
 		//iActP.addImage(aImg);
 		iActP.backgroundImage = img;
-		int xPos = (int)(pref.myAppWidth/2 - width/2);
+		int xPos = (pref.myAppWidth/2 - width/2);
 		aImg.setLocation(xPos,0);
 		aImg.refresh();
 	}

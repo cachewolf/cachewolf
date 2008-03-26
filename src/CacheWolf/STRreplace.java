@@ -1,7 +1,5 @@
 package CacheWolf;
 
-import ewe.sys.Vm;
-
 public class STRreplace{
 		/* Replace all instances of a String in a String.
 		 *   @param  s  String to alter.

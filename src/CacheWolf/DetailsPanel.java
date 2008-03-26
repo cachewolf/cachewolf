@@ -98,37 +98,37 @@ public class DetailsPanel extends CellPanel{
 		CellPanel line1Panel = new CellPanel();
 		line1Panel.addNext(chcType,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		line1Panel.addLast(lblDiff=new mLabel(MyLocale.getMsg(1000,"D")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
-		this.addLast(line1Panel,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
+		this.addLast(line1Panel,DONTSTRETCH,HFILL).setTag(CellConstants.SPAN, new Dimension(2,1));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(301,"Size:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		CellPanel line2Panel = new CellPanel();
 		line2Panel.addNext(chcSize,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		line2Panel.addLast(lblTerr=new mLabel(MyLocale.getMsg(1001,"T")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
-		this.addLast(line2Panel,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
+		this.addLast(line2Panel,DONTSTRETCH,HFILL).setTag(CellConstants.SPAN, new Dimension(2,1));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(302,"Waypoint:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(inpWaypoint.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		this.addLast(inpWaypoint.setTag(CellConstants.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(303,"Name:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(inpName.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		this.addLast(inpName.setTag(CellConstants.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(304,"Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(btnWayLoc.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		this.addLast(btnWayLoc.setTag(CellConstants.SPAN, new Dimension(2,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		CellPanel cp=new CellPanel();
 		cp.addNext(chcStatus,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		cp.addLast(btnFoundDate=new mButton(new mImage("calendar"+imagesize+".png")),DONTSTRETCH,DONTFILL);
-		this.addLast(cp,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
+		this.addLast(cp,DONTSTRETCH,HFILL).setTag(CellConstants.SPAN, new Dimension(2,1));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(306,"Owner:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		this.addLast(inpOwner.setTag(Control.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		this.addLast(inpOwner.setTag(CellConstants.SPAN, new Dimension(2,1)),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		CellPanel ip=new CellPanel();
 		ip.addNext(inpHidden,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		ip.addLast(btnHiddenDate=new mButton(new mImage("calendar"+imagesize+".png")),DONTSTRETCH,DONTFILL);
-		this.addLast(ip,DONTSTRETCH,HFILL).setTag(Control.SPAN, new Dimension(2,1));
+		this.addLast(ip,DONTSTRETCH,HFILL).setTag(CellConstants.SPAN, new Dimension(2,1));
 		inpHidden.modifyAll(DisplayOnly,0);
 		
 		//btnNotes = new mButton("Notes");
@@ -342,7 +342,7 @@ public class DetailsPanel extends CellPanel{
 			else if (ev.target == btnCenter){
 				CWPoint cp=new CWPoint(thisCache.LatLon);
 				if (!cp.isValid()){
-					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
+					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 					tmpMB.exec();
 				} else {				
 					pref.curCentrePt.set(cp);
@@ -390,7 +390,7 @@ public class DetailsPanel extends CellPanel{
 				CWPoint coords = new CWPoint(btnWayLoc.getText(),CWPoint.CW);
 				CoordsScreen cs = new CoordsScreen();
 				cs.setFields(coords, CWPoint.CW);
-				if (cs.execute()== CoordsScreen.IDOK){
+				if (cs.execute()== FormBase.IDOK){
 					dirty_details=true;
 					coords = cs.getCoords();
 					thisCache.pos.set(coords);
@@ -529,7 +529,7 @@ public class DetailsPanel extends CellPanel{
 			this.setTitle(title);
 			this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 			disp.setHtml(text);
-			ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
+			ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
 			this.addLast(sbp);
 			this.addLast(btCancel = new mButton(MyLocale.getMsg(3000,"Close")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		}

@@ -6,6 +6,7 @@ import ewe.ui.*;
 import ewe.util.*;
 import ewe.util.zip.*;
 import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.io.*;
 import ewe.sys.*;
 
@@ -34,27 +35,27 @@ public class TomTomExporter {
 		int fileFormat;
 
 		TomTomExporterScreen infoScreen = new TomTomExporterScreen("TomTomExport");
-		if (infoScreen.execute() == Form.IDCANCEL) return;
+		if (infoScreen.execute() == FormBase.IDCANCEL) return;
 		fileFormat = infoScreen.getFormat();
 
 		dirName = pref.getExportPath(expName);
 		
 		if (infoScreen.oneFilePerType()==true){
-			FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, dirName);
+			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, dirName);
 			fc.setTitle("Select target dir:");
-			if(fc.execute() == FileChooser.IDCANCEL) return;
+			if(fc.execute() == FormBase.IDCANCEL) return;
 			dirName = fc.getChosen();
 			pref.setExportPath(expName, dirName);
 			prefix = infoScreen.getPrefix();
 			writeOneFilePerType(fileFormat, dirName, prefix);
 		} else{
-			FileChooser fc = new FileChooser(FileChooser.SAVE, dirName);
+			FileChooser fc = new FileChooser(FileChooserBase.SAVE, dirName);
 			fc.setTitle("Select target file:");
 	
 			if (fileFormat == TT_ASC) fc.addMask("*.asc");
 			else fc.addMask("*.ov2");
 			
-			if(fc.execute() == FileChooser.IDCANCEL) return;
+			if(fc.execute() == FormBase.IDCANCEL) return;
 			fileName = fc.getChosen();
 			pref.setExportPathFromFileName(expName, fileName);
 			writeSingleFile(fileFormat, fileName);
@@ -255,7 +256,7 @@ public class TomTomExporter {
 	
 	public void copyIcon(int intWayType, String filename){
 		try {
-			ZipFile zif = new ZipFile (File.getProgramDirectory() + "/POIIcons.zip");
+			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + "/POIIcons.zip");
 			ZipEntry zipEnt;
 			int len;
 			String entName; 
@@ -264,7 +265,7 @@ public class TomTomExporter {
 			zipEnt = zif.getEntry(entName);
 			if (zipEnt == null) return;
 			
-		    byte[] buff = new byte[ (int) zipEnt.getSize() ];
+		    byte[] buff = new byte[ zipEnt.getSize() ];
 		    InputStream  fis = zif.getInputStream(zipEnt);
 		    FileOutputStream fos = new FileOutputStream( filename + ".bmp");
 		    while( 0 < (len = fis.read( buff )) )

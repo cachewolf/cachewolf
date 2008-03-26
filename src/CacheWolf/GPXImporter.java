@@ -2,13 +2,10 @@ package CacheWolf;
 
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
-import ewe.fx.Color;
-import ewe.io.*;
 import ewe.sys.*;
-import ewe.sys.Double;
+import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.*;
-import ewe.net.*;
 import ewe.util.zip.*;
 
 /**
@@ -59,7 +56,7 @@ public class GPXImporter extends MinML {
 		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			DBindex.put((String)ch.wayPoint, new Integer(i));
+			DBindex.put(ch.wayPoint, new Integer(i));
 		}//for
 	}
 /*	skg: This Constructor is not referenced, therefore commented out 
@@ -95,7 +92,7 @@ public class GPXImporter extends MinML {
 			String file;
 			
 			OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options", OCXMLImporterScreen.IMAGES);
-			if (options.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
+			if (options.execute() == FormBase.IDCANCEL) {	return; }
 			//String dist = options.distanceInput.getText();
 			//if (dist.length()== 0) return;
 			//getMaps = options.mapsCheckBox.getState();
@@ -162,7 +159,7 @@ public class GPXImporter extends MinML {
 			if (atts.getValue("creator").startsWith("TerraCaching")) fromTC = true;
 			else fromTC = false;
 
-			if (fromOC && doSpider) (new MessageBox("Warnung", "GPX-Dateien von Opencaching enthalten keine Informationen zu Bildern, sie werden nicht heruntergeladen. Am besten Caches von Opencaching holen per Menü /Anwendung/Download von Opencaching", MessageBox.OKB)).execute();
+			if (fromOC && doSpider) (new MessageBox("Warnung", "GPX-Dateien von Opencaching enthalten keine Informationen zu Bildern, sie werden nicht heruntergeladen. Am besten Caches von Opencaching holen per Menü /Anwendung/Download von Opencaching", FormBase.OKB)).execute();
 			zaehlerGel = 0;
 		}
 		if (name.equals("wpt")) {

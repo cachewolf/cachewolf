@@ -1,7 +1,6 @@
 package CacheWolf;
 
 import ewe.sys.*;
-import ewe.sys.Double;
 
 /**
 *	This class parses a string representation of longitude and latitude.

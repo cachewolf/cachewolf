@@ -1,6 +1,5 @@
 package CacheWolf;
 import ewe.util.*;
-import ewe.sys.*;
 
 /**
 *	Class to reduce a string to its main components,

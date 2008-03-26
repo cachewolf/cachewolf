@@ -66,10 +66,10 @@ public class TomTomExporterScreen extends Form {
 	public void onEvent(Event ev){
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == cancelB){
-				this.close(Form.IDCANCEL);
+				this.close(FormBase.IDCANCEL);
 			}
 			if (ev.target == okB){
-				this.close(Form.IDOK);
+				this.close(FormBase.IDOK);
 			}
 			if (ev.target == chkOneFilePerType){
 				activateInpPrefix(); 
