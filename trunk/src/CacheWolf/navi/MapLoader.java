@@ -231,7 +231,7 @@ public class MapLoader {
 	 * @param datei path and name of file to save to
 	 */
 	public void downloadImage(String url, String datei) throws IOException {
-		HttpConnection connImg; // TODO move proxy-handling in a global http-class
+		HttpConnection connImg; // TODO implement this in UrlFetcher class
 		Socket sockImg;
 		FileOutputStream fos;
 		ByteArray daten;

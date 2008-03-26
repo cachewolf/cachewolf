@@ -2,6 +2,7 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
+import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import utils.FileBugfix;
@@ -54,7 +55,7 @@ public class MapsList extends Vector {
 					if (dirs.get(j).equals(".")) // the notation dir/./filename doesn't work on all platforms anyhow
 						tempMIO = new MapListEntry(mapsPath+"/", rawFileName);
 					else tempMIO = new MapListEntry(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
-					add(tempMIO);
+					if (tempMIO.sortEntryBBox != null) add(tempMIO);
 					//ewe.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
 				}catch(Exception ex){ // TODO exception ist, glaub ich evtl überflüssig 
 					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), FormBase.OKB)).exec();
@@ -463,7 +464,11 @@ class MapListEntry /*implements Comparable */ {
 					map.fileNameWFL = path + filename + ".wfl";
 				}
 			} catch (IOException ioex) { // this should not happen
-				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4706,"Error while reading:")+" "+path+filename+": "+ ioex.getMessage(), FormBase.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4707,"I/O-Error while reading:")+" "+path+filename+": "+ ioex.getMessage(), FormBase.OKB)).exec();
+				Global.getPref().log("MapListEntry (String pathi, String filenamei): I/O-Error while reading: "+path+filename+": ", ioex);
+			} catch (Exception ex) {
+				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4706,"Error while reading:")+" "+path+filename+": "+ ex.getMessage(), FormBase.OKB)).exec();
+				Global.getPref().log("MapListEntry (String pathi, String filenamei): Error while reading: "+path+filename+": ", ex);
 			}
 		}
 	}
