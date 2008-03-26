@@ -73,16 +73,21 @@ public class DateTimeChooser extends Editor {
 	}
 	
 	public CellPanel addTopSection(CellPanel addTo,Control cp) {
+		int IconSize;
+		if (Vm.isMobile() && MyLocale.getScreenWidth() >= 400)
+			IconSize = 20;
+		else
+			IconSize = 10;
 		addTo.modify(DrawFlat,0);
 		addTo.defaultTags.set(INSETS,new Insets(0,0,0,0));
 		mButton b = new mButton();
 		b.borderStyle = BDR_OUTLINE|BF_LEFT|BF_TOP|BF_RIGHT|BF_SQUARE;
-		b.image = new DrawnIcon(DrawnIcon.CROSS,10,10,new Color(0x80,0,0));
+		b.image = new DrawnIcon(DrawnIcon.CROSS,IconSize,IconSize,new Color(0x80,0,0));
 		addTo.addNext(addField(b,"reject")).setCell(DONTSTRETCH);
 		addTo.addNext(cp,HSTRETCH,HFILL);
 		b = new mButton();
 		b.borderStyle = BDR_OUTLINE|BF_TOP|BF_RIGHT|BF_SQUARE;
-		b.image = new DrawnIcon(DrawnIcon.TICK,10,10,new Color(0,0x80,0));
+		b.image = new DrawnIcon(DrawnIcon.TICK,IconSize,IconSize,new Color(0,0x80,0));
 		addTo.addNext(addField(b,"accept")).setCell(DONTSTRETCH);
 		return addTo;
 	}
@@ -115,7 +120,9 @@ public class DateTimeChooser extends Editor {
 		addTable(monthChooser = new TableControl(),new monthChooserTableModel(locale),"monthName");
 		addTable(yearChooser = new TableControl(),new yearChooserTableModel(),"year");
 		addTable(timeChooser = new TableControl(),new timeChooserTableModel(),"time");
-	
+		
+		// the following is already done in addTopSection?
+/*	
 		mButton b = new mButton();
 		//b.borderStyle = BDR_OUTLINE|BF_LEFT|BF_TOP|BF_RIGHT|BF_SQUARE;
 		b.image = new DrawnIcon(DrawnIcon.CROSS,10,10,new Color(0x80,0,0));
@@ -124,6 +131,7 @@ public class DateTimeChooser extends Editor {
 		b = new mButton();
 		b.image = new DrawnIcon(DrawnIcon.TICK,10,10,new Color(0,0x80,0));
 		addField(b,"accept");
+*/
 		newDate();
 		
 	}
