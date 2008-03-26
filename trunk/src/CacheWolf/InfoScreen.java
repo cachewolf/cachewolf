@@ -2,7 +2,6 @@ package CacheWolf;
 
 import ewe.ui.*;
 import ewe.io.*;
-import ewe.sys.*;
 
 /**
 *	This class displays an information screen. It loads the html text to display
@@ -32,7 +31,7 @@ public class InfoScreen extends Form {
 			}
 		} else text = datei;
 		disp.setHtml(text);
-		ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
+		ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
 		this.addLast(sbp);
 		this.addLast(btCancel = new mButton(MyLocale.getMsg(3000,"Close")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 	}

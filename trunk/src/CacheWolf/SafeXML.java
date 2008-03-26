@@ -7,7 +7,6 @@ package CacheWolf;
 */
 
 import ewe.util.Hashtable;
-import ewe.sys.*;
 
 public class SafeXML{
 	private static final char ENTITY_START = '&';

@@ -3,6 +3,7 @@ package exp;
 import CacheWolf.*;
 import ewe.sys.*;
 import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedReader;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
@@ -11,7 +12,7 @@ import ewe.io.FileReader;
 import ewe.io.FileWriter;
 import ewe.io.LineNumberReader;
 import ewe.io.PrintWriter;
-import ewe.io.StringStream;
+import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
 import ewe.util.*;
 import ewe.io.IOException;
@@ -59,10 +60,10 @@ public class MagellanExporter {
 	public void doIt() {
 		File configFile = new File("magellan.cfg");
 		if (configFile.exists()) {
-			FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.getExportPath(expName+"Dir"));
+			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getExportPath(expName+"Dir"));
 			fc.setTitle(MyLocale.getMsg(2104, "Choose directory for exporting .gs files"));
 			String targetDir;
-			if(fc.execute() != FileChooser.IDCANCEL){
+			if(fc.execute() != FormBase.IDCANCEL){
 				targetDir = fc.getChosen() + "/";
 				pref.setExportPath(expName+"Dir", targetDir);
 
@@ -184,11 +185,11 @@ public class MagellanExporter {
 	 */
 	public File getOutputFile() {
 		File file;
-		FileChooser fc = new FileChooser(FileChooser.SAVE, pref
+		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref
 				.getExportPath(expName));
 		fc.setTitle(MyLocale.getMsg(2102, "Select target file:"));
 		fc.addMask(mask);
-		if (fc.execute() != FileChooser.IDCANCEL) {
+		if (fc.execute() != FormBase.IDCANCEL) {
 			file = fc.getChosenFile();
 			pref.setExportPath(expName, file.getPath());
 			return file;

@@ -1,8 +1,5 @@
 package CacheWolf;
 
-import com.stevesoft.ewe_pat.wrap.CharArrayBufferWrap;
-
-import ewe.data.PropertyList;
 import ewe.io.ByteArrayInputStream;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;

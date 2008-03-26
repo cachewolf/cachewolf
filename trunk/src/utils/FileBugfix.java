@@ -6,7 +6,6 @@ package utils;
 import ewe.io.*;
 import ewe.util.FileComparer;
 import ewe.util.mString;
-import CacheWolf.*;
 /**
  * @author pfeffer
  * class to fix a bug in ewe.io.File, which occurs only on some systems (e.g. linux): the mask "*.xyz" doesn't work
@@ -44,7 +43,7 @@ public class FileBugfix extends File{
 		if ((listAndSortOptions & LIST_FILES_ONLY) == 0)
 			dirs = super.list(null,LIST_DIRECTORIES_ONLY); // add dirs if not only asked for files
 		if ((listAndSortOptions & LIST_DIRECTORIES_ONLY) == 0)
-			found = super.list(null,File.LIST_FILES_ONLY|listAndSortOptions); // add files if not dirs only
+			found = super.list(null,FileBase.LIST_FILES_ONLY|listAndSortOptions); // add files if not dirs only
 		else {
 			found = dirs; // if dirs only -> aplpy masks to the dirs
 			dirs = new String[0]; // this line is missing in ewe FileBase.listmultiple -> doubled dirs when using listmultiple with the option dirs_only
@@ -53,7 +52,7 @@ public class FileBugfix extends File{
 		ewe.util.FileComparer [] fcs = new ewe.util.FileComparer[masks.length];
 
 		for (int i = 0; i<masks.length; i++)
-			fcs[i] = new FileComparer((File)this,ewe.sys.Vm.getLocale(),listAndSortOptions,masks[i]);
+			fcs[i] = new FileComparer(this,ewe.sys.Vm.getLocale(),listAndSortOptions,masks[i]);
 		int left = found.length;
 		for (int i = 0; i<found.length; i++){
 			boolean matched = false;

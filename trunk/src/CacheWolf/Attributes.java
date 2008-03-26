@@ -1,9 +1,6 @@
 package CacheWolf;
 
-import ewe.ui.*;
 import ewe.fx.*;
-import ewe.graphics.*;
-import ewe.util.*;
 
 public class Attributes {
 	public final static int MAXATTRIBS=12;
@@ -83,9 +80,9 @@ public class Attributes {
 			Attribute attr = new Attribute(attributeName);
 			attribs[count++] = attr;
 			if (attributeName.endsWith("-yes.gif"))
-				attributesYes |= (1l << ( (long)(Math.ceil((long)attr.getAttrNr() / 2.0) - 1.0) ) );
+				attributesYes |= (1l << ( (long)(Math.ceil(attr.getAttrNr() / 2.0) - 1.0) ) );
 			else
-				attributesNo |= (1l << ( (long)(Math.ceil((long)attr.getAttrNr() / 2.0) - 1.0) ) );
+				attributesNo |= (1l << ( (long)(Math.ceil(attr.getAttrNr() / 2.0) - 1.0) ) );
 		}
     }
 

@@ -6,8 +6,6 @@ import CacheWolf.MyLocale;
 
 import java.lang.Math;
 
-import ewe.database.GetSearchCriteria;
-
 /**
  * Class to transform coordinates and shift datums
  * it uses the 7 parameter Helmert Transformation

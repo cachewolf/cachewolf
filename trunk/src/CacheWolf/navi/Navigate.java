@@ -9,8 +9,8 @@ import ewe.io.IOException;
 import ewe.io.SerialPort;
 import ewe.io.SerialPortOptions;
 import ewe.net.Socket;
-import ewe.sys.Convert;
 import ewe.sys.mThread;
+import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.mString;
 
@@ -54,7 +54,7 @@ public class Navigate {
 				(new MessageBox(MyLocale.getMsg(4400, "Warning"), 
 						MyLocale.getMsg(4401, "Ignoring error:\n could not forward GPS data to host:\n")
 						+ pref.forwardGpsHost+"\n" + serThread.lastError
-						+ MyLocale.getMsg(4402, "\nstop and start GPS to retry"), MessageBox.OKB)).exec();
+						+ MyLocale.getMsg(4402, "\nstop and start GPS to retry"), FormBase.OKB)).exec();
 			}
 			if (gpsPos.latDec == 0 && gpsPos.lonDec == 0) { // TODO use isValid() // TODO raus damit?
 				gpsPos.latDec = destination.latDec; // setze Zielpunkt als Ausgangspunkt
@@ -72,12 +72,12 @@ public class Navigate {
 					MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ") 
 					+ e.getMessage()
 					+ MyLocale.getMsg(4405, "\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS"), 
-					MessageBox.OKB)).execute(); 
+					FormBase.OKB)).execute(); 
 		} catch (UnsatisfiedLinkError e) {
 			(new MessageBox(MyLocale.getMsg(4403, "Error"), 
 					MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ") 
 					+ MyLocale.getMsg(4406, "Please copy jave_ewe.dll into the directory of the cachewolf program"), 
-					MessageBox.OKB)).execute(); 
+					FormBase.OKB)).execute(); 
 		}
 	}
 

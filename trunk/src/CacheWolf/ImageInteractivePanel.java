@@ -1,9 +1,7 @@
 package CacheWolf;
 import ewe.graphics.*;
-import ewe.sys.*;
 import ewe.fx.*;
 import ewe.ui.*;
-import ewe.util.*;
 
 /**
 *	This class handles the resizing im images

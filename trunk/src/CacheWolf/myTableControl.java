@@ -127,7 +127,7 @@ public class myTableControl extends TableControl{
 				if ( ((CacheHolder)cacheDB.get(i)).is_Checked) count++;
 			}
 			if (count>0) {
-				if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), MessageBox.YESB | MessageBox.NOB)).execute() != Form.IDYES) return;
+				if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), FormBase.YESB | FormBase.NOB)).execute() != FormBase.IDYES) return;
 				DataMover dm=new DataMover();
 				myProgressBarForm pbf = new myProgressBarForm();
 				Handle h = new Handle();
@@ -159,7 +159,7 @@ public class myTableControl extends TableControl{
 			CacheHolder thisCache = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			CWPoint cp=new CWPoint(thisCache.LatLon);
 			if (!cp.isValid()){
-				MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
+				MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 				tmpMB.execute();
 			} else {				
 				pref.curCentrePt.set(cp);
@@ -181,7 +181,7 @@ public class myTableControl extends TableControl{
 					CWWrapper.exec(pref.browser, chD.URL); // maybe this works on some PDAs?
 				}
 			} catch (IOException ex) {
-				(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",MessageBox.OKB)).execute();
+				(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",FormBase.OKB)).execute();
 			}
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1018,"Open in browser offline"))) {
@@ -227,7 +227,7 @@ public class myTableControl extends TableControl{
 			 wayPoint=ch.wayPoint;
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 imgDrag=new IconAndText();
-			 imgDrag.addColumn((IImage) CacheType.cache2Img(ch.type));
+			 imgDrag.addColumn(CacheType.cache2Img(ch.type));
 			 imgDrag.addColumn(ch.wayPoint);
 			 dc.dragData=dc.startImageDrag(imgDrag,new Point(8,8),this);
 		 } else super.startDragging(dc);

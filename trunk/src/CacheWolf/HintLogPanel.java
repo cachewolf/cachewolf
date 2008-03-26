@@ -8,7 +8,6 @@ import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.ImageDragContext;
 import ewe.graphics.InteractivePanel;
-import ewe.graphics.ReactiveImage;
 import ewe.sys.*;
 import ewe.fx.Image;
 import ewe.fx.Rect;
@@ -47,9 +46,9 @@ public class HintLogPanel extends CellPanel{
 		hintpane.addNext(decodeButton,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		decodeButton.setMinimumSize(MyLocale.getScreenWidth()*2/3,10);
 		hintpane.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
-		hint.modify(Control.NotEditable,0);
+		hint.modify(ControlConstants.NotEditable,0);
 
-		ScrollBarPanel sbplog = new MyScrollBarPanel((ScrollClient)htmlImagDisp, ScrollBarPanel.NeverShowHorizontalScrollers);
+		ScrollBarPanel sbplog = new MyScrollBarPanel(htmlImagDisp, ScrollablePanel.NeverShowHorizontalScrollers);
 		//logpane.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
 		Rect r = new Rect(new Dimension (Global.getPref().myAppWidth-sbplog.vbar.getRect().width, 20));
 		htmlImagDisp.virtualSize = r;
@@ -67,8 +66,8 @@ public class HintLogPanel extends CellPanel{
 			hint.setText("");
 		crntLogPosition = 0;
 		setLogs(0);
-		moreBt.modify(0,Control.Disabled);
-		prevBt.modify(0,Control.Disabled);
+		moreBt.modify(0,ControlConstants.Disabled);
+		prevBt.modify(0,ControlConstants.Disabled);
 //		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 //		Vm.setSIP(0);
 //		}
@@ -106,7 +105,7 @@ public class HintLogPanel extends CellPanel{
 		int h = logs.getLineHeight() * logs.getNumLines();
 		htmlTxtImage = new AniImage(new Image(width, h));
 		htmlTxtImage.setLocation(0, 0);
-		htmlTxtImage.properties |= AniImage.IsMoveable;
+		htmlTxtImage.properties |= mImage.IsMoveable;
 		Graphics draw = new Graphics(htmlTxtImage.image);
 		logs.resizeTo(htmlTxtImage.getWidth(), htmlTxtImage.getHeight());
 		logs.doPaint(draw, new Rect(0,0,htmlTxtImage.getWidth(), htmlTxtImage.getHeight()));
@@ -131,23 +130,23 @@ public class HintLogPanel extends CellPanel{
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			int minLogs = java.lang.Math.min(Global.getPref().logsPerPage, cache.CacheLogs.size());
 			if(ev.target == moreBt){
-				prevBt.modify(0,Control.Disabled);
+				prevBt.modify(0,ControlConstants.Disabled);
 				prevBt.repaintNow();
 				crntLogPosition += minLogs;
 				if(crntLogPosition >= cache.CacheLogs.size()) {
 					//crntLogPosition = cache.CacheLogs.size()-5;
 					crntLogPosition = cache.CacheLogs.size()- minLogs;
-					moreBt.modify(Control.Disabled,0);
+					moreBt.modify(ControlConstants.Disabled,0);
 					moreBt.repaintNow();
 				}
 				setLogs(crntLogPosition);
 			} // = moreBt
 			if(ev.target == prevBt){
-				moreBt.modify(0,Control.Disabled);
+				moreBt.modify(0,ControlConstants.Disabled);
 				moreBt.repaintNow();
 				crntLogPosition -= minLogs;
 				if(crntLogPosition <= 0) {
-					prevBt.modify(Control.Disabled,0);
+					prevBt.modify(ControlConstants.Disabled,0);
 					prevBt.repaintNow();
 					crntLogPosition = 0;
 				}
@@ -165,7 +164,7 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 	public boolean scrollHorizontal = false;
 	public boolean imageNotDragged(ImageDragContext drag,Point where) {
 		if (drag == null || drag.image == null) return super.imageNotDragged(drag, where);
-		Rect r = getDim(null);
+		getDim(null);
 		if (drag.image.location.y <= 0 ){
 			drag.image.move(0, drag.image.location.y);
 		} else {

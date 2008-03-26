@@ -1,6 +1,5 @@
 package CacheWolf;
 import ewe.util.*;
-import ewe.sys.*;
 
 /**
  * @author Marc

@@ -5,7 +5,6 @@ import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.IKeys;
-import ewe.ui.KeyEvent;
 import ewe.ui.MessageBox;
 import ewe.ui.mButton;
 import ewe.ui.mInput;

@@ -10,7 +10,6 @@ import CacheWolf.Common;
 import CacheWolf.Extractor;
 import CacheWolf.Global;
 import ewe.sys.*;
-import ewe.ui.ExecTransfer;
 import ewe.io.*;
 
 

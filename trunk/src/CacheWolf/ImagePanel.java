@@ -48,10 +48,10 @@ public class ImagePanel extends InteractivePanel{
 			profile=Global.getProfile();
 			Vm.showWait(true);
 			clearImages();
-			thumb_size = (int)((pref.myAppWidth-2*padding) / 3);
+			thumb_size = ((pref.myAppWidth-2*padding) / 3);
 			thumb_size = thumb_size - padding;
 			int rowCounter = cache.Images.size() + cache.UserImages.size();
-			rowCounter = (int)(rowCounter/3)+1;
+			rowCounter = (rowCounter/3)+1;
 			Rect r = new Rect(0, 0, pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+padding);
 			this.virtualSize = r;
 			//this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
@@ -142,16 +142,17 @@ public class ImagePanel extends InteractivePanel{
 				scaleX = thumb_size;
 				scaleY = thumb_size;
 				dummyC = 0;
+				double thumb_size2 = thumb_size;
 				if(mI.getWidth()>mI.getHeight()){
 					scaleX = thumb_size;
 					dummyC = (double)mI.getHeight()/ (double)mI.getWidth();
-					dummyC = dummyC * (double)thumb_size;
+					dummyC = dummyC * thumb_size2;
 					scaleY = (int)dummyC;
 				}
 				if(mI.getWidth() <= mI.getHeight()){
 					scaleY = thumb_size;
 					dummyC = (double)mI.getWidth()/(double)mI.getHeight();
-					dummyC = dummyC * (double)thumb_size;
+					dummyC = dummyC * thumb_size2;
 					scaleX = (int)dummyC;
 				}
 				if(mI.getWidth() <= thumb_size){
@@ -190,12 +191,12 @@ public class ImagePanel extends InteractivePanel{
 					locY = locY+thumb_size+padding;
 				}
 			}catch(IllegalArgumentException imex){ // file not found, could not decode etc.
-				MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), MessageBox.OKB); // @todo: language support
+				MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), FormBase.OKB); // @todo: language support
 				tmp.exec();
 			} catch (OutOfMemoryError e) { // TODO show an error icon in the panel instead of nothing
-				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+":\n"+location,MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+":\n"+location,FormBase.OKB)).exec();
 			} catch (SystemResourceException e) { // TODO show an error icon in the panel instead of nothing
-				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+location,MessageBox.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+location,FormBase.OKB)).exec();
 			}
 		} //for
 		
@@ -227,11 +228,11 @@ public class ImagePanel extends InteractivePanel{
 	*/
 	public void imageClicked(AniImage which, Point pos){
 //		Vm.debug("Clicked"+pos.x+","+pos.y+" "+(((Control.currentPenEvent.modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON)?"RIGHT":"LEFT") );
-		if ((Control.currentPenEvent.modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON || duration>LONG_PEN_DOWN_DURATION) {
+		if ((ControlBase.currentPenEvent.modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON || duration>LONG_PEN_DOWN_DURATION) {
 			// Right button pressed - delete image to conserve space
 			if (which instanceof ImagePanelImage && !((ImagePanelImage)which).fileName.equals(NO_IMAGE)) {
-				MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(344,"Delete image")+" \""+((ImagePanelImage)which).imageText+"\"?", MessageBox.IDYES |MessageBox.IDNO);
-				if (mBox.execute() == MessageBox.IDOK){
+				MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(344,"Delete image")+" \""+((ImagePanelImage)which).imageText+"\"?", FormBase.IDYES |FormBase.IDNO);
+				if (mBox.execute() == FormBase.IDOK){
 						//Vm.debug("Deleting "+((ImagePanelImage)which).fileName);
 						try {
 							File f=new File(((ImagePanelImage)which).fileName);
@@ -249,10 +250,10 @@ public class ImagePanel extends InteractivePanel{
 					ImageDetailForm iF = new ImageDetailForm(fn, pref);
 					iF.execute(null, Gui.CENTER_FRAME);
 				} catch (IllegalArgumentException e) {
-					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden"), MessageBox.OKB); // @todo: language support
+					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden"), FormBase.OKB); // @todo: language support
 					tmp.exec();
 				} catch (OutOfMemoryError e) {
-					(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+fn,MessageBox.OKB)).exec();
+					(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+fn,FormBase.OKB)).exec();
 				}
 			}
 		}

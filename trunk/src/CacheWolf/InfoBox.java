@@ -1,6 +1,5 @@
 package CacheWolf;
 import ewe.ui.*;
-import ewe.sys.*;
 
 public class InfoBox extends Form{
 	TextMessage msgArea;
@@ -79,21 +78,21 @@ public class InfoBox extends Form{
 		case DISPLAY_ONLY:
 			msgArea = new TextMessage(info);
 			msgArea.autoWrap = autoWrap;
-			msgArea.alignment = Gui.CENTER;
-			msgArea.anchor = Gui.CENTER;
+			msgArea.alignment = CellConstants.CENTER;
+			msgArea.anchor = CellConstants.CENTER;
 			this.addLast(msgArea.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 			break;
 		case PROGRESS_WITH_WARNINGS:
 			msgArea = new TextMessage(info);
 			msgArea.autoWrap = autoWrap;
-			msgArea.alignment = Gui.CENTER;
-			msgArea.anchor = Gui.CENTER;
+			msgArea.alignment = CellConstants.CENTER;
+			msgArea.anchor = CellConstants.CENTER;
 			msgArea.setPreferredSize(psx-20, psy);
 			this.addLast(msgArea.getScrollablePanel(), CellConstants.HEXPAND | CellConstants.HGROW, CellConstants.HEXPAND | CellConstants.HGROW);
 			warnings = new TextMessage("");
 			warnings.autoWrap = autoWrap;
 			this.addLast(warnings.getScrollablePanel(), CellConstants.HEXPAND | CellConstants.VEXPAND |CellConstants.VGROW, CellConstants.HEXPAND | CellConstants.VEXPAND |CellConstants.VGROW);
-			mB.set(Control.Disabled, true);
+			mB.set(ControlConstants.Disabled, true);
 			mB.setPreferredSize(40, 20);
 			addLast(mB, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
 			break;
@@ -126,7 +125,7 @@ public class InfoBox extends Form{
 		warnings.setText(warnings.text + w);
 	}
 	public void addOkButton() { //unfortunately this doesn't work
-		mB.set(Control.Disabled, false);
+		mB.set(ControlConstants.Disabled, false);
 		//addNext(mB);
 		//relayout(true);
 		//mB.set(Control.Invisible, false);
@@ -137,10 +136,10 @@ public class InfoBox extends Form{
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 			if(ev.target == mB){
 				if(type == CHECKBOX) mCB_state = mCB.getState();
-				this.close(Form.IDOK);
+				this.close(FormBase.IDOK);
 			}
 			if(ev.target == mC){
-				this.close(Form.IDCANCEL);
+				this.close(FormBase.IDCANCEL);
 			}
 		}
 		super.onEvent(ev);

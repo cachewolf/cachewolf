@@ -3,10 +3,8 @@ package CacheWolf;
 import ewe.ui.*;
 import ewe.sys.*;
 import ewe.util.*;
-import java.lang.*;
 import ewe.fx.*;
-import ewe.reflect.*;
-import ewe.graphics.*;
+
 
 /**
 *	Table model used to display the cache list.
@@ -221,7 +219,7 @@ public class myTableModel extends TableModel{
 						else 
 							return checkboxUnticked;
 					case 1: // Type
-						return (IImage) CacheType.cache2Img(ch.type);
+						return CacheType.cache2Img(ch.type);
 					case 2: // Difficulty;
 						return ch.hard;
 					case 3: // Terrain

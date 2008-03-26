@@ -2,12 +2,6 @@ package CacheWolf;
 
 
 import ewe.ui.*;
-import ewe.io.*;
-import ewesoft.xml.*;
-import ewe.util.*;
-import ewe.sys.*;
-import ewe.math.*;
-import ewe.fx.*;
 
 /**
 *	This form displays profile specific data.
@@ -29,7 +23,7 @@ public class ProfileDataForm extends Form {
 		
     	resizable =  false;
 		content.setText(MyLocale.getMsg(1115,"Centre"));
-		content.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_RECT;
+		content.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_RECT;
 	    //defaultTags.set(this.INSETS,new Insets(2,2,2,2));		
 		title = MyLocale.getMsg(1118,"Profile")+": "+profile.name;
 		content.addNext(new mLabel(MyLocale.getMsg(1116,"Current")));
@@ -62,7 +56,7 @@ public class ProfileDataForm extends Form {
 			if (ev.target == btnCurrentCentre){
 				CoordsScreen cs = new CoordsScreen();
 				cs.setFields(pref.curCentrePt, CWPoint.CW);
-				if (cs.execute()== CoordsScreen.IDOK){
+				if (cs.execute()== FormBase.IDOK){
 					pref.curCentrePt.set(cs.getCoords());
 					btnCurrentCentre.setText(pref.curCentrePt.toString());
 					Global.getProfile().updateBearingDistance();
@@ -71,7 +65,7 @@ public class ProfileDataForm extends Form {
 			if (ev.target == btnProfileCentre){
 				CoordsScreen cs = new CoordsScreen();
 				cs.setFields(profile.centre, CWPoint.CW);
-				if (cs.execute()== CoordsScreen.IDOK){
+				if (cs.execute()== FormBase.IDOK){
 					profile.centre.set(cs.getCoords());
 					btnProfileCentre.setText(profile.centre.toString());
 					profile.hasUnsavedChanges=true;

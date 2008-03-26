@@ -6,15 +6,17 @@ package CacheWolf;
 import ewe.fx.Rect;
 import ewe.io.BufferedReader;
 import ewe.io.BufferedWriter;
-import ewe.io.File;
+import ewe.io.FileBase;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
 import ewe.sys.*;
 import ewe.sys.Double;
 import ewe.sys.Long;
+import ewe.ui.FormBase;
 import ewe.ui.Gui;
 import ewe.ui.MessageBox;
 import ewe.ui.Window;
+import ewe.ui.WindowConstants;
 /**
  *  This class handles internationalisation and some other local stuff like
  *  decimal separator, screen dimensions etc.
@@ -29,7 +31,7 @@ import ewe.ui.Window;
 public class MyLocale {
 	private static Locale l=null;
 	private static LocalResource lr=null;
-	private static Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
+	private static Rect s = (Rect)Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new Rect(),0);
 	private static String digSeparator=null;
 	/** Read a non-standard language from the file language. If it is empty,
 	 * the default language is used.
@@ -43,7 +45,7 @@ public class MyLocale {
 			 int tmp = Locale.createID(language,"",0);
 			 if (tmp > -1) l=new Locale(tmp);
 			 else { // language not found
-				 (new MessageBox("Error", "Language " + language + " not found - using standard language", MessageBox.OKB)).execute(); // don't copy this messagebox into a language file, because it is only used if no languages file can be accessed
+				 (new MessageBox("Error", "Language " + language + " not found - using standard language", FormBase.OKB)).execute(); // don't copy this messagebox into a language file, because it is only used if no languages file can be accessed
 				 l = Vm.getLocale(); 
 			 }
 		 }
@@ -56,7 +58,7 @@ public class MyLocale {
 					public Object get(int id,Object data){return data;}
 					public Object get(String id,Object data){return data;}
 				};
-				(new MessageBox("Error", "Language file languages/" + getLocaleLanguage().toUpperCase() + ".cfg couldn't be loaded - using hard coded messages", MessageBox.OKB)).execute();
+				(new MessageBox("Error", "Language file languages/" + getLocaleLanguage().toUpperCase() + ".cfg couldn't be loaded - using hard coded messages", FormBase.OKB)).execute();
 		 }
 		 
 		 double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
@@ -233,7 +235,7 @@ public class MyLocale {
 	 */
 	private static String getLanguage() {
 		try {
-			BufferedReader bufread=new BufferedReader(new FileReader(File.getProgramDirectory() + "/" + "language"));
+			BufferedReader bufread=new BufferedReader(new FileReader(FileBase.getProgramDirectory() + "/" + "language"));
 			language=bufread.readLine();
 			bufread.close();
 		} catch (Exception ex) {
@@ -249,7 +251,7 @@ public class MyLocale {
 	 */
 	public static void saveLanguage(String language) {
 		try{
-			BufferedWriter out = new BufferedWriter(new FileWriter(File.getProgramDirectory() + "/" + "language"));
+			BufferedWriter out = new BufferedWriter(new FileWriter(FileBase.getProgramDirectory() + "/" + "language"));
 			out.write(language);
 			out.close();
 		}catch (Exception e){ Vm.debug("Exception "+e);}

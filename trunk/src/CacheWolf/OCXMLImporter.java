@@ -6,6 +6,7 @@ import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
 import ewe.io.*;
 import ewe.sys.*;
+import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.*;
 import ewe.util.zip.*;
@@ -72,9 +73,9 @@ public class OCXMLImporter extends MinML {
 		user = p.myAlias.toLowerCase();
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			DBindexWpt.put((String)ch.wayPoint, new Integer(i));
+			DBindexWpt.put(ch.wayPoint, new Integer(i));
 			if (!ch.ocCacheID.equals(""))
-				DBindexID.put((String)ch.ocCacheID, new Integer(i));
+				DBindexID.put(ch.ocCacheID, new Integer(i));
 		}//for
 
 	}
@@ -89,8 +90,6 @@ public class OCXMLImporter extends MinML {
 	 * @return true, if some change was made to the cacheDB
 	 */
 	public boolean syncSingle(int number, InfoBox infB) {
-		boolean success=true;
-
 		ch = (CacheHolder)cacheDB.get(number);
 		chD= null; //new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
 
@@ -100,7 +99,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if (askForOptions) {
 			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.ALL);
-			if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return false; }
+			if (importOpt.execute() == FormBase.IDCANCEL) {	return false; }
 			askForOptions = false;
 			reload = importOpt.missingCheckBox.getState();
 		}
@@ -136,7 +135,7 @@ public class OCXMLImporter extends MinML {
 			+ "&charset=utf-8"
 			+ "&cdata=0"
 			+ "&session=0";
-		success = syncOC(url);
+		syncOC(url);
 		inf.close(0);
 		return true;
 	}
@@ -151,12 +150,12 @@ public class OCXMLImporter extends MinML {
 		String lastS =  profile.last_sync_opencaching;
 		CWPoint centre = pref.curCentrePt; // No need to clone curCentrePt as centre is only read
 		if (!centre.isValid()) {
-			(new MessageBox("Error", "Coordinates for centre must be set", MessageBox.OKB)).execute();
+			(new MessageBox("Error", "Coordinates for centre must be set", FormBase.OKB)).execute();
 			return;
 		}
 		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),
 																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES);
-		if (importOpt.execute() == OCXMLImporterScreen.IDCANCEL) {	return; }
+		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
 		Vm.showWait(true);
 		String dist = importOpt.distanceInput.getText();
 		if (dist.length()== 0) return;
@@ -437,15 +436,15 @@ public class OCXMLImporter extends MinML {
 				cacheDB.add(ch);
 				ch.detailsAdded();
 				Integer indexInt = new Integer(cacheDB.size()-1);
-				DBindexWpt.put((String)chD.wayPoint, indexInt);
-				DBindexID.put((String)chD.ocCacheID, indexInt);
+				DBindexWpt.put(chD.wayPoint, indexInt);
+				DBindexID.put(chD.ocCacheID, indexInt);
 			}
 			// update (overwrite) data
 			else {
 				chD.is_new = false;
 				cacheDB.set(index, new CacheHolder(chD));
 				// save ocCacheID, in case, the previous data is from GPX
-				DBindexID.put((String)chD.ocCacheID, new Integer(index));
+				DBindexID.put(chD.ocCacheID, new Integer(index));
 			}
 			// clear data (picture, logs) if we do a complete Update
 			if (incUpdate == false){

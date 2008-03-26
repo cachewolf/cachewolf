@@ -229,7 +229,7 @@ public class Matrix{
 					ja = 0;
 				}
 				det = Determinant(ap);
-				m[i][j] = (double) java.lang.Math.pow(-1, i + j) * det;
+				m[i][j] = java.lang.Math.pow(-1, i + j) * det;
 			}
 		m = Transpose2(m);
 		return m;

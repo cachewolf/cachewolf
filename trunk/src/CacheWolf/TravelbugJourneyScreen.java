@@ -77,7 +77,7 @@ public class TravelbugJourneyScreen extends Form  {
 		title="Travelbugs"+cache;
 		tcTbJourneyList=new tbListControl();
 		tcTbJourneyList.setTableModel(modTbJourneyList=new tbListTableModel());
-		tablepane.addLast(new MyScrollBarPanel(tcTbJourneyList,ScrollBarPanel.AlwaysShowVerticalScrollers),STRETCH,FILL);
+		tablepane.addLast(new MyScrollBarPanel(tcTbJourneyList,ScrollablePanel.AlwaysShowVerticalScrollers),STRETCH,FILL);
 	
 		lowerpane = split.getNextPanel();
 		
@@ -200,9 +200,9 @@ public class TravelbugJourneyScreen extends Form  {
 			tcTbJourneyList.repaint();
 		}
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED && selectedRow!=-1){
-			if (ev.target==inpTrackingNo) {pnlTab.selectNextTab(true,true); Gui.takeFocus(inpFromProfile,Control.ByKeyboard);pnlTab.repaint(); }
-			if (ev.target==inpFromDate) Gui.takeFocus(chkFromLogged,Control.ByKeyboard);
-			if (ev.target==inpToDate) Gui.takeFocus(chkToLogged,Control.ByKeyboard);
+			if (ev.target==inpTrackingNo) {pnlTab.selectNextTab(true,true); Gui.takeFocus(inpFromProfile,ControlConstants.ByKeyboard);pnlTab.repaint(); }
+			if (ev.target==inpFromDate) Gui.takeFocus(chkFromLogged,ControlConstants.ByKeyboard);
+			if (ev.target==inpToDate) Gui.takeFocus(chkToLogged,ControlConstants.ByKeyboard);
 			if (ev.target==btnFromDate || ev.target==btnToDate) {
 				mInput inpDate=ev.target==btnFromDate ? inpFromDate : inpToDate;
 				DateTimeChooser dc=new DateTimeChooser(Vm.getLocale());
@@ -222,18 +222,18 @@ public class TravelbugJourneyScreen extends Form  {
 				  inpDate.setText(Convert.toString(dc.year)+"-"+MyLocale.formatLong(dc.month,"00")+"-"+MyLocale.formatLong(dc.day,"00")+" "+dc.time);
 				  if (ev.target==btnFromDate){ 
 					  tblMyTravelbugJourneys.getTBJourney(selectedRow).setFromDate(inpDate.getText());
-					  Gui.takeFocus(chkFromLogged,Control.ByKeyboard);
+					  Gui.takeFocus(chkFromLogged,ControlConstants.ByKeyboard);
 				  } else {
 					  tblMyTravelbugJourneys.getTBJourney(selectedRow).setToDate(inpDate.getText());
-					  Gui.takeFocus(chkToLogged,Control.ByKeyboard);
+					  Gui.takeFocus(chkToLogged,ControlConstants.ByKeyboard);
 				  } tcTbJourneyList.repaint();
 				}				
 			}
 		}
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.EXITED){
 			pnlTab.selectNextTab(true,true); 
-			if (ev.target==chkFromLogged) Gui.takeFocus(inpToProfile,Control.ByKeyboard);
-			if (ev.target==chkToLogged) Gui.takeFocus(txtMission,Control.ByKeyboard);
+			if (ev.target==chkFromLogged) Gui.takeFocus(inpToProfile,ControlConstants.ByKeyboard);
+			if (ev.target==chkToLogged) Gui.takeFocus(txtMission,ControlConstants.ByKeyboard);
 		}
 		// The user closed the travelbugs screen
 		if (ev instanceof FormEvent && ev.type==FormEvent.CLOSED  && chD!=null) {
@@ -300,7 +300,7 @@ class tbListTableModel extends TableModel {
 				if (map!=7 && map!=11) 
 					return new IconAndText((IImage)imgRed,(String) tblMyTravelbugJourneys.getTBJourney(row).getElementByNumber(map),fm);
 				else { // Checkbox - special treatment
-					IconAndText iat=new IconAndText((IImage)imgRed,"",fm);
+					IconAndText iat=new IconAndText(imgRed,"",fm);
 					iat.addColumn(tblMyTravelbugJourneys.getTBJourney(row).getElementByNumber(map));
 					return iat;
 				}
@@ -604,11 +604,10 @@ class tbListControl extends TableControl {
 	
 	
 	public void cursorTo(int row,int col,boolean selectNew) {
-		TravelbugJourney tbj;
 		super.cursorTo(row,col,selectNew);
 		selectedRow=row;
 		if (row>=0) { 
-			modTbJourneyList.showFields(tbj=tblMyTravelbugJourneys.getTBJourney(row));
+			modTbJourneyList.showFields(tblMyTravelbugJourneys.getTBJourney(row));
 		} else {
 			modTbJourneyList.showFields(new TravelbugJourney(""));
 		}

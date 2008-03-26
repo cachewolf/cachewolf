@@ -2,6 +2,7 @@ package CacheWolf;
 import ewe.data.Property;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
+import ewe.io.FileBase;
 import ewe.io.IOException;
 import ewe.io.IOHandle;
 import ewe.io.IOTransfer;
@@ -290,7 +291,7 @@ public HttpConnection(String url)
 		port = proxyPort;
 		document = url;
 	} else {
-		url = ewe.io.File.fixupPath(url);
+		url = FileBase.fixupPath(url);
 		//ewe.sys.Vm.debug("url: "+url);
 		port = 80;
 		String uu = url.toLowerCase();
@@ -593,21 +594,8 @@ public Handle readInData(final Socket connection)
 	int length = documentProperties.getInt("content-length",-1);
 	if (length == 0)
 		return new Handle(Handle.Succeeded,new ByteArray());
-	//
-	try{
-		InputStream is = getInputStream();
-		return StreamUtils.readAllBytes(getInputStream(),null,length,0);
-	}catch(IOException e){
-		Handle h = new Handle();
-		h.fail(e);
-		return h;
-	}
-	//
-	/*
-	if ("chunked".equals(documentProperties.getValue(encodings,null)))
-		return readInChunkedData(connection);
-	return readInSomeData(connection,length,null);
-	*/
+	getInputStream();
+	return StreamUtils.readAllBytes(getInputStream(),null,length,0);
 }
 /**
  * Read in all the data from the Socket.
@@ -626,7 +614,7 @@ public Handle readInData()
 * the readInData() method.
 **/
 //===================================================================
-public InputStream getInputStream() throws IOException
+public InputStream getInputStream()
 //===================================================================
 {
 	//ewe.sys.Vm.debug(documentProperties.toString());

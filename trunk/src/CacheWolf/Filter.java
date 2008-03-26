@@ -1,4 +1,5 @@
 package CacheWolf;
+import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.*;
 import ewe.sys.*;
@@ -192,9 +193,9 @@ public class Filter{
 				if(ch.is_filtered == false && ch.in_range == false) ch.is_filtered = true;
 			}
 		}catch(FileNotFoundException fnex){
-			(new MessageBox("Error", "File not found", MessageBox.OKB)).execute();
+			(new MessageBox("Error", "File not found", FormBase.OKB)).execute();
 		}catch(IOException ioex){
-			(new MessageBox("Error", "Problem reading file!", MessageBox.OKB)).execute();
+			(new MessageBox("Error", "Problem reading file!", FormBase.OKB)).execute();
 		}
 	}
 	

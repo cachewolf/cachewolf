@@ -110,9 +110,9 @@ public class SkyOrientation {
 			sekunde = Convert.parseInt(utc.substring(4, 6)); // Kommastellen werden abgeschnitten
 			// julianisches "Datum" jd berechnen (see http://de.wikipedia.org/wiki/Julianisches_Datum )
 			if (monat<2) {jahr--; monat+=12;} // verlegung des Jahres Endes auf Feb macht Berechnung von SChaltjahren einfacher
-			double a = (int)java.lang.Math.floor((double)jahr/100.); // Alle hundert Jahre kein Schlatjahr (abrunden)
-			double b = 2 - a + java.lang.Math.floor((double)a/4.);
-			double jd = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*((double)monat+1.)) + (double)tag + (double)stunde/24 + (double)minute/1440 + (double)sekunde/86400 + b - 1524.5;
+			double a = (int)java.lang.Math.floor(jahr/100.); // Alle hundert Jahre kein Schlatjahr (abrunden)
+			double b = 2 - a + java.lang.Math.floor(a/4.);
+			double jd = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*(monat+1.)) + tag + (double)stunde/24 + (double)minute/1440 + (double)sekunde/86400 + b - 1524.5;
 			return jd;
 			//double jd0 = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*((double)monat+1.)) +(double)tag + b - 1524.5;
 		} catch (IndexOutOfBoundsException e) {
@@ -143,10 +143,10 @@ public class SkyOrientation {
 			sekunde=Convert.parseInt(utc.substring(4, 6)); // Kommastellen werden abgeschnitten
 			// julianisches "Datum" jd berechnen (see http://de.wikipedia.org/wiki/Julianisches_Datum )
 			if (monat<2) {jahr--; monat+=12;} // verlegung des Jahres Endes auf Feb macht Berechnung von SChaltjahren einfacher
-			double a = (int)java.lang.Math.floor((double)jahr/100.); // Alle hundert Jahre kein Schlatjahr (abrunden)
-			double b = 2 - a + java.lang.Math.floor((double)a/4.);
-			double jd = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*((double)monat+1.)) + (double)tag + (double)stunde/24 + (double)minute/1440 + (double)sekunde/86400 + b - 1524.5;
-			double jd0 = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*((double)monat+1.)) +(double)tag + b - 1524.5;
+			double a = (int)java.lang.Math.floor(jahr/100.); // Alle hundert Jahre kein Schlatjahr (abrunden)
+			double b = 2 - a + java.lang.Math.floor(a/4.);
+			double jd = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*(monat+1.)) + tag + (double)stunde/24 + (double)minute/1440 + (double)sekunde/86400 + b - 1524.5;
+			double jd0 = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*(monat+1.)) +tag + b - 1524.5;
 			// Ekliptikalkoordinaten der Sonne berechnen (see http://de.wikipedia.org/wiki/Sonnenstand )
 			double n = jd - 2451545.0;
 			double l = 280.46 + 0.9856474 * n;
@@ -160,7 +160,7 @@ public class SkyOrientation {
 			if (alphaNenner<0) {alpha +=180;}
 			// Azimut
 			double t0 = (jd0 - 2451545.)/36525.; // schon in t0 bzw jd0 richtig berechnet?
-			double thetaHG = 6.697376 + 2400.05134 * t0 + 1.002738 * ((double)stunde + (double)minute/60. + (double)sekunde/3600.);
+			double thetaHG = 6.697376 + 2400.05134 * t0 + 1.002738 * (stunde + minute/60. + sekunde/3600.);
 			double theta = thetaHG * 15. + lon;
 			double azimutNenner = java.lang.Math.cos((theta-alpha)/180*java.lang.Math.PI)*java.lang.Math.sin(lat/180*java.lang.Math.PI)-
 			java.lang.Math.tan(delta/180*java.lang.Math.PI)*java.lang.Math.cos(lat/180*java.lang.Math.PI);

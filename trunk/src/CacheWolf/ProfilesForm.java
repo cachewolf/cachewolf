@@ -3,10 +3,6 @@ package CacheWolf;
 import utils.FileBugfix;
 import ewe.ui.*;
 import ewe.io.*;
-import ewesoft.xml.*;
-import ewe.util.*;
-import ewe.sys.*;
-import ewe.math.*;
 import ewe.fx.*;
 
 /**
@@ -20,7 +16,6 @@ public class ProfilesForm extends Form{
 	// Maybe there is an easier way of making this happen, but I could not find it.
 	private class MyList extends mList {
 		private int first=1;
-		private mList ml;
 		private int select;
 	    
 		public MyList() {
@@ -91,7 +86,7 @@ public class ProfilesForm extends Form{
 		btnOK.setHotKey(0, IKeys.ENTER);
 		btnCancel.setHotKey(0, IKeys.ESCAPE);
 		this.baseDir=baseDir;
-		choice.takeFocus(Control.ByKeyboard);
+		choice.takeFocus(ControlConstants.ByKeyboard);
 	}
 	
 	/**

@@ -2,9 +2,6 @@
 package CacheWolf;
 
 import com.stevesoft.ewe_pat.Regex;
-import ewe.net.*;
-import ewe.data.Property;
-import ewe.data.PropertyList;
 import ewe.io.*;
 import ewe.util.*;
 import ewe.sys.*;

@@ -52,13 +52,13 @@ public class MainForm extends Editor {
 		this.exitSystemOnClose = true;
 		this.resizable = true;
 		this.moveable = true;
-		this.windowFlagsToSet = Window.FLAG_MAXIMIZE_ON_PDA;
+		this.windowFlagsToSet = WindowConstants.FLAG_MAXIMIZE_ON_PDA;
 		if(Vm.isMobile() == true) {
 			//this.windowFlagsToSet |=Window.FLAG_FULL_SCREEN;
 			this.resizable = false;
 			this.moveable = false;
 		}
-		Rect screen = ((ewe.fx.Rect) (Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0)));
+		Rect screen = ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0)));
 		if ( screen.height >= 600 && screen.width >= 800) this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
 		// Load CacheList

@@ -3,10 +3,12 @@ package exp;
 import CacheWolf.*;
 import ewe.sys.*;
 import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileWriter;
 import ewe.io.PrintWriter;
+import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
 import ewe.util.*;
 import ewe.io.IOException;
@@ -193,10 +195,10 @@ public class Exporter {
 	 */
 	public File getOutputFile (){
 		File file;
-		FileChooser fc = new FileChooser(FileChooser.SAVE, pref.getExportPath(expName));
+		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
 		fc.setTitle("Select target file:");
 		fc.addMask(mask);
-		if(fc.execute() != FileChooser.IDCANCEL){
+		if(fc.execute() != FormBase.IDCANCEL){
 			file = fc.getChosenFile();
 			pref.setExportPath(expName, file.getPath());
 			return file;

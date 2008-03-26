@@ -1,5 +1,4 @@
 package utils;
-import CacheWolf.*;
 import ewe.sys.*;
 
 /**
@@ -32,8 +31,7 @@ public class CWWrapper {
 			Vm.exec(strarr, dummy);
 		}
 		if(plattform.equals("Java")){
-			ewe.sys.Process p = Vm.exec("\"" + cmd + "\" "+args, null);
-//			p.waitFor();
+			Vm.exec("\"" + cmd + "\" "+args, null);
 		}
 	}
 }

@@ -2,7 +2,6 @@ package CacheWolf;
 
 import ewe.fx.*;
 import ewe.graphics.*;
-import ewe.sys.*;
 import ewe.ui.*;
 
 public class AttributesSelector extends Panel {
@@ -92,7 +91,6 @@ public class AttributesSelector extends Panel {
 	public void showAttributePalette() {
 		iap.images.clear();
 		int width = 170;
-		int height = 180;
 		int x = 2; int y = 2;
 		long bitMask = 0;
 		String attrName;
@@ -100,7 +98,7 @@ public class AttributesSelector extends Panel {
 		for (int i=0; i < Attribute.attributeNames.length; ++i) {
 			if (Attribute.attributeNames[i].endsWith("-yes.gif")) {
 				attrName = Attribute.attributeNames[i].substring(0,Attribute.attributeNames[i].length()-8);
-				bitMask = ( 1l << ( (long)(java.lang.Math.ceil((long)i / 2.0) - 1.0) ) );
+				bitMask = ( 1l << ( (long)(java.lang.Math.ceil(i / 2.0) - 1.0) ) );
 				if ( (selectionMaskYes & bitMask) != 0 )
 					value = "-yes.gif";
 				else if ( (selectionMaskNo & bitMask) != 0 )

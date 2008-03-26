@@ -28,12 +28,10 @@ public class Test extends mThread{
 	void testPerformance(){
 		Time start, end;
 		int i;
-		double tmp;
-		
 		// 100.000 Sinus
 		start = new Time();
 		for (i=0; i<100000; i++){
-			tmp = Math.sin(53);
+			Math.sin(53);
 		}
 		end = new Time();
 		printResult("sin(53)", start, end, i);
@@ -41,7 +39,7 @@ public class Test extends mThread{
 		// 1.000 CWPoint via constructor
 		start = new Time();
 		for (i=0; i<100; i++){
-			CWPoint cwP = new CWPoint("N 51° 27.635 E 009° 37.621", CWPoint.CW);
+			new CWPoint("N 51° 27.635 E 009° 37.621", CWPoint.CW);
 		}
 		end = new Time();
 		printResult("CWPoint(\"N 51° 27.635 E 009° 37.621\", CWPoint.CW)", start, end, i);

@@ -2,18 +2,14 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
-import CacheWolf.Global;
 import CacheWolf.HttpConnection;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
 import ewe.ui.*;
 import ewe.io.*;
 import ewe.fx.*;
 import ewe.util.*;
-import ewe.reflect.Array;
 import ewe.sys.*;
-import ewe.sys.Double;
 import ewe.net.*;
 import java.lang.Math;
 
@@ -61,7 +57,7 @@ public class MapLoader {
 		String FileName;
 		OnlineMapService tempOMS;
 		MessageBox f = null; 
-		dateien = files.list("*.wms", File.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
+		dateien = files.list("*.wms", FileBase.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
 		for(int i = 0; i < dateien.length;i++){
 			FileName = dateien[i];
 			try {
@@ -75,7 +71,7 @@ public class MapLoader {
 				tempOMS = new WebMapService(wmspath + "/" + FileName);
 				onlineMapServices.add(tempOMS);
 			}catch(Exception ex){ 
-				if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4801, "Ignoring error while \n reading web map service definition file \n")+ex.toString(), MessageBox.OKB)).exec();
+				if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4801, "Ignoring error while \n reading web map service definition file \n")+ex.toString(), FormBase.OKB)).exec();
 			}
 		}
 		tempOMS = new ExpediaMapService();
@@ -154,22 +150,22 @@ public class MapLoader {
 		int borderX = overlapping;
 		int borderY = overlapping;
 
-		numMapsY = (int) java.lang.Math.ceil( (pixelsY + (float)borderY) / (float)(size.y - borderY) );
-		numMapsX = (int) java.lang.Math.ceil( (pixelsX + (float)borderX) / (float)(size.x - borderX) );
+		numMapsY = (int) java.lang.Math.ceil( (pixelsY + borderY) / (size.y - borderY) );
+		numMapsX = (int) java.lang.Math.ceil( (pixelsX + borderX) / (size.x - borderX) );
 
 		//increments calulated from pixel offset of tiles
-		latinc = (float)-(size.y - borderY) / pixelsPerLat;
-		loninc = (float)(size.x - borderX) / pixelsPerLon;
+		latinc = -(size.y - borderY) / pixelsPerLat;
+		loninc = (size.x - borderX) / pixelsPerLon;
 
 		//calculation of centre of first tile
 
 		//additional size for borders and rounding
-		double oversizeX = (float)(numMapsX * (size.x - borderX) + borderX) - pixelsX;
-		double oversizeY = (float)(numMapsY * (size.y - borderY) + borderY) - pixelsY;
+		double oversizeX = (numMapsX * (size.x - borderX) + borderX) - pixelsX;
+		double oversizeY = (numMapsY * (size.y - borderY) + borderY) - pixelsY;
 
 		//offset for upper left corner
-		double offsetLat = -( ((float)size.y - oversizeY) / 2.0 ) / pixelsPerLat;
-		double offsetLon = ( ((float)size.x - oversizeX) / 2.0 ) / pixelsPerLon;
+		double offsetLat = -( (size.y - oversizeY) / 2.0 ) / pixelsPerLat;
+		double offsetLon = ( (size.x - oversizeX) / 2.0 ) / pixelsPerLon;
 
 		topleft.latDec += offsetLat;
 		topleft.lonDec += offsetLon;
@@ -433,7 +429,7 @@ class WebMapService extends OnlineMapService {
 		Properties wms = new Properties();
 		wms.load(in);
 		in.close();
-		String tmp = File.getFileExt(filename_);
+		String tmp = FileBase.getFileExt(filename_);
 		this.filename = tmp.substring(0, tmp.lastIndexOf('.'));
 		name = wms.getProperty("Name", "").trim();
 		if (name == "") throw new IllegalArgumentException(MyLocale.getMsg(4812, "WebMapService: property >Name:< missing in file:\n") + filename);
@@ -665,7 +661,7 @@ class ExpediaMapService extends OnlineMapService {
 	}
 
 	public float getMetersPerPixel(float scale) {
-		return (float)  EXPEDIA_METERS_PER_PIXEL * getZoomlevel(scale);
+		return EXPEDIA_METERS_PER_PIXEL * getZoomlevel(scale);
 	}
 	
 	private int getZoomlevel(float scale) {
@@ -683,7 +679,8 @@ class ExpediaMapService extends OnlineMapService {
 	}
 
 	public MapInfoObject getMapInfoObject(CWPoint center, float scale, Point pixelsize) {
-		float metersPerPixel = (float) getMetersPerPixel(scale);
+		float metersPerPixel2 = getMetersPerPixel(scale);
+		float metersPerPixel = metersPerPixel2;
 		MapInfoObject cal = new MapInfoObject(metersPerPixel, center,  pixelsize.x, pixelsize.y, name);
 		return cal;
 	}

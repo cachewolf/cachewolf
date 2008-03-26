@@ -7,7 +7,7 @@ import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
-import ewe.io.File;
+import ewe.io.FileBase;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
 import ewe.ui.*;
@@ -67,15 +67,15 @@ public class MapLoaderGui extends Form {
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 		center = new CWPoint(pref.curCentrePt);
 		cacheDB = cacheDBi;
-		mapLoader = new MapLoader(File.getProgramDirectory()+"/"+"webmapservices");
+		mapLoader = new MapLoader(FileBase.getProgramDirectory()+"/"+"webmapservices");
 
 		// sort the items in the list of services in a way that services which cover the current center point.
 		unsortedMapServices = mapLoader.getAvailableOnlineMapServices();
 		sortMapServices();
 		mapServiceChoice = new mChoice(sortedmapServices, 0);
 		MessageArea desc = new MessageArea(descString); 
-		desc.modifyAll(mTextPad.NotEditable | mTextPad.DisplayOnly | mTextPad.NoFocus, mTextPad.TakesKeyFocus);
-		desc.borderStyle = mTextPad.BDR_NOBORDER;
+		desc.modifyAll(ControlConstants.NotEditable | ControlConstants.DisplayOnly | ControlConstants.NoFocus, ControlConstants.TakesKeyFocus);
+		desc.borderStyle = UIConstants.BDR_NOBORDER;
 		this.addLast(desc);
 		this.addLast(mapServiceChoice);
 		// tiles panel
@@ -185,7 +185,7 @@ public class MapLoaderGui extends Form {
 		if (forCachesChkBox.getState() || perCache) {
 			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
 			if (surArea == null) {
-				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are seleted"), MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are seleted"), FormBase.OKB)).execute();
 				Vm.showWait(false);
 				progressBox.close(0);
 				return;
@@ -248,10 +248,10 @@ public class MapLoaderGui extends Form {
 		if (forCachesChkBox.getState()) {
 			// create map rectangle from caches
 			a = 0;
-			b = Control.Disabled;
+			b = ControlConstants.Disabled;
 		}
 		else { // use centre and distance input
-			a = Control.Disabled;
+			a = ControlConstants.Disabled;
 			b = 0;
 		}
 		forSelectedChkBox.modify(a, b);
@@ -268,7 +268,7 @@ public class MapLoaderGui extends Form {
 	public void onEvent(Event ev){
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == cancelB || ev.target == cancelBPerCache){
-				this.close(Form.IDCANCEL);
+				this.close(FormBase.IDCANCEL);
 			}
 			if (ev.target == okBtiles || ev.target == okBPerCache){
 				mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
@@ -282,15 +282,15 @@ public class MapLoaderGui extends Form {
 					overlapping = Convert.toInt(overlappingInput.getText());
 					if (!forCachesChkBox.getState()) {
 						if (radius <= 0) { 
-							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be graeter than 0"), MessageBox.OKB)).execute();
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be graeter than 0"), FormBase.OKB)).execute();
 							return;
 						}
 						if (overlapping < 0) { 
-							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1828, "'overlapping' must be greater or equal 0"), MessageBox.OKB)).execute();
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1828, "'overlapping' must be greater or equal 0"), FormBase.OKB)).execute();
 							return;
 						}
 						if (!center.isValid() && !forCachesChkBox.getState()) {
-							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1829, "Please enter the 'centre' around which the maps shall be downloaded"), MessageBox.OKB)).execute();
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1829, "Please enter the 'centre' around which the maps shall be downloaded"), FormBase.OKB)).execute();
 							return;
 						}
 					}
@@ -302,16 +302,16 @@ public class MapLoaderGui extends Form {
 					scale = Convert.toFloat(scaleInputPerCache.getText());
 				}
 				if (scale < mapLoader.currentOnlineMapService.minscale || scale > mapLoader.currentOnlineMapService.maxscale) {
-					(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1830, "The selected online map service provides map in the scale from")+" " + mapLoader.currentOnlineMapService.minscale + MyLocale.getMsg(1831, " to")+" "+ mapLoader.currentOnlineMapService.maxscale +MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), MessageBox.OKB)).execute();
+					(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1830, "The selected online map service provides map in the scale from")+" " + mapLoader.currentOnlineMapService.minscale + MyLocale.getMsg(1831, " to")+" "+ mapLoader.currentOnlineMapService.maxscale +MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), FormBase.OKB)).execute();
 					return;
 				}
-				this.close(Form.IDOK); 
+				this.close(FormBase.IDOK); 
 				this.downloadTiles();
 			}
 			if (ev.target == coosBtn) {
 				CoordsScreen cs = new CoordsScreen();
 				cs.setFields(center, CWPoint.CW);
-				if (cs.execute() != CoordsScreen.IDCANCEL) {
+				if (cs.execute() != FormBase.IDCANCEL) {
 					center = cs.getCoords();
 					coosBtn.setText(center.toString());
 					int tmp = sortingMapServices[mapServiceChoice.selectedIndex];

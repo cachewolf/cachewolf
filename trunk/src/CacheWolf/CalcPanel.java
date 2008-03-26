@@ -98,7 +98,7 @@ public class CalcPanel extends CellPanel {
 		// Output 
 		txtOutput = new TextDisplay(3,1); // Need to limit size for small screens
 		ScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
-		BottomP.addLast(sbp.setTag(Control.SPAN, new Dimension(4,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
+		BottomP.addLast(sbp.setTag(CellConstants.SPAN, new Dimension(4,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		
 		//add Panels
 		this.addLast(TopP,CellConstants.HSTRETCH, CellConstants.WEST);//.setTag(SPAN,new Dimension(4,1));
@@ -201,7 +201,7 @@ public class CalcPanel extends CellPanel {
 				CoordsScreen cs = new CoordsScreen();
 				readFields(coordInp, bd, currFormat);
 				cs.setFields(coordInp,currFormat);
-				if (cs.execute()== CoordsScreen.IDOK){
+				if (cs.execute()== FormBase.IDOK){
 					btnChangeLatLon.setText(cs.getCoords().toString(currFormat));
 					coordInp.set(cs.getCoords());
 				}

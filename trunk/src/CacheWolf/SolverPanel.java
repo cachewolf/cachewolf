@@ -3,10 +3,8 @@ package CacheWolf;
 
 import ewe.ui.*;
 import ewe.io.*;
-import ewe.filechooser.FileChooser;
 import ewe.fx.*;
 import ewe.util.*;
-import ewe.sys.*;
 
 /**
 * Class to create the solver panel. Calls the parser and tokeniser and handles
@@ -46,7 +44,7 @@ public class SolverPanel extends CellPanel{
 	private class OutputPanel extends mTextPad {
 		MenuItem mnuClr;
 		OutputPanel() {
-			this.modify(Control.NotEditable,0);
+			this.modify(ControlConstants.NotEditable,0);
 			//this.modifiers=this.modifiers|WantHoldDown; 
 			setMenu(mnuContext=getClipboardMenu(new Menu(new MenuItem[]{ mnuClr=new MenuItem(MyLocale.getMsg(1734,"Clear output")) },"")));
 		} 
@@ -141,7 +139,7 @@ public class SolverPanel extends CellPanel{
 				processCommand(mText.getText());
 			}
 			if (ev.target==btnWolfLang) {
-				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
+				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
 				is.execute(parent.getFrame(), Gui.CENTER_FRAME);
 			}
 			if (ev.target==btnDegRad) {

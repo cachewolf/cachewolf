@@ -5,7 +5,6 @@ import ewe.util.*;
 import ewesoft.xml.sax.*;
 import ewe.io.*;
 import ewe.sys.*;
-import CacheWolf.Extractor;
 import CacheWolf.CWPoint;
 
 /**

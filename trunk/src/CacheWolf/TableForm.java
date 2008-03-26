@@ -1,9 +1,6 @@
 package CacheWolf;
 
 import ewe.ui.CellConstants;
-import ewe.ui.CellPanel;
-import ewe.ui.Control;
-import ewe.ui.ControlEvent;
 import ewe.ui.Editor;
 
 public class TableForm extends Editor {

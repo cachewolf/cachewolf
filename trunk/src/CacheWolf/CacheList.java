@@ -1,6 +1,7 @@
 package CacheWolf;
 
 import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.fx.*;
 import ewe.io.*;
 import ewe.sys.*;
@@ -91,7 +92,7 @@ public class CacheList extends CellPanel {
 				 CacheHolder ch=(CacheHolder)cacheList.get(idx);
 				 wayPoint=ch.wayPoint;
 				 IconAndText imgDrag=new IconAndText();
-				 imgDrag.addColumn((IImage) CacheType.cache2Img(ch.type));
+				 imgDrag.addColumn(CacheType.cache2Img(ch.type));
 				 imgDrag.addColumn(ch.wayPoint);
 				 dc.dragData=dc.startImageDrag(imgDrag,new Point(8,8),this);
 			 } 
@@ -125,7 +126,7 @@ public class CacheList extends CellPanel {
 			 * the key event needs to go.
 			 */
 			if (needsInit && ev.target==this) {
-				Gui.takeFocus(Global.mainTab.tbP.tc, Control.ByKeyboard);
+				Gui.takeFocus(Global.mainTab.tbP.tc, ControlConstants.ByKeyboard);
 				ev.target=Global.mainTab.tbP.tc;
 				postEvent(ev);
 			}
@@ -191,23 +192,23 @@ public class CacheList extends CellPanel {
 			if (ev.target==btnNew) { 
 				newCacheList();
 			} else if(ev.target == btnLoad){
-				FileChooser fc = new FileChooser(FileChooser.OPEN, Global.getProfile().dataDir);
+				FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.getProfile().dataDir);
 				//fc.addMask(currCh.wayPoint + ".wl");
 				fc.addMask("*."+EXTENSION);
 				fc.addMask("*.*");
 				fc.setTitle(MyLocale.getMsg(191,"Select File"));
-				if(fc.execute() != FileChooser.IDCANCEL){
+				if(fc.execute() != FormBase.IDCANCEL){
 					currFile = fc.getChosen();
 					readFromFile(currFile);
 				}
 			} else if((ev.target == btnSave) && (currFile != null)){
 				saveToFile(currFile);
 			} else if((ev.target == btnSaveAs)||((ev.target == btnSave) && (currFile == null))){
-				FileChooser fc = new FileChooser(FileChooser.SAVE, Global.getProfile().dataDir);
+				FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.getProfile().dataDir);
 				//fc.addMask(currCh.wayPoint + ".wl");
 				fc.addMask("*."+EXTENSION);
 				fc.setTitle(MyLocale.getMsg(191,"Select File"));
-				if(fc.execute() != FileChooser.IDCANCEL){
+				if(fc.execute() != FormBase.IDCANCEL){
 					currFile = fc.getChosen();
 					if (currFile.indexOf('.')==0 || !currFile.toUpperCase().endsWith("."+EXTENSION)) currFile+="."+EXTENSION;
 					saveToFile(currFile);
@@ -289,7 +290,7 @@ public class CacheList extends CellPanel {
 		Global.getProfile().hasUnsavedChanges=true;
 		updateScreen(cacheList.size()-wrongBlackStatus);
 		if (wrongBlackStatus>0)
-			(new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(4600,"Some cache(s) cannot be shown because of wrong blacklist status"), MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(4600,"Some cache(s) cannot be shown because of wrong blacklist status"), FormBase.OKB)).execute();
 
 	}
 	
@@ -326,7 +327,7 @@ public class CacheList extends CellPanel {
 			// Add cache reference to hidden list
 			cacheList.add(ch);
 			// Add Cache and cache icon to visible list
-			lstCaches.addItem((new MenuItem()).iconize(ch.wayPoint+"   "+ch.CacheName,(IImage) CacheType.cache2Img(ch.type),true));
+			lstCaches.addItem((new MenuItem()).iconize(ch.wayPoint+"   "+ch.CacheName,CacheType.cache2Img(ch.type),true));
 		    dirty=true;
 			return true;
 		} else
@@ -351,14 +352,14 @@ public class CacheList extends CellPanel {
 	/** Check if there are any unsaved changes and ask user if he wants to save */
 	public void saveIfDirty() {
 		if (dirty) {
-			if ((new MessageBox(MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(192,"Save changes"),MessageBox.MBYESNO)).execute()==MessageBox.IDYES) {
+			if ((new MessageBox(MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(192,"Save changes"),FormBase.MBYESNO)).execute()==FormBase.IDYES) {
 				if (currFile!=null)
 					saveToFile(currFile);
 				else {
-					FileChooser fc = new FileChooser(FileChooser.SAVE, Global.getProfile().dataDir);
+					FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.getProfile().dataDir);
 					fc.addMask("*."+EXTENSION);
 					fc.setTitle(MyLocale.getMsg(191,"Select File"));
-					if(fc.execute() != FileChooser.IDCANCEL){
+					if(fc.execute() != FormBase.IDCANCEL){
 						currFile = fc.getChosen();
 						saveToFile(currFile);
 					}

@@ -40,7 +40,7 @@ public class MainMenu extends MenuBar {
 
 	public MainMenu(Form f){
 		father = f;
-		String cwd = File.getProgramDirectory();
+		String cwd = FileBase.getProgramDirectory();
 
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for profiles, part of "Application" menu below
@@ -270,7 +270,7 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == mnuEditCenter){
 				ProfileDataForm f=new ProfileDataForm(pref,profile);
-				int code=f.execute(getFrame(), Gui.CENTER_FRAME);
+				f.execute(getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
 				f.close(0);
 			}
@@ -286,10 +286,10 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadcaches){
-				FileChooser fc = new FileChooser(FileChooser.OPEN|FileChooser.MULTI_SELECT, pref.baseDir);
+				FileChooser fc = new FileChooser(FileChooserBase.OPEN|FileChooserBase.MULTI_SELECT, pref.baseDir);
 				fc.addMask("*.gpx,*.zip,*.loc");
 				fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
-				if(fc.execute() != FileChooser.IDCANCEL){
+				if(fc.execute() != FormBase.IDCANCEL){
 					String dir = fc.getChosenDirectory().toString();
 					String files[] = fc.getAllChosen();
 					/*
@@ -366,7 +366,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == exportGPS){
 				Vm.showWait(true);
 				LocExporter loc = new LocExporter();
-				String tmpFileName = File.getProgramDirectory() + "/temp.loc";
+				String tmpFileName = FileBase.getProgramDirectory() + "/temp.loc";
 				loc.setTmpFileName(tmpFileName);
 				loc.doIt(LocExporter.MODE_AUTO);
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
@@ -376,7 +376,7 @@ public class MainMenu extends MenuBar {
 					p.waitFor();
 				}catch(IOException ioex){
 					Vm.showWait(false);
-					(new MessageBox("Error", "Garmin export unsuccessful", MessageBox.OKB)).execute();
+					(new MessageBox("Error", "Garmin export unsuccessful", FormBase.OKB)).execute();
 					pref.log("Error exporting to Garmin",ioex);
 				};
 				ProgressBarForm.clear();
@@ -391,10 +391,10 @@ public class MainMenu extends MenuBar {
 				kml.doIt();
 			}
 			if(mev.selectedItem == exportTPL){
-				FileChooser fc = new FileChooser(FileChooser.OPEN, File.getProgramDirectory());
+				FileChooser fc = new FileChooser(FileChooserBase.OPEN, FileBase.getProgramDirectory());
 				fc.addMask("*.tpl");
 				fc.setTitle(MyLocale.getMsg(910,"Select Template file"));
-				if(fc.execute() != FileChooser.IDCANCEL){
+				if(fc.execute() != FormBase.IDCANCEL){
 					TPLExporter tpl = new TPLExporter( pref,profile, fc.getChosenFile().toString());
 					tpl.doIt();
 				}
@@ -423,7 +423,7 @@ public class MainMenu extends MenuBar {
 						MapImporter map = new MapImporter(pref, sM.getSelectedMap(),sM.worldfileexists);
 						map.execute(null, Gui.CENTER_FRAME);
 					} catch (java.lang.OutOfMemoryError e) {
-						MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156,"Out of memory error, map to big"), MessageBox.OKB);
+						MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156,"Out of memory error, map to big"), FormBase.OKB);
 						tmpMB.exec();
 					}
 				}
@@ -565,21 +565,20 @@ public class MainMenu extends MenuBar {
 			// "About" pulldown menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == about){
-				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "info.html", MyLocale.getMsg(117,"About"),true, pref);
+				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "info.html", MyLocale.getMsg(117,"About"),true, pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == legend){
-				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "legende.html", MyLocale.getMsg(155,"Legend"),true, pref);
+				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "legende.html", MyLocale.getMsg(155,"Legend"),true, pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == wolflang){
-				InfoScreen is = new InfoScreen(File.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
+				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == sysinfo){
 				//Vm.debug("Checking system...");
 				StringBuffer sb=new StringBuffer(400);
-				Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
 				Font f = mApp.guiFont;
 				sb.append("Profile: "); 				sb.append(profile.dataDir);
 				sb.append("<br>Platform: "); 			sb.append(Vm.getPlatform());
@@ -592,7 +591,7 @@ public class MainMenu extends MenuBar {
 				sb.append("<br>Font size: ");			sb.append(f.getSize());
 				sb.append("<br>Entries in DB: ");		sb.append(cacheDB.size());
 				sb.append("<br>File separator is: \""); sb.append(Vm.getProperty("file.separator","def")); 
-				sb.append("\"<br>Programme directory is "); sb.append(File.getProgramDirectory());
+				sb.append("\"<br>Programme directory is "); sb.append(FileBase.getProgramDirectory());
 				sb.append("<br>Number of details in RAM is "); sb.append(CacheHolder.cachesWithLoadedDetails.size());
 				sb.append(" Max.: ");					sb.append(Global.getPref().maxDetails);
 				sb.append("<br>CacheWolf version: ");		sb.append(Version.getReleaseDetailed());
@@ -602,7 +601,7 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == chkVersion){
 				Vm.showWait(true);
-				(new MessageBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage(), MessageBox.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage(), FormBase.OKB)).execute();
 				Vm.showWait(false);
 			}
 			
@@ -643,11 +642,11 @@ public class MainMenu extends MenuBar {
 				} else {
 					if (ch.isAddiWpt() && ch.mainCache!=null && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
 						alreadySaid2=true;
-						(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", MessageBox.OKB)).execute();
+						(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", FormBase.OKB)).execute();
 					}
 					if (!ch.isAddiWpt() && !alreadySaid) {
 						alreadySaid = true;
-						(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", MessageBox.OKB)).execute();
+						(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", FormBase.OKB)).execute();
 					}
 				}
 

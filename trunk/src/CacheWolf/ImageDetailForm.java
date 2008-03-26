@@ -1,6 +1,4 @@
 package CacheWolf;
-import ewe.graphics.*;
-import ewe.fx.*;
 import ewe.ui.*;
 
 

@@ -2,7 +2,6 @@ package CacheWolf;
 
 import ewe.fx.*;
 import ewe.graphics.*;
-import ewe.sys.*;
 import ewe.ui.*;
 
 public class AttributesViewer extends CellPanel {

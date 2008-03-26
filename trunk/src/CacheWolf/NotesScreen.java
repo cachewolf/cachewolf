@@ -1,11 +1,7 @@
 package CacheWolf;
 import ewe.ui.*;
-import ewe.io.*;
-import ewe.graphics.*;
 import ewe.fx.*;
-import ewe.util.*;
 import ewe.sys.*;
-import ewe.filechooser.*;
 
 /**
 *	This class displays a form to show and edit notes for a cache.
@@ -23,14 +19,14 @@ public class NotesScreen extends Form{
 		int sw = MyLocale.getScreenWidth();
 		String imagesize = "";
 		if (Vm.isMobile() && sw >= 400) imagesize="_vga";
-		addDateTime = new mButton((IImage)new mImage("date_time"+imagesize+".gif"));
+		addDateTime = new mButton(new mImage("date_time"+imagesize+".gif"));
 		
 		this.title = "Notes";
 		setPreferredSize(Global.getPref().myAppWidth, Global.getPref().myAppHeight);
 		this.resizeOnSIP = true;
 		thisCache = ch;
 		wayNotes.setText(thisCache.CacheNotes);
-		addLast(sbp.setTag(Control.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
+		addLast(sbp.setTag(CellConstants.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		titleControls=new CellPanel();
 		titleControls.addNext(addDateTime,CellConstants.HSTRETCH,CellConstants.HFILL);
 		titleControls.addNext(cancelBtn,CellConstants.HSTRETCH,CellConstants.HFILL);
@@ -57,7 +53,7 @@ public class NotesScreen extends Form{
 			if(ev.target == cancelBtn){
 				if ( (!thisCache.CacheNotes.equals(wayNotes.getText())) ) {
 					if ( (new MessageBox("Warning", "You will loose any changes made to the notes. Do you want to continue?"
-							, MessageBox.YESB|MessageBox.NOB)).execute() == MessageBox.IDYES) {
+							, FormBase.YESB|FormBase.NOB)).execute() == FormBase.IDYES) {
 						this.close(0);
 					}
 				} else this.close(0); // no changes -> exit without asking
@@ -65,7 +61,7 @@ public class NotesScreen extends Form{
 			if(ev.target == titleOK){
 				if ( (!thisCache.CacheNotes.equals(wayNotes.getText())) ) {
 					if ( (new MessageBox("Warning", "Save changes made to the notes?"
-							, MessageBox.YESB|MessageBox.NOB)).execute() == MessageBox.IDYES) {
+							, FormBase.YESB|FormBase.NOB)).execute() == FormBase.IDYES) {
 						thisCache.CacheNotes = wayNotes.getText();
 						thisCache.saveCacheDetails( Global.getProfile().dataDir);
 					}

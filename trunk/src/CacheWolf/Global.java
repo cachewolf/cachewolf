@@ -1,5 +1,4 @@
 package CacheWolf;
-import ewe.*;
 
 /**
  * Global data: Preferences and Profile
