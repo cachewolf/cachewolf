@@ -958,10 +958,10 @@ public class Parser{
 			if (isVariable(thisToken.token))
 				calcStack.add(getVariable(thisToken.token));
 			else if (!lookAheadToken().token.equals("(")) err(MyLocale.getMsg(1724,"Variable not set: ")+thisToken.token);
-			else {// Must be a function definition
+			    else {// Must be a function definition
 				funcDef=getFunctionDefinition(thisToken.token); // Does not return if function not defined or ambiguous
 				parseFunction(funcDef);
-			} 
+			    } 
 		} else if (thisToken.tt==TokenObj.TT_NUMBER) {
 			calcStack.add(getNumber(thisToken.token));
 		} else if (thisToken.tt==TokenObj.TT_STRING) {

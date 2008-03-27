@@ -19,11 +19,11 @@ import ewe.io.IOException;
 
 /**
  * @author Kalle
- * @author TweetyHH Class for Exporting direct to Magellans *.gs Files. Caches
+ * @author TweetyHH Class for Exporting direct to Explorists *.gs Files. Caches
  *         will be exported in files with maximum of 200 Caches.
  */
 
-public class MagellanExporter {
+public class ExploristExporter {
 	// starts with no ui for file selection
 	final static int TMP_FILE = 0;
 	// brings up a screen to select a file
@@ -48,7 +48,7 @@ public class MagellanExporter {
 	// name of exporter for saving pathname
 	String expName;
 
-	public MagellanExporter(Preferences p, Profile prof) {
+	public ExploristExporter(Preferences p, Profile prof) {
 		profile = prof;
 		pref = p;
 		cacheDB = profile.cacheDB;
@@ -82,10 +82,10 @@ public class MagellanExporter {
 					}
 					reader.close();
 				} catch (FileNotFoundException e) {
-					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n" + e.getMessage()));
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"),MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n" + e.getMessage()));
 					info.show();
 				} catch (IOException e) {
-					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n" + e.getMessage()));
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"),MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n" + e.getMessage()));
 					info.show();
 				} finally {
 					cacheDB.sort(new DistanceComparer(centre),false);
