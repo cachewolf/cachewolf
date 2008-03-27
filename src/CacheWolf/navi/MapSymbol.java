@@ -3,7 +3,7 @@ package CacheWolf.navi;
 import CacheWolf.CWPoint;
 import ewe.fx.*;
 
-public class MapSymbol extends MapImage { // TODO make this implement MapImage, so that it will be invisible automatically if not on screen. When doing so, test if setgoto-pos -> open map from gotopanel shows the map symbols (directly after starting CW)
+public class MapSymbol extends MapImage {
 	Object mapObject;
 	String name;
 	String filename;

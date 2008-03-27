@@ -54,10 +54,7 @@ public class MapInfoObject extends Area {
 	static private String digSep = MyLocale.getDigSeparator();
 	private int coordTrans = 0; 
 
-	public MapInfoObject() { // TODO remove this
-		//double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
-		//if(testA == 4.5) digSep = ","; else digSep = ".";
-	}
+	public MapInfoObject() { }
 
 	public MapInfoObject(MapInfoObject map) {
 		super (map.topleft, map.buttomright);
@@ -178,12 +175,9 @@ public class MapInfoObject extends Area {
 			buttomright.latDec = Common.parseDoubleException(line);
 			line = in.readLine();
 			buttomright.lonDec = Common.parseDoubleException(line);
-//			if (in.ready()) {// if there is more data... TODO this doesn't give the answer if there is more data :-(
-				line = in.readLine();
-				coordTrans = Common.parseInt(line);
-				//coordTrans = new TransformCoordinatesProperties(instream);
-			//}
-		//	else coordTrans = 0;
+			line = in.readLine(); // readLine returns null, if End of File reached
+			if (line != null) coordTrans = Common.parseInt(line);
+			else coordTrans = 0;
 			fileNameWFL = mapsPath + thisMap + ".wfl";
 //			fileName = ""; //mapsPath + thisMap + ".png";
 			mapName = thisMap;

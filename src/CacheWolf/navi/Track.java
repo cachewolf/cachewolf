@@ -18,7 +18,7 @@ public class Track {
 		num++;
 	}
 =====*/	
-	/*
+	/**
 	 * throws IndexOutOfBoundsException when track is full
 	 */
 	public void add(TrackPoint t) { 
