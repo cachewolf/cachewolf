@@ -570,8 +570,7 @@ public class OCXMLImporter extends MinML {
 	
 	private void getPic(String fetchURL, String picDesc) { // TODO handling of relativ URLs
 		try {
-			if (!fetchURL.startsWith("http://")) fetchURL = new URL(new URL("http://" + OPENCACHING_HOST+"/"), fetchURL).toString();
-			// if (!fetchURL.startsWith("http://")) fetchURL = "http://" + OPENCACHING_HOST + "/" + fetchURL; // TODO use URL.relative or so.. this is not quite correct: actually the "base" URL must be known... but anyway a different baseURL should not happen very often  - it doesn't in my area
+			if (!fetchURL.startsWith("http://")) fetchURL = new URL(new URL("http://" + OPENCACHING_HOST+"/"), fetchURL).toString(); // TODO this is not quite correct: actually the "base" URL must be known... but anyway a different baseURL should not happen very often  - it doesn't in my area
 			String fileName = createPicFilename(fetchURL);
 			// add title
 			chD.ImagesText.add(picDesc);

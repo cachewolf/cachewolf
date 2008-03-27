@@ -137,7 +137,7 @@ public class Navigate {
 			} catch (IndexOutOfBoundsException e) { // track full -> create a new one
 				curTrack = new Track(trackColor); 
 				curTrack.add(gpsPos);
-				if (movingMap != null) movingMap.addTrack(curTrack); // TODO maybe gotoPanel should also hold a list of Tracks, because otherwise they will be destroyed if not saved in mmp before
+				if (movingMap != null) movingMap.addTrack(curTrack);
 			}
 			try {
 				SkyOrientation.getSunAzimut(gpsPos.Time, gpsPos.Date, gpsPos.latDec, gpsPos.lonDec);
