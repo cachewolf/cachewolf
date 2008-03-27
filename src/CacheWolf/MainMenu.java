@@ -28,7 +28,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem spider, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
-	private MenuItem exportOZI, exportKML, exportTPL, exportMagellan;
+	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgCopy, orgMove, orgDelete,orgRebuild;
@@ -81,7 +81,7 @@ public class MainMenu extends MenuBar {
 		//if(!(new File(cwd + "/cmconvert/cmconvert.exe")).exists()) exitems[8].modifiers = MenuItem.Disabled;
 		exitems[8] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
 		exitems[9] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
-		exitems[10] = exportMagellan = new MenuItem(MyLocale.getMsg(132,"to Magellan"));
+		exitems[10] = exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist"));
 		exitems[11] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
 
 		Menu exportMenu = new Menu(exitems, MyLocale.getMsg(107,"Export"));
@@ -399,8 +399,8 @@ public class MainMenu extends MenuBar {
 					tpl.doIt();
 				}
 			}
-			if(mev.selectedItem == exportMagellan) {
-				MagellanExporter mag = new MagellanExporter( pref, profile);
+			if(mev.selectedItem == exportExplorist) {
+				ExploristExporter mag = new ExploristExporter( pref, profile);
 				mag.doIt();
 			}
 			///////////////////////////////////////////////////////////////////////
