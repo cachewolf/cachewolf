@@ -423,7 +423,6 @@ class MapListEntry /*implements Comparable */ {
 		map = null;
 		/*
 		try {map = new MapInfoObject(path, filename); } catch (Exception e) {
-			// TODO: handle exception
 		}
 		
 		ewe.sys.Vm.debug("centerID: "+map.getCenterID());

@@ -636,17 +636,19 @@ public class MainMenu extends MenuBar {
 //					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
 //					Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
 //					Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
-//					TODO: Diese Meldungen vor dem Einloggen darstellen						
 				{
 					cachesToUpdate.add(new Integer(i));
 				} else {
 					if (ch.isAddiWpt() && ch.mainCache!=null && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
 						alreadySaid2=true;
-						(new MessageBox("Information","Hilfswegpunkte könnnen nicht direkt gespidert werden\nBitte zusätzlich den Vater anhaken", FormBase.OKB)).execute();
+						(new MessageBox(MyLocale.getMsg(327,"Information"),
+								        MyLocale.getMsg(5001,"Can't spider additional waypoint directly. Please check main cache."), FormBase.OKB)).execute();
 					}
 					if (!ch.isAddiWpt() && !alreadySaid) {
 						alreadySaid = true;
-						(new MessageBox("Information",ch.wayPoint+ ": Diese Funktion steht gegenwärtig nur für Geocaching.com und Opencaching.de zur Verfügung", FormBase.OKB)).execute();
+						(new MessageBox(MyLocale.getMsg(327,"Information"),
+								        ch.wayPoint+ 
+								        MyLocale.getMsg(5002,": At the moment this function is only applicable for geocaching.com and opencaching.de."), FormBase.OKB)).execute();
 					}
 				}
 
