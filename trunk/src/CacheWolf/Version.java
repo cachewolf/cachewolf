@@ -43,7 +43,7 @@ public class Version {
 	 * @throws IOException
 	 */
 	public static void checkForUpdates() throws IOException {
-		Properties curvers = UrlFetcher.fetchPropertyList("http://svn.berlios.de/svnroot/repos/cachewolf/trunk/currentversions.txt");
+		Properties curvers = UrlFetcher.fetchPropertyList("http://www.cachewolf.org/currentversions.txt");
 		for (int i = updateavailabe.length-1; i >=1; i--) {
 			updateavailabe[i] = (checkVersion(curvers, "T"+(i-1))); 
 		}
