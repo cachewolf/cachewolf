@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter>
+  <chapterinfo>
+    <title>Die Menüs</title>
+
+    <date>2.1.2008</date>
+
+    <releaseinfo>In Bearbeitung</releaseinfo>
+
+    <edition>CacheWolf 1.0</edition>
+
+    <author>
+      <surname>Marc Schnitzler</surname>
+    </author>
+
+    <revhistory>
+      <revision>
+        <revnumber>0.1</revnumber>
+
+        <date>2. Januar 2008</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>Erster Entwurf</para>
+        </revdescription>
+      </revision>
+
+      <revision>
+        <revnumber>0.2</revnumber>
+
+        <date>16.3.2008</date>
+
+        <author>
+          <surname>Marc Schnitzler</surname>
+        </author>
+
+        <revdescription>
+          <para>Etwas mehr geschafft...</para>
+        </revdescription>
+      </revision>
+    </revhistory>
+  </chapterinfo>
+
+  <title id="menue">Die Menüs</title>
+
+  <section>
+    <title>Anwendung</title>
+
+    <para></para>
+
+    <section>
+      <title id="profil">Profil</title>
+
+      <para>Dieser Menüpunkt erlaubt die Anlage eines neuen Profils, oder das
+      aktuelle Profil zu wechseln. Bei <literal>Profil -&gt; Laden</literal>
+      wird die gleiche Maske gezeigt, wie beim Start von Cachewolf.</para>
+
+      <para>Profile sind im Prinzip nichts anderes, wie ein Verzeichnis
+      unterhalb des Basisverzeichnisses, dass Du beim ersten Start (siehe:
+      <xref linkend="start" />) von Cachewolf angelegt hast. In dem
+      Profilverzeichnis befindet sich eine Datei mit Namen index.xml. Diese
+      Datei enthält, neben der Liste der Caches, die in diesem Verzeichnis
+      gespeichert sind, Angaben zum gesetzten Zentrum und die
+      Filtereinstellungen (für dieses Profil).</para>
+    </section>
+
+    <section>
+      <title>Preferenzen</title>
+
+      <para>Mit diesem Menüpunkt gelangt man zur Einstellung der Präferenzen.
+      Dieses wurde hier: <xref linkend="editPrefs" /> beschrieben.</para>
+    </section>
+
+    <section>
+      <title id="zentrum">Zentrum</title>
+
+      <para>Unter diesem Menüpunkt kann das Zentrum gesetzt werden. Das
+      Zentrum wird in der Listenansicht (siehe: <xref linkend="liste" />) und
+      im Radar (siehe: <xref linkend="radar" />) genutzt, um Entfernungen zu
+      berechnen und anzuzeigen.</para>
+
+      <para>Nach der Menüauswahl erscheint das nachfolgende Fenster:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/zentrum.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>Die Koordinaten, die neben <literal>Aktuell</literal> stehen, sind
+      die Koordinaten, die Cachewolf gerade als Zentrumskoordinaten betrachtet
+      (offensichtlich). Die Koordinaten, die neben <literal>Profil</literal>
+      stehen sind gespeichert, d.h. beim nächsten Start von Cachewolf werden
+      diese Koordinaten als Zentrumskoordinaten gesetzt. Durch einen Klick auf
+      die Pfeile nach Unten, bzw. Oben kann man die Koordinaten hin und her
+      kopieren.</para>
+
+      <para>Durch einen Klick auf die Koordinaten selbst gelangt man zu
+      nachfolgendem Fenster:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/coordsparser.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para></para>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Import</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Export</title>
+
+      <para></para>
+
+      <section>
+        <title id="zu_garmin" xreflabel="Export zu Garmin">Zu Garmin</title>
+
+        <para>Dieser Menüeintrag ist nur dann Aktiv, wenn GPSBabel in dem
+        CacheWolf Verzeichnis gefunden wurde.</para>
+      </section>
+    </section>
+
+    <section>
+      <title id="karten">Karten</title>
+
+      <para>Mit CacheWolf (ab der Version 0.9m) ist es möglich, Karten zu
+      importieren und zu kalibrieren. Diese werden dann als Moving Map genutzt
+      (siehe <xref lang="" linkend="goto" />).</para>
+
+      <sidebar>
+        <para>Eine Moving Map unterscheidet sich von den typischen mobilen
+        Navigationssystemen (die heute häufig auf PDAs im Auto genutzt werden)
+        dadurch, dass dem Computer keinerlei Information über Strassen und
+        Wege vorliegen. Der Computer kann "nur" von einer GPS Koordinate auf
+        die x/y Koordinaten der Karte umrechnen und kann dadurch auf der Karte
+        darstellen, wo man sich befindet.</para>
+      </sidebar>
+
+      <para></para>
+
+      <section>
+        <title>Kalibrierte herunterladen</title>
+
+        <para>Über diese Funktion lassen sich georeferenzierte Karten direkt
+        aus dem Internat laden. Hierbei können zwei grundsätzlich
+        unterschiedliche Quellen genutzt werden. Expedia wurde schon in
+        früheren Versionen angeboten. Mit der 1.0 werden nun WMS Quellen
+        ebenfalls angeboten.</para>
+
+        <sidebar>
+          <para>Ein Web Map Service (WMS) ist ein Web Service, der auf den WMS
+          Implementation Specifications beruht, einer Schnittstelle, um Karten
+          zu generieren. <citation>Expedia</citation></para>
+        </sidebar>
+
+        <para>Siehe die Datei <literal>readme_wms.txt</literal> im Verzeichnis
+        <literal>webmapservices</literal>, um eigene WMS Quellen
+        einzubinden.</para>
+
+        <para>Mit der 1.0 werden Quellen für Karten folgender Bundesländer
+        angeboten:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Deutschland TOPO 1000</para>
+          </listitem>
+
+          <listitem>
+            <para>Deutschland TOPO 500</para>
+          </listitem>
+
+          <listitem>
+            <para>Deutschland TOPO 200</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Bayern</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Baden-Würtemberg</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Rheinland Pfalz</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Mecklenburg Vorpommern</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Sachsen</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Sachsen Anhalt</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Nordrhein Westphalen</para>
+          </listitem>
+
+          <listitem>
+            <para>TOPO 50 Baden-Würtemberg</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Für einige Bundesländer sind ebenfalls Luftbildaufnahmen
+        verfügbar.</para>
+
+        <para>Nach dem Klick auf diese Menüoption erscheint folgendes
+        Fenster:</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/georef_laden.jpg" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Hier muss man nun unterscheiden, was genau man haben möchte. Mit
+        dem Reiter "Tiles" werden aneinander hängende Kacheln geladen. Wie
+        viele wird bestimmt durch die Auswahl "all caches", bzw. "selected
+        caches" in Verbindung mit dem gesetzten Hacken bei
+        <literal>for</literal>. Wählt man "all" wird CacheWolf ein Rechteck
+        berechnen, der alle Caches umfasst und dann Kacheln gemäß der
+        eingestellten Genauigkeit (<literal>Approx. m per pixel</literal>)
+        bilden und herunterladen. Die Angabe bei overlapping in pixel legt
+        fest, wie viel die einzelnen Kacheln sich überlappen, sprich bei 0
+        liegen die Kachelkanten genau aneinander, ansonsten überschneiden sie
+        sich.</para>
+
+        <para>Statt die Kachel für alle Caches zu laden kann man auch sagen,
+        dass ein Rechteck um eine gesetzte Mitte (<literal>around the
+        center</literal>) heruntergeladen werden soll.</para>
+
+        <para>Der Hacken bei <literal>download an overview map</literal> wird
+        CacheWolf veranlassen eine Kachel zu ermitteln und herunterzuladen,
+        die das gesamte Rechteck umschliesst.</para>
+
+        <para>Die eben beschriebene Kachelmethode kann sehr viele Daten
+        (Dateien) generieren. In Gebieten, wo Caches weit auseinander liegen
+        erzeugt man hierdurch einen ziemlichen Überhang an Daten. Daher
+        besteht auch die Möglichkeit, Karten je Cache zu laden:</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/georef_per_cache.jpg" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Auch hier besteht die Möglichkeit eine Karte je Cache in der
+        Datenbank oder nur für die, die in der Listenansicht (einen Häckchen
+        wurde gesetzt) selektiert wurden.</para>
+
+        <para>Durch ein Klick auf <literal>OK</literal> beginnt der Download.
+        Je nach dem, wie die Parameter eingestellt wurden kann der Download
+        etwas Zeit in Anspruch nehmen.</para>
+      </section>
+
+      <section>
+        <title>Importieren</title>
+
+        <para>Der Import von Karten erfolgt durch die Auswahl eines
+        Verzeichnisses, in dem sich Karten im Format (PNG, JPG, GIF, BMP)
+        befinden (Leider werden die Karten selbst in dem Verzeichnis nicht
+        angezeigt). Wenn sich ebenfalls .map Deteien in dem Verzeichjnis
+        befinden, wird CacheWolf diese Dateien zum Kalibrieren der
+        gleichnamigen Kartendatei verwenden. </para>
+
+        <para><example>
+            <title>Kartendatei mit zugehörige .map Datei</title>
+
+            <para>Kartendatei: 01x01.png .map Datei: 01x01.map</para>
+          </example></para>
+
+        <para>Mit einer .map Datei meinen wir eine Datei im OziExplorer
+        format: <ulink
+        url="http://www.rus-roads.ru/gps/help_ozi/map_file_format.html">http://www.rus-roads.ru/gps/help_ozi/map_file_format.html</ulink></para>
+      </section>
+
+      <section>
+        <title>Kalibrieren</title>
+
+        <para>Zum Kalibrieren einer Karte muss man für mindestens drei Punkte
+        auf der Karte die GPS Koordinaten (WGS84, DMM) kennen. CacheWolf kann
+        aber auch mit mehr Koordinaten arbeiten; dadurch wird die Kalibrierung
+        genauer. Durch klick auf Anwendung -&gt; Karten -&gt; Kalibrieren
+        erhält man folgendes Bild:</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Speichern</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Speichern &amp; Beenden</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Beenden</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Suchen</title>
+
+    <para></para>
+
+    <section>
+      <title>Suchen</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Suche aufheben</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title id="filter">Filter</title>
+
+    <para></para>
+
+    <section>
+      <title>Anwenden</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Erzeugen</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Umkehren</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Aufheben</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Auswahl filtern</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Zeige Blacklist</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Cachetour</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title id="verwalten">Verwalten</title>
+
+    <para></para>
+
+    <section>
+      <title>Kopieren</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Verschieben</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Löschen</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Index neu erstellen</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title id="tbugs_verwalten">Travelbugs verwalten</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Über</title>
+
+    <para></para>
+  </section>
+</chapter>

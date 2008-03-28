@@ -1,0 +1,22 @@
+# Release
+T0VersionMajor: 0
+T0VersionMinor: 9
+T0Revision: 0
+
+# ReleaseCandidate
+T1VersionMajor: 0
+T1VersionMinor: 9
+T1SvnRevision: 800
+
+# InDevelopmentStable
+T2VersionMajor: 0
+T2VersionMinor: 9
+T2SvnRevision: 1000
+
+# InDevelopmentNewest
+T3VersionMajor: 0
+T3VersionMinor: 9
+T3SvnRevision: http://flyingfish.freewrt.org:8180/job/Cachewolf/lastBuild/
+
+RecommendedType: 3
+
