@@ -155,8 +155,9 @@ public class MainTab extends mTabbedPanel {
 			// Update chD with Details
 			if(detP.isDirty()) {
 				cacheDirty=true;
+				boolean isNew = detP.isNew();
 				detP.saveDirtyWaypoint();
-				if (detP.isNew()) {
+				if (isNew) {
 					tbP.myMod.updateRows();// This sorts the waypoint (if it is new) into the right position
 					tbP.selectRow(profile.getCacheIndex(detP.thisCache.wayPoint));
 				}
