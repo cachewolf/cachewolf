@@ -13,4 +13,3 @@ mkdir .\work\webmapservices
 copy .\res_noewe\webmapservices\*.* .\work\webmapservices\*.*
 mkdir .\work\languages
 copy .\res_noewe\languages\*.* .\work\languages\*.*
-copy .\lib\*.dll .\work\

@@ -1,1 +1,1 @@
-java -cp lib/ewe.jar Ewe ../Ewe/programs/Jewel.ewe
+java -cp lib/compile/ewe.jar Ewe programs/Jewel.ewe

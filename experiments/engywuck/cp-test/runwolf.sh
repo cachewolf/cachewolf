@@ -1,4 +1,4 @@
 #!/bin/sh
 cd work
-java -cp ../lib/ewe.jar:../lib:../bin Ewe CacheWolf.CacheWolf
+java -cp ../lib/compile/ewe.jar:../lib/additional:../bin Ewe CacheWolf.CacheWolf
 cd ..

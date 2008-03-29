@@ -7,7 +7,7 @@ printf '/VER_SVN =/s/\$.*\$/$LastChangedRevision: %s $/\nwq\n' $v | \
     ed -s src/CacheWolf/Version.java
 rm -rf bin
 mkdir -p bin/CacheWolf
-javac -source 1.3 -target 1.1 -encoding windows-1252 -cp ./lib/CompileEwe.zip:./lib/  -d ./bin/ -deprecation -nowarn ./src/CacheWolf/*.java ./src/CacheWolf/*/*.java ./src/exp/*.java ./src/utils/*.java
+javac -source 1.3 -target 1.1 -encoding windows-1252 -cp ./lib/compile/CompileEwe.zip:./lib/additional/  -d ./bin/ -deprecation -nowarn ./src/CacheWolf/*.java ./src/CacheWolf/*/*.java ./src/exp/*.java ./src/utils/*.java
 /usr/local/bin/ewecl programs/Jewel.ewe -c cw-pda.jnf
 /usr/local/bin/ewecl programs/Jewel.ewe -c cw-pc.jnf
 # Dont change the order above because the PC version has to overwrite the PDA version of the EWE-file
