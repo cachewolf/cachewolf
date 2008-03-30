@@ -165,26 +165,26 @@ public class CacheType {
 			{"Question","52"},{"Final","53"},
 			{"Trailhead","54"},{"Reference","55"},{"WhereIGo","1858"}};
 
-	public static String transType(String geoNum){
+	public static String transType(int geoNum){
 		String geo = new String("Unknown");
-		if(geoNum.equals("2")) geo = "Traditional Cache";
-		if(geoNum.equals("3")) geo = "Multi-cache";
-		if(geoNum.equals("4")) geo = "Virtual Cache";
-		if(geoNum.equals("5")) geo = "Letterbox Hybrid";
-		if(geoNum.equals("6")) geo = "Event Cache";
-		if(geoNum.equals("11")) geo = "Webcam Cache";
-		if(geoNum.equals("8")) geo = "Unknown Cache";
-		if(geoNum.equals("12")) geo = "Locationless Cache";
-		if(geoNum.equals("13")) geo = "Cache In Trash Out Event";
-		if(geoNum.equals("137")) geo = "Earthcache";
-		if(geoNum.equals("453")) geo = "Mega Event Cache";
-		if(geoNum.equals("1858")) geo = "WhereIGo Cache";
-		if(geoNum.equals("50")) geo = "Parking Area";
-		if(geoNum.equals("51")) geo = "Stages of a Multicache";
-		if(geoNum.equals("52")) geo = "Question to Answer";
-		if(geoNum.equals("53")) geo = "Final Location";
-		if(geoNum.equals("54")) geo = "Trailhead";
-		if(geoNum.equals("55")) geo = "Reference Point";
+		if(geoNum == 2) geo = "Traditional Cache";
+		if(geoNum == 3) geo = "Multi-cache";
+		if(geoNum == 4) geo = "Virtual Cache";
+		if(geoNum == 5) geo = "Letterbox Hybrid";
+		if(geoNum == 6) geo = "Event Cache";
+		if(geoNum == 11) geo = "Webcam Cache";
+		if(geoNum == 8) geo = "Unknown Cache";
+		if(geoNum == 12) geo = "Locationless Cache";
+		if(geoNum == 13) geo = "Cache In Trash Out Event";
+		if(geoNum == 137) geo = "Earthcache";
+		if(geoNum == 453) geo = "Mega Event Cache";
+		if(geoNum == 1858) geo = "WhereIGo Cache";
+		if(geoNum == 50) geo = "Parking Area";
+		if(geoNum == 51) geo = "Stages of a Multicache";
+		if(geoNum == 52) geo = "Question to Answer";
+		if(geoNum == 53) geo = "Final Location";
+		if(geoNum == 54) geo = "Trailhead";
+		if(geoNum == 55) geo = "Reference Point";
 		return geo;
 	}
 	
@@ -220,37 +220,31 @@ public class CacheType {
 		}
 	}
 
-	public static boolean isAddiWpt(String type){
-		if (type.equals("50")) return true;
-		if (type.equals("51")) return true;
-		if (type.equals("52")) return true;
-		if (type.equals("53")) return true;
-		if (type.equals("54")) return true;
-		if (type.equals("55")) return true;
-		return false;
+	public static boolean isAddiWpt(int type){
+		return (type >= 50 && type <= 55);
 	}
 
-	public static String typeText2Number(String typeText){
-		if (typeText.equals("Traditional Cache") || typeText.equals("Traditional")|| typeText.equals("Classic")) return "2";
-		if (typeText.equals("Multi-cache") || typeText.equals("Multi") || typeText.equals("Offset")) return "3";
-		if (typeText.equals("Virtual Cache") || typeText.equals("Virtual")) return "4";
-		if (typeText.equals("Letterbox Hybrid")) return "5";
-		if (typeText.equals("Event Cache") || typeText.equals("Event")) return "6";
-		if (typeText.equals("Unknown Cache") || typeText.equals("Other") || typeText.equals("Quiz")) return "8";
-		if (typeText.equals("Webcam Cache") || typeText.equals("Webcam")) return "11";
-		if (typeText.equals("Locationless (Reverse) Cache")) return "12";
-		if (typeText.equals("Cache In Trash Out Event")) return "13";
-		if (typeText.equals("Earthcache") || typeText.equals("Earth")) return "137";
-		if (typeText.equals("Mega-Event Cache")) return "453";
-		if (typeText.equals("Wherigo Cache")) return "1858";
-		if (typeText.equals("Waypoint|Parking Area")) return "50";
-		if (typeText.equals("Waypoint|Stages of a Multicache")) return "51";
-		if (typeText.equals("Waypoint|Question to Answer")) return "52";
-		if (typeText.equals("Waypoint|Final Coordinates")||typeText.equals("Waypoint|Final Location")) return "53";
-		if (typeText.equals("Waypoint|Trailhead")) return "54";
-		if (typeText.equals("Waypoint|Reference Point")) return "55";
+	public static int typeText2Number(String typeText){
+		if (typeText.equals("Traditional Cache") || typeText.equals("Traditional")|| typeText.equals("Classic")) return 2;
+		if (typeText.equals("Multi-cache") || typeText.equals("Multi") || typeText.equals("Offset")) return 3;
+		if (typeText.equals("Virtual Cache") || typeText.equals("Virtual")) return 4;
+		if (typeText.equals("Letterbox Hybrid")) return 5;
+		if (typeText.equals("Event Cache") || typeText.equals("Event")) return 6;
+		if (typeText.equals("Unknown Cache") || typeText.equals("Other") || typeText.equals("Quiz")) return 8;
+		if (typeText.equals("Webcam Cache") || typeText.equals("Webcam")) return 11;
+		if (typeText.equals("Locationless (Reverse) Cache")) return 12;
+		if (typeText.equals("Cache In Trash Out Event")) return 13;
+		if (typeText.equals("Earthcache") || typeText.equals("Earth")) return 137;
+		if (typeText.equals("Mega-Event Cache")) return 453;
+		if (typeText.equals("Wherigo Cache")) return 1858;
+		if (typeText.equals("Waypoint|Parking Area")) return 50;
+		if (typeText.equals("Waypoint|Stages of a Multicache")) return 51;
+		if (typeText.equals("Waypoint|Question to Answer")) return 52;
+		if (typeText.equals("Waypoint|Final Coordinates")||typeText.equals("Waypoint|Final Location")) return 53;
+		if (typeText.equals("Waypoint|Trailhead")) return 54;
+		if (typeText.equals("Waypoint|Reference Point")) return 55;
 		Vm.debug("Unknown Cache Type:" + typeText);
-		return "0";
+		return 0;
 	}
 
 	/**
@@ -268,31 +262,30 @@ public class CacheType {
 		*	9		??		Moving		9->109 (ok)
 		*	10		??		Drive-In		10->110 (ok)
 		*/
-		public static String transOCType(String type){
-			if(type.equals("1")) return "8";
-			if(type.equals("2")) return "2";
-			if(type.equals("3")) return "3";	
-			if(type.equals("4")) return "4";
-			if(type.equals("5")) return "11";
-			if(type.equals("6")) return "6";
-			if(type.equals("7")) return "8";
-			if(type.equals("8")|| type.equals("9") ||type.equals("10")) return "8";
+		public static int transOCType(int type){
+			if(type == 1) return 8;
+			if(type == 2) return 2;
+			if(type == 3) return 3;	
+			if(type == 4) return 4;
+			if(type == 5) return 11;
+			if(type == 6) return 6;
+			if(type == 7) return 8;
+			if(type >= 8 || type <= 10) return 8;
 	/* Not supportet at the moment
 			if(type.equals("8")) return "108";
 			if(type.equals("9")) return "109";
 			if(type.equals("10")) return "110";
 	*/
 			//no match found? return custom type!
-			return "0";
+			return 0;
 		}
 
 		
-	public static Image cache2Img(String cacheType) {
-		int ct=Convert.parseInt(cacheType);
-		if (ct==1858)
+	public static Image cache2Img(int cacheType) {
+		if (cacheType==1858)
 			return cacheImages[WHERIGO];
 		else	
-			return cacheImages[ct]; // TODO save in cacheholder as int
+			return cacheImages[cacheType]; // TODO save in cacheholder as int
 	}
 
 }

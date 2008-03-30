@@ -355,25 +355,25 @@ public class Filter{
 			if (hasTypeMatchPattern) { // Only do the checks if we have a filter
 				cacheTypePattern = 0;
 				// As each cache can only have one type, we can use else if and set the type
-				if (ch.type.equals("0")) cacheTypePattern = CUSTOM;
-				else if(ch.type.equals("2")) cacheTypePattern = TRADITIONAL;
-				else if(ch.type.equals("3")) cacheTypePattern = MULTI;
-				else if(ch.type.equals("4")) cacheTypePattern = VIRTUAL;
-				else if(ch.type.equals("5")) cacheTypePattern = LETTER;
-				else if(ch.type.equals("6")) cacheTypePattern = EVENT;
-				else if(ch.type.equals("8")) cacheTypePattern = MYSTERY;
-				else if(ch.type.equals("11")) cacheTypePattern = WEBCAM;
-				else if(ch.type.equals("12")) cacheTypePattern = LOCLESS;
-				else if(ch.type.equals("137"))cacheTypePattern = EARTH;
-				else if(ch.type.equals("453"))cacheTypePattern = MEGA;
-				else if(ch.type.equals("50"))cacheTypePattern = PARKING;
-				else if(ch.type.equals("51"))cacheTypePattern = STAGE;
-				else if(ch.type.equals("52"))cacheTypePattern = QUESTION;
-				else if(ch.type.equals("53"))cacheTypePattern = FINAL;
-				else if(ch.type.equals("54"))cacheTypePattern = TRAILHEAD;
-				else if(ch.type.equals("55"))cacheTypePattern = REFERENCE;
-				else if(ch.type.equals("13"))cacheTypePattern = CITO;
-				else if(ch.type.equals("1858"))cacheTypePattern = WHERIGO;
+				if (ch.type == 0) cacheTypePattern = CUSTOM;
+				else if(ch.type == 2) cacheTypePattern = TRADITIONAL;
+				else if(ch.type == 3) cacheTypePattern = MULTI;
+				else if(ch.type == 4) cacheTypePattern = VIRTUAL;
+				else if(ch.type == 5) cacheTypePattern = LETTER;
+				else if(ch.type == 6) cacheTypePattern = EVENT;
+				else if(ch.type == 8) cacheTypePattern = MYSTERY;
+				else if(ch.type == 11) cacheTypePattern = WEBCAM;
+				else if(ch.type == 12) cacheTypePattern = LOCLESS;
+				else if(ch.type == 137)cacheTypePattern = EARTH;
+				else if(ch.type == 453)cacheTypePattern = MEGA;
+				else if(ch.type == 50)cacheTypePattern = PARKING;
+				else if(ch.type == 51)cacheTypePattern = STAGE;
+				else if(ch.type == 52)cacheTypePattern = QUESTION;
+				else if(ch.type == 53)cacheTypePattern = FINAL;
+				else if(ch.type == 54)cacheTypePattern = TRAILHEAD;
+				else if(ch.type == 55)cacheTypePattern = REFERENCE;
+				else if(ch.type == 13)cacheTypePattern = CITO;
+				else if(ch.type == 1858)cacheTypePattern = WHERIGO;
 				if ((cacheTypePattern & typeMatchPattern) == 0) { ch.is_filtered=true; continue; }
 			}			
 			///////////////////////////////

@@ -774,11 +774,11 @@ public class SpiderGC{
 	 * @param doc A previously fetched cachepage
 	 * @return the waypoint type (Tradi, Multi, etc.)
 	 */
-	private String getType(String doc) throws Exception{
+	private int getType(String doc) throws Exception{
 		inRex = new Regex(p.getProp("cacheTypeRex"));
 		inRex.search(doc);
-		if(inRex.didMatch()) return inRex.stringMatched(1);
-		else return "";
+		if(inRex.didMatch()) return new Integer(inRex.stringMatched(1)).intValue();
+		else return 0;
 	}
 
 	/**

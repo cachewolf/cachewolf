@@ -100,7 +100,7 @@ public class KMLExporter extends Exporter {
 					tmp = (Vector)entry.getValue();
 					// skip over empty cachetypes
 					if (tmp.size() == 0) continue;
-					outp.print(startFolder(CacheType.transType((String)entry.getKey())));
+					outp.print(startFolder(CacheType.transType(new Integer((String)entry.getKey()).intValue())));
 
 					for(int i = 0; i<tmp.size(); i++){
 						ch = (CacheHolder) tmp.get(i);
@@ -285,7 +285,7 @@ public class KMLExporter extends Exporter {
 		strBuf.append("      <IconStyle>\r\n");
 		strBuf.append("         <Icon>\r\n");
 //		strBuf.append("            <href>"+ File.getProgramDirectory()+ "/" + CacheType.type2pic(Convert.parseInt(ch.type))+ "</href>\r\n");
-		strBuf.append("            <href>"+ CacheType.type2pic(Convert.parseInt(ch.type))+ "</href>\r\n");
+		strBuf.append("            <href>"+ CacheType.type2pic(ch.type)+ "</href>\r\n");
 		strBuf.append("         </Icon>\r\n");
 		strBuf.append("      </IconStyle>\r\n");
 		strBuf.append("      <LabelStyle>\r\n");
