@@ -25,7 +25,9 @@ public class Version {
 	};
 	
 	/** only valid after calling checkForUpdates() */
-	static int[] updateavailabe = {0,0,0,0,0}; 
+	static int[] updateavailabe = {0,0,0,0,0};
+	/** only valid after calling checkForUpdates() */
+	static String[] versionnumbers;
 
 	public static String getRelease() {
 		return Convert.toString(VER_MAJOR) + "." + Convert.toString(VER_MINOR);
@@ -44,8 +46,9 @@ public class Version {
 	 */
 	public static void checkForUpdates() throws IOException {
 		Properties curvers = UrlFetcher.fetchPropertyList("http://www.cachewolf.org/currentversions.txt");
+		versionnumbers = new String[updateavailabe.length];
 		for (int i = updateavailabe.length-1; i >=1; i--) {
-			updateavailabe[i] = (checkVersion(curvers, "T"+(i-1))); 
+			updateavailabe[i] = checkVersion(curvers, "T"+(i-1), i); // this also sets versionnumber[i]
 		}
 		updateavailabe[0] = Convert.toInt(curvers.getProperty("RecommendedType", "0"));
 	}
@@ -59,6 +62,7 @@ public class Version {
 		for (int i=1; i <= updateavailabe.length -1; i++) {
 			if (updateavailabe[i] != 2 || i-1 == VERSION_TYPE) {
 				ret.append(MyLocale.getMsg(7000+i-1, VERSION_TYPES[i-1]));
+				if (versionnumbers[i] != null) ret.append(" ").append(versionnumbers[i]);
 				if (i == updateavailabe[0]) ret.append("*");
 				if (i-1 == VERSION_TYPE ) ret.append("+");
 				ret.append(": ");
@@ -67,7 +71,8 @@ public class Version {
 			}
 		}
 		ret.append("* = ").append(MyLocale.getMsg(7020, "Recommended version type"));
-		ret.append("\n+ = ").append(MyLocale.getMsg(7021, "This version type"));
+		ret.append("\n+ = ").append(MyLocale.getMsg(7021, "This version type")).append("\n");
+		ret.append(getReleaseDetailed());
 		return ret.toString();
 	}
 
@@ -85,27 +90,33 @@ public class Version {
 	 * @return: 1 = newer Version available, 0 = this is up to date, 3 = check failed
 	 */
 
-	private static int checkVersion(Properties curvers, String prefix) {
+	private static int checkVersion(Properties curvers, String prefix, int t) {
 		try {
-			int curv = Convert.toInt(curvers.getProperty(prefix + "VersionMajor", "0")); 
-			if (curv > VER_MAJOR) return 1;
-			if (curv < VER_MAJOR) return 0;
-			curv = Convert.toInt(curvers.getProperty(prefix + "VersionMinor", "0"));
-			if (curv > VER_MINOR) return 1;
-			if (curv < VER_MINOR) return 0;
+			int curvmaj = Convert.toInt(curvers.getProperty(prefix + "VersionMajor", "0")); 
+			int curvmin = Convert.toInt(curvers.getProperty(prefix + "VersionMinor", "0"));
 			String svnRString = curvers.getProperty(prefix + "SvnRevision","0");
 			if (svnRString.startsWith("http")) {
-				String tmp = UrlFetcher.fetchString(svnRString);
-				Regex s = new Regex("(?i)Revision[\\s]*[:=][\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)");
+				String tmp;
+				Regex s;
+				int i = svnRString.indexOf(' '); 
+				if (i > 0) {
+					tmp = UrlFetcher.fetchString(svnRString.substring(0, i));
+					s = new Regex (svnRString.substring(i+1, svnRString.length()-i-1)); // flyingfish works 3/2008 with ("(?i)Revision[\\s]*[:=][\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)");
+				} else { versionnumbers[t] = "error: no RegEx"; return 3; } 
 				s.search(tmp);
-				if (!s.didMatch()) return 3;
+				if (!s.didMatch()) { versionnumbers[t] = "error: RegEx didnot match"; return 3; }
 				svnRString = s.stringMatched(1); 
 			}
+			versionnumbers[t] = curvmaj + "." + curvmin + "." + svnRString;
+			if (curvmaj > VER_MAJOR) return 1;
+			if (curvmaj < VER_MAJOR) return 0;
+			if (curvmin > VER_MINOR) return 1;
+			if (curvmin < VER_MINOR) return 0;
 			if (Convert.toInt(svnRString) > SVN_REVISION) return 1;
 			return 0;
 		} catch (IOException e) {
+			versionnumbers[t] = "IO-error"; 
 			return 3;
 		}
 	}
-
 }
