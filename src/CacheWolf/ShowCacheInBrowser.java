@@ -185,7 +185,7 @@ public class ShowCacheInBrowser {
 							addis.put("WAYPOINT",ch.wayPoint);
 							addis.put("NAME",ch.CacheName);
 							addis.put("LATLON",ch.LatLon);
-							addis.put("IMG","<img src=\""+CacheType.type2pic(Convert.parseInt(ch.type))+"\">");
+							addis.put("IMG","<img src=\""+CacheType.type2pic(ch.type)+"\">");
 							CacheHolderDetail chDA=new CacheHolderDetail(ch);
 							chDA.readCache(Global.getProfile().dataDir);
 							addis.put("LONGDESC",chDA.LongDescription); // Do we need to treat longDesc as above ?

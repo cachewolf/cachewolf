@@ -93,7 +93,7 @@ public class TomTomExporter {
 				out =  new RandomAccessFile(fileName,"rw");
 				for(int i = 0; i<cacheDB.size(); i++){
 					holder=(CacheHolder)cacheDB.get(i);
-					if(holder.type.equals(CacheType.wayType[j][TT_WPT_NUM]) && holder.is_black == false && holder.is_filtered == false){
+					if(holder.type == new Integer(CacheType.wayType[j][TT_WPT_NUM]).intValue() && holder.is_black == false && holder.is_filtered == false){
 						currExp++;
 						h.progress = (float)currExp/(float)counter;
 						h.changed();
