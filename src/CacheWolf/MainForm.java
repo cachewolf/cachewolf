@@ -61,16 +61,17 @@ public class MainForm extends Editor {
 		Rect screen = ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0)));
 		if ( screen.height >= 600 && screen.width >= 800) this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
-		// Load CacheList
-		InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
-		infB.exec();
-		infB.waitUntilPainted(100);
+		InfoBox infB = null;  
 		try{
 			pref.readPrefFile();
 			addGuiFont();
 			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true)) 
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
 			Vm.showWait(true);
+			// Load CacheList
+			infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
+			infB.exec();
+			infB.waitUntilPainted(100);
 			profile.readIndex();
 			pref.curCentrePt.set(profile.centre);
 			profile.updateBearingDistance();
