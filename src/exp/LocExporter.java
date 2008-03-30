@@ -104,12 +104,11 @@ public class LocExporter extends Exporter{
 			// First check if there is a mapping for "cache found"
 			if (chD.is_found) {
 				for (int i=0; i<mapSize; i++)
-					// TODO Geht das noch schöner...? ................ <------------------------------>
-					if (symbols[i].onlyIfFound!=null && symbols[i].type.equals(String.valueOf(chD.type))) return symbols[i].name;
+					if (symbols[i].onlyIfFound!=null && symbols[i].type.equals(chD.type)) return symbols[i].name;
 			}
 			// Now try mapping the cache irrespective of the "found" status
 			for (int i=0; i<mapSize; i++)
-				if (symbols[i].type.equals(String.valueOf(chD.type))) return symbols[i].name;
+				if (symbols[i].type.equals(chD.type)) return symbols[i].name;
 		
 			// If it is not a mapped type, just use the standard mapping
 			if (chD.is_found)

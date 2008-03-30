@@ -188,7 +188,7 @@ public class CalcPanel extends CellPanel {
 				coordOut = coordInp.project(bd.degrees, bd.distance);
 				ch.LatLon = coordOut.toString();
 				ch.pos.set(coordOut);
-				ch.type = 51; // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
+				ch.type = "51"; // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
 				mainT.newWaypoint(ch);
 			}
 			

@@ -230,17 +230,17 @@ public class ExploristExporter {
 		sb.append(",");
 		String add = "";
 		if (chD.isAddiWpt()) {
-			if (chD.type == 50) {
+			if (chD.type.equals("50")) {
 				add = "Pa:";
-			} else if (chD.type == 51) {
+			} else if (chD.type.equals("51")) {
 				add = "St:";
-			} else if (chD.type == 52) {
+			} else if (chD.type.equals("52")) {
 				add = "Qu:"; 
-			} else if (chD.type == 53) {	
+			} else if (chD.type.equals("53")) {	
 				add = "Fi:";
-			} else if (chD.type == 54) {
+			} else if (chD.type.equals("54")) {
 				add = "Tr:";
-			} else if (chD.type == 55) {	
+			} else if (chD.type.equals("55")) {	
 				add = "Re:";
 			}
 			sb.append(add).append(removeCommas(chD.CacheName));
@@ -255,7 +255,7 @@ public class ExploristExporter {
 		
 		if (!add.equals("")) { // Set Picture in Explorist to Virtual
 			sb.append("Virtual Cache");
-		} else if (chD.type != 8) { // Rewrite Unknown Caches
+		} else if (!chD.type.equals("8")) { // Rewrite Unknown Caches
 			sb.append(CacheType.transType(chD.type));
 		} else {
 			sb.append("Mystery Cache");
