@@ -101,7 +101,7 @@ public class Version {
 				int i = svnRString.indexOf(' '); 
 				if (i > 0) {
 					tmp = UrlFetcher.fetchString(svnRString.substring(0, i));
-					s = new Regex (svnRString.substring(i+1, svnRString.length()-i-1)); // flyingfish works 3/2008 with ("(?i)Revision[\\s]*[:=][\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)");
+					s = new Regex (svnRString.substring(i+1, svnRString.length())); // flyingfish works 3/2008 with ("(?i)Revision[\\s]*[:=][\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)");
 				} else { versionnumbers[t] = "error: no RegEx"; return 3; } 
 				s.search(tmp);
 				if (!s.didMatch()) { versionnumbers[t] = "error: RegEx didnot match"; return 3; }
