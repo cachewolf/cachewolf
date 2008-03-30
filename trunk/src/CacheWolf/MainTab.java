@@ -242,7 +242,7 @@ public class MainTab extends mTabbedPanel {
 			}
 			break;
 		case 7: // GotoPanel
-			MyLocale.setSIPButton();
+			MyLocale.setSIPOff();
 			break;
 		case 8:  // Cache Radar Panel
 			MyLocale.setSIPOff();
