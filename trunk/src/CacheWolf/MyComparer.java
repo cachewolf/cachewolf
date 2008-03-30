@@ -20,7 +20,7 @@ public class MyComparer implements Comparer{
 		if (colToCompare==1) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=String.valueOf(ch.type);
+				ch.sort=ch.type;
 			}
 		} else if (colToCompare==2) {
 			for (int i=0; i<visibleSize; i++) {

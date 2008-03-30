@@ -404,7 +404,7 @@ public class GotoPanel extends CellPanel {
 				CacheHolder ch = new CacheHolder();
 				ch.LatLon = myNavigation.gpsPos.toString();
 				ch.pos = new CWPoint(myNavigation.gpsPos);
-				ch.type = 51; // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
+				ch.type = "51"; // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
 				mainT.newWaypoint(ch);
 			}
 			// change destination waypoint

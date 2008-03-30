@@ -354,7 +354,7 @@ public class OCXMLImporter extends MinML {
 			cacheID = atts.getValue("id");
 		}
 		if(name.equals("type")){
-			chD.type = CacheType.transOCType(new Integer(atts.getValue("id")).intValue()); 
+			chD.type = CacheType.transOCType(atts.getValue("id"));
 			return;
 		}
 		if(name.equals("status")){
