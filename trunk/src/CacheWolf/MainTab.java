@@ -211,13 +211,21 @@ public class MainTab extends mTabbedPanel {
 		case 3: // Picture Panel
 			if (chD!=null) {
 				MyLocale.setSIPOff();
-				imageP.setImages(chD);
+				if (chD.isAddiWpt()) { 
+					imageP.setImages(chD.mainCache.getCacheDetails(true));
+				} else {
+					imageP.setImages(chD);
+				}
 			}
 			break;
 		case 4:  // Log Hint Panel
 			if (chD!=null) {
 				MyLocale.setSIPOff();
-				hintLP.setText(chD);
+				if (chD.isAddiWpt()) { 
+					hintLP.setText(chD.mainCache.getCacheDetails(true));
+				} else {
+					hintLP.setText(chD);
+				}
 			}
 			break;
 		case 5:  // Solver Panel
