@@ -53,7 +53,7 @@ public class PreferencesScreen extends Form {
 		else if(pref.fontSize <= 17){
 			setPreferredSize(300,250);
 		}
-		else if(pref.fontSize <= 21){
+		else if(pref.fontSize <= 20){
 			setPreferredSize(350,300);
 		}
 		else if(pref.fontSize <= 24){

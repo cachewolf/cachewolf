@@ -41,26 +41,26 @@ public class MovingMap extends Form {
 	//String mapPath;
 	Navigate myNavigation;
 	boolean running = false;
-
+	
 	MapImage mapImage1to1;
 	ArrowsOnMap directionArrows = new ArrowsOnMap();
-	AniImage statusImageHaveSignal = new AniImage("position_green.png");
-	AniImage statusImageNoSignal = new AniImage("position_yellow.png");
-	AniImage statusImageNoGps = new AniImage("position_red.png");
+	AniImage statusImageHaveSignal;
+	AniImage statusImageNoSignal;
+	AniImage statusImageNoGps;
 	AniImage bottonImageClose;
-	AniImage bottonImageChooseMap = new AniImage("choose_map.gif"); 
-	AniImage buttonImageGpsOn = new AniImage("snap2gps.gif");
-	AniImage buttonImageLens = new AniImage("lupe.png");
-	AniImage buttonImageLensActivated = new AniImage("lupe_activated.png");
-	AniImage buttonImageLensActivatedZoomIn = new AniImage("lupe_activated_zin.png");
-	AniImage buttonImageLensActivatedZoomOut = new AniImage("lupe_activated_zout.png");
-	AniImage buttonImageZoom1to1 = new AniImage("zoom1to1.png");
+	AniImage bottonImageChooseMap; 
+	AniImage buttonImageGpsOn;
+	AniImage buttonImageLens;
+	AniImage buttonImageLensActivated;
+	AniImage buttonImageLensActivatedZoomIn;
+	AniImage buttonImageLensActivatedZoomOut;
+	AniImage buttonImageZoom1to1;
 	AniImage DistanceImage;
 	Graphics DistanceImageGraphics;
 	AniImage ScaleImage;
 	Graphics ScaleImageGraphics;
-	MapSymbol posCircle = new MapSymbol("position_green.png", "gps-position", new CWPoint());
-	public static final String MARK_CACHE_IMAGE = "mark_cache.png";
+	MapSymbol posCircle;
+	String MARK_CACHE_IMAGE;
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
 	//double posCircleLat, posCircleLon;
 	FontMetrics fm;
@@ -92,7 +92,30 @@ public class MovingMap extends Form {
 
 		mmp = new MovingMapPanel(this);
 		this.addLast(mmp);
-		DrawnIcon closeX = new DrawnIcon(DrawnIcon.CROSS,15,15,new Color(0,0,0));
+		
+		boolean mobileVGA = false;
+		if (Vm.isMobile() && MyLocale.getScreenWidth() >= 400) mobileVGA = true;  
+		String imagesize="";
+		if(mobileVGA) imagesize="_vga";
+		
+		statusImageHaveSignal = new AniImage("position_green"+imagesize+".png");
+		statusImageNoSignal = new AniImage("position_yellow"+imagesize+".png");
+		statusImageNoGps = new AniImage("position_red"+imagesize+".png");
+		bottonImageChooseMap = new AniImage("choose_map"+imagesize+".gif"); 
+		buttonImageGpsOn = new AniImage("snap2gps"+imagesize+".gif");
+		buttonImageLens = new AniImage("lupe"+imagesize+".png");
+		buttonImageLensActivated = new AniImage("lupe_activated"+imagesize+".png");
+		buttonImageLensActivatedZoomIn = new AniImage("lupe_activated_zin"+imagesize+".png");
+		buttonImageLensActivatedZoomOut = new AniImage("lupe_activated_zout"+imagesize+".png");
+		buttonImageZoom1to1 = new AniImage("zoom1to1"+imagesize+".png");
+		posCircle = new MapSymbol("position_green"+imagesize+".png", "gps-position", new CWPoint());
+		MARK_CACHE_IMAGE = "mark_cache.png";
+		
+		DrawnIcon closeX;
+		if(mobileVGA)
+			closeX = new DrawnIcon(DrawnIcon.CROSS,30,30,new Color(0,0,0));
+		else
+			closeX = new DrawnIcon(DrawnIcon.CROSS,15,15,new Color(0,0,0));
 		bottonImageClose = new AniImage(new Image(closeX.getWidth(), closeX.getHeight()));
 		Graphics tmp = new Graphics(bottonImageClose.image);
 		tmp.setColor(255, 255, 255);
