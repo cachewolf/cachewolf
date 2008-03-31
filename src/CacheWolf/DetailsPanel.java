@@ -514,6 +514,7 @@ public class DetailsPanel extends CellPanel{
 		  dirty_notes=false;
 		  dirty_details=false;
 		  setIsNew(false);
+		  thisCache.getCacheDetails(true).hasUnsavedChanges = true;
 		  
 		  // Global.mainTab.tbP.refreshTable(); this is done in mainTab.onLeavingPanel
 		  ////Vm.debug("New status updated!");
