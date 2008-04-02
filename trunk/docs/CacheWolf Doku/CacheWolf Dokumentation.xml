@@ -5,6 +5,7 @@
 <!ENTITY __DerersteStart__f6anus0g SYSTEM "Der%20erste%20Start.xml">
 <!ENTITY __ansichten__f6anvxip SYSTEM "ansichten.xml">
 <!ENTITY __menu__fay2x5r3 SYSTEM "menu.xml">
+<!ENTITY __benutzte_dateien__fe71ytbk SYSTEM "benutzte_dateien.xml">
 ]>
 <book>
   <title>CacheWolf Dokumentation</title>
@@ -14,7 +15,7 @@
 
     <productnumber>1.0</productnumber>
 
-    <pubdate>Veröffentlicht am 11.12.2008</pubdate>
+    <pubdate>Noch nicht veröffentlicht!</pubdate>
 
     <releaseinfo>Dieses Dokument in der Ausgabe 1.0 bezieht sich auf die
     CacheWolf Version 1.0.</releaseinfo>
@@ -27,4 +28,6 @@
   &__ansichten__f6anvxip;
 
   &__menu__fay2x5r3;
+
+  &__benutzte_dateien__fe71ytbk;
 </book>

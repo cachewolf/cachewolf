@@ -116,6 +116,74 @@
       <title>Import</title>
 
       <para></para>
+
+      <section>
+        <title>Importiere GPX</title>
+
+        <para>Um an Geocaching.com GPX-Dateien zu kommen, muss man
+        Premium–Mitglied sein. Diese Dateien werden per Mail verschickt. Die
+        Dateien können einfach in ein Verzeichnis abgelegt werden. Die Dateien
+        müssen nicht entpackt werden.</para>
+
+        <para>Den Import startest Du durch anwählen von "Anwendung -&gt;
+        Importiere GPX". Du kannst eine Datei oder mit der Verwendung der
+        Umschalt - Taste mehrere Dateien auswählen.</para>
+
+        <para>Nach der Wahl der Datei, die du importieren möchtest, bekommst
+        du die Frage, ob Du auch Bilder und herunterladen möchtest und ob
+        bereits gefundene Caches auch geladen werden sollen.</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="???" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Aktivierst du diese Option(en), solltest du eine bestehende
+        Verbindung ins Internet haben. Hast Du die Option "Bilder" angekreuzt
+        wird CacheWolf beim Einlesen der GPX–Datei auf der Cacheseite
+        nachschauen, ob Bilder in der Beschreibung bzw. ob Spoilerbilder
+        vorhanden sind. Diese werden heruntergeladen. Das Herunterladen von
+        Bildern benötigt etwas Zeit.</para>
+
+        <para><emphasis>Hinweis zu den Additional Waypoints:</emphasis> Leider
+        werden von geocaching.com in der GPX - Datei nur die "Additional
+        Waypoints" mitgeschickt, die auch eine gültige Koordinate haben. Das
+        Dilemma ist aber, dass bei den meisten Multis, diese Koordinaten erst
+        ermittelt werden müssen. Normalerweise stellt dies noch immer kein
+        Problem dar; aber einige Geocacher beschreiben die einzelnen Stationen
+        innerhalb der "Additional Waypoints", da diese aber keine Koordinaten
+        haben und nicht in der GPX Datei nicht mitgeschickt werden, fehlen
+        vitale Informationen. Dem kann aber abgeholfen werden: CacheWolf
+        bietet die Möglichkeit, einzelne Caches aktualisieren zu können und
+        hier werden auch die Additional Waypoints direkt von der Cacheseite
+        geladen, die keine Koordinaten haben (siehe <xref
+        linkend="markierte_akt" />).</para>
+      </section>
+
+      <section>
+        <title>Download von Opencaching.de</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Spider von geocaching.com</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title id="markierte_akt">Markierte aktualisieren</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Always login to gc.com</title>
+
+        <para></para>
+      </section>
     </section>
 
     <section>
@@ -127,7 +195,20 @@
         <title id="zu_garmin" xreflabel="Export zu Garmin">Zu Garmin</title>
 
         <para>Dieser Menüeintrag ist nur dann Aktiv, wenn GPSBabel in dem
-        CacheWolf Verzeichnis gefunden wurde.</para>
+        CacheWolf Verzeichnis gefunden wurde. Von GPSBabel müssen die beiden
+        Dateien:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>gpsbabel.exe, und</para>
+          </listitem>
+
+          <listitem>
+            <para>libexpat.dll</para>
+          </listitem>
+        </orderedlist>
+
+        <para>vorhanden sein.</para>
       </section>
     </section>
 
@@ -277,7 +358,7 @@
         befinden (Leider werden die Karten selbst in dem Verzeichnis nicht
         angezeigt). Wenn sich ebenfalls .map Deteien in dem Verzeichjnis
         befinden, wird CacheWolf diese Dateien zum Kalibrieren der
-        gleichnamigen Kartendatei verwenden. </para>
+        gleichnamigen Kartendatei verwenden.</para>
 
         <para><example>
             <title>Kartendatei mit zugehörige .map Datei</title>
@@ -287,7 +368,34 @@
 
         <para>Mit einer .map Datei meinen wir eine Datei im OziExplorer
         format: <ulink
-        url="http://www.rus-roads.ru/gps/help_ozi/map_file_format.html">http://www.rus-roads.ru/gps/help_ozi/map_file_format.html</ulink></para>
+        url="http://www.rus-roads.ru/gps/help_ozi/map_file_format.html">http://www.rus-roads.ru/gps/help_ozi/map_file_format.html</ulink>.
+        CacheWolf nutzt die Zeilen mit den Präfixen MMPXY und MMPLL; also
+        müssen insgesamt 8 Zeilen vorhanden sein: und zwar zuerst die MMPXY
+        zeilen und dann die MMPLL Zeilen.</para>
+
+        <example>
+          <title>Map Beispieldatei</title>
+
+          <para>MMPNUM,4</para>
+
+          <para>MMPXY,1,10,10</para>
+
+          <para>MMPXY,2,982,815</para>
+
+          <para>MMPXY,3,10,815</para>
+
+          <para>MMPXY,4,982,10</para>
+
+          <para>MMPLL,1, 12.966397, 50.827195</para>
+
+          <para>MMPLL,2, 13.009637, 50.801890</para>
+
+          <para>MMPLL,3, 12.964382, 50.803439</para>
+
+          <para>MMPLL,4, 13.011675, 50.825644</para>
+        </example>
+
+        <para></para>
       </section>
 
       <section>
@@ -296,27 +404,75 @@
         <para>Zum Kalibrieren einer Karte muss man für mindestens drei Punkte
         auf der Karte die GPS Koordinaten (WGS84, DMM) kennen. CacheWolf kann
         aber auch mit mehr Koordinaten arbeiten; dadurch wird die Kalibrierung
-        genauer. Durch klick auf Anwendung -&gt; Karten -&gt; Kalibrieren
-        erhält man folgendes Bild:</para>
+        genauer. Durch klick auf <literal>Anwendung -&gt; Karten -&gt;
+        Kalibrieren</literal> erhält man folgendes Bild:</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/kalib.png" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Zum kalibrieren nun eine Karte aus der Liste "Nicht kalibrierte
+        Karten" auswählen und auf "Laden" klicken. Danach erscheint die Karte
+        in einem neuen Fenster. Ich empfehle dieses Fenster auf die volle
+        Bildschirmgröße zu vergrößern.</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/karte.png" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Jetzt musste Du für drei Punkte auf der Karte die GPS
+        Koordinaten eingeben. Hierzu einen entsprechenden Referenzpunkt mit
+        der Maus anklicken: an der Stelle wird ein rotes Kreuz auf der Karte
+        gezeichnet und ein Eingabefenster erscheint, um die Koordinaten
+        einzugeben (siehe <xref linkend="zentrum" />).</para>
+
+        <para>Nachdem Du drei Punkte angegeben hast wird Cachewolf ab dem
+        vierten Punkt die errechneten Koordinaten unterhalb der Karte
+        anzeigen:</para>
+
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/die_vierte.png" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Die Kalibrierung wird beendet durch einen klick auf den
+        "Fertig!" Knopf.</para>
+
+        <para>Du kannst die kalibrierung jederzeit erneuern in dem Du im
+        Kartenauswahlfenster einfach eine Karte aus der Liste "Kalibrierte
+        Karten" lädst.</para>
+
+        <para>Die Karten werden angeiegt, wenn man in der Goto-Ansicht auf
+        "map" klickt oder in dem man in der Details-Ansicht auf die grün
+        angedeutete Weltkugel klickt.</para>
       </section>
     </section>
 
     <section>
       <title>Speichern</title>
 
-      <para></para>
+      <para>Notizen werden durch den Wechsel aus der Detailansicht sofort
+      gespeichert. Alle anderen Änderungen, die man in der Detailansicht
+      (siehe <xref lang="" linkend="detailansicht" />) zu einem Cache werden
+      erst gespeichert, wenn man diese Menüoption wählt.</para>
     </section>
 
     <section>
       <title>Speichern &amp; Beenden</title>
 
-      <para></para>
+      <para>Zusätzlich zum Speichern, wird durch diesen Menüeintrag CacheWolf
+      beendet.</para>
     </section>
 
     <section>
       <title>Beenden</title>
 
-      <para></para>
+      <para>Beenden beendet CacheWolf!</para>
     </section>
   </section>
 
@@ -328,13 +484,19 @@
     <section>
       <title>Suchen</title>
 
-      <para></para>
+      <para>CacheWolf sucht im Namen und im Wegpunkt nach Übereinstimmung zum
+      eingegebenen Suchbegriff. Es wird nach Bestandteilen gesucht und nicht
+      nach einer genauen! Übereinstimmung. Das Ergebnis der Suche wird in der
+      Listenansicht dargestellt. Caches, die nicht passen werden
+      ausgeblendet!</para>
     </section>
 
     <section>
       <title>Suche aufheben</title>
 
-      <para></para>
+      <para>Weil Caches, die den Suchbegriff nicht erfüllen, ausgeblendet
+      werden, kann man alle Caches mit dieser Menüoption wieder anzeigen
+      lassen.</para>
     </section>
   </section>
 
@@ -389,24 +551,43 @@
   <section>
     <title id="verwalten">Verwalten</title>
 
-    <para></para>
+    <para>Diese Menügruppe stellt einige nützliche Funktionen zur
+    Massenverwaltung der „Datenbank“, dem Profil. Es ist wichtig zu wissen,
+    dass diese Funktionen auf alle sichtbaren Caches in der Listenansicht
+    angewendet werden. Man muss also vorher mit dem Filter arbeiten, um die
+    Caches zu identifizieren, die man kopieren, löschen oder verschieben
+    möchte.</para>
 
     <section>
       <title>Kopieren</title>
 
-      <para></para>
+      <para>Mit dieser Funktion werden die Caches in der Listenansicht in ein
+      Zielverzeichnis kopiert. Die Caches bleiben allerdings in der Datenbank
+      (Profil) erhalten. In dem Zielverzeichnis befinden sich nach dem
+      Kopieren alle Cachebeschreibungen (\*.xml), Bilder zu den Caches und die
+      index.xml. Man hat also eine neue Datenbank erzeugt! Diese lässt sich
+      durch die Einstellung in den Präferenzen (oder in den Profilen)
+      öffnen.</para>
     </section>
 
     <section>
       <title>Verschieben</title>
 
-      <para></para>
+      <para>Mit dieser Funktion werden die Caches in der Listenansicht in ein
+      Zielverzeichnis verschoben. Die Caches werden aus der aktuellen
+      Datenbank (Profil) gelöscht. In dem Zielverzeichnis befinden sich nach
+      dem Verschieben alle Cachebeschreibungen (\*.xml), Bilder zu den Caches
+      und die index.xml. Man hat also einen neue Datenbank erzeugt! Diese
+      lässt sich durch die Einstellung in den Präferenzen (oder in den
+      Profilen) öffnen.</para>
     </section>
 
     <section>
       <title>Löschen</title>
 
-      <para></para>
+      <para>Mit dieser Funktion werden die Caches in der aktuellen Datenbank
+      unwiderruflich gelöscht. Man kann also mit dieser Funktion Speicherplatz
+      frei machen.</para>
     </section>
 
     <section>
@@ -425,6 +606,39 @@
   <section>
     <title>Über</title>
 
-    <para></para>
+    <section>
+      <title>Über</title>
+
+      <para>Eine kleine Einführung in CacheWolf und wer die Software
+      geschrieben hat.</para>
+    </section>
+
+    <section>
+      <title>Legende</title>
+
+      <para>Anzeigen der Legende der Farben und Symbole</para>
+    </section>
+
+    <section>
+      <title>WolfLanguage</title>
+
+      <para>Dieser Menüpunkt öffnet eine Hilfeseite für die im Löser
+      verfügbaren Kommandos (bekommt man übrigens auch direkt in der <xref
+      linkend="loeser" /> Ansicht).</para>
+    </section>
+
+    <section>
+      <title>System</title>
+
+      <para>Dieser Menüpunkt zeigt eine Auswahl von Systeminformationen. Diese
+      sind für den Support wichtig.</para>
+    </section>
+
+    <section>
+      <title>Version Prüfen</title>
+
+      <para>Prüft auf neue Versionen von cacheWolf (Internetverbindung
+      notwendig!)</para>
+    </section>
   </section>
 </chapter>
