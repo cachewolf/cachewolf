@@ -515,7 +515,7 @@
   </section>
 
   <section>
-    <title>Löser</title>
+    <title id="loeser">Löser</title>
 
     <para>Der Löser wurde geschaffen, um die bei uns beliebten
     "Rechne-Dir-einen-Wolf"-Multis zu erleichtern. Er hat viele Funktionen,
