@@ -155,9 +155,9 @@ public class MainTab extends mTabbedPanel {
 			// Update chD with Details
 			if(detP.isDirty()) {
 				cacheDirty=true;
-				boolean isNew = detP.isNew();
+				boolean needTableUpdate = detP.needsTableUpdate();
 				detP.saveDirtyWaypoint();
-				if (isNew) {
+				if (needTableUpdate) {
 					tbP.myMod.updateRows();// This sorts the waypoint (if it is new) into the right position
 					tbP.selectRow(profile.getCacheIndex(detP.thisCache.wayPoint));
 				}
@@ -300,8 +300,13 @@ public class MainTab extends mTabbedPanel {
 	 */
 	public void newWaypoint(CacheHolder ch){
 		//When creating a new waypoint, simulate a change to the list view
-		onLeavingPanel(oldCard);
+		//if we are currently NOT in the list view
+		if (oldCard != 0)
+		{
+			onLeavingPanel(oldCard);
+		}
 		updatePendingChanges(); // was: onEnteringPanel(0); oldCard=0;
+		
 		mainCache=lastselected;
 		int selectedIndex = profile.getCacheIndex( lastselected );
 		if (selectedIndex >= 0) {
@@ -311,7 +316,7 @@ public class MainTab extends mTabbedPanel {
 			}			
 		}
 		Global.getProfile().hasUnsavedChanges=true;
-		detP.setIsNew(true);
+		detP.setNeedsTableUpdate(true);
 		if (ch.type == null || ch.type.equals("")) ch.type = "0";
 		if (CacheType.isAddiWpt(ch.type) && mainCache!=null && mainCache.length()>2) {
 			ch.wayPoint = profile.getNewAddiWayPointName(mainCache);
@@ -328,7 +333,7 @@ public class MainTab extends mTabbedPanel {
 		tbP.myMod.numRows++;
 		detP.setDetails(ch);
 		oldCard=1;
-		if (this.cardPanel.selectedItem !=1) select(detP);
+		if (this.cardPanel.selectedItem != 1) select(detP);
 		solverP.setInstructions("");
 		//tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
@@ -415,4 +420,6 @@ public class MainTab extends mTabbedPanel {
 	}
 }
 // 
+
+
 

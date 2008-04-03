@@ -31,7 +31,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
-	private MenuItem orgCopy, orgMove, orgDelete,orgRebuild;
+	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild;
 	public MenuItem filtCacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
@@ -168,13 +168,14 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organise" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organiseMenuItems=new MenuItem[6];
-		organiseMenuItems[0] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
-		organiseMenuItems[1] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
-		organiseMenuItems[2] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
-		organiseMenuItems[3] = orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index"));
-		organiseMenuItems[4] = mnuSeparator;
-		organiseMenuItems[5] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
+		MenuItem[] organiseMenuItems=new MenuItem[7];
+		organiseMenuItems[0] = orgNewWP = new MenuItem(MyLocale.getMsg(214,"New Waypoint"));
+		organiseMenuItems[1] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
+		organiseMenuItems[2] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
+		organiseMenuItems[3] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
+		organiseMenuItems[4] = orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index"));
+		organiseMenuItems[5] = mnuSeparator;
+		organiseMenuItems[6] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organise"),new Menu(organiseMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
@@ -530,6 +531,11 @@ public class MainMenu extends MenuBar {
 			///////////////////////////////////////////////////////////////////////
 			// "Organise" pulldown menu
 			///////////////////////////////////////////////////////////////////////
+			if(mev.selectedItem == orgNewWP){
+				Global.mainTab.lastselected = ((CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache())).wayPoint;
+				Global.mainTab.newWaypoint(new CacheHolder());
+			}
+
 			if(mev.selectedItem == orgCopy){
 				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
