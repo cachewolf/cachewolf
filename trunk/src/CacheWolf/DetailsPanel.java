@@ -33,7 +33,7 @@ public class DetailsPanel extends CellPanel{
 	private boolean dirty_details = false;
 	private boolean blackStatus = false;
 	private boolean blackStatusChanged=false;
-	private boolean isNewWpt = false;
+	private boolean needsTableUpdate = false;
 	
 	Preferences pref; // Test
 	Profile profile;
@@ -146,16 +146,16 @@ public class DetailsPanel extends CellPanel{
 		attV.clear();
 	}
 
-	public void setIsNew(boolean isnew) {
-		isNewWpt = isnew;
+	public void setNeedsTableUpdate(boolean tableUpdate) {
+		needsTableUpdate = tableUpdate;
 	}
 	
-	public boolean isNew() {
-		return isNewWpt;
+	public boolean needsTableUpdate() {
+		return needsTableUpdate;
 	}
 	
 	public boolean isDirty() {
-		return dirty_notes || dirty_details || isNewWpt;
+		return dirty_notes || dirty_details || needsTableUpdate;
 	}
 	public boolean hasBlackStatusChanged() {
 		return blackStatusChanged;
@@ -312,6 +312,7 @@ public class DetailsPanel extends CellPanel{
 	public void onEvent(Event ev){
 		if (ev instanceof DataChangeEvent ) {
 			dirty_details = true;
+			needsTableUpdate  = true;
 			profile.hasUnsavedChanges=true;
 			if (ev.target==chcType) {
 				createWptName();
@@ -380,7 +381,11 @@ public class DetailsPanel extends CellPanel{
 				blackStatusChanged=true;
 			}
 			else if (ev.target == btnNewWpt){
-				Global.mainTab.newWaypoint(new CacheHolder());
+				CacheHolder ch = new CacheHolder();
+				ch.LatLon = thisCache.LatLon;
+				ch.pos = new CWPoint( thisCache.pos );
+				ch.type = "51";
+				Global.mainTab.newWaypoint(ch);
 			}
 			else if (ev.target == btnGoto){
 				// TODO if something changed saveWpt();
@@ -513,7 +518,7 @@ public class DetailsPanel extends CellPanel{
 		  ch.setAttributesToAddiWpts();
 		  dirty_notes=false;
 		  dirty_details=false;
-		  setIsNew(false);
+		  setNeedsTableUpdate(false);
 		  thisCache.getCacheDetails(true).hasUnsavedChanges = true;
 		  
 		  // Global.mainTab.tbP.refreshTable(); this is done in mainTab.onLeavingPanel
@@ -597,10 +602,7 @@ public class DetailsPanel extends CellPanel{
 				} else 
 					super.popupMenuEvent(selectedItem);
 			}
-		}
-
-	
+		}	
 	}
-
 
 }
