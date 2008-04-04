@@ -798,8 +798,15 @@ public class Parser{
 			parseStringExp();
 			checkNextSymIs("THEN");
 			getNextTokenOtherThanSemi();
-			// If the first expression is a string, compare as string.
-			if (calcStack.get(calcStack.size()-2) instanceof String) {
+			boolean compAsString=false; //calcStack.get(calcStack.size()-2) instanceof String;
+			// If we can parse the first argument as a double, we will do a numeric comparison
+			try {
+				Common.parseDoubleException((String)calcStack.get(calcStack.size()-2) );
+			} catch (Exception ex) {
+				compAsString=true;
+			}
+			// If the first expression is not a double, compare as string.
+			if (compAsString) {
 				String b=popCalcStackAsString();
 				String a=popCalcStackAsString();
 				switch (compOp) {
