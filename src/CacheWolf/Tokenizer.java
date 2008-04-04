@@ -193,7 +193,7 @@ public class Tokenizer{
 			currentStream=currentStream.substring(0,1);
 			if (currentStream.equals("=")) emitToken(TokenObj.TT_EQ);
 			else if (currentStream.equals("<")) emitToken(TokenObj.TT_LT);
-			else if (currentStream.equals(">")) emitToken(TokenObj.TT_LT);
+			else if (currentStream.equals(">")) emitToken(TokenObj.TT_GT);
 			else emitToken(TokenObj.TT_SYMBOL);
 		} else
 			emitToken(TokenObj.TT_SYMBOL); 		
