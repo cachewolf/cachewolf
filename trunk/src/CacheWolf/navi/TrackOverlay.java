@@ -97,8 +97,9 @@ public class TrackOverlay extends MapImage {
 			if (tr.num > 0) {
 				for (i=0; i < tr.num; i++) {
 					n++;
-					if  ((numberOfPoints - n > 30*60) && ((n & 1) == 0)) continue;
-					if  ((numberOfPoints - n > 60*60) && ((n & 2) == 0)) continue;
+					if  ((numberOfPoints - n > 5*60) && ((n & 1) == 0)) continue;
+					if  ((numberOfPoints - n > 15*60) && ((n & 2) == 0)) continue;
+					if  ((numberOfPoints - n > 30*60) && ((n & 4) == 0)) continue;
 					paintPoint(tr.trackColor, tr.TrackPoints[i]);
 				}
 			}
