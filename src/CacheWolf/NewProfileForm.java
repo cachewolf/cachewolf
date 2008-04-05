@@ -1,17 +1,12 @@
 package CacheWolf;
 
 import ewe.io.File;
-import ewe.ui.ControlEvent;
-import ewe.ui.Event;
-import ewe.ui.Form;
-import ewe.ui.IKeys;
-import ewe.ui.MessageBox;
-import ewe.ui.mButton;
-import ewe.ui.mInput;
+import ewe.ui.*;
 
 public class NewProfileForm extends Form {
 	private mButton btnCancel,btnOK;
 	private mInput inpDir;
+	private TextMessage description;
 	public String profileDir;
 	private String baseDir;
 	//private Profile profile;
@@ -21,13 +16,16 @@ public class NewProfileForm extends Form {
 		//profile=prof;
         title = MyLocale.getMsg(1111,"Create new profile:");
 		addLast(inpDir=new mInput(MyLocale.getMsg(1112,"New profile name")),HSTRETCH,HFILL|LEFT);
+		description = new TextMessage(MyLocale.getMsg(1123,"Click 'Next' to define the center coordinates for this profile."));
+		description.setPreferredSize(240, -1);
+		addLast(description,HSTRETCH,HFILL|LEFT);
 		btnCancel = new mButton(MyLocale.getMsg(708,"Cancel"));
 		btnCancel.setHotKey(0, IKeys.ESCAPE);
 		addNext(btnCancel,HSTRETCH,LEFT);
-		btnOK = new mButton(MyLocale.getMsg(1605,"OK"));
+		btnOK = new mButton(MyLocale.getMsg(1124,"Next"));
 		btnOK.setHotKey(0, IKeys.ENTER);
 		addLast(btnOK,HSTRETCH,HFILL|RIGHT);
-		this.setPreferredSize(240,50);
+		this.setPreferredSize(240,80);
 		this.baseDir=baseDir;
 	}
 	
@@ -38,21 +36,27 @@ public class NewProfileForm extends Form {
 			}
 			if (ev.target == btnOK){
 				profileDir=inpDir.getDisplayText();
-				File f=new File(baseDir+profileDir);
-				if (f.exists()) {
-					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1114,"Directory exists already."),MBOK);
+				if (profileDir.equalsIgnoreCase("maps")) {
+					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1122,"'maps' is reserved for the maps directory."),MBOK);
 					mb.execute();
 					profileDir="";
 				} else {
-					if (profileDir.indexOf("/")>=0 || profileDir.indexOf("\\")>=0 || !f.createDir()) {
-						MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1113,"Cannot create directory"),MBOK);
+					File f=new File(baseDir+profileDir);
+					if (f.exists()) {
+						MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1114,"Directory exists already."),MBOK);
 						mb.execute();
 						profileDir="";
-						this.close(-1);
+					} else {
+						if (profileDir.indexOf("/")>=0 || profileDir.indexOf("\\")>=0 || !f.createDir()) {
+							MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1113,"Cannot create directory"),MBOK);
+							mb.execute();
+							profileDir="";
+							this.close(-1);
+						}
+						Global.getProfile().filterActive=Filter.FILTER_INACTIVE;
+						Global.getProfile().filterInverted=false;
+						this.close(0);
 					}
-					Global.getProfile().filterActive=Filter.FILTER_INACTIVE;
-					Global.getProfile().filterInverted=false;
-					this.close(0);
 				}
 			}
 		}

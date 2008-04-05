@@ -236,11 +236,19 @@ public class MainMenu extends MenuBar {
 				Global.mainTab.saveUnsavedChanges(true);
 				NewProfileForm f=new NewProfileForm(pref.baseDir);
 				int code=f.execute(getFrame(), Gui.CENTER_FRAME);
-				if (code==0) { 
+				if (code==0) {
 					profile.clearProfile(); 
 					pref.lastProfile=profile.name=f.profileDir;
 					pref.savePreferences(); // Remember that this was the last profile used
 					profile.dataDir=pref.baseDir+f.profileDir+"/";
+					
+					CoordsScreen cs = new CoordsScreen();
+					cs.setFields(new CWPoint(), CWPoint.CW);
+					if (cs.execute() == FormBase.IDOK) {
+						profile.centre.set(cs.getCoords());
+						profile.hasUnsavedChanges=true;
+					}
+
 					Filter.showBlacklisted=false;
 					filtBlack.modifiers&=~MenuItem.Checked;
 					tbp.refreshTable();
