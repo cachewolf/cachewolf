@@ -276,14 +276,10 @@ public class MovingMap extends Form {
 					dd.value = dd.value * 1000; 
 					dd.decimalPlaces = 0;
 					d = MyLocale.getMsg(4206, "Dist: ") + dd.toString() + "m";
-					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
-					digits = java.lang.Math.max(0, digits);
 				} 
 				else {
 					dd.decimalPlaces = 2;
 					d = MyLocale.getMsg(4206, "Dist: ") + dd.toString() + "km";
-					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd.value) / java.lang.Math.log(10.0) );
-					digits = java.lang.Math.max(0, digits);
 				}
 				
 				int backgroundWidth = fm.getTextWidth(d) + 4;
