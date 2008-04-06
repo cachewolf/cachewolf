@@ -337,7 +337,10 @@ public class myTableModel extends TableModel{
 				tcControl.update(true);
 				retval = true;
 			}
-		} catch(NullPointerException npex){Global.getPref().log("NPE in myTableModel.Penpressed");}
+		} catch(NullPointerException npex){
+			Global.getPref().log("NPE in myTableModel.Penpressed");
+			Vm.showWait(false);
+			}
 		return retval;
 	}
 	
