@@ -455,9 +455,16 @@ class MapListEntry /*implements Comparable */ {
 					if (!new File(f).rename(to))
 						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
 					f = Common.getImageName(path+filename);
-					to = sortEntryBBox+"E-"+filename+Common.getFilenameExtension(f);
-					if (!new File(f).rename(to)) 
-						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
+					if (f != null) {
+						to = sortEntryBBox+"E-"+filename+Common.getFilenameExtension(f);
+						if (!new File(f).rename(to)) {
+							Global.getPref().log("MapListEntry (String pathi, String filenamei): Failed to rename: "+path+filename+": "+f+".wfl to: "+to);
+							(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
+						}
+					} else {
+						Global.getPref().log("MapListEntry (String pathi, String filenamei): Could not find image assiciated to: "+path+filename+".wfl");
+						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4709,"Could not find image assiciated to:\n")+path+filename+".wfl", FormBase.OKB)).exec();
+					}
 					filename = sortEntryBBox+"E-"+filename;
 					map.mapName = sortEntryBBox+"E-"+map.mapName;
 					map.fileNameWFL = path + filename + ".wfl";
