@@ -671,7 +671,8 @@ class ExpediaMapService extends OnlineMapService {
 	public String getUrlForCenterScale(CWPoint center, float scale, Point pixelsize) {
 		int zoomlevel = getZoomlevel(scale);
 		String zone;
-		if (center.lonDec <= -10) zone = "USA0409";
+		if (     (center.lonDec <= -30   && center.lonDec >= -170) || 
+				( center.lonDec > 360-30 && center.lonDec <= 360-170) ) zone = "USA0409"; // TODO test which zone-code ist best for asia
 		else zone = "EUR0809";
 		String quelle = MainUrl + "&CenP=" + center.toString(CWPoint.LAT_LON);
 		quelle = quelle + "&Alti="+Convert.toString(zoomlevel)+"&Lang="+zone+"&Size="+Convert.toString(pixelsize.x)+","+Convert.toString(pixelsize.y)+"&Offs=0,0&MapS=0"; //&Pins=|" + latD.toString().replace(',', '.') + "," + lonD.toString().replace(',', '.') + "|5|";
