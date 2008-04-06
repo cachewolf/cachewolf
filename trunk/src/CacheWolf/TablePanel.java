@@ -94,9 +94,16 @@ public class TablePanel extends CellPanel{
 	/** Move all filtered caches to the end of the table and redisplay table */
 	//TODO Add a sort here to restore the sort after a filter
 	public void refreshTable(){
+		String wayPoint = ((CacheHolder)cacheDB.get(getSelectedCache())).wayPoint;
 		myMod.updateRows();
+
 		// Check whether the currently selected cache is still visible
-		selectRow(getSelectedCache());
+		int rownum = Global.getProfile().getCacheIndex(wayPoint);
+		if ( (rownum < 0) || (rownum>=myMod.numRows) )
+			rownum = 0;	
+
+		selectRow(rownum);
+
 		tc.update(true); // Update and repaint
 		if (statBar!=null) statBar.updateDisplay();
 	}
