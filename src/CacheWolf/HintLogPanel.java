@@ -32,6 +32,8 @@ public class HintLogPanel extends CellPanel{
 	mButton decodeButton = new mButton("Decode");
 	mButton moreBt = new mButton(">>");
 	mButton prevBt = new mButton("<<");
+	private MyScrollBarPanel sbplog;
+	
 	public HintLogPanel(){
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 		CellPanel logpane = split.getNextPanel();
@@ -48,7 +50,7 @@ public class HintLogPanel extends CellPanel{
 		hintpane.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
 		hint.modify(ControlConstants.NotEditable,0);
 
-		ScrollBarPanel sbplog = new MyScrollBarPanel(htmlImagDisp, ScrollablePanel.NeverShowHorizontalScrollers);
+		sbplog = new MyScrollBarPanel(htmlImagDisp, ScrollablePanel.NeverShowHorizontalScrollers);
 		//logpane.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
 		Rect r = new Rect(new Dimension (Global.getPref().myAppWidth-sbplog.vbar.getRect().width, 20));
 		htmlImagDisp.virtualSize = r;
@@ -114,6 +116,13 @@ public class HintLogPanel extends CellPanel{
 		htmlImagDisp.virtualSize = r;
 		htmlImagDisp.origin = new Point();
 		htmlImagDisp.checkScrolls();
+		// Can I get a reasonable value for scrollbarWidth before calling checkScrolls() 
+		// and in a more reasonable way?
+		// Now its ugly: I paint it, calculate the scrollbars and then resize the panel...
+		int scrollbarWidth = sbplog.vbar.getRect().width;
+		// And do it again, sam... *sigh*
+		logs.resizeTo(htmlTxtImage.getWidth()-scrollbarWidth, htmlTxtImage.getHeight());
+		logs.doPaint(draw, new Rect(0,0,htmlTxtImage.getWidth(), htmlTxtImage.getHeight()));
 
 		htmlImagDisp.repaintNow();
 		repaintNow();
