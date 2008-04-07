@@ -117,13 +117,18 @@ public class GotoPanel extends CellPanel {
 		lblGPS.backGround = RED;
 		lblGPS.setMenu(mnuContextFormt);
 		lblGPS.modifyAll(ControlConstants.WantHoldDown, 0);
-		CoordsP.addLast(lblPosition = new mLabel(myNavigation.gpsPos.toString(currFormat)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+
+		lblPosition = new mLabel(myNavigation.gpsPos.toString(currFormat));
+		lblPosition.anchor = mLabel.CENTER;
 		lblPosition.setMenu(mnuContextFormt);
 		lblPosition.modifyAll(ControlConstants.WantHoldDown, 0);
+		CoordsP.addLast(lblPosition, CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+
 		CoordsP.addNext(lblDST = new mLabel(MyLocale.getMsg(1500,"DST:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		lblDST.backGround = new Color(0,0,255);
 		lblDST.setMenu(mnuContextFormt);
 		lblDST.modifyAll(ControlConstants.WantHoldDown, 0);
+
 		CoordsP.addLast(btnGoto = new mButton(getGotoBtnText()),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		
 		//Rose for bearing
