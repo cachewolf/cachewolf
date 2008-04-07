@@ -173,6 +173,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	 */
 	public boolean examine(String NMEA){ 
 		boolean interpreted = false;
+		boolean logWritten = false;
 		try {
 			int i, start, end;
 			String latDeg="0", latMin="0", latNS="N"; 
@@ -189,9 +190,9 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 			}
 */			while(true){
 				start = NMEA.indexOf("$GP", end);  
-				if (start == -1) return interpreted;  
+				if (start == -1) break;
 				end = NMEA.indexOf("*", start);  
-				if ((end == -1)||(end+3 > NMEA.length())) return interpreted;  
+				if ((end == -1)||(end+3 > NMEA.length())) break;  
 
 
 				//Vm.debug(NMEA.substring(start,end+3));
@@ -203,7 +204,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				if (writeLog && (logFlag & LOGRAW) > 0){ 
 					try {
 						logFile.write(NMEA.substring(start,end+3)+"\n");
-						writeLog = false;
+						logWritten = true;
 					} catch (IOException e) {}
 				}
 
@@ -328,8 +329,12 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		} catch (Exception e) {
 			Global.getPref().log("Exception in examine in CWGPSPoint", e, true);
 			e.printStackTrace();
-			return interpreted;
 		}
+
+		if	(logWritten)
+			writeLog = false;
+
+		return interpreted;
 	}
 
 	private boolean checkSumOK(String nmea){
@@ -365,4 +370,5 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		Vm.debug("----------------");
 	}
 }
+
 
