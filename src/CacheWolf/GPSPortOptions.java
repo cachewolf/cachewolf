@@ -30,6 +30,7 @@ import ewe.ui.*;
 import ewe.io.*;
 import ewe.ui.formatted.TextDisplay;
 import ewe.reflect.FieldTransfer;
+import ewe.reflect.Reflect;
 import ewe.sys.*;
 import ewe.util.*;
 
@@ -88,9 +89,30 @@ public class GPSPortOptions extends SerialPortOptions {
 	boolean gpsRunning = false;
 
 	
-	public Editor getEditor(int whichEditor){
-		Editor ed;
-		ed = super.getEditor(0);
+	public Editor getEditor(){
+		MyEditor ed = new MyEditor();
+		// The following lines are mainly copied from SerialPortOptions.
+		// Reason: We want to use MyEditor instead of the default Editor,
+		//         because the latter places the ok/cancel buttons centered.
+		// Because this is from the general SerialPortOptions class, maybe not all of the code
+		// must be necessary.
+		ed.objectClass = Reflect.getForObject(this);
+		ed.sampleObject = this;
+		ed.setObject(this);
+		ed.title = "Serial Port Options";
+		InputStack is = new InputStack();
+		ed.addLast(is).setCell(CellConstants.HSTRETCH);
+		CellPanel cp = new CellPanel();
+		ed.addField(cp.addNext(new mComboBox()).setCell(CellConstants.HSTRETCH),"portName");
+		ed.addField(cp.addLast(new mButton("Update Ports$u")).setCell(CellConstants.DONTSTRETCH),"update");
+		is.add(cp,"Port:$p");
+		mComboBox cb = new mComboBox();
+		is.add(ed.addField(cb,"baudRate"),"Baud:$b");
+		cb.choice.addItems(ewe.util.mString.split("110|300|1200|2400|4800|9600|19200|38400|57600|115200"));
+		//
+		// End of copy from SerialPortOptions.
+		//
+		ed.buttonConstraints = CellConstants.HFILL;
 		ed.addField(ed.addNext(new mButton("Scan$u")).setCell(CellConstants.DONTSTRETCH),"scan");
 		btnTest = new mButton("Test$u");
 		ed.addField(ed.addLast(btnTest.setCell(CellConstants.DONTSTRETCH)),"test");
@@ -116,7 +138,6 @@ public class GPSPortOptions extends SerialPortOptions {
 		inputBoxLogTimer.setText("10");
 		ed.addField(ed.addLast(inputBoxLogTimer,0 , (CellConstants.WEST | CellConstants.HFILL)), "GPSLogTimer");
 
-		
 		gpsRunning = false;
 		return ed;
 	}

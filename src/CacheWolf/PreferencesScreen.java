@@ -306,35 +306,25 @@ public class PreferencesScreen extends Form {
 				if(fc.execute() != FormBase.IDCANCEL)	DataDir.setText(fc.getChosen()+"/");
 			}
 			if (ev.target == gpsB){
-				GPSPortOptions spo = new GPSPortOptions();
-				spo.portName = pref.mySPO.portName;
-				spo.baudRate = pref.mySPO.baudRate;
-				Editor s = spo.getEditor(SerialPortOptions.ADVANCED_EDITOR);
-				spo.forwardGpsChkB.setState(pref.forwardGPS);
-				spo.inputBoxForwardHost.setText(pref.forwardGpsHost);
-				spo.logGpsChkB.setState(pref.logGPS);
-				spo.inputBoxLogTimer.setText(pref.logGPSTimer);
+				GPSPortOptions gpo = new GPSPortOptions();
+				gpo.portName = pref.mySPO.portName;
+				gpo.baudRate = pref.mySPO.baudRate;
+				Editor s = gpo.getEditor();
+				gpo.forwardGpsChkB.setState(pref.forwardGPS);
+				gpo.inputBoxForwardHost.setText(pref.forwardGpsHost);
+				gpo.logGpsChkB.setState(pref.logGPS);
+				gpo.inputBoxLogTimer.setText(pref.logGPSTimer);
 				Gui.setOKCancel(s);
 				if (s.execute()== FormBase.IDOK) {
-					pref.mySPO.portName = spo.portName; 
-					pref.mySPO.baudRate = spo.baudRate;
-					pref.forwardGPS = spo.forwardGpsChkB.getState();
-					pref.forwardGpsHost = spo.inputBoxForwardHost.getText();
-					pref.logGPS = spo.logGpsChkB.getState();
-					pref.logGPSTimer = spo.inputBoxLogTimer.getText();
+					pref.mySPO.portName = gpo.portName; 
+					pref.mySPO.baudRate = gpo.baudRate;
+					pref.forwardGPS = gpo.forwardGpsChkB.getState();
+					pref.forwardGpsHost = gpo.inputBoxForwardHost.getText();
+					pref.logGPS = gpo.logGpsChkB.getState();
+					pref.logGPSTimer = gpo.inputBoxLogTimer.getText();
 					inpGPS.setText(pref.mySPO.portName+"/"+pref.mySPO.baudRate);
 				}
 			}
-			// change destination waypoint
-			/*if (ev.target == btnCentre){
-				CoordsScreen cs = new CoordsScreen();
-				cs.setFields(pref.curCentrePt, CWPoint.CW);
-				if (cs.execute()== CoordsScreen.IDOK){
-					pref.curCentrePt.set(cs.getCoords());
-					btnCentre.setText(pref.curCentrePt.toString(CWPoint.CW));
-				}
-			}
-			*/
 		}
 		super.onEvent(ev);
 	}
