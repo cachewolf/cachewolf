@@ -28,12 +28,14 @@ public class DetailsPanel extends CellPanel{
 	int dbIndex = -1;
 	CellPanel pnlTools = new CellPanel(); 
 	AttributesViewer attV;
+	mTextPad mNotes;
 	
 	private boolean dirty_notes = false;
 	private boolean dirty_details = false;
 	private boolean blackStatus = false;
 	private boolean blackStatusChanged=false;
 	private boolean needsTableUpdate = false;
+	private boolean isBigScreen = false;
 	
 	Preferences pref; // Test
 	Profile profile;
@@ -139,7 +141,13 @@ public class DetailsPanel extends CellPanel{
 		attV=new AttributesViewer();
 		this.addLast(attV);
 		
-		
+		if ((MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600)){
+			isBigScreen = true;  
+			this.addLast(new mLabel(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			mNotes = new mTextPad();
+			mNotes.modify(ControlConstants.NotEditable,0);
+			this.addLast(new MyScrollBarPanel(mNotes));
+		}
 	}
 	
 	public void clear() {
@@ -211,6 +219,8 @@ public class DetailsPanel extends CellPanel{
 		attV.showImages(ch.getCacheDetails(true).attributes);
 		lblTerr.setText((ch.terrain.length()>0) ? (MyLocale.getMsg(1001,"T")+": "+ch.terrain) : "");
 		lblDiff.setText((ch.hard.length()>0)    ? (MyLocale.getMsg(1000,"D")+": "+ch.hard) : ""); 
+
+		if(isBigScreen)	mNotes.setText(ch.details.CacheNotes);
 	}
 	
 	
@@ -323,6 +333,7 @@ public class DetailsPanel extends CellPanel{
 				dirty_notes=true; // TODO I think this is redundant, because the notes are saved seperately by the notes screen itself
 				NotesScreen nsc = new NotesScreen(thisCache.getCacheDetails(true));
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
+				if(isBigScreen) mNotes.setText(thisCache.getCacheDetails(true).CacheNotes);
 			}
 			else if(ev.target == btnShowMap){
 				Global.mainTab.SwitchToMovingMap(thisCache.pos, true);
