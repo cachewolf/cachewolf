@@ -233,28 +233,11 @@ public class MainMenu extends MenuBar {
 			// subMenu for profiles, part of "Application" menu 
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == mnuNewProfile){
-				Global.mainTab.saveUnsavedChanges(true);
-				NewProfileForm f=new NewProfileForm(pref.baseDir);
-				int code=f.execute(getFrame(), Gui.CENTER_FRAME);
-				if (code==0) {
-					profile.clearProfile(); 
-					pref.lastProfile=profile.name=f.profileDir;
-					pref.savePreferences(); // Remember that this was the last profile used
-					profile.dataDir=pref.baseDir+f.profileDir+"/";
-					
-					CoordsScreen cs = new CoordsScreen();
-					cs.setFields(new CWPoint(), CWPoint.CW);
-					if (cs.execute() == FormBase.IDOK) {
-						profile.centre.set(cs.getCoords());
-						profile.hasUnsavedChanges=true;
-					}
-
+				if (NewProfileWizard.startNewProfileWizard(getFrame()) ) {
 					Filter.showBlacklisted=false;
 					filtBlack.modifiers&=~MenuItem.Checked;
-					tbp.refreshTable();
-					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
+					tbp.refreshTable(); // TODO if the list was empty before a new profile was created, this causes a ArrayIndexOutOfBoundsException, it doesn't cause any harm, but should be caught at the appropriate point
 				}
-				f.close(0);
 			}
 			if(mev.selectedItem == mnuOpenProfile){
 				Global.mainTab.saveUnsavedChanges(true);
@@ -458,6 +441,7 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == exit){
 				Global.mainTab.saveUnsavedChanges(true);
+				CacheHolder.saveAllModifiedDetails();
 				tbp.saveColWidth(pref);
 				ewe.sys.Vm.exit(0);
 			}

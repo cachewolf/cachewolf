@@ -121,8 +121,10 @@ public class ProfilesForm extends Form{
 				}
 			}
 			if (ev.target == btnNew){
-				newSelectedProfile=createNewProfile();
-				if (newSelectedProfile.length()>0) close(1);
+				if (NewProfileWizard.startNewProfileWizard(getFrame()) ) {
+					newSelectedProfile = Global.getProfile().name;
+					close(1);
+				}
 			}
 		}
 		super.onEvent(ev);
