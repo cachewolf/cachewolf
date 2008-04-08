@@ -15,4 +15,39 @@ public class Ellipsoid {
 			b = a - (1/bi) * a;
 		}
 	}
-}
+	
+	   /**
+	    * Get semi-major axis.
+	    * @return semi-major axis (in meters).
+	    */
+	   public double getSemiMajorAxis()
+	   {
+	     return a;
+	   }
+
+	   /**
+	    * Get semi-minor axis.
+	    * @return semi-minor axis (in meters).
+	    */
+	   public double getSemiMinorAxis()
+	   {
+	     return b;
+	   }
+
+	   /**
+	    * Get flattening
+	    * @return
+	    */
+	   public double getFlattening()
+	   {
+	     return (a - b) / a;
+	   }
+
+	   /**
+	    * Get inverse flattening.
+	    * @return
+	    */
+	   public double getInverseFlattening()
+	   {
+	     return a / (a - b);
+	   }}

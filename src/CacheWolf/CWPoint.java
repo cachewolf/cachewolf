@@ -4,6 +4,7 @@ import ewe.sys.Convert;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.GkPoint;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.navi.GeodeticCalculator;
 
 import com.bbn.openmap.proj.coords.*;
 import com.bbn.openmap.proj.*;
@@ -30,7 +31,9 @@ public class CWPoint extends TrackPoint{
 	public static final int LAT_LON = 7;
 	public static final int LON_LAT = 8;
 	
-	
+	/** Degrees/Radians conversion constant. */
+	static private final double PiOver180 = Math.PI / 180.0;	
+
 	/**
 	 * Create CWPoint by using lat and lon 
 	 * @param lat Latitude as decimal
@@ -508,17 +511,7 @@ public class CWPoint extends TrackPoint{
 	 * @return projected waypoint
 	 */
 	public CWPoint project(double degrees, double distance){
-		float c, az;
-		
-		LatLonPoint llsrc = new LatLonPoint(this.latDec, this.lonDec);
-		c = (float)Length.KM.toRadians(distance);
-//		c = (float)(distance/1.852);
-//		c = (float)(java.lang.Math.PI/(180*60))*c;
-		az = (float)((degrees/180)*java.lang.Math.PI);
-		// c = (float) (distance * 1000 / ((TransformCoordinates.WGS84.a + TransformCoordinates.WGS84.b) / 2)); 
-		LatLonPoint lldst = llsrc.getPoint(c,az);
-		
-		return new CWPoint(lldst);
+		return new CWPoint( GeodeticCalculator.calculateEndingGlobalCoordinates(TransformCoordinates.WGS84, this, degrees, distance * 1000.0) );
 	}
 
 	/**
@@ -528,15 +521,8 @@ public class CWPoint extends TrackPoint{
 	 */	
 	public double getBearing(CWPoint dest){
 		if (!this.isValid() || dest == null || !dest.isValid()) return 361;
-		float az;
-		LatLonPoint src = new LatLonPoint(this.latDec, this.lonDec);
 		
-		az = src.azimuth(new LatLonPoint(dest.latDec, dest.lonDec));
-		if (az >= 0)
-			return az * 180 /java.lang.Math.PI;
-		else
-			return (2 * Math.PI + az) * 180 /Math.PI; 
-		
+		return GeodeticCalculator.calculateBearing(TransformCoordinates.WGS84 , this, dest);
 	}
 	
 	/**
@@ -566,8 +552,7 @@ public class CWPoint extends TrackPoint{
 	 * @return  distance to waypoint in KM
 	 */	
 	public double getDistance (CWPoint dest){
-		return getDistance(dest.latDec, dest.lonDec);
-		
+		return GeodeticCalculator.calculateDistance(TransformCoordinates.WGS84 , this, dest) / 1000.0;
 	}
 
 	/**
@@ -576,7 +561,7 @@ public class CWPoint extends TrackPoint{
 	 * @return  distance to waypoint in KM
 	 */	
 	public double getDistance (double latDecD, double lonDecD){
-		return Length.KM.fromRadians(getDistanceRad(latDecD, lonDecD));
+		return getDistance( new CWPoint(latDecD, lonDecD));
 	}
 
 	/**
@@ -585,8 +570,15 @@ public class CWPoint extends TrackPoint{
 	 * @return  distance to waypoint in Rad
 	 */	
 	public double getDistanceRad (double latDecD, double lonDecD){
-		LatLonPoint src = new LatLonPoint(this.latDec, this.lonDec);
-		return src.distance(new LatLonPoint(latDecD, lonDecD));
+		double phi1 = this.latDec * PiOver180;
+		double lambda0 = this.lonDec * PiOver180;
+		double phi = latDecD * PiOver180;
+		double lambda = lonDecD * PiOver180;
+		double pdiff =  Math.sin(((phi - phi1) / 2.0));
+		double ldiff =  Math.sin((lambda - lambda0) / 2.0);
+		double rval =  Math.sqrt((pdiff * pdiff) +  Math.cos(phi1) *  Math.cos(phi) * (ldiff * ldiff));
+
+		return 2.0 *  Math.asin(rval);		
 	}
 	
 	public double getDistanceRad (CWPoint ll) {
