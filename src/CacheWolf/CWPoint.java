@@ -511,8 +511,9 @@ public class CWPoint extends TrackPoint{
 		float c, az;
 		
 		LatLonPoint llsrc = new LatLonPoint(this.latDec, this.lonDec);
-		c = (float)(distance/1.852);
-		c = (float)(java.lang.Math.PI/(180*60))*c;
+		c = (float)Length.KM.toRadians(distance);
+//		c = (float)(distance/1.852);
+//		c = (float)(java.lang.Math.PI/(180*60))*c;
 		az = (float)((degrees/180)*java.lang.Math.PI);
 		// c = (float) (distance * 1000 / ((TransformCoordinates.WGS84.a + TransformCoordinates.WGS84.b) / 2)); 
 		LatLonPoint lldst = llsrc.getPoint(c,az);
