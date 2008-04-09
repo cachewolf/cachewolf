@@ -268,7 +268,15 @@ public class GeodeticCalculator
          lambda = omega + (1 - C) * f * sinalpha * (sigma + C * sinsigma * (cos2sigmam + C * cossigma * (-1 + 2 * cos2sigmam2)));
 
          // see how much improvement we got
-         double change = Math.abs((lambda - lambda0) / lambda);
+         // modification by MiK77: check if lambda is zero to avoid division by zero. Use lambda0 for division in this case.
+         double change = 1.0;
+         if (lambda != 0) {
+        	 change = Math.abs((lambda - lambda0) / lambda);
+         } else if (lambda0 != 0){
+        	 change = Math.abs((lambda - lambda0) / lambda0); 
+         } else {
+        	 change = 0.0;
+         }
 
          if ((i > 1) && (change < 0.0000000000001))
          {
