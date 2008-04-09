@@ -127,7 +127,10 @@ public class myTableControl extends TableControl{
 				if ( ((CacheHolder)cacheDB.get(i)).is_Checked) count++;
 			}
 			if (count>0) {
-				if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), FormBase.YESB | FormBase.NOB)).execute() != FormBase.IDYES) return;
+				if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), FormBase.YESB | FormBase.NOB)).execute() != FormBase.IDYES) {
+					Vm.showWait(false);
+					return;
+				}
 				DataMover dm=new DataMover();
 				myProgressBarForm pbf = new myProgressBarForm();
 				Handle h = new Handle();
