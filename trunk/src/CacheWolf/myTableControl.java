@@ -127,7 +127,7 @@ public class myTableControl extends TableControl{
 				if ( ((CacheHolder)cacheDB.get(i)).is_Checked) count++;
 			}
 			if (count>0) {
-				if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick?"), FormBase.YESB | FormBase.NOB)).execute() != FormBase.IDYES) {
+				if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick (") + count + MyLocale.getMsg(1028, ")?"), FormBase.YESB | FormBase.NOB)).execute() != FormBase.IDYES) {
 					Vm.showWait(false);
 					return;
 				}
