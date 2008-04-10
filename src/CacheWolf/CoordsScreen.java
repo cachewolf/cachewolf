@@ -26,6 +26,8 @@ public class CoordsScreen extends Form {
 	int exitKeys[]={75009};
 	int currFormat;
 	
+	boolean allowInvalid = false;
+	
 	public CoordsScreen()
 	{
 		this.setTitle("");
@@ -225,7 +227,15 @@ public class CoordsScreen extends Form {
 				currFormat = chkFormat.getSelectedIndex();
 				readFields(coordInp, currFormat);
 				if (coordInp.isValid()) this.close(IDOK);
-				else (new MessageBox("Error", "Please enter valid coordinates", FormBase.OKB)).execute();
+				else {
+					if	( allowInvalid ) {
+						if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1412,"Coordinates invalid. Apply anyway?"),FormBase.DEFOKB|FormBase.NOB)).execute() == FormBase.IDOK ) {
+							this.close(IDOK);						
+						}
+					} else {
+						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(1411,"Please enter valid coordinates"), FormBase.OKB)).execute();						
+					}
+				}
 			}
 			
 			if (ev.target == btnPaste){
@@ -249,7 +259,7 @@ public class CoordsScreen extends Form {
 					coord = new CWPoint(inp);
 				}
 				if (coord.latDec == -91 && coord.lonDec == -361){
-					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
+					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 					tmpMB.exec();
 				}else {
 					currFormat = chkFormat.getSelectedIndex();
