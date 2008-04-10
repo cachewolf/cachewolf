@@ -524,7 +524,7 @@ public class MainMenu extends MenuBar {
 			// "Organise" pulldown menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == orgNewWP){
-				Global.mainTab.lastselected = ((CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache())).wayPoint;
+				if (Global.mainTab.tbP.getSelectedCache() >= 0) Global.mainTab.lastselected = ((CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache())).wayPoint;
 				Global.mainTab.newWaypoint(new CacheHolder());
 			}
 

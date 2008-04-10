@@ -159,6 +159,10 @@ public class myTableControl extends TableControl{
 		}
 
 		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Centre"))){
+			if (tbp.getSelectedCache() < 0) {
+				Global.getPref().log("popupMenuEvent: getSelectedCache() < 0");
+				return;
+			}
 			CacheHolder thisCache = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			CWPoint cp=new CWPoint(thisCache.LatLon);
 			if (!cp.isValid()){
