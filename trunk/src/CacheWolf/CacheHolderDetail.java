@@ -4,6 +4,7 @@ import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
+import ewe.io.FileNotFoundException;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
@@ -142,7 +143,10 @@ public class CacheHolderDetail extends CacheHolder {
 		*/
 		public void readCache(String dir) throws IOException{
 			String dummy;
-			FileReader in = new FileReader(dir+wayPoint+".xml");
+			FileReader in = null;
+			if (new File(dir + wayPoint.toLowerCase() + ".xml").exists()) in = new FileReader(dir+wayPoint.toLowerCase() + ".xml");
+			if (new File(dir + wayPoint + ".xml").exists()) in = new FileReader(dir+wayPoint + ".xml");
+			if (in == null) throw new FileNotFoundException(dir+wayPoint.toLowerCase()+".xml");
 			String text= in.readAll();
 			in.close();
 			Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);		
@@ -261,9 +265,9 @@ public class CacheHolderDetail extends CacheHolder {
 			}
 			//Vm.debug("Writing to: " +dir + "for: " + wayPoint);
 			try{
-			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dir + wayPoint + ".xml")));
+			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dir + wayPoint.toLowerCase() + ".xml")));
 			} catch (Exception e) {
-				Global.getPref().log("Problem opening details file",e,true);
+				Global.getPref().log("Problem creating details file",e,true);
 				return;
 			}
 			try{
