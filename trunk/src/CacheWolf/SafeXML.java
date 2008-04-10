@@ -388,4 +388,128 @@ public class SafeXML{
 		return dummy;
 	}
 
+	/**
+	 * Converts a data string to something that is safe to use inside
+	 * an XML file (like prefs.xml) - entities like &amp; are *NOT*
+	 * valid XML unless declared specially, so we must use the numerical
+	 * values here.
+	 *
+	 * @param src (String) raw text to be processed
+	 *
+	 * @return (String) translated text, or null if input is null
+	 */
+	public static String strxmlencode(boolean src) {
+		/* bools are always safe */
+		return (src ? "true" : "false");
+	}
+	public static String strxmlencode(int src) {
+		/* numbers are always safe */
+		return (Integer.toString(src));
+	}
+	public static String strxmlencode(String src) {
+		int i, slen = src.length();
+		char tmp[];
+		StringBuffer dst = new StringBuffer(slen);
+
+		if (src == null)
+			return (null);
+		tmp = new char[slen];
+		src.getChars(0, slen, tmp, 0);
+		for (i = 0; i < slen; ++i)
+			if (tmp[i] == '&' || tmp[i] == '<' ||
+			    tmp[i] == '>' || tmp[i] > 0x7E) {
+				dst.append("&#");
+				dst.append((int)tmp[i]);
+				dst.append(';');
+			} else
+				dst.append(tmp[i]);
+		return (dst.toString());
+	}
+
+	/**
+	 * Converts a string that is safe to use inside an XML file (like
+	 * prefs.xml) back to a data string - entities like &amp; are *NOT*
+	 * valid XML unless declared specially, so we must use the numerical
+	 * values here. We also try to decode non-standard entities.
+	 *
+	 * @param src (String) translated text to be processed
+	 *
+	 * @return (String) raw text, or null if input is null
+	 */
+	public static String strxmldecode(String src) {
+		int i, j, slen = src.length();
+		char ch, tmp[];
+		StringBuffer dst = new StringBuffer(slen);
+		boolean isinval;
+
+		if (src == null)
+			return (null);
+		tmp = new char[slen];
+		src.getChars(0, slen, tmp, 0);
+		i = 0;
+		while (i < slen)
+			if (tmp[i] == '&') {
+				/* first scan if we have a trailing ; */
+				if (src.indexOf(';', i) == -1) {
+					/* no - ignore and proceed */
+					i++;
+					dst.append(0xFFFD);
+				} else if (tmp[++i] == '#') {
+					/* yes - numerical value? */
+					i++;
+					ch = 0;
+					isinval = false;
+					if (tmp[i] == 'x' || tmp[i] == 'X') {
+						/* hexadecimal numeric */
+						i++;
+						while ((j = tmp[i++]) != ';') {
+							ch *= 16;
+							if (j < 0x30)
+								isinval = true;
+							else if (j < 0x3A)
+								ch += j - 0x30;
+							else if (j < 0x41)
+								isinval = true;
+							else if (j < 0x47)
+								ch += j - 0x37;
+							else if (j < 0x61)
+								isinval = true;
+							else if (j < 0x67)
+								ch += j - 0x57;
+							else
+								isinval = true;
+						}
+					} else
+						/* decimal numeric */
+						while ((j = tmp[i++]) != ';') {
+							ch *= 10;
+							if (j < 0x30)
+								isinval = true;
+							else if (j < 0x3A)
+								ch += j - 0x30;
+							else
+								isinval = true;
+						}
+					if (isinval)
+						ch = 0xFFFD;
+					dst.append(ch);
+				} else {
+					/* yes - string value */
+					StringBuffer tconv = new StringBuffer("#");
+					String tc;
+
+					do {
+						tconv.append(tmp[i]);
+					} while (tmp[i++] != ';');
+
+					if ((tc = (String)iso2htmlMappings.get(tconv)) == null)
+						/* invalid entity, just retain it */
+						dst.append(tconv);
+					else
+						dst.append(tc);
+				}
+			} else
+				dst.append(tmp[i++]);
+		return (dst.toString());
+	}
 }

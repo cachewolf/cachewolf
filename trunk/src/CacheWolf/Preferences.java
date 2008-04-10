@@ -348,38 +348,38 @@ public class Preferences extends MinML{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(datei)));
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			outp.print("<preferences>\n");
-			outp.print("	<basedir dir = \""+ baseDir +"\"/>\n");
-			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+lastProfile+"</lastprofile>\n"); //RB
+			outp.print("	<basedir dir = \"" + SafeXML.strxmlencode(baseDir) + "\"/>\n");
+			outp.print("    <lastprofile autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\">" + SafeXML.strxmlencode(lastProfile) + "</lastprofile>\n"); //RB
 			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
 			outp.print("	<alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
-			outp.print("	<browser name = \""+browser+"\"/>\n");
-			outp.print("	<proxy prx = \""+ myproxy+"\" prt = \""+ myproxyport + "\" active = \""+ proxyActive +"\" />\n");
-			outp.print("	<port portname = \""+ mySPO.portName +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
-			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destinationHost = \""+ forwardGpsHost+"\"/>\n");
-			outp.print("	<portlog active= \""+ Convert.toString(logGPS)+"\" logTimer = \""+ logGPSTimer +"\"/>\n");
-			outp.print("    <font size =\""+fontSize+"\"/>\n");
-			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+"\"/>\n");
-			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
-			outp.print("    <listview colmap=\""+listColMap+"\" colwidths=\""+listColWidth+"\" />\n");
-			outp.print("    <travelbugs colmap=\""+travelbugColMap+"\" colwidths=\""+travelbugColWidth+"\" shownonlogged=\""+travelbugShowOnlyNonLogged+"\" />\n");
-			outp.print("    <descpanel showimages=\""+descShowImg+"\" />\n");
-			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
-			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\" initialhintheight=\""+initialHintHeight+"\"  maxspiderlogs=\""+maxLogsToSpider+"\" />\n");
-			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\" degMode=\""+solverDegMode+"\" />\n");
-			outp.print("    <garmin connection = \""+garminConn+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" MaxWaypointLength = \""+garminMaxLen+"\" />\n");
-			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
-			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
-			outp.print("    <spider forcelogin=\""+forceLogin+"\"/>\n");
-			outp.print("    <gotopanel northcentered=\""+northCenteredGoto+"\" />\n");
-			outp.print("    <details cacheSize=\""+maxDetails+"\" delete=\""+deleteDetails+"\"/>\n");
-			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ customMapsPath.replace('\\','/') +"\"/>\n");
+			outp.print("	<browser name = \"" + SafeXML.strxmlencode(browser) + "\"/>\n");
+			outp.print("	<proxy prx = \"" + SafeXML.strxmlencode(myproxy) + "\" prt = \"" + SafeXML.strxmlencode(myproxyport) + "\" active = \"" + SafeXML.strxmlencode(proxyActive) + "\" />\n");
+			outp.print("	<port portname = \"" + SafeXML.strxmlencode(mySPO.portName) + "\" baud = \"" + SafeXML.strxmlencode(mySPO.baudRate) + "\"/>\n");
+			outp.print("	<portforward active= \"" + SafeXML.strxmlencode(Convert.toString(forwardGPS)) + "\" destinationHost = \"" + SafeXML.strxmlencode(forwardGpsHost) + "\"/>\n");
+			outp.print("	<portlog active= \"" + SafeXML.strxmlencode(Convert.toString(logGPS)) + "\" logTimer = \"" + SafeXML.strxmlencode(logGPSTimer) + "\"/>\n");
+			outp.print("    <font size =\"" + SafeXML.strxmlencode(fontSize) + "\"/>\n");
+			outp.print("    <screen menuattop=\"" + SafeXML.strxmlencode(menuAtTop) + "\" tabsattop=\"" + SafeXML.strxmlencode(tabsAtTop) + "\" showstatus=\"" + SafeXML.strxmlencode(showStatus) + "\" hasclosebutton=\"" + SafeXML.strxmlencode(hasCloseButton) + "\"/>\n");
+			outp.print("    <fixedsip state = \"" + SafeXML.strxmlencode(fixSIP) + "\"/>\n");
+			outp.print("    <listview colmap=\"" + SafeXML.strxmlencode(listColMap) + "\" colwidths=\"" + SafeXML.strxmlencode(listColWidth) + "\" />\n");
+			outp.print("    <travelbugs colmap=\"" + SafeXML.strxmlencode(travelbugColMap) + "\" colwidths=\"" + SafeXML.strxmlencode(travelbugColWidth) + "\" shownonlogged=\"" + SafeXML.strxmlencode(travelbugShowOnlyNonLogged) + "\" />\n");
+			outp.print("    <descpanel showimages=\"" + SafeXML.strxmlencode(descShowImg) + "\" />\n");
+			outp.print("    <imagepanel showdeletedimages=\"" + SafeXML.strxmlencode(showDeletedImages) + "\"/>\n");
+			outp.print("    <hintlogpanel logsperpage=\"" + SafeXML.strxmlencode(logsPerPage) + "\" initialhintheight=\"" + SafeXML.strxmlencode(initialHintHeight) + "\"  maxspiderlogs=\"" + SafeXML.strxmlencode(maxLogsToSpider) + "\" />\n");
+			outp.print("    <solver ignorevariablecase=\"" + SafeXML.strxmlencode(solverIgnoreCase) + "\" degMode=\"" + SafeXML.strxmlencode(solverDegMode) + "\" />\n");
+			outp.print("    <garmin connection = \"" + SafeXML.strxmlencode(garminConn) + "\" GPSBabelOptions = \"" + SafeXML.strxmlencode(garminGPSBabelOptions) + "\" MaxWaypointLength = \"" + SafeXML.strxmlencode(garminMaxLen) + "\" />\n");
+			outp.print("    <opencaching downloadPicsOC=\"" + SafeXML.strxmlencode(downloadPicsOC) + "\" downloadMaps=\"" + SafeXML.strxmlencode(downloadMapsOC) + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadmissingOC) + "\"/>\n");
+			outp.print("	<location lat = \"" + SafeXML.strxmlencode(curCentrePt.getLatDeg(CWPoint.DD)) + "\" long = \"" + SafeXML.strxmlencode(curCentrePt.getLonDeg(CWPoint.DD)) + "\"/>\n");
+			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\"/>\n");
+			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
+			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
+			if (customMapsPath!=null) outp.print("	<mapspath dir = \"" + SafeXML.strxmlencode(customMapsPath.replace('\\','/')) + "\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			// save last path of different exporters
 			Iterator itPath = exporterPaths.entries();
 			MapEntry entry;
 			while(itPath.hasNext()){
 				entry = (MapEntry) itPath.next();
-				outp.print("    <expPath key = \"" + entry.getKey().toString() + "\" value = \"" + entry.getValue().toString().replace('\\', '/') + "\"/>\n");
+				outp.print("    <expPath key = \"" + SafeXML.strxmlencode(entry.getKey().toString()) + "\" value = \"" + SafeXML.strxmlencode(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
 			}
 			outp.print("</preferences>");
 			outp.close();
