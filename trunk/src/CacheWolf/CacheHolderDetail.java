@@ -145,7 +145,9 @@ public class CacheHolderDetail extends CacheHolder {
 			String dummy;
 			FileReader in = null;
 			if (new File(dir + wayPoint.toLowerCase() + ".xml").exists()) in = new FileReader(dir+wayPoint.toLowerCase() + ".xml");
-			if (new File(dir + wayPoint + ".xml").exists()) in = new FileReader(dir+wayPoint + ".xml");
+			if (in == null) {
+				if (new File(dir + wayPoint + ".xml").exists()) in = new FileReader(dir+wayPoint + ".xml");
+			}
 			if (in == null) throw new FileNotFoundException(dir+wayPoint.toLowerCase()+".xml");
 			String text= in.readAll();
 			in.close();
