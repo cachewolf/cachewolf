@@ -122,38 +122,65 @@ public class myTableControl extends TableControl{
 		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete"))){
 			Vm.showWait(true);
 			// Count # of caches to delete
-			int count=0;
+			int allCount=0;
+			int mainFilteredCount=0;
+			int addiFilteredCount=0;
+			int shouldDeleteCount=0;
+			boolean deleteFiltered=true;  // Bisheriges Verhalten
 			for(int i = cacheDB.size()-1; i >=0; i--){
-				if ( ((CacheHolder)cacheDB.get(i)).is_Checked) count++;
-			}
-			if (count>0) {
-				if ((new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1022, "Delete all caches that have a tick (") + count + MyLocale.getMsg(1028, ")?"), FormBase.YESB | FormBase.NOB)).execute() != FormBase.IDYES) {
-					Vm.showWait(false);
-					return;
-				}
-				DataMover dm=new DataMover();
-				myProgressBarForm pbf = new myProgressBarForm();
-				Handle h = new Handle();
-				pbf.setTask(h,MyLocale.getMsg(1012, "Delete selected"));
-				pbf.exec();
-				int nDeleted=0;
-				int size=cacheDB.size();
-				for(int i = size-1; i >=0; i--){// Start Counting down, as the size decreases with each deleted cache
-					ch = (CacheHolder)cacheDB.get(i);
-					if(ch.is_Checked == true) {
-						nDeleted++;
-						h.progress = ((float)nDeleted)/(float)count;
-						h.changed();
-						dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
-						cacheDB.remove(ch);
-						ch.releaseCacheDetails();
-						ch=null;
-						if (pbf.isClosed) break;
+				CacheHolder currCache = (CacheHolder)cacheDB.get(i);
+				if ( currCache.is_Checked) {
+					allCount++;
+					if (currCache.is_filtered) {
+						if (currCache.isAddiWpt()) {
+							addiFilteredCount++;
+						} else {
+							mainFilteredCount++;
+						}
 					}
 				}
-				pbf.exit(0);
-				profile.saveIndex(pref,true);	
-				tbp.refreshTable();
+			}
+			// Warn if there are ticked but invisible caches - and ask if they should be deleted,
+			// too.
+			shouldDeleteCount = allCount;
+			if (addiFilteredCount + mainFilteredCount > 0){
+				if ((new MessageBox(MyLocale.getMsg(144,"Warning"),
+						            MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") + 
+						            	mainFilteredCount + MyLocale.getMsg(1030, ", additional Waypoints: ") + 
+						            	addiFilteredCount+")\n" + MyLocale.getMsg(1031, "Delete them, too?"), 
+						            	FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
+					deleteFiltered = true;
+				} else {
+					deleteFiltered = false;
+					shouldDeleteCount = allCount - mainFilteredCount - addiFilteredCount;
+				}
+			}
+			if (shouldDeleteCount>0) {
+				if ((new MessageBox(MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(1022, "Delete selected caches (") + shouldDeleteCount + MyLocale.getMsg(1028, ") ?"), FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
+					DataMover dm=new DataMover();
+					myProgressBarForm pbf = new myProgressBarForm();
+					Handle h = new Handle();
+					pbf.setTask(h,MyLocale.getMsg(1012, "Delete selected"));
+					pbf.exec();
+					int nDeleted=0;
+					int size=cacheDB.size();
+					for(int i = size-1; i >=0; i--){// Start Counting down, as the size decreases with each deleted cache
+						ch = (CacheHolder)cacheDB.get(i);
+						if(ch.is_Checked && (!ch.is_filtered || deleteFiltered)) {
+							nDeleted++;
+							h.progress = ((float)nDeleted)/(float)allCount;
+							h.changed();
+							dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
+							cacheDB.remove(ch);
+							ch.releaseCacheDetails();
+							ch=null;
+							if (pbf.isClosed) break;
+						}
+					}
+					pbf.exit(0);
+					profile.saveIndex(pref,true);	
+					tbp.refreshTable();
+				}
 			}
 			Vm.showWait(false);
 		}
