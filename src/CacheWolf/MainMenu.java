@@ -168,14 +168,15 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organise" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organiseMenuItems=new MenuItem[7];
+		MenuItem[] organiseMenuItems=new MenuItem[8];
 		organiseMenuItems[0] = orgNewWP = new MenuItem(MyLocale.getMsg(214,"New Waypoint"));
-		organiseMenuItems[1] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
-		organiseMenuItems[2] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
-		organiseMenuItems[3] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
-		organiseMenuItems[4] = orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index"));
-		organiseMenuItems[5] = mnuSeparator;
-		organiseMenuItems[6] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
+		organiseMenuItems[1] = mnuSeparator;
+		organiseMenuItems[2] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
+		organiseMenuItems[3] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
+		organiseMenuItems[4] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
+		organiseMenuItems[5] = orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index"));
+		organiseMenuItems[6] = mnuSeparator;
+		organiseMenuItems[7] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organise"),new Menu(organiseMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
