@@ -659,7 +659,8 @@ public class Parser{
 			   "Station 1 = " $01xxxx
 			   goto($01xxxx); STOP
 			ENDIF*/
-			for (int i=0; i<nStages; i++) {
+			boolean didCreateWp=false;
+    		for (int i=0; i<nStages; i++) {
 				String stage=MyLocale.formatLong(i,"00");
 				String stageWpt="$"+stage+waypointName.substring(2);
 				String stageName = "Stage "+(i+1);
@@ -668,7 +669,7 @@ public class Parser{
 					stageName = "Final";
 					type = "53";
 				}
-				createWptIfNeeded(stage+waypointName.substring(2), stageName, type);
+				didCreateWp|=createWptIfNeeded(stage+waypointName.substring(2), stageName, type);
 				op.append("IF "+stageWpt+"=\"\" THEN\n");
 				op.append("  "+stageWpt+" = \"\"\n");
 				op.append("  \""+stageName+" = \" "+stageWpt+"\n");
@@ -676,6 +677,10 @@ public class Parser{
 				op.append("ENDIF\n");
 			}		
 			Global.mainTab.solverP.mText.appendText(op.toString(),true);
+			if (didCreateWp) {
+		    	Global.mainTab.updatePendingChanges();
+				Global.mainTab.tbP.refreshTable();
+			}
     	} else {
 	    	int i=Global.getProfile().getCacheIndex(waypointName);
 			if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
@@ -1066,12 +1071,10 @@ public class Parser{
 		}
 	}
 	
-	private void createWptIfNeeded(String wayPoint, String name, String type){
+	private boolean createWptIfNeeded(String wayPoint, String name, String type){
 	   	int ci=Global.getProfile().getCacheIndex(wayPoint);
-    	if (ci >= 0) return;
+    	if (ci >= 0) return false;
     	
-    	Global.mainTab.updatePendingChanges();
-
 		CacheHolder ch = new CacheHolder();
 		ch.wayPoint = wayPoint;
 		ch.type = type;
@@ -1083,7 +1086,7 @@ public class Parser{
 
 		Global.mainTab.cacheDB.add(ch);
 		Global.mainTab.tbP.myMod.numRows++;
-		Global.mainTab.tbP.refreshTable();
+		return true;
 	}
 	
 }
