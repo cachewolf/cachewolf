@@ -95,8 +95,9 @@ public class TablePanel extends CellPanel{
 	//TODO Add a sort here to restore the sort after a filter
 	public void refreshTable(){
 		String wayPoint;
-		if (getSelectedCache() >= 0)
-			wayPoint = ((CacheHolder)cacheDB.get(getSelectedCache())).wayPoint;
+		int sel = getSelectedCache();
+		if ((sel >= 0) && (sel < cacheDB.size()) ) // sel > cacheDB.size() can happen if you load a new profile, which is smaller than the old profile and you selected one cache that exceeds the number of caches in the new profile  
+			wayPoint = ((CacheHolder)cacheDB.get(sel)).wayPoint;
 		else wayPoint = null;
 		myMod.updateRows();
 

@@ -237,7 +237,7 @@ public class MainMenu extends MenuBar {
 				if (NewProfileWizard.startNewProfileWizard(getFrame()) ) {
 					Filter.showBlacklisted=false;
 					filtBlack.modifiers&=~MenuItem.Checked;
-					tbp.refreshTable(); // TODO if the list was empty before a new profile was created, this causes a ArrayIndexOutOfBoundsException, it doesn't cause any harm, but should be caught at the appropriate point
+					tbp.refreshTable();
 				}
 			}
 			if(mev.selectedItem == mnuOpenProfile){
