@@ -407,12 +407,15 @@ public class SafeXML{
 		return (Integer.toString(src));
 	}
 	public static String strxmlencode(String src) {
-		int i, slen = src.length();
+		int i, slen;
 		char tmp[];
-		StringBuffer dst = new StringBuffer(slen);
+		StringBuffer dst;
 
 		if (src == null)
 			return (null);
+
+		slen = src.length();
+		dst = new StringBuffer(slen);
 		tmp = new char[slen];
 		src.getChars(0, slen, tmp, 0);
 		for (i = 0; i < slen; ++i)
@@ -437,12 +440,16 @@ public class SafeXML{
 	 * @return (String) raw text, or null if input is null
 	 */
 	public static String strxmldecode(String src) {
-		if (src == null) return (null);
-		int i, j, slen = src.length();
+		int i, j, slen;
 		char ch, tmp[];
-		StringBuffer dst = new StringBuffer(slen);
+		StringBuffer dst;
 		boolean isinval;
 
+		if (src == null)
+			return (null);
+
+		slen = src.length();
+		dst = new StringBuffer(slen);
 		tmp = new char[slen];
 		src.getChars(0, slen, tmp, 0);
 		i = 0;
