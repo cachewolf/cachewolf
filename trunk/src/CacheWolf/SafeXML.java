@@ -437,13 +437,12 @@ public class SafeXML{
 	 * @return (String) raw text, or null if input is null
 	 */
 	public static String strxmldecode(String src) {
+		if (src == null) return (null);
 		int i, j, slen = src.length();
 		char ch, tmp[];
 		StringBuffer dst = new StringBuffer(slen);
 		boolean isinval;
 
-		if (src == null)
-			return (null);
 		tmp = new char[slen];
 		src.getChars(0, slen, tmp, 0);
 		i = 0;
