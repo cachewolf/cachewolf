@@ -25,7 +25,7 @@ public class NewProfileForm extends Form {
 		btnOK = new mButton(MyLocale.getMsg(1124,"Next"));
 		btnOK.setHotKey(0, IKeys.ENTER);
 		addLast(btnOK,HSTRETCH,HFILL|RIGHT);
-		this.setPreferredSize(240,80);
+		this.setPreferredSize(240,-1);
 		this.baseDir=baseDir;
 	}
 	
