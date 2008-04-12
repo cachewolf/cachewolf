@@ -1,9 +1,9 @@
 # please refer to readme_wms.txt for an explantion of this file format
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
-GetCapabilitiesUrl:	http://geodaten.service24.rlp.de/cgi/wms.cgi?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
+GetCapabilitiesUrl:	http://geodaten.service24.rlp.de/cgi-bin/wms.cgi?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
 Name:	de.rlp Luftbild
 MapType:	photo
-MainUrl:	http://geodaten.service24.rlp.de/cgi/wms.cgi?
+MainUrl:	http://geodaten.service24.rlp.de/cgi-bin/wms.cgi?
 ServiceTypeUrlPart:	SERVICE=WMS 
 VersionUrlPart:	VERSION=1.1.1 
 CoordinateReferenceSystemCacheWolf:   31466 31467

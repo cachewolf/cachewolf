@@ -404,8 +404,7 @@ public class DetailsPanel extends CellPanel{
 			}
 			else if (ev.target == btnWayLoc){
 				CWPoint coords = new CWPoint(btnWayLoc.getText(),CWPoint.CW);
-				CoordsScreen cs = new CoordsScreen();
-				cs.allowInvalid = true;
+				CoordsScreen cs = new CoordsScreen(true);
 				cs.setFields(coords, CWPoint.CW);
 				if (cs.execute()== FormBase.IDOK){
 					dirty_details=true;
