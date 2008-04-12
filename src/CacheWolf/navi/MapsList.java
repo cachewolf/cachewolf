@@ -493,6 +493,7 @@ class MapListEntry /*implements Comparable */ {
 	public static void loadingFinished() {
 		if (renameProgressInfoB != null) renameProgressInfoB.close(0);
 		renameProgressInfoB = null;
+		rename = 0;
 	}
 	
 	/*

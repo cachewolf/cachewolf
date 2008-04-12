@@ -95,7 +95,8 @@ public class TablePanel extends CellPanel{
 	//TODO Add a sort here to restore the sort after a filter
 	public void refreshTable(){
 		String wayPoint;
-		if (getSelectedCache() >= 0) wayPoint = ((CacheHolder)cacheDB.get(getSelectedCache())).wayPoint;
+		if (getSelectedCache() >= 0)
+			wayPoint = ((CacheHolder)cacheDB.get(getSelectedCache())).wayPoint;
 		else wayPoint = null;
 		myMod.updateRows();
 

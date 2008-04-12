@@ -36,12 +36,16 @@ public class DescriptionPanel extends CellPanel{
 	*/
 	//String description = null;
 	public void setText(CacheHolderDetail cache){
-		boolean isHtml=cache.is_HTML;
+		boolean isHtml;
 		//if (currCache == cache) return;
 		int scrollto = 0;
-		if (cache.hasSameMainCache(currCache)) scrollto = disp.getTopLine();
-		if (cache == null) desc = "";
+		if (cache == null) {
+			desc = "";
+			isHtml = false;
+		}
 		else {
+			if (cache.hasSameMainCache(currCache)) scrollto = disp.getTopLine();
+			isHtml=cache.is_HTML;
 			if (cache.isAddiWpt()) {
 				CacheHolderDetail mainCache=cache.mainCache.getCacheDetails(true);
 				isHtml=mainCache.is_HTML;
