@@ -178,6 +178,7 @@ public class myTableControl extends TableControl{
 						}
 					}
 					pbf.exit(0);
+					tbp.myMod.numRows-=nDeleted;
 					profile.saveIndex(pref,true);	
 					tbp.refreshTable();
 				}
