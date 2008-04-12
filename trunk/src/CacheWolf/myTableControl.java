@@ -309,7 +309,19 @@ public class myTableControl extends TableControl{
 			}
 		}
 	 }
-	 
+
+	 /**
+	  * this is only necessary to hinder the user to unselect
+	  */
+	 public void penReleased(Point p,boolean isDouble)
+	 {
+		 Point p2 = cellAtPoint(p.x,p.y,null);
+		 super.penReleased(p, isDouble);
+		 Rect sel = getSelection(null); 
+		 if ((sel.height == 0 || sel.height == 0) && p2 != null) cursorTo(p2.y,p2.x, true); // if the selection is gone -> reselect it 
+			 
+	 }
+
 	 class myProgressBarForm extends ProgressBarForm {
 
 		 boolean isClosed=false;
@@ -320,6 +332,8 @@ public class myTableControl extends TableControl{
 		 }
 		 
 	 }
+	 
+	 
 
 	public Menu getMenuSmall() {
 		return mSmall;

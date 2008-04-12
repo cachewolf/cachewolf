@@ -6,6 +6,7 @@ import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.NewProfileWizard;
 import CacheWolf.Preferences;
 import ewe.io.FileBase;
 import ewe.sys.Convert;
@@ -277,8 +278,8 @@ public class MapLoaderGui extends Form {
 					if (forSelectedChkBox.getSelectedItem().toString().equalsIgnoreCase(MyLocale.getMsg(1804, "all"))) onlySelected = false;
 					else onlySelected = true;
 					overviewmap = overviewChkBox.getState();
-					radius = Convert.toFloat(distanceInput.getText());
-					scale = Convert.toFloat(scaleInput.getText());
+					radius = (float)CacheWolf.Common.parseDouble(distanceInput.getText());
+					scale = (float)CacheWolf.Common.parseDouble(scaleInput.getText());
 					overlapping = Convert.toInt(overlappingInput.getText());
 					if (!forCachesChkBox.getState()) {
 						if (radius <= 0) { 
