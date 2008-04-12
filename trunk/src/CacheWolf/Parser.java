@@ -662,9 +662,16 @@ public class Parser{
 			for (int i=0; i<nStages; i++) {
 				String stage=MyLocale.formatLong(i,"00");
 				String stageWpt="$"+stage+waypointName.substring(2);
+				String stageName = "Stage "+(i+1);
+				String type = "51";
+				if (i == nStages - 1) {
+					stageName = "Final";
+					type = "53";
+				}
+				createWptIfNeeded(stage+waypointName.substring(2), stageName, type);
 				op.append("IF "+stageWpt+"=\"\" THEN\n");
 				op.append("  "+stageWpt+" = \"\"\n");
-				op.append("  \"Stage "+(i+1)+" = \" "+stageWpt+"\n");
+				op.append("  \""+stageName+" = \" "+stageWpt+"\n");
 				op.append("  goto("+stageWpt+"); STOP\n");
 				op.append("ENDIF\n");
 			}		
@@ -1057,6 +1064,26 @@ public class Parser{
 		}catch(Exception ex){
 			//Vm.debug(ex.toString());
 		}
+	}
+	
+	private void createWptIfNeeded(String wayPoint, String name, String type){
+	   	int ci=Global.getProfile().getCacheIndex(wayPoint);
+    	if (ci >= 0) return;
+    	
+    	Global.mainTab.updatePendingChanges();
+
+		CacheHolder ch = new CacheHolder();
+		ch.wayPoint = wayPoint;
+		ch.type = type;
+		ch.CacheSize = "None";
+		ch.CacheName= name;
+		
+		Global.getProfile().hasUnsavedChanges=true;
+		Global.getProfile().setAddiRef(ch);
+
+		Global.mainTab.cacheDB.add(ch);
+		Global.mainTab.tbP.myMod.numRows++;
+		Global.mainTab.tbP.refreshTable();
 	}
 	
 }

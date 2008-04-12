@@ -19,16 +19,28 @@ public class CoordsScreen extends Form {
 	mInput inpNSDeg, inpNSm, inpNSs, inpEWDeg, inpEWm, inpEWs;
 	mInput inpUTMZone, inpUTMNorthing, inpUTMEasting;
 	mInput inpText;
-	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse, btnGps;
+	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse, btnGps, btnClear;
 	CWPoint coordInp = new CWPoint();
 	CellPanel topLinePanel = new CellPanel();
 	CellPanel mainPanel = new CellPanel();
 	int exitKeys[]={75009};
 	int currFormat;
 	
-	boolean allowInvalid = false;
+	private boolean allowInvalid = false;
+	
+	public CoordsScreen(boolean allowInvalidCoords)
+	{
+		allowInvalid = allowInvalidCoords;
+		
+		InitCoordsScreen();		
+	}
 	
 	public CoordsScreen()
+	{
+		InitCoordsScreen();		
+	}
+	
+	private void InitCoordsScreen()
 	{
 		this.setTitle("");
 		//Radiobuttons for format
@@ -60,10 +72,17 @@ public class CoordsScreen extends Form {
 		mainPanel.addLast(inpEWs = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		// Input for UTM
-		mainPanel.addNext(new mLabel(MyLocale.getMsg(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		mainPanel.addNext(new mLabel(MyLocale.getMsg(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		mainPanel.addLast(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-
+		if (allowInvalid){
+			mainPanel.addNext(new mLabel(MyLocale.getMsg(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
+			mainPanel.addNext(new mLabel(MyLocale.getMsg(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
+			mainPanel.addNext(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
+			mainPanel.addLast(btnClear = new mButton(MyLocale.getMsg(1413,"Clear")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		} else {
+			mainPanel.addNext(new mLabel(MyLocale.getMsg(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
+			mainPanel.addNext(new mLabel(MyLocale.getMsg(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
+			mainPanel.addLast(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
+		}
+		
 		mainPanel.addNext(inpUTMZone = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		mainPanel.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		mainPanel.addNext(inpUTMNorthing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -277,6 +296,13 @@ public class CoordsScreen extends Form {
 					setFields(coord,currFormat);
 					activateFields(currFormat);
 				}
+			}
+			
+			if (ev.target == btnClear){
+				CWPoint coord = new CWPoint(91,361);
+				currFormat = chkFormat.getSelectedIndex();
+				setFields(coord,currFormat);
+				activateFields(currFormat);
 			}
 		}
 		super.onEvent(ev);
