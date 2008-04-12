@@ -64,7 +64,7 @@ public class HintLogPanel extends CellPanel{
 	public void setText(CacheHolderDetail cache){
 		this.cache = cache;
 		if(!cache.Hints.equals("null")) 
-			hint.setText(cache.Hints);
+			hint.setText(STRreplace.replace(cache.Hints, "<br>", "\n"));
 		else
 			hint.setText("");
 		crntLogPosition = 0;
