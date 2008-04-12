@@ -96,7 +96,9 @@ public class CoordsScreen extends Form {
 		mainPanel.addLast(btnParse = new mButton(MyLocale.getMsg(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		
 		// Buttons for cancel and apply, copy and paste
-		mainPanel.addNext(btnCancel = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		btnCancel = new mButton(MyLocale.getMsg(614,"Cancel"));
+		btnCancel.setHotKey(0, IKeys.ESCAPE);
+		mainPanel.addNext(btnCancel,CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnCancel.setTag(SPAN,new Dimension(4,1));
 		mainPanel.addNext(btnApply = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		//btnApply.setTag(SPAN,new Dimension(4,1));
