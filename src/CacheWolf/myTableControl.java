@@ -110,6 +110,7 @@ public class myTableControl extends TableControl{
 	}
 	
 	public void popupMenuEvent(Object selectedItem){
+		if (selectedItem == null) return;
 		CacheHolder ch;
 		if (selectedItem.toString().equals(MyLocale.getMsg(1015,"Select all"))){
 			setSelectForAll(true);
