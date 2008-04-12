@@ -31,7 +31,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
-	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild;
+	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgToggleCacheTour;
 	public MenuItem filtCacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
@@ -168,7 +168,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organise" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organiseMenuItems=new MenuItem[8];
+		MenuItem[] organiseMenuItems=new MenuItem[9];
 		organiseMenuItems[0] = orgNewWP = new MenuItem(MyLocale.getMsg(214,"New Waypoint"));
 		organiseMenuItems[1] = mnuSeparator;
 		organiseMenuItems[2] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
@@ -177,6 +177,7 @@ public class MainMenu extends MenuBar {
 		organiseMenuItems[5] = orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index"));
 		organiseMenuItems[6] = mnuSeparator;
 		organiseMenuItems[7] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
+		organiseMenuItems[8] = orgToggleCacheTour = new MenuItem(MyLocale.getMsg(197,"Show/Hide cachetour"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organise"),new Menu(organiseMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
@@ -560,6 +561,10 @@ public class MainMenu extends MenuBar {
 				tbs.execute(); //getFrame(), Gui.CENTER_FRAME);
 				tbs.close(0);
 			}
+			if (mev.selectedItem == orgToggleCacheTour){
+				Global.mainForm.toggleCacheListVisible();			
+			}
+
 			///////////////////////////////////////////////////////////////////////
 			// "About" pulldown menu
 			///////////////////////////////////////////////////////////////////////
