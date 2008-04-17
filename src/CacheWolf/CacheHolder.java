@@ -1,5 +1,7 @@
 package CacheWolf;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import ewe.io.IOException;
 import ewe.sys.Convert;
 import ewe.ui.FormBase;
@@ -539,4 +541,39 @@ public void finalize() {nObjects--;
    Vm.debug("CacheHolder: "+nObjects+" objects left");
 }
 	 */
+	
+	public String GetStatusDate() {
+		String statusDate = "";
+		
+		if (is_found) {
+			Regex rexDate=new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
+			rexDate.search(CacheStatus);
+			if (rexDate.stringMatched(1)!= null) {
+				statusDate = rexDate.stringMatched(1);
+			}
+		}
+
+		return statusDate;		
+	}
+	
+	public String GetStatusTime() {
+		String statusTime = "";
+
+		if (is_found) {
+			Regex rexTime=new Regex("([0-9]{1,2}:[0-9]{2})");
+			rexTime.search(CacheStatus);
+			if (rexTime.stringMatched(1)!= null) {
+				statusTime = rexTime.stringMatched(1);
+			}
+			else {
+				Regex rexDate=new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
+				rexDate.search(CacheStatus);
+				if (rexDate.stringMatched(1)!= null) {
+					statusTime = "00:00";
+				}
+			}
+		}
+
+		return statusTime;		
+	}
 }

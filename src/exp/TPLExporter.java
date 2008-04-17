@@ -216,6 +216,8 @@ public class TPLExporter {
 						varParams.put("LAT", dec.replaceAll(holder.pos.getLatDeg(CWPoint.DD)));
 						varParams.put("LON", dec.replaceAll(holder.pos.getLonDeg(CWPoint.DD)));
 						varParams.put("STATUS", holder.CacheStatus);
+						varParams.put("STATUS_DATE", holder.GetStatusDate());
+						varParams.put("STATUS_TIME", holder.GetStatusTime());
 						varParams.put("DATE", holder.DateHidden);
 						varParams.put("URL", holder.URL);
 						varParams.put("NOTES", holder.CacheNotes);
