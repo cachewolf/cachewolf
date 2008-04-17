@@ -4,6 +4,7 @@ import utils.CWWrapper;
 import ewe.sys.*;
 import ewe.ui.*;
 import ewe.fx.*;
+import ewe.io.File;
 import ewe.io.IOException;
 import ewe.util.*;
 
@@ -209,27 +210,40 @@ public class myTableControl extends TableControl{
 			Global.mainTab.gotoPoint(ch.pos);
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1020,"Open online in Browser"))){
-			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
-			CacheHolderDetail chD=ch.getCacheDetails(false, true);
-			try {
-				if (chD != null) {
-					//String cmd = "\""+pref.browser+ "\" \"" + chD.URL+"\"";
-					CWWrapper.exec(pref.browser, chD.URL); // maybe this works on some PDAs?
+			if(browserPathIsValid()){
+				ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
+				CacheHolderDetail chD=ch.getCacheDetails(false, true);
+				try {
+					if (chD != null) {
+						//String cmd = "\""+pref.browser+ "\" \"" + chD.URL+"\"";
+						CWWrapper.exec(pref.browser, chD.URL); // maybe this works on some PDAs?
+					}
+				} catch (IOException ex) {
+					(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nPossible reason:\n * An bug in ewe VM, please be \npatient for an update",FormBase.OKB)).execute();
 				}
-			} catch (IOException ex) {
-				(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in ewe VM, please be \npatient for an update",FormBase.OKB)).execute();
 			}
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1018,"Open in browser offline"))) {
-			ShowCacheInBrowser sc=new ShowCacheInBrowser();
-			sc.showCache(((CacheHolder)cacheDB.get(tbp.getSelectedCache())).getCacheDetails(false, true));
+			if(browserPathIsValid()){
+				ShowCacheInBrowser sc=new ShowCacheInBrowser();
+				sc.showCache(((CacheHolder)cacheDB.get(tbp.getSelectedCache())).getCacheDetails(false, true));
+			}
 		}
 		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1021,"Open description"))){
 			penDoubleClicked(null);
 		}
 
 	}
-
+	
+	public Boolean browserPathIsValid() {
+		if(!new File(pref.browser).exists()){
+			(new MessageBox("Error", "Path to browser:\n"+pref.browser+"\nis incorrect!",FormBase.OKB)).execute();
+			return false;
+		}
+		else
+			return true;
+	}
+	
 	public void penDoubleClicked(Point where) {
 		Global.mainTab.select(Global.mainTab.descP);
 	}
