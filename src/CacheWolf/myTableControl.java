@@ -235,7 +235,7 @@ public class myTableControl extends TableControl{
 
 	}
 	
-	public Boolean browserPathIsValid() {
+	public boolean browserPathIsValid() {
 		if(!new File(pref.browser).exists()){
 			(new MessageBox("Error", "Path to browser:\n"+pref.browser+"\nis incorrect!",FormBase.OKB)).execute();
 			return false;
