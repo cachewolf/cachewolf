@@ -219,7 +219,11 @@ public class myTableControl extends TableControl{
 						CWWrapper.exec(pref.browser, chD.URL); // maybe this works on some PDAs?
 					}
 				} catch (IOException ex) {
-					(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nPossible reason:\n * An bug in ewe VM, please be \npatient for an update",FormBase.OKB)).execute();
+					(new MessageBox(MyLocale.getMsg(321,"Error"),
+							MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +
+							MyLocale.getMsg(1035,"Possible reason:") + "\n" +
+							MyLocale.getMsg(1036,"A bug in ewe VM, please be") + "\n" +
+							MyLocale.getMsg(1037,"patient for an update"),FormBase.OKB)).execute();
 				}
 			}
 		}
@@ -237,7 +241,7 @@ public class myTableControl extends TableControl{
 	
 	public boolean browserPathIsValid() {
 		if(!new File(pref.browser).exists()){
-			(new MessageBox("Error", "Path to browser:\n"+pref.browser+"\nis incorrect!",FormBase.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(1032,"Path to browser:")+"\n"+pref.browser+"\n"+MyLocale.getMsg(1033,"is incorrect!"),FormBase.OKB)).execute();
 			return false;
 		}
 		else

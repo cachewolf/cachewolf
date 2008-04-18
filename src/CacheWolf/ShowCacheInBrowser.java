@@ -1,12 +1,17 @@
 package CacheWolf;
+import utils.CWWrapper;
+
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.io.BufferedWriter;
 import ewe.io.FileBase;
 import ewe.io.FileWriter;
+import ewe.io.IOException;
 import ewe.io.PrintWriter;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
+import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
 import ewe.util.*;
 import HTML.Template;
 
@@ -206,11 +211,13 @@ public class ShowCacheInBrowser {
 			//detfile.print(tpl.output());
 			detfile.close();
 			try {
-				String s = "\""+Global.getPref().browser+"\" \"file://"+saveTo+"\"";
-
-				Vm.exec(s); //Global.getPref().browser+" \"file:"+saveTo+"\"");
-				Global.getPref().log("Executing: "+s); //Global.getPref().browser+" \""+saveTo+"\"");
-			} catch (Exception ioex) {
+				CWWrapper.exec(Global.getPref().browser, "\"file://"+saveTo+"\""); // maybe this works on some PDAs?
+			} catch (IOException ex) {
+				(new MessageBox(MyLocale.getMsg(321,"Error"),
+						MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +
+						MyLocale.getMsg(1035,"Possible reason:") + "\n" +
+						MyLocale.getMsg(1036,"A bug in ewe VM, please be") + "\n" +
+						MyLocale.getMsg(1037,"patient for an update"),FormBase.OKB)).execute();
 			}
 			
 		} catch(Exception e) {
