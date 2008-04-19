@@ -530,6 +530,7 @@ public class DetailsPanel extends CellPanel{
 		  dirty_notes=false;
 		  dirty_details=false;
 		  setNeedsTableUpdate(false);
+		  if (thisCache.details != null) thisCache.details.hasUnsavedChanges = false;
 		  thisCache.getCacheDetails(true).hasUnsavedChanges = true;
 		  
 		  // Global.mainTab.tbP.refreshTable(); this is done in mainTab.onLeavingPanel
