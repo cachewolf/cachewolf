@@ -222,7 +222,8 @@ public class SpiderGC{
 				pref.log("No .XML file found for cache "+chD.wayPoint);
 			};
 */			// Read the cache data from GC.COM and compare to old data
-			ret=getCacheByWaypointName(chD,true,true,false,true);
+			boolean loadAllLogs = (MAXLOGS > 5);
+			ret=getCacheByWaypointName(chD,true,true,false,loadAllLogs);
 			// Save the spidered data
 			if (ret) {
 				pref.log("Saving to:" + profile.dataDir);
@@ -441,6 +442,8 @@ public class SpiderGC{
 		//=======
 		// Now ready to spider each cache in the list
 		//=======
+		boolean loadAllLogs = (MAXLOGS > 5);
+
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			if (infB.isClosed) break;
 
@@ -450,7 +453,7 @@ public class SpiderGC{
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + cachesToLoad.size() + ")");
 				chD = new CacheHolderDetail();
 				chD.wayPoint=wpt;
-				if (!getCacheByWaypointName(chD,false,getImages,doNotgetFound,true)) break;
+				if (!getCacheByWaypointName(chD,false,getImages,doNotgetFound,loadAllLogs)) break;
 				if (!chD.is_found || !doNotgetFound ) {
 					chD.saveCacheDetails(profile.dataDir);
 					cacheDB.add(new CacheHolder(chD)); 
