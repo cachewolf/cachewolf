@@ -48,6 +48,7 @@ public class MapsList extends Vector {
 			files = new FileBugfix(mapsPath+"/"+dirs.get(j));
 			//ewe.sys.Vm.debug("mapd-Dirs:"+files);
 			dateien = files.list("*.wfl", FileBase.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
+			if (dateien == null) continue;
 			for(int i = 0; i < dateien.length;i++){
 				// if (!dateien[i].endsWith(".wfl")) continue;
 				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));

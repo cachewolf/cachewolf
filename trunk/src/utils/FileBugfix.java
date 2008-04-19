@@ -3,6 +3,7 @@
  */
 package utils;
 
+import CacheWolf.STRreplace;
 import ewe.io.*;
 import ewe.util.FileComparer;
 import ewe.util.mString;
@@ -12,8 +13,9 @@ import ewe.util.mString;
  * so I get all the files wich null in spite of the mask and filter afterwords 
  */
 public class FileBugfix extends File{
-	public FileBugfix(String path) 
-	{super(path);}
+	public FileBugfix(String path) {
+		super(STRreplace.replace(path, "//", "/"));
+	}
 
 	public String[] list(final String mask,final int listAndSortOptions)
 	{
@@ -33,22 +35,25 @@ public class FileBugfix extends File{
 		 */
 		return listBugFixed (compositeMask, listAndSortOptions);
 	}
-	
+
 	public String[] listBugFixed(final String compositeMask,final int listAndSortOptions) {
+		File ewefile = ewe.sys.Vm.newFileObject();
+		ewefile.set(null, name);
+
 		String mask = (compositeMask == null) ? "*.*" : compositeMask; 
 		String[] found; //the following code is mainly copoed from FileBase.listmultiple to avoid recursion it is not called
 		char c = mask.indexOf(',') == -1 ? ';' : ',';
 		String masks [] = mString.split(mask,c);
 		String dirs [] = new String[0];
 		if ((listAndSortOptions & LIST_FILES_ONLY) == 0)
-			dirs = super.list(null,LIST_DIRECTORIES_ONLY); // add dirs if not only asked for files
+			dirs = ewefile.list(null,LIST_DIRECTORIES_ONLY); // add dirs if not only asked for files
 		if ((listAndSortOptions & LIST_DIRECTORIES_ONLY) == 0)
-			found = super.list(null,FileBase.LIST_FILES_ONLY|listAndSortOptions); // add files if not dirs only
+			found = ewefile.list(null,FileBase.LIST_FILES_ONLY|listAndSortOptions); // add files if not dirs only
 		else {
 			found = dirs; // if dirs only -> aplpy masks to the dirs
 			dirs = new String[0]; // this line is missing in ewe FileBase.listmultiple -> doubled dirs when using listmultiple with the option dirs_only
 		}
-
+		if (found == null) return null;
 		ewe.util.FileComparer [] fcs = new ewe.util.FileComparer[masks.length];
 
 		for (int i = 0; i<masks.length; i++)
@@ -75,4 +80,46 @@ public class FileBugfix extends File{
 		found = isMatching;
 		return found;
 	}
+
+	/**
+	 * this is needed in order to be able to use the simulated 
+	 * file system _filesystem.zip when running as applet 
+	 */
+	public boolean exists() {
+		File ewefile = ewe.sys.Vm.newFileObject();
+		ewefile.set(null, name);
+		return (ewefile.exists());
+	}
+
+	public boolean isDirectory() {
+		File ewefile = ewe.sys.Vm.newFileObject();
+		ewefile.set(null, name);
+		return (ewefile.isDirectory());
+	}
+
+	public boolean createDir() {
+		File ewefile = ewe.sys.Vm.newFileObject();
+		ewefile.set(null, name);
+		return (ewefile.createDir());
+
+	}
+	public boolean delete() {
+		File ewefile = ewe.sys.Vm.newFileObject();
+		ewefile.set(null, name);
+		return (ewefile.delete());
+	}
+	public int getLength() {
+		File ewefile = ewe.sys.Vm.newFileObject();
+		ewefile.set(null, name);
+		return (ewefile.getLength());
+	}
+
+	public String getDrivePath() {
+		File ewefile = ewe.sys.Vm.newFileObject();
+		ewefile.set(null, name);
+		return (ewefile.getDrivePath());
+	}
+
+
+
 }
