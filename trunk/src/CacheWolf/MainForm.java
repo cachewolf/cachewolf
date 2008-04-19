@@ -153,12 +153,12 @@ public class MainForm extends Editor {
 			// Make the splitterbar visible with a width of 6 
 			split.theSplitter.modify(0,Invisible);
 			split.theSplitter.resizeTo(6,split.theSplitter.getRect().height);
-			Global.mainForm.mMenu.filtCacheTour.modifiers|=MenuItem.Checked;
+			Global.mainForm.mMenu.cacheTour.modifiers|=MenuItem.Checked;
 		} else {
 			// Hide the splitterbar and set width to 0
 			split.theSplitter.modify(Invisible,0);
 			split.theSplitter.resizeTo(0,split.theSplitter.getRect().height);
-			Global.mainForm.mMenu.filtCacheTour.modifiers&=~MenuItem.Checked;
+			Global.mainForm.mMenu.cacheTour.modifiers&=~MenuItem.Checked;
 		}
 		split.theSplitter.doOpenClose(cacheListVisible);
 		Global.mainForm.mMenu.repaint();
