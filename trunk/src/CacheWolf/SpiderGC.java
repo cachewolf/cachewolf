@@ -104,11 +104,16 @@ public class SpiderGC{
 			pref.log("[login]:Fetching login page");
 			//Access the page once to get a viewstate
 			start = fetch(loginPage);   //http://www.geocaching.com/login/Default.aspx
+			if (start.equals("")) {
+				infB.close(0);
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
+				pref.log("[login]:Could not fetch: gc.com login page");
+				return ERR_LOGIN;
+			}
 		} catch(Exception ex){
 			infB.close(0);
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page"), FormBase.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
 			pref.log("[login]:Could not fetch: gc.com login page",ex);
-			passwort="";
 			return ERR_LOGIN;
 		}
 		if (!infB.isClosed) { // If user has not aborted, we continue
@@ -481,144 +486,170 @@ public class SpiderGC{
 	 * @return false if the infoBox was closed
 	 */
 	private boolean getCacheByWaypointName(CacheHolderDetail chD, boolean isUpdate, boolean fetchImages, boolean doNotGetFound, boolean fetchAllLogs) {
-		String completeWebPage;
-		int spiderTrys=0;
-		int MAX_SPIDER_TRYS=3;
-		while (spiderTrys++<MAX_SPIDER_TRYS) {
-			try{
-				String doc = p.getProp("getPageByName") + chD.wayPoint +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
-				pref.log("Fetching: " + chD.wayPoint);
-				completeWebPage = fetch(doc);
-			}catch(Exception ex){
-				pref.log("Could not fetch " + chD.wayPoint,ex);
-				chD.is_incomplete = true;
-				return !infB.isClosed; // Only return false (which terminates the loop over all caches) if infB is closed
-			}
-			// Only analyse the cache data and fetch pictures if user has not closed the progress window
-			if (!infB.isClosed) {
+		boolean canceled = false;
+		while (true) {
+			String completeWebPage;
+			int spiderTrys=0;
+			int MAX_SPIDER_TRYS=3;
+			while (spiderTrys++<MAX_SPIDER_TRYS) {
 				try{
-					chD.is_new = !isUpdate;
-					chD.is_update = false;
-					chD.is_log_update=false;
-					chD.is_HTML = true;
-					chD.is_available = true;
-					chD.is_archived = false;
-					chD.is_incomplete = false;
-					// Save size of logs to be able to check whether any new logs were added
-					//int logsz = chD.CacheLogs.size();
-					//chD.CacheLogs.clear();
-					chD.addiWpts.clear();
-					chD.Images.clear();
-					chD.ImagesText.clear();
-					chD.ImagesInfo.clear();
-	
-					if(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0) chD.is_available = false;
-					if(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0) chD.is_archived = true;
-					//==========
-					// General Cache Data
-					//==========
-					chD.setLatLon(getLatLon(completeWebPage));
-					pref.log("LatLon: " + chD.LatLon);
-					if (pref.debug) pref.log("chD.pos: " + chD.pos.toString());
-					if (chD.LatLon.equals("???")) {
-						pref.log(">>>> Failed to spider Cache. Retry.");
-						continue; // Restart the spider
+					String doc = p.getProp("getPageByName") + chD.wayPoint +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
+					pref.log("Fetching: " + chD.wayPoint);
+					completeWebPage = fetch(doc);
+					if	( completeWebPage.equals("")) {
+						pref.log("Could not fetch " + chD.wayPoint);
+						if (!infB.isClosed) {
+							continue;
+						} else {
+							chD.is_incomplete = true;
+							return false;
+						}
 					}
-					pref.log("Trying description");
-					chD.setLongDescription(getLongDesc(completeWebPage));
-					pref.log("Got description");
-	
-					pref.log("Getting cache name");
-					chD.CacheName = SafeXML.cleanback(getName(completeWebPage));
-					if (pref.debug) pref.log("Name: " + chD.CacheName); else pref.log("Got name");
-						
-					pref.log("Trying owner");
-					chD.CacheOwner = SafeXML.cleanback(getOwner(completeWebPage)).trim();
-					if(chD.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equals(pref.myAlias2))) chD.is_owned = true;
-					if (pref.debug) pref.log("Owner: " + chD.CacheOwner +"; is_owned = "+chD.is_owned+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
-					else pref.log("Got owner");
-
-						
-					pref.log("Trying date hidden");
-					chD.DateHidden = DateFormat.MDY2YMD(getDateHidden(completeWebPage));
-					if (pref.debug) pref.log("Hidden: " + chD.DateHidden);
-					else pref.log("Got date hidden");
-					
-					pref.log("Trying hints");
-					chD.setHints(getHints(completeWebPage));
-					if (pref.debug) pref.log("Hints: " + chD.Hints);
-					else pref.log("Got hints");
-					
-					pref.log("Trying size");
-					chD.CacheSize = getSize(completeWebPage);
-					if (pref.debug) pref.log("Size: " + chD.CacheSize);
-					else pref.log("Got size");
-	
-					pref.log("Trying difficulty");
-					chD.hard = getDiff(completeWebPage);
-					if (pref.debug) pref.log("Hard: " + chD.hard);
-					else pref.log("Got difficulty");
-	
-					pref.log("Trying terrain");
-					chD.terrain = getTerr(completeWebPage);
-					if (pref.debug) pref.log("Terr: " + chD.terrain);
-					else pref.log("Got terrain");
-	
-					pref.log("Trying cache type");
-					chD.type = getType(completeWebPage);
-					if (pref.debug) pref.log("Type: " + chD.type);
-					else pref.log("Got cache type");
-	
-					//==========
-					// Logs
-					//==========
-					pref.log("Trying logs");
-					chD.setCacheLogs(getLogs(completeWebPage, chD));
-					pref.log("Found logs");
-	
-					// If the switch is set to not store found caches and we found the cache => return
-					if (chD.is_found && doNotGetFound) return !infB.isClosed;
-	
-					//==========
-					// Bugs
-					//==========
-					// As there may be several bugs, we check whether the user has aborted
-					if (!infB.isClosed) getBugs(chD,completeWebPage);
-					chD.has_bug = chD.Travelbugs.size()>0;
-	
-					//==========
-					// Images
-					//==========
-					if(fetchImages){
-						pref.log("Trying images");
-						getImages(completeWebPage, chD);
-						pref.log("Got images");
-					}
-					//==========
-					// Addi waypoints
-					//==========
-	
-					pref.log("Getting additional waypoints");
-					getAddWaypoints(completeWebPage, chD.wayPoint, chD.is_found);
-					pref.log("Got additional waypoints");
-	
-					//==========
-					// Attributes
-					//==========
-					pref.log("Getting attributes");
-					getAttributes(completeWebPage, chD);
-					pref.log("Got attributes");
-					if (chD.is_new) chD.is_update=false;
-					break;
 				}catch(Exception ex){
-					pref.log("Error reading cache: "+chD.wayPoint);
-					pref.log("Exception in getCacheByWaypointName: ",ex);
+					pref.log("Could not fetch " + chD.wayPoint,ex);
+					if (!infB.isClosed) {
+						continue;
+					} else {
+						chD.is_incomplete = true;
+						return false;
+					}
 				}
-				finally{}
+				// Only analyse the cache data and fetch pictures if user has not closed the progress window
+				if (!infB.isClosed) {
+					try{
+						chD.is_new = !isUpdate;
+						chD.is_update = false;
+						chD.is_log_update=false;
+						chD.is_HTML = true;
+						chD.is_available = true;
+						chD.is_archived = false;
+						chD.is_incomplete = false;
+						// Save size of logs to be able to check whether any new logs were added
+						//int logsz = chD.CacheLogs.size();
+						//chD.CacheLogs.clear();
+						chD.addiWpts.clear();
+						chD.Images.clear();
+						chD.ImagesText.clear();
+						chD.ImagesInfo.clear();
+
+						if(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0) chD.is_available = false;
+						if(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0) chD.is_archived = true;
+						//==========
+						// General Cache Data
+						//==========
+						chD.setLatLon(getLatLon(completeWebPage));
+						pref.log("LatLon: " + chD.LatLon);
+						if (pref.debug) pref.log("chD.pos: " + chD.pos.toString());
+						if (chD.LatLon.equals("???")) {
+							pref.log(">>>> Failed to spider Cache. Retry.");
+							continue; // Restart the spider
+						}
+						pref.log("Trying description");
+						chD.setLongDescription(getLongDesc(completeWebPage));
+						pref.log("Got description");
+
+						pref.log("Getting cache name");
+						chD.CacheName = SafeXML.cleanback(getName(completeWebPage));
+						if (pref.debug) pref.log("Name: " + chD.CacheName); else pref.log("Got name");
+
+						pref.log("Trying owner");
+						chD.CacheOwner = SafeXML.cleanback(getOwner(completeWebPage)).trim();
+						if(chD.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equals(pref.myAlias2))) chD.is_owned = true;
+						if (pref.debug) pref.log("Owner: " + chD.CacheOwner +"; is_owned = "+chD.is_owned+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
+						else pref.log("Got owner");
+
+
+						pref.log("Trying date hidden");
+						chD.DateHidden = DateFormat.MDY2YMD(getDateHidden(completeWebPage));
+						if (pref.debug) pref.log("Hidden: " + chD.DateHidden);
+						else pref.log("Got date hidden");
+
+						pref.log("Trying hints");
+						chD.setHints(getHints(completeWebPage));
+						if (pref.debug) pref.log("Hints: " + chD.Hints);
+						else pref.log("Got hints");
+
+						pref.log("Trying size");
+						chD.CacheSize = getSize(completeWebPage);
+						if (pref.debug) pref.log("Size: " + chD.CacheSize);
+						else pref.log("Got size");
+
+						pref.log("Trying difficulty");
+						chD.hard = getDiff(completeWebPage);
+						if (pref.debug) pref.log("Hard: " + chD.hard);
+						else pref.log("Got difficulty");
+
+						pref.log("Trying terrain");
+						chD.terrain = getTerr(completeWebPage);
+						if (pref.debug) pref.log("Terr: " + chD.terrain);
+						else pref.log("Got terrain");
+
+						pref.log("Trying cache type");
+						chD.type = getType(completeWebPage);
+						if (pref.debug) pref.log("Type: " + chD.type);
+						else pref.log("Got cache type");
+
+						//==========
+						// Logs
+						//==========
+						pref.log("Trying logs");
+						chD.setCacheLogs(getLogs(completeWebPage, chD));
+						pref.log("Found logs");
+
+						// If the switch is set to not store found caches and we found the cache => return
+						if (chD.is_found && doNotGetFound) return !infB.isClosed;
+
+						//==========
+						// Bugs
+						//==========
+						// As there may be several bugs, we check whether the user has aborted
+						if (!infB.isClosed) getBugs(chD,completeWebPage);
+						chD.has_bug = chD.Travelbugs.size()>0;
+
+						//==========
+						// Images
+						//==========
+						if(fetchImages){
+							pref.log("Trying images");
+							getImages(completeWebPage, chD);
+							pref.log("Got images");
+						}
+						//==========
+						// Addi waypoints
+						//==========
+
+						pref.log("Getting additional waypoints");
+						getAddWaypoints(completeWebPage, chD.wayPoint, chD.is_found);
+						pref.log("Got additional waypoints");
+
+						//==========
+						// Attributes
+						//==========
+						pref.log("Getting attributes");
+						getAttributes(completeWebPage, chD);
+						pref.log("Got attributes");
+						if (chD.is_new) chD.is_update=false;
+						break;
+					}catch(Exception ex){
+						pref.log("Error reading cache: "+chD.wayPoint);
+						pref.log("Exception in getCacheByWaypointName: ",ex);
+					}
+					finally{}
+				} else {
+					break;
+				}
+			} // spiderTrys
+			if (spiderTrys>=MAX_SPIDER_TRYS) {
+				pref.log(">>> Failed to spider cache. Number of retrys exhausted.");
+				if ((new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(5515,"Failed to load cache.%0aPleas check your internet connection.%0aRetry?"),FormBase.DEFOKB|FormBase.NOB)).execute() == FormBase.IDOK ) {
+					continue;						
+				} else {
+					canceled = true;
+				}
 			}
-		} // spiderTrys
-		if (spiderTrys==MAX_SPIDER_TRYS) pref.log(">>> Failed to spider cache. Number of retrys exhausted.");
-		boolean ret=!infB.isClosed; // If the infoBox was closed before getting here, we return false
+			break;
+		}//while(true)
+		boolean ret=!infB.isClosed && !canceled; // If the infoBox was closed before getting here, we return false
 		return ret;
 	} // getCacheByWaypointName
 
