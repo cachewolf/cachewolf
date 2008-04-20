@@ -142,6 +142,7 @@ public class DescriptionPanel extends CellPanel{
 		disp.setPlainText("loading ...");
 	}
 	
+	// Probably not needed anymore (Change in Rev. 1395)
 	private void redraw() {
 		int currLine;
 
@@ -164,7 +165,7 @@ public class DescriptionPanel extends CellPanel{
 				currFont = currFont.changeNameAndSize(null, currFont.getSize() + 2);
 				disp.setFont(currFont);
 				disp.displayPropertiesChanged();
-				redraw();
+				//redraw();
 			}
 
 			if (ev.target == btnMinus){
@@ -172,7 +173,7 @@ public class DescriptionPanel extends CellPanel{
 				currFont = currFont.changeNameAndSize(null, currFont.getSize() - 2);
 				disp.setFont(currFont);
 				disp.displayPropertiesChanged();
-				redraw();
+				//redraw();
 			}
 		}
 		super.onEvent(ev);
