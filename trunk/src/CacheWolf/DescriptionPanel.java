@@ -32,91 +32,95 @@ public class DescriptionPanel extends CellPanel{
 	}
 	
 	/**
-	*	Set the text to display. Text should be HTML formated.
-	*/
-	//String description = null;
-	public void setText(CacheHolderDetail cache){
-		boolean isHtml;
-		//if (currCache == cache) return;
-		int scrollto = 0;
-		if (cache == null) {
-			desc = "";
-			isHtml = false;
-		}
-		else {
-			if (cache.hasSameMainCache(currCache)) scrollto = disp.getTopLine();
-			isHtml=cache.is_HTML;
-			if (cache.isAddiWpt()) {
-				CacheHolderDetail mainCache=cache.mainCache.getCacheDetails(true);
-				isHtml=mainCache.is_HTML;
-				if (cache.LongDescription != null && cache.LongDescription.length() > 0)
-					 desc = cache.LongDescription + (isHtml?"<hr>\n":"\n")+mainCache.LongDescription;
-				else 
-					desc = mainCache.LongDescription;
-			} else // not an addi-wpt
-				desc = cache.LongDescription;
-		}
-		//if (!desc.equals(description)) {
-			//disp.getDecoderProperties().setBoolean("allowImages",true);
-			Vm.showWait(true); 
-			if (isHtml) {
-				int imageNo=0;
-				if (Global.getPref().descShowImg) {
-					Vector Images;
-					if (cache.isAddiWpt()) {
-						Images = cache.mainCache.getCacheDetails(true).Images;
-					} else {
-						Images = cache.Images;						
-					}					
-					StringBuffer s=new StringBuffer(desc.length()+Images.size()*100);
-					int start=0;
-					int pos;
-					Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
-					if (Images.getCount() > 0) {
-						while (start>=0 && (pos=desc.indexOf("<img",start))>0) {
-							s.append(desc.substring(start,pos));
-							imgRex.searchFrom(desc,pos);
-							String imgUrl=imgRex.stringMatched(1);
-							//Vm.debug("imgUrl "+imgUrl);
-							if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
-								String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
-								// If we have an image which we stored when spidering, we can display it
-								if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
-									s.append("<img src=\""+
-											//Global.getProfile().dataDir+
-											Images.get(imageNo)+"\">");
-									imageNo++;
-								}
-							}
-							start=desc.indexOf(">",pos);
-							if (start>=0) start++;
-							if (imageNo >= Images.getCount())break;
-						}
-					}
-					if (start>=0) s.append(desc.substring(start));
-					desc=s.toString();
-				}
-				if (cache.hasImageInfo()) {
-					desc+=getPicDesc(imageNo,cache);
-				}
-				//disp.setHtml(desc);
-				disp.startHtml();
-				disp.getDecoderProperties().set("documentroot",Global.getProfile().dataDir);
-				disp.addHtml(desc,new ewe.sys.Handle());
-				disp.endHtml();
-				
-			}
-			else {
-				disp.startHtml(); // To clear the old HTML display
-				disp.endHtml();
-				disp.setPlainText(desc);
-			}
-			disp.scrollTo(scrollto,false);
-			//description = desc;
-			Vm.showWait(false);
-		//}
-		currCache = cache;
-	}
+         * Set the text to display. Text should be HTML formated.
+         */
+    // String description = null;
+    public void setText(CacheHolderDetail cache) {
+        boolean isHtml;
+        // if (currCache == cache) return;
+        int scrollto = 0;
+        if (cache == null) {
+            desc = "";
+            isHtml = false;
+        } else {
+            if (cache.hasSameMainCache(currCache))
+                scrollto = disp.getTopLine();
+            isHtml = cache.is_HTML;
+            if (cache.isAddiWpt()) {
+                CacheHolderDetail mainCache = cache.mainCache.getCacheDetails(true);
+                isHtml = mainCache.is_HTML;
+                if (cache.LongDescription != null && cache.LongDescription.length() > 0)
+                    desc = cache.LongDescription + (isHtml ? "<hr>\n" : "\n")
+                            + mainCache.LongDescription;
+                else
+                    desc = mainCache.LongDescription;
+            } else
+                // not an addi-wpt
+                desc = cache.LongDescription;
+        }
+        Vm.showWait(true);
+        if (isHtml) {
+            int imageNo = 0;
+            if (Global.getPref().descShowImg) {
+                Vector Images;
+                if (cache.isAddiWpt()) {
+                    Images = cache.mainCache.getCacheDetails(true).Images;
+                } else {
+                    Images = cache.Images;
+                }
+                StringBuffer s = new StringBuffer(desc.length() + Images.size() * 100);
+                int start = 0;
+                int pos;
+                Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
+                if (Images.getCount() > 0) {
+                    while (start >= 0 && (pos = desc.indexOf("<img", start)) > 0) {
+                        s.append(desc.substring(start, pos));
+                        imgRex.searchFrom(desc, pos);
+                        String imgUrl = imgRex.stringMatched(1);
+                        // Vm.debug("imgUrl "+imgUrl);
+                        if (imgUrl.lastIndexOf('.') > 0 && imgUrl.toLowerCase().startsWith("http")) {
+                            String imgType = (imgUrl.substring(imgUrl.lastIndexOf("."))
+                                    .toLowerCase() + "    ").substring(0, 4).trim();
+                            // If we have an image which we stored when spidering, we can display it
+                            if (!imgType.startsWith(".com") && !imgType.startsWith(".php")
+                                    && !imgType.startsWith(".exe")) {
+                                s.append("<img src=\"" +
+                                // Global.getProfile().dataDir+
+                                        Images.get(imageNo) + "\">");
+                                imageNo++;
+                            }
+                        }
+                        start = desc.indexOf(">", pos);
+                        if (start >= 0)
+                            start++;
+                        if (imageNo >= Images.getCount())
+                            break;
+                    }
+                }
+                if (start >= 0)
+                    s.append(desc.substring(start));
+                desc = s.toString();
+            }
+            if (cache.hasImageInfo()) {
+                desc += getPicDesc(imageNo, cache);
+            }
+            //disp.setHtml(desc);
+            disp.startHtml();
+            disp.getDecoderProperties().set("documentroot", Global.getProfile().dataDir);
+            disp.addHtml(desc, new ewe.sys.Handle());
+            disp.endHtml();
+
+        } else {
+            disp.startHtml(); // To clear the old HTML display
+            disp.endHtml();
+            disp.setPlainText(desc);
+        }
+        disp.scrollTo(scrollto, false);
+        //description = desc;
+        Vm.showWait(false);
+        //}
+        currCache = cache;
+    }
 	
 	/**
 	 * Get the descriptions for the pictures (if they exist)
