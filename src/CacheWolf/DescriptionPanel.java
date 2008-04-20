@@ -37,7 +37,7 @@ public class DescriptionPanel extends CellPanel{
     // String description = null;
     public void setText(CacheHolderDetail cache) {
         boolean isHtml;
-        // if (currCache == cache) return;
+        if (currCache == cache) return;
         int scrollto = 0;
         if (cache == null) {
             desc = "";
@@ -144,6 +144,7 @@ public class DescriptionPanel extends CellPanel{
 	
 	public void clear() {
 		disp.setPlainText("loading ...");
+		currCache = null;
 	}
 	
 	// Probably not needed anymore (Change in Rev. 1395)
