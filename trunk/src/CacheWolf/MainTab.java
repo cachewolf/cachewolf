@@ -377,7 +377,7 @@ public class MainTab extends mTabbedPanel {
 					Global.getPref().log("Error starting mavoing map (1): " + e.getMessage(), e, true);
 					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", FormBase.OKB)).execute(); } 
 			}
-		} catch (Exception e) { 
+		} catch (Exception e) { // TODO swith waiting indication clock off
 			Global.getPref().log("Error starting moving map (2): " + e.getMessage(), e, true);
 			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), FormBase.OKB)).execute(); }
 	}
@@ -391,7 +391,7 @@ public class MainTab extends mTabbedPanel {
 	
 	/** Save the index file
 	 * 
-	 * @param askForConfirmation If true, the save can be cancelled by user
+	 * @param askForConfirmation is ignored, old: If true, the save can be cancelled by user
 	 */
 	public void saveUnsavedChanges(boolean askForConfirmation) {
 		if (oldCard!=0) {
@@ -399,15 +399,9 @@ public class MainTab extends mTabbedPanel {
 			onEnteringPanel(0);
 			oldCard=0;
 		}
-		boolean saveIndex=!askForConfirmation; // Definitely save it if no confirmation needed
 		updatePendingChanges();
-		if (askForConfirmation) { // Don't know whether to save, have to ask
-			if (profile.hasUnsavedChanges &&     // Only ask if there were changes 
-					(new MessageBox(MyLocale.getMsg(144,"Warnung"),MyLocale.getMsg(1207,"Your profile has unsaved changes. Do you want to save?"),FormBase.DEFOKB|FormBase.NOB)).execute()==FormBase.IDOK) {
-				saveIndex=true; 
-			}
-		}
-		if (saveIndex) profile.saveIndex(Global.getPref(),false);
+		if (profile.hasUnsavedChanges) profile.saveIndex(Global.getPref(),true);
+	    this.tbP.saveColWidth(pref);
 		Global.getPref().savePreferences();
 	}
 	

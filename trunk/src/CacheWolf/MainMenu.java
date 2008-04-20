@@ -23,7 +23,7 @@ import exp.*;
  *     20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
  */
 public class MainMenu extends MenuBar {
-	private MenuItem profiles, preferences, mnuContext,loadcaches,loadOC,savenexit,savenoxit,exit,search,searchAll,searchClr;
+	private MenuItem profiles, preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap;
 	private MenuItem spider, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
@@ -99,7 +99,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Application" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem [] appMenuItems=new MenuItem[12];
+		MenuItem [] appMenuItems=new MenuItem[11];
 		appMenuItems[0] = profiles 	 = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu); 
 		appMenuItems[1] = preferences = new MenuItem(MyLocale.getMsg(108,"Preferences")); 
 		appMenuItems[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Centre"));
@@ -110,8 +110,8 @@ public class MainMenu extends MenuBar {
 		appMenuItems[7] = new MenuItem(MyLocale.getMsg(149,"Maps"),0,mapsMenu);
 		appMenuItems[8] = mnuSeparator;
 		appMenuItems[9] = savenoxit = new MenuItem(MyLocale.getMsg(127,"Save")); 
-		appMenuItems[10] = savenexit = new MenuItem(MyLocale.getMsg(110,"Save & Exit")); 
-		appMenuItems[11] = exit = new MenuItem(MyLocale.getMsg(111,"Exit"));
+		//appMenuItems[10] = savenexit = new MenuItem(MyLocale.getMsg(110,"Save & Exit")); 
+		appMenuItems[10] = exit = new MenuItem(MyLocale.getMsg(111,"Exit"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(120,"Application"),new Menu(appMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
@@ -436,16 +436,15 @@ public class MainMenu extends MenuBar {
 				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				tbp.saveColWidth(pref);
 			}
-
+/*
 			if(mev.selectedItem == savenexit){
 				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				tbp.saveColWidth(pref);
 				ewe.sys.Vm.exit(0);
 			}
+*/
 			if(mev.selectedItem == exit){
 				Global.mainTab.saveUnsavedChanges(true);
-				CacheHolder.saveAllModifiedDetails();
-				tbp.saveColWidth(pref);
 				ewe.sys.Vm.exit(0);
 			}
 
