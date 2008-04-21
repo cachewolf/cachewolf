@@ -22,7 +22,7 @@ import ewe.fx.Rect;
  */
 public class HintLogPanel extends CellPanel{
 	int crntLogPosition = 0;
-	CacheHolderDetail cache;
+	CacheHolderDetail currCache;
 	private final int DEFAULT_STRINGBUFFER_SIZE=8000;
 	mTextPad hint = new mTextPad();
 	//mTextPad logs = new mTextPad();
@@ -62,22 +62,24 @@ public class HintLogPanel extends CellPanel{
 	}
 
 	public void setText(CacheHolderDetail cache){
-		this.cache = cache;
-		if(!cache.Hints.equals("null")) 
-			hint.setText(STRreplace.replace(cache.Hints, "<br>", "\n"));
-		else
-			hint.setText("");
-		crntLogPosition = 0;
-		setLogs(0);
-		moreBt.modify(0,ControlConstants.Disabled);
-		prevBt.modify(0,ControlConstants.Disabled);
-//		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-//		Vm.setSIP(0);
-//		}
-		////Vm.debug("In log: " + cache.CacheLogs);
+	        if (currCache != cache){
+	            this.currCache = cache;
+	            if(!cache.Hints.equals("null")) 
+	                hint.setText(STRreplace.replace(cache.Hints, "<br>", "\n"));
+	            else
+	                hint.setText("");
+	            crntLogPosition = 0;
+	            setLogs(0);
+	            moreBt.modify(0,ControlConstants.Disabled);
+	            prevBt.modify(0,ControlConstants.Disabled);
+	        }
 	}
 
 	public void clear() {
+	    clearOutput();
+	    currCache = null;
+	}
+	private void clearOutput() {
 		if (htmlTxtImage != null) {
 			htmlImagDisp.removeImage(htmlTxtImage);
 			htmlTxtImage.free();		
@@ -87,14 +89,14 @@ public class HintLogPanel extends CellPanel{
 		Vm.showWait(true);
 		StringBuffer dummy = new StringBuffer(DEFAULT_STRINGBUFFER_SIZE);
 		int counter = 0;
-		int nLogs=cache.CacheLogs.size();
+		int nLogs=currCache.CacheLogs.size();
 		int logsPerPage=Global.getPref().logsPerPage;
 		for(int i = crntLogPosition; i<nLogs; i++){
-			dummy.append(cache.CacheLogs.getLog(i).toHtml());
+			dummy.append(currCache.CacheLogs.getLog(i).toHtml());
 			dummy.append("</br>");
 			if(++counter >= logsPerPage) break;
 		}
-		clear();
+		clearOutput();
 		logs.resizeTo(width, 50);
 		// The cache GCP0T6 crashes the HtmlDisplay
 		// As a temporary fix
@@ -141,14 +143,14 @@ public class HintLogPanel extends CellPanel{
 	 */
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
-			int minLogs = java.lang.Math.min(Global.getPref().logsPerPage, cache.CacheLogs.size());
+			int minLogs = java.lang.Math.min(Global.getPref().logsPerPage, currCache.CacheLogs.size());
 			if(ev.target == moreBt){
 				prevBt.modify(0,ControlConstants.Disabled);
 				prevBt.repaintNow();
 				crntLogPosition += minLogs;
-				if(crntLogPosition >= cache.CacheLogs.size()) {
+				if(crntLogPosition >= currCache.CacheLogs.size()) {
 					//crntLogPosition = cache.CacheLogs.size()-5;
-					crntLogPosition = cache.CacheLogs.size()- minLogs;
+					crntLogPosition = currCache.CacheLogs.size()- minLogs;
 					moreBt.modify(ControlConstants.Disabled,0);
 					moreBt.repaintNow();
 				}
