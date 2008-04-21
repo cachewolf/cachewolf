@@ -436,6 +436,7 @@ public class DetailsPanel extends CellPanel{
 				if (dc.execute()==ewe.ui.FormBase.IDOK) {
 				  chcStatus.setText(MyLocale.getMsg(318,"Found")+" "+Convert.toString(dc.year)+"-"+MyLocale.formatLong(dc.month,"00")+"-"+MyLocale.formatLong(dc.day,"00")+" "+dc.time);
 				  dirty_details=true;
+				  profile.hasUnsavedChanges=true;
 				}
 			}
 			else if (ev.target==btnHiddenDate) {
@@ -455,6 +456,7 @@ public class DetailsPanel extends CellPanel{
 				if (dc.execute()==ewe.ui.FormBase.IDOK) {
 				  inpHidden.setText(Convert.toString(dc.year)+"-"+MyLocale.formatLong(dc.month,"00")+"-"+MyLocale.formatLong(dc.day,"00"));
 				  dirty_details=true;
+				  profile.hasUnsavedChanges=true;
 				}
 			}
 			ev.consumed=true;
