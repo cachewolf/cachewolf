@@ -321,7 +321,6 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						case 3: this.numSatsInView = Convert.toInt(currToken); interpreted = true; break;
 						} // switch
 					} // while
-					if (Fix > 0) this.set(latNS, latDeg, latMin, "0", lonEW, lonDeg, lonMin, "0", CWPoint.DMM);
 				} // if
 				
 				//Vm.debug("End of examine");
