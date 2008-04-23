@@ -193,7 +193,7 @@ public class MainTab extends mTabbedPanel {
 			updatePendingChanges();
 			if (detP.hasBlackStatusChanged()) {
 				// Restore the filter status (this automatically sets the status for blacklisted caches)
-				Global.getProfile().restoreFilter();
+				Global.getProfile().restoreFilter( true );
 				tbP.refreshTable();
 			}
 			break;
@@ -415,6 +415,7 @@ public class MainTab extends mTabbedPanel {
 	}
 }
 // 
+
 
 
 
