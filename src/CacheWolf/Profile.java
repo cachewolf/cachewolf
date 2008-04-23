@@ -276,6 +276,7 @@ public class Profile {
 			//Vm.debug("End  :"+endT.format("H:mm:ss.SSS"));	
 			// Build references between caches and addi wpts
 			buildReferences();
+			hasUnsavedChanges = false;
 		} catch (FileNotFoundException e) {
 			Global.getPref().log("index.xml not found in directory "+dataDir); // Normal when profile is opened for first time
 			//e.printStackTrace();
@@ -283,7 +284,6 @@ public class Profile {
 			Global.getPref().log("Problem reading index.xml in dir: "+dataDir,e,true); 
 		}
 		normaliseFilters();
-		hasUnsavedChanges=false;
 	}
 
 	/** Restore the filter to the values stored in this profile 
