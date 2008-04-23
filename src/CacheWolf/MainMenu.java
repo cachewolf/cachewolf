@@ -624,7 +624,6 @@ public class MainMenu extends MenuBar {
 		Vm.showWait(true);
 		boolean alreadySaid = false;
 		boolean alreadySaid2 = false;
-		boolean test = true;
 		InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
 		infB.exec();
 		
@@ -656,21 +655,31 @@ public class MainMenu extends MenuBar {
 			}
 		}
 
+		int spiderErrors = 0;
 		for(int j = 0; j <	cachesToUpdate.size(); j++){
 			int i = ((Integer)cachesToUpdate.get(j)).intValue();
 			ch = (CacheHolder)cacheDB.get(i);
 //			infB.setInfo("Loading: " + ch.wayPoint);
 			infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
 			infB.redisplay();
-			if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC"))   
-				test = spider.spiderSingle(i, infB);
-			else  
-				test = ocSync.syncSingle(i, infB);
-			if (!test) {
-				infB.close(0);
-				break;
-			} else 
-				profile.hasUnsavedChanges=true;	
+			if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")) {
+				int test = spider.spiderSingle(i, infB);
+				if (test == -1) {
+					infB.close(0);
+					break;
+				} else if (test == 0) {
+					spiderErrors++;
+				} else {
+					profile.hasUnsavedChanges=true;	
+				}
+			}
+			else {
+				if (!ocSync.syncSingle(i, infB)) {
+					infB.close(0);
+					break;
+				} else 
+					profile.hasUnsavedChanges=true;	
+			}
 
 //			cacheDB.clear();
 //			profile.readIndex();
@@ -682,7 +691,9 @@ public class MainMenu extends MenuBar {
 		profile.updateBearingDistance();
 		tbp.refreshTable();
 		Vm.showWait(false);
-		
+		if ( spiderErrors > 0) {
+			new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
+		}		
 	}
 	
 }

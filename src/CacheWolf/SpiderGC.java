@@ -205,17 +205,17 @@ public class SpiderGC{
 	/**
 	 * Method to spider a single cache.
 	 * It assumes a login has already been performed!
-	 * @return True if spider was successful, false if spider was cancelled by closing the infobox
+	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with next cache
 	 */
-	public boolean spiderSingle(int number, InfoBox infB){
-		boolean ret=false;
+	public int spiderSingle(int number, InfoBox infB){
+		int ret=-1;
 		this.infB = infB;
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
-		if (ch.isAddiWpt()) return false;  // No point re-spidering an addi waypoint, comes with parent
+		if (ch.isAddiWpt()) return -1;  // No point re-spidering an addi waypoint, comes with parent
 
 		// check if we need to login
 		if (!loggedIn){
-			if (this.login()!=FormBase.IDOK) return false;
+			if (this.login()!=FormBase.IDOK) return -1;
 			// loggedIn is already set by this.login()
 		}
 		CacheHolderDetail chD=ch.getCacheDetails(true); //new CacheHolderDetail(ch);
@@ -230,7 +230,7 @@ public class SpiderGC{
 			boolean loadAllLogs = (MAXLOGS > 5);
 			ret=getCacheByWaypointName(chD,true,true,false,loadAllLogs);
 			// Save the spidered data
-			if (ret) {
+			if (ret == 1) {
 				pref.log("Saving to:" + profile.dataDir);
 				chD.saveCacheDetails(profile.dataDir);
 				((CacheHolder) cacheDB.get(number)).update(chD);
@@ -449,6 +449,7 @@ public class SpiderGC{
 		//=======
 		boolean loadAllLogs = (MAXLOGS > 5);
 
+		int spiderErrors = 0;
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			if (infB.isClosed) break;
 
@@ -458,15 +459,24 @@ public class SpiderGC{
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + cachesToLoad.size() + ")");
 				chD = new CacheHolderDetail();
 				chD.wayPoint=wpt;
-				if (!getCacheByWaypointName(chD,false,getImages,doNotgetFound,loadAllLogs)) break;
-				if (!chD.is_found || !doNotgetFound ) {
-					chD.saveCacheDetails(profile.dataDir);
-					cacheDB.add(new CacheHolder(chD)); 
+				int test = getCacheByWaypointName(chD,false,getImages,doNotgetFound,loadAllLogs);
+				if (test == -1) {
+					break;
+				} else if (test == 0) {
+					spiderErrors++;
+				} else {
+					if (!chD.is_found || !doNotgetFound ) {
+						chD.saveCacheDetails(profile.dataDir);
+						cacheDB.add(new CacheHolder(chD)); 
+					}
 				}
 			}
 		}
 		infB.close(0);
 		Vm.showWait(false);
+		if ( spiderErrors > 0) {
+			new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
+		}
 		Global.getProfile().saveIndex(Global.getPref(),true);
 	}
 
@@ -483,15 +493,16 @@ public class SpiderGC{
 	 * @param boolean doNotGetFound True if the cache is not to be spidered if it has already been found
 	 * @param boolean fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line).
 	 *     This is normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
-	 * @return false if the infoBox was closed
+	 * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if everything ok
 	 */
-	private boolean getCacheByWaypointName(CacheHolderDetail chD, boolean isUpdate, boolean fetchImages, boolean doNotGetFound, boolean fetchAllLogs) {
-		boolean canceled = false;
+	private int getCacheByWaypointName(CacheHolderDetail chD, boolean isUpdate, boolean fetchImages, boolean doNotGetFound, boolean fetchAllLogs) {
+		int ret = 1;
 		while (true) {
 			String completeWebPage;
 			int spiderTrys=0;
 			int MAX_SPIDER_TRYS=3;
 			while (spiderTrys++<MAX_SPIDER_TRYS) {
+				ret = 1;
 				try{
 					String doc = p.getProp("getPageByName") + chD.wayPoint +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
 					pref.log("Fetching: " + chD.wayPoint);
@@ -502,7 +513,7 @@ public class SpiderGC{
 							continue;
 						} else {
 							chD.is_incomplete = true;
-							return false;
+							return -1;
 						}
 					}
 				}catch(Exception ex){
@@ -511,7 +522,7 @@ public class SpiderGC{
 						continue;
 					} else {
 						chD.is_incomplete = true;
-						return false;
+						return -1;
 					}
 				}
 				// Only analyse the cache data and fetch pictures if user has not closed the progress window
@@ -523,7 +534,7 @@ public class SpiderGC{
 						chD.is_HTML = true;
 						chD.is_available = true;
 						chD.is_archived = false;
-						chD.is_incomplete = false;
+						chD.is_incomplete = true;
 						// Save size of logs to be able to check whether any new logs were added
 						//int logsz = chD.CacheLogs.size();
 						//chD.CacheLogs.clear();
@@ -542,6 +553,7 @@ public class SpiderGC{
 						if (pref.debug) pref.log("chD.pos: " + chD.pos.toString());
 						if (chD.LatLon.equals("???")) {
 							pref.log(">>>> Failed to spider Cache. Retry.");
+							ret = 0;
 							continue; // Restart the spider
 						}
 						pref.log("Trying description");
@@ -597,7 +609,13 @@ public class SpiderGC{
 						pref.log("Found logs");
 
 						// If the switch is set to not store found caches and we found the cache => return
-						if (chD.is_found && doNotGetFound) return !infB.isClosed;
+						if (chD.is_found && doNotGetFound) {
+							if (infB.isClosed) {
+								return -1;
+							} else {
+								return 1;
+							}
+						}
 
 						//==========
 						// Bugs
@@ -629,6 +647,7 @@ public class SpiderGC{
 						getAttributes(completeWebPage, chD);
 						pref.log("Got attributes");
 						if (chD.is_new) chD.is_update=false;
+						chD.is_incomplete = false;
 						break;
 					}catch(Exception ex){
 						pref.log("Error reading cache: "+chD.wayPoint);
@@ -639,17 +658,22 @@ public class SpiderGC{
 					break;
 				}
 			} // spiderTrys
-			if (spiderTrys>=MAX_SPIDER_TRYS) {
+			if ( ( spiderTrys >= MAX_SPIDER_TRYS ) && ( ret == 1 ) ) {
 				pref.log(">>> Failed to spider cache. Number of retrys exhausted.");
-				if ((new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(5515,"Failed to load cache.%0aPleas check your internet connection.%0aRetry?"),FormBase.DEFOKB|FormBase.NOB)).execute() == FormBase.IDOK ) {
+				int decision = (new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(5515,"Failed to load cache.%0aPleas check your internet connection.%0aRetry?"),FormBase.DEFOKB|FormBase.NOB|FormBase.CANCELB)).execute();
+				if ( decision == FormBase.IDOK ) {
 					continue;						
+				} else if ( decision == FormBase.IDNO ){
+					ret = 0;
 				} else {
-					canceled = true;
+					ret = -1;
 				}
 			}
 			break;
 		}//while(true)
-		boolean ret=!infB.isClosed && !canceled; // If the infoBox was closed before getting here, we return false
+		if (infB.isClosed) {// If the infoBox was closed before getting here, we return -1
+			return -1;
+		}
 		return ret;
 	} // getCacheByWaypointName
 
