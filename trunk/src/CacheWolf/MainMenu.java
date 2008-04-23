@@ -321,7 +321,7 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if (mev.selectedItem == update) 
-				updateSelectedCaches();
+				updateSelectedCaches(tbp);
 			if(mev.selectedItem == mnuForceLogin) {
 				mnuForceLogin.modifiers^=MenuItem.Checked;
 				Global.getPref().forceLogin=(mnuForceLogin.modifiers&MenuItem.Checked)!=0;
@@ -612,7 +612,7 @@ public class MainMenu extends MenuBar {
 		}
 	}
 
-	private void updateSelectedCaches() {
+	public static void updateSelectedCaches(TablePanel tablePanel) {
 		Preferences pref=Global.getPref();
 		Profile profile=Global.getProfile();
 		Vector cacheDB=profile.cacheDB;
@@ -689,7 +689,7 @@ public class MainMenu extends MenuBar {
 		profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 		profile.restoreFilter();
 		profile.updateBearingDistance();
-		tbp.refreshTable();
+		tablePanel.refreshTable();
 		Vm.showWait(false);
 		if ( spiderErrors > 0) {
 			new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();

@@ -26,6 +26,7 @@ public class myTableControl extends TableControl{
 			MyLocale.getMsg(1018,"Open in browser offline"),
 			"-",
 			MyLocale.getMsg(1012,"Delete selected"),
+			MyLocale.getMsg(1014,"Update"),
 			"-",
 			MyLocale.getMsg(1015,"Select all"),
 			MyLocale.getMsg(1016,"De-select all")},
@@ -186,6 +187,10 @@ public class myTableControl extends TableControl{
 				}
 			}
 			Vm.showWait(false);
+		}
+		
+		if (selectedItem.toString().equals(MyLocale.getMsg(1014,"Update"))){
+			MainMenu.updateSelectedCaches(tbp);
 		}
 
 		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Centre"))){
