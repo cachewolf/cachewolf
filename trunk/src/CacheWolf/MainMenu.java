@@ -237,6 +237,7 @@ public class MainMenu extends MenuBar {
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == mnuNewProfile){
 				if (NewProfileWizard.startNewProfileWizard(getFrame()) ) {
+					pref.curCentrePt = new CWPoint(profile.centre);
 					Filter.showBlacklisted=false;
 					filtBlack.modifiers&=~MenuItem.Checked;
 					tbp.refreshTable();
@@ -260,7 +261,6 @@ public class MainMenu extends MenuBar {
 					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 					infB.close(0);
 					tbp.resetModel();
-					Global.getProfile().hasUnsavedChanges=false;
 				}
 			}
 			if(mev.selectedItem == mnuEditCenter){

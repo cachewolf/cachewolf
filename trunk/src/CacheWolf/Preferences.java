@@ -543,11 +543,14 @@ public class Preferences extends MinML{
 				int code = f.execute();
 				// If no profile chosen (includes a new one), terminate
 				if (code==-1) return false; // Cancel pressed
+				CWPoint savecenter = new CWPoint(prof.centre);
 				prof.clearProfile();
-				curCentrePt.set(0,0); // No centre yet
+				prof.centre = savecenter;
+				prof.hasUnsavedChanges = true;
+				//curCentrePt.set(0,0); // No centre yet
 				lastProfile=f.newSelectedProfile;
 			}
-			profileExists=(new File(baseDir+lastProfile)).exists();
+			profileExists=(new FileBugfix(baseDir+lastProfile)).exists();
 			if (!profileExists) (new MessageBox(MyLocale.getMsg(144,"Warning"),
 					           MyLocale.getMsg(171,"Profile does not exist: ")+lastProfile,FormBase.MBOK)).execute();
 		} while (profileExists==false);
