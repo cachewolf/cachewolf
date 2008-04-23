@@ -69,6 +69,9 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		return this.Time;
 	}
 
+	/**
+	 * @return > 0: fixed <br> 0: not fixed <br> -1: no data from serial port <br> -2 data from serial port could not be interpreted
+	 */
 	public int getFix(){
 		return this.Fix;
 	}
@@ -214,23 +217,35 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					//Vm.debug("In $GPGGA");
 					i = 0;
 					while(ex.endOfSearch() != true){
+						boolean latlonerror = false; // indicate that some error occured in the data -> in this case frace fix to non-fixed in order to avoid invalid coordinates when a fix is indicated to the higher level API
 						currToken = ex.findNext();
 						i++;
-						if (currToken.length()==0) continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
+						if (currToken.length()==0) {
+							if (i >= 2 && i <= 5) latlonerror = true; // force non-fix if lat-lon not contained
+							continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
+						}
 						switch (i){
 						case 1: this.Time = currToken; break;
-						case 2: try {latDeg = currToken.substring(0,2); interpreted = true;} catch (IndexOutOfBoundsException e) {}
-						try {latMin = currToken.substring(2,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {}
+						case 2: try {latDeg = currToken.substring(0,2); interpreted = true;} catch (IndexOutOfBoundsException e) {latlonerror = true;}
+						try {latMin = currToken.substring(2,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {latlonerror = true;}
 						break;
 						case 3: latNS = currToken;
 						break;
 
-						case 4: try {lonDeg = currToken.substring(0,3); interpreted = true;} catch (IndexOutOfBoundsException e) {}
-						try {lonMin = currToken.substring(3,currToken.length()); interpreted = true; } catch (IndexOutOfBoundsException e) {}
+						case 4: try {lonDeg = currToken.substring(0,3); interpreted = true;} catch (IndexOutOfBoundsException e) {latlonerror = true;}
+						try {lonMin = currToken.substring(3,currToken.length()); interpreted = true; } catch (IndexOutOfBoundsException e) {latlonerror = true;}
 						break;
 						case 5: lonEW = currToken;
 						break;
-						case 6: this.Fix = Convert.toInt(currToken); interpreted = true; break;
+						case 6: 
+							if (!latlonerror) {
+								this.Fix = Convert.toInt(currToken); 
+								interpreted = true; 
+								break;
+							} else {
+								this.Fix = 0; 
+								break;
+							}
 						case 7: this.numSat = Convert.toInt(currToken); interpreted = true; break;
 						case 8: try {this.HDOP = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {} break;
 						case 9: try {this.Alt = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {} break;
@@ -260,9 +275,14 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					//Vm.debug("In $GPRMC");
 					i = 0;
 					String status = "V";
+					boolean latlonerror = false;
 					while(ex.endOfSearch() != true){
 						currToken = ex.findNext();
 						i++;
+						if (currToken.length()==0) {
+							if (i >= 2 && i <= 6) latlonerror = true; // force non-fix if lat-lon not contained
+							continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
+						}
 						if (currToken.length()==0) continue;
 						//Vm.debug("zz: " + i);
 						//Vm.debug(currToken);
@@ -274,9 +294,9 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						interpreted = true;
 						break;
 						case 3: 	//Vm.debug("Here--->");
-							try {latDeg = currToken.substring(0,2); interpreted = true;} catch (IndexOutOfBoundsException e) {}
+							try {latDeg = currToken.substring(0,2); interpreted = true;} catch (IndexOutOfBoundsException e) {latlonerror = true;}
 							//Vm.debug(":" + latDeg);
-							try {latMin = currToken.substring(2,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {}
+							try {latMin = currToken.substring(2,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {latlonerror = true;}
 							//Vm.debug(":" + latMin);
 							break;
 						case 4: latNS = currToken; interpreted = true;
@@ -304,9 +324,12 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						break;
 						} // switch
 					} // while
-					if (status.equals("A")){
-						this.set(latNS, latDeg, latMin, "0",
-								lonEW, lonDeg, lonMin, "0", CWPoint.DMM);				
+					if (latlonerror) this.Fix = 0;
+					else {
+						if (status.equals("A")){
+							this.set(latNS, latDeg, latMin, "0",
+									lonEW, lonDeg, lonMin, "0", CWPoint.DMM);				
+						}
 					}
 				} // if
 
