@@ -509,7 +509,7 @@ class GotoRose extends AniImage {
 		g.setColor(Color.White);
 		g.fillRect(0, 0, location.width, location.height);
 
-		int fontSize = java.lang.Math.min(location.width, location.height) / 15;
+		int fontSize = location.width / 17;
 		mainFont = new Font("Verdana", Font.BOLD, fontSize);
 		g.setFont(mainFont);
 		fm = g.getFontMetrics(mainFont);
