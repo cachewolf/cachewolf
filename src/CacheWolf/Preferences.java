@@ -526,7 +526,7 @@ public class Preferences extends MinML{
 		// If datadir is empty, ask for one
 		if (baseDir.length()==0 || !(new File(baseDir)).exists()) {
 			do {
-				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT,baseDir);
+				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT,"/");
 				fc.title = MyLocale.getMsg(170,"Select base directory for cache data");
 				// If no base directory given, terminate
 				if (fc.execute() == FormBase.IDCANCEL) ewe.sys.Vm.exit(0);
