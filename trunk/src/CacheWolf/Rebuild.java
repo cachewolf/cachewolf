@@ -26,10 +26,10 @@ public class Rebuild {
 		int orphans=0; // xml Files without entry in database
 		int nAdded=0;  // caches added to database
 		for (i=0; i<xmlFiles.length; i++) {
-			int pos=xmlFiles[i].indexOf('.');
+			int pos=xmlFiles[i].lastIndexOf('.');
 			if (pos<0) continue;
-			String wayPoint=xmlFiles[i].substring(0,pos);
-			if (wayPoint.charAt(0)=='i' || 			// Check for index.xml and index.bak
+			String wayPoint=xmlFiles[i].substring(0,pos).toUpperCase();
+			if (wayPoint.charAt(0)=='I' || 			// Check for index.xml and index.bak
 				prof.getCacheIndex(wayPoint)>=0)		// Check for waypoints already in database 
 				xmlFiles[i]=null;   				// Remove existing caches or index.xml
 			else {
