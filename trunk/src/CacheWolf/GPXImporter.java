@@ -120,7 +120,7 @@ public class GPXImporter extends MinML {
 						// skip over PRC-files
 						if (zipEnt.getName().endsWith("gpx")){
 							r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
-							infB = new InfoBox(zipEnt.toString(),(MyLocale.getMsg(4000,"Loaded caches") + ":" + zaehlerGel));
+							infB = new InfoBox(zipEnt.toString(),(MyLocale.getMsg(4000,"Loaded caches: ") + zaehlerGel));
 							infB.exec();
 							parse(r);
 							r.close();
@@ -130,14 +130,14 @@ public class GPXImporter extends MinML {
 				}
 				else {
 					r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
-					infB = new InfoBox("Info",(MyLocale.getMsg(4000,"Loaded caches") + ":" + zaehlerGel));
+					infB = new InfoBox("Info",(MyLocale.getMsg(4000,"Loaded caches: ") + zaehlerGel));
 					infB.show();
 					parse(r);
 					r.close();
 					infB.close(0);
 				}
 				// save Index 
-				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				infB.close(0);
 			}
 				Vm.showWait(false);
@@ -159,7 +159,7 @@ public class GPXImporter extends MinML {
 			if (atts.getValue("creator").startsWith("TerraCaching")) fromTC = true;
 			else fromTC = false;
 
-			if (fromOC && doSpider) (new MessageBox("Warnung", "GPX-Dateien von Opencaching enthalten keine Informationen zu Bildern, sie werden nicht heruntergeladen. Am besten Caches von Opencaching holen per Menü /Anwendung/Download von Opencaching", FormBase.OKB)).execute();
+			if (fromOC && doSpider) (new MessageBox("Warnung", MyLocale.getMsg(4001, "GPX files from opencaching don't contain information of images, they cannot be laoded. Best you get caches from opencaching by menu /Application/Import/Download from Opencaching"), FormBase.OKB)).execute();
 			zaehlerGel = 0;
 		}
 		if (name.equals("wpt")) {
@@ -170,6 +170,8 @@ public class GPXImporter extends MinML {
 			inLogs = false;
 			inBug = false;
 			nameFound = false;
+			zaehlerGel++;
+			infB.setInfo(MyLocale.getMsg(4000,"Loaded caches: ") + zaehlerGel);
 			return;
 		}
 		
