@@ -17,28 +17,15 @@ public class myTableControl extends TableControl{
 	public Profile profile;
 	public Vector cacheDB;
 	public TablePanel tbp;
-	private Menu mFull = new Menu(new String[]{
-			MyLocale.getMsg(1021,"Open description"),
-			MyLocale.getMsg(1010,"Goto"),
-			MyLocale.getMsg(1019,"Enter"),
-			"-",
-			MyLocale.getMsg(1020,"Open in $browser online"),
-			MyLocale.getMsg(1018,"Open in browser offline"),
-			"-",
-			MyLocale.getMsg(1012,"Delete selected"),
-			MyLocale.getMsg(1014,"Update"),
-			"-",
-			MyLocale.getMsg(1015,"Select all"),
-			MyLocale.getMsg(1016,"De-select all")},
-			MyLocale.getMsg(1013,"With selection"));
-	private Menu mSmall = new Menu(new String[]{
-			MyLocale.getMsg(1021,"Open description"),
-			MyLocale.getMsg(1010,"Goto"),
-			MyLocale.getMsg(1019,"Enter"),
-			"-",
-			MyLocale.getMsg(1020,"Open in $browser online"),
-			MyLocale.getMsg(1018,"Open in browser offline")},
-			MyLocale.getMsg(1013,"With selection"));
+	
+	private MenuItem miOpen, miGoto, miCenter;
+	private MenuItem miOpenOnline, miOpenOffline;
+	private MenuItem miDelete, miUpdate;
+	private MenuItem miTickAll, miUntickAll;
+	private MenuItem miSeparator;
+
+	private Menu mFull;
+	private Menu mSmall;
 
 	myTableControl(TablePanel tablePanel) {
 		profile=Global.getProfile();
@@ -46,6 +33,30 @@ public class myTableControl extends TableControl{
 		pref = Global.getPref();
 		tbp =tablePanel;
 		allowDragSelection = false; // allow only one row to be selected at one time
+				
+		MenuItem[] mnuFull = new MenuItem[12];
+  	mnuFull[0] = miOpen = new MenuItem(MyLocale.getMsg(1021,"Open description"));
+  	mnuFull[1] = miGoto = new MenuItem(MyLocale.getMsg(1010,"Goto"));
+  	mnuFull[2] = miCenter = new MenuItem(MyLocale.getMsg(1019,"Center"));
+  	mnuFull[3] = miSeparator = new MenuItem("-");
+  	mnuFull[4] = miOpenOnline = new MenuItem(MyLocale.getMsg(1020,"Open in $browser online"));
+  	mnuFull[5] = miOpenOffline = new MenuItem(MyLocale.getMsg(1018,"Open in browser offline"));
+  	mnuFull[6] = miSeparator;
+  	mnuFull[7] = miDelete = new MenuItem(MyLocale.getMsg(1012,"Delete selected"));
+  	mnuFull[8] = miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update"));
+  	mnuFull[9] = miSeparator;
+  	mnuFull[10] = miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all"));
+  	mnuFull[11] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));	
+  	mFull = new Menu(mnuFull, MyLocale.getMsg(1013,"With selection"));
+
+  	MenuItem[] mnuSmall = new MenuItem[6];
+  	mnuSmall[0] = miOpen;
+  	mnuSmall[1] = miGoto;
+  	mnuSmall[2] = miCenter;
+  	mnuSmall[3] = miSeparator;
+  	mnuSmall[4] = miOpenOnline;
+  	mnuSmall[5] = miOpenOffline;
+  	mSmall = new Menu(mnuSmall, MyLocale.getMsg(1013,"With selection"));	
 	}
 
 	/** Full menu when listview includes checkbox */
@@ -114,15 +125,15 @@ public class myTableControl extends TableControl{
 	public void popupMenuEvent(Object selectedItem){
 		if (selectedItem == null) return;
 		CacheHolder ch;
-		if (selectedItem.toString().equals(MyLocale.getMsg(1015,"Select all"))){
+		if (selectedItem == miTickAll){
 			setSelectForAll(true);
 		}
 
-		if (selectedItem.toString().equals(MyLocale.getMsg(1016,"De-select all"))){
+		if (selectedItem == miUntickAll){
 			setSelectForAll(false);
 		}
 
-		if (selectedItem.toString().equals(MyLocale.getMsg(1012,"Delete"))){
+		if (selectedItem == miDelete){
 			Vm.showWait(true);
 			// Count # of caches to delete
 			int allCount=0;
@@ -188,12 +199,12 @@ public class myTableControl extends TableControl{
 			}
 			Vm.showWait(false);
 		}
-		
-		if (selectedItem.toString().equals(MyLocale.getMsg(1014,"Update"))){
+				
+		if (selectedItem == miUpdate){
 			MainMenu.updateSelectedCaches(tbp);
 		}
 
-		if (selectedItem.toString().equals(MyLocale.getMsg(1019,"Centre"))){
+		if (selectedItem == miCenter){
 			if (tbp.getSelectedCache() < 0) {
 				Global.getPref().log("popupMenuEvent: getSelectedCache() < 0");
 				return;
@@ -210,11 +221,11 @@ public class myTableControl extends TableControl{
 			}
 		}
 
-		if (selectedItem.toString().equals(MyLocale.getMsg(1010,"Goto"))){
+		if (selectedItem == miGoto){
 			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 			Global.mainTab.gotoPoint(ch.pos);
 		}
-		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1020,"Open online in Browser"))){
+		if (selectedItem == miOpenOnline){
 			if(browserPathIsValid()){
 				ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
 				CacheHolderDetail chD=ch.getCacheDetails(false, true);
@@ -232,13 +243,13 @@ public class myTableControl extends TableControl{
 				}
 			}
 		}
-		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1018,"Open in browser offline"))) {
+		if (selectedItem == miOpenOffline) {
 			if(browserPathIsValid()){
 				ShowCacheInBrowser sc=new ShowCacheInBrowser();
 				sc.showCache(((CacheHolder)cacheDB.get(tbp.getSelectedCache())).getCacheDetails(false, true));
 			}
 		}
-		if (selectedItem.toString().equalsIgnoreCase(MyLocale.getMsg(1021,"Open description"))){
+		if (selectedItem == miOpen){
 			penDoubleClicked(null);
 		}
 
