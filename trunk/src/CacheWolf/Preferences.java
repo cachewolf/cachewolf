@@ -605,7 +605,7 @@ public class Preferences extends MinML{
 		}catch(Exception ex){
 			Vm.debug("Error writing to log file!");
 		}finally{
-			strout.close();
+			if (strout != null) strout.close();
 		}
 	}
 
