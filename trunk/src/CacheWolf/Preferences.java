@@ -82,11 +82,11 @@ public class Preferences extends MinML{
 	/** True if the GPS data should be forwarded to an IP address */
 	public boolean forwardGPS = false;
 	/** IP address for forwarding GPS data */
-	public String forwardGpsHost = "";
+	public String forwardGpsHost = "192.168.1.15";
 	/** True if the GPS data should be logged to a file */
 	public boolean logGPS = false;
 	/** Timer for logging GPS data */
-	public String logGPSTimer = "";
+	public String logGPSTimer = "5";
 	/** The default font size */
 	public int fontSize = 11;
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
