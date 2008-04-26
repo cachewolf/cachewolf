@@ -23,6 +23,7 @@ public class SearchCache {
 	*/
 	public void search(String searchStr){
 		if(searchStr.length()>0){
+			Global.getProfile().selectionChanged = true;
 			searchStr = searchStr.toUpperCase();
 			CacheHolder ch;
 			//Search through complete database
@@ -49,6 +50,7 @@ public class SearchCache {
 	* cache database. Restore to the state of the filter
 	*/
 	public void clearSearch(){
+		Global.getProfile().selectionChanged = true;
 		for(int i = cacheDB.size()-1;i >=0;i--){
 			CacheHolder ch=((CacheHolder)cacheDB.get(i));
 			ch.is_flaged=false;
