@@ -251,6 +251,7 @@ public class CacheList extends CellPanel {
 
 	/** Apply the cache list */
 	public void applyCacheList() {
+		Global.getProfile().selectionChanged = true;
 		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
 		int wrongBlackStatus=0;

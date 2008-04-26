@@ -117,6 +117,7 @@ public class Filter{
 	*	possible is currently: DD MM.mmm
 	*/
 	public void doFilterRoute(File routeFile, double distance){
+		Global.getProfile().selectionChanged = true;
 		Vector cacheDB=Global.getProfile().cacheDB;
 		//load file into a vector:
 		Vector wayPoints = new Vector();
@@ -333,6 +334,7 @@ public class Filter{
 			clearFilter();
 			return;
 		}
+		Global.getProfile().selectionChanged = true;
 		CacheHolder ch;
 		int cacheTypePattern;
 		int cacheRosePattern;
@@ -528,6 +530,7 @@ public class Filter{
 		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
 		if (cacheDB.size()==0) return;
+		Global.getProfile().selectionChanged = true;
 		boolean showBlackListed=Filter.showBlacklisted;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
@@ -544,6 +547,7 @@ public class Filter{
 	*	Clear the is_filtered flag from the cache database.
 	*/
 	public void clearFilter(){
+		Global.getProfile().selectionChanged = true;
 		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){

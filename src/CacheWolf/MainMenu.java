@@ -490,6 +490,7 @@ public class MainMenu extends MenuBar {
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == filtSelected){ // incremental filter
+				Global.getProfile().selectionChanged = true;
 				CacheHolder ch;
 				for(int i = cacheDB.size()-1; i>=0; i--){
 					ch = (CacheHolder)cacheDB.get(i);
@@ -500,6 +501,7 @@ public class MainMenu extends MenuBar {
 				tbp.refreshTable();
 			}
 			if (mev.selectedItem == filtNonSelected){
+				Global.getProfile().selectionChanged = true;
 				CacheHolder ch;
 				for(int i = cacheDB.size()-1; i >=0; i--){
 					ch = (CacheHolder)cacheDB.get(i);
