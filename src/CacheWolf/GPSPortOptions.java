@@ -78,7 +78,7 @@ class mySerialThread extends mThread{
 
 public class GPSPortOptions extends SerialPortOptions {
 	TextDisplay txtOutput;
-	mButton btnTest;
+	mButton btnTest, btnUpdatePortList;
 	public mInput inputBoxForwardHost;
 	mLabel  labelForwardHost;
 	public mCheckBox forwardGpsChkB;
@@ -87,10 +87,10 @@ public class GPSPortOptions extends SerialPortOptions {
 	public mCheckBox logGpsChkB;
 	mySerialThread serThread;
 	boolean gpsRunning = false;
+	MyEditor ed = new MyEditor();
 
 	
 	public Editor getEditor(){
-		MyEditor ed = new MyEditor();
 		// The following lines are mainly copied from SerialPortOptions.
 		// Reason: We want to use MyEditor instead of the default Editor,
 		//         because the latter places the ok/cancel buttons centered.
@@ -104,7 +104,8 @@ public class GPSPortOptions extends SerialPortOptions {
 		ed.addLast(is).setCell(CellConstants.HSTRETCH);
 		CellPanel cp = new CellPanel();
 		ed.addField(cp.addNext(new mComboBox()).setCell(CellConstants.HSTRETCH),"portName");
-		ed.addField(cp.addLast(new mButton(MyLocale.getMsg(7101,"Update Ports$u"))).setCell(CellConstants.DONTSTRETCH),"update");
+		btnUpdatePortList = new mButton(MyLocale.getMsg(7101,"Update Ports$u"));
+		ed.addField(cp.addLast(btnUpdatePortList).setCell(CellConstants.DONTSTRETCH),"update");
 		is.add(cp,"Port:$p");
 		mComboBox cb = new mComboBox();
 		is.add(ed.addField(cb,"baudRate"),MyLocale.getMsg(7102,"Baud:$b"));
@@ -128,16 +129,14 @@ public class GPSPortOptions extends SerialPortOptions {
 		inputBoxForwardHost.setPromptControl(labelForwardHost);
 		inputBoxForwardHost.setToolTip(MyLocale.getMsg(7106, "All data from GPS will be sent to TCP-port 23\n and can be redirected there to a serial port\n by HW Virtual Serial Port"));
 		ed.addField(ed.addLast(inputBoxForwardHost,0 , (CellConstants.WEST | CellConstants.HFILL)), "tcpForwardHost");
-		inputBoxForwardHost.setText("192.168.178.23");
 		logGpsChkB = new mCheckBox("");
 		ed.addField(ed.addNext(logGpsChkB, CellConstants.DONTSTRETCH, (CellConstants.EAST | CellConstants.DONTFILL)), "logGpsChkB");
 		labelLogTimer = new mLabel(MyLocale.getMsg(7107, "Interval in sec for logging"));
 		ed.addField(ed.addNext(labelLogTimer, CellConstants.DONTSTRETCH, (CellConstants.WEST | CellConstants.DONTFILL)), "labelLogTimer");
 		inputBoxLogTimer = new mInput("GPSLogTimer");
 		inputBoxLogTimer.setPromptControl(labelLogTimer);
-		inputBoxLogTimer.setText("10");
 		ed.addField(ed.addLast(inputBoxLogTimer,0 , (CellConstants.WEST | CellConstants.HFILL)), "GPSLogTimer");
-
+		this.ed.firstFocus = btnUpdatePortList;
 		gpsRunning = false;
 		return ed;
 	}
@@ -178,13 +177,15 @@ public class GPSPortOptions extends SerialPortOptions {
 	}
 	
 	public void fieldEvent(FieldTransfer xfer, Editor editor, Object event){
-		try {
+		if ( event != null && event instanceof EditorEvent) {
 			EditorEvent ev = (EditorEvent) event;
-			if (xfer.fieldName.equals("_editor_") && (ev.type == EditorEvent.CLOSED)) {
-				if (serThread != null) serThread.stop();
+			if (xfer.fieldName.equals("_editor_")) {
+				if (ev.type == EditorEvent.CLOSED) {
+					if (serThread != null) serThread.stop();
+				}
 			}
-		} catch (ClassCastException e) { } // happens if event is not an EditorEvent
-		super.fieldEvent(xfer,editor,event);
+			super.fieldEvent(xfer,editor,event);
+		}
 	}
 	
 	private boolean testPort(String port, int baud){
