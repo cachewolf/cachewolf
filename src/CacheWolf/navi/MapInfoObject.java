@@ -84,7 +84,7 @@ public class MapInfoObject extends Area {
 		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		double pixel2deg = meters2deg * scalei;
 		affine[0]=0; //x2lat
-		affine[1]=pixel2deg / java.lang.Math.cos(lat); //x2lon
+		affine[1]=pixel2deg / java.lang.Math.cos(lat*java.lang.Math.PI / 180); //x2lon
 		affine[2]=-pixel2deg; //y2lat
 		affine[3]=0; //y2lon
 		topleft.latDec=1; //top
