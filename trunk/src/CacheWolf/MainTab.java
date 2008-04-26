@@ -384,7 +384,8 @@ public class MainTab extends mTabbedPanel {
 
 	void updatePendingChanges() {
 		if (cacheDirty) {
-			chD.saveCacheDetails(Global.getProfile().dataDir);
+			if (chD != null)
+				chD.saveCacheDetails(Global.getProfile().dataDir);
 			cacheDirty = false;
 		}
 	}
