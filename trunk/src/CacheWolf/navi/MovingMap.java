@@ -1053,6 +1053,18 @@ public class MovingMap extends Form {
 			Rect screen = (Rect) s[1]; 
 			newmap = maps.getBestMap(cll, screen, Float.MAX_VALUE -1, false);
 		}
+		if (newmap == null) { // no map is covering any area of the caches -> zoom an empty map to cover all caches on screen
+			try {
+				Object [] s = getRectForMapChange(posCircle.where);
+			//	CWPoint cll = (CWPoint) s[0]; 
+				Rect screen = (Rect) s[1]; 
+				float neededscalex = (float) (sur.topleft.getDistance(sur.topleft.latDec, sur.buttomright.lonDec) * 1000 / screen.width);
+				float neededscaley = (float) (sur.topleft.getDistance(sur.buttomright.latDec, sur.topleft.lonDec) * 1000 / screen.height);
+				newmap = ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(); // beware: "-4" only works if the empty maps were added last see MapsList.addEmptyMaps
+				newmap.zoom(newmap.scale * newmap.zoomFactor / (neededscalex > neededscaley ? neededscalex : neededscaley), 0, 0);
+				forceMapLoad = true;
+			} catch (IOException e) { (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4279, "loadMapForAllCaches: IO-Exception in: newmap = ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap();"), FormBase.OKB)).exec(); }
+		}
 		boolean saveGpsIgnStatus = dontUpdatePos;
 		dontUpdatePos = true;
 		setMap(newmap, posCircle.where);
