@@ -337,10 +337,7 @@ public class CacheList extends CellPanel {
 	
 	void updateScreen(int numRows) {
 		Global.mainTab.tbP.myMod.numRows=numRows;
-		// Check whether the currently selected cache is still visible
-		//selectRow(getSelectedCache());
-		Global.mainTab.tbP.tc.update(true); // Update and repaint
-		if (Global.mainTab.tbP.statBar!=null) Global.mainTab.tbP.statBar.updateDisplay();
+		Global.mainTab.tbP.refreshTable(); // Update and repaint
 		int selPanel;
 		if ((selPanel=Global.mainTab.cardPanel.selectedItem)>-1) {
 			if (selPanel==1) {
