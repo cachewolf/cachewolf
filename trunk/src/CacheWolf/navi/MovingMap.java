@@ -76,6 +76,8 @@ public class MovingMap extends Form {
 	
 	Point lastRepaintMapPos = null;
 	double lastDistance = -1;
+	
+	float lastHighestResolutionGPSDestScale = -1;
 
 	public MovingMap(Navigate nav, Vector cacheDB){
 		this.cacheDB = cacheDB;
@@ -161,6 +163,7 @@ public class MovingMap extends Form {
 		//updateDistance(); // fill Rect with transparent color
 		scaleWanted = 1;
 		mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
+		lastHighestResolutionGPSDestScale = -1;
 		
 		lastRepaintMapPos = new Point(pref.myAppWidth +1, pref.myAppHeight +1);
 	}
@@ -579,7 +582,7 @@ public class MovingMap extends Form {
 										} // this happens if a position jump occured
 								}}}}}}} // close all IFs
 		Vm.gc(); // call garbage collection
-		Vm.debug("Overlayrearanged"+TrackOverlays.toString());
+		//Vm.debug("Overlayrearanged"+TrackOverlays.toString());
 	}
 
 	public void ShowLastAddedPoint(Track tr) {
@@ -930,23 +933,41 @@ public class MovingMap extends Form {
 		Object [] s = getRectForMapChange(where);
 		CWPoint cll = (CWPoint) s[0]; 
 		Rect screen = (Rect) s[1]; 
+		boolean posCircleOnScreen = ((Boolean) s[2]).booleanValue();
 		MapInfoObject newmap = null;
 		//if (mapChangeModus == 0) mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
 		wantMapTest = true;
 		switch (mapChangeModus) {
 		case NORMAL_KEEP_RESOLUTION: 
+			lastHighestResolutionGPSDestScale = -1;
 			newmap = maps.getBestMap(cll, screen, scaleWanted, false);
 			if (newmap == null) newmap = currentMap;
 			if (MapsList.scaleEquals(scaleWanted, newmap)) wantMapTest = false;
 			break;
-		case HIGHEST_RESOLUTION: newmap = maps.getBestMap(cll, screen, 0.000001f, false); break;
+		case HIGHEST_RESOLUTION:
+			lastHighestResolutionGPSDestScale = -1;
+			newmap = maps.getBestMap(cll, screen, 0.000001f, false);
+			break;
 		case HIGHEST_RESOLUTION_GPS_DEST: 
 			if (gotoPos!= null && GpsStatus != noGPS && posCircle.where.isValid()) {
-				newmap = maps.getMapForArea(posCircle.where, gotoPos.where); // TODO use home-coos if no gps? - consider start from details panel and from gotopanel
-				if (newmap == null) newmap = maps.getBestMap(cll, screen, 10000000000000000000000000000000000f, false); // use map with most available overview if no map containing PosCircle and GotoPos is available
+				if ( ( !posCircleOnScreen ) && ( lastHighestResolutionGPSDestScale > 0 ) ) {
+					newmap = maps.getBestMap(cll, screen, lastHighestResolutionGPSDestScale , false);
+				} else {
+					newmap = maps.getMapForArea(posCircle.where, gotoPos.where); // TODO use home-coos if no gps? - consider start from details panel and from gotopanel
+					if (newmap == null)	newmap = maps.getBestMap(cll, screen, 10000000000000000000000000000000000f, false); // use map with most available overview if no map containing PosCircle and GotoPos is available
+					
+					lastHighestResolutionGPSDestScale = newmap.scale;	
+					
+					if (!posCircleOnScreen) {
+						newmap = maps.getBestMap(cll, screen, lastHighestResolutionGPSDestScale , false);
+					}
+				}
 			}
 			//	either Goto-Pos or GPS-Pos not set
-			else newmap = maps.getBestMap(cll, screen, 0.000001f, false); 
+			else {
+				lastHighestResolutionGPSDestScale = -1;
+				newmap = maps.getBestMap(cll, screen, 0.000001f, false); 
+			}
 			break;
 		default: (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4208, "Bug: \nillegal mapChangeModus: ") + mapChangeModus, FormBase.OKB)).execute(); break;
 		}
@@ -977,6 +998,7 @@ public class MovingMap extends Form {
 		scaleWanted = currentMap.scale;
 		if (mapChangeModus == modus) return;
 		mapChangeModus = modus;
+		lastHighestResolutionGPSDestScale = -1;
 		if (modus != NORMAL_KEEP_RESOLUTION) setBestMap(posCircle.where, true);
 	}
 	/**
@@ -994,7 +1016,9 @@ public class MovingMap extends Form {
 		int h = (height != 0 ? height : pref.myAppHeight);
 		int x, y;
 		CWPoint cll;
+		Boolean posCircleOnScreen = java.lang.Boolean.FALSE;
 		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h && ll.isValid()) {
+			posCircleOnScreen = java.lang.Boolean.TRUE;
 			x = posCircleX; // posCircle is inside the screen
 			y = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn vorher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
 			cll = new CWPoint(ll);
@@ -1003,9 +1027,10 @@ public class MovingMap extends Form {
 			x = w/2;
 			y = h/2;
 		} 
-		Object[] ret = new Object[2];
+		Object[] ret = new Object[3];
 		ret[0] = cll;
 		ret[1] = new Rect(x, y, w, h);
+		ret[2] = posCircleOnScreen;
 		return ret; 
 	}
 
