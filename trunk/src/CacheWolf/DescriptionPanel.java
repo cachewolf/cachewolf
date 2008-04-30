@@ -58,6 +58,11 @@ public class DescriptionPanel extends CellPanel{
                 // not an addi-wpt
                 desc = cache.LongDescription;
         }
+        // HtmlDisplay does not show the <sup> tag correctly, so we need to replace with ^
+        if (desc.indexOf("<sup>")>=0) {
+        	desc=STRreplace.replace(desc,"<sup>","^(");
+        	desc=STRreplace.replace(desc, "</sup>",")");
+        }
         Vm.showWait(true);
         if (isHtml) {
             int imageNo = 0;
