@@ -246,8 +246,12 @@ public class PreferencesScreen extends Form {
 				MyLocale.getMsg(6011,"To Log")},pref.travelbugColMap),"T-bugs",null);
 		
 		this.addLast(mTab);
-		addNext(cancelB = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		addLast(applyB = new mButton(MyLocale.getMsg(615,"Apply")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		cancelB = new mButton(MyLocale.getMsg(614,"Cancel"));
+		cancelB.setHotKey(0, IKeys.ESCAPE);
+		addNext(cancelB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		applyB = new mButton(MyLocale.getMsg(615,"Apply"));
+		applyB.setHotKey(0, IKeys.ACTION);
+		addLast(applyB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 	}
 	
 	public void onEvent(Event ev){
