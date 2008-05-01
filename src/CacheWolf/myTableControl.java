@@ -231,7 +231,6 @@ public class myTableControl extends TableControl{
 				CacheHolderDetail chD=ch.getCacheDetails(false, true);
 				try {
 					if (chD != null) {
-						//String cmd = "\""+pref.browser+ "\" \"" + chD.URL+"\"";
 						CWWrapper.exec(pref.browser, chD.URL); // maybe this works on some PDAs?
 					}
 				} catch (IOException ex) {

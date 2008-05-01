@@ -367,6 +367,7 @@ public class MainMenu extends MenuBar {
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
 				try{
 					pref.log("gpsbabel.exe "+pref.garminGPSBabelOptions+" -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
+					// this will *only* work with ewe.jar at the moment
 					ewe.sys.Process p = Vm.exec("gpsbabel.exe "+pref.garminGPSBabelOptions+" -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
 					p.waitFor();
 				}catch(IOException ioex){
