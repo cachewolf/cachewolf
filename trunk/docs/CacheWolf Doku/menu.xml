@@ -228,6 +228,23 @@
         darstellen, wo man sich befindet.</para>
       </sidebar>
 
+      <para>Die Karten müssen als Raster-Bilddatei vorliegen und es muss
+      Informationen darüber mitgeliefert werden, welchen Bereich der Erde das
+      Bild bzw. die Karte abdeckt. Diese Informationen werden
+      "Kalibreiungsinformationen" genannt. CacheWolf speichert sie in
+      world-files (*.wfl), die den gleichen Namen wie die jeweilige Bilddatei
+      tragen.</para>
+
+      <para>CacheWolf kann gegenwärtig in der MovingMap nur ein Kartenbild
+      gleichzeitig anzeigen. Deswegen kann es vorkommen, dass ein Teil des
+      Bildschirms im Kartenmodus nicht mit einem Kartenbild hinterlegt wird,
+      obwohl es für den Bereich ein Kartenbild gibt. Deswegen hat CacheWolf a)
+      einen automatischen Mechanismus, der immer dasjenige Kartenbild läd, das
+      man braucht, und b) werden die Kartenbilder aus dem Internet
+      standardmäßig mit 100 Pixeln Überlappung heruntergeladen, um die Lücken,
+      die bei einem automatischen Kartenwechsel auftreten, möglichst gering zu
+      halten.</para>
+
       <para></para>
 
       <section>
