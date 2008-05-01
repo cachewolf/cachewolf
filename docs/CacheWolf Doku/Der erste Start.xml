@@ -79,11 +79,11 @@
         </imageobject>
       </inlinemediaobject></para>
 
-    <para>Dieser fordert dich nun auf, ein Basisverzeichnis auszuwählen für
-    die noch kommenden Cache-Daten. Die Idee dahinter ist folgende: In diesem
-    Verzeichnis kannst du beliebig viele Unterordner anlegen; jeder dieser
-    ordner ist ein eigenes Profil (siehe: <xref linkend="profil" />) innerhalb
-    des Cachewolf.</para>
+    <para>Dieser fordert dich nun auf, das Datenverzeichnis für CacheWolf
+    auszuwählen für die noch kommenden Cache-Daten und die Karten. Die Idee
+    dahinter ist folgende: In diesem Verzeichnis kannst du beliebig viele
+    Unterordner anlegen; jeder dieser Ordner ist ein eigenes Profil (siehe:
+    <xref linkend="profil" />) innerhalb des Cachewolf.</para>
 
     <tip>
       <para>Auf einem PocketPC kannst du dieses Verzeichnis auf die
@@ -93,6 +93,14 @@
 
     <para>Wähle nun ein Verzeichnis aus und bestätige mit <literal>Select
     Folder</literal></para>
+
+    <para>Danach erscheint der Dialog zur Auswahl eines Profils. In einem
+    Profil werden in der Regel die Daten einer Cache-Gegend gespeichert. Lege
+    ein neues Profil durch klick auf "neu" an, gebe einen Namen ein,
+    beispielsweise den Namen der Stadt, in deren Gegend Du Caches suchen
+    willst. Danach erscheint ein Dialog, in dem die Koordinaten des
+    Mittelpunktes eingegeben werden sollen, um die herum die Caches dieses
+    Profils liegen (Zentrum).</para>
   </section>
 
   <section>
