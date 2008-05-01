@@ -240,9 +240,12 @@
         ebenfalls angeboten.</para>
 
         <sidebar>
-          <para>Ein Web Map Service (WMS) ist ein Web Service, der auf den WMS
-          Implementation Specifications beruht, einer Schnittstelle, um Karten
-          zu generieren. <citation>Expedia</citation></para>
+          <para>Ein Web Map Service (WMS) ist ein Web Service, der auf den
+          OGC-WMS Implementation Specifications beruht, einer Schnittstelle,
+          um Karten aus dem Internet zu laden. Expedia ist eine Webseite, die
+          von Microsoft betrieben wird und Karten der USA und von Europa
+          anbietet. CacheWolf kann diese Webseite aufrufen und die dort
+          angebotenen Karten herunterladen und automatisch kalibrieren.</para>
         </sidebar>
 
         <para>Siehe die Datei <literal>readme_wms.txt</literal> im Verzeichnis
