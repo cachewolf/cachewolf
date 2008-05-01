@@ -6,10 +6,11 @@ import ewe.sys.*;
  * in EWE Version 1.49
  * It identifies the plattform and uses a different call
  * to Vm.exec() depending on the plattform.
- * It uses depreciated classes, which is OK for now.
+ * Bugs identified:
+ * ewe.jar: cmd needs quoting, args are whitespace-split
+ * Ewe VM:  cmd must not be quoted, args can be only one
  */
 public class CWWrapper {
-	
 	/**
 	 * It doesn't work at all on Loox N520 with WM 5 :-(
 	 * @param cmd
@@ -17,21 +18,11 @@ public class CWWrapper {
 	 * @throws ewe.io.IOException
 	 */
 	public static void exec(String cmd, String args) throws ewe.io.IOException{
-		String plattform = Vm.getPlatform();
-		if(plattform.equals("WinCE")){
-			Vm.exec(cmd, args, 0, false);
+		if (Vm.getPlatform().equals("Java")) {
+			/* we need extra quotes here, see ewe/sys/Vm.java */
+			cmd = "\"" + cmd + "\"";
+			args = "\"" + args + "\"";
 		}
-		if(plattform.equals("Win32")){
-			Vm.exec(cmd, args, 0, false);
-		}
-		if(plattform.equals("Unix")){
-			String[] strarr = new String[1];
-			strarr[0] = "\"" + cmd + "\" "+args;
-			String[] dummy = new String[1];
-			Vm.exec(strarr, dummy);
-		}
-		if(plattform.equals("Java")){
-			Vm.exec("\"" + cmd + "\" "+args, null);
-		}
+		Vm.exec(cmd, args, 0, false);
 	}
 }

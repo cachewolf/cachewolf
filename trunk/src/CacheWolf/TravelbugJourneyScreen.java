@@ -11,6 +11,7 @@ package CacheWolf;
  * @author salzkammergut
  */
 
+import utils.CWWrapper;
 import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
@@ -572,12 +573,12 @@ class tbListControl extends TableControl {
 				try {
 					String s;
 					if (tbj.getTb().getGuid().length()>10)
-						s = "\""+Global.getPref().browser+"\" \"http://www.geocaching.com/track/details.aspx?guid="+tbj.getTb().getGuid()+"\"";
+						s = "http://www.geocaching.com/track/details.aspx?guid="+tbj.getTb().getGuid();
 					else
-						s = "\""+Global.getPref().browser+"\" \"http://www.geocaching.com/track/details.aspx?id="+tbj.getTb().getGuid()+"\"";
-									
-					Vm.exec(s);
-					Global.getPref().log("Executing: "+s); 
+						s = "http://www.geocaching.com/track/details.aspx?id="+tbj.getTb().getGuid();
+
+					CWWrapper.exec(Global.getPref().browser, s);
+					Global.getPref().log("Executing: \""+Global.getPref().browser+"\" \""+s+"\"");
 				} catch (Exception ioex) {
 				}
 			}
