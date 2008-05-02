@@ -58,9 +58,15 @@
     <section>
       <title>Windows</title>
 
-      <para>Hier ist die Installation sehr einfach. Einfach die .zip-Datei in
-      ein Verzeichnis Deiner Wahl entpacken. Durch einen Doppelklick auf das
-      CacheWolf Icon startet das Programm.</para>
+      <para>Hier gibt es 2 Möglichkeiten. Eine mit einfacher Installation und
+      eine, bei der Cachewolf schneller arbeitet. Wir empfehlen die Variante,
+      in der CacheWolf schneller arbietet. Dies ist der Fall bei Verwendung
+      der Java-Version. Bitte lies dort, welche Schritte zur Installation
+      notwendig sind.</para>
+
+      <para>Alternativ kannst Du die einfache Installation verwenden: Einfach
+      die .zip-Datei in ein Verzeichnis Deiner Wahl entpacken. Durch einen
+      Doppelklick auf das CacheWolf Icon startet das Programm.</para>
     </section>
 
     <section>
@@ -68,10 +74,14 @@
 
       <para>Für den Einsatz der Java-Version benötigst du eine Java-Runtime in
       der Version 1.5 oder höher. Diese bekommst du entweder direkt bei Sun
-      oder über die Linux-eigene Paketverwaltung (SuSE: YaST, Debian:
+      über http://www.java.com/de/download/ (zumindest für Windows) oder über
+      die Linux-eigene Paketverwaltung (SuSE: YaST, Debian:
       apt-get,...).</para>
 
-      <para>Über die Kommandozeile startest du das Programm mittels:
+      <para>Nach der Installation von java klicken Windows-Nutzer klicken
+      einfach auf cachewolf.bat</para>
+
+      <para>Linux-Nutzer starten das Cachewolf über die Kommandozeile mittels:
       <literal>java -jar "/Pfadzucachewolf/CacheWolf.jar"
       &amp;</literal></para>
     </section>

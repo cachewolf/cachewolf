@@ -1449,7 +1449,7 @@ ENDIF</programlisting>
       <orderedlist>
         <listitem>
           <para>Hast du den Globus aus aus der Detailansicht (siehe <xref
-          lang="" linkend="detailansicht" />) geklickt wird eine Karte
+          lang="" linkend="detailansicht" />) geklickt, wird eine Karte
           dargestellt auf dem die Position des gewählten Caches (siehe <xref
           lang="" linkend="liste" />) gezeigt wird.</para>
         </listitem>
@@ -1499,11 +1499,15 @@ ENDIF</programlisting>
 
         <listitem>
           <para>Cachewolf sucht grundsätzlich in einem "maps" Verzeichnis im
-          Profilbasisverzeichnis nach geeigneten Karten. Innerhalb des maps
+          Datenverzeichnis nach geeigneten Karten. Innerhalb des maps
           Verzeichnis können noch die Verzeichnisse expedia, standard und topo
           vorhanden sein. Mit der Funktion <literal>Kartenverzeichnis
           wechseln</literal> kann ein anderes beliebiges Verzeichnis gewählt
-          werden.</para>
+          werden. CacheWolf durchsucht dabei stets das gewählte Verzeichnis
+          und alle Verzeichnisse eine Ebene tiefer, die in dem gewählten
+          Verzeichnis liegen. Es sollte also das Verzeichnis "topo" ausgewählt
+          werden, dann werden auch die Karten gefunden, die sich in
+          topo/&lt;profilname&gt; befinden.</para>
         </listitem>
       </itemizedlist>
 
