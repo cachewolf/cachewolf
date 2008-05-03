@@ -1,6 +1,8 @@
 package CacheWolf;
 
 import ewe.io.File;
+import ewe.io.SerialPort;
+import ewe.io.SerialPortOptions;
 import ewe.sys.Convert;
 
 public final class Common {
@@ -132,5 +134,11 @@ public final class Common {
 		return e.toString().replace(',', '.');
 
 	}
+	
+	public static String fixSerialPortName(String name) {
+		if (name.startsWith("/")) return new String(".."+name); // on linux (*nix) machines it is quite usual to give the complete file path to the serial port, but ewe expects only "ttyS0" or similar
+		else                      return name;
+	}
+
 
 }
