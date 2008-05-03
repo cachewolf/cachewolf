@@ -45,12 +45,8 @@ class mySerialThread extends mThread{
 	TextDisplay out;
 	boolean run;
 	
-	public mySerialThread(SerialPortOptions spo, TextDisplay td){
-		try {
-			comSp = new SerialPort(spo);
-		} catch (IOException e) {
-			Vm.debug("Error open COM-Port " + spo.portName);
-		}
+	public mySerialThread(SerialPortOptions spo, TextDisplay td) throws IOException {
+		comSp = new SerialPort(spo);
 		out = td;
 	}
 	
@@ -144,26 +140,36 @@ public class GPSPortOptions extends SerialPortOptions {
 	public void action(String field,Editor ed){
 		if (field.equals("scan")){
 			String[] ports = SerialPort.enumerateAvailablePorts();
-			
-			for (int i=0;i<ports.length;i++){
-				// try open with default GPS baudrate
-				if (!testPort(ports[i], 4800)) continue;
-				else {
-					this.portName = ports[i];
-					ed.toControls("portName");
-					this.baudRate = 4800;
-					ed.toControls("baudRate");
-					break;
+			txtOutput.setText("");
+			if (ports == null) {
+				txtOutput.appendText(MyLocale.getMsg(7109, "Could not get list of available serial ports\n"), true);
+			} else {
+				int i;
+				for (i=0; i<ports.length; i++){
+					// try open with default GPS baudrate
+					if (!testPort(ports[i], baudRate)) 	continue;
+					else {
+						this.portName = ports[i];
+						ed.toControls("portName");
+						break;
+					}
 				}
+				if (i >= ports.length) txtOutput.appendText(MyLocale.getMsg(7110, "GPS not found\n"), true);
 			}
 		}
 		if (field.equals("test")){
 			if (!gpsRunning){
 				ed.fromControls();
-				serThread = new mySerialThread(this, txtOutput);
-				serThread.start();
-				btnTest.setText("Stop");
-				gpsRunning = true;
+				txtOutput.setText(MyLocale.getMsg(7117, "Displaying data from serial port directly:\n"));
+				try {
+					this.portName = Common.fixSerialPortName(portName);
+					serThread = new mySerialThread(this, txtOutput);
+					serThread.start();
+					btnTest.setText("Stop");
+					gpsRunning = true;
+				} catch (IOException e) {
+					txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + this.portName + ", IOException: " + e.getMessage() + "\n", true);
+				}
 			}
 			else {
 				serThread.stop();
@@ -194,48 +200,34 @@ public class GPSPortOptions extends SerialPortOptions {
 		int gpsLen;
 		long now;
 		
-		gpsPort = new SerialPort(port, baud);
-		
-		//try to read some data
-		now = new Time().getTime();
-		txtOutput.appendText("Trying " + port + " at " + baud + " Baud\n",true);
-		while ( (new Time().getTime() - now) < 2000){
-			gpsLen = gpsPort.nonBlockingRead(gpsBuff,0, gpsBuff.length);
-			if (gpsLen > 0){
-				txtOutput.appendText("Port found\n", true);
-				gpsPort.close();
-				return true;
-			}
+		gpsPort = new SerialPort(Common.fixSerialPortName(port), baud);
+		if(gpsPort == null) {
+			txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + this.portName + "\n", true);
+			return false;
 		}
-		gpsPort.close();
-		return false;
-	}
-	
-	private boolean testGPS(String port, int baud){
-		SerialPort gpsPort; 
-		byte[] gpsBuff = new byte[1024];
-		int gpsLen;
-		long now;
-		
-		gpsPort = new SerialPort(port, baud);
 		
 		//try to read some data
 		now = new Time().getTime();
-		Vm.debug("Trying " + port + " at " + baud + " Baud");
+		txtOutput.appendText(MyLocale.getMsg(7111, "Trying ") + port + MyLocale.getMsg(7112, " at ") + baud + " Baud\n", true);
+		boolean gotdata = false;
 		while ( (new Time().getTime() - now) < 3000){
 			gpsLen = gpsPort.nonBlockingRead(gpsBuff,0, gpsBuff.length);
-			Vm.debug("Len:" + gpsLen);
 			if (gpsLen > 0){
+				if (!gotdata) txtOutput.appendText(MyLocale.getMsg(7113, " - got some data\n"), true);
+				gotdata = true;
 				String tmp = mString.fromAscii(gpsBuff,0,gpsLen);
-				Vm.debug(tmp);
-				if (tmp.startsWith("$GP")){
-					Vm.debug("GPS Port found");
+				if (tmp.indexOf("$GP", 0) >= 0){
+					txtOutput.appendText(MyLocale.getMsg(7114, "GPS Port found\n"), true);
 					gpsPort.close();
 					return true;
 				}
 			}
+			Vm.sleep(200);
 		}
+		if (gotdata) txtOutput.appendText(MyLocale.getMsg(7115, " - No GPS data tag found\n"), true);
+		else         txtOutput.appendText(MyLocale.getMsg(7116, " - no data received\n"), true);
 		gpsPort.close();
 		return false;
 	}
+	
 }
