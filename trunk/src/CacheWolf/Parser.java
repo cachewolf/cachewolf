@@ -281,8 +281,18 @@ public class Parser{
 	private String popCalcStackAsString() {
 		String s;
 		if (calcStack.get(calcStack.size()-1) instanceof Double) {
-			s = ((java.lang.Double)calcStack.get(calcStack.size()-1)).toString().replace(',','.'); // always show numbers with decimal point;
-			if (s.endsWith(".0")) s=s.substring(0,s.length()-2);
+			java.lang.Double D=((java.lang.Double)calcStack.get(calcStack.size()-1));
+			// Double.toString() formats numbers > 1E7 and < 1E-3 with exponential notation
+			// For large integers we therefore use Longs  
+			double d=D.doubleValue();
+			// If the double is an integer and within range of longs, use Long
+			if (java.lang.Math.floor(d)==d && d<java.lang.Long.MAX_VALUE && d>java.lang.Long.MIN_VALUE) {
+				java.lang.Long L=new java.lang.Long((long)d);
+				s=L.toString();
+			} else { // Use the default Double format
+				s = D.toString().replace(',','.'); // always show numbers with decimal point;
+				if (s.endsWith(".0")) s=s.substring(0,s.length()-2);
+			}
 		} else
 			s = (String)calcStack.get(calcStack.size()-1);
 		calcStack.removeElementAt(calcStack.size()-1);
@@ -429,6 +439,11 @@ public class Parser{
     	return Global.mainTab.nav.gpsPos.toString();
     }
     
+    /**
+     *  Crosstotal: Works for both strings and numbers. For strings any non-numeric character is ignored
+     *  Warning: When the number is non-integer or > 9223372036854775807, it is formatted using the E
+     *  notation, i.e. x.xxxxxxEyy. In this case the exponent yy is also included in the crosstotal 
+     */
     private double funcCrossTotal(int nargs) throws Exception {
     	int cycles=1;
 		if (nargs==2) cycles=(int)popCalcStackAsNumber(1);
@@ -442,8 +457,6 @@ public class Parser{
 			for (int i=0; i<aString.length(); i++) {
 			   if (aString.charAt(i)>='0' && aString.charAt(i)<='9')
 			      a += aString.charAt(i)-'0';
-			   else
-				  break; // break at first non numeric character 
 			}
 			aString=Convert.toString(a);
     	} 
