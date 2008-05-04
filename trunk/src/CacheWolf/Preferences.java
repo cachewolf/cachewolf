@@ -183,7 +183,7 @@ public class Preferences extends MinML{
 	 */
 	public void readPrefFile(){
 		try{
-			String datei = FileBase.getProgramDirectory() + "/" + "pref.xml";
+			String datei = "pref.xml"; // FileBase.getProgramDirectory() + "/" + "pref.xml";
 			datei = datei.replace('\\', '/');
 			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(datei));
 			parse(r);
@@ -453,7 +453,7 @@ public class Preferences extends MinML{
 			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", FormBase.YESB | FormBase.NOB);
 			if (inf.execute() == FormBase.IDYES) {
 				String sp = getMapManuallySavePath(false);
-				File spF = new File(sp);
+				FileBugfix spF = new FileBugfix(sp);
 				if (!spF.exists()) spF.mkdirs();
 				String image;
 				String lagacypath = ret;
@@ -483,8 +483,8 @@ public class Preferences extends MinML{
 	 */
 	public String getMapManuallySavePath(boolean create) {
 		String mapsDir = baseDir + mapsPath;
-		if (create && !(new File(mapsDir).isDirectory())) { // dir exists? 
-			if (new File(mapsDir).mkdirs() == false) {// dir creation failed?
+		if (create && !(new FileBugfix(mapsDir).isDirectory())) { // dir exists? 
+			if (new FileBugfix(mapsDir).mkdirs() == false) {// dir creation failed?
 				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+mapsDir, FormBase.OKB)).exec();
 				return null;
 			}
@@ -498,9 +498,9 @@ public class Preferences extends MinML{
 	public String getMapDownloadSavePath(String mapkind) {
 		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length()).replace('\\', '/');
 		String mapsDir = Global.getPref().baseDir + "maps/" + Common.ClearForFileName(mapkind)+ "/" + subdir;
-		if (!(new File(mapsDir).isDirectory())) { // dir exists? 
-			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
-			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new File(mapsDir).getParentFile(), FormBase.OKB)).exec();
+		if (!(new FileBugfix(mapsDir).isDirectory())) { // dir exists? 
+			if (new FileBugfix(mapsDir).mkdirs() == false) // dir creation failed?
+			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new FileBugfix(mapsDir).getParentFile(), FormBase.OKB)).exec();
 			return null;
 			}
 		}
@@ -527,14 +527,14 @@ public class Preferences extends MinML{
 	 */
 	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
 		// If datadir is empty, ask for one
-		if (baseDir.length()==0 || !(new File(baseDir)).exists()) {
+		if (baseDir.length()==0 || !(new FileBugfix(baseDir)).exists()) {
 			do {
 				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT,"/");
 				fc.title = MyLocale.getMsg(170,"Select base directory for cache data");
 				// If no base directory given, terminate
 				if (fc.execute() == FormBase.IDCANCEL) ewe.sys.Vm.exit(0);
 				baseDir = fc.getChosenFile().toString();
-			}while (!(new File(baseDir)).exists());
+			}while (!(new FileBugfix(baseDir)).exists());
 		}
 		baseDir=baseDir.replace('\\','/');
 		if (!baseDir.endsWith("/")) baseDir+="/";
@@ -578,7 +578,7 @@ public class Preferences extends MinML{
 	 * The log file is also cleared when Preferences is created and the filesize > 60KB
 	 */
 	public void logInit(){
-		File logFile = new File(LOGFILENAME);
+		File logFile = new FileBugfix(LOGFILENAME);
 		logFile.delete();
 		log("CW Version "+Version.getReleaseDetailed());
 	}
@@ -599,16 +599,17 @@ public class Preferences extends MinML{
 		text = dtm.toString()+ ": "+ text;
 		if (debug) Vm.debug(text);
 		text=text+"\n";
-		File logFile = new File(LOGFILENAME);
-		Stream strout = null;
+		FileWriter logFile = null;
 		try{
-			strout = logFile.toWritableStream(true);
-			strout.write(text.getBytes());
+			logFile = new FileWriter(LOGFILENAME, true);
+			//Stream strout = null;
+			//strout = logFile.toWritableStream(true);
+			logFile.println(text);
 			//Vm.debug(text); Not needed - put <debug value="true"> into pref.xml
 		}catch(Exception ex){
 			Vm.debug("Error writing to log file!");
 		}finally{
-			if (strout != null) strout.close();
+			if (logFile != null) try {logFile.close(); } catch (IOException ioe) {}
 		}
 	}
 
@@ -657,7 +658,7 @@ public class Preferences extends MinML{
 	}
 
 	public void setExportPathFromFileName(String exporter,String filename){
-		File tmpfile = new File (filename);
+		File tmpfile = new FileBugfix (filename);
 		exporterPaths.put(exporter, tmpfile.getPath());
 		savePreferences();
 	}

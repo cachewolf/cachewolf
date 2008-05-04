@@ -113,7 +113,7 @@ public class Attribute {
 			"firstaid-yes.gif"              //88 needs maintenance
 	};
 	private static mImage [] attributeImages=new mImage[89];
-	private static String IMAGEDIR=FileBase.getProgramDirectory()+"/attributes/";
+	private static String IMAGEDIR=STRreplace.replace("attributes/", "//", "/");
 	
 	public static String getImageDir() {
 		return IMAGEDIR; 

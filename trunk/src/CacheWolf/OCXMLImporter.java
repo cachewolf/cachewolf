@@ -1,5 +1,7 @@
 package CacheWolf;
 
+import utils.FileBugfix;
+
 import com.stevesoft.ewe_pat.Regex;
 
 import ewesoft.xml.*;
@@ -229,7 +231,7 @@ public class OCXMLImporter extends MinML {
 			file = fetch(url, "dummy");
 
 			//parse
-			tmpFile = new File(profile.dataDir + file);
+			tmpFile = new FileBugfix(profile.dataDir + file);
 			if (tmpFile.getLength() == 0 ) {
 				throw new IOException("no updates available");
 			}
@@ -282,7 +284,7 @@ public class OCXMLImporter extends MinML {
 				ch.calcRecommendationScore();
 			}
 		} */
-		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+		profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 		inf.setInfo(finalMessage);
 
 		return success;

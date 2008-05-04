@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
@@ -144,9 +145,9 @@ public class CacheHolderDetail extends CacheHolder {
 		public void readCache(String dir) throws IOException{
 			String dummy;
 			FileReader in = null;
-			if (new File(dir + wayPoint.toLowerCase() + ".xml").exists()) in = new FileReader(dir+wayPoint.toLowerCase() + ".xml");
+			if (new FileBugfix(dir + wayPoint.toLowerCase() + ".xml").exists()) in = new FileReader(dir+wayPoint.toLowerCase() + ".xml");
 			if (in == null) {
-				if (new File(dir + wayPoint + ".xml").exists()) in = new FileReader(dir+wayPoint + ".xml");
+				if (new FileBugfix(dir + wayPoint + ".xml").exists()) in = new FileReader(dir+wayPoint + ".xml");
 			}
 			if (in == null) throw new FileNotFoundException(dir+wayPoint.toLowerCase()+".xml");
 			String text= in.readAll();

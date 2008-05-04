@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import utils.FileBugfix;
 import ewe.io.File;
 import ewe.ui.*;
 
@@ -41,7 +42,7 @@ public class NewProfileForm extends Form {
 					mb.execute();
 					profileDir="";
 				} else {
-					File f=new File(baseDir+profileDir);
+					File f=new FileBugfix(baseDir+profileDir);
 					if (f.exists()) {
 						MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1114,"Directory exists already."),MBOK);
 						mb.execute();
