@@ -40,7 +40,8 @@ public class PreferencesScreen extends Form {
 		
 		pref = p;
 		this.title = MyLocale.getMsg(600,"Preferences");
-		//this.resizable = false;
+		if ((sw > 240) && (sh > 240))
+			this.resizable = true;
 		//this.moveable = true;
 		//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
 
