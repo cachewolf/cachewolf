@@ -15,6 +15,7 @@ import ewe.io.PrintWriter;
 import ewe.sys.*;
 import java.lang.Math;
 
+import utils.FileBugfix;
 
 /**
  * class to read, save and do the calculations for calibrated and 
@@ -146,7 +147,7 @@ public class MapInfoObject extends Area {
 		// if (fileName == null || fileName.length() > 0) return fileName; 
 		if (fileNameWFL.length() == 0) return ""; // no image associated (empty map)
 		String n = fileNameWFL.substring(0, fileNameWFL.lastIndexOf("."));
-		return Common.getImageName(n);
+		return Common.getImageName(CacheWolf.STRreplace.replace(n, "//", "/"));
 	}
 
 	/**
@@ -158,7 +159,7 @@ public class MapInfoObject extends Area {
 	 * @throws ArithmeticException when affine data is not correct, e.g. it is not possible to inverse affine-transformation
 	 */
 	public void loadwfl(String mapsPath, String thisMap) throws IOException, ArithmeticException {
-		FileInputStream instream = new FileInputStream (mapsPath + thisMap + ".wfl");
+		FileInputStream instream = new FileInputStream (CacheWolf.STRreplace.replace(mapsPath + thisMap + ".wfl", "//", "/"));
 		InputStreamReader in = new InputStreamReader(instream);
 		
 		String line = new String();
@@ -308,7 +309,7 @@ public class MapInfoObject extends Area {
 	}
 
 	public void saveWFL() throws IOException, IllegalArgumentException {
-		File dateiF = new File(fileNameWFL);
+		File dateiF = new FileBugfix(fileNameWFL);
 		String tmp = dateiF.getDrivePath(); // contains the name and the extension
 		saveWFL(tmp, mapName);
 	}

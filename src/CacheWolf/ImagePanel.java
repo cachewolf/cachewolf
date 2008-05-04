@@ -1,4 +1,5 @@
 package CacheWolf;
+import utils.FileBugfix;
 import ewe.graphics.*;
 import ewe.sys.*;
 import ewe.fx.*;
@@ -131,7 +132,7 @@ public class ImagePanel extends InteractivePanel{
 		locCounter=0;
 		for(int i = 0; i<images.size(); i++){
 			location = profile.dataDir + (String)images.get(i);
-			if (!(new File(location)).exists()) {
+			if (!(new FileBugfix(location)).exists()) {
 				location=NO_IMAGE;
 				if (!pref.showDeletedImages) continue; // Don't show the deleted Image if user does not want it
 			}

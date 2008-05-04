@@ -1,9 +1,12 @@
 package CacheWolf;
 
+import utils.FileBugfix;
+import ewe.io.Base64Codec;
 import ewe.io.File;
-import ewe.io.SerialPort;
-import ewe.io.SerialPortOptions;
+import ewe.io.IOException;
 import ewe.sys.Convert;
+import ewe.util.ByteArray;
+import ewe.io.JavaUtf8Codec;
 
 public final class Common {
 
@@ -108,7 +111,7 @@ public final class Common {
 		String[] t = {".png", ".gif", ".jpg", ".bmp"};
 		int i;
 		for (i = 0; i<t.length; i++) {
-			tmp = new File(name+t[i]);
+			tmp = new FileBugfix(name+t[i]);
 			if (tmp.exists()) break;
 		}
 		if (i >=t.length) fileName = null;

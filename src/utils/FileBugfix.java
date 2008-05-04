@@ -57,7 +57,7 @@ public class FileBugfix extends File{
 		ewe.util.FileComparer [] fcs = new ewe.util.FileComparer[masks.length];
 
 		for (int i = 0; i<masks.length; i++)
-			fcs[i] = new FileComparer(this,ewe.sys.Vm.getLocale(),listAndSortOptions,masks[i]);
+			fcs[i] = new FileComparer(ewefile,ewe.sys.Vm.getLocale(),listAndSortOptions,masks[i]);
 		int left = found.length;
 		for (int i = 0; i<found.length; i++){
 			boolean matched = false;

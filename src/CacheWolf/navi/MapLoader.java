@@ -5,6 +5,7 @@ import CacheWolf.Common;
 import CacheWolf.HttpConnection;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.STRreplace;
 import ewe.ui.*;
 import ewe.io.*;
 import ewe.fx.*;
@@ -68,7 +69,7 @@ public class MapLoader {
 					progressBox.waitUntilPainted(500);
 					ewe.sys.Vm.showWait(true);
 				}
-				tempOMS = new WebMapService(wmspath + "/" + FileName);
+				tempOMS = new WebMapService(STRreplace.replace(wmspath + "/" + FileName, "//", "/"));
 				onlineMapServices.add(tempOMS);
 			}catch(Exception ex){ 
 				if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4801, "Ignoring error while \n reading web map service definition file \n")+ex.toString(), FormBase.OKB)).exec();
@@ -250,7 +251,7 @@ public class MapLoader {
 	//	this prevents gdz1.leipzig.ifag.de (dtk100) from answering and ist not necessary for expedia connImg.setRequestorProperty("Cookie", "jscript=1; path=/;");
 		connImg.documentIsEncoded = true;
 		try{
-			File dateiF = new File(datei);
+			File dateiF = new FileBugfix(datei);
 			if(!dateiF.exists()){
 				int i=0;
 				sockImg = connImg.connect();
@@ -276,7 +277,7 @@ public class MapLoader {
 					throw new IOException(MyLocale.getMsg(4808, "downloadImage: content-type:")+" " + ct + MyLocale.getMsg(4809, " is not an image, begin of content:")+" " + tmp); 
 				}
 				daten = connImg.readData(sockImg);
-				fos = new FileOutputStream(dateiF);
+				fos = new FileOutputStream(datei); // note: using the constructor (File) instead of (String) will cause not to use the fake file system
 				fos.write(daten.toBytes());
 				fos.close();
 				sockImg.close();
