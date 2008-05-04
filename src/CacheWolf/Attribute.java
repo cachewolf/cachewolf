@@ -1,6 +1,7 @@
 package CacheWolf;
 
 import ewe.fx.mImage;
+import ewe.io.File;
 import ewe.io.FileBase;
 
 /**
@@ -113,7 +114,7 @@ public class Attribute {
 			"firstaid-yes.gif"              //88 needs maintenance
 	};
 	private static mImage [] attributeImages=new mImage[89];
-	private static String IMAGEDIR=STRreplace.replace("attributes/", "//", "/");
+	private static String IMAGEDIR=STRreplace.replace(File.getProgramDirectory()+"/attributes/", "//", "/");
 	
 	public static String getImageDir() {
 		return IMAGEDIR; 

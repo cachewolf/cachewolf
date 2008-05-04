@@ -183,7 +183,7 @@ public class Preferences extends MinML{
 	 */
 	public void readPrefFile(){
 		try{
-			String datei = "pref.xml"; // FileBase.getProgramDirectory() + "/" + "pref.xml";
+			String datei = STRreplace.replace(FileBase.getProgramDirectory() + "/pref.xml", "//", "/"); // this is necessary in case that the root dir is the program dir
 			datei = datei.replace('\\', '/');
 			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(datei));
 			parse(r);
