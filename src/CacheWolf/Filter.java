@@ -49,6 +49,7 @@ public class Filter{
 	private static final int WHERIGO = 262144;
 	private static final int TYPE_ALL=TRADITIONAL|MULTI|VIRTUAL|LETTER|EVENT|WEBCAM|MYSTERY|LOCLESS|CUSTOM
 	                                  |MEGA|EARTH|PARKING|STAGE|QUESTION|FINAL|TRAILHEAD|REFERENCE|CITO|WHERIGO;
+	private static final int TYPE_MAIN=TRADITIONAL|MULTI|VIRTUAL|LETTER|EVENT|WEBCAM|MYSTERY|LOCLESS|CUSTOM|MEGA|EARTH|CITO|WHERIGO;
 
 	private static final int N = 1;
 	private static final int NNE = 2;
@@ -511,12 +512,14 @@ public class Filter{
 		} // for
 		// Ensure that for all main caches that are filtered, the addis are also filtered independently of 
 		// the filter status of the addi
-		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = (CacheHolder)cacheDB.get(i);
-			if (ch.mainCache!=null) {
-				// We have found an addi, filte it if its parent is filtered
-				ch.is_filtered|=ch.mainCache.is_filtered;
-			}
+		if ((typeMatchPattern & TYPE_MAIN) != 0){ //exception: don't filter out correxpnding Addis, if only Addis are enabled
+			for(int i = cacheDB.size()-1; i >=0 ; i--){
+				ch = (CacheHolder)cacheDB.get(i);
+				if (ch.mainCache!=null) {
+					// We have found an addi, filte it if its parent is filtered
+					ch.is_filtered|=ch.mainCache.is_filtered;
+				}
+			}			
 		}
 		Global.getProfile().filterActive=FILTER_ACTIVE;
 		Global.getProfile().filterInverted=false;
