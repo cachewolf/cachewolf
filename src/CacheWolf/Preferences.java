@@ -46,10 +46,13 @@ public class Preferences extends MinML{
 		mySPO.parity = SerialPort.NOPARITY;
 		mySPO.stopBits = 1;
 		mySPO.baudRate = 4800;
-		if ( ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) 
-			 fontSize = 12;
-		else 
-			 fontSize = 11;
+		if ( ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) {
+			if (Vm.getPlatform().equals("Java"))
+				fontSize = 16;
+			else
+				fontSize = 12;
+		} else 
+			fontSize = 11;
 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
