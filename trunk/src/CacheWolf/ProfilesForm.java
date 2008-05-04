@@ -35,6 +35,17 @@ public class ProfilesForm extends Form{
 			}
 			super.doPaint(gr,area);
 		}
+
+		// Copied from BasicList.getScrollablePanel(), but exchanging
+		// the standard scroll bar with the fontsize sensitive one.
+		public ScrollablePanel getScrollablePanel()
+		{
+			dontAutoScroll = amScrolling = true;
+			ScrollablePanel sp = new MyScrollBarPanel(this);
+			sp.modify(0,TakeControlEvents);
+			return sp;
+		}
+		
 	}
 
 	private MyList choice;
