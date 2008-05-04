@@ -36,6 +36,9 @@ public class PreferencesScreen extends Form {
 	String [] garminPorts= new String[]{"com1","com2","com3","com4","com5","com6","com7","usb"};
 	
 	public PreferencesScreen (Preferences p){
+		int sw = MyLocale.getScreenWidth();
+		int sh = MyLocale.getScreenHeight();
+
 		mTab=new mTabbedPanel();
 		
 		pref = p;
@@ -46,8 +49,6 @@ public class PreferencesScreen extends Form {
 		//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
 
 		// set dialog-width according to fontsize
-		int sw = MyLocale.getScreenWidth();
-		int sh = MyLocale.getScreenHeight();
 		if((pref.fontSize <= 13)||(sw <= 240)||(sh <= 240)){
 			setPreferredSize(240,240);
 		}
