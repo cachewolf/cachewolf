@@ -395,10 +395,12 @@ public class GotoPanel extends CellPanel {
 
 			// set current position as centre and recalculate distance of caches in MainTab 
 			if (ev.target == btnCenter){
+				if (myNavigation.gpsPos.isValid()) {
 				Vm.showWait(true);
 				pref.curCentrePt.set(myNavigation.gpsPos);
 				mainT.updateBearDist();
 				Vm.showWait(false);
+				} else (new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set"), MessageBox.OKB)).execute();
 			}
 			//Start moving map
 			if (ev.target == btnMap){
