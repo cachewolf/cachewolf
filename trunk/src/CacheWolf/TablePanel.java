@@ -97,19 +97,39 @@ public class TablePanel extends CellPanel{
 	/** Move all filtered caches to the end of the table and redisplay table */
 	//TODO Add a sort here to restore the sort after a filter
 	public void refreshTable(){
+		
+		// First: Remember currently selected waypoint
 		String wayPoint;
+		Vector oldVisibleCaches = null;
 		int sel = getSelectedCache();
 		if ((sel >= 0) && (sel < cacheDB.size()) ) // sel > cacheDB.size() can happen if you load a new profile, which is smaller than the old profile and you selected one cache that exceeds the number of caches in the new profile  
 			wayPoint = ((CacheHolder)cacheDB.get(sel)).wayPoint;
 		else wayPoint = null;
+		// Then: remember all caches that are visible before the refresh
+		if (wayPoint != null) {
+	        oldVisibleCaches = new Vector(sel);
+	        for (int i = 0; i < sel; i++) {
+		        oldVisibleCaches.add(cacheDB.get(i));
+	        }
+        }
 		myMod.updateRows();
 
 		// Check whether the currently selected cache is still visible
 		int rownum = 0;
 		if (wayPoint != null) {
 			rownum = Global.getProfile().getCacheIndex(wayPoint);
-			if ( (rownum < 0) || (rownum>=myMod.numRows) )
-				rownum = 0;	
+			if ( (rownum < 0) || (rownum>=myMod.numRows) ) {
+				// If it is not visible: Go backward in the list of the 
+				// previously visible caches and look if you find
+				// any cache that is now still visible.
+				int i;
+				for (i=sel-1; i>=0; i--) {
+					CacheHolder checkCache = (CacheHolder) oldVisibleCaches.get(i);
+					rownum = Global.getProfile().getCacheIndex(checkCache.wayPoint);
+					if ((rownum >= 0) && (rownum < myMod.numRows)) break;
+					rownum = 0;	
+				}
+			}	
 		}
 		selectRow(rownum);
 
