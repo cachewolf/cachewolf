@@ -124,69 +124,77 @@
 
         <para>* Hast Du eine Gerät, daß Du in der zweiten Hälfte 2004 gekauft
         hast, dann solltest Du die "PocketPC" Version von CacheWolf
-        installieren. Beispiele (von Nutzern): PocketPCArm: XDA Trion,
-        ASUS632,Yakumo Delta GPS, Loox N520, Compaq IPAQ 6915, Medion
-        MDPPC250, FSC Loox N560, Dell Axim X51V, Yakumo DeltaX5BT, Acer N35
-        PocketPC: Loox N520, Mio Digi Walker P550 Zaurus: Sharp
-        SL-C1000</para>
+        installieren. Beispiele (von Nutzern):</para>
+
+        <para>** PocketPCArm: XDA Trion, ASUS632,Yakumo Delta GPS, Loox N520,
+        Compaq IPAQ 6915, Medion MDPPC250, FSC Loox N560, Dell Axim X51V,
+        Yakumo DeltaX5BT, Acer N35</para>
+
+        <para>** PocketPC: Loox N520, Mio Digi Walker P550</para>
+
+        <para>** Zaurus: Sharp SL-C1000</para>
 
         <para>Sagt dir das alles gar nichts probier einfach die Versionen
         durch - eine wird auf jeden Fall funktionieren!</para>
       </highlights>
 
-      <para>Die Installation ist ein mehrstufiger Prozess:</para>
+      <section>
+        <title>Installation</title>
 
-      <itemizedlist>
-        <listitem>
-          <para>Zuerst muss die EWE VM (Virtual Machine) installiert
-          werden:</para>
+        <itemizedlist>
+          <para>Die Installation ist ein mehrstufiger Prozess:</para>
 
-          <itemizedlist>
-            <listitem>
-              <para>EWE VM unter
-              <uri>http://www.ewesoft.com/Downloads/Downloads.html#_Toc105819897</uri>
-              herunterladen.</para>
+          <listitem>
+            <para>Zuerst muss die EWE VM (Virtual Machine) installiert
+            werden:</para>
 
-              <para>Hier darauf achten, die richtige Version ("Low Resolution"
-              für normale PDA's oder "High Resolution" für VGA-PDA's zu
-              laden.</para>
-            </listitem>
+            <itemizedlist>
+              <listitem>
+                <para>EWE VM unter
+                <uri>http://www.ewesoft.com/Downloads/Downloads.html#_Toc105819897</uri>
+                herunterladen.</para>
 
-            <listitem>
-              <para>Installation der VM wie unter dem Download Link
-              beschrieben: die cab-Datei auf den PDA übertragen (mittels
-              Speicherkarte oder ActiveSync) und dann auf dem PDA
-              ausführen.</para>
-            </listitem>
+                <para>Hier darauf achten, die richtige Version ("Low
+                Resolution" für normale PDA's oder "High Resolution" für
+                VGA-PDA's) zu laden.</para>
+              </listitem>
 
-            <listitem>
-              <para>Nach erfolgter Installation unter Start -&gt; Programme
-              -&gt; EWE das Programm EWE starten. Damit werden noch notwendige
-              Systemeinträge gemacht und die VM ist nun funktionsfähig. Das
-              Programm wieder schließen und die Funktion überprüfen, indem
-              eines der beiligenden Programme (z.B. Solitaire) gestartet
-              wird.</para>
-            </listitem>
-          </itemizedlist>
-        </listitem>
+              <listitem>
+                <para>Installation der VM wie unter dem Download-Link
+                beschrieben: die .cab-Datei auf den PDA übertragen (mittels
+                Speicherkarte oder ActiveSync) und dann auf dem PDA
+                ausführen.</para>
+              </listitem>
 
-        <listitem>
-          <para>Die entsprechende CacheWolf .zip-Datei auf dem PC
-          entpacken.</para>
-        </listitem>
+              <listitem>
+                <para>Nach erfolgter Installation unter Start -&gt; Programme
+                -&gt; EWE das Programm EWE starten. Damit werden noch
+                notwendige Systemeinträge gemacht und die VM ist nun
+                funktionsfähig. Das Programm wieder schließen und die Funktion
+                überprüfen, indem eines der beiligenden Programme (z.B.
+                Solitaire) gestartet wird.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
 
-        <listitem>
-          <para>Die ganzen Dateien dann auf den PocketPC in ein Verzeichnis
-          deiner Wahl kopiert werden.</para>
-        </listitem>
+          <listitem>
+            <para>Die entsprechende CacheWolf .zip-Datei auf dem PC
+            entpacken.</para>
+          </listitem>
 
-        <listitem>
-          <para>Nach dem Kopieren wird CacheWolf durch Klick auf die
-          Cachewolf.exe gestartet.</para>
-        </listitem>
-      </itemizedlist>
+          <listitem>
+            <para>Die ganzen Dateien dann auf den PocketPC in ein Verzeichnis
+            deiner Wahl kopiert werden.</para>
+          </listitem>
 
-      <para></para>
+          <listitem>
+            <para>Nach dem Kopieren wird CacheWolf durch Klick auf die
+            Cachewolf.exe gestartet.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para></para>
+      </section>
 
       <section>
         <title>Wichtige Information zur Nutzung von GPS Empfängern</title>
@@ -198,21 +206,21 @@
           <listitem>
             <para><emphasis role="bold">Zugriff auf GPS:</emphasis> Solltest
             du neben dem CW noch weitere Software einsetzen (z.B.
-            Navi-Software), die Zugriff auf das GPS haben will so kann es (je
-            nach Software und PDA) vorkommen dass diese Software - einmal
+            Navi-Software), die Zugriff auf das GPS haben will, so kann es (je
+            nach Software und PDA) vorkommen, dass diese Software - einmal
             gestartet - den Zugriff auf das GPS exklusiv nimmt und andere
             Programme das nachsehen haben (auch wenn z.B. die Navi-Software
-            gerade nicht mehr läuft!) \\ Die Lösung besteht darin, das
+            gerade nicht mehr läuft!). Die Lösung besteht darin, das
             GPS-Signal zu splitten, was beispielsweise der VirtCommMgr
             kann.</para>
           </listitem>
 
           <listitem>
             <para><emphasis role="bold">Static Navigation:</emphasis> dies
-            bezeichnet ein "Feature" für Navis, die die Routenführung aussetzt
-            wenn man sich langsamer als 6 km/h bewegt. Fürs cachen natürlich
-            etwas doof, aber man kann es (ohne Nebenwirkungen für
-            Navi-Software) abschalten - z.B. mittels des Programms
+            bezeichnet ein "Feature" für Navis, die die Routenführung
+            aussetzt, wenn man sich langsamer als 6 km/h bewegt. Fürs Cachen
+            natürlich etwas ungünstig, aber man kann es (ohne Nebenwirkungen
+            für Navi-Software) abschalten - z.B. mittels des Programms
             SirfTech.</para>
           </listitem>
         </orderedlist>
