@@ -89,9 +89,9 @@
     <section>
       <title>Pocket PC</title>
 
-      <para>Der Cachewolf läuft auf PocketPC's über eine sogenannte virtuelle
+      <para>Der Cachewolf läuft auf PocketPCs über eine sogenannte virtuelle
       Maschine (EWE VM). Diese stellt die Grundlage aller Funktionen des CW
-      dar und dadurch läuft er auf fast allen PocketPC's.</para>
+      dar und dadurch läuft er auf fast allen PocketPCs.</para>
 
       <para>Es existieren zwei optimierte Versionen von Cachewolf für den
       PocketPC: für Geräte mit ARM-Prozessor und für Geräte mit
@@ -155,8 +155,8 @@
                 herunterladen.</para>
 
                 <para>Hier darauf achten, die richtige Version ("Low
-                Resolution" für normale PDA's oder "High Resolution" für
-                VGA-PDA's) zu laden.</para>
+                Resolution" für normale PDAs oder "High Resolution" für
+                VGA-PDAs) zu laden.</para>
               </listitem>
 
               <listitem>
