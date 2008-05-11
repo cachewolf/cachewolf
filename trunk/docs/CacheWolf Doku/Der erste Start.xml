@@ -44,7 +44,7 @@
       <revision>
         <revnumber>0.99</revnumber>
 
-        <date>12. März 2008</date>
+        <date>12. M�rz 2008</date>
 
         <author>
           <surname>Marc Schnitzler</surname>
@@ -80,18 +80,18 @@
       </inlinemediaobject></para>
 
     <para>Dieser fordert dich nun auf, das Datenverzeichnis für CacheWolf
-    auszuwählen für die noch kommenden Cache-Daten und die Karten. Die Idee
+    auszuw�hlen für die noch kommenden Cache-Daten und die Karten. Die Idee
     dahinter ist folgende: In diesem Verzeichnis kannst du beliebig viele
     Unterordner anlegen; jeder dieser Ordner ist ein eigenes Profil (siehe:
     <xref linkend="profil" />) innerhalb des Cachewolf.</para>
 
     <tip>
       <para>Auf einem PocketPC kannst du dieses Verzeichnis auf die
-      Speicherkarte legen (den CW am besten auf dem Gerät oder der Flash-Disk
+      Speicherkarte legen (den CW am besten auf dem Ger�t oder der Flash-Disk
       ablegen).</para>
     </tip>
 
-    <para>Wähle nun ein Verzeichnis aus und bestätige mit <literal>Select
+    <para>W�hle nun ein Verzeichnis aus und best�tige mit <literal>Select
     Folder</literal></para>
 
     <para>Danach erscheint der Dialog zur Auswahl eines Profils. In einem
@@ -104,7 +104,7 @@
   </section>
 
   <section>
-    <title id="editPrefs">Einstellen der Präferenzen</title>
+    <title id="editPrefs">Konfigurieren der Einstellungen</title>
 
     <para>Es erscheint nun ein bisher leeres Fenster, die
     Listenansicht:</para>
@@ -117,14 +117,14 @@
 
     <para>Keine Angst, wir füllen dieses gleich...</para>
 
-    <para>Doch zuerst einmal wähle den Menüpunkt <literal>Anwendung -&gt;
-    Präferenzen</literal>, hier stellen wir nun ein paar grundsätzliche Dinge
-    ein:</para>
+    <para>Doch zuerst einmal w�hle den Menüpunkt <literal>Anwendung -&gt;
+    Einstellungen</literal>. Hier kann man nun ein paar grunds�tzliche Dinge
+    einstellen:</para>
 
     <para></para>
 
     <section>
-      <title>Einstellung Allgemein</title>
+      <title>Einstellungen Allgemein</title>
 
       <para><inlinemediaobject>
           <imageobject>
@@ -132,11 +132,12 @@
           </imageobject>
         </inlinemediaobject></para>
 
-      <para>Dieser Tab enthält einige Einstellungen. Was die Einstellung für
-      Profile bewirkt, ist hier <xref linkend="start" /> schon beschrieben
-      worden. Wenn, der Hacken bei <literal>Profil auto. laden</literal>
-      gesetzt wurde, erscheint beim nächsten und alle weiteren Starts von
-      CacheWolf der Profil-Abfrageschirm</para>
+      <para>Dieser Tab enth�lt einige Einstellungen. Was die Einstellung
+      <literal>Verzeichnis</literal> für Profile bewirkt, ist hier <xref
+      linkend="start" /> schon beschrieben worden. Wenn der Haken bei
+      <literal>Profil auto. laden</literal> gesetzt wurde, erscheint beim
+      n�chsten und allen weiteren Starts von CacheWolf der
+      Profil-Abfrageschirm</para>
 
       <para><inlinemediaobject>
           <imageobject>
@@ -144,10 +145,11 @@
           </imageobject>
         </inlinemediaobject></para>
 
-      <para>nicht mehr.</para>
+      <para>nicht mehr. Ist der Haken nicht gesetzt, musst Du jedes Mal nach
+      Programmstart das gewünschte Profil ausw�hlen.</para>
 
-      <para>Bei Browser kannst Du einen Link zu dem Browserprogramm Deiner
-      Wahl einfügen.</para>
+      <para>Bei <literal>Browser</literal> kannst Du einen Link zu dem
+      Browserprogramm Deiner Wahl einfügen.</para>
 
       <example>
         <title>Link zum Browser</title>
@@ -161,22 +163,22 @@
       kannst Du Deine Zugangsdaten zu <literal>geocaching.com</literal>
       hinterlegen. <emphasis role="bold">Achtung!</emphasis> Dein Passwort
       wird nicht verschlüsselt hinterlegt. Im Zweifel solltest Du Dein
-      Passwort hier nicht eingeben. CacheWolf wird beim nächsten einloggen
+      Passwort hier nicht eingeben. CacheWolf wird beim n�chsten Einloggen
       nach Deinem Passwort fragen.</para>
 
-      <para>Mit CacheWolf ist es möglich Caches direkt an Deinen GPS Empfänger
+      <para>Mit CacheWolf ist es möglich Caches direkt an Deinen GPS Empf�nger
       zu senden (siehe auch <xref linkend="zu_garmin" />). Unter
-      <literal>GPSBabel</literal> läßt sich der Port einstellen, der von
+      <literal>GPSBabel</literal> l��t sich der Port einstellen, der von
       GPSBabel beim Export genutzt werden soll. Der gesetzte Hacken bei
-      Kurznamen sorgt dafür, das nicht die Waypointnamen an den Empfänger
-      geschickt werden sondern der etwas verkürzte Cachename (Biespiel: Grosse
-      Dose wird zu Grsse Dse).</para>
+      Kurznamen sorgt dafür, dass nicht die Waypointnamen an den Empf�nger
+      geschickt werden, sondern der etwas verkürzte Cachename (Biespiel:
+      Grosse Dose wird zu Grsse Dse).</para>
 
       <para>Durch einen Klick auf den <literal>GPS</literal> Button wird der
-      Schirm zur Einstellung des GPS Empfängers angezeigt:</para>
+      Schirm zur Einstellung des GPS Empf�ngers angezeigt:</para>
 
       <section>
-        <title>GPS Einstelungen</title>
+        <title>GPS Empf�nger</title>
 
         <para></para>
 
@@ -187,18 +189,24 @@
           </inlinemediaobject></para>
 
         <para>Am besten jetzt auf <literal>Update Ports</literal> klicken.
-        Damit ermittelt CacheWolf welche Ports auf dem PDA zur verfügung
-        stehen. Danach den Port des GPS Empfängers einstellen. Bei
-        <literal>Baud</literal> die Geschwindigkeit des Empfängers einstellen;
-        4800 passt in der Regel. Durch einen Klick auf <literal>Test</literal>
-        kannst Du überprüfen, ob eine Verbindung zum Empfänger besteht. Vorher
-        bitte sicherstellen, dass der Empfänger angeschaltet ist. Mit
-        <literal>OK</literal> die Einstellungen bestätigen.</para>
+        Damit ermittelt CacheWolf, welche Ports auf dem PDA zur Verfügung
+        stehen. Danach den Port des GPS Empf�ngers einstellen. Mit einem Klick
+        auf den Button <literal>Scan</literal> sucht Cachewolf auf allen
+        verfügbaren Ports selbst�ndig nach einem vorhandenen GPS Empf�nger und
+        stellt Port und Baudrate automatisch ein. Möchtest Du den GPS
+        Empf�nger manuell einstellen, kannst du unter <literal>Baud</literal>
+        die Geschwindigkeit des Empf�ngers einstellen; 4800 passt in der
+        Regel.</para>
+
+        <para>Durch einen Klick auf <literal>Test</literal> kannst Du
+        überprüfen, ob eine Verbindung zum Empf�nger besteht. Vorher bitte
+        sicherstellen, dass der Empf�nger angeschaltet ist. Mit
+        <literal>OK</literal> die Einstellungen best�tigen.</para>
       </section>
     </section>
 
     <section>
-      <title>Einstellung Ansicht</title>
+      <title>Einstellungen Ansicht</title>
 
       <para><inlinemediaobject>
           <imageobject>
@@ -210,21 +218,21 @@
       CacheWolf vornehmen.</para>
 
       <para>Bei <literal>Font</literal> stellst Du die allgemeine
-      Schriftgrösse ein, die CacheWolf benutzt. Der Hacken bei <literal>PDA
-      hat Schliessen Button</literal> hat zur Folge, dass auf dem PDA rechts
-      oben im CacheWolf Fenster ein "X" erscheint. Klickst Du auf dieses "X"
-      wird CacheWolf beendet, und aus dem Speicher entfernt.</para>
+      Schriftgrösse ein, die CacheWolf benutzt. Der Haken bei <literal>PDA hat
+      Schliessen Button</literal> hat zur Folge, dass auf dem PDA rechts oben
+      im CacheWolf Fenster ein "X" erscheint. Klickst Du auf dieses "X" wird
+      CacheWolf beendet, und aus dem Speicher entfernt.</para>
 
-      <para>Der Hacken neben <literal>Menü oben</literal> setzt die
-      Menüeinträge im PDA oben, ansonsten erscheinen diese unten :-) Das Selbe
-      gilt für <literal>Tabs oben</literal>. Ein Hacken hier setzt die Tabs in
-      den Ansichten oben. Der Hacken bei <literal>Status</literal> bewirkt,
-      dass CacheWolf eine Statusleiste in der Listenansicht (siehe <xref
+      <para>Der Haken neben <literal>Menü oben</literal> setzt die
+      Menüeintr�ge im PDA oben, ansonsten erscheinen diese unten :-) Dasselbe
+      gilt für <literal>Tabs oben</literal>. Ein Haken hier setzt die Tabs in
+      den Ansichten oben. Der Haken bei <literal>Status</literal> bewirkt,
+      dass CacheWolf eine Statusleiste unten in der Listenansicht (siehe <xref
       linkend="liste" />) anzeigt.</para>
     </section>
 
     <section>
-      <title>Einstellung Mehr</title>
+      <title>Einstellungen Mehr</title>
 
       <para><inlinemediaobject>
           <imageobject>
@@ -233,10 +241,10 @@
         </inlinemediaobject></para>
 
       <para>In diesem Tab können Proxydaten eingegeben werden. Durch setzen
-      des Hackens bei "Proxy verwenden" werden diese Daten beim nächsten
-      Zugriff ins Internet genutzt.</para>
+      des Hakens bei <literal>Proxy verwenden</literal> werden diese Daten
+      beim n�chsten Zugriff ins Internet genutzt.</para>
 
-      <para>CacheWolf kennt aktuell drei Sprachen:</para>
+      <para>CacheWolf kennt aktuell vier Sprachen:</para>
 
       <itemizedlist>
         <listitem>
@@ -248,17 +256,22 @@
         </listitem>
 
         <listitem>
-          <para>NL = Niederländisch.</para>
+          <para>NL = Niederl�ndisch,</para>
+        </listitem>
+
+        <listitem>
+          <para>FR = Französisch.</para>
         </listitem>
       </itemizedlist>
 
-      <para>Um die Sprache zu ändern muss das Zweibuchstabenkürzel eingegeben
-      werden. Nach einem Neustart wird die eingestellte Sprache
-      benutzt.</para>
+      <para>Um die Sprache zu �ndern muss das entsprechende
+      Zweibuchstabenkürzel <literal>bei Sprache</literal> eingegeben werden.
+      Die neu eingestellte Sprache wird im Fall einer �nderung allerdings erst
+      nach einem Neustart benutzt.</para>
     </section>
 
     <section>
-      <title id="einstellungListe">Einstellung Liste</title>
+      <title id="einstellungListe">Einstellungen Liste</title>
 
       <para><inlinemediaobject>
           <imageobject>
@@ -266,9 +279,13 @@
           </imageobject>
         </inlinemediaobject></para>
 
-      <para>In diesem Tab kannst Du einstellen, welche Spalten, in welcher
-      Reihenfolge in der Listenansicht (siehe <xref linkend="liste" />)
-      angezeigt werden sollen.</para>
+      <para>In diesem Tab kannst Du einstellen, welche Spalten in der
+      Listenansicht (siehe <xref linkend="liste" />) angezeigt werden sollen.
+      Angezeigte Spalten können über den Pfeil nach rechts verborgen werden.
+      Verborgene Spalten können umgekehrt natürlich über den Pfeil nach links
+      wieder angezeigt werden. Au�erdem kann über die beiden Pfeile (nach oben
+      und nach unten) die gewünschte Reihenfolge der Spalten eingestellt
+      werden.</para>
 
       <tip>
         <para>Weniger Spalten beschleunigen das Scrollen auf dem PDA.</para>
@@ -276,13 +293,14 @@
     </section>
 
     <section>
-      <title>Einstellung T-Bugs</title>
+      <title>Einstellungen T-bugs</title>
 
       <para>CacheWolf besitzt eine integrierte Travelbug - Verwaltung (siehe
       <xref linkend="tbugs_verwalten" />).</para>
 
-      <para>In diesem Tab kannst Du einstellen, welche Spalten, in welcher
-      Reihenfolge in der Travelbugtabelle angezeigt werden sollen.</para>
+      <para>In diesem Tab kannst Du, wie im vorigen Abschnitt beschrieben,
+      einstellen, welche Spalten in der Travelbugtabelle angezeigt werden
+      sollen und in welcher Reihenfolge diese angezeigt werden.</para>
 
       <para><inlinemediaobject>
           <imageobject>
@@ -295,37 +313,40 @@
   </section>
 
   <section>
-    <title>Cachedaten bekommen</title>
+    <title>Cachedaten importieren</title>
 
-    <para>Programm läuft, Präferenzen eingestellt? Gut! Jetzt müssen wir noch
-    an Cache–Daten kommen. CacheWolf liesst GPX Dateien ein. Diese können
+    <para>Programm l�uft, Einstellungen erledigt? Gut! Jetzt müssen wir noch
+    an Cache-Daten kommen. CacheWolf liest GPX-Dateien ein. Diese können
     entweder von <ulink url="http://www.geocaching.com">Geocaching.com</ulink>
     oder von <ulink url="http://www.opencaching.de">Opencaching.de</ulink>
-    kommen.</para>
+    kommen. Alternativ können die Daten auch direkt heruntergeladen
+    (gespidert) werden.</para>
 
     <section>
       <title>Geocaching.com</title>
 
-      <para>Es gibt verschiedene Möglichkeiten an die Daten bei geocaching.com
-      zu kommen: Entweder durch den Import einer GPX Datei, einer LOC Datei
-      oder direkt durch herunterladen von der geocaching.com Webseite
-      (spidern).</para>
+      <para>Es gibt verschiedene Möglichkeiten an die Daten bei <ulink
+      url="???">geocaching.com</ulink> zu kommen: Entweder durch den Import
+      einer GPX Datei, einer LOC Datei oder direkt durch Herunterladen von der
+      geocaching.com Webseite (spidern).</para>
 
       <section>
         <title>Import einer GPX Datei</title>
 
-        <para>Um an Geocaching.com GPX-Dateien zu kommen, muss man leider
-        Premium–Mitglied sein. Diese Dateien werden per Mail verschickt. Die
-        Dateien können einfach in ein Verzeichnis abgelegt werden. Die Dateien
-        müssen nicht entpackt werden.</para>
+        <para>Um an GPX-Dateien von geocaching.com zu kommen, muss man
+        Premium-Mitglied sein. Die GPX-Dateien werden nach einer Pocket Query
+        (h�ufig als zip-Archiv) per Mail verschickt. Alternativ können
+        GPX-Dateien für einzelne Caches direkt heruntergeladen werden. Die
+        heruntengeladenen Dateien können einfach in ein Verzeichnis abgelegt
+        und müssen nicht entpackt werden.</para>
 
-        <para>Den Import startest Du durch anwählen von "<literal>Anwendung
+        <para>Den Import startest Du durch Anw�hlen von "<literal>Anwendung
         -&gt; Import -&gt; Importiere GPX</literal>". Du kannst eine Datei
-        oder mit der Verwendung der Umschalt - Taste mehrere Dateien
-        auswählen.</para>
+        oder mit Hilfe der Umschalt - Taste mehrere Dateien ausw�hlen.</para>
 
-        <para>Nach der Wahl der Datei, die du importieren möchtest, bekommst
-        du die Frage, ob Du auch Bilder und herunterladen möchtest:</para>
+        <para>Nach der Wahl der Datei, die du importieren möchtest, erscheint
+        ein Fenster mit der Frage, ob Du auch Bilder herunterladen
+        möchtest:</para>
 
         <para><inlinemediaobject>
             <imageobject>
@@ -333,26 +354,27 @@
             </imageobject>
           </inlinemediaobject></para>
 
-        <para>Aktivierst du diese Option(en), solltest du eine bestehende
-        Verbindung ins Internet haben. Hast Du die Option "Bilder" angekreuzt
-        wird CacheWolf beim Einlesen der GPX–Datei auf der Cacheseite
-        nachschauen, ob Bilder in der Beschreibung bzw. ob Spoilerbilder
-        vorhanden sind. Diese werden heruntergeladen. Das Herunterladen von
-        Bildern benötigt etwas Zeit.</para>
+        <para>Aktivierst du diese Option, solltest du eine bestehende
+        Verbindung ins Internet haben. Hast Du die Option <literal>Bilder
+        downloaden</literal> angekreuzt, wird CacheWolf beim Einlesen der
+        GPX-Datei auf der Cacheseite nachschauen, ob Bilder in der
+        Beschreibung bzw. ob Spoilerbilder vorhanden sind. Diese werden dann
+        heruntergeladen. Das Herunterladen von Bildern benötigt etwas
+        Zeit.</para>
 
         <para><note>
-            <para>Leider werden von geocaching.com in der GPX - Datei nur die
+            <para>Leider werden von geocaching.com in der GPX-Datei nur die
             "Additional Waypoints" mitgeschickt, die auch eine gültige
-            Koordinate haben. Das Dilemma ist aber, dass bei den meisten
-            Multis, diese Koordinaten erst ermittelt werden müssen.
-            Normalerweise stellt dies noch immer kein Problem dar; aber einige
-            Geocacher beschreiben die einzelnen Stationen innerhalb der
-            "Additional Waypoints", da diese aber keine Koordinaten haben und
-            nicht in der GPX Datei nicht mitgeschickt werden, fehlen vitale
-            Informationen. Dem kann aber abgeholfen werden: CacheWolf bietet
-            die Möglichkeit, einzelne Caches aktualisieren zu können und hier
-            werden auch die Additional Waypoints direkt von der Cacheseite
-            geladen, die keine Koordinaten haben (siehe <xref
+            Koordinate haben. Das Dilemma ist aber, dass diese Koordinaten bei
+            den meisten Multis erst ermittelt werden müssen. Normalerweise
+            stellt dies noch immer kein Problem dar; aber einige Owner
+            beschreiben die einzelnen Stationen innerhalb der "Additional
+            Waypoints". Da diese aber keine Koordinaten haben und nicht in der
+            GPX-Datei mitgeschickt werden, fehlen notwendige Informationen.
+            Dem kann aber abgeholfen werden: CacheWolf bietet die Möglichkeit,
+            einzelne Caches zu aktualisieren und hier werden auch die
+            "Additional Waypoints" direkt von der Cacheseite geladen, die
+            keine Koordinaten haben (siehe <xref
             linkend="list_popup" />).</para>
           </note></para>
       </section>
@@ -360,22 +382,23 @@
       <section>
         <title>Import einer LOC Datei</title>
 
-        <para>Der Import von LOC-Dateien geschieht auch über den Menüpunkt
-        "Importiere GPX". In den LOC-Dateien sind allerdings sehr wenig
-        Informationen enthalten, insbesondere fehlt die Beschreibung des
-        Caches.</para>
+        <para>Für Mitglieder, die keine Premium-Mitgliedschaft besitzen,
+        besteht noch die Möglichkeit, LOC-Dateien herunterzuladen. Der Import
+        von LOC-Dateien geschieht auch über den Menüpunkt <literal>Importiere GPX</literal>. In
+        den LOC-Dateien sind allerdings sehr wenig Informationen enthalten,
+        insbesondere fehlt die Beschreibung des Caches.</para>
       </section>
 
       <section>
         <title>Direktes herunterladen (spidern)</title>
 
-        <para>Durch anwählen von <literal>Anwendung -&gt; Import -&gt; Spider
+        <para>Durch Anw�hlen von <literal>Anwendung -&gt; Import -&gt; Spider
         von geocaching.com</literal> wirst Du zuerst aufgefordert Dein
-        Passwort einzugeben. Dies ist das gleiche Passwort, wie Du für Dein
-        Account bei geocaching.com nutzt. Dein Alias hast Du ja bereits in den
-        Präferenzen eingetragen. Nach der Eingabe Deines Passwortes loggt sich
-        CacheWolf auf der geocaching.com Homepage ein und präsentiert dann die
-        SPideroptionen:</para>
+        Passwort einzugeben. Dies ist das Passwort, das Du für Deinen Account
+        bei geocaching.com nutzt. Deinen Alias hast Du ja bereits in den
+        Einstellungen eingetragen. Nach der Eingabe Deines Passwortes loggt
+        sich CacheWolf auf der geocaching.com Homepage ein und pr�sentiert
+        dann die Spideroptionen ein einem neuen Fenster:</para>
 
         <para><inlinemediaobject>
             <imageobject>
@@ -385,13 +408,15 @@
 
         <para>Unter <literal>max. Abstand</literal> wird die Entfernung zum
         aktuellem Zentrum eingestellt (siehe <xref linkend="zentrum" />).
-        Cachewolf wird alle Caches im Umkreis von dem Zentrum herunterladen.
-        Wird der Hacken bei <literal>Bilder downloaden</literal> gesetzt, wird
-        Cachewolf die Bilder in der Cachebeschreibung als auch die
-        Spoilerbilder herunterladen.</para>
+        Cachewolf wird alle Caches im angegebenen Umkreis vom Zentrum
+        herunterladen. Wird der Haken bei <literal>Bilder downloaden</literal>
+        gesetzt, wird Cachewolf sowohl die Bilder in der Cachebeschreibung als
+        auch die Spoilerbilder herunterladen. Der Download von bereits
+        gefundenen Caches kann durch Ausw�hlen der Option <literal>Gefundene Caches
+        nicht laden verhindert</literal> werden.</para>
 
         <para>Mit <literal>OK</literal> wird der Spider gestartet. Je nach
-        Entfernung und Cachedichte wird das Spidern nun einige Zeit in
+        Entfernung und Cache-Dichte wird das Spidern nun einige Zeit in
         Anspruch nehmen.</para>
       </section>
     </section>
@@ -399,26 +424,28 @@
     <section>
       <title>Opencaching.de</title>
 
-      <para></para>
+      <para>Alternativ zu geocaching.com können Caches auch von <ulink
+      url="http://opencaching.de">opencaching.de</ulink> importiert werden. Wie bereits im
+      vorangegangen Abschnitt beschrieben, können die benötigten Daten
+      entweder über GPX-Dateien oder durch direktes Herunterladen bezogen
+      werden. </para>
 
-      <orderedlist>
-        <listitem>
-          <para>Einlesen einer bereits heruntergeladenen GPX-Datei:</para>
+      <section>
+    <title id="OpenGPX">Importieren einer bereits heruntergeladenen GPX-Datei</title>
 
           <para>Auf der Seite von Opencaching.de hat man die Option eine
-          GPX–Datei herunterzuladen. Diese Option befindet sich am Ende der
+          GPX-Datei herunterzuladen. Diese Option befindet sich am Ende der
           Suchergebnisseite. Die ZIP-Datei einfach in irgendein Verzeichnis
-          kopieren. Der GPX–Import erkennt automatisch dieses Format. Es ist
+          kopieren. Der GPX-Import erkennt automatisch dieses Format. Es ist
           nicht notwendig die Datei zu entpacken! Bei opencaching.de werden in
           der aktuellen Version alle Bilder geladen.</para>
-        </listitem>
+        </section>
+   <section>
+    <title id="OpenSpider">Direkter Download von opencaching.de</title>
 
-        <listitem>
-          <para>Direkter Download von opencaching.de:</para>
-
-          <para>Mit der Funktion "<literal>Anwendung -&gt; Import -&gt;
-          Download von opencaching.de</literal>" öffnet sich ein Dialog, der
-          die Eingabe vom Abstand um das im Profil eingestellte Zentrum
+          <para>Mit der Funktion <literal>Anwendung -&gt; Import -&gt;
+          Download von opencaching.de</literal> öffnet sich ein Dialog, der
+          die Eingabe des Abstands um das im Profil eingestellte Zentrum
           ermöglicht:</para>
 
           <para><inlinemediaobject>
@@ -428,16 +455,15 @@
             </inlinemediaobject></para>
 
           <para>Innerhalb eines Kreises in diesem Abstand werden alle Caches
-          (je nach Option mit allen in der Cachbeschreibung anzeigezeigten
+          (je nach Option mit allen in der Cachbeschreibung angezeigten
           Bildern heruntergeladen und automatisch importiert. Dabei merkt sich
-          CacheWolf automatisch das Datum, an dem zu letzt heruntergeladen
+          CacheWolf automatisch das Datum, an dem zuletzt heruntergeladen
           wurde. Bei einem erneuten Aufruf mit dem gleichen Zentrum (siehe
           <xref linkend="zentrum" />) und dem gleichen Abstand werden dann nur
-          die Hinzufügungen und Änderungen heruntergeladen und eingelesen.
-          Diese Funktion ist bei Opencaching kostenlos, selbst eine Anmeldung
-          ist dort nicht erforderlich.</para>
-        </listitem>
-      </orderedlist>
+          die �nderungen heruntergeladen und eingelesen. Diese Funktion ist
+          bei Opencaching kostenlos, selbst eine Anmeldung ist dort nicht
+          erforderlich.</para>
+  </section>
     </section>
   </section>
 </chapter>
