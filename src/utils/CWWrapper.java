@@ -2,27 +2,33 @@ package utils;
 import ewe.sys.*;
 
 /**
- * Class built as a wrapper for the buggy Vm.exec
+ * Class built as a wrapper for the buggy^Winconsistent Vm.exec
  * in EWE Version 1.49
  * It identifies the plattform and uses a different call
  * to Vm.exec() depending on the plattform.
  * Bugs identified:
- * ewe.jar: cmd needs quoting, args are whitespace-split
- * Ewe VM:  cmd must not be quoted, args can be only one
+ * ewe.jar: cmd needs quoting, arg are whitespace-split
+ * Unix VM: cmd must not be quoted, arg can be only one
+ * Win* VM: cmd may be quoted, arg are whitespace-split
  */
 public class CWWrapper {
 	/**
-	 * It doesn't work at all on Loox N520 with WM 5 :-(
+	 * Apply needed quotes around the command or the argument,
+	 * then call Vm.exec() appropriately.
 	 * @param cmd
-	 * @param args
+	 * @param arg (only one argument)
 	 * @throws ewe.io.IOException
 	 */
-	public static void exec(String cmd, String args) throws ewe.io.IOException{
-		if (Vm.getPlatform().equals("Java")) {
+	public static void exec(String cmd, String arg) throws ewe.io.IOException{
+		if (Vm.getPlatform().equals("WinCE") ||
+		    Vm.getPlatform().equals("Win32")) {
+			/* we need extra quotes here, see vm/nmwin32_c.c */
+			arg = "\"" + arg + "\"";
+		} else if (Vm.getPlatform().equals("Java")) {
 			/* we need extra quotes here, see ewe/sys/Vm.java */
 			cmd = "\"" + cmd + "\"";
-			args = "\"" + args + "\"";
+			arg = "\"" + arg + "\"";
 		}
-		Vm.exec(cmd, args, 0, false);
+		Vm.exec(cmd, arg, 0, false);
 	}
 }
