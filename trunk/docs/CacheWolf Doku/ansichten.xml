@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <chapter>
   <chapterinfo>
     <title>Ansichten</title>
@@ -88,8 +88,8 @@
     <title id="liste">Liste</title>
 
     <para>Die Listenansicht zeigt tabellarisch die Caches im ausgewählten
-    Profil an. Welche Spalten scihtbar sind läßt sich in den Präferenzen
-    einstellen (siehe <xref linkend="einstellungListe" />). Ein Doppelklick
+    Profil an. Welche Spalten sichtbar sind ,läßt sich in den Einstellungen
+    konfigurieren (siehe <xref linkend="einstellungListe" />). Ein Doppelklick
     auf eine Zeile öffnet die Beschreibung zu dem Cache.</para>
 
     <para><inlinemediaobject>
@@ -109,8 +109,8 @@
     <para>angeboten! Die einzelnen Funktionen im Menü werden hier <xref
     linkend="menue" /> beschrieben.</para>
 
-    <para>Ebenfalls nur in dieser Ansicht verfügbar ist die
-    Statusleiste:</para>
+    <para>Ebenfalls nur in dieser Ansicht verfügbar ist die Statusleiste,
+    falls diese in den Einstellungen aktiviert wurde:</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -118,21 +118,24 @@
         </imageobject>
       </inlinemediaobject></para>
 
-    <para>Über diese Leiste läßt sich die Tourenverwaltung <inlinemediaobject>
+    <para>Über die Statusleiste läßt sich die Tourenverwaltung
+    <inlinemediaobject>
         <imageobject>
           <imagedata fileref="pics/touricon.jpg" />
         </imageobject>
-      </inlinemediaobject> öffnen. Der Tourenplaner wird weiter unten
-    beschrieben. Der aktuelle Filter <inlinemediaobject>
+      </inlinemediaobject> öffnen. Der Tourenplaner <xref
+    linkend="tourenplaner" /> wird hier ausführlich beschrieben. Der aktuelle
+    Filter <inlinemediaobject>
         <imageobject>
           <imagedata fileref="pics/filtericon.gif" />
         </imageobject>
-      </inlinemediaobject> läßt ein- und auschalten. Der Filter <xref
+      </inlinemediaobject> läßt sich ein- und auschalten. Der Filter <xref
     linkend="filter" /> wird hier ausführlich beschrieben.</para>
 
-    <para>Durch einen Klick auf den Spaltenkopf wird die Tabelle neu sortiert.
-    Zuerst aufsteigend und dann absteigend, oder andersherum, je nachdem "wo"
-    man angefangen hat. Die Spaltenbreite läßt sich ebefalls verändern.</para>
+    <para>Durch einen Klick auf den Spaltenkopf wird die Tabelle neu
+    sortiert., z.B. nach der Entfernung zum Zentrum. Zuerst aufsteigend und
+    dann absteigend, oder andersherum, je nachdem "wo" man angefangen hat. Die
+    Spaltenbreite läßt sich ebenfalls verändern.</para>
 
     <para><emphasis role="bold">In der Listenansicht können einzelne Zeilen
     mit Farben hinterlegt sein:</emphasis></para>
@@ -166,13 +169,18 @@
         </imageobject>
       </inlinemediaobject></para>
 
+    <para>Ob der Cache Dir gehört, wird durch Vergleich des in den
+    Einstellungen gesetzten Alias mit dem in der Cachebeschreibung
+    gespeicherten Owner-Namen ermittelt. Beim Setzen des Alias sollte daher
+    auf korrekte Groß- und Kleinschreibung geachtet werden.</para>
+
     <para><emphasis role="bold">Punkte vor dem Wegpunktnamen informieren über
-    folgende Sachverhalte:</emphasis></para>
+    den Status nach der letzten Aktualisierung:</emphasis></para>
 
     <itemizedlist>
       <listitem>
         <para>ein gelber Punkt kennzeichnet den Cache als „neu” nach einer
-        Datenaktualisierung durch einen GPX–Import oder durch spidern,</para>
+        Datenaktualisierung durch einen GPX–Import oder durch Spidern,</para>
       </listitem>
 
       <listitem>
@@ -195,9 +203,9 @@
     <para><emphasis role="bold">DNF (did not find = nicht gefunden)
     Farbcodierung:</emphasis></para>
 
-    <para>Vor einzelnen Cache Namen können Farbbalken erscheinen. Diese zeigen
-    an, wie häufig in Folge der Cache nicht gefunden wurde, wenn der letzte
-    Logeintrag ein DNF war:</para>
+    <para>Vor einzelnen Cache-Namen können Farb-Balken erscheinen. Diese
+    zeigen an, wie häufig in Folge der Cache nicht gefunden wurde, wenn der
+    letzte Logeintrag ein DNF war:</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -215,19 +223,20 @@
         <imageobject>
           <imagedata fileref="pics/no_2_log.png" />
         </imageobject>
-      </inlinemediaobject> Letzten beiden Logeinträge sind DNFs</para>
+      </inlinemediaobject> Die letzten beiden Logeinträge sind DNFs</para>
 
     <para><inlinemediaobject>
         <imageobject>
           <imagedata fileref="pics/no_3_log.png" />
         </imageobject>
-      </inlinemediaobject> Letzten drei Logeinträge sind DNFs</para>
+      </inlinemediaobject> Die letzten drei Logeinträge sind DNFs</para>
 
     <para><inlinemediaobject>
         <imageobject>
           <imagedata fileref="pics/no_4_log.png" />
         </imageobject>
-      </inlinemediaobject> Letzten vier oder mehr Logeinträge sind DNFs</para>
+      </inlinemediaobject> Die letzten vier oder mehr Logeinträge sind
+    DNFs</para>
 
     <section>
       <title id="list_popup">Popup Menü in der Listenansicht</title>
@@ -244,27 +253,27 @@
 
       <orderedlist>
         <listitem>
-          <para><literal>Beschreibung öffnen</literal> öffnet die
-          <literal>Details</literal> Ansicht für den ausgewählten Cache in der
-          <literal>Listen</literal> Ansicht.</para>
+          <para><literal>Beschreibung öffnen</literal> öffnet die Ansicht
+          <literal>Details</literal> für den ausgewählten Cache in der Ansicht
+          <literal>Liste</literal>.</para>
         </listitem>
 
         <listitem>
-          <para><literal>Gehe zu diesem</literal> öffnet die
-          <literal>Goto</literal> Ansicht für den gewählten Cache. Dabei wird
-          als Zielkoordinate die Koordinate des Caches übernommen.</para>
+          <para><literal>Gehe zu diesem</literal> öffnet die Ansicht
+          <literal>Goto</literal> für den gewählten Cache. Dabei wird als
+          Zielkoordinate die Koordinate des Caches übernommen.</para>
         </listitem>
 
         <listitem>
-          <para><literal>Diesen als Zentrum setzen</literal> sortiert die
-          Listenansicht neu; dabei werden die Entfernungen zu den restlichen
-          Caches neu berechnet.</para>
+          <para><literal>Diesen als Zentrum setzen</literal> berechnet die
+          Entfernung jedes einzelnen Wegpunkts zum Zentrum neu und zeigt diese
+          in der Listenansicht an.</para>
         </listitem>
 
         <listitem>
           <para><literal>Im Browser online öffnen</literal>: Die originale
           Cachebeschreibung wird von geocaching.com oder opencaching.de
-          gezeigt. Braucht eine on-line Verbindung. Die Daten in Cachewolf
+          gezeigt. Benötigt eine online-Verbindung. Die Daten in Cachewolf
           werden hierbei nicht aktualisiert! In der Java Version wird dies
           nicht funktionieren, da aktuell ein Bug in der EWE VM vorhanden
           ist.</para>
@@ -272,52 +281,53 @@
 
         <listitem>
           <para><literal>Im Browser offline öffnen</literal>: Die
-          Cachebeschreibung wird in dem Browser (der in den Präferenzen
-          eingestellt wurde) dargestellt. In der Java Version wird dies nicht
+          Cachebeschreibung wird in dem Browser, der in den Präferenzen
+          eingestellt wurde, dargestellt. In der Java Version wird dies nicht
           funktionieren, da aktuell ein Bug in der EWE VM vorhanden
           ist.</para>
         </listitem>
 
         <listitem>
-          <para>Nichtmarkierte ausfiltern:</para>
-        </listitem>
-
-        <listitem>
-          <para><literal>Markierte löschen</literal>: Es werden alle Caches
-          gelöscht, die mit einem Häkchen versehen sind.</para>
+          <para><literal>Markierte löschen</literal>: Es werden alle Wegpunkte
+          gelöscht, die mit einem Häkchen versehen sind. Bevor die Wegpunkte
+          tatsächlich gelöscht werden, erfolgt noch eine Sicherheitsabfrage in
+          einem neuen Fenster. In diesem Fenster wird zur Kontrolle noch die
+          Anzahl der markierten Wegpunkte angezeigt.</para>
         </listitem>
 
         <listitem>
           <para><literal>Markierte aktualisieren</literal>: Alle Caches, die
-          mit einem Häkchen versehen sind werden aktualisiert indem Cachewolf
-          eine Verbindung zu geocaching.com aufbaut. Hinweis: Arbeitest Du
-          sonst mit GPX - Dateien, dann benutze diese Funktionalität, um an
-          die Additional Waypoints zu gelangen, die keine Koordinaten haben
-          (und somit nicht in der GPX Datei vorhanden).</para>
+          mit einem Häkchen versehen sind, werden aktualisiert, indem
+          Cachewolf eine Verbindung zu geocaching.com aufbaut. Hinweis:
+          Arbeitest Du sonst mit GPX-Dateien, dann benutze diese
+          Funktionalität, um an die Additional Waypoints zu gelangen, die
+          keine Koordinaten haben (und somit nicht in der GPX Datei vorhanden
+          sind).</para>
         </listitem>
 
         <listitem>
-          <para><literal>Alle wählen:</literal> Alle Caches werden mit einem
-          Häkchen vesehen.</para>
+          <para><literal>Alle markieren:</literal> Alle Caches werden mit
+          einem Häkchen versehen.</para>
         </listitem>
 
         <listitem>
-          <para><literal>Alle abwählen</literal>: Die Häkchen werden von allen
-          Caches entfernt.</para>
+          <para><literal>Alle Markierungen aufheben</literal>: Die Häkchen
+          werden von allen Caches entfernt.</para>
         </listitem>
       </orderedlist>
     </section>
   </section>
 
   <section>
-    <title>Tourenplaner</title>
+    <title id="tourenplaner">Tourenplaner</title>
 
     <para>Der Tourenplaner läßt sich in der Listenansicht mit einem Klick auf
     <inlinemediaobject>
         <imageobject>
           <imagedata fileref="pics/touricon.jpg" />
         </imageobject>
-      </inlinemediaobject> öffnen.</para>
+      </inlinemediaobject> oder über <literal>Verwalten -&gt;
+    Cachetour</literal> öffnen.</para>
 
     <informaltable>
       <tgroup cols="2">
@@ -330,20 +340,21 @@
               </inlinemediaobject></entry>
 
             <entry valign="top"><para>Mit dem Tourenplaner läßt sich aus der
-            Listenansicht oder dem Radar arbeiten. Caches könne durch
-            hineinziehen hinzugefügt, durch herausziehen aus der Liste
-            entfernt werden.</para><para>Durch einen klick auf die Icons unten
+            Listenansicht oder dem Radar arbeiten. Caches können durch
+            Hineinziehen hinzugefügt, durch Herausziehen aus der Liste
+            entfernt werden.</para><para>Durch einen Klick auf die Icons unten
             läßt sich eine neue Liste erzeugen, eine vorhandene öffnen, eine
             aktuelle Liste unter einem bestimmten Namen speichern oder eine
             existierende und gerade offene Liste speichern.</para><para>Mit
-            Liste anwenden wird die Listenansicht gefiltert und es sind nur
-            die Caches aus dem Tourenplaner vorhanden.</para><para>Hat man den
-            Tourenplaner und das Radar offen wird die Cachemarkierung im Radar
-            verändert, wenn man auf ein Cache in der Listenansicht klickt
-            (oder mit den Pfeilatsten die Auswahl verändert). Gleiches
-            passiert in der Listenansicht; dann wird jeweils der Cache
-            markiert, der gerade auch im Tourenplaner markiert
-            ist.</para></entry>
+            <literal>Tourfilter anwenden</literal> wird die Listenansicht
+            gefiltert. Anschließend werden nur noch die Caches aus dem
+            Tourenplaner angezeigt.</para><para>Hat man den Tourenplaner und
+            das Radar offen wird die Cachemarkierung im Radar verändert, wenn
+            man auf einen Cache im Tourenplaner klickt (oder mit den
+            Pfeilatsten die Auswahl verändert). Gleiches passiert in der
+            Listenansicht. Bei Anklicken eines Caches im Tourenplaner wird
+            jeweils der Cache in der Listenansicht markiert, der gerade auch
+            im Tourenplaner markiert ist.</para></entry>
           </row>
         </tbody>
       </tgroup>
@@ -353,8 +364,9 @@
   <section>
     <title id="detailansicht">Details</title>
 
-    <para>Die Details–Seite zeigt einige Eckdaten zu dem gewählten
-    Cache:.</para>
+    <para>Die Ansicht <literal>Details</literal> zeigt einige Eckdaten, wie
+    z.B. Name, Größe, Schwierigkeit und Koordinaten, zu dem gewählten
+    Cache:</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -374,18 +386,20 @@
 
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/goto.jpg" />
+          <imagedata fileref="pics/goto_button.jpg" />
         </imageobject>
-      </inlinemediaobject> Mit diesem Button wird die <literal>Goto</literal>
-    Ansicht geöffnet. Die Zielkoordinaten sind dann bereits auf die
-    Koordinaten des Caches gesetzt.</para>
+      </inlinemediaobject> Mit diesem Button wird die Ansicht
+    <literal>Goto</literal> geöffnet. Die Zielkoordinaten sind dann bereits
+    auf die Koordinaten des Caches gesetzt.</para>
 
     <para><inlinemediaobject>
         <imageobject>
           <imagedata fileref="pics/tb.jpg" />
         </imageobject>
       </inlinemediaobject> Sind Travelbugs in diesem Cache vorhanden (kein
-    roter Strich!) kann man die Beschreibungen zu den TBs öffnen.</para>
+    roter Strich!) kann man die Beschreibungen zu den TBs öffnen. Sind keine
+    TBs vorhanden, ist dieser Button deaktiviert (roter, diagonaler
+    Strich).</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -400,7 +414,7 @@
           <imagedata fileref="pics/pics.jpg" />
         </imageobject>
       </inlinemediaobject> Mit diesem Button können eigene Bilder zum Cache
-    hinzugefügt werden. Dies dürfte für diejenigen Interessant sein, die ihre
+    hinzugefügt werden. Dies dürfte für diejenigen interessant sein, die ihre
     Cachereisen archivieren. Zum Thema archivieren gibt es hier <xref
     linkend="verwalten" /> mehr.</para>
 
@@ -419,21 +433,23 @@
           <imagedata fileref="pics/notes.jpg" />
         </imageobject>
       </inlinemediaobject> Durch einen Klick auf diesen Button wird ein
-    Notizenfenster geöffnet. Die Notizen werden mit dem Cache
-    gespeichert.</para>
+    Notizenfenster geöffnet. Die Notizen werden mit dem Cache gespeichert.
+    Falls es zu diesem Cache bereits Notizen gibt, werden diese auf dem PC im
+    unteren Bereich angezeigt.</para>
 
     <para><inlinemediaobject>
         <imageobject>
           <imagedata fileref="pics/time.jpg" />
         </imageobject>
-      </inlinemediaobject> Durch einen Klick auf diesen Button wird zu den
-    Notizen die Uhrzeit und das Datum des PDAs hinzugefügt.</para>
+      </inlinemediaobject> Durch einen Klick auf diesen Button werden in einer
+    neuen Zeile am Ende der Notizen die Uhrzeit und das Datum des PDAs
+    hinzugefügt.</para>
 
     <para>Änderungen in den Textfeldern oder in den Auswahlfeldern werden
     gespeichert! Am Interessantesten dürfte das Feld neben
     <literal>Status</literal> sein. Durch einen Klick auf das Datumsfeld kann
-    das Gefunden Datum gesetzt werden (Datum wird durch ein Klick auf das
-    grüne Häckchen gesetzt).</para>
+    das <literal>Gefunden</literal> Datum gesetzt werden (Datum wird durch ein
+    Klick auf das grüne Häckchen gesetzt).</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -453,9 +469,9 @@
   <section>
     <title>Beschreibung</title>
 
-    <para>Die Beschreibung erfolgt weitesgehend in HTML. Bilder werden falls
-    möglich ebenfalls angezeigt.. Ansonsten können die Bilder in der
-    Bilderansicht (nächster Reiter) anschauen.</para>
+    <para>Die Beschreibung erfolgt weitestgehend in HTML. Bilder werden, falls
+    möglich, ebenfalls angezeigt. Ansonsten kann man sich die Bilder auch
+    einzeln in der Bilderansicht (nächster Reiter) anschauen.</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -464,7 +480,7 @@
       </inlinemediaobject></para>
 
     <para>Mit <literal>+</literal> und <literal>-</literal> läßt sich die
-    Schriftgröße vergrößern und verkleinern.</para>
+    Schriftgröße der Beschreibung vergrößern und verkleinern.</para>
   </section>
 
   <section>
@@ -473,13 +489,13 @@
     <para>Falls Bilder in der Cachebeschreibung vorhanden sind, werden diese
     in der Bilder–Ansicht als „Thumbnails” dargestellt. Ein Klick auf ein Bild
     öffnet ein neues Fenster. In diesem Fenster wird das Bild so dargestellt,
-    dass es in das vorhandene Fenster passt. Nochmal auf das Bild klicken und
-    es wird in der Originalauflösung dargestellt. Falls vorhanden, steht die
+    dass es in das vorhandene Fenster passt. Ein weiterer Klick auf das Bild
+    stellt es in der Originalauflösung dar. Falls vorhanden, steht die
     Bildbeschreibung unter dem jeweiligen Bild.</para>
 
-    <para>Bilder können durch rechte Maustaste gelöscht werden (z.B. um am PDA
-    Platz zu sparen). In den Präferenzen ist einstellbar ob gelöschte Bilder
-    durch ein rotes ? ersetzt werden oder überhaupt nicht angezeigt
+    <para>Bilder können durch rechte Maustaste gelöscht werden (z.B. um auf
+    dem PDA Platz zu sparen). In den Einstellungen kann man angeben, ob
+    gelöschte Bilder durch ein rotes ? ersetzt oder überhaupt nicht angezeigt
     werden.</para>
 
     <para><inlinemediaobject>
@@ -492,15 +508,16 @@
   <section>
     <title>Hints &amp; Logs</title>
 
-    <para>In der Hints &amp; Logs-Ansicht werden im oberen Teil des
-    Bildschirms (falls vorhanden) 5 Logeinträge gezeigt. Falls mehr als 5 Logs
-    vorhanden sind, kann man mit den &gt;&gt; und &lt;&lt; Knöpfen in den
-    Einträgen vorwärts und rückwärts blättern. Die Anzahl der anzuzeigenden
-    Logs kann in den Präferenzen auch auf einen anderen Wert als 5 eingestellt
-    werden.</para>
+    <para>In der Ansicht <literal>Hints &amp; Logs</literal> werden im oberen
+    Teil des Bildschirms (falls vorhanden) 5 Logeinträge gezeigt. Falls mehr
+    als 5 Logs vorhanden sind, kann man mit den &gt;&gt; und &lt;&lt; Knöpfen
+    in den Einträgen vorwärts und rückwärts blättern. Die Anzahl der
+    anzuzeigenden Logs kann in den Einstellungen auch auf einen anderen Wert
+    als 5 gesetzt werden.</para>
 
     <para>Den mit ROT13 verschlüsselten Hint (Lösungshinweise zum Cache) im
-    unteren Teil des Bildschirms kann man mit „Decode" entschlüsseln.</para>
+    unteren Teil des Bildschirms kann man mit <literal>Decode</literal>
+    entschlüsseln.</para>
 
     <para>Der Balken zwischen Hint und Logs kann durch Ziehen verschoben
     werden um so je nach Bedarf für Hint oder Logs mehr Platz zu schaffen.
@@ -527,43 +544,43 @@
         </imageobject>
       </inlinemediaobject></para>
 
-    <para>Der Solver hat zwei Bereiche: Der obere (weisse) dient zur Eingabe
-    von Befehlen, der untere (graue) stellt die Ausgabe dar.</para>
+    <para>Der Löser hat zwei Bereiche: Der obere (weiße) dient zur Eingabe von
+    Befehlen, der untere (graue) stellt die Ausgabe dar.</para>
 
-    <para>Der Knopf 'Rechne!' führt die Befehle im oberen Bereich aus und
-    stellt das Ergebnis im unteren Bereich dar. Die anderen Knöpfe dienen zum
-    Laden bzw. Speichern von Befehlsfolgen.</para>
+    <para>Der Knopf <literal>Rechne!</literal> führt die Befehle im oberen
+    Bereich aus und stellt das Ergebnis im unteren Bereich dar. Die anderen
+    Knöpfe dienen zum Laden bzw. Speichern von Befehlsfolgen.</para>
 
-    <para>Die Größe der Bereiche kann durch Ziehen des Steges zwischen den
-    Bereichen angepaßt werden. Ein Doppelklick auf den Steg maximiert jeweils
-    den oberen oder unteren Teil.</para>
+    <para>Die Größe der Bereiche kann durch Ziehen des Balkens zwischen den
+    Bereichen angepaßt werden. Ein Doppelklick auf den Balken maximiert
+    jeweils den oberen oder unteren Teil.</para>
 
-    <para>Wenn nur ein Befehl ausgeführt werden soll, kann es schneller sein
-    durch Doppelklick auf das obere Fenster die Direkteingabe
-    aufzurufen.</para>
+    <para>Wenn nur ein Befehl ausgeführt werden soll, ist es eventuell
+    einfacher und schneller, durch Doppelklick auf das obere Fenster die
+    Direkteingabe aufzurufen.</para>
 
     <para>Der Ausgabebereich kann auf zwei Arten gelöscht werden: Durch den
-    Befehl cls(), über das Kontextmenü (=rechte Maustaste).</para>
+    Befehl cls() oder über das Kontextmenü (=rechte Maustaste).</para>
 
     <para>Um die Tipparbeit (insbesondere unterwegs) auf ein Minimum zu
     reduzieren:</para>
 
     <itemizedlist>
       <listitem>
-        <para>müssen Funktionsnamen nicht mehr ausgeschrieben werden. Es
-        genügt wenn so viele Zeichen angegeben werden, wie notwendig um die
+        <para>müssen Funktionsnamen nicht ausgeschrieben werden. Es genügt,
+        wenn so viele Zeichen angegeben werden, wie notwendig sind um die
         Funktion eindeutig zu bestimmen. Beispiel: Statt crosstotal reicht
         auch cr</para>
 
-        <para>Hinweis: Die mindestens anzugebenden Buchstaben sind bei den
-        weiter unten beschriebenen Funktionen unterstrichen wie z.B.
+        <para role="">Hinweis: Die mindestens anzugebenden Buchstaben sind bei
+        den weiter unten beschriebenen Funktionen unterstrichen, wie z.B.
         quersumme</para>
       </listitem>
 
       <listitem>
         <para>sind einige Funktionen auch unter mehrfachen Namen ansprechbar
-        (alias). So kann statt crosstotal auch Quersumme geschrieben werden,
-        bzw. wegen oben auch kurz q</para>
+        (Alias). So kann statt crosstotal auch quersumme geschrieben werden
+        bzw. wie oben gesehen auch kurz q</para>
       </listitem>
 
       <listitem>
@@ -572,17 +589,17 @@
       </listitem>
 
       <listitem>
-        <para>ist das Semikolon als Befehlsende nicht mehr notwending ausser
-        wenn mehrere Befehle auf einer Zeile stehen sollen. Fortsetzungszeilen
+        <para>ist das Semikolon als Befehlsende nicht mehr notwending außer
+        wenn mehrere Befehle in einer Zeile stehen sollen. Fortsetzungszeilen
         können durch _ oder \ erzwungen werden (sollte aber kaum notwendig
         sein).</para>
       </listitem>
 
       <listitem>
-        <para>kann umgeschaltet werden ob Variablennamen Case-sensitiv sein
-        sollen. Funktionsname sind nicht case-sensitiv, d.h. die
-        Gross-/Kleinschreibung ist egal: Quersumme oder quersumme liefert das
-        gleiche Ergebnis. Bei Variablen ist aber standardmäßig A nicht gleich
+        <para>kann umgeschaltet werden, ob Variablennamen case-sensitive sein
+        sollen. Funktionsnamen sind nicht case-sensitive, d.h. die
+        Gross-/Kleinschreibung ist egal: Quersumme und quersumme liefern
+        dasselbe Ergebnis. Bei Variablen ist aber standardmäßig A nicht gleich
         a, also Vorsicht!</para>
       </listitem>
     </itemizedlist>
@@ -610,7 +627,7 @@
 
           <td>Variablen einen Wert (value) zuweisen</td>
 
-          <td>a = 5 WP="N 47 13.876 E 11 23.547"</td>
+          <td>a = 5<para>WP="N 47 13.876 E 11 23.547"</para></td>
 
           <td>Keine Anzeige bei Zuweisung</td>
         </tr>
@@ -640,9 +657,9 @@
 
           <td>Werte anzeigen</td>
 
-          <td>"N 34 12." show(a) "12" # oder auch "N 34 12." a "12"</td>
+          <td>"N 34 12." show(a) "12" # oder auch<para>"N 34 12." a "12"</para></td>
 
-          <td>N 34 12.512 N 34 12.512</td>
+          <td>N 34 12.512<para>N 34 12.512</para></td>
         </tr>
 
         <tr>
@@ -652,31 +669,33 @@
           zwei : die Formatierungszeichen 0 # und . verwendet werden. 0 steht
           für eine Ziffer, # für beliebig viele Ziffern</td>
 
-          <td>3.31:000: 3.56:0.0: 3.5671:0.#:</td>
+          <td>3.31:000: <para>3.56:0.0:</para><para>3.5671:0.#:</para></td>
 
-          <td>003 3.6 3.5671</td>
+          <td>003<para>3.6</para><para>3.5671</para></td>
         </tr>
       </tbody>
     </table>
 
-    <para><emphasis role="bold">Globale Variable</emphasis></para>
+    <para><emphasis role="bold">Globale Variablen</emphasis></para>
 
     <para>Der Löser unterscheidet zwischen lokalen und globalen Variablen.
-    Globale Variable merken sich ihren Wert zwischen mehrfachem Klick auf den
-    'Rechne!' Knopf, lokale Variable hingegen nicht. Globale Variable habe als
-    erstes Zeichen ein $. Beispiel:</para>
+    Globale Variablen merken sich ihren Wert zwischen mehrfachem Klick auf den
+    Knopf <literal>Rechne!</literal>, lokale Variablen hingegen nicht. Globale
+    Variablen habe als erstes Zeichen ein $. Beispiel:</para>
 
     <para><literal>$S=$S+1; "STAGE " $S</literal></para>
 
-    <para>Wenn diese Befehle mit dreimaligem Klick auf 'Rechne!' ausgeführt
-    werden, ergibt es folgende Ausgabe:</para>
+    <para>Wenn diese Befehle mit dreimaligem Klick auf den Knopf
+    <literal>Rechne! </literal>ausgeführt werden, ergibt dies folgende
+    Ausgabe:</para>
 
     <para><literal>STAGE 1 STAGE 2 STAGE 3</literal></para>
 
-    <para>Ein weiterer Unterschied ist, daß globale Variable mit der leeren
-    Zeichenkette vorbelegt werden. Lokale Variable werden nicht initialisiert.
-    Wenn eine lokale Variable verwendet wird, ohne daß ihr zuvor ein Wert
-    zugewiesen wurde, ergibt das einen Fehler. Beispiel:</para>
+    <para>Ein weiterer Unterschied ist, daß globale Variablen mit der leeren
+    Zeichenkette vorbelegt werden. Lokale Variablen werden nicht
+    initialisiert. Wenn eine lokale Variable verwendet wird, ohne daß ihr
+    zuvor ein Wert zugewiesen wurde, ergibt dies einen Fehler.
+    Beispiel:</para>
 
     <para><literal>A=B</literal></para>
 
@@ -685,10 +704,10 @@
     <para><literal>Fehler in Zeile:1 Spalte:1 Variable hat keinen Wert:
     B</literal></para>
 
-    <para>Alle Wegpunkte sind standardmäßig auch als globale Variable
+    <para>Alle Wegpunkte sind standardmäßig auch als globale Variablen
     ansprechbar, sowohl schreibend als auch lesend. Beispiel:</para>
 
-    <para><literal>$GCZ10H $OCABCD="N 47 23.456 W 1 25.987"</literal></para>
+    <para><literal>$GCZ10H; $OCABCD="N 47 23.456 W 1 25.987"</literal></para>
 
     <para>zeigt die Koordinate des Wegpunktes GCZ10H an und setzt den Wegpunkt
     OCABCD auf eine neue Koordinate.</para>
@@ -946,16 +965,6 @@
         </tr>
 
         <tr>
-          <td>val(String)</td>
-
-          <td>String addieren (A=1,B=2,...)</td>
-
-          <td>val("HelloWorld")</td>
-
-          <td>124</td>
-        </tr>
-
-        <tr>
           <td>sval(String)</td>
 
           <td>Ersetze Buchstaben durch ihre Position im Alphabet</td>
@@ -963,6 +972,16 @@
           <td>sval("HelloWorld")</td>
 
           <td>08 05 12 12 15 23 15 18 12 04</td>
+        </tr>
+
+        <tr>
+          <td>val(String)</td>
+
+          <td>String addieren (A=1,B=2,...)</td>
+
+          <td>val("HelloWorld")</td>
+
+          <td>124</td>
         </tr>
 
         <tr>
@@ -979,9 +998,9 @@
         <tr>
           <td>rot13(String)</td>
 
-          <td>Rot13 encoder</td>
+          <td>Rot13 Encoder</td>
 
-          <td>rot13("HelloWorld"</td>
+          <td>rot13("HelloWorld")</td>
 
           <td>UryybJbeyq</td>
         </tr>
@@ -1040,7 +1059,33 @@
           <td>Profilzentrum ins derzeitige Zentrum kopieren</td>
         </tr>
 
+          <tr>
+        <td>profilecenter()<para>Alias: ProfilZentrum oder auch:
+          pz</para></td>
+
+          <td>Profilzentrum</td>
+
+          <td>$Z=profilecenter()</td>
+
+          <td>Profilzentrum in globaler Variable $Z speichern</td>
+        </tr>
+
         <tr>
+          <td rowspan="2">profilecenter(Koordinate)</td>
+
+          <td rowspan="2">Profilzentrum setzen</td>
+
+          <td>pz($Z)</td>
+
+          <td>Profilzentrum wieder auf vorher gespeicherten Wert setzen</td>
+        </tr>
+
+        <tr>
+          <td>pz(ce())</td>
+
+          <td>Derzeitiges Zentrum in Profilzentrum kopieren</td>
+        </tr>
+          <tr>
           <td>curpos<para>Alias: cp</para></td>
 
           <td>Derzeitige GPS Position</td>
@@ -1113,34 +1158,7 @@
           <td>format(WP,"cw")</td>
 
           <td>N 47°13.876 E 011°23.547</td>
-        </tr>
-
-        <tr>
-          <td>profilecenter()<para>Alias: ProfilZentrum oder auch:
-          pz</para></td>
-
-          <td>Profilzentrum</td>
-
-          <td>$Z=profilecenter()</td>
-
-          <td>Profilzentrum in globaler Variable $Z speichern</td>
-        </tr>
-
-        <tr>
-          <td rowspan="2">profilecenter(Koordinate)</td>
-
-          <td rowspan="2">Profilzentrum setzen</td>
-
-          <td>pz($Z)</td>
-
-          <td>Profilzentrum wieder auf vorher gespeicherten Wert setzen</td>
-        </tr>
-
-        <tr>
-          <td>pz(ce())</td>
-
-          <td>Derzeitiges Zentrum in Profilzentrum kopieren</td>
-        </tr>
+        </tr>   
       </tbody>
     </table>
 
@@ -1233,7 +1251,7 @@
         </tr>
 
         <tr>
-          <td>ignorecase Alias: ic</td>
+          <td>ignorecase (Alias: ic)</td>
 
           <td>Anzeigen oder setzen ob Variablennamen die
           Gross-/Kleinschreibung unterscheiden</td>
@@ -1250,7 +1268,7 @@
 
           <td>ic(1)</td>
 
-          <td>3</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -1262,7 +1280,7 @@
         <tr>
           <td>a</td>
 
-          <td></td>
+          <td>3</td>
         </tr>
 
         <tr>
@@ -1272,7 +1290,7 @@
 
           <td>ic(0)</td>
 
-          <td>Fehlermeldung weil A &lt;&gt; a</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -1284,13 +1302,13 @@
         <tr>
           <td>a</td>
 
-          <td></td>
+          <td>Fehlermeldung weil A &lt;&gt; a</td>
         </tr>
       </tbody>
     </table>
 
     <para>Hinweis: Der Status von ignorecase bleibt über die CW-Sitzung hinaus
-    erhalten, weil er in den Präferenzen gespeichert wird!!</para>
+    erhalten, weil er in den Einstellungen gespeichert wird!!</para>
 
     <para><emphasis role="bold">Bedingte Ausführung</emphasis></para>
 
@@ -1396,13 +1414,16 @@ ENDIF</programlisting>
   <section>
     <title>Rechner</title>
 
-    <para>Die Rechneransicht erlaubt die Projektion und Umwandlung von
-    Koordinaten. Projezierte Koordinaten lassen sich gleich als neuer Wegpunkt
-    in der Datenbank abspeichern. Umwandeln kann man zwischen UTM und
-    verschiedenen Formaten von Grad, Minute und Sekunde.</para>
+    <para>Die Rechneransicht erlaubt über den Button <literal>Calc</literal>
+    die Projektion und Umwandlung von Koordinaten. Projezierte Koordinaten
+    lassen sich gleich als <literal>Neuer Wegpunkt</literal> in der Datenbank
+    abspeichern. Umwandeln kann man zwischen UTM und verschiedenen Formaten
+    von Grad, Minute und Sekunde.</para>
 
-    <para>Über den Goto Button kann sich auch direkt zu den errechneten
-    Koordinaten führen lassen.</para>
+    <para>Über den Button <literal>Goto</literal> kann man sich auch direkt zu
+    den errechneten Koordinaten führen lassen. <literal>Clear</literal>
+    entfernt die bisherige berechneten Koordinaten aus dem unteren
+    Ausgabe-Bildschirm.</para>
 
     <para><inlinemediaobject>
         <imageobject>
@@ -1415,7 +1436,7 @@ ENDIF</programlisting>
     <title id="goto">Goto</title>
 
     <para>Sofern ein GPS Empfänger angeschlossen ist und die GPS Einstellungen
-    in den Präferenzen gesetzt sind kann man mit der Hilfe dieser Ansicht sich
+    in den Einstellungen gesetzt sind, kann man sich mit Hilfe dieser Ansicht
     zu einem Cache navigieren lassen.</para>
 
     <para><inlinemediaobject>
@@ -1424,45 +1445,51 @@ ENDIF</programlisting>
         </imageobject>
       </inlinemediaobject></para>
 
-    <para>Die Navigation wird gestartet und beendet durch einen Klick auf den
-    “Start”-Knopf. Neue Zielkoordinaten können über den Knopf “Neuer Wegpunkt”
-    eingegeben werden. Soll die aktuell gemessene Position als Zentrum genutzt
-    werden (für Radar und die Entfernungsberechnung in der Listenansicht)
-    klickt man auf den “Zentrum”-Knopf. Hat man GPS-Empfang erscheinen eine
+    <para>Die Navigation wird durch einen Klick auf den Knopf
+    <literal>Start</literal> bzw. <literal>Stop</literal> gestartet und
+    beendet. Neue Zielkoordinaten können durch Klicken in das Koordinatenfeld
+    hinter <literal>Ziel</literal> (blau hinterlegt) eingegeben werden. Über
+    den Knopf <literal>Neuer Wegpunkt</literal> kann ein neuer Wegpunkt
+    erzeugt und mit Informationen gefüllt werden. Hat man GPS-Empfang werden
+    die aktuellen Koordinaten im neu erzeugten Wegpunkt eingetragen.</para>
+
+    <para>Soll die aktuell gemessene Position als Zentrum genutzt werden (für
+    Radar und die Entfernungsberechnung in der Listenansicht), klickt man auf
+    den Knopf <literal>Zentrum</literal>. Hat man GPS-Empfang, erscheinen eine
     rote, eine blaue und eine gelbe Linie in der Kompassrose. Die rote Linie
     zeigt die aktuelle Richtung (sofern man sich bewegt) und die blaue Linie
-    die Richtung zur Zielkoordinate. Liegen blaue und rote Linie übereinander
+    die Richtung zur Zielkoordinate. Liegen blaue und rote Linie übereinander,
     bewegt man sich direkt auf den Cache zu. Die gelbe Linie zeigt die
     Richtung der Sonne. Hält man also den PDA mit der gelben Linien auf die
-    Sonne zeigt die blaue Linie direkt auf den Cache!</para>
+    Sonne, zeigt die blaue Linie direkt in Richtung des Caches!</para>
 
-    <para>Der Map Button verdient ein eigenes Kapitel.</para>
+    <para>Der Button <literal>Karte</literal> verdient ein eigenes
+    Kapitel:</para>
 
     <section>
-      <title id="moving_map">Map (auch Karte, bzw. die Moving Map)</title>
+      <title id="moving_map">Karte (auch Map bzw. Moving Map)</title>
 
-      <para>Durch einen klick auf <literal>Map</literal> oder
-      <literal>Karte</literal> wird ein neues Fenster geöffnet in dem eine
-      Karte angezeigt wird. Welche Karte gezeigt wird hängt von drei Faktoren
-      ab:</para>
+      <para>Durch einen Klick auf <literal>Karte</literal> wird ein neues
+      Fenster geöffnet, in dem eine Karte angezeigt wird. Welche Karte gezeigt
+      wird, hängt von drei Faktoren ab:</para>
 
       <orderedlist>
         <listitem>
-          <para>Hast du den Globus aus aus der Detailansicht (siehe <xref
-          lang="" linkend="detailansicht" />) geklickt, wird eine Karte
-          dargestellt auf dem die Position des gewählten Caches (siehe <xref
-          lang="" linkend="liste" />) gezeigt wird.</para>
+          <para>Hast du den Globus in der Detailansicht (siehe <xref lang=""
+          linkend="detailansicht" />) angeklickt, wird eine Karte dargestellt
+          ,auf der die Position des gewählten Caches (siehe <xref lang=""
+          linkend="liste" />) gezeigt wird.</para>
         </listitem>
 
         <listitem>
-          <para>Hast Du, ohne dass ein Cache gewählt wurde aus der Goto
-          Ansicht diese Funktion gewählt wird eine Karte zentriert auf das
-          aktuelle Zentrum gezeigt.</para>
+          <para>Hast Du, ohne dass ein Cache gewählt wurde, aus der Ansicht
+          <literal>Goto</literal> diese Funktion gewählt, wird eine Karte
+          zentriert auf das aktuelle Zentrum gezeigt.</para>
         </listitem>
 
         <listitem>
           <para>Es wird keine Karte angezeigt, wenn keine vorhanden ist. Wie
-          Du an Karten herankommst wird hier <xref linkend="karten" />
+          Du an Karten kommst, wird hier <xref linkend="karten" />
           beschrieben.</para>
         </listitem>
       </orderedlist>
@@ -1473,12 +1500,12 @@ ENDIF</programlisting>
           </imageobject>
         </inlinemediaobject></para>
 
-      <para>Durch klicken und verschieben mit der Maus lässt sich die geladene
-      Karte verschieben. Hast Du eine Karte sehr weit verschoben, wird eine
-      aktueller Karte (so fern vorhanden) nachgeladen und angezeigt.</para>
+      <para>Durch Klicken und Ziehen der Maus lässt sich die geladene Karte
+      verschieben. Hast Du eine Karte sehr weit verschoben, wird eine
+      aktuellere Karte (sofern vorhanden) nachgeladen und angezeigt.</para>
 
-      <para>Durch klicken auf das gelbe Dreieck öffnet sich ein umfangreiches
-      Menü:</para>
+      <para>Durch Klicken auf das gelbe Dreieck in der linken oberen Ecke
+      öffnet sich ein umfangreiches Menü:</para>
 
       <para><inlinemediaobject>
           <imageobject>
@@ -1492,38 +1519,42 @@ ENDIF</programlisting>
       <itemizedlist>
         <listitem>
           <para>Mit <literal>Karte manuell auswählen</literal> kann eine
-          bestimmte Karte geladen werden. Durch einen klick auf diesen
+          bestimmte Karte geladen werden. Durch einen Klick auf diesen
           Menüpunkt bekommt man eine Auswahlliste sämtlicher Karten, die
-          Cachewolf im aktuellen maps Verzeichnis gefunden hat.</para>
+          Cachewolf im aktuellen <literal>maps</literal> Verzeichnis gefunden
+          hat.</para>
         </listitem>
 
         <listitem>
-          <para>Cachewolf sucht grundsätzlich in einem "maps" Verzeichnis im
-          Datenverzeichnis nach geeigneten Karten. Innerhalb des maps
-          Verzeichnis können noch die Verzeichnisse expedia, standard und topo
-          vorhanden sein. Mit der Funktion <literal>Kartenverzeichnis
-          wechseln</literal> kann ein anderes beliebiges Verzeichnis gewählt
-          werden. CacheWolf durchsucht dabei stets das gewählte Verzeichnis
-          und alle Verzeichnisse eine Ebene tiefer, die in dem gewählten
-          Verzeichnis liegen. Es sollte also das Verzeichnis "topo" ausgewählt
-          werden, dann werden auch die Karten gefunden, die sich in
-          topo/&lt;profilname&gt; befinden.</para>
+          <para>Cachewolf sucht grundsätzlich in einem <literal>maps</literal>
+          Verzeichnis im Datenverzeichnis nach geeigneten Karten. Innerhalb
+          des <literal>maps</literal> Verzeichnis können noch die
+          Verzeichnisse <literal>expedia</literal>,
+          <literal>standard</literal> und <literal>topo</literal> vorhanden
+          sein. Mit der Funktion <literal>Kartenverzeichnis wechseln</literal>
+          kann ein anderes beliebiges Verzeichnis gewählt werden. CacheWolf
+          durchsucht dabei stets das gewählte Verzeichnis und alle
+          Verzeichnisse eine Ebene tiefer (d.h. die Unterverzeichnisse, die in
+          dem gewählten Verzeichnis liegen). Es sollte also das Verzeichnis
+          <literal>topo</literal> ausgewählt werden, damit auch die Karten
+          gefunden werden, die sich in topo/&lt;profilname&gt;
+          befinden.</para>
         </listitem>
       </itemizedlist>
 
-      <para>Durch einen klick auf GPS (mit den grünen Pfeilen) läßt sich der
-      GPS Empfang einschalten und die Karte so verschieben, dass der aktuelle
-      Standpunkt in der Mitte des Bildschirmes liegt. Ist der GPS-Empfang
-      eingeschaltet und ein Fix ist vorhanden, dann zeigt ein grüner Kreis in
-      der Mitte des Schirms immer auf die eigene aktuelle Position, auch wenn
-      man sich bewegt. Wenn man sich bewegt wird die Karte so verschoben, dass
-      die eigene Position immer in der Mitte des Schirms mit grünen Kreis
-      angezeigt wird. Wenn kein Fix vorhanden ist, zeigt ein gelber Kreis die
-      letzte bekannte Position an. Wenn ein Fehler mit GPS-Empfänger
-      aufgetreten ist, wird der Kreis rot und eine Fehlermeldung poppt
-      auf.</para>
+      <para>Durch einen Klick auf das GPS-Symbol am rechten Rand (grüne
+      Pfeile) läßt sich der GPS Empfang einschalten und die Karte so
+      verschieben, dass der aktuelle Standpunkt in der Mitte des Bildschirmes
+      liegt. Ist der GPS-Empfang eingeschaltet und ein Fix ist vorhanden, dann
+      zeigt ein grüner Kreis in der Mitte des Schirms immer auf die eigene
+      aktuelle Position, auch wenn man sich bewegt. Wenn man sich bewegt wird
+      die Karte so verschoben, dass die eigene Position immer in der Mitte des
+      Schirms mit grünen Kreis angezeigt wird. Wenn kein Fix vorhanden ist,
+      zeigt ein gelber Kreis die letzte bekannte Position an. Wenn ein Fehler
+      mit dem GPS-Empfänger aufgetreten ist, wird der Kreis rot und eine
+      Fehlermeldung erscheint.</para>
 
-      <para>Durch Klick auf die Lupe, kann man in die Karte hinein- und
+      <para>Durch Klick auf die Lupe kann man in die Karte hinein- und
       herauszoomen. Man kann ein Rechteck aufziehen, auf das gezoomt werden
       soll. Zieht man das Rechteck von links-oben nach rechts-unten auf, so
       wird in das Rechteck hineingezoomt. Zieht man das Rechteck von
@@ -1532,12 +1563,9 @@ ENDIF</programlisting>
       wird.</para>
 
       <para>Mit Klick auf 1:1 kann der ursprüngliche Maßstab der Karte wieder
-      hergestellt werden.Drückt man lange oder mit der rechten Maustaste
-      irgendwo in die Karte, öffnet sich ein Kontextmenü. Wenn man auf einen
-      Cache geklickt hat, so kann man die entsprechende Cachebeschreibung
-      öffnen.</para>
+      hergestellt werden.</para>
 
-      <para>Drückt man lange oder mit der rechten Maustaste irgendwo in die
+      <para>Klickt man lange oder mit der rechten Maustaste irgendwo in die
       Karte, öffnet sich ein Kontextmenü:</para>
 
       <para><inlinemediaobject>
@@ -1546,10 +1574,9 @@ ENDIF</programlisting>
           </imageobject>
         </inlinemediaobject></para>
 
-      <para>Die Menüeinträge sind,denke ich, selbsterklärend.</para>
-
-      <para>Wenn man auf einen Cache geklickt hat, so kann man die
-      entsprechende Cachebeschreibung öffnen.</para>
+      <para>Die Menüeinträge sind,denke ich, selbsterklärend. Wenn man auf
+      einen Cache geklickt hat, so kann man über einen zusätzlichen Menüpunkt
+      die entsprechende Cachebeschreibung öffnen.</para>
     </section>
   </section>
 
@@ -1557,15 +1584,17 @@ ENDIF</programlisting>
     <title id="radar">Radar</title>
 
     <para>Der Radar ist sehr nützlich, um eine Cachetour zu planen. Jeder
-    Kreis entspricht einem Sprung von 10km. Durch „-„ und „+” kann man auf das
-    Zentrum hinein- und herauszommen. Durch einen Klick auf „Toggle“ werden
-    neben den Cachesymbolen die Wegpunktnamen ebenfalls angezeigt. Ein
-    erneuter Klick auf „Toggle” zeigt den Cachenamen an. Infos werden auch
-    gezeigt, wenn man mit der Maus über ein Cachesymbol fährt.</para>
+    grüne Kreis entspricht einer Entfernung von 10km. Ein gelber Kreis zeigt
+    eine Entfernung von 1km an. Durch „-„ und „+” kann man auf das Zentrum
+    hinein- und herauszommen. Durch einen Klick auf <literal>Toggle</literal>
+    werden neben den Cachesymbolen zusätzlich die Wegpunktnamen angezeigt. Ein
+    erneuter Klick auf <literal>Toggle</literal> zeigt statt des
+    Wegpunktnamens den Cachenamen an. Infos werden auch gezeigt, wenn man mit
+    der Maus über ein Cachesymbol fährt.</para>
 
     <para>Der rote Kreis zeigt den aktuell in der Listenansicht gewählten
     Cache. Man kann auf ein anderes Cachesymbol klicken: Die Ansicht wechselt
-    dann wieder auf die Listenansicht, in dem der gewählte Cache markiert
+    dann wieder auf die Listenansicht, in der der gewählte Cache markiert
     ist.</para>
 
     <para><inlinemediaobject>
