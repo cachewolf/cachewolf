@@ -87,6 +87,7 @@ logExEnd           = <br>[
 # Die Icons, die einen erfolgreichen Fund signalisieren
 icon_smile         = icon_smile.gif
 icon_camera        = icon_camera.gif
+icon_attended      = icon_attended.gif
 
 #--------------------------------------
 #Section2b: Bugs
