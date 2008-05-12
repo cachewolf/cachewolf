@@ -277,7 +277,7 @@ public class CacheList extends CellPanel {
 				ch=null;
 				ch=(CacheHolder) cacheDB.get(idx);
 			}
-			if (ch.is_black!=Filter.showBlacklisted) 
+			if (ch.is_black!=Global.getProfile().showBlacklisted) 
 				wrongBlackStatus++;
 			else {
 				ch.is_filtered=false;

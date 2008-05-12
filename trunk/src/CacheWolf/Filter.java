@@ -17,8 +17,6 @@ public class Filter{
 	public static final int FILTER_ACTIVE=1;
 	public static final int FILTER_CACHELIST=2;
 	
-	/** Toggle for showing blacklisted caches. Can be toggled through the Filter menu */
-	public static boolean showBlacklisted=false;
 	/** Indicator whether a filter is inverted */
 	//public static boolean filterInverted=false;
 	/** Indicator whether a filter is active. Used in status bar to indicate filter status */
@@ -351,7 +349,7 @@ public class Filter{
 		// A cache is only displayed (i.e. is_filtered = false) if it meets all 9 filter criteria
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered = ch.is_black^showBlacklisted;
+			ch.is_filtered = ch.is_black^Global.getProfile().showBlacklisted;
 			///////////////////////////////
 			// Filter criterium 1: Cache type
 			///////////////////////////////
@@ -534,7 +532,7 @@ public class Filter{
 		CacheHolder ch;
 		if (cacheDB.size()==0) return;
 		Global.getProfile().selectionChanged = true;
-		boolean showBlackListed=Filter.showBlacklisted;
+		boolean showBlackListed=Global.getProfile().showBlacklisted;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
 			if (ch.is_black==showBlackListed)
@@ -555,7 +553,7 @@ public class Filter{
 		CacheHolder ch;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered=(ch.is_black^showBlacklisted) ; // Always filter blacklisted caches
+			ch.is_filtered=(ch.is_black^Global.getProfile().showBlacklisted) ; // Always filter blacklisted caches
 		}
 		Global.getProfile().filterActive=FILTER_INACTIVE;
 		Global.getProfile().filterInverted=false;
@@ -576,4 +574,5 @@ public class Filter{
 	}
 
 }
+
 

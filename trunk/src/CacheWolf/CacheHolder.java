@@ -176,7 +176,7 @@ public class CacheHolder {
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 			is_black = xmlString.substring(start+1,end).equals("true");
-			if(is_black) is_filtered = true;
+			if(is_black!=Global.getProfile().showBlacklisted) is_filtered = true;
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 			is_owned = xmlString.substring(start+1,end).equals("true");

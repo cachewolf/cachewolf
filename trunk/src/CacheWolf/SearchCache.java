@@ -54,7 +54,7 @@ public class SearchCache {
 		for(int i = cacheDB.size()-1;i >=0;i--){
 			CacheHolder ch=((CacheHolder)cacheDB.get(i));
 			ch.is_flaged=false;
-			ch.is_filtered=(ch.is_black^Filter.showBlacklisted) ;
+			ch.is_filtered=(ch.is_black^Global.getProfile().showBlacklisted) ;
 		}
 		//Global.getProfile().filterActive=Filter.filterActive; //TODO This is a hack. Need to tidy this up
 		//Global.getProfile().filterInverted=Filter.filterInverted;

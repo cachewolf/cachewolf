@@ -135,6 +135,7 @@ public class MainMenu extends MenuBar {
 		filterMenuItems[6] = filtNonSelected = new MenuItem(MyLocale.getMsg(1011,"Filter out non selected"));
 		filterMenuItems[7] = mnuSeparator;
 		filterMenuItems[8] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
+        filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 		//filterMenuItems[9] = mnuSeparator;
 		//filterMenuItems[10] = cacheTour;
 
@@ -238,8 +239,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == mnuNewProfile){
 				if (NewProfileWizard.startNewProfileWizard(getFrame()) ) {
 					pref.curCentrePt = new CWPoint(profile.centre);
-					Filter.showBlacklisted=false;
-					filtBlack.modifiers&=~MenuItem.Checked;
+		            filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 					tbp.refreshTable();
 				}
 			}
@@ -256,8 +256,7 @@ public class MainMenu extends MenuBar {
 					profile.readIndex();
 					Vm.showWait(infB, false);
 					pref.curCentrePt.set(profile.centre);
-					filtBlack.modifiers&=~MenuItem.Checked;
-					Filter.showBlacklisted=false;
+                    filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 					infB.close(0);
 					tbp.resetModel();
@@ -309,15 +308,15 @@ public class MainMenu extends MenuBar {
 						}
 					}
 				}
-				Filter.showBlacklisted=false;
-				filtBlack.modifiers&=~MenuItem.Checked;
+                Global.getProfile().showBlacklisted = false;
+                filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadOC){
 				OCXMLImporter oc = new OCXMLImporter(pref,profile);
 				oc.doIt();
-				Filter.showBlacklisted=false;
-				filtBlack.modifiers&=~MenuItem.Checked;
+                Global.getProfile().showBlacklisted = false;
+                filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if (mev.selectedItem == update) 
@@ -513,8 +512,9 @@ public class MainMenu extends MenuBar {
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == filtBlack){
-				filtBlack.modifiers^=MenuItem.Checked;
-				Filter.showBlacklisted=!Filter.showBlacklisted;
+				//filtBlack.modifiers=filtBlack.modifiers|MenuItem.Checked;
+				Global.getProfile().showBlacklisted = !Global.getProfile().showBlacklisted;
+				filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				SearchCache ssc = new SearchCache(cacheDB);
 				ssc.clearSearch();// Clear search & restore filter status
 				Filter flt=new Filter();
