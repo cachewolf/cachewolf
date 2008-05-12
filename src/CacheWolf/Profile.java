@@ -60,6 +60,7 @@ public class Profile {
 	// Saved filterstatus - is only refreshed from class Filter when Profile is saved
 	public int filterActive=Filter.FILTER_INACTIVE;
 	public boolean filterInverted=false;
+	public boolean showBlacklisted = false;
 
 	public long filterAttrYes = 0l;
 	public long filterAttrNo = 0l;
@@ -157,7 +158,8 @@ public class Profile {
 			detfile.print("    <FILTER status = \""+filterActive+(filterInverted?"T":"F")+ 
 					"\" rose = \""+filterRose+"\" type = \""+filterType+
 					"\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
-					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" attributesYes = \""+filterAttrYes+"\" attributesNo = \""+filterAttrNo+"\" attributesChoice = \""+filterAttrChoice+"\" />\n");
+					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" attributesYes = \""+filterAttrYes+
+					"\" attributesNo = \""+filterAttrNo+"\" attributesChoice = \""+filterAttrChoice+"\" showBlacklist = \""+showBlacklisted+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
 			detfile.print("    <SPIDERGC dist = \""+distGC+"\"/>\n");
 			int size=cacheDB.size();
@@ -267,6 +269,7 @@ public class Profile {
 					attr = ex.findNext();
 					if (attr != null && !attr.equals(""))
 						filterAttrChoice = Convert.parseInt(attr);
+					showBlacklisted = new Boolean(ex.findNext()).booleanValue();
 				}
 			}
 			in.close();
