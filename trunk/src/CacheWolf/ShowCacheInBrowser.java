@@ -122,6 +122,7 @@ public class ShowCacheInBrowser {
 					int imageNo=0;
 					Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
 					while (start>=0 && (pos=chD.LongDescription.indexOf("<img",start))>0) {
+						if (imageNo >= chD.Images.getCount())break;
 						s.append(chD.LongDescription.substring(start,pos));
 						imgRex.searchFrom(chD.LongDescription,pos);
 						String imgUrl=imgRex.stringMatched(1);
@@ -137,7 +138,6 @@ public class ShowCacheInBrowser {
 						}
 						start=chD.LongDescription.indexOf(">",pos);
 						if (start>=0) start++;
-						if (imageNo >= chD.Images.getCount())break;
 					}
 					if (start>=0) s.append(chD.LongDescription.substring(start));
 					tpl.setParam("DESCRIPTION", s.toString());
