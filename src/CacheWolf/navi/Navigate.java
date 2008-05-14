@@ -46,7 +46,8 @@ public class Navigate {
 		if (gpsRunning) mm.gpsStarted();
 	}
 
-	public void startGps() {
+	public void startGps(boolean loggingOn, int loggingIntervall) {
+		setRawLogging(loggingOn, loggingIntervall);
 		if (serThread != null) if (serThread.isAlive()) return; // TODO use gpsRunning
 		try {
 			serThread = new SerialThread(pref.mySPO, gpsPos, (pref.forwardGPS ? pref.forwardGpsHost : ""));

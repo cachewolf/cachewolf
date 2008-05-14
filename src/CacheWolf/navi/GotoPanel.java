@@ -279,8 +279,7 @@ public class GotoPanel extends CellPanel {
 	}
 	
 	public void startGps() {
-		myNavigation.setRawLogging(pref.logGPS, Convert.toInt(pref.logGPSTimer));
-		myNavigation.startGps();
+		myNavigation.startGps(pref.logGPS, Convert.toInt(pref.logGPSTimer));
 	}
 
 	public void gpsStoped() {
