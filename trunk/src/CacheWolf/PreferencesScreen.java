@@ -31,7 +31,7 @@ public class PreferencesScreen extends Form {
 	CellPanel pnlDisplay = new CellPanel();
 	CellPanel pnlMore = new CellPanel();
 	CellPanel pnlTB = new CellPanel();
-	Frame frmGarmin = new Frame();
+	//Frame frmGarmin = new Frame();
 	ScrollBarPanel scp; // TODO not neede any more?
 	String [] garminPorts= new String[]{"com1","com2","com3","com4","com5","com6","com7","usb"};
 	
@@ -103,24 +103,24 @@ public class PreferencesScreen extends Form {
 		inpPassword.isPassword=true;
 		pnlGeneral.addLast(pnlBrowser,HSTRETCH,HFILL);
 		
-		pnlGeneral.addNext(gpsB = new mButton("GPS"),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlGeneral.addLast(gpsB = new mButton("GPS: " + pref.mySPO.portName+"/"+pref.mySPO.baudRate),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		//content.addNext(Alias.setTag(Control.SPAN, new Dimension(3,1)),content.DONTSTRETCH, (content.HFILL|content.WEST));
-		pnlGeneral.addLast(inpGPS=new mInput(""));
+/*		pnlGeneral.addLast(inpGPS=new mInput(""));
 		inpGPS.modify(ControlConstants.Disabled|ControlConstants.NoFocus,0);
 		inpGPS.setText(pref.mySPO.portName+"/"+pref.mySPO.baudRate);
-		
+	*/	
 		// Garmin and GPSBabel
-		frmGarmin.addNext(lblGarmin=new mLabel(MyLocale.getMsg(173,"Garmin:  PC Port:")),DONTSTRETCH,LEFT);
-		lblGarmin.setTag(INSETS,new Insets(4,0,0,0));
-		frmGarmin.addNext(chcGarminPort=new mChoice(garminPorts,0),DONTSTRETCH,LEFT);
-		chcGarminPort.setTag(INSETS,new Insets(4,0,0,0));
+		pnlGeneral.addNext(lblGarmin=new mLabel(MyLocale.getMsg(173,"Garmin:  PC Port:")),DONTSTRETCH,LEFT);
+//		lblGarmin.setTag(INSETS,new Insets(4,0,0,0));
+		pnlGeneral.addNext(chcGarminPort=new mChoice(garminPorts,0),DONTSTRETCH,RIGHT);
+		//chcGarminPort.setTag(INSETS,new Insets(4,0,0,0));
 		chcGarminPort.selectItem(pref.garminConn);
-		frmGarmin.addLast(chkSynthShort=new mCheckBox(MyLocale.getMsg(174,"Short Names")),STRETCH,RIGHT);
-		chkSynthShort.setTag(INSETS,new Insets(4,0,0,0));
+		pnlGeneral.addLast(chkSynthShort=new mCheckBox(MyLocale.getMsg(174,"Short Names")),STRETCH,LEFT);
+		//chkSynthShort.setTag(INSETS,new Insets(4,0,0,0));
 		chkSynthShort.setState(!pref.garminGPSBabelOptions.equals(""));
-		frmGarmin.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_TOP;
-		frmGarmin.setTag(INSETS,new Insets(4,0,0,0));
-		pnlGeneral.addLast(frmGarmin);
+		//frmGarmin.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_TOP;
+		//frmGarmin.setTag(INSETS,new Insets(4,0,0,0));
+		//pnlGeneral.addLast(frmGarmin);
 		pnlGeneral.addLast(new mLabel(""));
 		
 		/////////////////////////////////////////////////////////
@@ -328,7 +328,7 @@ public class PreferencesScreen extends Form {
 					pref.forwardGpsHost = gpo.inputBoxForwardHost.getText();
 					pref.logGPS = gpo.logGpsChkB.getState();
 					pref.logGPSTimer = gpo.inputBoxLogTimer.getText();
-					inpGPS.setText(pref.mySPO.portName+"/"+pref.mySPO.baudRate);
+					gpsB.setText("GPS: " + pref.mySPO.portName+"/"+pref.mySPO.baudRate);
 				}
 			}
 		}

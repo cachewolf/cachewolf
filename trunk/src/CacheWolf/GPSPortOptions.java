@@ -44,37 +44,55 @@ class mySerialThread extends mThread{
 	int comLength = 0;
 	TextDisplay out;
 	boolean run;
+	public String lastgot;
 	
 	public mySerialThread(SerialPortOptions spo, TextDisplay td) throws IOException {
 		comSp = new SerialPort(spo);
+		//comSp.setFlowControl(SerialPort.SOFTWARE_FLOW_CONTROL);
 		out = td;
+		lastgot = null;
 	}
 	
 	public void run() {
 		run = true;
 		while (run){
 			try {
-				sleep(1000);
+				sleep(200);
 			} catch (InterruptedException e) {}
 			if (comSp != null)	{  
 				comLength = comSp.nonBlockingRead(comBuff, 0 ,comBuff.length);
 				if (comLength > 0)	{
 					String str = mString.fromAscii(comBuff, 0, comLength).toUpperCase();
-					out.appendText(str,true);
+					lastgot = str;
+					if (out != null) out.appendText(str,true);
 				}
 			}
 		}
 	}
+	
+	public String nonBlockingRead() {
+		String ret = new String(lastgot); //mString.fromAscii(gpsBuff,0,gpsLen);
+		lastgot = null;
+		return ret;
 
-	public void stop() {
+	}
+
+	public boolean stop() {
 		run = false;
-		if (comSp != null) comSp.close(); //compSp == null can happen if a exception occured
+		boolean ret;
+		if (comSp != null) {
+			ret = comSp.close(); //compSp == null can happen if a exception occured 
+			try { ewe.sys.mThread.sleep(500); // wait in order to give the system time to close the serial port
+			} catch (InterruptedException e) {}
+		}
+		else ret = true;
+		return ret;
 	}
 }
 
 public class GPSPortOptions extends SerialPortOptions {
 	TextDisplay txtOutput;
-	mButton btnTest, btnUpdatePortList;
+	mButton btnTest, btnUpdatePortList, btnScan;
 	public mInput inputBoxForwardHost;
 	mLabel  labelForwardHost;
 	public mCheckBox forwardGpsChkB;
@@ -110,7 +128,9 @@ public class GPSPortOptions extends SerialPortOptions {
 		// End of copy from SerialPortOptions.
 		//
 		ed.buttonConstraints = CellConstants.HFILL;
-		ed.addField(ed.addNext(new mButton(MyLocale.getMsg(7103,"Scan$u"))).setCell(CellConstants.DONTSTRETCH),"scan");
+		btnScan = new mButton(MyLocale.getMsg(7103,"Scan$u"));
+		btnScan.setCell(CellConstants.DONTSTRETCH);
+		ed.addField(ed.addNext(btnScan),"scan");
 		btnTest = new mButton(MyLocale.getMsg(7104,"Test$t"));
 		ed.addField(ed.addLast(btnTest.setCell(CellConstants.DONTSTRETCH)),"test");
 		txtOutput = new TextDisplay();
@@ -136,50 +156,87 @@ public class GPSPortOptions extends SerialPortOptions {
 		gpsRunning = false;
 		return ed;
 	}
-	
-	public void action(String field,Editor ed){
-		if (field.equals("scan")){
-			String[] ports = SerialPort.enumerateAvailablePorts();
-			txtOutput.setText("");
-			if (ports == null) {
-				txtOutput.appendText(MyLocale.getMsg(7109, "Could not get list of available serial ports\n"), true);
-			} else {
-				int i;
-				for (i=0; i<ports.length; i++){
-					// try open with default GPS baudrate
-					if (!testPort(ports[i], baudRate)) 	continue;
-					else {
-						this.portName = ports[i];
-						ed.toControls("portName");
-						break;
+	boolean interruptScan = false;
+	boolean scanRunning = false;
+	public void action(String field,Editor ed_){
+		if (field.equals("scan")) {
+			if (scanRunning == false) {
+				txtOutput.setText("");
+				new mThread() {
+					public void run() {
+						btnTest.set(mButton.Disabled, true);
+						btnTest.repaintNow();
+						btnScan.setText(Gui.getTextFrom(MyLocale.getMsg(7119,"Stop")));
+						btnScan.repaintNow();
+						String[] ports = SerialPort.enumerateAvailablePorts(); // in case of bluethooth this can take several seconds
+						if (ports == null) {
+							txtOutput.appendText(MyLocale.getMsg(7109, "Could not get list of available serial ports\n"), true);
+						} else {
+							scanRunning = true;
+							interruptScan = false;
+							int i;
+							for (i=0; i<ports.length; i++){
+								if (interruptScan) { 
+									txtOutput.appendText(MyLocale.getMsg(7120, "Canceled"), true); // MyLocale.getMsg(7109, "Could not get list of available serial ports\n"), true);
+									fin();
+									return; 
+								}
+								if (!testPort(ports[i], baudRate)) 	continue;
+								else {
+									portName = ports[i];
+									if (ed != null) ed.toControls("portName");
+									break;
+								}
+							}
+							if (i >= ports.length) txtOutput.appendText(MyLocale.getMsg(7110, "GPS not found\n"), true);
+						}
+						fin();
 					}
-				}
-				if (i >= ports.length) txtOutput.appendText(MyLocale.getMsg(7110, "GPS not found\n"), true);
+					private void fin() {
+						scanRunning = false;
+						if (btnTest != null) {
+							btnTest.set(mButton.Disabled, false);
+							btnTest.repaintNow();
+						}
+						if (btnScan != null) {
+							btnScan.setText(Gui.getTextFrom(MyLocale.getMsg(7103,"Scan$u")));
+							btnScan.repaintNow();
+						}
+					}
+				}.start();
+			} else { // port scan running -> stop it.
+				interruptScan = true;
 			}
 		}
 		if (field.equals("test")){
 			if (!gpsRunning){
-				ed.fromControls();
+				ed_.fromControls();
 				txtOutput.setText(MyLocale.getMsg(7117, "Displaying data from serial port directly:\n"));
 				try {
+					btnScan.set(mButton.Disabled, true);
+					btnScan.repaintNow();
 					this.portName = Common.fixSerialPortName(portName);
 					serThread = new mySerialThread(this, txtOutput);
 					serThread.start();
-					btnTest.setText("Stop");
+					btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
 					gpsRunning = true;
 				} catch (IOException e) {
+					btnScan.set(mButton.Disabled, false);
+					btnScan.repaintNow();
 					txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + this.portName + ", IOException: " + e.getMessage() + "\n", true);
 				}
 			}
 			else {
 				serThread.stop();
-				btnTest.setText("Test");
+				btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7104,"Test$t")));
 				gpsRunning = false;
+				btnScan.set(mButton.Disabled, false);
+				btnScan.repaintNow();
 			}
 
 		}
 
-		super.action(field, ed);
+		super.action(field, ed_);
 	}
 	
 	public void fieldEvent(FieldTransfer xfer, Editor editor, Object event){
@@ -195,39 +252,48 @@ public class GPSPortOptions extends SerialPortOptions {
 	}
 	
 	private boolean testPort(String port, int baud){
-		SerialPort gpsPort; 
-		byte[] gpsBuff = new byte[1024];
+		mySerialThread gpsPort; 
 		int gpsLen;
 		long now;
 		
-		gpsPort = new SerialPort(Common.fixSerialPortName(port), baud);
-		if(gpsPort == null) {
-			txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + this.portName + "\n", true);
+		SerialPortOptions testspo= new SerialPortOptions();
+		testspo.baudRate = baud;
+		testspo.portName = Common.fixSerialPortName(port);
+		try {
+			gpsPort = new mySerialThread(testspo, null);
+		} catch (IOException e) {
+			txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + testspo.portName + "\n", true);
 			return false;
 		}
-		
+		//if (!gpsPort.isOpen()) txtOutput.appendText(MyLocale.getMsg(7108, "Failed (2) to open serial port: ") + this.portName + "\n", true);
+ 
 		//try to read some data
 		now = new Time().getTime();
 		txtOutput.appendText(MyLocale.getMsg(7111, "Trying ") + port + MyLocale.getMsg(7112, " at ") + baud + " Baud\n", true);
+		gpsPort.start();
+		boolean gpsfound = false;
 		boolean gotdata = false;
-		while ( (new Time().getTime() - now) < 3000){
-			gpsLen = gpsPort.nonBlockingRead(gpsBuff,0, gpsBuff.length);
-			if (gpsLen > 0){
-				if (!gotdata) txtOutput.appendText(MyLocale.getMsg(7113, " - got some data\n"), true);
-				gotdata = true;
-				String tmp = mString.fromAscii(gpsBuff,0,gpsLen);
-				if (tmp.indexOf("$GP", 0) >= 0){
-					txtOutput.appendText(MyLocale.getMsg(7114, "GPS Port found\n"), true);
-					gpsPort.close();
-					return true;
+		while ( (new Time().getTime() - now) < 3000 && !gpsfound){
+//			gpsLen = gpsPort.lastgot.length(); // nonBlockingRead(gpsBuff,0, gpsBuff.length);
+			//txtOutput.appendText("gpsLen: " + gpsLen, true);
+			if (gpsPort.lastgot != null) {
+				if (!gotdata) {
+					gotdata = true;
+					txtOutput.appendText(MyLocale.getMsg(7113, " - got some data\n"), true);
+					now = new Time().getTime(); // if receiced some data, give the GPS some extra time to send NMEA data (e.g. Sirf initially sends some non-NMEA text info about it self) 
 				}
+				if (gpsPort.nonBlockingRead().indexOf("$GP", 0) >= 0) gpsfound = true;
 			}
-			Vm.sleep(200);
+			try {ewe.sys.mThread.sleep(200); } catch (InterruptedException e) {}
 		}
-		if (gotdata) txtOutput.appendText(MyLocale.getMsg(7115, " - No GPS data tag found\n"), true);
-		else         txtOutput.appendText(MyLocale.getMsg(7116, " - no data received\n"), true);
-		gpsPort.close();
-		return false;
+		gpsPort.stop();
+		if (gpsfound)	 txtOutput.appendText(MyLocale.getMsg(7114, " - GPS Port found\n"), true);
+		else {
+			if (gotdata) txtOutput.appendText(MyLocale.getMsg(7115, " - No GPS data tag found\n"), true);
+			else         txtOutput.appendText(MyLocale.getMsg(7116, " - No data received\n"), true);
+		}
+		//catch (IOException io) { txtOutput.appendText("error closing serial port", true); }
+		return gpsfound;
 	}
 	
 }
