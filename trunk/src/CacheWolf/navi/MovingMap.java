@@ -1679,7 +1679,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	}
 
 	public void snapToGps() {
-		mm.myNavigation.startGps();
+		mm.myNavigation.startGps(mm.pref.logGPS, Convert.toInt(mm.pref.logGPSTimer));
 		mm.SnapToGps();
 	}
 
