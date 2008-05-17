@@ -1400,7 +1400,7 @@ public class MovingMap extends Form {
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			running = false;
 		}  
-		if(ev instanceof KeyEvent && ev.target == this && ((KeyEvent)ev).key == IKeys.ESCAPE) {
+		if( ev instanceof KeyEvent && ev.target == this && ( (((KeyEvent)ev).key == IKeys.ESCAPE) || (((KeyEvent)ev).key == IKeys.ENTER) || (((KeyEvent)ev).key == IKeys.ACTION) ) ) {
 			this.close(0);
 			ev.consumed = true;
 		}
