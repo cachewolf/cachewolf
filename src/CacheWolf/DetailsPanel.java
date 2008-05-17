@@ -301,7 +301,7 @@ public class DetailsPanel extends CellPanel{
 	 *
 	 */
 	public void createWptName() {
-		String wpt = inpWaypoint.getText();
+		String wpt = inpWaypoint.getText().toUpperCase();
 		if (CacheType.isAddiWpt(transSelect(chcType.getInt())) && 
 				(Global.mainTab.mainCache.startsWith("GC")||Global.mainTab.mainCache.startsWith("OC")||Global.mainTab.mainCache.startsWith("CW")) &&
 				wpt.startsWith("CW")) {
@@ -321,6 +321,10 @@ public class DetailsPanel extends CellPanel{
 	*/
 	public void onEvent(Event ev){
 		if (ev instanceof DataChangeEvent ) {
+			if (ev.target == inpWaypoint) {
+				// If user used lower case -> convert directly to upper case
+				inpWaypoint.setText(inpWaypoint.getText().toUpperCase());
+			}
 			dirty_details = true;
 			needsTableUpdate  = true;
 			profile.hasUnsavedChanges=true;
@@ -483,7 +487,7 @@ public class DetailsPanel extends CellPanel{
 		  }
 		  thisCache.is_black = blackStatus;
 		  String oldWaypoint=thisCache.wayPoint;
-		  thisCache.wayPoint = inpWaypoint.getText().trim();
+		  thisCache.wayPoint = inpWaypoint.getText().toUpperCase().trim();
 		  thisCache.CacheSize = chcSize.getText();
 		  // If the waypoint does not have a name, give it one
 		  if (thisCache.wayPoint.equals("")) { 
