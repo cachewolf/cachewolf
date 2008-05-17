@@ -199,7 +199,8 @@ public class DetailsPanel extends CellPanel{
 		blackStatus=ch.is_black; 
 		blackStatusChanged=false;
 		btnBlack.repaintNow();
-		createWptName();
+		if (inpWaypoint.getText().length() == 0)
+			createWptName();
 		if(ch.has_bug == true) {
 			//btnShowBug.modify(Control.Disabled,1);
 			btnShowBug.image = imgShowBug;
