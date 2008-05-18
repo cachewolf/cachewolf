@@ -53,7 +53,9 @@
   <section>
     <title>Welche Cachewolf - Version für was?</title>
 
-    <para></para>
+    <para>Cachewolf stellt verschiedene Versionen der Software zur Verfügung,
+    um verschiedene Betriebssysteme und Laufzeitumgebungen zu
+    unterstützen.</para>
 
     <section>
       <title>Windows</title>
@@ -95,7 +97,8 @@
 
       <para>Es existieren zwei optimierte Versionen von Cachewolf für den
       PocketPC: für Geräte mit ARM-Prozessor und für Geräte mit
-      Intel-Prozessor. Welche Version benötigt wird, kann man auch durch
+      Intel-Prozessor. Zusätzlich gibt es noch Versionen für Zaurus, SH3 und
+      MIPS Prozessoren. Welche Version benötigt wird, kann man auch durch
       Probieren ermitteln. (Teilweise laufen auch beide Versionen.)</para>
 
       <para>CacheWolf erkennt übrigens VGA-Geräte und stellt die Auflösung
@@ -110,7 +113,7 @@
         <para>Antwort: Diese Frage ist leider nicht so einfach zu
         beantworten.</para>
 
-        <para>Auf dieser Seite www.pocketpc-users.de gibt es eine sehr gute
+        <para>Auf dieser Seite (www.pocketpc-users.de) gibt es eine sehr gute
         Beschreibung.</para>
 
         <para>Vielleicht hilft aber folgende (kurze) Zusammenfassung:</para>
@@ -119,12 +122,14 @@
         wahrscheinlich einen ARM (kompatiblen) Prozessor. Es gibt allerdings
         Ausnahmen, die einen SH3 oder MIPS Prozessor nutzen.</para>
 
-        <para>* Pocket PC 2002 und 2003 Geräte nutzen ausschließ einen ARM
+        <para>* Pocket PC 2002 und 2003 Geräte nutzen ausschließlich einen ARM
         (kompatiblen) Prozessor.</para>
 
-        <para>* Hast Du eine Gerät, daß Du in der zweiten Hälfte 2004 gekauft
-        hast, dann solltest Du die "PocketPC" Version von CacheWolf
-        installieren. Beispiele (von Nutzern):</para>
+        <para>* Hast Du ein Gerät, das Du in der zweiten Hälfte von 2004 oder
+        später gekauft hast, dann solltest Du die "PocketPC" Version von
+        CacheWolf installieren. Die "ARM" Version sollte zwar auch laufen,
+        kann aber nicht alle Funktionen Deines Geräts optimal nutzen.
+        Beispiele (von Nutzern):</para>
 
         <para>** PocketPCArm: XDA Trion, ASUS632,Yakumo Delta GPS, Loox N520,
         Compaq IPAQ 6915, Medion MDPPC250, FSC Loox N560, Dell Axim X51V,
@@ -134,7 +139,7 @@
 
         <para>** Zaurus: Sharp SL-C1000</para>
 
-        <para>Sagt dir das alles gar nichts probier einfach die Versionen
+        <para>Sagt dir das alles gar nichts, probier einfach die Versionen
         durch - eine wird auf jeden Fall funktionieren!</para>
       </highlights>
 
