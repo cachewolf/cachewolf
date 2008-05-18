@@ -312,7 +312,7 @@
     </section>
   </section>
 
-  <section>
+  <section id="DatenImportieren">
     <title>Cachedaten importieren</title>
 
     <para>Programm läuft, Einstellungen erledigt? Gut! Jetzt müssen wir noch
@@ -330,7 +330,7 @@
       einer GPX Datei, einer LOC Datei oder direkt durch Herunterladen von der
       geocaching.com Webseite (spidern).</para>
 
-      <section>
+      <section id="DatenImportGPX">
         <title>Import einer GPX Datei</title>
 
         <para>Um an GPX-Dateien von geocaching.com zu kommen, muss man
@@ -384,12 +384,13 @@
 
         <para>Für Mitglieder, die keine Premium-Mitgliedschaft besitzen,
         besteht noch die Möglichkeit, LOC-Dateien herunterzuladen. Der Import
-        von LOC-Dateien geschieht auch über den Menüpunkt <literal>Importiere GPX</literal>. In
-        den LOC-Dateien sind allerdings sehr wenig Informationen enthalten,
-        insbesondere fehlt die Beschreibung des Caches.</para>
+        von LOC-Dateien geschieht auch über den Menüpunkt <literal>Importiere
+        GPX</literal>. In den LOC-Dateien sind allerdings sehr wenig
+        Informationen enthalten, insbesondere fehlt die Beschreibung des
+        Caches.</para>
       </section>
 
-      <section>
+      <section id="DatenImportSpider">
         <title>Direktes herunterladen (spidern)</title>
 
         <para>Durch Anwählen von <literal>Anwendung -&gt; Import -&gt; Spider
@@ -412,8 +413,8 @@
         herunterladen. Wird der Haken bei <literal>Bilder downloaden</literal>
         gesetzt, wird Cachewolf sowohl die Bilder in der Cachebeschreibung als
         auch die Spoilerbilder herunterladen. Der Download von bereits
-        gefundenen Caches kann durch Auswählen der Option <literal>Gefundene Caches
-        nicht laden verhindert</literal> werden.</para>
+        gefundenen Caches kann durch Auswählen der Option <literal>Gefundene
+        Caches nicht laden verhindert</literal> werden.</para>
 
         <para>Mit <literal>OK</literal> wird der Spider gestartet. Je nach
         Entfernung und Cache-Dichte wird das Spidern nun einige Zeit in
@@ -425,45 +426,46 @@
       <title>Opencaching.de</title>
 
       <para>Alternativ zu geocaching.com können Caches auch von <ulink
-      url="http://opencaching.de">opencaching.de</ulink> importiert werden. Wie bereits im
-      vorangegangen Abschnitt beschrieben, können die benötigten Daten
-      entweder über GPX-Dateien oder durch direktes Herunterladen bezogen
-      werden. </para>
+      url="http://opencaching.de">opencaching.de</ulink> importiert werden.
+      Wie bereits im vorangegangen Abschnitt beschrieben, können die
+      benötigten Daten entweder über GPX-Dateien oder durch direktes
+      Herunterladen bezogen werden.</para>
 
-      <section>
-    <title id="OpenGPX">Importieren einer bereits heruntergeladenen GPX-Datei</title>
+      <section id="DatenImportGPX2">
+        <title id="OpenGPX">Importieren einer bereits heruntergeladenen
+        GPX-Datei</title>
 
-          <para>Auf der Seite von Opencaching.de hat man die Option eine
-          GPX-Datei herunterzuladen. Diese Option befindet sich am Ende der
-          Suchergebnisseite. Die ZIP-Datei einfach in irgendein Verzeichnis
-          kopieren. Der GPX-Import erkennt automatisch dieses Format. Es ist
-          nicht notwendig die Datei zu entpacken! Bei opencaching.de werden in
-          der aktuellen Version alle Bilder geladen.</para>
-        </section>
-   <section>
-    <title id="OpenSpider">Direkter Download von opencaching.de</title>
+        <para>Auf der Seite von Opencaching.de hat man die Option eine
+        GPX-Datei herunterzuladen. Diese Option befindet sich am Ende der
+        Suchergebnisseite. Die ZIP-Datei einfach in irgendein Verzeichnis
+        kopieren. Der GPX-Import erkennt automatisch dieses Format. Es ist
+        nicht notwendig die Datei zu entpacken! Bei opencaching.de werden in
+        der aktuellen Version alle Bilder geladen.</para>
+      </section>
 
-          <para>Mit der Funktion <literal>Anwendung -&gt; Import -&gt;
-          Download von opencaching.de</literal> öffnet sich ein Dialog, der
-          die Eingabe des Abstands um das im Profil eingestellte Zentrum
-          ermöglicht:</para>
+      <section id="DatenImportDownload">
+        <title id="OpenSpider">Direkter Download von opencaching.de</title>
 
-          <para><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="pics/spider_options.jpg" />
-              </imageobject>
-            </inlinemediaobject></para>
+        <para>Mit der Funktion <literal>Anwendung -&gt; Import -&gt; Download
+        von opencaching.de</literal> öffnet sich ein Dialog, der die Eingabe
+        des Abstands um das im Profil eingestellte Zentrum ermöglicht:</para>
 
-          <para>Innerhalb eines Kreises in diesem Abstand werden alle Caches
-          (je nach Option mit allen in der Cachbeschreibung angezeigten
-          Bildern heruntergeladen und automatisch importiert. Dabei merkt sich
-          CacheWolf automatisch das Datum, an dem zuletzt heruntergeladen
-          wurde. Bei einem erneuten Aufruf mit dem gleichen Zentrum (siehe
-          <xref linkend="zentrum" />) und dem gleichen Abstand werden dann nur
-          die Änderungen heruntergeladen und eingelesen. Diese Funktion ist
-          bei Opencaching kostenlos, selbst eine Anmeldung ist dort nicht
-          erforderlich.</para>
-  </section>
+        <para><inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="pics/spider_options.jpg" />
+            </imageobject>
+          </inlinemediaobject></para>
+
+        <para>Innerhalb eines Kreises in diesem Abstand werden alle Caches (je
+        nach Option mit allen in der Cachbeschreibung angezeigten Bildern
+        heruntergeladen und automatisch importiert. Dabei merkt sich CacheWolf
+        automatisch das Datum, an dem zuletzt heruntergeladen wurde. Bei einem
+        erneuten Aufruf mit dem gleichen Zentrum (siehe <xref
+        linkend="zentrum" />) und dem gleichen Abstand werden dann nur die
+        Änderungen heruntergeladen und eingelesen. Diese Funktion ist bei
+        Opencaching kostenlos, selbst eine Anmeldung ist dort nicht
+        erforderlich.</para>
+      </section>
     </section>
   </section>
 </chapter>
