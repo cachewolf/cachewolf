@@ -16,6 +16,7 @@ public class Filter{
 	public static final int FILTER_INACTIVE=0;
 	public static final int FILTER_ACTIVE=1;
 	public static final int FILTER_CACHELIST=2;
+	public static final int FILTER_MARKED_ONLY=3;
 	
 	/** Indicator whether a filter is inverted */
 	//public static boolean filterInverted=false;
