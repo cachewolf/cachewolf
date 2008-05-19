@@ -44,9 +44,20 @@ public class MapsList extends Vector {
 		// sort(new StandardComparer(), false);
 
 		
-		for (int j = dirs.size()-1; j >= 0; j--) {
+		for (int j = 0; j < dirs.size(); j++) {
 			files = new FileBugfix(mapsPath+"/"+dirs.get(j));
 			//ewe.sys.Vm.debug("mapd-Dirs:"+files);
+			
+			//add subdirectories
+			if (!dirs.get(j).equals(".")) {
+				dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY);
+				if (dirstmp != null) {
+					for (int subDir = 0; subDir < dirstmp.length; subDir++) {
+						dirs.add(j+1+subDir, dirs.get(j)+"/"+dirstmp[subDir]);
+					}
+				}
+			}
+
 			dateien = files.list("*.wfl", FileBase.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
 			if (dateien == null) continue;
 			for(int i = 0; i < dateien.length;i++){

@@ -473,7 +473,10 @@ public class Preferences extends MinML{
 			else return  ret;
 		}
 		// expedia dir
-		return getMapExpediaLoadPath(); 
+		// return getMapExpediaLoadPath();
+		
+		//whole maps directory
+		return Global.getPref().baseDir.replace('\\', '/') + "maps";
 	}
 
 	/**
