@@ -45,7 +45,11 @@ public class MyLocale {
 			 int tmp = Locale.createID(language,"",0);
 			 if (tmp > -1) l=new Locale(tmp);
 			 else { // language not found
-				 (new MessageBox("Error", "Language " + language + " not found - using standard language", FormBase.OKB)).execute(); // don't copy this messagebox into a language file, because it is only used if no languages file can be accessed
+				 (new mThread() { // start a new thread is necessary because the simple ewe v1.49 threading model doesn't allow displaying of a messageBox in this kind of thread
+					 public void run() {
+						 (new MessageBox("Error", "Language " + language + " not found - using standard language", FormBase.OKB)).execute(); // don't copy this messagebox into a language file, because it is only used if no languages file can be accessed
+					 }
+				 }).start();
 				 l = Vm.getLocale(); 
 			 }
 		 }
