@@ -55,12 +55,16 @@ public class MyLocale {
 		 }
 		 else {
 			 lr = new LocalResource(){
-					public Object get(int id,Object data){return data;}
-					public Object get(String id,Object data){return data;}
-				};
-				(new MessageBox("Error", "Language file languages/" + getLocaleLanguage().toUpperCase() + ".cfg couldn't be loaded - using hard coded messages", FormBase.OKB)).execute();
+				 public Object get(int id,Object data){return data;}
+				 public Object get(String id,Object data){return data;}
+			 };
+			 (new mThread() { // start a new thread is necessary because the simple ewe v1.49 threading model doesn't allow displaying of a messageBox in this kind of thread
+				 public void run() {
+					 (new MessageBox("Error", "Language file languages/" + getLocaleLanguage().toUpperCase() + ".cfg couldn't be loaded - using hard coded messages", FormBase.OKB)).execute();
+				 }
+			 }).start();
 		 }
-		 
+
 		 double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
 		 if(testA == 4.5) digSeparator = ","; else digSeparator = ".";
 	}
