@@ -492,22 +492,36 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == filtSelected){ // incremental filter
 				Global.getProfile().selectionChanged = true;
 				CacheHolder ch;
+				boolean filterChanged = false;
 				for(int i = cacheDB.size()-1; i>=0; i--){
 					ch = (CacheHolder)cacheDB.get(i);
 					// This is an incremental filter, i.e. it keeps the existing filter
 					// status and only adds the marked caches to the filtered set
-					ch.is_filtered = ch.is_Checked || ch.is_filtered;
+					if (ch.is_Checked && !ch.is_filtered) {
+						ch.is_filtered = true;
+						filterChanged = true;
+					}
+				}
+				if ( filterChanged && Global.getProfile().filterActive == Filter.FILTER_INACTIVE) {
+					Global.getProfile().filterActive = Filter.FILTER_MARKED_ONLY;
 				}
 				tbp.refreshTable();
 			}
 			if (mev.selectedItem == filtNonSelected){
 				Global.getProfile().selectionChanged = true;
 				CacheHolder ch;
+				boolean filterChanged = false;
 				for(int i = cacheDB.size()-1; i >=0; i--){
 					ch = (CacheHolder)cacheDB.get(i);
 					// incremental filter. Keeps status of all marked caches and
 					// adds unmarked caches to filtered list
-					ch.is_filtered = !ch.is_Checked || ch.is_filtered;
+					if (!ch.is_Checked && !ch.is_filtered) {
+						ch.is_filtered = true;
+						filterChanged = true;
+					}
+				}
+				if ( filterChanged && Global.getProfile().filterActive == Filter.FILTER_INACTIVE) {
+					Global.getProfile().filterActive = Filter.FILTER_MARKED_ONLY;
 				}
 				tbp.refreshTable();
 			}

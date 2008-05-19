@@ -192,8 +192,8 @@ public class MainTab extends mTabbedPanel {
 			// If Solver or Details has changed, save Cache
 			updatePendingChanges();
 			if (detP.hasBlackStatusChanged()) {
-				// Restore the filter status (this automatically sets the status for blacklisted caches)
-				Global.getProfile().restoreFilter( true );
+				// filter out caches with wrong blacklist status
+				Global.getProfile().checkBlacklistStatus();
 				tbP.refreshTable();
 			}
 			break;

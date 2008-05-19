@@ -62,6 +62,8 @@ public class StatusBar extends CellPanel{
 			btnFlt.backGround=new Color(0,255,0);
 		else if (Global.getProfile().filterActive==Filter.FILTER_CACHELIST)
 			btnFlt.backGround=new Color(0,0,255);
+		else if (Global.getProfile().filterActive==Filter.FILTER_MARKED_ONLY)
+			btnFlt.backGround=new Color(0,255,255);
 		else
 			btnFlt.backGround=null;
 		// Current centre can only be displayed if screen is big

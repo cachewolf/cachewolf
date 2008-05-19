@@ -316,6 +316,23 @@ public class Profile {
 			}
 		}
 	}
+	
+	void checkBlacklistStatus() {
+		Vector cacheDB=Global.getProfile().cacheDB;
+		CacheHolder ch;
+		boolean filterChanged = false;
+		for(int i = cacheDB.size()-1; i >=0 ; i--){
+			ch = (CacheHolder)cacheDB.get(i);
+			if (ch.is_black^showBlacklisted) {
+				ch.is_filtered = true;
+				filterChanged = true;
+			}
+		}
+		if ( filterChanged ) {
+			selectionChanged = true;
+			hasUnsavedChanges=true;			
+		}
+	}
 
 	public int getCacheIndex(String wp){
 		int retval = -1;
