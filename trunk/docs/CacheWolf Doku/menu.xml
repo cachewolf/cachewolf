@@ -129,8 +129,8 @@
       vorhanden, da es auf diversen PDAs eher schwierig ist, das Kontextmenü
       in der Listenansicht direkt aufzurufen. Daher ist auf PDAs dieses Menü
       zu bevorzugen. Auf PCs dürfte es hingegen einfacher sein, das
-      Kontextmenü in der Listenansicht mit einem Rechtsklick aufzurufen.
-      </para>
+      Kontextmenü in der Listenansicht mit einem Rechtsklick
+      aufzurufen.</para>
     </section>
 
     <section>
@@ -177,7 +177,7 @@
         einzelnen Caches bei geocaching.com ein erneuter Login. Dies ist vor
         allem beim Spidern oder Aktualisieren vieler Caches recht hinderlich
         und sollte daher vor dem Spidern bzw. Aktualisieren auf jeden Fall
-        deaktiviert werden. </para>
+        deaktiviert werden.</para>
 
         <para>Benötigt wird diese Funktion aber dennoch: Nach einem einmal
         erfolgten Login (z.B. ausgelöst durch eine Aktualisierung) erfolgt
@@ -276,15 +276,15 @@
 
         <itemizedlist>
           <listitem>
-            <para>TOPO 1000 Deutschland </para>
+            <para>TOPO 1000 Deutschland</para>
           </listitem>
 
           <listitem>
-            <para>TOPO 500 Deutschland </para>
+            <para>TOPO 500 Deutschland</para>
           </listitem>
 
           <listitem>
-            <para>TOPO 200 Deutschland </para>
+            <para>TOPO 200 Deutschland</para>
           </listitem>
 
           <listitem>
@@ -547,17 +547,28 @@
       Zusätzlich wird nach der Suche noch ein Filter angewendet, der alle
       Wegpunkte, die nicht passen, ausblendet.</para>
 
-      <para>Willst Du also die von Dir gesuchten Caches farblich hervorheben,
-      aber dennoch eine Liste mit allen Caches im Profil sehen, musst Du erst
-      die entsprechende Suche durchführen und anschließend über
-      <literal>Filter -&gt; Aufheben</literal> den nach der Suche automatisch
-      ausgeführten Filter aufheben.</para>
+      <para>Im Gegensatz zum folgenden Menüpunkt <literal>Suche alle</literal>
+      wird bei dieser Suche nur in den aktuell dargestellten Wegpunkten
+      gesucht, d.h. falls vor der Suche bereits eine andere Suche durchgeführt
+      wurde oder falls ein Filter angewendet wurde, wird nicht in den
+      ausgefilterten Wegpunkten gesucht! Dadurch ist es möglich, eine bereits
+      durchgeführte Suche weiter zu verfeinern.</para>
     </section>
 
     <section>
       <title>Suche alle</title>
 
-      <para>TODO</para>
+      <para>Bei dieser Suche werden alle Wegpunkte des Profils nach einer
+      Übereinstimmung zum eingegebenen Suchbegriff durchsucht. War vor der
+      Suche noch ein Filter aktiv, wird dieser zuerst aufgehoben und dann erst
+      die Suche durchgeführt.</para>
+
+      <para>Willst Du die von Dir gesuchten Caches farblich hervorheben, aber
+      dennoch eine Liste mit allen Caches im Profil sehen, musst Du erst die
+      entsprechende Suche durchführen und anschließend über <literal>Filter
+      -&gt; Aufheben</literal> den nach der Suche automatisch ausgeführten
+      Filter aufheben. Die gesuchten Caches stehen dann am Anfang der Liste
+      und sind gelb hervorgehoben.</para>
     </section>
 
     <section>
