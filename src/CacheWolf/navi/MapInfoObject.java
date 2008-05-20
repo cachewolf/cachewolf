@@ -279,32 +279,15 @@ public class MapInfoObject extends Area {
 			transLonY = affine[0]/nenner;
 
 			// calculate north direction
-			// float scaleXpixels = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLonX,2)+java.lang.Math.pow(transLonY,2));
-			//	float scaleY = 1/(float)java.lang.Math.sqrt(java.lang.Math.pow(transLatX,2)+java.lang.Math.pow(transLatY,2));
-			// float rotationX2x=(float)transLonX*scaleXpixels;
-			// float rotationX2y=(float)transLonY*scaleXpixels;
-			//rotationY2y=-(float)transLatY*scaleY; // lat -> y = -, y -> y = +
-			//rotationY2x=-(float)transLatX*scaleY; // uncomment an make it a field of MapInfoObject if you need translation from x to x rotated
 			Point c = calcMapXY(center);
 			int heightpixel = c.y * 2;
 			c.y -= 1000;
 			rotationRad = (float) (center.getBearing(calcLatLon(c)) / 180 * Math.PI);  // note: the direction of nord can vary across the image. In Gauß-Krüger Projection it does change about 1 degree per 10km! //(float)java.lang.Math.atan(rotationX2y);
 			if (rotationRad > Math.PI) rotationRad -= 2* Math.PI;
-			//if (rotationX2x < 0) rotationRad = (float)java.lang.Math.PI - rotationRad;
+
 			// calculate scale in meters per pixel
-			CWPoint bl = new CWPoint(buttomright.latDec, topleft.lonDec);
-			double diagonal = topleft.getDistance(buttomright);
-			double beta = java.lang.Math.atan(bl.getDistance(buttomright) / bl.getDistance(topleft));
-			double gamma = beta - rotationRad;
-			double heightkm = diagonal * Math.cos(gamma);
-			// double metersPerLat = 1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0));
-			//CWPoint buttomleftimage = topleft.project(rotationRad * 180 / Math.PI + 180, heightkm);
-			//CWPoint buttomleftimage2 = calcLatLon(0, heightpixel);
-			//double kw = buttomleftimage.getDistance(buttomleftimage2);
-			//double kw2 = buttomleftimage.getBearing(buttomleftimage2);
-			//Vm.debug("project test: " + buttomleftimage.getDistance(topleft));
-			// double heightpixel = calcMapXY(buttomleftimage).y / Math.cos(rotationRad); 
-			scale = (float) (heightkm * 1000 / heightpixel); 
+			double heightkm = calcLatLon(0, heightpixel).getDistance(topleft);
+			scale = (float) (heightkm * 1000 / heightpixel);
 		} catch (ArithmeticException ex) { throw new ArithmeticException(MyLocale.getMsg(4305, "Not allowed values in affine\n (matrix cannot be inverted)\n in file \n") + fileNameWFL); }
 	}
 
