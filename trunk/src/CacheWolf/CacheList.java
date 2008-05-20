@@ -36,7 +36,7 @@ public class CacheList extends CellPanel {
 		// The actual list
 		lstCaches=new myList(10,1,false); lstCaches.text="CacheList"; 
 		lstCaches.addItem(MyLocale.getMsg(180,"Drag caches"));lstCaches.addItem(MyLocale.getMsg(181,"here"));
-		ScrollBarPanel scp=lstCaches.getScrollablePanel();
+		ScrollablePanel scp=lstCaches.getScrollablePanel();
 		addLast(scp,STRETCH,FILL); scp.setOptions(MyScrollBarPanel.NeverShowHorizontalScrollers);
 		// The buttons to move the selected cache
 		addNext(btnDown=new mButton(imgDown),HSHRINK,HFILL); btnDown.modify(Disabled,0);
@@ -141,7 +141,7 @@ public class CacheList extends CellPanel {
 			}
 			super.onKeyEvent(ev);
 		}
-		public ScrollBarPanel getScrollablePanel()
+		public ScrollablePanel getScrollablePanel()
 		{
 			dontAutoScroll = amScrolling = true;
 			ScrollBarPanel sp = new MyScrollBarPanel(this);
