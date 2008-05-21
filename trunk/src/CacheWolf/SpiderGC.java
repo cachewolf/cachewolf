@@ -214,7 +214,7 @@ public class SpiderGC{
 		if (ch.isAddiWpt()) return -1;  // No point re-spidering an addi waypoint, comes with parent
 
 		// check if we need to login
-		if (!loggedIn){
+		if (!loggedIn || Global.getPref().forceLogin){
 			if (this.login()!=FormBase.IDOK) return -1;
 			// loggedIn is already set by this.login()
 		}
