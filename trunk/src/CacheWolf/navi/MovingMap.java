@@ -215,8 +215,7 @@ public class MovingMap extends Form {
 		dontUpdatePos = true;
 		maps = new MapsList(mapsPath); // this actually loads the maps
 		if (maps.isEmpty()) {
-			(new MessageBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4204, "No georeferenced map available \n Please choose a scale \n to show the track and the caches"), FormBase.OKB)).execute();
-			(new MessageBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4205, "No georeferenced map available  \n you can get one by the menu: Application/Maps/download calibrated"), FormBase.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4204, "No georeferenced map available \n Please choose a scale \n to show the track and the caches. \n You can get one by the menu: Application/Maps/download calibrated"), FormBase.OKB)).execute();
 			noMapsAvailable = true;
 		} else noMapsAvailable = false;
 		maps.addEmptyMaps(lat); // the empty maps must be added last, otherwise in method setBestMap, when no mapt is available, a malfunction will happen, see there
