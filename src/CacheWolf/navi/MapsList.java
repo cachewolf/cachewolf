@@ -246,7 +246,7 @@ public class MapsList extends Vector {
 			ewe.sys.Vm.showWait(false);
 		}
 		if (fittingmap == null) return null;
-		return new MapInfoObject(fittingmap);
+		return new MapInfoObject(fittingmap); // TODO in case that this one and the old one are identical this instantiation could eventually be avoided as it is done at every greater shift of the map
 	}
 
 	/**

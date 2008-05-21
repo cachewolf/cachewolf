@@ -489,14 +489,14 @@ class WebMapService extends OnlineMapService {
 		GkPoint[] ret = new GkPoint[4];
 	//	CWPoint topright = new CWPoint(maparea.topleft.latDec, maparea.buttomright.lonDec);
 	//	CWPoint buttomleft = new CWPoint(maparea.buttomright.latDec, maparea.topleft.lonDec);
-		int crs = getCrs(maparea.topleft);
+		int crs = getCrs(maparea.getCenter());
 		int region = TransformCoordinates.getGkRegion(coordinateReferenceSystem[crs]);
 		ret[TOPLEFT_INDEX] = TransformCoordinates.wgs84ToGaussKrueger(maparea.topleft, coordinateReferenceSystem[crs]);
 		ret[BUTTOMRIGHT_INDEX] = TransformCoordinates.wgs84ToGaussKrueger(maparea.buttomright, coordinateReferenceSystem[crs]);
 		ret[TOPRIGHT_INDEX] = new GkPoint(ret[BUTTOMRIGHT_INDEX].getGkEasting(region), ret[TOPLEFT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth, ret[TOPLEFT_INDEX].lengthOfStripe0);
 		ret[BUTTOMLEFT_INDEX] = new GkPoint(ret[TOPLEFT_INDEX].getGkEasting(region), ret[BUTTOMRIGHT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth, ret[TOPLEFT_INDEX].lengthOfStripe0);
-		Vm.debug("rot left direkt: " + TransformCoordinates.GkToWgs84(ret[TOPLEFT_INDEX], region).getBearing(TransformCoordinates.GkToWgs84(ret[BUTTOMLEFT_INDEX], region)));
-		Vm.debug("rot right direkt: " + TransformCoordinates.GkToWgs84(ret[TOPRIGHT_INDEX], region).getBearing(TransformCoordinates.GkToWgs84(ret[BUTTOMRIGHT_INDEX], region)));
+		//Vm.debug("rot left direkt: " + TransformCoordinates.GkToWgs84(ret[TOPLEFT_INDEX], region).getBearing(TransformCoordinates.GkToWgs84(ret[BUTTOMLEFT_INDEX], region)));
+		//Vm.debug("rot right direkt: " + TransformCoordinates.GkToWgs84(ret[TOPRIGHT_INDEX], region).getBearing(TransformCoordinates.GkToWgs84(ret[BUTTOMRIGHT_INDEX], region)));
 		//ret[2] = TransformCoordinates.wgs84ToGermanGk(topright, coordinateReferenceSystem[crs]);
 		//ret[3] = TransformCoordinates.wgs84ToGermanGk(buttomleft, coordinateReferenceSystem[crs]);
 		return ret;	
@@ -544,7 +544,7 @@ class WebMapService extends OnlineMapService {
 		String bbox = "BBOX=";
 		int region = TransformCoordinates.getGkRegion(coordinateReferenceSystem[0]); 
 		if (region > 0) {
-			crs = getCrs(buttomleft);
+			crs = getCrs(maparea.getCenter());
 			GkPoint[] gk = getGkArea(maparea);
 			buttomleft = TransformCoordinates.GkToWgs84(gk[BUTTOMLEFT_INDEX], region);
 			topright = TransformCoordinates.GkToWgs84(gk[TOPRIGHT_INDEX], region);
@@ -565,7 +565,7 @@ class WebMapService extends OnlineMapService {
 	 * This method gives the number in the arrays of coordinateReferenceSystems, which should be used
 	 * a) if only one is in the array 0 is returned
 	 * b) if there are more, find out which one matches the correct Gauß-Küger stripe
-	 * Call this routine witch buttom left 
+	 * Call this routine with center of the area (use Area.getcenter()) 
 	 * @param p Point for which the epsg code is searched for
 	 * @return
 	 */
@@ -625,7 +625,7 @@ class WebMapService extends OnlineMapService {
 		georef.add(new GCPoint(buttomleft, new Point(0, pixelsize.y)));
 
 		MapInfoObject ret = new MapInfoObject();
-		ret.evalGCP(georef, pixelsize.x, pixelsize.y, coordinateReferenceSystem[getCrs(maparea.topleft)]);
+		ret.evalGCP(georef, pixelsize.x, pixelsize.y, coordinateReferenceSystem[getCrs(maparea.getCenter())]);
 		//Vm.debug("\n nach kal");
 		//Vm.debug("fehler tl: " + ret.calcLatLon(0, 0).getDistance(maparea.topleft)*1000);
 		//Vm.debug("fehler tl: " + ret.calcLatLon(0, 0).getBearing(maparea.topleft));
