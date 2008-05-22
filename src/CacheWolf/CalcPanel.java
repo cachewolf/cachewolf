@@ -49,7 +49,8 @@ public class CalcPanel extends CellPanel {
 	// different panels to avoid spanning
 	CellPanel TopP = new CellPanel();
 	CellPanel BottomP = new CellPanel();
-
+	
+	String lastWaypoint = "";
 	
 	int currFormat;
 	mButton btnChangeLatLon;
@@ -79,7 +80,9 @@ public class CalcPanel extends CellPanel {
 		BottomP.addNext(new mLabel(MyLocale.getMsg(1403,"Bearing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addLast(new mLabel(MyLocale.getMsg(1404,"Distance")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addNext(inpBearing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		inpBearing.setText("0");
 		BottomP.addNext(inpDistance = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		inpDistance.setText("0");
 		// Check for narrow screen and reduce width of fields to avoid horizontal scroll panel
 		if (MyLocale.getScreenWidth()<=240) {
 			FontMetrics fm = getFontMetrics(inpBearing.getFont());
@@ -147,10 +150,18 @@ public class CalcPanel extends CellPanel {
 	
 	// ch must be not null
 	public void setFields(CacheHolder ch){
-		currFormat = CWPoint.DMM;
-		if (ch.LatLon.length()== 0) coordInp.set(0,0);
-		else coordInp.set(ch.LatLon, CWPoint.CW);
-		setFields(coordInp, CWPoint.DMM);
+		if ( !ch.wayPoint.equalsIgnoreCase(lastWaypoint) ) {
+			lastWaypoint = ch.wayPoint;
+			if (ch.pos.isValid()) {
+				inpBearing.setText("0");
+				inpDistance.setText("0");
+
+				currFormat = CWPoint.DMM;
+				if (ch.LatLon.length()== 0) coordInp.set(0,0);
+				else coordInp.set(ch.LatLon, CWPoint.CW);
+				setFields(coordInp, CWPoint.DMM);				
+			}
+		}
 	}
 	
 	
@@ -158,9 +169,6 @@ public class CalcPanel extends CellPanel {
 		if (format == CWPoint.CW) format = CWPoint.DMM;
 		btnChangeLatLon.setText(coords.toString(format));
 		chkFormat.selectIndex(format);
-		inpBearing.setText("0");
-		inpDistance.setText("0");
-		chcDistUnit.setInt(0);
 	}
 
 
