@@ -85,6 +85,8 @@ public class DataMover {
 	  * @param exec
 	  */
 	 private void processCaches(Executor exec) {
+		// First empty the cache so that the correct cache details are on disk
+		CacheHolder.saveAllModifiedDetails(); 
 		int size=srcDB.size();
 		int count=0;
 		// Count the number of caches to move/delete/copy
