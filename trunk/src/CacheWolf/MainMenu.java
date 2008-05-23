@@ -602,7 +602,7 @@ public class MainMenu extends MenuBar {
 				sb.append("<br>Platform: "); 			sb.append(Vm.getPlatform());
 				sb.append("<br>Locale lang is: ");		sb.append(MyLocale.getLocaleLanguage()); 
 				sb.append("<br>Locale country is: "); 	sb.append(MyLocale.getLocaleCountry()); 
-				sb.append("<br>Decimal separator is: \""); sb.append(pref.digSeparator);
+				sb.append("<br>Decimal separator is: \""); sb.append(MyLocale.getDigSeparator());
 				sb.append("\"<br>Device is PDA: ");		sb.append(Vm.isMobile());
 				sb.append("<br>Screen: ");				sb.append(MyLocale.getScreenWidth()); 
 				sb.append(" x ");	 sb.append(MyLocale.getScreenHeight()); 

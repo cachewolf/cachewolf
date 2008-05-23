@@ -246,7 +246,7 @@ public class Parser{
 	
 	private double toNumber(String str) {
 		try {
-			if (Global.getPref().digSeparator.equals(","))	
+			if (MyLocale.getDigSeparator().equals(","))	
 				str = str.replace('.', ',');
 			else
 				str = str.replace(',','.');

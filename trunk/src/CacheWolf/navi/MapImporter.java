@@ -237,7 +237,7 @@ public class MapImporter extends Form {
 
 							line = inMap.readLine();
 							parts = mString.split(line, ',');
-							if(pref.digSeparator.equals(",")) {
+							if(MyLocale.getDigSeparator().equals(",")) {
 								parts[3]= parts[3].replace('.', ',');
 								parts[2]= parts[2].replace('.', ',');
 							}
@@ -248,7 +248,7 @@ public class MapImporter extends Form {
 
 							line = inMap.readLine();
 							parts = mString.split(line, ',');
-							if(pref.digSeparator.equals(",")) {
+							if(MyLocale.getDigSeparator().equals(",")) {
 								parts[3]= parts[3].replace('.', ',');
 								parts[2]= parts[2].replace('.', ',');
 							}
@@ -259,7 +259,7 @@ public class MapImporter extends Form {
 
 							line = inMap.readLine();
 							parts = mString.split(line, ',');
-							if(pref.digSeparator.equals(",")) {
+							if(MyLocale.getDigSeparator().equals(",")) {
 								parts[3]= parts[3].replace('.', ',');
 								parts[2]= parts[2].replace('.', ',');
 							}
@@ -270,7 +270,7 @@ public class MapImporter extends Form {
 
 							line = inMap.readLine();
 							parts = mString.split(line, ',');
-							if(pref.digSeparator.equals(",")) {
+							if(MyLocale.getDigSeparator().equals(",")) {
 								parts[3]= parts[3].replace('.', ',');
 								parts[2]= parts[2].replace('.', ',');
 							}

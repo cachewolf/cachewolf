@@ -41,7 +41,6 @@ public class Preferences extends MinML{
 	 * Constructor is private for a singleton object
 	 */
 	private Preferences(){
-		digSeparator=MyLocale.getDigSeparator();
 		mySPO.bits = 8;
 		mySPO.parity = SerialPort.NOPARITY;
 		mySPO.stopBits = 1;
@@ -151,6 +150,8 @@ public class Preferences extends MinML{
 	public int maxDetails=50;
 	/** Number of details to delete when maxDetails have been stored in cachesWithLoadedDetails */
 	public int deleteDetails=5;
+	/** The locale code (DE, EN, ...) */
+	public String language=""; 
 	
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -170,8 +171,6 @@ public class Preferences extends MinML{
 	public int myAppWidth = 0;
 	/** True if the preferences were changed and need to be saved */
 	public boolean dirty = false;
-	/** The decimal separator (from MyLocale) */
-	public String digSeparator = "";
 	
     //////////////////////////////////////////////////////////////////////////////////////
     // Read pref.xml file
@@ -318,6 +317,9 @@ public class Preferences extends MinML{
 			if (maxDetails<2) maxDetails=2;
 			if (deleteDetails<1) deleteDetails=1;
 		}
+		else if (name.equals("locale")) {
+			language = atts.getValue("language");
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -351,6 +353,7 @@ public class Preferences extends MinML{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(datei)));
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			outp.print("<preferences>\n");
+			outp.print("    <locale language=\"" + SafeXML.strxmlencode(language) + "\"/>\n");
 			outp.print("	<basedir dir = \"" + SafeXML.strxmlencode(baseDir) + "\"/>\n");
 			outp.print("    <lastprofile autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\">" + SafeXML.strxmlencode(lastProfile) + "</lastprofile>\n"); //RB
 			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
