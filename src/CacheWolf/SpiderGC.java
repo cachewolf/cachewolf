@@ -699,7 +699,7 @@ public class SpiderGC{
 		inRex.search(doc);
 		if(doc.indexOf("Here") >= 0) return(0);
 		if (!inRex.didMatch()) return 0;
-		if(pref.digSeparator.equals(",")) return Convert.toDouble(inRex.stringMatched(1).replace('.',','));
+		if(MyLocale.getDigSeparator().equals(",")) return Convert.toDouble(inRex.stringMatched(1).replace('.',','));
 		return Convert.toDouble(inRex.stringMatched(1));
 	}
 

@@ -228,26 +228,17 @@ public class MyLocale {
 		}
 	}
 	
-	/*=================================================================
-	 * During initialisation the file "language" in the program directory
-	 * is read to check whether the user wishes to ovverride the default
-	 * language. This language cannot be stored in the pref.xml file, due
-	 * to an initialisation conflict (pref.xml needs MyLocale). A better
-	 * solution may be to read the override language from the command line,
-	 * but I do not know how to specify command line parameters on a PDA
-	 ==================================================================*/
 	/**
-	 * Read the language file and return the specified language (or empty
+	 * Read the language from the prefs and return the specified language (or empty
 	 * string if none specified).
 	 * @return Language (e.g. DE, EN etc.) or ""
 	 */
 	private static String getLanguage() {
-		try {
-			BufferedReader bufread=new BufferedReader(new FileReader(FileBase.getProgramDirectory() + "/" + "language"));
-			language=bufread.readLine();
-			bufread.close();
-		} catch (Exception ex) {
-			language="";
+		Preferences pref = Global.getPref();
+		if ( pref != null ) {
+			language = pref.language;
+		} else {
+			language = "";
 		}
 		if (language==null) language="";
 		return language;
@@ -257,13 +248,13 @@ public class MyLocale {
 	 * Write the override language 
 	 * @param language The language to write
 	 */
-	public static void saveLanguage(String language) {
-		try{
-			BufferedWriter out = new BufferedWriter(new FileWriter(FileBase.getProgramDirectory() + "/" + "language"));
-			out.write(language);
-			out.close();
-		}catch (Exception e){ Vm.debug("Exception "+e);}
+	public static void saveLanguage(String saveLanguage) {
+		Preferences pref = Global.getPref();
+		if ( pref != null ) {
+			pref.language = saveLanguage;
+			pref.savePreferences();
+		}
 	}
-	
+
 }
 

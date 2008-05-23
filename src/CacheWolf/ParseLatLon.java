@@ -29,7 +29,7 @@ public class ParseLatLon {
 	*/
 	public ParseLatLon (String ll){
 		latlon = ll;
-		digSep=Global.getPref().digSeparator.charAt(0);
+		digSep=MyLocale.getDigSeparator().charAt(0);
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class ParseLatLon {
 	*/
 	public ParseLatLon (String ll, String tr){
 		latlon = ll;
-		digSep=Global.getPref().digSeparator.charAt(0);
+		digSep=MyLocale.getDigSeparator().charAt(0);
 	}
 	
 	private int start;
