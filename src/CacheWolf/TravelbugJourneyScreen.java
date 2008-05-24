@@ -63,7 +63,7 @@ public class TravelbugJourneyScreen extends Form  {
 		CellPanel tablepane = split.getNextPanel();
 		int curCacheNo=Global.mainTab.tbP.getSelectedCache();
 		String cache="";
-		if (curCacheNo<cacheDB.size()) {
+		if (curCacheNo>=0 && curCacheNo<cacheDB.size()) {
 			ch=(CacheHolder)cacheDB.elementAt(curCacheNo);
 			cache=MyLocale.getMsg(6022,": Current cache: ")+ch.wayPoint+" - "+ch.CacheName;
 			waypoint=ch.wayPoint;
