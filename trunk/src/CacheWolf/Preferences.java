@@ -36,6 +36,38 @@ public class Preferences extends MinML{
 	}
 
 	private static Preferences _reference;
+	
+	private String pathToConfigFile;
+	
+	/**
+	 * Call this method to set the path of the config file <br>
+	 * If you call it with null it defaults to [program-dir]/pref.xml
+	 * if p is a directory "pref.xml" will automatically appended
+	 * @param p
+	 */
+	public void setPathToConfigFile(String p) {
+		String p_;
+		if (p == null) {
+			String test;
+			test = Vm.getenv("APPDATA", "/"); // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data>
+			log("Vm.getenv(APPDATA: " + test); // this works also in win32.exe (ewe-vm on win xp)
+			test = Vm.getenv("HOME", "/"); // This should return on *nix system the home dir
+			log("Vm.getenv(HOME: " + test);
+			test = System.getProperty("user.dir"); // return in java-vm on win xp: <working dir> or maybe <program dir> 
+			log("System.getProperty(user.dir: " + test); // in win32.exe -> null
+			test = System.getProperty("user.home"); // in MS-java-VM env variable $HOME is ignored and always <windir>\java returned, see http://support.microsoft.com/kb/177181/en-us/
+			log("System.getProperty(user.home: " + test); // in win32.exe -> null
+			// "user.dir"              User's current working directory
+			// "user.home"             User home directory (taken from http://scv.bu.edu/Doc/Java/tutorial/java/system/properties.html )
+			p_ = FileBase.makePath(FileBase.getProgramDirectory(), "pref.xml");
+		}
+		else {
+			if (new FileBugfix(p).isDirectory()) p_ = FileBase.makePath(p, "pref.xml");
+			else p_ = p; 
+		}
+		pathToConfigFile = STRreplace.replace(p_, "//", "/"); // this is necessary in case that the root dir is the dir where the pref.xml is stored
+		pathToConfigFile = pathToConfigFile.replace('\\', '/');
+	}
 
 	/**
 	 * Constructor is private for a singleton object
@@ -177,16 +209,19 @@ public class Preferences extends MinML{
 	//////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
-	 * Method to open and parse the pref.xml file. Results are stored in the
+	 * Method to open and parse the config file (pref.xml). Results are stored in the
 	 * public variables of this class.
+	 * If you want to specify a non default config file call setPathToConfigFile() first.
 	 */
 	public void readPrefFile(){
+		if (pathToConfigFile == null) setPathToConfigFile(null); // this sets the default value 
 		try{
-			String datei = STRreplace.replace(FileBase.getProgramDirectory() + "/pref.xml", "//", "/"); // this is necessary in case that the root dir is the program dir
-			datei = datei.replace('\\', '/');
-			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(datei));
+			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(pathToConfigFile));
 			parse(r);
 			r.close();
+		}catch(IOException e){
+			log("IOException reading config file: " + pathToConfigFile, e, true);
+			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile, MessageBox.OKB)).execute();
 		}catch(Exception e){
 			if (e instanceof NullPointerException)
 				log("Error reading pref.xml: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
@@ -346,11 +381,9 @@ public class Preferences extends MinML{
 	 * Method to save current preferences in the pref.xml file
 	 */
 	public void savePreferences(){
-		String datei = FileBase.getProgramDirectory() + "/" + "pref.xml";
-		datei = datei.replace('\\', '/');
-
+		if (pathToConfigFile == null) setPathToConfigFile(null); // this sets the default value 
 		try{
-			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(datei)));
+			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(pathToConfigFile)));
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			outp.print("<preferences>\n");
 			outp.print("    <locale language=\"" + SafeXML.strxmlencode(language) + "\"/>\n");
@@ -390,7 +423,7 @@ public class Preferences extends MinML{
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
-			log("Problem saving: " +datei,e,true);
+			log("Problem saving: " +pathToConfigFile,e,true);
 		}
 	}
 
