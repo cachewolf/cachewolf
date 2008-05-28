@@ -207,14 +207,14 @@ public class SpiderGC{
 	 * It assumes a login has already been performed!
 	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with next cache
 	 */
-	public int spiderSingle(int number, InfoBox infB){
+	public int spiderSingle(int number, InfoBox infB, boolean forceLogin){
 		int ret=-1;
 		this.infB = infB;
 		CacheHolder ch = (CacheHolder)cacheDB.get(number);
 		if (ch.isAddiWpt()) return -1;  // No point re-spidering an addi waypoint, comes with parent
 
 		// check if we need to login
-		if (!loggedIn || Global.getPref().forceLogin){
+		if (!loggedIn || forceLogin){
 			if (this.login()!=FormBase.IDOK) return -1;
 			// loggedIn is already set by this.login()
 		}
