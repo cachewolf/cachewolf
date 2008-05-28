@@ -673,6 +673,7 @@ public class MainMenu extends MenuBar {
 		}
 
 		int spiderErrors = 0;
+		boolean forceLogin=Global.getPref().forceLogin; // To ensure that spiderSingle only logs in once if forcedLogin=true
 		for(int j = 0; j <	cachesToUpdate.size(); j++){
 			int i = ((Integer)cachesToUpdate.get(j)).intValue();
 			ch = (CacheHolder)cacheDB.get(i);
@@ -680,7 +681,7 @@ public class MainMenu extends MenuBar {
 			infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
 			infB.redisplay();
 			if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")) {
-				int test = spider.spiderSingle(i, infB);
+				int test = spider.spiderSingle(i, infB,forceLogin);
 				if (test == -1) {
 					infB.close(0);
 					break;
@@ -689,6 +690,7 @@ public class MainMenu extends MenuBar {
 				} else {
 					profile.hasUnsavedChanges=true;	
 				}
+				forceLogin=false;
 			}
 			else {
 				if (!ocSync.syncSingle(i, infB)) {
