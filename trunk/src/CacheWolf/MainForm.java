@@ -32,8 +32,9 @@ public class MainForm extends Editor {
 		doIt();
 	}
 	
-	public MainForm(boolean dbg){
+	public MainForm(boolean dbg, String pathtoprefxml){
 		pref.debug = dbg;
+		pref.setPathToConfigFile(pathtoprefxml); // in case pathtoprefxml == null the preferences will determine the path itself 
 		doIt();
 	}
 	protected void checkButtons() {
