@@ -6,12 +6,12 @@ import ewe.sys.*;
 public class CacheWolf extends Editor{
 	
 	
-	public static void main(String args[])
+	public static void main(String vmargs[])
 	{
 		//start with parameters:
 		//args[0]: spider
 		//args[1]: distance
-		ewe.sys.Vm.startEwe(args);
+		ewe.sys.Vm.startEwe(vmargs);
 /*		Gui.screenIs(Gui.PDA_SCREEN);
 		Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
 		//Gui.screenIs(Gui.PDA_SCREEN)
@@ -28,13 +28,43 @@ public class CacheWolf extends Editor{
 			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
 		}
 		
+		// get program command line parameters and switches
+		String[] args = vmargs; // Vm.getProgramArguments(); <-- only works in eclipse, but mixes the letters in the ewe-vm (tested in ewe-1.40 on win xp)
+		Vm.debug("prg-args: " + args.length);
+		Vm.debug("vm-args: " + vmargs.length);
+		String configfile = null;
+		boolean debug = false;
 		if(args.length > 0){
 			if(args[0].equals("test")){
 				Test t=new Test(); 
 				t.testAll();
 			}
+			for (int i=0; i < args.length ; i++) {
+				Vm.debug("prog: " + args[i]);
+				Vm.debug("vm: " + vmargs[i]);
+				if (args[i] != null && args[i].length() > 1 &&
+						(args[i].startsWith("-") || args[i].startsWith("/")) ) {
+					String c = args[i].substring(1, args[i].length());
+					if (c.equalsIgnoreCase("c")) {
+						if (i < args.length -1 ) {
+							configfile = args[i+1];
+							i++;
+						} else {
+							(new MessageBox("Error", MyLocale.getMsg(7200, "Usage: CacheWolf [-c <path to pref.xml>] [-debug]"), MessageBox.OKB)).execute();
+							// return usage info
+							ewe.sys.Vm.exit(1);
+						}
+					}
+					if (c.equalsIgnoreCase("debug")) {
+						Vm.debug("d");
+						debug = true;
+					}
+
+				}
+			}
 		}
-		Editor mainF = new MainForm();
+		
+		Editor mainF = new MainForm(debug, configfile);
 		Device.preventIdleState(true);
 		mainF.execute();
 		Device.preventIdleState(false);
