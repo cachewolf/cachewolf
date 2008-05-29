@@ -77,11 +77,15 @@ public class Version {
 	}
 
 	public static String getUpdateMessage() {
+		Vm.showWait(true);
 		try {
 			checkForUpdates();
 			return MyLocale.getMsg(7022, "Version type") +"\n"+ newVersionsArrayToString();
 		} catch (IOException e) {
 			return MyLocale.getMsg(7023, "Error getting current version information") +"\n" + e.getMessage();
+		}
+		finally {
+			Vm.showWait(false);
 		}
 	}
 

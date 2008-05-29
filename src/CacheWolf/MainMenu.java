@@ -618,9 +618,7 @@ public class MainMenu extends MenuBar {
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == chkVersion){
-				Vm.showWait(true);
 				(new MessageBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage(), FormBase.OKB)).execute();
-				Vm.showWait(false);
 			}
 			
 			// In case that the triggered event was due to one of the context menu items, process
