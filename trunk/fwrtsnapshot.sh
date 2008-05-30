@@ -10,8 +10,8 @@ mkdir -p bin/CacheWolf
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
     -cp lib/CompileEwe.zip:lib -d bin -deprecation -nowarn \
     src/CacheWolf/*.java src/CacheWolf/*/*.java src/exp/*.java src/utils/*.java
-/usr/local/bin/ewecl programs/Jewel.ewe -c cw-pda.jnf
-/usr/local/bin/ewecl programs/Jewel.ewe -c cw-pc.jnf
+`which ewecl` programs/Jewel.ewe -c cw-pda.jnf
+`which ewecl` programs/Jewel.ewe -c cw-pc.jnf
 # Don’t change the order of the above Jewel commands because
 # the PC version has to overwrite the PDA version of the EWE file
 rm -rf published
@@ -37,7 +37,7 @@ install -c -m 644 resources/attributes/*-non.gif published/dat/attributes/
 install -c -m 644 res_noewe/webmapservices/* published/dat/webmapservices/
 install -c -m 644 res_noewe/languages/* published/dat/languages/
 (cd published/dat && find * -type f | sort | \
-    /usr/local/bin/cpio -oC512 -Hustar -Mdist >../datfiles.tar)
+    `which cpio` -oC512 -Hustar -Mdist >../datfiles.tar)
 rm -rf published/dat
 chmod 644 published/datfiles.tar
 mkdir -p ~/public_html/CacheWolf-BE/r$v
