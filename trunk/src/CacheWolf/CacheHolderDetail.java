@@ -296,7 +296,7 @@ public class CacheHolderDetail extends CacheHolder {
 				  int iis = ImagesInfo.size();
 				  for(int i = 0;i<ImagesText.size();i++){
 						stbuf = (String)ImagesText.get(i);
-						if (iis < i && ImagesInfo.get(i) != null)
+						if (i< iis && ImagesInfo.get(i) != null)
 							detfile.print("    <IMGTEXT>"+stbuf+"<DESC>"+ImagesInfo.get(i)+"</DESC></IMGTEXT>\n");
 						else 
 							detfile.print("    <IMGTEXT>"+stbuf+"</IMGTEXT>\n");
