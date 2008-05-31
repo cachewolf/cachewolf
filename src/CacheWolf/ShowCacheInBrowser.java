@@ -151,6 +151,10 @@ public class ShowCacheInBrowser {
 							imgs.put("IMAGE","<img src=\"file://"+
 									   Global.getProfile().dataDir+chD.Images.get(imageNo)+"\" border=0>");
 							imgs.put("IMAGETEXT",chD.ImagesText.get(imageNo));
+							if (imageNo<chD.ImagesInfo.size() && chD.ImagesInfo.get(imageNo)!=null)
+								imgs.put("IMAGECOMMENT",chD.ImagesInfo.get(imageNo));
+							else
+								imgs.put("IMAGECOMMENT","");
 							imgs.put("I","'img"+new Integer(imageNo).toString()+"'");
 							imageVect.add(imgs);
 						}
