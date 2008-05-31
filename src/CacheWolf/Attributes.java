@@ -77,14 +77,16 @@ public class Attributes {
 	 */
 	public void add(String attributeName){
 		if (count<attribs.length) {
-			Attribute attr = new Attribute(attributeName);
-			attribs[count++] = attr;
-			if (attributeName.endsWith("-yes.gif"))
-				attributesYes |= (1l << ( (long)(Math.ceil(attr.getAttrNr() / 2.0) - 1.0) ) );
-			else
-				attributesNo |= (1l << ( (long)(Math.ceil(attr.getAttrNr() / 2.0) - 1.0) ) );
+			if ( !attributeName.equalsIgnoreCase( "attribute-blank.gif" ) ) {
+				Attribute attr = new Attribute(attributeName);
+				attribs[count++] = attr;
+				if (attributeName.endsWith("-yes.gif"))
+					attributesYes |= (1l << ( (long)(Math.ceil(attr.getAttrNr() / 2.0) - 1.0) ) );
+				else
+					attributesNo |= (1l << ( (long)(Math.ceil(attr.getAttrNr() / 2.0) - 1.0) ) );
+			}
 		}
-    }
+	}
 
 	/**
 	 * Get the name of the i'th attribute in the list
