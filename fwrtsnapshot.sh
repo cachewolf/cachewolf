@@ -40,6 +40,6 @@ install -c -m 644 res_noewe/languages/* published/dat/languages/
     `which cpio` -oC512 -Hustar -Mdist >../datfiles.tar)
 rm -rf published/dat
 chmod 644 published/datfiles.tar
-mkdir -p ~/public_html/CacheWolf-BE/r$v
-mv published/* ~/public_html/CacheWolf-BE/r$v/
+mkdir -p $HOME/public_html/CacheWolf-BE/r$v
+mv published/* $HOME/public_html/CacheWolf-BE/r$v/
 rm -rf bin published
