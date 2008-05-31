@@ -68,11 +68,13 @@ public class DescriptionPanel extends CellPanel{
             int imageNo = 0;
             if (Global.getPref().descShowImg) {
                 Vector Images;
+                CacheHolderDetail chDimages; // cache which supplies the images (could be main cache)
                 if (cache.isAddiWpt()) {
-                    Images = cache.mainCache.getCacheDetails(true).Images;
+                    chDimages=cache.mainCache.getCacheDetails(true);
                 } else {
-                    Images = cache.Images;
+                    chDimages=cache;
                 }
+            	Images = chDimages.Images;
                 StringBuffer s = new StringBuffer(desc.length() + Images.size() * 100);
                 int start = 0;
                 int pos;
@@ -82,6 +84,7 @@ public class DescriptionPanel extends CellPanel{
                         s.append(desc.substring(start, pos));
                         imgRex.searchFrom(desc, pos);
                         String imgUrl = imgRex.stringMatched(1);
+                        if (imgUrl==null) break; // Remaining pictures are from image span
                         // Vm.debug("imgUrl "+imgUrl);
                         if (imgUrl.lastIndexOf('.') > 0 && imgUrl.toLowerCase().startsWith("http")) {
                             String imgType = (imgUrl.substring(imgUrl.lastIndexOf("."))
@@ -105,9 +108,9 @@ public class DescriptionPanel extends CellPanel{
                 if (start >= 0)
                     s.append(desc.substring(start));
                 desc = s.toString();
-            }
-            if (cache.hasImageInfo()) {
-                desc += getPicDesc(imageNo, cache);
+                if (imageNo<Images.getCount()) {
+                    desc += getPicDesc(imageNo, chDimages);
+                }
             }
             //disp.setHtml(desc);
             disp.startHtml();
