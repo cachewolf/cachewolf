@@ -1,6 +1,8 @@
 #!/bin/sh
 # $Id$
 
+export PATH=$PATH:/usr/local/bin:/usr/bin:$HOME/bin
+
 set -x
 v=$(svn info | sed -n '/Revision: /s///p')
 printf '/VER_SVN =/s/\$.*\$/$LastChangedRevision: %s $/\nwq\n' $v | \
