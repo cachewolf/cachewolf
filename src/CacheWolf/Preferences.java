@@ -18,7 +18,7 @@ public class Preferences extends MinML{
 
 	public final int DEFAULT_MAX_LOGS_TO_SPIDER=250;
 	public final int DEFAULT_LOGS_PER_PAGE=5;
-	public final int DEFAULT_INITIAL_HINT_HEIGHT=50;
+	public final int DEFAULT_INITIAL_HINT_HEIGHT=10;
 
 	//////////////////////////////////////////////////////////////////////////////////////
     // Constructor
