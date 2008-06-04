@@ -7,7 +7,7 @@ export PATH
 # natureshadow insists on using “which”… so be it
 # allow the caller to override the paths to the tools
 test -n "$EWE" || EWE=$(which ewecl)
-#test -n "$CPIO" || CPIO=$(which cpio)
+test -n "$CPIO" || CPIO=$(which cpio)
 
 set -x
 v=$(svn info | sed -n '/Revision: /s///p')
@@ -47,8 +47,7 @@ install -c -m 644 res_noewe/languages/* published/dat/languages/
 (
 	cd published/dat
 	find * -type f | sort >../flst
-#	$CPIO -oC512 -Hustar -Mdist <../flst | gzip -n9 >../datfiles.tgz
-    tar -cvzf ../datfiles.tgz -T ../flst
+	$CPIO -oC512 -Hustar -Mdist <../flst | gzip -n9 >../datfiles.tgz
 	zip -j -X ../datfiles.zip -@ <../flst
 )
 rm -rf published/dat published/flst
