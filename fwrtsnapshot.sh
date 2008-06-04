@@ -1,7 +1,13 @@
 #!/bin/sh
 # $Id$
 
-export PATH=$PATH:/usr/local/bin:/usr/bin:$HOME/bin
+PATH=$PATH:/usr/local/bin:/usr/bin:$HOME/bin
+export PATH
+
+# natureshadow insists on using “which”… so be it
+# allow the caller to override the paths to the tools
+test -n "$EWE" || EWE=$(which ewecl)
+test -n "$CPIO" || CPIO=$(which cpio)
 
 set -x
 v=$(svn info | sed -n '/Revision: /s///p')
@@ -12,8 +18,8 @@ mkdir -p bin/CacheWolf
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
     -cp lib/CompileEwe.zip:lib -d bin -deprecation -nowarn \
     src/CacheWolf/*.java src/CacheWolf/*/*.java src/exp/*.java src/utils/*.java
-`which ewecl` programs/Jewel.ewe -c cw-pda.jnf
-`which ewecl` programs/Jewel.ewe -c cw-pc.jnf
+$EWE programs/Jewel.ewe -c cw-pda.jnf
+$EWE programs/Jewel.ewe -c cw-pc.jnf
 # Don’t change the order of the above Jewel commands because
 # the PC version has to overwrite the PDA version of the EWE file
 rm -rf published
@@ -38,12 +44,14 @@ install -c -m 644 resources/attributes-big/*.gif published/dat/attributes/
 install -c -m 644 resources/attributes/*-non.gif published/dat/attributes/
 install -c -m 644 res_noewe/webmapservices/* published/dat/webmapservices/
 install -c -m 644 res_noewe/languages/* published/dat/languages/
-(cd published/dat && find * -type f | sort | \
-    `which cpio` -oC512 -Hustar -Mdist >../datfiles.tar)
-(cd published/dat && zip -r ../datfiles.zip *)
-rm -rf published/dat
-chmod 644 published/datfiles.tar
-chmod 644 published/datfiles.zip
+(
+	cd published/dat
+	find * -type f | sort >../flst
+	$CPIO -oC512 -Hustar -Mdist <../flst | gzip -n9 >../datfiles.tgz
+	zip -j -X ../datfiles.zip -@ <../flst
+)
+rm -rf published/dat published/flst
+chmod 644 published/datfiles.tar published/datfiles.zip
 mkdir -p $HOME/public_html/CacheWolf-BE/r$v
 mv published/* $HOME/public_html/CacheWolf-BE/r$v/
 rm -rf bin published
