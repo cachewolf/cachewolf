@@ -40,8 +40,10 @@ install -c -m 644 res_noewe/webmapservices/* published/dat/webmapservices/
 install -c -m 644 res_noewe/languages/* published/dat/languages/
 (cd published/dat && find * -type f | sort | \
     `which cpio` -oC512 -Hustar -Mdist >../datfiles.tar)
+(cd published/dat && zip -r ../datfiles.zip *)
 rm -rf published/dat
 chmod 644 published/datfiles.tar
+chmod 644 published/datfiles.zip
 mkdir -p $HOME/public_html/CacheWolf-BE/r$v
 mv published/* $HOME/public_html/CacheWolf-BE/r$v/
 rm -rf bin published
