@@ -51,7 +51,7 @@ install -c -m 644 res_noewe/languages/* published/dat/languages/
 	zip -j -X ../datfiles.zip -@ <../flst
 )
 rm -rf published/dat published/flst
-chmod 644 published/datfiles.tar published/datfiles.zip
+chmod 644 published/datfiles.tgz published/datfiles.zip
 mkdir -p $HOME/public_html/CacheWolf-BE/r$v
 mv published/* $HOME/public_html/CacheWolf-BE/r$v/
 rm -rf bin published
