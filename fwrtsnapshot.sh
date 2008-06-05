@@ -48,7 +48,7 @@ install -c -m 644 res_noewe/languages/* published/dat/languages/
 	cd published/dat
 	find * -type f | sort >../flst
 	$CPIO -oC512 -Hustar -Mdist <../flst | gzip -n9 >../datfiles.tgz
-	zip -j -X ../datfiles.zip -@ <../flst
+	zip -X ../datfiles.zip -@ <../flst
 )
 rm -rf published/dat published/flst
 chmod 644 published/datfiles.tgz published/datfiles.zip
