@@ -2,7 +2,6 @@ package CacheWolf;
 
 import ewe.fx.mImage;
 import ewe.io.File;
-import ewe.io.FileBase;
 
 /**
  * This class represents a single attribute
@@ -111,9 +110,10 @@ public class Attribute {
 			"winter-no.gif", 		//85 not available for winter
 			"winter-yes.gif", 		//86 available in winter
 			"firstaid-no.gif",              //87 does not need maintenance
-			"firstaid-yes.gif"              //88 needs maintenance
+			"firstaid-yes.gif",              //88 needs maintenance
+			"flashlight-yes.gif"    // 89 Flashlight required
 	};
-	private static mImage [] attributeImages=new mImage[89];
+	private static mImage [] attributeImages=new mImage[90];
 	private static String IMAGEDIR=STRreplace.replace(File.getProgramDirectory()+"/attributes/", "//", "/");
 	
 	public static String getImageDir() {
