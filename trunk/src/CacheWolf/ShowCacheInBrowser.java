@@ -130,7 +130,7 @@ public class ShowCacheInBrowser {
 						if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
 							String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 							// If we have an image which we stored when spidering, we can display it
-							if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
+        					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 								s.append("<img src=\"file://"+
 								   Global.getProfile().dataDir+chD.Images.get(imageNo)+"\">");
 								imageNo++;

@@ -9,6 +9,8 @@ import ewe.util.Vector;
 
 /**
 *	This class shows the long description on a cache.
+*  Test with GC1CC5T - Final
+*            GC19DDX - 
 */
 public class DescriptionPanel extends CellPanel{
 	HtmlDisplay disp = new HtmlDisplay();
@@ -90,8 +92,7 @@ public class DescriptionPanel extends CellPanel{
                             String imgType = (imgUrl.substring(imgUrl.lastIndexOf("."))
                                     .toLowerCase() + "    ").substring(0, 4).trim();
                             // If we have an image which we stored when spidering, we can display it
-                            if (!imgType.startsWith(".com") && !imgType.startsWith(".php")
-                                    && !imgType.startsWith(".exe")) {
+        					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
                                 s.append("<img src=\"" +
                                 // Global.getProfile().dataDir+
                                         Images.get(imageNo) + "\">");
