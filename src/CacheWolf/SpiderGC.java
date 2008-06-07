@@ -985,7 +985,7 @@ public class SpiderGC{
 				try{
 					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 					// imgType is now max 4 chars, starting with .
-					if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
+					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
 						imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
@@ -1032,7 +1032,7 @@ public class SpiderGC{
 				try{
 					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 					// imgType is now max 4 chars, starting with .
-					if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
+					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
 						imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
@@ -1069,7 +1069,8 @@ public class SpiderGC{
 				imgUrl = "http://" + imgUrl;
 				try{
 					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
-					// imgType is now max 4 chars, starting with .
+					// imgType is now max 4 chars, starting with . Delete characters in URL after the image extension
+					imgUrl=imgUrl.substring(0,imgUrl.lastIndexOf(".")+imgType.length());
 					if( imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
