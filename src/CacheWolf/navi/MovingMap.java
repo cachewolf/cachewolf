@@ -84,7 +84,9 @@ public class MovingMap extends Form {
 		this.myNavigation = nav;
 		this.pref = Global.getPref();
 		if (pref.myAppHeight <= 640 && pref.myAppWidth <= 640)	this.windowFlagsToSet = WindowConstants.FLAG_FULL_SCREEN;
-		this.windowFlagsToClear = WindowConstants.FLAG_HAS_TITLE | UIConstants.BDR_NOBORDER;
+//      The following line is commented out, because this caused trouble under ewe-vm v1.49 on win-xp
+//      when MovingMap was started with maximized CacheWolf-Window
+//		this.windowFlagsToClear = WindowConstants.FLAG_HAS_TITLE | UIConstants.BDR_NOBORDER;
 		this.hasTopBar = false;
 		this.noBorder = true;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
