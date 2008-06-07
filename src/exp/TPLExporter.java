@@ -32,6 +32,7 @@ import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
+import CacheWolf.Common;
 import HTML.Template;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -131,7 +132,8 @@ public class TPLExporter {
 	Profile profile;
 	String tplFile;
 	String expName;
-
+	Regex rex=null;
+	
 	public TPLExporter(Preferences p, Profile prof, String tpl){
 		pref = p;
 		profile=prof;
@@ -194,19 +196,13 @@ public class TPLExporter {
 					}
 					try {
 						Regex dec = new Regex("[,.]",myFilter.decSep);
+						if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
 						varParams = new Hashtable();
 						varParams.put("TYPE", CacheType.transType(holder.type));
 						varParams.put("SHORTTYPE", CacheType.transType(holder.type).substring(0,1));
 						varParams.put("SIZE", holder.CacheSize);
 						varParams.put("SHORTSIZE", holder.CacheSize.substring(0,1));
 						varParams.put("WAYPOINT", holder.wayPoint);
-						if (myFilter.badChars != null) {
-							Regex rex = new Regex("["+myFilter.badChars+"]","");
-							varParams.put("NAME", rex.replaceAll(holder.CacheName));
-						}
-						else {
-							varParams.put("NAME", holder.CacheName);
-						}
 						varParams.put("OWNER", holder.CacheOwner);
 						varParams.put("DIFFICULTY", dec.replaceAll(holder.hard));
 						varParams.put("TERRAIN", dec.replaceAll(holder.terrain));
@@ -220,8 +216,18 @@ public class TPLExporter {
 						varParams.put("STATUS_TIME", holder.GetStatusTime());
 						varParams.put("DATE", holder.DateHidden);
 						varParams.put("URL", holder.URL);
-						varParams.put("NOTES", holder.CacheNotes);
 						varParams.put("DESCRIPTION", holder.LongDescription);
+						if (myFilter.badChars != null) {
+							varParams.put("NAME", rex.replaceAll(holder.CacheName));
+							varParams.put("NOTES", rex.replaceAll(holder.CacheNotes));
+							varParams.put("HINTS", rex.replaceAll(holder.Hints));
+							varParams.put("DECRYPTEDHINTS", rex.replaceAll(Common.rot13(holder.Hints)));
+						} else {
+							varParams.put("NAME", holder.CacheName);
+							varParams.put("NOTES", holder.CacheNotes);
+							varParams.put("HINTS", holder.Hints);
+							varParams.put("DECRYPTEDHINTS", Common.rot13(holder.Hints));
+						}
 						cache_index.add(varParams);
 					}catch(Exception e){
 						Vm.debug("Problem getting Parameter, Cache: " + holder.wayPoint);
