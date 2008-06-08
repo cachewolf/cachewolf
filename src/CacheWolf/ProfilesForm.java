@@ -65,8 +65,10 @@ public class ProfilesForm extends Form{
 		super();
     	resizable =  false;
 		int w=MyLocale.getScreenWidth();
+		int h=MyLocale.getScreenHeight();
 		if (w>240) w=240;
-		setPreferredSize(w,240);
+		if (h>320) h=320;
+		setPreferredSize(w,h);
 	    defaultTags.set(CellConstants.INSETS,new Insets(2,2,2,2));		
 		title = MyLocale.getMsg(1301,"Select Profile:");
 		if (hasNewButton) {
