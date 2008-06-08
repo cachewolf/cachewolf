@@ -141,17 +141,18 @@ public class MovingMap extends Form {
 		buttonImageZoom1to1.properties = mImage.AlwaysOnTop;
 		mmp.addImage(buttonImageZoom1to1);
 		//target distance
-		Font font = new Font("Helvetica", Font.PLAIN, 13);
+		int fontSize = ( 3 * pref.fontSize ) / 2;
+		Font font = new Font("Helvetica", Font.PLAIN, fontSize );
 		fm = getFontMetrics(font);
 		DistanceImage = new AniImage();
-		DistanceImage.setImage(new Image(120, 15), Color.White); // consider the size of the font used
+		DistanceImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight() ), Color.White); // consider the size of the font used
 		DistanceImageGraphics = new Graphics(DistanceImage.image);
 		DistanceImageGraphics.setFont(font);
 		DistanceImage.properties = mImage.AlwaysOnTop;
 		mmp.addImage(DistanceImage);
 		//scale
 		ScaleImage = new AniImage();
-		ScaleImage.setImage(new Image(120, 15), Color.White); // consider the size of the font used
+		ScaleImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight() ), Color.White); // consider the size of the font used
 		ScaleImageGraphics = new Graphics(ScaleImage.image);
 		ScaleImageGraphics.setFont(font);
 		ScaleImage.properties = mImage.AlwaysOnTop;
@@ -957,10 +958,12 @@ public class MovingMap extends Form {
 					newmap = maps.getMapForArea(posCircle.where, gotoPos.where); // TODO use home-coos if no gps? - consider start from details panel and from gotopanel
 					if (newmap == null)	newmap = maps.getBestMap(cll, screen, 10000000000000000000000000000000000f, false); // use map with most available overview if no map containing PosCircle and GotoPos is available
 					
-					lastHighestResolutionGPSDestScale = newmap.scale;	
-					
-					if (!posCircleOnScreen) {
-						newmap = maps.getBestMap(cll, screen, lastHighestResolutionGPSDestScale , false);
+					if (newmap != null) {
+						lastHighestResolutionGPSDestScale = newmap.scale;	
+						
+						if (!posCircleOnScreen) {
+							newmap = maps.getBestMap(cll, screen, lastHighestResolutionGPSDestScale , false);
+						}						
 					}
 				}
 			}
@@ -2008,6 +2011,9 @@ class ArrowsOnMap extends AniImage {
 	Point[] moveDirArrow = null;
 	Point[] northDirArrow = null;
 	
+	int imageSize = Global.getPref().fontSize * 8;
+	int arrowThickness = imageSize / 28;
+	
 	/**
 	 * @param gd goto direction
 	 * @param sd sun direction
@@ -2020,7 +2026,7 @@ class ArrowsOnMap extends AniImage {
 	}
 
 	public void newImage() {
-		setImage(new Image(80,80), Color.White);
+		setImage(new Image(imageSize,imageSize), Color.White);
 		draw = new Graphics(image);
 	}
 	public void setMap(MapInfoObject m) {
@@ -2146,7 +2152,7 @@ class ArrowsOnMap extends AniImage {
 	
 	public void drawArrow(Graphics g, Point[] arrow, Color col) {
 		if (arrow == null) return;
-		g.setPen(new Pen(col,Pen.SOLID,3));
+		g.setPen(new Pen(col,Pen.SOLID,arrowThickness));
 		g.drawLine(arrow[0].x, arrow[0].y, arrow[1].x,arrow[1].y);
 	}
 }
