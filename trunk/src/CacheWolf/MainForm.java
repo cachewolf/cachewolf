@@ -65,6 +65,9 @@ public class MainForm extends Editor {
 		InfoBox infB = null;  
 		try{
 			pref.readPrefFile();
+			if (MyLocale.initErrors.length() != 0) {
+				new MessageBox("Error", MyLocale.initErrors, FormBase.OKB).execute();
+			}
 			addGuiFont();
 			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true)) 
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
