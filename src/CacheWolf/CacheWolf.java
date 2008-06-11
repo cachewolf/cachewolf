@@ -29,7 +29,7 @@ public class CacheWolf extends Editor{
 		}
 		
 		// get program command line parameters and switches
-		String[] args = vmargs; // Vm.getProgramArguments(); <-- only works in eclipse, but mixes the letters in the ewe-vm (tested in ewe-1.40 on win xp)
+		String[] args = vmargs; // Vm.getProgramArguments(); <-- only works in eclipse, but mixes the letters in the ewe-vm (tested in ewe-1.49 on win xp)
 		String configfile = null;
 		boolean debug = false;
 		if(args.length > 0){
@@ -54,7 +54,7 @@ public class CacheWolf extends Editor{
 						}
 					}
 					if (c.equalsIgnoreCase("debug")) {
-						Vm.debug("d");
+						//Vm.debug("d");
 						debug = true;
 					}
 
