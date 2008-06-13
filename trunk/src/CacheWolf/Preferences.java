@@ -80,8 +80,15 @@ public class Preferences extends MinML{
 		if ( ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) {
 			if (Vm.getPlatform().equals("Unix"))
 				fontSize = 12;
-			else
-				fontSize = 16;
+			else{
+				// Default on VGA-PDAs: fontSize 21 + adjust ColWidth
+				if (Vm.isMobile()){
+					fontSize = 21;
+					listColWidth="20,20,30,30,92,177,144,83,60,105,50,104,22,30,30";
+				}
+				else
+					fontSize = 16;
+			}
 		} else 
 			fontSize = 11;
 	}
