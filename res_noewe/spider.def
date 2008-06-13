@@ -20,6 +20,7 @@
 # Version 3.4 - 20080227 Image comments added
 # Version 3.5 - 20080529 Modified descRex to allow for linebreaks
 # Version 3.6 - 20080531 Modified descRex to avoid Stack overflow in exe 
+# Version 3.7 - 20080613 Some lines generalized for proxies replacing the images.
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -64,7 +65,7 @@ hintsRex           = <span\ id="Hints"\ class="displayMe">((?s).*?)</span>
 sizeRex            = alt="Size:\ ((?s).*?)"\ title="Size:
 difficultyRex      = <span\ id="Difficulty">.*?alt="(.*?)\ out\ of
 terrainRex         = <span\ id="Terrain">.*?alt="(.*?)\ out\ of
-cacheTypeRex       = <img\ src="../images/WptTypes/(.*?)\\.gif
+cacheTypeRex       = /images/WptTypes/(.*?)\\.gif
 
 #--------------------------------------
 #Section2a: Logs
@@ -149,5 +150,5 @@ prefixExEnd        = </td>
 #--------------------------------------
 attBlockExStart = &nbsp;<b>Attributes</b><br/><table
 attBlockExEnd  = </td></tr></table>
-attExStart = src="../images/attributes/
+attExStart = /images/attributes/
 attExEnd = " Alt="
