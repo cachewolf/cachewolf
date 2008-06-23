@@ -48,6 +48,7 @@ public class Preferences extends MinML{
 	public void setPathToConfigFile(String p) {
 		String p_;
 		if (p == null) {
+			/*
 			String test;
 			test = Vm.getenv("APPDATA", "/"); // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data>
 			log("Vm.getenv(APPDATA: " + test); // this works also in win32.exe (ewe-vm on win xp)
@@ -59,6 +60,7 @@ public class Preferences extends MinML{
 			log("System.getProperty(user.home: " + test); // in win32.exe -> null
 			// "user.dir"              User's current working directory
 			// "user.home"             User home directory (taken from http://scv.bu.edu/Doc/Java/tutorial/java/system/properties.html )
+			 */
 			p_ = FileBase.makePath(FileBase.getProgramDirectory(), "pref.xml");
 		}
 		else {
