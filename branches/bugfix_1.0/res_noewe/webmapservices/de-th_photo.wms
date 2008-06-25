@@ -1,0 +1,20 @@
+TakenFromUrl:	http://www.thueringen.de/de/tlvermgeo/onlineservice/web_map_service/content.html
+GetCapabilitiesUrl:	http://www.webmap-test.thueringen.de/deegreewms/wms?service=WMS&version=1.1.1&request=GetCapabilities
+Name:	de.th Luftbild
+MapType:	photo
+MainUrl:	http://www.webmap-test.thueringen.de/deegreewms/wms?
+ServiceTypeUrlPart:	SERVICE=WMS 
+VersionUrlPart:	VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:	31468
+CoordinateReferenceSystemUrlPart:	SRS=EPSG:31468
+RequestUrlPart:	REQUEST=GetMap
+LayersUrlPart:	LAYERS=Orthophotos_TH-2m
+StylesUrlPart:	STYLES=
+ImageFormatUrlPart:	FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84:	N 52.0000 E 9.5000
+BoundingBoxButtomRightWGS84:	N 50.0000 E 13.0000
+MinScale:   0.399122
+MaxScale:   9.97806
+RecommendedScale:   2.0
+ImageFileExtension: .jpg
+
