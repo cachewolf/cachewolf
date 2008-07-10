@@ -589,43 +589,145 @@
     <section>
       <title>Anwenden</title>
 
-      <para></para>
+      <para>Durch Auswahl diesen Menüpunktes wird der gesetzte Filter
+      aktiviert. Zum setzen des Filters siehe das nachfolgende Kapitel.</para>
     </section>
 
     <section>
-      <title>Erzeugen</title>
+      <title>Ändern &amp; Anwenden</title>
 
-      <para></para>
+      <para>In Cachewolf kann man nach Richtung, Status, Bewertung, Typen,
+      Zusätzlichen Wegpunkten, Behälter und Attributen filtern.</para>
+
+      <para>Der Richtungsfilter:</para>
+
+      <para> <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/filter_richtung.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>erlaubt es all die Caches (und sonstigen Wegpunkte) auszufiltern
+      die mehr als xxx Kilometer entfernt sind (Option &lt;=); oder umgekehrt
+      weniger als (Option &gt;=) xxx Kilometer entfernt sind. Die
+      Himmelsrichtung kann durch setzen eines entsprechenden Häckchens
+      ebenfalls gefiltert werden. Häckchen gesetzt bedeutet NICHT filtern.
+      Kein Häkchen --&gt; Cache wird aus der Listenansicht verbannt.</para>
+
+      <para>Der Statusfilter:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/filter_status.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>erlaubt es, die Caches auszublenden, die einen Status haben, der
+      einem NICHT gesetzten Häkchen entsprechen. Die Spaltenanordnung ist hier
+      bewusst gewählt, da mindestens ein Häkchen auf der jeweiligen Seite
+      gesetzt sein muss. Ansonsten wird die Anzeige "Rot" weil die Auswahl
+      keinen Sinn ergeben würde.</para>
+
+      <para>Der Bewertungsfilter erlaubt die Auswahl von Caches nach Terrain
+      und Difficulty:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/filter_bewertung.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>Das Prinzip ist wie beim Richtungsfilter: Z.B. bei der Wahl
+      Schwierigkeit &lt;= 3 werden alle Caches ausgeblendet mit einer
+      Schwierigkeit &gt; 3.</para>
+
+      <para>Mit dem Typenfilter:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/filter_typen.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>können je nach Type ausgeblendet werden. Einnicht gesetztes
+      Häkchen blendet den Cachetype aus der Listenansicht aus.</para>
+
+      <para>Mit dem Addi Wpt filter:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/filter_addi.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>können Additional Waypoints aus- oder eingeblendet werden. Häkchen
+      gesetzt bedeutet der Additional Waypoint wird angezeigt. Additional
+      Waypoints werden übrigens immer unterhalb des zugehörigen Caches in der
+      Listenansicht angezeigt.</para>
+
+      <para>Nach dem inzwischen bekannten Prinzip können Behältertypen ein und
+      ausgeblendet werden:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/filter_behalter.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>Der Attributenfilter erlaubt es gezielt Caches zu finden, die mit
+      einem speziellen Attribute versehen sind:</para>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="pics/filter_attrib.jpg" />
+          </imageobject>
+        </inlinemediaobject></para>
+
+      <para>In der Normaleinstelung werden alle Caches angezeigt. In dem hier
+      gezeigten Schirm werden all die Caches ausgeblendet die in keinem
+      Jagdgebiet und wo Tauchausrüstung benötigt in der Listenansicht gezeigt.
+      Alle anderen werden ausgeblendet. Die Attributeauswahl erfolgt durch
+      mehrmaliges Klicken auf das Icon.</para>
     </section>
 
     <section>
       <title>Umkehren</title>
 
-      <para></para>
+      <para>Durch Auswahl diesen Menüpunktes, werden all die Caches
+      eingeblendet, die durch Anwenden des Filters ausgeblendet wurden.</para>
     </section>
 
     <section>
       <title>Aufheben</title>
 
-      <para></para>
+      <para>Durch Auswahl diesen Menüpunktes wird der Filter ausgeschaltet.
+      Dies geht auch durch einen Klick auf das Filtericon in der Statuszeile
+      (siehe <xref linkend="liste" />).</para>
     </section>
 
     <section>
-      <title>Auswahl filtern</title>
+      <title>Markierte ausfiltern</title>
 
-      <para></para>
+      <para>In der Listenansicht können bei einzelnen Caches "Häkchen" gesetzt
+      werden. Durch Auswahl diesen Menüpunktes werden all die Caches
+      ausgeblendet, die mit einem Häkchen versehen sind.</para>
+    </section>
+
+    <section>
+      <title>Nichtmarkierte ausfiltern</title>
+
+      <para>In der Listenansicht können bei einzelnen Caches "Häkchen" gesetzt
+      werden. Durch Auswahl diesen Menüpunktes werden all die Caches
+      ausgeblendet, die NICHT mit einem Häkchen versehen sind.</para>
     </section>
 
     <section>
       <title>Zeige Blacklist</title>
 
-      <para></para>
-    </section>
-
-    <section>
-      <title>Cachetour</title>
-
-      <para></para>
+      <para>In der Detailansicht (<xref linkend="detailansicht" />) können
+      einzelne Caches zur "Blacklist" hinzugefügt werden. Diese Liste wird
+      durch Auswahl diesen Menüpunktes eingeblendet (und dafür alle anderen
+      ausgeblendet).</para>
     </section>
   </section>
 
