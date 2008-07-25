@@ -21,6 +21,7 @@
 # Version 3.5 - 20080529 Modified descRex to allow for linebreaks
 # Version 3.6 - 20080531 Modified descRex to avoid Stack overflow in exe 
 # Version 3.7 - 20080613 Some lines generalized for proxies replacing the images.
+# Version 4.0 - 20080725 adaption to new GC-design
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -40,9 +41,9 @@ waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
 firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
 firstPage2         = &lon=
 # Regex to search for cachenames 
-listBlockRex       = <table id="dlResults"((?s).*?)</table>
+listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
 lineRex            = <tr\ bgcolor='#.{6}'>(?:(?s).*?)<td\ valign="top"\ align="left">((?s).*?)</tr>
-distRex            = <br\ />(.*?)(km|mi)</td>
+distRex            = <br\ />(.*?)(?:km|mi)(?:\\s*)</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
 showOnlyFound      = &f=1
 firstLine          = http://www.geocaching.com/seek/nearest.aspx?
@@ -74,19 +75,19 @@ cacheTypeRex       = /images/WptTypes/(.*?)\\.gif
 blockRex           = <span\ id="CacheLogs">((?s).*?)</span>
 # singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
 singleLogExStart   = <STRONG>
-singleLogExEnd     = [<A\ href=
+singleLogExEnd     = [<a\ href=
 # iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
 iconExStart        = http://www.geocaching.com/images/icons/
 iconExEnd          = '\ align='abs
-nameTempExStart    = <A\ HREF="
-nameTempExEnd      = /A>
+nameTempExStart    = <a\ href="
+nameTempExEnd      = /a>
 # Name extrahiert aus nameTemp
 nameExStart        = >
 nameExEnd          = <
 dateExStart        = align='absmiddle'>&nbsp;
 dateExEnd          = \ by\ <
-logExStart         = found)<br>
-logExEnd           = <br>[
+logExStart         = found)<br\ />
+logExEnd           = <br\ />[
 # Die Icons, die einen erfolgreichen Fund signalisieren
 icon_smile         = icon_smile.gif
 icon_camera        = icon_camera.gif
