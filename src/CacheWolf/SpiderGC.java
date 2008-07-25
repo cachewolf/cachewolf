@@ -937,7 +937,7 @@ public class SpiderGC{
 					bugDetails = fetch(link);
 					Extractor exDetails = new Extractor(bugDetails,p.getProp("bugDetailsStart"),p.getProp("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
 					tb.setMission(exDetails.findNext());
-					Extractor exGuid = new Extractor(bugDetails,"details.aspx?guid=","\" id=\"Form1",0,Extractor.EXCLUDESTARTEND); // TODO Replace with spider.def see also further down
+					Extractor exGuid = new Extractor(bugDetails,"details.aspx?guid=","\" id=\"aspnetForm",0,Extractor.EXCLUDESTARTEND); // TODO Replace with spider.def see also further down
 					tb.setGuid(exGuid.findNext());
 					chD.Travelbugs.add(tb);
 				}catch(Exception ex){
@@ -1052,8 +1052,8 @@ public class SpiderGC{
 							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
 						}
 						chD.ImagesText.add(exImgName.findNext()); // Keep the image description
-						while (imgComment.startsWith("<br>")) imgComment=imgComment.substring(4);
-						while (imgComment.endsWith("<BR>")) imgComment=imgComment.substring(0,imgComment.length()-4);
+						while (imgComment.startsWith("<br />")) imgComment=imgComment.substring(6);
+						while (imgComment.endsWith("<br />")) imgComment=imgComment.substring(0,imgComment.length()-6);
 						if (imgComment.length()==0)
 							chD.ImagesInfo.add(null);
 						else
