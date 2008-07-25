@@ -419,7 +419,13 @@ public class SpiderGC{
 				if(distance > 0){
 					page_number++;
 					if(page_number >= 15) page_number = 5;
-					doc = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL("pgrTop$_ctl" +page_number,false)
+					String strNextPage;
+					if (page_number < 10) {
+						strNextPage = "ctl00$ContentBody$pgrTop$ctl0" + page_number;
+					} else {
+						strNextPage = "ctl00$ContentBody$pgrTop$ctl" + page_number;
+					}
+					doc = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strNextPage,false)
 					    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
 					    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
 					    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
