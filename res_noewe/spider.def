@@ -22,6 +22,7 @@
 # Version 3.6 - 20080531 Modified descRex to avoid Stack overflow in exe 
 # Version 3.7 - 20080613 Some lines generalized for proxies replacing the images.
 # Version 4.0 - 20080725 adaption to new GC-design
+# Version 4.1 - 20080725 adaption to new GC-design (images and travelbugs)
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -102,7 +103,7 @@ blockExEnd         = What\ is\ a\ Travel\ Bug?
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
 bugExStart         = <a\ href='
 bugExEnd           = </a></strong></td>
-bugDetailsStart    = id="BugDetail_BugGoal">
+bugDetailsStart    = id="ctl00_ContentBody_BugDetails_BugGoal">
 bugDetailsEnd      = </span>
 getBugByName       = http://www.geocaching.com/track/search.aspx?k=
 getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
@@ -112,7 +113,7 @@ bugGuidExStart     = www.geocaching.com/track/details.aspx?id=
 bugGuidExEnd       = "
 bugNotFound        = No\ results\ were\ found\ for\ your\ search
 bugTotalRecords    = Total\ Records:\ <b>1</b>
-bugNameStart       = <span id="lbHeading">
+bugNameStart       = <span id="ctl00_ContentBody_lbHeading">
 bugNameEnd         = </span>
 
 
@@ -125,12 +126,12 @@ imgBlockExEnd      = >
 # imgSpanEx searches for images in the image section
 imgSpanExStart     = <span\ id="Images"
 imgSpanExEnd       = </span>
-imgNameExStart     = align=absmiddle\ border=0>
-imgNameExEnd       = </a><br/>
-imgSrcExStart      = <A\ HREF='http://
-imgSrcExEnd        = '\ rel='lightbox'
-imgCommentExStart  = </a><br/>
-imgCommentExEnd    = <A\ HREF
+imgNameExStart     = align="absmiddle"\ border="0">
+imgNameExEnd       = </a><br\ />
+imgSrcExStart      = <a\ href="http://
+imgSrcExEnd        = "\ rel="lightbox"
+imgCommentExStart  = </a><br\ />
+imgCommentExEnd    = <a\ href
 
 #--------------------------------------
 #Section2d: Additional waypoints
