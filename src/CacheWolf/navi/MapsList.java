@@ -25,7 +25,7 @@ public class MapsList extends Vector {
 	public static float scaleTolerance = 1.15f; // absolute deviations from this factor are seen to have the same scale
 
 	/**
-	 * loads alle the maps in mapsPath in all subDirs but not recursive, only one level 
+	 * loads all the maps in mapsPath in all subDirs recursive
 	 * @param mapsPath
 	 */
 	public MapsList(String mapsPath) {

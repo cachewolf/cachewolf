@@ -10,7 +10,7 @@ import ewe.util.mString;
 /**
  * @author pfeffer
  * class to fix a bug in ewe.io.File, which occurs only on some systems (e.g. linux): the mask "*.xyz" doesn't work
- * so I get all the files wich null in spite of the mask and filter afterwords 
+ * so I get all the files which null in spite of the mask and filter afterwords
  */
 public class FileBugfix extends File{
 	public FileBugfix(String path) {
@@ -40,8 +40,8 @@ public class FileBugfix extends File{
 		File ewefile = ewe.sys.Vm.newFileObject();
 		ewefile.set(null, name);
 
-		String mask = (compositeMask == null) ? "*.*" : compositeMask; 
-		String[] found; //the following code is mainly copoed from FileBase.listmultiple to avoid recursion it is not called
+		String mask = (compositeMask == null) ? "*.*" : compositeMask;
+		String[] found; //the following code is mainly copied from FileBase.listmultiple to avoid recursion it is not called
 		char c = mask.indexOf(',') == -1 ? ';' : ',';
 		String masks [] = mString.split(mask,c);
 		String dirs [] = new String[0];
@@ -50,7 +50,7 @@ public class FileBugfix extends File{
 		if ((listAndSortOptions & LIST_DIRECTORIES_ONLY) == 0)
 			found = ewefile.list(null,FileBase.LIST_FILES_ONLY|listAndSortOptions); // add files if not dirs only
 		else {
-			found = dirs; // if dirs only -> aplpy masks to the dirs
+			found = dirs; // if dirs only -> apply masks to the dirs
 			dirs = new String[0]; // this line is missing in ewe FileBase.listmultiple -> doubled dirs when using listmultiple with the option dirs_only
 		}
 		if (found == null) return null;
@@ -74,9 +74,11 @@ public class FileBugfix extends File{
 		}
 		String [] isMatching = new String[dirs.length+left];
 		ewe.sys.Vm.copyArray(dirs,0,isMatching,0,dirs.length);
+		for (int i = 0; i < dirs.length; i++)
+			isMatching[i]=isMatching[i].replace('\\', '/'); // on some PDAs a "\" in the path seems to make problems, but it seems that is ewe (files.list) returns sometimes a path containing a "\"
 		for (int i = 0, d = dirs.length; i<found.length; i++)
 			if (found[i] != null)
-				isMatching[d++] = found[i];
+				isMatching[d++] = found[i].replace('\\', '/'); // on some PDAs a "\" in the path seems to make problems, but it seems that is ewe (files.list) returns sometimes a path containing a "\"
 		found = isMatching;
 		return found;
 	}
