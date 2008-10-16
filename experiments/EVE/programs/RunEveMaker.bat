@@ -1,0 +1,1 @@
+java -cp ../classes/eve.jar Eve EveMaker.eve
