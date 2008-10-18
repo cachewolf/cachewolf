@@ -255,7 +255,7 @@ public class SpiderGC{
 			boolean loadAllLogs = (MAXLOGS > 5);
 			ret=getCacheByWaypointName(chD,true,true,false,loadAllLogs);
 			// Save the spidered data
-			if (ret==-1) {
+			if (ret==1) {
 				pref.log("Saving to:" + profile.dataDir);
 				chD.saveCacheDetails(profile.dataDir);
 				((CacheHolder) cacheDB.get(number)).update(chD);
