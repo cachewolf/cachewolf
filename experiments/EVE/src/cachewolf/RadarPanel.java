@@ -50,7 +50,7 @@ public class RadarPanel extends CellPanel{
 	private static Color YELLOW=new Color(255,255,0);
 	private AniImage circle=null;
 	/** Flag to indicate that the background and all caches needs to be redrawn */
-	private static Boolean redrawCaches=true;
+	private static boolean redrawCaches=true;
 	/**
 	* Constructor for the radar panel.
 	* Loads images, sets up the interactive panel and
