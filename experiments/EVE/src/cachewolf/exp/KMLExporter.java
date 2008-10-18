@@ -153,7 +153,7 @@ public class KMLExporter extends Exporter {
 
 	}
 	
-	private void buildOutDB(){
+	private void buildOutDB(){ // TODO untested since EVE
 		CacheHolder ch;
 		Vector tmp;
 		Enumeration categoryLoop;
@@ -165,7 +165,7 @@ public class KMLExporter extends Exporter {
 			outCacheDB[i] = new Hashtable();
 			// create the roots for the cachetypes
 			for (int j = 0; j < CacheType.wayType.length; j++) {
-				outCacheDB[i].put(Integer.toString(CacheType.wayTypeNo[j]), new Vector());
+				outCacheDB[i].put(new Integer(CacheType.wayTypeNo[j]), new Vector());
 			}
 		}
 
@@ -173,12 +173,12 @@ public class KMLExporter extends Exporter {
 		for(int i = 0; i<cacheDB.size(); i++){
 			ch=(CacheHolder)cacheDB.get(i);
 			if(ch.is_black == false && ch.is_filtered == false && !ch.isAddiWpt()){
-				if (ch.is_found) { tmp = (Vector) outCacheDB[FOUND].get(ch.type);}
-				else if (ch.is_owned) { tmp = (Vector) outCacheDB[OWNED].get(ch.type);}
-				else if (ch.is_archived || !ch.is_available){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(ch.type);}
-				else if (ch.is_available){ tmp = (Vector) outCacheDB[AVAILABLE].get(ch.type);}
-				else { tmp = (Vector) outCacheDB[UNKNOWN].get(ch.type);}
-				
+				if (ch.is_found) { tmp = (Vector) outCacheDB[FOUND].get(new Integer(ch.type));} // this "new" is not very efficient as it is only needed because get needs an object, on which it can call hashcode()
+				else if (ch.is_owned) { tmp = (Vector) outCacheDB[OWNED].get(new Integer(ch.type));}
+				else if (ch.is_archived || !ch.is_available){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(new Integer(ch.type));}
+				else if (ch.is_available){ tmp = (Vector) outCacheDB[AVAILABLE].get(new Integer(ch.type));}
+				else { tmp = (Vector) outCacheDB[UNKNOWN].get(new Integer(ch.type));}
+			
 				tmp.add(ch);
 			}
 		}
