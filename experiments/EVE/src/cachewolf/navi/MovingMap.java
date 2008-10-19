@@ -129,13 +129,13 @@ public class MovingMap extends Form {
 			closeX = new DrawnIcon(DrawnIcon.CROSS,30,30,Color.Black);
 		else
 			closeX = new DrawnIcon(DrawnIcon.CROSS,15,15,Color.Black);
-		Image imgButtonClose;
-		buttonImageClose = new AniImage(imgButtonClose=new Image(closeX.getWidth(), closeX.getHeight()));
+		Image imgButtonClose = new Image(closeX.getWidth(), closeX.getHeight());
 		Graphics tmp = new Graphics(imgButtonClose);
 		//tmp.setColor(255, 255, 255);
 		tmp.set(new Brush(Color.White,Brush.SOLID));
 		tmp.fillRect(0, 0, closeX.getWidth(), closeX.getHeight());
 		closeX.doDraw(tmp, 0);
+		buttonImageClose = new AniImage(imgButtonClose);
 		buttonImageClose.properties |= AniImage.AlwaysOnTop;
 		mmp.addImage(buttonImageClose);
 		buttonImageGpsOn.properties = AniImage.AlwaysOnTop;
