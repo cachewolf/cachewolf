@@ -7,7 +7,7 @@ public final class Common {
 
 	private static char digSep=MyLocale.getDigSeparator().charAt(0);
 	private static char notDigSep=MyLocale.getDigSeparator().charAt(0)=='.'?',':'.';
-	
+
 	/**
 	 * get double value from string. It interpretes "." and "," as decimal separator
 	 * when the string cannot be interpreted, return 0.
@@ -31,7 +31,7 @@ public final class Common {
 	public static double parseDoubleException (String value) {
 			return java.lang.Double.parseDouble(value.replace(notDigSep,digSep));
 	}
-	
+
 	public static int parseInt(String value){
 		try {
 			return java.lang.Integer.parseInt(value);
@@ -46,10 +46,12 @@ public final class Common {
 	 * @return Formatted number
 	 */
 	public static String doubleToString(double d, int decimalplaces) {
-		String format="0.0000000000".substring(0,decimalplaces+2);
-		return MyLocale.formatDouble(d, format).replace(',', '.');
+		String format;
+		if (decimalplaces > 0) format="0.0000000000".substring(0,decimalplaces+2);
+		else format = "0";
+ 		return MyLocale.formatDouble(d, format).replace(',', '.');
 	}
-	
+
 	/**
 	 * (De)codes the given text with rot13.
 	 * Text in [] won't be (de)coded.
@@ -65,25 +67,25 @@ public final class Common {
 
 			if (convert && ((c >= 'a' && c <= 'm') || (c >= 'A' && c <= 'M'))) {
 				dummy[i] = (char) (c + 13);
-			} 
+			}
 			else if (convert && ((c >= 'n' && c <= 'z') || (c >= 'N' && c <= 'Z'))) {
 				dummy[i] = (char) (c - 13);
-			} 
+			}
 			else if (c == '[') {
 				convert = false;
 				dummy[i] = '[';
-			} 
+			}
 			else if (c == ']') {
 				convert = true;
 				dummy[i] = ']';
-			} 
+			}
 			else {
 				dummy[i] = c;
 			}
 		}// for
 		return new String(dummy);
 	}
-	
+
 /* Not used. SKG 20080316
   	public static String stringToHex(String str){
 		StringBuffer strBuf = new StringBuffer();
@@ -98,18 +100,18 @@ public final class Common {
 		strBuf.append(strHex);
 		return strBuf.toString();
 	}
-*/	
+*/
 	public static String clearForFileName(String str) {
 		String ret = str.replace('?', '_');
 		ret = ret.replace(' ', '-');
 		ret = ret.replace(':', '-');
 		return ret;
 	}
-	
+
 	/**
 	 * finds the correct (existing) extension to an image filename
 	 * @param filename without extension
-	 * @return filename with extension 
+	 * @return filename with extension
 	 */
 	static public String getImageName(String name) {
 		String fileName;
@@ -135,11 +137,11 @@ public final class Common {
 		if (dot < 0) return "";
 		return fn.substring(dot, fn.length());
 	}
-	
+
 	public static String fixSerialPortName(String name) {
-		if (name.startsWith("/")) 
+		if (name.startsWith("/"))
 			return new String(".."+name); // on linux (*nix) machines it is quite usual to give the complete file path to the serial port, but ewe expects only "ttyS0" or similar
-		else                      
+		else
 			return name;
 	}
 
