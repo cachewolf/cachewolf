@@ -568,7 +568,7 @@ public class SpiderGC{
 						// Save size of logs to be able to check whether any new logs were added
 						//int logsz = chD.CacheLogs.size();
 						//chD.CacheLogs.clear();
-						chD.addiWpts.clear();
+						if (chD.hasAddiWpt()) chD.addiWpts.clear();
 						chD.images.clear();
 						chD.imagesText.clear();
 						chD.imagesInfo.clear();

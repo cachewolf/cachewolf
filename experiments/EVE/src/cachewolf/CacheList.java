@@ -327,6 +327,7 @@ public class CacheList extends CellPanel {
 		// Add addis if user wants it
 		if (chkAddAddis.state && ch.hasAddiWpt()) {
 			CacheHolder addiWpt;
+			ch.allocAddiMem();
 			for (int j=0; j<ch.addiWpts.size();j++){
 				addiWpt = (CacheHolder)ch.addiWpts.get(j);
 				if (!addiWpt.is_filtered) cachesAdded|=addCache(addiWpt);

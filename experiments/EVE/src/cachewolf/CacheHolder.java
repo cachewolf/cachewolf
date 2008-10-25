@@ -15,7 +15,7 @@ import cachewolf.utils.SafeXML;
  *	A class to hold information on a cache.<br>
  *	Not all attributes are filled at once. You will have to look at other
  *	classes and methods to get more information.
- *	
+ *
  */
 public class CacheHolder {
 	protected static final String NODISTANCE = "? km";
@@ -46,12 +46,12 @@ public class CacheHolder {
 	public String bearing = NOBEARING;
 	/** The angle (0=North, 180=South) from the current centre to this point */
 	public double degrees = 0;
-	/** The difficulty of the cache from 1 to 5 in .5 incements */ 
+	/** The difficulty of the cache from 1 to 5 in .5 incements */
 	public String hard = EMPTY;
 	/** The terrain rating of the cache from 1 to 5 in .5 incements */
 	public String terrain = EMPTY;
 	/** The cache type (@see CacheType for translation table)  */
-	public int type = 0; 
+	public int type = 0;
 	/** True if the cache has been archived */
 	public boolean is_archived = false;
 	/** True if the cache is available for searching */
@@ -93,7 +93,7 @@ public class CacheHolder {
 	/** True if the cache description is stored in HTML format */
 	public boolean is_HTML = true;
 	/** List of additional waypoints associated with this waypoint */
-	public Vector addiWpts = new Vector();
+	public Vector addiWpts = null; // Don't allocate a vector unless the waypoint really has addis - this will save time and memory
 	/** in range is used by the route filter to identify caches in range of a segment*/
 	public boolean in_range = false;
 	/** If this is an additional waypoint, this links back to the main waypoint */
@@ -102,7 +102,7 @@ public class CacheHolder {
 	public String lastSyncOC = EMPTY;
 	public CacheHolderDetail details = null;
 	/** When sorting the cacheDB this field is used. The relevant field is copied here and
-	 *  the sort is always done on this field to speed up the sorting process 
+	 *  the sort is always done on this field to speed up the sorting process
 	 */
 	public String sort;
 	private static StringBuffer sb=new StringBuffer(530); // Used in toXML()
@@ -129,7 +129,7 @@ public class CacheHolder {
 		try {
 			start=xmlString.indexOf('"'); end=xmlString.indexOf('"',start+1);
 			cacheName = SafeXML.cleanback(xmlString.substring(start+1,end));
-			
+
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
             cacheOwner = SafeXML.cleanback(xmlString.substring(start+1,end));
 			// Assume coordinates are in decimal format
@@ -142,7 +142,7 @@ public class CacheHolder {
 			latLon=pos.toString();
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			dateHidden = xmlString.substring(start+1,end); 
+			dateHidden = xmlString.substring(start+1,end);
 			// Convert the US format to YYYY-MM-DD if necessary
 			if (dateHidden.indexOf('/')>-1) dateHidden=DateFormat.MDY2YMD(dateHidden);
 
@@ -163,7 +163,7 @@ public class CacheHolder {
 
 			// The next item was 'dirty' but this is no longer used.
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_filtered = xmlString.substring(start+1,end).equals("true"); 
+			is_filtered = xmlString.substring(start+1,end).equals("true");
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 			cacheSize = xmlString.substring(start+1,end);
@@ -303,7 +303,7 @@ public class CacheHolder {
 
 	public String getStatusDate() {
 		String statusDate = "";
-		
+
 		if (is_found) {
 			Regex rexDate=new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
 			rexDate.search(cacheStatus);
@@ -312,7 +312,7 @@ public class CacheHolder {
 			}
 		}
 
-		return statusDate;		
+		return statusDate;
 	}
 
 	public String getStatusTime() {
@@ -332,12 +332,12 @@ public class CacheHolder {
 				}
 			}
 		}
-		return statusTime;		
+		return statusTime;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Call it only when necessary, it takes time, because all logs must be parsed
 	 *
@@ -368,39 +368,39 @@ public class CacheHolder {
 		details.numRecommended = numRecommended;
 		}
 	}
-	
+
 	/** Return a XML string containing all the cache data for storing in index.xml */
 	public String toXML() {
-		if (this instanceof CacheHolderDetail || (details != null && details.hasUnsavedChanges)) calcRecommendationScore(); 
+		if (this instanceof CacheHolderDetail || (details != null && details.hasUnsavedChanges)) calcRecommendationScore();
 		sb.delete(0,sb.length());
 		sb.append("    <CACHE name = \"");
 		sb.append(SafeXML.clean(cacheName));
 		sb.append("\" owner = \"");		sb.append(SafeXML.clean(cacheOwner));
-		sb.append("\" lat = \""); 		sb.append(pos.latDec ); 
+		sb.append("\" lat = \""); 		sb.append(pos.latDec );
 		sb.append("\" lon = \"");		sb.append(pos.lonDec);
 		sb.append("\" hidden = \"");	sb.append(dateHidden);
 		sb.append("\" wayp = \"");		sb.append(SafeXML.clean(wayPoint));
 		sb.append("\" status = \"");	sb.append(cacheStatus);
 		sb.append("\" type = \"");		sb.append(type);
 		sb.append("\" dif = \"");		sb.append(hard);
-		sb.append("\" terrain = \"" );	sb.append(terrain ); 
+		sb.append("\" terrain = \"" );	sb.append(terrain );
 		sb.append("\" filtered = \"" ); sb.append(is_filtered); // This was 'dirty', but dirty is not used
 		sb.append("\" size = \"");		sb.append(cacheSize);
-		sb.append("\" online = \"" );	sb.append(is_available); 
-		sb.append("\" archived = \"" );	sb.append(is_archived); 
-		sb.append("\" has_bug = \"" ); 	sb.append(has_bug); 
-		sb.append("\" black = \"" ); 	sb.append(is_black); 
-		sb.append("\" owned = \"" ); 	sb.append(is_owned); 
-		sb.append("\" found = \"" ); 	sb.append(is_found); 
+		sb.append("\" online = \"" );	sb.append(is_available);
+		sb.append("\" archived = \"" );	sb.append(is_archived);
+		sb.append("\" has_bug = \"" ); 	sb.append(has_bug);
+		sb.append("\" black = \"" ); 	sb.append(is_black);
+		sb.append("\" owned = \"" ); 	sb.append(is_owned);
+		sb.append("\" found = \"" ); 	sb.append(is_found);
 		sb.append("\" is_new = \"" );	sb.append(is_new);
-		sb.append("\" is_log_update = \"" );sb.append(is_log_update); 
-		sb.append("\" is_update = \"" );sb.append(is_update); 
-		sb.append("\" is_HTML = \"" ); 	sb.append(is_HTML); 
-		sb.append("\" DNFLOGS = \"" ); 	sb.append(noFindLogs ); 
-		sb.append("\" ocCacheID = \"" );sb.append(ocCacheID ); 
-		sb.append("\" is_INCOMPLETE = \"");sb.append(is_incomplete); 
-		sb.append("\" lastSyncOC = \"" );sb.append(lastSyncOC ); 
-		sb.append("\" num_recommended = \"");sb.append(Convert.formatInt(numRecommended)); 
+		sb.append("\" is_log_update = \"" );sb.append(is_log_update);
+		sb.append("\" is_update = \"" );sb.append(is_update);
+		sb.append("\" is_HTML = \"" ); 	sb.append(is_HTML);
+		sb.append("\" DNFLOGS = \"" ); 	sb.append(noFindLogs );
+		sb.append("\" ocCacheID = \"" );sb.append(ocCacheID );
+		sb.append("\" is_INCOMPLETE = \"");sb.append(is_incomplete);
+		sb.append("\" lastSyncOC = \"" );sb.append(lastSyncOC );
+		sb.append("\" num_recommended = \"");sb.append(Convert.formatInt(numRecommended));
 		sb.append("\" num_found = \"" );sb.append(Convert.formatInt(numFoundsSinceRecommendation));
 		sb.append("\" attributesYes = \"" ); sb.append(Convert.formatLong(attributesYes));
 		sb.append("\" attributesNo = \"" ); sb.append(Convert.formatLong(attributesNo));
@@ -420,13 +420,19 @@ public class CacheHolder {
 	}
 
 	public boolean hasAddiWpt() {
-		if (this.addiWpts.size()>0) 
+		if (addiWpts==null) return false;
+		if (this.addiWpts.size()>0)
 			return true;
 		return false;
 	}
 
+	/** Allocate space for addi waypoints */
+	public void allocAddiMem() {
+		if (addiWpts==null) addiWpts=new Vector();
+	}
 
-	public void calcDistance(CWPoint toPoint) {	
+
+	public void calcDistance(CWPoint toPoint) {
 		if(pos.isValid()){
 			kilom = pos.getDistance(toPoint);
 			degrees = toPoint.getBearing(pos);
@@ -459,7 +465,7 @@ public class CacheHolder {
 	}
 
 	/**
-	 * True if ch and this belong to the same main cache. 
+	 * True if ch and this belong to the same main cache.
 	 * @param ch
 	 * @return
 	 */
@@ -470,40 +476,40 @@ public class CacheHolder {
 		CacheHolder main1, main2;
 		if (this.isAddiWpt()) main1 = this.mainCache;  else main1 = this;
 		if (ch instanceof CacheHolderDetail) {
-			if (ch.isAddiWpt()) 
+			if (ch.isAddiWpt())
 				main2=ch.mainCache;
-			else 
+			else
 				return main1.wayPoint.equals(ch.wayPoint);
-			} else { // ch instanceof CacheHolder 
-				if (ch.isAddiWpt()) main2 = ch.mainCache; else main2 = ch; 
+			} else { // ch instanceof CacheHolder
+				if (ch.isAddiWpt()) main2 = ch.mainCache; else main2 = ch;
 			}
 		return main1 == main2;
 	}
 
-	/** 
+	/**
 	 * Call this method to get the long-description and so on.
 	 * If the according .xml-file is already read, it will return
 	 * that one, otherwise it will be loaded.
 	 * To avoid memory problems this routine loads not for more caches than maxDetails
-	 * the details. If maxdetails is reached, it will remove from RAM the details 
+	 * the details. If maxdetails is reached, it will remove from RAM the details
 	 * of the 5 caches that were loaded most long ago.
 	 */
 	public CacheHolderDetail getCacheDetails(boolean maybenew) {
 		return getCacheDetails(maybenew, true);
 	}
-	
-	/** 
+
+	/**
 	 * Call this method to get the long-description and so on.
 	 * If the according .xml-file is already read, it will return
 	 * that one, otherwise it will be loaded.
 	 * To avoid memory problems this routine loads not for more caches than maxDetails
-	 * the details. If maxdetails is reached, it will remove from RAM the details 
+	 * the details. If maxdetails is reached, it will remove from RAM the details
 	 * of the 5 caches that were loaded most long ago.
-	 * 
+	 *
 	 * @param alarmuser if true an error message will be displayed to the user, if the details could not be read
 	 * @return the respective CacheHolderDetail, null if according xml-file could not be read
 	 */
-		
+
 	public CacheHolderDetail getCacheDetails(boolean maybenew, boolean alarmuser) {
 		if (details != null) {
 			if (details.hasUnsavedChanges) this.update(details);
@@ -518,14 +524,14 @@ public class CacheHolder {
 			else {
 				if (alarmuser) (new MessageBox("Error", "Could not read cache details for cache: "+this.wayPoint, MessageBox.OKB)).execute();
 				return null;
-			} 
+			}
 		}
 		detailsAdded();
 		return details;
 	}
 
 	/**
-	 * Call this after you added the cache with details to the 
+	 * Call this after you added the cache with details to the
 	 * cacheDB <br> It is assumed that that details is set
 	 * for an example see OCXMLImporter.endCache()
 	 *
@@ -545,7 +551,7 @@ public class CacheHolder {
 		cachesWithLoadedDetails.remove(this);
 	}
 
-	//final static int maxDetails = 50; 
+	//final static int maxDetails = 50;
 	static Vector cachesWithLoadedDetails = new Vector(Global.getPref().maxDetails);
 
 	public static void removeOldestDetails() {

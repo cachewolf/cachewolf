@@ -472,6 +472,7 @@ public class Profile {
 		if (mainindex < 0) mainindex = getCacheIndex("CW"+mainwpt);
 		if (mainindex < 0) throw new IllegalArgumentException("no main cache found for: " + ch.wayPoint);
 		CacheHolder mainch = (CacheHolder)cacheDB.get(mainindex);
+		mainch.allocAddiMem();
 		mainch.addiWpts.add(ch);
 		ch.mainCache = mainch;
 	}
@@ -559,7 +560,7 @@ public class Profile {
 		// Build index for faster search and clear all references
 		for(int i = cacheDB.size() -1; i >= 0;i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.addiWpts.clear();
+			if (ch.hasAddiWpt() )ch.addiWpts.clear();
 			ch.mainCache = null;
 			// if (ch.wayPoint.startsWith("GC")) // Only put potential master caches into the index
 				dbIndex.put(ch.wayPoint, new Integer(i));
@@ -578,6 +579,7 @@ public class Profile {
 
 				if (index != null) {
 					mainCh = (CacheHolder) cacheDB.get(index.intValue());
+					mainCh.allocAddiMem();
 					mainCh.addiWpts.add(ch);
 					ch.mainCache = mainCh;
 					ch.setAttributesFromMainCache(mainCh);
