@@ -1399,7 +1399,7 @@ public class Parser{
 		CacheHolder ch = new CacheHolder();
 		ch.wayPoint = wayPoint;
 		ch.type = type;
-		ch.cacheSize = "None";
+		ch.setCacheSize("None");
 		ch.cacheName= name;
 
 		Global.getProfile().hasUnsavedChanges=true;

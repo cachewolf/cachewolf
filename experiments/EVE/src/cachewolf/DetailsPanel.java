@@ -11,7 +11,7 @@ import eve.ui.event.*;
 *	Class to create the panel to show the cache details.<br>
 *	Also allows for creation of a custom waypoint.<br>
 *
-*   
+*
 */
 public class DetailsPanel extends CellPanel{
 	Input inpWaypoint = new Input();
@@ -21,29 +21,29 @@ public class DetailsPanel extends CellPanel{
 	Input inpOwner = new Input();
 	Button btnAddDateTime;
 	Choice chcType = new Choice(CacheType.wayTypeList(),0);
-	Choice chcSize = new Choice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
+	Choice chcSize = new Choice(CacheHolder.cacheSizeList,0);
 	ComboBox chcStatus = new ComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
 	Button btnNewWpt, btnShowBug, btnShowMap, btnGoto, btnAddPicture, btnBlack, btnNotes;
 	Button btnFoundDate,btnHiddenDate;
 	CacheHolder thisCache;
-	Panel pnlTools = new Panel(); 
+	Panel pnlTools = new Panel();
 	AttributesViewer attV;
 	TextPad mNotes;
-	
+
 	private boolean dirty_notes = false;
 	private boolean dirty_details = false;
 	private boolean blackStatus = false;
 	private boolean blackStatusChanged=false;
 	private boolean needsTableUpdate = false;
 	private boolean isBigScreen = false;
-	
+
 	Preferences pref; // Test
 	Profile profile;
 	Picture imgBlack;
 	Picture imgBlackNo;
 	Picture imgShowBug, imgShowBugNo;
 	Label lblDiff, lblTerr;
-	
+
 	public DetailsPanel(){
 		pref = Global.getPref();
 		profile=Global.getProfile();
@@ -54,9 +54,9 @@ public class DetailsPanel extends CellPanel{
 		// Use larger Button-Icons on VGA-mobiles
 		int sw = MyLocale.getScreenWidth();
 		String imagesize="";
-		if (eve.sys.Device.isMobile() && sw >= 400) imagesize="_vga";  
+		if (eve.sys.Device.isMobile() && sw >= 400) imagesize="_vga";
 		// Button 1: New Waypoint
-		pnlTools.addNext(btnNewWpt = new Button(new Picture("newwpt"+imagesize+".png",new Color(255,0,0),0))); 
+		pnlTools.addNext(btnNewWpt = new Button(new Picture("newwpt"+imagesize+".png",new Color(255,0,0),0)));
 		btnNewWpt.setToolTip(MyLocale.getMsg(311,"Create Waypoint"));
 		PenEvent.wantPenMoved(btnNewWpt,PenEvent.WANT_PEN_MOVED_ONOFF,true);
 		// Button 2: Goto
@@ -65,30 +65,30 @@ public class DetailsPanel extends CellPanel{
 		// Button 3: Travelbugs
 		imgShowBug = new Picture("bug"+imagesize+".gif");
 		imgShowBugNo = new Picture("bug_no"+imagesize+".gif");
-		pnlTools.addNext(btnShowBug = new Button(imgShowBugNo)); 
+		pnlTools.addNext(btnShowBug = new Button(imgShowBugNo));
 		//btnShowBug.modify(Control.Disabled,0);
 		btnShowBug.setToolTip(MyLocale.getMsg(346,"Show travelbugs"));
 		// Button 4: Show Map
-		pnlTools.addNext(btnShowMap = new Button(new Picture("globe_small"+imagesize+".gif"))); 
+		pnlTools.addNext(btnShowMap = new Button(new Picture("globe_small"+imagesize+".gif")));
 		btnShowMap.setToolTip(MyLocale.getMsg(347,"Show map"));
 		// Button 5: Add images
-		pnlTools.addNext(btnAddPicture = new Button(new Picture("images"+imagesize+".gif"))); 
+		pnlTools.addNext(btnAddPicture = new Button(new Picture("images"+imagesize+".gif")));
 		btnAddPicture.setToolTip(MyLocale.getMsg(348,"Add user pictures"));
 		// Button 6: Toggle blacklist status
-		imgBlackNo = new Picture("no_black"+imagesize+".png",Color.Black,0); 
-		imgBlack = new Picture("is_black"+imagesize+".png",Color.White,0); 
-		pnlTools.addNext(btnBlack=new Button(imgBlackNo)); 
+		imgBlackNo = new Picture("no_black"+imagesize+".png",Color.Black,0);
+		imgBlack = new Picture("is_black"+imagesize+".png",Color.White,0);
+		pnlTools.addNext(btnBlack=new Button(imgBlackNo));
 		btnBlack.setToolTip(MyLocale.getMsg(349,"Toggle Blacklist status"));
 		// Button 7: Notes
-		pnlTools.addNext(btnNotes=new Button(new Picture("notes"+imagesize+".gif",Color.DarkBlue,0))); 
+		pnlTools.addNext(btnNotes=new Button(new Picture("notes"+imagesize+".gif",Color.DarkBlue,0)));
 		btnNotes.setToolTip(MyLocale.getMsg(351,"Add/Edit notes"));
 		// Button 8: Date/time stamp
-		pnlTools.addLast(btnAddDateTime = new Button(new Picture("date_time"+imagesize+".png"))); 
+		pnlTools.addLast(btnAddDateTime = new Button(new Picture("date_time"+imagesize+".png")));
 		btnAddDateTime.setToolTip(MyLocale.getMsg(350,"Add timestamp to notes"));
 		//showMap.modify(Control.Disabled,0);
 		pnlTools.stretchFirstRow=true;
 		this.addLast(pnlTools,CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(TAG_SPAN,new Dimension(3,1));;
-		
+
 		////////////////////
 		// Main body of screen
 		////////////////////
@@ -98,49 +98,49 @@ public class DetailsPanel extends CellPanel{
 		line1Panel.addNext(chcType,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		line1Panel.addLast(lblDiff=new Label(MyLocale.getMsg(1000,"D")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
 		this.addLast(line1Panel,HSTRETCH,HFILL);
-		
+
 		this.addNext(new Label(MyLocale.getMsg(301,"Size:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		Panel line2Panel = new Panel(); line2Panel.stretchFirstColumn=true; 	
+		Panel line2Panel = new Panel(); line2Panel.stretchFirstColumn=true;
 		line2Panel.addNext(chcSize,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		line2Panel.addLast(lblTerr=new Label(MyLocale.getMsg(1001,"T")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
-		this.addLast(line2Panel,HSTRETCH,HFILL); 
-		
+		this.addLast(line2Panel,HSTRETCH,HFILL);
+
 		this.addNext(new Label(MyLocale.getMsg(302,"Waypoint:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(inpWaypoint,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		
+
 		this.addNext(new Label(MyLocale.getMsg(303,"Name:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(inpName,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		
+
 		this.addNext(new Label(MyLocale.getMsg(304,"Location:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(btnWayLoc,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		
+
 		this.addNext(new Label(MyLocale.getMsg(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		Panel cp=new Panel(); cp.stretchFirstColumn=true;
 		cp.addNext(chcStatus,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		cp.addLast(btnFoundDate=new Button(new Picture("calendar"+imagesize+".png")),DONTSTRETCH,DONTFILL);
 		this.addLast(cp,HSTRETCH,HFILL);
-		
+
 		this.addNext(new Label(MyLocale.getMsg(306,"Owner:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		this.addLast(inpOwner,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		
+
 		this.addNext(new Label(MyLocale.getMsg(305,"Hidden on:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		Panel ip=new Panel(); ip.stretchFirstColumn=true;
 		ip.addNext(inpHidden,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		ip.addLast(btnHiddenDate=new Button(new Picture("calendar"+imagesize+".png")),DONTSTRETCH,DONTFILL);
 		this.addLast(ip,HSTRETCH,HFILL);
 		inpHidden.modifyAll(DisplayOnly,0);
-		
+
 		attV=new AttributesViewer();
 		this.addLast(attV);
 		if ((MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600)){
-			isBigScreen = true;  
+			isBigScreen = true;
 			this.addLast(new Label(MyLocale.getMsg(308,"Notes:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			mNotes = new TextPad();
 			mNotes.modify(ControlConstants.NotEditable,0);
 			this.addLast(new MyScrollBarPanel(mNotes));
 		}
 	}
-	
+
 	public void clear() {
 		attV.clear();
 	}
@@ -158,8 +158,8 @@ public class DetailsPanel extends CellPanel{
 	public boolean hasBlackStatusChanged() {
 		return blackStatusChanged;
 	}
-	
-	
+
+
 	/**
 	* @param chD details of the cache to display
 	* @param dbindex index in cacheDB, in which changes will be saved
@@ -186,7 +186,7 @@ public class DetailsPanel extends CellPanel{
 		} else {
 			btnBlack.image = imgBlackNo;
 		}
-		blackStatus=ch.is_black; 
+		blackStatus=ch.is_black;
 		blackStatusChanged=false;
 		btnBlack.repaintNow();
 		if (inpWaypoint.getText().length() == 0)
@@ -199,20 +199,13 @@ public class DetailsPanel extends CellPanel{
 			btnShowBug.image = imgShowBugNo;
 		}
 		btnShowBug.repaintNow();
-		if(ch.cacheSize.equals("Micro")) chcSize.setInt(1);
-		if(ch.cacheSize.equals("Small")) chcSize.setInt(2);
-		if(ch.cacheSize.equals("Regular")) chcSize.setInt(3);
-		if(ch.cacheSize.equals("Large")) chcSize.setInt(4);
-		if(ch.cacheSize.equals("Other")) chcSize.setInt(5);
-		if(ch.cacheSize.equals("Very Large")) chcSize.setInt(6);
-		if(ch.cacheSize.equals("None")) chcSize.setInt(7);
-		if(ch.cacheSize.equals("Not chosen")) chcSize.setInt(7);
+		chcSize.setInt(ch.cacheSize);
 		attV.showImages(ch.getCacheDetails(true).attributes);
 		lblTerr.setText((ch.terrain.length()>0) ? (MyLocale.getMsg(1001,"T")+": "+ch.terrain) : "");
-		lblDiff.setText((ch.hard.length()>0)    ? (MyLocale.getMsg(1000,"D")+": "+ch.hard) : ""); 
+		lblDiff.setText((ch.hard.length()>0)    ? (MyLocale.getMsg(1000,"D")+": "+ch.hard) : "");
 		if(isBigScreen)	mNotes.setText(ch.details.cacheNotes);	}
-	
-	
+
+
 	/**
 	*	Translate the cache type to the value in the cache type dropdown
 	*	control.
@@ -222,7 +215,7 @@ public class DetailsPanel extends CellPanel{
 		if (c_type<0) c_type=0;
 		return c_type;
 	}
-	
+
 	/**
 	*	Method to translate a selected cache type in the drop down control
 	*	to a "true" cache type.<br>
@@ -232,28 +225,28 @@ public class DetailsPanel extends CellPanel{
 	public int transSelect(int num){
 		return CacheType.wayTypeNo[num];
 	}
-	
+
 	/**
 	 * if is addi -> returns the respective AddiWpt
-	 * if is main -> returns the respective MainWpt 
+	 * if is main -> returns the respective MainWpt
 	 *
 	 */
 	public void createWptName() {
 		String wpt = inpWaypoint.getText().toUpperCase();
-		if (CacheType.isAddiWpt(transSelect(chcType.getInt())) && 
+		if (CacheType.isAddiWpt(transSelect(chcType.getInt())) &&
 				(Global.mainTab.mainCache.startsWith("GC")||Global.mainTab.mainCache.startsWith("OC")||Global.mainTab.mainCache.startsWith("CW")) &&
 				wpt.startsWith("CW")) {
 			// for what was this?:
 			Global.mainTab.lastselected=Global.mainTab.mainCache; //I don't know exactly, but it's needed for creating a series of Addis
-			
+
 			inpWaypoint.setText(Global.getProfile().getNewAddiWayPointName(Global.mainTab.mainCache));
-		} 
-		if (!CacheType.isAddiWpt(transSelect(chcType.getInt())) && !(wpt.startsWith("GC") 
+		}
+		if (!CacheType.isAddiWpt(transSelect(chcType.getInt())) && !(wpt.startsWith("GC")
 				|| wpt.startsWith("OC") || wpt.startsWith("CW")) ) {
 			inpWaypoint.setText(Global.getProfile().getNewWayPointName());
 		}
 	}
-	
+
 	/**
 	*	Method to react to a user input.
 	*/
@@ -275,7 +268,7 @@ public class DetailsPanel extends CellPanel{
 				dirty_notes=true; // TODO I think this is redundant, because the notes are saved seperately by the notes screen itself
 				NotesScreen nsc = new NotesScreen(thisCache.getCacheDetails(true));
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
-				if(isBigScreen) mNotes.setText(thisCache.getCacheDetails(true).cacheNotes);	
+				if(isBigScreen) mNotes.setText(thisCache.getCacheDetails(true).cacheNotes);
 			} else if(ev.target == btnShowMap){
 				Global.mainTab.switchToMovingMap(thisCache.pos, true);
 /*				try {
@@ -295,7 +288,7 @@ public class DetailsPanel extends CellPanel{
 				if (!cp.isValid()){
 					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), MessageBox.OKB);
 					tmpMB.exec();
-				} else {				
+				} else {
 					pref.curCentrePt.set(cp);
 					Global.mainTab.updateBearDist();
 				}
@@ -352,7 +345,7 @@ public class DetailsPanel extends CellPanel{
 				}
 			} else if (ev.target==btnFoundDate) {
 				DateTimeChooser dc=new DateTimeChooser(Vm.getLocale(), true);
-				dc.title=MyLocale.getMsg(328,"Date found"); 
+				dc.title=MyLocale.getMsg(328,"Date found");
 				dc.setPreferredSize(240,240);
 				String foundDate=chcStatus.getText();
 				if (foundDate.startsWith(MyLocale.getMsg(318,"Found")+" ")) foundDate=foundDate.substring(MyLocale.getMsg(318,"Found").length()+1);
@@ -373,7 +366,7 @@ public class DetailsPanel extends CellPanel{
 			} else if (ev.target==btnHiddenDate) {
 				//DateTimeChooser.dayFirst=true;
 				DateTimeChooser dc=new DateTimeChooser(Vm.getLocale(),false);
-				dc.title=MyLocale.getMsg(329,"Hidden date"); 
+				dc.title=MyLocale.getMsg(329,"Hidden date");
 				dc.setPreferredSize(240,240);
 				if (inpHidden.getText().length()==10)
 				try {
@@ -393,31 +386,31 @@ public class DetailsPanel extends CellPanel{
 			ev.consumed=true;
 		}
 	}
-	
+
 	public void saveDirtyWaypoint() {
-		// We have to update two objects: thisCache (a CacheHolderDetail) which contains 
+		// We have to update two objects: thisCache (a CacheHolderDetail) which contains
 		// the full cache which will be written to the cache.xml file AND
 		// the CacheHolder object which sits in cacheDB
 		  // Strip the found message if the status contains a date
-		if (chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found")) && 
+		if (chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found")) &&
 				  chcStatus.getText().length()>=MyLocale.getMsg(318,"Found").length()+11)
 			  thisCache.cacheStatus = chcStatus.getText().substring(MyLocale.getMsg(318,"Found").length()+1);
-		  else	  
+		  else
 			  thisCache.cacheStatus = chcStatus.getText();
 		  thisCache.is_found = chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found"));
 		  thisCache.cacheOwner = inpOwner.getText().trim();
 		  thisCache.is_owned = thisCache.cacheStatus.equals(MyLocale.getMsg(320,"Owner"));
 		  // Avoid setting is_owned if alias is empty and username is empty
 		  if(thisCache.is_owned == false){
-			  thisCache.is_owned = (!pref.myAlias.equals("") && pref.myAlias.equals(thisCache.cacheOwner)) || 
+			  thisCache.is_owned = (!pref.myAlias.equals("") && pref.myAlias.equals(thisCache.cacheOwner)) ||
 					        (!pref.myAlias2.equals("") && pref.myAlias2.equals(thisCache.cacheOwner));
 		  }
 		  thisCache.is_black = blackStatus;
 		  String oldWaypoint=thisCache.wayPoint;
 		  thisCache.wayPoint = inpWaypoint.getText().toUpperCase().trim();
-		  thisCache.cacheSize = chcSize.getText();
+		  thisCache.setCacheSize(chcSize.getText());
 		  // If the waypoint does not have a name, give it one
-		  if (thisCache.wayPoint.equals("")) { 
+		  if (thisCache.wayPoint.equals("")) {
 			  thisCache.wayPoint=profile.getNewWayPointName();
 		  }
 		  //Don't allow single letter names=> Problems in updateBearingDistance
@@ -431,11 +424,11 @@ public class DetailsPanel extends CellPanel{
 		 // thisCache.saveCacheDetails(profile.dataDir); // this is redundant, because all changes affecting the details are immediately saved
 		  // Now update the table
 		  CacheHolder ch = thisCache; // TODO variable ch is redundant
-		  
+
 	  /* The references have to be rebuilt if:
 	   *   - the cachetype changed from addi->normal or normal->addi
-	   *   - the old cachetype or the new cachetype were 'addi' and 
-	   *     the waypointname has changed 
+	   *   - the old cachetype or the new cachetype were 'addi' and
+	   *     the waypointname has changed
 	   */
 	  if (CacheType.isAddiWpt(ch.type)!=CacheType.isAddiWpt(oldType) ||
 		 ((CacheType.isAddiWpt(ch.type) || CacheType.isAddiWpt(oldType)) &&
@@ -455,7 +448,7 @@ public class DetailsPanel extends CellPanel{
 				  }
 				  profile.buildReferences(); // TODO this takes quite long -> use profile.setAddiRef instead
 			  } else {
-				  profile.buildReferences(); // we have to do this to release the link between the two caches  
+				  profile.buildReferences(); // we have to do this to release the link between the two caches
 			  }
 		  }
 		  // set status also on addi wpts
@@ -468,11 +461,11 @@ public class DetailsPanel extends CellPanel{
 	}
 
 	private class TravelbugInCacheScreen extends Form {
-		
+
 		private DispPanel disp = new DispPanel();
 		private Button btCancel;
 		private TravelbugJourneyList tbjList;
-		
+
 		TravelbugInCacheScreen(String text, String title) {
 			this.title=title;
 			this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
@@ -499,7 +492,7 @@ public class DetailsPanel extends CellPanel{
 				TBMenuItems[0]= mnuPickupTB = new MenuItem(MyLocale.getMsg(6016,"Pick up Travelbug"));
 				TBMenuItems[1]= mnuDropTB = new MenuItem(MyLocale.getMsg(6017,"Drop Travelbug"));
 				mnuPopup=new Menu(TBMenuItems,"");
-			} 
+			}
 			public void penRightReleased(Point p){
 				setMenu(mnuPopup);
 				doShowMenu(p); // direct call (not through doMenu) is neccesary because it will exclude the whole table
@@ -509,8 +502,8 @@ public class DetailsPanel extends CellPanel{
 				doShowMenu(p);
 			}
 			public void popupMenuEvent(Object selectedItem){
-				if (selectedItem==mnuPickupTB) { 
-					Travelbug tb=TravelbugPickup.pickupTravelbug(thisCache.getCacheDetails(true).travelbugs);	
+				if (selectedItem==mnuPickupTB) {
+					Travelbug tb=TravelbugPickup.pickupTravelbug(thisCache.getCacheDetails(true).travelbugs);
 					if (tb!=null) {
 						dirty_details=true;
 						// Get the list of my travelbugs
@@ -522,7 +515,7 @@ public class DetailsPanel extends CellPanel{
 						tbjList=null;
 						setHtml(thisCache.getCacheDetails(true).travelbugs.toHtml());
 						repaint();
-						thisCache.has_bug=thisCache.getCacheDetails(true).travelbugs.size()>0;						
+						thisCache.has_bug=thisCache.getCacheDetails(true).travelbugs.size()>0;
 					}
 				} else if (selectedItem==mnuDropTB) {
 					tbjList=new TravelbugJourneyList();
@@ -541,18 +534,18 @@ public class DetailsPanel extends CellPanel{
 					setHtml(thisCache.getCacheDetails(true).travelbugs.toHtml());
 					repaint();
 					dirty_details=true;
-				} else 
+				} else
 					super.popupMenuEvent(selectedItem);
 			}
 		}
 
-	
+
 	}
 
 //#############################################################################
 //  NotesScreen
 //#############################################################################
-	
+
 	/**
 	*	This class displays a form to show and edit notes for a cache.
 	*/
@@ -563,7 +556,7 @@ public class DetailsPanel extends CellPanel{
 		Button btSave = new Button(MyLocale.getMsg(127,"Save"));
 		Button cancelBtn = new Button("Cancel");
 		ScrollBarPanel sbp = new MyScrollBarPanel(wayNotes);
-		
+
 		public NotesScreen(CacheHolderDetail ch){
 			this.title = "Notes";
 			String imagesize = "";
@@ -579,7 +572,7 @@ public class DetailsPanel extends CellPanel{
 			titleControls.addNext(cancelBtn,CellConstants.HSTRETCH,CellConstants.HFILL);
 			titleControls.addLast(btSave,CellConstants.HSTRETCH,CellConstants.HFILL);
 		}
-		
+
 		public void onEvent(Event ev){
 			if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 				if (ev.target == addDateTime){
@@ -604,7 +597,7 @@ public class DetailsPanel extends CellPanel{
 							this.close(0);
 						}
 					} else this.close(0); // no changes -> exit without asking
-				} 
+				}
 				if(ev.target == titleOK){
 					if ( (!thisCache.cacheNotes.equals(wayNotes.getText())) ) {
 						if ( (new MessageBox("Warning", "Save changes made to the notes?"
@@ -618,6 +611,6 @@ public class DetailsPanel extends CellPanel{
 			super.onEvent(ev);
 		}
 	}
-	
+
 
 }

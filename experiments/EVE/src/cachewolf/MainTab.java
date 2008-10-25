@@ -346,7 +346,7 @@ public class MainTab extends TabbedPanel {
 			ch.type=0;
 			lastselected=ch.wayPoint;
 		}
-		ch.cacheSize = "None";
+		ch.setCacheSize("None");
 		chD = ch.getCacheDetails(true);
 		this.ch = ch;
 		cacheDB.add(ch);

@@ -37,7 +37,9 @@ public class CacheHolder {
 	/** The date when the cache was hidden in format yyyy-mm-dd */
 	public String dateHidden = EMPTY;
 	/** The size of the cache (as per GC cache sizes Micro, Small, ....) */
-	public String cacheSize = "None";
+	public int cacheSize = 0;
+	/** The pre-defined GC cache sizes */
+	public static String[] cacheSizeList={"Not Chosen","Micro","Small","Regular","Large","Very Large", "Other"};
 	/** The distance from the centre in km */
 	public double kilom = 0;
 	/** The formatted distance such as "x.xx km" */
@@ -124,6 +126,22 @@ public class CacheHolder {
 		notDecSep=decSep=='.'?',':'.';
 	}
 
+	public void setCacheSize(String cacheSize) {
+		if(cacheSize.equals("Not Chosen")) this.cacheSize=0;
+		else if(cacheSize.equals("Micro")) this.cacheSize=1;
+		else if(cacheSize.equals("Small")) this.cacheSize=2;
+		else if(cacheSize.equals("Regular")) this.cacheSize=3;
+		else if(cacheSize.equals("Large")) this.cacheSize=4;
+		else if(cacheSize.equals("Very Large")) this.cacheSize=5;
+		else if(cacheSize.equals("Other")) this.cacheSize=6;
+		else this.cacheSize=0;
+	}
+
+	public String getCacheSize() {
+		return cacheSizeList[cacheSize];
+	}
+
+
 	public CacheHolder(String xmlString) {
 		int start,end;
 		try {
@@ -166,7 +184,7 @@ public class CacheHolder {
 			is_filtered = xmlString.substring(start+1,end).equals("true");
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			cacheSize = xmlString.substring(start+1,end);
+			setCacheSize(xmlString.substring(start+1,end));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 			is_available = xmlString.substring(start+1,end).equals("true");
@@ -268,7 +286,7 @@ public class CacheHolder {
 		this.cacheOwner = ch.cacheOwner;
 
 		this.dateHidden = ch.dateHidden;
-		this.cacheSize = ch.cacheSize;
+		this.cacheSize=ch.cacheSize;
 		this.kilom = ch.kilom;
 		this.distance = ch.distance;
 		this.bearing = ch.bearing;
@@ -385,7 +403,7 @@ public class CacheHolder {
 		sb.append("\" dif = \"");		sb.append(hard);
 		sb.append("\" terrain = \"" );	sb.append(terrain );
 		sb.append("\" filtered = \"" ); sb.append(is_filtered); // This was 'dirty', but dirty is not used
-		sb.append("\" size = \"");		sb.append(cacheSize);
+		sb.append("\" size = \"");		sb.append(getCacheSize());
 		sb.append("\" online = \"" );	sb.append(is_available);
 		sb.append("\" archived = \"" );	sb.append(is_archived);
 		sb.append("\" has_bug = \"" ); 	sb.append(has_bug);

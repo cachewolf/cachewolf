@@ -611,7 +611,6 @@ public class TablePanel extends CellPanel{
 		private boolean sortAsc = false;
 		private int sortedBy = -1;
 		private FontMetrics fm;
-		private Picture picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge;
 		/** This is the modifier (Shift & Control key status) for Pen Events
 		 * it is set in myTableControl.onEvent */
 		public int penEventModifiers;
@@ -619,6 +618,11 @@ public class TablePanel extends CellPanel{
 		public boolean showExtraWptInfo=true;
 		private IconAndText iAndT = new IconAndText();
 		private IconAndText wpVal = new IconAndText();
+		private Object [] picSizeList={"?",new Picture("sizeMicro.png",Color.White,0),
+					new Picture("sizeSmall.png",Color.White,0),
+					new Picture("sizeReg.png",Color.White,0),
+					new Picture("sizeLarge.png",Color.White,0),
+					new Picture("sizeVLarge.png",Color.White,0)};
 
 		public ListTableModel(ListTableControl tc, FontMetrics fm){
 			super();
@@ -641,11 +645,6 @@ public class TablePanel extends CellPanel{
 			bug = new Picture("bug_table.png",Color.DarkBlue,0);
 			checkboxTicked = new Picture("checkboxTicked.png");
 			checkboxUnticked= new Picture("checkboxUnticked.png");
-			picSizeMicro=new Picture("sizeMicro.png",Color.White,0);
-			picSizeSmall=new Picture("sizeSmall.png",Color.White,0);
-			picSizeReg=new Picture("sizeReg.png",Color.White,0);
-			picSizeLarge=new Picture("sizeLarge.png",Color.White,0);
-			picSizeVLarge=new Picture("sizeVLarge.png",Color.White,0);
 			iAndT.fontMetrics=fm;
 			wpVal.fontMetrics=fm;
 			//updateRows();
@@ -795,15 +794,7 @@ public class TablePanel extends CellPanel{
 						case 11: // Bearing
 							return ch.bearing;
 						case 12: // Size
-							if (ch.cacheSize.length()==0) return "?";
-							switch (ch.cacheSize.charAt(0)) {
-								case 'M': return picSizeMicro;
-								case 'S': return picSizeSmall;
-								case 'R': return picSizeReg;
-								case 'L': return picSizeLarge;
-								case 'V': return picSizeVLarge;
-								default: return "?";
-							}
+							return picSizeList[ch.cacheSize];
 						case 13: // OC number of recommendations
 							if (ch.wayPoint.startsWith("OC"))
 								return Convert.formatInt(ch.numRecommended);
@@ -967,8 +958,8 @@ public class TablePanel extends CellPanel{
 				} else if (colToCompare==12) {
 					for (int i=0; i<visibleSize; i++) {
 						CacheHolder ch=(CacheHolder) cacheDB.get(i);
-						if (ch.cacheSize.length()==0) ch.sort="?";
-						else switch (ch.cacheSize.charAt(0)) {
+						if (ch.getCacheSize().length()==0) ch.sort="?";
+						else switch (ch.getCacheSize().charAt(0)) {
 							case 'M': ch.sort="1"; break;
 							case 'S': ch.sort="2"; break;
 							case 'R': ch.sort="3"; break;

@@ -309,7 +309,7 @@ public class RadarPanel extends CellPanel{
 			RadarPanelImage imgRP=(RadarPanelImage) which;
 			java.util.Vector cacheDB=Global.getProfile().cacheDB;
 			CacheHolder ch=(CacheHolder) cacheDB.get(imgRP.rownum);
-			String s=ch.wayPoint+"  "+ch.cacheSize+" / "+strDifficulty+"="+ch.hard+"  "+strTerrain+"="+ch.terrain;
+			String s=ch.wayPoint+"  "+ch.getCacheSize()+" / "+strDifficulty+"="+ch.hard+"  "+strTerrain+"="+ch.terrain;
 			String s1=ch.cacheName;
 			if (s1.length()>40) s1=s1.substring(0,40);
 			int tw=fm.getTextWidth(s)+2;

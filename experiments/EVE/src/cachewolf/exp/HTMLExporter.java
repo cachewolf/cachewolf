@@ -92,7 +92,7 @@ public class HTMLExporter{
 					chD=ch.getCacheDetails(false,true);
 					varParams = new Hashtable();
 					varParams.put("TYPE", CacheType.transType(chD.type));
-					varParams.put("SIZE", chD.cacheSize);
+					varParams.put("SIZE", chD.getCacheSize());
 					varParams.put("WAYPOINT", chD.wayPoint);
 					varParams.put("NAME", chD.cacheName);
 					varParams.put("OWNER", chD.cacheOwner);
@@ -108,7 +108,7 @@ public class HTMLExporter{
 					try{
 						Template page_tpl = new Template(template_init_page);
 						page_tpl.setParam("TYPE", CacheType.transType(chD.type));
-						page_tpl.setParam("SIZE", chD.cacheSize);
+						page_tpl.setParam("SIZE", chD.getCacheSize());
 						page_tpl.setParam("WAYPOINT", chD.wayPoint);
 						page_tpl.setParam("NAME", chD.cacheName);
 						page_tpl.setParam("OWNER", chD.cacheOwner);

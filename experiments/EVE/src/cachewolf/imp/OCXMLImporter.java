@@ -387,7 +387,7 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		if(name.equals("size")){
-			chD.cacheSize = transSize(atts.getValue("id"));
+			chD.setCacheSize(transSize(atts.getValue("id")));
 			return;
 		}
 

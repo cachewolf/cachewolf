@@ -203,8 +203,8 @@ public class TPLExporter {
 						varParams = new Hashtable();
 						varParams.put("TYPE", CacheType.transType(chD.type));
 						varParams.put("SHORTTYPE", CacheType.transType(chD.type).substring(0,1));
-						varParams.put("SIZE", chD.cacheSize);
-						varParams.put("SHORTSIZE", chD.cacheSize.substring(0,1));
+						varParams.put("SIZE", chD.getCacheSize());
+						varParams.put("SHORTSIZE", chD.getCacheSize().substring(0,1));
 						varParams.put("WAYPOINT", chD.wayPoint);
 						varParams.put("OWNER", chD.cacheOwner);
 						varParams.put("DIFFICULTY", dec.replaceAll(chD.hard));

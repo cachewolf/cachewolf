@@ -474,11 +474,11 @@ public class Filter{
 			///////////////////////////////
 			if (hasSizeMatchPattern) {
 				cacheSizePattern=0;
-				if (ch.cacheSize.startsWith("M")) cacheSizePattern = MICRO;
-				else if (ch.cacheSize.startsWith("S")) cacheSizePattern = SMALL;
-				else if (ch.cacheSize.startsWith("R")) cacheSizePattern = REGULAR;
-				else if (ch.cacheSize.startsWith("L")) cacheSizePattern = LARGE;
-				else if (ch.cacheSize.startsWith("V")) cacheSizePattern = VERYLARGE;
+				if (ch.cacheSize==1) cacheSizePattern = MICRO;
+				else if (ch.cacheSize==2) cacheSizePattern = SMALL;
+				else if (ch.cacheSize==3) cacheSizePattern = REGULAR;
+				else if (ch.cacheSize==4) cacheSizePattern = LARGE;
+				else if (ch.cacheSize==5) cacheSizePattern = VERYLARGE;
 				else cacheSizePattern = OTHER;
 				if ((cacheSizePattern & sizeMatchPattern) == 0) { ch.is_filtered=true; continue; }
 			}

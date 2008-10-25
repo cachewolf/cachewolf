@@ -22,7 +22,7 @@ public class Attribute {
 	 * The attribute names are identical to the image names.
 	 * Internally the first image name has number 0, the next number 1 and so on.
 	 */
-	public static final String [] attributeNames= {
+	protected static final String [] attributeNames= {
 			"error.gif",			//00 Unknown attribute
 			"available-no.gif", 	//01 not 24-7
 			"available-yes.gif", 	//02 available 24-7

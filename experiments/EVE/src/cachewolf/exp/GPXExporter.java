@@ -71,7 +71,7 @@ public class GPXExporter extends Exporter{
 				strBuf.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.cacheOwner)).append("</groundspeak:placed_by>\r\n");
 				strBuf.append("      <groundspeak:owner>").append(SafeXML.cleanGPX(ch.cacheOwner)+"</groundspeak:owner>\r\n");
 				strBuf.append("      <groundspeak:type>").append(CacheType.transType(ch.type)).append("</groundspeak:type>\r\n");
-				strBuf.append("      <groundspeak:container>").append(ch.cacheSize).append("</groundspeak:container>\r\n");
+				strBuf.append("      <groundspeak:container>").append(ch.getCacheSize()).append("</groundspeak:container>\r\n");
 				strBuf.append("      <groundspeak:difficulty>").append(ch.hard.replace(',','.')).append("</groundspeak:difficulty>\r\n");
 				strBuf.append("      <groundspeak:terrain>").append(ch.terrain.replace(',','.')).append("</groundspeak:terrain>\r\n");
 				String dummyHTML = ch.is_HTML ? STRING_TRUE:STRING_FALSE;

@@ -135,7 +135,7 @@ public class DBImporter {
 				// Size
 				i=line.indexOf("\"",j+1);
 				j=line.indexOf("\"",i+1);
-				ch.cacheSize=line.substring(i+1,j);
+				ch.setCacheSize(line.substring(i+1,j));
 				//waypoint
 				i=line.indexOf(" ",j+1);
 				j=line.indexOf(" ",i+1);
