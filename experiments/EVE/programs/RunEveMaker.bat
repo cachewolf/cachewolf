@@ -1,1 +1,1 @@
-java -cp ../classes/eve.jar Eve EveMaker.eve
+java -cp programs/eve.jar Eve programs/EveMaker.eve -c deploy/cw-eve-pc-relpath.enf
