@@ -1,21 +1,23 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.fx.*;
-import ewe.graphics.*;
-import ewe.ui.*;
+import eve.fx.*;
+import eve.sys.*;
+import eve.ui.*;
+import eve.ui.game.*;
+import eve.ui.event.*;
 
 public class AttributesSelector extends Panel {
-	protected static int TILESIZE=22; // Here we always use the small icons thus tilesize=22
+	protected static final int TILESIZE=22; // Here we always use the small icons thus tilesize=22
 	public long selectionMaskYes = 0;
 	public long selectionMaskNo = 0;
-	protected mLabel mInfo;
+	protected Label mInfo;
 
 	public AttributesSelector() {
 		//Rect r = new Rect(0,0,TILESIZE * ICONS_PER_ROW,TILESIZE * ICONROWS); // As on GC: 6 wide, 2 high
 		iap.virtualSize = new Rect(0,0,200,200);
 		iap.setPreferredSize(170, 155);
 		addLast(iap,CellConstants.STRETCH,FILL);
-		addLast(mInfo=new mLabel(""),HSTRETCH,HFILL);
+		addLast(mInfo=new Label(""),HSTRETCH,HFILL);
 	}
 
 	public void setSelectionMasks(long yes, long no) {
@@ -24,19 +26,19 @@ public class AttributesSelector extends Panel {
 		showAttributePalette();
 	}
 
-	protected class attAniImage extends AniImage {
+	protected class AttAniImage extends AniImage {
 		public String info;
 		public String attrName;
 		public String value;
 		public int attrNr;
 		public long bitMask;
-		attAniImage (mImage img) {
+		AttAniImage (ImageData img) {
 			super(img);
 		}
-		attAniImage (attAniImage cp, String val) {
+		AttAniImage (AttAniImage cp, String val) {
 			//super(null);
-			mImage rawImg=new mImage(Attribute.getImageDir() + cp.attrName + val );
-			setMImage (rawImg.getHeight()!=20 ? rawImg.scale(20,20,null,Image.FOR_DISPLAY) : rawImg  );
+			PixelBuffer rawImg=new PixelBuffer(Attribute.getImageDir() + cp.attrName + val );
+			change (rawImg.getHeight()!=20 ? rawImg.scale(20,20) : rawImg  );
 			value = val;
 			info = MyLocale.getMsg( value.equals("-no.gif") ? (2500+cp.attrNr-1) : 2500+cp.attrNr,"No attribute info found");
 			attrName = cp.attrName;
@@ -46,10 +48,10 @@ public class AttributesSelector extends Panel {
 		}
 	}
 	
-	protected class attInteractivePanel extends InteractivePanel {
+	protected class AttInteractivePanel extends InteractivePanel {
 				public boolean imageMovedOn(AniImage which) {
-			if (!((attAniImage)which).info.startsWith("*")) { // If text starts with * we have no explanation yet
-				mInfo.setText(((attAniImage)which).info);
+			if (!((AttAniImage)which).info.startsWith("*")) { // If text starts with * we have no explanation yet
+				mInfo.setText(((AttAniImage)which).info);
 				mInfo.repaintNow();
 			}
 			return true;
@@ -61,8 +63,8 @@ public class AttributesSelector extends Panel {
 		}
 		public boolean imagePressed(AniImage which, Point pos) {
 			if (which != null) {
-				String value = ((attAniImage)which).value;
-				long bit = ((attAniImage)which).bitMask;
+				String value = ((AttAniImage)which).value;
+				long bit = ((AttAniImage)which).bitMask;
 				if (value.equals("-non.gif")) {
 					selectionMaskYes |= bit;
 					selectionMaskNo  &= ~bit;
@@ -76,7 +78,7 @@ public class AttributesSelector extends Panel {
 					selectionMaskNo  &= ~bit;
 					value="-non.gif";
 				}
-				attAniImage tmpImg = new attAniImage( (attAniImage)which, value );
+				AttAniImage tmpImg = new AttAniImage( (AttAniImage)which, value );
 				removeImage(which);
 				addImage(tmpImg);
 				//System.out.println ("AniImage pressed: " + ((attAniImage)which).info);
@@ -86,7 +88,7 @@ public class AttributesSelector extends Panel {
 			return true;
 		}
 	}
-	protected InteractivePanel iap=new attInteractivePanel();
+	protected InteractivePanel iap=new AttInteractivePanel();
 
 	public void showAttributePalette() {
 		iap.images.clear();
@@ -105,8 +107,8 @@ public class AttributesSelector extends Panel {
 					value = "-no.gif";
 				else
 					value = "-non.gif";
-				mImage rawImg=new mImage(Attribute.getImageDir()+attrName+value);	
-				attAniImage img=new attAniImage(rawImg.getHeight()!=20 ? rawImg.scale(20,20,null,Image.FOR_DISPLAY) : rawImg );
+				PixelBuffer rawImg=new PixelBuffer(Attribute.getImageDir()+attrName+value);	
+				AttAniImage img=new AttAniImage((rawImg.getHeight()!=20 ? rawImg.scale(20,20) : rawImg ));
 				img.info=MyLocale.getMsg(2500+i,"No attribute info found");
 				img.value=value;
 				img.attrName=attrName;

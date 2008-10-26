@@ -1,12 +1,12 @@
-package CacheWolf;
+package cachewolf;
 /**
  * A list of GC travelbugs
  * @author salzkammergut
  */
-import ewe.util.Vector;
-import ewe.io.*;
+import java.util.Vector;
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
+import java.io.StringReader;
 
 public class TravelbugList extends MinML{
 
@@ -40,7 +40,7 @@ public class TravelbugList extends MinML{
 
 	/** Replace a travelbug in the list */
 	public void replace(int i, Travelbug tb) {
-		tbList.set(i, tb);
+		tbList.setElementAt( tb,i);
 	}
 	
 	/** Construct an empty travelbug list */

@@ -1,23 +1,24 @@
-package CacheWolf;
+package cachewolf;
 /*
  *  CacheWolf - Local settings class
- * 
+ *
  */
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import eve.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import eve.sys.*;
+import java.lang.Double;
+import java.lang.Long;
 
-import utils.FileBugfix;
-import ewe.fx.Rect;
-import ewe.io.File;
-import ewe.sys.*;
-import ewe.sys.Double;
-import ewe.sys.Long;
-import ewe.ui.FormBase;
-import ewe.ui.Gui;
-import ewe.ui.Window;
-import ewe.ui.WindowConstants;
+import eve.ui.Gui;
+import eve.fx.Dimension;
+import eve.ui.MessageBox;
 /**
  *  This class handles internationalisation and some other local stuff like
  *  decimal separator, screen dimensions etc.
- *  
+ *
  *  The methods are static, the class does not need initialisation.
  *
  *  @author salzkammergut
@@ -31,13 +32,13 @@ public class MyLocale {
 
 	private static Locale l=null;
 	private static LocalResource lr=null;
-	private static Rect s = (Rect)Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new Rect(),0);
+	private static Dimension s = Gui.getScreenSize();
 	private static String digSeparator=null;
 	/** Read a non-standard language from the file language. If it is empty,
 	 * the default language is used.
 	 */
 	public static String language=getLanguage();
-	
+
 	public static String initErrors;
 
 	private static String getLocaleFileName(String languageshort) {
@@ -59,38 +60,38 @@ public class MyLocale {
 		resourcelanguage = language_;
 	}
 
-	/** 
+	/**
 	 * This is used to determine the language file name - it is necessary because
-	 * ewe-vm v1.49 doesn't support French  
+	 * ewe-vm v1.49 doesn't support French
 	 */
-	static String resourcelanguage;
+	static String resourcelanguage; //TODO Is this necessary in EVE ?
 	static boolean inInit = false;
 
-	private static void init() throws IllegalThreadStateException {
+
+	private static void init() {
 		if (inInit) {
 			throw new IllegalThreadStateException("init may not be run twice"); // this can happen, if ewe is loading another class in background, which causes a call to e.g. MyLocale.getDigSeperator (most likely in a static statement). Ewe-Vm v1.49 seems to be loading static classes ahead, causing the danger of this problem.
 		}
 		inInit = true;
 		initErrors = "";
 		// the following logic priority: 1. try to use specified language (if specified), 2. try to use system language, 3. try to use english, 4. use hard coded messages
-		l = null;
 		if ( ( language.length()!=0 ) && ( !language.equalsIgnoreCase("auto") ) ) { // Was a language explicitly specified?
 			setLocale(language);
-			if (! (new FileBugfix(getLocaleFileName(resourcelanguage)).exists()) ) {
+			if (! (new File(getLocaleFileName(resourcelanguage)).exists()) ) {
 				l = null; // language file not found
 				initErrors += "Language " + language + " not found - using system language\n";// don't copy this messagebox into a language file, because it is only used if no languages file can be accessed
 			}
 		}
 		if ( l == null ) { // no language specified OR specified language not available -> use system default
-			setLocale(Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0)); 
+			setLocale(Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0));
 			// test if a localisation file for the system language exists
-			if (!(new FileBugfix(getLocaleFileName(resourcelanguage)).exists())) {
+			if (!(new File(getLocaleFileName(resourcelanguage)).exists())) {
 				setLocale(standardLanguage);
 				initErrors += "Your system language is not supported by cachewolf - using English\n You can choose a different language in the preferences\n";
 				/*       //uncomment this code to print a list of all supported languge (Locales), remark: this differs from vm to vm _and_ from OS to OS
   					 Vm.debug("gewählte Sprache: " + resourcelanguage, 0, 0);
 					 int [] all = Locale.getAllIDs(0);
-					 Locale ltmp = new Locale(); 
+					 Locale ltmp = new Locale();
 					 for (int i = 0; i<all.length; i++){
 						 ltmp.set(all[i]);
 						 String lg = ltmp.getString(Locale.LANGUAGE_SHORT,0,0);
@@ -100,9 +101,9 @@ public class MyLocale {
 			}
 		}
 		lr = null;
-		if (new FileBugfix(getLocaleFileName(resourcelanguage)).exists() ) {
-			ewe.io.TreeConfigFile tcf = ewe.io.TreeConfigFile.getConfigFile(getLocaleFileName(resourcelanguage));
-			if (tcf != null) {			 
+		if (new File(getLocaleFileName(resourcelanguage)).exists() ) {
+			eve.io.TreeConfigFile tcf = eve.io.TreeConfigFile.getConfigFile(getLocaleFileName(resourcelanguage));
+			if (tcf != null) {
 				lr = tcf.getLocalResourceObject(new Locale() {
 					public String getString(int what,int forValue,int options) {
 						if (what == LANGUAGE_SHORT) return resourcelanguage; // this is necessary because French cannot be set in ewe-vm v1.49
@@ -128,25 +129,25 @@ public class MyLocale {
 
 	/**
 	 * Return a localised string
-	 * 
-	 * The localised strings are stored in the configuration file (relative to
-	 *  executable:<br>
-	 *  	_config/cachewolf.Languages.cfg
-	 * If the configuration file does not exist or a string cannot be found in
-	 * the file, the defaultValue is resurned.
-	 *   
+	 *
+     * The localised strings are stored in the configuration file (relative to
+     *  executable:<br>
+     *  	_config/cachewolf.Languages.cfg
+     * If the configuration file does not exist or a string cannot be found in
+     * the file, the defaultValue is resurned.
+     *
 	 * @param resourceID   The unique number of the resource
 	 * @param defaultValue The default value of the string (if not found in the config file)
-	 * @return The localised string 
+	 * @return The localised string
 	 */
 	public static String getMsg(int resourceID, String defaultValue) {
-		if (l==null) 
+		if (l==null)
 			init();
-		if (lr!=null) { 
+		if (lr!=null) {
 			String res;
 			res=(String) lr.get(resourceID,defaultValue);
-			if (res!=null) 
-				return res;
+			if (res!=null)
+			   return res;
 			//Fallthrough to default value if string does not exist in file
 		}
 		return defaultValue;
@@ -154,22 +155,22 @@ public class MyLocale {
 
 	/**
 	 * Get the ISO two letter (lowercase) name of the locale language
-	 * 
+	 *
 	 * @return ISO two letter abbreviation of the locale language
 	 */
 	public static String getLocaleLanguage() {
 		if (l==null) init();
-		return l.getString(Locale.LANGUAGE_SHORT, 0, 0);		
+		return l.getString(Locale.LANGUAGE_SHORT, 0, 0);
 	}
 
 	/**
 	 * Get the three letter (uppercase) ISO country code
-	 * 
+	 *
 	 * @return The three letter (uppercase) ISO country code
 	 */
 	public static String getLocaleCountry() {
 		if (l==null) init();
-		return l.getString(Locale.COUNTRY_SHORT, 0, 0);		
+		return l.getString(Locale.COUNTRY_SHORT, 0, 0);
 	}
 
 	/**
@@ -209,104 +210,76 @@ public class MyLocale {
 	 */
 	public static String formatLong(Long number, String fmt) {
 		if (l==null) init();
-		return l.format(Locale.FORMAT_PARSE_NUMBER,number,fmt);
+		return l.format(number.longValue(),fmt,0);
 	}
 
 	/**
 	 * Formats a long to a given format specifier
 	 * @param number A long containing the number to be formatted
-	 * @param fmt A string containing the format specification</br> 
+	 * @param fmt A string containing the format specification</br>
 	 * @return The formatted number
 	 */
 	public static String formatLong(long number, String fmt) {
-		Long L=new Long();
-		L.set(number);
+		Long L=new Long(number);
 		return formatLong(L,fmt);
 	}
 	/**
 	 * Formats a Double to a given format specifier
 	 * @param number A Double containing the number to be formatted
-	 * @param fmt A string containing the format specification</br> 
+	 * @param fmt A string containing the format specification</br>
 	 * @return The formatted number
 	 */
-	public static String formatDouble(ewe.sys.Double number, String fmt) {
+	public static String formatDouble(Double number, String fmt) {
 		if (l==null) init();
-		return l.format(Locale.FORMAT_PARSE_NUMBER,number,fmt);
+		return l.format(number.doubleValue(),fmt,0);
 	}
 
 	/**
 	 * Formats a Double to a given format specifier
 	 * @param number A double containing the number to be formatted
-	 * @param fmt A string containing the format specification</br> 
+	 * @param fmt A string containing the format specification</br>
 	 * @return The formatted number
 	 */
 	public static String formatDouble(double number, String fmt) {
-		Double d=new Double();
-		d.set(number);
+		Double d=new Double(number);
 		return formatDouble(d,fmt);
 	}
 
-	/**
-	 * This function checks whether the device supports a
-	 * supplementary input panel (SIP) and if yes, shows it.
-	 *
-	 */
-	public static void setSIPOn() {
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-			Vm.setSIP(Vm.SIP_ON);
-		}
-	}
 
+	/*=================================================================
+	 * During initialisation the file "language" in the program directory
+	 * is read to check whether the user wishes to ovverride the default
+	 * language. This language cannot be stored in the pref.xml file, due
+	 * to an initialisation conflict (pref.xml needs MyLocale). A better
+	 * solution may be to read the override language from the command line,
+	 * but I do not know how to specify command line parameters on a PDA
+	 ==================================================================*/
 	/**
-	 * This function checks whether the device supports a
-	 * supplementary input panel (SIP) and if yes, hides it and
-	 * also hides the button.
-	 *
-	 */
-	public static void setSIPOff() {
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-			Vm.setSIP(0);
-		}
-	}
-
-	/**
-	 * This function checks whether the device supports a
-	 * supplementary input panel (SIP) and if yes, hides it and just
-	 * shows the button.
-	 *
-	 */
-	public static void setSIPButton() {
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
-		}
-	}
-
-	/**
-	 * Read the language from the prefs and return the specified language (or empty
+	 * Read the language file and return the specified language (or empty
 	 * string if none specified).
 	 * @return Language (e.g. DE, EN etc.) or ""
 	 */
 	private static String getLanguage() {
-		Preferences pref = Global.getPref();
-		if ( pref != null ) {
-			language = pref.language;
-		} else {
-			language = "";
-		}
-		if (language==null) language="";
-		return language;
+        Preferences pref = Global.getPref();
+        if ( pref != null ) {
+                language = pref.language;
+        } else {
+                language = "";
+        }
+        if (language==null) language="";
+        return language;
 	}
 
 	/**
-	 * Write the override language 
+	 * Write the override language
 	 * @param language The language to write
 	 */
 	public static void saveLanguage(String saveLanguage) {
-		Preferences pref = Global.getPref();
-		if ( pref != null ) {
+        Preferences pref = Global.getPref();
+        if ( pref != null ) {
 			pref.language = saveLanguage;
 			pref.savePreferences();
-		}
+        }
 	}
 
 }

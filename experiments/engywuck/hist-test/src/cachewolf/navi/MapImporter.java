@@ -1,20 +1,38 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
-import ewe.util.*;
-import ewe.io.*;
-import ewe.filechooser.*;
-import ewe.sys.*;
-import ewe.ui.*;
-import ewe.graphics.*;
-import ewe.fx.*;
+import java.util.*;
+import eve.io.*;
+import eve.ui.filechooser.FileChooser;
+import eve.sys.*;
+import eve.ui.*;
+import eve.fx.*;
+import eve.ui.game.AniImage;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
-import CacheWolf.CWPoint;
-import CacheWolf.Common;
-import CacheWolf.CoordsScreen;
-import CacheWolf.Global;
-import CacheWolf.InfoBox;
-import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
+import cachewolf.CWPoint;
+import cachewolf.CoordsScreen;
+import cachewolf.Global;
+import cachewolf.InfoBox;
+import cachewolf.MyLocale;
+import cachewolf.Preferences;
+import cachewolf.utils.Common;
+
+import eve.util.FormattedDataSource;
+import eve.util.mString;
+import eve.ui.event.ControlEvent;
+import eve.ui.game.InteractivePanel;
+
+
+import eve.util.ByteArray;
+
+
 
 /**
  *	This class is for importing and manually georeferencing maps
@@ -22,14 +40,14 @@ import CacheWolf.Preferences;
  */
 public class MapImporter extends Form {
 	Preferences pref;
-	String mapsPath = new String();
-	String thisMap = new String();
-	public String selectedMap = new String();
+	String mapsPath = "";
+	String thisMap = "";
+	public String selectedMap = "";
 	CellPanel infPanel;
-	mLabel infLabel = new mLabel("                          ");
+	Label infLabel = new Label("                          ");
 	Vector GCPs = new Vector();
 	MapInfoObject wfl = new MapInfoObject();
-	mButton infButton;
+	Button infButton;
 	ScrollBarPanel scp;
 	AniImage mapImg;
 	int imageWidth, imageHeight = 0;
@@ -72,16 +90,14 @@ public class MapImporter extends Form {
 		}catch(FileNotFoundException ex){
 			//	Vm.debug("Cannot load world file!");
 		}catch (IOException ex) { // is thrown if lat/lon out of range
-			MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), ex.getMessage(), FormBase.OKB);
+			MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), ex.getMessage(), MessageBox.OKB);
 			tmpMB.execute();
 			Vm.debug("Cannot load world file!");
 		}
 		mapInteractivePanel pane = new mapInteractivePanel(this);
-		scp = new CacheWolf.MyScrollBarPanel(pane);
-		Image img = new Image(Common.getImageName(mapsPath + thisMap));
-		PixelBuffer pB = new PixelBuffer(img);
+		scp = new cachewolf.MyScrollBarPanel(pane);
 		//pB = pB.scale((int)(pref.myAppWidth*0.98),(int)(pref.myAppHeight*0.98));
-		mapImg = new AniImage(pB.toDrawableImage());
+		mapImg = new AniImage(Common.getImageName(mapsPath + thisMap));
 		pane.addImage(mapImg);
 		scp.setPreferredSize(mapImg.getWidth(),mapImg.getHeight());
 		imageWidth = mapImg.getWidth();
@@ -89,7 +105,7 @@ public class MapImporter extends Form {
 		this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 		infPanel = new CellPanel();
 		infPanel.addNext(infLabel,CellConstants.STRETCH, CellConstants.FILL);
-		infButton = new mButton(MyLocale.getMsg(4107,"Done!"));
+		infButton = new Button(MyLocale.getMsg(4107,"Done!"));
 		infPanel.addLast(infButton,CellConstants.DONTSTRETCH, CellConstants.FILL);
 		this.addLast(infPanel, CellConstants.DONTSTRETCH, CellConstants.FILL);
 		//scp.repaintNow();
@@ -114,25 +130,25 @@ public class MapImporter extends Form {
 	/**
 	 *	Method to copy ("import") a png based map
 	 *	into the maps folder in the CacheWolf base directory.
-	 *	
+	 *
 	 *	If the maps directory does not exist it will create it.
 	 *	If it finds .map files it will assume these are oziexplorer calibration files.
 	 *	It will use these files to automatically georeference the files during import.
 	 */
 	public int importMap(){
-		String rawFileName = new String();
-		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().baseDir);
+		String rawFileName;
+		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, Global.getPref().baseDir);
 		fc.addMask("*.png,*.gif,*.bmp,*.jpg");
-		fc.setTitle(MyLocale.getMsg(4100,"Select Directory:"));
-		int tmp = fc.execute() ; 
-		if(tmp != FormBase.IDYES) return FormBase.IDCANCEL;
+		fc.title=(MyLocale.getMsg(4100,"Select Directory:"));
+		int tmp = fc.execute() ;
+		if(tmp != FileChooser.IDYES) return Form.IDCANCEL;
 		File inDir = fc.getChosenFile();
 		File mapFile;
-		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...            \n"), InfoBox.PROGRESS_WITH_WARNINGS, false); 
+		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109,"Loading maps...            \n"), InfoBox.PROGRESS_WITH_WARNINGS, false);
 		inf.setPreferredSize(220, 300);
 		inf.setInfoHeight(100);
 		inf.relayout(false);
-		Vm.showWait(this, true);
+		Form.showWait();
 		inf.exec();
 
 		//User selected a map, but maybe there are more png(s)
@@ -140,14 +156,14 @@ public class MapImporter extends Form {
 		//at the same time try to find associated .map files!
 		//These are georeference files targeted for OziExplorer.
 		//So lets check if we have more than 1 png file:
-		String line = new String();
+		String line = "";
 		InputStream in = null;
 		OutputStream out = null;
-		FileReader inMap;
+		BufferedReader inMap;
 		byte[] buf;
 		int len;
 		String[] parts;
-		String [] files = inDir.listMultiple("*.png,*.jpg,*.gif,*.bmp", FileBase.LIST_FILES_ONLY);
+		String [] files = inDir.listMultiple("*.png,*.jpg,*.gif,*.bmp", File.LIST_FILES_ONLY);
 
 		String currfile = null;
 		String curInFullPath;
@@ -171,7 +187,7 @@ public class MapImporter extends Form {
 					if (first) {
 						first = false;
 						header.copyFrom(buf, 0, len);
-						ImageInfo tmpII = Image.getImageInfo(header,null);
+						ImageInfo tmpII = Image.getImageInfo((new FormattedDataSource()).set(header),null);
 						imageWidth = tmpII.width;
 						imageHeight = tmpII.height;
 						out = new FileOutputStream(curOutFullPath); // only create outfile if geImageInfo didn't throw an exception so do it only here not directly after opening input stream
@@ -187,7 +203,7 @@ public class MapImporter extends Form {
 			} finally {
 				try {
 					if (in != null) in.close();
-					if (out  != null) out.close(); 
+					if (out  != null) out.close();
 				} catch (Throwable e) {}
 			}
 			//Check for a .map file
@@ -201,7 +217,7 @@ public class MapImporter extends Form {
 				GCPoint gcpG = new GCPoint();
 				//Vm.debug("Found file: " + inDir.getFullPath() + "/" + rawFileName + ".map");
 				try {
-					inMap = new FileReader(inDir.getFullPath() + "/" + rawFileName + ".map");
+					inMap = new BufferedReader(new FileReader(inDir.getFullPath() + "/" + rawFileName + ".map"));
 					while((line = inMap.readLine()) != null){
 						if(line.equals("MMPNUM,4")){
 
@@ -300,17 +316,17 @@ public class MapImporter extends Form {
 					inf.addWarning("\n"+MyLocale.getMsg(4117, "Error while importing .map-file: ")+ex.getMessage());
 				} catch(IOException ex){
 					inf.addWarning("\n"+MyLocale.getMsg(4118, "IO-Error while reading or writing calibration file")+"\n" + ex.getMessage());
-				} 
+				}
 			} else { // if map file.exists
 				if (!imageerror) inf.addWarning("\n"+MyLocale.getMsg(4119, "No calibration file found for: ") + currfile + " - you can calibrate it manually");
 			}
 		} // for file
-		Vm.showWait(this, false);
+		Form.cancelWait();
 		inf.addText("\n"+MyLocale.getMsg(4120, "done."));
 		inf.addOkButton();
 		//inf.addOkButton(); doesn't work
-		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
-		return FormBase.IDOK;
+		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false;
+		return Form.IDOK;
 	}
 
 
@@ -330,13 +346,13 @@ public class MapImporter extends Form {
 					try {
 						retry = false;
 						wfl.saveWFL(mapsPath, thisMap);
-						if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
+						if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false;
 					} catch (IOException e) {
-						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(321, "Error writing file ") + e.getMessage()+MyLocale.getMsg(324, " - retry?"), FormBase.YESB | FormBase.NOB);
-						if (tmpMB.execute() == FormBase.IDYES) retry = true;
+						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(321, "Error writing file ") + e.getMessage()+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
+						if (tmpMB.execute() == MessageBox.IDYES) retry = true;
 					}catch (IllegalArgumentException e) {
-						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(325, "Map not calibrated")+MyLocale.getMsg(324, " - retry?"), FormBase.YESB | FormBase.NOB);
-						if (tmpMB.execute() == FormBase.IDYES) { retry = true; break; }
+						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(325, "Map not calibrated")+MyLocale.getMsg(324, " - retry?"), MessageBox.YESB | MessageBox.NOB);
+						if (tmpMB.execute() == MessageBox.IDYES) { retry = true; break; }
 					}
 				}
 				if (!retry) close(0);
@@ -370,20 +386,20 @@ class mapInteractivePanel extends InteractivePanel{
 		g.drawLine(16,0,16,31);
 		AniImage aImg = new AniImage(img);
 		aImg.setLocation(pos.x-16,pos.y-16);
-		aImg.transparentColor = new Color(0,0,0);
-		//aImg.properties = mImage.IsNotHot;
-		aImg.properties = mImage.AlwaysOnTop;
+		//TODO How to set transparent color ? aImg.transparentColor = new Color(0,0,0);
+		//aImg.properties = Picture.IsNotHot;
+		aImg.properties = eve.fx.Drawing.AlwaysOnTop;
 		this.addImage(aImg);
 		g.free();
 		this.repaintNow();
 		f.updatePosition(pos.x, pos.y);
 
 		CoordsScreen cooS = new CoordsScreen(); // (String)lr.get(4108,"Coordinates:"), (String)lr.get(4108,"Coordinates:"), InfoBox.INPUT);
-		if (cooS.execute()==FormBase.IDOK) {
+		if (cooS.execute()==CoordsScreen.IDOK) {
 			GCPoint gcp = new GCPoint(cooS.getCoords());
 			gcp.bitMapX = pos.x;
 			gcp.bitMapY = pos.y;
-			f.addGCP(gcp); 
+			f.addGCP(gcp);
 		} else this.removeImage(aImg); // CANCEL pressed
 	}
 }

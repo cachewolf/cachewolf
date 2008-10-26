@@ -1,8 +1,8 @@
-package CacheWolf;
-
-import ewe.fx.Color;
-import ewe.fx.Insets;
-import ewe.ui.*;
+package cachewolf;
+import eve.fx.Color;
+import eve.fx.Insets;
+import eve.ui.*;
+import eve.ui.data.Editor;
 
 /**
  * Descendant from ewe.ui.Editor to allow more flexibility when needed
@@ -51,9 +51,9 @@ public class MyEditor extends Editor {
 					sk.setKey(1, "Close|" + EXIT_IDCANCEL, close, null);
 				}
 			} else {
-				titleOK = new mButton(close);// getButton("OK");
+				titleOK = new Button(close);// getButton("OK");
 				titleOK.backGround = Color.DarkBlue;
-				((mButton) titleOK).insideColor = getBackground();
+				((Button) titleOK).insideColor = getBackground();
 			}
 		}
 		if (titleOK != null)

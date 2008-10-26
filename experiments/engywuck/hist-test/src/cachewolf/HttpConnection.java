@@ -1,37 +1,37 @@
-package CacheWolf;
-import ewe.data.Property;
-import ewe.data.PropertyList;
-import ewe.io.AsciiCodec;
-import ewe.io.Base64Codec;
-import ewe.io.FileBase;
-import ewe.io.IOException;
-import ewe.io.IOHandle;
-import ewe.io.IOTransfer;
-import ewe.io.InputStream;
-import ewe.io.MemoryFile;
-import ewe.io.MemoryStream;
-import ewe.io.PartialInputStream;
-import ewe.io.Stream;
-import ewe.io.StreamAdapter;
-import ewe.io.StreamUtils;
-import ewe.io.TextCodec;
-import ewe.net.MalformedURLException;
-import ewe.net.Socket;
-import ewe.net.URL;
-import ewe.sys.Convert;
-import ewe.sys.Handle;
-import ewe.sys.Vm;
-import ewe.util.ByteArray;
-import ewe.util.CharArray;
-import ewe.util.SubString;
-import ewe.util.Vector;
-import ewe.util.mString;
+package cachewolf;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.Vector;
+
+import cachewolf.utils.Common;
+
+import eve.net.ChunkedDataInputStream;
+import eve.data.Property;
+import eve.data.PropertyList;
+import eve.io.AsciiCodec;
+import eve.io.File;
+import eve.io.PartialInputStream;
+import eve.io.StreamUtils;
+import eve.io.TextCodec;
+import eve.sys.Convert;
+import eve.sys.Handle;
+import eve.sys.Task;
+import eve.sys.TimeOut;
+import eve.sys.Vm;
+import eve.util.ByteArray;
+import eve.util.CharArray;
+import eve.util.SubString;
+import eve.net.Net;
+import eve.net.URL;
+
 
 /**
 Use this class to create an HttpConnection with a Web Server and to read
 in the data for the connection.<p>
-This a a modified version of XXX. This version automatically makes use of a proxy server
-if once for all proxy is set.
 To use this do the following:
 <ol>
 <li>Create an HttpConnection object with a URL or specify the host, port and document to get.
@@ -79,7 +79,7 @@ public String requestVersion = "HTTP/1.1";
 * initial GET/POST line. This is initially null, so you will have to create a new PropertyList
 * for it, or use one of the setRequestorProperty() or addRequestorProperty() methods.
 **/
-public ewe.data.PropertyList requestorProperties;
+public PropertyList requestorProperties;
 /**
 * This is the list of properties for the server and document. It is only valid after a connection has
 * been made since it is sent by the server to the requestor. One properties that will always be in
@@ -87,7 +87,7 @@ public ewe.data.PropertyList requestorProperties;
 * All other properties will be as specified by the server, and <b>the property names will be
 * converted to all lowercase letters</b>.
 **/
-public ewe.data.PropertyList documentProperties;
+public PropertyList documentProperties;
 /**
 * This is the response code from the server. It is only valid after a connection has
 * been made.
@@ -111,23 +111,24 @@ public int contentLength = -1;
 **/
 public TextCodec textCodec;
 
-Stream bytesToPost;
+InputStream bytesToPost;
 Object originalPostData;
 
-/**
- * Set these when the class is instantiated the first time.
- * afterwards you don't need to set proxy parameters anymore
- */
+	/**
+	 * Set these when the class is instantiated the first time.
+	 * afterwards you don't need to set proxy parameters anymore
+	 */
+	private static String proxy = Global.getPref().myproxy;
+	private static int proxyPort = Common.parseInt(Global.getPref().myproxyport);
+	private static boolean useProxy = Global.getPref().proxyActive;
+	
+	public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {
+		proxy = proxyi;
+		proxyPort = proxyporti;
+		useProxy = useproxyi;
+	}
 
-private static String proxy = Global.getPref().myproxy;
-private static int proxyPort = Common.parseInt(Global.getPref().myproxyport);
-private static boolean useProxy = Global.getPref().proxyActive;
 
-public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {
-	proxy = proxyi;
-	proxyPort = proxyporti;
-	useProxy = useproxyi;
-}
 
 /**
  * This returns true if post data has been set for this connection.
@@ -184,15 +185,16 @@ public PropertyList getRequestorProperties()
 public void setPostData(Object data)
 //===================================================================
 {
-	if (data instanceof Stream) bytesToPost = (Stream)data;
+	if (data instanceof InputStream) bytesToPost = (InputStream)data;
 	else if (data instanceof ByteArray) {
 		originalPostData = data;
-		bytesToPost = new MemoryFile((ByteArray)data);
+		ByteArray ba = (ByteArray)data;
+		bytesToPost = new ByteArrayInputStream(ba.data,0,ba.length);
 		getRequestorProperties().defaultTo("Content-Length",Convert.toString(((ByteArray)data).length));
 	}
 	else if (data instanceof byte[]) {
 		originalPostData = data;
-		bytesToPost = new MemoryFile(new ByteArray((byte[])data));
+		bytesToPost = new ByteArrayInputStream((byte[])data);
 		getRequestorProperties().defaultTo("Content-Length",Convert.toString(((byte[])data).length));
 	}else if (data instanceof String){
 		String s = (String)data;
@@ -205,7 +207,6 @@ public void setPostData(Object data)
 			
 		}
 	}
-	else if (data instanceof InputStream) bytesToPost = new StreamAdapter((InputStream)data);
 	if (bytesToPost != null && command.equalsIgnoreCase("get"))
 		command = "POST";
 }
@@ -288,31 +289,31 @@ public HttpConnection(String host, int port, String document)
 public HttpConnection(String url)
 //===================================================================
 {
-	if (useProxy) { 
-		host = proxy;
-		port = proxyPort;
-		document = url;
-	} else {
-		url = FileBase.fixupPath(url);
-		//ewe.sys.Vm.debug("url: "+url);
-		port = 80;
-		String uu = url.toLowerCase();
-		if (uu.startsWith("http://")){
-			uu = url.replace('\\','/');
-			host = uu.substring(7);
-			int first = host.indexOf('/');
-			if (first == -1) document = "/";
-			else {
-				document = host.substring(first);
-				host = host.substring(0,first);
-			}
-			int colon = host.indexOf(':');
-			if (colon != -1){
-				port = ewe.sys.Convert.toInt(host.substring(colon+1));
-				host = host.substring(0,colon);
+		if (useProxy) { 
+			host = proxy;
+			port = proxyPort;
+			document = url;
+		}	else {
+			url = File.fixupPath(url);
+			//ewe.sys.Vm.debug("url: "+url);
+			port = 80;
+			String uu = url.toLowerCase();
+			if (uu.startsWith("http://")){
+				uu = url.replace('\\','/');
+				host = uu.substring(7);
+				int first = host.indexOf('/');
+				if (first == -1) document = "/";
+				else {
+					document = host.substring(first);
+					host = host.substring(0,first);
+				}
+				int colon = host.indexOf(':');
+				if (colon != -1){
+					port = Convert.toInt(host.substring(colon+1));
+					host = host.substring(0,colon);
+				}
 			}
 		}
-	}
 }
 
 //===================================================================
@@ -335,7 +336,7 @@ public String getEncodedDocument()
 //===================================================================
 {
 	if (documentIsEncoded) return document;
-	else return URL.encodeURL(document,false);
+	return URL.encodeURL(document,false);
 }
 //===================================================================
 Object waitOnIO(Handle h,String errorMessage) throws IOException
@@ -345,8 +346,9 @@ Object waitOnIO(Handle h,String errorMessage) throws IOException
 		h.waitOn(Handle.Success);
 		return h.returnValue;
 	}catch(Exception e){
-		if (h.errorObject instanceof IOException) throw (IOException)h.errorObject;
-		else throw new IOException(errorMessage);
+		if (h.error instanceof IOException) 
+			throw (IOException)h.error;
+		throw new IOException(errorMessage);
 	}
 }
 public static final int SocketConnected = 0x1;
@@ -364,7 +366,7 @@ int makeRequest(Socket sock,TextCodec td) throws IOException
 	if (td == null) td = new AsciiCodec();
 	PropertyList pl = new PropertyList();
 	if (requestorProperties != null) pl.set(requestorProperties);
-	pl.defaultTo("Connection","close");
+	pl.defaultTo("Connection",keepAliveMode ? "keep-alive" : "close");
 	pl.defaultTo("Host",host);
 	StringBuffer sb = new StringBuffer();
 	sb.append(command+" "+getEncodedDocument()+" "+requestVersion+"\r\n");
@@ -374,15 +376,15 @@ int makeRequest(Socket sock,TextCodec td) throws IOException
 	}
 	sb.append("\r\n");
 	String req = sb.toString();
-	char [] rc = ewe.sys.Vm.getStringChars(req);
+	char [] rc = Vm.getStringChars(req);
 	ByteArray ba = ((TextCodec)td.getCopy()).encodeText(rc,0,rc.length,true,null);
-	sock.write(ba.data,0,ba.length);
-	sock.flush();
+	OutputStream os = sock.getOutputStream();
+	os.write(ba.data,0,ba.length);
+	os.flush();
 	//
 	if (bytesToPost != null){
-		IOTransfer iot = new IOTransfer();
-		iot.transfer(bytesToPost,sock);
-		sock.flush();
+		StreamUtils.transfer(null,bytesToPost,os);
+		os.flush();
 		bytesToPost.close();
 		/*
 		// For debugging - output eol and a blank line.
@@ -396,8 +398,9 @@ int makeRequest(Socket sock,TextCodec td) throws IOException
 	int lastReceived = -1;
 	//
 	ba.clear();
+	InputStream is = sock.getInputStream();
 	while(true){
-		int got = sock.read();
+		int got = is.read();
 		if (got == -1) throw new IOException("Unexpected end of stream.");
 		if (got == 10){
 			if (lastReceived == 10) break; //Got all the data now.
@@ -413,7 +416,7 @@ int makeRequest(Socket sock,TextCodec td) throws IOException
 	}
 	data.set(all.data,0,all.length);
 	int got = data.split('\n',lines);
-	documentProperties = new ewe.data.PropertyList();
+	documentProperties = new PropertyList();
 	if (got == 0) throw new IOException("No response");
 
 
@@ -424,7 +427,7 @@ int makeRequest(Socket sock,TextCodec td) throws IOException
 		if (idx != -1){
 			int id2 = response.indexOf(' ',idx+1);
 			if (id2 != -1){
-				responseCode = ewe.sys.Convert.toInt(response.substring(idx+1,id2));
+				responseCode = Convert.toInt(response.substring(idx+1,id2));
 			}
 		}
 	}
@@ -444,7 +447,7 @@ int makeRequest(Socket sock,TextCodec td) throws IOException
 }
 
 static final String [] encodings = {"transfer-coding","transfer-encoding"};
-byte [] buffer;
+//byte [] buffer;
 
 
 
@@ -479,109 +482,6 @@ public String getRedirectTo()
 	if (responseCode < 300 || responseCode > 399) return null;
 	return documentProperties.getString("location",null);
 }
-//===================================================================
-int readInChunkedHeader(Socket connection,ByteArray buff,CharArray chBuff) throws IOException
-//===================================================================
-{
- 	if (buffer == null) buffer = new byte[10240];
-	if (buff == null) buff = new ByteArray();
-	buff.clear();
-	while(true){
-		int got = connection.read();
-		if (got == -1) throw new IOException();
-		if (got == '\n') break;
-		buff.append((byte)got);
-	}
-	chBuff = new AsciiCodec().decodeText(buff.data,0,buff.length,true,chBuff);
-	String s = new String(chBuff.data,0,chBuff.length);
-	String length = mString.leftOf(s,';').trim().toUpperCase();
-	int clen = 0;
-	for (int i = 0; i<length.length(); i++){
-		char c = length.charAt(i);
-		clen *= 16;
-		clen += c <= '9' ? c-'0' : c-'A'+10;
-	}
-	//ewe.sys.Vm.debug("Length: "+length+" = "+clen);
-	return clen;
-}
-/*
-//===================================================================
-Handle readInSomeData(final Socket connection,final int numBytes,final ByteArray dest)
-//===================================================================
-{
-	return new ewe.sys.TaskObject(){
-		protected void doRun(){
-			try{
-				ByteArray ba = dest;
-				if (ba == null) ba = new ByteArray();
-				ba.clear();
-				int size = numBytes;
-				if (buffer == null) buffer = new byte[10240];			
-				handle.setProgress(0.0f);
-				while(size > 0){
-					int toRead = size > buffer.length ? buffer.length : size;
-					toRead = connection.read(buffer,0,toRead);
-					if (toRead <= 0) throw new IOException();
-					ba.append(buffer,0,toRead);
-					size -= toRead;
-					handle.setProgress((float)((double)(numBytes-size)/numBytes));
-				}
-				handle.setProgress(1.0f);
-				handle.returnValue = ba;
-				handle.set(Handle.Succeeded);
-				return;
-			}catch(Exception e){
-				handle.failed(e);
-			}finally{
-				if (!keepAliveMode || ((handle.check() & handle.Success) == 0))
-					connection.close();
-			}
-		}
-	}.startTask();
-}
-*/
-/*
-//===================================================================
-Handle readInChunkedData(final Socket connection)
-//===================================================================
-{
-	return new ewe.sys.TaskObject(){
-		protected void doRun(){
-			try{
-				ByteArray ba = new ByteArray();
-				while(true){
-					handle.setProgress(-1f);
-					int size = readInChunkedHeader(connection,null,null);
-					if (size == 0) break;
-					if (buffer == null) buffer = new byte[10240];			
-					while(size > 0){
-						int toRead = size > buffer.length ? buffer.length : size;
-						//ewe.sys.Vm.debug("Reading: "+toRead);
-						toRead = connection.read(buffer,0,toRead);
-						if (toRead <= 0) throw new IOException();
-						ba.append(buffer,0,toRead);
-						size -= toRead;
-						handle.setProgress(-1f);
-					}
-					//
-					// Should be a CRLF after the data.
-					//
-					while(true){
-						int got = connection.read();
-						if (got == -1) throw new IOException();
-						if (got == '\n') break;
-					}
-				}
-				handle.returnValue = ba;
-				handle.set(Handle.Succeeded);
-				return;
-			}catch(IOException e){
-				handle.failed(e);
-			}
-		}
-	}.startTask();
-}
-*/
 /**
  * Read in all the data from the Socket.
  * @param connection The socket returned by a connect() call.
@@ -590,14 +490,21 @@ Handle readInChunkedData(final Socket connection)
 	object that holds the data read in.
  */
 //===================================================================
-public Handle readInData(final Socket connection) 
+public Handle readInData(Socket connection) 
 //===================================================================
 {
 	int length = documentProperties.getInt("content-length",-1);
 	if (length == 0)
 		return new Handle(Handle.Succeeded,new ByteArray());
-	getInputStream();
-	return StreamUtils.readAllBytes(getInputStream(),null,length,0);
+	//
+	try{
+		InputStream is = getInputStream(connection);
+		return StreamUtils.readAllBytes(is,null,length,0);
+	}catch(IOException e){
+		Handle h = new Handle();
+		h.fail(e);
+		return h;
+	}
 }
 /**
  * Read in all the data from the Socket.
@@ -616,44 +523,28 @@ public Handle readInData()
 * the readInData() method.
 **/
 //===================================================================
-public InputStream getInputStream()
+public InputStream getInputStream(Socket connectedSocket) throws IOException
 //===================================================================
 {
 	//ewe.sys.Vm.debug(documentProperties.toString());
 	int length = documentProperties.getInt("content-length",-1);
-	if ("chunked".equals(documentProperties.getValue(encodings,null)))
-		return new MemoryStream(true){
-			byte[] buff = new byte[10240];
-			int leftInBlock = 0;
-			ByteArray ba = new ByteArray();
-			CharArray ca = new CharArray();
-			//-------------------------------------------------------------------
-			protected boolean loadAndPutDataBlock() throws IOException
-			//-------------------------------------------------------------------
-			{
-				if (leftInBlock <= 0){
-					leftInBlock = readInChunkedHeader(connectedSocket,ba,ca);
-					if (leftInBlock <= 0) return false;
-				}
-				int toRead = leftInBlock;
-				if (toRead > buff.length) toRead = buff.length;
-				int got = connectedSocket.read(buff,0,toRead);
-				if (got == -1) throw new IOException();
-				leftInBlock -= got;
-				putInBuffer(buff,0,got);
-				if (leftInBlock == 0){
-					while(true){
-						got = connectedSocket.read();
-						if (got == -1) throw new IOException();
-						if (got == '\n') break;
-					}
-				}
-				return true;
-			}
-		}.toInputStream();
-		//throw new IOException("Cannot get input stream from this!");
-	else return 
-		new PartialInputStream(connectedSocket,length).toInputStream();
+	if ("chunked".equals(documentProperties.getValue(encodings,null))){
+		//System.out.println("Is chunked!");
+		return new ChunkedDataInputStream(connectedSocket.getInputStream(),10240);
+	}
+	//System.out.println("Is not chunked!");
+	return new PartialInputStream(connectedSocket.getInputStream(),length);
+	
+}
+/**
+* Get an InputStream to read in the data. This is a very important method as it is used by
+* the readInData() method.
+**/
+//===================================================================
+public InputStream getInputStream() throws IOException
+//===================================================================
+{
+	return getInputStream(connectedSocket);
 }
 /**
  * Read in the document body from the Socket. This method blocks until the complete
@@ -683,20 +574,20 @@ public Handle readInText(final Socket connection,TextCodec documentTextDecoder)
 {
 	if (documentTextDecoder == null) documentTextDecoder = new AsciiCodec();
 	final TextCodec cc = (TextCodec)documentTextDecoder.getCopy();
-	return new ewe.sys.TaskObject(){
+	return new Task(){
 		protected void doRun(){
+			Handle handle = this;
 			try{
 				Handle h = readInData(connection);
-				if (!waitOnSuccess(h,true)) return;
+				if (!waitOnSuccess(h,TimeOut.Forever,true)) return;
 				ByteArray ba = (ByteArray)h.returnValue;
 				handle.returnValue = cc.decodeText(ba.data,0,ba.length,true,null);
 				handle.set(Handle.Succeeded);
 			}catch(Exception e){
-				handle.errorObject = e;
-				handle.set(Handle.Failed);
+				fail(e);
 			}
 		}
-	}.startTask();
+	}.start();
 }
 /**
  * Read in the document body from the Socket. This method blocks until the complete
@@ -737,42 +628,49 @@ public Handle connectAsync()
 public Handle connectAsync(final TextCodec serverTextDecoder)
 //===================================================================
 {
-	return new ewe.sys.TaskObject(){
+	return new Task(){
 		protected void doRun(){
 			while(true){
 			//
 			// Create a Socket using an IOHandle.
 			//
-			Handle sh = (openSocket != null) ? new Handle(Handle.Succeeded,openSocket) : new IOHandle();
-			Socket sock = (openSocket != null) ? openSocket : new Socket(host,port,(IOHandle)sh);
+			Handle handle = this;
 			try{
-				//
-				// Now wait until connected.
-				//
-				if (!waitOnSuccess(sh,true)) return;
-				//ewe.sys.Vm.debug("Socket connected.");
-				//
-				// Report that the socket connection was made.
-				// Now have to decode the data.
-				//
-				handle.setFlags(SocketConnected,0);
-				//
-				makeRequest(sock,serverTextDecoder);
-				//ewe.sys.Vm.debug("Request made.");
-				handle.returnValue = connectedSocket = sock;
-				handle.setFlags(Handle.Success,0);
-				return;
-			}catch(Exception e){
-				if (openSocket == null){
-					handle.failed(e);
+				Handle sh = (openSocket != null) ? new Handle(Handle.Succeeded,openSocket) : Net.newSocket(host,port); 
+				try{
+					//
+					// Now wait until connected.
+					//
+					if (!waitOnSuccess(sh,TimeOut.Forever,true)){
+						handle.fail(sh.error);
+						return;
+					}
+					//ewe.sys.Vm.debug("Socket connected.");
+					//
+					// Report that the socket connection was made.
+					// Now have to decode the data.
+					//
+					Socket sock = (Socket)sh.returnValue;
+					handle.setFlags(SocketConnected,0);
+					//
+					makeRequest(sock,serverTextDecoder);
+					//ewe.sys.Vm.debug("Request made.");
+					handle.returnValue = connectedSocket = sock;
+					handle.setFlags(Handle.Success,0);
 					return;
-				}else{
+				}catch(Exception e){
+					if (openSocket == null){
+						handle.fail(e);
+						return;
+					}
 					openSocket = null;
 					continue;
 				}
+			}catch(Exception e){
+				handle.fail(e);
 			}
 		}}
-	}.startTask();
+	}.start();
 }
 /**
  * This makes the connection, blocking the current thread.
@@ -843,5 +741,4 @@ public static void main(String args[]) throws IOException, InterruptedException
 //##################################################################
 }
 //##################################################################
-
 

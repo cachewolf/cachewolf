@@ -1,24 +1,27 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
-import CacheWolf.CWPoint;
-import CacheWolf.Common;
-import CacheWolf.Matrix;
-import CacheWolf.MyLocale;
-import ewe.fx.Point;
-import ewe.io.BufferedWriter;
-import ewe.io.FileInputStream;
-import ewe.io.FileWriter;
-import ewe.io.File;
-import ewe.io.IOException;
-import ewe.io.InputStreamReader;
-import ewe.io.PrintWriter;
-import ewe.sys.*;
+import eve.fx.Point;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import eve.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import eve.sys.*;
 import java.lang.Math;
 
-import utils.FileBugfix;
+import cachewolf.CWPoint;
+import cachewolf.MyLocale;
+import cachewolf.utils.Common;
+import cachewolf.utils.STRreplace;
+import cachewolf.utils.Matrix;
+
+
 
 /**
- * class to read, save and do the calculations for calibrated and 
+ * class to read, save and do the calculations for calibrated and
  * calibrating maps
  * start offset for language file: 4300
  * @author pfeffer
@@ -43,19 +46,19 @@ public class MapInfoObject extends Area {
 	public float scale; // in meters per pixel, note: it is assumed that this scale identifying the scale of the map, automatically adjusted when zooming
 	public float zoomFactor = 1; // if the image is zoomed, direct after laoding always 1
 	public Point shift = new Point (0,0);
-	public CWPoint origAffineUpperLeft; // this is only valid after zooming 
+	public CWPoint origAffineUpperLeft; // this is only valid after zooming
 	public float rotationRad; // contains the rotation of the map == north direction in rad
 	/** full path to the respective worldfile, including ".wfl"*/
-	public String fileNameWFL = new String();
+	public String fileNameWFL = "";
 	/** filename wihout directory */
 //	public String fileName = new String();
-	/** name of the map, introduced to allow 'maps' without an image (empty maps) */ 
-	public String mapName = new String();
+	/** name of the map, introduced to allow 'maps' without an image (empty maps) */
+	public String mapName = "";
 	//private Character digSep = new Character(' ');
 	static private String digSep = MyLocale.getDigSeparator();
-	private int coordTrans = 0; 
+	private int coordTrans = 0;
 
-	public MapInfoObject() { }
+	public MapInfoObject() {}
 
 	public MapInfoObject(MapInfoObject map) {
 		super (map.topleft, map.buttomright);
@@ -107,7 +110,7 @@ public class MapInfoObject extends Area {
 		mapName = name+".wfl";
 		double meters2deg = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		double pixel2deg = meters2deg * scalei;
-		double pixel2deghorizontal = pixel2deg / java.lang.Math.cos(center.latDec*java.lang.Math.PI / 180); 
+		double pixel2deghorizontal = pixel2deg / java.lang.Math.cos(center.latDec*java.lang.Math.PI / 180);
 		affine[0]=0; //x2lat
 		affine[1]=pixel2deghorizontal; //x2lon
 		affine[2]=-pixel2deg; //y2lat
@@ -128,7 +131,7 @@ public class MapInfoObject extends Area {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param path including trailing "/"
 	 * @param n without ".wfl"
 	 * @return name of the map including fast-find-prefix
@@ -140,14 +143,14 @@ public class MapInfoObject extends Area {
 		return mapName;
 	}
 
-	/** 
+	/**
 	 * @return the filename of the associated map image, "" if no file is associated, null if associated file could not be found
 	 */
 	public String getImageFilename() {
-		// if (fileName == null || fileName.length() > 0) return fileName; 
+		// if (fileName == null || fileName.length() > 0) return fileName;
 		if (fileNameWFL.length() == 0) return ""; // no image associated (empty map)
 		String n = fileNameWFL.substring(0, fileNameWFL.lastIndexOf("."));
-		return Common.getImageName(CacheWolf.STRreplace.replace(n, "//", "/"));
+		return Common.getImageName(STRreplace.replace(n, "//", "/"));
 	}
 
 	/**
@@ -159,10 +162,10 @@ public class MapInfoObject extends Area {
 	 * @throws ArithmeticException when affine data is not correct, e.g. it is not possible to inverse affine-transformation
 	 */
 	public void loadwfl(String mapsPath, String thisMap) throws IOException, ArithmeticException {
-		FileInputStream instream = new FileInputStream (CacheWolf.STRreplace.replace(mapsPath + thisMap + ".wfl", "//", "/"));
-		InputStreamReader in = new InputStreamReader(instream);
-		
-		String line = new String();
+		FileInputStream instream = new FileInputStream (STRreplace.replace(mapsPath + thisMap + ".wfl", "//", "/"));
+		BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+
+		String line = "";
 		try {
 			for(int i = 0; i<4;i++){
 				line = in.readLine();
@@ -177,14 +180,16 @@ public class MapInfoObject extends Area {
 			line = in.readLine();
 			buttomright.lonDec = Common.parseDoubleException(line);
 			line = in.readLine(); // readLine returns null, if End of File reached
-			if (line != null) coordTrans = Common.parseInt(line);
-			else coordTrans = 0;
+			if (line != null)
+				coordTrans = Common.parseInt(line);
+			else
+				coordTrans = 0;
 			fileNameWFL = mapsPath + thisMap + ".wfl";
 //			fileName = ""; //mapsPath + thisMap + ".png";
 			mapName = thisMap;
 			in.close();
 			if( !buttomright.isValid() ) {
-				affine[0] = 0; affine[1] = 0; affine[2] = 0; affine[3] = 0; 
+				affine[0] = 0; affine[1] = 0; affine[2] = 0; affine[3] = 0;
 				topleft.makeInvalid();
 				throw (new IOException(MyLocale.getMsg(4301, "Lat/Lon out of range while reading ")+mapsPath + thisMap + ".wfl"));
 			}
@@ -195,7 +200,7 @@ public class MapInfoObject extends Area {
 		origAffineUpperLeft = new CWPoint(affineTopleft);
 	}
 
-	public void evalGCP(ewe.util.Vector GCPs, int imageWidth, int imageHeight) throws IllegalArgumentException {
+	public void evalGCP(java.util.Vector GCPs, int imageWidth, int imageHeight) throws IllegalArgumentException {
 		evalGCP(GCPs, imageWidth, imageHeight, 0);
 	}
 		/**
@@ -204,12 +209,12 @@ public class MapInfoObject extends Area {
 	 *  @throws IllegalArgumentException when less than 3 georeferenced points were given in GCPs
 	 */
 
-	public void evalGCP(ewe.util.Vector GCPs, int imageWidth, int imageHeight, int epsg_code) throws IllegalArgumentException {
+	public void evalGCP(java.util.Vector GCPs, int imageWidth, int imageHeight, int epsg_code) throws IllegalArgumentException {
 		//N 48 16.000 E 11 32.000
 		//N 48 16.000 E 11 50.000
 		//N 48 9.000 E 11 32.000
 		if (GCPs.size() < 3 ) throw new IllegalArgumentException(MyLocale.getMsg(4304, "not enough points to calibrate the map"));
-		GCPoint gcp = new GCPoint();
+		GCPoint gcp;
 		//Calculate parameters for latitutde affine transformation (affine 0,2,4)
 		Matrix X = new Matrix(GCPs.size(),3);
 		Matrix trg = new Matrix(GCPs.size(),1);
@@ -219,14 +224,14 @@ public class MapInfoObject extends Area {
 			trg.matrix[i][0] = gcp.latDec;
 		}
 		Matrix Xtran = new Matrix(X);
-		Xtran.Transpose();
+		Xtran.transpose();
 		Matrix XtranX = new Matrix(Xtran);
-		XtranX.Multiply(X);
+		XtranX.multiply(X);
 		Matrix XtranXinv = new Matrix(XtranX);
-		XtranXinv.Inverse();
+		XtranXinv.inverse();
 		Matrix beta = new Matrix(XtranXinv);
-		beta.Multiply(Xtran);
-		beta.Multiply(trg);
+		beta.multiply(Xtran);
+		beta.multiply(trg);
 		affine[0] = beta.matrix[1][0];
 		affine[2] = beta.matrix[2][0];
 		affineTopleft.latDec = beta.matrix[0][0];
@@ -242,14 +247,14 @@ public class MapInfoObject extends Area {
 			trg.matrix[i][0] = gcp.lonDec;
 		}
 		Xtran = new Matrix(X);
-		Xtran.Transpose();
+		Xtran.transpose();
 		XtranX = new Matrix(Xtran);
-		XtranX.Multiply(X);
+		XtranX.multiply(X);
 		XtranXinv = new Matrix(XtranX);
-		XtranXinv.Inverse();
+		XtranXinv.inverse();
 		beta = new Matrix(XtranXinv);
-		beta.Multiply(Xtran);
-		beta.Multiply(trg);
+		beta.multiply(Xtran);
+		beta.multiply(trg);
 		affine[1] = beta.matrix[1][0];
 		affine[3] = beta.matrix[2][0];
 		affineTopleft.lonDec = beta.matrix[0][0];
@@ -292,7 +297,7 @@ public class MapInfoObject extends Area {
 	}
 
 	public void saveWFL() throws IOException, IllegalArgumentException {
-		File dateiF = new FileBugfix(fileNameWFL);
+		File dateiF = new File(fileNameWFL);
 		String tmp = dateiF.getDrivePath(); // contains the name and the extension
 		saveWFL(tmp, mapName);
 	}
@@ -305,7 +310,7 @@ public class MapInfoObject extends Area {
 	 * @throws IllegalArgumentException when affine[x] for all x == 0 ("map not calibrated").
 	 */
 	public void saveWFL(String mapsPath, String mapFileName) throws IOException, IllegalArgumentException {
-		if (affine[0]==0 && affine[1]==0 && affine[2]==0 && affine[3]==0 && 
+		if (affine[0]==0 && affine[1]==0 && affine[2]==0 && affine[3]==0 &&
 				!topleft.isValid()) throw (new IllegalArgumentException(MyLocale.getMsg(4306, "map not calibrated")));
 		PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(mapsPath + "/" + mapFileName + ".wfl")));
 		StringBuffer towriteB=new StringBuffer(400);
@@ -338,18 +343,18 @@ public class MapInfoObject extends Area {
 		// restore original values to calculate corret shift (upperleft)
 		affineTopleft.latDec = origAffineUpperLeft.latDec;
 		affineTopleft.lonDec = origAffineUpperLeft.lonDec;
-		affine[0] = affine[0] * zoomFactor; 
-		affine[1] = affine[1] * zoomFactor; 
+		affine[0] = affine[0] * zoomFactor;
+		affine[1] = affine[1] * zoomFactor;
 		affine[2] = affine[2] * zoomFactor;
 		affine[3] = affine[3] * zoomFactor;
 		TrackPoint upperleft = calcLatLon(diffX, diffY);
 		if (coordTrans != 0) upperleft = TransformCoordinatesProperties.fromWgs84(upperleft, coordTrans);
 		affineTopleft.latDec = upperleft.latDec; // TODO nachdenken affineTopleft
 		affineTopleft.lonDec = upperleft.lonDec;
-		affine[0] = affine[0] / zf ; 
-		affine[1] = affine[1] / zf ; 
-		affine[2] = affine[2] / zf ; 
-		affine[3] = affine[3] / zf ; 
+		affine[0] = affine[0] / zf ;
+		affine[1] = affine[1] / zf ;
+		affine[2] = affine[2] / zf ;
+		affine[3] = affine[3] / zf ;
 		zoomFactor = zf ;
 		shift.x = diffX;
 		shift.y = diffY;
@@ -368,11 +373,11 @@ public class MapInfoObject extends Area {
 		if (coordTrans != 0) t = TransformCoordinatesProperties.fromWgs84(ll, coordTrans);
 		else t = ll;
 		Point coords = new Point();
-		double b0, b1;
+		double b0,b1;
 		b0 = t.latDec - affineTopleft.latDec;
 		b1 = t.lonDec - affineTopleft.lonDec;
-		double mapx = transLatX * b0 + transLonX * b1;
-		double mapy = transLatY * b0 + transLonY * b1;
+		double mapx = transLatX* b0 + transLonX*b1;
+		double mapy = transLatY* b0 + transLonY*b1;
 		coords.x = (int)Math.round(mapx);
 		coords.y = (int)Math.round(mapy);
 		//Vm.debug("mapX=mapx2: "+mapx+"="+mapx2+"; mapy=mapy2: "+mapy+"="+mapy2);
@@ -393,7 +398,7 @@ public class MapInfoObject extends Area {
 			ll = TransformCoordinatesProperties.toWgs84(ll, coordTrans);
 		return ll;
 	}
-	
+
 	public CWPoint calcLatLon(Point p) {
 		return calcLatLon(p.x, p.y);
 	}
@@ -401,7 +406,7 @@ public class MapInfoObject extends Area {
 	/**
 	 * Get the prefix used for easy and fast finding of the best map
 	 * The filname of the .wfl and respective image should start with this
-	 * prefix in order to make finding the best map much faster 
+	 * prefix in order to make finding the best map much faster
 	 * @return
 	 */
 	public String getFfPrefix() {
@@ -425,7 +430,7 @@ public class MapInfoObject extends Area {
 		}
 
 		/**
-		 * If you are using Gauß-Krüger, put lat = northing, lon = easting 
+		 * If you are using Gauß-Krüger, put lat = northing, lon = easting
 		 * @param lat
 		 * @param lon
 		 */
@@ -440,4 +445,3 @@ public class MapInfoObject extends Area {
 			bitMapY = px.y;
 		}
 	}
-	

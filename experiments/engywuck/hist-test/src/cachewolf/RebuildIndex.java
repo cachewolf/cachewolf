@@ -1,16 +1,14 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.io.FileReader;
-import ewe.sys.Handle;
-import ewe.ui.FormBase;
-import ewe.ui.MessageBox;
-import ewe.ui.ProgressBarForm;
-import utils.FileBugfix;
+import eve.io.File;
+import eve.sys.Handle;
+import eve.ui.MessageBox;
+import eve.ui.ProgressBarForm;
 
-public class Rebuild {
+public class RebuildIndex {
 	String [] xmlFiles;
 	
-	public Rebuild() {}
+	public RebuildIndex() {}
 	
 	public void rebuild() {	
 		int i;
@@ -21,7 +19,7 @@ public class Rebuild {
 		pbf.setTask(h,MyLocale.getMsg(209,"Rebuilding index"));
 		pbf.exec();
 
-		FileBugfix file=new FileBugfix(Global.getProfile().dataDir);
+		eve.io.File file=new eve.io.File(Global.getProfile().dataDir);
 		xmlFiles=file.list("*.xml",0);
 		int orphans=0; // xml Files without entry in database
 		int nAdded=0;  // caches added to database
@@ -33,7 +31,7 @@ public class Rebuild {
 				prof.getCacheIndex(wayPoint)>=0)		// Check for waypoints already in database 
 				xmlFiles[i]=null;   				// Remove existing caches or index.xml
 			else {
-				//ewe.sys.Vm.debug("Orphan: "+wayPoint);
+				//eve.sys.Vm.debug("Orphan: "+wayPoint);
 				orphans++;
 			}
 		}
@@ -57,13 +55,13 @@ public class Rebuild {
 			(new MessageBox(MyLocale.getMsg(327, "Information"), 
 					  MyLocale.getMsg(210,"Caches nicht in index.xml: ")+orphans+
 					  MyLocale.getMsg(211,"\nDavon hinzugefügt: ")+nAdded
-					, FormBase.OKB)).execute();
+					, MessageBox.OKB)).execute();
 			prof.buildReferences();
-			prof.saveIndex(Global.getPref(),true);
+			prof.saveIndex(true);
 		}
 		if (orphans!=nAdded && (new MessageBox(MyLocale.getMsg(327, "Information"),
 					MyLocale.getMsg(212,"Delete all .xml files not in index.xml and associated pictures"), 
-					FormBase.YESB | FormBase.NOB)).execute()==FormBase.YESB) {
+					MessageBox.YESB | MessageBox.NOB)).execute()==MessageBox.YESB) {
 			h = new Handle();
 			pbf.setTask(h,MyLocale.getMsg(213,"Deleting orphans"));
 			DataMover dm=new DataMover();
@@ -82,9 +80,12 @@ public class Rebuild {
 
 	private String getCacheDetails(String xmlFile) {
 		try {
-			FileReader in = new FileReader(xmlFile);
-			String text= in.readAll();
+			char buf[]=new char[(int) (new File(xmlFile)).getLength()];
+			java.io.InputStreamReader in = new java.io.InputStreamReader(new java.io.FileInputStream(xmlFile),"UTF8");
+			int len=in.read(buf);
 			in.close();
+			eve.util.CharArray ca=new eve.util.CharArray(buf); ca.setLength(len);
+			String text=(ca).toString();
 			int start,end;
 			// Check that we have not accidentally listed another xml file in the directory
 			if (text.indexOf("<CACHEDETAILS>")<0 || (start=text.indexOf("<CACHE "))<0) return null;

@@ -1,4 +1,4 @@
-package CacheWolf;
+package cachewolf;
 
 /**
  * A travelbug journey starts in a cache (from....) where the tb is picked up and 
@@ -7,8 +7,10 @@ package CacheWolf;
  * transfer has been logged to GC.
  * @author salzkammergut
  */
-import ewe.fx.Image;
-import ewe.sys.*;
+import cachewolf.utils.SafeXML;
+import eve.sys.*;
+import eve.fx.Picture;
+
 
 public class TravelbugJourney  {
 	/** 
@@ -106,8 +108,8 @@ public class TravelbugJourney  {
 		setToDate(getDateTime());    
 	}
 	
-	private static Image checkboxTicked = new Image("checkboxTicked.png");
-	private static Image checkboxUnticked= new Image("checkboxUnticked.png");
+	private static Picture checkboxTicked = new Picture("checkboxTicked.png");
+	private static Picture checkboxUnticked= new Picture("checkboxUnticked.png");
 	
 	/** Get an element of a TravelbugJourney by number. This is used when
 	 * displaying the journey in list format.
@@ -127,15 +129,13 @@ public class TravelbugJourney  {
 			case 6: return getFromDate();
 			case 7: if (getFromLogged())
 						return checkboxTicked;
-					else
-						return checkboxUnticked;
+					return checkboxUnticked;
 			case 8: return getToProfile();
 			case 9: return getToWaypoint();
 			case 10: return getToDate();
 			case 11: if(getToLogged())
 						return checkboxTicked;
-					else
-						return checkboxUnticked;
+					return checkboxUnticked;
 			/* Special case 12: Return Z if both moves have been logged, blank otherwise
 			 This allows the not logged tbJourneys to be sorted to the top.*/
 			case 12: return bothLogsDone() ? "Z": " ";
@@ -286,11 +286,11 @@ public class TravelbugJourney  {
 		appendElem(s,"fromProfile",fromProfile,true);
 		appendElem(s,"fromWaypoint",fromWaypoint,false);
 		appendElem(s,"fromDate",fromDate,false);
-		appendElem(s,"fromLogged",(new Boolean(fromLogged)).toString(),false);
+		appendElem(s,"fromLogged",Boolean.toString(fromLogged),false);
 		appendElem(s,"toProfile",toProfile,true);
 		appendElem(s,"toWaypoint",toWaypoint,false);
 		appendElem(s,"toDate",toDate,false);
-		appendElem(s,"toLogged",(new Boolean(toLogged)).toString(),false);
+		appendElem(s,"toLogged",Boolean.toString(toLogged),false);
 		s.append("><name><![CDATA[");
 		s.append(tb.getName());
 		s.append("]]></name><![CDATA[");

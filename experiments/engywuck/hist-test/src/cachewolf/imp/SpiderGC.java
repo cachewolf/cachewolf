@@ -23,16 +23,42 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     */
 
-package CacheWolf;
-import ewe.net.*;
-import ewe.io.*;
-import ewe.sys.*;
-import ewe.sys.Double;
-import ewe.util.*;
-import com.stevesoft.ewe_pat.*;
-import ewe.ui.*;
-import ewe.data.Property;
-import ewe.data.PropertyList;
+package cachewolf.imp;
+import eve.net.*;
+import java.io.*;
+import eve.sys.*;
+import java.util.*;
+
+
+import cachewolf.CWPoint;
+import cachewolf.CacheHolder;
+import cachewolf.CacheHolderDetail;
+import cachewolf.CacheType;
+import cachewolf.Global;
+import cachewolf.HttpConnection;
+import cachewolf.InfoBox;
+import cachewolf.Log;
+import cachewolf.LogList;
+import cachewolf.MyLocale;
+import cachewolf.Preferences;
+import cachewolf.Profile;
+import cachewolf.Travelbug;
+import cachewolf.utils.Common;
+import cachewolf.utils.DateFormat;
+import cachewolf.utils.Extractor;
+import cachewolf.utils.STRreplace;
+import cachewolf.utils.SafeXML;
+
+import com.stevesoft.eve_pat.*;
+import eve.ui.*;
+import eve.data.Property;
+import eve.data.PropertyList;
+import eve.util.ByteArray;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import eve.util.CharArray;
+import eve.io.JavaUtf8Codec;
 
 /**
 *	Class to spider caches from gc.com
@@ -95,7 +121,7 @@ public class SpiderGC{
 		int code = infB.execute();
 		passwort = infB.getInput();
 		infB.close(0);
-		if(code != FormBase.IDOK) return code;
+		if(code != Form.IDOK) return code;
 
 		// Now start the login proper
 		infB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
@@ -112,8 +138,9 @@ public class SpiderGC{
 			}
 		} catch(Exception ex){
 			infB.close(0);
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page"), MessageBox.OKB)).execute();
 			pref.log("[login]:Could not fetch: gc.com login page",ex);
+			passwort="";
 			return ERR_LOGIN;
 		}
 		if (!infB.isClosed) { // If user has not aborted, we continue
@@ -127,7 +154,7 @@ public class SpiderGC{
 				//Vm.debug("ViewState: " + viewstate);
 			} else
 				pref.log("[login]:Viewstate not found before login");
-			
+
 			if(start.indexOf(loginSuccess) > 0)
 				pref.log("[login]:Already logged in");
 			else {
@@ -143,9 +170,9 @@ public class SpiderGC{
 					StringBuffer sb=new StringBuffer(1000);
 					sb.append(URL.encodeURL("__VIEWSTATE",false));	sb.append("="); sb.append(URL.encodeURL(viewstate,false));
 					sb.append("&"); sb.append(URL.encodeURL("myUsername",false));
-					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
+					sb.append("="); sb.append(encodeUTF8URL(eve.util.Utils.encodeJavaUtf8String(pref.myAlias)));
 					sb.append("&"); sb.append(URL.encodeURL("myPassword",false));
-					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
+					sb.append("="); sb.append(encodeUTF8URL(eve.util.Utils.encodeJavaUtf8String(passwort)));
 					sb.append("&"); sb.append(URL.encodeURL("cookie",false));
 					sb.append("="); sb.append(URL.encodeURL("on",false));
 					sb.append("&"); sb.append(URL.encodeURL("Button1",false));
@@ -162,13 +189,13 @@ public class SpiderGC{
 							pref.log("[login.Answer]:"+start);
 						}
 						infB.close(0);
-						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), FormBase.OKB)).execute();
+						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), MessageBox.OKB)).execute();
 						return ERR_LOGIN;
 					}
 				}catch(Exception ex){
 					pref.log("[login]:Login failed with exception.", ex);
 					infB.close(0);
-					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), FormBase.OKB)).execute();
+					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), MessageBox.OKB)).execute();
 					return ERR_LOGIN;
 				}
 			}
@@ -195,17 +222,15 @@ public class SpiderGC{
 		boolean loginAborted=infB.isClosed;
 		infB.close(0);
 		if (loginAborted)
-			return FormBase.IDCANCEL;
-		else {
-			loggedIn = true;
-			return FormBase.IDOK;
-		}
+			return Form.IDCANCEL;
+		loggedIn = true;
+		return Form.IDOK;
 	}
 
 	/**
 	 * Method to spider a single cache.
 	 * It assumes a login has already been performed!
-	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with next cache
+	 * @return True if spider was successful, false if spider was cancelled by closing the infobox
 	 */
 	public int spiderSingle(int number, InfoBox infB, boolean forceLogin){
 		int ret=-1;
@@ -214,8 +239,8 @@ public class SpiderGC{
 		if (ch.isAddiWpt()) return -1;  // No point re-spidering an addi waypoint, comes with parent
 
 		// check if we need to login
-		if (!loggedIn || forceLogin){
-			if (this.login()!=FormBase.IDOK) return -1;
+		if (!loggedIn){
+			if (this.login()!=Form.IDOK) return -1;
 			// loggedIn is already set by this.login()
 		}
 		CacheHolderDetail chD=ch.getCacheDetails(true); //new CacheHolderDetail(ch);
@@ -230,7 +255,7 @@ public class SpiderGC{
 			boolean loadAllLogs = (MAXLOGS > 5);
 			ret=getCacheByWaypointName(chD,true,true,false,loadAllLogs);
 			// Save the spidered data
-			if (ret == 1) {
+			if (ret==1) {
 				pref.log("Saving to:" + profile.dataDir);
 				chD.saveCacheDetails(profile.dataDir);
 				((CacheHolder) cacheDB.get(number)).update(chD);
@@ -247,11 +272,11 @@ public class SpiderGC{
 	 * @return the cache coordinates
 	 */
 	public String getCacheCoordinates(String wayPoint) {
-		String completeWebPage;
+		String completevebPage;
 		// Check whether spider definitions could be loaded, if not issue appropriate message and terminate
 		// Try to login. If login fails, issue appropriate message and terminate
 		if (!loggedIn || Global.getPref().forceLogin) {
-			if (login()!=FormBase.IDOK) {
+			if (login()!=Form.IDOK) {
 				return "";
 			}
 		}
@@ -260,7 +285,7 @@ public class SpiderGC{
 		try{
 			String doc = p.getProp("waypoint") + wayPoint;
 			pref.log("Fetching: " + wayPoint);
-			completeWebPage = fetch(doc);
+			completevebPage = fetch(doc);
 		}catch(Exception ex){
 			infB.close(0);
 			pref.log("Could not fetch " + wayPoint,ex);
@@ -268,7 +293,7 @@ public class SpiderGC{
 		}
 		infB.close(0);
 		try {
-			return getLatLon(completeWebPage);
+			return getLatLon(completevebPage);
 		} catch (Exception ex) {
 			return "????";
 		}
@@ -283,7 +308,7 @@ public class SpiderGC{
 		CacheHolderDetail chD;
 		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
 		if (!origin.isValid()) {
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), FormBase.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), MessageBox.OKB)).execute();
 			return;
 		}
 		if (System.getProperty("os.name")!=null)pref.log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"));
@@ -303,19 +328,18 @@ public class SpiderGC{
 		String doc = "";
 
 		if (!loggedIn || Global.getPref().forceLogin) {
-			if(login() != FormBase.IDOK) return;
+			if(login() != Form.IDOK) return;
 		}
 
 		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
-		if (options.execute() == FormBase.IDCANCEL) {return; }
+		//options.distanceInput.setText("");
+		if (options.execute() == OCXMLImporterScreen.IDCANCEL) {return; }
 		String dist = options.distanceInput.getText();
 		if (dist.length()== 0) return;
 		distance = Common.parseDouble(dist);
-		
+
 		//save last radius to profile
-		Double distDouble = new Double();
-		distDouble.value = distance;
-		dist = distDouble.toString(0, 1, 0).replace(',', '.');
+		dist = MyLocale.formatDouble(distance, "000.0").replace(',', '.');
 		profile.distGC = dist;
 
 		boolean doNotgetFound = options.foundCheckBox.getState();
@@ -325,7 +349,7 @@ public class SpiderGC{
 		//=======
 		// Prepare list of all caches that are to be spidered
 		//=======
-		Vm.showWait(true);
+		Form.showWait();
 		infB = new InfoBox("Status", MyLocale.getMsg(5502,"Fetching first page..."));
 		infB.exec();
 		//Get first page
@@ -336,10 +360,10 @@ public class SpiderGC{
 			start = fetch(ln);
 			pref.log("Got first page");
 		}catch(Exception ex){
-			pref.log("Error fetching first list page",ex,true);
-			Vm.showWait(false);
+				pref.log("Error fetching first list page",ex,true);
+			Form.cancelWait();
 			infB.close(0);
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), FormBase.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), MessageBox.OKB)).execute();
 			return;
 		}
 		dummy = "";
@@ -349,7 +373,7 @@ public class SpiderGC{
 			lineRex = new Regex(p.getProp("lineRex")); //"<tr bgcolor=((?s).*?)</tr>"
 		} catch (Exception ex) {
 			infB.close(0);
-			Vm.showWait(false);
+			Form.cancelWait();
 			return;
 		}
 		int found_on_page = 0;
@@ -357,7 +381,7 @@ public class SpiderGC{
 			//Loop till maximum distance has been found or no more caches are in the list
 			while(distance > 0){
 				if (infB.isClosed) break;
-		
+
 				rexViewstate.search(start);
 				if(rexViewstate.didMatch()){
 					viewstate = rexViewstate.stringMatched(1);
@@ -366,14 +390,14 @@ public class SpiderGC{
 					viewstate = "";
 					pref.log("Viewstate not found");
 				}
-				
+
 				rexEventvalidation.search(start);
 				if(rexEventvalidation.didMatch()){
 					eventvalidation = rexEventvalidation.stringMatched(1);
 					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
 				} else {
 					eventvalidation = "";
-					pref.log("Eventvalidation not found");					
+					pref.log("Eventvalidation not found");
 				}
 
 				//Vm.debug("In loop");
@@ -426,9 +450,9 @@ public class SpiderGC{
 						strNextPage = "ctl00$ContentBody$pgrTop$ctl" + page_number;
 					}
 					doc = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strNextPage,false)
-					    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
-					    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
-					    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
+				    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
+				    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
+				    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
 					try{
 						start = "";
 						pref.log("Fetching next list page:" + doc);
@@ -444,7 +468,7 @@ public class SpiderGC{
 			}
 		} catch (Exception ex) { // Some tag missing from spider.def
 			infB.close(0);
-			Vm.showWait(false);
+			Form.cancelWait();
 			return;
 		}
 		pref.log("Found " + cachesToLoad.size() + " caches");
@@ -455,7 +479,7 @@ public class SpiderGC{
 		//=======
 		boolean loadAllLogs = (MAXLOGS > 5);
 
-		int spiderErrors = 0;
+		int spiderErrors=0;
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			if (infB.isClosed) break;
 
@@ -473,17 +497,17 @@ public class SpiderGC{
 				} else {
 					if (!chD.is_found || !doNotgetFound ) {
 						chD.saveCacheDetails(profile.dataDir);
-						cacheDB.add(new CacheHolder(chD)); 
+						cacheDB.add(new CacheHolder(chD));
 					}
 				}
 			}
 		}
 		infB.close(0);
-		Vm.showWait(false);
+		Form.cancelWait();
 		if ( spiderErrors > 0) {
 			new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
 		}
-		Global.getProfile().saveIndex(Global.getPref(),true);
+		Global.getProfile().saveIndex(true);
 	}
 
 	/**
@@ -499,16 +523,16 @@ public class SpiderGC{
 	 * @param boolean doNotGetFound True if the cache is not to be spidered if it has already been found
 	 * @param boolean fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line).
 	 *     This is normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
-	 * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if everything ok
+	 * @return false if the infoBox was closed
 	 */
 	private int getCacheByWaypointName(CacheHolderDetail chD, boolean isUpdate, boolean fetchImages, boolean doNotGetFound, boolean fetchAllLogs) {
-		int ret = 1;
+		int ret=1;
 		while (true) {
 			String completeWebPage;
 			int spiderTrys=0;
 			int MAX_SPIDER_TRYS=3;
 			while (spiderTrys++<MAX_SPIDER_TRYS) {
-				ret = 1;
+				ret=1;
 				try{
 					String doc = p.getProp("getPageByName") + chD.wayPoint +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
 					pref.log("Fetching: " + chD.wayPoint);
@@ -540,14 +564,14 @@ public class SpiderGC{
 						chD.is_HTML = true;
 						chD.is_available = true;
 						chD.is_archived = false;
-						chD.is_incomplete = true;
+						chD.is_incomplete = false;
 						// Save size of logs to be able to check whether any new logs were added
 						//int logsz = chD.CacheLogs.size();
 						//chD.CacheLogs.clear();
-						chD.addiWpts.clear();
-						chD.Images.clear();
-						chD.ImagesText.clear();
-						chD.ImagesInfo.clear();
+						if (chD.hasAddiWpt()) chD.addiWpts.clear();
+						chD.images.clear();
+						chD.imagesText.clear();
+						chD.imagesInfo.clear();
 
 						if(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0) chD.is_available = false;
 						if(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0) chD.is_archived = true;
@@ -555,11 +579,11 @@ public class SpiderGC{
 						// General Cache Data
 						//==========
 						chD.setLatLon(getLatLon(completeWebPage));
-						pref.log("LatLon: " + chD.LatLon);
+						pref.log("LatLon: " + chD.latLon);
 						if (pref.debug) pref.log("chD.pos: " + chD.pos.toString());
-						if (chD.LatLon.equals("???")) {
+						if (chD.latLon.equals("???")) {
 							pref.log(">>>> Failed to spider Cache. Retry.");
-							ret = 0;
+							ret=0;
 							continue; // Restart the spider
 						}
 						pref.log("Trying description");
@@ -567,29 +591,29 @@ public class SpiderGC{
 						pref.log("Got description");
 
 						pref.log("Getting cache name");
-						chD.CacheName = SafeXML.cleanback(getName(completeWebPage));
-						if (pref.debug) pref.log("Name: " + chD.CacheName); else pref.log("Got name");
+						chD.cacheName = SafeXML.cleanback(getName(completeWebPage));
+						if (pref.debug) pref.log("Name: " + chD.cacheName); else pref.log("Got name");
 
 						pref.log("Trying owner");
-						chD.CacheOwner = SafeXML.cleanback(getOwner(completeWebPage)).trim();
-						if(chD.CacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.CacheOwner.equals(pref.myAlias2))) chD.is_owned = true;
-						if (pref.debug) pref.log("Owner: " + chD.CacheOwner +"; is_owned = "+chD.is_owned+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
+						chD.cacheOwner = SafeXML.cleanback(getOwner(completeWebPage)).trim();
+						if(chD.cacheOwner.equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.cacheOwner.equals(pref.myAlias2))) chD.is_owned = true;
+						if (pref.debug) pref.log("Owner: " + chD.cacheOwner +"; is_owned = "+chD.is_owned+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
 						else pref.log("Got owner");
 
 
 						pref.log("Trying date hidden");
-						chD.DateHidden = DateFormat.MDY2YMD(getDateHidden(completeWebPage));
-						if (pref.debug) pref.log("Hidden: " + chD.DateHidden);
+						chD.dateHidden = DateFormat.MDY2YMD(getDateHidden(completeWebPage));
+						if (pref.debug) pref.log("Hidden: " + chD.dateHidden);
 						else pref.log("Got date hidden");
 
 						pref.log("Trying hints");
 						chD.setHints(getHints(completeWebPage));
-						if (pref.debug) pref.log("Hints: " + chD.Hints);
+						if (pref.debug) pref.log("Hints: " + chD.hints);
 						else pref.log("Got hints");
 
 						pref.log("Trying size");
-						chD.CacheSize = getSize(completeWebPage);
-						if (pref.debug) pref.log("Size: " + chD.CacheSize);
+						chD.setCacheSize(getSize(completeWebPage));
+						if (pref.debug) pref.log("Size: " + chD.getCacheSize());
 						else pref.log("Got size");
 
 						pref.log("Trying difficulty");
@@ -628,7 +652,7 @@ public class SpiderGC{
 						//==========
 						// As there may be several bugs, we check whether the user has aborted
 						if (!infB.isClosed) getBugs(chD,completeWebPage);
-						chD.has_bug = chD.Travelbugs.size()>0;
+						chD.has_bug = chD.travelbugs.size()>0;
 
 						//==========
 						// Images
@@ -653,7 +677,7 @@ public class SpiderGC{
 						getAttributes(completeWebPage, chD);
 						pref.log("Got attributes");
 						if (chD.is_new) chD.is_update=false;
-						chD.is_incomplete = false;
+						chD.is_incomplete=false;
 						break;
 					}catch(Exception ex){
 						pref.log("Error reading cache: "+chD.wayPoint);
@@ -668,7 +692,7 @@ public class SpiderGC{
 				pref.log(">>> Failed to spider cache. Number of retrys exhausted.");
 				int decision = (new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(5515,"Failed to load cache.%0aPleas check your internet connection.%0aRetry?"),FormBase.DEFOKB|FormBase.NOB|FormBase.CANCELB)).execute();
 				if ( decision == FormBase.IDOK ) {
-					continue;						
+					continue;
 				} else if ( decision == FormBase.IDNO ){
 					ret = 0;
 				} else {
@@ -676,7 +700,7 @@ public class SpiderGC{
 				}
 			}
 			break;
-		}//while(true)
+			}// while (true)
 		if (infB.isClosed) {// If the infoBox was closed before getting here, we return -1
 			return -1;
 		}
@@ -690,9 +714,9 @@ public class SpiderGC{
 	 */
 	private int searchWpt(String wpt){
 		Integer INTR = (Integer)indexDB.get(wpt);
-		if(INTR != null){
+		if(INTR != null)
 			return INTR.intValue();
-		} else return -1;
+		return -1;
 	}
 
 	/**
@@ -805,8 +829,9 @@ public class SpiderGC{
 	private String getSize(String doc) throws Exception{
 		inRex = new Regex(p.getProp("sizeRex"));
 		inRex.search(doc);
-		if(inRex.didMatch()) return inRex.stringMatched(1);
-		else return "None";
+		if(inRex.didMatch())
+			return inRex.stringMatched(1);
+		return "None";
 	}
 
 	/**
@@ -817,8 +842,9 @@ public class SpiderGC{
 	private String getDiff(String doc) throws Exception{
 		inRex = new Regex(p.getProp("difficultyRex"));
 		inRex.search(doc);
-		if(inRex.didMatch()) return inRex.stringMatched(1);
-		else return "";
+		if(inRex.didMatch())
+			return inRex.stringMatched(1);
+		return "";
 	}
 
 	/**
@@ -829,8 +855,9 @@ public class SpiderGC{
 	private String getTerr(String doc) throws Exception{
 		inRex = new Regex(p.getProp("terrainRex"));
 		inRex.search(doc);
-		if(inRex.didMatch()) return inRex.stringMatched(1);
-		else return "";
+		if(inRex.didMatch())
+			return inRex.stringMatched(1);
+		return "";
 	}
 
 	/**
@@ -838,11 +865,12 @@ public class SpiderGC{
 	 * @param doc A previously fetched cachepage
 	 * @return the waypoint type (Tradi, Multi, etc.)
 	 */
-	private String getType(String doc) throws Exception{
+	private int getType(String doc) throws Exception{
 		inRex = new Regex(p.getProp("cacheTypeRex"));
 		inRex.search(doc);
-		if(inRex.didMatch()) return inRex.stringMatched(1);
-		else return "";
+		if(inRex.didMatch())
+			return Common.parseInt(inRex.stringMatched(1));
+		return 0;
 	}
 
 	/**
@@ -885,7 +913,7 @@ public class SpiderGC{
 			if((icon.equals(p.getProp("icon_smile")) || icon.equals(p.getProp("icon_camera")) || icon.equals(p.getProp("icon_attended"))) &&
 				(name.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && name.equalsIgnoreCase(pref.myAlias2))) )  {
 				chD.is_found = true;
-				chD.CacheStatus = d;
+				chD.cacheStatus = d;
 			}
 			if (nLogs<=MAXLOGS) reslts.add(new Log(icon,d,name,exLog.findNext()));
 
@@ -921,7 +949,7 @@ public class SpiderGC{
 		Extractor exBug = new Extractor(bugBlock,p.getProp("bugExStart"),p.getProp("bugExEnd"),0,Extractor.EXCLUDESTARTEND);
 		String link,bug,linkPlusBug,bugDetails;
 		String oldInfoBox=infB.getInfo();
-		chD.Travelbugs.clear();
+		chD.travelbugs.clear();
 		while(exBug.endOfSearch() == false){
 			if (infB.isClosed) break; // Allow user to cancel by closing progress form
 			linkPlusBug= exBug.findNext();
@@ -939,7 +967,7 @@ public class SpiderGC{
 					tb.setMission(exDetails.findNext());
 					Extractor exGuid = new Extractor(bugDetails,"details.aspx?guid=","\" id=\"aspnetForm",0,Extractor.EXCLUDESTARTEND); // TODO Replace with spider.def see also further down
 					tb.setGuid(exGuid.findNext());
-					chD.Travelbugs.add(tb);
+					chD.travelbugs.add(tb);
 				}catch(Exception ex){
 					pref.log("Could not fetch bug details");
 				}
@@ -993,20 +1021,20 @@ public class SpiderGC{
 					// imgType is now max 4 chars, starting with .
 					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
-						idxUrl=spideredUrls.find(imgUrl);
+						if (imgUrl.indexOf('%')>=0) imgUrl=URL.decodeURL(imgUrl);						idxUrl=spideredUrls.indexOf(imgUrl);
 						imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
 						if (idxUrl<0) { // New image
 							pref.log("Loading image: " + imgUrl+" as "+imgName);
 							spiderImage(imgUrl, imgName+imgType);
-							chD.Images.add(imgName+imgType);
+							chD.images.add(imgName+imgType);
 							spideredUrls.add(imgUrl);
 						} else { // Image already spidered as wayPoint_'idxUrl'
 							pref.log("Already loaded image: " + imgUrl);
 							oldImgName = chD.wayPoint + "_" + Convert.toString(idxUrl);
-							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
+							chD.images.add(oldImgName+imgType); // Store name of old image as image to load
 						}
-						chD.ImagesText.add(imgName); // Keep the image name
-						chD.ImagesInfo.add(null); // Need to stay in synch with ImagesText
+						chD.imagesText.add(imgName); // Keep the image name
+						chD.imagesInfo.add(null); // Need to stay in synch with ImagesText
 						imgCounter++;
 					}
 				} catch (IndexOutOfBoundsException e) {
@@ -1031,33 +1059,34 @@ public class SpiderGC{
 		}
 		while(exImgSrc.endOfSearch() == false){
 			imgUrl = exImgSrc.findNext();
-			imgComment = exImgComment.findNext(); 
 			//Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
+				imgComment = exImgComment.findNext();
 				try{
 					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 					// imgType is now max 4 chars, starting with .
 					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
-						idxUrl=spideredUrls.find(imgUrl);
+						if (imgUrl.indexOf('%')>=0) imgUrl=URL.decodeURL(imgUrl);
+						idxUrl=spideredUrls.indexOf(imgUrl);
 						imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
 						if (idxUrl<0) { // New image
 							pref.log("Loading image: " + imgUrl);
 							spiderImage(imgUrl, imgName+imgType);
-							chD.Images.add(imgName+imgType);
+							chD.images.add(imgName+imgType);
 						} else { // Image already spidered as wayPoint_ 'idxUrl'
 							pref.log("Already loaded image: " + imgUrl);
 							oldImgName = chD.wayPoint + "_" + Convert.toString(idxUrl);
-							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
+							chD.images.add(oldImgName+imgType); // Store name of old image as image to load
 						}
-						chD.ImagesText.add(exImgName.findNext()); // Keep the image description
-						while (imgComment.startsWith("<br />")) imgComment=imgComment.substring(6);
-						while (imgComment.endsWith("<br />")) imgComment=imgComment.substring(0,imgComment.length()-6);
+						chD.imagesText.add(exImgName.findNext()); // Keep the image description
+						while (imgComment.startsWith("<br />")) imgComment=imgComment.substring(4);
+						while (imgComment.endsWith("<br />")) imgComment=imgComment.substring(0,imgComment.length()-4);
 						if (imgComment.length()==0)
-							chD.ImagesInfo.add(null);
+							chD.imagesInfo.add(null);
 						else
-							chD.ImagesInfo.add(imgComment);
+							chD.imagesInfo.add(imgComment);
 						imgCounter++;
 					}
 				} catch (IndexOutOfBoundsException e) {
@@ -1075,19 +1104,20 @@ public class SpiderGC{
 				imgUrl = "http://" + imgUrl;
 				try{
 					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
-					// imgType is now max 4 chars, starting with . Delete characters in URL after the image extension
+					// imgType is now max 4 chars, starting with .
 					imgUrl=imgUrl.substring(0,imgUrl.lastIndexOf(".")+imgType.length());
 					if( imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
-						idxUrl=spideredUrls.find(imgUrl);
+						if (imgUrl.indexOf('%')>=0) imgUrl=URL.decodeURL(imgUrl);
+						idxUrl=spideredUrls.indexOf(imgUrl);
 						if (idxUrl<0) { // New image
 							imgName = chD.wayPoint + "_" + Convert.toString(imgCounter);
 							pref.log("Loading image: " + imgUrl+" as "+imgName);
 							spiderImage(imgUrl, imgName+imgType);
-							chD.Images.add(imgName+imgType);
+							chD.images.add(imgName+imgType);
 							spideredUrls.add(imgUrl);
-							chD.ImagesText.add(imgName); // Keep the image name
-							chD.ImagesInfo.add(null);
+							chD.imagesText.add(imgName); // Keep the image name
+							chD.imagesInfo.add(null);
 							imgCounter++;
 						}
 					}
@@ -1098,7 +1128,6 @@ public class SpiderGC{
 		}
 	}
 
-	
 	/**
 	 * Read an image from the server
 	 * @param imgUrl The Url of the image
@@ -1115,8 +1144,8 @@ public class SpiderGC{
 		String datei = "";
 		datei = profile.dataDir + target;
 		connImg = new HttpConnection(imgUrl);
-		if (imgUrl.indexOf('%')>=0) connImg.documentIsEncoded=true;
 		connImg.setRequestorProperty("Connection", "close");
+		if (imgUrl.indexOf('%')>=0) connImg.documentIsEncoded=true; // Don't re encode already encoded images
 		//connImg.setRequestorProperty("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.12) Gecko/20080201 Firefox/2.0.0.12");
 		//connImg.setRequestorProperty("Accept","text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
 		try{
@@ -1129,7 +1158,7 @@ public class SpiderGC{
 					connImg=connImg.getRedirectedConnection(redirect);
 					pref.log("Redirect to "+redirect);
 				}
-			} while(redirect!=null); // TODO this can end up in an endless loop if trying to load from a malicous site 
+			} while(redirect!=null); // TODO this can end up in an endless loop if trying to load from a malicous site
 			daten = connImg.readData(sockImg);
 			fos = new FileOutputStream(new File(datei));
 			fos.write(daten.toBytes());
@@ -1167,13 +1196,13 @@ public class SpiderGC{
 			rowBlock = exRowBlock.findNext();
 			rowBlock = exRowBlock.findNext();
 			while(exRowBlock.endOfSearch()==false){
-				CacheHolderDetail cxD = new CacheHolderDetail();
+				CacheHolderDetail cxD;
 				Extractor exPrefix=new Extractor(rowBlock,p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
 				String prefix=exPrefix.findNext();
 				String adWayPoint;
 				if (prefix.length()==2)
 					adWayPoint=prefix+wayPoint.substring(2);
-				else	
+				else
 				    adWayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
 				counter++;
 				int idx=profile.getCacheIndex(adWayPoint);
@@ -1189,7 +1218,7 @@ public class SpiderGC{
 				nameRex.search(rowBlock);
 				koordRex.search(rowBlock);
 				typeRex.search(rowBlock);
-				cxD.CacheName = nameRex.stringMatched(1);
+				cxD.cacheName = nameRex.stringMatched(1);
 				if(koordRex.didMatch()) cxD.setLatLon(koordRex.stringMatched(1));
 				if(typeRex.didMatch()) cxD.type = CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1));
 				rowBlock = exRowBlock.findNext();
@@ -1239,7 +1268,7 @@ public class SpiderGC{
 			HttpConnection conn;
 			if(pref.myproxy.length() > 0 && pref.proxyActive){
 				pref.log("[fetch]:Using proxy: " + pref.myproxy + " / " +pref.myproxyport);
-			} 
+			}
 			conn = new HttpConnection(address);
 			conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 			if(cookieSession.length()>0){
@@ -1317,9 +1346,9 @@ public class SpiderGC{
 		}
 		return "";
 	}
-	
-	
-	final static String hex = ewe.util.TextEncoder.hex;
+
+
+	final static String hex = eve.util.TextEncoder.hex;
 
 	public String encodeUTF8URL(byte[] what) {
 		int max = what.length;
@@ -1335,7 +1364,7 @@ public class SpiderGC{
 			} else dest[d++] = c;
 		}
 		return new String(dest,0,d);
-	}	
+	}
 
 	/**
 	 * Load the bug id for a given name. This method is not ideal, as there are
@@ -1357,11 +1386,11 @@ public class SpiderGC{
 		}
 		try {
 			if (bugList.equals("") || bugList.indexOf(p.getProp("bugNotFound"))>=0) {
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), FormBase.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), MessageBox.OKB)).execute();
 				return "";
 			}
 			if (bugList.indexOf(p.getProp("bugTotalRecords"))<0) {
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6021,"More than one travelbug found. Specify name more precisely."), FormBase.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6021,"More than one travelbug found. Specify name more precisely."), MessageBox.OKB)).execute();
 				return "";
 			}
 			Extractor exGuid = new Extractor(bugList,p.getProp("bugGuidExStart"),p.getProp("bugGuidExEnd"),0,Extractor.EXCLUDESTARTEND); // TODO Replace with spider.def
@@ -1392,7 +1421,7 @@ public class SpiderGC{
 		}
 		try {
 			if (bugDetails.indexOf(p.getProp("bugNotFound"))>=0) {
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), FormBase.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(6020,"Travelbug not found."), MessageBox.OKB)).execute();
 				return "";
 			}
 			Extractor exDetails = new Extractor(bugDetails,p.getProp("bugDetailsStart"),p.getProp("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
@@ -1427,7 +1456,7 @@ public class SpiderGC{
 			return "";
 		}
 	}
-	
+
 	/**
 	 * Fetch a bug's mission and namefor a given tracking number
 	 * @param TB the travelbug
@@ -1459,19 +1488,20 @@ public class SpiderGC{
 	}
 
 	private class myProperties extends Properties {
+		static final long serialVersionUID=0; // for compiler only
 		myProperties() {
 			super();
 			try {
-				load(new FileInputStream(FileBase.getProgramDirectory()+"/spider.def"));
+				load(new FileInputStream(eve.io.File.getProgramDirectory()+"/spider.def"));
 			} catch (Exception ex) {
 				pref.log("Failed to load spider.def",ex);
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5504,"Could not load 'spider.def'"), FormBase.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5504,"Could not load 'spider.def'"), MessageBox.OKB)).execute();
 			}
 		}
 		public String getProp(String key) throws Exception {
 			String s=super.getProperty(key);
 			if (s==null) {
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5497,"Error missing tag in spider.def") + ": "+key, FormBase.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5497,"Error missing tag in spider.def") + ": "+key, MessageBox.OKB)).execute();
 				throw new Exception("Missing tag in spider.def: "+key);
 			}
 			return s;

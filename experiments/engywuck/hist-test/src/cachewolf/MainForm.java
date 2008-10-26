@@ -1,19 +1,19 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.ui.*;
-import ewe.sys.*;
-import ewe.fx.*;
+import eve.ui.*;
+import eve.sys.*;
+import eve.fx.*;
 
 /**
 *	Mainform is responsible for building the user interface.
 *	Class ID = 5000
 */
-public class MainForm extends Editor {
+public class MainForm extends Form {
 	// The next three declares are for the cachelist
 	public boolean cacheListVisible=false;
     public CacheList cacheList;
     SplittablePanel split;
-	
+
 	StatusBar statBar=null;
 	Preferences pref = Global.getPref(); // Singleton pattern
 	Profile profile = Global.getProfile();
@@ -31,84 +31,89 @@ public class MainForm extends Editor {
 	public MainForm(){
 		doIt();
 	}
-	
+
 	public MainForm(boolean dbg, String pathtoprefxml){
 		pref.debug = dbg;
-		pref.setPathToConfigFile(pathtoprefxml); // in case pathtoprefxml == null the preferences will determine the path itself 
+		pref.setPathToConfigFile(pathtoprefxml); // in case pathtoprefxml == null the preferences will determine the path itself
 		doIt();
 	}
 	protected void checkButtons() {
 		if (pref.hasCloseButton) super.checkButtons();
-	} 
+	}
 
 	protected boolean canExit(int exitCode) {
 		mTab.saveUnsavedChanges(true);
 		return pref.hasCloseButton;
 	}
-	
+
 	public void doIt(){
-		//CellPanel [] p = addToolbar();
+		//*maximizeOnPDA();
+		//*Form.showWait();
+		//*pref.readPrefFile();
 		Global.mainForm=this;
 		//this.title = "CacheWolf " + Version.getRelease();
 		this.exitSystemOnClose = true;
 		this.resizable = true;
 		this.moveable = true;
-		this.windowFlagsToSet = WindowConstants.FLAG_MAXIMIZE_ON_PDA;
-		if(Vm.isMobile() == true) {
-			//this.windowFlagsToSet |=Window.FLAG_FULL_SCREEN;
+		this.windowFlagsToSet = Window.FLAG_MAXIMIZE_ON_PDA;
+		if (!Device.isMobile()) {
 			this.resizable = false;
 			this.moveable = false;
+			int h,w;
+			h=pref.myAppHeight;
+			if (h>MyLocale.getScreenHeight()) h=MyLocale.getScreenHeight();
+			w=pref.myAppWidth;
+			if (w>MyLocale.getScreenWidth()) w=MyLocale.getScreenWidth();
+			this.setPreferredSize(w,h);
 		}
-		Rect screen = ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0)));
-		if ( screen.height >= 600 && screen.width >= 800) this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
-		InfoBox infB = null;  
+		InfoBox infB = null;
+		// Load CacheList
 		try{
 			pref.readPrefFile();
 			if (MyLocale.initErrors.length() != 0) {
 				new MessageBox("Error", MyLocale.initErrors, FormBase.OKB).execute();
 			}
 			addGuiFont();
-			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true)) 
-				ewe.sys.Vm.exit(0); // User MUST select or create a profile
-			Vm.showWait(true);
-			// Load CacheList
+			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true))
+				eve.sys.Vm.exit(0); // User MUST select or create a profile
+			Form.showWait();
 			infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
 			infB.exec();
-			infB.waitUntilPainted(100);
+			infB.getWindow().waitUntilPainted(100);
 			profile.readIndex();
 			pref.curCentrePt.set(profile.centre);
-			profile.updateBearingDistance();
-			boolean saveHasUnsavedChanges = profile.hasUnsavedChanges; 
-			profile.restoreFilter(); // this method sets hasUnsavedChanges to true 
-			profile.hasUnsavedChanges = saveHasUnsavedChanges ; // in case that the profile is new, it hasUnsavedChanges, so set it back
-			setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
+ 			profile.updateBearingDistance();
+ 			boolean saveHasUnsavedChanges = profile.hasUnsavedChanges;
+ 			profile.restoreFilter(); // this method sets hasUnsavedChanges to true
+ 			profile.hasUnsavedChanges = saveHasUnsavedChanges ; // in case that the profile is new, it hasUnsavedChanges, so set it back
+			title="Cachewolf "+Version.getRelease()+" - "+profile.name;
 		} catch (Exception e){
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}
-		
-		
+
+
 		if(pref.fixSIP == true){
-			if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
+			if (Gui.screenIs(Gui.PDA_SCREEN) && Device.isMobile()) {
 				//Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
-				Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
+				//TODO Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
 				Device.preventIdleState(true);
 			}
-		} else Vm.setSIP(0);
-		
-        if (pref.showStatus) statBar = new StatusBar(pref, profile.cacheDB);
+		} //TODO else Vm.setSIP(0);
+
+        if (pref.showStatus) statBar = new StatusBar();
 		mMenu = new MainMenu(this);
 		mTab = new MainTab(mMenu,statBar);
 		split=new SplittablePanel(PanelSplitter.HORIZONTAL);
 		split.theSplitter.thickness=0; split.theSplitter.modify(Invisible,0);
 		CellPanel pnlCacheList = split.getNextPanel();
-		CellPanel pnlMainTab = split.getNextPanel(); 
+		CellPanel pnlMainTab = split.getNextPanel();
 		split.setSplitter(PanelSplitter.MIN_SIZE|PanelSplitter.BEFORE,PanelSplitter.HIDDEN|PanelSplitter.BEFORE,PanelSplitter.CLOSED);
 		pnlCacheList.addLast(cacheList=new CacheList(),STRETCH,FILL);
 		pnlMainTab.addLast(mTab,STRETCH,FILL);
-		
+
 		mTab.dontAutoScroll=true;
-		
+
 		this.addLast(split,STRETCH,FILL);
 		/*
 		if (pref.menuAtTop) {
@@ -121,30 +126,31 @@ public class MainForm extends Editor {
 		*/
 		mMenu.setTablePanel(mTab.getTablePanel());
 		if (infB != null) infB.close(0);
+		mTab.tbP.resetModel();
 		mTab.tbP.selectFirstRow();
 		//mTab.tbP.tc.paintSelection();
-		Vm.showWait(false);
+		Form.cancelWait();
 	}
 
-	
+
 	private void addGuiFont(){
-		Font defaultGuiFont = mApp.findFont("gui");
+		Font defaultGuiFont = Application.findFont("gui");
 		int sz = (pref.fontSize);
-		Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
-		mApp.addFont(newGuiFont, "gui"); 
-		mApp.fontsChanged();
-		mApp.mainApp.font = newGuiFont;
+		Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz);
+		Application.addFont(newGuiFont, "gui");
+		Application.mainApp.font = newGuiFont;
+		Application.fontsChanged();
 	}
-	
+
 	public void doPaint(Graphics g, Rect r){
 		pref.myAppHeight = this.height;
 		pref.myAppWidth = this.width;
 		super.doPaint(g,r);
 	}
-	
+
 	public void onEvent(Event ev){ // Preferences have been changed by PreferencesScreen
 		if(pref.dirty == true){
-			mTab.getTablePanel().myMod.setColumnNamesAndWidths();
+			mTab.getTablePanel().tModel.setColumnNamesAndWidths();
 			mTab.getTablePanel().refreshControl();
 		    //mTab.getTablePanel().refreshTable();
 			pref.dirty = false;
@@ -155,7 +161,7 @@ public class MainForm extends Editor {
 	public void toggleCacheListVisible() {
 		cacheListVisible=!cacheListVisible;
 		if (cacheListVisible) {
-			// Make the splitterbar visible with a width of 6 
+			// Make the splitterbar visible with a width of 6
 			split.theSplitter.modify(0,Invisible);
 			split.theSplitter.resizeTo(6,split.theSplitter.getRect().height);
 			Global.mainForm.mMenu.cacheTour.modifiers|=MenuItem.Checked;
@@ -167,7 +173,7 @@ public class MainForm extends Editor {
 		}
 		split.theSplitter.doOpenClose(cacheListVisible);
 		Global.mainForm.mMenu.repaint();
-		
+
 	}
-	
+
 }

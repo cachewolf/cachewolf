@@ -1,11 +1,15 @@
-package CacheWolf;
-import utils.FileBugfix;
-import ewe.graphics.*;
-import ewe.sys.*;
-import ewe.fx.*;
-import ewe.ui.*;
-import ewe.io.*;
-import ewe.util.*;
+package cachewolf;
+import eve.sys.*;
+import eve.fx.*;
+import eve.ui.*;
+import eve.io.*;
+import java.util.*;
+
+import cachewolf.utils.SafeXML;
+
+
+import eve.ui.game.*;
+import eve.ui.event.*;
 
 
 /**
@@ -37,22 +41,22 @@ public class ImagePanel extends InteractivePanel{
 	public ImagePanel(){
 	}
 	
-	static CacheHolderDetail oldCache=null;
+//	static CacheHolderDetail oldCache=null;
 	/**
 	* Method to set the individual cache images.
 	* Gets called immediatly before panel is displayed
 	* @see MainTab#onEvent(Event ev)
 	*/
 	public void setImages(CacheHolderDetail cache){
-		if (cache!=oldCache) {
+//		if (cache!=oldCache) {
 			pref = Global.getPref();
 			profile=Global.getProfile();
-			Vm.showWait(true);
+			Form.showWait();
 			clearImages();
-			thumb_size = ((pref.myAppWidth-2*padding) / 3);
+			thumb_size = (pref.myAppWidth-2*padding) / 3;
 			thumb_size = thumb_size - padding;
-			int rowCounter = cache.Images.size() + cache.UserImages.size();
-			rowCounter = (rowCounter/3)+1;
+			int rowCounter = cache.images.size() + cache.userImages.size();
+			rowCounter = rowCounter/3+1;
 			Rect r = new Rect(0, 0, pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+padding);
 			this.virtualSize = r;
 			//this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
@@ -62,22 +66,22 @@ public class ImagePanel extends InteractivePanel{
 			addTitle(MyLocale.getMsg(340,"Cache Images:"));
 			locY = 20;
 			locX = padding;
-			addImages(cache.Images,cache.ImagesText);
+			addImages(cache.images,cache.imagesText);
 			// load user images
 			if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
 			//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
 			//Vm.debug("locy after: " + Convert.toString(locY));
-			if (cache.UserImages.getCount()> 0){
+			if (cache.userImages.size()> 0){
 				addTitle(MyLocale.getMsg(341,"User Images:"));
 				locY = locY + 20;
 				locX = padding;
 				locCounter = 0;
-				addImages(cache.UserImages,cache.UserImagesText);
+				addImages(cache.userImages,cache.userImagesText);
 			}
-			oldCache=cache;
-		} // cache!=oldCache	
+//			oldCache=cache;
+//		} // cache!=oldCache	
 		this.refresh();
-		Vm.showWait(false);
+		Form.cancelWait();
 		//this.repaintNow();
 	}
 
@@ -86,7 +90,7 @@ public class ImagePanel extends InteractivePanel{
 	 *
 	 */
 	public void clearImages() {
-		oldCache=null;
+//		oldCache=null;
 		int lgr = images.size();
 		for(int i = 0; i<lgr;i++){
 			this.removeImage((AniImage)images.get(0));
@@ -124,7 +128,7 @@ public class ImagePanel extends InteractivePanel{
 	 */
 	private void addImages(Vector images, Vector imagesText) {
 		String location, imgText;
-		mImage mI;
+		PixelBuffer mI;
 		int scaleX, scaleY;
 		double dummyC;
 		ImagePanelImage ipi;
@@ -132,13 +136,13 @@ public class ImagePanel extends InteractivePanel{
 		locCounter=0;
 		for(int i = 0; i<images.size(); i++){
 			location = profile.dataDir + (String)images.get(i);
-			if (!(new FileBugfix(location)).exists()) {
+			if (!(new File(location)).exists()) {
 				location=NO_IMAGE;
 				if (!pref.showDeletedImages) continue; // Don't show the deleted Image if user does not want it
 			}
 			try{
-				mI = new mImage(location);
-				// actuall new mImage(location); should do the following "if" but it doesn't anyhow
+				mI = new PixelBuffer(location);
+				// actuall new Picture(location); should do the following "if" but it doesn't anyhow
 				if (mI.getWidth() <= 0 || mI.getHeight() <= 0 ) throw new IllegalArgumentException(location);
 				scaleX = thumb_size;
 				scaleY = thumb_size;
@@ -160,11 +164,11 @@ public class ImagePanel extends InteractivePanel{
 					scaleX = mI.getWidth();
 					scaleY = mI.getHeight();
 				}
-				mI = mI.scale(scaleX,scaleY,null,0);
-				mI.freeSource();
-				ipi = new ImagePanelImage(mI);
-				ipi.freeSource();
-				//mI.free(); --> this only works in java-VM, in ewe it will delete the image, so leave it commented out
+				mI = mI.scale(scaleX,scaleY);
+				ipi = new ImagePanelImage(mI.getImageData());
+				mI.freeImage();
+				ipi.freeImage();
+				//mI.free(); --> this only works in java-VM, in ewe it will delete the image, so leave it commented out				ipi.fileName = location; // this is set only to easily identify the filename of the image clicked
 				ipi.fileName = location; // this is set only to easily identify the filename of the image clicked
 				ipi.setLocation(locX, locY);
 				addImage(ipi);
@@ -175,7 +179,7 @@ public class ImagePanel extends InteractivePanel{
 					else
 						imgText = SafeXML.cleanback((String)imagesText.get(i));
 					if(imgText.length()==0) imgText = "???";
-					AimgText = new AniImage();
+					//AimgText = new AniImage();
 					AimgText = getImageText(imgText);
 					AimgText.setLocation(locX,locY+scaleY);
 					addImage(AimgText);
@@ -192,12 +196,12 @@ public class ImagePanel extends InteractivePanel{
 					locY = locY+thumb_size+padding;
 				}
 			}catch(IllegalArgumentException imex){ // file not found, could not decode etc.
-				MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), FormBase.OKB); // @todo: language support
+				MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht laden")+":\n"+imex.getMessage(), MessageBox.OKB); // @todo: language support
 				tmp.exec();
 			} catch (OutOfMemoryError e) { // TODO show an error icon in the panel instead of nothing
-				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+":\n"+location,FormBase.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+":\n"+location,MessageBox.OKB)).exec();
 			} catch (SystemResourceException e) { // TODO show an error icon in the panel instead of nothing
-				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+location,FormBase.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+location,MessageBox.OKB)).exec();
 			}
 		} //for
 		
@@ -228,12 +232,13 @@ public class ImagePanel extends InteractivePanel{
 	* If right mouse key is clicked, a dialogue to delete the image wil be displayed
 	*/
 	public void imageClicked(AniImage which, Point pos){
-//		Vm.debug("Clicked"+pos.x+","+pos.y+" "+(((Control.currentPenEvent.modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON)?"RIGHT":"LEFT") );
-		if ((ControlBase.currentPenEvent.modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON || duration>LONG_PEN_DOWN_DURATION) {
+		//eve.sys.Vm.debug("Clicked"+pos.x+","+pos.y+" "+(((eve.ui.Gui.currentPenPress().modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON)?"RIGHT":"LEFT") );
+		
+		if ((Gui.currentPenPress().modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON || duration>LONG_PEN_DOWN_DURATION) {
 			// Right button pressed - delete image to conserve space
 			if (which instanceof ImagePanelImage && !((ImagePanelImage)which).fileName.equals(NO_IMAGE)) {
-				MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(344,"Delete image")+" \""+((ImagePanelImage)which).imageText+"\"?", FormBase.IDYES |FormBase.IDNO);
-				if (mBox.execute() == FormBase.IDOK){
+				MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(344,"Delete image")+" \""+((ImagePanelImage)which).imageText+"\"?", MessageBox.IDYES |MessageBox.IDNO);
+				if (mBox.execute() == MessageBox.IDOK){
 						//Vm.debug("Deleting "+((ImagePanelImage)which).fileName);
 						try {
 							File f=new File(((ImagePanelImage)which).fileName);
@@ -243,18 +248,18 @@ public class ImagePanel extends InteractivePanel{
 				}
 			}
 		} else { 
-			String fn = new String();
+			String fn;
 			if(which instanceof ImagePanelImage){
 				ImagePanelImage ich = (ImagePanelImage)which;
 				fn = ich.fileName;
 				try {
-					ImageDetailForm iF = new ImageDetailForm(fn, pref);
+					ImageDetailScreen iF = new ImageDetailScreen(fn, pref);
 					iF.execute(null, Gui.CENTER_FRAME);
 				} catch (IllegalArgumentException e) {
-					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden"), FormBase.OKB); // @todo: language support
+					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden"), MessageBox.OKB); // @todo: language support
 					tmp.exec();
 				} catch (OutOfMemoryError e) {
-					(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+fn,FormBase.OKB)).exec();
+					(new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(343,"Not enough free memory to load cache image")+"\n"+fn,MessageBox.OKB)).exec();
 				}
 			}
 		}
@@ -274,4 +279,19 @@ public class ImagePanel extends InteractivePanel{
 		}
 		super.onPenEvent(ev);
 	}
+	
+	/**
+	* The ImagePanelImage extends AniImage by a fileName.
+	* This is an easy way to identify the image clicked,
+	* what is needed to display the full image from the
+	* thumbnail.
+	*/
+	private class ImagePanelImage extends AniImage{
+		public String fileName = "";
+		public String imageText = null;
+		public ImagePanelImage(ImageData i){
+			super(i);
+		}
+	}
+
 }

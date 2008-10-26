@@ -1,4 +1,4 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
 
 /**
@@ -9,7 +9,7 @@ package CacheWolf.navi;
  * @author pfeffer
  *
  */
- public class AreaList extends ewe.util.LinkedListElement { // in java since v1.2 I would use java.util.TreeSet
+ public class AreaList extends eve.util.LinkedListElement { // in java since v1.2 I would use java.util.TreeSet
 /*
 	 public AreaList(int s) {super(s);}
 

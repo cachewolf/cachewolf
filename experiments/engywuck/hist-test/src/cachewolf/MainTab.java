@@ -1,23 +1,26 @@
-package CacheWolf;
+package cachewolf;
 
-import CacheWolf.navi.GotoPanel;
-import CacheWolf.navi.MapImage;
-import CacheWolf.navi.MovingMap;
-import CacheWolf.navi.Navigate;
-import ewe.sys.Vm;
-import ewe.ui.*;
-import ewe.fx.*;
-import ewe.util.*;
+import eve.sys.*;
+import eve.ui.*;
+import eve.fx.*;
+import java.util.*;
+
+import cachewolf.navi.GotoPanel;
+import cachewolf.navi.MapImage;
+import cachewolf.navi.MovingMap;
+import cachewolf.navi.Navigate;
+
+import eve.ui.event.*;
+import eve.ui.table.*;
 
 /**
  *	This class creates the tabbed panel and sets the tabs to the respective
  *	other panels. Important is to have a look at the event handler!<br>
- *	Class ID = 1200
  *	@see MainForm
  *	@see MainMenu
  */
-public class MainTab extends mTabbedPanel {
-	DescriptionPanel descP= new DescriptionPanel();
+public class MainTab extends TabbedPanel {
+	DescriptionPanel descP=new DescriptionPanel();
 	HintLogPanel hintLP = new HintLogPanel();
 	TablePanel tbP;
 	Vector cacheDB;
@@ -39,6 +42,14 @@ public class MainTab extends mTabbedPanel {
 	public String mainCache="";
 	int oldCard=0;
 	boolean cacheDirty=false;
+	// These flags are set if data is put into the relevant panels
+	// They ensure that the panel is cleared, when a new cache is selected
+	boolean imagePhasData=false;
+	boolean descPhasData=false;
+	boolean detPhasData=false;
+	boolean hintLPhasData=false;
+	boolean solverPhasData=false;
+	boolean radarPhasData=false;
 	
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
 		Global.mainTab=this;
@@ -48,47 +59,45 @@ public class MainTab extends mTabbedPanel {
 		if (!pref.tabsAtTop) tabLocation=SOUTH;
 		cacheDB = profile.cacheDB;
 		this.statBar=statBar;
-		MyLocale.setSIPButton();
+		//TODOMyLocale.setSIPButton();
 		//Don't expand tabs if the screen is very narrow, i.e. HP IPAQ 65xx, 69xx
 		int sw = MyLocale.getScreenWidth();
 		if ( sw <= 240) this.dontExpandTabs=true;
 		String imagesize="";
-		if (Vm.isMobile() && sw >= 400) imagesize="_vga";  
+		if (Device.isMobile() && sw >= 400) imagesize="_vga";  
 		calcP = new CalcPanel(); // Init here so that Global.MainT is already set
-		tbP = new TablePanel(pref, profile, statBar);
+		tbP = new TablePanel(statBar);
 		Card c = this.addCard(new TableForm(tbP), MyLocale.getMsg(1200,"List"), null);
 		
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
-		c.iconize(new Image("details"+imagesize+".gif"),true);
+		c.iconize(new Picture("details"+imagesize+".gif"),true);
 
 		c = this.addCard(descP, MyLocale.getMsg(1202,"Description"), null);
-		c.iconize(new Image("descr"+imagesize+".gif"),true);
+		c.iconize(new Picture("descr"+imagesize+".gif"),true);
 
 		c = this.addCard(new MyScrollBarPanel(imageP = new ImagePanel()), MyLocale.getMsg(1203,"Images"), null);
-		c.iconize(new Image("images"+imagesize+".gif"),true);
+		c.iconize(new Picture("images"+imagesize+".gif"),true);
 
 		c = this.addCard(hintLP, MyLocale.getMsg(1204,"Hints & Logs"), null);
-		c.iconize(new Image("more"+imagesize+".gif"),true);
+		c.iconize(new Picture("more"+imagesize+".gif"),true);
 
-		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205,"Solver"), null);
-		c.iconize(new Image("solver"+imagesize+".gif"),true);
+		c = this.addCard(solverP = new SolverPanel(), MyLocale.getMsg(1205,"Solver"), null);
+		c.iconize(new Picture("solver"+imagesize+".gif"),true);
 
 		c = this.addCard(calcP, MyLocale.getMsg(1206,"Calc"), null);
-		mImage imgCalc=new mImage("projecttab"+imagesize+".gif"); imgCalc.transparentColor=new Color(0,255,0);
+		Picture imgCalc=new Picture("projecttab"+imagesize+".gif",new Color(0,255,0),0); 
 		c.iconize(imgCalc,true);
 
 		nav = new Navigate();
 		c = this.addCard(gotoP = new GotoPanel(nav), "Goto", null);
-		c.iconize(new Image("goto"+imagesize+".gif"),true);
+		c.iconize(new Picture("goto"+imagesize+".gif"),true);
 		nav.setGotoPanel(gotoP);
 
 		c = this.addCard(radarP, "Radar", null);
-		radarP.setMainTab(this);
-		c.iconize(new Image("radar"+imagesize+".gif"),true);
+		c.iconize(new Picture("radar"+imagesize+".gif"),true);
 		mnuMain.allowProfileChange(true);
-//		if (pref.noTabs) top.modify(ShrinkToNothing,0);//TODO
 	}
-
+	
 	public TablePanel getTablePanel(){
 		return tbP;
 	}
@@ -99,14 +108,17 @@ public class MainTab extends mTabbedPanel {
 	}
 
 	public void clearDetails() {
-		imageP.clearImages(); // Remove all images
-		descP.clear(); // write "loading ..."
-		detP.clear(); // Clear only the attributes
-		hintLP.clear(); // Remove the logs
-		solverP.setInstructions("loading ...");
-	}	
+		if (imagePhasData) { imageP.clearImages(); imagePhasData=false; }// Remove all images
+		if (descPhasData) { descP.clear(); descPhasData=false; }// write "loading ..."
+		if (detPhasData) { detP.clear(); detPhasData=false; }// Clear only the attributes
+		if (hintLPhasData) { hintLP.clear(); hintLPhasData=false; }// Remove the logs
+		if (solverPhasData) { solverP.setInstructions("loading ..."); solverPhasData=false; }
+		if (radarPhasData) { radarP.removeCircle(); radarPhasData=false; }
+	}
 	
+	static int level=0;
 	public void onEvent(Event ev) {
+//eve.sys.Vm.debug("              ".substring(0,level++*2)+"["+ev.target.getClass().getName()+"] "+event2Name(ev.type));
 		// This section clears old data when a new line is selected in the table
 		if (ev instanceof TableEvent) {
 			clearDetails();
@@ -120,9 +132,10 @@ public class MainTab extends mTabbedPanel {
 			onEnteringPanel(((MultiPanelEvent)ev).selectedIndex);
 			oldCard=((MultiPanelEvent)ev).selectedIndex;
 		}
-		super.onEvent(ev); //Make sure you call this.
 		// If we are in Listview update status
 		if (this.getSelectedItem()==0 && statBar!=null) statBar.updateDisplay();
+//eve.sys.Vm.debug("              ".substring(0,--level*2)+"END "+"["+ev.target.getClass().getName()+"] "+event2Name(ev.type));
+		super.onEvent(ev);
 	}
 
 	/**
@@ -136,7 +149,7 @@ public class MainTab extends mTabbedPanel {
 			// If it is Addi get details of main Wpt (chMain)
 			chMain=null;
 			cacheDirty=false;
-			if (tbP.getSelectedCache()>=Global.mainTab.tbP.myMod.numRows || tbP.getSelectedCache()<0) {
+			if (tbP.getSelectedCache()>=Global.mainTab.tbP.tModel.numRows || tbP.getSelectedCache()<0) {
 				ch=null; chD=null; 
 				lastselected="";
 			} else {
@@ -151,30 +164,30 @@ public class MainTab extends mTabbedPanel {
 				}
 			}
 		}
-		if (panelNo==1) { // Leaving the Details Panel
+		else if (panelNo==1) { // Leaving the Details Panel
 			// Update chD with Details
 			if(detP.isDirty()) {
 				cacheDirty=true;
 				boolean needTableUpdate = detP.needsTableUpdate();
 				detP.saveDirtyWaypoint();
 				if (needTableUpdate) {
-					tbP.myMod.updateRows();// This sorts the waypoint (if it is new) into the right position
+					tbP.updateRows();// This sorts the waypoint (if it is new) into the right position
 					tbP.selectRow(profile.getCacheIndex(detP.thisCache.wayPoint));
 				}
 				//was tbP.refreshTable();
-				tbP.tc.update(true); // Update and repaint
+				tbP.tControl.update(true); // Update and repaint
 				if (statBar!=null) statBar.updateDisplay();
 			}
 		}
-		if (panelNo==5) { // Leaving the Solver Panel
+		else if (panelNo==5) { // Leaving the Solver Panel
 			// Update chD or chMain with Solver
 			// If chMain is set (i.e. if it is an addi Wpt) save it immediately
 			if (chD!=null && solverP.isDirty()) {
 				cacheDirty=true;
 				if (chMain==null) {
-					chD.Solver=solverP.getInstructions();
+					chD.solver=solverP.getInstructions();
 				} else {
-					chMain.Solver=solverP.getInstructions();
+					chMain.solver=solverP.getInstructions();
 					chMain.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
 					chMain=null;
 				}
@@ -192,8 +205,8 @@ public class MainTab extends mTabbedPanel {
 			// If Solver or Details has changed, save Cache
 			updatePendingChanges();
 			if (detP.hasBlackStatusChanged()) {
-				// filter out caches with wrong blacklist status
-				Global.getProfile().checkBlacklistStatus();
+				// Restore the filter status (this automatically sets the status for blacklisted caches)
+				Global.getProfile().restoreFilter(true);
 				tbP.refreshTable();
 			}
 			break;
@@ -201,61 +214,72 @@ public class MainTab extends mTabbedPanel {
 			if (chD==null) { // Empty DB - show a dummy detail
 				newWaypoint(ch=new CacheHolder()); 
 			}
-			MyLocale.setSIPButton();
-			detP.setDetails(ch);
+			//TODO MyLocale.setSIPButton();
+			if (!detPhasData)  {
+				detP.setDetails(ch);
+				detPhasData=true;
+			}
 			break;
 		case 2: // Description Panel
-				MyLocale.setSIPOff();
-				descP.setText(chD);
+				//TODOMyLocale.setSIPOff();
+				if (!descPhasData) {
+					descP.setText(chD);
+					descPhasData=true;
+				}
 			break;
 		case 3: // Picture Panel
-			if (chD!=null) {
-				MyLocale.setSIPOff();
+			if (chD!=null && !imagePhasData) {
+				//TODOMyLocale.setSIPOff();
 				if (chD.isAddiWpt()) { 
 					imageP.setImages(chD.mainCache.getCacheDetails(true));
 				} else {
 					imageP.setImages(chD);
 				}
+				imagePhasData=true;
 			}
 			break;
 		case 4:  // Log Hint Panel
-			if (chD!=null) {
-				MyLocale.setSIPOff();
+			if (chD!=null && !hintLPhasData) {
+				//TODO MyLocale.setSIPOff();
 				if (chD.isAddiWpt()) { 
 					hintLP.setText(chD.mainCache.getCacheDetails(true));
 				} else {
 					hintLP.setText(chD);
 				}
+				hintLPhasData=true;
 			}
 			break;
 		case 5:  // Solver Panel
-			MyLocale.setSIPButton();
-			if (chD!=null) {
+			//TODO MyLocale.setSIPButton();
+			if (chD!=null && !solverPhasData) {
 				if (chD.isAddiWpt()) { 
 					chMain=chD.mainCache.getCacheDetails(true);//new CacheHolderDetail(chD.mainCache);
 /*					try {
 						chMain.readCache(profile.dataDir); //Vm.debug("mainT:readCache "+chD.wayPoint+"=>Main=>"+chMain.wayPoint+"/S:"+chMain.Solver);
 					} catch(Exception e){pref.log("Error reading cache .xml",e);}
-*/					solverP.setInstructions(chMain.Solver);
+*/					solverP.setInstructions(chMain.solver);
 				} else {
 					//Vm.debug("mainT: Waypoint:"+chD.wayPoint);
-					solverP.setInstructions(chD.Solver);
+					solverP.setInstructions(chD.solver);
 				}
+				solverPhasData=true;
 			}
 			break;
 		case 6:  // CalcPanel
 			if (chD!=null) {
-				MyLocale.setSIPButton();
+				//TODO MyLocale.setSIPOff();
 				calcP.setFields(chD);
 			}
 			break;
 		case 7: // GotoPanel
-			MyLocale.setSIPOff();
+			//TODO MyLocale.setSIPOff();
 			break;
 		case 8:  // Cache Radar Panel
-			MyLocale.setSIPOff();
-			radarP.setParam(pref, cacheDB, chD==null?"":chD.wayPoint);
-			radarP.drawThePanel();
+			//TODO MyLocale.setSIPOff();
+			if (!radarPhasData) {
+				radarP.drawCachesAndCircle();
+				radarPhasData=true;
+			}
 			break;
 		}
 	}
@@ -265,19 +289,18 @@ public class MainTab extends mTabbedPanel {
 	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
 		MessageBox info = new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \n werden neu berechnet...").replace('~','\n'), 0);
 		info.exec();
-		tbP.pref = pref;
 		profile.updateBearingDistance();
 		//tbP.refreshTable();
 		info.close(0);
-		tbP.tc.repaint();
+		//tbP.tControl.repaint();
 	}
 
-	public void gotoPoint(CWPoint where) { 
+	public void gotoPoint(CWPoint where) { // Called from CalcPanel, DetailsPanel
 		gotoP.setDestinationAndSwitch(where); 
 	}
 
 	public void openDescriptionPanel(CacheHolder chi) {
-		MyLocale.setSIPOff();
+		//TODO MyLocale.setSIPOff();
 		// To change cache we need to be in panel 0
 		onLeavingPanel(oldCard);
 		onEnteringPanel(0); oldCard=0;
@@ -301,12 +324,10 @@ public class MainTab extends mTabbedPanel {
 	public void newWaypoint(CacheHolder ch){
 		//When creating a new waypoint, simulate a change to the list view
 		//if we are currently NOT in the list view
-		if (oldCard != 0)
-		{
+		if (oldCard != 0) {
 			onLeavingPanel(oldCard);
 		}
 		updatePendingChanges(); // was: onEnteringPanel(0); oldCard=0;
-		
 		mainCache=lastselected;
 		int selectedIndex = profile.getCacheIndex( lastselected );
 		if (selectedIndex >= 0) {
@@ -317,23 +338,22 @@ public class MainTab extends mTabbedPanel {
 		}
 		Global.getProfile().hasUnsavedChanges=true;
 		detP.setNeedsTableUpdate(true);
-		if (ch.type == null || ch.type.equals("")) ch.type = "0";
 		if (CacheType.isAddiWpt(ch.type) && mainCache!=null && mainCache.length()>2) {
 			ch.wayPoint = profile.getNewAddiWayPointName(mainCache);
 			profile.setAddiRef(ch);
 		} else { 
 			ch.wayPoint = profile.getNewWayPointName();
-			ch.type="0";
+			ch.type=0;
 			lastselected=ch.wayPoint;
 		}
-		ch.CacheSize = "None";
+		ch.setCacheSize("None");
 		chD = ch.getCacheDetails(true);
 		this.ch = ch;
 		cacheDB.add(ch);
-		tbP.myMod.numRows++;
+		tbP.tModel.numRows++;
 		detP.setDetails(ch);
 		oldCard=1;
-		if (this.cardPanel.selectedItem != 1) select(detP);
+		if (this.cardPanel.selectedItem !=1) select(detP);
 		solverP.setInstructions("");
 		//tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
@@ -346,10 +366,10 @@ public class MainTab extends mTabbedPanel {
 	 * @param centerTo true: centers centerTo on the screen and disconnects MovingMap from GPS if Gps-pos is not on the loaded map
 	 * @param forceCenter
 	 */
-	public void SwitchToMovingMap(CWPoint centerTo, boolean forceCenter) {
+	public void switchToMovingMap(CWPoint centerTo, boolean forceCenter) {
 		try {
 			if (!centerTo.isValid()) {
-				(new MessageBox("Error", "No valid coordinates", FormBase.OKB)).execute();
+				(new MessageBox("Error", "No valid coordinates", MessageBox.OKB)).execute();
 				return;
 			}
 			if (mm == null) {
@@ -362,8 +382,8 @@ public class MainTab extends mTabbedPanel {
 			if (forceCenter) {
 				try {
 					int i = 0;
-					while (MapImage.screenDim.width == 0 && i < 10*60) { i++; ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
-					if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", FormBase.OKB)).execute(); return;}
+					while (MapImage.screenDim.width == 0 && i < 10*60) { i++; eve.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: eve.sys.sleep() will pause the whole vm - no other thread will run
+					if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", MessageBox.OKB)).execute(); return;}
 					mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
 					mm.updatePosition(centerTo);
 					/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
@@ -373,26 +393,26 @@ public class MainTab extends mTabbedPanel {
 				mm.setCenterOfScreen(centerTo, true); 
 			}
 					 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
-				}catch (InterruptedException e) {
+				}catch (InterruptedException e) {//TODO switch waiting indication off
 					Global.getPref().log("Error starting mavoing map (1): " + e.getMessage(), e, true);
-					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", FormBase.OKB)).execute(); } 
+					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", MessageBox.OKB)).execute(); } 
 			}
-		} catch (Exception e) { // TODO swith waiting indication clock off
+		} catch (Exception e) { 
 			Global.getPref().log("Error starting moving map (2): " + e.getMessage(), e, true);
-			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), FormBase.OKB)).execute(); }
+			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), MessageBox.OKB)).execute(); }
 	}
 
-	void updatePendingChanges() {
+	public void updatePendingChanges() {
 		if (cacheDirty) {
-			if (chD != null)
+			if (chD!=null)
 				chD.saveCacheDetails(Global.getProfile().dataDir);
-			cacheDirty = false;
+			cacheDirty=false;
 		}
 	}
 	
 	/** Save the index file
 	 * 
-	 * @param askForConfirmation is ignored, old: If true, the save can be cancelled by user
+	 * @param askForConfirmation If true, the save can be cancelled by user
 	 */
 	public void saveUnsavedChanges(boolean askForConfirmation) {
 		if (oldCard!=0) {
@@ -401,8 +421,8 @@ public class MainTab extends mTabbedPanel {
 			oldCard=0;
 		}
 		updatePendingChanges();
-		if (profile.hasUnsavedChanges) profile.saveIndex(Global.getPref(),true);
-	    this.tbP.saveColWidth(pref);
+		if (profile.hasUnsavedChanges) profile.saveIndex(true);
+		this.tbP.saveColWidth(pref);
 		Global.getPref().savePreferences();
 	}
 	
@@ -411,12 +431,36 @@ public class MainTab extends mTabbedPanel {
 		mnuMain.allowProfileChange(false);	  
 		if(this.getSelectedItem() == 0){// List view selected
 			mnuMain.allowProfileChange(true);	  
-			MyLocale.setSIPOff();
+			//TODO MyLocale.setSIPOff();
 		}
 	}
+	private String event2Name(int type) {//TODO Comment out
+		switch(type) {
+			case ControlEvent.PRESSED: return "ControlEvent.PRESSED"; 
+			case ControlEvent.FOCUS_IN: return "ControlEvent.FOCUS_IN";
+			case ControlEvent.FOCUS_OUT: return "ControlEvent.FOCUS_OUT";
+			case ControlEvent.TIMER: return "ControlEvent.TIMER"; 
+			case ControlEvent.CANCELLED: return "ControlEvent.CANCELLED"; 
+			case ControlEvent.EXITED: return "ControlEvent.EXITED"; 
+			case ControlEvent.MENU_SHOWN: return "ControlEvent.MENU_SHOWN";
+			case eve.ui.formatted.TextDisplay.LINES_SPLIT: return "ControlEvent.LINES_SPLIT"; 
+			case ControlEvent.STRUCTURE_CHANGED: return "ControlEvent.STRUCTURE_CHANGED";
+			case ControlEvent.OPERATION_CANCELLED: return "ControlEvent.OPERATION_CANCELLED";
+			case ControlEvent.POPUP_CLOSED: return "ControlEvent.POPUP_CLOSED";
+			case DataChangeEvent.DATA_CHANGED: return "DataChangeEvent.DATA_CHANGED"; 
+			case MultiPanelEvent.SELECTED: return "MultiPanelEvent.SELECTED"; 
+			case TableEvent.CELL_CLICKED: return "TableEvent.CELL_CLICKED"; 
+			case TableEvent.SELECTION_CHANGED: return "TableEvent.SELECTION_CHANGED";
+			case TableEvent.CELL_DOUBLE_CLICKED:  return "TableEvent.CELL_DOUBLE_CLICKED";
+			case eve.ui.data.EditorEvent.CLOSED: return "EditorEvent.CLOSED"; 
+			case eve.ui.data.EditorEvent.FROM_CONTROLS: return "EditorEvent.FROM_CONTROLS";
+			case eve.ui.data.EditorEvent.OBJECT_SET: return "EditorEvent.OBJECT_SET"; 
+			case eve.ui.data.EditorEvent.SHOWN: return "EditorEvent.SHOWN"; 
+			case eve.ui.data.EditorEvent.TO_CONTROLS: return "EditorEvent.TO_CONTROLS";
+		}
+		return Integer.toString(type);
+	}
+
 }
 // 
-
-
-
 

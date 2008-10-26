@@ -1,4 +1,5 @@
-package CacheWolf;
+package cachewolf;
+
 
 /**
  * Global data: Preferences and Profile

@@ -1,4 +1,5 @@
-package CacheWolf.navi;
+package cachewolf.navi;
+
 
 /**
  * this is not CWPoint because it should be as small as possible

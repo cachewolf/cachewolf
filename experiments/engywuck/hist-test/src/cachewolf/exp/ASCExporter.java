@@ -1,5 +1,5 @@
-package exp;
-import CacheWolf.*;
+package cachewolf.exp;
+import cachewolf.*;
 
 /**
 *	Class to export cache database to an ASCII (CSV!) file.
@@ -19,10 +19,10 @@ public class ASCExporter extends Exporter{
 		this();
 	}
 	
-	public String record (CacheHolderDetail holder, String lat, String lon){
+	public String record (CacheHolderDetail chD, String lat, String lon){
 		StringBuffer strBuf = new StringBuffer(100);
 		String dummy;
-		dummy = holder.CacheName;
+		dummy = chD.cacheName;
 		dummy = dummy.replace(',', ' ');
 		strBuf.append(dummy);
 		strBuf.append(",");

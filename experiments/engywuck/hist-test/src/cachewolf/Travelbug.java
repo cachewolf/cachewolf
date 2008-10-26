@@ -1,4 +1,7 @@
-package CacheWolf;
+package cachewolf;
+
+import cachewolf.utils.SafeXML;
+
 /**
  * This contains the basic information of a GC travelbug.
  * @author salzkammergut

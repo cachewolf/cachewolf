@@ -1,63 +1,72 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.filechooser.FileChooser;
-import ewe.filechooser.FileChooserBase;
-import ewe.fx.*;
-import ewe.io.*;
-import ewe.sys.*;
-import ewe.ui.*;
-import ewe.util.*;
+import eve.ui.filechooser.FileChooser;
+import eve.fx.*;
+import eve.sys.*;
+import eve.ui.*;
+import java.util.*;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.BufferedWriter;
+import eve.ui.event.KeyEvent;
+import eve.fx.gui.IKeys;
+import eve.ui.event.MenuEvent;
+import eve.ui.event.MultiPanelEvent;
+import eve.ui.event.ControlEvent;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+
 
 /********************************************************
  * This class implements the core functionality of a flexible cachelist for collecting
  * "Cachetours". Caches can be dragged into the list from the main list view and
  * from the radar panel view. Caches can be removed from the list by dragging them
  * out or selecting them and pressing the "delete" key. Within the list the selected
- * cache can be moved up/down using two buttons. The finished list can be saved and 
+ * cache can be moved up/down using two buttons. The finished list can be saved and
  * reloaded with the selected position being stored. The list can be applied as
  * a filter to the main list, thereby hiding all caches that are not in the list
- * and sorting the caches according to the list. 
+ * and sorting the caches according to the list.
  * Created by skg, Februar 2007
  ********************************************************/
 public class CacheList extends CellPanel {
-    /** The extension for cachelists (CL) */ 
-    private final String EXTENSION="CL";
-	private final String TITLE=MyLocale.getMsg(188,"CACHETOUR: NEW");
+    /** The extension for cachelists (CL) */
+    private final static String EXTENSION="CL";
+	private final static String TITLE=MyLocale.getMsg(188,"CACHETOUR: NEW");
 	private static int applyCount=0; // Counts the number of times we apply the list
     CacheList() {
-		this.setPreferredSize(100,-1); 
+		this.setPreferredSize(100,-1);
 		this.equalWidths=true;
-		mImage imgDown=new mImage("ewe/downarrowsmall.bmp"); imgDown.transparentColor=Color.White;
-		mImage imgUp=new mImage("ewe/uparrowsmall.bmp"); imgUp.transparentColor=Color.White;
+		Picture imgDown=new Picture("eve/downarrowsmall.png"); //imgDown.transparentColor=Color.White;
+		Picture imgUp=new Picture("eve/uparrowsmall.png"); //imgUp.transparentColor=Color.White;
 		// Title
-		lblTitle=new mLabel(TITLE);
-		lblTitle.backGround=new Color(0,0,200); lblTitle.foreGround=Color.White; 
+		lblTitle=new Label(TITLE);
+		lblTitle.backGround=new Color(0,0,200); lblTitle.foreGround=Color.White;
 		addLast(lblTitle,HSTRETCH,HFILL|HCENTER);
 		// The actual list
-		lstCaches=new myList(10,1,false); lstCaches.text="CacheList"; 
+		lstCaches=new myList(10,1,false); lstCaches.text="CacheList";
 		lstCaches.addItem(MyLocale.getMsg(180,"Drag caches"));lstCaches.addItem(MyLocale.getMsg(181,"here"));
 		ScrollablePanel scp=lstCaches.getScrollablePanel();
 		addLast(scp,STRETCH,FILL); scp.setOptions(MyScrollBarPanel.NeverShowHorizontalScrollers);
 		// The buttons to move the selected cache
-		addNext(btnDown=new mButton(imgDown),HSHRINK,HFILL); btnDown.modify(Disabled,0);
-		addLast(btnUp=new mButton(imgUp),HSHRINK,HFILL); btnUp.modify(Disabled,0);
+		addNext(btnDown=new Button(imgDown),HSHRINK,HFILL); btnDown.modify(Disabled,0);
+		addLast(btnUp=new Button(imgUp),HSHRINK,HFILL); btnUp.modify(Disabled,0);
 		// Buttons to clear, load and save the list
-		CellPanel cp=new CellPanel(); cp.equalWidths=true;
-		cp.addNext(btnNew=new mButton(imgNew=new mImage("clnew.png")),HSTRETCH,HFILL);
-		imgNew.transparentColor=new Color(255,0,0); btnNew.setToolTip(MyLocale.getMsg(182,"New list"));
-		cp.addNext(btnLoad=new mButton(imgOpen=new mImage("clopen.png")),HSTRETCH,HFILL);
-		imgOpen.transparentColor=new Color(255,0,0);btnLoad.setToolTip(MyLocale.getMsg(183,"Load list"));
-		cp.addNext(btnSaveAs=new mButton(imgSaveAs=new mImage("clsaveas.png")),HSTRETCH,HFILL);
-		imgSaveAs.transparentColor=new Color(0,255,0);btnSaveAs.setToolTip(MyLocale.getMsg(184,"Save as"));
-		cp.addLast(btnSave=new mButton(imgSave=new mImage("clsave.png")),HSTRETCH,HFILL);
-		imgSave.transparentColor=new Color(255,0,0);btnSave.setToolTip(MyLocale.getMsg(185,"Save (without confirmation)"));
+		Panel cp=new Panel(); cp.equalWidths=true;
+		cp.addNext(btnNew=new Button(new Picture("clnew.png",new Color(255,0,0),0)),HSTRETCH,HFILL);
+		btnNew.setToolTip(MyLocale.getMsg(182,"New list"));
+		cp.addNext(btnLoad=new Button(new Picture("clopen.png",new Color(255,0,0),0)),HSTRETCH,HFILL);
+		btnLoad.setToolTip(MyLocale.getMsg(183,"Load list"));
+		cp.addNext(btnSaveAs=new Button(new Picture("clsaveas.png",new Color(0,255,0),0)),HSTRETCH,HFILL);
+		btnSaveAs.setToolTip(MyLocale.getMsg(184,"Save as"));
+		cp.addLast(btnSave=new Button(new Picture("clsave.png",new Color(255,0,0),0)),HSTRETCH,HFILL);
+		btnSave.setToolTip(MyLocale.getMsg(185,"Save (without confirmation)"));
 		addLast(cp,HSTRETCH,HFILL);
 		// Button to toggle whether additional waypoints are automatically dragged
 		// with the parent waypoint
-		addLast(chkAddAddis=new mCheckBox(MyLocale.getMsg(193,"add Addis")),HSTRETCH,HFILL);
+		addLast(chkAddAddis=new CheckBox(MyLocale.getMsg(193,"add Addis")),HSTRETCH,HFILL);
 		chkAddAddis.setToolTip(MyLocale.getMsg(186,"Also drag Addi Wpts"));
 		// Finally button to apply the list as a filter
-		addLast(btnFilter=new mButton(MyLocale.getMsg(189,"Apply List")),HSTRETCH,HFILL);btnFilter.modify(Disabled,0);
+		addLast(btnFilter=new Button(MyLocale.getMsg(189,"Apply List")),HSTRETCH,HFILL);btnFilter.modify(Disabled,0);
 		btnFilter.setToolTip(MyLocale.getMsg(190,"Show only these waypoints"));
 	}
     /** Flag to ensure the initial message "Caches hierher ziehen" is cleared
@@ -68,72 +77,74 @@ public class CacheList extends CellPanel {
 	/** True if there are unsaved changes */
 	private boolean dirty=false;
 	// The UI elements
-	private mLabel lblTitle; 
-	private mCheckBox chkAddAddis;
-	private mButton btnDown, btnUp, btnLoad, btnNew, btnSave, btnSaveAs, btnFilter;
-    private mImage imgOpen,imgNew,imgSave,imgSaveAs;
-	/** This list mirrors the items in the list of selected caches for faster access. When the 
+	private Label lblTitle;
+	private CheckBox chkAddAddis;
+	private Button btnDown, btnUp, btnLoad, btnNew, btnSave, btnSaveAs, btnFilter;
+	/** This list mirrors the items in the list of selected caches for faster access. When the
      * list of selected caches is manipulated (btnUp, btnDown), this list is also kept up to date
      */
 	private Vector cacheList=new Vector(20);
 	/** The full filename of the current file */
 	private String currFile=null;
-	
-	private class myList extends mList {
-		myList(int rows, int columns, boolean multi) { super(rows,columns,multi); }
-		
+
+	private class myList extends eve.ui.List {
+		myList(int rows, int columns, boolean multi) {
+			super(rows,columns,multi);
+			modify(WantDrag,0);
+		}
+
 		//  Allow the caches to be dragged out of the cachelist
-		String wayPoint;
+		//String wayPoint;
 		int idx;
-		
+
 		public void startDragging(DragContext dc) {
 			 idx=getSelectedIndex(0);
 			 if (idx>=0) {
 				 CacheHolder ch=(CacheHolder)cacheList.get(idx);
-				 wayPoint=ch.wayPoint;
+				 //wayPoint=ch.wayPoint;
 				 IconAndText imgDrag=new IconAndText();
-				 imgDrag.addColumn(CacheType.cache2Img(ch.type));
+				 imgDrag.addColumn( CacheType.cache2Img(ch.type));
 				 imgDrag.addColumn(ch.wayPoint);
 				 dc.dragData=dc.startImageDrag(imgDrag,new Point(8,8),this);
-			 } 
+			 }
 		}
 
 		public void dragged(DragContext dc) {
 			 	dc.imageDrag();
 		}
-		 
+
 		public void stopDragging(DragContext dc) {
 			 dc.stopImageDrag(true);
-			 Point p = Gui.getPosInParent(this,getWindow());
+			 Point p = Gui.getPosInParent(this,getWindow(),null);
 			 p.x += dc.curPoint.x;
 			 p.y += dc.curPoint.y;
 			 Control c = getWindow().findChild(p.x,p.y);
-		     if (!(c instanceof myList)) { 
+		     if (!(c instanceof myList)) {
 		    	 // target is not myList => Remove dragged cache from list
-		    	 cacheList.del(idx);
+		    	 cacheList.removeElementAt(idx);
 		    	 lstCaches.deleteItem(idx);
 		    	 repaint();
 		    	 changeUpDownButtonStatus();
 		     }
 		 }
-		
+
 		// Alternative method of deleting a cache from the list through
 		// Keyboard interface
 		public void onKeyEvent(KeyEvent ev) {
-			/* This is a bit of a hack. By default Ewe sends key events to 
+			/* This is a bit of a hack. By default eve sends key events to
 			 * this panel. So if the list has not had anything dragged into it,
 			 * we redirect the focus to the list view, assuming that that is where
 			 * the key event needs to go.
 			 */
 			if (needsInit && ev.target==this) {
-				Gui.takeFocus(Global.mainTab.tbP.tc, ControlConstants.ByKeyboard);
-				ev.target=Global.mainTab.tbP.tc;
+				Gui.takeFocus(Global.mainTab.tbP.tControl, Control.ByKeyboard);
+				ev.target=Global.mainTab.tbP.tControl;
 				postEvent(ev);
 			}
 			if (ev.type == KeyEvent.KEY_PRESS && ev.target == this){
 				if (ev.key == IKeys.DELETE && cacheList.size()>0) {
 			    	 idx=getSelectedIndex(0);
-					 cacheList.del(idx);
+					 cacheList.removeElementAt(idx);
 			    	 lstCaches.deleteItem(idx);
 			    	 repaint();
 			    	 changeUpDownButtonStatus();
@@ -141,25 +152,25 @@ public class CacheList extends CellPanel {
 			}
 			super.onKeyEvent(ev);
 		}
-		public ScrollablePanel getScrollablePanel()
-		{
+		public ScrollablePanel getScrollablePanel() {
 			dontAutoScroll = amScrolling = true;
 			ScrollBarPanel sp = new MyScrollBarPanel(this);
 			sp.modify(0,TakeControlEvents);
 			return sp;
 		}
 
+
 	} //******************* myList
-	
+
 	/** Simple sort to ensure that the main list keeps the order of this list */
-	private class mySort implements Comparer{
+	private class mySort implements eve.util.Comparer{
 		public int compare(Object o1, Object o2){
 			CacheHolder oo1 = (CacheHolder)o1;
 			CacheHolder oo2 = (CacheHolder)o2;
 			return oo1.sort.compareTo(oo2.sort);
 		}
 	}
-	
+
 	/** Enable the up/down buttons only if at least 2 caches are in the list */
 	private void changeUpDownButtonStatus() {
 		btnUp.modify(0,Disabled);
@@ -173,20 +184,20 @@ public class CacheList extends CellPanel {
 		if (needsInit || lstCaches.itemsSize()<2) btnFilter.modify(Disabled,0);
 		btnFilter.repaintNow();
 	}
-	
+
 	public void onEvent(Event ev) {
 		if (ev instanceof MenuEvent && ev.type==MenuEvent.SELECTED) {
 			if (lstCaches.itemsSize()>0 && !needsInit) {
 				int lstCacheIdx=lstCaches.getSelectedIndex(0);
 				CacheHolder ch=(CacheHolder)cacheList.get(lstCacheIdx);
-				int idx=Global.getProfile().cacheDB.find(ch);
+				int idx=Global.getProfile().cacheDB.indexOf(ch);
 				// Ensure that the main view is updated with the selected cache, i.e.
 				// DetailsPanel, HintLog, Pictures etc.
 				int activeTab=Global.mainTab.cardPanel.selectedItem;
-				if (activeTab==0) { 
+				if (activeTab==0) {
 					// Select the cache also in the main list view
 					Global.mainTab.tbP.selectRow(idx);
-					Global.mainTab.tbP.tc.repaint();
+					Global.mainTab.tbP.tControl.repaint();
 				} else {
 					// We need to change to the list view first to load a new cache
 					Global.mainTab.onEvent(new MultiPanelEvent(0,Global.mainTab,0));
@@ -196,26 +207,26 @@ public class CacheList extends CellPanel {
 			}
 		}
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-			if (ev.target==btnNew) { 
+			if (ev.target==btnNew) {
 				newCacheList();
 			} else if(ev.target == btnLoad){
-				FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.getProfile().dataDir);
+				FileChooser fc = new FileChooser(FileChooser.OPEN, Global.getProfile().dataDir);
 				//fc.addMask(currCh.wayPoint + ".wl");
 				fc.addMask("*."+EXTENSION);
 				fc.addMask("*.*");
-				fc.setTitle(MyLocale.getMsg(191,"Select File"));
-				if(fc.execute() != FormBase.IDCANCEL){
+				fc.title=MyLocale.getMsg(191,"Select File");
+				if(fc.execute() != FileChooser.IDCANCEL){
 					currFile = fc.getChosen();
 					readFromFile(currFile);
 				}
 			} else if((ev.target == btnSave) && (currFile != null)){
 				saveToFile(currFile);
 			} else if((ev.target == btnSaveAs)||((ev.target == btnSave) && (currFile == null))){
-				FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.getProfile().dataDir);
+				FileChooser fc = new FileChooser(FileChooser.SAVE, Global.getProfile().dataDir);
 				//fc.addMask(currCh.wayPoint + ".wl");
 				fc.addMask("*."+EXTENSION);
-				fc.setTitle(MyLocale.getMsg(191,"Select File"));
-				if(fc.execute() != FormBase.IDCANCEL){
+				fc.title=MyLocale.getMsg(191,"Select File");
+				if(fc.execute() != FileChooser.IDCANCEL){
 					currFile = fc.getChosen();
 					if (currFile.indexOf('.')==0 || !currFile.toUpperCase().endsWith("."+EXTENSION)) currFile+="."+EXTENSION;
 					saveToFile(currFile);
@@ -226,12 +237,12 @@ public class CacheList extends CellPanel {
 					dirty=true;
 					// Swap items in hidden list
 					Object swap=cacheList.get(sel-1);
-					cacheList.set(sel-1,cacheList.get(sel));
-					cacheList.set(sel,swap);
+					cacheList.setElementAt(cacheList.get(sel),sel-1);
+					cacheList.setElementAt(swap,sel);
 					// Swap items in visible cachelist and repaint
 					swap=lstCaches.items.get(sel-1);
-					lstCaches.items.set(sel-1,lstCaches.items.get(sel));
-					lstCaches.items.set(sel,swap);
+					lstCaches.items.setElementAt(lstCaches.items.get(sel),sel-1);
+					lstCaches.items.setElementAt(swap,sel);
 					lstCaches.repaintDataNow();
 					lstCaches.select(sel-1);
 				}
@@ -241,12 +252,12 @@ public class CacheList extends CellPanel {
 					dirty=true;
 					// Swap items in hidden list
 					Object swap=cacheList.get(sel+1);
-					cacheList.set(sel+1,cacheList.get(sel));
-					cacheList.set(sel,swap);
+					cacheList.setElementAt(cacheList.get(sel),sel+1);
+					cacheList.setElementAt(swap,sel);
 					// Swap items in visible cachelist and repaint
 					swap=lstCaches.items.get(sel+1);
-					lstCaches.items.set(sel+1,lstCaches.items.get(sel));
-					lstCaches.items.set(sel,swap);
+					lstCaches.items.setElementAt(lstCaches.items.get(sel),sel+1);
+					lstCaches.items.setElementAt(swap,sel);
 					lstCaches.repaintDataNow();
 					lstCaches.select(sel+1);
 				}
@@ -284,7 +295,7 @@ public class CacheList extends CellPanel {
 				ch=null;
 				ch=(CacheHolder) cacheDB.get(idx);
 			}
-			if (ch.is_black!=Global.getProfile().showBlacklisted) 
+			if (ch.is_black!=Global.getProfile().showBlacklisted)
 				wrongBlackStatus++;
 			else {
 				ch.is_filtered=false;
@@ -292,17 +303,17 @@ public class CacheList extends CellPanel {
 			}
 		}
 		// The sort command places all filtered caches at the end
-		cacheDB.sort(new mySort(),false);
+		eve.util.Utils.sort(new Handle(),cacheDB, new mySort(),false);
 		Global.getProfile().filterActive=Filter.FILTER_CACHELIST;
 		Global.getProfile().filterInverted=false;
 		Global.getProfile().hasUnsavedChanges=true;
 		updateScreen(cacheList.size()-wrongBlackStatus);
 		if (wrongBlackStatus>0)
-			(new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(4600,"Some cache(s) cannot be shown because of wrong blacklist status"), FormBase.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(4600,"Some cache(s) cannot be shown because of wrong blacklist status"), MessageBox.OKB)).execute();
 
 	}
-	
-	/** Add a cache (and its addis) to the list 
+
+	/** Add a cache (and its addis) to the list
 	 * @return true if the cache is not already in lstCaches */
 	public boolean addCache(String wayPoint) {
 		// Check whether this is the first cache being added
@@ -316,35 +327,39 @@ public class CacheList extends CellPanel {
 		// Add addis if user wants it
 		if (chkAddAddis.state && ch.hasAddiWpt()) {
 			CacheHolder addiWpt;
-			for (int j=0; j<ch.addiWpts.getCount();j++){
+			ch.allocAddiMem();
+			for (int j=0; j<ch.addiWpts.size();j++){
 				addiWpt = (CacheHolder)ch.addiWpts.get(j);
 				if (!addiWpt.is_filtered) cachesAdded|=addCache(addiWpt);
 			}
 		}
 		// Update screen if any cache was added
-		if (cachesAdded) {	
+		if (cachesAdded) {
 			lstCaches.select(lstCaches.itemsSize()-1);
 			changeUpDownButtonStatus();
 		}
-		return cachesAdded;	
+		return cachesAdded;
 	}
 
 	/** Add a cache to the visible and invisible list */
 	private boolean addCache(CacheHolder ch) {
-		if (cacheList.find(ch)<0) {
+		if (cacheList.indexOf(ch)<0) {
 			// Add cache reference to hidden list
 			cacheList.add(ch);
 			// Add Cache and cache icon to visible list
-			lstCaches.addItem((new MenuItem()).iconize(ch.wayPoint+"   "+ch.CacheName,CacheType.cache2Img(ch.type),true));
+			lstCaches.addItem((new MenuItem()).iconize(ch.wayPoint+"   "+ch.cacheName,CacheType.cache2Img(ch.type),true));
 		    dirty=true;
 			return true;
-		} else
-			return false;
+		}
+		return false;
 	}
-	
+
 	void updateScreen(int numRows) {
-		Global.mainTab.tbP.myMod.numRows=numRows;
-		Global.mainTab.tbP.refreshTable(); // Update and repaint
+		Global.mainTab.tbP.tModel.numRows=numRows;
+		// Check whether the currently selected cache is still visible
+		//selectRow(getSelectedCache());
+		Global.mainTab.tbP.tControl.update(true); // Update and repaint
+		if (Global.mainTab.tbP.statBar!=null) Global.mainTab.tbP.statBar.updateDisplay();
 		int selPanel;
 		if ((selPanel=Global.mainTab.cardPanel.selectedItem)>-1) {
 			if (selPanel==1) {
@@ -357,14 +372,14 @@ public class CacheList extends CellPanel {
 	/** Check if there are any unsaved changes and ask user if he wants to save */
 	public void saveIfDirty() {
 		if (dirty) {
-			if ((new MessageBox(MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(192,"Save changes"),FormBase.MBYESNO)).execute()==FormBase.IDYES) {
+			if ((new MessageBox(MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(192,"Save changes"),MessageBox.MBYESNO)).execute()==MessageBox.IDYES) {
 				if (currFile!=null)
 					saveToFile(currFile);
 				else {
-					FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.getProfile().dataDir);
+					FileChooser fc = new FileChooser(FileChooser.SAVE, Global.getProfile().dataDir);
 					fc.addMask("*."+EXTENSION);
-					fc.setTitle(MyLocale.getMsg(191,"Select File"));
-					if(fc.execute() != FormBase.IDCANCEL){
+					fc.title=MyLocale.getMsg(191,"Select File");
+					if(fc.execute() != FileChooser.IDCANCEL){
 						currFile = fc.getChosen();
 						saveToFile(currFile);
 					}
@@ -373,9 +388,9 @@ public class CacheList extends CellPanel {
 		}
 		dirty=false;
 	}
-	
+
 	/** Clear the cachelist (save unsaved changes if needed) */
-	private void newCacheList() { 		
+	private void newCacheList() {
 		saveIfDirty();
 		lstCaches.items.clear();
 		cacheList.clear();
@@ -383,13 +398,13 @@ public class CacheList extends CellPanel {
 		lblTitle.setText(TITLE);
 		currFile=null;
 	}
-	
+
 	/** Read a list of caches */
 	private void readFromFile(String fileName) {
 		if (needsInit)  {lstCaches.deleteItem(0);lstCaches.deleteItem(0);  needsInit=false; }
 		int select=-1;
 		try {
-			FileReader in = new FileReader(fileName);
+			BufferedReader in = new BufferedReader(new FileReader(fileName));
 			String wayPoint;
 			int idx;
 			Vector cacheDB=Global.getProfile().cacheDB;
@@ -414,7 +429,7 @@ public class CacheList extends CellPanel {
 		}
 		if (select>-1)
 			lstCaches.select(select);
-		else	
+		else
 		    lstCaches.select(lstCaches.itemsSize()-1);
 		lstCaches.repaint();
 		this.postEvent(new MenuEvent(MenuEvent.SELECTED,this,null));
@@ -422,7 +437,7 @@ public class CacheList extends CellPanel {
 		setTitle(fileName);
 		dirty=false;
 	}
-	
+
 	/** Save the cachelist */
 	private void saveToFile(String fileName) {
 		int selectedIndex=lstCaches.getSelectedIndex(0);
@@ -439,7 +454,7 @@ public class CacheList extends CellPanel {
 		setTitle(fileName);
 		dirty=false;
 	}
-	
+
 	/** Set the title */
 	private void setTitle(String fileName) {
 		String localFileName=fileName.replace('\\','/');

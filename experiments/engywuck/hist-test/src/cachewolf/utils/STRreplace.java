@@ -1,4 +1,5 @@
-package CacheWolf;
+package cachewolf.utils;
+
 
 public class STRreplace{
 		/* Replace all instances of a String in a String.

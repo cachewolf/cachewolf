@@ -1,15 +1,22 @@
-package CacheWolf;
 
-import ewe.sys.Convert;
-import CacheWolf.navi.TrackPoint;
-import CacheWolf.navi.GkPoint;
-import CacheWolf.navi.TransformCoordinates;
-import CacheWolf.navi.GeodeticCalculator;
+package cachewolf;
+
+
+import eve.sys.Convert;
+
+import cachewolf.navi.GkPoint;
+import cachewolf.navi.TrackPoint;
+import cachewolf.navi.TransformCoordinates;
+import cachewolf.utils.Common;
+import cachewolf.utils.ParseLatLon;
+import cachewolf.utils.STRreplace;
+import cachewolf.navi.GeodeticCalculator;
 
 import com.bbn.openmap.proj.coords.*;
 import com.bbn.openmap.proj.*;
 import com.bbn.openmap.*;
-import com.stevesoft.ewe_pat.Regex;
+import com.stevesoft.eve_pat.Regex;
+
 
 /**
  * Class for getting an setting coords in different formats
@@ -477,11 +484,7 @@ public class CWPoint extends TrackPoint{
 	 */
 	public String getGKNorthing(int decimalplaces){
 		double gkNorthing = TransformCoordinates.wgs84ToGermanGk(this).getNorthing();
-		
-		ewe.sys.Double n = new ewe.sys.Double();
-		n.set(gkNorthing);
-		n.decimalPlaces = decimalplaces;
-		return n.toString().replace(',', '.');
+		return Common.doubleToString(gkNorthing,decimalplaces);
 	}
 
 	/**
@@ -489,15 +492,11 @@ public class CWPoint extends TrackPoint{
 	 */
 	public String getGKEasting(int decimalplaces) {
 		double gkEasting = TransformCoordinates.wgs84ToGermanGk(this).getGkEasting(GkPoint.GERMAN_GK);
-		
-		ewe.sys.Double e = new ewe.sys.Double();
-		e.set(gkEasting);
-		e.decimalPlaces = decimalplaces;
-		return e.toString().replace(',', '.');
+		return Common.doubleToString(gkEasting,decimalplaces);
 	}
 	
 	public String getGermanGkCoordinates() {
-		return TransformCoordinates.wgs84ToGermanGk(this).toString(0, "R:", " H:", GkPoint.GERMAN_GK);
+		return TransformCoordinates.wgs84ToGermanGk(this).toString(0, "R:", " H:",GkPoint.GERMAN_GK);
 	}
 
 	public String getGermanGkCoordinates(int decimalplaces, String pref, String seperator, int region) {
@@ -616,9 +615,9 @@ public class CWPoint extends TrackPoint{
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
 		case UTM:	return getUTMZone()  + " E " + getUTMEasting()+ " N " + getUTMNorthing();
 		case LON_LAT:
-			return Common.DoubleToString(lonDec, 8) +  "," + Common.DoubleToString(latDec, 8);
+			return Common.doubleToString(lonDec, 8) +  "," + Common.doubleToString(latDec, 8);
 		case LAT_LON:
-			return Common.DoubleToString(latDec, 8) +  "," + Common.DoubleToString(lonDec, 8);
+			return Common.doubleToString(latDec, 8) +  "," + Common.doubleToString(lonDec, 8);
 		case GK:
 			return getGermanGkCoordinates();
 		default: return "Unknown Format: " + format;

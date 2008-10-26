@@ -1,32 +1,33 @@
-package exp;
+package cachewolf.exp;
 
-import ewe.io.BufferedWriter;
-import ewe.io.File;
-import ewe.io.FileBase;
-import ewe.io.FileOutputStream;
-import ewe.io.FileWriter;
-import ewe.io.IOException;
-import ewe.io.InputStream;
-import ewe.io.PrintWriter;
-import ewe.sys.Convert;
-import ewe.sys.Handle;
-import ewe.sys.Vm;
-import ewe.ui.ProgressBarForm;
-import ewe.util.*;
-import ewe.util.Map.MapEntry;
-import ewe.util.zip.ZipEntry;
-import ewe.util.zip.ZipException;
-import ewe.util.zip.ZipFile;
-import CacheWolf.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import eve.sys.Handle;
+import eve.sys.Vm;
+import eve.ui.ProgressBarForm;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+
+import cachewolf.*;
+import cachewolf.utils.Common;
+import cachewolf.utils.SafeXML;
+
 
 /**
 *	Class to export the cache database (index) to an KML-File
-*	which can be read by Google Earth   
-*   
+*	which can be read by Google Earth
+*
 */
 public class KMLExporter extends Exporter {
-	private static final String COLOR_FOUND = "ff98fb98"; 
-	private static final String COLOR_OWNED = "ffffaa55"; 
+	private static final String COLOR_FOUND = "ff98fb98";
+	private static final String COLOR_OWNED = "ffffaa55";
 	private static final String COLOR_AVAILABLE = "ffffffff";
 	private static final String COLOR_NOT_AVAILABLE = "ff0000ff";
 
@@ -36,8 +37,8 @@ public class KMLExporter extends Exporter {
 	static final int OWNED = 2;
 	static final int NOT_AVAILABLE = 3;
 	static final int UNKNOWN = 4;
-	
-	
+
+
 	String []categoryNames = {"Available","Found", "Owned", "Not Available", "UNKNOWN"};
 	Hashtable [] outCacheDB = new Hashtable[categoryNames.length];
 
@@ -47,26 +48,26 @@ public class KMLExporter extends Exporter {
 		this.setHowManyParams(LAT_LON);
 	}
 
-	
+
 	public KMLExporter(Preferences p, Profile prof){
 			super();
 			this.setMask("*.kml");
 	}
 
 	public void doIt(int variant){
-		File outFile;
+		String outFile;
 		String str;
 		CacheHolder ch;
 		CacheHolder addiWpt;
-		CacheHolderDetail holder;
+		CacheHolderDetail chD;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
-		
+
 		if (variant == ASK_FILE) {
 			outFile = getOutputFile();
 			if (outFile == null) return;
 		} else {
-			outFile = new File(tmpFileName);
+			outFile = tmpFileName;
 		}
 
 		pbf.showMainTask = false;
@@ -79,9 +80,9 @@ public class KMLExporter extends Exporter {
 			ch = (CacheHolder)cacheDB.get(i);
 			if(ch.is_black == false && ch.is_filtered == false) counter++;
 		}
-		copyIcons(outFile.getParent());
+		copyIcons(new File(outFile).getParent());
 		buildOutDB();
-		
+
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 			str = this.header();
@@ -90,17 +91,17 @@ public class KMLExporter extends Exporter {
 				// skip over empty categories
 				if (outCacheDB[cat]==null) continue;
 
-				Iterator outLoop = outCacheDB[cat].entries();
+				Enumeration keys = outCacheDB[cat].keys();
 				outp.print(startFolder(categoryNames[cat]));
 
 				Vector tmp;
-				MapEntry entry; 
-				while (outLoop.hasNext()){
-					entry = (MapEntry) outLoop.next();
-					tmp = (Vector)entry.getValue();
+				String key;
+				while (keys.hasMoreElements()){
+					key=(String)keys.nextElement();
+					tmp = (Vector) outCacheDB[cat].get(key);
 					// skip over empty cachetypes
 					if (tmp.size() == 0) continue;
-					outp.print(startFolder(CacheType.transType((String)entry.getKey())));
+					outp.print(startFolder(CacheType.transType(Common.parseInt(key))));
 
 					for(int i = 0; i<tmp.size(); i++){
 						ch = (CacheHolder) tmp.get(i);
@@ -108,30 +109,30 @@ public class KMLExporter extends Exporter {
 						expCount++;
 						h.progress = (float)expCount/(float)counter;
 						h.changed();
-						
-						holder=new CacheHolderDetail(ch);
+
+						chD=new CacheHolderDetail(ch);
 						try {
-							holder.readCache(profile.dataDir);
+							chD.readCache(profile.dataDir);
 						} catch (IOException e) {
 							continue;
 						}
-						if (holder.pos.isValid()){
-							str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-								     holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+						if (chD.pos.isValid()){
+							str = record(chD, chD.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+								     chD.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 							if (str != null) outp.print(str);
 						}
 						if (ch.hasAddiWpt()){
-						outp.print(startFolder("Additional Waypoints", false));
+							outp.print(startFolder("Additional Waypoints", false));
 							for(int j = 0; j<ch.addiWpts.size(); j++){
 								addiWpt = (CacheHolder) ch.addiWpts.get(j);
-								holder=new CacheHolderDetail(addiWpt);
+								chD=new CacheHolderDetail(addiWpt);
 								expCount++;
-								if (holder.pos.isValid()){
-									str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-										     holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+								if (chD.pos.isValid()){
+									str = record(chD, chD.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+										     chD.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 									if (str != null) outp.print(str);
 								}
-								
+
 							}
 						outp.print(endFolder());// addi wpts
 						}
@@ -140,31 +141,31 @@ public class KMLExporter extends Exporter {
 				}
 				outp.print(endFolder());// category
 			}
-			
+
 			str = trailer();
 			if (str != null) outp.print(str);
 			outp.close();
 			pbf.exit(0);
 		} catch (IOException ioE){
-			Vm.debug("Error opening " + outFile.getName());
+			Vm.debug("Error opening " + outFile);
 		}
 		//try
 
 	}
-	
-	private void buildOutDB(){
+
+	private void buildOutDB(){ // TODO untested since EVE
 		CacheHolder ch;
 		Vector tmp;
-		Iterator categoryLoop;
-		MapEntry entry;
+		Enumeration categoryLoop;
+		String key;
 		boolean foundOne;
-		
+
 		// create the roots for the different categories
 		for (int i = 0; i < categoryNames.length; i++) {
 			outCacheDB[i] = new Hashtable();
 			// create the roots for the cachetypes
 			for (int j = 0; j < CacheType.wayType.length; j++) {
-				outCacheDB[i].put(CacheType.wayType[j][CacheType.WPT_NUM], new Vector());
+				outCacheDB[i].put(new Integer(CacheType.wayTypeNo[j]), new Vector());
 			}
 		}
 
@@ -172,24 +173,24 @@ public class KMLExporter extends Exporter {
 		for(int i = 0; i<cacheDB.size(); i++){
 			ch=(CacheHolder)cacheDB.get(i);
 			if(ch.is_black == false && ch.is_filtered == false && !ch.isAddiWpt()){
-				if (ch.is_found) { tmp = (Vector) outCacheDB[FOUND].get(ch.type);}
-				else if (ch.is_owned) { tmp = (Vector) outCacheDB[OWNED].get(ch.type);}
-				else if (ch.is_archived || !ch.is_available){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(ch.type);}
-				else if (ch.is_available){ tmp = (Vector) outCacheDB[AVAILABLE].get(ch.type);}
-				else { tmp = (Vector) outCacheDB[UNKNOWN].get(ch.type);}
-				
+				if (ch.is_found) { tmp = (Vector) outCacheDB[FOUND].get(new Integer(ch.type));} // this "new" is not very efficient as it is only needed because get needs an object, on which it can call hashcode()
+				else if (ch.is_owned) { tmp = (Vector) outCacheDB[OWNED].get(new Integer(ch.type));}
+				else if (ch.is_archived || !ch.is_available){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(new Integer(ch.type));}
+				else if (ch.is_available){ tmp = (Vector) outCacheDB[AVAILABLE].get(new Integer(ch.type));}
+				else { tmp = (Vector) outCacheDB[UNKNOWN].get(new Integer(ch.type));}
+
 				tmp.add(ch);
 			}
 		}
-		
+
 		//eleminate empty categories
 		for (int i = 0; i < categoryNames.length; i++) {
-			categoryLoop = outCacheDB[i].entries();
+			categoryLoop = outCacheDB[i].keys();
 			foundOne = false;
 			//look if all vectors for cachetypes are filled
-			while (categoryLoop.hasNext()){
-				entry = (MapEntry) categoryLoop.next();
-				tmp = (Vector)entry.getValue();
+			while (categoryLoop.hasMoreElements()){
+				key = (String) categoryLoop.nextElement();
+				tmp = (Vector)outCacheDB[i].get(key);
 				if (tmp.size()> 0){
 					foundOne = true;
 					break;
@@ -198,14 +199,14 @@ public class KMLExporter extends Exporter {
 			// set hashtable for that category to null
 			if (!foundOne)outCacheDB[i] = null;
 		}
-		
+
 
 	}
-	
+
 	private String startFolder(String name){
 		return startFolder(name, true);
 	}
-	
+
 	private String startFolder(String name, boolean open){
 		StringBuffer strBuf = new StringBuffer(200);
 		strBuf.append("<Folder>\r\n");
@@ -216,23 +217,23 @@ public class KMLExporter extends Exporter {
 	}
 
 	private String endFolder() {
-		
+
 		return "</Folder>\r\n";
 	}
 
 	public void copyIcons(String dir){
 		try {
-			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + "/POIIcons.zip");
+			ZipFile zif = new ZipFile (eve.io.File.getProgramDirectory() + "/POIIcons.zip");
 			ZipEntry zipEnt;
 			int len;
-			String entName, fileName; 
+			String entName, fileName;
 
 			for (int i = 0; i < CacheType.wayType.length; i++) {
-				fileName = CacheType.type2pic(Convert.parseInt(CacheType.wayType[i][CacheType.WPT_NUM]));
+				fileName = CacheType.type2pic(CacheType.wayTypeNo[i]);
 				entName = "GoogleEarthIcons/" + fileName;
 				zipEnt = zif.getEntry(entName);
 				if (zipEnt == null) continue;
-			    byte[] buff = new byte[ zipEnt.getSize() ];
+			    byte[] buff = new byte[ (int) zipEnt.getSize() ];
 			    InputStream  fis = zif.getInputStream(zipEnt);
 			    FileOutputStream fos = new FileOutputStream( dir + "/" + fileName);
 			    while( 0 < (len = fis.read( buff )) )
@@ -251,28 +252,28 @@ public class KMLExporter extends Exporter {
 			}
 	}
 
-	
+
 	public String header () {
 		StringBuffer strBuf = new StringBuffer(200);
-				
+
 		strBuf.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
 		strBuf.append("<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n");
 		strBuf.append("<Folder>\r\n");
 		strBuf.append("<name>CacheWolf</name>\r\n");
 		strBuf.append("<open>1</open>\r\n");
-	
+
 		return strBuf.toString();
 	}
 
 
 	public String record(CacheHolderDetail ch, String lat, String lon){
 		StringBuffer strBuf = new StringBuffer(200);
-		
+
 		strBuf.append("   <Placemark>\r\n");
 		if (ch.URL != null){
 			strBuf.append("      <description>"+SafeXML.clean(ch.URL)+"</description>\r\n");
 		}
-		strBuf.append("      <name>"+ ch.wayPoint + " - " + SafeXML.clean(ch.CacheName) +"</name>\r\n");
+		strBuf.append("      <name>"+ ch.wayPoint + " - " + SafeXML.clean(ch.cacheName) +"</name>\r\n");
 		strBuf.append("      <LookAt>\r\n");
 		strBuf.append("         <latitude>" + lat + "</latitude>\r\n");
 		strBuf.append("         <longitude>" + lon + "</longitude>\r\n");
@@ -285,7 +286,7 @@ public class KMLExporter extends Exporter {
 		strBuf.append("      <IconStyle>\r\n");
 		strBuf.append("         <Icon>\r\n");
 //		strBuf.append("            <href>"+ File.getProgramDirectory()+ "/" + CacheType.type2pic(Convert.parseInt(ch.type))+ "</href>\r\n");
-		strBuf.append("            <href>"+ CacheType.type2pic(Convert.parseInt(ch.type))+ "</href>\r\n");
+		strBuf.append("            <href>"+ CacheType.type2pic(ch.type)+ "</href>\r\n");
 		strBuf.append("         </Icon>\r\n");
 		strBuf.append("      </IconStyle>\r\n");
 		strBuf.append("      <LabelStyle>\r\n");
@@ -293,10 +294,10 @@ public class KMLExporter extends Exporter {
 		strBuf.append("      </LabelStyle>\r\n");
 		strBuf.append("      </Style>\r\n");
 		strBuf.append("   </Placemark>\r\n");
-	
+
 		return strBuf.toString();
 	}
-	
+
 	public String trailer(){
 		StringBuffer strBuf = new StringBuffer(50);
 
@@ -305,13 +306,13 @@ public class KMLExporter extends Exporter {
 
 		return strBuf.toString();
 	}
-	
+
 	private String getColor(CacheHolderDetail ch){
 		if (ch.is_found) return COLOR_FOUND;
 		if (ch.is_owned) return COLOR_OWNED;
 		if (ch.is_archived || !ch.is_available) return COLOR_NOT_AVAILABLE;
-		
+
 		return COLOR_AVAILABLE;
 	}
-	
+
 }

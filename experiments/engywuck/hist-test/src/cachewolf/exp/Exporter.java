@@ -1,17 +1,14 @@
-package exp;
+package cachewolf.exp;
 
-import CacheWolf.*;
-import ewe.sys.*;
-import ewe.filechooser.FileChooser;
-import ewe.filechooser.FileChooserBase;
-import ewe.io.BufferedWriter;
-import ewe.io.File;
-import ewe.io.FileWriter;
-import ewe.io.PrintWriter;
-import ewe.ui.FormBase;
-import ewe.ui.ProgressBarForm;
-import ewe.util.*;
-import ewe.io.IOException;
+import eve.sys.*;
+import eve.ui.filechooser.FileChooser;
+import java.io.*;
+import eve.ui.ProgressBarForm;
+import java.util.*;
+import java.io.IOException;
+
+import cachewolf.*;
+
 
 /**
  * @author Kalle
@@ -71,10 +68,10 @@ public class Exporter {
 	 *                1, if filechooser
 	 */
 	public void doIt(int variant){
-		File outFile;
+		String outFile;
 		String str;
 		CacheHolder ch;
-		CacheHolderDetail holder;
+		CacheHolderDetail chD;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
@@ -83,7 +80,7 @@ public class Exporter {
 			outFile = getOutputFile();
 			if (outFile == null) return;
 		} else {
-			outFile = new File(tmpFileName);
+			outFile = tmpFileName;
 		}
 
 		pbf.showMainTask = false;
@@ -98,32 +95,32 @@ public class Exporter {
 		}
 
 		try{
-			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
+			PrintWriter outp =  new PrintWriter(new FileOutputStream(outFile));
 			str = this.header();
 			if (str != null) outp.print(str);
-			holder=new CacheHolderDetail();
+			chD=new CacheHolderDetail();
 			for(int i = 0; i<cacheDB.size(); i++){
 				ch=(CacheHolder)cacheDB.get(i);
 				if(ch.is_black == false && ch.is_filtered == false){
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();
-					if (needCacheDetails) holder = ch.getCacheDetails(false, false);
-					else holder.update(ch);
-					if (needCacheDetails && holder == null) continue;
+					if (needCacheDetails) chD = ch.getCacheDetails(false, false);
+					else chD.update(ch);
+					if (needCacheDetails && chD == null) continue;
 					switch (this.howManyParams) {
 					case NO_PARAMS:
-						str = record(holder);
+						str = record(chD);
 						break;
 					case LAT_LON:
-						if (holder.pos.isValid() == false) continue;
-						str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-								     holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+						if (chD.pos.isValid() == false) continue;
+						str = record(chD, chD.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+								     chD.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 						break;
 					case LAT_LON|COUNT: 
-						if (holder.pos.isValid() == false) continue;
-						str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-									 holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+						if (chD.pos.isValid() == false) continue;
+						str = record(chD, chD.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+									 chD.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator),
 											 i);
 						break;
 					default:
@@ -148,7 +145,7 @@ public class Exporter {
 			outp.close();
 			pbf.exit(0);
 		} catch (IOException ioE){
-			Vm.debug("Error opening " + outFile.getName());
+			Vm.debug("Error opening " + outFile);
 		}
 		//try
 	}
@@ -193,18 +190,17 @@ public class Exporter {
 	 * uses a filechooser to get the name of the export file
 	 * @return
 	 */
-	public File getOutputFile (){
-		File file;
-		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
-		fc.setTitle("Select target file:");
+	public String getOutputFile (){
+		String file;
+		FileChooser fc = new FileChooser(FileChooser.SAVE, pref.getExportPath(expName));
+		fc.title=("Select target file:");
 		fc.addMask(mask);
-		if(fc.execute() != FormBase.IDCANCEL){
-			file = fc.getChosenFile();
-			pref.setExportPath(expName, file.getPath());
+		if(fc.execute() != FileChooser.IDCANCEL){
+			file = fc.getChosen();
+			pref.setExportPath(expName, file);
 			return file;
-		} else {
-			return null;
-		}
+		} 
+		return null;
 	}
 	/**
 	 * this method can be overided by an exporter class
@@ -377,13 +373,11 @@ public class Exporter {
         if ( c < 127 ) {
             // leave alone as equivalent string.
             return null;
-        } else {
-            String s=(String) iso2simpleMappings.get( new Integer(c));
-            if (s==null) // not in table, replace with empty string just to be sure
-            	return "";
-            else
-            	return s;
-        }
+        } 
+        String s=(String) iso2simpleMappings.get( new Integer(c));
+        if (s==null) // not in table, replace with empty string just to be sure
+        	return "";
+        return s;
     } // end charToEntity
 	
     public static String simplifyString( String text ) {

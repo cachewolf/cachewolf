@@ -1,4 +1,4 @@
-package CacheWolf;
+package cachewolf.utils;
 
 
 /**
@@ -14,7 +14,7 @@ public class Extractor  {
 		String tst;
 		boolean betweenonly;
 		public static boolean INCLUDESTARTEND = false;
-		public static boolean EXCLUDESTARTEND = true;
+		public static final boolean EXCLUDESTARTEND = true;
 		/**
 		*	Create an extractor.
 		*	sTxt = The string to search through.<br>
@@ -50,8 +50,9 @@ public class Extractor  {
 		* that is being searched through.
 		*/
 		public boolean endOfSearch(){
-			if(searchText == null || startOffset >= searchText.length()) return true;
-			else return false;
+			if(searchText == null || startOffset >= searchText.length()) 
+				return true;
+			return false;
 		}
 		
 		/**
@@ -60,13 +61,13 @@ public class Extractor  {
 		*	is returned til it's end.
 		*/
 		public String findNext(){
-			if (searchText == null) return new String(); //maby null should 
+			if (searchText == null) return ""; //maby null should 
 			int idxStart = searchText.indexOf(start,startOffset);
 			int idxEnd = searchText.indexOf(end, idxStart+start.length());
 			////Vm.debug("Start: " + Convert.toString(idxStart) + " End: " + Convert.toString(idxEnd));
 			if(idxEnd == -1) idxEnd = searchText.length(); //index counts from zero length from 1 but the last char is not included in substr and substr accepts length +1 (but not length+2)
 			startOffset = idxEnd;
-			tst = new String();
+			tst = "";
 			if(idxStart > -1){
 				if(betweenonly == false){
 					if (idxEnd+end.length() >= searchText.length()) 

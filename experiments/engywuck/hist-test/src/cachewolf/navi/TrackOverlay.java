@@ -1,21 +1,22 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
 //import java.awt.image.BufferedImage;
 
-import ewe.fx.Color;
-import ewe.fx.Graphics;
-import ewe.fx.IImage;
-import ewe.fx.Image;
-import ewe.fx.Point;
-import ewe.util.Vector;
+import eve.fx.Color;
+import eve.fx.Graphics;
+
+import eve.fx.Image;
+import eve.fx.Point;
+
+import java.util.Vector;
 
 
 public class TrackOverlay extends MapImage {
 	public TrackPoint topLeft;
 	public TrackPoint bottomRight;
 	Graphics draw;
-	Graphics drawMask;
-	int test;
+	//Graphics drawMask;
+	//int test;
 	MapInfoObject trans; 
 	Point pixelShift;
 	public Vector tracks;
@@ -32,21 +33,22 @@ public class TrackOverlay extends MapImage {
 		trans = transi;
 		pixelShift = trans.calcMapXY(topLeft);
 		bottomRight = trans.calcLatLon(widthi + pixelShift.x, highti + pixelShift.y);
-		if (ewe.sys.Vm.getPlatform().equalsIgnoreCase("java")) {
-			useTransparentColor = true; 
-			setImage(new Image(widthi, highti), transparentColorForOverlay); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in ewe-vm and doesn't consume more memory than a transparency color (ewe 1.49)
-		} else {
-			useTransparentColor = false; // // momentanously this it not used, but this is only because ewe treats areas as opaque which has a non white color in the image, so that the mask doesn't need to be changed
-			Image maski = new Image(widthi, highti);
-			drawMask = new Graphics(maski);
-			drawMask.setColor(Color.White);
-			drawMask.fillRect(0, 0, maski.getWidth(), maski.getHeight());
-			setImage(new Image(widthi, highti), maski); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in ewe-vm and doesn't consume more memory than a transparency color (ewe 1.49)
-			maski.free(); //setimage produces an inverted copy of the mask
-			maski = null;
+//TODO		if (eve.sys.Vm.getPlatform().equalsIgnoreCase("java")) {
+//			useTransparentColor = true; 
+//			setImage(new Image(widthi, highti), transparentColorForOverlay); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in eve-vm and doesn't consume more memory than a transparency color (eve 1.49)
+//		} else 
+		{
+			useTransparentColor = false; // // momentanously this it not used, but this is only because eve treats areas as opaque which has a non white color in the image, so that the mask doesn't need to be changed
+			//Image maski = new Image(widthi, highti);
+			//drawMask = new Graphics(maski);
+			//drawMask.setColor(Color.White);
+			//drawMask.fillRect(0, 0, maski.getWidth(), maski.getHeight());
+			setImage(new Image(widthi, highti), Color.White); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in eve-vm and doesn't consume more memory than a transparency color (eve 1.49)
+			//maski.free(); //setimage produces an inverted copy of the mask
+			//maski = null;
 		}
 		//properties = AlwaysOnTop; // arrows are above, so dont set it.
-		draw = new Graphics(image);
+		draw = new Graphics((Image) image);
 		draw.setDrawOp(Graphics.DRAW_OVER);
 		if (useTransparentColor) draw.setColor(transparentColorForOverlay);
 		else draw.setColor(Color.White);
@@ -57,7 +59,9 @@ public class TrackOverlay extends MapImage {
 		//draw.fillRectRGB(50, 50, 52, 52, 0x00ff0000); // fillRectRGB has a Bug - it never returns - use fillRect instead
 		//image.setPixels(markImage, 0, 50, 50, 2, 2, 0); // out of an to me unkwon reason this doesn't work here, but it does in painttracks
 	}
-	public void imageSet()
+
+//TODO ImageSet is not used in project	
+/*	public void imageSet()
 //	==================================================================
 	{
 		IImage i = drawable;
@@ -70,7 +74,7 @@ public class TrackOverlay extends MapImage {
 //		if (mask != null && mask != sourceMask) mask.freeze(); // dont freeze the mask, it could change. Anyway momentanously it doesnt change, because when the image contains non-white in the opaque areas, it will be opaque without changing the mask
 		properties &= ~HasChanged;
 	}
-
+*/
 
 	public void paintTracks() {
 	// for debugging TrackOverlayPositions
@@ -97,10 +101,9 @@ public class TrackOverlay extends MapImage {
 			if (tr.num > 0) {
 				for (i=0; i < tr.num; i++) {
 					n++;
-					if  ((numberOfPoints - n > 5*60) && ((n & 1) == 0)) continue;
-					if  ((numberOfPoints - n > 15*60) && ((n & 2) == 0)) continue;
-					if  ((numberOfPoints - n > 30*60) && ((n & 4) == 0)) continue;
-					paintPoint(tr.trackColor, tr.TrackPoints[i]);
+					if  ((numberOfPoints - n > 30*60) && ((n & 1) == 0)) continue;
+					if  ((numberOfPoints - n > 60*60) && ((n & 2) == 0)) continue;
+					paintPoint(tr.trackColor, tr.trackPoints[i]);
 				}
 			}
 		}
@@ -116,15 +119,15 @@ public class TrackOverlay extends MapImage {
 	 */
 	public boolean paintPoint(Color f, TrackPoint where){
 		if (where.latDec < bottomRight.latDec || where.latDec > topLeft.latDec || where.lonDec < topLeft.lonDec || where.lonDec > bottomRight.lonDec) return false;
-		//ewe.sys.Vm.debug("showlastaddedpoint, lat: "+lat+"   lon: "+lon);
+		//eve.sys.Vm.debug("showlastaddedpoint, lat: "+lat+"   lon: "+lon);
 		Point p = trans.calcMapXY(where);
 		int x = p.x - pixelShift.x;
 		int y = p.y - pixelShift.y;
 		//draw.drawLine(x, y, x, y);
-		//ewe.sys.Vm.debug("showlastaddedpoint, x: "+x+"   y: "+y+"loc.x: "+location.x+"  loc.y:"+location.y);
+		//eve.sys.Vm.debug("showlastaddedpoint, x: "+x+"   y: "+y+"loc.x: "+location.x+"  loc.y:"+location.y);
 		draw.fillRect(x-1, y-1, 3, 3);
 		//drawMask.fillRect(x-1, y-1, 3, 3);
-		/*	if (image.bufferedImage != null) { // funktioniert gut, allerdings nur in der java-VM wenn ewe.fx.Image.bufferedImage als public definiert
+		/*	if (image.bufferedImage != null) { // funktioniert gut, allerdings nur in der java-VM wenn eve.fx.Image.bufferedImage als public definiert
 			int yd;
 			for  (int xd=-1; xd<=1; xd++) {
 				for (yd=-1; yd<=1; yd++) {
@@ -140,14 +143,14 @@ public class TrackOverlay extends MapImage {
 	}
 
 	/**
-	 * this method forces ewe to transfer the drawn points
+	 * this method forces eve to transfer the drawn points
 	 * from _awtImage to bufferedImage, which is drawn to the screen
 	 *
 	 */
 	private void fixate() {
 		if (numPixels == 0) return;
 		//	draw.drawImage(image,null,Color.DarkBlue,0,0,location.width,location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
-		draw.drawImage(image, null, Color.Pink, 0, 0, 1, 1); // width and height is anyway ignored, evtl. testen,  
+		doDraw(draw,0);   // null, Color.Pink, 0, 0, 1, 1); // width and height is anyway ignored, evtl. testen,  
 		imageChangesDontShow = false;
 		removeAllPixels();
 	}
@@ -183,7 +186,7 @@ public class TrackOverlay extends MapImage {
 	public void paintLastAddedPoint(Track tr) { 
 		//draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
 		draw.setColor(tr.trackColor);
-		if (paintPoint(tr.trackColor, tr.TrackPoints[tr.num-1])) notOnThisOverlaySince = 0;
+		if (paintPoint(tr.trackColor, tr.trackPoints[tr.num-1])) notOnThisOverlaySince = 0;
 		else notOnThisOverlaySince++;
 		if (notOnThisOverlaySince > FIXATE_IF_NO_PIXELS_NUM) { // zur Performanceverbesserung: wenn in den letzten 60 Updates keines mehr für dieses Overlay dabei war, Overlay Pixels fest schreiben, damit doDraw entlastet wird.
 			fixate();
@@ -226,7 +229,7 @@ public class TrackOverlay extends MapImage {
  *  Zur Not wäre auch denkbar, doDraw zu überschreiben, um bei jedem Aufruf alle 
  *  Trackpoints neu zu zeichnen.
  *  Work-Aorund: draw.drawImage(image,null,Color.Pink,0,0,1,1); bewirkt, dass awtImage ins
- *  bufferedImage kopiert wird. Dabei wird die transparentColor (in mImage) nicht geändert
+ *  bufferedImage kopiert wird. Dabei wird die transparentColor (in Picture) nicht geändert
  *  und beim Aufruf von doDraw wird wieder die ursprüngliche transparentColor verwendet
  *  
  */
@@ -234,7 +237,7 @@ public class TrackOverlay extends MapImage {
 //drawmask.setDrawOp(Graphics.DRAW_OVER);
 //drawmask.drawRect(x-1, y-1, 2, 2, 1);
 //this.setImage(image, mask);
-//nächster Versuch: image.bufferedImage in ewe.fx.Image public definieren !!!
+//nächster Versuch: image.bufferedImage in eve.fx.Image public definieren !!!
 //image.rgb
 //draw._g.surfaceData.bufImg.raster.data[y*this.location.width + x] = -65536; := image._awtImage
 //((Image)image).eImage(colorOrMask)._awtImage.raster.data[0]=0;
@@ -246,7 +249,7 @@ public class TrackOverlay extends MapImage {
 //image.mask = null;
 //image.bufferedImage = null;
 //image.setPixels(markPixels, 0 , x-20, y, 2, 2, 0); // dadrin sollte bufferedImage = null gesetzt werden, wird es aber nicht :-(
-//ewe.fx.mImage mark = new mImage();
+//eve.fx.Picture mark = new Picture();
 //Image mark = new Image(2,2);
 //new Graphics(mark).drawImage(image, null, transparentColor, x-40, y, 2, 2);
 //mark.draw(draw, x-50, y, Graphics.DRAW_OVER); // options (Graphics.DRAW_OVER) are ignored anyway
@@ -257,7 +260,7 @@ public class TrackOverlay extends MapImage {
 //(java.awt.Image.b)
 //image.bufferedImage=null;
 //draw.flush();
-//ewe.ui.PenEvent.refreshTip(draw.surface);
+//eve.ui.PenEvent.refreshTip(draw.surface);
 //draw.setPixelRGB(x, y, -65536);
 //this.changed(); hilft auch nicht
 //this.refresh(); // hilft nicht :-(
@@ -265,9 +268,9 @@ public class TrackOverlay extends MapImage {
 //imageMayChange = true; // hilft auch nicht :-(
 
 /*
- * In der ewe-VM für PocketPC-ARM funktioniert die Festlegung einer 
+ * In der eve-VM für PocketPC-ARM funktioniert die Festlegung einer 
  * transparenten Farbe nicht (Hintergrund wird weiß statt durchsichtig)
- * deswegen (und weil in ewe-VM effizienter) Umstellung auf Transparenzmaske
+ * deswegen (und weil in eve-VM effizienter) Umstellung auf Transparenzmaske
  * statt transparenter Farbe
  * TODO Dies ist in Java-VM allerdings extrem Speicher fressend -> evtl abfragen 
 static int fixMask(WObject image,WObject col,int isMask):

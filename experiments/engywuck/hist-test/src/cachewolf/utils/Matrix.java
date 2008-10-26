@@ -1,6 +1,6 @@
-package CacheWolf;
+package cachewolf.utils;
 
-import ewe.sys.*;
+import eve.sys.*;
 
 public class Matrix{
 	int iDF = 0;
@@ -22,7 +22,7 @@ public class Matrix{
 	*	Method to multiply this matrix with another matrix.
 	*	The result is stored in this matrix!
 	*/
-	public void Multiply(Matrix srcMatrix){
+	public void multiply(Matrix srcMatrix){
 		double m[][] = new double[matrix.length][srcMatrix.matrix[0].length];
 		for (int i = 0; i < m.length; i++)
 			for (int j = 0; j < m[i].length; j++){
@@ -49,7 +49,7 @@ public class Matrix{
 		return product;
 	}
 	
-	public void MultiplyByScalar (double f) {
+	public void multiplyByScalar (double f) {
 		for (int i = 0; i < matrix.length; i++)
 			for (int j = 0; j < matrix[0].length; j++)
 				matrix[i][j] = matrix[i][j] * f;
@@ -69,7 +69,7 @@ public class Matrix{
 	*	would become:	|1 3 5 |
 	*			|2 4 6 |
 	*/
-	public void Transpose(){
+	public void transpose(){
 		
 		double m[][] = new double[matrix[0].length][matrix.length];
 		for (int i = 0; i < matrix.length; i++)
@@ -99,7 +99,7 @@ public class Matrix{
 	/**
 	*	Method to display the contents of a matrix.
 	*/
-	public void DumpMatrix(){
+	public void dumpMatrix(){
 		for (int i = 0; i < matrix.length; i++)
 			for (int j = 0; j < matrix[i].length; j++)
 				Vm.debug("[ "+i+ " " + j + " ] " + matrix[i][j]);
@@ -125,16 +125,15 @@ public class Matrix{
 					{
 						iDF = 0;
 						break outahere;
-					} else {
-						for (int c = 0; c < tms; c++) {
-							temp = m[col][c];
-							m[col][c] = m[col + v][c]; // switch rows
-							m[col + v][c] = temp;
-						}
-						v++; // count row switchs
-						iDF = iDF * -1; // each switch changes determinant
-										// factor
+					} 
+					for (int c = 0; c < tms; c++) {
+						temp = m[col][c];
+						m[col][c] = m[col + v][c]; // switch rows
+						m[col + v][c] = temp;
 					}
+					v++; // count row switchs
+					iDF = iDF * -1; // each switch changes determinant
+									// factor
 				}
 				if (m[col][col] != 0) {
 					try {
@@ -154,7 +153,7 @@ public class Matrix{
 	/**
 	*	Method to calculate the determinate of a matrix
 	*/
-	public double Determinant(double[][] matrix) {
+	public double determinant(double[][] matrix) {
 		int tms = matrix.length;
 		double det = 1;
 		matrix = UpperTriangle(matrix);
@@ -171,7 +170,7 @@ public class Matrix{
 	*	Method to calculate the inverse of this matrix.
 	*	The result is stored in this matrix!
 	*/
-	public void Inverse() {
+	public void inverse() {
 		// Formula used to Calculate Inverse:
 		// inv(A) = 1/det(A) * adj(A)
 		
@@ -180,7 +179,7 @@ public class Matrix{
 		double m[][] = new double[tms][tms];
 		double mm[][] = Adjoint(matrix);
 
-		double det = Determinant(matrix);
+		double det = determinant(matrix);
 		double dd = 0;
 
 		if (det == 0) {
@@ -228,7 +227,7 @@ public class Matrix{
 					}
 					ja = 0;
 				}
-				det = Determinant(ap);
+				det = determinant(ap);
 				m[i][j] = java.lang.Math.pow(-1, i + j) * det;
 			}
 		m = Transpose2(m);
@@ -237,7 +236,7 @@ public class Matrix{
 	
 	/**
 	*	"Old" helper method used by some other classes in cachewolf.
-	*	@deprecated Do not use when coding new classes!
+	*	//@deprecated Do not use when coding new classes!
 	*/
 	public static double dot(double p1, double p2, double q1, double q2, double x1, double x2){
 		double dt,AB0,AB1,BC0,BC1 = 0;
@@ -251,7 +250,7 @@ public class Matrix{
 	
 	/**
 	*	"Old" helper method used by some other classes in cachewolf.
-	*	@deprecated Do not use when coding new classes!
+	*	//@deprecated Do not use when coding new classes!
 	*/
 	public static double cross(double p1, double p2, double q1, double q2, double x1, double x2){
 		double cr,AB0,AB1,AC0,AC1 = 0;
@@ -265,7 +264,7 @@ public class Matrix{
 	
 	/**
 	*	"Old" helper method used by some other classes in cachewolf.
-	*	@deprecated Do not use when coding new classes!
+	*	//@deprecated Do not use when coding new classes!
 	*/
 	public static double dist(double p1, double p2, double q1, double q2){
 		double d1, d2,dt = 0;

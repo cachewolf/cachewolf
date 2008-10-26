@@ -1,25 +1,22 @@
-package exp;
+package cachewolf.exp;
 
-import CacheWolf.*;
-import ewe.sys.*;
-import ewe.filechooser.FileChooser;
-import ewe.filechooser.FileChooserBase;
-import ewe.io.BufferedReader;
-import ewe.io.BufferedWriter;
-import ewe.io.File;
-import ewe.io.FileNotFoundException;
-import ewe.io.FileReader;
-import ewe.io.FileWriter;
-import ewe.io.LineNumberReader;
-import ewe.io.PrintWriter;
-import ewe.ui.FormBase;
-import ewe.ui.ProgressBarForm;
-import ewe.util.*;
-import ewe.io.IOException;
+import eve.sys.*;
+import eve.ui.filechooser.FileChooser;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import eve.io.File;
+import java.io.*;
+import eve.ui.ProgressBarForm;
+import java.util.*;
+import java.io.IOException;
+
+import cachewolf.*;
+import cachewolf.utils.Common;
+
 
 /**
  * @author Kalle
- * @author TweetyHH Class for Exporting direct to Explorists *.gs Files. Caches
+ * @author TweetyHH Class for Exporting direct to Magellans *.gs Files. Caches
  *         will be exported in files with maximum of 200 Caches.
  */
 
@@ -40,7 +37,7 @@ public class ExploristExporter {
 	// mask in file chooser
 	String mask = "*.gs";
 	// decimal separator for lat- and lon-String
-	char decimalSeparator = '.';
+	//char decimalSeparator = '.';
 	// if true, the complete cache details are read
 	// before a call to the record method is made
 	boolean needCacheDetails = true;
@@ -60,16 +57,16 @@ public class ExploristExporter {
 	public void doIt() {
 		File configFile = new File("magellan.cfg");
 		if (configFile.exists()) {
-			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getExportPath(expName+"Dir"));
-			fc.setTitle(MyLocale.getMsg(2104, "Choose directory for exporting .gs files"));
+			FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.getExportPath(expName+"Dir"));
+			fc.title=(MyLocale.getMsg(2104, "Choose directory for exporting .gs files"));
 			String targetDir;
-			if(fc.execute() != FormBase.IDCANCEL){
+			if(fc.execute() != FileChooser.IDCANCEL){
 				targetDir = fc.getChosen() + "/";
 				pref.setExportPath(expName+"Dir", targetDir);
 
 				CWPoint centre = profile.centre;
 				try {
-					LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader(configFile)));
+					LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader(configFile.getName())));
 					String line, fileName, coordinate;
 					while ((line = reader.readLine()) != null)  {
 						StringTokenizer tokenizer = new StringTokenizer(line,"=");
@@ -77,18 +74,18 @@ public class ExploristExporter {
 						coordinate = tokenizer.nextToken().trim();
 						CWPoint point = new CWPoint(coordinate);
 						DistanceComparer dc = new DistanceComparer(point);
-						cacheDB.sort(dc, false);
+						eve.util.Utils.sort(new Handle(),cacheDB,dc, false);
 						doIt(fileName);
 					}
 					reader.close();
 				} catch (FileNotFoundException e) {
-					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"),MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n" + e.getMessage()));
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n" + e.getMessage()));
 					info.show();
 				} catch (IOException e) {
-					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"),MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n" + e.getMessage()));
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Magellan Exporter"),MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n" + e.getMessage()));
 					info.show();
 				} finally {
-					cacheDB.sort(new DistanceComparer(centre),false);
+					eve.util.Utils.sort(new Handle(), cacheDB, new DistanceComparer(centre),false);
 				}
 			}
 		}
@@ -105,7 +102,7 @@ public class ExploristExporter {
 		String fileBaseName;
 		String str = null;
 		CacheHolder ch;
-		CacheHolderDetail holder;
+		CacheHolderDetail chD;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
@@ -144,22 +141,22 @@ public class ExploristExporter {
 							outp.close();
 						}
 						outp = new PrintWriter(new BufferedWriter(
-								new FileWriter(new File(fileBaseName + expCount
+								new FileWriter(new java.io.File(fileBaseName + expCount
 										/ 200 + ".gs"))));
 					}
 
-					holder = new CacheHolderDetail(ch);
+					chD = new CacheHolderDetail(ch);
 					expCount++;
 					h.progress = (float) expCount / (float) counter;
 					h.changed();
 					try {
 						if (needCacheDetails) {
-							holder.readCache(profile.dataDir);
+							chD.readCache(profile.dataDir);
 						}
 					} catch (IOException e) {
 						continue;
 					}
-					str = record(holder);
+					str = record(chD);
 					if (str != null)
 						outp.print(str);
 				}// if
@@ -184,18 +181,17 @@ public class ExploristExporter {
 	 * @return
 	 */
 	public File getOutputFile() {
-		File file;
-		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref
+		eve.io.File file;
+		FileChooser fc = new FileChooser(FileChooser.SAVE, pref
 				.getExportPath(expName));
-		fc.setTitle(MyLocale.getMsg(2102, "Select target file:"));
+		fc.title=(MyLocale.getMsg(2102, "Select target file:"));
 		fc.addMask(mask);
-		if (fc.execute() != FormBase.IDCANCEL) {
+		if (fc.execute() != FileChooser.IDCANCEL) {
 			file = fc.getChosenFile();
-			pref.setExportPath(expName, file.getPath());
+			pref.setExportPath(expName, file.getDrivePath());
 			return file;
-		} else {
-			return null;
-		}
+		} 
+		return null;
 	}
 
 	/**
@@ -230,43 +226,43 @@ public class ExploristExporter {
 		sb.append(",");
 		String add = "";
 		if (chD.isAddiWpt()) {
-			if (chD.type.equals("50")) {
+			if (chD.type==50) {
 				add = "Pa:";
-			} else if (chD.type.equals("51")) {
+			} else if (chD.type==51) {
 				add = "St:";
-			} else if (chD.type.equals("52")) {
+			} else if (chD.type==52) {
 				add = "Qu:"; 
-			} else if (chD.type.equals("53")) {	
+			} else if (chD.type==53) {	
 				add = "Fi:";
-			} else if (chD.type.equals("54")) {
+			} else if (chD.type==54) {
 				add = "Tr:";
-			} else if (chD.type.equals("55")) {	
+			} else if (chD.type==55) {	
 				add = "Re:";
 			}
-			sb.append(add).append(removeCommas(chD.CacheName));
+			sb.append(add).append(removeCommas(chD.cacheName));
 		} else {
-			sb.append(removeCommas(chD.CacheName));
+			sb.append(removeCommas(chD.cacheName));
 		}		
 		sb.append(",");
-		sb.append(removeCommas(chD.CacheOwner));
+		sb.append(removeCommas(chD.cacheOwner));
 		sb.append(",");
-		sb.append(removeCommas(Common.rot13(chD.Hints)));
+		sb.append(removeCommas(Common.rot13(chD.hints)));
 		sb.append(",");
 		
 		if (!add.equals("")) { // Set Picture in Explorist to Virtual
 			sb.append("Virtual Cache");
-		} else if (!chD.type.equals("8")) { // Rewrite Unknown Caches
+		} else if (!(chD.type==8)) { // Rewrite Unknown Caches
 			sb.append(CacheType.transType(chD.type));
 		} else {
 			sb.append("Mystery Cache");
 		}
 		sb.append(",");
-		sb.append(toGsDateFormat(chD.DateHidden));  // created - DDMMYYY, YYY = year - 1900
+		sb.append(toGsDateFormat(chD.dateHidden));  // created - DDMMYYY, YYY = year - 1900
 		sb.append(",");
 		String lastFound = "0000";
-		for (int i = 0; i < chD.CacheLogs.size(); i++) {
-			if (chD.CacheLogs.getLog(i).isFoundLog() && chD.CacheLogs.getLog(i).getDate().compareTo(lastFound) > 0 ) {
-				lastFound = chD.CacheLogs.getLog(i).getDate();
+		for (int i = 0; i < chD.cacheLogs.size(); i++) {
+			if (chD.cacheLogs.getLog(i).isFoundLog() && chD.cacheLogs.getLog(i).getDate().compareTo(lastFound) > 0 ) {
+				lastFound = chD.cacheLogs.getLog(i).getDate();
 			}
 		}
 		
@@ -306,9 +302,7 @@ public class ExploristExporter {
 		if (input.length() >= 10) {
 			return input.substring(8, 10) + input.substring(5, 7) + "1" + input.substring(2, 4);
 		} 
-		else {
-			return "";
-		}
+		return "";
 	}
 	
 }

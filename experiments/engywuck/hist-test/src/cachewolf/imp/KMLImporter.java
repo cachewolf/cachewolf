@@ -1,11 +1,14 @@
-package CacheWolf.imp;
+package cachewolf.imp;
 
 import ewesoft.xml.*;
-import ewe.util.*;
+import java.util.*;
 import ewesoft.xml.sax.*;
-import ewe.io.*;
-import ewe.sys.*;
-import CacheWolf.CWPoint;
+import java.io.*;
+
+import cachewolf.CWPoint;
+
+import eve.sys.*;
+import eve.ui.Form;
 
 /**
  * Class to import coordinates from a KML file generated from
@@ -19,8 +22,8 @@ public class KMLImporter extends MinML {
 	
 	public Vector points = new Vector();
 	private CWPoint point = new CWPoint();
-	private String file = new String();
-	String strData = new String();
+	private String file = "";
+	String strData = "";
 	private int status = 0;
 	private static int MultiGeometry = 1;
 	private static int LineString = 2;
@@ -33,14 +36,14 @@ public class KMLImporter extends MinML {
 	public void importFile() {
 		try{
 			Reader r;
-			Vm.showWait(true);
+			Form.showWait();
 			r = new FileReader(file);
 			parse(r);
 			r.close();
-			Vm.showWait(false);
+			Form.cancelWait();
 		}catch(Exception e){
 			//Vm.debug(e.toString());
-			Vm.showWait(false);
+			Form.cancelWait();
 		}
 	}
 	
@@ -72,10 +75,8 @@ public class KMLImporter extends MinML {
 	private void parseCoordinatesLine(){
 		StringTokenizer exBlock = new StringTokenizer(strData, " ");
 		StringTokenizer numbers;
-		String lat = new String();
-		String lon = new String();
-		
-		String test = new String();
+		String lat, lon;
+		String test;
 		
 		while(exBlock.hasMoreTokens()){
 			test = exBlock.nextToken();

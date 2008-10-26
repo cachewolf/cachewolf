@@ -1,6 +1,6 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
-import CacheWolf.CWPoint;
+import cachewolf.CWPoint;
 
 public class Area {
 	 public final static int NOT_ON_EDGE = -1;
@@ -8,7 +8,7 @@ public class Area {
 	 public final static int AT_RIGHT_EDGE = 2;
 	 public final static int AT_BUTTOM_EDGE = 3;
 	 public final static int AT_LEFT_EDGE = 4;
-	 public static double edgeTolerance = 3 * 360/40000000; // approx 3m will be seen as the same
+	 public static final double edgeTolerance = 3 * 360/40000000; // approx 3m will be seen as the same
 
 	 CWPoint topleft;
 	 CWPoint buttomright;
@@ -26,14 +26,14 @@ public class Area {
 	 public boolean isInBound(TrackPoint p) {
 		 if (topleft.latDec >= p.latDec && topleft.lonDec <= p.lonDec 
 				 && buttomright.latDec <= p.latDec && buttomright.lonDec >= p.lonDec) return true;
-		 else return false;
+		 return false;
 	 }
 	 //if(affine[4] >= lati && lati >= lowlat && affine[5] <= loni && loni <= lowlon) isInBound = true;
 		
 	 public boolean isInBound(double lat, double lon) {
 		 if (topleft.latDec >= lat && topleft.lonDec <= lon
 				 && buttomright.latDec <= lat && buttomright.lonDec >= lon) return true;
-		 else return false;
+		 return false;
 	 }
 
 	/**
@@ -55,7 +55,7 @@ public class Area {
 				 || a.isInBound(this.buttomright.latDec, this.topleft.lonDec) // buttom left
 				 || a.isInBound(this.topleft.latDec, this.buttomright.lonDec)) // top right
 			 return true;
-		 else return false;
+		 return false;
 	 }
 
 	 public boolean equals(Area a) {
@@ -64,7 +64,7 @@ public class Area {
 				 && java.lang.Math.abs(buttomright.latDec - a.buttomright.latDec) < edgeTolerance
 				 && java.lang.Math.abs(buttomright.lonDec - a.buttomright.lonDec) < edgeTolerance )
 			 return true;
-		 else return false;
+		 return false;
 	 }
 	 
 	 public int getEdge(CWPoint tl, CWPoint br) {
@@ -98,7 +98,7 @@ public class Area {
 		 for (i=0; i<br.length(); i++ ) {
 			 if (ul.charAt(i) != br.charAt(i)) break;
 		 }
-		 //ewe.sys.Vm.debug(ul+"\n"+br+"\n i:"+i);
+		 //eve.sys.Vm.debug(ul+"\n"+br+"\n i:"+i);
 		 return ul.substring(0, i);
 	 }
 	 
@@ -110,8 +110,13 @@ public class Area {
 	 public static String getEasyFindString(CWPoint p, int prec) {
 		 double longinrange = p.lonDec;
 		 if (longinrange > 180) longinrange -= 180;
-		 int lat = (int) (((p.latDec+90d)/180d) * (double)(1 << (prec)));
-		 int lon = (int) (((longinrange+180)/360) * (double) (1 << (prec)));
+		 Double kw = new Double(((p.latDec+90d)/180d) *  (1 << prec));
+		 int lat = (int)((p.latDec+90d)/180d *  (1 << prec)); // TODO handle negative values
+		 lat = kw.intValue();
+		 //kw = (double) (1 << (prec));
+		 
+		 //kw = new Double(((longinrange+180)/360) * (2 ^ (prec -1)));
+		 int lon = (int)(((longinrange+180)/360) *  (1 << (prec))); // 180 = 10110100
 		 String ret = "";
 		 int tmp;
 		 for (int i=prec-1; i>=0;  i--) {
@@ -126,7 +131,7 @@ public class Area {
 	 
 	 static public boolean containsRoughly(String boundingbox, String q) {
 		 if (boundingbox.length() <= q.length() ) return q.startsWith(boundingbox);
-		 else return boundingbox.startsWith(q);
+		 return boundingbox.startsWith(q);
 	 }
 	 
 	 public String toString() {

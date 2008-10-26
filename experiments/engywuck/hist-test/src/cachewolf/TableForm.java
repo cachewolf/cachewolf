@@ -1,9 +1,9 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.ui.CellConstants;
-import ewe.ui.Editor;
+import eve.ui.CellConstants;
+import eve.ui.Form;
 
-public class TableForm extends Editor {
+public class TableForm extends Form {
 	public TableForm(TablePanel tp) {
 		if (Global.getPref().menuAtTop) {
 			this.addLast(Global.mainForm.mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);

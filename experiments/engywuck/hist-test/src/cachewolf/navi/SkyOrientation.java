@@ -1,8 +1,8 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
-import CacheWolf.CWPoint;
-import CacheWolf.MyLocale;
-import ewe.sys.Convert;
+import cachewolf.CWPoint;
+import cachewolf.MyLocale;
+import eve.sys.Convert;
 
 /** Class to caculate positions of luminaries
  * all methods are static
@@ -38,7 +38,7 @@ public class SkyOrientation {
 		// Sirius
 	};
 	
-	public static String [] LUMINARY_NAMES = { 
+	public static final String [] LUMINARY_NAMES = { 
 		MyLocale.getMsg(6100, "Sun"), 
 		MyLocale.getMsg(6101, "Moon"), 
 		MyLocale.getMsg(6102, "Grater Bear"),
@@ -48,7 +48,7 @@ public class SkyOrientation {
 		MyLocale.getMsg(6106, "Southern Cross")
 	};
 
-	public static String [] LUMINARY_DESC = {
+	public static final String [] LUMINARY_DESC = {
 		MyLocale.getMsg(6100, "Sun"), 
 		MyLocale.getMsg(6101, "Moon"), 
 		MyLocale.getMsg(6122, "Alioth in Greater Bear"),
@@ -112,7 +112,7 @@ public class SkyOrientation {
 			if (monat<2) {jahr--; monat+=12;} // verlegung des Jahres Endes auf Feb macht Berechnung von SChaltjahren einfacher
 			double a = (int)java.lang.Math.floor(jahr/100.); // Alle hundert Jahre kein Schlatjahr (abrunden)
 			double b = 2 - a + java.lang.Math.floor(a/4.);
-			double jd = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*(monat+1.)) + tag + (double)stunde/24 + (double)minute/1440 + (double)sekunde/86400 + b - 1524.5;
+			double jd = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*(monat+1.)) + tag + ((double)stunde)/24 + ((double)minute)/1440 + (double)sekunde/86400 + b - 1524.5;
 			return jd;
 			//double jd0 = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*((double)monat+1.)) +(double)tag + b - 1524.5;
 		} catch (IndexOutOfBoundsException e) {
@@ -145,7 +145,7 @@ public class SkyOrientation {
 			if (monat<2) {jahr--; monat+=12;} // verlegung des Jahres Endes auf Feb macht Berechnung von SChaltjahren einfacher
 			double a = (int)java.lang.Math.floor(jahr/100.); // Alle hundert Jahre kein Schlatjahr (abrunden)
 			double b = 2 - a + java.lang.Math.floor(a/4.);
-			double jd = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*(monat+1.)) + tag + (double)stunde/24 + (double)minute/1440 + (double)sekunde/86400 + b - 1524.5;
+			double jd = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*(monat+1.)) + tag + (stunde*3600 + minute*60 + sekunde)/86400. + b - 1524.5;
 			double jd0 = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*(monat+1.)) +tag + b - 1524.5;
 			// Ekliptikalkoordinaten der Sonne berechnen (see http://de.wikipedia.org/wiki/Sonnenstand )
 			double n = jd - 2451545.0;
@@ -160,7 +160,7 @@ public class SkyOrientation {
 			if (alphaNenner<0) {alpha +=180;}
 			// Azimut
 			double t0 = (jd0 - 2451545.)/36525.; // schon in t0 bzw jd0 richtig berechnet?
-			double thetaHG = 6.697376 + 2400.05134 * t0 + 1.002738 * (stunde + minute/60. + sekunde/3600.);
+			double thetaHG = 6.697376 + 2400.05134 * t0 + 1.002738 * (stunde*3600 + minute*60 + sekunde)/3600.;
 			double theta = thetaHG * 15. + lon;
 			double azimutNenner = java.lang.Math.cos((theta-alpha)/180*java.lang.Math.PI)*java.lang.Math.sin(lat/180*java.lang.Math.PI)-
 			java.lang.Math.tan(delta/180*java.lang.Math.PI)*java.lang.Math.cos(lat/180*java.lang.Math.PI);
@@ -171,12 +171,12 @@ public class SkyOrientation {
 			// null = Sueden auf Null = Norden umrechnen
 			azimut +=180.;
 			if (azimut >360.) azimut -=360.;
-			//ewe.sys.Vm.debug("sunAzimut1: " + azimut);
-			//ewe.sys.Vm.debug("sun Elevation: " +getSunAzimut2 (utc, datum, lat, lon).latDec);
+			//eve.sys.Vm.debug("sunAzimut1: " + azimut);
+			//eve.sys.Vm.debug("sun Elevation: " +getSunAzimut2 (utc, datum, lat, lon).latDec);
 			//CWPoint MoonDir = getMoonDir(jd, new CWPoint(lat, lon));
-			//ewe.sys.Vm.debug("Moon Elevation: " + MoonDir.latDec + "Moon Azimut: " + MoonDir.lonDec);
+			//eve.sys.Vm.debug("Moon Elevation: " + MoonDir.latDec + "Moon Azimut: " + MoonDir.lonDec);
 			//CWPoint OrionDir = getAlnilamDir(jd, new CWPoint(lat, lon));
-			//ewe.sys.Vm.debug("Alnilam (Orion) Elevation: " + OrionDir.latDec + "Alnilam (Orion) Azimut: " + OrionDir.lonDec );
+			//eve.sys.Vm.debug("Alnilam (Orion) Elevation: " + OrionDir.latDec + "Alnilam (Orion) Azimut: " + OrionDir.lonDec );
 			
 			return azimut;
 		} catch (IndexOutOfBoundsException e) {

@@ -24,13 +24,21 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     */
 
-package CacheWolf;
+package cachewolf.imp;
 
-import ewe.sys.Vm;
-import ewe.util.*;
-import ewe.io.*;
+import eve.sys.Vm;
+import java.util.*;
+import java.io.*;
+
+import cachewolf.CacheHolder;
+import cachewolf.CacheHolderDetail;
+import cachewolf.Profile;
+import cachewolf.utils.Common;
+
+
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
+import eve.ui.Form;
 
 /**
  * @author Kalle
@@ -39,17 +47,15 @@ import ewesoft.xml.sax.AttributeList;
 public class LOCXMLImporter extends MinML {
 	boolean debugXML = false;
 	Vector cacheDB;
-	Preferences pref;
 	Profile profile;
 	String file;
-	CacheHolderDetail holder;
+	CacheHolderDetail chD;
 
 	Hashtable DBindexWpt = new Hashtable();
-	String strData = new String();
+	String strData = "";
 
 	
-	public LOCXMLImporter ( Preferences pf, Profile prof, String f ){
-		pref = pf;
+	public LOCXMLImporter ( Profile prof, String f ){
 		profile=prof;
 		cacheDB = profile.cacheDB;
 		file = f;
@@ -63,17 +69,17 @@ public class LOCXMLImporter extends MinML {
 	public void doIt() {
 		try{
 			Reader r;
-			Vm.showWait(true);
+			Form.showWait();
 			//Test for zip.file
 						r = new FileReader(file);
 						parse(r);
 						r.close();
 			// save Index 
-			profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
-			Vm.showWait(false);
+			profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+			Form.cancelWait();
 		}catch(Exception e){
 			//Vm.debug(e.toString());
-			Vm.showWait(false);
+			Form.cancelWait();
 		}
 		
 	}
@@ -86,12 +92,12 @@ public class LOCXMLImporter extends MinML {
 		}
 		strData ="";
 		if (name.equals("name")){
-			holder = getHolder(atts.getValue("id"));
+			chD = getHolder(atts.getValue("id"));
 			return;
 		}
 		if (name.equals("coord")){
-			holder.pos.set(Common.parseDouble(atts.getValue("lat")),Common.parseDouble(atts.getValue("lon")));
-			holder.LatLon = holder.pos.toString();
+			chD.pos.set(Common.parseDouble(atts.getValue("lat")),Common.parseDouble(atts.getValue("lon")));
+			chD.latLon = chD.pos.toString();
 			return;
 		}
 
@@ -100,30 +106,30 @@ public class LOCXMLImporter extends MinML {
 	
 	public void endElement(String name){
 		if (name.equals("name")){
-			holder.CacheName = strData;
+			chD.cacheName = strData;
 		}
 
 		if (name.equals("waypoint")){
 			int index;
-			index = searchWpt(holder.wayPoint);
+			index = searchWpt(chD.wayPoint);
 			if (index == -1){
-				holder.is_new = true;
-				cacheDB.add(new CacheHolder(holder));
-				DBindexWpt.put(holder.wayPoint, new Integer(cacheDB.size()-1));
+				chD.is_new = true;
+				cacheDB.add(new CacheHolder(chD));
+				DBindexWpt.put(chD.wayPoint, new Integer(cacheDB.size()-1));
 			}
 			// update (overwrite) data
 			else {
-				holder.is_new = false;
-				cacheDB.set(index, new CacheHolder(holder));
+				chD.is_new = false;
+				cacheDB.setElementAt(new CacheHolder(chD),index);
 			}
 			// save all  (after each cache???)
-			holder.saveCacheDetails(profile.dataDir);
-			profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+			chD.saveCacheDetails(profile.dataDir);
+			profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 			return;
 		}
 
 		if (name.equals("link")){
-			holder.URL = strData;
+			chD.URL = strData;
 			return;
 		}
 
@@ -145,9 +151,9 @@ public class LOCXMLImporter extends MinML {
 	*/
 	private int searchWpt(String wpt){
 		Integer INTR = (Integer)DBindexWpt.get(wpt);
-		if(INTR != null){
+		if(INTR != null)
 			return INTR.intValue();
-		} else return -1;
+		return -1;
 	}
 
 	private CacheHolderDetail getHolder(String wpt){// See also OCXMLImporter

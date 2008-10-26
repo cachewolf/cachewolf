@@ -1,5 +1,5 @@
-package exp;
-import CacheWolf.*;
+package cachewolf.exp;
+import cachewolf.*;
 
 /**
 *	Class to export the cache database (index) to an OziExplorer File
@@ -49,7 +49,7 @@ public class OziExporter extends Exporter{
 		// Field 10 : Background Color (RGB value)
 		strBuf.append("16777215,");
 		// Field 11 : Description (max 40), no commas
-		tmpName = simplifyString(ch.CacheName);
+		tmpName = simplifyString(ch.cacheName);
 		if (tmpName.length() <= 40){
 			strBuf.append(tmpName + ",");
 		}

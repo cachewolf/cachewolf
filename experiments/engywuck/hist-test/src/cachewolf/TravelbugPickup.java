@@ -1,6 +1,6 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.ui.InputBox;
+import eve.ui.data.InputBox;
 
 public class TravelbugPickup {
 

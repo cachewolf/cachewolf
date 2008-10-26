@@ -1,19 +1,21 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
-import CacheWolf.CWPoint;
-import CacheWolf.Common;
-import CacheWolf.Global;
-import CacheWolf.InfoBox;
-import CacheWolf.MyLocale;
-import utils.FileBugfix;
-import ewe.io.File;
-import ewe.io.FileBase;
-import ewe.io.IOException;
-import ewe.sys.Time;
-import ewe.ui.FormBase;
-import ewe.ui.MessageBox;
-import ewe.util.Vector;
-import ewe.fx.*;
+import eve.io.File;
+import java.io.IOException;
+import eve.sys.Time;
+import eve.ui.MessageBox;
+import java.util.Vector;
+
+import cachewolf.CWPoint;
+import cachewolf.Global;
+import cachewolf.InfoBox;
+import cachewolf.MyLocale;
+import cachewolf.utils.Common;
+
+import eve.fx.*;
+import eve.ui.Form;
+import eve.ui.FormBase;
+
 /**
  * class to handle a list of maps
  * it loads the list, finds the best map for a given location,
@@ -22,7 +24,8 @@ import ewe.fx.*;
  *
  */
 public class MapsList extends Vector {
-	public static float scaleTolerance = 1.15f; // absolute deviations from this factor are seen to have the same scale
+	static final long serialVersionUID=0; // For compiler only
+	public static final float scaleTolerance = 1.15f; // absolute deviations from this factor are seen to have the same scale
 
 	/**
 	 * loads alle the maps in mapsPath in all subDirs but not recursive, only one level 
@@ -32,12 +35,15 @@ public class MapsList extends Vector {
 		super(); // forget already loaded maps
 		//if (mmp.mapImage != null) 
 		String dateien[];
-		FileBugfix files = new FileBugfix(mapsPath);
-		String rawFileName = new String();
-		String[] dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY);
+		File files = new File(mapsPath);
+		String rawFileName;
+		String[] dirstmp = files.list(null, File.LIST_DIRECTORIES_ONLY);
 		Vector dirs;
-		if (dirstmp != null) dirs = new Vector(dirstmp);
-		else dirs = new Vector();
+		if (dirstmp != null) {
+			dirs = new Vector();
+			for (int i=0; i<dirstmp.length; i++)
+				dirs.add(dirstmp[i]);
+		} else dirs = new Vector();
 		dirs.add("."); // include the mapsPath itself
 		MapListEntry tempMIO;
 		MessageBox f = null; 
@@ -45,20 +51,19 @@ public class MapsList extends Vector {
 
 		
 		for (int j = 0; j < dirs.size(); j++) {
-			files = new FileBugfix(mapsPath+"/"+dirs.get(j));
-			//ewe.sys.Vm.debug("mapd-Dirs:"+files);
+			files = new File(mapsPath+"/"+dirs.get(j));
+			//eve.sys.Vm.debug("mapd-Dirs:"+files);
 			
 			//add subdirectories
 			if (!dirs.get(j).equals(".")) {
-				dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY);
+				dirstmp = files.list(null, File.LIST_DIRECTORIES_ONLY);
 				if (dirstmp != null) {
 					for (int subDir = 0; subDir < dirstmp.length; subDir++) {
-						dirs.add(j+1+subDir, dirs.get(j)+"/"+dirstmp[subDir]);
+						dirs.add(dirs.get(j)+"/"+dirstmp[subDir]);
 					}
 				}
 			}
-
-			dateien = files.list("*.wfl", FileBase.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
+			dateien = files.list("*.wfl", File.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
 			if (dateien == null) continue;
 			for(int i = 0; i < dateien.length;i++){
 				// if (!dateien[i].endsWith(".wfl")) continue;
@@ -68,9 +73,9 @@ public class MapsList extends Vector {
 						tempMIO = new MapListEntry(mapsPath+"/", rawFileName);
 					else tempMIO = new MapListEntry(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
 					if (tempMIO.sortEntryBBox != null) add(tempMIO);
-					//ewe.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
+					//eve.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
 				}catch(Exception ex){ // TODO exception ist, glaub ich evtl überflüssig 
-					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), FormBase.OKB)).exec();
+					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), MessageBox.OKB)).exec();
 				} /* catch(ArithmeticException ex){ // affine contain not allowed values 
 					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
 				} */
@@ -130,13 +135,14 @@ public class MapsList extends Vector {
 				showprogress = true;      
 				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
-				progressBox.waitUntilPainted(100);
-				ewe.sys.Vm.showWait(true);
+				progressBox.getWindow().waitUntilPainted(100);
+				Form.showWait();
 			}
 			ml = (MapListEntry)get(i);
 			try {
 				if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
-				else { mi = ml.getMap(); testkw++;}
+				mi = ml.getMap(); 
+				testkw++;
 			} catch (IOException ex) {continue; } // could not read .wfl-file
 			better = false;
 //			mi = (MapInfoObject)get(i);
@@ -171,7 +177,7 @@ public class MapsList extends Vector {
 		}
 		if (progressBox != null) {
 			progressBox.close(0);
-			ewe.sys.Vm.showWait(false);
+			Form.cancelWait();
 		}
 		if (bestMap == null) return null;
 		return new MapInfoObject(bestMap); // return a copy of the MapInfoObject so that zooming won't change the MapInfoObject in the list 
@@ -209,13 +215,13 @@ public class MapsList extends Vector {
 				showprogress = true;      
 				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
-				progressBox.waitUntilPainted(100);
-				ewe.sys.Vm.showWait(true);
+				progressBox.getWindow().waitUntilPainted(100);
+				Form.showWait();
 			}
 			ml = (MapListEntry)get(i);
 			try {
 				if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
-				else { mi = ml.getMap();}
+				mi = ml.getMap();
 			} catch (IOException ex) {continue; } // could not read .wfl-file
 			better = false;
 			if (mi.isInBound(topleft) && mi.isInBound(bottomright)) { // both points are inside the map
@@ -243,10 +249,10 @@ public class MapsList extends Vector {
 		} // for
 		if (progressBox != null) {
 			progressBox.close(0);
-			ewe.sys.Vm.showWait(false);
+			Form.cancelWait();
 		}
 		if (fittingmap == null) return null;
-		return new MapInfoObject(fittingmap); // TODO in case that this one and the old one are identical this instantiation could eventually be avoided as it is done at every greater shift of the map
+		return new MapInfoObject(fittingmap);
 	}
 
 	/**
@@ -278,14 +284,14 @@ public class MapsList extends Vector {
 				showprogress = true;      
 				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
-				progressBox.waitUntilPainted(100);
-				ewe.sys.Vm.showWait(true);
+				progressBox.getWindow().waitUntilPainted(100);
+				Form.showWait();
 			}
 			better = false;
 			ml = (MapListEntry)get(i);
 			try {
 				if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
-				else { mi = ml.getMap();}
+				mi = ml.getMap();
 			} catch (IOException ex) {continue; } // could not read .wfl-file
 			if (mi.fileNameWFL == "") continue; // exclude "maps" without image // TODO make this a boolean in MapInfoObject
 			if (screenArea == null || !scaleEquals(lastscale, mi)) {
@@ -318,7 +324,7 @@ public class MapsList extends Vector {
 		}
 		if (progressBox != null) {
 			progressBox.close(0);
-			ewe.sys.Vm.showWait(false);
+			Form.cancelWait();
 		}
 		if (bestMap == null) return null;
 		return new MapInfoObject(bestMap);
@@ -341,13 +347,15 @@ public class MapsList extends Vector {
 	}
 	public static boolean scaleEquals(MapInfoObject a, MapInfoObject b) {
 		//return java.lang.Math.abs(a.scale - b.scale) < scaleTolerance;
-		if (a.scale > b.scale) return a.scale / b.scale < scaleTolerance; 
-		else return b.scale / a.scale < scaleTolerance;
+		if (a.scale > b.scale) 
+			return a.scale / b.scale < scaleTolerance; 
+		return b.scale / a.scale < scaleTolerance;
 	}
 	public static boolean scaleEquals(float s, MapInfoObject b) {
 		//return java.lang.Math.abs(s - b.scale) < scaleTolerance;
-		if (s > b.scale) return s / b.scale < scaleTolerance;
-		else return b.scale / s < scaleTolerance;
+		if (s > b.scale) 
+			return s / b.scale < scaleTolerance;
+		return b.scale / s < scaleTolerance;
 	}
 
 	/**
@@ -435,11 +443,12 @@ class MapListEntry /*implements Comparable */ {
 		map = null;
 		/*
 		try {map = new MapInfoObject(path, filename); } catch (Exception e) {
+			// TODO: handle exception
 		}
 		
-		ewe.sys.Vm.debug("centerID: "+map.getCenterID());
-		ewe.sys.Vm.debug("PxID: "+map.getPxSizeID());
-		ewe.sys.Vm.debug("scaleID: "+map.getScaleID()+"scale: "+map.scale);
+		eve.sys.Vm.debug("centerID: "+map.getCenterID());
+		eve.sys.Vm.debug("PxID: "+map.getPxSizeID());
+		eve.sys.Vm.debug("scaleID: "+map.getScaleID()+"scale: "+map.scale);
 		*/
 		try {
 			if (filenamei.startsWith("FF1")) sortEntryBBox = filenamei.substring(0, filenamei.indexOf("E-"));
@@ -448,14 +457,14 @@ class MapListEntry /*implements Comparable */ {
 			try {
 				map = new MapInfoObject(path, filename);
 				sortEntryBBox = "FF1"+map.getEasyFindString();
-				ewe.sys.Vm.debug(sortEntryBBox + ": "+filename);
+				eve.sys.Vm.debug(sortEntryBBox + ": "+filename);
 				if (rename == 0) { // never asked before
 					if ( (new MessageBox(MyLocale.getMsg(4702,"Optimisation"), MyLocale.getMsg(4703,"Cachewolf can make loading maps much faster by adding a identification mark to the filename. Do you want me to do this now?\n It can take several minutes"), 
-							FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES)
+							MessageBox.YESB | MessageBox.NOB)).execute() == MessageBox.IDYES)
 					{
 						renameProgressInfoB = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4704,"\nRenaming file:")+"    \n");
 						renameProgressInfoB.exec();
-						renameProgressInfoB.waitUntilPainted(100);
+						renameProgressInfoB.getWindow().waitUntilPainted(100);
 						rename = 1; // rename
 					} else rename = 2; // don't rename
 				}
@@ -505,7 +514,7 @@ class MapListEntry /*implements Comparable */ {
 	public static void loadingFinished() {
 		if (renameProgressInfoB != null) renameProgressInfoB.close(0);
 		renameProgressInfoB = null;
-		rename = 0;
+		rename=0;
 	}
 	
 	/*

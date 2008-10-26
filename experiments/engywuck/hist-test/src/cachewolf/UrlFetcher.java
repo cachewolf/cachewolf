@@ -1,12 +1,12 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.io.ByteArrayInputStream;
-import ewe.io.IOException;
-import ewe.io.JavaUtf8Codec;
-import ewe.net.Socket;
-import ewe.util.ByteArray;
-import ewe.util.CharArray;
-import ewe.util.Properties;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import eve.io.JavaUtf8Codec;
+import java.net.Socket;
+import eve.util.ByteArray;
+import eve.util.CharArray;
+import java.util.Properties;
 
 public class UrlFetcher {
 	public static String fetchString(String address) throws IOException
@@ -21,7 +21,7 @@ public class UrlFetcher {
 		CharArray t = new CharArray();
 		ByteArray doc = fetchByteArray(url, t);
 		Properties props = new Properties();
-		props.load(new ByteArrayInputStream(doc));
+		props.load(new ByteArrayInputStream(doc.data));
 		return props; 
 	}
 	
@@ -39,7 +39,7 @@ public class UrlFetcher {
 		int i=-1;
 		String urltmp = new String(url);
 		while (urltmp != null && i <= maxRedirections ) { // allow max 5 redirections (http 302 location)
-			if (realurl != null) realurl.copyFrom(new String(urltmp));
+			if (realurl != null) realurl.setData(new String(urltmp).toCharArray());
 			i++;
 			conn = new HttpConnection(urltmp);
 			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
@@ -61,7 +61,7 @@ public class UrlFetcher {
 	 */
 	public static boolean isUrlEncoded(String url) {
 		final String allowed = new String ("-_.~!*'();:@&=+$,/?%#[]");
-		char [] src = ewe.sys.Vm.getStringChars(url);
+		char [] src = eve.sys.Vm.getStringChars(url);
 		char c;
 		for (int i = 0; i<src.length; i++){
 			c = src[i];
@@ -70,7 +70,7 @@ public class UrlFetcher {
 					|| (c >= '0' && c <= '9')
 					|| (allowed.indexOf(c) >= 0)
 			) continue;
-			else return false;
+			return false;
 		}
 		return true;
 	}

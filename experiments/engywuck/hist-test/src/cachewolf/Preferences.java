@@ -1,13 +1,20 @@
-package CacheWolf;
-import utils.FileBugfix;
-import ewe.io.*;
-import ewe.sys.*;
-import ewe.ui.*;
+package cachewolf;
+import java.io.*;
+import eve.sys.*;
+import eve.ui.*;
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
-import ewe.filechooser.*;
-import ewe.util.*;
-import ewe.util.Map.MapEntry;
+import eve.ui.filechooser.*;
+import java.util.*;
+
+import cachewolf.imp.SpiderGC;
+import cachewolf.utils.Common;
+import cachewolf.utils.SafeXML;
+import cachewolf.utils.STRreplace;
+
+
+import eve.ui.data.*;
+//import java.util.Map.MapEntry;
 
 /**
  *	A class to hold the preferences that were loaded upon start up of CacheWolf.
@@ -36,86 +43,72 @@ public class Preferences extends MinML{
 	}
 
 	private static Preferences _reference;
-	
+
 	private String pathToConfigFile;
-	
-	/**
-	 * Call this method to set the path of the config file <br>
-	 * If you call it with null it defaults to [program-dir]/pref.xml
-	 * if p is a directory "pref.xml" will automatically appended
-	 * @param p
-	 */
-	public void setPathToConfigFile(String p) {
-		String p_;
-		if (p == null) {
-			/*
-			String test;
-			test = Vm.getenv("APPDATA", "/"); // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data>
-			log("Vm.getenv(APPDATA: " + test); // this works also in win32.exe (ewe-vm on win xp)
-			test = Vm.getenv("HOME", "/"); // This should return on *nix system the home dir
-			log("Vm.getenv(HOME: " + test);
-			test = System.getProperty("user.dir"); // return in java-vm on win xp: <working dir> or maybe <program dir> 
-			log("System.getProperty(user.dir: " + test); // in win32.exe -> null
-			test = System.getProperty("user.home"); // in MS-java-VM env variable $HOME is ignored and always <windir>\java returned, see http://support.microsoft.com/kb/177181/en-us/
-			log("System.getProperty(user.home: " + test); // in win32.exe -> null
-			// "user.dir"              User's current working directory
-			// "user.home"             User home directory (taken from http://scv.bu.edu/Doc/Java/tutorial/java/system/properties.html )
-			 */
-			p_ = FileBase.makePath(FileBase.getProgramDirectory(), "pref.xml");
-		}
-		else {
-			if (new FileBugfix(p).isDirectory()) p_ = FileBase.makePath(p, "pref.xml");
-			else p_ = p; 
-		}
-		pathToConfigFile = STRreplace.replace(p_, "//", "/"); // this is necessary in case that the root dir is the dir where the pref.xml is stored
-		pathToConfigFile = pathToConfigFile.replace('\\', '/');
-	}
+
+    /**
+     * Call this method to set the path of the config file <br>
+     * If you call it with null it defaults to [program-dir]/pref.xml
+     * if p is a directory "pref.xml" will automatically appended
+     * @param p
+     */
+    public void setPathToConfigFile(String p) {
+        String p_;
+        if (p == null) {
+        	p_ = eve.io.File.makePath(eve.io.File.getProgramDirectory(), "pref.xml");
+        }
+        else {
+			if (new File(p).isDirectory()) p_ = eve.io.File.makePath(p, "pref.xml");
+			else p_ = p;
+        }
+        pathToConfigFile = STRreplace.replace(p_, "//", "/"); // this is necessary in case that the root dir is the dir where the pref.xml is stored
+        pathToConfigFile = pathToConfigFile.replace('\\', '/');
+    }
+
 
 	/**
 	 * Constructor is private for a singleton object
 	 */
 	private Preferences(){
 		mySPO.bits = 8;
-		mySPO.parity = SerialPort.NOPARITY;
+		mySPO.parity = eve.io.SerialPort.NOPARITY;
 		mySPO.stopBits = 1;
 		mySPO.baudRate = 4800;
-		if ( ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0))).height > 400) {
-			if (Vm.getPlatform().equals("Unix"))
+		if (((new Window()).getWindowRect(null, false)).height > 400) {
+			if (false) //TODO Find equivalent of ewe.Vm.getPlatForm:      Vm.getPlatform().equals("Unix"))
 				fontSize = 12;
-			else{
-				// Default on VGA-PDAs: fontSize 21 + adjust ColWidth
-				if (Vm.isMobile()){
-					fontSize = 21;
-					listColWidth="20,20,30,30,92,177,144,83,60,105,50,104,22,30,30";
-				}
-				else
-					fontSize = 16;
+			else {
+                if (eve.sys.Device.isMobile()){
+                    fontSize = 21;
+                    listColWidth="20,20,30,30,92,177,144,83,60,105,50,104,22,30,30";
+                } else
+				 fontSize = 16;
 			}
-		} else 
-			fontSize = 11;
-	}
+		} else
+			 fontSize = 11;
+ 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Public fields stored in pref.xml
 	//////////////////////////////////////////////////////////////////////////////////////
-	
+
 	/** The base directory contains one subdirectory for each profile*/
-	public String baseDir = "";  
+	public String baseDir = "";
 	/** Name of last used profile */
-	public String lastProfile=""; 
+	public String lastProfile="";
 	/** If true, the last profile is reloaded automatically without a dialogue */
-	public boolean autoReloadLastProfile=false; 
+	public boolean autoReloadLastProfile=false;
 	/** This is the login alias for geocaching.com and opencaching.de */
 	public String myAlias = "";
 	/** Optional password */
 	public String password="";
-	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs) 
+	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs)
 	 *  It is currently not used yet */
 	public String myAlias2 = "";
 	/** The path to the browser */
 	public String browser = "";
 	/** Name of proxy for spidering */
-	public String myproxy = "";    
+	public String myproxy = "";
 	/** Proxyport when spidering */
 	public String myproxyport = "";
 	/** Flag whether proxy is to be used */
@@ -156,12 +149,12 @@ public class Preferences extends MinML{
 	/** If this flag is true, only non-logged travelbug journeys will be shown */
 	public boolean travelbugShowOnlyNonLogged=false;
 	/** If this is true, deleted images are shown with a ? in the imagepanel */
-	public boolean showDeletedImages=true; 
+	public boolean showDeletedImages=true;
 	/** This setting determines how many logs are shown per page of hintlogs (default 5) */
 	public int logsPerPage=DEFAULT_LOGS_PER_PAGE;
 	/** Initial height of hints field (set to 0 to hide them initially) */
-	public int initialHintHeight=DEFAULT_INITIAL_HINT_HEIGHT; 
-	/** Maximum logs to spider */ 
+	public int initialHintHeight=DEFAULT_INITIAL_HINT_HEIGHT;
+	/** Maximum logs to spider */
 	public int maxLogsToSpider = DEFAULT_MAX_LOGS_TO_SPIDER;
 	/** True if the Solver should ignore the case of variables */
 	public boolean solverIgnoreCase=true;
@@ -170,9 +163,9 @@ public class Preferences extends MinML{
 	/** True if the description panel should show images */
 	public boolean descShowImg=true;
 	/** The type of connection which GPSBABEL uses: com1 OR usb. */
-	public String garminConn="com1";  
+	public String garminConn="com1";
 	/** Additional options for GPSBabel, i.e. -s to synthethise short names */
-	public String garminGPSBabelOptions=""; 
+	public String garminGPSBabelOptions="";
 	/** Max. length for Garmin waypoint names (for etrex which can only accept 6 chars) */
 	public int garminMaxLen=0;
 	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
@@ -186,14 +179,19 @@ public class Preferences extends MinML{
 	/** True if the goto panel is North centered */
 	public boolean northCenteredGoto = true;
 	/** If not null, a customs map path has been specified by the user */
-	private String customMapsPath=null; 
+	private String customMapsPath=null;
 	/** Number of CacheHolder details that are kept in memory */
 	public int maxDetails=50;
 	/** Number of details to delete when maxDetails have been stored in cachesWithLoadedDetails */
 	public int deleteDetails=5;
-	/** The locale code (DE, EN, ...) */
-	public String language=""; 
-	
+    /** The locale code (DE, EN, ...) */
+    public String language="";
+
+	/** The height of the application */
+	public int myAppHeight = 600;
+	/** The width of the application */
+	public int myAppWidth = 800;
+
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
 	 * the line: <pre><debug value="true"></pre>
@@ -205,42 +203,40 @@ public class Preferences extends MinML{
     //////////////////////////////////////////////////////////////////////////////////////
     // Public fields not stored in pref.xml
 	//////////////////////////////////////////////////////////////////////////////////////
-	
-	/** The height of the application */
-	public int myAppHeight = 0;
-	/** The width of the application */
-	public int myAppWidth = 0;
+
 	/** True if the preferences were changed and need to be saved */
 	public boolean dirty = false;
-	
+	/** The decimal separator (from MyLocale) */
+	//public String digSeparator = "";
+
     //////////////////////////////////////////////////////////////////////////////////////
     // Read pref.xml file
 	//////////////////////////////////////////////////////////////////////////////////////
-	
+
 	/**
-	 * Method to open and parse the config file (pref.xml). Results are stored in the
+	 * Method to open and parse the config (pref.xml) file. Results are stored in the
 	 * public variables of this class.
 	 * If you want to specify a non default config file call setPathToConfigFile() first.
 	 */
 	public void readPrefFile(){
-		if (pathToConfigFile == null) setPathToConfigFile(null); // this sets the default value 
+        if (pathToConfigFile == null) setPathToConfigFile(null); // this sets the default value
 		try{
-			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(pathToConfigFile));
+			Reader r = new InputStreamReader(new FileInputStream(pathToConfigFile));
 			parse(r);
 			r.close();
-		}catch(IOException e){
-			log("IOException reading config file: " + pathToConfigFile, e, true);
-			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile, MessageBox.OKB)).execute();
+        }catch(IOException e){
+            log("IOException reading config file: " + pathToConfigFile, e, true);
+            (new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile, MessageBox.OKB)).execute();
 		}catch(Exception e){
 			if (e instanceof NullPointerException)
 				log("Error reading pref.xml: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
-			else 
+			else
 				log("Error reading pref.xml: ", e);
 		}
 	}
 
-	/** Helper variables for XML parser */ 
-	private StringBuffer collectElement=null; 
+	/** Helper variables for XML parser */
+	private StringBuffer collectElement=null;
 	private String lastName; // The string to the last XML that was processed
 
 	/**
@@ -295,7 +291,7 @@ public class Preferences extends MinML{
 		}
 		else if (name.equals("listview")) {
 			listColMap=atts.getValue("colmap");
-			listColWidth=atts.getValue("colwidths")+",30,30"; // append default values for older versions	
+			listColWidth=atts.getValue("colwidths")+",30,30"; // append default values for older versions
 			if((new StringTokenizer(listColWidth,",")).countTokens()<15) listColWidth+=",30,30"; // for older versions
 		}
 		else if(name.equals("proxy")) {
@@ -316,13 +312,18 @@ public class Preferences extends MinML{
 		}
 		else if (name.equals("descpanel")) {
 			descShowImg = Boolean.valueOf(atts.getValue("showimages")).booleanValue();
-		} 
+		}
 		else if (name.equals("screen")) {
 			menuAtTop=Boolean.valueOf(atts.getValue("menuattop")).booleanValue();
 			tabsAtTop=Boolean.valueOf(atts.getValue("tabsattop")).booleanValue();
 			showStatus=Boolean.valueOf(atts.getValue("showstatus")).booleanValue();
 			if (atts.getValue("hasclosebutton")!=null)
 				hasCloseButton=Boolean.valueOf(atts.getValue("hasclosebutton")).booleanValue();
+			if (atts.getValue("h")!=null) {
+				myAppHeight=Convert.toInt(atts.getValue("h"));
+				myAppWidth=Convert.toInt(atts.getValue("w"));
+			}
+
 		}
 		else if (name.equals("hintlogpanel")) {
 			logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
@@ -340,13 +341,13 @@ public class Preferences extends MinML{
 			customMapsPath=atts.getValue("dir").replace('\\', '/');
 		}
 		else if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
-		
+
 		else if (name.equals("expPath")){
 			exporterPaths.put(atts.getValue("key"),atts.getValue("value"));
 		}
 		else if (name.equals("travelbugs")) {
 			travelbugColMap=atts.getValue("colmap");
-			travelbugColWidth=atts.getValue("colwidths");	
+			travelbugColWidth=atts.getValue("colwidths");
 			travelbugShowOnlyNonLogged=Boolean.valueOf(atts.getValue("shownonlogged")).booleanValue();
 		}
 		else if (name.equals("gotopanel")) {
@@ -361,16 +362,17 @@ public class Preferences extends MinML{
 			if (maxDetails<2) maxDetails=2;
 			if (deleteDetails<1) deleteDetails=1;
 		}
-		else if (name.equals("locale")) {
-			language = atts.getValue("language");
-		}
-	}
+        else if (name.equals("locale")) {
+            language = atts.getValue("language");
+        }
+    }
+
 
 	public void characters( char ch[], int start, int length ) {
 		if (collectElement!=null) {
 			collectElement.append(ch,start,length); // Collect the name of the last profile
 		}
-	}	
+	}
 
 	/**
 	 * Method that gets called when the end of an element has been identified in pref.xml
@@ -385,49 +387,50 @@ public class Preferences extends MinML{
     //////////////////////////////////////////////////////////////////////////////////////
     // Write pref.xml file
 	//////////////////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Method to save current preferences in the pref.xml file
 	 */
 	public void savePreferences(){
-		if (pathToConfigFile == null) setPathToConfigFile(null); // this sets the default value 
+		if (pathToConfigFile == null) setPathToConfigFile(null); // this sets the default value
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(pathToConfigFile)));
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			outp.print("<preferences>\n");
 			outp.print("    <locale language=\"" + SafeXML.strxmlencode(language) + "\"/>\n");
-			outp.print("	<basedir dir = \"" + SafeXML.strxmlencode(baseDir) + "\"/>\n");
-			outp.print("    <lastprofile autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\">" + SafeXML.strxmlencode(lastProfile) + "</lastprofile>\n"); //RB
+			outp.print("	<basedir dir = \""+ SafeXML.strxmlencode(baseDir) +"\"/>\n");
+			outp.print("    <lastprofile autoreload=\""+autoReloadLastProfile+"\">"+SafeXML.strxmlencode(lastProfile)+"</lastprofile>\n"); //RB
 			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
 			outp.print("	<alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
-			outp.print("	<browser name = \"" + SafeXML.strxmlencode(browser) + "\"/>\n");
-			outp.print("	<proxy prx = \"" + SafeXML.strxmlencode(myproxy) + "\" prt = \"" + SafeXML.strxmlencode(myproxyport) + "\" active = \"" + SafeXML.strxmlencode(proxyActive) + "\" />\n");
-			outp.print("	<port portname = \"" + SafeXML.strxmlencode(mySPO.portName) + "\" baud = \"" + SafeXML.strxmlencode(mySPO.baudRate) + "\"/>\n");
-			outp.print("	<portforward active= \"" + SafeXML.strxmlencode(Convert.toString(forwardGPS)) + "\" destinationHost = \"" + SafeXML.strxmlencode(forwardGpsHost) + "\"/>\n");
-			outp.print("	<portlog active= \"" + SafeXML.strxmlencode(Convert.toString(logGPS)) + "\" logTimer = \"" + SafeXML.strxmlencode(logGPSTimer) + "\"/>\n");
-			outp.print("    <font size =\"" + SafeXML.strxmlencode(fontSize) + "\"/>\n");
-			outp.print("    <screen menuattop=\"" + SafeXML.strxmlencode(menuAtTop) + "\" tabsattop=\"" + SafeXML.strxmlencode(tabsAtTop) + "\" showstatus=\"" + SafeXML.strxmlencode(showStatus) + "\" hasclosebutton=\"" + SafeXML.strxmlencode(hasCloseButton) + "\"/>\n");
-			outp.print("    <fixedsip state = \"" + SafeXML.strxmlencode(fixSIP) + "\"/>\n");
-			outp.print("    <listview colmap=\"" + SafeXML.strxmlencode(listColMap) + "\" colwidths=\"" + SafeXML.strxmlencode(listColWidth) + "\" />\n");
-			outp.print("    <travelbugs colmap=\"" + SafeXML.strxmlencode(travelbugColMap) + "\" colwidths=\"" + SafeXML.strxmlencode(travelbugColWidth) + "\" shownonlogged=\"" + SafeXML.strxmlencode(travelbugShowOnlyNonLogged) + "\" />\n");
-			outp.print("    <descpanel showimages=\"" + SafeXML.strxmlencode(descShowImg) + "\" />\n");
-			outp.print("    <imagepanel showdeletedimages=\"" + SafeXML.strxmlencode(showDeletedImages) + "\"/>\n");
-			outp.print("    <hintlogpanel logsperpage=\"" + SafeXML.strxmlencode(logsPerPage) + "\" initialhintheight=\"" + SafeXML.strxmlencode(initialHintHeight) + "\"  maxspiderlogs=\"" + SafeXML.strxmlencode(maxLogsToSpider) + "\" />\n");
-			outp.print("    <solver ignorevariablecase=\"" + SafeXML.strxmlencode(solverIgnoreCase) + "\" degMode=\"" + SafeXML.strxmlencode(solverDegMode) + "\" />\n");
-			outp.print("    <garmin connection = \"" + SafeXML.strxmlencode(garminConn) + "\" GPSBabelOptions = \"" + SafeXML.strxmlencode(garminGPSBabelOptions) + "\" MaxWaypointLength = \"" + SafeXML.strxmlencode(garminMaxLen) + "\" />\n");
-			outp.print("    <opencaching downloadPicsOC=\"" + SafeXML.strxmlencode(downloadPicsOC) + "\" downloadMaps=\"" + SafeXML.strxmlencode(downloadMapsOC) + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadmissingOC) + "\"/>\n");
-			outp.print("	<location lat = \"" + SafeXML.strxmlencode(curCentrePt.getLatDeg(CWPoint.DD)) + "\" long = \"" + SafeXML.strxmlencode(curCentrePt.getLonDeg(CWPoint.DD)) + "\"/>\n");
-			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\"/>\n");
-			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
-			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
-			if (customMapsPath!=null) outp.print("	<mapspath dir = \"" + SafeXML.strxmlencode(customMapsPath.replace('\\','/')) + "\"/>\n");
+			outp.print("	<browser name = \""+SafeXML.strxmlencode(browser)+"\"/>\n");
+			outp.print("	<proxy prx = \""+ SafeXML.strxmlencode(myproxy)+"\" prt = \""+ myproxyport + "\" active = \""+ proxyActive +"\" />\n");
+			outp.print("	<port portname = \""+ SafeXML.strxmlencode(mySPO.portName) +"\" baud = \""+ mySPO.baudRate+"\"/>\n");
+			outp.print("	<portforward active= \""+ Convert.toString(forwardGPS)+"\" destinationHost = \""+ SafeXML.strxmlencode(forwardGpsHost)+"\"/>\n");
+			outp.print("	<portlog active= \""+ Convert.toString(logGPS)+"\" logTimer = \""+ logGPSTimer +"\"/>\n");
+			outp.print("    <font size =\""+fontSize+"\"/>\n");
+			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+
+					                "\" h=\""+myAppHeight+"\" w=\""+myAppWidth+"\" />\n");
+			outp.print("    <fixedsip state = \""+fixSIP+"\"/>\n");
+			outp.print("    <listview colmap=\""+listColMap+"\" colwidths=\""+listColWidth+"\" />\n");
+			outp.print("    <travelbugs colmap=\""+travelbugColMap+"\" colwidths=\""+travelbugColWidth+"\" shownonlogged=\""+travelbugShowOnlyNonLogged+"\" />\n");
+			outp.print("    <descpanel showimages=\""+descShowImg+"\" />\n");
+			outp.print("    <imagepanel showdeletedimages=\""+showDeletedImages+"\"/>\n");
+			outp.print("    <hintlogpanel logsperpage=\""+logsPerPage+"\" initialhintheight=\""+initialHintHeight+"\"  maxspiderlogs=\""+maxLogsToSpider+"\" />\n");
+			outp.print("    <solver ignorevariablecase=\""+solverIgnoreCase+"\" degMode=\""+solverDegMode+"\" />\n");
+			outp.print("    <garmin connection = \""+SafeXML.strxmlencode(garminConn)+"\" GPSBabelOptions = \""+garminGPSBabelOptions+"\" MaxWaypointLength = \""+garminMaxLen+"\" />\n");
+			outp.print("    <opencaching downloadPicsOC=\""+downloadPicsOC+"\" downloadMaps=\""+downloadMapsOC+"\" downloadMissing=\""+downloadmissingOC+"\"/>\n");
+			outp.print("	<location lat = \""+curCentrePt.getLatDeg(CWPoint.DD)+"\" long = \""+curCentrePt.getLonDeg(CWPoint.DD)+"\"/>\n");
+			outp.print("    <spider forcelogin=\""+forceLogin+"\"/>\n");
+			outp.print("    <gotopanel northcentered=\""+northCenteredGoto+"\" />\n");
+			outp.print("    <details cacheSize=\""+maxDetails+"\" delete=\""+deleteDetails+"\"/>\n");
+			if (customMapsPath!=null) outp.print("	<mapspath dir = \""+ SafeXML.strxmlencode(customMapsPath.replace('\\','/')) +"\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			// save last path of different exporters
-			Iterator itPath = exporterPaths.entries();
-			MapEntry entry;
-			while(itPath.hasNext()){
-				entry = (MapEntry) itPath.next();
-				outp.print("    <expPath key = \"" + SafeXML.strxmlencode(entry.getKey().toString()) + "\" value = \"" + SafeXML.strxmlencode(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
+			Enumeration ePath = exporterPaths.keys();
+			String entry;
+			while(ePath.hasMoreElements()){
+				entry = (String) ePath.nextElement();
+				outp.print("    <expPath key = \"" + SafeXML.strxmlencode(entry) + "\" value = \"" + SafeXML.strxmlencode(((String)exporterPaths.get(entry)).replace('\\', '/')) + "\"/>\n");
 			}
 			outp.print("</preferences>");
 			outp.close();
@@ -441,32 +444,32 @@ public class Preferences extends MinML{
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	private static final String mapsPath = "maps/standard";
-	
+
 	/**
 	 * custom = set by the user
 	 * @return custom Maps Path, null if not set
 	 */
 	public String getCustomMapsPath() {
-	   return customMapsPath;	
+	   return customMapsPath;
 	}
-	
+
 	public void saveCustomMapsPath(String mapspath_) {
 		if (customMapsPath == null || !customMapsPath.equals(mapspath_)) {
 			customMapsPath=new String(mapspath_).replace('\\', '/');
 			savePreferences();
 		}
 	}
-	
+
 	/**
 	 * gets the path to the calibrated maps
 	 * it first tries if there are manually imported maps
-	 * in <baseDir>/maps/standard then it tries 
+	 * in <baseDir>/maps/standard then it tries
 	 * the legacy dir: <program-dir>/maps
 	 * In case in both locations are no .wfl-files
 	 * it returns  <baseDir>/maps/expedia - the place where
 	 * the automatically downloaded maps are placed.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public String getMapLoadPath() {
 		saveCustomMapsPath(getMapLoadPathInternal());
@@ -475,30 +478,30 @@ public class Preferences extends MinML{
 	private String getMapLoadPathInternal() {
 		// here could also a list of map-types displayed...
 		// standard dir
-		String ret = getCustomMapsPath(); 
-		if (ret != null) return ret; 
+		String ret = getCustomMapsPath();
+		if (ret != null) return ret;
 		ret = getMapManuallySavePath(false);
-		File t = new FileBugfix(ret);
-		String[] f = t.list("*.wfl", FileBase.LIST_FILES_ONLY);
+		eve.io.File t = new eve.io.File(ret);
+		String[] f = t.list("*.wfl", eve.io.File.LIST_FILES_ONLY);
 		if (f != null && f.length > 0) return  baseDir + mapsPath;
-		f = t.list("*.wfl", FileBase.LIST_DIRECTORIES_ONLY | FileBase.LIST_ALWAYS_INCLUDE_DIRECTORIES);
+		f = t.list("*.wfl", eve.io.File.LIST_DIRECTORIES_ONLY | eve.io.File.LIST_ALWAYS_INCLUDE_DIRECTORIES);
 		if (f != null && f.length > 0) { // see if in a subdir of <baseDir>/maps/standard are .wfl files
 			String[] f2;
 			for (int i = 0; i< f.length; i++) {
 				t.set(null, ret+"/"+f[i]);
-				f2 = t.list("*.wfl", FileBase.LIST_FILES_ONLY);
+				f2 = t.list("*.wfl", eve.io.File.LIST_FILES_ONLY);
 				if (f2 != null && f2.length > 0) return  ret;
 			}
 		}
-		// lagacy dir 
-		ret = FileBase.getProgramDirectory() + "/maps";
+		// lagacy dir
+		ret = eve.io.File.getProgramDirectory() + "/maps";
 		t.set(null, ret);
-		f = t.list("*.wfl", FileBase.LIST_FILES_ONLY);
+		f = t.list("*.wfl", eve.io.File.LIST_FILES_ONLY);
 		if (f != null && f.length > 0) {
-			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", FormBase.YESB | FormBase.NOB);
-			if (inf.execute() == FormBase.IDYES) {
+			MessageBox inf = new MessageBox("Information", "The directory for calibrated maps \nhas moved in this program version\n to '<profiles directory>/maps/standard'\n Do you want to move your calibrated maps there now?", MessageBox.YESB | MessageBox.NOB);
+			if (inf.execute() == MessageBox.IDYES) {
 				String sp = getMapManuallySavePath(false);
-				FileBugfix spF = new FileBugfix(sp);
+				eve.io.File spF = new eve.io.File(sp);
 				if (!spF.exists()) spF.mkdirs();
 				String image;
 				String lagacypath = ret;
@@ -515,13 +518,13 @@ public class Preferences extends MinML{
 				t.delete();
 				return sp;
 			}
-			else return  ret;
+			return  ret;
 		}
-		// expedia dir
-		// return getMapExpediaLoadPath();
-		
-		//whole maps directory
-		return Global.getPref().baseDir.replace('\\', '/') + "maps";
+        // expedia dir
+        // return getMapExpediaLoadPath();
+
+        //whole maps directory
+        return Global.getPref().baseDir.replace('\\', '/') + "maps";
 	}
 
 	/**
@@ -531,9 +534,9 @@ public class Preferences extends MinML{
 	 */
 	public String getMapManuallySavePath(boolean create) {
 		String mapsDir = baseDir + mapsPath;
-		if (create && !(new FileBugfix(mapsDir).isDirectory())) { // dir exists? 
-			if (new FileBugfix(mapsDir).mkdirs() == false) {// dir creation failed?
-				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+mapsDir, FormBase.OKB)).exec();
+		if (create && !(new File(mapsDir).isDirectory())) { // dir exists?
+			if (new File(mapsDir).mkdirs() == false) {// dir creation failed?
+				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+mapsDir, MessageBox.OKB)).exec();
 				return null;
 			}
 		}
@@ -545,10 +548,10 @@ public class Preferences extends MinML{
 	 */
 	public String getMapDownloadSavePath(String mapkind) {
 		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length()).replace('\\', '/');
-		String mapsDir = Global.getPref().baseDir + "maps/" + Common.ClearForFileName(mapkind)+ "/" + subdir;
-		if (!(new FileBugfix(mapsDir).isDirectory())) { // dir exists? 
-			if (new FileBugfix(mapsDir).mkdirs() == false) // dir creation failed?
-			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new FileBugfix(mapsDir).getParentFile(), FormBase.OKB)).exec();
+		String mapsDir = Global.getPref().baseDir + "maps/" + Common.clearForFileName(mapkind)+ "/" + subdir;
+		if (!(new File(mapsDir).isDirectory())) { // dir exists?
+			if (new File(mapsDir).mkdirs() == false) // dir creation failed?
+			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new File(mapsDir).getParentFile(), MessageBox.OKB)).exec();
 			return null;
 			}
 		}
@@ -558,52 +561,51 @@ public class Preferences extends MinML{
 	public String getMapExpediaLoadPath() {
 		return Global.getPref().baseDir.replace('\\', '/') + "maps/expedia"; // baseDir has trailing /
 	}
-	
+
     //////////////////////////////////////////////////////////////////////////////////////
     // Profile Selector
 	//////////////////////////////////////////////////////////////////////////////////////
-	
+
 	static protected final int PROFILE_SELECTOR_FORCED_ON=0;
 	static protected final int PROFILE_SELECTOR_FORCED_OFF=1;
 	static protected final int PROFILE_SELECTOR_ONOROFF=2;
 
 	/**
-	 * Open Profile selector screen 
+	 * Open Profile selector screen
 	 * @param prof
 	 * @param showProfileSelector
 	 * @return True if a profile was selected
 	 */
 	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
 		// If datadir is empty, ask for one
-		if (baseDir.length()==0 || !(new FileBugfix(baseDir)).exists()) {
+		if (baseDir.length()==0 || !(new File(baseDir)).exists()) {
 			do {
-				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT,"/");
+				FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT,"/");
 				fc.title = MyLocale.getMsg(170,"Select base directory for cache data");
 				// If no base directory given, terminate
-				if (fc.execute() == FormBase.IDCANCEL) ewe.sys.Vm.exit(0);
+				if (fc.execute() == FileChooser.IDCANCEL) eve.sys.Vm.exit(0);
 				baseDir = fc.getChosenFile().toString();
-			}while (!(new FileBugfix(baseDir)).exists());
+			}while (!(new File(baseDir)).exists());
 		}
 		baseDir=baseDir.replace('\\','/');
 		if (!baseDir.endsWith("/")) baseDir+="/";
 		boolean profileExists=true;  // Assume that the profile exists
-		do {	
-			if(!profileExists || (showProfileSelector==PROFILE_SELECTOR_FORCED_ON) || 
+		do {
+			if(!profileExists || (showProfileSelector==PROFILE_SELECTOR_FORCED_ON) ||
 					(showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
 				ProfilesForm f = new ProfilesForm(baseDir,lastProfile,!profileExists || hasNewButton);
 				int code = f.execute();
 				// If no profile chosen (includes a new one), terminate
 				if (code==-1) return false; // Cancel pressed
 				CWPoint savecenter = new CWPoint(prof.centre);
-				prof.clearProfile();
-				prof.centre = savecenter;
-				prof.hasUnsavedChanges = true;
-				//curCentrePt.set(0,0); // No centre yet
+ 				prof.clearProfile();
+ 				prof.centre = savecenter;
+ 				prof.hasUnsavedChanges = true;
 				lastProfile=f.newSelectedProfile;
 			}
-			profileExists=(new FileBugfix(baseDir+lastProfile)).exists();
+			profileExists=(new File(baseDir+lastProfile)).exists();
 			if (!profileExists) (new MessageBox(MyLocale.getMsg(144,"Warning"),
-					           MyLocale.getMsg(171,"Profile does not exist: ")+lastProfile,FormBase.MBOK)).execute();
+					           MyLocale.getMsg(171,"Profile does not exist: ")+lastProfile,MessageBox.MBOK)).execute();
 		} while (profileExists==false);
 		// Now we are sure that baseDir exists and basDir+profile exists
 		prof.name=lastProfile;
@@ -619,18 +621,18 @@ public class Preferences extends MinML{
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	/** Log file is in program directory and called log.txt */
-	private final String LOGFILENAME=FileBase.getProgramDirectory()+"/log.txt";
-	
+	private final String LOGFILENAME=eve.io.File.getProgramDirectory()+"/log.txt";
+
 	/**
 	 * Method to delete an existing log file. Called on every SpiderGC.
 	 * The log file is also cleared when Preferences is created and the filesize > 60KB
 	 */
 	public void logInit(){
-		File logFile = new FileBugfix(LOGFILENAME);
+		File logFile = new File(LOGFILENAME);
 		logFile.delete();
 		log("CW Version "+Version.getReleaseDetailed());
 	}
-	
+
 	/**
 	 * Method to log messages to a file called log.txt
 	 * It will always append to an existing file.
@@ -650,9 +652,7 @@ public class Preferences extends MinML{
 		FileWriter logFile = null;
 		try{
 			logFile = new FileWriter(LOGFILENAME, true);
-			//Stream strout = null;
-			//strout = logFile.toWritableStream(true);
-			logFile.println(text);
+			logFile.write(text);
 			//Vm.debug(text); Not needed - put <debug value="true"> into pref.xml
 		}catch(Exception ex){
 			Vm.debug("Error writing to log file!");
@@ -662,7 +662,7 @@ public class Preferences extends MinML{
 	}
 
 	/** Log an exception to the log file with or without a stack trace
-	 * 
+	 *
 	 * @param text Optional message (Can be empty string)
 	 * @param e The exception
 	 * @param withStackTrace If true and the debug switch is true, the stack trace is appended to the log
@@ -675,24 +675,24 @@ public class Preferences extends MinML{
 		String msg;
 		if (text.equals("")) msg=text; else msg=text+"\n";
 		if (e!=null) {
-			if (withStackTrace && debug) 
-				msg+=ewe.sys.Vm.getAStackTrace(e);
+			if (withStackTrace && debug)
+				msg+=eve.sys.Vm.getAStackTrace(e);
 			else
 				msg+=e.toString();
 		}
 		log(msg);
 	}
-	
+
 	/** Log an exception to the log file without a stack trace, i.e.
-	 * where a stack trace is not needed because the location/cause of the error is clear 
-	 * 
+	 * where a stack trace is not needed because the location/cause of the error is clear
+	 *
 	 * @param message Optional message (Can be empty string)
 	 * @param e The exception
 	 */
 	public void log(String message,Exception e) {
 		log (message,e,false);
 	}
-		
+
     //////////////////////////////////////////////////////////////////////////////////////
     // Exporter path functions
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -706,7 +706,7 @@ public class Preferences extends MinML{
 	}
 
 	public void setExportPathFromFileName(String exporter,String filename){
-		File tmpfile = new FileBugfix (filename);
+		File tmpfile = new File (filename);
 		exporterPaths.put(exporter, tmpfile.getPath());
 		savePreferences();
 	}

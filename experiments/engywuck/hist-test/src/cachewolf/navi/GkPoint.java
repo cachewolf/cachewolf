@@ -1,4 +1,5 @@
-package CacheWolf.navi;
+package cachewolf.navi;
+import cachewolf.utils.Common;
 
 /**
  * Point in Gauß-Krüger Format
@@ -11,7 +12,6 @@ public class GkPoint {
 	int stripe;
 	int stripewidth;
 	float lengthOfStripe0; // e.g. in italien GK stripe 1 is at 9 degree
-
 	public GkPoint() { super(); }
 	
 	public GkPoint(GkPoint p) {
@@ -26,6 +26,7 @@ public class GkPoint {
 	public GkPoint(double e, double n, int stripewidthi, float degreeOfStripeZero) {
 		stripe = (int) Math.floor(e / 1000000);
 		set(e - 1000000 * stripe - 500000, n, stripe, stripewidthi, degreeOfStripeZero);
+		set(e - 1000000 * stripe - 500000, n, (int) Math.floor(e / 1000000), stripewidthi);
 	}
 	
 	/**
@@ -37,9 +38,9 @@ public class GkPoint {
 	 */
 	public GkPoint(double e, double n, int region) {
 		switch (region) {
-		case GERMAN_GK:	set(e, n, 3, 0); break;
-		case ITALIAN_GB:	set(e, n, 6, 3); break;
-		default: throw new IllegalArgumentException("GkPoint (double, double, int): region: " + region + " not supported");
+			case GERMAN_GK:	set(e, n, 3, 0); break;
+			case ITALIAN_GB:	set(e, n, 6, 3); break;
+			default: throw new IllegalArgumentException("GkPoint (double, double, int): region: " + region + " not supported");
 		}
 	}
 	
@@ -70,17 +71,15 @@ public class GkPoint {
 	}
 	
 	public double getStripeLon() {
-		return stripe * stripewidth + lengthOfStripe0; // TODO + stripeoffset
+		return stripe * stripewidth+ lengthOfStripe0; // TODO + stripeoffset
 	}
 	
 	public int getStripe() {
 		return stripe;
 	}
-
 	public TrackPoint toTrackPoint(int region) {
 		return new TrackPoint(northing, getGkEasting(region));
-		}
-	
+	}
 	/**
 	 * This will give you the normal Gauß-Krüger easting value
 	 * (that means including the stripe number)
@@ -90,7 +89,6 @@ public class GkPoint {
 	public static final int ITALIAN_GB = 3900; 
 	public static final int DEFAULT_GK = GERMAN_GK;
 	
-
 	/**
 	 * 
 	 * @param region international telephone area code * 100  
@@ -109,7 +107,7 @@ public class GkPoint {
 		}
 		return e;
 	}
-
+	
 	/**
 	 * easting measured in meters from stripe middle
 	 * @return
@@ -135,13 +133,7 @@ public class GkPoint {
 
 	
 	public String toString(int decimalplaces, String prefix, String seperator, int region) {
-		ewe.sys.Double n = new ewe.sys.Double();
-		ewe.sys.Double e = new ewe.sys.Double();
-		n.set(northing);
-		e.set(getGkEasting(region));
-		n.decimalPlaces = decimalplaces;
-		e.decimalPlaces = decimalplaces;
-		return prefix + e.toString().replace(',', '.') + seperator + n.toString().replace(',', '.');
+		return prefix + Common.doubleToString(getGkEasting(region),decimalplaces).replace(',', '.') + seperator + Common.doubleToString(northing,decimalplaces).replace(',', '.');
 	}
 	
 	/**

@@ -1,13 +1,17 @@
-package CacheWolf;
+package cachewolf;
 
 /**
  * A list of @see TravelbugJourney s.
  */
-import ewe.io.BufferedWriter;
-import ewe.io.File;
-import ewe.io.FileWriter;
-import ewe.io.PrintWriter;
-import ewe.util.*;
+import java.io.BufferedWriter;
+import eve.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.*;
+
+import cachewolf.utils.SafeXML;
+
+
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
 
@@ -102,7 +106,7 @@ public class TravelbugJourneyList extends MinML {
 		try{
 			String datei = Global.getPref().baseDir + "/" + "travelbugs.xml";
 			datei = datei.replace('\\', '/');
-			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(datei));
+			java.io.Reader r = new java.io.InputStreamReader(new java.io.FileInputStream(datei));
 			parse(r);
 			r.close();
 		}catch(Exception e){
@@ -183,7 +187,7 @@ public class TravelbugJourneyList extends MinML {
 
 	/** Sort the list of travelbug journeys by any column */
 	public void sort(int column, boolean ascending) {
-		tbJourneyList.sort(new tbjComparer(column),ascending);
+		eve.util.Utils.sort(new eve.sys.Handle(),tbJourneyList,new tbjComparer(column),ascending);
 	}
 
 	/** Sort only part of the travelbug journey list. This is used to sort the
@@ -195,11 +199,11 @@ public class TravelbugJourneyList extends MinML {
 	public void sortFirstHalf(int column, boolean ascending,int nElem) {
 		Object[] no = new Object[nElem];
 		for (int i=0; i<nElem; i++) no[i]=tbJourneyList.elementAt(i);
-		Utils.sort(null,no,new tbjComparer(column),ascending);
-		for (int i=0; i<nElem; i++) tbJourneyList.set(i,no[i]);
+		eve.util.Utils.sort(new eve.sys.Handle(),no,new tbjComparer(column),ascending);
+		for (int i=0; i<nElem; i++) tbJourneyList.setElementAt(no[i],i);
 	}
 	
-	private class tbjComparer implements Comparer {
+	private class tbjComparer implements eve.util.Comparer {
 		private int col;
 		tbjComparer(int column) {
 			col=column;

@@ -1,28 +1,33 @@
-package CacheWolf;
-import utils.CWWrapper;
+package cachewolf;
+import cachewolf.utils.Common;
+import cachewolf.utils.STRreplace;
 
-import com.stevesoft.ewe_pat.Regex;
+import com.stevesoft.eve_pat.Regex;
 
-import ewe.io.BufferedWriter;
-import ewe.io.FileBase;
-import ewe.io.FileWriter;
-import ewe.io.IOException;
-import ewe.io.PrintWriter;
-import ewe.sys.Convert;
-import ewe.sys.Vm;
-import ewe.ui.FormBase;
-import ewe.ui.MessageBox;
-import ewe.util.*;
+import java.io.BufferedWriter;
+import eve.io.File;
+
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
+import eve.ui.MessageBox;
+
+import eve.sys.Vm;
+import java.util.*;
+
+
 import HTML.Template;
+import eve.ui.Form;
 
 
 public class ShowCacheInBrowser {
-	String pd=FileBase.getProgramDirectory();
+	String pd=File.getProgramDirectory();
 	String saveTo=pd+"/temp.html";
 	static Hashtable diff=null;
 	static Hashtable terr=null;
 	static Hashtable args=null;
-	
+
 	ShowCacheInBrowser() {
 		if (diff==null) {
 			diff=new Hashtable(15);
@@ -37,7 +42,7 @@ public class ShowCacheInBrowser {
 			diff.put("4",y+y+y+y);
 			diff.put("4.5",y+y+y+y+y2);
 			diff.put("5",y+y+y+y+y);
-	
+
 			terr=new Hashtable(15);
 			String g="<img src=\"file://" + pd + "/g.png\" border=0>";
 			String g2="<img src=\"file://" + pd + "/g2.png\" border=0>";
@@ -50,7 +55,7 @@ public class ShowCacheInBrowser {
 			terr.put("4",g+g+g+g);
 			terr.put("4.5",g+g+g+g+g2);
 			terr.put("5",g+g+g+g+g);
-			
+
 			args = new Hashtable();
 			args.put("filename", pd+"/GCTemplate.html");
 			args.put("case_sensitive", "true");
@@ -58,22 +63,22 @@ public class ShowCacheInBrowser {
 			args.put("max_includes", new Integer(5));
 		}
 	}
-	
+
 	public void showCache(CacheHolderDetail chD) {
 		if (chD == null) return;
 		try {
 			Template tpl = new Template(args);
 			if(!chD.is_filtered){
-				Vm.showWait(true);
+				Form.showWait();
 				try {
 					if (chD.wayPoint.startsWith("OC"))
-						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+CacheType.transOCType(chD.type)+".gif\"");
-					else	
-						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+chD.type+".gif\"");
-					tpl.setParam("SIZE", chD.CacheSize);
+						tpl.setParam("TYPE", "\"file://"+File.getProgramDirectory()+"/"+CacheType.transOCType(chD.type)+".gif\"");
+					else
+						tpl.setParam("TYPE", "\"file://"+File.getProgramDirectory()+"/"+chD.type+".gif\"");
+					tpl.setParam("SIZE", chD.getCacheSize());
 					tpl.setParam("WAYPOINT", chD.wayPoint);
-					tpl.setParam("CACHE_NAME", chD.CacheName);
-					tpl.setParam("OWNER", chD.CacheOwner);
+					tpl.setParam("CACHE_NAME", chD.cacheName);
+					tpl.setParam("OWNER", chD.cacheOwner);
 					if (chD.hard.endsWith(".0")) chD.hard=chD.hard.substring(0,chD.hard.length()-2);
 					tpl.setParam("DIFFICULTY", (String) diff.get(chD.hard.replace(',','.')));
 					if (chD.terrain.endsWith(".0")) chD.terrain=chD.terrain.substring(0,chD.terrain.length()-2);
@@ -81,16 +86,16 @@ public class ShowCacheInBrowser {
 					tpl.setParam("DISTANCE", chD.distance.replace(',','.'));
 					tpl.setParam("BEARING", chD.bearing);
 					if (chD.pos!=null && chD.pos.isValid()) {
-						tpl.setParam("LATLON", chD.LatLon);
+						tpl.setParam("LATLON", chD.latLon);
 					} else {
 						tpl.setParam("LATLON", "unknown");
 					}
 					// If status is of format yyyy-mm-dd prefix it with a "Found" message in local language
-					if (chD.CacheStatus.length()>=10 && chD.CacheStatus.charAt(4)=='-')
-						tpl.setParam("STATUS",MyLocale.getMsg(318,"Found")+" "+chD.CacheStatus);
+					if (chD.cacheStatus.length()>=10 && chD.cacheStatus.charAt(4)=='-')
+						tpl.setParam("STATUS",MyLocale.getMsg(318,"Found")+" "+chD.cacheStatus);
 					else
-						tpl.setParam("STATUS", chD.CacheStatus);
-					
+						tpl.setParam("STATUS", chD.cacheStatus);
+
 					// Cache attributes
 					if (chD.attributes.getCount()>0) {
 						Vector attVect=new Vector(chD.attributes.getCount()+1);
@@ -99,7 +104,7 @@ public class ShowCacheInBrowser {
 							atts.put("IMAGE","<img src=\"file://"+
 									   Attribute.getImageDir()+chD.attributes.getName(i)+
 									   "\" border=0 alt=\""+chD.attributes.getInfo(i)+"\">");
-							if (i % 5 ==4) 
+							if (i % 5 ==4)
 								atts.put("BR","<br/>");
 							else
 								atts.put("BR","");
@@ -108,51 +113,51 @@ public class ShowCacheInBrowser {
 						}
 						tpl.setParam("ATTRIBUTES",attVect);
 					}
-					
-					tpl.setParam("DATE", chD.DateHidden);
+
+					tpl.setParam("DATE", chD.dateHidden);
 					tpl.setParam("URL", chD.URL);
-					if (chD.Travelbugs.size()>0) tpl.setParam("BUGS",chD.Travelbugs.toHtml());
-					if (chD.CacheNotes!=null && chD.CacheNotes.trim().length()>0) tpl.setParam("NOTES", STRreplace.replace(chD.CacheNotes,"\n","<br/>\n"));
-					if (chD.Solver!=null && chD.Solver.trim().length()>0) tpl.setParam("SOLVER", STRreplace.replace(chD.Solver,"\n","<br/>\n"));
+					if (chD.travelbugs.size()>0) tpl.setParam("BUGS",chD.travelbugs.toHtml());
+					if (chD.cacheNotes!=null && chD.cacheNotes.trim().length()>0) tpl.setParam("NOTES", STRreplace.replace(chD.cacheNotes,"\n","<br/>\n"));
+					if (chD.solver!=null && chD.solver.trim().length()>0) tpl.setParam("SOLVER", STRreplace.replace(chD.solver,"\n","<br/>\n"));
 					// Look for images
-					
-					StringBuffer s=new StringBuffer(chD.LongDescription.length());
+
+					StringBuffer s=new StringBuffer(chD.longDescription.length());
 					int start=0;
 					int pos;
 					int imageNo=0;
 					Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
-					while (start>=0 && (pos=chD.LongDescription.indexOf("<img",start))>0) {
-						if (imageNo >= chD.Images.getCount())break;
-						s.append(chD.LongDescription.substring(start,pos));
-						imgRex.searchFrom(chD.LongDescription,pos);
+					while (start>=0 && (pos=chD.longDescription.indexOf("<img",start))>0) {
+						if (imageNo >= chD.images.size())break;
+						s.append(chD.longDescription.substring(start,pos));
+						imgRex.searchFrom(chD.longDescription,pos);
 						String imgUrl=imgRex.stringMatched(1);
 						//Vm.debug("imgUrl "+imgUrl);
 						if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
 							String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 							// If we have an image which we stored when spidering, we can display it
-        					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
+							if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 								s.append("<img src=\"file://"+
-								   Global.getProfile().dataDir+chD.Images.get(imageNo)+"\">");
+								   Global.getProfile().dataDir+chD.images.get(imageNo)+"\">");
 								imageNo++;
 							}
 						}
-						start=chD.LongDescription.indexOf(">",pos);
+						start=chD.longDescription.indexOf(">",pos);
 						if (start>=0) start++;
 					}
-					if (start>=0) s.append(chD.LongDescription.substring(start));
+					if (start>=0) s.append(chD.longDescription.substring(start));
 					tpl.setParam("DESCRIPTION", s.toString());
-					
+
 					// Do the remaining pictures which are not included in main body of text
 					// They will be hidden initially and can be displayed by clicking on a link
-					if (imageNo<chD.Images.size()) {
-						Vector imageVect=new Vector(chD.Images.size()-imageNo);
-						for (; imageNo<chD.Images.size(); imageNo++) {
+					if (imageNo<chD.images.size()) {
+						Vector imageVect=new Vector(chD.images.size()-imageNo);
+						for (; imageNo<chD.images.size(); imageNo++) {
 							Hashtable imgs=new Hashtable();
 							imgs.put("IMAGE","<img src=\"file://"+
-									   Global.getProfile().dataDir+chD.Images.get(imageNo)+"\" border=0>");
-							imgs.put("IMAGETEXT",chD.ImagesText.get(imageNo));
-							if (imageNo<chD.ImagesInfo.size() && chD.ImagesInfo.get(imageNo)!=null)
-								imgs.put("IMAGECOMMENT",chD.ImagesInfo.get(imageNo));
+									   Global.getProfile().dataDir+chD.images.get(imageNo)+"\" border=0>");
+							imgs.put("IMAGETEXT",chD.imagesText.get(imageNo));
+							if (imageNo<chD.imagesInfo.size() && chD.imagesInfo.get(imageNo)!=null)
+								imgs.put("IMAGECOMMENT",chD.imagesInfo.get(imageNo));
 							else
 								imgs.put("IMAGECOMMENT","");
 							imgs.put("I","'img"+new Integer(imageNo).toString()+"'");
@@ -160,17 +165,17 @@ public class ShowCacheInBrowser {
 						}
 						tpl.setParam("IMAGES",imageVect);
 					}
-					
-					Vector logVect=new Vector(chD.CacheLogs.size());
-					for (int i=0; i<chD.CacheLogs.size(); i++) {
+
+					Vector logVect=new Vector(chD.cacheLogs.size());
+					for (int i=0; i<chD.cacheLogs.size(); i++) {
 						Hashtable logs=new Hashtable();
-						String log=STRreplace.replace(chD.CacheLogs.getLog(i).toHtml(),"http://www.geocaching.com/images/icons/","");
+						String log=STRreplace.replace(chD.cacheLogs.getLog(i).toHtml(),"http://www.geocaching.com/images/icons/","");
 						int posGt=log.indexOf('>'); // Find the icon which defines the type of log
 						if (posGt<0) {
 							logs.put("LOG",log);
 							logs.put("LOGTYPE","");
 						} else {
-							int posBr=log.indexOf("<br>"); 
+							int posBr=log.indexOf("<br>");
 							if(posBr<0) {
 								logs.put("LOG",log);
 								logs.put("LOGTYPE","");
@@ -184,20 +189,20 @@ public class ShowCacheInBrowser {
 					}
 					tpl.setParam("LOGS",logVect);
 					if (!chD.is_available) tpl.setParam("UNAVAILABLE","1");
-					if (!chD.Hints.equals("null"))tpl.setParam("HINT",Common.rot13(chD.Hints));
-					
+					if (!chD.hints.equals("null"))tpl.setParam("HINT",Common.rot13(chD.hints));
+
 					if (chD.hasAddiWpt()) {
 						Vector addiVect=new Vector(chD.addiWpts.size());
 						for (int i=0; i<chD.addiWpts.size(); i++) {
 							Hashtable addis=new Hashtable();
 							CacheHolder ch=(CacheHolder) chD.addiWpts.get(i);
 							addis.put("WAYPOINT",ch.wayPoint);
-							addis.put("NAME",ch.CacheName);
-							addis.put("LATLON",ch.LatLon);
-							addis.put("IMG","<img src=\""+CacheType.type2pic(Convert.parseInt(ch.type))+"\">");
+							addis.put("NAME",ch.cacheName);
+							addis.put("LATLON",ch.latLon);
+							addis.put("IMG","<img src=\""+CacheType.type2pic(ch.type)+"\">");
 							CacheHolderDetail chDA=new CacheHolderDetail(ch);
 							chDA.readCache(Global.getProfile().dataDir);
-							addis.put("LONGDESC",chDA.LongDescription); // Do we need to treat longDesc as above ?
+							addis.put("LONGDESC",chDA.longDescription); // Do we need to treat longDesc as above ?
 							addiVect.add(addis);
 						}
 						tpl.setParam("ADDIS",addiVect);
@@ -208,27 +213,29 @@ public class ShowCacheInBrowser {
 					e.printStackTrace();
 				}
 			}
-			PrintWriter detfile; 
-			FileWriter fw = new FileWriter(saveTo);
-			detfile = new PrintWriter(new BufferedWriter(fw));
+			PrintWriter detfile;
+	        detfile = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(saveTo), "UTF8")));
 			tpl.printTo(detfile);
 			//detfile.print(tpl.output());
 			detfile.close();
 			try {
-				CWWrapper.exec(Global.getPref().browser, "file://"+saveTo); // maybe this works on some PDAs?
+				String s = "\""+Global.getPref().browser+"\" \"file://"+saveTo+"\"";
+
+				Vm.execCommandLine(s); //Global.getPref().browser+" \"file:"+saveTo+"\"");
+				Global.getPref().log("Executing: "+s); //Global.getPref().browser+" \""+saveTo+"\"");
 			} catch (IOException ex) {
 				(new MessageBox(MyLocale.getMsg(321,"Error"),
-						MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +
-						MyLocale.getMsg(1035,"Possible reason:") + "\n" +
-						MyLocale.getMsg(1036,"A bug in ewe VM, please be") + "\n" +
-						MyLocale.getMsg(1037,"patient for an update"),FormBase.OKB)).execute();
+					MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +
+					MyLocale.getMsg(1035,"Possible reason:") + "\n" +
+					MyLocale.getMsg(1036,"A bug in ewe VM, please be") + "\n" +
+					MyLocale.getMsg(1037,"patient for an update"),Form.OKB)).execute();
 			}
-			
+
 		} catch(Exception e) {
 			e.printStackTrace();
 			Global.getPref().log("Error in ShowCache "+e.toString());
 		} finally {
-			Vm.showWait(false);
+			Form.cancelWait();
 		}
 	}
 }

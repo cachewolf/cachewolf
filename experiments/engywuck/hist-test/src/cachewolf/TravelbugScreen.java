@@ -1,6 +1,10 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.ui.*;
+import cachewolf.utils.SafeXML;
+import eve.ui.*;
+import eve.sys.Event;
+import eve.ui.event.ListEvent;
+import eve.ui.event.ControlEvent;
 
 /**
  * Choose a travelbug to pick up or drop
@@ -8,7 +12,7 @@ import ewe.ui.*;
  */ 
 public class TravelbugScreen extends Form {
 	private myList disp;
-	private mButton btCancel,btAccept;
+	private Button btCancel,btAccept;
 	/** The index into the list of travelbugs indicating the selected bug */
 	public int selectedItem=-1;
 	
@@ -19,18 +23,18 @@ public class TravelbugScreen extends Form {
 	 * @param allowNew True if a travelbug not on the list can be selected
 	 */
 	TravelbugScreen(TravelbugList tbl, String title,boolean allowNew) {
-		this.setTitle(title);
+		this.title=title;
 		this.setPreferredSize(240, -1);
 		disp=new myList(tbl,allowNew);
-		ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
+		ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollBarPanel.NeverShowHorizontalScrollers);
 		this.addLast(sbp);
-		this.addNext(btCancel = new mButton(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, CellConstants.FILL);
-		this.addLast(btAccept = new mButton("OK"),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		this.addNext(btCancel = new Button(MyLocale.getMsg(614,"Cancel")),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		this.addLast(btAccept = new Button("OK"),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		btAccept.modify(Disabled,0);
 	}
 
 	public void onEvent(Event ev){
-        if (ev instanceof ListEvent && ev.type==MenuEvent.SELECTED) {
+        if (ev instanceof ListEvent && ev.type==ListEvent.SELECTED) {
         	btAccept.modify(0,Disabled);
         	btAccept.repaint();
         }

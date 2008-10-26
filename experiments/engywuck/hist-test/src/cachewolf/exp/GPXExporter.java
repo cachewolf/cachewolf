@@ -1,7 +1,9 @@
-package exp;
-import ewe.sys.*;
-import ewe.io.FileBase;
-import CacheWolf.*;
+package cachewolf.exp;
+import cachewolf.*;
+import cachewolf.utils.Common;
+import cachewolf.utils.SafeXML;
+import eve.sys.*;
+import eve.io.File;
 /**
 *	Class to export the cache database to a GPX file with gc.com
 *	extensions.<br>
@@ -20,7 +22,7 @@ public class GPXExporter extends Exporter{
 		this.setMask("*.gpx");
 		this.setNeedCacheDetails(true);
 		this.setHowManyParams(LAT_LON);
-		this.setTmpFileName(FileBase.getProgramDirectory() + "/temp.gpx");
+		this.setTmpFileName(File.getProgramDirectory() + "/temp.gpx");
 	}
 	
 	public GPXExporter(Preferences p, Profile prof){
@@ -28,7 +30,7 @@ public class GPXExporter extends Exporter{
 		this.setMask("*.gpx");
 		this.setNeedCacheDetails(true);
 		this.setHowManyParams(LAT_LON);
-		this.setTmpFileName(FileBase.getProgramDirectory() + "/temp.gpx");
+		this.setTmpFileName(File.getProgramDirectory() + "/temp.gpx");
 	}
 	
 	public String header() {
@@ -53,38 +55,37 @@ public class GPXExporter extends Exporter{
 		try{
 			strBuf.append("  <wpt lat=\""+lat+"\" lon=\""+lon+"\">\r\n");
 		
-			String tim = ch.DateHidden.length()>0 ? ch.DateHidden : DEFAULT_DATE;
-			strBuf.append("    <time>").append(tim.toString()).append("T00:00:00.0000000-07:00</time>\r\n");
+			String tim = ch.dateHidden.length()>0 ? ch.dateHidden : DEFAULT_DATE;
+			strBuf.append("    <time>").append(tim).append("T00:00:00.0000000-07:00</time>\r\n");
 			strBuf.append("    <name>").append(ch.wayPoint).append("</name>\r\n");
-			strBuf.append("    <desc>").append(SafeXML.cleanGPX(ch.CacheName)).append(" by ").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</desc>\r\n");
+			strBuf.append("    <desc>").append(SafeXML.cleanGPX(ch.cacheName)).append(" by ").append(SafeXML.cleanGPX(ch.cacheOwner)).append("</desc>\r\n");
 			strBuf.append("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp=").append(ch.wayPoint).append("&amp;Submit6=Find</url>\r\n");
-			strBuf.append("    <urlname>").append(SafeXML.cleanGPX(ch.CacheName)).append(" by ").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</urlname>\r\n");
+			strBuf.append("    <urlname>").append(SafeXML.cleanGPX(ch.cacheName)).append(" by ").append(SafeXML.cleanGPX(ch.cacheOwner)).append("</urlname>\r\n");
 			if (!ch.isAddiWpt()){
 				strBuf.append("    <sym>Geocache</sym>\r\n");
 				strBuf.append("    <type>Geocache|").append(CacheType.transType(ch.type)).append("</type>\r\n");
 				String dummyAvailable = ch.is_available ? STRING_TRUE:STRING_FALSE;
 				String dummyArchived = ch.is_archived ? STRING_TRUE:STRING_FALSE;
 				strBuf.append("    <groundspeak:cache available=\"").append( dummyAvailable ).append( "\" archived=\"" ).append( dummyArchived).append( "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
-				strBuf.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.CacheName)).append("</groundspeak:name>\r\n");
-				strBuf.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</groundspeak:placed_by>\r\n");
-				strBuf.append("      <groundspeak:owner>").append(SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:owner>\r\n");
+				strBuf.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.cacheName)).append("</groundspeak:name>\r\n");
+				strBuf.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.cacheOwner)).append("</groundspeak:placed_by>\r\n");
+				strBuf.append("      <groundspeak:owner>").append(SafeXML.cleanGPX(ch.cacheOwner)+"</groundspeak:owner>\r\n");
 				strBuf.append("      <groundspeak:type>").append(CacheType.transType(ch.type)).append("</groundspeak:type>\r\n");
-				strBuf.append("      <groundspeak:container>").append(ch.CacheSize).append("</groundspeak:container>\r\n");
+				strBuf.append("      <groundspeak:container>").append(ch.getCacheSize()).append("</groundspeak:container>\r\n");
 				strBuf.append("      <groundspeak:difficulty>").append(ch.hard.replace(',','.')).append("</groundspeak:difficulty>\r\n");
 				strBuf.append("      <groundspeak:terrain>").append(ch.terrain.replace(',','.')).append("</groundspeak:terrain>\r\n");
 				String dummyHTML = ch.is_HTML ? STRING_TRUE:STRING_FALSE;
 				strBuf.append("      <groundspeak:long_description html=\"" ).append( dummyHTML ).append( "\">\r\n");
-				strBuf.append("      ").append(SafeXML.cleanGPX(ch.LongDescription));
+				strBuf.append("      ").append(SafeXML.cleanGPX(ch.longDescription));
 				strBuf.append("      \n</groundspeak:long_description>\r\n");
-				strBuf.append("	  <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.Hints))).append("</groundspeak:encoded_hints>\r\n");
+				strBuf.append("	  <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.hints))).append("</groundspeak:encoded_hints>\r\n");
 				strBuf.append("      <groundspeak:logs>\r\n");
 				strBuf.append("      </groundspeak:logs>\r\n");
 				strBuf.append("      <groundspeak:travelbugs />\r\n");
 				strBuf.append("    </groundspeak:cache>\r\n");
 			}else {
 				// there is no HTML in the description of addi wpts
-				strBuf.append("    <cmt>").append(SafeXML.cleanGPX(ch.LongDescription)).append("</cmt>\r\n");
-				strBuf.append("    <sym>").append(CacheType.transType(ch.type)).append("</sym>\r\n");
+				strBuf.append("    <cmt>").append(SafeXML.cleanGPX(ch.longDescription)).append("</cmt>\r\n");				strBuf.append("    <sym>").append(CacheType.transType(ch.type)).append("</sym>\r\n");
 				strBuf.append("    <type>Waypoint|").append(CacheType.transType(ch.type)).append("</type>\r\n");
 			}
 			strBuf.append("  </wpt>\r\n");

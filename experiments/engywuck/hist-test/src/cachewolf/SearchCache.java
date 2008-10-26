@@ -1,5 +1,5 @@
-package CacheWolf;
-import ewe.util.*;
+package cachewolf;
+import java.util.*;
 
 /**
 *	A class to perform a search on the cache database.
@@ -34,12 +34,12 @@ public class SearchCache {
 				ch = (CacheHolder)cacheDB.get(i);
 				if (ch.is_filtered) break; // Reached end of visible records
 				if(ch.wayPoint.toUpperCase().indexOf(searchStr) <0 && 
-				   ch.CacheName.toUpperCase().indexOf(searchStr) <0 && 
-				   ch.CacheStatus.toUpperCase().indexOf(searchStr)<0){
-					ch.is_flaged = false;
+				   ch.cacheName.toUpperCase().indexOf(searchStr) <0 && 
+				   ch.cacheStatus.toUpperCase().indexOf(searchStr)<0){
+					ch.is_flagged = false;
 					ch.is_filtered = true;
 				} else
-					ch.is_flaged=true;
+					ch.is_flagged=true;
 			} // for
 		     Global.mainTab.tbP.selectRow(0);
 		} // if
@@ -53,7 +53,7 @@ public class SearchCache {
 		Global.getProfile().selectionChanged = true;
 		for(int i = cacheDB.size()-1;i >=0;i--){
 			CacheHolder ch=((CacheHolder)cacheDB.get(i));
-			ch.is_flaged=false;
+			ch.is_flagged=false;
 			ch.is_filtered=(ch.is_black^Global.getProfile().showBlacklisted) ;
 		}
 		//Global.getProfile().filterActive=Filter.filterActive; //TODO This is a hack. Need to tidy this up

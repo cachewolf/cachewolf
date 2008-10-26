@@ -1,6 +1,8 @@
-package CacheWolf;
+package cachewolf.utils;
 
-import ewe.sys.*;
+import cachewolf.Global;
+import eve.sys.*;
+import cachewolf.MyLocale;
 
 /**
 *	This class parses a string representation of longitude and latitude.
@@ -8,8 +10,8 @@ import ewe.sys.*;
 *	latitude (DD.dddd)
 */
 public class ParseLatLon {
-	
-	String latlon;	
+
+	String latlon;
 	/**
 	*	After a calling the method parse()
 	*	this variable holds the double value of latitude
@@ -31,7 +33,7 @@ public class ParseLatLon {
 		latlon = ll;
 		digSep=MyLocale.getDigSeparator().charAt(0);
 	}
-	
+
 	/**
 	*	Constructor to parse a lat lon string like:
 	*	N 49 33.167 E 011 21.608.
@@ -41,10 +43,10 @@ public class ParseLatLon {
 		latlon = ll;
 		digSep=MyLocale.getDigSeparator().charAt(0);
 	}
-	
+
 	private int start;
 	private int end;
-	
+
 	/** Get the next non-blank part of the latlon String */
 	String getNext() {
         start=end;
@@ -53,13 +55,13 @@ public class ParseLatLon {
         while (latlon.charAt(end)!=' ') end++; // collect non-blanks
 		return latlon.substring(start,end);
 	}
-	
+
 	/**
 	* Parse a string that contains lat lon into it's lat and lon doubles. Class
 	* variable latlon must have been set befor you call this method.
 	*/
 	public void parse() throws NumberFormatException {
-		if (digSep==',') 
+		if (digSep==',')
 			latlon = latlon.replace('.', ',')+" ";
 		else
 			latlon = latlon.replace(',', '.')+" ";
@@ -81,8 +83,8 @@ public class ParseLatLon {
 			if(latNS.charAt(0)=='S') lat2= -lat2 ;
 			lon2 = Convert.parseDouble(lonDeg) + Convert.parseDouble(lonMin)/60.0;
 			if(lonEW.charAt(0)=='W') lon2 = -lon2;
-		} catch (Exception e) { 
-			throw new NumberFormatException("Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"); 
+		} catch (Exception e) {
+			throw new NumberFormatException("Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM");
 		}
 
 	}

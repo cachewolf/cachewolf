@@ -1,6 +1,6 @@
-package exp;
+package cachewolf.exp;
 
-import CacheWolf.*;
+import cachewolf.*;
 
 /**
  * Class to export the cache database (index) to an CSV File which can bei easy
@@ -24,12 +24,12 @@ public class MSARCSVExporter extends Exporter {
 
 	public String record(CacheHolderDetail ch, String lat, String lon) {
 		StringBuffer str = new StringBuffer(200);
-		str.append("\"" + ch.wayPoint + " - " + ch.CacheName + "\";");
+		str.append("\"" + ch.wayPoint + " - " + ch.cacheName + "\";");
 		str.append(lat + ";" + lon +";");
 		str.append("\"" + CacheType.transType(ch.type)+ "\";");
-		str.append("\"" + ch.CacheSize + "\";");
+		str.append("\"" + ch.getCacheSize() + "\";");
 		str.append("\"" + ch.wayPoint + "\";");
-		str.append("\"" + ch.DateHidden + "\";");
+		str.append("\"" + ch.dateHidden + "\";");
 		str.append("\"" + ch.URL + "\"\r\n");
 
 		return str.toString();

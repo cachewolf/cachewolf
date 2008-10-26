@@ -1,8 +1,8 @@
-package exp;
+package cachewolf.exp;
 
-import CacheWolf.CWPoint;
-import CacheWolf.CacheHolder;
-import ewe.util.Comparer;
+import cachewolf.CWPoint;
+import cachewolf.CacheHolder;
+import eve.util.Comparer;
 
 public class DistanceComparer implements Comparer {
 	
@@ -15,11 +15,10 @@ public class DistanceComparer implements Comparer {
 	public int compare(Object one, Object two) {
 		if ((! (one instanceof CacheHolder)) && (!(two instanceof CacheHolder))) {
 			return 0;
-		} else {
-			CacheHolder a = (CacheHolder) one;
-			CacheHolder b = (CacheHolder) two;
-			return (int) ((a.pos.getDistance(centre) - b.pos.getDistance(centre)) * 1000);
-		}
+		} 
+		CacheHolder a = (CacheHolder) one;
+		CacheHolder b = (CacheHolder) two;
+		return (int) ((a.pos.getDistance(centre) - b.pos.getDistance(centre)) * 1000);
 	}
 	
 }

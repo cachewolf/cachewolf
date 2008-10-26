@@ -1,6 +1,7 @@
-package exp;
-import CacheWolf.*;
-import ewe.sys.*;
+package cachewolf.exp;
+import cachewolf.*;
+import cachewolf.utils.Common;
+import eve.sys.*;
 
 /**
 *	Class to export the cache database (index) to an ascii overlay file for
@@ -14,7 +15,7 @@ public class OVLExporter extends Exporter{
 		this.setHowManyParams(LAT_LON|COUNT);
 	}
 	
-	public String record(CacheHolderDetail ch, String lat, String lon, int counter){
+	public String record(CacheHolderDetail chD, String lat, String lon, int counter){
 		StringBuffer str = new StringBuffer(200);
 		double tmp;
 		str.append("[Symbol "+Convert.toString(2*counter + 1)+"]\r\n");
@@ -42,7 +43,7 @@ public class OVLExporter extends Exporter{
 		tmp = Common.parseDouble(lat);
 		tmp += 0.002;
 		str.append("YKoord="+Convert.toString(tmp).replace(',', '.')+"\r\n");
-		str.append("Text="+ch.wayPoint+"\r\n");
+		str.append("Text="+chD.wayPoint+"\r\n");
 
 		return str.toString();
 	}

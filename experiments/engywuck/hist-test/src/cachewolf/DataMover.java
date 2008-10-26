@@ -1,51 +1,49 @@
-package CacheWolf;
+package cachewolf;
 
-import utils.FileBugfix;
-import ewe.filechooser.FileChooser;
-import ewe.filechooser.FileChooserBase;
-import ewe.io.*;
-import ewe.ui.*;
-import ewe.util.Vector;
-import ewe.sys.*;
+import eve.ui.filechooser.FileChooser;
+import java.io.*;
+import eve.ui.*;
+import java.util.Vector;
+import eve.sys.*;
 
 
 /**
 *	This class moves or copies the database files of selected caches from one directory to
-*   another. It provides also the possibility to delete cachefiles. 	
+*   another. It provides also the possibility to delete cachefiles.
 */
 public class DataMover {
 
-	Vector srcDB, dstDB;
+	Vector srcDB;
 	Preferences pref;
 	Profile profile;
-	
+
 	public DataMover(){
 		pref = Global.getPref();
 		profile=Global.getProfile();
 		srcDB = profile.cacheDB;
 	}
 	public void deleteCaches(){
-		
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(145,"Cachedata of ALL VISIBLE caches will be deleted! Continue?"), FormBase.IDYES |FormBase.IDNO);
-		if (mBox.execute() != FormBase.IDOK){
+
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(145,"Cachedata of ALL VISIBLE caches will be deleted! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
+		if (mBox.execute() != MessageBox.IDOK){
 			return;
 		}
 		processCaches(new Deleter(MyLocale.getMsg(143, "Delete")));
 		// write indexfiles
-		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+		profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 	}
 
 	public void copyCaches(){
 		Profile dstProfile=new Profile();
-		
+
 		dstProfile.dataDir=selectTargetDir();
 		if (dstProfile.dataDir.equals(profile.dataDir) ||
 			dstProfile.dataDir.equals("")) return;
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(146,"Cachedata of ALL VISIBLE caches will be copied! Continue?"), FormBase.IDYES |FormBase.IDNO);
-		if (mBox.execute() != FormBase.IDOK){
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(146,"Cachedata of ALL VISIBLE caches will be copied! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
+		if (mBox.execute() != MessageBox.IDOK){
 			return;
 		}
-		
+
 		// Read indexfile of destination, if one exists
 		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if(ftest.exists()){
@@ -53,40 +51,41 @@ public class DataMover {
 		}
 		processCaches(new Copier(MyLocale.getMsg(141, "Copy"),dstProfile));
 		// write indexfiles and keep the filter status
-		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+		dstProfile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 	}
-	
+
 	public void moveCaches() {
 		Profile dstProfile=new Profile();
+
 		// Select destination directory
 		dstProfile.dataDir=selectTargetDir();
 		if (dstProfile.dataDir.equals(profile.dataDir) ||
 			dstProfile.dataDir.equals("")) return;
-		
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(147,"Cachedata of ALL VISIBLE caches will be moved! Continue?"), FormBase.IDYES |FormBase.IDNO);
-		if (mBox.execute() != FormBase.IDOK){
+
+		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(147,"Cachedata of ALL VISIBLE caches will be moved! Continue?"), MessageBox.IDYES |MessageBox.IDNO);
+		if (mBox.execute() != MessageBox.IDOK){
 			return;
 		}
-		
+
 		// Read indexfile of destination, if one exists
 		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if(ftest.exists()){
-			dstProfile.readIndex();		
+			dstProfile.readIndex();
 		}
 		processCaches(new Mover(MyLocale.getMsg(142, "Move"),dstProfile));
 		// write indexfiles
-		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR); 
-		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+		dstProfile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+		profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 	}
-	
+
 	 /**
-	  * This function carries out the copy/delete/move with a progress bar. 
+	  * This function carries out the copy/delete/move with a progress bar.
 	  * The Executor class defines what operation is to be carried out.
 	  * @param exec
 	  */
 	 private void processCaches(Executor exec) {
-		// First empty the cache so that the correct cache details are on disk
-		CacheHolder.saveAllModifiedDetails(); 
+		 // First empty the cache so that the correct cache details are on disk
+		 CacheHolder.saveAllModifiedDetails();
 		int size=srcDB.size();
 		int count=0;
 		// Count the number of caches to move/delete/copy
@@ -97,7 +96,7 @@ public class DataMover {
 		Handle h = new Handle();
 		pbf.setTask(h,exec.title);
 		pbf.exec();
-		
+
 		int nProcessed=0;
 		// Now do the actual work
 		for(int i = size-1; i>=0; i--){
@@ -112,7 +111,7 @@ public class DataMover {
 		}
 		pbf.exit(0);
 	 }
-	
+
 	 class myProgressBarForm extends ProgressBarForm {
 		 boolean isClosed=false;
 		 protected boolean canExit(int exitCode) {
@@ -120,24 +119,25 @@ public class DataMover {
 			return true;
 		 }
 	 }
-	 
+
 	//////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//////////////////////////////////////////////////////////////////////
-	
+
 	public String selectTargetDir() {
 		// Select destination directory
-		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.baseDir);
-		fc.setTitle(MyLocale.getMsg(148,"Select Target directory"));
+		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, pref.baseDir);
+		fc.title=MyLocale.getMsg(148,"Select Target directory");
 		if(fc.execute() != FormBase.IDCANCEL){
 			return fc.getChosen() + "/";
 		}
-		else return "";
+		return "";
 	}
-	 
+
 	public void deleteCacheFiles(String wpt, String dir){
 		// delete files in dstDir to clean up trash
-		String tmp[] = new FileBugfix(dir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		//TODO Remove FileBugfix
+		String tmp[] = (new eve.io.File(dir)).list(wpt + "*.*", eve.io.File.LIST_FILES_ONLY);
 		for (int i=0; i < tmp.length;i++){
 			File tmpFile = new File(dir + tmp[i]);
 			tmpFile.delete();
@@ -145,16 +145,16 @@ public class DataMover {
 	}
 
 	public void moveCacheFiles(String wpt, String srcDir, String dstDir){
-		String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		String srcFiles[] = new eve.io.File(srcDir).list(wpt + "*.*", eve.io.File.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
-			File srcFile = new File(srcDir + srcFiles[i]);
-			File dstFile = new File(dstDir + srcFiles[i]);
+			eve.io.File srcFile = new eve.io.File(srcDir + srcFiles[i]);
+			eve.io.File dstFile = new eve.io.File(dstDir + srcFiles[i]);
 			srcFile.move(dstFile);
 		}
 	}
 
 	public void copyCacheFiles(String wpt, String srcDir, String dstDir){
-		String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		String srcFiles[] = new eve.io.File(srcDir).list(wpt + "*.*", eve.io.File.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
 			copy(srcDir + srcFiles[i],dstDir + srcFiles[i]);
 		}
@@ -163,11 +163,11 @@ public class DataMover {
 	public static void copy( String sFileSrc, String sFileDst)
 	  {
 	    try {
-			File   fSrc = new File( sFileSrc );
+			java.io.File   fSrc = new java.io.File( sFileSrc );
 		    int    len  = 32768;
 		    byte[] buff = new byte[ (int)java.lang.Math.min( len, fSrc.length() ) ];
-		    FileInputStream  fis = new FileInputStream(  fSrc );
-		    FileOutputStream fos = new FileOutputStream( sFileDst);
+		    java.io.FileInputStream  fis = new java.io.FileInputStream(  fSrc );
+		    java.io.FileOutputStream fos = new java.io.FileOutputStream( sFileDst);
 		    while( 0 < (len = fis.read( buff )) )
 		      fos.write( buff, 0, len );
 		    fos.flush();
@@ -182,13 +182,13 @@ public class DataMover {
 	//////////////////////////////////////////////////////////////////////
 	// Executor
 	//////////////////////////////////////////////////////////////////////
-		
+
 	private abstract class Executor {
 		String title;
 		Profile dstProfile;
 		public void doIt(int i, CacheHolder srcHolder){}
 	}
-	 
+
 	private class Deleter extends Executor {
 		 Deleter(String title) {
 			 this.title=title;
@@ -199,7 +199,7 @@ public class DataMover {
 			srcDB.removeElementAt(i);
 		 }
 	}
-	 
+
 	private class Copier extends Executor {
 		 Copier(String title, Profile dstProfile) {
 			 this.title=title;
@@ -213,7 +213,7 @@ public class DataMover {
 				deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
 				copyCacheFiles(srcHolder.wayPoint,profile.dataDir, dstProfile.dataDir);
 				// Update database
-				dstProfile.cacheDB.set(dstPos,srcHolder);
+				dstProfile.cacheDB.setElementAt(srcHolder,dstPos);
 			}
 			else {
 				deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
@@ -221,7 +221,7 @@ public class DataMover {
 				// Update database
 				dstProfile.cacheDB.add(srcHolder);
 			}
-		 }		 
+		 }
 	}
 
 	private class Mover extends Executor {
@@ -237,7 +237,7 @@ public class DataMover {
 				deleteCacheFiles(srcHolder.wayPoint, dstProfile.dataDir);
 				moveCacheFiles(srcHolder.wayPoint,profile.dataDir, dstProfile.dataDir);
 				// Update database
-				dstProfile.cacheDB.set(dstPos,srcHolder);
+				dstProfile.cacheDB.setElementAt(srcHolder,dstPos);
 				srcDB.removeElementAt(i);
 				i--;
 			}
@@ -249,6 +249,6 @@ public class DataMover {
 				srcDB.removeElementAt(i);
 				i--;
 			}
-		 }		 
+		 }
 	}
 }

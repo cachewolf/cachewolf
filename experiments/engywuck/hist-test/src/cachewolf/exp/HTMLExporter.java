@@ -1,13 +1,18 @@
-package exp;
-import com.stevesoft.ewe_pat.Regex;
+package cachewolf.exp;
+import cachewolf.*;
+import cachewolf.utils.Common;
+import cachewolf.utils.STRreplace;
 
-import CacheWolf.*;
-import ewe.util.*;
-import ewe.sys.*;
-import ewe.io.*;
-import ewe.ui.*;
-import ewe.filechooser.*;
+import com.stevesoft.eve_pat.Regex;
+
+
+import java.util.*;
+import eve.sys.*;
+import eve.ui.*;
+import eve.ui.filechooser.*;
 import HTML.*;
+import java.io.*;
+
 
 /**
 *	Class to export cache information to individual HTML files.<br>
@@ -31,7 +36,7 @@ public class HTMLExporter{
 	 		"case_sensitive", "true",
 	 		"max_includes",   "5"
 	 	};
-	public final static String expName = "HTML";
+	//public final static String expName = "HTML";
 
 	public HTMLExporter(Preferences p, Profile prof){
 		pref = p;
@@ -40,18 +45,19 @@ public class HTMLExporter{
 	}
 	
 	public void doIt(){
-		CacheHolderDetail holder;
+		CacheHolderDetail chD;
 		CacheHolder ch;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
-		new String();
-		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getExportPath(expName));
-		fc.setTitle("Select target directory:");
+		//need directory only!!!!
+		FileChooser fc = new FileChooser(FileChooser.DIRECTORY_SELECT, Global.getProfile().htmlExportDirectory);
+		fc.title=("Select target directory:");
 		String targetDir;
-		if(fc.execute() != FormBase.IDCANCEL){
+		if(fc.execute() != FileChooser.IDCANCEL){
 			targetDir = fc.getChosen() + "/";
-			pref.setExportPath(expName, targetDir);
+			Global.getProfile().htmlExportDirectory=targetDir;
+			//pref.setExportPath(expName, targetDir);
 			Vector cache_index = new Vector();
 			Vector cacheImg = new Vector();
 			Vector logImg = new Vector();
@@ -83,63 +89,63 @@ public class HTMLExporter{
 
 				ch = (CacheHolder)cacheDB.get(i);
 				if(ch.is_black == false && ch.is_filtered == false){
-					holder=ch.getCacheDetails(false,true);
+					chD=ch.getCacheDetails(false,true);
 					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.transType(holder.type));
-					varParams.put("SIZE", holder.CacheSize);
-					varParams.put("WAYPOINT", holder.wayPoint);
-					varParams.put("NAME", holder.CacheName);
-					varParams.put("OWNER", holder.CacheOwner);
-					varParams.put("DIFFICULTY", holder.hard);
-					varParams.put("TERRAIN", holder.terrain);
-					varParams.put("DISTANCE", holder.distance);
-					varParams.put("BEARING", holder.bearing);
-					varParams.put("LATLON", holder.LatLon);
-					varParams.put("STATUS", holder.CacheStatus);
-					varParams.put("DATE", holder.DateHidden);
+					varParams.put("TYPE", CacheType.transType(chD.type));
+					varParams.put("SIZE", chD.getCacheSize());
+					varParams.put("WAYPOINT", chD.wayPoint);
+					varParams.put("NAME", chD.cacheName);
+					varParams.put("OWNER", chD.cacheOwner);
+					varParams.put("DIFFICULTY", chD.hard);
+					varParams.put("TERRAIN", chD.terrain);
+					varParams.put("DISTANCE", chD.distance);
+					varParams.put("BEARING", chD.bearing);
+					varParams.put("LATLON", chD.latLon);
+					varParams.put("STATUS", chD.cacheStatus);
+					varParams.put("DATE", chD.dateHidden);
 					cache_index.add(varParams);
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						page_tpl.setParam("TYPE", CacheType.transType(holder.type));
-						page_tpl.setParam("SIZE", holder.CacheSize);
-						page_tpl.setParam("WAYPOINT", holder.wayPoint);
-						page_tpl.setParam("NAME", holder.CacheName);
-						page_tpl.setParam("OWNER", holder.CacheOwner);
-						page_tpl.setParam("DIFFICULTY", holder.hard);
-						page_tpl.setParam("TERRAIN", holder.terrain);
-						page_tpl.setParam("DISTANCE", holder.distance);
-						page_tpl.setParam("BEARING", holder.bearing);
-						page_tpl.setParam("LATLON", holder.LatLon);
-						page_tpl.setParam("STATUS", holder.CacheStatus);
-						page_tpl.setParam("DATE", holder.DateHidden);
-						if (holder.is_HTML)
-							page_tpl.setParam("DESCRIPTION", modifyLongDesc(holder,targetDir));
+						page_tpl.setParam("TYPE", CacheType.transType(chD.type));
+						page_tpl.setParam("SIZE", chD.getCacheSize());
+						page_tpl.setParam("WAYPOINT", chD.wayPoint);
+						page_tpl.setParam("NAME", chD.cacheName);
+						page_tpl.setParam("OWNER", chD.cacheOwner);
+						page_tpl.setParam("DIFFICULTY", chD.hard);
+						page_tpl.setParam("TERRAIN", chD.terrain);
+						page_tpl.setParam("DISTANCE", chD.distance);
+						page_tpl.setParam("BEARING", chD.bearing);
+						page_tpl.setParam("LATLON", chD.latLon);
+						page_tpl.setParam("STATUS", chD.cacheStatus);
+						page_tpl.setParam("DATE", chD.dateHidden);
+						if (chD.is_HTML)
+							page_tpl.setParam("DESCRIPTION", modifyLongDesc(chD,targetDir));
 						else {
-							String dummyText = new String();
-							dummyText = STRreplace.replace(holder.LongDescription, "\n", "<br>");
+							String dummyText;
+							dummyText = STRreplace.replace(chD.longDescription, "\n", "<br>");
 							page_tpl.setParam("DESCRIPTION",dummyText);
 							
 						}
-						page_tpl.setParam("HINTS", holder.Hints);
-						page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(holder.Hints));
+						page_tpl.setParam("HINTS", chD.hints);
+						page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(chD.hints));
 						StringBuffer sb=new StringBuffer(2000);
-						for(int j = 0; j<holder.CacheLogs.size(); j++){
-							sb.append(STRreplace.replace(holder.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
+						for(int j = 0; j<chD.cacheLogs.size(); j++){
+							sb.append(STRreplace.replace(chD.cacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
 							sb.append("<br>");
-							icon=holder.CacheLogs.getLog(j).getIcon();
-							if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
+							icon=chD.cacheLogs.getLog(j).getIcon();
+							if (logIcons.indexOf(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
 						}
 						page_tpl.setParam("LOGS", sb.toString());
-						page_tpl.setParam("NOTES", STRreplace.replace(holder.CacheNotes, "\n","<br>")); 
+						page_tpl.setParam("NOTES", STRreplace.replace(chD.cacheNotes, "\n","<br>")); 
 						// Cache Images
 						cacheImg.clear();
-						for(int j = 0; j<holder.Images.size(); j++){
+						for(int j = 0; j<chD.images.size(); j++){
 							imgParams = new Hashtable();
-							String imgFile = new String((String)holder.Images.get(j));
+							String imgFile = (String)chD.images.get(j);
 							imgParams.put("FILE", imgFile);
-							if (j < holder.ImagesText.size())
-								imgParams.put("TEXT",holder.ImagesText.get(j));
+							if (j < chD.imagesText.size())
+								imgParams.put("TEXT",chD.imagesText.get(j));
 							else
 								imgParams.put("TEXT",imgFile);
 							DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
@@ -148,12 +154,12 @@ public class HTMLExporter{
 						page_tpl.setParam("cacheImg", cacheImg);
 						// Log images
 						logImg.clear();
-						for(int j = 0; j<holder.LogImages.size(); j++){
+						for(int j = 0; j<chD.logImages.size(); j++){
 							logImgParams = new Hashtable();
-							String logImgFile = (String) holder.LogImages.get(j);
+							String logImgFile = (String) chD.logImages.get(j);
 							logImgParams.put("FILE", logImgFile);
-							if (j < holder.LogImagesText.size())
-								logImgParams.put("TEXT",holder.LogImagesText.get(j));
+							if (j < chD.logImagesText.size())
+								logImgParams.put("TEXT",chD.logImagesText.get(j));
 							else
 								logImgParams.put("TEXT",logImgFile);
 							DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
@@ -162,12 +168,12 @@ public class HTMLExporter{
 						page_tpl.setParam("logImg", logImg);
 						// User images
 						usrImg.clear();
-						for(int j = 0; j<holder.UserImages.size(); j++){
+						for(int j = 0; j<chD.userImages.size(); j++){
 							usrImgParams = new Hashtable();
-							String usrImgFile = new String((String)holder.UserImages.get(j));
+							String usrImgFile = (String)chD.userImages.get(j);
 							usrImgParams.put("FILE", usrImgFile);
-							if (j < holder.UserImagesText.size())
-								usrImgParams.put("TEXT",holder.UserImagesText.get(j));
+							if (j < chD.userImagesText.size())
+								usrImgParams.put("TEXT",chD.userImagesText.get(j));
 							else
 								usrImgParams.put("TEXT",usrImgFile);
 							DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
@@ -178,9 +184,9 @@ public class HTMLExporter{
 						// Map images
 						mapImg.clear();
 						mapImgParams = new Hashtable();
-						String mapImgFile = new String(holder.wayPoint + "_map.gif");
+						String mapImgFile = chD.wayPoint + "_map.gif";
 						// check if map file exists
-						File test = new File(profile.dataDir + mapImgFile);
+						java.io.File test = new java.io.File(profile.dataDir + mapImgFile);
 						if (test.exists()) {
 							mapImgParams.put("FILE", mapImgFile);
 							mapImgParams.put("TEXT",mapImgFile);
@@ -188,7 +194,7 @@ public class HTMLExporter{
 							mapImg.add(mapImgParams);
 							
 							mapImgParams = new Hashtable();
-							mapImgFile = holder.wayPoint + "_map_2.gif";
+							mapImgFile = chD.wayPoint + "_map_2.gif";
 							mapImgParams.put("FILE", mapImgFile);
 							mapImgParams.put("TEXT",mapImgFile);
 							DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
@@ -198,7 +204,7 @@ public class HTMLExporter{
 						}
 
 						
-						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + holder.wayPoint+".html")));
+						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + chD.wayPoint+".html")));
 						pagefile.print(page_tpl.output());
 						pagefile.close();
 					}catch(Exception e){
@@ -209,10 +215,10 @@ public class HTMLExporter{
 			// Copy the log-icons to the destination directory
 			for (int j=0; j<logIcons.size(); j++) {
 				icon=(String) logIcons.elementAt(j);
-				DataMover.copy(FileBase.getProgramDirectory() + "/"+icon,targetDir + icon);
+				DataMover.copy(eve.io.File.getProgramDirectory() + "/"+icon,targetDir + icon);
 				
 			}
-			DataMover.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif");
+			DataMover.copy(eve.io.File.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif");
 			try{
 				Template tpl = new Template(template_init_index);
 				tpl.setParam("cache_index", cache_index);
@@ -246,38 +252,38 @@ public class HTMLExporter{
 	 * @return The modified long description
 	 */
 	private String modifyLongDesc(CacheHolderDetail chD, String targetDir) {
-		StringBuffer s=new StringBuffer(chD.LongDescription.length());
+		StringBuffer s=new StringBuffer(chD.longDescription.length());
 		int start=0;
 		int pos;
 		int imageNo=0;
 		Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
-		while (start>=0 && (pos=chD.LongDescription.indexOf("<img",start))>0) {
-			s.append(chD.LongDescription.substring(start,pos));
-			imgRex.searchFrom(chD.LongDescription,pos);
+		while (start>=0 && (pos=chD.longDescription.indexOf("<img",start))>0) {
+			s.append(chD.longDescription.substring(start,pos));
+			imgRex.searchFrom(chD.longDescription,pos);
 			String imgUrl=imgRex.stringMatched(1);
 			//Vm.debug("imgUrl "+imgUrl);
 			if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
 				String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 				// If we have an image which we stored when spidering, we can display it
 				if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
-					s.append("<img src=\""+chD.Images.get(imageNo)+"\">");
+					s.append("<img src=\""+chD.images.get(imageNo)+"\">");
 					// The actual immages are copied elswhere
 					//DataMover.copy(profile.dataDir + chD.Images.get(imageNo),targetDir + chD.Images.get(imageNo));
 					imageNo++;
 				}
 			}
-			start=chD.LongDescription.indexOf(">",pos);
+			start=chD.longDescription.indexOf(">",pos);
 			if (start>=0) start++;
-			if (imageNo >= chD.Images.getCount())break;
+			if (imageNo >= chD.images.size())break;
 		}
-		if (start>=0) s.append(chD.LongDescription.substring(start));
+		if (start>=0) s.append(chD.longDescription.substring(start));
 		return s.toString();
 	}
 	
 	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field){
 		PrintWriter detfile; 
 		
-		list.sort(new HTMLComparer(field),false);
+		eve.util.Utils.sort(new Handle(),list, new HTMLComparer(field), false);
 		try {
 			detfile = new PrintWriter(new BufferedWriter(new FileWriter(file)));
 			detfile.print(tmpl.output());
@@ -293,7 +299,7 @@ public class HTMLExporter{
 		Vector navi_index;
 		PrintWriter detfile; 
 		
-		list.sort(new HTMLComparer(field),false);
+		eve.util.Utils.sort(new Handle(), list,new HTMLComparer(field),false);
 		navi_index = addAnchorString(list,field, fullCompare);
 		if (navi_index != null){
 			tmpl.setParam("navi_index",navi_index);
@@ -312,7 +318,7 @@ public class HTMLExporter{
 		Vector navi_index;
 		PrintWriter detfile; 
 		
-		list.sort(new HTMLComparer(field),false);
+		eve.util.Utils.sort(new Handle(), list,new HTMLComparer(field),false);
 		navi_index = addAnchorString(list,field, diff);
 		if (navi_index != null){
 			tmpl.setParam("navi_index",navi_index);
@@ -345,9 +351,10 @@ public class HTMLExporter{
 			currEntry = (Hashtable) list.get(i);
 			currValue = (String) currEntry.get(field);
 			currValue = currValue.toUpperCase();
-			if (currValue == null || currValue == "") continue;
+
 			try {
 				if (fullCompare) {
+					if (currValue == null || currValue.equals("")) continue;
 					if (lastValue.compareTo(currValue)!= 0){
 						// Values for navigation line 
 						topIndexParms = new Hashtable();
@@ -381,7 +388,7 @@ public class HTMLExporter{
 						currEntry.put("ANCHORTEXT", "");
 					}
 				}
-				list.set(i,currEntry);
+				list.setElementAt(currEntry,i);
 				lastValue = currValue;
 			} catch (Exception e){
 				continue;
@@ -418,7 +425,7 @@ public class HTMLExporter{
 				currEntry.put("ANCHORNAME", "");
 				currEntry.put("ANCHORTEXT", "");
 			}
-			list.set(i,currEntry);
+			list.setElementAt(currEntry,i);
 		}
 		return topIndex;
 	}
@@ -427,7 +434,7 @@ public class HTMLExporter{
 	 * @author Kalle
 	 * Comparer for sorting the vector for the index.html file
 	 */
-	private class HTMLComparer implements Comparer {
+	private class HTMLComparer implements eve.util.Comparer {
 		String compareWhat;
 
 		public HTMLComparer (String what){
@@ -453,11 +460,9 @@ public class HTMLExporter{
 				dbl2 = Common.parseDouble(str2.substring(0,str2.length()-3));
 				if (dbl1 > dbl2) return 1;
 				if (dbl1 < dbl2) return -1;
-				else return 0;
+				return 0;
 			}
-			else {
-				return str1.compareTo(str2);
-			}
+			return str1.compareTo(str2);
 		}
 	}
 

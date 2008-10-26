@@ -1,17 +1,23 @@
-package CacheWolf;
+package cachewolf;
 
-import CacheWolf.navi.MapImporter;
-import CacheWolf.navi.MapLoaderGui;
-import CacheWolf.navi.SelectMap;
-import ewe.ui.*;
-import ewe.util.Vector;
-//import ewe.util.mString;
-import ewe.fx.*;
-import ewe.sys.*;
-//import ewe.util.*;
-import ewe.io.*;
-import ewe.filechooser.*;
-import exp.*;
+import eve.ui.*;
+import java.util.Vector;
+
+import cachewolf.exp.*;
+import cachewolf.imp.DBImporter;
+import cachewolf.imp.GPXImporter;
+import cachewolf.imp.LOCXMLImporter;
+import cachewolf.imp.OCXMLImporter;
+import cachewolf.imp.SpiderGC;
+import cachewolf.navi.MapImporter;
+import cachewolf.navi.MapLoaderGui;
+import cachewolf.navi.SelectMap;
+
+import eve.sys.*;
+import eve.io.*;
+import eve.ui.filechooser.*;
+import eve.ui.data.InputBox;
+import eve.ui.event.MenuEvent;
 
 /**
  *	This class creates the menu for cachewolf. It is also responsible
@@ -23,24 +29,24 @@ import exp.*;
  *     20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
  */
 public class MainMenu extends MenuBar {
-	private MenuItem profiles, preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
+	private MenuItem preferences,mnuContext,loadcaches,loadOC,/* savenexit,*/savenoxit,exit,search,searchAll,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap;
-	private MenuItem spider, update, chkVersion;
+	private MenuItem spider, update, chkVersion, importDB;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
-	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
-	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild;
+	private MenuItem exportGPS, mnuSeparator;
+	private MenuItem orgNewWP,orgCopy, orgMove, orgDelete,orgRebuild;
 	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
 	private TablePanel tbp;
-	private FilterScreen scnFilter=new FilterScreen();
+	private FilterScreen scnFilter=null; // Lazy initialitation only if it is opened
 
 	public MainMenu(Form f){
 		father = f;
-		String cwd = FileBase.getProgramDirectory();
+		String cwd = File.getProgramDirectory();
 
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for profiles, part of "Application" menu below
@@ -53,13 +59,14 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for import, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mnuImport = new MenuItem[6];
+		MenuItem[] mnuImport = new MenuItem[7];
 		mnuImport[0] = loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")); //TODO internationalization
-		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download von opencaching.de")); 
-		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider von geocaching.com")); 
+		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download von opencaching.de"));
+		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider von geocaching.com"));
 		mnuImport[3] = update      = new MenuItem(MyLocale.getMsg(1014,"Update cache data"));
-		mnuImport[4] = mnuSeparator = new MenuItem("-"); 
-		mnuImport[5] = mnuForceLogin      = new MenuItem("Always login to GC"); 
+		mnuImport[4] = importDB    = new MenuItem("Import DB"); //TODO Internationalisation
+		mnuImport[5] = mnuSeparator = new MenuItem("-");
+		mnuImport[6] = mnuForceLogin      = new MenuItem("Always login to GC");
 		Menu importMenu = new Menu(mnuImport, MyLocale.getMsg(175,"Import"));
 		if (Global.getPref().forceLogin) mnuForceLogin.modifiers^=MenuItem.Checked;
 
@@ -72,13 +79,11 @@ public class MainMenu extends MenuBar {
 		exitems[1] = exportpcx5 = new MenuItem(MyLocale.getMsg(101,"to PCX5 Mapsource"));
 		exitems[2] = exporttop50 = new MenuItem(MyLocale.getMsg(102,"to TOP50 ASCII"));
 		exitems[3] = exportGPX = new MenuItem(MyLocale.getMsg(103,"to GPX"));
-		exitems[4] = exportASC = new MenuItem(MyLocale.getMsg(104,"to CSV"));
+		exitems[4] = exportASC = new MenuItem(MyLocale.getMsg(104,"to ASC"));
 		exitems[5] = exportTomTom = new MenuItem(MyLocale.getMsg(105,"to TomTom"));
 		exitems[6] = exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV"));
 		exitems[7] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
 		if(!(new File(cwd + "/gpsbabel.exe")).exists()) exitems[7].modifiers = MenuItem.Disabled;
-		//exitems[8] = exportCacheMate = new MenuItem(MyLocale.getMsg(123,"to Cachemate"));
-		//if(!(new File(cwd + "/cmconvert/cmconvert.exe")).exists()) exitems[8].modifiers = MenuItem.Disabled;
 		exitems[8] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
 		exitems[9] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
 		exitems[10] = exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist"));
@@ -100,8 +105,8 @@ public class MainMenu extends MenuBar {
 		// Create the "Application" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem [] appMenuItems=new MenuItem[11];
-		appMenuItems[0] = profiles 	 = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu); 
-		appMenuItems[1] = preferences = new MenuItem(MyLocale.getMsg(108,"Preferences")); 
+		appMenuItems[0] = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu);
+		appMenuItems[1] = preferences = new MenuItem(MyLocale.getMsg(108,"Preferences"));
 		appMenuItems[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Centre"));
 		appMenuItems[3] = mnuContext = new MenuItem(MyLocale.getMsg(134,"Current Cache"));
 		appMenuItems[4] = mnuSeparator;
@@ -109,8 +114,8 @@ public class MainMenu extends MenuBar {
 		appMenuItems[6] = new MenuItem(MyLocale.getMsg(107,"Export"),0,exportMenu);
 		appMenuItems[7] = new MenuItem(MyLocale.getMsg(149,"Maps"),0,mapsMenu);
 		appMenuItems[8] = mnuSeparator;
-		appMenuItems[9] = savenoxit = new MenuItem(MyLocale.getMsg(127,"Save")); 
-		//appMenuItems[10] = savenexit = new MenuItem(MyLocale.getMsg(110,"Save & Exit")); 
+		appMenuItems[9] = savenoxit = new MenuItem(MyLocale.getMsg(127,"Save"));
+		//appMenuItems[10] = savenexit = new MenuItem(MyLocale.getMsg(110,"Save & Exit"));
 		appMenuItems[10] = exit = new MenuItem(MyLocale.getMsg(111,"Exit"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(120,"Application"),new Menu(appMenuItems,null)));
 
@@ -118,7 +123,7 @@ public class MainMenu extends MenuBar {
 		// Create the "Search" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] searchMenuItems=new MenuItem[3];
-		searchMenuItems[0] = search = new MenuItem(MyLocale.getMsg(112,"Search$"+(char)6)); // char 6 = ctrl +f 
+		searchMenuItems[0] = search = new MenuItem(MyLocale.getMsg(112,"Search$"+(char)6)); // char 6 = ctrl +f
 		searchMenuItems[1] = searchAll = new MenuItem(MyLocale.getMsg(133,"Search All"));
 		searchMenuItems[2] = searchClr = new MenuItem(MyLocale.getMsg(113,"Clear search"));
 
@@ -126,18 +131,17 @@ public class MainMenu extends MenuBar {
 		// Create the "Filter" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] filterMenuItems=new MenuItem[9];
-		filterMenuItems[0] = filtApply  = new MenuItem(MyLocale.getMsg(709,"Apply")); 
-		filterMenuItems[1] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")); 
-		filterMenuItems[2] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")); 
+		filterMenuItems[0] = filtApply  = new MenuItem(MyLocale.getMsg(709,"Apply"));
+		filterMenuItems[1] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create"));
+		filterMenuItems[2] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert"));
 		filterMenuItems[3] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
 		filterMenuItems[4] = mnuSeparator;
 		filterMenuItems[5] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Filter selected"));
 		filterMenuItems[6] = filtNonSelected = new MenuItem(MyLocale.getMsg(1011,"Filter out non selected"));
 		filterMenuItems[7] = mnuSeparator;
 		filterMenuItems[8] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
-        filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 		//filterMenuItems[9] = mnuSeparator;
-		//filterMenuItems[10] = cacheTour;
+		//filterMenuItems[10] = filtCacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
 
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
@@ -156,9 +160,9 @@ public class MainMenu extends MenuBar {
 		filterAndSearchMenuItems[10]=search;
 		filterAndSearchMenuItems[11]=searchClr;
 		//filterAndSearchMenuItems[12] = mnuSeparator;
-		//filterAndSearchMenuItems[13] = cacheTour;
+		//filterAndSearchMenuItems[13] = filtCacheTour;
 
-		// Depending on screen width display either filter and search menus or the combined menu 
+		// Depending on screen width display either filter and searach menus or the combined menu
 		if (MyLocale.getScreenWidth()>300) {
 			this.addMenu(new PullDownMenu(MyLocale.getMsg(112,"Search"),new Menu(searchMenuItems,null)));
 			this.addMenu(new PullDownMenu(MyLocale.getMsg(159,"Filter"),new Menu(filterMenuItems,null)));
@@ -172,24 +176,24 @@ public class MainMenu extends MenuBar {
 		MenuItem[] organiseMenuItems=new MenuItem[9];
 		organiseMenuItems[0] = orgNewWP = new MenuItem(MyLocale.getMsg(214,"New Waypoint"));
 		organiseMenuItems[1] = mnuSeparator;
-		organiseMenuItems[2] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
-		organiseMenuItems[3] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
+		organiseMenuItems[2] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy"));
+		organiseMenuItems[3] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move"));
 		organiseMenuItems[4] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
 		organiseMenuItems[5] = orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index"));
 		organiseMenuItems[6] = mnuSeparator;
 		organiseMenuItems[7] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
-		cacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
-		organiseMenuItems[8] = cacheTour;
+		organiseMenuItems[8] = cacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
+
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organise"),new Menu(organiseMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
 		// Create the "About" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] aboutMenuItems=new MenuItem[5];
-		aboutMenuItems[0] = about = new MenuItem(MyLocale.getMsg(117,"About")); 
-		aboutMenuItems[1] = legend = new MenuItem(MyLocale.getMsg(155,"Legend")); 
-		aboutMenuItems[2] = wolflang = new MenuItem(MyLocale.getMsg(118,"WolfLanguage")); 
-		aboutMenuItems[3] = sysinfo = new MenuItem(MyLocale.getMsg(157,"System")); 
+		aboutMenuItems[0] = about = new MenuItem(MyLocale.getMsg(117,"About"));
+		aboutMenuItems[1] = legend = new MenuItem(MyLocale.getMsg(155,"Legend"));
+		aboutMenuItems[2] = wolflang = new MenuItem(MyLocale.getMsg(118,"WolfLanguage"));
+		aboutMenuItems[3] = sysinfo = new MenuItem(MyLocale.getMsg(157,"System"));
 		aboutMenuItems[4] = chkVersion = new MenuItem(MyLocale.getMsg(158,"Version Check"));
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(117,"About"),new Menu(aboutMenuItems,null)));
 	}
@@ -198,10 +202,10 @@ public class MainMenu extends MenuBar {
 		tbp = t;
 		if (mnuContext.subMenu == null) {
 			if ((","+Global.getPref().listColMap+",").indexOf(",0,")>=0)
-				mnuContext.subMenu = tbp.tc.getMenuFull();
-			else
-				mnuContext.subMenu = tbp.tc.getMenuSmall();
-		}		
+				mnuContext.subMenu = tbp.tControl.getMenuFull();
+			 else
+				 mnuContext.subMenu = tbp.tControl.getMenuSmall();
+		}
 	}
 
 	public void allowProfileChange(boolean profileChangeAllowed) {
@@ -234,42 +238,43 @@ public class MainMenu extends MenuBar {
 		if (ev instanceof MenuEvent){ //&& ev.type == MenuEvent.PRESSED
 			MenuEvent mev = (MenuEvent)ev;
 			///////////////////////////////////////////////////////////////////////
-			// subMenu for profiles, part of "Application" menu 
+			// subMenu for profiles, part of "Application" menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == mnuNewProfile){
-				if (NewProfileWizard.startNewProfileWizard(getFrame()) ) {
+				if (NewProfileWizard.startNewProfileWizard(getFrame()) ) {				Global.mainTab.saveUnsavedChanges(true);
 					pref.curCentrePt = new CWPoint(profile.centre);
-		            filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+					filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 					tbp.refreshTable();
+					Global.mainForm.title="CW "+Version.getRelease()+" - "+profile.name;
 				}
 			}
 			if(mev.selectedItem == mnuOpenProfile){
 				Global.mainTab.saveUnsavedChanges(true);
 				if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
-					tbp.myMod.numRows=0;
+					tbp.tModel.numRows=0;
 					CacheHolder.removeAllDetails();
 					profile.cacheDB.clear();
 					InfoBox infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
 					infB.exec();
-					infB.waitUntilPainted(1000);
-					Vm.showWait(infB, true);
+					infB.getWindow().waitUntilPainted(1000);
+					Form.showWait();
 					profile.readIndex();
-					Vm.showWait(infB, false);
+					Form.cancelWait();
 					pref.curCentrePt.set(profile.centre);
-                    filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
-					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
+					filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+					Global.mainForm.title="CW "+Version.getRelease()+" - "+profile.name;
 					infB.close(0);
-					tbp.resetModel();
+					tbp.resetModel(); // & restore Filter
 				}
 			}
 			if(mev.selectedItem == mnuEditCenter){
-				ProfileDataForm f=new ProfileDataForm(pref,profile);
+				CenterScreen f=new CenterScreen(pref,profile);
 				f.execute(getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
 				f.close(0);
 			}
 			///////////////////////////////////////////////////////////////////////
-			// subMenu for import, part of "Application" menu 
+			// subMenu for import, part of "Application" menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == spider){
 				SpiderGC spGC = new SpiderGC(pref, profile, true);
@@ -280,10 +285,10 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadcaches){
-				FileChooser fc = new FileChooser(FileChooserBase.OPEN|FileChooserBase.MULTI_SELECT, pref.baseDir);
+				FileChooser fc = new FileChooser(FileChooser.OPEN|FileChooser.MULTI_SELECT, pref.baseDir);
 				fc.addMask("*.gpx,*.zip,*.loc");
-				fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
-				if(fc.execute() != FormBase.IDCANCEL){
+				fc.title=MyLocale.getMsg(909,"Select file(s)");
+				if(fc.execute() != FileChooser.IDCANCEL){
 					String dir = fc.getChosenDirectory().toString();
 					String files[] = fc.getAllChosen();
 					/*
@@ -296,10 +301,10 @@ public class MainMenu extends MenuBar {
 							else how = GPXImporter.DOIT_NOSPOILER;
 					}
 					 */
-					for (int i = 0; i < files.length; i++){ 
+					for (int i = 0; i < files.length; i++){
 						String file = dir + "/" + files[i];
 						if (file.endsWith("loc")){
-							LOCXMLImporter loc = new LOCXMLImporter(pref, profile, file);
+							LOCXMLImporter loc = new LOCXMLImporter(profile, file);
 							loc.doIt();
 						}
 						else {
@@ -308,26 +313,36 @@ public class MainMenu extends MenuBar {
 						}
 					}
 				}
-                Global.getProfile().showBlacklisted = false;
-                filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+				Global.getProfile().showBlacklisted=false;
+				filtBlack.modifiers&=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadOC){
 				OCXMLImporter oc = new OCXMLImporter(pref,profile);
 				oc.doIt();
-                Global.getProfile().showBlacklisted = false;
-                filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+				Global.getProfile().showBlacklisted=false;
+				filtBlack.modifiers&=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				tbp.resetModel();
 			}
-			if (mev.selectedItem == update) 
+			if (mev.selectedItem == update)
 				updateSelectedCaches(tbp);
+
+			if (mev.selectedItem == importDB) {
+				FileChooser fc = new FileChooser(FileChooser.OPEN, pref.baseDir);
+				fc.addMask("*.gpx,*.zip");
+				fc.title=MyLocale.getMsg(909,"Select file(s)");
+				if(fc.execute() != FileChooser.IDCANCEL){
+					DBImporter dbI=new DBImporter();
+					dbI.doIt(fc.getChosenFile().toString());
+				}
+			}
 			if(mev.selectedItem == mnuForceLogin) {
 				mnuForceLogin.modifiers^=MenuItem.Checked;
 				Global.getPref().forceLogin=(mnuForceLogin.modifiers&MenuItem.Checked)!=0;
 				Global.getPref().savePreferences();
 			}
 			///////////////////////////////////////////////////////////////////////
-			// subMenu for export, part of "Application" menu 
+			// subMenu for export, part of "Application" menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == exporthtml){
 				HTMLExporter htm = new HTMLExporter(pref, profile);
@@ -336,7 +351,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == exportpcx5){
 				PCX5Exporter pcx = new PCX5Exporter( pref, profile);
 				pcx.doIt(PCX5Exporter.MODE_ASK);
-			} 
+			}
 			if(mev.selectedItem == exporttop50){
 				OVLExporter ovl = new OVLExporter(pref, profile);
 				ovl.doIt();
@@ -358,24 +373,23 @@ public class MainMenu extends MenuBar {
 				msar.doIt();
 			}
 			if(mev.selectedItem == exportGPS){
-				Vm.showWait(true);
+				Form.showWait();
 				LocExporter loc = new LocExporter();
-				String tmpFileName = FileBase.getProgramDirectory() + "/temp.loc";
+				String tmpFileName = File.getProgramDirectory() + "/temp.loc";
 				loc.setTmpFileName(tmpFileName);
 				loc.doIt(LocExporter.MODE_AUTO);
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
 				try{
 					pref.log("gpsbabel.exe "+pref.garminGPSBabelOptions+" -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
-					// this will *only* work with ewe.jar at the moment
-					ewe.sys.Process p = Vm.exec("gpsbabel.exe "+pref.garminGPSBabelOptions+" -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
+					java.lang.Process p = java.lang.Runtime.getRuntime().exec("gpsbabel.exe "+pref.garminGPSBabelOptions+" -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
 					p.waitFor();
-				}catch(IOException ioex){
-					Vm.showWait(false);
-					(new MessageBox("Error", "Garmin export unsuccessful", FormBase.OKB)).execute();
+				}catch(Exception ioex){
+					Form.cancelWait();
+					(new MessageBox("Error", "Garmin export unsuccessful", MessageBox.OKB)).execute();
 					pref.log("Error exporting to Garmin",ioex);
 				};
 				ProgressBarForm.clear();
-				Vm.showWait(false);
+				Form.cancelWait();
 			}
 			if(mev.selectedItem == exportOZI){
 				OziExporter ozi = new OziExporter( pref, profile);
@@ -386,10 +400,10 @@ public class MainMenu extends MenuBar {
 				kml.doIt();
 			}
 			if(mev.selectedItem == exportTPL){
-				FileChooser fc = new FileChooser(FileChooserBase.OPEN, FileBase.getProgramDirectory());
+				FileChooser fc = new FileChooser(FileChooser.OPEN, File.getProgramDirectory());
 				fc.addMask("*.tpl");
-				fc.setTitle(MyLocale.getMsg(910,"Select Template file"));
-				if(fc.execute() != FormBase.IDCANCEL){
+				fc.title=MyLocale.getMsg(910,"Select Template file");
+				if(fc.execute() != FileChooser.IDCANCEL){
 					TPLExporter tpl = new TPLExporter( pref,profile, fc.getChosenFile().toString());
 					tpl.doIt();
 				}
@@ -399,7 +413,7 @@ public class MainMenu extends MenuBar {
 				mag.doIt();
 			}
 			///////////////////////////////////////////////////////////////////////
-			// subMenu for maps, part of "Application" menu 
+			// subMenu for maps, part of "Application" menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == downloadmap){
 				MapLoaderGui mLG = new MapLoaderGui(cacheDB);
@@ -418,7 +432,7 @@ public class MainMenu extends MenuBar {
 						MapImporter map = new MapImporter(pref, sM.getSelectedMap(),sM.worldfileexists);
 						map.execute(null, Gui.CENTER_FRAME);
 					} catch (java.lang.OutOfMemoryError e) {
-						MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156,"Out of memory error, map to big"), FormBase.OKB);
+						MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156,"Out of memory error, map to big"), MessageBox.OKB);
 						tmpMB.exec();
 					}
 				}
@@ -433,19 +447,20 @@ public class MainMenu extends MenuBar {
 				pref.readPrefFile();
 			}
 			if(mev.selectedItem == savenoxit){
-				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
+				profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 				tbp.saveColWidth(pref);
 			}
-/*
-			if(mev.selectedItem == savenexit){
-				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
+
+/*			if(mev.selectedItem == savenexit){
+				profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 				tbp.saveColWidth(pref);
-				ewe.sys.Vm.exit(0);
+				eve.sys.Vm.exit(0);
 			}
-*/
-			if(mev.selectedItem == exit){
+*/			if(mev.selectedItem == exit){
 				Global.mainTab.saveUnsavedChanges(true);
-				ewe.sys.Vm.exit(0);
+				CacheHolder.saveAllModifiedDetails();
+				tbp.saveColWidth(pref);
+				eve.sys.Vm.exit(0);
 			}
 
 			///////////////////////////////////////////////////////////////////////
@@ -457,13 +472,13 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == searchAll){
 				SearchCache ssc = new SearchCache(cacheDB);
 				ssc.clearSearch();
-				tbp.refreshTable();		
-                search();
+				tbp.refreshTable();
+				search();
 			}
 			if(mev.selectedItem == searchClr){
 				SearchCache ssc = new SearchCache(cacheDB);
 				ssc.clearSearch();
-				tbp.refreshTable();		
+				tbp.refreshTable();
 			}
 			///////////////////////////////////////////////////////////////////////
 			// "Filter" pulldown menu
@@ -475,6 +490,7 @@ public class MainMenu extends MenuBar {
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == filtCreate){
+				if (scnFilter==null) scnFilter=new FilterScreen();
 				scnFilter.setData();
 				scnFilter.execute(father.getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
@@ -538,33 +554,32 @@ public class MainMenu extends MenuBar {
 			///////////////////////////////////////////////////////////////////////
 			// "Organise" pulldown menu
 			///////////////////////////////////////////////////////////////////////
-			if(mev.selectedItem == orgNewWP){
+ 			if(mev.selectedItem == orgNewWP){
 				if (Global.mainTab.tbP.getSelectedCache() >= 0) Global.mainTab.lastselected = ((CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache())).wayPoint;
 				Global.mainTab.newWaypoint(new CacheHolder());
-			}
-
+ 			}
 			if(mev.selectedItem == orgCopy){
-				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+				profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
 				dm.copyCaches();
 				tbp.refreshTable();
 			}
 
 			if(mev.selectedItem == orgMove){
-				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+				profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
 				dm.moveCaches();
 				tbp.refreshTable();
 			}
 
 			if(mev.selectedItem == orgDelete){
-				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+				profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
 				dm.deleteCaches();
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == orgRebuild){
-				Rebuild rb=new Rebuild();
+				RebuildIndex rb=new RebuildIndex();
 				rb.rebuild();
 				tbp.refreshTable();
 			}
@@ -576,54 +591,53 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == cacheTour){
 				cacheTour.modifiers^=MenuItem.Checked;
-				Global.mainForm.toggleCacheListVisible();			
+				Global.mainForm.toggleCacheListVisible();
 			}
-			
 			///////////////////////////////////////////////////////////////////////
 			// "About" pulldown menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == about){
-				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "info.html", MyLocale.getMsg(117,"About"),true, pref);
+				InfoHtmlScreen is = new InfoHtmlScreen(File.getProgramDirectory() + "/" + "info.html", MyLocale.getMsg(117,"About"),true);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == legend){
-				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "legende.html", MyLocale.getMsg(155,"Legend"),true, pref);
+				InfoHtmlScreen is = new InfoHtmlScreen(File.getProgramDirectory() + "/" + "legende.html", MyLocale.getMsg(155,"Legend"),true);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == wolflang){
-				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
+				InfoHtmlScreen is = new InfoHtmlScreen(File.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == sysinfo){
 				//Vm.debug("Checking system...");
 				StringBuffer sb=new StringBuffer(400);
-				Font f = mApp.guiFont;
+//TODO				Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
+//				Font f = mApp.guiFont;
 				sb.append("Profile: "); 				sb.append(profile.dataDir);
-				sb.append("<br>Platform: "); 			sb.append(Vm.getPlatform());
-				sb.append("<br>Locale lang is: ");		sb.append(MyLocale.getLocaleLanguage()); 
-				sb.append("<br>Locale country is: "); 	sb.append(MyLocale.getLocaleCountry()); 
+//TODO				sb.append("<br>Platform: "); 			sb.append(Vm.getPlatform());
+				sb.append("<br>Locale lang is: ");		sb.append(MyLocale.getLocaleLanguage());
+				sb.append("<br>Locale country is: "); 	sb.append(MyLocale.getLocaleCountry());
 				sb.append("<br>Decimal separator is: \""); sb.append(MyLocale.getDigSeparator());
-				sb.append("\"<br>Device is PDA: ");		sb.append(Vm.isMobile());
-				sb.append("<br>Screen: ");				sb.append(MyLocale.getScreenWidth()); 
-				sb.append(" x ");	 sb.append(MyLocale.getScreenHeight()); 
-				sb.append("<br>Font size: ");			sb.append(f.getSize());
+				sb.append("\"<br>Device is PDA: ");		sb.append(Device.isMobile());
+				sb.append("<br>Screen: ");				sb.append(MyLocale.getScreenWidth());
+				sb.append(" x ");	 sb.append(MyLocale.getScreenHeight());
+//TODO				sb.append("<br>Font size: ");			sb.append(f.getSize());
 				sb.append("<br>Entries in DB: ");		sb.append(cacheDB.size());
-				sb.append("<br>File separator is: \""); sb.append(Vm.getProperty("file.separator","def")); 
-				sb.append("\"<br>Programme directory is "); sb.append(FileBase.getProgramDirectory());
+				sb.append("<br>File separator is: \""); sb.append(Vm.getProperty("file.separator","def"));
+				sb.append("\"<br>Programme directory is "); sb.append(File.getProgramDirectory());
 				sb.append("<br>Number of details in RAM is "); sb.append(CacheHolder.cachesWithLoadedDetails.size());
 				sb.append(" Max.: ");					sb.append(Global.getPref().maxDetails);
 				sb.append("<br>CacheWolf version: ");		sb.append(Version.getReleaseDetailed());
 				sb.append("<br>");
-				InfoScreen is = new InfoScreen(sb.toString(), "System", false,pref);
+				InfoHtmlScreen is = new InfoHtmlScreen(sb.toString(), "System", false);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == chkVersion){
-				(new MessageBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage(), FormBase.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage(), MessageBox.OKB)).execute();
 			}
-			
-			// In case that the triggered event was due to one of the context menu items, process
+			  // In case that the triggered event was due to one of the context menu items, process
 			// the event by the context menu handler
-			tbp.tc.popupMenuEvent(mev.selectedItem);
+			tbp.tControl.popupMenuEvent(mev.selectedItem);
 		}
 	}
 
@@ -632,21 +646,21 @@ public class MainMenu extends MenuBar {
 		Profile profile=Global.getProfile();
 		Vector cacheDB=profile.cacheDB;
 		CacheHolder ch;
-		
+
 		SpiderGC spider = new SpiderGC(pref, profile, false);
 		OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
 		//Vm.debug("ByPass? " + profile.byPassIndexActive);
-		Vm.showWait(true);
+		Form.showWait();
 		boolean alreadySaid = false;
 		boolean alreadySaid2 = false;
 		InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
 		infB.exec();
-		
+
 		Vector cachesToUpdate = new Vector();
 		for(int i = 0; i <	cacheDB.size(); i++){
 			ch = (CacheHolder)cacheDB.get(i);
 			if(ch.is_Checked == true && !ch.is_filtered) {
-				if ( ch.wayPoint.length()>1 && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC") 
+				if ( ch.wayPoint.length()>1 && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")
 						|| ch.wayPoint.substring(0,2).equalsIgnoreCase("OC")))
 //					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
 //					Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
@@ -662,7 +676,7 @@ public class MainMenu extends MenuBar {
 					if (!ch.isAddiWpt() && !alreadySaid) {
 						alreadySaid = true;
 						(new MessageBox(MyLocale.getMsg(327,"Information"),
-								        ch.wayPoint+ 
+								        ch.wayPoint+
 								        MyLocale.getMsg(5002,": At the moment this function is only applicable for geocaching.com and opencaching.de."), FormBase.OKB)).execute();
 					}
 				}
@@ -686,7 +700,7 @@ public class MainMenu extends MenuBar {
 				} else if (test == 0) {
 					spiderErrors++;
 				} else {
-					profile.hasUnsavedChanges=true;	
+					profile.hasUnsavedChanges=true;
 				}
 				forceLogin=false;
 			}
@@ -694,23 +708,24 @@ public class MainMenu extends MenuBar {
 				if (!ocSync.syncSingle(i, infB)) {
 					infB.close(0);
 					break;
-				} else 
-					profile.hasUnsavedChanges=true;	
+				} else
+					profile.hasUnsavedChanges=true;
 			}
 
 //			cacheDB.clear();
 //			profile.readIndex();
 		}
 		infB.close(0);
-//		profile.hasUnsavedChanges=true;	
-		profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
-		profile.restoreFilter();
-		profile.updateBearingDistance();
-		tablePanel.refreshTable();
-		Vm.showWait(false);
+//		profile.hasUnsavedChanges=true;
+		profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+		profile.restoreFilter(true);
+		//profile.updateBearingDistance();
+		Global.mainTab.tbP.refreshTable();
+		Form.cancelWait();
 		if ( spiderErrors > 0) {
 			new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
-		}		
+		}
+
 	}
-	
+
 }

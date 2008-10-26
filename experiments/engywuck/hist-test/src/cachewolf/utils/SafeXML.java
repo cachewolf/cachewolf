@@ -1,4 +1,4 @@
-package CacheWolf;
+package cachewolf.utils;
 
 /**
 *	A class to replace unsafe XML characters with characters that a user
@@ -6,7 +6,7 @@ package CacheWolf;
 * 20061222: skg Modified cleanback to speed up the new index.xml reader
 */
 
-import ewe.util.Hashtable;
+import java.util.Hashtable;
 
 public class SafeXML{
 	private static final char ENTITY_START = '&';
@@ -119,6 +119,7 @@ public class SafeXML{
 				
 				"&#34;",  "\"",
 				"&#38;",  "&",
+				"&#39;",  "'",
 				"&#60;",  "<",
 				"&#62;",  ">",
 				"&#160;", " ",
@@ -230,8 +231,8 @@ public class SafeXML{
 				"&#8220;", "\"",
 				"&#8221;", "\"",
 				"&#8222;", "\"",
-				"&#8223;", "\"",
 				"&#8226;", "•",
+				"&#8223;", "\"",
 				"&#8242;", "'",
 				"&#8243;", "\""
 				};
@@ -414,7 +415,6 @@ public class SafeXML{
 
 		if (src == null)
 			return (null);
-
 		slen = src.length();
 		dst = new StringBuffer(slen);
 		tmp = new char[slen];
@@ -448,7 +448,6 @@ public class SafeXML{
 
 		if (src == null)
 			return (null);
-
 		slen = src.length();
 		dst = new StringBuffer(slen);
 		tmp = new char[slen];

@@ -1,6 +1,6 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.util.Vector;
+import java.util.Vector;
 
 public class LogList {
 	/** The Vector containing the Log objects 
@@ -38,7 +38,7 @@ public class LogList {
 
 	/** Replace a Log in the list */
 	public void replace(int i, Log log) {
-		logList.set(i, log);
+		logList.setElementAt(log,i);
 	}
 	
 	/** Merge a log into the list at the appropriate position
@@ -75,18 +75,17 @@ public class LogList {
 				if (!log.getMessage().equals(newLog.getMessage())) {
 					replace(i,newLog);
 					return i;
-				} else
-					return -1; // Log already in list
+				} 
+				return -1; // Log already in list
 			}
 			i++;
 		}
 		if (i==size) {
 			add(newLog);
 			return i;
-		} else {
-			logList.insertElementAt(newLog, firstLog);
-			return firstLog;
-		}
+		} 
+		logList.insertElementAt(newLog, firstLog);
+		return firstLog;
 	}
 
 	 /**

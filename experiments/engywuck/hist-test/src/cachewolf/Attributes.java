@@ -1,6 +1,8 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.fx.*;
+import cachewolf.utils.Extractor;
+import eve.fx.*;
+
 
 public class Attributes {
 	public final static int MAXATTRIBS=12;
@@ -16,7 +18,7 @@ public class Attributes {
 	public long attributesYes;
 	public long attributesNo;
 
-	public Attributes() { 
+	public Attributes() {
 	}
 
 	/**
@@ -25,7 +27,7 @@ public class Attributes {
 	 */public int getCount(){
 		return count;
 	}
-	
+
 	/**
 	 * Clear the attributes list
 	 *
@@ -35,13 +37,13 @@ public class Attributes {
 		attributesYes=0;
 		attributesNo=0;
 	}
-	
+
     ////////////////////////////////////////////////
     // Attribute set functions
     ////////////////////////////////////////////////
-	
-	public void XmlAttributesStart() {}
-	public void XmlAttributesEnd(String elem){
+
+	public void xmlAttributesStart() {}
+	public void xmlAttributesEnd(String elem){
 		clear();
 		Extractor ex=new Extractor(elem,"<ATT>","</ATT>",0,true);
 		String dummy = ex.findNext();
@@ -51,15 +53,15 @@ public class Attributes {
 		}
 	}
 
-	public void XmlAttributeStart(){}
-	public void XmlAttributeEnd(String elem){
+	public void xmlAttributeStart(){}
+	public void xmlAttributeEnd(String elem){
 		add(elem);
 	}
 
 	/*
-	 * Prepare for attributes to be written to cache.xml file 
+	 * Prepare for attributes to be written to cache.xml file
 	 */
-	public String XmlAttributesWrite(){
+	public String xmlAttributesWrite(){
 		StringBuffer sb=new StringBuffer(1000);
 		sb.append("<ATTRIBUTES>\n");
 		for (int i=0; i<count; i++) {
@@ -70,7 +72,7 @@ public class Attributes {
 		sb.append("</ATTRIBUTES>\n");
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Add a new attributes
 	 * @param attributeName
@@ -86,7 +88,7 @@ public class Attributes {
 					attributesNo |= (1l << ( (long)(Math.ceil(attr.getAttrNr() / 2.0) - 1.0) ) );
 			}
 		}
-	}
+    }
 
 	/**
 	 * Get the name of the i'th attribute in the list
@@ -97,13 +99,13 @@ public class Attributes {
 		if (i>=0 && i<count) return attribs[i].getImageName();
 		return "error.gif";
 	}
-	
+
 	/**
 	 * Get the image corresponding to an attribute
 	 * @param i The number of the attribute for which the image is to be retrieved
-	 * @return The mImage of the attribute
+	 * @return The Picture of the attribute
 	 */
-	public mImage getImage(int i) {
+	public Picture getImage(int i) {
 		if (i>=0 && i<count) return attribs[i].getImage();
 		return new Attribute().getImage();
 	}

@@ -1,4 +1,4 @@
-package CacheWolf;
+package cachewolf;
 
 /**
  * A list to manage the travelbugs. Each row represents one @see TravelbugJourney.
@@ -11,13 +11,26 @@ package CacheWolf;
  * @author salzkammergut
  */
 
-import utils.CWWrapper;
-import ewe.sys.Convert;
-import ewe.sys.Time;
-import ewe.sys.Vm;
-import ewe.ui.*;
-import ewe.util.*;
-import ewe.fx.*;
+import eve.sys.Convert;
+import eve.sys.Time;
+import eve.sys.Vm;
+import eve.ui.*;
+import java.util.*;
+
+import cachewolf.imp.SpiderGC;
+
+
+import eve.fx.*;
+import eve.ui.formatted.HtmlDisplay;
+import eve.sys.Event;
+import eve.ui.event.DataChangeEvent;
+import eve.ui.table.TableControl;
+import eve.ui.table.TableModel;
+import eve.ui.event.PenEvent;
+import eve.ui.event.MultiPanelEvent;
+import eve.ui.event.ControlEvent;
+import eve.ui.event.FormEvent;
+import eve.ui.table.TableCellAttributes;
 
 public class TravelbugJourneyScreen extends Form  {
 	
@@ -29,20 +42,20 @@ public class TravelbugJourneyScreen extends Form  {
 	private TravelbugJourneyList tblMyTravelbugJourneys;
 	/** The panel for the lower half of the screen */
 	private CellPanel lowerpane;
-	private mInput inpName,inpTrackingNo, 
+	private Input inpName,inpTrackingNo, 
 		   inpFromDate, inpFromProfile, inpFromWaypoint, 
 	       inpToDate, inpToProfile, inpToWaypoint;
-	private mLabel lblId;
-	private mButton btnFromDate,btnToDate;
-	private mCheckBox chkFromLogged, chkToLogged;
+	private Label lblId;
+	private Button btnFromDate,btnToDate;
+	private CheckBox chkFromLogged, chkToLogged;
 	private HtmlDisplay txtMission;
-	private mTabbedPanel pnlTab;
+	private TabbedPanel pnlTab;
     /**	 List of TBs in the current cache */
 	private TravelbugList tblSrcCache; 
 	/** The currently selected row */
 	private int selectedRow=-1;
 	/** A label which holds the number of currently displayed travelbug journeys*/
-	private mLabel lblNumVisibleJourneys;
+	private Label lblNumVisibleJourneys;
 	private final Color RED=new Color(255,0,0);
 	private int exitKeys[]={75009};
 	/** A flag to track whether the current cache has to be saved because a travelbug
@@ -65,7 +78,7 @@ public class TravelbugJourneyScreen extends Form  {
 		String cache="";
 		if (curCacheNo>=0 && curCacheNo<cacheDB.size()) {
 			ch=(CacheHolder)cacheDB.elementAt(curCacheNo);
-			cache=MyLocale.getMsg(6022,": Current cache: ")+ch.wayPoint+" - "+ch.CacheName;
+			cache=MyLocale.getMsg(6022,": Current cache: ")+ch.wayPoint+" - "+ch.cacheName;
 			waypoint=ch.wayPoint;
 			chD=new CacheHolderDetail(ch);
 			try {
@@ -73,46 +86,46 @@ public class TravelbugJourneyScreen extends Form  {
 			}catch (Exception ex) {
 				Global.getPref().log("Failed to read cache "+ch.wayPoint);
 			};
-			tblSrcCache=chD.Travelbugs;
+			tblSrcCache=chD.travelbugs;
 		}
 		title="Travelbugs"+cache;
 		tcTbJourneyList=new tbListControl();
 		tcTbJourneyList.setTableModel(modTbJourneyList=new tbListTableModel());
-		tablepane.addLast(new MyScrollBarPanel(tcTbJourneyList,ScrollablePanel.AlwaysShowVerticalScrollers),STRETCH,FILL);
+		tablepane.addLast(new MyScrollBarPanel(tcTbJourneyList,ScrollBarPanel.AlwaysShowVerticalScrollers),STRETCH,FILL);
 	
 		lowerpane = split.getNextPanel();
 		
-		pnlTab=new mTabbedPanel();
-		pnlTab.extraControlsRight=lblNumVisibleJourneys=new mLabel("  0");
+		pnlTab=new TabbedPanel();
+		pnlTab.extraControlsRight=lblNumVisibleJourneys=new Label("  0");
 		//------------------------------------------------
 		// First Tab - Name & Tracking #
 		//------------------------------------------------
 		CellPanel pnlName=new CellPanel();
-		pnlName.addNext(new mLabel(MyLocale.getMsg(6025,"Name:")),DONTSTRETCH,DONTFILL);
-		pnlName.addLast(inpName=new mInput(),HSTRETCH,HFILL);
-		pnlName.addNext(new mLabel(MyLocale.getMsg(6026,"Tracking #:")),DONTSTRETCH,DONTFILL);
-		pnlName.addLast(inpTrackingNo=new mInput(),HSTRETCH,HFILL);
-		pnlName.addNext(new mLabel(MyLocale.getMsg(6027,"ID/GUID:")),DONTSTRETCH,DONTFILL);
-		pnlName.addLast(lblId=new mLabel(""),HSTRETCH,HFILL);
+		pnlName.addNext(new Label(MyLocale.getMsg(6025,"Name:")),DONTSTRETCH,DONTFILL);
+		pnlName.addLast(inpName=new Input(),HSTRETCH,HFILL);
+		pnlName.addNext(new Label(MyLocale.getMsg(6026,"Tracking #:")),DONTSTRETCH,DONTFILL);
+		pnlName.addLast(inpTrackingNo=new Input(),HSTRETCH,HFILL);
+		pnlName.addNext(new Label(MyLocale.getMsg(6027,"ID/GUID:")),DONTSTRETCH,DONTFILL);
+		pnlName.addLast(lblId=new Label(""),HSTRETCH,HFILL);
 		pnlTab.addCard(pnlName,MyLocale.getMsg(6028,"Name"),"Name");
 		
 		//------------------------------------------------
 		// Second Tab - Where was the TB picked up from
 		//------------------------------------------------
 		CellPanel pnlFrom=new CellPanel();
-		pnlFrom.addNext(new mLabel(MyLocale.getMsg(6029,"Profile/Cache:")),DONTSTRETCH,DONTFILL|WEST);
-		pnlFrom.addNext(inpFromProfile=new mInput(),HSTRETCH,HFILL);
-		pnlFrom.addLast(inpFromWaypoint=new mInput(),HSTRETCH,HFILL);
+		pnlFrom.addNext(new Label(MyLocale.getMsg(6029,"Profile/Cache:")),DONTSTRETCH,DONTFILL|WEST);
+		pnlFrom.addNext(inpFromProfile=new Input(),HSTRETCH,HFILL);
+		pnlFrom.addLast(inpFromWaypoint=new Input(),HSTRETCH,HFILL);
 		
-		pnlFrom.addNext(new mLabel(MyLocale.getMsg(6030,"Date found:")),DONTSTRETCH,DONTFILL|WEST);
-		pnlFrom.addNext(inpFromDate=new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		pnlFrom.addLast(btnFromDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL|WEST);
+		pnlFrom.addNext(new Label(MyLocale.getMsg(6030,"Date found:")),DONTSTRETCH,DONTFILL|WEST);
+		pnlFrom.addNext(inpFromDate=new Input(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlFrom.addLast(btnFromDate=new Button(new Picture("calendar.png")),DONTSTRETCH,DONTFILL|WEST);
 		btnFromDate.modify(0,ControlConstants.TakesKeyFocus);
 		
-		pnlFrom.addNext(new mLabel(MyLocale.getMsg(6031,"Logged:")),DONTSTRETCH,DONTFILL|WEST);
-		pnlFrom.addLast(chkFromLogged=new mCheckBox(""),DONTSTRETCH,DONTFILL|WEST);
+		pnlFrom.addNext(new Label(MyLocale.getMsg(6031,"Logged:")),DONTSTRETCH,DONTFILL|WEST);
+		pnlFrom.addLast(chkFromLogged=new CheckBox(""),DONTSTRETCH,DONTFILL|WEST);
 		chkFromLogged.exitKeys=exitKeys;
-		pnlFrom.addLast(new mLabel(""));
+		pnlFrom.addLast(new Label(""));
 		
 		pnlTab.addCard(pnlFrom,MyLocale.getMsg(6032,"From"),"From");
 
@@ -120,21 +133,21 @@ public class TravelbugJourneyScreen extends Form  {
 		// Third Tab - Where was the TB dropped
 		//------------------------------------------------
 		CellPanel pnlTo=new CellPanel();
-		pnlTo.addNext(new mLabel(MyLocale.getMsg(6029,"Profile/Cache:")),DONTSTRETCH,DONTFILL|WEST);
-		pnlTo.addNext(inpToProfile=new mInput(),HSTRETCH,HFILL);
-		pnlTo.addLast(inpToWaypoint=new mInput(),HSTRETCH,HFILL);
+		pnlTo.addNext(new Label(MyLocale.getMsg(6029,"Profile/Cache:")),DONTSTRETCH,DONTFILL|WEST);
+		pnlTo.addNext(inpToProfile=new Input(),HSTRETCH,HFILL);
+		pnlTo.addLast(inpToWaypoint=new Input(),HSTRETCH,HFILL);
 		
-		pnlTo.addNext(new mLabel(MyLocale.getMsg(6033,"Date dropped:")),DONTSTRETCH,DONTFILL|WEST);
-		pnlTo.addNext(inpToDate=new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlTo.addNext(new Label(MyLocale.getMsg(6033,"Date dropped:")),DONTSTRETCH,DONTFILL|WEST);
+		pnlTo.addNext(inpToDate=new Input(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		//inpToDate.modifyAll(DisplayOnly,0);
-		pnlTo.addLast(btnToDate=new mButton(new mImage("calendar.png")),DONTSTRETCH,DONTFILL|WEST);
+		pnlTo.addLast(btnToDate=new Button(new Picture("calendar.png")),DONTSTRETCH,DONTFILL|WEST);
 		btnToDate.modify(0,ControlConstants.TakesKeyFocus);
-		//pnlTo.addLast(new mLabel(""));
+		//pnlTo.addLast(new Label(""));
 		
-		pnlTo.addNext(new mLabel(MyLocale.getMsg(6031,"Logged:")),DONTSTRETCH,DONTFILL|WEST);
-		pnlTo.addLast(chkToLogged=new mCheckBox(""),DONTSTRETCH,DONTFILL|WEST);
+		pnlTo.addNext(new Label(MyLocale.getMsg(6031,"Logged:")),DONTSTRETCH,DONTFILL|WEST);
+		pnlTo.addLast(chkToLogged=new CheckBox(""),DONTSTRETCH,DONTFILL|WEST);
 		chkToLogged.exitKeys=exitKeys;
-		pnlTo.addLast(new mLabel(""));
+		pnlTo.addLast(new Label(""));
 		
 		pnlTab.addCard(pnlTo,MyLocale.getMsg(6034,"To"),"To");
 		
@@ -142,7 +155,7 @@ public class TravelbugJourneyScreen extends Form  {
 		// Last Panel - TB Mission
 		//------------------------------------------------
 		CellPanel pnlDest=new CellPanel();
-		pnlDest.addLast(new mLabel(MyLocale.getMsg(6035,"Mission:")));
+		pnlDest.addLast(new Label(MyLocale.getMsg(6035,"Mission:")));
 		pnlDest.addLast(txtMission=new HtmlDisplay(),STRETCH,FILL);
 		txtMission.rows=3;
 		pnlTab.addCard(pnlDest,MyLocale.getMsg(6036,"Mission"),"Mission");
@@ -201,12 +214,12 @@ public class TravelbugJourneyScreen extends Form  {
 			tcTbJourneyList.repaint();
 		}
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED && selectedRow!=-1){
-			if (ev.target==inpTrackingNo) {pnlTab.selectNextTab(true,true); Gui.takeFocus(inpFromProfile,ControlConstants.ByKeyboard);pnlTab.repaint(); }
-			if (ev.target==inpFromDate) Gui.takeFocus(chkFromLogged,ControlConstants.ByKeyboard);
-			if (ev.target==inpToDate) Gui.takeFocus(chkToLogged,ControlConstants.ByKeyboard);
+			if (ev.target==inpTrackingNo) {pnlTab.selectNextTab(true,true); Gui.takeFocus(inpFromProfile,Control.ByKeyboard);pnlTab.repaint(); }
+			if (ev.target==inpFromDate) Gui.takeFocus(chkFromLogged,Control.ByKeyboard);
+			if (ev.target==inpToDate) Gui.takeFocus(chkToLogged,Control.ByKeyboard);
 			if (ev.target==btnFromDate || ev.target==btnToDate) {
-				mInput inpDate=ev.target==btnFromDate ? inpFromDate : inpToDate;
-				DateTimeChooser dc=new DateTimeChooser(Vm.getLocale());
+				Input inpDate=ev.target==btnFromDate ? inpFromDate : inpToDate;
+				DateTimeChooser dc=new DateTimeChooser(Vm.getLocale(), false);
 				dc.title=MyLocale.getMsg(328,"Date found"); 
 				dc.setPreferredSize(240,240);
 				String foundDate=inpDate.getText();
@@ -219,22 +232,22 @@ public class TravelbugJourneyScreen extends Form  {
 					} catch(IllegalArgumentException e1) {}
 				};
 				dc.reset(t);
-				if (dc.execute()==ewe.ui.FormBase.IDOK) {
+				if (dc.execute()==eve.ui.FormBase.IDOK) {
 				  inpDate.setText(Convert.toString(dc.year)+"-"+MyLocale.formatLong(dc.month,"00")+"-"+MyLocale.formatLong(dc.day,"00")+" "+dc.time);
 				  if (ev.target==btnFromDate){ 
 					  tblMyTravelbugJourneys.getTBJourney(selectedRow).setFromDate(inpDate.getText());
-					  Gui.takeFocus(chkFromLogged,ControlConstants.ByKeyboard);
+					  Gui.takeFocus(chkFromLogged,Control.ByKeyboard);
 				  } else {
 					  tblMyTravelbugJourneys.getTBJourney(selectedRow).setToDate(inpDate.getText());
-					  Gui.takeFocus(chkToLogged,ControlConstants.ByKeyboard);
+					  Gui.takeFocus(chkToLogged,Control.ByKeyboard);
 				  } tcTbJourneyList.repaint();
 				}				
 			}
 		}
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.EXITED){
 			pnlTab.selectNextTab(true,true); 
-			if (ev.target==chkFromLogged) Gui.takeFocus(inpToProfile,ControlConstants.ByKeyboard);
-			if (ev.target==chkToLogged) Gui.takeFocus(txtMission,ControlConstants.ByKeyboard);
+			if (ev.target==chkFromLogged) Gui.takeFocus(inpToProfile,Control.ByKeyboard);
+			if (ev.target==chkToLogged) Gui.takeFocus(txtMission,Control.ByKeyboard);
 		}
 		// The user closed the travelbugs screen
 		if (ev instanceof FormEvent && ev.type==FormEvent.CLOSED  && chD!=null) {
@@ -245,7 +258,7 @@ public class TravelbugJourneyScreen extends Form  {
 			Global.getPref().travelbugShowOnlyNonLogged=(tcTbJourneyList.mnuToggleList.modifiers & MenuItem.Checked) == MenuItem.Checked;
 			String travelbugColWidth=modTbJourneyList.getColWidths();
 			// If the preferences changed, save the pref.xml file
-			Vm.showWait(true);
+			Form.showWait();
 			if (!Global.getPref().travelbugColWidth.equals(travelbugColWidth) ||
 				old!=Global.getPref().travelbugShowOnlyNonLogged) {
 				Global.getPref().travelbugColWidth=travelbugColWidth;
@@ -254,9 +267,9 @@ public class TravelbugJourneyScreen extends Form  {
 			// If the list of travelbugs in the cache was modified, we need to save the cache too
 			if (chDmodified) {
 				chD.saveCacheDetails(Global.getProfile().dataDir);
-				ch.has_bug=chD.Travelbugs.size()>0;
+				ch.has_bug=chD.travelbugs.size()>0;
 			}
-			Vm.showWait(false);
+			Form.cancelWait();
 			chD=null;
 		}
 		updateNumBugs();
@@ -269,7 +282,7 @@ public class TravelbugJourneyScreen extends Form  {
 //==============================================================
 class tbListTableModel extends TableModel {
 	private FontMetrics fm;
-	private Image imgRed;
+	private Picture imgRed;
 	tbListTableModel() {
 		
 		fillToEqualHeights=true;
@@ -280,34 +293,31 @@ class tbListTableModel extends TableModel {
 		clipData=true;
 		fm=getFontMetrics();
 		// A red dot indicates that the journey has not been completely logged
-		imgRed = new Image("red.png");
+		imgRed = new Picture("red.png");
 	}
     private int colWidth[];
 	private int columnMap[];
 	
-	public Object getCellText(int row, int col) {
-		return null;
-	}
+//	public Object getCellText(int row, int col) {
+//		return null;
+//	}
 
 	public Object getCellData(int row, int col){
-		if(row == -1){
+		if(row == -1)
 			return TravelbugJourney.getElementNameByNumber(columnMap[col]);
-		} else {
-			int map=columnMap[col];
-			// If we have not yet logged the from or the to, a red dot is placed in front of the first item
-			if (col==0 && (!tblMyTravelbugJourneys.getTBJourney(row).getFromLogged() ||
-				!tblMyTravelbugJourneys.getTBJourney(row).getToLogged())) { 
-				// Is it a column with a checkbox?
-				if (map!=7 && map!=11) 
-					return new IconAndText((IImage)imgRed,(String) tblMyTravelbugJourneys.getTBJourney(row).getElementByNumber(map),fm);
-				else { // Checkbox - special treatment
-					IconAndText iat=new IconAndText(imgRed,"",fm);
-					iat.addColumn(tblMyTravelbugJourneys.getTBJourney(row).getElementByNumber(map));
-					return iat;
-				}
-			} else 
-				return tblMyTravelbugJourneys.getTBJourney(row).getElementByNumber(map);
-		}	
+		int map=columnMap[col];
+		// If we have not yet logged the from or the to, a red dot is placed in front of the first item
+		if (col==0 && (!tblMyTravelbugJourneys.getTBJourney(row).getFromLogged() ||
+			!tblMyTravelbugJourneys.getTBJourney(row).getToLogged())) { 
+			// Is it a column with a checkbox?
+			if (map!=7 && map!=11) 
+				return new IconAndText((IImage)imgRed,(String) tblMyTravelbugJourneys.getTBJourney(row).getElementByNumber(map),fm);
+			// Checkbox - special treatment
+			IconAndText iat=new IconAndText(imgRed,"",fm);
+			iat.addColumn(tblMyTravelbugJourneys.getTBJourney(row).getElementByNumber(map));
+			return iat;
+		}
+		return tblMyTravelbugJourneys.getTBJourney(row).getElementByNumber(map);
 	}
 	public int calculateRowHeight(int row) {
 		return charHeight+2;
@@ -361,7 +371,7 @@ class tbListTableModel extends TableModel {
 	public boolean penPressed(Point onTable,Point cell){
 		boolean retval=false;
 		if(cell!=null && cell.y == -1){ // Hit a header => sort the table accordingly
-			Vm.showWait(true);
+			Form.showWait();
 			if (cell.x == sortedBy) sortAsc=!sortAsc;
 			else sortAsc = false;
 			sortedBy = cell.x;
@@ -373,9 +383,9 @@ class tbListTableModel extends TableModel {
 				tblMyTravelbugJourneys.sort(columnMap[cell.x], sortAsc);
 			}
 			tcTbJourneyList.repaint();
-			Vm.showWait(false);
+			Form.cancelWait();
 			retval = true;
-		} else if (cell!=null && cell.y>=0 && (penEventModifiers & IKeys.SHIFT)>0) {
+		} else if (cell!=null && cell.y>=0 && (penEventModifiers & eve.fx.gui.IKeys.SHIFT)>0) {
 			// A range of rows can be marked by shift-click on the first and last row
 			if (lastRow!=-1) { // Second row being marked with shift key pressed
 				if (lastRow<cell.y)
@@ -494,7 +504,7 @@ class tbListControl extends TableControl {
 		if (selectedItem==mnuDropTB) {
 			if (selectedRow>=0 && selectedRow<modTbJourneyList.numRows) {
 				Travelbug tb=tblMyTravelbugJourneys.getTBJourney(selectedRow).getTb();
-				chD.Travelbugs.add(tb);
+				chD.travelbugs.add(tb);
 				tblMyTravelbugJourneys.addTbDrop(tb,Global.getProfile().name,waypoint);
 				chDmodified=true;
 				ch.has_bug=true;
@@ -534,19 +544,19 @@ class tbListControl extends TableControl {
 		if (selectedItem==mnuGetMission && selectedRow>-1) {
 			TravelbugJourney tbj=tblMyTravelbugJourneys.getTBJourney(selectedRow);
 			SpiderGC spider=new SpiderGC(Global.getPref(),Global.getProfile(),false);
-			Vm.showWait(true);
+			Form.showWait();
 			
 			//if we have an ID, get mission by ID
 			if (tbj.getTb().getGuid().length()!=0) {
 				tbj.getTb().setMission(spider.getBugMissionByGuid(tbj.getTb().getGuid()));
 			} else {
 				//try to get mission and name by tracking number
-				boolean suceeded = false;
+				boolean succeeded = false;
 				if (tbj.getTb().getTrackingNo().length() != 0) {
-					suceeded = spider.getBugMissionAndNameByTrackNr(tbj.getTb());
+					succeeded = spider.getBugMissionAndNameByTrackNr(tbj.getTb());
 				}
 				//if this has't worked, try to get ID by name
-				if (!suceeded) {
+				if (!succeeded) {
 					tbj.getTb().setGuid(spider.getBugId(tbj.getTb().getName().trim()));
 					//if we have an ID now, get mission by ID
 					if (tbj.getTb().getGuid().length()!=0) {
@@ -555,7 +565,7 @@ class tbListControl extends TableControl {
 				}
 			}
 			
-			Vm.showWait(false);
+			Form.cancelWait();
 			tcTbJourneyList.repaint();
 			txtMission.setHtml(tbj.getTb().getMission());
 			inpName.setText(tbj.getTb().getName());
@@ -565,20 +575,20 @@ class tbListControl extends TableControl {
 		if (selectedItem==mnuOpenOnline && selectedRow>=0) {
 			TravelbugJourney tbj=tblMyTravelbugJourneys.getTBJourney(selectedRow);
 			SpiderGC spider=new SpiderGC(Global.getPref(),Global.getProfile(),false);
-			Vm.showWait(true);
+			Form.showWait();
 			// First check whether ID is set, if not get it
 			if (tbj.getTb().getGuid().length()==0) tbj.getTb().setGuid(spider.getBugId(tbj.getTb().getName()));
 			if (tbj.getTb().getGuid().length()!=0) {
-				Vm.showWait(false);
+				Form.cancelWait();
 				try {
 					String s;
 					if (tbj.getTb().getGuid().length()>10)
-						s = "http://www.geocaching.com/track/details.aspx?guid="+tbj.getTb().getGuid();
+						s = "\""+Global.getPref().browser+"\" \"http://www.geocaching.com/track/details.aspx?guid="+tbj.getTb().getGuid()+"\"";
 					else
-						s = "http://www.geocaching.com/track/details.aspx?id="+tbj.getTb().getGuid();
-
-					CWWrapper.exec(Global.getPref().browser, s);
-					Global.getPref().log("Executing: \""+Global.getPref().browser+"\" \""+s+"\"");
+						s = "\""+Global.getPref().browser+"\" \"http://www.geocaching.com/track/details.aspx?id="+tbj.getTb().getGuid()+"\"";
+									
+					Vm.execCommandLine(s);
+					Global.getPref().log("Executing: "+s); 
 				} catch (Exception ioex) {
 				}
 			}

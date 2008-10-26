@@ -1,11 +1,11 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.ui.FormBase;
-import ewe.ui.Gui;
+import eve.ui.FormBase;
+import eve.ui.Gui;
 
 public class NewProfileWizard {
 
-	static public boolean startNewProfileWizard(ewe.ui.Frame parent) {
+	static public boolean startNewProfileWizard(eve.ui.Frame parent) {
 		if (Global.mainTab != null) Global.mainTab.saveUnsavedChanges(true);
 		Preferences pref = Global.getPref();
 		NewProfileForm f=new NewProfileForm(pref.baseDir);
@@ -23,7 +23,7 @@ public class NewProfileWizard {
 				profile.centre.set(cs.getCoords());
 				profile.hasUnsavedChanges=true;
 			}
-			Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
+			Global.mainForm.title="Cachewolf "+Version.getRelease()+" - "+profile.name;
 		}
 		f.close(0);
 		return (code == 0);

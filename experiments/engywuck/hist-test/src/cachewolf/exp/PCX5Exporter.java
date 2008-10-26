@@ -1,19 +1,20 @@
-package exp;
-import CacheWolf.*;
-import ewe.io.FileBase;
+package cachewolf.exp;
+import cachewolf.*;
+import cachewolf.utils.STRreplace;
+import eve.io.File;
 
 /**
 *	Class to export the cache database into an ascii file that may be imported
 *	ba Mapsource (c) by Garmin.
 */
 public class PCX5Exporter extends Exporter{
-	public static int MODE_AUTO = TMP_FILE;
-	public static int MODE_ASK = ASK_FILE;
+	public static final int MODE_AUTO = TMP_FILE;
+	public static final int MODE_ASK = ASK_FILE;
 	
 	public PCX5Exporter(Preferences p, Profile prof){
 		super();
 		this.setMask("*.wpt");
-		this.setTmpFileName(FileBase.getProgramDirectory() + "/temp.pcx");
+		this.setTmpFileName(File.getProgramDirectory() + "/temp.pcx");
 		this.setHowManyParams(NO_PARAMS);
 	}
 	
@@ -39,14 +40,14 @@ public class PCX5Exporter extends Exporter{
 		String latlonstr, dummy;
 
 		  strBuf.append("W  " + ch.wayPoint + " ");
-		  latlonstr = STRreplace.replace(ch.LatLon, "°", " ");
+		  latlonstr = STRreplace.replace(ch.latLon, "°", " ");
 		  latlonstr = STRreplace.replace(latlonstr, " ", "");
 		  latlonstr = STRreplace.replace(latlonstr, "E", " E");
 		  latlonstr = STRreplace.replace(latlonstr, "W", " W");
 		  strBuf.append(latlonstr + "     ");
 		  strBuf.append("01-JAN-04 01:00:00 -0000 ");
 		  // has 42 characters
-		  dummy = ch.CacheName;
+		  dummy = ch.cacheName;
 		  if (dummy.length() < 40){
 			  strBuf.append(dummy);
 			  int i = 40 - dummy.length();

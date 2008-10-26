@@ -1,7 +1,8 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.fx.mImage;
-import ewe.io.File;
+import eve.fx.Picture;
+import eve.io.File;
+import cachewolf.utils.STRreplace;
 
 /**
  * This class represents a single attribute
@@ -12,7 +13,7 @@ public class Attribute {
 	// Constructors
 	public Attribute() { attNo=0; }
 	public Attribute(String attributeName) { attNo=attName2int(attributeName); }
-	
+
 	private int attNo;
 
 	public int getAttrNr () { return attNo; }
@@ -21,7 +22,7 @@ public class Attribute {
 	 * The attribute names are identical to the image names.
 	 * Internally the first image name has number 0, the next number 1 and so on.
 	 */
-	public static final String [] attributeNames= {
+	protected static final String [] attributeNames= {
 			"error.gif",			//00 Unknown attribute
 			"available-no.gif", 	//01 not 24-7
 			"available-yes.gif", 	//02 available 24-7
@@ -39,7 +40,7 @@ public class Attribute {
 			"cliff-yes.gif", 		//14 falling-rocks nearby
 			"climbing-no.gif", 		//15 no difficult climbing
 			"climbing-yes.gif", 	//16 difficult climbing
-			"compass-no.gif", 		//17 
+			"compass-no.gif", 		//17
 			"compass-yes.gif",		//18
 			"cow-no.gif", 			//19
 			"cow-yes.gif", 			//20 watch for livestock
@@ -109,17 +110,16 @@ public class Attribute {
 			"wheelchair-yes.gif", 	//84 wheelchair accessible
 			"winter-no.gif", 		//85 not available for winter
 			"winter-yes.gif", 		//86 available in winter
-			"firstaid-no.gif",              //87 does not need maintenance
-			"firstaid-yes.gif",              //88 needs maintenance
+			"firstaid-no.gif",      //87 does not need maintenance
+			"firstaid-yes.gif",     //88 needs maintenance
 			"flashlight-yes.gif"    // 89 Flashlight required
 	};
-	private static mImage [] attributeImages=new mImage[90];
+	private static Picture [] attributeImages=new Picture[90];
 	private static String IMAGEDIR=STRreplace.replace(File.getProgramDirectory()+"/attributes/", "//", "/");
-	
 	public static String getImageDir() {
-		return IMAGEDIR; 
+		return IMAGEDIR;
 	}
-    
+
     /**
      * Returns the image name for a give attribute number
      * @return Image Name
@@ -127,9 +127,9 @@ public class Attribute {
 	public String getImageName(){
 		if (attNo>attributeNames.length)
 			return "error.gif";
-		else return attributeNames[attNo];
+		return attributeNames[attNo];
 	}
-	
+
 	/**
 	 * Returns the text description of the image
 	 * @return Text description of Image
@@ -137,32 +137,32 @@ public class Attribute {
 	public String getInfo(){
 		return MyLocale.getMsg(2500+attNo,"No attribute info found");
 	}
-	
+
 	/**
 	 * Returns the width of the attribute icons
-	 * @return The width of the images 
+	 * @return The width of the images
 	 */
 	public static int getImageWidth() {
 		initErrorImg();
-		return attributeImages[0].image.getWidth();
+		return attributeImages[0].getWidth();
 	}
-	
+
     /**
      * Get the image for a given attribute number. We use lazy initialisation here, i.e. the images are only
-     * loaded when they are requested. 
+     * loaded when they are requested.
      * @param attNo The attribute number
      * @return
      */
-    public mImage getImage() {
+    public Picture getImage() {
     	if (attNo<0 || attNo>=attributeNames.length) {
     		return attributeImages[0];
     	}
     	if (attributeImages[attNo]==null) {
-    		attributeImages[attNo]=new mImage(IMAGEDIR+attributeNames[attNo]);
+    		attributeImages[attNo]=new Picture(IMAGEDIR+attributeNames[attNo]);
     	}
     	return attributeImages[attNo];
     }
-    
+
 	/**
      * Encode an attribute name with the internal attribute number
      * @param attributeName The attribute name (=filename) to encode
@@ -177,12 +177,12 @@ public class Attribute {
     }
 
     private static void initErrorImg() {
-		if (attributeImages[0]==null) attributeImages[0]=new mImage(IMAGEDIR+"error.gif");
+		if (attributeImages[0]==null) attributeImages[0]=new Picture(IMAGEDIR+"error.gif");
     }
-    
+
     { // Static initialisation of error image
     	initErrorImg();
     }
 
-	
+
 }

@@ -1,43 +1,45 @@
-package CacheWolf;
+package cachewolf;
 
 
-import ewe.ui.*;
+import eve.ui.*;
+import eve.sys.*;
+import eve.ui.event.ControlEvent;
 
 /**
 *	This form displays profile specific data.
 *	It allows the copying of the current centre to the profile centre
 */
-public class ProfileDataForm extends Form {
+public class CenterScreen extends Form {
 
-	private mButton btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur;
+	private Button btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur;
 	Preferences pref;
 	Profile profile;
 	CellPanel content = new CellPanel();
 
 	/**
 	*/
-	public ProfileDataForm(Preferences p, Profile prof){
+	public CenterScreen(Preferences p, Profile prof){
 		super();
 		pref=p;
 		profile=prof;
 		
     	resizable =  false;
 		content.setText(MyLocale.getMsg(1115,"Centre"));
-		content.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_RECT;
-	    //defaultTags.set(this.INSETS,new Insets(2,2,2,2));		
+		content.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_RECT;
+	    //defaultTags.set(this.TAG_INSETS,new Insets(2,2,2,2));		
 		title = MyLocale.getMsg(1118,"Profile")+": "+profile.name;
-		content.addNext(new mLabel(MyLocale.getMsg(1116,"Current")));
-		content.addLast(btnCurrentCentre=new mButton(pref.curCentrePt.toString()),HSTRETCH,HFILL|LEFT);
-		content.addNext(new mLabel("      "),HSTRETCH,HFILL);
-		content.addNext(btnCur2Prof=new mButton("   v   "),DONTSTRETCH,DONTFILL|LEFT);
-		content.addNext(new mLabel(MyLocale.getMsg(1117,"copy")));
-		content.addLast(btnProf2Cur=new mButton("   ^   "),DONTSTRETCH,DONTFILL|RIGHT);
-		content.addNext(new mLabel(MyLocale.getMsg(1118,"Profile")));
-		content.addLast(btnProfileCentre=new mButton(profile.centre.toString()),HSTRETCH,HFILL|LEFT);
+		content.addNext(new Label(MyLocale.getMsg(1116,"Current")));
+		content.addLast(btnCurrentCentre=new Button(pref.curCentrePt.toString()),HSTRETCH,HFILL|LEFT);
+		content.addNext(new Label("      "),HSTRETCH,HFILL);
+		content.addNext(btnCur2Prof=new Button("   v   "),DONTSTRETCH,DONTFILL|LEFT);
+		content.addNext(new Label(MyLocale.getMsg(1117,"copy")));
+		content.addLast(btnProf2Cur=new Button("   ^   "),DONTSTRETCH,DONTFILL|RIGHT);
+		content.addNext(new Label(MyLocale.getMsg(1118,"Profile")));
+		content.addLast(btnProfileCentre=new Button(profile.centre.toString()),HSTRETCH,HFILL|LEFT);
 		addLast(content,HSTRETCH,HFILL);
-		addLast(new mLabel(""),VSTRETCH,FILL);
-		//addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
-		addLast(btnOK = new mButton("OK"),DONTSTRETCH,HFILL|RIGHT);
+		addLast(new Label(""),VSTRETCH,FILL);
+		//addNext(btnCancel = new Button(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
+		addLast(btnOK = new Button("OK"),DONTSTRETCH,HFILL|RIGHT);
 	}
 	
 	/**
@@ -56,7 +58,7 @@ public class ProfileDataForm extends Form {
 			if (ev.target == btnCurrentCentre){
 				CoordsScreen cs = new CoordsScreen();
 				cs.setFields(pref.curCentrePt, CWPoint.CW);
-				if (cs.execute()== FormBase.IDOK){
+				if (cs.execute()== CoordsScreen.IDOK){
 					pref.curCentrePt.set(cs.getCoords());
 					btnCurrentCentre.setText(pref.curCentrePt.toString());
 					Global.getProfile().updateBearingDistance();
@@ -65,7 +67,7 @@ public class ProfileDataForm extends Form {
 			if (ev.target == btnProfileCentre){
 				CoordsScreen cs = new CoordsScreen();
 				cs.setFields(profile.centre, CWPoint.CW);
-				if (cs.execute()== FormBase.IDOK){
+				if (cs.execute()== CoordsScreen.IDOK){
 					profile.centre.set(cs.getCoords());
 					btnProfileCentre.setText(profile.centre.toString());
 					profile.hasUnsavedChanges=true;

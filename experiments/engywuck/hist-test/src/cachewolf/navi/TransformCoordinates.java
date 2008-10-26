@@ -1,10 +1,12 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
-import CacheWolf.CWPoint;
-import CacheWolf.Matrix;
-import CacheWolf.MyLocale;
 
 import java.lang.Math;
+
+import cachewolf.CWPoint;
+import cachewolf.MyLocale;
+import cachewolf.utils.Matrix;
+
 
 /**
  * Class to transform coordinates and shift datums
@@ -58,7 +60,7 @@ public class TransformCoordinates {
 	/** use this for south Germany, maximum deviation sub meter, valid in the former BRD (west germany) in 47°00' N ... 50°20' N */
 	public static final TransformParameters GK_SOUTH_GERMANY =  GK_SOUTH_GERMANY_TO_WGS84; 
 
-	public static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637)); 
+	public static final Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637)); 
 	
 	// taken from http://www.lverma.nrw.de/produkte/druckschriften/verwaltungsvorschriften/images/gps/TrafopsNRW.pdf for NRW this transform has deviations lower than 34cm.
 	private static final TransformParameters GK_NRW_GERMANY_TO_WGS84 = new TransformParameters(566.1, 116.3, 390.1, -1.11, -0.24, 3.76, 12.6);
@@ -164,7 +166,7 @@ public class TransformCoordinates {
 	public static CWPoint italianGkToWgs84(GkPoint gk) {
 		if (ITALY_SARDINIA_GK.isInBound(gk.toTrackPoint(GkPoint.ITALIAN_GB))) return gkToWgs84(gk, HAYFORD1909, GB_ITALIAN_SARDINIA_TO_WGS84, 0.9996);
 		if (ITALY_SICILIA_GK.isInBound(gk.toTrackPoint(GkPoint.ITALIAN_GB))) return gkToWgs84(gk, HAYFORD1909, GB_ITALIAN_SICILIA_TO_WGS84, 0.9996);
-		else return gkToWgs84(gk, HAYFORD1909, GB_ITALIAN_PENINSULAR_TO_WGS84, 0.9996);
+		return gkToWgs84(gk, HAYFORD1909, GB_ITALIAN_PENINSULAR_TO_WGS84, 0.9996);
 	}
 
 	public static CWPoint GkToWgs84(GkPoint gk, int region) {
@@ -214,7 +216,7 @@ public class TransformCoordinates {
 	public static TransformParameters getItalianGkTransformParameters(TrackPoint ll) {
 		if (ITALY_SARDINIA.isInBound(ll)) return GB_ITALIAN_SARDINIA_TO_WGS84;
 		if (ITALY_SICILIA.isInBound(ll)) return GB_ITALIAN_SICILIA_TO_WGS84;
-		else return GB_ITALIAN_PENINSULAR_TO_WGS84;
+		return GB_ITALIAN_PENINSULAR_TO_WGS84;
 	}
 	
 	/**
@@ -252,7 +254,7 @@ public class TransformCoordinates {
 		//ewe.sys.Vm.debug("wgs84-ll: " + new CWPoint(ll).toString(CWPoint.DMS));
 		//ewe.sys.Vm.debug("gkll: " + gkll.toString(CWPoint.DMS));
 		if (stripe == -1)	return projectLatlon2GkStripeauto(gkll, forgk, stripewidth, degreeOfStripe0, scale);
-		else return projectLatlon2GK(gkll, forgk, stripewidth, stripe, degreeOfStripe0, scale); 
+		return projectLatlon2GK(gkll, forgk, stripewidth, stripe, degreeOfStripe0, scale); 
 	}
 	/**
 	 * Call this method to convert any Gauß-Krüger coordinates into
@@ -334,9 +336,9 @@ public class TransformCoordinates {
 		rotate.matrix[2][0] = - rotate.matrix[0][2];
 		rotate.matrix[2][1] = - rotate.matrix[1][2];
 
-		rotate.Multiply(coos);
+		rotate.multiply(coos);
 		coos = rotate;
-		coos.MultiplyByScalar(transParams.s); // scale
+		coos.multiplyByScalar(transParams.s); // scale
 
 		return new XyzCoordinates(coos.matrix[0][0], coos.matrix[1][0], coos.matrix[2][0]);
 	}

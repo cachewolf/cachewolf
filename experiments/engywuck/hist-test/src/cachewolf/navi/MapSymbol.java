@@ -1,9 +1,9 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
-import CacheWolf.CWPoint;
-import ewe.fx.*;
+import cachewolf.CWPoint;
+import eve.fx.*;
 
-public class MapSymbol extends MapImage {
+public class MapSymbol extends MapImage { 
 	Object mapObject;
 	String name;
 	String filename;
@@ -14,14 +14,14 @@ public class MapSymbol extends MapImage {
 		filename = filenamei;
 		where = where_;
 	}
-	public MapSymbol(String namei, Object mapObjecti, Image fromIm, CWPoint where_) {
+	public MapSymbol(String namei, Object mapObjecti, Picture fromIm, CWPoint where_) {
 		name = namei;
 		where = where_;
 		mapObject = mapObjecti;
 		setImage(fromIm);
 	}
 	public void loadImage(){
-		setImage(new Image(filename),0); freeSource();;
+		setImage((new Picture(filename)).toImage(0),null); //freeSource();
 		//properties = AniImage.AlwaysOnTop;
 	}
 }

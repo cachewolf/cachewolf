@@ -1,7 +1,7 @@
-package exp;
-import CacheWolf.*;
-import ewe.io.File;
-import ewe.io.FileBase;
+package cachewolf.exp;
+import cachewolf.*;
+import cachewolf.utils.Common;
+import eve.io.File;
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
 
@@ -12,7 +12,7 @@ import ewesoft.xml.sax.*;
 *	Now includes mapping of cachetypes to user defined icons (as defined in file garminmap.xml).
 */
 public class LocExporter extends Exporter{
-	public static int MODE_AUTO = TMP_FILE;
+	public static final int MODE_AUTO = TMP_FILE;
 	/**
 	 * Defines how certain cachetypes are mapped to user icons
 	 */
@@ -22,7 +22,7 @@ public class LocExporter extends Exporter{
 		super();
 		this.setMask("*.loc");
 		this.setHowManyParams(NO_PARAMS);
-		if ((new File(FileBase.getProgramDirectory()+"/garminmap.xml")).exists()) {
+		if ((new File(File.getProgramDirectory()+"/garminmap.xml")).exists()) {
 			gm=new GarminMap();
 			gm.readGarminMap();
 		}
@@ -46,7 +46,7 @@ public class LocExporter extends Exporter{
 			} catch (Exception ex){ pref.log("Invalid value for garmin.MaxWaypointLength"); }
 		}
 		strBuf.append("\"><![CDATA[");
-		strBuf.append(simplifyString(chD.CacheName));
+		strBuf.append(simplifyString(chD.cacheName));
 		strBuf.append("]]></name>\r\n   <coord lat=\"");
 		strBuf.append(chD.pos.getLatDeg(CWPoint.DD));
 		strBuf.append("\" lon=\"");
@@ -81,8 +81,8 @@ public class LocExporter extends Exporter{
 		String lastName;
 		public void readGarminMap(){
 			try{
-				String datei = FileBase.getProgramDirectory() + "/garminmap.xml";
-				ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(datei));
+				String datei = File.getProgramDirectory() + "/garminmap.xml";
+				java.io.Reader r = new java.io.InputStreamReader(new java.io.FileInputStream(datei));
 				parse(r);
 				r.close();
 			}catch(Exception e){
@@ -95,7 +95,7 @@ public class LocExporter extends Exporter{
 		public void startElement(String name, AttributeList atts){
 			lastName=name;
 			if (name.equals("icon")) {
-				symbols[mapSize]=new IconMap(atts.getValue("type"),atts.getValue("name"),atts.getValue("found"));
+				symbols[mapSize]=new IconMap(Common.parseInt(atts.getValue("type")),atts.getValue("name"),atts.getValue("found"));
 				mapSize++;
 			}
 		}		
@@ -104,25 +104,24 @@ public class LocExporter extends Exporter{
 			// First check if there is a mapping for "cache found"
 			if (chD.is_found) {
 				for (int i=0; i<mapSize; i++)
-					if (symbols[i].onlyIfFound!=null && symbols[i].type.equals(chD.type)) return symbols[i].name;
+					if (symbols[i].onlyIfFound!=null && symbols[i].type==chD.type) return symbols[i].name;
 			}
 			// Now try mapping the cache irrespective of the "found" status
 			for (int i=0; i<mapSize; i++)
-				if (symbols[i].type.equals(chD.type)) return symbols[i].name;
+				if (symbols[i].type==chD.type) return symbols[i].name;
 		
 			// If it is not a mapped type, just use the standard mapping
 			if (chD.is_found)
 				return "Geocache Found";
-			else
-				return "Geocache";
+			return "Geocache";
 		}
 		
 		private class IconMap {
-			public String type;
-			public String name;
+			public int type;
 			public Boolean onlyIfFound;
+			public String name;
 			
-			IconMap(String type, String name, String onlyIfFound) {
+			IconMap(int type, String name, String onlyIfFound) {
 				this.type=type;
 				this.name=name;
 				if (onlyIfFound!=null && onlyIfFound.equals("1"))

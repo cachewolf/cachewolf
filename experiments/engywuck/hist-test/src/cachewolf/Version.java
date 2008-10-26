@@ -1,29 +1,39 @@
 
-package CacheWolf;
+package cachewolf;
 
-import com.stevesoft.ewe_pat.Regex;
-import ewe.io.*;
-import ewe.util.*;
-import ewe.sys.*;
+
+import cachewolf.utils.Common;
+
+import com.stevesoft.eve_pat.Regex;
+import java.io.IOException;
+import java.util.Properties;
+
+import eve.sys.*;
+import eve.ui.Form;
 
 /**
  * Class to hold and handle version information of the cachewolf project
- * language localisation string at at number 7000 
+ * language localisation string at at number 7000
+ */
+
+/**
+ * Class to hold and handle version information of the cachewolf project
+ * language localisation string at at number 7000
  */
 
 public class Version {
 	static final int VER_MAJOR = 1;
-	static final int VER_MINOR = 0;
+	static final int VER_MINOR = 5;
 	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
 	static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ")+1, VER_SVN.lastIndexOf(" ")));
-	static final int VERSION_TYPE = 0;
+	static final int VERSION_TYPE = 1;
 	public static final String[] VERSION_TYPES = {
-		"Release", 
+		"Release",
 		"ReleaseCandidate",
 		"InDevelopmentStable",
 		"InDevelopmentNewest"
 	};
-	
+
 	/** only valid after calling checkForUpdates() */
 	static int[] updateavailabe = {0,0,0,0,0};
 	/** only valid after calling checkForUpdates() */
@@ -40,8 +50,8 @@ public class Version {
 	}
 
 	/**
-	 * Checks if newer versions of cachewolf are available 
-	 * @return [0] = recommended version type, [1]...[4]: 0: no update available, 1: newer version available, 2: version doesn't exists, 3: error 
+	 * Checks if newer versions of cachewolf are available
+	 * @return [0] = recommended version type, [1]...[4]: 0: no update available, 1: newer version available, 2: version doesn't exists, 3: error
 	 * @throws IOException
 	 */
 	public static void checkForUpdates() throws IOException {
@@ -77,15 +87,14 @@ public class Version {
 	}
 
 	public static String getUpdateMessage() {
-		Vm.showWait(true);
+		Form.showWait();
 		try {
 			checkForUpdates();
 			return MyLocale.getMsg(7022, "Version type") +"\n"+ newVersionsArrayToString();
 		} catch (IOException e) {
 			return MyLocale.getMsg(7023, "Error getting current version information") +"\n" + e.getMessage();
-		}
-		finally {
-			Vm.showWait(false);
+		} finally {
+			Form.cancelWait();
 		}
 	}
 
@@ -96,20 +105,20 @@ public class Version {
 
 	private static int checkVersion(Properties curvers, String prefix, int t) {
 		try {
-			int curvmaj = Convert.toInt(curvers.getProperty(prefix + "VersionMajor", "0")); 
+			int curvmaj = Convert.toInt(curvers.getProperty(prefix + "VersionMajor", "0"));
 			int curvmin = Convert.toInt(curvers.getProperty(prefix + "VersionMinor", "0"));
 			String svnRString = curvers.getProperty(prefix + "SvnRevision","0");
 			if (svnRString.startsWith("http")) {
 				String tmp;
 				Regex s;
-				int i = svnRString.indexOf(' '); 
+				int i = svnRString.indexOf(' ');
 				if (i > 0) {
 					tmp = UrlFetcher.fetchString(svnRString.substring(0, i));
 					s = new Regex (svnRString.substring(i+1, svnRString.length())); // flyingfish works 3/2008 with ("(?i)Revision[\\s]*[:=][\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)");
-				} else { versionnumbers[t] = "error: no RegEx"; return 3; } 
+				} else { versionnumbers[t] = "error: no RegEx"; return 3; }
 				s.search(tmp);
 				if (!s.didMatch()) { versionnumbers[t] = "error: RegEx didnot match"; return 3; }
-				svnRString = s.stringMatched(1); 
+				svnRString = s.stringMatched(1);
 			}
 			versionnumbers[t] = curvmaj + "." + curvmin + "." + svnRString;
 			if (curvmaj > VER_MAJOR) return 1;
@@ -119,7 +128,7 @@ public class Version {
 			if (Convert.toInt(svnRString) > SVN_REVISION) return 1;
 			return 0;
 		} catch (IOException e) {
-			versionnumbers[t] = "IO-error"; 
+			versionnumbers[t] = "IO-error";
 			return 3;
 		}
 	}

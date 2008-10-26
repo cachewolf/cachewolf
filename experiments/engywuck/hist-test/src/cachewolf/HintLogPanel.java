@@ -1,16 +1,18 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.ui.*;
-import ewe.fx.Dimension;
-import ewe.fx.Graphics;
-import ewe.fx.Point;
-import ewe.fx.mImage;
-import ewe.graphics.AniImage;
-import ewe.graphics.ImageDragContext;
-import ewe.graphics.InteractivePanel;
-import ewe.sys.*;
-import ewe.fx.Image;
-import ewe.fx.Rect;
+import cachewolf.utils.Common;
+import eve.ui.*;
+import eve.fx.Point;
+import eve.sys.*;
+import eve.fx.Rect;
+import eve.ui.formatted.HtmlDisplay;
+import eve.ui.game.AniImage;
+import eve.ui.event.KeyEvent;
+import eve.ui.game.InteractivePanel;
+import eve.ui.event.ControlEvent;
+import eve.fx.gui.IKeys; 
+import eve.ui.game.ImageDragContext;
+
 
 /**
  *	Class to create the panel that holds hints and logs.
@@ -21,17 +23,17 @@ import ewe.fx.Rect;
  *	Class ID=400
  */
 public class HintLogPanel extends CellPanel{
-	int crntLogPosition = 0;
-	CacheHolderDetail currCache;
-	private final int DEFAULT_STRINGBUFFER_SIZE=8000;
-	mTextPad hint = new mTextPad();
+	private int crntLogPosition = 0;
+	private CacheHolderDetail currCache;
+	private final static int DEFAULT_STRINGBUFFER_SIZE=8000;
+	private TextPad hint = new TextPad();
 	//mTextPad logs = new mTextPad();
-	HtmlDisplay logs = new HtmlDisplay();
-	AniImage htmlTxtImage;
-	fastScrollText htmlImagDisp = new fastScrollText();
-	mButton decodeButton = new mButton("Decode");
-	mButton moreBt = new mButton(">>");
-	mButton prevBt = new mButton("<<");
+	private HtmlDisplay logs = new HtmlDisplay();
+	//AniImage htmlTxtImage;
+	//fastScrollText htmlImagDisp = new fastScrollText();
+	private Button decodeButton = new Button("Decode");
+	private Button moreBt = new Button(">>");
+	private Button prevBt = new Button("<<");
 	private MyScrollBarPanel sbplog;
 	private int lastScrollbarWidth = 0;
 	
@@ -43,61 +45,57 @@ public class HintLogPanel extends CellPanel{
 		int initialHintHeight=Global.getPref().initialHintHeight;
 		if (initialHintHeight<0 || initialHintHeight>1000) initialHintHeight=Global.getPref().DEFAULT_INITIAL_HINT_HEIGHT;
 		hintpane.setPreferredSize(100,initialHintHeight); 
-		ScrollBarPanel sbphint = new MyScrollBarPanel(hint);
+		MyScrollBarPanel sbphint = new MyScrollBarPanel(hint);
 		hintpane.addLast(sbphint,CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		hintpane.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		hintpane.addNext(decodeButton,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		decodeButton.setMinimumSize(MyLocale.getScreenWidth()*2/3,10);
 		hintpane.addLast(moreBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
-		hint.modify(ControlConstants.NotEditable,0);
+		hint.modify(Control.NotEditable,0);
 
-		sbplog = new MyScrollBarPanel(htmlImagDisp, ScrollablePanel.NeverShowHorizontalScrollers);
-		//logpane.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
-		Rect r = new Rect(new Dimension (Global.getPref().myAppWidth-sbplog.vbar.getRect().width, 20));
-		htmlImagDisp.virtualSize = r;
-		htmlImagDisp.checkScrolls();
-		logpane.addLast(sbplog.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
-		this.addLast(split);
+		sbplog = new MyScrollBarPanel(logs, ScrollBarPanel.NeverShowHorizontalScrollers);
+		//sbplog.stretchFirstRow=true;sbplog.stretchLastRow=false; sbplog.backGround=new eve.fx.Color(0,0,255);
+		logpane.addLast(sbplog, CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(split, CellConstants.STRETCH, CellConstants.FILL);
 		clear();
 	}
-
+	
 	public void setText(CacheHolderDetail cache){
-	        if (currCache != cache){
-	            this.currCache = cache;
-	            if(!cache.Hints.equals("null")) 
-	                hint.setText(STRreplace.replace(cache.Hints, "<br>", "\n"));
-	            else
-	                hint.setText("");
-	            crntLogPosition = 0;
-	            setLogs(0);
-	            moreBt.modify(0,ControlConstants.Disabled);
-	            prevBt.modify(0,ControlConstants.Disabled);
-	        }
+		this.currCache = cache;
+		if(!cache.hints.equals("null")) 
+			hint.setText(cache.hints);
+		else
+			hint.setText("");
+		crntLogPosition = 0;
+		setLogs(0);
+		moreBt.modify(0,Control.Disabled);
+		prevBt.modify(0,Control.Disabled);
+//		if (Gui.screenIs(Gui.PDA_SCREEN) && Device.isMobile()) {
+//		Vm.setSIP(0);
+//		}
+		////Vm.debug("In log: " + cache.CacheLogs);
 	}
 
 	public void clear() {
-	    clearOutput();
-	    currCache = null;
-	}
-	private void clearOutput() {
-		if (htmlTxtImage != null) {
+		logs.setHtml("loading ...");
+		/*if (htmlTxtImage != null) {
 			htmlImagDisp.removeImage(htmlTxtImage);
 			htmlTxtImage.free();		
-		}
+		}*/
 	}
 	void setLogs(int crntLogPosition) {
-		Vm.showWait(true);
+		Form.showWait();
+		clear();
 		StringBuffer dummy = new StringBuffer(DEFAULT_STRINGBUFFER_SIZE);
 		int counter = 0;
-		int nLogs=currCache.CacheLogs.size();
+		int nLogs=currCache.cacheLogs.size();
 		int logsPerPage=Global.getPref().logsPerPage;
 		for(int i = crntLogPosition; i<nLogs; i++){
-			dummy.append(currCache.CacheLogs.getLog(i).toHtml());
+			dummy.append(currCache.cacheLogs.getLog(i).toHtml());
 			dummy.append("</br>");
 			if(++counter >= logsPerPage) break;
 		}
-		clearOutput();
-		logs.resizeTo(width, 50);
+		//logs.resizeTo(width, 50);
 		// The cache GCP0T6 crashes the HtmlDisplay
 		// As a temporary fix
 		try {
@@ -105,13 +103,13 @@ public class HintLogPanel extends CellPanel{
 		} catch (Exception e) {
 			logs=new HtmlDisplay();
 			Global.getPref().log("Error rendering HTML",e,true);
-			logs.setPlainText("Ewe VM: Internal error displaying logs");
+			logs.setPlainText("eve VM: Internal error displaying logs");
 		}
-		int h = logs.getLineHeight() * logs.getNumLines();
+		/*int h = logs.getLineHeight() * logs.getNumLines();
 		htmlTxtImage = new AniImage(new Image(width, h));
 		htmlTxtImage.setLocation(0, 0);
-		htmlTxtImage.properties |= mImage.IsMoveable;
-		Graphics draw = new Graphics(htmlTxtImage.image);
+		htmlTxtImage.properties |= AniImage.IsMoveable;
+		Graphics draw = new Graphics((Image)htmlTxtImage.getImage());
 		logs.resizeTo(htmlTxtImage.getWidth()-lastScrollbarWidth, htmlTxtImage.getHeight());
 		logs.doPaint(draw, new Rect(0,0,htmlTxtImage.getWidth(), htmlTxtImage.getHeight()));
 		htmlImagDisp.addImage(htmlTxtImage);
@@ -127,12 +125,14 @@ public class HintLogPanel extends CellPanel{
 		int scrollbarWidth = sbplog.vbar.getRect().width;
 		if (scrollbarWidth != lastScrollbarWidth) { 
 		    lastScrollbarWidth = scrollbarWidth;
-    		    logs.resizeTo(htmlTxtImage.getWidth()-scrollbarWidth, htmlTxtImage.getHeight());
-    		    logs.doPaint(draw, new Rect(0,0,htmlTxtImage.getWidth(), htmlTxtImage.getHeight()));
+   		    logs.resizeTo(htmlTxtImage.getWidth()-scrollbarWidth, htmlTxtImage.getHeight());
+   		    logs.doPaint(draw, new Rect(0,0,htmlTxtImage.getWidth(), htmlTxtImage.getHeight()));
 		}
+
 		htmlImagDisp.repaintNow();
+		*/
 		repaintNow();
-		Vm.showWait(false);
+		Form.cancelWait();
 	}
 
 	/**
@@ -143,25 +143,25 @@ public class HintLogPanel extends CellPanel{
 	 */
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
-			int minLogs = java.lang.Math.min(Global.getPref().logsPerPage, currCache.CacheLogs.size());
+			int minLogs = java.lang.Math.min(Global.getPref().logsPerPage, currCache.cacheLogs.size());
 			if(ev.target == moreBt){
-				prevBt.modify(0,ControlConstants.Disabled);
+				prevBt.modify(0,Control.Disabled);
 				prevBt.repaintNow();
 				crntLogPosition += minLogs;
-				if(crntLogPosition >= currCache.CacheLogs.size()) {
+				if(crntLogPosition >= currCache.cacheLogs.size()) {
 					//crntLogPosition = cache.CacheLogs.size()-5;
-					crntLogPosition = currCache.CacheLogs.size()- minLogs;
-					moreBt.modify(ControlConstants.Disabled,0);
+					crntLogPosition = currCache.cacheLogs.size()- minLogs;
+					moreBt.modify(Control.Disabled,0);
 					moreBt.repaintNow();
 				}
 				setLogs(crntLogPosition);
 			} // = moreBt
 			if(ev.target == prevBt){
-				moreBt.modify(0,ControlConstants.Disabled);
+				moreBt.modify(0,Control.Disabled);
 				moreBt.repaintNow();
 				crntLogPosition -= minLogs;
 				if(crntLogPosition <= 0) {
-					prevBt.modify(ControlConstants.Disabled,0);
+					prevBt.modify(Control.Disabled,0);
 					prevBt.repaintNow();
 					crntLogPosition = 0;
 				}
@@ -179,7 +179,7 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 	public boolean scrollHorizontal = false;
 	public boolean imageNotDragged(ImageDragContext drag,Point where) {
 		if (drag == null || drag.image == null) return super.imageNotDragged(drag, where);
-		getDim(null);
+		//Rect r = getDim(null);
 		if (drag.image.location.y <= 0 ){
 			drag.image.move(0, drag.image.location.y);
 		} else {

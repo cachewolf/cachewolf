@@ -1,15 +1,15 @@
-package CacheWolf.navi;
+package cachewolf.navi;
 
-import ewe.fx.*;
+import eve.fx.*;
 
 public class Track {
 	public Color trackColor;
-	public TrackPoint TrackPoints[];
+	public TrackPoint trackPoints[];
 	public int num;
 	
 	public Track(Color f) {
 		trackColor = f;
-		TrackPoints = new TrackPoint[5000];
+		trackPoints = new TrackPoint[5000];
 		num = 0;
 	}
 /*===== add is currently not used	
@@ -18,17 +18,17 @@ public class Track {
 		num++;
 	}
 =====*/	
-	/**
+	/*
 	 * throws IndexOutOfBoundsException when track is full
 	 */
 	public void add(TrackPoint t) { 
-		if (TrackPoints == null || t == null) return;
-		TrackPoints[num] = new TrackPoint(t);
+		if (trackPoints == null || t == null) return;
+		trackPoints[num] = new TrackPoint(t);
 		num++;
 	}
 /*===== loadTrack/saveTrack are currently not used
 	public void loadTrack(String filename){ // TODO untested!
-		byte [] all = ewe.sys.Vm.readResource(null,filename);
+		byte [] all = eve.sys.Vm.readResource(null,filename);
 		if (all == null) return; // TODO error handling
 		num = Utils.readInt(all, 0, 4);
 		for (int i=0; i<=num; i++){

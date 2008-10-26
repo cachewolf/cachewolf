@@ -1,10 +1,7 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.io.File;
-import ewe.io.IOException;
-import ewe.io.RandomAccessFile;
-import ewe.sys.*;
-
+import eve.sys.*;
+import com.stevesoft.eve_pat.*;
 import java.lang.Math;;
  
 
@@ -18,21 +15,45 @@ public class Test extends mThread{
 		testAll();
 	}
 	void testAll(){
-		testPerformance();
-/*		testRegex();
+//		testPerformance();
+	    Regex r = new Regex("x\\s*(a|b)y");
+	    r.search("abcx   ay");
+	    eve.sys.Vm.debug("sub = "+r.stringMatched(1));
+		
+		Regex rex = new Regex("(?:" +
+		"([NSns])\\s*([0-9]{1,2})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?\\s*" +
+		"([EWewOo])\\s*([0-9]{1,3})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?" +
+		")|(?:" +
+		"(?:([NnSs])\\s*(?![+-]))?"   +     "([+-]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=[+-EeWwOo])|\\s+|\\s*[°\uC2B0]\\s*)" +
+	  	"(?:([EeWwOo])\\s*(?![+-]))?"    +     "([+-]?[0-9]{1,3})[,.]([0-9]{1,8})\\s*[°\uC2B0]?" +
+		")|(?:" +
+		"([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" +
+		")|(?:" +
+		"[Rr]:?\\s*([+-]?[0-9]{1,7})\\s+[Hh]:?\\s*([+-]?[0-9]{1,7})" +
+		")");		
+	    rex.search("N 23° 12.1234 E 23° 45.234");
+	    eve.sys.Vm.debug("rex = "+rex.stringMatched(1)+" "+rex.stringMatched(2)+" "+rex.stringMatched(3)+" "+rex.stringMatched(4)+
+	    		" "+rex.stringMatched(5)+" "+rex.stringMatched(6)+" "+rex.stringMatched(7)+" "+rex.stringMatched(8)+" "+rex.stringMatched(9)+
+	    		" "+rex.stringMatched(10)
+	    );
+	    
+		//testRegex();
 		if (allPassed) 
 			Vm.debug("SUCCESS: All tests passed"); 
-		else 
+		else  
 			Vm.debug("FAILURE: At least one test failed"); 
-*/	}
+	}
 	void testPerformance(){
 		Time start, end;
 		int i;
+		double tmp=0.0;
+		
 		// 100.000 Sinus
 		start = new Time();
 		for (i=0; i<100000; i++){
-			Math.sin(53);
+			tmp = Math.sin(53);
 		}
+		tmp=tmp+0;
 		end = new Time();
 		printResult("sin(53)", start, end, i);
 		
@@ -75,32 +96,13 @@ public class Test extends mThread{
 		end = new Time();
 		printResult("cwSet.set(\"N 51° 27.635 E 009° 37.621\", CWPoint.CW) CWPoint set", start, end, i);
 
-		// 1.000 filewrite
-		String fileName = new String("test.tmp");
-		try {
-			RandomAccessFile out =  new RandomAccessFile(fileName,"rw");
-			start = new Time();
-			for (i=0; i<10000; i++){
-				out.writeBytes(fileName);
-			}
-			end = new Time();
-			out.close();
-			File dfile = new File(fileName);
-			dfile.delete();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		printResult("Filewrite 10 Bytes", start, end, i);
-		
 	}
 	
 	void printResult(String what, Time start, Time end, int count){
-		String VM = Vm.getPlatform();
 		long time;
 		time = end.getTime() - start.getTime();
 		
-		Vm.debug(VM + " " +  Convert.toString(time) + " msec " + Convert.toString(count) + " * " + what);
+		Vm.debug(" " +  Convert.toString(time) + " msec " + Convert.toString(count) + " * " + what);
 	}
 	
 	void testPassedRegex(String pattern, String expectedResult, int format) {

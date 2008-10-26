@@ -1,15 +1,24 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.fx.*;
-import ewe.ui.*;
-import ewe.util.*;
+import eve.fx.*;
+import eve.ui.*;
+import java.util.*;
+
+import cachewolf.utils.Common;
+
+
+import eve.ui.List;
+import eve.ui.event.ControlEvent;
+import eve.ui.event.ListEvent;
+import eve.sys.Event;
+
 
 public class TableColumnChooser extends CellPanel {
 
 	String [] colNames;
 	Vector shownCols=new Vector(20);
 	Vector hiddenCols=new Vector(20);
-	private mButton btnDown,btnUp,btnLeft,btnRight;
+	private Button btnDown,btnUp,btnLeft,btnRight;
 	private myList lstShown,lstHidden;
 	
 	/**
@@ -19,30 +28,30 @@ public class TableColumnChooser extends CellPanel {
 	 */
 	public TableColumnChooser(String [] colNames, String selectedCols) {
         this.colNames=colNames;
-		addNext(new mLabel(MyLocale.getMsg(6050,"Show column")));
-        addNext(new mLabel(""));
-        addLast(new mLabel(MyLocale.getMsg(6051,"Don't show column")));
+		addNext(new Label(MyLocale.getMsg(6050,"Show column")));
+        addNext(new Label(""));
+        addLast(new Label(MyLocale.getMsg(6051,"Don't show column")));
         
-        addNext(new MyScrollBarPanel(lstShown=new myList(6,shownCols),ScrollablePanel.AlwaysShowVerticalScrollers));
+        addNext(new MyScrollBarPanel(lstShown=new myList(6,shownCols),ScrollBarPanel.AlwaysShowVerticalScrollers));
         CellPanel cpMid=new CellPanel();
-        cpMid.addLast(new mLabel(""));
-        mImage imgRight=new mImage("ewe/rightarrowsmall.bmp");imgRight.transparentColor=Color.White;
-        mImage imgLeft=new mImage("ewe/leftarrowsmall.bmp");imgLeft.transparentColor=Color.White;
-        cpMid.addLast(btnRight=new mButton(imgRight));
-        cpMid.addLast(new mLabel(""));
-        cpMid.addLast(btnLeft=new mButton(imgLeft));
-        cpMid.addLast(new mLabel(""));
+        cpMid.addLast(new Label(""));
+        Picture imgRight=new Picture("eve/rightarrowsmall.png");//TODO imgRight.transparentColor=Color.White;
+        Picture imgLeft=new Picture("eve/leftarrowsmall.png");//TODO imgLeft.transparentColor=Color.White;
+        cpMid.addLast(btnRight=new Button(imgRight));
+        cpMid.addLast(new Label(""));
+        cpMid.addLast(btnLeft=new Button(imgLeft));
+        cpMid.addLast(new Label(""));
         addNext(cpMid,VSTRETCH,VFILL);
-        addLast(new MyScrollBarPanel(lstHidden=new myList(6,hiddenCols),ScrollablePanel.AlwaysShowVerticalScrollers));
+        addLast(new MyScrollBarPanel(lstHidden=new myList(6,hiddenCols),ScrollBarPanel.AlwaysShowVerticalScrollers));
         
         CellPanel pnlButtons=new CellPanel();
-		mImage imgDown=new mImage("ewe/downarrowsmall.bmp"); imgDown.transparentColor=Color.White;
-		mImage imgUp=new mImage("ewe/uparrowsmall.bmp"); imgUp.transparentColor=Color.White;
-        pnlButtons.addNext(btnDown=new mButton(imgDown),HSTRETCH,HFILL); btnDown.modify(Disabled,0);
-		pnlButtons.addLast(btnUp=new mButton(imgUp),HSTRETCH,HFILL); btnUp.modify(Disabled,0);
+		Picture imgDown=new Picture("eve/downarrowsmall.png"); //TODO imgDown.transparentColor=Color.White;
+		Picture imgUp=new Picture("eve/uparrowsmall.png"); //TODO imgUp.transparentColor=Color.White;
+        pnlButtons.addNext(btnDown=new Button(imgDown),HSTRETCH,HFILL); btnDown.modify(Disabled,0);
+		pnlButtons.addLast(btnUp=new Button(imgUp),HSTRETCH,HFILL); btnUp.modify(Disabled,0);
         addNext(pnlButtons);
-        addNext(new mLabel(""));
-        addLast(new mLabel(""));
+        addNext(new Label(""));
+        addLast(new Label(""));
         
         // Set up
         for (int i=0; i<colNames.length; i++) hiddenCols.add(colNames[i]);
@@ -103,7 +112,7 @@ public class TableColumnChooser extends CellPanel {
 		super.onEvent(ev);
 	}
 	
-	private class myList extends mList {
+	private class myList extends List {
 
 		//public Vector items;
 		int idx;
@@ -112,6 +121,7 @@ public class TableColumnChooser extends CellPanel {
 			super(rows,1,false);
 			//this.items=elements;
 			items=elements;
+			modify(WantDrag,0);
 		}
 
 		// Move selected element down by one
@@ -119,7 +129,7 @@ public class TableColumnChooser extends CellPanel {
 			idx=getSelectedIndex(0);
     		if (idx>=0) {
 	    		String s=(String) items.elementAt(idx);
-				items.del(idx);
+				items.removeElementAt(idx);
 	    		items.insertElementAt(s,idx+1);
 	    		select(idx+1);
 	    		repaint();
@@ -131,7 +141,7 @@ public class TableColumnChooser extends CellPanel {
 			idx=getSelectedIndex(0);
     		if (idx>=0) {
 				String s=(String) items.elementAt(idx);
-				items.del(idx);
+				items.removeElementAt(idx);
 	    		items.insertElementAt(s,idx-1);
 	    		select(idx-1);
 	    		repaint();
@@ -157,7 +167,7 @@ public class TableColumnChooser extends CellPanel {
 		public void stopDragging(DragContext dc) {
 			 if (dc.dragData==null) return;
 			 dc.stopImageDrag(true);
-			 Point p = Gui.getPosInParent(this,getWindow());
+			 Point p = Gui.getPosInParent(this,getWindow(),null);
 			 p.x += dc.curPoint.x;
 			 p.y += dc.curPoint.y;
 			 Control dest = getWindow().findChild(p.x,p.y);
@@ -170,7 +180,7 @@ public class TableColumnChooser extends CellPanel {
 		public void moveItem(myList dst, int srcIdx) {
 			 if(srcIdx<0) return;
 	    	 String colToMove=(String) items.elementAt(srcIdx);
-	    	 items.del(srcIdx);
+	    	 items.removeElementAt(srcIdx);
 	    	 dst.items.add(colToMove);
 	    	 repaint();
 	    	 dst.repaint();
@@ -187,7 +197,7 @@ public class TableColumnChooser extends CellPanel {
 	 */ 
 	public static int[] str2Array(String configString, int min, int max, int def, int minSize) {
 		Vector strConfigVector=new Vector(18);
-		SubString.split(configString,',',strConfigVector);
+		eve.util.SubString.split(configString,',',strConfigVector);
 		int i;
 		int nElem=strConfigVector.size();
 		int []res=new int[nElem>minSize?nElem:minSize];

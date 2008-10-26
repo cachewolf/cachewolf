@@ -5,8 +5,8 @@
  * This code may be freely used and modified on any personal or professional
  * project.  It comes with no warranty.
  */
-//package org.gavaghan.geodesy;
-package CacheWolf.navi;
+
+package cachewolf.navi;
 
 /**
  * <p>
@@ -271,11 +271,11 @@ public class GeodeticCalculator
          // modification by MiK77: check if lambda is zero to avoid division by zero. Use lambda0 for division in this case.
          double change = 1.0;
          if (lambda != 0) {
-        	 change = Math.abs((lambda - lambda0) / lambda);
+                 change = Math.abs((lambda - lambda0) / lambda);
          } else if (lambda0 != 0){
-        	 change = Math.abs((lambda - lambda0) / lambda0); 
+                 change = Math.abs((lambda - lambda0) / lambda0); 
          } else {
-        	 change = 0.0;
+                 change = 0.0;
          }
 
          if ((i > 1) && (change < 0.0000000000001))
@@ -340,14 +340,14 @@ public class GeodeticCalculator
    
    static public double calculateDistance(Ellipsoid ellipsoid, TrackPoint start, TrackPoint end)
    {
-	   return calculateDistanceAndBearing(ellipsoid, start, end, null);
+           return calculateDistanceAndBearing(ellipsoid, start, end, null);
    }
    
    static public double calculateBearing(Ellipsoid ellipsoid, TrackPoint start, TrackPoint end)
    {
-	   double bearing[]={0.0};
-	   calculateDistanceAndBearing(ellipsoid, start, end, bearing);
-	   return bearing[0];
+           double bearing[]={0.0};
+           calculateDistanceAndBearing(ellipsoid, start, end, bearing);
+           return bearing[0];
    }
 
 }

@@ -1,18 +1,13 @@
-package CacheWolf;
+package cachewolf.utils;
 
-import utils.FileBugfix;
-import ewe.io.Base64Codec;
-import ewe.io.File;
-import ewe.io.IOException;
-import ewe.sys.Convert;
-import ewe.util.ByteArray;
-import ewe.io.JavaUtf8Codec;
+import cachewolf.MyLocale;
+import eve.io.File;
 
 public final class Common {
 
 	private static char digSep=MyLocale.getDigSeparator().charAt(0);
 	private static char notDigSep=MyLocale.getDigSeparator().charAt(0)=='.'?',':'.';
-	
+
 	/**
 	 * get double value from string. It interpretes "." and "," as decimal separator
 	 * when the string cannot be interpreted, return 0.
@@ -36,13 +31,25 @@ public final class Common {
 	public static double parseDoubleException (String value) {
 			return java.lang.Double.parseDouble(value.replace(notDigSep,digSep));
 	}
-	
+
 	public static int parseInt(String value){
 		try {
 			return java.lang.Integer.parseInt(value);
 		} catch (Exception e) {
 			return 0;
 		}
+	}
+	/**
+	 * Format a double as string with a given number of decimal places
+	 * @param d The double to format
+	 * @param decimalplaces number of digits after the decimal point
+	 * @return Formatted number
+	 */
+	public static String doubleToString(double d, int decimalplaces) {
+		String format;
+		if (decimalplaces > 0) format="0.0000000000".substring(0,decimalplaces+2);
+		else format = "0";
+ 		return MyLocale.formatDouble(d, format).replace(',', '.');
 	}
 
 	/**
@@ -60,26 +67,27 @@ public final class Common {
 
 			if (convert && ((c >= 'a' && c <= 'm') || (c >= 'A' && c <= 'M'))) {
 				dummy[i] = (char) (c + 13);
-			} 
+			}
 			else if (convert && ((c >= 'n' && c <= 'z') || (c >= 'N' && c <= 'Z'))) {
 				dummy[i] = (char) (c - 13);
-			} 
+			}
 			else if (c == '[') {
 				convert = false;
 				dummy[i] = '[';
-			} 
+			}
 			else if (c == ']') {
 				convert = true;
 				dummy[i] = ']';
-			} 
+			}
 			else {
 				dummy[i] = c;
 			}
 		}// for
 		return new String(dummy);
 	}
-	
-	public static String stringToHex(String str){
+
+/* Not used. SKG 20080316
+  	public static String stringToHex(String str){
 		StringBuffer strBuf = new StringBuffer();
 		StringBuffer strHex = new StringBuffer();
 		StringBuffer strTxt = new StringBuffer();
@@ -92,18 +100,18 @@ public final class Common {
 		strBuf.append(strHex);
 		return strBuf.toString();
 	}
-	
-	public static String ClearForFileName(String str) {
+*/
+	public static String clearForFileName(String str) {
 		String ret = str.replace('?', '_');
 		ret = ret.replace(' ', '-');
 		ret = ret.replace(':', '-');
 		return ret;
 	}
-	
+
 	/**
 	 * finds the correct (existing) extension to an image filename
 	 * @param filename without extension
-	 * @return filename with extension 
+	 * @return filename with extension
 	 */
 	static public String getImageName(String name) {
 		String fileName;
@@ -111,7 +119,7 @@ public final class Common {
 		String[] t = {".png", ".gif", ".jpg", ".bmp"};
 		int i;
 		for (i = 0; i<t.length; i++) {
-			tmp = new FileBugfix(name+t[i]);
+			tmp = new File(name+t[i]);
 			if (tmp.exists()) break;
 		}
 		if (i >=t.length) fileName = null;
@@ -119,7 +127,7 @@ public final class Common {
 		return fileName;
 	}
 	/** get the extension of a filename, including "."
-	 * remark: ewe.io.File.getFileExtension return name + extension
+	 * remark: eve.io.File.getFileExtension return name + extension
 	 * @param fn
 	 * @return
 	 */
@@ -129,19 +137,12 @@ public final class Common {
 		if (dot < 0) return "";
 		return fn.substring(dot, fn.length());
 	}
-	
-	public static String DoubleToString(double d, int decimalplaces) {
-		ewe.sys.Double e = new ewe.sys.Double();
-		e.set(d);
-		e.decimalPlaces = decimalplaces;
-		return e.toString().replace(',', '.');
 
-	}
-	
 	public static String fixSerialPortName(String name) {
-		if (name.startsWith("/")) return new String(".."+name); // on linux (*nix) machines it is quite usual to give the complete file path to the serial port, but ewe expects only "ttyS0" or similar
-		else                      return name;
+		if (name.startsWith("/"))
+			return new String(".."+name); // on linux (*nix) machines it is quite usual to give the complete file path to the serial port, but ewe expects only "ttyS0" or similar
+		else
+			return name;
 	}
-
 
 }

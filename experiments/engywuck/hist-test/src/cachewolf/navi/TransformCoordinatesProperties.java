@@ -1,33 +1,32 @@
-package CacheWolf.navi;
+package cachewolf.navi;
+import java.util.Properties;
 
-import ewe.io.IOException;
-import ewe.io.InputStream;
-import ewe.sys.Convert;
-import ewe.util.Properties;
-import CacheWolf.CWPoint;
-import CacheWolf.MyLocale;
+import cachewolf.CWPoint;
+import cachewolf.MyLocale;
+
+
 
 /**
- * Class to load the parameters of a datum shift of a map and
- * the projection parameters from an Inputstream by the corresponding
- * EPSG code
- * After instantiation you can simply use to and fromWGS84 to
- * convert between WGS84 and the given Coordinate reference system, given
- * by the EPSG code
- * Start offset in the language file: 4920  
- * @author Pfeffer
- *
- */
+* Class to load the parameters of a datum shift of a map and
+* the projection parameters from an Inputstream by the corresponding
+* EPSG code
+* After instantiation you can simply use to and fromWGS84 to
+* convert between WGS84 and the given Coordinate reference system, given
+* by the EPSG code
+* Start offset in the language file: 4920  
+* @author Pfeffer
+*
+*/
 public class TransformCoordinatesProperties extends Properties {
 	public int epsgCode;
-	
-	public TransformCoordinatesProperties(InputStream is) throws IOException {
+	static final long serialVersionUID=0;
+/*	public TransformCoordinatesProperties(InputStream is) throws IOException {
 		super();
 		load(is);
 		epsgCode = Convert.toInt(getProperty("EpsgCode", "-1"));
 		if (epsgCode == -1) throw new IllegalArgumentException(MyLocale.getMsg(4922, "EPSG code missing in: ") + is.getName());
 	}
-	
+*/	
 	public TransformCoordinatesProperties(int epsgcodei) {
 		if (!TransformCoordinates.isSupported(epsgcodei)) throw new IllegalArgumentException(
 				MyLocale.getMsg(4920, "EPSG code ") 

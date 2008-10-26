@@ -1,19 +1,19 @@
-package CacheWolf;
+package cachewolf;
 
-import ewe.fx.*;
-import ewe.graphics.*;
-import ewe.ui.*;
+import eve.fx.*;
+import eve.ui.*;
+import eve.ui.game.*;
 
-public class AttributesViewer extends CellPanel {
-	protected static int TILESIZE=Attribute.getImageWidth()+2;
+public class AttributesViewer extends Panel {
+	protected static final int TILESIZE=Attribute.getImageWidth()+2;
 	protected final static int ICONS_PER_ROW=MyLocale.getScreenWidth()/TILESIZE<Attributes.MAXATTRIBS ? MyLocale.getScreenWidth()/TILESIZE : Attributes.MAXATTRIBS;
 	protected final static int ICONROWS=(Attributes.MAXATTRIBS+ICONS_PER_ROW-1)/ICONS_PER_ROW;
-	protected mLabel mInfo;
+	protected Label mInfo;
 
-	protected class attInteractivePanel extends InteractivePanel {
+	protected class AttInteractivePanel extends InteractivePanel {
 		public boolean imageMovedOn(AniImage which) {
-			if (!((attAniImage)which).info.startsWith("*")) { // If text starts with * we have no explanation yet
-				mInfo.setText(((attAniImage)which).info);
+			if (!((AttAniImage)which).info.startsWith("*")) { // If text starts with * we have no explanation yet
+				mInfo.setText(((AttAniImage)which).info);
 				mInfo.repaintNow();
 			}
 			return true;
@@ -25,9 +25,9 @@ public class AttributesViewer extends CellPanel {
 		}
 	}
 	
-	protected class attAniImage extends AniImage {
+	protected class AttAniImage extends AniImage {
 		public String info;
-		attAniImage (mImage img) {
+		AttAniImage (Picture img) {
 			super(img);
 		}
 	}
@@ -37,14 +37,14 @@ public class AttributesViewer extends CellPanel {
 		iap.virtualSize = r;
 		iap.setFixedSize(TILESIZE * ICONS_PER_ROW,TILESIZE * ICONROWS);
 		addLast(iap,CellConstants.HSTRETCH,CellConstants.FILL);
-		addLast(mInfo=new mLabel(""),HSTRETCH,HFILL);
+		addLast(mInfo=new Label(""),HSTRETCH,HFILL);
 	}
-	protected InteractivePanel iap=new attInteractivePanel();
+	protected InteractivePanel iap=new AttInteractivePanel();
 	
 	public void showImages(Attributes att) {
 		iap.images.clear();
 		for (int i=0; i<att.getCount(); i++) {
-			attAniImage img=new attAniImage( att.getImage(i));
+			AttAniImage img=new AttAniImage( att.getImage(i));
 			img.info=att.getInfo(i);
 			img.location=new Rect((i % ICONS_PER_ROW)*TILESIZE,(i / ICONS_PER_ROW)*TILESIZE,TILESIZE,TILESIZE);
 			iap.addImage(img);			

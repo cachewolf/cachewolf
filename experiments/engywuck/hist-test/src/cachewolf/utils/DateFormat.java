@@ -1,4 +1,4 @@
-package CacheWolf;
+package cachewolf.utils;
 /* Several date formats are used by GC.COM
  *    2/27/2004   - Hidden dates are in format mm/dd/yyyy (=US style)
  *    February 27 - Found dates which happened this year
@@ -6,12 +6,13 @@ package CacheWolf;
  * The internal standard is sortable:
  *    2004-02-27    - YYYY-MM-DD   
  */
-import ewe.sys.*;
+import eve.sys.Time;
+import eve.sys.Convert;
 
 public class DateFormat {
 
 /** Convert the US Format into a sortable format */
-static String MDY2YMD(String date) {
+public static String MDY2YMD(String date) {
 	// Dates are in format M/D/Y
 	int p1,p2=-1;
 	p1=date.indexOf("/");
@@ -20,8 +21,8 @@ static String MDY2YMD(String date) {
 		return date.substring(p2+1)+"-"+
 		        (p1==1?"0":"")+date.substring(0,p1)+"-"+
 		        (p1+2==p2?"0":"")+date.substring(p1+1,p2);
-	} else
-		return date;
+	} 
+	return date;
 }
 
 /* Convert the sortable date into a US date */
@@ -30,7 +31,7 @@ static String MDY2YMD(String date) {
 //}
 
 /** Convert the log format into a sortable format */
-static String logdate2YMD(String logdate) {
+public static String logdate2YMD(String logdate) {
    String monthNames[]={"January","February","March","April","May","June","July","August","September","October","November","December"};
    Time t=new Time();
    String year,month,day;
@@ -40,7 +41,7 @@ static String logdate2YMD(String logdate) {
    year=logdate.substring(i+2,i+6);
    for (m=0; m<12; m++) {
 	   if (logdate.startsWith(monthNames[m])) {
-		   month=(m<9?"0":"")+Convert.formatInt(m+1);
+		   month=(m<9?"0":"")+Convert.formatInt(m+1); //TODO Eliminate Convert
 		   day=logdate.substring(monthNames[m].length()+1,i);
 		   if (day.length()==1)day="0"+day;
 		   return year+"-"+month+"-"+day;
