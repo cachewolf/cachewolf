@@ -458,6 +458,7 @@ public class TablePanel extends CellPanel{
 				} else {
 					pref.curCentrePt.set(cp);
 					Global.getProfile().updateBearingDistance();
+					Global.mainTab.radarP.clearRadarPanel();
 					this.repaint();
 				}
 			} else if (selectedItem==miOpenOnline){
