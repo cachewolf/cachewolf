@@ -24,14 +24,14 @@ public class SolverPanel extends CellPanel{
 	private OutputPanel mOutput;
 	private Parser parser = null; // Lazy initialisation to speed up loading
 	private Vector msgFIFO = null; // Lazy initialisation to speed up loading
-	private Menu mnuContext;
+	private Menu mnuContextOutp,mnuContextInp;
 	private String originalInstructions="";
-	private Button btnDegRad; 
-	
+	private Button btnDegRad;
+
 	public boolean isDirty() {
 		return !originalInstructions.equals(getInstructions());
 	}
-	
+
 	public String getInstructions() {
 		return mText.getText();
 	}
@@ -40,22 +40,22 @@ public class SolverPanel extends CellPanel{
 		mText.setText(text);
 		mText.repaint();
 	}
-	
+
 	public void clearOutput() {
 		mOutput.setText("");
 	}
-	
+
 	Panel programPanel, outputPanel;
-	
+
 	private String getSolverDegMode() {
 		return Global.getPref().solverDegMode ? "DEG" : "RAD";
 	}
-	
+
 	public void showSolverMode() {
 		btnDegRad.setText(getSolverDegMode());
 		btnDegRad.repaint();
 	}
-	
+
 	public SolverPanel (){
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 
@@ -81,7 +81,7 @@ public class SolverPanel extends CellPanel{
 		outputPanel.addLast(new MyScrollBarPanel(mOutput = new OutputPanel()));
 		this.addLast(split);
 	}
-	
+
 	private void execDirectCommand() {
 		InpScreen boxInp=new InpScreen(MyLocale.getMsg(1733,"Input command"));
 		boxInp.input(parent.getFrame(),"",100); //,MyLocale.getScreenWidth()*4/5);
@@ -89,7 +89,7 @@ public class SolverPanel extends CellPanel{
 		if (s.equals("")) return;
 		processCommand(s);
 	}
-	
+
     private void processCommand(String s) {
 		if (parser==null) {
 			parser=new Parser(); // Lazy initialisation
@@ -103,7 +103,7 @@ public class SolverPanel extends CellPanel{
 		}
 		mOutput.appendText(msgStr,true);
     }
-	
+
 	public void onEvent(Event ev){
 		if (ev instanceof DataChangeEvent) Global.mainTab.cacheDirty=true;
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
@@ -120,7 +120,7 @@ public class SolverPanel extends CellPanel{
 			}
 /*			if(ev.target == btnLoad){
 				FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
-				
+
 				fc.addMask(currCh.wayPoint + ".wl");
 				fc.addMask("*.wl");
 				fc.setTitle("Select File");
@@ -163,12 +163,12 @@ public class SolverPanel extends CellPanel{
 					}
 				}
 			}
-*/			
+*/
 		}
 	}
 
 //############################################################################
-//  InputScreen	
+//  InputScreen
 //############################################################################
 
 	private class InpScreen extends InputBox {
@@ -177,41 +177,84 @@ public class SolverPanel extends CellPanel{
 	}
 
 //############################################################################
-//  InputPanel	
+//  InputPanel
 //############################################################################
-	
+
 	private class InputPanel extends TextPad {
+		MenuItem mnuCopyAndComment;
+		String text2copy;
+
+		InputPanel() {
+			mnuContextInp=getClipboardMenu(new Menu(new MenuItem[]{ mnuCopyAndComment=new MenuItem("Kopiere als Kommentar") },""));
+		}
+		public void penRightReleased(Point p){
+			showMenu(p);
+		}
+		public void penHeld(Point p){
+			showMenu(p);
+		}
+
+		private void showMenu(Point p) {
+			text2copy=eve.sys.Vm.getClipboardText();
+			// Disable the copy&comment menu item if clipboard is empty
+			if (text2copy.length()>0)
+				((MenuItem)mnuContextInp.items.elementAt(0)).modifiers&=~MenuItem.MODIFIER_DISABLED;
+			else
+				((MenuItem)mnuContextInp.items.elementAt(0)).modifiers|=MenuItem.MODIFIER_DISABLED;
+			setMenu(mnuContextInp);
+			doShowMenu(p);
+		}
+		public void popupMenuEvent(Object selectedItem){
+			if (selectedItem==mnuCopyAndComment)
+				copyAndComment();
+			else
+				super.popupMenuEvent(selectedItem);
+		}
 
 		public void  penDoubleClicked(Point where) {
 			execDirectCommand();
 		}
+
+		/** Take the clipboard, prefix each line with a # and insert it
+		 * into the input panel at the cursor. Thus descriptions can easily be
+		 * copied from the description to the solver.
+		 */
+		private void copyAndComment() {
+			StringBuffer sb=new StringBuffer(text2copy.length()*3/2);
+			sb.append('#');
+			for (int i=0; i<text2copy.length(); i++) {
+				sb.append(text2copy.charAt(i));
+				if (text2copy.charAt(i)==0x0A) sb.append('#');
+			}
+			clipboardTransfer(sb.toString(),false,false);
+		}
 	}
-	
+
 //############################################################################
-//  OutputPanel	
+//  OutputPanel
 //############################################################################
 	private class OutputPanel extends TextPad {
 		MenuItem mnuClr;
 		OutputPanel() {
 			this.modify(Control.NotEditable,0);
-			//this.modifiers=this.modifiers|WantHoldDown; 
-			setMenu(mnuContext=getClipboardMenu(new Menu(new MenuItem[]{ mnuClr=new MenuItem(MyLocale.getMsg(1734,"Clear output")) },"")));
-		} 
+			//this.modifiers=this.modifiers|WantHoldDown;
+			mnuContextOutp=getClipboardMenu(new Menu(new MenuItem[]{ mnuClr=new MenuItem(MyLocale.getMsg(1734,"Clear output")) },""));
+		}
 		public void penRightReleased(Point p){
-			setMenu(mnuContext);
+			setMenu(mnuContextOutp);
 			doShowMenu(p); // direct call (not through doMenu) is neccesary because it will exclude the whole table
 		}
 		public void penHeld(Point p){
-			setMenu(mnuContext);
+			setMenu(mnuContextOutp);
 			doShowMenu(p);
 		}
 		public void popupMenuEvent(Object selectedItem){
-			if (selectedItem==mnuClr) 
+			if (selectedItem==mnuClr)
 				this.setText("");
-			else 
+			else
 				super.popupMenuEvent(selectedItem);
 		}
 	}
-	
-	
+
+
 }
