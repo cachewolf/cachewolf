@@ -4,8 +4,8 @@
 
 package ewesoft.xml.sax;
 
-import ewe.io.IOException;
-import ewe.sys.Locale;
+import java.io.IOException;
+import eve.sys.Locale;
 
 
 /**

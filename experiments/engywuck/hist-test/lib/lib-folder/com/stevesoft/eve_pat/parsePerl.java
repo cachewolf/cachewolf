@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This class provides a method for parsing the "s/.../.../" constructs
 of Regex.perlCode.

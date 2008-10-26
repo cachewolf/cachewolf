@@ -5,8 +5,8 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.Hashtable;
+package com.stevesoft.eve_pat;
+import java.util.Hashtable;
 
 /** Provides the ability to match a backreference from within
   * a Pattern.

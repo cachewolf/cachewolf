@@ -31,15 +31,15 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintStream;
 */
-import ewe.io.BufferedInputStream;
-import ewe.io.File;
-import ewe.io.FileInputStream;
-import ewe.io.FileOutputStream;
-import ewe.io.IOException;
-import ewe.io.InputStreamReader;
-import ewe.io.LineNumberReader;
-import ewe.sys.Vm;
-import ewe.io.PrintWriter;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import eve.sys.Vm;
+import java.io.PrintWriter;
 
 
 import com.bbn.openmap.LatLonPoint;

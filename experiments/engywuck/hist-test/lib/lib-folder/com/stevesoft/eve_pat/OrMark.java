@@ -5,8 +5,8 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.Hashtable;
+package com.stevesoft.eve_pat;
+import java.util.Hashtable;
 
 /** Implements the parenthesis pattern subelement.*/
 class OrMark extends Or {

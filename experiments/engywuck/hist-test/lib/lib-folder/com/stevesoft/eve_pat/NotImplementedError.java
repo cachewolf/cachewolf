@@ -5,7 +5,7 @@ package//
 // the details.
 //    -- Happy Computing!
 //
-com.stevesoft.ewe_pat;
+com.stevesoft.eve_pat;
 
 public class NotImplementedError extends Error {
   public NotImplementedError(String s) {

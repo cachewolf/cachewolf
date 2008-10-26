@@ -5,33 +5,33 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.Hashtable;
+package com.stevesoft.eve_pat;
+import java.util.Hashtable;
 
 /** A special optimization of multi that is used when the
   * common subpattern ".*" is encountered.
   */
 class DotMulti extends PatternSub {
-    patInt fewestMatches,mostMatches;
+    patInt fevestMatches,mostMatches;
     public patInt minChars() {
-        return fewestMatches;
+        return fevestMatches;
     }
     public patInt maxChars() {
         return mostMatches;
     }
-    public boolean matchFewest = false;
+    public boolean matchFevest = false;
 
     StringLike src=null;
     int srclength=0;
     boolean dotDoesntMatchCR=true;
     DotMulti(patInt a,patInt b) {
-        fewestMatches = a;
+        fevestMatches = a;
         mostMatches = b;
     }
     public String toString() {
         return ".{"
-            +fewestMatches+","+mostMatches+"}"+
-            (matchFewest ? "?" : "")+"(?# <= dot multi)"+
+            +fevestMatches+","+mostMatches+"}"+
+            (matchFevest ? "?" : "")+"(?# <= dot multi)"+
             nextString();
     }
     final int submatchInternal(int pos,Pthings pt) {
@@ -51,9 +51,9 @@ class DotMulti extends PatternSub {
         src = pt.src;
         srclength = src.length();
         dotDoesntMatchCR = pt.dotDoesntMatchCR;
-        if(matchFewest) {
+        if(matchFevest) {
             int nMatches = 0;
-            while(fewestMatches.intValue() > nMatches) {
+            while(fevestMatches.intValue() > nMatches) {
                 i=submatchInternal(i,pt);
                 if(i<0) return -1;
                 nMatches++;
@@ -82,7 +82,7 @@ class DotMulti extends PatternSub {
             return -1;
         }
         int nMatches = 0;
-        while(fewestMatches.intValue() > nMatches) {
+        while(fevestMatches.intValue() > nMatches) {
             i=submatchInternal(i,pt);
             if(i >= 0)
                 nMatches++;
@@ -112,14 +112,14 @@ class DotMulti extends PatternSub {
             if(r >= 0) return r;
             m -= step;
             nMatches--;
-            if(nMatches < fewestMatches.intValue())
+            if(nMatches < fevestMatches.intValue())
                 return -1;
         }
         return -1;
     }
     Pattern clone1(Hashtable h) {
-        DotMulti dm = new DotMulti(fewestMatches,mostMatches);
-        dm.matchFewest = matchFewest;
+        DotMulti dm = new DotMulti(fevestMatches,mostMatches);
+        dm.matchFevest = matchFevest;
         return dm;
     }
 }

@@ -5,9 +5,9 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.Vector;
-import ewe.util.Hashtable;
+package com.stevesoft.eve_pat;
+import java.util.Vector;
+import java.util.Hashtable;
 
 /** The Bracket is a form of the Or class,
  implements the pattern element [  ]. */

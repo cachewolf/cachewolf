@@ -5,7 +5,7 @@ package//
 // the details.
 //    -- Happy Computing!
 //
-com.stevesoft.ewe_pat;
+com.stevesoft.eve_pat;
 
 /** Package pat can search anything that implements this
     interface.  Package pat assumes the following:

@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** See the example file
     <a href="http://javaregex.com/code/trans3.java.html">trans3.java</a> for

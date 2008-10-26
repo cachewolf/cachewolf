@@ -5,12 +5,12 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This is the same as Skip, except it needs a minimum
     of two characters in the initializing String.
-    @see com.stevesoft.ewe_pat.Skip
-    @see com.stevesoft.ewe_pat.SkipBMH
+    @see com.stevesoft.eve_pat.Skip
+    @see com.stevesoft.eve_pat.SkipBMH
     */
 public class Skip2 extends Skip {
     int c1,mask1;

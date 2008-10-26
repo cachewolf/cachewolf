@@ -2,8 +2,8 @@
  * Created on Jan 20, 2005
  */
 package ewesoft.xml;
-import ewe.util.Vector;
-import ewe.data.PropertyList;
+import java.util.Vector;
+import eve.data.PropertyList;
 /**
  * This class represents the data within the open and close tags
  * of an XML entry. It holds the name of the entry (the <b>tag</b>)

@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** When enabled, this class is thrown instead of
     the normal RegSyntax.  Thus, enabling of this

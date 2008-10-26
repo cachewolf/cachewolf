@@ -5,7 +5,7 @@ package//
 // the details.
 //    -- Happy Computing!
 //
-com.stevesoft.ewe_pat;
+com.stevesoft.eve_pat;
 
 /** An abstraction of the StringBuffer which only
     implements a subset of StringBuffer's methods.

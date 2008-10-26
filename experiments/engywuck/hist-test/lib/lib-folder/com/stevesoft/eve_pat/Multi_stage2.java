@@ -5,8 +5,8 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.Hashtable;
+package com.stevesoft.eve_pat;
+import java.util.Hashtable;
 
 /** If Multi were not split into a second stage, then
  a nested Multi would try to re-use the same count
@@ -15,12 +15,12 @@ class Multi_stage2 extends PatternSub {
     Pattern nextRet;
     patInt count;
     patInt matchMin,matchMax;
-    public boolean matchFewest = false;
+    public boolean matchFevest = false;
     public String toString() {
         String ret = "";
         ret += sub.toString();
         ret += "{"+matchMin+","+matchMax+"}";
-        if(matchFewest) ret += "?";
+        if(matchFevest) ret += "?";
         ret += parent.nextString();
         return ret;
     }
@@ -63,7 +63,7 @@ class Multi_stage2 extends PatternSub {
         if(!count.lessEq(matchMax) || pos > pt.src.length())
             return -1;
 
-        if((matchFewest||count.equals(matchMax)) && canUse >= 0) {
+        if((matchFevest||count.equals(matchMax)) && canUse >= 0) {
             Pattern n = super.getNext();
             if(n == null)
                 return canUse;
@@ -83,7 +83,7 @@ class Multi_stage2 extends PatternSub {
             }
         } finally { count.dec(); }
 
-        if(!matchFewest && canUse >= 0) {
+        if(!matchFevest && canUse >= 0) {
             Pattern n = super.getNext();
             if(n == null)
                 return canUse;
@@ -94,7 +94,7 @@ class Multi_stage2 extends PatternSub {
     public Pattern clone1(Hashtable h) {
         try {
             Multi_stage2 m = new Multi_stage2(matchMin,matchMax,sub.clone(h));
-            m.matchFewest = matchFewest;
+            m.matchFevest = matchFevest;
             return m;
         } catch(RegSyntax rs) {
             return null;

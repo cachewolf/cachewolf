@@ -5,10 +5,10 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
-import ewe.io.*;
-import ewe.util.*;
+import java.io.*;
+import java.util.*;
 
 /** This class is a different form of Regex designed to work more
  like the file matching utility of a Unix shell.  It is implemented

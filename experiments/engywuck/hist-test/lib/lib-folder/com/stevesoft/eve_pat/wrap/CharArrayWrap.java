@@ -5,9 +5,9 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat.wrap;
+package com.stevesoft.eve_pat.wrap;
 
-import com.stevesoft.ewe_pat.*;
+import com.stevesoft.eve_pat.*;
 
 /** This provides a wrapper for a char array so that
     it can be searched by Regex. */

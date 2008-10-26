@@ -5,9 +5,9 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
-import ewe.util.*;
+import java.util.*;
 
 /** ReplaceRule is a singly linked list of Objects which describe how
     to replace the matched portion of a String.  The only member method
@@ -20,12 +20,12 @@ import ewe.util.*;
     expression result to get the information it needs to
     do this.  Here is an <a href="http://javaregex.com/code/fancy.java.html">example</a>
 
-    @see com.stevesoft.ewe_pat.NullRule
-    @see com.stevesoft.ewe_pat.AmpersandRule
-    @see com.stevesoft.ewe_pat.BackRefRule
-    @see com.stevesoft.ewe_pat.LeftRule
-    @see com.stevesoft.ewe_pat.RightRule
-    @see com.stevesoft.ewe_pat.StringRule
+    @see com.stevesoft.eve_pat.NullRule
+    @see com.stevesoft.eve_pat.AmpersandRule
+    @see com.stevesoft.eve_pat.BackRefRule
+    @see com.stevesoft.eve_pat.LeftRule
+    @see com.stevesoft.eve_pat.RightRule
+    @see com.stevesoft.eve_pat.StringRule
     */
 public abstract class ReplaceRule {
     /** points to the next ReplaceRule in the linked list. */
@@ -242,7 +242,7 @@ public abstract class ReplaceRule {
         that is the ReplaceRule that will be used.  If the result
         is null, then the pattern works just as if it were
         "s/x/${foo}/".
-        @see com.stevesoft.ewe_pat.Validator#arg(java.lang.String)
+        @see com.stevesoft.eve_pat.Validator#arg(java.lang.String)
         */
     public ReplaceRule arg(String s) { return null; }
     static int getHexDigit(char c) {

@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This provides a base class for all the Unicode character
   * matching rules.

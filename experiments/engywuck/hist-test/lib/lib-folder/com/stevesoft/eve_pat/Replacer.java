@@ -5,11 +5,11 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
-import ewe.util.*;
+import java.util.*;
 
-import com.stevesoft.ewe_pat.wrap.StringWrap;
+import com.stevesoft.eve_pat.wrap.StringWrap;
 
 /** Internally used class. */
 class RegHolder {
@@ -43,8 +43,8 @@ class CodeVal {
   to the replacing object between calls to replaceAll, replaceFirst
   etc.  For details, see the example file
   <a href="http://javaregex.com/code/trans3.java.html">trans3.java</a>.
-  @see com.stevesoft.ewe_pat.Transformer
-  @see com.stevesoft.ewe_pat.Regex
+  @see com.stevesoft.eve_pat.Transformer
+  @see com.stevesoft.eve_pat.Regex
 */
 public class Replacer {
     boolean first;

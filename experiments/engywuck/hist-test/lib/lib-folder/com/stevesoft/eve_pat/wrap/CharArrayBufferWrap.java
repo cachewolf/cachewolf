@@ -5,9 +5,9 @@ package//
 // the details.
 //    -- Happy Computing!
 //
-com.stevesoft.ewe_pat.wrap;
+com.stevesoft.eve_pat.wrap;
 
-import com.stevesoft.ewe_pat.*;
+import com.stevesoft.eve_pat.*;
 
 /** Allows the outcome of a replaceAll() or replaceFirst()
     to be an array of characters rather than a String.

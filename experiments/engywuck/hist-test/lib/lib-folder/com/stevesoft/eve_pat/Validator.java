@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This class makes it easy to create your own patterns
 and integrate them into Regex.  For more detail, see the
@@ -28,7 +28,7 @@ public class Validator {
     
     By default, this method just returns end and thus
     does nothing.
-    @see com.stevesoft.ewe_pat.Regex#define(java.lang.String,java.lang.String,com.stevesoft.pat.Validator)
+    @see com.stevesoft.eve_pat.Regex#define(java.lang.String,java.lang.String,com.stevesoft.pat.Validator)
     */
     public int validate(StringLike src,int start,int end) {
         return end;

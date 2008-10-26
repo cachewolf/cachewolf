@@ -44,16 +44,16 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 OF THE POSSIBILITY OF SUCH DAMAGE
 */
 
-import ewe.io.Reader;
-import ewe.io.Writer;
-import ewe.io.InputStreamReader;
-import ewe.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 
-import ewe.sys.Locale;
-import ewe.util.Vector;
-import ewe.util.Stack;
-import ewe.util.EmptyStackException;
+import eve.sys.Locale;
+import java.util.Vector;
+import java.util.Stack;
+import java.util.EmptyStackException;
 import ewesoft.xml.sax.EntityResolver;
 import ewesoft.xml.sax.DTDHandler;
 import ewesoft.xml.sax.ErrorHandler;
@@ -145,7 +145,7 @@ public class MinML implements Parser, Locator, DocumentHandler, ErrorHandler {
     }
 
     public String getValue(final String name) {
-    final int index = attributeNames.find(name);
+    final int index = attributeNames.indexOf(name);
 
       return (index == -1) ? null : (String)attributeValues.elementAt(index);
     }

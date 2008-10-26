@@ -5,7 +5,7 @@ package//
 // the details.
 //    -- Happy Computing!
 //
-com.stevesoft.ewe_pat;
+com.stevesoft.eve_pat;
 
 /** A tool that is used to make the \E, \U, \L, and \Q
     elements of a substitution. */

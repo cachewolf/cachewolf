@@ -5,11 +5,11 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This implements the $& element of the second argument to
   * Regex.
-  * @see com.stevesoft.ewe_pat.ReplaceRule
+  * @see com.stevesoft.eve_pat.ReplaceRule
   */
 public final class AmpersandRule extends ReplaceRule {
     public AmpersandRule() {}

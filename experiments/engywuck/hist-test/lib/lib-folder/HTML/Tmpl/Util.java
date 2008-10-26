@@ -30,7 +30,7 @@
 
 
 package HTML.Tmpl;
-import ewe.sys.*;
+import eve.sys.*;
 
 public class Util
 {

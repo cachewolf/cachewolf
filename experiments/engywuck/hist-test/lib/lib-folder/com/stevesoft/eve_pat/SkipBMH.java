@@ -5,9 +5,9 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
-import com.stevesoft.ewe_pat.wrap.StringWrap;
+import com.stevesoft.eve_pat.wrap.StringWrap;
 
 /** Like Skip, but implements a
     <a href="http://www.dcc.uchile.cl/~rbaeza/handbook/algs/7/713b.srch.p.html">
@@ -18,8 +18,8 @@ import com.stevesoft.ewe_pat.wrap.StringWrap;
     the <a href="http://www.go2net.com/people/paulp/deep/1997/05/14/">
     Deep Magic</a> article on string searching.  As of this writing, I can
     beat String's indexOf method in many cases.
-    @see com.stevesoft.ewe_pat.Skip
-    @see com.stevesoft.ewe_pat.Skip2
+    @see com.stevesoft.eve_pat.Skip
+    @see com.stevesoft.eve_pat.Skip2
     */
 public class SkipBMH extends Skip {
     // This number could be 256, but I think it's

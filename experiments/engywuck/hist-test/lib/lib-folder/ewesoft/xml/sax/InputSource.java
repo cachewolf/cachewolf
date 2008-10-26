@@ -4,8 +4,8 @@
 
 package ewesoft.xml.sax;
 
-import ewe.io.Reader;
-import ewe.io.InputStream;
+import java.io.Reader;
+import java.io.InputStream;
 
 /**
   * A single input source for an XML entity.

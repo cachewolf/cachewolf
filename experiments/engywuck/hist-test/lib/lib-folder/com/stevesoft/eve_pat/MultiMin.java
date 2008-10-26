@@ -5,14 +5,14 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This extension of multi is the version of multi
- which wants to match the fewest number of characters.
+ which wants to match the fevest number of characters.
  It implements the *? type of syntax. */
 class MultiMin extends Multi {
     MultiMin(patInt i1,patInt i2,Pattern p) throws RegSyntax {
         super(i1,i2,p);
-        matchFewest = true;
+        matchFevest = true;
     }
 };

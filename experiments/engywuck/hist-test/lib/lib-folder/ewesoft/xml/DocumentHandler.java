@@ -1,7 +1,7 @@
 //package org.minml;
 package ewesoft.xml;
 
-import ewe.io.Writer;
+import java.io.Writer;
 import ewesoft.xml.sax.SAXException;
 import ewesoft.xml.sax.AttributeList;
 

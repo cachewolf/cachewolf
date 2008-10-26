@@ -5,9 +5,9 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
-import ewe.util.*;
+import java.util.*;
 
 /** Uses table lookup to match [] type constructs, but
     only if it can use a lookup table 256 bits in size.

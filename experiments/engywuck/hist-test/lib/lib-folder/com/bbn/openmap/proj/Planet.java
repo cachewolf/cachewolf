@@ -104,7 +104,7 @@ public class Planet {
 
     // Extra scale constant for better viewing of maps (do not use
     // this to
-    // calculate anything but points to be viewed!)
+    // calculate anything but points to be vieved!)
     public transient static int defaultPixelsPerMeter = 3272;// 3384:
                                                              // mattserver/Map.C,
                                                              // 3488:

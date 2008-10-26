@@ -5,12 +5,12 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
-import com.stevesoft.ewe_pat.wrap.StringWrap;
+import com.stevesoft.eve_pat.wrap.StringWrap;
 
 /** Replacement rule used by the Transformer.
-    @see com.stevesoft.ewe_pat.Transformer
+    @see com.stevesoft.eve_pat.Transformer
     */
 class TransRepRule extends ReplaceRule {
     Transformer t;
@@ -49,7 +49,7 @@ public class Transformer {
     boolean auto_optimize;
 
     /** Get a replacer to that works with the current Regex.
-     @see com.stevesoft.ewe_pat.Replacer
+     @see com.stevesoft.eve_pat.Replacer
      */
     public Replacer getReplacer() { return rp.getReplacer(); }
 
@@ -95,7 +95,7 @@ public class Transformer {
     }
 
     /** Add a new Regex by calling Regex.perlCode
-        @see com.stevesoft.ewe_pat.Regex#perlCode(java.lang.String)
+        @see com.stevesoft.eve_pat.Regex#perlCode(java.lang.String)
         */
     public void add(String rs) {
         Regex r = Regex.perlCode(rs);
@@ -104,7 +104,7 @@ public class Transformer {
     }
     /** Add an array of Strings (which will be converted to
         Regex's via the Regex.perlCode method.
-        @see com.stevesoft.ewe_pat.Regex#perlCode(java.lang.String)
+        @see com.stevesoft.eve_pat.Regex#perlCode(java.lang.String)
         */
     public void add(String[] array) {
         for(int i=0;i<array.length;i++)

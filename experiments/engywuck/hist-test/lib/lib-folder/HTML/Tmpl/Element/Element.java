@@ -30,8 +30,8 @@
 
 
 package HTML.Tmpl.Element;
-import ewe.util.Hashtable;
-import ewe.util.NoSuchElementException;
+import java.util.Hashtable;
+import java.util.NoSuchElementException;
 
 public abstract class Element
 {

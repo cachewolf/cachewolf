@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This class is just like FileRegex, except that its accept method
  only returns true if the file matching the pattern is a directory.*/

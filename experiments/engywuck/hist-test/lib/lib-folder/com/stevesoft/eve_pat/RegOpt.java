@@ -5,10 +5,10 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.Enumeration;
-import ewe.util.Hashtable;
-import ewe.util.Vector;
+package com.stevesoft.eve_pat;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /** This class is just like oneChar, but doesn't worry about case. */
 class FastChar extends oneChar {
@@ -42,7 +42,9 @@ class Branch extends Pattern {
     Branch() {}
     Pattern clone1(Hashtable x) {
         Branch b = new Branch();
-        b.keys = (Vector)keys.getCopy();
+        for (int i=0; i<keys.size(); i++)
+           b.keys.add(keys.elementAt(i));
+        //b.keys = (Vector)keys.getCopy();
         x.put(this,b);
         x.put(b,b);
 
@@ -270,7 +272,7 @@ public class RegOpt {
                     opt(m.sub,ignoreCase,dontMinQ));
             } catch(RegSyntax rs) {}
             fm.parent = m.parent;
-            fm.matchFewest = m.matchFewest;
+            fm.matchFevest = m.matchFevest;
             fm.next = m.next;
             p = fm;
         }

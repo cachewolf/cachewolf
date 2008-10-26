@@ -5,11 +5,11 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
-import ewe.io.*;
+import java.io.*;
 
-import com.stevesoft.ewe_pat.wrap.*;
+import com.stevesoft.eve_pat.wrap.*;
 
 /** This class allows you to replace the text in strings
     as you read them in.  Be careful what you do with
@@ -129,7 +129,7 @@ public class RegexReader extends Reader {
       if(rb.pos >= rb.epos)
         return -1;
     }
-    //ewe.sys.Vm.out().println(rb);
+    //eve.sys.Vm.out().println(rb);
     return rb.sb.charAt(rb.pos++);
   }
   public int read(char[] buf,int off,int len)
@@ -216,11 +216,11 @@ public class RegexReader extends Reader {
       sb.append((char)c);
     String res2 = sb.toString();
     if(!res1.equals(res2)) {
-      ewe.sys.Vm.out().println("nmax="+n);
-      ewe.sys.Vm.out().println("re="+re);
-      ewe.sys.Vm.out().println("inp="+inp);
-      ewe.sys.Vm.out().println("res1="+res1);
-      ewe.sys.Vm.out().println("res2="+res2);
+      eve.sys.Vm.out().println("nmax="+n);
+      eve.sys.Vm.out().println("re="+re);
+      eve.sys.Vm.out().println("inp="+inp);
+      eve.sys.Vm.out().println("res1="+res1);
+      eve.sys.Vm.out().println("res2="+res2);
       System.exit(255);
     }
   }
@@ -243,7 +243,7 @@ public class RegexReader extends Reader {
       test("s/.{0,7}/y/","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",n);
       test("s/x/$&/","xxx",n);
     }
-    ewe.sys.Vm.out().println("Success!!!");
+    eve.sys.Vm.out().println("Success!!!");
   }
   */
 }

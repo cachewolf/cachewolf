@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** Get Unicode properties for a character.  See
 <a href="http://unicode.org">http://unicode.org</a>. */

@@ -5,11 +5,11 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat.wrap;
+package com.stevesoft.eve_pat.wrap;
 
-import com.stevesoft.ewe_pat.*;
+import com.stevesoft.eve_pat.*;
 
-import ewe.io.*;
+import java.io.*;
 
 /** Provides a wrapper for a RandomAccessFile so that it
     can be searched by Regex. */
@@ -90,16 +90,16 @@ public class RandomAccessFileWrap implements StringLike {
         Regex r = new Regex("toString\\(\\) *(?@{})");
         r.setGFlag(true);
         r.optimize();
-        ewe.sys.Vm.out().print(files[i]+" ");
+        eve.sys.Vm.debug(files[i]+" ");
         int j=0;
         do {
           if(r.searchFrom(fw,j)) {
-            ewe.sys.Vm.out().println("Matched at index: "+
+            eve.sys.Vm.debug("Matched at index: "+
              r.matchedFrom());
             j=r.matchedTo();
           } else
-            ewe.sys.Vm.out().println("not found");
-          ewe.sys.Vm.out().println(r.stringMatched());
+            eve.sys.Vm.debug("not found");
+          eve.sys.Vm.debug(r.stringMatched());
         } while(r.didMatch());
       }
     }

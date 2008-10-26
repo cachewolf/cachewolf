@@ -5,11 +5,11 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
-import ewe.io.*;
+import java.io.*;
 
-import com.stevesoft.ewe_pat.wrap.*;
+import com.stevesoft.eve_pat.wrap.*;
 
 /** A basic extension of FilterWriter that uses Transformer
  to make replacements in data as it is written out.  It attempts
@@ -174,11 +174,11 @@ public class RegexWriter extends Writer {
     rw.close();
     String res2 = sw.toString();
     if(!res1.equals(res2)) {
-      ewe.sys.Vm.out().println("nmax="+n);
-      ewe.sys.Vm.out().println("re="+re);
-      ewe.sys.Vm.out().println("inp="+inp);
-      ewe.sys.Vm.out().println("res1="+res1);
-      ewe.sys.Vm.out().println("res2="+res2);
+      eve.sys.Vm.debug("nmax="+n);
+      eve.sys.Vm.debug("re="+re);
+      eve.sys.Vm.debug("inp="+inp);
+      eve.sys.Vm.debug("res1="+res1);
+      eve.sys.Vm.debug("res2="+res2);
       System.exit(255);
     }
   }
@@ -201,6 +201,6 @@ public class RegexWriter extends Writer {
       test("s/.{0,7}/y/","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",n);
       test("s/x/$&/","xxx",n);
     }
-    ewe.sys.Vm.out().println("Success!!!");
+    eve.sys.Vm.debug("Success!!!");
   }
 }

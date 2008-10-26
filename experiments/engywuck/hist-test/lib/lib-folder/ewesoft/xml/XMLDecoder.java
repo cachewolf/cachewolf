@@ -6,8 +6,8 @@ package ewesoft.xml;
 
 import ewesoft.xml.sax.AttributeList;
 import ewesoft.xml.sax.SAXException;
-import ewe.util.Vector;
-import ewe.data.PropertyList;
+import java.util.Vector;
+import eve.data.PropertyList;
 
 /**
  * This class will fully decode an XML document from a Reader.
@@ -39,7 +39,7 @@ public class XMLDecoder extends MinML {
 			current = document = new XMLElement();
 		}else{
 			XMLElement xe = new XMLElement();
-			current.subElements = Vector.add(current.subElements,xe);
+			current.subElements.add(xe);
 			xe.parent = current;
 			current = xe;
 		}
@@ -78,14 +78,14 @@ public class XMLDecoder extends MinML {
  * @throws ewe.io.IOException
  * @throws SAXException
  */
-	public static void main(String[] args) throws ewe.io.IOException, SAXException
+	public static void main(String[] args) throws java.io.IOException, SAXException
 	{
-		ewe.sys.Vm.startEwe(args);
-		ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(args[0]));
+		eve.ui.Application.startApplication(args);
+		java.io.Reader r = new java.io.InputStreamReader(new java.io.FileInputStream(args[0]));
 		XMLDecoder xd = new XMLDecoder();
 		xd.parse(r);
 		r.close();
-		ewe.sys.Vm.debug(xd.document.format());
-		//ewe.sys.Vm.exit(0);
+		eve.sys.Vm.debug(xd.document.format());
+		eve.ui.Application.exit(0);
 	}
 }

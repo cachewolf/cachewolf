@@ -5,8 +5,8 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.Hashtable;
+package com.stevesoft.eve_pat;
+import java.util.Hashtable;
 
 /** Matches any number of instances of sub Pattern
  this was the hardest method to write.  It implements
@@ -20,9 +20,9 @@ class Multi extends PatternSub {
     public patInt maxChars() { return b.mul(p.countMaxChars()); }
     Pattern p;
     Multi_stage2 st2;
-    public boolean matchFewest = false;
+    public boolean matchFevest = false;
     /**
-        @param a The fewest number of times the sub pattern can match.
+        @param a The fevest number of times the sub pattern can match.
         @param b The maximum number of times the sub pattern can match.
         @param p The sub pattern.
         @see Multi_stage2
@@ -37,21 +37,21 @@ class Multi extends PatternSub {
         sub = st2.sub;
     }
     public String toString() {
-        st2.matchFewest = matchFewest;
+        st2.matchFevest = matchFevest;
         return st2.toString();
     }
     public int matchInternal(int pos,Pthings pt) {
         try {
             st2 = new Multi_stage2(a,b,p);
         } catch(RegSyntax r__) {}
-        st2.matchFewest = matchFewest;
+        st2.matchFevest = matchFevest;
         st2.parent = this;
         return st2.matchInternal(pos,pt);
     }
     public Pattern clone1(Hashtable h) {
         try {
             Multi m = new Multi(a,b,((Pattern)p).clone(h));
-            m.matchFewest = matchFewest;
+            m.matchFevest = matchFevest;
             return m;
         } catch(RegSyntax rs) {
             return null;

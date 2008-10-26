@@ -29,10 +29,10 @@
 */
 
 package HTML.Tmpl.Element;
-import ewe.util.Vector;
-import ewe.util.Hashtable;
-import ewe.util.Enumeration;
-import ewe.util.NoSuchElementException;
+import java.util.Vector;
+import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
 
 public class Conditional extends Element
 {

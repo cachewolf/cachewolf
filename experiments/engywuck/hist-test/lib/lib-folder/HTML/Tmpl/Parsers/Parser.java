@@ -30,7 +30,7 @@
 
 
 package HTML.Tmpl.Parsers;
-import ewe.util.*;
+import java.util.*;
 import HTML.Tmpl.Element.*;
 import HTML.Tmpl.Util;
 

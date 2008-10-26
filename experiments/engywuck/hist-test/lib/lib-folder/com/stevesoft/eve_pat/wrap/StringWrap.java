@@ -5,9 +5,9 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat.wrap;
+package com.stevesoft.eve_pat.wrap;
 
-import com.stevesoft.ewe_pat.*;
+import com.stevesoft.eve_pat.*;
 
 /** A basic wrapper for the String object. Regex does
     not search String directly any longer, it searches StringLike. */

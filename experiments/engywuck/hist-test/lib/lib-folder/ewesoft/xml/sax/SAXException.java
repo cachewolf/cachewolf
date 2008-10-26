@@ -35,8 +35,8 @@ public class SAXException extends Exception {
     * @see ewesoft.xml.sax.Parser#setLocale
     */
   public SAXException (String message) {
-    super(message);
-    //this.message = message;
+    super();
+    this.message = message;
     this.exception = null;
   }
 
@@ -52,8 +52,8 @@ public class SAXException extends Exception {
     */
   public SAXException (Exception e)
   {
-    super(e.getMessage());
-    //this.message = null;
+    super();
+    this.message = null;
     this.exception = e;
   }
 
@@ -70,8 +70,8 @@ public class SAXException extends Exception {
     */
   public SAXException (String message, Exception e)
   {
-    super(message);
-    //this.message = message;
+    super();
+    this.message = message;
     this.exception = e;
   }
 
@@ -86,7 +86,7 @@ public class SAXException extends Exception {
     * @return The error or warning message.
     * @see ewesoft.xml.sax.Parser#setLocale
     */
-  /*public String getMessage ()
+  public String getMessage ()
   {
     if (message == null && exception != null) {
       return exception.getMessage();
@@ -94,7 +94,7 @@ public class SAXException extends Exception {
       return this.message;
     }
   }
-*/
+
 
   /**
     * Return the embedded exception, if any.
@@ -122,7 +122,7 @@ public class SAXException extends Exception {
   // Internal state.
   //////////////////////////////////////////////////////////////////////
 
-  //private String message;
+  private String message;
   private Exception exception;
 
 }

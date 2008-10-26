@@ -24,8 +24,8 @@ package com.bbn.openmap.util;
 
 //import java.util.Vector;
 import java.lang.*;
-import ewe.util.Vector;
-import ewe.sys.Vm;
+import java.util.Vector;
+import eve.sys.Vm;
 /**
  * A simple class to manage the line arguments of a program. Takes the
  * String[] argv that is provided to the main method of a class, and

@@ -4,7 +4,7 @@
 
 package ewesoft.xml.sax;
 
-import ewe.io.IOException;
+import java.io.IOException;
 
 
 /**

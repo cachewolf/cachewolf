@@ -5,8 +5,8 @@ package//
 // the details.
 //    -- Happy Computing!
 //
-com.stevesoft.ewe_pat;
-import ewe.util.*;
+com.stevesoft.eve_pat;
+import java.util.*;
 
 /** The idea behind this class is simply to eliminate the need for
   * testing to see if Regex.thePattern is null.  Every instruction

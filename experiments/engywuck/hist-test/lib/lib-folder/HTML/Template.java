@@ -29,9 +29,9 @@
 */
 
 package HTML;
-import ewe.util.*;
-import ewe.io.*;
-import ewe.sys.*;
+import java.util.*;
+import java.io.*;
+import eve.sys.*;
 import HTML.Tmpl.Element.*;
 import HTML.Tmpl.Parsers.*;
 import HTML.Tmpl.Util;

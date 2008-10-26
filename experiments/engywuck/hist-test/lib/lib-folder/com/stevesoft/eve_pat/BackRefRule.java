@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This method implements the pattern elements $1, $2, etc in
     a substitution rule. The apply(StringBufferLike sb,RegRes rr) method of this ReplaceRule

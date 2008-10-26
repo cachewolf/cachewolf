@@ -5,11 +5,11 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** The apply method of this ReplaceRule simply appends the text
     it was initialized with to the StringBufferLike.
-    @see com.stevesoft.ewe_pat.ReplaceRule
+    @see com.stevesoft.eve_pat.ReplaceRule
     */
 public class StringRule extends ReplaceRule {
     String s;

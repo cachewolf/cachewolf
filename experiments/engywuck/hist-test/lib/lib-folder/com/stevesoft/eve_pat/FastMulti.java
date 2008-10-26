@@ -5,8 +5,8 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.Hashtable;
+package com.stevesoft.eve_pat;
+import java.util.Hashtable;
 
 /** A special case of Multi, implemented when minChars().equals(maxChars()),
   * and some other conditions spelled out in RegOpt.safe4fm "Safe for
@@ -14,19 +14,19 @@ import ewe.util.Hashtable;
   * faster.
   */
 class FastMulti extends PatternSub {
-    patInt fewestMatches,mostMatches;
+    patInt fevestMatches,mostMatches;
     public patInt minChars() {
-        return sub.countMinChars().mul(fewestMatches);
+        return sub.countMinChars().mul(fevestMatches);
     }
     public patInt maxChars() {
         return sub.countMaxChars().mul(mostMatches);
     }
-    public boolean matchFewest = false;
+    public boolean matchFevest = false;
 
     FastMulti(patInt a,patInt b,Pattern p) throws RegSyntax {
         if(p == null) RegSyntaxError.endItAll("Null length pattern "+
                 "followed by *, +, or other Multi.");
-        fewestMatches = a;
+        fevestMatches = a;
         mostMatches = b;
         sub = p;
         step = p.countMinChars().intValue();
@@ -34,8 +34,8 @@ class FastMulti extends PatternSub {
     }
     public String toString() {
         return sub.toString()+"{"
-            +fewestMatches+","+mostMatches+"}"+
-            (matchFewest ? "?" : "")+"(?# <= fast multi)"+
+            +fevestMatches+","+mostMatches+"}"+
+            (matchFevest ? "?" : "")+"(?# <= fast multi)"+
             nextString();
     }
     int step = -1;
@@ -44,8 +44,8 @@ class FastMulti extends PatternSub {
         int i=pos;
         int endstr = pt.src.length()-step;
         patInt matches = new patInt(0);
-        if(matchFewest) {
-            if(fewestMatches.lessEq(matches)) {
+        if(matchFevest) {
+            if(fevestMatches.lessEq(matches)) {
                 int ii = nextMatch(i,pt);
                 if(ii >= 0) return ii;
             }
@@ -53,7 +53,7 @@ class FastMulti extends PatternSub {
                 i=sub.matchInternal(i,pt);
                 if(i >= 0) {
                     matches.inc();
-                    if(fewestMatches.lessEq(matches)) {
+                    if(fevestMatches.lessEq(matches)) {
                         int ii = nextMatch(i,pt);
                         if(ii >= 0) return ii;
                     }
@@ -64,7 +64,7 @@ class FastMulti extends PatternSub {
             return -1;
         }
         int nMatches = 0;
-        while(fewestMatches.intValue() > nMatches) {
+        while(fevestMatches.intValue() > nMatches) {
             i=sub.matchInternal(i,pt);
             if(i >= 0)
                 nMatches++;
@@ -94,15 +94,15 @@ class FastMulti extends PatternSub {
             if(r >= 0) return r;
             m -= step;
             nMatches--;
-            if(nMatches < fewestMatches.intValue())
+            if(nMatches < fevestMatches.intValue())
                 return -1;
         }
         return -1;
     }
     public Pattern clone1(Hashtable h) {
         try {
-            FastMulti fm = new FastMulti(fewestMatches,mostMatches,sub.clone(h));
-            fm.matchFewest = matchFewest;
+            FastMulti fm = new FastMulti(fevestMatches,mostMatches,sub.clone(h));
+            fm.matchFevest = matchFevest;
             return fm;
         } catch(RegSyntax rs) {
             return null;

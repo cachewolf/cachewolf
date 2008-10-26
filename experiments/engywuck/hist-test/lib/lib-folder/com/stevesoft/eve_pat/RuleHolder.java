@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 /** This class is used internally. */
 class RuleHolder extends ReplaceRule {
     ReplaceRule held = null;

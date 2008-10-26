@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** Implements the rules for \U, \L, \E, \Q in substitutions. */
 public final class CodeRule extends SpecialRule {

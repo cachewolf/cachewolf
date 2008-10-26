@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 /** 
         Shareware: package pat
    <a href="copyright.html">Copyright 2001, Steven R. Brandt</a>

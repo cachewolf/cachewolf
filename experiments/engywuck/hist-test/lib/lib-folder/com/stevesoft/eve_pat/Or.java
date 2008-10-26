@@ -5,9 +5,9 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
-import ewe.util.*;
+import java.util.*;
 
 /** This class implements the (?: ... ) extended Pattern.
  It provides a base class from which we derive the

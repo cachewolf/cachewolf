@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** Encapsulates the Unicode definitions of Upper,
     Lower, and Title case as defined by <a href="http://www.unicode.org">

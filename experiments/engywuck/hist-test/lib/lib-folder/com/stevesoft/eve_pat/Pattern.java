@@ -5,8 +5,8 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.*;
+package com.stevesoft.eve_pat;
+import java.util.*;
 /**
         Shareware: package pat
    <a href="copyright.html">Copyright 2001, Steven R. Brandt</a>

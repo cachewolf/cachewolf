@@ -5,7 +5,7 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This class implements user defined special replacement rules
   * of the form ${=name}. See <a href="http://javaregex.com/code/trans2.java.html">trans2.java</a>

@@ -5,14 +5,14 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** This class is used internally to search ahead for some
     optimized Regex objects.  It searches within a String
     for occrences of a given String -- like a more flexible
     version of String.indexOf.
-    @see com.stevesoft.ewe_pat.Skip2
-    @see com.stevesoft.ewe_pat.SkipBMH
+    @see com.stevesoft.eve_pat.Skip2
+    @see com.stevesoft.eve_pat.SkipBMH
     */
 public class Skip {
     static int mkmask(int c) {

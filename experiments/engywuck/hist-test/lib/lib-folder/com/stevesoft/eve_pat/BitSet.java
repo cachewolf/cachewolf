@@ -35,7 +35,7 @@ this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
 
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /* Written using "Java Class Libraries", 2nd edition, ISBN 0-201-31002-3
  * hashCode algorithm taken from JDK 1.2 docs.

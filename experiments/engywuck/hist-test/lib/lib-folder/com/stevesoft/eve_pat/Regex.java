@@ -5,11 +5,11 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
-import ewe.util.*;
-import ewe.io.*;
+package com.stevesoft.eve_pat;
+import java.util.*;
+import java.io.*;
 
-import com.stevesoft.ewe_pat.wrap.StringWrap;
+import com.stevesoft.eve_pat.wrap.StringWrap;
 
 
 /** Matches a Unicode punctuation character. */
@@ -173,7 +173,7 @@ Longer example:
 <pre>
         Regex r = new Regex("x(a|b)y");
         r.matchAt("xay",0);
-        ewe.sys.Vm.out().println("sub = "+r.stringMatched(1));
+        eve.sys.Vm.out().println("sub = "+r.stringMatched(1));
 </pre>
 The above would print "sub = a".
 <pre>
@@ -279,7 +279,7 @@ public class Regex extends RegRes implements FilenameFilter {
 
     /** Initializes the object without a Pattern. To supply a Pattern
         use compile(String s).
-         @see com.stevesoft.ewe_pat.Regex#compile(java.lang.String)
+         @see com.stevesoft.eve_pat.Regex#compile(java.lang.String)
                  */
     public Regex() {}
     /** Create and compile a Regex, but do not throw any exceptions.
@@ -288,8 +288,8 @@ public class Regex extends RegRes implements FilenameFilter {
         Regex object, and then call the compile method.  Therefore, you
         should only call this method when you know your pattern is right.
         I will probably become more like
-         @see com.stevesoft.ewe_pat.Regex#search(java.lang.String)
-         @see com.stevesoft.ewe_pat.Regex#compile(java.lang.String)
+         @see com.stevesoft.eve_pat.Regex#search(java.lang.String)
+         @see com.stevesoft.eve_pat.Regex#compile(java.lang.String)
          */
     public Regex(String s) {
         try {
@@ -299,8 +299,8 @@ public class Regex extends RegRes implements FilenameFilter {
 
     ReplaceRule rep = null;
     /** Create and compile both a Regex and a ReplaceRule.
-        @see com.stevesoft.ewe_pat.ReplaceRule
-	@see com.stevesoft.ewe_pat.Regex#compile(java.lang.String)
+        @see com.stevesoft.eve_pat.ReplaceRule
+	@see com.stevesoft.eve_pat.Regex#compile(java.lang.String)
         */
     public Regex(String s,String rp) {
         this(s);
@@ -309,8 +309,8 @@ public class Regex extends RegRes implements FilenameFilter {
     /** Create and compile a Regex, but give it the ReplaceRule
         specified.  This allows the user finer control of the
         Replacement process, if that is desired.
-        @see com.stevesoft.ewe_pat.ReplaceRule
-	@see com.stevesoft.ewe_pat.Regex#compile(java.lang.String)
+        @see com.stevesoft.eve_pat.ReplaceRule
+	@see com.stevesoft.eve_pat.Regex#compile(java.lang.String)
         */
     public Regex(String s,ReplaceRule rp) {
         this(s);
@@ -369,16 +369,16 @@ public class Regex extends RegRes implements FilenameFilter {
     }
     /** Replace the first occurence of this pattern in String s
         according to the ReplaceRule.
-        @see com.stevesoft.ewe_pat.ReplaceRule
-        @see com.stevesoft.ewe_pat.Regex#getReplaceRule()
+        @see com.stevesoft.eve_pat.ReplaceRule
+        @see com.stevesoft.eve_pat.Regex#getReplaceRule()
         */
     public String replaceFirst(String s) {
         return _getReplacer().replaceFirstRegion(s,this,0,s.length()).toString();
     }
     /** Replace the first occurence of this pattern in String s
         beginning with position pos according to the ReplaceRule.
-        @see com.stevesoft.ewe_pat.ReplaceRule
-        @see com.stevesoft.ewe_pat.Regex#getReplaceRule()
+        @see com.stevesoft.eve_pat.ReplaceRule
+        @see com.stevesoft.eve_pat.Regex#getReplaceRule()
         */
     public String replaceFirstFrom(String s,int pos) {
         return _getReplacer().replaceFirstRegion(s,this,pos,s.length()).toString();
@@ -386,8 +386,8 @@ public class Regex extends RegRes implements FilenameFilter {
     /** Replace the first occurence of this pattern in String s
         beginning with position start and ending with end
         according to the ReplaceRule.
-        @see com.stevesoft.ewe_pat.ReplaceRule
-        @see com.stevesoft.ewe_pat.Regex#getReplaceRule()
+        @see com.stevesoft.eve_pat.ReplaceRule
+        @see com.stevesoft.eve_pat.Regex#getReplaceRule()
         */
     public String replaceFirstRegion(String s,int start,int end) {
         return _getReplacer().replaceFirstRegion(s,this,start,end).toString();
@@ -395,8 +395,8 @@ public class Regex extends RegRes implements FilenameFilter {
 
     /** Replace all occurences of this pattern in String s
         according to the ReplaceRule.
-        @see com.stevesoft.ewe_pat.ReplaceRule
-        @see com.stevesoft.ewe_pat.Regex#getReplaceRule()
+        @see com.stevesoft.eve_pat.ReplaceRule
+        @see com.stevesoft.eve_pat.Regex#getReplaceRule()
         */
     public String replaceAll(String s) {
         return _getReplacer().replaceAllRegion(s,this,0,s.length()).toString();
@@ -406,8 +406,8 @@ public class Regex extends RegRes implements FilenameFilter {
     }
     /** Replace all occurences of this pattern in String s
         beginning with position pos according to the ReplaceRule.
-        @see com.stevesoft.ewe_pat.ReplaceRule
-        @see com.stevesoft.ewe_pat.Regex#getReplaceRule()
+        @see com.stevesoft.eve_pat.ReplaceRule
+        @see com.stevesoft.eve_pat.Regex#getReplaceRule()
         */
     public String replaceAllFrom(String s,int pos) {
         return _getReplacer().replaceAllRegion(s,this,pos,s.length()).toString();
@@ -415,8 +415,8 @@ public class Regex extends RegRes implements FilenameFilter {
     /** Replace all occurences of this pattern in String s
         beginning with position start and ending with end
         according to the ReplaceRule.
-        @see com.stevesoft.ewe_pat.ReplaceRule
-        @see com.stevesoft.ewe_pat.Regex#getReplaceRule()
+        @see com.stevesoft.eve_pat.ReplaceRule
+        @see com.stevesoft.eve_pat.Regex#getReplaceRule()
         */
     public String replaceAllRegion(String s,int start,int end) {
         return _getReplacer().replaceAllRegion(s,this,start,end).toString();
@@ -448,13 +448,13 @@ public class Regex extends RegRes implements FilenameFilter {
     public char esc = Pattern.ESC;
     /** This method compiles a regular expression, making it
          possible to call the search or matchAt methods.
-                @exception com.stevesoft.ewe_pat.RegSyntax
+                @exception com.stevesoft.eve_pat.RegSyntax
                 is thrown if a syntax error is encountered
 		in the pattern.
                  For example, "x{3,1}" or "*a" are not valid
 		 patterns.
-                @see com.stevesoft.ewe_pat.Regex#search
-                @see com.stevesoft.ewe_pat.Regex#matchAt
+                @see com.stevesoft.eve_pat.Regex#search
+                @see com.stevesoft.eve_pat.Regex#matchAt
                 */
     public void compile(String prepat) throws RegSyntax {
         String postpat = parsePerl.codify(prepat,true);
@@ -471,11 +471,11 @@ public class Regex extends RegRes implements FilenameFilter {
         minMatch = new patInt(0);
         StrPos sp = new StrPos(pat,0);
         if(sp.incMatch("(?e=")) {
-            char newEsc = sp.c;
+            char nevesc = sp.c;
             sp.inc();
             if(sp.match(')'))
                 newpat = reEscape(pat.substring(6),
-                    newEsc,Pattern.ESC);
+                    nevesc,Pattern.ESC);
         } else if(esc != Pattern.ESC)
             newpat = reEscape(pat,esc,Pattern.ESC);
         thePattern = _compile(newpat,mk);
@@ -535,14 +535,14 @@ public class Regex extends RegRes implements FilenameFilter {
     }
     /** Attempt to match a Pattern beginning
         at a specified location within the string.
-        @see com.stevesoft.ewe_pat.Regex#search
+        @see com.stevesoft.eve_pat.Regex#search
         */
     public boolean matchAt(String s,int start_pos) {
         return _search(s,start_pos,start_pos);
     }
     /** Attempt to match a Pattern beginning
         at a specified location within the StringLike.
-        @see com.stevesoft.ewe_pat.Regex#search
+        @see com.stevesoft.eve_pat.Regex#search
         */
     public boolean matchAt(StringLike s,int start_pos) {
         return _search(s,start_pos,start_pos);
@@ -551,8 +551,8 @@ public class Regex extends RegRes implements FilenameFilter {
 
     /** Search through a String for the first
         occurrence of a match.
-        @see com.stevesoft.ewe_pat.Regex#searchFrom
-        @see com.stevesoft.ewe_pat.Regex#matchAt
+        @see com.stevesoft.eve_pat.Regex#searchFrom
+        @see com.stevesoft.eve_pat.Regex#matchAt
         */
     public boolean search(String s) {
         if(s==null)
@@ -797,7 +797,7 @@ public class Regex extends RegRes implements FilenameFilter {
         is the heart of class Regex. Rthings has one integer
         member called intValue, it is used to keep track of the number
         of ()'s in the Pattern.
-        @exception com.stevesoft.ewe_pat.RegSyntax is thrown when a nonsensensical
+        @exception com.stevesoft.eve_pat.RegSyntax is thrown when a nonsensensical
         pattern is supplied.  For example, a pattern beginning
         with *. */
     protected void compile1(StrPos sp,Rthings mk) throws RegSyntax {
@@ -1104,13 +1104,13 @@ public class Regex extends RegRes implements FilenameFilter {
                 ;
         if(last instanceof Multi && i1.intValue()==0 &&
                 i2.intValue()==1)
-            ((Multi)last).matchFewest = true;
+            ((Multi)last).matchFevest = true;
         else if(last instanceof FastMulti && i1.intValue()==0 &&
                 i2.intValue()==1)
-            ((FastMulti)last).matchFewest = true;
+            ((FastMulti)last).matchFevest = true;
         else if(last instanceof DotMulti && i1.intValue()==0 &&
                 i2.intValue()==1)
-            ((DotMulti)last).matchFewest = true;
+            ((DotMulti)last).matchFevest = true;
 	else if(last instanceof Multi
 	     || last instanceof DotMulti
 	     || last instanceof FastMulti)
@@ -1262,8 +1262,8 @@ public class Regex extends RegRes implements FilenameFilter {
     }
     // Re-escape Pattern, allows us to use a different escape
     // character.
-    static String reEscape(String s,char oldEsc,char newEsc) {
-        if(oldEsc == newEsc) return s;
+    static String reEscape(String s,char oldEsc,char nevesc) {
+        if(oldEsc == nevesc) return s;
         int i;
         StringBuffer sb = new StringBuffer();
         for(i=0;i<s.length();i++) {
@@ -1271,13 +1271,13 @@ public class Regex extends RegRes implements FilenameFilter {
                 if(s.charAt(i+1)==oldEsc) {
                     sb.append(oldEsc);
                 } else {
-                    sb.append(newEsc);
+                    sb.append(nevesc);
                     sb.append(s.charAt(i+1));
                 }
                 i++;
-            } else if(s.charAt(i)==newEsc) {
-                sb.append(newEsc);
-                sb.append(newEsc);
+            } else if(s.charAt(i)==nevesc) {
+                sb.append(nevesc);
+                sb.append(nevesc);
             } else {
                 sb.append(s.charAt(i));
             }
@@ -1287,7 +1287,7 @@ public class Regex extends RegRes implements FilenameFilter {
     /** This method implements FilenameFilter, allowing one
          to use a Regex to search through a directory using File.list.
          There is a FileRegex now that does this better.
-         @see com.stevesoft.ewe_pat.FileRegex
+         @see com.stevesoft.eve_pat.FileRegex
         */
     public boolean accept(File dir,String s) {
         return search(s);
@@ -1311,11 +1311,11 @@ public class Regex extends RegRes implements FilenameFilter {
         months of the year "(January|February|...)" optimize() will make
         a Hashtable that takes it to the next appropriate pattern
         element -- eliminating the need for a linear search.
-        @see com.stevesoft.ewe_pat.Regex#optimized
-        @see com.stevesoft.ewe_pat.Regex#ignoreCase
-        @see com.stevesoft.ewe_pat.Regex#dontMatchInQuotes
-        @see com.stevesoft.ewe_pat.Regex#matchAt
-        @see com.stevesoft.ewe_pat.Regex#search
+        @see com.stevesoft.eve_pat.Regex#optimized
+        @see com.stevesoft.eve_pat.Regex#ignoreCase
+        @see com.stevesoft.eve_pat.Regex#dontMatchInQuotes
+        @see com.stevesoft.eve_pat.Regex#matchAt
+        @see com.stevesoft.eve_pat.Regex#search
         */
     public void optimize() {
         if(optimized()||thePattern==null) return;

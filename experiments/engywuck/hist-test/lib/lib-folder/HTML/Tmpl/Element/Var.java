@@ -29,8 +29,8 @@
 */
 
 package HTML.Tmpl.Element;
-import ewe.util.Hashtable;
-import ewe.util.NoSuchElementException;
+import java.util.Hashtable;
+import java.util.NoSuchElementException;
 import HTML.Tmpl.Util;
 
 public class Var extends Element
@@ -123,7 +123,7 @@ public class Var extends Element
 		else if(cname.endsWith(".Boolean"))
 			return ((Boolean)o).toString();
 		else if(cname.endsWith(".Date"))
-			return ((ewe.sys.Date)o).toString();
+			return ((java.util.Date)o).toString();
 		else if(cname.endsWith(".Vector"))
 			throw new ClassCastException("Attempt to set <tmpl_var> with a non-scalar. Var name=" + this.name);
 		else

@@ -5,11 +5,11 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 /** The apply(StringBufferLike sb,RegRes res) method of this derivation
     of ReplaceRule appends the contents of res.right() to the     StringBufferLike sb.
-    @see com.stevesoft.ewe_pat.ReplaceRule
+    @see com.stevesoft.eve_pat.ReplaceRule
     */
 public class RightRule extends ReplaceRule {
     public RightRule() {}

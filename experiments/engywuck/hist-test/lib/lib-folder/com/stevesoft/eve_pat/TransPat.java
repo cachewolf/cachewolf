@@ -5,11 +5,11 @@
 // the details.
 //    -- Happy Computing!
 //
-package com.stevesoft.ewe_pat;
+package com.stevesoft.eve_pat;
 
 
 /** This class is used to implement the Transformer
-    @see com.stevesoft.ewe_pat.Transform
+    @see com.stevesoft.eve_pat.Transform
     */
 class TransPat extends Pattern {
     Regex[] ra = new Regex[10];
