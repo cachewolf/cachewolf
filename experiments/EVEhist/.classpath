@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/lib-folder"/>
+	<classpathentry exported="true" kind="lib" path="lib/CompileEve.zip" sourcepath="lib/JavaEve.zip"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
