@@ -1,0 +1,2242 @@
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/Launcher.c ewe-win32-source_1.48_cemod/vm/Launcher.c
+--- ewe-win32-source-1.48/vm/Launcher.c	Fri Oct 29 15:43:00 2004
++++ ewe-win32-source_1.48_cemod/vm/Launcher.c	Sat May 17 08:49:09 2008
+@@ -33,7 +33,7 @@
+ #endif
+ #endif
+ 
+-//#define RESOLVE_CONFLICT
++#define RESOLVE_CONFLICT
+ 
+ void resolveConflict(TCHAR *msg)
+ {
+@@ -240,7 +240,7 @@
+ 			val[textLength(val)-1] = 0;
+ 			val++;
+ 		}
+-		//MessageBox(NULL,val,TEXT("Load DLL"),MB_OK);
++		MessageBox(NULL,val,TEXT("Load DLL"),MB_OK);
+ 		ret = LoadLibrary(val);
+ 		if (ret != NULL) return ret;
+ 	}
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/ProjectFiles/eVC4-Mobile/ceewedll.vcproj ewe-win32-source_1.48_cemod/vm/ProjectFiles/eVC4-Mobile/ceewedll.vcproj
+--- ewe-win32-source-1.48/vm/ProjectFiles/eVC4-Mobile/ceewedll.vcproj	Thu Jan  1 00:00:00 1970
++++ ewe-win32-source_1.48_cemod/vm/ProjectFiles/eVC4-Mobile/ceewedll.vcproj	Fri May 16 12:53:56 2008
+@@ -0,0 +1,771 @@
++<?xml version="1.0" encoding="Windows-1252"?>
++<VisualStudioProject
++	ProjectType="Visual C++"
++	Version="8,00"
++	Name="ceewedll"
++	ProjectGUID="{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}"
++	RootNamespace="ceewedll"
++	>
++	<Platforms>
++		<Platform
++			Name="Smartphone 2003 (ARMV4)"
++		/>
++		<Platform
++			Name="Pocket PC 2003 (ARMV4)"
++		/>
++	</Platforms>
++	<ToolFiles>
++	</ToolFiles>
++	<Configurations>
++		<Configuration
++			Name="Release|Smartphone 2003 (ARMV4)"
++			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
++			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
++			ConfigurationType="2"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
++			UseOfMFC="0"
++			ATLMinimizesCRunTimeLibraryUsage="false"
++			CharacterSet="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++				PreprocessorDefinitions="NDEBUG"
++				MkTypLibCompatible="true"
++				SuppressStartupBanner="true"
++				TargetEnvironment="1"
++				TypeLibraryName="$(PlatformName)\$(ConfigurationName)/ceewedll.tlb"
++				HeaderFileName=""
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++				Optimization="2"
++				InlineFunctionExpansion="1"
++				PreprocessorDefinitions="WINCE;_WIN32_WCE=$(CEVER);$(CePlatform);ARM;_ARM_;ARMV4;UNDER_CE=$(CEVER);UNICODE;NDEBUG"
++				StringPooling="true"
++				RuntimeLibrary="0"
++				EnableFunctionLevelLinking="true"
++				UsePrecompiledHeader="0"
++				PrecompiledHeaderFile="$(PlatformName)\$(ConfigurationName)/ceewedll.pch"
++				AssemblerListingLocation="$(PlatformName)\$(ConfigurationName)/"
++				ObjectFile="$(PlatformName)\$(ConfigurationName)/"
++				ProgramDataBaseFileName="$(PlatformName)\$(ConfigurationName)/"
++				WarningLevel="3"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++				AdditionalOptions="/r "
++				PreprocessorDefinitions="UNDER_CE=$(CEVER),_WIN32_WCE=$(CEVER),NDEBUG,UNICODE,_UNICODE,$(CePlatform),ARM,_ARM_,ARMV4"
++				Culture="1033"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalOptions="/ALIGN:4096 /subsystem:$(CESubsystem) /MACHINE:ARM "
++				AdditionalDependencies="commctrl.lib coredll.lib winsock.lib aygshell.lib secchk.lib ccrtrtti.lib"
++				OutputFile="ARMV4Rel/ewe.dll"
++				LinkIncremental="1"
++				SuppressStartupBanner="true"
++				IgnoreDefaultLibraryNames="$(CENoDefaultLib)"
++				ProgramDatabaseFile="$(PlatformName)\$(ConfigurationName)/ewe.pdb"
++				StackReserveSize="65536"
++				StackCommitSize="4096"
++				EntryPointSymbol="_DllMainCRTStartup"
++				BaseAddress="0x00100000"
++				ImportLibrary="$(PlatformName)\$(ConfigurationName)/ewe.lib"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++				SuppressStartupBanner="true"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ceewedll.bsc"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++		<Configuration
++			Name="Release|Pocket PC 2003 (ARMV4)"
++			OutputDirectory="$(SolutionDir)Pocket PC 2003 (ARMV4)\$(ConfigurationName)"
++			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
++			ConfigurationType="1"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
++			UseOfMFC="0"
++			ATLMinimizesCRunTimeLibraryUsage="false"
++			CharacterSet="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++				PreprocessorDefinitions="NDEBUG"
++				MkTypLibCompatible="true"
++				SuppressStartupBanner="true"
++				TargetEnvironment="1"
++				TypeLibraryName="$(PlatformName)\$(ConfigurationName)/ceewedll.tlb"
++				HeaderFileName=""
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++				Optimization="2"
++				InlineFunctionExpansion="1"
++				PreprocessorDefinitions="WINCE;_WIN32_WCE=$(CEVER);$(CePlatform);ARM;_ARM_;ARMV4;UNDER_CE=$(CEVER);UNICODE;NDEBUG"
++				StringPooling="true"
++				RuntimeLibrary="0"
++				EnableFunctionLevelLinking="true"
++				UsePrecompiledHeader="0"
++				PrecompiledHeaderFile="$(PlatformName)\$(ConfigurationName)/ceewedll.pch"
++				AssemblerListingLocation=""
++				ObjectFile="$(PlatformName)\$(ConfigurationName)/"
++				ProgramDataBaseFileName="$(PlatformName)\$(ConfigurationName)/"
++				WarningLevel="3"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++				AdditionalOptions="/r "
++				PreprocessorDefinitions="UNDER_CE=$(CEVER),_WIN32_WCE=$(CEVER),NDEBUG,UNICODE,_UNICODE,$(CePlatform),ARM,_ARM_,ARMV4"
++				Culture="1033"
++				AdditionalIncludeDirectories="&quot;C:\daten\ewe-win32-source&quot;"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalOptions="/ALIGN:4096 /subsystem:$(CESubsystem) /MACHINE:ARM "
++				AdditionalDependencies="commctrl.lib coredll.lib secchk.lib"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ewe.dll"
++				LinkIncremental="0"
++				SuppressStartupBanner="true"
++				AdditionalLibraryDirectories=""
++				IgnoreDefaultLibraryNames="$(CENoDefaultLib)"
++				GenerateDebugInformation="false"
++				AssemblyDebug="0"
++				ProgramDatabaseFile=""
++				SubSystem="9"
++				StackReserveSize="65536"
++				StackCommitSize="4096"
++				EntryPointSymbol=""
++				BaseAddress=""
++				ImportLibrary=""
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++				SuppressStartupBanner="true"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ceewedll.bsc"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++		<Configuration
++			Name="Debug|Smartphone 2003 (ARMV4)"
++			IntermediateDirectory="Smartphone 2003 (ARMV4)\$(ConfigurationName)"
++			ConfigurationType="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++		<Configuration
++			Name="Debug|Pocket PC 2003 (ARMV4)"
++			OutputDirectory="$(SolutionDir)Pocket PC 2003 (ARMV4)\$(ConfigurationName)"
++			IntermediateDirectory="Pocket PC 2003 (ARMV4)\$(ConfigurationName)"
++			ConfigurationType="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++				PreprocessorDefinitions="WINCE;_WIN32_WCE=$(CEVER);$(CePlatform);ARM;_ARM_;ARMV4;UNDER_CE=$(CEVER);UNICODE;NDEBUG"
++				StringPooling="true"
++				EnableFunctionLevelLinking="true"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++				PreprocessorDefinitions="UNDER_CE=$(CEVER),_WIN32_WCE=$(CEVER),NDEBUG,UNICODE,_UNICODE,$(CePlatform),ARM,_ARM_,ARMV4"
++				AdditionalIncludeDirectories="&quot;C:\daten\ewe-win32-source-1.48&quot;"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalDependencies="commctrl.lib coredll.lib secchk.lib"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ewe.dll"
++				IgnoreDefaultLibraryNames="$(CENoDefaultLib)"
++				SubSystem="9"
++				StackReserveSize="65536"
++				StackCommitSize="4096"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++	</Configurations>
++	<References>
++	</References>
++	<Files>
++		<Filter
++			Name="Source Files"
++			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
++			>
++			<File
++				RelativePath="..\..\zlib\adler32.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\crc32.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\deflate.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\ewe.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\ewe_vm.c"
++				>
++				<FileConfiguration
++					Name="Debug|Pocket PC 2003 (ARMV4)"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\ewecedll.rc"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCResourceCompilerTool"
++						AdditionalIncludeDirectories="\daten\ewe-win32-source\vm"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCResourceCompilerTool"
++						AdditionalIncludeDirectories="&quot;C:\daten\ewe-win32-source-1.48&quot;;..\.."
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Debug|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCResourceCompilerTool"
++						AdditionalIncludeDirectories="..\.."
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\infblock.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\infcodes.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\inffast.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\inflate.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\inftrees.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\infutil.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\jpeg-6b\jdecomp.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\jpeg-6b\jdecomp2.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\nmwin32_a.c"
++				>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Debug|Pocket PC 2003 (ARMV4)"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\nmwin32_b.c"
++				>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Debug|Pocket PC 2003 (ARMV4)"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\nmwin32_c.c"
++				>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Debug|Pocket PC 2003 (ARMV4)"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\trees.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\zlib\zutil.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++		</Filter>
++		<Filter
++			Name="Resource Files"
++			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
++			>
++			<File
++				RelativePath="..\..\sync\Ewe.ico"
++				>
++			</File>
++			<File
++				RelativePath="..\..\sync\TaskBarIcon.ico"
++				>
++			</File>
++		</Filter>
++		<Filter
++			Name="Header Files"
++			Filter="h;hpp;hxx;hm;inl"
++			>
++		</Filter>
++		<File
++			RelativePath="..\..\..\ewe.ewe"
++			>
++		</File>
++	</Files>
++	<Globals>
++	</Globals>
++</VisualStudioProject>
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/ProjectFiles/eVC4-Mobile/celauncher.vcproj ewe-win32-source_1.48_cemod/vm/ProjectFiles/eVC4-Mobile/celauncher.vcproj
+--- ewe-win32-source-1.48/vm/ProjectFiles/eVC4-Mobile/celauncher.vcproj	Thu Jan  1 00:00:00 1970
++++ ewe-win32-source_1.48_cemod/vm/ProjectFiles/eVC4-Mobile/celauncher.vcproj	Fri May 16 12:32:39 2008
+@@ -0,0 +1,415 @@
++<?xml version="1.0" encoding="Windows-1252"?>
++<VisualStudioProject
++	ProjectType="Visual C++"
++	Version="8,00"
++	Name="celauncher"
++	ProjectGUID="{AA80AA3D-7A46-4389-A15E-2DA84DD05442}"
++	>
++	<Platforms>
++		<Platform
++			Name="Smartphone 2003 (ARMV4)"
++		/>
++		<Platform
++			Name="Pocket PC 2003 (ARMV4)"
++		/>
++	</Platforms>
++	<ToolFiles>
++	</ToolFiles>
++	<Configurations>
++		<Configuration
++			Name="Release|Smartphone 2003 (ARMV4)"
++			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
++			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
++			ConfigurationType="1"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
++			UseOfMFC="0"
++			ATLMinimizesCRunTimeLibraryUsage="false"
++			CharacterSet="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++				PreprocessorDefinitions="NDEBUG"
++				MkTypLibCompatible="true"
++				SuppressStartupBanner="true"
++				TargetEnvironment="1"
++				TypeLibraryName="$(PlatformName)\$(ConfigurationName)/celauncher.tlb"
++				HeaderFileName=""
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++				Optimization="2"
++				InlineFunctionExpansion="1"
++				PreprocessorDefinitions="_WIN32_WCE=$(CEVER);$(CePlatform);ARM;_ARM_;ARMV4;UNDER_CE=$(CEVER);UNICODE;NDEBUG"
++				StringPooling="true"
++				RuntimeLibrary="0"
++				EnableFunctionLevelLinking="true"
++				UsePrecompiledHeader="0"
++				PrecompiledHeaderFile="$(PlatformName)\$(ConfigurationName)/celauncher.pch"
++				AssemblerListingLocation="$(PlatformName)\$(ConfigurationName)/"
++				ObjectFile="$(PlatformName)\$(ConfigurationName)/"
++				ProgramDataBaseFileName="$(PlatformName)\$(ConfigurationName)/"
++				WarningLevel="3"
++				SuppressStartupBanner="true"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++				AdditionalOptions="/r "
++				PreprocessorDefinitions="UNDER_CE=$(CEVER),_WIN32_WCE=$(CEVER),NDEBUG,UNICODE,_UNICODE,$(CePlatform),ARM,_ARM_,ARMV4"
++				Culture="1033"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalOptions="/ALIGN:4096 /subsystem:windowsce,4.20 /MACHINE:ARM "
++				AdditionalDependencies="commctrl.lib coredll.lib secchk.lib ccrtrtti.lib"
++				OutputFile="ARMV4Rel/ewe.exe"
++				LinkIncremental="1"
++				SuppressStartupBanner="true"
++				IgnoreDefaultLibraryNames="$(CENoDefaultLib)"
++				ProgramDatabaseFile="$(PlatformName)\$(ConfigurationName)/ewe.pdb"
++				StackReserveSize="65536"
++				StackCommitSize="4096"
++				EntryPointSymbol="WinMainCRTStartup"
++				BaseAddress="0x00010000"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++				SuppressStartupBanner="true"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/celauncher.bsc"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++		<Configuration
++			Name="Release|Pocket PC 2003 (ARMV4)"
++			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
++			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
++			ConfigurationType="1"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
++			UseOfMFC="0"
++			ATLMinimizesCRunTimeLibraryUsage="false"
++			CharacterSet="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++				PreprocessorDefinitions="NDEBUG"
++				MkTypLibCompatible="true"
++				SuppressStartupBanner="true"
++				TargetEnvironment="1"
++				TypeLibraryName="$(PlatformName)\$(ConfigurationName)/celauncher.tlb"
++				HeaderFileName=""
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++				Optimization="2"
++				InlineFunctionExpansion="1"
++				PreprocessorDefinitions="_WIN32_WCE=$(CEVER);$(CePlatform);ARM;_ARM_;ARMV4;UNDER_CE=$(CEVER);UNICODE;NDEBUG"
++				StringPooling="true"
++				RuntimeLibrary="0"
++				EnableFunctionLevelLinking="true"
++				UsePrecompiledHeader="0"
++				PrecompiledHeaderFile="$(PlatformName)\$(ConfigurationName)/celauncher.pch"
++				AssemblerListingLocation="$(PlatformName)\$(ConfigurationName)/"
++				ObjectFile="$(PlatformName)\$(ConfigurationName)/"
++				ProgramDataBaseFileName="$(PlatformName)\$(ConfigurationName)/"
++				WarningLevel="3"
++				SuppressStartupBanner="true"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++				AdditionalOptions="/r "
++				PreprocessorDefinitions="UNDER_CE=$(CEVER),_WIN32_WCE=$(CEVER),NDEBUG,UNICODE,_UNICODE,$(CePlatform),ARM,_ARM_,ARMV4"
++				Culture="1033"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalOptions="/ALIGN:4096 /subsystem:windowsce,4.20 /MACHINE:ARM "
++				AdditionalDependencies="commctrl.lib coredll.lib secchk.lib ccrtrtti.lib"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ewe.exe"
++				LinkIncremental="1"
++				SuppressStartupBanner="true"
++				IgnoreDefaultLibraryNames="$(CENoDefaultLib)"
++				ProgramDatabaseFile="$(PlatformName)\$(ConfigurationName)/ewe.pdb"
++				SubSystem="9"
++				StackReserveSize="65536"
++				StackCommitSize="4096"
++				EntryPointSymbol="WinMainCRTStartup"
++				BaseAddress="0x00010000"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++				SuppressStartupBanner="true"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/celauncher.bsc"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++		<Configuration
++			Name="Debug|Smartphone 2003 (ARMV4)"
++			ConfigurationType="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++		<Configuration
++			Name="Debug|Pocket PC 2003 (ARMV4)"
++			OutputDirectory="$(SolutionDir)Pocket PC 2003 (ARMV4)\$(ConfigurationName)"
++			IntermediateDirectory="Pocket PC 2003 (ARMV4)\$(ConfigurationName)"
++			ConfigurationType="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++				PreprocessorDefinitions="_WIN32_WCE=$(CEVER);$(CePlatform);ARM;_ARM_;ARMV4;UNDER_CE=$(CEVER);UNICODE;DEBUG"
++				DebugInformationFormat="3"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalDependencies="commctrl.lib coredll.lib secchk.lib ccrtrtti.lib"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ewe.exe"
++				IgnoreDefaultLibraryNames="$(CENoDefaultLib)"
++				ProgramDatabaseFile="$(PlatformName)\$(ConfigurationName)/ewe.pdb"
++				SubSystem="9"
++				StackReserveSize="65536"
++				StackCommitSize="4096"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++	</Configurations>
++	<References>
++	</References>
++	<Files>
++		<Filter
++			Name="Source Files"
++			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
++			>
++			<File
++				RelativePath="..\..\Launcher.c"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\..\launcher.rc"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCResourceCompilerTool"
++						AdditionalIncludeDirectories="\daten\ewe-win32-source\vm"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCResourceCompilerTool"
++						AdditionalIncludeDirectories="\daten\ewe-win32-source\vm"
++					/>
++				</FileConfiguration>
++			</File>
++		</Filter>
++		<Filter
++			Name="Resource Files"
++			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
++			>
++			<File
++				RelativePath="..\..\Ewe.ico"
++				>
++			</File>
++		</Filter>
++		<Filter
++			Name="Header Files"
++			Filter="h;hpp;hxx;hm;inl"
++			>
++		</Filter>
++	</Files>
++	<Globals>
++	</Globals>
++</VisualStudioProject>
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/ProjectFiles/eVC4-Mobile/ewevm.sln ewe-win32-source_1.48_cemod/vm/ProjectFiles/eVC4-Mobile/ewevm.sln
+--- ewe-win32-source-1.48/vm/ProjectFiles/eVC4-Mobile/ewevm.sln	Thu Jan  1 00:00:00 1970
++++ ewe-win32-source_1.48_cemod/vm/ProjectFiles/eVC4-Mobile/ewevm.sln	Tue May  6 15:12:52 2008
+@@ -0,0 +1,58 @@
++﻿
++Microsoft Visual Studio Solution File, Format Version 9.00
++# Visual Studio 2005
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ceewedll", "ceewedll.vcproj", "{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}"
++EndProject
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "celauncher", "celauncher.vcproj", "{AA80AA3D-7A46-4389-A15E-2DA84DD05442}"
++EndProject
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ewex_registry", "ewex_registry.vcproj", "{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}"
++EndProject
++Global
++	GlobalSection(SolutionConfigurationPlatforms) = preSolution
++		Debug|Pocket PC 2003 (ARMV4) = Debug|Pocket PC 2003 (ARMV4)
++		Debug|Smartphone 2003 (ARMV4) = Debug|Smartphone 2003 (ARMV4)
++		Release|Pocket PC 2003 (ARMV4) = Release|Pocket PC 2003 (ARMV4)
++		Release|Smartphone 2003 (ARMV4) = Release|Smartphone 2003 (ARMV4)
++	EndGlobalSection
++	GlobalSection(ProjectConfigurationPlatforms) = postSolution
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|Pocket PC 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Debug|Pocket PC 2003 (ARMV4).Build.0 = Debug|Pocket PC 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Debug|Pocket PC 2003 (ARMV4).Deploy.0 = Debug|Pocket PC 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Debug|Smartphone 2003 (ARMV4).ActiveCfg = Debug|Smartphone 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Debug|Smartphone 2003 (ARMV4).Build.0 = Debug|Smartphone 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Debug|Smartphone 2003 (ARMV4).Deploy.0 = Debug|Smartphone 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Pocket PC 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Release|Pocket PC 2003 (ARMV4).Build.0 = Release|Pocket PC 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Release|Pocket PC 2003 (ARMV4).Deploy.0 = Release|Pocket PC 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Release|Smartphone 2003 (ARMV4).ActiveCfg = Release|Smartphone 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Release|Smartphone 2003 (ARMV4).Build.0 = Release|Smartphone 2003 (ARMV4)
++		{D6D9CFF9-DF64-4FDA-A44C-B720C77191D0}.Release|Smartphone 2003 (ARMV4).Deploy.0 = Release|Smartphone 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|Pocket PC 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Debug|Pocket PC 2003 (ARMV4).Build.0 = Debug|Pocket PC 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Debug|Pocket PC 2003 (ARMV4).Deploy.0 = Debug|Pocket PC 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Debug|Smartphone 2003 (ARMV4).ActiveCfg = Debug|Smartphone 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Debug|Smartphone 2003 (ARMV4).Build.0 = Debug|Smartphone 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Debug|Smartphone 2003 (ARMV4).Deploy.0 = Debug|Smartphone 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Pocket PC 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Release|Pocket PC 2003 (ARMV4).Build.0 = Release|Pocket PC 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Release|Pocket PC 2003 (ARMV4).Deploy.0 = Release|Pocket PC 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Release|Smartphone 2003 (ARMV4).ActiveCfg = Release|Smartphone 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Release|Smartphone 2003 (ARMV4).Build.0 = Release|Smartphone 2003 (ARMV4)
++		{AA80AA3D-7A46-4389-A15E-2DA84DD05442}.Release|Smartphone 2003 (ARMV4).Deploy.0 = Release|Smartphone 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|Pocket PC 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Debug|Pocket PC 2003 (ARMV4).Build.0 = Debug|Pocket PC 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Debug|Pocket PC 2003 (ARMV4).Deploy.0 = Debug|Pocket PC 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Debug|Smartphone 2003 (ARMV4).ActiveCfg = Debug|Smartphone 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Debug|Smartphone 2003 (ARMV4).Build.0 = Debug|Smartphone 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Debug|Smartphone 2003 (ARMV4).Deploy.0 = Debug|Smartphone 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Pocket PC 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Release|Pocket PC 2003 (ARMV4).Build.0 = Release|Pocket PC 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Release|Pocket PC 2003 (ARMV4).Deploy.0 = Release|Pocket PC 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Release|Smartphone 2003 (ARMV4).ActiveCfg = Release|Smartphone 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Release|Smartphone 2003 (ARMV4).Build.0 = Release|Smartphone 2003 (ARMV4)
++		{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}.Release|Smartphone 2003 (ARMV4).Deploy.0 = Release|Smartphone 2003 (ARMV4)
++	EndGlobalSection
++	GlobalSection(SolutionProperties) = preSolution
++		HideSolutionNode = FALSE
++	EndGlobalSection
++EndGlobal
+Binary files ewe-win32-source-1.48/vm/ProjectFiles/eVC4-Mobile/ewevm.suo and ewe-win32-source_1.48_cemod/vm/ProjectFiles/eVC4-Mobile/ewevm.suo differ
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/ProjectFiles/eVC4-Mobile/ewex_registry.vcproj ewe-win32-source_1.48_cemod/vm/ProjectFiles/eVC4-Mobile/ewex_registry.vcproj
+--- ewe-win32-source-1.48/vm/ProjectFiles/eVC4-Mobile/ewex_registry.vcproj	Thu Jan  1 00:00:00 1970
++++ ewe-win32-source_1.48_cemod/vm/ProjectFiles/eVC4-Mobile/ewex_registry.vcproj	Fri May 16 12:30:24 2008
+@@ -0,0 +1,395 @@
++<?xml version="1.0" encoding="Windows-1252"?>
++<VisualStudioProject
++	ProjectType="Visual C++"
++	Version="8,00"
++	Name="ewex_registry"
++	ProjectGUID="{BCA969F0-F47D-4CDE-8C74-5CE17D0665D5}"
++	>
++	<Platforms>
++		<Platform
++			Name="Smartphone 2003 (ARMV4)"
++		/>
++		<Platform
++			Name="Pocket PC 2003 (ARMV4)"
++		/>
++	</Platforms>
++	<ToolFiles>
++	</ToolFiles>
++	<Configurations>
++		<Configuration
++			Name="Release|Smartphone 2003 (ARMV4)"
++			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
++			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
++			ConfigurationType="2"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
++			UseOfMFC="0"
++			ATLMinimizesCRunTimeLibraryUsage="false"
++			CharacterSet="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++				PreprocessorDefinitions="NDEBUG"
++				MkTypLibCompatible="true"
++				SuppressStartupBanner="true"
++				TargetEnvironment="1"
++				TypeLibraryName="$(PlatformName)\$(ConfigurationName)/ewex_registry.tlb"
++				HeaderFileName=""
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++				Optimization="2"
++				InlineFunctionExpansion="1"
++				PreprocessorDefinitions="_WIN32_WCE=$(CEVER);$(CePlatform);ARM;_ARM_;ARMV4;UNDER_CE=$(CEVER);UNICODE;NDEBUG"
++				StringPooling="true"
++				RuntimeLibrary="0"
++				EnableFunctionLevelLinking="true"
++				UsePrecompiledHeader="0"
++				PrecompiledHeaderFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.pch"
++				AssemblerListingLocation="$(PlatformName)\$(ConfigurationName)/"
++				ObjectFile="$(PlatformName)\$(ConfigurationName)/"
++				ProgramDataBaseFileName="$(PlatformName)\$(ConfigurationName)/"
++				WarningLevel="3"
++				SuppressStartupBanner="true"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++				AdditionalOptions="/r "
++				PreprocessorDefinitions="UNDER_CE=$(CEVER),_WIN32_WCE=$(CEVER),NDEBUG,UNICODE,_UNICODE,$(CePlatform),ARM,_ARM_,ARMV4"
++				Culture="1033"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalOptions="/ALIGN:4096 /subsystem:$(CESubsystem) /MACHINE:ARM "
++				AdditionalDependencies="commctrl.lib coredll.lib secchk.lib ccrtrtti.lib"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.dll"
++				LinkIncremental="1"
++				SuppressStartupBanner="true"
++				IgnoreDefaultLibraryNames="$(CENoDefaultLib)"
++				ProgramDatabaseFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.pdb"
++				StackReserveSize="65536"
++				StackCommitSize="4096"
++				EntryPointSymbol="_DllMainCRTStartup"
++				BaseAddress="0x00100000"
++				ImportLibrary="$(PlatformName)\$(ConfigurationName)/ewex_registry.lib"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++				SuppressStartupBanner="true"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.bsc"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++		<Configuration
++			Name="Release|Pocket PC 2003 (ARMV4)"
++			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
++			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
++			ConfigurationType="2"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
++			UseOfMFC="0"
++			ATLMinimizesCRunTimeLibraryUsage="false"
++			CharacterSet="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++				PreprocessorDefinitions="NDEBUG"
++				MkTypLibCompatible="true"
++				SuppressStartupBanner="true"
++				TargetEnvironment="1"
++				TypeLibraryName="$(PlatformName)\$(ConfigurationName)/ewex_registry.tlb"
++				HeaderFileName=""
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++				Optimization="2"
++				InlineFunctionExpansion="1"
++				PreprocessorDefinitions="_WIN32_WCE=$(CEVER);$(CePlatform);ARM;_ARM_;ARMV4;UNDER_CE=$(CEVER);UNICODE;NDEBUG"
++				StringPooling="true"
++				RuntimeLibrary="0"
++				EnableFunctionLevelLinking="true"
++				UsePrecompiledHeader="0"
++				PrecompiledHeaderFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.pch"
++				AssemblerListingLocation="$(PlatformName)\$(ConfigurationName)/"
++				ObjectFile="$(PlatformName)\$(ConfigurationName)/"
++				ProgramDataBaseFileName="$(PlatformName)\$(ConfigurationName)/"
++				WarningLevel="3"
++				SuppressStartupBanner="true"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++				AdditionalOptions="/r "
++				PreprocessorDefinitions="UNDER_CE=$(CEVER),_WIN32_WCE=$(CEVER),NDEBUG,UNICODE,_UNICODE,$(CePlatform),ARM,_ARM_,ARMV4"
++				Culture="1033"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalOptions="/ALIGN:4096 /subsystem:$(CESubsystem) /MACHINE:ARM "
++				AdditionalDependencies="commctrl.lib coredll.lib secchk.lib ccrtrtti.lib"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.dll"
++				LinkIncremental="1"
++				SuppressStartupBanner="true"
++				IgnoreDefaultLibraryNames="$(CENoDefaultLib)"
++				ProgramDatabaseFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.pdb"
++				SubSystem="9"
++				StackReserveSize="65536"
++				StackCommitSize="4096"
++				EntryPointSymbol="_DllMainCRTStartup"
++				BaseAddress="0x00100000"
++				ImportLibrary="$(PlatformName)\$(ConfigurationName)/ewex_registry.lib"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++				SuppressStartupBanner="true"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.bsc"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++		<Configuration
++			Name="Debug|Smartphone 2003 (ARMV4)"
++			ConfigurationType="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++		<Configuration
++			Name="Debug|Pocket PC 2003 (ARMV4)"
++			OutputDirectory="$(SolutionDir)Pocket PC 2003 (ARMV4)\$(ConfigurationName)"
++			IntermediateDirectory="Pocket PC 2003 (ARMV4)\$(ConfigurationName)"
++			ConfigurationType="1"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				ExecutionBucket="7"
++				PreprocessorDefinitions="_WIN32_WCE=$(CEVER);$(CePlatform);ARM;_ARM_;ARMV4;UNDER_CE=$(CEVER);UNICODE;_DEBUG"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalDependencies="commctrl.lib coredll.lib secchk.lib ccrtrtti.lib"
++				OutputFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.dll"
++				LinkIncremental="1"
++				IgnoreDefaultLibraryNames="$(CENoDefaultLib)"
++				ProgramDatabaseFile="$(PlatformName)\$(ConfigurationName)/ewex_registry.pdb"
++				SubSystem="9"
++				StackReserveSize="65536"
++				StackCommitSize="4096"
++				EntryPointSymbol="_DllMainCRTStartup"
++				BaseAddress="0x00100000"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCCodeSignTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++			<DeploymentTool
++				ForceDirty="-1"
++				RemoteDirectory=""
++				RegisterOutput="0"
++				AdditionalFiles=""
++			/>
++			<DebuggerTool
++			/>
++		</Configuration>
++	</Configurations>
++	<References>
++	</References>
++	<Files>
++		<Filter
++			Name="Source Files"
++			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
++			>
++			<File
++				RelativePath="..\..\ewex_registry\registry.cpp"
++				>
++				<FileConfiguration
++					Name="Release|Smartphone 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Pocket PC 2003 (ARMV4)"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="0"
++					/>
++				</FileConfiguration>
++			</File>
++		</Filter>
++		<Filter
++			Name="Header Files"
++			Filter="h;hpp;hxx;hm;inl"
++			>
++		</Filter>
++		<Filter
++			Name="Resource Files"
++			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
++			>
++		</Filter>
++	</Files>
++	<Globals>
++	</Globals>
++</VisualStudioProject>
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/ewe.c ewe-win32-source_1.48_cemod/vm/ewe.c
+--- ewe-win32-source-1.48/vm/ewe.c	Fri Jun  3 15:04:24 2005
++++ ewe-win32-source_1.48_cemod/vm/ewe.c	Sat May 17 08:49:09 2008
+@@ -6,7 +6,6 @@
+ 
+ 
+ /* - Did all these already.
+-
+ For LINUX version:
+ 
+ File must have one hook variable!
+@@ -37,12 +36,20 @@
+ 
+ //#define NO_PLATFORM_DEFINED 1
+ //#define PALMOS 1
+-//#define WINCE 1
++#define WINCE 1
+ //#define POCKETPC 1
+ 
++//JNZ 2008-05-14: Modification for WINCE-Core Versions without winsock.dll and aygshell.dll
++//CE-Core compatibility is only a quick hack, i.e. I have commented out all calls to missed functions
++//as a result there is no network support; from aygshell.dll only 2 functions were called, and I decided they are not
++//so very important. Keep in mind: to have the input panel it might be a good idea to use other programs to show/enable it 
++// --before -- starting this dll.
++#define NONET
++#define NO_HWKEYS
++//JNZ end mod
+ 
+ //#define SLOW_DOWN
+-//#define SHOW_MISSING_NATIVE_METHODS
++#define SHOW_MISSING_NATIVE_METHODS
+ //#define MAKING_POOL
+ //#define DONT_BIND
+ //#define RESOLVE_CONFLICT
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/ewe_vm.c ewe-win32-source_1.48_cemod/vm/ewe_vm.c
+--- ewe-win32-source-1.48/vm/ewe_vm.c	Fri Aug  5 13:57:42 2005
++++ ewe-win32-source_1.48_cemod/vm/ewe_vm.c	Sat May 17 08:49:09 2008
+@@ -88,7 +88,11 @@
+ #endif
+ 
+ #ifdef PocketPC
+-	#define USE_AYGSHELL
++	//#define USE_AYGSHELL
++#endif
++
++#ifdef USE_AYGSHELL
++	#undef USE_AYGSHELL
+ #endif
+ //
+ // The emulator gives sound problems under WindowsXP
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/ewex_registry/registry.cpp ewe-win32-source_1.48_cemod/vm/ewex_registry/registry.cpp
+--- ewe-win32-source-1.48/vm/ewex_registry/registry.cpp	Mon Jul 11 08:14:14 2005
++++ ewe-win32-source_1.48_cemod/vm/ewex_registry/registry.cpp	Sat May 17 08:53:33 2008
+@@ -357,9 +357,9 @@
+ 	//===================================================================
+ 	JavaString getSubKeys(int &num)
+ 	//===================================================================
+-	{
++	{int i;
+ 		JavaString first = NULL, last = NULL;
+-		for (int i = 0;; i++){
++		for (i = 0;; i++){
+ 			JavaString got = getSubKey(i);
+ 			if (got == NULL) break;
+ 			if (last) last->next = got;
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/nmwin32_b.c ewe-win32-source_1.48_cemod/vm/nmwin32_b.c
+--- ewe-win32-source-1.48/vm/nmwin32_b.c	Sun Jun  5 10:10:02 2005
++++ ewe-win32-source_1.48_cemod/vm/nmwin32_b.c	Sat May 17 08:49:09 2008
+@@ -2535,6 +2535,7 @@
+ 
+ static void exitSystem(int value)
+ {
++#ifndef NONET
+ 	if (win32WSAStarted){
+ 		int i, did = 0;
+ 		for (i = 0; i<MAX_ACTIVE_SOCKS; i++)
+@@ -2552,6 +2553,7 @@
+ 		}else
+ 			WSACleanup();
+ 	}
++#endif
+ 	timerThreadExit = 1;
+ 	mPostMessage(mainHWnd,WM_QUIT,0,value);
+ 	
+@@ -3824,8 +3826,10 @@
+ 		}
+ 
+ 	stopApp(mainWinObj);
+-	if (win32WSAStarted)
++#ifndef NONET
++	if (win32WSAStarted)	
+ 		WSACleanup();
++#endif
+ 	ExitThread(mainWinObj == 0 ? -1 : returnValue);
+ 	return mainWinObj == 0 ? -1 : returnValue;
+ 	}	
+diff -r -U 3 -N -d ewe-win32-source-1.48/vm/nmwin32_c.c ewe-win32-source_1.48_cemod/vm/nmwin32_c.c
+--- ewe-win32-source-1.48/vm/nmwin32_c.c	Sat Jun 18 02:36:30 2005
++++ ewe-win32-source_1.48_cemod/vm/nmwin32_c.c	Sat May 17 08:49:09 2008
+@@ -22,6 +22,7 @@
+  *********************************************************************************/
+ 
+ #ifdef WINCE
++#define NONET
+ #include <af_irda.h>
+ #include <winnetwk.h>
+ #endif
+@@ -181,7 +182,7 @@
+ //#if defined(PocketPC) || defined(CASIOBE300)
+ 
+ 
+-#if defined(USE_AYGSHELL)
++#ifdef USE_AYGSHELL
+ static void getSipInfo(SIPINFO *sip)
+ {
+ 	sip->cbSize = sizeof(SIPINFO);
+@@ -1401,7 +1402,7 @@
+ 		// it is not sent this message.
+ 		//
+ 		mPostMessage(hWnd,WM_ACTIVATE,WA_ACTIVE,0);
+-#if defined(PocketPC) && (_WIN32_WCE >= 300) && !defined(CASIOBE300)
++#if defined(PocketPC) && (_WIN32_WCE >= 300) && !defined(CASIOBE300) && defined(USE_AYGSHELL)
+ 		showSIPButton(hWnd,0);
+ 		if ((MainWinFlags & FLAG_SHOW_SIP_BUTTON) || ALWAYS_SHOW_SIP) showSIPButton(hWnd,1);
+ 		/* 
+@@ -1725,7 +1726,7 @@
+ 				SetActiveWindow(hWnd);
+ 			}
+ 			if (lParam & FLAG_FULL_SCREEN){
+-#if _WIN32_WCE >= 300 && !defined(CASIOBE300) && !defined(MS_SMARTPHONE) && !defined(HPC) && !defined(RLC)
++#if _WIN32_WCE >= 300 && !defined(CASIOBE300) && !defined(MS_SMARTPHONE) && !defined(HPC) && !defined(RLC) && defined(USE_AYGSHELL)
+ 				SHFullScreen(hWnd,SHFS_HIDETASKBAR);
+ #elif WINCE
+ 				SetWindowPos(hWnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+@@ -1733,7 +1734,7 @@
+ 			}
+ 			if (lParam & FLAG_ALWAYS_ON_TOP){
+ 				SetWindowPos(hWnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+-#if _WIN32_WCE >= 300 && !defined(CASIOBE300) && !defined(HPC) && !defined(RLC)
++#if _WIN32_WCE >= 300 && !defined(CASIOBE300) && !defined(HPC) && !defined(RLC) && defined(USE_AYGSHELL)
+ 					SHFullScreen(hWnd,SHFS_HIDETASKBAR);
+ #endif
+ 			}
+@@ -1918,7 +1919,7 @@
+ 
+ 
+ 				if (LOWORD(wParam) == WA_INACTIVE) {
+-#if _WIN32_WCE >= 300 && !defined(CASIOBE300) && !defined(HPC)  && !defined(RLC)
++#if _WIN32_WCE >= 300 && !defined(CASIOBE300) && !defined(HPC)  && !defined(RLC) && defined(USE_AYGSHELL)
+ 				if ((windowFlags & FLAG_FULL_SCREEN) && !(windowFlags & FLAG_ALWAYS_ON_TOP))
+ 					SHFullScreen(hWnd,SHFS_SHOWTASKBAR);
+ #elif WINCE
+@@ -1929,7 +1930,7 @@
+ #endif
+ 					type = 52;
+ 				}else {
+-#if _WIN32_WCE >= 300 && !defined(CASIOBE300) && !defined(HPC)  && !defined(RLC)
++#if _WIN32_WCE >= 300 && !defined(CASIOBE300) && !defined(HPC)  && !defined(RLC) && defined(USE_AYGSHELL)
+ 				if ((windowFlags & FLAG_FULL_SCREEN) && !(windowFlags & FLAG_ALWAYS_ON_TOP))
+ 					SHFullScreen(hWnd,SHFS_HIDETASKBAR);
+ #elif WINCE
+@@ -4473,7 +4474,7 @@
+ 		hw = mainHWnd;
+ 		if (win != 0) hw = WOBJ_WindowHWnd(win);
+ 	}
+-#if defined(PocketPC) && (_WIN32_WCE >= 300) && !defined(CASIOBE300)		
++#if defined(PocketPC) && (_WIN32_WCE >= 300) && !defined(CASIOBE300) && !defined(NO_HWKEYS)
+ 	SHSetAppKeyWndAssoc(0xC0,hw);
+ 	SHSetAppKeyWndAssoc(0xC1,hw);
+ 	SHSetAppKeyWndAssoc(0xC2,hw);
+@@ -4626,6 +4627,9 @@
+ }
+ static int startWinsock()
+ {
++#ifdef NONET
++	return 0;
++#else
+ 	if (win32WSAStarted == 0)
+ 		{
+ 		WSADATA wsaData;
+@@ -4634,7 +4638,7 @@
+ 		win32WSAStarted = 1;
+ 		}
+ 	return 1;
+-
++#endif
+ }
+ 
+ 
+@@ -4650,8 +4654,12 @@
+ 
+ WObject toNewIA(WObject oldIA, struct sockaddr_in *sockAddr,int isIR)
+ {
++#ifdef NONET
++	return 0;
++#else
+ 	UtfString addr;
+ 	WObject ia = oldIA, str;
++
+ 	if (ia == 0) {
+ 		if (IAClass == NULL){
+ 			IAClass = getClass(createUtfString("ewe/net/InetAddress"));
+@@ -4671,6 +4679,7 @@
+ 	objectPtr(ia)[1].obj = objectPtr(ia)[2].obj = str;
+ 	popObject();
+ 	return ia;
++#endif
+ }
+ 
+ WObject getIA(struct hostent FAR * he,int index)
+@@ -4720,7 +4729,11 @@
+ 	lookup = mMalloc(strlen(str.str)+1);
+ 	strcpy(lookup,str.str);
+ 	UNLOCKTHREAD
+-	he = gethostbyname(lookup);
++#ifdef NONET
++		he=0;
++#else
++		he = gethostbyname(lookup);
++#endif	
+ 	LOCKTHREAD
+ 		if (he != NULL){
+ 			WObject ret = getAllIA(he);
+@@ -4761,11 +4774,15 @@
+ }
+ static unsigned long myInetAddr(char *str)
+ {
++#ifdef NONET
++   return INADDR_NONE;
++#else
+ 	unsigned long got = inet_addr(str);
+ 	if (got != INADDR_NONE) return got;
+ 	if (strcmp(str,"255.255.255.255") == 0)
+ 		return 0xffffffff;
+ 	return INADDR_NONE;
++#endif
+ }
+ 
+ int isNetAddress(WObject host)
+@@ -4816,12 +4833,16 @@
+ 
+ static int32 _SocketCloseAll(WObject socket)
+ 	{
+-	SOCKET socketId;
++#ifdef NONET
++	return 0;
++#else
++		SOCKET socketId;
+ 	socketId = WOBJ_SocketId(socket);
+ 	if (socketId == INVALID_SOCKET)
+ 		return 0;
+ 	WOBJ_SocketId(socket) = INVALID_SOCKET;
+ 	return (closesocket(socketId) == 0);
++#endif
+ 	}
+ 
+ static int32 _SocketClose(WObject socket)
+@@ -4846,9 +4867,9 @@
+ 	*/
+ 
+ 	//if (isServer) // Threaded Sockets
+-
++#ifndef NONET 
+ 		ioctlsocket(sock,FIONBIO,&argp);
+-
++#endif
+ 	//if (!isServer)
+ 		//setsockopt(sock,SOL_SOCKET,SO_LINGER,(char *)&l,sizeof(struct linger));
+ 		//setsockopt(sock,SOL_SOCKET,SO_DONTLINGER,(char *)&val,sizeof(val));
+@@ -4871,7 +4892,9 @@
+ {
+ 	int err, errLen = sizeof(err);
+ 	//mMessageBox(NULL,L"Checking socket error",L"Check",MB_SETFOREGROUND|MB_OK);
++#ifndef NONET	
+ 	getsockopt(WOBJ_SocketId(wsock),SOL_SOCKET,SO_ERROR,(char *)&err,&errLen);
++#endif
+ 	//mMessageBox(NULL,L"Got socket error",L"Check",MB_SETFOREGROUND|MB_OK);
+ 	SetLastError(err);
+ 	setErrorableError(prefix,wsock,alternative);
+@@ -4880,6 +4903,10 @@
+ }
+ static int socketCheck(WObject wsock,SOCKET sock,int checkType)
+ {
++	
++#ifdef NONET	
++    return -1;
++#else
+ 	fd_set sockSet;
+ 	struct timeval tv;
+ 	int ret;
+@@ -4890,6 +4917,8 @@
+ 	switch(checkType) {
+ 	case -1:{
+ #ifdef WINCE
++
++	
+ 		DEVICELIST devList;             // Device list
+ 		SOCKADDR_IRDA address = {AF_IRDA, 0, 0, 0, 0, "EweIR"};
+ 		int iDevListLen = sizeof (devList), index;
+@@ -4938,6 +4967,7 @@
+ 		connect(sock, (struct sockaddr *)&address, sizeof (SOCKADDR_IRDA));
+ 
+ 		WOBJ_SocketFlags(wsock) |= SOCKET_IR_DEVICE_FOUND;
++
+ #endif
+ 		return 0;
+ 			}
+@@ -4970,6 +5000,7 @@
+ 		return checkSelectError(sock,select(0,NULL,&sockSet,NULL,&tv));
+ 
+ 	}
++	#endif
+ }
+ 
+ struct check_read {
+@@ -4982,6 +5013,7 @@
+ 
+ DWORD WINAPI CheckSocketReadWriteThread(LPVOID data)
+ {	
++#ifndef NONET
+ 	fd_set sockSet;
+ 	struct timeval tv;
+ 	struct check_read *cr = (struct check_read *)data;
+@@ -4999,6 +5031,7 @@
+ 		UNLOCKTHREAD
+ 	}
+ 	suspendResumeCoroutine(cr->coroutine);
++#endif
+ 	return 0;
+ }
+ 
+@@ -5074,12 +5107,16 @@
+ }
+ static WObject getHost(struct sockaddr_in *addr)
+ {
++#ifdef NONET
++	return 0;
++#else
+ 	char *host = inet_ntoa(addr->sin_addr);
+ 	UtfString hst;
+ 	if (host == NULL) return 0;
+ 	hst.str = host;
+ 	hst.len = strlen(host);
+ 	return createStringFromUtf(hst);
++#endif
+ }
+ static Var SSCheckIO(Var stack[])
+ {
+@@ -5087,7 +5124,9 @@
+ 	SOCKET sock = WOBJ_SocketId(stack[0].obj);
+ 	int checkType = stack[1].intValue;
+ 	v.intValue = 0;
++#ifndef NONET	
+ 	if (sock == INVALID_SOCKET) v.intValue = -1;
++
+ 	if (checkType == 1){
+ 		//Check for ACCEPT
+ 		struct sockaddr_in addr;
+@@ -5115,26 +5154,35 @@
+ 		}
+ 	}else if (checkType == 0){ //Check for LISTEN
+ 		v.intValue = 1;
++
+ 	}
++#endif		
+ 	return v;
++
+ }
+ 
+ static Var SocketGetLocalHost(Var stack[])
+ {
+ 	Var v;
++#ifndef NONET
++
+ 	struct sockaddr_in addr;
+ 	int len = sizeof(addr);
+ 	getsockname(WOBJ_SocketId(stack[0].obj),(struct sockaddr*)&addr,&len);
+ 	v.obj = getHost(&addr);
++	
++#endif
+ 	return v;
+ }
+ static Var SocketGetLocalPort(Var stack[])
+ {
+ 	Var v;
++#ifndef NONET
+ 	struct sockaddr_in addr;
+ 	int len = sizeof(addr);
+ 	getsockname(WOBJ_SocketId(stack[0].obj),(struct sockaddr*)&addr,&len);
+ 	v.intValue = ntohs(addr.sin_port);
++#endif
+ 	return v;
+ }
+ 
+@@ -5153,11 +5201,15 @@
+ 	int isGet = stack[3].intValue;
+ 	int ret = bs;
+ 	int size = sizeof(ret);
++#ifdef NONET
++	return returnVar(WSAENETDOWN);
++#else
+ 	if (isGet)
+ 		getsockopt(s,SOL_SOCKET,isReceive ? SO_RCVBUF : SO_SNDBUF,(char *)&ret,&size);
+ 	else
+ 		setsockopt(s,SOL_SOCKET,isReceive ? SO_RCVBUF : SO_SNDBUF,(char *)&ret,size);
+ 	return returnVar(ret);
++#endif
+ }
+ 
+ static Var SocketGetSetParameter(Var stack[])
+@@ -5173,6 +5225,9 @@
+ 	l.l_linger = ivalue;
+ 	l.l_onoff = bvalue;
+ 	
++#ifdef NONET
++	return returnVar(WSAENETDOWN);
++#else
+ 
+ 	if (isGet){
+ 		switch(par){
+@@ -5204,6 +5259,7 @@
+ 		}
+ 		return returnVar(1);
+ 	}
++#endif
+ }
+ 
+ static Var SSGetLocalPort(Var stack[])
+@@ -5224,7 +5280,12 @@
+ 		return TRUE;
+ 	}else{
+ 		struct hostent *hostEnt;
++#ifdef NONET
++	    hostEnt =NULL;
++#else
++	
+ 		hostEnt = gethostbyname(s.str);
++#endif
+ 		if (hostEnt == NULL) return FALSE;
+ 		xmemmove(&(sockAddr->sin_addr), hostEnt->h_addr_list[0], hostEnt->h_length);
+ 		return TRUE;
+@@ -5265,6 +5326,10 @@
+ 	v.obj = createStringFromUtf(createUtfString("Infra-Red not supported"));
+ 	return v;
+ #else
++#ifdef NONET
++		v.obj = createStringFromUtf(createUtfString("network not supported"));
++	return v;
++#else
+ 		int findPort = port == 0;
+ 		//char szError[100];             // Error message string    
+ 		SOCKADDR_IRDA address = {AF_IRDA, 0, 0, 0, 0, "EweIR"};
+@@ -5307,6 +5372,7 @@
+ 		WOBJ_SocketPort(sock) = port;
+ 	goto gotSock;
+ #endif
++#endif
+ 	}
+ 	if (!lookupHost(s,&sockAddr,TRUE)){
+ 		v.obj = createStringFromUtf(createUtfString("Could not bind to host address."));
+@@ -5531,6 +5597,10 @@
+ 	v.obj = 0;
+ 	socket = stack[0].obj;
+ 	datagram = stack[1].obj;
++#ifdef NONET
++	v.obj = createStringFromUtf(createUtfString("Socket closed."));
++	
++#else
+ 	if (WOBJ_SocketId(socket) == INVALID_SOCKET)
+ 		v.obj = createStringFromUtf(createUtfString("Socket closed."));
+ 	else{
+@@ -5571,13 +5641,16 @@
+ 				v.obj = datagram;
+ 		}
+ 	}
++#endif
+ 	return v;
+ }
+ static Var DSReceive(Var stack[])
+ {
+ 	WObject socket, datagram;
+ 	Var v;
+-
++#ifdef NONET
++			v.obj = createStringFromUtf(createUtfString("Socket closed."));	
++#else
+ 	v.obj = 0;
+ 	socket = stack[0].obj;
+ 	datagram = stack[1].obj;
+@@ -5586,7 +5659,10 @@
+ 	else{
+ 		int len = objectPtr(datagram)[2].intValue;
+ 		unsigned char *data = (unsigned char *)WOBJ_arrayStart(objectPtr(datagram)[1].obj);
++
++
+ 		if (WOBJ_SocketFlags(socket) & SOCKET_IS_IR){
++
+ #ifdef WINCE
+ 			SOCKADDR_IRDA address = {AF_IRDA, 0, 0, 0, 0, "EweIR"};
+ 			int socklen = sizeof(address);
+@@ -5631,6 +5707,7 @@
+ 			}
+ 		}
+ 	}
++#endif
+ 	return v;
+ }
+ static Var DSPause(Var stack[])
+@@ -5670,6 +5747,9 @@
+ 	// 3. Switch back on linger.
+ 	// 4. Close it.
+ 	//
++#ifdef NONET
++	return returnVar(1);
++#else
+ 	getsockopt(socketId,SOL_SOCKET,SO_LINGER,(char *)&l,&size);
+ 	if (l.l_onoff){
+ 		int val = l.l_linger;
+@@ -5685,6 +5765,7 @@
+ 	err = closesocket(socketId);
+ 	WOBJ_SocketId(socket) = INVALID_SOCKET;
+ 	return returnVar(err == 0);
++#endif
+ 	/*
+ 	if (socketId == INVALID_SOCKET)
+ 		return returnVar(1);
+@@ -5742,6 +5823,10 @@
+ 	int did;
+ 
+ 	v.intValue = -1;
++#ifdef NONET
++	//	v.obj = createStringFromUtf(createUtfString("network not supported"));
++	return v;
++#else
+ 	socket = stack[0].obj;
+ 	byteArray = stack[1].obj;
+ 	start = stack[2].intValue;
+@@ -5791,6 +5876,7 @@
+ 	v.intValue = count;
+ 	*/
+ 	return v;
++#endif
+ 	}
+ 
+ static Var SocketRead(Var stack[])
+@@ -12894,7 +12980,10 @@
+ 	DWORD len;
+ 
+ 	len = 256;
+-	if (WNetGetUserW(NULL, name, &len) != NO_ERROR){
++#ifdef NONET
++		v.obj = createStringFromUtf(createUtfString("user"));
++#else
++		if (WNetGetUserW(NULL, name, &len) != NO_ERROR){
+ #ifndef WINCE
+ 		if (GetLastError() == ERROR_CALL_NOT_IMPLEMENTED){
+ 			if (WNetGetUserA(NULL,(char *)name,&len) == NO_ERROR){
+@@ -12907,6 +12996,7 @@
+ 		return v;
+ 	}
+ 	v.obj = createStringFromUnicode(name, unilen(name));
++#endif
+ 	return v;
+ }
+ 
