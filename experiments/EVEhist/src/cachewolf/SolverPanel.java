@@ -118,52 +118,6 @@ public class SolverPanel extends CellPanel{
 				Global.getPref().solverDegMode=!Global.getPref().solverDegMode;
 				btnDegRad.setText(getSolverDegMode());
 			}
-/*			if(ev.target == btnLoad){
-				FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
-
-				fc.addMask(currCh.wayPoint + ".wl");
-				fc.addMask("*.wl");
-				fc.setTitle("Select File");
-				if(fc.execute() != FileChooser.IDCANCEL){
-					currFile = fc.getChosen();
-					mText.setText("");
-					try {
-						InputStreamReader inp = new InputStreamReader( new FileInputStream(currFile));
-						mText.setText(inp.readAll());
-						inp.close();
-
-					} catch (Exception e) {
-						Vm.debug("Error reading file " + e.toString());
-					}
-				}
-			}
-			if((ev.target == btnSave) && (currFile != null)){
-				try {
-					OutputStreamWriter outp = new OutputStreamWriter( new FileOutputStream(currFile));
-					outp.write(mText.getText());
-					outp.close();
-				} catch (Exception e) {
-					Vm.debug("Error writing file ");
-				}
-			}
-			if((ev.target == btnSaveAs)||((ev.target == btnSave) && (currFile == null))){
-				FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
-				fc.addMask(currCh.wayPoint + ".wl");
-				fc.addMask("*.wl");
-				fc.setTitle("Select File");
-				if(fc.execute() != FileChooser.IDCANCEL){
-					File saveFile = fc.getChosenFile();
-					currFile = fc.getChosen();
-					try {
-						OutputStreamWriter outp = new OutputStreamWriter( new FileOutputStream(saveFile));
-						outp.write(mText.getText());
-						outp.close();
-					} catch (Exception e) {
-						Vm.debug("Error writing file ");
-					}
-				}
-			}
-*/
 		}
 	}
 
@@ -185,7 +139,7 @@ public class SolverPanel extends CellPanel{
 		String text2copy;
 
 		InputPanel() {
-			mnuContextInp=getClipboardMenu(new Menu(new MenuItem[]{ mnuCopyAndComment=new MenuItem("Kopiere als Kommentar") },""));
+			mnuContextInp=getClipboardMenu(new Menu(new MenuItem[]{ mnuCopyAndComment=new MenuItem(MyLocale.getMsg(1740,"Copy as comment")) },""));
 		}
 		public void penRightReleased(Point p){
 			showMenu(p);
@@ -197,10 +151,10 @@ public class SolverPanel extends CellPanel{
 		private void showMenu(Point p) {
 			text2copy=eve.sys.Vm.getClipboardText();
 			// Disable the copy&comment menu item if clipboard is empty
-			if (text2copy.length()>0)
-				((MenuItem)mnuContextInp.items.elementAt(0)).modifiers&=~MenuItem.MODIFIER_DISABLED;
-			else
+			if (text2copy==null || text2copy.length()==0)
 				((MenuItem)mnuContextInp.items.elementAt(0)).modifiers|=MenuItem.MODIFIER_DISABLED;
+			else
+				((MenuItem)mnuContextInp.items.elementAt(0)).modifiers&=~MenuItem.MODIFIER_DISABLED;
 			setMenu(mnuContextInp);
 			doShowMenu(p);
 		}
