@@ -24,7 +24,7 @@ import cachewolf.utils.SafeXML;
  *
  */
 public class Profile {
-	private static final int VERSION=1;  // The version of the raw data
+	//private static final int VERSION=1;  // The version of the raw data
 	/** The list of caches (CacheHolder objects). A pointer to this object exists in many classes in parallel to
 	 *  this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector.
 	 */
@@ -282,8 +282,8 @@ public class Profile {
 			String text=in.readLine(); // <CACHELIST>
 			if (text!=null) {
 				if (text.indexOf("decimal")>0) fmtDec=true;
-				int i=text.indexOf("size=\"");
-				int j=text.indexOf("\"",i+7);
+				//int i=text.indexOf("size=\"");
+				//int j=text.indexOf("\"",i+7);
 				//if (i>0 && j>i+6) cacheDB.ensureCapacity(Common.parseInt(text.substring(i+6,j)));
 			}
 			Extractor ex = new Extractor(null, " = \"", "\" ", 0, true);

@@ -10,7 +10,7 @@ import eve.ui.game.AniImage;
 import eve.ui.event.KeyEvent;
 import eve.ui.game.InteractivePanel;
 import eve.ui.event.ControlEvent;
-import eve.fx.gui.IKeys; 
+import eve.fx.gui.IKeys;
 import eve.ui.game.ImageDragContext;
 
 
@@ -35,8 +35,7 @@ public class HintLogPanel extends CellPanel{
 	private Button moreBt = new Button(">>");
 	private Button prevBt = new Button("<<");
 	private MyScrollBarPanel sbplog;
-	private int lastScrollbarWidth = 0;
-	
+
 	public HintLogPanel(){
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 		CellPanel logpane = split.getNextPanel();
@@ -44,7 +43,7 @@ public class HintLogPanel extends CellPanel{
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
 		int initialHintHeight=Global.getPref().initialHintHeight;
 		if (initialHintHeight<0 || initialHintHeight>1000) initialHintHeight=Global.getPref().DEFAULT_INITIAL_HINT_HEIGHT;
-		hintpane.setPreferredSize(100,initialHintHeight); 
+		hintpane.setPreferredSize(100,initialHintHeight);
 		MyScrollBarPanel sbphint = new MyScrollBarPanel(hint);
 		hintpane.addLast(sbphint,CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		hintpane.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -59,10 +58,10 @@ public class HintLogPanel extends CellPanel{
 		this.addLast(split, CellConstants.STRETCH, CellConstants.FILL);
 		clear();
 	}
-	
+
 	public void setText(CacheHolderDetail cache){
 		this.currCache = cache;
-		if(!cache.hints.equals("null")) 
+		if(!cache.hints.equals("null"))
 			hint.setText(cache.hints);
 		else
 			hint.setText("");
@@ -80,7 +79,7 @@ public class HintLogPanel extends CellPanel{
 		logs.setHtml("loading ...");
 		/*if (htmlTxtImage != null) {
 			htmlImagDisp.removeImage(htmlTxtImage);
-			htmlTxtImage.free();		
+			htmlTxtImage.free();
 		}*/
 	}
 	void setLogs(int crntLogPosition) {
@@ -117,13 +116,13 @@ public class HintLogPanel extends CellPanel{
 		htmlImagDisp.virtualSize = r;
 		htmlImagDisp.origin = new Point();
 		htmlImagDisp.checkScrolls();
-		// Can I get a reasonable value for scrollbarWidth before calling checkScrolls() 
+		// Can I get a reasonable value for scrollbarWidth before calling checkScrolls()
 		// and in a more reasonable way?
 		// Now its ugly: I paint it, calculate the scrollbars and then resize the panel...
 		// Better: Now I only redo it when the scrollbar width changed, which is not the case
 		// normally.
 		int scrollbarWidth = sbplog.vbar.getRect().width;
-		if (scrollbarWidth != lastScrollbarWidth) { 
+		if (scrollbarWidth != lastScrollbarWidth) {
 		    lastScrollbarWidth = scrollbarWidth;
    		    logs.resizeTo(htmlTxtImage.getWidth()-scrollbarWidth, htmlTxtImage.getHeight());
    		    logs.doPaint(draw, new Rect(0,0,htmlTxtImage.getWidth(), htmlTxtImage.getHeight()));
@@ -187,7 +186,7 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 		}
 		return	super.imageNotDragged(drag, where);
 	}
-	
+
 	// I copied it here because the original has a bug when scrolling
 	// added the support for scrolling / draggin only vertically
 	// rewrite to support for images bigger than the canvas
@@ -203,7 +202,7 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 		Point to = new Point(where.x-dc.start.x,where.y-dc.start.y);
 		if (!scrollHorizontal) to.x = 0;
 		if (!scrollVertical) to.y = 0;
-		//if (origin.y - to.y < 0 || origin.y - to.y + r.height > moving.location.height) return true; 
+		//if (origin.y - to.y < 0 || origin.y - to.y + r.height > moving.location.height) return true;
 		if (moving == null) { // this is not used only copied
 			if (!dragBackground) return true;
 			int dx = dc.start.x-where.x, dy = dc.start.y-where.y;
@@ -255,6 +254,6 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 		}
 	}
 
-	
-	
+
+
 }

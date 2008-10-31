@@ -1,6 +1,5 @@
 package cachewolf.utils;
 
-import cachewolf.Global;
 import eve.sys.*;
 import cachewolf.MyLocale;
 

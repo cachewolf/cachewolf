@@ -3,18 +3,13 @@ package cachewolf;
  *  CacheWolf - Local settings class
  *
  */
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import eve.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import eve.sys.*;
 import java.lang.Double;
 import java.lang.Long;
 
 import eve.ui.Gui;
 import eve.fx.Dimension;
-import eve.ui.MessageBox;
 /**
  *  This class handles internationalisation and some other local stuff like
  *  decimal separator, screen dimensions etc.

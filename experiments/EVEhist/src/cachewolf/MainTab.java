@@ -28,7 +28,7 @@ public class MainTab extends TabbedPanel {
 	CalcPanel calcP;
 	Preferences pref;
 	Profile profile;
-	GotoPanel gotoP; 
+	GotoPanel gotoP;
 	RadarPanel radarP = new RadarPanel();
 	ImagePanel imageP;
 	SolverPanel solverP;
@@ -50,7 +50,7 @@ public class MainTab extends TabbedPanel {
 	boolean hintLPhasData=false;
 	boolean solverPhasData=false;
 	boolean radarPhasData=false;
-	
+
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
 		Global.mainTab=this;
 		mnuMain=mainMenu;
@@ -64,11 +64,11 @@ public class MainTab extends TabbedPanel {
 		int sw = MyLocale.getScreenWidth();
 		if ( sw <= 240) this.dontExpandTabs=true;
 		String imagesize="";
-		if (Device.isMobile() && sw >= 400) imagesize="_vga";  
+		if (Device.isMobile() && sw >= 400) imagesize="_vga";
 		calcP = new CalcPanel(); // Init here so that Global.MainT is already set
 		tbP = new TablePanel(statBar);
 		Card c = this.addCard(new TableForm(tbP), MyLocale.getMsg(1200,"List"), null);
-		
+
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
 		c.iconize(new Picture("details"+imagesize+".gif"),true);
 
@@ -85,7 +85,7 @@ public class MainTab extends TabbedPanel {
 		c.iconize(new Picture("solver"+imagesize+".gif"),true);
 
 		c = this.addCard(calcP, MyLocale.getMsg(1206,"Calc"), null);
-		Picture imgCalc=new Picture("projecttab"+imagesize+".gif",new Color(0,255,0),0); 
+		Picture imgCalc=new Picture("projecttab"+imagesize+".gif",new Color(0,255,0),0);
 		c.iconize(imgCalc,true);
 
 		nav = new Navigate();
@@ -97,7 +97,7 @@ public class MainTab extends TabbedPanel {
 		c.iconize(new Picture("radar"+imagesize+".gif"),true);
 		mnuMain.allowProfileChange(true);
 	}
-	
+
 	public TablePanel getTablePanel(){
 		return tbP;
 	}
@@ -115,7 +115,7 @@ public class MainTab extends TabbedPanel {
 		if (solverPhasData) { solverP.setInstructions("loading ..."); solverPhasData=false; }
 		if (radarPhasData) { radarP.removeCircle(); radarPhasData=false; }
 	}
-	
+
 	static int level=0;
 	public void onEvent(Event ev) {
 //eve.sys.Vm.debug("              ".substring(0,level++*2)+"["+ev.target.getClass().getName()+"] "+event2Name(ev.type));
@@ -150,7 +150,7 @@ public class MainTab extends TabbedPanel {
 			chMain=null;
 			cacheDirty=false;
 			if (tbP.getSelectedCache()>=Global.mainTab.tbP.tModel.numRows || tbP.getSelectedCache()<0) {
-				ch=null; chD=null; 
+				ch=null; chD=null;
 				lastselected="";
 			} else {
 				ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
@@ -212,7 +212,7 @@ public class MainTab extends TabbedPanel {
 			break;
 		case 1:  // DetailsPanel
 			if (chD==null) { // Empty DB - show a dummy detail
-				newWaypoint(ch=new CacheHolder()); 
+				newWaypoint(ch=new CacheHolder());
 			}
 			//TODO MyLocale.setSIPButton();
 			if (!detPhasData)  {
@@ -230,7 +230,7 @@ public class MainTab extends TabbedPanel {
 		case 3: // Picture Panel
 			if (chD!=null && !imagePhasData) {
 				//TODOMyLocale.setSIPOff();
-				if (chD.isAddiWpt()) { 
+				if (chD.isAddiWpt()) {
 					imageP.setImages(chD.mainCache.getCacheDetails(true));
 				} else {
 					imageP.setImages(chD);
@@ -241,7 +241,7 @@ public class MainTab extends TabbedPanel {
 		case 4:  // Log Hint Panel
 			if (chD!=null && !hintLPhasData) {
 				//TODO MyLocale.setSIPOff();
-				if (chD.isAddiWpt()) { 
+				if (chD.isAddiWpt()) {
 					hintLP.setText(chD.mainCache.getCacheDetails(true));
 				} else {
 					hintLP.setText(chD);
@@ -252,7 +252,7 @@ public class MainTab extends TabbedPanel {
 		case 5:  // Solver Panel
 			//TODO MyLocale.setSIPButton();
 			if (chD!=null && !solverPhasData) {
-				if (chD.isAddiWpt()) { 
+				if (chD.isAddiWpt()) {
 					chMain=chD.mainCache.getCacheDetails(true);//new CacheHolderDetail(chD.mainCache);
 /*					try {
 						chMain.readCache(profile.dataDir); //Vm.debug("mainT:readCache "+chD.wayPoint+"=>Main=>"+chMain.wayPoint+"/S:"+chMain.Solver);
@@ -283,8 +283,8 @@ public class MainTab extends TabbedPanel {
 			break;
 		}
 	}
-	
-	/** Update the distances of all caches to the centre and display a message 
+
+	/** Update the distances of all caches to the centre and display a message
 	 */
 	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
 		MessageBox info = new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \n werden neu berechnet...").replace('~','\n'), 0);
@@ -296,7 +296,7 @@ public class MainTab extends TabbedPanel {
 	}
 
 	public void gotoPoint(CWPoint where) { // Called from CalcPanel, DetailsPanel
-		gotoP.setDestinationAndSwitch(where); 
+		gotoP.setDestinationAndSwitch(where);
 	}
 
 	public void openDescriptionPanel(CacheHolder chi) {
@@ -314,11 +314,11 @@ public class MainTab extends TabbedPanel {
 
 
 	/**
-	 * this is called from goto / MovingMap / CalcPanel / DetailsPanel and so on to 
+	 * this is called from goto / MovingMap / CalcPanel / DetailsPanel and so on to
 	 * offer the user the possibility of entering an new waypoint
 	 * at a given position. ch must already been preset with a valid
 	 * CacheHolder object
-	 * 
+	 *
 	 * @param ch
 	 */
 	public void newWaypoint(CacheHolder ch){
@@ -334,14 +334,14 @@ public class MainTab extends TabbedPanel {
 			CacheHolder selectedCache = (CacheHolder) profile.cacheDB.get( selectedIndex );
 			if ( selectedCache.isAddiWpt() ) {
 				mainCache = selectedCache.mainCache.wayPoint;
-			}			
+			}
 		}
 		Global.getProfile().hasUnsavedChanges=true;
 		detP.setNeedsTableUpdate(true);
 		if (CacheType.isAddiWpt(ch.type) && mainCache!=null && mainCache.length()>2) {
 			ch.wayPoint = profile.getNewAddiWayPointName(mainCache);
 			profile.setAddiRef(ch);
-		} else { 
+		} else {
 			ch.wayPoint = profile.getNewWayPointName();
 			ch.type=0;
 			lastselected=ch.wayPoint;
@@ -359,10 +359,10 @@ public class MainTab extends TabbedPanel {
 
 	}
 
-	
+
 	/**
 	 * sets posCircle Lat/Lon to centerTo
-	 * 
+	 *
 	 * @param centerTo true: centers centerTo on the screen and disconnects MovingMap from GPS if Gps-pos is not on the loaded map
 	 * @param forceCenter
 	 */
@@ -375,7 +375,7 @@ public class MainTab extends TabbedPanel {
 			if (mm == null) {
 				mm = new MovingMap(nav, profile.cacheDB);
 				nav.setMovingMap(mm);
-			} 
+			}
 			if (forceCenter) mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
 			mm.updatePosition(centerTo);
 			mm.myExec();
@@ -390,14 +390,14 @@ public class MainTab extends TabbedPanel {
 				mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS if GPS-pos is not on the screen
 				mm.setResModus(MovingMap.HIGHEST_RESOLUTION);
 				mm.updatePosition(centerTo.latDec, centerTo.lonDec);
-				mm.setCenterOfScreen(centerTo, true); 
+				mm.setCenterOfScreen(centerTo, true);
 			}
-					 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
+					 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte
 				}catch (InterruptedException e) {//TODO switch waiting indication off
 					Global.getPref().log("Error starting mavoing map (1): " + e.getMessage(), e, true);
-					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", MessageBox.OKB)).execute(); } 
+					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", MessageBox.OKB)).execute(); }
 			}
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			Global.getPref().log("Error starting moving map (2): " + e.getMessage(), e, true);
 			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), MessageBox.OKB)).execute(); }
 	}
@@ -409,9 +409,9 @@ public class MainTab extends TabbedPanel {
 			cacheDirty=false;
 		}
 	}
-	
+
 	/** Save the index file
-	 * 
+	 *
 	 * @param askForConfirmation If true, the save can be cancelled by user
 	 */
 	public void saveUnsavedChanges(boolean askForConfirmation) {
@@ -425,42 +425,43 @@ public class MainTab extends TabbedPanel {
 		this.tbP.saveColWidth(pref);
 		Global.getPref().savePreferences();
 	}
-	
+
 	private void checkProfileChange() {
 		// A panel is selected. Could be the same panel twice
-		mnuMain.allowProfileChange(false);	  
+		mnuMain.allowProfileChange(false);
 		if(this.getSelectedItem() == 0){// List view selected
-			mnuMain.allowProfileChange(true);	  
+			mnuMain.allowProfileChange(true);
 			//TODO MyLocale.setSIPOff();
 		}
 	}
+/*
 	private String event2Name(int type) {//TODO Comment out
 		switch(type) {
-			case ControlEvent.PRESSED: return "ControlEvent.PRESSED"; 
+			case ControlEvent.PRESSED: return "ControlEvent.PRESSED";
 			case ControlEvent.FOCUS_IN: return "ControlEvent.FOCUS_IN";
 			case ControlEvent.FOCUS_OUT: return "ControlEvent.FOCUS_OUT";
-			case ControlEvent.TIMER: return "ControlEvent.TIMER"; 
-			case ControlEvent.CANCELLED: return "ControlEvent.CANCELLED"; 
-			case ControlEvent.EXITED: return "ControlEvent.EXITED"; 
+			case ControlEvent.TIMER: return "ControlEvent.TIMER";
+			case ControlEvent.CANCELLED: return "ControlEvent.CANCELLED";
+			case ControlEvent.EXITED: return "ControlEvent.EXITED";
 			case ControlEvent.MENU_SHOWN: return "ControlEvent.MENU_SHOWN";
-			case eve.ui.formatted.TextDisplay.LINES_SPLIT: return "ControlEvent.LINES_SPLIT"; 
+			case eve.ui.formatted.TextDisplay.LINES_SPLIT: return "ControlEvent.LINES_SPLIT";
 			case ControlEvent.STRUCTURE_CHANGED: return "ControlEvent.STRUCTURE_CHANGED";
 			case ControlEvent.OPERATION_CANCELLED: return "ControlEvent.OPERATION_CANCELLED";
 			case ControlEvent.POPUP_CLOSED: return "ControlEvent.POPUP_CLOSED";
-			case DataChangeEvent.DATA_CHANGED: return "DataChangeEvent.DATA_CHANGED"; 
-			case MultiPanelEvent.SELECTED: return "MultiPanelEvent.SELECTED"; 
-			case TableEvent.CELL_CLICKED: return "TableEvent.CELL_CLICKED"; 
+			case DataChangeEvent.DATA_CHANGED: return "DataChangeEvent.DATA_CHANGED";
+			case MultiPanelEvent.SELECTED: return "MultiPanelEvent.SELECTED";
+			case TableEvent.CELL_CLICKED: return "TableEvent.CELL_CLICKED";
 			case TableEvent.SELECTION_CHANGED: return "TableEvent.SELECTION_CHANGED";
 			case TableEvent.CELL_DOUBLE_CLICKED:  return "TableEvent.CELL_DOUBLE_CLICKED";
-			case eve.ui.data.EditorEvent.CLOSED: return "EditorEvent.CLOSED"; 
+			case eve.ui.data.EditorEvent.CLOSED: return "EditorEvent.CLOSED";
 			case eve.ui.data.EditorEvent.FROM_CONTROLS: return "EditorEvent.FROM_CONTROLS";
-			case eve.ui.data.EditorEvent.OBJECT_SET: return "EditorEvent.OBJECT_SET"; 
-			case eve.ui.data.EditorEvent.SHOWN: return "EditorEvent.SHOWN"; 
+			case eve.ui.data.EditorEvent.OBJECT_SET: return "EditorEvent.OBJECT_SET";
+			case eve.ui.data.EditorEvent.SHOWN: return "EditorEvent.SHOWN";
 			case eve.ui.data.EditorEvent.TO_CONTROLS: return "EditorEvent.TO_CONTROLS";
 		}
 		return Integer.toString(type);
 	}
-
+*/
 }
-// 
+//
 

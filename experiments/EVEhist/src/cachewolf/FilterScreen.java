@@ -3,7 +3,6 @@ import eve.ui.*;
 import eve.ui.event.*;
 import eve.fx.*;
 import eve.sys.*;
-import eve.ui.filechooser.*;
 
 /**
 *	This class displays a form that the user uses to set the filter criteria.

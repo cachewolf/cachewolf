@@ -15,7 +15,6 @@ import java.util.*;
 
 import eve.fx.*;
 import eve.fx.gui.IKeys;
-import eve.io.File;
 
 /**
 *	Class to display the cache database in a table.

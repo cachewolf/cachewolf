@@ -13,7 +13,7 @@ public class MyEditor extends Editor {
 	// Constraint used to align buttons of MyEditor
 	public int buttonConstraints = CellConstants.CENTER;
 
-	/** 
+	/**
 	 * Mainly overwritten of ewe.ui.Editor, except for the placement constraints for
 	 * the buttons which allow for variable buttonConstraints.
 	 */
@@ -25,7 +25,7 @@ public class MyEditor extends Editor {
 							: "Actions", BUTTONS_TO_SOFT_KEY_FIRST_BUTTON_SEPARATE);
 				} else {
 					CellPanel p = new CellPanel();
-					p.defaultTags.set(INSETS, new Insets(0, 1, 0, 1));
+					p.defaultTags.set(TAG_INSETS, new Insets(0, 1, 0, 1));
 					p.modify(AlwaysEnabled | NotAnEditor, 0); // Just in case a dialog pops up
 																// with global disabling.
 					for (int i = 0; i < buttons.size(); i++) {
@@ -35,7 +35,7 @@ public class MyEditor extends Editor {
 					}
 					p.endRow();
 					CellPanel p2 = buttonsPanel = new CellPanel();
-					p.defaultTags.set(INSETS, new Insets(2, 2, 2, 2));
+					p.defaultTags.set(TAG_INSETS, new Insets(2, 2, 2, 2));
 					//
 					// Here is difference from ewe.ui.Editor: CENTER -> buttonConstraints
 					//

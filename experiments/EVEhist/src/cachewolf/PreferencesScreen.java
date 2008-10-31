@@ -8,7 +8,6 @@ import eve.ui.filechooser.*;
 import eve.sys.*;
 import eve.ui.event.ControlEvent;
 import eve.ui.data.Editor;
-import eve.ui.data.SerialPortOptions;
 import eve.io.File;
 import eve.fx.gui.IKeys;
 /**
@@ -84,7 +83,7 @@ public class PreferencesScreen extends Form {
             frmDataDir.addLast(brwBt = new Button(MyLocale.getMsg(604,"Browse")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
             DataDir = new Input();
             DataDir.setText(pref.baseDir);
-            frmDataDir.addLast(DataDir.setTag(CellConstants.SPAN, new Dimension(3,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
+            frmDataDir.addLast(DataDir.setTag(CellConstants.TAG_SPAN, new Dimension(3,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
             frmDataDir.addLast(chkAutoLoad = new CheckBox(MyLocale.getMsg(629,"Autoload last profile")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
             if (pref.autoReloadLastProfile) chkAutoLoad.setState(true);
             chkAutoLoad.setTag(TAG_INSETS,new Insets(0,0,2,0));
@@ -189,7 +188,7 @@ public class PreferencesScreen extends Form {
             /////////////////////////////////////////////////////////
             CellPanel pnlProxy=new CellPanel();
             pnlProxy.addNext(new Label("Proxy"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-            pnlProxy.addLast(Proxy = new Input(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST)).setTag(SPAN,new Dimension(2,1));
+            pnlProxy.addLast(Proxy = new Input(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST)).setTag(TAG_SPAN,new Dimension(2,1));
             Proxy.setText(pref.myproxy);
             pnlProxy.addNext(new Label("Port"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
             pnlProxy.addLast(ProxyPort = new Input(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));

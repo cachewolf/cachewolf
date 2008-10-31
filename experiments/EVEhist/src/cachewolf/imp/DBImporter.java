@@ -8,12 +8,8 @@ import java.util.zip.ZipFile;
 
 import cachewolf.CWPoint;
 import cachewolf.CacheHolder;
-import cachewolf.CacheHolderDetail;
 import cachewolf.CacheType;
 import cachewolf.Filter;
-import cachewolf.InfoBox;
-import cachewolf.MyLocale;
-import cachewolf.Preferences;
 import cachewolf.Profile;
 import cachewolf.utils.Common;
 import cachewolf.utils.SafeXML;
@@ -27,7 +23,7 @@ public class DBImporter {
 	Vector cacheDB;
 	int zaehlerGel = 0;
 	Hashtable DBindex = new Hashtable();
-	
+
 	public DBImporter(){
 		cacheDB = cachewolf.Global.getProfile().cacheDB;
 		//index db for faster search
@@ -40,21 +36,21 @@ public class DBImporter {
 
 	public void doIt(String file){
 		Filter flt = new Filter();
-		boolean wasFiltered = (cachewolf.Global.getProfile().filterActive==Filter.FILTER_ACTIVE);		
+		boolean wasFiltered = (cachewolf.Global.getProfile().filterActive==Filter.FILTER_ACTIVE);
 		flt.clearFilter();
 		try {
 			java.io.BufferedReader r;
-			
+
 			if (file.indexOf(".zip") > 0){
 				ZipFile zif = new ZipFile (file);
 				ZipEntry zipEnt;
 				Enumeration zipEnum = zif.entries();
 				// there could be more than one file in the archive
-				while (zipEnum.hasMoreElements()) {	
+				while (zipEnum.hasMoreElements()) {
 					zipEnt = (ZipEntry) zipEnum.nextElement();
 					if (zipEnt.getName().endsWith("db")){
 						r = new java.io.BufferedReader(new java.io.InputStreamReader(zif.getInputStream(zipEnt)));
-						
+
 						parse(r,zipEnt.getSize());
 						r.close();
 					}
@@ -64,7 +60,7 @@ public class DBImporter {
 				parse(r,new java.io.File(file).length());
 				r.close();
 			}
-			// save Index 
+			// save Index
 			cachewolf.Global.getProfile().saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 			Form.cancelWait();
 		}catch(Exception e){
@@ -79,7 +75,7 @@ public class DBImporter {
 
 	private final void parse(java.io.BufferedReader r,long len) {
 // One typical line in DB file
-//734139 "CQ DE HB0 - HAM-Cache in Liechtenstein by DunaX" 2007 11 12 47.1388 9.53848333333333 
+//734139 "CQ DE HB0 - HAM-Cache in Liechtenstein by DunaX" 2007 11 12 47.1388 9.53848333333333
 //"Multi-cache" "Regular" GC17DPV 7a5585fd-af71-4ab7-ab42-27da2e461ef2 1.5 1.5
 		final int LINESIZE=150;
 		float size=len/LINESIZE;
@@ -161,12 +157,12 @@ public class DBImporter {
 		} catch(Exception ex) {}
 		if(showprogress) pbf.exit(0);
 	}
-	
+
 	private int searchWpt(String wpt){
 		Integer INTR = (Integer)DBindex.get(wpt);
 		if(INTR != null){
 			return INTR.intValue();
-		} 
+		}
 		return -1;
 	}
 }
