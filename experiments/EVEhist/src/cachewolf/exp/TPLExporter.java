@@ -53,7 +53,7 @@ class TplFilter implements HTML.Tmpl.Filter
 {
 	private int type=SCALAR;
 	private String newLine="\n";
-	TextCodec codec = new AsciiCodec();
+	TextCodec codec;
 	String badChars;
 	String decSep = ".";
 
@@ -243,10 +243,8 @@ public class TPLExporter {
 
 			tpl.setParam("cache_index", cache_index);
 			PrintWriter detfile;
-			OutputStreamWriter fw = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(saveTo)), myFilter.codec.toString());
-			detfile = new PrintWriter(fw);
+			detfile=new PrintWriter(new BufferedWriter(new TextWriter(new FileOutputStream(saveTo),false,myFilter.codec)));
 			tpl.printTo(detfile);
-			//detfile.print(tpl.output());
 			detfile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
