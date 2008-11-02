@@ -414,6 +414,16 @@ public class TablePanel extends CellPanel{
 					// select all on <ctrl-a>
 					setTickForAll(true);
 					ev.consumed = true;
+				}else if ( (ev.modifiers & IKeys.CONTROL) > 0 && ev.key == 7){ // <ctrl-g>
+					if(browserPathIsValid()){
+						CacheHolder ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
+						try {
+							String cmd = "\""+pref.browser+ "\" \"http://maps.google.com/maps?q="+ch.wayPoint+"-"+ch.cacheName+"@"+ch.pos.toString() + "\"";
+							eve.sys.Vm.execCommandLine(cmd);
+						} catch (IOException ex) {
+							(new MessageBox("Error", "Cannot start browser!\n"+ex.toString()+"\nThe are two possible reasons:\n * path to internet browser in \npreferences not correct\n * An bug in eve VM, please be \npatient for an update",MessageBox.OKB)).execute();
+						}
+					}
 				}else {
 					Global.mainTab.clearDetails();
 					if (ev.key == IKeys.HOME) tbP.selectRow(0); //  cursorTo(0,cursor.x+listMode,true);
