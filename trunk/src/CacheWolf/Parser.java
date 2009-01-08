@@ -1,5 +1,5 @@
 /* A parser that parses the following grammar:
-  EBNF Meta-Symbols: 
+  EBNF Meta-Symbols:
     {xx}        xx can occur any number of times incl 0
     [xx]        xx or empty
     |           or
@@ -8,9 +8,9 @@
 command -> if |
            simplecommand
 
-simplecommand -> "stop" | "st" | 
+simplecommand -> "stop" | "st" |
 		   assign
-           stringexp | 
+           stringexp |
 
 if -> "IF" stringexpr compop stringexpr "THEN" simplecommand { ";" simplecommand } "ENDIF"          // Nested IF's not allowed
 
@@ -22,19 +22,19 @@ stringexp -> (string | expr ) {string | tailexp }
 
 expr -> ["+" | "-"] tailexp [ formatstring ]
 
-tailexp -> term { ("+" | "-") term } 
-		 
+tailexp -> term { ("+" | "-") term }
+
 term -> factor { ("*" | "/") factor }
 
 factor -> expfactor { "^" expfactor }
 
-expfactor -> ident | 
-          number | 
+expfactor -> ident |
+          number |
           "(" stringexpr ")" |
           function "(" stringexpr { "," stringexpr }")"
-          
-function -> "sin" | "cos" | "tan" | "asin" | "acos" | "atan" | "goto" | "project" | "show"  | "crosstotal" | 
-            "rot13" | "len" | "mid"         
+
+function -> "sin" | "cos" | "tan" | "asin" | "acos" | "atan" | "goto" | "project" | "show"  | "crosstotal" |
+            "rot13" | "len" | "mid"
 
 ident -> valid identifier
 number -> valid number
@@ -54,7 +54,7 @@ import java.lang.Double;
 
 /**
 *	The wolf language parser. New version - January 2007
-*   
+*
 *   New features:
 *   - Improved error handling
 *   - Strings and doubles can be freely mixed as appropriate. Depending on context a conversion is performed,
@@ -70,16 +70,16 @@ import java.lang.Double;
 *   	- Command terminator ; no longer compulsory (only between multiple commands on same line)
 *   - New functions can easily be added
 *   - Can select whether variable names are case sensitive
-*   
+*
 *   To add a new function:
 *     1) Add its name and alias and allowed number of args to array functions
 *     2) Add a new private method in the "functions" section
-*     3) Add call to private method in executeFunction 
+*     3) Add call to private method in executeFunction
 *   @author salzkammergut Januay 2007
-*/ 
+*/
 public class Parser{
 
-	private class fnType { 
+	private class fnType {
 		public String funcName; 	 // the function name in the user input
 		public String alias;         // the funcName is mapped to this alias
 		public int nargs;            // bitmap for number of args, i.e. 14 = 1 or 2 or 3 args; 5 = 0 or 2 args
@@ -92,7 +92,7 @@ public class Parser{
 		}
 	}
     fnType[] functions=new fnType[]{ // in alphabetical order
-    	new fnType("abs","abs",2),	
+    	new fnType("abs","abs",2),
     	new fnType("acos","acos",2),
     	new fnType("asin","asin",2),
     	new fnType("atan","atan",2),
@@ -152,21 +152,21 @@ public class Parser{
 	TokenObj thisToken = new TokenObj();
 	Vector tokenStack;
 	Vector messageStack;
-	
+
 	public Parser(){
 	}
 
 ///////////////////////////////////////////
 //  Utility functions
 ///////////////////////////////////////////
-	
+
 	/* All errors are handled via function 'err'. Rather than creating many different Exceptions,
 	 * only the standard Exception is used. err raises this exception and thereby causes the stack to be
 	 * unwound until 'parse' eventually catches the exception and returns to SolverPanel, which displays
 	 * the messageStack containing the error message.
 	 */
-	
-	/** 
+
+	/**
      * Add an error message to the message stack and raise an Exception.
     */
 	private void err(String str) throws Exception {
@@ -176,7 +176,7 @@ public class Parser{
     	if (Global.mainTab.solverP.mText.setSelectionRange(0,thisToken.line-1,thisToken.position+thisToken.token.length()-1,thisToken.line-1))Global.mainTab.solverP.mText.repaintNow();
     	throw new Exception("Error "+str);
     }
-    
+
     /** Shows global symbols */
     private void showVars(boolean globals) throws Exception {
     	Iterator it=symbolTable.entries();
@@ -197,28 +197,28 @@ public class Parser{
     	Iterator it=symbolTable.entries();
     	while (it.hasNext()) {
     		ewe.util.Map.MapEntry sym=(ewe.util.Map.MapEntry) it.next();
-    		if (!((String)sym.getKey()).startsWith("$")) 
+    		if (!((String)sym.getKey()).startsWith("$"))
     			symbolTable.remove(sym.getKey());
     	}
     	Double pi=new Double(java.lang.Math.PI);
     	symbolTable.put("PI",pi);
     	symbolTable.put("pi",pi); // To make it easier for the user we also add a lowercase version of pi
     }
-    
+
 	private boolean isVariable(String varName) {
-		return varName.startsWith("$") ||  // Global variables exist per default 
+		return varName.startsWith("$") ||  // Global variables exist per default
 		       symbolTable.containsKey(Global.getPref().solverIgnoreCase?varName.toUpperCase():varName);
 	}
-	
+
 	private boolean isInteger(double d) {
 		return java.lang.Math.ceil(d)==d && java.lang.Math.floor(d)==d;
 	}
-	
+
     private boolean isValidCoord(String coord) {
     	cwPt.set(coord);
     	return cwPt.isValid();
     }
-    
+
 	private Object getVariable(String varName) throws Exception {
 		if (varName.startsWith("$")) { // Potential coordinate
 			int idx=Global.getProfile().getCacheIndex(varName.substring(1));
@@ -226,7 +226,7 @@ public class Parser{
 				CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(idx);
 				// Check whether coordinates are valid
 				cwPt.set(ch.pos);
-				if (cwPt.isValid() ) 
+				if (cwPt.isValid() )
 					return cwPt.toString();
 				else
 					return ""; // Convert invalid coordinates (N 0 0.0 E 0 0.0) into empty string
@@ -243,10 +243,10 @@ public class Parser{
 		}
 		return result;
 	}
-	
+
 	private double toNumber(String str) {
 		try {
-			if (MyLocale.getDigSeparator().equals(","))	
+			if (MyLocale.getDigSeparator().equals(","))
 				str = str.replace('.', ',');
 			else
 				str = str.replace(',','.');
@@ -255,35 +255,35 @@ public class Parser{
 			 return java.lang.Double.NaN;
 		}
 	}
-	
+
 	private Double getNumber(String str) throws Exception {
 		double ret=toNumber(str);
 		if (java.lang.Double.isNaN(ret))
 			err(MyLocale.getMsg(1703,"Not a valid number: ") + str);
 		return new java.lang.Double(ret);
 	}
-	
+
 	/** Get the top element of the calculation stack and try and convert it to a number if it is a string */
 	private double popCalcStackAsNumber(double defaultForEmptyString) throws Exception {
 		double num;
 		if (calcStack.get(calcStack.size()-1) instanceof String) {
 			if (((String)calcStack.get(calcStack.size()-1)).equals(""))
 				num=defaultForEmptyString;
-			else	
+			else
 				num = getNumber((String)calcStack.get(calcStack.size()-1)).doubleValue();
 		} else {
 			num = ((java.lang.Double)calcStack.get(calcStack.size()-1)).doubleValue();
 		}
 		calcStack.removeElementAt(calcStack.size()-1);
-		return num;	
+		return num;
 	}
-	
+
 	private String popCalcStackAsString() {
 		String s;
 		if (calcStack.get(calcStack.size()-1) instanceof Double) {
 			java.lang.Double D=((java.lang.Double)calcStack.get(calcStack.size()-1));
 			// Double.toString() formats numbers > 1E7 and < 1E-3 with exponential notation
-			// For large integers we therefore use Longs  
+			// For large integers we therefore use Longs
 			double d=D.doubleValue();
 			// If the double is an integer and within range of longs, use Long
 			if (java.lang.Math.floor(d)==d && d<java.lang.Long.MAX_VALUE && d>java.lang.Long.MIN_VALUE) {
@@ -296,9 +296,9 @@ public class Parser{
 		} else
 			s = (String)calcStack.get(calcStack.size()-1);
 		calcStack.removeElementAt(calcStack.size()-1);
-		return s;	
+		return s;
 	}
-	
+
 	private void getToken() throws Exception {
 		if(scanpos < tokenStack.size()){
 			thisToken = (TokenObj)tokenStack.get(scanpos);
@@ -306,7 +306,7 @@ public class Parser{
 			scanpos++;
 		} else err(MyLocale.getMsg(1704,"Unexpected end of source"));
 	}
-	
+
 	private TokenObj peekToken() {
 		if(scanpos < tokenStack.size()){
 			return (TokenObj)tokenStack.get(scanpos);
@@ -317,7 +317,7 @@ public class Parser{
 	private void getNextTokenOtherThanSemi() throws Exception {
 		do {
 			getToken();
-		} while (thisToken.token.equals(";"));	
+		} while (thisToken.token.equals(";"));
 	}
 
 	private void skipPastEndif(TokenObj ifToken) throws Exception {
@@ -335,7 +335,7 @@ public class Parser{
 	private TokenObj lookAheadToken() {
 		return (TokenObj)tokenStack.get(scanpos);
 	}
-	
+
 	private boolean checkNextSymIs(String str) throws Exception {
 		if(thisToken.token.toUpperCase().equals(str)){
 			return true;
@@ -364,7 +364,7 @@ public class Parser{
 ///////////////////////////////////////////
 //  FUNCTIONS
 ///////////////////////////////////////////
-	
+
 	/** If we are in DEGree mode, convert the argument to RADiants, if not leave it unchanged */
 	private double makeRadiant(double arg) {
 		if (Global.getPref().solverDegMode)
@@ -372,7 +372,7 @@ public class Parser{
 		else
 			return arg;
 	}
-	
+
 	/** If we are in DEGree mode, convert the argument to degrees */
 	private double makeDegree(double arg) {
 		if (Global.getPref().solverDegMode)
@@ -380,7 +380,7 @@ public class Parser{
 		else
 			return arg;
 	}
-    
+
     /** Calculate brearing from one point to the next */
     private double funcBearing() throws Exception {
     	String coordB=popCalcStackAsString();
@@ -404,21 +404,21 @@ public class Parser{
 			Global.getProfile().updateBearingDistance();
 		}
 	}
-	
+
 	/** Clear Screen */
 	private void funcCls() {
 		// OutputPanel is private, so need to cast to base class
 		((ewe.ui.mTextPad) Global.mainTab.solverP.mOutput).setText("");
 	}
-	
+
 	private int funcCountChar(String s, char c) {
     	int count=0;
     	for (int i=0; i<s.length(); i++)
     		if (s.charAt(i)==c) count++;
     	return count;
     }
-    
-    /** count(string1,string2) 
+
+    /** count(string1,string2)
      * */
     private void funcCount()throws Exception {
        	String s2=popCalcStackAsString();
@@ -432,17 +432,17 @@ public class Parser{
     			res+=s2.charAt(i)+"="+funcCountChar(s1,s2.charAt(i))+" ";
     		}
     		calcStack.add(res);
-    	} 
+    	}
     }
-    
+
     private String funcCp(){
     	return Global.mainTab.nav.gpsPos.toString();
     }
-    
+
     /**
      *  Crosstotal: Works for both strings and numbers. For strings any non-numeric character is ignored
      *  Warning: When the number is non-integer or > 9223372036854775807, it is formatted using the E
-     *  notation, i.e. x.xxxxxxEyy. In this case the exponent yy is also included in the crosstotal 
+     *  notation, i.e. x.xxxxxxEyy. In this case the exponent yy is also included in the crosstotal
      */
     private double funcCrossTotal(int nargs) throws Exception {
     	int cycles=1;
@@ -459,21 +459,21 @@ public class Parser{
 			      a += aString.charAt(i)-'0';
 			}
 			aString=Convert.toString(a);
-    	} 
+    	}
     	return a;
     }
-    
+
     private void funcDeg(boolean arg) {
     	Global.getPref().solverDegMode=arg;
     	Global.mainTab.solverP.showSolverMode();
     }
-    
+
     /** Convert degrees into Radiants */
     private double funcDeg2Rad() throws Exception {
     	double a=popCalcStackAsNumber(0);
     	return a/180.0*java.lang.Math.PI;
     }
-    	
+
     	/** Calculate distance between 2 points */
     private double funcDistance() throws Exception {
     	String coordB=popCalcStackAsString();
@@ -484,7 +484,7 @@ public class Parser{
     	cwPt.set(coordA);
     	return cwPt.getDistance(new CWPoint(coordB))*1000.0;
     }
-    
+
     /**
      * Encode a string by replacing all characters in a string with their corresponding characters in
      * another string
@@ -500,13 +500,13 @@ public class Parser{
     		int pos;
     		if ((pos=oldChars.indexOf(s.charAt(i)))!=-1) {
     			encodedStr+=newChars.charAt(pos);
-    		} else 
+    		} else
     			encodedStr+=s.charAt(i);
     	}
     	 return encodedStr;
     }
-    
-    /** Format a valid coordinate 
+
+    /** Format a valid coordinate
      *  If called with one args, format the argument on the stack to CW standard
      *  The optional second argument is one of these strings "UTM","DMS","DD","DMM" or "CW"
      * @param nargs 1 or 2 args
@@ -525,13 +525,13 @@ public class Parser{
     	else if (!fmtStr.equals("cw")) err(MyLocale.getMsg(1713,"Invalid coordinate format. Allowed are CW/DD/DMM/DMS/UTM"));
     	return cwPt.toString(fmt);
     }
-    
+
     /** Implements a goto command goto(coordinate,optionalWaypointName).
      */
     private void funcGoto(int nargs) throws Exception {
     	Navigate nav=Global.mainTab.nav;
 		String waypointName=null;
-        if (nargs==2) waypointName=popCalcStackAsString();  
+        if (nargs==2) waypointName=popCalcStackAsString();
 		String coord=popCalcStackAsString();
 		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
 		// Don't want to switch to goto panel, just set the values
@@ -543,21 +543,21 @@ public class Parser{
     		CacheHolder ch=((CacheHolder)Global.getProfile().cacheDB.get(i));
     		ch.LatLon=cwPt.toString(CWPoint.CW);
     		ch.pos.set(cwPt);
-    		ch.calcDistance(Global.getPref().curCentrePt); // Update distance/bearing 
+    		ch.calcDistance(Global.getPref().curCentrePt); // Update distance/bearing
     	    Global.getProfile().selectionChanged=true; // Tell moving map to updated displayed waypoints
     	}
     }
-    
+
     /** Display or change the case sensitivity of variable names */
     private void funcIgnoreVariableCase(int nargs) throws Exception {
-    	if (nargs==0) 
+    	if (nargs==0)
     		calcStack.add(""+Global.getPref().solverIgnoreCase);
     	else {
     		Global.getPref().solverIgnoreCase=(popCalcStackAsNumber(0)!=0)?true:false;
     	}
     }
-    
-    /** VB instr function 
+
+    /** VB instr function
      * instr([start],string1,string2)
      * */
     private int funcInstr(int nargs) throws Exception {
@@ -567,7 +567,7 @@ public class Parser{
     	if (nargs==3) start=(int) popCalcStackAsNumber(1);
     	if (start>s1.length()) err(MyLocale.getMsg(1715,"instr: Start position not in string"));
     	if(s2.equals("")) {
-    		if (s1.equals("")) 
+    		if (s1.equals(""))
     			return 0;
     		else
     			return 1;
@@ -593,7 +593,7 @@ public class Parser{
     		return s.substring((int)start-1,end);
     	}
     }
- 
+
 	/** Get or set the profile centre */
 	private void funcPz(int nargs) throws Exception {
 		if (nargs==0) {
@@ -604,16 +604,16 @@ public class Parser{
 			Global.getProfile().centre.set(coordA);
 		}
 	}
-    
+
     /** Project a waypoint at some angle and some distance */
     private String funcProject() throws Exception {
     	double distance=popCalcStackAsNumber(0);
     	if (distance<0) err(MyLocale.getMsg(1718,"Cannot project a negative distance"));
     	double degrees=popCalcStackAsNumber(0);
     	// If we are not in degree mode, arg is in radiants ==> convert it
-    	if (!Global.getPref().solverDegMode) degrees=degrees * 180.0 / java.lang.Math.PI; 
-    	if (degrees<0 || degrees>360) 
-    		if (Global.getPref().solverDegMode) 
+    	if (!Global.getPref().solverDegMode) degrees=degrees * 180.0 / java.lang.Math.PI;
+    	if (degrees<0 || degrees>360)
+    		if (Global.getPref().solverDegMode)
     			err(MyLocale.getMsg(1719,"Projection degrees must be in interval [0;360]"));
     		else
     			err(MyLocale.getMsg(1739,"Projection degrees must be in interval [0;2*PI]"));
@@ -628,7 +628,7 @@ public class Parser{
     	double a=popCalcStackAsNumber(0);
     	return a*180.0/java.lang.Math.PI;
     }
-    
+
     /** Replace all occurrences of a string with another string */
     private String funcReplace() throws Exception {
     	String replaceWith=popCalcStackAsString();
@@ -637,17 +637,17 @@ public class Parser{
         if (whatToReplace.equals("")) return s;
         return STRreplace.replace(s,whatToReplace,replaceWith);
     }
-    
+
     /** Reverse a string */
     private String funcReverse(String s) {
     	String res="";
     	for (int i=s.length()-1; i>=0; i--) res+=s.charAt(i);
     	return res;
     }
-    
+
     /** Create a skeleton for multis. This function can be called in three ways:<br>
-     *  <pre>sk()                Create skeleton for current cache (must have addi wpts) 
-     *  sk(number)          Create skeleton for number variables 
+     *  <pre>sk()                Create skeleton for current cache (must have addi wpts)
+     *  sk(number)          Create skeleton for number variables
      */
     private void funcSkeleton(int nargs) throws Exception {
    		String waypointName=Global.mainTab.lastselected;
@@ -688,7 +688,7 @@ public class Parser{
 				op.append("  \""+stageName+" = \" "+stageWpt+"\n");
 				op.append("  goto("+stageWpt+"); STOP\n");
 				op.append("ENDIF\n");
-			}		
+			}
 			Global.mainTab.solverP.mText.appendText(op.toString(),true);
 			if (didCreateWp) {
 		    	Global.mainTab.updatePendingChanges();
@@ -729,25 +729,25 @@ public class Parser{
 			}// if hasAddiWpt
     	}
     }
-    
+
     private double funcSqrt() throws Exception {
     	double a=popCalcStackAsNumber(0);
     	if (a<0) err(MyLocale.getMsg(1720,"Cannot calculate square root of a negative number"));
     	return java.lang.Math.sqrt(a);
     }
-    
+
     /** Replace each character by its number A=1, B=2 etc. and put result into a string */
     private String funcSval(String s) {
        	s=s.toLowerCase();
     	String res="";
        	for (int i=0; i<s.length(); i++) {
     		int pos="abcdefghijklmnopqrstuvwxyz".indexOf(s.charAt(i));
-    		if (pos>=0) 
+    		if (pos>=0)
     			res+=(res==""?"":" ")+MyLocale.formatLong(pos+1,"00");
     	}
     	return res;
     }
-    
+
     /** Replace each character by its number A=1, B=2 etc. and sum them */
     private double funcVal(String s) {
     	s=s.toLowerCase();
@@ -757,24 +757,24 @@ public class Parser{
     	}
     	return sum;
     }
-    
+
 ///////////////////////////////////////////
 //  PARSER
 ///////////////////////////////////////////
-   
-    
+
+
     /** The following methods implement a recursive descent parser.
      * Each method is called with 'thisToken' containing a valid token. It must return with 'thisToken' again containing
      * a valid token.
      */
- 
+
 	private void parseCommand()  throws Exception {
 		while(scanpos < tokenStack.size()) {
 			getToken();
 			if (thisToken.token.equals(";")) continue;  // skip an empty command
-			if (thisToken.tt==TokenObj.TT_IF) 
+			if (thisToken.tt==TokenObj.TT_IF)
 				parseIf();
-			else 
+			else
 				parseSimpleCommand();
 			checkNextSymIs(";");
 		}
@@ -788,14 +788,14 @@ public class Parser{
 		} else if (thisToken.token.equals("?")) { // Show all local variables
 			showVars(false);
 			getToken();
-		} else if (thisToken.tt==TokenObj.TT_VARIABLE && lookAheadToken().tt==TokenObj.TT_EQ) 
+		} else if (thisToken.tt==TokenObj.TT_VARIABLE && lookAheadToken().tt==TokenObj.TT_EQ)
 			parseAssign();
 		else {
 			parseStringExp();
 			while (calcStack.size()>0) messageStack.add(popCalcStackAsString());
 		}
 	}
-	
+
 	private void parseIf() throws Exception{
 		int compOp;
 		boolean compRes=false;
@@ -810,7 +810,7 @@ public class Parser{
 				if (varName.startsWith("$")) { // Could be a cachename
 					varName=varName.substring(1);
 					compRes=Global.getProfile().getCacheIndex(varName)!=-1;
-				} else 
+				} else
 					compRes=false;
 			} else // Found the variable, it must have a value
 				compRes=true;
@@ -869,12 +869,12 @@ public class Parser{
 		} else // comparison failed
 			skipPastEndif(ifToken);
 	}
-	
+
 	private void parseAssign() throws Exception  {
 		String varName=new String(thisToken.token);
 		getToken(); //=
 		getToken();
-		// Assigns of the format A=; are ignored so that they can stay as placeholders and 
+		// Assigns of the format A=; are ignored so that they can stay as placeholders and
 		// we can fill the data progressively during a multicache
 		if (thisToken.tt==TokenObj.TT_ENDIF || thisToken.token.equals(";")) return;
 		parseStringExp();
@@ -898,7 +898,7 @@ public class Parser{
 		}
 		symbolTable.put(Global.getPref().solverIgnoreCase?varName.toUpperCase():varName, popCalcStackAsString());
 	}
-	
+
 	private void parseStringExp()throws Exception {
 		if (thisToken.tt==TokenObj.TT_STRING) {
 			calcStack.add(thisToken.token);
@@ -907,8 +907,8 @@ public class Parser{
 			parseExp();
 		}
 		//calcStack.add(popCalcStackAsString());
-		while (thisToken.tt==TokenObj.TT_STRING || 
-			   thisToken.tt==TokenObj.TT_NUMBER || 
+		while (thisToken.tt==TokenObj.TT_STRING ||
+			   thisToken.tt==TokenObj.TT_NUMBER ||
 			   thisToken.tt==TokenObj.TT_VARIABLE ||
 			   thisToken.tt==TokenObj.TT_SYMBOL && thisToken.token.equals("(")) {
 			if (thisToken.tt==TokenObj.TT_STRING) {
@@ -922,7 +922,7 @@ public class Parser{
 			calcStack.add(a+b);
 		}
 	}
-	
+
 	private void parseExp()throws Exception {
 		char unaryOp='+';
 		if (thisToken.token.equals("+") || thisToken.token.equals("-") ) {
@@ -954,7 +954,7 @@ public class Parser{
 			getToken();
 		}
 	}
-	
+
 	private void parseTerm() throws Exception{
 		parseFactor();
 		while (thisToken.token.equals("*") || thisToken.token.equals("/") ) {
@@ -966,13 +966,13 @@ public class Parser{
 			if (op=='*')
 				calcStack.add(new java.lang.Double(a*b));
 			else
-				if (b==0.0) 
+				if (b==0.0)
 					err(MyLocale.getMsg(1729,"Division by 0"));
-				else 
+				else
 					calcStack.add(new java.lang.Double(a/b));
 		}
 	}
-	
+
 	private void parseFactor() throws Exception{
 		parseExpFactor();
 		while (thisToken.token.equals("^")) {
@@ -987,13 +987,13 @@ public class Parser{
 	private void parseExpFactor() throws Exception {
 		fnType funcDef;
 		if (thisToken.tt==TokenObj.TT_VARIABLE) {
-			if (isVariable(thisToken.token))
+			if (isVariable(thisToken.token) && !lookAheadToken().token.equals("(") )
 				calcStack.add(getVariable(thisToken.token));
 			else if (!lookAheadToken().token.equals("(")) err(MyLocale.getMsg(1724,"Variable not set: ")+thisToken.token);
 			    else {// Must be a function definition
 				funcDef=getFunctionDefinition(thisToken.token); // Does not return if function not defined or ambiguous
 				parseFunction(funcDef);
-			    } 
+			    }
 		} else if (thisToken.tt==TokenObj.TT_NUMBER) {
 			calcStack.add(getNumber(thisToken.token));
 		} else if (thisToken.tt==TokenObj.TT_STRING) {
@@ -1006,7 +1006,7 @@ public class Parser{
 		else err(MyLocale.getMsg(1725,"Unexpected character(s): ")+thisToken.token);
 		getToken();
 	}
-	
+
 	private void parseFunction(fnType funcDef) throws Exception {
 		String funcName=new String(thisToken.token);
         int nargs=0;
@@ -1019,7 +1019,7 @@ public class Parser{
 			while (thisToken.token.equals(",")) {
 				if (nargs==4) err(MyLocale.getMsg(1726,"Too many arguments for function ")+funcName);
 				getToken();
-				parseStringExp(); 
+				parseStringExp();
 				nargs++;
 			}
 			checkNextSymIs(")");
@@ -1027,7 +1027,7 @@ public class Parser{
 		//getToken(); done in parseFactor
 		executeFunction(funcName,nargs,funcDef);
 	}
-	
+
 	private void executeFunction(String funcName, int nargs, fnType funcDef) throws Exception {
 		if (!funcDef.nargsValid(nargs)) err(MyLocale.getMsg(1727,"Invalid number of arguments"));
 	         if (funcDef.alias.equals("asin")) calcStack.add(new java.lang.Double(makeDegree(java.lang.Math.asin(popCalcStackAsNumber(0)))));
@@ -1039,10 +1039,10 @@ public class Parser{
 	    else if (funcDef.alias.equals("cls")) funcCls();
 	    else if (funcDef.alias.equals("cos")) calcStack.add(new java.lang.Double(java.lang.Math.cos(makeRadiant(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("count")) funcCount();
-	    else if (funcDef.alias.equals("cp")) calcStack.add(funcCp());     
+	    else if (funcDef.alias.equals("cp")) calcStack.add(funcCp());
 	    else if (funcDef.alias.equals("ct")) calcStack.add(new java.lang.Double(funcCrossTotal(nargs)));
-	    else if (funcDef.alias.equals("deg")) funcDeg(true);     
-	    else if (funcDef.alias.equals("deg2rad")) calcStack.add(new java.lang.Double(funcDeg2Rad())); 
+	    else if (funcDef.alias.equals("deg")) funcDeg(true);
+	    else if (funcDef.alias.equals("deg2rad")) calcStack.add(new java.lang.Double(funcDeg2Rad()));
 	    else if (funcDef.alias.equals("distance")) calcStack.add(new java.lang.Double(funcDistance()));
 	    else if (funcDef.alias.equals("encode")) calcStack.add(funcEncode());
 	    else if (funcDef.alias.equals("format")) calcStack.add(funcFormat(nargs));
@@ -1052,10 +1052,10 @@ public class Parser{
 	    else if (funcDef.alias.equals("lc")) calcStack.add(popCalcStackAsString().toLowerCase());
 	    else if (funcDef.alias.equals("len")) calcStack.add(new Double(popCalcStackAsString().length()));
 	    else if (funcDef.alias.equals("mid")) calcStack.add(funcMid(nargs));
-	    else if (funcDef.alias.equals("project")) calcStack.add(funcProject());     
-	    else if (funcDef.alias.equals("pz")) funcPz(nargs);     
-	    else if (funcDef.alias.equals("rad")) funcDeg(false);     
-	    else if (funcDef.alias.equals("rad2deg")) calcStack.add(new java.lang.Double(funcRad2Deg())); 
+	    else if (funcDef.alias.equals("project")) calcStack.add(funcProject());
+	    else if (funcDef.alias.equals("pz")) funcPz(nargs);
+	    else if (funcDef.alias.equals("rad")) funcDeg(false);
+	    else if (funcDef.alias.equals("rad2deg")) calcStack.add(new java.lang.Double(funcRad2Deg()));
 	    else if (funcDef.alias.equals("replace")) calcStack.add(funcReplace());
 	    else if (funcDef.alias.equals("reverse")) calcStack.add(funcReverse(popCalcStackAsString()));
 	    else if (funcDef.alias.equals("rot13")) calcStack.add(Common.rot13(popCalcStackAsString()));
@@ -1063,14 +1063,14 @@ public class Parser{
 	    else if (funcDef.alias.equals("show"));
 	    else if (funcDef.alias.equals("sin")) calcStack.add(new java.lang.Double(java.lang.Math.sin(makeRadiant(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("skeleton")) funcSkeleton(nargs);
-	    else if (funcDef.alias.equals("sqrt")) calcStack.add(new java.lang.Double(funcSqrt())); 
+	    else if (funcDef.alias.equals("sqrt")) calcStack.add(new java.lang.Double(funcSqrt()));
 	    else if (funcDef.alias.equals("sval")) calcStack.add(funcSval(popCalcStackAsString()));
 	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(makeRadiant(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("uc")) calcStack.add(popCalcStackAsString().toUpperCase());
 	    else if (funcDef.alias.equals("val")) calcStack.add(new java.lang.Double(funcVal(popCalcStackAsString())));
 	    else err(MyLocale.getMsg(1728,"Function not yet implemented: ")+funcName);
 	}
-	
+
 	public void parse(Vector tck, Vector msgStack){
 		calcStack.clear();
 		clearLocalSymbols();
@@ -1083,17 +1083,17 @@ public class Parser{
 			//Vm.debug(ex.toString());
 		}
 	}
-	
+
 	private boolean createWptIfNeeded(String wayPoint, String name, String type){
 	   	int ci=Global.getProfile().getCacheIndex(wayPoint);
     	if (ci >= 0) return false;
-    	
+
 		CacheHolder ch = new CacheHolder();
 		ch.wayPoint = wayPoint;
 		ch.type = type;
 		ch.CacheSize = "None";
 		ch.CacheName= name;
-		
+
 		Global.getProfile().hasUnsavedChanges=true;
 		Global.getProfile().setAddiRef(ch);
 
@@ -1101,5 +1101,5 @@ public class Parser{
 		Global.mainTab.tbP.myMod.numRows++;
 		return true;
 	}
-	
+
 }
