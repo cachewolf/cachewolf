@@ -1000,7 +1000,7 @@ public class Parser{
 	private void parseExpFactor() throws Exception {
 		fnType funcDef;
 		if (thisToken.tt==TokenObj.TT_VARIABLE) {
-			if (isVariable(thisToken.token))
+			if (isVariable(thisToken.token) && !lookAheadToken().token.equals("("))
 				calcStack.add(getVariable(thisToken.token));
 			else if (!lookAheadToken().token.equals("(")) err(MyLocale.getMsg(1724,"Variable not set: ")+thisToken.token);
 			else {// Must be a function definition
