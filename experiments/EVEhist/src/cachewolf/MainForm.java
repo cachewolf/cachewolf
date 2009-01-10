@@ -56,16 +56,6 @@ public class MainForm extends Form {
 		this.resizable = true;
 		this.moveable = true;
 		this.windowFlagsToSet = Window.FLAG_MAXIMIZE_ON_PDA;
-		if (!Device.isMobile()) {
-			this.resizable = false;
-			this.moveable = false;
-			int h,w;
-			h=pref.myAppHeight;
-			if (h>MyLocale.getScreenHeight()) h=MyLocale.getScreenHeight();
-			w=pref.myAppWidth;
-			if (w>MyLocale.getScreenWidth()) w=MyLocale.getScreenWidth();
-			this.setPreferredSize(w,h);
-		}
 		this.resizeOnSIP = true;
 		InfoBox infB = null;
 		// Load CacheList
@@ -73,6 +63,16 @@ public class MainForm extends Form {
 			pref.readPrefFile();
 			if (MyLocale.initErrors.length() != 0) {
 				new MessageBox("Error", MyLocale.initErrors, FormBase.OKB).execute();
+			}
+			if (!Device.isMobile()) {
+				this.resizable = false;
+				this.moveable = false;
+				int h,w;
+				h=pref.myAppHeight;
+				if (h>MyLocale.getScreenHeight()) h=MyLocale.getScreenHeight();
+				w=pref.myAppWidth;
+				if (w>MyLocale.getScreenWidth()) w=MyLocale.getScreenWidth();
+				this.setPreferredSize(w,h);
 			}
 			addGuiFont();
 			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true))
