@@ -79,7 +79,7 @@ public class DescriptionPanel extends CellPanel{
 							if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
 								String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 								// If we have an image which we stored when spidering, we can display it
-								if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
+								if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe") && !imgType.startsWith(".pl")){
 									s.append("<img src=\""+
 											//Global.getProfile().dataDir+
 											Images.get(imageNo)+"\">");
