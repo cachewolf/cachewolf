@@ -215,8 +215,10 @@ public class HTMLExporter{
 			// Copy the log-icons to the destination directory
 			for (int j=0; j<logIcons.size(); j++) {
 				icon=(String) logIcons.elementAt(j);
-				DataMover.copy(eve.io.File.getProgramDirectory() + "/"+icon,targetDir + icon);
-				
+				// Copy icons only if they are not the "virtual" MAXLOGICON
+				if (!icon.equals(Log.MAXLOGICON)) {
+				    DataMover.copy(eve.io.File.getProgramDirectory() + "/"+icon,targetDir + icon);
+				}
 			}
 			DataMover.copy(eve.io.File.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif");
 			try{

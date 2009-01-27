@@ -3,7 +3,6 @@ package cachewolf;
 import cachewolf.imp.GPXImporter;
 
 public class Log {
-	private static String MAXLOGICON="MAXLOG";
 	private static String INVALIDLOGICON=null;
 	/** The icon which describes the log e.g. icon_sad */
 	private String icon;
@@ -16,6 +15,7 @@ public class Log {
 	/** true, if the logger recommended the cache */
 	private boolean recommended = false;
 	
+	public static String MAXLOGICON="MAXLOG";
 	/** Create a log from a single line in format<br>
 	 * <pre>RECOMMENDED="1"<img src='ICON'>&nbsp;DATE LOGGER<br>MESSAGE
 	 * or <img src='ICON'>&nbsp;DATE by LOGGER<br>MESSAGE</pre>
