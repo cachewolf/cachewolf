@@ -264,7 +264,7 @@ public class HTMLExporter{
 			imgRex.searchFrom(chD.longDescription,pos);
 			String imgUrl=imgRex.stringMatched(1);
 			//Vm.debug("imgUrl "+imgUrl);
-			if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
+			if (imgUrl != null && imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
 				String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 				// If we have an image which we stored when spidering, we can display it
 				if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe") && !imgType.startsWith(".pl")){
