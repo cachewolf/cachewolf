@@ -122,19 +122,24 @@ public class KMLExporter extends Exporter {
 							if (str != null) outp.print(str);
 						}
 						if (ch.hasAddiWpt()){
-							outp.print(startFolder("Additional Waypoints", false));
-							for(int j = 0; j<ch.addiWpts.size(); j++){
-								addiWpt = (CacheHolder) ch.addiWpts.get(j);
-								chD=new CacheHolderDetail(addiWpt);
-								expCount++;
-								if (chD.pos.isValid()){
-									str = record(chD, chD.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-										     chD.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
-									if (str != null) outp.print(str);
-								}
-
-							}
-						outp.print(endFolder());// addi wpts
+                            boolean createdAdditionalWaypointsFolder = false;
+                            for(int j = 0; j<ch.addiWpts.size(); j++){
+                            	addiWpt = (CacheHolder) ch.addiWpts.get(j);
+                            	chD=new CacheHolderDetail(addiWpt);
+                            	expCount++;
+                            	if (chD.pos.isValid() &&  ! chD.is_filtered){
+                            		if (! createdAdditionalWaypointsFolder) {
+                            			outp.print(startFolder("Additional Waypoints", false));
+                                        createdAdditionalWaypointsFolder = true;
+                                    }
+                            		str = record(chD, chD.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+                            		chD.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+                            		if (str != null) outp.print(str);
+                            	}
+                            }
+                            if (createdAdditionalWaypointsFolder) {
+                            	outp.print(endFolder());// addi wpts
+                            }
 						}
 					}
 					outp.print(endFolder());// cachetype
