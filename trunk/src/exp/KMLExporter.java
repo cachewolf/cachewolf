@@ -121,19 +121,25 @@ public class KMLExporter extends Exporter {
 							if (str != null) outp.print(str);
 						}
 						if (ch.hasAddiWpt()){
-						outp.print(startFolder("Additional Waypoints", false));
+							boolean createdAdditionalWaypointsFolder = false;
 							for(int j = 0; j<ch.addiWpts.size(); j++){
 								addiWpt = (CacheHolder) ch.addiWpts.get(j);
 								holder=new CacheHolderDetail(addiWpt);
 								expCount++;
-								if (holder.pos.isValid()){
+								if (holder.pos.isValid() &&  ! holder.is_filtered){
+									if (! createdAdditionalWaypointsFolder) {
+										outp.print(startFolder("Additional Waypoints", false));
+										createdAdditionalWaypointsFolder = true;
+									}
 									str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
 										     holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 									if (str != null) outp.print(str);
 								}
 								
 							}
-						outp.print(endFolder());// addi wpts
+							if (createdAdditionalWaypointsFolder) {
+								outp.print(endFolder());// addi wpts
+							}
 						}
 					}
 					outp.print(endFolder());// cachetype
