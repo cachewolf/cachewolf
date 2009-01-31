@@ -1,8 +1,8 @@
 #!/bin/sh
 
 if [ ! -e snapshot.sh ]; then
- echo "This script must be run from inside the programs/ directory!"
- exit 1
+	echo "This script must be run from inside the programs/ directory!"
+	exit 1
 fi
 
 cd ..
@@ -12,7 +12,8 @@ svn update
 
 echo Updating version number in code ...
 v=$(svn info | sed -n '/Revision: /s///p')
-printf '/VER_SVN =/s/\$.*\$/$LastChangedRevision: %s $/\nwq\n' $v | \
+# the '' below are so that svn doesn't ever fuck up _this_ file
+printf '/VER_SVN =/s/\$.*\$/$LastChangedRe''vision: %s $/\nwq\n' $v | \
     ed -s src/cachewolf/Version.java
 
 echo Removing old build ...
@@ -21,8 +22,8 @@ rm -rf bin
 echo Compiling Java classes ...
 mkdir -p bin/cachewolf
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
-    -cp lib/CompileEve.zip:lib/JavaEve.zip:lib/lib-folder -d bin -deprecation -nowarn \
-    src/cachewolf/*.java src/cachewolf/*/*.java
+    -cp lib/CompileEve.zip:lib/JavaEve.zip:lib/lib-folder -d bin \
+    -deprecation -nowarn src/cachewolf/*.java src/cachewolf/*/*.java
 
 echo Linking executables ...
 cd programs
