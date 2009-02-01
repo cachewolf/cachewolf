@@ -93,6 +93,8 @@ public class DescriptionPanel extends CellPanel{
 					}
 					if (start>=0) s.append(desc.substring(start));
 					newDesc=s.toString(); // Don't store in desc as this could modify chD
+				} else {
+					newDesc = desc;
 				}
 				if (chD.hasImageInfo()) {
 					newDesc+=getPicDesc(imageNo,chD);
@@ -102,6 +104,7 @@ public class DescriptionPanel extends CellPanel{
 				disp.getDecoderProperties().set("documentroot",Global.getProfile().dataDir);
 				disp.addHtml(newDesc,new eve.sys.Handle());
 				tm=disp.endHtml();
+				
 				
 			}
 			else {
