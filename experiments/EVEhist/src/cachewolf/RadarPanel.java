@@ -68,7 +68,7 @@ public class RadarPanel extends CellPanel{
 		clearRadarPanel();
 		cacheDB=Global.getProfile().cacheDB;
 	}
-	
+
 	public void clearRadarPanel() {
 		int anz = iActP.images.size();
 		for(int i = 0; i<anz;i++){
@@ -78,7 +78,7 @@ public class RadarPanel extends CellPanel{
 		iActP.refresh();
 		redrawCaches=true;
 	}
-	
+
 	/**
 	* Public method to draw the different caches and the
 	* radar background
@@ -92,7 +92,7 @@ public class RadarPanel extends CellPanel{
 		drawCircle();
 		iActP.repaintNow();
 	}
-	
+
 	/**
 	* Private method to draw the caches.
 	*/
@@ -118,7 +118,7 @@ public class RadarPanel extends CellPanel{
 							s=ch.wayPoint;
 						else
 							s=ch.cacheName;
-						if (s.length()>0) { 
+						if (s.length()>0) {
 							int tw;
 							Image img = new Image(tw=fm.getTextWidth(s),fm.getHeight());
 							Graphics g = new Graphics(img);
@@ -135,7 +135,7 @@ public class RadarPanel extends CellPanel{
 					}
 					Picture imgCache=CacheType.cache2Img(ch.type);
 					// If we have no image for the cache type use a question mark
-					if (imgCache==null) imgCache=CacheType.cachePictures[8]; 
+					if (imgCache==null) imgCache=CacheType.cachePictures[8];
 					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = ch.wayPoint;
 					rpi.rownum = i;
@@ -145,12 +145,12 @@ public class RadarPanel extends CellPanel{
 			}// if is_black...
 		}
 	}
-	
+
 	public void removeCircle() {
 		if (circle!=null) iActP.removeImage(circle);
-		circle=null; 
+		circle=null;
 	}
-	
+
 	private void drawCircle() {
 		removeCircle();
 		double pi180=java.lang.Math.PI / 180.0;
@@ -168,7 +168,7 @@ public class RadarPanel extends CellPanel{
 			circle = new AniImage(imgCircle,Color.Black);
 			circle.properties = eve.fx.Drawing.IsNotHot;
 			circle.setLocation(centerX+x-9,centerY+y-9);
-			iActP.addImage(circle); 
+			iActP.addImage(circle);
 		}
 	}
 	/**
@@ -187,8 +187,8 @@ public class RadarPanel extends CellPanel{
 		g.setColor(Color.Black);
 		//Vm.debug(Convert.toString(height));
 		g.fillRect(0,0,width, height);
-		
-		
+
+
 		if(width < height) {
 			scale = (double)scaleKm / (double)height;
 		} else {
@@ -199,7 +199,7 @@ public class RadarPanel extends CellPanel{
 		//centerY = (int)(centerY-centerY*0.15);
 		g.setColor(GREEN);
 		int radstep= 0, steps=0, radius = 0;
-		
+
 		if(width > height){
 			radstep = (int)(10 / scale);
 			steps = width / radstep;
@@ -221,12 +221,12 @@ public class RadarPanel extends CellPanel{
 			radius = radstep/5;
 			g.drawEllipse(centerX-radius/2,centerY-radius/2, radius,radius);
 			g.free();
-		}	
+		}
 		AniImage aImg = new AniImage(img);
 		iActP.backgroundImage = img;
 		aImg.refresh();
 	}
-	
+
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btPlus){
@@ -254,9 +254,9 @@ public class RadarPanel extends CellPanel{
 		}
 
 	}
-	
+
 	public void resizeTo(int width, int height) {
-		eve.sys.Vm.debug("RadarP: resize: "+width+","+height);
+		//eve.sys.Vm.debug("RadarP: resize: "+width+","+height);
 		iActP.origin.x=(MyLocale.getScreenWidth()-width)/2;
 		iActP.origin.y=(MyLocale.getScreenHeight()- height)/2;
 		repaint();
@@ -266,7 +266,7 @@ public class RadarPanel extends CellPanel{
 //################################################################################
 //   InteractiveRadarPanel
 //################################################################################
-	
+
 	/**
 	*	This class allows handling of a user click on a cache
 	*	in the radar panel.
@@ -281,28 +281,28 @@ public class RadarPanel extends CellPanel{
 		String strTerrain=MyLocale.getMsg(1121,"Terr");
 		AniImage imgDrag; // Allows the dragging of the cache into the cachelist
 		boolean canScroll=true;
-		
+
 		private void clearInfo() {
 			removeImage(imgInfo);
 			imgInfo=null;
 			refresh();
 			onImage=null;
 		}
-		
+
 		public void imageClicked(AniImage which, Point pos){
 			long timePenOff=Vm.getTimeStampLong();
 			// If the pen rested more than 500 msec, we only display the info and don't treat it as a click
-			if (timePenOff-timePenOn<500 || !Device.isMobile()) { 
+			if (timePenOff-timePenOn<500 || !Device.isMobile()) {
 				if(which instanceof RadarPanelImage){
 					RadarPanelImage ich = (RadarPanelImage)which;
 					Global.mainTab.clearDetails();
 					Global.mainTab.selectAndActive(ich.rownum);
 				}
 			} else {
-				if (imgInfo!=null) clearInfo(); 
+				if (imgInfo!=null) clearInfo();
 			}
 		}
-		
+
 		public boolean imageMovedOn(AniImage which) {
 			timePenOn=Vm.getTimeStampLong();
 			setFont(font);
@@ -333,12 +333,12 @@ public class RadarPanel extends CellPanel{
 			imgDrag=which;
 		return true;
 		}
-		
+
 		public boolean imageMovedOff(AniImage which) {
 			clearInfo();
 			return true;
 		}
-		
+
 		public void onPenEvent(PenEvent ev) {
 			super.onPenEvent(ev);
 			if (ev.type==PenEvent.PEN_UP) {
@@ -347,18 +347,18 @@ public class RadarPanel extends CellPanel{
 				if (isDragging) penReleased(new Point(ev.x,ev.y));
 			}
 		}
-		
+
 	    ///////////////////////////////////////////////////
 		//  Allow the caches to be dragged into a cachelist
 	    ///////////////////////////////////////////////////
-		
+
 		String wayPoint;
-		
+
 		public void startDragging(DragContext dc) {
 			if (!Global.mainForm.cacheListVisible) return;
 			Vector cacheDB=Global.getProfile().cacheDB;
 	//Vm.debug("myIAP startDrag "+dc.start.x+"/"+dc.start.y);
-			int idx=Global.getProfile().getCacheIndex(wayPoint); 
+			int idx=Global.getProfile().getCacheIndex(wayPoint);
 			if (idx>=0) {
 				 CacheHolder ch=(CacheHolder) cacheDB.get(idx);
 				 //wayPoint=ch.wayPoint;
@@ -372,12 +372,12 @@ public class RadarPanel extends CellPanel{
 			}
 		 }
 
-		 public void stopDragging(DragContext dc) {		 
+		 public void stopDragging(DragContext dc) {
 			canScroll=true;
 		 }
 		 public void draggingStarted(ImageDragContext dc) {}
 		 public void draggingStopped(ImageDragContext dc) {}
-		 
+
 		 public boolean imageBeginDragged(AniImage which,Point pos) {
 			if (!Global.mainForm.cacheListVisible) return false;
 			canScroll=false;
@@ -389,7 +389,7 @@ public class RadarPanel extends CellPanel{
 				java.util.Vector cacheDB=Global.getProfile().cacheDB;
 				CacheHolder ch=(CacheHolder) cacheDB.get(imgRP.rownum);
 				wayPoint=ch.wayPoint;
-				
+
 				int tw,th;
 				Image img = new Image(tw=fm.getTextWidth(wayPoint)+17,th=fm.getHeight()>15?fm.getHeight():15);
 				Graphics g = new Graphics(img);
@@ -417,13 +417,13 @@ public class RadarPanel extends CellPanel{
 			 	}
 			 	return super.imageDragged(drag,pos);
 		 }
-		 
+
 		 public boolean imageNotDragged(ImageDragContext drag, Point pos) {
 			if (drag.image!=null) {
 				images.remove(drag.image);
 				drag.image=null;
 				refresh();
-			}			
+			}
 			 Point p = Gui.getPosInParent(this,getWindow(),null);
 			 p.x += drag.curPoint.x-origin.x;
 			 p.y += drag.curPoint.y-origin.y;
@@ -434,9 +434,9 @@ public class RadarPanel extends CellPanel{
 		    		 ((List) c).makeItemVisible(((List)c).itemsSize()-1);
 		    	 }
 		     }
-			 return false; 
+			 return false;
 		 }
-		 
+
 		 public boolean canScreenScroll() {
 			 return canScroll;
 		 }
@@ -460,12 +460,12 @@ public class RadarPanel extends CellPanel{
 	public class RadarPanelImage extends AniImage{
 		public String wayPoint = "";
 		public int rownum;
-		
+
 		public RadarPanelImage(Picture i){
 			super(i);
 		}
 	}
-	
-	
+
+
 
 }

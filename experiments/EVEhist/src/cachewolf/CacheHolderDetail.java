@@ -33,10 +33,10 @@ public class CacheHolderDetail extends CacheHolder {
 	  //public String Bugs = EMPTY; Superceded by Travelbugs
 	  public String URL = EMPTY;
 	  public String solver = EMPTY;
-	  /** For faster cache import (from opencaching) changes are only written when the details are freed from memory 
-	   * If you want to save the changes automatically when the details are unloaded, set this to true */ 
+	  /** For faster cache import (from opencaching) changes are only written when the details are freed from memory
+	   * If you want to save the changes automatically when the details are unloaded, set this to true */
 	  public boolean hasUnsavedChanges = false;
-	  
+
 	 public CacheHolderDetail() {
 	 }
 	 //public CacheHolderDetail(String wpt) {super(wpt); }
@@ -49,7 +49,7 @@ public class CacheHolderDetail extends CacheHolder {
 	 	else if (!stripControlChars(this.longDescription).equals(stripControlChars(longDescription))) is_update=true;
 	 	this.longDescription = longDescription;
 	 }
-	 
+
 	 private String stripControlChars(String desc) {
 		 StringBuffer sb=new StringBuffer(desc.length());
 		 for (int i=0; i<desc.length(); i++) {
@@ -58,12 +58,12 @@ public class CacheHolderDetail extends CacheHolder {
 		 }
 		 return sb.toString();
 	 }
-	 
+
 	 public void setHints(String hints) {
 	 	if (!this.hints.equals(hints)) is_update=true;
 	 	this.hints = hints;
 	 }
-	 
+
 	 public void setCacheLogs(LogList newLogs) {
 		 int size=newLogs.size();
 		 for (int i=size-1; i>=0; i--) { // Loop over all new logs, must start with oldest log
@@ -73,7 +73,7 @@ public class CacheHolderDetail extends CacheHolder {
 		 noFindLogs=cacheLogs.countNotFoundLogs();
 	 }
 
-	 
+
 	  /**
 	 * Method to update an existing cache with new data. This is
 	 * necessary to avoid missing old logs. Called from GPX Importer
@@ -89,26 +89,26 @@ public class CacheHolderDetail extends CacheHolder {
 		  //  we need to check whether the travelbug is already in the existing list
 		  this.has_bug = newCh.travelbugs.size()>0;
 		  for (int i=newCh.travelbugs.size()-1; i>=0; i--) {
-			 Travelbug tb=newCh.travelbugs.getTB(i);  
+			 Travelbug tb=newCh.travelbugs.getTB(i);
 		     Travelbug oldTB=this.travelbugs.find(tb.getName());
 		     // If the bug is already in the cache, we keep it
 		     if (oldTB!=null)
 		    	 newCh.travelbugs.replace(i,oldTB);
-		    
+
 		  }
 		  this.travelbugs = newCh.travelbugs;
-		  
+
 		  // URL
 		  this.URL = newCh.URL;
-		  
+
 		  setLongDescription(newCh.longDescription);
 		  setHints(newCh.hints);
 		  setCacheLogs(newCh.cacheLogs);
-		  
+
 		  if (newCh.solver.length()>0) this.solver=newCh.solver;
 	 	return this;
 	  }
-	  
+
 	  /**
 	   * Adds a user image to the cache data
 	   * @param profile
@@ -116,7 +116,7 @@ public class CacheHolderDetail extends CacheHolder {
 		public void addUserImage(Profile profile){
 		  File imgFile;
 		  String imgDesc, imgDestName;
-		  
+
 		  //Get Image and description
 			FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
 			fc.title="Select image file:";
@@ -126,7 +126,7 @@ public class CacheHolderDetail extends CacheHolder {
 				//Create Destination Filename
 				String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf("."));
 				imgDestName = this.wayPoint + "_U_" + (this.userImages.size()+1) + ext;
-				
+
 				this.userImages.add(imgDestName);
 				this.userImagesText.add(imgDesc);
 				// Copy File
@@ -136,14 +136,13 @@ public class CacheHolderDetail extends CacheHolder {
 			}
 	  }
 
-	  
+
 		/**
 		*	Method to parse a specific cache.xml file.
 		*	It fills information on cache details, hints, logs, notes and
 		*	images.
 		*/
 		public void readCache(String dir) throws IOException{
-eve.sys.Vm.debug("===chD:readDetail: "+wayPoint);
 			String dummy;
 			String filename=dir+wayPoint.toLowerCase()+".xml";
 			if (!new File(filename).exists()) {
@@ -156,19 +155,19 @@ eve.sys.Vm.debug("===chD:readDetail: "+wayPoint);
 			in.close();
 			eve.util.CharArray ca=new eve.util.CharArray(buf); ca.setLength(len);
 			String text=(ca).toString();
-			Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);		
+			Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);
 			longDescription = ex.findNext();
 			ex = new Extractor(text, "<HINTS><![CDATA[", "]]></HINTS>", 0, true);
 			hints = ex.findNext();
 			// Attributes
 			ex = new Extractor(text,"<ATTRIBUTES>","</ATTRIBUTES>",0,true);
 			attributes.xmlAttributesEnd(ex.findNext());
-			
+
 			ex = new Extractor(text, "<LOGS>","</LOGS>", 0, true);
 			dummy = ex.findNext();
 			cacheLogs.clear();
 			ex = new Extractor(dummy, "<LOG>","</LOG>", 0, true);
-			
+
 			dummy = ex.findNext();
 			while(ex.endOfSearch()==false){
 				cacheLogs.add(new Log(dummy));
@@ -237,7 +236,7 @@ eve.sys.Vm.debug("===chD:readDetail: "+wayPoint);
 				travelbugs.addFromHTML(Bugs);
 			} else
 				travelbugs.addFromXML(dummy);
-			
+
 			ex = new Extractor(text, "<URL><![CDATA[", "]]></URL>", 0, true);
 			// if no URL is stored, set default URL (at this time only possible for gc.com)
 			dummy = ex.findNext();
@@ -252,7 +251,7 @@ eve.sys.Vm.debug("===chD:readDetail: "+wayPoint);
 			ex = new Extractor(text, "<SOLVER><![CDATA[", "]]></SOLVER>", 0, true);
 			solver=ex.findNext();
 		}
-		
+
 		/**
 		*	Method to save a cache.xml file.
 		*/
@@ -290,7 +289,7 @@ eve.sys.Vm.debug("===chD:readDetail: "+wayPoint);
 					  detfile.print(cacheLogs.getLog(i).toXML());
 				  }
 				  detfile.print("</LOGS>\r\n");
-			
+
 				  detfile.print("<NOTES><![CDATA["+cacheNotes+"]]></NOTES>\n");
 				  detfile.print("<IMAGES>");
 				  String stbuf;
@@ -302,7 +301,7 @@ eve.sys.Vm.debug("===chD:readDetail: "+wayPoint);
 						stbuf = (String)imagesText.get(i);
 						if (i < iis && imagesInfo.get(i) != null)
 							detfile.print("    <IMGTEXT>"+stbuf+"<DESC>"+imagesInfo.get(i)+"</DESC></IMGTEXT>\n");
-						else 
+						else
 							detfile.print("    <IMGTEXT>"+stbuf+"</IMGTEXT>\n");
 				  }
 				  for(int i = 0;i<logImages.size();i++){
@@ -339,23 +338,23 @@ eve.sys.Vm.debug("===chD:readDetail: "+wayPoint);
 			}
 			hasUnsavedChanges = false;
 		}
-		
+
 		/**
 		 * Method for checking if to caches belongs to each other, e.g.
 		 * an additional waypoint belongs to the main cache.
 		 * Works currently only, if the last 4 or 5 chars of the waypoint are
-		 * the same, this is the gc.com way. 
+		 * the same, this is the gc.com way.
 		 * @param ch cache to check
 		 * @return true if there is a relation, false otherwise
 		 */
 /*		public boolean belongsTo (CacheHolder ch) {
-			
+
 			// avoid self referencing
 			if (this.wayPoint.equals(ch.wayPoint)) return false;
 
 			return this.wayPoint.endsWith(ch.wayPoint.substring(2));
 		}
-*/		
+*/
 		/**
 		 * Return true if this cache has additional info for some pictures
 		 * @return true if cache has additional info, false otherwise
@@ -366,7 +365,7 @@ eve.sys.Vm.debug("===chD:readDetail: "+wayPoint);
 			return false;
 		}
 
-		
+
 
 //	   public void finalize() {
 //		   super.finalize();

@@ -195,8 +195,8 @@ public class Profile {
 	 *  Saves the index with the filter settings from Filter
 	 */
 	public void saveIndex(boolean showprogress) {
-		eve.util.OperationTimer ot=new eve.util.OperationTimer();
-		ot.start("SAVEINDEX");
+		//eve.util.OperationTimer ot=new eve.util.OperationTimer();
+		//ot.start("SAVEINDEX");
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 		if(showprogress){
@@ -262,8 +262,8 @@ public class Profile {
 			if(showprogress) pbf.exit(0);
 		}
 		hasUnsavedChanges=false;
-		ot.end();
-		eve.sys.Vm.debug(ot.toString());
+		//ot.end();
+		//pref.log(ot.toString());
 	}
 
 	/**
