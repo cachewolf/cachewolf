@@ -664,7 +664,7 @@ public class MainMenu extends MenuBar {
 						|| ch.wayPoint.substring(0,2).equalsIgnoreCase("OC")))
 //					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
 //					Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
-//					Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
+//					Alter code prï¿½ft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 				{
 					cachesToUpdate.add(new Integer(i));
 				} else {
@@ -720,7 +720,7 @@ public class MainMenu extends MenuBar {
 		profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 		profile.buildReferences();
 		profile.restoreFilter(true);
-		//profile.updateBearingDistance();
+		profile.updateBearingDistance();
 		Global.mainTab.tbP.refreshTable();
 		Form.cancelWait();
 		if ( spiderErrors > 0) {
