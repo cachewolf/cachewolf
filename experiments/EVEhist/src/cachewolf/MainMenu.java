@@ -718,6 +718,7 @@ public class MainMenu extends MenuBar {
 		infB.close(0);
 //		profile.hasUnsavedChanges=true;
 		profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+		profile.buildReferences();
 		profile.restoreFilter(true);
 		//profile.updateBearingDistance();
 		Global.mainTab.tbP.refreshTable();
