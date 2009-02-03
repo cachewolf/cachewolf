@@ -7,9 +7,6 @@ fi
 
 cd ..
 
-echo Updating SVN ...
-svn update
-
 echo Updating version number in code ...
 v=$(svn info | sed -n '/Revision: /s///p')
 # the '' below are so that svn doesn't ever fuck up _this_ file
