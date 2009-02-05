@@ -82,7 +82,7 @@ public class HTMLExporter{
 				h.changed();
 
 				ch = (CacheHolder)cacheDB.get(i);
-				if(ch.is_black == false && ch.is_filtered == false){
+				if(	ch.is_black == false && ch.is_filtered == false){
 					holder=ch.getCacheDetails(false,true);
 					varParams = new Hashtable();
 					varParams.put("TYPE", CacheType.transType(holder.type));
@@ -259,8 +259,16 @@ public class HTMLExporter{
 			if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
 				String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 				// If we have an image which we stored when spidering, we can display it
-				if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe")){
-					s.append("<img src=\""+chD.Images.get(imageNo)+"\">");
+				if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe") && !imgType.startsWith(".pl")){
+					String localImageSource = null;
+					try {
+						localImageSource = chD.Images.get(imageNo).toString();
+					} catch (ArrayIndexOutOfBoundsException e) {
+						// If we haven't a local image for this image number, then take
+						// a link to the original URL - better than nothing.
+						localImageSource = imgUrl;
+					}
+					s.append("<img src=\""+localImageSource+"\">");
 					// The actual immages are copied elswhere
 					//DataMover.copy(profile.dataDir + chD.Images.get(imageNo),targetDir + chD.Images.get(imageNo));
 					imageNo++;
