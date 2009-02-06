@@ -268,16 +268,16 @@ public class HTMLExporter{
 				String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
 				// If we have an image which we stored when spidering, we can display it
 				if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe") && !imgType.startsWith(".pl")){
-					String localImageSource = null;
-					try {
-						localImageSource = chD.images.get(imageNo).toString();
-					} catch (ArrayIndexOutOfBoundsException e) {
-						// If we haven't a local image for this image number, then take
-						// a link to the original URL - better than nothing.
-						localImageSource = imgUrl;
+					// It may occur that there are less local images than
+					// image links in the description (eg. because of importing
+					// GPX files). We have to allow for this situation.
+					Object localImageSource = null;
+					if (imageNo < chD.images.size()) {
+						localImageSource = chD.images.get(imageNo);
 					}
+					if (localImageSource == null) localImageSource = imgUrl;
 					s.append("<img src=\""+localImageSource+"\">");
-					// The actual immages are copied elswhere
+					// The actual images are copied elsewhere
 					//DataMover.copy(profile.dataDir + chD.Images.get(imageNo),targetDir + chD.Images.get(imageNo));
 					imageNo++;
 				}
