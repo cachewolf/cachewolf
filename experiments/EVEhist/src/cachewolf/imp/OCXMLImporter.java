@@ -219,6 +219,7 @@ public class OCXMLImporter extends MinML {
 		inf.exec();
 
 		success = syncOC(url);
+		profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 		Form.cancelWait();
 		if (success) {
 			profile.last_sync_opencaching = dateOfthisSync.format("yyyyMMddHHmmss");
@@ -301,7 +302,6 @@ public class OCXMLImporter extends MinML {
 				ch.calcRecommendationScore();
 			}
 		} */
-		profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 		inf.setInfo(finalMessage);
 
 		return success;
