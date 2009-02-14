@@ -139,7 +139,17 @@ public class OCXMLImporter extends MinML {
 			else lastS = ch.lastSyncOC;
 		}
 		dateOfthisSync = new Time();
-		dateOfthisSync.parse(lastS, "yyyyMMddHHmmss");
+		// TODO This is a workaround necessary because the expected format changed from Ewe to Eve, expecting now spaces between year mounth day...
+		
+		StringBuffer tmp = new StringBuffer(lastS.length()+5);
+		tmp.append(lastS.substring(0, 4)).append(" ");
+		tmp.append(lastS.substring(4, 6)).append(" ");
+		tmp.append(lastS.substring(6, 8)).append(" ");
+		tmp.append(lastS.substring(8, 10)).append(" ");
+		tmp.append(lastS.substring(10,12)).append(" ");
+		tmp.append(lastS.substring(12, 14));
+		
+		dateOfthisSync.parse(tmp.toString(), "yyyyMMddHHmmss");
 	
 
 		String url = "";
