@@ -6,7 +6,6 @@ import eve.fx.*;
 
 import eve.sys.*;
 import eve.ui.event.*;
-import eveWorkArounds.TimeWorkArounds;
 
 /**
 *	Class to create the panel to show the cache details.<br>
@@ -350,7 +349,7 @@ public class DetailsPanel extends CellPanel{
 				dc.setPreferredSize(240,240);
 				String foundDate=chcStatus.getText();
 				if (foundDate.startsWith(MyLocale.getMsg(318,"Found")+" ")) foundDate=foundDate.substring(MyLocale.getMsg(318,"Found").length()+1);
-				Time t=new TimeWorkArounds();
+				Time t=new Time();
 				try {
 					t.parse(foundDate,"y-M-d H:m");
 				} catch(IllegalArgumentException e) {
