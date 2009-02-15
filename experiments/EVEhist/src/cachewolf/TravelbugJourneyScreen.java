@@ -31,6 +31,7 @@ import eve.ui.event.MultiPanelEvent;
 import eve.ui.event.ControlEvent;
 import eve.ui.event.FormEvent;
 import eve.ui.table.TableCellAttributes;
+import eveWorkArounds.TimeWorkArounds;
 
 public class TravelbugJourneyScreen extends Form  {
 	
@@ -223,7 +224,7 @@ public class TravelbugJourneyScreen extends Form  {
 				dc.title=MyLocale.getMsg(328,"Date found"); 
 				dc.setPreferredSize(240,240);
 				String foundDate=inpDate.getText();
-				Time t=new Time();
+				Time t=new TimeWorkArounds();
 				try {
 					t.parse(foundDate,"y-M-d H:m");
 				} catch(IllegalArgumentException e) {

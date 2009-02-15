@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 
 import eve.util.CharArray;
+import eveWorkArounds.TimeWorkArounds;
 
 /**
  *	Class to import Data from opencaching.de. 
@@ -138,18 +139,8 @@ public class OCXMLImporter extends MinML {
 			if (ch.lastSyncOC.length() < 14) lastS = "20050801000000";
 			else lastS = ch.lastSyncOC;
 		}
-		dateOfthisSync = new Time();
-		// TODO This is a workaround necessary because the expected format changed from Ewe to Eve, expecting now spaces between year mounth day...
-		
-		StringBuffer tmp = new StringBuffer(lastS.length()+5);
-		tmp.append(lastS.substring(0, 4)).append(" ");
-		tmp.append(lastS.substring(4, 6)).append(" ");
-		tmp.append(lastS.substring(6, 8)).append(" ");
-		tmp.append(lastS.substring(8, 10)).append(" ");
-		tmp.append(lastS.substring(10,12)).append(" ");
-		tmp.append(lastS.substring(12, 14));
-		
-		dateOfthisSync.parse(tmp.toString(), "yyyyMMddHHmmss");
+		dateOfthisSync = new TimeWorkArounds();
+		dateOfthisSync.parse(lastS, "yyyyMMddHHmmss");
 	
 
 		String url = "";
@@ -326,7 +317,7 @@ public class OCXMLImporter extends MinML {
 		strData ="";
 
 		if (name.equals("oc11xml")){
-			Time lastSync = new Time();
+			Time lastSync = new TimeWorkArounds();
 			try {
 				lastSync.parse(atts.getValue("date"),"yyyy-MM-dd HH:mm:ss");
 			}catch (IllegalArgumentException e){ // TODO Fehler werfen
