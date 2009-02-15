@@ -182,7 +182,7 @@ public class OCXMLImporter extends MinML {
 		Form.showWait();
 		String dist = importOpt.distanceInput.getText();
 		if (dist.length()== 0) return;
-		dist=MyLocale.formatDouble(Common.parseDouble(dist),"00.0");
+		dist=MyLocale.formatDouble(Common.parseDouble(dist),"00.0").replace(',', '.');
 		//check, if distance is greater than before
 		if (Convert.toInt(dist) > Convert.toInt(profile.distOC) ||
 				pref.downloadmissingOC  ){
