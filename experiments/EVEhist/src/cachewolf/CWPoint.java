@@ -444,14 +444,22 @@ public class CWPoint extends TrackPoint{
 	 * Get "N" or "S" letter for latitude
 	 */
 	public String getNSLetter() {
-		return 	this.latDec < 0?"S":"N";
-	}
+        String result = "N";
+        if (this.latDec >= -90 && this.lonDec < 0) {
+            result = "S";
+        }
+        return  result;
+}
 
 	/**
 	 * Get "E" or "W" letter for latitude
 	 */
 	public String getEWLetter() {
-		return  this.lonDec < 0?"W":"E";
+		String result = "E";
+		if (this.lonDec >= -180 && this.lonDec < 0) {
+			result = "W";
+		}
+		return  result;
 	}
 
 	/**
