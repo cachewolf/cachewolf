@@ -4,9 +4,12 @@ package cachewolf.navi;
 
 import eve.fx.Color;
 import eve.fx.Graphics;
+import eve.fx.ImageObject;
+import eve.fx.PixelBuffer;
 
 import eve.fx.Image;
 import eve.fx.Point;
+import eve.ui.advanced.database.GetSearchCriteria;
 
 import java.util.Vector;
 
@@ -14,76 +17,23 @@ import java.util.Vector;
 public class TrackOverlay extends MapImage {
 	public TrackPoint topLeft;
 	public TrackPoint bottomRight;
-	Graphics draw;
-	//Graphics drawMask;
-	//int test;
+	ImageObject drawImage;
 	MapInfoObject trans; 
 	Point pixelShift;
 	public Vector tracks;
-	boolean imageChangesDontShow = false;
-	public Point trackPixels[] = null;
-	public Color trackPixelsColor[] = null;
-	public int numPixels = 0;
-	final static int maxPixelsInCache = 100;
-	final static Color transparentColorForOverlay = Color.White; // only for use when transparent color is used
-	static boolean useTransparentColor;
 	public TrackOverlay (TrackPoint topLefti, int widthi, int highti, MapInfoObject transi) {
 		super();
 		topLeft = new TrackPoint(topLefti);
 		trans = transi;
 		pixelShift = trans.calcMapXY(topLeft);
 		bottomRight = trans.calcLatLon(widthi + pixelShift.x, highti + pixelShift.y);
-//TODO		if (eve.sys.Vm.getPlatform().equalsIgnoreCase("java")) {
-//			useTransparentColor = true; 
-//			setImage(new Image(widthi, highti), transparentColorForOverlay); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in eve-vm and doesn't consume more memory than a transparency color (eve 1.49)
-//		} else 
-		{
-			useTransparentColor = false; // // momentanously this it not used, but this is only because eve treats areas as opaque which has a non white color in the image, so that the mask doesn't need to be changed
-			//Image maski = new Image(widthi, highti);
-			//drawMask = new Graphics(maski);
-			//drawMask.setColor(Color.White);
-			//drawMask.fillRect(0, 0, maski.getWidth(), maski.getHeight());
-			setImage(new Image(widthi, highti), Color.White); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in eve-vm and doesn't consume more memory than a transparency color (eve 1.49)
-			//maski.free(); //setimage produces an inverted copy of the mask
-			//maski = null;
-		}
-		//properties = AlwaysOnTop; // arrows are above, so dont set it.
-		draw = new Graphics((Image) image);
-		draw.setDrawOp(Graphics.DRAW_OVER);
-		if (useTransparentColor) draw.setColor(transparentColorForOverlay);
-		else draw.setColor(Color.White);
-		draw.fillRect(0, 0, widthi, highti);
-		//int[] markImage = {0x00ff0000, 0x00ff0000, 0x00ff0000, 0x00ff0000};
-		//int[] markMaskOpaque = {0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff};
-		//mask.setPixels( markMaskOpaque, 0, 50, 50, 2, 2, 0);
-		//draw.fillRectRGB(50, 50, 52, 52, 0x00ff0000); // fillRectRGB has a Bug - it never returns - use fillRect instead
-		//image.setPixels(markImage, 0, 50, 50, 2, 2, 0); // out of an to me unkwon reason this doesn't work here, but it does in painttracks
+		drawImage = new PixelBuffer(widthi, highti);
+		setImage(drawImage); //, Color.White); // java-vm: transparency with a mask is very memory consuming, but transparency with a mask is much faster in eve-vm and doesn't consume more memory than a transparency color (eve 1.49)
+		changed();
 	}
 
-//TODO ImageSet is not used in project	
-/*	public void imageSet()
-//	==================================================================
-	{
-		IImage i = drawable;
-		if (i == null) i = image;
-		if (i != null){
-			location.width = i.getWidth();
-			location.height = i.getHeight();
-		}
-		if (image != null && image != sourceImage) image.freeze();
-//		if (mask != null && mask != sourceMask) mask.freeze(); // dont freeze the mask, it could change. Anyway momentanously it doesnt change, because when the image contains non-white in the opaque areas, it will be opaque without changing the mask
-		properties &= ~HasChanged;
-	}
-*/
 
 	public void paintTracks() {
-	// for debugging TrackOverlayPositions
-	// draw.setPen(new Pen(Color.LightBlue,Pen.SOLID,1));
-	// draw.fillRect(1, 1, image.getWidth()-1, image.getHeight()-1);
-		//draw.setColor(255,0,0);
-		//draw.setPen(new Pen(new Color(255,0,0),Pen.SOLID,3));
-		//draw.fillRect(50, 50, 4, 4); // fillRectRGB has a Bug - it never returns - use fillRect instead
-
 		if (tracks == null || tracks.size() == 0) return;
 		int tri, i;
 		Track tr;
@@ -93,11 +43,9 @@ public class TrackOverlay extends MapImage {
 			numberOfPoints += (numberOfTracks - 1) * ((Track)tracks.get(0)).num;
 		}
 		int n = 0;
-		
+
 		for (tri=0; tri < numberOfTracks; tri++) {
 			tr = (Track)tracks.get(tri);
-			//draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
-			draw.setColor(tr.trackColor);
 			if (tr.num > 0) {
 				for (i=0; i < tr.num; i++) {
 					n++;
@@ -108,7 +56,7 @@ public class TrackOverlay extends MapImage {
 			}
 		}
 	}
-	
+
 
 	/**
 	 * 
@@ -123,91 +71,29 @@ public class TrackOverlay extends MapImage {
 		Point p = trans.calcMapXY(where);
 		int x = p.x - pixelShift.x;
 		int y = p.y - pixelShift.y;
-		//draw.drawLine(x, y, x, y);
 		//eve.sys.Vm.debug("showlastaddedpoint, x: "+x+"   y: "+y+"loc.x: "+location.x+"  loc.y:"+location.y);
-		draw.fillRect(x-1, y-1, 3, 3);
-		//drawMask.fillRect(x-1, y-1, 3, 3);
-		/*	if (image.bufferedImage != null) { // funktioniert gut, allerdings nur in der java-VM wenn eve.fx.Image.bufferedImage als public definiert
-			int yd;
-			for  (int xd=-1; xd<=1; xd++) {
-				for (yd=-1; yd<=1; yd++) {
-					((BufferedImage)image.bufferedImage).setRGB(x+xd, y+yd, -65536);
-				}
-			} */
-		if (imageChangesDontShow) {
-			try {addPixelIfNeccessary(x, y, f); }
-			catch (IndexOutOfBoundsException e) // thrown when there are more than pixels stored than possible
-			{ fixate();  }
-		}
+		//		draw.fillRect(x-1, y-1, 3, 3);
+		int[] bl = new int[3*3]; // TODO dies statisch machen
+		for (int i = 0 ; bl.length > i; i++)  bl[i] = f.toInt();
+		drawImage.setPixels(bl, 0, x-1, y-1, bl.length/3, 3, 0);
 		return true;
 	}
 
-	/**
-	 * this method forces eve to transfer the drawn points
-	 * from _awtImage to bufferedImage, which is drawn to the screen
-	 *
-	 */
-	private void fixate() {
-		if (numPixels == 0) return;
-		//	draw.drawImage(image,null,Color.DarkBlue,0,0,location.width,location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed 
-		doDraw(draw,0);   // null, Color.Pink, 0, 0, 1, 1); // width and height is anyway ignored, evtl. testen,  
-		imageChangesDontShow = false;
-		removeAllPixels();
-	}
-
-	private void removeAllPixels() {
-		numPixels = 0;
-		trackPixels = null;
-		trackPixelsColor = null;
-	}
-
-	
 	public void addPixel(int x, int y, Color f) throws IndexOutOfBoundsException {
-		if (trackPixels==null) { trackPixels = new Point[maxPixelsInCache]; trackPixelsColor = new Color[maxPixelsInCache]; } 
-		trackPixels[numPixels] = new Point(x, y); // IndexOutOfBoundsException is handled in PaintPoint
-		trackPixelsColor[numPixels] = f.getCopy();
-		numPixels++;
 	}
 
 	public void addPixelIfNeccessary(int x, int y, Color f){
-		if (trackPixels != null) {
-			int ll =(numPixels<30 ? 0 : numPixels-30); // look in the last 50 added Pixels if the same Pixel is already in the list (for performance reasons dont look in the whole list)
-			for (int i=numPixels-1; i>=ll; i--) {
-				if (trackPixels[i].x == x && trackPixels[i].y == y && f.equals(trackPixelsColor[i])) 
-				{ return; } 
-			}
-		}
 		addPixel(x, y, f);
 	}
 
 	public static final int FIXATE_IF_NO_PIXELS_NUM = 60;
-	private int notOnThisOverlaySince = 0;
 
 	public void paintLastAddedPoint(Track tr) { 
-		//draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
-		draw.setColor(tr.trackColor);
-		if (paintPoint(tr.trackColor, tr.trackPoints[tr.num-1])) notOnThisOverlaySince = 0;
-		else notOnThisOverlaySince++;
-		if (notOnThisOverlaySince > FIXATE_IF_NO_PIXELS_NUM) { // zur Performanceverbesserung: wenn in den letzten 60 Updates keines mehr für dieses Overlay dabei war, Overlay Pixels fest schreiben, damit doDraw entlastet wird.
-			fixate();
-			notOnThisOverlaySince = 0;
-		}
-
+		paintPoint(tr.trackColor, tr.trackPoints[tr.num-1]);
 	}
 
 	public void doDraw(Graphics g,int options) { // this is automatically called when the image need to be (re-)drawn on the screen
 		super.doDraw(g, options);
-		imageChangesDontShow = true; // g.drawImage (in super) copies _awtImage into bufferedImage, any later changes to _awtImage dont show up until the mask or the image has changed - unfortunately bufferedImage is not accessable from outside
-		// draw trackpoints which were added after image changes don't show up on the screen
-		if (tracks == null || tracks.size() == 0) return;
-		int i;
-		for (i=0; i<numPixels; i++) {
-			g.setColor(trackPixelsColor[i]);
-			g.fillRect(trackPixels[i].x-1, trackPixels[i].y-1, 3, 3);
-		}
-		//g.drawText(Convert.toString(test), 10, 10);
-		//g.drawRect(10 + test, 10, 10, 10);
-		//test++;
 	}
 }
 

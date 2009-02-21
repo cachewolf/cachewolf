@@ -156,7 +156,6 @@ public class MovingMap extends Form {
 		int fontSize = ( 3 * pref.fontSize ) / 2;
 		Font font = new Font("Helvetica", Font.PLAIN, fontSize );
 		fm = getFontMetrics(font);
-//		distanceImage = //, Color.White); // consider the size of the font used
 		distanceAniImage = new AniImage();
 		distanceAniImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight()));
 		distanceAniImage.properties = AniImage.AlwaysOnTop;
@@ -1102,7 +1101,7 @@ public class MovingMap extends Form {
 		dontUpdatePos = false;
 		ignoreGps = false;
 		switch (status) {
-		case noGPS: 	{ posCircle.change(null); ignoreGps = true; break; }
+		case noGPS: 	{ posCircle.change(null); ignoreGps = true; break; } // TODO this causes a nullPointerExceptionin Eve
 		case gotFix:    { posCircle.change(statusImageHaveSignal); break; }
 		case lostFix:   { posCircle.change(statusImageNoSignal); break; }
 		case noGPSData: { posCircle.change(statusImageNoGps); break; }
