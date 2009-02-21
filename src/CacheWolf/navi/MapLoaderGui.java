@@ -303,7 +303,14 @@ public class MapLoaderGui extends Form {
 					scale = Convert.toFloat(scaleInputPerCache.getText());
 				}
 				if (scale < mapLoader.currentOnlineMapService.minscale || scale > mapLoader.currentOnlineMapService.maxscale) {
-					(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1830, "The selected online map service provides map in the scale from")+" " + mapLoader.currentOnlineMapService.minscale + MyLocale.getMsg(1831, " to")+" "+ mapLoader.currentOnlineMapService.maxscale +MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), FormBase.OKB)).execute();
+					if (scale < mapLoader.currentOnlineMapService.minscale) {
+						scaleInput.setText(Convert.toString(mapLoader.currentOnlineMapService.minscale));
+						scaleInputPerCache.setText(Convert.toString(mapLoader.currentOnlineMapService.minscale));
+					} else {
+						scaleInput.setText(Convert.toString(mapLoader.currentOnlineMapService.maxscale));
+						scaleInputPerCache.setText(Convert.toString(mapLoader.currentOnlineMapService.maxscale));
+					}
+					(new MessageBox(MyLocale.getMsg(321, "Error"), "! " + scale + "\n" + MyLocale.getMsg(1830, "The selected online map service provides map in the scale from") + " " + mapLoader.currentOnlineMapService.minscale + MyLocale.getMsg(1831, " to") + " " + mapLoader.currentOnlineMapService.maxscale + MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), FormBase.OKB)).execute();
 					return;
 				}
 				this.close(FormBase.IDOK); 
