@@ -1,11 +1,6 @@
 #!/bin/sh
 
-if [ ! -e snapshot.sh ]; then
-	echo "This script must be run from inside the programs/ directory!"
-	exit 1
-fi
-
-cd ..
+cd "$(dirname "$0")/.."
 
 echo Updating version number in code ...
 v=$(svn info | sed -n '/Revision: /s///p')
@@ -20,7 +15,7 @@ echo Compiling Java classes ...
 mkdir -p bin/cachewolf
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
     -cp lib/CompileEve.zip:lib/JavaEve.zip:lib/lib-folder -d bin \
-    -deprecation -nowarn src/eveWorkArounds/*.java eve/*/*.java src/cachewolf/*.java src/cachewolf/*/*.java
+    -deprecation -nowarn $(find eve src -name \*.java)
 
 echo Linking executables ...
 cd programs
