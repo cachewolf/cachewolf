@@ -67,10 +67,11 @@ public class MovingMap extends Form {
 	AniImage buttonImageLensActivatedZoomIn;
 	AniImage buttonImageLensActivatedZoomOut;
 	AniImage buttonImageZoom1to1;
-	AniImage DistanceImage;
-	Graphics DistanceImageGraphics;
+	Image distanceImage;
+	AniImage distanceAniImage;
+	PixelBuffer distanceImagePxBuffer;
 	AniImage ScaleImage;
-	Graphics ScaleImageGraphics;
+	PixelBuffer ScaleImagePxBuffer;
 	MapSymbol posCircle;
 	String MARK_CACHE_IMAGE;
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
@@ -155,17 +156,14 @@ public class MovingMap extends Form {
 		int fontSize = ( 3 * pref.fontSize ) / 2;
 		Font font = new Font("Helvetica", Font.PLAIN, fontSize );
 		fm = getFontMetrics(font);
-		DistanceImage = new AniImage();
-		DistanceImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight()).getImageData()); //, Color.White); // consider the size of the font used
-		DistanceImageGraphics = new Graphics((Image)DistanceImage.getImage());
-		DistanceImageGraphics.setFont(font);
-		DistanceImage.properties = AniImage.AlwaysOnTop;
-		mmp.addImage(DistanceImage);
+//		distanceImage = //, Color.White); // consider the size of the font used
+		distanceAniImage = new AniImage();
+		distanceAniImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight()));
+		distanceAniImage.properties = AniImage.AlwaysOnTop;
+		mmp.addImage(distanceAniImage);
 		//scale
 		ScaleImage = new AniImage();
 		ScaleImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight()).getImageData()); //, Color.White); // consider the size of the font used
-		ScaleImageGraphics = new Graphics((Image)ScaleImage.getImage());
-		ScaleImageGraphics.setFont(font);
 		ScaleImage.properties = AniImage.AlwaysOnTop;
 		mmp.addImage(ScaleImage);
 		//resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialise mapImage.screenSize
@@ -177,7 +175,7 @@ public class MovingMap extends Form {
 		//updateDistance(); // fill Rect with transparent color
 		scaleWanted = 1;
 		mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
-	 	lastHighestResolutionGPSDestScale = -1;
+		lastHighestResolutionGPSDestScale = -1;
 
 		lastRepaintMapPos = new Point(pref.myAppWidth +1, pref.myAppHeight +1);
 	}
@@ -198,7 +196,7 @@ public class MovingMap extends Form {
 		buttonImageLensActivated.setLocation(w - buttonImageLensActivated.getWidth()-10, h/2 - buttonImageLensActivated.getHeight()/2 );
 		buttonImageLensActivatedZoomIn.setLocation(w - buttonImageLensActivatedZoomIn.getWidth()-10, h/2 - buttonImageLensActivatedZoomIn.getHeight()/2 );
 		buttonImageLensActivatedZoomOut.setLocation(w - buttonImageLensActivatedZoomOut.getWidth()-10, h/2 - buttonImageLensActivatedZoomOut.getHeight()/2 );
-		DistanceImage.setLocation(0, h - DistanceImage.getHeight());
+		distanceAniImage.setLocation(0, h - distanceAniImage.getHeight());
 		ScaleImage.setLocation(w - ScaleImage.getWidth(), h - ScaleImage.getHeight());
 		if (mmp.mapImage != null) mmp.mapImage.screenDimChanged();
 		if (posCircle != null) posCircle.screenDimChanged();
@@ -241,7 +239,7 @@ public class MovingMap extends Form {
 
 	public void updateScale() {
 		//TODO ScaleImageGraphics.setColor(ScaleImage.transparentColor);
-		ScaleImageGraphics.fillRect(0, 0, ScaleImage.location.width,ScaleImage.location.height);
+		if (ScaleImagePxBuffer == null) ScaleImagePxBuffer = new PixelBuffer(ScaleImage);
 
 		if (currentMap != null)
 		{
@@ -252,15 +250,11 @@ public class MovingMap extends Form {
 
 			String lineLengthString;
 			if (lineLengthMeters < 1000)
-			{
-				lineLengthString = Convert.toString((int) lineLengthMeters) + "m";
-			}
-			else
-			{
-				lineLengthString = Convert.toString((int) lineLengthMeters / 1000) + "km";
-			}
+				   lineLengthString = Convert.toString((int) lineLengthMeters) + "m";
+			else   lineLengthString = Convert.toString((int) lineLengthMeters / 1000) + "km";
 
 			int backgroundStartX = ScaleImage.location.width - (lineLengthPixels + fm.getTextWidth(lineLengthString) + 7);
+			Graphics ScaleImageGraphics = ScaleImagePxBuffer.getDrawingBuffer(null, null, 1); // this creates a new Image filled with a transparent color
 
 			ScaleImageGraphics.setColor(new Color(250,250,250));
 			ScaleImageGraphics.fillRect(backgroundStartX, 0, ScaleImage.location.width - backgroundStartX ,ScaleImage.location.height);
@@ -268,57 +262,47 @@ public class MovingMap extends Form {
 			ScaleImageGraphics.changePen(Color.DarkBlue,Pen.SOLID,3);
 			ScaleImageGraphics.drawLine(backgroundStartX + 2, ScaleImage.location.height / 2, backgroundStartX+2+lineLengthPixels, ScaleImage.location.height / 2);
 			ScaleImageGraphics.setColor(Color.DarkBlue);
+			ScaleImageGraphics.setFont(fm.getFont());
 			ScaleImageGraphics.drawText(lineLengthString , backgroundStartX + lineLengthPixels + 5, 0);
 		}
-
-		ScaleImageGraphics.drawImageData(ScaleImage.getImageData(),new Rect(0,0,ScaleImage.location.width,ScaleImage.location.height),new Rect(0,0,ScaleImage.location.width,ScaleImage.location.height),0); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed  Color.LightBlue,0,0,
-		ScaleImageGraphics.drawImageData(ScaleImage.getImageData(),new Rect(0,0,ScaleImage.location.width,ScaleImage.location.height),new Rect(0,0,ScaleImage.location.width,ScaleImage.location.height),0); // these 2 commands are necessary because of a bug or near to a bug in the eve-vm
+		ScaleImagePxBuffer.putDrawingBuffer(PixelBuffer.PUT_SET);
+		ScaleImage.setImage(ScaleImagePxBuffer);
 	}
-
+	
 	public void updateDistance(boolean repaint) {
-		//TODO DistanceImageGraphics.setColor(DistanceImage.transparentColor);
-		DistanceImageGraphics.fillRect(0, 0, DistanceImage.location.width,DistanceImage.location.height);
+		if (distanceImagePxBuffer == null) distanceImagePxBuffer = new PixelBuffer(distanceAniImage);
 		if (gotoPos != null && posCircle.where.isValid())
 		{
 			double currentDistance = gotoPos.where.getDistance(posCircle.where);
 			if (currentDistance != lastDistance)
 			{
 				lastDistance = currentDistance;
-				double dd=currentDistance;
+				double dd = currentDistance;
 				String d;
 				if (dd < 1) {
 					dd = dd * 1000;
 					d = MyLocale.getMsg(4206, "Dist: ") + Common.doubleToString(dd,0) + "m";
-					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd) / java.lang.Math.log(10.0) );
-					digits = java.lang.Math.max(0, digits);
-				}
-				else {
+				} else {
 					d = MyLocale.getMsg(4206, "Dist: ") + Common.doubleToString(dd,2) + "km";
-					int digits = (int)java.lang.Math.floor( java.lang.Math.log(dd) / java.lang.Math.log(10.0) );
-					digits = java.lang.Math.max(0, digits);
 				}
-
 				int backgroundWidth = fm.getTextWidth(d) + 4;
 
-				DistanceImageGraphics.setColor(new Color(250,250,250));
-				DistanceImageGraphics.fillRect(0, 0, backgroundWidth ,DistanceImage.location.height);
-
-				DistanceImageGraphics.setColor(Color.DarkBlue);
-				DistanceImageGraphics.drawText(d, 2, 0);
-
-				DistanceImageGraphics.drawImageData(DistanceImage.getImageData(),null,new Rect(0,0,DistanceImage.location.width,DistanceImage.location.height),0); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed
-				DistanceImageGraphics.drawImageData(DistanceImage.getImageData(),null,new Rect(0,0,DistanceImage.location.width,DistanceImage.location.height),0); // these 2 commands are necessary because of a bug or near to a bug in the eve-vm
-				if (repaint)
-				{
-					//TODO DistanceImage.updateImage();
-				}
+				Graphics gt = distanceImagePxBuffer.getDrawingBuffer(null, null, 1); // this creates a new Image filled with a transparent color
+				gt.setColor(new Color(250,250,250));
+				gt.fillRect(0, 0, backgroundWidth, distanceAniImage.location.height);
+				gt.setColor(Color.DarkBlue);
+				gt.setFont(fm.getFont());
+				gt.drawText(d, 2, 0);
+				distanceImagePxBuffer.putDrawingBuffer(PixelBuffer.PUT_SET);
+				distanceAniImage.setImage(distanceImagePxBuffer);
 			}
 		}
 		else
 		{
-			Rect area=new Rect(0,0,DistanceImage.location.width,DistanceImage.location.height);
-			DistanceImageGraphics.drawImageData(DistanceImage.getImageData(),area,area,0); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed Color.LightBlue,
-			DistanceImageGraphics.drawImageData(DistanceImage.getImageData(),area,area,0); // these 2 commands are necessary because of a bug or near to a bug in the eve-vm
+			distanceImagePxBuffer.clear();
+			//ttt = new PixelBuffer(distanceAniImage);
+			// ttt.clear(); // make it completely transparent
+			distanceAniImage.setImage(distanceImagePxBuffer);
 		}
 	}
 
@@ -1003,7 +987,7 @@ public class MovingMap extends Form {
 			} catch (IOException e) { (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4209, "setBestMap: problem in: setMap( ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(), lat, lon) lat/lon:") + where.toString(), MessageBox.OKB)).exec(); }
 			while (currentMap == null) { // this actually cannot happen, but maybe in case of an inconstistent code change (esp. regarding empty maps)
 				mmp.chooseMap(); // force the user to select a scale
-				 if (currentMap == null) (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4210, "Moving map cannot run without a map - please select one. \n You can select an empty map"), MessageBox.OKB)).execute();
+				if (currentMap == null) (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4210, "Moving map cannot run without a map - please select one. \n You can select an empty map"), MessageBox.OKB)).execute();
 			}
 		}
 		inBestMap = false;
@@ -1096,7 +1080,7 @@ public class MovingMap extends Form {
 		if (newmap == null) { // no map is covering any area of the caches -> zoom an empty map to cover all caches on screen
 			try {
 				Object [] s = getRectForMapChange(posCircle.where);
-			//	CWPoint cll = (CWPoint) s[0];
+				//	CWPoint cll = (CWPoint) s[0];
 				Rect screen = (Rect) s[1];
 				float neededscalex = (float) (sur.topleft.getDistance(sur.topleft.latDec, sur.buttomright.lonDec) * 1000 / (screen.width-15)); // 15 for the size of the cache image
 				float neededscaley = (float) (sur.topleft.getDistance(sur.buttomright.latDec, sur.topleft.lonDec) * 1000 / (screen.height-15)); // 15 for the size of the cache image
@@ -1378,7 +1362,7 @@ public class MovingMap extends Form {
 										mapImage1to1.getImageData(),
 										(int) (newImageRect.width*zoomFactor),
 										(int)(newImageRect.height*zoomFactor),0).getImageData(),0
-										)); //, newImageRect, 0));
+						)); //, newImageRect, 0));
 				currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
 			} catch (OutOfMemoryError e) {
 				(new MessageBox(MyLocale.getMsg(4207, "Error"),
@@ -1480,7 +1464,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 
 	public boolean imageBeginDragged(AniImage which,Point pos) {
 		if (mm.zoomingMode == true) { // zoom
-//			saveMapLoc = pos;
+			//			saveMapLoc = pos;
 			//		saveGpsIgnoreStatus = mm.ignoreGps;
 			//	mm.ignoreGps = true;
 			return false;
@@ -1615,7 +1599,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		else gpspos = null;
 		ListBox l = new ListBox(mm.maps, gpspos, mm.getGotoPos(), mm.currentMap);
 		if(l.execute() == FormBase.IDOK){
-//			Vm.debug("Trying map: " + l.selectedMap.fileName);
+			//			Vm.debug("Trying map: " + l.selectedMap.fileName);
 			mm.autoSelectMap = false;
 			if (l.selectedMap.isInBound(mm.posCircle.where) || l.selectedMap.getImageFilename().length()==0) {
 				mm.setMap(l.selectedMap, mm.posCircle.where);
@@ -1976,9 +1960,9 @@ class ListBox extends Form{
 				mapNum = Convert.toInt(it);
 				//	Vm.debug("Kartennummer: " + mapNum);
 				try {
-				selectedMap = ((MapListEntry)maps.get(mapNum)).getMap();
-				selected = true;
-				this.close(FormBase.IDOK);
+					selectedMap = ((MapListEntry)maps.get(mapNum)).getMap();
+					selected = true;
+					this.close(FormBase.IDOK);
 				} catch (IOException e) {
 					(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4278, "Cannot load wfl-file: \n")
 							+ ((MapListEntry)maps.get(mapNum)).filename, MessageBox.OKB)).execute();
@@ -2030,7 +2014,7 @@ class ArrowsOnMap extends AniImage {
 	Point[] northDirArrow = null;
 	int imageSize = Global.getPref().fontSize * 8;
 	int arrowThickness = imageSize / 28;
-	
+
 	/**
 	 * @param gd goto direction
 	 * @param sd sun direction
@@ -2076,7 +2060,7 @@ class ArrowsOnMap extends AniImage {
 		if (map == null || g == null) return;
 		drawArrows(g);
 		return;
-/*		if (!dirsChanged) {
+		/*		if (!dirsChanged) {
 			g.drawImage(image,mask,transparentColor,0,-minY,location.width,location.height); // the transparency with a transparent color doesn't work in eve-vm for pocketpc, it works in java-vm, eve-vm on pocketpc2003
 			return;
 		}
@@ -2088,56 +2072,56 @@ class ArrowsOnMap extends AniImage {
 		drawArrows(draw);
 		draw.drawImage(image,mask,Color.DarkBlue,0,0,location.width,location.height); // this trick (note: wrong transparentColor) forces a redraw
 		g.drawImage(image,mask,transparentColor,0,-minY,location.width,location.height);
-*/	}
+		 */	}
 
 	private void makeArrows(){
-			// draw only valid arrows
-			if (moveDir < 360 && moveDir > -360) {
-				if (moveDirArrow == null) moveDirArrow = new Point[2];
-				makeArrow(moveDirArrow, moveDir, 1.0f);
-			} else moveDirArrow = null;
-			if (gotoDir < 360 && gotoDir > -360) {
-				if (gotoDirArrow == null) gotoDirArrow = new Point[2];
-				makeArrow(gotoDirArrow, gotoDir, 1.0f);
-			} else gotoDirArrow = null;
-			if (sunDir < 360 && sunDir> -360) {
-				if (sunDirArrow == null ) sunDirArrow = new Point[2];
-				makeArrow(sunDirArrow, sunDir, 0.75f);
-			} else sunDirArrow = null;
-			if (java.lang.Math.abs(map.rotationRad) > 1.5 / 180 * java.lang.Math.PI)	{ // show northth arrow only if it has more than 1.5 degree deviation from vertical direction
-				if (northDirArrow == null) northDirArrow = new Point[2];
-				makeArrow(northDirArrow, 0, 1.0f); // north direction
-			} else northDirArrow = null;
+		// draw only valid arrows
+		if (moveDir < 360 && moveDir > -360) {
+			if (moveDirArrow == null) moveDirArrow = new Point[2];
+			makeArrow(moveDirArrow, moveDir, 1.0f);
+		} else moveDirArrow = null;
+		if (gotoDir < 360 && gotoDir > -360) {
+			if (gotoDirArrow == null) gotoDirArrow = new Point[2];
+			makeArrow(gotoDirArrow, gotoDir, 1.0f);
+		} else gotoDirArrow = null;
+		if (sunDir < 360 && sunDir> -360) {
+			if (sunDirArrow == null ) sunDirArrow = new Point[2];
+			makeArrow(sunDirArrow, sunDir, 0.75f);
+		} else sunDirArrow = null;
+		if (java.lang.Math.abs(map.rotationRad) > 1.5 / 180 * java.lang.Math.PI)	{ // show northth arrow only if it has more than 1.5 degree deviation from vertical direction
+			if (northDirArrow == null) northDirArrow = new Point[2];
+			makeArrow(northDirArrow, 0, 1.0f); // north direction
+		} else northDirArrow = null;
 
-			//select moveDirColor according to difference to gotoDir
-			moveDirColor = new Color(255,0,0); // red
+		//select moveDirColor according to difference to gotoDir
+		moveDirColor = new Color(255,0,0); // red
 
-			if (moveDirArrow != null && gotoDirArrow != null)
+		if (moveDirArrow != null && gotoDirArrow != null)
+		{
+			float diff = java.lang.Math.abs(moveDir - gotoDir);
+			while (diff > 360)
 			{
-				float diff = java.lang.Math.abs(moveDir - gotoDir);
-				while (diff > 360)
-				{
-					diff -= 360.0f;
-				}
-				if (diff > 180)
-				{
-					diff = 360.0f - diff;
-				}
+				diff -= 360.0f;
+			}
+			if (diff > 180)
+			{
+				diff = 360.0f - diff;
+			}
 
-				if (diff <= 5.0)
-				{
-					moveDirColor = new Color(0,192,0);// darkgreen
-				}
-				else if (diff <= 22.5)
-				{
-					moveDirColor = new Color(0,255,0);// green
-				}
-				else if (diff <= 45.0)
-				{
-					moveDirColor = new Color(255,128,0);// orange
-				}
+			if (diff <= 5.0)
+			{
+				moveDirColor = new Color(0,192,0);// darkgreen
+			}
+			else if (diff <= 22.5)
+			{
+				moveDirColor = new Color(0,255,0);// green
+			}
+			else if (diff <= 45.0)
+			{
+				moveDirColor = new Color(255,128,0);// orange
 			}
 		}
+	}
 
 	/**
 	 * make (calculate) Pixel array for a single arrow
