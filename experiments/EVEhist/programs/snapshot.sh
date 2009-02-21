@@ -20,7 +20,7 @@ echo Compiling Java classes ...
 mkdir -p bin/cachewolf
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
     -cp lib/CompileEve.zip:lib/JavaEve.zip:lib/lib-folder -d bin \
-    -deprecation -nowarn src/eveWorkArounds/*.java eve/*.java eve/*/*.java src/cachewolf/*.java src/cachewolf/*/*.java
+    -deprecation -nowarn src/eveWorkArounds/*.java eve/*/*.java src/cachewolf/*.java src/cachewolf/*/*.java
 
 echo Linking executables ...
 cd programs
