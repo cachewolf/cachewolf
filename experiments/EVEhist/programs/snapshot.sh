@@ -1,6 +1,14 @@
 #!/bin/sh
 
+export LC_ALL=C
+unset LANG LANGUAGE
 cd "$(dirname "$0")/.."
+
+set -x	# debug
+
+# note: you need paxmirabilis/mircpio for the below, for example
+# from https://www.freewrt.org/~tg/debs/dists/lenny/wtf/pkgs/mircpio/
+CPIO=$(which mircpio 2>/dev/null) || CPIO=cpio
 
 echo Updating version number in code ...
 v=$(svn info | sed -n '/Revision: /s///p')
@@ -21,6 +29,15 @@ echo Linking executables ...
 cd programs
 java -cp evecl-gui.jar Eve EveMaker.eve -c ../deploy/cw-eve-pc.enf
 java -cp evecl-gui.jar Eve EveMaker.eve -c ../deploy/cw-eve-pda.enf
+
+echo ==================================================================
+echo DEBUGGING OUTPUT: list of files created?
+echo
+echo deploy; ls -la deploy
+echo
+echo published; ls -la published
+echo
+echo ==================================================================
 
 cd ..
 mkdir -p published/dat/attributes
