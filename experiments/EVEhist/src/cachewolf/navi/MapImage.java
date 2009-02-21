@@ -52,7 +52,7 @@ public class MapImage extends AniImage {
 			properties &= ~AniImage.IsInvisible;
 		} else {
 			properties |= AniImage.IsInvisible;
-			super.move(0, 0);
+			super.setLocation(0, 0);
 		}
 	}
 

@@ -1097,16 +1097,18 @@ public class MovingMap extends Form {
 
 	public void setGpsStatus (int status) {
 		if (status == gpsStatus) return; // if ignoreGpsStatutsChanges == true than the Map is in manual-mode
+		if (gpsStatus == noGPS) 
+			mmp.addImage(posCircle);
 		gpsStatus = status;
 		dontUpdatePos = false;
 		ignoreGps = false;
 		switch (status) {
-		case noGPS: 	{ posCircle.change(null); ignoreGps = true; break; } // TODO this causes a nullPointerExceptionin Eve
+		case noGPS: 	{ mmp.removeImage(posCircle); ignoreGps = true; break; } // TODO doesn't always work: try: start MM, close it, stopp GPS, start MM
 		case gotFix:    { posCircle.change(statusImageHaveSignal); break; }
 		case lostFix:   { posCircle.change(statusImageNoSignal); break; }
 		case noGPSData: { posCircle.change(statusImageNoGps); break; }
 		}
-		mapMoved(0, 0); // positions the posCircle correctly accourding to its size (which can change when the image changes, e.g. from null to something else
+		mapMoved(0, 0); // positions the posCircle correctly according to its size (which can change when the image changes, e.g. from null to something else
 		posCircle.refresh(); // was refreshNow
 	}
 
@@ -1482,8 +1484,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	public boolean imageNotDragged(ImageDragContext dc,Point pos){
 		boolean ret = super.imageNotDragged(dc, pos);
 		bringMaptoBack();
-		if (dc.image == null) moveMap(pos.x - saveMapLoc.x, pos.y - saveMapLoc.y);
-		else mapMoved(pos.x - saveMapLoc.x, pos.y - saveMapLoc.y);
+		Vm.debug("p1: " + dc.point1 + ", p2: " + dc.point2 + ", prevp: " + dc.prevPoint + ", pos: "+pos+", saveMapL: "+saveMapLoc);
+		if (dc.image == null) moveMap(pos.x - dc.prevPoint.x, pos.y - dc.prevPoint.y);
+		else mapMoved(pos.x - dc.prevPoint.x, pos.y - dc.prevPoint.y);
 		mm.dontUpdatePos = saveGpsIgnoreStatus;
 		this.repaintNow();
 		return ret;
@@ -1491,7 +1494,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 
 	public void onPenEvent(PenEvent ev) {
 		if (!mm.zoomingMode && ev.type == PenEvent.PEN_DOWN) {
-			saveMapLoc = new Point (ev.x, ev.y);
+			 saveMapLoc = new Point (ev.x, ev.y);
 		}
 		if (mm.zoomingMode && ev.type == PenEvent.PEN_DOWN) {
 			saveGpsIgnoreStatus = mm.dontUpdatePos;
@@ -1518,7 +1521,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 
 		if (mm.zoomingMode && paintingZoomArea && (ev.type == PenEvent.PEN_MOVED_ON || ev.type == PenEvent.PEN_MOVE || ev.type == PenEvent.PEN_DRAG)) {
 			int left, top;
-			Graphics dr = this.getGraphics().getGraphics();
+			Graphics dr = this.getGraphics().getGraphics(); // in Ewe stant nur 1x getGrafics
 			if (lastZoomWidth < 0)left = saveMapLoc.x + lastZoomWidth;
 			else left = saveMapLoc.x;
 			if (lastZoomHeight < 0)top = saveMapLoc.y + lastZoomHeight;
