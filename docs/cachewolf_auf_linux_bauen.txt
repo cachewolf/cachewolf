@@ -1,0 +1,13 @@
+Um CacheWolf unter Linux x86 komplett zu bauen, braucht man noch das Linux Paket
+von http://www.ewesoft.com/Downloads/Downloads.html#_Toc105819901. Derzeit ist
+das Ewe149-Linux-x86.zip. Aus dem Paket benoetigt man nur ewecl aus dem Unter-
+verzeichnis CommandLine.
+
+Die Software ist gegen eine ältere Version der libc gelinkt. Die meisten
+Distributionen verfügen ueber Paket zur Kompatibilitaet: compat-libstdc++-33
+
+Bitte dieses Paket nach den Anweisungen des Distributionsherstellers
+zusaetzlich einspielen.
+
+Wer mutig ist, kann auch versuchen alles aus dem Sourcen selber zu bauen.
+http://www.ewesoft.com/Downloads/Downloads.html#_Toc105819911
