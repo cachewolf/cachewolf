@@ -1,7 +1,6 @@
-# please refere to readme_wms.txt for an explantion of this file format
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl:	http://www.landesvermessung.sachsen.de/ias/basiskarte/service/SRVTKFREE/WMSFREE_TK/wmsservice?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
-Name:	de.sn Topo 10
+Name:	de.Sachsen topo 10
 MapType:	topo
 MainUrl:	http://www.landesvermessung.sachsen.de/ias/basiskarte/service/SRVTKFREE/WMSFREE_TK/wmsservice?
 ServiceTypeUrlPart:	SERVICE=WMS 
