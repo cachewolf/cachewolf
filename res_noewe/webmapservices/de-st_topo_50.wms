@@ -1,9 +1,9 @@
-# please refer to readme_wms.txt for an explantion of this file format
 TakenFromUrl:	http://www.lvermgeo.sachsen-anhalt.de/de/geoservice/viewer/main.htm
 GetCapabilitiesUrl:	http://lsa-st317.sachsen-anhalt.de/geodatenportal/servlet/gtEntryPoint?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS
-Name:	de.st Topo 50
+Name:	de.Sachsen-Anhalt topo 50
 MapType:	topo
 MainUrl:	http://lsa-st317.sachsen-anhalt.de/geodatenportal/servlet/gtEntryPoint?
+#MainUrl:            http://geoportal.geodaten.sachsen-anhalt.de/geodatenportal/servlet/gtEntryPoint?
 ServiceTypeUrlPart:	SERVICE=WMS 
 VersionUrlPart:	VERSION=1.1.1 
 CoordinateReferenceSystemCacheWolf:   31468
