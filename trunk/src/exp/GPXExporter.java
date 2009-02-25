@@ -56,6 +56,9 @@ public class GPXExporter extends Exporter{
 			String tim = ch.DateHidden.length()>0 ? ch.DateHidden : DEFAULT_DATE;
 			strBuf.append("    <time>").append(tim.toString()).append("T00:00:00.0000000-07:00</time>\r\n");
 			strBuf.append("    <name>").append(ch.wayPoint).append("</name>\r\n");
+			if (ch.isAddiWpt()){
+				strBuf.append("    <cmt>").append(SafeXML.cleanGPX(ch.LongDescription)).append("</cmt>\r\n");
+			}
 			strBuf.append("    <desc>").append(SafeXML.cleanGPX(ch.CacheName)).append(" by ").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</desc>\r\n");
 			strBuf.append("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp=").append(ch.wayPoint).append("&amp;Submit6=Find</url>\r\n");
 			strBuf.append("    <urlname>").append(SafeXML.cleanGPX(ch.CacheName)).append(" by ").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</urlname>\r\n");
@@ -83,7 +86,6 @@ public class GPXExporter extends Exporter{
 				strBuf.append("    </groundspeak:cache>\r\n");
 			}else {
 				// there is no HTML in the description of addi wpts
-				strBuf.append("    <cmt>").append(SafeXML.cleanGPX(ch.LongDescription)).append("</cmt>\r\n");
 				strBuf.append("    <sym>").append(CacheType.transType(ch.type)).append("</sym>\r\n");
 				strBuf.append("    <type>Waypoint|").append(CacheType.transType(ch.type)).append("</type>\r\n");
 			}
@@ -97,7 +99,7 @@ public class GPXExporter extends Exporter{
 	}
 	
 	public String trailer() {
-		return "</gpx>";
+		return "</gpx>\r\n";
 	}
 	
 }
