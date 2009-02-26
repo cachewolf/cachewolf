@@ -255,7 +255,7 @@ public class myTableModel extends TableModel{
 					case 9: // Status
 						return ch.CacheStatus;
 					case 10: // Distance
-						return ch.distance;
+						return ch.getDistance();
 					case 11: // Bearing
 						return ch.bearing;
 					case 12: // Size

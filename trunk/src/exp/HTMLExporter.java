@@ -92,7 +92,7 @@ public class HTMLExporter{
 					varParams.put("OWNER", holder.CacheOwner);
 					varParams.put("DIFFICULTY", holder.hard);
 					varParams.put("TERRAIN", holder.terrain);
-					varParams.put("DISTANCE", holder.distance);
+					varParams.put("DISTANCE", holder.getDistance());
 					varParams.put("BEARING", holder.bearing);
 					varParams.put("LATLON", holder.LatLon);
 					varParams.put("STATUS", holder.CacheStatus);
@@ -108,7 +108,7 @@ public class HTMLExporter{
 						page_tpl.setParam("OWNER", holder.CacheOwner);
 						page_tpl.setParam("DIFFICULTY", holder.hard);
 						page_tpl.setParam("TERRAIN", holder.terrain);
-						page_tpl.setParam("DISTANCE", holder.distance);
+						page_tpl.setParam("DISTANCE", holder.getDistance());
 						page_tpl.setParam("BEARING", holder.bearing);
 						page_tpl.setParam("LATLON", holder.LatLon);
 						page_tpl.setParam("STATUS", holder.CacheStatus);

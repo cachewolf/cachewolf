@@ -545,19 +545,36 @@ class GotoRose extends AniImage {
 		
 		g.setColor(Color.Black);		
 		
+		int metricSystem = Global.getPref().metricSystem;
 		Double tmp = new Double();
 		strTemp = "";
-		if ( distance >= 0.0f ) {
-			tmp.set(distance);
-			if (tmp.value >= 1){
-				strTemp = MyLocale.formatDouble(tmp,"0.000")+ " km";
-			}
-			else {
-				tmp.set(tmp.value * 1000);
-				strTemp = tmp.toString(3,0,0) + " m";
+		double newDistance = 0;
+		int bigUnit = -1; 
+		int smallUnit = -1;
+		double threshold = -1;
+		// Allow for different metric systems
+		if (metricSystem == Metrics.METRIC) {
+			bigUnit = Metrics.KILOMETER;
+			smallUnit = Metrics.METER;
+			threshold = 1.0;
+			newDistance = distance;
+		} else if (metricSystem == Metrics.IMPERIAL) {
+			// Why these values? See: http://tinyurl.com/b4nn9m
+			bigUnit = Metrics.MILES;
+			smallUnit = Metrics.FEET;
+			threshold = 0.1;
+			newDistance = Metrics.convertUnit(distance, Metrics.KILOMETER, Metrics.MILES);
+		}
+		if ( newDistance >= 0.0f ) {
+			tmp.set(newDistance);
+			if (tmp.value >= threshold){
+				strTemp = MyLocale.formatDouble(tmp,"0.000")+ " " + Metrics.getUnit(bigUnit);
+			} else {
+				tmp.set(Metrics.convertUnit(tmp.value, bigUnit, smallUnit));
+				strTemp = tmp.toString(3,0,0) + " " + Metrics.getUnit(smallUnit);
 			}
 		}
-		else strTemp = "--- km";
+		else strTemp = "--- "+Metrics.getUnit(bigUnit);
 		g.drawText(strTemp, 2, lineHeight);
 		
 		tmp.set(gotoDir);
@@ -574,14 +591,25 @@ class GotoRose extends AniImage {
 		
 		Double tmp = new Double();
 
-		tmp.set(m_speed);
-		String strSpeed = "- km/h";
-		if (m_speed >= 0) {
-			if (m_speed >= 100) {
-				strSpeed = MyLocale.formatDouble(tmp,"0") + " km/h";				
+		String strSpeed = null;
+		String unit = null;
+
+		// Allow for different metric systems
+		if (Global.getPref().metricSystem == Metrics.METRIC) {
+			tmp.set(m_speed);
+			unit = " km";
+			strSpeed = "- km/k";
+		} else if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
+			tmp.set(Metrics.convertUnit(m_speed, Metrics.KILOMETER, Metrics.MILES));
+			unit = " mph";
+			strSpeed = "- mph";
+		}
+		if (tmp.value >= 0) {
+			if (tmp.value >= 100) {
+				strSpeed = MyLocale.formatDouble(tmp,"0") + unit;				
 			}
 			else {
-				strSpeed = MyLocale.formatDouble(tmp,"0.0") + " km/h";
+				strSpeed = MyLocale.formatDouble(tmp,"0.0") + unit;
 			}
 		}
 		

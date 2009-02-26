@@ -413,7 +413,7 @@ public class Filter{
 			// Filter criterium 3: Distance
 			///////////////////////////////
 			if(fscDist>0.0){
-				dummyd1 = Common.parseDouble(ch.distance.substring(0,ch.distance.length()-3)); 
+				dummyd1 = ch.kilom; 
 				if(distdirec == SMALLER && dummyd1 > fscDist)  { ch.is_filtered=true; continue; }
 				if(distdirec == GREATER && dummyd1 < fscDist)  { ch.is_filtered=true; continue; }
 			}

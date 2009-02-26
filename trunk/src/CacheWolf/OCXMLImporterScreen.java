@@ -47,7 +47,7 @@ public class OCXMLImporterScreen extends Form {
 			}
 			distanceInput.setText(dist1);
 			this.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			this.addLast(distUnit = new mLabel(" km"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			this.addLast(distUnit = new mLabel(" km/mi."),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
 
 		if ((options & IMAGES) > 0) {

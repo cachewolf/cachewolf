@@ -78,7 +78,7 @@ public class ShowCacheInBrowser {
 					tpl.setParam("DIFFICULTY", (String) diff.get(chD.hard.replace(',','.')));
 					if (chD.terrain.endsWith(".0")) chD.terrain=chD.terrain.substring(0,chD.terrain.length()-2);
 					tpl.setParam("TERRAIN", (String) terr.get(chD.terrain.replace(',','.')));
-					tpl.setParam("DISTANCE", chD.distance.replace(',','.'));
+					tpl.setParam("DISTANCE", chD.getDistance().replace(',','.'));
 					tpl.setParam("BEARING", chD.bearing);
 					if (chD.pos!=null && chD.pos.isValid()) {
 						tpl.setParam("LATLON", chD.LatLon);

@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.navi.Metrics;
 import ewe.ui.*;
 import ewe.ui.formatted.TextDisplay;
 import ewe.util.Vector;
@@ -90,7 +91,11 @@ public class CalcPanel extends CellPanel {
 			inpDistance.setPreferredSize(fm.getTextWidth("99999999"),fm.getHeight()*4/3);
 		}
 		BottomP.addLast(chcDistUnit = new mChoice(new String[]{"m", "km", MyLocale.getMsg(1407,"steps"), MyLocale.getMsg(1408,"feet"), MyLocale.getMsg(1409,"yards"), MyLocale.getMsg(1410,"miles")},0),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST)).setTag(CellConstants.INSETS,new ewe.fx.Insets(0,2,0,0));
-		chcDistUnit.setInt(0);
+		if (Global.getPref().metricSystem == Metrics.METRIC) {
+			chcDistUnit.setInt(0); // Meter
+		} else {
+			chcDistUnit.setInt(3); // Feet
+		}
 		
 		// Buttons for calc and save
 		BottomP.addNext(btnCalc = new mButton("Calc"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));

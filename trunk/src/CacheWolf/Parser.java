@@ -45,6 +45,7 @@ number -> valid number
 package CacheWolf;
 
 import ewe.util.*;
+import CacheWolf.navi.Metrics;
 import CacheWolf.navi.Navigate;
 
 import com.stevesoft.ewe_pat.*;
@@ -478,11 +479,18 @@ public class Parser{
     private double funcDistance() throws Exception {
     	String coordB=popCalcStackAsString();
     	String coordA=popCalcStackAsString();
+    	double result = 0;
 		// Attention: isValidCoord has sideeffect of setting cwPt
     	if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
 		if (!isValidCoord(coordB)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordB);
     	cwPt.set(coordA);
-    	return cwPt.getDistance(new CWPoint(coordB))*1000.0;
+    	double distKM = cwPt.getDistance(new CWPoint(coordB));
+    	result = distKM*1000.0;
+    	if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
+    		result = Metrics.convertUnit(distKM, Metrics.KILOMETER, Metrics.MILES);
+    		result = Metrics.convertUnit(result, Metrics.MILES, Metrics.YARDS);
+    	}
+    	return result;
     }
 
     /**
@@ -620,7 +628,13 @@ public class Parser{
     	String coord=popCalcStackAsString();
 		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
     	cwPt.set(coord);
-    	return cwPt.project(degrees,distance/1000.0).toString();
+    	if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
+    		distance = Metrics.convertUnit(distance, Metrics.YARDS, Metrics.MILES);
+    		distance = Metrics.convertUnit(distance, Metrics.MILES, Metrics.KILOMETER);
+    	} else {
+    		distance = distance / 1000.0;
+    	}
+    	return cwPt.project(degrees,distance).toString();
     }
 
     /** Convert Radiants into degrees */

@@ -1,4 +1,5 @@
 package CacheWolf;
+import CacheWolf.navi.Metrics;
 import ewe.ui.*;
 import ewe.io.*;
 import ewe.fx.*;
@@ -322,7 +323,13 @@ public class FilterScreen extends Form{
 				chcDist.select(0);
 			else
 				chcDist.select(1);
-			inpDist.setText(prof.filterDist.substring(1));
+			String dist = prof.filterDist.substring(1);
+			if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
+				double distValue = java.lang.Double.valueOf(dist);
+				double newDistValue = Metrics.convertUnit(distValue, Metrics.KILOMETER, Metrics.MILES);
+				dist = String.valueOf(newDistValue);
+			}
+			inpDist.setText(dist);
 		} else {
 			chcDist.select(0);
 			inpDist.setText("");
@@ -626,10 +633,22 @@ public class FilterScreen extends Form{
 							(chkVeryLarge.state ? "1" : "0")+
 							(chkOther.state ? "1" : "0");
 				
+				// Distance: If Metric system is set to imperial units,
+				//           then the entered value is meant to be miles,
+				//           otherwise it's kilometer.
+				double distValue = java.lang.Double.NaN;
+				String rawDistance = inpDist.getText().replace(',', '.');
+				String newDistance = rawDistance; // initial Value;
+				if (! rawDistance.trim().equals("")) {
+					distValue = java.lang.Double.valueOf(rawDistance);
+					if (Global.getPref().metricSystem == Metrics.IMPERIAL){
+						newDistance = String.valueOf(Metrics.convertUnit(distValue, Metrics.MILES, Metrics.KILOMETER));
+					}
+				}
 				if(chcDist.selectedIndex == 0) { 
-					pfl.filterDist="L"+inpDist.getText();
+					pfl.filterDist="L"+newDistance;
 				} else { 
-					pfl.filterDist="G"+inpDist.getText();
+					pfl.filterDist="G"+newDistance;
 				}
 					
 				if(chcDiff.selectedIndex == 0) { 
