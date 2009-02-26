@@ -1,9 +1,12 @@
 package CacheWolf;
 
+import CacheWolf.navi.Metrics;
+
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.io.IOException;
 import ewe.sys.Convert;
+import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.Vector;
@@ -14,8 +17,11 @@ import ewe.util.Vector;
  *	classes and methods to get more information.
  *	
  */
+/**
+ * @author torsti
+ *
+ */
 public class CacheHolder {
-	protected static final String NODISTANCE = "? km";
 	protected static final String NOBEARING = "?";
 	protected static final String EMPTY = "";
 
@@ -36,9 +42,10 @@ public class CacheHolder {
 	/** The size of the cache (as per GC cache sizes Micro, Small, ....) */
 	public String CacheSize = "None";
 	/** The distance from the centre in km */
-	public double kilom = 0;
-	/** The formatted distance such as "x.xx km" */
-	public String distance = NODISTANCE;
+	public double kilom = -1; int bla = 0;
+	public double lastKilom = -2; // Cache last value
+	public int lastMetric = -1; // Cache last metric
+	public String lastDistance = ""; // Cache last distance
 	/** The bearing N, NNE, NE, ENE ... from the current centre to this point */
 	public String bearing = NOBEARING;
 	/** The angle (0=North, 180=South) from the current centre to this point */
@@ -229,6 +236,45 @@ public class CacheHolder {
 		}
 	}
 
+	/**
+	 * Returns the distance in formatted output. Using kilometers when metric system is active,
+	 * using miles when imperial system is active.
+	 * 
+	 * @return The current distance.
+	 */
+	public String getDistance() {
+		String result = null;
+		String newUnit = null;
+
+		if (this.kilom == this.lastKilom && Global.getPref().metricSystem == this.lastMetric) {
+			result = this.lastDistance;
+		} else {
+			if (this.kilom >= 0) {
+				double newValue = 0;
+				switch (Global.getPref().metricSystem) {
+				case Metrics.METRIC:
+					newValue = this.kilom;
+					newUnit = Metrics.getUnit(Metrics.KILOMETER);
+					break;
+				case Metrics.IMPERIAL:
+					newValue = Metrics.convertUnit(this.kilom, Metrics.KILOMETER, Metrics.MILES);
+					newUnit = Metrics.getUnit(Metrics.MILES);
+					break;
+				}
+				result = MyLocale.formatDouble(newValue, "0.00") + " " + newUnit;
+			} else {
+				result = "? "
+				        + (Global.getPref().metricSystem == Metrics.METRIC ? Metrics
+				                .getUnit(Metrics.KILOMETER) : Metrics.getUnit(Metrics.MILES));
+			}
+			// Caching values, so reevaluation is only done when really needed
+			this.lastKilom = this.kilom;
+			this.lastMetric = Global.getPref().metricSystem;
+			this.lastDistance = result;
+		}
+		return result;
+	}
+	
 	public void update(CacheHolder ch) {
 		update(ch, false);
 	}
@@ -267,7 +313,6 @@ public class CacheHolder {
 		this.DateHidden = ch.DateHidden;
 		this.CacheSize = ch.CacheSize;
 		this.kilom = ch.kilom;
-		this.distance = ch.distance;
 		this.bearing = ch.bearing;
 		this.degrees = ch.degrees;
 		this.hard = ch.hard;
@@ -389,9 +434,8 @@ public class CacheHolder {
 			kilom = pos.getDistance(toPoint);
 			degrees = toPoint.getBearing(pos);
 			bearing = CWPoint.getDirection(degrees);
-			distance = MyLocale.formatDouble(kilom,"0.00")+" km";
 		} else {
-			distance = NODISTANCE;
+			kilom = -1;
 			bearing = NOBEARING;
 		}
 	}

@@ -206,7 +206,7 @@ public class TPLExporter {
 						varParams.put("OWNER", holder.CacheOwner);
 						varParams.put("DIFFICULTY", dec.replaceAll(holder.hard));
 						varParams.put("TERRAIN", dec.replaceAll(holder.terrain));
-						varParams.put("DISTANCE", dec.replaceAll(holder.distance));
+						varParams.put("DISTANCE", dec.replaceAll(holder.getDistance()));
 						varParams.put("BEARING", holder.bearing);
 						varParams.put("LATLON", holder.LatLon);
 						varParams.put("LAT", dec.replaceAll(holder.pos.getLatDeg(CWPoint.DD)));

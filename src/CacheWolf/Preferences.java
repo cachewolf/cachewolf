@@ -1,4 +1,5 @@
 package CacheWolf;
+import CacheWolf.navi.Metrics;
 import utils.FileBugfix;
 import ewe.io.*;
 import ewe.sys.*;
@@ -193,6 +194,8 @@ public class Preferences extends MinML{
 	public int deleteDetails=5;
 	/** The locale code (DE, EN, ...) */
 	public String language="";
+	/** The metric system to use */
+	public int metricSystem = Metrics.METRIC;
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -365,6 +368,13 @@ public class Preferences extends MinML{
 			if (maxDetails<2) maxDetails=2;
 			if (deleteDetails<1) deleteDetails=1;
 		}
+		else if (name.equals("metric")) {
+			metricSystem=Common.parseInt(atts.getValue("type"));
+			if (metricSystem != Metrics.METRIC &&
+					metricSystem != Metrics.IMPERIAL) {
+				metricSystem = Metrics.METRIC;
+			}
+		}
 		else if (name.equals("locale")) {
 			language = atts.getValue("language");
 		}
@@ -425,6 +435,7 @@ public class Preferences extends MinML{
 			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\"/>\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
+			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \"" + SafeXML.strxmlencode(customMapsPath.replace('\\','/')) + "\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			// save last path of different exporters

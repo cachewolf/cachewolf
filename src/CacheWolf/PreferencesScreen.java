@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.navi.Metrics;
 import utils.FileBugfix;
 import ewe.ui.*;
 import ewe.io.*;
@@ -15,7 +16,7 @@ import ewe.sys.*;
 */
 public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
-	mChoice NS, EW, inpLanguage;
+	mChoice NS, EW, inpLanguage, inpMetric;
 	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
@@ -208,7 +209,11 @@ public class PreferencesScreen extends Form {
 		pnlMore.addLast(inpLanguage=new mChoice(langs, curlang),DONTSTRETCH,DONTFILL|WEST);
 		//inpLanguage.setPreferredSize(20,-1);
 		inpLanguage.setToolTip(MyLocale.getMsg(591,"Select \"auto\" for system language or select your preferred language, e.g. DE or EN"));
-		
+		String [] metriken = {MyLocale.getMsg(589, "Metric (km)"), 
+				              MyLocale.getMsg(590, "Imperial (mi)")};
+		pnlMore.addNext(new mLabel(MyLocale.getMsg(588, "Length units")),DONTSTRETCH,DONTFILL|WEST);
+		int currMetrik = pref.metricSystem == Metrics.METRIC ? 0 : 1;
+		pnlMore.addLast(inpMetric=new mChoice(metriken, currMetrik),DONTSTRETCH,DONTFILL|WEST);
 		/////////////////////////////////////////////////////////
 		// Fourth/Fifth panel - Listview and Travelbugs
 		/////////////////////////////////////////////////////////
@@ -302,6 +307,7 @@ public class PreferencesScreen extends Form {
 				pref.listColMap=tccList.getSelectedCols();
 				pref.descShowImg=chkDescShowImg.getState();
 				Global.mainTab.tbP.myMod.setColumnNamesAndWidths();
+				pref.metricSystem = inpMetric.getInt() == 0 ? Metrics.METRIC : Metrics.IMPERIAL;
 				pref.savePreferences();
 				pref.dirty = true; // Need to update table in case columns were enabled/disabled
 				this.close(0);

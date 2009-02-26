@@ -65,12 +65,8 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==10) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				int p=ch.distance.indexOf(",");
-				if (p<0) p=ch.distance.indexOf(".");
-				if (p>=0 && p<=5)
-					ch.sort="00000".substring(0,5-p)+ch.distance;
-				else
-					ch.sort=ch.distance;
+				// CHECK Is the formatting correctly done?
+				ch.sort = MyLocale.formatDouble(ch.kilom*1000, "000000000000");
 			}
 		} else if (colToCompare==11) {
 			for (int i=0; i<visibleSize; i++) {
