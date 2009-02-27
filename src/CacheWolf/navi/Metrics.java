@@ -36,6 +36,9 @@ public final class Metrics {
 				case MILES:
 					result = value / FCT_MILE2KILOMETER;
 					break;
+				case METER:
+					result = value * 1000;
+					break;
 				}
 				break;
 			case MILES:
