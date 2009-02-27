@@ -325,7 +325,7 @@ public class FilterScreen extends Form{
 				chcDist.select(1);
 			String dist = prof.filterDist.substring(1);
 			if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
-				double distValue = java.lang.Double.valueOf(dist);
+				double distValue = java.lang.Double.valueOf(dist).doubleValue();
 				double newDistValue = Metrics.convertUnit(distValue, Metrics.KILOMETER, Metrics.MILES);
 				dist = String.valueOf(newDistValue);
 			}
@@ -640,7 +640,7 @@ public class FilterScreen extends Form{
 				String rawDistance = inpDist.getText().replace(',', '.');
 				String newDistance = rawDistance; // initial Value;
 				if (! rawDistance.trim().equals("")) {
-					distValue = java.lang.Double.valueOf(rawDistance);
+					distValue = java.lang.Double.valueOf(rawDistance).doubleValue();
 					if (Global.getPref().metricSystem == Metrics.IMPERIAL){
 						newDistance = String.valueOf(Metrics.convertUnit(distValue, Metrics.MILES, Metrics.KILOMETER));
 					}
