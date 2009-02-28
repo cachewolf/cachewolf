@@ -33,11 +33,33 @@ public final class Metrics {
 			switch (sourceUnit) {
 			case KILOMETER:
 				switch (targetUnit) {
+				case METER:
+					result = value * 1000;
+					break;
 				case MILES:
 					result = value / FCT_MILE2KILOMETER;
 					break;
-				case METER:
-					result = value * 1000;
+				case YARDS:
+					result = (value / FCT_MILE2KILOMETER) * FCT_MILE2YARD;
+					break;
+				case FEET:
+					result = (value / FCT_MILE2KILOMETER) * FCT_MILE2FOOT;
+					break;
+				}
+				break;
+			case METER:
+				switch (targetUnit) {
+				case KILOMETER:
+					result = value / 1000;
+					break;
+				case MILES:
+					result = (value / 1000) / FCT_MILE2KILOMETER;
+					break;
+				case YARDS:
+					result = ((value / 1000) / FCT_MILE2KILOMETER) * FCT_MILE2YARD;
+					break;
+				case FEET:
+					result = ((value / 1000) / FCT_MILE2KILOMETER) * FCT_MILE2FOOT;
 					break;
 				}
 				break;
@@ -45,6 +67,9 @@ public final class Metrics {
 				switch (targetUnit) {
 				case KILOMETER:
 					result = value * FCT_MILE2KILOMETER;
+					break;
+				case METER:
+					result = value * FCT_MILE2KILOMETER * 1000;
 					break;
 				case YARDS:
 					result = value * FCT_MILE2YARD;
@@ -56,6 +81,12 @@ public final class Metrics {
 				break;
 			case YARDS:
 				switch (targetUnit) {
+				case KILOMETER:
+					result = (value / FCT_MILE2YARD) * FCT_MILE2KILOMETER;
+					break;
+				case METER:
+					result = (value / FCT_MILE2YARD) * FCT_MILE2KILOMETER * 1000;
+					break;
 				case MILES:
 					result = value / FCT_MILE2YARD;
 					break;
@@ -66,6 +97,12 @@ public final class Metrics {
 				break;
 			case FEET:
 				switch (targetUnit) {
+				case KILOMETER:
+					result = (value / FCT_MILE2FOOT) * FCT_MILE2KILOMETER;
+					break;
+				case METER:
+					result = (value / FCT_MILE2FOOT) * FCT_MILE2KILOMETER * 1000;
+					break;
 				case MILES:
 					result = value / FCT_MILE2FOOT;
 					break;
