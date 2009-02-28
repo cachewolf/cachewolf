@@ -12,6 +12,7 @@ import ewe.ui.*;
 import ewe.graphics.*;
 import ewe.io.IOException;
 import ewe.sys.*;
+import ewe.sys.Double;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.*;
@@ -235,21 +236,57 @@ public class MovingMap extends Form {
 		
 		if (currentMap != null)
 		{
-			float lineLengthMeters = 40 * currentMap.scale;
-			float digits = (float)java.lang.Math.floor( java.lang.Math.log(lineLengthMeters) / java.lang.Math.log(10.0) );
-			lineLengthMeters = (float)java.lang.Math.ceil( lineLengthMeters / (float)java.lang.Math.pow(10, digits) ) * (float)java.lang.Math.pow(10, digits);
-			int lineLengthPixels = java.lang.Math.round( lineLengthMeters / currentMap.scale );
-
-			String lineLengthString;
-			if (lineLengthMeters < 1000)
-			{
-				lineLengthString = Convert.toString((int) lineLengthMeters) + "m";
-			}
-			else
-			{
-				lineLengthString = Convert.toString((int) lineLengthMeters / 1000) + "km";
+			double lineLengthMeters = 40 * currentMap.scale;
+			
+			int metricSystem = Global.getPref().metricSystem;
+			double localizedLineLength = 0;
+			int bigUnit = -1; 
+			int smallUnit = -1;
+			double threshold = -1;
+			// Allow for different metric systems
+			if (metricSystem == Metrics.IMPERIAL) {
+				bigUnit = Metrics.MILES;
+				smallUnit = Metrics.FEET;
+				threshold = 501;
+				
+				localizedLineLength = Metrics.convertUnit( lineLengthMeters, Metrics.METER, smallUnit);
+			} else {
+				bigUnit = Metrics.KILOMETER;
+				smallUnit = Metrics.METER;
+				threshold = 1000;
+				
+				localizedLineLength = lineLengthMeters;
 			}
 			
+			int currentUnit = smallUnit;
+						
+			float digits = (float)java.lang.Math.floor( java.lang.Math.log(localizedLineLength) / java.lang.Math.log(10.0) );
+			localizedLineLength = (float)java.lang.Math.ceil( localizedLineLength / (float)java.lang.Math.pow(10, digits) ) * (float)java.lang.Math.pow(10, digits);
+
+			if (localizedLineLength >= threshold)
+			{
+				currentUnit = bigUnit;
+				localizedLineLength = Metrics.convertUnit( lineLengthMeters, Metrics.METER, currentUnit);
+				
+				digits = (float)java.lang.Math.floor( java.lang.Math.log(localizedLineLength) / java.lang.Math.log(10.0) );
+				localizedLineLength = (float)java.lang.Math.ceil( localizedLineLength / (float)java.lang.Math.pow(10, digits) ) * (float)java.lang.Math.pow(10, digits);
+			}
+			
+			String lineLengthString = Convert.toString((int) localizedLineLength) + Metrics.getUnit(currentUnit);
+			
+			if	(digits < 0){
+				Double tmp = new Double();
+				tmp.set(localizedLineLength);
+				
+				int decimals = (int)(-1 * digits);
+				
+				lineLengthString = tmp.toString(decimals+2,decimals,0) + Metrics.getUnit(currentUnit);
+//				lineLengthString = MyLocale.formatDouble(tmp,"0.000") + Metrics.getUnit(currentUnit);
+			}
+
+			lineLengthMeters = Metrics.convertUnit( localizedLineLength, currentUnit, Metrics.METER);
+			
+			int lineLengthPixels = (int)java.lang.Math.round( lineLengthMeters / currentMap.scale );			
 			int backgroundStartX = ScaleImage.location.width - (lineLengthPixels + fm.getTextWidth(lineLengthString) + 7);
 			
 			ScaleImageGraphics.setColor(new Color(250,250,250));
@@ -275,16 +312,32 @@ public class MovingMap extends Form {
 			{
 				lastDistance = currentDistance;
 				ewe.sys.Double dd = new ewe.sys.Double();
-				dd.set(currentDistance);
 				String d;
-				if (dd.value < 1) {
-					dd.value = dd.value * 1000; 
-					dd.decimalPlaces = 0;
-					d = MyLocale.getMsg(4206, "Dist: ") + dd.toString() + "m";
-				} 
-				else {
-					dd.decimalPlaces = 2;
-					d = MyLocale.getMsg(4206, "Dist: ") + dd.toString() + "km";
+				
+				int metricSystem = Global.getPref().metricSystem;
+				double localizedDistance = 0;
+				int bigUnit = -1; 
+				int smallUnit = -1;
+				double threshold = -1;
+				// Allow for different metric systems
+				if (metricSystem == Metrics.METRIC) {
+					bigUnit = Metrics.KILOMETER;
+					smallUnit = Metrics.METER;
+					threshold = 1.0;
+					localizedDistance = currentDistance;
+				} else if (metricSystem == Metrics.IMPERIAL) {
+					// Why these values? See: http://tinyurl.com/b4nn9m
+					bigUnit = Metrics.MILES;
+					smallUnit = Metrics.FEET;
+					threshold = 0.1;
+					localizedDistance = Metrics.convertUnit(currentDistance, Metrics.KILOMETER, Metrics.MILES);
+				}
+				dd.set(localizedDistance);
+				if (dd.value >= threshold){
+					d = MyLocale.formatDouble(dd,"0.000") + Metrics.getUnit(bigUnit);
+				} else {
+					dd.set(Metrics.convertUnit(dd.value, bigUnit, smallUnit));
+					d = dd.toString(3,0,0) + Metrics.getUnit(smallUnit);
 				}
 				
 				int backgroundWidth = fm.getTextWidth(d) + 4;
