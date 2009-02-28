@@ -252,7 +252,7 @@ public class MyLocale {
 	 *
 	 */
 	public static void setSIPOn() {
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
+		if (Vm.isMobile()) {
 			Vm.setSIP(Vm.SIP_ON);
 		}
 	}
@@ -264,7 +264,7 @@ public class MyLocale {
 	 *
 	 */
 	public static void setSIPOff() {
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
+		if (Vm.isMobile()) {
 			Vm.setSIP(0);
 		}
 	}
@@ -276,7 +276,7 @@ public class MyLocale {
 	 *
 	 */
 	public static void setSIPButton() {
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
+		if (Vm.isMobile()) {
 			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
 		}
 	}
