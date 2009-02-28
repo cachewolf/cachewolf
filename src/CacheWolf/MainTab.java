@@ -189,6 +189,7 @@ public class MainTab extends mTabbedPanel {
 	private void onEnteringPanel(int panelNo) {//Vm.debug("Entering "+panelNo);
 		switch (panelNo) {// Switch by panel number
 		case 0:
+			MyLocale.setSIPOff();
 			// If Solver or Details has changed, save Cache
 			updatePendingChanges();
 			if (detP.hasBlackStatusChanged()) {
@@ -201,12 +202,12 @@ public class MainTab extends mTabbedPanel {
 			if (chD==null) { // Empty DB - show a dummy detail
 				newWaypoint(ch=new CacheHolder()); 
 			}
-			MyLocale.setSIPButton();
+			MyLocale.setSIPOff();
 			detP.setDetails(ch);
 			break;
 		case 2: // Description Panel
-				MyLocale.setSIPOff();
-				descP.setText(chD);
+			MyLocale.setSIPOff();
+			descP.setText(chD);
 			break;
 		case 3: // Picture Panel
 			if (chD!=null) {
@@ -229,7 +230,7 @@ public class MainTab extends mTabbedPanel {
 			}
 			break;
 		case 5:  // Solver Panel
-			MyLocale.setSIPButton();
+			MyLocale.setSIPOff();
 			if (chD!=null) {
 				if (chD.isAddiWpt()) { 
 					chMain=chD.mainCache.getCacheDetails(true);//new CacheHolderDetail(chD.mainCache);
@@ -245,7 +246,7 @@ public class MainTab extends mTabbedPanel {
 			break;
 		case 6:  // CalcPanel
 			if (chD!=null) {
-				MyLocale.setSIPButton();
+				MyLocale.setSIPOff();
 				calcP.setFields(chD);
 			}
 			break;
