@@ -553,17 +553,17 @@ class GotoRose extends AniImage {
 		int smallUnit = -1;
 		double threshold = -1;
 		// Allow for different metric systems
-		if (metricSystem == Metrics.METRIC) {
-			bigUnit = Metrics.KILOMETER;
-			smallUnit = Metrics.METER;
-			threshold = 1.0;
-			newDistance = distance;
-		} else if (metricSystem == Metrics.IMPERIAL) {
+		if (metricSystem == Metrics.IMPERIAL) {
 			// Why these values? See: http://tinyurl.com/b4nn9m
 			bigUnit = Metrics.MILES;
 			smallUnit = Metrics.FEET;
 			threshold = 0.1;
 			newDistance = Metrics.convertUnit(distance, Metrics.KILOMETER, Metrics.MILES);
+		} else {
+			bigUnit = Metrics.KILOMETER;
+			smallUnit = Metrics.METER;
+			threshold = 1.0;
+			newDistance = distance;
 		}
 		if ( newDistance >= 0.0f ) {
 			tmp.set(newDistance);
@@ -595,14 +595,14 @@ class GotoRose extends AniImage {
 		String unit = null;
 
 		// Allow for different metric systems
-		if (Global.getPref().metricSystem == Metrics.METRIC) {
-			tmp.set(m_speed);
-			unit = " km/h";
-			strSpeed = "- km/h";
-		} else if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
+		if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
 			tmp.set(Metrics.convertUnit(m_speed, Metrics.KILOMETER, Metrics.MILES));
 			unit = " mph";
 			strSpeed = "- mph";
+		} else {
+			tmp.set(m_speed);
+			unit = " km/h";
+			strSpeed = "- km/h";
 		}
 		if (tmp.value >= 0) {
 			if (tmp.value >= 100) {
