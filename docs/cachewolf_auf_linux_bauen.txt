@@ -19,13 +19,13 @@ Anmerkungen zu eclipse
 ======================
 
 Viele CW-Entwickler arbeiten mit Windows und dort nutzt eclipse zunaechst die
-Standardzeichenkodierung windows-1252. Ich habe jedoch noch kein Linux Version
+Standardzeichenkodierung windows-1252. Ich habe jedoch noch keine Linux Version
 mit brauchbarer windows-1252 Unterstuetzung gefunden. Das naechstbeste was
 Linux bietet ist ISO-8859-1. Wenn du den Sourcecode als ISO-8859-1 anzeigen
 laesst (rechte Maustaste / Eigenschaten) wird fast(!) alles korrekt angezeigt.
 Aber:
 
-Die beiden Zeichensaetze sind nicht identisch!
+!!Die beiden Zeichensaetze sind nicht identisch!!
 
 Um herauszufinden welche Dateien Probleme bereiten koennen, kannst du das Tool
 pcregrep benutzen (eventuell musst du es nachinstallieren) und dann folgendes
