@@ -597,8 +597,8 @@ class GotoRose extends AniImage {
 		// Allow for different metric systems
 		if (Global.getPref().metricSystem == Metrics.METRIC) {
 			tmp.set(m_speed);
-			unit = " km";
-			strSpeed = "- km/k";
+			unit = " km/h";
+			strSpeed = "- km/h";
 		} else if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
 			tmp.set(Metrics.convertUnit(m_speed, Metrics.KILOMETER, Metrics.MILES));
 			unit = " mph";
