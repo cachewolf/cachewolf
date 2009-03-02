@@ -85,7 +85,7 @@ public class ProfilesForm extends Form{
         // Now add these subdirectories to the list of profiles but
         // exclude the "maps" directory which will contain the moving maps
         for (int i=0; i<existingProfiles.length; i++) 
-			if (!existingProfiles[i].equals("maps")) choice.addItem(existingProfiles[i]);
+			if (!existingProfiles[i].equalsIgnoreCase("maps")) choice.addItem(existingProfiles[i]);
         // Highlight the profile that was used last
         choice.selectLastProfile(selectedProfile);
         // Add a scroll bar to the list of profiles
