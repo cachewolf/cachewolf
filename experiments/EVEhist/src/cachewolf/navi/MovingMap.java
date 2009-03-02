@@ -1421,7 +1421,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu kontextMenu;
 	MenuItem gotoMenuItem = new MenuItem(MyLocale.getMsg(4230, "Goto here$g"), 0, null);
 	MenuItem newWayPointMenuItem = new MenuItem(MyLocale.getMsg(4232, "Create new Waypoint here$n"), 0, null);;
-	MenuItem openCacheDescMenuItem,addCachetoListMenuItem;
+	MenuItem openCacheDescMenuItem,addCachetoListMenuItem,gotoCacheMenuItem;
 
 	MenuItem miLuminary[];
 
@@ -1706,7 +1706,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					if (clickedCache != null) {
 						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(4270, "Open")+" '"+(clickedCache.cacheName.length()>0 ? clickedCache.cacheName : clickedCache.wayPoint)+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
 						kontextMenu.addItem(openCacheDescMenuItem);
-						if (Global.mainForm.cacheListVisible) {
+						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.cacheName.length()>0 ? clickedCache.cacheName : clickedCache.wayPoint)+"'$g"); // clickedCache == null can happen if clicked on the goto-symbol
+						kontextMenu.addItem(gotoCacheMenuItem);
+						if (Global.mainForm.cacheListVisible) { 
 							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
 							kontextMenu.addItem(addCachetoListMenuItem);
 						}
@@ -1819,6 +1821,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						mm.postEvent(close);
 						MainTab mainT = Global.mainTab;
 						mainT.openDescriptionPanel(clickedCache);
+					}
+					if (action == gotoCacheMenuItem) {
+						kontextMenu.close();
+						mm.myNavigation.setDestination(clickedCache.pos);	
 					}
 					if (action == newWayPointMenuItem) {
 						kontextMenu.close();
@@ -2160,5 +2166,7 @@ class ArrowsOnMap extends AniImage {
 		g.drawLine(arrow[0].x, arrow[0].y, arrow[1].x,arrow[1].y);
 	}
 }
+
+
 
 
