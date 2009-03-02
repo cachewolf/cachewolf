@@ -252,20 +252,20 @@ public class CacheHolder {
 			if (this.kilom >= 0) {
 				double newValue = 0;
 				switch (Global.getPref().metricSystem) {
-				case Metrics.METRIC:
-					newValue = this.kilom;
-					newUnit = Metrics.getUnit(Metrics.KILOMETER);
-					break;
 				case Metrics.IMPERIAL:
 					newValue = Metrics.convertUnit(this.kilom, Metrics.KILOMETER, Metrics.MILES);
 					newUnit = Metrics.getUnit(Metrics.MILES);
+					break;
+				case Metrics.METRIC:
+				default:
+					newValue = this.kilom;
+					newUnit = Metrics.getUnit(Metrics.KILOMETER);
 					break;
 				}
 				result = MyLocale.formatDouble(newValue, "0.00") + " " + newUnit;
 			} else {
 				result = "? "
-				        + (Global.getPref().metricSystem == Metrics.METRIC ? Metrics
-				                .getUnit(Metrics.KILOMETER) : Metrics.getUnit(Metrics.MILES));
+				        + (Global.getPref().metricSystem == Metrics.IMPERIAL ? Metrics.getUnit(Metrics.MILES) : Metrics.getUnit(Metrics.KILOMETER));
 			}
 			// Caching values, so reevaluation is only done when really needed
 			this.lastKilom = this.kilom;

@@ -320,18 +320,18 @@ public class MovingMap extends Form {
 				int smallUnit = -1;
 				double threshold = -1;
 				// Allow for different metric systems
-				if (metricSystem == Metrics.METRIC) {
-					bigUnit = Metrics.KILOMETER;
-					smallUnit = Metrics.METER;
-					threshold = 1.0;
-					localizedDistance = currentDistance;
-				} else if (metricSystem == Metrics.IMPERIAL) {
+				if (metricSystem == Metrics.IMPERIAL) {
 					// Why these values? See: http://tinyurl.com/b4nn9m
 					bigUnit = Metrics.MILES;
 					smallUnit = Metrics.FEET;
 					threshold = 0.1;
 					localizedDistance = Metrics.convertUnit(currentDistance, Metrics.KILOMETER, Metrics.MILES);
-				}
+				} else {
+					bigUnit = Metrics.KILOMETER;
+					smallUnit = Metrics.METER;
+					threshold = 1.0;
+					localizedDistance = currentDistance;
+				} 
 				dd.set(localizedDistance);
 				if (dd.value >= threshold){
 					d = MyLocale.formatDouble(dd,"0.000") + Metrics.getUnit(bigUnit);
