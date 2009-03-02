@@ -62,18 +62,31 @@ public class GPXExporter extends Exporter{
 			strBuf.append("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp=").append(ch.wayPoint).append("&amp;Submit6=Find</url>\r\n");
 			strBuf.append("    <urlname>").append(SafeXML.cleanGPX(ch.cacheName)).append(" by ").append(SafeXML.cleanGPX(ch.cacheOwner)).append("</urlname>\r\n");
 			if (!ch.isAddiWpt()){
-				strBuf.append("    <sym>Geocache</sym>\r\n");
+				if ( ch.is_found ) {
+					strBuf.append("    <sym>Geocache Found</sym>\r\n");					
+				} else {
+					strBuf.append("    <sym>Geocache</sym>\r\n");
+				}
 				strBuf.append("    <type>Geocache|").append(CacheType.transType(ch.type)).append("</type>\r\n");
 				String dummyAvailable = ch.is_available ? STRING_TRUE:STRING_FALSE;
 				String dummyArchived = ch.is_archived ? STRING_TRUE:STRING_FALSE;
-				strBuf.append("    <groundspeak:cache available=\"").append( dummyAvailable ).append( "\" archived=\"" ).append( dummyArchived).append( "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
+				strBuf.append("    <groundspeak:cache id=\"").append( ch.GetCacheID() ).append( "\" available=\"" ).append( dummyAvailable ).append( "\" archived=\"" ).append( dummyArchived).append( "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
 				strBuf.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.cacheName)).append("</groundspeak:name>\r\n");
 				strBuf.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.cacheOwner)).append("</groundspeak:placed_by>\r\n");
 				strBuf.append("      <groundspeak:owner>").append(SafeXML.cleanGPX(ch.cacheOwner)+"</groundspeak:owner>\r\n");
 				strBuf.append("      <groundspeak:type>").append(CacheType.transType(ch.type)).append("</groundspeak:type>\r\n");
 				strBuf.append("      <groundspeak:container>").append(ch.getCacheSize()).append("</groundspeak:container>\r\n");
-				strBuf.append("      <groundspeak:difficulty>").append(ch.hard.replace(',','.')).append("</groundspeak:difficulty>\r\n");
-				strBuf.append("      <groundspeak:terrain>").append(ch.terrain.replace(',','.')).append("</groundspeak:terrain>\r\n");
+				//for Colorado/Oregon: 2.0 -> 2
+				String diffTerr = ch.hard.replace(',','.');
+				if ( diffTerr.endsWith( ".0" ) ) {
+					diffTerr = diffTerr.substring(0, 1);
+				}
+				strBuf.append("      <groundspeak:difficulty>").append(diffTerr).append("</groundspeak:difficulty>\r\n");
+				diffTerr = ch.terrain.replace(',','.');
+				if ( diffTerr.endsWith( ".0" ) ) {
+					diffTerr = diffTerr.substring(0, 1);
+				}
+				strBuf.append("      <groundspeak:terrain>").append(diffTerr).append("</groundspeak:terrain>\r\n");
 				String dummyHTML = ch.is_HTML ? STRING_TRUE:STRING_FALSE;
 				strBuf.append("      <groundspeak:long_description html=\"" ).append( dummyHTML ).append( "\">\r\n");
 				strBuf.append("      ").append(SafeXML.cleanGPX(ch.longDescription));

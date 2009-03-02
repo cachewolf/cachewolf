@@ -607,4 +607,36 @@ public void finalize() {nObjects--;
    Vm.debug("CacheHolder: "+nObjects+" objects left");
 }
 	 */
+
+	public String GetCacheID() {
+		String result = "";
+		
+		if ( wayPoint.toUpperCase().startsWith( "GC" ) ) {
+			int gcId = 0;
+
+			String sequence = "0123456789ABCDEFGHJKMNPQRTVWXYZ";
+			
+			String rightPart = wayPoint.substring( 2 ).toUpperCase();
+			
+			int base = 31;
+			if ((rightPart.length() < 4) || (rightPart.length() == 4 && sequence.indexOf(rightPart.charAt(0)) < 16)) {
+				base = 16;
+			}
+			
+			for ( int pos = 0; pos < rightPart.length(); pos++ ) {
+				gcId *= base;
+				gcId += sequence.indexOf(rightPart.charAt(pos));
+			}
+			
+	        if ( base == 31 ) {
+	        	gcId += java.lang.Math.pow(16, 4) - 16 * java.lang.Math.pow(31, 3);
+	        }
+	        
+	        result = Integer.toString(gcId);	        
+		} else if ( wayPoint.toUpperCase().startsWith( "OC" ) ) {
+        	result = ocCacheID;
+        }
+
+		return result;
+	}
 }
