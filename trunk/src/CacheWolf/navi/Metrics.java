@@ -3,6 +3,8 @@
  */
 package CacheWolf.navi;
 
+import CacheWolf.Global;
+
 /**
  * @author Engywuck
  *
@@ -25,6 +27,17 @@ public final class Metrics {
 	private static final double FCT_MILE2YARD = 1760;
 	private static final double FCT_MILE2FOOT = 5280;
 	
+	/**
+	 * Converts values from one to another unit.
+	 * @param value Value to convert
+	 * @param sourceUnit Constant from class Metrics to represent unit in which 
+	 * <code>value</code> is meant. 
+	 * @param targetUnit Constant from class Metrics to represent the unit in 
+	 * which <code>value</code> has to be transformed
+	 * @return The new converted value
+	 * @throws UnsupportedOperationException when the conversion between the two units
+	 * is not programmed.
+	 */
 	public static final double convertUnit(double value, int sourceUnit, int targetUnit) {
 		double result = Double.NaN;
 		if (sourceUnit == targetUnit) {
@@ -113,9 +126,9 @@ public final class Metrics {
 				break;
 			}
 		}
-		if (result == Double.NaN) {
-			// TODO Meldung verbessern
-			throw new UnsupportedOperationException("Cannot convert");
+		if (String.valueOf(result).equals("NaN")) {
+			Global.getPref().log("Cannot convert "+getUnit(sourceUnit)+ " to "+getUnit(targetUnit));
+			throw new UnsupportedOperationException("Cannot convert "+getUnit(sourceUnit)+ " to "+targetUnit);
 		}
 		return result;
 	}
