@@ -161,6 +161,7 @@ public class MapLoaderGui extends Form {
 		sortedmapServices[j]=sortedmapServices[k];
 		sortedmapServices[k]="===== ===== ===== ===== ===== ===== =====";
 		sortingMapServices[j]=sortingMapServices[k];
+		sortingMapServices[k]=-1;
 	}
 	
 	private int getSortedMapServiceIndex(int originalindex) {
@@ -276,6 +277,9 @@ public class MapLoaderGui extends Form {
 				this.close(FormBase.IDCANCEL);
 			}
 			if (ev.target == okBtiles || ev.target == okBPerCache){
+				if (sortingMapServices[mapServiceChoice.selectedIndex] == -1) {
+					(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1833, "Please don't select the separetor line in the wms service option"), FormBase.OKB)).execute(); 
+				}
 				mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 				if (ev.target == okBtiles) { // get tiles
 					perCache = false;
