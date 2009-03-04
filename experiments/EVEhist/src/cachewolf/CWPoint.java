@@ -445,7 +445,7 @@ public class CWPoint extends TrackPoint{
 	 */
 	public String getNSLetter() {
         String result = "N";
-        if (this.latDec >= -90 && this.lonDec < 0) {
+        if (this.latDec >= -90 && this.latDec < 0) {
             result = "S";
         }
         return  result;
