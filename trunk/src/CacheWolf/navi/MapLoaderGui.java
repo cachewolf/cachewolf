@@ -139,24 +139,28 @@ public class MapLoaderGui extends Form {
 	 *
 	 */	
 	private void sortMapServices() {
-		sortingMapServices = new int[unsortedMapServices.length];
+		sortingMapServices = new int[unsortedMapServices.length+1];
 		inbound = new boolean[unsortedMapServices.length];
 		int j=0;
-		for (int i=0; i < sortingMapServices.length; i++) {
+		for (int i=0; i < sortingMapServices.length-1; i++) {
 			if( ((OnlineMapService)mapLoader.onlineMapServices.get(i)).boundingBox.isInBound(center)) {
 				sortingMapServices[j] = i;
 				j++;
 				inbound[i] = true;
 			} else inbound[i] = false;
 		}
-		sortedmapServices = new String[unsortedMapServices.length];
-		for (int i=0; i < sortedmapServices.length; i++) {
+		int k=j;
+		sortedmapServices = new String[unsortedMapServices.length+1];
+		for (int i=0; i < sortedmapServices.length-1; i++) {
 			if (!inbound[i]) { 
 				sortingMapServices[j] = i;
 				j++;
 			}
 			sortedmapServices[i] = ((OnlineMapService)mapLoader.onlineMapServices.get(sortingMapServices[i])).getName();
 		}
+		sortedmapServices[j]=sortedmapServices[k];
+		sortedmapServices[k]="===== ===== ===== ===== ===== ===== =====";
+		sortingMapServices[j]=sortingMapServices[k];
 	}
 	
 	private int getSortedMapServiceIndex(int originalindex) {
