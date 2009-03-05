@@ -30,7 +30,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
-	private MenuItem exportGPS, exportCacheMate,mnuSeparator;
+	private MenuItem exportLOC, exportGPS, exportCacheMate,mnuSeparator;
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild;
 	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
@@ -66,7 +66,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] exitems = new MenuItem[12];
+		MenuItem[] exitems = new MenuItem[13];
 		//Vm.debug("Hi in MainMenu "+lr);
 		exitems[0] = exporthtml = new MenuItem(MyLocale.getMsg(100,"to HTML"));
 		exitems[1] = exportpcx5 = new MenuItem(MyLocale.getMsg(101,"to PCX5 Mapsource"));
@@ -75,14 +75,21 @@ public class MainMenu extends MenuBar {
 		exitems[4] = exportASC = new MenuItem(MyLocale.getMsg(104,"to CSV"));
 		exitems[5] = exportTomTom = new MenuItem(MyLocale.getMsg(105,"to TomTom"));
 		exitems[6] = exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV"));
-		exitems[7] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
-		if(!(new File(cwd + "/gpsbabel.exe")).exists()) exitems[7].modifiers = MenuItem.Disabled;
+		exitems[7] = exportLOC = new MenuItem(MyLocale.getMsg(215,"to LOC"));
+		exitems[8] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
+		try{
+			// this will *only* work with ewe.jar at the moment
+			ewe.sys.Process p = Vm.exec("gpsbabel -V");
+			p.waitFor();
+		}catch(IOException ioex){
+			exitems[8].modifiers = MenuItem.Disabled;
+		}
 		//exitems[8] = exportCacheMate = new MenuItem(MyLocale.getMsg(123,"to Cachemate"));
 		//if(!(new File(cwd + "/cmconvert/cmconvert.exe")).exists()) exitems[8].modifiers = MenuItem.Disabled;
-		exitems[8] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
-		exitems[9] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
-		exitems[10] = exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist"));
-		exitems[11] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
+		exitems[9] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
+		exitems[10] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
+		exitems[11] = exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist"));
+		exitems[12] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
 
 		Menu exportMenu = new Menu(exitems, MyLocale.getMsg(107,"Export"));
 
@@ -357,6 +364,10 @@ public class MainMenu extends MenuBar {
 				MSARCSVExporter msar = new MSARCSVExporter(pref,profile);
 				msar.doIt();
 			}
+			if(mev.selectedItem == exportLOC){
+				LocExporter loc = new LocExporter();
+				loc.doIt();
+			}
 			if(mev.selectedItem == exportGPS){
 				Vm.showWait(true);
 				LocExporter loc = new LocExporter();
@@ -365,9 +376,9 @@ public class MainMenu extends MenuBar {
 				loc.doIt(LocExporter.MODE_AUTO);
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
 				try{
-					pref.log("gpsbabel.exe "+pref.garminGPSBabelOptions+" -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
+					pref.log("gpsbabel "+pref.garminGPSBabelOptions+" -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
 					// this will *only* work with ewe.jar at the moment
-					ewe.sys.Process p = Vm.exec("gpsbabel.exe "+pref.garminGPSBabelOptions+" -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
+					ewe.sys.Process p = Vm.exec("gpsbabel "+pref.garminGPSBabelOptions+" -i geo -f \""+ tmpFileName +"\" -o garmin -F " + pref.garminConn +":");
 					p.waitFor();
 				}catch(IOException ioex){
 					Vm.showWait(false);

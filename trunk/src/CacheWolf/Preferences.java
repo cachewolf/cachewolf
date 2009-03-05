@@ -657,6 +657,7 @@ public class Preferences extends MinML{
 	 * @param text to log
 	 */
 	public void log(String text){
+		Vm.debug(text);
 		Time dtm = new Time();
 		dtm.getTime();
 		dtm.setFormat("dd.MM.yyyy'/'HH:mm");
