@@ -487,8 +487,7 @@ public class Parser{
     	double distKM = cwPt.getDistance(new CWPoint(coordB));
     	result = distKM*1000.0;
     	if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
-    		result = Metrics.convertUnit(distKM, Metrics.KILOMETER, Metrics.MILES);
-    		result = Metrics.convertUnit(result, Metrics.MILES, Metrics.YARDS);
+    		result = Metrics.convertUnit(distKM, Metrics.KILOMETER, Metrics.YARDS);
     	}
     	return result;
     }
@@ -629,8 +628,7 @@ public class Parser{
 		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
     	cwPt.set(coord);
     	if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
-    		distance = Metrics.convertUnit(distance, Metrics.YARDS, Metrics.MILES);
-    		distance = Metrics.convertUnit(distance, Metrics.MILES, Metrics.KILOMETER);
+    		distance = Metrics.convertUnit(distance, Metrics.YARDS, Metrics.KILOMETER);
     	} else {
     		distance = distance / 1000.0;
     	}
