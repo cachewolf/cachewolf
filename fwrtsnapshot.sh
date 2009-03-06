@@ -42,7 +42,7 @@ chmod -R 0755 published
 find published -type f -print0 | xargs -0 chmod 0644
 (
 	cd published/dat
-	find * -type f | sort >../flst
+	find * -type f | fgrep -v /.svn/ | sort >../flst
 	$CPIO -oC512 -Hustar -Mdist <../flst | gzip -n9 >../datfiles.tgz
 	zip -X ../datfiles.zip -@ <../flst
 )
