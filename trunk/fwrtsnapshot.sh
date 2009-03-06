@@ -2,7 +2,9 @@
 # $Id$
 
 PATH=$PATH:/usr/local/bin:/usr/bin:$HOME/bin
-export PATH
+LC_ALL=C
+unset LANG LANGUAGE
+export PATH LC_ALL
 
 # natureshadow insists on using “which”… so be it
 # allow the caller to override the paths to the tools
@@ -11,7 +13,7 @@ test -n "$CPIO" || CPIO=$(which cpio)
 
 set -x
 v=$(svn info | sed -n '/Revision: /s///p')
-printf '/VER_SVN =/s/\$.*\$/$LastChangedRevision: %s $/\nwq\n' $v | \
+printf '/VER_SVN =/s/\$.*\$/$LastChanged''Revision: %s $/\nw\nq\n' $v | \
     ed -s src/CacheWolf/Version.java
 rm -rf bin
 mkdir -p bin/CacheWolf
@@ -28,22 +30,16 @@ if test '!' -e programs/CacheWolf/Jar/CacheWolf.bat; then
 	exit 1
 fi
 mkdir -p published/dat/attributes
-mkdir -p published/dat/webmapservices
-mkdir -p published/dat/languages
 mv programs/CacheWolf/* published/
-chmod 755 published/*
 cp lib/java_ewe.dll published/Jar/
-chmod 644 published/*/*
-chmod 755 published/dat/attributes
-chmod 755 published/dat/webmapservices
-chmod 755 published/dat/languages
-printf '1,$g/ 12M/s///\nwq\n' | ed -s published/Jar/CacheWolf.bat
-install -c -m 644 work/CacheWolf.ewe published/
-install -c -m 644 res_noewe/* published/dat/
-install -c -m 644 resources/attributes-big/*.gif published/dat/attributes/
-install -c -m 644 resources/attributes/*-non.gif published/dat/attributes/
-install -c -m 644 res_noewe/webmapservices/* published/dat/webmapservices/
-install -c -m 644 res_noewe/languages/* published/dat/languages/
+chmod -R u+w published
+printf '1,$g/ 12M/s///\nw\nq\n' | ed -s published/Jar/CacheWolf.bat
+cp work/CacheWolf.ewe published/
+(cd res_noewe && cp -R * ../published/dat/)
+cp resources/attributes-big/*.gif resources/attributes/*-non.gif \
+    published/dat/attributes/
+chmod -R 0755 published
+find published -type f -print0 | xargs -0 chmod 0644
 (
 	cd published/dat
 	find * -type f | sort >../flst
