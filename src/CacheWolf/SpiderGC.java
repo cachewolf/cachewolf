@@ -537,6 +537,15 @@ public class SpiderGC{
 						chD.is_new = !isUpdate;
 						chD.is_update = false;
 						chD.is_log_update=false;
+
+						//first check if coordinates are available to prevent deleting existing coorinates
+						String latLon = getLatLon(completeWebPage);
+						if (latLon.equals("???")) {
+							pref.log(">>>> Failed to spider Cache. Retry.");
+							ret = 0;
+							continue; // Restart the spider
+						}
+
 						chD.is_HTML = true;
 						chD.is_available = true;
 						chD.is_archived = false;
@@ -554,14 +563,10 @@ public class SpiderGC{
 						//==========
 						// General Cache Data
 						//==========
-						chD.setLatLon(getLatLon(completeWebPage));
+						chD.setLatLon(latLon);
 						pref.log("LatLon: " + chD.LatLon);
 						if (pref.debug) pref.log("chD.pos: " + chD.pos.toString());
-						if (chD.LatLon.equals("???")) {
-							pref.log(">>>> Failed to spider Cache. Retry.");
-							ret = 0;
-							continue; // Restart the spider
-						}
+
 						pref.log("Trying description");
 						chD.setLongDescription(getLongDesc(completeWebPage));
 						pref.log("Got description");
