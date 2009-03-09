@@ -29,6 +29,8 @@ import ewe.io.*;
 import ewe.sys.*;
 import ewe.sys.Double;
 import ewe.util.*;
+import CacheWolf.navi.Metrics;
+
 import com.stevesoft.ewe_pat.*;
 import ewe.ui.*;
 import ewe.data.Property;
@@ -321,6 +323,18 @@ public class SpiderGC{
 		boolean doNotgetFound = options.foundCheckBox.getState();
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
+		
+		Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
+		double distanceInKm = distance;
+		if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
+			distanceInKm = Metrics.convertUnit(distance, Metrics.MILES, Metrics.KILOMETER);
+		}
+		for(int i = 0; i<cacheDB.size();i++){
+			ch = (CacheHolder)cacheDB.get(i);
+			if ( (ch.kilom <= distanceInKm) && !(doNotgetFound && ch.is_found) ) {
+				cachesToUpdate.put(ch.wayPoint, new Integer(i));
+			}
+		}
 
 		//=======
 		// Prepare list of all caches that are to be spidered
@@ -407,6 +421,8 @@ public class SpiderGC{
 								ch.is_available=is_available_GC;
 								chD=ch.getCacheDetails(true,false);
 								ch.detailsAdded();
+							} else {
+								cachesToUpdate.remove( ch.wayPoint );
 							}
 						}
 					} else distance = 0;
@@ -456,17 +472,19 @@ public class SpiderGC{
 		boolean loadAllLogs = (MAXLOGS > 5);
 
 		int spiderErrors = 0;
+		int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			if (infB.isClosed) break;
 
 			wpt = (String)cachesToLoad.get(i);
 			// Get only caches not already available in the DB
 			if(searchWpt(wpt) == -1){
-				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + cachesToLoad.size() + ")");
+				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + totalCachesToLoad + ")");
 				chD = new CacheHolderDetail();
 				chD.wayPoint=wpt;
 				int test = getCacheByWaypointName(chD,false,getImages,doNotgetFound,loadAllLogs);
 				if (test == -1) {
+					infB.close(0);
 					break;
 				} else if (test == 0) {
 					spiderErrors++;
@@ -478,6 +496,27 @@ public class SpiderGC{
 				}
 			}
 		}
+		
+		if (!infB.isClosed) {
+			int j = 1;
+			for (Enumeration e = cachesToUpdate.elements() ; e.hasMoreElements() ; j++) {
+				int i = ((Integer)e.nextElement()).intValue();
+				ch = (CacheHolder)cacheDB.get(i);
+				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (cachesToLoad.size()+j) + " / " + totalCachesToLoad + ")");
+				infB.redisplay();
+				if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")) {
+					int test = spiderSingle(i, infB,false);
+					if (test == -1) {
+						break;
+					} else if (test == 0) {
+						spiderErrors++;
+					} else {
+						profile.hasUnsavedChanges=true;	
+					}
+				}
+			}
+		}
+		
 		infB.close(0);
 		Vm.showWait(false);
 		if ( spiderErrors > 0) {
