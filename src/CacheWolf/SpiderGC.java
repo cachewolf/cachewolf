@@ -331,7 +331,7 @@ public class SpiderGC{
 		}
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			if ( (!ch.is_archived) && (ch.kilom <= distanceInKm) && !(doNotgetFound && ch.is_found) ) {
+			if ( (!ch.is_archived) && (ch.kilom <= distanceInKm) && !(doNotgetFound && ch.is_found) && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")) ) {
 				cachesToUpdate.put(ch.wayPoint, new Integer(i));
 			}
 		}
@@ -476,6 +476,7 @@ public class SpiderGC{
 
 		int spiderErrors = 0;
 		int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
+
 		for(int i = 0; i<cachesToLoad.size(); i++){
 			if (infB.isClosed) break;
 
@@ -507,15 +508,14 @@ public class SpiderGC{
 				ch = (CacheHolder)cacheDB.get(i);
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (cachesToLoad.size()+j) + " / " + totalCachesToLoad + ")");
 				infB.redisplay();
-				if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")) {
-					int test = spiderSingle(i, infB,false);
-					if (test == -1) {
-						break;
-					} else if (test == 0) {
-						spiderErrors++;
-					} else {
-						profile.hasUnsavedChanges=true;	
-					}
+
+				int test = spiderSingle(i, infB,false);
+				if (test == -1) {
+					break;
+				} else if (test == 0) {
+					spiderErrors++;
+				} else {
+					profile.hasUnsavedChanges=true;	
 				}
 			}
 		}
