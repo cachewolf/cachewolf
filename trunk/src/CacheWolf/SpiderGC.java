@@ -331,7 +331,7 @@ public class SpiderGC{
 		}
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			if ( (ch.kilom <= distanceInKm) && !(doNotgetFound && ch.is_found) ) {
+			if ( (!ch.is_archived) && (ch.kilom <= distanceInKm) && !(doNotgetFound && ch.is_found) ) {
 				cachesToUpdate.put(ch.wayPoint, new Integer(i));
 			}
 		}
@@ -413,6 +413,9 @@ public class SpiderGC{
 							boolean is_available_GC=lineRex.stringMatched(1).indexOf("<strike>")==-1;
 							if (ch.is_archived!=is_archived_GC) { // Update the database with the cache status
 								pref.log("Updating status of "+waypoint+" to "+(is_archived_GC?"archived":"not archived"));
+								if ( ch.is_archived ) {
+									cachesToUpdate.put(ch.wayPoint, nr);
+								}
 								ch.is_archived=is_archived_GC;
 								chD=ch.getCacheDetails(true,false);
 								ch.detailsAdded();
