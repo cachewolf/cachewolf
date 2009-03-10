@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project name="CacheWolf" default="release">
 
+	<!-- TODO: find out how to get svn revision information platform independent. -->
+	<!-- TODO: especially since svnversion would give better information if current directory is up to date -->
+	<!-- set a default build.version as long as not defined otherwiese on command line -->
+	<tstamp><format property="build.version" pattern="yyyyMMdd"/></tstamp>
+	<!-- set build type to experimental as long as not defined otherwiese on command line -->
+	<property name="build.type" value="3"/>
+
 	<property name="pkg.dir" value="packages"/>
 	<property name="classes.dir" value="bin"/>
 	<property name="assemble.dir" value="assemble"/>
@@ -9,14 +16,20 @@
 	<property name="icons.gui.files" value="dnf.gif,bug.gif,red.png,yellow.png,blue.png"/>
 	<property name="icons.log.files" value="traffic_cone.gif,recommendedlog.gif,icon_smile.gif,icon_sad.gif,icon_rsvp.gif,icon_note.gif,icon_needsmaint.gif,icon_maint.gif,icon_enabled.gif,icon_disabled.gif,icon_camera.gif,icon_attended.gif,big_smile.gif,coord_update.gif"/>
 	<property name="icons.cache.files" value="11.gif,8.gif,6.gif,5.gif,4,gif,3,gif,2.gif,1858.gif,13.gif,137.gif,12.gif"/>
-	<property name="addon.files" value="Garmin*.zip"/>
 	<property name="doc.files" value="wolflang.html,GCTemplate.html,info.html,legende.html"/>
 
 	<fail message="pleasy specify property ewecl.exe Hint: -Dewecl.exe=/path/to/ewecl" unless="ewecl.exe"/>
 
 	<target name="fixreleasenumber" description="fix the release number in " depends="clean">
-		<!-- TODO: find out how to do this platform independent -->
-		<echo message="fixing the build number is not working yet"/>
+		<echo message="setting build version: ${build.version}" />
+		<replaceregexp file="src/CacheWolf/Version.java" 
+			match="static final int SVN_REVISION = (.*);" 
+			replace="static final int SVN_REVISION = ${build.version};"/>
+		<echo message="setting build type: ${build.type}" />
+		<replaceregexp file="src/CacheWolf/Version.java" 
+			match="static final int VERSION_TYPE = (.*);" 
+			replace="static final int VERSION_TYPE = ${build.type};"/>
+
 	</target>
 
 	<target name="release" depends="CW-ARM,CW-MIPS,CW-SH3,CW-PPC2003,CW-EWE,CW-Win32,CW-Java" description="package all platforms">
@@ -30,6 +43,7 @@
 
 		<antcall target="copyres"/>
 
+		<copy file="programs/CacheWolf/PocketPC-ARM/CacheWolf.exe" todir="${assemble.dir}"/>
 		<zip destfile="${pkg.dir}/CacheWolf-ARM.zip" basedir="${assemble.dir}"/>
 
 		<delete dir="${assemble.dir}"/>
@@ -42,6 +56,7 @@
 
 		<antcall target="copyres"/>
 
+		<copy file="programs/CacheWolf/PocketPC-MIPS/CacheWolf.exe" todir="${assemble.dir}"/>
 		<zip destfile="${pkg.dir}/CacheWolf-MIPS.zip" basedir="${assemble.dir}"/>
 
 		<delete dir="${assemble.dir}"/>
@@ -52,6 +67,7 @@
 
 		<mkdir dir="${pkg.dir}"/>
 
+		<copy file="programs/CacheWolf/PocketPC-SH3/CacheWolf.exe" todir="${assemble.dir}"/>
 		<antcall target="copyres"/>
 
 		<zip destfile="${pkg.dir}/CacheWolf-SH3.zip" basedir="${assemble.dir}"/>
@@ -64,6 +80,7 @@
 
 		<mkdir dir="${pkg.dir}"/>
 
+		<copy file="programs/CacheWolf/PocketPC2003/CacheWolf.exe" todir="${assemble.dir}"/>
 		<antcall target="copyres"/>
 
 		<zip destfile="${pkg.dir}/CacheWolf-PPC2003.zip" basedir="${assemble.dir}"/>
@@ -89,6 +106,7 @@
 
 		<mkdir dir="${pkg.dir}"/>
 
+		<copy file="programs/CacheWolf/x86-Win32-StaticLinked/CacheWolf.exe" todir="${assemble.dir}"/>
 		<antcall target="copyres"/>
 
 		<zip destfile="${pkg.dir}/CacheWolf-Win32.zip" basedir="${assemble.dir}"/>
@@ -180,9 +198,13 @@
 		<!-- copy addons -->
 		<copy todir="${assemble.dir}/addons">
 			<fileset dir="res_noewe">
-				<include name="${addon.files}"/>
+				<include name="Garmin*.zip"/>
+				<include name="POI*.zip"/>
 			</fileset>
 		</copy>
+		<!-- copy logos -->
+		<copy todir="${assemble.dir}" file="docs/cachewolf.svg"/>
+		<copy todir="${assemble.dir}" file="resources/CacheWolf.ico"/>
 		<!-- copy documentation -->
 		<copy todir="${assemble.dir}">
 			<fileset dir="res_noewe" includes="${doc.files}"/>
