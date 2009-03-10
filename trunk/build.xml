@@ -8,7 +8,7 @@
 	<!-- set build type to experimental as long as not defined otherwiese on command line -->
 	<property name="build.type" value="3"/>
 
-	<property name="pkg.dir" value="packages"/>
+	<property name="pkg.dir" value="published"/>
 	<property name="classes.dir" value="bin"/>
 	<property name="assemble.dir" value="assemble"/>
 
