@@ -14,8 +14,9 @@
 
 	<property name="template.files" value="**/*.tpl"/>
 	<property name="icons.gui.files" value="dnf.gif,bug.gif,red.png,yellow.png,blue.png"/>
-	<property name="icons.log.files" value="traffic_cone.gif,recommendedlog.gif,icon_smile.gif,icon_sad.gif,icon_rsvp.gif,icon_note.gif,icon_needsmaint.gif,icon_maint.gif,icon_enabled.gif,icon_disabled.gif,icon_camera.gif,icon_attended.gif,big_smile.gif,coord_update.gif"/>
-	<property name="icons.cache.files" value="11.gif,8.gif,6.gif,5.gif,4,gif,3,gif,2.gif,1858.gif,13.gif,137.gif,12.gif"/>
+	<property name="icons.log.files" value="traffic_cone.gif,recommendedlog.gif,icon_smile.gif,icon_sad.gif,icon_rsvp.gif,icon_note.gif,icon_needsmaint.gif,icon_maint.gif,icon_enabled.gif,icon_disabled.gif,icon_camera.gif,icon_attended.gif,big_smile.gif,coord_update.gif,icon_greenlight.gif,icon_redlight.gif"/>
+	<property name="icons.cache.files" value="11.gif,8.gif,6.gif,5.gif,4.gif,3.gif,2.gif,1858.gif,13.gif,137.gif,12.gif"/>
+	<property name="icons.browser.files" value="g.png,g2.png,y.png,y2.png"/>
 	<property name="doc.files" value="wolflang.html,GCTemplate.html,info.html,legende.html"/>
 
 	<fail message="pleasy specify property ewecl.exe Hint: -Dewecl.exe=/path/to/ewecl" unless="ewecl.exe"/>
@@ -32,7 +33,8 @@
 
 	</target>
 
-	<target name="release" depends="CW-ARM,CW-MIPS,CW-SH3,CW-PPC2003,CW-EWE,CW-Win32,CW-Java" description="package all platforms">
+<!--	<target name="release" depends="CW-ARM,CW-MIPS,CW-SH3,CW-PPC2003,CW-EWE,CW-Win32,CW-Java" description="package all platforms"> -->
+	<target name="release" depends="CW-PPC2003,CW-EWE,CW-Win32,CW-Java" description="package all platforms">
 		<echo message="packages for all platforms are now in ${pkg.dir}"/>
 	</target>
 	
@@ -81,6 +83,10 @@
 		<mkdir dir="${pkg.dir}"/>
 
 		<copy file="programs/CacheWolf/PocketPC2003/CacheWolf.exe" todir="${assemble.dir}"/>
+		<!-- copy big attributes -->
+		<copy todir="${assemble.dir}/attributes-big">
+			<fileset dir="resources/attributes-big"/>
+		</copy>
 		<antcall target="copyres"/>
 
 		<zip destfile="${pkg.dir}/CacheWolf-PPC2003.zip" basedir="${assemble.dir}"/>
@@ -118,6 +124,8 @@
 		<mkdir dir="${assemble.dir}"/>
 
 		<copy file="programs/CacheWolf/Jar/CacheWolf.jar" todir="${assemble.dir}"/>
+		<copy file="lib/java_ewe.dll" todir="${assemble.dir}"/>
+		<copy file="docs/cachewolf.svg" todir="${assemble.dir}"/>
 		<antcall target="copyres"/>
 
 		<mkdir dir="${pkg.dir}"/>
@@ -171,6 +179,10 @@
 		<copy todir="${assemble.dir}">
 			<fileset dir="res_noewe" includes="${icons.gui.files}"/>
 		</copy>
+		<!-- copy browser icons -->
+		<copy todir="${assemble.dir}">
+			<fileset dir="res_noewe" includes="${icons.browser.files}"/>
+		</copy>
 		<!-- copy cache icons -->
 		<copy todir="${assemble.dir}">
 			<fileset dir="res_noewe" includes="${icons.cache.files}"/>
@@ -191,10 +203,6 @@
 		<copy todir="${assemble.dir}/attributes">
 			<fileset dir="resources/attributes"/>
 		</copy>
-		<!-- copy big attributes -->
-		<copy todir="${assemble.dir}/attributes-big">
-			<fileset dir="resources/attributes-big"/>
-		</copy>
 		<!-- copy addons -->
 		<copy todir="${assemble.dir}/addons">
 			<fileset dir="res_noewe">
@@ -202,13 +210,13 @@
 				<include name="POI*.zip"/>
 			</fileset>
 		</copy>
-		<!-- copy logos -->
-		<copy todir="${assemble.dir}" file="docs/cachewolf.svg"/>
+		<!-- copy logo -->
 		<copy todir="${assemble.dir}" file="resources/CacheWolf.ico"/>
 		<!-- copy documentation -->
 		<copy todir="${assemble.dir}">
 			<fileset dir="res_noewe" includes="${doc.files}"/>
 		</copy>
-
+		<!-- spider.def -->
+		<copy todir="${assemble.dir}" file="res_noewe/spider.def"/>
 	</target>
 </project>
