@@ -271,7 +271,7 @@ public class Preferences extends MinML{
 			if (tmp != null) password=tmp;
 			SpiderGC.passwort=password;
 		}
-		else if(name.equals("alias2")) SafeXML.cleanback(myAlias2 = atts.getValue("name"));
+		else if(name.equals("alias2")) myAlias2 = SafeXML.cleanback(atts.getValue("name"));
 		else if(name.equals("location")){
 			curCentrePt.set(atts.getValue("lat")+" "+atts.getValue("long"));
 		}

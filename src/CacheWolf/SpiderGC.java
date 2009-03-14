@@ -280,11 +280,14 @@ public class SpiderGC{
 	*	Method to start the spider for a search around the centre coordinates
 	*/
 	public void doIt(){
+		doIt(false);
+	}
+	public void doIt(boolean spiderAllFinds){
 		String postStr, dummy, ln, wpt;
 		Regex lineRex;
 		CacheHolderDetail chD;
 		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
-		if (!origin.isValid()) {
+		if ( !spiderAllFinds && !origin.isValid()) {
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), FormBase.OKB)).execute();
 			return;
 		}
@@ -308,19 +311,29 @@ public class SpiderGC{
 			if(login() != FormBase.IDOK) return;
 		}
 
-		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
-		if (options.execute() == FormBase.IDCANCEL) {return; }
-		String dist = options.distanceInput.getText();
-		if (dist.length()== 0) return;
-		distance = Common.parseDouble(dist);
-		
-		//save last radius to profile
-		Double distDouble = new Double();
-		distDouble.value = distance;
-		dist = distDouble.toString(0, 1, 0).replace(',', '.');
-		profile.distGC = dist;
+		boolean doNotgetFound = false;
 
-		boolean doNotgetFound = options.foundCheckBox.getState();
+		OCXMLImporterScreen options;
+		if (spiderAllFinds) {
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
+			if (options.execute() == FormBase.IDCANCEL) {return; }
+
+			distance = 1;
+		} else {
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);		if (options.execute() == FormBase.IDCANCEL) {return; }
+			String dist = options.distanceInput.getText();
+			if (dist.length()== 0) return;
+			distance = Common.parseDouble(dist);
+			
+			//save last radius to profile
+			Double distDouble = new Double();
+			distDouble.value = distance;
+			dist = distDouble.toString(0, 1, 0).replace(',', '.');
+			profile.distGC = dist;
+
+			doNotgetFound = options.foundCheckBox.getState();
+		}
+
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
 
@@ -339,8 +352,14 @@ public class SpiderGC{
 		}
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			if ( (!ch.is_archived) && (ch.kilom <= distanceInKm) && !(doNotgetFound && ch.is_found) && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")) ) {
-				cachesToUpdate.put(ch.wayPoint, new Integer(i));
+			if (spiderAllFinds) {
+				if ( (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")) ) {
+					cachesToUpdate.put(ch.wayPoint, new Integer(i));
+				}
+			} else {
+				if ( (!ch.is_archived) && (ch.kilom <= distanceInKm) && !(doNotgetFound && ch.is_found) && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")) ) {
+					cachesToUpdate.put(ch.wayPoint, new Integer(i));
+				}
 			}
 		}
 
@@ -352,9 +371,13 @@ public class SpiderGC{
 		infB.exec();
 		//Get first page
 		try{
-			ln = p.getProp("firstPage") + origin.getLatDeg(CWPoint.DD) + p.getProp("firstPage2") + origin.getLonDeg(CWPoint.DD)
-			                            + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );			
-			if(doNotgetFound) ln = ln + p.getProp("showOnlyFound");;
+			if (spiderAllFinds) {
+				ln = p.getProp("firstPageFinds") + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias));
+			} else {
+				ln = p.getProp("firstPage") + origin.getLatDeg(CWPoint.DD) + p.getProp("firstPage2") + origin.getLonDeg(CWPoint.DD)
+			                              + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );			
+				if(doNotgetFound) ln = ln + p.getProp("showOnlyFound");
+			}
 			pref.log("Getting first page: "+ln);
 			start = fetch(ln);
 			pref.log("Got first page");
@@ -442,9 +465,13 @@ public class SpiderGC{
 				}
 				infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
 				if(found_on_page < 20) distance = 0;
-				postStr = p.getProp("firstLine") + origin.getLatDeg(CWPoint.DD) + "&" + origin.getLonDeg(CWPoint.DD)
-							                     + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );			
-				if(doNotgetFound) postStr = postStr + p.getProp("showOnlyFound");
+				if (spiderAllFinds) {
+					postStr = p.getProp("firstLine");
+				} else {
+					postStr = p.getProp("firstLine") + origin.getLatDeg(CWPoint.DD) + "&" + origin.getLonDeg(CWPoint.DD)
+							                             + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );			
+					if(doNotgetFound) postStr = postStr + p.getProp("showOnlyFound");
+				}
 				if(distance > 0){
 					page_number++;
 					if(page_number >= 15) page_number = 5;

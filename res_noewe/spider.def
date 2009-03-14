@@ -25,6 +25,7 @@
 # Version 4.1 - 20080725 adaption to new GC-design (images and travelbugs)
 # Version 4.2 - 20081031 Fix for cache type (background image with name of type)
 # Version 4.3 - 20090314 maxDistance string added
+# Version 4.4 - 20090314 firstPageFinds string added
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -43,7 +44,8 @@ waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
 #--------------------------------------
 firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
 firstPage2         = &lon=
-# Regex to search for cachenames
+firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
+# Regex to search for cachenames 
 listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
 lineRex            = <tr\ bgcolor='#.{6}'>(?:(?s).*?)<td\ valign="top"\ align="left">((?s).*?)</tr>
 distRex            = <br\ />(.*?)(?:km|mi)(?:\\s*)</td>

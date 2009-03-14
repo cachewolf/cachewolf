@@ -25,7 +25,7 @@ import exp.*;
 public class MainMenu extends MenuBar {
 	private MenuItem profiles, preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap;
-	private MenuItem spider, update, chkVersion;
+	private MenuItem spider, spiderAllFinds, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
@@ -54,13 +54,14 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for import, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mnuImport = new MenuItem[6];
+		MenuItem[] mnuImport = new MenuItem[7];
 		mnuImport[0] = loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")); //TODO internationalization
 		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download von opencaching.de")); 
 		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider von geocaching.com")); 
-		mnuImport[3] = update      = new MenuItem(MyLocale.getMsg(1014,"Update cache data"));
-		mnuImport[4] = mnuSeparator = new MenuItem("-"); 
-		mnuImport[5] = mnuForceLogin      = new MenuItem("Always login to GC"); 
+		mnuImport[3] = spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")); 
+		mnuImport[4] = update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data"));
+		mnuImport[5] = mnuSeparator   = new MenuItem("-"); 
+		mnuImport[6] = mnuForceLogin  = new MenuItem(MyLocale.getMsg(216,"Always login to GC")); 
 		Menu importMenu = new Menu(mnuImport, MyLocale.getMsg(175,"Import"));
 		if (Global.getPref().forceLogin) mnuForceLogin.modifiers^=MenuItem.Checked;
 
@@ -299,6 +300,14 @@ public class MainMenu extends MenuBar {
 				SpiderGC spGC = new SpiderGC(pref, profile, true);
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doIt();
+				cacheDB.clear();
+				profile.readIndex();
+				tbp.resetModel();
+			}
+			if(mev.selectedItem == spiderAllFinds){
+				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				Global.mainTab.saveUnsavedChanges(false);
+				spGC.doIt(true);
 				cacheDB.clear();
 				profile.readIndex();
 				tbp.resetModel();
