@@ -323,7 +323,15 @@ public class SpiderGC{
 		boolean doNotgetFound = options.foundCheckBox.getState();
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
-		
+
+		//max distance in miles for URL, so we can get more than 80km
+		double saveDistanceInMiles = distance;
+		if ( Global.getPref().metricSystem != Metrics.IMPERIAL ) {
+			saveDistanceInMiles = Metrics.convertUnit(distance, Metrics.KILOMETER, Metrics.MILES);
+		}
+		// add a mile to be save from different distance calculations in CW and at GC
+		saveDistanceInMiles = java.lang.Math.ceil(saveDistanceInMiles) + 1;
+
 		Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
 		double distanceInKm = distance;
 		if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
@@ -344,8 +352,9 @@ public class SpiderGC{
 		infB.exec();
 		//Get first page
 		try{
-			ln = p.getProp("firstPage") + origin.getLatDeg(CWPoint.DD) + p.getProp("firstPage2") +origin.getLonDeg(CWPoint.DD);
-			if(doNotgetFound) ln = ln + "&f=1";
+			ln = p.getProp("firstPage") + origin.getLatDeg(CWPoint.DD) + p.getProp("firstPage2") + origin.getLonDeg(CWPoint.DD)
+			                            + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );			
+			if(doNotgetFound) ln = ln + p.getProp("showOnlyFound");;
 			pref.log("Getting first page: "+ln);
 			start = fetch(ln);
 			pref.log("Got first page");
@@ -433,7 +442,8 @@ public class SpiderGC{
 				}
 				infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
 				if(found_on_page < 20) distance = 0;
-				postStr = p.getProp("firstLine") + origin.getLatDeg(CWPoint.DD) + "&" + origin.getLonDeg(CWPoint.DD);
+				postStr = p.getProp("firstLine") + origin.getLatDeg(CWPoint.DD) + "&" + origin.getLonDeg(CWPoint.DD)
+							                     + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );			
 				if(doNotgetFound) postStr = postStr + p.getProp("showOnlyFound");
 				if(distance > 0){
 					page_number++;
