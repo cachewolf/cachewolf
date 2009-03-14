@@ -34,7 +34,8 @@ public class HintLogPanel extends CellPanel{
 	mButton prevBt = new mButton("<<");
 	private MyScrollBarPanel sbplog;
 	private int lastScrollbarWidth = 0;
-	
+	private boolean hintIsDecoded = false;
+
 	public HintLogPanel(){
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 		CellPanel logpane = split.getNextPanel();
@@ -62,19 +63,15 @@ public class HintLogPanel extends CellPanel{
 	}
 
 	public void setText(CacheHolderDetail cache){
-	        if (currCache != cache){
-	            this.currCache = cache;
-	            if(!cache.Hints.equals("null")) 
-	                hint.setText(STRreplace.replace(cache.Hints, "<br>", "\n"));
-	            else
-	                hint.setText("");
-	            crntLogPosition = 0;
-	            setLogs(0);
-	            moreBt.modify(0,ControlConstants.Disabled);
-	            prevBt.modify(0,ControlConstants.Disabled);
-	        }
+		if (currCache != cache){
+			this.currCache = cache;
+			resetHintText();
+			crntLogPosition = 0;
+			setLogs(0);
+			moreBt.modify(0,ControlConstants.Disabled);
+			prevBt.modify(0,ControlConstants.Disabled);
+		}
 	}
-
 	public void clear() {
 	    clearOutput();
 	    currCache = null;
@@ -168,10 +165,34 @@ public class HintLogPanel extends CellPanel{
 				setLogs(crntLogPosition);
 			}
 			if(ev.target == decodeButton){
-				hint.setText(Common.rot13(hint.getText()));
+				if(!hintIsDecoded)
+					decodeHintText();
+				else
+					resetHintText();
 			}
 		}
 	}
+
+	private void decodeHintText() {
+		if (hint.getText().length() > 0) {
+			Object selection = hint.getSelection();
+			if(selection != null)
+				hint.replaceSelection(Common.rot13(selection.toString()));
+			else
+				hint.setText(Common.rot13(hint.getText()));
+			decodeButton.setText("Encode");
+			hintIsDecoded = true;
+		}
+	}
+	private void resetHintText() {
+		if(!currCache.Hints.equals("null"))
+			hint.setText(STRreplace.replace(this.currCache.Hints, "<br>", "\n"));
+		else
+			hint.setText("");
+		decodeButton.setText("Decode");
+		hintIsDecoded = false;
+	}
+
 }
 
 class fastScrollText extends InteractivePanel { // TODO extend this class in a way that text can be marked and copied
