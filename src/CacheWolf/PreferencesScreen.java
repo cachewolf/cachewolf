@@ -16,8 +16,8 @@ import ewe.sys.*;
 */
 public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
-	mChoice NS, EW, inpLanguage, inpMetric;
-	mInput NSDeg, NSm, EWDeg, EWm, DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
+	mChoice inpLanguage, inpMetric, inpSpiderUpdates;
+	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
 	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
 	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort,chkProxyActive, chkDescShowImg;
@@ -175,10 +175,15 @@ public class PreferencesScreen extends Form {
 		inpLogsPerPage.setPreferredSize(40,-1);
 		//inpLogsPerPage.setTag(INSETS,new Insets(0,0,2,0));
 		//lblHlP.setTag(INSETS,new Insets(6,0,2,0));
+
 		frmHintLog.addNext(new mLabel(MyLocale.getMsg(633,"Max. logs to spider")),CellConstants.DONTSTRETCH,CellConstants.DONTFILL);	
 		frmHintLog.addLast(inpMaxLogsToSpider=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.EAST);
 		inpMaxLogsToSpider.setText(Convert.toString(pref.maxLogsToSpider));
 		inpMaxLogsToSpider.setPreferredSize(40,-1);
+		
+		String [] spiderUpdateOptions = { MyLocale.getMsg(640,"Yes"), MyLocale.getMsg(641,"No"), MyLocale.getMsg(642,"Ask") };
+		frmHintLog.addNext(new mLabel( MyLocale.getMsg(639,"Update caches when spidering?") ),DONTSTRETCH,DONTFILL|WEST);
+		frmHintLog.addLast(inpSpiderUpdates=new mChoice(spiderUpdateOptions, pref.spiderUpdates),DONTSTRETCH,DONTFILL|WEST);
 		pnlDisplay.addLast(frmHintLog,CellConstants.STRETCH,CellConstants.FILL);
 
 		/////////////////////////////////////////////////////////
@@ -308,6 +313,7 @@ public class PreferencesScreen extends Form {
 				pref.descShowImg=chkDescShowImg.getState();
 				Global.mainTab.tbP.myMod.setColumnNamesAndWidths();
 				pref.metricSystem = inpMetric.getInt() == 0 ? Metrics.METRIC : Metrics.IMPERIAL;
+				pref.spiderUpdates = inpSpiderUpdates.getInt();
 				pref.savePreferences();
 				pref.dirty = true; // Need to update table in case columns were enabled/disabled
 				this.close(0);
