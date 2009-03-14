@@ -23,11 +23,17 @@ public class CWWrapper {
 		if (Vm.getPlatform().equals("WinCE") ||
 		    Vm.getPlatform().equals("Win32")) {
 			/* we need extra quotes here, see vm/nmwin32_c.c */
-			arg = "\"" + arg + "\"";
+			if (arg.indexOf(" ") > -1)
+				arg = "\"" + arg + "\"";
 		} else if (Vm.getPlatform().equals("Java")) {
-			/* we need extra quotes here, see ewe/sys/Vm.java */
-			cmd = "\"" + cmd + "\"";
-			arg = "\"" + arg + "\"";
+			/* on win32 we need extra quotes here to support filenames whith spaces
+			 * (see ewe/sys/Vm.java)			 *
+			 * on linux (and os x?) we must not have extra quotes, filenames with spaces are unsupported
+			 * */
+			if (cmd.indexOf(" ") > -1)
+				cmd = "\"" + cmd + "\"";
+			if (arg.indexOf(" ") > -1)
+				arg = "\"" + arg + "\"";
 		}
 		Vm.exec(cmd, arg, 0, false);
 	}
