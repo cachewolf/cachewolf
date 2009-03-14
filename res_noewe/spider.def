@@ -24,6 +24,7 @@
 # Version 4.0 - 20080725 adaption to new GC-design
 # Version 4.1 - 20080725 adaption to new GC-design (images and travelbugs)
 # Version 4.2 - 20081031 Fix for cache type (background image with name of type)
+# Version 4.3 - 20090314 maxDistance string added
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -48,6 +49,7 @@ lineRex            = <tr\ bgcolor='#.{6}'>(?:(?s).*?)<td\ valign="top"\ align="l
 distRex            = <br\ />(.*?)(?:km|mi)(?:\\s*)</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
 showOnlyFound      = &f=1
+maxDistance        = &dist=
 firstLine          = http://www.geocaching.com/seek/nearest.aspx?
 nextListPage       = /seek/nearest.aspx
 
