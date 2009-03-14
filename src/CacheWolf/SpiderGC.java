@@ -476,7 +476,8 @@ public class SpiderGC{
 			Vm.showWait(false);
 			return;
 		}
-		pref.log("Found " + cachesToLoad.size() + " caches");
+		pref.log("Found " + cachesToLoad.size() + " new caches");
+		pref.log("Found " + cachesToUpdate.size() + " caches for update");
 		if (!infB.isClosed) infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
 
 		//=======
@@ -485,6 +486,21 @@ public class SpiderGC{
 		boolean loadAllLogs = (MAXLOGS > 5);
 
 		int spiderErrors = 0;
+		
+		if ( cachesToUpdate.size() > 0 ) {
+			switch (pref.spiderUpdates) {
+			case Preferences.NO:
+				cachesToUpdate.clear();
+				break;
+			case Preferences.ASK:
+				MessageBox mBox = new MessageBox(MyLocale.getMsg(5517,"Spider Updates?"), "" + cachesToUpdate.size() + MyLocale.getMsg(5518," caches in database need an update. Update now?") , FormBase.IDYES |FormBase.IDNO);
+				if (mBox.execute() != FormBase.IDOK){
+					cachesToUpdate.clear();
+				}
+				break;
+			}
+		}
+		
 		int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
 
 		for(int i = 0; i<cachesToLoad.size(); i++){
