@@ -203,6 +203,10 @@ public class Preferences extends MinML{
 	public int spiderUpdates = ASK;
 	/** Maximum number of new caches to spider */
 	public int maxSpiderNumber = 200;
+	/** Add short details to waypoint on export */
+	public boolean addDetailsToWaypoint = false;
+	/** Add short details to name on export */
+	public boolean addDetailsToName = false;
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -319,7 +323,11 @@ public class Preferences extends MinML{
 			tmp = atts.getValue("GPSBabelOptions");
 			if (tmp != null) garminGPSBabelOptions=tmp;
 			tmp = atts.getValue("MaxWaypointLength");
-			if (tmp != null) garminMaxLen=Convert.toInt(atts.getValue("MaxWaypointLength"));
+			if (tmp != null) garminMaxLen=Convert.toInt(tmp);
+			tmp = atts.getValue("addDetailsToWaypoint");
+			if (tmp != null) addDetailsToWaypoint = Boolean.valueOf(tmp).booleanValue();
+			tmp = atts.getValue("addDetailsToName");
+			if (tmp != null) addDetailsToName = Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("imagepanel")) {
 			showDeletedImages = Boolean.valueOf(atts.getValue("showdeletedimages")).booleanValue();
@@ -440,7 +448,8 @@ public class Preferences extends MinML{
 			outp.print("    <imagepanel showdeletedimages=\"" + SafeXML.strxmlencode(showDeletedImages) + "\"/>\n");
 			outp.print("    <hintlogpanel logsperpage=\"" + SafeXML.strxmlencode(logsPerPage) + "\" initialhintheight=\"" + SafeXML.strxmlencode(initialHintHeight) + "\"  maxspiderlogs=\"" + SafeXML.strxmlencode(maxLogsToSpider) + "\" />\n");
 			outp.print("    <solver ignorevariablecase=\"" + SafeXML.strxmlencode(solverIgnoreCase) + "\" degMode=\"" + SafeXML.strxmlencode(solverDegMode) + "\" />\n");
-			outp.print("    <garmin connection = \"" + SafeXML.strxmlencode(garminConn) + "\" GPSBabelOptions = \"" + SafeXML.strxmlencode(garminGPSBabelOptions) + "\" MaxWaypointLength = \"" + SafeXML.strxmlencode(garminMaxLen) + "\" />\n");
+			outp.print("    <garmin connection = \"" + SafeXML.strxmlencode(garminConn) + "\" GPSBabelOptions = \"" + SafeXML.strxmlencode(garminGPSBabelOptions) + "\" MaxWaypointLength = \"" + SafeXML.strxmlencode(garminMaxLen) +
+					        "\" addDetailsToWaypoint = \"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\" addDetailsToName = \"" + SafeXML.strxmlencode(addDetailsToName) + "\" />\n");
 			outp.print("    <opencaching downloadPicsOC=\"" + SafeXML.strxmlencode(downloadPicsOC) + "\" downloadMaps=\"" + SafeXML.strxmlencode(downloadMapsOC) + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadmissingOC) + "\"/>\n");
 			outp.print("	<location lat = \"" + SafeXML.strxmlencode(curCentrePt.getLatDeg(CWPoint.DD)) + "\" long = \"" + SafeXML.strxmlencode(curCentrePt.getLonDeg(CWPoint.DD)) + "\"/>\n");
 			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\"/>\n");

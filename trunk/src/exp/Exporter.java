@@ -415,5 +415,20 @@ public class Exporter {
         return ( sb.length() == originalTextLength ) ? text : sb.toString();
     } // end insertEntities
 
+    public static String getShortDetails( CacheHolder ch ) {
+    	StringBuffer strBuf = new StringBuffer(7);
+    	strBuf.append(ch.CacheSize.substring(0, 1).toLowerCase());
+    	strBuf.append(ch.hard.charAt(0));
+    	if ( ch.hard.endsWith(".5") ) {
+    		strBuf.append("5");
+    	}
+    	strBuf.append("/");
+    	strBuf.append(ch.terrain.charAt(0));
+    	if ( ch.terrain.endsWith(".5") ) {
+    		strBuf.append("5");
+    	}
+
+    	return strBuf.toString();
+    }
 
 }
