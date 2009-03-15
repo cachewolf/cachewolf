@@ -29,7 +29,9 @@ public class HintLogPanel extends CellPanel{
 	HtmlDisplay logs = new HtmlDisplay();
 	AniImage htmlTxtImage;
 	fastScrollText htmlImagDisp = new fastScrollText();
-	mButton decodeButton = new mButton("Decode");
+	private String decodeCaption = MyLocale.getMsg(400, "Decode");
+	private String encodeCaption = MyLocale.getMsg(401, "Encode");
+	mButton decodeButton = new mButton(this.decodeCaption);
 	mButton moreBt = new mButton(">>");
 	mButton prevBt = new mButton("<<");
 	private MyScrollBarPanel sbplog;
@@ -43,7 +45,7 @@ public class HintLogPanel extends CellPanel{
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
 		int initialHintHeight=Global.getPref().initialHintHeight;
 		if (initialHintHeight<0 || initialHintHeight>1000) initialHintHeight=Global.getPref().DEFAULT_INITIAL_HINT_HEIGHT;
-		hintpane.setPreferredSize(100,initialHintHeight); 
+		hintpane.setPreferredSize(100,initialHintHeight);
 		ScrollBarPanel sbphint = new MyScrollBarPanel(hint);
 		hintpane.addLast(sbphint,CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		hintpane.addNext(prevBt,CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -79,7 +81,7 @@ public class HintLogPanel extends CellPanel{
 	private void clearOutput() {
 		if (htmlTxtImage != null) {
 			htmlImagDisp.removeImage(htmlTxtImage);
-			htmlTxtImage.free();		
+			htmlTxtImage.free();
 		}
 	}
 	void setLogs(int crntLogPosition) {
@@ -116,13 +118,13 @@ public class HintLogPanel extends CellPanel{
 		htmlImagDisp.virtualSize = r;
 		htmlImagDisp.origin = new Point();
 		htmlImagDisp.checkScrolls();
-		// Can I get a reasonable value for scrollbarWidth before calling checkScrolls() 
+		// Can I get a reasonable value for scrollbarWidth before calling checkScrolls()
 		// and in a more reasonable way?
 		// Now its ugly: I paint it, calculate the scrollbars and then resize the panel...
 		// Better: Now I only redo it when the scrollbar width changed, which is not the case
 		// normally.
 		int scrollbarWidth = sbplog.vbar.getRect().width;
-		if (scrollbarWidth != lastScrollbarWidth) { 
+		if (scrollbarWidth != lastScrollbarWidth) {
 		    lastScrollbarWidth = scrollbarWidth;
     		    logs.resizeTo(htmlTxtImage.getWidth()-scrollbarWidth, htmlTxtImage.getHeight());
     		    logs.doPaint(draw, new Rect(0,0,htmlTxtImage.getWidth(), htmlTxtImage.getHeight()));
@@ -180,7 +182,7 @@ public class HintLogPanel extends CellPanel{
 				hint.replaceSelection(Common.rot13(selection.toString()));
 			else
 				hint.setText(Common.rot13(hint.getText()));
-			decodeButton.setText("Encode");
+			decodeButton.setText(this.encodeCaption);
 			hintIsDecoded = true;
 		}
 	}
@@ -189,7 +191,7 @@ public class HintLogPanel extends CellPanel{
 			hint.setText(STRreplace.replace(this.currCache.Hints, "<br>", "\n"));
 		else
 			hint.setText("");
-		decodeButton.setText("Decode");
+		decodeButton.setText(this.decodeCaption);
 		hintIsDecoded = false;
 	}
 
@@ -208,7 +210,7 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 		}
 		return	super.imageNotDragged(drag, where);
 	}
-	
+
 	// I copied it here because the original has a bug when scrolling
 	// added the support for scrolling / draggin only vertically
 	// rewrite to support for images bigger than the canvas
@@ -224,7 +226,7 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 		Point to = new Point(where.x-dc.start.x,where.y-dc.start.y);
 		if (!scrollHorizontal) to.x = 0;
 		if (!scrollVertical) to.y = 0;
-		//if (origin.y - to.y < 0 || origin.y - to.y + r.height > moving.location.height) return true; 
+		//if (origin.y - to.y < 0 || origin.y - to.y + r.height > moving.location.height) return true;
 		if (moving == null) { // this is not used only copied
 			if (!dragBackground) return true;
 			int dx = dc.start.x-where.x, dy = dc.start.y-where.y;
@@ -276,6 +278,6 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 		}
 	}
 
-	
-	
+
+
 }
