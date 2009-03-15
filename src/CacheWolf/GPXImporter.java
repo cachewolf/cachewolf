@@ -19,7 +19,7 @@ public class GPXImporter extends MinML {
 	Profile profile;
 	Vector cacheDB;
 	CacheHolderDetail chD;
-	String strData, saveDir, logData, logIcon, logDate, logFinder;
+	String strData, saveDir, logData, logIcon, logDate, logFinder, logId;
 	boolean inWpt, inCache, inLogs, inBug;
 	public XMLElement document;
 	private Vector files = new Vector();
@@ -223,8 +223,13 @@ public class GPXImporter extends MinML {
 			chD.is_HTML= true;
 		}
 
-		if (name.equals("groundspeak:logs") || name.equals("log") || name.equals("terra:logs")) {
+		if (name.equals("groundspeak:logs") || name.equals("logs") || name.equals("terra:logs")) {
 			inLogs = true;
+			return;
+		}
+		if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log")) {
+			inLogs = true;
+			logId = atts.getValue("id");
 			return;
 		}
 		if (name.equals("groundspeak:travelbugs")) {
@@ -266,6 +271,8 @@ public class GPXImporter extends MinML {
 						  (logFinder.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && logFinder.equalsIgnoreCase(pref.myAlias2)))) {
 							chD.CacheStatus=logDate;
 							chD.is_found=true;
+							chD.OwnLogId = logId;
+							chD.OwnLogText = logData;
 				}
 				return;
 			}
@@ -428,7 +435,14 @@ public class GPXImporter extends MinML {
 			chD.CacheSize = strData;
 			return;
 		}
-		
+		if (name.equals("groundspeak:country")|| name.equals("country")){
+			chD.Country = strData;
+			return;
+		}
+		if (name.equals("groundspeak:state")|| name.equals("state")){
+			chD.State = strData;
+			return;
+		}
 		if (name.equals("terra:size")){
 			chD.CacheSize = TCSizetoText(strData);
 		}

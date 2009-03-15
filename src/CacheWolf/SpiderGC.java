@@ -695,6 +695,24 @@ public class SpiderGC{
 						pref.log("Getting cache name");
 						chD.CacheName = SafeXML.cleanback(getName(completeWebPage));
 						if (pref.debug) pref.log("Name: " + chD.CacheName); else pref.log("Got name");
+						
+						pref.log("Trying location (country/state)");
+						String location = getLocation(completeWebPage);
+						if (location.length() != 0) {
+							int countryStart = location.indexOf(",");
+							if (countryStart > -1) {
+								chD.Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
+								chD.State = SafeXML.cleanback(location.substring(0, countryStart).trim());								
+							} else {
+								chD.Country = location.trim();
+								chD.State = "";
+							}
+							pref.log("Got location (country/state)");							
+						} else {
+							chD.Country = "";
+							chD.State = "";
+							pref.log("No location (country/state) found");
+						}
 
 						pref.log("Trying owner");
 						chD.CacheOwner = SafeXML.cleanback(getOwner(completeWebPage)).trim();
@@ -876,6 +894,19 @@ public class SpiderGC{
 	}
 
 	/**
+	 * Get the cache location (country and state)
+	 * @param doc A previously fetched cachepage
+	 * @return the location (country and state) of the cache
+	 */
+	private String getLocation(String doc) throws Exception{
+		inRex = new Regex(p.getProp("cacheLocationRex"));
+		inRex.search(doc);
+		if (!inRex.didMatch()) return "";
+						
+		return inRex.stringMatched(1);
+	}
+		
+	/**
 	 * Get the cache name
 	 * @param doc A previously fetched cachepage
 	 * @return the name of the cache
@@ -980,6 +1011,8 @@ public class SpiderGC{
 	private LogList getLogs(String doc, CacheHolderDetail chD) throws Exception{
 		String icon = "";
 		String name = "";
+		String logText = "";
+		String logId = "";
 		LogList reslts = new LogList();
 		Regex blockRex = new Regex(p.getProp("blockRex"));
 		blockRex.search(doc);
@@ -994,6 +1027,7 @@ public class SpiderGC{
 		Extractor exName = new Extractor(nameTemp, p.getProp("nameExStart"), p.getProp("nameExEnd"), 0 , true);
 		Extractor exDate = new Extractor(singleLog,p.getProp("dateExStart"), p.getProp("dateExEnd"), 0 , true);
 		Extractor exLog = new Extractor(singleLog, p.getProp("logExStart"), p.getProp("logExEnd"), 0, true);
+		Extractor exLogId = new Extractor(singleLog, p.getProp("logIdExStart"), p.getProp("logIdExEnd"), 0, true);
 		//Vm.debug("Log Block: " + singleLog);
 		int nLogs=0;
 		while(exSingleLog.endOfSearch() == false){
@@ -1007,13 +1041,17 @@ public class SpiderGC{
 			//Vm.debug("--------------------------------------------");
 			icon = exIcon.findNext();
 			name = exName.findNext();
+			logText = exLog.findNext();
+			logId = exLogId.findNext();
 			String d=DateFormat.logdate2YMD(exDate.findNext());
 			if((icon.equals(p.getProp("icon_smile")) || icon.equals(p.getProp("icon_camera")) || icon.equals(p.getProp("icon_attended"))) &&
 				(name.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && name.equalsIgnoreCase(pref.myAlias2))) )  {
 				chD.is_found = true;
 				chD.CacheStatus = d;
+				chD.OwnLogId = logId;
+				chD.OwnLogText = logText;
 			}
-			if (nLogs<=MAXLOGS) reslts.add(new Log(icon,d,name,exLog.findNext()));
+			if (nLogs<=MAXLOGS) reslts.add(new Log(icon,d,name,logText));
 
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
@@ -1022,9 +1060,10 @@ public class SpiderGC{
 			exName.setSource(nameTemp);
 			exDate.setSource(singleLog);
 			exLog.setSource(singleLog);
+			exLogId.setSource(singleLog);
 			// We cannot simply stop if we have reached MAXLOGS just in case we are waiting for
 			// a log by our alias that happened earlier.
-			if (nLogs>=MAXLOGS && chD.is_found) break;
+			if (nLogs>=MAXLOGS && chD.is_found && (chD.OwnLogId.length() != 0)) break;
 		}
 		if (nLogs>MAXLOGS) {
 			reslts.add(Log.maxLog());

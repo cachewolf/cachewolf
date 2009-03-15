@@ -33,6 +33,10 @@ public class CacheHolderDetail extends CacheHolder {
 	  //public String Bugs = EMPTY; Superceded by Travelbugs
 	  public String URL = EMPTY;
 	  public String Solver = EMPTY;
+	  public String OwnLogId = EMPTY;
+	  public String OwnLogText = EMPTY;
+	  public String Country = EMPTY;
+	  public String State = EMPTY;
 	  /** For faster cache import (from opencaching) changes are only written when the details are freed from memory 
 	   * If you want to save the changes automatically when the details are unloaded, set this to true */ 
 	  public boolean hasUnsavedChanges = false;
@@ -105,6 +109,12 @@ public class CacheHolderDetail extends CacheHolder {
 		  setHints(newCh.Hints);
 		  setCacheLogs(newCh.CacheLogs);
 		  
+		  if (newCh.OwnLogId.length()>0) this.OwnLogId=newCh.OwnLogId;
+		  if (newCh.OwnLogText.length()>0) this.OwnLogText=newCh.OwnLogText;
+		  
+		  if (newCh.Country.length()>0) this.Country=newCh.Country;
+		  if (newCh.State.length()>0) this.State=newCh.State;
+		  
 		  if (newCh.Solver.length()>0) this.Solver=newCh.Solver;
 	 	return this;
 	  }
@@ -154,14 +164,22 @@ public class CacheHolderDetail extends CacheHolder {
 			in.close();
 			Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);		
 			LongDescription = ex.findNext();
-			ex = new Extractor(text, "<HINTS><![CDATA[", "]]></HINTS>", 0, true);
-			Hints = ex.findNext();
+			ex = new Extractor(text, "<COUNTRY><![CDATA[", "]]></COUNTRY>", 0, true);
+			Country = ex.findNext();
+			ex = new Extractor(text, "<STATE><![CDATA[", "]]></STATE>", 0, true);
+			State = ex.findNext();
 			// Attributes
 			ex = new Extractor(text,"<ATTRIBUTES>","</ATTRIBUTES>",0,true);
 			attributes.XmlAttributesEnd(ex.findNext());
 			
+			ex = new Extractor(text, "<HINTS><![CDATA[", "]]></HINTS>", 0, true);
+			Hints = ex.findNext();
 			ex = new Extractor(text, "<LOGS>","</LOGS>", 0, true);
 			dummy = ex.findNext();
+			ex = new Extractor(dummy, "<OWNLOGID>","</OWNLOGID>", 0, true);
+			OwnLogId = ex.findNext();
+			ex = new Extractor(dummy, "<OWNLOG><![CDATA[", "]]></OWNLOG>", 0, true);
+			OwnLogText = ex.findNext();
 			CacheLogs.clear();
 			ex = new Extractor(dummy, "<LOG>","</LOG>", 0, true);
 			
@@ -278,9 +296,13 @@ public class CacheHolderDetail extends CacheHolder {
 				  detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n");
 				  detfile.print("<CACHEDETAILS>\r\n");
 				  detfile.print("<DETAILS><![CDATA["+LongDescription+"]]></DETAILS>\r\n");
+				  detfile.print("<COUNTRY><![CDATA["+Country+"]]></COUNTRY>\n");
+				  detfile.print("<STATE><![CDATA["+State+"]]></STATE>\n");
 				  detfile.print(attributes.XmlAttributesWrite());
 				  detfile.print("<HINTS><![CDATA["+Hints+"]]></HINTS>\r\n");
 				  detfile.print("<LOGS>\r\n");
+				  detfile.print("<OWNLOGID>"+OwnLogId+"</OWNLOGID>\r\n");
+				  detfile.print("<OWNLOG><![CDATA["+OwnLogText+"]]></OWNLOG>\r\n");
 				  for(int i = 0; i < CacheLogs.size(); i++){
 					  detfile.print(CacheLogs.getLog(i).toXML());
 				  }
