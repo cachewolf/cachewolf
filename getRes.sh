@@ -17,3 +17,4 @@ cp -fa res_noewe/languages/* work/languages/
 
 find work -type f | xargs chmod 644
 find work -type d | xargs chmod 755
+#
