@@ -55,7 +55,7 @@ public class OCXMLImporter extends MinML {
 	String ocSeekUrl = new String("http://"+OPENCACHING_HOST+"/viewcache.php?cacheid=");
 	String cacheID = new String();
 
-	String logData, logIcon, logDate, logFinder;
+	String logData, logIcon, logDate, logFinder, logId;
 	boolean loggerRecommended;
 	int logtype;
 	String user;
@@ -409,11 +409,7 @@ public class OCXMLImporter extends MinML {
 			logtype = Convert.toInt(atts.getValue("id"));
 			switch (logtype) {
 			case 1: 
-				logIcon = GPXImporter.typeText2Image("Found"); 
-				if (logFinder.equalsIgnoreCase(user) || logFinder.equalsIgnoreCase(pref.myAlias2)) { // see also endCacheLog
-					chD.is_found = true; 
-					chD.CacheStatus = MyLocale.getMsg(318,"Found");
-				}
+				logIcon = GPXImporter.typeText2Image("Found");
 				break;
 			case 2:	logIcon = GPXImporter.typeText2Image("Not Found"); 
 			chD.noFindLogs += 1;
@@ -423,7 +419,10 @@ public class OCXMLImporter extends MinML {
 			loggerRecommended = atts.getValue("recommended").equals("1");
 			return;
 		}
-
+		
+		if (name.equals("id")){
+			logId = atts.getValue("id");
+		}
 	}
 
 	private void endCache(String name){
@@ -498,6 +497,10 @@ public class OCXMLImporter extends MinML {
 		}
 		if(name.equals("datehidden")) {
 			chD.DateHidden = strData.substring(0,10); //Date;
+			return;
+		}
+		if (name.equals("country")){
+			chD.Country = strData;
 			return;
 		}
 	}
@@ -638,6 +641,12 @@ public class OCXMLImporter extends MinML {
 	private void endCacheLog(String name){
 		if (name.equals("cachelog")){ // </cachelog>
 			chD.CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended));
+			if((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(pref.myAlias2)) && logtype == 1) {
+						chD.CacheStatus=logDate;
+						chD.is_found=true;
+						chD.OwnLogId = logId;
+						chD.OwnLogText = logData;
+			}
 			chD.hasUnsavedChanges = true; //chD.saveCacheDetails(profile.dataDir);
 			return;
 		}
@@ -650,17 +659,10 @@ public class OCXMLImporter extends MinML {
 
 		if (name.equals("date"))  {
 			logDate = new String(strData);
-			if (chD.is_found) {
-				chD.CacheStatus=strData.substring(0,10);
-			}
 			return;
 		}
 		if (name.equals("userid")){
 			logFinder = new String(strData);
-			if((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(pref.myAlias2)) && logtype == 1){
-				chD.is_found = true; // see startCacheLog - in the current .xml this is set by startCacheLog but we sequence in the xml from opencaching might change, so I leave this also here
-				chD.CacheStatus = MyLocale.getMsg(318,"Found");
-			}
 			return;
 		}
 		if (name.equals("text")){ 
