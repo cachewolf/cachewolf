@@ -315,12 +315,13 @@ public class SpiderGC{
 
 		OCXMLImporterScreen options;
 		if (spiderAllFinds) {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
 			if (options.execute() == FormBase.IDCANCEL) {return; }
 
 			distance = 1;
 		} else {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);		if (options.execute() == FormBase.IDCANCEL) {return; }
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
+			if (options.execute() == FormBase.IDCANCEL) {return; }
 			String dist = options.distanceInput.getText();
 			if (dist.length()== 0) return;
 			distance = Common.parseDouble(dist);
@@ -333,6 +334,18 @@ public class SpiderGC{
 
 			doNotgetFound = options.foundCheckBox.getState();
 		}
+		
+		int maxNumber = -1;
+		String maxNumberString = options.maxNumberInput.getText();
+		if (maxNumberString.length()!= 0) {
+			maxNumber = Common.parseInt(maxNumberString);
+		}
+		if (maxNumber != pref.maxSpiderNumber) {
+			pref.maxSpiderNumber = maxNumber;
+			pref.savePreferences();
+		}
+		if (maxNumber == 0) return;
+		boolean maxNumberAbort = false;
 
 		boolean getImages = options.imagesCheckBox.getState();
 		options.close(0);
@@ -436,7 +449,17 @@ public class SpiderGC{
 						String waypoint=getWP(lineRex.stringMatched(1));
 						Integer nr;
 						if((nr=(Integer)indexDB.get(waypoint)) == null){
-							cachesToLoad.add(waypoint);
+							if ( (maxNumber > 0) && (cachesToLoad.size() >= maxNumber) ) {
+								maxNumberAbort = true;
+								
+								//add no more caches
+								distance = 0;
+								
+								//don't update existing caches, because list is not correct when aborting
+								cachesToUpdate.clear();
+							} else {
+								cachesToLoad.add(waypoint);
+							}
 						} else {
 							pref.log(waypoint+" already in DB");
 							ch=(CacheHolder) cacheDB.get(nr.intValue());
@@ -520,7 +543,7 @@ public class SpiderGC{
 				cachesToUpdate.clear();
 				break;
 			case Preferences.ASK:
-				MessageBox mBox = new MessageBox(MyLocale.getMsg(5517,"Spider Updates?"), "" + cachesToUpdate.size() + MyLocale.getMsg(5518," caches in database need an update. Update now?") , FormBase.IDYES |FormBase.IDNO);
+				MessageBox mBox = new MessageBox(MyLocale.getMsg(5517,"Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518," caches in database need an update. Update now?") , FormBase.IDYES |FormBase.IDNO);
 				if (mBox.execute() != FormBase.IDOK){
 					cachesToUpdate.clear();
 				}
@@ -577,6 +600,9 @@ public class SpiderGC{
 		Vm.showWait(false);
 		if ( spiderErrors > 0) {
 			new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
+		}
+		if ( maxNumberAbort ) {
+			new MessageBox(MyLocale.getMsg(5519,"Information"),MyLocale.getMsg(5520,"Only the given maximum of caches were loaded.%0aRepeat spidering later to load more caches.%0aNo already existing caches were updated."),FormBase.DEFOKB).execute();			
 		}
 		Global.getProfile().saveIndex(Global.getPref(),true);
 	}
