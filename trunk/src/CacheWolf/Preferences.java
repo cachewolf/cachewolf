@@ -201,6 +201,8 @@ public class Preferences extends MinML{
 	public int metricSystem = Metrics.METRIC;
 	/** Load updated caches while spidering */
 	public int spiderUpdates = ASK;
+	/** Maximum number of new caches to spider */
+	public int maxSpiderNumber = 200;
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -368,6 +370,8 @@ public class Preferences extends MinML{
 			forceLogin = Boolean.valueOf(atts.getValue("forcelogin")).booleanValue();
 			tmp = atts.getValue("spiderUpdates");
 			if (tmp != null) spiderUpdates=Convert.parseInt(tmp);
+			tmp = atts.getValue("maxSpiderNumber");
+			if (tmp != null) maxSpiderNumber=Convert.parseInt(tmp);
 		}
 		else if (name.equals("details")) {
 			maxDetails=Common.parseInt(atts.getValue("cacheSize"));
@@ -439,7 +443,7 @@ public class Preferences extends MinML{
 			outp.print("    <garmin connection = \"" + SafeXML.strxmlencode(garminConn) + "\" GPSBabelOptions = \"" + SafeXML.strxmlencode(garminGPSBabelOptions) + "\" MaxWaypointLength = \"" + SafeXML.strxmlencode(garminMaxLen) + "\" />\n");
 			outp.print("    <opencaching downloadPicsOC=\"" + SafeXML.strxmlencode(downloadPicsOC) + "\" downloadMaps=\"" + SafeXML.strxmlencode(downloadMapsOC) + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadmissingOC) + "\"/>\n");
 			outp.print("	<location lat = \"" + SafeXML.strxmlencode(curCentrePt.getLatDeg(CWPoint.DD)) + "\" long = \"" + SafeXML.strxmlencode(curCentrePt.getLonDeg(CWPoint.DD)) + "\"/>\n");
-			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\"/>\n");
+			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\"/>\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");

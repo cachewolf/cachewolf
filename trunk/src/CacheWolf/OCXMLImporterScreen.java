@@ -15,14 +15,17 @@ public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;
 	Preferences pref;
 	mInput distanceInput;
+	mInput maxNumberInput;
 	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox;
 	mLabel distLbl;
+	mLabel maxNumberLbl;
 	mLabel distUnit;
 	static int DIST = 1;
 	static int IMAGES = 2;
 	static int ALL = 4;
 	static int INCLUDEFOUND = 8;
 	static int ISGC = 16;
+	static int MAXNUMBER = 32;
 
 	
 	public OCXMLImporterScreen(String title, int options) {
@@ -48,6 +51,19 @@ public class OCXMLImporterScreen extends Form {
 			distanceInput.setText(dist1);
 			this.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			this.addLast(distUnit = new mLabel(" km/mi."),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		}
+		
+		if ((options & MAXNUMBER) > 0) {
+			this.addNext(maxNumberLbl = new mLabel(MyLocale.getMsg(1623,"Max. number:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			maxNumberInput = new mInput();
+			if ( pref.maxSpiderNumber < 0 ) {
+				maxNumberInput.setText("");
+			} else {
+				maxNumberInput.setText(Integer.toString(pref.maxSpiderNumber));
+			}
+			maxNumberInput.setText(Integer.toString(pref.maxSpiderNumber));
+			this.addNext(maxNumberInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			this.addLast( new mLabel(MyLocale.getMsg(1624," caches")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
 
 		if ((options & IMAGES) > 0) {
