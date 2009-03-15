@@ -22,6 +22,9 @@ public class LocExporter extends Exporter{
 		super();
 		this.setMask("*.loc");
 		this.setHowManyParams(NO_PARAMS);
+		if (Global.getPref().addDetailsToName) {
+			this.setNeedCacheDetails(true);
+		}
 		if ((new File(FileBase.getProgramDirectory()+"/garminmap.xml")).exists()) {
 			gm=new GarminMap();
 			gm.readGarminMap();
@@ -38,6 +41,9 @@ public class LocExporter extends Exporter{
 		StringBuffer strBuf = new StringBuffer(200);
 		strBuf.append("<waypoint>\r\n   <name id=\"");
 		String wptName=simplifyString(chD.wayPoint);
+		if (Global.getPref().addDetailsToWaypoint) {
+			wptName += getShortDetails( chD );			
+		}
 		if (Global.getPref().garminMaxLen==0)
 			strBuf.append(wptName);
 		else {
@@ -47,6 +53,16 @@ public class LocExporter extends Exporter{
 		}
 		strBuf.append("\"><![CDATA[");
 		strBuf.append(simplifyString(chD.CacheName));
+		if (Global.getPref().addDetailsToName) {
+			strBuf.append(", ");
+			strBuf.append(CacheType.wayType[Common.parseInt(chD.type)][CacheType.WPT_TEXT]);			
+			strBuf.append(" ");
+			strBuf.append( getShortDetails( chD ) );
+			if (!chD.Hints.equals("null")) {
+				strBuf.append("; Hint:");
+				strBuf.append( simplifyString(Common.rot13(chD.Hints)) );			
+			}
+		}
 		strBuf.append("]]></name>\r\n   <coord lat=\"");
 		strBuf.append(chD.pos.getLatDeg(CWPoint.DD));
 		strBuf.append("\" lon=\"");

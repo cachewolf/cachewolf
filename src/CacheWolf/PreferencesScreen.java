@@ -15,12 +15,12 @@ import ewe.sys.*;
 *	Class ID=600
 */
 public class PreferencesScreen extends Form {
-	mButton cancelB, applyB, brwBt, gpsB,btnCentre;
+	mButton cancelB, applyB, brwBt, gpsB;
 	mChoice inpLanguage, inpMetric, inpSpiderUpdates;
-	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, inpGPS, 
+	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, 
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
-	mCheckBox dif, ter, loc, own, hid, stat, dist, bear, chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, 
-	          chkTabsAtTop, chkShowStatus,chkHasCloseButton,chkSynthShort,chkProxyActive, chkDescShowImg;
+	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus,chkHasCloseButton,
+	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
 	mLabel lblGarmin;
@@ -105,11 +105,7 @@ public class PreferencesScreen extends Form {
 		pnlGeneral.addLast(pnlBrowser,HSTRETCH,HFILL);
 		
 		pnlGeneral.addLast(gpsB = new mButton("GPS: " + pref.mySPO.portName+"/"+pref.mySPO.baudRate),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		//content.addNext(Alias.setTag(Control.SPAN, new Dimension(3,1)),content.DONTSTRETCH, (content.HFILL|content.WEST));
-/*		pnlGeneral.addLast(inpGPS=new mInput(""));
-		inpGPS.modify(ControlConstants.Disabled|ControlConstants.NoFocus,0);
-		inpGPS.setText(pref.mySPO.portName+"/"+pref.mySPO.baudRate);
-	*/	
+
 		// Garmin and GPSBabel
 		pnlGeneral.addNext(lblGarmin=new mLabel(MyLocale.getMsg(173,"Garmin:  PC Port:")),DONTSTRETCH,LEFT);
 //		lblGarmin.setTag(INSETS,new Insets(4,0,0,0));
@@ -122,7 +118,12 @@ public class PreferencesScreen extends Form {
 		//frmGarmin.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_TOP;
 		//frmGarmin.setTag(INSETS,new Insets(4,0,0,0));
 		//pnlGeneral.addLast(frmGarmin);
-		pnlGeneral.addLast(new mLabel(""));
+		pnlGeneral.addNext(new mLabel(MyLocale.getMsg(643,"Append cache details to:")),DONTSTRETCH,LEFT);
+		pnlGeneral.addNext(chkAddDetailsToWaypoint=new mCheckBox(MyLocale.getMsg(644,"waypoints")),DONTSTRETCH,RIGHT);
+		chkAddDetailsToWaypoint.setState(pref.addDetailsToWaypoint);
+		pnlGeneral.addLast(chkAddDetailsToName=new mCheckBox(MyLocale.getMsg(645,"names")),STRETCH,LEFT);
+		chkAddDetailsToName.setState(pref.addDetailsToName);
+		//pnlGeneral.addLast(new mLabel(""));
 		
 		/////////////////////////////////////////////////////////
 		// Second panel - Screen
@@ -314,6 +315,9 @@ public class PreferencesScreen extends Form {
 				Global.mainTab.tbP.myMod.setColumnNamesAndWidths();
 				pref.metricSystem = inpMetric.getInt() == 0 ? Metrics.METRIC : Metrics.IMPERIAL;
 				pref.spiderUpdates = inpSpiderUpdates.getInt();
+				pref.addDetailsToWaypoint = chkAddDetailsToWaypoint.getState();
+				pref.addDetailsToName = chkAddDetailsToName.getState();
+
 				pref.savePreferences();
 				pref.dirty = true; // Need to update table in case columns were enabled/disabled
 				this.close(0);
