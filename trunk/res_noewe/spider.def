@@ -26,6 +26,7 @@
 # Version 4.2 - 20081031 Fix for cache type (background image with name of type)
 # Version 4.3 - 20090314 maxDistance string added
 # Version 4.4 - 20090314 firstPageFinds string added
+# Version 4.5 - 20090315 strings for spidering country/state/logId
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -73,6 +74,7 @@ sizeRex            = alt="Size:\ ((?s).*?)"\ title="Size:
 difficultyRex      = <span\ id="Difficulty">.*?alt="(.*?)\ out\ of
 terrainRex         = <span\ id="Terrain">.*?alt="(.*?)\ out\ of
 cacheTypeRex       = \\./images/WptTypes/(.*?)\\.gif
+cacheLocationRex   = <span\ id="Location">In\ ((?s).*?)</span>
 
 #--------------------------------------
 #Section2a: Logs
@@ -94,6 +96,8 @@ dateExStart        = align='absmiddle'>&nbsp;
 dateExEnd          = \ by\ <
 logExStart         = found)<br\ />
 logExEnd           = <br\ />[
+logIdExStart         = by\ <a\ name="
+logIdExEnd           = "\ style="
 # Die Icons, die einen erfolgreichen Fund signalisieren
 icon_smile         = icon_smile.gif
 icon_camera        = icon_camera.gif
