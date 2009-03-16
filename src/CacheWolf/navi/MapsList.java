@@ -32,13 +32,11 @@ public class MapsList extends Vector {
 		super(); // forget already loaded maps
 		//if (mmp.mapImage != null) 
 		String dateien[];
-		FileBugfix files = new FileBugfix(mapsPath);
-		String rawFileName = new String();
-		String[] dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY);
-		Vector dirs;
-		if (dirstmp != null) dirs = new Vector(dirstmp);
-		else dirs = new Vector();
-		dirs.add("."); // include the mapsPath itself
+		FileBugfix files;
+		String rawFileName;
+		String[] dirstmp;
+		Vector dirs = new Vector();
+		dirs.add(""); // start with the mapsPath (only this one , without its subdirs)
 		MapListEntry tempMIO;
 		MessageBox f = null; 
 		// sort(new StandardComparer(), false);
