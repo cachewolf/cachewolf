@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project name="CacheWolf" default="release">
 
-	<!-- ewe builder on exist for windows and linux -->
+	<!-- ewe builder only exist for windows and linux -->
 	<fail message="unsupport operating system. sorry">
 		<condition>
 			<not>
@@ -26,7 +26,7 @@
 	<property name="assemble.dir" value="assemble"/>
 
 	<!-- lists of files to be packaged, this should become less confusing later on -->
-	<property name="template.files" value="**/*.tpl"/>
+	<property name="template.files" value="*/*.tpl"/>
 	<property name="icons.gui.files" value="dnf.gif,bug.gif,red.png,yellow.png,blue.png"/>
 	<property name="icons.log.files" value="traffic_cone.gif,recommendedlog.gif,icon_smile.gif,icon_sad.gif,icon_rsvp.gif,icon_note.gif,icon_needsmaint.gif,icon_maint.gif,icon_enabled.gif,icon_disabled.gif,icon_camera.gif,icon_attended.gif,big_smile.gif,coord_update.gif,icon_greenlight.gif,icon_redlight.gif"/>
 	<property name="icons.cache.files" value="11.gif,8.gif,6.gif,5.gif,4.gif,3.gif,2.gif,1858.gif,13.gif,137.gif,12.gif"/>
@@ -46,8 +46,19 @@
 	</target>
 
 	<!-- <target name="release" depends="CW-ARM,CW-MIPS,CW-SH3,CW-PPC2003,CW-EWE,CW-Win32,CW-Java" description="package all platforms"> -->
-	<target name="release" depends="CW-PPC2003,CW-EWE,CW-Win32,CW-Java" description="package all platforms">
+	<target name="release" depends="CW-PPC2003,CW-PPC2003-CAB,CW-EWE,CW-Win32,CW-Java" description="package all platforms">
 		<echo message="packages for all platforms are now in ${pkg.dir}"/>
+	</target>
+
+	<target name="CW-PPC2003-CAB" depends="CW-PPC2003,compilecabhelper" description="package PPC2003 build as CAB" if="build.cab">
+		<delete dir="${assemble.dir}"/>
+		<mkdir dir="${assemble.dir}"/>
+		<java classname="build.CabHelper" classpath="bin">
+			<arg value="${pkg.dir}/CacheWolf-PPC2003.zip"/>
+			<arg value="${assemble.dir}"/>
+		</java>
+		<cab cabfile="${pkg.dir}/CacheWolf-PPC2003.cab" basedir="${assemble.dir}"/>
+		<delete dir="${assemble.dir}"/>
 	</target>
 	
 	<target name="CW-ARM" depends="ewebuild" description="package ARM release of CacheWolf">
@@ -225,7 +236,7 @@
 			<fileset dir="resources/attributes"/>
 		</copy>
 		<!-- copy addons -->
-		<copy todir="${assemble.dir}/addons">
+		<copy todir="${assemble.dir}">
 			<fileset dir="res_noewe">
 				<include name="Garmin*.zip"/>
 				<include name="POI*.zip"/>
@@ -239,5 +250,17 @@
 		</copy>
 		<!-- spider.def -->
 		<copy todir="${assemble.dir}" file="res_noewe/spider.def"/>
+	</target>
+
+	<target name="compilecabhelper" description="helper classes for building cabs" if="build.cab">
+		<mkdir dir="${classes.dir}"/>
+		<javac
+			source="1.5" 
+			target="1.5" 
+			encoding="windows-1252"
+			destdir="${classes.dir}"
+			srcdir="src"
+			includes="build/*.java"
+		/>
 	</target>
 </project>
