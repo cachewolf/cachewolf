@@ -207,6 +207,8 @@ public class Preferences extends MinML{
 	public boolean addDetailsToWaypoint = false;
 	/** Add short details to name on export */
 	public boolean addDetailsToName = false;
+	/** The own GC member ID */
+	public String gcMemberId = "";
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -278,6 +280,7 @@ public class Preferences extends MinML{
 			SpiderGC.passwort=password;
 		}
 		else if(name.equals("alias2")) myAlias2 = SafeXML.cleanback(atts.getValue("name"));
+		else if(name.equals("gcmemberid")) gcMemberId = atts.getValue("name");
 		else if(name.equals("location")){
 			curCentrePt.set(atts.getValue("lat")+" "+atts.getValue("long"));
 		}
@@ -433,6 +436,7 @@ public class Preferences extends MinML{
 			outp.print("    <lastprofile autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\">" + SafeXML.strxmlencode(lastProfile) + "</lastprofile>\n"); //RB
 			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
 			outp.print("	<alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
+			outp.print("	<gcmemberid name =\""+ SafeXML.clean(gcMemberId) +"\"/>\n");
 			outp.print("	<browser name = \"" + SafeXML.strxmlencode(browser) + "\"/>\n");
 			outp.print("	<proxy prx = \"" + SafeXML.strxmlencode(myproxy) + "\" prt = \"" + SafeXML.strxmlencode(myproxyport) + "\" active = \"" + SafeXML.strxmlencode(proxyActive) + "\" />\n");
 			outp.print("	<port portname = \"" + SafeXML.strxmlencode(mySPO.portName) + "\" baud = \"" + SafeXML.strxmlencode(mySPO.baudRate) + "\"/>\n");

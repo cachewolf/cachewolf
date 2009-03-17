@@ -417,15 +417,20 @@ public class Exporter {
 
     public static String getShortDetails( CacheHolder ch ) {
     	StringBuffer strBuf = new StringBuffer(7);
-    	strBuf.append(ch.CacheSize.substring(0, 1).toLowerCase());
-    	strBuf.append(ch.hard.charAt(0));
-    	if ( ch.hard.endsWith(".5") ) {
-    		strBuf.append("5");
-    	}
-    	strBuf.append("/");
-    	strBuf.append(ch.terrain.charAt(0));
-    	if ( ch.terrain.endsWith(".5") ) {
-    		strBuf.append("5");
+    	strBuf.append(CacheType.shortType(ch.type).toLowerCase());			
+    	if (!ch.isAddiWpt()) {
+    		if ( (ch.hard.length() > 0) && (ch.terrain.length() > 0) ) {
+    			strBuf.append(ch.hard.charAt(0));
+    			if ( ch.hard.endsWith(".5") ) {
+    				strBuf.append("5");
+    			}
+    			strBuf.append("/");
+    			strBuf.append(ch.terrain.charAt(0));
+    			if ( ch.terrain.endsWith(".5") ) {
+    				strBuf.append("5");
+    			}
+    		}
+    		strBuf.append(ch.CacheSize.substring(0, 1).toLowerCase());
     	}
 
     	return strBuf.toString();
