@@ -165,6 +165,30 @@ public class CacheType {
 			{"Question","52"},{"Final","53"},
 			{"Trailhead","54"},{"Reference","55"},{"WhereIGo","1858"}};
 
+	public static String shortType(String typeNum){
+		String shortType = new String("O");
+		if(typeNum.equals("0")) shortType = "C";
+		if(typeNum.equals("2")) shortType = "T";
+		if(typeNum.equals("3")) shortType = "M";
+		if(typeNum.equals("4")) shortType = "V";
+		if(typeNum.equals("5")) shortType = "L";
+		if(typeNum.equals("6")) shortType = "O";
+		if(typeNum.equals("11")) shortType = "W";
+		if(typeNum.equals("8")) shortType = "U";
+		if(typeNum.equals("12")) shortType = "O";
+		if(typeNum.equals("13")) shortType = "O";
+		if(typeNum.equals("137")) shortType = "E";
+		if(typeNum.equals("453")) shortType = "O";
+		if(typeNum.equals("1858")) shortType = "O";
+		if(typeNum.equals("50")) shortType = "P";
+		if(typeNum.equals("51")) shortType = "S";
+		if(typeNum.equals("52")) shortType = "Q";
+		if(typeNum.equals("53")) shortType = "F";
+		if(typeNum.equals("54")) shortType = "H";
+		if(typeNum.equals("55")) shortType = "R";
+		return shortType;
+	}
+
 	public static String transType(String geoNum){
 		String geo = new String("Unknown");
 		if(geoNum.equals("2")) geo = "Traditional Cache";
