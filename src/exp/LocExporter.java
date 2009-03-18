@@ -54,9 +54,11 @@ public class LocExporter extends Exporter{
 		strBuf.append("\"><![CDATA[");
 		strBuf.append(simplifyString(chD.CacheName));
 		if (Global.getPref().addDetailsToName) {
-			strBuf.append( getShortDetails( chD ) );
+			if ( !Global.getPref().addDetailsToWaypoint ) {
+				strBuf.append( getShortDetails( chD ) );
+			}
 			if ( (!chD.Hints.equals("null")) && (chD.Hints.length() > 0) ) {
-				strBuf.append("H:");
+				strBuf.append(":");
 				strBuf.append( simplifyString(Common.rot13(chD.Hints)) );			
 			}
 		}
