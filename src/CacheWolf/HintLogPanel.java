@@ -8,6 +8,7 @@ import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.ImageDragContext;
 import ewe.graphics.InteractivePanel;
+import ewe.io.File;
 import ewe.sys.*;
 import ewe.fx.Image;
 import ewe.fx.Rect;
@@ -92,7 +93,7 @@ public class HintLogPanel extends CellPanel{
 		int logsPerPage=Global.getPref().logsPerPage;
 		for(int i = crntLogPosition; i<nLogs; i++){
 			dummy.append(currCache.CacheLogs.getLog(i).toHtml());
-			dummy.append("</br>");
+			dummy.append("<br>");
 			if(++counter >= logsPerPage) break;
 		}
 		clearOutput();
@@ -100,7 +101,11 @@ public class HintLogPanel extends CellPanel{
 		// The cache GCP0T6 crashes the HtmlDisplay
 		// As a temporary fix
 		try {
-			logs.setHtml(dummy.toString());
+			logs.startHtml();
+			// set documentroot to prevent html renderer from loading remote images
+			logs.getDecoderProperties().set("documentroot", File.getProgramDirectory());
+			logs.addHtml(dummy.toString(), new ewe.sys.Handle());
+			logs.endHtml();
 		} catch (Exception e) {
 			logs=new HtmlDisplay();
 			Global.getPref().log("Error rendering HTML",e,true);
