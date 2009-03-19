@@ -11,14 +11,15 @@ public class CabHelper {
 	private static final Boolean DEBUG = true;
 	private static final String PROJECT_NAME = "CW-Test";
 	private static final String DOSNL = "\r\n";
+	
+	private static HashMap<String, HashMap<String, String>> cabMapping = new HashMap<String, HashMap<String, String>>();
+	private static Integer numFiles = 0;
+	private static Integer numDirectories = 0;
 
 	public static void main(String[] args) {
 		File zipFile;
 		File outDir;
 		String outDirName;
-		Integer numDirectories = 0;
-		Integer numFiles = 0;
-		HashMap<String, HashMap<String, String>> cabMapping = new HashMap<String, HashMap<String, String>>();
 		StringBuffer outBuffer = new StringBuffer();
 		
 		//
@@ -67,34 +68,29 @@ public class CabHelper {
 			zipList = zip.entries();
 
 			while (zipList.hasMoreElements()) {
+				
 				ZipEntry zipEntry = (ZipEntry) zipList.nextElement();
+				
 				if (zipEntry.isDirectory()) {
 					String dirName = winifyPath(zipEntry.getName());
-					if (cabMapping.get(dirName) == null) {
-						cabMapping.put(dirName, new HashMap<String, String>());
-						numDirectories++;
-					}
+					pushDirToMap(winifyPath(dirName));
 				} else {
-					String inFileName = zipEntry.getName().replace(
-							File.separatorChar, '\\');
-					String outFileName = String.format("%08d.DMY", numFiles);
-					String inDirName = "";
+					String inCabFileName;
+					String outCabFileName;
+					String inCabDirName;
+					File dummyFile;
+					
+					dummyFile = new File(zipEntry.getName());
+					
+					inCabFileName = dummyFile.getName();
+					inCabDirName = pushDirToMap(winifyPath(dummyFile.getParent()));
+					outCabFileName = String.format("%08d.DMY", numFiles);
+					
 					copyInputStream(zip.getInputStream(zipEntry),
 							new BufferedOutputStream(new FileOutputStream(
-									outDirName + File.separator + outFileName)));
-					Integer lastSlash = inFileName.lastIndexOf('\\');
-					if (lastSlash == -1) {
-						inDirName = "";
-					} else {
-						inDirName = inFileName.substring(0, lastSlash);
-						inFileName = inFileName.substring(lastSlash + 1);
-					}
-					if (cabMapping.get(inDirName) == null) {
-						cabMapping
-								.put(inDirName, new HashMap<String, String>());
-						numDirectories++;
-					}
-					cabMapping.get(inDirName).put(outFileName, inFileName);
+									outDirName + File.separator + outCabFileName)));
+
+					cabMapping.get(inCabDirName).put(outCabFileName, inCabFileName);
 
 					numFiles++;
 				}
@@ -104,6 +100,17 @@ public class CabHelper {
 			System.exit(1);
 		}
 		
+		// create an empty logfile and push it on the stack
+		try {
+			File dummyFile = new File(outDirName + File.separator + String.format("%08d.DMY", numFiles));
+			dummyFile.createNewFile();
+			cabMapping.get("").put(String.format("%08d.DMY", numFiles), "log.txt");
+			numFiles++;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
 		//
 		// output generation
 		//
@@ -114,6 +121,11 @@ public class CabHelper {
 		// header section with summary
 		outBuffer.append("\t<characteristic type=\"Install\">").append(DOSNL);
 		outBuffer.append("\t\t<parm name=\"InstallPhase\" value=\"install\" />").append(DOSNL);
+/*
+		// this should remove the version warning at the end of the cab install, but we need more input
+                outBuffer.append("\t\t<parm name=\"OSVersionMin\" value=\"1.0\" />").append(DOSNL);
+                outBuffer.append("\t\t<parm name=\"OSVersionMax\" value=\"6.99\" />").append(DOSNL);
+*/
 		outBuffer.append(String.format("\t\t<parm name=\"AppName\" value=\"%s\" />",PROJECT_NAME)).append(DOSNL);
 		outBuffer.append(String.format("\t\t<parm name=\"InstallDir\" value=\"%%CE1%%\\%s\" translation=\"install\" />",PROJECT_NAME)).append(DOSNL);
 		outBuffer.append(String.format("\t\t<parm name=\"NumDirs\" value=\"%d\" />",numDirectories)).append(DOSNL);
@@ -242,12 +254,14 @@ public class CabHelper {
 	 * or \)to the format later used by the PocketPC (\) and cutting of any
 	 * leading or trainling \
 	 * 
-	 * @param path
-	 *            path to normalize for use in cab
+	 * @param path path to normalize for use in cab
 	 * @return normalized path
 	 */
 	private static final String winifyPath(String path) {
-			path = path.replace(File.separatorChar, '\\');
+		if (path == null) {
+			return "";
+		}
+		path = path.replace(File.separatorChar, '\\');
 		if (path.indexOf('\\') == 0) {
 			path = path.substring(1);
 		}
@@ -267,5 +281,25 @@ public class CabHelper {
 		if (DEBUG) {
 			System.out.println(str);
 		}
+	}
+	
+	/**
+	 * check if a given directory already is a key in cabMapping
+	 * if directory is not a key yet, put it on the map and
+	 * associate an empty hashmap to it
+	 *
+	 * @param directory name of directory that was pushed to the map
+	 */
+	private static final String pushDirToMap(String directory) {
+		if ( directory == null ) {
+			directory = "";
+		}
+		
+		if (cabMapping.get(directory) == null) {
+			cabMapping.put(directory, new HashMap<String, String>());
+			numDirectories++;
+		}
+		
+		return directory;
 	}
 }
