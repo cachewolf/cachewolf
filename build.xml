@@ -53,7 +53,7 @@
 	<target name="CW-PPC2003-CAB" depends="CW-PPC2003,compilecabhelper" description="package PPC2003 build as CAB" if="build.cab">
 		<delete dir="${assemble.dir}"/>
 		<mkdir dir="${assemble.dir}"/>
-		<java classname="build.CabHelper" classpath="bin">
+		<java classname="build.CabHelper" classpath="bin" failonerror="true">
 			<arg value="${pkg.dir}/CacheWolf-PPC2003.zip"/>
 			<arg value="${assemble.dir}"/>
 		</java>
