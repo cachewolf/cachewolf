@@ -121,11 +121,10 @@ public class CabHelper {
 		// header section with summary
 		outBuffer.append("\t<characteristic type=\"Install\">").append(DOSNL);
 		outBuffer.append("\t\t<parm name=\"InstallPhase\" value=\"install\" />").append(DOSNL);
-/*
-		// this should remove the version warning at the end of the cab install, but we need more input
-                outBuffer.append("\t\t<parm name=\"OSVersionMin\" value=\"1.0\" />").append(DOSNL);
-                outBuffer.append("\t\t<parm name=\"OSVersionMax\" value=\"6.99\" />").append(DOSNL);
-*/
+		// this should remove the version warning at the end of the cab install 
+		// but even with a warning it will work
+		outBuffer.append("\t\t<parm name=\"OSVersionMin\" value=\"4.0\" />").append(DOSNL);
+		outBuffer.append("\t\t<parm name=\"OSVersionMax\" value=\"5.9\" />").append(DOSNL);
 		outBuffer.append(String.format("\t\t<parm name=\"AppName\" value=\"%s\" />",PROJECT_NAME)).append(DOSNL);
 		outBuffer.append(String.format("\t\t<parm name=\"InstallDir\" value=\"%%CE1%%\\%s\" translation=\"install\" />",PROJECT_NAME)).append(DOSNL);
 		outBuffer.append(String.format("\t\t<parm name=\"NumDirs\" value=\"%d\" />",numDirectories)).append(DOSNL);
