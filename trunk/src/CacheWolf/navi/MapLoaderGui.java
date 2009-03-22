@@ -173,37 +173,28 @@ public class MapLoaderGui extends Form {
 
 	public String getMapsDir() {
 		String ret = Global.getPref().getMapDownloadSavePath(mapLoader.currentOnlineMapService.getMapType());
-		Global.getPref().saveCustomMapsPath(getEqualLeadingPathSubString(ret,Global.getPref().getMapLoadPath()));
+		Global.getPref().saveCustomMapsPath(getLeadingPath(ret,Global.getPref().getMapLoadPath()));
 		// Global.getPref().saveCustomMapsPath(ret);
 		// eigentlich dürft das erst gespeichert werden, wenn erfolgreich heruntergeladen wurde
 		return ret;
 	}
-	
-	private String getEqualLeadingPathSubString(String neu , String alt) {
-		String gemeinsam=null;
-		int j=neu.length();
-		int k=alt.length();
-		if (k<j) {j=k;};
-		if (neu.substring(0,j).equals(alt.substring(0, j))) {
-			gemeinsam = neu.substring(0,j);
-		}
-		else {
-			boolean istKeinTeilstring = true;
-			// res erhält nur einen neuen Wert, wenn sich beide Strings bis zur Stelle j unterscheiden
-			for (int i = 0; i < j; i++) {
-				if (neu.charAt(i) != (alt.charAt(i))) {
-					gemeinsam=neu.substring(0,i);
-					k=gemeinsam.lastIndexOf("/"); // das Verzeichnis-Trennzeichen bei Java und ?
-					gemeinsam=gemeinsam.substring(0,k+1); // falls die letzten Verzeichnisse gleich beginnen
-					i=j;
-					istKeinTeilstring = false;
-	 			}		
+
+	private String getLeadingPath(String newPath , String oldPath) {
+		String LeadingPath="";
+		int StartPos=0;
+		int EndPos;
+		int LastPos = java.lang.Math.min(newPath.length(),oldPath.length());
+		do {
+			EndPos=newPath.indexOf("/", StartPos);
+			if (newPath.substring(StartPos,EndPos).equals(oldPath.substring(StartPos, EndPos))) {
+				LeadingPath=LeadingPath.concat(newPath.substring(StartPos,EndPos+1));
+				StartPos=EndPos+1;
 			}
-			if (istKeinTeilstring) {
-				gemeinsam=neu; // der neue Pfad
+			else {
+				break;
 			}
-		}
-		return gemeinsam;
+		} while (StartPos<LastPos);
+		return LeadingPath;
 	}
 	
 	public void downloadTiles() {
