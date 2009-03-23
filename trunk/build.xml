@@ -36,6 +36,11 @@
 			</not>
 		</condition>
 	</fail>
+	
+	<!-- seems the ewe compiler uses different paths on windows and linux :-( -->
+	<condition property="ewe.progdir" value="CacheWolf" else="programs/CacheWolf" >
+		<os family="windows"/>
+	</condition>
 
 	<!-- TODO: find out how to get svn revision information platform independent. -->
 	<!-- TODO: especially since svnversion would give better information if current directory is up to date -->
@@ -92,7 +97,7 @@
 
 		<antcall target="copyres"/>
 
-		<copy file="programs/CacheWolf/PocketPC-ARM/CacheWolf.exe" todir="${assemble.dir}"/>
+		<copy file="${ewe.progdir]/PocketPC-ARM/CacheWolf.exe" todir="${assemble.dir}"/>
 		<zip destfile="${pkg.dir}/CacheWolf-ARM.zip" basedir="${assemble.dir}"/>
 
 		<delete dir="${assemble.dir}"/>
@@ -105,7 +110,7 @@
 
 		<antcall target="copyres"/>
 
-		<copy file="programs/CacheWolf/PocketPC-MIPS/CacheWolf.exe" todir="${assemble.dir}"/>
+		<copy file="${ewe.progdir}/PocketPC-MIPS/CacheWolf.exe" todir="${assemble.dir}"/>
 		<zip destfile="${pkg.dir}/CacheWolf-MIPS.zip" basedir="${assemble.dir}"/>
 
 		<delete dir="${assemble.dir}"/>
@@ -116,7 +121,7 @@
 
 		<mkdir dir="${pkg.dir}"/>
 
-		<copy file="programs/CacheWolf/PocketPC-SH3/CacheWolf.exe" todir="${assemble.dir}"/>
+		<copy file="${ewe.progdir}/PocketPC-SH3/CacheWolf.exe" todir="${assemble.dir}"/>
 		<antcall target="copyres"/>
 
 		<zip destfile="${pkg.dir}/CacheWolf-SH3.zip" basedir="${assemble.dir}"/>
@@ -129,7 +134,7 @@
 
 		<mkdir dir="${pkg.dir}"/>
 
-		<copy file="programs/CacheWolf/PocketPC2003/CacheWolf.exe" todir="${assemble.dir}"/>
+		<copy file="${ewe.progdir}/PocketPC2003/CacheWolf.exe" todir="${assemble.dir}"/>
 		<!-- copy big attributes -->
 		<copy todir="${assemble.dir}/attributes-big">
 			<fileset dir="resources/attributes-big"/>
@@ -159,7 +164,7 @@
 
 		<mkdir dir="${pkg.dir}"/>
 
-		<copy file="programs/CacheWolf/x86-Win32-StaticLinked/CacheWolf.exe" todir="${assemble.dir}"/>
+		<copy file="${ewe.progdir}/x86-Win32-StaticLinked/CacheWolf.exe" todir="${assemble.dir}"/>
 		<antcall target="copyres"/>
 
 		<zip destfile="${pkg.dir}/CacheWolf-Win32.zip" basedir="${assemble.dir}"/>
@@ -170,7 +175,7 @@
 	<target name="CW-Java" depends="ewebuild" description="package Java release of CacheWolf">
 		<mkdir dir="${assemble.dir}"/>
 
-		<copy file="programs/CacheWolf/Jar/CacheWolf.jar" todir="${assemble.dir}"/>
+		<copy file="${ewe.progdir}/Jar/CacheWolf.jar" todir="${assemble.dir}"/>
 		<copy file="lib/java_ewe.dll" todir="${assemble.dir}"/>
 		<copy file="docs/cachewolf.svg" todir="${assemble.dir}"/>
 		<antcall target="copyres"/>
@@ -189,15 +194,18 @@
 		</exec>
 		<exec executable="programs/ewecl" os="Linux">
 			<arg value="programs/Jewel.ewe"/>
-			<arg value="-c cw-pc.jnf"/>
+			<arg value="-c"/>
+			<arg value="cw-pc.jnf"/>
 		</exec>
 		<exec executable="programs/ewe.exe" osfamily="windows">
 			<arg value="programs/Jewel.ewe"/>
-			<arg value="-c cw-pda.jnf"/>
+			<arg value="-c"/>
+			<arg value="cw-pda.jnf"/>
 		</exec>
 		<exec executable="programs/ewe.exe" osfamily="windows">
 			<arg value="programs/Jewel.ewe"/>
-			<arg value="-c cw-pc.jnf"/>
+			<arg value="-c" />
+			<arg value="cw-pc.jnf"/>
 		</exec>
 	</target>
 	
