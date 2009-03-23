@@ -1,6 +1,7 @@
 package build;
 
-// yes, it is possible to write terrible code in any language ;-)
+// this is plain java, since it is only needed if you want to build CABs for
+// PocketPCs with the ant build. It will not be used by CacheWolf itself
 
 import java.io.*;
 import java.util.*;
