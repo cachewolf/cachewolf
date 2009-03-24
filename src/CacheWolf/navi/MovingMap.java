@@ -1108,7 +1108,7 @@ public class MovingMap extends Form {
 			cll = new CWPoint(posCircle.where);
 		}
 		
-		MapInfoObject m = maps.getMapChangeResolution(cll, screen, currentMap.scale / currentMap.zoomFactor, !betterOverview);
+		MapInfoObject m = maps.getMapChangeResolution(cll, screen, currentMap.scale * currentMap.zoomFactor, !betterOverview);
 		if (m != null) {
 			boolean saveGpsIgnStatus = dontUpdatePos;
 			dontUpdatePos = true;
