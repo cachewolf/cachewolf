@@ -55,7 +55,7 @@ public class CacheHolder {
 	/** The terrain rating of the cache from 1 to 5 in .5 incements */
 	public String terrain = EMPTY;
 	/** The cache type (@see CacheType for translation table)  */
-	public String type = "0"; //TODO Should be an int
+	public int type = 0; 
 	/** True if the cache has been archived */
 	public boolean is_archived = false;
 	/** True if the cache is available for searching */
@@ -157,7 +157,7 @@ public class CacheHolder {
 			CacheStatus = xmlString.substring(start+1,end);
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			type = xmlString.substring(start+1,end);
+			type = new Integer(xmlString.substring(start+1,end)).intValue();
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 			hard = xmlString.substring(start+1,end);
