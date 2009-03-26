@@ -229,10 +229,11 @@ public class DetailsPanel extends CellPanel{
 	*	Translate the cache type to the value in the cache type dropdown
 	*	control.
 	*/
-	private int transType(String type){
+	private int transType(int type){
+		// TODO Hab ich so eine Übersetzungstabelle nicht schon an anderer Stelle gesehen ??? Redundanz ??
 		int c_type = 0;
 		int tt = 0;
-		tt = Convert.parseInt(type);
+		tt = type;
 		switch(tt){
 			case 0: c_type = 0; break;
 			case 2: c_type = 1; break;
@@ -266,28 +267,28 @@ public class DetailsPanel extends CellPanel{
 	*	This transformation is required to ease the display of the cache type
 	*	icon in the table display.
 	*/
-	public String transSelect(int num){
-		String ret = new String("");
+	public int transSelect(int num){
+		int ret = 0;
 		switch(num){
-			case 0: ret = "0"; break;
-			case 1: ret = "2"; break;
-			case 2: ret = "3"; break;
-			case 3: ret = "4"; break;
-			case 4: ret = "5"; break;
-			case 5: ret = "6"; break;
-			case 6: ret = "453"; break;
-			case 7: ret = "8"; break;
-			case 8: ret = "11"; break;
-			case 9: ret = "12"; break;
-			case 10: ret = "13";break;
-			case 11: ret = "137";break;
-			case 12: ret = "1858"; break;
-			case 13: ret = "50";break;
-			case 14: ret = "51";break;
-			case 15: ret = "52";break;
-			case 16: ret = "53";break;
-			case 17: ret = "54";break;
-			case 18: ret = "55";break;
+			case 0: ret = 0; break;
+			case 1: ret = 2; break;
+			case 2: ret = 3; break;
+			case 3: ret = 4; break;
+			case 4: ret = 5; break;
+			case 5: ret = 6; break;
+			case 6: ret = 453; break;
+			case 7: ret = 8; break;
+			case 8: ret = 11; break;
+			case 9: ret = 12; break;
+			case 10: ret = 13; break;
+			case 11: ret = 137; break;
+			case 12: ret = 1858; break;
+			case 13: ret = 50; break;
+			case 14: ret = 51; break;
+			case 15: ret = 52; break;
+			case 16: ret = 53; break;
+			case 17: ret = 54; break;
+			case 18: ret = 55; break;
 
 			default: Vm.debug("Unknown cachetype: " + num);
 			break;
@@ -400,7 +401,7 @@ public class DetailsPanel extends CellPanel{
 				CacheHolder ch = new CacheHolder();
 				ch.LatLon = thisCache.LatLon;
 				ch.pos = new CWPoint( thisCache.pos );
-				ch.type = "51";
+				ch.type = 51;
 				Global.mainTab.newWaypoint(ch);
 			}
 			else if (ev.target == btnGoto){
@@ -500,7 +501,7 @@ public class DetailsPanel extends CellPanel{
 		  thisCache.CacheName = inpName.getText().trim();
 		  thisCache.LatLon = thisCache.pos.toString();
 		  thisCache.DateHidden = inpHidden.getText().trim();
-		  String oldType=thisCache.type;
+		  int oldType=thisCache.type;
 		  thisCache.type = transSelect(chcType.getInt());
 		 // thisCache.saveCacheDetails(profile.dataDir); // this is redundant, because all changes affecting the details are immediately saved
 		  // Now update the table
