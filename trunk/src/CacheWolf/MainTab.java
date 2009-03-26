@@ -318,13 +318,12 @@ public class MainTab extends mTabbedPanel {
 		}
 		Global.getProfile().hasUnsavedChanges=true;
 		detP.setNeedsTableUpdate(true);
-		if (ch.type == null || ch.type.equals("")) ch.type = "0";
 		if (CacheType.isAddiWpt(ch.type) && mainCache!=null && mainCache.length()>2) {
 			ch.wayPoint = profile.getNewAddiWayPointName(mainCache);
 			profile.setAddiRef(ch);
 		} else { 
 			ch.wayPoint = profile.getNewWayPointName();
-			ch.type="0";
+			ch.type=0;
 			lastselected=ch.wayPoint;
 		}
 		ch.CacheSize = "None";

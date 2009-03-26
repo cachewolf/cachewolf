@@ -100,7 +100,7 @@ public class KMLExporter extends Exporter {
 					tmp = (Vector)entry.getValue();
 					// skip over empty cachetypes
 					if (tmp.size() == 0) continue;
-					outp.print(startFolder(CacheType.transType((String)entry.getKey())));
+					outp.print(startFolder(CacheType.transType(new Integer((String)entry.getKey()).intValue())));
 
 					for(int i = 0; i<tmp.size(); i++){
 						ch = (CacheHolder) tmp.get(i);
@@ -177,12 +177,13 @@ public class KMLExporter extends Exporter {
 		// fill structure with data from cacheDB
 		for(int i = 0; i<cacheDB.size(); i++){
 			ch=(CacheHolder)cacheDB.get(i);
+			// TODO Das Argument nach STring zu casten gefällt mir nicht ganz...
 			if(ch.is_black == false && ch.is_filtered == false && !ch.isAddiWpt()){
-				if (ch.is_found) { tmp = (Vector) outCacheDB[FOUND].get(ch.type);}
-				else if (ch.is_owned) { tmp = (Vector) outCacheDB[OWNED].get(ch.type);}
-				else if (ch.is_archived || !ch.is_available){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(ch.type);}
-				else if (ch.is_available){ tmp = (Vector) outCacheDB[AVAILABLE].get(ch.type);}
-				else { tmp = (Vector) outCacheDB[UNKNOWN].get(ch.type);}
+				if (ch.is_found) { tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.type));}
+				else if (ch.is_owned) { tmp = (Vector) outCacheDB[OWNED].get(String.valueOf(ch.type));}
+				else if (ch.is_archived || !ch.is_available){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(String.valueOf(ch.type));}
+				else if (ch.is_available){ tmp = (Vector) outCacheDB[AVAILABLE].get(String.valueOf(ch.type));}
+				else { tmp = (Vector) outCacheDB[UNKNOWN].get(String.valueOf(ch.type));}
 				
 				tmp.add(ch);
 			}
@@ -291,7 +292,7 @@ public class KMLExporter extends Exporter {
 		strBuf.append("      <IconStyle>\r\n");
 		strBuf.append("         <Icon>\r\n");
 //		strBuf.append("            <href>"+ File.getProgramDirectory()+ "/" + CacheType.type2pic(Convert.parseInt(ch.type))+ "</href>\r\n");
-		strBuf.append("            <href>"+ CacheType.type2pic(Convert.parseInt(ch.type))+ "</href>\r\n");
+		strBuf.append("            <href>"+ CacheType.type2pic(ch.type)+ "</href>\r\n");
 		strBuf.append("         </Icon>\r\n");
 		strBuf.append("      </IconStyle>\r\n");
 		strBuf.append("      <LabelStyle>\r\n");
