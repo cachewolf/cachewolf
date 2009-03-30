@@ -536,6 +536,7 @@ public class DetailsPanel extends CellPanel{
 		  // set status also on addi wpts
 		  ch.setAttributesToAddiWpts();
 		  dirty_notes=false;
+		  if (dirty_details) { Global.getProfile().hasUnsavedChanges=true;}
 		  dirty_details=false;
 		  setNeedsTableUpdate(false);
 		  if (thisCache.details != null) thisCache.details.hasUnsavedChanges = false;
