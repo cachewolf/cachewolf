@@ -328,7 +328,7 @@ public class MapLoaderGui extends Form {
 					if (forSelectedChkBoxPerCache.getSelectedItem().toString().equalsIgnoreCase(MyLocale.getMsg(1804, "all"))) onlySelected = false;
 					else onlySelected = true;
 					overviewmap = overviewChkBoxPerCache.getState();
-					scale = Convert.toFloat(scaleInputPerCache.getText());
+					scale = (float)CacheWolf.Common.parseDouble(scaleInputPerCache.getText());
 				}
 				if (scale < mapLoader.currentOnlineMapService.minscale || scale > mapLoader.currentOnlineMapService.maxscale) {
 					if (scale < mapLoader.currentOnlineMapService.minscale) {
