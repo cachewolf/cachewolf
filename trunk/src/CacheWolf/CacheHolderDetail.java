@@ -34,7 +34,7 @@ public class CacheHolderDetail extends CacheHolder {
 	  public String URL = EMPTY;
 	  public String Solver = EMPTY;
 	  public String OwnLogId = EMPTY;
-	  public String OwnLogText = EMPTY;
+	  public Log OwnLog = null;
 	  public String Country = EMPTY;
 	  public String State = EMPTY;
 	  /** For faster cache import (from opencaching) changes are only written when the details are freed from memory 
@@ -110,7 +110,7 @@ public class CacheHolderDetail extends CacheHolder {
 		  setCacheLogs(newCh.CacheLogs);
 		  
 		  if (newCh.OwnLogId.length()>0) this.OwnLogId=newCh.OwnLogId;
-		  if (newCh.OwnLogText.length()>0) this.OwnLogText=newCh.OwnLogText;
+		  if (newCh.OwnLog != null) this.OwnLog = newCh.OwnLog;
 		  
 		  if (newCh.Country.length()>0) this.Country=newCh.Country;
 		  if (newCh.State.length()>0) this.State=newCh.State;
@@ -179,7 +179,16 @@ public class CacheHolderDetail extends CacheHolder {
 			ex = new Extractor(dummy, "<OWNLOGID>","</OWNLOGID>", 0, true);
 			OwnLogId = ex.findNext();
 			ex = new Extractor(dummy, "<OWNLOG><![CDATA[", "]]></OWNLOG>", 0, true);
-			OwnLogText = ex.findNext();
+			String ownLogText = ex.findNext();
+			if ( ownLogText.length() > 0 ) {
+				if (ownLogText.indexOf("<img src='") >= 0) {
+					OwnLog = new Log( ownLogText + "]]>" );
+				} else {
+					OwnLog = new Log( "icon_smile.gif", "1900-01-01", Global.getPref().myAlias, ownLogText );
+				}
+			} else {
+				OwnLog = null;
+			}
 			CacheLogs.clear();
 			ex = new Extractor(dummy, "<LOG>","</LOG>", 0, true);
 			
@@ -302,7 +311,11 @@ public class CacheHolderDetail extends CacheHolder {
 				  detfile.print("<HINTS><![CDATA["+Hints+"]]></HINTS>\r\n");
 				  detfile.print("<LOGS>\r\n");
 				  detfile.print("<OWNLOGID>"+OwnLogId+"</OWNLOGID>\r\n");
-				  detfile.print("<OWNLOG><![CDATA["+OwnLogText+"]]></OWNLOG>\r\n");
+				  if ( OwnLog != null ) {
+					  detfile.print("<OWNLOG><![CDATA["+OwnLog.toHtml()+"]]></OWNLOG>\r\n");
+				  } else {
+					  detfile.print("<OWNLOG><![CDATA[]]></OWNLOG>\r\n");
+				  }
 				  for(int i = 0; i < CacheLogs.size(); i++){
 					  detfile.print(CacheLogs.getLog(i).toXML());
 				  }
