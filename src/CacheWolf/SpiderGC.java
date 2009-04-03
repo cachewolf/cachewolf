@@ -1049,7 +1049,7 @@ public class SpiderGC{
 				chD.is_found = true;
 				chD.CacheStatus = d;
 				chD.OwnLogId = logId;
-				chD.OwnLogText = logText;
+				chD.OwnLog = new Log(icon,d,name,logText);
 			}
 			if (nLogs<=MAXLOGS) reslts.add(new Log(icon,d,name,logText));
 
@@ -1063,7 +1063,7 @@ public class SpiderGC{
 			exLogId.setSource(singleLog);
 			// We cannot simply stop if we have reached MAXLOGS just in case we are waiting for
 			// a log by our alias that happened earlier.
-			if (nLogs>=MAXLOGS && chD.is_found && (chD.OwnLogId.length() != 0)) break;
+			if (nLogs>=MAXLOGS && chD.is_found && (chD.OwnLogId.length() != 0) && (chD.OwnLog != null) && !(chD.OwnLog.getDate().equals("1900-01-01"))) break;
 		}
 		if (nLogs>MAXLOGS) {
 			reslts.add(Log.maxLog());

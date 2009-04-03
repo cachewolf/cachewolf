@@ -645,7 +645,7 @@ public class OCXMLImporter extends MinML {
 						chD.CacheStatus=logDate;
 						chD.is_found=true;
 						chD.OwnLogId = logId;
-						chD.OwnLogText = logData;
+						chD.OwnLog = new Log(logIcon, logDate, logFinder, logData, loggerRecommended);
 			}
 			chD.hasUnsavedChanges = true; //chD.saveCacheDetails(profile.dataDir);
 			return;

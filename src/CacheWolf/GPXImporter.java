@@ -272,7 +272,7 @@ public class GPXImporter extends MinML {
 							chD.CacheStatus=logDate;
 							chD.is_found=true;
 							chD.OwnLogId = logId;
-							chD.OwnLogText = logData;
+							chD.OwnLog = new Log(logIcon,logDate,logFinder,logData);
 				}
 				return;
 			}
