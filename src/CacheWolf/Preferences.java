@@ -212,7 +212,7 @@ public class Preferences extends MinML{
 	/** The maximum number of logs to export */
 	public int numberOfLogsToExport = 5;
 	/** Add Travelbugs when exporting */
-	public boolean exportTravelbugs = true;
+	public boolean exportTravelbugs = false;
 	/** Try to make a MyFinds GPX when exporting to GPX */
 	public boolean exportGpxAsMyFinds = true;
 
