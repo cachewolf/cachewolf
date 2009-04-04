@@ -209,6 +209,12 @@ public class Preferences extends MinML{
 	public boolean addDetailsToName = false;
 	/** The own GC member ID */
 	public String gcMemberId = "";
+	/** The maximum number of logs to export */
+	public int numberOfLogsToExport = 5;
+	/** Add Travelbugs when exporting */
+	public boolean exportTravelbugs = true;
+	/** Try to make a MyFinds GPX when exporting to GPX */
+	public boolean exportGpxAsMyFinds = true;
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -397,6 +403,14 @@ public class Preferences extends MinML{
 				metricSystem = Metrics.METRIC;
 			}
 		}
+		else if (name.equals("export")) {
+			tmp = atts.getValue("numberOfLogsToExport");
+			if (tmp != null) numberOfLogsToExport=Convert.parseInt(tmp);
+			tmp = atts.getValue("exportTravelbugs");
+			if (tmp != null) exportTravelbugs = Boolean.valueOf(tmp).booleanValue();
+			tmp = atts.getValue("exportGpxAsMyFinds");
+			if (tmp != null) exportGpxAsMyFinds = Boolean.valueOf(tmp).booleanValue();
+		}
 		else if (name.equals("locale")) {
 			language = atts.getValue("language");
 		}
@@ -460,6 +474,7 @@ public class Preferences extends MinML{
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");
+			outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport) + "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds) + "\"/>\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \"" + SafeXML.strxmlencode(customMapsPath.replace('\\','/')) + "\"/>\n");
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			// save last path of different exporters
