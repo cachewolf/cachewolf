@@ -57,8 +57,8 @@ public class myInteractivePanel extends InteractivePanel{
 		RadarPanelImage imgRP=(RadarPanelImage) which;
 		ewe.util.Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch=(CacheHolder) cacheDB.get(imgRP.rownum);
-		String s=ch.wayPoint+"  "+ch.CacheSize+" / "+strDifficulty+"="+ch.hard+"  "+strTerrain+"="+ch.terrain;
-		String s1=ch.CacheName;
+		String s=ch.getWayPoint()+"  "+ch.getCacheSize()+" / "+strDifficulty+"="+ch.getHard()+"  "+strTerrain+"="+ch.getTerrain();
+		String s1=ch.getCacheName();
 		if (s1.length()>40) s1=s1.substring(0,40);
 		int tw=fm.getTextWidth(s)+2;
 		int tw1=fm.getTextWidth(s1)+2;
@@ -110,8 +110,8 @@ public class myInteractivePanel extends InteractivePanel{
 			 //wayPoint=ch.wayPoint;
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 IconAndText icnDrag=new IconAndText();
-			 icnDrag.addColumn(CacheType.cache2Img(ch.type));
-			 icnDrag.addColumn(ch.wayPoint);
+			 icnDrag.addColumn(CacheType.cache2Img(ch.getType()));
+			 icnDrag.addColumn(ch.getWayPoint());
 			 dc.dragData=dc.startImageDrag(icnDrag,new Point(8,8),this);
 			 //if (dc instanceof ImageDragContext) Vm.debug(">>>>Is Image drag");
 			 canScroll=false;
@@ -134,7 +134,7 @@ public class myInteractivePanel extends InteractivePanel{
 			RadarPanelImage imgRP=(RadarPanelImage) which;
 			ewe.util.Vector cacheDB=Global.getProfile().cacheDB;
 			CacheHolder ch=(CacheHolder) cacheDB.get(imgRP.rownum);
-			wayPoint=ch.wayPoint;
+			wayPoint=ch.getWayPoint();
 			
 			int tw,th;
 			Image img = new Image(tw=fm.getTextWidth(wayPoint+15),th=fm.getHeight()>15?fm.getHeight():15);

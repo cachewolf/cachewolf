@@ -129,13 +129,13 @@ public class myTableModel extends TableModel{
 		int size=cacheDB.size();
 		for (int i=0; i<size; i++){
 			ch = (CacheHolder) cacheDB.get(i);
-			if (ch.is_filtered) {
+			if (ch.is_filtered()) {
 				filteredDB.add(ch);
 			} else { // point is not filtered
 				if (ch.isAddiWpt()){ // unfiltered Addi Wpt
 					// check if main wpt is filtered
 					if(ch.mainCache != null) { // parent exists
-						if (ch.mainCache.is_filtered) 
+						if (ch.mainCache.is_filtered()) 
 							sortDB.add(ch); // Unfiltered Addi Wpt with filtered Main Wpt, show it on its own
 						// else Main cache is not filtered, Addi will be added below main cache further down
 					} else { //Addi without main Cache
@@ -146,7 +146,7 @@ public class myTableModel extends TableModel{
 					if (ch.hasAddiWpt()){
 						for (int j=0; j<ch.addiWpts.getCount();j++){
 							addiWpt = (CacheHolder)ch.addiWpts.get(j);
-							if (!addiWpt.is_filtered) sortDB.add(addiWpt);
+							if (!addiWpt.is_filtered()) sortDB.add(addiWpt);
 						}
 					}// if hasAddiWpt
 				} // if AddiWpt
@@ -171,17 +171,17 @@ public class myTableModel extends TableModel{
 			try {
 			   CacheHolder ch = (CacheHolder)cacheDB.get(row);
 				if(isSelected == true) ta.fillColor = COLOR_SELECTED;
-				else if(ch.is_available == false && ch.is_found == true){
+				else if(ch.is_available() == false && ch.is_found() == true){
 					ta.fillColor = COLOR_ARCHFND_BG;   // Green BG
 					ta.foreground = COLOR_ARCHFND_FG;  // Red FG
 				}
-				else if(ch.is_archived == true) ta.fillColor = COLOR_ARCHIVED;
-				else if(ch.is_available == false) ta.fillColor = COLOR_AVAILABLE;
-				else if(ch.is_owned == true) ta.fillColor = COLOR_OWNED;
-				else if(ch.is_found == true) ta.fillColor = COLOR_FOUND;
-				else if(ch.is_flaged == true) ta.fillColor = COLOR_FLAGED;
+				else if( ch.is_archived())  ta.fillColor = COLOR_ARCHIVED;
+				else if(!ch.is_available()) ta.fillColor = COLOR_AVAILABLE;
+				else if( ch.is_owned())     ta.fillColor = COLOR_OWNED;
+				else if( ch.is_found())     ta.fillColor = COLOR_FOUND;
+				else if( ch.is_flaged)        ta.fillColor = COLOR_FLAGED;
 			} catch (Exception e) {};
-		} else if (row==-1 && colMap[col]==0 && Global.getProfile().showBlacklisted) ta.fillColor=Color.Black;
+		} else if (row==-1 && colMap[col]==0 && Global.getProfile().showBlacklisted()) ta.fillColor=Color.Black;
 		return ta;
 	}
 
@@ -211,7 +211,7 @@ public class myTableModel extends TableModel{
 		if(row == -1) return colName[colMap[col]];
 		try { // Access to row can fail if many caches are deleted
 			CacheHolder ch = (CacheHolder)cacheDB.get(row);
-			if(ch.is_filtered == false){
+			if(ch.is_filtered() == false){
 				switch(colMap[col]) { // Faster than using column names
 					case 0: // Checkbox
 						if (ch.is_Checked) 
@@ -219,48 +219,48 @@ public class myTableModel extends TableModel{
 						else 
 							return checkboxUnticked;
 					case 1: // Type
-						return CacheType.cache2Img(ch.type);
+						return CacheType.cache2Img(ch.getType());
 					case 2: // Difficulty;
-						return ch.hard;
+						return ch.getHard();
 					case 3: // Terrain
-						return ch.terrain;
+						return ch.getTerrain();
 					case 4: // Waypoint
 						if (showExtraWptInfo) {
-							if(ch.is_incomplete) return new IconAndText(skull, ch.wayPoint, fm);
-							if(ch.is_new       ) return new IconAndText(yellow, ch.wayPoint, fm);
-							if(ch.is_update    ) return new IconAndText(red, ch.wayPoint, fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
-							if(ch.is_log_update) return new IconAndText(blue, ch.wayPoint, fm);
+							if(ch.is_incomplete()) return new IconAndText(skull, ch.getWayPoint(), fm);
+							if(ch.is_new()       ) return new IconAndText(yellow, ch.getWayPoint(), fm);
+							if(ch.is_updated()    ) return new IconAndText(red, ch.getWayPoint(), fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
+							if(ch.is_log_updated()) return new IconAndText(blue, ch.getWayPoint(), fm);
 						}
-						return ch.wayPoint;
+						return ch.getWayPoint();
 					case 5: // Cachename
 						// Fast return for majority of case
-						if (!showExtraWptInfo || (ch.has_bug == false && ch.noFindLogs==0)) return ch.CacheName; 
+						if (!showExtraWptInfo || (ch.has_bugs() == false && ch.getNoFindLogs()==0)) return ch.getCacheName(); 
 						// Now need more checks
 						IconAndText wpVal = new IconAndText();
-						if(ch.has_bug == true) wpVal.addColumn(bug);
-						if(ch.noFindLogs > 0){
-							if (ch.noFindLogs > noFindLogs.length) 
+						if(ch.has_bugs() == true) wpVal.addColumn(bug);
+						if(ch.getNoFindLogs() > 0){
+							if (ch.getNoFindLogs() > noFindLogs.length) 
 								wpVal.addColumn(noFindLogs[noFindLogs.length-1]);
 							else 
-								wpVal.addColumn(noFindLogs[ch.noFindLogs-1]);
+								wpVal.addColumn(noFindLogs[ch.getNoFindLogs()-1]);
 						}
-						wpVal.addColumn(ch.CacheName);
+						wpVal.addColumn(ch.getCacheName());
 						return wpVal;
 					case 6: // Location
 						return ch.LatLon;
 					case 7: // Owner
-						return ch.CacheOwner;
+						return ch.getCacheOwner();
 					case 8: // Date hidden
-						return ch.DateHidden;
+						return ch.getDateHidden();
 					case 9: // Status
-						return ch.CacheStatus;
+						return ch.getCacheStatus();
 					case 10: // Distance
 						return ch.getDistance();
 					case 11: // Bearing
 						return ch.bearing;
 					case 12: // Size
-						if (ch.CacheSize.length()==0) return "?";
-						switch (ch.CacheSize.charAt(0)) {
+						if (ch.getCacheSize().length()==0) return "?";
+						switch (ch.getCacheSize().charAt(0)) {
 							case 'M': return picSizeMicro;
 							case 'S': return picSizeSmall;
 							case 'R': return picSizeReg;
@@ -269,11 +269,11 @@ public class myTableModel extends TableModel{
 							default: return "?";
 						}
 					case 13: // OC number of recommendations
-						if (ch.wayPoint.startsWith("OC"))
-							return Convert.formatInt(ch.numRecommended);
+						if (ch.getWayPoint().startsWith("OC"))
+							return Convert.formatInt(ch.getNumRecommended());
 						return null;
 					case 14: // OC rating	
-						if (ch.wayPoint.startsWith("OC"))
+						if (ch.getWayPoint().startsWith("OC"))
 							return Convert.formatInt(ch.recommendationScore);
 						return null;
 				} // Switch
@@ -323,7 +323,7 @@ public class myTableModel extends TableModel{
 				cacheDB.sort(new MyComparer(cacheDB, mappedCol,numRows), sortAsc);
 				updateRows();
 				if(a != null){
-					int rownum = Global.getProfile().getCacheIndex(ch.wayPoint);
+					int rownum = Global.getProfile().getCacheIndex(ch.getWayPoint());
 					if(rownum >= 0){
 						tcControl.cursorTo(rownum, 0, true);
 	/*					tcControl.scrollToVisible(rownum, 0);
@@ -365,7 +365,7 @@ public class myTableModel extends TableModel{
 				for (int i=0;i<addiCount;i++){
 					addiWpt = (CacheHolder)ch.addiWpts.get(i);
 					addiWpt.is_Checked = ch.is_Checked;
-					if (!addiWpt.is_filtered){
+					if (!addiWpt.is_filtered()){
 						tcControl.repaintCell(cacheDB.find(addiWpt), x);
 					}
 				}

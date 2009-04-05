@@ -141,7 +141,7 @@ public class MainTab extends mTabbedPanel {
 				lastselected="";
 			} else {
 				ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
-				lastselected=ch.wayPoint;  // Used in Parser.Skeleton
+				lastselected=ch.getWayPoint();  // Used in Parser.Skeleton
 				try {
 					chD = ch.getCacheDetails(true);
 					//chD=new CacheHolderDetail(ch);
@@ -159,7 +159,7 @@ public class MainTab extends mTabbedPanel {
 				detP.saveDirtyWaypoint();
 				if (needTableUpdate) {
 					tbP.myMod.updateRows();// This sorts the waypoint (if it is new) into the right position
-					tbP.selectRow(profile.getCacheIndex(detP.thisCache.wayPoint));
+					tbP.selectRow(profile.getCacheIndex(detP.thisCache.getWayPoint()));
 				}
 				//was tbP.refreshTable();
 				tbP.tc.update(true); // Update and repaint
@@ -255,7 +255,7 @@ public class MainTab extends mTabbedPanel {
 			break;
 		case 8:  // Cache Radar Panel
 			MyLocale.setSIPOff();
-			radarP.setParam(pref, cacheDB, chD==null?"":chD.wayPoint);
+			radarP.setParam(pref, cacheDB, chD==null?"":chD.getWayPoint());
 			radarP.drawThePanel();
 			break;
 		}
@@ -282,7 +282,7 @@ public class MainTab extends mTabbedPanel {
 		// To change cache we need to be in panel 0
 		onLeavingPanel(oldCard);
 		onEnteringPanel(0); oldCard=0;
-		int row = profile.getCacheIndex(chi.wayPoint);
+		int row = profile.getCacheIndex(chi.getWayPoint());
 		tbP.selectRow(row);
 		//tbP.tc.scrollToVisible(row, 0);
 		//tbP.selectRow(row);
@@ -313,23 +313,23 @@ public class MainTab extends mTabbedPanel {
 		if (selectedIndex >= 0) {
 			CacheHolder selectedCache = (CacheHolder) profile.cacheDB.get( selectedIndex );
 			if ( selectedCache.isAddiWpt() ) {
-				mainCache = selectedCache.mainCache.wayPoint;
+				mainCache = selectedCache.mainCache.getWayPoint();
 			}			
 		}
-		Global.getProfile().hasUnsavedChanges=true;
 		detP.setNeedsTableUpdate(true);
-		if (CacheType.isAddiWpt(ch.type) && mainCache!=null && mainCache.length()>2) {
-			ch.wayPoint = profile.getNewAddiWayPointName(mainCache);
+		if (CacheType.isAddiWpt(ch.getType()) && mainCache!=null && mainCache.length()>2) {
+			ch.setWayPoint(profile.getNewAddiWayPointName(mainCache));
 			profile.setAddiRef(ch);
 		} else { 
-			ch.wayPoint = profile.getNewWayPointName();
-			ch.type=0;
-			lastselected=ch.wayPoint;
+			ch.setWayPoint(profile.getNewWayPointName());
+			ch.setType(0);
+			lastselected=ch.getWayPoint();
 		}
-		ch.CacheSize = "None";
+		ch.setCacheSize("None");
 		chD = ch.getCacheDetails(true);
 		this.ch = ch;
 		cacheDB.add(ch);
+		Global.getProfile().notifyUnsavedChanges(true); // Just to be sure 
 		tbP.myMod.numRows++;
 		detP.setDetails(ch);
 		oldCard=1;
@@ -401,7 +401,7 @@ public class MainTab extends mTabbedPanel {
 			oldCard=0;
 		}
 		updatePendingChanges();
-		if (profile.hasUnsavedChanges) profile.saveIndex(Global.getPref(),true);
+		if (profile.hasUnsavedChanges()) profile.saveIndex(Global.getPref(),true);
 	    this.tbP.saveColWidth(pref);
 		Global.getPref().savePreferences();
 	}

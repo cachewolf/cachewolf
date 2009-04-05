@@ -80,7 +80,7 @@ public class TomTomExporter {
 		counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_black == false && holder.is_filtered == false) counter++;
+			if(holder.is_black() == false && holder.is_filtered() == false) counter++;
 		}
 		
 		ext = format==TT_ASC?".asc":".ov2";
@@ -93,7 +93,7 @@ public class TomTomExporter {
 				out =  new RandomAccessFile(fileName,"rw");
 				for(int i = 0; i<cacheDB.size(); i++){
 					holder=(CacheHolder)cacheDB.get(i);
-					if(holder.type == new Integer(CacheType.wayType[j][TT_WPT_NUM]).intValue() && holder.is_black == false && holder.is_filtered == false){
+					if(holder.getType() == new Integer(CacheType.wayType[j][TT_WPT_NUM]).intValue() && holder.is_black() == false && holder.is_filtered() == false){
 						currExp++;
 						h.progress = (float)currExp/(float)counter;
 						h.changed();
@@ -138,7 +138,7 @@ public class TomTomExporter {
 		int expCount = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_black == false && holder.is_filtered == false) counter++;
+			if(holder.is_black() == false && holder.is_filtered() == false) counter++;
 		}
 
 		try{
@@ -147,7 +147,7 @@ public class TomTomExporter {
 			out =  new RandomAccessFile(fileName,"rw");
 			for(int i = 0; i<cacheDB.size(); i++){
 				holder=(CacheHolder)cacheDB.get(i);
-				if(holder.is_black == false && holder.is_filtered == false){
+				if(holder.is_black() == false && holder.is_filtered() == false){
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();
@@ -177,17 +177,17 @@ public class TomTomExporter {
 			outp.writeBytes(",");
 			//outp.writeBytes("\"" + ch.CacheName.replace(',',' ') + "\"\r\n");
 			outp.writeBytes("\"");
-			outp.writeBytes(ch.wayPoint);
+			outp.writeBytes(ch.getWayPoint());
 			outp.writeBytes(" - ");
-			outp.writeBytes(ch.CacheName.replace(',',' '));
+			outp.writeBytes(ch.getCacheName().replace(',',' '));
 			outp.writeBytes(" by ");
-			outp.writeBytes(ch.CacheOwner);
+			outp.writeBytes(ch.getCacheOwner());
 			outp.writeBytes("- ");             
-			outp.writeBytes(ch.hard);
+			outp.writeBytes(ch.getHard());
 			outp.writeBytes("/");
-			outp.writeBytes(ch.terrain);
+			outp.writeBytes(ch.getTerrain());
 			outp.writeBytes(" - ");
-			outp.writeBytes(ch.CacheSize);
+			outp.writeBytes(ch.getCacheSize());
 			outp.writeBytes("\"\r\n");
 		} catch (IOException e) {
 			Vm.debug("Error writing to file");
@@ -204,7 +204,7 @@ public class TomTomExporter {
 		try {
 			d = 2;
 			outp.writeByte((byte)d);
-			data = ch.wayPoint.length()+ch.CacheName.length()+ch.CacheOwner.length()+ch.hard.length()+ch.terrain.length()+ch.CacheSize.length()+27;
+			data = ch.getWayPoint().length()+ch.getCacheName().length()+ch.getCacheOwner().length()+ch.getHard().length()+ch.getTerrain().length()+ch.getCacheSize().length()+27;
 			writeIntBinary(outp, data);
 			latlon = Common.parseDouble(lon);
 			latlon *=100000;
@@ -212,21 +212,21 @@ public class TomTomExporter {
 			latlon = Common.parseDouble(lat);;
 			latlon *=100000;
 			writeIntBinary(outp, (int) latlon);
-			outp.writeBytes(ch.wayPoint);
+			outp.writeBytes(ch.getWayPoint());
 			outp.writeBytes(" - ");
-			outp.writeBytes(ch.CacheName);
+			outp.writeBytes(ch.getCacheName());
 			outp.writeBytes(" by ");
-			outp.writeBytes(ch.CacheOwner);
+			outp.writeBytes(ch.getCacheOwner());
 			//Wenn Leerzeichen am Ende von Cache.Owner entfernt: 
 			//Hier wieder einfügen
 			//und data = holder.wayPoint.length()+holder.CacheName.length()+.....
 			//wider um 1 erhöhen
 			outp.writeBytes("- ");             
-			outp.writeBytes(ch.hard);
+			outp.writeBytes(ch.getHard());
 			outp.writeBytes("/");
-			outp.writeBytes(ch.terrain);
+			outp.writeBytes(ch.getTerrain());
 			outp.writeBytes(" - ");
-			outp.writeBytes(ch.CacheSize);
+			outp.writeBytes(ch.getCacheSize());
 			d = 0;
 			outp.writeByte((byte)d);
 		} catch (IOException e) {

@@ -20,8 +20,7 @@ public class NewProfileWizard {
 			CoordsScreen cs = new CoordsScreen();
 			cs.setFields(new CWPoint(), CWPoint.CW);
 			if (cs.execute() == FormBase.IDOK) {
-				profile.centre.set(cs.getCoords());
-				profile.hasUnsavedChanges=true;
+				profile.setCenterCoords(cs.getCoords());
 			}
 			Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 		}

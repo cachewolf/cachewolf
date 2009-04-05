@@ -56,7 +56,7 @@ public class LOCXMLImporter extends MinML {
 		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			DBindexWpt.put(ch.wayPoint, new Integer(i));
+			DBindexWpt.put(ch.getWayPoint(), new Integer(i));
 		}//for
 	}
 	
@@ -100,20 +100,20 @@ public class LOCXMLImporter extends MinML {
 	
 	public void endElement(String name){
 		if (name.equals("name")){
-			holder.CacheName = strData;
+			holder.setCacheName(strData);
 		}
 
 		if (name.equals("waypoint")){
 			int index;
-			index = searchWpt(holder.wayPoint);
+			index = searchWpt(holder.getWayPoint());
 			if (index == -1){
-				holder.is_new = true;
+				holder.setNew(true);
 				cacheDB.add(new CacheHolder(holder));
-				DBindexWpt.put(holder.wayPoint, new Integer(cacheDB.size()-1));
+				DBindexWpt.put(holder.getWayPoint(), new Integer(cacheDB.size()-1));
 			}
 			// update (overwrite) data
 			else {
-				holder.is_new = false;
+				holder.setNew(false);
 				cacheDB.set(index, new CacheHolder(holder));
 			}
 			// save all  (after each cache???)
@@ -157,7 +157,7 @@ public class LOCXMLImporter extends MinML {
 		index = searchWpt(wpt);
 		if (index == -1){
 			ch = new CacheHolderDetail();
-			ch.wayPoint = wpt;
+			ch.setWayPoint(wpt);
 			return ch;
 		}
 		ch = new CacheHolderDetail((CacheHolder) cacheDB.get(index));

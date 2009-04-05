@@ -16,9 +16,9 @@ public class Attributes {
 	public long attributesYes;
 	public long attributesNo;
 
-	public Attributes() { 
+	public Attributes(){ 
 	}
-
+	
 	/**
 	 * Get the number of attributes in the list
 	 * @return number of attributes

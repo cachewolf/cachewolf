@@ -667,7 +667,7 @@ public class Parser{
     	if (ci<0) return;
     	// If it is an addi, find its main cache
     	if (((CacheHolder) Global.getProfile().cacheDB.get(ci)).isAddiWpt()) {
-    		waypointName=((CacheHolder) Global.getProfile().cacheDB.get(ci)).mainCache.wayPoint;
+    		waypointName=((CacheHolder) Global.getProfile().cacheDB.get(ci)).mainCache.getWayPoint();
     	}
    		int nStages=-1;
     	if (nargs==1) {
@@ -716,17 +716,17 @@ public class Parser{
 				for (int j=0; j<ch.addiWpts.getCount();j++){
 					addiWpt = (CacheHolder)ch.addiWpts.get(j);
 					op.append("IF $");
-					op.append(addiWpt.wayPoint);
+					op.append(addiWpt.getWayPoint());
 					op.append("=\"\" THEN\n   $");
-					op.append(addiWpt.wayPoint);
+					op.append(addiWpt.getWayPoint());
 					op.append("=\"\"");
 					//op.append(addiWpt.pos.toString());
 					op.append("\n   \"Punkt ");
-					op.append(addiWpt.wayPoint.substring(0,2));
+					op.append(addiWpt.getWayPoint().substring(0,2));
 					op.append(" [");
-					op.append(addiWpt.CacheName);
+					op.append(addiWpt.getCacheName());
 					op.append("] = \" $");
-					op.append(addiWpt.wayPoint);
+					op.append(addiWpt.getWayPoint());
 					CacheHolderDetail chD=new CacheHolderDetail(addiWpt);
 					try {
 						chD.readCache(Global.getProfile().dataDir);
@@ -734,7 +734,7 @@ public class Parser{
 					if (chD.LongDescription.trim().length()>0)
 						op.append("\n   \""+STRreplace.replace(chD.LongDescription,"\"","\"\"")+"\"");
 					op.append("\n   goto($");
-					op.append(addiWpt.wayPoint);
+					op.append(addiWpt.getWayPoint());
 					op.append("); STOP\nENDIF\n\n");
 				}
 				Global.mainTab.solverP.mText.appendText(op.toString(),true);
@@ -1101,12 +1101,11 @@ public class Parser{
     	if (ci >= 0) return false;
 
 		CacheHolder ch = new CacheHolder();
-		ch.wayPoint = wayPoint;
-		ch.type = type;
-		ch.CacheSize = "None";
-		ch.CacheName= name;
+		ch.setWayPoint(wayPoint);
+		ch.setType(type);
+		ch.setCacheSize("None");
+		ch.setCacheName(name);
 
-		Global.getProfile().hasUnsavedChanges=true;
 		Global.getProfile().setAddiRef(ch);
 
 		Global.mainTab.cacheDB.add(ch);

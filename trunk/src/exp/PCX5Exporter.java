@@ -38,7 +38,7 @@ public class PCX5Exporter extends Exporter{
 		StringBuffer strBuf = new StringBuffer(200);
 		String latlonstr, dummy;
 
-		  strBuf.append("W  " + ch.wayPoint + " ");
+		  strBuf.append("W  " + ch.getWayPoint() + " ");
 		  latlonstr = STRreplace.replace(ch.LatLon, "°", " ");
 		  latlonstr = STRreplace.replace(latlonstr, " ", "");
 		  latlonstr = STRreplace.replace(latlonstr, "E", " E");
@@ -46,7 +46,7 @@ public class PCX5Exporter extends Exporter{
 		  strBuf.append(latlonstr + "     ");
 		  strBuf.append("01-JAN-04 01:00:00 -0000 ");
 		  // has 42 characters
-		  dummy = ch.CacheName;
+		  dummy = ch.getCacheName();
 		  if (dummy.length() < 40){
 			  strBuf.append(dummy);
 			  int i = 40 - dummy.length();
@@ -57,7 +57,7 @@ public class PCX5Exporter extends Exporter{
 			  strBuf.append(dummy.substring(0,40));
 		  }
 		  strBuf.append(" 0.000000e+000 ");
-		  if(ch.is_found) strBuf.append("  8256\r\n");
+		  if(ch.is_found()) strBuf.append("  8256\r\n");
 		  else  		  strBuf.append("  8255\r\n");
 		return strBuf.toString();
 	}
