@@ -70,7 +70,7 @@ public class HTMLExporter{
 			int counter = 0;
 			for(int i = 0; i<cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
-				if(ch.is_black == false && ch.is_filtered == false) counter++;
+				if(ch.is_black() == false && ch.is_filtered() == false) counter++;
 			}
 			
 			pbf.showMainTask = false;
@@ -82,38 +82,38 @@ public class HTMLExporter{
 				h.changed();
 
 				ch = (CacheHolder)cacheDB.get(i);
-				if(	ch.is_black == false && ch.is_filtered == false){
+				if(	ch.is_black() == false && ch.is_filtered() == false){
 					holder=ch.getCacheDetails(false,true);
 					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.transType(holder.type));
-					varParams.put("SIZE", holder.CacheSize);
-					varParams.put("WAYPOINT", holder.wayPoint);
-					varParams.put("NAME", holder.CacheName);
-					varParams.put("OWNER", holder.CacheOwner);
-					varParams.put("DIFFICULTY", holder.hard);
-					varParams.put("TERRAIN", holder.terrain);
+					varParams.put("TYPE", CacheType.transType(holder.getType()));
+					varParams.put("SIZE", holder.getCacheSize());
+					varParams.put("WAYPOINT", holder.getWayPoint());
+					varParams.put("NAME", holder.getCacheName());
+					varParams.put("OWNER", holder.getCacheOwner());
+					varParams.put("DIFFICULTY", holder.getHard());
+					varParams.put("TERRAIN", holder.getTerrain());
 					varParams.put("DISTANCE", holder.getDistance());
 					varParams.put("BEARING", holder.bearing);
 					varParams.put("LATLON", holder.LatLon);
-					varParams.put("STATUS", holder.CacheStatus);
-					varParams.put("DATE", holder.DateHidden);
+					varParams.put("STATUS", holder.getCacheStatus());
+					varParams.put("DATE", holder.getDateHidden());
 					cache_index.add(varParams);
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						page_tpl.setParam("TYPE", CacheType.transType(holder.type));
-						page_tpl.setParam("SIZE", holder.CacheSize);
-						page_tpl.setParam("WAYPOINT", holder.wayPoint);
-						page_tpl.setParam("NAME", holder.CacheName);
-						page_tpl.setParam("OWNER", holder.CacheOwner);
-						page_tpl.setParam("DIFFICULTY", holder.hard);
-						page_tpl.setParam("TERRAIN", holder.terrain);
+						page_tpl.setParam("TYPE", CacheType.transType(holder.getType()));
+						page_tpl.setParam("SIZE", holder.getCacheSize());
+						page_tpl.setParam("WAYPOINT", holder.getWayPoint());
+						page_tpl.setParam("NAME", holder.getCacheName());
+						page_tpl.setParam("OWNER", holder.getCacheOwner());
+						page_tpl.setParam("DIFFICULTY", holder.getHard());
+						page_tpl.setParam("TERRAIN", holder.getTerrain());
 						page_tpl.setParam("DISTANCE", holder.getDistance());
 						page_tpl.setParam("BEARING", holder.bearing);
 						page_tpl.setParam("LATLON", holder.LatLon);
-						page_tpl.setParam("STATUS", holder.CacheStatus);
-						page_tpl.setParam("DATE", holder.DateHidden);
-						if (holder.is_HTML)
+						page_tpl.setParam("STATUS", holder.getCacheStatus());
+						page_tpl.setParam("DATE", holder.getDateHidden());
+						if (holder.is_HTML())
 							page_tpl.setParam("DESCRIPTION", modifyLongDesc(holder,targetDir));
 						else {
 							String dummyText = new String();
@@ -178,7 +178,7 @@ public class HTMLExporter{
 						// Map images
 						mapImg.clear();
 						mapImgParams = new Hashtable();
-						String mapImgFile = new String(holder.wayPoint + "_map.gif");
+						String mapImgFile = new String(holder.getWayPoint() + "_map.gif");
 						// check if map file exists
 						File test = new File(profile.dataDir + mapImgFile);
 						if (test.exists()) {
@@ -188,7 +188,7 @@ public class HTMLExporter{
 							mapImg.add(mapImgParams);
 							
 							mapImgParams = new Hashtable();
-							mapImgFile = holder.wayPoint + "_map_2.gif";
+							mapImgFile = holder.getWayPoint() + "_map_2.gif";
 							mapImgParams.put("FILE", mapImgFile);
 							mapImgParams.put("TEXT",mapImgFile);
 							DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
@@ -198,7 +198,7 @@ public class HTMLExporter{
 						}
 
 						
-						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + holder.wayPoint+".html")));
+						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + holder.getWayPoint()+".html")));
 						pagefile.print(page_tpl.output());
 						pagefile.close();
 					}catch(Exception e){

@@ -160,7 +160,7 @@ public class MainMenu extends MenuBar {
 		filterMenuItems[6] = filtNonSelected = new MenuItem(MyLocale.getMsg(1011,"Filter out non selected"));
 		filterMenuItems[7] = mnuSeparator;
 		filterMenuItems[8] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
-        filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+        filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 		//filterMenuItems[9] = mnuSeparator;
 		//filterMenuItems[10] = cacheTour;
 
@@ -264,7 +264,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == mnuNewProfile){
 				if (NewProfileWizard.startNewProfileWizard(getFrame()) ) {
 					pref.curCentrePt = new CWPoint(profile.centre);
-		            filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+		            filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 					tbp.refreshTable();
 				}
 			}
@@ -281,7 +281,7 @@ public class MainMenu extends MenuBar {
 					profile.readIndex();
 					Vm.showWait(infB, false);
 					pref.curCentrePt.set(profile.centre);
-                    filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+                    filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 					infB.close(0);
 					tbp.resetModel();
@@ -341,15 +341,15 @@ public class MainMenu extends MenuBar {
 						}
 					}
 				}
-                Global.getProfile().showBlacklisted = false;
-                filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+                Global.getProfile().setShowBlacklisted(false);
+                filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadOC){
 				OCXMLImporter oc = new OCXMLImporter(pref,profile);
 				oc.doIt();
-                Global.getProfile().showBlacklisted = false;
-                filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+                Global.getProfile().setShowBlacklisted(false);
+                filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if (mev.selectedItem == update) 
@@ -543,13 +543,13 @@ public class MainMenu extends MenuBar {
 					ch = (CacheHolder)cacheDB.get(i);
 					// This is an incremental filter, i.e. it keeps the existing filter
 					// status and only adds the marked caches to the filtered set
-					if (ch.is_Checked && !ch.is_filtered) {
-						ch.is_filtered = true;
+					if (ch.is_Checked && !ch.is_filtered()) {
+						ch.setFiltered(true);
 						filterChanged = true;
 					}
 				}
-				if ( filterChanged && Global.getProfile().filterActive == Filter.FILTER_INACTIVE) {
-					Global.getProfile().filterActive = Filter.FILTER_MARKED_ONLY;
+				if ( filterChanged && Global.getProfile().getFilterActive() == Filter.FILTER_INACTIVE) {
+					Global.getProfile().setFilterActive(Filter.FILTER_MARKED_ONLY);
 				}
 				tbp.refreshTable();
 			}
@@ -561,31 +561,32 @@ public class MainMenu extends MenuBar {
 					ch = (CacheHolder)cacheDB.get(i);
 					// incremental filter. Keeps status of all marked caches and
 					// adds unmarked caches to filtered list
-					if (!ch.is_Checked && !ch.is_filtered) {
-						ch.is_filtered = true;
+					if (!ch.is_Checked && !ch.is_filtered()) {
+						ch.setFiltered(true);
 						filterChanged = true;
 					}
 				}
-				if ( filterChanged && Global.getProfile().filterActive == Filter.FILTER_INACTIVE) {
-					Global.getProfile().filterActive = Filter.FILTER_MARKED_ONLY;
+				if ( filterChanged && Global.getProfile().getFilterActive() == Filter.FILTER_INACTIVE) {
+					Global.getProfile().setFilterActive(Filter.FILTER_MARKED_ONLY);
 				}
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == filtBlack){
 				//filtBlack.modifiers=filtBlack.modifiers|MenuItem.Checked;
-				Global.getProfile().showBlacklisted = !Global.getProfile().showBlacklisted;
-				filtBlack.modifiers=Global.getProfile().showBlacklisted?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+				Global.getProfile().setShowBlacklisted(!Global.getProfile().showBlacklisted());
+				filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				SearchCache ssc = new SearchCache(cacheDB);
 				ssc.clearSearch();// Clear search & restore filter status
-				Filter flt=new Filter();
-				flt.clearFilter();
+				//Filter flt=new Filter();
+				//flt.clearFilter();
+				Global.getProfile().restoreFilter();
 				tbp.refreshTable();
 			}
 			///////////////////////////////////////////////////////////////////////
 			// "Organise" pulldown menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == orgNewWP){
-				if (Global.mainTab.tbP.getSelectedCache() >= 0) Global.mainTab.lastselected = ((CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache())).wayPoint;
+				if (Global.mainTab.tbP.getSelectedCache() >= 0) Global.mainTab.lastselected = ((CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache())).getWayPoint();
 				Global.mainTab.newWaypoint(new CacheHolder());
 			}
 
@@ -691,9 +692,9 @@ public class MainMenu extends MenuBar {
 		Vector cachesToUpdate = new Vector();
 		for(int i = 0; i <	cacheDB.size(); i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			if(ch.is_Checked == true && !ch.is_filtered) {
-				if ( ch.wayPoint.length()>1 && (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC") 
-						|| ch.wayPoint.substring(0,2).equalsIgnoreCase("OC")))
+			if(ch.is_Checked == true && !ch.is_filtered()) {
+				if ( ch.getWayPoint().length()>1 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC") 
+						|| ch.getWayPoint().substring(0,2).equalsIgnoreCase("OC")))
 //					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
 //					Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
 //					Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
@@ -708,7 +709,7 @@ public class MainMenu extends MenuBar {
 					if (!ch.isAddiWpt() && !alreadySaid) {
 						alreadySaid = true;
 						(new MessageBox(MyLocale.getMsg(327,"Information"),
-								        ch.wayPoint+ 
+								        ch.getWayPoint()+ 
 								        MyLocale.getMsg(5002,": At the moment this function is only applicable for geocaching.com and opencaching.de."), FormBase.OKB)).execute();
 					}
 				}
@@ -722,9 +723,9 @@ public class MainMenu extends MenuBar {
 			int i = ((Integer)cachesToUpdate.get(j)).intValue();
 			ch = (CacheHolder)cacheDB.get(i);
 //			infB.setInfo("Loading: " + ch.wayPoint);
-			infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.wayPoint +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
+			infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.getWayPoint() +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
 			infB.redisplay();
-			if (ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")) {
+			if (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) {
 				int test = spider.spiderSingle(i, infB,forceLogin);
 				if (test == -1) {
 					infB.close(0);
@@ -732,7 +733,7 @@ public class MainMenu extends MenuBar {
 				} else if (test == 0) {
 					spiderErrors++;
 				} else {
-					profile.hasUnsavedChanges=true;	
+					//profile.hasUnsavedChanges=true;	
 				}
 				forceLogin=false;
 			}
@@ -740,15 +741,15 @@ public class MainMenu extends MenuBar {
 				if (!ocSync.syncSingle(i, infB)) {
 					infB.close(0);
 					break;
-				} else 
-					profile.hasUnsavedChanges=true;	
+				} else { 
+					//profile.hasUnsavedChanges=true;
+				}	
 			}
 
 //			cacheDB.clear();
 //			profile.readIndex();
 		}
 		infB.close(0);
-//		profile.hasUnsavedChanges=true;	
 		profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 		profile.restoreFilter();
 		profile.updateBearingDistance();

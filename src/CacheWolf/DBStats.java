@@ -24,8 +24,8 @@ public class DBStats {
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_black == false && holder.is_filtered == false){
-				if(holder.wayPoint.startsWith("GC") || holder.wayPoint.startsWith("OC")) counter++;
+			if(holder.is_black() == false && holder.is_filtered() == false){
+				if(holder.getWayPoint().startsWith("GC") || holder.getWayPoint().startsWith("OC")) counter++;
 			}
 		}
 		return counter;
@@ -40,8 +40,8 @@ public class DBStats {
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_black == false){
-				if(holder.wayPoint.startsWith("GC") || holder.wayPoint.startsWith("OC")) counter++;
+			if(holder.is_black() == false){
+				if(holder.getWayPoint().startsWith("GC") || holder.getWayPoint().startsWith("OC")) counter++;
 			}
 		}
 		return counter;
@@ -52,8 +52,8 @@ public class DBStats {
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = (CacheHolder)cacheDB.get(i);
-			if(holder.is_found == true) {
-				if(holder.wayPoint.startsWith("GC") || holder.wayPoint.startsWith("OC")) counter++;
+			if(holder.is_found() == true) {
+				if(holder.getWayPoint().startsWith("GC") || holder.getWayPoint().startsWith("OC")) counter++;
 			}
 		}
 		return counter;

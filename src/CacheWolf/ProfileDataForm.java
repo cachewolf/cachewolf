@@ -66,15 +66,15 @@ public class ProfileDataForm extends Form {
 				CoordsScreen cs = new CoordsScreen();
 				cs.setFields(profile.centre, CWPoint.CW);
 				if (cs.execute()== FormBase.IDOK){
+					profile.notifyUnsavedChanges(cs.getCoords().equals(profile.centre));
 					profile.centre.set(cs.getCoords());
 					btnProfileCentre.setText(profile.centre.toString());
-					profile.hasUnsavedChanges=true;
 				}
 			}
 			if (ev.target == btnCur2Prof){
+				profile.notifyUnsavedChanges(pref.curCentrePt.equals(profile.centre));
 				profile.centre.set(pref.curCentrePt);
 				btnProfileCentre.setText(profile.centre.toString());
-				profile.hasUnsavedChanges=true;
 			}
 			if (ev.target == btnProf2Cur){
 				pref.curCentrePt.set(profile.centre);

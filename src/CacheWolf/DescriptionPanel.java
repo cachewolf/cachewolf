@@ -47,10 +47,10 @@ public class DescriptionPanel extends CellPanel{
         } else {
             if (cache.hasSameMainCache(currCache))
                 scrollto = disp.getTopLine();
-            isHtml = cache.is_HTML;
+            isHtml = cache.is_HTML();
             if (cache.isAddiWpt()) {
                 CacheHolderDetail mainCache = cache.mainCache.getCacheDetails(true);
-                isHtml = mainCache.is_HTML;
+                isHtml = mainCache.is_HTML();
                 if (cache.LongDescription != null && cache.LongDescription.length() > 0)
                     desc = cache.LongDescription + (isHtml ? "<hr>\n" : "\n")
                             + mainCache.LongDescription;
@@ -162,7 +162,7 @@ public class DescriptionPanel extends CellPanel{
 
 		Vm.showWait(true);
 		currLine = disp.getTopLine();
-		if (currCache.is_HTML)	disp.setHtml(desc);
+		if (currCache.is_HTML())	disp.setHtml(desc);
 		else				disp.setPlainText(currCache.LongDescription);
 		disp.scrollTo(currLine,false);
 		Vm.showWait(false);

@@ -26,21 +26,21 @@ public class CacheHolder {
 	protected static final String EMPTY = "";
 
 	/** Cachestatus is Found, Not found or a date in format yyyy-mm-dd hh:mm for found date */
-	public String CacheStatus = EMPTY;
+	private String cacheStatus = EMPTY;
 	/** The name of the waypoint typicall GC.... or OC.... or CW...... (can be any characters) */
-	public String wayPoint = EMPTY;
+	private String wayPoint = EMPTY;
 	/** The name of the cache (short description) */
-	public String CacheName = EMPTY;
+	private String cacheName = EMPTY;
 	/** The alias of the owner */
-	public String CacheOwner = EMPTY;
+	private String cacheOwner = EMPTY;
 	/** The coordinates of the cache */
 	public CWPoint pos = new CWPoint();
 	/** The coordinates of the cache */
 	public String LatLon = pos.toString();
 	/** The date when the cache was hidden in format yyyy-mm-dd */
-	public String DateHidden = EMPTY;
+	private String dateHidden = EMPTY;
 	/** The size of the cache (as per GC cache sizes Micro, Small, ....) */
-	public String CacheSize = "None";
+	private String cacheSize = "None";
 	/** The distance from the centre in km */
 	public double kilom = -1; int bla = 0;
 	public double lastKilom = -2; // Cache last value
@@ -51,31 +51,31 @@ public class CacheHolder {
 	/** The angle (0=North, 180=South) from the current centre to this point */
 	public double degrees = 0;
 	/** The difficulty of the cache from 1 to 5 in .5 incements */ 
-	public String hard = EMPTY;
+	private String hard = EMPTY;
 	/** The terrain rating of the cache from 1 to 5 in .5 incements */
-	public String terrain = EMPTY;
+	private String terrain = EMPTY;
 	/** The cache type (@see CacheType for translation table)  */
-	public int type = 0; 
+	private int type = 0; 
 	/** True if the cache has been archived */
-	public boolean is_archived = false;
+	private boolean archived = false;
 	/** True if the cache is available for searching */
-	public boolean is_available = true;
+	private boolean available = true;
 	/** True if we own this cache */
-	public boolean is_owned = false;
+	private boolean owned = false;
 	/** True if we have found this cache */
-	public boolean is_found = false;
+	private boolean found = false;
 	/** If this is true, the cache has been filtered (is currently invisible) */
-	public boolean is_filtered = false;
+	private boolean filtered = false;
 	/** True if the number of logs for this cache has changed */
-	public boolean is_log_update = false;
+	private boolean log_updated = false;
 	/** True if cache details have changed: longDescription, Hints,  */
-	public boolean is_update = false;
+	private boolean cache_updated = false;
 	/** True if the cache data is incomplete (e.g. an error occurred during spidering */
-	public boolean is_incomplete = false;
+	private boolean incomplete = false;
 	/** True if the cache is blacklisted */
-	public boolean is_black = false;
+	private boolean black = false;
 	/** True if the cache is new */
-	public boolean is_new = false;
+	private boolean newCache = false;
 	/** True if the cache is part of the results of a search */
 	public boolean is_flaged = false;
 	/** True if the cache has been selected using the tick box in the list view */
@@ -83,19 +83,19 @@ public class CacheHolder {
 	/** Not used: This attribute is saved with the cache and read back but never set */
 //	public String dirty = EMPTY;
 	/** The unique OC cache ID */
-	public String ocCacheID = EMPTY;
+	private String ocCacheID = EMPTY;
 	/** The number of times this cache has not been found (max. 5) */
-	public int noFindLogs = 0;
+	private int noFindLogs = 0;
 	/** Number of recommendations (from the opencaching logs) */
-	public int numRecommended = 0;
+	private int numRecommended = 0;
 	/** Number of Founds since start of recommendations system */
-	public int numFoundsSinceRecommendation = 0;
+	private int numFoundsSinceRecommendation = 0;
 	/** Recommendation score: calculated as rations  numRecommended / numLogsSinceRecommendation * 100 */
 	public int recommendationScore = 0;
 	/** True if this cache has travelbugs */
-	public boolean has_bug = false;
+	private boolean bugs = false;
 	/** True if the cache description is stored in HTML format */
-	public boolean is_HTML = true;
+	private boolean html = true;
 	/** List of additional waypoints associated with this waypoint */
 	public Vector addiWpts = new Vector();
 	/** in range is used by the route filter to identify caches in range of a segment*/
@@ -103,7 +103,7 @@ public class CacheHolder {
 	/** If this is an additional waypoint, this links back to the main waypoint */
 	public CacheHolder mainCache;
 	/** The date this cache was last synced with OC in format yyyyMMddHHmmss */
-	public String lastSyncOC = EMPTY;
+	private String lastSyncOC = EMPTY;
 	public CacheHolderDetail details = null;
 	/** When sorting the cacheDB this field is used. The relevant field is copied here and
 	 *  the sort is always done on this field to speed up the sorting process 
@@ -111,9 +111,10 @@ public class CacheHolder {
 	public String sort;
 	private static StringBuffer sb=new StringBuffer(530); // Used in toXML()
 
-	public long attributesYes = 0;
-	public long attributesNo  = 0;
+	private long attributesYes = 0;
+	private long attributesNo  = 0;
 
+	
 //	static int nObjects=0;
 	public CacheHolder() {//nObjects++;Vm.debug("CacheHolder() nO="+nObjects);
 	}
@@ -132,10 +133,10 @@ public class CacheHolder {
 		int start,end;
 		try {
 			start=xmlString.indexOf('"'); end=xmlString.indexOf('"',start+1);
-			CacheName = SafeXML.cleanback(xmlString.substring(start+1,end));
+			setCacheName(SafeXML.cleanback(xmlString.substring(start+1,end)));
 			
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-            CacheOwner = SafeXML.cleanback(xmlString.substring(start+1,end));
+            setCacheOwner(SafeXML.cleanback(xmlString.substring(start+1,end)));
 			// Assume coordinates are in decimal format
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 			double lat=Convert.parseDouble(xmlString.substring(start+1,end).replace(notDecSep,decSep));
@@ -146,90 +147,90 @@ public class CacheHolder {
 			LatLon=pos.toString();
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			DateHidden = xmlString.substring(start+1,end); 
+			setDateHidden(xmlString.substring(start+1,end)); 
 			// Convert the US format to YYYY-MM-DD if necessary
-			if (DateHidden.indexOf('/')>-1) DateHidden=DateFormat.MDY2YMD(DateHidden);
+			if (getDateHidden().indexOf('/')>-1) setDateHidden(DateFormat.MDY2YMD(getDateHidden()));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			wayPoint = SafeXML.cleanback(xmlString.substring(start+1,end));
+			setWayPoint(SafeXML.cleanback(xmlString.substring(start+1,end)));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			CacheStatus = xmlString.substring(start+1,end);
+			setCacheStatus(xmlString.substring(start+1,end));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			type = new Integer(xmlString.substring(start+1,end)).intValue();
+			setType(new Integer(xmlString.substring(start+1,end)).intValue());
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			hard = xmlString.substring(start+1,end);
+			setHard(xmlString.substring(start+1,end));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			terrain = xmlString.substring(start+1,end);
+			setTerrain(xmlString.substring(start+1,end));
 
 			// The next item was 'dirty' but this is no longer used.
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_filtered = xmlString.substring(start+1,end).equals("true"); 
+			setFiltered(xmlString.substring(start+1,end).equals("true")); 
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			CacheSize = xmlString.substring(start+1,end);
+			setCacheSize(xmlString.substring(start+1,end));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_available = xmlString.substring(start+1,end).equals("true");
+			setAvailable(xmlString.substring(start+1,end).equals("true"));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_archived = xmlString.substring(start+1,end).equals("true");
+			setArchived(xmlString.substring(start+1,end).equals("true"));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			has_bug = xmlString.substring(start+1,end).equals("true");
+			setHas_bugs(xmlString.substring(start+1,end).equals("true"));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_black = xmlString.substring(start+1,end).equals("true");
-			if(is_black!=Global.getProfile().showBlacklisted) is_filtered = true;
+			setBlack(xmlString.substring(start+1,end).equals("true"));
+			if(is_black()!=Global.getProfile().showBlacklisted()) setFiltered(true);
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_owned = xmlString.substring(start+1,end).equals("true");
+			setOwned(xmlString.substring(start+1,end).equals("true"));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_found = xmlString.substring(start+1,end).equals("true");
+			setFound(xmlString.substring(start+1,end).equals("true"));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_new = xmlString.substring(start+1,end).equals("true");
+			setNew(xmlString.substring(start+1,end).equals("true"));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_log_update = xmlString.substring(start+1,end).equals("true");
+			setLog_updated(xmlString.substring(start+1,end).equals("true"));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_update = xmlString.substring(start+1,end).equals("true");
+			setUpdated(xmlString.substring(start+1,end).equals("true"));
 
 			// for backwards compatibility set value to true, if it is not in the file
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_HTML = !xmlString.substring(start+1,end).equals("false");
+			setHTML(!xmlString.substring(start+1,end).equals("false"));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			noFindLogs = Convert.toInt(xmlString.substring(start+1,end));
+			setNoFindLogs(Convert.toInt(xmlString.substring(start+1,end)));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			ocCacheID = xmlString.substring(start+1,end);
+			setOcCacheID(xmlString.substring(start+1,end));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			is_incomplete = xmlString.substring(start+1,end).equals("true");
+			setIncomplete(xmlString.substring(start+1,end).equals("true"));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			lastSyncOC = xmlString.substring(start+1,end);
+			setLastSyncOC(xmlString.substring(start+1,end));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			numRecommended = Convert.toInt(xmlString.substring(start+1,end));
+			setNumRecommended(Convert.toInt(xmlString.substring(start+1,end)));
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			numFoundsSinceRecommendation = Convert.toInt(xmlString.substring(start+1,end));
-			recommendationScore = LogList.getScore(numRecommended, numFoundsSinceRecommendation);
+			setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start+1,end)));
+			recommendationScore = LogList.getScore(getNumRecommended(), getNumFoundsSinceRecommendation());
 
 			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 			if (start > -1 && end > -1) {
-				attributesYes = Convert.parseLong(xmlString.substring(start+1,end));
+				setAttributesYes(Convert.parseLong(xmlString.substring(start+1,end)));
 
 				start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
 				if (start > -1 && end > -1)
-					attributesNo = Convert.parseLong(xmlString.substring(start+1,end));
+					setAttributesNo(Convert.parseLong(xmlString.substring(start+1,end)));
 			}
 		} catch (Exception ex) {
 
@@ -280,11 +281,11 @@ public class CacheHolder {
 	}
 	public void update(CacheHolder ch, boolean overwrite) {
 		this.recommendationScore = ch.recommendationScore;
-		this.numFoundsSinceRecommendation = ch.numFoundsSinceRecommendation;
-		this.numRecommended = ch.numRecommended;
+		this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
+		this.setNumRecommended(ch.getNumRecommended());
 		if (overwrite) {
-			this.CacheStatus=ch.CacheStatus;
-			this.is_found = ch.is_found;
+			this.setCacheStatus(ch.getCacheStatus());
+			this.setFound(ch.is_found());
 			this.pos = ch.pos;
 			this.LatLon = ch.LatLon;
 		} else {
@@ -296,9 +297,9 @@ public class CacheHolder {
 	   true                yyyy-mm-dd          yyyy-mm-dd       no (or yes)
 	   true                yyyy-mm-dd hh:mm    yyyy-mm-dd       no
 			 */
-			if (!this.is_found || this.CacheStatus.indexOf(":")<0) {
-				this.CacheStatus=ch.CacheStatus;
-				this.is_found = ch.is_found;
+			if (!this.is_found() || this.getCacheStatus().indexOf(":")<0) {
+				this.setCacheStatus(ch.getCacheStatus());
+				this.setFound(ch.is_found());
 			}
 			// Don't overwrite valid coordinates with invalid ones
 			if (ch.pos.isValid() || !this.pos.isValid()) {
@@ -306,70 +307,70 @@ public class CacheHolder {
 				this.LatLon = ch.LatLon;
 			}
 		}
-		this.wayPoint = ch.wayPoint;
-		this.CacheName = ch.CacheName;
-		this.CacheOwner = ch.CacheOwner;
+		this.setWayPoint(ch.getWayPoint());
+		this.setCacheName(ch.getCacheName());
+		this.setCacheOwner(ch.getCacheOwner());
 
-		this.DateHidden = ch.DateHidden;
-		this.CacheSize = ch.CacheSize;
+		this.setDateHidden(ch.getDateHidden());
+		this.setCacheSize(ch.getCacheSize());
 		this.kilom = ch.kilom;
 		this.bearing = ch.bearing;
 		this.degrees = ch.degrees;
-		this.hard = ch.hard;
-		this.terrain = ch.terrain;
-		this.type = ch.type;
-		this.is_archived = ch.is_archived;
-		this.is_available = ch.is_available;
-		this.is_owned = ch.is_owned;
-		this.is_filtered = ch.is_filtered;
-		this.is_log_update = ch.is_log_update;
-		this.is_update = ch.is_update;
-		this.is_incomplete = ch.is_incomplete;
-		this.is_black=ch.is_black;
+		this.setHard(ch.getHard());
+		this.setTerrain(ch.getTerrain());
+		this.setType(ch.getType());
+		this.setArchived(ch.is_archived());
+		this.setAvailable(ch.is_available());
+		this.setOwned(ch.is_owned());
+		this.setFiltered(ch.is_filtered());
+		this.setLog_updated(ch.is_log_updated());
+		this.setUpdated(ch.is_updated());
+		this.setIncomplete(ch.is_incomplete());
+		this.setBlack(ch.is_black());
 		this.addiWpts = ch.addiWpts;
 		this.mainCache=ch.mainCache;
-		this.is_new=ch.is_new;
+		this.setNew(ch.is_new());
 		this.is_flaged = ch.is_flaged;
 		this.is_Checked = ch.is_Checked;
 		//this.dirty = ch.dirty;
-		this.ocCacheID = ch.ocCacheID;
-		this.noFindLogs = ch.noFindLogs;
-		this.has_bug = ch.has_bug;
-		this.is_HTML = ch.is_HTML;
+		this.setOcCacheID(ch.getOcCacheID());
+		this.setNoFindLogs(ch.getNoFindLogs());
+		this.setHas_bugs(ch.has_bugs());
+		this.setHTML(ch.is_HTML());
 		this.sort=ch.sort;
-		this.lastSyncOC = ch.lastSyncOC;
+		this.setLastSyncOC(ch.getLastSyncOC());
 
-		this.attributesYes = ch.attributesYes;
-		this.attributesNo = ch.attributesNo;
+		this.setAttributesYes(ch.getAttributesYes());
+		this.setAttributesNo(ch.getAttributesNo());
 	}
 	/**
 	 * Call it only when necessary, it takes time, because all logs must be parsed
 	 *
 	 */
 	public void calcRecommendationScore() {
-		if (wayPoint.toLowerCase().startsWith("oc") ) {
+		if (getWayPoint().toLowerCase().startsWith("oc") ) {
 			CacheHolderDetail chD;
 			if (this instanceof CacheHolderDetail)	chD = (CacheHolderDetail)this;
 			else chD = getCacheDetails(true, false);
 			if (chD != null) {
 				chD.CacheLogs.calcRecommendations();
 				recommendationScore = chD.CacheLogs.recommendationRating;
-				numFoundsSinceRecommendation = chD.CacheLogs.foundsSinceRecommendation;
-				numRecommended = chD.CacheLogs.numRecommended;
+				setNumFoundsSinceRecommendation(chD.CacheLogs.foundsSinceRecommendation);
+				setNumRecommended(chD.CacheLogs.numRecommended);
 			} else { // cache doesn't have details
 				recommendationScore = -1;
-				numFoundsSinceRecommendation = -1;
-				numRecommended = -1;
+				setNumFoundsSinceRecommendation(-1);
+				setNumRecommended(-1);
 			}
 		} else {
 			recommendationScore = -1;
-			numFoundsSinceRecommendation = -1;
-			numRecommended = -1;
+			setNumFoundsSinceRecommendation(-1);
+			setNumRecommended(-1);
 		}
 		if (details != null) {
 		details.recommendationScore = recommendationScore;
-		details.numFoundsSinceRecommendation = numFoundsSinceRecommendation;
-		details.numRecommended = numRecommended;
+		details.setNumFoundsSinceRecommendation(getNumFoundsSinceRecommendation());
+		details.setNumRecommended(getNumRecommended());
 		}
 	}
 	
@@ -377,50 +378,50 @@ public class CacheHolder {
 	public String toXML() {
 		if (this instanceof CacheHolderDetail || (details != null && details.hasUnsavedChanges)) calcRecommendationScore(); 
 		sb.delete(0,sb.length());
-		sb.append("    <CACHE name = \"");
-		sb.append(SafeXML.clean(CacheName));
-		sb.append("\" owner = \"");		sb.append(SafeXML.clean(CacheOwner));
+		sb.append("    <CACHE ");
+		sb.append(" name = \"");        sb.append(SafeXML.clean(getCacheName()));
+		sb.append("\" owner = \"");		sb.append(SafeXML.clean(getCacheOwner()));
 		sb.append("\" lat = \""); 		sb.append(pos.latDec ); 
 		sb.append("\" lon = \"");		sb.append(pos.lonDec);
-		sb.append("\" hidden = \"");	sb.append(DateHidden);
-		sb.append("\" wayp = \"");		sb.append(SafeXML.clean(wayPoint));
-		sb.append("\" status = \"");	sb.append(CacheStatus);
-		sb.append("\" type = \"");		sb.append(type);
-		sb.append("\" dif = \"");		sb.append(hard);
-		sb.append("\" terrain = \"" );	sb.append(terrain ); 
-		sb.append("\" filtered = \"" ); sb.append(is_filtered); // This was 'dirty', but dirty is not used
-		sb.append("\" size = \"");		sb.append(CacheSize);
-		sb.append("\" online = \"" );	sb.append(is_available); 
-		sb.append("\" archived = \"" );	sb.append(is_archived); 
-		sb.append("\" has_bug = \"" ); 	sb.append(has_bug); 
-		sb.append("\" black = \"" ); 	sb.append(is_black); 
-		sb.append("\" owned = \"" ); 	sb.append(is_owned); 
-		sb.append("\" found = \"" ); 	sb.append(is_found); 
-		sb.append("\" is_new = \"" );	sb.append(is_new);
-		sb.append("\" is_log_update = \"" );sb.append(is_log_update); 
-		sb.append("\" is_update = \"" );sb.append(is_update); 
-		sb.append("\" is_HTML = \"" ); 	sb.append(is_HTML); 
-		sb.append("\" DNFLOGS = \"" ); 	sb.append(noFindLogs ); 
-		sb.append("\" ocCacheID = \"" );sb.append(ocCacheID ); 
-		sb.append("\" is_INCOMPLETE = \"");sb.append(is_incomplete); 
-		sb.append("\" lastSyncOC = \"" );sb.append(lastSyncOC ); 
-		sb.append("\" num_recommended = \"");sb.append(Convert.formatInt(numRecommended)); 
-		sb.append("\" num_found = \"" );sb.append(Convert.formatInt(numFoundsSinceRecommendation));
-		sb.append("\" attributesYes = \"" ); sb.append(Convert.formatLong(attributesYes));
-		sb.append("\" attributesNo = \"" ); sb.append(Convert.formatLong(attributesNo));
+		sb.append("\" hidden = \"");	sb.append(getDateHidden());
+		sb.append("\" wayp = \"");		sb.append(SafeXML.clean(getWayPoint()));
+		sb.append("\" status = \"");	sb.append(getCacheStatus());
+		sb.append("\" type = \"");		sb.append(getType());
+		sb.append("\" dif = \"");		sb.append(getHard());
+		sb.append("\" terrain = \"" );	sb.append(getTerrain() ); 
+		sb.append("\" filtered = \"" ); sb.append(is_filtered()); // This was 'dirty', but dirty is not used
+		sb.append("\" size = \"");		sb.append(getCacheSize());
+		sb.append("\" online = \"" );	sb.append(is_available()); 
+		sb.append("\" archived = \"" );	sb.append(is_archived()); 
+		sb.append("\" has_bug = \"" ); 	sb.append(has_bugs()); 
+		sb.append("\" black = \"" ); 	sb.append(is_black()); 
+		sb.append("\" owned = \"" ); 	sb.append(is_owned()); 
+		sb.append("\" found = \"" ); 	sb.append(is_found()); 
+		sb.append("\" is_new = \"" );	sb.append(is_new());
+		sb.append("\" is_log_update = \"" );sb.append(is_log_updated()); 
+		sb.append("\" is_update = \"" );sb.append(is_updated()); 
+		sb.append("\" is_HTML = \"" ); 	sb.append(is_HTML()); 
+		sb.append("\" DNFLOGS = \"" ); 	sb.append(getNoFindLogs()); 
+		sb.append("\" ocCacheID = \"" );sb.append(getOcCacheID()); 
+		sb.append("\" is_INCOMPLETE = \"");sb.append(is_incomplete()); 
+		sb.append("\" lastSyncOC = \"" );sb.append(getLastSyncOC()); 
+		sb.append("\" num_recommended = \"");sb.append(Convert.formatInt(getNumRecommended())); 
+		sb.append("\" num_found = \"" );sb.append(Convert.formatInt(getNumFoundsSinceRecommendation()));
+		sb.append("\" attributesYes = \"" ); sb.append(Convert.formatLong(getAttributesYes()));
+		sb.append("\" attributesNo = \"" ); sb.append(Convert.formatLong(getAttributesNo()));
 		sb.append("\" />\n");
 		return sb.toString();
 	}
 
 	public void setLatLon(String latLon) {
 		latLon=latLon.trim();
-		if (!latLon.equals(LatLon.trim())) is_update=true;
+		if (!latLon.equals(LatLon.trim())) setUpdated(true);
 		LatLon = latLon;
 		pos.set(latLon);
 	}
 
 	public boolean isAddiWpt() {
-		return CacheType.isAddiWpt(this.type);
+		return CacheType.isAddiWpt(this.getType());
 	}
 
 	public boolean hasAddiWpt() {
@@ -440,14 +441,14 @@ public class CacheHolder {
 		}
 	}
 	public void setAttributesFromMainCache(CacheHolder mainCh){
-		this.CacheOwner = mainCh.CacheOwner;
-		this.CacheStatus = mainCh.CacheStatus;
-		this.is_archived = mainCh.is_archived;
-		this.is_available = mainCh.is_available;
-		this.is_black = mainCh.is_black;
-		this.is_owned = mainCh.is_owned;
-		this.is_new = mainCh.is_new;
-		this.is_found = mainCh.is_found;
+		this.setCacheOwner(mainCh.getCacheOwner());
+		this.setCacheStatus(mainCh.getCacheStatus());
+		this.setArchived(mainCh.is_archived());
+		this.setAvailable(mainCh.is_available());
+		this.setBlack(mainCh.is_black());
+		this.setOwned(mainCh.is_owned());
+		this.setNew(mainCh.is_new());
+		this.setFound(mainCh.is_found());
 	}
 
 	public void setAttributesToAddiWpts(){
@@ -475,7 +476,7 @@ public class CacheHolder {
 			if (ch.isAddiWpt()) 
 				main2=ch.mainCache;
 			else 
-				return main1.wayPoint.equals(ch.wayPoint);
+				return main1.getWayPoint().equals(ch.getWayPoint());
 		} else { // ch instanceof CacheHolder 
 			if (ch.isAddiWpt()) main2 = ch.mainCache; else main2 = ch; 
 		}
@@ -512,16 +513,21 @@ public class CacheHolder {
 			else details.update(this);
 			return details;
 		}
+		// FIXME Problem: Hier wird ein neues Detail-Objekt erzeugt, welches natürlich noch
+		//       Default-Werte in den Feldern stehen hat. 
+		//       Das Zurücksetzen von UnsavedChanges ist erstmal ein Hack.
+		boolean hasUnsavedChanges = Global.getProfile().hasUnsavedChanges();
 		details = new CacheHolderDetail(this);
 		try {
 			details.readCache(Global.getProfile().dataDir);
 		} catch (IOException e) {
 			if (maybenew) details.update(this);
 			else {
-				if (alarmuser) (new MessageBox("Error", "Could not read cache details for cache: "+this.wayPoint, FormBase.OKB)).execute();
+				if (alarmuser) (new MessageBox("Error", "Could not read cache details for cache: "+this.getWayPoint(), FormBase.OKB)).execute();
 				return null;
 			} 
 		}
+		if (! hasUnsavedChanges) Global.getProfile().resetUnsavedChanges();
 		detailsAdded();
 		return details;
 	}
@@ -589,9 +595,9 @@ public void finalize() {nObjects--;
 	public String GetStatusDate() {
 		String statusDate = "";
 		
-		if (is_found) {
+		if (is_found()) {
 			Regex rexDate=new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
-			rexDate.search(CacheStatus);
+			rexDate.search(getCacheStatus());
 			if (rexDate.stringMatched(1)!= null) {
 				statusDate = rexDate.stringMatched(1);
 			}
@@ -603,15 +609,15 @@ public void finalize() {nObjects--;
 	public String GetStatusTime() {
 		String statusTime = "";
 
-		if (is_found) {
+		if (is_found()) {
 			Regex rexTime=new Regex("([0-9]{1,2}:[0-9]{2})");
-			rexTime.search(CacheStatus);
+			rexTime.search(getCacheStatus());
 			if (rexTime.stringMatched(1)!= null) {
 				statusTime = rexTime.stringMatched(1);
 			}
 			else {
 				Regex rexDate=new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
-				rexDate.search(CacheStatus);
+				rexDate.search(getCacheStatus());
 				if (rexDate.stringMatched(1)!= null) {
 					statusTime = "00:00";
 				}
@@ -624,12 +630,12 @@ public void finalize() {nObjects--;
 	public String GetCacheID() {
 		String result = "";
 		
-		if ( wayPoint.toUpperCase().startsWith( "GC" ) ) {
+		if ( getWayPoint().toUpperCase().startsWith( "GC" ) ) {
 			int gcId = 0;
 
 			String sequence = "0123456789ABCDEFGHJKMNPQRTVWXYZ";
 			
-			String rightPart = wayPoint.substring( 2 ).toUpperCase();
+			String rightPart = getWayPoint().substring( 2 ).toUpperCase();
 			
 			int base = 31;
 			if ((rightPart.length() < 4) || (rightPart.length() == 4 && sequence.indexOf(rightPart.charAt(0)) < 16)) {
@@ -646,11 +652,266 @@ public void finalize() {nObjects--;
 	        }
 	        
 	        result = Integer.toString(gcId);	        
-		} else if ( wayPoint.toUpperCase().startsWith( "OC" ) ) {
-        	result = ocCacheID;
+		} else if ( getWayPoint().toUpperCase().startsWith( "OC" ) ) {
+        	result = getOcCacheID();
         }
 
 		return result;
 	}
+
+	// Getter and Setter for private properties
+
+	public String getCacheStatus() {
+    	return cacheStatus;
+    }
+
+	public void setCacheStatus(String cacheStatus) {
+		Global.getProfile().notifyUnsavedChanges(!cacheStatus.equals(this.cacheStatus));		
+    	this.cacheStatus = cacheStatus;
+    }
+
+	public String getWayPoint() {
+    	return wayPoint;
+    }
+
+	public void setWayPoint(String wayPoint) {
+		Global.getProfile().notifyUnsavedChanges(!wayPoint.equals(this.wayPoint));		
+    	this.wayPoint = wayPoint;
+    }
+
+	public String getCacheName() {
+    	return cacheName;
+    }
+
+	public void setCacheName(String cacheName) {
+		Global.getProfile().notifyUnsavedChanges(!cacheName.equals(this.cacheName));		
+    	this.cacheName = cacheName;
+    }
+
+	public String getCacheOwner() {
+    	return cacheOwner;
+    }
+
+	public void setCacheOwner(String cacheOwner) {
+		Global.getProfile().notifyUnsavedChanges(!cacheOwner.equals(this.cacheOwner));		
+    	this.cacheOwner = cacheOwner;
+    }
+
+	public String getDateHidden() {
+    	return dateHidden;
+    }
+
+	public void setDateHidden(String dateHidden) {
+		Global.getProfile().notifyUnsavedChanges(!dateHidden.equals(this.dateHidden));		
+    	this.dateHidden = dateHidden;
+    }
+
+	public String getCacheSize() {
+    	return cacheSize;
+    }
+
+	public void setCacheSize(String cacheSize) {
+		Global.getProfile().notifyUnsavedChanges(!cacheSize.equals(this.cacheSize));		
+    	this.cacheSize = cacheSize;
+    }
+
+	public String getHard() {
+    	return hard;
+    }
+
+	public void setHard(String hard) {
+		Global.getProfile().notifyUnsavedChanges(!hard.equals(this.hard));		
+    	this.hard = hard;
+    }
+
+	public String getTerrain() {
+    	return terrain;
+    }
+
+	public void setTerrain(String terrain) {
+		Global.getProfile().notifyUnsavedChanges(!terrain.equals(this.terrain));		
+    	this.terrain = terrain;
+    }
+
+	public int getType() {
+    	return type;
+    }
+
+	public void setType(int type) {
+		Global.getProfile().notifyUnsavedChanges(type != this.type);		
+    	this.type = type;
+    }
+
+	public boolean is_archived() {
+    	return archived;
+    }
+
+	public void setArchived(boolean is_archived) {
+		Global.getProfile().notifyUnsavedChanges(is_archived != this.archived);		
+    	this.archived = is_archived;
+    }
+
+	public boolean is_available() {
+    	return available;
+    }
+
+	public void setAvailable(boolean is_available) {
+		Global.getProfile().notifyUnsavedChanges(is_available != this.available);		
+    	this.available = is_available;
+    }
+
+	public boolean is_owned() {
+    	return owned;
+    }
+
+	public void setOwned(boolean is_owned) {
+		Global.getProfile().notifyUnsavedChanges(is_owned != this.owned);		
+    	this.owned = is_owned;
+    }
+
+	public boolean is_found() {
+    	return found;
+    }
+
+	public void setFound(boolean is_found) {
+		Global.getProfile().notifyUnsavedChanges(is_found != this.found);		
+    	this.found = is_found;
+    }
+
+	public boolean is_filtered() {
+    	return filtered;
+    }
+
+	public void setFiltered(boolean is_filtered) {
+		Global.getProfile().notifyUnsavedChanges(is_filtered != this.filtered);		
+    	this.filtered = is_filtered;
+    }
+
+	public boolean is_log_updated() {
+    	return log_updated;
+    }
+
+	public void setLog_updated(boolean is_log_updated) {
+		Global.getProfile().notifyUnsavedChanges(is_log_updated != this.log_updated);		
+    	this.log_updated = is_log_updated;
+    }
+
+	public boolean is_updated() {
+    	return cache_updated;
+    }
+
+	public void setUpdated(boolean is_updated) {
+		Global.getProfile().notifyUnsavedChanges(is_updated != this.cache_updated);		
+    	this.cache_updated = is_updated;
+    }
+
+	public boolean is_incomplete() {
+    	return incomplete;
+    }
+
+	public void setIncomplete(boolean is_incomplete) {
+		Global.getProfile().notifyUnsavedChanges(is_incomplete != this.incomplete);		
+    	this.incomplete = is_incomplete;
+    }
+
+	public boolean is_black() {
+    	return black;
+    }
+
+	public void setBlack(boolean is_black) {
+		Global.getProfile().notifyUnsavedChanges(is_black != this.black);		
+    	this.black = is_black;
+    }
+
+	public boolean is_new() {
+    	return newCache;
+    }
+
+	public void setNew(boolean is_new) {
+		Global.getProfile().notifyUnsavedChanges(is_new != this.newCache);		
+    	this.newCache = is_new;
+    }
+
+	public String getOcCacheID() {
+    	return ocCacheID;
+    }
+
+	public void setOcCacheID(String ocCacheID) {
+		Global.getProfile().notifyUnsavedChanges(!ocCacheID.equals(this.ocCacheID));		
+    	this.ocCacheID = ocCacheID;
+    }
+
+	public int getNoFindLogs() {
+    	return noFindLogs;
+    }
+
+	public void setNoFindLogs(int noFindLogs) {
+		Global.getProfile().notifyUnsavedChanges(noFindLogs != this.noFindLogs);		
+    	this.noFindLogs = noFindLogs;
+    }
+
+	public int getNumRecommended() {
+    	return numRecommended;
+    }
+
+	public void setNumRecommended(int numRecommended) {
+		Global.getProfile().notifyUnsavedChanges(numRecommended != this.numRecommended);		
+    	this.numRecommended = numRecommended;
+    }
+
+	public int getNumFoundsSinceRecommendation() {
+    	return numFoundsSinceRecommendation;
+    }
+
+	public void setNumFoundsSinceRecommendation(int numFoundsSinceRecommendation) {
+		Global.getProfile().notifyUnsavedChanges(numFoundsSinceRecommendation != this.numFoundsSinceRecommendation);		
+    	this.numFoundsSinceRecommendation = numFoundsSinceRecommendation;
+    }
+
+	public boolean has_bugs() {
+    	return bugs;
+    }
+
+	public void setHas_bugs(boolean has_bug) {
+		Global.getProfile().notifyUnsavedChanges(has_bug != this.bugs);		
+    	this.bugs = has_bug;
+    }
+
+	public boolean is_HTML() {
+    	return html;
+    }
+
+	public void setHTML(boolean is_HTML) {
+		Global.getProfile().notifyUnsavedChanges(is_HTML != this.html);		
+    	this.html = is_HTML;
+    }
+
+	public String getLastSyncOC() {
+    	return lastSyncOC;
+    }
+
+	public void setLastSyncOC(String lastSyncOC) {
+		Global.getProfile().notifyUnsavedChanges(!lastSyncOC.equals(this.lastSyncOC));		
+    	this.lastSyncOC = lastSyncOC;
+    }
+
+	public long getAttributesYes() {
+    	return attributesYes;
+    }
+
+	public void setAttributesYes(long attributesYes) {
+		Global.getProfile().notifyUnsavedChanges(attributesYes != this.attributesYes);		
+    	this.attributesYes = attributesYes;
+    }
+
+	public long getAttributesNo() {
+    	return attributesNo;
+    }
+
+	public void setAttributesNo(long attributesNo) {
+		Global.getProfile().notifyUnsavedChanges(attributesNo != this.attributesNo);		
+    	this.attributesNo = attributesNo;
+    }
+
 }
 

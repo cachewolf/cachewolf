@@ -56,38 +56,38 @@ public class GPXExporter extends Exporter{
 		try{
 			strBuf.append("  <wpt lat=\""+lat+"\" lon=\""+lon+"\">\r\n");
 		
-			String tim = ch.DateHidden.length()>0 ? ch.DateHidden : DEFAULT_DATE;
+			String tim = ch.getDateHidden().length()>0 ? ch.getDateHidden() : DEFAULT_DATE;
 			strBuf.append("    <time>").append(tim.toString()).append("T00:00:00.0000000-07:00</time>\r\n");
-			strBuf.append("    <name>").append(ch.wayPoint).append("</name>\r\n");
+			strBuf.append("    <name>").append(ch.getWayPoint()).append("</name>\r\n");
 			if (ch.isAddiWpt()){
 				strBuf.append("    <cmt>").append(SafeXML.cleanGPX(ch.LongDescription)).append("</cmt>\r\n");
 			}
-			strBuf.append("    <desc>").append(SafeXML.cleanGPX(ch.CacheName)).append(" by ").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</desc>\r\n");
-			strBuf.append("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp=").append(ch.wayPoint).append("&amp;Submit6=Find</url>\r\n");
-			strBuf.append("    <urlname>").append(SafeXML.cleanGPX(ch.CacheName)).append(" by ").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</urlname>\r\n");
+			strBuf.append("    <desc>").append(SafeXML.cleanGPX(ch.getCacheName())).append(" by ").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</desc>\r\n");
+			strBuf.append("    <url>http://www.geocaching.com/seek/cache_details.aspx?wp=").append(ch.getWayPoint()).append("&amp;Submit6=Find</url>\r\n");
+			strBuf.append("    <urlname>").append(SafeXML.cleanGPX(ch.getCacheName())).append(" by ").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</urlname>\r\n");
 			if (!ch.isAddiWpt()){
-				if ( ch.is_found ) {
+				if ( ch.is_found() ) {
 					strBuf.append("    <sym>Geocache Found</sym>\r\n");					
 				} else {
 					strBuf.append("    <sym>Geocache</sym>\r\n");
 				}
-				strBuf.append("    <type>Geocache|").append(CacheType.transType(ch.type)).append("</type>\r\n");
-				String dummyAvailable = ch.is_available ? STRING_TRUE:STRING_FALSE;
-				String dummyArchived = ch.is_archived ? STRING_TRUE:STRING_FALSE;
+				strBuf.append("    <type>Geocache|").append(CacheType.transType(ch.getType())).append("</type>\r\n");
+				String dummyAvailable = ch.is_available() ? STRING_TRUE:STRING_FALSE;
+				String dummyArchived = ch.is_archived() ? STRING_TRUE:STRING_FALSE;
 				strBuf.append("    <groundspeak:cache id=\"").append( ch.GetCacheID() ).append( "\" available=\"" ).append( dummyAvailable ).append( "\" archived=\"" ).append( dummyArchived).append( "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
-				strBuf.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.CacheName)).append("</groundspeak:name>\r\n");
-				strBuf.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.CacheOwner)).append("</groundspeak:placed_by>\r\n");
+				strBuf.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.getCacheName())).append("</groundspeak:name>\r\n");
+				strBuf.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:placed_by>\r\n");
 				//todo low prio: correct owner-id
-				strBuf.append("      <groundspeak:owner id=\"23\">").append(SafeXML.cleanGPX(ch.CacheOwner)+"</groundspeak:owner>\r\n");
-				strBuf.append("      <groundspeak:type>").append(CacheType.transType(ch.type)).append("</groundspeak:type>\r\n");
-				strBuf.append("      <groundspeak:container>").append(ch.CacheSize).append("</groundspeak:container>\r\n");
+				strBuf.append("      <groundspeak:owner id=\"23\">").append(SafeXML.cleanGPX(ch.getCacheOwner())+"</groundspeak:owner>\r\n");
+				strBuf.append("      <groundspeak:type>").append(CacheType.transType(ch.getType())).append("</groundspeak:type>\r\n");
+				strBuf.append("      <groundspeak:container>").append(ch.getCacheSize()).append("</groundspeak:container>\r\n");
 				//for Colorado/Oregon: 2.0 -> 2
-				String diffTerr = ch.hard.replace(',','.');
+				String diffTerr = ch.getHard().replace(',','.');
 				if ( diffTerr.endsWith( ".0" ) ) {
 					diffTerr = diffTerr.substring(0, 1);
 				}
 				strBuf.append("      <groundspeak:difficulty>").append(diffTerr).append("</groundspeak:difficulty>\r\n");
-				diffTerr = ch.terrain.replace(',','.');
+				diffTerr = ch.getTerrain().replace(',','.');
 				if ( diffTerr.endsWith( ".0" ) ) {
 					diffTerr = diffTerr.substring(0, 1);
 				}
@@ -96,13 +96,13 @@ public class GPXExporter extends Exporter{
 				strBuf.append("      <groundspeak:country>").append(SafeXML.cleanGPX(ch.Country)+"</groundspeak:country>\r\n");
 				strBuf.append("      <groundspeak:state>").append(SafeXML.cleanGPX(ch.State)+"</groundspeak:state>\r\n");
 												
-				String dummyHTML = ch.is_HTML ? STRING_TRUE:STRING_FALSE;
+				String dummyHTML = ch.is_HTML() ? STRING_TRUE:STRING_FALSE;
 				strBuf.append("      <groundspeak:long_description html=\"" ).append( dummyHTML ).append( "\">\r\n");
 				strBuf.append("      ").append(SafeXML.cleanGPX(ch.LongDescription));
 				strBuf.append("      \n</groundspeak:long_description>\r\n");
 				strBuf.append("	  <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.Hints))).append("</groundspeak:encoded_hints>\r\n");
 				strBuf.append("      <groundspeak:logs>\r\n");
-				if ( Global.getPref().exportGpxAsMyFinds && ch.is_found ) {
+				if ( Global.getPref().exportGpxAsMyFinds && ch.is_found() ) {
 					if ( ch.OwnLogId.length() != 0 ) {
 						strBuf.append("        <groundspeak:log id=\"" ).append( ch.OwnLogId ).append( "\">\r\n");						
 					} else {
@@ -149,8 +149,8 @@ public class GPXExporter extends Exporter{
 				strBuf.append("    </groundspeak:cache>\r\n");
 			}else {
 				// there is no HTML in the description of addi wpts
-				strBuf.append("    <sym>").append(CacheType.transType(ch.type)).append("</sym>\r\n");
-				strBuf.append("    <type>Waypoint|").append(CacheType.transType(ch.type)).append("</type>\r\n");
+				strBuf.append("    <sym>").append(CacheType.transType(ch.getType())).append("</sym>\r\n");
+				strBuf.append("    <type>Waypoint|").append(CacheType.transType(ch.getType())).append("</type>\r\n");
 			}
 			strBuf.append("  </wpt>\r\n");
 		}catch(Exception e){

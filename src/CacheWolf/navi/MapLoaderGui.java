@@ -85,8 +85,8 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addLast(cachesLbl);
 		pnlTiles.addNext(distLbl = new mLabel(MyLocale.getMsg(1810,"Within a rectangle of:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		distanceInput = new mInput();
-		int tmp = Convert.toInt((Global.getProfile().distOC));
-		tmp = java.lang.Math.max(tmp, Convert.toInt((Global.getProfile().distGC)));
+		int tmp = Convert.toInt((Global.getProfile().getDistOC()));
+		tmp = java.lang.Math.max(tmp, Convert.toInt((Global.getProfile().getDistGC())));
 		distanceInput.setText(Convert.toString((tmp > 0 ? tmp : 15)));
 		pnlTiles.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlTiles.addLast(km);
@@ -248,11 +248,11 @@ public class MapLoaderGui extends Form {
 					}
 					if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0) { // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
 						numdownloaded++;
-						progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '")+mapLoader.currentOnlineMapService.getName()+"'\n"+numdownloaded+" / "+numCaches+MyLocale.getMsg(1821, "\n for cache:\n")+ch.CacheName);
+						progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '")+mapLoader.currentOnlineMapService.getName()+"'\n"+numdownloaded+" / "+numCaches+MyLocale.getMsg(1821, "\n for cache:\n")+ch.getCacheName());
 						try {
 							mapLoader.downloadMap(ch.pos, scale, size, mapsDir);
 						} catch (Exception e) {
-							progressBox.addWarning(MyLocale.getMsg(1822, "Cache:")+" " + ch.CacheName + "(" + ch.wayPoint + ") "+MyLocale.getMsg(1823, "Ignoring error:")+" " + e.getMessage()+"\n");
+							progressBox.addWarning(MyLocale.getMsg(1822, "Cache:")+" " + ch.getCacheName() + "(" + ch.getWayPoint() + ") "+MyLocale.getMsg(1823, "Ignoring error:")+" " + e.getMessage()+"\n");
 						}
 					}
 				}

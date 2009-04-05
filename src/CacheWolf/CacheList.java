@@ -90,10 +90,10 @@ public class CacheList extends CellPanel {
 			 idx=getSelectedIndex(0);
 			 if (idx>=0) {
 				 CacheHolder ch=(CacheHolder)cacheList.get(idx);
-				 wayPoint=ch.wayPoint;
+				 wayPoint=ch.getWayPoint();
 				 IconAndText imgDrag=new IconAndText();
-				 imgDrag.addColumn(CacheType.cache2Img(ch.type));
-				 imgDrag.addColumn(ch.wayPoint);
+				 imgDrag.addColumn(CacheType.cache2Img(ch.getType()));
+				 imgDrag.addColumn(ch.getWayPoint());
 				 dc.dragData=dc.startImageDrag(imgDrag,new Point(8,8),this);
 			 } 
 		}
@@ -266,7 +266,7 @@ public class CacheList extends CellPanel {
 		// Start by setting all caches to filtered
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered=true ; // ignore blacklist attribute
+			ch.setFiltered(true) ; // ignore blacklist attribute
 			ch.sort=apply;
 		}
 		// Now "unfilter" the caches in our list
@@ -279,23 +279,22 @@ public class CacheList extends CellPanel {
 			   cacheDB for each entry in cacheList, we simply compare the sort field of ch to apply.
 			*/
 			if (!ch.sort.equals(apply)) {
-				int idx=Global.getProfile().getCacheIndex(ch.wayPoint);
+				int idx=Global.getProfile().getCacheIndex(ch.getWayPoint());
 				if (idx==-1) continue;
 				ch=null;
 				ch=(CacheHolder) cacheDB.get(idx);
 			}
-			if (ch.is_black!=Global.getProfile().showBlacklisted) 
+			if (ch.is_black()!=Global.getProfile().showBlacklisted()) 
 				wrongBlackStatus++;
 			else {
-				ch.is_filtered=false;
+				ch.setFiltered(false);
 				ch.sort=MyLocale.formatLong(i,"00000");
 			}
 		}
 		// The sort command places all filtered caches at the end
 		cacheDB.sort(new mySort(),false);
-		Global.getProfile().filterActive=Filter.FILTER_CACHELIST;
-		Global.getProfile().filterInverted=false;
-		Global.getProfile().hasUnsavedChanges=true;
+		Global.getProfile().setFilterActive(Filter.FILTER_CACHELIST);
+		Global.getProfile().setFilterInverted(false);
 		updateScreen(cacheList.size()-wrongBlackStatus);
 		if (wrongBlackStatus>0)
 			(new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(4600,"Some cache(s) cannot be shown because of wrong blacklist status"), FormBase.OKB)).execute();
@@ -318,7 +317,7 @@ public class CacheList extends CellPanel {
 			CacheHolder addiWpt;
 			for (int j=0; j<ch.addiWpts.getCount();j++){
 				addiWpt = (CacheHolder)ch.addiWpts.get(j);
-				if (!addiWpt.is_filtered) cachesAdded|=addCache(addiWpt);
+				if (!addiWpt.is_filtered()) cachesAdded|=addCache(addiWpt);
 			}
 		}
 		// Update screen if any cache was added
@@ -335,7 +334,7 @@ public class CacheList extends CellPanel {
 			// Add cache reference to hidden list
 			cacheList.add(ch);
 			// Add Cache and cache icon to visible list
-			lstCaches.addItem((new MenuItem()).iconize(ch.wayPoint+"   "+ch.CacheName,CacheType.cache2Img(ch.type),true));
+			lstCaches.addItem((new MenuItem()).iconize(ch.getWayPoint()+"   "+ch.getCacheName(),CacheType.cache2Img(ch.getType()),true));
 		    dirty=true;
 			return true;
 		} else
@@ -430,7 +429,7 @@ public class CacheList extends CellPanel {
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
 			for (int i=0; i<cacheList.size(); i++) {
 				// Put a > in front of the selected cache
-				outp.print((i==selectedIndex?">":"")+((CacheHolder)cacheList.get(i)).wayPoint+"\n");
+				outp.print((i==selectedIndex?">":"")+((CacheHolder)cacheList.get(i)).getWayPoint()+"\n");
 			}
 			outp.close();
 		} catch(Exception e) {

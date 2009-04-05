@@ -129,7 +129,7 @@ public class ExploristExporter {
 		int expCount = 0;
 		for (int i = 0; i < cacheDB.size(); i++) {
 			ch = (CacheHolder) cacheDB.get(i);
-			if (ch.is_black == false && ch.is_filtered == false)
+			if (ch.is_black() == false && ch.is_filtered() == false)
 				counter++;
 		}
 
@@ -137,7 +137,7 @@ public class ExploristExporter {
 			PrintWriter outp = null;
 			for (int i = 0; i < cacheDB.size(); i++) {
 				ch = (CacheHolder) cacheDB.get(i);
-				if (ch.is_black == false && ch.is_filtered == false) {
+				if (ch.is_black() == false && ch.is_filtered() == false) {
 					// all 200 caches we need a new file
 					if (expCount % 200 == 0) {
 						if (outp != null) {
@@ -226,42 +226,42 @@ public class ExploristExporter {
 		sb.append("E,");
 		sb.append("0000,"); // Height
 		sb.append("M,"); // in meter
-		sb.append(chD.wayPoint);
+		sb.append(chD.getWayPoint());
 		sb.append(",");
 		String add = "";
 		if (chD.isAddiWpt()) {
-			if (chD.type == 50) {
+			if (chD.getType() == 50) {
 				add = "Pa:";
-			} else if (chD.type == 51) {
+			} else if (chD.getType() == 51) {
 				add = "St:";
-			} else if (chD.type == 52) {
+			} else if (chD.getType() == 52) {
 				add = "Qu:"; 
-			} else if (chD.type == 53) {	
+			} else if (chD.getType() == 53) {	
 				add = "Fi:";
-			} else if (chD.type == 54) {
+			} else if (chD.getType() == 54) {
 				add = "Tr:";
-			} else if (chD.type == 55) {	
+			} else if (chD.getType() == 55) {	
 				add = "Re:";
 			}
-			sb.append(add).append(removeCommas(chD.CacheName));
+			sb.append(add).append(removeCommas(chD.getCacheName()));
 		} else {
-			sb.append(removeCommas(chD.CacheName));
+			sb.append(removeCommas(chD.getCacheName()));
 		}		
 		sb.append(",");
-		sb.append(removeCommas(chD.CacheOwner));
+		sb.append(removeCommas(chD.getCacheOwner()));
 		sb.append(",");
 		sb.append(removeCommas(Common.rot13(chD.Hints)));
 		sb.append(",");
 		
 		if (!add.equals("")) { // Set Picture in Explorist to Virtual
 			sb.append("Virtual Cache");
-		} else if (chD.type != 8) { // Rewrite Unknown Caches
-			sb.append(CacheType.transType(chD.type));
+		} else if (chD.getType() != 8) { // Rewrite Unknown Caches
+			sb.append(CacheType.transType(chD.getType()));
 		} else {
 			sb.append("Mystery Cache");
 		}
 		sb.append(",");
-		sb.append(toGsDateFormat(chD.DateHidden));  // created - DDMMYYY, YYY = year - 1900
+		sb.append(toGsDateFormat(chD.getDateHidden()));  // created - DDMMYYY, YYY = year - 1900
 		sb.append(",");
 		String lastFound = "0000";
 		for (int i = 0; i < chD.CacheLogs.size(); i++) {
@@ -272,9 +272,9 @@ public class ExploristExporter {
 		
 		sb.append(toGsDateFormat(lastFound)); // lastFound - DDMMYYY, YYY = year - 1900
 		sb.append(",");
-		sb.append(removeCommas(chD.hard));
+		sb.append(removeCommas(chD.getHard()));
 		sb.append(",");
-		sb.append(removeCommas(chD.terrain));
+		sb.append(removeCommas(chD.getTerrain()));
 		sb.append("*41");
 		return Exporter.simplifyString(sb.toString() + "\r\n");
 	}

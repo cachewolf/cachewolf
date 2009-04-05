@@ -81,7 +81,6 @@ public class TablePanel extends CellPanel{
 	public void resetModel() {
 		myMod.numRows = cacheDB.size();
 		Global.getProfile().updateBearingDistance();
-		Global.getProfile().restoreFilter(); // Restore the isActive & isInverted status of the filter
 		tc.scrollToVisible(0,0);
 		refreshTable();
 	}
@@ -103,7 +102,7 @@ public class TablePanel extends CellPanel{
 		Vector oldVisibleCaches = null;
 		int sel = getSelectedCache();
 		if ((sel >= 0) && (sel < cacheDB.size()) ) // sel > cacheDB.size() can happen if you load a new profile, which is smaller than the old profile and you selected one cache that exceeds the number of caches in the new profile  
-			wayPoint = ((CacheHolder)cacheDB.get(sel)).wayPoint;
+			wayPoint = ((CacheHolder)cacheDB.get(sel)).getWayPoint();
 		else wayPoint = null;
 		// Then: remember all caches that are visible before the refresh
 		if (wayPoint != null) {
@@ -125,7 +124,7 @@ public class TablePanel extends CellPanel{
 				int i;
 				for (i=sel-1; i>=0; i--) {
 					CacheHolder checkCache = (CacheHolder) oldVisibleCaches.get(i);
-					rownum = Global.getProfile().getCacheIndex(checkCache.wayPoint);
+					rownum = Global.getProfile().getCacheIndex(checkCache.getWayPoint());
 					if ((rownum >= 0) && (rownum < myMod.numRows)) break;
 					rownum = 0;	
 				}

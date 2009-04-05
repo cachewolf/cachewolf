@@ -24,12 +24,12 @@ public class MSARCSVExporter extends Exporter {
 
 	public String record(CacheHolderDetail ch, String lat, String lon) {
 		StringBuffer str = new StringBuffer(200);
-		str.append("\"" + ch.wayPoint + " - " + ch.CacheName + "\";");
+		str.append("\"" + ch.getWayPoint() + " - " + ch.getCacheName() + "\";");
 		str.append(lat + ";" + lon +";");
-		str.append("\"" + CacheType.transType(ch.type)+ "\";");
-		str.append("\"" + ch.CacheSize + "\";");
-		str.append("\"" + ch.wayPoint + "\";");
-		str.append("\"" + ch.DateHidden + "\";");
+		str.append("\"" + CacheType.transType(ch.getType())+ "\";");
+		str.append("\"" + ch.getCacheSize() + "\";");
+		str.append("\"" + ch.getWayPoint() + "\";");
+		str.append("\"" + ch.getDateHidden() + "\";");
 		str.append("\"" + ch.URL + "\"\r\n");
 
 		return str.toString();

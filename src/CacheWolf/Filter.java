@@ -191,7 +191,7 @@ public class Filter{
 			} // for segments
 			for(int i = cacheDB.size()-1; i >=0 ; i--){
 				ch = (CacheHolder)cacheDB.get(i);
-				if(ch.is_filtered == false && ch.in_range == false) ch.is_filtered = true;
+				if(ch.is_filtered() == false && ch.in_range == false) ch.setFiltered(true);
 			}
 		}catch(FileNotFoundException fnex){
 			(new MessageBox("Error", "File not found", FormBase.OKB)).execute();
@@ -251,16 +251,16 @@ public class Filter{
 	 */
 	public void setFilter() {
 		Profile profile=Global.getProfile();
-		archived     = profile.filterVar.charAt(0) == '1';
-		available    = profile.filterVar.charAt(1) == '1';
-		foundByMe    = profile.filterVar.charAt(2) == '1';
-		ownedByMe    = profile.filterVar.charAt(3) == '1';
-		notArchived  = profile.filterVar.charAt(4) == '1';
-		notAvailable = profile.filterVar.charAt(5) == '1';
-		notFoundByMe = profile.filterVar.charAt(6) == '1';
-		notOwnedByMe = profile.filterVar.charAt(7) == '1';
+		archived     = profile.getFilterVar().charAt(0) == '1';
+		available    = profile.getFilterVar().charAt(1) == '1';
+		foundByMe    = profile.getFilterVar().charAt(2) == '1';
+		ownedByMe    = profile.getFilterVar().charAt(3) == '1';
+		notArchived  = profile.getFilterVar().charAt(4) == '1';
+		notAvailable = profile.getFilterVar().charAt(5) == '1';
+		notFoundByMe = profile.getFilterVar().charAt(6) == '1';
+		notOwnedByMe = profile.getFilterVar().charAt(7) == '1';
 		typeMatchPattern=0;
-		String filterType=profile.filterType;
+		String filterType=profile.getFilterType();
 		if (filterType.charAt(0) == '1') typeMatchPattern|=TRADITIONAL;
 		if (filterType.charAt(1) == '1') typeMatchPattern|=MULTI;
 		if (filterType.charAt(2) == '1') typeMatchPattern|=VIRTUAL;
@@ -282,7 +282,7 @@ public class Filter{
 		if (filterType.charAt(18) == '1') typeMatchPattern|=WHERIGO;
 		hasTypeMatchPattern= typeMatchPattern!=TYPE_ALL;
 		roseMatchPattern=0;
-		String filterRose=profile.filterRose;
+		String filterRose=profile.getFilterRose();
 		if (filterRose.charAt(0) == '1') roseMatchPattern|=NW;
 		if (filterRose.charAt(1) == '1') roseMatchPattern|=NNW;
 		if (filterRose.charAt(2) == '1') roseMatchPattern|=N;
@@ -301,7 +301,7 @@ public class Filter{
 		if (filterRose.charAt(15) == '1') roseMatchPattern|=WNW;
 		hasRoseMatchPattern=roseMatchPattern!=ROSE_ALL;
 		sizeMatchPattern=0;
-		String filterSize=profile.filterSize;
+		String filterSize=profile.getFilterSize();
 		if (filterSize.charAt(0) == '1') sizeMatchPattern|=MICRO;
 		if (filterSize.charAt(1) == '1') sizeMatchPattern|=SMALL;
 		if (filterSize.charAt(2) == '1') sizeMatchPattern|=REGULAR;
@@ -309,17 +309,17 @@ public class Filter{
 		if (filterSize.charAt(4) == '1') sizeMatchPattern|=VERYLARGE;
 		if (filterSize.charAt(5) == '1') sizeMatchPattern|=OTHER;
 		hasSizeMatchPattern=sizeMatchPattern!=SIZE_ALL;
-		distdirec = profile.filterDist.charAt(0) == 'L' ? SMALLER : GREATER; 
-		fscDist = Common.parseDouble(profile.filterDist.substring(1));  // Distance
-		diffdirec = profile.filterDiff.charAt(0) == 'L' ? SMALLER : 
-					(profile.filterDiff.charAt(0) == '=' ? EQUAL : GREATER );
-		fscDiff = Common.parseDouble(profile.filterDiff.substring(1));  // Difficulty
-		terrdirec = profile.filterTerr.charAt(0) == 'L' ? SMALLER : 
-				(profile.filterTerr.charAt(0) == '=' ? EQUAL : GREATER );
-		fscTerr = Common.parseDouble(profile.filterTerr.substring(1));  // Terrain
-		attributesYesPattern = profile.filterAttrYes;
-		attributesNoPattern = profile.filterAttrNo;
-		attributesChoice = profile.filterAttrChoice;
+		distdirec = profile.getFilterDist().charAt(0) == 'L' ? SMALLER : GREATER; 
+		fscDist = Common.parseDouble(profile.getFilterDist().substring(1));  // Distance
+		diffdirec = profile.getFilterDiff().charAt(0) == 'L' ? SMALLER : 
+					(profile.getFilterDiff().charAt(0) == '=' ? EQUAL : GREATER );
+		fscDiff = Common.parseDouble(profile.getFilterDiff().substring(1));  // Difficulty
+		terrdirec = profile.getFilterTerr().charAt(0) == 'L' ? SMALLER : 
+				(profile.getFilterTerr().charAt(0) == '=' ? EQUAL : GREATER );
+		fscTerr = Common.parseDouble(profile.getFilterTerr().substring(1));  // Terrain
+		attributesYesPattern = profile.getFilterAttrYes();
+		attributesNoPattern = profile.getFilterAttrNo();
+		attributesChoice = profile.getFilterAttrChoice();
 	}
 	
 	/**
@@ -329,6 +329,7 @@ public class Filter{
 	*/
 	public void doFilter(){
 		Vector cacheDB=Global.getProfile().cacheDB;
+		Hashtable examinedCaches;
 		if (cacheDB.size()==0) return;
 		if (!hasFilter()) { // If the filter was completely reset, we can just clear it
 			clearFilter();
@@ -336,194 +337,267 @@ public class Filter{
 		}
 		Global.getProfile().selectionChanged = true;
 		CacheHolder ch;
-		int cacheTypePattern;
-		int cacheRosePattern;
-		int cacheSizePattern;
-		// Values from filterscreen are parsed outside the main filter loop (fsc=FilterSCreen)
-		double dummyd1;
-		//Loop db and match once against type pattern and once against rose pattern
+		examinedCaches = new Hashtable(cacheDB.size());
+		
+		for(int i = cacheDB.size()-1; i >=0 ; i--){
+			ch = (CacheHolder)cacheDB.get(i);
+			if (examinedCaches.containsKey(ch)) continue;
+			
+			boolean filterCache = excludedByFilter(ch);
+			if (!filterCache && ch.mainCache!=null && ((typeMatchPattern & TYPE_MAIN) != 0)) {
+				if (examinedCaches.containsKey(ch.mainCache)) {
+					filterCache = ch.mainCache.is_filtered();
+				} else {
+					ch.mainCache.setFiltered(excludedByFilter(ch.mainCache));
+					filterCache = ch.mainCache.is_filtered();
+					examinedCaches.put(ch.mainCache, null);
+				}
+			}
+			ch.setFiltered(filterCache);			
+		}
+		Global.getProfile().setFilterActive(FILTER_ACTIVE);
+		Global.getProfile().setFilterInverted(false);
+		examinedCaches = null;
+		//Global.getProfile().hasUnsavedChanges=true;
+	}
+
+	public boolean excludedByFilter(CacheHolder ch) {
+		//Match once against type pattern and once against rose pattern
 		//Default is_filtered = false, means will be displayed!
 		//If cache does not match type or rose pattern then is_filtered is set to true
 		// and we proceed to next cache (no further tests needed)
 		//Then we check the other filter criteria one by one: As soon as one is found that
 		// eliminates the cache (i.e. sets is_filtered to true), we can skip the other tests
 		// A cache is only displayed (i.e. is_filtered = false) if it meets all 9 filter criteria
-		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered = ch.is_black^Global.getProfile().showBlacklisted;
-			///////////////////////////////
-			// Filter criterium 1: Cache type
-			///////////////////////////////
-			if (hasTypeMatchPattern) { // Only do the checks if we have a filter
-				cacheTypePattern = 0;
-				// As each cache can only have one type, we can use else if and set the type
-				if (ch.type == 0) cacheTypePattern = CUSTOM;
-				else if(ch.type == 2) cacheTypePattern = TRADITIONAL;
-				else if(ch.type == 3) cacheTypePattern = MULTI;
-				else if(ch.type == 4) cacheTypePattern = VIRTUAL;
-				else if(ch.type == 5) cacheTypePattern = LETTER;
-				else if(ch.type == 6) cacheTypePattern = EVENT;
-				else if(ch.type == 8) cacheTypePattern = MYSTERY;
-				else if(ch.type == 11) cacheTypePattern = WEBCAM;
-				else if(ch.type == 12) cacheTypePattern = LOCLESS;
-				else if(ch.type == 137)cacheTypePattern = EARTH;
-				else if(ch.type == 453)cacheTypePattern = MEGA;
-				else if(ch.type == 50)cacheTypePattern = PARKING;
-				else if(ch.type == 51)cacheTypePattern = STAGE;
-				else if(ch.type == 52)cacheTypePattern = QUESTION;
-				else if(ch.type == 53)cacheTypePattern = FINAL;
-				else if(ch.type == 54)cacheTypePattern = TRAILHEAD;
-				else if(ch.type == 55)cacheTypePattern = REFERENCE;
-				else if(ch.type == 13)cacheTypePattern = CITO;
-				else if(ch.type == 1858)cacheTypePattern = WHERIGO;
-				if ((cacheTypePattern & typeMatchPattern) == 0) { ch.is_filtered=true; continue; }
-			}			
-			///////////////////////////////
-			// Filter criterium 2: Bearing from centre
-			///////////////////////////////
-			// The optimal number of comparisons to identify one of 16 objects is 4 (=log2(16))
-			// By using else if we can reduce the number of comparisons from 16 to just over 8
-			// By first checking the first letter, we can reduce the average number further to
-			// just under 5
-			if (hasRoseMatchPattern) {
-				if (ch.bearing.startsWith("N")) {
-					if(ch.bearing.equals("NW")) cacheRosePattern = NW;
-					else if(ch.bearing.equals("NNW")) cacheRosePattern = NNW;
-					else if(ch.bearing.equals("N")) cacheRosePattern = N;
-					else if(ch.bearing.equals("NNE")) cacheRosePattern = NNE;
-					else cacheRosePattern = NE;
-				} else if (ch.bearing.startsWith("E")) {
-					if(ch.bearing.equals("ENE")) cacheRosePattern = ENE;
-					else if(ch.bearing.equals("E")) cacheRosePattern = E;
-					else cacheRosePattern = ESE;
-				} else if (ch.bearing.startsWith("S")) {
-					if(ch.bearing.equals("SW")) cacheRosePattern = SW;
-					else if(ch.bearing.equals("SSW")) cacheRosePattern = SSW;
-					else if(ch.bearing.equals("S")) cacheRosePattern = S;
-					else if(ch.bearing.equals("SSE")) cacheRosePattern = SSE;
-					else cacheRosePattern = SE;
-				} else {
-					if(ch.bearing.equals("WNW")) cacheRosePattern = WNW;
-					else if(ch.bearing.equals("W")) cacheRosePattern = W;
-					else cacheRosePattern = WSW;
-				}
-				if ((cacheRosePattern & roseMatchPattern) == 0) { ch.is_filtered=true; continue; }
-			}			
-			///////////////////////////////
-			// Filter criterium 3: Distance
-			///////////////////////////////
-			if(fscDist>0.0){
-				dummyd1 = ch.kilom; 
-				if(distdirec == SMALLER && dummyd1 > fscDist)  { ch.is_filtered=true; continue; }
-				if(distdirec == GREATER && dummyd1 < fscDist)  { ch.is_filtered=true; continue; }
-			}
-			///////////////////////////////
-			// Filter criterium 4: Difficulty
-			///////////////////////////////
-			if(fscDiff>0.0){
-				dummyd1 = Common.parseDouble(ch.hard);
-				if(diffdirec == SMALLER && dummyd1 > fscDiff) { ch.is_filtered=true; continue; }
-				if(diffdirec == EQUAL && dummyd1 != fscDiff) { ch.is_filtered=true; continue; }
-				if(diffdirec == GREATER && dummyd1 < fscDiff) { ch.is_filtered=true; continue; }
-			}
-			///////////////////////////////
-			// Filter criterium 5: Terrain
-			///////////////////////////////
-			if(fscTerr>0.0){
-				dummyd1 = Common.parseDouble(ch.terrain);
-				if(terrdirec == SMALLER &&  dummyd1 > fscTerr) { ch.is_filtered=true; continue; }
-				if(terrdirec == EQUAL && dummyd1 != fscTerr) { ch.is_filtered=true; continue; }
-				if(terrdirec == GREATER &&  dummyd1 < fscTerr) { ch.is_filtered=true; continue; }
-			}
-//Vm.debug(ch.wayPoint+" Found"+ch.is_found+"  FoundyMe="+foundByMe+"   notFoundByMe="+notFoundByMe);
-//Vm.debug(ch.wayPoint+" Owned"+ch.is_owned+"  OwnedByMe="+ownedByMe+"   notOwnedByMe="+notOwnedByMe);
-//Vm.debug(ch.wayPoint+" Archived"+ch.is_archived+"  Archived="+archived+"   notArchived="+notArchived);
-//Vm.debug(ch.wayPoint+" Available"+ch.is_available+"  Available="+available+"   notAvailable="+notAvailable);
-//Vm.debug("Blacklisted: "+ch.is_black);
-			///////////////////////////////
-			// Filter criterium 6: Found by me
-			///////////////////////////////
-			if((ch.is_found && !foundByMe) ||
-			   (!ch.is_found && !notFoundByMe)){ ch.is_filtered=true; continue; }
-			///////////////////////////////
-			// Filter criterium 7: Owned by me
-			///////////////////////////////
-			if((ch.is_owned && !ownedByMe) ||
-			   (!ch.is_owned && !notOwnedByMe)) { ch.is_filtered=true; continue; }
-			
-			///////////////////////////////
-			// Filter criterium 8: Archived
-			///////////////////////////////
-			if((ch.is_archived && !archived) ||
-			   (!ch.is_archived && !notArchived)){ ch.is_filtered=true; continue; }
-
-			///////////////////////////////
-			// Filter criterium 9: Unavailable
-			///////////////////////////////
-			if((ch.is_available && !available) ||
-			   (!ch.is_available && !notAvailable)) { ch.is_filtered=true; continue; }
-			///////////////////////////////
-			// Filter criterium 10: Size
-			///////////////////////////////
-			if (hasSizeMatchPattern) {
-				cacheSizePattern=0;
-				if (ch.CacheSize.startsWith("M")) cacheSizePattern = MICRO;
-				else if (ch.CacheSize.startsWith("S")) cacheSizePattern = SMALL;
-				else if (ch.CacheSize.startsWith("R")) cacheSizePattern = REGULAR;
-				else if (ch.CacheSize.startsWith("L")) cacheSizePattern = LARGE;
-				else if (ch.CacheSize.startsWith("V")) cacheSizePattern = VERYLARGE;
-				else cacheSizePattern = OTHER;
-				if ((cacheSizePattern & sizeMatchPattern) == 0) { ch.is_filtered=true; continue; }
-			}
-			///////////////////////////////
-			// Filter criterium 11: Attributes
-			///////////////////////////////
-			if ( (attributesYesPattern != 0 || attributesNoPattern != 0) && ch.mainCache == null) {
-				if (attributesChoice == 0) {
-					// AND-condition:
-					if (
-						(ch.attributesYes & attributesYesPattern) != attributesYesPattern
-						|| (ch.attributesNo & attributesNoPattern) != attributesNoPattern )
-					{
-						ch.is_filtered=true;
-						continue;
-					}
-				} else if (attributesChoice == 1) {
-					// OR-condition:
-					if (
-						(ch.attributesYes & attributesYesPattern) == 0
-						&& (ch.attributesNo & attributesNoPattern) == 0 )
-					{
-						ch.is_filtered=true;
-						continue;
-					}
-				} else {
-					// NOT-condition:
-					if (
-						(ch.attributesYes & attributesYesPattern) != 0
-						|| (ch.attributesNo & attributesNoPattern) != 0 )
-					{
-						ch.is_filtered=true;
-						continue;
-					}
-				}
-			}
-		} // for
-		// Ensure that for all main caches that are filtered, the addis are also filtered independently of 
-		// the filter status of the addi
-		if ((typeMatchPattern & TYPE_MAIN) != 0){ //exception: don't filter out correxpnding Addis, if only Addis are enabled
-			for(int i = cacheDB.size()-1; i >=0 ; i--){
-				ch = (CacheHolder)cacheDB.get(i);
-				if (ch.mainCache!=null) {
-					// We have found an addi, filte it if its parent is filtered
-					ch.is_filtered|=ch.mainCache.is_filtered;
-				}
-			}			
-		}
-		Global.getProfile().filterActive=FILTER_ACTIVE;
-		Global.getProfile().filterInverted=false;
-		Global.getProfile().hasUnsavedChanges=true;
-	}
+	    int cacheTypePattern;
+	    int cacheRosePattern;
+	    int cacheSizePattern;
+	    double dummyd1;
+	    boolean cacheFiltered;
+	    do {
+	    	cacheFiltered = ch.is_black()^Global.getProfile().showBlacklisted();
+	    	if (cacheFiltered) break;
+	    	
+	        ///////////////////////////////
+	        // Filter criterium 1: Cache type
+	        ///////////////////////////////
+	        if (hasTypeMatchPattern) { // Only do the checks if we have a filter
+		        cacheTypePattern = 0;
+		        // As each cache can only have one type, we can use else if and set the type
+		        if (ch.getType() == 0)
+			        cacheTypePattern = CUSTOM;
+		        else if (ch.getType() == 2)
+			        cacheTypePattern = TRADITIONAL;
+		        else if (ch.getType() == 3)
+			        cacheTypePattern = MULTI;
+		        else if (ch.getType() == 4)
+			        cacheTypePattern = VIRTUAL;
+		        else if (ch.getType() == 5)
+			        cacheTypePattern = LETTER;
+		        else if (ch.getType() == 6)
+			        cacheTypePattern = EVENT;
+		        else if (ch.getType() == 8)
+			        cacheTypePattern = MYSTERY;
+		        else if (ch.getType() == 11)
+			        cacheTypePattern = WEBCAM;
+		        else if (ch.getType() == 12)
+			        cacheTypePattern = LOCLESS;
+		        else if (ch.getType() == 137)
+			        cacheTypePattern = EARTH;
+		        else if (ch.getType() == 453)
+			        cacheTypePattern = MEGA;
+		        else if (ch.getType() == 50)
+			        cacheTypePattern = PARKING;
+		        else if (ch.getType() == 51)
+			        cacheTypePattern = STAGE;
+		        else if (ch.getType() == 52)
+			        cacheTypePattern = QUESTION;
+		        else if (ch.getType() == 53)
+			        cacheTypePattern = FINAL;
+		        else if (ch.getType() == 54)
+			        cacheTypePattern = TRAILHEAD;
+		        else if (ch.getType() == 55)
+			        cacheTypePattern = REFERENCE;
+		        else if (ch.getType() == 13)
+			        cacheTypePattern = CITO;
+		        else if (ch.getType() == 1858)
+			        cacheTypePattern = WHERIGO;
+		        if ((cacheTypePattern & typeMatchPattern) == 0) {
+			        cacheFiltered = true; break;
+		        }
+	        }
+	        ///////////////////////////////
+	        // Filter criterium 2: Bearing from centre
+	        ///////////////////////////////
+	        // The optimal number of comparisons to identify one of 16 objects is 4 (=log2(16))
+	        // By using else if we can reduce the number of comparisons from 16 to just over 8
+	        // By first checking the first letter, we can reduce the average number further to
+	        // just under 5
+	        if (hasRoseMatchPattern) {
+		        if (ch.bearing.startsWith("N")) {
+			        if (ch.bearing.equals("NW"))
+				        cacheRosePattern = NW;
+			        else if (ch.bearing.equals("NNW"))
+				        cacheRosePattern = NNW;
+			        else if (ch.bearing.equals("N"))
+				        cacheRosePattern = N;
+			        else if (ch.bearing.equals("NNE"))
+				        cacheRosePattern = NNE;
+			        else
+				        cacheRosePattern = NE;
+		        } else if (ch.bearing.startsWith("E")) {
+			        if (ch.bearing.equals("ENE"))
+				        cacheRosePattern = ENE;
+			        else if (ch.bearing.equals("E"))
+				        cacheRosePattern = E;
+			        else
+				        cacheRosePattern = ESE;
+		        } else if (ch.bearing.startsWith("S")) {
+			        if (ch.bearing.equals("SW"))
+				        cacheRosePattern = SW;
+			        else if (ch.bearing.equals("SSW"))
+				        cacheRosePattern = SSW;
+			        else if (ch.bearing.equals("S"))
+				        cacheRosePattern = S;
+			        else if (ch.bearing.equals("SSE"))
+				        cacheRosePattern = SSE;
+			        else
+				        cacheRosePattern = SE;
+		        } else {
+			        if (ch.bearing.equals("WNW"))
+				        cacheRosePattern = WNW;
+			        else if (ch.bearing.equals("W"))
+				        cacheRosePattern = W;
+			        else
+				        cacheRosePattern = WSW;
+		        }
+		        if ((cacheRosePattern & roseMatchPattern) == 0) {
+			        cacheFiltered = true; break;
+		        }
+	        }
+	        ///////////////////////////////
+	        // Filter criterium 3: Distance
+	        ///////////////////////////////
+	        if (fscDist > 0.0) {
+		        dummyd1 = ch.kilom;
+		        if (distdirec == SMALLER && dummyd1 > fscDist) {
+			        cacheFiltered = true; break;
+		        }
+		        if (distdirec == GREATER && dummyd1 < fscDist) {
+			        cacheFiltered = true; break;
+		        }
+	        }
+	        ///////////////////////////////
+	        // Filter criterium 4: Difficulty
+	        ///////////////////////////////
+	        if (fscDiff > 0.0) {
+		        dummyd1 = Common.parseDouble(ch.getHard());
+		        if (diffdirec == SMALLER && dummyd1 > fscDiff) {
+			        cacheFiltered = true; break;
+		        }
+		        if (diffdirec == EQUAL && dummyd1 != fscDiff) {
+			        cacheFiltered = true; break;
+		        }
+		        if (diffdirec == GREATER && dummyd1 < fscDiff) {
+			        cacheFiltered = true; break;
+		        }
+	        }
+	        ///////////////////////////////
+	        // Filter criterium 5: Terrain
+	        ///////////////////////////////
+	        if (fscTerr > 0.0) {
+		        dummyd1 = Common.parseDouble(ch.getTerrain());
+		        if (terrdirec == SMALLER && dummyd1 > fscTerr) {
+			        cacheFiltered = true; break;
+		        }
+		        if (terrdirec == EQUAL && dummyd1 != fscTerr) {
+			        cacheFiltered = true; break;
+		        }
+		        if (terrdirec == GREATER && dummyd1 < fscTerr) {
+			        cacheFiltered = true; break;
+		        }
+	        }
+	        //Vm.debug(ch.wayPoint+" Found"+ch.is_found+"  FoundyMe="+foundByMe+"   notFoundByMe="+notFoundByMe);
+	        //Vm.debug(ch.wayPoint+" Owned"+ch.is_owned+"  OwnedByMe="+ownedByMe+"   notOwnedByMe="+notOwnedByMe);
+	        //Vm.debug(ch.wayPoint+" Archived"+ch.is_archived+"  Archived="+archived+"   notArchived="+notArchived);
+	        //Vm.debug(ch.wayPoint+" Available"+ch.is_available+"  Available="+available+"   notAvailable="+notAvailable);
+	        //Vm.debug("Blacklisted: "+ch.is_black);
+	        ///////////////////////////////
+	        // Filter criterium 6: Found by me
+	        ///////////////////////////////
+	        if ((ch.is_found() && !foundByMe) || (!ch.is_found() && !notFoundByMe)) {
+		        cacheFiltered = true; break;
+	        }
+	        ///////////////////////////////
+	        // Filter criterium 7: Owned by me
+	        ///////////////////////////////
+	        if ((ch.is_owned() && !ownedByMe) || (!ch.is_owned() && !notOwnedByMe)) {
+		        cacheFiltered = true; break;
+	        }
+	        ///////////////////////////////
+	        // Filter criterium 8: Archived
+	        ///////////////////////////////
+	        if ((ch.is_archived() && !archived) || (!ch.is_archived() && !notArchived)) {
+		        cacheFiltered = true; break;
+	        }
+	        ///////////////////////////////
+	        // Filter criterium 9: Unavailable
+	        ///////////////////////////////
+	        if ((ch.is_available() && !available) || (!ch.is_available() && !notAvailable)) {
+		        cacheFiltered = true; break;
+	        }
+	        ///////////////////////////////
+	        // Filter criterium 10: Size
+	        ///////////////////////////////
+	        if (hasSizeMatchPattern) {
+		        cacheSizePattern = 0;
+		        if (ch.getCacheSize().startsWith("M"))
+			        cacheSizePattern = MICRO;
+		        else if (ch.getCacheSize().startsWith("S"))
+			        cacheSizePattern = SMALL;
+		        else if (ch.getCacheSize().startsWith("R"))
+			        cacheSizePattern = REGULAR;
+		        else if (ch.getCacheSize().startsWith("L"))
+			        cacheSizePattern = LARGE;
+		        else if (ch.getCacheSize().startsWith("V"))
+			        cacheSizePattern = VERYLARGE;
+		        else
+			        cacheSizePattern = OTHER;
+		        if ((cacheSizePattern & sizeMatchPattern) == 0) {
+			        cacheFiltered = true; break;
+		        }
+	        }
+	        ///////////////////////////////
+	        // Filter criterium 11: Attributes
+	        ///////////////////////////////
+	        if ((attributesYesPattern != 0 || attributesNoPattern != 0) && ch.mainCache == null) {
+		        if (attributesChoice == 0) {
+			        // AND-condition:
+			        if ((ch.getAttributesYes() & attributesYesPattern) != attributesYesPattern
+			                || (ch.getAttributesNo() & attributesNoPattern) != attributesNoPattern) {
+				        cacheFiltered = true;
+				        break;
+			        }
+		        } else if (attributesChoice == 1) {
+			        // OR-condition:
+			        if ((ch.getAttributesYes() & attributesYesPattern) == 0
+			                && (ch.getAttributesNo() & attributesNoPattern) == 0) {
+				        cacheFiltered = true;
+				        break;
+			        }
+		        } else {
+			        // NOT-condition:
+			        if ((ch.getAttributesYes() & attributesYesPattern) != 0
+			                || (ch.getAttributesNo() & attributesNoPattern) != 0) {
+				        cacheFiltered = true;
+				        break;
+			        }
+		        }
+	        }
+	        break;
+        } while (true);
+		return cacheFiltered;
+    }
 	
 	/**
 	*	Invert is_filtered flag on all caches
@@ -533,16 +607,16 @@ public class Filter{
 		CacheHolder ch;
 		if (cacheDB.size()==0) return;
 		Global.getProfile().selectionChanged = true;
-		boolean showBlackListed=Global.getProfile().showBlacklisted;
+		boolean showBlackListed=Global.getProfile().showBlacklisted();
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			if (ch.is_black==showBlackListed)
-				ch.is_filtered=!ch.is_filtered; // Only invert those that would be shown under blacklist filter
+			if (ch.is_black()==showBlackListed)
+				ch.setFiltered(!ch.is_filtered()); // Only invert those that would be shown under blacklist filter
 			else
-				ch.is_filtered=true; // Hide all those that have the wrong is_black status
+				ch.setFiltered(true); // Hide all those that have the wrong is_black status
 		}
-		Global.getProfile().filterInverted=!Global.getProfile().filterInverted;
-		Global.getProfile().hasUnsavedChanges=true;
+		Global.getProfile().setFilterInverted(!Global.getProfile().isFilterInverted());
+		//Global.getProfile().hasUnsavedChanges=true;
 	}
 	
 	/**
@@ -554,24 +628,24 @@ public class Filter{
 		CacheHolder ch;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			ch.is_filtered=(ch.is_black^Global.getProfile().showBlacklisted) ; // Always filter blacklisted caches
+			ch.setFiltered((ch.is_black()^Global.getProfile().showBlacklisted())) ; // Always filter blacklisted caches
 		}
-		Global.getProfile().filterActive=FILTER_INACTIVE;
-		Global.getProfile().filterInverted=false;
-		Global.getProfile().hasUnsavedChanges=true;
+		Global.getProfile().setFilterActive(FILTER_INACTIVE);
+		Global.getProfile().setFilterInverted(false);
+		//Global.getProfile().hasUnsavedChanges=true;
 	}
 
 	public boolean hasFilter() {
 		Profile prof=Global.getProfile();
-		return !(prof.filterType.equals(Profile.FILTERTYPE) &&
-		    prof.filterRose.equals(Profile.FILTERROSE) &&
-		    prof.filterVar.equals(Profile.FILTERVAR) &&
-		    prof.filterSize.equals(Profile.FILTERSIZE) &&
-		    prof.filterDist.equals("L") &&
-		    prof.filterDiff.equals("L") &&
-		    prof.filterTerr.equals("L") &&
-		    prof.filterAttrYes == 0l &&
-		    prof.filterAttrNo == 0l);
+		return !(prof.getFilterType().equals(Profile.FILTERTYPE) &&
+		    prof.getFilterRose().equals(Profile.FILTERROSE) &&
+		    prof.getFilterVar().equals(Profile.FILTERVAR) &&
+		    prof.getFilterSize().equals(Profile.FILTERSIZE) &&
+		    prof.getFilterDist().equals("L") &&
+		    prof.getFilterDiff().equals("L") &&
+		    prof.getFilterTerr().equals("L") &&
+		    prof.getFilterAttrYes() == 0l &&
+		    prof.getFilterAttrNo() == 0l);
 	}
 
 }

@@ -94,7 +94,7 @@ public class Exporter {
 		int expCount = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			if(ch.is_black == false && ch.is_filtered == false) counter++;
+			if(ch.is_black() == false && ch.is_filtered() == false) counter++;
 		}
 
 		try{
@@ -104,7 +104,7 @@ public class Exporter {
 			holder=new CacheHolderDetail();
 			for(int i = 0; i<cacheDB.size(); i++){
 				ch=(CacheHolder)cacheDB.get(i);
-				if(ch.is_black == false && ch.is_filtered == false){
+				if(ch.is_black() == false && ch.is_filtered() == false){
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();
@@ -417,20 +417,20 @@ public class Exporter {
 
     public static String getShortDetails( CacheHolder ch ) {
     	StringBuffer strBuf = new StringBuffer(7);
-    	strBuf.append(CacheType.shortType(ch.type).toLowerCase());			
+    	strBuf.append(CacheType.shortType(ch.getType()).toLowerCase());			
     	if (!ch.isAddiWpt()) {
-    		if ( (ch.hard.length() > 0) && (ch.terrain.length() > 0) ) {
-    			strBuf.append(ch.hard.charAt(0));
-    			if ( ch.hard.endsWith(".5") ) {
+    		if ( (ch.getHard().length() > 0) && (ch.getTerrain().length() > 0) ) {
+    			strBuf.append(ch.getHard().charAt(0));
+    			if ( ch.getHard().endsWith(".5") ) {
     				strBuf.append("5");
     			}
     			strBuf.append("/");
-    			strBuf.append(ch.terrain.charAt(0));
-    			if ( ch.terrain.endsWith(".5") ) {
+    			strBuf.append(ch.getTerrain().charAt(0));
+    			if ( ch.getTerrain().endsWith(".5") ) {
     				strBuf.append("5");
     			}
     		}
-    		strBuf.append(ch.CacheSize.substring(0, 1).toLowerCase());
+    		strBuf.append(ch.getCacheSize().substring(0, 1).toLowerCase());
     	}
 
     	return strBuf.toString();

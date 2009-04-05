@@ -65,13 +65,13 @@ public class TravelbugJourneyScreen extends Form  {
 		String cache="";
 		if (curCacheNo>=0 && curCacheNo<cacheDB.size()) {
 			ch=(CacheHolder)cacheDB.elementAt(curCacheNo);
-			cache=MyLocale.getMsg(6022,": Current cache: ")+ch.wayPoint+" - "+ch.CacheName;
-			waypoint=ch.wayPoint;
+			cache=MyLocale.getMsg(6022,": Current cache: ")+ch.getWayPoint()+" - "+ch.getCacheName();
+			waypoint=ch.getWayPoint();
 			chD=new CacheHolderDetail(ch);
 			try {
 				chD.readCache(Global.getProfile().dataDir);
 			}catch (Exception ex) {
-				Global.getPref().log("Failed to read cache "+ch.wayPoint);
+				Global.getPref().log("Failed to read cache "+ch.getWayPoint());
 			};
 			tblSrcCache=chD.Travelbugs;
 		}
@@ -254,7 +254,7 @@ public class TravelbugJourneyScreen extends Form  {
 			// If the list of travelbugs in the cache was modified, we need to save the cache too
 			if (chDmodified) {
 				chD.saveCacheDetails(Global.getProfile().dataDir);
-				ch.has_bug=chD.Travelbugs.size()>0;
+				ch.setHas_bugs(chD.Travelbugs.size()>0);
 			}
 			Vm.showWait(false);
 			chD=null;
@@ -497,7 +497,7 @@ class tbListControl extends TableControl {
 				chD.Travelbugs.add(tb);
 				tblMyTravelbugJourneys.addTbDrop(tb,Global.getProfile().name,waypoint);
 				chDmodified=true;
-				ch.has_bug=true;
+				ch.setHas_bugs(true);
 			}
 			repaint();
 		}

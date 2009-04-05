@@ -39,11 +39,11 @@ public class OCXMLImporterScreen extends Form {
 			String dist1;
 			String dist2;
 			if ((options & ISGC) > 0) {
-				dist1 = Global.getProfile().distGC;
-				dist2 = Global.getProfile().distOC;
+				dist1 = Global.getProfile().getDistGC();
+				dist2 = Global.getProfile().getDistOC();
 			} else {
-				dist1 = Global.getProfile().distOC;
-				dist2 = Global.getProfile().distGC;
+				dist1 = Global.getProfile().getDistOC();
+				dist2 = Global.getProfile().getDistGC();
 			}
 			if ( dist1.equals("") || dist1.equals("0") || dist1.equals("0.0") ) {
 				dist1 = dist2;

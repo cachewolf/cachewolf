@@ -651,8 +651,8 @@ public class Preferences extends MinML{
 				if (code==-1) return false; // Cancel pressed
 				CWPoint savecenter = new CWPoint(prof.centre);
 				prof.clearProfile();
-				prof.centre = savecenter;
-				prof.hasUnsavedChanges = true;
+				prof.setCenterCoords(savecenter);
+				//prof.hasUnsavedChanges = true;
 				//curCentrePt.set(0,0); // No centre yet
 				lastProfile=f.newSelectedProfile;
 			}

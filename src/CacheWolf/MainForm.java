@@ -86,9 +86,6 @@ public class MainForm extends Editor {
 			profile.readIndex();
 			pref.curCentrePt.set(profile.centre);
 			profile.updateBearingDistance();
-			boolean saveHasUnsavedChanges = profile.hasUnsavedChanges;
-			profile.restoreFilter(); // this method sets hasUnsavedChanges to true
-			profile.hasUnsavedChanges = saveHasUnsavedChanges ; // in case that the profile is new, it hasUnsavedChanges, so set it back
 			setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 		} catch (Exception e){
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());

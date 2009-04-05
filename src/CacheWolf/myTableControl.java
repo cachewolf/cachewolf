@@ -102,7 +102,7 @@ public class myTableControl extends TableControl{
 				else if (ev.key == IKeys.ACTION || ev.key == IKeys.ENTER) Global.mainTab.select(Global.mainTab.descP);
 				else if (ev.key == IKeys.DOWN) Global.mainTab.tbP.selectRow(java.lang.Math.min(cursor.y+ 1, model.numRows-1)); 
 				else if (ev.key == IKeys.UP) Global.mainTab.tbP.selectRow(java.lang.Math.max(cursor.y-1, 0));
-				else if (ev.key == IKeys.LEFT && Global.mainForm.cacheListVisible && cursor.y>=0 && cursor.y<tbp.myMod.numRows) Global.mainForm.cacheList.addCache(((CacheHolder)cacheDB.elementAt(cursor.y)).wayPoint); 
+				else if (ev.key == IKeys.LEFT && Global.mainForm.cacheListVisible && cursor.y>=0 && cursor.y<tbp.myMod.numRows) Global.mainForm.cacheList.addCache(((CacheHolder)cacheDB.elementAt(cursor.y)).getWayPoint()); 
 				else if (ev.key == IKeys.RIGHT) {
 					CacheHolder ch;
 					ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
@@ -150,7 +150,7 @@ public class myTableControl extends TableControl{
 				CacheHolder currCache = (CacheHolder)cacheDB.get(i);
 				if ( currCache.is_Checked) {
 					allCount++;
-					if (currCache.is_filtered) {
+					if (currCache.is_filtered()) {
 						if (currCache.isAddiWpt()) {
 							addiFilteredCount++;
 						} else {
@@ -185,11 +185,11 @@ public class myTableControl extends TableControl{
 					int size=cacheDB.size();
 					for(int i = size-1; i >=0; i--){// Start Counting down, as the size decreases with each deleted cache
 						ch = (CacheHolder)cacheDB.get(i);
-						if(ch.is_Checked && (!ch.is_filtered || deleteFiltered)) {
+						if(ch.is_Checked && (!ch.is_filtered() || deleteFiltered)) {
 							nDeleted++;
 							h.progress = ((float)nDeleted)/(float)allCount;
 							h.changed();
-							dm.deleteCacheFiles(ch.wayPoint,profile.dataDir);
+							dm.deleteCacheFiles(ch.getWayPoint(),profile.dataDir);
 							cacheDB.remove(ch);
 							ch.releaseCacheDetails();
 							ch=null;
@@ -298,11 +298,11 @@ public class myTableControl extends TableControl{
 			}
 			 row=p.y;
 			 CacheHolder ch=(CacheHolder)cacheDB.get(p.y);
-			 wayPoint=ch.wayPoint;
+			 wayPoint=ch.getWayPoint();
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 imgDrag=new IconAndText();
-			 imgDrag.addColumn(CacheType.cache2Img(ch.type));
-			 imgDrag.addColumn(ch.wayPoint);
+			 imgDrag.addColumn(CacheType.cache2Img(ch.getType()));
+			 imgDrag.addColumn(ch.getWayPoint());
 			 dc.dragData=dc.startImageDrag(imgDrag,new Point(8,8),this);
 		 } else super.startDragging(dc);
 	 }
