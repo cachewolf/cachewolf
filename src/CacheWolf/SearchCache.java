@@ -32,12 +32,12 @@ public class SearchCache {
 			//marked caches.
 			for(int i = 0;i < cacheDB.size();i++){
 				ch = (CacheHolder)cacheDB.get(i);
-				if (ch.is_filtered) break; // Reached end of visible records
-				if(ch.wayPoint.toUpperCase().indexOf(searchStr) <0 && 
-				   ch.CacheName.toUpperCase().indexOf(searchStr) <0 && 
-				   ch.CacheStatus.toUpperCase().indexOf(searchStr)<0){
+				if (ch.is_filtered()) break; // Reached end of visible records
+				if(ch.getWayPoint().toUpperCase().indexOf(searchStr) <0 && 
+				   ch.getCacheName().toUpperCase().indexOf(searchStr) <0 && 
+				   ch.getCacheStatus().toUpperCase().indexOf(searchStr)<0){
 					ch.is_flaged = false;
-					ch.is_filtered = true;
+					ch.setFiltered(true);
 				} else
 					ch.is_flaged=true;
 			} // for
@@ -54,7 +54,7 @@ public class SearchCache {
 		for(int i = cacheDB.size()-1;i >=0;i--){
 			CacheHolder ch=((CacheHolder)cacheDB.get(i));
 			ch.is_flaged=false;
-			ch.is_filtered=(ch.is_black^Global.getProfile().showBlacklisted) ;
+			//ch.setFiltered((ch.is_black()^Global.getProfile().showBlacklisted())) ;
 		}
 		//Global.getProfile().filterActive=Filter.filterActive; //TODO This is a hack. Need to tidy this up
 		//Global.getProfile().filterInverted=Filter.filterInverted;

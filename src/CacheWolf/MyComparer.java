@@ -20,27 +20,27 @@ public class MyComparer implements Comparer{
 		if (colToCompare==1) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=String.valueOf(ch.type);
+				ch.sort=String.valueOf(ch.getType());
 			}
 		} else if (colToCompare==2) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.hard;
+				ch.sort=ch.getHard();
 			}
 		} else if (colToCompare==3) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.terrain;
+				ch.sort=ch.getTerrain();
 			}
 		} else if (colToCompare==4) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.wayPoint.toUpperCase();
+				ch.sort=ch.getWayPoint().toUpperCase();
 			}
 		} else if (colToCompare==5) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.CacheName.toLowerCase();
+				ch.sort=ch.getCacheName().toLowerCase();
 			}
 		} else if (colToCompare==6) {
 			for (int i=0; i<visibleSize; i++) {
@@ -50,17 +50,17 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==7) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.CacheOwner.toLowerCase();
+				ch.sort=ch.getCacheOwner().toLowerCase();
 			}
 		} else if (colToCompare==8) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.DateHidden;
+				ch.sort=ch.getDateHidden();
 			}
 		} else if (colToCompare==9) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				ch.sort=ch.CacheStatus;
+				ch.sort=ch.getCacheStatus();
 			}
 		} else if (colToCompare==10) {
 			for (int i=0; i<visibleSize; i++) {
@@ -77,8 +77,8 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==12) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				if (ch.CacheSize.length()==0) ch.sort="?";
-				else switch (ch.CacheSize.charAt(0)) {
+				if (ch.getCacheSize().length()==0) ch.sort="?";
+				else switch (ch.getCacheSize().charAt(0)) {
 					case 'M': ch.sort="1"; break;
 					case 'S': ch.sort="2"; break;
 					case 'R': ch.sort="3"; break;
@@ -90,15 +90,15 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==13) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				if (ch.wayPoint.startsWith("OC"))
-					ch.sort=MyLocale.formatLong(ch.numRecommended,"00000");
+				if (ch.getWayPoint().startsWith("OC"))
+					ch.sort=MyLocale.formatLong(ch.getNumRecommended(),"00000");
 				else
 					ch.sort="\uFFFF";
 			}			
 		} else if (colToCompare==14) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=(CacheHolder) cacheDB.get(i);
-				if (ch.wayPoint.startsWith("OC"))
+				if (ch.getWayPoint().startsWith("OC"))
 					ch.sort=MyLocale.formatLong(ch.recommendationScore,"00000");
 				else
 					ch.sort="\uFFFF";

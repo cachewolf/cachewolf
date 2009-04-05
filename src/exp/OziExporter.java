@@ -31,7 +31,7 @@ public class OziExporter extends Exporter{
 		// usually start at 1 and increment. Can be set to -1 (minus 1) and the number will be auto generated.
 		strBuf.append("-1,");
 		// Field 2 : Name - the waypoint name, use the correct length name to suit the GPS type.
-		strBuf.append(ch.wayPoint + ",");
+		strBuf.append(ch.getWayPoint() + ",");
 		// Field 3 : Latitude - decimal degrees.
 		strBuf.append(lat+",");
 		// Field 4 : Longitude - decimal degrees.
@@ -49,7 +49,7 @@ public class OziExporter extends Exporter{
 		// Field 10 : Background Color (RGB value)
 		strBuf.append("16777215,");
 		// Field 11 : Description (max 40), no commas
-		tmpName = simplifyString(ch.CacheName);
+		tmpName = simplifyString(ch.getCacheName());
 		if (tmpName.length() <= 40){
 			strBuf.append(tmpName + ",");
 		}

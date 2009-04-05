@@ -158,7 +158,7 @@ public class TPLExporter {
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			if(ch.is_black == false && ch.is_filtered == false) counter++;
+			if(ch.is_black() == false && ch.is_filtered() == false) counter++;
 		}
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
@@ -185,54 +185,54 @@ public class TPLExporter {
 				ch = (CacheHolder)cacheDB.get(i);
 				h.progress = (float)i/(float)counter;
 				h.changed();
-				if(ch.is_black == false && ch.is_filtered == false){
+				if(ch.is_black() == false && ch.is_filtered() == false){
 					if (ch.pos.isValid() == false) continue;
 					holder=new CacheHolderDetail(ch);
 					try{
 						holder.readCache(profile.dataDir);
 					}catch(Exception e){
 						Vm.debug("Problem reading cache page");
-						Global.getPref().log("Exception in TplExporter = Problem reading cache page, Cache: " + holder.wayPoint, e, true);
+						Global.getPref().log("Exception in TplExporter = Problem reading cache page, Cache: " + holder.getWayPoint(), e, true);
 					}
 					try {
 						Regex dec = new Regex("[,.]",myFilter.decSep);
 						if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
 						varParams = new Hashtable();
-						varParams.put("TYPE", CacheType.transType(holder.type));
-						varParams.put("SHORTTYPE", CacheType.transType(holder.type).substring(0,1));
-						varParams.put("SIZE", holder.CacheSize);
-						varParams.put("SHORTSIZE", holder.CacheSize.substring(0,1));
-						varParams.put("WAYPOINT", holder.wayPoint);
-						varParams.put("OWNER", holder.CacheOwner);
-						varParams.put("DIFFICULTY", dec.replaceAll(holder.hard));
-						varParams.put("TERRAIN", dec.replaceAll(holder.terrain));
+						varParams.put("TYPE", CacheType.transType(holder.getType()));
+						varParams.put("SHORTTYPE", CacheType.transType(holder.getType()).substring(0,1));
+						varParams.put("SIZE", holder.getCacheSize());
+						varParams.put("SHORTSIZE", holder.getCacheSize().substring(0,1));
+						varParams.put("WAYPOINT", holder.getWayPoint());
+						varParams.put("OWNER", holder.getCacheOwner());
+						varParams.put("DIFFICULTY", dec.replaceAll(holder.getHard()));
+						varParams.put("TERRAIN", dec.replaceAll(holder.getTerrain()));
 						varParams.put("DISTANCE", dec.replaceAll(holder.getDistance()));
 						varParams.put("BEARING", holder.bearing);
 						varParams.put("LATLON", holder.LatLon);
 						varParams.put("LAT", dec.replaceAll(holder.pos.getLatDeg(CWPoint.DD)));
 						varParams.put("LON", dec.replaceAll(holder.pos.getLonDeg(CWPoint.DD)));
-						varParams.put("STATUS", holder.CacheStatus);
+						varParams.put("STATUS", holder.getCacheStatus());
 						varParams.put("STATUS_DATE", holder.GetStatusDate());
 						varParams.put("STATUS_TIME", holder.GetStatusTime());
-						varParams.put("DATE", holder.DateHidden);
+						varParams.put("DATE", holder.getDateHidden());
 						varParams.put("URL", holder.URL);
 						varParams.put("DESCRIPTION", holder.LongDescription);
 						if (myFilter.badChars != null) {
-							varParams.put("NAME", rex.replaceAll(holder.CacheName));
+							varParams.put("NAME", rex.replaceAll(holder.getCacheName()));
 							varParams.put("NOTES", rex.replaceAll(holder.CacheNotes));
 							varParams.put("HINTS", rex.replaceAll(holder.Hints));
 							varParams.put("DECRYPTEDHINTS", rex.replaceAll(Common.rot13(holder.Hints)));
 						} else {
-							varParams.put("NAME", holder.CacheName);
+							varParams.put("NAME", holder.getCacheName());
 							varParams.put("NOTES", holder.CacheNotes);
 							varParams.put("HINTS", holder.Hints);
 							varParams.put("DECRYPTEDHINTS", Common.rot13(holder.Hints));
 						}
 						cache_index.add(varParams);
 					}catch(Exception e){
-						Vm.debug("Problem getting Parameter, Cache: " + holder.wayPoint);
+						Vm.debug("Problem getting Parameter, Cache: " + holder.getWayPoint());
 						e.printStackTrace();
-						Global.getPref().log("Exception in TplExporter = Problem getting Parameter, Cache: " + holder.wayPoint, e, true);
+						Global.getPref().log("Exception in TplExporter = Problem getting Parameter, Cache: " + holder.getWayPoint(), e, true);
 					}
 				}
 			}

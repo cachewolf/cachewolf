@@ -63,21 +63,21 @@ public class ShowCacheInBrowser {
 		if (chD == null) return;
 		try {
 			Template tpl = new Template(args);
-			if(!chD.is_filtered){
+			if(!chD.is_filtered()){
 				Vm.showWait(true);
 				try {
-					if (chD.wayPoint.startsWith("OC"))
-						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+CacheType.transOCType(chD.type)+".gif\"");
+					if (chD.getWayPoint().startsWith("OC"))
+						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+CacheType.transOCType(chD.getType())+".gif\"");
 					else	
-						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+chD.type+".gif\"");
-					tpl.setParam("SIZE", chD.CacheSize);
-					tpl.setParam("WAYPOINT", chD.wayPoint);
-					tpl.setParam("CACHE_NAME", chD.CacheName);
-					tpl.setParam("OWNER", chD.CacheOwner);
-					if (chD.hard.endsWith(".0")) chD.hard=chD.hard.substring(0,chD.hard.length()-2);
-					tpl.setParam("DIFFICULTY", (String) diff.get(chD.hard.replace(',','.')));
-					if (chD.terrain.endsWith(".0")) chD.terrain=chD.terrain.substring(0,chD.terrain.length()-2);
-					tpl.setParam("TERRAIN", (String) terr.get(chD.terrain.replace(',','.')));
+						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+chD.getType()+".gif\"");
+					tpl.setParam("SIZE", chD.getCacheSize());
+					tpl.setParam("WAYPOINT", chD.getWayPoint());
+					tpl.setParam("CACHE_NAME", chD.getCacheName());
+					tpl.setParam("OWNER", chD.getCacheOwner());
+					if (chD.getHard().endsWith(".0")) chD.setHard(chD.getHard().substring(0,chD.getHard().length()-2));
+					tpl.setParam("DIFFICULTY", (String) diff.get(chD.getHard().replace(',','.')));
+					if (chD.getTerrain().endsWith(".0")) chD.setTerrain(chD.getTerrain().substring(0,chD.getTerrain().length()-2));
+					tpl.setParam("TERRAIN", (String) terr.get(chD.getTerrain().replace(',','.')));
 					tpl.setParam("DISTANCE", chD.getDistance().replace(',','.'));
 					tpl.setParam("BEARING", chD.bearing);
 					if (chD.pos!=null && chD.pos.isValid()) {
@@ -86,10 +86,10 @@ public class ShowCacheInBrowser {
 						tpl.setParam("LATLON", "unknown");
 					}
 					// If status is of format yyyy-mm-dd prefix it with a "Found" message in local language
-					if (chD.CacheStatus.length()>=10 && chD.CacheStatus.charAt(4)=='-')
-						tpl.setParam("STATUS",MyLocale.getMsg(318,"Found")+" "+chD.CacheStatus);
+					if (chD.getCacheStatus().length()>=10 && chD.getCacheStatus().charAt(4)=='-')
+						tpl.setParam("STATUS",MyLocale.getMsg(318,"Found")+" "+chD.getCacheStatus());
 					else
-						tpl.setParam("STATUS", chD.CacheStatus);
+						tpl.setParam("STATUS", chD.getCacheStatus());
 					
 					// Cache attributes
 					if (chD.attributes.getCount()>0) {
@@ -109,7 +109,7 @@ public class ShowCacheInBrowser {
 						tpl.setParam("ATTRIBUTES",attVect);
 					}
 					
-					tpl.setParam("DATE", chD.DateHidden);
+					tpl.setParam("DATE", chD.getDateHidden());
 					tpl.setParam("URL", chD.URL);
 					if (chD.Travelbugs.size()>0) tpl.setParam("BUGS",chD.Travelbugs.toHtml());
 					if (chD.CacheNotes!=null && chD.CacheNotes.trim().length()>0) tpl.setParam("NOTES", STRreplace.replace(chD.CacheNotes,"\n","<br/>\n"));
@@ -183,7 +183,7 @@ public class ShowCacheInBrowser {
 						logVect.add(logs);
 					}
 					tpl.setParam("LOGS",logVect);
-					if (!chD.is_available) tpl.setParam("UNAVAILABLE","1");
+					if (!chD.is_available()) tpl.setParam("UNAVAILABLE","1");
 					if (!chD.Hints.equals("null"))tpl.setParam("HINT",Common.rot13(chD.Hints));
 					
 					if (chD.hasAddiWpt()) {
@@ -191,10 +191,10 @@ public class ShowCacheInBrowser {
 						for (int i=0; i<chD.addiWpts.size(); i++) {
 							Hashtable addis=new Hashtable();
 							CacheHolder ch=(CacheHolder) chD.addiWpts.get(i);
-							addis.put("WAYPOINT",ch.wayPoint);
-							addis.put("NAME",ch.CacheName);
+							addis.put("WAYPOINT",ch.getWayPoint());
+							addis.put("NAME",ch.getCacheName());
 							addis.put("LATLON",ch.LatLon);
-							addis.put("IMG","<img src=\""+CacheType.type2pic(ch.type)+"\">");
+							addis.put("IMG","<img src=\""+CacheType.type2pic(ch.getType())+"\">");
 							CacheHolderDetail chDA=new CacheHolderDetail(ch);
 							chDA.readCache(Global.getProfile().dataDir);
 							addis.put("LONGDESC",chDA.LongDescription); // Do we need to treat longDesc as above ?
@@ -203,8 +203,8 @@ public class ShowCacheInBrowser {
 						tpl.setParam("ADDIS",addiVect);
 					}
 				}catch(Exception e){
-					Vm.debug("Problem getting Parameter, Cache: " + chD.wayPoint);
-					Global.getPref().log("Problem getting parameter "+e.toString()+", Cache: " + chD.wayPoint);
+					Vm.debug("Problem getting Parameter, Cache: " + chD.getWayPoint());
+					Global.getPref().log("Problem getting parameter "+e.toString()+", Cache: " + chD.getWayPoint());
 					e.printStackTrace();
 				}
 			}

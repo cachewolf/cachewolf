@@ -58,11 +58,11 @@ public class StatusBar extends CellPanel{
 					MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound() + "  ";
 		disp.setText(strStatus);
 		// Indicate that a filter is active in the status line
-		if (Global.getProfile().filterActive==Filter.FILTER_ACTIVE)
+		if (Global.getProfile().getFilterActive()==Filter.FILTER_ACTIVE)
 			btnFlt.backGround=new Color(0,255,0);
-		else if (Global.getProfile().filterActive==Filter.FILTER_CACHELIST)
+		else if (Global.getProfile().getFilterActive()==Filter.FILTER_CACHELIST)
 			btnFlt.backGround=new Color(0,0,255);
-		else if (Global.getProfile().filterActive==Filter.FILTER_MARKED_ONLY)
+		else if (Global.getProfile().getFilterActive()==Filter.FILTER_MARKED_ONLY)
 			btnFlt.backGround=new Color(0,255,255);
 		else
 			btnFlt.backGround=null;
@@ -80,7 +80,7 @@ public class StatusBar extends CellPanel{
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btnFlt){
 				Filter flt = new Filter();
-				if (Global.getProfile().filterActive==Filter.FILTER_INACTIVE) {
+				if (Global.getProfile().getFilterActive()==Filter.FILTER_INACTIVE) {
 					flt.setFilter();
 					flt.doFilter();
 				} else {

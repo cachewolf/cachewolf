@@ -49,8 +49,8 @@ public class CacheHolderDetail extends CacheHolder {
 	 }
 
 	 public void setLongDescription(String longDescription) {
-	 	if (LongDescription.equals("")) is_new=true;
-	 	else if (!stripControlChars(LongDescription).equals(stripControlChars(longDescription))) is_update=true;
+	 	if (LongDescription.equals("")) setNew(true);
+	 	else if (!stripControlChars(LongDescription).equals(stripControlChars(longDescription))) setUpdated(true);
 	 	LongDescription = longDescription;
 	 }
 	 
@@ -64,17 +64,17 @@ public class CacheHolderDetail extends CacheHolder {
 	 }
 	 
 	 public void setHints(String hints) {
-	 	if (!Hints.equals(hints)) is_update=true;
+	 	if (!Hints.equals(hints)) setUpdated(true);
 	 	Hints = hints;
 	 }
 	 
 	 public void setCacheLogs(LogList newLogs) {
 		 int size=newLogs.size();
 		 for (int i=size-1; i>=0; i--) { // Loop over all new logs, must start with oldest log
-			 if (CacheLogs.merge(newLogs.getLog(i))>=0) this.is_log_update=true;
+			 if (CacheLogs.merge(newLogs.getLog(i))>=0) this.setLog_updated(true);
 		 }
 		 //CacheLogs=logs;
-		 noFindLogs=CacheLogs.countNotFoundLogs();
+		 setNoFindLogs(CacheLogs.countNotFoundLogs());
 	 }
 
 	 
@@ -87,11 +87,11 @@ public class CacheHolderDetail extends CacheHolder {
 	public CacheHolderDetail update(CacheHolderDetail newCh){
 		  super.update(newCh);
 		  // flags
-		  if (this.is_found == true && this.CacheStatus.equals("")) this.CacheStatus = MyLocale.getMsg(318,"Found");
+		  if (this.is_found() && this.getCacheStatus().equals("")) this.setCacheStatus(MyLocale.getMsg(318,"Found"));
 
 		  //travelbugs:GPX-File contains all actual travelbugs but not the missions
 		  //  we need to check whether the travelbug is already in the existing list
-		  this.has_bug = newCh.Travelbugs.size()>0;
+		  this.setHas_bugs(newCh.Travelbugs.size()>0);
 		  for (int i=newCh.Travelbugs.size()-1; i>=0; i--) {
 			 Travelbug tb=newCh.Travelbugs.getTB(i);  
 		     Travelbug oldTB=this.Travelbugs.find(tb.getName());
@@ -135,7 +135,7 @@ public class CacheHolderDetail extends CacheHolder {
 				imgDesc = new InputBox("Description").input("",10);
 				//Create Destination Filename
 				String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf("."));
-				imgDestName = this.wayPoint + "_U_" + (this.UserImages.size()+1) + ext;
+				imgDestName = this.getWayPoint() + "_U_" + (this.UserImages.size()+1) + ext;
 				
 				this.UserImages.add(imgDestName);
 				this.UserImagesText.add(imgDesc);
@@ -155,11 +155,11 @@ public class CacheHolderDetail extends CacheHolder {
 		public void readCache(String dir) throws IOException{
 			String dummy;
 			FileReader in = null;
-			if (new FileBugfix(dir + wayPoint.toLowerCase() + ".xml").exists()) in = new FileReader(dir+wayPoint.toLowerCase() + ".xml");
+			if (new FileBugfix(dir + getWayPoint().toLowerCase() + ".xml").exists()) in = new FileReader(dir+getWayPoint().toLowerCase() + ".xml");
 			if (in == null) {
-				if (new FileBugfix(dir + wayPoint + ".xml").exists()) in = new FileReader(dir+wayPoint + ".xml");
+				if (new FileBugfix(dir + getWayPoint() + ".xml").exists()) in = new FileReader(dir+getWayPoint() + ".xml");
 			}
-			if (in == null) throw new FileNotFoundException(dir+wayPoint.toLowerCase()+".xml");
+			if (in == null) throw new FileNotFoundException(dir+getWayPoint().toLowerCase()+".xml");
 			String text= in.readAll();
 			in.close();
 			Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);		
@@ -267,8 +267,8 @@ public class CacheHolderDetail extends CacheHolder {
 				URL = dummy;
 			}
 			else {
-				if (wayPoint.startsWith("GC")) {
-					URL = "http://www.geocaching.com/seek/cache_details.aspx?wp="+ wayPoint + "&Submit6=Find&log=y";
+				if (getWayPoint().startsWith("GC")) {
+					URL = "http://www.geocaching.com/seek/cache_details.aspx?wp="+ getWayPoint() + "&Submit6=Find&log=y";
 				}
 			}
 			ex = new Extractor(text, "<SOLVER><![CDATA[", "]]></SOLVER>", 0, true);
@@ -281,27 +281,27 @@ public class CacheHolderDetail extends CacheHolder {
 		public void saveCacheDetails(String dir){
 			PrintWriter detfile;
 			//File exists?
-			boolean exists = (new File(dir + wayPoint + ".xml")).exists();
+			boolean exists = (new File(dir + getWayPoint() + ".xml")).exists();
 			//yes: then delete
 			if (exists) {
-				boolean ok = (new File(dir + wayPoint + ".xml")).delete();
+				boolean ok = (new File(dir + getWayPoint() + ".xml")).delete();
 				if(ok) ok = true;
 			}
-			boolean exists2 = (new File(dir + wayPoint.toLowerCase() + ".xml")).exists();
+			boolean exists2 = (new File(dir + getWayPoint().toLowerCase() + ".xml")).exists();
 			//yes: delete
 			if (exists2) {
-				boolean ok2 = (new File(dir + wayPoint.toLowerCase() + ".xml")).delete();
+				boolean ok2 = (new File(dir + getWayPoint().toLowerCase() + ".xml")).delete();
 				if(ok2) ok2=true;
 			}
 			//Vm.debug("Writing to: " +dir + "for: " + wayPoint);
 			try{
-			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dir + wayPoint.toLowerCase() + ".xml")));
+			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dir + getWayPoint().toLowerCase() + ".xml")));
 			} catch (Exception e) {
 				Global.getPref().log("Problem creating details file",e,true);
 				return;
 			}
 			try{
-				if(wayPoint.length()>0){
+				if(getWayPoint().length()>0){
 				  detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n");
 				  detfile.print("<CACHEDETAILS>\r\n");
 				  detfile.print("<DETAILS><![CDATA["+LongDescription+"]]></DETAILS>\r\n");
@@ -366,12 +366,12 @@ public class CacheHolderDetail extends CacheHolder {
 				  detfile.print("</CACHEDETAILS>\n");
 				} // if length
 			} catch (Exception e){
-				Global.getPref().log("Problem waypoint " + wayPoint + " writing to a details file: " + e.getMessage());
+				Global.getPref().log("Problem waypoint " + getWayPoint() + " writing to a details file: " + e.getMessage());
 			}
 			try{
 			  detfile.close();
 			} catch (Exception e){
-				Global.getPref().log("Problem waypoint " + wayPoint + " writing to a details file: " + e.getMessage());
+				Global.getPref().log("Problem waypoint " + getWayPoint() + " writing to a details file: " + e.getMessage());
 			}
 			hasUnsavedChanges = false;
 		}
@@ -387,9 +387,9 @@ public class CacheHolderDetail extends CacheHolder {
 		public boolean belongsTo (CacheHolder ch) {
 			
 			// avoid self referencing
-			if (this.wayPoint.equals(ch.wayPoint)) return false;
+			if (this.getWayPoint().equals(ch.getWayPoint())) return false;
 
-			return this.wayPoint.endsWith(ch.wayPoint.substring(2));
+			return this.getWayPoint().endsWith(ch.getWayPoint().substring(2));
 		}
 		
 		/**

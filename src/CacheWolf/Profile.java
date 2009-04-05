@@ -32,45 +32,51 @@ public class Profile {
 	 *  the index.xml and cache files live. (Excuse the English spelling of centre)     */
 	public String name=new String();
 	/** This is the directory for the profile. It contains a closing /.   	 */
-	public String dataDir=new String();  
+	public String dataDir = new String();
+
 	/** Last sync date for opencaching caches */
-	public String last_sync_opencaching = new String();
+	private String last_sync_opencaching = new String();
+
 	/** Distance for opencaching caches */
-	public String distOC = new String();
+	private String distOC = new String();
+
 	/** Distance for geocaching caches */
-	public String distGC = new String();
+	private String distGC = new String();
 
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
 
 	// When extending the filter check "normaliseFilters"
 	// which ensures backward compatibility. Normally no change should be needed
-	public final static String FILTERTYPE="1111111111111111111";
-	public final static String FILTERROSE="1111111111111111";
-	public final static String FILTERVAR="11111111";
-	public final static String FILTERSIZE="111111";
-	public String filterType = new String(FILTERTYPE);
-	public String filterRose = new String(FILTERROSE);
-	public String filterSize = new String(FILTERSIZE);
-	//filter settings for archived ... owner (section) in filterscreen
-	public String filterVar = new String(FILTERVAR);
-	public String filterDist=new String("L");
-	public String filterDiff=new String("L");
-	public String filterTerr=new String("L");
-	// Saved filterstatus - is only refreshed from class Filter when Profile is saved
-	public int filterActive=Filter.FILTER_INACTIVE;
-	public boolean filterInverted=false;
-	public boolean showBlacklisted = false;
+	public final static String FILTERTYPE = "1111111111111111111";
+	public final static String FILTERROSE = "1111111111111111";
+	public final static String FILTERVAR = "11111111";
+	public final static String FILTERSIZE = "111111";
 
-	public long filterAttrYes = 0l;
-	public long filterAttrNo = 0l;
-	public int filterAttrChoice = 0;
+	private String filterType = new String(FILTERTYPE);
+	private String filterRose = new String(FILTERROSE);
+	private String filterSize = new String(FILTERSIZE);
+
+	// filter settings for archived ... owner (section) in filterscreen
+	private String filterVar = new String(FILTERVAR);
+	private String filterDist = new String("L");
+	private String filterDiff = new String("L");
+	private String filterTerr = new String("L");
+
+	// Saved filterstatus - is only refreshed from class Filter when Profile is saved
+	private int filterActive = Filter.FILTER_INACTIVE;
+	private boolean filterInverted = false;
+	private boolean showBlacklisted = false;
+
+	private long filterAttrYes = 0l;
+	private long filterAttrNo = 0l;
+	private int filterAttrChoice = 0;
 
 	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map 
 	/** True if the profile has been modified and not saved
 	 * The following modifications set this flag: New profile centre, Change of waypoint data 
 	 */
-	public boolean hasUnsavedChanges = false;
+	private boolean hasUnsavedChanges = false;
 	public boolean byPassIndexActive = false;
 
 	//TODO Add other settings, such as max. number of logs to spider
@@ -83,18 +89,50 @@ public class Profile {
 	public Profile(){
 	}
 
+
+	/**
+	 * Returns <code>true</code> if profile needs to be changed when profile is left. Returns
+	 * <code>false</code> if no relevant changes have been made.
+	 * 
+	 * @return hasUnsavedChanges
+	 */
+	public boolean hasUnsavedChanges() {
+		return hasUnsavedChanges;
+	}
+
+	/**
+	 * Remember that profile needs to be saved. Flag is set <code>true</code> when parameter is
+	 * true, but it's not set to <code>false</code> when parameter is <code>false</code>.<br>
+	 * This is only done internally on saving the cache.
+	 * 
+	 * @param hasUnsavedChanges
+	 *            the hasUnsavedChanges to set
+	 */
+	public void notifyUnsavedChanges(boolean changes) {
+		hasUnsavedChanges = hasUnsavedChanges || changes;
+	}
+	
+	public void resetUnsavedChanges() {
+		hasUnsavedChanges = false;
+	}
+
 	public void clearProfile() {
 		CacheHolder.removeAllDetails();
 		cacheDB.clear();
-		centre.set(-361,-361);
-		name="";
-		dataDir="";  
-		last_sync_opencaching = "";
-		distOC = "";
-		distGC = "";
-		hasUnsavedChanges=false;
+		centre.set(-361, -361);
+		name = "";
+		dataDir = "";
+		setLast_sync_opencaching("");
+		setDistOC("");
+		setDistGC("");
+		resetUnsavedChanges();
 	}
 
+	public void setCenterCoords(CWPoint coords) {
+		this.notifyUnsavedChanges(coords.equals(this.centre));
+		this.centre.set(coords);
+	}
+	
 	/**
 	 *	Method to save the index.xml file that holds the total information
 	 *	on available caches in the database. The database is nothing else
@@ -145,32 +183,32 @@ public class Profile {
 //				detfile.print("    <CENTRE lat=\""+savedCentre.getNSLetter() + " " + savedCentre.getLatDeg(CWPoint.CW) + "&deg; " + savedCentre.getLatMin(CWPoint.CW)+ "\" "+
 //				"long=\""+savedCentre.getEWLetter() + " " + savedCentre.getLonDeg(CWPoint.CW) + "&deg; " + savedCentre.getLonMin(CWPoint.CW)+"\"/>\n");
 				detfile.print("    <CENTRE lat=\""+savedCentre.latDec+"\" lon=\""+savedCentre.lonDec+"\"/>\n");
-			if(last_sync_opencaching == null || last_sync_opencaching.endsWith("null") || last_sync_opencaching.equals("")){
-				last_sync_opencaching = "20050801000000";
+			if(getLast_sync_opencaching() == null || getLast_sync_opencaching().endsWith("null") || getLast_sync_opencaching().equals("")){
+				setLast_sync_opencaching("20050801000000");
 			}
-			if(distOC == null || distOC.endsWith("null") || distOC.equals("")){
-				distOC = "0.0";
+			if (getDistOC() == null || getDistOC().endsWith("null") || getDistOC().equals("")) {
+				setDistOC("0.0");
 			}
-			if(distGC == null || distGC.endsWith("null") || distGC.equals("")){
-				distGC = "0.0";
+			if (getDistGC() == null || getDistGC().endsWith("null") || getDistGC().equals("")) {
+				setDistGC("0.0");
 			}
 
-			detfile.print("    <FILTER status = \""+filterActive+(filterInverted?"T":"F")+ 
-					"\" rose = \""+filterRose+"\" type = \""+filterType+
-					"\" var = \""+filterVar+"\" dist = \""+filterDist.replace('"',' ')+"\" diff = \""+
-					filterDiff+"\" terr = \""+filterTerr+"\" size = \""+filterSize+"\" attributesYes = \""+filterAttrYes+
-					"\" attributesNo = \""+filterAttrNo+"\" attributesChoice = \""+filterAttrChoice+"\" showBlacklist = \""+showBlacklisted+"\" />\n");
-			detfile.print("    <SYNCOC date = \""+last_sync_opencaching+"\" dist = \""+distOC+"\"/>\n");
-			detfile.print("    <SPIDERGC dist = \""+distGC+"\"/>\n");
-			int size=cacheDB.size();
-			for(int i = 0; i<size;i++){
-				if(showprogress){
-					h.progress = (float)i/(float)size;
+			detfile.print("    <FILTER status = \""+getFilterActive()+(isFilterInverted()?"T":"F")+ 
+					"\" rose = \""+getFilterRose()+"\" type = \""+getFilterType()+
+					"\" var = \""+getFilterVar()+"\" dist = \""+getFilterDist().replace('"',' ')+"\" diff = \""+
+					getFilterDiff()+"\" terr = \""+getFilterTerr()+"\" size = \""+getFilterSize()+"\" attributesYes = \""+getFilterAttrYes()+
+					"\" attributesNo = \""+getFilterAttrNo()+"\" attributesChoice = \""+getFilterAttrChoice()+"\" showBlacklist = \""+showBlacklisted()+"\" />\n");
+			detfile.print("    <SYNCOC date = \""+getLast_sync_opencaching()+"\" dist = \""+getDistOC()+"\"/>\n");
+			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\"/>\n");
+			int size = cacheDB.size();
+			for (int i = 0; i < size; i++) {
+				if (showprogress) {
+					h.progress = (float) i / (float) size;
 					h.changed();
 				}
-				ch = (CacheHolder)cacheDB.get(i);
-				////Vm.debug("Saving: " + ch.CacheName);
-				if(ch.wayPoint.length()>0) { //TODO && ch.LongDescription.equals("An Error Has Occured") == false){
+				ch = (CacheHolder) cacheDB.get(i);
+				// //Vm.debug("Saving: " + ch.CacheName);
+				if (ch.getWayPoint().length() > 0) { // TODO && ch.LongDescription.equals("An
 /*					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
 							//"\" lat = \""+ SafeXML.clean(ch.LatLon) +
 							"\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
@@ -188,7 +226,7 @@ public class Profile {
 			detfile.close();
 			if(showprogress) pbf.exit(0);
 		}
-		hasUnsavedChanges=false;
+		resetUnsavedChanges();
 	}
 
 	/**
@@ -196,16 +234,16 @@ public class Profile {
 	 *	on available caches in the database. The database in nothing else
 	 *	than the collection of caches in a directory.
 	 */
-	public void readIndex(){
-		
+	public void readIndex() {
+
 		try {
 			selectionChanged = true;
-			boolean fmtDec=false;
-			char decSep=MyLocale.getDigSeparator().charAt(0);
-			char notDecSep=decSep=='.'?',':'.';
+			boolean fmtDec = false;
+			char decSep = MyLocale.getDigSeparator().charAt(0);
+			char notDecSep = decSep == '.' ? ',' : '.';
 			FileReader in = new FileReader(dataDir + "index.xml");
 			in.readLine(); // <?xml version= ...
-			String text=in.readLine(); // <CACHELIST>
+			String text = in.readLine(); // <CACHELIST>
 			if (text!=null && text.indexOf("decimal")>0) fmtDec=true;
 			Extractor ex = new Extractor(null, " = \"", "\" ", 0, true);
 			
@@ -231,45 +269,45 @@ public class Profile {
 					}	
 				} else if (text.indexOf("<SYNCOC")>=0) {
 					int start=text.indexOf("date = \"")+8;
-					last_sync_opencaching=text.substring(start,text.indexOf("\"",start));
+					setLast_sync_opencaching(text.substring(start,text.indexOf("\"",start)));
 					start=text.indexOf("dist = \"")+8;
-					distOC=text.substring(start,text.indexOf("\"",start));
+					setDistOC(text.substring(start,text.indexOf("\"",start)));
 				} else if (text.indexOf("<SPIDERGC")>=0) {
 					int start=text.indexOf("dist = \"")+8;
-					distGC=text.substring(start,text.indexOf("\"",start));
+					setDistGC(text.substring(start,text.indexOf("\"",start)));
 				} else if (text.indexOf("<FILTER")>=0){
 					ex.setSource(text);
 					String temp=ex.findNext(); // Filter status is now first, need to deal with old versions which don't have filter status
 					if (temp.length()==2) {
 						// Compatibility with previous versions
 						if (temp.charAt(0)=='T') 
-							filterActive=Filter.FILTER_ACTIVE;
+							setFilterActive(Filter.FILTER_ACTIVE);
 						else
-							filterActive=Common.parseInt(temp.substring(0,1));
-						filterInverted=temp.charAt(1)=='T';
-						filterRose = ex.findNext();
+							setFilterActive(Common.parseInt(temp.substring(0,1)));
+						setFilterInverted(temp.charAt(1)=='T');
+						setFilterRose(ex.findNext());
 					} else 
-						filterRose = temp;
-					filterType = ex.findNext();
+						setFilterRose(temp);
+					setFilterType(ex.findNext());
 					//Need this to stay "downward" compatible. New type introduced
 					//if(filterType.length()<=17) filterType = filterType + "1";
 					//Vm.debug("fil len: " +filterType.length());
 					//This is handled by "normaliseFilters" which is called at the end.
-					filterVar = ex.findNext();
-					filterDist = ex.findNext();
-					filterDiff = ex.findNext();
-					filterTerr = ex.findNext();
-					filterSize = ex.findNext();
+					setFilterVar(ex.findNext());
+					setFilterDist(ex.findNext());
+					setFilterDiff(ex.findNext());
+					setFilterTerr(ex.findNext());
+					setFilterSize(ex.findNext());
 					String attr = ex.findNext();
 					if (attr != null && !attr.equals(""))
-						filterAttrYes = Convert.parseLong(attr);
+						setFilterAttrYes(Convert.parseLong(attr));
 					attr = ex.findNext();
 					if (attr != null && !attr.equals(""))
-						filterAttrNo = Convert.parseLong(attr);
+						setFilterAttrNo(Convert.parseLong(attr));
 					attr = ex.findNext();
 					if (attr != null && !attr.equals(""))
-						filterAttrChoice = Convert.parseInt(attr);
-					showBlacklisted = new Boolean(ex.findNext()).booleanValue();
+						setFilterAttrChoice(Convert.parseInt(attr));
+					setShowBlacklisted(Boolean.valueOf(ex.findNext()).booleanValue());
 				}
 			}
 			in.close();
@@ -279,7 +317,6 @@ public class Profile {
 			//Vm.debug("End  :"+endT.format("H:mm:ss.SSS"));	
 			// Build references between caches and addi wpts
 			buildReferences();
-			hasUnsavedChanges = false;
 		} catch (FileNotFoundException e) {
 			Global.getPref().log("index.xml not found in directory "+dataDir); // Normal when profile is opened for first time
 			//e.printStackTrace();
@@ -287,6 +324,7 @@ public class Profile {
 			Global.getPref().log("Problem reading index.xml in dir: "+dataDir,e,true); 
 		}
 		normaliseFilters();
+		resetUnsavedChanges();
 	}
 
 	/** Restore the filter to the values stored in this profile 
@@ -298,19 +336,19 @@ public class Profile {
 	}
 	
 	void restoreFilter(boolean clearIfInactive) {
-		boolean inverted=filterInverted; // Save it as doFilter will clear filterInverted
+		boolean inverted=isFilterInverted(); // Save it as doFilter will clear filterInverted
 		Filter flt=new Filter();
-		if (filterActive==Filter.FILTER_ACTIVE) {
+		if (getFilterActive()==Filter.FILTER_ACTIVE) {
 			flt.setFilter();
 			flt.doFilter();
 			if (inverted) {
 				flt.invertFilter();
-				filterInverted=true; // Needed because previous line inverts filterInverted
+				setFilterInverted(true); // Needed because previous line inverts filterInverted
 			}
-		} else if (filterActive==Filter.FILTER_CACHELIST) {
+		} else if (getFilterActive()==Filter.FILTER_CACHELIST) {
 			Global.mainForm.cacheList.applyCacheList();
 			//flt.filterActive=filterActive;
-		} else if (filterActive==Filter.FILTER_INACTIVE) {
+		} else if (getFilterActive()==Filter.FILTER_INACTIVE) {
 			if (clearIfInactive) {
 				flt.clearFilter();
 			}
@@ -320,26 +358,21 @@ public class Profile {
 	void checkBlacklistStatus() {
 		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
-		boolean filterChanged = false;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = (CacheHolder)cacheDB.get(i);
-			if (ch.is_black^showBlacklisted) {
-				ch.is_filtered = true;
-				filterChanged = true;
+			if (ch.is_black() ^ showBlacklisted()) {
+				ch.setFiltered(true);
+				selectionChanged = true;
 			}
-		}
-		if ( filterChanged ) {
-			selectionChanged = true;
-			hasUnsavedChanges=true;			
 		}
 	}
 
-	public int getCacheIndex(String wp){
+	public int getCacheIndex(String wp) {
 		int retval = -1;
 		CacheHolder ch;
-		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
-			if(ch.wayPoint.equals(wp)){
+		for (int i = 0; i < cacheDB.size(); i++) {
+			ch = (CacheHolder) cacheDB.get(i);
+			if (ch.getWayPoint().equals(wp)) {
 				return i;
 			}
 		}
@@ -347,71 +380,75 @@ public class Profile {
 	}
 
 	/** Get a unique name for a new waypoint */
-	//TODO Make more efficient
-	public String getNewWayPointName(){
-		String strWp=null;
-		long  lgWp=1;
-		int s = cacheDB.size(); 
-		if (s ==0 )
+	// TODO Make more efficient
+	public String getNewWayPointName() {
+		String strWp = null;
+		long lgWp = 1;
+		int s = cacheDB.size();
+		if (s == 0)
 			return "CW0000";
-		//Create new waypoint,look if not in db
-		for(int i = 0;i < s;i++){
+		// Create new waypoint,look if not in db
+		for (int i = 0; i < s; i++) {
 			strWp = "CW" + MyLocale.formatLong(lgWp, "0000");
-			if(((CacheHolder)cacheDB.get(i)).wayPoint.indexOf(strWp) >=0 ){
-				//waypoint exists in database
+			if (((CacheHolder) cacheDB.get(i)).getWayPoint().indexOf(strWp) >= 0) {
+				// waypoint exists in database
 				lgWp++;
 				i = -1; // Because i++ will be executed next, so we start the loop with 0
 			}
 		}
 		return strWp;
 	}
-	
+
 	/**
 	 * 
 	 * @param forcache maincache
 	 * @return
 	 */
 	public String getNewAddiWayPointName(String forcache) {
-		int wptNo=-1;
+		int wptNo = -1;
 		String waypoint;
 		do {
-			waypoint=MyLocale.formatLong(++wptNo,"00")+forcache.substring(2);
-		} while (Global.getProfile().getCacheIndex(waypoint)>=0);
+			waypoint = MyLocale.formatLong(++wptNo, "00") + forcache.substring(2);
+		} while (Global.getProfile().getCacheIndex(waypoint) >= 0);
 		return waypoint;
 	}
 
 	/**
 	 * Call this after getNewAddiWayPointName to set the references between main and addi correctly
+	 * 
 	 * @param ch
 	 */
 	public void setAddiRef(CacheHolder ch) {
-		String mainwpt = ch.wayPoint.substring(2);
-		int mainindex = getCacheIndex("GC"+mainwpt);
-		if (mainindex < 0) mainindex = getCacheIndex("OC"+mainwpt);
-		if (mainindex < 0) mainindex = getCacheIndex("CW"+mainwpt);
-		if (mainindex < 0) throw new IllegalArgumentException("no main cache found for: " + ch.wayPoint);
-		CacheHolder mainch = (CacheHolder)cacheDB.get(mainindex);
+		String mainwpt = ch.getWayPoint().substring(2);
+		int mainindex = getCacheIndex("GC" + mainwpt);
+		if (mainindex < 0)
+			mainindex = getCacheIndex("OC" + mainwpt);
+		if (mainindex < 0)
+			mainindex = getCacheIndex("CW" + mainwpt);
+		if (mainindex < 0)
+			throw new IllegalArgumentException("no main cache found for: " + ch.getWayPoint());
+		CacheHolder mainch = (CacheHolder) cacheDB.get(mainindex);
 		mainch.addiWpts.add(ch);
 		ch.mainCache = mainch;
 	}
 
-
 	public String toString() {
 		return "Profile: Name="+name+"\nCentre="+centre.toString()+"\ndataDir="+dataDir+"\nlastSyncOC="+
-		last_sync_opencaching+"\ndistOC="+distOC+"\ndistGC="+distGC;
+		getLast_sync_opencaching()+"\ndistOC="+getDistOC()+"\ndistGC="+getDistGC();
 	}
 
 	public void setSelectForAll(boolean selectStatus) {
 		selectionChanged = true;
 		CacheHolder ch;
-		for(int i = cacheDB.size()-1; i >=	0; i--){
-			ch = (CacheHolder)cacheDB.get(i);
-			if (ch.is_filtered == false) ch.is_Checked = selectStatus;
+		for (int i = cacheDB.size() - 1; i >= 0; i--) {
+			ch = (CacheHolder) cacheDB.get(i);
+			if (ch.is_filtered() == false)
+				ch.is_Checked = selectStatus;
 		}
-	} 
-
+	}
 
 	public int numCachesInArea; // only valid after calling getSourroundingArea
+
 	public Area getSourroundingArea(boolean onlyOfSelected) {
 		if (cacheDB == null || cacheDB.size() == 0) return null;
 		CacheHolder ch;
@@ -420,7 +457,7 @@ public class Profile {
 		CWPoint tmpca = new CWPoint();
 		numCachesInArea = 0;
 		boolean isAddi = false;
-		for (int i=cacheDB.size()-1; i >= 0; i--) {
+		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			ch = (CacheHolder) cacheDB.get(i);
 			if (!onlyOfSelected || ch.is_Checked) {
 				if (ch.pos == null) { // this can not happen
@@ -441,7 +478,7 @@ public class Profile {
 				}
 			}
 		}
-		if (topleft != null && bottomright != null) 
+		if (topleft != null && bottomright != null)
 			return new Area(topleft, bottomright);
 		else return null;
 	}
@@ -477,25 +514,25 @@ public class Profile {
 
 		Integer index;
 		// Build index for faster search and clear all references
-		for(int i = cacheDB.size() -1; i >= 0;i--){
-			ch = (CacheHolder)cacheDB.get(i);
+		for (int i = cacheDB.size() - 1; i >= 0; i--) {
+			ch = (CacheHolder) cacheDB.get(i);
 			ch.addiWpts.clear();
 			ch.mainCache = null;
 			// if (ch.wayPoint.startsWith("GC")) // Only put potential master caches into the index
-				dbIndex.put(ch.wayPoint, new Integer(i));
+			dbIndex.put(ch.getWayPoint(), new Integer(i));
 		}
 		// Build references
 		int max = cacheDB.size();
-		for(int i =  0; i < max ;i++){
-			ch = (CacheHolder)cacheDB.get(i);
+		for (int i = 0; i < max; i++) {
+			ch = (CacheHolder) cacheDB.get(i);
 			if (ch.isAddiWpt()) {
-				//search main cache
-				index = (Integer) dbIndex.get("GC"+ ch.wayPoint.substring(2));
+				// search main cache
+				index = (Integer) dbIndex.get("GC" + ch.getWayPoint().substring(2));
 				if (index == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
-					index = (Integer) dbIndex.get("OC"+ ch.wayPoint.substring(2));
+					index = (Integer) dbIndex.get("OC"+ ch.getWayPoint().substring(2));
 				if (index == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
-					index = (Integer) dbIndex.get("CW"+ ch.wayPoint.substring(2));
-				
+					index = (Integer) dbIndex.get("CW"+ ch.getWayPoint().substring(2));
+
 				if (index != null) {
 					mainCh = (CacheHolder) cacheDB.get(index.intValue());
 					mainCh.addiWpts.add(ch);
@@ -505,42 +542,193 @@ public class Profile {
 			}// if
 		}// for
 		// sort addi wpts
-		for(int i =  0; i < max ;i++){
-			ch = (CacheHolder)cacheDB.get(i);
-			if (ch.hasAddiWpt() && (ch.addiWpts.size()> 1)){
-				//ch.addiWpts.sort(new MyComparer(ch.addiWpts,MyLocale.getMsg(1002,"Waypoint"),ch.addiWpts.size()), false);
-				ch.addiWpts.sort(
-						new ewe.util.Comparer() {	
-							public int compare(Object o1, Object o2){
-								return ((CacheHolder) o1).wayPoint.compareTo(((CacheHolder)o2).wayPoint);
-							}
-						},false );
+		for (int i = 0; i < max; i++) {
+			ch = (CacheHolder) cacheDB.get(i);
+			if (ch.hasAddiWpt() && (ch.addiWpts.size() > 1)) {
+				// ch.addiWpts.sort(new
+				// MyComparer(ch.addiWpts,MyLocale.getMsg(1002,"Waypoint"),ch.addiWpts.size()),
+				// false);
+				ch.addiWpts.sort(new ewe.util.Comparer() {
+					public int compare(Object o1, Object o2) {
+						return ((CacheHolder) o1).getWayPoint().compareTo(
+						        ((CacheHolder) o2).getWayPoint());
+					}
+				}, false);
 			}
 		}
 
 	}
-	
-	
-	/** Ensure that all filters have the proper length so that the 'charAt' access in the filter
-	 * do not cause nullPointer Exceptions
+
+	/**
+	 * Ensure that all filters have the proper length so that the 'charAt' access in the filter do
+	 * not cause nullPointer Exceptions
 	 */
 	private void normaliseFilters() {
-		String manyOnes="11111111111111111111111111111";
-		if (filterRose.length()<FILTERROSE.length()) { 
-			filterRose=(filterRose+manyOnes).substring(0,FILTERROSE.length()); 
-		}  
-		if (filterVar.length()<FILTERVAR.length()) { 
-			filterVar=(filterVar+manyOnes).substring(0,FILTERVAR.length()); 
-		}  
-		if (filterType.length()<FILTERTYPE.length()) { 
-			filterType=(filterType+manyOnes).substring(0,FILTERTYPE.length());
-		} 
-		if (filterSize.length()<FILTERSIZE.length()) {
-			filterSize=(filterSize+manyOnes).substring(0,FILTERSIZE.length());
+		String manyOnes = "11111111111111111111111111111";
+		if (getFilterRose().length() < FILTERROSE.length()) {
+			setFilterRose((getFilterRose() + manyOnes).substring(0, FILTERROSE.length()));
 		}
-		if (filterDist.length()==0) filterDist="L";
-		if (filterDiff.length()==0) filterDiff="L";
-		if (filterTerr.length()==0) filterTerr="L";
+		if (getFilterVar().length() < FILTERVAR.length()) {
+			setFilterVar((getFilterVar() + manyOnes).substring(0, FILTERVAR.length()));
+		}
+		if (getFilterType().length() < FILTERTYPE.length()) {
+			setFilterType((getFilterType() + manyOnes).substring(0, FILTERTYPE.length()));
+		}
+		if (getFilterSize().length() < FILTERSIZE.length()) {
+			setFilterSize((getFilterSize() + manyOnes).substring(0, FILTERSIZE.length()));
+		}
+		if (getFilterDist().length() == 0)
+			setFilterDist("L");
+		if (getFilterDiff().length() == 0)
+			setFilterDiff("L");
+		if (getFilterTerr().length() == 0)
+			setFilterTerr("L");
+	}
+
+	// Getter and Setter for private properties
+
+	public String getFilterType() {
+		return filterType;
+	}
+
+	public void setFilterType(String filterType) {
+		this.notifyUnsavedChanges(!filterType.equals(this.filterType));
+		this.filterType = filterType;
+	}
+
+	public String getFilterRose() {
+		return filterRose;
+	}
+
+	public void setFilterRose(String filterRose) {
+		this.notifyUnsavedChanges(!filterRose.equals(this.filterRose));
+		this.filterRose = filterRose;
+	}
+
+	public String getFilterSize() {
+		return filterSize;
+	}
+
+	public void setFilterSize(String filterSize) {
+		this.notifyUnsavedChanges(!filterSize.equals(this.filterSize));
+		this.filterSize = filterSize;
+	}
+
+	public String getFilterVar() {
+		return filterVar;
+	}
+
+	public void setFilterVar(String filterVar) {
+		this.notifyUnsavedChanges(!filterVar.equals(this.filterVar));
+		this.filterVar = filterVar;
+	}
+
+	public String getFilterDist() {
+		return filterDist;
+	}
+
+	public void setFilterDist(String filterDist) {
+		this.notifyUnsavedChanges(!filterDist.equals(this.filterDist));
+		this.filterDist = filterDist;
+	}
+
+	public String getFilterDiff() {
+		return filterDiff;
+	}
+
+	public void setFilterDiff(String filterDiff) {
+		this.notifyUnsavedChanges(!filterDiff.equals(this.filterDiff));
+		this.filterDiff = filterDiff;
+	}
+
+	public String getFilterTerr() {
+		return filterTerr;
+	}
+
+	public void setFilterTerr(String filterTerr) {
+		this.notifyUnsavedChanges(!filterTerr.equals(this.filterTerr));
+		this.filterTerr = filterTerr;
+	}
+
+	public int getFilterActive() {
+		return filterActive;
+	}
+
+	public void setFilterActive(int filterActive) {
+		this.notifyUnsavedChanges(filterActive != this.filterActive);
+		this.filterActive = filterActive;
+	}
+
+	public boolean isFilterInverted() {
+		return filterInverted;
+	}
+
+	public void setFilterInverted(boolean filterInverted) {
+		this.notifyUnsavedChanges(filterInverted != this.filterInverted);
+		this.filterInverted = filterInverted;
+	}
+
+	public boolean showBlacklisted() {
+		return showBlacklisted;
+	}
+
+	public void setShowBlacklisted(boolean showBlacklisted) {
+		this.notifyUnsavedChanges(showBlacklisted != this.showBlacklisted);
+		this.showBlacklisted = showBlacklisted;
+	}
+
+	public long getFilterAttrYes() {
+		return filterAttrYes;
+	}
+
+	public void setFilterAttrYes(long filterAttrYes) {
+		this.notifyUnsavedChanges(filterAttrYes != this.filterAttrYes);
+		this.filterAttrYes = filterAttrYes;
+	}
+
+	public long getFilterAttrNo() {
+		return filterAttrNo;
+	}
+
+	public void setFilterAttrNo(long filterAttrNo) {
+		this.notifyUnsavedChanges(filterAttrNo != this.filterAttrNo);
+		this.filterAttrNo = filterAttrNo;
+	}
+
+	public int getFilterAttrChoice() {
+		return filterAttrChoice;
+	}
+
+	public void setFilterAttrChoice(int filterAttrChoice) {
+		this.notifyUnsavedChanges(filterAttrChoice != this.filterAttrChoice);
+		this.filterAttrChoice = filterAttrChoice;
+	}
+
+	public String getLast_sync_opencaching() {
+		return last_sync_opencaching;
+	}
+
+	public void setLast_sync_opencaching(String last_sync_opencaching) {
+		this.notifyUnsavedChanges(!last_sync_opencaching.equals(this.last_sync_opencaching));
+		this.last_sync_opencaching = last_sync_opencaching;
+	}
+
+	public String getDistOC() {
+		return distOC;
+	}
+
+	public void setDistOC(String distOC) {
+		this.notifyUnsavedChanges(!distOC.equals(this.distOC));
+		this.distOC = distOC;
+	}
+
+	public String getDistGC() {
+		return distGC;
+	}
+
+	public void setDistGC(String distGC) {
+		this.notifyUnsavedChanges(!distGC.equals(this.distGC));
+		this.distGC = distGC;
 	}
 
 }

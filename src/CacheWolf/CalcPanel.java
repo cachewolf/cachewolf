@@ -155,8 +155,8 @@ public class CalcPanel extends CellPanel {
 	
 	// ch must be not null
 	public void setFields(CacheHolder ch){
-		if ( !ch.wayPoint.equalsIgnoreCase(lastWaypoint) ) {
-			lastWaypoint = ch.wayPoint;
+		if ( !ch.getWayPoint().equalsIgnoreCase(lastWaypoint) ) {
+			lastWaypoint = ch.getWayPoint();
 			if (ch.pos.isValid()) {
 				inpBearing.setText("0");
 				inpDistance.setText("0");
@@ -201,7 +201,7 @@ public class CalcPanel extends CellPanel {
 				coordOut = coordInp.project(bd.degrees, bd.distance);
 				ch.LatLon = coordOut.toString();
 				ch.pos.set(coordOut);
-				ch.type = 51; // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
+				ch.setType(51); // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
 				mainT.newWaypoint(ch);
 			}
 			

@@ -77,7 +77,7 @@ public class KMLExporter extends Exporter {
 		int expCount = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = (CacheHolder)cacheDB.get(i);
-			if(ch.is_black == false && ch.is_filtered == false) counter++;
+			if(ch.is_black() == false && ch.is_filtered() == false) counter++;
 		}
 		copyIcons(outFile.getParent());
 		buildOutDB();
@@ -126,7 +126,7 @@ public class KMLExporter extends Exporter {
 								addiWpt = (CacheHolder) ch.addiWpts.get(j);
 								holder=new CacheHolderDetail(addiWpt);
 								expCount++;
-								if (holder.pos.isValid() &&  ! holder.is_filtered){
+								if (holder.pos.isValid() &&  ! holder.is_filtered()){
 									if (! createdAdditionalWaypointsFolder) {
 										outp.print(startFolder("Additional Waypoints", false));
 										createdAdditionalWaypointsFolder = true;
@@ -178,12 +178,12 @@ public class KMLExporter extends Exporter {
 		for(int i = 0; i<cacheDB.size(); i++){
 			ch=(CacheHolder)cacheDB.get(i);
 			// TODO Das Argument nach STring zu casten gefällt mir nicht ganz...
-			if(ch.is_black == false && ch.is_filtered == false && !ch.isAddiWpt()){
-				if (ch.is_found) { tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.type));}
-				else if (ch.is_owned) { tmp = (Vector) outCacheDB[OWNED].get(String.valueOf(ch.type));}
-				else if (ch.is_archived || !ch.is_available){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(String.valueOf(ch.type));}
-				else if (ch.is_available){ tmp = (Vector) outCacheDB[AVAILABLE].get(String.valueOf(ch.type));}
-				else { tmp = (Vector) outCacheDB[UNKNOWN].get(String.valueOf(ch.type));}
+			if(ch.is_black() == false && ch.is_filtered() == false && !ch.isAddiWpt()){
+				if (ch.is_found()) { tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.getType()));}
+				else if (ch.is_owned()) { tmp = (Vector) outCacheDB[OWNED].get(String.valueOf(ch.getType()));}
+				else if (ch.is_archived() || !ch.is_available()){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(String.valueOf(ch.getType()));}
+				else if (ch.is_available()){ tmp = (Vector) outCacheDB[AVAILABLE].get(String.valueOf(ch.getType()));}
+				else { tmp = (Vector) outCacheDB[UNKNOWN].get(String.valueOf(ch.getType()));}
 				
 				tmp.add(ch);
 			}
@@ -279,7 +279,7 @@ public class KMLExporter extends Exporter {
 		if (ch.URL != null){
 			strBuf.append("      <description>"+SafeXML.clean(ch.URL)+"</description>\r\n");
 		}
-		strBuf.append("      <name>"+ ch.wayPoint + " - " + SafeXML.clean(ch.CacheName) +"</name>\r\n");
+		strBuf.append("      <name>"+ ch.getWayPoint() + " - " + SafeXML.clean(ch.getCacheName()) +"</name>\r\n");
 		strBuf.append("      <LookAt>\r\n");
 		strBuf.append("         <latitude>" + lat + "</latitude>\r\n");
 		strBuf.append("         <longitude>" + lon + "</longitude>\r\n");
@@ -292,7 +292,7 @@ public class KMLExporter extends Exporter {
 		strBuf.append("      <IconStyle>\r\n");
 		strBuf.append("         <Icon>\r\n");
 //		strBuf.append("            <href>"+ File.getProgramDirectory()+ "/" + CacheType.type2pic(Convert.parseInt(ch.type))+ "</href>\r\n");
-		strBuf.append("            <href>"+ CacheType.type2pic(ch.type)+ "</href>\r\n");
+		strBuf.append("            <href>"+ CacheType.type2pic(ch.getType())+ "</href>\r\n");
 		strBuf.append("         </Icon>\r\n");
 		strBuf.append("      </IconStyle>\r\n");
 		strBuf.append("      <LabelStyle>\r\n");
@@ -314,9 +314,9 @@ public class KMLExporter extends Exporter {
 	}
 	
 	private String getColor(CacheHolderDetail ch){
-		if (ch.is_found) return COLOR_FOUND;
-		if (ch.is_owned) return COLOR_OWNED;
-		if (ch.is_archived || !ch.is_available) return COLOR_NOT_AVAILABLE;
+		if (ch.is_found()) return COLOR_FOUND;
+		if (ch.is_owned()) return COLOR_OWNED;
+		if (ch.is_archived() || !ch.is_available()) return COLOR_NOT_AVAILABLE;
 		
 		return COLOR_AVAILABLE;
 	}

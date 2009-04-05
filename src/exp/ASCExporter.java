@@ -22,7 +22,7 @@ public class ASCExporter extends Exporter{
 	public String record (CacheHolderDetail holder, String lat, String lon){
 		StringBuffer strBuf = new StringBuffer(100);
 		String dummy;
-		dummy = holder.CacheName;
+		dummy = holder.getCacheName();
 		dummy = dummy.replace(',', ' ');
 		strBuf.append(dummy);
 		strBuf.append(",");

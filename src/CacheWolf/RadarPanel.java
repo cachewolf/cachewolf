@@ -106,7 +106,7 @@ public class RadarPanel extends CellPanel{
 		double pi180=java.lang.Math.PI / 180.0;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			holder = (CacheHolder)cacheDB.get(i);
-			if(!holder.is_filtered && holder.pos.isValid()) {
+			if(!holder.is_filtered() && holder.pos.isValid()) {
 				degrees = holder.degrees * pi180;
 				x =new Float(holder.kilom/scale *  java.lang.Math.sin(degrees)).intValue();
 				y = -new Float(holder.kilom/scale *  java.lang.Math.cos(degrees)).intValue();
@@ -114,9 +114,9 @@ public class RadarPanel extends CellPanel{
 					if (toggleMod>0) {
 						String s;
 						if (toggleMod==1)
-							s=holder.wayPoint;
+							s=holder.getWayPoint();
 						else
-							s=holder.CacheName;
+							s=holder.getCacheName();
 						if (s.length()>0) { 
 							int tw;
 							Image img = new Image(tw=fm.getTextWidth(s),fm.getHeight());
@@ -133,15 +133,15 @@ public class RadarPanel extends CellPanel{
 							iActP.addImage(aImg);
 						}
 					}
-					Image imgCache=CacheType.cache2Img(holder.type);
+					Image imgCache=CacheType.cache2Img(holder.getType());
 					// If we have no image for the cache type use a question mark
 					if (imgCache==null) imgCache=CacheType.cacheImages[8]; 
 					rpi = new RadarPanelImage(imgCache);
-					rpi.wayPoint = holder.wayPoint;
+					rpi.wayPoint = holder.getWayPoint();
 					rpi.rownum = i;
 					rpi.setLocation(centerX+x-7,centerY+y-7);
 					iActP.addImage(rpi);
-					if(holder.wayPoint.equals(selectedWaypoint)){ // Draw red circle around selected wpt
+					if(holder.getWayPoint().equals(selectedWaypoint)){ // Draw red circle around selected wpt
 						Image imgCircle = new Image(20, 20);
 						Graphics gCircle = new Graphics(imgCircle);
 						gCircle.setColor(Color.Black);

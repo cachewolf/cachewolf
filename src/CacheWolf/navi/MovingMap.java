@@ -378,8 +378,8 @@ public class MovingMap extends Form {
 			CacheHolder ch;
 			for (int i=cacheDB.size()-1; i>=0; i--) {
 				ch = (CacheHolder) cacheDB.get(i);
-				if (ch.is_Checked && !ch.is_filtered && ch != mainT.ch) {
-					if (ch.pos.isValid()) addSymbol(ch.CacheName, ch, CacheType.cache2Img(ch.type), ch.pos);
+				if (ch.is_Checked && !ch.is_filtered() && ch != mainT.ch) {
+					if (ch.pos.isValid()) addSymbol(ch.getCacheName(), ch, CacheType.cache2Img(ch.getType()), ch.pos);
 				}
 			}
 		}
@@ -401,7 +401,7 @@ public class MovingMap extends Form {
 		}
 		if (ch != null) {
 			addSymbol("selectedCache", MARK_CACHE_IMAGE, ch.pos);
-			addSymbolIfNecessary(ch.CacheName, ch, CacheType.cache2Img(ch.type), ch.pos);
+			addSymbolIfNecessary(ch.getCacheName(), ch, CacheType.cache2Img(ch.getType()), ch.pos);
 		}
 		markedCache = ch;
 	}
@@ -1753,9 +1753,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
 					clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
 					if (clickedCache != null) {
-						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(4270, "Open")+" '"+(clickedCache.CacheName.length()>0 ? clickedCache.CacheName : clickedCache.wayPoint)+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(4270, "Open")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
 						kontextMenu.addItem(openCacheDescMenuItem);
-						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.CacheName.length()>0 ? clickedCache.CacheName : clickedCache.wayPoint)+"'$g"); // clickedCache == null can happen if clicked on the goto-symbol
+						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$g"); // clickedCache == null can happen if clicked on the goto-symbol
 						kontextMenu.addItem(gotoCacheMenuItem);
 						if (Global.mainForm.cacheListVisible) { 
 							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
@@ -1888,7 +1888,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					}
 					if (action == addCachetoListMenuItem) {
 						kontextMenu.close();
-						Global.mainForm.cacheList.addCache(clickedCache.wayPoint);
+						Global.mainForm.cacheList.addCache(clickedCache.getWayPoint());
 					}
 					for (int i=0; i<miLuminary.length; i++) {
 						if (action == miLuminary[i]) {

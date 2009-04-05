@@ -40,7 +40,7 @@ public class LocExporter extends Exporter{
 		if (!chD.pos.isValid()) return null;
 		StringBuffer strBuf = new StringBuffer(200);
 		strBuf.append("<waypoint>\r\n   <name id=\"");
-		String wptName=simplifyString(chD.wayPoint);
+		String wptName=simplifyString(chD.getWayPoint());
 		if (Global.getPref().addDetailsToWaypoint) {
 			wptName += getShortDetails( chD );			
 		}
@@ -52,7 +52,7 @@ public class LocExporter extends Exporter{
 			} catch (Exception ex){ pref.log("Invalid value for garmin.MaxWaypointLength"); }
 		}
 		strBuf.append("\"><![CDATA[");
-		strBuf.append(simplifyString(chD.CacheName));
+		strBuf.append(simplifyString(chD.getCacheName()));
 		if (Global.getPref().addDetailsToName) {
 			if ( !Global.getPref().addDetailsToWaypoint ) {
 				strBuf.append( getShortDetails( chD ) );
@@ -70,7 +70,7 @@ public class LocExporter extends Exporter{
 		if (gm!=null) {
 			strBuf.append(gm.getIcon(chD));
 		} else {
-			if (chD.is_found)
+			if (chD.is_found())
 				strBuf.append("Geocache Found");
 			else
 				strBuf.append("Geocache");
@@ -117,17 +117,17 @@ public class LocExporter extends Exporter{
 		
 		public String getIcon(CacheHolderDetail chD) {
 			// First check if there is a mapping for "cache found"
-			if (chD.is_found) {
+			if (chD.is_found()) {
 				for (int i=0; i<mapSize; i++)
 					// TODO Geht das noch schöner...? ................ <------------------------------>
-					if (symbols[i].onlyIfFound!=null && symbols[i].type.equals(String.valueOf(chD.type))) return symbols[i].name;
+					if (symbols[i].onlyIfFound!=null && symbols[i].type.equals(String.valueOf(chD.getType()))) return symbols[i].name;
 			}
 			// Now try mapping the cache irrespective of the "found" status
 			for (int i=0; i<mapSize; i++)
-				if (symbols[i].type.equals(String.valueOf(chD.type))) return symbols[i].name;
+				if (symbols[i].type.equals(String.valueOf(chD.getType()))) return symbols[i].name;
 		
 			// If it is not a mapped type, just use the standard mapping
-			if (chD.is_found)
+			if (chD.is_found())
 				return "Geocache Found";
 			else
 				return "Geocache";
