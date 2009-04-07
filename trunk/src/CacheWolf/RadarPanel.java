@@ -16,7 +16,7 @@ public class RadarPanel extends CellPanel{
 	mButton btPlus = new mButton("   +   ");
 	int toggleMod = 0; //0 = cacheicons, 1= cacheWP, 2 = cacheNames
 	Preferences pref;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	myInteractivePanel iActP;
 	double scale;
 	int scaleKm = 30;
@@ -51,7 +51,7 @@ public class RadarPanel extends CellPanel{
 	* database. It also calculates the maximum size available for drawing 
 	* the radar.
 	*/
-	public void setParam(Preferences p, Vector db, String sWp){
+	public void setParam(Preferences p, CacheDB db, String sWp){
 		selectedWaypoint = sWp;
 		pref = p;
 		cacheDB = db;
@@ -105,7 +105,7 @@ public class RadarPanel extends CellPanel{
 		double degrees;
 		double pi180=java.lang.Math.PI / 180.0;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			holder = (CacheHolder)cacheDB.get(i);
+			holder = cacheDB.get(i);
 			if(!holder.is_filtered() && holder.pos.isValid()) {
 				degrees = holder.degrees * pi180;
 				x =new Float(holder.kilom/scale *  java.lang.Math.sin(degrees)).intValue();

@@ -57,7 +57,7 @@ public class SpiderGC{
 	private static String cookieSession = "";
 	private static double distance = 0;
 	private Regex inRex = new Regex();
-	private Vector cacheDB;
+	private CacheDB cacheDB;
 	private Vector cachesToLoad = new Vector();
 	private Hashtable indexDB;
 	private InfoBox infB;
@@ -212,7 +212,7 @@ public class SpiderGC{
 	public int spiderSingle(int number, InfoBox infB, boolean forceLogin){
 		int ret=-1;
 		this.infB = infB;
-		CacheHolder ch = (CacheHolder)cacheDB.get(number);
+		CacheHolder ch = cacheDB.get(number);
 		if (ch.isAddiWpt()) return -1;  // No point re-spidering an addi waypoint, comes with parent
 
 		// check if we need to login
@@ -235,7 +235,7 @@ public class SpiderGC{
 			if (ret == 1) {
 				pref.log("Saving to:" + profile.dataDir);
 				chD.saveCacheDetails(profile.dataDir);
-				((CacheHolder) cacheDB.get(number)).update(chD);
+				cacheDB.get(number).update(chD);
 			}
 		}catch(Exception ex){
 			pref.log("Error spidering " + chD.getWayPoint() + " in spiderSingle");
@@ -298,7 +298,7 @@ public class SpiderGC{
 		CacheHolder ch;
 		//index the database for faster searching!
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			indexDB.put(ch.getWayPoint(), new Integer(i));
 			ch.setNew(false);
 		}
@@ -364,7 +364,7 @@ public class SpiderGC{
 			distanceInKm = Metrics.convertUnit(distance, Metrics.MILES, Metrics.KILOMETER);
 		}
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (spiderAllFinds) {
 				if ( (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) ) {
 					cachesToUpdate.put(ch.getWayPoint(), new Integer(i));
@@ -462,7 +462,7 @@ public class SpiderGC{
 							}
 						} else {
 							pref.log(waypoint+" already in DB");
-							ch=(CacheHolder) cacheDB.get(nr.intValue());
+							ch=cacheDB.get(nr.intValue());
 							// If the <strike> tag is used, the cache is marked as unavailable or archived
 							boolean is_archived_GC=lineRex.stringMatched(1).indexOf("<strike><font color=\"red\">")!=-1;
 							boolean is_available_GC=lineRex.stringMatched(1).indexOf("<strike>")==-1;
@@ -581,7 +581,7 @@ public class SpiderGC{
 			int j = 1;
 			for (Enumeration e = cachesToUpdate.elements() ; e.hasMoreElements() ; j++) {
 				int i = ((Integer)e.nextElement()).intValue();
-				ch = (CacheHolder)cacheDB.get(i);
+				ch = cacheDB.get(i);
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.getWayPoint() +" (" + (cachesToLoad.size()+j) + " / " + totalCachesToLoad + ")");
 				infB.redisplay();
 
@@ -1344,7 +1344,7 @@ public class SpiderGC{
 				counter++;
 				int idx=profile.getCacheIndex(adWayPoint);
 				if (idx>=0) {
-					cxD=new CacheHolderDetail((CacheHolder) cacheDB.get(idx));
+					cxD=new CacheHolderDetail(cacheDB.get(idx));
 					try{ // If addi exists, try to read it to preserve the notes
 						cxD.readCache(profile.dataDir);
 					} catch (Exception ex) {};
@@ -1369,7 +1369,7 @@ public class SpiderGC{
 					cxD.setUpdated(false);
 					cacheDB.add(new CacheHolder(cxD));
 				}else {
-					CacheHolder cx=(CacheHolder) cacheDB.get(idx);
+					CacheHolder cx=cacheDB.get(idx);
 					if (cx.is_Checked && // Only re-spider existing addi waypoints that are ticked
 				 	   !cx.is_filtered()) { // and are visible (i.e.  not filtered)
 					   cx.update(cxD);

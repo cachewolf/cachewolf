@@ -1,6 +1,7 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
+import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CoordsScreen;
 import CacheWolf.DetailsPanel;
@@ -39,7 +40,7 @@ public class GotoPanel extends CellPanel {
 	Color gpsStatus;
 
 	MainTab mainT;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	DetailsPanel detP;
 
 	Preferences pref;

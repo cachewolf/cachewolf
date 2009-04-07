@@ -26,6 +26,7 @@
 package exp;
 
 import CacheWolf.CWPoint;
+import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheHolderDetail;
 import CacheWolf.CacheType;
@@ -127,7 +128,7 @@ class TplFilter implements HTML.Tmpl.Filter
  
 
 public class TPLExporter {
-	Vector cacheDB;
+	CacheDB cacheDB;
 	Preferences pref;
 	Profile profile;
 	String tplFile;
@@ -157,7 +158,7 @@ public class TPLExporter {
 		pref.setExportPath(expName, saveTo.getPath());
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if(ch.is_black() == false && ch.is_filtered() == false) counter++;
 		}
 		pbf.showMainTask = false;
@@ -182,7 +183,7 @@ public class TPLExporter {
 			Template tpl = new Template(args);
 
 			for(int i = 0; i<counter;i++){
-				ch = (CacheHolder)cacheDB.get(i);
+				ch = cacheDB.get(i);
 				h.progress = (float)i/(float)counter;
 				h.changed();
 				if(ch.is_black() == false && ch.is_filtered() == false){

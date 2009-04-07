@@ -24,7 +24,7 @@ public class myTableModel extends TableModel{
 	private static final Color COLOR_SELECTED	= new Color(198,198,198);
 	private static final Color COLOR_ARCHFND_FG	= new Color(255,0,0); // Archived && Found
 	private static final Color COLOR_ARCHFND_BG	= new Color(152,251,152);	
-	private Vector cacheDB;
+	private CacheDB cacheDB;
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
 	 * the element j (as per the list below) is visible in column i. 
 	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
@@ -128,7 +128,7 @@ public class myTableModel extends TableModel{
 		// - filtered caches are moved to the end
 		int size=cacheDB.size();
 		for (int i=0; i<size; i++){
-			ch = (CacheHolder) cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (ch.is_filtered()) {
 				filteredDB.add(ch);
 			} else { // point is not filtered
@@ -169,7 +169,7 @@ public class myTableModel extends TableModel{
 		ta.anchor = CellConstants.LEFT;
 		if(row >= 0){ 
 			try {
-			   CacheHolder ch = (CacheHolder)cacheDB.get(row);
+			   CacheHolder ch = cacheDB.get(row);
 				if(isSelected == true) ta.fillColor = COLOR_SELECTED;
 				else if(ch.is_available() == false && ch.is_found() == true){
 					ta.fillColor = COLOR_ARCHFND_BG;   // Green BG
@@ -210,7 +210,7 @@ public class myTableModel extends TableModel{
 	public Object getCellData(int row, int col){
 		if(row == -1) return colName[colMap[col]];
 		try { // Access to row can fail if many caches are deleted
-			CacheHolder ch = (CacheHolder)cacheDB.get(row);
+			CacheHolder ch = cacheDB.get(row);
 			if(ch.is_filtered() == false){
 				switch(colMap[col]) { // Faster than using column names
 					case 0: // Checkbox
@@ -316,7 +316,7 @@ public class myTableModel extends TableModel{
 				}
 				Vm.showWait(true);
 				Point a = tcControl.getSelectedCell(null);
-				if((a != null) && (a.y >= 0) && (a.y < cacheDB.size())) ch = (CacheHolder)cacheDB.get(a.y);
+				if((a != null) && (a.y >= 0) && (a.y < cacheDB.size())) ch = cacheDB.get(a.y);
 				if (mappedCol == sortedBy) sortAsc=!sortAsc;
 				else sortAsc = false;
 				sortedBy = mappedCol;
@@ -355,7 +355,7 @@ public class myTableModel extends TableModel{
 		CacheHolder ch;
 		boolean singleRow= from == to;
 		for (int j=from; j<=to; j++) {
-			ch=(CacheHolder) cacheDB.get(j);
+			ch=cacheDB.get(j);
 			ch.is_Checked= !ch.is_Checked; 
 			tcControl.repaintCell(j, x);
 			// set the ceckbox also for addi wpts
@@ -366,7 +366,7 @@ public class myTableModel extends TableModel{
 					addiWpt = (CacheHolder)ch.addiWpts.get(i);
 					addiWpt.is_Checked = ch.is_Checked;
 					if (!addiWpt.is_filtered()){
-						tcControl.repaintCell(cacheDB.find(addiWpt), x);
+						tcControl.repaintCell(cacheDB.getIndex(addiWpt), x);
 					}
 				}
 				

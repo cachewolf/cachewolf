@@ -6,9 +6,9 @@ import ewe.util.*;
  * Use this class to obtain statistics or information on a cache database.
  */
 public class DBStats {
-	Vector cacheDB = new Vector();
+	CacheDB cacheDB = null;
 	
-	public DBStats(Vector db){
+	public DBStats(CacheDB db){
 		cacheDB = db;
 	}
 	
@@ -23,7 +23,7 @@ public class DBStats {
 		CacheHolder holder;
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			holder = (CacheHolder)cacheDB.get(i);
+			holder = cacheDB.get(i);
 			if(holder.is_black() == false && holder.is_filtered() == false){
 				if(holder.getWayPoint().startsWith("GC") || holder.getWayPoint().startsWith("OC")) counter++;
 			}
@@ -39,7 +39,7 @@ public class DBStats {
 		CacheHolder holder;
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			holder = (CacheHolder)cacheDB.get(i);
+			holder = cacheDB.get(i);
 			if(holder.is_black() == false){
 				if(holder.getWayPoint().startsWith("GC") || holder.getWayPoint().startsWith("OC")) counter++;
 			}
@@ -51,7 +51,7 @@ public class DBStats {
 		CacheHolder holder;
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			holder = (CacheHolder)cacheDB.get(i);
+			holder = cacheDB.get(i);
 			if(holder.is_found() == true) {
 				if(holder.getWayPoint().startsWith("GC") || holder.getWayPoint().startsWith("OC")) counter++;
 			}

@@ -25,7 +25,7 @@ public class Profile {
 	/** The list of caches (CacheHolder objects). A pointer to this object exists in many classes in parallel to
 	 *  this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector. 
 	 */
-	public Vector cacheDB=new Vector();
+	public CacheDB cacheDB=new CacheDB();
 	/** The centre point of this group of caches. Read from ans stored to index.xml file */
 	public CWPoint centre=new CWPoint();
 	/** The name of the profile. The baseDir in preferences is appended this name to give the dataDir where
@@ -206,7 +206,7 @@ public class Profile {
 					h.progress = (float) i / (float) size;
 					h.changed();
 				}
-				ch = (CacheHolder) cacheDB.get(i);
+				ch = cacheDB.get(i);
 				// //Vm.debug("Saving: " + ch.CacheName);
 				if (ch.getWayPoint().length() > 0) { // TODO && ch.LongDescription.equals("An
 /*					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
@@ -356,10 +356,9 @@ public class Profile {
 	}
 	
 	void checkBlacklistStatus() {
-		Vector cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (ch.is_black() ^ showBlacklisted()) {
 				ch.setFiltered(true);
 				selectionChanged = true;
@@ -368,15 +367,7 @@ public class Profile {
 	}
 
 	public int getCacheIndex(String wp) {
-		int retval = -1;
-		CacheHolder ch;
-		for (int i = 0; i < cacheDB.size(); i++) {
-			ch = (CacheHolder) cacheDB.get(i);
-			if (ch.getWayPoint().equals(wp)) {
-				return i;
-			}
-		}
-		return retval;
+		return cacheDB.getIndex(wp);
 	}
 
 	/** Get a unique name for a new waypoint */
@@ -390,7 +381,7 @@ public class Profile {
 		// Create new waypoint,look if not in db
 		for (int i = 0; i < s; i++) {
 			strWp = "CW" + MyLocale.formatLong(lgWp, "0000");
-			if (((CacheHolder) cacheDB.get(i)).getWayPoint().indexOf(strWp) >= 0) {
+			if (cacheDB.get(i).getWayPoint().indexOf(strWp) >= 0) {
 				// waypoint exists in database
 				lgWp++;
 				i = -1; // Because i++ will be executed next, so we start the loop with 0
@@ -427,7 +418,7 @@ public class Profile {
 			mainindex = getCacheIndex("CW" + mainwpt);
 		if (mainindex < 0)
 			throw new IllegalArgumentException("no main cache found for: " + ch.getWayPoint());
-		CacheHolder mainch = (CacheHolder) cacheDB.get(mainindex);
+		CacheHolder mainch = cacheDB.get(mainindex);
 		mainch.addiWpts.add(ch);
 		ch.mainCache = mainch;
 	}
@@ -441,7 +432,7 @@ public class Profile {
 		selectionChanged = true;
 		CacheHolder ch;
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
-			ch = (CacheHolder) cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (ch.is_filtered() == false)
 				ch.is_Checked = selectStatus;
 		}
@@ -458,7 +449,7 @@ public class Profile {
 		numCachesInArea = 0;
 		boolean isAddi = false;
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
-			ch = (CacheHolder) cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (!onlyOfSelected || ch.is_Checked) {
 				if (ch.pos == null) { // this can not happen
 					tmpca.set(ch.LatLon);
@@ -491,11 +482,11 @@ public class Profile {
 	 */
 	public void updateBearingDistance(){
 		CWPoint centerPoint = new CWPoint(Global.getPref().curCentrePt); // Clone current centre to be sure
-		int anz = cacheDB.getCount();
+		int anz = cacheDB.size();
 		CacheHolder ch;
 		// Jetzt durch die CacheDaten schleifen
 		while(--anz >= 0){
-			ch = (CacheHolder)cacheDB.get(anz); // This returns a pointer to the CacheHolder object
+			ch = cacheDB.get(anz); // This returns a pointer to the CacheHolder object
 			ch.calcDistance(centerPoint);
 		}
 		// The following call is not very clean as it mixes UI with base classes
@@ -515,7 +506,7 @@ public class Profile {
 		Integer index;
 		// Build index for faster search and clear all references
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
-			ch = (CacheHolder) cacheDB.get(i);
+			ch = cacheDB.get(i);
 			ch.addiWpts.clear();
 			ch.mainCache = null;
 			// if (ch.wayPoint.startsWith("GC")) // Only put potential master caches into the index
@@ -524,7 +515,7 @@ public class Profile {
 		// Build references
 		int max = cacheDB.size();
 		for (int i = 0; i < max; i++) {
-			ch = (CacheHolder) cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (ch.isAddiWpt()) {
 				// search main cache
 				index = (Integer) dbIndex.get("GC" + ch.getWayPoint().substring(2));
@@ -534,7 +525,7 @@ public class Profile {
 					index = (Integer) dbIndex.get("CW"+ ch.getWayPoint().substring(2));
 
 				if (index != null) {
-					mainCh = (CacheHolder) cacheDB.get(index.intValue());
+					mainCh = cacheDB.get(index.intValue());
 					mainCh.addiWpts.add(ch);
 					ch.mainCache = mainCh;
 					ch.setAttributesFromMainCache(mainCh);
@@ -543,7 +534,7 @@ public class Profile {
 		}// for
 		// sort addi wpts
 		for (int i = 0; i < max; i++) {
-			ch = (CacheHolder) cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (ch.hasAddiWpt() && (ch.addiWpts.size() > 1)) {
 				// ch.addiWpts.sort(new
 				// MyComparer(ch.addiWpts,MyLocale.getMsg(1002,"Waypoint"),ch.addiWpts.size()),

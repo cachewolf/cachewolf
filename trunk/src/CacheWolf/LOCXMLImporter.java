@@ -38,7 +38,7 @@ import ewesoft.xml.sax.AttributeList;
  */
 public class LOCXMLImporter extends MinML {
 	boolean debugXML = false;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	Preferences pref;
 	Profile profile;
 	String file;
@@ -55,7 +55,7 @@ public class LOCXMLImporter extends MinML {
 		file = f;
 		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			DBindexWpt.put(ch.getWayPoint(), new Integer(i));
 		}//for
 	}
@@ -160,7 +160,7 @@ public class LOCXMLImporter extends MinML {
 			ch.setWayPoint(wpt);
 			return ch;
 		}
-		ch = new CacheHolderDetail((CacheHolder) cacheDB.get(index));
+		ch = new CacheHolderDetail(cacheDB.get(index));
 		try {
 			ch.readCache(profile.dataDir);
 		} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};

@@ -34,7 +34,7 @@ public class OCXMLImporter extends MinML {
 	int numCacheImported, numDescImported, numLogImported= 0;
 
 	boolean debugGPX = false;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	InfoBox inf;
 	CacheHolder ch;
 	CacheHolderDetail chD;
@@ -74,7 +74,7 @@ public class OCXMLImporter extends MinML {
 		}
 		user = p.myAlias.toLowerCase();
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			DBindexWpt.put(ch.getWayPoint(), new Integer(i));
 			if (!ch.getOcCacheID().equals(""))
 				DBindexID.put(ch.getOcCacheID(), new Integer(i));
@@ -92,7 +92,7 @@ public class OCXMLImporter extends MinML {
 	 * @return true, if some change was made to the cacheDB
 	 */
 	public boolean syncSingle(int number, InfoBox infB) {
-		ch = (CacheHolder)cacheDB.get(number);
+		ch = cacheDB.get(number);
 		chD= null; //new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
 
 		if (infB.isClosed) {
@@ -175,7 +175,7 @@ public class OCXMLImporter extends MinML {
 		profile.setDistOC(dist);
 		// Clear status of caches in db
 		for(int i = cacheDB.size()-1; i>=0 ;i--){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			ch.setUpdated(false);
 			ch.setNew(false);
 			ch.setLog_updated(false);
@@ -746,7 +746,7 @@ public class OCXMLImporter extends MinML {
 			chD = new CacheHolderDetail();
 			return chD;
 		}
-		chD = ((CacheHolder) cacheDB.get(index)).getCacheDetails(true);
+		chD = cacheDB.get(index).getCacheDetails(true);
 /*		try {
 			chD.readCache(profile.dataDir);
 		} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};

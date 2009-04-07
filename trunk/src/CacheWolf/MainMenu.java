@@ -254,7 +254,7 @@ public class MainMenu extends MenuBar {
 	public void onEvent(Event ev){
 		Preferences pref=Global.getPref();
 		Profile profile=Global.getProfile();
-		Vector cacheDB=profile.cacheDB;
+		CacheDB cacheDB=profile.cacheDB;
 		Global.mainTab.updatePendingChanges();
 		if (ev instanceof MenuEvent){ //&& ev.type == MenuEvent.PRESSED
 			MenuEvent mev = (MenuEvent)ev;
@@ -540,7 +540,7 @@ public class MainMenu extends MenuBar {
 				CacheHolder ch;
 				boolean filterChanged = false;
 				for(int i = cacheDB.size()-1; i>=0; i--){
-					ch = (CacheHolder)cacheDB.get(i);
+					ch = cacheDB.get(i);
 					// This is an incremental filter, i.e. it keeps the existing filter
 					// status and only adds the marked caches to the filtered set
 					if (ch.is_Checked && !ch.is_filtered()) {
@@ -558,7 +558,7 @@ public class MainMenu extends MenuBar {
 				CacheHolder ch;
 				boolean filterChanged = false;
 				for(int i = cacheDB.size()-1; i >=0; i--){
-					ch = (CacheHolder)cacheDB.get(i);
+					ch = cacheDB.get(i);
 					// incremental filter. Keeps status of all marked caches and
 					// adds unmarked caches to filtered list
 					if (!ch.is_Checked && !ch.is_filtered()) {
@@ -586,7 +586,7 @@ public class MainMenu extends MenuBar {
 			// "Organise" pulldown menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == orgNewWP){
-				if (Global.mainTab.tbP.getSelectedCache() >= 0) Global.mainTab.lastselected = ((CacheHolder)cacheDB.get(Global.mainTab.tbP.getSelectedCache())).getWayPoint();
+				if (Global.mainTab.tbP.getSelectedCache() >= 0) Global.mainTab.lastselected = cacheDB.get(Global.mainTab.tbP.getSelectedCache()).getWayPoint();
 				Global.mainTab.newWaypoint(new CacheHolder());
 			}
 
@@ -677,7 +677,7 @@ public class MainMenu extends MenuBar {
 	public static void updateSelectedCaches(TablePanel tablePanel) {
 		Preferences pref=Global.getPref();
 		Profile profile=Global.getProfile();
-		Vector cacheDB=profile.cacheDB;
+		CacheDB cacheDB=profile.cacheDB;
 		CacheHolder ch;
 		
 		SpiderGC spider = new SpiderGC(pref, profile, false);
@@ -691,7 +691,7 @@ public class MainMenu extends MenuBar {
 		
 		Vector cachesToUpdate = new Vector();
 		for(int i = 0; i <	cacheDB.size(); i++){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if(ch.is_Checked == true && !ch.is_filtered()) {
 				if ( ch.getWayPoint().length()>1 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC") 
 						|| ch.getWayPoint().substring(0,2).equalsIgnoreCase("OC")))
@@ -721,7 +721,7 @@ public class MainMenu extends MenuBar {
 		boolean forceLogin=Global.getPref().forceLogin; // To ensure that spiderSingle only logs in once if forcedLogin=true
 		for(int j = 0; j <	cachesToUpdate.size(); j++){
 			int i = ((Integer)cachesToUpdate.get(j)).intValue();
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 //			infB.setInfo("Loading: " + ch.wayPoint);
 			infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.getWayPoint() +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
 			infB.redisplay();
