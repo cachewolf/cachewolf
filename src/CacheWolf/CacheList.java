@@ -179,7 +179,7 @@ public class CacheList extends CellPanel {
 			if (lstCaches.itemsSize()>0 && !needsInit) {
 				int lstCacheIdx=lstCaches.getSelectedIndex(0);
 				CacheHolder ch=(CacheHolder)cacheList.get(lstCacheIdx);
-				int idx=Global.getProfile().cacheDB.find(ch);
+				int idx=Global.getProfile().cacheDB.getIndex(ch);
 				// Ensure that the main view is updated with the selected cache, i.e.
 				// DetailsPanel, HintLog, Pictures etc.
 				int activeTab=Global.mainTab.cardPanel.selectedItem;
@@ -259,13 +259,13 @@ public class CacheList extends CellPanel {
 	/** Apply the cache list */
 	public void applyCacheList() {
 		Global.getProfile().selectionChanged = true;
-		Vector cacheDB=Global.getProfile().cacheDB;
+		CacheDB cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
 		int wrongBlackStatus=0;
 		String apply="\uFFFF"+Convert.toString(applyCount++);
 		// Start by setting all caches to filtered
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			ch.setFiltered(true) ; // ignore blacklist attribute
 			ch.sort=apply;
 		}
@@ -282,7 +282,7 @@ public class CacheList extends CellPanel {
 				int idx=Global.getProfile().getCacheIndex(ch.getWayPoint());
 				if (idx==-1) continue;
 				ch=null;
-				ch=(CacheHolder) cacheDB.get(idx);
+				ch=cacheDB.get(idx);
 			}
 			if (ch.is_black()!=Global.getProfile().showBlacklisted()) 
 				wrongBlackStatus++;
@@ -308,7 +308,7 @@ public class CacheList extends CellPanel {
 		if (needsInit)  {lstCaches.deleteItem(0);lstCaches.deleteItem(0);  needsInit=false; lstCaches.repaint(); }
 		int idx=Global.getProfile().getCacheIndex(wayPoint);
 		if (idx==-1) return false;
-		CacheHolder ch=(CacheHolder) Global.getProfile().cacheDB.get(idx);
+		CacheHolder ch=Global.getProfile().cacheDB.get(idx);
 		boolean cachesAdded=false;
 		// Add main cache
 		cachesAdded|=addCache(ch);
@@ -391,7 +391,7 @@ public class CacheList extends CellPanel {
 			FileReader in = new FileReader(fileName);
 			String wayPoint;
 			int idx;
-			Vector cacheDB=Global.getProfile().cacheDB;
+			CacheDB cacheDB=Global.getProfile().cacheDB;
 			int lineNr=0;
 			while ((wayPoint = in.readLine()) != null){
 				wayPoint=wayPoint.trim();
@@ -403,7 +403,7 @@ public class CacheList extends CellPanel {
 				// Only add the cache if it is in this profile
 				idx=Global.getProfile().getCacheIndex(wayPoint);
 				if (idx>=0) {
-					addCache((CacheHolder) cacheDB.get(idx));
+					addCache(cacheDB.get(idx));
 				}
 				lineNr++;
 			}

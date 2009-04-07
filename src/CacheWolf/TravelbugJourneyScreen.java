@@ -58,13 +58,13 @@ public class TravelbugJourneyScreen extends Form  {
 	private String waypoint="";
 	
 	public TravelbugJourneyScreen() {
-		Vector cacheDB=Global.getProfile().cacheDB;
+		CacheDB cacheDB=Global.getProfile().cacheDB;
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 		CellPanel tablepane = split.getNextPanel();
 		int curCacheNo=Global.mainTab.tbP.getSelectedCache();
 		String cache="";
 		if (curCacheNo>=0 && curCacheNo<cacheDB.size()) {
-			ch=(CacheHolder)cacheDB.elementAt(curCacheNo);
+			ch=cacheDB.get(curCacheNo);
 			cache=MyLocale.getMsg(6022,": Current cache: ")+ch.getWayPoint()+" - "+ch.getCacheName();
 			waypoint=ch.getWayPoint();
 			chD=new CacheHolderDetail(ch);

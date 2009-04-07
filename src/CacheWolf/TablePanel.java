@@ -13,7 +13,7 @@ public class TablePanel extends CellPanel{
 	myTableControl tc;
 	myTableModel myMod;
 	Preferences pref;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	MainTab myMaintab;
 	StatusBar statBar;
 	/** We keep track of the currently selected cache in two variables(for speed)
@@ -102,7 +102,7 @@ public class TablePanel extends CellPanel{
 		Vector oldVisibleCaches = null;
 		int sel = getSelectedCache();
 		if ((sel >= 0) && (sel < cacheDB.size()) ) // sel > cacheDB.size() can happen if you load a new profile, which is smaller than the old profile and you selected one cache that exceeds the number of caches in the new profile  
-			wayPoint = ((CacheHolder)cacheDB.get(sel)).getWayPoint();
+			wayPoint = cacheDB.get(sel).getWayPoint();
 		else wayPoint = null;
 		// Then: remember all caches that are visible before the refresh
 		if (wayPoint != null) {

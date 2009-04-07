@@ -17,7 +17,7 @@ public class GPXImporter extends MinML {
 	
 	static Preferences pref;
 	Profile profile;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	CacheHolderDetail chD;
 	String strData, saveDir, logData, logIcon, logDate, logFinder, logId;
 	boolean inWpt, inCache, inLogs, inBug;
@@ -55,7 +55,7 @@ public class GPXImporter extends MinML {
 		//index db for faster search
 		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			DBindex.put(ch.getWayPoint(), new Integer(i));
 		}//for
 	}
@@ -322,7 +322,7 @@ public class GPXImporter extends MinML {
 			//Update cache data
 			else {
 				//Vm.debug("it is not new!");
-				CacheHolderDetail oldCh= new CacheHolderDetail((CacheHolder) cacheDB.get(index));
+				CacheHolderDetail oldCh= new CacheHolderDetail(cacheDB.get(index));
 				try {
 					//Vm.debug("Try to load");
 					oldCh.readCache(saveDir);

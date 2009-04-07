@@ -34,7 +34,7 @@ public class ExploristExporter {
 	final static int LAT_LON = 1;
 	final static int COUNT = 2;
 
-	Vector cacheDB;
+	CacheDB cacheDB;
 	Preferences pref;
 	Profile profile;
 	// mask in file chooser
@@ -128,7 +128,7 @@ public class ExploristExporter {
 		int counter = 0;
 		int expCount = 0;
 		for (int i = 0; i < cacheDB.size(); i++) {
-			ch = (CacheHolder) cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (ch.is_black() == false && ch.is_filtered() == false)
 				counter++;
 		}
@@ -136,7 +136,7 @@ public class ExploristExporter {
 		try {
 			PrintWriter outp = null;
 			for (int i = 0; i < cacheDB.size(); i++) {
-				ch = (CacheHolder) cacheDB.get(i);
+				ch = cacheDB.get(i);
 				if (ch.is_black() == false && ch.is_filtered() == false) {
 					// all 200 caches we need a new file
 					if (expCount % 200 == 0) {

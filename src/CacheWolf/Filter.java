@@ -118,7 +118,7 @@ public class Filter{
 	*/
 	public void doFilterRoute(File routeFile, double distance){
 		Global.getProfile().selectionChanged = true;
-		Vector cacheDB=Global.getProfile().cacheDB;
+	    CacheDB cacheDB=Global.getProfile().cacheDB;
 		//load file into a vector:
 		Vector wayPoints = new Vector();
 		Regex rex = new Regex("(N|S).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3}).*?(E|W).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3})");
@@ -164,7 +164,7 @@ public class Filter{
 			}
 			//initialise database
 			for(int i = cacheDB.size()-1; i >=0 ; i--){
-				ch = (CacheHolder)cacheDB.get(i);
+				ch = cacheDB.get(i);
 				ch.in_range = false;
 				//cacheDB.set(i, ch);
 			}
@@ -176,7 +176,7 @@ public class Filter{
 				toPoint = (CWPoint)wayPoints.get(z+1);
 				//... go through the current cache database
 				for(int i = cacheDB.size()-1; i >=0 ; i--){
-					ch = (CacheHolder)cacheDB.get(i);
+					ch = cacheDB.get(i);
 					cwp = new CWPoint(ch.LatLon, CWPoint.CW);
 					calcDistance = DistToSegment(fromPoint, toPoint, cwp);
 					calcDistance = (calcDistance*180*60)/java.lang.Math.PI;
@@ -190,7 +190,7 @@ public class Filter{
 				} // for database
 			} // for segments
 			for(int i = cacheDB.size()-1; i >=0 ; i--){
-				ch = (CacheHolder)cacheDB.get(i);
+				ch = cacheDB.get(i);
 				if(ch.is_filtered() == false && ch.in_range == false) ch.setFiltered(true);
 			}
 		}catch(FileNotFoundException fnex){
@@ -328,7 +328,7 @@ public class Filter{
 	*	not displaying a cache that is filtered.
 	*/
 	public void doFilter(){
-		Vector cacheDB=Global.getProfile().cacheDB;
+		CacheDB cacheDB=Global.getProfile().cacheDB;
 		Hashtable examinedCaches;
 		if (cacheDB.size()==0) return;
 		if (!hasFilter()) { // If the filter was completely reset, we can just clear it
@@ -340,7 +340,7 @@ public class Filter{
 		examinedCaches = new Hashtable(cacheDB.size());
 		
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (examinedCaches.containsKey(ch)) continue;
 			
 			boolean filterCache = excludedByFilter(ch);
@@ -603,13 +603,13 @@ public class Filter{
 	*	Invert is_filtered flag on all caches
 	*/
 	public void invertFilter(){
-		Vector cacheDB=Global.getProfile().cacheDB;
+		CacheDB cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
 		if (cacheDB.size()==0) return;
 		Global.getProfile().selectionChanged = true;
 		boolean showBlackListed=Global.getProfile().showBlacklisted();
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if (ch.is_black()==showBlackListed)
 				ch.setFiltered(!ch.is_filtered()); // Only invert those that would be shown under blacklist filter
 			else
@@ -624,10 +624,10 @@ public class Filter{
 	*/
 	public void clearFilter(){
 		Global.getProfile().selectionChanged = true;
-		Vector cacheDB=Global.getProfile().cacheDB;
+		CacheDB cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			ch.setFiltered((ch.is_black()^Global.getProfile().showBlacklisted())) ; // Always filter blacklisted caches
 		}
 		Global.getProfile().setFilterActive(FILTER_INACTIVE);

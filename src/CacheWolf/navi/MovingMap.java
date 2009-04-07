@@ -1,6 +1,7 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
+import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
@@ -34,7 +35,7 @@ public class MovingMap extends Form {
 	MovingMapPanel mmp;
 	MapsList maps;
 	Vector symbols;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	TrackOverlay[] TrackOverlays;
 	CWPoint TrackOverlaySetCenterTopLeft;
 	Vector tracks;
@@ -80,7 +81,7 @@ public class MovingMap extends Form {
 	
 	float lastHighestResolutionGPSDestScale = -1;
 
-	public MovingMap(Navigate nav, Vector cacheDB){
+	public MovingMap(Navigate nav, CacheDB cacheDB){
 		this.cacheDB = cacheDB;
 		this.myNavigation = nav;
 		this.pref = Global.getPref();
@@ -377,7 +378,7 @@ public class MovingMap extends Form {
 			removeAllMapSymbolsButGoto();
 			CacheHolder ch;
 			for (int i=cacheDB.size()-1; i>=0; i--) {
-				ch = (CacheHolder) cacheDB.get(i);
+				ch = cacheDB.get(i);
 				if (ch.is_Checked && !ch.is_filtered() && ch != mainT.ch) {
 					if (ch.pos.isValid()) addSymbol(ch.getCacheName(), ch, CacheType.cache2Img(ch.getType()), ch.pos);
 				}

@@ -43,7 +43,7 @@ public class CalcPanel extends CellPanel {
 	CWPoint coordInp = new CWPoint();
 	CWPoint coordOut = new CWPoint();
 	// Needed for creation of new waypoint
-	Vector cacheDB;
+	CacheDB cacheDB;
 	MainTab mainT;
 	Preferences pref;
 	Profile profile;
