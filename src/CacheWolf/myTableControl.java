@@ -15,7 +15,7 @@ public class myTableControl extends TableControl{
 
 	public Preferences pref;
 	public Profile profile;
-	public Vector cacheDB;
+	public CacheDB cacheDB;
 	public TablePanel tbp;
 	
 	private MenuItem miOpen, miGoto, miCenter;
@@ -102,10 +102,10 @@ public class myTableControl extends TableControl{
 				else if (ev.key == IKeys.ACTION || ev.key == IKeys.ENTER) Global.mainTab.select(Global.mainTab.descP);
 				else if (ev.key == IKeys.DOWN) Global.mainTab.tbP.selectRow(java.lang.Math.min(cursor.y+ 1, model.numRows-1)); 
 				else if (ev.key == IKeys.UP) Global.mainTab.tbP.selectRow(java.lang.Math.max(cursor.y-1, 0));
-				else if (ev.key == IKeys.LEFT && Global.mainForm.cacheListVisible && cursor.y>=0 && cursor.y<tbp.myMod.numRows) Global.mainForm.cacheList.addCache(((CacheHolder)cacheDB.elementAt(cursor.y)).getWayPoint()); 
+				else if (ev.key == IKeys.LEFT && Global.mainForm.cacheListVisible && cursor.y>=0 && cursor.y<tbp.myMod.numRows) Global.mainForm.cacheList.addCache(cacheDB.get(cursor.y).getWayPoint()); 
 				else if (ev.key == IKeys.RIGHT) {
 					CacheHolder ch;
-					ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
+					ch = cacheDB.get(tbp.getSelectedCache());
 					Global.mainTab.gotoPoint(ch.pos);
 				}
 				else if (ev.key == 6 ) MainMenu.search(); // (char)6 == ctrl + f 
@@ -147,7 +147,7 @@ public class myTableControl extends TableControl{
 			int shouldDeleteCount=0;
 			boolean deleteFiltered=true;  // Bisheriges Verhalten
 			for(int i = cacheDB.size()-1; i >=0; i--){
-				CacheHolder currCache = (CacheHolder)cacheDB.get(i);
+				CacheHolder currCache = cacheDB.get(i);
 				if ( currCache.is_Checked) {
 					allCount++;
 					if (currCache.is_filtered()) {
@@ -184,13 +184,13 @@ public class myTableControl extends TableControl{
 					int nDeleted=0;
 					int size=cacheDB.size();
 					for(int i = size-1; i >=0; i--){// Start Counting down, as the size decreases with each deleted cache
-						ch = (CacheHolder)cacheDB.get(i);
+						ch = cacheDB.get(i);
 						if(ch.is_Checked && (!ch.is_filtered() || deleteFiltered)) {
 							nDeleted++;
 							h.progress = ((float)nDeleted)/(float)allCount;
 							h.changed();
 							dm.deleteCacheFiles(ch.getWayPoint(),profile.dataDir);
-							cacheDB.remove(ch);
+							cacheDB.removeElementAt(i);
 							ch.releaseCacheDetails();
 							ch=null;
 							if (pbf.isClosed) break;
@@ -214,7 +214,7 @@ public class myTableControl extends TableControl{
 				Global.getPref().log("popupMenuEvent: getSelectedCache() < 0");
 				return;
 			}
-			CacheHolder thisCache = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
+			CacheHolder thisCache = cacheDB.get(tbp.getSelectedCache());
 			CWPoint cp=new CWPoint(thisCache.LatLon);
 			if (!cp.isValid()){
 				MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
@@ -227,12 +227,12 @@ public class myTableControl extends TableControl{
 		}
 
 		if (selectedItem == miGoto){
-			ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
+			ch = cacheDB.get(tbp.getSelectedCache());
 			Global.mainTab.gotoPoint(ch.pos);
 		}
 		if (selectedItem == miOpenOnline){
 			if(browserPathIsValid()){
-				ch = (CacheHolder)cacheDB.get(tbp.getSelectedCache());
+				ch = cacheDB.get(tbp.getSelectedCache());
 				CacheHolderDetail chD=ch.getCacheDetails(false, true);
 				try {
 					if (chD != null) {
@@ -250,7 +250,7 @@ public class myTableControl extends TableControl{
 		if (selectedItem == miOpenOffline) {
 			if(browserPathIsValid()){
 				ShowCacheInBrowser sc=new ShowCacheInBrowser();
-				sc.showCache(((CacheHolder)cacheDB.get(tbp.getSelectedCache())).getCacheDetails(false, true));
+				sc.showCache(cacheDB.get(tbp.getSelectedCache()).getCacheDetails(false, true));
 			}
 		}
 		if (selectedItem == miOpen){
@@ -288,7 +288,7 @@ public class myTableControl extends TableControl{
 	int row;
 	
 	public void startDragging(DragContext dc) {
-		Vector cacheDB=Global.getProfile().cacheDB;
+		CacheDB cacheDB=Global.getProfile().cacheDB;
 		 Point p=cellAtPoint(dc.start.x,dc.start.y,null);
 		 wayPoint=null;
 		 if (p.y>=0) { 
@@ -297,7 +297,7 @@ public class myTableControl extends TableControl{
 				return;
 			}
 			 row=p.y;
-			 CacheHolder ch=(CacheHolder)cacheDB.get(p.y);
+			 CacheHolder ch=cacheDB.get(p.y);
 			 wayPoint=ch.getWayPoint();
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 imgDrag=new IconAndText();

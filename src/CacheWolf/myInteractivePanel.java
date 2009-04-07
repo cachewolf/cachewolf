@@ -55,8 +55,8 @@ public class myInteractivePanel extends InteractivePanel{
 		timePenOn=Vm.getTimeStampLong();
 		setFont(font);
 		RadarPanelImage imgRP=(RadarPanelImage) which;
-		ewe.util.Vector cacheDB=Global.getProfile().cacheDB;
-		CacheHolder ch=(CacheHolder) cacheDB.get(imgRP.rownum);
+		CacheDB cacheDB=Global.getProfile().cacheDB;
+		CacheHolder ch=cacheDB.get(imgRP.rownum);
 		String s=ch.getWayPoint()+"  "+ch.getCacheSize()+" / "+strDifficulty+"="+ch.getHard()+"  "+strTerrain+"="+ch.getTerrain();
 		String s1=ch.getCacheName();
 		if (s1.length()>40) s1=s1.substring(0,40);
@@ -102,11 +102,11 @@ public class myInteractivePanel extends InteractivePanel{
 	
 	public void startDragging(DragContext dc) {
 		if (!Global.mainForm.cacheListVisible) return;
-		Vector cacheDB=Global.getProfile().cacheDB;
+		CacheDB cacheDB=Global.getProfile().cacheDB;
 //Vm.debug("myIAP startDrag "+dc.start.x+"/"+dc.start.y);
 		int idx=Global.getProfile().getCacheIndex(wayPoint); 
 		if (idx>=0) {
-			 CacheHolder ch=(CacheHolder) cacheDB.get(idx);
+			 CacheHolder ch=cacheDB.get(idx);
 			 //wayPoint=ch.wayPoint;
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 IconAndText icnDrag=new IconAndText();
@@ -132,8 +132,8 @@ public class myInteractivePanel extends InteractivePanel{
 		AniImage dragImage=null;
 		if (which instanceof RadarPanelImage) {
 			RadarPanelImage imgRP=(RadarPanelImage) which;
-			ewe.util.Vector cacheDB=Global.getProfile().cacheDB;
-			CacheHolder ch=(CacheHolder) cacheDB.get(imgRP.rownum);
+			CacheDB cacheDB=Global.getProfile().cacheDB;
+			CacheHolder ch=cacheDB.get(imgRP.rownum);
 			wayPoint=ch.getWayPoint();
 			
 			int tw,th;

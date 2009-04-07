@@ -17,7 +17,7 @@ import HTML.*;
 */
 public class HTMLExporter{
 //	TODO Exportanzahl anpassen: Bug: 7351
-	Vector cacheDB;
+	CacheDB cacheDB;
 	Preferences pref;
 	Profile profile;
 	String [] template_init_index = {
@@ -69,7 +69,7 @@ public class HTMLExporter{
 			//Generate index page
 			int counter = 0;
 			for(int i = 0; i<cacheDB.size();i++){
-				ch = (CacheHolder)cacheDB.get(i);
+				ch = cacheDB.get(i);
 				if(ch.is_black() == false && ch.is_filtered() == false) counter++;
 			}
 			
@@ -81,7 +81,7 @@ public class HTMLExporter{
 				h.progress = (float)(i+1)/(float)counter;
 				h.changed();
 
-				ch = (CacheHolder)cacheDB.get(i);
+				ch = cacheDB.get(i);
 				if(	ch.is_black() == false && ch.is_filtered() == false){
 					holder=ch.getCacheDetails(false,true);
 					varParams = new Hashtable();

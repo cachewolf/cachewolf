@@ -9,9 +9,9 @@ import ewe.util.*;
 */
 public class SearchCache {
 
-	Vector cacheDB;
+	CacheDB cacheDB;
 	
-	public SearchCache(Vector DB){
+	public SearchCache(CacheDB DB){
 		cacheDB = DB;
 	}
 	
@@ -31,7 +31,7 @@ public class SearchCache {
 			//TableModel will be responsible for displaying
 			//marked caches.
 			for(int i = 0;i < cacheDB.size();i++){
-				ch = (CacheHolder)cacheDB.get(i);
+				ch = cacheDB.get(i);
 				if (ch.is_filtered()) break; // Reached end of visible records
 				if(ch.getWayPoint().toUpperCase().indexOf(searchStr) <0 && 
 				   ch.getCacheName().toUpperCase().indexOf(searchStr) <0 && 
@@ -52,7 +52,7 @@ public class SearchCache {
 	public void clearSearch(){
 		Global.getProfile().selectionChanged = true;
 		for(int i = cacheDB.size()-1;i >=0;i--){
-			CacheHolder ch=((CacheHolder)cacheDB.get(i));
+			CacheHolder ch=cacheDB.get(i);
 			ch.is_flaged=false;
 			//ch.setFiltered((ch.is_black()^Global.getProfile().showBlacklisted())) ;
 		}

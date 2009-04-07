@@ -17,7 +17,7 @@ public class TomTomExporter {
 	public final static int TT_WPT_NUM = 1;
 	public final static String expName = "TomTom";
 
-	Vector cacheDB;
+	CacheDB cacheDB;
 	Preferences pref;
 	Profile profile;
 
@@ -79,7 +79,7 @@ public class TomTomExporter {
 		currExp = 0;
 		counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			holder = (CacheHolder)cacheDB.get(i);
+			holder = cacheDB.get(i);
 			if(holder.is_black() == false && holder.is_filtered() == false) counter++;
 		}
 		
@@ -92,7 +92,7 @@ public class TomTomExporter {
 				dfile.delete();
 				out =  new RandomAccessFile(fileName,"rw");
 				for(int i = 0; i<cacheDB.size(); i++){
-					holder=(CacheHolder)cacheDB.get(i);
+					holder=cacheDB.get(i);
 					if(holder.getType() == new Integer(CacheType.wayType[j][TT_WPT_NUM]).intValue() && holder.is_black() == false && holder.is_filtered() == false){
 						currExp++;
 						h.progress = (float)currExp/(float)counter;
@@ -137,7 +137,7 @@ public class TomTomExporter {
 		int counter = 0;
 		int expCount = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			holder = (CacheHolder)cacheDB.get(i);
+			holder = cacheDB.get(i);
 			if(holder.is_black() == false && holder.is_filtered() == false) counter++;
 		}
 
@@ -146,7 +146,7 @@ public class TomTomExporter {
 			dfile.delete();
 			out =  new RandomAccessFile(fileName,"rw");
 			for(int i = 0; i<cacheDB.size(); i++){
-				holder=(CacheHolder)cacheDB.get(i);
+				holder=cacheDB.get(i);
 				if(holder.is_black() == false && holder.is_filtered() == false){
 					expCount++;
 					h.progress = (float)expCount/(float)counter;

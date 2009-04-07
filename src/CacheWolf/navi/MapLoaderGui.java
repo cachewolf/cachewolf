@@ -1,6 +1,7 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
+import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
@@ -53,7 +54,7 @@ public class MapLoaderGui extends Form {
 	int[] sortingMapServices;
 	boolean[] inbound;
 	CWPoint center;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	boolean perCache;
 	boolean onlySelected;
 	float radius;
@@ -62,7 +63,7 @@ public class MapLoaderGui extends Form {
 	boolean overviewmap;
 	int numCaches;
 
-	public MapLoaderGui(Vector cacheDBi) {
+	public MapLoaderGui(CacheDB cacheDBi) {
 		super();
 		this.title = MyLocale.getMsg(1800, "Download georeferenced maps"); 
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
@@ -240,7 +241,7 @@ public class MapLoaderGui extends Form {
 			Global.getProfile().getSourroundingArea(onlySelected); // calculate numCachesInArea
 			int numCaches = Global.getProfile().numCachesInArea;
 			for (int i=cacheDB.size()-1; i >= 0; i--) {
-				ch = (CacheHolder) cacheDB.get(i);
+				ch = cacheDB.get(i);
 				if (!this.onlySelected || ch.is_Checked) {
 					if (ch.pos == null) { // this can not happen
 						tmpca.set(ch.LatLon);

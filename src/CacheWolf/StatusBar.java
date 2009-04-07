@@ -20,7 +20,7 @@ public class StatusBar extends CellPanel{
 	mImage imgCacheTour;
 	boolean MobileVGA;
 	
-	public StatusBar(Preferences p, Vector db){
+	public StatusBar(Preferences p, CacheDB db){
 		pref=p;
 		int sw = MyLocale.getScreenWidth();
 		MobileVGA = (Vm.isMobile() && sw >= 400);

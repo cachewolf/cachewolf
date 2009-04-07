@@ -224,7 +224,7 @@ public class Parser{
 		if (varName.startsWith("$")) { // Potential coordinate
 			int idx=Global.getProfile().getCacheIndex(varName.substring(1));
 			if (idx!=-1) { // Found it!
-				CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(idx);
+				CacheHolder ch=Global.getProfile().cacheDB.get(idx);
 				// Check whether coordinates are valid
 				cwPt.set(ch.pos);
 				if (cwPt.isValid() )
@@ -547,7 +547,7 @@ public class Parser{
     		int i=Global.getProfile().getCacheIndex(waypointName);
     		if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
     		cwPt.set(coord);
-    		CacheHolder ch=((CacheHolder)Global.getProfile().cacheDB.get(i));
+    		CacheHolder ch=Global.getProfile().cacheDB.get(i);
     		ch.LatLon=cwPt.toString(CWPoint.CW);
     		ch.pos.set(cwPt);
     		ch.calcDistance(Global.getPref().curCentrePt); // Update distance/bearing
@@ -666,8 +666,8 @@ public class Parser{
     	int ci=Global.getProfile().getCacheIndex(waypointName);
     	if (ci<0) return;
     	// If it is an addi, find its main cache
-    	if (((CacheHolder) Global.getProfile().cacheDB.get(ci)).isAddiWpt()) {
-    		waypointName=((CacheHolder) Global.getProfile().cacheDB.get(ci)).mainCache.getWayPoint();
+    	if (Global.getProfile().cacheDB.get(ci).isAddiWpt()) {
+    		waypointName=Global.getProfile().cacheDB.get(ci).mainCache.getWayPoint();
     	}
    		int nStages=-1;
     	if (nargs==1) {
@@ -709,7 +709,7 @@ public class Parser{
     	} else {
 	    	int i=Global.getProfile().getCacheIndex(waypointName);
 			if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
-	   	    CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(i);
+	   	    CacheHolder ch=Global.getProfile().cacheDB.get(i);
 			CacheHolder addiWpt;
 	   	    if (ch.hasAddiWpt()){
 	   	    	op.append("cls()\n");
@@ -893,7 +893,7 @@ public class Parser{
 		if (varName.startsWith("$")) { // Potential coordinate
 			int idx=Global.getProfile().getCacheIndex(varName.substring(1));
 			if (idx!=-1) { // Yes, is a coordinate
-				CacheHolder ch=(CacheHolder)Global.getProfile().cacheDB.get(idx);
+				CacheHolder ch=Global.getProfile().cacheDB.get(idx);
 				// Check whether new coordinates are valid
 				String coord=popCalcStackAsString();
 				cwPt.set(coord);

@@ -23,7 +23,7 @@ public class DetailsPanel extends CellPanel{
 	mComboBox chcStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
 	mButton btnNewWpt, btnShowBug, btnShowMap, btnGoto, btnAddPicture, btnBlack, btnNotes, btnSave, btnCancel;
 	mButton btnFoundDate,btnHiddenDate;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	CacheHolder thisCache;
 	int dbIndex = -1;
 	CellPanel pnlTools = new CellPanel(); 

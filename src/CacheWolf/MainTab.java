@@ -20,7 +20,7 @@ public class MainTab extends mTabbedPanel {
 	DescriptionPanel descP= new DescriptionPanel();
 	HintLogPanel hintLP = new HintLogPanel();
 	TablePanel tbP;
-	Vector cacheDB;
+	CacheDB cacheDB;
 	public DetailsPanel detP = new DetailsPanel();
 	CalcPanel calcP;
 	Preferences pref;
@@ -140,7 +140,7 @@ public class MainTab extends mTabbedPanel {
 				ch=null; chD=null; 
 				lastselected="";
 			} else {
-				ch = (CacheHolder)cacheDB.get(tbP.getSelectedCache());
+				ch = cacheDB.get(tbP.getSelectedCache());
 				lastselected=ch.getWayPoint();  // Used in Parser.Skeleton
 				try {
 					chD = ch.getCacheDetails(true);
@@ -311,7 +311,7 @@ public class MainTab extends mTabbedPanel {
 		mainCache=lastselected;
 		int selectedIndex = profile.getCacheIndex( lastselected );
 		if (selectedIndex >= 0) {
-			CacheHolder selectedCache = (CacheHolder) profile.cacheDB.get( selectedIndex );
+			CacheHolder selectedCache = profile.cacheDB.get( selectedIndex );
 			if ( selectedCache.isAddiWpt() ) {
 				mainCache = selectedCache.mainCache.getWayPoint();
 			}			

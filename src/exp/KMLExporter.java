@@ -76,7 +76,7 @@ public class KMLExporter extends Exporter {
 		int counter = 0;
 		int expCount = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if(ch.is_black() == false && ch.is_filtered() == false) counter++;
 		}
 		copyIcons(outFile.getParent());
@@ -176,7 +176,7 @@ public class KMLExporter extends Exporter {
 
 		// fill structure with data from cacheDB
 		for(int i = 0; i<cacheDB.size(); i++){
-			ch=(CacheHolder)cacheDB.get(i);
+			ch=cacheDB.get(i);
 			// TODO Das Argument nach STring zu casten gefällt mir nicht ganz...
 			if(ch.is_black() == false && ch.is_filtered() == false && !ch.isAddiWpt()){
 				if (ch.is_found()) { tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.getType()));}

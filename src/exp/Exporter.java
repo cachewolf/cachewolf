@@ -33,7 +33,7 @@ public class Exporter {
 	final static int LAT_LON 	= 1;
 	final static int COUNT 		= 2;
 	
-	Vector cacheDB;
+	CacheDB cacheDB;
 	Preferences pref;
 	Profile profile;
 	// mask in file chooser
@@ -93,7 +93,7 @@ public class Exporter {
 		int counter = 0;
 		int expCount = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
+			ch = cacheDB.get(i);
 			if(ch.is_black() == false && ch.is_filtered() == false) counter++;
 		}
 
@@ -103,7 +103,7 @@ public class Exporter {
 			if (str != null) outp.print(str);
 			holder=new CacheHolderDetail();
 			for(int i = 0; i<cacheDB.size(); i++){
-				ch=(CacheHolder)cacheDB.get(i);
+				ch=cacheDB.get(i);
 				if(ch.is_black() == false && ch.is_filtered() == false){
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
