@@ -356,7 +356,6 @@ public class Filter{
 			ch.setFiltered(filterCache);			
 		}
 		Global.getProfile().setFilterActive(FILTER_ACTIVE);
-		Global.getProfile().setFilterInverted(false);
 		examinedCaches = null;
 		//Global.getProfile().hasUnsavedChanges=true;
 	}
@@ -631,8 +630,6 @@ public class Filter{
 			ch.setFiltered((ch.is_black()^Global.getProfile().showBlacklisted())) ; // Always filter blacklisted caches
 		}
 		Global.getProfile().setFilterActive(FILTER_INACTIVE);
-		Global.getProfile().setFilterInverted(false);
-		//Global.getProfile().hasUnsavedChanges=true;
 	}
 
 	public boolean hasFilter() {
