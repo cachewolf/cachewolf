@@ -116,7 +116,7 @@ public class TablePanel extends CellPanel{
 		// Check whether the currently selected cache is still visible
 		int rownum = 0;
 		if (wayPoint != null) {
-			rownum = Global.getProfile().getCacheIndex(wayPoint);
+			rownum = Global.getProfile().cacheDB.getIndex(wayPoint);
 			if ( (rownum < 0) || (rownum>=myMod.numRows) ) {
 				// If it is not visible: Go backward in the list of the 
 				// previously visible caches and look if you find
@@ -124,7 +124,7 @@ public class TablePanel extends CellPanel{
 				int i;
 				for (i=sel-1; i>=0; i--) {
 					CacheHolder checkCache = (CacheHolder) oldVisibleCaches.get(i);
-					rownum = Global.getProfile().getCacheIndex(checkCache.getWayPoint());
+					rownum = Global.getProfile().cacheDB.getIndex(checkCache.getWayPoint());
 					if ((rownum >= 0) && (rownum < myMod.numRows)) break;
 					rownum = 0;	
 				}

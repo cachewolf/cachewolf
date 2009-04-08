@@ -46,7 +46,6 @@ public class OCXMLImporter extends MinML {
 	boolean incUpdate = true; // complete or incremental Update
 	boolean ignoreDesc = false;
 	boolean askForOptions = true;
-	Hashtable DBindexWpt = new Hashtable();
 	Hashtable DBindexID = new Hashtable();
 
 	String picUrl = new String();
@@ -75,7 +74,6 @@ public class OCXMLImporter extends MinML {
 		user = p.myAlias.toLowerCase();
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = cacheDB.get(i);
-			DBindexWpt.put(ch.getWayPoint(), new Integer(i));
 			if (!ch.getOcCacheID().equals(""))
 				DBindexID.put(ch.getOcCacheID(), new Integer(i));
 		}//for
@@ -429,7 +427,7 @@ public class OCXMLImporter extends MinML {
 		if (name.equals("cache")){
 			chD.setLastSyncOC(dateOfthisSync.format("yyyyMMddHHmmss"));
 			int index;
-			index = searchWpt(chD.getWayPoint());
+			index = cacheDB.getIndex(chD.getWayPoint());
 			if (index == -1){
 				chD.setNew(true);
 				CacheHolder ch = new CacheHolder(chD);
@@ -437,7 +435,6 @@ public class OCXMLImporter extends MinML {
 				cacheDB.add(ch);
 				ch.detailsAdded();
 				Integer indexInt = new Integer(cacheDB.size()-1);
-				DBindexWpt.put(chD.getWayPoint(), indexInt);
 				DBindexID.put(chD.getOcCacheID(), indexInt);
 			}
 			// update (overwrite) data
@@ -715,22 +712,11 @@ public class OCXMLImporter extends MinML {
 	}
 
 	/**
-	 * Method to iterate through cache database and look for waypoint.
-	 * Returns value >= 0 if waypoint is found, else -1
-	 */
-	private int searchWpt(String wpt){
-		Integer INTR = (Integer)DBindexWpt.get(wpt);
-		if(INTR != null){
-			return INTR.intValue();
-		} else return -1;
-	}
-
-	/**
 	 * Method to iterate through cache database and look for cacheID.
 	 * Returns value >= 0 if cacheID is found, else -1
 	 */
-	private int searchID(String cacheID){
-		Integer INTR = (Integer)DBindexID.get(cacheID);
+	private int searchID(String cacxheID){
+		Integer INTR = (Integer)DBindexID.get(cacxheID);
 		if(INTR != null){
 			return INTR.intValue();
 		} else return -1;
@@ -740,7 +726,7 @@ public class OCXMLImporter extends MinML {
 	private CacheHolderDetail getHolder(String wpt){// See also LOCXMLImporter
 		int index;
 		
-		index = searchWpt(wpt);
+		index = cacheDB.getIndex(wpt);
 		if (index ==-1) index = searchID(wpt);
 		if (index == -1) {
 			chD = new CacheHolderDetail();

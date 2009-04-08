@@ -59,7 +59,6 @@ public class SpiderGC{
 	private Regex inRex = new Regex();
 	private CacheDB cacheDB;
 	private Vector cachesToLoad = new Vector();
-	private Hashtable indexDB;
 	private InfoBox infB;
 	private static myProperties p=null;
 
@@ -293,13 +292,10 @@ public class SpiderGC{
 		}
 		if (System.getProperty("os.name")!=null)pref.log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"));
 		if (System.getProperty("java.vendor")!=null)pref.log("Java: "+System.getProperty("java.vendor")+"/"+System.getProperty("java.version"));
-		// Prepare an index of caches for faster searching
-		indexDB = new Hashtable(cacheDB.size());
 		CacheHolder ch;
-		//index the database for faster searching!
+		// Reset is_new()
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = cacheDB.get(i);
-			indexDB.put(ch.getWayPoint(), new Integer(i));
 			ch.setNew(false);
 		}
 		String start = "";
@@ -367,11 +363,11 @@ public class SpiderGC{
 			ch = cacheDB.get(i);
 			if (spiderAllFinds) {
 				if ( (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) ) {
-					cachesToUpdate.put(ch.getWayPoint(), new Integer(i));
+					cachesToUpdate.put(ch.getWayPoint(), ch);
 				}
 			} else {
 				if ( (!ch.is_archived()) && (ch.kilom <= distanceInKm) && !(doNotgetFound && ch.is_found()) && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) ) {
-					cachesToUpdate.put(ch.getWayPoint(), new Integer(i));
+					cachesToUpdate.put(ch.getWayPoint(), ch);
 				}
 			}
 		}
@@ -447,8 +443,8 @@ public class SpiderGC{
 					found_on_page++;
 					if(getDist(lineRex.stringMatched(1)) <= distance){
 						String waypoint=getWP(lineRex.stringMatched(1));
-						Integer nr;
-						if((nr=(Integer)indexDB.get(waypoint)) == null){
+						CacheHolder existingCache;
+						if((existingCache=cacheDB.get(waypoint)) == null){
 							if ( (maxNumber > 0) && (cachesToLoad.size() >= maxNumber) ) {
 								maxNumberAbort = true;
 								
@@ -462,14 +458,14 @@ public class SpiderGC{
 							}
 						} else {
 							pref.log(waypoint+" already in DB");
-							ch=cacheDB.get(nr.intValue());
+							ch=existingCache;
 							// If the <strike> tag is used, the cache is marked as unavailable or archived
 							boolean is_archived_GC=lineRex.stringMatched(1).indexOf("<strike><font color=\"red\">")!=-1;
 							boolean is_available_GC=lineRex.stringMatched(1).indexOf("<strike>")==-1;
 							if (ch.is_archived()!=is_archived_GC) { // Update the database with the cache status
 								pref.log("Updating status of "+waypoint+" to "+(is_archived_GC?"archived":"not archived"));
 								if ( ch.is_archived() ) {
-									cachesToUpdate.put(ch.getWayPoint(), nr);
+									cachesToUpdate.put(ch.getWayPoint(), ch);
 								}
 								ch.setArchived(is_archived_GC);
 								chD=ch.getCacheDetails(true,false);
@@ -558,7 +554,7 @@ public class SpiderGC{
 
 			wpt = (String)cachesToLoad.get(i);
 			// Get only caches not already available in the DB
-			if(searchWpt(wpt) == -1){
+			if(cacheDB.getIndex(wpt) == -1){
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + totalCachesToLoad + ")");
 				chD = new CacheHolderDetail();
 				chD.setWayPoint(wpt);
@@ -580,12 +576,11 @@ public class SpiderGC{
 		if (!infB.isClosed) {
 			int j = 1;
 			for (Enumeration e = cachesToUpdate.elements() ; e.hasMoreElements() ; j++) {
-				int i = ((Integer)e.nextElement()).intValue();
-				ch = cacheDB.get(i);
+				ch = (CacheHolder)e.nextElement();
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.getWayPoint() +" (" + (cachesToLoad.size()+j) + " / " + totalCachesToLoad + ")");
 				infB.redisplay();
 
-				int test = spiderSingle(i, infB,false);
+				int test = spiderSingle(cacheDB.getIndex(ch), infB,false);
 				if (test == -1) {
 					break;
 				} else if (test == 0) {
@@ -828,17 +823,6 @@ public class SpiderGC{
 		return ret;
 	} // getCacheByWaypointName
 
-	/**
-	 * Check whether a waypoint is in the database
-	 * @param wpt Name of waypoint to check
-	 * @return index of waypoint in database, -1 if it does not exist
-	 */
-	private int searchWpt(String wpt){
-		Integer INTR = (Integer)indexDB.get(wpt);
-		if(INTR != null){
-			return INTR.intValue();
-		} else return -1;
-	}
 
 	/**
 	 * Get the Distance to the centre
