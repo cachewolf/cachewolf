@@ -279,10 +279,8 @@ public class CacheList extends CellPanel {
 			   cacheDB for each entry in cacheList, we simply compare the sort field of ch to apply.
 			*/
 			if (!ch.sort.equals(apply)) {
-				int idx=Global.getProfile().getCacheIndex(ch.getWayPoint());
-				if (idx==-1) continue;
-				ch=null;
-				ch=cacheDB.get(idx);
+				ch=cacheDB.get(ch.getWayPoint());
+				if (ch == null) continue;
 			}
 			if (ch.is_black()!=Global.getProfile().showBlacklisted()) 
 				wrongBlackStatus++;
@@ -306,9 +304,8 @@ public class CacheList extends CellPanel {
 	public boolean addCache(String wayPoint) {
 		// Check whether this is the first cache being added
 		if (needsInit)  {lstCaches.deleteItem(0);lstCaches.deleteItem(0);  needsInit=false; lstCaches.repaint(); }
-		int idx=Global.getProfile().getCacheIndex(wayPoint);
-		if (idx==-1) return false;
-		CacheHolder ch=Global.getProfile().cacheDB.get(idx);
+		CacheHolder ch=Global.getProfile().cacheDB.get(wayPoint);
+		if (ch == null) return false;
 		boolean cachesAdded=false;
 		// Add main cache
 		cachesAdded|=addCache(ch);
@@ -390,8 +387,6 @@ public class CacheList extends CellPanel {
 		try {
 			FileReader in = new FileReader(fileName);
 			String wayPoint;
-			int idx;
-			CacheDB cacheDB=Global.getProfile().cacheDB;
 			int lineNr=0;
 			while ((wayPoint = in.readLine()) != null){
 				wayPoint=wayPoint.trim();
@@ -401,9 +396,9 @@ public class CacheList extends CellPanel {
 					select=lineNr;
 				}
 				// Only add the cache if it is in this profile
-				idx=Global.getProfile().getCacheIndex(wayPoint);
-				if (idx>=0) {
-					addCache(cacheDB.get(idx));
+				CacheHolder ch=Global.getProfile().cacheDB.get(wayPoint);
+				if (ch != null) {
+					addCache(ch);
 				}
 				lineNr++;
 			}

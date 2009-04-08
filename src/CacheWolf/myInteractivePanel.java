@@ -102,13 +102,8 @@ public class myInteractivePanel extends InteractivePanel{
 	
 	public void startDragging(DragContext dc) {
 		if (!Global.mainForm.cacheListVisible) return;
-		CacheDB cacheDB=Global.getProfile().cacheDB;
-//Vm.debug("myIAP startDrag "+dc.start.x+"/"+dc.start.y);
-		int idx=Global.getProfile().getCacheIndex(wayPoint); 
-		if (idx>=0) {
-			 CacheHolder ch=cacheDB.get(idx);
-			 //wayPoint=ch.wayPoint;
-			 //Vm.debug("Waypoint : "+ch.wayPoint);
+		CacheHolder ch=Global.getProfile().cacheDB.get(wayPoint); 
+		if (ch != null) {
 			 IconAndText icnDrag=new IconAndText();
 			 icnDrag.addColumn(CacheType.cache2Img(ch.getType()));
 			 icnDrag.addColumn(ch.getWayPoint());

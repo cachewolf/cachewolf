@@ -31,7 +31,6 @@ public class GPXImporter extends MinML {
 	boolean fromTC = false;
 	boolean nameFound = false;
 	int zaehlerGel = 0;
-	Hashtable DBindex = new Hashtable();
 	public static final int DOIT_ASK = 0;
 	public static final int DOIT_NOSPOILER = 1;
 	public static final int DOIT_WITHSPOILER = 2;
@@ -52,12 +51,6 @@ public class GPXImporter extends MinML {
 		inCache = false;
 		inLogs = false;
 		inBug =false;
-		//index db for faster search
-		CacheHolder ch;
-		for(int i = 0; i<cacheDB.size();i++){
-			ch = cacheDB.get(i);
-			DBindex.put(ch.getWayPoint(), new Integer(i));
-		}//for
 	}
 /*	skg: This Constructor is not referenced, therefore commented out 
 	public GPXImporter(Vector DB, String[] f,String d, Preferences p)
@@ -273,7 +266,7 @@ public class GPXImporter extends MinML {
 		if (name.equals("wpt")){
 			// Add cache Data only, if waypoint not already in database
 			//if (searchWpt(cacheDB, holder.wayPoint)== -1){
-			int index=searchWpt(chD.getWayPoint());
+			int index=cacheDB.getIndex(chD.getWayPoint());
 			//Vm.debug("here ?!?!?");
 			//Vm.debug("chould be new!!!!");
 			if (index == -1){
@@ -522,12 +515,6 @@ public class GPXImporter extends MinML {
 	}
 	*/
 	
-	private int searchWpt(String wpt){
-		Integer INTR = (Integer)DBindex.get(wpt);
-		if(INTR != null){
-			return INTR.intValue();
-		} else return -1;
-	}
 	private void spiderImagesUsingSpider(){
 		String addr;
 		String cacheText;
