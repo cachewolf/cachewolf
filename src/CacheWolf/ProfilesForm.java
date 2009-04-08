@@ -127,7 +127,6 @@ public class ProfilesForm extends Form{
 			}
 			if (ev.target == btnOK || ev.target == choice){
 				Global.getProfile().setFilterActive(Filter.FILTER_INACTIVE);
-				Global.getProfile().setFilterInverted(false);
 				if (choice.getSelectedItem()!=null) {
 					newSelectedProfile=choice.getSelectedItem().toString();
 					close(1);

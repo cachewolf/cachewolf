@@ -638,6 +638,7 @@ public class Profile {
 
 	public void setFilterActive(int filterActive) {
 		this.notifyUnsavedChanges(filterActive != this.filterActive);
+		this.setFilterInverted(false);
 		this.filterActive = filterActive;
 	}
 
