@@ -55,7 +55,6 @@ public class NewProfileForm extends Form {
 							this.close(-1);
 						}
 						Global.getProfile().setFilterActive(Filter.FILTER_INACTIVE);
-						Global.getProfile().setFilterInverted(false);
 						this.close(0);
 					}
 				}
