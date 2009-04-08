@@ -90,7 +90,7 @@ public class CacheDB {
 		CacheHolder oldObj = (CacheHolder) vectorDB.get(index);
 	    vectorDB.set(index, ch);
 	    hashDB.put(ch.getWayPoint(), this.getIntObj(ch.getWayPoint(), index));
-	    if (oldObj!=null) {
+	    if (oldObj!=null && ! oldObj.getWayPoint().equals(oldObj.getWayPoint())) {
 	    	hashDB.remove(oldObj.getWayPoint());
 	    }
     }
