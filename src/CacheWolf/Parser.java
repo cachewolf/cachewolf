@@ -222,9 +222,8 @@ public class Parser{
 
 	private Object getVariable(String varName) throws Exception {
 		if (varName.startsWith("$")) { // Potential coordinate
-			int idx=Global.getProfile().getCacheIndex(varName.substring(1));
-			if (idx!=-1) { // Found it!
-				CacheHolder ch=Global.getProfile().cacheDB.get(idx);
+			CacheHolder ch=Global.getProfile().cacheDB.get(varName.substring(1));
+			if (ch != null) { // Found it!
 				// Check whether coordinates are valid
 				cwPt.set(ch.pos);
 				if (cwPt.isValid() )
@@ -544,10 +543,12 @@ public class Parser{
 		// Don't want to switch to goto panel, just set the values
 		nav.setDestination(coord);
 		if (nargs==2) { // Now set the value of the addi waypoint (it must exist already)
-    		int i=Global.getProfile().getCacheIndex(waypointName);
-    		if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
     		cwPt.set(coord);
-    		CacheHolder ch=Global.getProfile().cacheDB.get(i);
+    		CacheHolder ch=Global.getProfile().cacheDB.get(waypointName);
+    		if (ch == null) {
+    			err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
+    			return;
+    		}
     		ch.LatLon=cwPt.toString(CWPoint.CW);
     		ch.pos.set(cwPt);
     		ch.calcDistance(Global.getPref().curCentrePt); // Update distance/bearing
@@ -663,11 +664,11 @@ public class Parser{
      */
     private void funcSkeleton(int nargs) throws Exception {
    		String waypointName=Global.mainTab.lastselected;
-    	int ci=Global.getProfile().getCacheIndex(waypointName);
-    	if (ci<0) return;
+    	CacheHolder c=Global.getProfile().cacheDB.get(waypointName);
+    	if (c == null) return;
     	// If it is an addi, find its main cache
-    	if (Global.getProfile().cacheDB.get(ci).isAddiWpt()) {
-    		waypointName=Global.getProfile().cacheDB.get(ci).mainCache.getWayPoint();
+    	if (c.isAddiWpt()) {
+    		waypointName=c.mainCache.getWayPoint();
     	}
    		int nStages=-1;
     	if (nargs==1) {
@@ -707,9 +708,11 @@ public class Parser{
 				Global.mainTab.tbP.refreshTable();
 			}
     	} else {
-	    	int i=Global.getProfile().getCacheIndex(waypointName);
-			if (i<0) err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
-	   	    CacheHolder ch=Global.getProfile().cacheDB.get(i);
+	   	    CacheHolder ch=Global.getProfile().cacheDB.get(waypointName);
+	   	    if (ch == null) {
+	   	    	err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
+	   	    	return;
+	   	    }
 			CacheHolder addiWpt;
 	   	    if (ch.hasAddiWpt()){
 	   	    	op.append("cls()\n");
@@ -891,9 +894,8 @@ public class Parser{
 		if (thisToken.tt==TokenObj.TT_ENDIF || thisToken.token.equals(";")) return;
 		parseStringExp();
 		if (varName.startsWith("$")) { // Potential coordinate
-			int idx=Global.getProfile().getCacheIndex(varName.substring(1));
-			if (idx!=-1) { // Yes, is a coordinate
-				CacheHolder ch=Global.getProfile().cacheDB.get(idx);
+			CacheHolder ch=Global.getProfile().cacheDB.get(varName.substring(1));
+			if (ch != null) { // Yes, is a coordinate
 				// Check whether new coordinates are valid
 				String coord=popCalcStackAsString();
 				cwPt.set(coord);

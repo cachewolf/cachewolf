@@ -44,7 +44,6 @@ public class LOCXMLImporter extends MinML {
 	String file;
 	CacheHolderDetail holder;
 
-	Hashtable DBindexWpt = new Hashtable();
 	String strData = new String();
 
 	
@@ -53,11 +52,6 @@ public class LOCXMLImporter extends MinML {
 		profile=prof;
 		cacheDB = profile.cacheDB;
 		file = f;
-		CacheHolder ch;
-		for(int i = 0; i<cacheDB.size();i++){
-			ch = cacheDB.get(i);
-			DBindexWpt.put(ch.getWayPoint(), new Integer(i));
-		}//for
 	}
 	
 	public void doIt() {
@@ -105,11 +99,10 @@ public class LOCXMLImporter extends MinML {
 
 		if (name.equals("waypoint")){
 			int index;
-			index = searchWpt(holder.getWayPoint());
+			index = cacheDB.getIndex(holder.getWayPoint());
 			if (index == -1){
 				holder.setNew(true);
 				cacheDB.add(new CacheHolder(holder));
-				DBindexWpt.put(holder.getWayPoint(), new Integer(cacheDB.size()-1));
 			}
 			// update (overwrite) data
 			else {
@@ -138,23 +131,11 @@ public class LOCXMLImporter extends MinML {
 		if (debugXML) Vm.debug(strData);
 	}
 
-	
-	/**
-	* Method to iterate through cache database and look for waypoint.
-	* Returns value >= 0 if waypoint is found, else -1
-	*/
-	private int searchWpt(String wpt){
-		Integer INTR = (Integer)DBindexWpt.get(wpt);
-		if(INTR != null){
-			return INTR.intValue();
-		} else return -1;
-	}
-
 	private CacheHolderDetail getHolder(String wpt){// See also OCXMLImporter
 		int index;
 		CacheHolderDetail ch;
 		
-		index = searchWpt(wpt);
+		index = cacheDB.getIndex(wpt);
 		if (index == -1){
 			ch = new CacheHolderDetail();
 			ch.setWayPoint(wpt);

@@ -371,22 +371,17 @@ public class Profile {
 	}
 
 	/** Get a unique name for a new waypoint */
-	// TODO Make more efficient
 	public String getNewWayPointName() {
 		String strWp = null;
-		long lgWp = 1;
+		long lgWp = 0;
 		int s = cacheDB.size();
 		if (s == 0)
 			return "CW0000";
 		// Create new waypoint,look if not in db
-		for (int i = 0; i < s; i++) {
+		do {
+			lgWp++;
 			strWp = "CW" + MyLocale.formatLong(lgWp, "0000");
-			if (cacheDB.get(i).getWayPoint().indexOf(strWp) >= 0) {
-				// waypoint exists in database
-				lgWp++;
-				i = -1; // Because i++ will be executed next, so we start the loop with 0
-			}
-		}
+		} while (cacheDB.getIndex(strWp) >= 0);
 		return strWp;
 	}
 
@@ -501,31 +496,27 @@ public class Profile {
 	 */
 	public void buildReferences(){
 		CacheHolder ch, mainCh;
-		Hashtable dbIndex = new Hashtable((int)(cacheDB.size()/0.75f + 1), 0.75f); // initialise so that von rehashing is neccessary
 
-		Integer index;
 		// Build index for faster search and clear all references
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			ch = cacheDB.get(i);
 			ch.addiWpts.clear();
 			ch.mainCache = null;
-			// if (ch.wayPoint.startsWith("GC")) // Only put potential master caches into the index
-			dbIndex.put(ch.getWayPoint(), new Integer(i));
 		}
+		
 		// Build references
 		int max = cacheDB.size();
 		for (int i = 0; i < max; i++) {
 			ch = cacheDB.get(i);
 			if (ch.isAddiWpt()) {
 				// search main cache
-				index = (Integer) dbIndex.get("GC" + ch.getWayPoint().substring(2));
-				if (index == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
-					index = (Integer) dbIndex.get("OC"+ ch.getWayPoint().substring(2));
-				if (index == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
-					index = (Integer) dbIndex.get("CW"+ ch.getWayPoint().substring(2));
+				mainCh = cacheDB.get("GC" + ch.getWayPoint().substring(2));
+				if (mainCh == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
+					mainCh = cacheDB.get("OC" + ch.getWayPoint().substring(2));
+				if (mainCh == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
+					mainCh = cacheDB.get("CW" + ch.getWayPoint().substring(2));
 
-				if (index != null) {
-					mainCh = cacheDB.get(index.intValue());
+				if (mainCh != null) {
 					mainCh.addiWpts.add(ch);
 					ch.mainCache = mainCh;
 					ch.setAttributesFromMainCache(mainCh);
