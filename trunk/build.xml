@@ -140,6 +140,7 @@
 			<fileset dir="resources/attributes-big"/>
 		</copy>
 		<antcall target="copyres"/>
+		<antcall target="copyppcdll"/>
 
 		<zip destfile="${pkg.dir}/CacheWolf-PPC2003.zip" basedir="${assemble.dir}"/>
 
@@ -230,6 +231,10 @@
 			includes="CacheWolf/*.java,CacheWolf/*/*.java,exp/*.java,utils/*.java"
 		/>
 
+	</target>
+
+	<target name="copyppcdll" description="copy modified dll for PPC2003">
+		<copy todir="${assemble.dir}" file="platform-dep/PNA-WinCE42/ewe.dll" />
 	</target>
 
 	<target name="copyres" description="copy images to the assembly directory">
