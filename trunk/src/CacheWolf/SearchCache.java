@@ -60,6 +60,6 @@ public class SearchCache {
 		}
 		//Global.getProfile().filterActive=Filter.filterActive; //TODO This is a hack. Need to tidy this up
 		//Global.getProfile().filterInverted=Filter.filterInverted;
-		Global.getProfile().restoreFilter();
+		profile.restoreFilter();
 	}
 }
