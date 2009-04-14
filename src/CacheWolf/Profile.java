@@ -332,7 +332,7 @@ public class Profile {
 	 *  The values of Filter.isActive and Filter.isInactive are set by the filter 
 	 **/
 	void restoreFilter() {
-		restoreFilter( false );		
+		restoreFilter( true );		
 	}
 	
 	void restoreFilter(boolean clearIfInactive) {
