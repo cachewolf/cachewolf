@@ -50,11 +50,13 @@ public class SearchCache {
 	* cache database. Restore to the state of the filter
 	*/
 	public void clearSearch(){
-		Global.getProfile().selectionChanged = true;
+	    Profile profile = Global.getProfile();
+		profile.selectionChanged = true;
+		boolean filter_marked_only = profile.getFilterActive() == Filter.FILTER_MARKED_ONLY;
 		for(int i = cacheDB.size()-1;i >=0;i--){
 			CacheHolder ch=cacheDB.get(i);
 			ch.is_flaged=false;
-			//ch.setFiltered((ch.is_black()^Global.getProfile().showBlacklisted())) ;
+			if (filter_marked_only) ch.setFiltered((ch.is_black()^Global.getProfile().showBlacklisted())) ;
 		}
 		//Global.getProfile().filterActive=Filter.filterActive; //TODO This is a hack. Need to tidy this up
 		//Global.getProfile().filterInverted=Filter.filterInverted;
