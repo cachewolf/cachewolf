@@ -257,7 +257,6 @@ public class GPSPortOptions extends SerialPortOptions {
 	
 	private boolean testPort(String port, int baud){
 		mySerialThread gpsPort; 
-		int gpsLen;
 		long now;
 		
 		SerialPortOptions testspo= new SerialPortOptions();

@@ -1,7 +1,6 @@
 package CacheWolf;
 
 import ewe.fx.mImage;
-import ewe.io.File;
 import ewe.io.FileBase;
 
 /**

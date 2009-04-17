@@ -23,14 +23,14 @@ import exp.*;
  *     20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
  */
 public class MainMenu extends MenuBar {
-	private MenuItem profiles, preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
+	private MenuItem preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap;
 	private MenuItem spider, spiderAllFinds, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
-	private MenuItem exportLOC, exportGPS, exportCacheMate,mnuSeparator;
+	private MenuItem exportLOC, exportGPS, mnuSeparator;
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild;
 	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
@@ -41,8 +41,7 @@ public class MainMenu extends MenuBar {
 
 	public MainMenu(Form f){
 		father = f;
-		String cwd = FileBase.getProgramDirectory();
-
+	
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for profiles, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
@@ -127,7 +126,7 @@ public class MainMenu extends MenuBar {
 		// Create the "Application" pulldown menu
 		///////////////////////////////////////////////////////////////////////
 		MenuItem [] appMenuItems=new MenuItem[11];
-		appMenuItems[0] = profiles 	 = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu); 
+		appMenuItems[0] = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu); 
 		appMenuItems[1] = preferences = new MenuItem(MyLocale.getMsg(108,"Preferences")); 
 		appMenuItems[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Centre"));
 		appMenuItems[3] = mnuContext = new MenuItem(MyLocale.getMsg(134,"Current Cache"));
