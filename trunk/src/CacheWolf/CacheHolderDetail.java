@@ -14,12 +14,16 @@ import ewe.ui.FormBase;
 import ewe.ui.InputBox;
 import ewe.util.Vector;
 
-public class CacheHolderDetail extends CacheHolder {
-	  public String LongDescription = EMPTY;
-	  public String LastUpdate = EMPTY;
-	  public String Hints = EMPTY;
+public class CacheHolderDetail {
+	  
+	  
+	 /** CacheHolder which holds the detail. <b>Only</b> set by CacheHolder when creating detail! **/
+	  private CacheHolder parent = null;
+	  public String LongDescription = CacheHolder.EMPTY;
+	  public String LastUpdate = CacheHolder.EMPTY;
+	  public String Hints = CacheHolder.EMPTY;
 	  public LogList CacheLogs=new LogList();
-	  public String CacheNotes = EMPTY;
+	  public String CacheNotes = CacheHolder.EMPTY;
 	  public Vector Images = new Vector();
 	  public Vector ImagesText = new Vector();
 	  public Vector ImagesInfo = new Vector();
@@ -31,26 +35,26 @@ public class CacheHolderDetail extends CacheHolder {
 	  public Vector CacheIcons = new Vector();
 	  public TravelbugList Travelbugs=new TravelbugList();
 	  //public String Bugs = EMPTY; Superceded by Travelbugs
-	  public String URL = EMPTY;
-	  public String Solver = EMPTY;
-	  public String OwnLogId = EMPTY;
+	  public String URL = CacheHolder.EMPTY;
+	  public String Solver = CacheHolder.EMPTY;
+	  public String OwnLogId = CacheHolder.EMPTY;
 	  public Log OwnLog = null;
-	  public String Country = EMPTY;
-	  public String State = EMPTY;
+	  public String Country = CacheHolder.EMPTY;
+	  public String State = CacheHolder.EMPTY;
 	  /** For faster cache import (from opencaching) changes are only written when the details are freed from memory 
 	   * If you want to save the changes automatically when the details are unloaded, set this to true */ 
 	  public boolean hasUnsavedChanges = false;
 	  
-	 public CacheHolderDetail() {
-	 }
-	 //public CacheHolderDetail(String wpt) {super(wpt); }
 	 public CacheHolderDetail(CacheHolder ch) {
-		 super(ch);
+		 parent = ch;
 	 }
 
+	 public CacheHolder getParent() {
+		 return parent;
+	 }
 	 public void setLongDescription(String longDescription) {
-	 	if (LongDescription.equals("")) setNew(true);
-	 	else if (!stripControlChars(LongDescription).equals(stripControlChars(longDescription))) setUpdated(true);
+	 	if (LongDescription.equals("")) getParent().setNew(true);
+	 	else if (!stripControlChars(LongDescription).equals(stripControlChars(longDescription))) getParent().setUpdated(true);
 	 	LongDescription = longDescription;
 	 }
 	 
@@ -64,17 +68,17 @@ public class CacheHolderDetail extends CacheHolder {
 	 }
 	 
 	 public void setHints(String hints) {
-	 	if (!Hints.equals(hints)) setUpdated(true);
+	 	if (!Hints.equals(hints)) getParent().setUpdated(true);
 	 	Hints = hints;
 	 }
 	 
 	 public void setCacheLogs(LogList newLogs) {
 		 int size=newLogs.size();
 		 for (int i=size-1; i>=0; i--) { // Loop over all new logs, must start with oldest log
-			 if (CacheLogs.merge(newLogs.getLog(i))>=0) this.setLog_updated(true);
+			 if (CacheLogs.merge(newLogs.getLog(i))>=0) getParent().setLog_updated(true);
 		 }
 		 //CacheLogs=logs;
-		 setNoFindLogs(CacheLogs.countNotFoundLogs());
+		 getParent().setNoFindLogs(CacheLogs.countNotFoundLogs());
 	 }
 
 	 
@@ -85,13 +89,12 @@ public class CacheHolderDetail extends CacheHolder {
 	 * @return CacheHolder with updated data
 	 */
 	public CacheHolderDetail update(CacheHolderDetail newCh){
-		  super.update(newCh);
 		  // flags
-		  if (this.is_found() && this.getCacheStatus().equals("")) this.setCacheStatus(MyLocale.getMsg(318,"Found"));
+		  if (getParent().is_found() && getParent().getCacheStatus().equals("")) getParent().setCacheStatus(MyLocale.getMsg(318,"Found"));
 
 		  //travelbugs:GPX-File contains all actual travelbugs but not the missions
 		  //  we need to check whether the travelbug is already in the existing list
-		  this.setHas_bugs(newCh.Travelbugs.size()>0);
+		  getParent().setHas_bugs(newCh.Travelbugs.size()>0);
 		  for (int i=newCh.Travelbugs.size()-1; i>=0; i--) {
 			 Travelbug tb=newCh.Travelbugs.getTB(i);  
 		     Travelbug oldTB=this.Travelbugs.find(tb.getName());
@@ -104,6 +107,11 @@ public class CacheHolderDetail extends CacheHolder {
 		  
 		  // URL
 		  this.URL = newCh.URL;
+		  
+		  // Images
+		  this.Images = newCh.Images;
+		  this.ImagesInfo = newCh.ImagesInfo;
+		  this.ImagesText = newCh.ImagesText;
 		  
 		  setLongDescription(newCh.LongDescription);
 		  setHints(newCh.Hints);
@@ -135,7 +143,7 @@ public class CacheHolderDetail extends CacheHolder {
 				imgDesc = new InputBox("Description").input("",10);
 				//Create Destination Filename
 				String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf("."));
-				imgDestName = this.getWayPoint() + "_U_" + (this.UserImages.size()+1) + ext;
+				imgDestName = getParent().getWayPoint() + "_U_" + (this.UserImages.size()+1) + ext;
 				
 				this.UserImages.add(imgDestName);
 				this.UserImagesText.add(imgDesc);
@@ -152,14 +160,19 @@ public class CacheHolderDetail extends CacheHolder {
 		*	It fills information on cache details, hints, logs, notes and
 		*	images.
 		*/
-		public void readCache(String dir) throws IOException{
+		void readCache(String dir) throws IOException{
 			String dummy;
 			FileReader in = null;
-			if (new FileBugfix(dir + getWayPoint().toLowerCase() + ".xml").exists()) in = new FileReader(dir+getWayPoint().toLowerCase() + ".xml");
+			// If parent cache has empty waypoint then don't do anything. This might happen
+			// when a cache object is freshly created to serve as container for imported data
+			if (this.getParent().getWayPoint().equals(CacheHolder.EMPTY)) return;
+			
+			if (new FileBugfix(dir + getParent().getWayPoint().toLowerCase() + ".xml").exists()) in = new FileReader(dir+getParent().getWayPoint().toLowerCase() + ".xml");
 			if (in == null) {
-				if (new FileBugfix(dir + getWayPoint() + ".xml").exists()) in = new FileReader(dir+getWayPoint() + ".xml");
+				if (new FileBugfix(dir + getParent().getWayPoint() + ".xml").exists()) in = new FileReader(dir+getParent().getWayPoint() + ".xml");
 			}
-			if (in == null) throw new FileNotFoundException(dir+getWayPoint().toLowerCase()+".xml");
+			if (in == null) throw new FileNotFoundException(dir+getParent().getWayPoint().toLowerCase()+".xml");
+			Global.getPref().log("Reading file "+getParent().getWayPoint() + ".xml");
 			String text= in.readAll();
 			in.close();
 			Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);		
@@ -267,8 +280,8 @@ public class CacheHolderDetail extends CacheHolder {
 				URL = dummy;
 			}
 			else {
-				if (getWayPoint().startsWith("GC")) {
-					URL = "http://www.geocaching.com/seek/cache_details.aspx?wp="+ getWayPoint() + "&Submit6=Find&log=y";
+				if (getParent().getWayPoint().startsWith("GC")) {
+					URL = "http://www.geocaching.com/seek/cache_details.aspx?wp="+ getParent().getWayPoint() + "&Submit6=Find&log=y";
 				}
 			}
 			ex = new Extractor(text, "<SOLVER><![CDATA[", "]]></SOLVER>", 0, true);
@@ -280,28 +293,29 @@ public class CacheHolderDetail extends CacheHolder {
 		*/
 		public void saveCacheDetails(String dir){
 			PrintWriter detfile;
+			
 			//File exists?
-			boolean exists = (new File(dir + getWayPoint() + ".xml")).exists();
+			boolean exists = (new File(dir + getParent().getWayPoint() + ".xml")).exists();
 			//yes: then delete
 			if (exists) {
-				boolean ok = (new File(dir + getWayPoint() + ".xml")).delete();
+				boolean ok = (new File(dir + getParent().getWayPoint() + ".xml")).delete();
 				if(ok) ok = true;
 			}
-			boolean exists2 = (new File(dir + getWayPoint().toLowerCase() + ".xml")).exists();
+			boolean exists2 = (new File(dir + getParent().getWayPoint().toLowerCase() + ".xml")).exists();
 			//yes: delete
 			if (exists2) {
-				boolean ok2 = (new File(dir + getWayPoint().toLowerCase() + ".xml")).delete();
+				boolean ok2 = (new File(dir + getParent().getWayPoint().toLowerCase() + ".xml")).delete();
 				if(ok2) ok2=true;
 			}
 			//Vm.debug("Writing to: " +dir + "for: " + wayPoint);
 			try{
-			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dir + getWayPoint().toLowerCase() + ".xml")));
+			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dir + getParent().getWayPoint().toLowerCase() + ".xml")));
 			} catch (Exception e) {
 				Global.getPref().log("Problem creating details file",e,true);
 				return;
 			}
 			try{
-				if(getWayPoint().length()>0){
+				if(getParent().getWayPoint().length()>0){
 				  detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n");
 				  detfile.print("<CACHEDETAILS>\r\n");
 				  detfile.print("<DETAILS><![CDATA["+LongDescription+"]]></DETAILS>\r\n");
@@ -362,36 +376,21 @@ public class CacheHolderDetail extends CacheHolder {
 				  detfile.print(Travelbugs.toXML());
 				  detfile.print("<URL><![CDATA["+URL+"]]></URL>\r\n");
 				  detfile.print("<SOLVER><![CDATA["+Solver+"]]></SOLVER>\r\n");
-				  detfile.print(toXML()); // This will allow restoration of index.xml
+				  detfile.print(getParent().toXML()); // This will allow restoration of index.xml
 				  detfile.print("</CACHEDETAILS>\n");
+				  Global.getPref().log("Writing file: "+getParent().getWayPoint().toLowerCase() + ".xml");
 				} // if length
 			} catch (Exception e){
-				Global.getPref().log("Problem waypoint " + getWayPoint() + " writing to a details file: " + e.getMessage());
+				Global.getPref().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: " + e.getMessage());
 			}
 			try{
 			  detfile.close();
 			} catch (Exception e){
-				Global.getPref().log("Problem waypoint " + getWayPoint() + " writing to a details file: " + e.getMessage());
+				Global.getPref().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: " + e.getMessage());
 			}
 			hasUnsavedChanges = false;
 		}
-		
-		/**
-		 * Method for checking if to caches belongs to each other, e.g.
-		 * an additional waypoint belongs to the main cache.
-		 * Works currently only, if the last 4 or 5 chars of the waypoint are
-		 * the same, this is the gc.com way. 
-		 * @param ch cache to check
-		 * @return true if there is a relation, false otherwise
-		 */
-		public boolean belongsTo (CacheHolder ch) {
-			
-			// avoid self referencing
-			if (this.getWayPoint().equals(ch.getWayPoint())) return false;
-
-			return this.getWayPoint().endsWith(ch.getWayPoint().substring(2));
-		}
-		
+				
 		/**
 		 * Return true if this cache has additional info for some pictures
 		 * @return true if cache has additional info, false otherwise
@@ -408,3 +407,5 @@ public class CacheHolderDetail extends CacheHolder {
 //	   }
 
 }
+
+

@@ -24,6 +24,7 @@ public class myTableModel extends TableModel{
 	private static final Color COLOR_SELECTED	= new Color(198,198,198);
 	private static final Color COLOR_ARCHFND_FG	= new Color(255,0,0); // Archived && Found
 	private static final Color COLOR_ARCHFND_BG	= new Color(152,251,152);	
+	private static final Color COLOR_DETAILS_LOADED		= new Color(229,206,235);
 	private CacheDB cacheDB;
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
 	 * the element j (as per the list below) is visible in column i. 
@@ -180,6 +181,7 @@ public class myTableModel extends TableModel{
 				else if( ch.is_owned())     ta.fillColor = COLOR_OWNED;
 				else if( ch.is_found())     ta.fillColor = COLOR_FOUND;
 				else if( ch.is_flaged)        ta.fillColor = COLOR_FLAGED;
+				else if( Global.getPref().debug && ch.detailsLoaded()) ta.fillColor = COLOR_DETAILS_LOADED;
 			} catch (Exception e) {};
 		} else if (row==-1 && colMap[col]==0 && Global.getProfile().showBlacklisted()) ta.fillColor=Color.Black;
 		return ta;

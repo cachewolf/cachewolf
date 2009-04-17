@@ -67,13 +67,8 @@ public class TravelbugJourneyScreen extends Form  {
 			ch=cacheDB.get(curCacheNo);
 			cache=MyLocale.getMsg(6022,": Current cache: ")+ch.getWayPoint()+" - "+ch.getCacheName();
 			waypoint=ch.getWayPoint();
-			chD=new CacheHolderDetail(ch);
-			try {
-				chD.readCache(Global.getProfile().dataDir);
-			}catch (Exception ex) {
-				Global.getPref().log("Failed to read cache "+ch.getWayPoint());
-			};
-			tblSrcCache=chD.Travelbugs;
+			chD=ch.getExistingDetails();
+			tblSrcCache=ch.getExistingDetails().Travelbugs;
 		}
 		title="Travelbugs"+cache;
 		tcTbJourneyList=new tbListControl();
@@ -253,8 +248,8 @@ public class TravelbugJourneyScreen extends Form  {
 			}
 			// If the list of travelbugs in the cache was modified, we need to save the cache too
 			if (chDmodified) {
-				chD.saveCacheDetails(Global.getProfile().dataDir);
 				ch.setHas_bugs(chD.Travelbugs.size()>0);
+				ch.save();
 			}
 			Vm.showWait(false);
 			chD=null;

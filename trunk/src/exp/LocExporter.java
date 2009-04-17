@@ -35,14 +35,16 @@ public class LocExporter extends Exporter{
 		return "<?xml version=\"1.0\"?><loc version=\"1.0\" src=\"EasyGPS\">\r\n";
 	}
 	
-	public String record(CacheHolderDetail chD){
+	public String record(CacheHolder ch){
+		CacheHolderDetail det = ch.getExistingDetails();
+		
 		// filter out not valid coords
-		if (!chD.pos.isValid()) return null;
+		if (!ch.pos.isValid()) return null;
 		StringBuffer strBuf = new StringBuffer(200);
 		strBuf.append("<waypoint>\r\n   <name id=\"");
-		String wptName=simplifyString(chD.getWayPoint());
+		String wptName=simplifyString(ch.getWayPoint());
 		if (Global.getPref().addDetailsToWaypoint) {
-			wptName += getShortDetails( chD );			
+			wptName += getShortDetails( ch );			
 		}
 		if (Global.getPref().garminMaxLen==0)
 			strBuf.append(wptName);
@@ -52,25 +54,25 @@ public class LocExporter extends Exporter{
 			} catch (Exception ex){ pref.log("Invalid value for garmin.MaxWaypointLength"); }
 		}
 		strBuf.append("\"><![CDATA[");
-		strBuf.append(simplifyString(chD.getCacheName()));
+		strBuf.append(simplifyString(ch.getCacheName()));
 		if (Global.getPref().addDetailsToName) {
 			if ( !Global.getPref().addDetailsToWaypoint ) {
-				strBuf.append( getShortDetails( chD ) );
+				strBuf.append( getShortDetails( ch ) );
 			}
-			if ( (!chD.Hints.equals("null")) && (chD.Hints.length() > 0) ) {
+			if ( (!det.Hints.equals("null")) && (det.Hints.length() > 0) ) {
 				strBuf.append(":");
-				strBuf.append( simplifyString(Common.rot13(chD.Hints)) );			
+				strBuf.append( simplifyString(Common.rot13(det.Hints)) );			
 			}
 		}
 		strBuf.append("]]></name>\r\n   <coord lat=\"");
-		strBuf.append(chD.pos.getLatDeg(CWPoint.DD));
+		strBuf.append(ch.pos.getLatDeg(CWPoint.DD));
 		strBuf.append("\" lon=\"");
-		strBuf.append(chD.pos.getLonDeg(CWPoint.DD));
+		strBuf.append(ch.pos.getLonDeg(CWPoint.DD));
 		strBuf.append("\"/>\r\n   <type>");
 		if (gm!=null) {
-			strBuf.append(gm.getIcon(chD));
+			strBuf.append(gm.getIcon(ch));
 		} else {
-			if (chD.is_found())
+			if (ch.is_found())
 				strBuf.append("Geocache Found");
 			else
 				strBuf.append("Geocache");
@@ -115,19 +117,19 @@ public class LocExporter extends Exporter{
 			}
 		}		
 		
-		public String getIcon(CacheHolderDetail chD) {
+		public String getIcon(CacheHolder ch) {
 			// First check if there is a mapping for "cache found"
-			if (chD.is_found()) {
+			if (ch.is_found()) {
 				for (int i=0; i<mapSize; i++)
 					// TODO Geht das noch schöner...? ................ <------------------------------>
-					if (symbols[i].onlyIfFound!=null && symbols[i].type.equals(String.valueOf(chD.getType()))) return symbols[i].name;
+					if (symbols[i].onlyIfFound!=null && symbols[i].type.equals(String.valueOf(ch.getType()))) return symbols[i].name;
 			}
 			// Now try mapping the cache irrespective of the "found" status
 			for (int i=0; i<mapSize; i++)
-				if (symbols[i].type.equals(String.valueOf(chD.getType()))) return symbols[i].name;
+				if (symbols[i].type.equals(String.valueOf(ch.getType()))) return symbols[i].name;
 		
 			// If it is not a mapped type, just use the standard mapping
-			if (chD.is_found())
+			if (ch.is_found())
 				return "Geocache Found";
 			else
 				return "Geocache";

@@ -23,6 +23,7 @@ public class NewProfileWizard {
 				profile.setCenterCoords(cs.getCoords());
 			}
 			Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
+			profile.notifyUnsavedChanges(true);
 		}
 		f.close(0);
 		return (code == 0);

@@ -42,7 +42,7 @@ public class LOCXMLImporter extends MinML {
 	Preferences pref;
 	Profile profile;
 	String file;
-	CacheHolderDetail holder;
+	CacheHolder holder;
 
 	String strData = new String();
 
@@ -102,21 +102,20 @@ public class LOCXMLImporter extends MinML {
 			index = cacheDB.getIndex(holder.getWayPoint());
 			if (index == -1){
 				holder.setNew(true);
-				cacheDB.add(new CacheHolder(holder));
+				cacheDB.add(holder);
 			}
 			// update (overwrite) data
 			else {
 				holder.setNew(false);
-				cacheDB.set(index, new CacheHolder(holder));
 			}
 			// save all  (after each cache???)
-			holder.saveCacheDetails(profile.dataDir);
+			holder.save();
 			profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 			return;
 		}
 
 		if (name.equals("link")){
-			holder.URL = strData;
+			holder.getFreshDetails().URL = strData;
 			return;
 		}
 
@@ -131,20 +130,14 @@ public class LOCXMLImporter extends MinML {
 		if (debugXML) Vm.debug(strData);
 	}
 
-	private CacheHolderDetail getHolder(String wpt){// See also OCXMLImporter
-		int index;
-		CacheHolderDetail ch;
+	private CacheHolder getHolder(String wpt){// See also OCXMLImporter
+		CacheHolder ch;
 		
-		index = cacheDB.getIndex(wpt);
-		if (index == -1){
-			ch = new CacheHolderDetail();
+		ch = cacheDB.get(wpt);
+		if (ch == null) {
+			ch = new CacheHolder();
 			ch.setWayPoint(wpt);
-			return ch;
 		}
-		ch = new CacheHolderDetail(cacheDB.get(index));
-		try {
-			ch.readCache(profile.dataDir);
-		} catch (Exception e) {Vm.debug("Could not open file: " + e.toString());};
 		return ch;
 	}
 
