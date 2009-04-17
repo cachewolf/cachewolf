@@ -431,7 +431,9 @@ public class SpiderGC{
 				dummy = listBlockRex.stringMatched(1);
 				try{
 					lineRex.search(dummy);
-				}catch(NullPointerException nex){}
+				}catch(NullPointerException nex){
+					Global.getPref().log("Ignored Exception", nex, true);
+				}
 				while(lineRex.didMatch()){
 					//Vm.debug(getDist(lineRex.stringMatched(1)) + " / " +getWP(lineRex.stringMatched(1)));
 					found_on_page++;
@@ -788,7 +790,6 @@ public class SpiderGC{
 						pref.log("Error reading cache: "+ch.getWayPoint());
 						pref.log("Exception in getCacheByWaypointName: ",ex);
 					}
-					finally{}
 				} else {
 					break;
 				}
@@ -1437,7 +1438,9 @@ public class SpiderGC{
 			CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 			sock.close();
 			return getResponseHeaders(conn)+c_data.toString();
-		} catch (Exception e) {	}
+		} catch (Exception e) {	
+			Global.getPref().log("Ignored Exception", e, true);
+		}
 		return "";
 	}
 

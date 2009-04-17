@@ -74,7 +74,8 @@ public class TravelbugJourneyList extends MinML {
 		return count;
 	}
 	
-	TravelbugJourneyList() {}
+	TravelbugJourneyList() { // Public constructor
+	}
 	
 	/**
 	 * Return a list of the travelbugs still in my possession

@@ -8,7 +8,7 @@ public class LogList {
 	private Vector logList=new Vector(10);
 
 	/** Construct an empty Log list */
-	public LogList() {
+	public LogList() { // Public constructor
 	}
 	
 	/** Get the Log at a certain position in the list */

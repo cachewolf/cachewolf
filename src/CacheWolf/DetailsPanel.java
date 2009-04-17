@@ -436,7 +436,9 @@ public class DetailsPanel extends CellPanel{
 				} catch(IllegalArgumentException e) {
 					try {
 						t.parse(foundDate,"y-M-d");
-					} catch(IllegalArgumentException e1) {}
+					} catch(IllegalArgumentException e1) {
+						// No parsable date given - should not appear
+					}
 				};
 				dc.reset(t);
 				if (dc.execute()==ewe.ui.FormBase.IDOK) {

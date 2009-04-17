@@ -434,8 +434,12 @@ public class MovingMap extends Form {
 		try {
 			TrackOverlaySetCenterTopLeft = ScreenXY2LatLon(100, 100);
 			addMissingOverlays();
-		} catch (NullPointerException e) {} // hapens if currentmap == null or PosCircle not valid
-		catch (IllegalArgumentException e) {} // happens if screensize is still not known    ---> in both cases creation of Overlayset will be done in updateOverlayPos if tracks != null 
+		} catch (NullPointerException e) {
+			// hapens if currentmap == null or PosCircle not valid
+		} 
+		catch (IllegalArgumentException e) {
+			// happens if screensize is still not known    ---> in both cases creation of Overlayset will be done in updateOverlayPos if tracks != null
+		}  
 	}
 
 	public void destroyOverlaySet() {
@@ -2030,7 +2034,9 @@ class ListBox extends Form{
 				selected = false;
 				this.close(FormBase.IDCANCEL);
 			}
-		}catch (NegativeArraySizeException e) {} // happens in substring when a dividing line selected 
+		}catch (NegativeArraySizeException e) {
+			// happens in substring when a dividing line selected 
+		} 
 	}
 
 	public void onEvent(Event ev){
