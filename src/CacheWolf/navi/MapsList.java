@@ -220,7 +220,7 @@ public class MapsList extends Vector {
 				if (fittingmap == null || fittingmap.scale > mi.scale * scaleTolerance) {
 					better = true; // mi map has a better (lower) scale than the last knwon good map
 				} else {
-					if (fittingmap != null && scaleEquals(mi, fittingmap)) { // same scale as bestmap till now -> test if its center is nearer to the gps-point = topleft
+					if (scaleEquals(mi, fittingmap)) { // same scale as bestmap till now -> test if its center is nearer to the gps-point = topleft
 						latNearer = java.lang.Math.abs(topleft.latDec- mi.center.latDec)/mi.sizeKm < minDistLat ;
 						lonNearer = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
 						if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
