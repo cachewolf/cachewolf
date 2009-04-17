@@ -26,7 +26,6 @@ public class myTableModel extends TableModel{
 	private static final Color COLOR_ARCHFND_FG	= new Color(255,0,0); // Archived && Found
 	private static final Color COLOR_ARCHFND_BG	= new Color(152,251,152);	
 	private static final Color COLOR_DETAILS_LOADED		= new Color(229,206,235);
-	private static final Color COLOR_WHITE      = new Color(255,255,255);
 	private static final Color COLOR_LINE      = new Color(255,255,255);
 	private CacheDB cacheDB;
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
