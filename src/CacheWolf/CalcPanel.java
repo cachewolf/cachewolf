@@ -3,7 +3,6 @@ package CacheWolf;
 import CacheWolf.navi.Metrics;
 import ewe.ui.*;
 import ewe.ui.formatted.TextDisplay;
-import ewe.util.Vector;
 import ewe.fx.Dimension;
 import ewe.fx.FontMetrics;
 

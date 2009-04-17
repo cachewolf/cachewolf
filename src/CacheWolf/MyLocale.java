@@ -10,8 +10,6 @@ import ewe.io.File;
 import ewe.sys.*;
 import ewe.sys.Double;
 import ewe.sys.Long;
-import ewe.ui.FormBase;
-import ewe.ui.Gui;
 import ewe.ui.Window;
 import ewe.ui.WindowConstants;
 /**

@@ -2,12 +2,7 @@ package CacheWolf.navi;
 import ewe.fx.*;
 import ewe.graphics.*;
 import ewe.io.FileInputStream;
-import ewe.io.FileReader;
 import ewe.io.IOException;
-import ewe.io.InputStream;
-import ewe.io.InputStreamReader;
-import ewe.io.Stream;
-import ewe.util.ByteArray;
 /** 
  * class that can be used with any x and any y
  * it will save taht location and make itself automatically

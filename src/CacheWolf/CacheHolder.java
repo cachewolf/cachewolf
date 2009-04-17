@@ -1,23 +1,12 @@
 package CacheWolf;
 
-import utils.FileBugfix;
 import CacheWolf.navi.Metrics;
 
 import com.stevesoft.ewe_pat.Regex;
 
-import ewe.filechooser.FileChooser;
-import ewe.filechooser.FileChooserBase;
-import ewe.io.BufferedWriter;
-import ewe.io.File;
-import ewe.io.FileNotFoundException;
-import ewe.io.FileReader;
-import ewe.io.FileWriter;
 import ewe.io.IOException;
-import ewe.io.PrintWriter;
 import ewe.sys.Convert;
-import ewe.sys.Vm;
 import ewe.ui.FormBase;
-import ewe.ui.InputBox;
 import ewe.ui.MessageBox;
 import ewe.util.Vector;
 

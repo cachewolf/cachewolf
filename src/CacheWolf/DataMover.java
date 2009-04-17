@@ -5,7 +5,6 @@ import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.*;
 import ewe.ui.*;
-import ewe.util.Vector;
 import ewe.sys.*;
 
 

@@ -6,7 +6,6 @@ import ewe.ui.*;
 import ewe.fx.*;
 import ewe.io.File;
 import ewe.io.IOException;
-import ewe.util.*;
 
 /**
  *	Implements the user interaction of the list view. Works together with myTableModel and TablePanel

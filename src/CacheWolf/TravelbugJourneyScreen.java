@@ -16,7 +16,6 @@ import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.*;
-import ewe.util.*;
 import ewe.fx.*;
 
 public class TravelbugJourneyScreen extends Form  {

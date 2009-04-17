@@ -7,7 +7,6 @@ import CacheWolf.navi.Navigate;
 import ewe.sys.Vm;
 import ewe.ui.*;
 import ewe.fx.*;
-import ewe.util.*;
 
 /**
  *	This class creates the tabbed panel and sets the tabs to the respective
