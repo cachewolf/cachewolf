@@ -252,7 +252,7 @@ public class Preferences extends MinML{
 			r.close();
 		}catch(IOException e){
 			log("IOException reading config file: " + pathToConfigFile, e, true);
-			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile, MessageBox.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile, FormBase.OKB)).execute();
 		}catch(Exception e){
 			if (e instanceof NullPointerException)
 				log("Error reading pref.xml: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
