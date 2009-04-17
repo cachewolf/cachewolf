@@ -109,30 +109,23 @@ public class KMLExporter extends Exporter {
 						h.progress = (float)expCount/(float)counter;
 						h.changed();
 						
-						holder=new CacheHolderDetail(ch);
-						try {
-							holder.readCache(profile.dataDir);
-						} catch (IOException e) {
-							continue;
-						}
-						if (holder.pos.isValid()){
-							str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-								     holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+						if (ch.pos.isValid()){
+							str = record(ch, ch.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+								     ch.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 							if (str != null) outp.print(str);
 						}
 						if (ch.hasAddiWpt()){
 							boolean createdAdditionalWaypointsFolder = false;
 							for(int j = 0; j<ch.addiWpts.size(); j++){
 								addiWpt = (CacheHolder) ch.addiWpts.get(j);
-								holder=new CacheHolderDetail(addiWpt);
 								expCount++;
-								if (holder.pos.isValid() &&  ! holder.is_filtered()){
+								if (ch.pos.isValid() &&  ! addiWpt.is_filtered()){
 									if (! createdAdditionalWaypointsFolder) {
 										outp.print(startFolder("Additional Waypoints", false));
 										createdAdditionalWaypointsFolder = true;
 									}
-									str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-										     holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+									str = record(addiWpt, addiWpt.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+											addiWpt.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 									if (str != null) outp.print(str);
 								}
 								
@@ -272,12 +265,13 @@ public class KMLExporter extends Exporter {
 	}
 
 
-	public String record(CacheHolderDetail ch, String lat, String lon){
+	public String record(CacheHolder ch, String lat, String lon){
 		StringBuffer strBuf = new StringBuffer(200);
+		CacheHolderDetail det = ch.getExistingDetails();
 		
 		strBuf.append("   <Placemark>\r\n");
-		if (ch.URL != null){
-			strBuf.append("      <description>"+SafeXML.clean(ch.URL)+"</description>\r\n");
+		if (det.URL != null){
+			strBuf.append("      <description>"+SafeXML.clean(det.URL)+"</description>\r\n");
 		}
 		strBuf.append("      <name>"+ ch.getWayPoint() + " - " + SafeXML.clean(ch.getCacheName()) +"</name>\r\n");
 		strBuf.append("      <LookAt>\r\n");
@@ -313,7 +307,7 @@ public class KMLExporter extends Exporter {
 		return strBuf.toString();
 	}
 	
-	private String getColor(CacheHolderDetail ch){
+	private String getColor(CacheHolder ch){
 		if (ch.is_found()) return COLOR_FOUND;
 		if (ch.is_owned()) return COLOR_OWNED;
 		if (ch.is_archived() || !ch.is_available()) return COLOR_NOT_AVAILABLE;

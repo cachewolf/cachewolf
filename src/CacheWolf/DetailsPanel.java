@@ -221,7 +221,7 @@ public class DetailsPanel extends CellPanel{
 		lblTerr.setText((ch.getTerrain().length()>0) ? (MyLocale.getMsg(1001,"T")+": "+ch.getTerrain()) : "");
 		lblDiff.setText((ch.getHard().length()>0)    ? (MyLocale.getMsg(1000,"D")+": "+ch.getHard()) : ""); 
 
-		if(isBigScreen)	mNotes.setText(ch.details.CacheNotes);
+		if(isBigScreen)	mNotes.setText(ch.getExistingDetails().CacheNotes);
 	}
 	
 	
@@ -377,7 +377,7 @@ public class DetailsPanel extends CellPanel{
 				else 	note = note + dtm.toString();
 				note = note + "\n";
 				thisCache.getCacheDetails(true).CacheNotes = note;
-				thisCache.getCacheDetails(true).saveCacheDetails( Global.getProfile().dataDir);
+				thisCache.save();
 			}
 			else if (ev.target == btnAddPicture){
 				thisCache.getCacheDetails(true).addUserImage(profile);
@@ -536,14 +536,9 @@ public class DetailsPanel extends CellPanel{
 		  // set status also on addi wpts
 		  ch.setAttributesToAddiWpts();
 		  dirty_notes=false;
-		  // if (dirty_details) { Global.getProfile().hasUnsavedChanges=true;}
 		  dirty_details=false;
 		  setNeedsTableUpdate(false);
-		  if (thisCache.details != null) thisCache.details.hasUnsavedChanges = false;
-		  thisCache.getCacheDetails(true).hasUnsavedChanges = true;
-		  
-		  // Global.mainTab.tbP.refreshTable(); this is done in mainTab.onLeavingPanel
-		  ////Vm.debug("New status updated!");
+		  thisCache.getFreshDetails().hasUnsavedChanges = true;
 	}
 
 	private class TravelbugInCacheScreen extends Form {

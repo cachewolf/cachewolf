@@ -9,7 +9,7 @@ import ewe.sys.*;
 */
 public class NotesScreen extends Form{
 	mTextPad wayNotes = new mTextPad();
-	CacheHolderDetail thisCache = null;
+	CacheHolderDetail chD = null;
 	mButton addDateTime;
 	mButton btSave = new mButton(MyLocale.getMsg(127,"Save"));
 	mButton cancelBtn = new mButton("Cancel");
@@ -24,8 +24,8 @@ public class NotesScreen extends Form{
 		this.title = "Notes";
 		setPreferredSize(Global.getPref().myAppWidth, Global.getPref().myAppHeight);
 		this.resizeOnSIP = true;
-		thisCache = ch;
-		wayNotes.setText(thisCache.CacheNotes);
+		chD = ch;
+		wayNotes.setText(chD.CacheNotes);
 		addLast(sbp.setTag(CellConstants.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		titleControls=new CellPanel();
 		titleControls.addNext(addDateTime,CellConstants.HSTRETCH,CellConstants.HFILL);
@@ -46,12 +46,12 @@ public class NotesScreen extends Form{
 				wayNotes.setText(note);
 			}
 			if(ev.target == btSave){
-				thisCache.CacheNotes = wayNotes.getText();
-				thisCache.saveCacheDetails( Global.getProfile().dataDir);
+				chD.CacheNotes = wayNotes.getText();
+				chD.getParent().save();
 				this.close(0);
 			}
 			if(ev.target == cancelBtn){
-				if ( (!thisCache.CacheNotes.equals(wayNotes.getText())) ) {
+				if ( (!chD.CacheNotes.equals(wayNotes.getText())) ) {
 					if ( (new MessageBox("Warning", "You will loose any changes made to the notes. Do you want to continue?"
 							, FormBase.YESB|FormBase.NOB)).execute() == FormBase.IDYES) {
 						this.close(0);
@@ -59,11 +59,11 @@ public class NotesScreen extends Form{
 				} else this.close(0); // no changes -> exit without asking
 			} 
 			if(ev.target == titleOK){
-				if ( (!thisCache.CacheNotes.equals(wayNotes.getText())) ) {
+				if ( (!chD.CacheNotes.equals(wayNotes.getText())) ) {
 					if ( (new MessageBox("Warning", "Save changes made to the notes?"
 							, FormBase.YESB|FormBase.NOB)).execute() == FormBase.IDYES) {
-						thisCache.CacheNotes = wayNotes.getText();
-						thisCache.saveCacheDetails( Global.getProfile().dataDir);
+						chD.CacheNotes = wayNotes.getText();
+						chD.getParent().save();
 					}
 				}
 			}

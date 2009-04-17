@@ -730,12 +730,8 @@ public class Parser{
 					op.append(addiWpt.getCacheName());
 					op.append("] = \" $");
 					op.append(addiWpt.getWayPoint());
-					CacheHolderDetail chD=new CacheHolderDetail(addiWpt);
-					try {
-						chD.readCache(Global.getProfile().dataDir);
-					} catch( Exception ex) {};
-					if (chD.LongDescription.trim().length()>0)
-						op.append("\n   \""+STRreplace.replace(chD.LongDescription,"\"","\"\"")+"\"");
+					if (addiWpt.getExistingDetails().LongDescription.trim().length()>0)
+						op.append("\n   \""+STRreplace.replace(addiWpt.getExistingDetails().LongDescription,"\"","\"\"")+"\"");
 					op.append("\n   goto($");
 					op.append(addiWpt.getWayPoint());
 					op.append("); STOP\nENDIF\n\n");

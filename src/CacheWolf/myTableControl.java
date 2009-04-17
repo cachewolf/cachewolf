@@ -189,9 +189,8 @@ public class myTableControl extends TableControl{
 							nDeleted++;
 							h.progress = ((float)nDeleted)/(float)allCount;
 							h.changed();
-							dm.deleteCacheFiles(ch.getWayPoint(),profile.dataDir);
 							cacheDB.removeElementAt(i);
-							ch.releaseCacheDetails();
+							dm.deleteCacheFiles(ch.getWayPoint(),profile.dataDir);
 							ch=null;
 							if (pbf.isClosed) break;
 						}
@@ -250,7 +249,7 @@ public class myTableControl extends TableControl{
 		if (selectedItem == miOpenOffline) {
 			if(browserPathIsValid()){
 				ShowCacheInBrowser sc=new ShowCacheInBrowser();
-				sc.showCache(cacheDB.get(tbp.getSelectedCache()).getCacheDetails(false, true));
+				sc.showCache(cacheDB.get(tbp.getSelectedCache()));
 			}
 		}
 		if (selectedItem == miOpen){

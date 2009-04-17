@@ -143,7 +143,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		if (doLogging){
 			try {
 				logFile.close();
-			} catch (IOException e) {}
+			} catch (IOException e) {/*Too lazy to do something */}
 			if (logTimer > 0) {
 				Vm.cancelTimer(logTimer);
 				logTimer = 0;

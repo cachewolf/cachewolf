@@ -194,9 +194,8 @@ public class DataMover {
 			 this.title=title;
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
-			srcHolder.releaseCacheDetails();
-			deleteCacheFiles(srcHolder.getWayPoint(),profile.dataDir);
-			srcDB.removeElementAt(i);
+			 srcDB.removeElementAt(i);
+			 deleteCacheFiles(srcHolder.getWayPoint(),profile.dataDir);
 		 }
 	}
 	 
@@ -206,19 +205,16 @@ public class DataMover {
 			 this.dstProfile=dstProfile;
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
-				srcHolder.releaseCacheDetails();
+				srcHolder.save();
+				deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir);
+				copyCacheFiles(srcHolder.getWayPoint(),profile.dataDir, dstProfile.dataDir);
 				// does cache exists in destDB ?
+				// Update database
 				int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
 				if (dstPos >= 0){
-					deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir);
-					copyCacheFiles(srcHolder.getWayPoint(),profile.dataDir, dstProfile.dataDir);
-					// Update database
 					dstProfile.cacheDB.set(dstPos,srcHolder);
 				}
 				else {
-					deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir);
-					copyCacheFiles(srcHolder.getWayPoint(),profile.dataDir, dstProfile.dataDir);
-					// Update database
 					dstProfile.cacheDB.add(srcHolder);
 				}
 			 }		 
@@ -230,25 +226,20 @@ public class DataMover {
 				 this.dstProfile=dstProfile;
 			 }
 			 public void doIt(int i,CacheHolder srcHolder) {
+				 srcDB.removeElementAt(i);
+				 deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir);
+				 moveCacheFiles(srcHolder.getWayPoint(),profile.dataDir, dstProfile.dataDir);
 				// does cache exists in destDB ?
-				srcHolder.releaseCacheDetails();
+				 // Update database
 				int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
 				if (dstPos >= 0){
-					deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir);
-					moveCacheFiles(srcHolder.getWayPoint(),profile.dataDir, dstProfile.dataDir);
-					// Update database
 					dstProfile.cacheDB.set(dstPos,srcHolder);
-					srcDB.removeElementAt(i);
-					i--;
 				}
 				else {
-					deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir);
-					moveCacheFiles(srcHolder.getWayPoint(),profile.dataDir, dstProfile.dataDir);
 					// Update database
 					dstProfile.cacheDB.add(srcHolder);
-					srcDB.removeElementAt(i);
-					i--;
 				}
+				i--;
 			 }		 
 		}
 	}

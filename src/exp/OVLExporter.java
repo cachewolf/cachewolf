@@ -14,7 +14,7 @@ public class OVLExporter extends Exporter{
 		this.setHowManyParams(LAT_LON|COUNT);
 	}
 	
-	public String record(CacheHolderDetail ch, String lat, String lon, int counter){
+	public String record(CacheHolder ch, String lat, String lon, int counter){
 		StringBuffer str = new StringBuffer(200);
 		double tmp;
 		str.append("[Symbol "+Convert.toString(2*counter + 1)+"]\r\n");

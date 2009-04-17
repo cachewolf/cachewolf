@@ -34,7 +34,7 @@ public class PCX5Exporter extends Exporter{
 		return strBuf.toString();
 	}
 	
-	public String record(CacheHolderDetail ch){
+	public String record(CacheHolder ch){
 		StringBuffer strBuf = new StringBuffer(200);
 		String latlonstr, dummy;
 

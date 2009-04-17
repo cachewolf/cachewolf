@@ -146,7 +146,7 @@ public class TPLExporter {
 	}
 	
 	public void doIt(){
-		CacheHolderDetail holder;
+		CacheHolderDetail det;
 		CacheHolder ch;
 		ProgressBarForm pbf = new ProgressBarForm();
 		ewe.sys.Handle h = new ewe.sys.Handle();
@@ -184,56 +184,50 @@ public class TPLExporter {
 
 			for(int i = 0; i<counter;i++){
 				ch = cacheDB.get(i);
+				det = ch.getExistingDetails();
 				h.progress = (float)i/(float)counter;
 				h.changed();
 				if(ch.is_black() == false && ch.is_filtered() == false){
 					if (ch.pos.isValid() == false) continue;
-					holder=new CacheHolderDetail(ch);
-					try{
-						holder.readCache(profile.dataDir);
-					}catch(Exception e){
-						Vm.debug("Problem reading cache page");
-						Global.getPref().log("Exception in TplExporter = Problem reading cache page, Cache: " + holder.getWayPoint(), e, true);
-					}
 					try {
 						Regex dec = new Regex("[,.]",myFilter.decSep);
 						if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
 						varParams = new Hashtable();
-						varParams.put("TYPE", CacheType.transType(holder.getType()));
-						varParams.put("SHORTTYPE", CacheType.transType(holder.getType()).substring(0,1));
-						varParams.put("SIZE", holder.getCacheSize());
-						varParams.put("SHORTSIZE", holder.getCacheSize().substring(0,1));
-						varParams.put("WAYPOINT", holder.getWayPoint());
-						varParams.put("OWNER", holder.getCacheOwner());
-						varParams.put("DIFFICULTY", dec.replaceAll(holder.getHard()));
-						varParams.put("TERRAIN", dec.replaceAll(holder.getTerrain()));
-						varParams.put("DISTANCE", dec.replaceAll(holder.getDistance()));
-						varParams.put("BEARING", holder.bearing);
-						varParams.put("LATLON", holder.LatLon);
-						varParams.put("LAT", dec.replaceAll(holder.pos.getLatDeg(CWPoint.DD)));
-						varParams.put("LON", dec.replaceAll(holder.pos.getLonDeg(CWPoint.DD)));
-						varParams.put("STATUS", holder.getCacheStatus());
-						varParams.put("STATUS_DATE", holder.GetStatusDate());
-						varParams.put("STATUS_TIME", holder.GetStatusTime());
-						varParams.put("DATE", holder.getDateHidden());
-						varParams.put("URL", holder.URL);
-						varParams.put("DESCRIPTION", holder.LongDescription);
+						varParams.put("TYPE", CacheType.transType(ch.getType()));
+						varParams.put("SHORTTYPE", CacheType.transType(ch.getType()).substring(0,1));
+						varParams.put("SIZE", ch.getCacheSize());
+						varParams.put("SHORTSIZE", ch.getCacheSize().substring(0,1));
+						varParams.put("WAYPOINT", ch.getWayPoint());
+						varParams.put("OWNER", ch.getCacheOwner());
+						varParams.put("DIFFICULTY", dec.replaceAll(ch.getHard()));
+						varParams.put("TERRAIN", dec.replaceAll(ch.getTerrain()));
+						varParams.put("DISTANCE", dec.replaceAll(ch.getDistance()));
+						varParams.put("BEARING", ch.bearing);
+						varParams.put("LATLON", ch.LatLon);
+						varParams.put("LAT", dec.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
+						varParams.put("LON", dec.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
+						varParams.put("STATUS", ch.getCacheStatus());
+						varParams.put("STATUS_DATE", ch.GetStatusDate());
+						varParams.put("STATUS_TIME", ch.GetStatusTime());
+						varParams.put("DATE", ch.getDateHidden());
+						varParams.put("URL", det.URL);
+						varParams.put("DESCRIPTION", det.LongDescription);
 						if (myFilter.badChars != null) {
-							varParams.put("NAME", rex.replaceAll(holder.getCacheName()));
-							varParams.put("NOTES", rex.replaceAll(holder.CacheNotes));
-							varParams.put("HINTS", rex.replaceAll(holder.Hints));
-							varParams.put("DECRYPTEDHINTS", rex.replaceAll(Common.rot13(holder.Hints)));
+							varParams.put("NAME", rex.replaceAll(ch.getCacheName()));
+							varParams.put("NOTES", rex.replaceAll(det.CacheNotes));
+							varParams.put("HINTS", rex.replaceAll(det.Hints));
+							varParams.put("DECRYPTEDHINTS", rex.replaceAll(Common.rot13(det.Hints)));
 						} else {
-							varParams.put("NAME", holder.getCacheName());
-							varParams.put("NOTES", holder.CacheNotes);
-							varParams.put("HINTS", holder.Hints);
-							varParams.put("DECRYPTEDHINTS", Common.rot13(holder.Hints));
+							varParams.put("NAME", ch.getCacheName());
+							varParams.put("NOTES", det.CacheNotes);
+							varParams.put("HINTS", det.Hints);
+							varParams.put("DECRYPTEDHINTS", Common.rot13(det.Hints));
 						}
 						cache_index.add(varParams);
 					}catch(Exception e){
-						Vm.debug("Problem getting Parameter, Cache: " + holder.getWayPoint());
+						Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
 						e.printStackTrace();
-						Global.getPref().log("Exception in TplExporter = Problem getting Parameter, Cache: " + holder.getWayPoint(), e, true);
+						Global.getPref().log("Exception in TplExporter = Problem getting Parameter, Cache: " + ch.getWayPoint(), e, true);
 					}
 				}
 			}

@@ -16,7 +16,7 @@ public class Attributes {
 	public long attributesYes;
 	public long attributesNo;
 
-	public Attributes(){ 
+	public Attributes(){ // Just a public constructor
 	}
 	
 	/**
@@ -40,7 +40,8 @@ public class Attributes {
     // Attribute set functions
     ////////////////////////////////////////////////
 	
-	public void XmlAttributesStart() {}
+	public void XmlAttributesStart() { // Any reason for this?		
+	}  
 	public void XmlAttributesEnd(String elem){
 		clear();
 		Extractor ex=new Extractor(elem,"<ATT>","</ATT>",0,true);
@@ -51,7 +52,8 @@ public class Attributes {
 		}
 	}
 
-	public void XmlAttributeStart(){}
+	public void XmlAttributeStart(){  // Any reason for this?
+	}
 	public void XmlAttributeEnd(String elem){
 		add(elem);
 	}

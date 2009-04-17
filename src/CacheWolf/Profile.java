@@ -519,7 +519,7 @@ public class Profile {
 				if (mainCh != null) {
 					mainCh.addiWpts.add(ch);
 					ch.mainCache = mainCh;
-					ch.setAttributesFromMainCache(mainCh);
+					ch.setAttributesFromMainCache();
 				}// if
 			}// if
 		}// for

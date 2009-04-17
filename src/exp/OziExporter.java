@@ -23,7 +23,7 @@ public class OziExporter extends Exporter{
 		return strBuf.toString();
 	}
 
-	public String record(CacheHolderDetail ch, String lat, String lon){
+	public String record(CacheHolder ch, String lat, String lon){
 		StringBuffer strBuf = new StringBuffer(200);
 		String tmpName;
 

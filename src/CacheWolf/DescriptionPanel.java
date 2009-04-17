@@ -15,7 +15,7 @@ import ewe.util.Vector;
 public class DescriptionPanel extends CellPanel{
 	HtmlDisplay disp = new HtmlDisplay();
 	mButton btnPlus, btnMinus;
-	CacheHolderDetail currCache;
+	CacheHolder currCache;
 	
 	CellPanel buttonP = new CellPanel();
 	CellPanel descP = new CellPanel();
@@ -37,7 +37,7 @@ public class DescriptionPanel extends CellPanel{
          * Set the text to display. Text should be HTML formated.
          */
     // String description = null;
-    public void setText(CacheHolderDetail cache) {
+    public void setText(CacheHolder cache) {
         boolean isHtml;
         if (currCache == cache) return;
         int scrollto = 0;
@@ -49,16 +49,15 @@ public class DescriptionPanel extends CellPanel{
                 scrollto = disp.getTopLine();
             isHtml = cache.is_HTML();
             if (cache.isAddiWpt()) {
-                CacheHolderDetail mainCache = cache.mainCache.getCacheDetails(true);
-                isHtml = mainCache.is_HTML();
-                if (cache.LongDescription != null && cache.LongDescription.length() > 0)
-                    desc = cache.LongDescription + (isHtml ? "<hr>\n" : "\n")
-                            + mainCache.LongDescription;
+                isHtml = cache.mainCache.is_HTML();
+                if (cache.getExistingDetails().LongDescription != null && cache.getExistingDetails().LongDescription.length() > 0)
+                    desc = cache.getExistingDetails().LongDescription + (isHtml ? "<hr>\n" : "\n")
+                            + cache.mainCache.getExistingDetails().LongDescription;
                 else
-                    desc = mainCache.LongDescription;
+                    desc = cache.mainCache.getExistingDetails().LongDescription;
             } else
                 // not an addi-wpt
-                desc = cache.LongDescription;
+                desc = cache.getExistingDetails().LongDescription;
         }
         // HtmlDisplay does not show the <sup> tag correctly, so we need to replace with ^
         if (desc.indexOf("<sup>")>=0) {
@@ -70,13 +69,13 @@ public class DescriptionPanel extends CellPanel{
             int imageNo = 0;
             if (Global.getPref().descShowImg) {
                 Vector Images;
-                CacheHolderDetail chDimages; // cache which supplies the images (could be main cache)
+                CacheHolder chImages; // cache which supplies the images (could be main cache)
                 if (cache.isAddiWpt()) {
-                    chDimages=cache.mainCache.getCacheDetails(true);
+                    chImages=cache.mainCache;
                 } else {
-                    chDimages=cache;
+                    chImages=cache;
                 }
-            	Images = chDimages.Images;
+            	Images = chImages.getExistingDetails().Images;
                 StringBuffer s = new StringBuffer(desc.length() + Images.size() * 100);
                 int start = 0;
                 int pos;
@@ -110,7 +109,7 @@ public class DescriptionPanel extends CellPanel{
                     s.append(desc.substring(start));
                 desc = s.toString();
                 if (imageNo<Images.getCount()) {
-                    desc += getPicDesc(imageNo, chDimages);
+                    desc += getPicDesc(imageNo, chImages.getExistingDetails());
                 }
             }
             //disp.setHtml(desc);
@@ -154,18 +153,6 @@ public class DescriptionPanel extends CellPanel{
 	public void clear() {
 		disp.setPlainText("loading ...");
 		currCache = null;
-	}
-	
-	// Probably not needed anymore (Change in Rev. 1395)
-	private void redraw() {
-		int currLine;
-
-		Vm.showWait(true);
-		currLine = disp.getTopLine();
-		if (currCache.is_HTML())	disp.setHtml(desc);
-		else				disp.setPlainText(currCache.LongDescription);
-		disp.scrollTo(currLine,false);
-		Vm.showWait(false);
 	}
 	
 	/**

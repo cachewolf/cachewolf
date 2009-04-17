@@ -30,8 +30,8 @@ public class MainTab extends mTabbedPanel {
 	ImagePanel imageP;
 	SolverPanel solverP;
 	String lastselected = "";
-	public CacheHolder ch=null;
-	CacheHolderDetail chD =null, chMain=null;
+	public CacheHolder ch=null, chMain=null;
+	CacheHolderDetail chD =null;
 	MainMenu mnuMain;
 	StatusBar statBar;
 	public MovingMap mm;
@@ -137,18 +137,13 @@ public class MainTab extends mTabbedPanel {
 			chMain=null;
 			cacheDirty=false;
 			if (tbP.getSelectedCache()>=Global.mainTab.tbP.myMod.numRows || tbP.getSelectedCache()<0) {
-				ch=null; chD=null; 
+				ch=null;
+				chD=null; 
 				lastselected="";
 			} else {
 				ch = cacheDB.get(tbP.getSelectedCache());
 				lastselected=ch.getWayPoint();  // Used in Parser.Skeleton
-				try {
-					chD = ch.getCacheDetails(true);
-					//chD=new CacheHolderDetail(ch);
-					//chD.readCache(profile.dataDir);//Vm.debug("MainTab:readCache "+chD.wayPoint+"/S:"+chD.Solver);
-				} catch(Exception e){
-					//Vm.debug("Error loading: "+ch.wayPoint);
-				}
+				chD = ch.getCacheDetails(true);
 			}
 		}
 		if (panelNo==1) { // Leaving the Details Panel
@@ -174,8 +169,8 @@ public class MainTab extends mTabbedPanel {
 				if (chMain==null) {
 					chD.Solver=solverP.getInstructions();
 				} else {
-					chMain.Solver=solverP.getInstructions();
-					chMain.saveCacheDetails(Global.getProfile().dataDir);//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
+					chMain.getExistingDetails().Solver=solverP.getInstructions();
+					chMain.save();//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
 					chMain=null;
 				}
 			}
@@ -207,55 +202,42 @@ public class MainTab extends mTabbedPanel {
 			break;
 		case 2: // Description Panel
 			MyLocale.setSIPOff();
-			descP.setText(chD);
+			descP.setText(ch);
 			break;
 		case 3: // Picture Panel
-			if (chD!=null) {
-				MyLocale.setSIPOff();
-				if (chD.isAddiWpt()) { 
-					imageP.setImages(chD.mainCache.getCacheDetails(true));
-				} else {
-					imageP.setImages(chD);
-				}
+			MyLocale.setSIPOff();
+			if (ch.isAddiWpt()) { 
+				imageP.setImages(ch.mainCache.getCacheDetails(true));
+			} else {
+				imageP.setImages(chD);
 			}
 			break;
 		case 4:  // Log Hint Panel
-			if (chD!=null) {
-				MyLocale.setSIPOff();
-				if (chD.isAddiWpt()) { 
-					hintLP.setText(chD.mainCache.getCacheDetails(true));
-				} else {
-					hintLP.setText(chD);
-				}
+			MyLocale.setSIPOff();
+			if (ch.isAddiWpt()) { 
+				hintLP.setText(ch.mainCache.getCacheDetails(true));
+			} else {
+				hintLP.setText(chD);
 			}
 			break;
 		case 5:  // Solver Panel
 			MyLocale.setSIPOff();
-			if (chD!=null) {
-				if (chD.isAddiWpt()) { 
-					chMain=chD.mainCache.getCacheDetails(true);//new CacheHolderDetail(chD.mainCache);
-/*					try {
-						chMain.readCache(profile.dataDir); //Vm.debug("mainT:readCache "+chD.wayPoint+"=>Main=>"+chMain.wayPoint+"/S:"+chMain.Solver);
-					} catch(Exception e){pref.log("Error reading cache .xml",e);}
-*/					solverP.setInstructions(chMain.Solver);
-				} else {
-					//Vm.debug("mainT: Waypoint:"+chD.wayPoint);
-					solverP.setInstructions(chD.Solver);
-				}
+			if (ch.isAddiWpt()) { 
+				solverP.setInstructions(ch.mainCache.getFreshDetails().Solver);
+			} else {
+				solverP.setInstructions(chD.Solver);
 			}
 			break;
 		case 6:  // CalcPanel
-			if (chD!=null) {
-				MyLocale.setSIPOff();
-				calcP.setFields(chD);
-			}
+			MyLocale.setSIPOff();
+			calcP.setFields(ch);
 			break;
 		case 7: // GotoPanel
 			MyLocale.setSIPOff();
 			break;
 		case 8:  // Cache Radar Panel
 			MyLocale.setSIPOff();
-			radarP.setParam(pref, cacheDB, chD==null?"":chD.getWayPoint());
+			radarP.setParam(pref, cacheDB, ch.getWayPoint());
 			radarP.drawThePanel();
 			break;
 		}
@@ -316,7 +298,6 @@ public class MainTab extends mTabbedPanel {
 				mainCache = selectedCache.mainCache.getWayPoint();
 			}			
 		}
-		detP.setNeedsTableUpdate(true);
 		if (CacheType.isAddiWpt(ch.getType()) && mainCache!=null && mainCache.length()>2) {
 			ch.setWayPoint(profile.getNewAddiWayPointName(mainCache));
 			profile.setAddiRef(ch);
@@ -335,6 +316,7 @@ public class MainTab extends mTabbedPanel {
 		oldCard=1;
 		if (this.cardPanel.selectedItem != 1) select(detP);
 		solverP.setInstructions("");
+		detP.setNeedsTableUpdate(true);
 		//tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
 	}
@@ -385,7 +367,7 @@ public class MainTab extends mTabbedPanel {
 	void updatePendingChanges() {
 		if (cacheDirty) {
 			if (chD != null)
-				chD.saveCacheDetails(Global.getProfile().dataDir);
+				chD.getParent().save();
 			cacheDirty = false;
 		}
 	}

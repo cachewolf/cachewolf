@@ -126,11 +126,13 @@ public class CacheDB {
     }
 
 	/** Removes a CacheHolder object at the specified position in the cache list. The following
-	 * elements are renumbered.
+	 * elements are renumbered.<br>
+	 * Additionally the cache details are unloaded and saved to file, if necessary.
 	 * @param index The index of element to remove
 	 */
 	public void removeElementAt(int index) {
 		CacheHolder ch = this.get(index);
+		ch.releaseCacheDetails();
 	    vectorDB.removeElementAt(index);
 	    hashDB.remove(ch.getWayPoint());
 	    // When one element has been removed, we have to update the index
