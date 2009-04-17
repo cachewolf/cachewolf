@@ -1,12 +1,8 @@
 package CacheWolf;
 
 import utils.FileBugfix;
-import ewe.io.Base64Codec;
 import ewe.io.File;
-import ewe.io.IOException;
 import ewe.sys.Convert;
-import ewe.util.ByteArray;
-import ewe.io.JavaUtf8Codec;
 
 public final class Common {
 

@@ -2,7 +2,6 @@ package CacheWolf;
 
 import utils.MutableInteger;
 import ewe.util.Comparer;
-import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Vector;

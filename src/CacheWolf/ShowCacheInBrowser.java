@@ -8,7 +8,6 @@ import ewe.io.FileBase;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
-import ewe.sys.Convert;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;

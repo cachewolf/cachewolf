@@ -7,7 +7,6 @@ import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.navi.GeodeticCalculator;
 
 import com.bbn.openmap.proj.coords.*;
-import com.bbn.openmap.proj.*;
 import com.bbn.openmap.*;
 import com.stevesoft.ewe_pat.Regex;
 

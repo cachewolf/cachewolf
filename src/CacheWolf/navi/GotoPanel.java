@@ -11,7 +11,6 @@ import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import ewe.ui.*;
-import ewe.util.Vector;
 import ewe.fx.*;
 import ewe.graphics.AniImage;
 //import ewe.io.IOException;
