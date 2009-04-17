@@ -48,7 +48,7 @@ public class CacheWolf extends Editor{
 							configfile = args[i+1];
 							i++;
 						} else {
-							(new MessageBox("Error", MyLocale.getMsg(7200, "Usage: CacheWolf [-c <path to pref.xml>] [-debug]"), MessageBox.OKB)).execute();
+							(new MessageBox("Error", MyLocale.getMsg(7200, "Usage: CacheWolf [-c <path to pref.xml>] [-debug]"), FormBase.OKB)).execute();
 							// return usage info
 							ewe.sys.Vm.exit(1);
 						}

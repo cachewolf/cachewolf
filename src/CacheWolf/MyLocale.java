@@ -7,6 +7,7 @@ package CacheWolf;
 import utils.FileBugfix;
 import ewe.fx.Rect;
 import ewe.io.File;
+import ewe.io.FileBase;
 import ewe.sys.*;
 import ewe.sys.Double;
 import ewe.sys.Long;
@@ -39,7 +40,7 @@ public class MyLocale {
 	public static String initErrors;
 
 	private static String getLocaleFileName(String languageshort) {
-		return File.makePath(File.getProgramDirectory(), "languages/" + languageshort.toUpperCase() + ".cfg");
+		return FileBase.makePath(FileBase.getProgramDirectory(), "languages/" + languageshort.toUpperCase() + ".cfg");
 	}
 
 	/**

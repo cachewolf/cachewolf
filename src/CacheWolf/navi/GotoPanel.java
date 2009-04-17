@@ -119,7 +119,7 @@ public class GotoPanel extends CellPanel {
 		lblGPS.modifyAll(ControlConstants.WantHoldDown, 0);
 
 		lblPosition = new mLabel(myNavigation.gpsPos.toString(currFormat));
-		lblPosition.anchor = mLabel.CENTER;
+		lblPosition.anchor = CellConstants.CENTER;
 		lblPosition.setMenu(mnuContextFormt);
 		lblPosition.modifyAll(ControlConstants.WantHoldDown, 0);
 		CoordsP.addLast(lblPosition, CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
@@ -397,7 +397,7 @@ public class GotoPanel extends CellPanel {
 				pref.curCentrePt.set(myNavigation.gpsPos);
 				mainT.updateBearDist();
 				Vm.showWait(false);
-				} else (new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set"), MessageBox.OKB)).execute();
+				} else (new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set"), FormBase.OKB)).execute();
 			}
 			//Start moving map
 			if (ev.target == btnMap){

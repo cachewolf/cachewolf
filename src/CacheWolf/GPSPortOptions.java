@@ -168,7 +168,7 @@ public class GPSPortOptions extends SerialPortOptions {
 				txtOutput.setText("");
 				new mThread() {
 					public void run() {
-						btnTest.set(mButton.Disabled, true);
+						btnTest.set(ControlConstants.Disabled, true);
 						btnTest.repaintNow();
 						btnScan.setText(Gui.getTextFrom(MyLocale.getMsg(7119,"Stop")));
 						btnScan.repaintNow();
@@ -199,7 +199,7 @@ public class GPSPortOptions extends SerialPortOptions {
 					private void fin() {
 						scanRunning = false;
 						if (btnTest != null) {
-							btnTest.set(mButton.Disabled, false);
+							btnTest.set(ControlConstants.Disabled, false);
 							btnTest.repaintNow();
 						}
 						if (btnScan != null) {
@@ -217,7 +217,7 @@ public class GPSPortOptions extends SerialPortOptions {
 				ed_.fromControls();
 				txtOutput.setText(MyLocale.getMsg(7117, "Displaying data from serial port directly:\n"));
 				try {
-					btnScan.set(mButton.Disabled, true);
+					btnScan.set(ControlConstants.Disabled, true);
 					btnScan.repaintNow();
 					this.portName = Common.fixSerialPortName(portName);
 					serThread = new mySerialThread(this, txtOutput);
@@ -225,7 +225,7 @@ public class GPSPortOptions extends SerialPortOptions {
 					btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
 					gpsRunning = true;
 				} catch (IOException e) {
-					btnScan.set(mButton.Disabled, false);
+					btnScan.set(ControlConstants.Disabled, false);
 					btnScan.repaintNow();
 					txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + this.portName + ", IOException: " + e.getMessage() + "\n", true);
 				}
@@ -234,7 +234,7 @@ public class GPSPortOptions extends SerialPortOptions {
 				serThread.stop();
 				btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7104,"Test$t")));
 				gpsRunning = false;
-				btnScan.set(mButton.Disabled, false);
+				btnScan.set(ControlConstants.Disabled, false);
 				btnScan.repaintNow();
 			}
 
