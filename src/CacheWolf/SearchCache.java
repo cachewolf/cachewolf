@@ -35,7 +35,8 @@ public class SearchCache {
 				if (ch.is_filtered()) break; // Reached end of visible records
 				if(ch.getWayPoint().toUpperCase().indexOf(searchStr) <0 && 
 				   ch.getCacheName().toUpperCase().indexOf(searchStr) <0 && 
-				   ch.getCacheStatus().toUpperCase().indexOf(searchStr)<0){
+				   ch.getCacheStatus().toUpperCase().indexOf(searchStr)<0 /*&&
+				   ch.getExistingDetails().LongDescription.toUpperCase().indexOf(searchStr)<0*/){
 					ch.is_flaged = false;
 					ch.setFiltered(true);
 				} else

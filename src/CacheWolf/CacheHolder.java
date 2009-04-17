@@ -1,13 +1,23 @@
 package CacheWolf;
 
+import utils.FileBugfix;
 import CacheWolf.navi.Metrics;
 
 import com.stevesoft.ewe_pat.Regex;
 
+import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
+import ewe.io.BufferedWriter;
+import ewe.io.File;
+import ewe.io.FileNotFoundException;
+import ewe.io.FileReader;
+import ewe.io.FileWriter;
 import ewe.io.IOException;
+import ewe.io.PrintWriter;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
+import ewe.ui.InputBox;
 import ewe.ui.MessageBox;
 import ewe.util.Vector;
 
@@ -114,128 +124,161 @@ public class CacheHolder {
 	private long attributesYes = 0;
 	private long attributesNo  = 0;
 
-	
-//	static int nObjects=0;
-	public CacheHolder() {//nObjects++;Vm.debug("CacheHolder() nO="+nObjects);
-	}
-
-	public CacheHolder(CacheHolder ch) {//nObjects++;Vm.debug("CacheHolder(ch) nO="+nObjects);
-		update(ch);
-	}
-
-	static char decSep,notDecSep;
+		static char decSep,notDecSep;
 	static {
 		decSep=MyLocale.getDigSeparator().charAt(0);
 		notDecSep=decSep=='.'?',':'.';
 	}
 
+	public CacheHolder() {  // Just a public constructor
+	}
+	
 	public CacheHolder(String xmlString) {
 		int start,end;
-		try {
-			start=xmlString.indexOf('"'); end=xmlString.indexOf('"',start+1);
-			setCacheName(SafeXML.cleanback(xmlString.substring(start+1,end)));
-			
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-            setCacheOwner(SafeXML.cleanback(xmlString.substring(start+1,end)));
-			// Assume coordinates are in decimal format
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			double lat=Convert.parseDouble(xmlString.substring(start+1,end).replace(notDecSep,decSep));
+		if (xmlString.length() <= 10) {
+			this.wayPoint = xmlString;
+		} else	
+	        try {
+		        start = xmlString.indexOf('"');
+		        end = xmlString.indexOf('"', start + 1);
+		        setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			double lon=Convert.parseDouble(xmlString.substring(start+1,end).replace(notDecSep,decSep));
-			pos=new CWPoint(lat,lon);
-			LatLon=pos.toString();
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setCacheOwner(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		        // Assume coordinates are in decimal format
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        double lat = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
+		                notDecSep, decSep));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setDateHidden(xmlString.substring(start+1,end)); 
-			// Convert the US format to YYYY-MM-DD if necessary
-			if (getDateHidden().indexOf('/')>-1) setDateHidden(DateFormat.MDY2YMD(getDateHidden()));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        double lon = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
+		                notDecSep, decSep));
+		        pos = new CWPoint(lat, lon);
+		        LatLon = pos.toString();
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setWayPoint(SafeXML.cleanback(xmlString.substring(start+1,end)));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setDateHidden(xmlString.substring(start + 1, end));
+		        // Convert the US format to YYYY-MM-DD if necessary
+		        if (getDateHidden().indexOf('/') > -1)
+			        setDateHidden(DateFormat.MDY2YMD(getDateHidden()));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setCacheStatus(xmlString.substring(start+1,end));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setWayPoint(SafeXML.cleanback(xmlString.substring(start + 1, end)));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setType(new Integer(xmlString.substring(start+1,end)).intValue());
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setCacheStatus(xmlString.substring(start + 1, end));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setHard(xmlString.substring(start+1,end));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setType(new Integer(xmlString.substring(start + 1, end)).intValue());
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setTerrain(xmlString.substring(start+1,end));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setHard(xmlString.substring(start + 1, end));
 
-			// The next item was 'dirty' but this is no longer used.
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setFiltered(xmlString.substring(start+1,end).equals("true")); 
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setTerrain(xmlString.substring(start + 1, end));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setCacheSize(xmlString.substring(start+1,end));
+		        // The next item was 'dirty' but this is no longer used.
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setFiltered(xmlString.substring(start + 1, end).equals("true"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setAvailable(xmlString.substring(start+1,end).equals("true"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setCacheSize(xmlString.substring(start + 1, end));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setArchived(xmlString.substring(start+1,end).equals("true"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setAvailable(xmlString.substring(start + 1, end).equals("true"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setHas_bugs(xmlString.substring(start+1,end).equals("true"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setArchived(xmlString.substring(start + 1, end).equals("true"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setBlack(xmlString.substring(start+1,end).equals("true"));
-			if(is_black()!=Global.getProfile().showBlacklisted()) setFiltered(true);
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setHas_bugs(xmlString.substring(start + 1, end).equals("true"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setOwned(xmlString.substring(start+1,end).equals("true"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setBlack(xmlString.substring(start + 1, end).equals("true"));
+		        if (is_black() != Global.getProfile().showBlacklisted())
+			        setFiltered(true);
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setFound(xmlString.substring(start+1,end).equals("true"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setOwned(xmlString.substring(start + 1, end).equals("true"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setNew(xmlString.substring(start+1,end).equals("true"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setFound(xmlString.substring(start + 1, end).equals("true"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setLog_updated(xmlString.substring(start+1,end).equals("true"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setNew(xmlString.substring(start + 1, end).equals("true"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setUpdated(xmlString.substring(start+1,end).equals("true"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setLog_updated(xmlString.substring(start + 1, end).equals("true"));
 
-			// for backwards compatibility set value to true, if it is not in the file
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setHTML(!xmlString.substring(start+1,end).equals("false"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setUpdated(xmlString.substring(start + 1, end).equals("true"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setNoFindLogs(Convert.toInt(xmlString.substring(start+1,end)));
+		        // for backwards compatibility set value to true, if it is not in the file
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setHTML(!xmlString.substring(start + 1, end).equals("false"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setOcCacheID(xmlString.substring(start+1,end));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setNoFindLogs(Convert.toInt(xmlString.substring(start + 1, end)));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setIncomplete(xmlString.substring(start+1,end).equals("true"));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setOcCacheID(xmlString.substring(start + 1, end));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setLastSyncOC(xmlString.substring(start+1,end));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setIncomplete(xmlString.substring(start + 1, end).equals("true"));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setNumRecommended(Convert.toInt(xmlString.substring(start+1,end)));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setLastSyncOC(xmlString.substring(start + 1, end));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start+1,end)));
-			recommendationScore = LogList.getScore(getNumRecommended(), getNumFoundsSinceRecommendation());
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setNumRecommended(Convert.toInt(xmlString.substring(start + 1, end)));
 
-			start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-			if (start > -1 && end > -1) {
-				setAttributesYes(Convert.parseLong(xmlString.substring(start+1,end)));
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start + 1, end)));
+		        recommendationScore = LogList.getScore(getNumRecommended(),
+		                getNumFoundsSinceRecommendation());
 
-				start=xmlString.indexOf('"',end+1); end=xmlString.indexOf('"',start+1);
-				if (start > -1 && end > -1)
-					setAttributesNo(Convert.parseLong(xmlString.substring(start+1,end)));
-			}
-		} catch (Exception ex) {
+		        start = xmlString.indexOf('"', end + 1);
+		        end = xmlString.indexOf('"', start + 1);
+		        if (start > -1 && end > -1) {
+			        setAttributesYes(Convert.parseLong(xmlString.substring(start + 1, end)));
 
-		}
-	}
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        if (start > -1 && end > -1)
+				        setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
+		        }
+	        } catch (Exception ex) {
+
+	        }
+        }
+	
 
 	/**
 	 * Returns the distance in formatted output. Using kilometers when metric system is active,
@@ -279,6 +322,15 @@ public class CacheHolder {
 	public void update(CacheHolder ch) {
 		update(ch, false);
 	}
+	/** 
+	 * Updates Cache information with information provided by cache given as argument. This is used
+	 * to update the cache with the information retrieved from files or web: The argument cache
+	 * is the one that is filled with the read information, <code>this</code> is the cache that
+	 * is already in the database and subject to update. 
+	 * @param ch The cache who's information is updating the current one
+	 * @param overwrite If <code>true</code>, then <i>status</i>, <i>is_found</i> and <i>position</i>
+	 * is updated, otherwise not.
+	 */
 	public void update(CacheHolder ch, boolean overwrite) {
 		this.recommendationScore = ch.recommendationScore;
 		this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
@@ -342,41 +394,41 @@ public class CacheHolder {
 
 		this.setAttributesYes(ch.getAttributesYes());
 		this.setAttributesNo(ch.getAttributesNo());
+		if (ch.detailsLoaded()) {
+			this.getFreshDetails().update(ch.getFreshDetails());
+		}	
 	}
 	/**
 	 * Call it only when necessary, it takes time, because all logs must be parsed
-	 *
 	 */
 	public void calcRecommendationScore() {
-		if (getWayPoint().toLowerCase().startsWith("oc") ) {
-			CacheHolderDetail chD;
-			if (this instanceof CacheHolderDetail)	chD = (CacheHolderDetail)this;
-			else chD = getCacheDetails(true, false);
-			if (chD != null) {
-				chD.CacheLogs.calcRecommendations();
-				recommendationScore = chD.CacheLogs.recommendationRating;
-				setNumFoundsSinceRecommendation(chD.CacheLogs.foundsSinceRecommendation);
-				setNumRecommended(chD.CacheLogs.numRecommended);
-			} else { // cache doesn't have details
-				recommendationScore = -1;
-				setNumFoundsSinceRecommendation(-1);
-				setNumRecommended(-1);
+		if (getWayPoint().toLowerCase().startsWith("oc")) {
+			// Calculate recommendation score only when details
+			// are already loaded. When they aren't loaded, then we assume
+			// that there is no change, so nothing to do.
+			if (this.detailsLoaded()) {
+				CacheHolderDetail chD = getCacheDetails(true, false);
+				if (chD != null) {
+					chD.CacheLogs.calcRecommendations();
+					recommendationScore = chD.CacheLogs.recommendationRating;
+					setNumFoundsSinceRecommendation(chD.CacheLogs.foundsSinceRecommendation);
+					setNumRecommended(chD.CacheLogs.numRecommended);
+				} else { // cache doesn't have details
+					recommendationScore = -1;
+					setNumFoundsSinceRecommendation(-1);
+					setNumRecommended(-1);
+				}
 			}
 		} else {
 			recommendationScore = -1;
 			setNumFoundsSinceRecommendation(-1);
 			setNumRecommended(-1);
 		}
-		if (details != null) {
-		details.recommendationScore = recommendationScore;
-		details.setNumFoundsSinceRecommendation(getNumFoundsSinceRecommendation());
-		details.setNumRecommended(getNumRecommended());
-		}
 	}
 	
 	/** Return a XML string containing all the cache data for storing in index.xml */
 	public String toXML() {
-		if (this instanceof CacheHolderDetail || (details != null && details.hasUnsavedChanges)) calcRecommendationScore(); 
+		calcRecommendationScore(); 
 		sb.delete(0,sb.length());
 		sb.append("    <CACHE ");
 		sb.append(" name = \"");        sb.append(SafeXML.clean(getCacheName()));
@@ -440,7 +492,8 @@ public class CacheHolder {
 			bearing = NOBEARING;
 		}
 	}
-	public void setAttributesFromMainCache(CacheHolder mainCh){
+	public void setAttributesFromMainCache(){
+		CacheHolder mainCh = this.mainCache;
 		this.setCacheOwner(mainCh.getCacheOwner());
 		this.setCacheStatus(mainCh.getCacheStatus());
 		this.setArchived(mainCh.is_archived());
@@ -456,7 +509,7 @@ public class CacheHolder {
 			CacheHolder addiWpt;
 			for (int i= this.addiWpts.getCount() - 1;  i>=0; i--){
 				addiWpt = (CacheHolder) this.addiWpts.get(i);
-				addiWpt.setAttributesFromMainCache(this);
+				addiWpt.setAttributesFromMainCache();
 			}
 		}
 	}
@@ -472,17 +525,17 @@ public class CacheHolder {
 		if ((!this.isAddiWpt()) && (!ch.isAddiWpt())) return false;
 		CacheHolder main1, main2;
 		if (this.isAddiWpt()) main1 = this.mainCache;  else main1 = this;
-		if (ch instanceof CacheHolderDetail) {
-			if (ch.isAddiWpt()) 
-				main2=ch.mainCache;
-			else 
-				return main1.getWayPoint().equals(ch.getWayPoint());
-		} else { // ch instanceof CacheHolder 
-			if (ch.isAddiWpt()) main2 = ch.mainCache; else main2 = ch; 
-		}
+		if (ch.isAddiWpt()) main2 = ch.mainCache; else main2 = ch; 
 		return main1 == main2;
 	}
 
+	/** Find out of detail object of Cache is loaded. Returns <code>true</code> if this is the case.
+	 * @return True when details object is present
+	 */
+	public boolean detailsLoaded() {
+		return details!=null;
+	}
+	
 	/** 
 	 * Call this method to get the long-description and so on.
 	 * If the according .xml-file is already read, it will return
@@ -495,93 +548,122 @@ public class CacheHolder {
 		return getCacheDetails(maybenew, true);
 	}
 	
-	/** 
-	 * Call this method to get the long-description and so on.
-	 * If the according .xml-file is already read, it will return
-	 * that one, otherwise it will be loaded.
-	 * To avoid memory problems this routine loads not for more caches than maxDetails
-	 * the details. If maxdetails is reached, it will remove from RAM the details 
-	 * of the 5 caches that were loaded most long ago.
+	/**
+	 * Gets the detail object of a cache. The detail object stores information which is not needed
+	 * for every cache instantaneously, but can be loaded if the user decides to look at this cache.
+	 * If the cache object is already existing, the method will return this object, otherwise it 
+	 * will create it and try to read it from the corresponding <waypoint>.xml file.
+	 * Depending on the parameters it is allowed that the <waypoint>.xml file does not yet exist,
+	 * or the user is warned that the file doesn't exist.
+	 * If more than <code>maxdetails</code> details are loaded, then the 5 last recently loaded 
+	 * caches are unloaded (to save ram). 
 	 * 
-	 * @param alarmuser if true an error message will be displayed to the user, if the details could not be read
-	 * @return the respective CacheHolderDetail, null if according xml-file could not be read
+	 * @param maybenew
+	 * 			  If true and the cache file could not be read, then an empty detail object is 
+	 *            returned.
+	 * @param alarmuser
+	 *            If true an error message will be displayed to the user, if the details could not
+	 *            be read, and the method returns null 
+	 * @return The respective CacheHolderDetail, or null
 	 */
-		
+
 	public CacheHolderDetail getCacheDetails(boolean maybenew, boolean alarmuser) {
-		if (details != null) {
-			if (details.hasUnsavedChanges) this.update(details);
-			else details.update(this);
-			return details;
+		if (details == null) {
+
+			details = new CacheHolderDetail(this);
+			try {
+				details.readCache(Global.getProfile().dataDir);
+			} catch (IOException e) {
+				if (alarmuser && !maybenew) {
+					(new MessageBox("Error", "Could not read cache details for cache: "
+					        + this.getWayPoint(), FormBase.OKB)).execute();
+				}
+				if (!maybenew) details = null;
+			}
+			if (details != null
+					  // for importing/spidering reasons helper objects with same waypoint are created
+					&& !cachesWithLoadedDetails.contains(this.getWayPoint())
+					  // helper objects may have empty waypoint
+					&& !this.getWayPoint().equals(CacheHolder.EMPTY)) {
+				cachesWithLoadedDetails.add(this.getWayPoint());
+				if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails) removeOldestDetails();
+			}
 		}
-		// FIXME Problem: Hier wird ein neues Detail-Objekt erzeugt, welches natürlich noch
-		//       Default-Werte in den Feldern stehen hat. 
-		//       Das Zurücksetzen von UnsavedChanges ist erstmal ein Hack.
-		boolean hasUnsavedChanges = Global.getProfile().hasUnsavedChanges();
-		details = new CacheHolderDetail(this);
-		try {
-			details.readCache(Global.getProfile().dataDir);
-		} catch (IOException e) {
-			if (maybenew) details.update(this);
-			else {
-				if (alarmuser) (new MessageBox("Error", "Could not read cache details for cache: "+this.getWayPoint(), FormBase.OKB)).execute();
-				return null;
-			} 
-		}
-		if (! hasUnsavedChanges) Global.getProfile().resetUnsavedChanges();
-		detailsAdded();
 		return details;
+	}
+	
+	/**
+	 * Gets a detail object for the cache. If the object is already created, then this object is
+	 * returned, otherwise it's created from the cache.xml file. If no such file is found, an empty
+	 * object is returned.
+	 * @return The object representing the cache details
+	 */
+	public CacheHolderDetail getFreshDetails() {
+		return this.getCacheDetails(true, false);
+	}
+	/**
+	 * Gets a detail object for the cache. If the object is already created, then this object is
+	 * returned, otherwise it's created from the cache.xml file. If no such file is found, an error
+	 * message is displayed and <code>null</code> is returned.
+	 * @return The object representing the cache details, or <code>null</code>.
+	 */
+	public CacheHolderDetail getExistingDetails() {
+		return this.getCacheDetails(false, true);
 	}
 
 	/**
-	 * Call this after you added the cache with details to the 
-	 * cacheDB <br> It is assumed that that details is set
-	 * for an example see OCXMLImporter.endCache()
-	 *
+	 * Saves the cache to the corresponding <waypoint>.xml file, located in the profiles
+	 * directory. The waypoint of the 
+	 * cache should be set to do so.
 	 */
-	public void detailsAdded() {
-		cachesWithLoadedDetails.add(this);
-		if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails) removeOldestDetails();
+	public void save() {
+		this.getFreshDetails().saveCacheDetails(Global.getProfile().dataDir);
 	}
-
-	public void releaseCacheDetails() {
+	
+	void releaseCacheDetails() {
 		if (details != null && details.hasUnsavedChanges){
-			//calcRecommendationScore();
 			details.saveCacheDetails(Global.getProfile().dataDir);
-			this.update(details);
 		}
 		details = null;
-		cachesWithLoadedDetails.remove(this);
+		cachesWithLoadedDetails.remove(this.getWayPoint());
 	}
 
 	//final static int maxDetails = 50; 
 	static Vector cachesWithLoadedDetails = new Vector(Global.getPref().maxDetails);
 
 	public static void removeOldestDetails() {
-		for (int i=0; i<Global.getPref().deleteDetails; i++)
-			((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
+		for (int i=0; i<Global.getPref().deleteDetails; i++) {
+			String wp = (String) cachesWithLoadedDetails.get(i);
+			CacheHolder ch = Global.getProfile().cacheDB.get(wp);
+			if (ch!=null) ch.releaseCacheDetails();
+		}	
 	}
 
 	public static void removeAllDetails() {
-		for (int i=cachesWithLoadedDetails.size()-1; i>=0; i--)
-			((CacheHolder)(cachesWithLoadedDetails.get(0))).releaseCacheDetails();
+		for (int i=cachesWithLoadedDetails.size()-1; i>=0; i--) {
+			String wp = (String) cachesWithLoadedDetails.get(i);
+			CacheHolder ch = Global.getProfile().cacheDB.get(wp);
+			if (ch!=null && ch.detailsLoaded()) ch.releaseCacheDetails();
+		}
 	}
 
 	/**
 	 * when importing caches you can set details.saveChanges = true
-	 * when the import ist finished call this method to save the pending changes
-	 *
+	 * when the import is finished call this method to save the pending changes
 	 */
 	public static void saveAllModifiedDetails() {
 		CacheHolder ch;
 		CacheHolderDetail chD;
 		for (int i=cachesWithLoadedDetails.size()-1; i>=0; i--) {
-			ch = (CacheHolder)(cachesWithLoadedDetails.get(i));
-			chD = ch.getCacheDetails(false);
-			if (chD.hasUnsavedChanges) {
-				//ch.calcRecommendationScore();
-				chD.saveCacheDetails(Global.getProfile().dataDir);
-				ch.update(chD);
-			}
+			String wp = (String) cachesWithLoadedDetails.get(i);
+			ch = Global.getProfile().cacheDB.get(wp);
+			if (ch != null) {
+	            chD = ch.getCacheDetails(false);
+	            if (chD.hasUnsavedChanges) {
+		            //ch.calcRecommendationScore();
+		            chD.saveCacheDetails(Global.getProfile().dataDir);
+	            }
+            }
 		}
 	}
 
@@ -642,9 +724,9 @@ public void finalize() {nObjects--;
 				base = 16;
 			}
 			
-			for ( int pos = 0; pos < rightPart.length(); pos++ ) {
+			for ( int p = 0; p < rightPart.length(); p++ ) {
 				gcId *= base;
-				gcId += sequence.indexOf(rightPart.charAt(pos));
+				gcId += sequence.indexOf(rightPart.charAt(p));
 			}
 			
 	        if ( base == 31 ) {

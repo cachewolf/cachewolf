@@ -105,7 +105,6 @@ public class ExploristExporter {
 		String fileBaseName;
 		String str = null;
 		CacheHolder ch;
-		CacheHolderDetail holder;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
@@ -148,18 +147,10 @@ public class ExploristExporter {
 										/ 200 + ".gs"))));
 					}
 
-					holder = new CacheHolderDetail(ch);
 					expCount++;
 					h.progress = (float) expCount / (float) counter;
 					h.changed();
-					try {
-						if (needCacheDetails) {
-							holder.readCache(profile.dataDir);
-						}
-					} catch (IOException e) {
-						continue;
-					}
-					str = record(holder);
+					str = record(ch);
 					if (str != null)
 						outp.print(str);
 				}// if
@@ -205,7 +196,8 @@ public class ExploristExporter {
 	 *            cachedata
 	 * @return formated cache data
 	 */
-	public String record(CacheHolderDetail chD) {
+	public String record(CacheHolder ch) {
+		CacheHolderDetail det = ch.getExistingDetails();
 		/*
 		static protected final int GC_AW_PARKING = 50;
 		static protected final int GC_AW_STAGE_OF_MULTI = 51;
@@ -216,65 +208,65 @@ public class ExploristExporter {
 		*/
 		StringBuffer sb = new StringBuffer();
 		sb.append("$PMGNGEO,");
-		sb.append(chD.pos.getLatDeg(CWPoint.DMM));
-		sb.append(chD.pos.getLatMin(CWPoint.DMM));
+		sb.append(ch.pos.getLatDeg(CWPoint.DMM));
+		sb.append(ch.pos.getLatMin(CWPoint.DMM));
 		sb.append(",");
 		sb.append("N,");
-		sb.append(chD.pos.getLonDeg(CWPoint.DMM));
-		sb.append(chD.pos.getLonMin(CWPoint.DMM));
+		sb.append(ch.pos.getLonDeg(CWPoint.DMM));
+		sb.append(ch.pos.getLonMin(CWPoint.DMM));
 		sb.append(",");
 		sb.append("E,");
 		sb.append("0000,"); // Height
 		sb.append("M,"); // in meter
-		sb.append(chD.getWayPoint());
+		sb.append(ch.getWayPoint());
 		sb.append(",");
 		String add = "";
-		if (chD.isAddiWpt()) {
-			if (chD.getType() == 50) {
+		if (ch.isAddiWpt()) {
+			if (ch.getType() == 50) {
 				add = "Pa:";
-			} else if (chD.getType() == 51) {
+			} else if (ch.getType() == 51) {
 				add = "St:";
-			} else if (chD.getType() == 52) {
+			} else if (ch.getType() == 52) {
 				add = "Qu:"; 
-			} else if (chD.getType() == 53) {	
+			} else if (ch.getType() == 53) {	
 				add = "Fi:";
-			} else if (chD.getType() == 54) {
+			} else if (ch.getType() == 54) {
 				add = "Tr:";
-			} else if (chD.getType() == 55) {	
+			} else if (ch.getType() == 55) {	
 				add = "Re:";
 			}
-			sb.append(add).append(removeCommas(chD.getCacheName()));
+			sb.append(add).append(removeCommas(ch.getCacheName()));
 		} else {
-			sb.append(removeCommas(chD.getCacheName()));
+			sb.append(removeCommas(ch.getCacheName()));
 		}		
 		sb.append(",");
-		sb.append(removeCommas(chD.getCacheOwner()));
+		sb.append(removeCommas(ch.getCacheOwner()));
 		sb.append(",");
-		sb.append(removeCommas(Common.rot13(chD.Hints)));
+		sb.append(removeCommas(Common.rot13(det.Hints)));
 		sb.append(",");
 		
 		if (!add.equals("")) { // Set Picture in Explorist to Virtual
 			sb.append("Virtual Cache");
-		} else if (chD.getType() != 8) { // Rewrite Unknown Caches
-			sb.append(CacheType.transType(chD.getType()));
+		} else if (ch.getType() != 8) { // Rewrite Unknown Caches
+			sb.append(CacheType.transType(ch.getType()));
 		} else {
 			sb.append("Mystery Cache");
 		}
 		sb.append(",");
-		sb.append(toGsDateFormat(chD.getDateHidden()));  // created - DDMMYYY, YYY = year - 1900
+		sb.append(toGsDateFormat(ch.getDateHidden()));  // created - DDMMYYY, YYY = year - 1900
 		sb.append(",");
 		String lastFound = "0000";
-		for (int i = 0; i < chD.CacheLogs.size(); i++) {
-			if (chD.CacheLogs.getLog(i).isFoundLog() && chD.CacheLogs.getLog(i).getDate().compareTo(lastFound) > 0 ) {
-				lastFound = chD.CacheLogs.getLog(i).getDate();
+		for (int i = 0; i < det.CacheLogs.size(); i++) {
+			if (det.CacheLogs.getLog(i).isFoundLog() && det.CacheLogs.getLog(i).getDate().compareTo(lastFound) > 0 ) {
+				lastFound = det.CacheLogs.getLog(i).getDate();
 			}
 		}
 		
 		sb.append(toGsDateFormat(lastFound)); // lastFound - DDMMYYY, YYY = year - 1900
 		sb.append(",");
-		sb.append(removeCommas(chD.getHard()));
+		sb.append(removeCommas(ch.getHard()));
 		sb.append(",");
-		sb.append(removeCommas(chD.getTerrain()));
+		sb.append(removeCommas(ch.getTerrain()));
 		sb.append("*41");
 		return Exporter.simplifyString(sb.toString() + "\r\n");
 	}

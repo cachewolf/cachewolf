@@ -40,7 +40,7 @@ public class HTMLExporter{
 	}
 	
 	public void doIt(){
-		CacheHolderDetail holder;
+		CacheHolderDetail det;
 		CacheHolder ch;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
@@ -83,63 +83,63 @@ public class HTMLExporter{
 
 				ch = cacheDB.get(i);
 				if(	ch.is_black() == false && ch.is_filtered() == false){
-					holder=ch.getCacheDetails(false,true);
+					det=ch.getExistingDetails();
 					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.transType(holder.getType()));
-					varParams.put("SIZE", holder.getCacheSize());
-					varParams.put("WAYPOINT", holder.getWayPoint());
-					varParams.put("NAME", holder.getCacheName());
-					varParams.put("OWNER", holder.getCacheOwner());
-					varParams.put("DIFFICULTY", holder.getHard());
-					varParams.put("TERRAIN", holder.getTerrain());
-					varParams.put("DISTANCE", holder.getDistance());
-					varParams.put("BEARING", holder.bearing);
-					varParams.put("LATLON", holder.LatLon);
-					varParams.put("STATUS", holder.getCacheStatus());
-					varParams.put("DATE", holder.getDateHidden());
+					varParams.put("TYPE", CacheType.transType(ch.getType()));
+					varParams.put("SIZE", ch.getCacheSize());
+					varParams.put("WAYPOINT", ch.getWayPoint());
+					varParams.put("NAME", ch.getCacheName());
+					varParams.put("OWNER", ch.getCacheOwner());
+					varParams.put("DIFFICULTY", ch.getHard());
+					varParams.put("TERRAIN", ch.getTerrain());
+					varParams.put("DISTANCE", ch.getDistance());
+					varParams.put("BEARING", ch.bearing);
+					varParams.put("LATLON", ch.LatLon);
+					varParams.put("STATUS", ch.getCacheStatus());
+					varParams.put("DATE", ch.getDateHidden());
 					cache_index.add(varParams);
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						page_tpl.setParam("TYPE", CacheType.transType(holder.getType()));
-						page_tpl.setParam("SIZE", holder.getCacheSize());
-						page_tpl.setParam("WAYPOINT", holder.getWayPoint());
-						page_tpl.setParam("NAME", holder.getCacheName());
-						page_tpl.setParam("OWNER", holder.getCacheOwner());
-						page_tpl.setParam("DIFFICULTY", holder.getHard());
-						page_tpl.setParam("TERRAIN", holder.getTerrain());
-						page_tpl.setParam("DISTANCE", holder.getDistance());
-						page_tpl.setParam("BEARING", holder.bearing);
-						page_tpl.setParam("LATLON", holder.LatLon);
-						page_tpl.setParam("STATUS", holder.getCacheStatus());
-						page_tpl.setParam("DATE", holder.getDateHidden());
-						if (holder.is_HTML())
-							page_tpl.setParam("DESCRIPTION", modifyLongDesc(holder,targetDir));
+						page_tpl.setParam("TYPE", CacheType.transType(ch.getType()));
+						page_tpl.setParam("SIZE", ch.getCacheSize());
+						page_tpl.setParam("WAYPOINT", ch.getWayPoint());
+						page_tpl.setParam("NAME", ch.getCacheName());
+						page_tpl.setParam("OWNER", ch.getCacheOwner());
+						page_tpl.setParam("DIFFICULTY", ch.getHard());
+						page_tpl.setParam("TERRAIN", ch.getTerrain());
+						page_tpl.setParam("DISTANCE", ch.getDistance());
+						page_tpl.setParam("BEARING", ch.bearing);
+						page_tpl.setParam("LATLON", ch.LatLon);
+						page_tpl.setParam("STATUS", ch.getCacheStatus());
+						page_tpl.setParam("DATE", ch.getDateHidden());
+						if (ch.is_HTML())
+							page_tpl.setParam("DESCRIPTION", modifyLongDesc(det,targetDir));
 						else {
 							String dummyText = new String();
-							dummyText = STRreplace.replace(holder.LongDescription, "\n", "<br>");
+							dummyText = STRreplace.replace(det.LongDescription, "\n", "<br>");
 							page_tpl.setParam("DESCRIPTION",dummyText);
 							
 						}
-						page_tpl.setParam("HINTS", holder.Hints);
-						page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(holder.Hints));
+						page_tpl.setParam("HINTS", det.Hints);
+						page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(det.Hints));
 						StringBuffer sb=new StringBuffer(2000);
-						for(int j = 0; j<holder.CacheLogs.size(); j++){
-							sb.append(STRreplace.replace(holder.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
+						for(int j = 0; j<det.CacheLogs.size(); j++){
+							sb.append(STRreplace.replace(det.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
 							sb.append("<br>");
-							icon=holder.CacheLogs.getLog(j).getIcon();
+							icon=det.CacheLogs.getLog(j).getIcon();
 							if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
 						}
 						page_tpl.setParam("LOGS", sb.toString());
-						page_tpl.setParam("NOTES", STRreplace.replace(holder.CacheNotes, "\n","<br>")); 
+						page_tpl.setParam("NOTES", STRreplace.replace(det.CacheNotes, "\n","<br>")); 
 						// Cache Images
 						cacheImg.clear();
-						for(int j = 0; j<holder.Images.size(); j++){
+						for(int j = 0; j<det.Images.size(); j++){
 							imgParams = new Hashtable();
-							String imgFile = new String((String)holder.Images.get(j));
+							String imgFile = new String((String)det.Images.get(j));
 							imgParams.put("FILE", imgFile);
-							if (j < holder.ImagesText.size())
-								imgParams.put("TEXT",holder.ImagesText.get(j));
+							if (j < det.ImagesText.size())
+								imgParams.put("TEXT",det.ImagesText.get(j));
 							else
 								imgParams.put("TEXT",imgFile);
 							DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
@@ -148,12 +148,12 @@ public class HTMLExporter{
 						page_tpl.setParam("cacheImg", cacheImg);
 						// Log images
 						logImg.clear();
-						for(int j = 0; j<holder.LogImages.size(); j++){
+						for(int j = 0; j<det.LogImages.size(); j++){
 							logImgParams = new Hashtable();
-							String logImgFile = (String) holder.LogImages.get(j);
+							String logImgFile = (String) det.LogImages.get(j);
 							logImgParams.put("FILE", logImgFile);
-							if (j < holder.LogImagesText.size())
-								logImgParams.put("TEXT",holder.LogImagesText.get(j));
+							if (j < det.LogImagesText.size())
+								logImgParams.put("TEXT",det.LogImagesText.get(j));
 							else
 								logImgParams.put("TEXT",logImgFile);
 							DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
@@ -162,12 +162,12 @@ public class HTMLExporter{
 						page_tpl.setParam("logImg", logImg);
 						// User images
 						usrImg.clear();
-						for(int j = 0; j<holder.UserImages.size(); j++){
+						for(int j = 0; j<det.UserImages.size(); j++){
 							usrImgParams = new Hashtable();
-							String usrImgFile = new String((String)holder.UserImages.get(j));
+							String usrImgFile = new String((String)det.UserImages.get(j));
 							usrImgParams.put("FILE", usrImgFile);
-							if (j < holder.UserImagesText.size())
-								usrImgParams.put("TEXT",holder.UserImagesText.get(j));
+							if (j < det.UserImagesText.size())
+								usrImgParams.put("TEXT",det.UserImagesText.get(j));
 							else
 								usrImgParams.put("TEXT",usrImgFile);
 							DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
@@ -178,7 +178,7 @@ public class HTMLExporter{
 						// Map images
 						mapImg.clear();
 						mapImgParams = new Hashtable();
-						String mapImgFile = new String(holder.getWayPoint() + "_map.gif");
+						String mapImgFile = new String(ch.getWayPoint() + "_map.gif");
 						// check if map file exists
 						File test = new File(profile.dataDir + mapImgFile);
 						if (test.exists()) {
@@ -188,7 +188,7 @@ public class HTMLExporter{
 							mapImg.add(mapImgParams);
 							
 							mapImgParams = new Hashtable();
-							mapImgFile = holder.getWayPoint() + "_map_2.gif";
+							mapImgFile = ch.getWayPoint() + "_map_2.gif";
 							mapImgParams.put("FILE", mapImgFile);
 							mapImgParams.put("TEXT",mapImgFile);
 							DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
@@ -198,7 +198,7 @@ public class HTMLExporter{
 						}
 
 						
-						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + holder.getWayPoint()+".html")));
+						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getWayPoint()+".html")));
 						pagefile.print(page_tpl.output());
 						pagefile.close();
 					}catch(Exception e){

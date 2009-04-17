@@ -211,7 +211,8 @@ public class SpiderGC{
 	public int spiderSingle(int number, InfoBox infB, boolean forceLogin){
 		int ret=-1;
 		this.infB = infB;
-		CacheHolder ch = cacheDB.get(number);
+		CacheHolder ch = new CacheHolder(); // cacheDB.get(number);
+		ch.setWayPoint(cacheDB.get(number).getWayPoint());
 		if (ch.isAddiWpt()) return -1;  // No point re-spidering an addi waypoint, comes with parent
 
 		// check if we need to login
@@ -219,25 +220,18 @@ public class SpiderGC{
 			if (this.login()!=FormBase.IDOK) return -1;
 			// loggedIn is already set by this.login()
 		}
-		CacheHolderDetail chD=ch.getCacheDetails(true); //new CacheHolderDetail(ch);
 		try{
-/*			// Get all existing details of the cache
-			try {
-				chD.readCache(profile.dataDir);
-			} catch (IOException ioex) {
-				pref.log("No .XML file found for cache "+chD.wayPoint);
-			};
-*/			// Read the cache data from GC.COM and compare to old data
+			// Read the cache data from GC.COM and compare to old data
 			boolean loadAllLogs = (MAXLOGS > 5);
-			ret=getCacheByWaypointName(chD,true,true,false,loadAllLogs);
+			ret=getCacheByWaypointName(ch,true,true,false,loadAllLogs);
 			// Save the spidered data
 			if (ret == 1) {
 				pref.log("Saving to:" + profile.dataDir);
-				chD.saveCacheDetails(profile.dataDir);
-				cacheDB.get(number).update(chD);
+				cacheDB.get(number).update(ch);
+				ch.save();
 			}
 		}catch(Exception ex){
-			pref.log("Error spidering " + chD.getWayPoint() + " in spiderSingle");
+			pref.log("Error spidering " + ch.getWayPoint() + " in spiderSingle");
 		}
 		return ret;
 	} // spiderSingle
@@ -284,7 +278,7 @@ public class SpiderGC{
 	public void doIt(boolean spiderAllFinds){
 		String postStr, dummy, ln, wpt;
 		Regex lineRex;
-		CacheHolderDetail chD;
+		CacheHolder holder;
 		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
 		if ( !spiderAllFinds && !origin.isValid()) {
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), FormBase.OKB)).execute();
@@ -468,13 +462,9 @@ public class SpiderGC{
 									cachesToUpdate.put(ch.getWayPoint(), ch);
 								}
 								ch.setArchived(is_archived_GC);
-								chD=ch.getCacheDetails(true,false);
-								ch.detailsAdded();
 							} else if (ch.is_available()!=is_available_GC) { // Update the database with the cache status
 								pref.log("Updating status of "+waypoint+" to "+(is_available_GC?"available":"not available"));
 								ch.setAvailable(is_available_GC);
-								chD=ch.getCacheDetails(true,false);
-								ch.detailsAdded();
 							} else {
 								cachesToUpdate.remove( ch.getWayPoint() );
 							}
@@ -511,7 +501,6 @@ public class SpiderGC{
 					}catch(Exception ex){
 						//Vm.debug("Couldn't get the next page");
 						pref.log("Error getting next page");
-					}finally{
 					}
 				}
 				//Vm.debug("Distance is now: " + distance);
@@ -556,18 +545,18 @@ public class SpiderGC{
 			// Get only caches not already available in the DB
 			if(cacheDB.getIndex(wpt) == -1){
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + totalCachesToLoad + ")");
-				chD = new CacheHolderDetail();
-				chD.setWayPoint(wpt);
-				int test = getCacheByWaypointName(chD,false,getImages,doNotgetFound,loadAllLogs);
+				holder = new CacheHolder();
+				holder.setWayPoint(wpt);
+				int test = getCacheByWaypointName(holder,false,getImages,doNotgetFound,loadAllLogs);
 				if (test == -1) {
 					infB.close(0);
 					break;
 				} else if (test == 0) {
 					spiderErrors++;
 				} else {
-					if (!chD.is_found() || !doNotgetFound ) {
-						chD.saveCacheDetails(profile.dataDir);
-						cacheDB.add(new CacheHolder(chD)); 
+					if (!holder.is_found() || !doNotgetFound ) {
+						cacheDB.add(holder); 
+						holder.save();
 					}
 				}
 			}
@@ -618,7 +607,7 @@ public class SpiderGC{
 	 *     This is normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
 	 * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if everything ok
 	 */
-	private int getCacheByWaypointName(CacheHolderDetail chD, boolean isUpdate, boolean fetchImages, boolean doNotGetFound, boolean fetchAllLogs) {
+	private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean doNotGetFound, boolean fetchAllLogs) {
 		int ret = 1;
 		while (true) {
 			String completeWebPage;
@@ -627,33 +616,33 @@ public class SpiderGC{
 			while (spiderTrys++<MAX_SPIDER_TRYS) {
 				ret = 1;
 				try{
-					String doc = p.getProp("getPageByName") + chD.getWayPoint() +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
-					pref.log("Fetching: " + chD.getWayPoint());
+					String doc = p.getProp("getPageByName") + ch.getWayPoint() +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
+					pref.log("Fetching: " + ch.getWayPoint());
 					completeWebPage = fetch(doc);
 					if	( completeWebPage.equals("")) {
-						pref.log("Could not fetch " + chD.getWayPoint());
+						pref.log("Could not fetch " + ch.getWayPoint());
 						if (!infB.isClosed) {
 							continue;
 						} else {
-							chD.setIncomplete(true);
+							ch.setIncomplete(true);
 							return -1;
 						}
 					}
 				}catch(Exception ex){
-					pref.log("Could not fetch " + chD.getWayPoint(),ex);
+					pref.log("Could not fetch " + ch.getWayPoint(),ex);
 					if (!infB.isClosed) {
 						continue;
 					} else {
-						chD.setIncomplete(true);
+						ch.setIncomplete(true);
 						return -1;
 					}
 				}
 				// Only analyse the cache data and fetch pictures if user has not closed the progress window
 				if (!infB.isClosed) {
 					try{
-						chD.setNew(!isUpdate);
-						chD.setUpdated(false);
-						chD.setLog_updated(false);
+						ch.setNew(!isUpdate);
+						ch.setUpdated(false);
+						ch.setLog_updated(false);
 
 						//first check if coordinates are available to prevent deleting existing coorinates
 						String latLon = getLatLon(completeWebPage);
@@ -663,99 +652,99 @@ public class SpiderGC{
 							continue; // Restart the spider
 						}
 
-						chD.setHTML(true);
-						chD.setAvailable(true);
-						chD.setArchived(false);
-						chD.setIncomplete(true);
+						ch.setHTML(true);
+						ch.setAvailable(true);
+						ch.setArchived(false);
+						ch.setIncomplete(true);
 						// Save size of logs to be able to check whether any new logs were added
 						//int logsz = chD.CacheLogs.size();
 						//chD.CacheLogs.clear();
-						chD.addiWpts.clear();
-						chD.Images.clear();
-						chD.ImagesText.clear();
-						chD.ImagesInfo.clear();
+						ch.addiWpts.clear();
+						ch.getFreshDetails().Images.clear();
+						ch.getFreshDetails().ImagesText.clear();
+						ch.getFreshDetails().ImagesInfo.clear();
 
-						if(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0) chD.setAvailable(false);
-						if(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0) chD.setArchived(true);
+						if(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0) ch.setAvailable(false);
+						if(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0) ch.setArchived(true);
 						//==========
 						// General Cache Data
 						//==========
-						chD.setLatLon(latLon);
-						pref.log("LatLon: " + chD.LatLon);
-						if (pref.debug) pref.log("chD.pos: " + chD.pos.toString());
+						ch.setLatLon(latLon);
+						pref.log("LatLon: " + ch.LatLon);
+						if (pref.debug) pref.log("chD.pos: " + ch.pos.toString());
 
 						pref.log("Trying description");
-						chD.setLongDescription(getLongDesc(completeWebPage));
+						ch.getFreshDetails().setLongDescription(getLongDesc(completeWebPage));
 						pref.log("Got description");
 
 						pref.log("Getting cache name");
-						chD.setCacheName(SafeXML.cleanback(getName(completeWebPage)));
-						if (pref.debug) pref.log("Name: " + chD.getCacheName()); else pref.log("Got name");
+						ch.setCacheName(SafeXML.cleanback(getName(completeWebPage)));
+						if (pref.debug) pref.log("Name: " + ch.getCacheName()); else pref.log("Got name");
 						
 						pref.log("Trying location (country/state)");
 						String location = getLocation(completeWebPage);
 						if (location.length() != 0) {
 							int countryStart = location.indexOf(",");
 							if (countryStart > -1) {
-								chD.Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
-								chD.State = SafeXML.cleanback(location.substring(0, countryStart).trim());								
+								ch.getFreshDetails().Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
+								ch.getFreshDetails().State = SafeXML.cleanback(location.substring(0, countryStart).trim());								
 							} else {
-								chD.Country = location.trim();
-								chD.State = "";
+								ch.getFreshDetails().Country = location.trim();
+								ch.getFreshDetails().State = "";
 							}
 							pref.log("Got location (country/state)");							
 						} else {
-							chD.Country = "";
-							chD.State = "";
+							ch.getFreshDetails().Country = "";
+							ch.getFreshDetails().State = "";
 							pref.log("No location (country/state) found");
 						}
 
 						pref.log("Trying owner");
-						chD.setCacheOwner(SafeXML.cleanback(getOwner(completeWebPage)).trim());
-						if(chD.getCacheOwner().equals(pref.myAlias) || (pref.myAlias2.length()>0 && chD.getCacheOwner().equals(pref.myAlias2))) chD.setOwned(true);
-						if (pref.debug) pref.log("Owner: " + chD.getCacheOwner() +"; is_owned = "+chD.is_owned()+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
+						ch.setCacheOwner(SafeXML.cleanback(getOwner(completeWebPage)).trim());
+						if(ch.getCacheOwner().equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.getCacheOwner().equals(pref.myAlias2))) ch.setOwned(true);
+						if (pref.debug) pref.log("Owner: " + ch.getCacheOwner() +"; is_owned = "+ch.is_owned()+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
 						else pref.log("Got owner");
 
 
 						pref.log("Trying date hidden");
-						chD.setDateHidden(DateFormat.MDY2YMD(getDateHidden(completeWebPage)));
-						if (pref.debug) pref.log("Hidden: " + chD.getDateHidden());
+						ch.setDateHidden(DateFormat.MDY2YMD(getDateHidden(completeWebPage)));
+						if (pref.debug) pref.log("Hidden: " + ch.getDateHidden());
 						else pref.log("Got date hidden");
 
 						pref.log("Trying hints");
-						chD.setHints(getHints(completeWebPage));
-						if (pref.debug) pref.log("Hints: " + chD.Hints);
+						ch.getFreshDetails().setHints(getHints(completeWebPage));
+						if (pref.debug) pref.log("Hints: " + ch.getFreshDetails().Hints);
 						else pref.log("Got hints");
 
 						pref.log("Trying size");
-						chD.setCacheSize(getSize(completeWebPage));
-						if (pref.debug) pref.log("Size: " + chD.getCacheSize());
+						ch.setCacheSize(getSize(completeWebPage));
+						if (pref.debug) pref.log("Size: " + ch.getCacheSize());
 						else pref.log("Got size");
 
 						pref.log("Trying difficulty");
-						chD.setHard(getDiff(completeWebPage));
-						if (pref.debug) pref.log("Hard: " + chD.getHard());
+						ch.setHard(getDiff(completeWebPage));
+						if (pref.debug) pref.log("Hard: " + ch.getHard());
 						else pref.log("Got difficulty");
 
 						pref.log("Trying terrain");
-						chD.setTerrain(getTerr(completeWebPage));
-						if (pref.debug) pref.log("Terr: " + chD.getTerrain());
+						ch.setTerrain(getTerr(completeWebPage));
+						if (pref.debug) pref.log("Terr: " + ch.getTerrain());
 						else pref.log("Got terrain");
 
 						pref.log("Trying cache type");
-						chD.setType(getType(completeWebPage));
-						if (pref.debug) pref.log("Type: " + chD.getType());
+						ch.setType(getType(completeWebPage));
+						if (pref.debug) pref.log("Type: " + ch.getType());
 						else pref.log("Got cache type");
 
 						//==========
 						// Logs
 						//==========
 						pref.log("Trying logs");
-						chD.setCacheLogs(getLogs(completeWebPage, chD));
+						ch.getFreshDetails().setCacheLogs(getLogs(completeWebPage, ch.getFreshDetails()));
 						pref.log("Found logs");
 
 						// If the switch is set to not store found caches and we found the cache => return
-						if (chD.is_found() && doNotGetFound) {
+						if (ch.is_found() && doNotGetFound) {
 							if (infB.isClosed) {
 								return -1;
 							} else {
@@ -767,15 +756,15 @@ public class SpiderGC{
 						// Bugs
 						//==========
 						// As there may be several bugs, we check whether the user has aborted
-						if (!infB.isClosed) getBugs(chD,completeWebPage);
-						chD.setHas_bugs(chD.Travelbugs.size()>0);
+						if (!infB.isClosed) getBugs(ch.getFreshDetails(),completeWebPage);
+						ch.setHas_bugs(ch.getFreshDetails().Travelbugs.size()>0);
 
 						//==========
 						// Images
 						//==========
 						if(fetchImages){
 							pref.log("Trying images");
-							getImages(completeWebPage, chD);
+							getImages(completeWebPage, ch.getFreshDetails());
 							pref.log("Got images");
 						}
 						//==========
@@ -783,20 +772,20 @@ public class SpiderGC{
 						//==========
 
 						pref.log("Getting additional waypoints");
-						getAddWaypoints(completeWebPage, chD.getWayPoint(), chD.is_found());
+						getAddWaypoints(completeWebPage, ch.getWayPoint(), ch.is_found());
 						pref.log("Got additional waypoints");
 
 						//==========
 						// Attributes
 						//==========
 						pref.log("Getting attributes");
-						getAttributes(completeWebPage, chD);
+						getAttributes(completeWebPage, ch.getFreshDetails());
 						pref.log("Got attributes");
-						if (chD.is_new()) chD.setUpdated(false);
-						chD.setIncomplete(false);
+						if (ch.is_new()) ch.setUpdated(false);
+						ch.setIncomplete(false);
 						break;
 					}catch(Exception ex){
-						pref.log("Error reading cache: "+chD.getWayPoint());
+						pref.log("Error reading cache: "+ch.getWayPoint());
 						pref.log("Exception in getCacheByWaypointName: ",ex);
 					}
 					finally{}
@@ -1031,8 +1020,8 @@ public class SpiderGC{
 			String d=DateFormat.logdate2YMD(exDate.findNext());
 			if((icon.equals(p.getProp("icon_smile")) || icon.equals(p.getProp("icon_camera")) || icon.equals(p.getProp("icon_attended"))) &&
 				(name.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && name.equalsIgnoreCase(pref.myAlias2))) )  {
-				chD.setFound(true);
-				chD.setCacheStatus(d);
+				chD.getParent().setFound(true);
+				chD.getParent().setCacheStatus(d);
 				chD.OwnLogId = logId;
 				chD.OwnLog = new Log(icon,d,name,logText);
 			}
@@ -1048,7 +1037,7 @@ public class SpiderGC{
 			exLogId.setSource(singleLog);
 			// We cannot simply stop if we have reached MAXLOGS just in case we are waiting for
 			// a log by our alias that happened earlier.
-			if (nLogs>=MAXLOGS && chD.is_found() && (chD.OwnLogId.length() != 0) && (chD.OwnLog != null) && !(chD.OwnLog.getDate().equals("1900-01-01"))) break;
+			if (nLogs>=MAXLOGS && chD.getParent().is_found() && (chD.OwnLogId.length() != 0) && (chD.OwnLog != null) && !(chD.OwnLog.getDate().equals("1900-01-01"))) break;
 		}
 		if (nLogs>MAXLOGS) {
 			reslts.add(Log.maxLog());
@@ -1118,7 +1107,7 @@ public class SpiderGC{
 		//========
 		String longDesc = "";
 		try {
-			if (chD.getWayPoint().startsWith("TC")) longDesc = doc;
+			if (chD.getParent().getWayPoint().startsWith("TC")) longDesc = doc;
 			else
 				longDesc = getLongDesc(doc);
 			longDesc = STRreplace.replace(longDesc, "<img", "<IMG");
@@ -1144,7 +1133,7 @@ public class SpiderGC{
 					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
-						imgName = chD.getWayPoint() + "_" + Convert.toString(imgCounter);
+						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 						if (idxUrl<0) { // New image
 							pref.log("Loading image: " + imgUrl+" as "+imgName);
 							spiderImage(imgUrl, imgName+imgType);
@@ -1152,7 +1141,7 @@ public class SpiderGC{
 							spideredUrls.add(imgUrl);
 						} else { // Image already spidered as wayPoint_'idxUrl'
 							pref.log("Already loaded image: " + imgUrl);
-							oldImgName = chD.getWayPoint() + "_" + Convert.toString(idxUrl);
+							oldImgName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
 							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
 						}
 						chD.ImagesText.add(imgName); // Keep the image name
@@ -1191,14 +1180,14 @@ public class SpiderGC{
 					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
-						imgName = chD.getWayPoint() + "_" + Convert.toString(imgCounter);
+						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 						if (idxUrl<0) { // New image
 							pref.log("Loading image: " + imgUrl);
 							spiderImage(imgUrl, imgName+imgType);
 							chD.Images.add(imgName+imgType);
 						} else { // Image already spidered as wayPoint_ 'idxUrl'
 							pref.log("Already loaded image: " + imgUrl);
-							oldImgName = chD.getWayPoint() + "_" + Convert.toString(idxUrl);
+							oldImgName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
 							chD.Images.add(oldImgName+imgType); // Store name of old image as image to load
 						}
 						chD.ImagesText.add(exImgName.findNext()); // Keep the image description
@@ -1231,7 +1220,7 @@ public class SpiderGC{
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
 						if (idxUrl<0) { // New image
-							imgName = chD.getWayPoint() + "_" + Convert.toString(imgCounter);
+							imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 							pref.log("Loading image: " + imgUrl+" as "+imgName);
 							spiderImage(imgUrl, imgName+imgType);
 							chD.Images.add(imgName+imgType);
@@ -1317,7 +1306,7 @@ public class SpiderGC{
 			rowBlock = exRowBlock.findNext();
 			rowBlock = exRowBlock.findNext();
 			while(exRowBlock.endOfSearch()==false){
-				CacheHolderDetail cxD = new CacheHolderDetail();
+				CacheHolder hd = null;
 				Extractor exPrefix=new Extractor(rowBlock,p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
 				String prefix=exPrefix.findNext();
 				String adWayPoint;
@@ -1328,35 +1317,36 @@ public class SpiderGC{
 				counter++;
 				int idx=profile.getCacheIndex(adWayPoint);
 				if (idx>=0) {
-					cxD=new CacheHolderDetail(cacheDB.get(idx));
-					try{ // If addi exists, try to read it to preserve the notes
-						cxD.readCache(profile.dataDir);
-					} catch (Exception ex) {};
+					// Creating new CacheHolder, but accessing old cache.xml file
+					hd=new CacheHolder();
+					hd.setWayPoint(adWayPoint);
+					hd.getExistingDetails(); // Accessing Details reads file if not yet done
 				} else {
-					cxD=new CacheHolderDetail(); cxD.setWayPoint(adWayPoint);
+					hd=new CacheHolder(); 
+					hd.setWayPoint(adWayPoint);
 				}
-				cxD.setUpdated(false); 
-				cxD.setNew(false);
+				hd.setUpdated(false); 
+				hd.setNew(false);
 				nameRex.search(rowBlock);
 				koordRex.search(rowBlock);
 				typeRex.search(rowBlock);
-				cxD.setCacheName(nameRex.stringMatched(1));
-				if(koordRex.didMatch()) cxD.setLatLon(koordRex.stringMatched(1));
-				if(typeRex.didMatch()) cxD.setType(CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1)));
+				hd.setCacheName(nameRex.stringMatched(1));
+				if(koordRex.didMatch()) hd.setLatLon(koordRex.stringMatched(1));
+				if(typeRex.didMatch()) hd.setType(CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1)));
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
-				cxD.setLongDescription(descRex.stringMatched(1));
-				cxD.setFound(is_found);
-				cxD.saveCacheDetails(profile.dataDir);
+				hd.getFreshDetails().setLongDescription(descRex.stringMatched(1));
+				hd.setFound(is_found);
+				hd.save();
 				if (idx<0){
-					cxD.setNew(true); 
-					cxD.setUpdated(false);
-					cacheDB.add(new CacheHolder(cxD));
+					hd.setNew(true); 
+					hd.setUpdated(false);
+					cacheDB.add(hd);
 				}else {
 					CacheHolder cx=cacheDB.get(idx);
 					if (cx.is_Checked && // Only re-spider existing addi waypoints that are ticked
 				 	   !cx.is_filtered()) { // and are visible (i.e.  not filtered)
-					   cx.update(cxD);
+					   cx.update(hd);
 					   cx.is_Checked=true;
 					}
 				}
@@ -1375,8 +1365,8 @@ public class SpiderGC{
 			chD.attributes.add(attribute);
 			attribute=attEx.findNext();
 		}
-		chD.setAttributesYes(chD.attributes.attributesYes);
-		chD.setAttributesNo(chD.attributes.attributesNo);
+		chD.getParent().setAttributesYes(chD.attributes.attributesYes);
+		chD.getParent().setAttributesNo(chD.attributes.attributesNo);
 	}
 
 

@@ -74,7 +74,6 @@ public class Exporter {
 		File outFile;
 		String str;
 		CacheHolder ch;
-		CacheHolderDetail holder;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
@@ -101,29 +100,25 @@ public class Exporter {
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 			str = this.header();
 			if (str != null) outp.print(str);
-			holder=new CacheHolderDetail();
 			for(int i = 0; i<cacheDB.size(); i++){
 				ch=cacheDB.get(i);
 				if(ch.is_black() == false && ch.is_filtered() == false){
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();
-					if (needCacheDetails) holder = ch.getCacheDetails(false, false);
-					else holder.update(ch);
-					if (needCacheDetails && holder == null) continue;
 					switch (this.howManyParams) {
 					case NO_PARAMS:
-						str = record(holder);
+						str = record(ch);
 						break;
 					case LAT_LON:
-						if (holder.pos.isValid() == false) continue;
-						str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-								     holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+						if (ch.pos.isValid() == false) continue;
+						str = record(ch, ch.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+								     ch.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 						break;
 					case LAT_LON|COUNT: 
-						if (holder.pos.isValid() == false) continue;
-						str = record(holder, holder.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
-									 holder.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+						if (ch.pos.isValid() == false) continue;
+						str = record(ch, ch.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
+									 ch.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator),
 											 i);
 						break;
 					default:
@@ -219,7 +214,7 @@ public class Exporter {
 	 * @param ch	cachedata
 	 * @return formated cache data
 	 */	
-	public String record(CacheHolderDetail chD){
+	public String record(CacheHolder chD){
 		return null;
 	}
 
@@ -230,7 +225,7 @@ public class Exporter {
 	 * @param lon
 	 * @return formated cache data
 	 */
-	public String record(CacheHolderDetail ch, String lat, String lon){
+	public String record(CacheHolder ch, String lat, String lon){
 		return null;
 	}
 	/**
@@ -241,7 +236,7 @@ public class Exporter {
 	 * @param count of actual record
 	 * @return formated cache data
 	 */
-	public String record(CacheHolderDetail ch, String lat, String lon, int count){
+	public String record(CacheHolder ch, String lat, String lon, int count){
 		return null;
 	}
 	
