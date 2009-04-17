@@ -110,8 +110,8 @@ public class Area {
 	 public static String getEasyFindString(CWPoint p, int prec) {
 		 double longinrange = p.lonDec;
 		 if (longinrange > 180) longinrange -= 180;
-		 int lat = (int) (((p.latDec+90d)/180d) * (double)(1 << (prec)));
-		 int lon = (int) (((longinrange+180)/360) * (double) (1 << (prec)));
+		 int lat = (int) (((p.latDec+90d)/180d) * (1 << (prec)));
+		 int lon = (int) (((longinrange+180)/360) * (1 << (prec)));
 		 String ret = "";
 		 int tmp;
 		 for (int i=prec-1; i>=0;  i--) {
