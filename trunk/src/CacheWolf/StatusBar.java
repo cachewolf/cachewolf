@@ -2,7 +2,6 @@ package CacheWolf;
 
 import ewe.sys.Vm;
 import ewe.ui.*;
-import ewe.util.*;
 import ewe.fx.*;
 
 /**

@@ -7,13 +7,11 @@ import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import CacheWolf.NewProfileWizard;
 import CacheWolf.Preferences;
 import ewe.io.FileBase;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
 import ewe.ui.*;
-import ewe.util.Vector;
 
 /**
  * @author pfeffer

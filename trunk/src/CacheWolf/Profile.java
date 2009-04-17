@@ -12,7 +12,6 @@ import ewe.sys.Convert;
 import ewe.sys.Handle;
 import ewe.sys.Vm;
 import ewe.ui.ProgressBarForm;
-import ewe.util.*;
 
 /**
  * This class holds a profile, i.e. a group of caches with a centre location

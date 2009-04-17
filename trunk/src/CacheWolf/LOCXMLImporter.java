@@ -27,7 +27,6 @@
 package CacheWolf;
 
 import ewe.sys.Vm;
-import ewe.util.*;
 import ewe.io.*;
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;

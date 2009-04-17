@@ -2,7 +2,6 @@
 
 package utils;
 
-import ewe.sys.Vm;
 import ewe.sys.mThread;
 import ewe.ui.MessageBox;
 /**
