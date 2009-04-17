@@ -19,14 +19,12 @@ public class myTableModel extends TableModel{
 	private static final Color COLOR_FLAGED		= new Color(255,255,0);
 	private static final Color COLOR_FOUND		= new Color(152,251,152);
 	private static final Color COLOR_OWNED		= new Color(135,206,235);
-	private static final Color COLOR_AVAILABLE	= new Color(255,69,0);
-	private static final Color COLOR_ARCHIVED	= new Color(139,37,0);
+	private static final Color COLOR_AVAILABLE	= new Color(255,128,0);
+	private static final Color COLOR_ARCHIVED	= new Color(200,0,0);
 //	private static final Color COLOR_SELECTED	= new Color(198,198,198);
 	private static final Color COLOR_SELECTED	= new Color(141,141,141);
-	private static final Color COLOR_ARCHFND_FG	= new Color(255,0,0); // Archived && Found
-	private static final Color COLOR_ARCHFND_BG	= new Color(152,251,152);	
 	private static final Color COLOR_DETAILS_LOADED		= new Color(229,206,235);
-	private static final Color COLOR_LINE      = new Color(255,255,255);
+	private static final Color COLOR_WHITE   	= new Color(255,255,255);
 	private CacheDB cacheDB;
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
 	 * the element j (as per the list below) is visible in column i. 
@@ -172,27 +170,37 @@ public class myTableModel extends TableModel{
 		ta.alignment = CellConstants.LEFT;
 		ta.anchor = CellConstants.LEFT;
 		// The default color of a line is white
-		COLOR_LINE.set(255, 255, 255);
+		Color lineColor      = new Color(255,255,255);
+		lineColor.set(COLOR_WHITE);
 		if(row >= 0){ 
 			try {
 				// Now find out if the line should be painted in an other color.
 				// Selected lines are not considered, so far
-			   CacheHolder ch = cacheDB.get(row);
-				if(ch.is_available() == false && ch.is_found() == true){
-					COLOR_LINE.set(COLOR_ARCHFND_BG);   // Green BG
-					ta.foreground = COLOR_ARCHFND_FG;  // Red FG
+				CacheHolder ch = cacheDB.get(row);
+				if( ch.is_owned())     lineColor.set(COLOR_OWNED);
+				else if( ch.is_found())     lineColor.set(COLOR_FOUND);
+				else if( ch.is_flaged)        lineColor.set(COLOR_FLAGED);
+				else if( Global.getPref().debug && ch.detailsLoaded()) lineColor.set(COLOR_DETAILS_LOADED);
+
+				if( ch.is_archived() ) {
+					if ( lineColor.equals(COLOR_WHITE) ) {
+						lineColor.set(COLOR_ARCHIVED);
+					} else {
+						ta.foreground = COLOR_ARCHIVED;
+					}
 				}
-				else if( ch.is_archived())  COLOR_LINE.set(COLOR_ARCHIVED);
-				else if(!ch.is_available()) COLOR_LINE.set(COLOR_AVAILABLE);
-				else if( ch.is_owned())     COLOR_LINE.set(COLOR_OWNED);
-				else if( ch.is_found())     COLOR_LINE.set(COLOR_FOUND);
-				else if( ch.is_flaged)        COLOR_LINE.set(COLOR_FLAGED);
-				else if( Global.getPref().debug && ch.detailsLoaded()) COLOR_LINE.set(COLOR_DETAILS_LOADED);
-				
+				else if(!ch.is_available() ) {
+					if ( lineColor.equals(COLOR_WHITE) ) {
+						lineColor.set(COLOR_AVAILABLE);
+					} else {
+						ta.foreground = COLOR_AVAILABLE;
+					}
+				}
+
 				// Now, if a line is selected, blend the determined color with the selection 
 				// color.
-				if (isSelected) mergeColor(COLOR_LINE, COLOR_LINE, COLOR_SELECTED);
-				ta.fillColor = COLOR_LINE;
+				if (isSelected) mergeColor(lineColor, lineColor, COLOR_SELECTED);
+				ta.fillColor = lineColor;
 			} catch (Exception e) {
 				Global.getPref().log("Ignored Exception", e, true);
 			};
