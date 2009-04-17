@@ -154,9 +154,7 @@ public class myTableModel extends TableModel{
 			} // if filtered
 		}
 		// rebuild database
-		cacheDB.clear();
-		cacheDB.addAll(sortDB);
-		cacheDB.addAll(filteredDB);
+		cacheDB.rebuild(sortDB, filteredDB);
 		this.numRows = sortDB.getCount();
 	}
 	

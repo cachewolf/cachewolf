@@ -2,8 +2,11 @@ package CacheWolf;
 
 import utils.MutableInteger;
 import ewe.util.Comparer;
+import ewe.util.Enumeration;
 import ewe.util.Hashtable;
+import ewe.util.Iterator;
 import ewe.util.Vector;
+import ewe.util.Map.MapEntry;
 
 /**
  * @author torsti
@@ -124,6 +127,76 @@ public class CacheDB {
 	    hashDB.clear();
 	    vectorDB.clear();
     }
+	
+	/**
+	 * Same as <br>
+	 * <code>clear();<br>addAll(cachesA);<br>addAll(cachesB);<br></code>but optimized 
+	 * to reduce object creation. <br>
+	 * Thus builds cacheDB out of caches of vectors cachesA and cachesB, added in this order.
+	 * 
+	 * @param cachesA
+	 *            First Vector of CacheHolder object to add to CacheDB
+	 * @param cachesB
+	 *            Second Vector of CacheHolder object to add to CacheDB
+	 */
+	public void rebuild(Vector cachesA, Vector cachesB) {
+		int vectorSize = vectorDB.size();
+		int cachesAsize = 0;
+		int cachesBsize = 0;
+		// First negate all hashtable position values, to distinguish the old from the new values
+		Iterator iter = hashDB.entries();
+		while (iter.hasNext()) {
+			MutableInteger mInt = (MutableInteger) ((MapEntry) iter.next()).getValue();
+			mInt.setInt(-mInt.getInt());
+		}
+		// Then set all vector elements at the proper position
+		for (int abc=1; abc <= 2; abc++) {
+			Vector cachesAB = null;
+			int offset = 0;
+			if (abc == 1) {
+				cachesAB=cachesA;
+				if (cachesA != null) cachesAsize = cachesA.size();
+			} else {
+				cachesAB=cachesB;
+				if (cachesA != null) offset = cachesA.size();
+				if (cachesB != null) cachesBsize = cachesB.size();
+			}
+			if (cachesAB == null) continue;
+			for (int i=offset; i<cachesAB.size()+offset; i++) {
+				CacheHolder ch = (CacheHolder) cachesAB.get(i-offset);
+				if (i < vectorSize) {
+					vectorDB.set(i, ch);
+				} else {
+					vectorDB.add(ch);
+				}
+				hashDB.put(ch.getWayPoint(), this.getIntObj(ch.getWayPoint(), i)); 
+			}
+		}
+		// If there are more elements in vectorDB than in the sum of sizes of cachesA and cachesB
+		// then the rest has to be deleted.
+		for (int i=vectorDB.size()-1; i >= cachesAsize + cachesBsize ; i--) {
+			vectorDB.del(i);
+		}
+		// Now delete any element from hashDB which still has a negative position value
+		Vector wpToDelete = null;
+		MapEntry me = null;
+		iter = hashDB.entries();
+		while (iter.hasNext()) {
+			me = (MapEntry) iter.next();
+			MutableInteger mInt = (MutableInteger) me.getValue();
+			if (mInt.getInt()<0) {
+				if (wpToDelete == null) wpToDelete = new Vector();
+				String wp = (String) me.getKey();
+				wpToDelete.add(wp);
+			}
+		}
+		if (wpToDelete != null) {
+			for (int i=0; i<wpToDelete.size(); i++) {
+				String wp = (String) wpToDelete.get(i);
+				hashDB.remove(wp);
+			}
+		}	
+	}
 
 	/** Removes a CacheHolder object at the specified position in the cache list. The following
 	 * elements are renumbered.<br>
