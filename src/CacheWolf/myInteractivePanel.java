@@ -116,9 +116,6 @@ public class myInteractivePanel extends InteractivePanel{
 	 public void stopDragging(DragContext dc) {		 
 		canScroll=true;
 	 }
-	 public void draggingStarted(ImageDragContext dc) {}
-	 public void draggingStopped(ImageDragContext dc) {}
-	 
 	 public boolean imageBeginDragged(AniImage which,Point pos) {
 		if (!Global.mainForm.cacheListVisible) return false;
 		canScroll=false;

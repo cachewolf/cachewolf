@@ -186,7 +186,7 @@ public class DataMover {
 	private abstract class Executor {
 		String title;
 		Profile dstProfile;
-		public void doIt(int i, CacheHolder srcHolder){}
+		public abstract void doIt(int i, CacheHolder srcHolder);
 	}
 	 
 	private class Deleter extends Executor {

@@ -275,7 +275,7 @@ public class CacheHolder {
 				        setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
 		        }
 	        } catch (Exception ex) {
-
+	        	Global.getPref().log("Ignored Exception", ex, true);
 	        }
         }
 	

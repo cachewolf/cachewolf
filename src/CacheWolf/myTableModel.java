@@ -194,7 +194,9 @@ public class myTableModel extends TableModel{
 				// color.
 				if (isSelected) mergeColor(COLOR_LINE, COLOR_LINE, COLOR_SELECTED);
 				ta.fillColor = COLOR_LINE;
-			} catch (Exception e) {};
+			} catch (Exception e) {
+				Global.getPref().log("Ignored Exception", e, true);
+			};
 		} else if (row==-1 && colMap[col]==0 && Global.getProfile().showBlacklisted()) ta.fillColor=Color.Black;
 		return ta;
 	}

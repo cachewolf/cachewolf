@@ -10,7 +10,8 @@ import utils.FileBugfix;
 public class Rebuild {
 	String [] xmlFiles;
 	
-	public Rebuild() {}
+	public Rebuild() { // Public constructor
+	}
 	
 	public void rebuild() {	
 		int i;

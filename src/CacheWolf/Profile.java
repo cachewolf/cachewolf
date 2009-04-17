@@ -86,7 +86,7 @@ public class Profile {
 	 * Constructor for a profile
 	 *
 	 */
-	public Profile(){
+	public Profile(){ // public constructor
 	}
 
 

@@ -34,7 +34,7 @@ public class ImagePanel extends InteractivePanel{
 	/**
 	* Constructor to create the image panel.<p>
 	*/
-	public ImagePanel(){
+	public ImagePanel(){ // Public constructor
 	}
 	
 	static CacheHolderDetail oldCache=null;
@@ -239,7 +239,9 @@ public class ImagePanel extends InteractivePanel{
 							File f=new File(((ImagePanelImage)which).fileName);
 							f.delete();
 							removeImage(which);
-						} catch(Exception e) {};
+						} catch(Exception e) {
+							Global.getPref().log("Ignored Exception", e, true);
+						};
 				}
 			}
 		} else { 

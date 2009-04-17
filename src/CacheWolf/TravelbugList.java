@@ -44,7 +44,7 @@ public class TravelbugList extends MinML{
 	}
 	
 	/** Construct an empty travelbug list */
-	public TravelbugList() {
+	public TravelbugList() { // public constructor
 	}
 	
 	/** Find a travelbug in the list. 

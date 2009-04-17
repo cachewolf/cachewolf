@@ -188,7 +188,9 @@ public class MapImporter extends Form {
 				try {
 					if (in != null) in.close();
 					if (out  != null) out.close(); 
-				} catch (Throwable e) {}
+				} catch (Throwable e) {
+					Global.getPref().log("Ignored Exception", e, true);
+				}
 			}
 			//Check for a .map file
 			rawFileName = currfile.substring(0, currfile.lastIndexOf("."));

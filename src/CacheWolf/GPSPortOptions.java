@@ -58,7 +58,9 @@ class mySerialThread extends mThread{
 		while (run){
 			try {
 				sleep(200);
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+				Global.getPref().log("Ignored exception", e, true);
+			}
 			if (comSp != null)	{  
 				comLength = comSp.nonBlockingRead(comBuff, 0 ,comBuff.length);
 				if (comLength > 0)	{
@@ -83,7 +85,9 @@ class mySerialThread extends mThread{
 		if (comSp != null) {
 			ret = comSp.close(); //compSp == null can happen if a exception occured 
 			try { ewe.sys.mThread.sleep(500); // wait in order to give the system time to close the serial port
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+				Global.getPref().log("Ignored exception", e, true);
+			}
 		}
 		else ret = true;
 		return ret;
@@ -284,7 +288,9 @@ public class GPSPortOptions extends SerialPortOptions {
 				}
 				if (gpsPort.nonBlockingRead().indexOf("$GP", 0) >= 0) gpsfound = true;
 			}
-			try {ewe.sys.mThread.sleep(200); } catch (InterruptedException e) {}
+			try {ewe.sys.mThread.sleep(200); } catch (InterruptedException e) {
+				Global.getPref().log("Ignored exception", e, true);
+			}
 		}
 		gpsPort.stop();
 		if (gpsfound)	 txtOutput.appendText(MyLocale.getMsg(7114, " - GPS Port found\n"), true);
