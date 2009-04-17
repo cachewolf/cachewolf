@@ -2,6 +2,7 @@ package CacheWolf;
 
 import ewe.fx.mImage;
 import ewe.io.File;
+import ewe.io.FileBase;
 
 /**
  * This class represents a single attribute
@@ -114,7 +115,7 @@ public class Attribute {
 			"flashlight-yes.gif"    // 89 Flashlight required
 	};
 	private static mImage [] attributeImages=new mImage[90];
-	private static String IMAGEDIR=STRreplace.replace(File.getProgramDirectory()+"/attributes/", "//", "/");
+	private static String IMAGEDIR=STRreplace.replace(FileBase.getProgramDirectory()+"/attributes/", "//", "/");
 	
 	public static String getImageDir() {
 		return IMAGEDIR; 
