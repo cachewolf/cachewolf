@@ -371,9 +371,11 @@ public class CacheHolder {
 		this.addiWpts = ch.addiWpts;
 		this.mainCache=ch.mainCache;
 		this.setNew(ch.is_new());
-		this.is_flaged = ch.is_flaged;
-		this.is_Checked = ch.is_Checked;
-		//this.dirty = ch.dirty;
+		// I don't think that updating a cache with current data should affect the state
+		// if a cache is checked or a search result. So the following two assignments are
+		// removed.
+//		this.is_flaged = ch.is_flaged;
+//		this.is_Checked = ch.is_Checked;
 		this.setOcCacheID(ch.getOcCacheID());
 		this.setNoFindLogs(ch.getNoFindLogs());
 		this.setHas_bugs(ch.has_bugs());
