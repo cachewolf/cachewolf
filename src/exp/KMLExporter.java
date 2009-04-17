@@ -58,7 +58,6 @@ public class KMLExporter extends Exporter {
 		String str;
 		CacheHolder ch;
 		CacheHolder addiWpt;
-		CacheHolderDetail holder;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 		

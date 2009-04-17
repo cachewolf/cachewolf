@@ -8,7 +8,6 @@ import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.ImageDragContext;
 import ewe.graphics.InteractivePanel;
-import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.sys.*;
 import ewe.fx.Image;

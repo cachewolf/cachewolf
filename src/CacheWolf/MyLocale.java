@@ -6,7 +6,6 @@ package CacheWolf;
 
 import utils.FileBugfix;
 import ewe.fx.Rect;
-import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.sys.*;
 import ewe.sys.Double;

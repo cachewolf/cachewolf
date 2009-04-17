@@ -38,7 +38,6 @@ public class FilterScreen extends Form{
 	private CellPanel pnlContainer=new CellPanel();
 	private CellPanel pnlSearch=new CellPanel();
 	private CellPanel pnlRose = new CellPanel();
-	private CellPanel pnlButtons=new CellPanel();
 	private CellPanel pnlAddi=new CellPanel();
 	private CellPanel pnlCacheAttributes=new CellPanel();
 	private CardPanel cp=new CardPanel();
