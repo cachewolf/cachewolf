@@ -55,7 +55,8 @@ public class MapInfoObject extends Area {
 	static private String digSep = MyLocale.getDigSeparator();
 	private int coordTrans = 0; 
 
-	public MapInfoObject() { }
+	public MapInfoObject() { // Public constructor
+	}
 
 	public MapInfoObject(MapInfoObject map) {
 		super (map.topleft, map.buttomright);
@@ -417,7 +418,7 @@ public class MapInfoObject extends Area {
 		public int bitMapX = 0;
 		public int bitMapY = 0;
 
-		public GCPoint(){
+		public GCPoint(){ // Public constructor
 		}
 
 		public GCPoint(CWPoint p) {

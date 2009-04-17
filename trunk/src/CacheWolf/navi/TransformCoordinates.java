@@ -95,7 +95,9 @@ public class TransformCoordinates {
 	static final Area ITALY_SICILIA_GK = new Area(wgs84ToGaussKrueger(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toTrackPoint(GkPoint.ITALIAN_GB),
 			wgs84ToGaussKrueger(ITALY_SICILIA.buttomright, EPSG_ITALIAN_GB_EW2).toTrackPoint(GkPoint.ITALIAN_GB));
 
-	private TransformCoordinates() {} // as all members are static, so avoid instantiation
+	private TransformCoordinates() {
+		// as all members are static, so avoid instantiation
+	} 
 
 	/* replaced by getGkRegion
 	public static boolean isGermanGk(int epsgcode) {

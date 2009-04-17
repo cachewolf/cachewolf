@@ -441,7 +441,9 @@ class MapListEntry /*implements Comparable */ {
 		*/
 		try {
 			if (filenamei.startsWith("FF1")) sortEntryBBox = filenamei.substring(0, filenamei.indexOf("E-"));
-		} catch (IndexOutOfBoundsException ex) { }
+		} catch (IndexOutOfBoundsException ex) {
+			Global.getPref().log("Ignored Exception", ex, true);
+		}
 		if (sortEntryBBox == null ) { //|| sortEntryScaleCenterPx.length() < 16) {
 			try {
 				map = new MapInfoObject(path, filename);

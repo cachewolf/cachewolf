@@ -306,8 +306,6 @@ public class GotoPanel extends CellPanel {
 				if (mainT.ch != null && mainT.ch.pos.isValid()) centerTo = new CWPoint(mainT.ch.pos);
 				else {
 					if (pref.curCentrePt.isValid()) centerTo = new CWPoint(pref.curCentrePt);
-					else {
-					}
 				}
 			}
 		}

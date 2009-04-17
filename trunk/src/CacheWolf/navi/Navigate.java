@@ -198,7 +198,9 @@ class SerialThread extends mThread{
 				//Vm.debug("Loop? " + noData);
 				noData++;
 				if (noData > 5) { myGPS.noDataError(); }
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+				Global.getPref().log("Ignored Exception", e, true);
+			}
 			if (comSp != null)	{
 				comLength = comSp.nonBlockingRead(comBuff, 0 ,comBuff.length);
 				//Vm.debug("Length: " + comBuff.length);
@@ -245,7 +247,9 @@ class UpdateThread extends mThread {
 	public void run () {
 		run = true;
 		while (run) {
-			try { sleep (calldelay);} catch (InterruptedException e) {}
+			try { sleep (calldelay);} catch (InterruptedException e) {
+				Global.getPref().log("Ignored Exception", e, true);
+			}
 			ticked.ticked();
 		}
 	}

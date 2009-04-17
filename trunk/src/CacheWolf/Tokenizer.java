@@ -29,7 +29,7 @@ public class Tokenizer{
 	TokenObj thisToken;
 	Vector messageStack;
 	
-	public Tokenizer(){
+	public Tokenizer(){ // Public constructor
 	}
 
     private void err(String str) throws Exception {
@@ -251,6 +251,8 @@ public class Tokenizer{
 				else if (newLineIsSeparator && (look=='\\' || look=='_')) ;
 				else err(MyLocale.getMsg(1732,"Invalid character")); 
 			}
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			Global.getPref().log("Ignored Exception", e, true);
+		}
 	}
 }

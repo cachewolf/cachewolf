@@ -154,7 +154,7 @@ public class Parser{
 	Vector tokenStack;
 	Vector messageStack;
 
-	public Parser(){
+	public Parser(){ // Global constructor
 	}
 
 ///////////////////////////////////////////

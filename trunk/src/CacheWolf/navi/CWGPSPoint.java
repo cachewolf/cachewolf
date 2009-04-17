@@ -208,7 +208,9 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					try {
 						logFile.write(NMEA.substring(start,end+3)+"\n");
 						logWritten = true;
-					} catch (IOException e) {}
+					} catch (IOException e) {
+						Global.getPref().log("Ignored Exception", e, true);
+					}
 				}
 
 				Extractor ex = new Extractor ("," + NMEA.substring(start,end), ",",",",0,true);
@@ -247,8 +249,12 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 								break;
 							}
 						case 7: this.numSat = Convert.toInt(currToken); interpreted = true; break;
-						case 8: try {this.HDOP = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {} break;
-						case 9: try {this.Alt = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {} break;
+						case 8: try {this.HDOP = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
+							Global.getPref().log("Ignored Exception", e, true);
+						} break;
+						case 9: try {this.Alt = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
+							Global.getPref().log("Ignored Exception", e, true);
+						} break;
 						} // switch
 					} // while
 					if (Fix > 0) this.set(latNS, latDeg, latMin, "0", lonEW, lonDeg, lonMin, "0", CWPoint.DMM);
@@ -262,10 +268,14 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						i++;
 						if (currToken.length()==0) continue;
 						switch (i){
-						case 1: try { this.Bear =Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {}
+						case 1: try { this.Bear =Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
+							Global.getPref().log("Ignored Exception", e, true);
+						}
 						if (this.Bear > 360) Vm.debug("Error bear VTG");
 						break;
-						case 7: try { this.Speed = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {} 
+						case 7: try { this.Speed = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
+							Global.getPref().log("Ignored Exception", e, true);
+						} 
 						break;
 						} // switch
 					} // while
@@ -301,25 +311,35 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 							break;
 						case 4: latNS = currToken; interpreted = true;
 						break;
-						case 5: try {lonDeg = currToken.substring(0,3); interpreted = true;} catch (IndexOutOfBoundsException e) {}
-						try {lonMin = currToken.substring(3,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {}
+						case 5: try {lonDeg = currToken.substring(0,3); interpreted = true;} catch (IndexOutOfBoundsException e) {
+							Global.getPref().log("Ignored Exception", e, true);
+						}
+						try {lonMin = currToken.substring(3,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {
+							Global.getPref().log("Ignored Exception", e, true);
+						}
 						break;
 						case 6: lonEW = currToken;
 						interpreted = true;
 						break;
 						case 7: if (status.equals("A")){
 							try {this.Speed = Common.parseDouble(currToken)*1.854;
-							interpreted = true; } catch (NumberFormatException e) { }
+							interpreted = true; } catch (NumberFormatException e) { 
+								Global.getPref().log("Ignored Exception", e, true);
+							}
 						}
 						break;
 						case 8: if (status.equals("A") && currToken.length()> 0){
 							try {this.Bear = Common.parseDouble(currToken);
-							interpreted = true; } catch (NumberFormatException e) { }
+							interpreted = true; } catch (NumberFormatException e) {
+								Global.getPref().log("Ignored Exception", e, true);
+							}
 						}
 						break;
 						case 9: if (status.equals("A") && currToken.length()> 0){
 							try {this.Date = currToken;
-							interpreted = true; } catch (NumberFormatException e) { }
+							interpreted = true; } catch (NumberFormatException e) { 
+								Global.getPref().log("Ignored Exception", e, true);
+							}
 						}
 						break;
 						} // switch
