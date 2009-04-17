@@ -297,7 +297,7 @@ public class MapImporter extends Form {
 						} // if
 
 					} // while
-					if (inMap != null)	inMap.close();
+					inMap.close();
 				} catch(IllegalArgumentException ex){ // is thrown from Convert.toDouble and saveWFL if affine[0-5]==0 NumberFormatException is a subclass of IllegalArgumentExepction
 					inf.addWarning("\n"+MyLocale.getMsg(4117, "Error while importing .map-file: ")+ex.getMessage());
 				} catch(IOException ex){
