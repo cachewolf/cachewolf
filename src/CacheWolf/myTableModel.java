@@ -21,10 +21,13 @@ public class myTableModel extends TableModel{
 	private static final Color COLOR_OWNED		= new Color(135,206,235);
 	private static final Color COLOR_AVAILABLE	= new Color(255,69,0);
 	private static final Color COLOR_ARCHIVED	= new Color(139,37,0);
-	private static final Color COLOR_SELECTED	= new Color(198,198,198);
+//	private static final Color COLOR_SELECTED	= new Color(198,198,198);
+	private static final Color COLOR_SELECTED	= new Color(141,141,141);
 	private static final Color COLOR_ARCHFND_FG	= new Color(255,0,0); // Archived && Found
 	private static final Color COLOR_ARCHFND_BG	= new Color(152,251,152);	
 	private static final Color COLOR_DETAILS_LOADED		= new Color(229,206,235);
+	private static final Color COLOR_WHITE      = new Color(255,255,255);
+	private static final Color COLOR_LINE      = new Color(255,255,255);
 	private CacheDB cacheDB;
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
 	 * the element j (as per the list below) is visible in column i. 
@@ -162,29 +165,52 @@ public class myTableModel extends TableModel{
 	* Method to set the row color of the table displaying the
 	* cache list, depending on different flags set to the cache.
 	*/
+	/* (non-Javadoc)
+	 * @see ewe.ui.TableModel#getCellAttributes(int, int, boolean, ewe.ui.TableCellAttributes)
+	 */
 	public TableCellAttributes getCellAttributes(int row,int col,boolean  isSelected, TableCellAttributes ta){
 		ta = super.getCellAttributes(row, col, isSelected, ta);
 		ta.alignment = CellConstants.LEFT;
 		ta.anchor = CellConstants.LEFT;
+		// The default color of a line is white
+		COLOR_LINE.set(255, 255, 255);
 		if(row >= 0){ 
 			try {
+				// Now find out if the line should be painted in an other color.
+				// Selected lines are not considered, so far
 			   CacheHolder ch = cacheDB.get(row);
-				if(isSelected == true) ta.fillColor = COLOR_SELECTED;
-				else if(ch.is_available() == false && ch.is_found() == true){
-					ta.fillColor = COLOR_ARCHFND_BG;   // Green BG
+				if(ch.is_available() == false && ch.is_found() == true){
+					COLOR_LINE.set(COLOR_ARCHFND_BG);   // Green BG
 					ta.foreground = COLOR_ARCHFND_FG;  // Red FG
 				}
-				else if( ch.is_archived())  ta.fillColor = COLOR_ARCHIVED;
-				else if(!ch.is_available()) ta.fillColor = COLOR_AVAILABLE;
-				else if( ch.is_owned())     ta.fillColor = COLOR_OWNED;
-				else if( ch.is_found())     ta.fillColor = COLOR_FOUND;
-				else if( ch.is_flaged)        ta.fillColor = COLOR_FLAGED;
-				else if( Global.getPref().debug && ch.detailsLoaded()) ta.fillColor = COLOR_DETAILS_LOADED;
+				else if( ch.is_archived())  COLOR_LINE.set(COLOR_ARCHIVED);
+				else if(!ch.is_available()) COLOR_LINE.set(COLOR_AVAILABLE);
+				else if( ch.is_owned())     COLOR_LINE.set(COLOR_OWNED);
+				else if( ch.is_found())     COLOR_LINE.set(COLOR_FOUND);
+				else if( ch.is_flaged)        COLOR_LINE.set(COLOR_FLAGED);
+				else if( Global.getPref().debug && ch.detailsLoaded()) COLOR_LINE.set(COLOR_DETAILS_LOADED);
+				
+				// Now, if a line is selected, blend the determined color with the selection 
+				// color.
+				if (isSelected) mergeColor(COLOR_LINE, COLOR_LINE, COLOR_SELECTED);
+				ta.fillColor = COLOR_LINE;
 			} catch (Exception e) {};
 		} else if (row==-1 && colMap[col]==0 && Global.getProfile().showBlacklisted()) ta.fillColor=Color.Black;
 		return ta;
 	}
 
+	/**
+	 * Determines the arithmetic mean value of two colors and stores the result in the 
+	 * third color.
+	 * @param colorMerged Resulting color
+	 * @param colorA First color to merge. May be same object as <code>colorMerged</code>.
+	 * @param colorB Second color to merge. May be same object as <code>colorMerged</code>.
+	 */
+	private void mergeColor(Color colorMerged, Color colorA, Color colorB) {
+		colorMerged.set((colorA.getRed()+colorB.getRed())/2,
+				         (colorA.getGreen()+colorB.getGreen())/2,
+				         (colorA.getBlue()+colorB.getBlue())/2);
+	}
 	public int calculateRowHeight(int row){
 		return java.lang.Math.max(18, charHeight+4);
 	}
