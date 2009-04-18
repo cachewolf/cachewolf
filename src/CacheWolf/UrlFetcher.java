@@ -36,9 +36,9 @@ public class UrlFetcher {
 		final int maxRedirections = 5;
 		HttpConnection conn = null;
 		Socket sock = null;
-		int i=-1;
+		int i=0;
 		String urltmp = new String(url);
-		while (urltmp != null && i <= maxRedirections ) { // allow max 5 redirections (http 302 location)
+		do  { // allow max 5 redirections (http 302 location)
 			if (realurl != null) realurl.copyFrom(new String(urltmp));
 			i++;
 			conn = new HttpConnection(urltmp);
@@ -48,7 +48,7 @@ public class UrlFetcher {
 			sock = conn.connect();
 			if (conn.responseCode >= 400) throw new IOException("URL: "+ urltmp + "\nhttp response code: " + conn.responseCode);
 			urltmp = conn.getRedirectTo();
-		}
+		} while (urltmp != null && i <= maxRedirections ); 
 		if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: "+url + " only "+maxRedirections+" are allowed");
 		ByteArray daten = conn.readData(sock);
 		sock.close();

@@ -165,11 +165,9 @@ public class MapImporter extends Form {
 			try {
 				in = new FileInputStream(curInFullPath);
 				buf = new byte[1024*10];
-				boolean first = true;
 				ByteArray header = new ByteArray(buf);
 				while ((len = in.read(buf)) > 0) {
-					if (first) {
-						first = false;
+					if (out==null) {
 						header.copyFrom(buf, 0, len);
 						ImageInfo tmpII = Image.getImageInfo(header,null);
 						imageWidth = tmpII.width;
