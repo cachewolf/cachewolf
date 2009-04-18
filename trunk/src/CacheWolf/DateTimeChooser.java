@@ -42,10 +42,10 @@ public class DateTimeChooser extends Editor {
 		//return new Time(day,month,year);
 	}
 	
-	void addTable(TableControl tc,TableModel tm,String name) {
+	void addTable(TableControl tc,TableModel tm,String pName) {
 		tc.setTableModel(tm);
 		tc.setClickMode(true);
-		panels.addItem(tc,name,null);
+		panels.addItem(tc,pName,null);
 		//tc.addListener(this);
 	}
 	

@@ -275,12 +275,12 @@ public class MainTab extends mTabbedPanel {
 	/**
 	 * this is called from goto / MovingMap / CalcPanel / DetailsPanel and so on to 
 	 * offer the user the possibility of entering an new waypoint
-	 * at a given position. ch must already been preset with a valid
+	 * at a given position. pCh must already been preset with a valid
 	 * CacheHolder object
 	 * 
-	 * @param ch
+	 * @param pCh
 	 */
-	public void newWaypoint(CacheHolder ch){
+	public void newWaypoint(CacheHolder pCh){
 		//When creating a new waypoint, simulate a change to the list view
 		//if we are currently NOT in the list view
 		if (oldCard != 0)
@@ -297,21 +297,21 @@ public class MainTab extends mTabbedPanel {
 				mainCache = selectedCache.mainCache.getWayPoint();
 			}			
 		}
-		if (CacheType.isAddiWpt(ch.getType()) && mainCache!=null && mainCache.length()>2) {
-			ch.setWayPoint(profile.getNewAddiWayPointName(mainCache));
-			profile.setAddiRef(ch);
+		if (CacheType.isAddiWpt(pCh.getType()) && mainCache!=null && mainCache.length()>2) {
+			pCh.setWayPoint(profile.getNewAddiWayPointName(mainCache));
+			profile.setAddiRef(pCh);
 		} else { 
-			ch.setWayPoint(profile.getNewWayPointName());
-			ch.setType(0);
-			lastselected=ch.getWayPoint();
+			pCh.setWayPoint(profile.getNewWayPointName());
+			pCh.setType(0);
+			lastselected=pCh.getWayPoint();
 		}
-		ch.setCacheSize("None");
-		chD = ch.getCacheDetails(true);
-		this.ch = ch;
-		cacheDB.add(ch);
+		pCh.setCacheSize("None");
+		chD = pCh.getCacheDetails(true);
+		this.ch = pCh;
+		cacheDB.add(pCh);
 		Global.getProfile().notifyUnsavedChanges(true); // Just to be sure 
 		tbP.myMod.numRows++;
-		detP.setDetails(ch);
+		detP.setDetails(pCh);
 		oldCard=1;
 		if (this.cardPanel.selectedItem != 1) select(detP);
 		solverP.setInstructions("");

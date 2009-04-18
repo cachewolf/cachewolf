@@ -59,7 +59,6 @@ public class MapLoaderGui extends Form {
 	float scale;
 	int overlapping;
 	boolean overviewmap;
-	int numCaches;
 
 	public MapLoaderGui(CacheDB cacheDBi) {
 		super();
@@ -222,9 +221,9 @@ public class MapLoaderGui extends Form {
 		}
 		if (overviewmap) {
 			progressBox.setInfo(MyLocale.getMsg(1824, "downloading overview map")); 
-			float scale = MapLoader.getScale(center, radius * 1000, size);
+			float overviewScale = MapLoader.getScale(center, radius * 1000, size);
 			try {
-				mapLoader.downloadMap(center, scale, size, mapsDir);
+				mapLoader.downloadMap(center, overviewScale, size, mapsDir);
 			} catch (Exception e) {
 				progressBox.addWarning(MyLocale.getMsg(1825, "Overview map: Ignoring error:")+" " + e.getMessage()+"\n");
 			}

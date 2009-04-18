@@ -90,8 +90,8 @@ public class AttributesSelector extends Panel {
 
 	public void showAttributePalette() {
 		iap.images.clear();
-		int width = 170;
-		int x = 2; int y = 2;
+		int myWidth = 170;
+		int myX = 2; int myY = 2;
 		long bitMask = 0;
 		String attrName;
 		String value;
@@ -113,14 +113,14 @@ public class AttributesSelector extends Panel {
 				img.attrNr = i;
 				img.bitMask = bitMask;
 
-				if (x+TILESIZE > width) {
-					x = 2;
-					y += TILESIZE;
+				if (myX+TILESIZE > myWidth) {
+					myX = 2;
+					myY += TILESIZE;
 				}
-				img.location=new Rect(x,y,TILESIZE,TILESIZE);
+				img.location=new Rect(myX,myY,TILESIZE,TILESIZE);
 				//System.out.println("img.location=new Rect("+x+","+y+","+TILESIZE+","+TILESIZE+");");
 				iap.addImage(img);
-				x += TILESIZE;
+				myX += TILESIZE;
 			}
 		}
 		iap.repaintNow();

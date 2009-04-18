@@ -16,14 +16,18 @@ public class myInteractivePanel extends InteractivePanel{
 	boolean penMoving = false;
 	int x1,y1,x2,y2 = 0;
 	static Color RED = new Color(255,0,0);
-	Font font = new Font("gui", Font.BOLD,Global.getPref().fontSize);
-	FontMetrics fm = getFontMetrics(font);
+	//Font font = new Font("gui", Font.BOLD,Global.getPref().fontSize);
+	FontMetrics fm = null;
 	long timePenOn=0;
 	AniImage imgInfo;
 	String strDifficulty=MyLocale.getMsg(1120,"Diff");
 	String strTerrain=MyLocale.getMsg(1121,"Terr");
 	AniImage imgDrag; // Allows the dragging of the cache into the cachelist
 	boolean canScroll=true;
+	{
+		font = new Font("gui", Font.BOLD,Global.getPref().fontSize);
+		fm = getFontMetrics(font);
+	}
 	
 	private void clearInfo() {
 		removeImage(imgInfo);

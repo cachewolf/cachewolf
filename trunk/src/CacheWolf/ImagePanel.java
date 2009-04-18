@@ -99,7 +99,7 @@ public class ImagePanel extends InteractivePanel{
 	 */
 	private void addTitle(String title) {
 		AniImage aImg;
-		Font font = new Font("Verdana", Font.BOLD, 20);
+		Font titleFont = new Font("Verdana", Font.BOLD, 20);
 		FontMetrics fm = getFontMetrics();
 		int stringWidth = fm.getTextWidth(title);
 		int stringHeight = fm.getHeight();
@@ -108,7 +108,7 @@ public class ImagePanel extends InteractivePanel{
 		g.setColor(new Color(195,195,195));
 		g.fillRect(0,0,stringWidth*2,stringHeight+5);
 		g.setColor(new Color(0,0,0));
-		g.setFont(font);
+		g.setFont(titleFont);
 		g.drawText(title, 0,0);
 		g.free();
 		aImg = new AniImage(img);
@@ -119,10 +119,10 @@ public class ImagePanel extends InteractivePanel{
 	
 	/**
 	 * Add the images to the panel. Can add both normal and user images
-	 * @param images Vector of images or userImages
+	 * @param pImages Vector of images or userImages
 	 * @param imagesText Vector of image texts or user image texts
 	 */
-	private void addImages(Vector images, Vector imagesText) {
+	private void addImages(Vector pImages, Vector imagesText) {
 		String location, imgText;
 		mImage mI;
 		int scaleX, scaleY;
@@ -130,8 +130,8 @@ public class ImagePanel extends InteractivePanel{
 		ImagePanelImage ipi;
 		AniImage AimgText;
 		locCounter=0;
-		for(int i = 0; i<images.size(); i++){
-			location = profile.dataDir + (String)images.get(i);
+		for(int i = 0; i<pImages.size(); i++){
+			location = profile.dataDir + (String)pImages.get(i);
 			if (!(new FileBugfix(location)).exists()) {
 				location=NO_IMAGE;
 				if (!pref.showDeletedImages) continue; // Don't show the deleted Image if user does not want it
@@ -203,18 +203,18 @@ public class ImagePanel extends InteractivePanel{
 		
 	}
 	
-	private AniImage getImageText(String text){
-		Font font = new Font("Verdana", Font.BOLD, 14);
+	private AniImage getImageText(String pText){
+		Font aniImageFont = new Font("Verdana", Font.BOLD, 14);
 		FontMetrics fm = getFontMetrics();
-		int stringWidth = fm.getTextWidth(text);
+		int stringWidth = fm.getTextWidth(pText);
 		int stringHeight = fm.getHeight();
 		Image img = new Image(stringWidth*2,stringHeight+5);
 		Graphics g = new Graphics(img);
 		g.setColor(new Color(195,195,195));
 		g.fillRect(0,0,stringWidth*2,stringHeight+5);
 		g.setColor(new Color(0,0,0));
-		g.setFont(font);
-		g.drawText(text, 0,0);
+		g.setFont(aniImageFont);
+		g.drawText(pText, 0,0);
 		g.free();
 		AniImage a = new AniImage(img);
 		return a;

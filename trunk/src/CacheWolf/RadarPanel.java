@@ -95,11 +95,11 @@ public class RadarPanel extends CellPanel{
 	* Private method to draw the caches.
 	*/
 	private void drawCaches(){
-		Font font = new Font("Gui", Font.BOLD,Global.getPref().fontSize);
-		FontMetrics fm = getFontMetrics(font);
+		Font radarFont = new Font("Gui", Font.BOLD,Global.getPref().fontSize);
+		FontMetrics fm = getFontMetrics(radarFont);
 		AniImage aImg;
 		RadarPanelImage rpi;
-		int x,y = 0;
+		int drX,drY = 0;
 		CacheHolder holder;
 		double degrees;
 		double pi180=java.lang.Math.PI / 180.0;
@@ -107,9 +107,9 @@ public class RadarPanel extends CellPanel{
 			holder = cacheDB.get(i);
 			if(!holder.is_filtered() && holder.pos.isValid()) {
 				degrees = holder.degrees * pi180;
-				x =new Float(holder.kilom/scale *  java.lang.Math.sin(degrees)).intValue();
-				y = -new Float(holder.kilom/scale *  java.lang.Math.cos(degrees)).intValue();
-				if(centerX+x>=0 && centerY+y>=0 && centerX+x<=width && centerY+y <= height){
+				drX =new Float(holder.kilom/scale *  java.lang.Math.sin(degrees)).intValue();
+				drY = -new Float(holder.kilom/scale *  java.lang.Math.cos(degrees)).intValue();
+				if(centerX+drX>=0 && centerY+drY>=0 && centerX+drX<=width && centerY+drY <= height){
 					if (toggleMod>0) {
 						String s;
 						if (toggleMod==1)
@@ -120,13 +120,13 @@ public class RadarPanel extends CellPanel{
 							int tw;
 							Image img = new Image(tw=fm.getTextWidth(s),fm.getHeight());
 							Graphics g = new Graphics(img);
-							g.setFont(font);
+							g.setFont(radarFont);
 							g.setColor(Color.Black);
 							g.fillRect(0,0,tw, fm.getHeight());
 							g.setColor(Color.White);
 							g.drawText(s, 0,0);
 							aImg = new AniImage(img);
-							aImg.setLocation(centerX+x+5,centerY+y);
+							aImg.setLocation(centerX+drX+5,centerY+drY);
 							aImg.transparentColor = Color.Black;
 							aImg.properties = mImage.IsNotHot;
 							iActP.addImage(aImg);
@@ -138,7 +138,7 @@ public class RadarPanel extends CellPanel{
 					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = holder.getWayPoint();
 					rpi.rownum = i;
-					rpi.setLocation(centerX+x-7,centerY+y-7);
+					rpi.setLocation(centerX+drX-7,centerY+drY-7);
 					iActP.addImage(rpi);
 					if(holder.getWayPoint().equals(selectedWaypoint)){ // Draw red circle around selected wpt
 						Image imgCircle = new Image(20, 20);
@@ -148,7 +148,7 @@ public class RadarPanel extends CellPanel{
 						gCircle.setColor(new Color(255,0,0));
 						gCircle.drawEllipse(0,0, 20,20);
 						aImg = new AniImage(imgCircle);
-						aImg.setLocation(centerX+x-9,centerY+y-9);
+						aImg.setLocation(centerX+drX-9,centerY+drY-9);
 						aImg.transparentColor = new Color(0,0,0);
 						aImg.properties = mImage.IsNotHot;
 						iActP.addImage(aImg);
