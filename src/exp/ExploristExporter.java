@@ -133,15 +133,16 @@ public class ExploristExporter {
 		}
 
 		try {
-			PrintWriter outp = null;
+			// Set initial value for outp to calm down compiler
+			PrintWriter outp = new PrintWriter(new BufferedWriter(
+								new FileWriter(new File(fileBaseName + expCount
+										/ 200 + ".gs"))));
 			for (int i = 0; i < cacheDB.size(); i++) {
 				ch = cacheDB.get(i);
 				if (ch.is_black() == false && ch.is_filtered() == false) {
 					// all 200 caches we need a new file
-					if (expCount % 200 == 0) {
-						if (outp != null) {
-							outp.close();
-						}
+					if (expCount % 200 == 0 && expCount > 0) {
+						outp.close();
 						outp = new PrintWriter(new BufferedWriter(
 								new FileWriter(new File(fileBaseName + expCount
 										/ 200 + ".gs"))));

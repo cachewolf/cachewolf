@@ -117,17 +117,20 @@ public class TablePanel extends CellPanel{
 		int rownum = 0;
 		if (wayPoint != null) {
 			rownum = Global.getProfile().cacheDB.getIndex(wayPoint);
+			// If it is not visible: Go backward in the list of the 
+			// previously visible caches and look if you find
+			// any cache that is now still visible.
 			if ( (rownum < 0) || (rownum>=myMod.numRows) ) {
-				// If it is not visible: Go backward in the list of the 
-				// previously visible caches and look if you find
-				// any cache that is now still visible.
-				int i;
-				for (i=sel-1; i>=0; i--) {
-					CacheHolder checkCache = (CacheHolder) oldVisibleCaches.get(i);
-					rownum = Global.getProfile().cacheDB.getIndex(checkCache.getWayPoint());
-					if ((rownum >= 0) && (rownum < myMod.numRows)) break;
-					rownum = 0;	
-				}
+				if (oldVisibleCaches!=null) {
+	                int i;
+	                for (i = sel - 1; i >= 0; i--) {
+		                CacheHolder checkCache = (CacheHolder) oldVisibleCaches.get(i);
+		                rownum = Global.getProfile().cacheDB.getIndex(checkCache.getWayPoint());
+		                if ((rownum >= 0) && (rownum < myMod.numRows))
+			                break;
+		                rownum = 0;
+	                }
+                }
 			}	
 		}
 		selectRow(rownum);

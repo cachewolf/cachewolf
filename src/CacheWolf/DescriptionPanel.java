@@ -65,7 +65,7 @@ public class DescriptionPanel extends CellPanel{
         	desc=STRreplace.replace(desc, "</sup>",")");
         }
         Vm.showWait(true);
-        if (isHtml) {
+        if (cache!=null && isHtml) {
             int imageNo = 0;
             if (Global.getPref().descShowImg) {
                 Vector Images;
