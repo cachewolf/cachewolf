@@ -154,12 +154,12 @@ public class Matrix{
 	/**
 	*	Method to calculate the determinate of a matrix
 	*/
-	public double Determinant(double[][] matrix) {
-		int tms = matrix.length;
+	public double Determinant(double[][] pMatrix) {
+		int tms = pMatrix.length;
 		double det = 1;
-		matrix = UpperTriangle(matrix);
+		pMatrix = UpperTriangle(pMatrix);
 		for (int i = 0; i < tms; i++) {
-			det = det * matrix[i][i];
+			det = det * pMatrix[i][i];
 		} // multiply down diagonal
 		det = det * iDF; // adjust w/ determinant factor
 		return det;

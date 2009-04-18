@@ -18,19 +18,19 @@ public class InfoScreen extends Form {
 	
 	public InfoScreen(String datei, String tit, boolean readFromFile, Preferences p){
 		pref = p;
-		String text = new String();
+		String myText = new String();
 		this.setTitle(tit);
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		if(readFromFile == true){
 			try{
 				FileReader in = new FileReader(datei);
-				text = in.readAll();
+				myText = in.readAll();
 				in.close();
 			}catch(Exception ex){
 				//Vm.debug("Error! Could not open " + datei);
 			}
-		} else text = datei;
-		disp.setHtml(text);
+		} else myText = datei;
+		disp.setHtml(myText);
 		ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
 		this.addLast(sbp);
 		this.addLast(btCancel = new mButton(MyLocale.getMsg(3000,"Close")),CellConstants.DONTSTRETCH, CellConstants.FILL);

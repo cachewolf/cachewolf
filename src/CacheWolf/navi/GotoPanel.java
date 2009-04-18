@@ -179,10 +179,10 @@ public class GotoPanel extends CellPanel {
 //		}	
 	}
 	
-	public void resizeTo(int width, int height){
-		super.resizeTo(width, height);
+	public void resizeTo(int pWidth, int pHeight){
+		super.resizeTo(pWidth, pHeight);
 		Rect coordsRect = CoordsP.getRect();
-		int roseHeight = height - coordsRect.y - coordsRect.height;
+		int roseHeight = pHeight - coordsRect.y - coordsRect.height;
 		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 			//some space for the SIP button
 			if ( (Vm.getParameter(VmConstants.VM_FLAGS) & (VmConstants.VM_FLAG_SIP_BUTTON_ON_SCREEN)) == (VmConstants.VM_FLAG_SIP_BUTTON_ON_SCREEN) ){
@@ -190,9 +190,9 @@ public class GotoPanel extends CellPanel {
 				roseHeight -= screen.height / 14;				
 			}
 		}
-		roseP.resizeTo(width, roseHeight); 
-		icRose.resizeTo(width, roseHeight);
-		compassRose.resize(width, roseHeight);
+		roseP.resizeTo(pWidth, roseHeight); 
+		icRose.resizeTo(pWidth, roseHeight);
+		compassRose.resize(pWidth, roseHeight);
 	}
 
 
