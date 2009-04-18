@@ -21,12 +21,10 @@ public class myTableModel extends TableModel{
 	private static final Color COLOR_OWNED		= new Color(135,206,235);
 	private static final Color COLOR_AVAILABLE	= new Color(255,128,0);
 	private static final Color COLOR_ARCHIVED	= new Color(200,0,0);
-//	private static final Color COLOR_SELECTED	= new Color(198,198,198);
 	private static final Color COLOR_SELECTED	= new Color(141,141,141);
 	private static final Color COLOR_DETAILS_LOADED		= new Color(229,206,235);
 	private static final Color COLOR_WHITE   	= new Color(255,255,255);
 	private Color lineColorBG                   = new Color(255,255,255);
-	private Color lineColorFG                   = new Color(0,0,0);
 	private Color lastColorBG                   = new Color(255,255,255);
 	private Color lastColorFG                   = new Color(0,0,0);
 	private int lastRow = -2;
@@ -61,7 +59,6 @@ public class myTableModel extends TableModel{
 //	private int lastRow=-1;
 	private myTableControl tcControl;
 	public boolean showExtraWptInfo=true;
-	private int dbgCnt=0;
 	
 	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
@@ -185,8 +182,6 @@ public class myTableModel extends TableModel{
 		if (row >= 0) {
 			if (row != lastRow) {
 				try {
-					Vm.debug(String.valueOf(row) + " / " + String.valueOf(col) + " / "
-							+ String.valueOf(dbgCnt++));
 					// Now find out if the line should be painted in an other color.
 					// Selected lines are not considered, so far
 					CacheHolder ch = cacheDB.get(row);
