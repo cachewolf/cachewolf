@@ -25,6 +25,11 @@ public class myTableModel extends TableModel{
 	private static final Color COLOR_SELECTED	= new Color(141,141,141);
 	private static final Color COLOR_DETAILS_LOADED		= new Color(229,206,235);
 	private static final Color COLOR_WHITE   	= new Color(255,255,255);
+	private Color lineColorBG                   = new Color(255,255,255);
+	private Color lineColorFG                   = new Color(0,0,0);
+	private Color lastColorBG                   = new Color(255,255,255);
+	private Color lastColorFG                   = new Color(0,0,0);
+	private int lastRow = -2;
 	private CacheDB cacheDB;
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
 	 * the element j (as per the list below) is visible in column i. 
@@ -56,6 +61,7 @@ public class myTableModel extends TableModel{
 //	private int lastRow=-1;
 	private myTableControl tcControl;
 	public boolean showExtraWptInfo=true;
+	private int dbgCnt=0;
 	
 	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
@@ -159,52 +165,75 @@ public class myTableModel extends TableModel{
 	}
 	
 	/**
-	* Method to set the row color of the table displaying the
-	* cache list, depending on different flags set to the cache.
-	*/
-	/* (non-Javadoc)
+	 * Method to set the row color of the table displaying the cache list, depending on different
+	 * flags set to the cache.
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see ewe.ui.TableModel#getCellAttributes(int, int, boolean, ewe.ui.TableCellAttributes)
 	 */
-	public TableCellAttributes getCellAttributes(int row,int col,boolean  isSelected, TableCellAttributes ta){
+	public TableCellAttributes getCellAttributes(int row, int col, boolean isSelected,
+	        TableCellAttributes ta) {
 		ta = super.getCellAttributes(row, col, isSelected, ta);
 		ta.alignment = CellConstants.LEFT;
 		ta.anchor = CellConstants.LEFT;
 		// The default color of a line is white
-		Color lineColor      = new Color(255,255,255);
-		lineColor.set(COLOR_WHITE);
-		if(row >= 0){ 
-			try {
-				// Now find out if the line should be painted in an other color.
-				// Selected lines are not considered, so far
-				CacheHolder ch = cacheDB.get(row);
-				if( ch.is_owned())     lineColor.set(COLOR_OWNED);
-				else if( ch.is_found())     lineColor.set(COLOR_FOUND);
-				else if( ch.is_flaged)        lineColor.set(COLOR_FLAGED);
-				else if( Global.getPref().debug && ch.detailsLoaded()) lineColor.set(COLOR_DETAILS_LOADED);
+		lineColorBG.set(COLOR_WHITE);
+		// Determination of colors is only done for first column. Other columns take same
+		// color.
+		if (row >= 0) {
+			if (row != lastRow) {
+				try {
+					Vm.debug(String.valueOf(row) + " / " + String.valueOf(col) + " / "
+							+ String.valueOf(dbgCnt++));
+					// Now find out if the line should be painted in an other color.
+					// Selected lines are not considered, so far
+					CacheHolder ch = cacheDB.get(row);
+					if (ch.is_owned())
+						lineColorBG.set(COLOR_OWNED);
+					else if (ch.is_found())
+						lineColorBG.set(COLOR_FOUND);
+					else if (ch.is_flaged)
+						lineColorBG.set(COLOR_FLAGED);
+					else if (Global.getPref().debug && ch.detailsLoaded())
+						lineColorBG.set(COLOR_DETAILS_LOADED);
 
-				if( ch.is_archived() ) {
-					if ( lineColor.equals(COLOR_WHITE) ) {
-						lineColor.set(COLOR_ARCHIVED);
-					} else {
-						ta.foreground = COLOR_ARCHIVED;
+					if (ch.is_archived()) {
+						if (lineColorBG.equals(COLOR_WHITE)) {
+							lineColorBG.set(COLOR_ARCHIVED);
+						} else {
+							ta.foreground = COLOR_ARCHIVED;
+						}
+					} else if (!ch.is_available()) {
+						if (lineColorBG.equals(COLOR_WHITE)) {
+							lineColorBG.set(COLOR_AVAILABLE);
+						} else {
+							ta.foreground = COLOR_AVAILABLE;
+						}
 					}
-				}
-				else if(!ch.is_available() ) {
-					if ( lineColor.equals(COLOR_WHITE) ) {
-						lineColor.set(COLOR_AVAILABLE);
-					} else {
-						ta.foreground = COLOR_AVAILABLE;
-					}
-				}
 
-				// Now, if a line is selected, blend the determined color with the selection 
-				// color.
-				if (isSelected) mergeColor(lineColor, lineColor, COLOR_SELECTED);
-				ta.fillColor = lineColor;
-			} catch (Exception e) {
-				Global.getPref().log("Ignored Exception", e, true);
-			};
-		} else if (row==-1 && colMap[col]==0 && Global.getProfile().showBlacklisted()) ta.fillColor=Color.Black;
+					// Now, if a line is selected, blend the determined color with the selection
+					// color.
+					if (isSelected)
+						mergeColor(lineColorBG, lineColorBG, COLOR_SELECTED);
+					ta.fillColor = lineColorBG;
+					lastColorBG.set(ta.fillColor);
+					lastColorFG.set(ta.foreground);
+					lastRow = row;
+				} catch (Exception e) {
+					Global.getPref().log("Ignored Exception", e, true);
+				};
+			} else  {
+				// Here: We already had this row.
+				// Take color computed for last column 
+				ta.fillColor = lastColorBG;
+				ta.foreground = lastColorFG;
+			}
+		} else if (row == -1 && colMap[col] == 0 && Global.getProfile().showBlacklisted()) {
+			ta.fillColor = Color.Black;
+			lastColorBG.set(ta.fillColor);
+		}
 		return ta;
 	}
 
