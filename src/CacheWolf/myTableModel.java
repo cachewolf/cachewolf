@@ -180,7 +180,7 @@ public class myTableModel extends TableModel{
 		// Determination of colors is only done for first column. Other columns take same
 		// color.
 		if (row >= 0) {
-			if (row != lastRow) {
+			if (row==0 || row != lastRow) {
 				try {
 					// Now find out if the line should be painted in an other color.
 					// Selected lines are not considered, so far
