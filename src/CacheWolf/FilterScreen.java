@@ -80,9 +80,9 @@ public class FilterScreen extends Form{
 		mButton mb=new mButton(new mImage(imgName)); mb.borderWidth=0; mb.modify(NotEditable|PreferredSizeOnly,0);
 		return mb;
 	}
-	private void addTitle(CellPanel c, String title) {
+	private void addTitle(CellPanel c, String pTitle) {
 		mLabel lblTitle;
-		c.addLast(lblTitle=new mLabel(title),HSTRETCH,FILL|CENTER);
+		c.addLast(lblTitle=new mLabel(pTitle),HSTRETCH,FILL|CENTER);
 		lblTitle.backGround=new Color(127,127,127); 
 		lblTitle.foreGround=Color.White; 
 		lblTitle.setTag(INSETS,new Insets(2,0,4,0));

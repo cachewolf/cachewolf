@@ -90,34 +90,34 @@ public class SpiderGC{
 			return ERR_LOGIN;
 		}
 		//Get password
-		InfoBox infB = new InfoBox(MyLocale.getMsg(5506,"Password"), MyLocale.getMsg(5505,"Enter Password"), InfoBox.INPUT);
-		infB.feedback.setText(passwort); // Remember the PWD for next time
-		infB.feedback.isPassword=true;
-		int code = infB.execute();
-		passwort = infB.getInput();
-		infB.close(0);
+		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506,"Password"), MyLocale.getMsg(5505,"Enter Password"), InfoBox.INPUT);
+		localInfB.feedback.setText(passwort); // Remember the PWD for next time
+		localInfB.feedback.isPassword=true;
+		int code = localInfB.execute();
+		passwort = localInfB.getInput();
+		localInfB.close(0);
 		if(code != FormBase.IDOK) return code;
 
 		// Now start the login proper
-		infB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
-		infB.exec();
+		localInfB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
+		localInfB.exec();
 		try{
 			pref.log("[login]:Fetching login page");
 			//Access the page once to get a viewstate
 			start = fetch(loginPage);   //http://www.geocaching.com/login/Default.aspx
 			if (start.equals("")) {
-				infB.close(0);
+				localInfB.close(0);
 				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
 				pref.log("[login]:Could not fetch: gc.com login page");
 				return ERR_LOGIN;
 			}
 		} catch(Exception ex){
-			infB.close(0);
+			localInfB.close(0);
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
 			pref.log("[login]:Could not fetch: gc.com login page",ex);
 			return ERR_LOGIN;
 		}
-		if (!infB.isClosed) { // If user has not aborted, we continue
+		if (!localInfB.isClosed) { // If user has not aborted, we continue
 			Regex rexCookieID = new Regex("(?i)Set-Cookie: userid=(.*?);.*");
 			Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
 			Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*?)\" />");
@@ -162,13 +162,13 @@ public class SpiderGC{
 							pref.log("[login.LoginUrl]:"+sb.toString());
 							pref.log("[login.Answer]:"+start);
 						}
-						infB.close(0);
+						localInfB.close(0);
 						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), FormBase.OKB)).execute();
 						return ERR_LOGIN;
 					}
 				}catch(Exception ex){
 					pref.log("[login]:Login failed with exception.", ex);
-					infB.close(0);
+					localInfB.close(0);
 					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), FormBase.OKB)).execute();
 					return ERR_LOGIN;
 				}
@@ -193,8 +193,8 @@ public class SpiderGC{
 				cookieSession = rexCookieSession.stringMatched(1);
 			//Vm.debug("cookieSession = " + cookieSession);
 		}
-		boolean loginAborted=infB.isClosed;
-		infB.close(0);
+		boolean loginAborted=localInfB.isClosed;
+		localInfB.close(0);
 		if (loginAborted)
 			return FormBase.IDCANCEL;
 		else {
@@ -208,9 +208,9 @@ public class SpiderGC{
 	 * It assumes a login has already been performed!
 	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with next cache
 	 */
-	public int spiderSingle(int number, InfoBox infB, boolean forceLogin){
+	public int spiderSingle(int number, InfoBox pInfB, boolean forceLogin){
 		int ret=-1;
-		this.infB = infB;
+		this.infB = pInfB;
 		CacheHolder ch = new CacheHolder(); // cacheDB.get(number);
 		ch.setWayPoint(cacheDB.get(number).getWayPoint());
 		if (ch.isAddiWpt()) return -1;  // No point re-spidering an addi waypoint, comes with parent
@@ -250,18 +250,18 @@ public class SpiderGC{
 				return "";
 			}
 		}
-		InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
-		infB.exec();
+		InfoBox localInfB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
+		localInfB.exec();
 		try{
 			String doc = p.getProp("waypoint") + wayPoint;
 			pref.log("Fetching: " + wayPoint);
 			completeWebPage = fetch(doc);
 		}catch(Exception ex){
-			infB.close(0);
+			localInfB.close(0);
 			pref.log("Could not fetch " + wayPoint,ex);
 			return "";
 		}
-		infB.close(0);
+		localInfB.close(0);
 		try {
 			return getLatLon(completeWebPage);
 		} catch (Exception ex) {
@@ -1451,9 +1451,9 @@ public class SpiderGC{
 			boolean gotany = false;
 
 			for (int i = 0; i < pl.size(); i++) {
-				Property p = (Property)pl.get(i);
-				if (p.value != null) {
-					sb.append(p.name).append(": ").append(p.value).append("\r\n");
+				Property currProp = (Property)pl.get(i);
+				if (currProp.value != null) {
+					sb.append(currProp.name).append(": ").append(currProp.value).append("\r\n");
 					gotany = true;
 				}
 			}

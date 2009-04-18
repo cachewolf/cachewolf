@@ -70,11 +70,11 @@ public class TablePanel extends CellPanel{
 		return tc.cursor.y;
 	}
 	
-	public void saveColWidth(Preferences pref){
+	public void saveColWidth(Preferences pPref){
 		String colWidths=myMod.getColWidths();
-		if (!colWidths.equals(pref.listColWidth)) {
-			pref.listColWidth=colWidths;
-			pref.savePreferences();
+		if (!colWidths.equals(pPref.listColWidth)) {
+			pPref.listColWidth=colWidths;
+			pPref.savePreferences();
 		}
 	}
 	

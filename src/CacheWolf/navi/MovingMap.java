@@ -144,19 +144,19 @@ public class MovingMap extends Form {
 		mmp.addImage(buttonImageZoom1to1);
 		//target distance
 		int fontSize = ( 3 * pref.fontSize ) / 2;
-		Font font = new Font("Helvetica", Font.PLAIN, fontSize );
-		fm = getFontMetrics(font);
+		Font imageFont = new Font("Helvetica", Font.PLAIN, fontSize );
+		fm = getFontMetrics(imageFont);
 		DistanceImage = new AniImage();
 		DistanceImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight() ), Color.White); // consider the size of the font used
 		DistanceImageGraphics = new Graphics(DistanceImage.image);
-		DistanceImageGraphics.setFont(font);
+		DistanceImageGraphics.setFont(imageFont);
 		DistanceImage.properties = mImage.AlwaysOnTop;
 		mmp.addImage(DistanceImage);
 		//scale
 		ScaleImage = new AniImage();
 		ScaleImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight() ), Color.White); // consider the size of the font used
 		ScaleImageGraphics = new Graphics(ScaleImage.image);
-		ScaleImageGraphics.setFont(font);
+		ScaleImageGraphics.setFont(imageFont);
 		ScaleImage.properties = mImage.AlwaysOnTop;
 		mmp.addImage(ScaleImage);
 		//resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialise mapImage.screenSize
@@ -661,13 +661,13 @@ public class MovingMap extends Form {
 		int ww = ws.width;
 		int wh = ws.height;
 		//Vm.sleep(100); // this is necessary because the ewe vm ist not multi-threaded and the serial thread also needs time
-		int num, x, y;
+		int num, pX, pY;
 		for (int yi=0; yi<3; yi++) {
 			for (int xi=0; xi<3; xi++) {
 				num = yi*3+xi;
-				x = posOnScreen.x+(xi-1)*ww;
-				y = posOnScreen.y+(yi-1)*wh; 
-				TrackOverlays[num].setLocation(x, y);
+				pX = posOnScreen.x+(xi-1)*ww;
+				pY = posOnScreen.y+(yi-1)*wh; 
+				TrackOverlays[num].setLocation(pX, pY);
 			}
 		}
 	}
@@ -773,9 +773,9 @@ public class MovingMap extends Form {
 		return new Point(coords.x + mapPos.x, coords.y + mapPos.y);
 	}
 
-	public CWPoint ScreenXY2LatLon (int x, int y){
+	public CWPoint ScreenXY2LatLon (int px, int py){
 		Point mapPos = getMapPositionOnScreen();
-		return currentMap.calcLatLon(x - mapPos.x, y - mapPos.y);
+		return currentMap.calcLatLon(px - mapPos.x, py - mapPos.y);
 	}
 
 
@@ -793,9 +793,9 @@ public class MovingMap extends Form {
 		}
 	}
 
-	public MapSymbol addSymbol(String name, String filename, CWPoint where) {
+	public MapSymbol addSymbol(String pName, String filename, CWPoint where) {
 		if (symbols==null) symbols=new Vector();
-		MapSymbol ms = new MapSymbol(name, filename, where);
+		MapSymbol ms = new MapSymbol(pName, filename, where);
 		ms.loadImage();
 		ms.properties |= mImage.AlwaysOnTop;
 		Point pOnScreen = getXYonScreen(where);
@@ -805,15 +805,15 @@ public class MovingMap extends Form {
 		return ms;
 	}
 	
-	public void addSymbolIfNecessary(String name, Object mapObject, Image imSymb, CWPoint where) {
-		if (findMapSymbol(name) >= 0) return;
-		else addSymbol(name, mapObject, imSymb, where);
+	public void addSymbolIfNecessary(String pName, Object mapObject, Image imSymb, CWPoint where) {
+		if (findMapSymbol(pName) >= 0) return;
+		else addSymbol(pName, mapObject, imSymb, where);
 		
 	}
 		
-	public void addSymbol(String name, Object mapObject, Image imSymb, CWPoint ll) {
+	public void addSymbol(String pName, Object mapObject, Image imSymb, CWPoint ll) {
 		if (symbols==null) symbols=new Vector();
-		MapSymbol ms = new MapSymbol(name, mapObject, imSymb, ll);
+		MapSymbol ms = new MapSymbol(pName, mapObject, imSymb, ll);
 		ms.properties = mImage.AlwaysOnTop;
 		Point pOnScreen = getXYonScreen(ll);
 		if (pOnScreen != null) ms.setLocation(pOnScreen.x-ms.getWidth()/2, pOnScreen.y-ms.getHeight()/2);
@@ -850,8 +850,8 @@ public class MovingMap extends Form {
 		if (gotoPos != null) symbols.add(gotoPos);
 	}
 
-	public void removeMapSymbol(String name) {
-		int symbNr = findMapSymbol(name);
+	public void removeMapSymbol(String pName) {
+		int symbNr = findMapSymbol(pName);
 		if (symbNr != -1) removeMapSymbol(symbNr);
 	}
 
@@ -866,12 +866,12 @@ public class MovingMap extends Form {
 		symbols.removeElementAt(SymNr);
 	}
 
-	public int findMapSymbol(String name) {
+	public int findMapSymbol(String pName) {
 		if (symbols == null) return -1;
 		MapSymbol ms;
 		for (int i = symbols.size() -1; i >= 0 ; i--) {
 			ms= (MapSymbol)symbols.get(i);
-			if (ms.name == name) return i;
+			if (ms.name == pName) return i;
 		}
 		return -1;
 	}
@@ -1076,22 +1076,22 @@ public class MovingMap extends Form {
 	public Object[] getRectForMapChange(CWPoint ll) {
 		int w = (width != 0 ? width : pref.myAppWidth); // width == 0 happens if this routine is run before the windows is on the screen
 		int h = (height != 0 ? height : pref.myAppHeight);
-		int x, y;
+		int pX, pY;
 		CWPoint cll;
 		Boolean posCircleOnScreen = java.lang.Boolean.FALSE;
 		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h && ll.isValid()) {
 			posCircleOnScreen = java.lang.Boolean.TRUE;
-			x = posCircleX; // posCircle is inside the screen
-			y = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn vorher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
+			pX = posCircleX; // posCircle is inside the screen
+			pY = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn vorher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
 			cll = new CWPoint(ll);
 		} else { // when posCircle out of screen - use centre of screen as point which as to be included in the map
 			cll = ScreenXY2LatLon(w/2, h/2);
-			x = w/2;
-			y = h/2;
+			pX = w/2;
+			pY = h/2;
 		} 
 		Object[] ret = new Object[3];
 		ret[0] = cll;
-		ret[1] = new Rect(x, y, w, h);
+		ret[1] = new Rect(pX, pY, w, h);
 		ret[2] = posCircleOnScreen;
 		return ret; 
 	}

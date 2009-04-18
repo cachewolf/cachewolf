@@ -342,8 +342,8 @@ public class OCXMLImporter extends MinML {
 
 	}
 
-	public void characters(char[] ch,int start,int length){
-		String chars = new String(ch,start,length);
+	public void characters(char[] ch2,int start,int length){
+		String chars = new String(ch2,start,length);
 		strData += chars;
 		if (debugGPX) Vm.debug(strData);
 	}

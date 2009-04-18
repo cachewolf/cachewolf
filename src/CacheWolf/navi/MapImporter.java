@@ -48,9 +48,9 @@ public class MapImporter extends Form {
 	 *	info panel below the map.
 	 *	It helps to identify how good the georeferencing works based on the set GCPs.
 	 */
-	public void updatePosition(int x, int y){
+	public void updatePosition(int px, int py){
 		if(GCPs.size()>=3  || (wfl.topleft.isValid())){
-			CWPoint p = wfl.calcLatLon(x,y);
+			CWPoint p = wfl.calcLatLon(px,py);
 			infLabel.setText("--> " + p.getLatDeg(CWPoint.DMS) + " " +p.getLatMin(CWPoint.DMM) + " / " + p.getLonDeg(CWPoint.DMS) + " " + p.getLonMin(CWPoint.DMM));
 		}
 	}

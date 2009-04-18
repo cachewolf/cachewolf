@@ -122,8 +122,8 @@ public class myTableControl extends TableControl{
 	
 	 
 	/** always select a whole row */
-	public boolean isSelected(int row,int col) {
-		return row==selection.y;
+	public boolean isSelected(int pRow,int pCol) {
+		return pRow==selection.y;
 	}
 	
 	public void popupMenuEvent(Object selectedItem){
@@ -286,7 +286,6 @@ public class myTableControl extends TableControl{
 	int row;
 	
 	public void startDragging(DragContext dc) {
-		CacheDB cacheDB=Global.getProfile().cacheDB;
 		 Point p=cellAtPoint(dc.start.x,dc.start.y,null);
 		 wayPoint=null;
 		 if (p.y>=0) { 
@@ -331,18 +330,18 @@ public class myTableControl extends TableControl{
 	 		super.dragged(dc);
 	 }
 
-	 public void cursorTo(int row,int col,boolean selectNew) {
-		if (row != -2 && col != -2 && !canSelect(row,col)) return;
-		cursor.set(col,row);
+	 public void cursorTo(int pRow,int pCol,boolean selectNew) {
+		if (pRow != -2 && pCol != -2 && !canSelect(pRow,pCol)) return;
+		cursor.set(pCol,pRow);
 		if (selectNew){
 			clearSelectedCells(oldExtendedSelection);
 			paintCells(null,oldExtendedSelection);
-			if (row != -2 && col != -2){
-				if (scrollToVisible(row,col)) repaintNow();
-				addToSelection(Rect.buff.set(0,row,model.numCols,1),true);
+			if (pRow != -2 && pCol != -2){
+				if (scrollToVisible(pRow,pCol)) repaintNow();
+				addToSelection(Rect.buff.set(0,pRow,model.numCols,1),true);
 				//fireSelectionEvent(TableEvent.FLAG_SELECTED_BY_ARROWKEY);
 				clickedFlags = TableEvent.FLAG_SELECTED_BY_ARROWKEY;
-				if (clickMode) clicked(row,col);
+				if (clickMode) clicked(pRow,pCol);
 				clickedFlags = 0;
 			}
 		}

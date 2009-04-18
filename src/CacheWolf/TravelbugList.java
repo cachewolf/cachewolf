@@ -29,8 +29,8 @@ public class TravelbugList extends MinML{
 	}
 
 	/** Add a travelbug to the list */
-	public void add(Travelbug tb) {
-		tbList.add(tb);
+	public void add(Travelbug pTb) {
+		tbList.add(pTb);
 	}
 	
 	/** Remove a travelbug from the list */
@@ -39,8 +39,8 @@ public class TravelbugList extends MinML{
 	}
 
 	/** Replace a travelbug in the list */
-	public void replace(int i, Travelbug tb) {
-		tbList.set(i, tb);
+	public void replace(int i, Travelbug pTb) {
+		tbList.set(i, pTb);
 	}
 	
 	/** Construct an empty travelbug list */
@@ -69,7 +69,7 @@ public class TravelbugList extends MinML{
 		while(fnd>=0) {
 			int fnd2=htmlList.indexOf("<br>",fnd+12);
 			int fnd3=htmlList.indexOf("<b>Name:</b>",fnd2+4);
-			Travelbug tb=new Travelbug(htmlList.substring(fnd+12,fnd2));
+			Travelbug tb2=new Travelbug(htmlList.substring(fnd+12,fnd2));
 			String mission;
 			if (fnd3>0) {
 				mission=htmlList.substring(fnd2+4,fnd3);
@@ -77,8 +77,8 @@ public class TravelbugList extends MinML{
 				mission=htmlList.substring(fnd2+4);
 			}
 			if (mission.endsWith("<hr>")) mission=mission.substring(0,mission.length()-4);
-			tb.setMission(mission);
-			tbList.add(tb);
+			tb2.setMission(mission);
+			tbList.add(tb2);
 			fnd=fnd3;
 		}
 	}
