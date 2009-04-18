@@ -1950,7 +1950,10 @@ class ListBox extends Form{
 					list.addItem(i + ": " + map.mapName);
 					row++;
 					inList[i] = true;
-					if (!curMapFound && map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
+					if (!curMapFound && curMap!=null && map.mapName.equals(curMap.mapName)) { 
+						oldmap = row; 
+						curMapFound = true; 
+					}
 				} else inList[i] = false;
 			}
 		}
@@ -1969,7 +1972,10 @@ class ListBox extends Form{
 					list.addItem(i + ": " + map.mapName);
 					row++;
 					inList[i] = true;
-					if (!curMapFound  && map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
+					if (!curMapFound  && curMap!=null && map.mapName.equals(curMap.mapName)) { 
+						oldmap = row; 
+						curMapFound = true; 
+					}
 				}
 			}
 		}
@@ -1987,7 +1993,10 @@ class ListBox extends Form{
 					list.addItem(i + ": " + map.mapName);
 					row++;
 					inList[i] = true;
-					if (!curMapFound  && map.mapName.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
+					if (!curMapFound  && curMap!=null && map.mapName.equals(curMap.mapName)) { 
+						oldmap = row; 
+						curMapFound = true; 
+					}
 				}
 			}
 		}
@@ -1998,7 +2007,10 @@ class ListBox extends Form{
 			if(!inList[i]) {
 				list.addItem(i + ": " + ml.filename);
 				row++;
-				if (!curMapFound && ml.filename.equals(curMap.mapName)) { oldmap = row; curMapFound = true; }
+				if (!curMapFound && curMap!=null && ml.filename.equals(curMap.mapName)) { 
+					oldmap = row; 
+					curMapFound = true; 
+				}
 			}
 		}
 		list.selectItem(oldmap, true);

@@ -381,7 +381,7 @@ public class myTableModel extends TableModel{
 				sortedBy = mappedCol;
 				cacheDB.sort(new MyComparer(cacheDB, mappedCol,numRows), sortAsc);
 				updateRows();
-				if(a != null){
+				if(a != null && ch!=null){
 					int rownum = Global.getProfile().getCacheIndex(ch.getWayPoint());
 					if(rownum >= 0){
 						tcControl.cursorTo(rownum, 0, true);
