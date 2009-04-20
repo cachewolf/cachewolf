@@ -20,7 +20,7 @@ public class SearchCache {
 	* and / or cache name) is flagged as matching. The search only
 	* acts on the filtered (=visible) set of caches
 	*/
-	public void search(String searchStr){
+	public void search(String searchStr, boolean searchInDescriptionAndNotes){
 		if(searchStr.length()>0){
 			Global.getProfile().selectionChanged = true;
 			searchStr = searchStr.toUpperCase();
@@ -34,8 +34,10 @@ public class SearchCache {
 				if (ch.is_filtered()) break; // Reached end of visible records
 				if(ch.getWayPoint().toUpperCase().indexOf(searchStr) <0 && 
 				   ch.getCacheName().toUpperCase().indexOf(searchStr) <0 && 
-				   ch.getCacheStatus().toUpperCase().indexOf(searchStr)<0 /*&&
-				   ch.getExistingDetails().LongDescription.toUpperCase().indexOf(searchStr)<0*/){
+				   ch.getCacheStatus().toUpperCase().indexOf(searchStr)<0 &&
+				   (! searchInDescriptionAndNotes || 
+					ch.getExistingDetails().LongDescription.toUpperCase().indexOf(searchStr)<0 &&
+					ch.getExistingDetails().CacheNotes.toUpperCase().indexOf(searchStr)<0)){
 					ch.is_flaged = false;
 					ch.setFiltered(true);
 				} else
