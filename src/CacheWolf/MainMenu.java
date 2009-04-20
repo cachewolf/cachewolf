@@ -38,6 +38,7 @@ public class MainMenu extends MenuBar {
 	private TablePanel tbp;
 	private FilterScreen scnFilter=new FilterScreen();
 	private boolean addExeToGpsbabel = false;
+	private static boolean searchInDescriptionAndNotes = false;
 
 	public MainMenu(Form f){
 		father = f;
@@ -245,10 +246,12 @@ public class MainMenu extends MenuBar {
 	}
 
 	public static void search() {
-		String srch = new InputBox(MyLocale.getMsg(119,"Search for:")).input("",10);
+		SearchBox inp = new SearchBox(MyLocale.getMsg(119,"Search for:"));
+		String srch = inp.input(null,"",searchInDescriptionAndNotes,10);
 		if (srch != null) {
+			searchInDescriptionAndNotes = inp.useNoteDesc();
 			SearchCache ssc = new SearchCache(Global.getProfile().cacheDB);
-			ssc.search(srch);
+			ssc.search(srch, searchInDescriptionAndNotes);
 			Global.mainTab.tbP.refreshTable();
 		}
 	}
