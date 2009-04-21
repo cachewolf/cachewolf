@@ -34,7 +34,7 @@ public class SearchCache {
 					counter++;
 				}
 			}
-			CWProgressBar cwp = new CWProgressBar("Searching...", 0, counter, searchInDescriptionAndNotes);
+			CWProgressBar cwp = new CWProgressBar(MyLocale.getMsg(219,"Searching..."), 0, counter, searchInDescriptionAndNotes);
 			cwp.exec();
 			cwp.allowExit(true);
 			//Search through complete database
