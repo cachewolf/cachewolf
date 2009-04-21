@@ -4,6 +4,8 @@ import CacheWolf.navi.Metrics;
 
 import com.stevesoft.ewe_pat.Regex;
 
+import ewe.fx.FontMetrics;
+import ewe.fx.IconAndText;
 import ewe.io.IOException;
 import ewe.sys.Convert;
 import ewe.ui.FormBase;
@@ -112,6 +114,9 @@ public class CacheHolder {
 
 	private long attributesYes = 0;
 	private long attributesNo  = 0;
+	
+	private IconAndText iconAndTextWP = null;
+	private int iconAndTextWPLevel = 0;
 
 		static char decSep,notDecSep;
 	static {
@@ -734,6 +739,31 @@ public void finalize() {nObjects--;
 
 	// Getter and Setter for private properties
 
+	/**
+	 * Gets an IconAndText object for the cache. If the level of the Icon is equal to the 
+	 * last call of the method, the same (cached) object is returned. If the object is
+	 * null or the level is different, a new object is created.<br> 
+	 * @param level 4=is_incomplete(), 3=is_new(), 2=is_updated(), 1=is_log_updated
+	 * @param fm Font metrics
+	 * @return New or old IconAndText object
+	 */
+	public IconAndText getIconAndTextWP(int level, FontMetrics fm) {
+		IconAndText result;
+		if (level == iconAndTextWPLevel && iconAndTextWP != null) {
+			result = iconAndTextWP;
+		} else {
+			switch (level) {
+				case 4: iconAndTextWP = new IconAndText(myTableModel.skull, this.getWayPoint(), fm); break;
+				case 3: iconAndTextWP = new IconAndText(myTableModel.yellow, this.getWayPoint(), fm); break;
+				case 2: iconAndTextWP = new IconAndText(myTableModel.red, this.getWayPoint(), fm); break;
+				case 1: iconAndTextWP = new IconAndText(myTableModel.blue, this.getWayPoint(), fm); break;
+			}
+			result = iconAndTextWP;
+			iconAndTextWPLevel = level;
+		}
+		return result;
+	}
+	
 	public String getCacheStatus() {
     	return cacheStatus;
     }
@@ -866,6 +896,7 @@ public void finalize() {nObjects--;
 
 	public void setLog_updated(boolean is_log_updated) {
 		Global.getProfile().notifyUnsavedChanges(is_log_updated != this.log_updated);		
+		if (is_log_updated && iconAndTextWPLevel==1) iconAndTextWP = null;
     	this.log_updated = is_log_updated;
     }
 
@@ -875,6 +906,7 @@ public void finalize() {nObjects--;
 
 	public void setUpdated(boolean is_updated) {
 		Global.getProfile().notifyUnsavedChanges(is_updated != this.cache_updated);		
+		if (is_updated && iconAndTextWPLevel==2) iconAndTextWP = null;
     	this.cache_updated = is_updated;
     }
 
@@ -883,7 +915,8 @@ public void finalize() {nObjects--;
     }
 
 	public void setIncomplete(boolean is_incomplete) {
-		Global.getProfile().notifyUnsavedChanges(is_incomplete != this.incomplete);		
+		Global.getProfile().notifyUnsavedChanges(is_incomplete != this.incomplete);	
+		if (is_incomplete && iconAndTextWPLevel==4) iconAndTextWP = null;
     	this.incomplete = is_incomplete;
     }
 
@@ -902,7 +935,8 @@ public void finalize() {nObjects--;
 
 	public void setNew(boolean is_new) {
 		Global.getProfile().notifyUnsavedChanges(is_new != this.newCache);		
-    	this.newCache = is_new;
+		if (is_new && iconAndTextWPLevel==3) iconAndTextWP = null;
+		this.newCache = is_new;
     }
 
 	public String getOcCacheID() {

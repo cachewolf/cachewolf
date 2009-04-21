@@ -45,7 +45,7 @@ public class myTableModel extends TableModel{
 			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX")};
 	
 	private static Image noFindLogs[] = new Image[4];
-	private mImage red, blue, yellow, skull; // green
+	public static mImage red, blue, yellow, skull; // green
 	private Image checkboxTicked,checkboxUnticked;
 	private mImage bug;
 	private boolean sortAsc = false;
@@ -285,10 +285,10 @@ public class myTableModel extends TableModel{
 						return ch.getTerrain();
 					case 4: // Waypoint
 						if (showExtraWptInfo) {
-							if(ch.is_incomplete()) return new IconAndText(skull, ch.getWayPoint(), fm);
-							if(ch.is_new()       ) return new IconAndText(yellow, ch.getWayPoint(), fm);
-							if(ch.is_updated()    ) return new IconAndText(red, ch.getWayPoint(), fm); // TODO this is for sure quite inefficient, better store it, don't create always new when the table is refreshed or only scrolled
-							if(ch.is_log_updated()) return new IconAndText(blue, ch.getWayPoint(), fm);
+							if(ch.is_incomplete()) return ch.getIconAndTextWP(4, fm);
+							if(ch.is_new()       ) return ch.getIconAndTextWP(3, fm);
+							if(ch.is_updated()    ) return ch.getIconAndTextWP(2, fm);
+							if(ch.is_log_updated()) return ch.getIconAndTextWP(1, fm);
 						}
 						return ch.getWayPoint();
 					case 5: // Cachename
