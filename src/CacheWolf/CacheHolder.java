@@ -748,20 +748,16 @@ public void finalize() {nObjects--;
 	 * @return New or old IconAndText object
 	 */
 	public IconAndText getIconAndTextWP(int level, FontMetrics fm) {
-		IconAndText result;
-		if (level == iconAndTextWPLevel && iconAndTextWP != null) {
-			result = iconAndTextWP;
-		} else {
+		if (level != iconAndTextWPLevel || iconAndTextWP == null) {
 			switch (level) {
 				case 4: iconAndTextWP = new IconAndText(myTableModel.skull, this.getWayPoint(), fm); break;
 				case 3: iconAndTextWP = new IconAndText(myTableModel.yellow, this.getWayPoint(), fm); break;
 				case 2: iconAndTextWP = new IconAndText(myTableModel.red, this.getWayPoint(), fm); break;
 				case 1: iconAndTextWP = new IconAndText(myTableModel.blue, this.getWayPoint(), fm); break;
 			}
-			result = iconAndTextWP;
 			iconAndTextWPLevel = level;
 		}
-		return result;
+		return iconAndTextWP;
 	}
 	
 	public String getCacheStatus() {
