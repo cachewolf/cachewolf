@@ -1,5 +1,7 @@
 package CacheWolf;
 
+import ewe.sys.Vm;
+
 /**
 *	A class to perform a search on the cache database.
 *	The searchstr is searched for in the waypoint
@@ -25,11 +27,22 @@ public class SearchCache {
 			Global.getProfile().selectionChanged = true;
 			searchStr = searchStr.toUpperCase();
 			CacheHolder ch;
+			int counter = 0;
+			if (searchInDescriptionAndNotes) {
+				for(int i=0 ; i<cacheDB.size(); i++) {
+					if (cacheDB.get(i).is_filtered()) break;
+					counter++;
+				}
+			}
+			CWProgressBar cwp = new CWProgressBar("Searching...", 0, counter, searchInDescriptionAndNotes);
+			cwp.exec();
+			cwp.allowExit(true);
 			//Search through complete database
 			//Mark finds by setting is_flaged
 			//TableModel will be responsible for displaying
 			//marked caches.
 			for(int i = 0;i < cacheDB.size();i++){
+				cwp.setPosition(i);
 				ch = cacheDB.get(i);
 				if (ch.is_filtered()) break; // Reached end of visible records
 				if(ch.getWayPoint().toUpperCase().indexOf(searchStr) <0 && 
@@ -42,8 +55,10 @@ public class SearchCache {
 					ch.setFiltered(true);
 				} else
 					ch.is_flaged=true;
+				if (cwp.isClosed()) break;
 			} // for
-		     Global.mainTab.tbP.selectRow(0);
+			cwp.exit(0);
+		    Global.mainTab.tbP.selectRow(0);
 		} // if
 	}
 	
