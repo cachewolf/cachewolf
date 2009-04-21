@@ -1,7 +1,5 @@
 package CacheWolf;
 
-import ewe.sys.Vm;
-
 /**
 *	A class to perform a search on the cache database.
 *	The searchstr is searched for in the waypoint
