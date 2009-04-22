@@ -740,17 +740,17 @@ public void finalize() {nObjects--;
 	/**
 	 * Initializes the caches states (and its addis) before updating, so that the "new", "updated",
 	 * "log_updated" and "incomplete" properties are properly set. 
-	 * @param newCache <code>true</code> if it is a new cache (i.e. a cache not existing in CacheDB),
+	 * @param pNewCache <code>true</code> if it is a new cache (i.e. a cache not existing in CacheDB),
 	 * <code>false</code> otherwise.
 	 */
-	public void initStates(boolean newCache) {
-		this.setNew(newCache);
+	public void initStates(boolean pNewCache) {
+		this.setNew(pNewCache);
 		this.setUpdated(false);
 		this.setLog_updated(false);
 		this.setIncomplete(false);
-		if (!newCache && this.hasAddiWpt()) {
+		if (!pNewCache && this.hasAddiWpt()) {
 			for (int i=0; i<this.addiWpts.size(); i++) {
-				((CacheHolder)this.addiWpts.get(i)).initStates(newCache);
+				((CacheHolder)this.addiWpts.get(i)).initStates(pNewCache);
 			}
 		}
 	}
