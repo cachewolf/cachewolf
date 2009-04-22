@@ -288,10 +288,10 @@ public class SpiderGC{
 		if (System.getProperty("os.name")!=null)pref.log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"));
 		if (System.getProperty("java.vendor")!=null)pref.log("Java: "+System.getProperty("java.vendor")+"/"+System.getProperty("java.version"));
 		CacheHolder ch;
-		// Reset is_new()
+		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = cacheDB.get(i);
-			ch.setNew(false);
+			if (ch.mainCache==null) ch.initStates(false);
 		}
 		String start = "";
 		Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*)\" />");
