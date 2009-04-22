@@ -86,7 +86,7 @@ public class MainMenu extends MenuBar {
 			p.waitFor();
 			gpsbabelFound = true;
 		}catch(IOException ioex){
-			Global.getPref().log("Ignored Exception", ioex, true);
+			// Most of the time there will be an exception, so don't complain
 		}
 		if ( !gpsbabelFound ) {
 			try{
@@ -96,7 +96,7 @@ public class MainMenu extends MenuBar {
 				addExeToGpsbabel = true;
 				gpsbabelFound = true;
 			}catch(IOException ioex){
-				Global.getPref().log("Ignored Exception", ioex, true);
+				// Most of the time there will be an exception, so don't complain
 			}
 		}		
 		
