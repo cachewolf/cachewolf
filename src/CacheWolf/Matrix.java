@@ -237,8 +237,10 @@ public class Matrix{
 	
 	/**
 	*	"Old" helper method used by some other classes in cachewolf.
-	*	@deprecated Do not use when coding new classes!
 	*/
+	//  No reason for deprecation, so I removed it. Or is there a better substitution for this
+	//  method?
+	//	@deprecated Do not use when coding new classes!
 	public static double dot(double p1, double p2, double q1, double q2, double x1, double x2){
 		double dt,AB0,AB1,BC0,BC1 = 0;
 		AB0 = q1 - p1;
@@ -251,8 +253,10 @@ public class Matrix{
 	
 	/**
 	*	"Old" helper method used by some other classes in cachewolf.
-	*	@deprecated Do not use when coding new classes!
 	*/
+	//  No reason for deprecation, so I removed it. Or is there a better substitution for this
+	//  method?
+	//	@deprecated Do not use when coding new classes!
 	public static double cross(double p1, double p2, double q1, double q2, double x1, double x2){
 		double cr,AB0,AB1,AC0,AC1 = 0;
 		AB0 = q1 - p1;
@@ -265,8 +269,10 @@ public class Matrix{
 	
 	/**
 	*	"Old" helper method used by some other classes in cachewolf.
-	*	@deprecated Do not use when coding new classes!
 	*/
+	//  No reason for deprecation, so I removed it. Or is there a better substitution for this
+	//  method?
+	//	@deprecated Do not use when coding new classes!
 	public static double dist(double p1, double p2, double q1, double q2){
 		double d1, d2,dt = 0;
 		d1 = p1 - q1;
