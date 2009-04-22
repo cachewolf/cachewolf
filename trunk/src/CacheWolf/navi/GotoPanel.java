@@ -738,24 +738,6 @@ class GotoRose extends AniImage {
 		}
 	}
 
-	/**
-	 * draw single arrow 
-	 * @param g handle for drawing
-	 * @param angle angle of arrow
-	 * @param col color of arrow
-	 */
-	private void drawSimpleArrow(Graphics g, float angle, Color col, float scale) {
-		float angleRad;
-		int x, y, centerX = location.width/2, centerY = location.height/2;
-		int arrowLength = roseRadius; 
-
-		angleRad = (angle) * (float)java.lang.Math.PI / 180;
-		x = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad) * scale).intValue();
-		y = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad) * scale).intValue();
-		g.setPen(new Pen(col,Pen.SOLID,3));
-		g.drawLine(centerX,centerY,x,y);
-	}
-	
 	private void drawSunArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
@@ -814,67 +796,6 @@ class GotoRose extends AniImage {
 			g.setBrush(new Brush(colPoint, Brush.SOLID));
 			g.fillPolygon(pointsX, pointsY, 3);			
 		}
-	}
-	
-	private void drawDoubleArrow(Graphics g, float angle, Color colFront, Color colRear, float scale) {
-		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
-		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = roseRadius * scale;
-		float halfArrowWidth = arrowLength * 0.1f;
-		
-		int[] pointsX = new int[3];
-		int[] pointsY = new int[3];
-
-		pointsX[0] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
-		pointsY[0] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
-		pointsX[1] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI / 2.0)).intValue();
-		pointsY[1] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI / 2.0)).intValue();
-		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 2.0)).intValue();
-		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 2.0)).intValue();
-		
-		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
-		g.setBrush(new Brush(colFront, Brush.SOLID));
-		g.fillPolygon(pointsX, pointsY, 3);
-		
-		pointsX[0] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad + java.lang.Math.PI)).intValue();
-		pointsY[0] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad + java.lang.Math.PI)).intValue();
-		
-		g.setBrush(new Brush(colRear, Brush.SOLID));
-		g.fillPolygon(pointsX, pointsY, 3);
-	}
-	
-	private void drawRose(Graphics g, float angle, Color colFront, Color colRear, float scale) {
-		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
-		int centerX = location.width/2, centerY = location.height/2;
-		float arrowLength = roseRadius * scale;
-		float halfArrowWidth = arrowLength * 0.12f;
-		
-		int[] pointsX = new int[8];
-		int[] pointsY = new int[8];
-
-		pointsX[0] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 4.0)).intValue();
-		pointsY[0] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 4.0)).intValue();
-		pointsX[1] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad)).intValue();
-		pointsY[1] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
-		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI / 4.0)).intValue();
-		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI / 4.0)).intValue();
-		pointsX[3] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad + java.lang.Math.PI / 2.0)).intValue();
-		pointsY[3] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad + java.lang.Math.PI / 2.0)).intValue();
-		pointsX[4] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + 3.0 * java.lang.Math.PI / 4.0)).intValue();
-		pointsY[4] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + 3.0 * java.lang.Math.PI / 4.0)).intValue();
-		pointsX[5] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad + java.lang.Math.PI)).intValue();
-		pointsY[5] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad + java.lang.Math.PI)).intValue();
-		pointsX[6] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - 3.0 * java.lang.Math.PI / 4.0)).intValue();
-		pointsY[6] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - 3.0 * java.lang.Math.PI / 4.0)).intValue();
-		pointsX[7] = centerX + new Float(arrowLength * java.lang.Math.sin(angleRad - java.lang.Math.PI / 2.0)).intValue();
-		pointsY[7] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad - java.lang.Math.PI / 2.0)).intValue();
-		
-		g.setPen(new Pen(colRear,Pen.SOLID,1));
-		g.setBrush(new Brush(colRear, Brush.SOLID));
-		g.fillPolygon(pointsX, pointsY, 8);
-		
-		g.setBrush(new Brush(colFront, Brush.SOLID));
-		g.fillPolygon(pointsX, pointsY, 3);
 	}
 	
 	private void drawFullRose(Graphics g, float angle, Color colLeft, Color colRight, Color colNorthLeft, Color colNorthRight,
