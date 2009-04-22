@@ -369,13 +369,13 @@ public class CacheHolder {
 		this.setAvailable(ch.is_available());
 		this.setOwned(ch.is_owned());
 		this.setFiltered(ch.is_filtered());
-		this.setLog_updated(ch.is_log_updated());
-		this.setUpdated(ch.is_updated());
+//		this.setLog_updated(ch.is_log_updated());
+//		this.setUpdated(ch.is_updated());
 		this.setIncomplete(ch.is_incomplete());
 		this.setBlack(ch.is_black());
 		this.addiWpts = ch.addiWpts;
 		this.mainCache=ch.mainCache;
-		this.setNew(ch.is_new());
+//		this.setNew(ch.is_new());
 		// I don't think that updating a cache with current data should affect the state
 		// if a cache is checked or a search result. So the following two assignments are
 		// removed.
@@ -735,6 +735,24 @@ public void finalize() {nObjects--;
         }
 
 		return result;
+	}
+	
+	/**
+	 * Initializes the caches states (and its addis) before updating, so that the "new", "updated",
+	 * "log_updated" and "incomplete" properties are properly set. 
+	 * @param newCache <code>true</code> if it is a new cache (i.e. a cache not existing in CacheDB),
+	 * <code>false</code> otherwise.
+	 */
+	public void initStates(boolean newCache) {
+		this.setNew(newCache);
+		this.setUpdated(false);
+		this.setLog_updated(false);
+		this.setIncomplete(false);
+		if (!newCache && this.hasAddiWpt()) {
+			for (int i=0; i<this.addiWpts.size(); i++) {
+				((CacheHolder)this.addiWpts.get(i)).initStates(newCache);
+			}
+		}
 	}
 
 	// Getter and Setter for private properties
