@@ -226,9 +226,10 @@ public class SpiderGC{
 			ret=getCacheByWaypointName(ch,true,true,false,loadAllLogs);
 			// Save the spidered data
 			if (ret == 1) {
-				pref.log("Saving to:" + profile.dataDir);
-				cacheDB.get(number).update(ch);
-				ch.save();
+				CacheHolder cacheInDB = cacheDB.get(number);
+				cacheInDB.initStates(false);
+				cacheInDB.update(ch);
+				cacheInDB.save();
 			}
 		}catch(Exception ex){
 			pref.log("Error spidering " + ch.getWayPoint() + " in spiderSingle");
@@ -642,9 +643,7 @@ public class SpiderGC{
 				// Only analyse the cache data and fetch pictures if user has not closed the progress window
 				if (!infB.isClosed) {
 					try{
-						ch.setNew(!isUpdate);
-						ch.setUpdated(false);
-						ch.setLog_updated(false);
+						ch.initStates(!isUpdate);
 
 						//first check if coordinates are available to prevent deleting existing coorinates
 						String latLon = getLatLon(completeWebPage);
@@ -783,7 +782,7 @@ public class SpiderGC{
 						pref.log("Getting attributes");
 						getAttributes(completeWebPage, ch.getFreshDetails());
 						pref.log("Got attributes");
-						if (ch.is_new()) ch.setUpdated(false);
+						//if (ch.is_new()) ch.setUpdated(false);
 						ch.setIncomplete(false);
 						break;
 					}catch(Exception ex){
@@ -1326,8 +1325,7 @@ public class SpiderGC{
 					hd=new CacheHolder(); 
 					hd.setWayPoint(adWayPoint);
 				}
-				hd.setUpdated(false); 
-				hd.setNew(false);
+				hd.initStates(idx<0);
 				nameRex.search(rowBlock);
 				koordRex.search(rowBlock);
 				typeRex.search(rowBlock);
@@ -1338,17 +1336,17 @@ public class SpiderGC{
 				descRex.search(rowBlock);
 				hd.getFreshDetails().setLongDescription(descRex.stringMatched(1));
 				hd.setFound(is_found);
-				hd.save();
 				if (idx<0){
-					hd.setNew(true); 
-					hd.setUpdated(false);
 					cacheDB.add(hd);
+					hd.save();
 				}else {
 					CacheHolder cx=cacheDB.get(idx);
 					if (cx.is_Checked && // Only re-spider existing addi waypoints that are ticked
 				 	   !cx.is_filtered()) { // and are visible (i.e.  not filtered)
+					   cx.initStates(false);
 					   cx.update(hd);
 					   cx.is_Checked=true;
+					   cx.save();
 					}
 				}
 				rowBlock = exRowBlock.findNext();
