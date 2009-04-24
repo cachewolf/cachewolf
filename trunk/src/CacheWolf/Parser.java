@@ -528,7 +528,8 @@ public class Parser{
     	else if (fmtStr.equals("dmm")) fmt=CWPoint.DMM;
     	else if (fmtStr.equals("dms")) fmt=CWPoint.DMS;
     	else if (fmtStr.equals("utm")) fmt=CWPoint.UTM;
-    	else if (!fmtStr.equals("cw")) err(MyLocale.getMsg(1713,"Invalid coordinate format. Allowed are CW/DD/DMM/DMS/UTM"));
+    	else if (fmtStr.equals("gk")) fmt=CWPoint.GK;
+    	else if (!fmtStr.equals("cw")) err(MyLocale.getMsg(1713,"Invalid coordinate format. Allowed are CW/DD/DMM/DMS/UTM/GK"));
     	return cwPt.toString(fmt);
     }
 
