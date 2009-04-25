@@ -115,6 +115,8 @@ public class GPXImporter extends MinML {
 							r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
 							infB = new InfoBox(zipEnt.toString(),(MyLocale.getMsg(4000,"Loaded caches: ") + zaehlerGel));
 							infB.exec();
+							if (r.read() != 65279)
+								r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
 							parse(r);
 							r.close();
 							infB.close(0);
@@ -125,6 +127,8 @@ public class GPXImporter extends MinML {
 					r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
 					infB = new InfoBox("Info",(MyLocale.getMsg(4000,"Loaded caches: ") + zaehlerGel));
 					infB.show();
+					if (r.read() != 65279)
+						r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
 					parse(r);
 					r.close();
 					infB.close(0);
