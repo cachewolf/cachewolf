@@ -222,6 +222,7 @@ public class MainTab extends mTabbedPanel {
 		case 5:  // Solver Panel
 			MyLocale.setSIPOff();
 			if (ch.isAddiWpt()) { 
+				chMain=ch.mainCache;
 				solverP.setInstructions(ch.mainCache.getFreshDetails().Solver);
 			} else {
 				solverP.setInstructions(chD.Solver);
