@@ -166,6 +166,7 @@ public class MapImporter extends Form {
 				in = new FileInputStream(curInFullPath);
 				buf = new byte[1024*10];
 				ByteArray header = new ByteArray(buf);
+				out = null; // May be unequal to null because of prior loop
 				while ((len = in.read(buf)) > 0) {
 					if (out==null) {
 						header.copyFrom(buf, 0, len);
