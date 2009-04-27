@@ -25,7 +25,8 @@ public class SolverPanel extends CellPanel{
 	Vector msgFIFO = new Vector();
 	Menu mnuContext;
 	private String originalInstructions="";
-	mButton btnDegRad; 
+	mButton btnDegRad;
+	private CacheHolder ch; 
 	
 	public boolean isDirty() {
 		return !originalInstructions.equals(getInstructions());
@@ -34,10 +35,32 @@ public class SolverPanel extends CellPanel{
 	public String getInstructions() {
 		return mText.getText();
 	}
+	/**
+	 * Sets the instructions in the solver panel. The last remembered cache of the solver panel
+	 * is not changed.
+	 * @param text The instructions to set.
+	 */
 	public void setInstructions(String text) {
 		originalInstructions=text;
 		mText.setText(text);
 		mText.repaint();
+	}
+	/**
+	 * Sets the instructions of the solver panel to the solver code in the given cache.
+	 * The current cache is remembered. If the instructions are set for an other cache, 
+	 * then the output panel is cleared if the cache objects do not belong to each other.
+	 * @param pCh The cache who's solver code is used
+	 */
+	public void setInstructions(CacheHolder pCh) {
+		if (pCh != null) {
+	        this.setInstructions(pCh.getFreshDetails().Solver);
+	        if (!pCh.hasSameMainCache(ch)) {
+		        this.clearOutput();
+	        }
+        } else {
+        	this.setInstructions("");
+        }
+		ch = pCh;
 	}
 	
 	
@@ -130,6 +153,13 @@ public class SolverPanel extends CellPanel{
 			msgStr = msgStr + msgFIFO.get(i) + "\n";
 		}
 		mOutput.appendText(msgStr,true);
+    }
+    
+    /**
+     * Clears the output panel
+     */
+    void clearOutput() {
+    	mOutput.setText("");
     }
 	
 	public void onEvent(Event ev){

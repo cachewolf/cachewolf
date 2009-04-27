@@ -223,9 +223,9 @@ public class MainTab extends mTabbedPanel {
 			MyLocale.setSIPOff();
 			if (ch.isAddiWpt()) { 
 				chMain=ch.mainCache;
-				solverP.setInstructions(ch.mainCache.getFreshDetails().Solver);
+				solverP.setInstructions(ch.mainCache);
 			} else {
-				solverP.setInstructions(chD.Solver);
+				solverP.setInstructions(ch);
 			}
 			break;
 		case 6:  // CalcPanel
@@ -315,7 +315,7 @@ public class MainTab extends mTabbedPanel {
 		detP.setDetails(pCh);
 		oldCard=1;
 		if (this.cardPanel.selectedItem != 1) select(detP);
-		solverP.setInstructions("");
+		solverP.setInstructions(pCh);
 		detP.setNeedsTableUpdate(true);
 		//tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
