@@ -138,7 +138,7 @@ public class GPXExporter extends Exporter{
 					det.Travelbugs.size();
 					strBuf.append("      <groundspeak:travelbugs>\r\n");
 					for (int i = 0; i < det.Travelbugs.size(); i++) {
-						strBuf.append("        <groundspeak:travelbug id=\"").append(Integer.toString(i)).append("\" ref=\"\">\r\n");
+						strBuf.append("        <groundspeak:travelbug id=\"").append(Integer.toString(i)).append("\" ref=\"TB\">\r\n");
 						strBuf.append("          <groundspeak:name>").append(SafeXML.cleanGPX(det.Travelbugs.getTB(i).getName())).append("</groundspeak:name>\r\n");
 						strBuf.append("        </groundspeak:travelbug>\r\n");						
 					}
