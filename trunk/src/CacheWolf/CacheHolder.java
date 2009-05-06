@@ -342,9 +342,13 @@ public class CacheHolder {
 	   true                "Found"             yyyy-mm-dd       yes
 	   true                yyyy-mm-dd          yyyy-mm-dd       no (or yes)
 	   true                yyyy-mm-dd hh:mm    yyyy-mm-dd       no
+	   any                 any                 empty            no
 			 */
 			if (!this.is_found() || this.getCacheStatus().indexOf(":")<0) {
-				this.setCacheStatus(ch.getCacheStatus());
+				// don't overwrite with empty data
+				if (!ch.getCacheStatus().trim().equals("")) {
+					this.setCacheStatus(ch.getCacheStatus());
+				}
 				this.setFound(ch.is_found());
 			}
 			// Don't overwrite valid coordinates with invalid ones
