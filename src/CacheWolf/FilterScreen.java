@@ -251,7 +251,7 @@ public class FilterScreen extends Form{
 		pnlCacheAttributes.addLast(chcAttrib = new mChoice(new String[]{MyLocale.getMsg(740,"all"), MyLocale.getMsg(741,"one"), MyLocale.getMsg(742,"none")},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		attV=new AttributesSelector();
-		pnlCacheAttributes.addLast(attV, CellConstants.STRETCH|CellConstants.LEFT|CellConstants.BORDER, CellConstants.STRETCH);
+		pnlCacheAttributes.addLast(attV, CellConstants.STRETCH|CellConstants.LEFT/*|CellConstants.BORDER*/, CellConstants.STRETCH);
 		attV.setSelectionMasks( 0l, 0l );
 		
 		Frame frmScreen=new Frame();
