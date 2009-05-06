@@ -658,8 +658,8 @@ public class CacheHolder {
 			String wp = (String) cachesWithLoadedDetails.get(i);
 			ch = Global.getProfile().cacheDB.get(wp);
 			if (ch != null) {
-	            chD = ch.getCacheDetails(false);
-	            if (chD.hasUnsavedChanges) {
+	            chD = ch.getExistingDetails();
+	            if (chD!=null && chD.hasUnsavedChanges) {
 		            //ch.calcRecommendationScore();
 		            chD.saveCacheDetails(Global.getProfile().dataDir);
 	            }
