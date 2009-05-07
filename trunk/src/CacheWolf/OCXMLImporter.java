@@ -410,7 +410,7 @@ public class OCXMLImporter extends MinML {
 				logIcon = GPXImporter.typeText2Image("Found");
 				break;
 			case 2:	logIcon = GPXImporter.typeText2Image("Not Found"); 
-			holder.setNoFindLogs(holder.getNoFindLogs()+1);
+			holder.setNoFindLogs((byte)(holder.getNoFindLogs()+1));
 			break;
 			case 3: logIcon = GPXImporter.typeText2Image("Note");
 			}
@@ -483,11 +483,11 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		if(name.equals("difficulty")) {
-			holder.setHard(strData);
+			holder.setHard(CacheHolder.terrHard_OC2GC(strData));
 			return;
 		}
 		if(name.equals("terrain")) {
-			holder.setTerrain(strData);
+			holder.setTerrain(CacheHolder.terrHard_OC2GC(strData));
 			return;
 		}
 		if(name.equals("datehidden")) {
