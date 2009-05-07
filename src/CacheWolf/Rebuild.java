@@ -9,6 +9,7 @@ import utils.FileBugfix;
 
 public class Rebuild {
 	String [] xmlFiles;
+	private int cacheXmlVersion;
 	
 	public Rebuild() { // Public constructor
 	}
@@ -47,7 +48,7 @@ public class Rebuild {
 					h.changed();
 					String details=getCacheDetails(prof.dataDir+xmlFiles[i]);
 					if (details!=null) { // In older Versions of CW the <CACHE... /> line was not stored in the cache.xml
-						CacheHolder ch=new CacheHolder(details);
+						CacheHolder ch=new CacheHolder(details, cacheXmlVersion);
 						prof.cacheDB.add(ch);
 						nAdded++;
 						xmlFiles[i]=null;
@@ -87,8 +88,13 @@ public class Rebuild {
 			String text= in.readAll();
 			in.close();
 			int start,end;
+			int vstart;
+			cacheXmlVersion = 1; // Initial guess
 			// Check that we have not accidentally listed another xml file in the directory
 			if (text.indexOf("<CACHEDETAILS>")<0 || (start=text.indexOf("<CACHE "))<0) return null;
+			if ((vstart = text.indexOf("<VERSION = \"")) >= 0) {
+				cacheXmlVersion = Integer.valueOf(text.substring(vstart+9, text.indexOf("\"", vstart+9))).intValue();
+			}
 			end=text.indexOf("/>",start);
 			return text.substring(start,end+2);
 		} catch (Exception ex) {
