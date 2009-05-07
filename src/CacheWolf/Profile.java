@@ -77,6 +77,7 @@ public class Profile {
 	 */
 	private boolean hasUnsavedChanges = false;
 	public boolean byPassIndexActive = false;
+	private int indexXmlVersion;
 
 	//TODO Add other settings, such as max. number of logs to spider
 	//TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
@@ -178,6 +179,7 @@ public class Profile {
 		try{
 			detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			detfile.print("<CACHELIST format=\"decimal\">\n");
+			detfile.print("    <VERSION value = \"2\"/>\n");
 			if (savedCentre.isValid())
 //				detfile.print("    <CENTRE lat=\""+savedCentre.getNSLetter() + " " + savedCentre.getLatDeg(CWPoint.CW) + "&deg; " + savedCentre.getLatMin(CWPoint.CW)+ "\" "+
 //				"long=\""+savedCentre.getEWLetter() + " " + savedCentre.getLonDeg(CWPoint.CW) + "&deg; " + savedCentre.getLonMin(CWPoint.CW)+"\"/>\n");
@@ -241,6 +243,7 @@ public class Profile {
 			char decSep = MyLocale.getDigSeparator().charAt(0);
 			char notDecSep = decSep == '.' ? ',' : '.';
 			FileReader in = new FileReader(dataDir + "index.xml");
+			indexXmlVersion = 1; // Initial guess
 			in.readLine(); // <?xml version= ...
 			String text = in.readLine(); // <CACHELIST>
 			if (text!=null && text.indexOf("decimal")>0) fmtDec=true;
@@ -250,7 +253,7 @@ public class Profile {
 			while ((text = in.readLine()) != null){
 				// Check for Line with cache data
 				if (text.indexOf("<CACHE ")>=0){
-					CacheHolder ch=new CacheHolder(text);
+					CacheHolder ch=new CacheHolder(text,indexXmlVersion);
 					cacheDB.add(ch);
 				} else if (text.indexOf("<CENTRE")>=0) { // lat=  lon=
 					if (fmtDec) {
@@ -266,6 +269,9 @@ public class Profile {
 						String lon=SafeXML.cleanback(text.substring(start,text.indexOf("\"",start)));
 						centre.set(lat+" "+lon,CWPoint.CW); // Fast parse
 					}	
+				} else if (text.indexOf("<VERSION")>=0) {
+					int start=text.indexOf("value = \"")+9;
+					indexXmlVersion  = Integer.valueOf(text.substring(start,text.indexOf("\"",start))).intValue();
 				} else if (text.indexOf("<SYNCOC")>=0) {
 					int start=text.indexOf("date = \"")+8;
 					setLast_sync_opencaching(text.substring(start,text.indexOf("\"",start)));

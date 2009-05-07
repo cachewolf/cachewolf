@@ -307,7 +307,7 @@ public class CacheType {
 		if (cacheType==1858)
 			return cacheImages[WHERIGO];
 		else	
-			return cacheImages[cacheType]; // TODO save in cacheholder as int
+			return cacheImages[cacheType]; 
 	}
 
 }
