@@ -547,7 +547,7 @@ public class MainMenu extends MenuBar {
 					ch = cacheDB.get(i);
 					// This is an incremental filter, i.e. it keeps the existing filter
 					// status and only adds the marked caches to the filtered set
-					if (ch.is_Checked && !ch.is_filtered()) {
+					if (ch.is_Checked && ch.isVisible()) {
 						ch.setFiltered(true);
 						filterChanged = true;
 					}
@@ -565,7 +565,7 @@ public class MainMenu extends MenuBar {
 					ch = cacheDB.get(i);
 					// incremental filter. Keeps status of all marked caches and
 					// adds unmarked caches to filtered list
-					if (!ch.is_Checked && !ch.is_filtered()) {
+					if (!ch.is_Checked && ch.isVisible()) {
 						ch.setFiltered(true);
 						filterChanged = true;
 					}
@@ -581,9 +581,6 @@ public class MainMenu extends MenuBar {
 				filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				SearchCache ssc = new SearchCache(cacheDB);
 				ssc.clearSearch();// Clear search & restore filter status
-				//Filter flt=new Filter();
-				//flt.clearFilter();
-				Global.getProfile().restoreFilter();
 				tbp.refreshTable();
 			}
 			///////////////////////////////////////////////////////////////////////
@@ -696,7 +693,7 @@ public class MainMenu extends MenuBar {
 		Vector cachesToUpdate = new Vector();
 		for(int i = 0; i <	cacheDB.size(); i++){
 			ch = cacheDB.get(i);
-			if(ch.is_Checked == true && !ch.is_filtered()) {
+			if(ch.is_Checked == true && ch.isVisible()) {
 				if ( ch.getWayPoint().length()>1 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC") 
 						|| ch.getWayPoint().substring(0,2).equalsIgnoreCase("OC")))
 //					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))

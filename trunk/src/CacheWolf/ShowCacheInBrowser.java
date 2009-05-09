@@ -62,7 +62,7 @@ public class ShowCacheInBrowser {
 		if (chD == null) return;
 		try {
 			Template tpl = new Template(args);
-			if(!chD.is_filtered()){
+			if(chD.isVisible()){
 				Vm.showWait(true);
 				try {
 					if (chD.getWayPoint().startsWith("OC"))

@@ -1342,7 +1342,7 @@ public class SpiderGC{
 				}else {
 					CacheHolder cx=cacheDB.get(idx);
 					if (cx.is_Checked && // Only re-spider existing addi waypoints that are ticked
-				 	   !cx.is_filtered()) { // and are visible (i.e.  not filtered)
+				 	   cx.isVisible()) { // and are visible (i.e.  not filtered)
 					   cx.initStates(false);
 					   cx.update(hd);
 					   cx.is_Checked=true;

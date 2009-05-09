@@ -69,8 +69,7 @@ public class HTMLExporter{
 			//Generate index page
 			int counter = 0;
 			for(int i = 0; i<cacheDB.size();i++){
-				ch = cacheDB.get(i);
-				if(ch.is_black() == false && ch.is_filtered() == false) counter++;
+				if(cacheDB.get(i).isVisible()) counter++;
 			}
 			
 			pbf.showMainTask = false;
@@ -82,7 +81,7 @@ public class HTMLExporter{
 				h.changed();
 
 				ch = cacheDB.get(i);
-				if(	ch.is_black() == false && ch.is_filtered() == false){
+				if(	ch.isVisible()){
 					det=ch.getExistingDetails();
 					varParams = new Hashtable();
 					varParams.put("TYPE", CacheType.transType(ch.getType()));

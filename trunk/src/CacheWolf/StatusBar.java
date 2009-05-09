@@ -47,7 +47,7 @@ public class StatusBar extends CellPanel{
 		disp.setToolTip(MyLocale.getMsg(196,"Total # of caches (GC&OC)\nTotal # visible\nTotal # found"));
 		addLast(lblCenter=new mLabel(""),CellConstants.STRETCH, WEST|CellConstants.FILL);
 		lblCenter.setToolTip(MyLocale.getMsg(195,"Current centre"));
-		updateDisplay();
+//		updateDisplay();
 	}
 	
 	public void updateDisplay(){

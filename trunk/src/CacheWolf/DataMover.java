@@ -90,7 +90,7 @@ public class DataMover {
 		int count=0;
 		// Count the number of caches to move/delete/copy
 		for(int i = 0; i<size; i++) {
-			if(srcDB.get(i).is_filtered()==false) count++;
+			if(srcDB.get(i).isVisible()) count++;
 		}
 		myProgressBarForm pbf = new myProgressBarForm();
 		Handle h = new Handle();
@@ -101,7 +101,7 @@ public class DataMover {
 		// Now do the actual work
 		for(int i = size-1; i>=0; i--){
 			CacheHolder srcHolder=srcDB.get(i);
-			if(srcHolder.is_filtered()==false){
+			if(srcHolder.isVisible()){
 				h.progress = ((float)nProcessed++)/(float)count;
 				h.changed();
 				//Now do the copy/delete/move of the cache

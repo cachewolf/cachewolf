@@ -125,6 +125,7 @@ public class MainForm extends Editor {
 		*/
 		mMenu.setTablePanel(mTab.getTablePanel());
 		if (infB != null) infB.close(0);
+		mTab.tbP.refreshTable();
 		mTab.tbP.selectFirstRow();
 		//mTab.tbP.tc.paintSelection();
 		Vm.showWait(false);

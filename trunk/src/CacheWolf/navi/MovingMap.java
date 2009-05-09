@@ -379,7 +379,7 @@ public class MovingMap extends Form {
 			CacheHolder ch;
 			for (int i=cacheDB.size()-1; i>=0; i--) {
 				ch = cacheDB.get(i);
-				if (ch.is_Checked && !ch.is_filtered() && ch != mainT.ch) {
+				if (ch.is_Checked && ch.isVisible() && ch != mainT.ch) {
 					if (ch.pos.isValid()) addSymbol(ch.getCacheName(), ch, CacheType.cache2Img(ch.getType()), ch.pos);
 				}
 			}

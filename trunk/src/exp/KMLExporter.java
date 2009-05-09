@@ -75,8 +75,7 @@ public class KMLExporter extends Exporter {
 		int counter = 0;
 		int expCount = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			ch = cacheDB.get(i);
-			if(ch.is_black() == false && ch.is_filtered() == false) counter++;
+			if (cacheDB.get(i).isVisible()) counter++;
 		}
 		copyIcons(outFile.getParent());
 		buildOutDB();
@@ -118,7 +117,7 @@ public class KMLExporter extends Exporter {
 							for(int j = 0; j<ch.addiWpts.size(); j++){
 								addiWpt = (CacheHolder) ch.addiWpts.get(j);
 								expCount++;
-								if (ch.pos.isValid() &&  ! addiWpt.is_filtered()){
+								if (ch.pos.isValid() &&  addiWpt.isVisible()){
 									if (! createdAdditionalWaypointsFolder) {
 										outp.print(startFolder("Additional Waypoints", false));
 										createdAdditionalWaypointsFolder = true;
@@ -170,7 +169,7 @@ public class KMLExporter extends Exporter {
 		for(int i = 0; i<cacheDB.size(); i++){
 			ch=cacheDB.get(i);
 			// TODO Das Argument nach STring zu casten gefällt mir nicht ganz...
-			if(ch.is_black() == false && ch.is_filtered() == false && !ch.isAddiWpt()){
+			if(ch.isVisible() && !ch.isAddiWpt()){
 				if (ch.is_found()) { tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.getType()));}
 				else if (ch.is_owned()) { tmp = (Vector) outCacheDB[OWNED].get(String.valueOf(ch.getType()));}
 				else if (ch.is_archived() || !ch.is_available()){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(String.valueOf(ch.getType()));}

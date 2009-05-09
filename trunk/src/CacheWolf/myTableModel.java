@@ -86,7 +86,7 @@ public class myTableModel extends TableModel{
 		picSizeReg=new mImage("sizeReg.png"); picSizeReg.transparentColor=Color.White;
 		picSizeLarge=new mImage("sizeLarge.png"); picSizeLarge.transparentColor=Color.White;
 		picSizeVLarge=new mImage("sizeVLarge.png"); picSizeVLarge.transparentColor=Color.White;
-		updateRows();
+//		updateRows();
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class myTableModel extends TableModel{
 	}
 	public void updateRows(){
 		Vector sortDB = new Vector();
-		Vector filteredDB = new Vector();
+		Vector notVisibleDB = new Vector();
 		CacheHolder ch, addiWpt;
 		// sort cacheDB:
 		// - addi wpts are listet behind the main cache
@@ -133,13 +133,13 @@ public class myTableModel extends TableModel{
 		int size=cacheDB.size();
 		for (int i=0; i<size; i++){
 			ch = cacheDB.get(i);
-			if (ch.is_filtered()) {
-				filteredDB.add(ch);
+			if (!ch.isVisible()) {
+				notVisibleDB.add(ch);
 			} else { // point is not filtered
 				if (ch.isAddiWpt()){ // unfiltered Addi Wpt
 					// check if main wpt is filtered
 					if(ch.mainCache != null) { // parent exists
-						if (ch.mainCache.is_filtered()) 
+						if (! ch.mainCache.isVisible()) 
 							sortDB.add(ch); // Unfiltered Addi Wpt with filtered Main Wpt, show it on its own
 						// else Main cache is not filtered, Addi will be added below main cache further down
 					} else { //Addi without main Cache
@@ -150,14 +150,14 @@ public class myTableModel extends TableModel{
 					if (ch.hasAddiWpt()){
 						for (int j=0; j<ch.addiWpts.getCount();j++){
 							addiWpt = (CacheHolder)ch.addiWpts.get(j);
-							if (!addiWpt.is_filtered()) sortDB.add(addiWpt);
+							if (addiWpt.isVisible()) sortDB.add(addiWpt);
 						}
 					}// if hasAddiWpt
 				} // if AddiWpt
 			} // if filtered
 		}
 		// rebuild database
-		cacheDB.rebuild(sortDB, filteredDB);
+		cacheDB.rebuild(sortDB, notVisibleDB);
 		this.numRows = sortDB.getCount();
 	}
 	
@@ -270,7 +270,7 @@ public class myTableModel extends TableModel{
 		if(row == -1) return colName[colMap[col]];
 		try { // Access to row can fail if many caches are deleted
 			CacheHolder ch = cacheDB.get(row);
-			if(ch.is_filtered() == false){
+			if(ch!=null /*ch.isVisible()*/){ // Check of visibility needed here??
 				switch(colMap[col]) { // Faster than using column names
 					case 0: // Checkbox
 						if (ch.is_Checked) 
@@ -424,7 +424,7 @@ public class myTableModel extends TableModel{
 				for (int i=0;i<addiCount;i++){
 					addiWpt = (CacheHolder)ch.addiWpts.get(i);
 					addiWpt.is_Checked = ch.is_Checked;
-					if (!addiWpt.is_filtered()){
+					if (addiWpt.isVisible()){
 						tcControl.repaintCell(cacheDB.getIndex(addiWpt), x);
 					}
 				}

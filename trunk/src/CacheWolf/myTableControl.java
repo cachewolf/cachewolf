@@ -141,19 +141,19 @@ public class myTableControl extends TableControl{
 			Vm.showWait(true);
 			// Count # of caches to delete
 			int allCount=0;
-			int mainFilteredCount=0;
-			int addiFilteredCount=0;
+			int mainNonVisibleCount=0;
+			int addiNonVisibleCount=0;
 			int shouldDeleteCount=0;
 			boolean deleteFiltered=true;  // Bisheriges Verhalten
 			for(int i = cacheDB.size()-1; i >=0; i--){
 				CacheHolder currCache = cacheDB.get(i);
 				if ( currCache.is_Checked) {
 					allCount++;
-					if (currCache.is_filtered()) {
+					if (! currCache.isVisible()) {
 						if (currCache.isAddiWpt()) {
-							addiFilteredCount++;
+							addiNonVisibleCount++;
 						} else {
-							mainFilteredCount++;
+							mainNonVisibleCount++;
 						}
 					}
 				}
@@ -161,16 +161,16 @@ public class myTableControl extends TableControl{
 			// Warn if there are ticked but invisible caches - and ask if they should be deleted,
 			// too.
 			shouldDeleteCount = allCount;
-			if (addiFilteredCount + mainFilteredCount > 0){
+			if (addiNonVisibleCount + mainNonVisibleCount > 0){
 				if ((new MessageBox(MyLocale.getMsg(144,"Warning"),
 						            MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") + 
-						            	mainFilteredCount + MyLocale.getMsg(1030, ", additional Waypoints: ") + 
-						            	addiFilteredCount+")\n" + MyLocale.getMsg(1031, "Delete them, too?"), 
+						            	mainNonVisibleCount + MyLocale.getMsg(1030, ", additional Waypoints: ") + 
+						            	addiNonVisibleCount+")\n" + MyLocale.getMsg(1031, "Delete them, too?"), 
 						            	FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
 					deleteFiltered = true;
 				} else {
 					deleteFiltered = false;
-					shouldDeleteCount = allCount - mainFilteredCount - addiFilteredCount;
+					shouldDeleteCount = allCount - mainNonVisibleCount - addiNonVisibleCount;
 				}
 			}
 			if (shouldDeleteCount>0) {
@@ -184,7 +184,7 @@ public class myTableControl extends TableControl{
 					int size=cacheDB.size();
 					for(int i = size-1; i >=0; i--){// Start Counting down, as the size decreases with each deleted cache
 						ch = cacheDB.get(i);
-						if(ch.is_Checked && (!ch.is_filtered() || deleteFiltered)) {
+						if(ch.is_Checked && (ch.isVisible() || deleteFiltered)) {
 							nDeleted++;
 							h.progress = ((float)nDeleted)/(float)allCount;
 							h.changed();
