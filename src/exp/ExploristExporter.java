@@ -127,9 +127,7 @@ public class ExploristExporter {
 		int counter = 0;
 		int expCount = 0;
 		for (int i = 0; i < cacheDB.size(); i++) {
-			ch = cacheDB.get(i);
-			if (ch.is_black() == false && ch.is_filtered() == false)
-				counter++;
+			if (cacheDB.get(i).isVisible()) counter++;
 		}
 
 		try {
@@ -139,7 +137,7 @@ public class ExploristExporter {
 										/ 200 + ".gs"))));
 			for (int i = 0; i < cacheDB.size(); i++) {
 				ch = cacheDB.get(i);
-				if (ch.is_black() == false && ch.is_filtered() == false) {
+				if (ch.isVisible()) {
 					// all 200 caches we need a new file
 					if (expCount % 200 == 0 && expCount > 0) {
 						outp.close();

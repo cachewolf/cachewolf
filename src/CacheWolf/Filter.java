@@ -372,11 +372,8 @@ public class Filter{
 	    int cacheRosePattern;
 	    int cacheSizePattern;
 	    double dummyd1;
-	    boolean cacheFiltered;
+	    boolean cacheFiltered=false;
 	    do {
-	    	cacheFiltered = ch.is_black()^Global.getProfile().showBlacklisted();
-	    	if (cacheFiltered) break;
-	    	
 	        ///////////////////////////////
 	        // Filter criterium 1: Cache type
 	        ///////////////////////////////
@@ -599,23 +596,10 @@ public class Filter{
     }
 	
 	/**
-	*	Invert is_filtered flag on all caches
+	*	Switches flag to invert filter property.
 	*/
 	public void invertFilter(){
-		CacheDB cacheDB=Global.getProfile().cacheDB;
-		CacheHolder ch;
-		if (cacheDB.size()==0) return;
-		Global.getProfile().selectionChanged = true;
-		boolean showBlackListed=Global.getProfile().showBlacklisted();
-		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = cacheDB.get(i);
-			if (ch.is_black()==showBlackListed)
-				ch.setFiltered(!ch.is_filtered()); // Only invert those that would be shown under blacklist filter
-			else
-				ch.setFiltered(true); // Hide all those that have the wrong is_black status
-		}
 		Global.getProfile().setFilterInverted(!Global.getProfile().isFilterInverted());
-		//Global.getProfile().hasUnsavedChanges=true;
 	}
 	
 	/**
@@ -624,10 +608,8 @@ public class Filter{
 	public void clearFilter(){
 		Global.getProfile().selectionChanged = true;
 		CacheDB cacheDB=Global.getProfile().cacheDB;
-		CacheHolder ch;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = cacheDB.get(i);
-			ch.setFiltered((ch.is_black()^Global.getProfile().showBlacklisted())) ; // Always filter blacklisted caches
+			cacheDB.get(i).setFiltered(false);
 		}
 		Global.getProfile().setFilterActive(FILTER_INACTIVE);
 	}

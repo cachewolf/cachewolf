@@ -23,7 +23,7 @@ public class DBStats {
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			holder = cacheDB.get(i);
-			if(holder.is_black() == false && holder.is_filtered() == false){
+			if(holder.isVisible()){
 				if(holder.getWayPoint().startsWith("GC") || holder.getWayPoint().startsWith("OC")) counter++;
 			}
 		}

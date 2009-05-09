@@ -28,7 +28,7 @@ public class SearchCache {
 			int counter = 0;
 			if (searchInDescriptionAndNotes) {
 				for(int i=0 ; i<cacheDB.size(); i++) {
-					if (cacheDB.get(i).is_filtered()) break;
+					if (!cacheDB.get(i).isVisible()) break;
 					counter++;
 				}
 			}
@@ -42,7 +42,7 @@ public class SearchCache {
 			for(int i = 0;i < cacheDB.size();i++){
 				cwp.setPosition(i);
 				ch = cacheDB.get(i);
-				if (ch.is_filtered()) break; // Reached end of visible records
+				if (!ch.isVisible()) break; // Reached end of visible records
 				if(ch.getWayPoint().toUpperCase().indexOf(searchStr) <0 && 
 				   ch.getCacheName().toUpperCase().indexOf(searchStr) <0 && 
 				   ch.getCacheStatus().toUpperCase().indexOf(searchStr)<0 &&
@@ -50,31 +50,26 @@ public class SearchCache {
 					ch.getExistingDetails().LongDescription.toUpperCase().indexOf(searchStr)<0 &&
 					ch.getExistingDetails().CacheNotes.toUpperCase().indexOf(searchStr)<0)){
 					ch.is_flaged = false;
-					ch.setFiltered(true);
 				} else
 					ch.is_flaged=true;
 				if (cwp.isClosed()) break;
 			} // for
 			cwp.exit(0);
+			Global.getProfile().setShowSearchResult(true);
 		    Global.mainTab.tbP.selectRow(0);
 		} // if
 	}
 	
 	/**
 	* Method to remove the flag from all caches in the 
-	* cache database. Restore to the state of the filter
+	* cache database.
 	*/
 	public void clearSearch(){
 	    Profile profile = Global.getProfile();
 		profile.selectionChanged = true;
-		boolean filter_marked_only = profile.getFilterActive() == Filter.FILTER_MARKED_ONLY;
+		profile.setShowSearchResult(false);
 		for(int i = cacheDB.size()-1;i >=0;i--){
-			CacheHolder ch=cacheDB.get(i);
-			ch.is_flaged=false;
-			if (filter_marked_only) ch.setFiltered((ch.is_black()^Global.getProfile().showBlacklisted())) ;
+			cacheDB.get(i).is_flaged=false;
 		}
-		//Global.getProfile().filterActive=Filter.filterActive; //TODO This is a hack. Need to tidy this up
-		//Global.getProfile().filterInverted=Filter.filterInverted;
-		profile.restoreFilter();
 	}
 }

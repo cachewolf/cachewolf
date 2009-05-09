@@ -159,7 +159,7 @@ public class TPLExporter {
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = cacheDB.get(i);
-			if(ch.is_black() == false && ch.is_filtered() == false) counter++;
+			if(cacheDB.get(i).isVisible() == false) counter++;
 		}
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
@@ -187,7 +187,7 @@ public class TPLExporter {
 				det = ch.getExistingDetails();
 				h.progress = (float)i/(float)counter;
 				h.changed();
-				if(ch.is_black() == false && ch.is_filtered() == false){
+				if(ch.isVisible()){
 					if (ch.pos.isValid() == false) continue;
 					try {
 						Regex dec = new Regex("[,.]",myFilter.decSep);
