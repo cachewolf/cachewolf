@@ -12,7 +12,7 @@ import ewe.fx.*;
 public class myInteractivePanel extends InteractivePanel{
 
 	MainTab mt;
-	
+
 	boolean penMoving = false;
 	int x1,y1,x2,y2 = 0;
 	static Color RED = new Color(255,0,0);
@@ -28,29 +28,29 @@ public class myInteractivePanel extends InteractivePanel{
 		font = new Font("gui", Font.BOLD,Global.getPref().fontSize);
 		fm = getFontMetrics(font);
 	}
-	
+
 	private void clearInfo() {
 		removeImage(imgInfo);
 		imgInfo=null;
 		refresh();
 		onImage=null;
 	}
-	
+
 	public void imageClicked(AniImage which, Point pos){
 		long timePenOff=Vm.getTimeStampLong();
 		// If the pen rested more than 500 msec, we only display the info and don't treat it as a click
-		if (timePenOff-timePenOn<500 || !Vm.isMobile()) { 
+		if (timePenOff-timePenOn<500 || !Vm.isMobile()) {
 			new String();
 			if(which instanceof RadarPanelImage){
 				RadarPanelImage ich = (RadarPanelImage)which;
-				Global.mainTab.clearDetails();				
+				Global.mainTab.clearDetails();
 				mt.selectAndActive(ich.rownum);
 			}
 		} else {
-			if (imgInfo!=null) clearInfo(); 
+			if (imgInfo!=null) clearInfo();
 		}
 	}
-	
+
 	public void setMainTab(MainTab tb){
 		mt = tb;
 	}
@@ -60,7 +60,8 @@ public class myInteractivePanel extends InteractivePanel{
 		RadarPanelImage imgRP=(RadarPanelImage) which;
 		CacheDB cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch=cacheDB.get(imgRP.rownum);
-		String s=ch.getWayPoint()+"  "+ch.getCacheSize()+" / "+strDifficulty+"="+ch.getHard()+"  "+strTerrain+"="+ch.getTerrain();
+		wayPoint=ch.getWayPoint();
+		String s=wayPoint+"  "+ch.getCacheSize()+" / "+strDifficulty+"="+ch.getHard()+"  "+strTerrain+"="+ch.getTerrain();
 		String s1=ch.getCacheName();
 		if (s1.length()>40) s1=s1.substring(0,40);
 		int tw=fm.getTextWidth(s)+2;
@@ -96,16 +97,16 @@ public class myInteractivePanel extends InteractivePanel{
 			if (isDragging) penReleased(new Point(ev.x,ev.y));
 		}
 	}
-	
+
     ///////////////////////////////////////////////////
 	//  Allow the caches to be dragged into a cachelist
     ///////////////////////////////////////////////////
-	
+
 	String wayPoint;
-	
+
 	public void startDragging(DragContext dc) {
 		if (!Global.mainForm.cacheListVisible) return;
-		CacheHolder ch=Global.getProfile().cacheDB.get(wayPoint); 
+		CacheHolder ch=Global.getProfile().cacheDB.get(wayPoint);
 		if (ch != null) {
 			 IconAndText icnDrag=new IconAndText();
 			 icnDrag.addColumn(CacheType.cache2Img(ch.getType()));
@@ -116,7 +117,7 @@ public class myInteractivePanel extends InteractivePanel{
 		}
 	 }
 
-	 public void stopDragging(DragContext dc) {		 
+	 public void stopDragging(DragContext dc) {
 		canScroll=true;
 	 }
 	 public boolean imageBeginDragged(AniImage which,Point pos) {
@@ -130,7 +131,7 @@ public class myInteractivePanel extends InteractivePanel{
 			CacheDB cacheDB=Global.getProfile().cacheDB;
 			CacheHolder ch=cacheDB.get(imgRP.rownum);
 			wayPoint=ch.getWayPoint();
-			
+
 			int tw,th;
 			Image img = new Image(tw=fm.getTextWidth(wayPoint+15),th=fm.getHeight()>15?fm.getHeight():15);
 			Graphics g = new Graphics(img);
@@ -158,13 +159,13 @@ public class myInteractivePanel extends InteractivePanel{
 		 	}
 		 	return super.imageDragged(drag,pos);
 	 }
-	 
+
 	 public boolean imageNotDragged(ImageDragContext drag, Point pos) {
 		if (drag.image!=null) {
 			images.remove(drag.image);
 			drag.image=null;
 			refresh();
-		}			
+		}
 		 Point p = Gui.getPosInParent(this,getWindow());
 		 p.x += drag.curPoint.x-origin.x;
 		 p.y += drag.curPoint.y-origin.y;
@@ -175,9 +176,9 @@ public class myInteractivePanel extends InteractivePanel{
 	    		 ((mList) c).makeItemVisible(((mList)c).itemsSize()-1);
 	    	 }
 	     }
-		 return false; 
+		 return false;
 	 }
-	 
+
 	 public boolean canScreenScroll() {
 		 return canScroll;
 	 }
