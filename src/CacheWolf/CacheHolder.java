@@ -891,7 +891,7 @@ public void finalize() {nObjects--;
 	 * @param value The bit field as long value
 	 */
 	private void long2boolFields(long value) {
-		this.setFiltered((value & this.bool2BitMask(true, 1)) != 0);
+		this.setFiltered((value & this.bool2BitMask(true, 1)) == 0);
 		this.setAvailable((value & this.bool2BitMask(true, 2)) != 0);
 		this.setArchived((value & this.bool2BitMask(true, 3)) != 0);
 		this.setHas_bugs((value & this.bool2BitMask(true, 4)) != 0);
