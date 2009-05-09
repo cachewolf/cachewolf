@@ -29,7 +29,7 @@ import ewe.sys.Vm;
 */
 
 public class CacheType {
-	private static Image cacheImages[] = new Image[454]; // Images are used by TableControl
+	private static Image cacheImages[] = new Image[138]; // Images are used by TableControl
 	public static final int WHERIGO=100; // The cache we mapped the wherigo to
 	public static final int MEGA_EVENT=101; // Mapping for Mega Event 
 	static {
