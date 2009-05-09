@@ -29,8 +29,9 @@ import ewe.sys.Vm;
 */
 
 public class CacheType {
-	public static Image cacheImages[] = new Image[454]; // Images are used by TableControl
-	public static int WHERIGO=200; // The cache we mapped the wherigo to
+	private static Image cacheImages[] = new Image[454]; // Images are used by TableControl
+	public static final int WHERIGO=100; // The cache we mapped the wherigo to
+	public static final int MEGA_EVENT=101; // Mapping for Mega Event 
 	static {
 		cacheImages[0] = new Image("0.png");
 		//cacheImages[1] = new Image();
@@ -58,7 +59,7 @@ public class CacheType {
 		cacheImages[110] = new Image("110.png");
 		cacheImages[137] = new Image("137.png");
 		cacheImages[WHERIGO] = new Image("1858.png");  // Fudge as whereigo is really 1858
-		cacheImages[453] = new Image("453.png");
+		cacheImages[MEGA_EVENT] = new Image("453.png");
 	}
 
 	//Types from gc.com
@@ -304,10 +305,44 @@ public class CacheType {
 
 		
 	public static Image cache2Img(int cacheType) {
-		if (cacheType==1858)
-			return cacheImages[WHERIGO];
-		else	
-			return cacheImages[cacheType]; 
+		int index = cacheType;
+		switch (cacheType) {
+			case 1858: index =  WHERIGO; break;
+			case 453:  index =  MEGA_EVENT; break;
+		}
+		return cacheImages[index];
 	}
+	
+	/**
+	 * Packs the cache type into the range of a byte. For the int values which don't fit in the 
+	 * byte range, some conversion has to be done.
+	 * @param cacheType Cache Type as integer
+	 * @return A corresponding byte value. 
+	 */
+	public static byte toByte(int cacheType) {
+		int result = cacheType-128;
+		switch (cacheType) {
+			case 1858: result =  WHERIGO; break;
+			case 453:  result =  MEGA_EVENT; break;
+			default: result = cacheType-128;
+		}
+		return (byte)(result);
+	}
+	
+	/**
+	 * Unpacks the cache type from byte to int. 
+	 * @param cacheType Cache type as byte
+	 * @return The cache type as int
+	 */
+	public static int toInt(byte cacheType) {
+		int result;
+		switch (cacheType) {
+		case WHERIGO:     result =  1858; break;
+		case MEGA_EVENT:  result =  453; break;
+		default: result = cacheType+128;
+		}
+		return result;
+	}
+	
 
 }
