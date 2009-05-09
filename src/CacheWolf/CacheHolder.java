@@ -826,7 +826,10 @@ public void finalize() {nObjects--;
 	 * @return long value representing the boolean bit field
 	 */
 	private long boolFields2long() {
-		long value = bool2BitMask(this.is_filtered(), 1)    | 
+		// To get the same list of visible caches after loading a profile,
+		// the property isVisible() is saved instead of is_filtered(), but at 
+		// the place where is_filtered() is read.
+		long value = bool2BitMask(this.isVisible(), 1)    | 
 		             bool2BitMask(this.is_available(), 2)   |
 		             bool2BitMask(this.is_archived(), 3)    |
 		             bool2BitMask(this.has_bugs(), 4)       |
@@ -930,6 +933,29 @@ public void finalize() {nObjects--;
 		return result;
 	}
 
+
+	/**
+	 * Returns <code>true</code> if the waypoint should appear in the cache list, 
+	 * <code>false</code> if it should not appear.<br>
+	 * The method takes into account blacklist, filters, search results - everything
+	 * that determines if a cache is visible in the list or not. 
+	 * @return
+	 */
+	public boolean isVisible() {
+		Profile profile = Global.getProfile();
+		int filter = profile.getFilterActive();
+		boolean noShow=
+			(  (profile.showBlacklisted() != this.is_black())   
+				||
+			   (profile.showSearchResult() && !this.is_flaged)   
+			    ||
+			   ( (filter==Filter.FILTER_ACTIVE||filter==Filter.FILTER_MARKED_ONLY) &&	
+			  	 (this.is_filtered())^profile.isFilterInverted())                            
+			  	||
+			   (filter==Filter.FILTER_CACHELIST) && 
+			     !Global.mainForm.cacheList.contains(this.getWayPoint()));
+		return !noShow;
+	}
 
 	// Getter and Setter for private properties
 
@@ -1211,6 +1237,30 @@ public void finalize() {nObjects--;
     	this.found = is_found;
     }
 
+	/**
+	 * <b><u>Important</u></b>: This flag no longer indicates if a cache is visible
+	 * in the list. Instead, it now <u>only</u> flags if the cache is filtered out
+	 * by filter criteria. Use <code>isVisible()</code> instead.<br>
+	 * This property is affected by the following features:
+	 * <ul>
+	 * <li>"Defining and applying" a filter</li>
+	 * <li>Filtering out checked or unchecked caches</li>
+	 * </ul>
+	 * It is <u>not</u> affected by:
+	 * <ul>
+	 * <li>Inverting a filter</li>
+	 * <li>Removing a filter</li>
+	 * <li>Applying a filter</li>
+	 * <li>Applying a cache tour filter</li>
+	 * <li>Switching between normal view and blacklist view</li>
+	 * <li>Performing searches</li>
+	 * <li>Anything else that isn't directly connected to filters in 
+	 * it's proper sense.</li>
+	 * </ul>
+	 * The new method for deciding if a cache is visible or not is <code>isVisible()
+	 * </code>.  
+	 * @return <code>True</code> if filter criteria are matched
+	 */
 	public boolean is_filtered() {
     	return filtered;
     }
@@ -1250,6 +1300,14 @@ public void finalize() {nObjects--;
     	this.incomplete = is_incomplete;
     }
 
+	/**
+	 * Determines if the blacklist status is set for the cache. Do not use this method
+	 * to check if the cache should be displayed. Use <code>isVisible()</code> for
+	 * this, which already does this (and other) checks.<br>
+	 * Only use this method if you really want to inform yourself about the 
+	 * black status of the cache!
+	 * @return <code>true</code> if he black status of the cache is set.
+	 */
 	public boolean is_black() {
     	return black;
     }

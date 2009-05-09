@@ -66,6 +66,7 @@ public class Profile {
 	private int filterActive = Filter.FILTER_INACTIVE;
 	private boolean filterInverted = false;
 	private boolean showBlacklisted = false;
+	private boolean showSearchResult = false;
 
 	private long filterAttrYes = 0l;
 	private long filterAttrNo = 0l;
@@ -181,8 +182,6 @@ public class Profile {
 			detfile.print("<CACHELIST format=\"decimal\">\n");
 			detfile.print("    <VERSION value = \"2\"/>\n");
 			if (savedCentre.isValid())
-//				detfile.print("    <CENTRE lat=\""+savedCentre.getNSLetter() + " " + savedCentre.getLatDeg(CWPoint.CW) + "&deg; " + savedCentre.getLatMin(CWPoint.CW)+ "\" "+
-//				"long=\""+savedCentre.getEWLetter() + " " + savedCentre.getLonDeg(CWPoint.CW) + "&deg; " + savedCentre.getLonMin(CWPoint.CW)+"\"/>\n");
 				detfile.print("    <CENTRE lat=\""+savedCentre.latDec+"\" lon=\""+savedCentre.lonDec+"\"/>\n");
 			if(getLast_sync_opencaching() == null || getLast_sync_opencaching().endsWith("null") || getLast_sync_opencaching().equals("")){
 				setLast_sync_opencaching("20050801000000");
@@ -194,7 +193,16 @@ public class Profile {
 				setDistGC("0.0");
 			}
 
-			detfile.print("    <FILTER status = \""+getFilterActive()+(isFilterInverted()?"T":"F")+ 
+			// If the current filter is a CacheTour filter, then save it as
+			// normal filter, because after loading there is no cache tour defined
+			// which could be used as filter criterium.
+			int activeFilterForSave;
+			if (getFilterActive()==Filter.FILTER_CACHELIST) {
+				activeFilterForSave = Filter.FILTER_ACTIVE;
+			} else {
+				activeFilterForSave = getFilterActive();
+			}
+			detfile.print("    <FILTER status = \""+activeFilterForSave+(isFilterInverted()?"T":"F")+ 
 					"\" rose = \""+getFilterRose()+"\" type = \""+getFilterType()+
 					"\" var = \""+getFilterVar()+"\" dist = \""+getFilterDist().replace('"',' ')+"\" diff = \""+
 					getFilterDiff()+"\" terr = \""+getFilterTerr()+"\" size = \""+getFilterSize()+"\" attributesYes = \""+getFilterAttrYes()+
@@ -360,17 +368,6 @@ public class Profile {
 		}
 	}
 	
-	void checkBlacklistStatus() {
-		CacheHolder ch;
-		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = cacheDB.get(i);
-			if (ch.is_black() ^ showBlacklisted()) {
-				ch.setFiltered(true);
-				selectionChanged = true;
-			}
-		}
-	}
-
 	public int getCacheIndex(String wp) {
 		return cacheDB.getIndex(wp);
 	}
@@ -433,7 +430,7 @@ public class Profile {
 		CacheHolder ch;
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			ch = cacheDB.get(i);
-			if (ch.is_filtered() == false)
+			if (ch.isVisible())
 				ch.is_Checked = selectStatus;
 		}
 	}
@@ -665,6 +662,24 @@ public class Profile {
 		this.showBlacklisted = showBlacklisted;
 	}
 
+	/**
+	 * If <code>true</code> then the cache list will only display the
+	 * caches that are result of a search.   
+	 * @return <code>True</code> if list should only display search results
+	 */
+	public boolean showSearchResult() {
+		return showSearchResult;
+	}
+	
+	/**
+	 * Sets parameter if cache list should only display the caches that are
+	 * results of a search.
+	 * @param showSearchResult <code>True</code>: List should only display search
+	 * results.
+	 */
+	public void setShowSearchResult(boolean showSearchResult){
+		this.showSearchResult = showSearchResult;
+	}
 	public long getFilterAttrYes() {
 		return filterAttrYes;
 	}

@@ -121,7 +121,7 @@ public class MainTab extends mTabbedPanel {
 		}
 		super.onEvent(ev); //Make sure you call this.
 		// If we are in Listview update status
-		if (this.getSelectedItem()==0 && statBar!=null) statBar.updateDisplay();
+//		if (this.getSelectedItem()==0 && statBar!=null) statBar.updateDisplay();
 	}
 
 	/**
@@ -187,8 +187,6 @@ public class MainTab extends mTabbedPanel {
 			// If Solver or Details has changed, save Cache
 			updatePendingChanges();
 			if (detP.hasBlackStatusChanged()) {
-				// filter out caches with wrong blacklist status
-				Global.getProfile().checkBlacklistStatus();
 				tbP.refreshTable();
 			}
 			break;

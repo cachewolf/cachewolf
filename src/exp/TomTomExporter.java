@@ -79,8 +79,7 @@ public class TomTomExporter {
 		currExp = 0;
 		counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			holder = cacheDB.get(i);
-			if(holder.is_black() == false && holder.is_filtered() == false) counter++;
+			if(cacheDB.get(i).isVisible()) counter++;
 		}
 		
 		ext = format==TT_ASC?".asc":".ov2";
@@ -93,7 +92,7 @@ public class TomTomExporter {
 				out =  new RandomAccessFile(fileName,"rw");
 				for(int i = 0; i<cacheDB.size(); i++){
 					holder=cacheDB.get(i);
-					if(holder.getType() == new Integer(CacheType.wayType[j][TT_WPT_NUM]).intValue() && holder.is_black() == false && holder.is_filtered() == false){
+					if(holder.getType() == new Integer(CacheType.wayType[j][TT_WPT_NUM]).intValue() && holder.isVisible() == false){
 						currExp++;
 						h.progress = (float)currExp/(float)counter;
 						h.changed();
@@ -137,8 +136,7 @@ public class TomTomExporter {
 		int counter = 0;
 		int expCount = 0;
 		for(int i = 0; i<cacheDB.size();i++){
-			holder = cacheDB.get(i);
-			if(holder.is_black() == false && holder.is_filtered() == false) counter++;
+			if(cacheDB.get(i).isVisible()) counter++;
 		}
 
 		try{
@@ -147,7 +145,7 @@ public class TomTomExporter {
 			out =  new RandomAccessFile(fileName,"rw");
 			for(int i = 0; i<cacheDB.size(); i++){
 				holder=cacheDB.get(i);
-				if(holder.is_black() == false && holder.is_filtered() == false){
+				if(holder.isVisible()){
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();

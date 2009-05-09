@@ -75,7 +75,7 @@ public class CacheList extends CellPanel {
 	/** This list mirrors the items in the list of selected caches for faster access. When the 
      * list of selected caches is manipulated (btnUp, btnDown), this list is also kept up to date
      */
-	private Vector cacheList=new Vector(20);
+	private CacheDB cacheList=new CacheDB();
 	/** The full filename of the current file */
 	private String currFile=null;
 	
@@ -89,7 +89,7 @@ public class CacheList extends CellPanel {
 		public void startDragging(DragContext dc) {
 			 idx=getSelectedIndex(0);
 			 if (idx>=0) {
-				 CacheHolder ch=(CacheHolder)cacheList.get(idx);
+				 CacheHolder ch=cacheList.get(idx);
 				 wayPoint=ch.getWayPoint();
 				 IconAndText imgDrag=new IconAndText();
 				 imgDrag.addColumn(CacheType.cache2Img(ch.getType()));
@@ -110,7 +110,7 @@ public class CacheList extends CellPanel {
 			 Control c = getWindow().findChild(p.x,p.y);
 		     if (!(c instanceof myList)) { 
 		    	 // target is not myList => Remove dragged cache from list
-		    	 cacheList.del(idx);
+		    	 cacheList.removeElementAt(idx);
 		    	 lstCaches.deleteItem(idx);
 		    	 repaint();
 		    	 changeUpDownButtonStatus();
@@ -133,7 +133,7 @@ public class CacheList extends CellPanel {
 			if (ev.type == KeyEvent.KEY_PRESS && ev.target == this){
 				if (ev.key == IKeys.DELETE && cacheList.size()>0) {
 			    	 idx=getSelectedIndex(0);
-					 cacheList.del(idx);
+					 cacheList.removeElementAt(idx);
 			    	 lstCaches.deleteItem(idx);
 			    	 repaint();
 			    	 changeUpDownButtonStatus();
@@ -178,7 +178,7 @@ public class CacheList extends CellPanel {
 		if (ev instanceof MenuEvent && ev.type==MenuEvent.SELECTED) {
 			if (lstCaches.itemsSize()>0 && !needsInit) {
 				int lstCacheIdx=lstCaches.getSelectedIndex(0);
-				CacheHolder ch=(CacheHolder)cacheList.get(lstCacheIdx);
+				CacheHolder ch=cacheList.get(lstCacheIdx);
 				int idx=Global.getProfile().cacheDB.getIndex(ch);
 				// Ensure that the main view is updated with the selected cache, i.e.
 				// DetailsPanel, HintLog, Pictures etc.
@@ -227,7 +227,7 @@ public class CacheList extends CellPanel {
 					// Swap items in hidden list
 					Object swap=cacheList.get(sel-1);
 					cacheList.set(sel-1,cacheList.get(sel));
-					cacheList.set(sel,swap);
+					cacheList.set(sel,(CacheHolder)swap);
 					// Swap items in visible cachelist and repaint
 					swap=lstCaches.items.get(sel-1);
 					lstCaches.items.set(sel-1,lstCaches.items.get(sel));
@@ -242,7 +242,7 @@ public class CacheList extends CellPanel {
 					// Swap items in hidden list
 					Object swap=cacheList.get(sel+1);
 					cacheList.set(sel+1,cacheList.get(sel));
-					cacheList.set(sel,swap);
+					cacheList.set(sel,(CacheHolder)swap);
 					// Swap items in visible cachelist and repaint
 					swap=lstCaches.items.get(sel+1);
 					lstCaches.items.set(sel+1,lstCaches.items.get(sel));
@@ -261,39 +261,22 @@ public class CacheList extends CellPanel {
 		Global.getProfile().selectionChanged = true;
 		CacheDB cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch;
-		int wrongBlackStatus=0;
+		int wrongVisStatus=0;
 		String apply="\uFFFF"+Convert.toString(applyCount++);
-		// Start by setting all caches to filtered
+		Global.getProfile().setFilterActive(Filter.FILTER_CACHELIST);
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			ch = cacheDB.get(i);
-			ch.setFiltered(true) ; // ignore blacklist attribute
-			ch.sort=apply;
+			cacheDB.get(i).sort=apply;
 		}
-		// Now "unfilter" the caches in our list
 		for (int i = cacheList.size()-1; i>=0; i--) {
-			ch = (CacheHolder)cacheList.get(i);
-			/* If the cache was reloaded from a GPX file since we dragged it into the list,
-			   the pointer ch points to a CacheHolder object that is no longer part of cacheDB.
-			   In this case we need to search the cacheDB for an object with the name of ch.wayPoint
-			   and use that object. To speed up this process and avoid having to search the whole
-			   cacheDB for each entry in cacheList, we simply compare the sort field of ch to apply.
-			*/
-			if (!ch.sort.equals(apply)) {
-				ch=cacheDB.get(ch.getWayPoint());
-				if (ch == null) continue;
-			}
-			if (ch.is_black()!=Global.getProfile().showBlacklisted()) 
-				wrongBlackStatus++;
-			else {
-				ch.setFiltered(false);
-				ch.sort=MyLocale.formatLong(i,"00000");
-			}
+			ch = cacheDB.get((cacheList.get(i)).getWayPoint());
+			if (!ch.isVisible()) wrongVisStatus++;
+			String s = MyLocale.formatLong(i,"00000"); 
+			ch.sort=s;
 		}
 		// The sort command places all filtered caches at the end
 		cacheDB.sort(new mySort(),false);
-		Global.getProfile().setFilterActive(Filter.FILTER_CACHELIST);
-		updateScreen(cacheList.size()-wrongBlackStatus);
-		if (wrongBlackStatus>0)
+		updateScreen(cacheList.size()-wrongVisStatus);
+		if (wrongVisStatus>0)
 			(new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(4600,"Some cache(s) cannot be shown because of wrong blacklist status"), FormBase.OKB)).execute();
 
 	}
@@ -313,7 +296,7 @@ public class CacheList extends CellPanel {
 			CacheHolder addiWpt;
 			for (int j=0; j<ch.addiWpts.getCount();j++){
 				addiWpt = (CacheHolder)ch.addiWpts.get(j);
-				if (!addiWpt.is_filtered()) cachesAdded|=addCache(addiWpt);
+				if (addiWpt.isVisible()) cachesAdded|=addCache(addiWpt);
 			}
 		}
 		// Update screen if any cache was added
@@ -326,7 +309,7 @@ public class CacheList extends CellPanel {
 
 	/** Add a cache to the visible and invisible list */
 	private boolean addCache(CacheHolder ch) {
-		if (cacheList.find(ch)<0) {
+		if (cacheList.getIndex(ch.getWayPoint())<0) {
 			// Add cache reference to hidden list
 			cacheList.add(ch);
 			// Add Cache and cache icon to visible list
@@ -338,7 +321,7 @@ public class CacheList extends CellPanel {
 	}
 	
 	void updateScreen(int numRows) {
-		Global.mainTab.tbP.myMod.numRows=numRows;
+//		Global.mainTab.tbP.myMod.numRows=numRows;
 		Global.mainTab.tbP.refreshTable(); // Update and repaint
 		int selPanel;
 		if ((selPanel=Global.mainTab.cardPanel.selectedItem)>-1) {
@@ -383,6 +366,7 @@ public class CacheList extends CellPanel {
 	private void readFromFile(String fileName) {
 		if (needsInit)  {lstCaches.deleteItem(0);lstCaches.deleteItem(0);  needsInit=false; }
 		int select=-1;
+		boolean selected = false;
 		try {
 			FileReader in = new FileReader(fileName);
 			String wayPoint;
@@ -392,14 +376,16 @@ public class CacheList extends CellPanel {
 				// Select the cache starting with >
 				if (wayPoint.startsWith(">")) {
 					wayPoint=wayPoint.substring(1);
-					select=lineNr;
+					selected = true;
 				}
 				// Only add the cache if it is in this profile
 				CacheHolder ch=Global.getProfile().cacheDB.get(wayPoint);
 				if (ch != null) {
 					addCache(ch);
+					if (selected) select = lineNr+
+					lineNr++;
 				}
-				lineNr++;
+				selected = false;
 			}
 			in.close();
 		} catch(Exception e) {
@@ -423,7 +409,7 @@ public class CacheList extends CellPanel {
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
 			for (int i=0; i<cacheList.size(); i++) {
 				// Put a > in front of the selected cache
-				outp.print((i==selectedIndex?">":"")+((CacheHolder)cacheList.get(i)).getWayPoint()+"\n");
+				outp.print((i==selectedIndex?">":"")+(cacheList.get(i)).getWayPoint()+"\n");
 			}
 			outp.close();
 		} catch(Exception e) {
@@ -445,5 +431,14 @@ public class CacheList extends CellPanel {
 		else
 			lblTitle.setText(localFileName);
 		lblTitle.repaint();
+	}
+	
+	/**
+	 * Determines if the cache tour contains a cache with a certain waypoint
+	 * @param waypoint Waypoint to check
+	 * @return <code>True</code>: Contains waypoint, otherwise not.
+	 */
+	public boolean contains(String waypoint) {
+		return cacheList.getIndex(waypoint)>=0;
 	}
 }
