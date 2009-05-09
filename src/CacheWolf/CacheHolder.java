@@ -1055,8 +1055,10 @@ public void finalize() {nObjects--;
 	 */
 	private static String size_byte2String(byte value) {
 		String result;
+		//Change: If no sensible value for the cache size is entered, then 
+		//the state is set to "None".
 		switch (value) {
-		case SIZE_UNKNOWN: result = SIZE_UNKNOWN_TXT; break;
+		case SIZE_UNKNOWN: result = SIZE_NONE_TXT; break;
 		case SIZE_OTHER: result = SIZE_OTHER_TXT; break;
 		case SIZE_MICRO: result = SIZE_MICRO_TXT; break;
 		case SIZE_SMALL: result = SIZE_SMALL_TXT; break;
@@ -1064,7 +1066,7 @@ public void finalize() {nObjects--;
 		case SIZE_LARGE: result = SIZE_LARGE_TXT; break;
 		case SIZE_VLARGE: result = SIZE_VLARGE_TXT; break;
 		case SIZE_NONE: result = SIZE_NONE_TXT; break;
-		default: result = SIZE_UNKNOWN_TXT;
+		default: result = SIZE_NONE_TXT;
 		} 
 		return result;
 	}
