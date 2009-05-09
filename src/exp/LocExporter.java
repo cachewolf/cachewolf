@@ -17,7 +17,7 @@ public class LocExporter extends Exporter{
 	 * Defines how certain cachetypes are mapped to user icons
 	 */
 	private static GarminMap gm=null;
-	
+
 	public LocExporter(){
 		super();
 		this.setMask("*.loc");
@@ -30,21 +30,20 @@ public class LocExporter extends Exporter{
 			gm.readGarminMap();
 		}
 	}
-	
+
 	public String header () {
 		return "<?xml version=\"1.0\"?><loc version=\"1.0\" src=\"EasyGPS\">\r\n";
 	}
-	
+
 	public String record(CacheHolder ch){
-		CacheHolderDetail det = ch.getExistingDetails();
-		
+
 		// filter out not valid coords
 		if (!ch.pos.isValid()) return null;
 		StringBuffer strBuf = new StringBuffer(200);
 		strBuf.append("<waypoint>\r\n   <name id=\"");
 		String wptName=simplifyString(ch.getWayPoint());
 		if (Global.getPref().addDetailsToWaypoint) {
-			wptName += getShortDetails( ch );			
+			wptName += getShortDetails( ch );
 		}
 		if (Global.getPref().garminMaxLen==0)
 			strBuf.append(wptName);
@@ -59,9 +58,10 @@ public class LocExporter extends Exporter{
 			if ( !Global.getPref().addDetailsToWaypoint ) {
 				strBuf.append( getShortDetails( ch ) );
 			}
+			CacheHolderDetail det = ch.getExistingDetails();
 			if ( (!det.Hints.equals("null")) && (det.Hints.length() > 0) ) {
 				strBuf.append(":");
-				strBuf.append( simplifyString(Common.rot13(det.Hints)) );			
+				strBuf.append( simplifyString(Common.rot13(det.Hints)) );
 			}
 		}
 		strBuf.append("]]></name>\r\n   <coord lat=\"");
@@ -83,7 +83,7 @@ public class LocExporter extends Exporter{
 	public String trailer(){
 		return "</loc>\r\n";
 	}
-	
+
 	/**
 	 * This class implements user defined icons which depend on the cache type and the found status.
 	 * See also http://www.geoclub.de/ftopic10413.html
@@ -91,10 +91,10 @@ public class LocExporter extends Exporter{
 	 *
 	 */
 	private class GarminMap extends MinML {
-		
+
 		private IconMap[] symbols=new IconMap[24];
 		private int mapSize=0;
-		
+
 		String lastName;
 		public void readGarminMap(){
 			try{
@@ -105,7 +105,7 @@ public class LocExporter extends Exporter{
 			}catch(Exception e){
 				if (e instanceof NullPointerException)
 					Global.getPref().log("Error reading garminmap.xml: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
-				else 
+				else
 					Global.getPref().log("Error reading garminmap.xml: ", e);
 			}
 		}
@@ -115,8 +115,8 @@ public class LocExporter extends Exporter{
 				symbols[mapSize]=new IconMap(atts.getValue("type"),atts.getValue("name"),atts.getValue("found"));
 				mapSize++;
 			}
-		}		
-		
+		}
+
 		public String getIcon(CacheHolder ch) {
 			// First check if there is a mapping for "cache found"
 			if (ch.is_found()) {
@@ -127,19 +127,19 @@ public class LocExporter extends Exporter{
 			// Now try mapping the cache irrespective of the "found" status
 			for (int i=0; i<mapSize; i++)
 				if (symbols[i].type.equals(String.valueOf(ch.getType()))) return symbols[i].name;
-		
+
 			// If it is not a mapped type, just use the standard mapping
 			if (ch.is_found())
 				return "Geocache Found";
 			else
 				return "Geocache";
 		}
-		
+
 		private class IconMap {
 			public String type;
 			public String name;
 			public Boolean onlyIfFound;
-			
+
 			IconMap(String type, String name, String onlyIfFound) {
 				this.type=type;
 				this.name=name;
@@ -149,7 +149,7 @@ public class LocExporter extends Exporter{
 					this.onlyIfFound=null;
 			}
 		}
-	
+
 	}
-	
+
 }
