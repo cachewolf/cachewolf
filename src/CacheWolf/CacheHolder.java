@@ -1170,19 +1170,11 @@ public void finalize() {nObjects--;
     }
 
 	/**
-	 * Gets the type of cache as integer. Internally it is saved as byte, so some conversion has
-	 * to be done as not every integer value which is (historically) attributed to the cache types
-	 * fits in the byte value range.
+	 * Gets the type of cache as integer.
 	 * @return Cache type
 	 */
 	public int getType() {
-		int result;
-		switch (type) {
-		case 100: result = 1848; break;
-		case 101: result = 453; break;
-		default: result = type + 128;
-    }
-    	return result;
+		return CacheType.toInt(type);
     }
 
 	/**
@@ -1191,12 +1183,7 @@ public void finalize() {nObjects--;
 	 * @param type Cache Type
 	 */
 	public void setType(int type) {
-		byte newType;
-		switch (type) {
-		case 1848: newType = 100; break;
-		case 453: newType = 101; break;
-		default: newType = (byte)(type - 128);
-    }
+		byte newType = CacheType.toByte(type);
 		Global.getProfile().notifyUnsavedChanges(newType != this.type);		
     	this.type = newType;
     }
