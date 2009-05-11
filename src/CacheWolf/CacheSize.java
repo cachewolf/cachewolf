@@ -18,6 +18,7 @@ public final class CacheSize {
 
 	/*
 	 * geocaching.com size string as found by analyzing GPX files
+	 * plus OC/TC Very large
 	 */
 	static final protected String GC_SIZE_MICRO = "Micro";
 	static final protected String GC_SIZE_SMALL = "Small";
@@ -26,6 +27,7 @@ public final class CacheSize {
 	static final protected String GC_SIZE_NOTCHOSEN = "Not chosen";
 	static final protected String GC_SIZE_OTHER = "Other";
 	static final protected String GC_SIZE_VIRTUAL = "Virtual";
+	static final protected String OCTC_SIZE_VERYLARGE = "Very large";
 
 	/*
 	 * OpenCaching Size IDs
@@ -38,6 +40,16 @@ public final class CacheSize {
 	static final protected String OC_SIZE_LARGE = "5";
 	static final protected String OC_SIZE_VERYLARGE = "6";
 	static final protected String OC_SIZE_NONE = "7";
+	
+	/*
+	 * TerraCaching Size IDs
+	 * taken from old GPXimporter (?? reliable source ??)
+	 */
+	static final protected String TC_SIZE_MICRO = "1";
+	static final protected String TC_SIZE_MEDIUM = "2";
+	static final protected String TC_SIZE_REGULAR = "3";
+	static final protected String TC_SIZE_LARGE = "4";
+	static final protected String TC_SIZE_VERYLARGE = "4";
 
 	/*
 	 * images to show in CW index panel we use less images than sizes since all
@@ -47,23 +59,19 @@ public final class CacheSize {
 	static final protected String CW_GUIIMG_SMALL = "sizeSmall.png";
 	static final protected String CW_GUIIMG_NORMAL = "sizeReg.png";
 	static final protected String CW_GUIIMG_LARGE = "sizeLarge.png";
-	static final protected String CW_GUIIMG_NONPHYSICAL = ""; // TODO: create image for nonphysical caches
+	static final protected String CW_GUIIMG_NONPHYSICAL = "sizeNonPhysical.png"; 
 	static final protected String CW_GUIIMG_VERYLARGE = "sizeVLarge.png";
-
+	
 	/*
-	 * images to use in exports (notably HTML export)
+	 * bit masks to be used with the filter function
 	 */
-/*	// do not compile until needed (also see below exportSizeImage())
-	// when needed make sure to add appropriate images to resources
-	static final protected String CW_EXPIMG_MICRO = "dummy.png";
-	static final protected String CW_EXPIMG_SMALL = "dummy.png"; 
-	static final protected String CW_EXPIMG_NORMAL = "dummy.png";
-	static final protected String CW_EXPIMG_LARGE = "dummy.png";
-	static final protected String CW_EXPIMG_VIRTUAL = "dummy.png";
-	static final protected String CW_EXPIMG_NOTCHOSEN = "dummy.png";
-	static final protected String CW_EXPIMG_OTHER = "dummy.png";
-	static final protected String CW_EXPIMG_VERYLARGE = "dummy.png";
-	static final protected String CW_EXPIMG_NONE = "dummy.png";*/
+	static final protected byte CW_FILTER_MICRO = 0x01<<0;
+	static final protected byte CW_FILTER_SMALL = 0x01<<1;
+	static final protected byte CW_FILTER_NORMAL = 0x01<<2;
+	static final protected byte CW_FILTER_LARGE = 0x01<<3;
+	static final protected byte CW_FILTER_VERYLARGE = 0x01<<4;
+	static final protected byte CW_FILTER_NONPHYSICAL = 0x01<<5;
+	static final protected byte CW_FILTER_ALL = CW_FILTER_MICRO|CW_FILTER_SMALL|CW_FILTER_NORMAL|CW_FILTER_LARGE|CW_FILTER_NONPHYSICAL|CW_FILTER_VERYLARGE;
 
 	/**
 	 * the constructor does nothing
@@ -76,14 +84,14 @@ public final class CacheSize {
 	 * convert the size info from a CacheHolder to a string suitable for GPX
 	 * export
 	 * 
-	 * @param cwsize
+	 * @param size
 	 *            CW internal representation of cache size
 	 * @return string representation of CacheWolf internal cache size
 	 * @throws IllegalArgumentException
 	 *             if cwsize can not be mapped to a CW_SIZE constant
 	 */
-	public String cw2GcString(byte cwsize) {
-		switch (cwsize) {
+	public static String cw2ExportString(byte size) {
+		switch (size) {
 		case CW_SIZE_MICRO:
 			return GC_SIZE_MICRO;
 		case CW_SIZE_SMALL:
@@ -98,15 +106,44 @@ public final class CacheSize {
 			return GC_SIZE_OTHER;
 		case CW_SIZE_VIRTUAL:
 			return GC_SIZE_VIRTUAL;
+		case CW_SIZE_VERYLARGE:
+			return OCTC_SIZE_VERYLARGE;
 		default:
-			throw (new IllegalArgumentException("unmatched argument " + cwsize
+			throw (new IllegalArgumentException("unmatched argument " + size
 					+ " in CacheSize cw2GcString()"));
 		}
 	}
 
 	/**
-	 * convert the cache size information from a GPX import to internal
-	 * representation
+	 * convert the cache size information from a TerraCaching GPX import to internal representation
+	 * 
+	 * @param tcstring
+	 *            size information extracted from a TC GPX inport
+	 * @return CacheWolf internal representation of size information
+	 * @throws IllegalArgumentException
+	 *             if tcstring can not be mapped to internal representation
+	 *             (CW_SIZE_*)
+	 */
+
+	public static byte tcGpxString2Cw(String tcstring) {
+		if (tcstring.equals(TC_SIZE_MICRO)) {
+			return CW_SIZE_MICRO;
+		} else if (tcstring.equals(TC_SIZE_MEDIUM)) {
+			return CW_SIZE_SMALL;
+		} else if (tcstring.equals(TC_SIZE_REGULAR)) {
+			return CW_SIZE_REGULAR;
+		} else if (tcstring.equals(TC_SIZE_LARGE)) {
+			return CW_SIZE_LARGE;
+		} else if (tcstring.equals(TC_SIZE_VERYLARGE)) {
+			return CW_SIZE_VERYLARGE;
+		} else {
+			throw (new IllegalArgumentException("unmatched argument "
+					+ tcstring + " in CacheSize tcGpxString2Cw()"));
+		}
+	}
+	
+	/**
+	 * convert the cache size information from a GC GPX import to internal representation
 	 * 
 	 * @param gcstring
 	 *            size information extracted from a GPX inport
@@ -116,7 +153,7 @@ public final class CacheSize {
 	 *             (CW_SIZE_*)
 	 */
 
-	public byte gcGpxString2Cw(String gcstring) {
+	public static byte gcGpxString2Cw(String gcstring) {
 		if (gcstring.equals(GC_SIZE_MICRO)) {
 			return CW_SIZE_MICRO;
 		} else if (gcstring.equals(GC_SIZE_SMALL)) {
@@ -148,7 +185,7 @@ public final class CacheSize {
 	 *             if spiderstring can not be mapped to internal representation
 	 *             (CW_SIZE_*)
 	 */
-	public byte gcSpiderString2Cw(String spiderstring) {
+	public static byte gcSpiderString2Cw(String spiderstring) {
 		// at the moment both sources use the same strings
 		return gcGpxString2Cw(spiderstring);
 	}
@@ -163,7 +200,7 @@ public final class CacheSize {
 	 * @trows IllegalArgumentException if ocxmlstring can not be mapped to a
 	 *        CW_SIZE_*
 	 */
-	public byte ocXmlString2Cw(String ocxmlstring) {
+	public static byte ocXmlString2Cw(String ocxmlstring) {
 		if (ocxmlstring.equals(OC_SIZE_OTHER)) {
 			return CW_SIZE_OTHER;
 		} else if (ocxmlstring.equals(OC_SIZE_MICRO)) {
@@ -187,12 +224,12 @@ public final class CacheSize {
 	/**
 	 * get name of the image to be displayed in CW index panel
 	 * 
-	 * @param size
-	 * @return
+	 * @param size CW internal representation of cache size
+	 * @return filename of image to be displayed in main panel as size icon
 	 * @throws IllegalArgumentException
 	 *             if size can not be mapped
 	 */
-	public String guiSizeImage(byte size) {
+	public static String guiSizeImage(byte size) {
 		switch (size) {
 		case CW_SIZE_MICRO:
 			return CW_GUIIMG_MICRO;
@@ -217,32 +254,72 @@ public final class CacheSize {
 					+ size + " in CacheSize guiSizeImage()"));
 		}
 	}
-
-/*	// do not compile until there is an expoter that can make use of this
-	public String exportSizeImage(byte size) {
+	
+	/**
+	 * return a bit mask representing the caches size for use in the Filter
+	 * 
+	 * @param size CW internal representation of cache size
+	 * @return a bit mask for the filter function
+	 * @throws IllegalArgumentException if size can not be mapped to a bit mask
+	 */
+	
+	public static byte getFilterPattern(byte size) {
 		switch (size) {
 		case CW_SIZE_MICRO:
-			return CW_EXPIMG_MICRO;
+			return CW_FILTER_MICRO;
 		case CW_SIZE_SMALL:
-			return CW_EXPIMG_SMALL;
+			return CW_FILTER_SMALL;
 		case CW_SIZE_REGULAR:
-			return CW_EXPIMG_NORMAL;
+			return CW_FILTER_NORMAL;
 		case CW_SIZE_LARGE:
-			return CW_EXPIMG_LARGE;
+			return CW_FILTER_LARGE;
 		case CW_SIZE_NOTCHOSEN:
-			return CW_EXPIMG_NOTCHOSEN;
+			return CW_FILTER_NONPHYSICAL;
 		case CW_SIZE_OTHER:
-			return CW_EXPIMG_OTHER;
+			return CW_FILTER_NONPHYSICAL;
 		case CW_SIZE_VIRTUAL:
-			return CW_EXPIMG_VIRTUAL;
+			return CW_FILTER_NONPHYSICAL;
 		case CW_SIZE_VERYLARGE:
-			return CW_EXPIMG_VERYLARGE;
+			return CW_FILTER_VERYLARGE;
 		case CW_SIZE_NONE:
-			return CW_EXPIMG_NONE;
+			return CW_FILTER_NONPHYSICAL;
 		default:
 			throw (new IllegalArgumentException("unmatched argument " 
-				+ size + " in CacheSize exportSizeImage()"));
+					+ size + " in CacheSize getFilterPattern()"));
 		}
-	}*/
-
+	}
+	
+	/**
+	 * provides abbreviated representations of CacheSize for compact exporters
+	 * 
+	 * @param size CW internal representation of cache size
+	 * @return a one letter String for cache size 
+	 * @throws IllegalArgumentException  if size can not be mapped
+	 */
+	
+	public static String getExportShortId(byte size) {
+		switch (size) {
+		case CW_SIZE_MICRO:
+			return "m";
+		case CW_SIZE_SMALL:
+			return "s";
+		case CW_SIZE_REGULAR:
+			return "r";
+		case CW_SIZE_LARGE:
+			return "l";
+		case CW_SIZE_NOTCHOSEN:
+			return "n";
+		case CW_SIZE_OTHER:
+			return "n";
+		case CW_SIZE_VIRTUAL:
+			return "n";
+		case CW_SIZE_VERYLARGE:
+			return "v";
+		case CW_SIZE_NONE:
+			return "n";
+		default:
+			throw (new IllegalArgumentException("unmatched argument " 
+					+ size + " in CacheSize getExportShortId()"));
+		}
+	}
 }
