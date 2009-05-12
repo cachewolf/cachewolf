@@ -1102,7 +1102,7 @@ public class Parser{
 		CacheHolder ch = new CacheHolder();
 		ch.setWayPoint(wayPoint);
 		ch.setType(type);
-		ch.setCacheSize("None");
+		ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 		ch.setCacheName(name);
 
 		Global.getProfile().setAddiRef(ch);

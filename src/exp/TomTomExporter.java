@@ -185,7 +185,7 @@ public class TomTomExporter {
 			outp.writeBytes("/");
 			outp.writeBytes(ch.getTerrain());
 			outp.writeBytes(" - ");
-			outp.writeBytes(ch.getCacheSize());
+			outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
 			outp.writeBytes("\"\r\n");
 		} catch (IOException e) {
 			Vm.debug("Error writing to file");
@@ -202,7 +202,7 @@ public class TomTomExporter {
 		try {
 			d = 2;
 			outp.writeByte((byte)d);
-			data = ch.getWayPoint().length()+ch.getCacheName().length()+ch.getCacheOwner().length()+ch.getHard().length()+ch.getTerrain().length()+ch.getCacheSize().length()+27;
+			data = ch.getWayPoint().length()+ch.getCacheName().length()+ch.getCacheOwner().length()+ch.getHard().length()+ch.getTerrain().length()+CacheSize.cw2ExportString(ch.getCacheSize()).length()+27;
 			writeIntBinary(outp, data);
 			latlon = Common.parseDouble(lon);
 			latlon *=100000;
@@ -224,7 +224,7 @@ public class TomTomExporter {
 			outp.writeBytes("/");
 			outp.writeBytes(ch.getTerrain());
 			outp.writeBytes(" - ");
-			outp.writeBytes(ch.getCacheSize());
+			outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
 			d = 0;
 			outp.writeByte((byte)d);
 		} catch (IOException e) {

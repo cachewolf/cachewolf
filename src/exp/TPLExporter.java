@@ -29,6 +29,7 @@ import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheHolderDetail;
+import CacheWolf.CacheSize;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.Preferences;
@@ -195,8 +196,8 @@ public class TPLExporter {
 						varParams = new Hashtable();
 						varParams.put("TYPE", CacheType.transType(ch.getType()));
 						varParams.put("SHORTTYPE", CacheType.transType(ch.getType()).substring(0,1));
-						varParams.put("SIZE", ch.getCacheSize());
-						varParams.put("SHORTSIZE", ch.getCacheSize().substring(0,1));
+						varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
+						varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.getCacheSize()));
 						varParams.put("WAYPOINT", ch.getWayPoint());
 						varParams.put("OWNER", ch.getCacheOwner());
 						varParams.put("DIFFICULTY", dec.replaceAll(ch.getHard()));

@@ -18,7 +18,7 @@ public class DetailsPanel extends CellPanel{
 	mInput inpOwner = new mInput();
 	mButton btnDelete,btnCenter, btnAddDateTime;
 	mChoice chcType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "wherIGo", "Addi: Parking", "Addi: Stage", "Addi: Question", "Addi: Final","Addi: Trailhead","Addi: Reference"},0);
-	mChoice chcSize = new mChoice(new String[]{"", "Micro", "Small", "Regular", "Large","Other","Very Large","None"},0);
+	mChoice chcSize = new mChoice(CacheSize.guiSizeStrings(),0);
 	mComboBox chcStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
 	mButton btnNewWpt, btnShowBug, btnShowMap, btnGoto, btnAddPicture, btnBlack, btnNotes, btnSave, btnCancel;
 	mButton btnFoundDate,btnHiddenDate;
@@ -208,14 +208,8 @@ public class DetailsPanel extends CellPanel{
 			btnShowBug.image = imgShowBugNo;
 		}
 		btnShowBug.repaintNow();
-		if(ch.getCacheSize().equals("Micro")) chcSize.setInt(1);
-		if(ch.getCacheSize().equals("Small")) chcSize.setInt(2);
-		if(ch.getCacheSize().equals("Regular")) chcSize.setInt(3);
-		if(ch.getCacheSize().equals("Large")) chcSize.setInt(4);
-		if(ch.getCacheSize().equals("Other")) chcSize.setInt(5);
-		if(ch.getCacheSize().equals("Very Large")) chcSize.setInt(6);
-		if(ch.getCacheSize().equals("None")) chcSize.setInt(7);
-		if(ch.getCacheSize().equals("Not chosen")) chcSize.setInt(7);
+		chcSize.setInt(ch.getCacheSize());
+
 		attV.showImages(ch.getCacheDetails(true).attributes);
 		lblTerr.setText((ch.getTerrain().length()>0) ? (MyLocale.getMsg(1001,"T")+": "+ch.getTerrain()) : "");
 		lblDiff.setText((ch.getHard().length()>0)    ? (MyLocale.getMsg(1000,"D")+": "+ch.getHard()) : ""); 
@@ -491,7 +485,7 @@ public class DetailsPanel extends CellPanel{
 		  thisCache.setBlack(blackStatus);
 		  String oldWaypoint=thisCache.getWayPoint();
 		  thisCache.setWayPoint(inpWaypoint.getText().toUpperCase().trim());
-		  thisCache.setCacheSize(chcSize.getText());
+		  thisCache.setCacheSize(CacheSize.guiSizeStrings2CwSize(chcSize.getText()));
 		  // If the waypoint does not have a name, give it one
 		  if (thisCache.getWayPoint().equals("")) { 
 			  thisCache.setWayPoint(profile.getNewWayPointName());

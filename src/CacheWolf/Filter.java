@@ -68,14 +68,6 @@ public class Filter{
 	private static final int S = 32768;
 	private static final int ROSE_ALL= N|NNE|NE|ENE|E|ESE|SE|SSE|SSW|SW|WSW|W|WNW|NW|NNW|S;
 
-	private static final int MICRO=1; 
-	private static final int SMALL=2;	
-	private static final int REGULAR=4;	
-	private static final int LARGE=8;	
-	private static final int VERYLARGE=16;	
-	private static final int OTHER=32;	
-	private static final int SIZE_ALL=MICRO|SMALL|REGULAR|LARGE|VERYLARGE|OTHER;
-	
 	private int distdirec = 0;
 	private int diffdirec = 0;
 	private int terrdirec = 0;
@@ -302,13 +294,13 @@ public class Filter{
 		hasRoseMatchPattern=roseMatchPattern!=ROSE_ALL;
 		sizeMatchPattern=0;
 		String filterSize=profile.getFilterSize();
-		if (filterSize.charAt(0) == '1') sizeMatchPattern|=MICRO;
-		if (filterSize.charAt(1) == '1') sizeMatchPattern|=SMALL;
-		if (filterSize.charAt(2) == '1') sizeMatchPattern|=REGULAR;
-		if (filterSize.charAt(3) == '1') sizeMatchPattern|=LARGE;
-		if (filterSize.charAt(4) == '1') sizeMatchPattern|=VERYLARGE;
-		if (filterSize.charAt(5) == '1') sizeMatchPattern|=OTHER;
-		hasSizeMatchPattern=sizeMatchPattern!=SIZE_ALL;
+		if (filterSize.charAt(0) == '1') sizeMatchPattern|=CacheSize.CW_FILTER_MICRO;
+		if (filterSize.charAt(1) == '1') sizeMatchPattern|=CacheSize.CW_FILTER_SMALL;
+		if (filterSize.charAt(2) == '1') sizeMatchPattern|=CacheSize.CW_FILTER_NORMAL;
+		if (filterSize.charAt(3) == '1') sizeMatchPattern|=CacheSize.CW_FILTER_LARGE;
+		if (filterSize.charAt(4) == '1') sizeMatchPattern|=CacheSize.CW_FILTER_VERYLARGE;
+		if (filterSize.charAt(5) == '1') sizeMatchPattern|=CacheSize.CW_FILTER_NONPHYSICAL;
+		hasSizeMatchPattern=sizeMatchPattern!=CacheSize.CW_FILTER_ALL;
 		distdirec = profile.getFilterDist().charAt(0) == 'L' ? SMALLER : GREATER; 
 		fscDist = Common.parseDouble(profile.getFilterDist().substring(1));  // Distance
 		diffdirec = profile.getFilterDiff().charAt(0) == 'L' ? SMALLER : 
@@ -546,19 +538,7 @@ public class Filter{
 	        // Filter criterium 10: Size
 	        ///////////////////////////////
 	        if (hasSizeMatchPattern) {
-		        cacheSizePattern = 0;
-		        if (ch.getCacheSize().startsWith("M"))
-			        cacheSizePattern = MICRO;
-		        else if (ch.getCacheSize().startsWith("S"))
-			        cacheSizePattern = SMALL;
-		        else if (ch.getCacheSize().startsWith("R"))
-			        cacheSizePattern = REGULAR;
-		        else if (ch.getCacheSize().startsWith("L"))
-			        cacheSizePattern = LARGE;
-		        else if (ch.getCacheSize().startsWith("V"))
-			        cacheSizePattern = VERYLARGE;
-		        else
-			        cacheSizePattern = OTHER;
+		        cacheSizePattern = CacheSize.getFilterPattern(ch.getCacheSize());
 		        if ((cacheSizePattern & sizeMatchPattern) == 0) {
 			        cacheFiltered = true; break;
 		        }

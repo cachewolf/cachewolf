@@ -15,7 +15,7 @@ public class Version {
 	static final int VER_MAJOR = 1;
 	static final int VER_MINOR = 0;
 	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
-	static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ")+1, VER_SVN.lastIndexOf(" ")));
+	static final int SVN_REVISION = 20090512;
 	static final int VERSION_TYPE = 3;
 	public static final String[] VERSION_TYPES = {
 		"Release", 
@@ -34,8 +34,8 @@ public class Version {
 	}
 
 	public static String getReleaseDetailed() {
-		// habe die SVN-Nummer doch aus der Anzeige erstmal wieder herausgenommen, weil es in einem final Release doch recht seltsam aussähe.
-		// Sinnvoll wäre daher vielleicht, eine Methode getReleaseDatail, die die SVN-Versionnummer mit angibt und z.B. im "über"-Dialog angezeigt werden könnte.
+		// habe die SVN-Nummer doch aus der Anzeige erstmal wieder herausgenommen, weil es in einem final Release doch recht seltsam aussï¿½he.
+		// Sinnvoll wï¿½re daher vielleicht, eine Methode getReleaseDatail, die die SVN-Versionnummer mit angibt und z.B. im "ï¿½ber"-Dialog angezeigt werden kï¿½nnte.
 		return getRelease() + "." + Convert.toString(SVN_REVISION) + " " + VERSION_TYPES[VERSION_TYPE];
 	}
 

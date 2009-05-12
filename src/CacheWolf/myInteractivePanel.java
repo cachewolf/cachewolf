@@ -54,6 +54,7 @@ public class myInteractivePanel extends InteractivePanel{
 	public void setMainTab(MainTab tb){
 		mt = tb;
 	}
+	
 	public boolean imageMovedOn(AniImage which) {
 		timePenOn=Vm.getTimeStampLong();
 		setFont(font);
@@ -61,7 +62,7 @@ public class myInteractivePanel extends InteractivePanel{
 		CacheDB cacheDB=Global.getProfile().cacheDB;
 		CacheHolder ch=cacheDB.get(imgRP.rownum);
 		wayPoint=ch.getWayPoint();
-		String s=wayPoint+"  "+ch.getCacheSize()+" / "+strDifficulty+"="+ch.getHard()+"  "+strTerrain+"="+ch.getTerrain();
+		String s=wayPoint+"  "+CacheSize.getExportShortId(ch.getCacheSize())+" / "+strDifficulty+"="+ch.getHard()+"  "+strTerrain+"="+ch.getTerrain();
 		String s1=ch.getCacheName();
 		if (s1.length()>40) s1=s1.substring(0,40);
 		int tw=fm.getTextWidth(s)+2;
