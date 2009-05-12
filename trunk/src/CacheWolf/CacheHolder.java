@@ -47,22 +47,6 @@ public class CacheHolder {
 	protected static final String DT_45_TXT = "4.5";
 	protected static final String DT_50_TXT = "5";
 	protected static final String DT_UNKNOWN_TXT = "?";
-	protected static final byte SIZE_UNKNOWN = 0;
-	protected static final byte SIZE_OTHER = 1;
-	protected static final byte SIZE_MICRO = 2;
-	protected static final byte SIZE_SMALL = 3;
-	protected static final byte SIZE_REGULAR = 4;
-	protected static final byte SIZE_LARGE = 5;
-	protected static final byte SIZE_VLARGE = 6;
-	protected static final byte SIZE_NONE = 7;
-	protected static final String SIZE_UNKNOWN_TXT = "";
-	protected static final String SIZE_OTHER_TXT = "Other";
-	protected static final String SIZE_MICRO_TXT = "Micro";
-	protected static final String SIZE_SMALL_TXT = "Small";
-	protected static final String SIZE_REGULAR_TXT = "Regular";
-	protected static final String SIZE_LARGE_TXT = "Large";
-	protected static final String SIZE_VLARGE_TXT = "Very Large";
-	protected static final String SIZE_NONE_TXT = "None";
 
 	/** Cachestatus is Found, Not found or a date in format yyyy-mm-dd hh:mm for found date */
 	private String cacheStatus = EMPTY;
@@ -79,7 +63,7 @@ public class CacheHolder {
 	/** The date when the cache was hidden in format yyyy-mm-dd */
 	private String dateHidden = EMPTY;
 	/** The size of the cache (as per GC cache sizes Micro, Small, ....) */
-	private String cacheSize = "None";
+	private byte cacheSize = CacheSize.CW_SIZE_NOTCHOSEN;
 	/** The distance from the centre in km */
 	public double kilom = -1; int bla = 0;
 	public double lastKilom = -2; // Cache last value
@@ -169,7 +153,7 @@ public class CacheHolder {
 		this.wayPoint = wp;
     }
 	
-	public CacheHolder(String xmlString, int version) {		 
+	public CacheHolder(String xmlString, int version) {
 		int start,end;
 	        try {
 			if (version == 1) {
@@ -217,7 +201,9 @@ public class CacheHolder {
 		        setFiltered(xmlString.substring(start + 1, end).equals("true"));
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
-		        setCacheSize(xmlString.substring(start + 1, end));
+		        
+		        setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
+		        
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setAvailable(xmlString.substring(start + 1, end).equals("true"));
@@ -345,7 +331,7 @@ public class CacheHolder {
 		            setFiltered(true);
             }
 	        } catch (Exception ex) {
-	        	Global.getPref().log("Ignored Exception", ex, true);
+	        	Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
 	        }
         }
 	
@@ -856,7 +842,7 @@ public void finalize() {nObjects--;
 		long value = byteBitMask(CacheHolder.terrHard_String2byte(hard), 1)    | 
 		byteBitMask(CacheHolder.terrHard_String2byte(terrain), 2)   |
 		byteBitMask(this.type, 3)    |
-		byteBitMask(CacheHolder.size_String2byte(cacheSize), 4)|
+		byteBitMask(cacheSize, 4)|
 		byteBitMask(this.noFindLogs, 5);		             
 		return value;
 	}
@@ -869,7 +855,7 @@ public void finalize() {nObjects--;
 		this.setHard(CacheHolder.terrHard_byte2String(byteFromLong(value, 1)));
 		this.setTerrain(CacheHolder.terrHard_byte2String(byteFromLong(value, 2)));
 		this.type = byteFromLong(value, 3);
-		this.setCacheSize(CacheHolder.size_byte2String(byteFromLong(value, 4)));
+		this.setCacheSize(byteFromLong(value, 4));
 		this.setNoFindLogs((byteFromLong(value, 5)));
 	}
 
@@ -1025,12 +1011,12 @@ public void finalize() {nObjects--;
     	this.dateHidden = dateHidden;
     }
 
-	public String getCacheSize() {
+	public byte getCacheSize() {
     	return cacheSize;
     }
 
-	public void setCacheSize(String cacheSize) {
-		Global.getProfile().notifyUnsavedChanges(!cacheSize.equals(this.cacheSize));		
+	public void setCacheSize(byte cacheSize) {
+		Global.getProfile().notifyUnsavedChanges(cacheSize != this.cacheSize);		
     	this.cacheSize = cacheSize;
     }
 
@@ -1071,28 +1057,6 @@ public void finalize() {nObjects--;
 		case DT_45: result = DT_45_TXT; break;
 		case DT_50: result = DT_50_TXT; break;
 		default: result = DT_UNKNOWN_TXT;
-		} 
-		return result;
-	}
-	/**
-	 * The string representation of the internal value for the cache size.
-	 * @param value Internal cache size value 
-	 * @return String representation of cache size
-	 */
-	private static String size_byte2String(byte value) {
-		String result;
-		//Change: If no sensible value for the cache size is entered, then 
-		//the state is set to "None".
-		switch (value) {
-		case SIZE_UNKNOWN: result = SIZE_NONE_TXT; break;
-		case SIZE_OTHER: result = SIZE_OTHER_TXT; break;
-		case SIZE_MICRO: result = SIZE_MICRO_TXT; break;
-		case SIZE_SMALL: result = SIZE_SMALL_TXT; break;
-		case SIZE_REGULAR: result = SIZE_REGULAR_TXT; break;
-		case SIZE_LARGE: result = SIZE_LARGE_TXT; break;
-		case SIZE_VLARGE: result = SIZE_VLARGE_TXT; break;
-		case SIZE_NONE: result = SIZE_NONE_TXT; break;
-		default: result = SIZE_NONE_TXT;
 		} 
 		return result;
 	}
@@ -1143,32 +1107,7 @@ public void finalize() {nObjects--;
 	    if (value.endsWith(".0")) value = value.substring(0,1);
 	    return value;
     }
-    /**
-     * @param value
-     * @return
-     */
-    private static byte size_String2byte(String value) {
-    	byte result;
-    	if (value.equals(SIZE_OTHER_TXT)) {
-    		result = SIZE_OTHER;
-    	} else if (value.equals(SIZE_MICRO_TXT)) {
-    		result = SIZE_MICRO;
-    	} else if (value.equals(SIZE_SMALL_TXT)) {
-    		result = SIZE_SMALL;
-    	} else if (value.equals(SIZE_REGULAR_TXT)) {
-    		result = SIZE_REGULAR;
-    	} else if (value.equals(SIZE_LARGE_TXT)) {
-    		result = SIZE_LARGE;
-    	} else if (value.equals(SIZE_VLARGE_TXT)) {
-    		result = SIZE_VLARGE;
-    	} else if (value.equals(SIZE_NONE_TXT)) {
-    		result = SIZE_NONE;
-    	} else {
-    		result = DT_UNKNOWN;
-    	}
-    	return result;
-    }
-
+ 
 	/**
 	 * Gets the type of cache as integer.
 	 * @return Cache type

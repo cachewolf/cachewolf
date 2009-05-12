@@ -80,7 +80,7 @@ public class GPXExporter extends Exporter{
 				//todo low prio: correct owner-id
 				strBuf.append("      <groundspeak:owner id=\"23\">").append(SafeXML.cleanGPX(ch.getCacheOwner())+"</groundspeak:owner>\r\n");
 				strBuf.append("      <groundspeak:type>").append(CacheType.transType(ch.getType())).append("</groundspeak:type>\r\n");
-				strBuf.append("      <groundspeak:container>").append(ch.getCacheSize()).append("</groundspeak:container>\r\n");
+				strBuf.append("      <groundspeak:container>").append(CacheSize.cw2ExportString(ch.getCacheSize())).append("</groundspeak:container>\r\n");
 				//for Colorado/Oregon: 2.0 -> 2
 				String diffTerr = ch.getHard().replace(',','.');
 				if ( diffTerr.endsWith( ".0" ) ) {

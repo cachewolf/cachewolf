@@ -424,7 +424,7 @@ public class Exporter {
     				strBuf.append("5");
     			}
     		}
-    		strBuf.append(ch.getCacheSize().substring(0, 1).toLowerCase());
+    		strBuf.append(CacheSize.getExportShortId(ch.getCacheSize()));
     	}
 
     	return strBuf.toString();

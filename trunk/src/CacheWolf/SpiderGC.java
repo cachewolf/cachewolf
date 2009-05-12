@@ -718,7 +718,7 @@ public class SpiderGC{
 						else pref.log("Got hints");
 
 						pref.log("Trying size");
-						ch.setCacheSize(getSize(completeWebPage));
+						ch.setCacheSize(CacheSize.gcSpiderString2Cw(getSize(completeWebPage)));
 						if (pref.debug) pref.log("Size: " + ch.getCacheSize());
 						else pref.log("Got size");
 

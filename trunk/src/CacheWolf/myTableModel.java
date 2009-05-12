@@ -51,7 +51,8 @@ public class myTableModel extends TableModel{
 	private boolean sortAsc = false;
 	private int sortedBy = -1;
 	private FontMetrics fm;
-	private mImage picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge;
+//	private mImage picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge,picSizeNonPhysical;
+	private mImage[] sizePics = new mImage[CacheSize.CW_TOTAL_SIZE_IMAGES];
 	/** This is the modifier (Shift & Control key status) for Pen Events
 	 * it is set in myTableControl.onEvent */
 	public int penEventModifiers; 
@@ -81,11 +82,19 @@ public class myTableModel extends TableModel{
 		bug = new mImage("bug_table.png");bug.transparentColor=Color.DarkBlue;
 		checkboxTicked = new Image("checkboxTicked.png");
 		checkboxUnticked= new Image("checkboxUnticked.png");
-		picSizeMicro=new mImage("sizeMicro.png"); picSizeMicro.transparentColor=Color.White;
-		picSizeSmall=new mImage("sizeSmall.png"); picSizeSmall.transparentColor=Color.White;
-		picSizeReg=new mImage("sizeReg.png"); picSizeReg.transparentColor=Color.White;
-		picSizeLarge=new mImage("sizeLarge.png"); picSizeLarge.transparentColor=Color.White;
-		picSizeVLarge=new mImage("sizeVLarge.png"); picSizeVLarge.transparentColor=Color.White;
+		
+//		picSizeMicro=new mImage("sizeMicro.png"); picSizeMicro.transparentColor=Color.White;
+//		picSizeSmall=new mImage("sizeSmall.png"); picSizeSmall.transparentColor=Color.White;
+//		picSizeReg=new mImage("sizeReg.png"); picSizeReg.transparentColor=Color.White;
+//		picSizeLarge=new mImage("sizeLarge.png"); picSizeLarge.transparentColor=Color.White;
+//		picSizeVLarge=new mImage("sizeVLarge.png"); picSizeVLarge.transparentColor=Color.White;
+//		picSizeNonPhysical=new mImage("sizeNonPhysical.png"); picSizeNonPhysical.transparentColor=Color.White;
+		
+		for (byte i = 0; i < CacheSize.CW_TOTAL_SIZE_IMAGES; i++) {
+			sizePics[i] = new mImage(CacheSize.sizeImageForId(i));
+			sizePics[i].transparentColor=Color.White;
+		}
+				
 //		updateRows();
 	}
 	
@@ -217,7 +226,7 @@ public class myTableModel extends TableModel{
 					lastColorFG.set(ta.foreground);
 					lastRow = row;
 				} catch (Exception e) {
-					Global.getPref().log("Ignored Exception", e, true);
+					Global.getPref().log("Ignored Exception in myTableModel.TableCellAttributes()", e, true);
 				};
 			} else  {
 				// Here: We already had this row.
@@ -318,14 +327,10 @@ public class myTableModel extends TableModel{
 					case 11: // Bearing
 						return ch.bearing;
 					case 12: // Size
-						if (ch.getCacheSize().length()==0) return "?";
-						switch (ch.getCacheSize().charAt(0)) {
-							case 'M': return picSizeMicro;
-							case 'S': return picSizeSmall;
-							case 'R': return picSizeReg;
-							case 'L': return picSizeLarge;
-							case 'V': return picSizeVLarge;
-							default: return "?";
+						if (ch.isAddiWpt()) {
+							return "";
+						} else {
+							return sizePics[CacheSize.guiSizeImageId(ch.getCacheSize())];
 						}
 					case 13: // OC number of recommendations
 						if (ch.getWayPoint().startsWith("OC"))
@@ -337,7 +342,10 @@ public class myTableModel extends TableModel{
 						return null;
 				} // Switch
 			} // if
-		} catch (Exception e) { return null; }
+		} catch (Exception e) {
+			Global.getPref().log("Ignored Exception in myTableModel.getCellData()", e, true);
+			return null; 
+		}
 		return null;
 	}
 	
