@@ -77,15 +77,7 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==12) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				if (ch.getCacheSize().length()==0) ch.sort="?";
-				else switch (ch.getCacheSize().charAt(0)) {
-					case 'M': ch.sort="1"; break;
-					case 'S': ch.sort="2"; break;
-					case 'R': ch.sort="3"; break;
-					case 'L': ch.sort="4"; break; 
-					case 'V': ch.sort="5"; break;
-					default: ch.sort="?";
-				}
+				ch.sort=Byte.toString(ch.getCacheSize());
 			}
 		} else if (colToCompare==13) {
 			for (int i=0; i<visibleSize; i++) {

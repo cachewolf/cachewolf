@@ -28,6 +28,7 @@ public final class CacheSize {
 	static final protected String GC_SIZE_OTHER = "Other";
 	static final protected String GC_SIZE_VIRTUAL = "Virtual";
 	static final protected String OCTC_SIZE_VERYLARGE = "Very large";
+	static final protected String OCTC_SIZE_NONE = "None";
 
 	/*
 	 * OpenCaching Size IDs
@@ -63,6 +64,24 @@ public final class CacheSize {
 	static final protected String CW_GUIIMG_VERYLARGE = "sizeVLarge.png";
 	
 	/*
+	 * IDs for the sizePics[] array in TableModel
+	 * therefore they must start with 0 and be consecutive
+	 */
+	static final protected byte CW_GUIIMGID_MICRO = 0;
+	static final protected byte CW_GUIIMGID_SMALL = 1;
+	static final protected byte CW_GUIIMGID_NORMAL = 2;
+	static final protected byte CW_GUIIMGID_LARGE = 3;
+	static final protected byte CW_GUIIMGID_NONPHYSICAL = 4;
+	static final protected byte CW_GUIIMGID_VERYLARGE = 5;
+	
+	/*
+	 * total number of different size images
+	 * will be used to det the dimension of sizePics[] array in TableModel
+	 */
+	static final protected byte CW_TOTAL_SIZE_IMAGES = 6;
+	
+	
+	/*
 	 * bit masks to be used with the filter function
 	 */
 	static final protected byte CW_FILTER_MICRO = 0x01<<0;
@@ -78,6 +97,27 @@ public final class CacheSize {
 	 */
 	public CacheSize() {
 		// do nothing
+	}
+	
+	/**
+	 * map filenames of images for the different sizes to the ids used
+	 * array index for sizePics[] in TableModel
+	 * @param id size identifier matching the CW_GUIIMGID_ constants
+	 * @return filenam of image to be displayed for id
+	 * @throws IllegalArgumentException if there is no image associated to the id
+	 */
+	public static String sizeImageForId(byte id) {
+		switch(id) {
+		case CW_GUIIMGID_MICRO: return CW_GUIIMG_MICRO;
+		case CW_GUIIMGID_SMALL: return CW_GUIIMG_SMALL;
+		case CW_GUIIMGID_NORMAL: return CW_GUIIMG_NORMAL;
+		case CW_GUIIMGID_LARGE: return CW_GUIIMG_LARGE;
+		case CW_GUIIMGID_NONPHYSICAL: return CW_GUIIMG_NONPHYSICAL;
+		case CW_GUIIMGID_VERYLARGE: return CW_GUIIMG_VERYLARGE;
+		default:
+			throw (new IllegalArgumentException("unmatched argument " + id
+					+ " in CacheSize cw2ExportString()"));			
+		}
 	}
 
 	/**
@@ -108,9 +148,11 @@ public final class CacheSize {
 			return GC_SIZE_VIRTUAL;
 		case CW_SIZE_VERYLARGE:
 			return OCTC_SIZE_VERYLARGE;
+		case CW_SIZE_NONE:
+			return OCTC_SIZE_NONE;
 		default:
 			throw (new IllegalArgumentException("unmatched argument " + size
-					+ " in CacheSize cw2GcString()"));
+					+ " in CacheSize cw2ExportString()"));
 		}
 	}
 
@@ -229,29 +271,66 @@ public final class CacheSize {
 	 * @throws IllegalArgumentException
 	 *             if size can not be mapped
 	 */
-	public static String guiSizeImage(byte size) {
+	public static byte guiSizeImageId(byte size) {
 		switch (size) {
 		case CW_SIZE_MICRO:
-			return CW_GUIIMG_MICRO;
+			return CW_GUIIMGID_MICRO;
 		case CW_SIZE_SMALL:
-			return CW_GUIIMG_SMALL;
+			return CW_GUIIMGID_SMALL;
 		case CW_SIZE_REGULAR:
-			return CW_GUIIMG_NORMAL;
+			return CW_GUIIMGID_NORMAL;
 		case CW_SIZE_LARGE:
-			return CW_GUIIMG_LARGE;
+			return CW_GUIIMGID_LARGE;
 		case CW_SIZE_NOTCHOSEN:
-			return CW_GUIIMG_NONPHYSICAL;
+			return CW_GUIIMGID_NONPHYSICAL;
 		case CW_SIZE_OTHER:
-			return CW_GUIIMG_NONPHYSICAL;
+			return CW_GUIIMGID_NONPHYSICAL;
 		case CW_SIZE_VIRTUAL:
-			return CW_GUIIMG_NONPHYSICAL;
+			return CW_GUIIMGID_NONPHYSICAL;
 		case CW_SIZE_VERYLARGE:
-			return CW_GUIIMG_VERYLARGE;
+			return CW_GUIIMGID_VERYLARGE;
 		case CW_SIZE_NONE:
-			return CW_GUIIMG_NONPHYSICAL;
+			return CW_GUIIMGID_NONPHYSICAL;
 		default:
 			throw (new IllegalArgumentException("unmatched argument " 
 					+ size + " in CacheSize guiSizeImage()"));
+		}
+	}
+	
+
+	/**
+	 * convert an "old style" size string to the new internal representation
+	 * @param v1Size old size string
+	 * @return CW internal representation of cache size
+	 * @throws if v1Size can not be mapped
+	 * @deprecated remove once v1 file version compatibility is abandoned
+	 */
+	public static final byte v1Converter(String v1Size) {
+		if (v1Size.equals(GC_SIZE_MICRO)) {
+			return CW_SIZE_MICRO;
+		} else if (v1Size.equals(GC_SIZE_SMALL)) {
+			return CW_SIZE_SMALL;
+		} else if (v1Size.equals(GC_SIZE_REGULAR)) {
+			return CW_SIZE_REGULAR;
+		} else if (v1Size.equals(GC_SIZE_LARGE)) {
+			return CW_SIZE_LARGE;
+		} else if (v1Size.equals(GC_SIZE_NOTCHOSEN)) {
+			return CW_SIZE_NOTCHOSEN;
+		} else if (v1Size.equals(GC_SIZE_OTHER)) {
+			return CW_SIZE_OTHER;
+		} else if (v1Size.equals(GC_SIZE_VIRTUAL)) {
+			return CW_SIZE_VIRTUAL;
+		} else if (v1Size.equals(OCTC_SIZE_NONE)) {
+			return CW_SIZE_NONE;
+		} else if (v1Size.equals(OCTC_SIZE_VERYLARGE)) {
+			return CW_SIZE_VERYLARGE;
+		} else if (v1Size.equals("")) {
+			return CW_SIZE_NOTCHOSEN;
+		} else if (v1Size.equals(null)) {
+			return CW_SIZE_NOTCHOSEN;
+		} else {
+			throw (new IllegalArgumentException("unmatched argument "
+					+ v1Size + " in v1Converter()"));
 		}
 	}
 	
@@ -321,5 +400,86 @@ public final class CacheSize {
 			throw (new IllegalArgumentException("unmatched argument " 
 					+ size + " in CacheSize getExportShortId()"));
 		}
+	}
+	
+	/**
+	 * generate a string array suitable to be used in DetalsPanel drop down list
+	 * @return strings to be displayed in the DetailsPanel Size DropDown
+	 * @see guiSizeStrings2CwSize
+	 * @see cwSizeId2GuiSizeId
+	 */
+	
+	public static String[] guiSizeStrings() {
+		// make sure strings appear in ascending order for CW_SIZE_*
+		String ret[] = new String[] {
+				GC_SIZE_NOTCHOSEN,
+				GC_SIZE_OTHER,
+				GC_SIZE_MICRO,
+				GC_SIZE_SMALL,
+				GC_SIZE_REGULAR,
+				GC_SIZE_LARGE,
+				OCTC_SIZE_VERYLARGE,
+				OCTC_SIZE_NONE,
+				GC_SIZE_VIRTUAL
+		};
+		return ret;
+	}
+
+	/**
+	 * map a string chosen from the DetailsPanel Size drop down list back to internal representation
+	 * @param id
+	 * @return 
+	 * @throws IllegalArgumentException if id can not be mapped 
+	 * @see cwSizeId2GuiSizeId
+	 * @see guiSizeStrings
+	 */
+	public static byte guiSizeStrings2CwSize(String id) {
+		// map the strings in guiSizeStrings() back to cw byte types
+		if (id.equals(GC_SIZE_NOTCHOSEN)) {
+			return CW_SIZE_NOTCHOSEN;
+		} else if (id.equals(GC_SIZE_OTHER)) {
+			return CW_SIZE_OTHER;
+		} else if (id.equals(GC_SIZE_SMALL)) {
+			return CW_SIZE_SMALL;
+		} else if (id.equals(GC_SIZE_REGULAR)) {
+			return CW_SIZE_REGULAR;
+		} else if (id.equals(GC_SIZE_LARGE)) {
+			return CW_SIZE_LARGE;
+		} else if (id.equals(OCTC_SIZE_VERYLARGE)) {
+			return CW_SIZE_VERYLARGE;
+		} else if (id.equals(OCTC_SIZE_NONE)) {
+			return CW_SIZE_NONE;
+		} else if (id.equals(GC_SIZE_MICRO)) {
+			return CW_SIZE_MICRO;
+		} else {
+			throw (new IllegalArgumentException("unmatched argument " 
+					+ id + " in guiSizeStrings2CwSize()"));
+		}	
+	}
+	
+	/**
+	 * map internal representation to index used in the the DetailsPanel Size drop down list
+	 * @param id internal id to be mapped
+	 * @return index of internal size in array
+	 * @throws IllegalArgumentException if id can not be mapped
+	 * @see guiSizeStrings2CwSize
+	 * @see cwSizeId2GuiSizeId
+	 */
+	public static int cwSizeId2GuiSizeId(byte id) {
+		switch(id) {
+		case CW_SIZE_NOTCHOSEN: return 0;
+		case CW_SIZE_OTHER: return 1;
+		case CW_SIZE_MICRO: return 2;
+		case CW_SIZE_SMALL: return 3;
+		case CW_SIZE_REGULAR: return 4;
+		case CW_SIZE_LARGE: return 5;
+		case CW_SIZE_VERYLARGE: return 6;
+		case CW_SIZE_NONE: return 7;
+		case CW_SIZE_VIRTUAL: return 8;
+		default:
+			throw (new IllegalArgumentException("unmatched argument " 
+					+ id + " in CacheSize ()"));
+		}
+		
 	}
 }
