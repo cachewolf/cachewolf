@@ -111,8 +111,8 @@ public class ShowCacheInBrowser {
 					tpl.setParam("DATE", chD.getDateHidden());
 					tpl.setParam("URL", chD.getExistingDetails().URL);
 					if (chD.getExistingDetails().Travelbugs.size()>0) tpl.setParam("BUGS",chD.getExistingDetails().Travelbugs.toHtml());
-					if (chD.getExistingDetails().CacheNotes!=null && chD.getExistingDetails().CacheNotes.trim().length()>0) tpl.setParam("NOTES", STRreplace.replace(chD.getExistingDetails().CacheNotes,"\n","<br/>\n"));
-					if (chD.getExistingDetails().Solver!=null && chD.getExistingDetails().Solver.trim().length()>0) tpl.setParam("SOLVER", STRreplace.replace(chD.getExistingDetails().Solver,"\n","<br/>\n"));
+					if (chD.getExistingDetails().getCacheNotes().trim().length()>0) tpl.setParam("NOTES", STRreplace.replace(chD.getExistingDetails().getCacheNotes(),"\n","<br/>\n"));
+					if (chD.getExistingDetails().getSolver()!=null && chD.getExistingDetails().getSolver().trim().length()>0) tpl.setParam("SOLVER", STRreplace.replace(chD.getExistingDetails().getSolver(),"\n","<br/>\n"));
 					// Look for images
 					
 					StringBuffer s=new StringBuffer(chD.getExistingDetails().LongDescription.length());

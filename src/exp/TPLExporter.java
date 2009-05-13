@@ -216,12 +216,12 @@ public class TPLExporter {
 						varParams.put("DESCRIPTION", det.LongDescription);
 						if (myFilter.badChars != null) {
 							varParams.put("NAME", rex.replaceAll(ch.getCacheName()));
-							varParams.put("NOTES", rex.replaceAll(det.CacheNotes));
+							varParams.put("NOTES", rex.replaceAll(det.getCacheNotes()));
 							varParams.put("HINTS", rex.replaceAll(det.Hints));
 							varParams.put("DECRYPTEDHINTS", rex.replaceAll(Common.rot13(det.Hints)));
 						} else {
 							varParams.put("NAME", ch.getCacheName());
-							varParams.put("NOTES", det.CacheNotes);
+							varParams.put("NOTES", det.getCacheNotes());
 							varParams.put("HINTS", det.Hints);
 							varParams.put("DECRYPTEDHINTS", Common.rot13(det.Hints));
 						}

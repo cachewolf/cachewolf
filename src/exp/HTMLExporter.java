@@ -130,7 +130,7 @@ public class HTMLExporter{
 							if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
 						}
 						page_tpl.setParam("LOGS", sb.toString());
-						page_tpl.setParam("NOTES", STRreplace.replace(det.CacheNotes, "\n","<br>")); 
+						page_tpl.setParam("NOTES", STRreplace.replace(det.getCacheNotes(), "\n","<br>")); 
 						// Cache Images
 						cacheImg.clear();
 						for(int j = 0; j<det.Images.size(); j++){

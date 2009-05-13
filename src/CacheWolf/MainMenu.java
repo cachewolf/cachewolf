@@ -31,7 +31,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator;
-	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild;
+	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgCheckNotesAndSolver;
 	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
@@ -196,17 +196,18 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organise" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organiseMenuItems=new MenuItem[9];
+		MenuItem[] organiseMenuItems=new MenuItem[10];
 		organiseMenuItems[0] = orgNewWP = new MenuItem(MyLocale.getMsg(214,"New Waypoint"));
 		organiseMenuItems[1] = mnuSeparator;
 		organiseMenuItems[2] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
 		organiseMenuItems[3] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
 		organiseMenuItems[4] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
 		organiseMenuItems[5] = orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index"));
-		organiseMenuItems[6] = mnuSeparator;
-		organiseMenuItems[7] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
+		organiseMenuItems[6] = orgCheckNotesAndSolver = new MenuItem(MyLocale.getMsg(220,"Rebuild Index"));
+		organiseMenuItems[7] = mnuSeparator;
+		organiseMenuItems[8] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
 		cacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
-		organiseMenuItems[8] = cacheTour;
+		organiseMenuItems[9] = cacheTour;
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organise"),new Menu(organiseMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
@@ -614,6 +615,21 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == orgRebuild){
 				Rebuild rb=new Rebuild();
 				rb.rebuild();
+				tbp.refreshTable();
+			}
+			if(mev.selectedItem == orgCheckNotesAndSolver){
+				// Checking every cache if notes or solver data exist
+				CWProgressBar cwp = new CWProgressBar(MyLocale.getMsg(219,"Searching..."), 0, cacheDB.size(), true);
+				cwp.exec();
+				cwp.allowExit(true);
+				for(int i = 0;i < cacheDB.size();i++){
+					cwp.setPosition(i);
+					CacheHolder ch = cacheDB.get(i);
+					ch.setHasNote(!ch.getFreshDetails().getCacheNotes().equals(""));
+					ch.setHasSolver(!ch.getFreshDetails().getSolver().equals(""));
+					if (cwp.isClosed()) break;
+				} // for
+				cwp.exit(0);
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == orgTravelbugs){
