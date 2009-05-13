@@ -14,7 +14,6 @@ import ewe.fx.*;
 */
 public class myTableModel extends TableModel{
 	
-	public static final int MAXCOLUMNS=14;
 	// Colors for Cache status (BG unless otherwise stated)
 	private static final Color COLOR_FLAGED		= new Color(255,255,0);
 	private static final Color COLOR_FOUND		= new Color(152,251,152);
@@ -33,7 +32,7 @@ public class myTableModel extends TableModel{
 	 * the element j (as per the list below) is visible in column i. 
 	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
 	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend.
-	 * [14] OC index
+	 * [14] OC index, [15] Solver exists, [16] Note exists
 	 */
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
@@ -42,7 +41,8 @@ public class myTableModel extends TableModel{
 			MyLocale.getMsg(1002,"Waypoint"),"Name",MyLocale.getMsg(1004,"Location"),
 			MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),
 			MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S"),
-			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX")};
+			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX"),MyLocale.getMsg(1038,"S"),
+			MyLocale.getMsg(1040,"N")};
 	
 	private static Image noFindLogs[] = new Image[4];
 	public static mImage red, blue, yellow, skull; // green
@@ -52,11 +52,12 @@ public class myTableModel extends TableModel{
 	private int sortedBy = -1;
 	private FontMetrics fm;
 //	private mImage picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge,picSizeNonPhysical;
+	private mImage picHasSolver,picHasNotes;
 	private mImage[] sizePics = new mImage[CacheSize.CW_TOTAL_SIZE_IMAGES];
 	/** This is the modifier (Shift & Control key status) for Pen Events
 	 * it is set in myTableControl.onEvent */
 	public int penEventModifiers; 
-	/** The row of the last click where the shift key was pressed */
+	
 //	private int lastRow=-1;
 	private myTableControl tcControl;
 	public boolean showExtraWptInfo=true;
@@ -95,6 +96,8 @@ public class myTableModel extends TableModel{
 			sizePics[i].transparentColor=Color.White;
 		}
 				
+		picHasSolver=new mImage("solver_exists.png"); picHasSolver.transparentColor=Color.White;
+		picHasNotes=new mImage("notes_exist.png"); picHasNotes.transparentColor=Color.White;
 //		updateRows();
 	}
 	
@@ -103,7 +106,7 @@ public class myTableModel extends TableModel{
 	 *
 	 */
 	public void setColumnNamesAndWidths() {
-		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,14,0, -1);
+		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,16,0, -1);
 		colWidth=TableColumnChooser.str2Array(Global.getPref().listColWidth,10,1024,50, colMap.length);
 		numCols=colMap.length;
 		clearCellAdjustments();
@@ -340,12 +343,16 @@ public class myTableModel extends TableModel{
 						if (ch.getWayPoint().startsWith("OC"))
 							return Convert.formatInt(ch.recommendationScore);
 						return null;
+					case 15: // Is solver filled?
+					    if (ch.hasSolver()) return picHasSolver; else return null; 
+					case 16: // Does note exist?
+						if (ch.hasNote()) return picHasNotes; else return null;
 				} // Switch
 			} // if
 		} catch (Exception e) {
 			Global.getPref().log("Ignored Exception in myTableModel.getCellData()", e, true);
-			return null; 
-		}
+		return null;
+	}
 		return null;
 	}
 	
@@ -444,5 +451,5 @@ public class myTableModel extends TableModel{
 		//super.select(row, col, selectOn);
 		tcControl.cursorTo(row, col, true);
 	}
-	
+		
 }
