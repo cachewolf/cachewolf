@@ -180,7 +180,7 @@ public class Profile {
 		try{
 			detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			detfile.print("<CACHELIST format=\"decimal\">\n");
-			detfile.print("    <VERSION value = \"2\"/>\n");
+			detfile.print("    <VERSION value = \"3\"/>\n");
 			if (savedCentre.isValid())
 				detfile.print("    <CENTRE lat=\""+savedCentre.latDec+"\" lon=\""+savedCentre.lonDec+"\"/>\n");
 			if(getLast_sync_opencaching() == null || getLast_sync_opencaching().endsWith("null") || getLast_sync_opencaching().equals("")){

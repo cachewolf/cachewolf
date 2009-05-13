@@ -267,7 +267,7 @@ public class CacheHolder {
 		            if (start > -1 && end > -1)
 			            setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
 	            }
-            } else if (version == 2) {
+            } else if (version == 3 || version == 2) {
 	            start = xmlString.indexOf('"');
 	            end = xmlString.indexOf('"', start + 1);
 	            setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
