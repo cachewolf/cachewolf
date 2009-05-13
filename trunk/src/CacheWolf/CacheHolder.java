@@ -127,6 +127,10 @@ public class CacheHolder {
 	public CacheHolder mainCache;
 	/** The date this cache was last synced with OC in format yyyyMMddHHmmss */
 	private String lastSyncOC = EMPTY;
+	/** True if cache has solver entry */
+	private boolean hasSolver = false;
+	/** True if a note is entered for the cache */
+	private boolean hasNote = false;
 	public CacheHolderDetail details = null;
 	/** When sorting the cacheDB this field is used. The relevant field is copied here and
 	 *  the sort is always done on this field to speed up the sorting process 
@@ -1333,6 +1337,25 @@ public void finalize() {nObjects--;
 		Global.getProfile().notifyUnsavedChanges(attributesNo != this.attributesNo);		
     	this.attributesNo = attributesNo;
     }
+	
+	public boolean hasSolver() {
+		return hasSolver;
+	}
+	
+	public void setHasSolver(boolean hasSolver) {
+		Global.getProfile().notifyUnsavedChanges(hasSolver != this.hasSolver);		
+		this.hasSolver = hasSolver;
+	}
+
+	public boolean hasNote() {
+		return hasNote;
+	}
+	
+	public void setHasNote(boolean hasNote) {
+		Global.getProfile().notifyUnsavedChanges(hasNote != this.hasNote);		
+		this.hasNote = hasNote;
+	}
+	
 
 }
 

@@ -23,7 +23,7 @@ public class CacheHolderDetail {
 	  public String LastUpdate = CacheHolder.EMPTY;
 	  public String Hints = CacheHolder.EMPTY;
 	  public LogList CacheLogs=new LogList();
-	  public String CacheNotes = CacheHolder.EMPTY;
+	  private String CacheNotes = CacheHolder.EMPTY;
 	  public Vector Images = new Vector();
 	  public Vector ImagesText = new Vector();
 	  public Vector ImagesInfo = new Vector();
@@ -36,7 +36,7 @@ public class CacheHolderDetail {
 	  public TravelbugList Travelbugs=new TravelbugList();
 	  //public String Bugs = EMPTY; Superceded by Travelbugs
 	  public String URL = CacheHolder.EMPTY;
-	  public String Solver = CacheHolder.EMPTY;
+	  private String Solver = CacheHolder.EMPTY;
 	  public String OwnLogId = CacheHolder.EMPTY;
 	  public Log OwnLog = null;
 	  public String Country = CacheHolder.EMPTY;
@@ -70,6 +70,26 @@ public class CacheHolderDetail {
 	 public void setHints(String hints) {
 	 	if (!Hints.equals(hints)) getParent().setUpdated(true);
 	 	Hints = hints;
+	 }
+	 
+	 public void setSolver(String solver) {
+		 if (!Solver.equals(solver)) getParent().setUpdated(true);
+		 getParent().setHasSolver(!solver.trim().equals(""));
+		 Solver = solver;
+	 }
+	 
+	 public String getSolver() {
+		 return this.Solver;
+	 }
+
+	 public void setCacheNotes(String notes) {
+		 if (!CacheNotes.equals(notes)) getParent().setUpdated(true);
+		 getParent().setHasNote(!notes.trim().equals(""));
+		 CacheNotes = notes;
+	 }
+	 
+	 public String getCacheNotes() {
+		 return this.CacheNotes;
 	 }
 	 
 	 public void setCacheLogs(LogList newLogs) {
@@ -123,7 +143,7 @@ public class CacheHolderDetail {
 		  if (newCh.Country.length()>0) this.Country=newCh.Country;
 		  if (newCh.State.length()>0) this.State=newCh.State;
 		  
-		  if (newCh.Solver.length()>0) this.Solver=newCh.Solver;
+		  if (newCh.getSolver().length()>0) this.setSolver(newCh.getSolver());
 	 	return this;
 	  }
 	  
@@ -285,7 +305,7 @@ public class CacheHolderDetail {
 				}
 			}
 			ex = new Extractor(text, "<SOLVER><![CDATA[", "]]></SOLVER>", 0, true);
-			Solver=ex.findNext();
+			this.setSolver(ex.findNext());
 		}
 		
 		/**
@@ -376,7 +396,7 @@ public class CacheHolderDetail {
 				  //detfile.print("]]></BUGS>\n");
 				  detfile.print(Travelbugs.toXML());
 				  detfile.print("<URL><![CDATA["+URL+"]]></URL>\r\n");
-				  detfile.print("<SOLVER><![CDATA["+Solver+"]]></SOLVER>\r\n");
+				  detfile.print("<SOLVER><![CDATA["+getSolver()+"]]></SOLVER>\r\n");
 				  detfile.print(getParent().toXML()); // This will allow restoration of index.xml
 				  detfile.print("</CACHEDETAILS>\n");
 				  Global.getPref().log("Writing file: "+getParent().getWayPoint().toLowerCase() + ".xml");

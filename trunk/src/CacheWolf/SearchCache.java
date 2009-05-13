@@ -48,7 +48,7 @@ public class SearchCache {
 				   ch.getCacheStatus().toUpperCase().indexOf(searchStr)<0 &&
 				   (! searchInDescriptionAndNotes || 
 					ch.getExistingDetails().LongDescription.toUpperCase().indexOf(searchStr)<0 &&
-					ch.getExistingDetails().CacheNotes.toUpperCase().indexOf(searchStr)<0)){
+					ch.getExistingDetails().getCacheNotes().toUpperCase().indexOf(searchStr)<0)){
 					ch.is_flaged = false;
 				} else
 					ch.is_flaged=true;

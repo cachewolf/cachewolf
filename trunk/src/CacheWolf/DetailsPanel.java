@@ -214,7 +214,7 @@ public class DetailsPanel extends CellPanel{
 		lblTerr.setText((ch.getTerrain().length()>0) ? (MyLocale.getMsg(1001,"T")+": "+ch.getTerrain()) : "");
 		lblDiff.setText((ch.getHard().length()>0)    ? (MyLocale.getMsg(1000,"D")+": "+ch.getHard()) : ""); 
 
-		if(isBigScreen)	mNotes.setText(ch.getExistingDetails().CacheNotes);
+		if(isBigScreen)	mNotes.setText(ch.getExistingDetails().getCacheNotes());
 	}
 	
 	
@@ -332,7 +332,7 @@ public class DetailsPanel extends CellPanel{
 				dirty_notes=true; // TODO I think this is redundant, because the notes are saved seperately by the notes screen itself
 				NotesScreen nsc = new NotesScreen(thisCache.getCacheDetails(true));
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
-				if(isBigScreen) mNotes.setText(thisCache.getCacheDetails(true).CacheNotes);
+				if(isBigScreen) mNotes.setText(thisCache.getCacheDetails(true).getCacheNotes());
 			}
 			else if(ev.target == btnShowMap){
 				Global.mainTab.SwitchToMovingMap(thisCache.pos, true);
@@ -362,14 +362,14 @@ public class DetailsPanel extends CellPanel{
 			}
 			else if (ev.target == btnAddDateTime){
 				dirty_notes=true;
-				String note = thisCache.getCacheDetails(true).CacheNotes;
+				String note = thisCache.getCacheDetails(true).getCacheNotes();
 				Time dtm = new Time();
 				dtm.getTime();
 				dtm.setFormat("E dd.MM.yyyy '/' HH:mm");
 				if(note.length() > 0)	note = note + "\n" + dtm.toString();
 				else 	note = note + dtm.toString();
 				note = note + "\n";
-				thisCache.getCacheDetails(true).CacheNotes = note;
+				thisCache.getCacheDetails(true).setCacheNotes(note);
 				thisCache.save();
 			}
 			else if (ev.target == btnAddPicture){
