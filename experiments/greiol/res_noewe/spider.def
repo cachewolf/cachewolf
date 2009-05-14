@@ -1,0 +1,166 @@
+#============================================================
+# spider.def - Definition file for reading caches from GC.COM
+# Version 1.0 - 20070526 skg
+# Version 2.0 - 20070531 nach GC Änderungen
+# Version 2.1 - 20070601 TB Anpassung an GC Änderung
+# Version 2.2 - 20070602 firstLine ergänzt. Damit funktionieren jetzt auch die nächsten Seiten.
+# Version 2.3 - 20070602 sizeRex an GC Änderungen angepasst
+# Version 2.4 - 20070616 neu: Attribute
+# Version 2.5 - 20070629 Anpassungen an Listenänderung bei GC
+# Version 2.6 - 20070701 Bugfix: Wenn Zentrum exakt in Cachekoordinaten liegt wurde der Cache nicht gespidert
+# Version 2.7 - 20070811 Bugfix fuer verschluesselte Logs
+# Version 2.8 - 20070814 Findet jetzt auch Addi Wpts in eigenen Caches
+# Version 2.9 - 20070817 Bessere Unterscheidung zwischen Werbung vs.normalen Caches + Caches ohne Richtung/Entfenung
+# Version 2.10 - 20070825 Travelbug support
+# Version 2.11 - 20070907 get travelbug mission by tracking number
+# Version 3.0 - 20071010 adaption to new GC-design
+# Version 3.1 - 20071013 Use the given prefix for addi waypoints
+# Version 3.2 - 20071024 longer end sequence for longDescRex
+# Version 3.3 - 20080316 get travelbug name by tracking number
+# Version 3.4 - 20080227 Image comments added
+# Version 3.5 - 20080529 Modified descRex to allow for linebreaks
+# Version 3.6 - 20080531 Modified descRex to avoid Stack overflow in exe
+# Version 3.7 - 20080613 Some lines generalized for proxies replacing the images.
+# Version 4.0 - 20080725 adaption to new GC-design
+# Version 4.1 - 20080725 adaption to new GC-design (images and travelbugs)
+# Version 4.2 - 20081031 Fix for cache type (background image with name of type)
+# Version 4.3 - 20090314 maxDistance string added
+# Version 4.4 - 20090314 firstPageFinds string added
+# Version 4.5 - 20090315 strings for spidering country/state/logId
+# Version 4.6 - 20090406 Fix for country/state (did not work with US caches)
+#============================================================
+# A suffix of Rex indicates a regular expression
+# A suffix of ExStart indicates the start of an Extractor search pattern
+# A suffix of ExEnd indicates the end of an Extractor search pattern
+#
+# Important:
+# * When entering spaces into a string ensure to escape them or write them as \\u0020
+# * Be sure that you have no hidden spaces at the end of a line or the patterns will not match!
+#------------------------------------------------------------
+loginPage          = http://www.geocaching.com/login/Default.aspx
+loginSuccess       = You\ are\ logged\ in\ as
+nextPage           = /login/default.aspx
+waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
+#--------------------------------------
+#Section1: First page with list of caches
+#--------------------------------------
+firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
+firstPage2         = &lon=
+firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
+# Regex to search for cachenames
+listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
+lineRex            = <tr\ bgcolor='#.{6}'>(?:(?s).*?)<td\ valign="top"\ align="left">((?s).*?)</tr>
+distRex            = <br\ />(.*?)(?:km|mi)(?:\\s*)</td>
+waypointRex        = \\(GC(.*?)\\)<br\ />
+showOnlyFound      = &f=1
+maxDistance        = &dist=
+firstLine          = http://www.geocaching.com/seek/nearest.aspx?
+nextListPage       = /seek/nearest.aspx
+
+#--------------------------------------
+#Section2: Get cachepage by name
+#--------------------------------------
+getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
+fetchAllLogs       = &log=y
+cacheUnavailable   = This\ cache\ is\ temporarily\ unavailable
+cacheArchived      = This cache\ has\ been\ archived
+latLonRex          = <span\ id="LatLon"\ style="font-weight:bold;">((?s).*?)</span>
+shortDescRex       = <span\ id="ShortDescription">((?s).*?)</span>
+longDescRex        = <span\ id="LongDescription">((?s).*?)<strong>Additional\ Hints&nbsp;\\(</strong>
+cacheNameRex       = <span\ id="CacheName">((?s).*?)</span>
+cacheOwnerRex      = <span\ id="CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span>
+dateHiddenRex      = <span\ id="DateHidden">((?s).*?)</span>
+hintsRex           = <span\ id="Hints"\ class="displayMe">((?s).*?)</span>
+sizeRex            = alt="Size:\ ((?s).*?)"\ title="Size:
+difficultyRex      = <span\ id="Difficulty">.*?alt="(.*?)\ out\ of
+terrainRex         = <span\ id="Terrain">.*?alt="(.*?)\ out\ of
+cacheTypeRex       = \\./images/WptTypes/(.*?)\\.gif
+cacheLocationRex   = <span\ id="Location">In\ ([^<]*?)<
+
+#--------------------------------------
+#Section2a: Logs
+#--------------------------------------
+# blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
+blockRex           = <span\ id="CacheLogs">((?s).*?)</span>
+# singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
+singleLogExStart   = <STRONG>
+singleLogExEnd     = [<a\ href=
+# iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
+iconExStart        = http://www.geocaching.com/images/icons/
+iconExEnd          = '\ align='abs
+nameTempExStart    = <a\ href="
+nameTempExEnd      = /a>
+# Name extrahiert aus nameTemp
+nameExStart        = >
+nameExEnd          = <
+dateExStart        = align='absmiddle'>&nbsp;
+dateExEnd          = \ by\ <
+logExStart         = found)<br\ />
+logExEnd           = <br\ />[
+logIdExStart         = by\ <a\ name="
+logIdExEnd           = "\ style="
+# Die Icons, die einen erfolgreichen Fund signalisieren
+icon_smile         = icon_smile.gif
+icon_camera        = icon_camera.gif
+icon_attended      = icon_attended.gif
+
+#--------------------------------------
+#Section2b: Bugs
+#--------------------------------------
+# blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
+blockExStart       = >&nbsp;<b>Inventory</b>
+blockExEnd         = What\ is\ a\ Travel\ Bug?
+# bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
+bugExStart         = <a\ href='
+bugExEnd           = </a></strong></td>
+bugDetailsStart    = id="ctl00_ContentBody_BugDetails_BugGoal">
+bugDetailsEnd      = </span>
+getBugByName       = http://www.geocaching.com/track/search.aspx?k=
+getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
+getBugById         = http://www.geocaching.com/track/details.aspx?id=
+getBugByTrackNr    = http://www.geocaching.com/track/details.aspx?tracker=
+bugGuidExStart     = www.geocaching.com/track/details.aspx?id=
+bugGuidExEnd       = "
+bugNotFound        = No\ results\ were\ found\ for\ your\ search
+bugTotalRecords    = Total\ Records:\ <b>1</b>
+bugNameStart       = <span id="ctl00_ContentBody_lbHeading">
+bugNameEnd         = </span>
+
+
+#--------------------------------------
+#Section2c: Images
+#--------------------------------------
+# imgBlockEx searches for images in the long description
+imgBlockExStart    = <IMG
+imgBlockExEnd      = >
+# imgSpanEx searches for images in the image section
+imgSpanExStart     = <span\ id="Images"
+imgSpanExEnd       = </span>
+imgNameExStart     = align="absmiddle"\ border="0">
+imgNameExEnd       = </a><br\ />
+imgSrcExStart      = <a\ href="http://
+imgSrcExEnd        = "\ rel="lightbox"
+imgCommentExStart  = </a><br\ />
+imgCommentExEnd    = <a\ href
+
+#--------------------------------------
+#Section2d: Additional waypoints
+#--------------------------------------
+wayBlockExStart    = <strong>Additional\ Waypoints</strong>
+wayBlockExEnd      = </table>
+nameRex            = &RefDS=1">(.*)</a>
+koordRex           = align="left">([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})</td>
+descRex            = colspan="4">((?:.|\n|\r)*?)</td>
+typeRex            = </a>\ \\((.*)\\)</td>
+rowBlockExStart    = <tr
+rowBlockExEnd      = </tr>
+prefixExStart      = <td\ valign=\"top\"\ align=\"left\">
+prefixExEnd        = </td>
+
+#--------------------------------------
+#Section2e: Attributes
+#--------------------------------------
+attBlockExStart = &nbsp;<b>Attributes</b><br/><table
+attBlockExEnd  = </td></tr></table>
+attExStart = /images/attributes/
+attExEnd = " Alt="
