@@ -209,6 +209,7 @@ public class myTableModel extends TableModel{
 					if (ch.is_archived()) {
 						if (lineColorBG.equals(COLOR_WHITE)) {
 							lineColorBG.set(COLOR_ARCHIVED);
+							ta.foreground = COLOR_WHITE;
 						} else {
 							ta.foreground = COLOR_ARCHIVED;
 						}
