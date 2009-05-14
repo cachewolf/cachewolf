@@ -1,147 +1,175 @@
 package CacheWolf;
 
+/**
+ * Handels all aspects of converting cache type information from
+ * and to the various im- and exporters as well as for converting
+ * legavy profiles to courrent standard
+ */
 public final class CacheType {
 	
 	/** custom waypoint */
-	static protected final byte CW_TYPE_CUSTOM = 0;
+	public static final byte CW_TYPE_CUSTOM = 0;
 	/** traditional cache (GC,OC) */
-	static protected final byte CW_TYPE_TRADITIONAL = 2;
+	public static final byte CW_TYPE_TRADITIONAL = 2;
 	/** multi cache (GC,OC) */
-	static protected final byte CW_TYPE_MULTI = 3;
+	public static final byte CW_TYPE_MULTI = 3;
 	/** virtual cache (GC) */
-	static protected final byte CW_TYPE_VIRTUAL = 4;
+	public static final byte CW_TYPE_VIRTUAL = 4;
 	/** letterbox cache (GC) */
-	static protected final byte CW_TYPE_LETTERBOX = 5;
+	public static final byte CW_TYPE_LETTERBOX = 5;
 	/** event cache (OC,GC) */
-	static protected final byte CW_TYPE_EVENT = 6;
+	public static final byte CW_TYPE_EVENT = 6;
 	/** quiz cache (OC) */
-	static protected final byte CW_TYPE_QUIZ = 7;
+	public static final byte CW_TYPE_QUIZ = 7;
 	/** unknown cache (GC) */
-	static protected final byte CW_TYPE_UNKNOWN = 8;
+	public static final byte CW_TYPE_UNKNOWN = 8;
 	/** math cache (OC) */
-	static protected final byte CW_TYPE_MATH = 108;
+	public static final byte CW_TYPE_MATH = 108;
 	/** moving cache (OC) */
-	static protected final byte CW_TYPE_MOVING = 9;
+	public static final byte CW_TYPE_MOVING = 9;
 	/** drive in cache (OC) */
-	static protected final byte CW_TYPE_DRIVE_IN = 10;
+	public static final byte CW_TYPE_DRIVE_IN = 10;
 	/** webcam cache (GC,OC) */
-	static protected final byte CW_TYPE_WEBCAM = 11;
+	public static final byte CW_TYPE_WEBCAM = 11;
 	/** locationless cache (GC) */
-	static protected final byte CW_TYPE_LOCATIONLESS = 12;
+	public static final byte CW_TYPE_LOCATIONLESS = 12;
 	/** CITO cache (GC,OC)*/
-	static protected final byte CW_TYPE_CITO = 13;
+	public static final byte CW_TYPE_CITO = 13;
 	/** Additional Waypoint Parking (GC) */
-	static protected final byte CW_TYPE_PARKING = 50;
+	public static final byte CW_TYPE_PARKING = 50;
 	/** Additional Waypoint Stage of a Multi (GC) */
-	static protected final byte CW_TYPE_STAGE = 51;
+	public static final byte CW_TYPE_STAGE = 51;
 	/** Additional Waypoint Question to answer (GC) */
-	static protected final byte CW_TYPE_QUESTION = 52;
+	public static final byte CW_TYPE_QUESTION = 52;
 	/** Additional Waypoint Final (GC) */
-	static protected final byte CW_TYPE_FINAL = 53;
+	public static final byte CW_TYPE_FINAL = 53;
 	/** Additional Waypoint Trailhead (GC) */
-	static protected final byte CW_TYPE_TRAILHEAD = 54;
+	public static final byte CW_TYPE_TRAILHEAD = 54;
 	/** Additional Waypoint Reference (GC) */
-	static protected final byte CW_TYPE_REFERENCE = 55;
+	public static final byte CW_TYPE_REFERENCE = 55;
 	/** Mega Event Cache (GC) */
-	static protected final byte CW_TYPE_MEGA_EVENT = 100;
+	public static final byte CW_TYPE_MEGA_EVENT = 100;
 	/** WhereIGo Cache (GC) */
-	static protected final byte CW_TYPE_WHEREIGO = 101;
+	public static final byte CW_TYPE_WHEREIGO = 101;
 	/** Project Ape cache (GC)*/
-	static protected final byte CW_TYPE_APE = 102;
+	public static final byte CW_TYPE_APE = 102;
 	/** Adenture Maze Exhibit (GC)*/
-	static protected final byte CW_TYPE_MAZE = 103;
+	public static final byte CW_TYPE_MAZE = 103;
 	/** Earth Cache (GC) */
-	static protected final byte CW_TYPE_EARTH = 104;
+	public static final byte CW_TYPE_EARTH = 104;
 	/** unparsable cache type or missing information, should throw IllegalArgumentExceptions when found */
-	static protected final byte CW_TYPE_ERROR = -1;
+	public static final byte CW_TYPE_ERROR = -1;
 	
+	/** image for custom waypoints */
+	public static final String CW_GUIIMG_CUSTOM = "0.png";
 	/** image for traditional cache (GC,OC) */
-	static protected final String CW_GUIIMG_TRADITIONAL = "2.png";
+	public static final String CW_GUIIMG_TRADITIONAL = "2.png";
 	/** image for multi cache (GC,OC) */
-	static protected final String CW_GUIIMG_MULTI = "3.png";
+	public static final String CW_GUIIMG_MULTI = "3.png";
 	/** image for virtual cache (GC) */
-	static protected final String CW_GUIIMG_VIRTUAL = "4.png";
+	public static final String CW_GUIIMG_VIRTUAL = "4.png";
 	/** image for letterbox cache (GC) */
-	static protected final String CW_GUIIMG_LETTERBOX = "5.png";
+	public static final String CW_GUIIMG_LETTERBOX = "5.png";
 	/** image for event cache (OC,GC) */
-	static protected final String CW_GUIIMG_EVENT = "6.png";
+	public static final String CW_GUIIMG_EVENT = "6.png";
 	/** image for quiz cache (OC) */
-	static protected final String CW_GUIIMG_QUIZ = "8.png";
+	public static final String CW_GUIIMG_QUIZ = "8.png";
 	/** image for unknown cache (GC) */
-	static protected final String CW_GUIIMG_UNKNOWN = "8.png";
+	public static final String CW_GUIIMG_UNKNOWN = "8.png";
 	/** image for math cache (OC) */
-	static protected final String CW_GUIIMG_MATH = "108.png";
+	public static final String CW_GUIIMG_MATH = "108.png";
 	/** image for moving cache (OC) */
-	static protected final String CW_GUIIMG_MOVING = "109.png";
+	public static final String CW_GUIIMG_MOVING = "109.png";
 	/** image for drive in cache (OC) */
-	static protected final String CW_GUIIMG_DRIVE_IN = "110.png";
+	public static final String CW_GUIIMG_DRIVE_IN = "110.png";
 	/** image for webcam cache (GC,OC) */
-	static protected final String CW_GUIIMG_WEBCAM = "11.png";
+	public static final String CW_GUIIMG_WEBCAM = "11.png";
 	/** image for locationless cache (GC) */
-	static protected final String CW_GUIIMG_LOCATIONLESS = "12.png";
+	public static final String CW_GUIIMG_LOCATIONLESS = "12.png";
 	/** image for CITO cache (GC,OC)*/
-	static protected final String CW_GUIIMG_CITO = "13.png";
+	public static final String CW_GUIIMG_CITO = "13.png";
 	/** image for Additional Waypoint Parking (GC) */
-	static protected final String CW_GUIIMG_PARKING = "pkg.png";
+	public static final String CW_GUIIMG_PARKING = "pkg.png";
 	/** image for Additional Waypoint Stage of a Multi (GC) */
-	static protected final String CW_GUIIMG_STAGE = "stage.png";
+	public static final String CW_GUIIMG_STAGE = "stage.png";
 	/** image for Additional Waypoint Question to answer (GC) */
-	static protected final String CW_GUIIMG_QUESTION = "puzzle.png";
+	public static final String CW_GUIIMG_QUESTION = "puzzle.png";
 	/** image for Additional Waypoint Final (GC) */
-	static protected final String CW_GUIIMG_FINAL = "flag.png";
+	public static final String CW_GUIIMG_FINAL = "flag.png";
 	/** image for Additional Waypoint Trailhead (GC) */
-	static protected final String CW_GUIIMG_TRAILHEAD = "trailhead.png";
+	public static final String CW_GUIIMG_TRAILHEAD = "trailhead.png";
 	/** image for Additional Waypoint Reference Point (GC) */
-	static protected final String CW_GUIIMG_REFERENCE = "waypoint.png";
+	public static final String CW_GUIIMG_REFERENCE = "waypoint.png";
 	/** image for Mega Event Cache (GC) */
-	static protected final String CW_GUIIMG_MEGA_EVENT = "453.png";
+	public static final String CW_GUIIMG_MEGA_EVENT = "453.png";
 	/** image for WhereIGo Cache (GC) */
-	static protected final String CW_GUIIMG_WHEREIGO = "1858.png";
+	public static final String CW_GUIIMG_WHEREIGO = "1858.png";
 	/** image for Project Ape cache (GC)*/
-	static protected final String CW_GUIIMG_APE = "typeApe.png";
+	public static final String CW_GUIIMG_APE = "typeApe.png";
 	/** image for Adenture Maze Exhibit (GC)*/
-	static protected final String CW_GUIIMG_MAZE = "typeMaze.png";
+	public static final String CW_GUIIMG_MAZE = "typeMaze.png";
 	/** image for Earth Cache (GC) */
-	static protected final String CW_GUIIMG_EARTH = "137.png";
+	public static final String CW_GUIIMG_EARTH = "137.png";
 	
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_CUSTOM = "Custom";
+	public static final String CW_GUISTR_CUSTOM = "Custom";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_TRADI = "Tradi";
+	public static final String CW_GUISTR_TRADI = "Tradi";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_MULTI = "Multi";
+	public static final String CW_GUISTR_MULTI = "Multi";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_VIRTUAL = "Virtual";
+	public static final String CW_GUISTR_VIRTUAL = "Virtual";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_LETTERBOX = "Letterbox";
+	public static final String CW_GUISTR_LETTERBOX = "Letterbox";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_EVENT = "Event";
+	public static final String CW_GUISTR_EVENT = "Event";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_MEGAEVENT = "Mega Event";
+	public static final String CW_GUISTR_MEGAEVENT = "Mega Event";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_WEBCAM = "Webcam";
+	public static final String CW_GUISTR_WEBCAM = "Webcam";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_UNKNOWN = "Mystery";
+	public static final String CW_GUISTR_UNKNOWN = "Mystery";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_LOCATIONLESS = "Locationless";
+	public static final String CW_GUISTR_LOCATIONLESS = "Locationless";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_CITO = "CITO";
+	public static final String CW_GUISTR_CITO = "CITO";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_EARTH = "Earthcache";
+	public static final String CW_GUISTR_EARTH = "Earthcache";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_WHEREIGO = "WherIGo";
+	public static final String CW_GUISTR_WHEREIGO = "WherIGo";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_PARKING = "Addi: Parking";
+	public static final String CW_GUISTR_PARKING = "Addi: Parking";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_STAGE = "Addi: Stage";
+	public static final String CW_GUISTR_STAGE = "Addi: Stage";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_QUESTION = "Addi: Question";
+	public static final String CW_GUISTR_QUESTION = "Addi: Question";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_FINAL = "Addi: Final";
+	public static final String CW_GUISTR_FINAL = "Addi: Final";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_TRAILHEAD = "Addi: Trailhead";
+	public static final String CW_GUISTR_TRAILHEAD = "Addi: Trailhead";
 	/** GUI string for custom waypoit */
-	static protected final String CW_GUISTR_REFERENCE = "Addi: Reference";
+	public static final String CW_GUISTR_REFERENCE = "Addi: Reference";
+	
+	public static final String GC_GPX_TRADITIONAL = "Traditional Cache";
+	public static final String GC_GPX_MULTI = "Multi-cache";
+	public static final String GC_GPX_VIRTUAL = "Virtual Cache";
+	public static final String GC_GPX_LETTERBOX = "Letterbox Hybrid";
+	public static final String GC_GPX_EVENT = "Event Cache";
+	public static final String GC_GPX_UNKNOWN = "Unknown Cache";
+	public static final String GC_GPX_WEBCAM = "Webcam Cache";
+	public static final String GC_GPX_LOCATIONLESS = "Locationless (Reverse) Cache";
+	public static final String GC_GPX_CITO = "Cache In Trash Out Event";
+	public static final String GC_GPX_EARTH = "Earthcache";
+	public static final String GC_GPX_MEGA_EVENT = "Mega-Event Cache";
+	public static final String GC_GPX_WHEREIGO = "Wherigo Cache";
+	public static final String GC_GPX_PARKING = "Waypoint|Parking Area";
+	public static final String GC_GPX_STAGE = "Waypoint|Stages of a Multicache";
+	public static final String GC_GPX_QUESTION = "Waypoint|Question to Answer";
+	public static final String GC_GPX_FINAL = "Waypoint|Final Coordinates";
+	public static final String GC_GPX_TRAILHEAD = "Waypoint|Trailhead";
+	public static final String GC_GPX_REFERENCE = "Waypoint|Reference Point";
+	public static final String GC_GPX_MAZE = "FIXME"; //FIXME: insert right string
+	public static final String GC_GPX_APE = "FIXME"; //FIXME: insert right string
 	
 	/**  constructor does nothing */
 	public CacheType() {
@@ -160,34 +188,59 @@ public final class CacheType {
 	
 	/**
 	 * 
-	 * @param size
+	 * @param type
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
-	public static String getExportShortId(byte size) throws IllegalArgumentException {
-		throw new IllegalArgumentException("unmatched argument "+size+" in CacheSizeNew getExportShortId()");
+	public static String getExportShortId(byte type) throws IllegalArgumentException {
+		switch (type){
+		case CW_TYPE_CUSTOM: return "C";
+		case CW_TYPE_TRADITIONAL: return "T";
+		case CW_TYPE_MULTI: return "M";
+		case CW_TYPE_VIRTUAL: return "V";
+		case CW_TYPE_LETTERBOX: return "L";
+		case CW_TYPE_EVENT: return "X";
+		case CW_TYPE_WEBCAM: return "W";
+		case CW_TYPE_UNKNOWN: return "U";
+		case CW_TYPE_LOCATIONLESS: return "O";
+		case CW_TYPE_CITO: return "X";
+		case CW_TYPE_EARTH: return "E";
+		case CW_TYPE_MEGA_EVENT: return "X";
+		case CW_TYPE_WHEREIGO: return "G";
+		case CW_TYPE_PARKING: return "P";
+		case CW_TYPE_STAGE: return "S";
+		case CW_TYPE_QUESTION: return "Q";
+		case CW_TYPE_FINAL: return "F";
+		case CW_TYPE_TRAILHEAD: return "H";
+		case CW_TYPE_REFERENCE: return "R";
+		case CW_TYPE_APE: return "T";
+		case CW_TYPE_MAZE: return "X";
+		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew getExportShortId()");
+		}
 	}
 	
 	/**
 	 * 
-	 * @param size
+	 * @param type
 	 * @return
 	 * @throws IllegalArgumentException if size can not be mapped to internal representation
 	 * @deprecated remove once v1 file version compatibility is abandoned
 	 */
-	public static final byte v1Converter(String size) throws IllegalArgumentException  {
-		throw new IllegalArgumentException("unmatched argument "+size+" in CacheSizeNew v1Converter()");
+	public static final byte v1Converter(String type) throws IllegalArgumentException  {
+		throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew v1Converter()");
 	}
 
 	/**
 	 * 
-	 * @param size
+	 * @param type
 	 * @return
 	 * @throws IllegalArgumentException if size can not be mapped to internal representation
 	 * @deprecated remove once v2 file version compatibility is abandoned
 	 */
-	public static final byte v2Converter(byte size) throws IllegalArgumentException  {
-		throw new IllegalArgumentException("unmatched argument "+size+" in CacheSizeNew v2Converter()");
+	public static final byte v2Converter(byte type) throws IllegalArgumentException  {
+		switch (type) {
+		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew v2Converter()");
+		}
 	}
 	
 	/**
@@ -276,24 +329,28 @@ public final class CacheType {
 	 * @throws IllegalArgumentException
 	 */
 	public static final byte gpxType2CwType(String gpxType) throws IllegalArgumentException {
-		if (gpxType.equals("Traditional Cache") || gpxType.equals("Traditional")|| gpxType.equals("Classic")) return CW_TYPE_TRADITIONAL;
-		if (gpxType.equals("Multi-cache") || gpxType.equals("Multi") || gpxType.equals("Offset")) return CW_TYPE_MULTI;
-		if (gpxType.equals("Virtual Cache") || gpxType.equals("Virtual")) return CW_TYPE_VIRTUAL;
-		if (gpxType.equals("Letterbox Hybrid")) return CW_TYPE_LETTERBOX;
-		if (gpxType.equals("Event Cache") || gpxType.equals("Event")) return CW_TYPE_EVENT;
-		if (gpxType.equals("Unknown Cache") || gpxType.equals("Other") || gpxType.equals("Quiz")) return CW_TYPE_UNKNOWN;
-		if (gpxType.equals("Webcam Cache") || gpxType.equals("Webcam")) return CW_TYPE_WEBCAM;
-		if (gpxType.equals("Locationless (Reverse) Cache")) return CW_TYPE_LOCATIONLESS;
-		if (gpxType.equals("Cache In Trash Out Event")) return CW_TYPE_CITO;
-		if (gpxType.equals("Earthcache") || gpxType.equals("Earth")) return CW_TYPE_EARTH;
-		if (gpxType.equals("Mega-Event Cache")) return CW_TYPE_MEGA_EVENT;
-		if (gpxType.equals("Wherigo Cache")) return CW_TYPE_WHEREIGO;
-		if (gpxType.equals("Waypoint|Parking Area")) return CW_TYPE_PARKING;
-		if (gpxType.equals("Waypoint|Stages of a Multicache")) return CW_TYPE_STAGE;
-		if (gpxType.equals("Waypoint|Question to Answer")) return CW_TYPE_QUESTION;
-		if (gpxType.equals("Waypoint|Final Coordinates")||gpxType.equals("Waypoint|Final Location")) return CW_TYPE_FINAL;
-		if (gpxType.equals("Waypoint|Trailhead")) return CW_TYPE_TRAILHEAD;
-		if (gpxType.equals("Waypoint|Reference Point")) return CW_TYPE_REFERENCE;
+		// TODO: add ape
+		// TODO: add maze
+		if (gpxType.equals(GC_GPX_TRADITIONAL) || gpxType.equals("Traditional")|| gpxType.equals("Classic")) return CW_TYPE_TRADITIONAL;
+		if (gpxType.equals(GC_GPX_MULTI) || gpxType.equals("Multi") || gpxType.equals("Offset")) return CW_TYPE_MULTI;
+		if (gpxType.equals(GC_GPX_VIRTUAL) || gpxType.equals("Virtual")) return CW_TYPE_VIRTUAL;
+		if (gpxType.equals(GC_GPX_LETTERBOX)) return CW_TYPE_LETTERBOX;
+		if (gpxType.equals(GC_GPX_EVENT) || gpxType.equals("Event")) return CW_TYPE_EVENT;
+		if (gpxType.equals(GC_GPX_UNKNOWN) || gpxType.equals("Other") || gpxType.equals("Quiz")) return CW_TYPE_UNKNOWN;
+		if (gpxType.equals(GC_GPX_WEBCAM) || gpxType.equals("Webcam")) return CW_TYPE_WEBCAM;
+		if (gpxType.equals(GC_GPX_LOCATIONLESS)) return CW_TYPE_LOCATIONLESS;
+		if (gpxType.equals(GC_GPX_CITO)) return CW_TYPE_CITO;
+		if (gpxType.equals(GC_GPX_EARTH) || gpxType.equals("Earth")) return CW_TYPE_EARTH;
+		if (gpxType.equals(GC_GPX_MEGA_EVENT)) return CW_TYPE_MEGA_EVENT;
+		if (gpxType.equals(GC_GPX_WHEREIGO)) return CW_TYPE_WHEREIGO;
+		if (gpxType.equals(GC_GPX_PARKING)) return CW_TYPE_PARKING;
+		if (gpxType.equals(GC_GPX_STAGE)) return CW_TYPE_STAGE;
+		if (gpxType.equals(GC_GPX_QUESTION)) return CW_TYPE_QUESTION;
+		if (gpxType.equals(GC_GPX_FINAL)||gpxType.equals("Waypoint|Final Location")) return CW_TYPE_FINAL;
+		if (gpxType.equals(GC_GPX_TRAILHEAD)) return CW_TYPE_TRAILHEAD;
+		if (gpxType.equals(GC_GPX_REFERENCE)) return CW_TYPE_REFERENCE;
+		if (gpxType.equals(GC_GPX_MAZE)) return CW_TYPE_MAZE;
+		if (gpxType.equals(GC_GPX_APE)) return CW_TYPE_APE;
 		throw new IllegalArgumentException("unmatched argument "+gpxType+" in CacheSize gpxType2CwType()");
 	}
 	
@@ -315,6 +372,90 @@ public final class CacheType {
 		if(ocType.equals("9")) return CW_TYPE_UNKNOWN;
 		if(ocType.equals("10")) return CW_TYPE_UNKNOWN;
 		throw new IllegalArgumentException("unmatched argument "+ocType+" in CacheSize ocType2CwType()");
+	}
+	
+	/**
+	 * 
+	 * @param gcType
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	public static final byte gcSpider2CwType(String gcType) throws IllegalArgumentException {
+		if (gcType.equals("2")) { return CW_TYPE_TRADITIONAL; }
+		if (gcType.equals("3")) { return CW_TYPE_MULTI; }
+		if (gcType.equals("4")) { return CW_TYPE_VIRTUAL; }
+		if (gcType.equals("5")) { return CW_TYPE_LETTERBOX; }
+		if (gcType.equals("6")) { return CW_TYPE_EVENT; }
+		if (gcType.equals("8")) { return CW_TYPE_UNKNOWN; }
+		if (gcType.equals("9")) { return CW_TYPE_APE; }
+		if (gcType.equals("11")) { return CW_TYPE_WEBCAM; }
+		if (gcType.equals("12")) { return CW_TYPE_LOCATIONLESS; }
+		if (gcType.equals("13")) { return CW_TYPE_CITO; }
+		if (gcType.equals("137")) { return CW_TYPE_EARTH; }
+		if (gcType.equals("453")) { return CW_TYPE_MEGA_EVENT; }
+		if (gcType.equals("1858")) { return CW_TYPE_WHEREIGO; }
+		if (gcType.equals("1304")) { return CW_TYPE_MAZE; }
+		throw new IllegalArgumentException("unmatched argument "+gcType+" in CacheSize gcSpider2CwType()");
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	public static final String typeImageForId(byte id) throws IllegalArgumentException {
+		switch (id) {
+		case CW_TYPE_CUSTOM: return "CW_GUIIMG_CUSTOM";
+		case CW_TYPE_TRADITIONAL: return CW_GUIIMG_TRADITIONAL;
+		case CW_TYPE_MULTI: return CW_GUIIMG_MULTI;
+		case CW_TYPE_VIRTUAL: return CW_GUIIMG_VIRTUAL;
+		case CW_TYPE_LETTERBOX: return CW_GUIIMG_LETTERBOX;
+		case CW_TYPE_EVENT: return CW_GUIIMG_EVENT;
+		case CW_TYPE_WEBCAM: return CW_GUIIMG_WEBCAM;
+		case CW_TYPE_UNKNOWN: return CW_GUIIMG_UNKNOWN;
+		case CW_TYPE_LOCATIONLESS: return CW_GUIIMG_LOCATIONLESS;
+		case CW_TYPE_CITO: return CW_GUIIMG_CITO;
+		case CW_TYPE_EARTH: return CW_GUIIMG_EARTH;
+		case CW_TYPE_MEGA_EVENT: return CW_GUIIMG_MEGA_EVENT;
+		case CW_TYPE_WHEREIGO: return CW_GUIIMG_WHEREIGO;
+		case CW_TYPE_PARKING: return CW_GUIIMG_PARKING;
+		case CW_TYPE_STAGE: return CW_GUIIMG_STAGE;
+		case CW_TYPE_QUESTION: return CW_GUIIMG_QUESTION;
+		case CW_TYPE_FINAL: return CW_GUIIMG_FINAL;
+		case CW_TYPE_TRAILHEAD: return CW_GUIIMG_TRAILHEAD;
+		case CW_TYPE_REFERENCE: return CW_GUIIMG_REFERENCE;
+		case CW_TYPE_APE: return CW_GUIIMG_APE;
+		case CW_TYPE_MAZE: return CW_GUIIMG_MAZE;
+		default: throw new IllegalArgumentException("unmatched argument "+id+" in CacheSize typeImageForId()");
+		}
+	}
+	
+	public static final String id2GpxString(byte id) throws IllegalArgumentException {
+		switch (id) {
+		case CW_TYPE_TRADITIONAL: return GC_GPX_TRADITIONAL;
+		case CW_TYPE_MULTI: return GC_GPX_MULTI;
+		case CW_TYPE_VIRTUAL: return GC_GPX_VIRTUAL;
+		case CW_TYPE_LETTERBOX: return GC_GPX_LETTERBOX;
+		case CW_TYPE_EVENT: return GC_GPX_EVENT;
+		case CW_TYPE_UNKNOWN: return GC_GPX_UNKNOWN;
+		case CW_TYPE_WEBCAM: return GC_GPX_WEBCAM;
+		case CW_TYPE_LOCATIONLESS: return GC_GPX_LOCATIONLESS;
+		case CW_TYPE_CITO: return GC_GPX_CITO;
+		case CW_TYPE_EARTH: return GC_GPX_EARTH;
+		case CW_TYPE_MEGA_EVENT: return GC_GPX_MEGA_EVENT;
+		case CW_TYPE_WHEREIGO: return GC_GPX_WHEREIGO;
+		case CW_TYPE_PARKING: return GC_GPX_PARKING;
+		case CW_TYPE_STAGE: return GC_GPX_STAGE;
+		case CW_TYPE_QUESTION: return GC_GPX_QUESTION;
+		case CW_TYPE_FINAL: return GC_GPX_FINAL;
+		case CW_TYPE_TRAILHEAD: return GC_GPX_TRAILHEAD;
+		case CW_TYPE_REFERENCE: return GC_GPX_REFERENCE;
+		case CW_TYPE_MAZE: return GC_GPX_MAZE;
+		case CW_TYPE_APE: return GC_GPX_APE;
+		default: throw new IllegalArgumentException("unmatched argument "+id+" in CacheSize id2GpxString()");
+		}
+		
 	}
 	
 	// cache to image

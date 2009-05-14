@@ -7,105 +7,105 @@ public final class CacheSize {
 	 * up ;-)
 	 */
 	/** container size not chosen */
-	static final protected byte CW_SIZE_NOTCHOSEN = 0;
+	public static final byte CW_SIZE_NOTCHOSEN = 0;
 	/** container size other */
-	static final protected byte CW_SIZE_OTHER = 1;
+	public static final byte CW_SIZE_OTHER = 1;
 	/** container size micro */
-	static final protected byte CW_SIZE_MICRO = 2;
+	public static final byte CW_SIZE_MICRO = 2;
 	/* container size small */
-	static final protected byte CW_SIZE_SMALL = 3;
+	public static final byte CW_SIZE_SMALL = 3;
 	/** container size regular */
-	static final protected byte CW_SIZE_REGULAR = 4;
+	public static final byte CW_SIZE_REGULAR = 4;
 	/** container size large */
-	static final protected byte CW_SIZE_LARGE = 5;
+	public static final byte CW_SIZE_LARGE = 5;
 	/** container size very large */
-	static final protected byte CW_SIZE_VERYLARGE = 6;
+	public static final byte CW_SIZE_VERYLARGE = 6;
 	/** container size none */
-	static final protected byte CW_SIZE_NONE = 7;
+	public static final byte CW_SIZE_NONE = 7;
 	/** container size virtual */
-	static final protected byte CW_SIZE_VIRTUAL = 8;
+	public static final byte CW_SIZE_VIRTUAL = 8;
 	/** unparsable size or missing size information should throw IllegalArgumentExceptions when found */
-	static final protected byte CW_SIZE_ERROR = -1;
+	public static final byte CW_SIZE_ERROR = -1;
 
 	/*
 	 * geocaching.com size strings as found by analyzing GPX files 
 	 * plus opencaching & terracaching Very large + none
 	 */
-	static final protected String GC_SIZE_MICRO = "Micro";
-	static final protected String GC_SIZE_SMALL = "Small";
-	static final protected String GC_SIZE_REGULAR = "Regular";
-	static final protected String GC_SIZE_LARGE = "Large";
-	static final protected String GC_SIZE_NOTCHOSEN = "Not chosen";
-	static final protected String GC_SIZE_OTHER = "Other";
-	static final protected String GC_SIZE_VIRTUAL = "Virtual";
-	static final protected String OCTC_SIZE_VERYLARGE = "Very large";
-	static final protected String OCTC_SIZE_NONE = "None";
+	public static final String GC_SIZE_MICRO = "Micro";
+	public static final String GC_SIZE_SMALL = "Small";
+	public static final String GC_SIZE_REGULAR = "Regular";
+	public static final String GC_SIZE_LARGE = "Large";
+	public static final String GC_SIZE_NOTCHOSEN = "Not chosen";
+	public static final String GC_SIZE_OTHER = "Other";
+	public static final String GC_SIZE_VIRTUAL = "Virtual";
+	public static final String OCTC_SIZE_VERYLARGE = "Very large";
+	public static final String OCTC_SIZE_NONE = "None";
 
 	/*
 	 * OpenCaching Size IDs see
 	 * http://oc-server.svn.sourceforge.net/viewvc/oc-server/doc/sql/static-data/data.sql?view=markup
 	 */
-	static final protected String OC_SIZE_OTHER = "1";
-	static final protected String OC_SIZE_MICRO = "2";
-	static final protected String OC_SIZE_SMALL = "3";
-	static final protected String OC_SIZE_NORMAL = "4";
-	static final protected String OC_SIZE_LARGE = "5";
-	static final protected String OC_SIZE_VERYLARGE = "6";
-	static final protected String OC_SIZE_NONE = "7";
+	public static final String OC_SIZE_OTHER = "1";
+	public static final String OC_SIZE_MICRO = "2";
+	public static final String OC_SIZE_SMALL = "3";
+	public static final String OC_SIZE_NORMAL = "4";
+	public static final String OC_SIZE_LARGE = "5";
+	public static final String OC_SIZE_VERYLARGE = "6";
+	public static final String OC_SIZE_NONE = "7";
 
 	/*
 	 * TerraCaching Size IDs taken from old GPXimporter (?? reliable source ??)
 	 */
-	static final protected String TC_SIZE_MICRO = "1";
-	static final protected String TC_SIZE_MEDIUM = "2";
-	static final protected String TC_SIZE_REGULAR = "3";
-	static final protected String TC_SIZE_LARGE = "4";
-	static final protected String TC_SIZE_VERYLARGE = "4";
+	public static final String TC_SIZE_MICRO = "1";
+	public static final String TC_SIZE_MEDIUM = "2";
+	public static final String TC_SIZE_REGULAR = "3";
+	public static final String TC_SIZE_LARGE = "4";
+	public static final String TC_SIZE_VERYLARGE = "4";
 
 	/*
 	 * images to show in CW index panel we use less images than sizes since all
 	 * non physical caches are represented by the same symbol
 	 */
 	/** GUI image for micro caches */
-	static final protected String CW_GUIIMG_MICRO = "sizeMicro.png";
+	public static final String CW_GUIIMG_MICRO = "sizeMicro.png";
 	/** GUI image for small caches */
-	static final protected String CW_GUIIMG_SMALL = "sizeSmall.png";
+	public static final String CW_GUIIMG_SMALL = "sizeSmall.png";
 	/** GUI image for regular / normal caches */
-	static final protected String CW_GUIIMG_NORMAL = "sizeReg.png";
+	public static final String CW_GUIIMG_NORMAL = "sizeReg.png";
 	/** GUI image for large caches */
-	static final protected String CW_GUIIMG_LARGE = "sizeLarge.png";
+	public static final String CW_GUIIMG_LARGE = "sizeLarge.png";
 	/** GUI image for non physical caches */
-	static final protected String CW_GUIIMG_NONPHYSICAL = "sizeNonPhysical.png";
+	public static final String CW_GUIIMG_NONPHYSICAL = "sizeNonPhysical.png";
 	/** GUI image for very large caches */
-	static final protected String CW_GUIIMG_VERYLARGE = "sizeVLarge.png";
+	public static final String CW_GUIIMG_VERYLARGE = "sizeVLarge.png";
 
 	/*
 	 * IDs for the sizePics[] array in TableModel therefore they must start with
 	 * 0 and be consecutive
 	 */
-	static final protected byte CW_GUIIMGID_MICRO = 0;
-	static final protected byte CW_GUIIMGID_SMALL = 1;
-	static final protected byte CW_GUIIMGID_NORMAL = 2;
-	static final protected byte CW_GUIIMGID_LARGE = 3;
-	static final protected byte CW_GUIIMGID_NONPHYSICAL = 4;
-	static final protected byte CW_GUIIMGID_VERYLARGE = 5;
+	public static final byte CW_GUIIMGID_MICRO = 0;
+	public static final byte CW_GUIIMGID_SMALL = 1;
+	public static final byte CW_GUIIMGID_NORMAL = 2;
+	public static final byte CW_GUIIMGID_LARGE = 3;
+	public static final byte CW_GUIIMGID_NONPHYSICAL = 4;
+	public static final byte CW_GUIIMGID_VERYLARGE = 5;
 
 	/*
 	 * total number of different size images will be used to det the dimension
 	 * of sizePics[] array in TableModel
 	 */
-	static final protected byte CW_TOTAL_SIZE_IMAGES = 6;
+	public static final byte CW_TOTAL_SIZE_IMAGES = 6;
 
 	/*
 	 * bit masks to be used with the filter function
 	 */
-	static final protected byte CW_FILTER_MICRO = 0x01 << 0;
-	static final protected byte CW_FILTER_SMALL = 0x01 << 1;
-	static final protected byte CW_FILTER_NORMAL = 0x01 << 2;
-	static final protected byte CW_FILTER_LARGE = 0x01 << 3;
-	static final protected byte CW_FILTER_VERYLARGE = 0x01 << 4;
-	static final protected byte CW_FILTER_NONPHYSICAL = 0x01 << 5;
-	static final protected byte CW_FILTER_ALL = CW_FILTER_MICRO
+	public static final byte CW_FILTER_MICRO = 0x01 << 0;
+	public static final byte CW_FILTER_SMALL = 0x01 << 1;
+	public static final byte CW_FILTER_NORMAL = 0x01 << 2;
+	public static final byte CW_FILTER_LARGE = 0x01 << 3;
+	public static final byte CW_FILTER_VERYLARGE = 0x01 << 4;
+	public static final byte CW_FILTER_NONPHYSICAL = 0x01 << 5;
+	public static final byte CW_FILTER_ALL = CW_FILTER_MICRO
 			| CW_FILTER_SMALL | CW_FILTER_NORMAL | CW_FILTER_LARGE
 			| CW_FILTER_NONPHYSICAL | CW_FILTER_VERYLARGE;
 

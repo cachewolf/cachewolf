@@ -193,7 +193,7 @@ public class ShowCacheInBrowser {
 							addis.put("WAYPOINT",ch.getWayPoint());
 							addis.put("NAME",ch.getCacheName());
 							addis.put("LATLON",ch.LatLon);
-							addis.put("IMG","<img src=\""+CacheType.type2pic(ch.getType())+"\">");
+							addis.put("IMG","<img src=\""+CacheType.typeImageForId(ch.getType())+"\">");
 							addis.put("LONGDESC",ch.getExistingDetails().LongDescription); // Do we need to treat longDesc as above ?
 							addiVect.add(addis);
 						}
