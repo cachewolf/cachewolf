@@ -26,6 +26,8 @@ public class FilterScreen extends Form{
 	                  chkArchived,chkNotArchived, chkAvailable,chkNotAvailable,
 					  chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
 					  chkSSW, chkSW, chkWSW, chkW, chkWNW,chkWherigo;
+	private mComboBox chcStatus;
+	private mCheckBox chkUseRegexp;
 	
 	private mInput inpDist, inpTerr, inpDiff;
 
@@ -142,6 +144,10 @@ public class FilterScreen extends Form{
 		pnlAttributes.addNext(chkOwned = new mCheckBox(MyLocale.getMsg(707,"Owned")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlAttributes.addLast(chkNotOwned = new mCheckBox(MyLocale.getMsg(732,"Anderer Besitzer")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
+		pnlAttributes.addNext(new mLabel(MyLocale.getMsg(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlAttributes.addLast(chcStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlAttributes.addLast(chkUseRegexp = new mCheckBox(MyLocale.getMsg(299,"Regular expression")));
+		
 		//////////////////////////
 		// Panel 3 - Cache ratings
 		//////////////////////////
@@ -311,18 +317,17 @@ public class FilterScreen extends Form{
 	}
 	
 	
-	public void setData(){
-		Profile prof=Global.getProfile();
+	public void setData(FilterData data){
 
 		//////////////////////////
 		// Panel 1 - Bearing & Distance
 		//////////////////////////
-		if (prof.getFilterDist().length()>1) {
-			if (prof.getFilterDist().charAt(0)=='L')
+		if (data.getFilterDist().length()>1) {
+			if (data.getFilterDist().charAt(0)=='L')
 				chcDist.select(0);
 			else
 				chcDist.select(1);
-			String dist = prof.getFilterDist().substring(1);
+			String dist = data.getFilterDist().substring(1);
 			if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
 				double distValue = java.lang.Double.valueOf(dist).doubleValue();
 				double newDistValue = Metrics.convertUnit(distValue, Metrics.KILOMETER, Metrics.MILES);
@@ -333,7 +338,7 @@ public class FilterScreen extends Form{
 			chcDist.select(0);
 			inpDist.setText("");
 		}
-		String fltRose=prof.getFilterRose();
+		String fltRose=data.getFilterRose();
 		chkNW.state   = fltRose.charAt(0) == '1';
 		chkNNW.state  = fltRose.charAt(1) == '1';
 		chkN.state    = fltRose.charAt(2) == '1';
@@ -357,7 +362,7 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 2 - Cache attributes
 		//////////////////////////
-		String fltVar=prof.getFilterVar();
+		String fltVar=data.getFilterVar();
 		chkArchived.state      = fltVar.charAt(0) == '1';
 		chkAvailable.state     = fltVar.charAt(1) == '1';
 		chkFound.state         = fltVar.charAt(2) == '1';
@@ -366,31 +371,33 @@ public class FilterScreen extends Form{
 		chkNotAvailable.state  = fltVar.charAt(5) == '1';
 		chkNotFound.state      = fltVar.charAt(6) == '1';
 		chkNotOwned.state      = fltVar.charAt(7) == '1';
+		chcStatus.setText(data.getFilterStatus());
+		chkUseRegexp.setState(data.useRegexp());
 
 		//////////////////////////
 		// Panel 3 - Cache ratings
 		//////////////////////////
-		if (prof.getFilterDiff().length()>1) {
-			if (prof.getFilterDiff().charAt(0)=='L')
+		if (data.getFilterDiff().length()>1) {
+			if (data.getFilterDiff().charAt(0)=='L')
 				chcDiff.select(0);
-			else if (prof.getFilterDiff().charAt(0)=='=')
+			else if (data.getFilterDiff().charAt(0)=='=')
 				chcDiff.select(1);
 			else
 				chcDiff.select(2);
-			inpDiff.setText(prof.getFilterDiff().substring(1));
+			inpDiff.setText(data.getFilterDiff().substring(1));
 		} else {
 			chcDiff.select(0);
 			inpDiff.setText("");
 		}
 
-		if (prof.getFilterTerr().length()>1) {
-			if (prof.getFilterTerr().charAt(0)=='L')
+		if (data.getFilterTerr().length()>1) {
+			if (data.getFilterTerr().charAt(0)=='L')
 				chcTerr.select(0);
-			else if (prof.getFilterTerr().charAt(0)=='=')
+			else if (data.getFilterTerr().charAt(0)=='=')
 				chcTerr.select(1);
 			else
 				chcTerr.select(2);
-			inpTerr.setText(prof.getFilterTerr().substring(1));
+			inpTerr.setText(data.getFilterTerr().substring(1));
 		} else {
 			chcTerr.select(0);
 			inpTerr.setText("");
@@ -401,7 +408,7 @@ public class FilterScreen extends Form{
 		// Panel 4 - Cache types
 		//////////////////////////
 		
-		String fltType=prof.getFilterType();
+		String fltType=data.getFilterType();
 		chkTrad.state       = fltType.charAt(0) == '1';
 		chkMulti.state      = fltType.charAt(1) == '1';
 		chkVirtual.state    = fltType.charAt(2) == '1';
@@ -432,7 +439,7 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 6 - Cache container
 		//////////////////////////
-		String fltSize=prof.getFilterSize();
+		String fltSize=data.getFilterSize();
 		chkMicro.state      = fltSize.charAt(0) == '1';
 		chkSmall.state      = fltSize.charAt(1) == '1';
 		chkRegular.state    = fltSize.charAt(2) == '1';
@@ -447,8 +454,8 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 8 - Cache attributes
 		//////////////////////////
-		attV.setSelectionMasks( prof.getFilterAttrYes(), prof.getFilterAttrNo() );
-		chcAttrib.select(prof.getFilterAttrChoice());
+		attV.setSelectionMasks( data.getFilterAttrYes(), data.getFilterAttrNo() );
+		chcAttrib.select(data.getFilterAttrChoice());
 		
 		// Adjust colors of buttons depending on which filters are active
 		setColors();
@@ -474,7 +481,8 @@ public class FilterScreen extends Form{
 		
 		// Panel 2 - Cache attributes
 		if (!( chkArchived.state    && chkAvailable.state    && chkFound.state    && chkOwned.state &&
-			   chkNotArchived.state && chkNotAvailable.state && chkNotFound.state && chkNotOwned.state))
+			   chkNotArchived.state && chkNotAvailable.state && chkNotFound.state && chkNotOwned.state &&
+			   chcStatus.getText().equals("")))
 			btnAttributes.backGround=COLOR_FILTERACTIVE;
 		else
 			btnAttributes.backGround=COLOR_FILTERINACTIVE;
@@ -668,6 +676,9 @@ public class FilterScreen extends Form{
 				pfl.setFilterAttrYes(attV.selectionMaskYes);
 				pfl.setFilterAttrNo(attV.selectionMaskNo);
 				pfl.setFilterAttrChoice(chcAttrib.selectedIndex);
+				pfl.setFilterStatus(chcStatus.getText());
+				pfl.setFilterUseRegexp(chkUseRegexp.getState());
+				// FIXME Das geht bestimmt auch über Filter-Objekte
 				Filter flt = new Filter();
 				flt.setFilter();
 				flt.doFilter();

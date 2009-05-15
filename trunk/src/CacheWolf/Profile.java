@@ -45,32 +45,11 @@ public class Profile {
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
 
-	// When extending the filter check "normaliseFilters"
-	// which ensures backward compatibility. Normally no change should be needed
-	public final static String FILTERTYPE = "1111111111111111111";
-	public final static String FILTERROSE = "1111111111111111";
-	public final static String FILTERVAR = "11111111";
-	public final static String FILTERSIZE = "111111";
-
-	private String filterType = new String(FILTERTYPE);
-	private String filterRose = new String(FILTERROSE);
-	private String filterSize = new String(FILTERSIZE);
-
-	// filter settings for archived ... owner (section) in filterscreen
-	private String filterVar = new String(FILTERVAR);
-	private String filterDist = new String("L");
-	private String filterDiff = new String("L");
-	private String filterTerr = new String("L");
-
-	// Saved filterstatus - is only refreshed from class Filter when Profile is saved
+	private FilterData currentFilter = new FilterData();
 	private int filterActive = Filter.FILTER_INACTIVE;
 	private boolean filterInverted = false;
 	private boolean showBlacklisted = false;
 	private boolean showSearchResult = false;
-
-	private long filterAttrYes = 0l;
-	private long filterAttrNo = 0l;
-	private int filterAttrChoice = 0;
 
 	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map 
 	/** True if the profile has been modified and not saved
@@ -206,7 +185,8 @@ public class Profile {
 					"\" rose = \""+getFilterRose()+"\" type = \""+getFilterType()+
 					"\" var = \""+getFilterVar()+"\" dist = \""+getFilterDist().replace('"',' ')+"\" diff = \""+
 					getFilterDiff()+"\" terr = \""+getFilterTerr()+"\" size = \""+getFilterSize()+"\" attributesYes = \""+getFilterAttrYes()+
-					"\" attributesNo = \""+getFilterAttrNo()+"\" attributesChoice = \""+getFilterAttrChoice()+"\" showBlacklist = \""+showBlacklisted()+"\" />\n");
+					"\" attributesNo = \""+getFilterAttrNo()+"\" attributesChoice = \""+getFilterAttrChoice()+"\" showBlacklist = \""+showBlacklisted()+
+					"\" status = \""+SafeXML.clean(getFilterStatus())+"\" useRegexp = \""+getFilterUseRegexp()+"\" />\n");
 			detfile.print("    <SYNCOC date = \""+getLast_sync_opencaching()+"\" dist = \""+getDistOC()+"\"/>\n");
 			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\"/>\n");
 			int size = cacheDB.size();
@@ -321,6 +301,8 @@ public class Profile {
 					if (attr != null && !attr.equals(""))
 						setFilterAttrChoice(Convert.parseInt(attr));
 					setShowBlacklisted(Boolean.valueOf(ex.findNext()).booleanValue());
+					setFilterStatus(SafeXML.cleanback(ex.findNext()));
+					setFilterUseRegexp(Boolean.valueOf(ex.findNext()).booleanValue());
 				}
 			}
 			in.close();
@@ -336,7 +318,8 @@ public class Profile {
 		} catch (IOException e){
 			Global.getPref().log("Problem reading index.xml in dir: "+dataDir,e,true); 
 		}
-		normaliseFilters();
+		// FIXME Brauchen wir das noch? Und wenn ja: Hier?
+		//normaliseFilters();
 		resetUnsavedChanges();
 	}
 
@@ -543,95 +526,69 @@ public class Profile {
 
 	}
 
-	/**
-	 * Ensure that all filters have the proper length so that the 'charAt' access in the filter do
-	 * not cause nullPointer Exceptions
-	 */
-	private void normaliseFilters() {
-		String manyOnes = "11111111111111111111111111111";
-		if (getFilterRose().length() < FILTERROSE.length()) {
-			setFilterRose((getFilterRose() + manyOnes).substring(0, FILTERROSE.length()));
-		}
-		if (getFilterVar().length() < FILTERVAR.length()) {
-			setFilterVar((getFilterVar() + manyOnes).substring(0, FILTERVAR.length()));
-		}
-		if (getFilterType().length() < FILTERTYPE.length()) {
-			setFilterType((getFilterType() + manyOnes).substring(0, FILTERTYPE.length()));
-		}
-		if (getFilterSize().length() < FILTERSIZE.length()) {
-			setFilterSize((getFilterSize() + manyOnes).substring(0, FILTERSIZE.length()));
-		}
-		if (getFilterDist().length() == 0)
-			setFilterDist("L");
-		if (getFilterDiff().length() == 0)
-			setFilterDiff("L");
-		if (getFilterTerr().length() == 0)
-			setFilterTerr("L");
-	}
-
 	// Getter and Setter for private properties
 
 	public String getFilterType() {
-		return filterType;
+		return currentFilter.getFilterType();
 	}
 
 	public void setFilterType(String filterType) {
-		this.notifyUnsavedChanges(!filterType.equals(this.filterType));
-		this.filterType = filterType;
+		this.notifyUnsavedChanges(!filterType.equals(this.getFilterType()));
+		this.currentFilter.setFilterType(filterType);
 	}
 
 	public String getFilterRose() {
-		return filterRose;
+		return currentFilter.getFilterRose();
 	}
 
 	public void setFilterRose(String filterRose) {
-		this.notifyUnsavedChanges(!filterRose.equals(this.filterRose));
-		this.filterRose = filterRose;
+		this.notifyUnsavedChanges(!filterRose.equals(this.getFilterRose()));
+		this.currentFilter.setFilterRose(filterRose);
 	}
 
 	public String getFilterSize() {
-		return filterSize;
+		return currentFilter.getFilterSize();
 	}
 
 	public void setFilterSize(String filterSize) {
-		this.notifyUnsavedChanges(!filterSize.equals(this.filterSize));
-		this.filterSize = filterSize;
+		this.notifyUnsavedChanges(!filterSize.equals(this.getFilterSize()));
+		this.currentFilter.setFilterSize(filterSize);
 	}
 
 	public String getFilterVar() {
-		return filterVar;
+		return currentFilter.getFilterVar();
 	}
 
 	public void setFilterVar(String filterVar) {
-		this.notifyUnsavedChanges(!filterVar.equals(this.filterVar));
-		this.filterVar = filterVar;
+		this.notifyUnsavedChanges(!filterVar.equals(this.getFilterVar()));
+		this.currentFilter.setFilterVar(filterVar);
 	}
 
 	public String getFilterDist() {
-		return filterDist;
+		return currentFilter.getFilterDist();
 	}
 
 	public void setFilterDist(String filterDist) {
-		this.notifyUnsavedChanges(!filterDist.equals(this.filterDist));
-		this.filterDist = filterDist;
+		this.notifyUnsavedChanges(!filterDist.equals(this.getFilterDist()));
+		this.currentFilter.setFilterDist(filterDist);
 	}
 
 	public String getFilterDiff() {
-		return filterDiff;
+		return currentFilter.getFilterDiff();
 	}
 
 	public void setFilterDiff(String filterDiff) {
-		this.notifyUnsavedChanges(!filterDiff.equals(this.filterDiff));
-		this.filterDiff = filterDiff;
+		this.notifyUnsavedChanges(!filterDiff.equals(this.getFilterDiff()));
+		this.currentFilter.setFilterDiff(filterDiff);
 	}
 
 	public String getFilterTerr() {
-		return filterTerr;
+		return currentFilter.getFilterTerr();
 	}
 
 	public void setFilterTerr(String filterTerr) {
-		this.notifyUnsavedChanges(!filterTerr.equals(this.filterTerr));
-		this.filterTerr = filterTerr;
+		this.notifyUnsavedChanges(!filterTerr.equals(this.getFilterTerr()));
+		this.currentFilter.setFilterTerr(filterTerr);
 	}
 
 	public int getFilterActive() {
@@ -680,33 +637,52 @@ public class Profile {
 	public void setShowSearchResult(boolean showSearchResult){
 		this.showSearchResult = showSearchResult;
 	}
+
 	public long getFilterAttrYes() {
-		return filterAttrYes;
+		return currentFilter.getFilterAttrYes();
 	}
 
 	public void setFilterAttrYes(long filterAttrYes) {
-		this.notifyUnsavedChanges(filterAttrYes != this.filterAttrYes);
-		this.filterAttrYes = filterAttrYes;
+		this.notifyUnsavedChanges(filterAttrYes != this.getFilterAttrYes());
+		this.currentFilter.setFilterAttrYes(filterAttrYes);
 	}
 
 	public long getFilterAttrNo() {
-		return filterAttrNo;
+		return currentFilter.getFilterAttrNo();
 	}
 
 	public void setFilterAttrNo(long filterAttrNo) {
-		this.notifyUnsavedChanges(filterAttrNo != this.filterAttrNo);
-		this.filterAttrNo = filterAttrNo;
+		this.notifyUnsavedChanges(filterAttrNo != this.getFilterAttrNo());
+		this.currentFilter.setFilterAttrNo(filterAttrNo);
 	}
 
 	public int getFilterAttrChoice() {
-		return filterAttrChoice;
+		return currentFilter.getFilterAttrChoice();
 	}
 
 	public void setFilterAttrChoice(int filterAttrChoice) {
-		this.notifyUnsavedChanges(filterAttrChoice != this.filterAttrChoice);
-		this.filterAttrChoice = filterAttrChoice;
+		this.notifyUnsavedChanges(filterAttrChoice != this.getFilterAttrChoice());
+		this.currentFilter.setFilterAttrChoice(filterAttrChoice);
 	}
 
+	public String getFilterStatus() {
+    	return currentFilter.getFilterStatus();
+    }
+
+	public void setFilterStatus(String filterStatus) {
+		this.notifyUnsavedChanges(filterStatus != this.getFilterStatus());
+    	this.currentFilter.setFilterStatus(filterStatus);
+    }
+
+	public boolean getFilterUseRegexp() {
+    	return currentFilter.useRegexp();
+    }
+
+	public void setFilterUseRegexp(boolean useRegexp) {
+		this.notifyUnsavedChanges(useRegexp != this.getFilterUseRegexp());
+    	this.currentFilter.setUseRegexp(useRegexp);
+    }
+	
 	public String getLast_sync_opencaching() {
 		return last_sync_opencaching;
 	}
@@ -734,4 +710,11 @@ public class Profile {
 		this.distGC = distGC;
 	}
 
+	public FilterData getCurrentFilter() {
+    	return currentFilter;
+    }
+
+	public void setCurrentFilter(FilterData currentFilter) {
+    	this.currentFilter = currentFilter;
+    }
 }
