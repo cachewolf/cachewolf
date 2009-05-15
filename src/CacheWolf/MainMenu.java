@@ -526,7 +526,7 @@ public class MainMenu extends MenuBar {
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == filtCreate){
-				scnFilter.setData();
+				scnFilter.setData(profile.getCurrentFilter());
 				scnFilter.execute(father.getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
 			}

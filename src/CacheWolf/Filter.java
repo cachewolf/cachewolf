@@ -84,6 +84,9 @@ public class Filter{
 	
 	private boolean foundByMe;
 	private boolean notFoundByMe;
+
+	private String cacheStatus;
+	private boolean useRegexp;
 	
 	private boolean ownedByMe;
 	private boolean notOwnedByMe;
@@ -252,6 +255,9 @@ public class Filter{
 		notFoundByMe = profile.getFilterVar().charAt(6) == '1';
 		notOwnedByMe = profile.getFilterVar().charAt(7) == '1';
 		typeMatchPattern=0;
+		cacheStatus  = profile.getFilterStatus();
+		useRegexp    = profile.getFilterUseRegexp();
+		
 		String filterType=profile.getFilterType();
 		if (filterType.charAt(0) == '1') typeMatchPattern|=TRADITIONAL;
 		if (filterType.charAt(1) == '1') typeMatchPattern|=MULTI;
@@ -570,6 +576,21 @@ public class Filter{
 			        }
 		        }
 	        }
+	        if (!cacheStatus.equals("")) {
+	        	if (!useRegexp) {
+	        		if (ch.getCacheStatus().toLowerCase().indexOf(cacheStatus.toLowerCase())<0) {
+	        			cacheFiltered = true;
+	        			break;
+	        		}
+	        	} else {
+	        		Regex rex=new Regex(cacheStatus.toLowerCase());
+	        		rex.search(ch.getCacheStatus().toLowerCase());
+	        		if (rex.stringMatched()==null) {
+	        			cacheFiltered = true;
+	        			break;
+	        		}
+	        	}
+	        }
 	        break;
         } while (true);
 		return cacheFiltered;
@@ -594,12 +615,12 @@ public class Filter{
 		Global.getProfile().setFilterActive(FILTER_INACTIVE);
 	}
 
-	public boolean hasFilter() {
+		public boolean hasFilter() {
 		Profile prof=Global.getProfile();
-		return !(prof.getFilterType().equals(Profile.FILTERTYPE) &&
-		    prof.getFilterRose().equals(Profile.FILTERROSE) &&
-		    prof.getFilterVar().equals(Profile.FILTERVAR) &&
-		    prof.getFilterSize().equals(Profile.FILTERSIZE) &&
+		return !(prof.getFilterType().equals(FilterData.FILTERTYPE) &&
+		    prof.getFilterRose().equals(FilterData.FILTERROSE) &&
+		    prof.getFilterVar().equals(FilterData.FILTERVAR) &&
+		    prof.getFilterSize().equals(FilterData.FILTERSIZE) &&
 		    prof.getFilterDist().equals("L") &&
 		    prof.getFilterDiff().equals("L") &&
 		    prof.getFilterTerr().equals("L") &&
