@@ -625,7 +625,8 @@ public class Filter{
 		    prof.getFilterDiff().equals("L") &&
 		    prof.getFilterTerr().equals("L") &&
 		    prof.getFilterAttrYes() == 0l &&
-		    prof.getFilterAttrNo() == 0l);
+		    prof.getFilterAttrNo() == 0l &&
+		    prof.getFilterStatus().equals(""));
 	}
 
 }
