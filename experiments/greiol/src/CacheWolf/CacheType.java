@@ -227,6 +227,32 @@ public final class CacheType {
 	 * @deprecated remove once v1 file version compatibility is abandoned
 	 */
 	public static final byte v1Converter(String type) throws IllegalArgumentException  {
+		if (type.equals("0")) return CW_TYPE_CUSTOM;
+		if (type.equals("2")) return CW_TYPE_TRADITIONAL;
+		if (type.equals("3")) return CW_TYPE_MULTI;
+		if (type.equals("4")) return CW_TYPE_VIRTUAL;
+		if (type.equals("5")) return CW_TYPE_LETTERBOX;
+		if (type.equals("6")) return CW_TYPE_EVENT;
+		if (type.equals("")) return CW_TYPE_QUIZ;
+		if (type.equals("8")) return CW_TYPE_UNKNOWN;
+		if (type.equals("")) return CW_TYPE_MATH;
+		if (type.equals("")) return CW_TYPE_MOVING;
+		if (type.equals("")) return CW_TYPE_DRIVE_IN;
+		if (type.equals("11")) return CW_TYPE_WEBCAM;
+		if (type.equals("12")) return CW_TYPE_LOCATIONLESS;
+		if (type.equals("")) return CW_TYPE_CITO;
+		if (type.equals("50")) return CW_TYPE_PARKING;
+		if (type.equals("51")) return CW_TYPE_STAGE;
+		if (type.equals("52")) return CW_TYPE_QUESTION;
+		if (type.equals("53")) return CW_TYPE_FINAL;
+		if (type.equals("54")) return CW_TYPE_TRAILHEAD;
+		if (type.equals("55")) return CW_TYPE_REFERENCE;
+		if (type.equals("453")) return CW_TYPE_MEGA_EVENT;
+		if (type.equals("1858")) return CW_TYPE_WHEREIGO;
+		if (type.equals("")) return CW_TYPE_APE;
+		if (type.equals("")) return CW_TYPE_MAZE;
+		if (type.equals("137")) return CW_TYPE_EARTH;
+		
 		throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew v1Converter()");
 	}
 

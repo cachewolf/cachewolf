@@ -198,7 +198,13 @@ public class CacheHolder {
 		        
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
-	            setType(CacheType.v1Converter((xmlString.substring(start + 1, end))));
+		        try {
+		        	setType(CacheType.v1Converter((xmlString.substring(start + 1, end))));
+		        } catch (IllegalArgumentException ex) {
+		        	setType(CacheType.CW_TYPE_ERROR);
+		        	Global.getPref().log(wayPoint, ex, true);
+		        	setIncomplete(true);
+		        }
 	            
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
@@ -215,8 +221,13 @@ public class CacheHolder {
 
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
-		        
-		        setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
+		        try {
+		        	setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
+		        } catch (IllegalArgumentException ex) {
+		        	setCacheSize(CacheSize.CW_SIZE_ERROR);
+		        	Global.getPref().log(wayPoint, ex, true);
+		        	setIncomplete(true);
+		        }
 		        
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
@@ -271,7 +282,7 @@ public class CacheHolder {
 
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
-		        setIncomplete(xmlString.substring(start + 1, end).equals("true"));
+		        setIncomplete(xmlString.substring(start + 1, end).equals("true") || incomplete);
 
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
