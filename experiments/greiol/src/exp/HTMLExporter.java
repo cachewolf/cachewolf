@@ -84,7 +84,7 @@ public class HTMLExporter{
 				if(	ch.isVisible()){
 					det=ch.getExistingDetails();
 					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.transType(ch.getType()));
+					varParams.put("TYPE", CacheType.cw2ExportString(ch.getType()));
 					varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 					varParams.put("WAYPOINT", ch.getWayPoint());
 					varParams.put("NAME", ch.getCacheName());
@@ -100,7 +100,7 @@ public class HTMLExporter{
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						page_tpl.setParam("TYPE", CacheType.transType(ch.getType()));
+						page_tpl.setParam("TYPE", CacheType.cw2ExportString(ch.getType()));
 						page_tpl.setParam("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 						page_tpl.setParam("WAYPOINT", ch.getWayPoint());
 						page_tpl.setParam("NAME", ch.getCacheName());

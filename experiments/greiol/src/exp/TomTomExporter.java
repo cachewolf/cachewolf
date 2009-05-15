@@ -85,14 +85,14 @@ public class TomTomExporter {
 		ext = format==TT_ASC?".asc":".ov2";
 		try{
 			//loop through type
-			for(int j = 0; j < CacheType.wayType.length; j++){
-				fileName = dirName + "/" + prefix + CacheType.wayType[j][TT_WPT_TEXT]+ ext;
+			for(int j = 0; j < CacheType.guiTypeStrings().length; j++){
+				fileName = dirName + "/" + prefix + CacheType.guiTypeStrings()[j]+ ext;
 				dfile = new File(fileName);
 				dfile.delete();
 				out =  new RandomAccessFile(fileName,"rw");
 				for(int i = 0; i<cacheDB.size(); i++){
 					holder=cacheDB.get(i);
-					if(holder.getType() == new Integer(CacheType.wayType[j][TT_WPT_NUM]).intValue() && holder.isVisible() == false){
+					if(holder.getType() == new Integer(CacheType.guiSelect2Cw(j)).intValue() && holder.isVisible() == false){
 						currExp++;
 						h.progress = (float)currExp/(float)counter;
 						h.changed();
@@ -110,7 +110,7 @@ public class TomTomExporter {
 				if (dfile.length()==0) {
 					dfile.delete();
 				} else {
-					copyIcon(j, dirName + "/" + prefix + CacheType.wayType[j][TT_WPT_TEXT]); 
+					copyIcon(j, dirName + "/" + prefix + CacheType.guiTypeStrings()[j]); 
 				}
 			}//for wayType
 			pbf.exit(0);
@@ -259,7 +259,7 @@ public class TomTomExporter {
 			int len;
 			String entName; 
 			
-			entName = "TomTomIcons/"+ "GC-" + CacheType.wayType[intWayType][TT_WPT_TEXT] + ".bmp";
+			entName = "TomTomIcons/"+ "GC-" + CacheType.guiTypeStrings()[intWayType] + ".bmp";
 			zipEnt = zif.getEntry(entName);
 			if (zipEnt == null) return;
 			
@@ -272,10 +272,10 @@ public class TomTomExporter {
 		    fos.close();
 		    fis.close();
 		} catch (ZipException e) {
-			Vm.debug("Problem copying Icon" + "GC-" + CacheType.wayType[intWayType][TT_WPT_TEXT] + ".bmp" );
+			Vm.debug("Problem copying Icon" + "GC-" + CacheType.guiTypeStrings()[intWayType] + ".bmp" );
 			e.printStackTrace();
 		} catch (IOException e) {
-			Vm.debug("Problem copying Icon" + "GC-" + CacheType.wayType[intWayType][TT_WPT_TEXT] + ".bmp" );
+			Vm.debug("Problem copying Icon" + "GC-" + CacheType.guiTypeStrings()[intWayType] + ".bmp" );
 			e.printStackTrace();
 		}
 

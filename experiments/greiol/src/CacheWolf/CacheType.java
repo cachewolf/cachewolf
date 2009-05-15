@@ -3,7 +3,7 @@ package CacheWolf;
 /**
  * Handels all aspects of converting cache type information from
  * and to the various im- and exporters as well as for converting
- * legavy profiles to courrent standard
+ * legavy profiles to current standard
  */
 public final class CacheType {
 	
@@ -322,6 +322,31 @@ public final class CacheType {
 		}
 	}
 	
+	public static final int cw2GuiSelect(byte id) throws IllegalArgumentException {
+		switch (id) {
+		case  CW_TYPE_CUSTOM: return 0;
+		case  CW_TYPE_TRADITIONAL: return 1;
+		case  CW_TYPE_MULTI: return 2;
+		case  CW_TYPE_VIRTUAL: return 3;
+		case  CW_TYPE_LETTERBOX: return 4;
+		case  CW_TYPE_EVENT: return 5;
+		case  CW_TYPE_MEGA_EVENT: return 6;
+		case  CW_TYPE_WEBCAM: return 7;
+		case  CW_TYPE_UNKNOWN: return 8;
+		case  CW_TYPE_LOCATIONLESS: return 9;
+		case CW_TYPE_CITO: return 10;
+		case CW_TYPE_EARTH: return 11;
+		case CW_TYPE_WHEREIGO: return 12;
+		case CW_TYPE_PARKING: return 13;
+		case CW_TYPE_STAGE: return 14;
+		case CW_TYPE_QUESTION: return 15;
+		case CW_TYPE_FINAL: return 16;
+		case CW_TYPE_TRAILHEAD: return 17;
+		case CW_TYPE_REFERENCE: return 18;
+		default: throw new IllegalArgumentException("unmatched argument "+id+" in CacheSize cw2GuiSelect()");
+		}
+	}
+	
 	/**
 	 * 
 	 * @param gpxType
@@ -456,6 +481,22 @@ public final class CacheType {
 		default: throw new IllegalArgumentException("unmatched argument "+id+" in CacheSize id2GpxString()");
 		}
 		
+	}
+	
+	//TODO: de we actually need this one
+	public static final String cw2ExportString(byte id) throws IllegalArgumentException {
+		String ret;
+		try {
+			ret = id2GpxString(id);
+			// check for | in additional waypoints and only use the string after |
+			int pipePosistion = ret.indexOf("|");
+			if (pipePosistion > -1) {
+				ret = ret.substring(pipePosistion);
+			}
+		} catch (IllegalArgumentException ex) {
+			ret = "";
+		}
+		return ret;
 	}
 	
 	// cache to image

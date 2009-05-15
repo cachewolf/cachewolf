@@ -194,8 +194,8 @@ public class TPLExporter {
 						Regex dec = new Regex("[,.]",myFilter.decSep);
 						if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
 						varParams = new Hashtable();
-						varParams.put("TYPE", CacheType.transType(ch.getType()));
-						varParams.put("SHORTTYPE", CacheType.transType(ch.getType()).substring(0,1));
+						varParams.put("TYPE", CacheType.cw2ExportString(ch.getType()));
+						varParams.put("SHORTTYPE", CacheType.getExportShortId(ch.getType()));
 						varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 						varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.getCacheSize()));
 						varParams.put("WAYPOINT", ch.getWayPoint());

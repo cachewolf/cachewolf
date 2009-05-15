@@ -1,4 +1,5 @@
 package CacheWolf;
+
 import CacheWolf.navi.Metrics;
 import ewe.ui.*;
 import ewe.io.*;
@@ -14,18 +15,18 @@ public class FilterScreen extends Form{
 	private static final Color COLOR_FILTERINACTIVE=new Color(190,190,190);
 	private static final Color COLOR_FILTERACTIVE=new Color(0,255,0);
 	private static final Color COLOR_FILTERALL=new Color(255,0,0); // Red
-    	
+
 	private mButton btnCancel, btnApply,btnRoute,
-					btnBearing,btnTypes,btnAttributes,btnRatings,btnContainer,btnSearch,btnAddi, btnSelect,btnDeselect,btnCacheAttributes;
+			btnBearing,btnTypes,btnAttributes,btnRatings,btnContainer,btnSearch,btnAddi, btnSelect,btnDeselect,btnCacheAttributes;
 	
 	private mChoice chcDist, chcDiff, chcTerr, chcAttrib;
 	private mCheckBox chkFound, chkNotFound, chkTrad, chkVirtual, chkEvent, chkEarth, chkMega,
-					  chkOwned, chkNotOwned, chkMulti, chkLetter, chkWebcam, chkMystery, chkLocless,
-	                  chkCustom,chkParking,	chkStage, chkQuestion, chkFinal, chkTrailhead, chkReference,
-					  chkMicro,chkSmall,chkRegular,chkLarge,chkVeryLarge,chkOther,chkCito,
-	                  chkArchived,chkNotArchived, chkAvailable,chkNotAvailable,
-					  chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
-					  chkSSW, chkSW, chkWSW, chkW, chkWNW,chkWherigo;
+			chkOwned, chkNotOwned, chkMulti, chkLetter, chkWebcam, chkMystery, chkLocless,
+			chkCustom,chkParking,	chkStage, chkQuestion, chkFinal, chkTrailhead, chkReference,
+			chkMicro,chkSmall,chkRegular,chkLarge,chkVeryLarge,chkOther,chkCito,
+			chkArchived,chkNotArchived, chkAvailable,chkNotAvailable,
+			chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
+			chkSSW, chkSW, chkWSW, chkW, chkWNW,chkWherigo;
 	
 	private mInput inpDist, inpTerr, inpDiff;
 
@@ -161,48 +162,48 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		
 		addTitle(pnlCacheTypes,MyLocale.getMsg(719,"Cache types"));
-		pnlCacheTypes.addNext(addImg("2.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_TRADITIONAL));
 		pnlCacheTypes.addNext(chkTrad = new mCheckBox("Traditonal"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("3.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_MULTI));
 		pnlCacheTypes.addLast(chkMulti = new mCheckBox("Multi"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("4.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_VIRTUAL));
 		pnlCacheTypes.addNext(chkVirtual = new mCheckBox("Virtual"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("5.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_LETTERBOX));
 		pnlCacheTypes.addLast(chkLetter = new mCheckBox("Letterbox"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("6.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_EVENT));
 		pnlCacheTypes.addNext(chkEvent = new mCheckBox("Event"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("11.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_WEBCAM));
 		pnlCacheTypes.addLast(chkWebcam = new mCheckBox("Webcam"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("8.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_UNKNOWN));
 		pnlCacheTypes.addNext(chkMystery = new mCheckBox("Mystery"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("137.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_EARTH));
 		pnlCacheTypes.addLast(chkEarth = new mCheckBox("Earth"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("12.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_LOCATIONLESS));
 		pnlCacheTypes.addNext(chkLocless = new mCheckBox("Locationless"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("453.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_MEGA_EVENT));
 		pnlCacheTypes.addLast(chkMega = new mCheckBox("Mega-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("13.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_CITO));
 		pnlCacheTypes.addNext(chkCito = new mCheckBox("Cito-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		//pnlCacheTypes.addLast(addiWptChk = new mCheckBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		//pnlCacheTypes.addLast(new mLabel(""));
-		pnlCacheTypes.addNext(addImg("0.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_CUSTOM));
 		pnlCacheTypes.addLast(chkCustom = new mCheckBox("Custom"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
-		pnlCacheTypes.addNext(addImg("1858.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_WHEREIGO));
 		pnlCacheTypes.addNext(chkWherigo = new myChkBox("WherIGo"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
-		pnlCacheTypes.addNext(addImg("110.png"));
+		pnlCacheTypes.addNext(addImg(CacheType.CW_GUIIMG_DRIVE_IN));
 		pnlCacheTypes.addNext(addiWptChk = new myChkBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		//addiWptChk.modify(0,NotAnEditor);
@@ -210,17 +211,17 @@ public class FilterScreen extends Form{
 		// Panel 5 - Addi waypoints
 		//////////////////////////
 		addTitle(pnlAddi,MyLocale.getMsg(726,"Additional waypoints"));
-		pnlAddi.addNext(addImg("pkg.png"));
+		pnlAddi.addNext(addImg(CacheType.CW_GUIIMG_PARKING));
 		pnlAddi.addNext(chkParking = new mCheckBox("Parking"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("stage.png"));
+		pnlAddi.addNext(addImg(CacheType.CW_GUIIMG_STAGE));
 		pnlAddi.addLast(chkStage = new mCheckBox("Stage"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("puzzle.png"));
+		pnlAddi.addNext(addImg(CacheType.CW_GUIIMG_QUESTION));
 		pnlAddi.addNext(chkQuestion = new mCheckBox("Question"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("flag.png"));
+		pnlAddi.addNext(addImg(CacheType.CW_GUIIMG_FINAL));
 		pnlAddi.addLast(chkFinal = new mCheckBox("Final"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("trailhead.png"));
+		pnlAddi.addNext(addImg(CacheType.CW_GUIIMG_TRAILHEAD));
 		pnlAddi.addNext(chkTrailhead = new mCheckBox("Trailhead"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("waypoint.png"));
+		pnlAddi.addNext(addImg(CacheType.CW_GUIIMG_REFERENCE));
 		pnlAddi.addLast(chkReference = new mCheckBox("Reference"), CellConstants.DONTSTRETCH, CellConstants.FILL);
         pnlAddi.addLast(new mLabel(""),VSTRETCH,FILL);		
 
@@ -228,12 +229,12 @@ public class FilterScreen extends Form{
 		// Panel 6 - Cache container
 		//////////////////////////
 		addTitle(pnlContainer,MyLocale.getMsg(727,"Cache container"));
-		pnlContainer.addLast(chkMicro=new mCheckBox("Micro"));
-		pnlContainer.addLast(chkSmall=new mCheckBox("Small"));
-		pnlContainer.addLast(chkRegular=new mCheckBox("Regular"));
-		pnlContainer.addLast(chkLarge=new mCheckBox("Large"));
-		pnlContainer.addLast(chkVeryLarge=new mCheckBox("Very Large"));
-		pnlContainer.addLast(chkOther=new mCheckBox("Other"));
+		pnlContainer.addLast(chkMicro=new mCheckBox(CacheSize.GC_SIZE_MICRO));
+		pnlContainer.addLast(chkSmall=new mCheckBox(CacheSize.GC_SIZE_SMALL));
+		pnlContainer.addLast(chkRegular=new mCheckBox(CacheSize.GC_SIZE_REGULAR));
+		pnlContainer.addLast(chkLarge=new mCheckBox(CacheSize.GC_SIZE_LARGE));
+		pnlContainer.addLast(chkVeryLarge=new mCheckBox(CacheSize.OCTC_SIZE_VERYLARGE));
+		pnlContainer.addLast(chkOther=new mCheckBox(CacheSize.GC_SIZE_OTHER));
 		
 		//////////////////////////
 		// Panel 7 - Search
@@ -270,7 +271,7 @@ public class FilterScreen extends Form{
 		pnlButtons.addLast(btnAddi=new mButton(MyLocale.getMsg(733,"Add. Wpt"))); 
 		pnlButtons.addLast(btnContainer=new mButton(MyLocale.getMsg(724,"Container")));
 		pnlButtons.addLast(btnCacheAttributes=new mButton(MyLocale.getMsg(738,"Attributes")));
-		// Search ist für 0.9n noch deaktiviert
+		// Search ist fï¿½r 0.9n noch deaktiviert
 		//pnlButtons.addLast(btnSearch=new mButton("Search")); btnSearch.modify(Disabled,0);
 		addNext(pnlButtons,HSTRETCH,FILL);
 

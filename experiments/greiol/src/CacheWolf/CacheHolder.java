@@ -78,7 +78,7 @@ public class CacheHolder {
 	/** The terrain rating of the cache from 1 to 5 in .5 incements */
 	private String terrain = EMPTY;
 	/** The cache type (@see CacheType for translation table)  */
-	private byte type = -1; 
+	private byte type = CacheType.CW_TYPE_ERROR; 
 	/** True if the cache has been archived */
 	private boolean archived = false;
 	/** True if the cache is available for searching */

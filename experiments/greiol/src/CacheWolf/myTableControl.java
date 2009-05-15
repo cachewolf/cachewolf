@@ -298,7 +298,7 @@ public class myTableControl extends TableControl{
 			 wayPoint=ch.getWayPoint();
 			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 imgDrag=new IconAndText();
-			 imgDrag.addColumn(CacheType.cache2Img(ch.getType()));
+			 imgDrag.addColumn(GuiImageBroker.getTypeImage(ch.getType()));
 			 imgDrag.addColumn(ch.getWayPoint());
 			 dc.dragData=dc.startImageDrag(imgDrag,new Point(8,8),this);
 		 } else super.startDragging(dc);

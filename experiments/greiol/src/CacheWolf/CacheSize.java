@@ -1,5 +1,10 @@
 package CacheWolf;
 
+/**
+ * Handels all aspects of converting cache size information from
+ * and to the various im- and exporters as well as for converting
+ * legavy profiles to current standard
+ */
 public final class CacheSize {
 
 	/*
