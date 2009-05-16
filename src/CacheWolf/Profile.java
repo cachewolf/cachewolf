@@ -181,12 +181,9 @@ public class Profile {
 			} else {
 				activeFilterForSave = getFilterActive();
 			}
-			detfile.print("    <FILTER status = \""+activeFilterForSave+(isFilterInverted()?"T":"F")+ 
-					"\" rose = \""+getFilterRose()+"\" type = \""+getFilterType()+
-					"\" var = \""+getFilterVar()+"\" dist = \""+getFilterDist().replace('"',' ')+"\" diff = \""+
-					getFilterDiff()+"\" terr = \""+getFilterTerr()+"\" size = \""+getFilterSize()+"\" attributesYes = \""+getFilterAttrYes()+
-					"\" attributesNo = \""+getFilterAttrNo()+"\" attributesChoice = \""+getFilterAttrChoice()+"\" showBlacklist = \""+showBlacklisted()+
-					"\" status = \""+SafeXML.clean(getFilterStatus())+"\" useRegexp = \""+getFilterUseRegexp()+"\" />\n");
+			detfile.print("    <FILTERCONFIG status = \""+activeFilterForSave+
+					(isFilterInverted()?"T":"F")+"\" showBlacklist = \""+showBlacklisted()+"\" />\n");
+			detfile.print(this.getCurrentFilter().toXML(""));
 			detfile.print("    <SYNCOC date = \""+getLast_sync_opencaching()+"\" dist = \""+getDistOC()+"\"/>\n");
 			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\"/>\n");
 			int size = cacheDB.size();
@@ -197,13 +194,8 @@ public class Profile {
 				}
 				ch = cacheDB.get(i);
 				// //Vm.debug("Saving: " + ch.CacheName);
-				if (ch.getWayPoint().length() > 0) { // TODO && ch.LongDescription.equals("An
-/*					detfile.print("    <CACHE name = \""+SafeXML.clean(ch.CacheName)+"\" owner = \""+SafeXML.clean(ch.CacheOwner)+
-							//"\" lat = \""+ SafeXML.clean(ch.LatLon) +
-							"\" lat = \""+ ch.pos.latDec + "\" lon = \""+ch.pos.lonDec+
-							"\" hidden = \""+ch.DateHidden+"\" wayp = \""+SafeXML.clean(ch.wayPoint)+"\" status = \""+ch.CacheStatus+"\" type = \""+ch.type+"\" dif = \""+ch.hard+"\" terrain = \"" + ch.terrain + "\" dirty = \"false" + // ch.dirty + dirty is not used, so we save it as false 
-							"\" size = \""+ch.CacheSize+"\" online = \"" + Convert.toString(ch.is_available) + "\" archived = \"" + Convert.toString(ch.is_archived) + "\" has_bug = \"" + Convert.toString(ch.has_bug) + "\" black = \"" + Convert.toString(ch.is_black) + "\" owned = \"" + Convert.toString(ch.is_owned) + "\" found = \"" + Convert.toString(ch.is_found) + "\" is_new = \"" + Convert.toString(ch.is_new) +"\" is_log_update = \"" + Convert.toString(ch.is_log_update) + "\" is_update = \"" + Convert.toString(ch.is_update) + "\" is_HTML = \"" + Convert.toString(ch.is_HTML) + "\" DNFLOGS = \"" + ch.noFindLogs + "\" ocCacheID = \"" + ch.ocCacheID + "\" is_INCOMPLETE = \""+Convert.toString(ch.is_incomplete)+ "\" lastSyncOC = \"" + ch.lastSyncOC + "\" />\n");
-*/					detfile.print(ch.toXML());
+				if (ch.getWayPoint().length() > 0) { 
+					detfile.print(ch.toXML());
 				}
 			}
 			detfile.print("</CACHELIST>\n");
@@ -268,8 +260,9 @@ public class Profile {
 				} else if (text.indexOf("<SPIDERGC")>=0) {
 					int start=text.indexOf("dist = \"")+8;
 					setDistGC(text.substring(start,text.indexOf("\"",start)));
-				} else if (text.indexOf("<FILTER")>=0){
-					ex.setSource(text);
+				} else if (indexXmlVersion <=2 && text.indexOf("<FILTER")>=0){
+					// Read filter data of file versions 1 and 2. (Legacy code)
+					ex.setSource(text.substring(text.indexOf("<FILTER")));
 					String temp=ex.findNext(); // Filter status is now first, need to deal with old versions which don't have filter status
 					if (temp.length()==2) {
 						// Compatibility with previous versions
@@ -301,8 +294,33 @@ public class Profile {
 					if (attr != null && !attr.equals(""))
 						setFilterAttrChoice(Convert.parseInt(attr));
 					setShowBlacklisted(Boolean.valueOf(ex.findNext()).booleanValue());
-					setFilterStatus(SafeXML.cleanback(ex.findNext()));
+				} else if (text.indexOf("<FILTERDATA")>=0){
+					ex.setSource(text.substring(text.indexOf("<FILTERDATA")));
+					setFilterRose(ex.findNext());
+					setFilterType(ex.findNext());
+					//Need this to stay "downward" compatible. New type introduced
+					//if(filterType.length()<=17) filterType = filterType + "1";
+					//Vm.debug("fil len: " +filterType.length());
+					//This is handled by "normaliseFilters" which is called at the end.
+					setFilterVar(ex.findNext());
+					setFilterDist(ex.findNext());
+					setFilterDiff(ex.findNext());
+					setFilterTerr(ex.findNext());
+					setFilterSize(ex.findNext());
+					String attr = ex.findNext();
+					setFilterAttrYes(Convert.parseLong(attr));
+					attr = ex.findNext();
+					setFilterAttrNo(Convert.parseLong(attr));
+					attr = ex.findNext();
+					setFilterAttrChoice(Convert.parseInt(attr));
+					setFilterStatus(SafeXML.strxmldecode(ex.findNext()));
 					setFilterUseRegexp(Boolean.valueOf(ex.findNext()).booleanValue());
+				} else if (text.indexOf("<FILTERCONFIG")>=0){
+					ex.setSource(text.substring(text.indexOf("<FILTERCONFIG")));
+					String temp=ex.findNext();
+					setFilterActive(Common.parseInt(temp.substring(0,1)));
+					setFilterInverted(temp.charAt(1)=='T');
+					setShowBlacklisted(Boolean.valueOf(ex.findNext()).booleanValue());
 				}
 			}
 			in.close();
@@ -318,8 +336,8 @@ public class Profile {
 		} catch (IOException e){
 			Global.getPref().log("Problem reading index.xml in dir: "+dataDir,e,true); 
 		}
-		// FIXME Brauchen wir das noch? Und wenn ja: Hier?
-		//normaliseFilters();
+		// TODO Brauchen wir das noch?
+		this.getCurrentFilter().normaliseFilters();
 		resetUnsavedChanges();
 	}
 
@@ -710,6 +728,10 @@ public class Profile {
 		this.distGC = distGC;
 	}
 
+	/**
+	 * Returns the currently active FilterData object for the profile.
+	 * @return Object representing the setting of the filter
+	 */
 	public FilterData getCurrentFilter() {
     	return currentFilter;
     }

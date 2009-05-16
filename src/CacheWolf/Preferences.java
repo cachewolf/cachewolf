@@ -23,6 +23,8 @@ public class Preferences extends MinML{
 	public static final int YES = 0;
 	public static final int NO = 1;
 	public static final int ASK = 2;
+	// Hashtable is saving filter data objects the user wants to save
+	private Hashtable filterList = new Hashtable(15);
 
 	//////////////////////////////////////////////////////////////////////////////////////
     // Constructor
@@ -414,6 +416,26 @@ public class Preferences extends MinML{
 		else if (name.equals("locale")) {
 			language = atts.getValue("language");
 		}
+		else if (name.equals("FILTERDATA")) {
+			// Creating a filter object and reading the saved data
+			String id = SafeXML.strxmldecode(atts.getValue("id"));
+			FilterData data = new FilterData();
+			data.setFilterRose(atts.getValue("rose"));
+			data.setFilterType(atts.getValue("type"));
+			data.setFilterVar(atts.getValue("var"));
+			data.setFilterDist(atts.getValue("dist"));
+			data.setFilterDiff(atts.getValue("diff"));
+			data.setFilterTerr(atts.getValue("terr"));
+			data.setFilterSize(atts.getValue("size"));
+			data.setFilterAttrYes(Convert.parseLong(atts.getValue("attributesYes")));
+			data.setFilterAttrNo(Convert.parseLong(atts.getValue("attributesNo")));
+			data.setFilterAttrChoice(Convert.parseInt(atts.getValue("attributesChoice")));
+			data.setFilterStatus(SafeXML.strxmldecode(atts.getValue("status")));
+			data.setUseRegexp(Boolean.valueOf(atts.getValue("useRegexp")).booleanValue());
+			// Filter object is remembered under the given ID
+			this.addFilter(id, data);
+		}
+
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -476,6 +498,11 @@ public class Preferences extends MinML{
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");
 			outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport) + "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds) + "\"/>\n");
 			if (customMapsPath!=null) outp.print("	<mapspath dir = \"" + SafeXML.strxmlencode(customMapsPath.replace('\\','/')) + "\"/>\n");
+			// Saving filters
+			String[] filterIDs = this.getFilterIDs();
+			for (int i=0; i<filterIDs.length; i++){
+				outp.print(this.getFilter(filterIDs[i]).toXML(filterIDs[i]));
+			}
 			if (debug) outp.print("    <debug value=\"true\" />\n"); // Keep the debug switch if it is set
 			// save last path of different exporters
 			Iterator itPath = exporterPaths.entries();
@@ -776,4 +803,57 @@ public class Preferences extends MinML{
 		return dir;
 	}
 
+	/**
+	 * <code>True</code> or <code>false</code>, depending if a filter with the given ID is 
+	 * saved in the preferences.
+	 * @param filterID ID of the filter to check
+	 * @return True or false
+	 */
+	public boolean hasFilter(String filterID) {
+		return this.filterList.containsKey(filterID);
+	}
+	
+	/**
+	 * Returns the FilterData object saved with the given ID. The ID is not saved in the object, 
+	 * so it may be resaved under another ID.
+	 * @param filterID ID of the FilterData object
+	 * @return FilterData object
+	 */
+	public FilterData getFilter(String filterID) {
+		return (FilterData)this.filterList.get(filterID);
+	}
+	
+	/**
+	 * Adds a FilterData object to the list. If a FilterData object is already saved unter the 
+	 * given ID, the old object is removed and the new one is set at its place.
+	 * @param filterID ID to associate with the filter object
+	 * @param filter FilterData object
+	 */
+	public void addFilter(String filterID, FilterData filter) {
+		this.filterList.put(filterID, filter);
+	}
+	
+	/**
+	 * Removed the FilterData object which is saved with the given ID. If no such FilterData object
+	 * exists, nothing happens.
+	 * @param filterID ID of FilterData object to remove
+	 */
+	public void removeFilter(String filterID) {
+		this.filterList.remove(filterID);
+	}
+	
+	/**
+	 * Returns an array of ID of saved FilterData objects.
+	 * @return Array of IDs
+	 */
+	public String[] getFilterIDs() {
+		String[] result;
+		result = new String[this.filterList.size()];
+		Enumeration en = this.filterList.keys();
+		int i=0;
+		while (en.hasMoreElements()) {
+			result[i++] = (String) en.nextElement();
+		}
+		return result;
+	}
 }
