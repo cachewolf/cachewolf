@@ -16,6 +16,7 @@ public class FilterScreen extends Form{
 	private static final Color COLOR_FILTERALL=new Color(255,0,0); // Red
     	
 	private mButton btnCancel, btnApply,btnRoute,
+				    btnSaveFlt, btnDelFlt,
 					btnBearing,btnTypes,btnAttributes,btnRatings,btnContainer,btnSearch,btnAddi, btnSelect,btnDeselect,btnCacheAttributes;
 	
 	private mChoice chcDist, chcDiff, chcTerr, chcAttrib;
@@ -26,7 +27,7 @@ public class FilterScreen extends Form{
 	                  chkArchived,chkNotArchived, chkAvailable,chkNotAvailable,
 					  chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
 					  chkSSW, chkSW, chkWSW, chkW, chkWNW,chkWherigo;
-	private mComboBox chcStatus;
+	private mComboBox chcStatus, fltList;
 	private mCheckBox chkUseRegexp;
 	
 	private mInput inpDist, inpTerr, inpDiff;
@@ -43,6 +44,11 @@ public class FilterScreen extends Form{
 	private CellPanel pnlAddi=new CellPanel();
 	private CellPanel pnlCacheAttributes=new CellPanel();
 	private CardPanel cp=new CardPanel();
+	
+	// ID of last filter selected from the filter list
+	private String currentFilterID = ""; 
+	// Flag, true if filters have been changed, added or deleted. Leads to saving of pref.xml
+	private boolean savedFiltersChanged= false;
 
 	// A subclassed checkbox with a "third" state (=grey background).
 	// If all addi wpts are false or all addi wpts are true, the background is white
@@ -267,6 +273,23 @@ public class FilterScreen extends Form{
 		frmScreen.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_BOTTOM;
 		this.addLast(frmScreen,HSTRETCH,HFILL);
 		
+		// Had to move the button panel to the top, so that the SIP can't display over the 
+		// filter list field - in case we want to enter a new filter name.
+		CellPanel savDelPanel = new CellPanel(); // Panel for "save" and "delete" button
+		savDelPanel.equalWidths = true;
+		mImage savImg=new mImage("clsave.png"); savImg.transparentColor=new Color(255,0,0);
+		savDelPanel.addNext(btnSaveFlt = new mButton(savImg),STRETCH,FILL);
+		savDelPanel.addLast(btnDelFlt = new mButton(new mImage("trash.png")),STRETCH,FILL);
+		Panel fltListPanel = new Panel();
+		fltListPanel.addLast(fltList = new mComboBox());
+		fltListPanel.addLast(savDelPanel);
+		Panel btPanel = new Panel();
+		btPanel.addNext(btnCancel = new mButton(MyLocale.getMsg(708,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
+		btPanel.addNext(btnApply = new mButton(MyLocale.getMsg(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
+		btPanel.addLast(fltListPanel,CellConstants.STRETCH, CellConstants.FILL);
+//		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
+		addLast(btPanel.setTag(CellConstants.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
+
 		CellPanel pnlButtons=new CellPanel();
 		pnlButtons.addLast(new mLabel("Filter"));
 		pnlButtons.addLast(btnBearing=new mButton(MyLocale.getMsg(721,"Bearing")));
@@ -290,11 +313,10 @@ public class FilterScreen extends Form{
 		cp.addItem(pnlCacheAttributes,"Attr",null);
 		addLast(cp,VSTRETCH,FILL);
 
-		Panel btPanel = new Panel();
-		btPanel.addNext(btnCancel = new mButton(MyLocale.getMsg(708,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
-		btPanel.addLast(btnApply = new mButton(MyLocale.getMsg(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
-//		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
-		addLast(btPanel.setTag(CellConstants.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
+		// ***********
+		// Here: Former position of Cancel/Apply buttons
+		// ***********
+		
 		int sw = MyLocale.getScreenWidth(); int sh = MyLocale.getScreenHeight(); 
 		Preferences pref = Global.getPref();int fs = pref.fontSize;
 		int psx; int psy;
@@ -314,6 +336,9 @@ public class FilterScreen extends Form{
 				setPreferredSize(240,240);
 		}
 		cp.select(3);
+		
+		// Populating the comboBox of saved filters
+		buildFilterList();
 	}
 	
 	
@@ -567,6 +592,10 @@ public class FilterScreen extends Form{
 	public void onEvent(Event ev){
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btnCancel){
+				if (savedFiltersChanged) {
+					Global.getPref().savePreferences();
+					savedFiltersChanged = false;
+				}
 				this.close(0);
 			}
 			else if (ev.target == btnRoute){
@@ -588,104 +617,56 @@ public class FilterScreen extends Form{
 			}
 			else if (ev.target == btnApply){
 				Vm.showWait(true);
-				//Save filter required
-				Profile pfl = Global.getProfile();
-				pfl.setFilterVar((chkArchived.state    ? "1" : "0") +
-							(chkAvailable.state   ? "1" : "0") +
-							(chkFound.state       ? "1" : "0") +
-							(chkOwned.state       ? "1" : "0") +
-							(chkNotArchived.state ? "1" : "0") +
-							(chkNotAvailable.state? "1" : "0") +
-							(chkNotFound.state    ? "1" : "0") +
-							(chkNotOwned.state    ? "1" : "0"));							
-				pfl.setFilterType((chkTrad.state    ? "1" : "0") +
-								(chkMulti.state   ? "1" : "0") +
-								(chkVirtual.state ? "1" : "0") +
-								(chkLetter.state  ? "1" : "0") +
-								(chkEvent.state   ? "1" : "0") + 
-								(chkWebcam.state  ? "1" : "0") +
-								(chkMystery.state ? "1" : "0") +
-								(chkEarth.state   ? "1" : "0") +
-								(chkLocless.state ? "1" : "0") +
-								(chkMega.state    ? "1" : "0") +
-								(chkCustom.state  ? "1" : "0") +
-								(chkParking.state ? "1" : "0") +
-								(chkStage.state   ? "1" : "0") +
-								(chkQuestion.state? "1" : "0") +
-								(chkFinal.state   ? "1" : "0") +
-								(chkTrailhead.state ? "1" : "0") +
-								(chkReference.state ? "1" : "0")+
-								(chkCito.state ? "1" : "0")+
-								(chkWherigo.state ? "1" : "0"));
-				pfl.setFilterRose((chkNW.state  ? "1":"0")+
-							 (chkNNW.state ? "1":"0")+
-							 (chkN.state   ? "1":"0")+
-							 (chkNNE.state ? "1":"0")+
-							 (chkNE.state  ? "1":"0")+
-							 (chkENE.state ? "1":"0")+
-							 (chkE.state   ? "1":"0")+
-							 (chkESE.state ? "1":"0")+
-							 (chkSE.state  ? "1":"0")+
-							 (chkSSE.state ? "1":"0")+
-							 (chkS.state   ? "1":"0")+
-							 (chkSSW.state ? "1":"0")+
-							 (chkSW.state  ? "1":"0")+
-							 (chkWSW.state ? "1":"0")+
-							 (chkW.state   ? "1":"0")+
-							 (chkWNW.state ? "1":"0"));
-				pfl.setFilterSize((chkMicro.state ? "1" : "0")+
-							(chkSmall.state ? "1" : "0")+
-							(chkRegular.state ? "1" : "0")+
-							(chkLarge.state ? "1" : "0")+
-							(chkVeryLarge.state ? "1" : "0")+
-							(chkOther.state ? "1" : "0"));
-				
-				// Distance: If Metric system is set to imperial units,
-				//           then the entered value is meant to be miles,
-				//           otherwise it's kilometer.
-				double distValue = java.lang.Double.NaN;
-				String rawDistance = inpDist.getText().replace(',', '.');
-				String newDistance = rawDistance; // initial Value;
-				if (! rawDistance.trim().equals("")) {
-					distValue = java.lang.Double.valueOf(rawDistance).doubleValue();
-					if (Global.getPref().metricSystem == Metrics.IMPERIAL){
-						newDistance = String.valueOf(Metrics.convertUnit(distValue, Metrics.MILES, Metrics.KILOMETER));
-					}
-				}
-				if(chcDist.selectedIndex == 0) { 
-					pfl.setFilterDist("L"+newDistance);
-				} else { 
-					pfl.setFilterDist("G"+newDistance);
-				}
-					
-				if(chcDiff.selectedIndex == 0) { 
-					pfl.setFilterDiff("L"+inpDiff.getText());
-				} else if(chcDiff.selectedIndex == 1) { 
-					pfl.setFilterDiff("="+inpDiff.getText());
-				} else {	
-					pfl.setFilterDiff("G"+inpDiff.getText());
-				}	
-					
-				if(chcTerr.selectedIndex == 0) { 
-					pfl.setFilterTerr("L"+inpTerr.getText());
-				} else if(chcTerr.selectedIndex == 1){ 
-					pfl.setFilterTerr("="+inpTerr.getText());
-				} else { 
-					pfl.setFilterTerr("G"+inpTerr.getText());
-				}
-				pfl.setFilterAttrYes(attV.selectionMaskYes);
-				pfl.setFilterAttrNo(attV.selectionMaskNo);
-				pfl.setFilterAttrChoice(chcAttrib.selectedIndex);
-				pfl.setFilterStatus(chcStatus.getText());
-				pfl.setFilterUseRegexp(chkUseRegexp.getState());
-				// FIXME Das geht bestimmt auch über Filter-Objekte
+
+				FilterData data = getDataFromScreen();
+				Global.getProfile().setCurrentFilter(data);
+
 				Filter flt = new Filter();
 				flt.setFilter();
 				flt.doFilter();
+				if (savedFiltersChanged) {
+					Global.getPref().savePreferences();
+					savedFiltersChanged = false;
+				}
 				Global.mainTab.tbP.tc.scrollToVisible(0,0);
 				Vm.showWait(false);
-				//Tabelle neu zeichnen lassen!
 				this.close(0);
+			} else if (ev.target == btnSaveFlt) {
+				String ID = fltList.getText();
+				FilterData data = getDataFromScreen();
+				MessageBox mBox;
+				if (ID.equals("")) {
+					mBox = new MessageBox(MyLocale.getMsg(221,"No filter name"), MyLocale.getMsg(222,"Please enter a name for the filter") , FormBase.IDOK);
+					mBox.execute();
+				} else if (Global.getPref().hasFilter(ID)) {
+					mBox = new MessageBox(MyLocale.getMsg(221,"Overwrite Filter?"), MyLocale.getMsg(222,"The filter already exists. Overwrite it?") , FormBase.IDYES |FormBase.IDNO);
+					if (mBox.execute() == FormBase.IDYES){
+						Global.getPref().addFilter(ID, data);
+						savedFiltersChanged = true;
+					}	
+				} else {
+					Global.getPref().addFilter(ID, data);
+					savedFiltersChanged = true;
+				}	
+				buildFilterList();
+			} else if (ev.target == btnDelFlt) {
+				String ID = fltList.getText();
+				if (!ID.equals("")) {
+					FilterData data = Global.getPref().getFilter(ID);
+					// We only need to delete anything, if there is already a filter of the id
+					// in the list box. If not, just delete the text in the box.
+					if (data != null) {
+						MessageBox mBox = new MessageBox(MyLocale.getMsg(223,"Delete filter?"), ID+MyLocale.getMsg(224," - Delete this filter?") , FormBase.IDYES |FormBase.IDNO);
+						if (mBox.execute() == FormBase.IDYES){
+							Global.getPref().removeFilter(ID);
+							fltList.setText("");
+							savedFiltersChanged = true;
+							this.buildFilterList();
+						}							
+					} else {
+						fltList.setText("");
+					}
+				}
 			} else if (ev.target == addiWptChk) { // Set all addi filters to value of main addi filter
 				chkParking.setState(addiWptChk.state);
 				chkStage.setState(addiWptChk.state);
@@ -721,9 +702,131 @@ public class FilterScreen extends Form{
 			}
 		}
 		if (ev instanceof DataChangeEvent )	{ 
+			if (ev.target == fltList) {
+				if (!currentFilterID.equals(fltList.getText())) {
+					FilterData data = Global.getPref().getFilter(fltList.getText());
+					if (data!=null) {
+						currentFilterID = fltList.getText();
+						this.setData(data);
+						this.repaintNow();
+					}
+				}
+//				Vm.debug("Event: "+ev.toString()+"; Target: "+ev.target+"; Liste: "+fltList.getText()+
+//						" (alt: "+fltList.oldText+")");
+				//setColors();
+			}
 			setColors();
 		}
 
 	}
+	
+	/**
+	 * Populating the list of available filters in the comboBox from memory, so that the comboBox
+	 * reflects the filters that are currenty in memory.
+	 */
+	private void buildFilterList() {
+		while (fltList.choice.itemsSize()>0) {
+			fltList.choice.deleteItem(0);
+		}
+		fltList.choice.addItems(Global.getPref().getFilterIDs());
+		fltList.choice.updateItems();
+	}
+	
+	/**
+     * Examines the filter screen and creates a FilterData object that represents the data
+     * entered in the screen.
+     */
+    private FilterData getDataFromScreen() {
+    	FilterData data = new FilterData();
+    	data.setFilterVar((chkArchived.state    ? "1" : "0") +
+	    			(chkAvailable.state   ? "1" : "0") +
+	    			(chkFound.state       ? "1" : "0") +
+	    			(chkOwned.state       ? "1" : "0") +
+	    			(chkNotArchived.state ? "1" : "0") +
+	    			(chkNotAvailable.state? "1" : "0") +
+	    			(chkNotFound.state    ? "1" : "0") +
+	    			(chkNotOwned.state    ? "1" : "0"));							
+	    data.setFilterType((chkTrad.state    ? "1" : "0") +
+	    				(chkMulti.state   ? "1" : "0") +
+	    				(chkVirtual.state ? "1" : "0") +
+	    				(chkLetter.state  ? "1" : "0") +
+	    				(chkEvent.state   ? "1" : "0") + 
+	    				(chkWebcam.state  ? "1" : "0") +
+	    				(chkMystery.state ? "1" : "0") +
+	    				(chkEarth.state   ? "1" : "0") +
+	    				(chkLocless.state ? "1" : "0") +
+	    				(chkMega.state    ? "1" : "0") +
+	    				(chkCustom.state  ? "1" : "0") +
+	    				(chkParking.state ? "1" : "0") +
+	    				(chkStage.state   ? "1" : "0") +
+	    				(chkQuestion.state? "1" : "0") +
+	    				(chkFinal.state   ? "1" : "0") +
+	    				(chkTrailhead.state ? "1" : "0") +
+	    				(chkReference.state ? "1" : "0")+
+	    				(chkCito.state ? "1" : "0")+
+	    				(chkWherigo.state ? "1" : "0"));
+	    data.setFilterRose((chkNW.state  ? "1":"0")+
+	    			 (chkNNW.state ? "1":"0")+
+	    			 (chkN.state   ? "1":"0")+
+	    			 (chkNNE.state ? "1":"0")+
+	    			 (chkNE.state  ? "1":"0")+
+	    			 (chkENE.state ? "1":"0")+
+	    			 (chkE.state   ? "1":"0")+
+	    			 (chkESE.state ? "1":"0")+
+	    			 (chkSE.state  ? "1":"0")+
+	    			 (chkSSE.state ? "1":"0")+
+	    			 (chkS.state   ? "1":"0")+
+	    			 (chkSSW.state ? "1":"0")+
+	    			 (chkSW.state  ? "1":"0")+
+	    			 (chkWSW.state ? "1":"0")+
+	    			 (chkW.state   ? "1":"0")+
+	    			 (chkWNW.state ? "1":"0"));
+	    data.setFilterSize((chkMicro.state ? "1" : "0")+
+	    			(chkSmall.state ? "1" : "0")+
+	    			(chkRegular.state ? "1" : "0")+
+	    			(chkLarge.state ? "1" : "0")+
+	    			(chkVeryLarge.state ? "1" : "0")+
+	    			(chkOther.state ? "1" : "0"));
+	    
+	    // Distance: If Metric system is set to imperial units,
+	    //           then the entered value is meant to be miles,
+	    //           otherwise it's kilometer.
+	    double distValue = java.lang.Double.NaN;
+	    String rawDistance = inpDist.getText().replace(',', '.');
+	    String newDistance = rawDistance; // initial Value;
+	    if (! rawDistance.trim().equals("")) {
+	    	distValue = java.lang.Double.valueOf(rawDistance).doubleValue();
+	    	if (Global.getPref().metricSystem == Metrics.IMPERIAL){
+	    		newDistance = String.valueOf(Metrics.convertUnit(distValue, Metrics.MILES, Metrics.KILOMETER));
+	    	}
+	    }
+	    if(chcDist.selectedIndex == 0) { 
+	    	data.setFilterDist("L"+newDistance);
+	    } else { 
+	    	data.setFilterDist("G"+newDistance);
+	    }
+	    	
+	    if(chcDiff.selectedIndex == 0) { 
+	    	data.setFilterDiff("L"+inpDiff.getText());
+	    } else if(chcDiff.selectedIndex == 1) { 
+	    	data.setFilterDiff("="+inpDiff.getText());
+	    } else {	
+	    	data.setFilterDiff("G"+inpDiff.getText());
+	    }	
+	    	
+	    if(chcTerr.selectedIndex == 0) { 
+	    	data.setFilterTerr("L"+inpTerr.getText());
+	    } else if(chcTerr.selectedIndex == 1){ 
+	    	data.setFilterTerr("="+inpTerr.getText());
+	    } else { 
+	    	data.setFilterTerr("G"+inpTerr.getText());
+	    }
+	    data.setFilterAttrYes(attV.selectionMaskYes);
+	    data.setFilterAttrNo(attV.selectionMaskNo);
+	    data.setFilterAttrChoice(chcAttrib.selectedIndex);
+	    data.setFilterStatus(chcStatus.getText());
+	    data.setUseRegexp(chkUseRegexp.getState());
+	    return data;
+    }
 
 }

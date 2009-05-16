@@ -1,5 +1,10 @@
 package CacheWolf;
 
+/**
+ * This class represents the settings of the filter that can be done when the users changes the
+ * filter in CacheWolf.
+ *
+ */
 public class FilterData {
 
 	// When extending the filter check "normaliseFilters"
@@ -22,7 +27,8 @@ public class FilterData {
 	private long filterAttrYes = 0l;
 	private long filterAttrNo = 0l;
 	private int filterAttrChoice = 0;
-	
+
+	// filter setting for state of cache
 	private String filterStatus = "";
 	private boolean useRegexp = false;
 
@@ -33,12 +39,30 @@ public class FilterData {
 	public FilterData(){ // public constructor
 	}
 
-
+	/**
+	 * Returns an XML representation of the filter data. If a non empty String is passed as
+	 * parameter, then this String is used as ID-tag for the filter. If it is empty, then the ID
+	 * tag will not appear in the cache data. The ID tag is the string which is used in the filter
+	 * screen to appear in the filter list.
+	 * @param ID ID tag of filter 
+	 * @return XML represenation of filter
+	 */
+	public String toXML(String ID) {
+		String saveID="";
+		if (ID != null && ! ID.equals("")) {
+			saveID = "id = \""+SafeXML.strxmlencode(ID)+"\" ";
+		}
+	    return "    <FILTERDATA "+saveID+"rose = \""+getFilterRose()+"\" type = \""+getFilterType()+
+		"\" var = \""+getFilterVar()+"\" dist = \""+getFilterDist().replace('"',' ')+"\" diff = \""+
+		getFilterDiff()+"\" terr = \""+getFilterTerr()+"\" size = \""+getFilterSize()+"\" attributesYes = \""+getFilterAttrYes()+
+		"\" attributesNo = \""+getFilterAttrNo()+"\" attributesChoice = \""+getFilterAttrChoice()+
+		"\" status = \""+SafeXML.strxmlencode(getFilterStatus())+"\" useRegexp = \""+useRegexp()+"\" />\n";	
+	}
 	/**
 	 * Ensure that all filters have the proper length so that the 'charAt' access in the filter do
 	 * not cause nullPointer Exceptions
 	 */
-	private void normaliseFilters() {
+	public void normaliseFilters() {
 		String manyOnes = "11111111111111111111111111111";
 		if (getFilterRose().length() < FILTERROSE.length()) {
 			setFilterRose((getFilterRose() + manyOnes).substring(0, FILTERROSE.length()));
@@ -67,22 +91,14 @@ public class FilterData {
 	}
 
 	public void setFilterType(String filterType) {
-		this.notifyUnsavedChanges(!filterType.equals(this.filterType));
 		this.filterType = filterType;
 	}
-
-	private void notifyUnsavedChanges(boolean b) {
-	    // TODO Auto-generated method stub
-	    
-    }
-
 
 	public String getFilterRose() {
 		return filterRose;
 	}
 
 	public void setFilterRose(String filterRose) {
-		this.notifyUnsavedChanges(!filterRose.equals(this.filterRose));
 		this.filterRose = filterRose;
 	}
 
@@ -91,7 +107,6 @@ public class FilterData {
 	}
 
 	public void setFilterSize(String filterSize) {
-		this.notifyUnsavedChanges(!filterSize.equals(this.filterSize));
 		this.filterSize = filterSize;
 	}
 
@@ -100,7 +115,6 @@ public class FilterData {
 	}
 
 	public void setFilterVar(String filterVar) {
-		this.notifyUnsavedChanges(!filterVar.equals(this.filterVar));
 		this.filterVar = filterVar;
 	}
 
@@ -109,7 +123,6 @@ public class FilterData {
 	}
 
 	public void setFilterDist(String filterDist) {
-		this.notifyUnsavedChanges(!filterDist.equals(this.filterDist));
 		this.filterDist = filterDist;
 	}
 
@@ -118,7 +131,6 @@ public class FilterData {
 	}
 
 	public void setFilterDiff(String filterDiff) {
-		this.notifyUnsavedChanges(!filterDiff.equals(this.filterDiff));
 		this.filterDiff = filterDiff;
 	}
 
@@ -127,7 +139,6 @@ public class FilterData {
 	}
 
 	public void setFilterTerr(String filterTerr) {
-		this.notifyUnsavedChanges(!filterTerr.equals(this.filterTerr));
 		this.filterTerr = filterTerr;
 	}
 
@@ -136,7 +147,6 @@ public class FilterData {
 	}
 
 	public void setFilterAttrYes(long filterAttrYes) {
-		this.notifyUnsavedChanges(filterAttrYes != this.filterAttrYes);
 		this.filterAttrYes = filterAttrYes;
 	}
 
@@ -145,7 +155,6 @@ public class FilterData {
 	}
 
 	public void setFilterAttrNo(long filterAttrNo) {
-		this.notifyUnsavedChanges(filterAttrNo != this.filterAttrNo);
 		this.filterAttrNo = filterAttrNo;
 	}
 
@@ -154,25 +163,20 @@ public class FilterData {
 	}
 
 	public void setFilterAttrChoice(int filterAttrChoice) {
-		this.notifyUnsavedChanges(filterAttrChoice != this.filterAttrChoice);
 		this.filterAttrChoice = filterAttrChoice;
 	}
-
 
 	public String getFilterStatus() {
     	return filterStatus;
     }
 
-
 	public void setFilterStatus(String filterStatus) {
     	this.filterStatus = filterStatus;
     }
 
-
 	public boolean useRegexp() {
     	return useRegexp;
     }
-
 
 	public void setUseRegexp(boolean useRegexp) {
     	this.useRegexp = useRegexp;
