@@ -4,6 +4,8 @@ package CacheWolf;
  * Handels all aspects of converting cache type information from
  * and to the various im- and exporters as well as for converting
  * legavy profiles to current standard
+ * 
+ * Do not instantiate this class, only use it in a static way
  */
 public final class CacheType {
 	
@@ -57,7 +59,7 @@ public final class CacheType {
 	public static final byte CW_TYPE_MAZE = 103;
 	/** Earth Cache (GC) */
 	public static final byte CW_TYPE_EARTH = 104;
-	/** unparsable cache type or missing information, should throw IllegalArgumentExceptions when found */
+	/** unrecognized cache type or missing information, should throw IllegalArgumentExceptions when found */
 	public static final byte CW_TYPE_ERROR = -1;
 	
 	/** image for custom waypoints */
@@ -150,26 +152,46 @@ public final class CacheType {
 	/** GUI string for custom waypoit */
 	public static final String CW_GUISTR_REFERENCE = "Addi: Reference";
 	
+	/** GPX identifier for Traditional caches */
 	public static final String GC_GPX_TRADITIONAL = "Traditional Cache";
+	/** GPX identifier for Multi caches */
 	public static final String GC_GPX_MULTI = "Multi-cache";
+	/** GPX identifier for virtual caches */
 	public static final String GC_GPX_VIRTUAL = "Virtual Cache";
+	/** GPX identifier for Letterbox hybrids */
 	public static final String GC_GPX_LETTERBOX = "Letterbox Hybrid";
+	/** GPX identifier for Event caches */
 	public static final String GC_GPX_EVENT = "Event Cache";
+	/** GPX identifier for Unknown or Mystery caches */ 
 	public static final String GC_GPX_UNKNOWN = "Unknown Cache";
+	/** GPX identifier for Webcam caches */
 	public static final String GC_GPX_WEBCAM = "Webcam Cache";
+	/** GPX identifier for Locationless caches */
 	public static final String GC_GPX_LOCATIONLESS = "Locationless (Reverse) Cache";
+	/** GPX identifier for CITO events */
 	public static final String GC_GPX_CITO = "Cache In Trash Out Event";
+	/** GPX identifier for Earth caches */
 	public static final String GC_GPX_EARTH = "Earthcache";
+	/** GPX identifier for Mega Events */
 	public static final String GC_GPX_MEGA_EVENT = "Mega-Event Cache";
+	/** GPX identifier for WhereIGo caches */
 	public static final String GC_GPX_WHEREIGO = "Wherigo Cache";
+	/** GPX identifier for additional waypoint Parking */
 	public static final String GC_GPX_PARKING = "Waypoint|Parking Area";
+	/** GPX identifier for additional waypoint Stage */
 	public static final String GC_GPX_STAGE = "Waypoint|Stages of a Multicache";
+	/** GPX identifier for additional waypoint QTA */
 	public static final String GC_GPX_QUESTION = "Waypoint|Question to Answer";
+	/** GPX identifier for additional waypoint Final */
 	public static final String GC_GPX_FINAL = "Waypoint|Final Coordinates";
+	/** GPX identifier for additional waypoint Trailhead */
 	public static final String GC_GPX_TRAILHEAD = "Waypoint|Trailhead";
+	/** GPX identifier for additional waypoint Reference Point */
 	public static final String GC_GPX_REFERENCE = "Waypoint|Reference Point";
-	public static final String GC_GPX_MAZE = "FIXME"; //FIXME: insert right string
-	public static final String GC_GPX_APE = "FIXME"; //FIXME: insert right string
+	/** GPX identifier for additional waypoint Adventure Maze Exhibit Events */
+	public static final String GC_GPX_MAZE = "GPS Adventures Exhibit"; 
+	/** GPX identifier for additional waypoint Project Ape caches */
+	public static final String GC_GPX_APE = "Project APE Cache"; 
 	
 	/**  constructor does nothing */
 	public CacheType() {
@@ -177,20 +199,10 @@ public final class CacheType {
 	}
 	
 	/**
-	 * 
-	 * @param id
-	 * @return
-	 * @throws IllegalArgumentException
-	 */
-	public static int cwTypeId2GuiTypeId(byte id) throws IllegalArgumentException {
-		throw new IllegalArgumentException("unmatched argument "+id+" in CacheSizeNew cwTypeId2GuiTypeId()");
-	}
-	
-	/**
-	 * 
-	 * @param type
-	 * @return
-	 * @throws IllegalArgumentException
+	 * translate cache type to a short version for compact exporters or "smart" cache names. 
+	 * @param type CacheWolf internal type information
+	 * @return abbreviation of cache type
+	 * @throws IllegalArgumentException if <code>type</code> can not be mapped
 	 */
 	public static String getExportShortId(byte type) throws IllegalArgumentException {
 		switch (type){
@@ -220,10 +232,10 @@ public final class CacheType {
 	}
 	
 	/**
-	 * 
-	 * @param type
-	 * @return
-	 * @throws IllegalArgumentException if size can not be mapped to internal representation
+	 * convert version1 type information to current values
+	 * @param type version1 cache type information
+	 * @return current version cache type information
+	 * @throws IllegalArgumentException if <code>size</code> can not be mapped to internal representation
 	 * @deprecated remove once v1 file version compatibility is abandoned
 	 */
 	public static final byte v1Converter(String type) throws IllegalArgumentException  {
@@ -257,10 +269,10 @@ public final class CacheType {
 	}
 
 	/**
-	 * 
-	 * @param type
-	 * @return
-	 * @throws IllegalArgumentException if size can not be mapped to internal representation
+	 * convert version1 type information to current values
+	 * @param type version2 cache type information
+	 * @return current version cache type information
+	 * @throws IllegalArgumentException if <code>size</code> can not be mapped to internal representation
 	 * @deprecated remove once v2 file version compatibility is abandoned
 	 */
 	public static final byte v2Converter(byte type) throws IllegalArgumentException  {
@@ -272,7 +284,7 @@ public final class CacheType {
 	/**
 	 * check if a given waypoint type is an additional waypoint
 	 * @param type waypoint type to check 
-	 * @return true if it is an addition waypint, false otherwise
+	 * @return true if it is an additional waypint, false otherwise
 	 */
 	public static final boolean isAddiWpt(byte type) {
 		switch (type) {
@@ -288,9 +300,12 @@ public final class CacheType {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * create list of cache types to be shown in GUI drop down lists
+	 * @return list of cache types to be shown in GUI drop down list
+	 * @see guiSelect2Cw
+	 * @see cw2GuiSelect
 	 */
+	//TODO: move to a class "closer" to the gui?
 	public static final String[] guiTypeStrings() {
 		String ret[] = new String[] {
 				CW_GUISTR_CUSTOM,
@@ -317,13 +332,16 @@ public final class CacheType {
 	}
 	
 	/**
-	 * 
-	 * @param selection
-	 * @return
-	 * @throws IllegalArgumentException
+	 * translate GUI drop down index selection back to internally stored type
+	 * @param selection index value from drop down list
+	 * @return internal type
+	 * @throws IllegalArgumentException if <code>selection</code> can not be matched
+	 * @see guiTypeStrings
+	 * @see cw2GuiSelect
 	 */
+	//TODO: move to a class "closer" to the gui?
 	public static final byte guiSelect2Cw(int selection) throws IllegalArgumentException {
-		// make sure to refelect the order of guiTypeStrings()
+		// make sure to reflect the order of guiTypeStrings()
 		switch (selection) {
 		case  0: return CW_TYPE_CUSTOM;
 		case  1: return CW_TYPE_TRADITIONAL;
@@ -348,18 +366,27 @@ public final class CacheType {
 		}
 	}
 	
+	/**
+	 * translate cache type to position of index to highlight in GUI cache type drop down list 
+	 * @param id internal id of cache type
+	 * @return index of the cache type in GUI list
+	 * @throws IllegalArgumentException if <code>id</code> can not be matched
+	 * @see guiTypeStrings
+	 * @see guiSelect2Cw
+	 */
+	//TODO: move to a class "closer" to the gui?
 	public static final int cw2GuiSelect(byte id) throws IllegalArgumentException {
 		switch (id) {
-		case  CW_TYPE_CUSTOM: return 0;
-		case  CW_TYPE_TRADITIONAL: return 1;
-		case  CW_TYPE_MULTI: return 2;
-		case  CW_TYPE_VIRTUAL: return 3;
-		case  CW_TYPE_LETTERBOX: return 4;
-		case  CW_TYPE_EVENT: return 5;
-		case  CW_TYPE_MEGA_EVENT: return 6;
-		case  CW_TYPE_WEBCAM: return 7;
-		case  CW_TYPE_UNKNOWN: return 8;
-		case  CW_TYPE_LOCATIONLESS: return 9;
+		case CW_TYPE_CUSTOM: return 0;
+		case CW_TYPE_TRADITIONAL: return 1;
+		case CW_TYPE_MULTI: return 2;
+		case CW_TYPE_VIRTUAL: return 3;
+		case CW_TYPE_LETTERBOX: return 4;
+		case CW_TYPE_EVENT: return 5;
+		case CW_TYPE_MEGA_EVENT: return 6;
+		case CW_TYPE_WEBCAM: return 7;
+		case CW_TYPE_UNKNOWN: return 8;
+		case CW_TYPE_LOCATIONLESS: return 9;
 		case CW_TYPE_CITO: return 10;
 		case CW_TYPE_EARTH: return 11;
 		case CW_TYPE_WHEREIGO: return 12;
@@ -374,14 +401,12 @@ public final class CacheType {
 	}
 	
 	/**
-	 * 
-	 * @param gpxType
-	 * @return
-	 * @throws IllegalArgumentException
+	 * convert the strings found in import of GPX from GC, OC or TC to internal cache type 
+	 * @param gpxType type information found in GPX
+	 * @return internal cache type
+	 * @throws IllegalArgumentException if <code>gpxType</code> can not be matched
 	 */
 	public static final byte gpxType2CwType(String gpxType) throws IllegalArgumentException {
-		// TODO: add ape
-		// TODO: add maze
 		if (gpxType.equals(GC_GPX_TRADITIONAL) || gpxType.equals("Traditional")|| gpxType.equals("Classic")) return CW_TYPE_TRADITIONAL;
 		if (gpxType.equals(GC_GPX_MULTI) || gpxType.equals("Multi") || gpxType.equals("Offset")) return CW_TYPE_MULTI;
 		if (gpxType.equals(GC_GPX_VIRTUAL) || gpxType.equals("Virtual")) return CW_TYPE_VIRTUAL;
@@ -406,10 +431,10 @@ public final class CacheType {
 	}
 	
 	/**
-	 * 
-	 * @param ocType
-	 * @return
-	 * @throws IllegalArgumentException
+	 * convert the cache type information from an OC XML import to internal cache type
+	 * @param ocType cache type found in OC XML
+	 * @return internal cache type
+	 * @throws IllegalArgumentException if <code>ocType</code> can not be macthed
 	 */
 	public static final byte ocType2CwType(String ocType) throws IllegalArgumentException {
 		if(ocType.equals("1")) return CW_TYPE_UNKNOWN;
@@ -426,10 +451,10 @@ public final class CacheType {
 	}
 	
 	/**
-	 * 
-	 * @param gcType
-	 * @return
-	 * @throws IllegalArgumentException
+	 * convert type information discovered by GC spider to internal type information
+	 * @param gcType type information from GC spider
+	 * @return internal representation of cache type
+	 * @throws IllegalArgumentException if <code>gcType</code> can not be matched
 	 */
 	public static final byte gcSpider2CwType(String gcType) throws IllegalArgumentException {
 		if (gcType.equals("2")) { return CW_TYPE_TRADITIONAL; }
@@ -444,16 +469,16 @@ public final class CacheType {
 		if (gcType.equals("13")) { return CW_TYPE_CITO; }
 		if (gcType.equals("137")) { return CW_TYPE_EARTH; }
 		if (gcType.equals("453")) { return CW_TYPE_MEGA_EVENT; }
-		if (gcType.equals("1858")) { return CW_TYPE_WHEREIGO; }
 		if (gcType.equals("1304")) { return CW_TYPE_MAZE; }
+		if (gcType.equals("1858")) { return CW_TYPE_WHEREIGO; }
 		throw new IllegalArgumentException("unmatched argument "+gcType+" in CacheSize gcSpider2CwType()");
 	}
 	
 	/**
-	 * 
-	 * @param id
-	 * @return
-	 * @throws IllegalArgumentException
+	 * map cache types to images
+	 * @param id internal cache type id
+	 * @return non qualified name of image
+	 * @throws IllegalArgumentException if <code>id</code> can not be matched
 	 */
 	public static final String typeImageForId(byte id) throws IllegalArgumentException {
 		switch (id) {
@@ -482,6 +507,12 @@ public final class CacheType {
 		}
 	}
 	
+	/**
+	 * generate type description matching those of GC for GPX export
+	 * @param id internal type id
+	 * @return type information in GC.com GPX format 
+	 * @throws IllegalArgumentException
+	 */
 	public static final String id2GpxString(byte id) throws IllegalArgumentException {
 		switch (id) {
 		case CW_TYPE_TRADITIONAL: return GC_GPX_TRADITIONAL;
@@ -509,7 +540,14 @@ public final class CacheType {
 		
 	}
 	
-	//TODO: de we actually need this one
+	//TODO: do we actually need this one
+	
+	/**
+	 * generate human readable type description for exporters
+	 * @param id internal type id
+	 * @return human readable description of waypoint type for exporters  
+	 * @throws IllegalArgumentException if <code>id</code> is not a valid cache type
+	 */
 	public static final String cw2ExportString(byte id) throws IllegalArgumentException {
 		String ret;
 		try {
@@ -524,7 +562,4 @@ public final class CacheType {
 		}
 		return ret;
 	}
-	
-	// cache to image
-	
 }

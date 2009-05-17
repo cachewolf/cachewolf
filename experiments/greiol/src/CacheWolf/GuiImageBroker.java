@@ -3,7 +3,9 @@ package CacheWolf;
 import ewe.fx.Image;
 
 /**
- * hold preloaded versions of gui images in a single place
+ * hold preloaded versions of GUI images in a single place
+ * 
+ * Do not instantiate this class, only use it in a static way.
  */
 
 public final class GuiImageBroker {
@@ -11,7 +13,7 @@ public final class GuiImageBroker {
 	// TODO: check with Image an mImage
 	
 	/**
-	 * 
+	 * images to be displayed for cache types in GUI
 	 * @see getTypeImage
 	 * @see CacheTypes
 	 */
@@ -40,14 +42,21 @@ public final class GuiImageBroker {
 		new Image(CacheType.CW_GUISTR_WHEREIGO)		// 21
 	};
 	
+	// TODO: move size images here
 	private static final Image[] sizeImages = {
 		
 	};
 
+	/** constructor does nothing */
 	public GuiImageBroker() {
-		// TODO Auto-generated constructor stub
 	}
 	
+	/**
+	 * select image to be displayed for a given cache type
+	 * @param id internal cache type id
+	 * @return <code>Image</code> object to be displayed
+	 * @throws IllegalArgumentException if <code>id</code> has no associated image
+	 */
 	public static Image getTypeImage(byte id) throws IllegalArgumentException {
 		switch (id) {
 		case CacheType.CW_TYPE_CUSTOM: return typeImages[0];
