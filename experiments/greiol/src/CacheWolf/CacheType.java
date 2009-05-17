@@ -245,14 +245,9 @@ public final class CacheType {
 		if (type.equals("4")) return CW_TYPE_VIRTUAL;
 		if (type.equals("5")) return CW_TYPE_LETTERBOX;
 		if (type.equals("6")) return CW_TYPE_EVENT;
-		if (type.equals("")) return CW_TYPE_QUIZ;
 		if (type.equals("8")) return CW_TYPE_UNKNOWN;
-		if (type.equals("")) return CW_TYPE_MATH;
-		if (type.equals("")) return CW_TYPE_MOVING;
-		if (type.equals("")) return CW_TYPE_DRIVE_IN;
 		if (type.equals("11")) return CW_TYPE_WEBCAM;
 		if (type.equals("12")) return CW_TYPE_LOCATIONLESS;
-		if (type.equals("")) return CW_TYPE_CITO;
 		if (type.equals("50")) return CW_TYPE_PARKING;
 		if (type.equals("51")) return CW_TYPE_STAGE;
 		if (type.equals("52")) return CW_TYPE_QUESTION;
@@ -261,8 +256,6 @@ public final class CacheType {
 		if (type.equals("55")) return CW_TYPE_REFERENCE;
 		if (type.equals("453")) return CW_TYPE_MEGA_EVENT;
 		if (type.equals("1858")) return CW_TYPE_WHEREIGO;
-		if (type.equals("")) return CW_TYPE_APE;
-		if (type.equals("")) return CW_TYPE_MAZE;
 		if (type.equals("137")) return CW_TYPE_EARTH;
 		
 		throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew v1Converter()");
@@ -277,6 +270,28 @@ public final class CacheType {
 	 */
 	public static final byte v2Converter(byte type) throws IllegalArgumentException  {
 		switch (type) {
+		case -128: return CW_TYPE_CUSTOM;
+		case -126: return CW_TYPE_TRADITIONAL;
+		case -125: return CW_TYPE_MULTI;
+		case -124: return CW_TYPE_VIRTUAL;
+		case -123: return CW_TYPE_LETTERBOX;
+		case -122: return CW_TYPE_EVENT;
+		case -121: return CW_TYPE_QUIZ;
+		case -120: return CW_TYPE_UNKNOWN;
+		case -119: return CW_TYPE_MOVING;
+		case -118: return CW_TYPE_DRIVE_IN;
+		case -117: return CW_TYPE_WEBCAM;
+		case -116: return CW_TYPE_LOCATIONLESS;
+		case -115: return CW_TYPE_CITO;
+		case -78: return CW_TYPE_PARKING;
+		case -77: return CW_TYPE_STAGE;
+		case -76: return CW_TYPE_QUESTION;
+		case -75: return CW_TYPE_FINAL;
+		case -74: return CW_TYPE_TRAILHEAD;
+		case -73: return CW_TYPE_REFERENCE;
+		case 101: return CW_TYPE_MEGA_EVENT;
+		case 100: return CW_TYPE_WHEREIGO;
+		case 9: return CW_TYPE_EARTH;
 		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew v2Converter()");
 		}
 	}
@@ -541,7 +556,6 @@ public final class CacheType {
 	}
 	
 	//TODO: do we actually need this one
-	
 	/**
 	 * generate human readable type description for exporters
 	 * @param id internal type id
