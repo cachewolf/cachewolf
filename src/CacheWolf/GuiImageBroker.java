@@ -39,7 +39,7 @@ public final class GuiImageBroker {
 		new Image(CacheType.CW_GUIIMG_UNKNOWN),		// 18
 		new Image(CacheType.CW_GUIIMG_VIRTUAL),		// 19
 		new Image(CacheType.CW_GUIIMG_WEBCAM),		// 20
-		new Image(CacheType.CW_GUISTR_WHEREIGO)		// 21
+		new Image(CacheType.CW_GUIIMG_WHEREIGO)		// 21
 	};
 	
 	// TODO: move size images here
