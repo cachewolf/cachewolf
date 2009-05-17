@@ -411,7 +411,7 @@ public class Exporter {
 
     public static String getShortDetails( CacheHolder ch ) {
     	StringBuffer strBuf = new StringBuffer(7);
-    	strBuf.append(CacheType.shortType(ch.getType()).toLowerCase());			
+    	strBuf.append(CacheType.getExportShortId(ch.getType()).toLowerCase());			
     	if (!ch.isAddiWpt()) {
     		if ( (ch.getHard().length() > 0) && (ch.getTerrain().length() > 0) ) {
     			strBuf.append(ch.getHard().charAt(0));

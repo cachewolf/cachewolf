@@ -84,7 +84,7 @@ public class HTMLExporter{
 				if(	ch.isVisible()){
 					det=ch.getExistingDetails();
 					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.transType(ch.getType()));
+					varParams.put("TYPE", CacheType.cw2ExportString(ch.getType()));
 					varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 					varParams.put("WAYPOINT", ch.getWayPoint());
 					varParams.put("NAME", ch.getCacheName());
@@ -100,7 +100,7 @@ public class HTMLExporter{
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						page_tpl.setParam("TYPE", CacheType.transType(ch.getType()));
+						page_tpl.setParam("TYPE", CacheType.cw2ExportString(ch.getType()));
 						page_tpl.setParam("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 						page_tpl.setParam("WAYPOINT", ch.getWayPoint());
 						page_tpl.setParam("NAME", ch.getCacheName());
@@ -116,92 +116,120 @@ public class HTMLExporter{
 							page_tpl.setParam("DESCRIPTION", modifyLongDesc(det,targetDir));
 						else {
 							String dummyText = new String();
+							try {
 							dummyText = STRreplace.replace(det.LongDescription, "\n", "<br>");
+							} catch (NullPointerException e) {
+								dummyText = "CacheWolf Error: Missing Long Description";
+						}
 							page_tpl.setParam("DESCRIPTION",dummyText);
-							
 						}
-						page_tpl.setParam("HINTS", det.Hints);
-						page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(det.Hints));
+						try {
+							page_tpl.setParam("HINTS", det.Hints);
+						} catch (NullPointerException e) { 
+							page_tpl.setParam("HINTS", "CacheWolf Error: Hint information missing");
+						}
+						try {
+							page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(det.Hints));
+						} catch (NullPointerException e) { 
+							page_tpl.setParam("DECRYPTEDHINTS", Common.rot13("CacheWolf Error: Hint information missing"));
+						}
+						
 						StringBuffer sb=new StringBuffer(2000);
-						for(int j = 0; j<det.CacheLogs.size(); j++){
-							sb.append(STRreplace.replace(det.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
-							sb.append("<br>");
-							icon=det.CacheLogs.getLog(j).getIcon();
-							if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
-						}
-						page_tpl.setParam("LOGS", sb.toString());
-						page_tpl.setParam("NOTES", STRreplace.replace(det.getCacheNotes(), "\n","<br>")); 
+						try {
+							for(int j = 0; j<det.CacheLogs.size(); j++){
+								sb.append(STRreplace.replace(det.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
+								sb.append("<br>");
+								icon=det.CacheLogs.getLog(j).getIcon();
+								if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
+							}
+						} catch (Exception e) { Vm.debug("P "+e); } //TODO: find out what is going wrong and especially why
+						try {
+							page_tpl.setParam("LOGS", sb.toString());
+						} catch (Exception e) { Vm.debug("Q "+e); } //TODO: find out what is going wrong and especially why
+						try {
+							page_tpl.setParam("NOTES", STRreplace.replace(det.getCacheNotes(), "\n","<br>"));
+						} catch (Exception e) { Vm.debug("R "+e); } //TODO: find out what is going wrong and especially why
 						// Cache Images
-						cacheImg.clear();
-						for(int j = 0; j<det.Images.size(); j++){
-							imgParams = new Hashtable();
-							String imgFile = new String((String)det.Images.get(j));
-							imgParams.put("FILE", imgFile);
-							if (j < det.ImagesText.size())
-								imgParams.put("TEXT",det.ImagesText.get(j));
-							else
-								imgParams.put("TEXT",imgFile);
-							DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
-							cacheImg.add(imgParams);
-						}
-						page_tpl.setParam("cacheImg", cacheImg);
-						// Log images
-						logImg.clear();
-						for(int j = 0; j<det.LogImages.size(); j++){
-							logImgParams = new Hashtable();
-							String logImgFile = (String) det.LogImages.get(j);
-							logImgParams.put("FILE", logImgFile);
-							if (j < det.LogImagesText.size())
-								logImgParams.put("TEXT",det.LogImagesText.get(j));
-							else
-								logImgParams.put("TEXT",logImgFile);
-							DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
-							logImg.add(logImgParams);
-						}
-						page_tpl.setParam("logImg", logImg);
-						// User images
-						usrImg.clear();
-						for(int j = 0; j<det.UserImages.size(); j++){
-							usrImgParams = new Hashtable();
-							String usrImgFile = new String((String)det.UserImages.get(j));
-							usrImgParams.put("FILE", usrImgFile);
-							if (j < det.UserImagesText.size())
-								usrImgParams.put("TEXT",det.UserImagesText.get(j));
-							else
-								usrImgParams.put("TEXT",usrImgFile);
-							DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
-							usrImg.add(usrImgParams);
-						}
+						try {
+							cacheImg.clear();
+							for(int j = 0; j<det.Images.size(); j++){
+								imgParams = new Hashtable();
+								String imgFile = new String((String)det.Images.get(j));
+								imgParams.put("FILE", imgFile);
+								if (j < det.ImagesText.size())
+									imgParams.put("TEXT",det.ImagesText.get(j));
+								else
+									imgParams.put("TEXT",imgFile);
+								DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
+								cacheImg.add(imgParams);
+							}
+						} catch (Exception e) { Vm.debug("S "+e); } //TODO: find out what is going wrong and especially why
+						try {
+							page_tpl.setParam("cacheImg", cacheImg);
+							// Log images
+							logImg.clear();
+							for(int j = 0; j<det.LogImages.size(); j++){
+								logImgParams = new Hashtable();
+								String logImgFile = (String) det.LogImages.get(j);
+								logImgParams.put("FILE", logImgFile);
+								if (j < det.LogImagesText.size())
+									logImgParams.put("TEXT",det.LogImagesText.get(j));
+								else
+									logImgParams.put("TEXT",logImgFile);
+								DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
+								logImg.add(logImgParams);
+							}
+						} catch (Exception e) { Vm.debug("T "+e); } //TODO: find out what is going wrong and especially why
+						try {
+							page_tpl.setParam("logImg", logImg);
+							// User images
+							usrImg.clear();
+							for(int j = 0; j<det.UserImages.size(); j++){
+								usrImgParams = new Hashtable();
+								String usrImgFile = new String((String)det.UserImages.get(j));
+								usrImgParams.put("FILE", usrImgFile);
+								if (j < det.UserImagesText.size())
+									usrImgParams.put("TEXT",det.UserImagesText.get(j));
+								else
+									usrImgParams.put("TEXT",usrImgFile);
+								DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
+								usrImg.add(usrImgParams);
+							}
+						} catch (Exception e) { Vm.debug("U "+e); } //TODO: find out what is going wrong and especially why
+						
 						page_tpl.setParam("userImg", usrImg);
 
 						// Map images
 						mapImg.clear();
 						mapImgParams = new Hashtable();
+						
 						String mapImgFile = new String(ch.getWayPoint() + "_map.gif");
 						// check if map file exists
 						File test = new File(profile.dataDir + mapImgFile);
-						if (test.exists()) {
-							mapImgParams.put("FILE", mapImgFile);
-							mapImgParams.put("TEXT",mapImgFile);
-							DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
-							mapImg.add(mapImgParams);
-							
-							mapImgParams = new Hashtable();
-							mapImgFile = ch.getWayPoint() + "_map_2.gif";
-							mapImgParams.put("FILE", mapImgFile);
-							mapImgParams.put("TEXT",mapImgFile);
-							DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
-							mapImg.add(mapImgParams);
-	
-							page_tpl.setParam("mapImg", mapImg);
-						}
-
-						
-						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getWayPoint()+".html")));
-						pagefile.print(page_tpl.output());
-						pagefile.close();
+						try {
+							if (test.exists()) {
+								mapImgParams.put("FILE", mapImgFile);
+								mapImgParams.put("TEXT",mapImgFile);
+								DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
+								mapImg.add(mapImgParams);
+								
+								mapImgParams = new Hashtable();
+								mapImgFile = ch.getWayPoint() + "_map_2.gif";
+								mapImgParams.put("FILE", mapImgFile);
+								mapImgParams.put("TEXT",mapImgFile);
+								DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
+								mapImg.add(mapImgParams);
+		
+								page_tpl.setParam("mapImg", mapImg);
+							}
+						} catch (Exception e) { Vm.debug("V "+e); } //TODO: find out what is going wrong and especially why
+						try {
+							PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getWayPoint()+".html")));
+							pagefile.print(page_tpl.output());
+							pagefile.close();
+						} catch (Exception e) { Vm.debug("W "+e); }  //TODO: find out what is going wrong and especially why
 					}catch(Exception e){
-						Vm.debug("Problem writing waypoint html file");
+						Vm.debug("Problem writing waypoint html file"+e);
 					}
 				}//if is black, filtered
 			}

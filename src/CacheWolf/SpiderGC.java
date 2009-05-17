@@ -969,10 +969,10 @@ public class SpiderGC{
 	 * @param doc A previously fetched cachepage
 	 * @return the waypoint type (Tradi, Multi, etc.)
 	 */
-	private int getType(String doc) throws Exception{
+	private byte getType(String doc) throws Exception {
 		inRex = new Regex(p.getProp("cacheTypeRex"));
 		inRex.search(doc);
-		if(inRex.didMatch()) return new Integer(inRex.stringMatched(1)).intValue();
+		if(inRex.didMatch()) return CacheType.gcSpider2CwType(inRex.stringMatched(1));
 		else return 0;
 	}
 
@@ -982,7 +982,7 @@ public class SpiderGC{
 	 * @param chD Cache Details
 	 * @return A HTML string containing the logs
 	 */
-	private LogList getLogs(String doc, CacheHolderDetail chD) throws Exception{
+	private LogList getLogs(String doc, CacheHolderDetail chD) throws Exception {
 		String icon = "";
 		String name = "";
 		String logText = "";
@@ -1331,7 +1331,7 @@ public class SpiderGC{
 				typeRex.search(rowBlock);
 				hd.setCacheName(nameRex.stringMatched(1));
 				if(koordRex.didMatch()) hd.setLatLon(koordRex.stringMatched(1));
-				if(typeRex.didMatch()) hd.setType(CacheType.typeText2Number("Waypoint|"+typeRex.stringMatched(1)));
+				if(typeRex.didMatch()) hd.setType(CacheType.gpxType2CwType("Waypoint|"+typeRex.stringMatched(1)));
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
 				hd.getFreshDetails().setLongDescription(descRex.stringMatched(1));

@@ -65,9 +65,9 @@ public class ShowCacheInBrowser {
 			if(chD.isVisible()){
 				Vm.showWait(true);
 				try {
-					if (chD.getWayPoint().startsWith("OC"))
-						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+CacheType.transOCType(chD.getType())+".gif\"");
-					else	
+//					if (chD.getWayPoint().startsWith("OC"))
+//						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+CacheType.transOCType(chD.getType())+".gif\"");
+//					else	
 						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+chD.getType()+".gif\"");
 					tpl.setParam("SIZE", CacheSize.cw2ExportString(chD.getCacheSize()));
 					tpl.setParam("WAYPOINT", chD.getWayPoint());
@@ -193,7 +193,7 @@ public class ShowCacheInBrowser {
 							addis.put("WAYPOINT",ch.getWayPoint());
 							addis.put("NAME",ch.getCacheName());
 							addis.put("LATLON",ch.LatLon);
-							addis.put("IMG","<img src=\""+CacheType.type2pic(ch.getType())+"\">");
+							addis.put("IMG","<img src=\""+CacheType.typeImageForId(ch.getType())+"\">");
 							addis.put("LONGDESC",ch.getExistingDetails().LongDescription); // Do we need to treat longDesc as above ?
 							addiVect.add(addis);
 						}

@@ -92,7 +92,7 @@ public class CacheList extends CellPanel {
 				 CacheHolder ch=cacheList.get(idx);
 				 wayPoint=ch.getWayPoint();
 				 IconAndText imgDrag=new IconAndText();
-				 imgDrag.addColumn(CacheType.cache2Img(ch.getType()));
+				 imgDrag.addColumn(GuiImageBroker.getTypeImage(ch.getType()));
 				 imgDrag.addColumn(ch.getWayPoint());
 				 dc.dragData=dc.startImageDrag(imgDrag,new Point(8,8),this);
 			 } 
@@ -313,7 +313,7 @@ public class CacheList extends CellPanel {
 			// Add cache reference to hidden list
 			cacheList.add(ch);
 			// Add Cache and cache icon to visible list
-			lstCaches.addItem((new MenuItem()).iconize(ch.getWayPoint()+"   "+ch.getCacheName(),CacheType.cache2Img(ch.getType()),true));
+			lstCaches.addItem((new MenuItem()).iconize(ch.getWayPoint()+"   "+ch.getCacheName(),GuiImageBroker.getTypeImage(ch.getType()),true));
 		    dirty=true;
 			return true;
 		} else
