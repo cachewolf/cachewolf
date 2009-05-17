@@ -1,4 +1,3 @@
-
 package CacheWolf;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -14,8 +13,8 @@ import ewe.sys.*;
 public class Version {
 	static final int VER_MAJOR = 1;
 	static final int VER_MINOR = 0;
-	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
-	static final int SVN_REVISION = 20090515;
+	static final String VER_SVN = "$LastChangedRevision$"; //TODO: change build scripts to change SVN_REVISION = since VER_SVN = does not work as expected anyway
+	static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ")+1, VER_SVN.lastIndexOf(" ")));
 	static final int VERSION_TYPE = 3;
 	public static final String[] VERSION_TYPES = {
 		"Release", 
@@ -34,8 +33,8 @@ public class Version {
 	}
 
 	public static String getReleaseDetailed() {
-		// habe die SVN-Nummer doch aus der Anzeige erstmal wieder herausgenommen, weil es in einem final Release doch recht seltsam aussï¿½he.
-		// Sinnvoll wï¿½re daher vielleicht, eine Methode getReleaseDatail, die die SVN-Versionnummer mit angibt und z.B. im "ï¿½ber"-Dialog angezeigt werden kï¿½nnte.
+		// habe die SVN-Nummer doch aus der Anzeige erstmal wieder herausgenommen, weil es in einem final Release doch recht seltsam aussähe.
+		// Sinnvoll wäre daher vielleicht, eine Methode getReleaseDatail, die die SVN-Versionnummer mit angibt und z.B. im "Über"-Dialog angezeigt werden könnte.
 		return getRelease() + "." + Convert.toString(SVN_REVISION) + " " + VERSION_TYPES[VERSION_TYPE];
 	}
 
