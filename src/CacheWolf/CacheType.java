@@ -290,7 +290,7 @@ public final class CacheType {
 		case -74: return CW_TYPE_TRAILHEAD;
 		case -73: return CW_TYPE_REFERENCE;
 		case 101: return CW_TYPE_MEGA_EVENT;
-		case 100: return CW_TYPE_WHEREIGO;
+		case -62: return CW_TYPE_WHEREIGO;
 		case 9: return CW_TYPE_EARTH;
 		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew v2Converter()");
 		}
