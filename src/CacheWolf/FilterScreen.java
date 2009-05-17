@@ -15,18 +15,18 @@ public class FilterScreen extends Form{
 	private static final Color COLOR_FILTERACTIVE=new Color(0,255,0);
 	private static final Color COLOR_FILTERALL=new Color(255,0,0); // Red
     	
-	private mButton btnCancel, btnApply,btnRoute,
-				    btnSaveFlt, btnDelFlt,
-					btnBearing,btnTypes,btnAttributes,btnRatings,btnContainer,btnSearch,btnAddi, btnSelect,btnDeselect,btnCacheAttributes;
+	private mButton btnCancel, btnApply, btnRoute, btnSaveFlt, btnDelFlt,
+					btnBearing, btnTypes, btnAttributes, btnRatings, btnContainer, btnSearch,
+					btnAddi, btnSelect, btnDeselect, btnCacheAttributes;
 	
 	private mChoice chcDist, chcDiff, chcTerr, chcAttrib;
 	private mCheckBox chkFound, chkNotFound, chkTrad, chkVirtual, chkEvent, chkEarth, chkMega,
 					  chkOwned, chkNotOwned, chkMulti, chkLetter, chkWebcam, chkMystery, chkLocless,
-	                  chkCustom,chkParking,	chkStage, chkQuestion, chkFinal, chkTrailhead, chkReference,
+	                  chkCustom, chkParking, chkStage, chkQuestion, chkFinal, chkTrailhead, chkReference,
 					  chkMicro,chkSmall,chkRegular,chkLarge,chkVeryLarge,chkOther,chkCito,
-	                  chkArchived,chkNotArchived, chkAvailable,chkNotAvailable,
+	                  chkArchived, chkNotArchived, chkAvailable, chkNotAvailable,
 					  chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
-					  chkSSW, chkSW, chkWSW, chkW, chkWNW,chkWherigo;
+					  chkSSW, chkSW, chkWSW, chkW, chkWNW, chkWherigo;
 	private mComboBox chcStatus, fltList;
 	private mCheckBox chkUseRegexp;
 	

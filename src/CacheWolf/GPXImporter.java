@@ -386,7 +386,7 @@ public class GPXImporter extends MinML {
 		
 		// aditional wapypoint
 		if (name.equals("type")&& inWpt && !inCache && strData.startsWith("Waypoint")){
-			holder.setType(CacheType.typeText2Number(strData));
+			holder.setType(CacheType.gpxType2CwType(strData));
 			holder.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 		}
 		
@@ -408,7 +408,7 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		if ((name.equals("groundspeak:type") || name.equals("type")|| name.equals("terra:style"))&& inCache){
-			holder.setType(CacheType.typeText2Number(strData));
+			holder.setType(CacheType.gpxType2CwType(strData));
 			return;
 		}
 		if (name.equals("groundspeak:container")|| name.equals("container")){

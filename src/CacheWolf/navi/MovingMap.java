@@ -5,6 +5,7 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
+import CacheWolf.GuiImageBroker;
 import CacheWolf.InfoBox;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
@@ -380,7 +381,7 @@ public class MovingMap extends Form {
 			for (int i=cacheDB.size()-1; i>=0; i--) {
 				ch = cacheDB.get(i);
 				if (ch.is_Checked && ch.isVisible() && ch != mainT.ch) {
-					if (ch.pos.isValid()) addSymbol(ch.getCacheName(), ch, CacheType.cache2Img(ch.getType()), ch.pos);
+					if (ch.pos.isValid()) addSymbol(ch.getCacheName(), ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
 				}
 			}
 		}
@@ -402,7 +403,7 @@ public class MovingMap extends Form {
 		}
 		if (ch != null) {
 			addSymbol("selectedCache", MARK_CACHE_IMAGE, ch.pos);
-			addSymbolIfNecessary(ch.getCacheName(), ch, CacheType.cache2Img(ch.getType()), ch.pos);
+			addSymbolIfNecessary(ch.getCacheName(), ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
 		}
 		markedCache = ch;
 	}
@@ -1043,7 +1044,7 @@ public class MovingMap extends Form {
 			return;
 		}
 		if (currentMap == null && newmap == null) {
-			// (new MessageBox("Information", "Für die aktuelle Position steht keine Karte zur Verfüng, bitte wählen Sie eine manuell", MessageBox.OKB)).execute();
+			// (new MessageBox("Information", "Fï¿½r die aktuelle Position steht keine Karte zur Verfï¿½ng, bitte wï¿½hlen Sie eine manuell", MessageBox.OKB)).execute();
 			posCircle.where.set(cll); // choosemap calls setmap with posCircle-coos
 			try {
 				setMap( ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(), where); // beware: "-4" only works if the empty maps were added last see MapsList.addEmptyMaps
@@ -1082,7 +1083,7 @@ public class MovingMap extends Form {
 		if (posCircleX >= 0 && posCircleX <= w && posCircleY >= 0 && posCircleY <= h && ll.isValid()) {
 			posCircleOnScreen = java.lang.Boolean.TRUE;
 			pX = posCircleX; // posCircle is inside the screen
-			pY = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten führen, wenn vorher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
+			pY = posCircleY; // TODO eigentlich interessiert, ob nach dem evtl. Kartenwechsel PosCircle on Screen ist. So wie es jetzt ist, kann 2mal der gleiche Aufruf zum laden unterschiedlicher Karten fï¿½hren, wenn vorher PosCircle nicht auf dem SChirm war, nach dem ersten Laden aber schon.
 			cll = new CWPoint(ll);
 		} else { // when posCircle out of screen - use centre of screen as point which as to be included in the map
 			cll = ScreenXY2LatLon(w/2, h/2);
@@ -1130,7 +1131,7 @@ public class MovingMap extends Form {
 	public void loadMapForAllCaches(){
 		Area sur = Global.getProfile().getSourroundingArea(true);
 		if (sur == null) {
-			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit Häckchen ausgewählt"), FormBase.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit Hï¿½ckchen ausgewï¿½hlt"), FormBase.OKB)).execute();
 			return;
 		}
 		MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.buttomright);
@@ -1488,9 +1489,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	MenuItem hideMapMI = new MenuItem(MyLocale.getMsg(4240, "Hide map"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4241, "Hide map"), null, CellConstants.RIGHT));
 	// automatic
 	MenuItem mapChangeModusMI = new MenuItem(MyLocale.getMsg(4242, "Modus for automatic map change"), MenuItem.Separator, null);;
-	MenuItem highestResGpsDestMI = new MenuItem(MyLocale.getMsg(4244, "Highest res. containing dest. & cur. position"), new IconAndText(new mImage("res_gps_goto.png"), MyLocale.getMsg(4245, "Highest res. containing dest. & cur. position"), null, CellConstants.RIGHT)); //immer höchste Auflösung wählen, die akt. Pos. und Ziel enthalten 
-	MenuItem highestResolutionMI = new MenuItem(MyLocale.getMsg(4246, "Highest resolution"), new IconAndText(new mImage("res_high.png"), MyLocale.getMsg(4247, "Highest resolution"), null, CellConstants.RIGHT)); //immer höchste Auflösung wählen 
-	MenuItem keepManResolutionMI = new MenuItem(MyLocale.getMsg(4248, "Keep manual resolution"), new IconAndText(new mImage("res_manuell.png"), MyLocale.getMsg(4249, "Keep manual resolution"), null, CellConstants.RIGHT)); // manuell gewählte Auflösung beibehalten  
+	MenuItem highestResGpsDestMI = new MenuItem(MyLocale.getMsg(4244, "Highest res. containing dest. & cur. position"), new IconAndText(new mImage("res_gps_goto.png"), MyLocale.getMsg(4245, "Highest res. containing dest. & cur. position"), null, CellConstants.RIGHT)); //immer hï¿½chste Auflï¿½sung wï¿½hlen, die akt. Pos. und Ziel enthalten 
+	MenuItem highestResolutionMI = new MenuItem(MyLocale.getMsg(4246, "Highest resolution"), new IconAndText(new mImage("res_high.png"), MyLocale.getMsg(4247, "Highest resolution"), null, CellConstants.RIGHT)); //immer hï¿½chste Auflï¿½sung wï¿½hlen 
+	MenuItem keepManResolutionMI = new MenuItem(MyLocale.getMsg(4248, "Keep manual resolution"), new IconAndText(new mImage("res_manuell.png"), MyLocale.getMsg(4249, "Keep manual resolution"), null, CellConstants.RIGHT)); // manuell gewï¿½hlte Auflï¿½sung beibehalten  
 	// manuell
 	MenuItem mapChangeResMI = new MenuItem(MyLocale.getMsg(4250, "Change resolution manually"), MenuItem.Separator, null);;
 	MenuItem AllCachesResMI = new MenuItem(MyLocale.getMsg(4252, "Load a map containing all marked caches"),  new IconAndText(new mImage("loupe_all.png"), MyLocale.getMsg(4253, "Load a map containing all marked caches"), null, CellConstants.RIGHT));   

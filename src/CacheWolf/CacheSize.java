@@ -1,100 +1,116 @@
 package CacheWolf;
 
+/**
+ * Handels all aspects of converting cache size information from
+ * and to the various im- and exporters as well as for converting
+ * legavy profiles to current standard
+ */
 public final class CacheSize {
 
 	/*
 	 * internal representation of cache sizes in CacheHolder we just made them
 	 * up ;-)
 	 */
-	static final protected byte CW_SIZE_NOTCHOSEN = 0;
-	static final protected byte CW_SIZE_OTHER = 1;
-	static final protected byte CW_SIZE_MICRO = 2;
-	static final protected byte CW_SIZE_SMALL = 3;
-	static final protected byte CW_SIZE_REGULAR = 4;
-	static final protected byte CW_SIZE_LARGE = 5;
-	static final protected byte CW_SIZE_VERYLARGE = 6;
-	static final protected byte CW_SIZE_NONE = 7;
-	static final protected byte CW_SIZE_VIRTUAL = 8;
+	/** container size not chosen */
+	public static final byte CW_SIZE_NOTCHOSEN = 0;
+	/** container size other */
+	public static final byte CW_SIZE_OTHER = 1;
+	/** container size micro */
+	public static final byte CW_SIZE_MICRO = 2;
+	/* container size small */
+	public static final byte CW_SIZE_SMALL = 3;
+	/** container size regular */
+	public static final byte CW_SIZE_REGULAR = 4;
+	/** container size large */
+	public static final byte CW_SIZE_LARGE = 5;
+	/** container size very large */
+	public static final byte CW_SIZE_VERYLARGE = 6;
+	/** container size none */
+	public static final byte CW_SIZE_NONE = 7;
+	/** container size virtual */
+	public static final byte CW_SIZE_VIRTUAL = 8;
+	/** unparsable size or missing size information should throw IllegalArgumentExceptions when found */
+	public static final byte CW_SIZE_ERROR = -1;
 
 	/*
-	 * geocaching.com size string as found by analyzing GPX files plus OC/TC
-	 * Very large
+	 * geocaching.com size strings as found by analyzing GPX files 
+	 * plus opencaching & terracaching Very large + none
 	 */
-	static final protected String GC_SIZE_MICRO = "Micro";
-	static final protected String GC_SIZE_SMALL = "Small";
-	static final protected String GC_SIZE_REGULAR = "Regular";
-	static final protected String GC_SIZE_LARGE = "Large";
-	static final protected String GC_SIZE_NOTCHOSEN = "Not chosen";
-	static final protected String GC_SIZE_OTHER = "Other";
-	static final protected String GC_SIZE_VIRTUAL = "Virtual";
-	static final protected String OCTC_SIZE_VERYLARGE = "Very large";
-	static final protected String OCTC_SIZE_NONE = "None";
+	public static final String GC_SIZE_MICRO = "Micro";
+	public static final String GC_SIZE_SMALL = "Small";
+	public static final String GC_SIZE_REGULAR = "Regular";
+	public static final String GC_SIZE_LARGE = "Large";
+	public static final String GC_SIZE_NOTCHOSEN = "Not chosen";
+	public static final String GC_SIZE_OTHER = "Other";
+	public static final String GC_SIZE_VIRTUAL = "Virtual";
+	public static final String OCTC_SIZE_VERYLARGE = "Very large";
+	public static final String OCTC_SIZE_NONE = "None";
 
 	/*
 	 * OpenCaching Size IDs see
 	 * http://oc-server.svn.sourceforge.net/viewvc/oc-server/doc/sql/static-data/data.sql?view=markup
 	 */
-	static final protected String OC_SIZE_OTHER = "1";
-	static final protected String OC_SIZE_MICRO = "2";
-	static final protected String OC_SIZE_SMALL = "3";
-	static final protected String OC_SIZE_NORMAL = "4";
-	static final protected String OC_SIZE_LARGE = "5";
-	static final protected String OC_SIZE_VERYLARGE = "6";
-	static final protected String OC_SIZE_NONE = "7";
+	public static final String OC_SIZE_OTHER = "1";
+	public static final String OC_SIZE_MICRO = "2";
+	public static final String OC_SIZE_SMALL = "3";
+	public static final String OC_SIZE_NORMAL = "4";
+	public static final String OC_SIZE_LARGE = "5";
+	public static final String OC_SIZE_VERYLARGE = "6";
+	public static final String OC_SIZE_NONE = "7";
 
 	/*
 	 * TerraCaching Size IDs taken from old GPXimporter (?? reliable source ??)
 	 */
-	static final protected String TC_SIZE_MICRO = "1";
-	static final protected String TC_SIZE_MEDIUM = "2";
-	static final protected String TC_SIZE_REGULAR = "3";
-	static final protected String TC_SIZE_LARGE = "4";
-	static final protected String TC_SIZE_VERYLARGE = "4";
+	public static final String TC_SIZE_MICRO = "1";
+	public static final String TC_SIZE_MEDIUM = "2";
+	public static final String TC_SIZE_REGULAR = "3";
+	public static final String TC_SIZE_LARGE = "4";
+	public static final String TC_SIZE_VERYLARGE = "4";
 
 	/*
 	 * images to show in CW index panel we use less images than sizes since all
 	 * non physical caches are represented by the same symbol
 	 */
 	/** GUI image for micro caches */
-	static final protected String CW_GUIIMG_MICRO = "sizeMicro.png";
+	public static final String CW_GUIIMG_MICRO = "sizeMicro.png";
 	/** GUI image for small caches */
-	static final protected String CW_GUIIMG_SMALL = "sizeSmall.png";
+	public static final String CW_GUIIMG_SMALL = "sizeSmall.png";
 	/** GUI image for regular / normal caches */
-	static final protected String CW_GUIIMG_NORMAL = "sizeReg.png";
+	public static final String CW_GUIIMG_NORMAL = "sizeReg.png";
 	/** GUI image for large caches */
-	static final protected String CW_GUIIMG_LARGE = "sizeLarge.png";
+	public static final String CW_GUIIMG_LARGE = "sizeLarge.png";
 	/** GUI image for non physical caches */
-	static final protected String CW_GUIIMG_NONPHYSICAL = "sizeNonPhysical.png";
+	public static final String CW_GUIIMG_NONPHYSICAL = "sizeNonPhysical.png";
 	/** GUI image for very large caches */
-	static final protected String CW_GUIIMG_VERYLARGE = "sizeVLarge.png";
+	public static final String CW_GUIIMG_VERYLARGE = "sizeVLarge.png";
 
 	/*
 	 * IDs for the sizePics[] array in TableModel therefore they must start with
 	 * 0 and be consecutive
 	 */
-	static final protected byte CW_GUIIMGID_MICRO = 0;
-	static final protected byte CW_GUIIMGID_SMALL = 1;
-	static final protected byte CW_GUIIMGID_NORMAL = 2;
-	static final protected byte CW_GUIIMGID_LARGE = 3;
-	static final protected byte CW_GUIIMGID_NONPHYSICAL = 4;
-	static final protected byte CW_GUIIMGID_VERYLARGE = 5;
+	public static final byte CW_GUIIMGID_MICRO = 0;
+	public static final byte CW_GUIIMGID_SMALL = 1;
+	public static final byte CW_GUIIMGID_NORMAL = 2;
+	public static final byte CW_GUIIMGID_LARGE = 3;
+	public static final byte CW_GUIIMGID_NONPHYSICAL = 4;
+	public static final byte CW_GUIIMGID_VERYLARGE = 5;
 
 	/*
 	 * total number of different size images will be used to det the dimension
 	 * of sizePics[] array in TableModel
 	 */
-	static final protected byte CW_TOTAL_SIZE_IMAGES = 6;
+	public static final byte CW_TOTAL_SIZE_IMAGES = 6;
 
 	/*
 	 * bit masks to be used with the filter function
 	 */
-	static final protected byte CW_FILTER_MICRO = 0x01 << 0;
-	static final protected byte CW_FILTER_SMALL = 0x01 << 1;
-	static final protected byte CW_FILTER_NORMAL = 0x01 << 2;
-	static final protected byte CW_FILTER_LARGE = 0x01 << 3;
-	static final protected byte CW_FILTER_VERYLARGE = 0x01 << 4;
-	static final protected byte CW_FILTER_NONPHYSICAL = 0x01 << 5;
-	static final protected byte CW_FILTER_ALL = CW_FILTER_MICRO
+	public static final byte CW_FILTER_MICRO = 0x01 << 0;
+	public static final byte CW_FILTER_SMALL = 0x01 << 1;
+	public static final byte CW_FILTER_NORMAL = 0x01 << 2;
+	public static final byte CW_FILTER_LARGE = 0x01 << 3;
+	public static final byte CW_FILTER_VERYLARGE = 0x01 << 4;
+	public static final byte CW_FILTER_NONPHYSICAL = 0x01 << 5;
+	public static final byte CW_FILTER_ALL = CW_FILTER_MICRO
 			| CW_FILTER_SMALL | CW_FILTER_NORMAL | CW_FILTER_LARGE
 			| CW_FILTER_NONPHYSICAL | CW_FILTER_VERYLARGE;
 
@@ -115,7 +131,7 @@ public final class CacheSize {
 	 * @throws IllegalArgumentException
 	 *             if there is no image associated to the id
 	 */
-	public static String sizeImageForId(byte id) {
+	public static String sizeImageForId(byte id) throws IllegalArgumentException {
 		switch (id) {
 			case CW_GUIIMGID_MICRO:
 				return CW_GUIIMG_MICRO;
@@ -144,7 +160,7 @@ public final class CacheSize {
 	 * @throws IllegalArgumentException
 	 *             if cwsize can not be mapped to a CW_SIZE constant
 	 */
-	public static String cw2ExportString(byte size) {
+	public static String cw2ExportString(byte size) throws IllegalArgumentException {
 		switch (size) {
 			case CW_SIZE_MICRO:
 				return GC_SIZE_MICRO;
@@ -181,7 +197,7 @@ public final class CacheSize {
 	 *             (CW_SIZE_*)
 	 */
 
-	public static byte tcGpxString2Cw(String tcstring) {
+	public static byte tcGpxString2Cw(String tcstring) throws IllegalArgumentException {
 		if (tcstring.equals(TC_SIZE_MICRO)) {
 			return CW_SIZE_MICRO;
 		} else if (tcstring.equals(TC_SIZE_MEDIUM)) {
@@ -209,7 +225,7 @@ public final class CacheSize {
 	 *             (CW_SIZE_*)
 	 */
 
-	public static byte gcGpxString2Cw(String gcstring) {
+	public static byte gcGpxString2Cw(String gcstring) throws IllegalArgumentException {
 		if (gcstring.equals(GC_SIZE_MICRO)) {
 			return CW_SIZE_MICRO;
 		} else if (gcstring.equals(GC_SIZE_SMALL)) {
@@ -240,7 +256,7 @@ public final class CacheSize {
 	 *             if spiderstring can not be mapped to internal representation
 	 *             (CW_SIZE_*)
 	 */
-	public static byte gcSpiderString2Cw(String spiderstring) {
+	public static byte gcSpiderString2Cw(String spiderstring) throws IllegalArgumentException {
 		// at the moment both sources use the same strings
 		return gcGpxString2Cw(spiderstring);
 	}
@@ -255,7 +271,7 @@ public final class CacheSize {
 	 * @trows IllegalArgumentException if ocxmlstring can not be mapped to a
 	 *        CW_SIZE_*
 	 */
-	public static byte ocXmlString2Cw(String ocxmlstring) {
+	public static byte ocXmlString2Cw(String ocxmlstring) throws IllegalArgumentException {
 		if (ocxmlstring.equals(OC_SIZE_OTHER)) {
 			return CW_SIZE_OTHER;
 		} else if (ocxmlstring.equals(OC_SIZE_MICRO)) {
@@ -284,7 +300,7 @@ public final class CacheSize {
 	 * @throws IllegalArgumentException
 	 *             if size can not be mapped
 	 */
-	public static byte guiSizeImageId(byte size) {
+	public static byte guiSizeImageId(byte size) throws IllegalArgumentException {
 		switch (size) {
 			case CW_SIZE_MICRO:
 				return CW_GUIIMGID_MICRO;
@@ -310,15 +326,15 @@ public final class CacheSize {
 	}
 
 	/**
-	 * convert an "old style" size string to the new internal representation
+	 * convert v1 style size string to the new internal representation
 	 * 
 	 * @param v1Size
 	 *            old size string
 	 * @return CW internal representation of cache size
-	 * @throws if v1Size can not be mapped
+	 * @throws IllegalArgumentException if v1Size can not be mapped
 	 * @deprecated remove once v1 file version compatibility is abandoned
 	 */
-	public static final byte v1Converter(String v1Size) {
+	public static final byte v1Converter(String v1Size) throws IllegalArgumentException {
 		if (v1Size.equals(GC_SIZE_MICRO)) {
 			return CW_SIZE_MICRO;
 		} else if (v1Size.equals(GC_SIZE_SMALL)) {
@@ -346,23 +362,6 @@ public final class CacheSize {
 		}
 	}
 	
-	public static final byte v2Converter(byte v2Size) {
-		switch(v2Size) {
-			case CW_SIZE_MICRO: // fall through
-			case CW_SIZE_SMALL: // fall through
-			case CW_SIZE_REGULAR: // fall through
-			case CW_SIZE_LARGE: // fall through
-			case CW_SIZE_NOTCHOSEN: // fall through
-			case CW_SIZE_OTHER: // fall through
-			case CW_SIZE_VIRTUAL: // fall through
-			case CW_SIZE_NONE: // fall through
-			case CW_SIZE_VERYLARGE: return v2Size;
-			case -1: return CW_SIZE_NOTCHOSEN; // -1 was catch all in v2
-			default:
-				throw (new IllegalArgumentException("unmatched argument " + v2Size + " in v2Converter()"));
-		}
-	}
-
 	/**
 	 * return a bit mask representing the caches size for use in the Filter
 	 * 
@@ -372,8 +371,7 @@ public final class CacheSize {
 	 * @throws IllegalArgumentException
 	 *             if size can not be mapped to a bit mask
 	 */
-
-	public static byte getFilterPattern(byte size) {
+	public static byte getFilterPattern(byte size) throws IllegalArgumentException {
 		switch (size) {
 			case CW_SIZE_MICRO:
 				return CW_FILTER_MICRO;
@@ -408,7 +406,7 @@ public final class CacheSize {
 	 *             if size can not be mapped
 	 */
 
-	public static String getExportShortId(byte size) {
+	public static String getExportShortId(byte size) throws IllegalArgumentException {
 		switch (size) {
 			case CW_SIZE_MICRO:
 				return "m";
@@ -440,12 +438,19 @@ public final class CacheSize {
 	 * @see guiSizeStrings2CwSize
 	 * @see cwSizeId2GuiSizeId
 	 */
-
 	public static String[] guiSizeStrings() {
 		// make sure strings appear in ascending order for CW_SIZE_*
-		String ret[] = new String[] { GC_SIZE_NOTCHOSEN, GC_SIZE_OTHER,
-				GC_SIZE_MICRO, GC_SIZE_SMALL, GC_SIZE_REGULAR, GC_SIZE_LARGE,
-				OCTC_SIZE_VERYLARGE, OCTC_SIZE_NONE, GC_SIZE_VIRTUAL };
+		String ret[] = new String[] { 
+				GC_SIZE_NOTCHOSEN, 
+				GC_SIZE_OTHER,
+				GC_SIZE_MICRO, 
+				GC_SIZE_SMALL, 
+				GC_SIZE_REGULAR, 
+				GC_SIZE_LARGE,
+				OCTC_SIZE_VERYLARGE, 
+				OCTC_SIZE_NONE, 
+				GC_SIZE_VIRTUAL 
+				};
 		return ret;
 	}
 
@@ -460,7 +465,7 @@ public final class CacheSize {
 	 * @see cwSizeId2GuiSizeId
 	 * @see guiSizeStrings
 	 */
-	public static byte guiSizeStrings2CwSize(String id) {
+	public static byte guiSizeStrings2CwSize(String id) throws IllegalArgumentException {
 		// map the strings in guiSizeStrings() back to cw byte types
 		if (id.equals(GC_SIZE_NOTCHOSEN)) {
 			return CW_SIZE_NOTCHOSEN;
@@ -495,7 +500,7 @@ public final class CacheSize {
 	 * @see guiSizeStrings2CwSize
 	 * @see cwSizeId2GuiSizeId
 	 */
-	public static int cwSizeId2GuiSizeId(byte id) {
+	public static int cwSizeId2GuiSizeId(byte id) throws IllegalArgumentException {
 		switch (id) {
 		case CW_SIZE_NOTCHOSEN:
 			return 0;

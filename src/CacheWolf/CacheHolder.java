@@ -65,7 +65,7 @@ public class CacheHolder {
 	/** The size of the cache (as per GC cache sizes Micro, Small, ....) */
 	private byte cacheSize = CacheSize.CW_SIZE_NOTCHOSEN;
 	/** The distance from the centre in km */
-	public double kilom = -1; int bla = 0;
+	public double kilom = -1;
 	public double lastKilom = -2; // Cache last value
 	public int lastMetric = -1; // Cache last metric
 	public String lastDistance = ""; // Cache last distance
@@ -78,7 +78,7 @@ public class CacheHolder {
 	/** The terrain rating of the cache from 1 to 5 in .5 incements */
 	private String terrain = EMPTY;
 	/** The cache type (@see CacheType for translation table)  */
-	private byte type = -128; 
+	private byte type = CacheType.CW_TYPE_ERROR; 
 	/** True if the cache has been archived */
 	private boolean archived = false;
 	/** True if the cache is available for searching */
@@ -164,9 +164,11 @@ public class CacheHolder {
 		        start = xmlString.indexOf('"');
 		        end = xmlString.indexOf('"', start + 1);
 		        setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		        
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setCacheOwner(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		        
 		        // Assume coordinates are in decimal format
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
@@ -178,93 +180,129 @@ public class CacheHolder {
 		                notDecSep, decSep));
 		        pos = new CWPoint(lat, lon);
 		        LatLon = pos.toString();
+		        
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setDateHidden(xmlString.substring(start + 1, end));
 		        // Convert the US format to YYYY-MM-DD if necessary
 		        if (getDateHidden().indexOf('/') > -1)
 			        setDateHidden(DateFormat.MDY2YMD(getDateHidden()));
+		        
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setWayPoint(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		        
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setCacheStatus(xmlString.substring(start + 1, end));
+		        
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
-	            setType(Integer.parseInt(xmlString.substring(start + 1, end)));
+		        try {
+		        	setType(CacheType.v1Converter((xmlString.substring(start + 1, end))));
+		        } catch (IllegalArgumentException ex) {
+		        	setType(CacheType.CW_TYPE_ERROR);
+		        	Global.getPref().log(wayPoint, ex, true);
+		        	setIncomplete(true);
+		        }
+	            
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 	            setHard(CacheHolder.terrHard_OC2GC(xmlString.substring(start + 1, end)));
-		        start = xmlString.indexOf('"', end + 1);
+
+	            start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 	            setTerrain(CacheHolder.terrHard_OC2GC(xmlString.substring(start + 1, end)));
 		        // The next item was 'dirty' but this is no longer used.
-		        start = xmlString.indexOf('"', end + 1);
+
+	            start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setFiltered(xmlString.substring(start + 1, end).equals("true"));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
-		        
-		        setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
+		        try {
+		        	setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
+		        } catch (IllegalArgumentException ex) {
+		        	setCacheSize(CacheSize.CW_SIZE_ERROR);
+		        	Global.getPref().log(wayPoint, ex, true);
+		        	setIncomplete(true);
+		        }
 		        
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setAvailable(xmlString.substring(start + 1, end).equals("true"));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setArchived(xmlString.substring(start + 1, end).equals("true"));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setHas_bugs(xmlString.substring(start + 1, end).equals("true"));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setBlack(xmlString.substring(start + 1, end).equals("true"));
 		        if (is_black() != Global.getProfile().showBlacklisted())
 			        setFiltered(true);
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setOwned(xmlString.substring(start + 1, end).equals("true"));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setFound(xmlString.substring(start + 1, end).equals("true"));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setNew(xmlString.substring(start + 1, end).equals("true"));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setLog_updated(xmlString.substring(start + 1, end).equals("true"));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setUpdated(xmlString.substring(start + 1, end).equals("true"));
 		        // for backwards compatibility set value to true, if it is not in the file
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setHTML(!xmlString.substring(start + 1, end).equals("false"));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 	            setNoFindLogs((byte)Convert.toInt(xmlString.substring(start + 1, end)));
-		        start = xmlString.indexOf('"', end + 1);
+
+	            start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setOcCacheID(xmlString.substring(start + 1, end));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
-		        setIncomplete(xmlString.substring(start + 1, end).equals("true"));
+		        setIncomplete(xmlString.substring(start + 1, end).equals("true") || incomplete);
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setLastSyncOC(xmlString.substring(start + 1, end));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setNumRecommended(Convert.toInt(xmlString.substring(start + 1, end)));
+
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
 		        setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start + 1, end)));
 		        recommendationScore = LogList.getScore(getNumRecommended(),
 		                getNumFoundsSinceRecommendation());
-	            start = xmlString.indexOf('"', end + 1);
+
+		        start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 	            if (start > -1 && end > -1) {
 		            setAttributesYes(Convert.parseLong(xmlString.substring(start + 1, end)));
+
 
 		        start = xmlString.indexOf('"', end + 1);
 		        end = xmlString.indexOf('"', start + 1);
@@ -275,9 +313,11 @@ public class CacheHolder {
 	            start = xmlString.indexOf('"');
 	            end = xmlString.indexOf('"', start + 1);
 	            setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 	            setCacheOwner(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+	            
 	            // Assume coordinates are in decimal format
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
@@ -289,32 +329,40 @@ public class CacheHolder {
 	                    notDecSep, decSep));
 	            pos = new CWPoint(lat, lon);
 	            LatLon = pos.toString();
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 	            setDateHidden(xmlString.substring(start + 1, end));
 	            // Convert the US format to YYYY-MM-DD if necessary
 	            if (getDateHidden().indexOf('/') > -1)
 		            setDateHidden(DateFormat.MDY2YMD(getDateHidden()));
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 	            setWayPoint(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 	            setCacheStatus(xmlString.substring(start + 1, end));
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 	            setOcCacheID(xmlString.substring(start + 1, end));
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 	            setLastSyncOC(xmlString.substring(start + 1, end));
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 	            setNumRecommended(Convert.toInt(xmlString.substring(start + 1, end)));
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 	            setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start + 1, end)));
 	            recommendationScore = LogList.getScore(getNumRecommended(),
 	                    getNumFoundsSinceRecommendation());
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
 		        if (start > -1 && end > -1) {
@@ -325,12 +373,15 @@ public class CacheHolder {
 			        if (start > -1 && end > -1)
 				        setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
 		        }
+		        
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
-	            this.long2boolFields(Convert.parseLong(xmlString.substring(start + 1, end)));	            
+	            this.long2boolFields(Convert.parseLong(xmlString.substring(start + 1, end)));
+	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
-	            this.long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));	            
+	            this.long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));	  
+	            
 	            if (is_black() != Global.getProfile().showBlacklisted())
 		            setFiltered(true);
             }
@@ -1116,8 +1167,8 @@ public void finalize() {nObjects--;
 	 * Gets the type of cache as integer.
 	 * @return Cache type
 	 */
-	public int getType() {
-		return CacheType.toInt(type);
+	public byte getType() {
+		return type;
     }
 
 	/**
@@ -1125,8 +1176,8 @@ public void finalize() {nObjects--;
 	 * and byte internally of CacheHolder, some conversion has to be done.
 	 * @param type Cache Type
 	 */
-	public void setType(int type) {
-		byte newType = CacheType.toByte(type);
+	public void setType(byte type) {
+		byte newType = type;
 		Global.getProfile().notifyUnsavedChanges(newType != this.type);		
     	this.type = newType;
     }

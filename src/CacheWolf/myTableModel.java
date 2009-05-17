@@ -291,7 +291,7 @@ public class myTableModel extends TableModel{
 						else 
 							return checkboxUnticked;
 					case 1: // Type
-						return CacheType.cache2Img(ch.getType());
+						return GuiImageBroker.getTypeImage(ch.getType());
 					case 2: // Difficulty;
 						return ch.getHard();
 					case 3: // Terrain

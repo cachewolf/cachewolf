@@ -691,10 +691,10 @@ public class Parser{
 				String stage=MyLocale.formatLong(i,"00");
 				String stageWpt="$"+stage+waypointName.substring(2);
 				String stageName = "Stage "+(i+1);
-				int type = 51;
+				byte type = CacheType.CW_TYPE_STAGE;
 				if (i == nStages - 1) {
 					stageName = "Final";
-					type = 53;
+					type = CacheType.CW_TYPE_FINAL;
 				}
 				didCreateWp|=createWptIfNeeded(stage+waypointName.substring(2), stageName, type);
 				op.append("IF "+stageWpt+"=\"\" THEN\n");
@@ -1095,7 +1095,7 @@ public class Parser{
 		}
 	}
 
-	private boolean createWptIfNeeded(String wayPoint, String name, int type){
+	private boolean createWptIfNeeded(String wayPoint, String name, byte type){
 	   	int ci=Global.getProfile().getCacheIndex(wayPoint);
     	if (ci >= 0) return false;
 

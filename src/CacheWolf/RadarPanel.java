@@ -132,9 +132,9 @@ public class RadarPanel extends CellPanel{
 							iActP.addImage(aImg);
 						}
 					}
-					Image imgCache=CacheType.cache2Img(holder.getType());
+					Image imgCache=GuiImageBroker.getTypeImage(holder.getType());
 					// If we have no image for the cache type use a question mark
-					if (imgCache==null) imgCache=CacheType.cache2Img(8); 
+					if (imgCache==null) imgCache=GuiImageBroker.getTypeImage(CacheType.CW_TYPE_UNKNOWN); 
 					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = holder.getWayPoint();
 					rpi.rownum = i;
