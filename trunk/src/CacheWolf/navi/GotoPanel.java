@@ -3,6 +3,7 @@ package CacheWolf.navi;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.CacheType;
 import CacheWolf.CoordsScreen;
 import CacheWolf.DetailsPanel;
 import CacheWolf.Global;
@@ -92,11 +93,11 @@ public class GotoPanel extends CellPanel {
 		//Format selection for coords		
 		//context menu
 		mnuContextFormt = new Menu();
-		mnuContextFormt.addItem(miDD = new MenuItem("d.d°"));
+		mnuContextFormt.addItem(miDD = new MenuItem("d.dï¿½"));
 		miDD.modifiers &= ~MenuItem.Checked;
-		mnuContextFormt.addItem(miDMM = new MenuItem("d°m.m\'"));
+		mnuContextFormt.addItem(miDMM = new MenuItem("dï¿½m.m\'"));
 		miDMM.modifiers |= MenuItem.Checked;
-		mnuContextFormt.addItem(miDMS = new MenuItem("d°m\'s\""));
+		mnuContextFormt.addItem(miDMS = new MenuItem("dï¿½m\'s\""));
 		miDMS.modifiers &= ~MenuItem.Checked;
 		mnuContextFormt.addItem(miUTM = new MenuItem("UTM"));
 		miUTM.modifiers &= ~MenuItem.Checked;
@@ -171,7 +172,7 @@ public class GotoPanel extends CellPanel {
 
 		//while (true){
 //		int notinterpreted = 0;
-//		if (myGPS.examine("@ööH @ööHö@ÖÖHHÜÄÜÖÄÄÄH")) { notinterpreted = 0;} else notinterpreted++;
+//		if (myGPS.examine("@ï¿½ï¿½H @ï¿½ï¿½Hï¿½@ï¿½ï¿½HHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½H")) { notinterpreted = 0;} else notinterpreted++;
 //		if (notinterpreted > 5) myGPS.noInterpretableData();
 //		// myGPS.noInterpretableData();
 
@@ -408,7 +409,7 @@ public class GotoPanel extends CellPanel {
 				CacheHolder ch = new CacheHolder();
 				ch.LatLon = myNavigation.gpsPos.toString();
 				ch.pos = new CWPoint(myNavigation.gpsPos);
-				ch.setType(51); // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
+				ch.setType(CacheType.CW_TYPE_STAGE); // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
 				mainT.newWaypoint(ch);
 			}
 			// change destination waypoint

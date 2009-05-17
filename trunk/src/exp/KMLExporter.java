@@ -17,7 +17,7 @@ import ewe.util.Map.MapEntry;
 import ewe.util.zip.ZipEntry;
 import ewe.util.zip.ZipException;
 import ewe.util.zip.ZipFile;
-import CacheWolf.*;
+import CacheWolf.*; // if we would use public instead of protected we would not need this.
 
 /**
 *	Class to export the cache database (index) to an KML-File
@@ -98,7 +98,7 @@ public class KMLExporter extends Exporter {
 					tmp = (Vector)entry.getValue();
 					// skip over empty cachetypes
 					if (tmp.size() == 0) continue;
-					outp.print(startFolder(CacheType.transType(new Integer((String)entry.getKey()).intValue())));
+					outp.print(startFolder(CacheType.cw2ExportString(CacheType.guiSelect2Cw(new Integer((String)entry.getKey()).byteValue()))));
 
 					for(int i = 0; i<tmp.size(); i++){
 						ch = (CacheHolder) tmp.get(i);
@@ -160,15 +160,15 @@ public class KMLExporter extends Exporter {
 		for (int i = 0; i < categoryNames.length; i++) {
 			outCacheDB[i] = new Hashtable();
 			// create the roots for the cachetypes
-			for (int j = 0; j < CacheType.wayType.length; j++) {
-				outCacheDB[i].put(CacheType.wayType[j][CacheType.WPT_NUM], new Vector());
+			for (int j = 0; j < CacheType.guiTypeStrings().length; j++) {
+				outCacheDB[i].put(String.valueOf(CacheType.guiSelect2Cw(j)), new Vector());
 			}
 		}
 
 		// fill structure with data from cacheDB
 		for(int i = 0; i<cacheDB.size(); i++){
 			ch=cacheDB.get(i);
-			// TODO Das Argument nach STring zu casten gefällt mir nicht ganz...
+			// TODO Das Argument nach STring zu casten gefï¿½llt mir nicht ganz...
 			if(ch.isVisible() && !ch.isAddiWpt()){
 				if (ch.is_found()) { tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.getType()));}
 				else if (ch.is_owned()) { tmp = (Vector) outCacheDB[OWNED].get(String.valueOf(ch.getType()));}
@@ -225,8 +225,8 @@ public class KMLExporter extends Exporter {
 			int len;
 			String entName, fileName; 
 
-			for (int i = 0; i < CacheType.wayType.length; i++) {
-				fileName = CacheType.type2pic(Convert.parseInt(CacheType.wayType[i][CacheType.WPT_NUM]));
+			for (int i = 0; i < CacheType.guiTypeStrings().length; i++) {
+				fileName = CacheType.typeImageForId(CacheType.guiSelect2Cw(i));
 				entName = "GoogleEarthIcons/" + fileName;
 				zipEnt = zif.getEntry(entName);
 				if (zipEnt == null) continue;
@@ -284,7 +284,7 @@ public class KMLExporter extends Exporter {
 		strBuf.append("      <IconStyle>\r\n");
 		strBuf.append("         <Icon>\r\n");
 //		strBuf.append("            <href>"+ File.getProgramDirectory()+ "/" + CacheType.type2pic(Convert.parseInt(ch.type))+ "</href>\r\n");
-		strBuf.append("            <href>"+ CacheType.type2pic(ch.getType())+ "</href>\r\n");
+		strBuf.append("            <href>"+ CacheType.typeImageForId(ch.getType())+ "</href>\r\n");
 		strBuf.append("         </Icon>\r\n");
 		strBuf.append("      </IconStyle>\r\n");
 		strBuf.append("      <LabelStyle>\r\n");

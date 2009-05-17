@@ -62,9 +62,9 @@ public class CalcPanel extends CellPanel {
 		cacheDB = profile.cacheDB;
 		
 		
-		TopP.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		TopP.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		TopP.addNext(chkDMS =new mCheckBox("d°m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
+		TopP.addNext(chkDD =new mCheckBox("d.dï¿½"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		TopP.addNext(chkDMM =new mCheckBox("dï¿½m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		TopP.addNext(chkDMS =new mCheckBox("dï¿½m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
 		TopP.addNext(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		TopP.addLast(chkGK =new mCheckBox("GK"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 
@@ -200,7 +200,7 @@ public class CalcPanel extends CellPanel {
 				coordOut = coordInp.project(bd.degrees, bd.distance);
 				ch.LatLon = coordOut.toString();
 				ch.pos.set(coordOut);
-				ch.setType(51); // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
+				ch.setType(CacheType.CW_TYPE_STAGE); // TODO unfertig
 				mainT.newWaypoint(ch);
 			}
 			

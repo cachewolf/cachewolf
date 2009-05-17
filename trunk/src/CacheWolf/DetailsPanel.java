@@ -17,7 +17,7 @@ public class DetailsPanel extends CellPanel{
 	mInput inpHidden = new mInput();
 	mInput inpOwner = new mInput();
 	mButton btnDelete,btnCenter, btnAddDateTime;
-	mChoice chcType = new mChoice(new String[]{"Custom", "Traditional", "Multi", "Virtual", "Letterbox", "Event", "Mega Event", "Mystery", "Webcam", "Locationless", "CITO", "Earthcache", "wherIGo", "Addi: Parking", "Addi: Stage", "Addi: Question", "Addi: Final","Addi: Trailhead","Addi: Reference"},0);
+	mChoice chcType = new mChoice(CacheType.guiTypeStrings(),0);
 	mChoice chcSize = new mChoice(CacheSize.guiSizeStrings(),0);
 	mComboBox chcStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0);
 	mButton btnNewWpt, btnShowBug, btnShowMap, btnGoto, btnAddPicture, btnBlack, btnNotes, btnSave, btnCancel;
@@ -189,7 +189,7 @@ public class DetailsPanel extends CellPanel{
 			// If the cache status contains a date, do not overwrite it with 'found' message
 			if(ch.is_found() == true) chcStatus.setText(MyLocale.getMsg(318,"Found"));
 		}
-		chcType.setInt(transType(ch.getType()));
+		chcType.setInt(CacheType.cw2GuiSelect(ch.getType()));
 		if(ch.is_black()){
 			btnBlack.image = imgBlack;
 		} else {
@@ -217,79 +217,6 @@ public class DetailsPanel extends CellPanel{
 		if(isBigScreen)	mNotes.setText(ch.getExistingDetails().getCacheNotes());
 	}
 	
-	
-	/**
-	*	Translate the cache type to the value in the cache type dropdown
-	*	control.
-	*/
-	private int transType(int type){
-		// TODO Hab ich so eine Übersetzungstabelle nicht schon an anderer Stelle gesehen ??? Redundanz ??
-		int c_type = 0;
-		int tt = 0;
-		tt = type;
-		switch(tt){
-			case 0: c_type = 0; break;
-			case 2: c_type = 1; break;
-			case 3: c_type = 2; break;
-			case 4: c_type = 3; break;
-			case 5: c_type = 4; break;
-			case 6: c_type = 5; break;
-			case 453: c_type = 6;break;
-			case 8: c_type = 7; break;
-			case 11: c_type = 8; break; //Earth
-			case 12: c_type = 9; break;
-			case 13: c_type = 10; break;
-			case 137: c_type = 11;break;
-			case 1858: c_type = 12; break;
-			case 50: c_type = 13;break;
-			case 51: c_type = 14;break;
-			case 52: c_type = 15;break;
-			case 53: c_type = 16;break;
-			case 54: c_type = 17;break;
-			case 55: c_type = 18;break;
-
-			default: Vm.debug("Unknown cachetype: " + type);
-					break;
-		}
-		return c_type;
-	}
-	
-	/**
-	*	Method to translate a selected cache type in the drop down control
-	*	to a "true" cache type.<br>
-	*	This transformation is required to ease the display of the cache type
-	*	icon in the table display.
-	*/
-	public int transSelect(int num){
-		int ret = 0;
-		switch(num){
-			case 0: ret = 0; break;
-			case 1: ret = 2; break;
-			case 2: ret = 3; break;
-			case 3: ret = 4; break;
-			case 4: ret = 5; break;
-			case 5: ret = 6; break;
-			case 6: ret = 453; break;
-			case 7: ret = 8; break;
-			case 8: ret = 11; break;
-			case 9: ret = 12; break;
-			case 10: ret = 13; break;
-			case 11: ret = 137; break;
-			case 12: ret = 1858; break;
-			case 13: ret = 50; break;
-			case 14: ret = 51; break;
-			case 15: ret = 52; break;
-			case 16: ret = 53; break;
-			case 17: ret = 54; break;
-			case 18: ret = 55; break;
-
-			default: Vm.debug("Unknown cachetype: " + num);
-			break;
-
-		} //switch
-		return ret;
-	}
-	
 	/**
 	 * if is addi -> returns the respective AddiWpt
 	 * if is main -> returns the respective MainWpt 
@@ -297,7 +224,7 @@ public class DetailsPanel extends CellPanel{
 	 */
 	public void createWptName() {
 		String wpt = inpWaypoint.getText().toUpperCase();
-		if (CacheType.isAddiWpt(transSelect(chcType.getInt())) && 
+		if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) && 
 				(Global.mainTab.mainCache.startsWith("GC")||Global.mainTab.mainCache.startsWith("OC")||Global.mainTab.mainCache.startsWith("CW")) &&
 				wpt.startsWith("CW")) {
 			// for what was this?:
@@ -305,7 +232,7 @@ public class DetailsPanel extends CellPanel{
 			
 			inpWaypoint.setText(Global.getProfile().getNewAddiWayPointName(Global.mainTab.mainCache));
 		} 
-		if (!CacheType.isAddiWpt(transSelect(chcType.getInt())) && !(wpt.startsWith("GC") 
+		if (!CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) && !(wpt.startsWith("GC") 
 				|| wpt.startsWith("OC") || wpt.startsWith("CW")) ) {
 			inpWaypoint.setText(Global.getProfile().getNewWayPointName());
 		}
@@ -394,7 +321,7 @@ public class DetailsPanel extends CellPanel{
 				CacheHolder ch = new CacheHolder();
 				ch.LatLon = thisCache.LatLon;
 				ch.pos = new CWPoint( thisCache.pos );
-				ch.setType(51);
+				ch.setType(CacheType.CW_TYPE_STAGE);
 				Global.mainTab.newWaypoint(ch);
 			}
 			else if (ev.target == btnGoto){
@@ -496,8 +423,8 @@ public class DetailsPanel extends CellPanel{
 		  thisCache.setCacheName(inpName.getText().trim());
 		  thisCache.LatLon = thisCache.pos.toString();
 		  thisCache.setDateHidden(inpHidden.getText().trim());
-		  int oldType=thisCache.getType();
-		  thisCache.setType(transSelect(chcType.getInt()));
+		  byte oldType=thisCache.getType();
+		  thisCache.setType(CacheType.guiSelect2Cw(chcType.getInt()));
 		 // thisCache.saveCacheDetails(profile.dataDir); // this is redundant, because all changes affecting the details are immediately saved
 		  // Now update the table
 		  CacheHolder ch = thisCache; // TODO variable ch is redundant
