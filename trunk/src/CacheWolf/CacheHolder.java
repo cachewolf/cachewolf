@@ -380,7 +380,11 @@ public class CacheHolder {
 	            
 	            start = xmlString.indexOf('"', end + 1);
 	            end = xmlString.indexOf('"', start + 1);
-	            this.long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));	  
+	            if (version == 2) {
+	            	long2byteFieldsv2(Convert.parseLong(xmlString.substring(start + 1, end)));
+	            } else {
+	            	long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));
+	            }
 	            
 	            if (is_black() != Global.getProfile().showBlacklisted())
 		            setFiltered(true);
@@ -913,6 +917,28 @@ public void finalize() {nObjects--;
 		this.setCacheSize(byteFromLong(value, 4));
 		this.setNoFindLogs((byteFromLong(value, 5)));
 	}
+	
+	/**
+	 * convert a v2 byte filed to the current structures
+	 * @param value
+	 */
+	private void long2byteFieldsv2(long value) {
+		setHard(CacheHolder.terrHard_byte2String(byteFromLong(value, 1)));
+		setTerrain(CacheHolder.terrHard_byte2String(byteFromLong(value, 2)));
+		try {
+			setType(CacheType.v2Converter(byteFromLong(value, 3)));
+		} catch (IllegalArgumentException ex) {
+			setType(CacheType.CW_TYPE_UNKNOWN);
+			setIncomplete(true);
+		}
+		try {
+			setCacheSize(byteFromLong(value, 4));
+		} catch (IllegalArgumentException ex) {
+			setCacheSize(CacheSize.CW_SIZE_ERROR);
+			setIncomplete(true);
+		}
+		setNoFindLogs((byteFromLong(value, 5)));
+	}
 
 	/**
 	 * Extracts a byte from a long value. The position is the number of the 8-bit block
@@ -943,7 +969,7 @@ public void finalize() {nObjects--;
 		this.setLog_updated((value & this.bool2BitMask(true, 9)) != 0);
 		this.setUpdated((value & this.bool2BitMask(true, 10)) != 0);
 		this.setHTML((value & this.bool2BitMask(true, 11)) != 0);
-		this.setIncomplete((value & this.bool2BitMask(true, 12)) != 0);
+		this.setIncomplete(((value & this.bool2BitMask(true, 12)) != 0) || this.is_incomplete());
 	}
 	
 	/**
