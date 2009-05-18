@@ -291,6 +291,7 @@ public final class CacheType {
 		case -73: return CW_TYPE_REFERENCE;
 		case 101: return CW_TYPE_MEGA_EVENT;
 		case -62: return CW_TYPE_WHEREIGO;
+		case 100: return CW_TYPE_WHEREIGO; // yes, it can be either of those
 		case 9: return CW_TYPE_EARTH;
 		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew v2Converter()");
 		}
@@ -569,8 +570,8 @@ public final class CacheType {
 			// check for | in additional waypoints and only use the string after |
 			int pipePosistion = ret.indexOf("|");
 			if (pipePosistion > -1) {
-				ret = ret.substring(pipePosistion);
-			}
+				ret = ret.substring(pipePosistion+1);
+			} //TODO: check for exceeding max length
 		} catch (IllegalArgumentException ex) {
 			ret = "";
 		}

@@ -10,7 +10,7 @@ import ewe.fx.Image;
 
 public final class GuiImageBroker {
 	
-	// TODO: check with Image an mImage
+	// TODO: check with Image and mImage
 	
 	/**
 	 * images to be displayed for cache types in GUI
