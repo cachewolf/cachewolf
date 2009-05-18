@@ -12,6 +12,9 @@ public final class GuiImageBroker {
 	
 	// TODO: check with Image and mImage
 	
+	/** image to be displayed in case of error */
+	public static Image imageError = new Image("guiError.png");
+	
 	/**
 	 * images to be displayed for cache types in GUI
 	 * @see getTypeImage
@@ -82,8 +85,6 @@ public final class GuiImageBroker {
 		case CacheType.CW_TYPE_WEBCAM: return typeImages[20];
 		case CacheType.CW_TYPE_WHEREIGO: return typeImages[21];
 		default: throw new IllegalArgumentException("unmatched id "+id+" in GuiImageBroker getTypeImage()");
-		}
-		
+		}	
 	}
-
 }
