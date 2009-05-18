@@ -25,12 +25,12 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==2) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				ch.sort=ch.getHard();
+				ch.sort=CacheTerrDiff.longDT(ch.getHard());
 			}
 		} else if (colToCompare==3) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				ch.sort=ch.getTerrain();
+				ch.sort=CacheTerrDiff.longDT(ch.getTerrain());
 			}
 		} else if (colToCompare==4) {
 			for (int i=0; i<visibleSize; i++) {

@@ -73,10 +73,8 @@ public class ShowCacheInBrowser {
 					tpl.setParam("WAYPOINT", chD.getWayPoint());
 					tpl.setParam("CACHE_NAME", chD.getCacheName());
 					tpl.setParam("OWNER", chD.getCacheOwner());
-					if (chD.getHard().endsWith(".0")) chD.setHard(chD.getHard().substring(0,chD.getHard().length()-2));
-					tpl.setParam("DIFFICULTY", (String) diff.get(chD.getHard().replace(',','.')));
-					if (chD.getTerrain().endsWith(".0")) chD.setTerrain(chD.getTerrain().substring(0,chD.getTerrain().length()-2));
-					tpl.setParam("TERRAIN", (String) terr.get(chD.getTerrain().replace(',','.')));
+					tpl.setParam("DIFFICULTY", CacheTerrDiff.longDT(chD.getHard()));
+					tpl.setParam("TERRAIN", CacheTerrDiff.longDT(chD.getTerrain()));
 					tpl.setParam("DISTANCE", chD.getDistance().replace(',','.'));
 					tpl.setParam("BEARING", chD.bearing);
 					if (chD.pos!=null && chD.pos.isValid()) {

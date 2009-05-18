@@ -89,8 +89,8 @@ public class HTMLExporter{
 					varParams.put("WAYPOINT", ch.getWayPoint());
 					varParams.put("NAME", ch.getCacheName());
 					varParams.put("OWNER", ch.getCacheOwner());
-					varParams.put("DIFFICULTY", ch.getHard());
-					varParams.put("TERRAIN", ch.getTerrain());
+					varParams.put("DIFFICULTY", CacheTerrDiff.longDT(ch.getHard()));
+					varParams.put("TERRAIN", CacheTerrDiff.longDT(ch.getTerrain()));
 					varParams.put("DISTANCE", ch.getDistance());
 					varParams.put("BEARING", ch.bearing);
 					varParams.put("LATLON", ch.LatLon);

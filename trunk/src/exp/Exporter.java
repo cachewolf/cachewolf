@@ -413,17 +413,9 @@ public class Exporter {
     	StringBuffer strBuf = new StringBuffer(7);
     	strBuf.append(CacheType.getExportShortId(ch.getType()).toLowerCase());			
     	if (!ch.isAddiWpt()) {
-    		if ( (ch.getHard().length() > 0) && (ch.getTerrain().length() > 0) ) {
-    			strBuf.append(ch.getHard().charAt(0));
-    			if ( ch.getHard().endsWith(".5") ) {
-    				strBuf.append("5");
-    			}
-    			strBuf.append("/");
-    			strBuf.append(ch.getTerrain().charAt(0));
-    			if ( ch.getTerrain().endsWith(".5") ) {
-    				strBuf.append("5");
-    			}
-    		}
+   			strBuf.append(ch.getHard());
+   			strBuf.append("/");
+   			strBuf.append(ch.getTerrain());
     		strBuf.append(CacheSize.getExportShortId(ch.getCacheSize()));
     	}
 
