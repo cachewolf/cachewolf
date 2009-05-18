@@ -85,8 +85,10 @@ public class FilterScreen extends Form{
 	}
 	private myChkBox addiWptChk;
 	
-	private mButton addImg(String imgName) {
-		mButton mb=new mButton(new mImage(imgName)); mb.borderWidth=0; mb.modify(NotEditable|PreferredSizeOnly,0);
+	private mButton addImg(Image image) {
+		mButton mb = new mButton(image);
+		mb.borderWidth=0; 
+		mb.modify(NotEditable|PreferredSizeOnly,0);
 		return mb;
 	}
 	private void addTitle(CellPanel c, String pTitle) {
@@ -174,48 +176,48 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		
 		addTitle(pnlCacheTypes,MyLocale.getMsg(719,"Cache types"));
-		pnlCacheTypes.addNext(addImg("2.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_TRADITIONAL)));
 		pnlCacheTypes.addNext(chkTrad = new mCheckBox("Traditonal"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("3.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_MULTI)));
 		pnlCacheTypes.addLast(chkMulti = new mCheckBox("Multi"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("4.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_VIRTUAL)));
 		pnlCacheTypes.addNext(chkVirtual = new mCheckBox("Virtual"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("5.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_LETTERBOX)));
 		pnlCacheTypes.addLast(chkLetter = new mCheckBox("Letterbox"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("6.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_EVENT)));
 		pnlCacheTypes.addNext(chkEvent = new mCheckBox("Event"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("11.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_WEBCAM)));
 		pnlCacheTypes.addLast(chkWebcam = new mCheckBox("Webcam"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("8.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_UNKNOWN)));
 		pnlCacheTypes.addNext(chkMystery = new mCheckBox("Mystery"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("137.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_EARTH)));
 		pnlCacheTypes.addLast(chkEarth = new mCheckBox("Earth"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("12.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_LOCATIONLESS)));
 		pnlCacheTypes.addNext(chkLocless = new mCheckBox("Locationless"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("453.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_MEGA_EVENT)));
 		pnlCacheTypes.addLast(chkMega = new mCheckBox("Mega-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg("13.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_VIRTUAL)));
 		pnlCacheTypes.addNext(chkCito = new mCheckBox("Cito-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		//pnlCacheTypes.addLast(addiWptChk = new mCheckBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		//pnlCacheTypes.addLast(new mLabel(""));
-		pnlCacheTypes.addNext(addImg("0.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_CUSTOM)));
 		pnlCacheTypes.addLast(chkCustom = new mCheckBox("Custom"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
-		pnlCacheTypes.addNext(addImg("1858.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_WHEREIGO)));
 		pnlCacheTypes.addNext(chkWherigo = new myChkBox("WherIGo"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
-		pnlCacheTypes.addNext(addImg("110.png"));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_DRIVE_IN)));
 		pnlCacheTypes.addNext(addiWptChk = new myChkBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		//addiWptChk.modify(0,NotAnEditor);
@@ -223,17 +225,17 @@ public class FilterScreen extends Form{
 		// Panel 5 - Addi waypoints
 		//////////////////////////
 		addTitle(pnlAddi,MyLocale.getMsg(726,"Additional waypoints"));
-		pnlAddi.addNext(addImg("pkg.png"));
+		pnlAddi.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_PARKING)));
 		pnlAddi.addNext(chkParking = new mCheckBox("Parking"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("stage.png"));
+		pnlAddi.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_STAGE)));
 		pnlAddi.addLast(chkStage = new mCheckBox("Stage"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("puzzle.png"));
+		pnlAddi.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_QUESTION)));
 		pnlAddi.addNext(chkQuestion = new mCheckBox("Question"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("flag.png"));
+		pnlAddi.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_FINAL)));
 		pnlAddi.addLast(chkFinal = new mCheckBox("Final"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("trailhead.png"));
+		pnlAddi.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_TRAILHEAD)));
 		pnlAddi.addNext(chkTrailhead = new mCheckBox("Trailhead"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlAddi.addNext(addImg("waypoint.png"));
+		pnlAddi.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_REFERENCE)));
 		pnlAddi.addLast(chkReference = new mCheckBox("Reference"), CellConstants.DONTSTRETCH, CellConstants.FILL);
         pnlAddi.addLast(new mLabel(""),VSTRETCH,FILL);		
 
