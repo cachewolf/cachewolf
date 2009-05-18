@@ -3,6 +3,7 @@
  */
 package CacheWolf;
 
+import ewe.sys.Convert;
 import ewe.ui.*;
 
 /**
@@ -16,21 +17,27 @@ public class OCXMLImporterScreen extends Form {
 	Preferences pref;
 	mInput distanceInput;
 	mInput maxNumberInput;
-	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox;
+	mInput maxLogsInput;
+	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox, travelbugsCheckBox;
 	mLabel distLbl;
 	mLabel maxNumberLbl;
 	mLabel distUnit;
+	boolean isGC = true;
 	static int DIST = 1;
 	static int IMAGES = 2;
 	static int ALL = 4;
 	static int INCLUDEFOUND = 8;
 	static int ISGC = 16;
 	static int MAXNUMBER = 32;
+	static int TRAVELBUGS = 64;
+	static int MAXLOGS = 128;
 
 	
 	public OCXMLImporterScreen(String title, int options) {
 		super();
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
+		
+		isGC = ((options & ISGC) > 0);
 		
 		this.title = title;
 		if ((options & DIST) > 0) {
@@ -38,7 +45,7 @@ public class OCXMLImporterScreen extends Form {
 			distanceInput = new mInput();
 			String dist1;
 			String dist2;
-			if ((options & ISGC) > 0) {
+			if (isGC) {
 				dist1 = Global.getProfile().getDistGC();
 				dist2 = Global.getProfile().getDistOC();
 			} else {
@@ -61,17 +68,31 @@ public class OCXMLImporterScreen extends Form {
 			} else {
 				maxNumberInput.setText(Integer.toString(pref.maxSpiderNumber));
 			}
-			maxNumberInput.setText(Integer.toString(pref.maxSpiderNumber));
 			this.addNext(maxNumberInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			this.addLast( new mLabel(MyLocale.getMsg(1624," caches")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		}
+		
+		if ((options & MAXLOGS) > 0) {
+			this.addNext(new mLabel(MyLocale.getMsg(1626,"Max. logs:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			maxLogsInput = new mInput();
+			maxLogsInput.setText(Convert.toString(pref.maxLogsToSpider));
+			this.addLast(maxLogsInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
 
 		if ((options & IMAGES) > 0) {
 			imagesCheckBox = new mCheckBox();
 			imagesCheckBox.setText(MyLocale.getMsg(1602,"Download Images"));
-			imagesCheckBox.setState(true); // @ToDo: aus Prefs
+			imagesCheckBox.setState(pref.downloadPics);
 			this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
+		
+		if ((options & TRAVELBUGS) > 0) {
+			travelbugsCheckBox = new mCheckBox();
+			travelbugsCheckBox.setText(MyLocale.getMsg(1625,"Download TBs"));
+			travelbugsCheckBox.setState(pref.downloadTBs);
+			this.addLast(travelbugsCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		}
+		
 		if((options & INCLUDEFOUND) > 0){
 			foundCheckBox = new mCheckBox();
 			foundCheckBox.setText(MyLocale.getMsg(1622,"Exclude found caches"));
@@ -82,7 +103,7 @@ public class OCXMLImporterScreen extends Form {
 		if((options & ALL) > 0){
 			missingCheckBox = new mCheckBox();
 			missingCheckBox.setText(MyLocale.getMsg(1606,"Alle erneut downloaden"));
-			missingCheckBox.setState(false); // @ToDo: aus Prefs
+			missingCheckBox.setState(pref.downloadmissingOC);
 			this.addLast(missingCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
 
@@ -101,9 +122,11 @@ public class OCXMLImporterScreen extends Form {
 			}
 			if (ev.target == okB){
 				    // distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
-					if (imagesCheckBox!=null) pref.downloadPicsOC = imagesCheckBox.state;
+					if (imagesCheckBox!=null) pref.downloadPics = imagesCheckBox.state;
 					if (missingCheckBox!=null) pref.downloadmissingOC = missingCheckBox.state;
-					// TODO: sofort speichern?
+					if (travelbugsCheckBox!=null) pref.downloadTBs = travelbugsCheckBox.state;
+					if (maxLogsInput!=null) pref.maxLogsToSpider=Common.parseInt(maxLogsInput.getText());
+					pref.savePreferences();
 				this.close(FormBase.IDOK);
 				}
 		}
