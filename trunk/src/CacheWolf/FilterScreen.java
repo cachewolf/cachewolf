@@ -27,7 +27,8 @@ public class FilterScreen extends Form{
 	                  chkArchived, chkNotArchived, chkAvailable, chkNotAvailable,
 					  chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
 					  chkSSW, chkSW, chkWSW, chkW, chkWNW, chkWherigo;
-	private mComboBox chcStatus, fltList;
+	private mComboBox chcStatus;
+	private mChoice   fltList;
 	private mCheckBox chkUseRegexp;
 	
 	private mInput inpDist, inpTerr, inpDiff;
@@ -273,22 +274,6 @@ public class FilterScreen extends Form{
 		frmScreen.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_BOTTOM;
 		this.addLast(frmScreen,HSTRETCH,HFILL);
 		
-		// Had to move the button panel to the top, so that the SIP can't display over the 
-		// filter list field - in case we want to enter a new filter name.
-		CellPanel savDelPanel = new CellPanel(); // Panel for "save" and "delete" button
-		savDelPanel.equalWidths = true;
-		mImage savImg=new mImage("clsave.png"); savImg.transparentColor=new Color(255,0,0);
-		savDelPanel.addNext(btnSaveFlt = new mButton(savImg),STRETCH,FILL);
-		savDelPanel.addLast(btnDelFlt = new mButton(new mImage("trash.png")),STRETCH,FILL);
-		Panel fltListPanel = new Panel();
-		fltListPanel.addLast(fltList = new mComboBox());
-		fltListPanel.addLast(savDelPanel);
-		Panel btPanel = new Panel();
-		btPanel.addNext(btnCancel = new mButton(MyLocale.getMsg(708,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
-		btPanel.addNext(btnApply = new mButton(MyLocale.getMsg(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
-		btPanel.addLast(fltListPanel,CellConstants.STRETCH, CellConstants.FILL);
-//		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
-		addLast(btPanel.setTag(CellConstants.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
 
 		CellPanel pnlButtons=new CellPanel();
 		pnlButtons.addLast(new mLabel("Filter"));
@@ -313,9 +298,21 @@ public class FilterScreen extends Form{
 		cp.addItem(pnlCacheAttributes,"Attr",null);
 		addLast(cp,VSTRETCH,FILL);
 
-		// ***********
-		// Here: Former position of Cancel/Apply buttons
-		// ***********
+		CellPanel savDelPanel = new CellPanel(); // Panel for "save" and "delete" button
+		savDelPanel.equalWidths = true;
+		mImage savImg=new mImage("clsave.png"); savImg.transparentColor=new Color(255,0,0);
+		savDelPanel.addNext(btnSaveFlt = new mButton(savImg),STRETCH,FILL);
+		savDelPanel.addLast(btnDelFlt = new mButton(new mImage("trash.png")),STRETCH,FILL);
+		Panel fltListPanel = new Panel();
+		fltListPanel.addLast(fltList = new mChoice());
+		fltListPanel.addLast(savDelPanel);
+		CellPanel btPanel = new CellPanel();
+		btPanel.equalWidths = true;
+		btPanel.addNext(fltListPanel,CellConstants.STRETCH, CellConstants.FILL);
+		btPanel.addNext(btnCancel = new mButton(MyLocale.getMsg(708,"Cancel")),CellConstants.STRETCH, CellConstants.FILL);
+		btPanel.addLast(btnApply = new mButton(MyLocale.getMsg(709,"Apply")),CellConstants.STRETCH, CellConstants.FILL);
+//		btPanel.addLast(btnRoute = new mButton("Route"),CellConstants.STRETCH, CellConstants.FILL);
+		addLast(btPanel.setTag(CellConstants.SPAN, new Dimension(3,1)), CellConstants.STRETCH, CellConstants.FILL);
 		
 		int sw = MyLocale.getScreenWidth(); int sh = MyLocale.getScreenHeight(); 
 		Preferences pref = Global.getPref();int fs = pref.fontSize;
@@ -635,20 +632,22 @@ public class FilterScreen extends Form{
 				String ID = fltList.getText();
 				FilterData data = getDataFromScreen();
 				MessageBox mBox;
-				if (ID.equals("")) {
-					mBox = new MessageBox(MyLocale.getMsg(221,"No filter name"), MyLocale.getMsg(222,"Please enter a name for the filter") , FormBase.IDOK);
-					mBox.execute();
-				} else if (Global.getPref().hasFilter(ID)) {
-					mBox = new MessageBox(MyLocale.getMsg(221,"Overwrite Filter?"), MyLocale.getMsg(222,"The filter already exists. Overwrite it?") , FormBase.IDYES |FormBase.IDNO);
-					if (mBox.execute() == FormBase.IDYES){
-						Global.getPref().addFilter(ID, data);
+				InputBox inp = new InputBox("ID");
+				String newID = inp.input(ID, 20);
+				if (newID != null && !newID.equals("")) {
+					if (Global.getPref().hasFilter(newID)) {
+						mBox = new MessageBox(MyLocale.getMsg(221,"Overwrite Filter?"), MyLocale.getMsg(222,"The filter already exists. Overwrite it?") , FormBase.IDYES |FormBase.IDNO);
+						if (mBox.execute() == FormBase.IDYES){
+							Global.getPref().addFilter(newID, data);
+							savedFiltersChanged = true;
+							buildFilterList();
+						} 
+					} else {
+						Global.getPref().addFilter(newID, data);
 						savedFiltersChanged = true;
+						buildFilterList();
 					}	
-				} else {
-					Global.getPref().addFilter(ID, data);
-					savedFiltersChanged = true;
 				}	
-				buildFilterList();
 			} else if (ev.target == btnDelFlt) {
 				String ID = fltList.getText();
 				if (!ID.equals("")) {
@@ -725,11 +724,11 @@ public class FilterScreen extends Form{
 	 * reflects the filters that are currenty in memory.
 	 */
 	private void buildFilterList() {
-		while (fltList.choice.itemsSize()>0) {
-			fltList.choice.deleteItem(0);
+		while (fltList.itemsSize()>0) {
+			fltList.deleteItem(0);
 		}
-		fltList.choice.addItems(Global.getPref().getFilterIDs());
-		fltList.choice.updateItems();
+		fltList.addItems(Global.getPref().getFilterIDs());
+		fltList.updateItems();
 	}
 	
 	/**
