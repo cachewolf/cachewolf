@@ -84,7 +84,7 @@ public class GPXImporter extends MinML {
 			ewe.io.Reader r;
 			String file;
 			
-			OCXMLImporterScreen options = new OCXMLImporterScreen("Spider Options", OCXMLImporterScreen.IMAGES);
+			OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
 			if (options.execute() == FormBase.IDCANCEL) {	return; }
 			//String dist = options.distanceInput.getText();
 			//if (dist.length()== 0) return;

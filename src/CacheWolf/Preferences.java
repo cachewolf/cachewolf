@@ -181,8 +181,6 @@ public class Preferences extends MinML{
 	public String garminGPSBabelOptions="";
 	/** Max. length for Garmin waypoint names (for etrex which can only accept 6 chars) */
 	public int garminMaxLen=0;
-	public boolean downloadPicsOC = true; //TODO Sollten die auch im Profil gespeichert werden mit Preferences als default Werte ?
-	public boolean downloadMapsOC = true;
 	public boolean downloadmissingOC = false;
 	/** The currently used centre point, can be different from the profile's centrepoint. This is used
 	 *  for spidering */
@@ -217,6 +215,10 @@ public class Preferences extends MinML{
 	public boolean exportTravelbugs = false;
 	/** Try to make a MyFinds GPX when exporting to GPX */
 	public boolean exportGpxAsMyFinds = true;
+	/** Download images when loading cache data */
+	public boolean downloadPics = true;
+	/** Download TB information when loading cache data */
+	public boolean downloadTBs = true;
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -313,8 +315,6 @@ public class Preferences extends MinML{
 			baseDir = atts.getValue("dir");
 		}
 		else if (name.equals("opencaching")) {
-			downloadPicsOC = Boolean.valueOf(atts.getValue("downloadPics")).booleanValue();
-			downloadMapsOC = Boolean.valueOf(atts.getValue("downloadMaps")).booleanValue();
 			downloadmissingOC = Boolean.valueOf(atts.getValue("downloadmissing")).booleanValue();
 
 		}
@@ -391,6 +391,10 @@ public class Preferences extends MinML{
 			if (tmp != null) spiderUpdates=Convert.parseInt(tmp);
 			tmp = atts.getValue("maxSpiderNumber");
 			if (tmp != null) maxSpiderNumber=Convert.parseInt(tmp);
+			tmp = atts.getValue("downloadPics");
+			if (tmp != null) downloadPics=Boolean.valueOf(tmp).booleanValue();
+			tmp = atts.getValue("downloadTBs");
+			if (tmp != null) downloadTBs=Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("details")) {
 			maxDetails=Common.parseInt(atts.getValue("cacheSize"));
@@ -468,16 +472,16 @@ public class Preferences extends MinML{
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			outp.print("<preferences>\n");
 			outp.print("    <locale language=\"" + SafeXML.strxmlencode(language) + "\"/>\n");
-			outp.print("	<basedir dir = \"" + SafeXML.strxmlencode(baseDir) + "\"/>\n");
+			outp.print("    <basedir dir = \"" + SafeXML.strxmlencode(baseDir) + "\"/>\n");
 			outp.print("    <lastprofile autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\">" + SafeXML.strxmlencode(lastProfile) + "</lastprofile>\n"); //RB
-			outp.print("	<alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
-			outp.print("	<alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
-			outp.print("	<gcmemberid name =\""+ SafeXML.clean(gcMemberId) +"\"/>\n");
-			outp.print("	<browser name = \"" + SafeXML.strxmlencode(browser) + "\"/>\n");
-			outp.print("	<proxy prx = \"" + SafeXML.strxmlencode(myproxy) + "\" prt = \"" + SafeXML.strxmlencode(myproxyport) + "\" active = \"" + SafeXML.strxmlencode(proxyActive) + "\" />\n");
-			outp.print("	<port portname = \"" + SafeXML.strxmlencode(mySPO.portName) + "\" baud = \"" + SafeXML.strxmlencode(mySPO.baudRate) + "\"/>\n");
-			outp.print("	<portforward active= \"" + SafeXML.strxmlencode(Convert.toString(forwardGPS)) + "\" destinationHost = \"" + SafeXML.strxmlencode(forwardGpsHost) + "\"/>\n");
-			outp.print("	<portlog active= \"" + SafeXML.strxmlencode(Convert.toString(logGPS)) + "\" logTimer = \"" + SafeXML.strxmlencode(logGPSTimer) + "\"/>\n");
+			outp.print("    <alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
+			outp.print("    <alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
+			outp.print("    <gcmemberid name =\""+ SafeXML.clean(gcMemberId) +"\"/>\n");
+			outp.print("    <browser name = \"" + SafeXML.strxmlencode(browser) + "\"/>\n");
+			outp.print("    <proxy prx = \"" + SafeXML.strxmlencode(myproxy) + "\" prt = \"" + SafeXML.strxmlencode(myproxyport) + "\" active = \"" + SafeXML.strxmlencode(proxyActive) + "\" />\n");
+			outp.print("    <port portname = \"" + SafeXML.strxmlencode(mySPO.portName) + "\" baud = \"" + SafeXML.strxmlencode(mySPO.baudRate) + "\"/>\n");
+			outp.print("    <portforward active= \"" + SafeXML.strxmlencode(Convert.toString(forwardGPS)) + "\" destinationHost = \"" + SafeXML.strxmlencode(forwardGpsHost) + "\"/>\n");
+			outp.print("    <portlog active= \"" + SafeXML.strxmlencode(Convert.toString(logGPS)) + "\" logTimer = \"" + SafeXML.strxmlencode(logGPSTimer) + "\"/>\n");
 			outp.print("    <font size =\"" + SafeXML.strxmlencode(fontSize) + "\"/>\n");
 			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+
 	                "\" h=\""+myAppHeight+"\" w=\""+myAppWidth+"\" />\n");
@@ -490,14 +494,14 @@ public class Preferences extends MinML{
 			outp.print("    <solver ignorevariablecase=\"" + SafeXML.strxmlencode(solverIgnoreCase) + "\" degMode=\"" + SafeXML.strxmlencode(solverDegMode) + "\" />\n");
 			outp.print("    <garmin connection = \"" + SafeXML.strxmlencode(garminConn) + "\" GPSBabelOptions = \"" + SafeXML.strxmlencode(garminGPSBabelOptions) + "\" MaxWaypointLength = \"" + SafeXML.strxmlencode(garminMaxLen) +
 					        "\" addDetailsToWaypoint = \"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\" addDetailsToName = \"" + SafeXML.strxmlencode(addDetailsToName) + "\" />\n");
-			outp.print("    <opencaching downloadPicsOC=\"" + SafeXML.strxmlencode(downloadPicsOC) + "\" downloadMaps=\"" + SafeXML.strxmlencode(downloadMapsOC) + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadmissingOC) + "\"/>\n");
-			outp.print("	<location lat = \"" + SafeXML.strxmlencode(curCentrePt.getLatDeg(CWPoint.DD)) + "\" long = \"" + SafeXML.strxmlencode(curCentrePt.getLonDeg(CWPoint.DD)) + "\"/>\n");
-			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\"/>\n");
+			outp.print("    <opencaching downloadMissing=\"" + SafeXML.strxmlencode(downloadmissingOC) + "\"/>\n");
+			outp.print("    <location lat = \"" + SafeXML.strxmlencode(curCentrePt.getLatDeg(CWPoint.DD)) + "\" long = \"" + SafeXML.strxmlencode(curCentrePt.getLonDeg(CWPoint.DD)) + "\"/>\n");
+			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");
 			outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport) + "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds) + "\"/>\n");
-			if (customMapsPath!=null) outp.print("	<mapspath dir = \"" + SafeXML.strxmlencode(customMapsPath.replace('\\','/')) + "\"/>\n");
+			if (customMapsPath!=null) outp.print("    <mapspath dir = \"" + SafeXML.strxmlencode(customMapsPath.replace('\\','/')) + "\"/>\n");
 			// Saving filters
 			String[] filterIDs = this.getFilterIDs();
 			for (int i=0; i<filterIDs.length; i++){
