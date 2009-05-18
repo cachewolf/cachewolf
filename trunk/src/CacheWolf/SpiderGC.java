@@ -468,6 +468,9 @@ public class SpiderGC{
 							} else if (ch.is_available()!=is_available_GC) { // Update the database with the cache status
 								pref.log("Updating status of "+waypoint+" to "+(is_available_GC?"available":"not available"));
 								ch.setAvailable(is_available_GC);
+							} else if (spiderAllFinds && !ch.is_found()) { // Update the database with the cache status
+								pref.log("Updating status of "+waypoint+" to found");
+								ch.setFound(true);								
 							} else {
 								cachesToUpdate.remove( ch.getWayPoint() );
 							}
