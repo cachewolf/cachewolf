@@ -485,7 +485,7 @@ public class Filter{
 	        // Filter criterium 4: Difficulty
 	        ///////////////////////////////
 	        if (fscDiff > 0.0) {
-		        dummyd1 = Common.parseDouble(ch.getHard());
+		        dummyd1 = ch.getHard() / 10D;
 		        if (diffdirec == SMALLER && dummyd1 > fscDiff) {
 			        cacheFiltered = true; break;
 		        }
@@ -500,7 +500,7 @@ public class Filter{
 	        // Filter criterium 5: Terrain
 	        ///////////////////////////////
 	        if (fscTerr > 0.0) {
-		        dummyd1 = Common.parseDouble(ch.getTerrain());
+	        	dummyd1 = ch.getTerrain() / 10D;
 		        if (terrdirec == SMALLER && dummyd1 > fscTerr) {
 			        cacheFiltered = true; break;
 		        }
@@ -511,11 +511,7 @@ public class Filter{
 			        cacheFiltered = true; break;
 		        }
 	        }
-	        //Vm.debug(ch.wayPoint+" Found"+ch.is_found+"  FoundyMe="+foundByMe+"   notFoundByMe="+notFoundByMe);
-	        //Vm.debug(ch.wayPoint+" Owned"+ch.is_owned+"  OwnedByMe="+ownedByMe+"   notOwnedByMe="+notOwnedByMe);
-	        //Vm.debug(ch.wayPoint+" Archived"+ch.is_archived+"  Archived="+archived+"   notArchived="+notArchived);
-	        //Vm.debug(ch.wayPoint+" Available"+ch.is_available+"  Available="+available+"   notAvailable="+notAvailable);
-	        //Vm.debug("Blacklisted: "+ch.is_black);
+
 	        ///////////////////////////////
 	        // Filter criterium 6: Found by me
 	        ///////////////////////////////

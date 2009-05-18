@@ -25,28 +25,6 @@ import ewe.util.Vector;
 public class CacheHolder {
 	protected static final String NOBEARING = "?";
 	protected static final String EMPTY = "";
-	protected static final byte DT_EMPTY = 0;
-	protected static final byte DT_10 = 10;
-	protected static final byte DT_15 = 15;
-	protected static final byte DT_20 = 20;
-	protected static final byte DT_25 = 25;
-	protected static final byte DT_30 = 30;
-	protected static final byte DT_35 = 35;
-	protected static final byte DT_40 = 40;
-	protected static final byte DT_45 = 45;
-	protected static final byte DT_50 = 50;
-	protected static final byte DT_UNKNOWN = -1;
-	protected static final String DT_EMPTY_TXT = "";
-	protected static final String DT_10_TXT = "1";
-	protected static final String DT_15_TXT = "1.5";
-	protected static final String DT_20_TXT = "2";
-	protected static final String DT_25_TXT = "2.5";
-	protected static final String DT_30_TXT = "3";
-	protected static final String DT_35_TXT = "3.5";
-	protected static final String DT_40_TXT = "4";
-	protected static final String DT_45_TXT = "4.5";
-	protected static final String DT_50_TXT = "5";
-	protected static final String DT_UNKNOWN_TXT = "?";
 
 	/** Cachestatus is Found, Not found or a date in format yyyy-mm-dd hh:mm for found date */
 	private String cacheStatus = EMPTY;
@@ -74,9 +52,9 @@ public class CacheHolder {
 	/** The angle (0=North, 180=South) from the current centre to this point */
 	public double degrees = 0;
 	/** The difficulty of the cache from 1 to 5 in .5 incements */ 
-	private String hard = EMPTY;
+	private byte hard = CacheTerrDiff.CW_DT_ERROR;
 	/** The terrain rating of the cache from 1 to 5 in .5 incements */
-	private String terrain = EMPTY;
+	private byte terrain = CacheTerrDiff.CW_DT_ERROR;
 	/** The cache type (@see CacheType for translation table)  */
 	private byte type = CacheType.CW_TYPE_ERROR; 
 	/** True if the cache has been archived */
@@ -103,8 +81,6 @@ public class CacheHolder {
 	public boolean is_flaged = false;
 	/** True if the cache has been selected using the tick box in the list view */
 	public boolean is_Checked = false;
-	/** Not used: This attribute is saved with the cache and read back but never set */
-//	public String dirty = EMPTY;
 	/** The unique OC cache ID */
 	private String ocCacheID = EMPTY;
 	/** The number of times this cache has not been found (max. 5) */
@@ -160,237 +136,255 @@ public class CacheHolder {
 	public CacheHolder(String xmlString, int version) {
 		int start,end;
 	        try {
-			if (version == 1) {
-		        start = xmlString.indexOf('"');
-		        end = xmlString.indexOf('"', start + 1);
-		        setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
-		        
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setCacheOwner(SafeXML.cleanback(xmlString.substring(start + 1, end)));
-		        
-		        // Assume coordinates are in decimal format
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        double lat = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
-		                notDecSep, decSep));
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        double lon = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
-		                notDecSep, decSep));
-		        pos = new CWPoint(lat, lon);
-		        LatLon = pos.toString();
-		        
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setDateHidden(xmlString.substring(start + 1, end));
-		        // Convert the US format to YYYY-MM-DD if necessary
-		        if (getDateHidden().indexOf('/') > -1)
-			        setDateHidden(DateFormat.MDY2YMD(getDateHidden()));
-		        
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setWayPoint(SafeXML.cleanback(xmlString.substring(start + 1, end)));
-		        
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setCacheStatus(xmlString.substring(start + 1, end));
-		        
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        try {
-		        	setType(CacheType.v1Converter((xmlString.substring(start + 1, end))));
-		        } catch (IllegalArgumentException ex) {
-		        	setType(CacheType.CW_TYPE_ERROR);
-		        	Global.getPref().log(wayPoint, ex, true);
-		        	setIncomplete(true);
-		        }
-	            
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-	            setHard(CacheHolder.terrHard_OC2GC(xmlString.substring(start + 1, end)));
-
-	            start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-	            setTerrain(CacheHolder.terrHard_OC2GC(xmlString.substring(start + 1, end)));
-		        // The next item was 'dirty' but this is no longer used.
-
-	            start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setFiltered(xmlString.substring(start + 1, end).equals("true"));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        try {
-		        	setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
-		        } catch (IllegalArgumentException ex) {
-		        	setCacheSize(CacheSize.CW_SIZE_ERROR);
-		        	Global.getPref().log(wayPoint, ex, true);
-		        	setIncomplete(true);
-		        }
-		        
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setAvailable(xmlString.substring(start + 1, end).equals("true"));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setArchived(xmlString.substring(start + 1, end).equals("true"));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setHas_bugs(xmlString.substring(start + 1, end).equals("true"));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setBlack(xmlString.substring(start + 1, end).equals("true"));
-		        if (is_black() != Global.getProfile().showBlacklisted())
-			        setFiltered(true);
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setOwned(xmlString.substring(start + 1, end).equals("true"));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setFound(xmlString.substring(start + 1, end).equals("true"));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setNew(xmlString.substring(start + 1, end).equals("true"));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setLog_updated(xmlString.substring(start + 1, end).equals("true"));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setUpdated(xmlString.substring(start + 1, end).equals("true"));
-		        // for backwards compatibility set value to true, if it is not in the file
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setHTML(!xmlString.substring(start + 1, end).equals("false"));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-	            setNoFindLogs((byte)Convert.toInt(xmlString.substring(start + 1, end)));
-
-	            start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setOcCacheID(xmlString.substring(start + 1, end));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setIncomplete(xmlString.substring(start + 1, end).equals("true") || incomplete);
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setLastSyncOC(xmlString.substring(start + 1, end));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setNumRecommended(Convert.toInt(xmlString.substring(start + 1, end)));
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		        setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start + 1, end)));
-		        recommendationScore = LogList.getScore(getNumRecommended(),
-		                getNumFoundsSinceRecommendation());
-
-		        start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            if (start > -1 && end > -1) {
-		            setAttributesYes(Convert.parseLong(xmlString.substring(start + 1, end)));
-
-
-		        start = xmlString.indexOf('"', end + 1);
-		        end = xmlString.indexOf('"', start + 1);
-		            if (start > -1 && end > -1)
-			            setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
-	            }
-            } else if (version == 3 || version == 2) {
-	            start = xmlString.indexOf('"');
-	            end = xmlString.indexOf('"', start + 1);
-	            setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            setCacheOwner(SafeXML.cleanback(xmlString.substring(start + 1, end)));
-	            
-	            // Assume coordinates are in decimal format
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            double lat = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
-	                    notDecSep, decSep));
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            double lon = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
-	                    notDecSep, decSep));
-	            pos = new CWPoint(lat, lon);
-	            LatLon = pos.toString();
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            setDateHidden(xmlString.substring(start + 1, end));
-	            // Convert the US format to YYYY-MM-DD if necessary
-	            if (getDateHidden().indexOf('/') > -1)
-		            setDateHidden(DateFormat.MDY2YMD(getDateHidden()));
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            setWayPoint(SafeXML.cleanback(xmlString.substring(start + 1, end)));
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            setCacheStatus(xmlString.substring(start + 1, end));
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            setOcCacheID(xmlString.substring(start + 1, end));
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            setLastSyncOC(xmlString.substring(start + 1, end));
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            setNumRecommended(Convert.toInt(xmlString.substring(start + 1, end)));
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start + 1, end)));
-	            recommendationScore = LogList.getScore(getNumRecommended(),
-	                    getNumFoundsSinceRecommendation());
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-		        if (start > -1 && end > -1) {
-			        setAttributesYes(Convert.parseLong(xmlString.substring(start + 1, end)));
-
+				if (version == 1) {
+			        start = xmlString.indexOf('"');
+			        end = xmlString.indexOf('"', start + 1);
+			        setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+			        
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
-			        if (start > -1 && end > -1)
-				        setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
-		        }
-		        
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            this.long2boolFields(Convert.parseLong(xmlString.substring(start + 1, end)));
-	            
-	            start = xmlString.indexOf('"', end + 1);
-	            end = xmlString.indexOf('"', start + 1);
-	            if (version == 2) {
-	            	long2byteFieldsv2(Convert.parseLong(xmlString.substring(start + 1, end)));
-	            } else {
-	            	long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));
+			        setCacheOwner(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+			        
+			        // Assume coordinates are in decimal format
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        double lat = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
+			                notDecSep, decSep));
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        double lon = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
+			                notDecSep, decSep));
+			        pos = new CWPoint(lat, lon);
+			        LatLon = pos.toString();
+			        
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setDateHidden(xmlString.substring(start + 1, end));
+			        // Convert the US format to YYYY-MM-DD if necessary
+			        if (getDateHidden().indexOf('/') > -1)
+				        setDateHidden(DateFormat.MDY2YMD(getDateHidden()));
+			        
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setWayPoint(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+			        
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setCacheStatus(xmlString.substring(start + 1, end));
+			        
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        try {
+			        	setType(CacheType.v1Converter((xmlString.substring(start + 1, end))));
+			        } catch (IllegalArgumentException ex) {
+			        	setType(CacheType.CW_TYPE_ERROR);
+			        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+			        }
+		            
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        try {
+			        	setHard(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
+			        } catch (IllegalArgumentException ex) {
+			        	setHard(CacheTerrDiff.CW_DT_ERROR);
+			        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+			        }
+	
+		            start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        try {
+			        	setTerrain(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
+			        } catch (IllegalArgumentException ex) {
+			        	setTerrain(CacheTerrDiff.CW_DT_ERROR);
+			        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+			        }
+	
+			        // The next item was 'dirty' but this is no longer used.
+		            start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setFiltered(xmlString.substring(start + 1, end).equals("true"));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        try {
+			        	setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
+			        } catch (IllegalArgumentException ex) {
+			        	setCacheSize(CacheSize.CW_SIZE_ERROR);
+			        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+			        }
+			        
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setAvailable(xmlString.substring(start + 1, end).equals("true"));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setArchived(xmlString.substring(start + 1, end).equals("true"));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setHas_bugs(xmlString.substring(start + 1, end).equals("true"));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setBlack(xmlString.substring(start + 1, end).equals("true"));
+			        if (is_black() != Global.getProfile().showBlacklisted())
+				        setFiltered(true);
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setOwned(xmlString.substring(start + 1, end).equals("true"));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setFound(xmlString.substring(start + 1, end).equals("true"));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setNew(xmlString.substring(start + 1, end).equals("true"));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setLog_updated(xmlString.substring(start + 1, end).equals("true"));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setUpdated(xmlString.substring(start + 1, end).equals("true"));
+			        // for backwards compatibility set value to true, if it is not in the file
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setHTML(!xmlString.substring(start + 1, end).equals("false"));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+		            setNoFindLogs((byte)Convert.toInt(xmlString.substring(start + 1, end)));
+	
+		            start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setOcCacheID(xmlString.substring(start + 1, end));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setIncomplete(xmlString.substring(start + 1, end).equals("true") || incomplete);
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setLastSyncOC(xmlString.substring(start + 1, end));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setNumRecommended(Convert.toInt(xmlString.substring(start + 1, end)));
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			        setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start + 1, end)));
+			        recommendationScore = LogList.getScore(getNumRecommended(),
+			                getNumFoundsSinceRecommendation());
+	
+			        start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            if (start > -1 && end > -1) {
+			            setAttributesYes(Convert.parseLong(xmlString.substring(start + 1, end)));
+	
+	
+			        start = xmlString.indexOf('"', end + 1);
+			        end = xmlString.indexOf('"', start + 1);
+			            if (start > -1 && end > -1)
+				            setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
+		            }
+	            } else if (version == 3 || version == 2) {
+		            start = xmlString.indexOf('"');
+		            end = xmlString.indexOf('"', start + 1);
+		            setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            setCacheOwner(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		            
+		            // Assume coordinates are in decimal format
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            double lat = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
+		                    notDecSep, decSep));
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            double lon = Convert.parseDouble(xmlString.substring(start + 1, end).replace(
+		                    notDecSep, decSep));
+		            pos = new CWPoint(lat, lon);
+		            LatLon = pos.toString();
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            setDateHidden(xmlString.substring(start + 1, end));
+		            // Convert the US format to YYYY-MM-DD if necessary
+		            if (getDateHidden().indexOf('/') > -1)
+			            setDateHidden(DateFormat.MDY2YMD(getDateHidden()));
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            setWayPoint(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            setCacheStatus(xmlString.substring(start + 1, end));
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            setOcCacheID(xmlString.substring(start + 1, end));
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            setLastSyncOC(xmlString.substring(start + 1, end));
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            setNumRecommended(Convert.toInt(xmlString.substring(start + 1, end)));
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start + 1, end)));
+		            recommendationScore = LogList.getScore(getNumRecommended(),
+		                    getNumFoundsSinceRecommendation());
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+			        if (start > -1 && end > -1) {
+				        setAttributesYes(Convert.parseLong(xmlString.substring(start + 1, end)));
+	
+				        start = xmlString.indexOf('"', end + 1);
+				        end = xmlString.indexOf('"', start + 1);
+				        if (start > -1 && end > -1)
+					        setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
+			        }
+			        
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            this.long2boolFields(Convert.parseLong(xmlString.substring(start + 1, end)));
+		            
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+		            if (version == 2) {
+		            	long2byteFieldsv2(Convert.parseLong(xmlString.substring(start + 1, end)));
+		            } else {
+		            	long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));
+		            }
+		            
+		            if (is_black() != Global.getProfile().showBlacklisted())
+			            setFiltered(true);
 	            }
-	            
-	            if (is_black() != Global.getProfile().showBlacklisted())
-		            setFiltered(true);
-            }
 	        } catch (Exception ex) {
 	        	Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
+	        }
+	        
+	        if (type == CacheType.CW_TYPE_ERROR) {
+	        	setIncomplete(true);
+	        } else {
+	        	if (! isAddiWpt() && 
+	        		(terrain == CacheTerrDiff.CW_DT_ERROR 
+	        		|| hard == CacheTerrDiff.CW_DT_ERROR 
+	        		|| cacheSize == CacheSize.CW_SIZE_ERROR)
+	        	) setIncomplete(true);
 	        }
         }
 	
@@ -493,18 +487,10 @@ public class CacheHolder {
 		this.setAvailable(ch.is_available());
 		this.setOwned(ch.is_owned());
 		this.setFiltered(ch.is_filtered());
-//		this.setLog_updated(ch.is_log_updated());
-//		this.setUpdated(ch.is_updated());
 		this.setIncomplete(ch.is_incomplete());
 		this.setBlack(ch.is_black());
 		this.addiWpts = ch.addiWpts;
 		this.mainCache=ch.mainCache;
-//		this.setNew(ch.is_new());
-		// I don't think that updating a cache with current data should affect the state
-		// if a cache is checked or a search result. So the following two assignments are
-		// removed.
-//		this.is_flaged = ch.is_flaged;
-//		this.is_Checked = ch.is_Checked;
 		this.setOcCacheID(ch.getOcCacheID());
 		this.setNoFindLogs(ch.getNoFindLogs());
 		this.setHas_bugs(ch.has_bugs());
@@ -772,13 +758,6 @@ public class CacheHolder {
 		}
 	}
 
-	/*
-public void finalize() {nObjects--;
-   Vm.debug("Destroying CacheHolder "+wayPoint);
-   Vm.debug("CacheHolder: "+nObjects+" objects left");
-}
-	 */
-	
 	public String GetStatusDate() {
 		String statusDate = "";
 		
@@ -900,8 +879,8 @@ public void finalize() {nObjects--;
 	 * @return long value representing the byte field
 	 */
 	private long byteFields2long() {
-		long value = byteBitMask(CacheHolder.terrHard_String2byte(hard), 1)    | 
-		byteBitMask(CacheHolder.terrHard_String2byte(terrain), 2)   |
+		long value = byteBitMask(hard, 1)    | 
+		byteBitMask(terrain, 2)   |
 		byteBitMask(this.type, 3)    |
 		byteBitMask(cacheSize, 4)|
 		byteBitMask(this.noFindLogs, 5);		             
@@ -913,11 +892,14 @@ public void finalize() {nObjects--;
 	 * @param value The long value which contains up to 8 bytes.
 	 */
 	private void long2byteFields(long value) {
-		this.setHard(CacheHolder.terrHard_byte2String(byteFromLong(value, 1)));
-		this.setTerrain(CacheHolder.terrHard_byte2String(byteFromLong(value, 2)));
-		this.type = byteFromLong(value, 3);
-		this.setCacheSize(byteFromLong(value, 4));
-		this.setNoFindLogs((byteFromLong(value, 5)));
+		setHard(byteFromLong(value, 1));
+		setTerrain(byteFromLong(value, 2));
+		setType(byteFromLong(value, 3));
+		setCacheSize(byteFromLong(value, 4));
+		setNoFindLogs((byteFromLong(value, 5)));
+		if (getHard() == -1 || getTerrain() == 1 || getType() == -1 || getCacheSize() == -1 ) {
+			setIncomplete(true);
+		}
 	}
 	
 	/**
@@ -925,21 +907,22 @@ public void finalize() {nObjects--;
 	 * @param value
 	 */
 	private void long2byteFieldsv2(long value) {
-		setHard(CacheHolder.terrHard_byte2String(byteFromLong(value, 1)));
-		setTerrain(CacheHolder.terrHard_byte2String(byteFromLong(value, 2)));
+		setHard(byteFromLong(value, 1));
+		setTerrain(byteFromLong(value, 2));
 		try {
 			setType(CacheType.v2Converter(byteFromLong(value, 3)));
 		} catch (IllegalArgumentException ex) {
 			setType(CacheType.CW_TYPE_UNKNOWN);
-			setIncomplete(true);
 		}
 		try {
 			setCacheSize(byteFromLong(value, 4));
 		} catch (IllegalArgumentException ex) {
 			setCacheSize(CacheSize.CW_SIZE_ERROR);
-			setIncomplete(true);
 		}
 		setNoFindLogs((byteFromLong(value, 5)));
+		if (getHard() == -1 || getTerrain() == 1) {
+			setIncomplete(true);
+		}
 	}
 
 	/**
@@ -1105,94 +1088,24 @@ public void finalize() {nObjects--;
     	this.cacheSize = cacheSize;
     }
 
-	public String getHard() {
+	public byte getHard() {
     	return hard;
     }
 
-	public void setHard(String hard) {
-		Global.getProfile().notifyUnsavedChanges(!hard.equals(this.hard));		
+	public void setHard(byte hard) {
+		Global.getProfile().notifyUnsavedChanges(hard != this.hard);		
     	this.hard = hard;
     }
 
-	public String getTerrain() {
+	public byte getTerrain() {
     	return terrain;
     }
 
-	public void setTerrain(String terrain) {
-		Global.getProfile().notifyUnsavedChanges(!terrain.equals(this.terrain));		
+	public void setTerrain(byte terrain) {
+		Global.getProfile().notifyUnsavedChanges(terrain != this.terrain);		
     	this.terrain = terrain;
     }
 
-	/**
-	 * The string representation of the internal value for difficulty and terrain values.
-	 * @param value Difficulty or terrain voting as byte
-	 * @return String representation of the value
-	 */
-	private static String terrHard_byte2String(byte value) {
-		String result;
-		switch (value) {
-		case DT_EMPTY: result = DT_EMPTY_TXT; break;
-		case DT_10: result = DT_10_TXT; break;
-		case DT_15: result = DT_15_TXT; break;
-		case DT_20: result = DT_20_TXT; break;
-		case DT_25: result = DT_25_TXT; break;
-		case DT_30: result = DT_30_TXT; break;
-		case DT_35: result = DT_35_TXT; break;
-		case DT_40: result = DT_40_TXT; break;
-		case DT_45: result = DT_45_TXT; break;
-		case DT_50: result = DT_50_TXT; break;
-		default: result = DT_UNKNOWN_TXT;
-		} 
-		return result;
-	}
-
-	/**
-	 * Decoding the String represenations of difficulty or terrain values to internal (byte) values.
-	 * The format of the String values has to be like 1 ; 1.5 ; 3 ; 4.5<br>
-	 * Other formats won't be recognized.
-     * @param value String representation of the difficulty/terrain
-     * @return The internal byte value for the difficulty/terrain
-     */
-    private static byte terrHard_String2byte(String value) {
-	    byte result;
-	    if (value.equals(DT_EMPTY_TXT)) {
-			result = DT_EMPTY;
-		} else if (value.equals(DT_10_TXT)) {
-			result = DT_10;
-		} else if (value.equals(DT_15_TXT)) {
-			result = DT_15;
-		} else if (value.equals(DT_20_TXT)) {
-			result = DT_20;
-		} else if (value.equals(DT_25_TXT)) {
-			result = DT_25;
-		} else if (value.equals(DT_30_TXT)) {
-			result = DT_30;
-		} else if (value.equals(DT_35_TXT)) {
-			result = DT_35;
-		} else if (value.equals(DT_40_TXT)) {
-			result = DT_40;
-		} else if (value.equals(DT_45_TXT)) {
-			result = DT_45;
-		} else if (value.equals(DT_50_TXT)) {
-			result = DT_50;
-		} else {
-			result = DT_UNKNOWN;
-		}
-	    return result;
-    }
-
-	/**
-	 * Converting the OC format of difficulty values (1,0 ; 3,5) to GC format (1 ; 3.5). If the
-	 * format is already GC, then it is returned unchanged. 
-     * @param pValue String to convert
-     * @return Converted String
-     */
-    public static String terrHard_OC2GC(String pValue) {
-	    String value = pValue.replace(',', '.');
-	    if (value.endsWith(".0")) value = value.substring(0,1);
-	    return value;
-    }
- 
 	/**
 	 * Gets the type of cache as integer.
 	 * @return Cache type
@@ -1436,7 +1349,6 @@ public void finalize() {nObjects--;
 		Global.getProfile().notifyUnsavedChanges(hasNote != this.hasNote);		
 		this.hasNote = hasNote;
 	}
-	
 
 }
 

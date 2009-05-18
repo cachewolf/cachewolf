@@ -202,8 +202,8 @@ public class TPLExporter {
 						varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.getCacheSize()));
 						varParams.put("WAYPOINT", ch.getWayPoint());
 						varParams.put("OWNER", ch.getCacheOwner());
-						varParams.put("DIFFICULTY", dec.replaceAll(ch.getHard()));
-						varParams.put("TERRAIN", dec.replaceAll(ch.getTerrain()));
+						varParams.put("DIFFICULTY", String.valueOf(ch.getHard()));
+						varParams.put("TERRAIN", String.valueOf(ch.getTerrain()));
 						varParams.put("DISTANCE", dec.replaceAll(ch.getDistance()));
 						varParams.put("BEARING", ch.bearing);
 						varParams.put("LATLON", ch.LatLon);

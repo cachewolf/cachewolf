@@ -483,11 +483,11 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		if(name.equals("difficulty")) {
-			holder.setHard(CacheHolder.terrHard_OC2GC(strData));
+			holder.setHard(CacheTerrDiff.v1Converter(strData));
 			return;
 		}
 		if(name.equals("terrain")) {
-			holder.setTerrain(CacheHolder.terrHard_OC2GC(strData));
+			holder.setTerrain(CacheTerrDiff.v1Converter(strData));
 			return;
 		}
 		if(name.equals("datehidden")) {

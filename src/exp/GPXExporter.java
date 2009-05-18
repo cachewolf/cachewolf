@@ -82,15 +82,10 @@ public class GPXExporter extends Exporter{
 				strBuf.append("      <groundspeak:type>").append(CacheType.id2GpxString(ch.getType())).append("</groundspeak:type>\r\n");
 				strBuf.append("      <groundspeak:container>").append(CacheSize.cw2ExportString(ch.getCacheSize())).append("</groundspeak:container>\r\n");
 				//for Colorado/Oregon: 2.0 -> 2
-				String diffTerr = ch.getHard().replace(',','.');
-				if ( diffTerr.endsWith( ".0" ) ) {
-					diffTerr = diffTerr.substring(0, 1);
-				}
+				String diffTerr = CacheTerrDiff.shortDT(ch.getHard());
+				
 				strBuf.append("      <groundspeak:difficulty>").append(diffTerr).append("</groundspeak:difficulty>\r\n");
-				diffTerr = ch.getTerrain().replace(',','.');
-				if ( diffTerr.endsWith( ".0" ) ) {
-					diffTerr = diffTerr.substring(0, 1);
-				}
+				diffTerr = CacheTerrDiff.shortDT(ch.getTerrain());
 				strBuf.append("      <groundspeak:terrain>").append(diffTerr).append("</groundspeak:terrain>\r\n");
 				
 				strBuf.append("      <groundspeak:country>").append(SafeXML.cleanGPX(det.Country)+"</groundspeak:country>\r\n");

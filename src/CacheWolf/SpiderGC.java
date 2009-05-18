@@ -728,12 +728,12 @@ public class SpiderGC{
 						else pref.log("Got size");
 
 						pref.log("Trying difficulty");
-						ch.setHard(getDiff(completeWebPage));
+						ch.setHard(CacheTerrDiff.v1Converter(getDiff(completeWebPage)));
 						if (pref.debug) pref.log("Hard: " + ch.getHard());
 						else pref.log("Got difficulty");
 
 						pref.log("Trying terrain");
-						ch.setTerrain(getTerr(completeWebPage));
+						ch.setTerrain(CacheTerrDiff.v1Converter(getTerr(completeWebPage)));
 						if (pref.debug) pref.log("Terr: " + ch.getTerrain());
 						else pref.log("Got terrain");
 

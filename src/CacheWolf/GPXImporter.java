@@ -400,11 +400,11 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		if (name.equals("groundspeak:difficulty") || name.equals("difficulty") || name.equals("terra:mental_challenge")) {
-			holder.setHard(strData);
+			holder.setHard(CacheTerrDiff.v1Converter(strData));
 			return;
 		}
 		if (name.equals("groundspeak:terrain")|| name.equals("terrain")|| name.equals("terra:physical_challenge")) {
-			holder.setTerrain(strData);
+			holder.setTerrain(CacheTerrDiff.v1Converter(strData));
 			return;
 		}
 		if ((name.equals("groundspeak:type") || name.equals("type")|| name.equals("terra:style"))&& inCache){
