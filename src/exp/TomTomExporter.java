@@ -1,6 +1,5 @@
 package exp;
 
-
 import CacheWolf.*;
 import ewe.ui.*;
 import ewe.util.*;
@@ -20,9 +19,6 @@ public class TomTomExporter {
 	CacheDB cacheDB;
 	Preferences pref;
 	Profile profile;
-
-	
-
 	
 	public TomTomExporter() {
 		profile = Global.getProfile();
@@ -68,13 +64,13 @@ public class TomTomExporter {
 		String ext, fileName = null;
 
 		CacheHolder holder;
-		ProgressBarForm pbf = new ProgressBarForm();
+		ProgressBarForm progressForm = new ProgressBarForm();
 		Handle h = new Handle();
 		int currExp, counter;
 		
-		pbf.showMainTask = false;
-		pbf.setTask(h,"Exporting ...");
-		pbf.exec();
+		progressForm.showMainTask = false;
+		progressForm.setTask(h,"Exporting ...");
+		progressForm.exec();
 		
 		currExp = 0;
 		counter = 0;
@@ -83,16 +79,23 @@ public class TomTomExporter {
 		}
 		
 		ext = format==TT_ASC?".asc":".ov2";
+
 		try{
 			//loop through type
 			for(int j = 0; j < CacheType.guiTypeStrings().length; j++){
-				fileName = dirName + "/" + prefix + CacheType.guiTypeStrings()[j]+ ext;
+				String typeName = CacheType.guiTypeStrings()[j];
+				if (typeName.startsWith("Addi: ")) {
+					typeName = typeName.substring(6);
+				}
+				
+				fileName = dirName + "/" + prefix + typeName + ext;
 				dfile = new File(fileName);
 				dfile.delete();
 				out =  new RandomAccessFile(fileName,"rw");
 				for(int i = 0; i<cacheDB.size(); i++){
 					holder=cacheDB.get(i);
-					if(holder.getType() == new Integer(CacheType.guiSelect2Cw(j)).intValue() && holder.isVisible() == false){
+
+					if(holder.getType() == CacheType.guiSelect2Cw(j) && holder.isVisible() == true){
 						currExp++;
 						h.progress = (float)currExp/(float)counter;
 						h.changed();
@@ -110,15 +113,14 @@ public class TomTomExporter {
 				if (dfile.length()==0) {
 					dfile.delete();
 				} else {
-					copyIcon(j, dirName + "/" + prefix + CacheType.guiTypeStrings()[j]); 
+					copyIcon(j, dirName + "/" + prefix,typeName); 
 				}
 			}//for wayType
-			pbf.exit(0);
+			progressForm.exit(0);
 		} catch (IOException e){
 			Vm.debug("Problem creating file! " + fileName);
 			e.printStackTrace();
 		}//try
-		
 	}
 	
 	public void writeSingleFile(int format, String fileName){
@@ -158,7 +160,7 @@ public class TomTomExporter {
 				}//if
 			}//for
 			out.close();
-			copyIcon(0, fileName.substring(0,fileName.indexOf(".")));
+			copyIcon(0, fileName.substring(0,fileName.indexOf(".")),"");
 			pbf.exit(0);
 		}catch (Exception e){
 			Vm.debug("Problem writing to file! " + fileName);
@@ -194,7 +196,6 @@ public class TomTomExporter {
 		return;
 	}
 
-	
 	public void writeRecordBinary(RandomAccessFile outp, CacheHolder ch, String lat, String lon){
 		int d,data;
 		double latlon;
@@ -252,34 +253,32 @@ public class TomTomExporter {
 		return;
 	}
 	
-	public void copyIcon(int intWayType, String filename){
+	public void copyIcon(int intWayType, String prefix, String typeName){
 		try {
 			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + "/POIIcons.zip");
 			ZipEntry zipEnt;
 			int len;
 			String entName; 
 			
-			entName = "TomTomIcons/"+ "GC-" + CacheType.guiTypeStrings()[intWayType] + ".bmp";
+			entName = "TomTomIcons/"+ "GC-" + typeName + ".bmp";
 			zipEnt = zif.getEntry(entName);
 			if (zipEnt == null) return;
 			
 		    byte[] buff = new byte[ zipEnt.getSize() ];
 		    InputStream  fis = zif.getInputStream(zipEnt);
-		    FileOutputStream fos = new FileOutputStream( filename + ".bmp");
+		    FileOutputStream fos = new FileOutputStream( prefix + typeName + ".bmp");
 		    while( 0 < (len = fis.read( buff )) )
 		      fos.write( buff, 0, len );
 		    fos.flush();
 		    fos.close();
 		    fis.close();
 		} catch (ZipException e) {
-			Vm.debug("Problem copying Icon" + "GC-" + CacheType.guiTypeStrings()[intWayType] + ".bmp" );
+			Vm.debug("Problem copying Icon" + "GC-" + typeName + ".bmp" );
 			e.printStackTrace();
 		} catch (IOException e) {
-			Vm.debug("Problem copying Icon" + "GC-" + CacheType.guiTypeStrings()[intWayType] + ".bmp" );
+			Vm.debug("Problem copying Icon" + "GC-" + typeName + ".bmp" );
 			e.printStackTrace();
 		}
-
-		
 	}
 	
 }
