@@ -885,7 +885,9 @@ public void finalize() {nObjects--;
 		             bool2BitMask(this.is_log_updated(), 9) |
 		             bool2BitMask(this.is_updated(), 10)    |
 		             bool2BitMask(this.is_HTML(), 11)       |
-		             bool2BitMask(this.is_incomplete(), 12);		             
+		             bool2BitMask(this.is_incomplete(), 12) |
+		             bool2BitMask(this.hasNote(), 13)       |
+		             bool2BitMask(this.hasSolver(), 14);		             
 		return value;
 	}
 
@@ -970,6 +972,8 @@ public void finalize() {nObjects--;
 		this.setUpdated((value & this.bool2BitMask(true, 10)) != 0);
 		this.setHTML((value & this.bool2BitMask(true, 11)) != 0);
 		this.setIncomplete(((value & this.bool2BitMask(true, 12)) != 0) || this.is_incomplete());
+		this.setHasNote((value & this.bool2BitMask(true, 13)) != 0);
+		this.setHasSolver((value & this.bool2BitMask(true, 14)) != 0);
 	}
 	
 	/**
