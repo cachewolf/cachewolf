@@ -97,12 +97,14 @@ public class DetailsPanel extends CellPanel{
 
 		this.addNext(new mLabel(MyLocale.getMsg(300,"Type:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTHWEST));
 		CellPanel line1Panel = new CellPanel();
+		chcType.alwaysDrop = true;
 		line1Panel.addNext(chcType,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		line1Panel.addLast(lblDiff=new mLabel(MyLocale.getMsg(1000,"D")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
 		this.addLast(line1Panel,DONTSTRETCH,HFILL).setTag(CellConstants.SPAN, new Dimension(2,1));
 		
 		this.addNext(new mLabel(MyLocale.getMsg(301,"Size:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		CellPanel line2Panel = new CellPanel();
+		chcSize.alwaysDrop = true;
 		line2Panel.addNext(chcSize,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		line2Panel.addLast(lblTerr=new mLabel(MyLocale.getMsg(1001,"T")+": 5.5"),CellConstants.DONTSTRETCH,(CellConstants.DONTFILL|CellConstants.EAST));
 		this.addLast(line2Panel,DONTSTRETCH,HFILL).setTag(CellConstants.SPAN, new Dimension(2,1));
