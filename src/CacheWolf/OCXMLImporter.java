@@ -127,7 +127,7 @@ public class OCXMLImporter extends MinML {
 			+ "modifiedsince=" + lastS
 			+ "&cache=1"
 			+ "&cachedesc=1";
-		if (pref.downloadPicsOC) url += "&picture=1";
+		if (pref.downloadPics) url += "&picture=1";
 		else url += "&picture=0";
 		url += "&cachelog=1"
 			+ "&removedobject=0"
@@ -184,7 +184,7 @@ public class OCXMLImporter extends MinML {
 			+ "modifiedsince=" + lastS
 			+ "&cache=1"
 			+ "&cachedesc=1";
-		if (pref.downloadPicsOC) url += "&picture=1";
+		if (pref.downloadPics) url += "&picture=1";
 		else url += "&picture=0";
 		url += "&cachelog=1"
 			+ "&removedobject=0"
@@ -504,7 +504,7 @@ public class OCXMLImporter extends MinML {
 
 		if (!ignoreDesc){
 			if (name.equals("cachedesc")){
-				if (pref.downloadPicsOC && holder.is_HTML()) {
+				if (pref.downloadPics && holder.is_HTML()) {
 					String fetchUrl, imgTag, imgAltText;
 					Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthält keine Anführungszeichen
 					Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
@@ -581,7 +581,7 @@ public class OCXMLImporter extends MinML {
 					holder.getFreshDetails().Images.add(fileName);
 				}
 				else {
-					if (pref.downloadPicsOC) {
+					if (pref.downloadPics) {
 						holder.getFreshDetails().Images.add(fetch(fetchURL, fileName));
 					}
 				}

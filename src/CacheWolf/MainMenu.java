@@ -699,6 +699,9 @@ public class MainMenu extends MenuBar {
 		CacheDB cacheDB=profile.cacheDB;
 		CacheHolder ch;
 		
+		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5003,"Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS);
+		if (options.execute() == FormBase.IDCANCEL) {	return; }
+		
 		SpiderGC spider = new SpiderGC(pref, profile, false);
 		OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
 		//Vm.debug("ByPass? " + profile.byPassIndexActive);

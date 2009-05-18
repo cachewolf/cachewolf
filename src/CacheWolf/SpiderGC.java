@@ -223,7 +223,7 @@ public class SpiderGC{
 		try{
 			// Read the cache data from GC.COM and compare to old data
 			boolean loadAllLogs = (MAXLOGS > 5);
-			ret=getCacheByWaypointName(ch,true,true,false,loadAllLogs);
+			ret=getCacheByWaypointName(ch,true,pref.downloadPics,pref.downloadTBs,false,loadAllLogs);
 			// Save the spidered data
 			if (ret == 1) {
 				CacheHolder cacheInDB = cacheDB.get(number);
@@ -306,12 +306,12 @@ public class SpiderGC{
 
 		OCXMLImporterScreen options;
 		if (spiderAllFinds) {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS);
 			if (options.execute() == FormBase.IDCANCEL) {return; }
 
 			distance = 1;
 		} else {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS);
 			if (options.execute() == FormBase.IDCANCEL) {return; }
 			String dist = options.distanceInput.getText();
 			if (dist.length()== 0) return;
@@ -339,6 +339,7 @@ public class SpiderGC{
 		boolean maxNumberAbort = false;
 
 		boolean getImages = options.imagesCheckBox.getState();
+		boolean getTBs = options.travelbugsCheckBox.getState();
 		options.close(0);
 
 		//max distance in miles for URL, so we can get more than 80km
@@ -553,7 +554,7 @@ public class SpiderGC{
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + totalCachesToLoad + ")");
 				holder = new CacheHolder();
 				holder.setWayPoint(wpt);
-				int test = getCacheByWaypointName(holder,false,getImages,doNotgetFound,loadAllLogs);
+				int test = getCacheByWaypointName(holder,false,getImages,getTBs,doNotgetFound,loadAllLogs);
 				if (test == -1) {
 					infB.close(0);
 					break;
@@ -608,12 +609,13 @@ public class SpiderGC{
 	 * @param CacheHolderDetail chD The element wayPoint must be set to the name of a waypoint
 	 * @param boolean isUpdate True if an existing cache is being updated, false if it is a new cache
 	 * @param boolean fetchImages True if the pictures are to be fetched
+	 * @param boolean fetchTBs True if the TBs are to be fetched
 	 * @param boolean doNotGetFound True if the cache is not to be spidered if it has already been found
 	 * @param boolean fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line).
 	 *     This is normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
 	 * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if everything ok
 	 */
-	private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean doNotGetFound, boolean fetchAllLogs) {
+	private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean fetchTBs, boolean doNotGetFound, boolean fetchAllLogs) {
 		int ret = 1;
 		while (true) {
 			String completeWebPage;
@@ -760,7 +762,7 @@ public class SpiderGC{
 						// Bugs
 						//==========
 						// As there may be several bugs, we check whether the user has aborted
-						if (!infB.isClosed) getBugs(ch.getFreshDetails(),completeWebPage);
+						if (!infB.isClosed && fetchTBs) getBugs(ch.getFreshDetails(),completeWebPage);
 						ch.setHas_bugs(ch.getFreshDetails().Travelbugs.size()>0);
 
 						//==========
