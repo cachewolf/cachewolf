@@ -95,6 +95,24 @@ public class MyComparer implements Comparer{
 				else
 					ch.sort="\uFFFF";
 			}			
+		} else if (colToCompare==15) {
+		    for (int i=0; i<visibleSize; i++) {
+		        CacheHolder ch=cacheDB.get(i);
+		        if (ch.hasSolver()) {
+		            ch.sort="1";
+		        } else {
+		            ch.sort="2";
+		        }
+		    }
+		} else if (colToCompare==16) {
+		    for (int i=0; i<visibleSize; i++) {
+		        CacheHolder ch=cacheDB.get(i);
+		        if (ch.hasNote()) {
+		            ch.sort="1";
+		        } else {
+		            ch.sort="2";
+		        }
+		    }
 		}
 	}
 	
