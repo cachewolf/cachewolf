@@ -1,9 +1,9 @@
 package CacheWolf;
 
 /**
- * Handels all aspects of converting cache size information from
+ * Handles all aspects of converting cache size information from
  * and to the various im- and exporters as well as for converting
- * legavy profiles to current standard
+ * legacy profiles to current standard
  */
 public final class CacheSize {
 
@@ -96,7 +96,7 @@ public final class CacheSize {
 	public static final byte CW_GUIIMGID_VERYLARGE = 5;
 
 	/*
-	 * total number of different size images will be used to det the dimension
+	 * total number of different size images will be used to set the dimension
 	 * of sizePics[] array in TableModel
 	 */
 	public static final byte CW_TOTAL_SIZE_IMAGES = 6;
@@ -127,9 +127,9 @@ public final class CacheSize {
 	 * 
 	 * @param id
 	 *            size identifier matching the CW_GUIIMGID_ constants
-	 * @return filenam of image to be displayed for id
+	 * @return filename of image to be displayed for id
 	 * @throws IllegalArgumentException
-	 *             if there is no image associated to the id
+	 *             if there is no image associated to the <code>id</code>
 	 */
 	public static String sizeImageForId(byte id) throws IllegalArgumentException {
 		switch (id) {
@@ -158,7 +158,7 @@ public final class CacheSize {
 	 *            CW internal representation of cache size
 	 * @return string representation of CacheWolf internal cache size
 	 * @throws IllegalArgumentException
-	 *             if cwsize can not be mapped to a CW_SIZE constant
+	 *             if <code>cwsize</code> can not be mapped to a CW_SIZE constant
 	 */
 	public static String cw2ExportString(byte size) throws IllegalArgumentException {
 		switch (size) {
@@ -190,10 +190,10 @@ public final class CacheSize {
 	 * internal representation
 	 * 
 	 * @param tcstring
-	 *            size information extracted from a TC GPX inport
+	 *            size information extracted from a TC GPX import
 	 * @return CacheWolf internal representation of size information
 	 * @throws IllegalArgumentException
-	 *             if tcstring can not be mapped to internal representation
+	 *             if <code>tcstring</code> can not be mapped to internal representation
 	 *             (CW_SIZE_*)
 	 */
 
@@ -218,10 +218,10 @@ public final class CacheSize {
 	 * representation
 	 * 
 	 * @param gcstring
-	 *            size information extracted from a GPX inport
+	 *            size information extracted from a GPX import
 	 * @return CacheWolf internal representation of size information
 	 * @throws IllegalArgumentException
-	 *             if gcstring can not be mapped to internal representation
+	 *             if <code>gcstring</code> can not be mapped to internal representation
 	 *             (CW_SIZE_*)
 	 */
 
@@ -250,10 +250,10 @@ public final class CacheSize {
 	 * representation for CacheHolder
 	 * 
 	 * @param spiderstring
-	 *            string identified by the spider as containing size iformation
+	 *            string identified by the spider as containing size information
 	 * @return CacheWolf internal representation of size information
 	 * @throws IllegalArgumentException
-	 *             if spiderstring can not be mapped to internal representation
+	 *             if <code>spiderstring</code> can not be mapped to internal representation
 	 *             (CW_SIZE_*)
 	 */
 	public static byte gcSpiderString2Cw(String spiderstring) throws IllegalArgumentException {
@@ -268,7 +268,7 @@ public final class CacheSize {
 	 * @param ocxmlstring
 	 *            string extracted from OC-XML attribute size
 	 * @return CacheWolf internal representation of size information
-	 * @trows IllegalArgumentException if ocxmlstring can not be mapped to a
+	 * @trows IllegalArgumentException if <code>ocxmlstring</code> can not be mapped to a
 	 *        CW_SIZE_*
 	 */
 	public static byte ocXmlString2Cw(String ocxmlstring) throws IllegalArgumentException {
@@ -298,7 +298,7 @@ public final class CacheSize {
 	 *            CW internal representation of cache size
 	 * @return filename of image to be displayed in main panel as size icon
 	 * @throws IllegalArgumentException
-	 *             if size can not be mapped
+	 *             if <code>size</code> can not be mapped
 	 */
 	public static byte guiSizeImageId(byte size) throws IllegalArgumentException {
 		switch (size) {
@@ -331,7 +331,7 @@ public final class CacheSize {
 	 * @param v1Size
 	 *            old size string
 	 * @return CW internal representation of cache size
-	 * @throws IllegalArgumentException if v1Size can not be mapped
+	 * @throws IllegalArgumentException if <code>v1Size</code> can not be mapped
 	 * @deprecated remove once v1 file version compatibility is abandoned
 	 */
 	public static final byte v1Converter(String v1Size) throws IllegalArgumentException {
@@ -369,7 +369,7 @@ public final class CacheSize {
 	 *            CW internal representation of cache size
 	 * @return a bit mask for the filter function
 	 * @throws IllegalArgumentException
-	 *             if size can not be mapped to a bit mask
+	 *             if <code>size</code> can not be mapped to a bit mask
 	 */
 	public static byte getFilterPattern(byte size) throws IllegalArgumentException {
 		switch (size) {
@@ -403,7 +403,7 @@ public final class CacheSize {
 	 *            CW internal representation of cache size
 	 * @return a one letter String for cache size
 	 * @throws IllegalArgumentException
-	 *             if size can not be mapped
+	 *             if <code>size</code> can not be mapped
 	 */
 
 	public static String getExportShortId(byte size) throws IllegalArgumentException {
@@ -458,10 +458,10 @@ public final class CacheSize {
 	 * map a string chosen from the DetailsPanel Size drop down list back to
 	 * internal representation
 	 * 
-	 * @param id
-	 * @return
+	 * @param id string selected in the list
+	 * @return cw type information
 	 * @throws IllegalArgumentException
-	 *             if id can not be mapped
+	 *             if <code>id</code> can not be mapped
 	 * @see cwSizeId2GuiSizeId
 	 * @see guiSizeStrings
 	 */
@@ -496,7 +496,7 @@ public final class CacheSize {
 	 *            internal id to be mapped
 	 * @return index of internal size in array
 	 * @throws IllegalArgumentException
-	 *             if id can not be mapped
+	 *             if <code>id</code> can not be mapped
 	 * @see guiSizeStrings2CwSize
 	 * @see cwSizeId2GuiSizeId
 	 */

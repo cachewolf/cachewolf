@@ -1,7 +1,12 @@
 package exp;
 
-//FIXME: broken!
-
+import CacheWolf.CWPoint;
+import CacheWolf.CacheHolder;
+import CacheWolf.CacheHolderDetail;
+import CacheWolf.CacheType;
+import CacheWolf.Preferences;
+import CacheWolf.Profile;
+import CacheWolf.SafeXML;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;
@@ -10,16 +15,16 @@ import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.PrintWriter;
-import ewe.sys.Convert;
 import ewe.sys.Handle;
 import ewe.sys.Vm;
 import ewe.ui.ProgressBarForm;
-import ewe.util.*;
+import ewe.util.Hashtable;
+import ewe.util.Iterator;
+import ewe.util.Vector;
 import ewe.util.Map.MapEntry;
 import ewe.util.zip.ZipEntry;
 import ewe.util.zip.ZipException;
 import ewe.util.zip.ZipFile;
-import CacheWolf.*; // if we would use public instead of protected we would not need this.
 
 /**
 *	Class to export the cache database (index) to an KML-File
@@ -100,7 +105,7 @@ public class KMLExporter extends Exporter {
 					tmp = (Vector)entry.getValue();
 					// skip over empty cachetypes
 					if (tmp.size() == 0) continue;
-					outp.print(startFolder(CacheType.cw2ExportString(CacheType.guiSelect2Cw(new Integer((String)entry.getKey()).byteValue()))));
+					outp.print(startFolder(CacheType.cw2ExportString(new Integer((String)entry.getKey()).byteValue())));
 
 					for(int i = 0; i<tmp.size(); i++){
 						ch = (CacheHolder) tmp.get(i);
