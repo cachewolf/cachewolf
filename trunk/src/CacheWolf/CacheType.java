@@ -1,9 +1,9 @@
 package CacheWolf;
 
 /**
- * Handels all aspects of converting cache type information from
+ * Handles all aspects of converting cache type information from
  * and to the various im- and exporters as well as for converting
- * legavy profiles to current standard
+ * legacy profiles to current standard
  * 
  * Do not instantiate this class, only use it in a static way
  */
@@ -227,7 +227,7 @@ public final class CacheType {
 		case CW_TYPE_REFERENCE: return "R";
 		case CW_TYPE_APE: return "T";
 		case CW_TYPE_MAZE: return "X";
-		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew getExportShortId()");
+		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSize getExportShortId()");
 		}
 	}
 	
@@ -258,7 +258,7 @@ public final class CacheType {
 		if (type.equals("1858")) return CW_TYPE_WHEREIGO;
 		if (type.equals("137")) return CW_TYPE_EARTH;
 		
-		throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew v1Converter()");
+		throw new IllegalArgumentException("unmatched argument "+type+" in CacheSize v1Converter()");
 	}
 
 	/**
@@ -293,7 +293,7 @@ public final class CacheType {
 		case -62: return CW_TYPE_WHEREIGO;
 		case 100: return CW_TYPE_WHEREIGO; // yes, it can be either of those
 		case 9: return CW_TYPE_EARTH;
-		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSizeNew v2Converter()");
+		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSize v2Converter()");
 		}
 	}
 	
