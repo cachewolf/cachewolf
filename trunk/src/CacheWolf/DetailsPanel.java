@@ -213,10 +213,22 @@ public class DetailsPanel extends CellPanel{
 		chcSize.setInt(ch.getCacheSize());
 
 		attV.showImages(ch.getCacheDetails(true).attributes);
-		lblTerr.setText((ch.getTerrain() != CacheTerrDiff.CW_DT_ERROR) ? 
+		try {
+			lblTerr.setText((ch.getTerrain() != CacheTerrDiff.CW_DT_ERROR) ? 
 				(MyLocale.getMsg(1001,"T")+": "+CacheTerrDiff.longDT(ch.getTerrain())) : "");
-		lblDiff.setText((ch.getHard() != CacheTerrDiff.CW_DT_ERROR) ? 
-				(MyLocale.getMsg(1000,"D")+": "+CacheTerrDiff.longDT(ch.getHard())) : ""); 
+		} catch (IllegalArgumentException ex) {
+			ch.setTerrain(CacheTerrDiff.CW_DT_ERROR);
+			ch.setIncomplete(true);
+			lblTerr.setText("");
+		}
+		try {
+			lblDiff.setText((ch.getHard() != CacheTerrDiff.CW_DT_ERROR) ? 
+				(MyLocale.getMsg(1000,"D")+": "+CacheTerrDiff.longDT(ch.getHard())) : "");
+		} catch (IllegalArgumentException ex) {
+			ch.setHard(CacheTerrDiff.CW_DT_ERROR);
+			ch.setIncomplete(true);
+			lblDiff.setText("");
+		}
 
 		if(isBigScreen)	mNotes.setText(ch.getExistingDetails().getCacheNotes());
 	}
