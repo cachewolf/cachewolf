@@ -665,11 +665,14 @@ public class CacheHolder {
 			try {
 				details.readCache(Global.getProfile().dataDir);
 			} catch (IOException e) {
-				if (alarmuser && !maybenew) {
-					(new MessageBox("Error", "Could not read cache details for cache: "
-					        + this.getWayPoint(), FormBase.OKB)).execute();
+				if (! maybenew ) {
+					if (alarmuser) {
+						(new MessageBox("Error", "Could not read cache details for cache: "
+						        + this.getWayPoint(), FormBase.OKB)).execute();
+					}
+					details = null;
+					this.setIncomplete(true);
 				}
-				if (!maybenew) details = null;
 			}
 			if (details != null
 					  // for importing/spidering reasons helper objects with same waypoint are created
