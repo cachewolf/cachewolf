@@ -162,7 +162,7 @@ public class TPLExporter {
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = cacheDB.get(i);
-			if(cacheDB.get(i).isVisible() == false) counter++;
+			if(cacheDB.get(i).isVisible() == true) counter++;
 		}
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
