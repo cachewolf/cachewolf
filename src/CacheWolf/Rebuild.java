@@ -74,8 +74,12 @@ public class Rebuild {
 				if (xmlFiles[i]!=null){	
 					h.progress = ((float)nDeleted++)/(float)(orphans-nAdded);
 					h.changed();
-					String wayPoint=xmlFiles[i].substring(0,xmlFiles[i].indexOf('.'));
-					dm.deleteCacheFiles(wayPoint,prof.dataDir);
+					int dotPos = xmlFiles[i].indexOf('.');
+					if (dotPos > 0) {
+					    // This may appear when there are directories in the profile
+					    String wayPoint=xmlFiles[i].substring(0,dotPos);
+					    dm.deleteCacheFiles(wayPoint,prof.dataDir);
+					}
 				}
 			}
 		}
