@@ -29,6 +29,8 @@ public class CacheTerrDiff {
 	protected static final byte CW_DT_50 = 50;
 	/** wrong terrain or difficulty */
 	protected static final byte CW_DT_ERROR = -1;
+	/** terrain or difficulty for additional waypoints */
+	protected static final byte CW_DT_ADDITIONAL = 0;
 
 	/** constructor dies nothing */
 	public CacheTerrDiff() {
