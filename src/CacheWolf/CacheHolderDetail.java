@@ -125,6 +125,8 @@ public class CacheHolderDetail {
 		  }
 		  this.Travelbugs = newCh.Travelbugs;
 		  
+		  if (newCh.attributes.getCount() > 0) this.attributes = newCh.attributes;
+		  
 		  // URL
 		  this.URL = newCh.URL;
 		  
