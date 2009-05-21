@@ -3,6 +3,7 @@
  */
 package CacheWolf;
 
+import CacheWolf.SpiderGC.SpiderProperties;
 import ewe.sys.Convert;
 import ewe.ui.*;
 
@@ -15,6 +16,7 @@ import ewe.ui.*;
 public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;
 	Preferences pref;
+	mChoice chcType;
 	mInput distanceInput;
 	mInput maxNumberInput;
 	mInput maxLogsInput;
@@ -31,6 +33,7 @@ public class OCXMLImporterScreen extends Form {
 	static int MAXNUMBER = 32;
 	static int TRAVELBUGS = 64;
 	static int MAXLOGS = 128;
+	static int TYPE = 256;
 
 	
 	public OCXMLImporterScreen(String title, int options) {
@@ -40,6 +43,24 @@ public class OCXMLImporterScreen extends Form {
 		isGC = ((options & ISGC) > 0);
 		
 		this.title = title;
+				
+		if ((options & TYPE) > 0) {
+			this.addLast( chcType = new mChoice(new String[] {
+					MyLocale.getMsg(1627,"All caches"),	
+					CacheType.CW_GUISTR_TRADI,
+					CacheType.CW_GUISTR_MULTI,
+					CacheType.CW_GUISTR_VIRTUAL,
+					CacheType.CW_GUISTR_LETTERBOX,
+					CacheType.CW_GUISTR_EVENT,
+					CacheType.CW_GUISTR_MEGAEVENT,
+					CacheType.CW_GUISTR_WEBCAM,
+					CacheType.CW_GUISTR_UNKNOWN,
+					CacheType.CW_GUISTR_CITO,
+					CacheType.CW_GUISTR_EARTH,
+					CacheType.CW_GUISTR_WHEREIGO
+				},0), CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
+		}
+
 		if ((options & DIST) > 0) {
 			this.addNext(distLbl = new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			distanceInput = new mInput();
@@ -131,5 +152,56 @@ public class OCXMLImporterScreen extends Form {
 				}
 		}
 		super.onEvent(ev);
+	}
+	
+	public String getCacheTypeRestriction(SpiderProperties p){
+		String cacheTypeRestriction = "";
+
+		if (chcType!=null){
+			try {
+				switch (chcType.getInt()) {
+				case  0:
+					cacheTypeRestriction = "";
+					break;
+				case  1: 
+					cacheTypeRestriction = p.getProp("onlyTraditional");
+					break;
+				case  2:
+					cacheTypeRestriction = p.getProp("onlyMulti");
+					break;
+				case  3:
+					cacheTypeRestriction = p.getProp("onlyVirtual") ;
+					break;
+				case  4:
+					cacheTypeRestriction = p.getProp("onlyLetterboxHybrid");
+					break;
+				case  5:
+					cacheTypeRestriction = p.getProp("onlyEvent");
+					break;
+				case  6:
+					cacheTypeRestriction = p.getProp("onlyMegaEvent");
+					break;
+				case  7:
+					cacheTypeRestriction = p.getProp("onlyWebcam");
+					break;
+				case  8:
+					cacheTypeRestriction = p.getProp("onlyUnknown");
+					break;
+				case 9:
+					cacheTypeRestriction = p.getProp("onlyCito");
+					break;
+				case 10:
+					cacheTypeRestriction = p.getProp("onlyEarth");
+					break;
+				case 11:
+					cacheTypeRestriction = p.getProp("onlyWherigo");
+					break;
+				default:
+					cacheTypeRestriction = "";
+				}
+			}catch (Exception ex) { // Some tag missing from spider.def
+			}
+		}
+		return cacheTypeRestriction;
 	}
 }

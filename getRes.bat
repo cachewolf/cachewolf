@@ -8,7 +8,8 @@ REM get ressources
 copy .\resources\*.* .\work\*.*
 copy .\res_noewe\*.* .\work\*.*
 mkdir .\work\attributes
-copy .\resources\attributes\*.* .\work\attributes\*.*
+copy .\resources\attributes-big\*.* .\work\attributes\*.*
+copy .\resources\attributes\*-non.gif .\work\attributes\*.*
 mkdir .\work\webmapservices
 copy .\res_noewe\webmapservices\*.* .\work\webmapservices\*.*
 mkdir .\work\languages
