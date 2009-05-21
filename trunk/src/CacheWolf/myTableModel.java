@@ -293,9 +293,17 @@ public class myTableModel extends TableModel{
 					case 1: // Type
 						return GuiImageBroker.getTypeImage(ch.getType());
 					case 2: // Difficulty;
-						return CacheTerrDiff.longDT(ch.getHard());
+						if (ch.isAddiWpt()) {
+							return "";
+						} else {
+							return CacheTerrDiff.longDT(ch.getHard());
+						}
 					case 3: // Terrain
-						return CacheTerrDiff.longDT(ch.getTerrain());
+						if (ch.isAddiWpt()) {
+							return "";
+						} else {
+							return CacheTerrDiff.longDT(ch.getTerrain());
+						}
 					case 4: // Waypoint
 						if (showExtraWptInfo) {
 							if(ch.is_incomplete()) return ch.getIconAndTextWP(4, fm);
