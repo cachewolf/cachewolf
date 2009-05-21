@@ -52,6 +52,7 @@ public class SpiderGC{
 	private static Preferences pref;
 	private Profile profile;
 	private static String viewstate = "";
+	private static String viewstate1 = "";
 	private static String eventvalidation = "";
 	private static String cookieID = "";
 	private static String cookieSession = "";
@@ -60,7 +61,7 @@ public class SpiderGC{
 	private CacheDB cacheDB;
 	private Vector cachesToLoad = new Vector();
 	private InfoBox infB;
-	private static myProperties p=null;
+	private static SpiderProperties p=null;
 
 	public SpiderGC(Preferences prf, Profile profile, boolean bypass){
 		this.profile=profile;
@@ -68,7 +69,7 @@ public class SpiderGC{
 		pref = prf;
 		if (p==null) {
 			pref.logInit();
-			p=new myProperties();
+			p=new SpiderProperties();
 		}
 		MAXLOGS=pref.maxLogsToSpider;
 	}
@@ -120,6 +121,7 @@ public class SpiderGC{
 		if (!localInfB.isClosed) { // If user has not aborted, we continue
 			Regex rexCookieID = new Regex("(?i)Set-Cookie: userid=(.*?);.*");
 			Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
+			Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
 			Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*?)\" />");
 			Regex rexCookieSession = new Regex("(?i)Set-Cookie: ASP.NET_SessionId=(.*?);.*");
 			rexViewstate.search(start);
@@ -179,6 +181,13 @@ public class SpiderGC{
 				pref.log("[login]:Viewstate not found");
 			}
 			viewstate = rexViewstate.stringMatched(1);
+			
+			rexViewstate1.search(start);
+			if (!rexViewstate1.didMatch()) {
+				pref.log("[login]:Viewstate1 not found");
+			}
+			viewstate1 = rexViewstate1.stringMatched(1);
+			
 			rexCookieID.search(start);
 			if (!rexCookieID.didMatch()) {
 				pref.log("[login]:CookieID not found. Using old one.");
@@ -295,6 +304,7 @@ public class SpiderGC{
 		}
 		String start = "";
 		Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*)\" />");
+		Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*)\" />");
 		Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*)\" />");
 		String doc = "";
 
@@ -303,15 +313,15 @@ public class SpiderGC{
 		}
 
 		boolean doNotgetFound = false;
-
+		
 		OCXMLImporterScreen options;
 		if (spiderAllFinds) {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS);
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.TYPE);
 			if (options.execute() == FormBase.IDCANCEL) {return; }
 
 			distance = 1;
 		} else {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS);
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.DIST| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.TYPE);
 			if (options.execute() == FormBase.IDCANCEL) {return; }
 			String dist = options.distanceInput.getText();
 			if (dist.length()== 0) return;
@@ -340,6 +350,9 @@ public class SpiderGC{
 
 		boolean getImages = options.imagesCheckBox.getState();
 		boolean getTBs = options.travelbugsCheckBox.getState();
+		
+		String cacheTypeRestriction = options.getCacheTypeRestriction(p);
+
 		options.close(0);
 
 		//max distance in miles for URL, so we can get more than 80km
@@ -383,6 +396,7 @@ public class SpiderGC{
 			                              + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );			
 				if(doNotgetFound) ln = ln + p.getProp("showOnlyFound");
 			}
+			ln = ln + cacheTypeRestriction;
 			pref.log("Getting first page: "+ln);
 			start = fetch(ln);
 			pref.log("Got first page");
@@ -403,12 +417,13 @@ public class SpiderGC{
 			Vm.showWait(false);
 			return;
 		}
+		int page = 0;
 		int found_on_page = 0;
 		try {
 			//Loop till maximum distance has been found or no more caches are in the list
 			while(distance > 0){
 				if (infB.isClosed) break;
-		
+						
 				rexViewstate.search(start);
 				if(rexViewstate.didMatch()){
 					viewstate = rexViewstate.stringMatched(1);
@@ -416,6 +431,15 @@ public class SpiderGC{
 				} else {
 					viewstate = "";
 					pref.log("Viewstate not found");
+				}
+				
+				rexViewstate1.search(start);
+				if(rexViewstate1.didMatch()){
+					viewstate1 = rexViewstate1.stringMatched(1);
+					//Vm.debug("ViewState: " + viewstate);
+				} else {
+					viewstate1 = "";
+					pref.log("Viewstate1 not found");
 				}
 				
 				rexEventvalidation.search(start);
@@ -479,7 +503,10 @@ public class SpiderGC{
 					} else distance = 0;
 					lineRex.searchFrom(dummy, lineRex.matchedTo());
 				}
-				infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
+				
+				page++;
+				infB.setInfo(MyLocale.getMsg(5521,"Page ") + page + "\n" + MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
+
 				if(found_on_page < 20) distance = 0;
 				if (spiderAllFinds) {
 					postStr = p.getProp("firstLine");
@@ -488,6 +515,7 @@ public class SpiderGC{
 							                             + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );			
 					if(doNotgetFound) postStr = postStr + p.getProp("showOnlyFound");
 				}
+				postStr = postStr + cacheTypeRestriction;
 				if(distance > 0){
 					page_number++;
 					if(page_number >= 15) page_number = 5;
@@ -499,8 +527,10 @@ public class SpiderGC{
 					}
 					doc = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strNextPage,false)
 					    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
+					    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
 					    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
-					    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
+					    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
+//					    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
 					try{
 						start = "";
 						pref.log("Fetching next list page:" + doc);
@@ -1606,8 +1636,8 @@ public class SpiderGC{
 		}
 	}
 
-	private class myProperties extends Properties {
-		myProperties() {
+	public class SpiderProperties extends Properties {
+		SpiderProperties() {
 			super();
 			try {
 				load(new FileInputStream(FileBase.getProgramDirectory()+"/spider.def"));
