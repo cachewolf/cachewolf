@@ -1,7 +1,7 @@
 # Release
 T0VersionMajor: 1
 T0VersionMinor: 0
-T0SvnRevision: 1532
+T0SvnRevision: 1839
 
 # ReleaseCandidate
 T1VersionMajor: 1
@@ -15,9 +15,9 @@ T2SvnRevision: 1536
 
 # InDevelopmentNewest
 T3VersionMajor: 1
-T3VersionMinor: 0
+T3VersionMinor: 1
 #T3SvnRevision: http://flyingfish.freewrt.org:8180/job/Cachewolf/lastBuild/ (?i)Revision[\\s]*[:=][\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 T3SvnRevision: http://pub.naturalnet.de/~nik/own/CacheWolf-BE/zcurrent.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 
-RecommendedType: 3
+RecommendedType: 1
 
