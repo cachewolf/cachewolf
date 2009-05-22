@@ -1,0 +1,19 @@
+TakenFromUrl:   http://isk.geobasis-bb.de/index.php?cms=1101
+GetCapabilitiesUrl:   http://isk.geobasis-bb.de/ows/dnm025.php?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1%2
+Name:   de.Berlin/Brandenburg topo 25
+MapType:   topo
+MainUrl:   http://isk.geobasis-bb.de/ows/dnm025.php?
+ServiceTypeUrlPart:   SERVICE=WMS
+VersionUrlPart:   VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:   4326
+CoordinateReferenceSystemUrlPart:   SRS=EPSG:4326
+RequestUrlPart:   REQUEST=GetMap
+LayersUrlPart:   LAYERS=bg,siedlung,transport,vegetation,gewaesser,gewaessernamen,ortsnamen,strassennamen
+StylesUrlPart:   STYLES=2
+ImageFormatUrlPart:   FORMAT=image/png
+BoundingBoxTopLeftWGS84:   N 53.5 E 11.2
+BoundingBoxButtomRightWGS84:   N 51.3 E 14.8
+MinScale:   0.0
+MaxScale:   11.0485
+RecommendedScale:   2.5
+ImageFileExtension:   .png

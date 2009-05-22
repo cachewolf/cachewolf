@@ -1,0 +1,20 @@
+# de_topo_OSM.wms - Version 0.2
+TakenFromUrl: http://www.wheregroup.com/de/freier_wms_mit_openstreetmap_daten
+GetCapabilitiesUrl: http://osm.wheregroup.com/cgi-bin/mapserv?map=/data/umn/osm/osm_basic.map&REQUEST=GetCapabilities&SERVICE=WMS&VERSION=1.1.1
+Name: eu OpenStreetMap
+MainUrl:  http://osm.wheregroup.com/cgi-bin/osm_basic.xml?
+MapType:  topo
+ServiceTypeUrlPart:   SERVICE=WMS 
+VersionUrlPart:   VERSION=1.1.1 
+CoordinateReferenceSystemCacheWolf: 4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326
+RequestUrlPart: REQUEST=GetMap
+LayersUrlPart:  LAYERS=Landwirtschaft,Industriegebiet,Bauland,Gruenflaeche,unkultiviertes_Land,Park,Naherholungsgebiet,Wald,Wiese,Wasser,Fluesse,Baeche,Kanal,Insel,Kueste,Strand,Fussgaengerzone,Fussgaengerweg,Radweg,Wege,Wohnstrasse,Zufahrtswege,einfache_Strasse,Landstrasse,Bundesstrasse,Kraftfahrstrasse,Autobahn,Ortschaft,Weiler,Dorf,Stadt,Grossstadt,Bahn,Bahnhof,Gebaeude
+StylesUrlPart:  STYLES=
+ImageFormatUrlPart: FORMAT=image/png
+BoundingBoxTopLeftWGS84:  N 74.1 W 10.4
+BoundingBoxButtomRightWGS84:  N 35.7 E 43.0
+MinScale: 0.6
+MaxScale: 99.99
+RecommendedScale: 5
+ImageFileExtension: .png
