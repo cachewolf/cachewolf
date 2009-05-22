@@ -1371,6 +1371,9 @@ public class SpiderGC{
 				descRex.search(rowBlock);
 				hd.getFreshDetails().setLongDescription(descRex.stringMatched(1));
 				hd.setFound(is_found);
+				hd.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+				hd.setHard(CacheTerrDiff.CW_DT_ADDITIONAL);
+				hd.setTerrain(CacheTerrDiff.CW_DT_ADDITIONAL);
 				if (idx<0){
 					cacheDB.add(hd);
 					hd.save();
@@ -1385,6 +1388,7 @@ public class SpiderGC{
 					}
 				}
 				rowBlock = exRowBlock.findNext();
+
 			}
 		}
 	}
