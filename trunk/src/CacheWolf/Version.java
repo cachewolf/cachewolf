@@ -13,7 +13,7 @@ import ewe.sys.*;
 
 public class Version {
 	static final int VER_MAJOR = 1;
-	static final int VER_MINOR = 0;
+	static final int VER_MINOR = 1;
 	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
 	static final int SVN_REVISION = 20090512;
 	static final int VERSION_TYPE = 3;
