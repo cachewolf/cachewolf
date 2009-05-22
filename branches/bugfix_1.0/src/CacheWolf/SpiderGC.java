@@ -50,6 +50,7 @@ public class SpiderGC{
 	private static Preferences pref;
 	private Profile profile;
 	private static String viewstate = "";
+	private static String viewstate1 = "";
 	private static String eventvalidation = "";
 	private static String cookieID = "";
 	private static String cookieSession = "";
@@ -299,6 +300,7 @@ public class SpiderGC{
 		}
 		String start = "";
 		Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*)\" />");
+		Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*)\" />");
 		Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*)\" />");
 		String doc = "";
 
@@ -357,7 +359,7 @@ public class SpiderGC{
 			//Loop till maximum distance has been found or no more caches are in the list
 			while(distance > 0){
 				if (infB.isClosed) break;
-		
+						
 				rexViewstate.search(start);
 				if(rexViewstate.didMatch()){
 					viewstate = rexViewstate.stringMatched(1);
@@ -365,6 +367,14 @@ public class SpiderGC{
 				} else {
 					viewstate = "";
 					pref.log("Viewstate not found");
+				}
+				
+				rexViewstate1.search(start);
+				if(rexViewstate1.didMatch()){
+					viewstate1 = rexViewstate1.stringMatched(1);
+				} else {
+					viewstate1 = "";
+					pref.log("Viewstate1 not found");
 				}
 				
 				rexEventvalidation.search(start);
@@ -427,8 +437,9 @@ public class SpiderGC{
 					}
 					doc = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strNextPage,false)
 					    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
+					    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
 					    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
-					    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
+					    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
 					try{
 						start = "";
 						pref.log("Fetching next list page:" + doc);
