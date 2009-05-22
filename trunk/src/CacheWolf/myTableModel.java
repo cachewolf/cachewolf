@@ -230,7 +230,7 @@ public class myTableModel extends TableModel{
 					lastColorFG.set(ta.foreground);
 					lastRow = row;
 				} catch (Exception e) {
-					Global.getPref().log("Ignored Exception in myTableModel.TableCellAttributes()", e, true);
+					if (Global.getPref().debug) Global.getPref().log("Ignored Exception in myTableModel.TableCellAttributes()", e, true);
 				};
 			} else  {
 				// Here: We already had this row.
@@ -359,7 +359,7 @@ public class myTableModel extends TableModel{
 				} // Switch
 			} // if
 		} catch (Exception e) {
-			Global.getPref().log("Ignored Exception in myTableModel.getCellData()", e, true);
+			if (Global.getPref().debug) Global.getPref().log("Ignored Exception in myTableModel.getCellData()",e, true);
 		return null;
 	}
 		return null;
