@@ -85,12 +85,39 @@ public class HTMLExporter{
 					det=ch.getExistingDetails();
 					varParams = new Hashtable();
 					varParams.put("TYPE", CacheType.cw2ExportString(ch.getType()));
-					varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 					varParams.put("WAYPOINT", ch.getWayPoint());
 					varParams.put("NAME", ch.getCacheName());
 					varParams.put("OWNER", ch.getCacheOwner());
-					varParams.put("DIFFICULTY", CacheTerrDiff.longDT(ch.getHard()));
-					varParams.put("TERRAIN", CacheTerrDiff.longDT(ch.getTerrain()));
+					if (ch.isAddiWpt()) {
+						varParams.put("SIZE", "");
+						varParams.put("DIFFICULTY", "");
+						varParams.put("TERRAIN", "");
+					} else {
+						try {
+							varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
+						} catch (IllegalArgumentException ex) {
+							varParams.put("SIZE", "");
+							if (Global.getPref().debug) {
+								Global.getPref().log(ch.getWayPoint()+" has wrong size ", ex);
+							}
+						}
+						try {
+							varParams.put("DIFFICULTY", CacheTerrDiff.longDT(ch.getHard()));
+						} catch (IllegalArgumentException ex) {
+							varParams.put("DIFFICULTY", "");
+							if (Global.getPref().debug) {
+								Global.getPref().log(ch.getWayPoint()+" has wrong difficulty ", ex);
+							}
+						}
+						try {
+							varParams.put("TERRAIN", CacheTerrDiff.longDT(ch.getTerrain()));
+						} catch (IllegalArgumentException ex) {
+							varParams.put("TERRAIN", "");
+							if (Global.getPref().debug) {
+								Global.getPref().log(ch.getWayPoint()+" has wrong terrain ", ex);
+							}
+						}
+					}
 					varParams.put("DISTANCE", ch.getDistance());
 					varParams.put("BEARING", ch.bearing);
 					varParams.put("LATLON", ch.LatLon);

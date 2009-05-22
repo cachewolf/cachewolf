@@ -900,7 +900,7 @@ public class CacheHolder {
 		setType(byteFromLong(value, 3));
 		setCacheSize(byteFromLong(value, 4));
 		setNoFindLogs((byteFromLong(value, 5)));
-		if ( ( (!isAddiWpt()) && ( getHard() == -1 || getTerrain() == 1 || getCacheSize() == -1 ) ) || (getType() == -1) ) {
+		if (( getHard() == -1 || getTerrain() == -1 || getCacheSize() == -1 ) || getType() == -1 ) {
 			setIncomplete(true);
 		}
 	}
