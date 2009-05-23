@@ -378,43 +378,43 @@ public class Filter{
 	        if (hasTypeMatchPattern) { // Only do the checks if we have a filter
 		        cacheTypePattern = 0;
 		        // As each cache can only have one type, we can use else if and set the type
-		        if (ch.getType() == 0)
+		        if (ch.getType() == CacheType.CW_TYPE_CUSTOM)
 			        cacheTypePattern = CUSTOM;
-		        else if (ch.getType() == 2)
+		        else if (ch.getType() == CacheType.CW_TYPE_TRADITIONAL)
 			        cacheTypePattern = TRADITIONAL;
-		        else if (ch.getType() == 3)
+		        else if (ch.getType() == CacheType.CW_TYPE_MULTI)
 			        cacheTypePattern = MULTI;
-		        else if (ch.getType() == 4)
+		        else if (ch.getType() == CacheType.CW_TYPE_VIRTUAL)
 			        cacheTypePattern = VIRTUAL;
-		        else if (ch.getType() == 5)
+		        else if (ch.getType() == CacheType.CW_TYPE_LETTERBOX)
 			        cacheTypePattern = LETTER;
-		        else if (ch.getType() == 6)
+		        else if (ch.getType() == CacheType.CW_TYPE_EVENT)
 			        cacheTypePattern = EVENT;
-		        else if (ch.getType() == 8)
+		        else if (ch.getType() == CacheType.CW_TYPE_UNKNOWN)
 			        cacheTypePattern = MYSTERY;
-		        else if (ch.getType() == 11)
+		        else if (ch.getType() == CacheType.CW_TYPE_WEBCAM)
 			        cacheTypePattern = WEBCAM;
-		        else if (ch.getType() == 12)
+		        else if (ch.getType() == CacheType.CW_TYPE_LOCATIONLESS)
 			        cacheTypePattern = LOCLESS;
-		        else if (ch.getType() == 137)
+		        else if (ch.getType() == CacheType.CW_TYPE_EARTH)
 			        cacheTypePattern = EARTH;
-		        else if (ch.getType() == 453)
+		        else if (ch.getType() == CacheType.CW_TYPE_MEGA_EVENT)
 			        cacheTypePattern = MEGA;
-		        else if (ch.getType() == 50)
+		        else if (ch.getType() == CacheType.CW_TYPE_PARKING)
 			        cacheTypePattern = PARKING;
-		        else if (ch.getType() == 51)
+		        else if (ch.getType() == CacheType.CW_TYPE_STAGE)
 			        cacheTypePattern = STAGE;
-		        else if (ch.getType() == 52)
+		        else if (ch.getType() == CacheType.CW_TYPE_QUESTION)
 			        cacheTypePattern = QUESTION;
-		        else if (ch.getType() == 53)
+		        else if (ch.getType() == CacheType.CW_TYPE_FINAL)
 			        cacheTypePattern = FINAL;
-		        else if (ch.getType() == 54)
+		        else if (ch.getType() == CacheType.CW_TYPE_TRAILHEAD)
 			        cacheTypePattern = TRAILHEAD;
-		        else if (ch.getType() == 55)
+		        else if (ch.getType() == CacheType.CW_TYPE_REFERENCE)
 			        cacheTypePattern = REFERENCE;
-		        else if (ch.getType() == 13)
+		        else if (ch.getType() == CacheType.CW_TYPE_CITO)
 			        cacheTypePattern = CITO;
-		        else if (ch.getType() == 1858)
+		        else if (ch.getType() == CacheType.CW_TYPE_WHEREIGO)
 			        cacheTypePattern = WHERIGO;
 		        if ((cacheTypePattern & typeMatchPattern) == 0) {
 			        cacheFiltered = true; break;
