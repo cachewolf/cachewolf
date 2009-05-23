@@ -206,7 +206,7 @@ public class FilterScreen extends Form{
 		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_MEGA_EVENT)));
 		pnlCacheTypes.addLast(chkMega = new mCheckBox("Mega-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
-		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_VIRTUAL)));
+		pnlCacheTypes.addNext(addImg(GuiImageBroker.getTypeImage(CacheType.CW_TYPE_CITO)));
 		pnlCacheTypes.addNext(chkCito = new mCheckBox("Cito-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		
 		//pnlCacheTypes.addLast(addiWptChk = new mCheckBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
