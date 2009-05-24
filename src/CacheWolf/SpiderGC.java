@@ -94,11 +94,13 @@ public class SpiderGC{
 		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506,"Password"), MyLocale.getMsg(5505,"Enter Password"), InfoBox.INPUT);
 		localInfB.feedback.setText(passwort); // Remember the PWD for next time
 		localInfB.feedback.isPassword=true;
-		int code = localInfB.execute();
-		passwort = localInfB.getInput();
+		int code=FormBase.IDOK;
+		if (passwort.equals("")) {
+			code = localInfB.execute();
+			passwort = localInfB.getInput();
+		}
 		localInfB.close(0);
 		if(code != FormBase.IDOK) return code;
-
 		// Now start the login proper
 		localInfB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
 		localInfB.exec();
