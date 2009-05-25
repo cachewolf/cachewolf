@@ -58,6 +58,8 @@ public class Profile {
 	private boolean hasUnsavedChanges = false;
 	public boolean byPassIndexActive = false;
 	private int indexXmlVersion;
+	/** version number of current format for index.xml and waypoint.xml */
+	protected static int CURRENTFILEFORMAT = 3;
 
 	//TODO Add other settings, such as max. number of logs to spider
 	//TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
@@ -252,6 +254,11 @@ public class Profile {
 				} else if (text.indexOf("<VERSION")>=0) {
 					int start=text.indexOf("value = \"")+9;
 					indexXmlVersion  = Integer.valueOf(text.substring(start,text.indexOf("\"",start))).intValue();
+					if (indexXmlVersion > CURRENTFILEFORMAT) {
+						Global.getPref().log("unsupported file format");
+						clearProfile();
+						return;
+					}
 				} else if (text.indexOf("<SYNCOC")>=0) {
 					int start=text.indexOf("date = \"")+8;
 					setLast_sync_opencaching(text.substring(start,text.indexOf("\"",start)));
@@ -330,6 +337,9 @@ public class Profile {
 			//Vm.debug("End  :"+endT.format("H:mm:ss.SSS"));	
 			// Build references between caches and addi wpts
 			buildReferences();
+			if (indexXmlVersion < CURRENTFILEFORMAT) {
+				saveIndex(Global.getPref(), true);
+			}
 		} catch (FileNotFoundException e) {
 			Global.getPref().log("index.xml not found in directory "+dataDir); // Normal when profile is opened for first time
 			//e.printStackTrace();
