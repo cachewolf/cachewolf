@@ -462,7 +462,7 @@ public final class CacheType {
 		if(ocType.equals("7")) return CW_TYPE_UNKNOWN;
 		if(ocType.equals("8")) return CW_TYPE_UNKNOWN;
 		if(ocType.equals("9")) return CW_TYPE_UNKNOWN;
-		if(ocType.equals("10")) return CW_TYPE_TRADITIONAL;
+		if(ocType.equals("10")) return CW_TYPE_TRADITIONAL; // drive in
 		throw new IllegalArgumentException("unmatched argument "+ocType+" in CacheSize ocType2CwType()");
 	}
 	
