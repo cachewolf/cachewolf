@@ -183,36 +183,51 @@ public class CacheHolder {
 		            
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
-			        try {
-			        	setHard(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
-			        } catch (IllegalArgumentException ex) {
-			        	setHard(CacheTerrDiff.CW_DT_ERROR);
-			        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+			        if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
+			        	setHard(CacheTerrDiff.CW_DT_ADDITIONAL);
+			        } else {
+				        try {
+				        	setHard(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
+				        } catch (IllegalArgumentException ex) {
+				        	setHard(CacheTerrDiff.CW_DT_ERROR);
+				        	setIncomplete(true);
+				        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+				        }
 			        }
-	
-		            start = xmlString.indexOf('"', end + 1);
-			        end = xmlString.indexOf('"', start + 1);
-			        try {
-			        	setTerrain(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
-			        } catch (IllegalArgumentException ex) {
-			        	setTerrain(CacheTerrDiff.CW_DT_ERROR);
-			        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
-			        }
-	
+			        start = xmlString.indexOf('"', end + 1);
+				    end = xmlString.indexOf('"', start + 1);
+				    if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
+				    	setTerrain(CacheTerrDiff.CW_DT_ADDITIONAL);
+				    } else {
+					    try {
+					    	setTerrain(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
+					    } catch (IllegalArgumentException ex) {
+					    	setTerrain(CacheTerrDiff.CW_DT_ERROR);
+					    	setIncomplete(true);
+					    	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+				        }
+				    }
 			        // The next item was 'dirty' but this is no longer used.
 		            start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
 			        setFiltered(xmlString.substring(start + 1, end).equals("true"));
 	
+			        if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
+			        	
+			        } 
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
-			        try {
-			        	setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
-			        } catch (IllegalArgumentException ex) {
-			        	setCacheSize(CacheSize.CW_SIZE_ERROR);
-			        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+			        if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
+			        	setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+			        } else {
+				        try {
+				        	setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
+				        } catch (IllegalArgumentException ex) {
+				        	setCacheSize(CacheSize.CW_SIZE_ERROR);
+				        	setIncomplete(true);
+				        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+				        }
 			        }
-			        
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
 			        setAvailable(xmlString.substring(start + 1, end).equals("true"));
@@ -375,16 +390,6 @@ public class CacheHolder {
 	            }
 	        } catch (Exception ex) {
 	        	Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
-	        }
-	        
-	        if (type == CacheType.CW_TYPE_ERROR) {
-	        	setIncomplete(true);
-	        } else {
-	        	if (! isAddiWpt() && 
-	        		(terrain == CacheTerrDiff.CW_DT_ERROR 
-	        		|| hard == CacheTerrDiff.CW_DT_ERROR 
-	        		|| cacheSize == CacheSize.CW_SIZE_ERROR)
-	        	) setIncomplete(true);
 	        }
         }
 	
