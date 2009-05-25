@@ -388,6 +388,15 @@ public class CacheHolder {
 		            if (is_black() != Global.getProfile().showBlacklisted())
 			            setFiltered(true);
 	            }
+				if (version < Profile.CURRENTFILEFORMAT) {
+		            // forceload of details, creates waypoint.xml if missing
+		            details = getCacheDetails(true, false);
+		            // make sure details get (re)written in new format
+		            details.hasUnsavedChanges = true;
+		            // update information on notes and solver info
+		            setHasNote(!details.getCacheNotes().equals(""));
+					setHasSolver(!details.getSolver().equals(""));
+				}
 	        } catch (Exception ex) {
 	        	Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
 	        }
