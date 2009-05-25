@@ -450,7 +450,7 @@ public final class CacheType {
 	 * convert the cache type information from an OC XML import to internal cache type
 	 * @param ocType cache type found in OC XML
 	 * @return internal cache type
-	 * @throws IllegalArgumentException if <code>ocType</code> can not be macthed
+	 * @throws IllegalArgumentException if <code>ocType</code> can not be matched
 	 */
 	public static final byte ocType2CwType(String ocType) throws IllegalArgumentException {
 		if(ocType.equals("1")) return CW_TYPE_UNKNOWN;
@@ -462,7 +462,7 @@ public final class CacheType {
 		if(ocType.equals("7")) return CW_TYPE_UNKNOWN;
 		if(ocType.equals("8")) return CW_TYPE_UNKNOWN;
 		if(ocType.equals("9")) return CW_TYPE_UNKNOWN;
-		if(ocType.equals("10")) return CW_TYPE_UNKNOWN;
+		if(ocType.equals("10")) return CW_TYPE_TRADITIONAL;
 		throw new IllegalArgumentException("unmatched argument "+ocType+" in CacheSize ocType2CwType()");
 	}
 	
