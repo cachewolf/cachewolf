@@ -35,7 +35,6 @@ StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 54.001848 E 6.579380
 BoundingBoxButtomRightWGS84: N 51.372735 E 11.734608
-        <LatLonBoundingBox minx="6.579380" miny="51.372735" maxx="11.734608" maxy="54.001848" />
 MinScale:   2.772396
 MaxScale:   4.950000
 RecommendedScale:   2,5
