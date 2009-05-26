@@ -926,14 +926,19 @@ public class CacheHolder {
 		} catch (IllegalArgumentException ex) {
 			setType(CacheType.CW_TYPE_UNKNOWN);
 		}
-		try {
-			setCacheSize(byteFromLong(value, 4));
-		} catch (IllegalArgumentException ex) {
-			setCacheSize(CacheSize.CW_SIZE_ERROR);
-		}
+		setCacheSize(byteFromLong(value, 4));
 		setNoFindLogs((byteFromLong(value, 5)));
-		if (getHard() == -1 || getTerrain() == 1) {
-			setIncomplete(true);
+		if (getHard() == -1 || getTerrain() == -1 || getCacheSize() == -1) {
+			if (this.isAddiWpt() || this.getType()==CacheType.CW_TYPE_CUSTOM) {
+				// Addis don't have their own values for difficulty, terrain and size
+				// Custom waypoints can't be updated to remove incomplete flag, so we 
+				// have to set reasonable values.
+				if (getHard() == -1) setHard(CacheTerrDiff.CW_DT_ADDITIONAL);
+				if (getTerrain() == -1) setTerrain(CacheTerrDiff.CW_DT_ADDITIONAL);
+				if (getCacheSize() == -1) setCacheSize(CacheSize.CW_SIZE_NONE);
+			} else {
+				setIncomplete(true);
+			}
 		}
 	}
 
