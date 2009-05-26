@@ -865,7 +865,7 @@ public class CacheHolder {
 		// To get the same list of visible caches after loading a profile,
 		// the property isVisible() is saved instead of is_filtered(), but at 
 		// the place where is_filtered() is read.
-		long value = bool2BitMask(this.isVisible(), 1)    | 
+		long value = bool2BitMask(!this.isVisible(), 1)     | 
 		             bool2BitMask(this.is_available(), 2)   |
 		             bool2BitMask(this.is_archived(), 3)    |
 		             bool2BitMask(this.has_bugs(), 4)       |
@@ -960,7 +960,7 @@ public class CacheHolder {
 	 * @param value The bit field as long value
 	 */
 	private void long2boolFields(long value) {
-		this.setFiltered((value & this.bool2BitMask(true, 1)) == 0);
+		this.setFiltered((value & this.bool2BitMask(true, 1)) != 0);
 		this.setAvailable((value & this.bool2BitMask(true, 2)) != 0);
 		this.setArchived((value & this.bool2BitMask(true, 3)) != 0);
 		this.setHas_bugs((value & this.bool2BitMask(true, 4)) != 0);
