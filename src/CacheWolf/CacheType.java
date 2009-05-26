@@ -248,6 +248,7 @@ public final class CacheType {
 		if (type.equals("8")) return CW_TYPE_UNKNOWN;
 		if (type.equals("11")) return CW_TYPE_WEBCAM;
 		if (type.equals("12")) return CW_TYPE_LOCATIONLESS;
+		if (type.equals("13")) return CW_TYPE_CITO;
 		if (type.equals("50")) return CW_TYPE_PARKING;
 		if (type.equals("51")) return CW_TYPE_STAGE;
 		if (type.equals("52")) return CW_TYPE_QUESTION;

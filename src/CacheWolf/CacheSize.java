@@ -343,7 +343,7 @@ public final class CacheSize {
 			return CW_SIZE_REGULAR;
 		} else if (v1Size.equals(GC_SIZE_LARGE)) {
 			return CW_SIZE_LARGE;
-		} else if (v1Size.equals(GC_SIZE_NOTCHOSEN)) {
+		} else if (v1Size.toLowerCase().equals(GC_SIZE_NOTCHOSEN.toLowerCase())) {
 			return CW_SIZE_NOTCHOSEN;
 		} else if (v1Size.equals(GC_SIZE_OTHER)) {
 			return CW_SIZE_OTHER;
