@@ -438,6 +438,7 @@ public class OCXMLImporter extends MinML {
 			// update (overwrite) data
 			else {
 				holder.setNew(false);
+				holder.setIncomplete(false);
 				cacheDB.get(index).update(holder);
 				// save ocCacheID, in case, the previous data is from GPX
 				DBindexID.put(holder.getOcCacheID(), new Integer(index));
