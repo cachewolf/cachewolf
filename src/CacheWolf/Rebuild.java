@@ -10,14 +10,14 @@ import utils.FileBugfix;
 public class Rebuild {
 	String [] xmlFiles;
 	private int cacheXmlVersion;
-	
+
 	public Rebuild() { // Public constructor
 	}
-	
-	public void rebuild() {	
+
+	public void rebuild() {
 		int i;
 		Profile prof=Global.getProfile();
-		
+
 		myProgressBarForm pbf = new myProgressBarForm();
 		Handle h = new Handle();
 		pbf.setTask(h,MyLocale.getMsg(209,"Rebuilding index"));
@@ -32,7 +32,7 @@ public class Rebuild {
 			if (pos<0) continue;
 			String wayPoint=xmlFiles[i].substring(0,pos).toUpperCase();
 			if (wayPoint.equalsIgnoreCase("index") || 			// Check for index.xml and index.bak
-				prof.getCacheIndex(wayPoint)>=0)		// Check for waypoints already in database 
+				prof.getCacheIndex(wayPoint)>=0)		// Check for waypoints already in database
 				xmlFiles[i]=null;   				// Remove existing caches or index.xml
 			else {
 				//ewe.sys.Vm.debug("Orphan: "+wayPoint);
@@ -56,7 +56,7 @@ public class Rebuild {
 				}
 				if (pbf.isClosed) break;
 			}
-			(new MessageBox(MyLocale.getMsg(327, "Information"), 
+			(new MessageBox(MyLocale.getMsg(327, "Information"),
 					  MyLocale.getMsg(210,"Caches nicht in index.xml: ")+orphans+
 					  MyLocale.getMsg(211,"\nDavon hinzugefügt: ")+nAdded
 					, FormBase.OKB)).execute();
@@ -64,14 +64,14 @@ public class Rebuild {
 			prof.saveIndex(Global.getPref(),true);
 		}
 		if (orphans!=nAdded && (new MessageBox(MyLocale.getMsg(327, "Information"),
-					MyLocale.getMsg(212,"Delete all .xml files not in index.xml and associated pictures"), 
+					MyLocale.getMsg(212,"Delete all .xml files not in index.xml and associated pictures"),
 					FormBase.YESB | FormBase.NOB)).execute()==FormBase.YESB) {
 			h = new Handle();
 			pbf.setTask(h,MyLocale.getMsg(213,"Deleting orphans"));
 			DataMover dm=new DataMover();
 			int nDeleted=0;
 			for (i=0; i<xmlFiles.length; i++) {
-				if (xmlFiles[i]!=null){	
+				if (xmlFiles[i]!=null){
 					h.progress = ((float)nDeleted++)/(float)(orphans-nAdded);
 					h.changed();
 					int dotPos = xmlFiles[i].indexOf('.');
@@ -96,8 +96,8 @@ public class Rebuild {
 			cacheXmlVersion = 1; // Initial guess
 			// Check that we have not accidentally listed another xml file in the directory
 			if (text.indexOf("<CACHEDETAILS>")<0 || (start=text.indexOf("<CACHE "))<0) return null;
-			if ((vstart = text.indexOf("<VERSION = \"")) >= 0) {
-				cacheXmlVersion = Integer.valueOf(text.substring(vstart+9, text.indexOf("\"", vstart+9))).intValue();
+			if ((vstart = text.indexOf("<VERSION value = \"")) >= 0) {
+				cacheXmlVersion = Integer.valueOf(text.substring(vstart+18, text.indexOf("\"", vstart+18))).intValue();
 			}
 			end=text.indexOf("/>",start);
 			return text.substring(start,end+2);
@@ -113,6 +113,6 @@ public class Rebuild {
 			return true;
 		 }
 	 }
-	 
-	
+
+
 }
