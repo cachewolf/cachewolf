@@ -11,6 +11,8 @@ import ewe.io.PrintWriter;
 import ewe.sys.Convert;
 import ewe.sys.Handle;
 import ewe.sys.Vm;
+import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
 import ewe.ui.ProgressBarForm;
 
 /**
@@ -258,6 +260,9 @@ public class Profile {
 						Global.getPref().log("unsupported file format");
 						clearProfile();
 						return;
+					}
+					if (indexXmlVersion < CURRENTFILEFORMAT) {
+						new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4407, "The profile files are not in the current format.%0aTherefore they are now converted to the current format. Depending of the size of the profile and the computer involved this may take some minutes. Please bear with us until the conversion is done."), FormBase.OKB).execute();
 					}
 				} else if (text.indexOf("<SYNCOC")>=0) {
 					int start=text.indexOf("date = \"")+8;
