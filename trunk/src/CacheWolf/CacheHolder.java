@@ -243,8 +243,6 @@ public class CacheHolder {
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
 			        setBlack(xmlString.substring(start + 1, end).equals("true"));
-			        if (is_black() != Global.getProfile().showBlacklisted())
-				        setFiltered(true);
 	
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
@@ -384,9 +382,6 @@ public class CacheHolder {
 		            } else {
 		            	long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));
 		            }
-		            
-		            if (is_black() != Global.getProfile().showBlacklisted())
-			            setFiltered(true);
 	            }
 				if (version < Profile.CURRENTFILEFORMAT) {
 		            // forceload of details, creates waypoint.xml if missing
@@ -395,7 +390,7 @@ public class CacheHolder {
 		            details.hasUnsavedChanges = true;
 		            // update information on notes and solver info
 		            setHasNote(!details.getCacheNotes().equals(""));
-					setHasSolver(!details.getSolver().equals(""));
+			    setHasSolver(!details.getSolver().equals(""));
 				}
 	        } catch (Exception ex) {
 	        	Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
