@@ -293,13 +293,15 @@ public class myTableModel extends TableModel{
 					case 1: // Type
 						return GuiImageBroker.getTypeImage(ch.getType());
 					case 2: // Difficulty;
-						if (ch.isAddiWpt()) {
+						// FIXME Needs optimizing when code is stable
+						if (ch.isAddiWpt() || ch.getType()==CacheType.CW_TYPE_CUSTOM) {
 							return "";
 						} else {
 							return CacheTerrDiff.longDT(ch.getHard());
 						}
 					case 3: // Terrain
-						if (ch.isAddiWpt()) {
+						// FIXME Needs optimizing when code is stable
+						if (ch.isAddiWpt() || ch.getType()==CacheType.CW_TYPE_CUSTOM) {
 							return "";
 						} else {
 							return CacheTerrDiff.longDT(ch.getTerrain());
