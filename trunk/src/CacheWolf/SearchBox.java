@@ -44,7 +44,7 @@ public class SearchBox extends InputBox {
 		buildingForm = true;
 		useNoteDesc = new mCheckBox(MyLocale.getMsg(218,"Also in description/notes"));//,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		useNoteDesc.setState(checkUseNoteDesc);		
-		useLogs = new mCheckBox(MyLocale.getMsg(21888,"Also in logs"));//,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		useLogs = new mCheckBox(MyLocale.getMsg(225,"Also in logs"));//,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		useLogs.setState(checkUseLogs);		
 		result = super.input(pParent, initialValue, pWidth);
 		return result;
