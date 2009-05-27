@@ -33,7 +33,7 @@ public class CacheTerrDiff {
 	protected static final byte CW_DT_UNSET = 0;
 
 	/** constructor dies nothing */
-	public CacheTerrDiff() {
+	private CacheTerrDiff() { // no instantiation needed 
 	}
 	
 	/**
