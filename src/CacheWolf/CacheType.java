@@ -194,7 +194,7 @@ public final class CacheType {
 	public static final String GC_GPX_APE = "Project APE Cache"; 
 	
 	/**  constructor does nothing */
-	public CacheType() {
+	private CacheType() { // no instantiation needed
 
 	}
 	

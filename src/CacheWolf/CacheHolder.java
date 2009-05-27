@@ -212,9 +212,6 @@ public class CacheHolder {
 			        end = xmlString.indexOf('"', start + 1);
 			        setFiltered(xmlString.substring(start + 1, end).equals("true"));
 	
-			        if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
-			        	
-			        } 
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
 			        if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
