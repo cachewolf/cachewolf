@@ -6,6 +6,7 @@ public class LogList {
 	/** The Vector containing the Log objects 
 	 * The list is always sorted in descending order */
 	private Vector logList=new Vector(10);
+	private static final StringBuffer buffer = new StringBuffer();
 
 	/** Construct an empty Log list */
 	public LogList() { // Public constructor
@@ -130,5 +131,18 @@ public class LogList {
 	 
 	 public static int getScore(int numrecommends, int numfoundlogs) {
 		 return Math.round((((float)numrecommends * (float)numrecommends +1f ) / (numfoundlogs / 10f +1f))*100f);
+	 }
+	 
+	 /**
+	  * Returns a simple concatenation of all Log texts of the list. Intended for text search in 
+	  * Logs.
+	 * @return All log messages
+	 */
+	public String allMessages() {
+		 buffer.setLength(0);
+		 for (int i=0; i<logList.size(); i++) {
+			 buffer.append(((Log)logList.get(i)).getMessage());
+		 }
+		 return buffer.toString();
 	 }
 }
