@@ -58,9 +58,8 @@ public final class GuiImageBroker {
 	 * select image to be displayed for a given cache type
 	 * @param id internal cache type id
 	 * @return <code>Image</code> object to be displayed
-	 * @throws IllegalArgumentException if <code>id</code> has no associated image
 	 */
-	public static Image getTypeImage(byte id) throws IllegalArgumentException {
+	public static Image getTypeImage(byte id) {
 		switch (id) {
 		case CacheType.CW_TYPE_CUSTOM: return typeImages[0];
 		case CacheType.CW_TYPE_APE: return typeImages[1];
@@ -84,7 +83,7 @@ public final class GuiImageBroker {
 		case CacheType.CW_TYPE_VIRTUAL: return typeImages[19];
 		case CacheType.CW_TYPE_WEBCAM: return typeImages[20];
 		case CacheType.CW_TYPE_WHEREIGO: return typeImages[21];
-		default: throw new IllegalArgumentException("unmatched id "+id+" in GuiImageBroker getTypeImage()");
+		default: return imageError;
 		}	
 	}
 }

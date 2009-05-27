@@ -29,8 +29,8 @@ public class CacheTerrDiff {
 	protected static final byte CW_DT_50 = 50;
 	/** wrong terrain or difficulty */
 	protected static final byte CW_DT_ERROR = -1;
-	/** terrain or difficulty for additional waypoints */
-	protected static final byte CW_DT_ADDITIONAL = 0;
+	/** terrain or difficulty for additional/custom waypoints */
+	protected static final byte CW_DT_UNSET = 0;
 
 	/** constructor dies nothing */
 	public CacheTerrDiff() {
@@ -102,6 +102,28 @@ public class CacheTerrDiff {
 		case CW_DT_45: return "4.5";
 		case CW_DT_50: return "5";
 		default: throw new IllegalArgumentException("unmapped terrain or diffulty "+td);
+		}
+	}
+	
+	/**
+	 * check if a given difficulty or terrain is valid
+	 * takes about 1/20th of the time a try {} catch{} block needs
+	 * so use this function instead
+	 * @param td terrain or difficulty to check
+	 * @return true if terrain or difficulty is valid, false otherwise
+	 */
+	public static final boolean isValidTD(byte td) {
+		switch (td) {
+		case CW_DT_10: return true;
+		case CW_DT_15: return true;
+		case CW_DT_20: return true;
+		case CW_DT_25: return true;
+		case CW_DT_30: return true;
+		case CW_DT_35: return true;
+		case CW_DT_40: return true;
+		case CW_DT_45: return true;
+		case CW_DT_50: return true;
+		default: return false;
 		}
 	}
 }

@@ -525,4 +525,26 @@ public final class CacheSize {
 		}
 
 	}
+	
+	/**
+	 * checks if a given size information would be valid for use with CacheWolf.
+	 * takes about 1/20th of the time a try {} catch {} block would need, so use this
+	 * function if you just want to check
+	 * @param size size information to check
+	 * @return true if size is valid, false otherwise
+	 */
+	public static boolean isValidSize(byte size) {
+		switch (size) {
+		case CW_SIZE_NOTCHOSEN: return true;
+		case CW_SIZE_OTHER: return true;
+		case CW_SIZE_MICRO: return true;
+		case CW_SIZE_SMALL: return true;
+		case CW_SIZE_REGULAR: return true;
+		case CW_SIZE_LARGE: return true;
+		case CW_SIZE_VERYLARGE: return true;
+		case CW_SIZE_NONE: return true;
+		case CW_SIZE_VIRTUAL: return true;
+		default: return false;
+		}
+	}
 }

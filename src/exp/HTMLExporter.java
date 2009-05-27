@@ -88,35 +88,17 @@ public class HTMLExporter{
 					varParams.put("WAYPOINT", ch.getWayPoint());
 					varParams.put("NAME", ch.getCacheName());
 					varParams.put("OWNER", ch.getCacheOwner());
-					if (ch.isAddiWpt()) {
+					if (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType()) {
 						varParams.put("SIZE", "");
 						varParams.put("DIFFICULTY", "");
 						varParams.put("TERRAIN", "");
 					} else {
-						try {
-							varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
-						} catch (IllegalArgumentException ex) {
-							varParams.put("SIZE", "");
-							if (Global.getPref().debug) {
-								Global.getPref().log(ch.getWayPoint()+" has wrong size ", ex);
-							}
-						}
-						try {
-							varParams.put("DIFFICULTY", CacheTerrDiff.longDT(ch.getHard()));
-						} catch (IllegalArgumentException ex) {
-							varParams.put("DIFFICULTY", "");
-							if (Global.getPref().debug) {
-								Global.getPref().log(ch.getWayPoint()+" has wrong difficulty ", ex);
-							}
-						}
-						try {
-							varParams.put("TERRAIN", CacheTerrDiff.longDT(ch.getTerrain()));
-						} catch (IllegalArgumentException ex) {
-							varParams.put("TERRAIN", "");
-							if (Global.getPref().debug) {
-								Global.getPref().log(ch.getWayPoint()+" has wrong terrain ", ex);
-							}
-						}
+						varParams.put("SIZE", CacheSize.isValidSize(ch.getCacheSize())?
+								CacheSize.cw2ExportString(ch.getCacheSize()):"");
+						varParams.put("DIFFICULTY", CacheTerrDiff.isValidTD(ch.getHard())? 
+								CacheTerrDiff.longDT(ch.getHard()):"");
+						varParams.put("TERRAIN", CacheTerrDiff.isValidTD(ch.getTerrain())?
+								CacheTerrDiff.longDT(ch.getTerrain()):"");
 					}
 					varParams.put("DISTANCE", ch.getDistance());
 					varParams.put("BEARING", ch.bearing);
@@ -127,57 +109,38 @@ public class HTMLExporter{
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						page_tpl.setParam("TYPE", CacheType.cw2ExportString(ch.getType()));
-						page_tpl.setParam("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
+						page_tpl.setParam("TYPE", varParams.get("TYPE").toString());
+						page_tpl.setParam("SIZE", varParams.get("SIZE").toString());
 						page_tpl.setParam("WAYPOINT", ch.getWayPoint());
 						page_tpl.setParam("NAME", ch.getCacheName());
 						page_tpl.setParam("OWNER", ch.getCacheOwner());
-						page_tpl.setParam("DIFFICULTY", ch.getHard());
-						page_tpl.setParam("TERRAIN", ch.getTerrain());
+						page_tpl.setParam("DIFFICULTY", varParams.get("DIFFICULTY").toString());
+						page_tpl.setParam("TERRAIN", varParams.get("TERRAIN").toString());
 						page_tpl.setParam("DISTANCE", ch.getDistance());
 						page_tpl.setParam("BEARING", ch.bearing);
 						page_tpl.setParam("LATLON", ch.LatLon);
 						page_tpl.setParam("STATUS", ch.getCacheStatus());
 						page_tpl.setParam("DATE", ch.getDateHidden());
-						if (ch.is_HTML())
-							page_tpl.setParam("DESCRIPTION", modifyLongDesc(det,targetDir));
-						else {
-							String dummyText = new String();
-							try {
-							dummyText = STRreplace.replace(det.LongDescription, "\n", "<br>");
-							} catch (NullPointerException e) {
-								dummyText = "CacheWolf Error: Missing Long Description";
-						}
-							page_tpl.setParam("DESCRIPTION",dummyText);
-						}
-						try {
+						if (det != null) {
+							if (ch.is_HTML()) {
+								page_tpl.setParam("DESCRIPTION", modifyLongDesc(det,targetDir));
+							} else {
+								page_tpl.setParam("DESCRIPTION",STRreplace.replace(det.LongDescription, "\n", "<br>"));
+							}
 							page_tpl.setParam("HINTS", det.Hints);
-						} catch (NullPointerException e) { 
-							page_tpl.setParam("HINTS", "CacheWolf Error: Hint information missing");
-						}
-						try {
 							page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(det.Hints));
-						} catch (NullPointerException e) { 
-							page_tpl.setParam("DECRYPTEDHINTS", Common.rot13("CacheWolf Error: Hint information missing"));
-						}
-						
-						StringBuffer sb=new StringBuffer(2000);
-						try {
+							
+							StringBuffer sb=new StringBuffer(2000);
 							for(int j = 0; j<det.CacheLogs.size(); j++){
 								sb.append(STRreplace.replace(det.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
 								sb.append("<br>");
 								icon=det.CacheLogs.getLog(j).getIcon();
 								if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
 							}
-						} catch (Exception e) { Vm.debug("P "+e); } //TODO: find out what is going wrong and especially why
-						try {
+							
 							page_tpl.setParam("LOGS", sb.toString());
-						} catch (Exception e) { Vm.debug("Q "+e); } //TODO: find out what is going wrong and especially why
-						try {
 							page_tpl.setParam("NOTES", STRreplace.replace(det.getCacheNotes(), "\n","<br>"));
-						} catch (Exception e) { Vm.debug("R "+e); } //TODO: find out what is going wrong and especially why
-						// Cache Images
-						try {
+							
 							cacheImg.clear();
 							for(int j = 0; j<det.Images.size(); j++){
 								imgParams = new Hashtable();
@@ -190,9 +153,8 @@ public class HTMLExporter{
 								DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
 								cacheImg.add(imgParams);
 							}
-						} catch (Exception e) { Vm.debug("S "+e); } //TODO: find out what is going wrong and especially why
-						try {
 							page_tpl.setParam("cacheImg", cacheImg);
+							
 							// Log images
 							logImg.clear();
 							for(int j = 0; j<det.LogImages.size(); j++){
@@ -206,9 +168,8 @@ public class HTMLExporter{
 								DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
 								logImg.add(logImgParams);
 							}
-						} catch (Exception e) { Vm.debug("T "+e); } //TODO: find out what is going wrong and especially why
-						try {
 							page_tpl.setParam("logImg", logImg);
+							
 							// User images
 							usrImg.clear();
 							for(int j = 0; j<det.UserImages.size(); j++){
@@ -222,18 +183,16 @@ public class HTMLExporter{
 								DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
 								usrImg.add(usrImgParams);
 							}
-						} catch (Exception e) { Vm.debug("U "+e); } //TODO: find out what is going wrong and especially why
-						
-						page_tpl.setParam("userImg", usrImg);
+							page_tpl.setParam("userImg", usrImg);
+							
+							// Map images
+							mapImg.clear();
+							mapImgParams = new Hashtable();
+							
+							String mapImgFile = new String(ch.getWayPoint() + "_map.gif");
+							// check if map file exists
+							File test = new File(profile.dataDir + mapImgFile);
 
-						// Map images
-						mapImg.clear();
-						mapImgParams = new Hashtable();
-						
-						String mapImgFile = new String(ch.getWayPoint() + "_map.gif");
-						// check if map file exists
-						File test = new File(profile.dataDir + mapImgFile);
-						try {
 							if (test.exists()) {
 								mapImgParams.put("FILE", mapImgFile);
 								mapImgParams.put("TEXT",mapImgFile);
@@ -249,12 +208,21 @@ public class HTMLExporter{
 		
 								page_tpl.setParam("mapImg", mapImg);
 							}
-						} catch (Exception e) { Vm.debug("V "+e); } //TODO: find out what is going wrong and especially why
-						try {
-							PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getWayPoint()+".html")));
-							pagefile.print(page_tpl.output());
-							pagefile.close();
-						} catch (Exception e) { Vm.debug("W "+e); }  //TODO: find out what is going wrong and especially why
+						} else {
+							page_tpl.setParam("DESCRIPTION", "");
+							page_tpl.setParam("HINTS", "");
+							page_tpl.setParam("DECRYPTEDHINTS", "");
+							page_tpl.setParam("LOGS", "");
+							page_tpl.setParam("NOTES", "");
+							page_tpl.setParam("cacheImg", cacheImg);
+							page_tpl.setParam("logImg", ""); // ???
+							page_tpl.setParam("userImg", ""); // ???
+							page_tpl.setParam("mapImg", ""); // ???
+						}
+						
+						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getWayPoint()+".html")));
+						pagefile.print(page_tpl.output());
+						pagefile.close();
 					}catch(Exception e){
 						Vm.debug("Problem writing waypoint html file"+e);
 					}

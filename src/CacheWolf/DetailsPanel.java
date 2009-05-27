@@ -213,27 +213,23 @@ public class DetailsPanel extends CellPanel{
 		chcSize.setInt(ch.getCacheSize());
 
 		attV.showImages(ch.getCacheDetails(true).attributes);
-		if (ch.isAddiWpt()) {
+		if (ch.isAddiWpt() || ch.getType() == CacheType.CW_TYPE_CUSTOM) {
 			lblTerr.setText("");
 			lblDiff.setText("");
 		} else {
-			try {
-				lblTerr.setText((ch.getTerrain() != CacheTerrDiff.CW_DT_ERROR) ? 
-					(MyLocale.getMsg(1001,"T")+": "+CacheTerrDiff.longDT(ch.getTerrain())) : "");
-			} catch (IllegalArgumentException ex) {
-				ch.setTerrain(CacheTerrDiff.CW_DT_ERROR);
-				ch.setIncomplete(true);
-				if (Global.getPref().debug) Global.getPref().log(ch.getWayPoint()+" has wrong terrain ", ex);
+			if (CacheTerrDiff.isValidTD(ch.getTerrain())) {
+				lblTerr.setText(MyLocale.getMsg(1001,"T")+": "+CacheTerrDiff.longDT(ch.getTerrain()));
+			} else {
 				lblTerr.setText("");
-			}
-			try {
-				lblDiff.setText((ch.getHard() != CacheTerrDiff.CW_DT_ERROR) ? 
-					(MyLocale.getMsg(1000,"D")+": "+CacheTerrDiff.longDT(ch.getHard())) : "");
-			} catch (IllegalArgumentException ex) {
-				ch.setHard(CacheTerrDiff.CW_DT_ERROR);
 				ch.setIncomplete(true);
-				if (Global.getPref().debug) Global.getPref().log(ch.getWayPoint()+" has wrong difficulty ", ex);
+				if (Global.getPref().debug) Global.getPref().log(ch.getWayPoint()+" has wrong terrain "+ch.getTerrain());
+			}
+			if (CacheTerrDiff.isValidTD(ch.getHard())) {
+				lblDiff.setText(MyLocale.getMsg(1000,"D")+": "+CacheTerrDiff.longDT(ch.getHard()));
+			} else {
 				lblDiff.setText("");
+				ch.setIncomplete(true);
+				if (Global.getPref().debug) Global.getPref().log(ch.getWayPoint()+" has wrong difficulty "+ch.getHard());
 			}
 		}
 
