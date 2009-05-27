@@ -688,29 +688,6 @@ public class OCXMLImporter extends MinML {
 
 
 	/**
-	 *	Method to translate opencaching size types to geocaching types.
-	 *	Required to be "backwards" compatible :-(
-	 *	OC	GC	Comment	Rule
-	 *	1	5	other size	1->5
-	 *	2 	1	micro		2->1
-	 *	3 	2	small		3->2
-	 *	4	3	normal		4->3
-	 *	5 	4	large		5->4
-	 *	6	6	very large	6->6
-	 *	7	7	no container	7->7
-	 */
-	private String transSize(String type){
-		if(type.equals("1")) return "Other";
-		if(type.equals("2")) return "Micro";
-		if(type.equals("3")) return "Small";
-		if(type.equals("4")) return "Regular";
-		if(type.equals("5")) return "Large";
-		if(type.equals("6")) return "Very Large";
-		if(type.equals("7")) return "None";
-		return "0";
-	}
-
-	/**
 	 * Method to iterate through cache database and look for cacheID.
 	 * Returns value >= 0 if cacheID is found, else -1
 	 */

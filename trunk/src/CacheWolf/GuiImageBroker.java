@@ -51,7 +51,7 @@ public final class GuiImageBroker {
 	};
 
 	/** constructor does nothing */
-	public GuiImageBroker() {
+	private GuiImageBroker() { // no instantiation needed
 	}
 	
 	/**

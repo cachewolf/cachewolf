@@ -85,8 +85,8 @@ public class FilterScreen extends Form{
 	}
 	private myChkBox addiWptChk;
 	
-	private mButton addImg(Image image) {
-		mButton mb = new mButton(image);
+	private mButton addImg(Image pImage) {
+		mButton mb = new mButton(pImage);
 		mb.borderWidth=0; 
 		mb.modify(NotEditable|PreferredSizeOnly,0);
 		return mb;

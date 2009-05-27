@@ -3,7 +3,6 @@ package CacheWolf.navi;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.GuiImageBroker;
 import CacheWolf.InfoBox;
