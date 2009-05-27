@@ -1374,8 +1374,8 @@ public class SpiderGC{
 				hd.getFreshDetails().setLongDescription(descRex.stringMatched(1));
 				hd.setFound(is_found);
 				hd.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-				hd.setHard(CacheTerrDiff.CW_DT_ADDITIONAL);
-				hd.setTerrain(CacheTerrDiff.CW_DT_ADDITIONAL);
+				hd.setHard(CacheTerrDiff.CW_DT_UNSET);
+				hd.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 				if (idx<0){
 					cacheDB.add(hd);
 					hd.save();
