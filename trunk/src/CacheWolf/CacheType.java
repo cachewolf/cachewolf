@@ -291,8 +291,8 @@ public final class CacheType {
 		case -74: return CW_TYPE_TRAILHEAD;
 		case -73: return CW_TYPE_REFERENCE;
 		case 101: return CW_TYPE_MEGA_EVENT;
-		case -62: return CW_TYPE_WHEREIGO;
-		case 100: return CW_TYPE_WHEREIGO; // yes, it can be either of those
+		case -62: return CW_TYPE_WHEREIGO; // yes, it can be either of these
+		case 100: return CW_TYPE_WHEREIGO; // yes, it can be either of these
 		case 9: return CW_TYPE_EARTH;
 		default: throw new IllegalArgumentException("unmatched argument "+type+" in CacheSize v2Converter()");
 		}
@@ -557,7 +557,7 @@ public final class CacheType {
 		
 	}
 	
-	//TODO: do we actually need this one
+	//TODO: do we actually need this one?
 	/**
 	 * generate human readable type description for exporters
 	 * @param id internal type id
@@ -577,5 +577,36 @@ public final class CacheType {
 			ret = "";
 		}
 		return ret;
+	}
+	
+	/**
+	 * checks if the given type would be valid for internal use in cachewolf
+	 * @param type type value to be checked
+	 * @return true if <code>type</code> matches on of the CacheWolf types, false otherwise
+	 */
+	public static final boolean isValidType(byte type) {
+		switch (type) {
+		case CW_TYPE_TRADITIONAL: return true;
+		case CW_TYPE_MULTI: return true;
+		case CW_TYPE_VIRTUAL: return true;
+		case CW_TYPE_LETTERBOX: return true;
+		case CW_TYPE_EVENT: return true;
+		case CW_TYPE_UNKNOWN: return true;
+		case CW_TYPE_WEBCAM: return true;
+		case CW_TYPE_LOCATIONLESS: return true;
+		case CW_TYPE_CITO: return true;
+		case CW_TYPE_EARTH: return true;
+		case CW_TYPE_MEGA_EVENT: return true;
+		case CW_TYPE_WHEREIGO: return true;
+		case CW_TYPE_PARKING: return true;
+		case CW_TYPE_STAGE: return true;
+		case CW_TYPE_QUESTION: return true;
+		case CW_TYPE_FINAL: return true;
+		case CW_TYPE_TRAILHEAD: return true;
+		case CW_TYPE_REFERENCE: return true;
+		case CW_TYPE_MAZE: return true;
+		case CW_TYPE_APE: return true;
+		default: return false;
+		}
 	}
 }

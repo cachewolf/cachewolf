@@ -184,7 +184,7 @@ public class CacheHolder {
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
 			        if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
-			        	setHard(CacheTerrDiff.CW_DT_ADDITIONAL);
+			        	setHard(CacheTerrDiff.CW_DT_UNSET);
 			        } else {
 				        try {
 				        	setHard(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
@@ -197,7 +197,7 @@ public class CacheHolder {
 			        start = xmlString.indexOf('"', end + 1);
 				    end = xmlString.indexOf('"', start + 1);
 				    if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
-				    	setTerrain(CacheTerrDiff.CW_DT_ADDITIONAL);
+				    	setTerrain(CacheTerrDiff.CW_DT_UNSET);
 				    } else {
 					    try {
 					    	setTerrain(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
@@ -933,8 +933,8 @@ public class CacheHolder {
 				// Addis don't have their own values for difficulty, terrain and size
 				// Custom waypoints can't be updated to remove incomplete flag, so we 
 				// have to set reasonable values.
-				if (getHard() == -1) setHard(CacheTerrDiff.CW_DT_ADDITIONAL);
-				if (getTerrain() == -1) setTerrain(CacheTerrDiff.CW_DT_ADDITIONAL);
+				if (getHard() == -1) setHard(CacheTerrDiff.CW_DT_UNSET);
+				if (getTerrain() == -1) setTerrain(CacheTerrDiff.CW_DT_UNSET);
 				if (getCacheSize() == -1) setCacheSize(CacheSize.CW_SIZE_NONE);
 			} else {
 				setIncomplete(true);
