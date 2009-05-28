@@ -421,7 +421,6 @@ public final class CacheType {
 	 * convert the strings found in import of GPX from GC, OC or TC to internal cache type 
 	 * @param gpxType type information found in GPX
 	 * @return internal cache type
-	 * @throws IllegalArgumentException if <code>gpxType</code> can not be matched
 	 */
 	public static final byte gpxType2CwType(String gpxType) throws IllegalArgumentException {
 		if (gpxType.equals(GC_GPX_TRADITIONAL) || gpxType.equals("Traditional")|| gpxType.equals("Classic")) return CW_TYPE_TRADITIONAL;
@@ -444,7 +443,7 @@ public final class CacheType {
 		if (gpxType.equals(GC_GPX_REFERENCE)) return CW_TYPE_REFERENCE;
 		if (gpxType.equals(GC_GPX_MAZE)) return CW_TYPE_MAZE;
 		if (gpxType.equals(GC_GPX_APE)) return CW_TYPE_APE;
-		throw new IllegalArgumentException("unmatched argument "+gpxType+" in CacheSize gpxType2CwType()");
+		return CW_TYPE_CUSTOM;
 	}
 	
 	/**
