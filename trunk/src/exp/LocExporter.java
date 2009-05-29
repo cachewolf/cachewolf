@@ -124,14 +124,14 @@ public class LocExporter extends Exporter{
 			// Try each icon in turn
 			for (int i=0; i<mapSize; i++) {
 				IconMap icon=(IconMap) symbols.get(i);
-				Boolean match=true;
+				boolean match=true;
 				// If a certainattribute is not null it must match the current caches values
-				match&=(icon.type==null) || ch.getType()==0 || icon.type.equals(String.valueOf(ch.getType()));
-				match&=(icon.size==null) || ch.getCacheSize()==0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize()));
-				match&=(icon.terrain==null) || ch.getTerrain()==0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain()));
-				match&=(icon.difficulty==null) ||  ch.getHard()==0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard()));
-				match&=(icon.status==null) ||  ch.getCacheStatus().startsWith(icon.status);
-				match&=(icon.found==null) || ch.is_found();
+				match=match && (icon.type==null) || ch.getType()==0 || icon.type.equals(String.valueOf(ch.getType()));
+				match=match && (icon.size==null) || ch.getCacheSize()==0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize()));
+				match=match && (icon.terrain==null) || ch.getTerrain()==0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain()));
+				match=match && (icon.difficulty==null) ||  ch.getHard()==0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard()));
+				match=match && (icon.status==null) ||  ch.getCacheStatus().startsWith(icon.status);
+				match=match && (icon.found==null) || ch.is_found();
 				if (match) return icon.name;
 			}
 
