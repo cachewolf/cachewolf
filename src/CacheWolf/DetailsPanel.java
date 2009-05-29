@@ -341,6 +341,9 @@ public class DetailsPanel extends CellPanel{
 				ch.LatLon = thisCache.LatLon;
 				ch.pos = new CWPoint( thisCache.pos );
 				ch.setType(CacheType.CW_TYPE_STAGE);
+				ch.setHard(CacheTerrDiff.CW_DT_UNSET);
+				ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
+				ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 				Global.mainTab.newWaypoint(ch);
 			}
 			else if (ev.target == btnGoto){
