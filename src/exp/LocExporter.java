@@ -4,6 +4,8 @@ import ewe.io.File;
 import ewe.io.FileBase;
 import ewesoft.xml.*;
 import ewesoft.xml.sax.*;
+import ewe.util.Vector;
+
 
 /**
 *	Class to export the cache database into an geocaching .loc file that may be exported
@@ -92,8 +94,7 @@ public class LocExporter extends Exporter{
 	 */
 	private class GarminMap extends MinML {
 
-		private IconMap[] symbols=new IconMap[24];
-		private int mapSize=0;
+		private Vector symbols=new Vector(24);
 
 		String lastName;
 		public void readGarminMap(){
@@ -112,21 +113,27 @@ public class LocExporter extends Exporter{
 		public void startElement(String name, AttributeList atts){
 			lastName=name;
 			if (name.equals("icon")) {
-				symbols[mapSize]=new IconMap(atts.getValue("type"),atts.getValue("name"),atts.getValue("found"));
-				mapSize++;
+				symbols.add(new IconMap(atts.getValue("type"),atts.getValue("name"),atts.getValue("found"),
+						atts.getValue("size"),atts.getValue("terrain"),atts.getValue("difficulty"),
+						atts.getValue("status")));
 			}
 		}
 
 		public String getIcon(CacheHolder ch) {
-			// First check if there is a mapping for "cache found"
-			if (ch.is_found()) {
-				for (int i=0; i<mapSize; i++)
-					// TODO Geht das noch schöner...? ................ <------------------------------>
-					if (symbols[i].onlyIfFound!=null && symbols[i].type.equals(String.valueOf(ch.getType()))) return symbols[i].name;
+			int mapSize=symbols.size();
+			// Try each icon in turn
+			for (int i=0; i<mapSize; i++) {
+				IconMap icon=(IconMap) symbols.get(i);
+				Boolean match=true;
+				// If a certainattribute is not null it must match the current caches values
+				match&=(icon.type==null) || ch.getType()==0 || icon.type.equals(String.valueOf(ch.getType()));
+				match&=(icon.size==null) || ch.getCacheSize()==0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize()));
+				match&=(icon.terrain==null) || ch.getTerrain()==0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain()));
+				match&=(icon.difficulty==null) ||  ch.getHard()==0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard()));
+				match&=(icon.status==null) ||  ch.getCacheStatus().startsWith(icon.status);
+				match&=(icon.found==null) || ch.is_found();
+				if (match) return icon.name;
 			}
-			// Now try mapping the cache irrespective of the "found" status
-			for (int i=0; i<mapSize; i++)
-				if (symbols[i].type.equals(String.valueOf(ch.getType()))) return symbols[i].name;
 
 			// If it is not a mapped type, just use the standard mapping
 			if (ch.is_found())
@@ -138,15 +145,20 @@ public class LocExporter extends Exporter{
 		private class IconMap {
 			public String type;
 			public String name;
-			public Boolean onlyIfFound;
+			public String size;
+			public String terrain;
+			public String difficulty;
+			public String found;
+			public String status;
 
-			IconMap(String type, String name, String onlyIfFound) {
+			IconMap(String type, String name, String found, String size, String terrain, String difficulty, String status) {
 				this.type=type;
 				this.name=name;
-				if (onlyIfFound!=null && onlyIfFound.equals("1"))
-					this.onlyIfFound=Boolean.TRUE;
-				else
-					this.onlyIfFound=null;
+				this.found=found;
+				this.size=size;
+				this.terrain=terrain;
+				this.difficulty=difficulty;
+				this.status=status;
 			}
 		}
 
