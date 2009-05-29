@@ -388,6 +388,8 @@ public class GPXImporter extends MinML {
 		if (name.equals("type")&& inWpt && !inCache && strData.startsWith("Waypoint")){
 			holder.setType(CacheType.gpxType2CwType(strData));
 			holder.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+			holder.setHard(CacheTerrDiff.CW_DT_UNSET);
+			holder.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 		}
 		
 		if ((name.equals("groundspeak:name")|| name.equals("terra:name")) && inCache) {
