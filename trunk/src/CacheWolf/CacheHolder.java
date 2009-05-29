@@ -1038,7 +1038,7 @@ public class CacheHolder {
 	public IconAndText getIconAndTextWP(int level, FontMetrics fm) {
 		if (level != iconAndTextWPLevel || iconAndTextWP == null) {
 			switch (level) {
-				case 4: iconAndTextWP = new IconAndText(myTableModel.skull, this.getWayPoint(), fm); break;
+				case 4: iconAndTextWP = new IconAndText(GuiImageBroker.imageError, this.getWayPoint(), fm); break;
 				case 3: iconAndTextWP = new IconAndText(myTableModel.yellow, this.getWayPoint(), fm); break;
 				case 2: iconAndTextWP = new IconAndText(myTableModel.red, this.getWayPoint(), fm); break;
 				case 1: iconAndTextWP = new IconAndText(myTableModel.blue, this.getWayPoint(), fm); break;

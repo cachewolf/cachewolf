@@ -45,7 +45,7 @@ public class myTableModel extends TableModel{
 			MyLocale.getMsg(1040,"N")};
 	
 	private static Image noFindLogs[] = new Image[4];
-	public static mImage red, blue, yellow, skull; // green
+	public static mImage red, blue, yellow; // skull, green
 	private Image checkboxTicked,checkboxUnticked;
 	private mImage bug;
 	private boolean sortAsc = false;
@@ -79,7 +79,7 @@ public class myTableModel extends TableModel{
 		blue = new mImage("blue.png"); blue.transparentColor=Color.White;
 		//green = new mImage("green.png");green.transparentColor=Color.White;
 		yellow = new mImage("yellow.png");yellow.transparentColor=Color.White;
-		skull = new mImage("skull.png");skull.transparentColor=Color.DarkBlue;
+		//skull = new mImage("skull.png");skull.transparentColor=Color.DarkBlue;
 		bug = new mImage("bug_table.png");bug.transparentColor=Color.DarkBlue;
 		checkboxTicked = new Image("checkboxTicked.png");
 		checkboxUnticked= new Image("checkboxUnticked.png");
