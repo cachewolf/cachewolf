@@ -306,6 +306,9 @@ public class MainTab extends mTabbedPanel {
 		} else { 
 			pCh.setWayPoint(profile.getNewWayPointName());
 			pCh.setType(CacheType.CW_TYPE_CUSTOM);
+			pCh.setHard(CacheTerrDiff.CW_DT_UNSET);
+			pCh.setTerrain(CacheTerrDiff.CW_DT_UNSET);
+			pCh.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 			lastselected=pCh.getWayPoint();
 		}
 		pCh.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
