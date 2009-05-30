@@ -157,11 +157,7 @@ public class TPLExporter {
 		if(fc.execute() == FormBase.IDCANCEL) return;
 		File saveTo = fc.getChosenFile();
 		pref.setExportPath(expName, saveTo.getPath());
-		int counter = 0;
-		for(int i = 0; i<cacheDB.size();i++){
-			ch = cacheDB.get(i);
-			if(cacheDB.get(i).isVisible() == true) counter++;
-		}
+		int counter = cacheDB.countVisible();
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
 		pbf.exec();

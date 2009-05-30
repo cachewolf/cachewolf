@@ -89,11 +89,8 @@ public class Exporter {
 		pbf.setTask(h,"Exporting ...");
 		pbf.exec();
 
-		int counter = 0;
+		int counter = cacheDB.countVisible();
 		int expCount = 0;
-		for(int i = 0; i<cacheDB.size();i++){
-			if(cacheDB.get(i).isVisible()) counter++;
-		}
 
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(outFile)));

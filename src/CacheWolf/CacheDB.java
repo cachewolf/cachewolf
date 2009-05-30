@@ -250,4 +250,18 @@ public class CacheDB {
 		}
 	}
 	
+	/**
+	 * Returns the number of currently visible waypoints. <br>As this number is not only dependent from
+	 * CacheHolder properties, but also from the state of the filter and so on, the determination
+	 * of this number always requires a count through all waypoints. So use with caution.
+	 * @return Number of currently visible waypoints.
+	 */
+	public int countVisible() {
+		int c=0;
+		for (int i=0; i<vectorDB.size(); i++) {
+			if (this.get(i).isVisible()) c++;
+		}
+		return c;
+	}
+	
 }
