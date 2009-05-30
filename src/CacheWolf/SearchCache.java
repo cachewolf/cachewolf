@@ -27,10 +27,7 @@ public class SearchCache {
 			CacheHolder ch;
 			int counter = 0;
 			if (searchInDescriptionAndNotes || searchInLogs) {
-				for(int i=0 ; i<cacheDB.size(); i++) {
-					if (!cacheDB.get(i).isVisible()) break;
-					counter++;
-				}
+				counter = cacheDB.countVisible();
 			}
 			CWProgressBar cwp = new CWProgressBar(MyLocale.getMsg(219,"Searching..."), 0, counter, searchInDescriptionAndNotes);
 			cwp.exec();

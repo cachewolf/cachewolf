@@ -58,14 +58,3 @@ public class DBStats {
 		return counter;
 	}
 }
-
-// TODO ASCExporter.java
-//TODO GPXExporter.java
-//TODO HTMLExporter.java
-//TODO KMLExporter.java
-//TODO MSARCSVExporter.java
-//TODO OVLExporter.java
-//TODO OziExporter.java
-//TODO PCX5Exporter.java
-//TODO TomTomASCExporter.ja
-//TODO TomTomOV2Exporter.ja
