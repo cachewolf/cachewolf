@@ -551,9 +551,9 @@ public final class CacheType {
 		case CW_TYPE_REFERENCE: return GC_GPX_REFERENCE;
 		case CW_TYPE_MAZE: return GC_GPX_MAZE;
 		case CW_TYPE_APE: return GC_GPX_APE;
+		case CW_TYPE_CUSTOM: return CW_GUISTR_CUSTOM;
 		default: throw new IllegalArgumentException("unmatched argument "+id+" in CacheSize id2GpxString()");
 		}
-		
 	}
 	
 	//TODO: do we actually need this one?
@@ -605,6 +605,7 @@ public final class CacheType {
 		case CW_TYPE_REFERENCE: return true;
 		case CW_TYPE_MAZE: return true;
 		case CW_TYPE_APE: return true;
+		case CW_TYPE_CUSTOM: return true;
 		default: return false;
 		}
 	}
