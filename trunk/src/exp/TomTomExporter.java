@@ -73,10 +73,7 @@ public class TomTomExporter {
 		progressForm.exec();
 		
 		currExp = 0;
-		counter = 0;
-		for(int i = 0; i<cacheDB.size();i++){
-			if(cacheDB.get(i).isVisible()) counter++;
-		}
+		counter = cacheDB.countVisible();
 		
 		ext = format==TT_ASC?".asc":".ov2";
 
@@ -135,11 +132,8 @@ public class TomTomExporter {
 		pbf.setTask(h,"Exporting ...");
 		pbf.exec();
 
-		int counter = 0;
+		int counter = cacheDB.countVisible();
 		int expCount = 0;
-		for(int i = 0; i<cacheDB.size();i++){
-			if(cacheDB.get(i).isVisible()) counter++;
-		}
 
 		try{
 			dfile = new File(fileName);

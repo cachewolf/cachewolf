@@ -67,10 +67,7 @@ public class HTMLExporter{
 			Hashtable mapImgParams;
 
 			//Generate index page
-			int counter = 0;
-			for(int i = 0; i<cacheDB.size();i++){
-				if(cacheDB.get(i).isVisible()) counter++;
-			}
+			int counter = cacheDB.countVisible();
 			
 			pbf.showMainTask = false;
 			pbf.setTask(h,"Exporting ...");
