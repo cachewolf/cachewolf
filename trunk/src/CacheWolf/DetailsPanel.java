@@ -357,6 +357,7 @@ public class DetailsPanel extends CellPanel{
 				if (cs.execute()== FormBase.IDOK){
 					dirty_details=true;
 					coords = cs.getCoords();
+					Global.getProfile().notifyUnsavedChanges(!thisCache.pos.toString().equals(coords.toString()));
 					thisCache.pos.set(coords);
 					btnWayLoc.setText(coords.toString());
 					thisCache.LatLon=coords.toString();
