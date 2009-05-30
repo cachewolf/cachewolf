@@ -239,6 +239,12 @@ public class SpiderGC{
 			if (ret == 1) {
 				CacheHolder cacheInDB = cacheDB.get(number);
 				cacheInDB.initStates(false);
+				if (cacheInDB.is_found() && !ch.is_found() && ! loadAllLogs) {
+					// If the number of logs to spider is 5 or less, then the "not found" information
+					// of the spidered cache is not credible. In this case it should not overwrite
+					// the "found" state of an existing cache.
+					ch.setFound(true);
+				}
 				cacheInDB.update(ch);
 				cacheInDB.save();
 			}
