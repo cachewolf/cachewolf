@@ -184,9 +184,9 @@ public class DetailsPanel extends CellPanel{
 	    btnWayLoc.setText(ch.pos.toString());
 		inpHidden.setText(ch.getDateHidden());
 		inpOwner.setText(ch.getCacheOwner());
-		if (ch.getCacheStatus().length()>=10 && ch.getCacheStatus().charAt(4)=='-')
+		if (ch.getCacheStatus().length()>=10 && ch.getCacheStatus().charAt(4)=='-') {
 			chcStatus.setText(MyLocale.getMsg(318,"Found")+" "+ch.getCacheStatus());
-		else {
+		} else {
 			chcStatus.setText(ch.getCacheStatus());
 			// If the cache status contains a date, do not overwrite it with 'found' message
 			if(ch.is_found() == true) chcStatus.setText(MyLocale.getMsg(318,"Found"));
@@ -419,11 +419,18 @@ public class DetailsPanel extends CellPanel{
 		// the CacheHolder object which sits in cacheDB
 		  // Strip the found message if the status contains a date
 		if (chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found")) && 
-				  chcStatus.getText().length()>=MyLocale.getMsg(318,"Found").length()+11)
+				  chcStatus.getText().length()>=MyLocale.getMsg(318,"Found").length()+11) {
 			  thisCache.setCacheStatus(chcStatus.getText().substring(MyLocale.getMsg(318,"Found").length()+1));
-		  else	  
+		} else { 	  
 			  thisCache.setCacheStatus(chcStatus.getText());
-		  thisCache.setFound(chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found")));
+		}
+		if (! thisCache.is_found() && thisCache.getCacheStatus().length()>=10 && thisCache.getCacheStatus().charAt(4)=='-') {
+			// Use same heuristic condition as in setDetails(CacheHolder) to determine, if this cache
+			// has to considered as found.
+			thisCache.setFound(true);
+		} else {
+			thisCache.setFound(chcStatus.getText().startsWith(MyLocale.getMsg(318,"Found")));
+		}	
 		  thisCache.setCacheOwner(inpOwner.getText().trim());
 		  thisCache.setOwned(thisCache.getCacheStatus().equals(MyLocale.getMsg(320,"Owner")));
 		  // Avoid setting is_owned if alias is empty and username is empty
