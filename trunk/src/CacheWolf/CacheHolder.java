@@ -18,10 +18,6 @@ import ewe.util.Vector;
  *	classes and methods to get more information.
  *	
  */
-/**
- * @author torsti
- *
- */
 public class CacheHolder {
 	protected static final String NOBEARING = "?";
 	protected static final String EMPTY = "";
@@ -79,6 +75,8 @@ public class CacheHolder {
 	private boolean newCache = false;
 	/** True if the cache is part of the results of a search */
 	public boolean is_flaged = false;
+	/** True if additional waypoints for this cache should be displayed regardless of the filter settings */
+	private boolean showAddis = false;
 	/** True if the cache has been selected using the tick box in the list view */
 	public boolean is_Checked = false;
 	/** The unique OC cache ID */
@@ -1021,7 +1019,10 @@ public class CacheHolder {
 			  	 (this.is_filtered())^profile.isFilterInverted())                            
 			  	||
 			   (filter==Filter.FILTER_CACHELIST) && 
-			     !Global.mainForm.cacheList.contains(this.getWayPoint()));
+			     !Global.mainForm.cacheList.contains(this.getWayPoint())
+			);
+		boolean showAddi = this.showAddis() && this.mainCache != null && this.mainCache.isVisible();
+		noShow = noShow && !showAddi;
 		return !noShow;
 	}
 
@@ -1175,6 +1176,44 @@ public class CacheHolder {
     	this.found = is_found;
     }
 
+	/**
+	 * If this returns <code>true</code>, then the additional waypoints for this cache should be 
+	 * displayed regardless how the filter is set. If it is <code>false</code>, then the normal 
+	 * filter settings apply.<br>
+	 * This property is not saved in index.xml, so if you reload the data, then this information
+	 * is gone.
+	 * @return <code>True</code>: Always display additional waypoints for cache.
+	 */
+	public boolean showAddis() {
+		return this.showAddis;
+	}
+	
+	/**
+	 * Setter for <code>showAddis()</code>. 
+	 * If this returns <code>true</code>, then the additional waypoints for this cache should be 
+	 * displayed regardless how the filter is set. If it is <code>false</code>, then the normal 
+	 * filter settings apply.<br>
+	 * This property is not saved in index.xml, so if you reload the data, then this information
+	 * is gone.
+	 * @param value <code>True</code>: Always display additional waypoints for cache.
+	 */
+	public void setShowAddis(boolean value) {
+		// This value is always stored in the main cache and all addis.
+		CacheHolder mc = null;
+		if (this.mainCache == null) {
+			mc = this;
+		} else {
+			mc = this.mainCache;
+		}
+		if (mc.showAddis != value) {
+			mc.showAddis = value;
+			for (int i=0; i<mc.addiWpts.size(); i++) {
+				CacheHolder ac = (CacheHolder) mc.addiWpts.get(i);
+				ac.showAddis = value;
+			}
+		}
+	}
+	
 	/**
 	 * <b><u>Important</u></b>: This flag no longer indicates if a cache is visible
 	 * in the list. Instead, it now <u>only</u> flags if the cache is filtered out

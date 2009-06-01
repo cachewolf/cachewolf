@@ -17,7 +17,7 @@ public class myTableControl extends TableControl{
 	public CacheDB cacheDB;
 	public TablePanel tbp;
 	
-	private MenuItem miOpen, miGoto, miCenter;
+	private MenuItem miOpen, miGoto, miCenter, miUnhideAddis;
 	private MenuItem miOpenOnline, miOpenOffline;
 	private MenuItem miDelete, miUpdate;
 	private MenuItem miTickAll, miUntickAll;
@@ -33,28 +33,30 @@ public class myTableControl extends TableControl{
 		tbp =tablePanel;
 		allowDragSelection = false; // allow only one row to be selected at one time
 				
-		MenuItem[] mnuFull = new MenuItem[12];
+		MenuItem[] mnuFull = new MenuItem[13];
   	mnuFull[0] = miOpen = new MenuItem(MyLocale.getMsg(1021,"Open description"));
   	mnuFull[1] = miGoto = new MenuItem(MyLocale.getMsg(1010,"Goto"));
   	mnuFull[2] = miCenter = new MenuItem(MyLocale.getMsg(1019,"Center"));
-  	mnuFull[3] = miSeparator = new MenuItem("-");
-  	mnuFull[4] = miOpenOnline = new MenuItem(MyLocale.getMsg(1020,"Open in $browser online"));
-  	mnuFull[5] = miOpenOffline = new MenuItem(MyLocale.getMsg(1018,"Open in browser offline"));
-  	mnuFull[6] = miSeparator;
-  	mnuFull[7] = miDelete = new MenuItem(MyLocale.getMsg(1012,"Delete selected"));
-  	mnuFull[8] = miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update"));
-  	mnuFull[9] = miSeparator;
-  	mnuFull[10] = miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all"));
-  	mnuFull[11] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));	
+  	mnuFull[3] = miUnhideAddis = new MenuItem(MyLocale.getMsg(1042,"Unhide Addis"));
+  	mnuFull[4] = miSeparator = new MenuItem("-");
+  	mnuFull[5] = miOpenOnline = new MenuItem(MyLocale.getMsg(1020,"Open in $browser online"));
+  	mnuFull[6] = miOpenOffline = new MenuItem(MyLocale.getMsg(1018,"Open in browser offline"));
+  	mnuFull[7] = miSeparator;
+  	mnuFull[8] = miDelete = new MenuItem(MyLocale.getMsg(1012,"Delete selected"));
+  	mnuFull[9] = miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update"));
+  	mnuFull[10] = miSeparator;
+  	mnuFull[11] = miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all"));
+  	mnuFull[12] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));	
   	mFull = new Menu(mnuFull, MyLocale.getMsg(1013,"With selection"));
 
-  	MenuItem[] mnuSmall = new MenuItem[6];
+  	MenuItem[] mnuSmall = new MenuItem[7];
   	mnuSmall[0] = miOpen;
   	mnuSmall[1] = miGoto;
   	mnuSmall[2] = miCenter;
-  	mnuSmall[3] = miSeparator;
-  	mnuSmall[4] = miOpenOnline;
-  	mnuSmall[5] = miOpenOffline;
+  	mnuSmall[3] = miUnhideAddis;
+  	mnuSmall[4] = miSeparator;
+  	mnuSmall[5] = miOpenOnline;
+  	mnuSmall[6] = miOpenOffline;
   	mSmall = new Menu(mnuSmall, MyLocale.getMsg(1013,"With selection"));	
 	}
 
@@ -221,6 +223,17 @@ public class myTableControl extends TableControl{
 				pref.curCentrePt.set(cp);
 				Global.mainTab.updateBearDist(); // Update the distances with a warning message
 				//tbp.refreshTable();
+			}
+		}
+		
+		if (selectedItem == miUnhideAddis) {
+			// This sets the "showAddis" Flag to true. To reset is to false, apply the filter.
+			ch = cacheDB.get(tbp.getSelectedCache());
+			ch.setShowAddis(true);
+			if (ch.addiWpts.size()>0) {
+				tbp.refreshTable();
+			} else {
+				new MessageBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(1043, "This cache has no additional waypoints."),FormBase.OKB).execute();
 			}
 		}
 

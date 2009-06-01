@@ -339,6 +339,7 @@ public class Filter{
 		
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			ch = cacheDB.get(i);
+			ch.setShowAddis(false); 
 			if (examinedCaches.containsKey(ch)) continue;
 			
 			boolean filterCache = excludedByFilter(ch);
@@ -606,7 +607,9 @@ public class Filter{
 		Global.getProfile().selectionChanged = true;
 		CacheDB cacheDB=Global.getProfile().cacheDB;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
-			cacheDB.get(i).setFiltered(false);
+			CacheHolder ch = cacheDB.get(i);
+			ch.setFiltered(false);
+			ch.setShowAddis(false);
 		}
 		Global.getProfile().setFilterActive(FILTER_INACTIVE);
 	}
