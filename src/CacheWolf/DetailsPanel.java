@@ -35,7 +35,7 @@ public class DetailsPanel extends CellPanel {
 	mImage imgBlackNo;
 	mImage imgShowBug, imgShowBugNo, imgNewWpt, imgGoto;
 	mImage imgShowMaps, imgAddImages, imgNotes;
-	mLabel lblDiff, lblTerr;
+	mLabel lblDiff, lblTerr, lblAddiCount;
 
 	CacheDB cacheDB;
 	CacheHolder thisCache;
@@ -143,8 +143,13 @@ public class DetailsPanel extends CellPanel {
 
 		this.addNext(new mLabel(MyLocale.getMsg(302, "Waypoint:")), CellConstants.DONTSTRETCH,
 		        (CellConstants.DONTFILL | CellConstants.WEST));
-		this.addLast(inpWaypoint.setTag(CellConstants.SPAN, new Dimension(2, 1)),
-		        CellConstants.DONTSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		line2Panel = new CellPanel();
+		line2Panel.addNext(inpWaypoint, CellConstants.HSTRETCH,
+		        (CellConstants.HFILL | CellConstants.WEST));
+		line2Panel.addLast(lblAddiCount = new mLabel(MyLocale.getMsg(1044, "Addis")+": 888"),
+		        CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.EAST));
+		this.addLast(line2Panel, DONTSTRETCH, HFILL)
+		        .setTag(CellConstants.SPAN, new Dimension(2, 1));
 
 		this.addNext(new mLabel(MyLocale.getMsg(303, "Name:")), CellConstants.DONTSTRETCH,
 		        (CellConstants.DONTFILL | CellConstants.WEST));
@@ -281,6 +286,13 @@ public class DetailsPanel extends CellPanel {
 					        .log(ch.getWayPoint() + " has wrong difficulty " + ch.getHard());
 			}
 		}
+		int addiCount = 0;
+		if (ch.mainCache==null) {
+			addiCount = ch.addiWpts.size();
+		} else {
+			addiCount = ch.mainCache.addiWpts.size();
+		}
+		lblAddiCount.setText( MyLocale.getMsg(1044, "Addis")+": "+String.valueOf(addiCount)); 
 
 		if (isBigScreen)
 			mNotes.setText(ch.getExistingDetails().getCacheNotes());
