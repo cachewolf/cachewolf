@@ -321,11 +321,13 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadcaches){
-				FileChooser fc = new FileChooser(FileChooserBase.OPEN|FileChooserBase.MULTI_SELECT, pref.baseDir);
+				String dir = pref.getImporterPath("LocGpxImporter");
+				FileChooser fc = new FileChooser(FileChooserBase.OPEN|FileChooserBase.MULTI_SELECT, dir);
 				fc.addMask("*.gpx,*.zip,*.loc");
 				fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
 				if(fc.execute() != FormBase.IDCANCEL){
-					String dir = fc.getChosenDirectory().toString();
+					dir = fc.getChosenDirectory().toString();
+					pref.setImporterPath("LocGpxImporter", dir);
 					String files[] = fc.getAllChosen();
 					/*
 					int how = GPXImporter.DOIT_ASK;

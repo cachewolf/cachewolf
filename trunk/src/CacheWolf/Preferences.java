@@ -377,6 +377,9 @@ public class Preferences extends MinML{
 		else if (name.equals("expPath")){
 			exporterPaths.put(atts.getValue("key"),atts.getValue("value"));
 		}
+		else if (name.equals("impPath")) {
+			importerPaths.put(atts.getValue("key"), atts.getValue("value"));
+		}
 		else if (name.equals("travelbugs")) {
 			travelbugColMap=atts.getValue("colmap");
 			travelbugColWidth=atts.getValue("colwidths");
@@ -515,6 +518,12 @@ public class Preferences extends MinML{
 				entry = (MapEntry) itPath.next();
 				outp.print("    <expPath key = \"" + SafeXML.strxmlencode(entry.getKey().toString()) + "\" value = \"" + SafeXML.strxmlencode(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
 			}
+			itPath = importerPaths.entries();
+			while(itPath.hasNext()){
+				entry = (MapEntry) itPath.next();
+				outp.print("    <impPath key = \"" + SafeXML.strxmlencode(entry.getKey().toString()) + "\" value = \"" + SafeXML.strxmlencode(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
+			}
+			
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
@@ -804,6 +813,19 @@ public class Preferences extends MinML{
 		if (dir == null){
 			dir = Global.getProfile().dataDir;
 		}
+		return dir;
+	}
+	
+	private Hashtable importerPaths = new Hashtable();
+	
+	public void setImporterPath(String importer, String directory) {
+		importerPaths.put(importer, directory);
+		savePreferences();
+	}
+	
+	public String getImporterPath(String importer) {
+		String dir = (String) importerPaths.get(importer);
+		if (null == dir) dir = Global.getProfile().dataDir;
 		return dir;
 	}
 
