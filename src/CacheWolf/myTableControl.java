@@ -133,11 +133,11 @@ public class myTableControl extends TableControl{
 		CacheHolder ch;
 		if (selectedItem == miTickAll){
 			setSelectForAll(true);
-		}
+		} else
 
 		if (selectedItem == miUntickAll){
 			setSelectForAll(false);
-		}
+		} else
 
 		if (selectedItem == miDelete){
 			Vm.showWait(true);
@@ -203,11 +203,11 @@ public class myTableControl extends TableControl{
 				}
 			}
 			Vm.showWait(false);
-		}
+		} else
 				
 		if (selectedItem == miUpdate){
 			MainMenu.updateSelectedCaches(tbp);
-		}
+		} else
 
 		if (selectedItem == miCenter){
 			if (tbp.getSelectedCache() < 0) {
@@ -224,7 +224,7 @@ public class myTableControl extends TableControl{
 				Global.mainTab.updateBearDist(); // Update the distances with a warning message
 				//tbp.refreshTable();
 			}
-		}
+		} else
 		
 		if (selectedItem == miUnhideAddis) {
 			// This sets the "showAddis" Flag to true. To reset is to false, apply the filter.
@@ -235,12 +235,13 @@ public class myTableControl extends TableControl{
 			} else {
 				new MessageBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(1043, "This cache has no additional waypoints."),FormBase.OKB).execute();
 			}
-		}
+		} else
 
 		if (selectedItem == miGoto){
 			ch = cacheDB.get(tbp.getSelectedCache());
 			Global.mainTab.gotoPoint(ch.pos);
-		}
+		} else
+		    
 		if (selectedItem == miOpenOnline){
 			if(browserPathIsValid()){
 				ch = cacheDB.get(tbp.getSelectedCache());
@@ -257,13 +258,15 @@ public class myTableControl extends TableControl{
 							MyLocale.getMsg(1037,"patient for an update"),FormBase.OKB)).execute();
 				}
 			}
-		}
+		} else
+		    
 		if (selectedItem == miOpenOffline) {
 			if(browserPathIsValid()){
 				ShowCacheInBrowser sc=new ShowCacheInBrowser();
 				sc.showCache(cacheDB.get(tbp.getSelectedCache()));
 			}
-		}
+		} else
+		    
 		if (selectedItem == miOpen){
 			penDoubleClicked(null);
 		}
