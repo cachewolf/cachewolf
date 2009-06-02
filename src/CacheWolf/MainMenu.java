@@ -695,6 +695,11 @@ public class MainMenu extends MenuBar {
 			// In case that the triggered event was due to one of the context menu items, process
 			// the event by the context menu handler
 			tbp.tc.popupMenuEvent(mev.selectedItem);
+			
+		} else if (ev instanceof ControlEvent) {
+			if (ev.type == ControlEvent.MENU_SHOWN) {
+				Global.mainTab.tbP.tc.adjustAddiHideUnhideMenu();
+			}
 		}
 	}
 
