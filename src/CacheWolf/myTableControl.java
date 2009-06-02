@@ -80,34 +80,15 @@ public class myTableControl extends TableControl{
 	
 	public void penRightReleased(Point p){
 		if (cacheDB.size()>0) { // No context menu when DB is empty
-			// Find out cell at pixel position
-			Point p2 = cellAtPoint(p.x,p.y,null);
-			if (p2 != null && p2.y >= 0) {
-				// Get the cache at the position
-				CacheHolder selCache = cacheDB.get(p2.y);
-				if (selCache != null) {
-					// Depending if it has Addis and the ShowAddis-Flag the menu item to unhide
-					// addis is properly named and activated or disabled.
-					if (selCache.addiWpts.size() > 0) {
-						miUnhideAddis.modifiers&=~MenuItem.Disabled;
-						if (!selCache.showAddis()) {
-							miUnhideAddis.setText(MyLocale.getMsg(1042,"Unhide Addis"));
-						} else {
-							miUnhideAddis.setText(MyLocale.getMsg(1045,"Hide Addis"));
-						}
-					} else {
-						miUnhideAddis.setText(MyLocale.getMsg(1042,"Unhide Addis"));
-						miUnhideAddis.modifiers|=MenuItem.Disabled;
-					}
-				}
-			}
-			
+			adjustAddiHideUnhideMenu(p);
 			menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
 			
 		}
 	}
-	public void penHeld(Point p){
+
+    public void penHeld(Point p){
 		if (cacheDB.size()>0) // No context menu when DB is empty
+			adjustAddiHideUnhideMenu(p);
 			menuState.doShowMenu(p,true,null); 
 	}
 
@@ -319,7 +300,39 @@ public class myTableControl extends TableControl{
 
 		super.onEvent(ev);
 	}
-    ///////////////////////////////////////////////////
+
+	/**
+	 * Adjusting the menu item for hiding or unhiding additional waypoints. If the cache has no
+	 * addis, then the menu is deactivated. If it has addis, then the menu text is adapted according
+	 * to the current value of the property <code>showAddis()</code>. 
+     * @param p Position (in Pixels) where the context menu is triggered. This defines the cache
+     * the functionality is applying for.
+     */
+    private void adjustAddiHideUnhideMenu(Point p) {
+	    // Find out cell at pixel position
+	    Point p2 = cellAtPoint(p.x,p.y,null);
+	    if (p2 != null && p2.y >= 0) {
+	    	// Get the cache at the position
+	    	CacheHolder selCache = cacheDB.get(p2.y);
+	    	if (selCache != null) {
+	    		// Depending if it has Addis and the ShowAddis-Flag the menu item to unhide
+	    		// addis is properly named and activated or disabled.
+	    		if (selCache.addiWpts.size() > 0) {
+	    			miUnhideAddis.modifiers&=~MenuItem.Disabled;
+	    			if (!selCache.showAddis()) {
+	    				miUnhideAddis.setText(MyLocale.getMsg(1042,"Unhide Addis"));
+	    			} else {
+	    				miUnhideAddis.setText(MyLocale.getMsg(1045,"Hide Addis"));
+	    			}
+	    		} else {
+	    			miUnhideAddis.setText(MyLocale.getMsg(1042,"Unhide Addis"));
+	    			miUnhideAddis.modifiers|=MenuItem.Disabled;
+	    		}
+	    	}
+	    }
+    }
+	
+	///////////////////////////////////////////////////
 	//  Allow the caches to be dragged into a cachelist
     ///////////////////////////////////////////////////
 	
