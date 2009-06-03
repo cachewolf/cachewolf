@@ -32,7 +32,7 @@ public class myTableModel extends TableModel{
 	 * the element j (as per the list below) is visible in column i. 
 	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
 	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend.
-	 * [14] OC index, [15] Solver exists, [16] Note exists
+	 * [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals
 	 */
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
@@ -42,7 +42,7 @@ public class myTableModel extends TableModel{
 			MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),
 			MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S"),
 			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX"),MyLocale.getMsg(1038,"S"),
-			MyLocale.getMsg(1040,"N")};
+			MyLocale.getMsg(1040,"N"),MyLocale.getMsg(1047,"A")};
 	
 	private static Image noFindLogs[] = new Image[4];
 	public static mImage red, blue, yellow; // skull, green
@@ -106,7 +106,7 @@ public class myTableModel extends TableModel{
 	 *
 	 */
 	public void setColumnNamesAndWidths() {
-		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,16,0, -1);
+		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,17,0, -1);
 		colWidth=TableColumnChooser.str2Array(Global.getPref().listColWidth,10,1024,50, colMap.length);
 		numCols=colMap.length;
 		clearCellAdjustments();
@@ -358,6 +358,12 @@ public class myTableModel extends TableModel{
 					    if (ch.hasSolver()) return picHasSolver; else return null; 
 					case 16: // Does note exist?
 						if (ch.hasNote()) return picHasNotes; else return null;
+					case 17: // Number of Additional Waypoints;
+						if (ch.mainCache == null) {
+							return String.valueOf(ch.addiWpts.size());
+						} else {
+							return "";
+						}
 				} // Switch
 			} // if
 		} catch (Exception e) {
