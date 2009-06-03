@@ -321,7 +321,7 @@ public class Preferences extends MinML{
 		else if (name.equals("listview")) {
 			listColMap=atts.getValue("colmap");
 			listColWidth=atts.getValue("colwidths")+",30,30"; // append default values for older versions
-			if((new StringTokenizer(listColWidth,",")).countTokens()<17) listColWidth+=",30,30"; // for older versions
+			if((new StringTokenizer(listColWidth,",")).countTokens()<18) listColWidth+=",30,30"; // for older versions
 		}
 		else if(name.equals("proxy")) {
 			myproxy = atts.getValue("prx");
