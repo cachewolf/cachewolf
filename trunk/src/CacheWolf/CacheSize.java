@@ -240,6 +240,9 @@ public final class CacheSize {
 			return CW_SIZE_OTHER;
 		} else if (gcstring.equals(GC_SIZE_VIRTUAL)) {
 			return CW_SIZE_VIRTUAL;
+		// GSAK exports wrong type information
+		} else if (gcstring.equals("Unknown")) {
+			return CW_SIZE_NOTCHOSEN;
 		} else {
 			throw (new IllegalArgumentException("unmatched argument " + gcstring + " in CacheSize gcGpxString2Cw()"));
 		}
