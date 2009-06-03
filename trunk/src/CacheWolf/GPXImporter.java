@@ -532,6 +532,11 @@ public class GPXImporter extends MinML {
 			//Vm.debug(addr + "|");
 			cacheText = SpiderGC.fetch(addr);
 			imgSpider.getImages(cacheText, holder.getFreshDetails());
+			try {
+				imgSpider.getAttributes(cacheText, holder.getFreshDetails());
+			} catch (Exception e) {
+				if (Global.getPref().debug) Global.getPref().log("unable to fetch attrivbutes for"+holder.getWayPoint(), e);
+			}
 		}
 	}
 	
