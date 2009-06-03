@@ -1401,7 +1401,7 @@ public class SpiderGC{
 		}
 	}
 
-	private void getAttributes(String doc, CacheHolderDetail chD) throws Exception {
+	public void getAttributes(String doc, CacheHolderDetail chD) throws Exception {
 		Extractor attBlock = new Extractor(doc,p.getProp("attBlockExStart"),p.getProp("attBlockExEnd"), 0 , true);
 		String atts = attBlock.findNext();
 		Extractor attEx = new Extractor(atts,p.getProp("attExStart"),p.getProp("attExEnd"), 0 , true);
