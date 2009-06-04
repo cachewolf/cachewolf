@@ -116,7 +116,7 @@ public final class CacheType {
 	/** GUI string for custom waypoit */
 	public static final String CW_GUISTR_CUSTOM = "Custom";
 	/** GUI string for custom waypoit */
-	public static final String CW_GUISTR_TRADI = "Tradi";
+	public static final String CW_GUISTR_TRADI = "Traditional";
 	/** GUI string for custom waypoit */
 	public static final String CW_GUISTR_MULTI = "Multi";
 	/** GUI string for custom waypoit */
