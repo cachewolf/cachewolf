@@ -93,6 +93,7 @@ public class MapLoader {
 	}
 
 	public void setCurrentMapService(int index) {
+		if (index==-1) index=0; // if no center set
 		currentOnlineMapService = (OnlineMapService) onlineMapServices.get(index);
 	}
 
