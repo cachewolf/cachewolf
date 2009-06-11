@@ -154,7 +154,7 @@ public class Preferences extends MinML{
 	/** The list of visible columns in the list view */
 	public String listColMap="0,1,2,3,4,5,6,7,8,9,10,11,12";
 	/** The widths for each column in list view */
-	public String listColWidth="15,20,20,25,92,177,144,83,60,105,50,104,22,30,30";
+	public String listColWidth="15,20,20,25,92,177,144,83,60,105,50,104,22,30,30,30,30,30";
 	/** The columns which are to be displayed in TravelbugsJourneyScreen. See also TravelbugJourney */
 	public String travelbugColMap="1,4,5,6,8,9,10,7";
 	/** The column widths for the travelbug journeys. */
@@ -320,8 +320,8 @@ public class Preferences extends MinML{
 		}
 		else if (name.equals("listview")) {
 			listColMap=atts.getValue("colmap");
-			listColWidth=atts.getValue("colwidths")+",30,30"; // append default values for older versions
-			if((new StringTokenizer(listColWidth,",")).countTokens()<18) listColWidth+=",30,30"; // for older versions
+			listColWidth=atts.getValue("colwidths");
+			while ((new StringTokenizer(listColWidth,",")).countTokens()<myTableModel.N_COLUMNS) listColWidth+=",30"; // for older versions
 		}
 		else if(name.equals("proxy")) {
 			myproxy = atts.getValue("prx");
@@ -523,7 +523,7 @@ public class Preferences extends MinML{
 				entry = (MapEntry) itPath.next();
 				outp.print("    <impPath key = \"" + SafeXML.strxmlencode(entry.getKey().toString()) + "\" value = \"" + SafeXML.strxmlencode(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
 			}
-			
+
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
@@ -815,14 +815,14 @@ public class Preferences extends MinML{
 		}
 		return dir;
 	}
-	
+
 	private Hashtable importerPaths = new Hashtable();
-	
+
 	public void setImporterPath(String importer, String directory) {
 		importerPaths.put(importer, directory);
 		savePreferences();
 	}
-	
+
 	public String getImporterPath(String importer) {
 		String dir = (String) importerPaths.get(importer);
 		if (null == dir) dir = Global.getProfile().dataDir;
@@ -830,7 +830,7 @@ public class Preferences extends MinML{
 	}
 
 	/**
-	 * <code>True</code> or <code>false</code>, depending if a filter with the given ID is 
+	 * <code>True</code> or <code>false</code>, depending if a filter with the given ID is
 	 * saved in the preferences.
 	 * @param filterID ID of the filter to check
 	 * @return True or false
@@ -838,9 +838,9 @@ public class Preferences extends MinML{
 	public boolean hasFilter(String filterID) {
 		return this.filterList.containsKey(filterID);
 	}
-	
+
 	/**
-	 * Returns the FilterData object saved with the given ID. The ID is not saved in the object, 
+	 * Returns the FilterData object saved with the given ID. The ID is not saved in the object,
 	 * so it may be resaved under another ID.
 	 * @param filterID ID of the FilterData object
 	 * @return FilterData object
@@ -848,9 +848,9 @@ public class Preferences extends MinML{
 	public FilterData getFilter(String filterID) {
 		return (FilterData)this.filterList.get(filterID);
 	}
-	
+
 	/**
-	 * Adds a FilterData object to the list. If a FilterData object is already saved unter the 
+	 * Adds a FilterData object to the list. If a FilterData object is already saved unter the
 	 * given ID, the old object is removed and the new one is set at its place.
 	 * @param filterID ID to associate with the filter object
 	 * @param filter FilterData object
@@ -858,7 +858,7 @@ public class Preferences extends MinML{
 	public void addFilter(String filterID, FilterData filter) {
 		this.filterList.put(filterID, filter);
 	}
-	
+
 	/**
 	 * Removed the FilterData object which is saved with the given ID. If no such FilterData object
 	 * exists, nothing happens.
@@ -867,7 +867,7 @@ public class Preferences extends MinML{
 	public void removeFilter(String filterID) {
 		this.filterList.remove(filterID);
 	}
-	
+
 	/**
 	 * Returns an array of ID of saved FilterData objects.
 	 * @return Array of IDs
