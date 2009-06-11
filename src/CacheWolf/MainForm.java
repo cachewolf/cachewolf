@@ -79,6 +79,11 @@ public class MainForm extends Editor {
 			if (!pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_ONOROFF, true))
 				ewe.sys.Vm.exit(0); // User MUST select or create a profile
 			Vm.showWait(true);
+
+
+			// Replace buildt-in symbols with customized images
+			GuiImageBroker.customizedSymbols();
+
 			// Load CacheList
 			infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
 			infB.exec();
