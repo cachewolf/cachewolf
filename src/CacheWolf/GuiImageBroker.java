@@ -1,20 +1,22 @@
 package CacheWolf;
 
 import ewe.fx.Image;
+import ewe.io.FileBase;
+import utils.FileBugfix;
 
 /**
  * hold preloaded versions of GUI images in a single place
- * 
+ *
  * Do not instantiate this class, only use it in a static way.
  */
 
 public final class GuiImageBroker {
-	
+
 	// TODO: check with Image and mImage
-	
+
 	/** image to be displayed in case of error */
 	public static Image imageError = new Image("guiError.png");
-	
+
 	/**
 	 * images to be displayed for cache types in GUI
 	 * @see getTypeImage
@@ -44,16 +46,16 @@ public final class GuiImageBroker {
 		new Image(CacheType.CW_GUIIMG_WEBCAM),		// 20
 		new Image(CacheType.CW_GUIIMG_WHEREIGO)		// 21
 	};
-	
+
 	// TODO: move size images here
 	private static final Image[] sizeImages = {
-		
+
 	};
 
 	/** constructor does nothing */
 	private GuiImageBroker() { // no instantiation needed
 	}
-	
+
 	/**
 	 * select image to be displayed for a given cache type
 	 * @param id internal cache type id
@@ -84,6 +86,39 @@ public final class GuiImageBroker {
 		case CacheType.CW_TYPE_WEBCAM: return typeImages[20];
 		case CacheType.CW_TYPE_WHEREIGO: return typeImages[21];
 		default: return imageError;
-		}	
+		}
 	}
+
+	/**
+	 * Replaces the buildt-in symbols by images stored in /symbols:
+	 * If the subdirectory symbols exists in CW-directory *.png-files
+	 * are read in and roughly checked for validity (names must be
+	 * convertable to integers between 0 and 21).
+	 * For every valid file x.png the corresponding typeImages[x] is
+	 * replaced by the image in x.png.
+	 * Images are NOT checked for size etc.
+	 */
+	public static void customizedSymbols()
+	{
+		FileBugfix dir=new FileBugfix(FileBase.getProgramDirectory()+"/symbols");
+		if (dir.isDirectory()){
+			int id;
+			String name = "";
+			String [] pngFiles;
+			pngFiles=dir.list("*.png",0);
+			for (int i=0; i<pngFiles.length; i++) {
+				name = pngFiles[i].substring(0,pngFiles[i].length()-4);
+				try {
+					id = Integer.parseInt (name);
+				}
+				catch (Exception E){
+					id = -1; //filename invalid for symbols
+				}
+				if (0<=id && id<=typeImages.length){
+					typeImages[id]= new Image(FileBase.getProgramDirectory()+"/symbols/"+pngFiles[i]);
+				}
+			}
+		}
+	}
+
 }
