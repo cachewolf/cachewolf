@@ -13,7 +13,7 @@ import ewe.fx.*;
 * 20061212 salzkammergut, patch to speed up scrolling, Used MyLocale
 */
 public class myTableModel extends TableModel{
-	
+
 	// Colors for Cache status (BG unless otherwise stated)
 	private static final Color COLOR_FLAGED		= new Color(255,255,0);
 	private static final Color COLOR_FOUND		= new Color(152,251,152);
@@ -28,9 +28,11 @@ public class myTableModel extends TableModel{
 	private Color lastColorFG                   = new Color(0,0,0);
 	private int lastRow = -2;
 	private CacheDB cacheDB;
+	/** The max number of columns in the list view */
+	public static final int N_COLUMNS = 18;
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
-	 * the element j (as per the list below) is visible in column i. 
-	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, 
+	 * the element j (as per the list below) is visible in column i.
+	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates,
 	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend.
 	 * [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals
 	 */
@@ -43,7 +45,7 @@ public class myTableModel extends TableModel{
 			MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S"),
 			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX"),MyLocale.getMsg(1038,"S"),
 			MyLocale.getMsg(1040,"N"),MyLocale.getMsg(1047,"A")};
-	
+
 	private static Image noFindLogs[] = new Image[4];
 	public static mImage red, blue, yellow; // skull, green
 	private Image checkboxTicked,checkboxUnticked;
@@ -56,18 +58,18 @@ public class myTableModel extends TableModel{
 	private mImage[] sizePics = new mImage[CacheSize.CW_TOTAL_SIZE_IMAGES];
 	/** This is the modifier (Shift & Control key status) for Pen Events
 	 * it is set in myTableControl.onEvent */
-	public int penEventModifiers; 
-	
+	public int penEventModifiers;
+
 //	private int lastRow=-1;
 	private myTableControl tcControl;
 	public boolean showExtraWptInfo=true;
-	
+
 	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
 		cacheDB = Global.getProfile().cacheDB;
 		fm = this.fm;
 		tcControl = tc;
-		setColumnNamesAndWidths(); 
+		setColumnNamesAndWidths();
 		this.numRows = cacheDB.size();
 		//Dimension selrow = new Dimension(-1,1);
 		//this.cursorSize = selrow;
@@ -83,30 +85,30 @@ public class myTableModel extends TableModel{
 		bug = new mImage("bug_table.png");bug.transparentColor=Color.DarkBlue;
 		checkboxTicked = new Image("checkboxTicked.png");
 		checkboxUnticked= new Image("checkboxUnticked.png");
-		
+
 //		picSizeMicro=new mImage("sizeMicro.png"); picSizeMicro.transparentColor=Color.White;
 //		picSizeSmall=new mImage("sizeSmall.png"); picSizeSmall.transparentColor=Color.White;
 //		picSizeReg=new mImage("sizeReg.png"); picSizeReg.transparentColor=Color.White;
 //		picSizeLarge=new mImage("sizeLarge.png"); picSizeLarge.transparentColor=Color.White;
 //		picSizeVLarge=new mImage("sizeVLarge.png"); picSizeVLarge.transparentColor=Color.White;
 //		picSizeNonPhysical=new mImage("sizeNonPhysical.png"); picSizeNonPhysical.transparentColor=Color.White;
-		
+
 		for (byte i = 0; i < CacheSize.CW_TOTAL_SIZE_IMAGES; i++) {
 			sizePics[i] = new mImage(CacheSize.sizeImageForId(i));
 			sizePics[i].transparentColor=Color.White;
 		}
-				
+
 		picHasSolver=new mImage("solver_exists.png"); picHasSolver.transparentColor=Color.White;
 		picHasNotes=new mImage("notes_exist.png"); picHasNotes.transparentColor=Color.White;
 //		updateRows();
 	}
-	
+
 	/**
 	 * Sets the column names and widths from preferences
 	 *
 	 */
 	public void setColumnNamesAndWidths() {
-		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,17,0, -1);
+		colMap=TableColumnChooser.str2Array(Global.getPref().listColMap,0,N_COLUMNS-1,0, -1);
 		colWidth=TableColumnChooser.str2Array(Global.getPref().listColWidth,10,1024,50, colMap.length);
 		numCols=colMap.length;
 		clearCellAdjustments();
@@ -116,7 +118,7 @@ public class myTableModel extends TableModel{
 		else
 			tcControl.setMenuSmall();
 	}
-	
+
 	/**
 	 * Return the column widths as a comma delimited string for storing in the preferences
 	 * @return
@@ -128,8 +130,8 @@ public class myTableModel extends TableModel{
 		}
 		clearCellAdjustments();
 		// Convert to string
-		StringBuffer sb=new StringBuffer(40);
-		for (int i=0; i<colWidth.length; i++) {
+		StringBuffer sb=new StringBuffer(100);
+		for (int i=0; i<N_COLUMNS; i++) {
 			if (sb.length()!=0) sb.append(',');
 			sb.append(colWidth[i]);
 		}
@@ -151,7 +153,7 @@ public class myTableModel extends TableModel{
 				if (ch.isAddiWpt()){ // unfiltered Addi Wpt
 					// check if main wpt is filtered
 					if(ch.mainCache != null) { // parent exists
-						if (! ch.mainCache.isVisible()) 
+						if (! ch.mainCache.isVisible())
 							sortDB.add(ch); // Unfiltered Addi Wpt with filtered Main Wpt, show it on its own
 						// else Main cache is not filtered, Addi will be added below main cache further down
 					} else { //Addi without main Cache
@@ -172,14 +174,14 @@ public class myTableModel extends TableModel{
 		cacheDB.rebuild(sortDB, notVisibleDB);
 		this.numRows = sortDB.getCount();
 	}
-	
+
 	/**
 	 * Method to set the row color of the table displaying the cache list, depending on different
 	 * flags set to the cache.
 	 */
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ewe.ui.TableModel#getCellAttributes(int, int, boolean, ewe.ui.TableCellAttributes)
 	 */
 	public TableCellAttributes getCellAttributes(int row, int col, boolean isSelected,
@@ -234,7 +236,7 @@ public class myTableModel extends TableModel{
 				};
 			} else  {
 				// Here: We already had this row.
-				// Take color computed for last column 
+				// Take color computed for last column
 				ta.fillColor = lastColorBG;
 				ta.foreground = lastColorFG;
 			}
@@ -246,7 +248,7 @@ public class myTableModel extends TableModel{
 	}
 
 	/**
-	 * Determines the arithmetic mean value of two colors and stores the result in the 
+	 * Determines the arithmetic mean value of two colors and stores the result in the
 	 * third color.
 	 * @param colorMerged Resulting color
 	 * @param colorA First color to merge. May be same object as <code>colorMerged</code>.
@@ -262,13 +264,13 @@ public class myTableModel extends TableModel{
 	}
 
 	public int calculateColWidth(int col){
-		if(col == -1) 
+		if(col == -1)
         	return 0;
         else if (col<numCols)
         	return colWidth[colMap[col]];
         else return 0;
 	}
-	
+
 	/**
 	 * Need to override this method with a null return to avoid
 	 * getCellData being called twice on each access to a cell.
@@ -286,9 +288,9 @@ public class myTableModel extends TableModel{
 			if(ch!=null /*ch.isVisible()*/){ // Check of visibility needed here??
 				switch(colMap[col]) { // Faster than using column names
 					case 0: // Checkbox
-						if (ch.is_Checked) 
-							return checkboxTicked; 
-						else 
+						if (ch.is_Checked)
+							return checkboxTicked;
+						else
 							return checkboxUnticked;
 					case 1: // Type
 						return GuiImageBroker.getTypeImage(ch.getType());
@@ -316,14 +318,14 @@ public class myTableModel extends TableModel{
 						return ch.getWayPoint();
 					case 5: // Cachename
 						// Fast return for majority of case
-						if (!showExtraWptInfo || (ch.has_bugs() == false && ch.getNoFindLogs()==0)) return ch.getCacheName(); 
+						if (!showExtraWptInfo || (ch.has_bugs() == false && ch.getNoFindLogs()==0)) return ch.getCacheName();
 						// Now need more checks
 						IconAndText wpVal = new IconAndText();
 						if(ch.has_bugs() == true) wpVal.addColumn(bug);
 						if(ch.getNoFindLogs() > 0){
-							if (ch.getNoFindLogs() > noFindLogs.length) 
+							if (ch.getNoFindLogs() > noFindLogs.length)
 								wpVal.addColumn(noFindLogs[noFindLogs.length-1]);
-							else 
+							else
 								wpVal.addColumn(noFindLogs[ch.getNoFindLogs()-1]);
 						}
 						wpVal.addColumn(ch.getCacheName());
@@ -350,12 +352,12 @@ public class myTableModel extends TableModel{
 						if (ch.getWayPoint().startsWith("OC"))
 							return Convert.formatInt(ch.getNumRecommended());
 						return null;
-					case 14: // OC rating	
+					case 14: // OC rating
 						if (ch.getWayPoint().startsWith("OC"))
 							return Convert.formatInt(ch.recommendationScore);
 						return null;
 					case 15: // Is solver filled?
-					    if (ch.hasSolver()) return picHasSolver; else return null; 
+					    if (ch.hasSolver()) return picHasSolver; else return null;
 					case 16: // Does note exist?
 						if (ch.hasNote()) return picHasNotes; else return null;
 					case 17: // Number of Additional Waypoints;
@@ -372,7 +374,7 @@ public class myTableModel extends TableModel{
 	}
 		return null;
 	}
-	
+
 	public boolean penPressed(Point onTable,Point cell){
 		boolean retval = false;
 		if (cell==null) return false;
@@ -398,10 +400,10 @@ public class myTableModel extends TableModel{
 				// column it is mapped into
 				int mappedCol=colMap[cell.x];
 				if (mappedCol==0) { // Click on Tickbox header
-					// Hide/unhide the additional information about a waypoint such as 
+					// Hide/unhide the additional information about a waypoint such as
 					// travelbugs/number of notfound logs/yellow circle/red circle etc.
 					// This helps on small PDA screens
-					showExtraWptInfo=!showExtraWptInfo; 
+					showExtraWptInfo=!showExtraWptInfo;
 					this.table.repaint();
 					return true;
 				}
@@ -420,7 +422,7 @@ public class myTableModel extends TableModel{
 	/*					tcControl.scrollToVisible(rownum, 0);
 						tcControl.clearSelectedCells(new Vector());
 						for(int i= 0; i < MAXCOLUMNS; i++){
-							tcControl.addToSelection(rownum,i); 
+							tcControl.addToSelection(rownum,i);
 						}
 		*/			}
 				}
@@ -434,7 +436,7 @@ public class myTableModel extends TableModel{
 			}
 		return retval;
 	}
-	
+
 	/** Toggle the select status for a group of caches
 	 * If from==to, the addi Waypoints are also toggled if the cache is a main waypoint
 	 * If from!=to, each cache is toggled irrespective of its type (main or addi)
@@ -447,7 +449,7 @@ public class myTableModel extends TableModel{
 		boolean singleRow= from == to;
 		for (int j=from; j<=to; j++) {
 			ch=cacheDB.get(j);
-			ch.is_Checked= !ch.is_Checked; 
+			ch.is_Checked= !ch.is_Checked;
 			tcControl.repaintCell(j, x);
 			// set the ceckbox also for addi wpts
 			if (ch.hasAddiWpt() && singleRow){
@@ -460,13 +462,13 @@ public class myTableModel extends TableModel{
 						tcControl.repaintCell(cacheDB.getIndex(addiWpt), x);
 					}
 				}
-				
+
 			}
-		}		
+		}
 	}
 	public void select(int row,int col,boolean selectOn) {
 		//super.select(row, col, selectOn);
 		tcControl.cursorTo(row, col, true);
 	}
-		
+
 }
