@@ -101,9 +101,9 @@ public final class CacheType {
 	/** image for Additional Waypoint Trailhead (GC) */
 	public static final String CW_GUIIMG_TRAILHEAD = "typeTrailhead.png";
 	/** image for Additional Waypoint Reference Point (GC) */
-	public static final String CW_GUIIMG_REFERENCE = "waypoint.png";
+	public static final String CW_GUIIMG_REFERENCE = "typeReference.png";
 	/** image for Mega Event Cache (GC) */
-	public static final String CW_GUIIMG_MEGA_EVENT = "typemegaevent.png";
+	public static final String CW_GUIIMG_MEGA_EVENT = "typeMegaevent.png";
 	/** image for WhereIGo Cache (GC) */
 	public static final String CW_GUIIMG_WHEREIGO = "typeWhereigo.png";
 	/** image for Project Ape cache (GC)*/
