@@ -59,6 +59,7 @@ public class HTMLExporter{
 			Vector usrImg = new Vector();
 			Vector logIcons = new Vector(15);
 			String icon;
+			int incompleteWaypoint = 0;
 
 			Hashtable varParams;
 			Hashtable imgParams;
@@ -79,6 +80,11 @@ public class HTMLExporter{
 
 				ch = cacheDB.get(i);
 				if(	ch.isVisible()){
+					if (ch.is_incomplete()) {
+						incompleteWaypoint++;
+						Global.getPref().log("skipping export of incomplete waypoint "+ch.getWayPoint());
+						continue;
+					}
 					det=ch.getExistingDetails();
 					varParams = new Hashtable();
 					varParams.put("TYPE", CacheType.cw2ExportString(ch.getType()));
@@ -222,6 +228,9 @@ public class HTMLExporter{
 						pagefile.close();
 					}catch(Exception e){
 						Vm.debug("Problem writing waypoint html file"+e);
+					}
+					if (incompleteWaypoint > 0) {
+						new MessageBox("Export Error", incompleteWaypoint+" incomplete waypoints have not been exported. See log for details.", FormBase.OKB).execute();
 					}
 				}//if is black, filtered
 			}
