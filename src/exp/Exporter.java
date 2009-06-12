@@ -10,6 +10,7 @@ import ewe.io.FileWriter;
 import ewe.io.PrintWriter;
 import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
+import ewe.ui.*;
 import ewe.util.*;
 import ewe.io.IOException;
 
@@ -93,12 +94,18 @@ public class Exporter {
 		int expCount = 0;
 
 		try{
+			int incompleteWaypoints = 0;
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 			str = this.header();
 			if (str != null) outp.print(str);
 			for(int i = 0; i<cacheDB.size(); i++){
 				ch=cacheDB.get(i);
 				if(ch.isVisible()){
+					if (ch.is_incomplete()) {
+						Global.getPref().log("skipping export of incomplete waypoint "+ch.getWayPoint());
+						incompleteWaypoints++;
+						continue;
+					}
 					expCount++;
 					h.progress = (float)expCount/(float)counter;
 					h.changed();
@@ -138,6 +145,9 @@ public class Exporter {
 			if (str != null) outp.print(str);
 			outp.close();
 			pbf.exit(0);
+			if (incompleteWaypoints > 0) {
+				new MessageBox("Export Error", incompleteWaypoints+" incomplete waypoints have not been exported. See log for details.", FormBase.OKB).execute();
+			}
 		} catch (IOException ioE){
 			Vm.debug("Error opening " + outFile.getName());
 		}
