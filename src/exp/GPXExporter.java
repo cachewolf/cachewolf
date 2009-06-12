@@ -149,6 +149,7 @@ public class GPXExporter extends Exporter{
 			}
 			strBuf.append("  </wpt>\r\n");
 		}catch(Exception e){
+			Vm.debug(ch.getWayPoint());
 			e.printStackTrace();
 			return null;
 		}//try
