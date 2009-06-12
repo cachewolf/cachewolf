@@ -63,55 +63,55 @@ public final class CacheType {
 	public static final byte CW_TYPE_ERROR = -1;
 	
 	/** image for custom waypoints */
-	public static final String CW_GUIIMG_CUSTOM = "0.png";
+	public static final String CW_GUIIMG_CUSTOM = "typeCustom.png";
 	/** image for traditional cache (GC,OC) */
-	public static final String CW_GUIIMG_TRADITIONAL = "2.png";
+	public static final String CW_GUIIMG_TRADITIONAL = "typeTradi.png";
 	/** image for multi cache (GC,OC) */
-	public static final String CW_GUIIMG_MULTI = "3.png";
+	public static final String CW_GUIIMG_MULTI = "typeMulti.png";
 	/** image for virtual cache (GC) */
-	public static final String CW_GUIIMG_VIRTUAL = "4.png";
+	public static final String CW_GUIIMG_VIRTUAL = "typeVirtual.png";
 	/** image for letterbox cache (GC) */
-	public static final String CW_GUIIMG_LETTERBOX = "5.png";
+	public static final String CW_GUIIMG_LETTERBOX = "typeLetterbox.png";
 	/** image for event cache (OC,GC) */
-	public static final String CW_GUIIMG_EVENT = "6.png";
+	public static final String CW_GUIIMG_EVENT = "typeEvent.png";
 	/** image for quiz cache (OC) */
-	public static final String CW_GUIIMG_QUIZ = "8.png";
+	public static final String CW_GUIIMG_QUIZ = "typeUnknown.png";
 	/** image for unknown cache (GC) */
-	public static final String CW_GUIIMG_UNKNOWN = "8.png";
+	public static final String CW_GUIIMG_UNKNOWN = "typeUnknown.png";
 	/** image for math cache (OC) */
-	public static final String CW_GUIIMG_MATH = "108.png";
+	public static final String CW_GUIIMG_MATH = "typeMath.png";
 	/** image for moving cache (OC) */
-	public static final String CW_GUIIMG_MOVING = "109.png";
+	public static final String CW_GUIIMG_MOVING = "typeMoving.png";
 	/** image for drive in cache (OC) */
-	public static final String CW_GUIIMG_DRIVE_IN = "110.png";
+	public static final String CW_GUIIMG_DRIVE_IN = "typeDrivein.png";
 	/** image for webcam cache (GC,OC) */
-	public static final String CW_GUIIMG_WEBCAM = "11.png";
+	public static final String CW_GUIIMG_WEBCAM = "typeWebcam.png";
 	/** image for locationless cache (GC) */
-	public static final String CW_GUIIMG_LOCATIONLESS = "12.png";
+	public static final String CW_GUIIMG_LOCATIONLESS = "typeLocless.png";
 	/** image for CITO cache (GC,OC)*/
-	public static final String CW_GUIIMG_CITO = "13.png";
+	public static final String CW_GUIIMG_CITO = "typeCito.png";
 	/** image for Additional Waypoint Parking (GC) */
-	public static final String CW_GUIIMG_PARKING = "pkg.png";
+	public static final String CW_GUIIMG_PARKING = "typeParking.png";
 	/** image for Additional Waypoint Stage of a Multi (GC) */
-	public static final String CW_GUIIMG_STAGE = "stage.png";
+	public static final String CW_GUIIMG_STAGE = "typeStage.png";
 	/** image for Additional Waypoint Question to answer (GC) */
-	public static final String CW_GUIIMG_QUESTION = "puzzle.png";
+	public static final String CW_GUIIMG_QUESTION = "typeQuestion.png";
 	/** image for Additional Waypoint Final (GC) */
-	public static final String CW_GUIIMG_FINAL = "flag.png";
+	public static final String CW_GUIIMG_FINAL = "typeFinal.png";
 	/** image for Additional Waypoint Trailhead (GC) */
-	public static final String CW_GUIIMG_TRAILHEAD = "trailhead.png";
+	public static final String CW_GUIIMG_TRAILHEAD = "typeTrailhead.png";
 	/** image for Additional Waypoint Reference Point (GC) */
 	public static final String CW_GUIIMG_REFERENCE = "waypoint.png";
 	/** image for Mega Event Cache (GC) */
-	public static final String CW_GUIIMG_MEGA_EVENT = "453.png";
+	public static final String CW_GUIIMG_MEGA_EVENT = "typemegaevent.png";
 	/** image for WhereIGo Cache (GC) */
-	public static final String CW_GUIIMG_WHEREIGO = "1858.png";
+	public static final String CW_GUIIMG_WHEREIGO = "typeWhereigo.png";
 	/** image for Project Ape cache (GC)*/
 	public static final String CW_GUIIMG_APE = "typeApe.png";
 	/** image for Adenture Maze Exhibit (GC)*/
 	public static final String CW_GUIIMG_MAZE = "typeMaze.png";
 	/** image for Earth Cache (GC) */
-	public static final String CW_GUIIMG_EARTH = "137.png";
+	public static final String CW_GUIIMG_EARTH = "typeEarth.png";
 	
 	/** GUI string for custom waypoit */
 	public static final String CW_GUISTR_CUSTOM = "Custom";
