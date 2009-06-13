@@ -1,4 +1,5 @@
 REM clean up
+cd %~d0%~p0
 del .\work\*.png
 del .\work\*.gif
 del .\work\*.html
