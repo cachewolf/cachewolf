@@ -19,6 +19,7 @@ import ewe.sys.Date;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.util.Hashtable;
+import ewe.util.Iterator;
 
 //TODO: use safexml a lot more (at least start using it ;) )
 
@@ -89,11 +90,18 @@ public class GpxExportNg {
 						.concat("\t\t\t\t\t<groundspeak:name>@@TBNAME@@</groundspeak:name>\n")
 						.concat("\t\t\t\t</groundspeak:travelbug>\n");
 	
+	//FIXME: don't use this until GPX import can strip this off as well
+	final static String GPXADDIINMAIN = "@@ADDIID@@ - @@ADDISHORT@@@@ADDIDELIM@@"
+						.concat("@@ADDILAT@@ @@ADDILON@@@@ADDIDELIM@@")
+						.concat("@@ADDILONG@@@@ADDIDELIM@@");
+	
 	static boolean smartIds;
 	static boolean customIcons;
-	static boolean separateFile;
+	static boolean separateFiles;
 	static boolean sendToGarmin;
 	static int outType;
+	
+	
 	
 	public GpxExportNg() {
 		GpxExportNgForm exportOptions;
@@ -108,11 +116,11 @@ public class GpxExportNg {
 		
 		outType = exportOptions.getExportType();
 		smartIds = exportOptions.getSmartIds();
-		separateFile = exportOptions.getSeparateFiles();
+		separateFiles = exportOptions.getSeparateFiles();
 		sendToGarmin = exportOptions.getSendToGarmin();
 		customIcons = exportOptions.getCustomIcons();
 		
-		if (separateFile) {
+		if (separateFiles) {
 			final Hashtable fileHandles;
 			final String directoryName;
 			//TODO: get directory
@@ -130,32 +138,24 @@ public class GpxExportNg {
 			file = fc.getChosenFile();
 			Global.getPref().setExportPath(expName, file.getPath());
 
-			StringBuffer out = new StringBuffer();
-			
-			out.append(formatHeader());
-			
-			for(int i = 0; i<Global.getProfile().cacheDB.size(); i++){
-				CacheHolder ch=Global.getProfile().cacheDB.get(i);
-				if (ch.is_incomplete()) {
-					Vm.debug("skipping incomplete waypoint "+ch.getWayPoint());
-					continue;
-				}
-				out.append(formatCache(ch));
-			}
-			
-			out.append("</gpx>\n");
-			
 			try {
 				PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(file)));
-				outp.print(out.toString());
+				outp.print(formatHeader());
+				for(int i = 0; i<Global.getProfile().cacheDB.size(); i++){
+					CacheHolder ch=Global.getProfile().cacheDB.get(i);
+					if (ch.is_incomplete()) {
+						Vm.debug("skipping incomplete waypoint "+ch.getWayPoint());
+						continue;
+					}
+					outp.print(formatCache(ch));
+				}
+				outp.print("</gpx>\n");
 				outp.close();
 			} catch (Exception ex) {
 				if (Global.getPref().debug) Global.getPref().log("unable to write GPX output to "+file.toString(), ex);
 				else Global.getPref().log("unable to write GPX output to "+file.toString());
 				//TODO: give a message to the user
 			}
-			//TODO: write file. do it when we have a complete waypoint to save memory?
-			Vm.debug(out.toString());
 		}
 	}
 	
@@ -291,12 +291,7 @@ public class GpxExportNg {
 		trans.add(new Regex("@@CACHESTATE@@",ch.details.State));
 		trans.add(new Regex("@@CACHEHTML@@",ch.is_HTML()?TRUE:FALSE));
 		trans.add(new Regex("@@CACHESHORTDESCRIPTION@@","CacheWolf can not provide Short description"));
-		/* 
-		 * TODO: add additional waypoints to long description, but then GPX importer must 
-		 * remove them as well. otherwise people using PQs to feed CacheWolf will have 
-		 * duplicate additionals at end of PQ like export 
-		 */
-		trans.add(new Regex("@@CACHELONGDESCRIPTION@@",ch.details.LongDescription));
+		trans.add(new Regex("@@CACHELONGDESCRIPTION@@",formatLongDescription(ch)));
 		trans.add(new Regex("@@CACHEHINT@@",ch.details.Hints));
 		
 		ret.append(trans.replaceAll(GPXEXTENSION));
@@ -333,5 +328,40 @@ public class GpxExportNg {
 		Transformer trans = new Transformer(true);
 		trans.add(new Regex("@@CREATEDATE@@",new Date().setFormat("yyyy-MM-dd").toString()));
 		return trans.replaceFirst(GPXHEADER);
+	}
+	
+	public String formatLongDescription(CacheHolder ch) {
+		if (ch.isAddiWpt() || ch.getType() == CacheType.CW_TYPE_CUSTOM) {
+			return ch.details.LongDescription;
+		} else {
+			Vm.debug("real cache");
+			StringBuffer ret = new StringBuffer();
+			String delim = "";
+			ret.append(ch.details.LongDescription);
+			if (ch.is_HTML()) {
+				delim="<br />";
+			}
+			//FIXME: format is not quite right yet
+			//FIXME: cut Addis off in GPXimporter otherwiese people who use GPX to feed CacheWolf have them doubled
+			if (ch.addiWpts.size() > 0) {
+				Vm.debug("adding waypoints");
+				ret.append(delim).append("\n").append("Additional Waypoints").append(delim).append("\n");
+				Iterator iter = ch.addiWpts.iterator();
+				while (iter.hasNext()) {
+					CacheHolder addi = (CacheHolder) iter.next();
+					Transformer trans = new Transformer(true);
+					trans.add(new Regex("@@ADDIID@@",addi.getWayPoint()));
+					trans.add(new Regex("@@ADDISHORT@@",addi.getCacheName()));
+					trans.add(new Regex("@@ADDIDELIM@@",delim));
+					trans.add(new Regex("@@ADDILAT@@",addi.LatLon));
+					trans.add(new Regex("@@ADDILON@@",""));
+					trans.add(new Regex("@@ADDILONG@@",addi.getFreshDetails().LongDescription));
+					ret.append(trans.replaceAll(GPXADDIINMAIN));
+				}
+				ret.append(delim).append("\n");
+
+			}
+			return ret.toString();
+		}
 	}
 }
