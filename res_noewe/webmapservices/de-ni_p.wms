@@ -1,8 +1,9 @@
 TakenFromUrl:       http://www.umwelt.niedersachsen.de/master/C7089178_N7088657_L20_D0_I598.html
-GetCapabilitiesUrl: http://www.umweltkarten.niedersachsen.de/arcgis/services/GR_Gebiete/MapServer/WMSServer?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+GetCapabilitiesUrl: http://www.umweltkarten.niedersachsen.de/arcgis/services/Programme/MapServer/WMSServer?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 Name:               de.Niedersachsen photo c SF=0..1,95
 MapType:                        photo
-MainUrl:            http://www.umweltkarten.niedersachsen.de/arcgis/services/GR_Gebiete/MapServer/WMSServer?
+#MainUrl:            http://www.umweltkarten.niedersachsen.de/arcgis/services/GR_Gebiete/MapServer/WMSServer?
+MainUrl:            http://www.umweltkarten.niedersachsen.de/arcgis/services/Programme/MapServer/WMSServer?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:  31467
