@@ -112,7 +112,7 @@ public class myTableControl extends TableControl{
 				else if (ev.key == IKeys.RIGHT) {
 					CacheHolder ch;
 					ch = cacheDB.get(tbp.getSelectedCache());
-					Global.mainTab.gotoPoint(ch.pos);
+					Global.mainTab.gotoP.setDestinationAndSwitch(ch); 
 				}
 				else if (ev.key == 6 ) MainMenu.search(); // (char)6 == ctrl + f 
 				else super.onKeyEvent(ev);
@@ -246,7 +246,7 @@ public class myTableControl extends TableControl{
 
 		if (selectedItem == miGoto){
 			ch = cacheDB.get(tbp.getSelectedCache());
-			Global.mainTab.gotoPoint(ch.pos);
+			Global.mainTab.gotoP.setDestinationAndSwitch(ch); 
 		} else
 		    
 		if (selectedItem == miOpenOnline){
