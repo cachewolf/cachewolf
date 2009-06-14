@@ -553,6 +553,7 @@ public class Parser{
     		ch.LatLon=cwPt.toString(CWPoint.CW);
     		ch.pos.set(cwPt);
     		ch.calcDistance(Global.getPref().curCentrePt); // Update distance/bearing
+    		nav.setDestination(ch);
     	    Global.getProfile().selectionChanged=true; // Tell moving map to updated displayed waypoints
     	}
     }

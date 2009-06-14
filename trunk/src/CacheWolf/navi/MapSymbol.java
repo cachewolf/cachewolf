@@ -14,6 +14,12 @@ public class MapSymbol extends MapImage {
 		filename = filenamei;
 		where = where_;
 	}
+	public MapSymbol(String namei, Object mapObjecti, String filenamei, CWPoint where_) {
+		name = namei;
+		filename = filenamei;
+		where = where_;
+		mapObject = mapObjecti;
+	}
 	public MapSymbol(String namei, Object mapObjecti, Image fromIm, CWPoint where_) {
 		name = namei;
 		where = where_;
