@@ -207,7 +207,7 @@ public class CalcPanel extends CellPanel {
 			if (ev.target == btnGoto){
 				readFields(coordInp, bd, currFormat);
 				coordOut = coordInp.project(bd.degrees, bd.distance);
-				mainT.gotoPoint(coordOut);
+				mainT.gotoP.setDestinationAndSwitch(coordOut); 
 			}
 			if (ev.target == btnChangeLatLon){
 				CoordsScreen cs = new CoordsScreen();

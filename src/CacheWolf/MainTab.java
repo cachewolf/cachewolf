@@ -257,10 +257,6 @@ public class MainTab extends mTabbedPanel {
 		tbP.tc.repaint();
 	}
 
-	public void gotoPoint(CWPoint where) { 
-		gotoP.setDestinationAndSwitch(where); 
-	}
-
 	public void openDescriptionPanel(CacheHolder chi) {
 		MyLocale.setSIPOff();
 		// To change cache we need to be in panel 0
