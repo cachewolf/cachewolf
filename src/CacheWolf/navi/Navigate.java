@@ -13,6 +13,8 @@ import ewe.sys.mThread;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.mString;
+import CacheWolf.CacheHolder;
+
 
 /**
  * Non-Gui Class to handle all things regarding navigation
@@ -23,6 +25,8 @@ import ewe.util.mString;
  */
 public class Navigate {
 	public CWPoint destination = new CWPoint();
+	public CacheHolder destinationCache;
+	public boolean destinationIsCache = false;
 	public CWGPSPoint gpsPos = new CWGPSPoint();
 	public Track curTrack = null;
 	Color trackColor = new Color(255,0,0); // red
@@ -116,10 +120,20 @@ public class Navigate {
 
 
 	public void setDestination(CWPoint d) {
+		destinationIsCache = false;
 		destination = new CWPoint (d);
 		if (gotoPanel != null) gotoPanel.destChanged(destination);
 		if (movingMap != null) movingMap.destChanged(destination);
 	}
+	
+	public void setDestination(CacheHolder ch) {
+		destinationIsCache = true;
+		destinationCache=ch;
+		destination = new CWPoint (ch.pos);
+		if (gotoPanel != null) gotoPanel.destChanged(destination);
+		if (movingMap != null) movingMap.destChanged(ch);
+	}
+
 	/**
 	 * use the constants SkyOrientation.SUN, SkyOrientation.MOON etc.
 	 * @param lu

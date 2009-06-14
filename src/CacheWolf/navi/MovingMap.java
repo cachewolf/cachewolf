@@ -388,7 +388,13 @@ public class MovingMap extends Form {
 		addTrack(myNavigation.curTrack);
 		if (tracks != null && tracks.size() > 0 && ((Track)tracks.get(0)).num > 0) 
 			rebuildOverlaySet(); // show points which where added when MavingMap was not running
-		destChanged(myNavigation.destination);
+		if (myNavigation.destinationIsCache) {
+			destChanged(myNavigation.destinationCache);
+		}
+		else {
+			destChanged(myNavigation.destination);
+		}
+		
 		FormFrame ret = exec();
 		return ret;
 	}
@@ -804,6 +810,18 @@ public class MovingMap extends Form {
 		mmp.addImage(ms);
 		return ms;
 	}
+
+	public MapSymbol addSymbol(String pName, Object mapObject, String filename, CWPoint where) {
+		if (symbols==null) symbols=new Vector();
+		MapSymbol ms = new MapSymbol(pName, mapObject, filename, where);
+		ms.loadImage();
+		ms.properties |= mImage.AlwaysOnTop;
+		Point pOnScreen = getXYonScreen(where);
+		ms.setLocation(pOnScreen.x-ms.getWidth()/2, pOnScreen.y-ms.getHeight()/2);
+		symbols.add(ms);
+		mmp.addImage(ms);
+		return ms;
+	}
 	
 	public void addSymbolIfNecessary(String pName, Object mapObject, Image imSymb, CWPoint where) {
 		if (findMapSymbol(pName) >= 0) return;
@@ -827,6 +845,18 @@ public class MovingMap extends Form {
 		removeGotoPosition();
 		if (d == null || !d.isValid() ) return;
 		gotoPos = addSymbol("goto", "goto_map.png", d);
+		//updateDistance(); - this is called from updatePosition
+		forceMapLoad = true;
+		if (this.width != 0) updatePosition(posCircle.where); // dirty hack: if this.width == 0, then the symbols are not on the screen and get hidden by updateSymbolPositions
+	}
+
+	public void destChanged(CacheHolder ch) {
+		CWPoint d = new CWPoint (ch.pos);
+		if(!running || (d == null && gotoPos == null) || 
+				(d != null && gotoPos != null && gotoPos.where.equals(d))) return;
+		removeGotoPosition();
+		if (d == null || !d.isValid() ) return;
+		gotoPos = addSymbol("goto", ch, "goto_map.png", d);
 		//updateDistance(); - this is called from updatePosition
 		forceMapLoad = true;
 		if (this.width != 0) updatePosition(posCircle.where); // dirty hack: if this.width == 0, then the symbols are not on the screen and get hidden by updateSymbolPositions
@@ -1878,7 +1908,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					}
 					if (action == gotoCacheMenuItem) {
 						kontextMenu.close();
-						mm.myNavigation.setDestination(clickedCache.pos);	
+						mm.myNavigation.setDestination(clickedCache);	
 					}
 					if (action == newWayPointMenuItem) {
 						kontextMenu.close();
