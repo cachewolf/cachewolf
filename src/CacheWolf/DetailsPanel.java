@@ -412,7 +412,7 @@ public class DetailsPanel extends CellPanel {
 				Global.mainTab.newWaypoint(ch);
 			} else if (ev.target == btnGoto) {
 				// TODO if something changed saveWpt();
-				Global.mainTab.gotoPoint(thisCache.pos);
+				Global.mainTab.gotoP.setDestinationAndSwitch(thisCache); 
 			} else if (ev.target == btnWayLoc) {
 				CWPoint coords = new CWPoint(btnWayLoc.getText(), CWPoint.CW);
 				CoordsScreen cs = new CoordsScreen(true);

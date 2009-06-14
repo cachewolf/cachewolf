@@ -221,6 +221,10 @@ public class GotoPanel extends CellPanel {
 		myNavigation.setDestination(where);
 		mainT.select(this);
 	}
+	public void setDestinationAndSwitch(CacheHolder ch) {
+		myNavigation.setDestination(ch);
+		mainT.select(this);
+	}
 	
 	/**
 	 * updates distance and bearing
