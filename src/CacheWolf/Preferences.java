@@ -1,4 +1,5 @@
 package CacheWolf;
+
 import CacheWolf.navi.Metrics;
 import utils.FileBugfix;
 import ewe.io.*;
@@ -219,7 +220,9 @@ public class Preferences extends MinML{
 	public boolean downloadPics = true;
 	/** Download TB information when loading cache data */
 	public boolean downloadTBs = true;
-
+	/** external Cacherating software */
+	public String rater;
+	
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
 	 * the line: <pre><debug value="true"></pre>
@@ -423,6 +426,9 @@ public class Preferences extends MinML{
 		else if (name.equals("locale")) {
 			language = atts.getValue("language");
 		}
+		else if (name.equals("rater")) {
+			rater = atts.getValue("tool");
+		}
 		else if (name.equals("FILTERDATA")) {
 			// Creating a filter object and reading the saved data
 			String id = SafeXML.strxmldecode(atts.getValue("id"));
@@ -523,7 +529,7 @@ public class Preferences extends MinML{
 				entry = (MapEntry) itPath.next();
 				outp.print("    <impPath key = \"" + SafeXML.strxmlencode(entry.getKey().toString()) + "\" value = \"" + SafeXML.strxmlencode(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
 			}
-
+			outp.print("    <rater tool=\"".concat(rater).concat("\"/>\n"));
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
