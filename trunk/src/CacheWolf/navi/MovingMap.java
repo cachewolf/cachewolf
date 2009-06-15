@@ -407,10 +407,12 @@ public class MovingMap extends Form {
 			if (!markedCache.is_Checked) removeMapSymbol(markedCache);
 		}
 		if (ch != null) {
-			addSymbol("selectedCache", MARK_CACHE_IMAGE, ch.pos);
-			addSymbolIfNecessary(ch.getCacheName(), ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
+			if ( !ch.LatLon.equals("Nicht gesetzt")) {
+				addSymbol("selectedCache", MARK_CACHE_IMAGE, ch.pos);
+				addSymbolIfNecessary(ch.getCacheName(), ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
+				markedCache = ch;
+			}
 		}
-		markedCache = ch;
 	}
 	
 	public void addTrack(Track tr) {
