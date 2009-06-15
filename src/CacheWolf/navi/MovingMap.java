@@ -407,7 +407,7 @@ public class MovingMap extends Form {
 			if (!markedCache.is_Checked) removeMapSymbol(markedCache);
 		}
 		if (ch != null) {
-			if ( !ch.LatLon.equals("Nicht gesetzt")) {
+			if ( ch.pos.isValid()) {
 				addSymbol("selectedCache", MARK_CACHE_IMAGE, ch.pos);
 				addSymbolIfNecessary(ch.getCacheName(), ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
 				markedCache = ch;
