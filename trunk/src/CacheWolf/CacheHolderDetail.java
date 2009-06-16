@@ -238,7 +238,7 @@ public class CacheHolderDetail {
 			ex = new Extractor(text, "<IMG>", "</IMG>", 0, true);
 			dummy = ex.findNext();
 			while(ex.endOfSearch() == false){
-				Images.add(dummy);
+				Images.add(SafeXML.strxmldecode(dummy));
 				dummy = ex.findNext();
 			}
 			ImagesText.clear();
@@ -363,7 +363,7 @@ public class CacheHolderDetail {
 				  String stbuf = new String();
 				  for(int i = 0;i<Images.size();i++){
 						stbuf = (String)Images.get(i);
-						detfile.print("    <IMG>"+stbuf+"</IMG>\n");
+						detfile.print("    <IMG>"+SafeXML.strxmlencode(stbuf)+"</IMG>\n");
 				  }
 				  int iis = ImagesInfo.size();
 				  for(int i = 0;i<ImagesText.size();i++){
