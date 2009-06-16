@@ -30,6 +30,7 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheHolderDetail;
 import CacheWolf.CacheSize;
+import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.Preferences;
@@ -196,8 +197,8 @@ public class TPLExporter {
 						varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.getCacheSize()));
 						varParams.put("WAYPOINT", ch.getWayPoint());
 						varParams.put("OWNER", ch.getCacheOwner());
-						varParams.put("DIFFICULTY", String.valueOf(ch.getHard()));
-						varParams.put("TERRAIN", String.valueOf(ch.getTerrain()));
+						varParams.put("DIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType())?"":CacheTerrDiff.longDT(ch.getHard()));
+						varParams.put("TERRAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType())?"":CacheTerrDiff.longDT(ch.getTerrain()));
 						varParams.put("DISTANCE", dec.replaceAll(ch.getDistance()));
 						varParams.put("BEARING", ch.bearing);
 						varParams.put("LATLON", ch.LatLon);
