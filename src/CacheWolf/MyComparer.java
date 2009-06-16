@@ -113,6 +113,11 @@ public class MyComparer implements Comparer{
 		            ch.sort="2";
 		        }
 		    }
+		} else if (colToCompare==17) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch =  cacheDB.get(i);
+				ch.sort=MyLocale.formatLong(ch.addiWpts.size(),"000");
+			}
 		}
 	}
 	
