@@ -1,11 +1,11 @@
 package CacheWolf.imp;
 
+import utils.CWWrapper;
+import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
-import CacheWolf.CacheHolder;
-import utils.CWWrapper;
 import ewe.sys.Handle;
-import ewe.ui.*;
+import ewe.ui.ProgressBarForm;
 
 /*
  * get rating for a cache from an external tool
@@ -17,26 +17,28 @@ public class Rating {
 	public Rating() {
 		rater = Global.getPref().rater;
 	}
-	
+
 	/**
-	 * call the tool defined by Global.getPref().rater with a visible waypoint as parameter
-	 * wait for tool to finish, catch exit code and write it to CacheHolder.numRecommended
+	 * call the tool defined by Global.getPref().rater with a visible waypoint
+	 * as parameter wait for tool to finish, catch exit code and write it to
+	 * CacheHolder.numRecommended
 	 */
 	public void run() {
-		if (null == rater) return;
-		
+		if (null == rater)
+			return;
+
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
-		
+
 		int totalWaypoints = Global.getProfile().cacheDB.countVisible();
 		int countWaypoints = 0;
-		
+
 		pbf.showMainTask = false;
-		pbf.setTask(h,"Rating ...");
+		pbf.setTask(h, "Rating ...");
 		pbf.exec();
-		
-		for(int i = 0; i<Global.getProfile().cacheDB.size(); i++){
-			CacheHolder ch=Global.getProfile().cacheDB.get(i);
+
+		for (int i = 0; i < Global.getProfile().cacheDB.size(); i++) {
+			CacheHolder ch = Global.getProfile().cacheDB.get(i);
 			if (ch.isVisible()) {
 				if (!ch.isAddiWpt() && ch.getType() != CacheType.CW_TYPE_CUSTOM) {
 					int rate;
@@ -48,11 +50,12 @@ public class Rating {
 					}
 				}
 				countWaypoints++;
-				h.progress = (float)countWaypoints/(float)totalWaypoints;
+				h.progress = (float) countWaypoints / (float) totalWaypoints;
 				h.changed();
 			}
 		}
-		
+		pbf.exit(0);
+		Global.mainForm.repaintNow();
 	}
 
 }

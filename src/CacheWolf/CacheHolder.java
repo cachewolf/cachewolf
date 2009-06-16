@@ -532,7 +532,7 @@ public class CacheHolder {
 		} else {
 			recommendationScore = -1;
 			setNumFoundsSinceRecommendation(-1);
-			setNumRecommended(-1);
+//			setNumRecommended(-1);
 		}
 	}
 	
