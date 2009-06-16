@@ -3,6 +3,7 @@ package CacheWolf;
 import CacheWolf.navi.MapImporter;
 import CacheWolf.navi.MapLoaderGui;
 import CacheWolf.navi.SelectMap;
+import CacheWolf.imp.Rating;
 import ewe.ui.*;
 import ewe.util.Vector;
 //import ewe.util.mString;
@@ -31,7 +32,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator;
-	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgCheckNotesAndSolver;
+	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgCheckNotesAndSolver, orgRater;
 	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
 	private Form father;
@@ -197,18 +198,20 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organise" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organiseMenuItems=new MenuItem[10];
+		MenuItem[] organiseMenuItems=new MenuItem[11];
 		organiseMenuItems[0] = orgNewWP = new MenuItem(MyLocale.getMsg(214,"New Waypoint"));
 		organiseMenuItems[1] = mnuSeparator;
 		organiseMenuItems[2] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")); 
 		organiseMenuItems[3] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")); 
 		organiseMenuItems[4] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
 		organiseMenuItems[5] = orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index"));
-		organiseMenuItems[6] = orgCheckNotesAndSolver = new MenuItem(MyLocale.getMsg(220,"Rebuild Index"));
-		organiseMenuItems[7] = mnuSeparator;
-		organiseMenuItems[8] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
+		organiseMenuItems[6] = orgCheckNotesAndSolver = new MenuItem(MyLocale.getMsg(220,"Check Notes/Solver"));
+		organiseMenuItems[7] = orgRater = new MenuItem("Rater");
+		if (null == Global.getPref().rater) orgRater.modifiers = MenuItem.Disabled;
+		organiseMenuItems[8] = mnuSeparator;
+		organiseMenuItems[9] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
 		cacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
-		organiseMenuItems[9] = cacheTour;
+		organiseMenuItems[10] = cacheTour;
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organise"),new Menu(organiseMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
@@ -385,8 +388,9 @@ public class MainMenu extends MenuBar {
 				ovl.doIt();
 			}
 			if(mev.selectedItem == exportGPX){
-				GPXExporter htm = new GPXExporter(pref, profile);
-				htm.doIt(1);
+//				GpxExportNg gpx = new GpxExportNg();
+				GPXExporter gpx = new GPXExporter(pref,profile);
+				gpx.doIt(1);
 			}
 			if(mev.selectedItem == exportASC){
 				ASCExporter asc = new ASCExporter(pref,profile);
@@ -648,6 +652,10 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == cacheTour){
 				cacheTour.modifiers^=MenuItem.Checked;
 				Global.mainForm.toggleCacheListVisible();			
+			}
+			if(mev.selectedItem == orgRater) {
+				Rating rater = new Rating();
+				rater.run();
 			}
 			
 			///////////////////////////////////////////////////////////////////////
