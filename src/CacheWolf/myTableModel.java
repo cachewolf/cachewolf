@@ -349,9 +349,8 @@ public class myTableModel extends TableModel{
 							return sizePics[CacheSize.guiSizeImageId(ch.getCacheSize())];
 						}
 					case 13: // OC number of recommendations
-						if (ch.getWayPoint().startsWith("OC"))
-							return Convert.formatInt(ch.getNumRecommended());
-						return null;
+						if (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType()) return null;
+						return Convert.formatInt(ch.getNumRecommended());
 					case 14: // OC rating
 						if (ch.getWayPoint().startsWith("OC"))
 							return Convert.formatInt(ch.recommendationScore);
@@ -370,8 +369,8 @@ public class myTableModel extends TableModel{
 			} // if
 		} catch (Exception e) {
 			if (Global.getPref().debug) Global.getPref().log("Ignored Exception in myTableModel.getCellData()",e, true);
-		return null;
-	}
+			return null;
+		}
 		return null;
 	}
 
