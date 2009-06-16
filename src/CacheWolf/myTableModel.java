@@ -361,7 +361,7 @@ public class myTableModel extends TableModel{
 					case 16: // Does note exist?
 						if (ch.hasNote()) return picHasNotes; else return null;
 					case 17: // Number of Additional Waypoints;
-						if (ch.mainCache == null) {
+						if (ch.mainCache == null && ch.addiWpts.size()>0) {
 							return String.valueOf(ch.addiWpts.size());
 						} else {
 							return "";
