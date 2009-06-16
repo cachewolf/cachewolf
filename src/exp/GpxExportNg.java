@@ -5,6 +5,9 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
+import CacheWolf.CWPoint;
+import CacheWolf.LogList;
+import CacheWolf.Log;
 
 import com.stevesoft.ewe_pat.Regex;
 import com.stevesoft.ewe_pat.Transformer;
@@ -80,7 +83,7 @@ public class GpxExportNg {
 						.concat("\t\t\t<groundspeak:encoded_hints>@@CACHEHINT@@</groundspeak:encoded_hints>\n");
 
 	final static String GPXLOG = "\t\t\t\t<groundspeak:log id=\"@@LOGID@@\">\n"
-						.concat("\t\t\t\t\t<groundspeak:date>@@LOGDATE@@</groundspeak:date>\n")
+						.concat("\t\t\t\t\t<groundspeak:date>@@LOGDATE@@T00:00:00</groundspeak:date>\n")
 						.concat("\t\t\t\t\t<groundspeak:type>@@LOGTYPE@@</groundspeak:type>\n")
 						.concat("\t\t\t\t\t<groundspeak:finder id=\"@@LOGFINDERID@@\">@@LOGFINDER@@</groundspeak:finder>\n")
 						.concat("\t\t\t\t\t<groundspeak:text encoded=\"@@LOGENCODE@@\">@@LOGTEXT@@</groundspeak:text>\n")
@@ -296,10 +299,10 @@ public class GpxExportNg {
 		
 		ret.append(trans.replaceAll(GPXEXTENSION));
 		
-//		ret.append("\t\t\t<groundspeak:logs>\n");
-//		ret.append(formatLogs(ch));
-//		ret.append("\t\t\t</groundspeak:logs>\n");
-//		
+		ret.append("\t\t\t<groundspeak:logs>\n");
+		ret.append(formatLogs(ch));
+		ret.append("\t\t\t</groundspeak:logs>\n");
+		
 //		ret.append("\t\t\t<groundspeak:travelbugs>\n");
 //		ret.append(formatTbs(ch));
 //		ret.append("\t\t\t</groundspeak:travelbugs>\n");
@@ -319,9 +322,23 @@ public class GpxExportNg {
 	}
 	
 	public String formatLogs(CacheHolder ch) {
-		Transformer trans = new Transformer(true);
-		return "";
-//		return trans.replaceFirst(GPXLOG);
+		LogList logs = ch.getFreshDetails().CacheLogs;
+		StringBuffer ret = new StringBuffer();
+		if (0 == logs.size()) return "";
+		for (int i = 0; i < logs.size(); i++) {
+			Log log = logs.getLog(i);
+			if (outType == GPX_MYFINDSPQ && !log.getLogger().equals(Global.getPref().myAlias)) continue;
+			Transformer trans = new Transformer(true);
+			trans.add(new Regex("@@LOGID@@",""));
+			trans.add(new Regex("@@LOGDATE@@",log.getDate()));
+			trans.add(new Regex("@@LOGTYPE@@",image2TypeText(log.getIcon())));
+			trans.add(new Regex("@@LOGFINDERID@@",""));
+			trans.add(new Regex("@@LOGFINDER@@",log.getLogger()));
+			trans.add(new Regex("@@LOGENCODE@@",""));
+			trans.add(new Regex("@@LOGTEXT@@",log.getMessage()));
+			ret.append(trans.replaceAll(GPXLOG));
+		}
+		return ret.toString();
 	}
 	
 	public String formatHeader() {
@@ -334,18 +351,25 @@ public class GpxExportNg {
 		if (ch.isAddiWpt() || ch.getType() == CacheType.CW_TYPE_CUSTOM) {
 			return ch.details.LongDescription;
 		} else {
-			Vm.debug("real cache");
+
 			StringBuffer ret = new StringBuffer();
 			String delim = "";
 			ret.append(ch.details.LongDescription);
 			if (ch.is_HTML()) {
 				delim="<br />";
+			} else {
+				delim="\n";
 			}
 			//FIXME: format is not quite right yet
-			//FIXME: cut Addis off in GPXimporter otherwiese people who use GPX to feed CacheWolf have them doubled
+			//FIXME: cut Addis off in GPXimporter otherwise people who use GPX to feed CacheWolf have them doubled
 			if (ch.addiWpts.size() > 0) {
-				Vm.debug("adding waypoints");
-				ret.append(delim).append("\n").append("Additional Waypoints").append(delim).append("\n");
+
+				if (ch.is_HTML()) {
+					ret.append("<p>Additional Waypoints</p>");
+				} else {
+					ret.append("Additional Waypoints\n");
+				}
+
 				Iterator iter = ch.addiWpts.iterator();
 				while (iter.hasNext()) {
 					CacheHolder addi = (CacheHolder) iter.next();
@@ -353,15 +377,42 @@ public class GpxExportNg {
 					trans.add(new Regex("@@ADDIID@@",addi.getWayPoint()));
 					trans.add(new Regex("@@ADDISHORT@@",addi.getCacheName()));
 					trans.add(new Regex("@@ADDIDELIM@@",delim));
-					trans.add(new Regex("@@ADDILAT@@",addi.LatLon));
+					trans.add(new Regex("@@ADDILAT@@",formatAddiLatLon(addi.pos)));
 					trans.add(new Regex("@@ADDILON@@",""));
 					trans.add(new Regex("@@ADDILONG@@",addi.getFreshDetails().LongDescription));
 					ret.append(trans.replaceAll(GPXADDIINMAIN));
 				}
 				ret.append(delim).append("\n");
-
 			}
 			return ret.toString();
+		}
+	}
+	
+	public static String image2TypeText(String image){
+		if (image.equals("icon_smile.gif")) return "Found it";
+		if (image.equals("icon_sad.gif")) return "Didn't find it";
+		if (image.equals("icon_note.gif")) return "Write note";
+		if (image.equals("icon_enabled.gif")) return "Enable Listing";
+		if (image.equals("icon_disabled.gif")) return "Temporarily Disable Listing";
+		if (image.equals("icon_camera.gif")) return "Webcam Photo Taken";
+		if (image.equals("11.png")) return "Webcam Photo Taken";
+		if (image.equals("icon_attended.gif")) return "Attended";
+		if (image.equals("green.gif")) return "Publish Listing";
+		if (image.equals("icon_rsvp.gif")) return "Will Attend";
+		if (image.equals("big_smile.gif")) return "Post Reviewer Note";
+		if (image.equals("traffic_cone.gif")) return "Archive (show)";
+		if (image.equals("icon_maint.gif")) return "Owner Maintenance";
+		if (image.equals("icon_needsmaint.gif")) return "Needs Maintenance";
+		if (image.equals("coord_update.gif")) return "Update Coordinates";
+
+		return image;
+	}
+	
+	private String formatAddiLatLon(CWPoint pos) {
+		if (pos.isValid()) {
+			return pos.toString();
+		} else {
+			return "N/S  __ ° __ . ___ W/E ___ ° __ . ___";
 		}
 	}
 }
