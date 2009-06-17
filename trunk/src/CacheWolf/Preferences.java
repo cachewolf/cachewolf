@@ -540,7 +540,7 @@ public class Preferences extends MinML{
 				entry = (MapEntry) itPath.next();
 				outp.print("    <impPath key = \"" + SafeXML.strxmlencode(entry.getKey().toString()) + "\" value = \"" + SafeXML.strxmlencode(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
 			}
-			outp.print("    <rater tool=\"".concat(rater).concat("\"/>\n"));
+			if (rater != null) outp.print("    <rater tool=\"".concat(rater).concat("\"/>\n"));
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
