@@ -1,10 +1,13 @@
 package CacheWolf;
 
+import java.util.BitSet;
+
 import utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.*;
 import ewe.ui.*;
+import ewe.util.Iterator;
 import ewe.sys.*;
 
 
@@ -25,11 +28,12 @@ public class DataMover {
 	}
 	public void deleteCaches(){
 		
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(145,"Cachedata of ALL VISIBLE caches will be deleted! Continue?"), FormBase.IDYES |FormBase.IDNO);
-		if (mBox.execute() != FormBase.IDOK){
+		int mode = showMessageBox(251,"All waypoints will be deleted");
+		if (mode == -1){
 			return;
 		}
-		processCaches(new Deleter(MyLocale.getMsg(143, "Delete")));
+		
+		processCaches(new Deleter(MyLocale.getMsg(143, "Delete")), mode);
 		// write indexfiles
 		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 	}
@@ -40,20 +44,109 @@ public class DataMover {
 		dstProfile.dataDir=selectTargetDir();
 		if (dstProfile.dataDir.equals(profile.dataDir) ||
 			dstProfile.dataDir.equals("")) return;
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(146,"Cachedata of ALL VISIBLE caches will be copied! Continue?"), FormBase.IDYES |FormBase.IDNO);
-		if (mBox.execute() != FormBase.IDOK){
+		
+		//Von Andi P
+		int mode = showMessageBox(253,"All waypoints will be copied");
+		if (mode == -1){
 			return;
 		}
+		//Ende
 		
 		// Read indexfile of destination, if one exists
 		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if(ftest.exists()){
 			dstProfile.readIndex();
 		}
-		processCaches(new Copier(MyLocale.getMsg(141, "Copy"),dstProfile));
+		processCaches(new Copier(MyLocale.getMsg(141, "Copy"),dstProfile), mode);
 		// write indexfiles and keep the filter status
 		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+		//Now repair the cache-Vector:
+		for(int i =0; i < srcDB.size();i++){
+			CacheHolder holder = srcDB.get(i);
+			for(Iterator j=holder.addiWpts.iterator(); j.hasNext();){
+				CacheHolder element = (CacheHolder) j.next();
+				element.mainCache = holder;
+			}
+		}
 	}
+	
+	/**
+	 * Shows the messagebox before copying/moving/deleting waypoints.
+	 * It returns the mode selected by the user.
+	 * 0 means all visible
+	 * 1 means all ticked
+	 * 2 means all visible and ticked cache
+	 * -1 means the user has pressed `Cancel' and no action has to be taken.
+	 * @return mode selected by the user
+	 */
+	private int showMessageBox(int actionTextNr, String defaultValue) {
+		DataMoverForm cpf = new DataMoverForm ();
+		cpf.setTickedText(makeTickedText ());
+		cpf.setVisibleText(makeVisibleText ());
+		cpf.setTickedVisibleText(makeVisibleTickedText ());
+		cpf.setFirstLineText(MyLocale.getMsg(actionTextNr, defaultValue));
+		int dialogResult = cpf.execute(null, Gui.CENTER_FRAME);
+		if (dialogResult != FormBase.IDOK){
+			return -1;
+		}
+		int mode = cpf.getMode();
+		return mode;
+	}
+
+	private String makeTickedText() {
+		int size=srcDB.size();
+		int countMainWP=0;
+		int countAddiWP=0;
+		// Count the number of caches to move/delete/copy
+		for(int i = 0; i<size; i++) {
+			if(srcDB.get(i).is_Checked && !srcDB.get(i).isAddiWpt()){
+				countMainWP++;
+			}
+			else if (srcDB.get(i).is_Checked && srcDB.get(i).isAddiWpt()){
+				countAddiWP++;
+			}
+		}
+		return MyLocale.getMsg(255, "All ticked") + " ("+countMainWP+
+			' ' + MyLocale.getMsg(257, "Main") + ", "+countAddiWP +
+			MyLocale.getMsg(258, " Addi") +')';
+	}
+	
+	private String makeVisibleText() {
+		int size=srcDB.size();
+		int countMainWP=0;
+		int countAddiWP=0;
+		// Count the number of caches to move/delete/copy
+		for(int i = 0; i<size; i++) {
+			if(srcDB.get(i).isVisible() && !srcDB.get(i).isAddiWpt()){
+				countMainWP++;
+			}
+			else if (srcDB.get(i).isVisible() && srcDB.get(i).isAddiWpt()){
+				countAddiWP++;
+			}
+		}
+		return MyLocale.getMsg(254, "All visible") + " ("+countMainWP+
+			' ' + MyLocale.getMsg(257, "Main") + ", "+countAddiWP +
+			MyLocale.getMsg(258, " Addi") +')';
+	}
+
+	private String makeVisibleTickedText() {
+		int size=srcDB.size();
+		int countMainWP=0;
+		int countAddiWP=0;
+		// Count the number of caches to move/delete/copy
+		for(int i = 0; i<size; i++) {
+			if(srcDB.get(i).isVisible() && srcDB.get(i).is_Checked && !srcDB.get(i).isAddiWpt()){
+				countMainWP++;
+			}
+			else if (srcDB.get(i).isVisible() && srcDB.get(i).is_Checked && srcDB.get(i).isAddiWpt()){
+				countAddiWP++;
+			}
+		}
+		return MyLocale.getMsg(256, "All visible and ticked") + " ("+countMainWP+
+		' ' + MyLocale.getMsg(257, "Main") + ", "+countAddiWP +
+		MyLocale.getMsg(258, " Addi") +')';
+	}
+
 	
 	public void moveCaches() {
 		Profile dstProfile=new Profile();
@@ -62,17 +155,17 @@ public class DataMover {
 		if (dstProfile.dataDir.equals(profile.dataDir) ||
 			dstProfile.dataDir.equals("")) return;
 		
-		MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(147,"Cachedata of ALL VISIBLE caches will be moved! Continue?"), FormBase.IDYES |FormBase.IDNO);
-		if (mBox.execute() != FormBase.IDOK){
+		int mode = showMessageBox(252, "All waypoints will be moved");
+		if (mode == -1){
 			return;
 		}
-		
+				
 		// Read indexfile of destination, if one exists
 		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if(ftest.exists()){
 			dstProfile.readIndex();		
 		}
-		processCaches(new Mover(MyLocale.getMsg(142, "Move"),dstProfile));
+		processCaches(new Mover(MyLocale.getMsg(142, "Move"),dstProfile), mode);
 		// write indexfiles
 		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR); 
 		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
@@ -81,14 +174,43 @@ public class DataMover {
 	 /**
 	  * This function carries out the copy/delete/move with a progress bar. 
 	  * The Executor class defines what operation is to be carried out.
+	  * mode defines if visible/marked or visible and markes caches are be processed.
+	  * 0 means all visible
+	  * 1 means all marked
+	  * 2 means all visible and marked
 	  * @param exec
+	 * @param tickeOnly if set to <code>true</true> only caches with the checked-flag will be handled.
 	  */
-	 private void processCaches(Executor exec) {
+	 private void processCaches(Executor exec, int mode) {
 		// First empty the cache so that the correct cache details are on disk
 		CacheHolder.saveAllModifiedDetails(); 
 		int size=srcDB.size();
+		int count=0;
 		// Count the number of caches to move/delete/copy
-		int count=srcDB.countVisible();
+		// and remember the index of the files process, makes it a little bit easier
+		BitSet processSet = new BitSet();
+		for(int i = 0; i<size; i++) {
+			switch (mode){
+			case 0:
+				if (srcDB.get(i).isVisible()){
+					count++;
+					processSet.set(i);
+				}
+				break;
+			case 1:
+				if (srcDB.get(i).is_Checked){
+					count++;
+					processSet.set(i);
+				}
+				break;
+			case 2:
+				if (srcDB.get(i).isVisible() && srcDB.get(i).is_Checked){
+					count++;
+					processSet.set(i);
+				}
+				break;
+			}
+		}
 		myProgressBarForm pbf = new myProgressBarForm();
 		Handle h = new Handle();
 		pbf.setTask(h,exec.title);
@@ -98,7 +220,7 @@ public class DataMover {
 		// Now do the actual work
 		for(int i = size-1; i>=0; i--){
 			CacheHolder srcHolder=srcDB.get(i);
-			if(srcHolder.isVisible()){
+			if(processSet.get(i)){
 				h.progress = ((float)nProcessed++)/(float)count;
 				h.changed();
 				//Now do the copy/delete/move of the cache
@@ -206,6 +328,17 @@ public class DataMover {
 				copyCacheFiles(srcHolder.getWayPoint(),profile.dataDir, dstProfile.dataDir);
 				// does cache exists in destDB ?
 				// Update database
+				//*wall* when copying addis without their maincache, the maincache in the srcDB will be set to null on saving the dstProfile later.
+				//Therefore it will be shown twice in the cachelist.
+				//To prevent this, addis will be cloned and to save memory only addis will be clones.
+				//TODO clone addis only when the maincache will not be copied.
+//				if (srcHolder.isAddiWpt()){
+//					try {
+//						srcHolder = (CacheHolder) srcHolder.clone();
+//					} catch (CloneNotSupportedException e) {
+//						//ignore, CacheHolder implements Cloneable ensures this methods
+//					}
+//				}
 				int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
 				if (dstPos >= 0){
 					dstProfile.cacheDB.set(dstPos,srcHolder);

@@ -220,6 +220,9 @@ public class Preferences extends MinML{
 	public boolean downloadPics = true;
 	/** Download TB information when loading cache data */
 	public boolean downloadTBs = true;
+	/** Last mode select in the DataMover for processing cache*/
+	public int processorMode = 0;
+	
 	/** external Cacherating software */
 	public String rater;
 	
@@ -448,6 +451,13 @@ public class Preferences extends MinML{
 			// Filter object is remembered under the given ID
 			this.addFilter(id, data);
 		}
+		else if (name.equals ("datamover")){
+			tmp = atts.getValue("processorMode");
+			if (tmp != null){
+				processorMode=Convert.parseInt(tmp);
+			}
+			
+		}
 
 	}
 
@@ -510,6 +520,7 @@ public class Preferences extends MinML{
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");
 			outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport) + "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds) + "\"/>\n");
+			outp.print("    <datamover processorMode=\"" + SafeXML.strxmlencode(processorMode) + "\" />\n");
 			if (customMapsPath!=null) outp.print("    <mapspath dir = \"" + SafeXML.strxmlencode(customMapsPath.replace('\\','/')) + "\"/>\n");
 			// Saving filters
 			String[] filterIDs = this.getFilterIDs();
@@ -529,7 +540,7 @@ public class Preferences extends MinML{
 				entry = (MapEntry) itPath.next();
 				outp.print("    <impPath key = \"" + SafeXML.strxmlencode(entry.getKey().toString()) + "\" value = \"" + SafeXML.strxmlencode(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
 			}
-			if (null != rater) outp.print("    <rater tool=\"".concat(rater).concat("\"/>\n"));
+			outp.print("    <rater tool=\"".concat(rater).concat("\"/>\n"));
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {

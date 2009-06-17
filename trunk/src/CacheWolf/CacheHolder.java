@@ -18,7 +18,7 @@ import ewe.util.Vector;
  *	classes and methods to get more information.
  *	
  */
-public class CacheHolder {
+public class CacheHolder implements Cloneable{
 	protected static final String NOBEARING = "?";
 	protected static final String EMPTY = "";
 
@@ -1403,5 +1403,13 @@ public class CacheHolder {
 		this.hasNote = hasNote;
 	}
 
+	/**
+	 * Create a swallow-copy(!) no deep copy
+	 */
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	
 }
 
