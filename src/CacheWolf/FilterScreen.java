@@ -595,6 +595,8 @@ public class FilterScreen extends Form{
 					Global.getPref().savePreferences();
 					savedFiltersChanged = false;
 				}
+				fltList.select(-1);
+				currentFilterID = "";
 				this.close(0);
 			}
 			else if (ev.target == btnRoute){
@@ -611,6 +613,8 @@ public class FilterScreen extends Form{
 					flt.doFilterRoute(datei, Convert.toDouble(inf.feedback.getText()));
 				}
 				Vm.showWait(false);
+				fltList.select(-1);
+				currentFilterID = "";
 				this.close(0);
 				
 			}
@@ -629,6 +633,8 @@ public class FilterScreen extends Form{
 				}
 				Global.mainTab.tbP.tc.scrollToVisible(0,0);
 				Vm.showWait(false);
+				fltList.select(-1);
+				currentFilterID = "";
 				this.close(0);
 			} else if (ev.target == btnSaveFlt) {
 				String ID = fltList.getText();
