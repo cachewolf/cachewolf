@@ -250,6 +250,7 @@ public class MainTab extends mTabbedPanel {
 	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
 		MessageBox info = new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \n werden neu berechnet...").replace('~','\n'), 0);
 		info.exec();
+		info.waitUntilPainted(200);
 		tbP.pref = pref;
 		profile.updateBearingDistance();
 		//tbP.refreshTable();
