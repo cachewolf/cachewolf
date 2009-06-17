@@ -1,7 +1,5 @@
 package CacheWolf;
 
-import java.util.BitSet;
-
 import utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -188,25 +186,25 @@ public class DataMover {
 		int count=0;
 		// Count the number of caches to move/delete/copy
 		// and remember the index of the files process, makes it a little bit easier
-		BitSet processSet = new BitSet();
+		boolean processSet[] = new boolean[size];
 		for(int i = 0; i<size; i++) {
 			switch (mode){
 			case 0:
 				if (srcDB.get(i).isVisible()){
 					count++;
-					processSet.set(i);
+					processSet[i]=true;
 				}
 				break;
 			case 1:
 				if (srcDB.get(i).is_Checked){
 					count++;
-					processSet.set(i);
+					processSet[i]=true;
 				}
 				break;
 			case 2:
 				if (srcDB.get(i).isVisible() && srcDB.get(i).is_Checked){
 					count++;
-					processSet.set(i);
+					processSet[i]=true;
 				}
 				break;
 			}
@@ -220,7 +218,7 @@ public class DataMover {
 		// Now do the actual work
 		for(int i = size-1; i>=0; i--){
 			CacheHolder srcHolder=srcDB.get(i);
-			if(processSet.get(i)){
+			if(processSet[i]){
 				h.progress = ((float)nProcessed++)/(float)count;
 				h.changed();
 				//Now do the copy/delete/move of the cache
