@@ -118,6 +118,11 @@ public class MyComparer implements Comparer{
 				CacheHolder ch =  cacheDB.get(i);
 				ch.sort=MyLocale.formatLong(ch.addiWpts.size(),"000");
 			}
+		} else if (colToCompare==18) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch =  cacheDB.get(i);
+				ch.sort=MyLocale.formatLong(ch.getNoFindLogs(),"000");
+			}
 		}
 	}
 	

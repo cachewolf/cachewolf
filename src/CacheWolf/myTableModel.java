@@ -29,12 +29,12 @@ public class myTableModel extends TableModel{
 	private int lastRow = -2;
 	private CacheDB cacheDB;
 	/** The max number of columns in the list view */
-	public static final int N_COLUMNS = 18;
+	public static final int N_COLUMNS = 19;
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
 	 * the element j (as per the list below) is visible in column i.
 	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates,
 	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend.
-	 * [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals
+	 * [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF
 	 */
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
@@ -44,7 +44,7 @@ public class myTableModel extends TableModel{
 			MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),
 			MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S"),
 			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX"),MyLocale.getMsg(1038,"S"),
-			MyLocale.getMsg(1040,"N"),MyLocale.getMsg(1047,"A")};
+			MyLocale.getMsg(1040,"N"),MyLocale.getMsg(1047,"A"),MyLocale.getMsg(111111,"DNF")};
 
 	private static Image noFindLogs[] = new Image[4];
 	public static mImage red, blue, yellow; // skull, green
@@ -362,6 +362,12 @@ public class myTableModel extends TableModel{
 					case 17: // Number of Additional Waypoints;
 						if (ch.mainCache == null && ch.addiWpts.size()>0) {
 							return String.valueOf(ch.addiWpts.size());
+						} else {
+							return "";
+						}
+					case 18: // Number of DNF logs
+						if (ch.getNoFindLogs()>0) {
+							return String.valueOf(ch.getNoFindLogs());
 						} else {
 							return "";
 						}
