@@ -44,7 +44,7 @@ public class myTableModel extends TableModel{
 			MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),
 			MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S"),
 			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX"),MyLocale.getMsg(1038,"S"),
-			MyLocale.getMsg(1040,"N"),MyLocale.getMsg(1047,"A"),MyLocale.getMsg(111111,"DNF")};
+			MyLocale.getMsg(1040,"N"),MyLocale.getMsg(1047,"A"),MyLocale.getMsg(1049,"DNF")};
 
 	private static Image noFindLogs[] = new Image[4];
 	public static mImage red, blue, yellow; // skull, green
