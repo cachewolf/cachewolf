@@ -18,7 +18,7 @@ import ewe.util.Vector;
  *	classes and methods to get more information.
  *	
  */
-public class CacheHolder implements Cloneable{
+public class CacheHolder{
 	protected static final String NOBEARING = "?";
 	protected static final String EMPTY = "";
 
@@ -1402,14 +1402,5 @@ public class CacheHolder implements Cloneable{
 		Global.getProfile().notifyUnsavedChanges(hasNote != this.hasNote);		
 		this.hasNote = hasNote;
 	}
-
-	/**
-	 * Create a swallow-copy(!) no deep copy
-	 */
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
-	
 }
 
