@@ -375,7 +375,7 @@ public class myTableModel extends TableModel{
 							return "";
 						}
 					case 19: // Last sync date
-						if (ch.getLastSync() != "") {
+						if (!ch.getLastSync().equals("")) {
 							lastSyncWorker.parse(ch.getLastSync(),"yyyyMMddHHmmss");
 							return lastSyncWorker.format("yyyy-MM-dd HH:mm");
 						} else {
