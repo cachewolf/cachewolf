@@ -113,8 +113,8 @@ public class OCXMLImporter extends MinML {
 		String lastS; 
 		if (reload)  lastS = "20050801000000";
 		else {
-			if (ch.getLastSyncOC().length() < 14) lastS = "20050801000000";
-			else lastS = ch.getLastSyncOC();
+			if (ch.getLastSync().length() < 14) lastS = "20050801000000";
+			else lastS = ch.getLastSync();
 		}
 		dateOfthisSync = new Time();
 		dateOfthisSync.parse(lastS, "yyyyMMddHHmmss");
@@ -426,7 +426,7 @@ public class OCXMLImporter extends MinML {
 	// TODO Do we have to release the "holder" cache details ?
 	private void endCache(String name){
 		if (name.equals("cache")){
-			holder.setLastSyncOC(dateOfthisSync.format("yyyyMMddHHmmss"));
+			holder.setLastSync(dateOfthisSync.format("yyyyMMddHHmmss"));
 			int index;
 			index = cacheDB.getIndex(holder.getWayPoint());
 			if (index == -1){

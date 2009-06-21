@@ -26,15 +26,17 @@ public class myTableModel extends TableModel{
 	private Color lineColorBG                   = new Color(255,255,255);
 	private Color lastColorBG                   = new Color(255,255,255);
 	private Color lastColorFG                   = new Color(0,0,0);
+	private static final Time lastSyncWorker = new Time();
 	private int lastRow = -2;
 	private CacheDB cacheDB;
 	/** The max number of columns in the list view */
-	public static final int N_COLUMNS = 19;
+	public static final int N_COLUMNS = 20;
 	/** How the columns are mapped onto the list view. If colMap[i]=j, it means that
 	 * the element j (as per the list below) is visible in column i.
 	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates,
 	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend.
 	 * [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF
+	 * [19] Last Sync Date
 	 */
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
@@ -44,7 +46,8 @@ public class myTableModel extends TableModel{
 			MyLocale.getMsg(1005,"Owner"),MyLocale.getMsg(1006,"Hidden"),MyLocale.getMsg(1007,"Status"),
 			MyLocale.getMsg(1008,"Dist"),MyLocale.getMsg(1009,"Bear"),MyLocale.getMsg(1017,"S"),
 			MyLocale.getMsg(1026,"#Rec"),MyLocale.getMsg(1027,"OC-IDX"),MyLocale.getMsg(1038,"S"),
-			MyLocale.getMsg(1040,"N"),MyLocale.getMsg(1047,"A"),MyLocale.getMsg(1049,"DNF")};
+			MyLocale.getMsg(1040,"N"),MyLocale.getMsg(1047,"A"),MyLocale.getMsg(1049,"DNF"),
+			MyLocale.getMsg(1051,"Last synced")};
 
 	private static Image noFindLogs[] = new Image[4];
 	public static mImage red, blue, yellow; // skull, green
@@ -368,6 +371,13 @@ public class myTableModel extends TableModel{
 					case 18: // Number of DNF logs
 						if (ch.getNoFindLogs()>0) {
 							return String.valueOf(ch.getNoFindLogs());
+						} else {
+							return "";
+						}
+					case 19: // Last sync date
+						if (ch.getLastSync() != "") {
+							lastSyncWorker.parse(ch.getLastSync(),"yyyyMMddHHmmss");
+							return lastSyncWorker.format("yyyy-MM-dd HH:mm");
 						} else {
 							return "";
 						}
