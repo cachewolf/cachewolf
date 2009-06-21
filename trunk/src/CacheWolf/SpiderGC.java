@@ -245,6 +245,7 @@ public class SpiderGC{
 					// the "found" state of an existing cache.
 					ch.setFound(true);
 				}
+				ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
 				cacheInDB.update(ch);
 				cacheInDB.save();
 			}

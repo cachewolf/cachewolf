@@ -246,7 +246,8 @@ public class PreferencesScreen extends Form {
 				MyLocale.getMsg(1039,"Solver exists"),
 				MyLocale.getMsg(1041,"Note exists"),
 				MyLocale.getMsg(1046,"# Additionals"),
-				MyLocale.getMsg(1048, "# DNF Logs")
+				MyLocale.getMsg(1048, "# DNF Logs"),
+				MyLocale.getMsg(1051, "Last sync date")
 				},pref.listColMap),MyLocale.getMsg(595,"List"),null);
 
 		mTab.addCard(tccBugs=new TableColumnChooser(new String[] {

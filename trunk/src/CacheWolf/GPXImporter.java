@@ -30,6 +30,7 @@ public class GPXImporter extends MinML {
 	boolean fromOC = false;
 	boolean fromTC = false;
 	boolean nameFound = false;
+	static final Time gpxDate = new Time();
 	int zaehlerGel = 0;
 	public static final int DOIT_ASK = 0;
 	public static final int DOIT_NOSPOILER = 1;
@@ -344,11 +345,12 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		
+		if (name.equals("time") && !inWpt) {
+			gpxDate.parse(strData.substring(0,19),"yyyy-MM-dd'T'HH:mm:ss");
+			return;
+		}
+
 		if (name.equals("time") && inWpt) {
-			//String Date = new String();
-			//Date = strData.substring(5,7); // month
-			//Date += "/" + strData.substring(8,10); // day
-			//Date += "/" + strData.substring(0,4); // year
 			holder.setDateHidden(strData.substring(0,10)); //Date;
 			return;
 		}
@@ -359,6 +361,7 @@ public class GPXImporter extends MinML {
 		
 		if (name.equals("name") && inWpt && !inCache) {
 			holder.setWayPoint(strData);
+			holder.setLastSync(gpxDate.format("yyyyMMddHHmmss"));
 			//msgA.setText("import " + strData);
 			return;
 		}
