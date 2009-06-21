@@ -37,6 +37,8 @@ public class myTableModel extends TableModel{
 	 * [7]owner, [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend.
 	 * [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF
 	 * [19] Last Sync Date
+	 *
+	 * Attention: When adding columns here, also add a default with in Preferences.listColWidth
 	 */
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
