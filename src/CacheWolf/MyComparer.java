@@ -123,8 +123,13 @@ public class MyComparer implements Comparer{
 				CacheHolder ch =  cacheDB.get(i);
 				ch.sort=MyLocale.formatLong(ch.getNoFindLogs(),"000");
 			}
+		} else if (colToCompare==19) {
+			for (int i=0; i<visibleSize; i++) {
+				CacheHolder ch =  cacheDB.get(i);
+				ch.sort=ch.getLastSync();
+			}
 		}
-	}
+ 	}
 	
 	public int compare(Object o1, Object o2){
 		CacheHolder oo1 = (CacheHolder)o1;

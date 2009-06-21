@@ -100,7 +100,7 @@ public class CacheHolder{
 	/** If this is an additional waypoint, this links back to the main waypoint */
 	public CacheHolder mainCache;
 	/** The date this cache was last synced with OC in format yyyyMMddHHmmss */
-	private String lastSyncOC = EMPTY;
+	private String lastSync = EMPTY;
 	/** True if cache has solver entry */
 	private boolean hasSolver = false;
 	/** True if a note is entered for the cache */
@@ -278,7 +278,7 @@ public class CacheHolder{
 	
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
-			        setLastSyncOC(xmlString.substring(start + 1, end));
+			        setLastSync(xmlString.substring(start + 1, end));
 	
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
@@ -343,7 +343,7 @@ public class CacheHolder{
 		            
 		            start = xmlString.indexOf('"', end + 1);
 		            end = xmlString.indexOf('"', start + 1);
-		            setLastSyncOC(xmlString.substring(start + 1, end));
+		            setLastSync(xmlString.substring(start + 1, end));
 		            
 		            start = xmlString.indexOf('"', end + 1);
 		            end = xmlString.indexOf('"', start + 1);
@@ -500,7 +500,7 @@ public class CacheHolder{
 		this.setHas_bugs(ch.has_bugs());
 		this.setHTML(ch.is_HTML());
 		this.sort=ch.sort;
-		this.setLastSyncOC(ch.getLastSyncOC());
+		this.setLastSync(ch.getLastSync());
 
 		this.setAttributesYes(ch.getAttributesYes());
 		this.setAttributesNo(ch.getAttributesNo());
@@ -549,7 +549,7 @@ public class CacheHolder{
 		sb.append("\" wayp = \"");		sb.append(SafeXML.clean(getWayPoint()));
 		sb.append("\" status = \"");	sb.append(getCacheStatus());
 		sb.append("\" ocCacheID = \"" );sb.append(getOcCacheID()); 
-		sb.append("\" lastSyncOC = \"" );sb.append(getLastSyncOC()); 
+		sb.append("\" lastSyncOC = \"" );sb.append(getLastSync()); 
 		sb.append("\" num_recommended = \"");sb.append(Convert.formatInt(getNumRecommended())); 
 		sb.append("\" num_found = \"" );sb.append(Convert.formatInt(getNumFoundsSinceRecommendation()));
 		sb.append("\" attributesYes = \"" ); sb.append(Convert.formatLong(getAttributesYes()));
@@ -1358,13 +1358,13 @@ public class CacheHolder{
     	this.html = is_HTML;
     }
 
-	public String getLastSyncOC() {
-    	return lastSyncOC;
+	public String getLastSync() {
+    	return lastSync;
     }
 
-	public void setLastSyncOC(String lastSyncOC) {
-		Global.getProfile().notifyUnsavedChanges(!lastSyncOC.equals(this.lastSyncOC));		
-    	this.lastSyncOC = lastSyncOC;
+	public void setLastSync(String lastSync) {
+		Global.getProfile().notifyUnsavedChanges(!lastSync.equals(this.lastSync));		
+    	this.lastSync = lastSync;
     }
 
 	public long getAttributesYes() {
