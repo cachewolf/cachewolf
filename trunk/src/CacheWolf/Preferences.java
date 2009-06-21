@@ -155,7 +155,7 @@ public class Preferences extends MinML{
 	/** The list of visible columns in the list view */
 	public String listColMap="0,1,2,3,4,5,6,7,8,9,10,11,12";
 	/** The widths for each column in list view */
-	public String listColWidth="15,20,20,25,92,177,144,83,60,105,50,104,22,30,30,30,30,30";
+	public String listColWidth="15,20,20,25,92,177,144,83,60,105,50,104,22,30,30,30,30,30,30,30";
 	/** The columns which are to be displayed in TravelbugsJourneyScreen. See also TravelbugJourney */
 	public String travelbugColMap="1,4,5,6,8,9,10,7";
 	/** The column widths for the travelbug journeys. */
@@ -222,10 +222,10 @@ public class Preferences extends MinML{
 	public boolean downloadTBs = true;
 	/** Last mode select in the DataMover for processing cache*/
 	public int processorMode = 0;
-	
+
 	/** external Cacherating software */
 	public String rater;
-	
+
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
 	 * the line: <pre><debug value="true"></pre>
@@ -456,7 +456,7 @@ public class Preferences extends MinML{
 			if (tmp != null){
 				processorMode=Convert.parseInt(tmp);
 			}
-			
+
 		}
 
 	}
