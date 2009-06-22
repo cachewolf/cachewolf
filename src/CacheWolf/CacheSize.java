@@ -486,6 +486,8 @@ public final class CacheSize {
 			return CW_SIZE_NONE;
 		} else if (id.equals(GC_SIZE_MICRO)) {
 			return CW_SIZE_MICRO;
+		} else if (id.equals(GC_SIZE_VIRTUAL)) {
+			return CW_SIZE_VIRTUAL;
 		} else {
 			throw (new IllegalArgumentException("unmatched argument " + id + " in guiSizeStrings2CwSize()"));
 		}
