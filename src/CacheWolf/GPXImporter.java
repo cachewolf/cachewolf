@@ -393,6 +393,7 @@ public class GPXImporter extends MinML {
 			holder.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 			holder.setHard(CacheTerrDiff.CW_DT_UNSET);
 			holder.setTerrain(CacheTerrDiff.CW_DT_UNSET);
+			holder.setLastSync("");
 		}
 		
 		if ((name.equals("groundspeak:name")|| name.equals("terra:name")) && inCache) {
