@@ -6,6 +6,7 @@ import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
+import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.Log;
 import CacheWolf.LogList;
@@ -38,7 +39,6 @@ import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Random;
 
-//TODO: use safexml a lot more (at least start using it ;) )
 
 /**
  * experimental GPX exporter that should better handle the various tasks that
@@ -173,7 +173,7 @@ public class GpxExportNg {
 			}
 			
 			if (sendToGarmin) {
-				tempDir = baseDir+File.separator+this.getClass().toString(); //FIXME: get from dialog
+				tempDir = baseDir+File.separator+this.getClass().toString();
 				new File(tempDir).mkdir();
 			} else {
 				tempDir = outDir;
@@ -253,7 +253,6 @@ public class GpxExportNg {
 				
 				pbf.exit(0);
 				
-				//TODO: connect with image and build garmin poi file
 			} catch (Exception e) {
 				e.printStackTrace();
 				pbf.exit(0);
@@ -368,25 +367,39 @@ public class GpxExportNg {
 
 		if (smartIds && ch.getType() != CacheType.CW_TYPE_CUSTOM) {
 			if (ch.isAddiWpt()) {
-				trans.add(new Regex("@@WPNAME@@", ch.mainCache.getWayPoint()
-						.concat(" ").concat(ch.getWayPoint().substring(0, 2))));
+				trans.add(new Regex("@@WPNAME@@", SafeXML.cleanGPX(ch.mainCache.getWayPoint()
+						.concat(" ")
+						.concat(ch.getWayPoint().substring(0, 2))
+						)));
 			} else {
-				trans.add(new Regex("@@WPNAME@@", ch.getWayPoint()
+				trans.add(new Regex("@@WPNAME@@", SafeXML.cleanGPX(ch.getWayPoint()
 						.concat(" ")
 						.concat(CacheType.getExportShortId(ch.getType()))
 						.concat(String.valueOf(ch.getTerrain()))
 						.concat(String.valueOf(ch.getHard()))
-						.concat(CacheSize.getExportShortId(ch.getCacheSize()))));
+						.concat(CacheSize.getExportShortId(ch.getCacheSize()))
+						)));
 			}
 		} else {
 			trans.add(new Regex("@@WPNAME@@", ch.getWayPoint()));
 		}
-
-		if (ch.isAddiWpt() || ch.getType() == CacheType.CW_TYPE_CUSTOM) {
-			trans.add(new Regex("@@WPCMT@@",
-					SafeXML.cleanGPX(ch.getFreshDetails().LongDescription)));
+		
+		if (ch.getType() == CacheType.CW_TYPE_CUSTOM) {
+			trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getFreshDetails().LongDescription)));
 		} else {
-			trans.add(new Regex("@@WPCMT@@", ""));
+			if (smartIds && outType == GPX_COMPACT) {
+				if (ch.isAddiWpt()) {
+					trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getCacheName()+" "+ch.getFreshDetails().LongDescription)));
+				} else {
+					trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getCacheName()+" "+Common.rot13(ch.getFreshDetails().Hints))));
+				}
+			} else {
+				if (ch.isAddiWpt()) {
+					trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getFreshDetails().LongDescription)));
+				} else {
+					trans.add(new Regex("@@WPCMT@@", ""));
+				}
+			}
 		}
 
 		if (ch.isAddiWpt()) {

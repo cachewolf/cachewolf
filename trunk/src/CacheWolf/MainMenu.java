@@ -28,7 +28,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem downloadmap, kalibmap, importmap;
 	private MenuItem spider, spiderAllFinds, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
-	private MenuItem exportpcx5, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
+	private MenuItem exportGpxNg, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator;
@@ -73,7 +73,7 @@ public class MainMenu extends MenuBar {
 		MenuItem[] exitems = new MenuItem[13];
 		//Vm.debug("Hi in MainMenu "+lr);
 		exitems[0] = exporthtml = new MenuItem(MyLocale.getMsg(100,"to HTML"));
-		exitems[1] = exportpcx5 = new MenuItem(MyLocale.getMsg(101,"to PCX5 Mapsource"));
+		exitems[1] = exportGpxNg = new MenuItem(MyLocale.getMsg(101,"to GPX Test"));
 		exitems[2] = exporttop50 = new MenuItem(MyLocale.getMsg(102,"to TOP50 ASCII"));
 		exitems[3] = exportGPX = new MenuItem(MyLocale.getMsg(103,"to GPX"));
 		exitems[4] = exportASC = new MenuItem(MyLocale.getMsg(104,"to CSV"));
@@ -379,16 +379,15 @@ public class MainMenu extends MenuBar {
 				HTMLExporter htm = new HTMLExporter(pref, profile);
 				htm.doIt();
 			}
-			if(mev.selectedItem == exportpcx5){
-				PCX5Exporter pcx = new PCX5Exporter( pref, profile);
-				pcx.doIt(PCX5Exporter.MODE_ASK);
+			if(mev.selectedItem == exportGpxNg){
+				GpxExportNg gpx = new GpxExportNg();
+				gpx.doit();
 			} 
 			if(mev.selectedItem == exporttop50){
 				OVLExporter ovl = new OVLExporter(pref, profile);
 				ovl.doIt();
 			}
 			if(mev.selectedItem == exportGPX){
-//				GpxExportNg gpx = new GpxExportNg();
 				GPXExporter gpx = new GPXExporter(pref,profile);
 				gpx.doIt(1);
 			}
