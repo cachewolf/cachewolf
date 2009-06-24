@@ -345,8 +345,13 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		
-		if (name.equals("time") && !inWpt) {
-			gpxDate.parse(strData.substring(0,19),"yyyy-MM-dd'T'HH:mm:ss");
+		if (name.equals("time") && !inWpt) {		    
+			try {
+			    gpxDate.parse(strData.substring(0,19),"yyyy-MM-dd'T'HH:mm:ss");
+			} catch (IllegalArgumentException e) {
+			    gpxDate.setTime(0);
+			    Global.getPref().log("Error parsing date: '"+strData+"'. Ignoring.");
+			}
 			return;
 		}
 
@@ -361,7 +366,11 @@ public class GPXImporter extends MinML {
 		
 		if (name.equals("name") && inWpt && !inCache) {
 			holder.setWayPoint(strData);
-			holder.setLastSync(gpxDate.format("yyyyMMddHHmmss"));
+			if (gpxDate.getTime()!=0) {
+			    holder.setLastSync(gpxDate.format("yyyyMMddHHmmss"));
+			} else {
+			    holder.setLastSync("");
+			}    
 			//msgA.setText("import " + strData);
 			return;
 		}
