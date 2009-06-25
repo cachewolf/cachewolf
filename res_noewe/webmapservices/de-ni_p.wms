@@ -31,7 +31,7 @@ RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=19|Schrift: Kleine Orte||
 LayersUrlPart:     LAYERS=12
 StylesUrlPart:     STYLES=
-ImageFormatUrlPart:FORMAT=image/png
+ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 53.898485 E 6.600296
 BoundingBoxButtomRightWGS84: N 51.265165 E 11.665345
 MinScale:   0
@@ -39,5 +39,5 @@ MaxScale:   2.772396
 RecommendedScale:   1
 #MinSFInput:0
 #MaxSFInput:1,9586
-ImageFileExtension: .png
+ImageFileExtension: .jpg
 #weitere Overlays hinzufügen geht bei Photo nicht.
