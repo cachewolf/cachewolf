@@ -147,16 +147,16 @@ public class SpiderGC{
 					pref.log("[login]:Logging in as "+pref.myAlias);
 					StringBuffer sb=new StringBuffer(1000);
 					sb.append(URL.encodeURL("__VIEWSTATE",false));	sb.append("="); sb.append(URL.encodeURL(viewstate,false));
-					sb.append("&"); sb.append(URL.encodeURL("myUsername",false));
+					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("myUsername",false));
 					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
-					sb.append("&"); sb.append(URL.encodeURL("myPassword",false));
+					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("myPassword",false));
 					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
-					sb.append("&"); sb.append(URL.encodeURL("cookie",false));
+					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("cookie",false));
 					sb.append("="); sb.append(URL.encodeURL("on",false));
-					sb.append("&"); sb.append(URL.encodeURL("Button1",false));
+					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("Button1",false));
 					sb.append("="); sb.append(URL.encodeURL("Login",false));
-					sb.append("&"); sb.append(URL.encodeURL("__EVENTVALIDATION",false));
-					sb.append("="); sb.append(URL.encodeURL(eventvalidation,false));
+//					sb.append("&"); sb.append(URL.encodeURL("__EVENTVALIDATION",false));
+//					sb.append("="); sb.append(URL.encodeURL(eventvalidation,false));
 					start = fetch_post(loginPage, sb.toString(), nextPage);  // /login/default.aspx
 					if(start.indexOf(loginSuccess) > 0)
 						pref.log("[login]:Login successful");
