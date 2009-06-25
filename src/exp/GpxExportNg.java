@@ -586,38 +586,38 @@ public class GpxExportNg {
 	}
 
 	public static String image2TypeText(String image) {
-		if (image.equals("icon_smile.gif"))
+		if (image.indexOf("icon_smile.gif") > -1)
 			return "Found it";
-		if (image.equals("icon_sad.gif"))
+		if (image.indexOf("icon_sad.gif") > -1)
 			return "Didn't find it";
-		if (image.equals("icon_note.gif"))
+		if (image.indexOf("icon_note.gif") > -1)
 			return "Write note";
-		if (image.equals("icon_enabled.gif"))
+		if (image.indexOf("icon_enabled.gif") > -1)
 			return "Enable Listing";
-		if (image.equals("icon_disabled.gif"))
+		if (image.indexOf("icon_disabled.gif") > -1)
 			return "Temporarily Disable Listing";
-		if (image.equals("icon_camera.gif"))
+		if (image.indexOf("icon_camera.gif") > -1)
 			return "Webcam Photo Taken";
-		if (image.equals("11.png"))
+		if (image.indexOf("11.png") > -1)
 			return "Webcam Photo Taken";
-		if (image.equals("icon_attended.gif"))
+		if (image.indexOf("icon_attended.gif") > -1)
 			return "Attended";
-		if (image.equals("green.gif"))
+		if (image.indexOf("green.gif") > -1)
 			return "Publish Listing";
-		if (image.equals("icon_rsvp.gif"))
+		if (image.indexOf("icon_rsvp.gif") > -1)
 			return "Will Attend";
-		if (image.equals("big_smile.gif"))
+		if (image.indexOf("big_smile.gif") > -1)
 			return "Post Reviewer Note";
-		if (image.equals("traffic_cone.gif"))
+		if (image.indexOf("traffic_cone.gif") > -1)
 			return "Archive (show)";
-		if (image.equals("icon_maint.gif"))
+		if (image.indexOf("icon_maint.gif") > -1)
 			return "Owner Maintenance";
-		if (image.equals("icon_needsmaint.gif"))
+		if (image.indexOf("icon_needsmaint.gif") > -1)
 			return "Needs Maintenance";
-		if (image.equals("coord_update.gif"))
+		if (image.indexOf("coord_update.gif") > -1)
 			return "Update Coordinates";
-
-		return image;
+		Global.getPref().log("unknown logtype "+image);
+		return "Write note";
 	}
 
 	private String formatAddiLatLon(CWPoint pos) {
