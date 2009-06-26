@@ -1,0 +1,23 @@
+TakenFromUrl:       http://wms.pcn.minambiente.it/cgi-bin/mapserv.exe?map=/ms_ogc/service/ortofoto_colore_06.map&
+GetCapabilitiesUrl: http://wms.pcn.minambiente.it/cgi-bin/mapserv.exe?map=/ms_ogc/service/ortofoto_colore_06.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               Italien photo
+MapType:                        photo
+MainUrl:            http://wms.pcn.minambiente.it/cgi-bin/mapserv.exe?map=/ms_ogc/service/ortofoto_colore_06.map&
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=ortofoto_colore|ortofoto_colore_06||
+#LayersUrlPart:     LAYERS=ortofoto_colore_06|ortofoto_colore_06||
+#LayersUrlPart:     LAYERS=ortofoto_colore_06_32|ortofoto_colore_06_32|0|29.9341709057782
+#LayersUrlPart:     LAYERS=ortofoto_colore_06_33|ortofoto_colore_06_33|0|29.9341709057782
+LayersUrlPart:     LAYERS=ortofoto_colore_06_33
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 48.0000 E 6.0000
+BoundingBoxButtomRightWGS84: N 36.0000 E 19.0000
+MinScale:   0
+MaxScale:   45
+RecommendedScale:   1
+ImageFileExtension: .jpg
