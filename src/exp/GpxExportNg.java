@@ -354,9 +354,9 @@ public class GpxExportNg {
 		
 		Transformer trans = new Transformer(true);
 
-		trans.add(new Regex("@@WPLAT@@", String.valueOf(ch.pos.latDec)));
+		trans.add(new Regex("@@WPLAT@@", String.valueOf(ch.pos.latDec).replace(',', '.')));
 
-		trans.add(new Regex("@@WPLON@@", String.valueOf(ch.pos.lonDec)));
+		trans.add(new Regex("@@WPLON@@", String.valueOf(ch.pos.lonDec).replace(',', '.')));
 
 		if (ch.isAddiWpt()) {
 			try {
