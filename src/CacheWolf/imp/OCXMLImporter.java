@@ -1,6 +1,21 @@
-package CacheWolf;
+package CacheWolf.imp;
 
 import utils.FileBugfix;
+
+import CacheWolf.CWPoint;
+import CacheWolf.CacheDB;
+import CacheWolf.CacheHolder;
+import CacheWolf.CacheSize;
+import CacheWolf.CacheTerrDiff;
+import CacheWolf.CacheType;
+import CacheWolf.Common;
+import CacheWolf.InfoBox;
+import CacheWolf.Log;
+import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
+import CacheWolf.Profile;
+import CacheWolf.SafeXML;
+import CacheWolf.UrlFetcher;
 
 import com.stevesoft.ewe_pat.Regex;
 

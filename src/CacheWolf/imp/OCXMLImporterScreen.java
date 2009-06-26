@@ -1,9 +1,14 @@
 /**
  * 
  */
-package CacheWolf;
+package CacheWolf.imp;
 
-import CacheWolf.SpiderGC.SpiderProperties;
+import CacheWolf.CacheType;
+import CacheWolf.Common;
+import CacheWolf.Global;
+import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
+import CacheWolf.imp.SpiderGC.SpiderProperties;
 import ewe.sys.Convert;
 import ewe.ui.*;
 
@@ -26,13 +31,13 @@ public class OCXMLImporterScreen extends Form {
 	mLabel distUnit;
 	boolean isGC = true;
 	static int DIST = 1;
-	static int IMAGES = 2;
+	public static int IMAGES = 2;
 	static int ALL = 4;
 	static int INCLUDEFOUND = 8;
 	static int ISGC = 16;
 	static int MAXNUMBER = 32;
-	static int TRAVELBUGS = 64;
-	static int MAXLOGS = 128;
+	public static int TRAVELBUGS = 64;
+	public static int MAXLOGS = 128;
 	static int TYPE = 256;
 
 	

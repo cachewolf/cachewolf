@@ -10,27 +10,27 @@ package CacheWolf;
 public class CacheTerrDiff {
 	
 	/** terrain or difficulty 1.0 */
-	protected static final byte CW_DT_10 = 10;
+	public static final byte CW_DT_10 = 10;
 	/** terrain or difficulty 1.5 */
-	protected static final byte CW_DT_15 = 15;
+	public static final byte CW_DT_15 = 15;
 	/** terrain or difficulty 2.0 */
-	protected static final byte CW_DT_20 = 20;
+	public static final byte CW_DT_20 = 20;
 	/** terrain or difficulty 2.5 */
-	protected static final byte CW_DT_25 = 25;
+	public static final byte CW_DT_25 = 25;
 	/** terrain or difficulty 3.0 */
-	protected static final byte CW_DT_30 = 30;
+	public static final byte CW_DT_30 = 30;
 	/** terrain or difficulty 3.5 */
-	protected static final byte CW_DT_35 = 35;
+	public static final byte CW_DT_35 = 35;
 	/** terrain or difficulty 4.0 */
-	protected static final byte CW_DT_40 = 40;
+	public static final byte CW_DT_40 = 40;
 	/** terrain or difficulty 4.5 */
-	protected static final byte CW_DT_45 = 45;
+	public static final byte CW_DT_45 = 45;
 	/** terrain or difficulty 5.0 */
-	protected static final byte CW_DT_50 = 50;
+	public static final byte CW_DT_50 = 50;
 	/** wrong terrain or difficulty */
-	protected static final byte CW_DT_ERROR = -1;
+	public static final byte CW_DT_ERROR = -1;
 	/** terrain or difficulty for additional/custom waypoints */
-	protected static final byte CW_DT_UNSET = 0;
+	public static final byte CW_DT_UNSET = 0;
 
 	/** constructor dies nothing */
 	private CacheTerrDiff() { // no instantiation needed 
@@ -44,7 +44,7 @@ public class CacheTerrDiff {
 	 * @return internal representation of terrain or difficulty
 	 * @throws IllegalArgumentException if <code>v1TerrDiff</code> can not be mapped
 	 */
-	static final byte v1Converter(String v1TerrDiff) throws IllegalArgumentException {
+	public static final byte v1Converter(String v1TerrDiff) throws IllegalArgumentException {
 		if (v1TerrDiff == null) {
 			throw new IllegalArgumentException("error mapping terrain or difficulty");
 		}

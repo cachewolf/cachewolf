@@ -1,12 +1,33 @@
-package CacheWolf;
+package CacheWolf.imp;
 
-import ewesoft.xml.*;
-import ewesoft.xml.sax.*;
-import ewe.sys.*;
+import CacheWolf.CacheDB;
+import CacheWolf.CacheHolder;
+import CacheWolf.CacheSize;
+import CacheWolf.CacheTerrDiff;
+import CacheWolf.CacheType;
+import CacheWolf.Common;
+import CacheWolf.Extractor;
+import CacheWolf.Filter;
+import CacheWolf.Global;
+import CacheWolf.InfoBox;
+import CacheWolf.Log;
+import CacheWolf.MyLocale;
+import CacheWolf.ParseLatLon;
+import CacheWolf.Preferences;
+import CacheWolf.Profile;
+import CacheWolf.SafeXML;
+import CacheWolf.Travelbug;
+import ewe.sys.Time;
+import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
-import ewe.util.*;
-import ewe.util.zip.*;
+import ewe.util.Enumeration;
+import ewe.util.Vector;
+import ewe.util.zip.ZipEntry;
+import ewe.util.zip.ZipFile;
+import ewesoft.xml.MinML;
+import ewesoft.xml.XMLElement;
+import ewesoft.xml.sax.AttributeList;
 
 /**
 *	Class to import Data from an GPX File. If cache data exists, the data from 
