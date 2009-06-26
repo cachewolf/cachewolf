@@ -1,6 +1,6 @@
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl:	http://geodaten.service24.rlp.de/cgi-bin/wms.cgi?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
-Name:	de.Rheinland-Pfalz photo
+Name:	de.Rheinland-Pfalz photo SF=0,36..17,6
 MapType:	photo
 MainUrl:	http://geodaten.service24.rlp.de/cgi-bin/wms.cgi?
 ServiceTypeUrlPart:	SERVICE=WMS 
@@ -19,10 +19,11 @@ RequestUrlPart:   REQUEST=GetMap
 #LayersUrlPart:     LAYERS=likar:likar|Liegenschaftskarte-WA|0.001|3
 LayersUrlPart:   LAYERS=freedop%3Adop
 StylesUrlPart:   STYLES=
-ImageFormatUrlPart:   FORMAT=image/png
-BoundingBoxTopLeftWGS84:   N 50.400 E 6.000
-BoundingBoxButtomRightWGS84:   N 49.300 E 8.200
+ImageFormatUrlPart:   FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 51.0000 E 6.0000
+BoundingBoxButtomRightWGS84: N 48.8000 E 8.7000
 MinScale:   0.5
 MaxScale:   24.95
 RecommendedScale:	0.4
-ImageFileExtension: .png 
+ImageFileExtension: .jpg 
+# weitergehende Skaliwerungen nicht geprüft
