@@ -8,7 +8,7 @@ public class InfoBox extends Form{
 	public boolean mCB_state = false;
 	mButton mB = new mButton("OK");
 	mButton mC = new mButton("Cancel");
-	mInput feedback = new mInput();
+	public mInput feedback = new mInput();
 	public final static int CHECKBOX = 1;
 	public final static int INPUT = 2;
 	public final static int DISPLAY_ONLY = 3;

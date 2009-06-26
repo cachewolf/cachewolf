@@ -49,7 +49,12 @@ public final class GuiImageBroker {
 
 	// TODO: move size images here
 	private static final Image[] sizeImages = {
-
+//		new Image(CacheSize.CW_GUIIMG_NONPHYSICAL),
+//		new Image(CacheSize.CW_GUIIMG_MICRO),
+//		new Image(CacheSize.CW_GUIIMG_SMALL),
+//		new Image(CacheSize.CW_GUIIMG_NORMAL),
+//		new Image(CacheSize.CW_GUIIMG_LARGE),
+//		new Image(CacheSize.CW_GUIIMG_VERYLARGE)
 	};
 
 	/** constructor does nothing */
@@ -90,10 +95,10 @@ public final class GuiImageBroker {
 	}
 
 	/**
-	 * Replaces the buildt-in symbols by images stored in /symbols:
-	 * If the subdirectory symbols exists in CW-directory *.png-files
+	 * Replaces the build-in symbols by images stored in /symbols:
+	 * If the sub directory symbols exists in CW-directory *.png-files
 	 * are read in and roughly checked for validity (names must be
-	 * convertable to integers between 0 and 21).
+	 * convertible to integers between 0 and 21).
 	 * For every valid file x.png the corresponding typeImages[x] is
 	 * replaced by the image in x.png.
 	 * Images are NOT checked for size etc.

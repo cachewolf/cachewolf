@@ -11,6 +11,7 @@ package CacheWolf;
  * @author salzkammergut
  */
 
+import CacheWolf.imp.SpiderGC;
 import utils.CWWrapper;
 import ewe.sys.Convert;
 import ewe.sys.Time;

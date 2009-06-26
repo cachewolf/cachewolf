@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Navigate;
 import ewe.ui.*;
 import ewe.fx.Dimension;
