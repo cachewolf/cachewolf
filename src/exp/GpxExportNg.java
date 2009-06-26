@@ -17,14 +17,15 @@ import com.stevesoft.ewe_pat.Transformer;
 
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
+import ewe.fx.Sound;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileWriter;
 import ewe.io.PrintWriter;
+import ewe.sys.Convert;
 import ewe.sys.Date;
 import ewe.sys.Handle;
-import ewe.sys.Vm;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.Control;
 import ewe.ui.ControlEvent;
@@ -34,11 +35,11 @@ import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
 import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
+import ewe.ui.mInput;
+import ewe.ui.mLabel;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
-import ewe.util.Random;
-
 
 /**
  * experimental GPX exporter that should better handle the various tasks that
@@ -59,6 +60,7 @@ public class GpxExportNg {
 	final static String TRUE = "True";
 	final static String FALSE = "False";
 	private static GarminMap gm;
+	private int maxLogs = ewe.math.Number.INTEGER_MAX_VALUE;
 
 	final static String GPXHEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 			.concat("<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" version=\"1.0\" creator=\"CacheWolf\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.groundspeak.com/cache/1/0 http://www.groundspeak.com/cache/1/0/cache.xsd\" xmlns=\"http://www.topografix.com/GPX/1/0\">\n")
@@ -142,7 +144,7 @@ public class GpxExportNg {
 			final String outDir;
 			final String tempDir;
 			final String baseDir = FileBase.getProgramDirectory();
-			final String prefix="GC-";
+			final String prefix = exportOptions.getPrefix();
 			final FileChooser fc;
 			
 			if (sendToGarmin) { 
@@ -267,6 +269,10 @@ public class GpxExportNg {
 					Global.getPref().log("unable to load garminmap.xml");
 				}
 			}
+			
+			if (outType == GPX_PQLIKE) {
+				maxLogs = exportOptions.getMaxLogs();
+			}
 			final File file;
 			final FileChooser fc = new FileChooser(FileChooserBase.SAVE, 
 					Global.getPref().getExportPath(expName+"-GPX"));
@@ -375,8 +381,8 @@ public class GpxExportNg {
 				trans.add(new Regex("@@WPNAME@@", SafeXML.cleanGPX(ch.getWayPoint()
 						.concat(" ")
 						.concat(CacheType.getExportShortId(ch.getType()))
-						.concat(String.valueOf(ch.getTerrain()))
 						.concat(String.valueOf(ch.getHard()))
+						.concat(String.valueOf(ch.getTerrain()))
 						.concat(CacheSize.getExportShortId(ch.getCacheSize()))
 						)));
 			}
@@ -518,7 +524,15 @@ public class GpxExportNg {
 		if (0 == logs.size())
 			return "";
 		
-		for (int i = 0; i < logs.size(); i++) {
+		int exportlogs;
+		
+		if (outType == GPX_PQLIKE && maxLogs < logs.size()) {
+			exportlogs = maxLogs;
+		} else {
+			exportlogs = logs.size();
+		}
+		
+		for (int i = 0; i < exportlogs; i++) {
 			Log log = logs.getLog(i);
 			
 			if (outType == GPX_MYFINDSPQ
@@ -635,6 +649,7 @@ public class GpxExportNg {
 		private CheckBoxGroup cbgExportType;
 		private mCheckBox cbCompact, cbPqLike, cbMyFinds, cbCustomIcons,
 				cbSeperateFiles, cbSendToGarmin, cbSmartId;
+		private mInput ibMaxLogs,ibPrefix;
 		private mButton btnOk, btnCancel;
 
 		/**
@@ -666,6 +681,11 @@ public class GpxExportNg {
 			cbSendToGarmin.modify(Control.Disabled, 0); // not yet
 
 			cbSmartId = new mCheckBox("use smart IDs");
+			
+			ibPrefix = new mInput("GC-");
+			ibPrefix.modify(Control.Disabled, 0);
+			ibMaxLogs = new mInput(String.valueOf(Global.getPref().numberOfLogsToExport));
+			ibMaxLogs.modify(Control.Disabled, 0);
 
 			btnOk = new mButton("OK");
 			btnCancel = new mButton("Cancel");
@@ -677,6 +697,11 @@ public class GpxExportNg {
 			addNext(cbSendToGarmin);
 			addLast(cbMyFinds);
 			addLast(cbSmartId);
+			addNext(new mLabel("Prefix"));
+			addLast(new mLabel("Max Logs"));
+			
+			addNext(ibPrefix);
+			addLast(ibMaxLogs);
 
 			addButton(btnOk);
 			addButton(btnCancel);
@@ -699,6 +724,8 @@ public class GpxExportNg {
 						// cbSendToGarmin.repaint();
 						if (cbSmartId.change(0, Control.Disabled))
 							cbSmartId.repaint();
+						if (ibMaxLogs.change(Control.Disabled, 0))
+							ibMaxLogs.repaint();
 					} else if (cbgExportType.getSelected() == cbPqLike) {
 						cbSeperateFiles.setState(false);
 						if (cbCustomIcons.change(0, Control.Disabled))
@@ -709,6 +736,10 @@ public class GpxExportNg {
 						// cbSendToGarmin.repaint();
 						if (cbSmartId.change(0, Control.Disabled))
 							cbSmartId.repaint();
+						if (ibPrefix.change(Control.Disabled, 0))
+							ibPrefix.repaint();
+						if (ibMaxLogs.change(Control.Disabled, 1))
+							ibMaxLogs.repaint();
 					} else if (cbgExportType.getSelected() == cbMyFinds) {
 						cbCustomIcons.setState(false);
 						cbSeperateFiles.setState(false);
@@ -722,9 +753,37 @@ public class GpxExportNg {
 						// cbSendToGarmin.repaint();
 						if (cbSmartId.change(Control.Disabled, 0))
 							cbSmartId.repaint();
+						if (ibPrefix.change(Control.Disabled, 0))
+							ibPrefix.repaint();
+						if (ibMaxLogs.change(Control.Disabled, 0))
+							ibMaxLogs.repaint();
+					}
+				} else if (ev.target == cbSeperateFiles) {
+					if (cbSeperateFiles.state) {
+						if (ibPrefix.change(Control.Disabled, 1)) ibPrefix.repaint();
+					} else {
+						if (ibPrefix.change(Control.Disabled, 0)) ibPrefix.repaint();
 					}
 				} else if (ev.target == btnOk) {
-					close(1);
+					if (cbPqLike.state) {
+						try {
+							int logs = getMaxLogs();
+							if (logs > -1) {
+								close(1);
+							} else {
+								ibMaxLogs.selectAll();
+								ibMaxLogs.takeFocus(0);
+								Sound.beep();
+							}
+						} catch (NumberFormatException e) {
+							ibMaxLogs.selectAll();
+							ibMaxLogs.takeFocus(0);
+							Sound.beep();
+						}
+					} else {
+						close(1);
+					}
+					
 				} else if (ev.target == btnCancel) {
 					close(-1);
 				}
@@ -776,6 +835,22 @@ public class GpxExportNg {
 		 */
 		public boolean getSeparateFiles() {
 			return cbSeperateFiles.state;
+		}
+		
+		/**
+		 * get the number of logs to export. used in PQlike export.
+		 * @return number of logs to export
+		 */
+		public int getMaxLogs() {
+			return Convert.parseInt(ibMaxLogs.getText());
+		}
+		
+		/**
+		 * get prefix for sepearte file export
+		 * @return prefix for separate file export
+		 */
+		public String getPrefix() {
+			return ibPrefix.getText();
 		}
 	}
 }
