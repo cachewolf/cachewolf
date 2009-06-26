@@ -23,12 +23,33 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     */
 
-package CacheWolf;
+package CacheWolf.imp;
 import ewe.net.*;
 import ewe.io.*;
 import ewe.sys.*;
 import ewe.sys.Double;
 import ewe.util.*;
+import CacheWolf.CWPoint;
+import CacheWolf.CacheDB;
+import CacheWolf.CacheHolder;
+import CacheWolf.CacheHolderDetail;
+import CacheWolf.CacheSize;
+import CacheWolf.CacheTerrDiff;
+import CacheWolf.CacheType;
+import CacheWolf.Common;
+import CacheWolf.DateFormat;
+import CacheWolf.Extractor;
+import CacheWolf.Global;
+import CacheWolf.HttpConnection;
+import CacheWolf.InfoBox;
+import CacheWolf.Log;
+import CacheWolf.LogList;
+import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
+import CacheWolf.Profile;
+import CacheWolf.STRreplace;
+import CacheWolf.SafeXML;
+import CacheWolf.Travelbug;
 import CacheWolf.navi.Metrics;
 
 import com.stevesoft.ewe_pat.*;

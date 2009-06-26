@@ -1,5 +1,7 @@
 package CacheWolf;
 
+import CacheWolf.imp.GPXImporter;
+
 public class Log {
 	private static String MAXLOGICON="MAXLOG";
 	private static String INVALIDLOGICON=null;
@@ -19,7 +21,7 @@ public class Log {
 	 * or <img src='ICON'>&nbsp;DATE by LOGGER<br>MESSAGE</pre>
 	 * @param logLine
 	 */
-	Log(String logLine) {
+	public Log(String logLine) {
 //		RECOMMENDED="1"<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
 		try {
 			int ic1=logLine.indexOf("RECOMMENDED=\"1\"");
@@ -47,11 +49,11 @@ public class Log {
 		}
 	}
 	
-	Log(String icon, String date, String logger, String message) {
+	public Log(String icon, String date, String logger, String message) {
 		this(icon, date, logger, message, false);
 	}
 	
-	Log(String icon, String date, String logger, String message, boolean recommended_) {
+	public Log(String icon, String date, String logger, String message, boolean recommended_) {
 		this.icon=icon;
 		this.date=date;
 		this.logger=logger;

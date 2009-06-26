@@ -364,7 +364,7 @@ public class Profile {
 	 *  Called from Main Form and MainMenu 
 	 *  The values of Filter.isActive and Filter.isInactive are set by the filter 
 	 **/
-	void restoreFilter() {
+	public void restoreFilter() {
 		restoreFilter( true );		
 	}
 	
