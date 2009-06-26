@@ -228,7 +228,7 @@ public class HTMLExporter{
 						pagefile.close();
 					}catch(Exception e){
 						exportErrors++;
-						Global.getPref().log("HTMLExport: error wehen exporting "+ch.getWayPoint()+" reason: ",e);
+						Global.getPref().log("HTMLExport: error wehen exporting "+ch.getWayPoint()+" reason: ",e,Global.getPref().debug);
 					}
 					if (exportErrors > 0) {
 						new MessageBox("Export Error", exportErrors+" waypoints have not been exported. See log for details.", FormBase.OKB).execute();
