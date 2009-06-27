@@ -1104,6 +1104,8 @@ public class Parser{
 		ch.setWayPoint(wayPoint);
 		ch.setType(type);
 		ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+		ch.setHard(CacheTerrDiff.CW_DT_UNSET);
+		ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 		ch.setCacheName(name);
 
 		Global.getProfile().setAddiRef(ch);
