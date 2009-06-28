@@ -1,6 +1,5 @@
 package CacheWolf;
 
-import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
 import utils.FileBugfix;
 import ewe.ui.*;
@@ -105,7 +104,9 @@ public class PreferencesScreen extends Form {
 		inpPassword.isPassword=true;
 		pnlGeneral.addLast(pnlBrowser,HSTRETCH,HFILL);
 		
-		pnlGeneral.addLast(gpsB = new mButton("GPS: " + pref.mySPO.portName+"/"+pref.mySPO.baudRate),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlGeneral.addLast(gpsB = new mButton("GPS: " + 
+			(pref.useGPSD ? "gpsd " + pref.gpsdHost : pref.mySPO.portName+"/"+pref.mySPO.baudRate) ),
+			CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 
 		// Garmin and GPSBabel
 		pnlGeneral.addNext(lblGarmin=new mLabel(MyLocale.getMsg(173,"Garmin:  PC Port:")),DONTSTRETCH,LEFT);
@@ -341,6 +342,12 @@ public class PreferencesScreen extends Form {
 				Editor s = gpo.getEditor();
 				gpo.forwardGpsChkB.setState(pref.forwardGPS);
 				gpo.inputBoxForwardHost.setText(pref.forwardGpsHost);
+				gpo.gpsdChkB.setState(pref.useGPSD);
+				if(pref.gpsdPort!=pref.DEFAULT_GPSD_PORT){
+					gpo.inputBoxGpsdHost.setText(pref.gpsdHost + ":" + Convert.toString(pref.gpsdPort));
+				}else{
+					gpo.inputBoxGpsdHost.setText(pref.gpsdHost);
+				}
 				gpo.logGpsChkB.setState(pref.logGPS);
 				gpo.inputBoxLogTimer.setText(pref.logGPSTimer);
 				Gui.setOKCancel(s);
@@ -349,6 +356,16 @@ public class PreferencesScreen extends Form {
 					pref.mySPO.baudRate = gpo.baudRate;
 					pref.forwardGPS = gpo.forwardGpsChkB.getState();
 					pref.forwardGpsHost = gpo.inputBoxForwardHost.getText();
+					pref.useGPSD = gpo.gpsdChkB.getState();
+					String gpsdHostString = gpo.inputBoxGpsdHost.getText();	// hostname[:port]
+					int posColon = gpsdHostString.indexOf(':');
+					if(posColon>=0){
+						pref.gpsdHost=gpsdHostString.substring(0,posColon);
+						pref.gpsdPort=Convert.toInt(gpsdHostString.substring(posColon+1));
+					}else{
+						pref.gpsdHost=gpsdHostString;
+						pref.gpsdPort=pref.DEFAULT_GPSD_PORT;
+					}
 					pref.logGPS = gpo.logGpsChkB.getState();
 					pref.logGPSTimer = gpo.inputBoxLogTimer.getText();
 					gpsB.setText("GPS: " + pref.mySPO.portName+"/"+pref.mySPO.baudRate);
