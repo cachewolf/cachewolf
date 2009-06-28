@@ -5,6 +5,8 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package CacheWolf.navi;
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
 import CacheWolf.Extractor;
@@ -42,6 +44,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	FileWriter logFile;
 	String lastStrExamined = new String();
 
+	Regex numberMatcher = new Regex("\\-?\\d+");
 
 	public CWGPSPoint()
 	{
@@ -170,7 +173,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	}
 
 	/**
-	 * 
+	 * Sets the attributes from a NMEA String
 	 * @param NMEA	string with data to examine
 	 * @return true if some data could be interpreted false otherwise
 	 */
@@ -379,6 +382,79 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		return interpreted;
 	}
 
+	
+	/**
+	 * Sets the attributes from a GPSD string
+	 * @param gps	GPSD string with data to examine
+	 *              Format: GPSD,key=value,... 
+	 * @return true if some data could be interpreted false otherwise
+	 */
+	public boolean examineGpsd(String gps){
+		boolean valid = false;
+		if(!gps.startsWith("GPSD,"))
+			return false;
+		Extractor ex = new Extractor (gps, ",",",",4,true);
+		while(!ex.endOfSearch()){
+			String part = ex.findNext();
+			if(part.startsWith("A=") && part.indexOf('?')<0){
+				// The current altitude as "A=%f", meters above mean sea level. 
+				this.Alt=Common.parseDouble(part.substring(2));
+				valid = true;
+			}else if(part.startsWith("D=") && part.indexOf('?')<0){
+				// Returns the UTC time in the ISO 8601 format, "D=yyyy-mm-ddThh:mm:ss.ssZ"
+				//                                               0000000000111111111122 
+				//                                               0123456789012345678901
+				String year = part.substring(2,6);
+				String month = part.substring(7,9);
+				String day = part.substring(10,12);
+				String hour = part.substring(13,15);
+				String min = part.substring(16,18);
+				String sec = part.substring(19,21);
+				this.Date=year+month+day;
+				this.Time=hour+min+sec;
+				valid = true;
+			}else if(part.startsWith("P=")){
+				// Returns the current position in the form "P=%f %f"; numbers are in degrees, latitude first. 
+				if(part.indexOf('?')<0){
+					this.Fix = 1;
+					int spacepos=part.indexOf(' ');
+					if(spacepos>=3){
+						String lat=part.substring(2,spacepos);
+						String lon=part.substring(spacepos+1);
+						this.latDec=Common.parseDouble(lat);
+						this.lonDec=Common.parseDouble(lon);
+					}else
+						this.set(part.substring(2));
+				}else{
+					this.Fix = 0;
+				}
+				valid = true;
+			}else if(part.startsWith("Q=")){
+				// Returns "Q=%d %f %f %f %f %f": a count of satellites used in the last fix,
+				// and five dimensionless dilution-of-precision (DOP) numbers -- 
+				// spherical, horizontal, vertical, time, and total geometric.
+				int spacepos=part.indexOf(' ');
+				if(part.indexOf('?')<0 && spacepos>=3){
+					this.numSat = Common.parseInt(part.substring(2, spacepos));
+					valid = true;
+				}else{
+					this.numSat = 0;
+				}
+				this.numSatsInView = 0;			// Not supported by GPSD
+				//TODO parse DOP values
+			}else if(part.startsWith("T=") && part.indexOf('?')<0){
+				// Track made good; course "T=%f" in degrees from true north.
+				this.Bear = Common.parseDouble(part.substring(2));
+				valid = true;
+			}else if(part.startsWith("V=") && part.indexOf('?')<0){
+				// The current speed over ground as "V=%f" in knots.
+				this.Speed = Common.parseDouble(part.substring(2));
+				valid = true;
+			}
+		}
+		return valid;
+	}
+		
 	private boolean checkSumOK(String nmea){
 		int startPos = 1; // begin after $
 		int endPos = nmea.length() - 3;// without * an two checksum chars
