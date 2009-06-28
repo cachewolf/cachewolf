@@ -32,6 +32,7 @@ import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
 import ewe.ui.ProgressBarForm;
 import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
@@ -61,6 +62,7 @@ public class GpxExportNg {
 	final static String FALSE = "False";
 	private static GarminMap gm;
 	private int maxLogs = ewe.math.Number.INTEGER_MAX_VALUE;
+	private int exportErrors = 0;
 
 	final static String GPXHEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 			.concat("<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" version=\"1.0\" creator=\"CacheWolf\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.groundspeak.com/cache/1/0 http://www.groundspeak.com/cache/1/0/cache.xsd\" xmlns=\"http://www.topografix.com/GPX/1/0\">\n")
@@ -256,7 +258,8 @@ public class GpxExportNg {
 				pbf.exit(0);
 				
 			} catch (Exception e) {
-				e.printStackTrace();
+				Global.getPref().log("GPX Export: unknown cause for ", e, Global.getPref().debug);
+				exportErrors++;
 				pbf.exit(0);
 			}
 		} else {
@@ -272,7 +275,12 @@ public class GpxExportNg {
 			
 			if (outType == GPX_PQLIKE) {
 				maxLogs = exportOptions.getMaxLogs();
+				if (maxLogs != Global.getPref().numberOfLogsToExport) {
+					Global.getPref().numberOfLogsToExport = maxLogs;
+					Global.getPref().dirty = true;
+				}
 			}
+			
 			final File file;
 			final FileChooser fc = new FileChooser(FileChooserBase.SAVE, 
 					Global.getPref().getExportPath(expName+"-GPX"));
@@ -305,8 +313,9 @@ public class GpxExportNg {
 					if (!ch.isVisible()) {
 						continue;
 					} else if (ch.is_incomplete()) {
+						exportErrors++;
 						Global.getPref().log(
-								"skipping export of incomplete waypoint "
+								"GPX Export: skipping export of incomplete waypoint "
 										+ ch.getWayPoint());
 					} else {
 						outp.print(formatCache(ch));
@@ -321,12 +330,16 @@ public class GpxExportNg {
 				outp.print("</gpx>\n");
 				outp.close();
 			} catch (Exception ex) {
+				exportErrors++;
 				if (Global.getPref().debug)
-					Global.getPref().log("unable to write GPX output to " + file.toString(),ex);
+					Global.getPref().log("GPX Export: unable to write output to " + file.toString(),ex,Global.getPref().debug);
 				else
-					Global.getPref().log("unable to write GPX output to " + file.toString());
+					Global.getPref().log("GPX Export: unable to write output to " + file.toString());
 				// TODO: give a message to the user
 			}
+		}
+		if (exportErrors > 0) {
+			new MessageBox("Export Error", exportErrors+" errors during export. Check log for details.", FormBase.OKB).execute();
 		}
 	}
 
@@ -339,13 +352,24 @@ public class GpxExportNg {
 
 		StringBuffer ret = new StringBuffer();
 
-		ret.append(formatCompact(ch));
+		try {
+			ret.append(formatCompact(ch));
 		
-		if (outType != GPX_COMPACT && !(ch.getType() == CacheType.CW_TYPE_CUSTOM || ch.isAddiWpt())) {
-			ret.append(formatPqExtensions(ch));
+			if (outType != GPX_COMPACT && !(ch.getType() == CacheType.CW_TYPE_CUSTOM || ch.isAddiWpt())) {
+				ret.append(formatPqExtensions(ch));
+			}
+		
+			ret.append("\t</wpt>\n");
+		} catch (IllegalArgumentException e) {
+			exportErrors++;
+			ch.setIncomplete(true);
+			Global.getPref().log("GPX Export: "+ch.getWayPoint()+" set to incomplete ", e, Global.getPref().debug);
+			return "";
+		} catch (Exception e) {
+			exportErrors++;
+			Global.getPref().log("GPX Export: "+ch.getWayPoint()+" caused ", e, Global.getPref().debug);
+			return "";
 		}
-		
-		ret.append("\t</wpt>\n");
 
 		return ret.toString();
 	}
@@ -403,7 +427,7 @@ public class GpxExportNg {
 				if (ch.isAddiWpt()) {
 					trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getFreshDetails().LongDescription)));
 				} else {
-					trans.add(new Regex("@@WPCMT@@", ""));
+					trans.add(new Regex("\t\t<cmt>@@WPCMT@@</cmt>\n", ""));
 				}
 			}
 		}
@@ -599,7 +623,7 @@ public class GpxExportNg {
 		}
 	}
 
-	public static String image2TypeText(String image) {
+	public String image2TypeText(String image) {
 		if (image.indexOf("icon_smile.gif") > -1)
 			return "Found it";
 		if (image.indexOf("icon_sad.gif") > -1)
@@ -630,7 +654,8 @@ public class GpxExportNg {
 			return "Needs Maintenance";
 		if (image.indexOf("coord_update.gif") > -1)
 			return "Update Coordinates";
-		Global.getPref().log("unknown logtype "+image);
+		Global.getPref().log("GPX Export: unknown logtype "+image);
+		exportErrors++;
 		return "Write note";
 	}
 
