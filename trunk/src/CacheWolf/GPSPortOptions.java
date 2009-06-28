@@ -29,6 +29,7 @@ package CacheWolf;
 import ewe.ui.*;
 import ewe.io.*;
 import ewe.ui.formatted.TextDisplay;
+import ewe.net.Socket;
 import ewe.reflect.FieldTransfer;
 import ewe.reflect.Reflect;
 import ewe.sys.*;
@@ -94,16 +95,95 @@ class mySerialThread extends mThread{
 	}
 }
 
+class GpsdThread extends mThread{
+	Socket gpsdSocket;
+	boolean run;
+	TextDisplay out;
+	Socket tcpConn;
+	String lastError = new String();
+	public String lastgot;
+	
+	public GpsdThread(TextDisplay td) throws IOException {
+		try{
+			gpsdSocket = new Socket(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
+		} catch (IOException e) {
+			throw new IOException(Global.getPref().gpsdHost);
+		} // catch (UnsatisfiedLinkError e) {} // TODO in original java-vm 
+		out = td;
+		lastgot = null;
+	}
+	
+	public void run() {
+		String gpsResult;
+		run = true;
+		while (run){
+			try {
+				sleep(900);
+			} catch (InterruptedException e) {
+				Global.getPref().log("Ignored Exception", e, true);
+			}
+			if (gpsdSocket != null)	{
+				gpsResult = getGpsdData("ADPQTV\r\n");
+				if (gpsResult!=null) {
+					lastgot = gpsResult;
+					if (out != null) out.appendText(gpsResult,true);
+				}
+			}
+		} // while
+	}
+
+	private String getGpsdData(String command) {
+		byte[] rcvBuff = new byte[1024*10]; // when some action takes a long time (eg. loading or zooming a map), a lot of data can be in the buffer, read that at once
+		int rcvLength = 0;
+		try {
+			gpsdSocket.write(command.getBytes());
+		} catch (IOException e) {
+			Global.getPref().log("Socket exception", e, true);
+		}
+		try {
+			sleep(100);
+		} catch (InterruptedException e) {
+			Global.getPref().log("Ignored exception", e, true);
+		}
+		try {
+			rcvLength = gpsdSocket.read(rcvBuff);
+		} catch (IOException e) {
+			Global.getPref().log("Socket exception", e, true);
+		}
+		String str = null;
+		if (rcvLength > 0)	{
+			str = mString.fromAscii(rcvBuff, 0, rcvLength); 
+		}
+		return str;
+	}
+
+	public String nonBlockingRead() {
+		String ret = new String(lastgot); //mString.fromAscii(gpsBuff,0,gpsLen);
+		lastgot = null;
+		return ret;
+
+	}
+
+	public void stop() {
+		run = false;
+		if (gpsdSocket != null) gpsdSocket.close();
+	}
+}
+
 public class GPSPortOptions extends SerialPortOptions {
 	TextDisplay txtOutput;
 	mButton btnTest, btnUpdatePortList, btnScan;
 	public mInput inputBoxForwardHost;
 	mLabel  labelForwardHost;
 	public mCheckBox forwardGpsChkB;
+	public mInput inputBoxGpsdHost;
+	mLabel  labelGpsdHost;
+	public mCheckBox gpsdChkB;
 	public mInput inputBoxLogTimer;
 	mLabel  labelLogTimer;
 	public mCheckBox logGpsChkB;
 	mySerialThread serThread;
+	GpsdThread gpsdThread = null;
 	boolean gpsRunning = false;
 	MyEditor ed = new MyEditor();
 
@@ -141,6 +221,7 @@ public class GPSPortOptions extends SerialPortOptions {
 		ScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
 		sbp.setOptions(ScrollablePanel.AlwaysShowVerticalScrollers | ScrollablePanel.AlwaysShowHorizontalScrollers);
 		ed.addField(ed.addLast(sbp),"out");
+		
 		forwardGpsChkB = new mCheckBox("");
 		ed.addField(ed.addNext(forwardGpsChkB, CellConstants.DONTSTRETCH, (CellConstants.EAST | CellConstants.DONTFILL)), "forwardGpsChkB");
 		labelForwardHost = new mLabel(MyLocale.getMsg(7105, "Forward GPS data to host"));
@@ -149,6 +230,16 @@ public class GPSPortOptions extends SerialPortOptions {
 		inputBoxForwardHost.setPromptControl(labelForwardHost);
 		inputBoxForwardHost.setToolTip(MyLocale.getMsg(7106, "All data from GPS will be sent to TCP-port 23\n and can be redirected there to a serial port\n by HW Virtual Serial Port"));
 		ed.addField(ed.addLast(inputBoxForwardHost,0 , (CellConstants.WEST | CellConstants.HFILL)), "tcpForwardHost");
+
+		gpsdChkB = new mCheckBox("");
+		ed.addField(ed.addNext(gpsdChkB, CellConstants.DONTSTRETCH, (CellConstants.EAST | CellConstants.DONTFILL)), "gpsdChkB");
+		labelGpsdHost = new mLabel(MyLocale.getMsg(7121, "Receive GPS from gpsd host"));
+		ed.addField(ed.addNext(labelGpsdHost, CellConstants.DONTSTRETCH, (CellConstants.WEST | CellConstants.DONTFILL)), "labelGpsd");
+		inputBoxGpsdHost = new mInput("GpsdHost");
+		inputBoxGpsdHost.setPromptControl(labelGpsdHost);
+		inputBoxGpsdHost.setToolTip(MyLocale.getMsg(7122, "GPS data will be received from a gpsd server, not from a serial port"));
+		ed.addField(ed.addLast(inputBoxGpsdHost,0 , (CellConstants.WEST | CellConstants.HFILL)), "GpsdHost");
+
 		logGpsChkB = new mCheckBox("");
 		ed.addField(ed.addNext(logGpsChkB, CellConstants.DONTSTRETCH, (CellConstants.EAST | CellConstants.DONTFILL)), "logGpsChkB");
 		labelLogTimer = new mLabel(MyLocale.getMsg(7107, "Interval in sec for logging"));
@@ -215,23 +306,44 @@ public class GPSPortOptions extends SerialPortOptions {
 		if (field.equals("test")){
 			if (!gpsRunning){
 				ed_.fromControls();
-				txtOutput.setText(MyLocale.getMsg(7117, "Displaying data from serial port directly:\n"));
-				try {
-					btnScan.set(ControlConstants.Disabled, true);
-					btnScan.repaintNow();
-					this.portName = Common.fixSerialPortName(portName);
-					serThread = new mySerialThread(this, txtOutput);
-					serThread.start();
-					btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
-					gpsRunning = true;
-				} catch (IOException e) {
-					btnScan.set(ControlConstants.Disabled, false);
-					btnScan.repaintNow();
-					txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + this.portName + ", IOException: " + e.getMessage() + "\n", true);
+				if(Global.getPref().useGPSD){
+					txtOutput.setText(MyLocale.getMsg(99999, "Displaying data from gpsd directly:\n"));
+					try {
+						btnScan.set(ControlConstants.Disabled, true);
+						btnScan.repaintNow();
+						gpsdThread = new GpsdThread(txtOutput);
+						gpsdThread.start();
+						btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
+						gpsRunning = true;
+					} catch (IOException e) {
+						(new MessageBox(MyLocale.getMsg(4403, "Error"), 
+							MyLocale.getMsg(99999, "Could not connect to GPSD.") 
+							+ e.getMessage()
+							+ MyLocale.getMsg(99999, "\npossible reasons:\nGPSD is not running or GPSD host is not reachable"), 
+							FormBase.OKB)).execute(); 
+					}
+				}else{
+					txtOutput.setText(MyLocale.getMsg(7117, "Displaying data from serial port directly:\n"));
+					try {
+						btnScan.set(ControlConstants.Disabled, true);
+						btnScan.repaintNow();
+						this.portName = Common.fixSerialPortName(portName);
+						serThread = new mySerialThread(this, txtOutput);
+						serThread.start();
+						btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
+						gpsRunning = true;
+					} catch (IOException e) {
+						btnScan.set(ControlConstants.Disabled, false);
+						btnScan.repaintNow();
+						txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + this.portName + ", IOException: " + e.getMessage() + "\n", true);
+					}
 				}
 			}
 			else {
-				serThread.stop();
+				if(serThread!=null)
+					serThread.stop();
+				if(gpsdThread!=null)
+					gpsdThread.stop();
 				btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7104,"Test$t")));
 				gpsRunning = false;
 				btnScan.set(ControlConstants.Disabled, false);
