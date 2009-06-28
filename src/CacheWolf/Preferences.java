@@ -1,6 +1,5 @@
 package CacheWolf;
 
-import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
 import utils.FileBugfix;
 import ewe.io.*;
@@ -22,6 +21,7 @@ public class Preferences extends MinML{
 	public final int DEFAULT_MAX_LOGS_TO_SPIDER=250;
 	public final int DEFAULT_LOGS_PER_PAGE=5;
 	public final int DEFAULT_INITIAL_HINT_HEIGHT=10;
+	public final int DEFAULT_GPSD_PORT=2947;
 	public static final int YES = 0;
 	public static final int NO = 1;
 	public static final int ASK = 2;
@@ -134,6 +134,12 @@ public class Preferences extends MinML{
 	public boolean forwardGPS = false;
 	/** IP address for forwarding GPS data */
 	public String forwardGpsHost = "192.168.1.15";
+	/** True if the GPS data should be received from a GPSD on this or another host */
+	public boolean useGPSD = false;
+	/** IP address of GPSD host */
+	public String gpsdHost = "127.0.0.1";
+	/** Port for forwarding GPS data */
+	public int gpsdPort = DEFAULT_GPSD_PORT;
 	/** True if the GPS data should be logged to a file */
 	public boolean logGPS = false;
 	/** Timer for logging GPS data */
@@ -308,6 +314,11 @@ public class Preferences extends MinML{
 		else if(name.equals("portforward")) {
 			forwardGPS = Convert.toBoolean(atts.getValue("active"));
 			forwardGpsHost = atts.getValue("destinationHost");
+		}
+		else if(name.equals("gpsd")) {
+			useGPSD = Convert.toBoolean(atts.getValue("active"));
+			gpsdHost = atts.getValue("host");
+			gpsdPort = Convert.toInt(atts.getValue("port"));
 		}
 		else if(name.equals("portlog")) {
 			logGPS = Convert.toBoolean(atts.getValue("active"));
@@ -501,6 +512,7 @@ public class Preferences extends MinML{
 			outp.print("    <proxy prx = \"" + SafeXML.strxmlencode(myproxy) + "\" prt = \"" + SafeXML.strxmlencode(myproxyport) + "\" active = \"" + SafeXML.strxmlencode(proxyActive) + "\" />\n");
 			outp.print("    <port portname = \"" + SafeXML.strxmlencode(mySPO.portName) + "\" baud = \"" + SafeXML.strxmlencode(mySPO.baudRate) + "\"/>\n");
 			outp.print("    <portforward active= \"" + SafeXML.strxmlencode(Convert.toString(forwardGPS)) + "\" destinationHost = \"" + SafeXML.strxmlencode(forwardGpsHost) + "\"/>\n");
+			outp.print("    <gpsd active= \"" + SafeXML.strxmlencode(Convert.toString(useGPSD)) + "\" host = \"" + SafeXML.strxmlencode(gpsdHost) + "\" port = \"" + SafeXML.strxmlencode(gpsdPort) + "\"/>\n");
 			outp.print("    <portlog active= \"" + SafeXML.strxmlencode(Convert.toString(logGPS)) + "\" logTimer = \"" + SafeXML.strxmlencode(logGPSTimer) + "\"/>\n");
 			outp.print("    <font size =\"" + SafeXML.strxmlencode(fontSize) + "\"/>\n");
 			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+
