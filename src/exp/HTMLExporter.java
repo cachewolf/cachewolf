@@ -226,7 +226,11 @@ public class HTMLExporter{
 						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getWayPoint()+".html")));
 						pagefile.print(page_tpl.output());
 						pagefile.close();
-					}catch(Exception e){
+					} catch (IllegalArgumentException e) {
+						exportErrors++;
+						ch.setIncomplete(true);
+						Global.getPref().log("HTMLExport: "+ch.getWayPoint()+" is incomplete reason: ",e,Global.getPref().debug);
+					} catch(Exception e){
 						exportErrors++;
 						Global.getPref().log("HTMLExport: error wehen exporting "+ch.getWayPoint()+" reason: ",e,Global.getPref().debug);
 					}
