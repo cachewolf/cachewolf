@@ -266,6 +266,8 @@ public class SpiderGC{
 					// the "found" state of an existing cache.
 					ch.setFound(true);
 				}
+				// preserve rating information
+				ch.setNumRecommended(cacheInDB.getNumRecommended());
 				cacheInDB.update(ch);
 				cacheInDB.save();
 			}
