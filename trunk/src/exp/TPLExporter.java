@@ -197,8 +197,8 @@ public class TPLExporter {
 						varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.getCacheSize()));
 						varParams.put("WAYPOINT", ch.getWayPoint());
 						varParams.put("OWNER", ch.getCacheOwner());
-						varParams.put("DIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType())?"":CacheTerrDiff.longDT(ch.getHard()));
-						varParams.put("TERRAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType())?"":CacheTerrDiff.longDT(ch.getTerrain()));
+						varParams.put("DIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType())?"":dec.replaceAll(CacheTerrDiff.longDT(ch.getHard())));
+						varParams.put("TERRAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType())?"":dec.replaceAll(CacheTerrDiff.longDT(ch.getTerrain())));
 						varParams.put("DISTANCE", dec.replaceAll(ch.getDistance()));
 						varParams.put("BEARING", ch.bearing);
 						varParams.put("LATLON", ch.LatLon);
