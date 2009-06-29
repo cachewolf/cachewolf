@@ -26,6 +26,7 @@ import ewe.io.PrintWriter;
 import ewe.sys.Convert;
 import ewe.sys.Date;
 import ewe.sys.Handle;
+import ewe.sys.Vm;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.Control;
 import ewe.ui.ControlEvent;
@@ -60,7 +61,7 @@ public class GpxExportNg {
 	final static String expName = "GpxExportNG";
 	final static String TRUE = "True";
 	final static String FALSE = "False";
-	private static GarminMap gm;
+	private static GarminMap poiMapper;
 	private int maxLogs = ewe.math.Number.INTEGER_MAX_VALUE;
 	private int exportErrors = 0;
 
@@ -125,6 +126,10 @@ public class GpxExportNg {
 	static int outType;
 
 	public GpxExportNg() {
+		// do nothing
+	}
+	
+	public void doit() {
 		GpxExportNgForm exportOptions;
 		int ret;
 
@@ -168,8 +173,8 @@ public class GpxExportNg {
 			}
 			
 			if ((new File(baseDir+"/garminmap.xml")).exists()) {
-				gm=new GarminMap();
-				gm.readGarminMap();
+				poiMapper=new GarminMap();
+				poiMapper.readGarminMap();
 			} else {
 				//TODO: display warning
 				Global.getPref().log("unable to load garminmap.xml");
@@ -213,11 +218,11 @@ public class GpxExportNg {
 								"skipping export of incomplete waypoint "
 										+ ch.getWayPoint());
 					} else {
-						String poiId = gm.getPoiId(ch);
+						String poiId = poiMapper.getPoiId(ch);
 						if (null == poiId) {
 							Global.getPref().log("unmatched POI ID for "+ch.getWayPoint());
+							exportErrors++;
 						} else {
-							File outFile;
 							PrintWriter writer;
 							if (fileHandles.containsKey(poiId)) {
 								writer = (PrintWriter) fileHandles.get(poiId);
@@ -265,8 +270,8 @@ public class GpxExportNg {
 		} else {
 			if (customIcons) {
 				if ((new File(FileBase.getProgramDirectory()+"/garminmap.xml")).exists()) {
-					gm=new GarminMap();
-					gm.readGarminMap();
+					poiMapper=new GarminMap();
+					poiMapper.readGarminMap();
 				} else {
 					customIcons = false;
 					Global.getPref().log("unable to load garminmap.xml");
@@ -280,20 +285,22 @@ public class GpxExportNg {
 					Global.getPref().dirty = true;
 				}
 			}
-			
-			final File file;
-			final FileChooser fc = new FileChooser(FileChooserBase.SAVE, 
+			final File file;	
+			if (! sendToGarmin) {
+				final FileChooser fc = new FileChooser(FileChooserBase.SAVE, 
 					Global.getPref().getExportPath(expName+"-GPX"));
 			
-			fc.setTitle("Select target GPX file:");
-			fc.addMask("*.gpx");
+				fc.setTitle("Select target GPX file:");
+				fc.addMask("*.gpx");
 			
-			if (fc.execute() == FormBase.IDCANCEL)
-				return;
+				if (fc.execute() == FormBase.IDCANCEL)
+					return;
 
-			file = fc.getChosenFile();
-			Global.getPref().setExportPath(expName+"-GPX", file.getPath());
-
+				file = fc.getChosenFile();
+				Global.getPref().setExportPath(expName+"-GPX", file.getPath());
+			} else {
+				file = new File("").createTempFile("gpxexport", null, null);
+			}
 			try {
 				ProgressBarForm pbf = new ProgressBarForm();
 				Handle h = new Handle();
@@ -336,6 +343,18 @@ public class GpxExportNg {
 				else
 					Global.getPref().log("GPX Export: unable to write output to " + file.toString());
 				// TODO: give a message to the user
+			}
+			if (sendToGarmin) {
+				try {
+					String gpsBabelCommand;
+					gpsBabelCommand = Global.getPref().gpsbabel+" "+Global.getPref().garminGPSBabelOptions+" -i gpx -f "+ file.getCreationName() +" -o garmin -F " + Global.getPref().garminConn +":";
+					if (Global.getPref().debug) Global.getPref().log("GPX Export: gpsbabelcommand is "+ gpsBabelCommand);
+					ewe.sys.Process p = Vm.exec( gpsBabelCommand );
+					p.waitFor();
+				} catch (Exception ex) {
+					Global.getPref().log("GPX Export error :", ex, Global.getPref().debug);
+				}
+				file.delete();
 			}
 		}
 		if (exportErrors > 0) {
@@ -469,7 +488,7 @@ public class GpxExportNg {
 		}
 
 		if (customIcons) {
-			trans.add(new Regex("@@WPSYMBOL@@", gm.getIcon(ch)));
+			trans.add(new Regex("@@WPSYMBOL@@", poiMapper.getIcon(ch)));
 		} else {
 			if (ch.isAddiWpt()) {
 				trans.add(new Regex("@@WPSYMBOL@@", CacheType.id2GpxString(
@@ -529,10 +548,6 @@ public class GpxExportNg {
 
 		ret.append("\t\t</groundspeak:cache>\n");
 		return ret.toString();
-	}
-
-	public void doit() {
-
 	}
 
 	public String formatTbs(CacheHolder ch) {
@@ -654,7 +669,7 @@ public class GpxExportNg {
 			return "Needs Maintenance";
 		if (image.indexOf("coord_update.gif") > -1)
 			return "Update Coordinates";
-		Global.getPref().log("GPX Export: unknown logtype "+image);
+		Global.getPref().log("GPX Export: warning - unknown logtype "+image+" was changed to 'Write note'");
 		exportErrors++;
 		return "Write note";
 	}
@@ -703,7 +718,8 @@ public class GpxExportNg {
 			cbSeperateFiles = new mCheckBox("one file per type");
 
 			cbSendToGarmin = new mCheckBox("send to Garmin GPSr");
-			cbSendToGarmin.modify(Control.Disabled, 0); // not yet
+			if (Global.getPref().gpsbabel == null)
+				cbSendToGarmin.modify(Control.Disabled, 0);
 
 			cbSmartId = new mCheckBox("use smart IDs");
 			
@@ -745,8 +761,9 @@ public class GpxExportNg {
 							cbCustomIcons.repaint();
 						if (cbSeperateFiles.change(0, Control.Disabled))
 							cbSeperateFiles.repaint();
-						// if (cbSendToGarmin.change(0,Control.Disabled))
-						// cbSendToGarmin.repaint();
+						if (Global.getPref().gpsbabel != null)
+							if (cbSendToGarmin.change(0,Control.Disabled))
+								cbSendToGarmin.repaint();
 						if (cbSmartId.change(0, Control.Disabled))
 							cbSmartId.repaint();
 						if (ibMaxLogs.change(Control.Disabled, 0))
@@ -757,8 +774,9 @@ public class GpxExportNg {
 							cbCustomIcons.repaint();
 						if (cbSeperateFiles.change(Control.Disabled, 0))
 							cbSeperateFiles.repaint();
-						// if (cbSendToGarmin.change(0,Control.Disabled))
-						// cbSendToGarmin.repaint();
+						if (Global.getPref().gpsbabel != null)
+							if (cbSendToGarmin.change(0,Control.Disabled))
+						 		cbSendToGarmin.repaint();
 						if (cbSmartId.change(0, Control.Disabled))
 							cbSmartId.repaint();
 						if (ibPrefix.change(Control.Disabled, 0))
@@ -774,8 +792,8 @@ public class GpxExportNg {
 							cbCustomIcons.repaint();
 						if (cbSeperateFiles.change(Control.Disabled, 0))
 							cbSeperateFiles.repaint();
-						// if (cbSendToGarmin.change(Control.Disabled,0))
-						// cbSendToGarmin.repaint();
+						if (cbSendToGarmin.change(Control.Disabled,0))
+							cbSendToGarmin.repaint();
 						if (cbSmartId.change(Control.Disabled, 0))
 							cbSmartId.repaint();
 						if (ibPrefix.change(Control.Disabled, 0))
@@ -786,8 +804,13 @@ public class GpxExportNg {
 				} else if (ev.target == cbSeperateFiles) {
 					if (cbSeperateFiles.state) {
 						if (ibPrefix.change(Control.Disabled, 1)) ibPrefix.repaint();
+						if (cbSendToGarmin.change(Control.Disabled, 0)) {
+							cbSendToGarmin.setState(false);
+							cbSendToGarmin.repaint();
+						}
 					} else {
 						if (ibPrefix.change(Control.Disabled, 0)) ibPrefix.repaint();
+						if (cbSendToGarmin.change(0, Control.Disabled)) cbSendToGarmin.repaint();
 					}
 				} else if (ev.target == btnOk) {
 					if (cbPqLike.state) {
