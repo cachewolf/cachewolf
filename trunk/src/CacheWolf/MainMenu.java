@@ -65,7 +65,6 @@ public class MainMenu extends MenuBar {
 	private Form father;
 	private TablePanel tbp;
 	private FilterScreen scnFilter=new FilterScreen();
-	private boolean addExeToGpsbabel = false;
 	private static boolean searchInDescriptionAndNotes = false;
 	private static boolean searchInLogs = false;
 
@@ -108,33 +107,9 @@ public class MainMenu extends MenuBar {
 		exitems[6] = exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV"));
 		exitems[7] = exportLOC = new MenuItem(MyLocale.getMsg(215,"to LOC"));
 		exitems[8] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
-		boolean gpsbabelFound = false;
-		try{
-			// this will *only* work with ewe.jar at the moment
-			ewe.sys.Process p = Vm.exec("gpsbabel -V");
-			p.waitFor();
-			gpsbabelFound = true;
-		}catch(IOException ioex){
-			// Most of the time there will be an exception, so don't complain
-		}
-		if ( !gpsbabelFound ) {
-			try{
-				// this will *only* work with ewe.jar at the moment
-				ewe.sys.Process p = Vm.exec("gpsbabel.exe -V");
-				p.waitFor();
-				addExeToGpsbabel = true;
-				gpsbabelFound = true;
-			}catch(IOException ioex){
-				// Most of the time there will be an exception, so don't complain
-			}
-		}		
-		
-		if ( !gpsbabelFound ) {
+		if ( Global.getPref().gpsbabel == null ) {
 			exitems[8].modifiers = MenuItem.Disabled;	
 		}
-		
-		//exitems[8] = exportCacheMate = new MenuItem(MyLocale.getMsg(123,"to Cachemate"));
-		//if(!(new File(cwd + "/cmconvert/cmconvert.exe")).exists()) exitems[8].modifiers = MenuItem.Disabled;
 		exitems[9] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
 		exitems[10] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
 		exitems[11] = exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist"));
@@ -435,6 +410,7 @@ public class MainMenu extends MenuBar {
 				loc.doIt();
 			}
 			if(mev.selectedItem == exportGPS){
+				String gpsBabelCommand;
 				Vm.showWait(true);
 				LocExporter loc = new LocExporter();
 				//String tmpFileName = FileBase.getProgramDirectory() + "/temp.loc";
@@ -444,21 +420,16 @@ public class MainMenu extends MenuBar {
 				loc.setTmpFileName(tmpFileName);
 				loc.doIt(LocExporter.MODE_AUTO);
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
-				try{
-					String gpsBabelCommand = "";
-					if ( addExeToGpsbabel ) {
-						gpsBabelCommand = "gpsbabel.exe "+pref.garminGPSBabelOptions+" -i geo -f "+ tmpFileName +" -o garmin -F " + pref.garminConn +":";
-					} else {
-						gpsBabelCommand = "gpsbabel "+pref.garminGPSBabelOptions+" -i geo -f "+ tmpFileName +" -o garmin -F " + pref.garminConn +":";						
-					}
-					pref.log( gpsBabelCommand );
+				gpsBabelCommand = pref.gpsbabel+" "+pref.garminGPSBabelOptions+" -i geo -f "+ tmpFileName +" -o garmin -F " + pref.garminConn +":";
+				if (pref.debug)	pref.log( gpsBabelCommand );
+				try {
 					// this will *only* work with ewe.jar at the moment
 					ewe.sys.Process p = Vm.exec( gpsBabelCommand );
 					p.waitFor();
 				}catch(IOException ioex){
 					Vm.showWait(false);
 					(new MessageBox("Error", "Garmin export unsuccessful", FormBase.OKB)).execute();
-					pref.log("Error exporting to Garmin",ioex);
+					pref.log("Error exporting to Garmin",ioex,pref.debug);
 				};
 				ProgressBarForm.clear();
 				Vm.showWait(false);

@@ -102,6 +102,8 @@ public class Preferences extends MinML{
 			}
 		} else
 			fontSize = 11;
+		
+		setgpsbabel();
 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -236,7 +238,7 @@ public class Preferences extends MinML{
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
-	 * the line: <pre><debug value="true"></pre>
+	 * the line: <pre><debug value="true" /></pre>
 	 * to the pref.xml file.
 	 */
 	public boolean debug = false;
@@ -912,5 +914,26 @@ public class Preferences extends MinML{
 			result[i++] = (String) en.nextElement();
 		}
 		return result;
+	}
+	
+	public String gpsbabel = null;
+	
+	public void setgpsbabel() {
+		try{
+			ewe.sys.Process p = Vm.exec("gpsbabel -V");
+			p.waitFor();
+			gpsbabel="gpsbabel";
+		}catch(IOException ioex){
+			// Most of the time there will be an exception, so don't complain
+		}
+		if ( gpsbabel == null ) {
+			try{
+				ewe.sys.Process p = Vm.exec("gpsbabel.exe -V");
+				p.waitFor();
+				gpsbabel = "gpsbabel.exe";
+			}catch(IOException ioex){
+				// Most of the time there will be an exception, so don't complain
+			}
+		}
 	}
 }
