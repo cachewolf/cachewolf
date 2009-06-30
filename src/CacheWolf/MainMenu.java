@@ -69,6 +69,9 @@ public class MainMenu extends MenuBar {
 	private static boolean searchInLogs = false;
 
 	public MainMenu(Form f){
+		
+		Global.getPref().setgpsbabel();
+		
 		father = f;
 	
 		///////////////////////////////////////////////////////////////////////
