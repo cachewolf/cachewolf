@@ -72,7 +72,7 @@ public class GPXImporter extends MinML {
 		inWpt = false;
 		inCache = false;
 		inLogs = false;
-		inBug =false;
+		inBug = false;
 	}
 /*	skg: This Constructor is not referenced, therefore commented out 
 	public GPXImporter(Vector DB, String[] f,String d, Preferences p)
@@ -294,7 +294,7 @@ public class GPXImporter extends MinML {
 			//if (searchWpt(cacheDB, holder.wayPoint)== -1){
 			int index=cacheDB.getIndex(holder.getWayPoint());
 			//Vm.debug("here ?!?!?");
-			//Vm.debug("chould be new!!!!");
+			//Vm.debug("could be new!!!!");
 			if (index == -1){
 				holder.setNoFindLogs(holder.getFreshDetails().CacheLogs.countNotFoundLogs());
 				holder.setNew(true);
@@ -361,7 +361,6 @@ public class GPXImporter extends MinML {
 		if (name.equals("groundspeak:name")&& inBug) {
 			Travelbug tb=new Travelbug(strData);
 			holder.getFreshDetails().Travelbugs.add(tb);
-			//holder.Bugs += "<b>Name:</b> " + strData + "<br><hr>";
 			holder.setHas_bugs(true);
 			return;
 		}
@@ -396,7 +395,7 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		//Vm.debug("Check: " + inWpt + " / " + fromOC);
-		//if (name.equals("desc") && inWpt && fromOC) {
+
 		// fill name with contents of <desc>, in case of gc.com the name is
 		// later replaced by the contents of <groundspeak:name> which is shorter
 		if (name.equals("desc")&& inWpt ) {
@@ -498,7 +497,7 @@ public class GPXImporter extends MinML {
 		if (debugGPX) Vm.debug("Char: " + strBuf.toString());
 	}
 	
-
+	// if you change any of these make sure to check image2TypeText in the GPX exporters
 	public static String typeText2Image(String typeText){
 		if (typeText.equals("Found it")||typeText.equals("Found")||typeText.equals("find")) return "icon_smile.gif";
 		if (typeText.equals("Didn't find it")||typeText.equals("Not Found")||typeText.equals("no_find")) return "icon_sad.gif";
@@ -506,18 +505,19 @@ public class GPXImporter extends MinML {
 			||typeText.equals("Not Attempted")||typeText.equals("Other")) return "icon_note.gif";
 		if (typeText.equals("Enable Listing")) return "icon_enabled.gif";
 		if (typeText.equals("Temporarily Disable Listing")) return "icon_disabled.gif";
-		if (typeText.equals("Webcam Photo Taken")) return "11.png";
+		if (typeText.equals("Webcam Photo Taken")) return "icon_camera.gif";
 		if (typeText.equals("Attended")) return "icon_attended.gif";
-		if (typeText.equals("Publish Listing")) return "green.png";
+		if (typeText.equals("Publish Listing")) return "icon_greenlight.gof";
 		if (typeText.equals("Will Attend")) return "icon_rsvp.gif";
 		if (typeText.equals("Post Reviewer Note")) return "big_smile.gif";
 		if (typeText.equals("Unarchive")) return "traffic_cone.gif";
-		if (typeText.equals("Archive (show)")) return "traffic_cone.gif";
+		if (typeText.equals("Archive")) return "traffic_cone.gif";
 		if (typeText.equals("Owner Maintenance")) return "icon_maint.gif";
 		if (typeText.equals("Needs Maintenance")) return "icon_needsmaint.gif";
+		if (typeText.equals("Needs Archived")) return "icon_remove.gif";
 		if (typeText.equals("Update Coordinates")) return "coord_update.gif";
-		//Vm.debug("Unknown Log Type:" + typeText);
-		return typeText;
+		Global.getPref().log("GPX Import: warning, unknown logtype "+typeText+" assuming Write note");
+		return "icon_note.gif";
 	}
 	
 	public static String TCSizetoText(String size){

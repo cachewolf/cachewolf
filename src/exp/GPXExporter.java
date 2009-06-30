@@ -170,13 +170,14 @@ public class GPXExporter extends Exporter{
 		if (image.equals("icon_camera.gif")) return "Webcam Photo Taken";
 		if (image.equals("11.png")) return "Webcam Photo Taken";
 		if (image.equals("icon_attended.gif")) return "Attended";
-		if (image.equals("green.gif")) return "Publish Listing";
+		if (image.equals("icon_greenlight.gif")) return "Publish Listing";
 		if (image.equals("icon_rsvp.gif")) return "Will Attend";
 		if (image.equals("big_smile.gif")) return "Post Reviewer Note";
 		if (image.equals("traffic_cone.gif")) return "Archive (show)";
 		if (image.equals("icon_maint.gif")) return "Owner Maintenance";
 		if (image.equals("icon_needsmaint.gif")) return "Needs Maintenance";
 		if (image.equals("coord_update.gif")) return "Update Coordinates";
+		if (image.equals("icon_remove.gif")) return "Needs Archived";
 
 		return image;
 	}
