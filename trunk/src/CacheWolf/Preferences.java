@@ -102,8 +102,6 @@ public class Preferences extends MinML{
 			}
 		} else
 			fontSize = 11;
-		
-		setgpsbabel();
 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
