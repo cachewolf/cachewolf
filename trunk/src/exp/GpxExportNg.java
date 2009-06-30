@@ -21,7 +21,10 @@ import ewe.fx.Sound;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;
+import ewe.io.FileOutputStream;
 import ewe.io.FileWriter;
+import ewe.io.IOException;
+import ewe.io.InputStream;
 import ewe.io.PrintWriter;
 import ewe.sys.Convert;
 import ewe.sys.Date;
@@ -42,6 +45,9 @@ import ewe.ui.mLabel;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
+import ewe.util.zip.ZipEntry;
+import ewe.util.zip.ZipException;
+import ewe.util.zip.ZipFile;
 
 /**
  * experimental GPX exporter that should better handle the various tasks that
@@ -153,6 +159,7 @@ public class GpxExportNg {
 			final String baseDir = FileBase.getProgramDirectory();
 			final String prefix = exportOptions.getPrefix();
 			final FileChooser fc;
+			ZipFile poiZip = null;
 			
 			if (sendToGarmin) { 
 				fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT,Global.getPref().getExportPath(expName+"-GPI"));
@@ -188,12 +195,12 @@ public class GpxExportNg {
 				tempDir = outDir;
 				String tmp[] = new FileBugfix(tempDir).list(prefix + "*.gpx", ewe.io.FileBase.LIST_FILES_ONLY);
 				for (int i=0; i < tmp.length;i++){
-					FileBugfix tmpFile = new FileBugfix(tempDir + tmp[i]);
+					FileBugfix tmpFile = new FileBugfix(tempDir + File.separator + tmp[i]);
 					tmpFile.delete();
 				}
 				tmp = new FileBugfix(tempDir).list(prefix + "*.bmp", ewe.io.FileBase.LIST_FILES_ONLY);
 				for (int i=0; i < tmp.length;i++){
-					FileBugfix tmpFile = new FileBugfix(tempDir + tmp[i]);
+					FileBugfix tmpFile = new FileBugfix(tempDir + File.separator + tmp[i]);
 					tmpFile.delete();
 				}
 			}
@@ -240,18 +247,28 @@ public class GpxExportNg {
 					h.changed();
 				}
 				
+				try {
+					poiZip = new ZipFile (FileBase.getProgramDirectory() + File.separator + "GarminPOI.zip");
+				} catch (IOException e) {
+					Global.getPref().log("GPX Export: warning GarminPOI.zip not found", e, Global.getPref().debug);
+					exportErrors++;
+				}
+				
 				Enumeration keys = fileHandles.keys();
 				while (keys.hasMoreElements()) {
 					String key = (String) keys.nextElement();
 					PrintWriter writer = (PrintWriter) fileHandles.get(key);
 					writer.print("</gpx>\n");
 					writer.close();
+					if (poiZip != null)
+						if (!copyPoiIcon(outDir,key,prefix,poiZip)) 
+							exportErrors++;
 				}
 				
 				if (sendToGarmin) {
 					String tmp[] = new FileBugfix(outDir).list(prefix + "*.gpi", ewe.io.FileBase.LIST_FILES_ONLY);
 					for (int i=0; i < tmp.length;i++){
-						FileBugfix tmpFile = new FileBugfix(tempDir + tmp[i]);
+						FileBugfix tmpFile = new FileBugfix(tempDir + File.separator + tmp[i]);
 						tmpFile.delete();
 					}				
 
@@ -639,47 +656,63 @@ public class GpxExportNg {
 	}
 
 	public String image2TypeText(String image) {
-		if (image.indexOf("icon_smile.gif") > -1)
-			return "Found it";
-		if (image.indexOf("icon_sad.gif") > -1)
-			return "Didn't find it";
-		if (image.indexOf("icon_note.gif") > -1)
-			return "Write note";
-		if (image.indexOf("icon_enabled.gif") > -1)
-			return "Enable Listing";
-		if (image.indexOf("icon_disabled.gif") > -1)
-			return "Temporarily Disable Listing";
-		if (image.indexOf("icon_camera.gif") > -1)
-			return "Webcam Photo Taken";
-		if (image.indexOf("11.png") > -1)
-			return "Webcam Photo Taken";
-		if (image.indexOf("icon_attended.gif") > -1)
-			return "Attended";
-		if (image.indexOf("green.gif") > -1)
-			return "Publish Listing";
-		if (image.indexOf("icon_rsvp.gif") > -1)
-			return "Will Attend";
-		if (image.indexOf("big_smile.gif") > -1)
-			return "Post Reviewer Note";
-		if (image.indexOf("traffic_cone.gif") > -1)
-			return "Archive (show)";
-		if (image.indexOf("icon_maint.gif") > -1)
-			return "Owner Maintenance";
-		if (image.indexOf("icon_needsmaint.gif") > -1)
-			return "Needs Maintenance";
-		if (image.indexOf("coord_update.gif") > -1)
-			return "Update Coordinates";
+		if (image.equals("icon_smile.gif")) return "Found it";
+		if (image.equals("icon_sad.gif")) return "Didn't find it";
+		if (image.equals("icon_note.gif")) return "Write note";
+		if (image.equals("icon_enabled.gif")) return "Enable Listing";
+		if (image.equals("icon_disabled.gif")) return "Temporarily Disable Listing";
+		if (image.equals("icon_camera.gif")) return "Webcam Photo Taken";
+		if (image.equals("icon_attended.gif")) return "Attended";
+		if (image.equals("icon_greenlight.gif")) return "Publish Listing";
+		if (image.equals("icon_rsvp.gif")) return "Will Attend";
+		if (image.equals("big_smile.gif")) return "Post Reviewer Note";
+		if (image.equals("traffic_cone.gif")) return "Archive";
+		if (image.equals("icon_maint.gif")) return "Owner Maintenance";
+		if (image.equals("icon_needsmaint.gif")) return "Needs Maintenance";
+		if (image.equals("coord_update.gif")) return "Update Coordinates";
+		if (image.equals("icon_remove.gif")) return "Needs Archived";
 		Global.getPref().log("GPX Export: warning - unknown logtype "+image+" was changed to 'Write note'");
 		exportErrors++;
 		return "Write note";
 	}
 
+	/**
+	 * create a position information suitable for a gc.com PQlike export
+	 * @param pos position
+	 * @return if position is valid return the cachewolf formatted position, otherwise return teh string used in PQs
+	 */
 	private String formatAddiLatLon(CWPoint pos) {
 		if (pos.isValid()) {
 			return pos.toString();
 		} else {
 			return "N/S  __ ° __ . ___ W/E ___ ° __ . ___";
 		}
+	}
+	
+	boolean copyPoiIcon(String outdir, String type, String prefix, ZipFile poiZip) {
+		ZipEntry icon;
+		byte[] buff;
+		int len;
+		
+		try {	
+			icon = poiZip.getEntry(type+".bmp");
+			if (icon == null) return false; // icon not found in archive
+			
+			buff = new byte[ icon.getSize() ];
+			InputStream  fis = poiZip.getInputStream(icon);
+			FileOutputStream fos = new FileOutputStream(outdir.concat(File.separator).concat(prefix).concat(type).concat(".bmp"));
+			while( 0 < (len = fis.read( buff )) ) fos.write( buff, 0, len );
+			fos.flush();
+			fos.close();
+			fis.close();
+		} catch (ZipException e) {
+			Global.getPref().log("failed to copy icon "+type+".bmp", e, Global.getPref().debug);
+			return false;
+		} catch (IOException e) {
+			Global.getPref().log("failed to copy icon "+type+".bmp", e, Global.getPref().debug);
+			return false;
+		}
+		return true;
 	}
 
 	/**
