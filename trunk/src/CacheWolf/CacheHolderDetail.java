@@ -194,7 +194,7 @@ public class CacheHolderDetail {
 				if (new FileBugfix(dir + getParent().getWayPoint() + ".xml").exists()) in = new FileReader(dir+getParent().getWayPoint() + ".xml");
 			}
 			if (in == null) throw new FileNotFoundException(dir+getParent().getWayPoint().toLowerCase()+".xml");
-			Global.getPref().log("Reading file "+getParent().getWayPoint() + ".xml");
+			if (Global.getPref().debug) Global.getPref().log("Reading file "+getParent().getWayPoint() + ".xml");
 			String text= in.readAll();
 			in.close();
 			Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);		
