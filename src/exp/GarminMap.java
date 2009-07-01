@@ -38,7 +38,7 @@ class GarminMap extends MinML {
 		if (name.equals("icon")) {
 			symbols.add(new IconMap(atts.getValue("type"),atts.getValue("name"),atts.getValue("found"),
 					atts.getValue("size"),atts.getValue("terrain"),atts.getValue("difficulty"),
-					atts.getValue("status"),atts.getValue("poiid")));
+					atts.getValue("status"),atts.getValue("poiid"),atts.getValue("ozicolor")));
 		}
 	}
 
@@ -82,6 +82,24 @@ class GarminMap extends MinML {
 		}
 		return null;
 	}
+	
+	public String ozicolor(CacheHolder ch) {
+		int mapSize=symbols.size();
+		// Try each icon in turn
+		for (int i=0; i<mapSize; i++) {
+			IconMap icon=(IconMap) symbols.get(i);
+			boolean match=true;
+			// If a certain attribute is not null it must match the current caches values
+			match=match && ((icon.type==null) || ch.getType()==0 || icon.type.equals(String.valueOf(ch.getType())));
+			match=match && ((icon.size==null) || ch.getCacheSize()==0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize())));
+			match=match && ((icon.terrain==null) || ch.getTerrain()==0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
+			match=match && ((icon.difficulty==null) ||  ch.getHard()==0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard())));
+			match=match && ((icon.status==null) ||  ch.getCacheStatus().startsWith(icon.status));
+			match=match && ((icon.found==null) || ch.is_found());
+			if (match) return icon.ozicolor;
+		}
+		return null;
+	}
 
 	private class IconMap {
 		public String type;
@@ -92,8 +110,9 @@ class GarminMap extends MinML {
 		public String found;
 		public String status;
 		public String poiId;
+		public String ozicolor;
 
-		IconMap(String type, String name, String found, String size, String terrain, String difficulty, String status, String poiId) {
+		IconMap(String type, String name, String found, String size, String terrain, String difficulty, String status, String poiId, String ozicolor) {
 			this.type=type;
 			this.name=name;
 			this.found=found;
@@ -102,6 +121,7 @@ class GarminMap extends MinML {
 			this.difficulty=difficulty;
 			this.status=status;
 			this.poiId = poiId;
+			this.ozicolor = ozicolor;
 		}
 	}
 

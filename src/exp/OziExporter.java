@@ -1,4 +1,6 @@
 package exp;
+import ewe.io.File;
+import ewe.io.FileBase;
 import CacheWolf.*;
 
 /**
@@ -6,10 +8,18 @@ import CacheWolf.*;
 */
 public class OziExporter extends Exporter{
 	
+	GarminMap poiMapper;
+	
 	public OziExporter(Preferences p, Profile prof){
 		super();
 		this.setHowManyParams(LAT_LON);
 		this.setMask("*.wpt");
+		if ((new File(FileBase.getProgramDirectory()+"/garminmap.xml")).exists()) {
+			poiMapper=new GarminMap();
+			poiMapper.readGarminMap();
+		} else {
+			poiMapper = null;
+		}
 	}
 	
 	public String header () {
@@ -31,7 +41,18 @@ public class OziExporter extends Exporter{
 		// usually start at 1 and increment. Can be set to -1 (minus 1) and the number will be auto generated.
 		strBuf.append("-1,");
 		// Field 2 : Name - the waypoint name, use the correct length name to suit the GPS type.
-		strBuf.append(ch.getWayPoint() + ",");
+		if (ch.getType() == CacheType.CW_TYPE_CUSTOM || ch.isAddiWpt()) {
+			strBuf.append(ch.getWayPoint() + ",");
+		} else {
+			strBuf.append(ch.getWayPoint()
+			.concat(" ")
+			.concat(CacheType.getExportShortId(ch.getType()))
+			.concat(String.valueOf(ch.getHard()))
+			.concat(String.valueOf(ch.getTerrain()))
+			.concat(CacheSize.getExportShortId(ch.getCacheSize()))
+			.concat(",")
+			);
+		}
 		// Field 3 : Latitude - decimal degrees.
 		strBuf.append(lat+",");
 		// Field 4 : Longitude - decimal degrees.
@@ -43,13 +64,19 @@ public class OziExporter extends Exporter{
 		// Field 7 : Status - always set to 1
 		strBuf.append("1,");
 		// Field 8 : Map Display Format
-		strBuf.append("0,");
+		strBuf.append("3,");
 		// Field 9 : Foreground Color (RGB value)
 		strBuf.append("0,");
 		// Field 10 : Background Color (RGB value)
-		strBuf.append("16777215,");
+		String color="16777215";
+		if (poiMapper != null) {
+			String tmpcolor = poiMapper.ozicolor(ch);
+			if (tmpcolor != null)
+				color = tmpcolor;
+		}
+		strBuf.append(color+",");
 		// Field 11 : Description (max 40), no commas
-		tmpName = simplifyString(ch.getCacheName());
+		tmpName = simplifyString(ch.getCacheName()).replace(',', ' ');
 		if (tmpName.length() <= 40){
 			strBuf.append(tmpName + ",");
 		}
@@ -65,15 +92,15 @@ public class OziExporter extends Exporter{
 		// Field 15 : Altitude - in feet (-777 if not valid)
 		strBuf.append("-777,");
 		// Field 16 : Font Size - in points
-		strBuf.append("8,");
+		strBuf.append("7,");
 		// Field 17 : Font Style - 0 is normal, 1 is bold.
-		strBuf.append("1,");
+		strBuf.append("0,");
 		// Field 18 : Symbol Size - 17 is normal size
 		strBuf.append("17,");
 		// Field 19 : Proximity Symbol Position
 		strBuf.append("0,");
 		// Field 20 : Proximity Time
-		strBuf.append("  10.0,");
+		strBuf.append("10.0,");
 	    // Field 21 : Proximity or Route or Both
 		strBuf.append("2,");
 		// Field 22 : File Attachment Name
