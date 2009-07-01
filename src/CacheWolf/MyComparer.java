@@ -82,10 +82,7 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==13) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				if (ch.getWayPoint().startsWith("OC"))
-					ch.sort=MyLocale.formatLong(ch.getNumRecommended(),"00000");
-				else
-					ch.sort="\uFFFF";
+				ch.sort=MyLocale.formatLong(ch.getNumRecommended(),"00000");
 			}			
 		} else if (colToCompare==14) {
 			for (int i=0; i<visibleSize; i++) {
