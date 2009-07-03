@@ -139,11 +139,11 @@ public class DescriptionPanel extends CellPanel{
 		sb.append("<hr><font size=\"+1\" color=\"red\">").append(MyLocale.getMsg(202,"IMAGES").toUpperCase()).append("</font>");
 		sb.append("<br><br>");
 		for (int i=imagesShown; i<chD.images.size(); i++) {
-			sb.append(chD.images.get(i).getText()).append("<br>");
+			sb.append(chD.images.get(i).getTitle()).append("<br>");
 			// Show the additional text if there is one
 			if (chD.images.get(i).getComment()!=null) sb.append("<font color='blue'>").append(chD.images.get(i).getComment()).append("</font>");
 			// Only show the image if images are enabled
-			if (Global.getPref().descShowImg) sb.append("<img src=\""+chD.images.get(i).getName()+"\"><br>");
+			if (Global.getPref().descShowImg) sb.append("<img src=\""+chD.images.get(i).getFilename()+"\"><br>");
 			sb.append("<br><br><hr>");
 		}
 		return sb.toString();

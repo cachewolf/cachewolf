@@ -147,9 +147,9 @@ public class HTMLExporter{
 							cacheImg.clear();
 							for(int j = 0; j<det.images.size(); j++){
 								imgParams = new Hashtable();
-								String imgFile = new String(det.images.get(j).getName());
+								String imgFile = new String(det.images.get(j).getFilename());
 								imgParams.put("FILE", imgFile);
-								imgParams.put("TEXT",det.images.get(j).getText());
+								imgParams.put("TEXT",det.images.get(j).getTitle());
 								DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
 								cacheImg.add(imgParams);
 							}
@@ -159,9 +159,9 @@ public class HTMLExporter{
 							logImg.clear();
 							for(int j = 0; j<det.logImages.size(); j++){
 								logImgParams = new Hashtable();
-								String logImgFile = det.logImages.get(j).getName();
+								String logImgFile = det.logImages.get(j).getFilename();
 								logImgParams.put("FILE", logImgFile);
-								logImgParams.put("TEXT",det.logImages.get(j).getText());
+								logImgParams.put("TEXT",det.logImages.get(j).getTitle());
 								DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
 								logImg.add(logImgParams);
 							}
@@ -171,9 +171,9 @@ public class HTMLExporter{
 							usrImg.clear();
 							for(int j = 0; j<det.userImages.size(); j++){
 								usrImgParams = new Hashtable();
-								String usrImgFile = new String(det.userImages.get(j).getName());
+								String usrImgFile = new String(det.userImages.get(j).getFilename());
 								usrImgParams.put("FILE", usrImgFile);
-								usrImgParams.put("TEXT",det.userImages.get(j).getText());
+								usrImgParams.put("TEXT",det.userImages.get(j).getTitle());
 								DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
 								usrImg.add(usrImgParams);
 							}
@@ -289,7 +289,7 @@ public class HTMLExporter{
 					// GPX files). We have to allow for this situation.
 					Object localImageSource = null;
 					if (imageNo < chD.images.size()) {
-						localImageSource = chD.images.get(imageNo).getName();
+						localImageSource = chD.images.get(imageNo).getFilename();
 					}
 					if (localImageSource == null) localImageSource = imgUrl;
 					s.append("<img src=\""+localImageSource+"\">");

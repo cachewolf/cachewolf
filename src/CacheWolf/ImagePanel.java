@@ -130,7 +130,7 @@ public class ImagePanel extends InteractivePanel{
 		AniImage AimgText;
 		locCounter=0;
 		for(int i = 0; i<pImages.size(); i++){
-			location = profile.dataDir + pImages.get(i).getName();
+			location = profile.dataDir + pImages.get(i).getFilename();
 			if (!(new FileBugfix(location)).exists()) {
 				location=NO_IMAGE;
 				if (!pref.showDeletedImages) continue; // Don't show the deleted Image if user does not want it
@@ -172,7 +172,7 @@ public class ImagePanel extends InteractivePanel{
 					if (location.equals(NO_IMAGE))
 						imgText=MyLocale.getMsg(342,"Deleted");
 					else
-						imgText = SafeXML.cleanback(pImages.get(i).getText());
+						imgText = SafeXML.cleanback(pImages.get(i).getTitle());
 					if(imgText.length()==0) imgText = "???";
 					AimgText = new AniImage();
 					AimgText = getImageText(imgText);
