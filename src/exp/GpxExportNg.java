@@ -26,12 +26,14 @@ import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.PrintWriter;
+import ewe.io.StreamReader;
 import ewe.sys.Convert;
 import ewe.sys.Date;
 import ewe.sys.Handle;
+import ewe.sys.Process;
 import ewe.sys.Vm;
 import ewe.ui.CheckBoxGroup;
-import ewe.ui.ControlConstants;
+import ewe.ui.Control;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
@@ -83,7 +85,7 @@ public class GpxExportNg {
 			.concat("<keywords>cache, geocache, waypoints</keywords>\n")
 	// TODO: is it worth a second loop?
 	// .concat("<bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\" maxlon=\"6.918817\" />")
-			;
+	;
 
 	final static String GPXCOMPACT = "\t<wpt lat=\"@@WPLAT@@\" lon=\"@@WPLON@@\">\n"
 			.concat("\t\t<time>@@CACHETIME@@T00:00:00</time>\n")
@@ -134,7 +136,7 @@ public class GpxExportNg {
 	public GpxExportNg() {
 		// do nothing
 	}
-	
+
 	public void doit() {
 		GpxExportNgForm exportOptions;
 		int ret;
@@ -160,47 +162,55 @@ public class GpxExportNg {
 			final String prefix = exportOptions.getPrefix();
 			final FileChooser fc;
 			ZipFile poiZip = null;
-			
-			if (sendToGarmin) { 
-				fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT,Global.getPref().getExportPath(expName+"-GPI"));
+
+			if (sendToGarmin) {
+				fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, 
+						Global.getPref().getExportPath(expName + "-GPI"));
 			} else {
-				fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT,Global.getPref().getExportPath(expName+"-POI"));
+				fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, 
+						Global.getPref().getExportPath(expName + "-POI"));
 			}
-			
+
 			fc.setTitle("Select target directory:");
-			
+
 			if (fc.execute() == FormBase.IDCANCEL)
 				return;
 
 			outDir = fc.getChosenFile().getFullPath();
 			if (sendToGarmin) {
-				Global.getPref().setExportPath(expName+"-GPI", outDir);
+				Global.getPref().setExportPath(expName + "-GPI", outDir);
 			} else {
-				Global.getPref().setExportPath(expName+"-POI", outDir);
+				Global.getPref().setExportPath(expName + "-POI", outDir);
 			}
-			
-			if ((new File(baseDir+"/garminmap.xml")).exists()) {
-				poiMapper=new GarminMap();
+
+			if ((new File(baseDir + "/garminmap.xml")).exists()) {
+				poiMapper = new GarminMap();
 				poiMapper.readGarminMap();
 			} else {
-				//TODO: display warning
-				Global.getPref().log("unable to load garminmap.xml");
+				Global.getPref().log("GPX Export: unable to load garminmap.xml");
+				new MessageBox("Export Error", "unable to load garminmap.xml",
+						FormBase.OKB).execute();
 				return;
 			}
-			
+
 			if (sendToGarmin) {
-				tempDir = baseDir+FileBase.separator+this.getClass().toString();
+				// FIXME: create proper tempdir
+				tempDir = baseDir + File.separator + "GPXExporterNG.tmp";
 				new File(tempDir).mkdir();
 			} else {
 				tempDir = outDir;
-				String tmp[] = new FileBugfix(tempDir).list(prefix + "*.gpx", ewe.io.FileBase.LIST_FILES_ONLY);
-				for (int i=0; i < tmp.length;i++){
-					FileBugfix tmpFile = new FileBugfix(tempDir + FileBase.separator + tmp[i]);
+				String tmp[] = new FileBugfix(tempDir).list(prefix + "*.gpx",
+						ewe.io.FileBase.LIST_FILES_ONLY);
+				for (int i = 0; i < tmp.length; i++) {
+					FileBugfix tmpFile = new FileBugfix(tempDir
+							+ File.separator + tmp[i]);
 					tmpFile.delete();
 				}
-				tmp = new FileBugfix(tempDir).list(prefix + "*.bmp", ewe.io.FileBase.LIST_FILES_ONLY);
-				for (int i=0; i < tmp.length;i++){
-					FileBugfix tmpFile = new FileBugfix(tempDir + FileBase.separator + tmp[i]);
+				tmp = new FileBugfix(tempDir).list(prefix + "*.bmp",
+						ewe.io.FileBase.LIST_FILES_ONLY);
+				for (int i = 0; i < tmp.length; i++) {
+					FileBugfix tmpFile = new FileBugfix(tempDir
+							+ File.separator + tmp[i]);
 					tmpFile.delete();
 				}
 			}
@@ -211,11 +221,11 @@ public class GpxExportNg {
 
 				int expCount = 0;
 				int totalCount = Global.getProfile().cacheDB.countVisible();
-				
+
 				pbf.showMainTask = false;
 				pbf.setTask(h, "Exporting ...");
 				pbf.exec();
-				
+
 				for (int i = 0; i < Global.getProfile().cacheDB.size(); i++) {
 					CacheHolder ch = Global.getProfile().cacheDB.get(i);
 					if (!ch.isVisible()) {
@@ -227,58 +237,107 @@ public class GpxExportNg {
 					} else {
 						String poiId = poiMapper.getPoiId(ch);
 						if (null == poiId) {
-							Global.getPref().log("unmatched POI ID for "+ch.getWayPoint());
+							Global.getPref().log(
+									"GPX Export: unmatched POI ID for "
+											+ ch.getWayPoint() + " of type "
+											+ ch.getType());
 							exportErrors++;
 						} else {
 							PrintWriter writer;
 							if (fileHandles.containsKey(poiId)) {
 								writer = (PrintWriter) fileHandles.get(poiId);
 							} else {
-								writer = new PrintWriter(new BufferedWriter(new FileWriter(new File(tempDir + FileBase.separator + prefix+poiId+".gpx"))));
+								writer = new PrintWriter(new BufferedWriter(
+										new FileWriter(new File(tempDir
+												+ File.separator + prefix
+												+ poiId + ".gpx"))));
 								fileHandles.put(poiId, writer);
 								writer.print(formatHeader());
 							}
 							writer.print(formatCache(ch));
 						}
-						
+
 					}
 					expCount++;
 					h.progress = (float) expCount / (float) totalCount;
 					h.changed();
 				}
-				
+
 				try {
-					poiZip = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator + "GarminPOI.zip");
+					poiZip = new ZipFile(FileBase.getProgramDirectory()
+							+ File.separator + "GarminPOI.zip");
 				} catch (IOException e) {
-					Global.getPref().log("GPX Export: warning GarminPOI.zip not found", e, Global.getPref().debug);
+					Global.getPref().log(
+							"GPX Export: warning GarminPOI.zip not found", e,
+							Global.getPref().debug);
 					exportErrors++;
 				}
-				
+
+				if (sendToGarmin) {
+					String tmp[] = new FileBugfix(outDir).list(
+							prefix + "*.gpi", ewe.io.FileBase.LIST_FILES_ONLY);
+					for (int i = 0; i < tmp.length; i++) {
+						FileBugfix tmpFile = new FileBugfix(outDir
+								+ File.separator + tmp[i]);
+						tmpFile.delete();
+					}
+				}
+
 				Enumeration keys = fileHandles.keys();
 				while (keys.hasMoreElements()) {
+
 					String key = (String) keys.nextElement();
 					PrintWriter writer = (PrintWriter) fileHandles.get(key);
+
 					writer.print("</gpx>\n");
 					writer.close();
 					if (poiZip != null)
-						if (!copyPoiIcon(outDir,key,prefix,poiZip)) 
+						if (!copyPoiIcon(tempDir, key, prefix, poiZip))
 							exportErrors++;
-				}
-				
-				if (sendToGarmin) {
-					String tmp[] = new FileBugfix(outDir).list(prefix + "*.gpi", ewe.io.FileBase.LIST_FILES_ONLY);
-					for (int i=0; i < tmp.length;i++){
-						FileBugfix tmpFile = new FileBugfix(tempDir + FileBase.separator + tmp[i]);
-						tmpFile.delete();
-					}				
 
-					// TODO: create GPI files
+					// TODO: check with blanks and on windows
+					String gpsBabelCommand = Global.getPref().gpsbabel
+							.concat(" -i gpx -f ")
+							.concat(tempDir + File.separator + prefix + key + ".gpx")
+							.concat(" -o garmin_gpi,sleep=1,category=\"")
+							.concat(prefix + key).concat("\",bitmap=")
+							.concat(tempDir + File.separator + prefix + key	+ ".bmp")
+							.concat(" -F ")
+							.concat(outDir + File.separator + prefix + key + ".gpi");
+
+					if (Global.getPref().debug)
+						Global.getPref().log(gpsBabelCommand);
+
+					Process babelProcess = Vm.exec(gpsBabelCommand);
+					StreamReader errorStream = new StreamReader(babelProcess.getErrorStream());
+					while (errorStream.isOpen()) {
+						String errorMsg = errorStream.readALine();
+						if (errorMsg != null) {
+							Global.getPref().log("GPX Export: " + errorMsg);
+							exportErrors++;
+						}
+						try {
+							babelProcess.exitValue();
+							errorStream.close();
+						} catch (IllegalThreadStateException e) {
+							// still running
+						}
+					}
+				}
+
+				if (sendToGarmin) {
 					FileBugfix tmpdir = new FileBugfix(tempDir);
+					String tmp[] = new FileBugfix(tempDir).list(prefix + "*.*",
+							ewe.io.FileBase.LIST_FILES_ONLY);
+					for (int i = 0; i < tmp.length; i++) {
+						FileBugfix tmpFile = new FileBugfix(tempDir	+ File.separator + tmp[i]);
+						tmpFile.delete();
+					}
 					tmpdir.delete();
 				}
-				
+
 				pbf.exit(0);
-				
+
 			} catch (Exception e) {
 				Global.getPref().log("GPX Export: unknown cause for ", e, Global.getPref().debug);
 				exportErrors++;
@@ -286,15 +345,15 @@ public class GpxExportNg {
 			}
 		} else {
 			if (customIcons) {
-				if ((new File(FileBase.getProgramDirectory()+"/garminmap.xml")).exists()) {
-					poiMapper=new GarminMap();
+				if ((new File(FileBase.getProgramDirectory() + "/garminmap.xml")).exists()) {
+					poiMapper = new GarminMap();
 					poiMapper.readGarminMap();
 				} else {
 					customIcons = false;
 					Global.getPref().log("unable to load garminmap.xml");
 				}
 			}
-			
+
 			if (outType == GPX_PQLIKE) {
 				maxLogs = exportOptions.getMaxLogs();
 				if (maxLogs != Global.getPref().numberOfLogsToExport) {
@@ -302,27 +361,27 @@ public class GpxExportNg {
 					Global.getPref().dirty = true;
 				}
 			}
-			final File file;	
-			if (! sendToGarmin) {
-				final FileChooser fc = new FileChooser(FileChooserBase.SAVE, 
-					Global.getPref().getExportPath(expName+"-GPX"));
-			
+			final File file;
+			if (!sendToGarmin) {
+				final FileChooser fc = new FileChooser(FileChooserBase.SAVE,
+						Global.getPref().getExportPath(expName + "-GPX"));
+
 				fc.setTitle("Select target GPX file:");
 				fc.addMask("*.gpx");
-			
+
 				if (fc.execute() == FormBase.IDCANCEL)
 					return;
 
 				file = fc.getChosenFile();
-				Global.getPref().setExportPath(expName+"-GPX", file.getPath());
+				Global.getPref()
+						.setExportPath(expName + "-GPX", file.getPath());
 			} else {
 				file = new File("").createTempFile("gpxexport", null, null);
 			}
 			try {
 				ProgressBarForm pbf = new ProgressBarForm();
 				Handle h = new Handle();
-				PrintWriter outp = new PrintWriter(new BufferedWriter(
-						new FileWriter(file)));
+				PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(file)));
 				int expCount = 0;
 				int totalCount = Global.getProfile().cacheDB.countVisible();
 
@@ -338,9 +397,7 @@ public class GpxExportNg {
 						continue;
 					} else if (ch.is_incomplete()) {
 						exportErrors++;
-						Global.getPref().log(
-								"GPX Export: skipping export of incomplete waypoint "
-										+ ch.getWayPoint());
+						Global.getPref().log("GPX Export: skipping export of incomplete waypoint " + ch.getWayPoint());
 					} else {
 						outp.print(formatCache(ch));
 					}
@@ -356,18 +413,43 @@ public class GpxExportNg {
 			} catch (Exception ex) {
 				exportErrors++;
 				if (Global.getPref().debug)
-					Global.getPref().log("GPX Export: unable to write output to " + file.toString(),ex,Global.getPref().debug);
+					Global.getPref().log("GPX Export: unable to write output to " + file.toString(), ex, Global.getPref().debug);
 				else
 					Global.getPref().log("GPX Export: unable to write output to " + file.toString());
-				// TODO: give a message to the user
+
+				new MessageBox("Export Error", "unable to write output to "	+ file.toString(), FormBase.OKB).execute();
+				return;
 			}
+
 			if (sendToGarmin) {
 				try {
 					String gpsBabelCommand;
-					gpsBabelCommand = Global.getPref().gpsbabel+" "+Global.getPref().garminGPSBabelOptions+" -i gpx -f "+ file.getCreationName() +" -o garmin -F " + Global.getPref().garminConn +":";
-					if (Global.getPref().debug) Global.getPref().log("GPX Export: gpsbabelcommand is "+ gpsBabelCommand);
-					ewe.sys.Process p = Vm.exec( gpsBabelCommand );
-					p.waitFor();
+					gpsBabelCommand = Global.getPref().gpsbabel
+						.concat(" ")
+						.concat(Global.getPref().garminGPSBabelOptions)
+						.concat(" -i gpx -f ")
+						.concat(file.getCreationName())
+						.concat(" -o garmin -F ")
+						.concat(Global.getPref().garminConn)
+						.concat(":");
+					if (Global.getPref().debug)
+						Global.getPref().log("GPX Export: gpsbabelcommand is "+ gpsBabelCommand);
+					
+					Process babelProcess = Vm.exec(gpsBabelCommand);
+					StreamReader errorStream = new StreamReader(babelProcess.getErrorStream());
+					while (errorStream.isOpen()) {
+						String errorMsg = errorStream.readALine();
+						if (errorMsg != null) {
+							Global.getPref().log("GPX Export: " + errorMsg);
+							exportErrors++;
+						}
+						try {
+							babelProcess.exitValue();
+							errorStream.close();
+						} catch (IllegalThreadStateException e) {
+							// still running
+						}
+					}
 				} catch (Exception ex) {
 					Global.getPref().log("GPX Export error :", ex, Global.getPref().debug);
 				}
@@ -375,7 +457,8 @@ public class GpxExportNg {
 			}
 		}
 		if (exportErrors > 0) {
-			new MessageBox("Export Error", exportErrors+" errors during export. Check log for details.", FormBase.OKB).execute();
+			new MessageBox("Export Error", exportErrors	+ " errors during export. Check log for details.",
+					FormBase.OKB).execute();
 		}
 	}
 
@@ -383,27 +466,28 @@ public class GpxExportNg {
 		// no addis or custom in MyFindsPq - and of course only finds
 		if ((GPX_MYFINDSPQ == outType) && ((ch.getType() == CacheType.CW_TYPE_CUSTOM) || ch.isAddiWpt() || !ch.is_found()))
 			return "";
-		
-		if (!ch.pos.isValid()) return ""; 
+
+		if (!ch.pos.isValid())
+			return "";
 
 		StringBuffer ret = new StringBuffer();
 
 		try {
 			ret.append(formatCompact(ch));
-		
+
 			if (outType != GPX_COMPACT && !(ch.getType() == CacheType.CW_TYPE_CUSTOM || ch.isAddiWpt())) {
 				ret.append(formatPqExtensions(ch));
 			}
-		
+
 			ret.append("\t</wpt>\n");
 		} catch (IllegalArgumentException e) {
 			exportErrors++;
 			ch.setIncomplete(true);
-			Global.getPref().log("GPX Export: "+ch.getWayPoint()+" set to incomplete ", e, Global.getPref().debug);
+			Global.getPref().log("GPX Export: " + ch.getWayPoint() + " set to incomplete ",	e, Global.getPref().debug);
 			return "";
 		} catch (Exception e) {
 			exportErrors++;
-			Global.getPref().log("GPX Export: "+ch.getWayPoint()+" caused ", e, Global.getPref().debug);
+			Global.getPref().log("GPX Export: " + ch.getWayPoint() + " caused ", e,	Global.getPref().debug);
 			return "";
 		}
 
@@ -411,7 +495,7 @@ public class GpxExportNg {
 	}
 
 	private String formatCompact(CacheHolder ch) {
-		
+
 		Transformer trans = new Transformer(true);
 
 		trans.add(new Regex("@@WPLAT@@", String.valueOf(ch.pos.latDec).replace(',', '.')));
@@ -422,7 +506,7 @@ public class GpxExportNg {
 			try {
 				trans.add(new Regex("@@CACHETIME@@", ch.mainCache.getDateHidden()));
 			} catch (Exception e) {
-				Global.getPref().log(ch.getWayPoint()+" has no parent");
+				Global.getPref().log(ch.getWayPoint() + " has no parent");
 				trans.add(new Regex("@@CACHETIME@@", "1970-01-01"));
 			}
 		} else if (ch.getType() == CacheType.CW_TYPE_CUSTOM) {
@@ -433,31 +517,29 @@ public class GpxExportNg {
 
 		if (smartIds && ch.getType() != CacheType.CW_TYPE_CUSTOM) {
 			if (ch.isAddiWpt()) {
-				trans.add(new Regex("@@WPNAME@@", SafeXML.cleanGPX(ch.mainCache.getWayPoint()
-						.concat(" ")
-						.concat(ch.getWayPoint().substring(0, 2))
-						)));
+				trans.add(new Regex("@@WPNAME@@", SafeXML.cleanGPX(
+						ch.mainCache.getWayPoint().concat(" ").concat(ch.getWayPoint().substring(0, 2)))));
 			} else {
-				trans.add(new Regex("@@WPNAME@@", SafeXML.cleanGPX(ch.getWayPoint()
+				trans.add(new Regex("@@WPNAME@@", SafeXML.cleanGPX(
+						ch.getWayPoint()
 						.concat(" ")
 						.concat(CacheType.getExportShortId(ch.getType()))
 						.concat(String.valueOf(ch.getHard()))
 						.concat(String.valueOf(ch.getTerrain()))
-						.concat(CacheSize.getExportShortId(ch.getCacheSize()))
-						)));
+						.concat(CacheSize.getExportShortId(ch.getCacheSize())))));
 			}
 		} else {
 			trans.add(new Regex("@@WPNAME@@", ch.getWayPoint()));
 		}
-		
+
 		if (ch.getType() == CacheType.CW_TYPE_CUSTOM) {
 			trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getFreshDetails().LongDescription)));
 		} else {
 			if (smartIds && outType == GPX_COMPACT) {
 				if (ch.isAddiWpt()) {
-					trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getCacheName()+" "+ch.getFreshDetails().LongDescription)));
+					trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getCacheName() + " " + ch.getFreshDetails().LongDescription)));
 				} else {
-					trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getCacheName()+" "+Common.rot13(ch.getFreshDetails().Hints))));
+					trans.add(new Regex("@@WPCMT@@", SafeXML.cleanGPX(ch.getCacheName() + " " + Common.rot13(ch.getFreshDetails().Hints))));
 				}
 			} else {
 				if (ch.isAddiWpt()) {
@@ -471,13 +553,15 @@ public class GpxExportNg {
 		if (ch.isAddiWpt()) {
 			trans.add(new Regex("@@WPDESC@@", SafeXML.cleanGPX(ch.getCacheName())));
 		} else {
-			trans.add(new Regex("@@WPDESC@@", SafeXML.cleanGPX(ch.getCacheName()
-					.concat(" by ")
+			trans.add(new Regex("@@WPDESC@@", SafeXML.cleanGPX(
+					ch.getCacheName().concat(" by ")
 					.concat(ch.getCacheOwner())
 					.concat(", ")
 					.concat(CacheType.cw2ExportString(ch.getType()))
-					.concat(" (").concat(CacheTerrDiff.shortDT(ch.getHard()))
-					.concat("/").concat(CacheTerrDiff.shortDT(ch.getTerrain()))
+					.concat(" (")
+					.concat(CacheTerrDiff.shortDT(ch.getHard()))
+					.concat("/")
+					.concat(CacheTerrDiff.shortDT(ch.getTerrain()))
 					.concat(")"))));
 		}
 
@@ -487,14 +571,10 @@ public class GpxExportNg {
 			if (ch.isAddiWpt()) {
 				// TODO: find out URL schema for additional waypoints
 				// TODO: check for OC caches
-				trans.add(new Regex("@@WPURL@@",
-						"http://www.geocaching.com/seek/wpt.aspx?wp="
-						.concat(ch.getWayPoint())));
+				trans.add(new Regex("@@WPURL@@","http://www.geocaching.com/seek/wpt.aspx?wp=".concat(ch.getWayPoint())));
 			} else {
 				// TODO: check for OC caches
-				trans.add(new Regex("@@WPURL@@",
-						"http://www.geocaching.com/seek/cache_details.aspx?wp="
-						.concat(ch.getWayPoint())));
+				trans.add(new Regex("@@WPURL@@","http://www.geocaching.com/seek/cache_details.aspx?wp=".concat(ch.getWayPoint())));
 			}
 		}
 
@@ -508,9 +588,8 @@ public class GpxExportNg {
 			trans.add(new Regex("@@WPSYMBOL@@", poiMapper.getIcon(ch)));
 		} else {
 			if (ch.isAddiWpt()) {
-				trans.add(new Regex("@@WPSYMBOL@@", CacheType.id2GpxString(
-					ch.getType()).substring(CacheType.id2GpxString(ch.getType()).indexOf("|") + 1)
-					));
+				trans.add(new Regex("@@WPSYMBOL@@", CacheType.id2GpxString(ch.getType())
+						.substring(CacheType.id2GpxString(ch.getType()).indexOf("|") + 1)));
 			} else if (ch.getType() == CacheType.CW_TYPE_CUSTOM) {
 				trans.add(new Regex("@@WPSYMBOL@@", "Custom"));
 			} else if (ch.is_found()) {
@@ -547,10 +626,8 @@ public class GpxExportNg {
 		trans.add(new Regex("@@CACHECOUNTRY@@", SafeXML.cleanGPX(ch.details.Country)));
 		trans.add(new Regex("@@CACHESTATE@@", SafeXML.cleanGPX((ch.details.State))));
 		trans.add(new Regex("@@CACHEHTML@@", ch.is_HTML() ? TRUE : FALSE));
-		trans.add(new Regex("@@CACHESHORTDESCRIPTION@@",
-				"CacheWolf can not provide a short description"));
-		trans.add(new Regex("@@CACHELONGDESCRIPTION@@",
-				SafeXML.cleanGPX(formatLongDescription(ch))));
+		trans.add(new Regex("@@CACHESHORTDESCRIPTION@@","CacheWolf can not provide a short description"));
+		trans.add(new Regex("@@CACHELONGDESCRIPTION@@", SafeXML.cleanGPX(formatLongDescription(ch))));
 		trans.add(new Regex("@@CACHEHINT@@", SafeXML.cleanGPX(ch.details.Hints)));
 
 		ret.append(trans.replaceAll(GPXEXTENSION));
@@ -576,25 +653,25 @@ public class GpxExportNg {
 	public String formatLogs(CacheHolder ch) {
 		LogList logs = ch.getFreshDetails().CacheLogs;
 		StringBuffer ret = new StringBuffer();
-		
+
 		if (0 == logs.size())
 			return "";
-		
+
 		int exportlogs;
-		
+
 		if (outType == GPX_PQLIKE && maxLogs < logs.size()) {
 			exportlogs = maxLogs;
 		} else {
 			exportlogs = logs.size();
 		}
-		
+
 		for (int i = 0; i < exportlogs; i++) {
 			Log log = logs.getLog(i);
-			
+
 			if (outType == GPX_MYFINDSPQ
 					&& !log.getLogger().equals(Global.getPref().myAlias))
 				continue;
-			
+
 			Transformer trans = new Transformer(true);
 			trans.add(new Regex("@@LOGID@@", ""));
 			trans.add(new Regex("@@LOGDATE@@", log.getDate()));
@@ -605,14 +682,13 @@ public class GpxExportNg {
 			trans.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(log.getMessage())));
 			ret.append(trans.replaceAll(GPXLOG));
 		}
-		
+
 		return ret.toString();
 	}
 
 	public String formatHeader() {
 		Transformer trans = new Transformer(true);
-		trans.add(new Regex("@@CREATEDATE@@", new Date()
-				.setFormat("yyyy-MM-dd").toString()));
+		trans.add(new Regex("@@CREATEDATE@@", new Date().setFormat("yyyy-MM-dd").toString()));
 		return trans.replaceFirst(GPXHEADER);
 	}
 
@@ -644,9 +720,9 @@ public class GpxExportNg {
 					trans.add(new Regex("@@ADDIID@@", addi.getWayPoint()));
 					trans.add(new Regex("@@ADDISHORT@@", addi.getCacheName()));
 					trans.add(new Regex("@@ADDIDELIM@@", delim));
-					trans.add(new Regex("@@ADDILAT@@", formatAddiLatLon(addi.pos)));
+					trans.add(new Regex("@@ADDILAT@@",formatAddiLatLon(addi.pos)));
 					trans.add(new Regex("@@ADDILON@@", ""));
-					trans.add(new Regex("@@ADDILONG@@", addi.getFreshDetails().LongDescription));
+					trans.add(new Regex("@@ADDILONG@@",addi.getFreshDetails().LongDescription));
 					ret.append(trans.replaceAll(GPXADDIINMAIN));
 				}
 				ret.append(delim).append("\n");
@@ -656,30 +732,48 @@ public class GpxExportNg {
 	}
 
 	public String image2TypeText(String image) {
-		if (image.equals("icon_smile.gif")) return "Found it";
-		if (image.equals("icon_sad.gif")) return "Didn't find it";
-		if (image.equals("icon_note.gif")) return "Write note";
-		if (image.equals("icon_enabled.gif")) return "Enable Listing";
-		if (image.equals("icon_disabled.gif")) return "Temporarily Disable Listing";
-		if (image.equals("icon_camera.gif")) return "Webcam Photo Taken";
-		if (image.equals("icon_attended.gif")) return "Attended";
-		if (image.equals("icon_greenlight.gif")) return "Publish Listing";
-		if (image.equals("icon_rsvp.gif")) return "Will Attend";
-		if (image.equals("big_smile.gif")) return "Post Reviewer Note";
-		if (image.equals("traffic_cone.gif")) return "Archive";
-		if (image.equals("icon_maint.gif")) return "Owner Maintenance";
-		if (image.equals("icon_needsmaint.gif")) return "Needs Maintenance";
-		if (image.equals("coord_update.gif")) return "Update Coordinates";
-		if (image.equals("icon_remove.gif")) return "Needs Archived";
-		Global.getPref().log("GPX Export: warning - unknown logtype "+image+" was changed to 'Write note'");
+		if (image.equals("icon_smile.gif"))
+			return "Found it";
+		if (image.equals("icon_sad.gif"))
+			return "Didn't find it";
+		if (image.equals("icon_note.gif"))
+			return "Write note";
+		if (image.equals("icon_enabled.gif"))
+			return "Enable Listing";
+		if (image.equals("icon_disabled.gif"))
+			return "Temporarily Disable Listing";
+		if (image.equals("icon_camera.gif"))
+			return "Webcam Photo Taken";
+		if (image.equals("icon_attended.gif"))
+			return "Attended";
+		if (image.equals("icon_greenlight.gif"))
+			return "Publish Listing";
+		if (image.equals("icon_rsvp.gif"))
+			return "Will Attend";
+		if (image.equals("big_smile.gif"))
+			return "Post Reviewer Note";
+		if (image.equals("traffic_cone.gif"))
+			return "Archive";
+		if (image.equals("icon_maint.gif"))
+			return "Owner Maintenance";
+		if (image.equals("icon_needsmaint.gif"))
+			return "Needs Maintenance";
+		if (image.equals("coord_update.gif"))
+			return "Update Coordinates";
+		if (image.equals("icon_remove.gif"))
+			return "Needs Archived";
+		Global.getPref().log("GPX Export: warning - unknown logtype " + image + " was changed to 'Write note'");
 		exportErrors++;
 		return "Write note";
 	}
 
 	/**
 	 * create a position information suitable for a gc.com PQlike export
-	 * @param pos position
-	 * @return if position is valid return the cachewolf formatted position, otherwise return teh string used in PQs
+	 * 
+	 * @param pos
+	 *            position
+	 * @return if position is valid return the cachewolf formatted position,
+	 *         otherwise return teh string used in PQs
 	 */
 	private String formatAddiLatLon(CWPoint pos) {
 		if (pos.isValid()) {
@@ -688,28 +782,32 @@ public class GpxExportNg {
 			return "N/S  __ ° __ . ___ W/E ___ ° __ . ___";
 		}
 	}
-	
-	boolean copyPoiIcon(String outdir, String type, String prefix, ZipFile poiZip) {
+
+	boolean copyPoiIcon(String outdir, String type, String prefix,
+			ZipFile poiZip) {
 		ZipEntry icon;
 		byte[] buff;
 		int len;
-		
-		try {	
-			icon = poiZip.getEntry(type+".bmp");
-			if (icon == null) return false; // icon not found in archive
-			
-			buff = new byte[ icon.getSize() ];
-			InputStream  fis = poiZip.getInputStream(icon);
-			FileOutputStream fos = new FileOutputStream(outdir.concat(FileBase.separator).concat(prefix).concat(type).concat(".bmp"));
-			while( 0 < (len = fis.read( buff )) ) fos.write( buff, 0, len );
+
+		try {
+			icon = poiZip.getEntry(type + ".bmp");
+			if (icon == null)
+				return false; // icon not found in archive
+
+			buff = new byte[icon.getSize()];
+			InputStream fis = poiZip.getInputStream(icon);
+			FileOutputStream fos = new FileOutputStream(outdir
+					.concat(File.separator).concat(prefix).concat(type).concat(".bmp"));
+			while (0 < (len = fis.read(buff)))
+				fos.write(buff, 0, len);
 			fos.flush();
 			fos.close();
 			fis.close();
 		} catch (ZipException e) {
-			Global.getPref().log("failed to copy icon "+type+".bmp", e, Global.getPref().debug);
+			Global.getPref().log("failed to copy icon " + type + ".bmp", e,Global.getPref().debug);
 			return false;
 		} catch (IOException e) {
-			Global.getPref().log("failed to copy icon "+type+".bmp", e, Global.getPref().debug);
+			Global.getPref().log("failed to copy icon " + type + ".bmp", e,Global.getPref().debug);
 			return false;
 		}
 		return true;
@@ -720,16 +818,15 @@ public class GpxExportNg {
 	 */
 	private class GpxExportNgForm extends Form {
 		private CheckBoxGroup cbgExportType;
-		private mCheckBox cbCompact, cbPqLike, cbMyFinds, cbCustomIcons,
-				cbSeperateFiles, cbSendToGarmin, cbSmartId;
-		private mInput ibMaxLogs,ibPrefix;
+		private mCheckBox cbCompact, cbPqLike, cbMyFinds, cbCustomIcons,cbSeperateFiles, cbSendToGarmin, cbSmartId;
+		private mInput ibMaxLogs, ibPrefix;
 		private mButton btnOk, btnCancel;
 
 		/**
 		 * set up the form / dialog
 		 */
 		public GpxExportNgForm() {
-			// TODO: get defaults from profile
+			// TODO: get/set defaults from profile
 
 			this.setTitle("GPX Export");
 
@@ -752,14 +849,15 @@ public class GpxExportNg {
 
 			cbSendToGarmin = new mCheckBox("send to Garmin GPSr");
 			if (Global.getPref().gpsbabel == null)
-				cbSendToGarmin.modify(ControlConstants.Disabled, 0);
+				cbSendToGarmin.modify(Control.Disabled, 0);
 
 			cbSmartId = new mCheckBox("use smart IDs");
-			
+
 			ibPrefix = new mInput("GC-");
-			ibPrefix.modify(ControlConstants.Disabled, 0);
-			ibMaxLogs = new mInput(String.valueOf(Global.getPref().numberOfLogsToExport));
-			ibMaxLogs.modify(ControlConstants.Disabled, 0);
+			ibPrefix.modify(Control.Disabled, 0);
+			ibMaxLogs = new mInput(String
+					.valueOf(Global.getPref().numberOfLogsToExport));
+			ibMaxLogs.modify(Control.Disabled, 0);
 
 			btnOk = new mButton("OK");
 			btnCancel = new mButton("Cancel");
@@ -773,7 +871,7 @@ public class GpxExportNg {
 			addLast(cbSmartId);
 			addNext(new mLabel("Prefix"));
 			addLast(new mLabel("Max Logs"));
-			
+
 			addNext(ibPrefix);
 			addLast(ibMaxLogs);
 
@@ -790,60 +888,57 @@ public class GpxExportNg {
 
 				if (ev.target == cbgExportType) {
 					if (cbgExportType.getSelected() == cbCompact) {
-						if (cbCustomIcons.change(0, ControlConstants.Disabled))
+						if (cbCustomIcons.change(0, Control.Disabled))
 							cbCustomIcons.repaint();
-						if (cbSeperateFiles.change(0, ControlConstants.Disabled))
+						if (cbSeperateFiles.change(0, Control.Disabled))
 							cbSeperateFiles.repaint();
 						if (Global.getPref().gpsbabel != null)
-							if (cbSendToGarmin.change(0,ControlConstants.Disabled))
+							if (cbSendToGarmin.change(0, Control.Disabled))
 								cbSendToGarmin.repaint();
-						if (cbSmartId.change(0, ControlConstants.Disabled))
+						if (cbSmartId.change(0, Control.Disabled))
 							cbSmartId.repaint();
-						if (ibMaxLogs.change(ControlConstants.Disabled, 0))
+						if (ibMaxLogs.change(Control.Disabled, 0))
 							ibMaxLogs.repaint();
 					} else if (cbgExportType.getSelected() == cbPqLike) {
 						cbSeperateFiles.setState(false);
-						if (cbCustomIcons.change(0, ControlConstants.Disabled))
+						if (cbCustomIcons.change(0, Control.Disabled))
 							cbCustomIcons.repaint();
-						if (cbSeperateFiles.change(ControlConstants.Disabled, 0))
+						if (cbSeperateFiles.change(Control.Disabled, 0))
 							cbSeperateFiles.repaint();
 						if (Global.getPref().gpsbabel != null)
-							if (cbSendToGarmin.change(0,ControlConstants.Disabled))
-						 		cbSendToGarmin.repaint();
-						if (cbSmartId.change(0, ControlConstants.Disabled))
+							if (cbSendToGarmin.change(0, Control.Disabled))
+								cbSendToGarmin.repaint();
+						if (cbSmartId.change(0, Control.Disabled))
 							cbSmartId.repaint();
-						if (ibPrefix.change(ControlConstants.Disabled, 0))
+						if (ibPrefix.change(Control.Disabled, 0))
 							ibPrefix.repaint();
-						if (ibMaxLogs.change(ControlConstants.Disabled, 1))
+						if (ibMaxLogs.change(Control.Disabled, 1))
 							ibMaxLogs.repaint();
 					} else if (cbgExportType.getSelected() == cbMyFinds) {
 						cbCustomIcons.setState(false);
 						cbSeperateFiles.setState(false);
 						cbSendToGarmin.setState(false);
 						cbSmartId.setState(false);
-						if (cbCustomIcons.change(ControlConstants.Disabled, 0))
+						if (cbCustomIcons.change(Control.Disabled, 0))
 							cbCustomIcons.repaint();
-						if (cbSeperateFiles.change(ControlConstants.Disabled, 0))
+						if (cbSeperateFiles.change(Control.Disabled, 0))
 							cbSeperateFiles.repaint();
-						if (cbSendToGarmin.change(ControlConstants.Disabled,0))
+						if (cbSendToGarmin.change(Control.Disabled, 0))
 							cbSendToGarmin.repaint();
-						if (cbSmartId.change(ControlConstants.Disabled, 0))
+						if (cbSmartId.change(Control.Disabled, 0))
 							cbSmartId.repaint();
-						if (ibPrefix.change(ControlConstants.Disabled, 0))
+						if (ibPrefix.change(Control.Disabled, 0))
 							ibPrefix.repaint();
-						if (ibMaxLogs.change(ControlConstants.Disabled, 0))
+						if (ibMaxLogs.change(Control.Disabled, 0))
 							ibMaxLogs.repaint();
 					}
 				} else if (ev.target == cbSeperateFiles) {
 					if (cbSeperateFiles.state) {
-						if (ibPrefix.change(ControlConstants.Disabled, 1)) ibPrefix.repaint();
-						if (cbSendToGarmin.change(ControlConstants.Disabled, 0)) {
-							cbSendToGarmin.setState(false);
-							cbSendToGarmin.repaint();
-						}
+						if (ibPrefix.change(Control.Disabled, 1))
+							ibPrefix.repaint();
 					} else {
-						if (ibPrefix.change(ControlConstants.Disabled, 0)) ibPrefix.repaint();
-						if (cbSendToGarmin.change(0, ControlConstants.Disabled)) cbSendToGarmin.repaint();
+						if (ibPrefix.change(Control.Disabled, 0))
+							ibPrefix.repaint();
 					}
 				} else if (ev.target == btnOk) {
 					if (cbPqLike.state) {
@@ -864,7 +959,7 @@ public class GpxExportNg {
 					} else {
 						close(1);
 					}
-					
+
 				} else if (ev.target == btnCancel) {
 					close(-1);
 				}
@@ -917,17 +1012,19 @@ public class GpxExportNg {
 		public boolean getSeparateFiles() {
 			return cbSeperateFiles.state;
 		}
-		
+
 		/**
 		 * get the number of logs to export. used in PQlike export.
+		 * 
 		 * @return number of logs to export
 		 */
 		public int getMaxLogs() {
 			return Convert.parseInt(ibMaxLogs.getText());
 		}
-		
+
 		/**
 		 * get prefix for sepearte file export
+		 * 
 		 * @return prefix for separate file export
 		 */
 		public String getPrefix() {
