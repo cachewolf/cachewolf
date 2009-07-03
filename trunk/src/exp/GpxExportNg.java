@@ -33,7 +33,7 @@ import ewe.sys.Handle;
 import ewe.sys.Process;
 import ewe.sys.Vm;
 import ewe.ui.CheckBoxGroup;
-import ewe.ui.Control;
+import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
@@ -195,7 +195,7 @@ public class GpxExportNg {
 
 			if (sendToGarmin) {
 				// FIXME: create proper tempdir
-				tempDir = baseDir + File.separator + "GPXExporterNG.tmp";
+				tempDir = baseDir + FileBase.separator + "GPXExporterNG.tmp";
 				new File(tempDir).mkdir();
 			} else {
 				tempDir = outDir;
@@ -203,14 +203,14 @@ public class GpxExportNg {
 						ewe.io.FileBase.LIST_FILES_ONLY);
 				for (int i = 0; i < tmp.length; i++) {
 					FileBugfix tmpFile = new FileBugfix(tempDir
-							+ File.separator + tmp[i]);
+							+ FileBase.separator + tmp[i]);
 					tmpFile.delete();
 				}
 				tmp = new FileBugfix(tempDir).list(prefix + "*.bmp",
 						ewe.io.FileBase.LIST_FILES_ONLY);
 				for (int i = 0; i < tmp.length; i++) {
 					FileBugfix tmpFile = new FileBugfix(tempDir
-							+ File.separator + tmp[i]);
+							+ FileBase.separator + tmp[i]);
 					tmpFile.delete();
 				}
 			}
@@ -249,7 +249,7 @@ public class GpxExportNg {
 							} else {
 								writer = new PrintWriter(new BufferedWriter(
 										new FileWriter(new File(tempDir
-												+ File.separator + prefix
+												+ FileBase.separator + prefix
 												+ poiId + ".gpx"))));
 								fileHandles.put(poiId, writer);
 								writer.print(formatHeader());
@@ -265,7 +265,7 @@ public class GpxExportNg {
 
 				try {
 					poiZip = new ZipFile(FileBase.getProgramDirectory()
-							+ File.separator + "GarminPOI.zip");
+							+ FileBase.separator + "GarminPOI.zip");
 				} catch (IOException e) {
 					Global.getPref().log(
 							"GPX Export: warning GarminPOI.zip not found", e,
@@ -278,7 +278,7 @@ public class GpxExportNg {
 							prefix + "*.gpi", ewe.io.FileBase.LIST_FILES_ONLY);
 					for (int i = 0; i < tmp.length; i++) {
 						FileBugfix tmpFile = new FileBugfix(outDir
-								+ File.separator + tmp[i]);
+								+ FileBase.separator + tmp[i]);
 						tmpFile.delete();
 					}
 				}
@@ -298,12 +298,12 @@ public class GpxExportNg {
 					// TODO: check with blanks and on windows
 					String gpsBabelCommand = Global.getPref().gpsbabel
 							.concat(" -i gpx -f ")
-							.concat(tempDir + File.separator + prefix + key + ".gpx")
+							.concat(tempDir + FileBase.separator + prefix + key + ".gpx")
 							.concat(" -o garmin_gpi,sleep=1,category=\"")
 							.concat(prefix + key).concat("\",bitmap=")
-							.concat(tempDir + File.separator + prefix + key	+ ".bmp")
+							.concat(tempDir + FileBase.separator + prefix + key	+ ".bmp")
 							.concat(" -F ")
-							.concat(outDir + File.separator + prefix + key + ".gpi");
+							.concat(outDir + FileBase.separator + prefix + key + ".gpi");
 
 					if (Global.getPref().debug)
 						Global.getPref().log(gpsBabelCommand);
@@ -330,7 +330,7 @@ public class GpxExportNg {
 					String tmp[] = new FileBugfix(tempDir).list(prefix + "*.*",
 							ewe.io.FileBase.LIST_FILES_ONLY);
 					for (int i = 0; i < tmp.length; i++) {
-						FileBugfix tmpFile = new FileBugfix(tempDir	+ File.separator + tmp[i]);
+						FileBugfix tmpFile = new FileBugfix(tempDir	+ FileBase.separator + tmp[i]);
 						tmpFile.delete();
 					}
 					tmpdir.delete();
@@ -797,7 +797,7 @@ public class GpxExportNg {
 			buff = new byte[icon.getSize()];
 			InputStream fis = poiZip.getInputStream(icon);
 			FileOutputStream fos = new FileOutputStream(outdir
-					.concat(File.separator).concat(prefix).concat(type).concat(".bmp"));
+					.concat(FileBase.separator).concat(prefix).concat(type).concat(".bmp"));
 			while (0 < (len = fis.read(buff)))
 				fos.write(buff, 0, len);
 			fos.flush();
@@ -849,15 +849,15 @@ public class GpxExportNg {
 
 			cbSendToGarmin = new mCheckBox("send to Garmin GPSr");
 			if (Global.getPref().gpsbabel == null)
-				cbSendToGarmin.modify(Control.Disabled, 0);
+				cbSendToGarmin.modify(ControlConstants.Disabled, 0);
 
 			cbSmartId = new mCheckBox("use smart IDs");
 
 			ibPrefix = new mInput("GC-");
-			ibPrefix.modify(Control.Disabled, 0);
+			ibPrefix.modify(ControlConstants.Disabled, 0);
 			ibMaxLogs = new mInput(String
 					.valueOf(Global.getPref().numberOfLogsToExport));
-			ibMaxLogs.modify(Control.Disabled, 0);
+			ibMaxLogs.modify(ControlConstants.Disabled, 0);
 
 			btnOk = new mButton("OK");
 			btnCancel = new mButton("Cancel");
@@ -888,56 +888,56 @@ public class GpxExportNg {
 
 				if (ev.target == cbgExportType) {
 					if (cbgExportType.getSelected() == cbCompact) {
-						if (cbCustomIcons.change(0, Control.Disabled))
+						if (cbCustomIcons.change(0, ControlConstants.Disabled))
 							cbCustomIcons.repaint();
-						if (cbSeperateFiles.change(0, Control.Disabled))
+						if (cbSeperateFiles.change(0, ControlConstants.Disabled))
 							cbSeperateFiles.repaint();
 						if (Global.getPref().gpsbabel != null)
-							if (cbSendToGarmin.change(0, Control.Disabled))
+							if (cbSendToGarmin.change(0, ControlConstants.Disabled))
 								cbSendToGarmin.repaint();
-						if (cbSmartId.change(0, Control.Disabled))
+						if (cbSmartId.change(0, ControlConstants.Disabled))
 							cbSmartId.repaint();
-						if (ibMaxLogs.change(Control.Disabled, 0))
+						if (ibMaxLogs.change(ControlConstants.Disabled, 0))
 							ibMaxLogs.repaint();
 					} else if (cbgExportType.getSelected() == cbPqLike) {
 						cbSeperateFiles.setState(false);
-						if (cbCustomIcons.change(0, Control.Disabled))
+						if (cbCustomIcons.change(0, ControlConstants.Disabled))
 							cbCustomIcons.repaint();
-						if (cbSeperateFiles.change(Control.Disabled, 0))
+						if (cbSeperateFiles.change(ControlConstants.Disabled, 0))
 							cbSeperateFiles.repaint();
 						if (Global.getPref().gpsbabel != null)
-							if (cbSendToGarmin.change(0, Control.Disabled))
+							if (cbSendToGarmin.change(0, ControlConstants.Disabled))
 								cbSendToGarmin.repaint();
-						if (cbSmartId.change(0, Control.Disabled))
+						if (cbSmartId.change(0, ControlConstants.Disabled))
 							cbSmartId.repaint();
-						if (ibPrefix.change(Control.Disabled, 0))
+						if (ibPrefix.change(ControlConstants.Disabled, 0))
 							ibPrefix.repaint();
-						if (ibMaxLogs.change(Control.Disabled, 1))
+						if (ibMaxLogs.change(ControlConstants.Disabled, 1))
 							ibMaxLogs.repaint();
 					} else if (cbgExportType.getSelected() == cbMyFinds) {
 						cbCustomIcons.setState(false);
 						cbSeperateFiles.setState(false);
 						cbSendToGarmin.setState(false);
 						cbSmartId.setState(false);
-						if (cbCustomIcons.change(Control.Disabled, 0))
+						if (cbCustomIcons.change(ControlConstants.Disabled, 0))
 							cbCustomIcons.repaint();
-						if (cbSeperateFiles.change(Control.Disabled, 0))
+						if (cbSeperateFiles.change(ControlConstants.Disabled, 0))
 							cbSeperateFiles.repaint();
-						if (cbSendToGarmin.change(Control.Disabled, 0))
+						if (cbSendToGarmin.change(ControlConstants.Disabled, 0))
 							cbSendToGarmin.repaint();
-						if (cbSmartId.change(Control.Disabled, 0))
+						if (cbSmartId.change(ControlConstants.Disabled, 0))
 							cbSmartId.repaint();
-						if (ibPrefix.change(Control.Disabled, 0))
+						if (ibPrefix.change(ControlConstants.Disabled, 0))
 							ibPrefix.repaint();
-						if (ibMaxLogs.change(Control.Disabled, 0))
+						if (ibMaxLogs.change(ControlConstants.Disabled, 0))
 							ibMaxLogs.repaint();
 					}
 				} else if (ev.target == cbSeperateFiles) {
 					if (cbSeperateFiles.state) {
-						if (ibPrefix.change(Control.Disabled, 1))
+						if (ibPrefix.change(ControlConstants.Disabled, 1))
 							ibPrefix.repaint();
 					} else {
-						if (ibPrefix.change(Control.Disabled, 0))
+						if (ibPrefix.change(ControlConstants.Disabled, 0))
 							ibPrefix.repaint();
 					}
 				} else if (ev.target == btnOk) {
