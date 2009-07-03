@@ -119,7 +119,7 @@ public class ShowCacheInBrowser {
 					int imageNo=0;
 					Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
 					while (start>=0 && (pos=chD.getExistingDetails().LongDescription.indexOf("<img",start))>0) {
-						if (imageNo >= chD.getExistingDetails().Images.getCount())break;
+						if (imageNo >= chD.getExistingDetails().images.size())break;
 						s.append(chD.getExistingDetails().LongDescription.substring(start,pos));
 						imgRex.searchFrom(chD.getExistingDetails().LongDescription,pos);
 						String imgUrl=imgRex.stringMatched(1);
@@ -129,7 +129,7 @@ public class ShowCacheInBrowser {
 							// If we have an image which we stored when spidering, we can display it
         					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 								s.append("<img src=\"file://"+
-								   Global.getProfile().dataDir+chD.getExistingDetails().Images.get(imageNo)+"\">");
+								   Global.getProfile().dataDir+chD.getExistingDetails().images.get(imageNo).getName()+"\">");
 								imageNo++;
 							}
 						}
@@ -141,15 +141,15 @@ public class ShowCacheInBrowser {
 					
 					// Do the remaining pictures which are not included in main body of text
 					// They will be hidden initially and can be displayed by clicking on a link
-					if (imageNo<chD.getExistingDetails().Images.size()) {
-						Vector imageVect=new Vector(chD.getExistingDetails().Images.size()-imageNo);
-						for (; imageNo<chD.getExistingDetails().Images.size(); imageNo++) {
+					if (imageNo<chD.getExistingDetails().images.size()) {
+						Vector imageVect=new Vector(chD.getExistingDetails().images.size()-imageNo);
+						for (; imageNo<chD.getExistingDetails().images.size(); imageNo++) {
 							Hashtable imgs=new Hashtable();
 							imgs.put("IMAGE","<img src=\"file://"+
-									   Global.getProfile().dataDir+chD.getExistingDetails().Images.get(imageNo)+"\" border=0>");
-							imgs.put("IMAGETEXT",chD.getExistingDetails().ImagesText.get(imageNo));
-							if (imageNo<chD.getExistingDetails().ImagesInfo.size() && chD.getExistingDetails().ImagesInfo.get(imageNo)!=null)
-								imgs.put("IMAGECOMMENT",chD.getExistingDetails().ImagesInfo.get(imageNo));
+									   Global.getProfile().dataDir+chD.getExistingDetails().images.get(imageNo).getName()+"\" border=0>");
+							imgs.put("IMAGETEXT",chD.getExistingDetails().images.get(imageNo).getText());
+							if (imageNo<chD.getExistingDetails().images.size() && chD.getExistingDetails().images.get(imageNo).getComment()!=null)
+								imgs.put("IMAGECOMMENT",chD.getExistingDetails().images.get(imageNo).getComment());
 							else
 								imgs.put("IMAGECOMMENT","");
 							imgs.put("I","'img"+new Integer(imageNo).toString()+"'");

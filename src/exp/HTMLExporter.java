@@ -145,14 +145,11 @@ public class HTMLExporter{
 							page_tpl.setParam("NOTES", STRreplace.replace(det.getCacheNotes(), "\n","<br>"));
 							
 							cacheImg.clear();
-							for(int j = 0; j<det.Images.size(); j++){
+							for(int j = 0; j<det.images.size(); j++){
 								imgParams = new Hashtable();
-								String imgFile = new String((String)det.Images.get(j));
+								String imgFile = new String(det.images.get(j).getName());
 								imgParams.put("FILE", imgFile);
-								if (j < det.ImagesText.size())
-									imgParams.put("TEXT",det.ImagesText.get(j));
-								else
-									imgParams.put("TEXT",imgFile);
+								imgParams.put("TEXT",det.images.get(j).getText());
 								DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
 								cacheImg.add(imgParams);
 							}
@@ -160,14 +157,11 @@ public class HTMLExporter{
 							
 							// Log images
 							logImg.clear();
-							for(int j = 0; j<det.LogImages.size(); j++){
+							for(int j = 0; j<det.logImages.size(); j++){
 								logImgParams = new Hashtable();
-								String logImgFile = (String) det.LogImages.get(j);
+								String logImgFile = det.logImages.get(j).getName();
 								logImgParams.put("FILE", logImgFile);
-								if (j < det.LogImagesText.size())
-									logImgParams.put("TEXT",det.LogImagesText.get(j));
-								else
-									logImgParams.put("TEXT",logImgFile);
+								logImgParams.put("TEXT",det.logImages.get(j).getText());
 								DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
 								logImg.add(logImgParams);
 							}
@@ -175,14 +169,11 @@ public class HTMLExporter{
 							
 							// User images
 							usrImg.clear();
-							for(int j = 0; j<det.UserImages.size(); j++){
+							for(int j = 0; j<det.userImages.size(); j++){
 								usrImgParams = new Hashtable();
-								String usrImgFile = new String((String)det.UserImages.get(j));
+								String usrImgFile = new String(det.userImages.get(j).getName());
 								usrImgParams.put("FILE", usrImgFile);
-								if (j < det.UserImagesText.size())
-									usrImgParams.put("TEXT",det.UserImagesText.get(j));
-								else
-									usrImgParams.put("TEXT",usrImgFile);
+								usrImgParams.put("TEXT",det.userImages.get(j).getText());
 								DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
 								usrImg.add(usrImgParams);
 							}
@@ -297,8 +288,8 @@ public class HTMLExporter{
 					// image links in the description (eg. because of importing
 					// GPX files). We have to allow for this situation.
 					Object localImageSource = null;
-					if (imageNo < chD.Images.size()) {
-						localImageSource = chD.Images.get(imageNo);
+					if (imageNo < chD.images.size()) {
+						localImageSource = chD.images.get(imageNo).getName();
 					}
 					if (localImageSource == null) localImageSource = imgUrl;
 					s.append("<img src=\""+localImageSource+"\">");
@@ -309,7 +300,7 @@ public class HTMLExporter{
 			}
 			start=chD.LongDescription.indexOf(">",pos);
 			if (start>=0) start++;
-			if (imageNo >= chD.Images.getCount())break;
+			if (imageNo >= chD.images.size()) break;
 		}
 		if (start>=0) s.append(chD.LongDescription.substring(start));
 		return s.toString();

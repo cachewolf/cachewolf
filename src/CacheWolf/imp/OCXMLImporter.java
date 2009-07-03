@@ -9,6 +9,7 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Common;
+import CacheWolf.ImageInfo;
 import CacheWolf.InfoBox;
 import CacheWolf.Log;
 import CacheWolf.MyLocale;
@@ -461,9 +462,7 @@ public class OCXMLImporter extends MinML {
 			// clear data (picture, logs) if we do a complete Update
 			if (incUpdate == false){
 				holder.getFreshDetails().CacheLogs.clear();
-				holder.getFreshDetails().Images.clear();
-				holder.getFreshDetails().ImagesText.clear();
-				holder.getFreshDetails().ImagesInfo.clear();
+				holder.getFreshDetails().images.clear();
 			}
 
 			// save all
@@ -588,17 +587,18 @@ public class OCXMLImporter extends MinML {
 		try {
 			if (!fetchURL.startsWith("http://")) fetchURL = new URL(new URL("http://" + OPENCACHING_HOST+"/"), fetchURL).toString(); // TODO this is not quite correct: actually the "base" URL must be known... but anyway a different baseURL should not happen very often  - it doesn't in my area
 			String fileName = createPicFilename(fetchURL);
+			ImageInfo imageInfo = new ImageInfo();
 			// add title
-			holder.getFreshDetails().ImagesText.add(picDesc);
-			holder.getFreshDetails().ImagesInfo.add(null); // need to stay in sync with ImagesText
+			imageInfo.setText(picDesc);
+			holder.getFreshDetails().images.add(imageInfo);
 			try {
 				File ftest = new File(profile.dataDir + fileName);
 				if (ftest.exists()){
-					holder.getFreshDetails().Images.add(fileName);
+					imageInfo.setName(fileName);
 				}
 				else {
 					if (pref.downloadPics) {
-						holder.getFreshDetails().Images.add(fetch(fetchURL, fileName));
+						imageInfo.setName(fetch(fetchURL, fileName));
 					}
 				}
 			} catch (IOException e) {
