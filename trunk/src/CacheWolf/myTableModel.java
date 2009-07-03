@@ -378,7 +378,12 @@ public class myTableModel extends TableModel{
 						}
 					case 19: // Last sync date
 						if (!ch.getLastSync().equals("")) {
-							lastSyncWorker.parse(ch.getLastSync(),"yyyyMMddHHmmss");
+							try {
+	                            lastSyncWorker.parse(ch.getLastSync(),"yyyyMMddHHmmss");
+                            } catch (IllegalArgumentException e) {
+                            	Global.getPref().log("Could not parse 'lastSyncDate': "+ch.getLastSync()+". Reset to empty.",e);
+                            	ch.setLastSync("");
+                            }
 							return lastSyncWorker.format("yyyy-MM-dd HH:mm");
 						} else {
 							return "";
