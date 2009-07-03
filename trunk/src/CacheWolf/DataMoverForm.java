@@ -1,8 +1,10 @@
 package CacheWolf;
 
+import ewe.ui.CellConstants;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.Event;
 import ewe.ui.Form;
+import ewe.ui.FormBase;
 import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
 import ewe.ui.mLabel;
@@ -24,15 +26,15 @@ public class DataMoverForm extends Form {
 		tickedVisible = new mCheckBox (MyLocale.getMsg(256, "All visible and ticked"));
 		tickedVisible.setGroup(chkFormat);
 		firstLine = new mLabel ("");
-		firstLine.anchor = mLabel.CENTER;
+		firstLine.anchor = CellConstants.CENTER;
 		addLast (firstLine);
 		addLast (visible);
 		addLast (ticked);
 		addLast (tickedVisible);
 		mLabel continueQuestion =new mLabel (MyLocale.getMsg(259, "Do You really want to continue?"));
-		continueQuestion.anchor = mLabel.CENTER;
+		continueQuestion.anchor = CellConstants.CENTER;
 		addLast (continueQuestion);
-		doButtons(Form.YESB|Form.CANCELB);
+		doButtons(FormBase.YESB|FormBase.CANCELB);
 		setModefromPref();
 	}
 
