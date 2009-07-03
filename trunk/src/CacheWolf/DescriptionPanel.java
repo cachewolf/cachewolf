@@ -5,7 +5,6 @@ import com.stevesoft.ewe_pat.Regex;
 import ewe.ui.*;
 import ewe.fx.*;
 import ewe.sys.*;
-import ewe.util.Vector;
 
 /**
 *	This class shows the long description on a cache.
@@ -68,19 +67,19 @@ public class DescriptionPanel extends CellPanel{
         if (cache!=null && isHtml) {
             int imageNo = 0;
             if (Global.getPref().descShowImg) {
-                Vector Images;
+                CacheImages Images;
                 CacheHolder chImages; // cache which supplies the images (could be main cache)
                 if (cache.isAddiWpt()) {
                     chImages=cache.mainCache;
                 } else {
                     chImages=cache;
                 }
-            	Images = chImages.getExistingDetails().Images;
+            	Images = chImages.getExistingDetails().images;
                 StringBuffer s = new StringBuffer(desc.length() + Images.size() * 100);
                 int start = 0;
                 int pos;
                 Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
-                if (Images.getCount() > 0) {
+                if (Images.size() > 0) {
                     while (start >= 0 && (pos = desc.indexOf("<img", start)) > 0) {
                         s.append(desc.substring(start, pos));
                         imgRex.searchFrom(desc, pos);
@@ -101,14 +100,14 @@ public class DescriptionPanel extends CellPanel{
                         start = desc.indexOf(">", pos);
                         if (start >= 0)
                             start++;
-                        if (imageNo >= Images.getCount())
+                        if (imageNo >= Images.size())
                             break;
                     }
                 }
                 if (start >= 0)
                     s.append(desc.substring(start));
                 desc = s.toString();
-                if (imageNo<Images.getCount()) {
+                if (imageNo<Images.size()) {
                     desc += getPicDesc(imageNo, chImages.getExistingDetails());
                 }
             }
@@ -139,12 +138,12 @@ public class DescriptionPanel extends CellPanel{
 		StringBuffer sb=new StringBuffer(1000);
 		sb.append("<hr><font size=\"+1\" color=\"red\">").append(MyLocale.getMsg(202,"IMAGES").toUpperCase()).append("</font>");
 		sb.append("<br><br>");
-		for (int i=imagesShown; i<chD.ImagesInfo.size(); i++) {
-			sb.append(chD.ImagesText.get(i)).append("<br>");
+		for (int i=imagesShown; i<chD.images.size(); i++) {
+			sb.append(chD.images.get(i).getText()).append("<br>");
 			// Show the additional text if there is one
-			if (chD.ImagesInfo.get(i)!=null) sb.append("<font color='blue'>").append(chD.ImagesInfo.get(i)).append("</font>");
+			if (chD.images.get(i).getComment()!=null) sb.append("<font color='blue'>").append(chD.images.get(i).getComment()).append("</font>");
 			// Only show the image if images are enabled
-			if (Global.getPref().descShowImg) sb.append("<img src=\""+chD.Images.get(i)+"\"><br>");
+			if (Global.getPref().descShowImg) sb.append("<img src=\""+chD.images.get(i).getName()+"\"><br>");
 			sb.append("<br><br><hr>");
 		}
 		return sb.toString();

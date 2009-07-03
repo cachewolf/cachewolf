@@ -5,7 +5,6 @@ import ewe.sys.*;
 import ewe.fx.*;
 import ewe.ui.*;
 import ewe.io.*;
-import ewe.util.*;
 
 
 /**
@@ -51,7 +50,7 @@ public class ImagePanel extends InteractivePanel{
 			clearImages();
 			thumb_size = ((pref.myAppWidth-2*padding) / 3);
 			thumb_size = thumb_size - padding;
-			int rowCounter = cache.Images.size() + cache.UserImages.size();
+			int rowCounter = cache.images.size() + cache.userImages.size();
 			rowCounter = (rowCounter/3)+1;
 			Rect r = new Rect(0, 0, pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+padding);
 			this.virtualSize = r;
@@ -62,17 +61,17 @@ public class ImagePanel extends InteractivePanel{
 			addTitle(MyLocale.getMsg(340,"Cache Images:"));
 			locY = 20;
 			locX = padding;
-			addImages(cache.Images,cache.ImagesText);
+			addImages(cache.images);
 			// load user images
 			if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
 			//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
 			//Vm.debug("locy after: " + Convert.toString(locY));
-			if (cache.UserImages.getCount()> 0){
+			if (cache.userImages.size()> 0){
 				addTitle(MyLocale.getMsg(341,"User Images:"));
 				locY = locY + 20;
 				locX = padding;
 				locCounter = 0;
-				addImages(cache.UserImages,cache.UserImagesText);
+				addImages(cache.userImages);
 			}
 			oldCache=cache;
 		} // cache!=oldCache	
@@ -122,7 +121,7 @@ public class ImagePanel extends InteractivePanel{
 	 * @param pImages Vector of images or userImages
 	 * @param imagesText Vector of image texts or user image texts
 	 */
-	private void addImages(Vector pImages, Vector imagesText) {
+	private void addImages(CacheImages pImages) {
 		String location, imgText;
 		mImage mI;
 		int scaleX, scaleY;
@@ -131,7 +130,7 @@ public class ImagePanel extends InteractivePanel{
 		AniImage AimgText;
 		locCounter=0;
 		for(int i = 0; i<pImages.size(); i++){
-			location = profile.dataDir + (String)pImages.get(i);
+			location = profile.dataDir + pImages.get(i).getName();
 			if (!(new FileBugfix(location)).exists()) {
 				location=NO_IMAGE;
 				if (!pref.showDeletedImages) continue; // Don't show the deleted Image if user does not want it
@@ -169,11 +168,11 @@ public class ImagePanel extends InteractivePanel{
 				ipi.setLocation(locX, locY);
 				addImage(ipi);
 				//Name of picture:
-				if(imagesText.size()>i){
+				if(pImages.size()>i){
 					if (location.equals(NO_IMAGE))
 						imgText=MyLocale.getMsg(342,"Deleted");
 					else
-						imgText = SafeXML.cleanback((String)imagesText.get(i));
+						imgText = SafeXML.cleanback(pImages.get(i).getText());
 					if(imgText.length()==0) imgText = "???";
 					AimgText = new AniImage();
 					AimgText = getImageText(imgText);

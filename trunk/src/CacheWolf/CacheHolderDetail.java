@@ -24,13 +24,9 @@ public class CacheHolderDetail {
 	  public String Hints = CacheHolder.EMPTY;
 	  public LogList CacheLogs=new LogList();
 	  private String CacheNotes = CacheHolder.EMPTY;
-	  public Vector Images = new Vector();
-	  public Vector ImagesText = new Vector();
-	  public Vector ImagesInfo = new Vector();
-	  public Vector LogImages = new Vector();
-	  public Vector LogImagesText = new Vector();
-	  public Vector UserImages = new Vector();
-	  public Vector UserImagesText = new Vector();
+	  public CacheImages images = new CacheImages();
+	  public CacheImages logImages = new CacheImages();
+	  public CacheImages userImages = new CacheImages();
 	  public Attributes attributes=new Attributes();
 	  public Vector CacheIcons = new Vector();
 	  public TravelbugList Travelbugs=new TravelbugList();
@@ -131,9 +127,7 @@ public class CacheHolderDetail {
 		  this.URL = newCh.URL;
 		  
 		  // Images
-		  this.Images = newCh.Images;
-		  this.ImagesInfo = newCh.ImagesInfo;
-		  this.ImagesText = newCh.ImagesText;
+		  this.images = newCh.images;
 		  
 		  setLongDescription(newCh.LongDescription);
 		  setHints(newCh.Hints);
@@ -165,10 +159,12 @@ public class CacheHolderDetail {
 				imgDesc = new InputBox("Description").input("",10);
 				//Create Destination Filename
 				String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf("."));
-				imgDestName = getParent().getWayPoint() + "_U_" + (this.UserImages.size()+1) + ext;
+				imgDestName = getParent().getWayPoint() + "_U_" + (this.userImages.size()+1) + ext;
 				
-				this.UserImages.add(imgDestName);
-				this.UserImagesText.add(imgDesc);
+				ImageInfo userImageInfo = new ImageInfo();
+				userImageInfo.setName(imgDestName);
+				userImageInfo.setText(imgDesc);
+				this.userImages.add(userImageInfo);
 				// Copy File
 				DataMover.copy(imgFile.getFullPath(),profile.dataDir + imgDestName);
 				// Save Data
@@ -185,6 +181,7 @@ public class CacheHolderDetail {
 		void readCache(String dir) throws IOException{
 			String dummy;
 			FileReader in = null;
+			ImageInfo imageInfo;
 			// If parent cache has empty waypoint then don't do anything. This might happen
 			// when a cache object is freshly created to serve as container for imported data
 			if (this.getParent().getWayPoint().equals(CacheHolder.EMPTY)) return;
@@ -234,55 +231,64 @@ public class CacheHolderDetail {
 			}
 			ex = new Extractor(text, "<NOTES><![CDATA[", "]]></NOTES>", 0, true);
 			CacheNotes = ex.findNext();
-			Images.clear();
+			images.clear();
 			ex = new Extractor(text, "<IMG>", "</IMG>", 0, true);
 			dummy = ex.findNext();
 			while(ex.endOfSearch() == false){
-				Images.add(SafeXML.strxmldecode(dummy));
+				imageInfo = new ImageInfo();
+				imageInfo.setName(SafeXML.strxmldecode(dummy));
+				this.images.add(imageInfo);
 				dummy = ex.findNext();
 			}
-			ImagesText.clear();
 			ex = new Extractor(text, "<IMGTEXT>", "</IMGTEXT>", 0, true);
 			dummy = ex.findNext();
+			int imgNr = 0;
 			while(ex.endOfSearch() == false){
+				imageInfo = this.images.get(imgNr);
 				int pos=dummy.indexOf("<DESC>");
 				if (pos>0) {
-					ImagesText.add(dummy.substring(0,pos));
-					ImagesInfo.add(dummy.substring(pos+6,dummy.indexOf("</DESC>")));
+					imageInfo.setText(dummy.substring(0,pos));
+					imageInfo.setComment(dummy.substring(pos+6,dummy.indexOf("</DESC>")));
 				} else {
-					ImagesText.add(dummy);
-					ImagesInfo.add(null);
+					imageInfo.setText(dummy);
 				}
 				dummy = ex.findNext();
+				imgNr = imgNr + 1;
 			}
 			// Logimages
-			LogImages.clear();
+			logImages.clear();
 			ex = new Extractor(text, "<LOGIMG>", "</LOGIMG>", 0, true);
 			dummy = ex.findNext();
 			while(ex.endOfSearch() == false){
-				LogImages.add(dummy);
+				imageInfo = new ImageInfo();
+				imageInfo.setName(dummy);
+				logImages.add(imageInfo);
 				dummy = ex.findNext();
 			}
-			LogImagesText.clear();
 			ex = new Extractor(text, "<LOGIMGTEXT>", "</LOGIMGTEXT>", 0, true);
 			dummy = ex.findNext();
+			imgNr = 0;
 			while(ex.endOfSearch() == false){
-				LogImagesText.add(dummy);
+				imageInfo = logImages.get(imgNr++);
+				imageInfo.setText(dummy);
 				dummy = ex.findNext();
 			}
 
-			UserImages.clear();
+			userImages.clear();
 			ex = new Extractor(text, "<USERIMG>", "</USERIMG>", 0, true);
 			dummy = ex.findNext();
 			while(ex.endOfSearch() == false){
-				UserImages.add(dummy);
+				imageInfo = new ImageInfo();
+				imageInfo.setName(dummy);
+				userImages.add(imageInfo);
 				dummy = ex.findNext();
 			}
-			UserImagesText.clear();
 			ex = new Extractor(text, "<USERIMGTEXT>", "</USERIMGTEXT>", 0, true);
 			dummy = ex.findNext();
+			imgNr = 0;
 			while(ex.endOfSearch() == false){
-				UserImagesText.add(dummy);
+				imageInfo = userImages.get(imgNr++);
+				imageInfo.setText(dummy);
 				dummy = ex.findNext();
 			}
 
@@ -361,33 +367,33 @@ public class CacheHolderDetail {
 				  detfile.print("<NOTES><![CDATA["+CacheNotes+"]]></NOTES>\n");
 				  detfile.print("<IMAGES>\n");
 				  String stbuf = new String();
-				  for(int i = 0;i<Images.size();i++){
-						stbuf = (String)Images.get(i);
+				  for(int i = 0;i<images.size();i++){
+						stbuf = images.get(i).getName();
 						detfile.print("    <IMG>"+SafeXML.strxmlencode(stbuf)+"</IMG>\n");
 				  }
-				  int iis = ImagesInfo.size();
-				  for(int i = 0;i<ImagesText.size();i++){
-						stbuf = (String)ImagesText.get(i);
-						if (i< iis && ImagesInfo.get(i) != null)
-							detfile.print("    <IMGTEXT>"+stbuf+"<DESC>"+ImagesInfo.get(i)+"</DESC></IMGTEXT>\n");
+				  int iis = images.size();
+				  for(int i = 0;i<iis;i++){
+						stbuf = images.get(i).getText();
+						if (i< iis && images.get(i).getComment() != null)
+							detfile.print("    <IMGTEXT>"+stbuf+"<DESC>"+images.get(i).getComment()+"</DESC></IMGTEXT>\n");
 						else 
 							detfile.print("    <IMGTEXT>"+stbuf+"</IMGTEXT>\n");
 				  }
 
-				  for(int i = 0;i<LogImages.size();i++){
-						stbuf = (String)LogImages.get(i);
+				  for(int i = 0;i<logImages.size();i++){
+						stbuf = logImages.get(i).getName();
 						detfile.print("    <LOGIMG>"+stbuf+"</LOGIMG>\n");
 				  }
-				  for(int i = 0;i<LogImagesText.size();i++){
-						stbuf = (String)LogImagesText.get(i);
+				  for(int i = 0;i<logImages.size();i++){
+						stbuf = logImages.get(i).getText();
 						detfile.print("    <LOGIMGTEXT>"+stbuf+"</LOGIMGTEXT>\n");
 				  }
-				  for(int i = 0;i<UserImages.size();i++){
-						stbuf = (String)UserImages.get(i);
+				  for(int i = 0;i<userImages.size();i++){
+						stbuf = userImages.get(i).getName();
 						detfile.print("    <USERIMG>"+stbuf+"</USERIMG>\n");
 				  }
-				  for(int i = 0;i<UserImagesText.size();i++){
-						stbuf = (String)UserImagesText.get(i);
+				  for(int i = 0;i<userImages.size();i++){
+						stbuf = userImages.get(i).getText();
 						detfile.print("    <USERIMGTEXT>"+stbuf+"</USERIMGTEXT>\n");
 				  }
 
@@ -419,16 +425,10 @@ public class CacheHolderDetail {
 		 * @return true if cache has additional info, false otherwise
 		 */
 		public boolean hasImageInfo() {
-			for (int i=ImagesInfo.size()-1; i>=0; i--)
-				if (ImagesInfo.get(i)!=null) return true;
+			for (int i=this.images.size()-1; i>=0; i--)
+				if (this.images.get(i).getComment() != null) return true;
 			return false;
 		}
-
-//	   public void finalize() {
-//		   super.finalize();
-//		   Vm.debug("Destroying CacheHolder "+wayPoint);
-//	   }
-
 }
 
 
