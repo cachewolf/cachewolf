@@ -162,8 +162,8 @@ public class CacheHolderDetail {
 				imgDestName = getParent().getWayPoint() + "_U_" + (this.userImages.size()+1) + ext;
 				
 				ImageInfo userImageInfo = new ImageInfo();
-				userImageInfo.setName(imgDestName);
-				userImageInfo.setText(imgDesc);
+				userImageInfo.setFilename(imgDestName);
+				userImageInfo.setTitle(imgDesc);
 				this.userImages.add(userImageInfo);
 				// Copy File
 				DataMover.copy(imgFile.getFullPath(),profile.dataDir + imgDestName);
@@ -236,7 +236,7 @@ public class CacheHolderDetail {
 			dummy = ex.findNext();
 			while(ex.endOfSearch() == false){
 				imageInfo = new ImageInfo();
-				imageInfo.setName(SafeXML.strxmldecode(dummy));
+				imageInfo.setFilename(SafeXML.strxmldecode(dummy));
 				this.images.add(imageInfo);
 				dummy = ex.findNext();
 			}
@@ -247,10 +247,10 @@ public class CacheHolderDetail {
 				imageInfo = this.images.get(imgNr);
 				int pos=dummy.indexOf("<DESC>");
 				if (pos>0) {
-					imageInfo.setText(dummy.substring(0,pos));
+					imageInfo.setTitle(dummy.substring(0,pos));
 					imageInfo.setComment(dummy.substring(pos+6,dummy.indexOf("</DESC>")));
 				} else {
-					imageInfo.setText(dummy);
+					imageInfo.setTitle(dummy);
 				}
 				dummy = ex.findNext();
 				imgNr = imgNr + 1;
@@ -261,7 +261,7 @@ public class CacheHolderDetail {
 			dummy = ex.findNext();
 			while(ex.endOfSearch() == false){
 				imageInfo = new ImageInfo();
-				imageInfo.setName(dummy);
+				imageInfo.setFilename(dummy);
 				logImages.add(imageInfo);
 				dummy = ex.findNext();
 			}
@@ -270,7 +270,7 @@ public class CacheHolderDetail {
 			imgNr = 0;
 			while(ex.endOfSearch() == false){
 				imageInfo = logImages.get(imgNr++);
-				imageInfo.setText(dummy);
+				imageInfo.setTitle(dummy);
 				dummy = ex.findNext();
 			}
 
@@ -279,7 +279,7 @@ public class CacheHolderDetail {
 			dummy = ex.findNext();
 			while(ex.endOfSearch() == false){
 				imageInfo = new ImageInfo();
-				imageInfo.setName(dummy);
+				imageInfo.setFilename(dummy);
 				userImages.add(imageInfo);
 				dummy = ex.findNext();
 			}
@@ -288,7 +288,7 @@ public class CacheHolderDetail {
 			imgNr = 0;
 			while(ex.endOfSearch() == false){
 				imageInfo = userImages.get(imgNr++);
-				imageInfo.setText(dummy);
+				imageInfo.setTitle(dummy);
 				dummy = ex.findNext();
 			}
 
@@ -368,12 +368,12 @@ public class CacheHolderDetail {
 				  detfile.print("<IMAGES>\n");
 				  String stbuf = new String();
 				  for(int i = 0;i<images.size();i++){
-						stbuf = images.get(i).getName();
+						stbuf = images.get(i).getFilename();
 						detfile.print("    <IMG>"+SafeXML.strxmlencode(stbuf)+"</IMG>\n");
 				  }
 				  int iis = images.size();
 				  for(int i = 0;i<iis;i++){
-						stbuf = images.get(i).getText();
+						stbuf = images.get(i).getTitle();
 						if (i< iis && images.get(i).getComment() != null)
 							detfile.print("    <IMGTEXT>"+stbuf+"<DESC>"+images.get(i).getComment()+"</DESC></IMGTEXT>\n");
 						else 
@@ -381,19 +381,19 @@ public class CacheHolderDetail {
 				  }
 
 				  for(int i = 0;i<logImages.size();i++){
-						stbuf = logImages.get(i).getName();
+						stbuf = logImages.get(i).getFilename();
 						detfile.print("    <LOGIMG>"+stbuf+"</LOGIMG>\n");
 				  }
 				  for(int i = 0;i<logImages.size();i++){
-						stbuf = logImages.get(i).getText();
+						stbuf = logImages.get(i).getTitle();
 						detfile.print("    <LOGIMGTEXT>"+stbuf+"</LOGIMGTEXT>\n");
 				  }
 				  for(int i = 0;i<userImages.size();i++){
-						stbuf = userImages.get(i).getName();
+						stbuf = userImages.get(i).getFilename();
 						detfile.print("    <USERIMG>"+stbuf+"</USERIMG>\n");
 				  }
 				  for(int i = 0;i<userImages.size();i++){
-						stbuf = userImages.get(i).getText();
+						stbuf = userImages.get(i).getTitle();
 						detfile.print("    <USERIMGTEXT>"+stbuf+"</USERIMGTEXT>\n");
 				  }
 

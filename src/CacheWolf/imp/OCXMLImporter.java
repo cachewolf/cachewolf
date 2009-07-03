@@ -589,16 +589,16 @@ public class OCXMLImporter extends MinML {
 			String fileName = createPicFilename(fetchURL);
 			ImageInfo imageInfo = new ImageInfo();
 			// add title
-			imageInfo.setText(picDesc);
+			imageInfo.setTitle(picDesc);
 			holder.getFreshDetails().images.add(imageInfo);
 			try {
 				File ftest = new File(profile.dataDir + fileName);
 				if (ftest.exists()){
-					imageInfo.setName(fileName);
+					imageInfo.setFilename(fileName);
 				}
 				else {
 					if (pref.downloadPics) {
-						imageInfo.setName(fetch(fetchURL, fileName));
+						imageInfo.setFilename(fetch(fetchURL, fileName));
 					}
 				}
 			} catch (IOException e) {
