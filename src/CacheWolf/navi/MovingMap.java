@@ -854,10 +854,10 @@ public class MovingMap extends Form {
 
 	public void destChanged(CacheHolder ch) {
 		CWPoint d = new CWPoint (ch.pos);
-		if(!running || (d == null && gotoPos == null) || 
-				(d != null && gotoPos != null && gotoPos.where.equals(d))) return;
+		if(!running || (gotoPos == null) || 
+				(gotoPos != null && gotoPos.where.equals(d))) return;
 		removeGotoPosition();
-		if (d == null || !d.isValid() ) return;
+		if (!d.isValid() ) return;
 		gotoPos = addSymbol("goto", ch, "goto_map.png", d);
 		//updateDistance(); - this is called from updatePosition
 		forceMapLoad = true;

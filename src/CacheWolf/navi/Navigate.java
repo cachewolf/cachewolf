@@ -9,7 +9,6 @@ import ewe.io.IOException;
 import ewe.io.SerialPort;
 import ewe.io.SerialPortOptions;
 import ewe.net.Socket;
-import ewe.sys.Vm;
 import ewe.sys.mThread;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
