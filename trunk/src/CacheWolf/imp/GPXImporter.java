@@ -326,7 +326,7 @@ public class GPXImporter extends MinML {
 						while(ex.endOfSearch() == false && spiderOK == true){
 							//Vm.debug("Replacing: " + text);
 							if (num >= holder.getFreshDetails().images.size())break;
-							imgName = holder.getFreshDetails().images.get(num).getText();
+							imgName = holder.getFreshDetails().images.get(num).getTitle();
 							holder.getFreshDetails().LongDescription = replace(holder.getFreshDetails().LongDescription, text, "[[Image: " + imgName + "]]");
 							num++;
 							text = ex.findNext();

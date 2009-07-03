@@ -1209,14 +1209,14 @@ public class SpiderGC{
 						if (idxUrl<0) { // New image
 							pref.log("Loading image: " + imgUrl+" as "+imgName);
 							spiderImage(imgUrl, imgName+imgType);
-							imageInfo.setName(imgName+imgType);
+							imageInfo.setFilename(imgName+imgType);
 							spideredUrls.add(imgUrl);
 						} else { // Image already spidered as wayPoint_'idxUrl'
 							pref.log("Already loaded image: " + imgUrl);
 							oldImgName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
-							imageInfo.setName(oldImgName+imgType);
+							imageInfo.setFilename(oldImgName+imgType);
 						}
-						imageInfo.setText(imgName);
+						imageInfo.setTitle(imgName);
 						imageInfo.setComment(null);
 						imgCounter++;
 						chD.images.add(imageInfo);
@@ -1258,14 +1258,14 @@ public class SpiderGC{
 						if (idxUrl<0) { // New image
 							pref.log("Loading image: " + imgUrl+" as "+imgName);
 							spiderImage(imgUrl, imgName+imgType);
-							imageInfo.setName(imgName+imgType);
+							imageInfo.setFilename(imgName+imgType);
 							spideredUrls.add(imgUrl);
 						} else { // Image already spidered as wayPoint_'idxUrl'
 							pref.log("Already loaded image: " + imgUrl);
 							oldImgName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
-							imageInfo.setName(oldImgName+imgType);
+							imageInfo.setFilename(oldImgName+imgType);
 						}
-						imageInfo.setText(exImgName.findNext());
+						imageInfo.setTitle(exImgName.findNext());
 						while (imgComment.startsWith("<br />")) imgComment=imgComment.substring(6);
 						while (imgComment.endsWith("<br />")) imgComment=imgComment.substring(0,imgComment.length()-6);
 						imageInfo.setComment(imgComment);
@@ -1297,9 +1297,9 @@ public class SpiderGC{
 							imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 							pref.log("Loading image: " + imgUrl+" as "+imgName);
 							spiderImage(imgUrl, imgName+imgType);
-							imageInfo.setName(imgName+imgType);
+							imageInfo.setFilename(imgName+imgType);
 							spideredUrls.add(imgUrl);
-							imageInfo.setText(imgName);
+							imageInfo.setTitle(imgName);
 							imgCounter++;
 							chD.images.add(imageInfo);
 						}

@@ -129,7 +129,7 @@ public class ShowCacheInBrowser {
 							// If we have an image which we stored when spidering, we can display it
         					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 								s.append("<img src=\"file://"+
-								   Global.getProfile().dataDir+chD.getExistingDetails().images.get(imageNo).getName()+"\">");
+								   Global.getProfile().dataDir+chD.getExistingDetails().images.get(imageNo).getFilename()+"\">");
 								imageNo++;
 							}
 						}
@@ -146,8 +146,8 @@ public class ShowCacheInBrowser {
 						for (; imageNo<chD.getExistingDetails().images.size(); imageNo++) {
 							Hashtable imgs=new Hashtable();
 							imgs.put("IMAGE","<img src=\"file://"+
-									   Global.getProfile().dataDir+chD.getExistingDetails().images.get(imageNo).getName()+"\" border=0>");
-							imgs.put("IMAGETEXT",chD.getExistingDetails().images.get(imageNo).getText());
+									   Global.getProfile().dataDir+chD.getExistingDetails().images.get(imageNo).getFilename()+"\" border=0>");
+							imgs.put("IMAGETEXT",chD.getExistingDetails().images.get(imageNo).getTitle());
 							if (imageNo<chD.getExistingDetails().images.size() && chD.getExistingDetails().images.get(imageNo).getComment()!=null)
 								imgs.put("IMAGECOMMENT",chD.getExistingDetails().images.get(imageNo).getComment());
 							else
