@@ -1,6 +1,6 @@
-TakenFromUrl:       http://www.geoproxy.geoportal-th.de
+TakenFromUrl:       http://www.geoproxy.de/?
 GetCapabilitiesUrl: http://www.geoproxy.geoportal-th.de/geoproxy/services?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               de.Thüringen t25 SF=~1..8
+Name:               de.Thueringen t25 SF=~1..7,9
 MapType:                        topo
 MainUrl:            http://www.geoproxy.geoportal-th.de/geoproxy/services?
 ServiceTypeUrlPart: SERVICE=WMS
@@ -106,7 +106,7 @@ RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=dtk25wies|Gruenland, Flugplatz|11.20028|1.39972
 #LayersUrlPart:     LAYERS=dtk25grbr|Grundriss|11.20028|1.39972
 #LayersUrlPart:     LAYERS=dtkv25babl|Gewaesser|11.20028|1.39972
-#LayersUrlPart:     LAYERS=dtkv25col|DTK25-V Kombination farbig|11.20028|1.39972
+#LayersUrlPart:     LAYERS=dtkv25col|DTK25-V Kombination farbig|11.20028|1,39972
 #LayersUrlPart:     LAYERS=dtkv25rebrv|Relief|11.20028|1.39972
 #LayersUrlPart:     LAYERS=dtkv25schw|Grundriss u. Schrift|11.20028|1.39972
 #LayersUrlPart:     LAYERS=dtkv25wald|Waldflaeche|11.20028|1.39972
@@ -348,11 +348,9 @@ RequestUrlPart:     REQUEST=GetMap
 LayersUrlPart:     LAYERS=dtkv25col
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
-BoundingBoxTopLeftWGS84: N 56.0000 E 5.0000
-BoundingBoxButtomRightWGS84: N 47.0000 E 15.0000
-# testen oder
-# ol=N 53.0000 E 9.0000 , ur=N 49.0000 E 13.0000
-MinScale:   0
-MaxScale:   45
-RecommendedScale:   5
+BoundingBoxTopLeftWGS84: N 51.7 E 10.3
+BoundingBoxButtomRightWGS84: N 50.1 E 12.7
+MinScale:   1
+MaxScale:   12
+RecommendedScale:   2,5
 ImageFileExtension: .png
