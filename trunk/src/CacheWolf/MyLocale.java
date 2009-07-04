@@ -6,6 +6,7 @@ package CacheWolf;
 
 import utils.FileBugfix;
 import ewe.fx.Rect;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.sys.*;
 import ewe.sys.Double;
@@ -306,6 +307,27 @@ public class MyLocale {
 			pref.savePreferences();
 		}
 	}
+
+	/**
+	 * Returns the path to a localized version of a help file
+	 * @param basename
+	 * @return
+	 */
+	public static String getLocalizedFile (String basename){
+		String language = MyLocale.getLocaleLanguage();
+		String programmDirectory = FileBase.getProgramDirectory() + "/";
+		int index = basename.lastIndexOf('.');
+		String prefix = basename.substring(0,index);
+		String suffix = basename.substring(index);
+		File f = new File (programmDirectory, prefix+'_'+language+suffix);
+		if (f.exists()){
+			return f.toString();
+		}
+		else{
+			return new File (programmDirectory,basename).toString();
+		}
+	}
+
 
 }
 
