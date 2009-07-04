@@ -101,6 +101,7 @@ public class Parser{
     	new fnType("asin","asin",2),
     	new fnType("atan","atan",2),
       	new fnType("bearing","bearing",4),
+    	new fnType("cb","cb",16),
      	new fnType("centre","center",3),
     	new fnType("center","center",3),
     	new fnType("cls","cls",1),
@@ -108,6 +109,7 @@ public class Parser{
     	new fnType("cos","cos",2),
     	new fnType("count","count",4),
      	new fnType("cp","cp",1),
+    	new fnType("crossbearing","cb",16),
     	new fnType("crosstotal","ct",6),
     	new fnType("ct","ct",2),
      	new fnType("curpos","cp",1),
@@ -147,9 +149,7 @@ public class Parser{
     	new fnType("tan","tan",2),
     	new fnType("ucase","uc",2),
     	new fnType("val","val",2),
-     	new fnType("zentrum","center",3),
-    	new fnType("crossbearing","cb",16),
-    	new fnType("cb","cb",16)
+     	new fnType("zentrum","center",3)
      	    	};
 	private static int scanpos = 0;
 	CWPoint cwPt=new CWPoint();
@@ -633,6 +633,8 @@ public class Parser{
 		String coordinates2 = popCalcStackAsString();
 		double degrees1 = popCalcStackAsNumber(-1);
 		String coordinates1 = popCalcStackAsString();
+		if (!isValidCoord(coordinates1)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordinates1);
+ 		if (!isValidCoord(coordinates2)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordinates2);
 
 		//Check parameters
     	if (degrees1<0 || degrees1>360 || degrees2 < 0 || degrees2 > 360){
@@ -643,7 +645,7 @@ public class Parser{
     			err(MyLocale.getMsg(1741,"Crossbearing degrees must be in interval [0;2*PI]"));
     		}
     	}
-    	
+
     	double rAN = Global.getPref().solverDegMode ? degrees1 / 180.0
 				* java.lang.Math.PI : degrees1;
 		double rBN = Global.getPref().solverDegMode ? degrees2 / 180.0
@@ -656,11 +658,16 @@ public class Parser{
 		CWPoint result2 = crossbearingCalculation(point1, point2, rAN, rBN);
 		return result2.toString();
 	}
-	
+
 	private CWPoint crossbearingCalculation(CWPoint point1, CWPoint point2, double rAN, double rBN) throws Exception {
 		//see german wikipedia keyword vorwaertsschnitt for the calculation.
 		//peilung von a->b
 		//Yes we will make an error, therefore we have to calculate the target-point iteratively.
+		//Testcode for crossbearing:
+		// MP="S35 47.100 W089 43.200" # MP is centre of circle, could be any waypoint
+		// A=project(MP,0,1000); B=project(MP,120,1000) # Points of equilateral triangle on circle
+		// C1=project(MP,240,1000); C2=cb(A,210 ,B,270)
+		//	C1 "=" C2
 		final int maxRadius = 6378;
     	double distance = point1.getDistance(point2);
     	if (Math.abs (distance) <= 0.0000000001){
@@ -671,7 +678,7 @@ public class Parser{
 	    if (Global.getPref().solverDegMode) phiAB=phiAB / 180.0 * java.lang.Math.PI;
 	    double phiBA = point2.getBearing(point1);
 	    if (Global.getPref().solverDegMode) phiBA=phiBA / 180.0 * java.lang.Math.PI;
-	    
+
 	    double psi = phiAB - rAN;
 	    double phi = rBN - phiBA;
 
@@ -698,7 +705,7 @@ public class Parser{
 	    }
 		return result2;
 	}
-	
+
     /** Project a waypoint at some angle and some distance */
     private String funcProject() throws Exception {
     	double distance=popCalcStackAsNumber(0);
