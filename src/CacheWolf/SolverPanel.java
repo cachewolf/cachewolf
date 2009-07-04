@@ -169,7 +169,7 @@ public class SolverPanel extends CellPanel{
 				processCommand(mText.getText());
 			}
 			if (ev.target==btnWolfLang) {
-				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
+				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118,"WolfLanguage"), true, pref);
 				is.execute(parent.getFrame(), Gui.CENTER_FRAME);
 			}
 			if (ev.target==btnDegRad) {
