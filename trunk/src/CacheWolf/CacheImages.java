@@ -12,18 +12,25 @@ import ewe.util.Vector;
  */
 public class CacheImages {
 	
+	private int initialSize=10;
 	/** Lazy initialization of the vector: It is created only when needed. If it is not accessed,
 	 * it will stay <code>null</code>.*/
 	private Vector vector=null;
 	/** Images that should display in the image panel */
 	private CacheImages display=null;
 	
-	public CacheImages(){ // Public Constructor
+	public CacheImages(){ // Public constructor
 	}
-		
+
+	public CacheImages(int initialSize) {
+		if (initialSize<0) {
+			throw new IllegalArgumentException("Initial size for CacheImage must be > 0. Value: "+String.valueOf(initialSize));
+		}
+		this.initialSize = initialSize;
+	}
 	private Vector getVector(){
 		if (this.vector==null) {
-			vector = new Vector(10);
+			vector = new Vector(this.initialSize);
 		}
 		return this.vector;
 	}
@@ -75,16 +82,21 @@ public class CacheImages {
 	 */
 	private void checkForDisplayImages() {
 		if (this.size()>1) {
-			display = new CacheImages(/*this.size()*/);
+			display = new CacheImages(this.size());
+			// Loop over every image
 			for (int i=0; i<this.size(); i++) {
 				boolean shouldDisplay = true;
 				ImageInfo currImg = this.get(i);
+				// Now check against every other image
 				for (int j=0; j<this.size(); j++) {
+					if (i==j) continue; // Except same image
 					ImageInfo testImg = this.get(j);
-					if (i==j) continue;
+					// Are the filenames the same?
 					if (currImg.getFilename().equals(testImg.getFilename())) {
+						// Check if other title is better than current one
 						if (currImg.getFilename().startsWith(currImg.getTitle()) &&
 							!testImg.getFilename().startsWith(testImg.getTitle())) {
+							// If yes: Don't show the image
 							shouldDisplay = false;
 						}
 					}
