@@ -11,6 +11,7 @@ import CacheWolf.navi.SelectMap;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Font;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.IOException;
 import ewe.sys.Vm;
@@ -662,15 +663,15 @@ public class MainMenu extends MenuBar {
 			// "About" pulldown menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == about){
-				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "info.html", MyLocale.getMsg(117,"About"),true, pref);
+				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("info.html"), MyLocale.getMsg(117,"About"),true, pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == legend){
-				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "legende.html", MyLocale.getMsg(155,"Legend"),true, pref);
+				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("legende.html"), MyLocale.getMsg(155,"Legend"),true, pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == wolflang){
-				InfoScreen is = new InfoScreen(FileBase.getProgramDirectory() + "/" + "wolflang.html", MyLocale.getMsg(118,"WolfLanguage"), true, pref);
+				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118,"WolfLanguage"), true, pref);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == sysinfo){
