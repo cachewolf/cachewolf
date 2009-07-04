@@ -44,13 +44,16 @@ number -> valid number
 
 package CacheWolf;
 
-import ewe.util.*;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.Navigate;
+import CacheWolf.navi.TransformCoordinates;
 
-import com.stevesoft.ewe_pat.*;
-import ewe.sys.*;
-import java.lang.Double;
+import com.stevesoft.ewe_pat.Regex;
+
+import ewe.sys.Convert;
+import ewe.util.Hashtable;
+import ewe.util.Iterator;
+import ewe.util.Vector;
 
 
 /**
@@ -144,7 +147,9 @@ public class Parser{
     	new fnType("tan","tan",2),
     	new fnType("ucase","uc",2),
     	new fnType("val","val",2),
-     	new fnType("zentrum","center",3)
+     	new fnType("zentrum","center",3),
+    	new fnType("crossbearing","cb",16),
+    	new fnType("cb","cb",16)
      	    	};
 	private static int scanpos = 0;
 	CWPoint cwPt=new CWPoint();
@@ -615,6 +620,85 @@ public class Parser{
 		}
 	}
 
+	/**
+	 * Calculates the crossbearing from point1 with bearing 1 and point2 with bearing2
+	 * point1 and point 2 must be different.
+	 * Not very well tested. No guarantee for correct result if any of the distance is greater than 300 kilometers and / or any of the angles in the spherical triangle id greater then 90degrees
+	 * @return
+	 * @throws Exception
+	 */
+	private String funcCrossBearing () throws Exception{
+		//parameters come in reversed order!
+		double degrees2 = popCalcStackAsNumber(-1);
+		String coordinates2 = popCalcStackAsString();
+		double degrees1 = popCalcStackAsNumber(-1);
+		String coordinates1 = popCalcStackAsString();
+
+		//Check parameters
+    	if (degrees1<0 || degrees1>360 || degrees2 < 0 || degrees2 > 360){
+    		if (Global.getPref().solverDegMode){
+    			err(MyLocale.getMsg(1740,"Crossbearing degrees must be in interval [0;360]"));
+    		}
+    		else{
+    			err(MyLocale.getMsg(1741,"Crossbearing degrees must be in interval [0;2*PI]"));
+    		}
+    	}
+    	
+    	double rAN = Global.getPref().solverDegMode ? degrees1 / 180.0
+				* java.lang.Math.PI : degrees1;
+		double rBN = Global.getPref().solverDegMode ? degrees2 / 180.0
+				* java.lang.Math.PI : degrees2;
+
+		CWPoint point1=new CWPoint(coordinates1);
+		CWPoint point2=new CWPoint(coordinates2);
+
+		//Zum besseren Testen ohne Rundungsfehler
+		CWPoint result2 = crossbearingCalculation(point1, point2, rAN, rBN);
+		return result2.toString();
+	}
+	
+	private CWPoint crossbearingCalculation(CWPoint point1, CWPoint point2, double rAN, double rBN) throws Exception {
+		//see german wikipedia keyword vorwaertsschnitt for the calculation.
+		//peilung von a->b
+		//Yes we will make an error, therefore we have to calculate the target-point iteratively.
+		final int maxRadius = 6378;
+    	double distance = point1.getDistance(point2);
+    	if (Math.abs (distance) <= 0.0000000001){
+    		err (MyLocale.getMsg(1742,"Crossbearing: distance between points to small"));
+    	}
+    	double distanceInRad = distance / maxRadius;
+	    double phiAB = point1.getBearing(point2);
+	    if (Global.getPref().solverDegMode) phiAB=phiAB / 180.0 * java.lang.Math.PI;
+	    double phiBA = point2.getBearing(point1);
+	    if (Global.getPref().solverDegMode) phiBA=phiBA / 180.0 * java.lang.Math.PI;
+	    
+	    double psi = phiAB - rAN;
+	    double phi = rBN - phiBA;
+
+	    //calculate projetiondistance
+	    double bInRad = distanceInRad * java.lang.Math.sin(phi) / java.lang.Math.sin(phi+psi);
+	    double b = bInRad * maxRadius ;//* (1-flattening);
+	    double aInRad = distanceInRad * java.lang.Math.sin(psi) / java.lang.Math.sin(phi+psi);
+	    double a = aInRad * maxRadius ;//* (1-flattening);
+	    double phiAN = phiAB - psi;
+	    double phiANDegrees = phiAN * 180.0 / java.lang.Math.PI;
+	    double phiBN = phiBA + phi;
+	    double phiBNDegrees = phiBN * 180.0 / java.lang.Math.PI;
+	    CWPoint result2 = point2.project(phiBNDegrees, a);
+	    CWPoint result = point1.project(phiANDegrees, b);
+	    double errorDistance = result.getDistance(result2);
+	    //if the distance between the points is to large, we will restart the calculation with the new points found.
+	    //since the error is mostly very small these iterations are seldom used and the needed depth is very low.
+	    //First we will make sure, that this calculation will terminate
+	    if (distance < errorDistance){
+    		err (MyLocale.getMsg(1743,"Crossbearing calculation failed. Please inform the developers at geoclub.de"));
+	    }
+	    if (errorDistance * 1000 > 1){
+	    	return crossbearingCalculation(result, result2, rAN, rBN);
+	    }
+		return result2;
+	}
+	
     /** Project a waypoint at some angle and some distance */
     private String funcProject() throws Exception {
     	double distance=popCalcStackAsNumber(0);
@@ -1080,6 +1164,7 @@ public class Parser{
 	    else if (funcDef.alias.equals("tan")) calcStack.add(new java.lang.Double(java.lang.Math.tan(makeRadiant(popCalcStackAsNumber(0)))));
 	    else if (funcDef.alias.equals("uc")) calcStack.add(popCalcStackAsString().toUpperCase());
 	    else if (funcDef.alias.equals("val")) calcStack.add(new java.lang.Double(funcVal(popCalcStackAsString())));
+	    else if (funcDef.alias.equals("cb")) calcStack.add(funcCrossBearing ());
 	    else err(MyLocale.getMsg(1728,"Function not yet implemented: ")+funcName);
 	}
 
