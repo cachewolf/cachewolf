@@ -236,7 +236,13 @@ public class CacheHolderDetail {
 			dummy = ex.findNext();
 			while(ex.endOfSearch() == false){
 				imageInfo = new ImageInfo();
-				imageInfo.setFilename(SafeXML.strxmldecode(dummy));
+				int pos=dummy.indexOf("<URL>");
+				if (pos>0) {
+					imageInfo.setFilename(SafeXML.strxmldecode(dummy.substring(0,pos)));
+					imageInfo.setURL(SafeXML.strxmldecode((dummy.substring(pos+5,dummy.indexOf("</URL>")))));
+				} else {
+					imageInfo.setFilename(SafeXML.strxmldecode(dummy));
+				}
 				this.images.add(imageInfo);
 				dummy = ex.findNext();
 			}
@@ -369,7 +375,12 @@ public class CacheHolderDetail {
 				  String stbuf = new String();
 				  for(int i = 0;i<images.size();i++){
 						stbuf = images.get(i).getFilename();
-						detfile.print("    <IMG>"+SafeXML.strxmlencode(stbuf)+"</IMG>\n");
+						String urlBuf = images.get(i).getURL();
+						if (urlBuf != null && !urlBuf.equals("")) {
+							detfile.print("    <IMG>"+SafeXML.strxmlencode(stbuf)+"<URL>"+SafeXML.strxmlencode(urlBuf)+"</URL></IMG>\n");
+						} else {
+							detfile.print("    <IMG>"+SafeXML.strxmlencode(stbuf)+"</IMG>\n");
+						}
 				  }
 				  int iis = images.size();
 				  for(int i = 0;i<iis;i++){
