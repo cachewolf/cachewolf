@@ -1175,13 +1175,13 @@ public class SpiderGC{
 		Extractor exImgBlock,exImgComment;
 		int idxUrl; // Index of already spidered Url in list of spideredUrls
 		CacheImages lastImages=null;
-		
+
 		// First: Get current image object of waypoint before spidering images.
 		CacheHolder oldCh = Global.getProfile().cacheDB.get(chD.getParent().getWayPoint());
 		if (oldCh != null) {
 			lastImages = oldCh.getFreshDetails().images;
 		}
-		
+
 		//========
 		//In the long description
 		//========
@@ -1216,7 +1216,8 @@ public class SpiderGC{
 						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 						if (lastImages != null) {
 							imageInfo = lastImages.needsSpidering(imgUrl, imgName+imgType);
-						}
+						} else
+							imageInfo=null;
 						if (imageInfo == null) {
 							imageInfo = new ImageInfo();
 							if (idxUrl<0) { // New image
@@ -1232,7 +1233,7 @@ public class SpiderGC{
 								imageInfo.setURL(imgUrl);
 							}
 						} else {
-							pref.log("Already exising image: " + imgUrl);
+							pref.log("Already existing image: " + imgUrl);
 							spideredUrls.add(imgUrl);
 						}
 						imageInfo.setTitle(imgName);
@@ -1275,7 +1276,8 @@ public class SpiderGC{
 						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 						if (lastImages != null) {
 							imageInfo = lastImages.needsSpidering(imgUrl, imgName+imgType);
-						}
+						} else
+							imageInfo=null;
 						if (imageInfo == null) {
 							imageInfo = new ImageInfo();
 							if (idxUrl<0) { // New image
@@ -1291,7 +1293,7 @@ public class SpiderGC{
 								imageInfo.setURL(imgUrl);
 							}
 						} else {
-							pref.log("Already exising image: " + imgUrl);
+							pref.log("Already existing image: " + imgUrl);
 							spideredUrls.add(imgUrl);
 						}
 						imageInfo.setTitle(exImgName.findNext());
@@ -1325,7 +1327,8 @@ public class SpiderGC{
 							imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 							if (lastImages != null) {
 								imageInfo = lastImages.needsSpidering(imgUrl, imgName+imgType);
-							}
+							} else
+								imageInfo=null;
 							if (imageInfo == null) {
 								imageInfo = new ImageInfo();
 								pref.log("Loading image: " + imgUrl+" as "+imgName);
@@ -1334,7 +1337,7 @@ public class SpiderGC{
 								imageInfo.setURL(imgUrl);
 								spideredUrls.add(imgUrl);
 							} else {
-								pref.log("Already exising image: " + imgUrl);
+								pref.log("Already existing image: " + imgUrl);
 								spideredUrls.add(imgUrl);
 							}
 							imageInfo.setTitle(imgName);
