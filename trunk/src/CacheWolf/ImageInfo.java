@@ -8,15 +8,17 @@ package CacheWolf;
  */
 public class ImageInfo {
 	
-	private String filename="";
-	private String title="";
+	private String filename=null;
+	private String title=null;
 	private String comment=null;
+	private String URL;
 
 	/**
 	 * Gets the filename of the image (without path)
 	 * @return Filename
 	 */
 	public String getFilename() {
+		if (filename == null) return "";
     	return filename;
     }
 	/**
@@ -31,6 +33,7 @@ public class ImageInfo {
 	 * @return Title
 	 */
 	public String getTitle() {
+		if (title == null) return "";
     	return title;
     }
 	/**
@@ -59,6 +62,14 @@ public class ImageInfo {
 		} else {
 			this.comment = comment;
 		}
+    }
+	public String getURL() {
+		if (URL == null) return "";
+    	return URL;
+    }
+	
+	public void setURL(String url) {
+    	URL = url;
     }
 	
 }
