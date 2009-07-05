@@ -3,6 +3,7 @@
  */
 package CacheWolf;
 
+import utils.FileBugfix;
 import ewe.util.Vector;
 
 /**
@@ -135,6 +136,40 @@ public class CacheImages {
 	 */
 	public CacheImages getDisplayImages() {
 		return this.getDisplayImages(false);
+	}
+	
+	/**
+	 * Checks if a image of a given URL needs to be spidered. It does <b>not</b> need to be spidered
+	 * if the following conditions meet: <ul>
+	 * <li>The url is from <code>http://img.geocaching.com/cache/</code> or 
+	 * <code>http://img.groundspeak.com/cache/</code>. (Reason: Images at these places don't change - 
+	 * if images change, they get a new url.)</li>
+	 * <li>An image with the given URL is among the images of the caches image object.</li>
+	 * <li>The image is present in the file system.</li>
+	 * </ul> If no spidering is needed, then the <code>ImageInfo</code> object of the equivalent image is
+	 * returned, otherwise (when spidering is needed) <code>null</code> is returned.
+	 * @param pUrl URL to check
+	 * @return ImageInfo object
+	 */
+	public ImageInfo needsSpidering(String pUrl, String pFilename) {
+		String url = pUrl.toLowerCase();
+		ImageInfo result = null;
+		if (this.size() > 0 && 
+				(url.startsWith("http://img.geocaching.com/cache/")
+				 || url.startsWith("http://img.groundspeak.com/cache/"))) {
+			for (int i=0; i<this.size(); i++) {
+				ImageInfo img = this.get(i);
+				if (img.getURL().toLowerCase().equals(url) 
+						&& img.getFilename().equals(pFilename)) {
+					String location = Global.getProfile().dataDir + pFilename;
+					if ((new FileBugfix(location)).exists()) {
+						result = img;
+						break;
+					}
+				}
+			}
+		}
+		return result;
 	}
 	
 }
