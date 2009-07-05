@@ -33,7 +33,6 @@ import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheHolderDetail;
-import CacheWolf.CacheImages;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
@@ -1171,17 +1170,9 @@ public class SpiderGC{
 		int imgCounter = 0;
 		String imgName, oldImgName, imgType, imgUrl, imgComment;
 		Vector spideredUrls=new Vector(15);
-		ImageInfo imageInfo=null;
+		ImageInfo imageInfo;
 		Extractor exImgBlock,exImgComment;
 		int idxUrl; // Index of already spidered Url in list of spideredUrls
-		CacheImages lastImages=null;
-
-		// First: Get current image object of waypoint before spidering images.
-		CacheHolder oldCh = Global.getProfile().cacheDB.get(chD.getParent().getWayPoint());
-		if (oldCh != null) {
-			lastImages = oldCh.getFreshDetails().images;
-		}
-
 		//========
 		//In the long description
 		//========
@@ -1214,27 +1205,16 @@ public class SpiderGC{
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
 						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
-						if (lastImages != null) {
-							imageInfo = lastImages.needsSpidering(imgUrl, imgName+imgType);
-						} else
-							imageInfo=null;
-						if (imageInfo == null) {
-							imageInfo = new ImageInfo();
-							if (idxUrl<0) { // New image
-								pref.log("Loading image: " + imgUrl+" as "+imgName);
-								spiderImage(imgUrl, imgName+imgType);
-								imageInfo.setFilename(imgName+imgType);
-								imageInfo.setURL(imgUrl);
-								spideredUrls.add(imgUrl);
-							} else { // Image already spidered as wayPoint_'idxUrl'
-								pref.log("Already loaded image: " + imgUrl);
-								oldImgName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
-								imageInfo.setFilename(oldImgName+imgType);
-								imageInfo.setURL(imgUrl);
-							}
-						} else {
-							pref.log("Already existing image: " + imgUrl);
+						imageInfo = new ImageInfo();
+						if (idxUrl<0) { // New image
+							pref.log("Loading image: " + imgUrl+" as "+imgName);
+							spiderImage(imgUrl, imgName+imgType);
+							imageInfo.setFilename(imgName+imgType);
 							spideredUrls.add(imgUrl);
+						} else { // Image already spidered as wayPoint_'idxUrl'
+							pref.log("Already loaded image: " + imgUrl);
+							oldImgName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
+							imageInfo.setFilename(oldImgName+imgType);
 						}
 						imageInfo.setTitle(imgName);
 						imageInfo.setComment(null);
@@ -1274,27 +1254,16 @@ public class SpiderGC{
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
 						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
-						if (lastImages != null) {
-							imageInfo = lastImages.needsSpidering(imgUrl, imgName+imgType);
-						} else
-							imageInfo=null;
-						if (imageInfo == null) {
-							imageInfo = new ImageInfo();
-							if (idxUrl<0) { // New image
-								pref.log("Loading image: " + imgUrl+" as "+imgName);
-								spiderImage(imgUrl, imgName+imgType);
-								imageInfo.setFilename(imgName+imgType);
-								imageInfo.setURL(imgUrl);
-								spideredUrls.add(imgUrl);
-							} else { // Image already spidered as wayPoint_'idxUrl'
-								pref.log("Already loaded image: " + imgUrl);
-								oldImgName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
-								imageInfo.setFilename(oldImgName+imgType);
-								imageInfo.setURL(imgUrl);
-							}
-						} else {
-							pref.log("Already existing image: " + imgUrl);
+						imageInfo = new ImageInfo();
+						if (idxUrl<0) { // New image
+							pref.log("Loading image: " + imgUrl+" as "+imgName);
+							spiderImage(imgUrl, imgName+imgType);
+							imageInfo.setFilename(imgName+imgType);
 							spideredUrls.add(imgUrl);
+						} else { // Image already spidered as wayPoint_'idxUrl'
+							pref.log("Already loaded image: " + imgUrl);
+							oldImgName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
+							imageInfo.setFilename(oldImgName+imgType);
 						}
 						imageInfo.setTitle(exImgName.findNext());
 						while (imgComment.startsWith("<br />")) imgComment=imgComment.substring(6);
@@ -1324,22 +1293,12 @@ public class SpiderGC{
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
 						if (idxUrl<0) { // New image
+							imageInfo = new ImageInfo();
 							imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
-							if (lastImages != null) {
-								imageInfo = lastImages.needsSpidering(imgUrl, imgName+imgType);
-							} else
-								imageInfo=null;
-							if (imageInfo == null) {
-								imageInfo = new ImageInfo();
-								pref.log("Loading image: " + imgUrl+" as "+imgName);
-								spiderImage(imgUrl, imgName+imgType);
-								imageInfo.setFilename(imgName+imgType);
-								imageInfo.setURL(imgUrl);
-								spideredUrls.add(imgUrl);
-							} else {
-								pref.log("Already existing image: " + imgUrl);
-								spideredUrls.add(imgUrl);
-							}
+							pref.log("Loading image: " + imgUrl+" as "+imgName);
+							spiderImage(imgUrl, imgName+imgType);
+							imageInfo.setFilename(imgName+imgType);
+							spideredUrls.add(imgUrl);
 							imageInfo.setTitle(imgName);
 							imgCounter++;
 							chD.images.add(imageInfo);
