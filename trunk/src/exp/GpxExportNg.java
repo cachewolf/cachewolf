@@ -63,14 +63,19 @@ public class GpxExportNg {
 	final static int GPX_COMPACT = 0;
 	/** export is PQ like */
 	final static int GPX_PQLIKE = 1;
-	/** export follows gc.com myfinds format */
+	/** export follows gc.com MyFinds format */
 	final static int GPX_MYFINDSPQ = 2;
-
+	/** name used as key when storing preferences */
 	final static String expName = "GpxExportNG";
+	/** string representation of true */
 	final static String TRUE = "True";
+	/** string representation of false */
 	final static String FALSE = "False";
+	/** object used to determine custom symbols and POI categories */
 	private static GarminMap poiMapper;
+	/** maximum number of logs to export. can be overwritten with preferences, default unlimited*/
 	private int maxLogs = ewe.math.Number.INTEGER_MAX_VALUE;
+	/** number of errors / warnings during export */
 	private int exportErrors = 0;
 
 	final static String GPXHEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -295,20 +300,18 @@ public class GpxExportNg {
 						if (!copyPoiIcon(tempDir, key, prefix, poiZip))
 							exportErrors++;
 
-					// TODO: check with blanks and on windows
-					String gpsBabelCommand = Global.getPref().gpsbabel
-							.concat(" -i gpx -f ")
-							.concat(tempDir + FileBase.separator + prefix + key + ".gpx")
-							.concat(" -o garmin_gpi,sleep=1,category=\"")
-							.concat(prefix + key).concat("\",bitmap=")
-							.concat(tempDir + FileBase.separator + prefix + key	+ ".bmp")
-							.concat(" -F ")
-							.concat(outDir + FileBase.separator + prefix + key + ".gpi");
+					String[] cmdStack = new String[9];
+					cmdStack[0]=Global.getPref().gpsbabel;
+					cmdStack[1]="-i";
+					cmdStack[2]="gpx";
+					cmdStack[3]="-f";
+					cmdStack[4]=tempDir + FileBase.separator + prefix + key + ".gpx";
+					cmdStack[5]="-o";
+					cmdStack[6]="garmin_gpi,sleep=1,category="+prefix + key+",bitmap="+tempDir + FileBase.separator + prefix + key	+ ".bmp";
+					cmdStack[7]="-F";
+					cmdStack[8]=outDir + FileBase.separator + prefix + key + ".gpi";
 
-					if (Global.getPref().debug)
-						Global.getPref().log(gpsBabelCommand);
-
-					Process babelProcess = Vm.exec(gpsBabelCommand);
+					Process babelProcess = startProcess(cmdStack);
 					StreamReader errorStream = new StreamReader(babelProcess.getErrorStream());
 					while (errorStream.isOpen()) {
 						String errorMsg = errorStream.readALine();
@@ -423,31 +426,32 @@ public class GpxExportNg {
 
 			if (sendToGarmin) {
 				try {
-					String gpsBabelCommand;
-					gpsBabelCommand = Global.getPref().gpsbabel
-						.concat(" ")
-						.concat(Global.getPref().garminGPSBabelOptions)
-						.concat(" -i gpx -f ")
-						.concat(file.getCreationName())
-						.concat(" -o garmin -F ")
-						.concat(Global.getPref().garminConn)
-						.concat(":");
-					if (Global.getPref().debug)
-						Global.getPref().log("GPX Export: gpsbabelcommand is "+ gpsBabelCommand);
+					String[] cmdStack = new String[9];
+					cmdStack[0]=Global.getPref().gpsbabel;
+					cmdStack[1]="-i";
+					cmdStack[2]="gpx";
+					cmdStack[3]="-f";
+					cmdStack[4]=file.getCreationName();
+					cmdStack[5]="-o";
+					cmdStack[6]="garmin";
+					cmdStack[7]="-F";
+					cmdStack[8]=Global.getPref().garminConn.concat(":");
 					
-					Process babelProcess = Vm.exec(gpsBabelCommand);
-					StreamReader errorStream = new StreamReader(babelProcess.getErrorStream());
-					while (errorStream.isOpen()) {
-						String errorMsg = errorStream.readALine();
-						if (errorMsg != null) {
-							Global.getPref().log("GPX Export: " + errorMsg);
-							exportErrors++;
-						}
-						try {
-							babelProcess.exitValue();
-							errorStream.close();
-						} catch (IllegalThreadStateException e) {
-							// still running
+					Process babelProcess = this.startProcess(cmdStack);
+					if (babelProcess != null) {
+						StreamReader errorStream = new StreamReader(babelProcess.getErrorStream());
+						while (errorStream.isOpen()) {
+							String errorMsg = errorStream.readALine();
+							if (errorMsg != null) {
+								Global.getPref().log("GPX Export: " + errorMsg);
+								exportErrors++;
+							}
+							try {
+								babelProcess.exitValue();
+								errorStream.close();
+							} catch (IllegalThreadStateException e) {
+								// still running
+							}
 						}
 					}
 				} catch (Exception ex) {
@@ -462,6 +466,11 @@ public class GpxExportNg {
 		}
 	}
 
+	/**
+	 * wrapper for formatting a cache. will call some subroutines to do the actual work
+	 * @param ch
+	 * @return
+	 */
 	private String formatCache(CacheHolder ch) {
 		// no addis or custom in MyFindsPq - and of course only finds
 		if ((GPX_MYFINDSPQ == outType) && ((ch.getType() == CacheType.CW_TYPE_CUSTOM) || ch.isAddiWpt() || !ch.is_found()))
@@ -494,6 +503,11 @@ public class GpxExportNg {
 		return ret.toString();
 	}
 
+	/**
+	 * generate minimal waypoint information according to GPX specification
+	 * @param ch
+	 * @return
+	 */
 	private String formatCompact(CacheHolder ch) {
 
 		Transformer trans = new Transformer(true);
@@ -604,6 +618,11 @@ public class GpxExportNg {
 		return trans.replaceFirst(GPXCOMPACT);
 	}
 
+	/**
+	 * format gc.com extended cache information as found in a PQ
+	 * @param ch cacheholder
+	 * @return formatted cache information for cache waypoints or emty string for all other waypoints (additional / custom)
+	 */
 	private String formatPqExtensions(CacheHolder ch) {
 		// no details pq details for addis or custom waypoints
 		if (ch.getType() == CacheType.CW_TYPE_CUSTOM || ch.isAddiWpt())
@@ -644,12 +663,22 @@ public class GpxExportNg {
 		return ret.toString();
 	}
 
+	/**
+	 * format TB information as found in a gc.com GPX file
+	 * @param ch cacheholder containing TB information
+	 * @return
+	 */
 	public String formatTbs(CacheHolder ch) {
 		Transformer trans = new Transformer(true);
 		return "";
 		// return trans.replaceFirst(GPXTB);
 	}
 
+	/**
+	 * format cache logs as found in a gc.com GPX file
+	 * @param ch cacheholder containing the logs
+	 * @return formatted logs or empty string if no logs are present
+	 */
 	public String formatLogs(CacheHolder ch) {
 		LogList logs = ch.getFreshDetails().CacheLogs;
 		StringBuffer ret = new StringBuffer();
@@ -686,12 +715,21 @@ public class GpxExportNg {
 		return ret.toString();
 	}
 
+	/**
+	 * format the header of the GPX file
+	 * @return
+	 */
 	public String formatHeader() {
 		Transformer trans = new Transformer(true);
 		trans.add(new Regex("@@CREATEDATE@@", new Date().setFormat("yyyy-MM-dd").toString()));
 		return trans.replaceFirst(GPXHEADER);
 	}
 
+	/**
+	 * format a long description as found in the gc.com GPX files
+	 * @param ch cacheholder to format
+	 * @return formatted output
+	 */
 	public String formatLongDescription(CacheHolder ch) {
 		if (ch.isAddiWpt() || ch.getType() == CacheType.CW_TYPE_CUSTOM) {
 			return ch.details.LongDescription;
@@ -706,7 +744,7 @@ public class GpxExportNg {
 			}
 			// FIXME: format is not quite right yet
 			// FIXME: cut Addis off in GPXimporter otherwise people who use GPX to feed CacheWolf have them doubled
-			if (ch.addiWpts.size() > 0) {
+			if (ch.addiWpts.size() > 0 && outType != GPX_MYFINDSPQ) {
 				if (ch.is_HTML()) {
 					ret.append("\n\n<p>Additional Waypoints</p>");
 				} else {
@@ -783,8 +821,15 @@ public class GpxExportNg {
 		}
 	}
 
-	boolean copyPoiIcon(String outdir, String type, String prefix,
-			ZipFile poiZip) {
+	/**
+	 * copy the bitmap identified by <code>prefix</code> and <code>type</code> from <code>poiZip</code> to <code>outdir</code>
+	 * @param outdir
+	 * @param type
+	 * @param prefix
+	 * @param poiZip
+	 * @return true on success, false otherwise
+	 */
+	boolean copyPoiIcon(String outdir, String type, String prefix, ZipFile poiZip) {
 		ZipEntry icon;
 		byte[] buff;
 		int len;
@@ -811,6 +856,35 @@ public class GpxExportNg {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Execute the command defined by cmd
+	 * @param cmd command and options to execute. if command or options include a space quatation marks are added. this will not wirk with the java version on unix systems
+	 * @return a handle to the process on success or null otherwise
+	 */
+	Process startProcess(String[] cmd) {
+		String command = "";
+		if (cmd.length == 0) {
+			exportErrors++;
+			Global.getPref().log("GPX Export: empty gpsbabel command");
+			return null;
+		}
+		
+		for (int i = 0; i < cmd.length; i++) {
+			if (cmd[i].indexOf(" ") > -1) {
+				cmd[i]="\""+cmd[i]+"\"";
+			}
+			command = command.concat(cmd[i]).concat(" ");
+		}
+		
+		try {
+			return Vm.exec(command);
+		} catch (IOException e) {
+			Global.getPref().log("error excuting "+command, e, Global.getPref().debug);
+			exportErrors++;
+			return null;
+		}
 	}
 
 	/**
