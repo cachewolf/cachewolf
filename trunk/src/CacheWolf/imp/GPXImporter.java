@@ -278,7 +278,7 @@ public class GPXImporter extends MinML {
 			}
 			if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log") ) {
 				holder.getFreshDetails().CacheLogs.add(new Log(logIcon,logDate,logFinder,logData));
-				if((logIcon.equals("icon_smile.gif") || logIcon.equals("11.png") || logIcon.equals("icon_attended.gif")) && 
+				if((logIcon.equals("icon_smile.gif") || logIcon.equals("icon_camera.gif") || logIcon.equals("icon_attended.gif")) && 
 						  (logFinder.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && logFinder.equalsIgnoreCase(pref.myAlias2)))) {
 							holder.setCacheStatus(logDate);
 							holder.setFound(true);
