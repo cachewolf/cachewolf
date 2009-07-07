@@ -295,7 +295,7 @@ public class MainMenu extends MenuBar {
 					infB.exec();
 					infB.waitUntilPainted(1000);
 					Vm.showWait(infB, true);
-					profile.readIndex();
+					profile.readIndex(infB);
 					Vm.showWait(infB, false);
 					pref.curCentrePt.set(profile.centre);
                     filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
