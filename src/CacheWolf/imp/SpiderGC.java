@@ -651,6 +651,7 @@ public class SpiderGC{
 					break;
 				} else if (test == 0) {
 					spiderErrors++;
+					Global.getPref().log("SpiderGC: could not spider "+ch.getWayPoint());
 				} else {
 					//profile.hasUnsavedChanges=true;
 				}
