@@ -2,6 +2,7 @@ package CacheWolf.imp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.CacheImages;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
@@ -312,27 +313,26 @@ public class GPXImporter extends MinML {
 								//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
 							}
 						}
-					if(holder.getWayPoint().startsWith("GC")|| fromTC) {
-						//spiderImages();
-						spiderImagesUsingSpider();
-						//Rename image sources
-						String text;
-						String orig;
-						String imgName;
-						orig = holder.getFreshDetails().LongDescription;
-						Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
-						text = ex.findNext();
-						int num = 0;
-						while(ex.endOfSearch() == false && spiderOK == true){
-							//Vm.debug("Replacing: " + text);
-							if (num >= holder.getFreshDetails().images.size())break;
-							imgName = holder.getFreshDetails().images.get(num).getTitle();
-							holder.getFreshDetails().LongDescription = replace(holder.getFreshDetails().LongDescription, text, "[[Image: " + imgName + "]]");
-							num++;
+						if(holder.getWayPoint().startsWith("GC")|| fromTC) {
+							//spiderImages();
+							spiderImagesUsingSpider();
+							//Rename image sources
+							String text;
+							String orig;
+							String imgName;
+							orig = holder.getFreshDetails().LongDescription;
+							Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
 							text = ex.findNext();
+							int num = 0;
+							while(ex.endOfSearch() == false && spiderOK == true){
+								//Vm.debug("Replacing: " + text);
+								if (num >= holder.getFreshDetails().images.size())break;
+								imgName = holder.getFreshDetails().images.get(num).getTitle();
+								holder.getFreshDetails().LongDescription = replace(holder.getFreshDetails().LongDescription, text, "[[Image: " + imgName + "]]");
+								num++;
+								text = ex.findNext();
+							}
 						}
-					}
-						
 					}
 				}
 				holder.save();
@@ -341,6 +341,9 @@ public class GPXImporter extends MinML {
 			//Update cache data
 			else {
 				CacheHolder oldCh= cacheDB.get(index);
+				// Preserve images: Copy images from old cache version because here we didn't add
+				// any image information to the holder object.
+				holder.getFreshDetails().images = oldCh.getExistingDetails().images;
 				oldCh.update(holder);
 				oldCh.save();
 			}
