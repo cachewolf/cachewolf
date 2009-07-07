@@ -9,16 +9,16 @@ import ewe.sys.*;
 /**
 *	This class shows the long description on a cache.
 *  Test with GC1CC5T - Final
-*            GC19DDX -
+*            GC19DDX - 
 */
 public class DescriptionPanel extends CellPanel{
 	HtmlDisplay disp = new HtmlDisplay();
 	mButton btnPlus, btnMinus;
 	CacheHolder currCache;
-
+	
 	CellPanel buttonP = new CellPanel();
 	CellPanel descP = new CellPanel();
-
+	
 	private String desc;
 
 	public DescriptionPanel(){
@@ -31,7 +31,7 @@ public class DescriptionPanel extends CellPanel{
 		this.addLast(buttonP,CellConstants.HSTRETCH,CellConstants.HFILL);
 		clear();
 	}
-
+	
 	/**
          * Set the text to display. Text should be HTML formated.
          */
@@ -128,7 +128,7 @@ public class DescriptionPanel extends CellPanel{
         //}
         currCache = cache;
     }
-
+	
 	/**
 	 * Get the descriptions for the pictures (if they exist)
 	 * @param imagesShown images already shown as part of long description (don't show again)
@@ -148,17 +148,17 @@ public class DescriptionPanel extends CellPanel{
 		}
 		return sb.toString();
 	}
-
+	
 	public void clear() {
 		disp.setPlainText("loading ...");
 		currCache = null;
 	}
-
+	
 	/**
 	 * Eventhandler
 	 */
 	public void onEvent(Event ev){
-
+		
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btnPlus){
 				Font currFont = disp.getFont();
