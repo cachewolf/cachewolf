@@ -214,16 +214,22 @@ public class Profile {
 		resetUnsavedChanges();
 	}
 
+	public void readIndex() {
+		readIndex(null);
+	}
 	/**
 	 *	Method to read the index.xml file that holds the total information
 	 *	on available caches in the database. The database in nothing else
 	 *	than the collection of caches in a directory.
 	 */
-	public void readIndex() {
+	public void readIndex(InfoBox infoBox) {
 
 		try {
 			selectionChanged = true;
 			boolean fmtDec = false;
+			String mainInfoText = MyLocale.getMsg(5000,"Loading Cache-List");
+			int wptNo=1;
+			int lastShownWpt=0;
 			char decSep = MyLocale.getDigSeparator().charAt(0);
 			char notDecSep = decSep == '.' ? ',' : '.';
 			FileReader in = new FileReader(dataDir + "index.xml");
@@ -243,6 +249,13 @@ public class Profile {
 							convertWarningDisplayed = true;
 							new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4407, "The profile files are not in the current format.%0aTherefore they are now converted to the current format. Depending of the size of the profile and the computer involved this may take some minutes. Please bear with us until the conversion is done."), FormBase.OKB).execute();
 						}
+					}
+					if (infoBox!=null) {
+						if (wptNo - 10 >= lastShownWpt) {
+							infoBox.setInfo(mainInfoText+"\n"+String.valueOf(wptNo));
+							lastShownWpt = wptNo;
+						}
+						wptNo++;
 					}
 					CacheHolder ch=new CacheHolder(text,indexXmlVersion);
 					cacheDB.add(ch);

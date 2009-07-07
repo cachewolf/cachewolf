@@ -88,7 +88,7 @@ public class MainForm extends Editor {
 			infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));
 			infB.exec();
 			infB.waitUntilPainted(100);
-			profile.readIndex();
+			profile.readIndex(infB);
 			pref.curCentrePt.set(profile.centre);
 			profile.updateBearingDistance();
 			setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
