@@ -1112,7 +1112,7 @@ public class SpiderGC{
 			logId = exLogId.findNext();
 			String d=DateFormat.logdate2YMD(exDate.findNext());
 			if((icon.equals(p.getProp("icon_smile")) || icon.equals(p.getProp("icon_camera")) || icon.equals(p.getProp("icon_attended"))) &&
-				(name.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && name.equalsIgnoreCase(pref.myAlias2))) )  {
+				(name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) || (pref.myAlias2.length()>0 && name.equalsIgnoreCase(SafeXML.clean(pref.myAlias2)))) )  {
 				chD.getParent().setFound(true);
 				chD.getParent().setCacheStatus(d);
 				chD.OwnLogId = logId;
