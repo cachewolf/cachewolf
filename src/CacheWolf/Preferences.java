@@ -230,9 +230,12 @@ public class Preferences extends MinML{
 	public boolean downloadTBs = true;
 	/** Last mode select in the DataMover for processing cache*/
 	public int processorMode = 0;
-
 	/** external Cacherating software */
 	public String rater;
+	/** maximum number of logs to store in cache details */
+	public int maxLogsToKeep = DEFAULT_MAX_LOGS_TO_SPIDER;
+	/** keep own logs even when excessing <code>maxLogsToKeep</code> */
+	public boolean alwaysKeepOwnLogs = true;
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -443,7 +446,7 @@ public class Preferences extends MinML{
 			language = atts.getValue("language");
 		}
 		else if (name.equals("rater")) {
-			rater = atts.getValue("tool");
+			rater = SafeXML.strxmldecode(atts.getValue("tool"));
 		}
 		else if (name.equals("FILTERDATA")) {
 			// Creating a filter object and reading the saved data
@@ -471,7 +474,15 @@ public class Preferences extends MinML{
 			}
 
 		}
-
+		else if (name.equals("logkeeping")) {
+			tmp = atts.getValue("maximum");
+			if (tmp != null) 
+				maxLogsToKeep = Convert.parseInt(tmp);
+			
+			tmp = atts.getValue("keepown");
+			if (tmp != null)
+				alwaysKeepOwnLogs = Boolean.valueOf(tmp).booleanValue();  
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -554,7 +565,8 @@ public class Preferences extends MinML{
 				entry = (MapEntry) itPath.next();
 				outp.print("    <impPath key = \"" + SafeXML.strxmlencode(entry.getKey().toString()) + "\" value = \"" + SafeXML.strxmlencode(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
 			}
-			if (rater != null) outp.print("    <rater tool=\"".concat(rater).concat("\"/>\n"));
+			if (rater != null) outp.print("    <rater tool=\"".concat(SafeXML.strxmlencode(rater)).concat("\"/>\n"));
+			outp.print("    <logkeeping maximum=\""+SafeXML.strxmlencode(maxLogsToKeep)+"\" keepown=\""+SafeXML.strxmlencode(alwaysKeepOwnLogs)+"\" />\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
