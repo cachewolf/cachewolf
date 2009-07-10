@@ -92,6 +92,7 @@ difficultyRex      = <span\ id="Difficulty">.*?alt="(.*?)\ out\ of
 terrainRex         = <span\ id="Terrain">.*?alt="(.*?)\ out\ of
 cacheTypeRex       = \\./images/WptTypes/(.*?)\\.gif
 cacheLocationRex   = <span\ id="Location">In\ ([^<]*?)<
+premiumCachepage   = Sorry, the owner of this listing has made it viewable to subscribers only.
 
 #--------------------------------------
 #Section2a: Logs

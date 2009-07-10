@@ -71,6 +71,16 @@ public class SpiderGC{
 	public static String passwort = ""; // Can be pre-set from preferences
 	public static boolean loggedIn = false;
 
+	// Return values for spider action
+	/** Ignoring a premium member cache when spidering from a non premium account */
+	public static int SPIDER_IGNORE_PREMIUM = -2;
+	/** Canceling spider process */
+	public static int SPIDER_CANCEL = -1;
+	/** Error occured while spidering */
+	public static int SPIDER_ERROR = 0;
+	/** Cache was spidered without problems */
+	public static int SPIDER_OK = 1;
+	
 	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
 	private Profile profile;
@@ -259,7 +269,7 @@ public class SpiderGC{
 			boolean loadAllLogs = (MAXLOGS > 5);
 			ret=getCacheByWaypointName(ch,true,pref.downloadPics,pref.downloadTBs,false,loadAllLogs);
 			// Save the spidered data
-			if (ret == 1) {
+			if (ret == SPIDER_OK) {
 				CacheHolder cacheInDB = cacheDB.get(number);
 				cacheInDB.initStates(false);
 				if (cacheInDB.is_found() && !ch.is_found() && ! loadAllLogs) {
@@ -639,17 +649,17 @@ public class SpiderGC{
 				holder = new CacheHolder();
 				holder.setWayPoint(wpt);
 				int test = getCacheByWaypointName(holder,false,getImages,getTBs,doNotgetFound,loadAllLogs);
-				if (test == -1) {
+				if (test == SPIDER_CANCEL) {
 					infB.close(0);
 					break;
-				} else if (test == 0) {
+				} else if (test == SPIDER_ERROR) {
 					spiderErrors++;
-				} else {
+				} else if (test == SPIDER_OK){
 					if (!holder.is_found() || !doNotgetFound ) {
 						cacheDB.add(holder);
 						holder.save();
 					}
-				}
+				} // For test==SPIDER_IGNORE_PREMIUM: Nothing to do
 			}
 		}
 
@@ -661,9 +671,9 @@ public class SpiderGC{
 				infB.redisplay();
 
 				int test = spiderSingle(cacheDB.getIndex(ch), infB,false);
-				if (test == -1) {
+				if (test == SPIDER_CANCEL) {
 					break;
-				} else if (test == 0) {
+				} else if (test == SPIDER_ERROR) {
 					spiderErrors++;
 					Global.getPref().log("SpiderGC: could not spider "+ch.getWayPoint());
 				} else {
@@ -701,13 +711,13 @@ public class SpiderGC{
 	 * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if everything ok
 	 */
 	private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean fetchTBs, boolean doNotGetFound, boolean fetchAllLogs) {
-		int ret = 1;
+		int ret = SPIDER_OK; // initialize value;
 		while (true) {
 			String completeWebPage;
 			int spiderTrys=0;
 			int MAX_SPIDER_TRYS=3;
 			while (spiderTrys++<MAX_SPIDER_TRYS) {
-				ret = 1;
+				ret = SPIDER_OK; // initialize value;
 				try{
 					String doc = p.getProp("getPageByName") + ch.getWayPoint() +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
 					pref.log("Fetching: " + ch.getWayPoint());
@@ -718,7 +728,7 @@ public class SpiderGC{
 							continue;
 						} else {
 							ch.setIncomplete(true);
-							return -1;
+							return SPIDER_CANCEL;
 						}
 					}
 				}catch(Exception ex){
@@ -727,7 +737,7 @@ public class SpiderGC{
 						continue;
 					} else {
 						ch.setIncomplete(true);
-						return -1;
+						return SPIDER_CANCEL;
 					}
 				}
 				// Only analyse the cache data and fetch pictures if user has not closed the progress window
@@ -738,9 +748,17 @@ public class SpiderGC{
 						//first check if coordinates are available to prevent deleting existing coorinates
 						String latLon = getLatLon(completeWebPage);
 						if (latLon.equals("???")) {
-							pref.log(">>>> Failed to spider Cache. Retry.");
-							ret = 0;
-							continue; // Restart the spider
+							if (completeWebPage.indexOf(p.getProp("premiumCachepage"))>0) {
+								// Premium cache spidered by non premium member
+								pref.log("Ignoring premium member cache: "+ch.getWayPoint());
+								spiderTrys = MAX_SPIDER_TRYS;
+								ret = SPIDER_IGNORE_PREMIUM;
+								continue;
+							} else {
+								pref.log(">>>> Failed to spider Cache. Retry.");
+								ret = SPIDER_ERROR;
+								continue; // Restart the spider
+							}
 						}
 
 						ch.setHTML(true);
@@ -835,9 +853,9 @@ public class SpiderGC{
 						// If the switch is set to not store found caches and we found the cache => return
 						if (ch.is_found() && doNotGetFound) {
 							if (infB.isClosed) {
-								return -1;
+								return SPIDER_CANCEL;
 							} else {
-								return 1;
+								return SPIDER_OK;
 							}
 						}
 
@@ -886,21 +904,21 @@ public class SpiderGC{
 					break;
 				}
 			} // spiderTrys
-			if ( ( spiderTrys >= MAX_SPIDER_TRYS ) && ( ret == 1 ) ) {
+			if ( ( spiderTrys >= MAX_SPIDER_TRYS ) && ( ret == SPIDER_OK ) ) {
 				pref.log(">>> Failed to spider cache. Number of retrys exhausted.");
 				int decision = (new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(5515,"Failed to load cache.%0aPleas check your internet connection.%0aRetry?"),FormBase.DEFOKB|FormBase.NOB|FormBase.CANCELB)).execute();
 				if ( decision == FormBase.IDOK ) {
 					continue;
 				} else if ( decision == FormBase.IDNO ){
-					ret = 0;
+					ret = SPIDER_ERROR;
 				} else {
-					ret = -1;
+					ret = SPIDER_CANCEL;
 				}
 			}
 			break;
 		}//while(true)
 		if (infB.isClosed) {// If the infoBox was closed before getting here, we return -1
-			return -1;
+			return SPIDER_CANCEL;
 		}
 		return ret;
 	} // getCacheByWaypointName
@@ -1758,6 +1776,13 @@ public class SpiderGC{
 				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5504,"Could not load 'spider.def'"), FormBase.OKB)).execute();
 			}
 		}
+		
+		/**
+		 * Gets an entry in spider.def by its key (tag)
+		 * @param key The key which is attributed to a specific entry
+		 * @return The value for the key
+		 * @throws Exception When a key is requested which doesn't exist
+		 */
 		public String getProp(String key) throws Exception {
 			String s=super.getProperty(key);
 			if (s==null) {
