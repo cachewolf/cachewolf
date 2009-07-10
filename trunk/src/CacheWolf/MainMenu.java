@@ -768,10 +768,10 @@ public class MainMenu extends MenuBar {
 			infB.redisplay();
 			if (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) {
 				int test = spider.spiderSingle(i, infB,forceLogin);
-				if (test == -1) {
+				if (test == SpiderGC.SPIDER_CANCEL) {
 					infB.close(0);
 					break;
-				} else if (test == 0) {
+				} else if (test == SpiderGC.SPIDER_ERROR) {
 					spiderErrors++;
 				} else {
 					//profile.hasUnsavedChanges=true;	
