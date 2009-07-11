@@ -1,0 +1,73 @@
+<font face="Tahoma" size = "2"><b>WolfLanguage Befehle:</b><br>
+Zeichen hinter dem # bis zum Zeilenende werden ignoriert<br>
+Mehrere Befehle in einer Zeile werden durch einem Semikolon (;) getrennt<br>
+<i>Beispiel: stop</i>   # Stoppt Skript<br>
+<i>Beispiel: cls()</i>   # Ausgabefenster löschen<br>
+<br>
+<b><u>Grundlegende Operationen</u></b><br>
+ Zuweisung:<br>
+ variable = wert<br>
+<i> Beispiel: a = 2</i><br>
+<i> Beispiel: $a = 2; b="abc"</i><br>
+$a ist eine globale Variable.<br>
+Numerische Ausdrücke formatieren:<br>
+Beispiel: 3.14159:000.00:<br>
+<i>Formatierungszeichen:</i> 0 . # wobei # für beliebige Ziffern steht<br> 
+<br>
+<u><b> Anzeige von Werten</b></u><br>
+ "beliebiger Text" " weitere Text":<br>
+<i> Beispiel: "N 34 12." a " :das " rot13("Mvry")</i>
+ +, -, *, /, (, ):<br>
+<i> Beispiel: a = 1 / 2 + 34 - 8 * 12<br>
+ oder a = (1 / b + 34 - b) * 12</i><br>
+<br>
+<b><u>Wurzel, Potenz</u></b><br>
+ sqrt(), ^:<br>
+<i> Beispiel: a = sqrt(2) ^ 5</i><br>
+<br>
+<b><u>Trigonometrische Funktionen</u></b><br>
+ cos(), sin(), tan(),<br>
+ atan(), asin(), acos():<br>
+<i> Beispiel: a = cos(90);<br>
+ oder a = atan(b);</i><br>
+<u>Modus für trigonometrische Funktionen ändern</u><br>
+ deg()<br>
+ rad()<br>
+<u>Trigonometrische Konvertierungen</u><br>
+ deg2rad()  <i>alias</i> d2r()<br>
+ rad2deg()  <i>alias</i> r2d()<br>   
+<br>
+<b><u>Numerische Functionen</u></b><br>
+ct(number) # Quersumme (engl.: crosstotal)<br>
+q(number) # Quersumme<br><br>
+<b><u>Text Funktionen</u></b>[s is eine Zeichenkette]<br>
+length(s)<br>
+mid(s,startpos,length)<br> 
+instr(s,searchStr)<br>
+instr(startpos,s,searchstr)<br>
+ucase(s)<br>
+lcase(s)<br>
+replace(s,searchStr,ReplaceStr)<br>
+reverse(s)<br>
+encode(s,s1,s2)<br>
+count(s,whatStr)<br>
+val(s)<i> # A=1, B=2, ... Z=26;  Alle addieren</i><br>
+sval(s)<i> # A=1, B=2, ... Z=26</i><br>
+rot13(s)<br><br>
+<b><u>Koordinaten</u></b><br>
+bearing(coordinate1,coordinate2) # Peilung<br>
+center() # get current center<br>
+center(coordinate)<br>
+cp() # get current GPS position<br>
+distance(coordinate1,coordinate2) # Abstand zwischen zwei Punkten<br>  
+format(coordinate,fmt) <br>
+  <i>wobei fmt="CW" or "UTM" or "DMS" or "DD" or "DMM" or "GK"</i><br>
+goto(coordinate)<br>
+goto(coordinate,waypointname)<br>
+project(coordinate,angle,distance) # Projektion<br><br>
+<b><u>Programme für Multicaches generieren (mit/ohne zusätzlichen Wegpunkten)</u></b><br>
+skeleton() # Skript-Gerüst für aktuellen Cache generieren<br>
+skeleton(AnzahlderStationen) # Gerüst mit Stationen generieren<br><br>
+<b><u>IF THEN ENDIF</u></b><br>
+IF bedingung THEN Anweisung ; Anweisung .... ENDIF<br><br>
+</font>
