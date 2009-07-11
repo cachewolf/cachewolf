@@ -15,6 +15,6 @@ cp -fa resources/attributes/* work/attributes
 cp -fa res_noewe/webmapservices/* work/webmapservices/
 cp -fa res_noewe/languages/* work/languages/
 
-find work -type f | xargs chmod 644
-find work -type d | xargs chmod 755
+find work -type f -exec chmod 644 \{\} \;
+find work -type d -exec chmod 755 \{\} \;
 #
