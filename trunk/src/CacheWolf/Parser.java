@@ -636,7 +636,7 @@ public class Parser{
 		if (!isValidCoord(coordinates1)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordinates1);
  		if (!isValidCoord(coordinates2)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordinates2);
 
-		//Check parameters
+		//Check parameters: Range
     	if (degrees1<0 || degrees1>360 || degrees2 < 0 || degrees2 > 360){
     		if (Global.getPref().solverDegMode){
     			err(MyLocale.getMsg(1740,"Crossbearing degrees must be in interval [0;360]"));
@@ -645,7 +645,6 @@ public class Parser{
     			err(MyLocale.getMsg(1741,"Crossbearing degrees must be in interval [0;2*PI]"));
     		}
     	}
-
     	double rAN = Global.getPref().solverDegMode ? degrees1 / 180.0
 				* java.lang.Math.PI : degrees1;
 		double rBN = Global.getPref().solverDegMode ? degrees2 / 180.0
@@ -654,7 +653,15 @@ public class Parser{
 		CWPoint point1=new CWPoint(coordinates1);
 		CWPoint point2=new CWPoint(coordinates2);
 
-		//Zum besseren Testen ohne Rundungsfehler
+    	//check Parameters: bearings to project must be different from the bearing between point1 and point2
+    	if (degrees1 == degrees2){
+    		double bearing1 = point1.getBearing(point2);
+    		double bearing2 = point1.getBearing(point1);
+    		if (bearing1 == degrees1 || bearing2 == degrees2){
+    			err(MyLocale.getMsg(1740,"Invalid crossbearing angles"));    			
+    		}
+    	}
+
 		CWPoint result2 = crossbearingCalculation(point1, point2, rAN, rBN);
 		return result2.toString();
 	}
