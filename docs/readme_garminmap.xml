@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. -->
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "docbookV4.5/docbookx.dtd" []>
+<article>
+  <title>Readme: garminmap.xml</title>
+  <abstract>
+    <para>Mit Hilfe der Datei <filename>garminmap.xml</filename> wird für den Export von GPX- und OZI-Wegpunktdateien festgelegt wie die Wegpunkte im jeweiligen Programm dargestellt werden. Darüber hinaus kann festgelegt werden welche Kategorien und Symbole beim Erzeugen von Custom POI für Garmin Handheld Geräte verwendet werden. Die Datei muss im selben Verzeichnis liegen wie die Date prefs.xml. </para>
+    <para>Dieses Dokument beschreibt nicht die eigentliche Installation der Custom Symbols auf dem Handheld oder in Mapsource.</para>
+  </abstract>
+  <para>In der Datei <filename>Garmin User Symbols.zip</filename> findest du einige Beispiele, die im Folgenden kurz erklärt werden sollen.</para>
+  <section>
+    <title>Beispiel: pro Cachetyp ein Symbol</title>
+    <para>Im diesem Beispiel wird einfach jedem Cachetyp ein eigenes Symbol zugeordnet</para>
+    <para><programlisting>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;iconmap&gt;
+&lt;icon type=&quot;0&quot; name=&quot;Custom 18&quot; /&gt;
+&lt;icon type=&quot;2&quot; name=&quot;Custom 0&quot; /&gt;
+&lt;icon type=&quot;3&quot; name=&quot;Custom 1&quot; /&gt;
+&lt;icon type=&quot;4&quot; name=&quot;Custom 6&quot; /&gt;
+&lt;icon type=&quot;5&quot; name=&quot;Custom 3&quot; /&gt;
+&lt;icon type=&quot;6&quot; name=&quot;Custom 4&quot; /&gt;
+&lt;icon type=&quot;8&quot; name=&quot;Custom 2&quot; /&gt;
+&lt;icon type=&quot;11&quot; name=&quot;Custom 7&quot; /&gt;
+&lt;icon type=&quot;12&quot; name=&quot;Custom 10&quot; /&gt;
+&lt;icon type=&quot;13&quot; name=&quot;Custom 5&quot; /&gt;
+&lt;icon type=&quot;50&quot; name=&quot;Parking Area&quot; /&gt;
+&lt;icon type=&quot;51&quot; name=&quot;Custom 11&quot; /&gt;
+&lt;icon type=&quot;52&quot; name=&quot;Custom 12&quot; /&gt;
+&lt;icon type=&quot;53&quot; name=&quot;Custom 16&quot; /&gt;
+&lt;icon type=&quot;54&quot; name=&quot;Trail Head&quot; /&gt;
+&lt;icon type=&quot;55&quot; name=&quot;Custom 14&quot; /&gt;
+&lt;icon type=&quot;100&quot; name=&quot;Custom 4&quot; /&gt;
+&lt;icon type=&quot;101&quot; name=&quot;Custom 17&quot; /&gt;
+&lt;icon type=&quot;102&quot; name=&quot;Custom 18&quot; /&gt;
+&lt;icon type=&quot;103&quot; name=&quot;Custom 20&quot; /&gt;
+&lt;icon type=&quot;104&quot; name=&quot;Custom 8&quot; /&gt;
+&lt;/iconmap&gt;</programlisting></para>
+    <para>Die Datei <filename>garminmap.xml</filename> beginnt immer mit<programlisting>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;iconmap&gt;</programlisting>und endet mit<programlisting>&lt;/iconmap&gt;</programlisting></para>
+    <para>Jede einzelne Zeile beginnt mit <code>&lt;icon</code> und endet mit <code> /&gt;</code>. Bitte das Leerzeichen nicht vergessen, </para>
+    <para>Innerhalb der Zeile finden sich dann Bedingungen und Anweisungen. </para>
+    <para>In unserem Beispiel ist <code>type=&quot;2&quot;</code> eine Bedingung, die auf alle Traditional Caches zutrifft und  <code>name=&quot;Custom 0&quot;</code> die Anweisung die ausgeführt wird, wenn die Bedingung erfüllt ist. In diesem Fall wird auf einem Garmin Handheld oder in Mapsource das Benutzerdefinierte Symbol 0 angezeigt. Eine Liste aller Cachetypen findest du im <link linkend="cachetypen">Anhang</link>. </para>
+    <para>Wie die Zeile <programlisting>&lt;icon type=&quot;50&quot; name=&quot;Parking Area&quot; /&gt;</programlisting>zeiget muss man sich bei den anzuzeigenden Symbolen nicht auf die Benutzerdefinierten beschränken, sondern kann auch die in jedem Garmin Handheld fest eingebauten Symbole benutzen. Auf diese Weise können auch Benutzer von Geräten die das Anlegen von Benutzerdefinierten Symbolen nicht unterstützen von der Garminmap profitieren und zumindest unterschiedliche Symbole darstellen lassen. </para>
+  </section>
+  <section>
+    <title>Beispiel: verknüpfte Bedingungen</title>
+    <para>Neben der einfach Zuweisung aus dem ersten Beispiel lassen sich mit der <filename>garminmap.xml</filename> auch komplexere Bedingungen für die Zuweisung eines Symbols erstellen. Dabei sind folgende Bedingungen möglich und beliebig kombinierbar:<itemizedlist>
+        <listitem>
+          <para>type= Typ des Caches. Für mögliche Werte siehe <link linkend="cachetypen">Liste</link>.</para>
+        </listitem>
+        <listitem>
+          <para>size= Größe des Cachebehälters. Für mögliche Werte siehe <link linkend="cachegroesse">Liste</link></para>
+        </listitem>
+        <listitem>
+          <para>terrain= 10, 15, 20, 25, 30, 35, 40, 45 oder 50. Custom und Additional Waypoints haben keine Geländebewertung</para>
+        </listitem>
+        <listitem>
+          <para>difficulty= 10, 15, 20, 25, 30, 35, 40, 45 oder 50. Custom und Additional Waypoints haben keine Schwierugkeit</para>
+        </listitem>
+        <listitem>
+          <para>found= 1 (gefunden) oder 0 (nicht gefunden). Nicht verwechseln mit status</para>
+        </listitem>
+        <listitem>
+          <para>status= Inhalt des Statusfeldes im Detailspanel. Es wird nur gegen den Anfang des Feldes geprüft. status=&quot;Nachr&quot; findet als Nachtcache und Nachtisch!</para>
+        </listitem>
+      </itemizedlist>Wichtig dabei ist, dass die Werte der Bedingungen immer mit doppelten Anfürungszeichen (&quot;) umschlossen werden.</para>
+  </section>
+  <section>
+    <title>Anhang</title>
+    <section id="cachetypen">
+      <title>Cachetypen</title>
+      <para>Cachtypen werden innerhalb der Bedingungen durch einen Zahlenwert aus der folgenden Tabelle repräsentiert</para>
+      <programlisting>0 Custom
+2 Traditional
+3 Multicache
+4 Virtual Cache
+5 Letterbox
+6 Event Cache
+8 Unknown / Mystery Cache
+11 Webcam Cache
+12 Locationless (Reverse) Cache
+13 CITO Event
+100 Mega Event
+101 WhereIGo cache
+102 Project Ape Cache
+103 Adventure Maze Exhibit
+104 Earthcache
+50 Additional Waypoint Parking
+51 Additional Waypoint Stage of a Multicache
+52 Additional Waypoint Question to Answer
+53 Additional Waypoint Final
+54 Additional Waypoint Trailhead
+55 Additional Waypoint Reference</programlisting>
+    </section>
+    <section id="cachegroesse">
+      <title>Cachegrößen</title>
+      <para>Cachegrößen werden innerhalb der Bedingungen durch einen Buchstaben aus der folgenden Tabelle repräsentiert. Ob groß oder klein geschreiben spielt dabei keine Rolle.</para>
+      <programlisting>m Micro
+s Small
+r Regular
+l Large
+v Very Large
+n Not Chosen / Other / Virtual / None</programlisting>
+    </section>
+  </section>
+</article>
