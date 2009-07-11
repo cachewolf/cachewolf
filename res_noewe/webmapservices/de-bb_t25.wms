@@ -1,0 +1,30 @@
+TakenFromUrl:       http://isk.geobasis-bb.de
+GetCapabilitiesUrl: http://isk.geobasis-bb.de/ows/dnm025.php?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:   de.Berlin/Brandenburg t25 SF=1..17
+MapType:                        topo
+MainUrl:            http://isk.geobasis-bb.de/ows/dnm025.php?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31468 31469
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31468 SRS=EPSG:31469 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=bg|Hintergrundfl‰che|0.498903|1746.16
+#LayersUrlPart:     LAYERS=siedlung|Siedlungsfl‰chen, Orte|0.05|25.0
+#LayersUrlPart:     LAYERS=vegetation|Vegetationsfl‰chen|0.05|25.0
+#LayersUrlPart:     LAYERS=gewaesser|Gew‰sser (See, Fluﬂ, Kanal)|0.05|25.0
+#LayersUrlPart:     LAYERS=transport|Transportwege|0.05|25.0
+#LayersUrlPart:     LAYERS=strassennamen|Straﬂenklassifizierungen und Strassennamen|0.05|5.0
+#LayersUrlPart:     LAYERS=ortsnamen|Namen der Ortschaften|0.05|5.0
+#LayersUrlPart:     LAYERS=gewaessernamen|Gewaessernamen|0.05|5.0
+LayersUrlPart:     LAYERS=siedlung,vegetation,gewaesser,transport
+StylesUrlPart:     STYLES=2
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 53.5000 E 11.7000
+BoundingBoxButtomRightWGS84: N 51.3000 E 14.8000
+MinScale:   0.1
+MaxScale:   25
+RecommendedScale:   2.5
+ImageFileExtension: .png
+# layer Kommentare siehe  t10
+#SF bis 17 teilweise getestet (Capabilities stimmen nicht)
+#BBox aus Capabilities (ev zu klein)
