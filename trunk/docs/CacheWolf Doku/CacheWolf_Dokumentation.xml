@@ -2,7 +2,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
 "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
 <!ENTITY __Installation__f6afn1eo SYSTEM "Installation.xml">
-<!ENTITY __DerersteStart__f6anus0g SYSTEM "Der%20erste%20Start.xml">
+<!ENTITY __DerersteStart__f6anus0g SYSTEM "Der_erste_Start.xml">
 <!ENTITY __ansichten__f6anvxip SYSTEM "ansichten.xml">
 <!ENTITY __menu__fay2x5r3 SYSTEM "menu.xml">
 <!ENTITY __benutzte_dateien__fe71ytbk SYSTEM "benutzte_dateien.xml">
