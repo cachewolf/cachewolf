@@ -912,7 +912,7 @@ public class Preferences extends MinML{
 	}
 
 	/**
-	 * Returns an array of ID of saved FilterData objects.
+	 * Returns a alphabetically sorted array of ID of saved FilterData objects.
 	 * @return Array of IDs
 	 */
 	public String[] getFilterIDs() {
@@ -923,6 +923,13 @@ public class Preferences extends MinML{
 		while (en.hasMoreElements()) {
 			result[i++] = (String) en.nextElement();
 		}
+		// Now sorting the array of filter IDs
+		Comparer comp = new ewe.util.Comparer() {
+			public int compare(Object o1, Object o2) {
+				return ((String) o1).compareTo((String) o2);
+			}
+		};
+		Utils.sort(result, comp, false);
 		return result;
 	}
 	
