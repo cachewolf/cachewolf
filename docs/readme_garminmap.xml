@@ -3,7 +3,7 @@
 <article lang="de">
   <title>Readme: garminmap.xml</title>
   <abstract>
-    <para>Mit Hilfe der Datei <filename>garminmap.xml</filename> wird für den Export von GPX- und OZI-Wegpunktdateien festgelegt wie die Wegpunkte im jeweiligen Programm dargestellt werden. Darüber hinaus kann festgelegt werden welche Kategorien und Symbole beim Erzeugen von Custom POI für Garmin Handheld Geräte verwendet werden. Die Datei muss im selben Verzeichnis liegen wie die Date prefs.xml. </para>
+    <para>Mit Hilfe der Datei <filename>garminmap.xml</filename> wird für den Export von GPX- und OZI-Wegpunktdateien festgelegt wie die Wegpunkte im jeweiligen Programm dargestellt werden. Darüber hinaus kann festgelegt werden welche Kategorien und Symbole beim Erzeugen von Custom POI für Garmin Handheld Geräte verwendet werden. Die Datei muss im selben Verzeichnis liegen wie die Datei prefs.xml. </para>
     <para>Dieses Dokument beschreibt nicht die eigentliche Installation der Custom Symbols auf dem Handheld oder in Mapsource.</para>
   </abstract>
   <para>In der Datei <filename>Garmin User Symbols.zip</filename> findest du einige Beispiele, die im Folgenden kurz erklärt werden sollen.</para>
@@ -60,7 +60,7 @@
           <para>found= 1 (gefunden) oder 0 (nicht gefunden). Nicht verwechseln mit status</para>
         </listitem>
         <listitem>
-          <para>status= Inhalt des Statusfeldes im Detailspanel. Es wird nur gegen den Anfang des Feldes geprüft. status=&quot;Nachr&quot; findet als Nachtcache und Nachtisch!</para>
+          <para>status= Inhalt des Statusfeldes im Detailspanel. Es wird nur gegen den Anfang des Feldes geprüft. status=&quot;Nacht&quot; findet als Nachtcache und Nachtisch!</para>
         </listitem>
       </itemizedlist>Wichtig dabei ist, dass die Werte der Bedingungen immer mit doppelten Anfürungszeichen (&quot;) umschlossen werden.</para>
     <para><programlisting>&lt;icon type=&quot;2&quot; terrain=&quot;50&quot; name=&quot;XXXX&quot; /&gt;</programlisting>weist allen caches vom Typ 2 (Traditional) und der Geländewertung 50 (5) das Symbol mit dem Namen zu.</para>
@@ -87,7 +87,7 @@
       <para>Nicht alle Garmin Handhelds unterstützen die Verwendung von Custom Points of Interest. Bitte schau im Handbuch deines Gerätes nach, ob die Funktion unterstützt wird bevor du sie benutzt.</para>
     </important>
     <para>Bei der <code>poiid</code> handelt es sich um einen Freitext der von dir individuell festgelegt werden kann. Da einige Garmin Handhelds jedoch Schwierigkeiten bei der Darstellung von Sonderzeichen haben, solltest du dich bei der Vergabe der ID auf die Zeichen A-z, a-z, 0-9, sowie - und _ beschränken.</para>
-    <para><programlisting>&lt;icon type=&quot;2&quot; poiid=&quot;Traditional&quot; /&gt;</programlisting>könnte also eine Regel sein, die festlegt wie während eines POI Exports Traditional Caches behandelt werden. Natürlich lassen sich auch hier wieder die verschiednen Anweisungen kombinieren, so daß eine solche Regle auch so aussehen könnte: <programlisting>&lt;icon type=&quot;2&quot; poiid=&quot;Traditional&quot; ozicolor=&quot;65280&quot; name=&quot;Custom 0&quot; /&gt;</programlisting></para>
+    <para><programlisting>&lt;icon type=&quot;2&quot; poiid=&quot;Traditional&quot; /&gt;</programlisting>könnte also eine Regel sein, die festlegt wie während eines POI Exports Traditional Caches behandelt werden. Natürlich lassen sich auch hier wieder die verschiednen Anweisungen kombinieren, so daß eine solche Regel auch so aussehen könnte: <programlisting>&lt;icon type=&quot;2&quot; poiid=&quot;Traditional&quot; ozicolor=&quot;65280&quot; name=&quot;Custom 0&quot; /&gt;</programlisting></para>
     <para>Beim Export wird der vergebenen ID noch ein Prefix vorangestellt, welche du im Exportdialog vergibst. Prefix und <code>piid</code> sollten gemeinsam auf das Display deines Handhelds passen. </para>
     <section>
       <title>Garmin POI Loader</title>
