@@ -2,7 +2,6 @@ package CacheWolf.imp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheImages;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
@@ -510,7 +509,7 @@ public class GPXImporter extends MinML {
 		if (typeText.equals("Temporarily Disable Listing")) return "icon_disabled.gif";
 		if (typeText.equals("Webcam Photo Taken")) return "icon_camera.gif";
 		if (typeText.equals("Attended")) return "icon_attended.gif";
-		if (typeText.equals("Publish Listing")) return "icon_greenlight.gof";
+		if (typeText.equals("Publish Listing")) return "icon_greenlight.gif";
 		if (typeText.equals("Will Attend")) return "icon_rsvp.gif";
 		if (typeText.equals("Post Reviewer Note")) return "big_smile.gif";
 		if (typeText.equals("Unarchive")) return "traffic_cone.gif";
