@@ -55,9 +55,7 @@ import ewe.util.zip.ZipFile;
 
 /**
  * experimental GPX exporter that should better handle the various tasks that
- * can be accomplished with GPX it is not yet linked to any menu, so if you want
- * to play around with it, first you have to create a menu item
- * 
+ * can be accomplished with GPX
  */
 public class GpxExportNg {
 
