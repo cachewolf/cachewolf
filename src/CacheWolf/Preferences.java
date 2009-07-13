@@ -472,12 +472,12 @@ public class Preferences extends MinML{
 			if (tmp != null){
 				processorMode=Convert.parseInt(tmp);
 			}
-
 		}
 		else if (name.equals("logkeeping")) {
 			tmp = atts.getValue("maximum");
 			if (tmp != null) 
 				maxLogsToKeep = Convert.parseInt(tmp);
+			if (maxLogsToKeep < 0) maxLogsToKeep = 0;
 			
 			tmp = atts.getValue("keepown");
 			if (tmp != null)
