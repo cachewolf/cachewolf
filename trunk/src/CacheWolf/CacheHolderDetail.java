@@ -93,7 +93,7 @@ public class CacheHolderDetail {
 		 for (int i=size-1; i>=0; i--) { // Loop over all new logs, must start with oldest log
 			 if (CacheLogs.merge(newLogs.getLog(i))>=0) getParent().setLog_updated(true);
 		 }
-		 //CacheLogs=logs;
+		 if (CacheLogs.purgeLogs() > 0) hasUnsavedChanges=true;
 		 getParent().setNoFindLogs(CacheLogs.countNotFoundLogs());
 	 }
 

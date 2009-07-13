@@ -97,6 +97,11 @@ public class Log {
 	public boolean isFoundLog() {
 		return icon.equals(GPXImporter.typeText2Image("Found"));
 	}
+
+	/** log was written by one of the aliases defined in preferences */
+	public boolean isOwnLog() {
+		return this.logger.equalsIgnoreCase(Global.getPref().myAlias) || this.logger.equalsIgnoreCase(Global.getPref().myAlias2); 
+	}
 	
 	/** Return XML representation of log for storing in cache.xml */
 	public String toXML(){

@@ -145,4 +145,22 @@ public class LogList {
 		 }
 		 return buffer.toString();
 	 }
+
+	/**
+	 * trim down number of log to maximum number user wants to keep in database
+	 * @return number of removed logs
+	 */
+	public int purgeLogs() {
+		int maxKeep = Global.getPref().maxLogsToKeep;
+		boolean keepOwn = Global.getPref().alwaysKeepOwnLogs;
+		int purgedLogs = 0;
+		for (int i = logList.size(); i > maxKeep; i--) {
+			if (!(keepOwn && getLog(i-1).isOwnLog())) {
+				this.remove(i-1);
+				purgedLogs++;
+			}
+		}
+		return purgedLogs;
+	}
+	
 }
