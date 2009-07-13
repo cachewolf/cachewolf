@@ -183,7 +183,7 @@ public class MapLoaderGui extends Form {
 		int EndPos;
 		int LastPos = java.lang.Math.min(newPath.length(),oldPath.length());
 		do {
-			EndPos=newPath.indexOf("/", StartPos);
+			EndPos=java.lang.Math.min(newPath.indexOf("/", StartPos),LastPos);
 			if (newPath.substring(StartPos,EndPos).equals(oldPath.substring(StartPos, EndPos))) {
 				LeadingPath=LeadingPath.concat(newPath.substring(StartPos,EndPos+1));
 				StartPos=EndPos+1;
