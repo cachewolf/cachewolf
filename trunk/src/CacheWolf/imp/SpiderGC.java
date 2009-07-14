@@ -67,7 +67,6 @@ public class SpiderGC{
 	/**
 	 * The maximum number of logs that will be stored
 	 */
-	public static int MAXLOGS=250; // Can be pre-set from preferences
 	public static String passwort = ""; // Can be pre-set from preferences
 	public static boolean loggedIn = false;
 
@@ -104,7 +103,6 @@ public class SpiderGC{
 			pref.logInit();
 			p=new SpiderProperties();
 		}
-		MAXLOGS=pref.maxLogsToSpider;
 	}
 
 	/**
@@ -252,7 +250,7 @@ public class SpiderGC{
 	 * It assumes a login has already been performed!
 	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with next cache
 	 */
-	public int spiderSingle(int number, InfoBox pInfB, boolean forceLogin){
+	public int spiderSingle(int number, InfoBox pInfB, boolean forceLogin, boolean loadAllLogs){
 		int ret=-1;
 		this.infB = pInfB;
 		CacheHolder ch = new CacheHolder(); // cacheDB.get(number);
@@ -266,7 +264,6 @@ public class SpiderGC{
 		}
 		try{
 			// Read the cache data from GC.COM and compare to old data
-			boolean loadAllLogs = (MAXLOGS > 5);
 			ret=getCacheByWaypointName(ch,true,pref.downloadPics,pref.downloadTBs,false,loadAllLogs);
 			// Save the spidered data
 			if (ret == SPIDER_OK) {
@@ -619,7 +616,7 @@ public class SpiderGC{
 		//=======
 		// Now ready to spider each cache in the list
 		//=======
-		boolean loadAllLogs = (MAXLOGS > 5);
+		boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
 
 		int spiderErrors = 0;
 
@@ -670,7 +667,7 @@ public class SpiderGC{
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.getWayPoint() +" (" + (cachesToLoad.size()+j) + " / " + totalCachesToLoad + ")");
 				infB.redisplay();
 
-				int test = spiderSingle(cacheDB.getIndex(ch), infB,false);
+				int test = spiderSingle(cacheDB.getIndex(ch), infB,false,loadAllLogs);
 				if (test == SPIDER_CANCEL) {
 					break;
 				} else if (test == SPIDER_ERROR) {
@@ -1136,7 +1133,7 @@ public class SpiderGC{
 				chD.OwnLogId = logId;
 				chD.OwnLog = new Log(icon,d,name,logText);
 			}
-			if (nLogs<=MAXLOGS) reslts.add(new Log(icon,d,name,logText));
+			if (nLogs<=pref.maxLogsToSpider) reslts.add(new Log(icon,d,name,logText));
 
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
@@ -1148,11 +1145,11 @@ public class SpiderGC{
 			exLogId.setSource(singleLog);
 			// We cannot simply stop if we have reached MAXLOGS just in case we are waiting for
 			// a log by our alias that happened earlier.
-			if (nLogs>=MAXLOGS && chD.getParent().is_found() && (chD.OwnLogId.length() != 0) && (chD.OwnLog != null) && !(chD.OwnLog.getDate().equals("1900-01-01"))) break;
+			if (nLogs>=pref.maxLogsToSpider && chD.getParent().is_found() && (chD.OwnLogId.length() != 0) && (chD.OwnLog != null) && !(chD.OwnLog.getDate().equals("1900-01-01"))) break;
 		}
-		if (nLogs>MAXLOGS) {
+		if (nLogs>pref.maxLogsToSpider) {
 			reslts.add(Log.maxLog());
-			pref.log("Too many logs. MAXLOGS reached ("+MAXLOGS+")");
+			pref.log("Too many logs. MAXLOGS reached ("+pref.maxLogsToSpider+")");
 		} else
 			pref.log(nLogs+" logs found");
 		return reslts;
