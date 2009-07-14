@@ -761,7 +761,7 @@ public class MainMenu extends MenuBar {
 		
 		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5003,"Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS);
 		if (options.execute() == FormBase.IDCANCEL) {	return; }
-		
+				
 		SpiderGC spider = new SpiderGC(pref, profile, false);
 		OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
 		//Vm.debug("ByPass? " + profile.byPassIndexActive);
@@ -770,6 +770,8 @@ public class MainMenu extends MenuBar {
 		boolean alreadySaid2 = false;
 		InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
 		infB.exec();
+		
+		boolean loadAllLogs = (pref.maxLogsToSpider > 5);
 		
 		Vector cachesToUpdate = new Vector();
 		for(int i = 0; i <	cacheDB.size(); i++){
@@ -808,7 +810,7 @@ public class MainMenu extends MenuBar {
 			infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.getWayPoint() +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
 			infB.redisplay();
 			if (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) {
-				int test = spider.spiderSingle(i, infB,forceLogin);
+				int test = spider.spiderSingle(i, infB, forceLogin, loadAllLogs);
 				if (test == SpiderGC.SPIDER_CANCEL) {
 					infB.close(0);
 					break;
