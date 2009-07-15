@@ -1,13 +1,17 @@
 #!/bin/sh
 
-# backup of prefs.xml
-if [ -f "work/pref.xml" ]; then
-	echo "backup of pref.xml"
-	mv work/pref.xml /tmp
-	if [ $? -ne 0 ] ; then
-		echo "echo could not save pref.xml to /tmp. aborting"
+filestosave="pref.xml garminmap.xml"
+
+for savefile in $filestosave; do 
+	if [ -f "work/$savefile" ]; then
+		echo "backup of $savefile"
+		mv "work/$savefile" /tmp/
+		if [ $? -ne 0 ] ; then
+			echo "could not backup $savefile to /tmp. aborting"
+			exit 1
+		fi
 	fi
-fi
+done
 
 # clean up
 rm -rf work
@@ -16,6 +20,7 @@ rm -rf work
 mkdir -p work/attributes
 mkdir -p work/webmapservices
 mkdir -p work/languages
+mkdir -p work/templates
 
 # get ressources
 cp -fa resources/*.* work
@@ -23,14 +28,17 @@ cp -fa res_noewe/*.* work
 cp -fa resources/attributes/* work/attributes
 cp -fa res_noewe/webmapservices/* work/webmapservices/
 cp -fa res_noewe/languages/* work/languages/
+cp -fa res_noewe/templates/* work/templates/
 
 # set sane permissions
 find work -type f -exec chmod 644 "{}" \;
 find work -type d -exec chmod 755 "{}" \;
 
 # restore of pref.xml
-if [ -f "/tmp/pref.xml" ] ; then
-	echo "restore of pref.xml"
-	mv /tmp/pref.xml work/pref.xml
-fi
+for savefile in $filestosave; do
+	if [ -f "/tmp/$savefile" ] ; then
+		echo "restore of $savefile"
+		mv "/tmp/$savefile" "work/"
+	fi
+done
 #
