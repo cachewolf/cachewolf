@@ -55,7 +55,7 @@
 	<property name="assemble.dir" value="assemble"/>
 
 	<!-- lists of files to be packaged, this should become less confusing later on -->
-	<property name="template.files" value="*.tpl"/>
+	<property name="template.files" value="templates/*.tpl"/>
 	<property name="icons.gui.files" value="dnf.gif,bug.gif,red.png,yellow.png,blue.png"/>
 	<property name="icons.log.files" value="traffic_cone.gif,recommendedlog.gif,icon_smile.gif,icon_sad.gif,icon_rsvp.gif,icon_note.gif,icon_needsmaint.gif,icon_maint.gif,icon_enabled.gif,icon_disabled.gif,icon_camera.gif,icon_attended.gif,big_smile.gif,coord_update.gif,icon_greenlight.gif,icon_redlight.gif,icon_remove.gif"/>
 	<property name="icons.cache.files" value="11.gif,8.gif,6.gif,5.gif,4.gif,3.gif,2.gif,13.gif,12.gif,100.gif,101.gif,102.gif,103.gif,104.gif"/>
