@@ -774,14 +774,14 @@ public class Preferences extends MinML{
 	 * It will always append to an existing file.
 	 * To show the message on the console, the global variable debug must be set.
 	 * This can be done by adding
-	 * <pre><debug value="true"></pre>
+	 * <pre>&lt;debug value="true"&gt;</pre>
 	 * to the pref.xml file
 	 * @param text to log
 	 */
 	public void log(String text){
 		Time dtm = new Time();
 		dtm.getTime();
-		dtm.setFormat("dd.MM.yyyy'/'HH:mm");
+		dtm.setFormat("dd.MM.yyyy'/'HH:mm:ss.SSS");
 		text = dtm.toString()+ ": "+ text;
 		if (debug) Vm.debug(text);
 		text=text+"\n";
