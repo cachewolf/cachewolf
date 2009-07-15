@@ -447,7 +447,7 @@ public class MainMenu extends MenuBar {
 				kml.doIt();
 			}
 			if(mev.selectedItem == exportTPL){
-				FileChooser fc = new FileChooser(FileChooserBase.OPEN, FileBase.getProgramDirectory());
+				FileChooser fc = new FileChooser(FileChooserBase.OPEN, FileBase.getProgramDirectory()+FileBase.separator+"templates");
 				fc.addMask("*.tpl");
 				fc.setTitle(MyLocale.getMsg(910,"Select Template file"));
 				if(fc.execute() != FormBase.IDCANCEL){

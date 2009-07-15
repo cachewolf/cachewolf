@@ -21,13 +21,13 @@ public class HTMLExporter{
 	Preferences pref;
 	Profile profile;
 	String [] template_init_index = {
-	 		"filename",  "index.tpl",
+	 		"filename",  "templates"+FileBase.separator+"index.tpl",
 	 		"case_sensitive", "true",
 	 		"max_includes",   "5"
 	 		//,"debug", "true"
 	 	};
 	String [] template_init_page = {
-	 		"filename",  "page.tpl",
+	 		"filename",  "templates"+FileBase.separator+"page.tpl",
 	 		"case_sensitive", "true",
 	 		"max_includes",   "5"
 	 	};
