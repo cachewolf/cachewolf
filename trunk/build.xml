@@ -272,12 +272,9 @@
 		<copy todir="${assemble.dir}/attributes" failonerror="true" verbose="true">
 			<fileset dir="resources/attributes"/>
 		</copy>
-		<!-- copy addons -->
-		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
-			<fileset dir="res_noewe">
-				<include name="Garmin*.zip"/>
-				<include name="POI*.zip"/>
-			</fileset>
+		<!-- copy exporticons -->
+		<copy todir="${assemble.dir}/exporticons" failonerror="true" verbose="true">
+			<fileset dir="res_noewe/exporticons"/>
 		</copy>
 		<!-- copy logo -->
 		<copy todir="${assemble.dir}" file="resources/CacheWolf.ico" failonerror="true" verbose="true"/>

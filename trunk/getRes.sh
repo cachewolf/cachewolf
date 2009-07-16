@@ -21,6 +21,7 @@ mkdir -p work/attributes
 mkdir -p work/webmapservices
 mkdir -p work/languages
 mkdir -p work/templates
+mkdir -p work/exporticons
 
 # get ressources
 cp -fa resources/*.* work
@@ -29,6 +30,7 @@ cp -fa resources/attributes/* work/attributes
 cp -fa res_noewe/webmapservices/* work/webmapservices/
 cp -fa res_noewe/languages/* work/languages/
 cp -fa res_noewe/templates/* work/templates/
+cp -fa res_noewe/exporticons/* work/exporticons/
 
 # set sane permissions
 find work -type f -exec chmod 644 "{}" \;
