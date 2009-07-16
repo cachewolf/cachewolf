@@ -224,15 +224,14 @@ public class KMLExporter extends Exporter {
 
 	public void copyIcons(String dir){
 		try {
-			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + "/POIIcons.zip");
+			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator + "exporticons" + FileBase.separator + "GoogleEarth.zip");
 			ZipEntry zipEnt;
 			int len;
-			String entName, fileName; 
+			String fileName; 
 
 			for (int i = 0; i < CacheType.guiTypeStrings().length; i++) {
 				fileName = CacheType.typeImageForId(CacheType.guiSelect2Cw(i));
-				entName = "GoogleEarthIcons/" + fileName;
-				zipEnt = zif.getEntry(entName);
+				zipEnt = zif.getEntry(fileName);
 				if (zipEnt == null) continue;
 			    byte[] buff = new byte[ zipEnt.getSize() ];
 			    InputStream  fis = zif.getInputStream(zipEnt);

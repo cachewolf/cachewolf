@@ -249,12 +249,12 @@ public class TomTomExporter {
 	
 	public void copyIcon(int intWayType, String prefix, String typeName){
 		try {
-			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + "/POIIcons.zip");
+			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator+"exporticons"+FileBase.separator+"TomTom.zip");
 			ZipEntry zipEnt;
 			int len;
 			String entName; 
 			
-			entName = "TomTomIcons/"+ "GC-" + typeName + ".bmp";
+			entName = "GC-" + typeName + ".bmp";
 			zipEnt = zif.getEntry(entName);
 			if (zipEnt == null) return;
 			
@@ -267,10 +267,10 @@ public class TomTomExporter {
 		    fos.close();
 		    fis.close();
 		} catch (ZipException e) {
-			Vm.debug("Problem copying Icon" + "GC-" + typeName + ".bmp" );
+			Vm.debug("Problem copying Icon " + "GC-" + typeName + ".bmp" );
 			e.printStackTrace();
 		} catch (IOException e) {
-			Vm.debug("Problem copying Icon" + "GC-" + typeName + ".bmp" );
+			Vm.debug("Problem copying Icon " + "GC-" + typeName + ".bmp" );
 			e.printStackTrace();
 		}
 	}
