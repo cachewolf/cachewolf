@@ -62,7 +62,7 @@ public class Attributes {
 	 * Prepare for attributes to be written to cache.xml file 
 	 */
 	public String XmlAttributesWrite(){
-		StringBuffer sb=new StringBuffer(1000);
+		StringBuffer sb=new StringBuffer(3*count+2);
 		sb.append("<ATTRIBUTES>\n");
 		for (int i=0; i<count; i++) {
 			sb.append("   <ATT>");
