@@ -176,7 +176,7 @@ public class SpiderGC{
 				//Ok now login!
 				try{
 					pref.log("[login]:Logging in as "+pref.myAlias);
-					StringBuffer sb=new StringBuffer(30);
+					StringBuffer sb=new StringBuffer(1000);
 					sb.append(URL.encodeURL("__VIEWSTATE",false));	sb.append("="); sb.append(URL.encodeURL(viewstate,false));
 					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("myUsername",false));
 					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
@@ -1607,7 +1607,7 @@ public class SpiderGC{
 	private static String getResponseHeaders(HttpConnection conn) {
 		PropertyList pl = conn.documentProperties;
 		if (pl != null) {
-			StringBuffer sb = new StringBuffer(pl.size()*4+1);
+			StringBuffer sb = new StringBuffer(1000);
 			boolean gotany = false;
 
 			for (int i = 0; i < pl.size(); i++) {
@@ -1618,8 +1618,7 @@ public class SpiderGC{
 				}
 			}
 			if (gotany)
-				sb.append("\r\n");
-				return sb.toString();
+				return sb.toString() + "\r\n";
 		}
 		return "";
 	}
