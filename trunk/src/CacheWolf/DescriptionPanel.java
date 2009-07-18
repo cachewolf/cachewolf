@@ -135,7 +135,7 @@ public class DescriptionPanel extends CellPanel{
 	 * @param chD
 	 */
 	private String getPicDesc(int imagesShown,CacheHolderDetail chD) {
-		StringBuffer sb=new StringBuffer(chD.images.size()*7+5);
+		StringBuffer sb=new StringBuffer(1000);
 		sb.append("<hr><font size=\"+1\" color=\"red\">").append(MyLocale.getMsg(202,"IMAGES").toUpperCase()).append("</font>");
 		sb.append("<br><br>");
 		for (int i=imagesShown; i<chD.images.size(); i++) {
