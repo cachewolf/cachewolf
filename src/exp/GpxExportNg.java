@@ -501,7 +501,7 @@ public class GpxExportNg {
 	 */
 	private String formatCache(CacheHolder ch) {
 		// no addis or custom in MyFindsPq - and of course only finds
-		if ((STYLE_GPX_MYFINDS == exportStyle) && ((ch.getType() == CacheType.CW_TYPE_CUSTOM) || ch.isAddiWpt() || !ch.is_found()))
+		if ((STYLE_GPX_MYFINDS == exportStyle) && (ch.isCustomWpt() || ch.isAddiWpt() || !ch.is_found()))
 			return "";
 
 		if (!ch.pos.isValid())
@@ -513,7 +513,7 @@ public class GpxExportNg {
 		try {
 			ret.append(formatCompact(ch));
 
-			if (exportStyle != STYLE_GPX_COMPACT && !(ch.getType() == CacheType.CW_TYPE_CUSTOM || ch.isAddiWpt())) {
+			if (exportStyle != STYLE_GPX_COMPACT && !(ch.isCustomWpt() || ch.isAddiWpt())) {
 				ret.append(formatPqExtensions(ch));
 			}
 
@@ -554,7 +554,7 @@ public class GpxExportNg {
 					exportErrors++;
 					ret.append("    <time>1970-01-01T00:00:00</time>\n");
 				}
-			} else if (ch.getType() == CacheType.CW_TYPE_CUSTOM) {
+			} else if (ch.isCustomWpt()) {
 				ret.append("    <time>1970-01-01T00:00:00</time>\n");
 			} else {
 				ret.append("    <time>"+ch.getDateHidden()+"T00:00:00</time>\n");
@@ -564,7 +564,7 @@ public class GpxExportNg {
 		if (exportIds == WPNAME_ID_SMART) {
 			if (ch.isAddiWpt()) {
 				ret.append("    <name>".concat(SafeXML.cleanGPX(ch.mainCache.getWayPoint().concat(" ").concat(ch.getWayPoint().substring(0, 2)))).concat("</name>\n"));
-			} else if (ch.getType() == CacheType.CW_TYPE_CUSTOM) {
+			} else if (ch.isCustomWpt()) {
 				ret.append("    <name>".concat(SafeXML.cleanGPX(ch.getWayPoint())).concat("</name>\n"));
 			} else {
 				ret.append("    <name>".concat(SafeXML.cleanGPX(ch.getWayPoint())
@@ -583,7 +583,7 @@ public class GpxExportNg {
 		}
 		
 		// no <cmt> for custom
-		if (ch.getType() != CacheType.CW_TYPE_CUSTOM) {
+		if (!ch.isCustomWpt()) {
 			if (exportIds == WPNAME_ID_SMART && exportStyle == STYLE_GPX_COMPACT) {
 				if (ch.isAddiWpt()) {
 					ret.append("    <cmt>".concat(SafeXML.cleanGPX(ch.getCacheName() + " " + ch.getFreshDetails().LongDescription)).concat("</cmt>\n"));
@@ -599,7 +599,7 @@ public class GpxExportNg {
 			}
 		}
 
-		if (ch.isAddiWpt() || ch.getType() == CacheType.CW_TYPE_CUSTOM) {
+		if (ch.isAddiWpt() || ch.isCustomWpt()) {
 			ret.append("    <desc>".concat(SafeXML.cleanGPX(ch.getCacheName())).concat("</desc>\n"));
 		} else {
 			ret.append("    <desc>".concat(SafeXML.cleanGPX(ch.getCacheName().concat(" by ").concat(ch.getCacheOwner()).concat(", ")
@@ -610,7 +610,7 @@ public class GpxExportNg {
 		}
 
 		if (exportStyle != STYLE_GPX_COMPACT) {
-			if (ch.getType() != CacheType.CW_TYPE_CUSTOM) {
+			if (!ch.isCustomWpt()) {
 				ret.append("    <url>".concat(ch.details.URL).concat("</url>\n"));
 				ret.append("    <urlname>".concat(SafeXML.cleanGPX(ch.getCacheName())).concat("</urlname>\n"));
 			}
@@ -622,7 +622,7 @@ public class GpxExportNg {
 			if (ch.isAddiWpt()) {
 				ret.append("    <sym>".concat(CacheType.id2GpxString(ch.getType())
 						.substring(CacheType.id2GpxString(ch.getType()).indexOf("|") + 1)).concat("</sym>\n"));
-			} else if (ch.getType() == CacheType.CW_TYPE_CUSTOM) {
+			} else if (ch.isCustomWpt()) {
 				ret.append("    <sym>Custom</sym>\n");
 			} else if (ch.is_found()) {
 				ret.append("    <sym>Geocache found</sym>\n");
@@ -645,7 +645,7 @@ public class GpxExportNg {
 	 */
 	private String formatPqExtensions(CacheHolder ch) {
 		// no details pq details for addis or custom waypoints
-		if (ch.getType() == CacheType.CW_TYPE_CUSTOM || ch.isAddiWpt())
+		if (ch.isCustomWpt() || ch.isAddiWpt())
 			return "";
 
 		return "    <groundspeak:cache id=\"".concat(ch.GetCacheID()).concat("\" available=\"").concat(ch.is_available() ? TRUE : FALSE).concat("\" archived=\"").concat(ch.is_archived() ? TRUE : FALSE).concat("\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\n")
@@ -753,7 +753,7 @@ public class GpxExportNg {
 	 * @return formatted output
 	 */
 	public String formatLongDescription(CacheHolder ch) {
-		if (ch.isAddiWpt() || ch.getType() == CacheType.CW_TYPE_CUSTOM) {
+		if (ch.isAddiWpt() || ch.isCustomWpt()) {
 			return ch.details.LongDescription;
 		} else {
 			StringBuffer ret = new StringBuffer();
