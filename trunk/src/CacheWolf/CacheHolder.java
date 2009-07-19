@@ -181,7 +181,7 @@ public class CacheHolder{
 		            
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
-			        if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
+			        if (isAddiWpt() || isCustomWpt()) {
 			        	setHard(CacheTerrDiff.CW_DT_UNSET);
 			        } else {
 				        try {
@@ -194,7 +194,7 @@ public class CacheHolder{
 			        }
 			        start = xmlString.indexOf('"', end + 1);
 				    end = xmlString.indexOf('"', start + 1);
-				    if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
+				    if (isAddiWpt() || isCustomWpt()) {
 				    	setTerrain(CacheTerrDiff.CW_DT_UNSET);
 				    } else {
 					    try {
@@ -212,7 +212,7 @@ public class CacheHolder{
 	
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
-			        if (isAddiWpt() || getType() == CacheType.CW_TYPE_CUSTOM) {
+			        if (isAddiWpt() || isCustomWpt()) {
 			        	setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 			        } else {
 				        try {
@@ -570,6 +570,14 @@ public class CacheHolder{
 	public boolean isAddiWpt() {
 		return CacheType.isAddiWpt(this.getType());
 	}
+	
+	public boolean isCustomWpt() {
+		return CacheType.isCustomWpt(getType());
+	}
+	
+	public boolean isCacheWpt() {
+		return CacheType.isCacheWpt(getType());
+	}
 
 	public boolean hasAddiWpt() {
 		if (this.addiWpts.getCount()>0) return true;
@@ -924,7 +932,7 @@ public class CacheHolder{
 		setCacheSize(byteFromLong(value, 4));
 		setNoFindLogs((byteFromLong(value, 5)));
 		if (getHard() == -1 || getTerrain() == -1 || getCacheSize() == -1) {
-			if (this.isAddiWpt() || this.getType()==CacheType.CW_TYPE_CUSTOM) {
+			if (isAddiWpt() || isCustomWpt()) {
 				// Addis don't have their own values for difficulty, terrain and size
 				// Custom waypoints can't be updated to remove incomplete flag, so we 
 				// have to set reasonable values.

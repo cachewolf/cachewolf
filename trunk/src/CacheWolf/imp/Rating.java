@@ -40,7 +40,7 @@ public class Rating {
 		for (int i = 0; i < Global.getProfile().cacheDB.size(); i++) {
 			CacheHolder ch = Global.getProfile().cacheDB.get(i);
 			if (ch.isVisible()) {
-				if (!ch.isAddiWpt() && ch.getType() != CacheType.CW_TYPE_CUSTOM) {
+				if (ch.isCacheWpt()) {
 					int rate;
 					try {
 						rate = CWWrapper.exec(rater, ch.getWayPoint(), true);

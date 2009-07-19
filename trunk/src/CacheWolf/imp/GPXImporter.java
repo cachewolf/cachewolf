@@ -446,7 +446,7 @@ public class GPXImporter extends MinML {
 		}
 		if ((name.equals("groundspeak:type") || name.equals("type")|| name.equals("terra:style"))&& inCache){
 			holder.setType(CacheType.gpxType2CwType(strData));
-			if (holder.getType() == CacheType.CW_TYPE_CUSTOM) {
+			if (holder.isCustomWpt()) {
 				holder.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 				holder.setHard(CacheTerrDiff.CW_DT_UNSET);
 				holder.setTerrain(CacheTerrDiff.CW_DT_UNSET);
