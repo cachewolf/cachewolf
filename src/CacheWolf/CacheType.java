@@ -316,6 +316,36 @@ public final class CacheType {
 		
 	}
 	
+	public static final boolean isCacheWpt(byte type) {
+		switch (type) {
+		case CW_TYPE_TRADITIONAL: // fall through
+		case CW_TYPE_MULTI: // fall through
+		case CW_TYPE_VIRTUAL: // fall through
+		case CW_TYPE_LETTERBOX: // fall through
+		case CW_TYPE_EVENT: // fall through
+		case CW_TYPE_QUIZ: // fall through
+		case CW_TYPE_UNKNOWN: // fall through
+		case CW_TYPE_MOVING: // fall through
+		case CW_TYPE_DRIVE_IN: // fall through
+		case CW_TYPE_WEBCAM: // fall through
+		case CW_TYPE_LOCATIONLESS: // fall through
+		case CW_TYPE_CITO: // fall through
+		case CW_TYPE_MEGA_EVENT: // fall through
+		case CW_TYPE_WHEREIGO: // fall through
+		case CW_TYPE_EARTH: // fall through
+		case CW_TYPE_APE: // fall through
+		case CW_TYPE_MAZE: return true;
+		default: return false;
+		}
+	}
+	
+	public static final boolean isCustomWpt(byte type) {
+		if (type == CW_TYPE_CUSTOM)
+			return true;
+		else
+			return false;
+	}
+	
 	/**
 	 * create list of cache types to be shown in GUI drop down lists
 	 * @return list of cache types to be shown in GUI drop down list

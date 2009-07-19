@@ -239,7 +239,7 @@ public class DetailsPanel extends CellPanel {
 		chcSize.setInt(ch.getCacheSize());
 
 		attV.showImages(ch.getCacheDetails(true).attributes);
-		if (ch.isAddiWpt() || ch.getType() == CacheType.CW_TYPE_CUSTOM) {
+		if (ch.isAddiWpt() || ch.isCustomWpt()) {
 			btnTerr.setText("T: -.-");
 			btnDiff.setText("D: -.-");
 			deactivatControl(btnTerr);

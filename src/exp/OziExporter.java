@@ -41,7 +41,7 @@ public class OziExporter extends Exporter{
 		// usually start at 1 and increment. Can be set to -1 (minus 1) and the number will be auto generated.
 		strBuf.append("-1,");
 		// Field 2 : Name - the waypoint name, use the correct length name to suit the GPS type.
-		if (ch.getType() == CacheType.CW_TYPE_CUSTOM || ch.isAddiWpt()) {
+		if (ch.isCustomWpt() || ch.isAddiWpt()) {
 			strBuf.append(ch.getWayPoint() + ",");
 		} else {
 			strBuf.append(ch.getWayPoint()
