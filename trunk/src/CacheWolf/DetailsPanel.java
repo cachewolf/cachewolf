@@ -240,10 +240,10 @@ public class DetailsPanel extends CellPanel {
 
 		attV.showImages(ch.getCacheDetails(true).attributes);
 		if (ch.isAddiWpt() || ch.isCustomWpt()) {
-			btnTerr.setText("T: -.-");
-			btnDiff.setText("D: -.-");
-			deactivatControl(btnTerr);
-			deactivatControl(btnDiff);
+			btnTerr.setText(MyLocale.getMsg(1001, "T")+": -.-");
+			btnDiff.setText(MyLocale.getMsg(1000, "D")+": -.-");
+			deactivateControl(btnTerr);
+			deactivateControl(btnDiff);
 		} else {
 			activateControl(btnTerr);
 			activateControl(btnDiff);
@@ -308,19 +308,30 @@ public class DetailsPanel extends CellPanel {
 			if (ev.target == inpWaypoint) {
 				// If user used lower case -> convert directly to upper case
 				inpWaypoint.setText(inpWaypoint.getText().toUpperCase());
+				//FIXME: if name was changed, we should rename the waypoint.xml file. how? where?
+			} else if (ev.target == chcType) {
+				createWptName();
+				if (CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.selectedIndex))) {
+					activateControl(btnTerr);
+					activateControl(btnDiff);
+					activateControl(chcSize);
+				} else {
+					deactivateControl(btnTerr);
+					deactivateControl(btnDiff);
+					deactivateControl(chcSize);
+					chcSize.select(0);
+					btnTerr.setText(MyLocale.getMsg(1001, "T")+": -.-");
+					btnDiff.setText(MyLocale.getMsg(1000, "D")+": -.-");
+				}
 			}
+			//FIXME: check if something was actually changed, since datacachnge events also occur if you just hop through the fileds with the tab key (Why? don't know!)
 			dirty_details = true;
 			needsTableUpdate = true;
-			// profile.hasUnsavedChanges=true;
-			if (ev.target == chcType) {
-				createWptName();
-			}
 		}
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 			if (ev.target == btnNotes) {
 				dirty_notes = true; // TODO I think this is redundant, because
-									// the notes are saved
-				// seperately by the notes screen itself
+									// the notes are saved separately by the notes screen itself
 				NotesScreen nsc = new NotesScreen(thisCache
 						.getCacheDetails(true));
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
@@ -367,6 +378,7 @@ public class DetailsPanel extends CellPanel {
 					note = note + dtm.toString();
 				note = note + "\n";
 				thisCache.getCacheDetails(true).setCacheNotes(note);
+				//FIXME: better use saveDirtyWaypoint()?
 				thisCache.save();
 			} else if (ev.target == btnAddPicture) {
 				thisCache.getCacheDetails(true).addUserImage(profile);
@@ -393,7 +405,7 @@ public class DetailsPanel extends CellPanel {
 				ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 				Global.mainTab.newWaypoint(ch);
 			} else if (ev.target == btnGoto) {
-				// TODO if something changed saveWpt();
+				// FIXME: if something changed saveDirtyWaypoint();
 				Global.mainTab.gotoP.setDestinationAndSwitch(thisCache);
 			} else if (ev.target == btnWayLoc) {
 				CWPoint coords = new CWPoint(btnWayLoc.getText(), CWPoint.CW);
@@ -468,6 +480,7 @@ public class DetailsPanel extends CellPanel {
 						.getTerrain());
 				returnValue = tdf.execute();
 				if (returnValue == 1 && tdf.getDT() != thisCache.getTerrain()) {
+					//FIXME: do this when waypoint is checked for saving
 					thisCache.setTerrain(tdf.getDT());
 					btnTerr.setText(MyLocale.getMsg(1001, "T") + ": "
 							+ CacheTerrDiff.longDT(thisCache.getTerrain()));
@@ -478,6 +491,7 @@ public class DetailsPanel extends CellPanel {
 				TerrDiffForm tdf = new TerrDiffForm(false, thisCache.getHard());
 				returnValue = tdf.execute();
 				if (returnValue == 1 && tdf.getDT() != thisCache.getHard()) {
+					//FIXME: do this when waypoint is checked for saving
 					thisCache.setHard(tdf.getDT());
 					btnDiff.setText(MyLocale.getMsg(1000, "D") + ": "
 							+ CacheTerrDiff.longDT(thisCache.getHard()));
@@ -488,17 +502,24 @@ public class DetailsPanel extends CellPanel {
 		}
 	}
 	
+	/** allow user input on control item */
 	private void activateControl(Control ctrl) {
 		if (ctrl.change(0, ControlConstants.Disabled))
 			ctrl.repaint();
 	}
-	
-	private void deactivatControl(Control ctrl) {
+
+	/** block user input on control item */
+	private void deactivateControl(Control ctrl) {
 		if (ctrl.change(ControlConstants.Disabled, 0))
 			ctrl.repaint();
 	}
 
 	public void saveDirtyWaypoint() {
+		//FIXME: here we should check if the data is now different from what it used to be when calling the details panel instead of relying on dirty flags
+		//FIXME: take care of renaming waypoints
+		//FIXME: add method to convert back text of difficulty & terrain buttons
+		//FIXME: check if manual changes have converted a cache from incomplete to complete
+		
 		// We have to update two objects: thisCache (a CacheHolderDetail) which
 		// contains
 		// the full cache which will be written to the cache.xml file AND
