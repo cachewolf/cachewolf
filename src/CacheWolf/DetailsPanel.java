@@ -244,9 +244,12 @@ public class DetailsPanel extends CellPanel {
 			btnDiff.setText(MyLocale.getMsg(1000, "D")+": -.-");
 			deactivateControl(btnTerr);
 			deactivateControl(btnDiff);
+			deactivateControl(chcSize);
+			chcSize.select(0);
 		} else {
 			activateControl(btnTerr);
 			activateControl(btnDiff);
+			activateControl(chcSize);
 			if (CacheTerrDiff.isValidTD(ch.getTerrain())) {
 				btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(ch.getTerrain()));
 			} else {
@@ -618,6 +621,7 @@ public class DetailsPanel extends CellPanel {
 		}
 		// set status also on addi wpts
 		ch.setAttributesToAddiWpts();
+		ch.checkIncomplete();
 		dirty_notes = false;
 		dirty_details = false;
 		setNeedsTableUpdate(false);

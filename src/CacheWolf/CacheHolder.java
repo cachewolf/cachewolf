@@ -678,7 +678,8 @@ public class CacheHolder{
 			} catch (IOException e) {
 				if (! maybenew ) {
 					if (alarmuser) {
-						(new MessageBox("Error", "Could not read cache details for cache: "
+						//FIXME: put a message to languages file
+						(new MessageBox(MyLocale.getMsg(31415,"Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ")
 						        + this.getWayPoint(), FormBase.OKB)).execute();
 					}
 					details = null;
@@ -911,7 +912,10 @@ public class CacheHolder{
 		setType(byteFromLong(value, 3));
 		setCacheSize(byteFromLong(value, 4));
 		setNoFindLogs((byteFromLong(value, 5)));
-		if (( getHard() == -1 || getTerrain() == -1 || getCacheSize() == -1 ) || getType() == -1 ) {
+		if ( getHard() == CacheTerrDiff.CW_DT_ERROR 
+				|| getTerrain() == CacheTerrDiff.CW_DT_ERROR 
+				|| getCacheSize() == CacheSize.CW_SIZE_ERROR 
+				|| getType() == CacheType.CW_TYPE_ERROR ) {
 			setIncomplete(true);
 		}
 	}
@@ -935,9 +939,9 @@ public class CacheHolder{
 				// Addis don't have their own values for difficulty, terrain and size
 				// Custom waypoints can't be updated to remove incomplete flag, so we 
 				// have to set reasonable values.
-				if (getHard() == -1) setHard(CacheTerrDiff.CW_DT_UNSET);
-				if (getTerrain() == -1) setTerrain(CacheTerrDiff.CW_DT_UNSET);
-				if (getCacheSize() == -1) setCacheSize(CacheSize.CW_SIZE_NONE);
+				if (getHard() == CacheTerrDiff.CW_DT_ERROR) setHard(CacheTerrDiff.CW_DT_UNSET);
+				if (getTerrain() == CacheTerrDiff.CW_DT_ERROR) setTerrain(CacheTerrDiff.CW_DT_UNSET);
+				if (getCacheSize() == CacheSize.CW_SIZE_ERROR) setCacheSize(CacheSize.CW_SIZE_NONE);
 			} else {
 				setIncomplete(true);
 			}
@@ -1283,6 +1287,52 @@ public class CacheHolder{
 		if (is_incomplete && iconAndTextWPLevel==4) iconAndTextWP = null;
     	this.incomplete = is_incomplete;
     }
+	
+	public boolean checkIncomplete() {
+		boolean ret;
+		if (isCacheWpt()) {
+			if (getWayPoint().length() < 3
+					|| getHard() <= CacheTerrDiff.CW_DT_UNSET
+					|| getTerrain() <= CacheTerrDiff.CW_DT_UNSET
+					|| getCacheSize() == CacheSize.CW_SIZE_ERROR
+					|| getCacheOwner().length() == 0
+					|| getDateHidden().length() == 0 
+					|| getCacheName().length() == 0) 
+				ret = true;
+			else
+				ret = false;
+		} else if (isAddiWpt()) {
+			if (mainCache == null
+					|| getHard() != CacheTerrDiff.CW_DT_UNSET 
+					|| getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN
+					|| getTerrain() != CacheTerrDiff.CW_DT_UNSET
+					|| getWayPoint().length() < 2
+//					|| getCacheOwner().length() > 0
+//					|| getDateHidden().length() > 0 
+					|| getCacheName().length() == 0
+					)
+				ret = true;
+			else
+				ret = false;
+		} else if (isCustomWpt()) {
+			if (getHard() != CacheTerrDiff.CW_DT_UNSET 
+					|| getTerrain() != CacheTerrDiff.CW_DT_UNSET
+					|| getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN
+					|| getWayPoint().length() < 2
+//					|| getCacheOwner().length() > 0
+//					|| getDateHidden().length() > 0 
+					|| getCacheName().length() == 0
+					)
+				ret = true;
+			else
+				ret = false;
+		} else {
+			// we should not get here, so let's set a warning just in case
+			ret=true;
+		}
+		setIncomplete(ret);
+		return ret;
+	}
 
 	/**
 	 * Determines if the blacklist status is set for the cache. Do not use this method
