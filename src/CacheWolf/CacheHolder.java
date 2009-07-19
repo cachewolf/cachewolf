@@ -492,7 +492,6 @@ public class CacheHolder{
 		this.setOwned(ch.is_owned());
 		this.setFiltered(ch.is_filtered());
 		this.setIncomplete(ch.is_incomplete());
-		this.setBlack(ch.is_black());
 		this.addiWpts = ch.addiWpts;
 		this.mainCache=ch.mainCache;
 		this.setOcCacheID(ch.getOcCacheID());
