@@ -121,6 +121,7 @@ public class DetailsPanel extends CellPanel {
 		line1Panel.addNext(chcType, CellConstants.HSTRETCH,	(CellConstants.HFILL | CellConstants.WEST));
 
 		line1Panel.addLast(btnDiff = new mButton(MyLocale.getMsg(1000, "D")	+ ": 5.5"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.EAST));
+		btnDiff.setPreferredSize(pref.fontSize * 3, chcSize.getPreferredSize(null).height);
 
 		this.addLast(line1Panel, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
 
@@ -129,8 +130,8 @@ public class DetailsPanel extends CellPanel {
 		chcSize.alwaysDrop = true;
 		line2Panel.addNext(chcSize, CellConstants.HSTRETCH,	(CellConstants.HFILL | CellConstants.WEST));
 
-		line2Panel.addLast(btnTerr = new mButton(MyLocale.getMsg(1001, "T")	+ ": 5.5"), CellConstants.DONTSTRETCH,
-				(CellConstants.DONTFILL | CellConstants.EAST));
+		line2Panel.addLast(btnTerr = new mButton(MyLocale.getMsg(1001, "T")	+ ": 5.5"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.EAST));
+		btnTerr.setPreferredSize(pref.fontSize * 3, chcSize.getPreferredSize(null).height);
 		this.addLast(line2Panel, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
 
 		this.addNext(new mLabel(MyLocale.getMsg(302, "Waypoint:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
