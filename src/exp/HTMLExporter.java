@@ -44,6 +44,7 @@ public class HTMLExporter{
 		CacheHolder ch;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
+		int exportErrors = 0;
 
 		new String();
 		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getExportPath(expName));
@@ -59,7 +60,6 @@ public class HTMLExporter{
 			Vector usrImg = new Vector();
 			Vector logIcons = new Vector(15);
 			String icon;
-			int exportErrors = 0;
 
 			Hashtable varParams;
 			Hashtable imgParams;
@@ -85,7 +85,7 @@ public class HTMLExporter{
 						Global.getPref().log("HTMLExport: skipping export of incomplete waypoint "+ch.getWayPoint());
 						continue;
 					}
-					det=ch.getExistingDetails();
+					det=ch.getCacheDetails(false,false);
 					varParams = new Hashtable();
 					varParams.put("TYPE", CacheType.cw2ExportString(ch.getType()));
 					varParams.put("WAYPOINT", ch.getWayPoint());
@@ -150,8 +150,10 @@ public class HTMLExporter{
 								String imgFile = new String(det.images.get(j).getFilename());
 								imgParams.put("FILE", imgFile);
 								imgParams.put("TEXT",det.images.get(j).getTitle());
-								DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile);
-								cacheImg.add(imgParams);
+								if (DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile))
+									cacheImg.add(imgParams);
+								else
+									exportErrors++;
 							}
 							page_tpl.setParam("cacheImg", cacheImg);
 							
@@ -162,8 +164,10 @@ public class HTMLExporter{
 								String logImgFile = det.logImages.get(j).getFilename();
 								logImgParams.put("FILE", logImgFile);
 								logImgParams.put("TEXT",det.logImages.get(j).getTitle());
-								DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile);
-								logImg.add(logImgParams);
+								if (DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile))
+									logImg.add(logImgParams);
+								else
+									exportErrors++;
 							}
 							page_tpl.setParam("logImg", logImg);
 							
@@ -174,8 +178,10 @@ public class HTMLExporter{
 								String usrImgFile = new String(det.userImages.get(j).getFilename());
 								usrImgParams.put("FILE", usrImgFile);
 								usrImgParams.put("TEXT",det.userImages.get(j).getTitle());
-								DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile);
-								usrImg.add(usrImgParams);
+								if (DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile))
+									usrImg.add(usrImgParams);
+								else
+									exportErrors++;
 							}
 							page_tpl.setParam("userImg", usrImg);
 							
@@ -190,15 +196,19 @@ public class HTMLExporter{
 							if (test.exists()) {
 								mapImgParams.put("FILE", mapImgFile);
 								mapImgParams.put("TEXT",mapImgFile);
-								DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
-								mapImg.add(mapImgParams);
+								if (DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile))
+									mapImg.add(mapImgParams);
+								else
+									exportErrors++;
 								
 								mapImgParams = new Hashtable();
 								mapImgFile = ch.getWayPoint() + "_map_2.gif";
 								mapImgParams.put("FILE", mapImgFile);
 								mapImgParams.put("TEXT",mapImgFile);
-								DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile);
-								mapImg.add(mapImgParams);
+								if (DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile))
+									mapImg.add(mapImgParams);
+								else
+									exportErrors++;
 		
 								page_tpl.setParam("mapImg", mapImg);
 							}
@@ -212,6 +222,7 @@ public class HTMLExporter{
 							page_tpl.setParam("logImg", ""); // ???
 							page_tpl.setParam("userImg", ""); // ???
 							page_tpl.setParam("mapImg", ""); // ???
+							exportErrors++;
 						}
 						
 						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getWayPoint()+".html")));
@@ -225,18 +236,19 @@ public class HTMLExporter{
 						exportErrors++;
 						Global.getPref().log("HTMLExport: error wehen exporting "+ch.getWayPoint()+" reason: ",e,Global.getPref().debug);
 					}
-					if (exportErrors > 0) {
-						new MessageBox("Export Error", exportErrors+" waypoints have not been exported. See log for details.", FormBase.OKB).execute();
-					}
 				}//if is black, filtered
 			}
+
 			// Copy the log-icons to the destination directory
 			for (int j=0; j<logIcons.size(); j++) {
 				icon=(String) logIcons.elementAt(j);
-				DataMover.copy(FileBase.getProgramDirectory() + "/"+icon,targetDir + icon);
+				if (!DataMover.copy(FileBase.getProgramDirectory() + "/"+icon,targetDir + icon))
+					exportErrors++;
 				
 			}
-			DataMover.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif");
+			if (!DataMover.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif"))
+				exportErrors++;
+			
 			try{
 				Template tpl = new Template(template_init_index);
 				tpl.setParam("cache_index", cache_index);
@@ -261,6 +273,11 @@ public class HTMLExporter{
 			
 		}//if
 		pbf.exit(0);
+		
+		if (exportErrors > 0) {
+			new MessageBox("Export Error", exportErrors+" errors during export. See log for details.", FormBase.OKB).execute();
+		}
+
 	}
 	
 	/**
