@@ -8,7 +8,8 @@
 <table border = "2px" align = "center">
 <tr style = "background-color:lightgrey;font-family:sans-serif;font-size:14;"><td>
 <tmpl_var TYPE> <tmpl_var WAYPOINT> <tmpl_var NAME> by <tmpl_var OWNER><br>
-Difficulty: <tmpl_var DIFFICULTY>&nbsp;&nbsp;Terrain: <tmpl_var TERRAIN>&nbsp;&nbsp;Size: <tmpl_var SIZE>
+Difficulty: <tmpl_var DIFFICULTY>&nbsp;&nbsp;Terrain: <tmpl_var TERRAIN>&nbsp;&nbsp;Size: <tmpl_var SIZE><br>
+Coordinates: <tmpl_var LATLON>
 </td></tr>
 <tr style = "font-family:sans-serif;font-size:12;"><td>
 Description:<br>

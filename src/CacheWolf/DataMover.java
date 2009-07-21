@@ -276,23 +276,30 @@ public class DataMover {
 		}
 	}
 
-	public static void copy( String sFileSrc, String sFileDst)
-	  {
-	    try {
+	/**
+	 * copy a file
+	 * @param sFileSrc source file name
+	 * @param sFileDst destination file name
+	 * @return true on success, false if an error occurred
+	 */
+	public static boolean copy( String sFileSrc, String sFileDst) {
+		try {
 			File   fSrc = new File( sFileSrc );
-		    int    len  = 32768;
-		    byte[] buff = new byte[ (int)java.lang.Math.min( len, fSrc.length() ) ];
-		    FileInputStream  fis = new FileInputStream(  fSrc );
-		    FileOutputStream fos = new FileOutputStream( sFileDst);
-		    while( 0 < (len = fis.read( buff )) )
-		      fos.write( buff, 0, len );
-		    fos.flush();
-		    fos.close();
-		    fis.close();
-	    }
-	    catch (Exception ex){
-	    	Vm.debug("Filecopy failed: "+sFileSrc+"=>"+sFileDst);
-	    }
+			int    len  = 32768;
+			byte[] buff = new byte[ (int)java.lang.Math.min( len, fSrc.length() ) ];
+			FileInputStream  fis = new FileInputStream(  fSrc );
+			FileOutputStream fos = new FileOutputStream( sFileDst);
+			while( 0 < (len = fis.read( buff )) )
+				fos.write( buff, 0, len );
+			fos.flush();
+			fos.close();
+			fis.close();
+		}
+		catch (Exception ex){
+			Global.getPref().log("Filecopy failed: "+sFileSrc+"=>"+sFileDst,ex,Global.getPref().debug);
+			return false;
+		}
+		return true;
 	}
 
 	//////////////////////////////////////////////////////////////////////

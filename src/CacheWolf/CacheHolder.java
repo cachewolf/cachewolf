@@ -681,6 +681,8 @@ public class CacheHolder{
 						//FIXME: put a message to languages file
 						(new MessageBox(MyLocale.getMsg(31415,"Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ")
 						        + this.getWayPoint(), FormBase.OKB)).execute();
+					} else {
+						Global.getPref().log("Could not read details for waypoint " + getWayPoint());
 					}
 					details = null;
 					this.setIncomplete(true);
