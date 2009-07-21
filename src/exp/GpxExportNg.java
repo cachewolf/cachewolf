@@ -34,6 +34,7 @@ import ewe.sys.Handle;
 import ewe.sys.Process;
 import ewe.sys.Time;
 import ewe.sys.Vm;
+import ewe.ui.Control;
 import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.DataChangeEvent;
@@ -827,6 +828,8 @@ public class GpxExportNg {
 			return "Update Coordinates";
 		if (image.equals("icon_remove.gif"))
 			return "Needs Archived";
+		if (image.equals("icon_redlight.gif"))
+			return "Retract Listing";
 		Global.getPref().log("GPX Export: warning - unknown logtype " + image + " was changed to 'Write note'");
 		exportErrors++;
 		return "Write note";
@@ -1232,6 +1235,18 @@ public class GpxExportNg {
 		 */
 		public String getPrefix() {
 			return ibPrefix.getText();
+		}
+		
+		/** set control to accept user interaction */
+		private void activateControl(Control ctrl) {
+			if (ctrl.change(0, ControlConstants.Disabled))
+				ctrl.repaint();
+		}
+		
+		/** set control to deny user interaction */
+		private void deactivatControl(Control ctrl) {
+			if (ctrl.change(ControlConstants.Disabled, 0))
+				ctrl.repaint();
 		}
 	}
 }

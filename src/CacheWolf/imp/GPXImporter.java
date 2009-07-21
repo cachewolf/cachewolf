@@ -518,6 +518,7 @@ public class GPXImporter extends MinML {
 		if (typeText.equals("Needs Maintenance")) return "icon_needsmaint.gif";
 		if (typeText.equals("Needs Archived")) return "icon_remove.gif";
 		if (typeText.equals("Update Coordinates")) return "coord_update.gif";
+		if (typeText.equals("Retract Listing")) return "img_redlight.gif";
 		Global.getPref().log("GPX Import: warning, unknown logtype "+typeText+" assuming Write note");
 		return "icon_note.gif";
 	}
