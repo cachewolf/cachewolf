@@ -440,6 +440,92 @@ public class CacheHolderDetail {
 				if (this.images.get(i).getComment() != null) return true;
 			return false;
 		}
+
+		/**
+		 * change id in waypoint details and rename associated files. Function should only be called by CacheHolder
+		 * @param newWptId new id of the waypoint
+		 * @return true on success, false for failure
+		 */
+		protected boolean rename(String newWptId) {
+			boolean success = false;
+			String profiledir = Global.getProfile().dataDir;
+			int oldWptLength = getParent().getWayPoint().length();
+			
+			// just in case ... (got the pun? ;) )
+			newWptId = newWptId.toUpperCase();
+			
+			// update image information
+			for(int i = 0;i<images.size();i++){
+				String filename = images.get(i).getFilename();
+				String comment = images.get(i).getComment();
+				String title = images.get(i).getTitle();
+				if (filename.indexOf(getParent().getWayPoint())==0) {
+					filename=newWptId.concat(filename.substring(oldWptLength));
+					images.get(i).setFilename(filename);
+				}
+				if (comment.indexOf(getParent().getWayPoint())==0) {
+					comment=newWptId.concat(comment.substring(oldWptLength));
+					images.get(i).setComment(comment);
+				}
+				if (title.indexOf(getParent().getWayPoint())==0) {
+					title=newWptId.concat(title.substring(oldWptLength));
+					images.get(i).setTitle(title);
+				}
+			}
+			for(int i = 0;i<logImages.size();i++){
+				String filename = logImages.get(i).getFilename();
+				String comment = logImages.get(i).getComment();
+				String title = logImages.get(i).getTitle();
+				if (filename.indexOf(getParent().getWayPoint())==0) {
+					filename=newWptId.concat(filename.substring(oldWptLength));
+					logImages.get(i).setFilename(filename);
+				}
+				if (comment.indexOf(getParent().getWayPoint())==0) {
+					comment=newWptId.concat(comment.substring(oldWptLength));
+					logImages.get(i).setComment(comment);
+				}
+				if (title.indexOf(getParent().getWayPoint())==0) {
+					title=newWptId.concat(title.substring(oldWptLength));
+					logImages.get(i).setTitle(title);
+				}
+			}
+			for(int i = 0;i<userImages.size();i++){
+				String filename = userImages.get(i).getFilename();
+				String comment = userImages.get(i).getComment();
+				String title = userImages.get(i).getTitle();
+				if (filename.indexOf(getParent().getWayPoint())==0) {
+					filename=newWptId.concat(filename.substring(oldWptLength));
+					userImages.get(i).setFilename(filename);
+				}
+				if (comment.indexOf(getParent().getWayPoint())==0) {
+					comment=newWptId.concat(comment.substring(oldWptLength));
+					userImages.get(i).setComment(comment);
+				}
+				if (title.indexOf(getParent().getWayPoint())==0) {
+					title=newWptId.concat(title.substring(oldWptLength));
+					userImages.get(i).setTitle(title);
+				}
+			}
+
+			// rename the files
+			try {
+				// since we use *.* we do not need FileBugFix
+				String srcFiles[] = new File(profiledir).list(getParent().getWayPoint().concat("*.*"), ewe.io.FileBase.LIST_FILES_ONLY);
+				for (int i=0; i < srcFiles.length;i++){
+					String newfile = newWptId.concat(srcFiles[i].substring(oldWptLength));
+					File srcFile = new File(profiledir.concat(srcFiles[i]));
+					File dstFile = new File(profiledir.concat(newfile));
+					srcFile.move(dstFile);
+				}
+				success = true;
+			} catch (Exception e) {
+				Global.getPref().log("Error renaming waypoint details", e, Global.getPref().debug);
+				//TODO: any chance of a roll back?
+				//TODO: should we ignore a file not found?
+			}
+			
+			return success;
+		}
 }
 
 
