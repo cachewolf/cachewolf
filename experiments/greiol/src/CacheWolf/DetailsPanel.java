@@ -9,102 +9,173 @@ import ewe.sys.*;
  * Also allows for creation of a custom waypoint.<br>
  */
 public class DetailsPanel extends CellPanel {
+	
+	// ===== GUI elements =====
+	/** waypoint id */
+	private static mInput inpWaypoint;
+	/** waypoint name */
+	private static mInput inpName;
+	/** waypoint hidden date */
+	private static mInput inpHidden;
+	/** waypoint owner */
+	private static mInput inpOwner;
+	/** FIXME */
+	private static mButton btnWayLoc;
+	/** FIXME */
+	private static mButton btnCenter;
+	/** add time stamp to notes */
+	private static mButton btnAddDateTime;
+	/** FIXME */
+	private static mButton btnNewWpt;
+	/** FIXME */
+	private static mButton btnShowBug;
+	/** FIXME */
+	private static mButton btnShowMap;
+	/** FIXME */
+	private static mButton btnGoto;
+	/** FIXME */
+	private static mButton btnAddPicture;
+	/** FIXME */
+	private static mButton btnBlack;
+	/** FIXME */
+	private static mButton btnNotes;
+	/** FIXME */
+	private static mButton btnFoundDate;
+	/** FIXME */
+	private static mButton btnHiddenDate;
+	/** FIXME */
+	private static mButton btnTerr;
+	/** FIXME */
+	private static mButton btnDiff;
+	/** drop down list with cache types */
+	private static mChoice chcType;
+	/** drop down list with container sizes */
+	private static mChoice chcSize;
+	/** FIXME */
+	private static mComboBox chcStatus;
+	/** FIXME */
+	private static CellPanel pnlTools;
+	/** FIXME */
+	private static mTextPad mNotes;
+	/** FIXME */
+	private static mLabel lblAddiCount;
+	/** FIXME move to image broker?*/
+	private static mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgNotes;
+	/** FIXME: what are they for? */
+	private static mImage imgShowMaps, imgAddImages;
+	
+	// ===== data handles =====
+	/** FIXME: never used? */
+	private static CacheDB cacheDB;
+	/** waypoint to be displayed */
+	private static CacheHolder thisCache;
+	/** FIXME: never used? */
+	private static int dbIndex = -1;
+	/** FIXME */
+	private static AttributesViewer attV;
+	/** preferences object */
+	private static Preferences pref;
+	/** waypoint profile */
+	private static Profile profile;
+	
+	// ===== flags =====
+	/** notes have changes */
+	private boolean dirty_notes;
+	/** details have changed FIXME: make this obsolete */
+	private boolean dirty_details;
+	/** cache is blacklisted FIXME: make this obsolete*/
+	private boolean blackStatus;
+	/** blacklist status was changed by user FIXME: make this obsolete */
+	private boolean blackStatusChanged;
+	/** FIXME */
+	private boolean needsTableUpdate;
+	/** screen is VGA or better */
+	private boolean isBigScreen;
+	
+	// ------------- initialize
+	// ------------- present data
+	// ------------- save data
+	// ------------- user interaction
+	// ------------- auxiliary methods
+	
 
-	mInput inpWaypoint = new mInput();
-	mInput inpName = new mInput();
-	mButton btnWayLoc = new mButton();
-	mInput inpHidden = new mInput();
-	mInput inpOwner = new mInput();
-	mButton btnDelete, btnCenter, btnAddDateTime;
-	mChoice chcType = new mChoice(CacheType.guiTypeStrings(), 0);
-	mChoice chcSize = new mChoice(CacheSize.guiSizeStrings(), 0);
+//	mInput inpWaypoint = new mInput();
+//	mInput inpName = new mInput();
+//	mButton btnWayLoc = new mButton();
+//	mInput inpHidden = new mInput();
+//	mInput inpOwner = new mInput();
+//	mChoice chcType = new mChoice(CacheType.guiTypeStrings(), 0);
+//	mChoice chcSize = new mChoice(CacheSize.guiSizeStrings(), 0);
+//	mComboBox chcStatus = new mComboBox(new String[] { "",
+//			MyLocale.getMsg(313, "Flag 1"), MyLocale.getMsg(314, "Flag 2"),
+//			MyLocale.getMsg(315, "Flag 3"), MyLocale.getMsg(316, "Flag 4"),
+//			MyLocale.getMsg(317, "Search"), MyLocale.getMsg(318, "Found"),
+//			MyLocale.getMsg(319, "Not Found"), MyLocale.getMsg(320, "Owner") },
+//			0);
 
-	mComboBox chcStatus = new mComboBox(new String[] { "",
-			MyLocale.getMsg(313, "Flag 1"), MyLocale.getMsg(314, "Flag 2"),
-			MyLocale.getMsg(315, "Flag 3"), MyLocale.getMsg(316, "Flag 4"),
-			MyLocale.getMsg(317, "Search"), MyLocale.getMsg(318, "Found"),
-			MyLocale.getMsg(319, "Not Found"), MyLocale.getMsg(320, "Owner") },
-			0);
-
-	mButton btnNewWpt, btnShowBug, btnShowMap, btnGoto, btnAddPicture,
-			btnBlack, btnNotes, btnSave, btnCancel;
-	mButton btnFoundDate, btnHiddenDate;
-	CellPanel pnlTools = new CellPanel();
-	mTextPad mNotes;
-
-	mImage imgBlack;
-	mImage imgBlackNo;
-	mImage imgShowBug, imgShowBugNo, imgNewWpt, imgGoto;
-	mImage imgShowMaps, imgAddImages, imgNotes;
-	mLabel lblAddiCount;
-	mButton btnTerr, btnDiff;
-
-	CacheDB cacheDB;
-	CacheHolder thisCache;
-	int dbIndex = -1;
-
-	AttributesViewer attV;
-
-	private boolean dirty_notes = false;
-	private boolean dirty_details = false;
-	private boolean blackStatus = false;
-	private boolean blackStatusChanged = false;
-	private boolean needsTableUpdate = false;
-	private boolean isBigScreen = false;
-
-	Preferences pref; // Test
-	Profile profile;
+	
+	// TODO: move images to image broker
+	//mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgShowMaps, imgAddImages, imgNotes;
 
 	public DetailsPanel() {
+		
+		// ===== initialize data handles =====
 		pref = Global.getPref();
 		profile = Global.getProfile();
 		cacheDB = profile.cacheDB;
-		// //////////////////
-		// Tools
-		// //////////////////
-		// Use larger Button-Icons on VGA-mobiles
-		int sw = MyLocale.getScreenWidth();
-		String imagesize = "";
-		if (Vm.isMobile() && sw >= 400)
-			imagesize = "_vga";
-		// Button 1: New Waypoint
-		pnlTools.addNext(btnNewWpt = new mButton(imgNewWpt = new mImage(
-				"newwpt" + imagesize + ".png")));
-		btnNewWpt.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
-		PenEvent.wantPenMoved(btnNewWpt, PenEvent.WANT_PEN_MOVED_ONOFF, true);
+		
+		// ===== initialize flags =====
+		dirty_notes = false;
+		dirty_details = false;
+		blackStatus = false;
+		blackStatusChanged = false;
+		needsTableUpdate = false;
+		// should this be limited to mobile devices? make a difference between big screen and big icons?
+		isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
+
+		// ===== initialize GUI objects =====
+		// ----- tools panel ------
+		pnlTools = new CellPanel();
+		btnNewWpt = new mButton(imgNewWpt = new mImage(isBigScreen?"newwpt_vga.png":"newwpt.png"));
 		imgNewWpt.transparentColor = new Color(255, 0, 0);
-		// Button 2: Goto
-		pnlTools.addNext(btnGoto = new mButton(imgGoto = new mImage("goto" + imagesize + ".png")));// Goto.gif
-		// funzt
-		// manchmal
-		// nicht
+		btnNewWpt.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
+		
+		btnGoto = new mButton(imgGoto = new mImage(isBigScreen?"goto_vga.png":"goto.png"));
 		imgGoto.transparentColor = Color.White;
 		btnGoto.setToolTip(MyLocale.getMsg(345, "Goto these coordinates"));
-		// Button 3: Travelbugs
-		imgShowBug = new mImage("bug" + imagesize + ".gif");
-		imgShowBugNo = new mImage("bug_no" + imagesize + ".gif");
-		pnlTools.addNext(btnShowBug = new mButton(imgShowBugNo));
-		// btnShowBug.modify(Control.Disabled,0);
+		
+		btnShowBug = new mButton(new mImage(isBigScreen?"bug_no_vga.gif":"bug_no.gif"));
 		btnShowBug.setToolTip(MyLocale.getMsg(346, "Show travelbugs"));
-		// Button 4: Show Map
-		pnlTools.addNext(btnShowMap = new mButton(imgShowMaps = new mImage("globe_small" + imagesize + ".gif")));
+		this.deactivateControl(btnShowBug);
+		
+		btnShowMap = new mButton(new mImage(isBigScreen?"globe_small_vga.gif":"globe_small.gif"));
 		btnShowMap.setToolTip(MyLocale.getMsg(347, "Show map"));
-		// Button 5: Add images
-		pnlTools.addNext(btnAddPicture = new mButton(imgAddImages = new mImage("images" + imagesize + ".gif")));
+		
+		btnAddPicture = new mButton(imgAddImages = new mImage(isBigScreen?"images_vga.gif":"images_vga.gif"));
 		btnAddPicture.setToolTip(MyLocale.getMsg(348, "Add user pictures"));
+		
+		
+		// ===== put the controls onto the GUI =====
+		// ----- tools panel ------
+		pnlTools.addNext(btnNewWpt);
+		pnlTools.addNext(btnGoto);
+		pnlTools.addNext(btnShowBug);
+		pnlTools.addNext(btnShowMap);
+		pnlTools.addNext(btnAddPicture);		
+
 		// Button 6: Toggle blacklist status
-		imgBlackNo = new mImage("no_black" + imagesize + ".png");
+		imgBlackNo = new mImage(isBigScreen?"no_black_vga.png":"no_black.png");
 		imgBlackNo.transparentColor = Color.Black;
-		imgBlack = new mImage("is_black" + imagesize + ".png");
+		imgBlack = new mImage(isBigScreen?"is_black_vga.png":"is_black.png");
 		imgBlack.transparentColor = Color.White;
 		pnlTools.addNext(btnBlack = new mButton(imgBlackNo));
 		btnBlack.setToolTip(MyLocale.getMsg(349, "Toggle Blacklist status"));
 		// Button 7: Notes
-		pnlTools.addNext(btnNotes = new mButton(imgNotes = new mImage("notes" + imagesize + ".gif")));
+		pnlTools.addNext(btnNotes = new mButton(imgNotes = new mImage(isBigScreen?"notes_vga.gif":"notes.gif")));
 		imgNotes.transparentColor = Color.DarkBlue;
 		btnNotes.setToolTip(MyLocale.getMsg(351, "Add/Edit notes"));
 		// Button 8: Date/time stamp
-		pnlTools.addLast(btnAddDateTime = new mButton(new mImage("date_time" + imagesize + ".gif")));
+		pnlTools.addLast(btnAddDateTime = new mButton(new mImage(isBigScreen?"date_time_vga.gif":"date_time.gif")));
 		btnAddDateTime.setToolTip(MyLocale.getMsg(350, "Add timestamp to notes"));
 		// showMap.modify(Control.Disabled,0);
 		pnlTools.stretchFirstRow = true;
@@ -114,6 +185,19 @@ public class DetailsPanel extends CellPanel {
 		// //////////////////
 		// Main body of screen
 		// //////////////////
+		chcType = new mChoice(CacheType.guiTypeStrings(), 0);
+		chcSize = new mChoice(CacheSize.guiSizeStrings(), 0);
+		chcStatus = new mComboBox(new String[] { "",
+				MyLocale.getMsg(313, "Flag 1"), MyLocale.getMsg(314, "Flag 2"),
+				MyLocale.getMsg(315, "Flag 3"), MyLocale.getMsg(316, "Flag 4"),
+				MyLocale.getMsg(317, "Search"), MyLocale.getMsg(318, "Found"),
+				MyLocale.getMsg(319, "Not Found"), MyLocale.getMsg(320, "Owner") },
+				0);
+	inpWaypoint = new mInput();
+	inpName = new mInput();
+	btnWayLoc = new mButton();
+	inpHidden = new mInput();
+	inpOwner = new mInput();
 
 		this.addNext(new mLabel(MyLocale.getMsg(300, "Type:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.NORTHWEST));
 		CellPanel line1Panel = new CellPanel();
@@ -149,7 +233,7 @@ public class DetailsPanel extends CellPanel {
 		this.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 		CellPanel cp = new CellPanel();
 		cp.addNext(chcStatus, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
-		cp.addLast(btnFoundDate = new mButton(new mImage("calendar" + imagesize + ".png")), DONTSTRETCH, DONTFILL);
+		cp.addLast(btnFoundDate = new mButton(new mImage(isBigScreen?"calendar_vga.png":"calendar.png")), DONTSTRETCH, DONTFILL);
 		this.addLast(cp, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
 
 		this.addNext(new mLabel(MyLocale.getMsg(306, "Owner:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
@@ -158,15 +242,14 @@ public class DetailsPanel extends CellPanel {
 		this.addNext(new mLabel(MyLocale.getMsg(305, "Hidden on:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 		CellPanel ip = new CellPanel();
 		ip.addNext(inpHidden, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
-		ip.addLast(btnHiddenDate = new mButton(new mImage("calendar" + imagesize + ".png")), DONTSTRETCH, DONTFILL);
+		ip.addLast(btnHiddenDate = new mButton(new mImage(isBigScreen?"calendar_vga.png":"calendar.png")), DONTSTRETCH, DONTFILL);
 		this.addLast(ip, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN, new Dimension(2, 1));
 		inpHidden.modifyAll(DisplayOnly, 0);
 
 		attV = new AttributesViewer();
 		this.addLast(attV);
 
-		if ((MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600)) {
-			isBigScreen = true;
+		if (isBigScreen) {
 			this.addLast(new mLabel(MyLocale.getMsg(308, "Notes:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 			mNotes = new mTextPad();
 			mNotes.modify(ControlConstants.NotEditable, 0);
@@ -522,7 +605,7 @@ public class DetailsPanel extends CellPanel {
 			ctrl.repaint();
 	}
 	
-//	private void save2() {
+	private void saveIfNeeded() {
 //		boolean saveWpt = false;
 //		boolean renameWpt = false;
 //		int newdiff;
@@ -545,7 +628,7 @@ public class DetailsPanel extends CellPanel {
 //		if (newdiff)
 //		if (newterr)
 //		if (btnBlack.getImage()
-//	}
+	}
 
 	public void saveDirtyWaypoint() {
 		//FIXME: here we should check if the data is now different from what it used to be when calling the details panel instead of relying on dirty flags
@@ -656,6 +739,10 @@ public class DetailsPanel extends CellPanel {
 		dirty_details = false;
 		setNeedsTableUpdate(false);
 		thisCache.getFreshDetails().hasUnsavedChanges = true;
+	}
+	
+	public String getDisplayedWaypoint() {
+		return thisCache.getWayPoint();
 	}
 
 	private class TravelbugInCacheScreen extends Form {

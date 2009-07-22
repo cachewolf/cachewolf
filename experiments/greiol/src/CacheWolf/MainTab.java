@@ -153,7 +153,7 @@ public class MainTab extends mTabbedPanel {
 				detP.saveDirtyWaypoint();
 				if (needTableUpdate) {
 					tbP.myMod.updateRows();// This sorts the waypoint (if it is new) into the right position
-					tbP.selectRow(profile.getCacheIndex(detP.thisCache.getWayPoint()));
+					tbP.selectRow(profile.getCacheIndex(detP.getDisplayedWaypoint()));
 				}
 				//was tbP.refreshTable();
 				tbP.tc.update(true); // Update and repaint
