@@ -1,0 +1,19 @@
+TakenFromUrl:   http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Dialogbox
+GetCapabilitiesUrl:   http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK50?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.0
+Name: de.nrw Topo 50
+MapType:   topo
+MainUrl:   http://www.geoserver.nrw.de:80/GeoOgcWms1.3/servlet/TK50?
+ServiceTypeUrlPart:   SERVICE=WMS
+VersionUrlPart:   VERSION=1.1.0
+CoordinateReferenceSystemCacheWolf:   31466 31467
+CoordinateReferenceSystemUrlPart:   SRS=EPSG:31466 SRS=EPSG:31467
+RequestUrlPart:   REQUEST=GetMap
+LayersUrlPart:   LAYERS=Raster%3ATK50%5FKMF%3AFarbkombination
+StylesUrlPart:   STYLES=
+ImageFormatUrlPart:   FORMAT=image/png
+BoundingBoxTopLeftWGS84:   N 52.7691 E 5.673
+BoundingBoxButtomRightWGS84:   N 49.9944 E 10.142
+MinScale:   0.0
+MaxScale:   23.335
+RecommendedScale:   5
+ImageFileExtension: .png

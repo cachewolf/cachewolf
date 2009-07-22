@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. --><!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "docbookV4.5/docbookx.dtd" []>
+<article lang="de">
+  <title>Readme: garminmap.xml</title>
+  <abstract>
+    <para>Mit Hilfe der Datei <filename>garminmap.xml</filename> wird für den Export von GPX- und OZI-Wegpunktdateien festgelegt wie die Wegpunkte im jeweiligen Programm dargestellt werden. Darüber hinaus kann festgelegt werden welche Kategorien und Symbole beim Erzeugen von Custom POI für Garmin Handheld Geräte verwendet werden. Die Datei muss im selben Verzeichnis liegen wie die Datei prefs.xml. </para>
+    <para>Dieses Dokument beschreibt nicht die eigentliche Installation der Custom Symbols auf dem Handheld oder in Mapsource.</para>
+  </abstract>
+  <para>In der Datei <filename>Garmin User Symbols.zip</filename> findest du einige Beispiele, die im Folgenden kurz erklärt werden sollen.</para>
+  <section>
+    <title>Beispiel: pro Cachetyp ein Symbol</title>
+    <para>Im diesem Beispiel wird einfach jedem Cachetyp ein eigenes Symbol zugeordnet</para>
+    <para><programlisting>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;iconmap&gt;
+&lt;icon type=&quot;0&quot; name=&quot;Custom 18&quot; /&gt;
+&lt;icon type=&quot;2&quot; name=&quot;Custom 0&quot; /&gt;
+&lt;icon type=&quot;3&quot; name=&quot;Custom 1&quot; /&gt;
+&lt;icon type=&quot;4&quot; name=&quot;Custom 6&quot; /&gt;
+&lt;icon type=&quot;5&quot; name=&quot;Custom 3&quot; /&gt;
+&lt;icon type=&quot;6&quot; name=&quot;Custom 4&quot; /&gt;
+&lt;icon type=&quot;8&quot; name=&quot;Custom 2&quot; /&gt;
+&lt;icon type=&quot;11&quot; name=&quot;Custom 7&quot; /&gt;
+&lt;icon type=&quot;12&quot; name=&quot;Custom 10&quot; /&gt;
+&lt;icon type=&quot;13&quot; name=&quot;Custom 5&quot; /&gt;
+&lt;icon type=&quot;50&quot; name=&quot;Parking Area&quot; /&gt;
+&lt;icon type=&quot;51&quot; name=&quot;Custom 11&quot; /&gt;
+&lt;icon type=&quot;52&quot; name=&quot;Custom 12&quot; /&gt;
+&lt;icon type=&quot;53&quot; name=&quot;Custom 16&quot; /&gt;
+&lt;icon type=&quot;54&quot; name=&quot;Trail Head&quot; /&gt;
+&lt;icon type=&quot;55&quot; name=&quot;Custom 14&quot; /&gt;
+&lt;icon type=&quot;100&quot; name=&quot;Custom 4&quot; /&gt;
+&lt;icon type=&quot;101&quot; name=&quot;Custom 17&quot; /&gt;
+&lt;icon type=&quot;102&quot; name=&quot;Custom 18&quot; /&gt;
+&lt;icon type=&quot;103&quot; name=&quot;Custom 20&quot; /&gt;
+&lt;icon type=&quot;104&quot; name=&quot;Custom 8&quot; /&gt;
+&lt;/iconmap&gt;</programlisting></para>
+    <para>Die Datei <filename>garminmap.xml</filename> beginnt immer mit<programlisting>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;iconmap&gt;</programlisting>und endet mit<programlisting>&lt;/iconmap&gt;</programlisting></para>
+    <para>Jede einzelne Zeile beginnt mit <code>&lt;icon</code> und endet mit <code> /&gt;</code>. Bitte das Leerzeichen nicht vergessen, </para>
+    <para>Innerhalb der Zeile finden sich dann Bedingungen und Anweisungen. </para>
+    <para>In unserem Beispiel ist <code>type=&quot;2&quot;</code> eine Bedingung, die auf alle Traditional Caches zutrifft und  <code>name=&quot;Custom 0&quot;</code> die Anweisung die ausgeführt wird, wenn die Bedingung erfüllt ist. In diesem Fall wird auf einem Garmin Handheld oder in Mapsource das Benutzerdefinierte Symbol 0 angezeigt. Eine Liste aller Cachetypen findest du im <link linkend="cachetypen">Anhang</link>. </para>
+    <para>Wie die Zeile <programlisting>&lt;icon type=&quot;50&quot; name=&quot;Parking Area&quot; /&gt;</programlisting>zeiget muss man sich bei den anzuzeigenden Symbolen nicht auf die Benutzerdefinierten beschränken, sondern kann auch die in jedem Garmin Handheld fest eingebauten Symbole benutzen. Auf diese Weise können auch Benutzer von Geräten die das Anlegen von Benutzerdefinierten Symbolen nicht unterstützen von der Garminmap profitieren und zumindest unterschiedliche Symbole darstellen lassen. </para>
+  </section>
+  <section>
+    <title>Beispiel: verknüpfte Bedingungen</title>
+    <para>Neben der einfach Zuweisung aus dem ersten Beispiel lassen sich mit der <filename>garminmap.xml</filename> auch komplexere Bedingungen für die Zuweisung eines Symbols erstellen. Dabei sind folgende Bedingungen möglich und beliebig kombinierbar:<itemizedlist>
+        <listitem>
+          <para>type= Typ des Caches. Für mögliche Werte siehe <link linkend="cachetypen">Liste</link>.</para>
+        </listitem>
+        <listitem>
+          <para>size= Größe des Cachebehälters. Für mögliche Werte siehe <link linkend="cachegroesse">Liste</link></para>
+        </listitem>
+        <listitem>
+          <para>terrain= 10, 15, 20, 25, 30, 35, 40, 45 oder 50. Custom und Additional Waypoints haben keine Geländebewertung</para>
+        </listitem>
+        <listitem>
+          <para>difficulty= 10, 15, 20, 25, 30, 35, 40, 45 oder 50. Custom und Additional Waypoints haben keine Schwierugkeit</para>
+        </listitem>
+        <listitem>
+          <para>found= 1 (gefunden) oder 0 (nicht gefunden). Nicht verwechseln mit status</para>
+        </listitem>
+        <listitem>
+          <para>status= Inhalt des Statusfeldes im Detailspanel. Es wird nur gegen den Anfang des Feldes geprüft. status=&quot;Nacht&quot; findet als Nachtcache und Nachtisch!</para>
+        </listitem>
+      </itemizedlist>Wichtig dabei ist, dass die Werte der Bedingungen immer mit doppelten Anfürungszeichen (&quot;) umschlossen werden.</para>
+    <para><programlisting>&lt;icon type=&quot;2&quot; terrain=&quot;50&quot; name=&quot;XXXX&quot; /&gt;</programlisting>weist allen caches vom Typ 2 (Traditional) und der Geländewertung 50 (5) das Symbol mit dem Namen zu.</para>
+    <para>Weil man häufig auch für Gelände 4.5 eine erweitere Ausrüstung braucht, könnte man das auch wie folgt ergämzen <programlisting>&lt;icon type=&quot;2&quot; terrain=&quot;50&quot; name=&quot;XXXX&quot; /&gt;
+&lt;icon type=&quot;2&quot; terrain=&quot;45&quot; name=&quot;XXXX&quot; /&gt;</programlisting></para>
+    <para>Damit alle anderen Tradis auch ein Symbol bekommen, könnte die komplette Sequenz für Tradis dann so aussehen:<programlisting>&lt;icon type=&quot;2&quot; terrain=&quot;50&quot; name=&quot;XXXX&quot; /&gt;
+&lt;icon type=&quot;2&quot; terrain=&quot;45&quot; name=&quot;XXXX&quot; /&gt;
+&lt;icon type=&quot;2&quot; name=&quot;Custom 0&quot; /&gt;</programlisting>Alle Traids mit Gelände 5 oder 4.5 bekommen das Symbol XXXX alle übrigen Tradis das Symbol Custom 0. Du kannst in einer Reihe beliebig viele Bedingungen benutzen. Die Reihen werden dabei in der Reihenfolge abgearbeitet in der sie in der datei stehen. Die Reihen mit komplexeren Bedingungen sollten also immer vor den einfachen Regeln stehen. Bei einem Eintrag von <programlisting>&lt;icon type=&quot;2&quot; name=&quot;Custom 0&quot; /&gt;
+&lt;icon type=&quot;2&quot; terrain=&quot;50&quot; name=&quot;XXXX&quot; /&gt;
+&lt;icon type=&quot;2&quot; terrain=&quot;45&quot; name=&quot;XXXX&quot; /&gt;</programlisting>würden die speziellen Regeln für das Gelände nie benutzt werden, da alle Tradis bereits von der ersten Regel erfasst würden.</para>
+  </section>
+  <section>
+    <title>Beispiel: OZI Export</title>
+    <para>Die Datei <filename>garminmap.xml</filename> kann auch zusammen mit dem OZI Export benutzt werden. In dem Fall heisst die Anweisung aber nicht <code>name=&quot;&quot;</code> sondern <code>ozicolor=&quot;&quot;</code>. Dabei steht ozicolor für die verwendete Hintergrundfarbe bei der Darstellung. Die Vordergrundfarbe ist immer Schwarz.</para>
+    <para>Ein Traditional Cache könnte durch folgende Regel dargestellt werden: <programlisting>&lt;icon type=&quot;2&quot; ozicolor=&quot;65280&quot; /&gt;</programlisting></para>
+    <para>Ein Traditional würde also in Grün dargestellt, denn alle Farbangaben sind die Dezimalschreibweisen der eigentlich hexadezimalen RGB Farben. 65280 entspricht dabei dem Farbcode 00FF00.</para>
+    <para>Im Internet findest du zahlreiche RGB Farbtabellen aus denen du dir die Farben mit denen deine Wegpunkte dargestellt werden sollen aussuchen kannst. Mit dem Taschenrechner, den dein Betriebssystem mitliefert, können die dort angegeben Hexadezimalwerte meist bequem in das dezimale Format umgerechnet werden. Versuche Farben zu verwenden, die sich gut unterscheiden lassen.</para>
+    <para>Genauso wie Bedingungen verknüpft werden können, können auch Anweisungen verknüpft werden. Solltest du also eine angepasste Darstellung für Garmin und Ozi haben wollen, benötigst du nicht zwei verschiedene Dateien, sondern kannst beides in einer einzigen Datei festlegen. Für den Traditional Cache aus unserem Beispiel könnte das dann so aussehen: <programlisting>&lt;icon type=&quot;2&quot; name=&quot;Custom 0&quot; ozicolor=&quot;65280&quot; /&gt;</programlisting></para>
+  </section>
+  <section>
+    <title>Beispiel: Garmin POI (GPI)</title>
+    <para>Zuammen mit dem experimentellen GPX Exporter kann die <filename>garminmap.xml</filename> auch verwendet werden um Einzeldateien für den Gramin POI Loader oder diekt GPI dateien für die Verwendung auf dem Garmin Handheld zu erzeugen. Dazu wurde die Anweisung <code>poiid=&quot;&quot;</code> eingeführt.</para>
+    <important>
+      <para>Nicht alle Garmin Handhelds unterstützen die Verwendung von Custom Points of Interest. Bitte schau im Handbuch deines Gerätes nach, ob die Funktion unterstützt wird bevor du sie benutzt.</para>
+    </important>
+    <para>Bei der <code>poiid</code> handelt es sich um einen Freitext der von dir individuell festgelegt werden kann. Da einige Garmin Handhelds jedoch Schwierigkeiten bei der Darstellung von Sonderzeichen haben, solltest du dich bei der Vergabe der ID auf die Zeichen A-z, a-z, 0-9, sowie - und _ beschränken.</para>
+    <para><programlisting>&lt;icon type=&quot;2&quot; poiid=&quot;Traditional&quot; /&gt;</programlisting>könnte also eine Regel sein, die festlegt wie während eines POI Exports Traditional Caches behandelt werden. Natürlich lassen sich auch hier wieder die verschiednen Anweisungen kombinieren, so daß eine solche Regel auch so aussehen könnte: <programlisting>&lt;icon type=&quot;2&quot; poiid=&quot;Traditional&quot; ozicolor=&quot;65280&quot; name=&quot;Custom 0&quot; /&gt;</programlisting></para>
+    <para>Beim Export wird der vergebenen ID noch ein Prefix vorangestellt, welche du im Exportdialog vergibst. Prefix und <code>piid</code> sollten gemeinsam auf das Display deines Handhelds passen. </para>
+    <section>
+      <title>Garmin POI Loader</title>
+      <para>Sofern du den Garmin POI Loader benutzen möchtest um deine Wegpunkte später auf den Handheld zu laden, musst du nichts weiter tun. Der Exporter wird im angegebenen Verzeichnis Dateien mit dem Namen <code>Prefix-PoiId.gpx</code> erzuegen, die du weiterverarbeiten kannst.</para>
+    </section>
+    <section>
+      <title>GPI Dateien erzeugen</title>
+      <para>Garmin GPI Dateien enthalten neben den Wegpunktinformationen immer auch eine Grafik mit der der Wegpunkt auf dem Bildschirm dargestellt wird.  Damit eine korrekte GPI Datei erzeugt werden kann, muss in dem Verzeichnis in dem die <filename>garminmap.xml</filename> liegt auch noch eine Datei mit dem Namen <filename>GarminPOI.zip</filename> existieren. In dieser Datei muss sich zu jeder von dir vergebenen <code>poiid</code> eine Datei mit dem Namen <filename>poiid.bmp</filename> befinden. Lautet eine deiner Anweisungen  <code>poiid=&quot;Traditional&quot;</code> muss sich in der <filename>GarminPOI.zip</filename>   eine <filename>Traditional.bmp</filename> befinden.</para>
+    </section>
+  </section>
+  <section>
+    <title>Anhang</title>
+    <section id="cachetypen">
+      <title>Cachetypen</title>
+      <para>Cachtypen werden innerhalb der Bedingungen durch einen Zahlenwert aus der folgenden Tabelle repräsentiert</para>
+      <programlisting>0 Custom
+2 Traditional
+3 Multicache
+4 Virtual Cache
+5 Letterbox
+6 Event Cache
+8 Unknown / Mystery Cache
+11 Webcam Cache
+12 Locationless (Reverse) Cache
+13 CITO Event
+100 Mega Event
+101 WhereIGo cache
+102 Project Ape Cache
+103 Adventure Maze Exhibit
+104 Earthcache
+50 Additional Waypoint Parking
+51 Additional Waypoint Stage of a Multicache
+52 Additional Waypoint Question to Answer
+53 Additional Waypoint Final
+54 Additional Waypoint Trailhead
+55 Additional Waypoint Reference</programlisting>
+    </section>
+    <section id="cachegroesse">
+      <title>Cachegrößen</title>
+      <para>Cachegrößen werden innerhalb der Bedingungen durch einen Buchstaben aus der folgenden Tabelle repräsentiert. Ob groß oder klein geschreiben spielt dabei keine Rolle.</para>
+      <programlisting>m Micro
+s Small
+r Regular
+l Large
+v Very Large
+n Not Chosen / Other / Virtual / None</programlisting>
+    </section>
+  </section>
+</article>
