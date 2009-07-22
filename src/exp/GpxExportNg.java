@@ -544,7 +544,7 @@ public class GpxExportNg {
 		
 //			.concat("\t\t<desc>@@WPDESC@@</desc>\n")
 		
-		ret.append("  <wp lat=\""+String.valueOf(ch.pos.latDec).replace(',', '.')+"\" lon=\""+String.valueOf(ch.pos.lonDec).replace(',', '.')+"\">\n");
+		ret.append("  <wpt lat=\""+String.valueOf(ch.pos.latDec).replace(',', '.')+"\" lon=\""+String.valueOf(ch.pos.lonDec).replace(',', '.')+"\">\n");
 		
 		if (exportStyle != STYLE_GPX_COMPACT) {
 			if (ch.isAddiWpt()) {
