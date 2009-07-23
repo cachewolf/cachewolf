@@ -315,7 +315,7 @@ public class CacheHolderDetail {
 			}
 			else {
 				if (getParent().getWayPoint().startsWith("GC")) {
-					URL = "http://www.geocaching.com/seek/cache_details.aspx?wp="+ getParent().getWayPoint() + "&Submit6=Find&log=y";
+					URL = "http://www.geocaching.com/seek/cache_details.aspx?wp="+ getParent().getWayPoint();
 				}
 			}
 			ex = new Extractor(text, "<SOLVER><![CDATA[", "]]></SOLVER>", 0, true);
