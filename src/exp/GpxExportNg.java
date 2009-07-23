@@ -652,7 +652,7 @@ public class GpxExportNg {
 		return "    <groundspeak:cache id=\"".concat(ch.GetCacheID()).concat("\" available=\"").concat(ch.is_available() ? TRUE : FALSE).concat("\" archived=\"").concat(ch.is_archived() ? TRUE : FALSE).concat("\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\n")
 		.concat("      <groundspeak:name>").concat(SafeXML.cleanGPX(ch.getCacheName())).concat("</groundspeak:name>\n")
 		.concat("      <groundspeak:placed_by>").concat(SafeXML.cleanGPX(ch.getCacheOwner())).concat("</groundspeak:placed_by>\n")
-		.concat("      <groundspeak:owner id=\"").concat("31415").concat("\">").concat(SafeXML.cleanGPX(ch.getCacheOwner())).concat("@@CACHEOWNER@@</groundspeak:owner>\n")
+		.concat("      <groundspeak:owner id=\"").concat("31415").concat("\">").concat(SafeXML.cleanGPX(ch.getCacheOwner())).concat("</groundspeak:owner>\n")
 		.concat("      <groundspeak:type>").concat(CacheType.id2GpxString(ch.getType())).concat("</groundspeak:type>\n")
 		.concat("      <groundspeak:container>").concat(CacheSize.cw2ExportString(ch.getCacheSize())).concat("</groundspeak:container>\n")
 		.concat("      <groundspeak:difficulty>").concat(CacheTerrDiff.shortDT(ch.getHard())).concat("</groundspeak:difficulty>\n")
