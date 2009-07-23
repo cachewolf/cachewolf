@@ -100,7 +100,7 @@ public class MainTab extends mTabbedPanel {
 	public void clearDetails() {
 		imageP.clearImages(); // Remove all images
 		descP.clear(); // write "loading ..."
-		detP.clear(); // Clear only the attributes
+		detP.clearAttributes(); // Clear only the attributes
 		hintLP.clear(); // Remove the logs
 		solverP.setInstructions("loading ...");
 	}	

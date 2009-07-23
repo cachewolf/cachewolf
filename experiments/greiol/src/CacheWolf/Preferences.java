@@ -102,6 +102,9 @@ public class Preferences extends MinML{
 			}
 		} else
 			fontSize = 11;
+		//TODO: should be overridden by preferences
+		useBigIcons = Vm.isMobile() && MyLocale.getScreenWidth() >= 400;
+		isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);;
 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -118,8 +121,7 @@ public class Preferences extends MinML{
 	public String myAlias = "";
 	/** Optional password */
 	public String password="";
-	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs)
-	 *  It is currently not used yet */
+	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs) */
 	public String myAlias2 = "";
 	/** The path to the browser */
 	public String browser = "";
@@ -244,6 +246,8 @@ public class Preferences extends MinML{
 	 */
 	public boolean debug = false;
 	//////////////////////////////////////////////
+	public boolean isBigScreen;
+	public boolean useBigIcons;
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Public fields not stored in pref.xml
@@ -610,6 +614,7 @@ public class Preferences extends MinML{
 		saveCustomMapsPath(getMapLoadPathInternal());
 		return getCustomMapsPath();
 	}
+
 	private String getMapLoadPathInternal() {
 		// here could also a list of map-types displayed...
 		// standard dir
@@ -757,7 +762,8 @@ public class Preferences extends MinML{
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	/** Log file is in program directory and called log.txt */
-	private final String LOGFILENAME=FileBase.getProgramDirectory()+"/log.txt";
+	// FIXME: should be placed where pref.xml is
+	private final String LOGFILENAME = FileBase.getProgramDirectory().concat(FileBase.separator).concat("log.txt");
 
 	/**
 	 * Method to delete an existing log file. Called on every SpiderGC.
@@ -952,5 +958,10 @@ public class Preferences extends MinML{
 				// Most of the time there will be an exception, so don't complain
 			}
 		}
+	}
+	
+	/** directory where pref.xml is stored */
+	public String getPathToConfigFile() {
+		return pathToConfigFile;
 	}
 }

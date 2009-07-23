@@ -1,8 +1,35 @@
 package CacheWolf;
 
-import ewe.ui.*;
-import ewe.fx.*;
-import ewe.sys.*;
+import ewe.fx.Color;
+import ewe.fx.Dimension;
+import ewe.fx.Point;
+import ewe.fx.mImage;
+import ewe.sys.Convert;
+import ewe.sys.Time;
+import ewe.sys.Vm;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.Control;
+import ewe.ui.ControlConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.DataChangeEvent;
+import ewe.ui.DateChooser;
+import ewe.ui.Event;
+import ewe.ui.Form;
+import ewe.ui.FormBase;
+import ewe.ui.Gui;
+import ewe.ui.HtmlDisplay;
+import ewe.ui.Menu;
+import ewe.ui.MenuItem;
+import ewe.ui.MessageBox;
+import ewe.ui.ScrollBarPanel;
+import ewe.ui.ScrollablePanel;
+import ewe.ui.mButton;
+import ewe.ui.mChoice;
+import ewe.ui.mComboBox;
+import ewe.ui.mInput;
+import ewe.ui.mLabel;
+import ewe.ui.mTextPad;
 
 /**
  * Class to create the panel to show the cache details.<br>
@@ -35,9 +62,9 @@ public class DetailsPanel extends CellPanel {
 	private static mButton btnGoto;
 	/** FIXME */
 	private static mButton btnAddPicture;
-	/** FIXME */
+	/** toggle blacklist status */
 	private static mButton btnBlack;
-	/** FIXME */
+	/** add or edit notes for waypoint */
 	private static mButton btnNotes;
 	/** FIXME */
 	private static mButton btnFoundDate;
@@ -91,29 +118,15 @@ public class DetailsPanel extends CellPanel {
 	private boolean needsTableUpdate;
 	/** screen is VGA or better */
 	private boolean isBigScreen;
+	/** use big icons */
+	private boolean useBigIcons;
 	
 	// ------------- initialize
 	// ------------- present data
 	// ------------- save data
 	// ------------- user interaction
 	// ------------- auxiliary methods
-	
 
-//	mInput inpWaypoint = new mInput();
-//	mInput inpName = new mInput();
-//	mButton btnWayLoc = new mButton();
-//	mInput inpHidden = new mInput();
-//	mInput inpOwner = new mInput();
-//	mChoice chcType = new mChoice(CacheType.guiTypeStrings(), 0);
-//	mChoice chcSize = new mChoice(CacheSize.guiSizeStrings(), 0);
-//	mComboBox chcStatus = new mComboBox(new String[] { "",
-//			MyLocale.getMsg(313, "Flag 1"), MyLocale.getMsg(314, "Flag 2"),
-//			MyLocale.getMsg(315, "Flag 3"), MyLocale.getMsg(316, "Flag 4"),
-//			MyLocale.getMsg(317, "Search"), MyLocale.getMsg(318, "Found"),
-//			MyLocale.getMsg(319, "Not Found"), MyLocale.getMsg(320, "Owner") },
-//			0);
-
-	
 	// TODO: move images to image broker
 	//mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgShowMaps, imgAddImages, imgNotes;
 
@@ -130,30 +143,44 @@ public class DetailsPanel extends CellPanel {
 		blackStatus = false;
 		blackStatusChanged = false;
 		needsTableUpdate = false;
-		// should this be limited to mobile devices? make a difference between big screen and big icons?
-		isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
+		isBigScreen = pref.isBigScreen;
+		useBigIcons = pref.useBigIcons;
 
 		// ===== initialize GUI objects =====
 		// ----- tools panel ------
 		pnlTools = new CellPanel();
-		btnNewWpt = new mButton(imgNewWpt = new mImage(isBigScreen?"newwpt_vga.png":"newwpt.png"));
+		btnNewWpt = new mButton(imgNewWpt = new mImage(useBigIcons?"newwpt_vga.png":"newwpt.png"));
+		//FIXME: get an image with proper transparency
 		imgNewWpt.transparentColor = new Color(255, 0, 0);
 		btnNewWpt.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
 		
-		btnGoto = new mButton(imgGoto = new mImage(isBigScreen?"goto_vga.png":"goto.png"));
+		btnGoto = new mButton(imgGoto = new mImage(useBigIcons?"goto_vga.png":"goto.png"));
+		//FIXME: get an image with proper transparency
 		imgGoto.transparentColor = Color.White;
 		btnGoto.setToolTip(MyLocale.getMsg(345, "Goto these coordinates"));
 		
-		btnShowBug = new mButton(new mImage(isBigScreen?"bug_no_vga.gif":"bug_no.gif"));
+		btnShowBug = new mButton(new mImage(useBigIcons?"bug_no_vga.gif":"bug_no.gif"));
 		btnShowBug.setToolTip(MyLocale.getMsg(346, "Show travelbugs"));
-		this.deactivateControl(btnShowBug);
+		deactivateControl(btnShowBug);
 		
-		btnShowMap = new mButton(new mImage(isBigScreen?"globe_small_vga.gif":"globe_small.gif"));
+		btnShowMap = new mButton(new mImage(useBigIcons?"globe_small_vga.gif":"globe_small.gif"));
 		btnShowMap.setToolTip(MyLocale.getMsg(347, "Show map"));
 		
-		btnAddPicture = new mButton(imgAddImages = new mImage(isBigScreen?"images_vga.gif":"images_vga.gif"));
+		btnAddPicture = new mButton(imgAddImages = new mImage(useBigIcons?"images_vga.gif":"images_vga.gif"));
 		btnAddPicture.setToolTip(MyLocale.getMsg(348, "Add user pictures"));
 		
+		btnBlack = new mButton(imgBlack = new mImage(useBigIcons?"no_black_vga.png":"no_black.png"));
+		//FIXME: get an image with proper transparency
+		imgBlack.transparentColor = Color.Black;
+		btnBlack.setToolTip(MyLocale.getMsg(349, "Toggle Blacklist status"));
+		
+		btnNotes = new mButton(imgNotes = new mImage(useBigIcons?"notes_vga.gif":"notes.gif"));
+		//FIXME: get an image with proper transparency
+		imgNotes.transparentColor = Color.DarkBlue;
+		btnNotes.setToolTip(MyLocale.getMsg(351, "Add/Edit notes"));
+		
+		btnAddDateTime = new mButton(new mImage(useBigIcons?"date_time_vga.gif":"date_time.gif"));
+		btnAddDateTime.setToolTip(MyLocale.getMsg(350, "Add timestamp to notes"));
 		
 		// ===== put the controls onto the GUI =====
 		// ----- tools panel ------
@@ -161,21 +188,19 @@ public class DetailsPanel extends CellPanel {
 		pnlTools.addNext(btnGoto);
 		pnlTools.addNext(btnShowBug);
 		pnlTools.addNext(btnShowMap);
-		pnlTools.addNext(btnAddPicture);		
+		pnlTools.addNext(btnAddPicture);	
+		pnlTools.addNext(btnBlack);
+		pnlTools.addNext(btnNotes);
+		pnlTools.addLast(btnAddDateTime);
+		
+		/*****************************************************\
+		 
+		                      CLEAN UP BELOW
+		                      
+		\*****************************************************/
 
-		// Button 6: Toggle blacklist status
-		imgBlackNo = new mImage(isBigScreen?"no_black_vga.png":"no_black.png");
-		imgBlackNo.transparentColor = Color.Black;
-		imgBlack = new mImage(isBigScreen?"is_black_vga.png":"is_black.png");
-		imgBlack.transparentColor = Color.White;
-		pnlTools.addNext(btnBlack = new mButton(imgBlackNo));
-		btnBlack.setToolTip(MyLocale.getMsg(349, "Toggle Blacklist status"));
-		// Button 7: Notes
-		pnlTools.addNext(btnNotes = new mButton(imgNotes = new mImage(isBigScreen?"notes_vga.gif":"notes.gif")));
-		imgNotes.transparentColor = Color.DarkBlue;
-		btnNotes.setToolTip(MyLocale.getMsg(351, "Add/Edit notes"));
 		// Button 8: Date/time stamp
-		pnlTools.addLast(btnAddDateTime = new mButton(new mImage(isBigScreen?"date_time_vga.gif":"date_time.gif")));
+		pnlTools.addLast(btnAddDateTime = new mButton(new mImage(useBigIcons?"date_time_vga.gif":"date_time.gif")));
 		btnAddDateTime.setToolTip(MyLocale.getMsg(350, "Add timestamp to notes"));
 		// showMap.modify(Control.Disabled,0);
 		pnlTools.stretchFirstRow = true;
@@ -233,7 +258,7 @@ public class DetailsPanel extends CellPanel {
 		this.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 		CellPanel cp = new CellPanel();
 		cp.addNext(chcStatus, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
-		cp.addLast(btnFoundDate = new mButton(new mImage(isBigScreen?"calendar_vga.png":"calendar.png")), DONTSTRETCH, DONTFILL);
+		cp.addLast(btnFoundDate = new mButton(new mImage(useBigIcons?"calendar_vga.png":"calendar.png")), DONTSTRETCH, DONTFILL);
 		this.addLast(cp, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
 
 		this.addNext(new mLabel(MyLocale.getMsg(306, "Owner:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
@@ -242,7 +267,7 @@ public class DetailsPanel extends CellPanel {
 		this.addNext(new mLabel(MyLocale.getMsg(305, "Hidden on:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 		CellPanel ip = new CellPanel();
 		ip.addNext(inpHidden, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
-		ip.addLast(btnHiddenDate = new mButton(new mImage(isBigScreen?"calendar_vga.png":"calendar.png")), DONTSTRETCH, DONTFILL);
+		ip.addLast(btnHiddenDate = new mButton(new mImage(useBigIcons?"calendar_vga.png":"calendar.png")), DONTSTRETCH, DONTFILL);
 		this.addLast(ip, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN, new Dimension(2, 1));
 		inpHidden.modifyAll(DisplayOnly, 0);
 
@@ -256,8 +281,25 @@ public class DetailsPanel extends CellPanel {
 			this.addLast(new MyScrollBarPanel(mNotes));
 		}
 	}
+	
+	public void toggleBugImage() {
+		
+	}
+	
+	/** toggle blackStatus and update image accordingly */
+	public void toggleBlackStatus() {
+		blackStatus = ! blackStatus;
+		if (blackStatus) {
+			imgBlack = new mImage(useBigIcons?"is_black_vga.png":"is_black.png");
+			imgBlack.transparentColor = Color.White;
+		} else {
+			imgBlack = new mImage(useBigIcons?"no_black_vga.png":"no_black.png");
+			imgBlack.transparentColor = Color.Black;
+		}
+		btnBlack.repaint();
+	}
 
-	public void clear() {
+	public void clearAttributes() {
 		attV.clear();
 	}
 
@@ -411,7 +453,7 @@ public class DetailsPanel extends CellPanel {
 					btnDiff.setText(MyLocale.getMsg(1000, "D")+": -.-");
 				}
 			}
-			//FIXME: check if something was actually changed, since datacachnge events also occur if you just hop through the fileds with the tab key (Why? don't know!)
+			//FIXME: check if something was actually changed, since datachange events also occur if you just hop through the fileds with the tab key (Why? don't know!)
 			dirty_details = true;
 			needsTableUpdate = true;
 		}
@@ -426,19 +468,7 @@ public class DetailsPanel extends CellPanel {
 					mNotes.setText(thisCache.getCacheDetails(true).getCacheNotes());
 			} else if (ev.target == btnShowMap) {
 				Global.mainTab.SwitchToMovingMap(thisCache.pos, true);
-				/*
-				 * try { MapDetailForm mdf = new
-				 * MapDetailForm(thisCache.wayPoint, pref, profile);
-				 * mdf.execute(); } catch (IllegalArgumentException e) {
-				 * MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"),
-				 * MyLocale.getMsg(322,"Kann Bild/Karte nicht finden")+":
-				 * "+e.getMessage(), MessageBox.OKB); tmp.exec(); }
-				 */
 			} else if (ev.target == btnShowBug) {
-				// InfoScreen is = new InfoScreen(thisCache.Travelbugs.toHtml(),
-				// "Travelbugs",
-				// false, pref);
-				// is.execute();
 				TravelbugInCacheScreen ts = new TravelbugInCacheScreen(thisCache.getCacheDetails(true).Travelbugs.toHtml(),	"Travelbugs");
 				ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 			} else if (ev.target == btnCenter) {
@@ -565,7 +595,7 @@ public class DetailsPanel extends CellPanel {
 					dirty_details = true;
 					// profile.hasUnsavedChanges=true;
 				}
-			} else if (ev.target == this.btnTerr) {
+			} else if (ev.target == btnTerr) {
 				int returnValue;
 				TerrDiffForm tdf = new TerrDiffForm(true, thisCache
 						.getTerrain());
@@ -577,7 +607,7 @@ public class DetailsPanel extends CellPanel {
 							+ CacheTerrDiff.longDT(thisCache.getTerrain()));
 					dirty_details = true;
 				}
-			} else if (ev.target == this.btnDiff) {
+			} else if (ev.target == btnDiff) {
 				int returnValue;
 				TerrDiffForm tdf = new TerrDiffForm(false, thisCache.getHard());
 				returnValue = tdf.execute();
