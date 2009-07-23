@@ -98,8 +98,8 @@ public class DetailsPanel extends CellPanel {
 	private static CacheHolder thisCache;
 	/** FIXME: never used? */
 	private static int dbIndex = -1;
-	/** FIXME */
-	private static AttributesViewer attV;
+	/** panel to display waypoint attributes */
+	private static AttributesViewer attViewer;
 	/** preferences object */
 	private static Preferences pref;
 	/** waypoint profile */
@@ -120,17 +120,15 @@ public class DetailsPanel extends CellPanel {
 	private boolean isBigScreen;
 	/** use big icons */
 	private boolean useBigIcons;
-	
-	// ------------- initialize
-	// ------------- present data
-	// ------------- save data
-	// ------------- user interaction
-	// ------------- auxiliary methods
 
 	// TODO: move images to image broker
 	//mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgShowMaps, imgAddImages, imgNotes;
 
 	public DetailsPanel() {
+		
+		// ===== local objects =====
+		/** helper panels to organize layout */
+		CellPanel helperPanel1, helperPanel2, helperPanel3, helperPanel4, helperPanel5; 
 		
 		// ===== initialize data handles =====
 		pref = Global.getPref();
@@ -147,6 +145,7 @@ public class DetailsPanel extends CellPanel {
 		useBigIcons = pref.useBigIcons;
 
 		// ===== initialize GUI objects =====
+		
 		// ----- tools panel ------
 		pnlTools = new CellPanel();
 		btnNewWpt = new mButton(imgNewWpt = new mImage(useBigIcons?"newwpt_vga.png":"newwpt.png"));
@@ -166,7 +165,7 @@ public class DetailsPanel extends CellPanel {
 		btnShowMap = new mButton(new mImage(useBigIcons?"globe_small_vga.gif":"globe_small.gif"));
 		btnShowMap.setToolTip(MyLocale.getMsg(347, "Show map"));
 		
-		btnAddPicture = new mButton(imgAddImages = new mImage(useBigIcons?"images_vga.gif":"images_vga.gif"));
+		btnAddPicture = new mButton(imgAddImages = new mImage(useBigIcons?"images_vga.gif":"images.gif"));
 		btnAddPicture.setToolTip(MyLocale.getMsg(348, "Add user pictures"));
 		
 		btnBlack = new mButton(imgBlack = new mImage(useBigIcons?"no_black_vga.png":"no_black.png"));
@@ -182,6 +181,32 @@ public class DetailsPanel extends CellPanel {
 		btnAddDateTime = new mButton(new mImage(useBigIcons?"date_time_vga.gif":"date_time.gif"));
 		btnAddDateTime.setToolTip(MyLocale.getMsg(350, "Add timestamp to notes"));
 		
+		// ----- main body -----
+		
+		helperPanel1 = new CellPanel();
+		helperPanel2 = new CellPanel();
+		helperPanel3 = new CellPanel();
+		helperPanel4 = new CellPanel();
+		helperPanel5 = new CellPanel();
+		attViewer = new AttributesViewer();
+		
+		chcType = new mChoice(CacheType.guiTypeStrings(), 0);
+		chcType.alwaysDrop = true;
+		chcSize = new mChoice(CacheSize.guiSizeStrings(), 0);
+		chcSize.alwaysDrop = true;
+		chcStatus = new mComboBox(new String[] { "",
+				MyLocale.getMsg(313, "Flag 1"), MyLocale.getMsg(314, "Flag 2"),
+				MyLocale.getMsg(315, "Flag 3"), MyLocale.getMsg(316, "Flag 4"),
+				MyLocale.getMsg(317, "Search"), MyLocale.getMsg(318, "Found"),
+				MyLocale.getMsg(319, "Not Found"), MyLocale.getMsg(320, "Owner") },
+				0);
+		inpWaypoint = new mInput();
+		inpName = new mInput();
+		btnWayLoc = new mButton();
+		inpOwner = new mInput();
+		inpHidden = new mInput();
+		inpHidden.modifyAll(DisplayOnly, 0);
+		
 		// ===== put the controls onto the GUI =====
 		// ----- tools panel ------
 		pnlTools.addNext(btnNewWpt);
@@ -193,138 +218,82 @@ public class DetailsPanel extends CellPanel {
 		pnlTools.addNext(btnNotes);
 		pnlTools.addLast(btnAddDateTime);
 		
-		/*****************************************************\
-		 
-		                      CLEAN UP BELOW
-		                      
-		\*****************************************************/
-
-		// Button 8: Date/time stamp
-		pnlTools.addLast(btnAddDateTime = new mButton(new mImage(useBigIcons?"date_time_vga.gif":"date_time.gif")));
-		btnAddDateTime.setToolTip(MyLocale.getMsg(350, "Add timestamp to notes"));
-		// showMap.modify(Control.Disabled,0);
 		pnlTools.stretchFirstRow = true;
-		this.addLast(pnlTools, CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN, new Dimension(3, 1));
-		;
-
-		// //////////////////
-		// Main body of screen
-		// //////////////////
-		chcType = new mChoice(CacheType.guiTypeStrings(), 0);
-		chcSize = new mChoice(CacheSize.guiSizeStrings(), 0);
-		chcStatus = new mComboBox(new String[] { "",
-				MyLocale.getMsg(313, "Flag 1"), MyLocale.getMsg(314, "Flag 2"),
-				MyLocale.getMsg(315, "Flag 3"), MyLocale.getMsg(316, "Flag 4"),
-				MyLocale.getMsg(317, "Search"), MyLocale.getMsg(318, "Found"),
-				MyLocale.getMsg(319, "Not Found"), MyLocale.getMsg(320, "Owner") },
-				0);
-	inpWaypoint = new mInput();
-	inpName = new mInput();
-	btnWayLoc = new mButton();
-	inpHidden = new mInput();
-	inpOwner = new mInput();
-
-		this.addNext(new mLabel(MyLocale.getMsg(300, "Type:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.NORTHWEST));
-		CellPanel line1Panel = new CellPanel();
-		chcType.alwaysDrop = true;
-		line1Panel.addNext(chcType, CellConstants.HSTRETCH,	(CellConstants.HFILL | CellConstants.WEST));
-
-		line1Panel.addLast(btnDiff = new mButton(MyLocale.getMsg(1000, "D")	+ ": 5.5"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.EAST));
+		
+		// ----- helper panels -----
+		
+		btnDiff = new mButton(MyLocale.getMsg(1000, "D")	+ ": 5.5");
 		btnDiff.setPreferredSize(pref.fontSize * 3, chcSize.getPreferredSize(null).height);
-
-		this.addLast(line1Panel, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
-
-		this.addNext(new mLabel(MyLocale.getMsg(301, "Size:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		CellPanel line2Panel = new CellPanel();
-		chcSize.alwaysDrop = true;
-		line2Panel.addNext(chcSize, CellConstants.HSTRETCH,	(CellConstants.HFILL | CellConstants.WEST));
-
-		line2Panel.addLast(btnTerr = new mButton(MyLocale.getMsg(1001, "T")	+ ": 5.5"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.EAST));
+		
+		btnTerr = new mButton(MyLocale.getMsg(1001, "T")	+ ": 5.5");
 		btnTerr.setPreferredSize(pref.fontSize * 3, chcSize.getPreferredSize(null).height);
-		this.addLast(line2Panel, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
+		
+		lblAddiCount = new mLabel(MyLocale.getMsg(1044, "Addis") + ": 888");
+		
+		btnFoundDate = new mButton(new mImage(useBigIcons?"calendar_vga.png":"calendar.png"));
+		
+		btnHiddenDate = new mButton(new mImage(useBigIcons?"calendar_vga.png":"calendar.png"));
 
-		this.addNext(new mLabel(MyLocale.getMsg(302, "Waypoint:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		line2Panel = new CellPanel();
-		line2Panel.addNext(inpWaypoint, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
-		line2Panel.addLast(lblAddiCount = new mLabel(MyLocale.getMsg(1044, "Addis") + ": 888"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.EAST));
-		this.addLast(line2Panel, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
+		helperPanel1.addNext(chcType, CellConstants.HSTRETCH,	(CellConstants.HFILL | CellConstants.WEST));
+		helperPanel1.addLast(btnDiff, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.EAST));		
+		
+		helperPanel2.addNext(chcSize, CellConstants.HSTRETCH,	(CellConstants.HFILL | CellConstants.WEST));
+		helperPanel2.addLast(btnTerr, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.EAST));
 
-		this.addNext(new mLabel(MyLocale.getMsg(303, "Name:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		this.addLast(inpName.setTag(CellConstants.SPAN, new Dimension(2, 1)), CellConstants.DONTSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		helperPanel3.addNext(inpWaypoint, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		helperPanel3.addLast(lblAddiCount, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.EAST));
 
-		this.addNext(new mLabel(MyLocale.getMsg(304, "Location:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		this.addLast(btnWayLoc.setTag(CellConstants.SPAN, new Dimension(2, 1)), CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		helperPanel4.addNext(chcStatus, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		helperPanel4.addLast(btnFoundDate, DONTSTRETCH, DONTFILL);
 
-		this.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		CellPanel cp = new CellPanel();
-		cp.addNext(chcStatus, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
-		cp.addLast(btnFoundDate = new mButton(new mImage(useBigIcons?"calendar_vga.png":"calendar.png")), DONTSTRETCH, DONTFILL);
-		this.addLast(cp, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
+		helperPanel5.addNext(inpHidden, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		helperPanel5.addLast(btnHiddenDate, DONTSTRETCH, DONTFILL);
+		
+		// ----- main body -----
+		addLast(pnlTools, CellConstants.DONTSTRETCH, CellConstants.WEST).setTag(SPAN, new Dimension(3, 1));
+		
+		addNext(new mLabel(MyLocale.getMsg(300, "Type:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.NORTHWEST));
+		addLast(helperPanel1, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
+		
+		addNext(new mLabel(MyLocale.getMsg(301, "Size:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.NORTHWEST));
+		addLast(helperPanel2, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
+		
+		addNext(new mLabel(MyLocale.getMsg(302, "Waypoint:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		addLast(helperPanel3, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
+		
+		addNext(new mLabel(MyLocale.getMsg(303, "Name:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		addLast(inpName.setTag(CellConstants.SPAN, new Dimension(2, 1)), CellConstants.DONTSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		
+		addNext(new mLabel(MyLocale.getMsg(304, "Location:")),	CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		addLast(btnWayLoc.setTag(CellConstants.SPAN, new Dimension(2, 1)), CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		
+		addNext(new mLabel(MyLocale.getMsg(307, "Status:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		addLast(helperPanel4, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN,	new Dimension(2, 1));
 
-		this.addNext(new mLabel(MyLocale.getMsg(306, "Owner:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		this.addLast(inpOwner.setTag(CellConstants.SPAN, new Dimension(2, 1)), CellConstants.DONTSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
-
-		this.addNext(new mLabel(MyLocale.getMsg(305, "Hidden on:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		CellPanel ip = new CellPanel();
-		ip.addNext(inpHidden, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
-		ip.addLast(btnHiddenDate = new mButton(new mImage(useBigIcons?"calendar_vga.png":"calendar.png")), DONTSTRETCH, DONTFILL);
-		this.addLast(ip, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN, new Dimension(2, 1));
-		inpHidden.modifyAll(DisplayOnly, 0);
-
-		attV = new AttributesViewer();
-		this.addLast(attV);
-
+		addNext(new mLabel(MyLocale.getMsg(306, "Owner:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		addLast(inpOwner.setTag(CellConstants.SPAN, new Dimension(2, 1)), CellConstants.DONTSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		
+		addNext(new mLabel(MyLocale.getMsg(305, "Hidden on:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		addLast(helperPanel5, DONTSTRETCH, HFILL).setTag(CellConstants.SPAN, new Dimension(2, 1));
+		
+		addLast(attViewer);
+		
 		if (isBigScreen) {
 			this.addLast(new mLabel(MyLocale.getMsg(308, "Notes:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 			mNotes = new mTextPad();
 			mNotes.modify(ControlConstants.NotEditable, 0);
-			this.addLast(new MyScrollBarPanel(mNotes));
+			addLast(new MyScrollBarPanel(mNotes));
 		}
 	}
+
+	// ------------- present data
 	
-	public void toggleBugImage() {
-		
-	}
-	
-	/** toggle blackStatus and update image accordingly */
-	public void toggleBlackStatus() {
-		blackStatus = ! blackStatus;
-		if (blackStatus) {
-			imgBlack = new mImage(useBigIcons?"is_black_vga.png":"is_black.png");
-			imgBlack.transparentColor = Color.White;
-		} else {
-			imgBlack = new mImage(useBigIcons?"no_black_vga.png":"no_black.png");
-			imgBlack.transparentColor = Color.Black;
-		}
-		btnBlack.repaint();
-	}
+	/*****************************************************\
+	 
+	                      CLEAN UP BELOW
+	                      
+	\*****************************************************/
 
-	public void clearAttributes() {
-		attV.clear();
-	}
-
-	public void setNeedsTableUpdate(boolean tableUpdate) {
-		needsTableUpdate = tableUpdate;
-	}
-
-	public boolean needsTableUpdate() {
-		return needsTableUpdate;
-	}
-
-	public boolean isDirty() {
-		return dirty_notes || dirty_details || needsTableUpdate;
-	}
-
-	public boolean hasBlackStatusChanged() {
-		return blackStatusChanged;
-	}
-
-	/**
-	 * @param chD
-	 *            details of the cache to display
-	 * @param dbindex
-	 *            index in cacheDB, in which changes will be saved
-	 */
 	public void setDetails(CacheHolder ch) {
 		thisCache = ch;
 		dirty_notes = false;
@@ -364,7 +333,7 @@ public class DetailsPanel extends CellPanel {
 		btnShowBug.repaintNow();
 		chcSize.setInt(ch.getCacheSize());
 
-		attV.showImages(ch.getCacheDetails(true).attributes);
+		attViewer.showImages(ch.getCacheDetails(true).attributes);
 		if (ch.isAddiWpt() || ch.isCustomWpt()) {
 			btnTerr.setText(MyLocale.getMsg(1001, "T")+": -.-");
 			btnDiff.setText(MyLocale.getMsg(1000, "D")+": -.-");
@@ -404,6 +373,58 @@ public class DetailsPanel extends CellPanel {
 		if (isBigScreen)
 			mNotes.setText(ch.getExistingDetails().getCacheNotes());
 	}
+
+	// ------------- save data
+	// ------------- user interaction
+	// ------------- auxiliary methods
+
+
+	
+	public void toggleBugImage() {
+		
+	}
+	
+	/** toggle blackStatus and update image accordingly */
+	public void toggleBlackStatus() {
+		blackStatus = ! blackStatus;
+		if (blackStatus) {
+			imgBlack = new mImage(useBigIcons?"is_black_vga.png":"is_black.png");
+			imgBlack.transparentColor = Color.White;
+		} else {
+			imgBlack = new mImage(useBigIcons?"no_black_vga.png":"no_black.png");
+			imgBlack.transparentColor = Color.Black;
+		}
+		btnBlack.repaint();
+	}
+
+	/** clear attributes panel */
+	public void clearAttributes() {
+		attViewer.clear();
+	}
+
+	public void setNeedsTableUpdate(boolean tableUpdate) {
+		needsTableUpdate = tableUpdate;
+	}
+
+	public boolean needsTableUpdate() {
+		return needsTableUpdate;
+	}
+
+	public boolean isDirty() {
+		return dirty_notes || dirty_details || needsTableUpdate;
+	}
+
+	public boolean hasBlackStatusChanged() {
+		return blackStatusChanged;
+	}
+
+	/**
+	 * @param chD
+	 *            details of the cache to display
+	 * @param dbindex
+	 *            index in cacheDB, in which changes will be saved
+	 */
+
 
 	/**
 	 * if is addi -> returns the respective AddiWpt if is main -> returns the
