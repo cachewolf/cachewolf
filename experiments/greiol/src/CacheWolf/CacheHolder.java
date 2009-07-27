@@ -725,6 +725,7 @@ public class CacheHolder{
 	 * cache should be set to do so.
 	 */
 	public void save() {
+		checkIncomplete();
 		this.getFreshDetails().saveCacheDetails(Global.getProfile().dataDir);
 	}
 	
@@ -1075,9 +1076,19 @@ public class CacheHolder{
     	return wayPoint;
     }
 
+	/**
+	 * set a new waypointd id and rename all associated files (details & images)
+	 * @param wayPoint new waypoint identifier
+	 */
 	public void setWayPoint(String wayPoint) {
-		Global.getProfile().notifyUnsavedChanges(!wayPoint.equals(this.wayPoint));		
-    	this.wayPoint = wayPoint;
+		if (!wayPoint.equals(this.wayPoint)){
+			if (getFreshDetails().rename(wayPoint)) {
+				this.wayPoint = wayPoint;
+				Global.getProfile().notifyUnsavedChanges(true);
+			} else {
+				Global.getPref().log("Could not rename "+this.wayPoint+" to "+wayPoint);
+			}
+		}
     }
 
 	public String getCacheName() {
@@ -1460,24 +1471,6 @@ public class CacheHolder{
 	public void setHasNote(boolean hasNote) {
 		Global.getProfile().notifyUnsavedChanges(hasNote != this.hasNote);		
 		this.hasNote = hasNote;
-	}
-	
-	/**
-	 * rename a waypoint and all its associated files
-	 * @param newWptId new waypoint id (will be converted to upper case)
-	 * @return true on success, false on error
-	 */
-	public boolean rename(String newWptId) {
-		newWptId = newWptId.toUpperCase();
-		getFreshDetails();
-		if (details.rename(newWptId)) {
-			setWayPoint(newWptId);
-			save();
-			Global.getProfile().notifyUnsavedChanges(true);
-			return true;
-		} else {
-			return false;
-		}
 	}
 }
 

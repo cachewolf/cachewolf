@@ -48,43 +48,43 @@ public class DetailsPanel extends CellPanel {
 	private static mInput inpOwner;
 	/** waypoint coordinates, open change coordinates dialog */
 	private static mButton btnCoordinates;
-	/** FIXME */
+	/** set center to current waypoint */
 	private static mButton btnCenter;
 	/** add time stamp to notes */
 	private static mButton btnAddDateTime;
-	/** FIXME */
+	/** create a new waypoint */
 	private static mButton btnNewWpt;
 	/** show details for travelbus in waypoint */
 	private static mButton btnShowBug;
-	/** FIXME */
+	/** switch to moving map and center on waypoint coordinates */
 	private static mButton btnShowMap;
-	/** FIXME */
+	/** set waypoint as destination and switch to goto ppanel */
 	private static mButton btnGoto;
-	/** FIXME */
+	/** add a user picture to waypoint */
 	private static mButton btnAddPicture;
 	/** toggle blacklist status */
 	private static mButton btnBlack;
 	/** add or edit notes for waypoint */
 	private static mButton btnNotes;
-	/** FIXME */
+	/** set found date */
 	private static mButton btnFoundDate;
-	/** FIXME */
+	/** set hidden date */
 	private static mButton btnHiddenDate;
-	/** FIXME */
+	/** set terrain value */
 	private static mButton btnTerr;
-	/** FIXME */
+	/** set difficulty value */
 	private static mButton btnDiff;
 	/** drop down list with cache types */
 	private static mChoice chcType;
 	/** drop down list with container sizes */
 	private static mChoice chcSize;
-	/** FIXME */
+	/** select waypoint status */
 	private static mComboBox chcStatus;
-	/** FIXME */
+	/** toolbar panel */
 	private static CellPanel pnlTools;
-	/** FIXME */
+	/** notes for waypoint */
 	private static mTextPad cacheNotes;
-	/** FIXME */
+	/** shows number of additional waypoints */
 	private static mLabel lblAddiCount;
 	/** FIXME move to image broker?*/
 	private static mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgNotes;
@@ -406,12 +406,16 @@ public class DetailsPanel extends CellPanel {
 	protected boolean saveIfNeeded() {
 		// waypoint
 		// userimages ???
-		// coordinates
 		// status
-		// terrain
-		// difficulty
+		
+		//FIXME: check boolean flags
+
+		/** one or more properties have changed and details need to be saved */
 		boolean needsSaving = false;
-		int newDifficulty, newTerrain;
+		/** rebuild references if type changed from addi to custom or cache and vice versa */
+		boolean rebuildReferences = false;
+		/** temp vars */
+		byte tmpbyte;
 		
 		if (!inpHidden.getText().equals(ch.getDateHidden())) {
 			ch.setDateHidden(inpHidden.getText());
@@ -434,6 +438,7 @@ public class DetailsPanel extends CellPanel {
 		}
 		
 		if (ch.getType() != CacheType.guiSelect2Cw(chcType.getInt())) {
+			//check if type changed addi <-> custom||cahe to rebuild references
 			ch.setType(CacheType.guiSelect2Cw(chcType.getInt()));
 			needsSaving = true;
 		}
@@ -446,7 +451,20 @@ public class DetailsPanel extends CellPanel {
 		
 		if (!ch.pos.toString().equals(btnCoordinates.getText())) {
 			ch.LatLon = btnCoordinates.getText();
-			/// PUH!
+			ch.pos = new CWPoint(ch.LatLon);
+			needsSaving = true;
+		}
+		
+		tmpbyte = decodeTerrDiff(btnDiff.getText(), ch.isCacheWpt());
+		if (tmpbyte != ch.getHard()) {
+			ch.setHard(tmpbyte);
+			needsSaving = true;
+		}
+		
+		tmpbyte = decodeTerrDiff(btnTerr.getText(), ch.isCacheWpt());
+		if (tmpbyte != ch.getTerrain()) {
+			ch.setTerrain(tmpbyte);
+			needsSaving = true;
 		}
 		
 		if (isBigScreen) {
@@ -456,26 +474,11 @@ public class DetailsPanel extends CellPanel {
 			}
 		}
 		
-		// ch.setAttributesToAddiWpts();
-		//		boolean saveWpt = false;
-		//		boolean renameWpt = false;
-		//		int newdiff;
-		//		int newTerr;
-		//	
-		//		Objects to check:
-
-
-		//		if (!this.inpWaypoint.equals(thisCache.getWayPoint())) {
-		//			saveWpt = true;
-		//			renameWpt = true;
-		//		}
-		//		if (!this.chcSize)
-		//		if (!this.chcStatus)
-		//		if (!this.chcType)
-		//		if (newdiff)
-		//		if (newterr)
-		//		if (btnBlack.getImage()
-		needsTableUpdate = needsTableUpdate || needsSaving;
+		if (needsSaving) {
+			ch.save();
+			needsTableUpdate = true;
+		}
+		
 		return true;
 	}
 
@@ -515,6 +518,23 @@ public class DetailsPanel extends CellPanel {
 	public boolean isDirty() {
 		return dirty_notes || needsTableUpdate;
 		//return dirty_notes || dirty_details || needsTableUpdate;
+	}
+	
+	/**
+	 * convert the string displayed in the terrain in difficulty buttons to a byte for intrernal use<br>
+	 * assumes that the relevant information will at positions 3 and 5 in a 0 indexed string 
+	 * @param td string for terrain or difficulty
+	 * @param isCache true if waypoint is a cache, false for addis and custom
+	 * @return 0 for additional or custum waypoints, -1 for caches if td is not valid, parsed byte otherwise
+	 */
+	private byte decodeTerrDiff(String td, boolean isCache) {
+		if (! isCache) return 0;
+		
+		td = td.substring(3,1).concat(td.substring(5,1));
+		
+		if (td.equals("--")) return -1;
+		
+		return Byte.parseByte(td);
 	}
 
 	public boolean hasBlackStatusChanged() {
@@ -623,6 +643,9 @@ public class DetailsPanel extends CellPanel {
 					note = note + dtm.toString();
 				note = note + "\n";
 				ch.getCacheDetails(true).setCacheNotes(note);
+				if (isBigScreen) {
+					cacheNotes.setText(ch.details.getCacheNotes());
+				}
 				//FIXME: better use saveDirtyWaypoint()?
 				ch.save();
 				

@@ -451,9 +451,6 @@ public class CacheHolderDetail {
 			String profiledir = Global.getProfile().dataDir;
 			int oldWptLength = getParent().getWayPoint().length();
 			
-			// just in case ... (got the pun? ;) )
-			newWptId = newWptId.toUpperCase();
-			
 			// update image information
 			for(int i = 0;i<images.size();i++){
 				String filename = images.get(i).getFilename();
@@ -523,6 +520,7 @@ public class CacheHolderDetail {
 				//TODO: any chance of a roll back?
 				//TODO: should we ignore a file not found?
 			}
+			hasUnsavedChanges = true;
 			
 			return success;
 		}
