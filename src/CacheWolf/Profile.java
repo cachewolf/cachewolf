@@ -446,11 +446,14 @@ public class Profile {
 			mainindex = getCacheIndex("OC" + mainwpt);
 		if (mainindex < 0)
 			mainindex = getCacheIndex("CW" + mainwpt);
-		if (mainindex < 0)
-			throw new IllegalArgumentException("no main cache found for: " + ch.getWayPoint());
-		CacheHolder mainch = cacheDB.get(mainindex);
-		mainch.addiWpts.add(ch);
-		ch.mainCache = mainch;
+		if (mainindex < 0) {
+			ch.setIncomplete(true);
+		} else {
+			CacheHolder mainch = cacheDB.get(mainindex);
+			mainch.addiWpts.add(ch);
+			ch.mainCache = mainch;
+			ch.setAttributesFromMainCache();
+		}
 	}
 
 	public String toString() {
@@ -530,7 +533,7 @@ public class Profile {
 	 * and main cache.
 	 */
 	public void buildReferences(){
-		CacheHolder ch, mainCh;
+		CacheHolder ch;
 
 		// Build index for faster search and clear all references
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
@@ -543,28 +546,13 @@ public class Profile {
 		int max = cacheDB.size();
 		for (int i = 0; i < max; i++) {
 			ch = cacheDB.get(i);
-			if (ch.isAddiWpt()) {
-				// search main cache
-				mainCh = cacheDB.get("GC" + ch.getWayPoint().substring(2));
-				if (mainCh == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
-					mainCh = cacheDB.get("OC" + ch.getWayPoint().substring(2));
-				if (mainCh == null)  // TODO save the source (GC or OC or Custom) of the maincache somewhere else to avoid ambiguity of addi-wpt-names
-					mainCh = cacheDB.get("CW" + ch.getWayPoint().substring(2));
-
-				if (mainCh != null) {
-					mainCh.addiWpts.add(ch);
-					ch.mainCache = mainCh;
-					ch.setAttributesFromMainCache();
-				}// if
-			}// if
-		}// for
+			if (ch.isAddiWpt()) 
+				setAddiRef(ch);
+		}
 		// sort addi wpts
 		for (int i = 0; i < max; i++) {
 			ch = cacheDB.get(i);
 			if (ch.hasAddiWpt() && (ch.addiWpts.size() > 1)) {
-				// ch.addiWpts.sort(new
-				// MyComparer(ch.addiWpts,MyLocale.getMsg(1002,"Waypoint"),ch.addiWpts.size()),
-				// false);
 				ch.addiWpts.sort(new ewe.util.Comparer() {
 					public int compare(Object o1, Object o2) {
 						return ((CacheHolder) o1).getWayPoint().compareTo(
