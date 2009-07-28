@@ -21,8 +21,7 @@ public class StatusBar extends CellPanel{
 	
 	public StatusBar(Preferences p, CacheDB db){
 		pref=p;
-		int sw = MyLocale.getScreenWidth();
-		MobileVGA = (Vm.isMobile() && sw >= 400);
+		MobileVGA = pref.useBigIcons;
 		String imagesize="";
 		if(MobileVGA) imagesize="_vga";  
 		addNext(btnCacheTour=new mButton(imgCacheTour=new mImage("cachetour"+imagesize+".png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
