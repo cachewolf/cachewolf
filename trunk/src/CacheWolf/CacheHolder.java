@@ -48,11 +48,11 @@ public class CacheHolder{
 	/** The angle (0=North, 180=South) from the current centre to this point */
 	public double degrees = 0;
 	/** The difficulty of the cache from 1 to 5 in .5 incements */ 
-	private byte hard = CacheTerrDiff.CW_DT_ERROR;
+	private byte hard = CacheTerrDiff.CW_DT_UNSET;
 	/** The terrain rating of the cache from 1 to 5 in .5 incements */
-	private byte terrain = CacheTerrDiff.CW_DT_ERROR;
+	private byte terrain = CacheTerrDiff.CW_DT_UNSET;
 	/** The cache type (@see CacheType for translation table)  */
-	private byte type = CacheType.CW_TYPE_ERROR; 
+	private byte type = CacheType.CW_TYPE_CUSTOM; 
 	/** True if the cache has been archived */
 	private boolean archived = false;
 	/** True if the cache is available for searching */
@@ -124,11 +124,12 @@ public class CacheHolder{
 		notDecSep=decSep=='.'?',':'.';
 	}
 
-	public CacheHolder() {  // Just a public constructor
+	public CacheHolder() {
+		// do nothing
 	}
 	
 	public CacheHolder(String wp) {
-		this.wayPoint = wp;
+		wayPoint = wp;
     }
 	
 	public CacheHolder(String xmlString, int version) {
@@ -566,21 +567,24 @@ public class CacheHolder{
 		pos.set(latLon);
 	}
 
+	/** return true if waypoint is an additional waypoint of a cache */
 	public boolean isAddiWpt() {
 		return CacheType.isAddiWpt(this.getType());
 	}
 	
+	/** return true if waypoint is a custom waypoint */
 	public boolean isCustomWpt() {
 		return CacheType.isCustomWpt(getType());
 	}
 	
+	/** return true if waypoint is a cache main waypoint */
 	public boolean isCacheWpt() {
 		return CacheType.isCacheWpt(getType());
 	}
 
+	/** return true waypoint has one or more additional waypoints */
 	public boolean hasAddiWpt() {
-		if (this.addiWpts.getCount()>0) return true;
-		else return false;
+		return addiWpts.getCount()>0;
 	}
 
 
@@ -594,6 +598,7 @@ public class CacheHolder{
 			bearing = NOBEARING;
 		}
 	}
+
 	public void setAttributesFromMainCache(){
 		CacheHolder mainCh = this.mainCache;
 		this.setCacheOwner(mainCh.getCacheOwner());
@@ -725,6 +730,7 @@ public class CacheHolder{
 	 * cache should be set to do so.
 	 */
 	public void save() {
+		checkIncomplete();
 		this.getFreshDetails().saveCacheDetails(Global.getProfile().dataDir);
 	}
 	
@@ -1290,7 +1296,9 @@ public class CacheHolder{
     	this.incomplete = is_incomplete;
     }
 	
+	/** checks the waypoint data integrity to set a warning flag if something is missing */
 	public boolean checkIncomplete() {
+		// TODO: discuss if we should only check cache waypoints and silently "fix" everything else
 		boolean ret;
 		if (isCacheWpt()) {
 			if (getWayPoint().length() < 3
@@ -1304,11 +1312,14 @@ public class CacheHolder{
 			else
 				ret = false;
 		} else if (isAddiWpt()) {
-			if (mainCache == null
-					|| getHard() != CacheTerrDiff.CW_DT_UNSET 
+			//FIXME: do not check for mainCache == null, since it will be null during initial import
+			//FIXME: find out why we only check waypoints with IDs of a certain length ???
+//			if (mainCache == null
+//					|| getHard() != CacheTerrDiff.CW_DT_UNSET 
+			if (getHard() != CacheTerrDiff.CW_DT_UNSET
 					|| getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN
 					|| getTerrain() != CacheTerrDiff.CW_DT_UNSET
-					|| getWayPoint().length() < 2
+					|| getWayPoint().length() < 3
 //					|| getCacheOwner().length() > 0
 //					|| getDateHidden().length() > 0 
 					|| getCacheName().length() == 0
@@ -1320,7 +1331,7 @@ public class CacheHolder{
 			if (getHard() != CacheTerrDiff.CW_DT_UNSET 
 					|| getTerrain() != CacheTerrDiff.CW_DT_UNSET
 					|| getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN
-					|| getWayPoint().length() < 2
+					|| getWayPoint().length() < 3
 //					|| getCacheOwner().length() > 0
 //					|| getDateHidden().length() > 0 
 					|| getCacheName().length() == 0
