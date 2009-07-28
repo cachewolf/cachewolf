@@ -62,10 +62,8 @@ public class DetailsPanel extends CellPanel {
 		// //////////////////
 		// Tools
 		// //////////////////
-		// Use larger Button-Icons on VGA-mobiles
-		int sw = MyLocale.getScreenWidth();
 		String imagesize = "";
-		if (Vm.isMobile() && sw >= 400)
+		if (pref.useBigIcons)
 			imagesize = "_vga";
 		// Button 1: New Waypoint
 		pnlTools.addNext(btnNewWpt = new mButton(imgNewWpt = new mImage(
