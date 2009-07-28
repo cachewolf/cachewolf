@@ -582,7 +582,9 @@ public class DetailsPanel extends CellPanel {
 		// affecting the details are immediately saved
 		// Now update the table
 		CacheHolder ch = thisCache; // TODO variable ch is redundant
-
+		
+		ch.checkIncomplete();
+		
 		/*
 		 * The references have to be rebuilt if: - the cachetype changed from
 		 * addi->normal or normal->addi - the old cachetype or the new cachetype
@@ -594,35 +596,16 @@ public class DetailsPanel extends CellPanel {
 						.equals(oldWaypoint))) {
 			// If we changed the type to addi, check that a parent exists
 			if (CacheType.isAddiWpt(ch.getType())) {
-				int idx;
-				if (ch.getWayPoint().length() < 5)
-					idx = -1;
-				else {
-					idx = profile.getCacheIndex("GC" + ch.getWayPoint().substring(ch.getWayPoint().length() == 5 ? 1 : 2));
-					if (idx < 0)
-						idx = profile.getCacheIndex("OC" + ch.getWayPoint().substring(ch.getWayPoint().length() == 5 ? 1 : 2));
-					if (idx < 0)
-						idx = profile.getCacheIndex("CW"+ ch.getWayPoint().substring(ch.getWayPoint().length() == 5 ? 1 : 2));
-					if (idx < 0)
-						(new MessageBox(
-								MyLocale.getMsg(144, "Warning"),
-								MyLocale.getMsg(734,"No main cache found for addi waypoint ")
-										+ " "+ ch.getWayPoint()+ "\n"
-										+ MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYY, where xx are any 2 chars and YYYY are the main cache's chars after the GC"),
-								FormBase.OKB)).execute();
-				}
-				profile.buildReferences(); // TODO this takes quite long -> use
-											// profile.setAddiRef
-				// instead
+				profile.setAddiRef(ch);
 			} else {
-				profile.buildReferences(); // we have to do this to release the
-											// link between the
-				// two caches
+				// rebuild links between caches
+				profile.buildReferences();
 			}
+		} else {
+			// set status also on addi wpts
+			ch.setAttributesToAddiWpts();
 		}
-		// set status also on addi wpts
-		ch.setAttributesToAddiWpts();
-		ch.checkIncomplete();
+		
 		dirty_notes = false;
 		dirty_details = false;
 		setNeedsTableUpdate(false);
