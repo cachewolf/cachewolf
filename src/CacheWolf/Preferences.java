@@ -28,6 +28,11 @@ public class Preferences extends MinML{
 	public static final int ASK = 2;
 	// Hashtable is saving filter data objects the user wants to save
 	private Hashtable filterList = new Hashtable(15);
+	/** screen is big enough to hold additional information like cache notes */
+	public boolean isBigScreen;
+	/** display big icons. default only true for VGA PDAs */
+	// TODO: make this configurable via pref.xml
+	public boolean useBigIcons;
 
 	//////////////////////////////////////////////////////////////////////////////////////
     // Constructor
@@ -102,6 +107,9 @@ public class Preferences extends MinML{
 			}
 		} else
 			fontSize = 11;
+		
+		useBigIcons = Vm.isMobile() && MyLocale.getScreenWidth() >= 400;
+		isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -118,14 +126,13 @@ public class Preferences extends MinML{
 	public String myAlias = "";
 	/** Optional password */
 	public String password="";
-	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs)
-	 *  It is currently not used yet */
+	/** This is an alternative alias used to identify found caches (i.e. if using multiple IDs) */
 	public String myAlias2 = "";
 	/** The path to the browser */
 	public String browser = "";
-	/** Name of proxy for spidering */
+	/** Name of HTTP proxy for spidering */
 	public String myproxy = "";
-	/** Proxyport when spidering */
+	/** HTTP proxy port when spidering */
 	public String myproxyport = "";
 	/** Flag whether proxy is to be used */
 	public boolean proxyActive=false;
@@ -610,6 +617,7 @@ public class Preferences extends MinML{
 		saveCustomMapsPath(getMapLoadPathInternal());
 		return getCustomMapsPath();
 	}
+
 	private String getMapLoadPathInternal() {
 		// here could also a list of map-types displayed...
 		// standard dir
@@ -756,6 +764,7 @@ public class Preferences extends MinML{
     // Log functions
 	//////////////////////////////////////////////////////////////////////////////////////
 
+	// FIXME: should use path to config file instead of program directory
 	/** Log file is in program directory and called log.txt */
 	private final String LOGFILENAME=FileBase.getProgramDirectory()+"/log.txt";
 
@@ -953,4 +962,11 @@ public class Preferences extends MinML{
 			}
 		}
 	}
+	
+	/** get directory where pref.xml is stored<br>
+	 *  use this if you need a path where the user has sufficient rights to create a file */
+	public String getPathToConfigFile() {
+		return pathToConfigFile;
+	}
+
 }
