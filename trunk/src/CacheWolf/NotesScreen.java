@@ -16,9 +16,8 @@ public class NotesScreen extends Form{
 	ScrollBarPanel sbp = new MyScrollBarPanel(wayNotes);
 	
 	public NotesScreen(CacheHolderDetail ch){
-		int sw = MyLocale.getScreenWidth();
 		String imagesize = "";
-		if (Vm.isMobile() && sw >= 400) imagesize="_vga";
+		if (Global.getPref().useBigIcons) imagesize="_vga";
 		addDateTime = new mButton(new mImage("date_time"+imagesize+".gif"));
 		
 		this.title = "Notes";
