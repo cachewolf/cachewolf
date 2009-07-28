@@ -124,11 +124,19 @@ public class CacheHolder{
 		notDecSep=decSep=='.'?',':'.';
 	}
 
-	public CacheHolder() {  // Just a public constructor
+	public CacheHolder() {
+		type = CacheType.CW_TYPE_CUSTOM;
+		cacheSize = CacheSize.CW_SIZE_NOTCHOSEN;
+		hard = CacheTerrDiff.CW_DT_UNSET;
+		terrain = CacheTerrDiff.CW_DT_UNSET;
 	}
 	
 	public CacheHolder(String wp) {
-		this.wayPoint = wp;
+		wayPoint = wp;
+		type = CacheType.CW_TYPE_CUSTOM;
+		cacheSize = CacheSize.CW_SIZE_NOTCHOSEN;
+		hard = CacheTerrDiff.CW_DT_UNSET;
+		terrain = CacheTerrDiff.CW_DT_UNSET;
     }
 	
 	public CacheHolder(String xmlString, int version) {
@@ -1292,6 +1300,7 @@ public class CacheHolder{
     }
 	
 	public boolean checkIncomplete() {
+		// TODO: discuss if we should only check cache waypoints and silently "fix" everything else
 		boolean ret;
 		if (isCacheWpt()) {
 			if (getWayPoint().length() < 3
@@ -1305,11 +1314,11 @@ public class CacheHolder{
 			else
 				ret = false;
 		} else if (isAddiWpt()) {
-			if (mainCache == null
-					|| getHard() != CacheTerrDiff.CW_DT_UNSET 
+			// do not check for maincache==null sind main cache may be null during gox import
+			if (getHard() != CacheTerrDiff.CW_DT_UNSET
 					|| getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN
 					|| getTerrain() != CacheTerrDiff.CW_DT_UNSET
-					|| getWayPoint().length() < 2
+					|| getWayPoint().length() < 3
 //					|| getCacheOwner().length() > 0
 //					|| getDateHidden().length() > 0 
 					|| getCacheName().length() == 0
@@ -1321,7 +1330,7 @@ public class CacheHolder{
 			if (getHard() != CacheTerrDiff.CW_DT_UNSET 
 					|| getTerrain() != CacheTerrDiff.CW_DT_UNSET
 					|| getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN
-					|| getWayPoint().length() < 2
+					|| getWayPoint().length() < 3
 //					|| getCacheOwner().length() > 0
 //					|| getDateHidden().length() > 0 
 					|| getCacheName().length() == 0

@@ -689,23 +689,6 @@ public class DetailsPanel extends CellPanel {
 				
 			} else if (ev.target == btnBlack) {
 				toggleBlackStatus();
-//				if (ch.is_black()) {
-//					//FIXME: only change thisCache in save routine
-//					ch.setBlack(false);
-//					btnBlack.image = imgBlackNo;
-//				} else {
-//					//FIXME: only change thisCache in save routine
-//					ch.setBlack(true);
-//					btnBlack.image = imgBlack;
-//				}
-//				//FIXME: during display of details only the GUI should be relevant
-//				// and we collect results at the end
-//				blackStatus = ch.is_black();
-//				
-//				btnBlack.repaintNow();
-////				dirty_details = true;
-//				blackStatusChanged = true;
-				
 			} else if (ev.target == btnNewWpt) {
 				CacheHolder newch = new CacheHolder();
 				newch.LatLon = ch.LatLon;
@@ -920,30 +903,9 @@ public class DetailsPanel extends CellPanel {
 						.equals(oldWaypoint))) {
 			// If we changed the type to addi, check that a parent exists
 			if (CacheType.isAddiWpt(ch.getType())) {
-				int idx;
-				if (ch.getWayPoint().length() < 5)
-					idx = -1;
-				else {
-					idx = profile.getCacheIndex("GC" + ch.getWayPoint().substring(ch.getWayPoint().length() == 5 ? 1 : 2));
-					if (idx < 0)
-						idx = profile.getCacheIndex("OC" + ch.getWayPoint().substring(ch.getWayPoint().length() == 5 ? 1 : 2));
-					if (idx < 0)
-						idx = profile.getCacheIndex("CW"+ ch.getWayPoint().substring(ch.getWayPoint().length() == 5 ? 1 : 2));
-					if (idx < 0)
-						(new MessageBox(
-								MyLocale.getMsg(144, "Warning"),
-								MyLocale.getMsg(734,"No main cache found for addi waypoint ")
-								+ " "+ ch.getWayPoint()+ "\n"
-								+ MyLocale.getMsg(735,"Addi Waypoints must have the format xxYYYY, where xx are any 2 chars and YYYY are the main cache's chars after the GC"),
-								FormBase.OKB)).execute();
-				}
-				profile.buildReferences(); // TODO this takes quite long -> use
-				// profile.setAddiRef
-				// instead
+				profile.setAddiRef(ch);
 			} else {
-				profile.buildReferences(); // we have to do this to release the
-				// link between the
-				// two caches
+				profile.buildReferences();
 			}
 		}
 		// set status also on addi wpts
