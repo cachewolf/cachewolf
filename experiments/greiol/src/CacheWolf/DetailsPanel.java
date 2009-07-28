@@ -34,6 +34,7 @@ import ewe.ui.mTextPad;
 /**
  * Class to create the panel to show the cache details.<br>
  * Also allows for creation of a custom waypoint.<br>
+ * TODO: should we add buttons for cache state (enable, disable, archive)?
  */
 public class DetailsPanel extends CellPanel {
 
@@ -404,9 +405,10 @@ public class DetailsPanel extends CellPanel {
 	 * @return true if changes were saved, false if there were no changes to save
 	 */
 	protected boolean saveIfNeeded() {
-		// waypoint
 		// userimages ???
 		// status
+		// setfound
+		// set owned
 		
 		//FIXME: check boolean flags
 
@@ -425,6 +427,7 @@ public class DetailsPanel extends CellPanel {
 		if (!inpOwner.getText().equals(ch.getCacheOwner())) {
 			ch.setCacheOwner(inpOwner.getText());
 			needsSaving = true;
+			//TODO: check with alias and somehow check with status 
 		}
 		
 		if (!inpName.getText().equals(ch.getCacheName())) {
@@ -472,6 +475,38 @@ public class DetailsPanel extends CellPanel {
 				ch.getFreshDetails().setCacheNotes(cacheNotes.getText());
 				needsSaving = true;
 			}
+		}
+		
+		// status - die logik dahinter verstehe ich noch nicht
+		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found"))){
+			if (!ch.is_found()) {
+				ch.setFound(true);
+				needsSaving = true;
+			}
+			//FIXME: hier fehlt noch was
+		} else if (chcStatus.getText().startsWith(MyLocale.getMsg(320, "Owner"))) {
+			if (!ch.is_owned()) {
+				ch.setOwned(true);
+				needsSaving = true;
+			}
+		} else {
+			if (ch.is_found() || !ch.getCacheStatus().equals(chcStatus.getText())) {
+				ch.setCacheStatus(chcStatus.getText());
+				ch.setFound(false);
+				needsSaving = true;
+			}
+		}
+		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found")) && chcStatus.getText().length() >= MyLocale.getMsg(318, "Found").length() + 11) {
+			ch.setCacheStatus(chcStatus.getText().substring(MyLocale.getMsg(318, "Found").length() + 1));
+		} else {
+			ch.setCacheStatus(chcStatus.getText());
+		}
+		
+		//always make this the last check, since it will also save the changes
+		if (!ch.getWayPoint().equals(inpWaypoint.getText().trim().toUpperCase())) {
+			ch.rename(inpWaypoint.getText().trim().toUpperCase());
+			needsSaving = false;
+			needsTableUpdate = true;
 		}
 		
 		if (needsSaving) {
