@@ -523,7 +523,7 @@ public class CacheHolderDetail {
 				//TODO: any chance of a roll back?
 				//TODO: should we ignore a file not found?
 			}
-			
+			hasUnsavedChanges = true;
 			return success;
 		}
 }
