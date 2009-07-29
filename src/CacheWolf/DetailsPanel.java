@@ -244,11 +244,19 @@ public class DetailsPanel extends CellPanel {
 			deactivateControl(btnTerr);
 			deactivateControl(btnDiff);
 			deactivateControl(chcSize);
+			deactivateControl(inpOwner);
+			deactivateControl(inpHidden);
+			deactivateControl(btnShowBug);
+			deactivateControl(btnBlack);
 			chcSize.select(0);
 		} else {
 			activateControl(btnTerr);
 			activateControl(btnDiff);
 			activateControl(chcSize);
+			activateControl(inpOwner);
+			activateControl(inpHidden);
+			activateControl(btnShowBug);
+			activateControl(btnBlack);
 			if (CacheTerrDiff.isValidTD(ch.getTerrain())) {
 				btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(ch.getTerrain()));
 			} else {
@@ -317,10 +325,18 @@ public class DetailsPanel extends CellPanel {
 					activateControl(btnTerr);
 					activateControl(btnDiff);
 					activateControl(chcSize);
+					activateControl(inpOwner);
+					activateControl(inpHidden);
+					activateControl(btnShowBug);
+					activateControl(btnBlack);
 				} else {
 					deactivateControl(btnTerr);
 					deactivateControl(btnDiff);
 					deactivateControl(chcSize);
+					deactivateControl(inpOwner);
+					deactivateControl(inpHidden);
+					deactivateControl(btnShowBug);
+					deactivateControl(btnBlack);
 					chcSize.select(0);
 					btnTerr.setText(MyLocale.getMsg(1001, "T")+": -.-");
 					btnDiff.setText(MyLocale.getMsg(1000, "D")+": -.-");
@@ -478,25 +494,31 @@ public class DetailsPanel extends CellPanel {
 				}
 			} else if (ev.target == this.btnTerr) {
 				int returnValue;
-				TerrDiffForm tdf = new TerrDiffForm(true, thisCache
-						.getTerrain());
+				TerrDiffForm tdf = new TerrDiffForm(true, 
+						decodeTerrDiff(btnTerr, 
+								MyLocale.getMsg(1001, "T"), 
+								CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))
+							)
+						);
 				returnValue = tdf.execute();
-				if (returnValue == 1 && tdf.getDT() != thisCache.getTerrain()) {
-					//FIXME: do this when waypoint is checked for saving
-					thisCache.setTerrain(tdf.getDT());
-					btnTerr.setText(MyLocale.getMsg(1001, "T") + ": "
-							+ CacheTerrDiff.longDT(thisCache.getTerrain()));
+				Vm.debug(returnValue+"");
+				if (returnValue == 1) {
+					btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(tdf.getDT()));
 					dirty_details = true;
 				}
 			} else if (ev.target == this.btnDiff) {
 				int returnValue;
-				TerrDiffForm tdf = new TerrDiffForm(false, thisCache.getHard());
+				TerrDiffForm tdf = new TerrDiffForm(false, 
+						decodeTerrDiff(btnDiff, 
+								MyLocale.getMsg(1001, "D"), 
+								CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))
+							)
+						);
+						
 				returnValue = tdf.execute();
-				if (returnValue == 1 && tdf.getDT() != thisCache.getHard()) {
-					//FIXME: do this when waypoint is checked for saving
-					thisCache.setHard(tdf.getDT());
+				if (returnValue == 1) {
 					btnDiff.setText(MyLocale.getMsg(1000, "D") + ": "
-							+ CacheTerrDiff.longDT(thisCache.getHard()));
+							+ CacheTerrDiff.longDT(tdf.getDT()));
 					dirty_details = true;
 				}
 			}
@@ -603,11 +625,39 @@ public class DetailsPanel extends CellPanel {
 			// set status also on addi wpts
 			ch.setAttributesToAddiWpts();
 		}
-		
+		thisCache.setHard(decodeTerrDiff(this.btnDiff,MyLocale.getMsg(1000, "D"),thisCache.isCacheWpt()));
+		thisCache.setTerrain(decodeTerrDiff(this.btnTerr,MyLocale.getMsg(1001, "T"),thisCache.isCacheWpt()));
 		dirty_notes = false;
 		dirty_details = false;
 		setNeedsTableUpdate(false);
 		thisCache.getFreshDetails().hasUnsavedChanges = true;
+	}
+	
+	/**
+	 * convert the string displayed in the terrain in difficulty buttons to a byte for intrernal use<br>
+	 * assumes that the relevant information will at positions 3 and 5 in a 0 indexed string
+	 * @param button button control to get the text from 
+	 * @param td localized string for abbreviation of terrain or difficulty
+	 * @param isCache true if waypoint is a cache, false for addis and custom
+	 * @return 0 for additional or custum waypoints, -1 for caches if td is not valid, parsed byte otherwise
+	 */
+	private byte decodeTerrDiff(mButton button, String td, boolean isCache) {
+		StringBuffer tdv = new StringBuffer(2);
+		
+		// terrain and difficulty are always unset for non cache waypoints
+		if (! isCache) return CacheTerrDiff.CW_DT_UNSET;
+		
+		// cut off beginning of string
+		String buttonText = button.getText().substring(td.length()+2);
+		// we now should have a string of length 3
+		if (buttonText.length() != 3) return -1;
+
+		buttonText=tdv.append(buttonText.charAt(0)).append(buttonText.charAt(2)).toString();
+
+		// unset value is invalid
+		if (buttonText.equals("--")) return CacheTerrDiff.CW_DT_ERROR;
+		
+		return Byte.parseByte(buttonText);
 	}
 
 	private class TravelbugInCacheScreen extends Form {
