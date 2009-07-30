@@ -108,8 +108,7 @@ public class Preferences extends MinML{
 		} else
 			fontSize = 11;
 		
-		useBigIcons = Vm.isMobile() && MyLocale.getScreenWidth() >= 400;
-		isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
+
 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -287,6 +286,8 @@ public class Preferences extends MinML{
 			else
 				log("Error reading pref.xml: ", e);
 		}
+		useBigIcons = Vm.isMobile() && MyLocale.getScreenWidth() >= 400;
+		isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
 	}
 
 	/** Helper variables for XML parser */
