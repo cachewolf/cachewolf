@@ -192,12 +192,6 @@ public class DetailsPanel extends CellPanel {
 		return blackStatusChanged;
 	}
 
-	/**
-	 * @param chD
-	 *            details of the cache to display
-	 * @param dbindex
-	 *            index in cacheDB, in which changes will be saved
-	 */
 	public void setDetails(CacheHolder ch) {
 		thisCache = ch;
 		dirty_notes = false;
@@ -548,6 +542,8 @@ public class DetailsPanel extends CellPanel {
 		// contains
 		// the full cache which will be written to the cache.xml file AND
 		// the CacheHolder object which sits in cacheDB
+		//FIXME: so how do we do this??
+		
 		// Strip the found message if the status contains a date
 		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found"))
 				&& chcStatus.getText().length() >= MyLocale
@@ -601,29 +597,28 @@ public class DetailsPanel extends CellPanel {
 		// because all changes
 		// affecting the details are immediately saved
 		// Now update the table
-		CacheHolder ch = thisCache; // TODO variable ch is redundant
 		
-		ch.checkIncomplete();
+		thisCache.checkIncomplete();
 		
 		/*
 		 * The references have to be rebuilt if: - the cachetype changed from
 		 * addi->normal or normal->addi - the old cachetype or the new cachetype
 		 * were 'addi' and the waypointname has changed
 		 */
-		if (CacheType.isAddiWpt(ch.getType()) != CacheType.isAddiWpt(oldType)
-				|| ((CacheType.isAddiWpt(ch.getType()) || CacheType
+		if (CacheType.isAddiWpt(thisCache.getType()) != CacheType.isAddiWpt(oldType)
+				|| ((CacheType.isAddiWpt(thisCache.getType()) || CacheType
 						.isAddiWpt(oldType)) && !thisCache.getWayPoint()
 						.equals(oldWaypoint))) {
 			// If we changed the type to addi, check that a parent exists
-			if (CacheType.isAddiWpt(ch.getType())) {
-				profile.setAddiRef(ch);
+			if (CacheType.isAddiWpt(thisCache.getType())) {
+				profile.setAddiRef(thisCache);
 			} else {
 				// rebuild links between caches
 				profile.buildReferences();
 			}
 		} else {
 			// set status also on addi wpts
-			ch.setAttributesToAddiWpts();
+			thisCache.setAttributesToAddiWpts();
 		}
 		thisCache.setHard(decodeTerrDiff(this.btnDiff,MyLocale.getMsg(1000, "D"),thisCache.isCacheWpt()));
 		thisCache.setTerrain(decodeTerrDiff(this.btnTerr,MyLocale.getMsg(1001, "T"),thisCache.isCacheWpt()));
