@@ -424,7 +424,7 @@ public class SpiderGC{
   					cachesToUpdate.put(ch.getWayPoint(), ch);
   				}
   			} else {
-  				if ( (!ch.is_archived()) && (ch.kilom <= distanceInKm) && !(doNotgetFound && ch.is_found()) && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) ) {
+  				if ( (!ch.is_archived()) && (ch.kilom <= distanceInKm) && !(doNotgetFound && (ch.is_found() || ch.is_owned())) && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) ) {
   					cachesToUpdate.put(ch.getWayPoint(), ch);
   				}
   			}
