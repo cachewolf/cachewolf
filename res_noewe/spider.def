@@ -29,6 +29,7 @@
 # Version 4.5 - 20090315 strings for spidering country/state/logId
 # Version 4.6 - 20090406 Fix for country/state (did not work with US caches)
 # Version 4.7 - 20090521 Strings for single cache types added
+# Version 4.8 - 20090805 More specific unavailability detection
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -78,7 +79,7 @@ onlyGPSAdventure    = &tx=72e69af2-7986-4990-afd9-bc16cbbb4ce3
 #--------------------------------------
 getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
-cacheUnavailable   = This\ cache\ is\ temporarily\ unavailable
+cacheUnavailable   = <ul><font\ color="red"><li>This\ cache\ is\ temporarily\ unavailable.\ Read\ the\ logs\ below\ to\ read\ the\ status\ for\ this\ cache.</li></font></ul>
 cacheArchived      = This cache\ has\ been\ archived
 latLonRex          = <span\ id="LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = <span\ id="ShortDescription">((?s).*?)</span>
