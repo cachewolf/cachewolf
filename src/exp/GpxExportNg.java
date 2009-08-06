@@ -633,7 +633,7 @@ public class GpxExportNg {
 		}
 
 		if (exportStyle != STYLE_GPX_COMPACT) {
-			ret.append("    <type>".concat(CacheType.id2GpxString(ch.getType())).concat("</type>\n"));
+			ret.append("    <type>".concat(ch.isCacheWpt()?"Geocache|":"").concat(CacheType.id2GpxString(ch.getType())).concat("</type>\n"));
 		}
 		
 		return ret.toString();
