@@ -561,7 +561,7 @@ public final class CacheType {
 	 */
 	public static final String id2GpxString(byte id) throws IllegalArgumentException {
 		switch (id) {
-		case CW_TYPE_TRADITIONAL: return "Geocache|".concat(GC_GPX_TRADITIONAL);
+		case CW_TYPE_TRADITIONAL: return GC_GPX_TRADITIONAL;
 		case CW_TYPE_MULTI: return GC_GPX_MULTI;
 		case CW_TYPE_VIRTUAL: return GC_GPX_VIRTUAL;
 		case CW_TYPE_LETTERBOX: return GC_GPX_LETTERBOX;
