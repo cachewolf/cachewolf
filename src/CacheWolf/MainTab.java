@@ -239,7 +239,7 @@ public class MainTab extends mTabbedPanel {
 			break;
 		case 8:  // Cache Radar Panel
 			MyLocale.setSIPOff();
-			radarP.setParam(pref, cacheDB, ch.getWayPoint());
+			radarP.setParam(pref, cacheDB, ch);
 			radarP.drawThePanel();
 			break;
 		}
