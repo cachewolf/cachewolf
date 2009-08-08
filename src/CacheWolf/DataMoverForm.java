@@ -5,18 +5,15 @@ import ewe.ui.CheckBoxGroup;
 import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
-import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
 import ewe.ui.mLabel;
 
 public class DataMoverForm extends Form {
-	mCheckBox ticked, visible, tickedVisible;
-	CheckBoxGroup chkFormat = new CheckBoxGroup();
-	mButton yesButton;
-	mButton noButton;
-	mLabel firstLine;
+	private mCheckBox ticked, visible, tickedVisible;
+	private CheckBoxGroup chkFormat = new CheckBoxGroup();
+	private mLabel firstLine;
 	
-	public DataMoverForm ()
+	public DataMoverForm (String tickedText, String visibleText, String tickedVisibleText, String firstLineText)
 	{
 		title = MyLocale.getMsg(144,"Warning");
 		ticked = new mCheckBox (MyLocale.getMsg(254, "All visible"));
@@ -36,6 +33,10 @@ public class DataMoverForm extends Form {
 		addLast (continueQuestion);
 		doButtons(FormBase.YESB|FormBase.CANCELB);
 		setModefromPref();
+		ticked.text = tickedText;
+		visible.text = visibleText;
+		tickedVisible.text = tickedVisibleText;
+		firstLine.text = firstLineText;
 	}
 
 	/**
@@ -60,22 +61,6 @@ public class DataMoverForm extends Form {
 			Preferences.getPrefObject().processorMode = getMode();
 		}
 		super.onEvent(ev);
-	}
-	
-	public void setTickedText(String value) {
-		ticked.text = value;
-	}
-
-	public void setVisibleText(String value) {
-		visible.text = value;
-	}
-
-	public void setTickedVisibleText(String value) {
-		tickedVisible.text = value;
-	}
-	
-	public void setFirstLineText (String value){
-		firstLine.text = value;
 	}
 	
 	public int getMode (){

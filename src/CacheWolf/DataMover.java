@@ -15,9 +15,9 @@ import ewe.sys.*;
 */
 public class DataMover {
 
-	CacheDB srcDB, dstDB;
-	Preferences pref;
-	Profile profile;
+	private CacheDB srcDB;
+	private Preferences pref;
+	private Profile profile;
 	
 	public DataMover(){
 		pref = Global.getPref();
@@ -78,11 +78,7 @@ public class DataMover {
 	 * @return mode selected by the user
 	 */
 	private int showMessageBox(int actionTextNr, String defaultValue) {
-		DataMoverForm cpf = new DataMoverForm ();
-		cpf.setTickedText(makeTickedText ());
-		cpf.setVisibleText(makeVisibleText ());
-		cpf.setTickedVisibleText(makeVisibleTickedText ());
-		cpf.setFirstLineText(MyLocale.getMsg(actionTextNr, defaultValue));
+		DataMoverForm cpf = new DataMoverForm (makeTickedText (), makeVisibleText (),makeVisibleTickedText (), MyLocale.getMsg(actionTextNr, defaultValue) );
 		int dialogResult = cpf.execute(null, Gui.CENTER_FRAME);
 		if (dialogResult != FormBase.IDOK){
 			return -1;
