@@ -1,10 +1,24 @@
 package CacheWolf;
 
 
-import ewe.ui.*;
-import ewe.io.*;
-import ewe.fx.*;
-import ewe.util.*;
+import ewe.fx.Color;
+import ewe.fx.Dimension;
+import ewe.fx.Point;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.DataChangeEvent;
+import ewe.ui.Event;
+import ewe.ui.Gui;
+import ewe.ui.InputBox;
+import ewe.ui.Menu;
+import ewe.ui.MenuItem;
+import ewe.ui.PanelSplitter;
+import ewe.ui.SplittablePanel;
+import ewe.ui.mButton;
+import ewe.ui.mTextPad;
+import ewe.util.Vector;
 
 /**
 * Class to create the solver panel. Calls the parser and tokeniser and handles
@@ -13,19 +27,19 @@ import ewe.util.*;
 *	@see Tokenizer
 */
 public class SolverPanel extends CellPanel{
-	mButton mBtSolve;
-	mButton btnLoad, btnSave, btnSaveAs,btnWolfLang;
+	private mButton mBtSolve;
+	private mButton btnWolfLang;
+	//FIXME: encapsulate
 	mTextPad mText;
+	//FIXME: encapsulate
 	OutputPanel mOutput;
-	Preferences pref;
-	Profile profile;
-	String currFile;
-	Tokenizer tokeniser = new Tokenizer();
-	Parser parser = new Parser();
-	Vector msgFIFO = new Vector();
-	Menu mnuContext;
+	private Preferences pref;
+	private Tokenizer tokeniser = new Tokenizer();
+	private Parser parser = new Parser();
+	private Vector msgFIFO = new Vector();
+	private Menu mnuContext;
 	private String originalInstructions="";
-	mButton btnDegRad;
+	private mButton btnDegRad;
 	private CacheHolder ch; 
 	
 	public boolean isDirty() {
@@ -109,7 +123,6 @@ public class SolverPanel extends CellPanel{
 	
 	public SolverPanel (Preferences p, Profile prof){
 		pref = p;
-		profile = prof;
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 
 		programPanel = split.getNextPanel();
@@ -127,10 +140,7 @@ public class SolverPanel extends CellPanel{
 		pnlButtons.equalWidths=true;
 		pnlStatButtons.addLast(pnlButtons,CellConstants.HSTRETCH,CellConstants.HFILL);
 		programPanel.addLast(pnlStatButtons,HSTRETCH,HFILL);
-		/*programPanel.addNext(btnLoad= new mButton(MyLocale.getMsg(1736,"Load")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		programPanel.addNext(btnSave= new mButton(MyLocale.getMsg(1737,"Save")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		programPanel.addLast(btnSaveAs= new mButton(MyLocale.getMsg(1738,"SaveAs")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		*/
+
 		outputPanel.addLast(new MyScrollBarPanel(mOutput = new OutputPanel()));
 
 		this.addLast(split);
@@ -176,52 +186,6 @@ public class SolverPanel extends CellPanel{
 				Global.getPref().solverDegMode=!Global.getPref().solverDegMode;
 				btnDegRad.setText(getSolverDegMode());
 			}
-/*			if(ev.target == btnLoad){
-				FileChooser fc = new FileChooser(FileChooser.OPEN, profile.dataDir);
-				
-				fc.addMask(currCh.wayPoint + ".wl");
-				fc.addMask("*.wl");
-				fc.setTitle("Select File");
-				if(fc.execute() != FileChooser.IDCANCEL){
-					currFile = fc.getChosen();
-					mText.setText("");
-					try {
-						InputStreamReader inp = new InputStreamReader( new FileInputStream(currFile));
-						mText.setText(inp.readAll());
-						inp.close();
-
-					} catch (Exception e) {
-						Vm.debug("Error reading file " + e.toString());
-					}
-				}
-			}
-			if((ev.target == btnSave) && (currFile != null)){
-				try {
-					OutputStreamWriter outp = new OutputStreamWriter( new FileOutputStream(currFile));
-					outp.write(mText.getText());
-					outp.close();
-				} catch (Exception e) {
-					Vm.debug("Error writing file ");
-				}
-			}
-			if((ev.target == btnSaveAs)||((ev.target == btnSave) && (currFile == null))){
-				FileChooser fc = new FileChooser(FileChooser.SAVE, profile.dataDir);
-				fc.addMask(currCh.wayPoint + ".wl");
-				fc.addMask("*.wl");
-				fc.setTitle("Select File");
-				if(fc.execute() != FileChooser.IDCANCEL){
-					File saveFile = fc.getChosenFile();
-					currFile = fc.getChosen();
-					try {
-						OutputStreamWriter outp = new OutputStreamWriter( new FileOutputStream(saveFile));
-						outp.write(mText.getText());
-						outp.close();
-					} catch (Exception e) {
-						Vm.debug("Error writing file ");
-					}
-				}
-			}
-*/			
 		}
 	}
 	
