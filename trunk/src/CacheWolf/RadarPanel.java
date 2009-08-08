@@ -21,7 +21,7 @@ public class RadarPanel extends CellPanel{
 	int scaleKm = 30;
 	int centerX, centerY;
 	int height, width;
-	String selectedWaypoint = new String();
+	CacheHolder selectedWaypoint = null;
 	MainTab mt;
 	boolean penMoving = false;
 	int x1,y1,x2,y2 = 0;
@@ -50,7 +50,7 @@ public class RadarPanel extends CellPanel{
 	* database. It also calculates the maximum size available for drawing 
 	* the radar.
 	*/
-	public void setParam(Preferences p, CacheDB db, String sWp){
+	public void setParam(Preferences p, CacheDB db, CacheHolder sWp){
 		selectedWaypoint = sWp;
 		pref = p;
 		cacheDB = db;
@@ -140,7 +140,7 @@ public class RadarPanel extends CellPanel{
 					rpi.rownum = i;
 					rpi.setLocation(centerX+drX-7,centerY+drY-7);
 					iActP.addImage(rpi);
-					if(holder.getWayPoint().equals(selectedWaypoint)){ // Draw red circle around selected wpt
+					if(holder == selectedWaypoint){ // Draw red circle around selected wpt
 						Image imgCircle = new Image(20, 20);
 						Graphics gCircle = new Graphics(imgCircle);
 						gCircle.setColor(Color.Black);
