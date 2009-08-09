@@ -1,8 +1,15 @@
 package CacheWolf;
 
-import ewe.sys.Vm;
-import ewe.ui.*;
-import ewe.fx.*;
+import ewe.fx.Color;
+import ewe.fx.mImage;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.Event;
+import ewe.ui.Gui;
+import ewe.ui.mButton;
+import ewe.ui.mLabel;
 
 /**
  * Class ID = 4500
@@ -10,14 +17,14 @@ import ewe.fx.*;
  *
  */
 public class StatusBar extends CellPanel{
-	DBStats stats;
-	mLabel disp,lblFlt,lblCenter;
-	Preferences pref;
-	mButton btnFlt;
-	mImage imgFlt;
-	mButton btnCacheTour;
-	mImage imgCacheTour;
-	boolean MobileVGA;
+	private DBStats stats;
+	private mLabel disp,lblCenter;
+	private Preferences pref;
+	private mButton btnFlt;
+	private mImage imgFlt;
+	private mButton btnCacheTour;
+	private mImage imgCacheTour;
+	private boolean MobileVGA;
 	
 	public StatusBar(Preferences p, CacheDB db){
 		pref=p;
@@ -40,13 +47,11 @@ public class StatusBar extends CellPanel{
 			btnFlt.setPreferredSize(20,13);
 		btnFlt.borderWidth=0; imgFlt.transparentColor=Color.White;
 		btnFlt.setToolTip("Filter status");
-//		addNext(lblFlt= new mLabel("Flt"),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); lblFlt.backGround=new ewe.fx.Color(0,255,0);
 		stats = new DBStats(db);
 		addNext(disp = new mLabel(""),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		disp.setToolTip(MyLocale.getMsg(196,"Total # of caches (GC&OC)\nTotal # visible\nTotal # found"));
 		addLast(lblCenter=new mLabel(""),CellConstants.STRETCH, WEST|CellConstants.FILL);
 		lblCenter.setToolTip(MyLocale.getMsg(195,"Current centre"));
-//		updateDisplay();
 	}
 	
 	public void updateDisplay(){
