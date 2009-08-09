@@ -1,7 +1,13 @@
 package CacheWolf;
 
-
-import ewe.ui.*;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlEvent;
+import ewe.ui.Event;
+import ewe.ui.Form;
+import ewe.ui.FormBase;
+import ewe.ui.UIConstants;
+import ewe.ui.mButton;
+import ewe.ui.mLabel;
 
 /**
 *	This form displays profile specific data.
@@ -10,12 +16,10 @@ import ewe.ui.*;
 public class ProfileDataForm extends Form {
 
 	private mButton btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur;
-	Preferences pref;
-	Profile profile;
-	CellPanel content = new CellPanel();
+	private Preferences pref;
+	private Profile profile;
+	private CellPanel content = new CellPanel();
 
-	/**
-	*/
 	public ProfileDataForm(Preferences p, Profile prof){
 		super();
 		pref=p;
