@@ -1,8 +1,15 @@
 package CacheWolf;
 
-import ewe.fx.*;
-import ewe.graphics.*;
-import ewe.ui.*;
+import ewe.fx.Image;
+import ewe.fx.Point;
+import ewe.fx.Rect;
+import ewe.fx.mImage;
+import ewe.graphics.AniImage;
+import ewe.graphics.InteractivePanel;
+import ewe.ui.CellConstants;
+import ewe.ui.DataChangeEvent;
+import ewe.ui.Panel;
+import ewe.ui.mLabel;
 
 public class AttributesSelector extends Panel {
 	protected static int TILESIZE=22; // Here we always use the small icons thus tilesize=22
@@ -24,15 +31,18 @@ public class AttributesSelector extends Panel {
 		showAttributePalette();
 	}
 
+	//FIXME: explain the usefulness of animated images in this context since it is not obvious
 	protected class attAniImage extends AniImage {
-		public String info;
-		public String attrName;
-		public String value;
-		public int attrNr;
-		public long bitMask;
+		private String info;
+		private String attrName;
+		private String value;
+		private int attrNr;
+		private long bitMask;
+		
 		attAniImage (mImage img) {
 			super(img);
 		}
+		
 		attAniImage (attAniImage cp, String val) {
 			//super(null);
 			mImage rawImg=new mImage(Attribute.getImageDir() + cp.attrName + val );
@@ -47,7 +57,7 @@ public class AttributesSelector extends Panel {
 	}
 	
 	protected class attInteractivePanel extends InteractivePanel {
-				public boolean imageMovedOn(AniImage which) {
+		public boolean imageMovedOn(AniImage which) {
 			if (!((attAniImage)which).info.startsWith("*")) { // If text starts with * we have no explanation yet
 				mInfo.setText(((attAniImage)which).info);
 				mInfo.repaintNow();
@@ -88,7 +98,7 @@ public class AttributesSelector extends Panel {
 	}
 	protected InteractivePanel iap=new attInteractivePanel();
 
-	public void showAttributePalette() {
+	private void showAttributePalette() {
 		iap.images.clear();
 		int myWidth = 170;
 		int myX = 2; int myY = 2;
