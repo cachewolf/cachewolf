@@ -1,40 +1,54 @@
 package CacheWolf;
 
-import ewe.ui.*;
 import ewe.fx.Dimension;
 import ewe.fx.Graphics;
+import ewe.fx.Image;
 import ewe.fx.Point;
+import ewe.fx.Rect;
 import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.ImageDragContext;
 import ewe.graphics.InteractivePanel;
 import ewe.io.FileBase;
-import ewe.sys.*;
-import ewe.fx.Image;
-import ewe.fx.Rect;
+import ewe.sys.Vm;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.Event;
+import ewe.ui.HtmlDisplay;
+import ewe.ui.IKeys;
+import ewe.ui.IScroll;
+import ewe.ui.KeyEvent;
+import ewe.ui.PanelSplitter;
+import ewe.ui.ScrollBarPanel;
+import ewe.ui.ScrollablePanel;
+import ewe.ui.SplittablePanel;
+import ewe.ui.mButton;
+import ewe.ui.mTextPad;
 
 /**
  *	Class to create the panel that holds hints and logs.
  *	It holds a method to cryt and decrypt hints.
  *	Two buttons allow for navigation through the logs. 5 logs are displayed at
- *   together. This was implemented to allow for better performance on the
+ *  a time. This was implemented to allow for better performance on the
  *	PocketPC. This number can be changed in the preferences.
  *	Class ID=400
  */
 public class HintLogPanel extends CellPanel{
-	int crntLogPosition = 0;
-	CacheHolderDetail currCache;
+	private int crntLogPosition = 0;
+	private CacheHolderDetail currCache;
 	private final int DEFAULT_STRINGBUFFER_SIZE=8000;
-	mTextPad hint = new mTextPad();
+	private mTextPad hint = new mTextPad();
 	//mTextPad logs = new mTextPad();
-	HtmlDisplay logs = new HtmlDisplay();
-	AniImage htmlTxtImage;
-	fastScrollText htmlImagDisp = new fastScrollText();
+	private HtmlDisplay logs = new HtmlDisplay();
+	private AniImage htmlTxtImage;
+	private fastScrollText htmlImagDisp = new fastScrollText();
 	private String decodeCaption = MyLocale.getMsg(400, "Decode");
 	private String encodeCaption = MyLocale.getMsg(401, "Encode");
-	mButton decodeButton = new mButton(this.decodeCaption);
-	mButton moreBt = new mButton(">>");
-	mButton prevBt = new mButton("<<");
+	private mButton decodeButton = new mButton(this.decodeCaption);
+	private mButton moreBt = new mButton(">>");
+	private mButton prevBt = new mButton("<<");
 	private MyScrollBarPanel sbplog;
 	private int lastScrollbarWidth = 0;
 	private boolean hintIsDecoded = false;
@@ -75,17 +89,20 @@ public class HintLogPanel extends CellPanel{
 			prevBt.modify(0,ControlConstants.Disabled);
 		}
 	}
+	
 	public void clear() {
 	    clearOutput();
 	    currCache = null;
 	}
+	
 	private void clearOutput() {
 		if (htmlTxtImage != null) {
 			htmlImagDisp.removeImage(htmlTxtImage);
 			htmlTxtImage.free();
 		}
 	}
-	void setLogs(int crntLogPosition) {
+
+	private void setLogs(int crntLogPosition) {
 		Vm.showWait(true);
 		StringBuffer dummy = new StringBuffer(DEFAULT_STRINGBUFFER_SIZE);
 		int counter = 0;
@@ -203,8 +220,8 @@ public class HintLogPanel extends CellPanel{
 }
 
 class fastScrollText extends InteractivePanel { // TODO extend this class in a way that text can be marked and copied
-	public boolean scrollVertical = true;
-	public boolean scrollHorizontal = false;
+	private boolean scrollVertical = true;
+	private boolean scrollHorizontal = false;
 	public boolean imageNotDragged(ImageDragContext drag,Point where) {
 		if (drag == null || drag.image == null) return super.imageNotDragged(drag, where);
 		getDim(null);
@@ -282,7 +299,4 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 			}
 		}
 	}
-
-
-
 }
