@@ -1,4 +1,5 @@
 package CacheWolf;
+
 import ewe.data.Property;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
@@ -53,31 +54,31 @@ public class HttpConnection {
 /**
 * The host to connect to.
 **/
-public String host;
+private String host;
 /**
 * The port to connect to.
 **/
-public int port;
+private int port;
 /**
 * The document to fetch/submit.
 **/
-public String document;
+private String document;
 /**
 * This is the command to be sent to the server. By default it is "GET". If you call
 * setPostData() and command is "GET" then the command will be replaced by "POST".
 **/
-public String command = "GET";
+private String command = "GET";
 /**
 * This is the version sent to the server. By default it is "HTTP/1.1". You could
 * change it to something else if necessary.
 **/
-public String requestVersion = "HTTP/1.1";
+private String requestVersion = "HTTP/1.1";
 /**
 * These are the properties that will be sent to the WebServer. These are sent after the
 * initial GET/POST line. This is initially null, so you will have to create a new PropertyList
 * for it, or use one of the setRequestorProperty() or addRequestorProperty() methods.
 **/
-public ewe.data.PropertyList requestorProperties;
+private ewe.data.PropertyList requestorProperties;
 /**
 * This is the list of properties for the server and document. It is only valid after a connection has
 * been made since it is sent by the server to the requestor. One properties that will always be in
@@ -98,19 +99,19 @@ public boolean documentIsEncoded;
 /**
 * Set this to true for keep alive mode requests.
 **/
-public boolean keepAliveMode;
+private boolean keepAliveMode;
 /**
 * This is the length of the document <b>read in</b>, valid after a connection call. If it is -1, then the
 * web server has not provided the length of the document.
 **/
-public int contentLength = -1;
+private int contentLength = -1;
 /**
 * This is the codec used when sending data to the server. 
 **/
-public TextCodec textCodec;
+private TextCodec textCodec;
 
-Stream bytesToPost;
-Object originalPostData;
+private Stream bytesToPost;
+private Object originalPostData;
 
 /**
  * Set these when the class is instantiated the first time.
@@ -121,6 +122,7 @@ private static String proxy = Global.getPref().myproxy;
 private static int proxyPort = Common.parseInt(Global.getPref().myproxyport);
 private static boolean useProxy = Global.getPref().proxyActive;
 
+//FIXME: why is this called immediately from preferences screen? shouldn't we read it from preferences instead?
 public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {
 	proxy = proxyi;
 	proxyPort = proxyporti;
@@ -129,11 +131,12 @@ public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {
 
 /**
  * This returns true if post data has been set for this connection.
+ * FIXME: unreferenced!
  */
-public boolean hasPostData()
-{
-	return bytesToPost != null;
-}
+//public boolean hasPostData()
+//{
+//	return bytesToPost != null;
+//}
 /**
  * Get a new HttpConnection whose parameters are copied from this HttpConnection
  * but which directs its request to a different host/document as directed by
@@ -165,7 +168,7 @@ connection is made. You can add directly to this OR you can call setRequestorPro
 addRequestorProperty();
  */
 //===================================================================
-public PropertyList getRequestorProperties()
+private PropertyList getRequestorProperties()
 //===================================================================
 {
 	if (requestorProperties == null) requestorProperties = new PropertyList();
@@ -210,13 +213,14 @@ public void setPostData(Object data)
 /**
  * This sets the "Content-Length" requestor property to be the specified length.
  * @param length the number of bytes to be posted.
+ * FIXME: not referenced
  */
 //===================================================================
-public void setPostDataLength(int length)
-//===================================================================
-{
-	getRequestorProperties().set("Content-Length",Convert.toString(length));
-}
+//public void setPostDataLength(int length)
+////===================================================================
+//{
+//	getRequestorProperties().set("Content-Length",Convert.toString(length));
+//}
 /**
  * Set an exclusive requestor property. These are sent to the web server after the initial request line.
  * @param name The name of the property.
@@ -232,23 +236,25 @@ public void setRequestorProperty(String name, String property)
  * Add a non-exclusive requestor property. These are sent to the web server after the initial request line.
  * @param name The name of the property.
  * @param property The value of the property.
+ * FIXME: not referenced
  */
-//===================================================================
-public void addRequestorProperty(String name, String property)
-//===================================================================
-{
-	getRequestorProperties().add(name,property);
-}
+////===================================================================
+//public void addRequestorProperty(String name, String property)
+////===================================================================
+//{
+//	getRequestorProperties().add(name,property);
+//}
 /**
  * Set the default value of a requestor property. If the value is already set
  * this will have no effect. Otherwise the value will be set to defaultValue.
  * @param name the name of the property.
  * @param defaultValue the value to default to.
+ * FIXME: not referenced
  */
-public void defaultRequestorProperty(String name, String defaultValue)
-{
-	getRequestorProperties().defaultTo(name,defaultValue);
-}
+//public void defaultRequestorProperty(String name, String defaultValue)
+//{
+//	getRequestorProperties().defaultTo(name,defaultValue);
+//}
 protected Socket openSocket;
 protected Socket connectedSocket;
 
@@ -256,28 +262,30 @@ protected Socket connectedSocket;
 * If a connection has already been made to the server, then you can call
 * this method and the HttpConnection protocol will be done over this Socket.
 * @param sock The already connected socket.
+* FIXME: not referenced
 */
-//===================================================================
-public void setAlreadyOpenSocket(Socket sock)
-//===================================================================
-{	
-	openSocket = sock;
-}
+////===================================================================
+//public void setAlreadyOpenSocket(Socket sock)
+////===================================================================
+//{	
+//	openSocket = sock;
+//}
 
 /**
  * Create a new HttpConnection to the specified host and port to fetch the specified document.
  * @param host The host to connect to.
  * @param port The port to connect on.
  * @param document the document to get.
+ * FIXME: not referenced
  */
-//===================================================================
-public HttpConnection(String host, int port, String document)
-//===================================================================
-{
-	this.host = host;
-	this.port = port;
-	this.document = document;
-}
+////===================================================================
+//public HttpConnection(String host, int port, String document)
+////===================================================================
+//{
+//	this.host = host;
+//	this.port = port;
+//	this.document = document;
+//}
 /**
  * Create an HttpConnection with an http:// URL.
  * @param url The full url, starting with http://
@@ -313,30 +321,32 @@ public HttpConnection(String url)
 	}
 }
 
-//===================================================================
-public HttpConnection(URL url)
-//===================================================================
-{
-	this(url.toString());
-	documentIsEncoded = true;
-}
-static char [] space = {' '}, percentSpace = {'%','2','0'};
+//FIXME: never referenced
+////===================================================================
+//public HttpConnection(URL url)
+////===================================================================
+//{
+//	this(url.toString());
+//	documentIsEncoded = true;
+//}
+//private static char [] space = {' '}, percentSpace = {'%','2','0'};
 
+// FIXME: never referenced
+////===================================================================
+//public String toURLString()
+////===================================================================
+//{
+//	return "http://"+host+":"+port+document;
+//}
 //===================================================================
-public String toURLString()
-//===================================================================
-{
-	return "http://"+host+":"+port+document;
-}
-//===================================================================
-public String getEncodedDocument()
+private String getEncodedDocument()
 //===================================================================
 {
 	if (documentIsEncoded) return document;
 	else return URL.encodeURL(document,false);
 }
 //===================================================================
-Object waitOnIO(Handle h,String errorMessage) throws IOException
+private Object waitOnIO(Handle h,String errorMessage) throws IOException
 //===================================================================
 {
 	try{
@@ -347,14 +357,15 @@ Object waitOnIO(Handle h,String errorMessage) throws IOException
 		else throw new IOException(errorMessage);
 	}
 }
-public static final int SocketConnected = 0x1;
-public static final int DataReady = 0x2;
+private static final int SocketConnected = 0x1;
+// never referenced
+//private static final int DataReady = 0x2;
 
-static Vector lines;
-static SubString data;
+private static Vector lines;
+private static SubString data;
 
 //===================================================================
-int makeRequest(Socket sock,TextCodec td) throws IOException
+private int makeRequest(Socket sock,TextCodec td) throws IOException
 //===================================================================
 {
 	responseCode = -1;
@@ -441,8 +452,8 @@ int makeRequest(Socket sock,TextCodec td) throws IOException
 	return responseCode;
 }
 
-static final String [] encodings = {"transfer-coding","transfer-encoding"};
-byte [] buffer;
+private static final String [] encodings = {"transfer-coding","transfer-encoding"};
+private byte [] buffer;
 
 
 
@@ -453,16 +464,18 @@ byte [] buffer;
  * Alternatively you could also call getRedirectTo() and then if that returns a non-null
  * String, you can call getRedirectedConnection() to get copies.
  * If there is no redirection required or possible the method will return this same HttpConnection.
+ * 
+ * FIXME: never referenced
  */
-//===================================================================
-public HttpConnection redirectTo()
-//===================================================================
-{
-	if (responseCode < 300 || responseCode > 399) return this;
-	String newURL = documentProperties.getString("location",null);
-	if (newURL == null) return this;
-	return new HttpConnection(newURL);
-}					
+////===================================================================
+//public HttpConnection redirectTo()
+////===================================================================
+//{
+//	if (responseCode < 300 || responseCode > 399) return this;
+//	String newURL = documentProperties.getString("location",null);
+//	if (newURL == null) return this;
+//	return new HttpConnection(newURL);
+//}					
 
 /**
  * Call this after a success connection. If it returns a non-null String then
@@ -478,7 +491,7 @@ public String getRedirectTo()
 	return documentProperties.getString("location",null);
 }
 //===================================================================
-int readInChunkedHeader(Socket connection,ByteArray buff,CharArray chBuff) throws IOException
+private int readInChunkedHeader(Socket connection,ByteArray buff,CharArray chBuff) throws IOException
 //===================================================================
 {
  	if (buffer == null) buffer = new byte[10240];
@@ -588,7 +601,7 @@ Handle readInChunkedData(final Socket connection)
 	object that holds the data read in.
  */
 //===================================================================
-public Handle readInData(final Socket connection) 
+private Handle readInData(final Socket connection) 
 //===================================================================
 {
 	int length = documentProperties.getInt("content-length",-1);
@@ -602,29 +615,31 @@ public Handle readInData(final Socket connection)
  * @return A Handle with which you can monitor the connection. When the Handle
 	reports Success, then the returnValue of the Handle will be a ewe.util.ByteArray
 	object that holds the data read in.
+	
+	FIXME: never referenced
  */
-//===================================================================
-public Handle readInData() 
-//===================================================================
-{
-	return readInData(connectedSocket);
-}
+////===================================================================
+//public Handle readInData() 
+////===================================================================
+//{
+//	return readInData(connectedSocket);
+//}
 /**
 * Get an InputStream to read in the data. This is a very important method as it is used by
 * the readInData() method.
 **/
 //===================================================================
-public InputStream getInputStream()
+private InputStream getInputStream()
 //===================================================================
 {
 	//ewe.sys.Vm.debug(documentProperties.toString());
 	int length = documentProperties.getInt("content-length",-1);
 	if ("chunked".equals(documentProperties.getValue(encodings,null)))
 		return new MemoryStream(true){
-			byte[] buff = new byte[10240];
-			int leftInBlock = 0;
-			ByteArray ba = new ByteArray();
-			CharArray ca = new CharArray();
+			private byte[] buff = new byte[10240];
+			private int leftInBlock = 0;
+			private ByteArray ba = new ByteArray();
+			private CharArray ca = new CharArray();
 			//-------------------------------------------------------------------
 			protected boolean loadAndPutDataBlock() throws IOException
 			//-------------------------------------------------------------------
@@ -676,7 +691,7 @@ public ByteArray readData(Socket connection) throws IOException
 	object that holds the text read in.
  */
 //===================================================================
-public Handle readInText(final Socket connection,TextCodec documentTextDecoder)
+private Handle readInText(final Socket connection,TextCodec documentTextDecoder)
 //===================================================================
 {
 	if (documentTextDecoder == null) documentTextDecoder = new AsciiCodec();
@@ -718,7 +733,7 @@ public CharArray readText(Socket connection,TextCodec documentTextDecoder) throw
  * Success, then the returnValue of the IOHandle will hold the connected socket.
  */
 //===================================================================
-public Handle connectAsync()
+private Handle connectAsync()
 //===================================================================
 {
 	return connectAsync(new AsciiCodec());
@@ -732,7 +747,7 @@ public Handle connectAsync()
  * Success, then the returnValue of the Handle will hold the connected socket.
  */
 //===================================================================
-public Handle connectAsync(final TextCodec serverTextDecoder)
+private Handle connectAsync(final TextCodec serverTextDecoder)
 //===================================================================
 {
 	return new ewe.sys.TaskObject(){
@@ -788,16 +803,17 @@ public Socket connect() throws IOException
  * Connect to the server and save the socket for later use as the "connectedSocket" field.
  * @return the connected socket - before any data is sent or read.
  * @exception IOException if a connection could not be made.
+ * FIXME: never referenced
  */
-//===================================================================
-public Socket connectSocketOnly() throws IOException
-//===================================================================
-{
-	//if (connectedSocket != null) return connectedSocket;
-	//return connectedSocket = new Socket(host,port);
-	if (openSocket != null) return openSocket;
-	return openSocket = new Socket(host,port);
-}
+////===================================================================
+//public Socket connectSocketOnly() throws IOException
+////===================================================================
+//{
+//	//if (connectedSocket != null) return connectedSocket;
+//	//return connectedSocket = new Socket(host,port);
+//	if (openSocket != null) return openSocket;
+//	return openSocket = new Socket(host,port);
+//}
 
 /*
 //===================================================================
