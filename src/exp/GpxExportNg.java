@@ -662,7 +662,7 @@ public class GpxExportNg {
 		.concat("      <groundspeak:state>").concat(SafeXML.cleanGPX(ch.details.State)).concat("</groundspeak:state>\n")
 		.concat("      <groundspeak:short_description html=\"").concat(ch.is_HTML() ? TRUE : FALSE).concat("\"></groundspeak:short_description>\n")
 		.concat("      <groundspeak:long_description html=\"").concat(ch.is_HTML() ? TRUE : FALSE).concat("\">").concat(SafeXML.cleanGPX(formatLongDescription(ch))).concat("</groundspeak:long_description>\n")
-		.concat("      <groundspeak:encoded_hints>").concat(SafeXML.cleanGPX(ch.details.Hints)).concat("</groundspeak:encoded_hints>\n")
+		.concat("      <groundspeak:encoded_hints>").concat(SafeXML.cleanGPX(Common.rot13(ch.details.Hints))).concat("</groundspeak:encoded_hints>\n")
 		.concat("      <groundspeak:logs>\n")
 		.concat(formatLogs(ch))
 		.concat("      </groundspeak:logs>\n")
