@@ -20,22 +20,6 @@ import CacheWolf.MyLocale;
  */
 public class TransformCoordinatesProperties extends Properties {
 	public int epsgCode;
-	
-	public TransformCoordinatesProperties(InputStream is) throws IOException {
-		super();
-		load(is);
-		epsgCode = Convert.toInt(getProperty("EpsgCode", "-1"));
-		if (epsgCode == -1) throw new IllegalArgumentException(MyLocale.getMsg(4922, "EPSG code missing in: ") + is.getName());
-	}
-	
-	public TransformCoordinatesProperties(int epsgcodei) {
-		if (!TransformCoordinates.isSupported(epsgcodei)) throw new IllegalArgumentException(
-				MyLocale.getMsg(4920, "EPSG code ") 
-				+ epsgcodei 
-				+ MyLocale.getMsg(4921, " not supported"));
-		epsgCode = epsgcodei;
-	}
-
 	/**
 	 * return ll transformed into the desired coordinate reference system
 	 * if the prjection is Gauß-Krüger, easting will be put in lonDec and
@@ -51,10 +35,10 @@ public class TransformCoordinatesProperties extends Properties {
 			ret = ll;
 		}
 		if (ret == null) {
-			int region = TransformCoordinates.getGkRegion(epsgCode);
-			if (region > 0) {
-				GkPoint xy = TransformCoordinates.wgs84ToGaussKrueger(ll, epsgCode);
-				ret = xy.toTrackPoint(region);
+			int localsystem = TransformCoordinates.getLocalProjectionSystem(epsgCode);
+			if (localsystem > 0) {
+				ProjectedPoint xy = TransformCoordinates.wgs84ToEpsg(ll, epsgCode);
+				ret = xy.toTrackPoint(localsystem);
 			} else {
 				throw new IllegalArgumentException(
 						MyLocale.getMsg(4923, "fromWgs84: EPSG code ") 
@@ -80,16 +64,8 @@ public class TransformCoordinatesProperties extends Properties {
 			break;
 		}
 		if (ret == null) {
-			int region = TransformCoordinates.getGkRegion(epsgCode);
-			if (region > 0) {
-				GkPoint xy = new GkPoint(p.lonDec, p.latDec, TransformCoordinates.getGkRegion(epsgCode));
-				ret = TransformCoordinates.GkToWgs84(xy, region);
-			} else {
-				throw new IllegalArgumentException(
-						MyLocale.getMsg(4924, "ToWgs84: EPSG code ")
-						+ epsgCode
-						+ MyLocale.getMsg(4921, " not supported"));
-			}
+			ProjectedPoint xy = new ProjectedPoint(p, epsgCode, true, false);
+			ret = TransformCoordinates.ProjectedEpsgToWgs84(xy, epsgCode);
 		}
 		return ret;
 	}
