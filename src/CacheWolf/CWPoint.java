@@ -1,8 +1,8 @@
 package CacheWolf;
 
 import ewe.sys.Convert;
+import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.TrackPoint;
-import CacheWolf.navi.GkPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.navi.GeodeticCalculator;
 
@@ -326,11 +326,9 @@ public class CWPoint extends TrackPoint{
 	 * @param strNorthing Northing component
 	 */
 	public void set ( String strEasting, String strNorthing ){
-		GkPoint gk = new GkPoint(Common.parseDouble(strEasting), Common.parseDouble(strNorthing), GkPoint.GERMAN_GK);
-		
-		this. latDec = TransformCoordinates.germanGkToWgs84(gk).latDec;
-		this. lonDec = TransformCoordinates.germanGkToWgs84(gk).lonDec;
-		this.utmValid = false;
+		CWPoint pp = new CWPoint(Common.parseDouble(strEasting), Common.parseDouble(strNorthing));
+		ProjectedPoint gk = new ProjectedPoint(pp, ProjectedPoint.LOCALSYSTEM_DEFAULT, true, true);
+		set(TransformCoordinates.ProjectedToWgs84(gk, ProjectedPoint.LOCALSYSTEM_DEFAULT, true));
 	}
 
 	/**
@@ -484,7 +482,7 @@ public class CWPoint extends TrackPoint{
 	 * Get GK northing
 	 */
 	public String getGKNorthing(int decimalplaces){
-		double gkNorthing = TransformCoordinates.wgs84ToGermanGk(this).getNorthing();
+		double gkNorthing = TransformCoordinates.wgs84ToLocalsystem(this, ProjectedPoint.LOCALSYSTEM_DEFAULT).getNorthing();
 		
 		ewe.sys.Double n = new ewe.sys.Double();
 		n.set(gkNorthing);
@@ -496,7 +494,7 @@ public class CWPoint extends TrackPoint{
 	 * Get GK easting
 	 */
 	public String getGKEasting(int decimalplaces) {
-		double gkEasting = TransformCoordinates.wgs84ToGermanGk(this).getGkEasting(GkPoint.GERMAN_GK);
+		double gkEasting = TransformCoordinates.wgs84ToLocalsystem(this, ProjectedPoint.LOCALSYSTEM_DEFAULT).getEasting();
 		
 		ewe.sys.Double e = new ewe.sys.Double();
 		e.set(gkEasting);
@@ -505,12 +503,9 @@ public class CWPoint extends TrackPoint{
 	}
 	
 	public String getGermanGkCoordinates() {
-		return TransformCoordinates.wgs84ToGermanGk(this).toString(0, "R:", " H:", GkPoint.GERMAN_GK);
+		return TransformCoordinates.wgs84ToLocalsystem(this, ProjectedPoint.LOCALSYSTEM_DEFAULT).toString(0, "R:", " H:");
 	}
 
-	public String getGermanGkCoordinates(int decimalplaces, String pref, String seperator, int region) {
-		return TransformCoordinates.wgs84ToGermanGk(this).toString(decimalplaces, pref, seperator, region);
-	}
 	
 	/**
 	 * Method to calculate a projected waypoint

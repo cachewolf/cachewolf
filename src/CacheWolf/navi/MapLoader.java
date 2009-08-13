@@ -486,16 +486,18 @@ class WebMapService extends OnlineMapService {
 	 * @param maparea
 	 * @return [0] = topleft, [1] = buttomright, [2] = topright, [3] = buttomleft
 	 */
-	private GkPoint[] getGkArea(Area maparea) {
-		GkPoint[] ret = new GkPoint[4];
+	private ProjectedPoint[] getGkArea(Area maparea) {
+		ProjectedPoint[] ret = new ProjectedPoint[4];
 	//	CWPoint topright = new CWPoint(maparea.topleft.latDec, maparea.buttomright.lonDec);
 	//	CWPoint buttomleft = new CWPoint(maparea.buttomright.latDec, maparea.topleft.lonDec);
 		int crs = getCrs(maparea.getCenter());
-		int region = TransformCoordinates.getGkRegion(coordinateReferenceSystem[crs]);
-		ret[TOPLEFT_INDEX] = TransformCoordinates.wgs84ToGaussKrueger(maparea.topleft, coordinateReferenceSystem[crs]);
-		ret[BUTTOMRIGHT_INDEX] = TransformCoordinates.wgs84ToGaussKrueger(maparea.buttomright, coordinateReferenceSystem[crs]);
-		ret[TOPRIGHT_INDEX] = new GkPoint(ret[BUTTOMRIGHT_INDEX].getGkEasting(region), ret[TOPLEFT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth, ret[TOPLEFT_INDEX].lengthOfStripe0);
-		ret[BUTTOMLEFT_INDEX] = new GkPoint(ret[TOPLEFT_INDEX].getGkEasting(region), ret[BUTTOMRIGHT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth, ret[TOPLEFT_INDEX].lengthOfStripe0);
+		int region = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[crs]);
+		ret[TOPLEFT_INDEX] = TransformCoordinates.wgs84ToEpsg(maparea.topleft, coordinateReferenceSystem[crs]);
+		ret[BUTTOMRIGHT_INDEX] = TransformCoordinates.wgs84ToEpsg(maparea.buttomright, coordinateReferenceSystem[crs]);
+		ret[TOPRIGHT_INDEX] =  ret[BUTTOMRIGHT_INDEX].cloneIt();
+		ret[TOPRIGHT_INDEX].shift(ret[TOPLEFT_INDEX].getNorthing() - ret[BUTTOMRIGHT_INDEX].getNorthing(), 0); // was: new GkPoint(ret[BUTTOMRIGHT_INDEX].getEasting(region), ret[TOPLEFT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth, ret[TOPLEFT_INDEX].lengthOfStripe0);
+		ret[BUTTOMLEFT_INDEX] = ret[BUTTOMRIGHT_INDEX].cloneIt(); 
+		ret[BUTTOMLEFT_INDEX].shift(ret[TOPLEFT_INDEX].getEasting() - ret[BUTTOMRIGHT_INDEX].getEasting(), 1); // was: new GkPoint(ret[TOPLEFT_INDEX].getEasting(region), ret[BUTTOMRIGHT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth, ret[TOPLEFT_INDEX].lengthOfStripe0);
 		//Vm.debug("rot left direkt: " + TransformCoordinates.GkToWgs84(ret[TOPLEFT_INDEX], region).getBearing(TransformCoordinates.GkToWgs84(ret[BUTTOMLEFT_INDEX], region)));
 		//Vm.debug("rot right direkt: " + TransformCoordinates.GkToWgs84(ret[TOPRIGHT_INDEX], region).getBearing(TransformCoordinates.GkToWgs84(ret[BUTTOMRIGHT_INDEX], region)));
 		//ret[2] = TransformCoordinates.wgs84ToGermanGk(topright, coordinateReferenceSystem[crs]);
@@ -504,17 +506,18 @@ class WebMapService extends OnlineMapService {
 	}
 	public Area CenterScaleToArea(CWPoint center, float scale, Point pixelsize) {
 		Area bbox = new Area();
-		int region = TransformCoordinates.getGkRegion(coordinateReferenceSystem[0]);
+		int region = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[0]);
 		if (region > 0 ) {
-			GkPoint cgk = TransformCoordinates.wgs84ToGaussKrueger(center, coordinateReferenceSystem[getCrs(center)]);
-			GkPoint tlgk = new GkPoint(cgk);
+			int epsg = coordinateReferenceSystem[getCrs(center)];
+			ProjectedPoint cgk = TransformCoordinates.wgs84ToEpsg(center, epsg);
+			ProjectedPoint tlgk = cgk.cloneIt();
 			tlgk.shift(- pixelsize.x * scale / 2, 1);
 			tlgk.shift(pixelsize.y * scale / 2, 0);
-			GkPoint brgk = new GkPoint(cgk);
+			ProjectedPoint brgk = cgk.cloneIt();
 			brgk.shift(pixelsize.x * scale / 2, 1);
 			brgk.shift(-pixelsize.y * scale / 2, 0);
-			bbox.topleft = TransformCoordinates.GkToWgs84(tlgk, region);
-			bbox.buttomright = TransformCoordinates.GkToWgs84(brgk, region);
+			bbox.topleft = TransformCoordinates.ProjectedEpsgToWgs84(tlgk, epsg); // old: (tlgk, region);
+			bbox.buttomright = TransformCoordinates.ProjectedEpsgToWgs84(brgk, epsg); // TransformCoordinates.GkToWgs84(brgk, region);
 		} else {
 			switch (coordinateReferenceSystem[0]) {
 			case TransformCoordinates.EPSG_ETRS89:
@@ -543,14 +546,14 @@ class WebMapService extends OnlineMapService {
 		if ( scale < minscaleWMS || scale > maxscaleWMS ) throw new IllegalArgumentException(MyLocale.getMsg(4825, "scale")+" " + scale / Math.sqrt(2)+ MyLocale.getMsg(4826, " not supported by online map service, supported scale range:")+" " + minscale + " - " + maxscale + MyLocale.getMsg(4827, " (measured in meters per pixel vertically)"));
 		int crs = 0;
 		String bbox = "BBOX=";
-		int region = TransformCoordinates.getGkRegion(coordinateReferenceSystem[0]); 
-		if (region > 0) {
+		int localsystem = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[0]); 
+		if (localsystem > 0) {
 			crs = getCrs(maparea.getCenter());
-			GkPoint[] gk = getGkArea(maparea);
-			buttomleft = TransformCoordinates.GkToWgs84(gk[BUTTOMLEFT_INDEX], region);
-			topright = TransformCoordinates.GkToWgs84(gk[TOPRIGHT_INDEX], region);
-			bbox += TransformCoordinates.wgs84ToGaussKrueger(buttomleft, coordinateReferenceSystem[crs]).toString(2, "", ",", region);
-			bbox += "," + TransformCoordinates.wgs84ToGaussKrueger(topright, coordinateReferenceSystem[crs]).toString(2, "", ",", region);
+			ProjectedPoint[] gk = getGkArea(maparea);
+			buttomleft = TransformCoordinates.ProjectedEpsgToWgs84(gk[BUTTOMLEFT_INDEX], coordinateReferenceSystem[crs]);
+			topright = TransformCoordinates.ProjectedEpsgToWgs84(gk[TOPRIGHT_INDEX], coordinateReferenceSystem[crs]);
+			bbox += TransformCoordinates.wgs84ToEpsg(buttomleft, coordinateReferenceSystem[crs]).toString(2, "", ",");
+			bbox += "," + TransformCoordinates.wgs84ToEpsg(topright, coordinateReferenceSystem[crs]).toString(2, "", ",");
 		} else if (coordinateReferenceSystem[0] == TransformCoordinates.EPSG_WGS84) 
 			bbox += buttomleft.toString(CWPoint.LON_LAT)  + "," + topright.toString(CWPoint.LON_LAT);
 		else throw new IllegalArgumentException(MyLocale.getMsg(4828, "Coordinate system not supported by cachewolf:")+" " + coordinateReferenceSystem.toString());
@@ -563,22 +566,32 @@ class WebMapService extends OnlineMapService {
 	}
 
 	/**
-	 * This method gives the number in the arrays of coordinateReferenceSystems, which should be used
+	 * This method gives the number in the array of coordinateReferenceSystems, which should be used
 	 * a) if only one is in the array 0 is returned
-	 * b) if there are more, find out which one matches the correct Gauß-Küger stripe
+	 * b) if there are more, find out which one matches the correct zone (e.g. Gauß-Küger stripe)
 	 * Call this routine with center of the area (use Area.getcenter()) 
 	 * @param p Point for which the epsg code is searched for
 	 * @return
 	 */
 	private int getCrs(TrackPoint p) {
-		int crs = 0;
+		int crsindex = 0;
 		if (coordinateReferenceSystem.length > 1) {
-			int region = TransformCoordinates.getGkRegion(coordinateReferenceSystem[0]);
-			GkPoint gkbl = TransformCoordinates.wgs84ToGk(p, region); // TODO: think / read about what to do if buttom left and top right ae not in the same Gauß-Krüger stripe?
-			crs = TransformCoordinates.whichEpsg(coordinateReferenceSystem, gkbl);
-			if (crs < 0) throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:")+" " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gauß-Krüger-Stripe in the EPSG-code list in the .wms"));
+			int ls = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[0]);
+			ProjectedPoint gkbl = TransformCoordinates.wgs84ToLocalsystem(p, ls); // TODO: think / read about what to do if buttom left and top right are not in the same Gauß-Krüger stripe?
+			int wantepsg = gkbl.getEpsgCode();
+			for (crsindex = 0; crsindex < coordinateReferenceSystem.length; crsindex++) {
+				if (coordinateReferenceSystem[crsindex] == wantepsg) break; 
+			}
+			if (crsindex >= coordinateReferenceSystem.length) { // not match
+				for (crsindex = 0; crsindex < coordinateReferenceSystem.length; crsindex++) {
+					if (Math.abs(coordinateReferenceSystem[crsindex] - wantepsg) == 1) break; // accept 1 zone deviation 
+				}
+				if (crsindex >= coordinateReferenceSystem.length) crsindex = -1;
+				
+			}
+			if (crsindex < 0) throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:")+" " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gauß-Krüger-Stripe in the EPSG-code list in the .wms"));
 		}
-		return crs;
+		return crsindex;
 	}
 
 	protected MapInfoObject getMapInfoObjectInternal(Area maparea, Point pixelsize) {
@@ -592,9 +605,9 @@ class WebMapService extends OnlineMapService {
 		CWPoint buttomright = new CWPoint(maparea.buttomright);
 		double metersperpixalhorizontal = ( buttomright.getDistance(buttomleft) + topleft.getDistance(topright))/2 * 1000 / pixelsize.x; 
 		double metersperpixalvertical = ( buttomright.getDistance(topright) + topleft.getDistance(buttomleft))/2 * 1000 / pixelsize.y;
-		int region = TransformCoordinates.getGkRegion(coordinateReferenceSystem[0]); 
+		int region = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[0]); 
 		if ( region > 0) {
-			GkPoint[] gk = getGkArea(maparea);
+			ProjectedPoint[] gk = getGkArea(maparea);
 			// bounding box in WMS is defined around the pixels, not exactly on the pixels --> the bounding box must be reduced on all edges by half a pixel
 			gk[TOPLEFT_INDEX].shift(metersperpixalhorizontal / 2, 1);
 			gk[TOPLEFT_INDEX].shift(-metersperpixalvertical / 2, 0);
@@ -607,10 +620,10 @@ class WebMapService extends OnlineMapService {
 
 			Vm.debug("\n" + maparea.topleft.toString(CWPoint.LAT_LON));
 			//Vm.debug(TransformCoordinates.germanGkToWgs84(TransformCoordinates.wgs84ToGermanGk(maparea.topleft)).toString(CWPoint.LAT_LON));
-			topleft.set(gk[TOPLEFT_INDEX].northing, gk[TOPLEFT_INDEX].getGkEasting(region));
-			buttomright.set(gk[BUTTOMRIGHT_INDEX].northing, gk[BUTTOMRIGHT_INDEX].getGkEasting(region));
-			topright.set(gk[TOPRIGHT_INDEX].northing, gk[TOPRIGHT_INDEX].getGkEasting(region));
-			buttomleft.set(gk[BUTTOMLEFT_INDEX].northing, gk[BUTTOMLEFT_INDEX].getGkEasting(region));
+			topleft.set(gk[TOPLEFT_INDEX].getNorthing(), gk[TOPLEFT_INDEX].getEasting());
+			buttomright.set(gk[BUTTOMRIGHT_INDEX].getNorthing(), gk[BUTTOMRIGHT_INDEX].getEasting());
+			topright.set(gk[TOPRIGHT_INDEX].getNorthing(), gk[TOPRIGHT_INDEX].getEasting());
+			buttomleft.set(gk[BUTTOMLEFT_INDEX].getNorthing(), gk[BUTTOMLEFT_INDEX].getEasting());
 		} else if (coordinateReferenceSystem[0] == TransformCoordinates.EPSG_WGS84) {
 			// bounding box in WMS is defined around the pixels, not exactly on the pixels --> the bounding box must be reduced on all edges by half a pixel
 			topleft.shift(metersperpixalhorizontal / 2, 1);
