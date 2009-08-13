@@ -33,66 +33,74 @@ Name:	de.nrw Luftbild
 # taken from getCapabilieties answer: <HTTP><GET><OnlineResource xlink:href=
 # note: if it doesn't work, please try adding an "?" to the URL got from there
 MainUrl:	http://www.gis2.nrw.de/wmsconnector/wms/luftbild? 
-# if this service delivers topografical maps, fill in here "topo"
+# if this service delivers topografic maps, fill in here "topo"
 # if it delivers aerial photographs fill in "photo".
 # Please use only lower case letters and no special characters
 # in order to avoid problems using this file on different platforms
 # CacheWolf will store all maps of the same Type in the same 
 # directory.
 MapType: photo
-# this is fix, dont change it
+# this is fix, don't change it
 ServiceTypeUrlPart:	SERVICE=WMS 
 # taken from the getCapabilities request: <WMT_MS_Capabilities version=
 VersionUrlPart:	VERSION=1.1.0 
-# The EPSG-Code, supported by cachewolf: german gauß-krüger (31466, 31467, 31468, 
-# 31469), italian Gauß-Boaga (3003 and 3004) and WGS84 (4326)
+# The EPSG-Code, supported by cachewolf: German Gauß-Krüger (31466, 31467, 31468, 
+# 31469), Italian Gauß-Boaga (3003 and 3004), Austrian Lambert old (31287) and
+# new (31287) and WGS84 (4326)
 # You get a list of supported coordinate systems from the WMS in the getCapabilieties 
 # answer under <Layer><SRS> or <CRS>
-# Plases feel free to ask for another coordinate system to be supported by cachewolf 
+# Please feel free to ask for another coordinate system to be supported by cachewolf 
 # if you need it
-# In case the wms server accepts coordinates in more than one Gauß-Krüger stripe
-# you can list the epsg codes here, seperated by a space. CacheWolf will
-# automatically make use of the correct stripe. 
-# The sequens of strings in the UrlPart must match sequence of the corresponding numbers here.
+# Many servers say they support several EPSG codes. My experience is
+# that usually the projection which was used for the scanned analog material
+# offer the best calibration and image quality. That's why you should test 
+# the calibration especially when using epsg:4326 (WGS84) [there is no printed
+# map in that format].
+# In countries which cover a big area of the world (like Germany, unlike Austria)
+# we have zones (or stripes) which each has its own epsg code. But they all
+# belong to the same local system. In this case
+# put all the EPSG codes which (a) belong to the same local system and 
+# which (b) are supported by the server here, separated by a space. 
+# CacheWolf will automatically make use of the correct zone and according epsg code. 
+# The sequence of strings in the UrlPart must match sequence of the corresponding numbers here.
 # Sometimes the wms-Server provides only one stripe, in spite of the fact, that
 # the map it provides is not completely within this stripe. In this case
 # just list only this epsg code. CacheWolf will automatically calculate the
-# Gauß-Krüger coordinates for that stripe.
-# The automatic for the stripe selection only works if a german EPSG code
-# is the first one in the space seperated list
+# local system for that zone (e.g. Gauß-Krüger coordinates for that stripe).
 # remark: some WMS offer WGS84 (EPSG 4326), but they are sometimes working not
 # correctly (for example the WMS of the Landesvermessungsamt NRW as of nov. 2007)
 # In this case don't list it.
+# don't mix different local systems.
 CoordinateReferenceSystemCacheWolf:	31466 31467
 # this usually will match the number above
 CoordinateReferenceSystemUrlPart:	SRS=EPSG:31466 SRS=EPSG:31467
-# Post not supported by Cachewolf --> dont change this
+# Post not supported by Cachewolf --> don't change this
 RequestUrlPart:	REQUEST=GetMap
-# comma seperated (without spaces) list of layers to combine
+# comma separated (without spaces) list of layers to combine
 # all of supported layers you get from the getCapabilities request <Layer><Name>
 # these names are to be used. Special characters must be URL-encode
 LayersUrlPart:	LAYERS=Orthophoto%20Str.%202,Orthophoto%20Str.%203
 # if the WMS supports different rendering styles, select the one you need here
-# comma seperated (without spaces) list of style commands for map rendering (do not delete this item even if it is empty
+# comma separated (without spaces) list of style commands for map rendering (do not delete this item even if it is empty
 StylesUrlPart:	STYLES=
-# format, dont forget to set ImageFileExtension accordingly
+# format, don't forget to set ImageFileExtension accordingly
 # you get a list of supported image formats from getCapabilieties answer: <GetMap><Format>
 ImageFormatUrlPart:	FORMAT=image/png
 # Limits of the service in WGS84 coordinates. 
 # You can use any format here, which is accepted by the input coordinates dialog in cachewolf
-# remark: more than 8 digits after the decimal seperator will cause the
+# remark: more than 8 digits after the decimal separator will cause the
 # program to not recognize it
-# taken from getCapabilieties answer: <BoundingBox SRS="EPSG:4326", dont forget to add "N"/"S" and "E"/"W"
+# taken from getCapabilieties answer: <BoundingBox SRS="EPSG:4326", don't forget to add "N"/"S" and "E"/"W"
 BoundingBoxTopLeftWGS84:	N 52.7691 E 5.673
 BoundingBoxButtomRightWGS84:	N 49.9944 E 10.142
 # scale range that the service supports in meters per pixel (measured diagonal)
-# Please don't wonder that they do mot match the scale given in
+# Please don't wonder that they do not match the scale given in
 # the map download dialog as that scale is measured vertically 
-# (multiply it ba sqrt(2) and you get the scale used here
+# (multiply it by sqrt(2)=1.41 and you get the scale used here
 # taken from the getCapabilities request "<Layer><ScaleHint min="
 MinScale:	0.17957836
 MaxScale:	5.61182372
-# Plaes recommend a scale for this WMS. This scale will appear in the
+# Please recommend a scale for this WMS. This scale will appear in the
 # map download dialog as default. Scale is measured in meters per pixel
 # vertical, so, multiply it by 1.41 (=sqrt(2)) to get the scale as measured
 # above in MinScale and MaxScale
