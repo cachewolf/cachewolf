@@ -442,17 +442,21 @@ public class Profile {
 	public void setAddiRef(CacheHolder ch) {
 		String mainwpt = ch.getWayPoint().substring(2);
 		int mainindex = getCacheIndex("GC" + mainwpt);
-		if (mainindex < 0)
+		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
 			mainindex = getCacheIndex("OC" + mainwpt);
-		if (mainindex < 0)
+		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
 			mainindex = getCacheIndex("CW" + mainwpt);
-		if (mainindex < 0) {
+		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()) {
 			ch.setIncomplete(true);
 		} else {
 			CacheHolder mainch = cacheDB.get(mainindex);
-			mainch.addiWpts.add(ch);
-			ch.mainCache = mainch;
-			ch.setAttributesFromMainCache();
+			if (mainch.getWayPoint().equals(ch.getWayPoint())) {
+				ch.setIncomplete(true);
+			} else {
+				mainch.addiWpts.add(ch);
+				ch.mainCache = mainch;
+				ch.setAttributesFromMainCache();
+			}
 		}
 	}
 
