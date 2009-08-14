@@ -4,9 +4,16 @@ import CacheWolf.navi.GotoPanel;
 import CacheWolf.navi.MapImage;
 import CacheWolf.navi.MovingMap;
 import CacheWolf.navi.Navigate;
-import ewe.sys.Vm;
-import ewe.ui.*;
-import ewe.fx.*;
+import ewe.fx.Color;
+import ewe.fx.Image;
+import ewe.fx.mImage;
+import ewe.ui.Card;
+import ewe.ui.Event;
+import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
+import ewe.ui.MultiPanelEvent;
+import ewe.ui.TableEvent;
+import ewe.ui.mTabbedPanel;
 
 /**
  *	This class creates the tabbed panel and sets the tabs to the respective
@@ -294,7 +301,11 @@ public class MainTab extends mTabbedPanel {
 		if (selectedIndex >= 0) {
 			CacheHolder selectedCache = profile.cacheDB.get( selectedIndex );
 			if ( selectedCache.isAddiWpt() ) {
-				mainCache = selectedCache.mainCache.getWayPoint();
+				if (selectedCache.mainCache != null) {
+					mainCache = selectedCache.mainCache.getWayPoint();
+				} else {
+					mainCache = null;
+				}
 			}			
 		}
 		if (CacheType.isAddiWpt(pCh.getType()) && mainCache!=null && mainCache.length()>2) {
@@ -302,10 +313,6 @@ public class MainTab extends mTabbedPanel {
 			profile.setAddiRef(pCh);
 		} else { 
 			pCh.setWayPoint(profile.getNewWayPointName());
-			pCh.setType(CacheType.CW_TYPE_CUSTOM);
-			pCh.setHard(CacheTerrDiff.CW_DT_UNSET);
-			pCh.setTerrain(CacheTerrDiff.CW_DT_UNSET);
-			pCh.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 			lastselected=pCh.getWayPoint();
 		}
 		pCh.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);

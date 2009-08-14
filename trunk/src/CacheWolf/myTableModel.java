@@ -1,10 +1,19 @@
 package CacheWolf;
 
-import ewe.ui.*;
-import ewe.sys.*;
-import ewe.util.*;
-import ewe.fx.*;
-
+import ewe.fx.Color;
+import ewe.fx.FontMetrics;
+import ewe.fx.IconAndText;
+import ewe.fx.Image;
+import ewe.fx.Point;
+import ewe.fx.mImage;
+import ewe.sys.Convert;
+import ewe.sys.Time;
+import ewe.sys.Vm;
+import ewe.ui.CellConstants;
+import ewe.ui.IKeys;
+import ewe.ui.TableCellAttributes;
+import ewe.ui.TableModel;
+import ewe.util.Vector;
 
 /**
 *	Table model used to display the cache list.
@@ -161,6 +170,9 @@ public class myTableModel extends TableModel{
 						if (! ch.mainCache.isVisible())
 							sortDB.add(ch); // Unfiltered Addi Wpt with filtered Main Wpt, show it on its own
 						// else Main cache is not filtered, Addi will be added below main cache further down
+						else
+							//FIXME: is there anything useful we can do about this?
+							Global.getPref().log("Huston, we have a problem with "+ch.getWayPoint()+" in myTableModel.updateRows()");
 					} else { //Addi without main Cache
 						sortDB.add(ch);
 					}

@@ -420,10 +420,11 @@ public class DetailsPanel extends CellPanel {
 	 */
 	public void createWptName() {
 		String wpt = inpWaypoint.getText().toUpperCase();
-		if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) && 
-				(Global.mainTab.mainCache.startsWith("GC") || 
-					Global.mainTab.mainCache.startsWith("OC") || 
-					Global.mainTab.mainCache.startsWith("CW")) 
+		if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) 
+				&& Global.mainTab.mainCache != null 
+				&& (Global.mainTab.mainCache.startsWith("GC") 
+						|| Global.mainTab.mainCache.startsWith("OC") 
+						|| Global.mainTab.mainCache.startsWith("CW")) 
 				&& wpt.startsWith("CW")) {
 			// for what was this?:
 			Global.mainTab.lastselected = Global.mainTab.mainCache; // I don't know exactly, but it's needed for creating a series of Addis
@@ -743,6 +744,7 @@ public class DetailsPanel extends CellPanel {
 						.isAddiWpt(oldType)) && !thisCache.getWayPoint()
 						.equals(oldWaypoint))) {
 			// If we changed the type to addi, check that a parent exists
+			//FIXME: if cache was renamed we need to rebuild CacheDB.hashDB first
 			if (CacheType.isAddiWpt(thisCache.getType())) {
 				profile.setAddiRef(thisCache);
 			} else {
