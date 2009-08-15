@@ -24,10 +24,18 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package CacheWolf;
+package CacheWolf.imp;
 
 //TODO: move to CacheWOlf.imp
 
+import CacheWolf.CacheDB;
+import CacheWolf.CacheHolder;
+import CacheWolf.CacheSize;
+import CacheWolf.CacheTerrDiff;
+import CacheWolf.CacheType;
+import CacheWolf.Common;
+import CacheWolf.Preferences;
+import CacheWolf.Profile;
 import ewe.sys.Vm;
 import ewe.io.*;
 import ewesoft.xml.MinML;
