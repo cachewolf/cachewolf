@@ -1,6 +1,7 @@
 package CacheWolf;
 
 import CacheWolf.imp.GPXImporter;
+import CacheWolf.imp.LOCXMLImporter;
 import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.imp.OCXMLImporterScreen;
 import CacheWolf.imp.Rating;
@@ -11,7 +12,6 @@ import CacheWolf.navi.SelectMap;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Font;
-import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.IOException;
 import ewe.sys.Vm;
@@ -348,6 +348,8 @@ public class MainMenu extends MenuBar {
 							else how = GPXImporter.DOIT_NOSPOILER;
 					}
 					 */
+					
+					int how = GPXImporter.DOIT_ASK;
 					for (int i = 0; i < files.length; i++){ 
 						String file = dir + "/" + files[i];
 						if (file.endsWith("loc")){
@@ -356,7 +358,8 @@ public class MainMenu extends MenuBar {
 						}
 						else {
 							GPXImporter gpx = new GPXImporter(pref, profile, file);
-							gpx.doIt(0);
+							gpx.doIt(how);
+							how = gpx.getHow();
 						}
 					}
 				}
