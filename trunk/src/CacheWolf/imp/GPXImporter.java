@@ -59,6 +59,7 @@ public class GPXImporter extends MinML {
 	boolean getMaps = false;
 	SpiderGC imgSpider;
 	StringBuffer strBuf;
+	private int doitHow;
 	
 	public GPXImporter(Preferences p, Profile prof, String f )
 	{
@@ -73,6 +74,7 @@ public class GPXImporter extends MinML {
 		inCache = false;
 		inLogs = false;
 		inBug = false;
+		doitHow = DOIT_ASK;
 	}
 /*	skg: This Constructor is not referenced, therefore commented out 
 	public GPXImporter(Vector DB, String[] f,String d, Preferences p)
@@ -99,25 +101,29 @@ public class GPXImporter extends MinML {
 	}
 */	
 	public void doIt(int how){
+		doitHow = how;
 		Filter flt = new Filter();
 		boolean wasFiltered = (profile.getFilterActive()==Filter.FILTER_ACTIVE);
 		flt.clearFilter();
 		try{
 			ewe.io.Reader r;
 			String file;
-			
-			OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
-			if (options.execute() == FormBase.IDCANCEL) {	return; }
-			//String dist = options.distanceInput.getText();
-			//if (dist.length()== 0) return;
-			//getMaps = options.mapsCheckBox.getState();
-			boolean getImages = options.imagesCheckBox.getState();
-			doSpider = false;
-			if(getImages){
+			if (how == DOIT_ASK) {
+				OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC);
+				if (options.execute() == FormBase.IDCANCEL) { return; }
+				doSpider = options.imagesCheckBox.getState();
+				options.close(0);
+			} else if (how == DOIT_NOSPOILER) {
+				doSpider = false;
+			} else {
 				doSpider = true;
-				imgSpider = new SpiderGC(pref, profile, false);
 			}
-			options.close(0);
+			if (doSpider) {
+				imgSpider = new SpiderGC(pref, profile, false);
+				doitHow = DOIT_WITHSPOILER;
+			} else {
+				doitHow = DOIT_NOSPOILER;
+			}
 			
 			//Vm.debug("State of: " + doSpider);
 			Vm.showWait(true);
@@ -596,5 +602,9 @@ public class GPXImporter extends MinML {
 			return sb.toString();
 		}
 		else return "";
+	}
+	
+	public int getHow() {
+		return doitHow;
 	}
 }
