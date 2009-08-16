@@ -233,7 +233,7 @@ public final class TransformCoordinates {
 		XyzCoordinates xyztarget = transform(xyzWgs, transparams.inverted);
 		CWPoint tll = xyz2Latlon(xyztarget, transparams.ellip);
 		ProjectedPoint ret = new ProjectedPoint(tll, epsg_localsystem, false, isLocalsystem);
-		Vm.debug("wgs84: " + wgs84.latDec + " lon: " + wgs84.lonDec + ", Projected: " + ret.toString());
+		//Vm.debug("wgs84: " + wgs84.latDec + " lon: " + wgs84.lonDec + ", Projected: " + ret.toString());
 		return ret;
 	}
 
