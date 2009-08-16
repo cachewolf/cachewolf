@@ -2,6 +2,7 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
+import CacheWolf.Global;
 import CacheWolf.HttpConnection;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
@@ -561,7 +562,7 @@ class WebMapService extends OnlineMapService {
 		coordinateReferenceSystemUrlPart[crs] + "&" + bbox + 
 		"&WIDTH=" + pixelsize.x + "&HEIGHT=" + pixelsize.y + "&" + 
 		layersUrlPart + "&" + stylesUrlPart + "&" + imageFormatUrlPart;
-		Vm.debug(ret);
+		Global.getPref().log(ret + " WGS84: Buttom left: " + buttomleft.toString(CWPoint.DD) + "top right: " + topright.toString(CWPoint.DD));
 		return ret;
 	}
 
@@ -618,7 +619,7 @@ class WebMapService extends OnlineMapService {
 			gk[BUTTOMLEFT_INDEX].shift(metersperpixalhorizontal / 2, 1);
 			gk[BUTTOMLEFT_INDEX].shift(metersperpixalvertical / 2, 0);
 
-			Vm.debug("\n" + maparea.topleft.toString(CWPoint.LAT_LON));
+			//Vm.debug("\n" + maparea.topleft.toString(CWPoint.LAT_LON));
 			//Vm.debug(TransformCoordinates.germanGkToWgs84(TransformCoordinates.wgs84ToGermanGk(maparea.topleft)).toString(CWPoint.LAT_LON));
 			topleft.set(gk[TOPLEFT_INDEX].getNorthing(), gk[TOPLEFT_INDEX].getEasting());
 			buttomright.set(gk[BUTTOMRIGHT_INDEX].getNorthing(), gk[BUTTOMRIGHT_INDEX].getEasting());
