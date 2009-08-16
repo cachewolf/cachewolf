@@ -191,11 +191,22 @@ public final class CacheType {
 	/** GPX identifier for additional waypoint Adventure Maze Exhibit Events */
 	public static final String GC_GPX_MAZE = "GPS Adventures Exhibit"; 
 	/** GPX identifier for additional waypoint Project Ape caches */
-	public static final String GC_GPX_APE = "Project APE Cache"; 
-	
-	/**  constructor does nothing */
-	private CacheType() { // no instantiation needed
+	public static final String GC_GPX_APE = "Project APE Cache";
+	/** reference to singleton CacheType object */
+	private static CacheType ref;
 
+	/** thou shallst not instantiate this object */
+	private CacheType() { }
+	
+	/**
+	 * give a singleton reference to this object to whoever needs one. create one, if not done so already.
+	 * @return reference to CacheType object
+	 */
+	public static synchronized CacheType getCacheType() {
+		if (ref == null) {
+			ref = new CacheType();
+		}
+		return ref;
 	}
 	
 	/**
@@ -204,7 +215,7 @@ public final class CacheType {
 	 * @return abbreviation of cache type
 	 * @throws IllegalArgumentException if <code>type</code> can not be mapped
 	 */
-	public static String getExportShortId(byte type) throws IllegalArgumentException {
+	public static String getExportShortId(final byte type) throws IllegalArgumentException {
 		switch (type){
 		case CW_TYPE_CUSTOM: return "C";
 		case CW_TYPE_TRADITIONAL: return "T";
@@ -238,7 +249,7 @@ public final class CacheType {
 	 * @throws IllegalArgumentException if <code>size</code> can not be mapped to internal representation
 	 * @deprecated remove once v1 file version compatibility is abandoned
 	 */
-	public static final byte v1Converter(String type) throws IllegalArgumentException  {
+	public static byte v1Converter(final String type) throws IllegalArgumentException  {
 		if (type.equals("0")) return CW_TYPE_CUSTOM;
 		if (type.equals("2")) return CW_TYPE_TRADITIONAL;
 		if (type.equals("3")) return CW_TYPE_MULTI;
@@ -269,7 +280,7 @@ public final class CacheType {
 	 * @throws IllegalArgumentException if <code>size</code> can not be mapped to internal representation
 	 * @deprecated remove once v2 file version compatibility is abandoned
 	 */
-	public static final byte v2Converter(byte type) throws IllegalArgumentException  {
+	public static byte v2Converter(final byte type) throws IllegalArgumentException  {
 		switch (type) {
 		case -128: return CW_TYPE_CUSTOM;
 		case -126: return CW_TYPE_TRADITIONAL;
@@ -303,7 +314,7 @@ public final class CacheType {
 	 * @param type waypoint type to check 
 	 * @return true if it is an additional waypint, false otherwise
 	 */
-	public static final boolean isAddiWpt(byte type) {
+	public static boolean isAddiWpt(final byte type) {
 		switch (type) {
 		case CW_TYPE_PARKING: // fall through
 		case CW_TYPE_STAGE: // fall through
@@ -316,7 +327,7 @@ public final class CacheType {
 		
 	}
 	
-	public static final boolean isCacheWpt(byte type) {
+	public static boolean isCacheWpt(final byte type) {
 		switch (type) {
 		case CW_TYPE_TRADITIONAL: // fall through
 		case CW_TYPE_MULTI: // fall through
@@ -339,11 +350,8 @@ public final class CacheType {
 		}
 	}
 	
-	public static final boolean isCustomWpt(byte type) {
-		if (type == CW_TYPE_CUSTOM)
-			return true;
-		else
-			return false;
+	public static boolean isCustomWpt(final byte type) {
+		return type == CW_TYPE_CUSTOM;
 	}
 	
 	/**
@@ -353,8 +361,8 @@ public final class CacheType {
 	 * @see cw2GuiSelect
 	 */
 	//TODO: move to a class "closer" to the gui?
-	public static final String[] guiTypeStrings() {
-		String ret[] = new String[] {
+	public static String[] guiTypeStrings() {
+		return new String[] {
 				CW_GUISTR_CUSTOM,
 				CW_GUISTR_TRADI,
 				CW_GUISTR_MULTI,
@@ -375,7 +383,6 @@ public final class CacheType {
 				CW_GUISTR_TRAILHEAD,
 				CW_GUISTR_REFERENCE
 			};
-		return ret;
 	}
 	
 	/**
@@ -387,7 +394,7 @@ public final class CacheType {
 	 * @see cw2GuiSelect
 	 */
 	//TODO: move to a class "closer" to the gui?
-	public static final byte guiSelect2Cw(int selection) throws IllegalArgumentException {
+	public static byte guiSelect2Cw(final int selection) throws IllegalArgumentException {
 		// make sure to reflect the order of guiTypeStrings()
 		switch (selection) {
 		case  0: return CW_TYPE_CUSTOM;
@@ -415,15 +422,15 @@ public final class CacheType {
 	
 	/**
 	 * translate cache type to position of index to highlight in GUI cache type drop down list 
-	 * @param id internal id of cache type
+	 * @param typeId internal id of cache type
 	 * @return index of the cache type in GUI list
 	 * @throws IllegalArgumentException if <code>id</code> can not be matched
 	 * @see guiTypeStrings
 	 * @see guiSelect2Cw
 	 */
 	//TODO: move to a class "closer" to the gui?
-	public static final int cw2GuiSelect(byte id) throws IllegalArgumentException {
-		switch (id) {
+	public static int cw2GuiSelect(final byte typeId) throws IllegalArgumentException {
+		switch (typeId) {
 		case CW_TYPE_CUSTOM: return 0;
 		case CW_TYPE_TRADITIONAL: return 1;
 		case CW_TYPE_MULTI: return 2;
@@ -443,7 +450,7 @@ public final class CacheType {
 		case CW_TYPE_FINAL: return 16;
 		case CW_TYPE_TRAILHEAD: return 17;
 		case CW_TYPE_REFERENCE: return 18;
-		default: throw new IllegalArgumentException("unmatched argument "+id+" in CacheSize cw2GuiSelect()");
+		default: throw new IllegalArgumentException("unmatched argument "+typeId+" in CacheSize cw2GuiSelect()");
 		}
 	}
 	
@@ -452,7 +459,7 @@ public final class CacheType {
 	 * @param gpxType type information found in GPX
 	 * @return internal cache type
 	 */
-	public static final byte gpxType2CwType(String gpxType) throws IllegalArgumentException {
+	public static byte gpxType2CwType(final String gpxType) throws IllegalArgumentException {
 		if (gpxType.equals(GC_GPX_TRADITIONAL) || gpxType.equals("Traditional")|| gpxType.equals("Classic")) return CW_TYPE_TRADITIONAL;
 		if (gpxType.equals(GC_GPX_MULTI) || gpxType.equals("Multi") || gpxType.equals("Offset")) return CW_TYPE_MULTI;
 		if (gpxType.equals(GC_GPX_VIRTUAL) || gpxType.equals("Virtual")) return CW_TYPE_VIRTUAL;
@@ -482,7 +489,7 @@ public final class CacheType {
 	 * @return internal cache type
 	 * @throws IllegalArgumentException if <code>ocType</code> can not be matched
 	 */
-	public static final byte ocType2CwType(String ocType) throws IllegalArgumentException {
+	public static byte ocType2CwType(final String ocType) throws IllegalArgumentException {
 		if(ocType.equals("1")) return CW_TYPE_UNKNOWN;
 		if(ocType.equals("2")) return CW_TYPE_TRADITIONAL;
 		if(ocType.equals("3")) return CW_TYPE_MULTI;	
@@ -502,7 +509,7 @@ public final class CacheType {
 	 * @return internal representation of cache type
 	 * @throws IllegalArgumentException if <code>gcType</code> can not be matched
 	 */
-	public static final byte gcSpider2CwType(String gcType) throws IllegalArgumentException {
+	public static byte gcSpider2CwType(final String gcType) throws IllegalArgumentException {
 		if (gcType.equals("2")) { return CW_TYPE_TRADITIONAL; }
 		if (gcType.equals("3")) { return CW_TYPE_MULTI; }
 		if (gcType.equals("4")) { return CW_TYPE_VIRTUAL; }
@@ -522,12 +529,12 @@ public final class CacheType {
 	
 	/**
 	 * map cache types to images
-	 * @param id internal cache type id
+	 * @param typeId internal cache type id
 	 * @return non qualified name of image
 	 * @throws IllegalArgumentException if <code>id</code> can not be matched
 	 */
-	public static final String typeImageForId(byte id) throws IllegalArgumentException {
-		switch (id) {
+	public static String typeImageForId(final byte typeId) throws IllegalArgumentException {
+		switch (typeId) {
 		case CW_TYPE_CUSTOM: return "CW_GUIIMG_CUSTOM";
 		case CW_TYPE_TRADITIONAL: return CW_GUIIMG_TRADITIONAL;
 		case CW_TYPE_MULTI: return CW_GUIIMG_MULTI;
@@ -549,18 +556,18 @@ public final class CacheType {
 		case CW_TYPE_REFERENCE: return CW_GUIIMG_REFERENCE;
 		case CW_TYPE_APE: return CW_GUIIMG_APE;
 		case CW_TYPE_MAZE: return CW_GUIIMG_MAZE;
-		default: throw new IllegalArgumentException("unmatched argument "+id+" in CacheSize typeImageForId()");
+		default: throw new IllegalArgumentException("unmatched argument "+typeId+" in CacheSize typeImageForId()");
 		}
 	}
 	
 	/**
 	 * generate type description matching those of GC for GPX export
-	 * @param id internal type id
+	 * @param typeId internal type id
 	 * @return type information in GC.com GPX format 
 	 * @throws IllegalArgumentException
 	 */
-	public static final String id2GpxString(byte id) throws IllegalArgumentException {
-		switch (id) {
+	public static String id2GpxString(final byte typeId) throws IllegalArgumentException {
+		switch (typeId) {
 		case CW_TYPE_TRADITIONAL: return GC_GPX_TRADITIONAL;
 		case CW_TYPE_MULTI: return GC_GPX_MULTI;
 		case CW_TYPE_VIRTUAL: return GC_GPX_VIRTUAL;
@@ -582,23 +589,23 @@ public final class CacheType {
 		case CW_TYPE_MAZE: return GC_GPX_MAZE;
 		case CW_TYPE_APE: return GC_GPX_APE;
 		case CW_TYPE_CUSTOM: return CW_GUISTR_CUSTOM;
-		default: throw new IllegalArgumentException("unmatched argument "+id+" in CacheSize id2GpxString()");
+		default: throw new IllegalArgumentException("unmatched argument "+typeId+" in CacheSize id2GpxString()");
 		}
 	}
 	
 	//TODO: do we actually need this one?
 	/**
 	 * generate human readable type description for exporters
-	 * @param id internal type id
+	 * @param typeId internal type id
 	 * @return human readable description of waypoint type for exporters  
 	 * @throws IllegalArgumentException if <code>id</code> is not a valid cache type
 	 */
-	public static final String cw2ExportString(byte id) throws IllegalArgumentException {
+	public static String cw2ExportString(final byte typeId) throws IllegalArgumentException {
 		String ret;
 		try {
-			ret = id2GpxString(id);
+			ret = id2GpxString(typeId);
 			// check for | in additional waypoints and only use the string after |
-			int pipePosistion = ret.indexOf("|");
+			final int pipePosistion = ret.indexOf('|');
 			if (pipePosistion > -1) {
 				ret = ret.substring(pipePosistion+1);
 			} //TODO: check for exceeding max length
@@ -613,7 +620,7 @@ public final class CacheType {
 	 * @param type type value to be checked
 	 * @return true if <code>type</code> matches on of the CacheWolf types, false otherwise
 	 */
-	public static final boolean isValidType(byte type) {
+	public static boolean isValidType(final byte type) {
 		switch (type) {
 		case CW_TYPE_TRADITIONAL: return true;
 		case CW_TYPE_MULTI: return true;
