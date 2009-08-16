@@ -14,37 +14,31 @@ import ewe.ui.MessageBox;
  * you get in the ewe-vm the exception: ewe.sys Event Direction Exception: This Task cannot be done within a timer tick <br>
  * when you use the normal MessageBox
  * @author pfeffer
+ * 
+ * FIXME: add javadoc!
  *
  */
 public class MessageBoxFixed {
-	String title, text;
-	int type;
-	int ret;
-	boolean done;
-	static int debug = 0;
-	public MessageBoxFixed(String title_, String text_, int type_) {
+	private String title, text;
+	private int type;
+	private int ret;
+	private boolean done;
+
+	public MessageBoxFixed(final String title_, final String text_, final int type_) {
 		set(title_, text_, type_);
 	}
-	public void set(String title_, String text_, int type_) {
+
+	public void set(final String title_, final String text_, final int type_) {
 		title = title_;
 		text = text_;
 		type = type_;
 	}
 
 	public int execute() {
-		//Vm.debug("aufruf: " + debug);
-		//debug++;
-/*	// this code is a beginning of code to determine, if a new mThread is needed
- 		Vm.debug("t ." + mThread.inThread());
-		MessageBox mb = new MessageBox(title,  text, type);
-		ret = mb.execute();
-*/
-		MBThread t = new MBThread();  // start a new thread is necessary because the simple ewe v1.49 threading model doesn't allow displaying of a messageBox in this kind of thread
+		final MBThread t = new MBThread();  // start a new thread is necessary because the simple ewe v1.49 threading model doesn't allow displaying of a messageBox in this kind of thread
 		t.start();
 		done = false;
 		while (!done) {
-			//Vm.debug("A");
-			//mThread.yield(100); // this seem to be without effect in ewe-vm v1.49
 			try { mThread.sleep(100); } catch (InterruptedException e) {
 		//		Vm.debug("interrupted"); // never reached, even if interrupted is explicitly called
 			}

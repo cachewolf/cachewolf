@@ -1,6 +1,3 @@
-/**
- * 
- */
 package utils;
 
 import ewe.util.Intable;
@@ -11,12 +8,13 @@ import ewe.util.Intable;
  */
 public class MutableInteger implements Intable {
 
-	int value;
+	private int value;
+	
 	public MutableInteger() {
 		value = -1;
 	}
 	
-	public MutableInteger(int initialValue) {
+	public MutableInteger(final int initialValue) {
 		value = initialValue;
 	}
 
@@ -24,8 +22,8 @@ public class MutableInteger implements Intable {
 		return value;
 	}
 	
-	public void setInt(int value) {
-		this.value = value;
+	public void setInt(final int newValue) {
+		value = newValue;
 	}
 
 }
