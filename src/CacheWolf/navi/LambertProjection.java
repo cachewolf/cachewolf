@@ -44,8 +44,8 @@ public class LambertProjection extends Projection{
 		double t1 = java.lang.Math.tan(java.lang.Math.PI/4 - firstStandardParallel/ 2) / java.lang.Math.pow((1.0 - (e * java.lang.Math.sin(firstStandardParallel ))) / (1.0 + (e * java.lang.Math.sin(firstStandardParallel ))), e/2);
 		double t2 = java.lang.Math.tan(java.lang.Math.PI/4 - secondSandardParallel/ 2) / java.lang.Math.pow((1.0 - (e * java.lang.Math.sin(secondSandardParallel))) / (1.0 + (e * java.lang.Math.sin(secondSandardParallel))), e/2);
 		n = (java.lang.Math.log(m1) - java.lang.Math.log(m2)) / (java.lang.Math.log(t1) - java.lang.Math.log(t2));
-		double nsin = java.lang.Math.sin(centralLat);
-		Vm.debug("n-log: " + n+ " n-sin phi: " + nsin);
+		// double nsin = java.lang.Math.sin(centralLat); // nsin and n should be equal
+		// Vm.debug("n-log: " + n+ " n-sin phi: " + nsin);
 		F0 = m1 / (n * java.lang.Math.pow(t1, n)); // pow(t2???, n)
 		Rb = ellip.a * F0 * java.lang.Math.pow(t0, n);
 	}
