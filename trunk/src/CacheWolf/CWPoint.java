@@ -585,7 +585,7 @@ public class CWPoint extends TrackPoint{
 	}
 	
 	public double getDistanceRad (CWPoint ll) {
-		return getDistance(ll.latDec, ll.lonDec);
+		return getDistanceRad(ll.latDec, ll.lonDec);
 	}
 
 	
