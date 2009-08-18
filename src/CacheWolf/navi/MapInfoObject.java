@@ -270,7 +270,7 @@ public class MapInfoObject extends Area {
 		try {
 			topleft.set(calcLatLon(0, 0));
 			center.set((buttomright.latDec + topleft.latDec)/2,(buttomright.lonDec + topleft.lonDec)/2);
-			sizeKm = java.lang.Math.abs((float)center.getDistance(buttomright.latDec, buttomright.lonDec)) *2;
+			sizeKm = java.lang.Math.abs((float)center.getDistance(buttomright)) *2;
 
 			//calculate reverse affine
 			double nenner=(-affine[1]*affine[2]+affine[0]*affine[3]);
