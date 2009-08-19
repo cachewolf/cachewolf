@@ -237,7 +237,7 @@ public class CWPoint extends TrackPoint{
 				} else if (rex.stringMatched(17) != null){ // UTM
 					set(rex.stringMatched(17),rex.stringMatched(19),rex.stringMatched(18)); //parse sequence is E N, but set needs N E
 				} else if (rex.stringMatched(20) != null){ // GK
-					set(rex.stringMatched(20),rex.stringMatched(21));
+					set(rex.stringMatched(21),rex.stringMatched(20));
 				}
 				//else Vm.debug("CWPoint: "+coord+" could not be parsed");
 			}	/**
@@ -325,8 +325,8 @@ public class CWPoint extends TrackPoint{
 	 * @param strEasting  Easting component
 	 * @param strNorthing Northing component
 	 */
-	public void set ( String strEasting, String strNorthing ){
-		CWPoint pp = new CWPoint(Common.parseDouble(strEasting), Common.parseDouble(strNorthing));
+	public void set (String strNorthing, String strEasting){
+		CWPoint pp = new CWPoint(Common.parseDouble(strNorthing),Common.parseDouble(strEasting));
 		ProjectedPoint gk = new ProjectedPoint(pp, ProjectedPoint.LOCALSYSTEM_DEFAULT, true, true);
 		set(TransformCoordinates.ProjectedToWgs84(gk, ProjectedPoint.LOCALSYSTEM_DEFAULT, true));
 	}

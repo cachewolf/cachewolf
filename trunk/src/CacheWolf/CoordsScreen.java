@@ -163,7 +163,7 @@ public class CoordsScreen extends Form {
 			coords.set(inpUTMZone.getText(), 
 					   inpUTMNorthing.getText(), inpUTMEasting.getText());
 		else if (format == CWPoint.GK) {
-			coords.set(inpUTMEasting.getText(), inpUTMNorthing.getText());			
+			coords.set(inpUTMNorthing.getText(), inpUTMEasting.getText());			
 		}
 		else {
 			NS = chcNS.getInt()== 0?"N":"S";

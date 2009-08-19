@@ -15,7 +15,7 @@ public class Version {
 	static final int VER_MAJOR = 1;
 	static final int VER_MINOR = 1;
 	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
-	static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ")+1, VER_SVN.lastIndexOf(" ")));
+	static final int SVN_REVISION = 20090818;
 	static final int VERSION_TYPE = 3;
 	public static final String[] VERSION_TYPES = {
 		"Release", 
