@@ -116,7 +116,9 @@ public class GkProjection extends Projection{
 	
 	private static ProjectedPoint project(CWPoint latlon, Ellipsoid ellipsoid, double stripewidth, int stripe, double degreeOfStripe0, double scale, ProjectedPoint gkp) {
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
-		double l = (latlon.lonDec - degreeOfStripe0 - stripe * stripewidth) /180*Math.PI;
+		double l = latlon.lonDec;
+		if (l<0) l+=360;
+		l = (l - degreeOfStripe0 - stripe * stripewidth) /180*Math.PI;
 		double B = latlon.latDec /180*Math.PI;
 		double N = ellipsoid.a/ Math.sqrt(1- e2 * Math.pow(Math.sin(B),2));
 		double nue = Math.sqrt(Math.pow(ellipsoid.a, 2) / Math.pow(ellipsoid.b, 2)* e2 * Math.pow(Math.cos(B), 2));
