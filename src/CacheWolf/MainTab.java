@@ -156,11 +156,11 @@ public class MainTab extends mTabbedPanel {
 			// Update chD with Details
 			if(detP.isDirty()) {
 				cacheDirty=true;
-				boolean needTableUpdate = detP.needsTableUpdate();
+				boolean needTableUpdate = detP.getNeedsTableUpdate();
 				detP.saveDirtyWaypoint();
 				if (needTableUpdate) {
 					tbP.myMod.updateRows();// This sorts the waypoint (if it is new) into the right position
-					tbP.selectRow(profile.getCacheIndex(detP.thisCache.getWayPoint()));
+					tbP.selectRow(profile.getCacheIndex(detP.cache.getWayPoint()));
 				}
 				//was tbP.refreshTable();
 				tbP.tc.update(true); // Update and repaint
@@ -202,11 +202,13 @@ public class MainTab extends mTabbedPanel {
 			}
 			break;
 		case 1:  // DetailsPanel
+			boolean newCache = false;
 			if (chD==null) { // Empty DB - show a dummy detail
-				newWaypoint(ch=new CacheHolder()); 
+				newWaypoint(ch=new CacheHolder());
+				newCache = true;
 			}
 			MyLocale.setSIPOff();
-			detP.setDetails(ch);
+			detP.setDetails(ch, newCache);
 			break;
 		case 2: // Description Panel
 			MyLocale.setSIPOff();
@@ -321,11 +323,10 @@ public class MainTab extends mTabbedPanel {
 		cacheDB.add(pCh);
 		Global.getProfile().notifyUnsavedChanges(true); // Just to be sure 
 		tbP.myMod.numRows++;
-		detP.setDetails(pCh);
+		detP.setDetails(pCh, true);
 		oldCard=1;
 		if (this.cardPanel.selectedItem != 1) select(detP);
 		solverP.setInstructions(pCh);
-		detP.setNeedsTableUpdate(true);
 		//tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
 	}
