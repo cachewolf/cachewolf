@@ -1,6 +1,6 @@
 /* $Id$ */
 
-package utils;
+package CacheWolf.utils;
 
 import ewe.sys.mThread;
 import ewe.ui.MessageBox;

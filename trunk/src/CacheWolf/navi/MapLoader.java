@@ -7,6 +7,7 @@ import CacheWolf.HttpConnection;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.STRreplace;
+import CacheWolf.utils.FileBugfix;
 import ewe.ui.*;
 import ewe.io.*;
 import ewe.fx.*;
@@ -15,7 +16,6 @@ import ewe.sys.*;
 import ewe.net.*;
 import java.lang.Math;
 
-import utils.FileBugfix;
 
 /**
  *

@@ -1,6 +1,5 @@
-package exp;
+package CacheWolf.exp;
 
-import utils.FileBugfix;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
@@ -12,6 +11,7 @@ import CacheWolf.Log;
 import CacheWolf.LogList;
 import CacheWolf.MyLocale;
 import CacheWolf.SafeXML;
+import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
 import com.stevesoft.ewe_pat.Transformer;

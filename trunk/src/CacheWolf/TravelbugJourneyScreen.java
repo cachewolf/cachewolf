@@ -12,7 +12,7 @@ package CacheWolf;
  */
 
 import CacheWolf.imp.SpiderGC;
-import utils.CWWrapper;
+import CacheWolf.utils.CWWrapper;
 import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;

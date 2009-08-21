@@ -1,7 +1,7 @@
 /**
  * 
  */
-package utils;
+package CacheWolf.utils;
 
 import CacheWolf.STRreplace;
 import ewe.io.*;

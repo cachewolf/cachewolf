@@ -3,7 +3,7 @@
  */
 package CacheWolf;
 
-import utils.MutableInteger;
+import CacheWolf.utils.MutableInteger;
 
 /**
  * Utility class for converting data from old version files to current version files. This class

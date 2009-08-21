@@ -1,11 +1,11 @@
 package CacheWolf;
 
+import CacheWolf.utils.FileBugfix;
 import ewe.io.FileReader;
 import ewe.sys.Handle;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.ui.ProgressBarForm;
-import utils.FileBugfix;
 
 public class Rebuild {
 	String [] xmlFiles;

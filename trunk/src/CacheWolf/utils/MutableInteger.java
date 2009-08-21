@@ -1,4 +1,4 @@
-package utils;
+package CacheWolf.utils;
 
 import ewe.util.Intable;
 
