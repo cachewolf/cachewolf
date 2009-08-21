@@ -1,6 +1,6 @@
 package CacheWolf;
 
-import utils.CWWrapper;
+import CacheWolf.utils.CWWrapper;
 import ewe.sys.*;
 import ewe.ui.*;
 import ewe.fx.*;

@@ -1,6 +1,6 @@
 package CacheWolf;
 
-import utils.FileBugfix;
+import CacheWolf.utils.FileBugfix;
 import ewe.io.File;
 import ewe.ui.*;
 

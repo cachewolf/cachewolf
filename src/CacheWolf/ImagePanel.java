@@ -1,5 +1,5 @@
 package CacheWolf;
-import utils.FileBugfix;
+import CacheWolf.utils.FileBugfix;
 import ewe.graphics.*;
 import ewe.sys.*;
 import ewe.fx.*;

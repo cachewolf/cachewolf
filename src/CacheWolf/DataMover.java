@@ -1,6 +1,6 @@
 package CacheWolf;
 
-import utils.FileBugfix;
+import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.*;

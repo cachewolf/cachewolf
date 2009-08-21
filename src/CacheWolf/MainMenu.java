@@ -1,5 +1,17 @@
 package CacheWolf;
 
+import CacheWolf.exp.ASCExporter;
+import CacheWolf.exp.ExploristExporter;
+import CacheWolf.exp.GPXExporter;
+import CacheWolf.exp.GpxExportNg;
+import CacheWolf.exp.HTMLExporter;
+import CacheWolf.exp.KMLExporter;
+import CacheWolf.exp.LocExporter;
+import CacheWolf.exp.MSARCSVExporter;
+import CacheWolf.exp.OVLExporter;
+import CacheWolf.exp.OziExporter;
+import CacheWolf.exp.TPLExporter;
+import CacheWolf.exp.TomTomExporter;
 import CacheWolf.imp.GPXImporter;
 import CacheWolf.imp.LOCXMLImporter;
 import CacheWolf.imp.OCXMLImporter;
@@ -29,18 +41,6 @@ import ewe.ui.ProgressBarForm;
 import ewe.ui.PullDownMenu;
 import ewe.ui.mApp;
 import ewe.util.Vector;
-import exp.ASCExporter;
-import exp.ExploristExporter;
-import exp.GPXExporter;
-import exp.GpxExportNg;
-import exp.HTMLExporter;
-import exp.KMLExporter;
-import exp.LocExporter;
-import exp.MSARCSVExporter;
-import exp.OVLExporter;
-import exp.OziExporter;
-import exp.TPLExporter;
-import exp.TomTomExporter;
 
 /**
  *	This class creates the menu for cachewolf. It is also responsible

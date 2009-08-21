@@ -5,7 +5,7 @@ import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import utils.FileBugfix;
+import CacheWolf.utils.FileBugfix;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.IOException;

@@ -1,8 +1,8 @@
 package CacheWolf;
 
+import CacheWolf.utils.FileBugfix;
 import ewe.fx.Image;
 import ewe.io.FileBase;
-import utils.FileBugfix;
 
 /**
  * hold preloaded versions of GUI images in a single place

@@ -19,7 +19,7 @@ rm -rf bin
 mkdir -p bin/CacheWolf
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
     -cp lib/CompileEwe.zip:lib -d bin -deprecation -nowarn \
-    src/CacheWolf/*.java src/CacheWolf/*/*.java src/exp/*.java src/utils/*.java
+    src/CacheWolf/*.java src/CacheWolf/*/*.java 
 $EWE programs/Jewel.ewe -c cw-pda.jnf
 $EWE programs/Jewel.ewe -c cw-pc.jnf
 # Don’t change the order of the above Jewel commands because
