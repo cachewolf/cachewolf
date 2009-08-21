@@ -1,6 +1,5 @@
 package CacheWolf.imp;
 
-import utils.FileBugfix;
 
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
@@ -17,6 +16,7 @@ import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
+import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
 

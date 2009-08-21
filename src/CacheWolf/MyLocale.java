@@ -4,7 +4,7 @@ package CacheWolf;
  * 
  */
 
-import utils.FileBugfix;
+import CacheWolf.utils.FileBugfix;
 import ewe.fx.Rect;
 import ewe.io.File;
 import ewe.io.FileBase;

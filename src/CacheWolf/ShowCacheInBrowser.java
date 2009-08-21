@@ -1,5 +1,4 @@
 package CacheWolf;
-import utils.CWWrapper;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -12,6 +11,7 @@ import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.*;
+import CacheWolf.utils.CWWrapper;
 import HTML.Template;
 
 

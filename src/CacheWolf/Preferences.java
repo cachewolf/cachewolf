@@ -2,7 +2,7 @@ package CacheWolf;
 
 import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
-import utils.FileBugfix;
+import CacheWolf.utils.FileBugfix;
 import ewe.io.*;
 import ewe.sys.*;
 import ewe.ui.*;

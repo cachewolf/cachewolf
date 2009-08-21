@@ -4,6 +4,7 @@ import CacheWolf.CWPoint;
 import CacheWolf.Common;
 import CacheWolf.Matrix;
 import CacheWolf.MyLocale;
+import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
 import ewe.io.BufferedWriter;
 import ewe.io.FileInputStream;
@@ -15,7 +16,6 @@ import ewe.io.PrintWriter;
 import ewe.sys.*;
 import java.lang.Math;
 
-import utils.FileBugfix;
 
 /**
  * class to read, save and do the calculations for calibrated and 
