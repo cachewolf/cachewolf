@@ -1,7 +1,6 @@
 package CacheWolf.imp;
 
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.utils.CWWrapper;
 import ewe.sys.Handle;

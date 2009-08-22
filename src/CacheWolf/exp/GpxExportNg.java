@@ -34,7 +34,6 @@ import ewe.sys.Handle;
 import ewe.sys.Process;
 import ewe.sys.Time;
 import ewe.sys.Vm;
-import ewe.ui.Control;
 import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.DataChangeEvent;
@@ -127,7 +126,6 @@ public class GpxExportNg {
 
 	private static boolean customIcons;
 	private static boolean sendToGarmin;
-	private static boolean separateHints;
 	
 	private static int exportIds;
 	private static int exportTarget;
@@ -673,16 +671,6 @@ public class GpxExportNg {
 
 	}
 
-	/**
-	 * format TB information as found in a gc.com GPX file
-	 * @param ch cacheholder containing TB information
-	 * @return
-	 */
-	public String formatTbs(CacheHolder ch) {
-		Transformer trans = new Transformer(true);
-		return "";
-		// return trans.replaceFirst(GPXTB);
-	}
 
 	/**
 	 * format cache logs as found in a gc.com GPX file
@@ -929,9 +917,9 @@ public class GpxExportNg {
 		private mInput ibMaxLogs, ibPrefix;
 		private mButton btnOk, btnCancel;
 		
-		private boolean hasBitmaps;
-		private boolean hasGarminMap;
-		private boolean hasGpsbabel;
+		private boolean hasBitmapsFrm;
+		private boolean hasGarminMapFrm;
+		private boolean hasGpsbabelFrm;
 		
 		private mChoice chStyle, chTarget, chIds;
 		private int chosenStyle, chosenTarget, chosenIds;
@@ -941,9 +929,9 @@ public class GpxExportNg {
 		 */
 		public GpxExportNgForm(boolean hasGarminMap, boolean hasBitmaps, boolean hasGpsbabel) {
 
-			this.hasBitmaps = hasBitmaps;
-			this.hasGarminMap = hasGarminMap;
-			this.hasGpsbabel = hasGpsbabel;
+			this.hasBitmapsFrm = hasBitmaps;
+			this.hasGarminMapFrm = hasGarminMap;
+			this.hasGpsbabelFrm = hasGpsbabel;
 			
 			// TODO: get/set defaults from profile
 			chosenStyle = 0;
@@ -1069,10 +1057,10 @@ public class GpxExportNg {
 						if (chTarget.change(ControlConstants.Disabled, 0))
 							chTarget.repaint();
 						
-						if (hasGpsbabel && cbSendToGarmin.change(0, ControlConstants.Disabled))
+						if (hasGpsbabelFrm && cbSendToGarmin.change(0, ControlConstants.Disabled))
 							cbSendToGarmin.repaint();
 						
-						if (hasGarminMap && cbCustomIcons.change(0, ControlConstants.Disabled))
+						if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
 							cbCustomIcons.repaint();
 						
 						cbSeperateHints.state = false;
@@ -1091,10 +1079,10 @@ public class GpxExportNg {
 						if (chTarget.change(0, ControlConstants.Disabled))
 							chTarget.repaint();
 						
-						if (hasGpsbabel && cbSendToGarmin.change(0, ControlConstants.Disabled))
+						if (hasGpsbabelFrm && cbSendToGarmin.change(0, ControlConstants.Disabled))
 							cbSendToGarmin.repaint();
 						
-						if (hasGarminMap && cbCustomIcons.change(0, ControlConstants.Disabled))
+						if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
 							cbCustomIcons.repaint();
 						
 						cbSeperateHints.state = false;
@@ -1125,7 +1113,7 @@ public class GpxExportNg {
 						if (cbSendToGarmin.change(ControlConstants.Disabled, 0))
 							cbSendToGarmin.repaint();
 						
-						if (hasBitmaps && cbCustomIcons.change(0, ControlConstants.Disabled))
+						if (hasBitmapsFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
 							cbCustomIcons.repaint();
 						
 						if (cbSeperateHints.change(0, ControlConstants.Disabled))
@@ -1134,10 +1122,10 @@ public class GpxExportNg {
 						if (ibPrefix.change(0, ControlConstants.Disabled))
 							ibPrefix.repaint();
 					} else { // Single GPX
-						if (hasGpsbabel && cbSendToGarmin.change(0, ControlConstants.Disabled))
+						if (hasGpsbabelFrm && cbSendToGarmin.change(0, ControlConstants.Disabled))
 							cbSendToGarmin.repaint();
 						
-						if (hasGarminMap && cbCustomIcons.change(0, ControlConstants.Disabled))
+						if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
 							cbCustomIcons.repaint();
 						
 						cbSeperateHints.state=false;
@@ -1239,17 +1227,6 @@ public class GpxExportNg {
 		public String getPrefix() {
 			return ibPrefix.getText();
 		}
-		
-		/** set control to accept user interaction */
-		private void activateControl(Control ctrl) {
-			if (ctrl.change(0, ControlConstants.Disabled))
-				ctrl.repaint();
-		}
-		
-		/** set control to deny user interaction */
-		private void deactivatControl(Control ctrl) {
-			if (ctrl.change(ControlConstants.Disabled, 0))
-				ctrl.repaint();
-		}
+			    
 	}
 }

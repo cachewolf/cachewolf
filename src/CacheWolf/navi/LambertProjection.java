@@ -1,6 +1,5 @@
 package CacheWolf.navi;
 
-import ewe.sys.Vm;
 import CacheWolf.CWPoint;
 public class LambertProjection extends Projection{
 	

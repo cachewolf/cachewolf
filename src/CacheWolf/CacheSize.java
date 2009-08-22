@@ -114,23 +114,11 @@ public final class CacheSize {
 			| CW_FILTER_SMALL | CW_FILTER_NORMAL | CW_FILTER_LARGE
 			| CW_FILTER_NONPHYSICAL | CW_FILTER_VERYLARGE;
 	
-	/** reference to singleton CacheSize object */
-	private static CacheSize ref;
-
 	/** thou shallst not instantiate this object */
-	private CacheSize() { }
-	
-	/**
-	 * give a singleton reference to this object to whoever needs one. create one, if not done so already.
-	 * @return reference to CacheSize object
-	 */
-	public static synchronized CacheSize getCacheSize() {
-		if (ref == null) {
-			ref = new CacheSize();
-		}
-		return ref;
+	private CacheSize() { // Nothing to do
 	}
 
+	
 	/**
 	 * map filenames of images for the different sizes to the ids used array
 	 * index for sizePics[] in TableModel
@@ -367,8 +355,6 @@ public final class CacheSize {
 		} else if (v1Size.equals(OCTC_SIZE_VERYLARGE)) {
 			return CW_SIZE_VERYLARGE;
 		} else if (v1Size.equals("")) {
-			return CW_SIZE_NOTCHOSEN;
-		} else if (v1Size == null) {
 			return CW_SIZE_NOTCHOSEN;
 		} else {
 			throw (new IllegalArgumentException("unmatched argument " + v1Size + " in v1Converter()"));

@@ -86,16 +86,10 @@ public class DetailsPanel extends CellPanel {
 	private static mLabel lblAddiCount;
 	/** FIXME move to image broker? */
 	private static mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgNotes;
-	/** FIXME: what are they for? */
-	private static mImage imgShowMaps, imgAddImages;
 
 	// ===== data handles =====
-	/** FIXME: never used? */
-	private static CacheDB cacheDB;
 	/** waypoint to be displayed. */
 	public CacheHolder cache;
-	/** FIXME: never used? */
-	private static int dbIndex = -1;
 	/** panel to display waypoint attributes */
 	private static AttributesViewer attViewer;
 	/** preferences object. */
@@ -136,7 +130,6 @@ public class DetailsPanel extends CellPanel {
 		// ===== initialize data handles =====
 		pref = Global.getPref();
 		profile = Global.getProfile();
-		cacheDB = profile.cacheDB;
 
 		// ===== initialize flags =====
 		dirtyNotes = false;
@@ -277,7 +270,7 @@ public class DetailsPanel extends CellPanel {
 		btnShowMap = new mButton(new mImage(useBigIcons ? "globe_small_vga.gif" : "globe_small.gif"));
 		btnShowMap.setToolTip(MyLocale.getMsg(347, "Show map"));
 
-		btnAddPicture = new mButton(imgAddImages = new mImage(useBigIcons ? "images_vga.gif" : "images.gif"));
+		btnAddPicture = new mButton(new mImage(useBigIcons ? "images_vga.gif" : "images.gif"));
 		btnAddPicture.setToolTip(MyLocale.getMsg(348, "Add user pictures"));
 
 		btnBlack = new mButton(imgBlack = new mImage(useBigIcons ? "no_black_vga.png" : "no_black.png"));

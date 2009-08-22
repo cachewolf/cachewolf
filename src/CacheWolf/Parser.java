@@ -46,7 +46,6 @@ package CacheWolf;
 
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.Navigate;
-import CacheWolf.navi.TransformCoordinates;
 
 import com.stevesoft.ewe_pat.Regex;
 
