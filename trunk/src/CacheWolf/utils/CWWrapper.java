@@ -14,24 +14,13 @@ import ewe.sys.Vm;
  */
 public final class CWWrapper {
 	
-	/** reference to this object */
-	private static CWWrapper ref;
-	
 	/**
 	 * thou shallst not instantiate this object
 	 */
-	private CWWrapper() {}
-	
-	/**
-	 * give a singleton reference to this object to whoever needs one. create one, if not done so already.
-	 * @return reference to CWWrapper
-	 */
-	public static synchronized CWWrapper getCWWrapper() {
-		if (ref == null) {
-			ref = new CWWrapper();
-		}
-		return ref;
+	private CWWrapper() {
+		// Nothing to do
 	}
+	
 	
 	/**
 	 * Apply needed quotes around the command or the argument,
@@ -67,10 +56,4 @@ public final class CWWrapper {
 		return Vm.exec(cmd, arg, 0, wait);
 	}
 
-	/**
-	 * just make sure no one tries funny things with us
-	 */
-	public Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException(); 
-	}
 }

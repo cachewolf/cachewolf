@@ -192,23 +192,13 @@ public final class CacheType {
 	public static final String GC_GPX_MAZE = "GPS Adventures Exhibit"; 
 	/** GPX identifier for additional waypoint Project Ape caches */
 	public static final String GC_GPX_APE = "Project APE Cache";
-	/** reference to singleton CacheType object */
-	private static CacheType ref;
 
 	/** thou shallst not instantiate this object */
-	private CacheType() { }
-	
-	/**
-	 * give a singleton reference to this object to whoever needs one. create one, if not done so already.
-	 * @return reference to CacheType object
-	 */
-	public static synchronized CacheType getCacheType() {
-		if (ref == null) {
-			ref = new CacheType();
-		}
-		return ref;
+	private CacheType() { 
+		// Nothing to do
 	}
 	
+
 	/**
 	 * translate cache type to a short version for compact exporters or "smart" cache names. 
 	 * @param type CacheWolf internal type information

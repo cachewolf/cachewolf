@@ -85,6 +85,7 @@ public class SpiderGC{
 	private Profile profile;
 	private static String viewstate = "";
 	private static String viewstate1 = "";
+	//FIXME Field is never read. Needed?
 	private static String eventvalidation = "";
 	private static String cookieID = "";
 	private static String cookieSession = "";

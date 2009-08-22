@@ -314,12 +314,12 @@ public class MyLocale {
 	 * @return
 	 */
 	public static String getLocalizedFile (String basename){
-		String language = MyLocale.getLocaleLanguage();
+		String lang = MyLocale.getLocaleLanguage();
 		String programmDirectory = FileBase.getProgramDirectory() + "/";
 		int index = basename.lastIndexOf('.');
 		String prefix = basename.substring(0,index);
 		String suffix = basename.substring(index);
-		File f = new File (programmDirectory, prefix+'_'+language+suffix);
+		File f = new File (programmDirectory, prefix+'_'+lang+suffix);
 		if (f.exists()){
 			return f.toString();
 		}

@@ -2,11 +2,9 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Matrix;
-import CacheWolf.MyLocale;
 
 import java.lang.Math;
 
-import ewe.sys.Vm;
 
 /**
  * Class to transform coordinates and shift datums

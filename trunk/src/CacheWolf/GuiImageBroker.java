@@ -17,9 +17,6 @@ public final class GuiImageBroker {
 	/** image to be displayed in case of error */
 	public static Image imageError = new Image("guiError.png");
 	
-	/** reference to this object */
-	private static GuiImageBroker ref;
-
 	/**
 	 * images to be displayed for cache types in GUI
 	 * @see getTypeImage
@@ -61,18 +58,10 @@ public final class GuiImageBroker {
 //	};
 
 	/** thou shallst not instantiate this object */
-	private GuiImageBroker() { }
-	
-	/**
-	 * give a singleton reference to this object to whoever needs one. create one, if not done so already.
-	 * @return reference to CWWrapper
-	 */
-	public static synchronized GuiImageBroker getGuiImageBroker() {
-		if (ref == null) {
-			ref = new GuiImageBroker();
-		}
-		return ref;
+	private GuiImageBroker() { 
+		// Noting to do
 	}
+	
 
 	/**
 	 * select image to be displayed for a given cache type
