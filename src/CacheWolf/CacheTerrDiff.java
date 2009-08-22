@@ -31,21 +31,9 @@ public final class CacheTerrDiff {
 	public static final byte CW_DT_ERROR = -1;
 	/** terrain or difficulty for additional/custom waypoints */
 	public static final byte CW_DT_UNSET = 0;
-	/** reference to singleton CacheTerrDiff object */
-	private static CacheTerrDiff ref;
 
-	/** constructor dies nothing */
-	private CacheTerrDiff() { }
-	
-	/**
-	 * give a singleton reference to this object to whoever needs one. create one, if not done so already.
-	 * @return reference to CacheTerrDiff object
-	 */
-	public static synchronized CacheTerrDiff getCacheTerrDiff() {
-		if (ref == null) {
-			ref = new CacheTerrDiff();
-		}
-		return ref;
+	private CacheTerrDiff() { 
+		// Nothing to do
 	}
 	
 	/**

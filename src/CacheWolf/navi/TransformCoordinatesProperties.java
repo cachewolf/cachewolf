@@ -1,8 +1,5 @@
 package CacheWolf.navi;
 
-import ewe.io.IOException;
-import ewe.io.InputStream;
-import ewe.sys.Convert;
 import ewe.util.Properties;
 import CacheWolf.CWPoint;
 import CacheWolf.MyLocale;
