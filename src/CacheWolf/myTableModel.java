@@ -169,10 +169,10 @@ public class myTableModel extends TableModel{
 					if(ch.mainCache != null) { // parent exists
 						if (! ch.mainCache.isVisible())
 							sortDB.add(ch); // Unfiltered Addi Wpt with filtered Main Wpt, show it on its own
-						// else Main cache is not filtered, Addi will be added below main cache further down
-						else
-							//FIXME: is there anything useful we can do about this?
-							Global.getPref().log("Huston, we have a problem with "+ch.getWayPoint()+" in myTableModel.updateRows()");
+						// else 
+						// Main cache is not filtered, Addi will be added below main cache further down
+						// This case doesn't seem to be a problem. It occurs regularly, when
+						// filtered addis are unfiltered, so there is not need to log this case.
 					} else { //Addi without main Cache
 						sortDB.add(ch);
 					}

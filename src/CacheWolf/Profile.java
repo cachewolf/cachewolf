@@ -358,6 +358,9 @@ public class Profile {
 			//Vm.debug("Start:"+startT.format("H:mm:ss.SSS"));
 			//Vm.debug("End  :"+endT.format("H:mm:ss.SSS"));	
 			// Build references between caches and addi wpts
+			if (infoBox!=null) {
+				infoBox.setInfo(MyLocale.getMsg(5004,"Building references..."));
+			}
 			buildReferences();
 			if (indexXmlVersion < CURRENTFILEFORMAT) {
 				saveIndex(Global.getPref(), true);
@@ -538,6 +541,7 @@ public class Profile {
 	 */
 	public void buildReferences(){
 		CacheHolder ch;
+		MyComparer myComparer = new MyComparer();
 
 		// Build index for faster search and clear all references
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
@@ -557,12 +561,7 @@ public class Profile {
 		for (int i = 0; i < max; i++) {
 			ch = cacheDB.get(i);
 			if (ch.hasAddiWpt() && (ch.addiWpts.size() > 1)) {
-				ch.addiWpts.sort(new ewe.util.Comparer() {
-					public int compare(Object o1, Object o2) {
-						return ((CacheHolder) o1).getWayPoint().compareTo(
-						        ((CacheHolder) o2).getWayPoint());
-					}
-				}, false);
+				ch.addiWpts.sort(myComparer, false);
 			}
 		}
 
@@ -763,4 +762,13 @@ public class Profile {
 	public void setCurrentFilter(FilterData currentFilter) {
     	this.currentFilter = currentFilter;
     }
+	
+	private class MyComparer implements ewe.util.Comparer {
+
+		public int compare(Object o1, Object o2) {
+			return ((CacheHolder) o1).getWayPoint().compareTo(
+			        ((CacheHolder) o2).getWayPoint());
+		}
+		
+	}
 }
