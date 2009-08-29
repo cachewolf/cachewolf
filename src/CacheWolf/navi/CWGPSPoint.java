@@ -260,7 +260,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						} break;
 						} // switch
 					} // while
-					if (Fix > 0) this.set(latNS, latDeg, latMin, "0", lonEW, lonDeg, lonMin, "0", CWPoint.DMM);
+					if (Fix > 0) this.set(latNS, latDeg, latMin, "0", lonEW, lonDeg, lonMin, "0", TransformCoordinates.DMM);
 
 				} // if
 
@@ -351,7 +351,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					else {
 						if (status.equals("A")){
 							this.set(latNS, latDeg, latMin, "0",
-									lonEW, lonDeg, lonMin, "0", CWPoint.DMM);				
+									lonEW, lonDeg, lonMin, "0", TransformCoordinates.DMM);				
 						}
 					}
 				} // if
@@ -475,8 +475,8 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 
 
 	public void printAll(){
-		Vm.debug("Latitude:     " + this.getLatDeg(DD));
-		Vm.debug("Longitude:    " + this.getLonDeg(DD));
+		Vm.debug("Latitude:     " + this.getLatDeg(TransformCoordinates.DD));
+		Vm.debug("Longitude:    " + this.getLonDeg(TransformCoordinates.DD));
 		Vm.debug("Speed:        " + this.Speed);
 		Vm.debug("Bearing:      " + this.Bear);
 		Vm.debug("Time:         " + this.Time);

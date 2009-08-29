@@ -51,7 +51,7 @@ public class MapImporter extends Form {
 	public void updatePosition(int px, int py){
 		if(GCPs.size()>=3  || (wfl.topleft.isValid())){
 			CWPoint p = wfl.calcLatLon(px,py);
-			infLabel.setText("--> " + p.getLatDeg(CWPoint.DMS) + " " +p.getLatMin(CWPoint.DMM) + " / " + p.getLonDeg(CWPoint.DMS) + " " + p.getLonMin(CWPoint.DMM));
+			infLabel.setText("--> " + p.getLatDeg(TransformCoordinates.DMS) + " " +p.getLatMin(TransformCoordinates.DMM) + " / " + p.getLonDeg(TransformCoordinates.DMS) + " " + p.getLonMin(TransformCoordinates.DMM));
 		}
 	}
 

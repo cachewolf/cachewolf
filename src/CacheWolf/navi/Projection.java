@@ -10,6 +10,7 @@ abstract class Projection{
 	 * corresponding epsg-codes (see method getEpsgcode)
 	 */
 	public int epsgCode;
+	public boolean zoneSeperately = false;
 
 	/**
 	 * The zone is automatically determined
@@ -40,4 +41,16 @@ abstract class Projection{
 		return epsgCode + pp.zone;
 	}
 	public abstract ProjectedPoint set(double northing, double easting, ProjectedPoint pp);
+	public ProjectedPoint set(double northing, double easting, String zone, ProjectedPoint pp) {
+		throw new UnsupportedOperationException("Projection.set (double, double String, ProjectedPoint): This projection uses no seperate zones");
+	}
+	public String getZone(ProjectedPoint pp) {
+		throw new UnsupportedOperationException("Projection.getZone (double, double String, ProjectedPoint): This projection uses no seperate zones");
+		
+	}
+
+	public String toHumanReadableString(ProjectedPoint pp) {
+	 	return pp.toString(0, "", " ");
+	}
+	
 }

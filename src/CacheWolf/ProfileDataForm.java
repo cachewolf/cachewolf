@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.navi.TransformCoordinates;
 import ewe.ui.CellPanel;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
@@ -59,7 +60,7 @@ public class ProfileDataForm extends Form {
 			}
 			if (ev.target == btnCurrentCentre){
 				CoordsScreen cs = new CoordsScreen();
-				cs.setFields(pref.curCentrePt, CWPoint.CW);
+				cs.setFields(pref.curCentrePt, TransformCoordinates.CW);
 				if (cs.execute()== FormBase.IDOK){
 					pref.curCentrePt.set(cs.getCoords());
 					btnCurrentCentre.setText(pref.curCentrePt.toString());
@@ -68,7 +69,7 @@ public class ProfileDataForm extends Form {
 			}
 			if (ev.target == btnProfileCentre){
 				CoordsScreen cs = new CoordsScreen();
-				cs.setFields(profile.centre, CWPoint.CW);
+				cs.setFields(profile.centre, TransformCoordinates.CW);
 				if (cs.execute()== FormBase.IDOK){
 					profile.notifyUnsavedChanges(cs.getCoords().equals(profile.centre));
 					profile.centre.set(cs.getCoords());

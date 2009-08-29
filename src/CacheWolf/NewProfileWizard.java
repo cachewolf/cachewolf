@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.navi.TransformCoordinates;
 import ewe.ui.FormBase;
 import ewe.ui.Gui;
 
@@ -18,7 +19,7 @@ public class NewProfileWizard {
 			profile.dataDir=pref.baseDir+f.profileDir+"/";
 			
 			CoordsScreen cs = new CoordsScreen();
-			cs.setFields(new CWPoint(), CWPoint.CW);
+			cs.setFields(new CWPoint(), TransformCoordinates.CW);
 			if (cs.execute() == FormBase.IDOK) {
 				profile.setCenterCoords(cs.getCoords());
 			}

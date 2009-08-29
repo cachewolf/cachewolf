@@ -16,6 +16,8 @@ import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
+
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -204,8 +206,8 @@ public class OCXMLImporter extends MinML {
 		else url += "&picture=0";
 		url += "&cachelog=1"
 			+ "&removedobject=0"
-			+ "&lat=" + centre.getLatDeg(CWPoint.DD)
-			+ "&lon=" + centre.getLonDeg(CWPoint.DD)
+			+ "&lat=" + centre.getLatDeg(TransformCoordinates.DD)
+			+ "&lon=" + centre.getLonDeg(TransformCoordinates.DD)
 			+ "&distance=" + dist
 			+ "&charset=utf-8"
 			+ "&cdata=0"

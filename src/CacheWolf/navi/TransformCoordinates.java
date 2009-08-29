@@ -28,23 +28,77 @@ import java.lang.Math;
  */
 public final class TransformCoordinates {
 
-	public static final int EPSG_WGS84 = 4326; 
-	public static final int EPSG_ETRS89 = 25832; // TODO support it anyhow 
-	public static final int EPSG_GK2 = 31466; 
-	public static final int EPSG_GK3 = 31467; 
-	public static final int EPSG_GK4 = 31468; 
-	public static final int EPSG_GK5 = 31469;
+	public static final int EPSG_WGS84 					= 4326; 
+	public static final int EPSG_ETRS89 				= 25832; // TODO support it anyhow 
+	/** Gauß-Krüger, Bessel 1841, Potsdam (DHDN)  */
+	public static final int EPSG_GERMAN_GK2 			= 31466; 
+	public static final int EPSG_GERMAN_GK3 			= 31467; 
+	public static final int EPSG_GERMAN_GK4 			= 31468; 
+	public static final int EPSG_GERMAN_GK5 			= 31469;
 	/** Gauß-Boaga, Monte Mario, Roma 1940, IT_ROMA1940 */
-	public static final int EPSG_ITALIAN_GB_EW1 = 3003; 
-	public static final int EPSG_ITALIAN_GB_EW2 = 3004;
+	public static final int EPSG_ITALIAN_GB_EW1 		= 3003; 
+	public static final int EPSG_ITALIAN_GB_EW2 		= 3004;
 	/** Austrian Lambert, Bessel 1841, Hermannskogel */
-	public static final int EPSG_AUSTRIAN_LAMBERT_OLD = 31287;
+	public static final int EPSG_AUSTRIAN_LAMBERT_OLD 	= 31287;
 	/** Austrian Lambert, ETRS89 */
-	public static final int EPSG_AUSTRIAN_LAMBERT_NEW = 3416;
+	public static final int EPSG_AUSTRIAN_LAMBERT_NEW 	= 3416;
+	/** French Lambert, Clarke 1880 IGN */
+	public static final int EPSG_FRENCH_LAMBERT_NTF_I 	= 27571;
+	public static final int EPSG_FRENCH_LAMBERT_NTF_II	= 27572;
+	public static final int EPSG_FRENCH_LAMBERT_NTF_III	= 27573;
+	public static final int EPSG_FRENCH_LAMBERT_NTF_IV 	= 27574;
+	public static final int EPSG_TEST				 	= -5;
+	
+	
+	public static final int LOCALSYSTEM_GERMAN_GK           	= 4900;
+	public static final int LOCALSYSTEM_ITALIAN_GB          	= 3900;
+	public static final int LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD	= 4300;
+	public static final int LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW	= 4301;
+	public static final int LOCALSYSTEM_FRANCE_LAMBERT_IIE  	= 3300;
+	public static final int LOCALSYSTEM_UTM_WGS84            	= 10000;
+	/** returned from some methods if not supported */
+	public static final int LOCALSYSTEM_NOT_SUPPORTED			= -1;
+	public static final int LOCALSYSTEM_DEFAULT = LOCALSYSTEM_GERMAN_GK;
+	public static final int DD      						 	= 10001; // these (10001+) may not conflict with LOCALSYSTEM_XXX,
+	public static final int DMM     							= 10002; // they are not used here, but in CWPoint
+	public static final int DMS     							= 10003;
+	public static final int LAT_LON 							= 10004;
+	public static final int LON_LAT 							= 10005;
+	/** it is a projected point or not WGS84 = none of the above */
+	public static final int CUSTOM  							= 10006;
+	/** define default */
+	public static final int CW      							= DMM;
+	/** only used as format to read */
+	public static final int REGEX   							= 10008;
+	public static final int UTM     							= LOCALSYSTEM_UTM_WGS84;
 
-	public static final Ellipsoid BESSEL      = new Ellipsoid(6377397.155, 6356078.962, true);
-	public static final Ellipsoid WGS84       = new Ellipsoid(6378137.000, 6356752.314, true);
-	public static final Ellipsoid HAYFORD1909 = new Ellipsoid(6378388    , 297        , false);
+	public static final Ellipsoid BESSEL      	= new Ellipsoid(6377397.155, 6356078.962, true);
+	public static final Ellipsoid WGS84       	= new Ellipsoid(6378137.000, 6356752.314, true);
+	public static final Ellipsoid HAYFORD1909 	= new Ellipsoid(6378388    , 297        , false);
+	public static final Ellipsoid CLARKE1880IGN = new Ellipsoid(6378249.2  , 293.4660213, false);
+	public static final Ellipsoid CLARKE1866    = new Ellipsoid(6378206.4  , 294.97870  , false);
+
+	public static final class LocalSystem {
+		public int code; 
+		public String friendlyShortname;
+		public String id;
+		public boolean zoneSeperatly;
+		public LocalSystem(int code_, String name_, String id_, boolean zoneSeperatly_) {
+			code = code_;
+			friendlyShortname = name_;
+			zoneSeperatly = zoneSeperatly_;
+			id = id_;
+		}
+	};
+
+	public static final LocalSystem[] localSystems = {
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_GERMAN_GK, 			"de Gauß-K.",  "de.gk", ProjectedPoint.PJ_GERMAN_GK.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD,  "at Lamb.",    "at.lb", ProjectedPoint.PJ_AUSTRIAN_LAMBERT_OLD.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB,            "it Gauß-B.",  "it.gb", ProjectedPoint.PJ_ITALIAN_GB.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE,    "fr Lamb-IIe", "fr.l2", ProjectedPoint.PJ_FRENCH_LAMBERT_NTF_II.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_UTM_WGS84,             "UTM",         "utm",   ProjectedPoint.PJ_UTM_WGS84.zoneSeperately)
+	};
+	
 
 	//	 taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (North) to ETRS89
 	//	 they are the same as http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 4 = Deutschland Nord" (rotation *-1)
@@ -59,7 +113,7 @@ public final class TransformCoordinates {
 	/** use this for south Germany, maximum deviation sub meter, valid in the former BRD (west germany) in 47°00' N ... 50°20' N */
 	private static final TransformParameters GK_SOUTH_GERMANY_TO_WGS84 = new TransformParameters(597.1, 71.4, 412.1, -0.894, -0.068, 1.563, -7.580, BESSEL);
 
-	public static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637)); 
+	private static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637)); 
 
 	// taken from http://www.lverma.nrw.de/produkte/druckschriften/verwaltungsvorschriften/images/gps/TrafopsNRW.pdf for NRW this transform has deviations lower than 34cm.
 	/** use this for NRW in Germany. Deviations less than 34 cm */
@@ -80,31 +134,77 @@ public final class TransformCoordinates {
 
 	// taken from http://crs.bkg.bund.de/crs-eu/ -> italy -> ROMA40 (change the sign of the rotation parameters!)
 	/** The italian variant of Gauß-Krüger (Gauß-Boaga) */
-	public static final TransformParameters GB_ITALIAN_PENINSULAR_TO_WGS84 =  new TransformParameters(-104.1, -49.1, -9.9, -0.971, 2.917, -0.714, -11.68, HAYFORD1909);
+	private static final TransformParameters GB_ITALIAN_PENINSULAR_TO_WGS84 =  new TransformParameters(-104.1, -49.1, -9.9, -0.971, 2.917, -0.714, -11.68, HAYFORD1909);
 	//static final Area ITALY_PENINSULAR = new Area(new CWPoint());
-	public static final TransformParameters GB_ITALIAN_SARDINIA_TO_WGS84 =  new TransformParameters(-168.6, -34.0, 38.6, 0.374, 0.679, 1.379, 9.48, HAYFORD1909);
-	static final Area ITALY_SARDINIA = new Area(new CWPoint(42, 6), new CWPoint(38, 11));
-	static final Area ITALY_SARDINIA_GK = new Area(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toTrackPoint(ProjectedPoint.LOCALSYSTEM_ITALIAN_GB),
-			wgs84ToEpsg(ITALY_SARDINIA.buttomright, EPSG_ITALIAN_GB_EW1).toTrackPoint(ProjectedPoint.LOCALSYSTEM_ITALIAN_GB));
+	private static final TransformParameters GB_ITALIAN_SARDINIA_TO_WGS84 =  new TransformParameters(-168.6, -34.0, 38.6, 0.374, 0.679, 1.379, 9.48, HAYFORD1909);
+	private static final Area ITALY_SARDINIA = new Area(new CWPoint(42, 6), new CWPoint(38, 11));
+	private static final Area ITALY_SARDINIA_GK = new Area(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB),
+			wgs84ToEpsg(ITALY_SARDINIA.buttomright, EPSG_ITALIAN_GB_EW1).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
-	public static final TransformParameters GB_ITALIAN_SICILIA_TO_WGS84 =  new TransformParameters(-50.2, -50.4, 84.8, 0.690, 2.012, -0.459, 28.08, HAYFORD1909);
-	static final Area ITALY_SICILIA = new Area(new CWPoint(39, 12), new CWPoint(36.3, 15.6));
-	static final Area ITALY_SICILIA_GK = new Area(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toTrackPoint(ProjectedPoint.LOCALSYSTEM_ITALIAN_GB),
-			wgs84ToEpsg(ITALY_SICILIA.buttomright, EPSG_ITALIAN_GB_EW2).toTrackPoint(ProjectedPoint.LOCALSYSTEM_ITALIAN_GB));
+	private static final TransformParameters GB_ITALIAN_SICILIA_TO_WGS84 =  new TransformParameters(-50.2, -50.4, 84.8, 0.690, 2.012, -0.459, 28.08, HAYFORD1909);
+	private static final Area ITALY_SICILIA = new Area(new CWPoint(39, 12), new CWPoint(36.3, 15.6));
+	private static final Area ITALY_SICILIA_GK = new Area(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB),
+			wgs84ToEpsg(ITALY_SICILIA.buttomright, EPSG_ITALIAN_GB_EW2).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
 	// see also http://hal.gis.univie.ac.at/karto/lehr/fachbereiche/geoinfo/givi0304/tutorials/ersteschritte/projectionen.htm#ParMGIWGS84 
 	// taken from taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true click on "national CRS" -> Austria -> AT (translation *-1 as of 11-8-2009)
 	/** Austria Datum Hermannskogel, AT_MGI accuracy about 1.5m */
-	public static final TransformParameters LAMBERT_AUSTRIAN_OLD_TO_WGS84 = new TransformParameters(577.326, 90.129, 463.919, -5.136599, -1.4742, -5.297044, 2.4232, BESSEL);
-	public static final TransformParameters LAMBERT_AUSTRIAN_NEW_TO_WGS84 = new TransformParameters(0      ,0      ,0       ,0         ,0       ,0         ,0      , WGS84);
+	private static final TransformParameters LAMBERT_AUSTRIAN_OLD_TO_WGS84 = new TransformParameters(577.326, 90.129, 463.919, -5.136599, -1.4742, -5.297044, 2.4232, BESSEL);
 	// Übersicht über alle Transformparameter und EPSG-COdes und Projektionenm (PORJ4):
 	// http://svn.osgeo.org/metacrs/proj/trunk/proj/nad/epsg
 	//public static final TransformParameters WGS72_TO_WGS84 =  new TransformParameters(0, 0, 4.5, 0, 0, -0.554, 0.219);
+	private static final TransformParameters LAMBERT_FRENCH_NTF_TO_WGS84 = new TransformParameters(-168    ,    -60,320      ,0         ,0       ,0         ,0      , CLARKE1880IGN);
+	private static final TransformParameters NO_DATUM_SHIFT = new TransformParameters(0      ,0      ,0       ,0         ,0       ,0         ,0      , WGS84);
 
 	private TransformCoordinates() {
 		// as all members are static, so avoid instantiation
 	} 
 
+	/**
+	 * @return String[] of short friendly names all supported projected systems
+	 * the position in this array matches the position in localSystems[]
+	 */
+	public static final String[] getProjectedSystemNames() {
+		String[] ls = new String[TransformCoordinates.localSystems.length];
+		for (int i=0; i < TransformCoordinates.localSystems.length; i++) {
+			ls[i] = TransformCoordinates.localSystems[i].friendlyShortname;
+		}
+		return ls;
+	}
+	
+	public static final int getLocalSystemCode(String id) {
+    	String idl = id.toLowerCase();
+    	if (idl.equals("dd")) 		return TransformCoordinates.DD;
+    	else if (idl.equals("dmm")) return TransformCoordinates.DMM;
+    	else if (idl.equals("dms")) return TransformCoordinates.DMS;
+    	else if (idl.equals("utm")) return TransformCoordinates.UTM;
+    	else if (idl.equals("cw")) return TransformCoordinates.CW;
+    	else {
+    		for (int i=0; i < localSystems.length; i++) {
+    			if (localSystems[i].id.equals(idl)) return localSystems[i].code;
+    		}
+    	}
+    	return LOCALSYSTEM_NOT_SUPPORTED;
+	}
+	
+	public static final LocalSystem getLocalSystem(int localsystemcode) {
+		for (int i=0; i < TransformCoordinates.localSystems.length; i++) {
+			if (TransformCoordinates.localSystems[i].code == localsystemcode) return TransformCoordinates.localSystems[i]; 
+		}
+		throw new IllegalArgumentException("TransformCoordinate.getLocalSystem(int): localsystemcode " + localsystemcode + " not supported");
+	}
+
+	/**
+	 * @return String[] of short friendly names all supported projected systems
+	 * the position in this array matches the position in localSystems[]
+	 */
+	public static final String[] getProjectedSystemIDs() {
+		String[] ls = new String[TransformCoordinates.localSystems.length];
+		for (int i=0; i < TransformCoordinates.localSystems.length; i++) {
+			ls[i] = TransformCoordinates.localSystems[i].id;
+		}
+		return ls;
+	}
 
 	/**
 	 * 
@@ -113,17 +213,18 @@ public final class TransformCoordinates {
 	 * Inside one ProjectedRegion the epsg-code (zone / stripe) can be automatically choosen
 	 * depending on lat / lon.
 	 */
-	public static int getLocalProjectionSystem(int epsgcode) {
+	public static final int getLocalProjectionSystem(int epsgcode) {
 		int ret;
 		switch (epsgcode) {
-		case EPSG_GK2:
-		case EPSG_GK3:
-		case EPSG_GK4:
-		case EPSG_GK5: 					ret = ProjectedPoint.LOCALSYSTEM_GERMAN_GK; break;
+		case EPSG_GERMAN_GK2:
+		case EPSG_GERMAN_GK3:
+		case EPSG_GERMAN_GK4:
+		case EPSG_GERMAN_GK5: 					 ret = TransformCoordinates.LOCALSYSTEM_GERMAN_GK; break;
 		case EPSG_ITALIAN_GB_EW1:
-		case EPSG_ITALIAN_GB_EW2:       ret = ProjectedPoint.LOCALSYSTEM_ITALIAN_GB; break;
-		case EPSG_AUSTRIAN_LAMBERT_OLD: ret = ProjectedPoint.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD; break;
-		case EPSG_AUSTRIAN_LAMBERT_NEW: ret = ProjectedPoint.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW; break;
+		case EPSG_ITALIAN_GB_EW2:        ret = TransformCoordinates.LOCALSYSTEM_ITALIAN_GB; break;
+		case EPSG_AUSTRIAN_LAMBERT_OLD:  ret = TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD; break;
+		case EPSG_AUSTRIAN_LAMBERT_NEW:  ret = TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW; break;
+		case EPSG_FRENCH_LAMBERT_NTF_II: ret = TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE; break;
 		default: ret = -1;
 		}
 		return ret;
@@ -142,21 +243,15 @@ public final class TransformCoordinates {
 	public static CWPoint ProjectedToWgs84(ProjectedPoint lp, int epsg_localsystem, boolean isLocalSystem) {
 		CWPoint ll = lp.unproject();
 		int ls = (isLocalSystem ? epsg_localsystem : getLocalProjectionSystem(epsg_localsystem));
-		TransformParameters transparams;
-		switch (ls) {
-		case ProjectedPoint.LOCALSYSTEM_GERMAN_GK:
-			transparams = getGermanTransformParams(lp);  break;
-		case ProjectedPoint.LOCALSYSTEM_ITALIAN_GB: 
-			transparams = getItalianTransformParams(lp); break;
-		case ProjectedPoint.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD:	
-			transparams = LAMBERT_AUSTRIAN_OLD_TO_WGS84; break; 
-		case ProjectedPoint.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW: 	
-			transparams = LAMBERT_AUSTRIAN_NEW_TO_WGS84; break;
-		default: throw new IllegalArgumentException("ProjectedToWGS84: EPSG-code: " + epsg_localsystem + " not supported");
+		TransformParameters transparams = getTransParams(lp, ls);
+		CWPoint ret;
+		if (transparams == NO_DATUM_SHIFT) ret = ll; 
+		else {
+			XyzCoordinates xyzorig = latLon2xyz(ll, 0, transparams.ellip);
+			XyzCoordinates xyzwgs84 = transform(xyzorig, transparams);
+			ret = xyz2Latlon(xyzwgs84, WGS84);
 		}
-		XyzCoordinates xyzorig = latLon2xyz(ll, 0, transparams.ellip);
-		XyzCoordinates xyzwgs84 = transform(xyzorig, transparams);
-		return xyz2Latlon(xyzwgs84, WGS84);
+		return ret;
 	}
 
 
@@ -197,8 +292,8 @@ public final class TransformCoordinates {
 		else return GB_ITALIAN_PENINSULAR_TO_WGS84;
 	}
 	public static TransformParameters getItalianTransformParams(ProjectedPoint gk) {
-		if (ITALY_SARDINIA_GK.isInBound(gk.toTrackPoint(ProjectedPoint.LOCALSYSTEM_ITALIAN_GB))) return GB_ITALIAN_SARDINIA_TO_WGS84;
-		if (ITALY_SICILIA_GK.isInBound(gk.toTrackPoint(ProjectedPoint.LOCALSYSTEM_ITALIAN_GB))) return GB_ITALIAN_SICILIA_TO_WGS84;
+		if (ITALY_SARDINIA_GK.isInBound(gk.toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB))) return GB_ITALIAN_SARDINIA_TO_WGS84;
+		if (ITALY_SICILIA_GK.isInBound(gk.toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB))) return GB_ITALIAN_SICILIA_TO_WGS84;
 		else return GB_ITALIAN_PENINSULAR_TO_WGS84;
 	}
 
@@ -237,16 +332,40 @@ public final class TransformCoordinates {
 
 	private static TransformParameters getTransParams(TrackPoint wgs84, int localsystem) {
 		switch(localsystem) {
-		case ProjectedPoint.LOCALSYSTEM_GERMAN_GK: 
+		case TransformCoordinates.LOCALSYSTEM_GERMAN_GK: 
 			return getGermanGkTransformParameters(wgs84); 
-		case ProjectedPoint.LOCALSYSTEM_ITALIAN_GB: 
+		case TransformCoordinates.LOCALSYSTEM_ITALIAN_GB: 
 			return getItalianGkTransformParameters(wgs84);
-		case ProjectedPoint.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD:
+		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD:
 			return LAMBERT_AUSTRIAN_OLD_TO_WGS84;
+		case TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE:
+			return LAMBERT_FRENCH_NTF_TO_WGS84;
+		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:
+		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW: 	
+			return NO_DATUM_SHIFT;
 		default: 
-			throw new IllegalArgumentException("getTransParams: localsystem: " + localsystem + "not supported");
+			throw new IllegalArgumentException("TransformCoordinates.getTransParams(wgs84): localsystem: " + localsystem + "not supported");
 		}
 	}
+	private static TransformParameters getTransParams(ProjectedPoint pp, int localsystem) {
+		TransformParameters transparams;
+		switch (localsystem) {
+		case TransformCoordinates.LOCALSYSTEM_GERMAN_GK:
+			transparams = getGermanTransformParams(pp);  break;
+		case TransformCoordinates.LOCALSYSTEM_ITALIAN_GB: 
+			transparams = getItalianTransformParams(pp); break;
+		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD:	
+			transparams = LAMBERT_AUSTRIAN_OLD_TO_WGS84; break;
+		case TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE:
+			transparams = LAMBERT_FRENCH_NTF_TO_WGS84; break;
+		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:
+		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW: 	
+			transparams = NO_DATUM_SHIFT; break;
+		default: throw new IllegalArgumentException("TransformCoordinates.getTransParams(ProjectedPoint): local projection system code: " + localsystem + " not supported");
+		}
+		return transparams;
+	}
+
 
 	private static XyzCoordinates latLon2xyz(TrackPoint ll, double alt, Ellipsoid ellipsoid) {
 		if (!ll.isValid()) throw new IllegalArgumentException("latLon2xyz: invalid lat-lon");
@@ -362,5 +481,6 @@ class TransformParameters {
 	}
 	public TransformParameters inverted = null;
 }
+
 
 

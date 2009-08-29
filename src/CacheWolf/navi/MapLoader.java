@@ -222,7 +222,7 @@ public class MapLoader {
 
 	public String createFilename(CWPoint center, float scale) {
 		String filename = Common.ClearForFileName(currentOnlineMapService.getNameForFileSystem()+"_s"+Common.DoubleToString(scale, 1)
-				+ "_c" + center.toString(CWPoint.LAT_LON).replace(',', '-'));
+				+ "_c" + center.toString(TransformCoordinates.LAT_LON).replace(',', '-'));
 		return filename;
 	}
 
@@ -557,13 +557,13 @@ class WebMapService extends OnlineMapService {
 			bbox += TransformCoordinates.wgs84ToEpsg(buttomleft, coordinateReferenceSystem[crs]).toString(2, "", ",");
 			bbox += "," + TransformCoordinates.wgs84ToEpsg(topright, coordinateReferenceSystem[crs]).toString(2, "", ",");
 		} else if (coordinateReferenceSystem[0] == TransformCoordinates.EPSG_WGS84) 
-			bbox += buttomleft.toString(CWPoint.LON_LAT)  + "," + topright.toString(CWPoint.LON_LAT);
+			bbox += buttomleft.toString(TransformCoordinates.LON_LAT)  + "," + topright.toString(TransformCoordinates.LON_LAT);
 		else throw new IllegalArgumentException(MyLocale.getMsg(4828, "Coordinate system not supported by cachewolf:")+" " + coordinateReferenceSystem.toString());
 		String ret = MainUrl + "SERVICE=WMS" + "&"+ versionUrlPart + "&" + requestUrlPart + "&" + 
 		coordinateReferenceSystemUrlPart[crs] + "&" + bbox + 
 		"&WIDTH=" + pixelsize.x + "&HEIGHT=" + pixelsize.y + "&" + 
 		layersUrlPart + "&" + stylesUrlPart + "&" + imageFormatUrlPart;
-		Global.getPref().log(ret + " WGS84: Buttom left: " + buttomleft.toString(CWPoint.DD) + "top right: " + topright.toString(CWPoint.DD));
+		Global.getPref().log(ret + " WGS84: Buttom left: " + buttomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
 		return ret;
 	}
 
@@ -691,7 +691,7 @@ class ExpediaMapService extends OnlineMapService {
 		if (     (center.lonDec <= -30   && center.lonDec >= -170) || 
 				( center.lonDec > 360-30 && center.lonDec <= 360-170) ) zone = "USA0409"; // TODO test which zone-code ist best for asia
 		else zone = "EUR0809";
-		String quelle = MainUrl + "&CenP=" + center.toString(CWPoint.LAT_LON);
+		String quelle = MainUrl + "&CenP=" + center.toString(TransformCoordinates.LAT_LON);
 		quelle = quelle + "&Alti="+Convert.toString(zoomlevel)+"&Lang="+zone+"&Size="+Convert.toString(pixelsize.x)+","+Convert.toString(pixelsize.y)+"&Offs=0,0&MapS=0"; //&Pins=|" + latD.toString().replace(',', '.') + "," + lonD.toString().replace(',', '.') + "|5|";
 		return quelle;
 	}
