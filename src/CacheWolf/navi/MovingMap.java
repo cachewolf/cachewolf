@@ -1032,8 +1032,8 @@ public class MovingMap extends Form {
 		int middleheight = r.y + (r.height)/2;
 		CWPoint centerPoint = ScreenXY2LatLon(middlewidth, middleheight);
 		Rect screen = new Rect ();
-		screen.height = r.height - r.y; 
-		screen.width = r.width - r.x;
+		screen.height = r.height ;//- r.y; 
+		screen.width = r.width ;//- r.x;
 		MapInfoObject bestMap = maps.getBestMap(centerPoint, screen, currentMap.scale, true);
 		if (bestMap == null){
 			//No map found, area must be left white
@@ -1161,14 +1161,14 @@ public class MovingMap extends Form {
 		if (blackArea.x > whiteArea.x) {
 			Rect r= new Rect ();
 			r.x = 0;
-			r.y = 0;
+			r.y = whiteArea.y;
 			r.width = blackArea.x;
 			r.height = whiteArea.height;
 			rectangles.add(r);
 		}
 		if (blackArea.y > whiteArea.y) {
 			Rect r= new Rect ();
-			r.x = 0;
+			r.x = whiteArea.x;
 			r.y = 0;
 			r.width = whiteArea.width;
 			r.height = blackArea.y;
