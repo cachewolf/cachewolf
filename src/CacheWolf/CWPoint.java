@@ -403,7 +403,7 @@ public class CWPoint extends TrackPoint{
 				switch (what) {
 					case 0: return MyLocale.formatLong(iDeg, "00");
 					case 1: return MyLocale.formatDouble(tmpMin, "00");
-					case 2: return MyLocale.formatDouble(tmpSec, "00.0").replace(',','.');
+					case 2: return MyLocale.formatDouble(tmpSec, "00.00").replace(',','.');
 				}
 		}
 		return ""; // Dummy to keep compiler happy
