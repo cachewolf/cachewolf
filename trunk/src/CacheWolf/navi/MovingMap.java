@@ -17,6 +17,7 @@ import ewe.sys.Double;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.*;
+import ewe.util.Iterator;
 import ewe.util.Vector;
 
 /**
@@ -80,6 +81,17 @@ public class MovingMap extends Form {
 	double lastDistance = -1;
 	
 	float lastHighestResolutionGPSDestScale = -1;
+
+	public static final int tileWidth = 150;
+	public static final int tileHeight = 150;
+
+	public boolean isFillWhiteArea() {
+		return pref.fillWhiteArea;
+	}
+
+	public void setFillWhiteArea(boolean fillWhiteArea) {
+		pref.fillWhiteArea = fillWhiteArea;
+	}
 
 	public MovingMap(Navigate nav, CacheDB cacheDB){
 		this.cacheDB = cacheDB;
@@ -959,6 +971,43 @@ public class MovingMap extends Form {
 			return;
 		}
 		updateOnlyPosition(where, true);
+		
+		//Clean up any additional images, tiles will removed and any other item be added again later
+		Vector icons = new Vector ();
+		for (Iterator i = mmp.images.iterator(); i.hasNext();) {
+			AniImage im = (AniImage) i.next();
+			if (im.getClass().equals(MapImage.class)&& mmp.mapImage != im) {
+				i.remove();
+			}
+			else{
+				icons.add(im);
+				i.remove();
+			}
+		}
+		//Mark all tiles as dirty
+		MovingMapCache.getCache().clearUsedFlags ();
+		
+		Point mapPosx = getMapPositionOnScreen();
+		//Holds areas not filled by currentmap and/or used tiles
+		Vector rectangles = new Vector();
+		//calculate areas which will not drawn
+		Rect whiteArea = new Rect (0,0,width,height);
+		Rect blackArea = new Rect (mapPosx.x, mapPosx.y, 1000, 1000);
+		calculateRectangles(blackArea, whiteArea,rectangles);
+		//I've somtimes experincied an endless which might be caused by a bug in getBestMap. Therefore i will stop the loop after 30 runs
+		int count=0;
+		while (isFillWhiteArea() && currentMap.zoomFactor == 1.0 && !mapHidden && !rectangles.isEmpty() && count < 30){
+			count++;
+			updateTileForWhiteArea(rectangles);
+		}		
+		//Remove all tiles not needed from the cache to reduce memory
+		MovingMapCache.getCache().cleanCache ();
+		//At Last redraw all icons on the map
+		for(Iterator i = icons.iterator(); i.hasNext();){
+			AniImage im = (AniImage) i.next();
+			mmp.addImage(im);
+		}
+		
 		if (!autoSelectMap) return;
 		Point mapPos = getMapPositionOnScreen();
 		boolean screenNotCompletlyCovered =  mmp.mapImage == null || (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width));
@@ -971,6 +1020,175 @@ public class MovingMap extends Form {
 				setBestMap(where, screenNotCompletlyCovered);
 				forceMapLoad = false;
 			}
+		}
+	}
+
+	private void updateTileForWhiteArea(Vector rectangles) {
+		Rect blackArea;
+		Rect r = (Rect) rectangles.get(0);
+		rectangles.removeElementAt(0);
+		//calculate the center of the rectangle and try to get an map for it
+		int middlewidth = r.x + (r.width)/2;
+		int middleheight = r.y + (r.height)/2;
+		CWPoint centerPoint = ScreenXY2LatLon(middlewidth, middleheight);
+		Rect screen = new Rect ();
+		screen.height = r.height - r.y; 
+		screen.width = r.width - r.x;
+		MapInfoObject bestMap = maps.getBestMap(centerPoint, screen, currentMap.scale, true);
+		if (bestMap == null){
+			//No map found, area must be left white
+			return;
+		}
+		//A map was found, but it does not contain the previously calculated center
+		if (!(bestMap.buttomright.latDec <= centerPoint.latDec && centerPoint.latDec <= bestMap.topleft.latDec)){
+			return;
+		}
+		if (!(bestMap.topleft.lonDec <= centerPoint.lonDec && centerPoint.lonDec <= bestMap.buttomright.lonDec)){
+			return;
+		}
+		if (!bestMap.getImageFilename().equals(currentMap.getImageFilename())) {
+			String filename = bestMap.getImageFilename();
+			if (filename.length() > 0) {
+				//calculate position of the new map on the screen
+				Point mapPos = new Point();
+				Point mapposint = bestMap.calcMapXY(posCircle.where);
+				mapPos.x = posCircleX - mapposint.x;
+				mapPos.y = posCircleY - mapposint.y;
+				Point mapDimension = bestMap.calcMapXY(bestMap.buttomright);
+				blackArea = new Rect (mapPos.x, mapPos.y, mapDimension.x, mapDimension.y);
+				//Are there any white areas left?
+				calculateRectangles(blackArea, r, rectangles);
+				//Not all maps have the dimension 1000x1000 Pixels, we cache this information:
+				Dimension rect2 = MovingMapCache.getCache().getDimension (filename);
+				MapImage fullImage = null;
+				if (rect2 == null){
+					fullImage = new MapImage(filename);
+					rect2 = new Dimension (fullImage.getHeight(), fullImage.getWidth());
+					MovingMapCache.getCache ().putDimension (filename, rect2);
+				}
+				generateTiles(blackArea, filename, mapPos, rect2, fullImage);
+			}
+		}
+	}
+
+	private void generateTiles(Rect blackArea, String filename, Point mapPos,
+			Dimension rect2, MapImage fullImage) {
+		//Generate tiles from the map
+		int numRows = ((rect2.height-1)/tileHeight)+1;
+		int numCols = ((rect2.width-1)/tileWidth)+1;
+		for (int row = 0; row < numRows; row++) {
+			for (int column = 0; column < numCols; column++) {
+				//Tile is not needed, don't process
+				if (!isCoveredByBlackArea(mapPos, row, column, blackArea, rect2)) {
+					continue;
+				}
+				//Get tile from cache or if not found, put all tiles for this image into the cache. 
+				MapImage im = MovingMapCache.getCache().get(filename, row, column);
+				if (im == null) {
+					if (fullImage == null){
+						fullImage = new MapImage(filename);
+					}
+					putImageIntoCache(filename, fullImage, mapPos, blackArea);
+					im = MovingMapCache.getCache().get(filename, row, column);
+				}
+				//If a tile has been found, draw it on the screen
+				if (im != null) {
+					im.setLocation(mapPos.x + (column * tileWidth), mapPos.y + (row * tileHeight));
+					mmp.addImage(im);
+				}
+			}
+		}
+	}
+
+	private void putImageIntoCache(String filename, MapImage fullImage, Point mapPos, Rect blackArea) {
+		MapImage im;
+		int numRows = (fullImage.getHeight()-1)/tileHeight + 1;
+		int numCols = (fullImage.getWidth()-1)/tileWidth + 1;
+		for (int row2 = 0; row2 < numRows; row2++) {
+			for (int column2 = 0; column2 < numCols; column2++) {
+				int realWidth = java.lang.Math.min(tileWidth, (fullImage.getWidth() - tileWidth*column2));
+				int realHeight = java.lang.Math.min(tileHeight, (fullImage.getHeight() - tileHeight*row2));
+				if (!isCoveredByBlackArea(mapPos, row2, column2, blackArea, new Dimension(fullImage.getWidth(), fullImage.getHeight()))){
+					continue;
+				}
+				Image image2 = new Image(realWidth, realHeight);
+				int[] pixels = new int[realWidth * realHeight];
+				fullImage.getPixels(pixels, 0, tileWidth * column2, tileHeight * row2, realWidth, realHeight, 0);
+				image2.setPixels(pixels, 0, 0, 0, realWidth, realHeight, 0);
+				im = new MapImage();
+				im.setImage(image2);
+
+				MovingMapCache.getCache().put(filename, row2, column2, im);
+			}
+		}
+	}
+
+	private boolean isCoveredByBlackArea (Point mapPos, int row,int column,Rect blackArea, Dimension mapDimension){
+		int realWidth = java.lang.Math.min(tileWidth, (mapDimension.width - tileWidth*column));
+		int realHeight = java.lang.Math.min(tileHeight, (mapDimension.height - tileHeight*row));
+		int left = mapPos.x + column * tileWidth;
+		int right = left + realWidth;
+		int top = mapPos.y + row * tileHeight;
+		int bottom = top +realHeight;
+		if (right < blackArea.x || bottom < blackArea.y){
+			return false;
+		}
+		if (left > blackArea.x + blackArea.width || top > blackArea.y + blackArea.height){
+			return false;
+		}
+		return true;
+	}
+	
+	private void calculateRectangles(Rect blackArea, Rect whiteArea, Vector rectangles) {
+		if (width == 0 || height == 0) return;
+		if (whiteArea.x >= width || whiteArea.y >= height) return;
+		
+		if (blackArea.x < 0){
+			blackArea.width += blackArea.x; 
+			blackArea.x =0;
+		}
+		if (blackArea.y < 0){
+			blackArea.height += blackArea.y; 
+			blackArea.y =0;
+		}
+		if (blackArea.x + blackArea.width > width){
+			blackArea.width = width - blackArea.x;
+		}
+		if (blackArea.y + blackArea.height > height){
+			blackArea.height = height - blackArea.y;
+		}
+		
+		if (blackArea.x > whiteArea.x) {
+			Rect r= new Rect ();
+			r.x = 0;
+			r.y = 0;
+			r.width = blackArea.x;
+			r.height = whiteArea.height;
+			rectangles.add(r);
+		}
+		if (blackArea.y > whiteArea.y) {
+			Rect r= new Rect ();
+			r.x = 0;
+			r.y = 0;
+			r.width = whiteArea.width;
+			r.height = blackArea.y;
+			rectangles.add(r);
+		}
+		if ((blackArea.y + blackArea.height) <  whiteArea.y + whiteArea.height) {
+			Rect r= new Rect ();
+			r.x = whiteArea.x;
+			r.y = blackArea.y + blackArea.height;
+			r.width = whiteArea.width;
+			r.height = (whiteArea.y + whiteArea.height) - r.y;
+			rectangles.add(r);
+		}
+		if ((blackArea.x + blackArea.width)<  whiteArea.x + whiteArea.width) {
+			Rect r= new Rect ();
+			r.x = blackArea.x + blackArea.width;
+			r.y = whiteArea.y;
+			r.width = (whiteArea.x + whiteArea.width) - r.x;
+			r.height = whiteArea.height;
+			rectangles.add(r);
 		}
 	}
 
@@ -1517,6 +1735,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	MenuItem changeMapDirMI = new MenuItem(MyLocale.getMsg(4236, "Change map directory$c"), new IconAndText(new mImage("map_cd.png"), MyLocale.getMsg(4237, "Change map directory"), null, CellConstants.RIGHT));
 	MenuItem showMapMI = new MenuItem(MyLocale.getMsg(4238, "Show map"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4239, "Show map"), null, CellConstants.RIGHT));
 	MenuItem hideMapMI = new MenuItem(MyLocale.getMsg(4240, "Hide map"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4241, "Hide map"), null, CellConstants.RIGHT));
+	MenuItem fillMapMI = new MenuItem(MyLocale.getMsg(4267, "Show white areas"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4267, "Show white areas"), null, CellConstants.RIGHT));
+	MenuItem noFillMapMI = new MenuItem(MyLocale.getMsg(4266, "Fill white areas"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4266, "Fill white areas"), null, CellConstants.RIGHT));
 	// automatic
 	MenuItem mapChangeModusMI = new MenuItem(MyLocale.getMsg(4242, "Modus for automatic map change"), MenuItem.Separator, null);;
 	MenuItem highestResGpsDestMI = new MenuItem(MyLocale.getMsg(4244, "Highest res. containing dest. & cur. position"), new IconAndText(new mImage("res_gps_goto.png"), MyLocale.getMsg(4245, "Highest res. containing dest. & cur. position"), null, CellConstants.RIGHT)); //immer h�chste Aufl�sung w�hlen, die akt. Pos. und Ziel enthalten 
@@ -1541,6 +1761,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	boolean paintingZoomArea;
 	ImageList saveImageList = null;
 	int lastZoomWidth , lastZoomHeight;
+	
 	public MovingMapPanel(MovingMap f){
 		this.mm = f;
 		miLuminary = new MenuItem[SkyOrientation.LUMINARY_NAMES.length];
@@ -1721,7 +1942,12 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				if (mm.mapHidden) mapsMenu.addItem(showMapMI);
 				else mapsMenu.addItem(hideMapMI);
 			}
-
+			if (mm.isFillWhiteArea()){
+				mapsMenu.addItem(fillMapMI);
+			}
+			else{
+				mapsMenu.addItem(noFillMapMI);
+			}
 			// automatic
 			highestResGpsDestMI.modifiers &= ~MenuItem.Checked;
 			highestResolutionMI.modifiers &= ~MenuItem.Checked;
@@ -1826,7 +2052,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							mapsMenu.close();
 							chooseMap();
 						}
-						if (action == changeMapDirMI)	{
+						else if (action == changeMapDirMI)	{
 							mapsMenu.close();
 							FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().baseDir+"maps");
 							fc.addMask("*.wfl");
@@ -1837,52 +2063,64 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 								mm.forceMapLoad();
 							}
 						}
+						else if (action == fillMapMI){
+							mapsMenu.close ();
+							mm.setFillWhiteArea(false);
+							mm.updatePosition (mm.posCircle.where);
+							repaintNow();
+						}
+						else if (action == noFillMapMI){
+							mapsMenu.close ();
+							mm.setFillWhiteArea(true);
+							mm.updatePosition (mm.posCircle.where);
+							repaintNow();
+						}
 						//dont show map
-						if (action == hideMapMI) {
+						else if (action == hideMapMI) {
 							mapsMenu.close();
 							mm.hideMap();
 						}
 						// show map
-						if (action == showMapMI) {
+						else if (action == showMapMI) {
 							mapsMenu.close();
 							mm.showMap();
 						}
 						// map change modus
-						if (action == highestResGpsDestMI) {
+						else if (action == highestResGpsDestMI) {
 							mapsMenu.close();
 							mm.setResModus(MovingMap.HIGHEST_RESOLUTION_GPS_DEST);
 						}
-						if (action == highestResolutionMI) {
+						else if (action == highestResolutionMI) {
 							mapsMenu.close();
 							mm.setResModus(MovingMap.HIGHEST_RESOLUTION);
 						}
-						if (action == keepManResolutionMI) {
+						else if (action == keepManResolutionMI) {
 							mapsMenu.close();
 							mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 						}
 						// manually change map resolution
-						if (action == moreDetailsMI) {
+						else if (action == moreDetailsMI) {
 							mapsMenu.close();
 							mm.loadMoreDetailedMap(false);
 						} 
-						if (action == moreOverviewMI) {
+						else if (action == moreOverviewMI) {
 							mapsMenu.close();
 							mm.loadMoreDetailedMap(true);
 						}
-						if (action == AllCachesResMI) {
+						else if (action == AllCachesResMI) {
 							mapsMenu.close();
 							mm.loadMapForAllCaches();
 						}
 						// moveto position
-						if (action == moveToCenterMI) {
+						else if (action == moveToCenterMI) {
 							mapsMenu.close();
 							mm.setCenterOfScreen(Global.getPref().curCentrePt, true);
 						}
-						if (action == moveToDestMI) {
+						else if (action == moveToDestMI) {
 							mapsMenu.close();
 							mm.setCenterOfScreen(mm.gotoPos.where, true);
 						}
-						if (action == moveToGpsMI) {
+						else if (action == moveToGpsMI) {
 							mapsMenu.close();
 							this.snapToGps();						
 						}
