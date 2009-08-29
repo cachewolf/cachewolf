@@ -992,9 +992,9 @@ public class MovingMap extends Form {
 		Vector rectangles = new Vector();
 		//calculate areas which will not drawn
 		Rect whiteArea = new Rect (0,0,width,height);
-		Rect blackArea = new Rect (mapPosx.x, mapPosx.y, 1000, 1000);
+		Rect blackArea = new Rect (mapPosx.x, mapPosx.y, mmp.mapImage.getWidth(), mmp.mapImage.getHeight());
 		calculateRectangles(blackArea, whiteArea,rectangles);
-		//I've somtimes experincied an endless which might be caused by a bug in getBestMap. Therefore i will stop the loop after 30 runs
+		//I've sometimes experienced an endless loop which might be caused by a bug in getBestMap. Therefore i will stop the loop after 30 runs
 		int count=0;
 		while (isFillWhiteArea() && currentMap.zoomFactor == 1.0 && !mapHidden && !rectangles.isEmpty() && count < 30){
 			count++;
