@@ -127,21 +127,18 @@ public class CoordsScreen extends Form {
 			enable(chcEW); enable(inpEWDeg); disable(inpEWm); disable(inpEWs);
 			inpEWDeg.wantReturn=true;
 			disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
-			enable(localCooSystem);
 			break;
 		case TransformCoordinates.DMM: 	
 			enable(chcNS); enable(inpNSDeg); enable(inpNSm); disable(inpNSs);
 			enable(chcEW); enable(inpEWDeg); enable(inpEWm); disable(inpEWs);
 			inpEWm.wantReturn=true;
 			disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
-			enable(localCooSystem);
 			break;
 		case TransformCoordinates.DMS: 	
 			enable(chcNS); enable(inpNSDeg); enable(inpNSm); enable(inpNSs);
 			enable(chcEW); enable(inpEWDeg); enable(inpEWm); enable(inpEWs);
 			inpEWs.wantReturn=true;
 			disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
-			enable(localCooSystem);
 			break;
 		default: 	
 			disable(chcNS); disable(inpNSDeg); disable(inpNSm); disable(inpNSs);
@@ -149,7 +146,6 @@ public class CoordsScreen extends Form {
 			if (TransformCoordinates.localSystems[localCooSystem.getInt()].zoneSeperatly) enable(inpUTMZone);
 			else disable(inpUTMZone); 
 			enable(inpUTMNorthing); enable(inpUTMEasting);
-			disable(localCooSystem);
 			inpUTMNorthing.wantReturn=true;
 			break;
 		}
