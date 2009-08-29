@@ -92,11 +92,11 @@ public final class TransformCoordinates {
 	};
 
 	public static final LocalSystem[] localSystems = {
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_UTM_WGS84,             "UTM",         "utm",   ProjectedPoint.PJ_UTM_WGS84.zoneSeperately),
 		new LocalSystem(TransformCoordinates.LOCALSYSTEM_GERMAN_GK, 			"de Gauﬂ-K.",  "de.gk", ProjectedPoint.PJ_GERMAN_GK.zoneSeperately),
 		new LocalSystem(TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD,  "at Lamb.",    "at.lb", ProjectedPoint.PJ_AUSTRIAN_LAMBERT_OLD.zoneSeperately),
 		new LocalSystem(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB,            "it Gauﬂ-B.",  "it.gb", ProjectedPoint.PJ_ITALIAN_GB.zoneSeperately),
-		new LocalSystem(TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE,    "fr Lamb-IIe", "fr.l2", ProjectedPoint.PJ_FRENCH_LAMBERT_NTF_II.zoneSeperately),
-		new LocalSystem(TransformCoordinates.LOCALSYSTEM_UTM_WGS84,             "UTM",         "utm",   ProjectedPoint.PJ_UTM_WGS84.zoneSeperately)
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE,    "fr Lamb-IIe", "fr.l2", ProjectedPoint.PJ_FRENCH_LAMBERT_NTF_II.zoneSeperately)
 	};
 	
 
