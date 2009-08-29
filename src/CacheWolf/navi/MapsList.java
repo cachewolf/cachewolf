@@ -142,7 +142,6 @@ public class MapsList extends Vector {
 				screenArea = getAreaForScreen(screen, ll, mi.scale, mi);
 				lastscale = mi.scale;
 			}
-//			if(forceScale && java.lang.Math.abs (scale- mi.scale) > 0.0001) continue;
 			
 			if (screenArea.isOverlapping(mi) ) { // is on screen
 				if (!forceScale || (forceScale && scaleEquals(scale, mi))) { // different scale?
