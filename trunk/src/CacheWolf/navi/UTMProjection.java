@@ -32,7 +32,7 @@ public final class UTMProjection extends Projection {
 	}
 
 	public ProjectedPoint project(CWPoint wgs84, ProjectedPoint pp) {
-		int stripe = (int) Math.floor((wgs84.lonDec - 177) / 6); // we start with stripe 0, but officially this is stripe 1
+		int stripe = (int) Math.floor((wgs84.lonDec - 180) / 6); // we start with stripe 0, but officially this is stripe 1
 		if (stripe < 0) stripe += 60;
 		GkProjection.project(wgs84, ellip, 6, stripe -30, 3, 0.9996, pp);
 		pp.zone = stripe;
