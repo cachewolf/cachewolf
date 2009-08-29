@@ -998,7 +998,12 @@ public class MovingMap extends Form {
 		int count=0;
 		while (isFillWhiteArea() && currentMap.zoomFactor == 1.0 && !mapHidden && !rectangles.isEmpty() && count < 30){
 			count++;
+			try {
 			updateTileForWhiteArea(rectangles);
+			} catch (ewe.sys.SystemResourceException sre) {
+				setFillWhiteArea(false);
+				(new MessageBox("Error", "Not enough ressources to fill white ares, disabling this", MessageBox.OKB)).execute();
+			}
 		}		
 		//Remove all tiles not needed from the cache to reduce memory
 		MovingMapCache.getCache().cleanCache ();
