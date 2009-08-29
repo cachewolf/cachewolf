@@ -27,14 +27,14 @@ import ewe.sys.Double;
  */
 
 
-public class GotoPanel extends CellPanel {
+public final class GotoPanel extends CellPanel {
 
 	//public CWGPSPoint gpsPosition = new CWGPSPoint();
 	//public CWPoint toPoint = new CWPoint();
 	public Navigate myNavigation;
 	mButton btnGPS, btnCenter,btnSave;
 	mButton btnGoto, btnMap;
-	int currFormat;
+	int currFormatSel;
 
 	mLabel lblGPS, lblPosition, lblDST;
 	Color gpsStatus;
@@ -61,14 +61,14 @@ public class GotoPanel extends CellPanel {
 	final static Font BOLD = new Font("Arial", Font.BOLD, 14);
 
 	int ticker = 0;
-	
+
 	Menu mnuContextFormt;
-	MenuItem miDMM, miDMS, miDD, miUTM, miGK;
-	
+	MenuItem miCooformat[] = new MenuItem[TransformCoordinates.localSystems.length + 3]; //miDMM, miDMS, miDD, miUTM, miGK;
+
 	Menu mnuContextRose;
 	MenuItem miLuminary[] = new MenuItem[SkyOrientation.LUMINARY_NAMES.length];
 	MenuItem miNorthCentered;
-	
+
 	/**
 	 * Create GotoPanel 
 	 * @param Preferences 	global preferences
@@ -93,17 +93,14 @@ public class GotoPanel extends CellPanel {
 		//Format selection for coords		
 		//context menu
 		mnuContextFormt = new Menu();
-		mnuContextFormt.addItem(miDD = new MenuItem("d.dï¿½"));
-		miDD.modifiers &= ~MenuItem.Checked;
-		mnuContextFormt.addItem(miDMM = new MenuItem("dï¿½m.m\'"));
-		miDMM.modifiers |= MenuItem.Checked;
-		mnuContextFormt.addItem(miDMS = new MenuItem("dï¿½m\'s\""));
-		miDMS.modifiers &= ~MenuItem.Checked;
-		mnuContextFormt.addItem(miUTM = new MenuItem("UTM"));
-		miUTM.modifiers &= ~MenuItem.Checked;
-		mnuContextFormt.addItem(miGK = new MenuItem("GK"));
-		miGK.modifiers &= ~MenuItem.Checked;
-		currFormat = CWPoint.DMM;
+		currFormatSel = 1; // default to d° m.m
+		mnuContextFormt.addItem(miCooformat[0] = new MenuItem("d.d°"));
+		miCooformat[0].modifiers &= ~MenuItem.Checked;
+		mnuContextFormt.addItem(miCooformat[1] = new MenuItem("d°m.m\'"));
+		miCooformat[1].modifiers |= MenuItem.Checked; // default
+		mnuContextFormt.addItem(miCooformat[2] = new MenuItem("d°m\'s\""));
+		miCooformat[2].modifiers &= ~MenuItem.Checked;
+		mnuContextFormt.addItems(TransformCoordinates.getProjectedSystemNames());
 
 		// Create context menu for compass rose: select luminary for orientation
 		mnuContextRose = new Menu();
@@ -119,7 +116,7 @@ public class GotoPanel extends CellPanel {
 		lblGPS.setMenu(mnuContextFormt);
 		lblGPS.modifyAll(ControlConstants.WantHoldDown, 0);
 
-		lblPosition = new mLabel(myNavigation.gpsPos.toString(currFormat));
+		lblPosition = new mLabel(myNavigation.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
 		lblPosition.anchor = CellConstants.CENTER;
 		lblPosition.setMenu(mnuContextFormt);
 		lblPosition.modifyAll(ControlConstants.WantHoldDown, 0);
@@ -131,15 +128,15 @@ public class GotoPanel extends CellPanel {
 		lblDST.modifyAll(ControlConstants.WantHoldDown, 0);
 
 		CoordsP.addLast(btnGoto = new mButton(getGotoBtnText()),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-		
+
 		//Rose for bearing
-//		compassRose = new GotoRose("rose.png");
+		//		compassRose = new GotoRose("rose.png");
 		compassRose = new GotoRose();
 		icRose = new ImageControl(compassRose);
 		icRose.setMenu(mnuContextRose);
 		icRose.modifyAll(ControlConstants.WantHoldDown, 0); // this is necessary in order to make PenHold on a PDA work as right click
 		roseP.addLast(icRose,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.NORTH));
-		
+
 		mnuContextRose.addItem(new MenuItem("", MenuItem.Separator, null));
 		mnuContextRose.addItem(miNorthCentered = new MenuItem(MyLocale.getMsg(1503,"North Centered")));
 		if (compassRose.isNorthCentered()) miNorthCentered.modifiers |= MenuItem.Checked;
@@ -171,15 +168,15 @@ public class GotoPanel extends CellPanel {
 		 */
 
 		//while (true){
-//		int notinterpreted = 0;
-//		if (myGPS.examine("@ï¿½ï¿½H @ï¿½ï¿½Hï¿½@ï¿½ï¿½HHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½H")) { notinterpreted = 0;} else notinterpreted++;
-//		if (notinterpreted > 5) myGPS.noInterpretableData();
-//		// myGPS.noInterpretableData();
+		//		int notinterpreted = 0;
+		//		if (myGPS.examine("@ï¿½ï¿½H @ï¿½ï¿½Hï¿½@ï¿½ï¿½HHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½H")) { notinterpreted = 0;} else notinterpreted++;
+		//		if (notinterpreted > 5) myGPS.noInterpretableData();
+		//		// myGPS.noInterpretableData();
 
 
-//		}	
+		//		}	
 	}
-	
+
 	public void resizeTo(int pWidth, int pHeight){
 		super.resizeTo(pWidth, pHeight);
 		Rect coordsRect = CoordsP.getRect();
@@ -204,14 +201,14 @@ public class GotoPanel extends CellPanel {
 	public void setDestination(CWPoint dest){
 		myNavigation.setDestination(dest);
 		if (!myNavigation.destination.isValid()) (new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(1507,"Coordinates are out of range:") +"\n"+MyLocale.getMsg(1508,"latitude")+": "+myNavigation.destination.latDec+"\n "+MyLocale.getMsg(1509,"longditue")+": "+myNavigation.destination.lonDec, FormBase.OKB)).execute();
-		
+
 	}
-	
+
 	public void destChanged(CWPoint d) { // called from myNavigate
 		btnGoto.setText(getGotoBtnText());
 		updateDistance();
 	}
-	
+
 
 	/**
 	 * set the coords of the destination and switch to gotoPanel  
@@ -225,12 +222,12 @@ public class GotoPanel extends CellPanel {
 		myNavigation.setDestination(ch);
 		mainT.select(this);
 	}
-	
+
 	/**
 	 * updates distance and bearing
 	 *
 	 */
-	
+
 	public void updateDistance() {
 		//update distance
 		float distance = -1.0f;
@@ -252,7 +249,7 @@ public class GotoPanel extends CellPanel {
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) {
 			// display values only, if signal good
 			//Vm.debug("currTrack.add: nachher");
-			lblPosition.setText(myNavigation.gpsPos.toString(currFormat));
+			lblPosition.setText(myNavigation.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
 			speed.set(myNavigation.gpsPos.getSpeed());
 			sunAzimut.set(myNavigation.skyOrientationDir.lonDec);
 			bearMov.set(myNavigation.gpsPos.getBear());
@@ -271,7 +268,7 @@ public class GotoPanel extends CellPanel {
 			gpsStatus = RED;
 			myNavigation.stopGps();
 		}
-		// cannot interprete data
+		// cannot interpret data
 		if (fix == -2) {
 			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511, "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n")+myNavigation.gpsPos.lastStrExamined, FormBase.OKB)).exec();
 			gpsStatus = RED;
@@ -282,7 +279,7 @@ public class GotoPanel extends CellPanel {
 	public void gpsStarted() {
 		btnGPS.setText(MyLocale.getMsg(1505,"Stop"));
 	}
-	
+
 	public void startGps() {
 		myNavigation.startGps(pref.logGPS, Convert.toInt(pref.logGPSTimer));
 	}
@@ -293,12 +290,12 @@ public class GotoPanel extends CellPanel {
 		this.repaintNow(); // without this the change in the background color will not be displayed
 	}
 
-	
+
 	private String getGotoBtnText() {
 		if (myNavigation.destination == null) return MyLocale.getMsg(999,"Not set");
-		else return myNavigation.destination.toString(currFormat);
+		else return myNavigation.destination.toString(CoordsScreen.getLocalSystem(currFormatSel));
 	}
-	
+
 	public void switchToMovingMap() {
 		CWPoint centerTo = null;
 		if (myNavigation.isGpsPosValid()) centerTo = new CWPoint(myNavigation.gpsPos); // set gps-pos if gps is on
@@ -316,72 +313,43 @@ public class GotoPanel extends CellPanel {
 		if (centerTo != null && centerTo.isValid())
 			mainT.SwitchToMovingMap(centerTo, false);
 		else
-		(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS"), FormBase.OKB)).execute(); 
+			(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS"), FormBase.OKB)).execute(); 
 	}
-	
+
 	/**
 	 * Eventhandler
 	 */
-
 	public void onEvent(Event ev){
 		if (ev instanceof MenuEvent) { 
-			if (ev.type == MenuEvent.SELECTED ) {
-				MenuItem action = (MenuItem) mnuContextFormt.getSelectedItem(); 
-				if (action != null) {
-					if (action == miDD) {
-						mnuContextFormt.close();
-						currFormat = CWPoint.DD;
-						}
-					if (action == miDMM) {
-						mnuContextFormt.close();
-						currFormat = CWPoint.DMM;
-					}
-					if (action == miDMS) {
-						mnuContextFormt.close();
-						currFormat = CWPoint.DMS;
-					}
-					if (action == miUTM) {
-						mnuContextFormt.close();
-						currFormat = CWPoint.UTM;
-					}
-					if (action == miGK) {
-						mnuContextFormt.close();
-						currFormat = CWPoint.GK;
-					}
-					miDD.modifiers &= ~MenuItem.Checked;
-					miDMM.modifiers &= ~MenuItem.Checked;
-					miDMS.modifiers &= ~MenuItem.Checked;
-					miUTM.modifiers &= ~MenuItem.Checked;
-					miGK.modifiers &= ~MenuItem.Checked;
-					switch (currFormat) {
-					case CWPoint.DD: miDD.modifiers |= MenuItem.Checked; break;   
-					case CWPoint.DMM: miDMM.modifiers |= MenuItem.Checked; break;   
-					case CWPoint.DMS: miDMS.modifiers |= MenuItem.Checked; break;   
-					case CWPoint.UTM: miUTM.modifiers |= MenuItem.Checked; break;
-					case CWPoint.GK: miGK.modifiers |= MenuItem.Checked; break;
-					}
-
-					lblPosition.setText(myNavigation.gpsPos.toString(currFormat));
+			if (ev.type == MenuEvent.SELECTED) {
+				if (((MenuEvent)ev).menu == mnuContextFormt) {
+					mnuContextFormt.close();
+					mnuContextFormt.getItemAt(currFormatSel).modifiers &= ~MenuItem.Checked;
+					currFormatSel = mnuContextFormt.getInt();
+					mnuContextFormt.getItemAt(currFormatSel).modifiers |= MenuItem.Checked;
+					lblPosition.setText(myNavigation.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
 					btnGoto.setText(getGotoBtnText());
 				} // end lat-lon-format context menu
-				action = (MenuItem) mnuContextRose.getSelectedItem();
-				if (action != null) {
-					for (int i=0; i<miLuminary.length; i++) {
-						if (action == miLuminary[i]) {
-							myNavigation.setLuminary(i);
-							miLuminary[i].modifiers |= MenuItem.Checked;
-							compassRose.setLuminaryName(SkyOrientation.getLuminaryName(myNavigation.luminary));
-						} else miLuminary[i].modifiers &= ~MenuItem.Checked;
-					}
-					if (action == miNorthCentered) {
-						if (compassRose.isNorthCentered()) {
-							compassRose.setNorthCentered(false);
-							miNorthCentered.modifiers &= ~MenuItem.Checked;							
+				if (((MenuEvent)ev).menu == mnuContextRose) {
+					MenuItem action = (MenuItem) mnuContextRose.getSelectedItem();
+					if (action != null) {
+						for (int i=0; i<miLuminary.length; i++) {
+							if (action == miLuminary[i]) {
+								myNavigation.setLuminary(i);
+								miLuminary[i].modifiers |= MenuItem.Checked;
+								compassRose.setLuminaryName(SkyOrientation.getLuminaryName(myNavigation.luminary));
+							} else miLuminary[i].modifiers &= ~MenuItem.Checked;
 						}
-						else
-						{
-							compassRose.setNorthCentered(true);
-							miNorthCentered.modifiers |= MenuItem.Checked;
+						if (action == miNorthCentered) {
+							if (compassRose.isNorthCentered()) {
+								compassRose.setNorthCentered(false);
+								miNorthCentered.modifiers &= ~MenuItem.Checked;							
+							}
+							else
+							{
+								compassRose.setNorthCentered(true);
+								miNorthCentered.modifiers |= MenuItem.Checked;
+							}
 						}
 					}
 				}
@@ -398,10 +366,10 @@ public class GotoPanel extends CellPanel {
 			// set current position as centre and recalculate distance of caches in MainTab 
 			if (ev.target == btnCenter){
 				if (myNavigation.gpsPos.isValid()) {
-				Vm.showWait(true);
-				pref.curCentrePt.set(myNavigation.gpsPos);
-				mainT.updateBearDist();
-				Vm.showWait(false);
+					Vm.showWait(true);
+					pref.curCentrePt.set(myNavigation.gpsPos);
+					mainT.updateBearDist();
+					Vm.showWait(false);
 				} else (new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set"), FormBase.OKB)).execute();
 			}
 			//Start moving map
@@ -419,8 +387,8 @@ public class GotoPanel extends CellPanel {
 			// change destination waypoint
 			if (ev.target == btnGoto){
 				CoordsScreen cs = new CoordsScreen();
-				if (myNavigation.destination.isValid())	cs.setFields(myNavigation.destination, currFormat);
-				else cs.setFields(new CWPoint(0,0), currFormat);
+				if (myNavigation.destination.isValid())	cs.setFields(myNavigation.destination, CoordsScreen.getLocalSystem(currFormatSel));
+				else cs.setFields(new CWPoint(0,0), CoordsScreen.getLocalSystem(currFormatSel));
 				if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK)
 					setDestination(cs.getCoords());
 			}
@@ -437,23 +405,23 @@ class GotoRose extends AniImage {
 	float sunDir = -361;
 	float moveDir = -361;
 	float distance = -1;
-	
+
 	int m_fix = -1;
 	int m_sats = -1;
 	int m_satsInView = 0;
 	double m_hdop = -1;
 	float m_speed = -1;
-	
+
 	String m_Luminary = MyLocale.getMsg(6100, "Sun");
-	
+
 	Font mainFont;
 	FontMetrics fm;
 	int lineHeight;
-	
+
 	int roseRadius;
-	
+
 	boolean northCentered = Global.getPref().northCenteredGoto;
-	
+
 	final static Color RED = new Color(255,0,0);
 	final static Color YELLOW = new Color(255,255,0);
 	final static Color GREEN = new Color(0,255,0);
@@ -471,23 +439,23 @@ class GotoRose extends AniImage {
 	public GotoRose(String fn){
 		super(fn);
 	}
-	
+
 	public GotoRose(){
 		super();
 	}
-	
+
 	public void setWaypointDirectionDist(float wd, float dist) {
 		gotoDir = wd;
 		distance = dist;
 	}
-	
+
 	public void setSunMoveDirections(float sd, float md, float speed ) {
 		sunDir = sd;
 		moveDir = md;
 		m_speed = speed;
 		refresh();
 	}
-	
+
 	public void setGpsStatus(int fix, int sats, int satsInView, double hdop) {
 		m_fix = fix;
 		m_sats = sats;
@@ -495,20 +463,20 @@ class GotoRose extends AniImage {
 		m_hdop = hdop;
 		refresh();
 	}
-	
+
 	public void setLuminaryName(String Luminary) {
 		m_Luminary = Luminary;
 		refresh();
 	}
 
-	
+
 	/**
 	 * draw arrows for the directions of movement and destination waypoint
 	 * @param ctrl the control to paint on
 	 * @param moveDir degrees of movement
 	 * @param destDir degrees of destination waypoint
 	 */
-	
+
 	public void doDraw(Graphics g,int options) {
 		g.setColor(Color.White);
 		g.fillRect(0, 0, location.width, location.height);
@@ -531,23 +499,23 @@ class GotoRose extends AniImage {
 			g.setPen(new Pen(new Color(150,150,150),Pen.SOLID,3));
 			g.drawEllipse(location.width/2 - radius, location.height/2 - radius, 2 * radius, 2 * radius );
 		}
-		
+
 		drawArrows(g);
 		drawWayPointData(g);
 		drawGpsData(g);
 		drawLuminaryData(g);
 		drawGpsStatus(g);
 	}
-		
+
 	private void drawWayPointData(Graphics g){
 		String strTemp = MyLocale.getMsg(1512, "Waypoint");
 		g.setColor(Color.DarkBlue);
 		g.fillRect(0, 0, fm.getTextWidth(strTemp) + 4, lineHeight);
 		g.setColor(Color.White);		
 		g.drawText(strTemp, 2, 0);
-		
+
 		g.setColor(Color.Black);		
-		
+
 		int metricSystem = Global.getPref().metricSystem;
 		Double tmp = new Double();
 		strTemp = "";
@@ -579,19 +547,19 @@ class GotoRose extends AniImage {
 		}
 		else strTemp = "--- "+Metrics.getUnit(bigUnit);
 		g.drawText(strTemp, 2, lineHeight);
-		
+
 		tmp.set(gotoDir);
 		if ((tmp.value <= 360) && (tmp.value >= -360))
 			strTemp = tmp.toString(0,0,0) + " " + MyLocale.getMsg(1502,"deg");
 		else strTemp = "---" + " " + MyLocale.getMsg(1502,"deg");
 		g.drawText(strTemp, 2, 2*lineHeight);
 	}
-	
+
 	private void drawGpsData(Graphics g){
 		g.setColor(RED);
-		
+
 		String strHeadline = MyLocale.getMsg(1501,"Current");
-		
+
 		Double tmp = new Double();
 
 		String strSpeed = null;
@@ -615,7 +583,7 @@ class GotoRose extends AniImage {
 				strSpeed = MyLocale.formatDouble(tmp,"0.0") + unit;
 			}
 		}
-		
+
 		tmp.set(moveDir);
 		String strMoveDir = "---" + " " + MyLocale.getMsg(1502,"deg");
 		if ((tmp.value <= 360) && (tmp.value >= -360))
@@ -623,16 +591,16 @@ class GotoRose extends AniImage {
 
 		int textWidth = java.lang.Math.max(fm.getTextWidth(strSpeed), fm.getTextWidth(strMoveDir));
 		textWidth = java.lang.Math.max(textWidth, fm.getTextWidth(strHeadline));
-		
+
 		int startX = location.width - (textWidth + 4);
 		g.fillRect(startX, 0, location.width - startX, lineHeight);
-		
+
 		g.setColor(Color.Black);		
 		g.drawText(strHeadline, startX + 2, 0);		
 		g.drawText(strSpeed, startX + 2, lineHeight);
 		g.drawText(strMoveDir, startX + 2, 2*lineHeight);
 	}
-	
+
 	private void drawLuminaryData(Graphics g){
 		g.setColor(YELLOW);
 
@@ -651,20 +619,20 @@ class GotoRose extends AniImage {
 		g.drawText(m_Luminary, 2, startY);
 		g.drawText(strSunDir, 2, startY + lineHeight);
 	}
-	
+
 	private void drawGpsStatus(Graphics g){
 		if ((m_fix > 0) && (m_sats >= 0)) {
 			// Set background to signal quality
 			g.setColor(GREEN);
 		}
 		else
-		// receiving data, but signal ist not good
-		if ((m_fix == 0) && (m_sats >= 0)) {
-			g.setColor(YELLOW);
-		}
-		else {
-			g.setColor(RED);
-		}
+			// receiving data, but signal ist not good
+			if ((m_fix == 0) && (m_sats >= 0)) {
+				g.setColor(YELLOW);
+			}
+			else {
+				g.setColor(RED);
+			}
 
 		String strSats = "Sats: -";
 		if (m_sats >= 0) {
@@ -688,7 +656,7 @@ class GotoRose extends AniImage {
 		{
 			// select moveDirColor according to difference to gotoDir
 			Color moveDirColor = RED;
-			
+
 			if (gotoDir < 360 && gotoDir > -360 && moveDir < 360 && moveDir > -360)
 			{
 				float diff = java.lang.Math.abs(moveDir - gotoDir);
@@ -700,7 +668,7 @@ class GotoRose extends AniImage {
 				{
 					diff = 360.0f - diff;
 				}
-				
+
 				if (diff <= 12.25f)
 				{
 					moveDirColor = GREEN;
@@ -731,11 +699,11 @@ class GotoRose extends AniImage {
 					//drawDoubleArrow(g, 360 - moveDir, BLUE, new Color(175,0,0), 1.0f);
 					//drawRose(g, 360 - moveDir, new Color(100,100,100), new Color(200,200,200), 1.0f);
 					drawFullRose(g, 360 - moveDir, new Color(255,255,255), new Color(200,200,200), new Color(150,150,150), new Color(200,200,200), new Color(200,200,200), new Color(75,75,75), 1.0f, false, false);
-					
+
 					int radius = (int)(roseRadius * 0.75f);
 					g.setPen(new Pen(RED,Pen.SOLID,3));
 					g.drawLine(location.width/2, location.height/2 - radius, location.width/2, location.height/2 + radius);
-					
+
 					if (gotoDir < 360 && gotoDir > -360) drawThinArrow(g, gotoDir - moveDir, Color.DarkBlue, moveDirColor, 1.0f);
 					if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir - moveDir, YELLOW, 0.75f);					
 				}				
@@ -765,23 +733,23 @@ class GotoRose extends AniImage {
 		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI)).intValue();
 		pointsX[3] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 2.0)).intValue();
 		pointsY[3] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 2.0)).intValue();
-		
-//		g.setPen(new Pen(col,Pen.SOLID,3));
-//		g.drawLine(centerX,centerY,pointX,pointY);
-		
+
+		//		g.setPen(new Pen(col,Pen.SOLID,3));
+		//		g.drawLine(centerX,centerY,pointX,pointY);
+
 		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
 		g.setBrush(new Brush(col, Brush.SOLID));
 		g.fillPolygon(pointsX, pointsY, 4);
 		g.fillEllipse(circleX - circleRadius, circleY - circleRadius, 2 * circleRadius, 2 * circleRadius);
 	}
-	
+
 	private void drawThinArrow(Graphics g, float angle, Color col, Color colPoint, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
 		float arrowLength = roseRadius * scale;
 		float halfOpeningAngle = (float)(java.lang.Math.PI * 0.03);
 		float sideLineLength = arrowLength * 0.75f;
-		
+
 		int[] pointsX = new int[4];
 		int[] pointsY = new int[4];
 
@@ -793,7 +761,7 @@ class GotoRose extends AniImage {
 		pointsY[2] = centerY - new Float(sideLineLength * java.lang.Math.cos(angleRad + halfOpeningAngle)).intValue();
 		pointsX[3] = centerX;
 		pointsY[3] = centerY;
-		
+
 		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
 		g.setBrush(new Brush(col, Brush.SOLID));
 		g.fillPolygon(pointsX, pointsY, 4);
@@ -802,7 +770,7 @@ class GotoRose extends AniImage {
 			g.fillPolygon(pointsX, pointsY, 3);			
 		}
 	}
-	
+
 	private void drawFullRose(Graphics g, float angle, Color colLeft, Color colRight, Color colNorthLeft, Color colNorthRight,
 			Color colBorder, Color colText, float scale, boolean bDrawText, boolean bDrawEightArrows) {
 		float subScale1 = 1.0f;
@@ -821,15 +789,15 @@ class GotoRose extends AniImage {
 		drawRosePart(g, 180 + angle, colLeft, colRight, colBorder, colText, scale * subScale1, innerScale, "S", bDrawText);
 		drawRosePart(g, 270 + angle, colLeft, colRight, colBorder, colText, scale * subScale1, innerScale, "W", bDrawText);
 	}
-	
+
 	private void drawRosePart(Graphics g, float angle, Color colLeft, Color colRight, Color colBorder, Color colText, float scale, float innerScale, String strDir, boolean bDrawText) {
 		float angleRad = angle * (float)java.lang.Math.PI / 180;
 		float angleRadText = (angle + 7.5f) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
-				
+
 		float arrowLength = roseRadius * scale;
 		float halfArrowWidth = arrowLength * innerScale;
-		
+
 		int[] pointsX = new int[3];
 		int[] pointsY = new int[3];
 
@@ -839,17 +807,17 @@ class GotoRose extends AniImage {
 		pointsY[1] = centerY - new Float(arrowLength * java.lang.Math.cos(angleRad)).intValue();
 		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 4.0)).intValue();
 		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 4.0)).intValue();
-				
+
 		g.setPen(new Pen(colBorder,Pen.SOLID,1));
 		g.setBrush(new Brush(colLeft, Brush.SOLID));
 		g.fillPolygon(pointsX, pointsY, 3);
 
 		pointsX[2] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad + java.lang.Math.PI / 4.0)).intValue();
 		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI / 4.0)).intValue();
-		
+
 		g.setBrush(new Brush(colRight, Brush.SOLID));
 		g.fillPolygon(pointsX, pointsY, 3);
-					
+
 		if (bDrawText){
 			int tempFontSize = new Float(scale * mainFont.getSize()).intValue();
 			Font tempFont = new Font(mainFont.getName(), Font.BOLD, tempFontSize);
@@ -862,18 +830,18 @@ class GotoRose extends AniImage {
 			float stringPosition = arrowLength - stringGap / 2.0f;
 			g.setColor(colText);
 			g.drawText(strDir, centerX + new Float(stringPosition * java.lang.Math.sin(angleRadText) - stringWidth / 2.0f).intValue(),
-					           centerY - new Float(stringPosition * java.lang.Math.cos(angleRadText) + stringHeight / 2.0f).intValue());
-			
+					centerY - new Float(stringPosition * java.lang.Math.cos(angleRadText) + stringHeight / 2.0f).intValue());
+
 			g.setFont(mainFont);
 		}
 	}
-	
+
 	private void drawThickArrow(Graphics g, float angle, Color col, float scale) {
 		float angleRad = (angle) * (float)java.lang.Math.PI / 180;
 		int centerX = location.width/2, centerY = location.height/2;
 		float arrowLength = roseRadius * scale;
 		float halfArrowWidth = arrowLength * 0.1f;
-		
+
 		int[] pointsX = new int[4];
 		int[] pointsY = new int[4];
 
@@ -885,12 +853,12 @@ class GotoRose extends AniImage {
 		pointsY[2] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad + java.lang.Math.PI)).intValue();
 		pointsX[3] = centerX + new Float(halfArrowWidth * java.lang.Math.sin(angleRad - java.lang.Math.PI / 2.0)).intValue();
 		pointsY[3] = centerY - new Float(halfArrowWidth * java.lang.Math.cos(angleRad - java.lang.Math.PI / 2.0)).intValue();
-		
+
 		g.setPen(new Pen(Color.Black,Pen.SOLID,1));
 		g.setBrush(new Brush(col, Brush.SOLID));
 		g.fillPolygon(pointsX, pointsY, 4);
 	}
-	
+
 	public void setNorthCentered(boolean nc) {
 		northCentered = nc;
 		if (northCentered != Global.getPref().northCenteredGoto) {
@@ -899,7 +867,7 @@ class GotoRose extends AniImage {
 		}
 		refresh();
 	}
-	
+
 	public boolean isNorthCentered() {
 		return northCentered;
 	}

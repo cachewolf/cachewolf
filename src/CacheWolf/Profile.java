@@ -1,6 +1,7 @@
 package CacheWolf;
 
 import CacheWolf.navi.Area;
+import CacheWolf.navi.TransformCoordinates;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileNotFoundException;
@@ -271,7 +272,7 @@ public class Profile {
 						String lat=SafeXML.cleanback(text.substring(start,text.indexOf("\"",start)));
 						start=text.indexOf("long=\"")+6;
 						String lon=SafeXML.cleanback(text.substring(start,text.indexOf("\"",start)));
-						centre.set(lat+" "+lon,CWPoint.CW); // Fast parse
+						centre.set(lat+" "+lon,TransformCoordinates.CW); // Fast parse
 					}	
 				} else if (text.indexOf("<VERSION")>=0) {
 					int start=text.indexOf("value = \"")+9;

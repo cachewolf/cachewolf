@@ -1,5 +1,6 @@
 package CacheWolf.exp;
 import CacheWolf.*;
+import CacheWolf.navi.TransformCoordinates;
 import ewe.sys.*;
 
 /**
@@ -57,8 +58,8 @@ public class OVLExporter extends Exporter{
 		str.append("MapName=Gesamtes Bundesgebiet (D1000)\r\n");
 		str.append("DimmFc=100\r\n");
 		str.append("ZoomFc=100\r\n");
-		str.append("CenterLat="+pref.curCentrePt.getLatDeg(CWPoint.CW)+".00\r\n");
-		str.append("CenterLong="+pref.curCentrePt.getLonDeg(CWPoint.CW)+".00\r\n");
+		str.append("CenterLat="+pref.curCentrePt.getLatDeg(TransformCoordinates.CW)+".00\r\n");
+		str.append("CenterLong="+pref.curCentrePt.getLonDeg(TransformCoordinates.CW)+".00\r\n");
 		str.append("RefColor=255\r\n");
 		str.append("RefRad=58\r\n");
 		str.append("RefLine=6\r\n");

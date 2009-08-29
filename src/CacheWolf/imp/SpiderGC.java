@@ -53,6 +53,7 @@ import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
 import CacheWolf.navi.Metrics;
+import CacheWolf.navi.TransformCoordinates;
 
 import com.stevesoft.ewe_pat.*;
 import ewe.ui.*;
@@ -443,7 +444,7 @@ public class SpiderGC{
 			if (spiderAllFinds) {
 				ln = p.getProp("firstPageFinds") + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias));
 			} else {
-				ln = p.getProp("firstPage") + origin.getLatDeg(CWPoint.DD) + p.getProp("firstPage2") + origin.getLonDeg(CWPoint.DD)
+				ln = p.getProp("firstPage") + origin.getLatDeg(TransformCoordinates.DD) + p.getProp("firstPage2") + origin.getLonDeg(TransformCoordinates.DD)
 			                              + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );
 				if(doNotgetFound) ln = ln + p.getProp("showOnlyFound");
 			}
@@ -573,7 +574,7 @@ public class SpiderGC{
 				if (spiderAllFinds) {
 					postStr = p.getProp("firstLine");
 				} else {
-					postStr = p.getProp("firstLine") + origin.getLatDeg(CWPoint.DD) + "&" + origin.getLonDeg(CWPoint.DD)
+					postStr = p.getProp("firstLine") + origin.getLatDeg(TransformCoordinates.DD) + "&" + origin.getLonDeg(TransformCoordinates.DD)
 							                             + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );
 					if(doNotgetFound) postStr = postStr + p.getProp("showOnlyFound");
 				}

@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.navi.TransformCoordinates;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Point;
@@ -557,9 +558,9 @@ public class DetailsPanel extends CellPanel {
 				// FIXME: if something changed saveDirtyWaypoint();
 				Global.mainTab.gotoP.setDestinationAndSwitch(cache);
 			} else if (ev.target == btnCoordinates) {
-				CWPoint coords = new CWPoint(btnCoordinates.getText(), CWPoint.CW);
+				CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.CW);
 				final CoordsScreen cs = new CoordsScreen(true);
-				cs.setFields(coords, CWPoint.CW);
+				cs.setFields(coords, TransformCoordinates.CW);
 				if (cs.execute() == FormBase.IDOK) {
 					dirtyDetails = true;
 					coords = cs.getCoords();

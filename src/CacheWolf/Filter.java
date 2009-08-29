@@ -6,6 +6,7 @@ import ewe.sys.*;
 import ewe.io.*;
 import com.stevesoft.ewe_pat.*;
 import CacheWolf.imp.*;
+import CacheWolf.navi.TransformCoordinates;
 
 /**
 *	Class that actually filters the cache database.<br>
@@ -172,7 +173,7 @@ public class Filter{
 				//... go through the current cache database
 				for(int i = cacheDB.size()-1; i >=0 ; i--){
 					ch = cacheDB.get(i);
-					cwp = new CWPoint(ch.LatLon, CWPoint.CW);
+					cwp = new CWPoint(ch.LatLon, TransformCoordinates.CW);
 					calcDistance = DistToSegment(fromPoint, toPoint, cwp);
 					calcDistance = (calcDistance*180*60)/java.lang.Math.PI;
 					calcDistance = calcDistance * 1.852;
