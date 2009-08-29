@@ -13,8 +13,16 @@ import ewe.util.mString;
  * so I get all the files which null in spite of the mask and filter afterwords
  */
 public class FileBugfix extends File{
+	File ewefile;
 	public FileBugfix(String path) {
 		super(STRreplace.replace(path, "//", "/"));
+		ewefile = ewe.sys.Vm.newFileObject();
+		ewefile.set(null, name);
+	}
+	
+
+	public void set(File dir, String name) {
+		ewefile.set(dir, STRreplace.replace(name, "//", "/")); // this or null?
 	}
 
 	public String[] list(final String mask,final int listAndSortOptions)
@@ -37,9 +45,6 @@ public class FileBugfix extends File{
 	}
 
 	public String[] listBugFixed(final String compositeMask,final int listAndSortOptions) {
-		File ewefile = ewe.sys.Vm.newFileObject();
-		ewefile.set(null, name);
-
 		String mask = (compositeMask == null) ? "*.*" : compositeMask;
 		String[] found; //the following code is mainly copied from FileBase.listmultiple to avoid recursion it is not called
 		char c = mask.indexOf(',') == -1 ? ';' : ',';
@@ -88,37 +93,25 @@ public class FileBugfix extends File{
 	 * file system _filesystem.zip when running as applet 
 	 */
 	public boolean exists() {
-		File ewefile = ewe.sys.Vm.newFileObject();
-		ewefile.set(null, name);
 		return (ewefile.exists());
 	}
 
 	public boolean isDirectory() {
-		File ewefile = ewe.sys.Vm.newFileObject();
-		ewefile.set(null, name);
 		return (ewefile.isDirectory());
 	}
 
 	public boolean createDir() {
-		File ewefile = ewe.sys.Vm.newFileObject();
-		ewefile.set(null, name);
 		return (ewefile.createDir());
 
 	}
 	public boolean delete() {
-		File ewefile = ewe.sys.Vm.newFileObject();
-		ewefile.set(null, name);
 		return (ewefile.delete());
 	}
 	public int getLength() {
-		File ewefile = ewe.sys.Vm.newFileObject();
-		ewefile.set(null, name);
 		return (ewefile.getLength());
 	}
 
 	public String getDrivePath() {
-		File ewefile = ewe.sys.Vm.newFileObject();
-		ewefile.set(null, name);
 		return (ewefile.getDrivePath());
 	}
 
