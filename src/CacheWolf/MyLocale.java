@@ -126,17 +126,17 @@ public class MyLocale {
 	}
 
 	/**
-	 * Return a localised string
+	 * Return a localized string
 	 * 
-	 * The localised strings are stored in the configuration file (relative to
+	 * The localized strings are stored in the configuration file (relative to
 	 *  executable:<br>
 	 *  	_config/cachewolf.Languages.cfg
 	 * If the configuration file does not exist or a string cannot be found in
-	 * the file, the defaultValue is resurned.
+	 * the file, the defaultValue is returned.
 	 *   
 	 * @param resourceID   The unique number of the resource
-	 * @param defaultValue The default value of the string (if not found in the config file)
-	 * @return The localised string 
+	 * @param defaultValue The default value of the string (if not found in the configuration file)
+	 * @return The localized string 
 	 */
 	public static String getMsg(int resourceID, String defaultValue) {
 		if (l==null) 
