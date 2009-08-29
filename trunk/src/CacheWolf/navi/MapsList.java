@@ -142,8 +142,10 @@ public class MapsList extends Vector {
 				screenArea = getAreaForScreen(screen, ll, mi.scale, mi);
 				lastscale = mi.scale;
 			}
+//			if(forceScale && java.lang.Math.abs (scale- mi.scale) > 0.0001) continue;
+			
 			if (screenArea.isOverlapping(mi) ) { // is on screen
-				if (!forceScale || (forceScale && !scaleEquals(scale, mi))) { // different scale?
+				if (!forceScale || (forceScale && scaleEquals(scale, mi))) { // different scale?
 					if (!forceScale && (mi.isInBound(ll) && (bestMap == null || scaleNearer(mi.scale, bestMap.scale, scale) || !bestMap.isInBound(ll)))) 
 						better = true; // inbound and resolution nearer at wanted resolution or old one is on screen but lat/long not inbound-> better
 					else {
@@ -153,7 +155,9 @@ public class MapsList extends Vector {
 							if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
 							else {
 								if ( (latNearer || lonNearer )) { 
-									if (bestMap == null || mi.center.getDistanceRad(ll) < bestMap.center.getDistanceRad(ll) ) better = true;
+									if (bestMap == null || mi.center.getDistanceRad(ll) < bestMap.center.getDistanceRad(ll) ){
+										better = true;
+									}
 								}
 							}
 						}
