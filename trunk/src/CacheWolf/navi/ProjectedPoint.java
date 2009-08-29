@@ -4,10 +4,16 @@ import CacheWolf.CWPoint;
 
 public final class ProjectedPoint {
 
-	public static final LambertProjection PJ_AUSTRIAN_LAMBERT_OLD 	= new LambertProjection(TransformCoordinates.EPSG_AUSTRIAN_LAMBERT_OLD,   400000, 400000, 49.0, 46.0, 1         , 47.5, 13.333333, TransformCoordinates.BESSEL); 
-	public static final LambertProjection PJ_AUSTRIAN_LAMBERT_NEW 	= new LambertProjection(TransformCoordinates.EPSG_AUSTRIAN_LAMBERT_NEW,   400000, 400000, 49.0, 46.0, 1         , 47.5, 13.333333, TransformCoordinates.WGS84);
-	public static final LambertProjection PJ_FRENCH_LAMBERT_NTF_II 	= new LambertProjection(TransformCoordinates.EPSG_FRENCH_LAMBERT_NTF_II, 2200000, 600000, 46.8, 46.8, 0.99987742, 46.8, 2.337229172 /*(2+20/60+14.025/3600) */, TransformCoordinates.CLARKE1880IGN);
-	public static final LambertProjection PJ_TEST 	                = new LambertProjection(TransformCoordinates.EPSG_TEST,  150000, 250000, 18, 18, 1         , 18, -77, TransformCoordinates.CLARKE1866); 
+	public static final LambertProjection PJ_AUSTRIAN_LAMBERT_OLD 	= new LambertProjection(TransformCoordinates.EPSG_AUSTRIAN_LAMBERT_OLD, TransformCoordinates.BESSEL);
+	public static final LambertProjection PJ_AUSTRIAN_LAMBERT_NEW 	= new LambertProjection(TransformCoordinates.EPSG_AUSTRIAN_LAMBERT_NEW,  TransformCoordinates.WGS84);
+	public static final LambertProjection PJ_FRENCH_LAMBERT_NTF_II 	= new LambertProjection(TransformCoordinates.EPSG_FRENCH_LAMBERT_NTF_II, TransformCoordinates.CLARKE1880IGN);
+	public static final LambertProjection PJ_TEST 	                = new LambertProjection(TransformCoordinates.EPSG_TEST, TransformCoordinates.CLARKE1866); 
+	{ 
+		PJ_AUSTRIAN_LAMBERT_OLD.setup ( 400000, 400000, 49.0, 46.0, 1         , 47.5, 13.333333); // actually this should be done inside the constructor. But Ewe doesn't support more than 8 parameters (at least for constructors)
+		PJ_AUSTRIAN_LAMBERT_NEW.setup ( 400000, 400000, 49.0, 46.0, 1         , 47.5, 13.333333);
+		PJ_FRENCH_LAMBERT_NTF_II.setup(2200000, 600000, 46.8, 46.8, 0.99987742, 46.8, 2.337229172 /*(2+20/60+14.025/3600) */); 
+		PJ_TEST.setup( 150000, 250000, 18, 18, 1         , 18, -77); 
+	}
 	public static final GkProjection PJ_GERMAN_GK  = new GkProjection(TransformCoordinates.EPSG_GERMAN_GK2 -2           , 0, 500000, 3, 1000000, 0, 1     , TransformCoordinates.BESSEL);
 	public static final GkProjection PJ_ITALIAN_GB = new GkProjection(TransformCoordinates.EPSG_ITALIAN_GB_EW1 -1, 0, 500000, 6, 1000000, 0, 0.9996, TransformCoordinates.HAYFORD1909);
 	public static final UTMProjection PJ_UTM_WGS84 = new UTMProjection(TransformCoordinates.WGS84);

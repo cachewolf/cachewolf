@@ -22,18 +22,20 @@ public final class LambertProjection extends Projection{
 	 * @param centralLat: in decimal degrees
 	 * @param centralLon
 	 */
-	public LambertProjection(int epsgcode_, double falseNorthing_, double falseEasting_, 
-			double firstStandardParallel_, double secondSandardParallel_, double scale_,
-			double centralLat_,	double centralLon_, Ellipsoid ellip_) {
+	public LambertProjection(int epsgcode_, Ellipsoid ellip_) {
 		epsgCode = epsgcode_;
+		ellip = ellip_;
+	}
+
+	public void setup(double falseNorthing_, double falseEasting_, 
+			double firstStandardParallel_, double secondSandardParallel_, double scale_,
+			double centralLat_,	double centralLon_) {
 		falseNorthing = falseNorthing_;
 		falseEasting = falseEasting_;
 		double firstStandardParallel = firstStandardParallel_ * java.lang.Math.PI / 180;
 		double secondSandardParallel = secondSandardParallel_* java.lang.Math.PI / 180;
 		centralLat = centralLat_ * java.lang.Math.PI / 180;
 		centralLon = centralLon_ * java.lang.Math.PI / 180;
-		ellip = ellip_;
-
 
 		double f = ellip.getFlattening();
 		e = java.lang.Math.sqrt(2.0 * f - f*f);
@@ -51,7 +53,7 @@ public final class LambertProjection extends Projection{
 		F0 = m1 / (n * java.lang.Math.pow(t1, n)) * scale_; // pow(t2???, n)
 		Rb = ellip.a * F0 * java.lang.Math.pow(t0, n);
 	}
-
+	
 	public ProjectedPoint project(CWPoint ll, ProjectedPoint pp, int epsg) {
 		return project(ll, pp);
 	}
