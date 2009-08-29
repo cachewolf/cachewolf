@@ -104,11 +104,12 @@ public final class Common {
 	 */
 	static public String getImageName(String name) {
 		String fileName;
-		File tmp;
+		FileBugfix tmp = null;
 		String[] t = {".png", ".gif", ".jpg", ".bmp"};
 		int i;
 		for (i = 0; i<t.length; i++) {
-			tmp = new FileBugfix(name+t[i]);
+			if (tmp == null) tmp = new FileBugfix(name+t[i]);
+			else tmp.setText(name+t[i]);
 			if (tmp.exists()) break;
 		}
 		if (i >=t.length) fileName = null;
