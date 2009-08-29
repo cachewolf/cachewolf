@@ -82,8 +82,8 @@ public class MovingMap extends Form {
 	
 	float lastHighestResolutionGPSDestScale = -1;
 
-	public static final int tileWidth = 150;
-	public static final int tileHeight = 150;
+	public static final int tileWidth = 100;
+	public static final int tileHeight = 100;
 
 	public boolean isFillWhiteArea() {
 		return pref.fillWhiteArea;
