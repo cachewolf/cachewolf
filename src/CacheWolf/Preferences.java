@@ -243,6 +243,9 @@ public class Preferences extends MinML{
 	/** keep own logs even when excessing <code>maxLogsToKeep</code> */
 	public boolean alwaysKeepOwnLogs = true;
 
+	/** Determines whether to fill the white areas on the map */
+	public boolean fillWhiteArea=false;
+
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
 	 * the line: <pre><debug value="true" /></pre>
@@ -491,6 +494,10 @@ public class Preferences extends MinML{
 			if (tmp != null)
 				alwaysKeepOwnLogs = Boolean.valueOf(tmp).booleanValue();  
 		}
+		else if (name.equals("fillWhiteArea")){
+			tmp = atts.getValue("on");
+			fillWhiteArea = tmp != null && tmp.equalsIgnoreCase("true");
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -575,6 +582,7 @@ public class Preferences extends MinML{
 			}
 			if (rater != null) outp.print("    <rater tool=\"".concat(SafeXML.strxmlencode(rater)).concat("\"/>\n"));
 			outp.print("    <logkeeping maximum=\""+SafeXML.strxmlencode(maxLogsToKeep)+"\" keepown=\""+SafeXML.strxmlencode(alwaysKeepOwnLogs)+"\" />\n");
+			outp.print("    <fillWhiteArea on=\""+SafeXML.strxmlencode(fillWhiteArea)+"\"/>\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
