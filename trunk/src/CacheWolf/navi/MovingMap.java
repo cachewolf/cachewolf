@@ -1046,6 +1046,13 @@ public class MovingMap extends Form {
 		if (!(bestMap.topleft.lonDec <= centerPoint.lonDec && centerPoint.lonDec <= bestMap.buttomright.lonDec)){
 			return;
 		}
+		//Pfeffer got an NPE in the following if-statement. I think the image-filename has got not the correct extension.
+		//For me, showing a message seems better than throwing the NPE  
+		if (bestMap.getImageFilename() == null){
+			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4217, "Could not find image associated with: \n")+currentMap.fileNameWFL, FormBase.OKB)).execute();
+			return;
+		}
+
 		if (!bestMap.getImageFilename().equals(currentMap.getImageFilename())) {
 			String filename = bestMap.getImageFilename();
 			if (filename.length() > 0) {
