@@ -433,8 +433,8 @@ public class MapInfoObject extends Area {
 		public GCPoint(double lat, double lon){
 			this.latDec = lat;
 			this.lonDec = lon;
-			this.utmValid = false;
 		}
+		
 		public GCPoint(CWPoint ll, Point px) {
 			super(ll);
 			bitMapX = px.x;

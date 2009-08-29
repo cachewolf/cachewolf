@@ -2,20 +2,23 @@ package CacheWolf;
 
 import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Navigate;
+import CacheWolf.navi.ProjectedPoint;
+import CacheWolf.navi.TransformCoordinates;
 import ewe.ui.*;
 import ewe.fx.Dimension;
 import ewe.sys.*;
 
 /**
-*	Class for entering coordinates<br>
-*	Class IDs 1400 and 600 (same as calc panel and preferences screen)<br>
-*/
+ *	Class for entering coordinates<br>
+ *	Class IDs 1400 and 600 (same as calc panel and preferences screen)<br>
+ */
 
 
 public class CoordsScreen extends Form {
 
-	mCheckBox chkDMM, chkDMS, chkDD, chkUTM, chkGK;
+	mCheckBox chkDMM, chkDMS, chkDD, chkCustom;
 	CheckBoxGroup chkFormat = new CheckBoxGroup();
+	mChoice localCooSystem;
 	mChoice chcNS, chcEW;
 	mInput inpNSDeg, inpNSm, inpNSs, inpEWDeg, inpEWm, inpEWs;
 	mInput inpUTMZone, inpUTMNorthing, inpUTMEasting;
@@ -26,21 +29,21 @@ public class CoordsScreen extends Form {
 	CellPanel mainPanel = new CellPanel();
 	int exitKeys[]={75009};
 	int currFormat;
-	
+
 	private boolean allowInvalid = false;
-	
+
 	public CoordsScreen(boolean allowInvalidCoords)
 	{
 		allowInvalid = allowInvalidCoords;
-		
+
 		InitCoordsScreen();		
 	}
-	
+
 	public CoordsScreen()
 	{
 		InitCoordsScreen();		
 	}
-	
+
 	private void InitCoordsScreen()
 	{
 		this.setTitle("");
@@ -48,15 +51,18 @@ public class CoordsScreen extends Form {
 		topLinePanel.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		topLinePanel.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		topLinePanel.addNext(chkDMS =new mCheckBox("d°m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
-		topLinePanel.addNext(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-		topLinePanel.addLast(chkGK =new mCheckBox("GK"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		//topLinePanel.addNext(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
+		topLinePanel.addNext(chkCustom =new mCheckBox(""),CellConstants.DONTSTRETCH, CellConstants.WEST);
+
+		String[] ls = TransformCoordinates.getProjectedSystemNames();
+		topLinePanel.addLast(localCooSystem = new mChoice(ls, 0),CellConstants.DONTSTRETCH, CellConstants.WEST);
 
 		chkDD.setGroup(chkFormat); chkDD.exitKeys=exitKeys;
 		chkDMM.setGroup(chkFormat);chkDMM.exitKeys=exitKeys;
 		chkDMS.setGroup(chkFormat);chkDMS.exitKeys=exitKeys;
-		chkUTM.setGroup(chkFormat);chkUTM.exitKeys=exitKeys;
-		chkGK.setGroup(chkFormat);chkGK.exitKeys=exitKeys;
-		
+		//	chkUTM.setGroup(chkFormat);chkUTM.exitKeys=exitKeys;
+		//localCooSystem.setGroup(chkFormat);chkGK.exitKeys=exitKeys;
+		chkCustom.setGroup(chkFormat);chkCustom.exitKeys=exitKeys;
 		this.addLast(topLinePanel,CellConstants.DONTSTRETCH, CellConstants.WEST);
 
 		// Input for degrees
@@ -65,7 +71,7 @@ public class CoordsScreen extends Form {
 		mainPanel.addNext(inpNSDeg = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		mainPanel.addNext(inpNSm = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		mainPanel.addLast(inpNSs = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		
+
 		mainPanel.addNext(chcEW = new mChoice(new String[]{"E", "W"},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		chcEW.setInt(0);
 		mainPanel.addNext(inpEWDeg = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -83,19 +89,19 @@ public class CoordsScreen extends Form {
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
 			mainPanel.addLast(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
 		}
-		
+
 		mainPanel.addNext(inpUTMZone = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		mainPanel.addNext(inpUTMEasting = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		mainPanel.addNext(inpUTMNorthing = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		mainPanel.addLast(btnGps = new mButton("GPS"),CellConstants.HSTRETCH, (CellConstants.HFILL));
-		
-		mainPanel.addLast(new mLabel(MyLocale.getMsg(1405,"To load coordinates from GC, enter GCxxxxx below")),CellConstants.HSTRETCH, (CellConstants.HFILL)).setTag(SPAN,new Dimension(4,1));
-			// Input for free Text
+
+		//	mainPanel.addLast(new mLabel(MyLocale.getMsg(1405,"To load coordinates from GC, enter GCxxxxx below")),CellConstants.HSTRETCH, (CellConstants.HFILL)).setTag(SPAN,new Dimension(4,1));
+		// Input for free Text
 		mainPanel.addNext(inpText = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		inpText.toolTip=MyLocale.getMsg(1406,"Enter coordinates in any format or GCxxxxx");
 		inpText.setTag(SPAN,new Dimension(3,1));
 		mainPanel.addLast(btnParse = new mButton(MyLocale.getMsg(619,"Parse")),CellConstants.HSTRETCH, (CellConstants.HFILL));
-		
+
 		// Buttons for cancel and apply, copy and paste
 		btnCancel = new mButton(MyLocale.getMsg(614,"Cancel"));
 		btnCancel.setHotKey(0, IKeys.ESCAPE);
@@ -112,43 +118,42 @@ public class CoordsScreen extends Form {
 		this.addLast(mainPanel,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		chcNS.takeFocus(ControlConstants.ByKeyboard);
 	}
-	
+
 	public void activateFields(int format){
 		inpEWDeg.wantReturn=false; inpEWm.wantReturn=false; inpEWs.wantReturn=false; inpUTMNorthing.wantReturn=false;
 		switch (format){
-			case CWPoint.DD:
-				enable(chcNS); enable(inpNSDeg); disable(inpNSm); disable(inpNSs);
-				enable(chcEW); enable(inpEWDeg); disable(inpEWm); disable(inpEWs);
-				inpEWDeg.wantReturn=true;
-				disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
-				break;
-			case CWPoint.CW:
-			case CWPoint.DMM: 	
-				enable(chcNS); enable(inpNSDeg); enable(inpNSm); disable(inpNSs);
-				enable(chcEW); enable(inpEWDeg); enable(inpEWm); disable(inpEWs);
-				inpEWm.wantReturn=true;
-				disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
-				break;
-			case CWPoint.DMS: 	
-				enable(chcNS); enable(inpNSDeg); enable(inpNSm); enable(inpNSs);
-				enable(chcEW); enable(inpEWDeg); enable(inpEWm); enable(inpEWs);
-				inpEWs.wantReturn=true;
-				disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
-				break;
-			case CWPoint.UTM: 	
-				disable(chcNS); disable(inpNSDeg); disable(inpNSm); disable(inpNSs);
-				disable(chcEW); disable(inpEWDeg); disable(inpEWm); disable(inpEWs);
-				enable(inpUTMZone); enable(inpUTMNorthing); enable(inpUTMEasting);
-				inpUTMNorthing.wantReturn=true;
-	 			break;
-			case CWPoint.GK: 	
-				disable(chcNS); disable(inpNSDeg); disable(inpNSm); disable(inpNSs);
-				disable(chcEW); disable(inpEWDeg); disable(inpEWm); disable(inpEWs);
-				disable(inpUTMZone); enable(inpUTMNorthing); enable(inpUTMEasting);
-				inpUTMNorthing.wantReturn=true;
-	 			break;
+		case TransformCoordinates.DD:
+			enable(chcNS); enable(inpNSDeg); disable(inpNSm); disable(inpNSs);
+			enable(chcEW); enable(inpEWDeg); disable(inpEWm); disable(inpEWs);
+			inpEWDeg.wantReturn=true;
+			disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
+			enable(localCooSystem);
+			break;
+		case TransformCoordinates.DMM: 	
+			enable(chcNS); enable(inpNSDeg); enable(inpNSm); disable(inpNSs);
+			enable(chcEW); enable(inpEWDeg); enable(inpEWm); disable(inpEWs);
+			inpEWm.wantReturn=true;
+			disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
+			enable(localCooSystem);
+			break;
+		case TransformCoordinates.DMS: 	
+			enable(chcNS); enable(inpNSDeg); enable(inpNSm); enable(inpNSs);
+			enable(chcEW); enable(inpEWDeg); enable(inpEWm); enable(inpEWs);
+			inpEWs.wantReturn=true;
+			disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
+			enable(localCooSystem);
+			break;
+		default: 	
+			disable(chcNS); disable(inpNSDeg); disable(inpNSm); disable(inpNSs);
+			disable(chcEW); disable(inpEWDeg); disable(inpEWm); disable(inpEWs);
+			if (TransformCoordinates.localSystems[localCooSystem.getInt()].zoneSeperatly) enable(inpUTMZone);
+			else disable(inpUTMZone); 
+			enable(inpUTMNorthing); enable(inpUTMEasting);
+			disable(localCooSystem);
+			inpUTMNorthing.wantReturn=true;
+			break;
 		}
-		
+
 		this.stretchLastColumn = true;
 		this.stretchLastRow = true;
 		this.repaintNow();
@@ -156,37 +161,37 @@ public class CoordsScreen extends Form {
 
 	private void enable(Control c) {c.modify(ControlConstants.TakesKeyFocus,ControlConstants.Disabled); }
 	private void disable(Control c) {c.modify(ControlConstants.Disabled,ControlConstants.TakesKeyFocus); }
-	
-	public void readFields(CWPoint coords, int format){
+
+	public void readFields(CWPoint coords){
 		String NS, EW;
-		if (format == CWPoint.UTM)
-			coords.set(inpUTMZone.getText(), 
-					   inpUTMNorthing.getText(), inpUTMEasting.getText());
-		else if (format == CWPoint.GK) {
-			coords.set(inpUTMNorthing.getText(), inpUTMEasting.getText());			
+		if (localSystemToformatSel(currFormat) >= formatSelToLocalSystem.length) {
+			if (TransformCoordinates.getLocalSystem(currFormat).zoneSeperatly)
+				coords.set(inpUTMNorthing.getText(), inpUTMEasting.getText(), inpUTMZone.getText(), currFormat); 
+			else
+				coords.set(inpUTMNorthing.getText(), inpUTMEasting.getText(), currFormat);			
 		}
 		else {
 			NS = chcNS.getInt()== 0?"N":"S";
 			EW = chcEW.getInt()== 0?"E":"W";
 			coords.set(NS, inpNSDeg.getText(), inpNSm.getText(), inpNSs.getText(),
-							 EW, inpEWDeg.getText(), inpEWm.getText(), inpEWs.getText(),
-							 format);
+					EW, inpEWDeg.getText(), inpEWm.getText(), inpEWs.getText(),
+					currFormat);
 		}
-
+		int formatsel = combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt());
+		currFormat = getLocalSystem(formatsel);
 		return;
 	}
 	public void setFields(CWPoint coords, int format) {
-		if (format == CWPoint.CW) format = CWPoint.DMM;
-		if (format == CWPoint.UTM){
-			inpUTMZone.setText(coords.getUTMZone());
-			inpUTMNorthing.setText(coords.getUTMNorthing());
-			inpUTMEasting.setText((coords.getUTMEasting()));
-		}
-		else if (format == CWPoint.GK){
-			inpUTMZone.setText("");
+		int formatsel = localSystemToformatSel(format); 
+		if ( formatsel >= formatSelToLocalSystem.length){ // projected point = neither dd, dd° mm.mm nor dd° mm' ss.s"
 			if (coords.isValid()){
-				inpUTMNorthing.setText(coords.getGKNorthing(0));
-				inpUTMEasting.setText((coords.getGKEasting(0)));				
+				localCooSystem.setInt(formatsel - formatSelToLocalSystem.length);
+				ProjectedPoint pp = TransformCoordinates.wgs84ToLocalsystem(coords, format);
+				inpText.setText(pp.toHumanReadableString());
+				inpUTMNorthing.setText(Common.DoubleToString(pp.getNorthing(),0));
+				inpUTMEasting.setText(Common.DoubleToString(pp.getEasting(),0));
+				if (TransformCoordinates.getLocalSystem(format).zoneSeperatly) inpUTMZone.setText(pp.getZoneString()); 
+				else inpUTMZone.setText("");
 			}
 			else {
 				inpUTMNorthing.setText("0");
@@ -196,16 +201,16 @@ public class CoordsScreen extends Form {
 		else {
 			chcNS.setInt(coords.getNSLetter().equals("N")?0:1);
 			chcEW.setInt(coords.getEWLetter().equals("E")?0:1);
-			
+
 			inpNSDeg.setText(STRreplace.replace(coords.getLatDeg(format),"-",""));
 			inpNSm.setText(coords.getLatMin(format));
 			inpNSs.setText(coords.getLatSec(format));
-			
+
 			inpEWDeg.setText(STRreplace.replace(coords.getLonDeg(format),"-",""));
 			inpEWm.setText(coords.getLonMin(format));
 			inpEWs.setText(coords.getLonSec(format));
 		}
-		chkFormat.selectIndex(format);
+		chkFormat.selectIndex(java.lang.Math.min(localSystemToformatSel(format), formatSelToLocalSystem.length));
 		inpText.setText(coords.toString(format));
 		currFormat = format;
 		activateFields(format);
@@ -214,7 +219,7 @@ public class CoordsScreen extends Form {
 	public CWPoint getCoords(){
 		return coordInp;
 	}
-	
+
 
 	public void onEvent(Event ev){
 
@@ -224,20 +229,19 @@ public class CoordsScreen extends Form {
 		// For input fields we use the wantReturn field
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.EXITED){
 			if (((ControlEvent)ev).target==chkDD || ((ControlEvent)ev).target==chkDMM ||
-			    ((ControlEvent)ev).target==chkDMS) Gui.takeFocus(chcNS,ControlConstants.ByKeyboard);	
-			if (((ControlEvent)ev).target==chkUTM) Gui.takeFocus(inpUTMZone,ControlConstants.ByKeyboard);
-			if (((ControlEvent)ev).target==chkGK) Gui.takeFocus(inpUTMEasting,ControlConstants.ByKeyboard);
+					((ControlEvent)ev).target==chkDMS) Gui.takeFocus(chcNS,ControlConstants.ByKeyboard);	
+			if (((ControlEvent)ev).target==chkCustom) Gui.takeFocus(inpUTMEasting,ControlConstants.ByKeyboard);
 			if (((ControlEvent)ev).target==chcNS) Gui.takeFocus(inpNSDeg,ControlConstants.ByKeyboard);
 			if (((ControlEvent)ev).target==chcEW) Gui.takeFocus(inpEWDeg,ControlConstants.ByKeyboard);
 		}
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (((ControlEvent)ev).target==inpEWDeg || ((ControlEvent)ev).target==inpEWm ||
 					((ControlEvent)ev).target==inpEWs || ((ControlEvent)ev).target==inpUTMNorthing) Gui.takeFocus(btnApply,ControlConstants.ByKeyboard);	
-			if (ev.target == chkFormat){
-				readFields(coordInp, currFormat);
-				currFormat = chkFormat.getSelectedIndex();
+			
+			if (ev.target == chkFormat || ev.target == localCooSystem){
+				if (ev.target == localCooSystem) chkFormat.selectIndex(3);
+				readFields(coordInp);
 				setFields(coordInp, currFormat);
-				activateFields(currFormat);
 				this.repaintNow();
 			}
 
@@ -246,8 +250,8 @@ public class CoordsScreen extends Form {
 			}
 
 			if (ev.target == btnApply){
-				currFormat = chkFormat.getSelectedIndex();
-				readFields(coordInp, currFormat);
+				currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
+				readFields(coordInp);
 				if (coordInp.isValid()) this.close(IDOK);
 				else {
 					if	( allowInvalid ) {
@@ -259,15 +263,14 @@ public class CoordsScreen extends Form {
 					}
 				}
 			}
-			
+
 			if (ev.target == btnPaste){
 				inpText.setText(Vm.getClipboardText(""));
 			}
-			
+
 			if (ev.target == btnCopy){
-				currFormat = chkFormat.getSelectedIndex();
-				readFields(coordInp, currFormat);
-				Vm.setClipboardText(coordInp.toString(chkFormat.getSelectedIndex()));
+				readFields(coordInp); // TODO was anderes als Gauß-Krüger unterstützen
+				Vm.setClipboardText(coordInp.toString(currFormat));
 			}
 
 			if (ev.target == btnParse){
@@ -280,36 +283,61 @@ public class CoordsScreen extends Form {
 				} else {	
 					coord = new CWPoint(inp);
 				}
-				if (coord.latDec == -91 && coord.lonDec == -361){
+				if (!coord.isValid()){
 					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 					tmpMB.exec();
 				}else {
-					currFormat = chkFormat.getSelectedIndex();
+					currFormat =  getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
 					setFields(coord,currFormat);
-					activateFields(currFormat);
 					this.repaintNow();
 				}
 			}
-			
+
 			if (ev.target == btnGps){
 				Navigate nav=Global.mainTab.nav;
 				if (nav.gpsPos.isValid()){
 					CWPoint coord = nav.gpsPos;
-					currFormat = chkFormat.getSelectedIndex();
+					currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
 					setFields(coord,currFormat);
-					activateFields(currFormat);
 				}
 			}
-			
+
 			if (ev.target == btnClear){
 				CWPoint coord = new CWPoint(91,361);
-				currFormat = chkFormat.getSelectedIndex();
+				currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
 				setFields(coord,currFormat);
-				activateFields(currFormat);
 			}
 		}
 		super.onEvent(ev);
 	}
 
+	private static final int[] formatSelToLocalSystem = {
+		TransformCoordinates.DD,
+		TransformCoordinates.DMM,
+		TransformCoordinates.DMS,
+	};
+
+	public int localSystemToformatSel(int cwpointformat) {
+		for (int i=0; i < formatSelToLocalSystem.length; i++) 
+			if (formatSelToLocalSystem[i] == cwpointformat) return i;
+		for (int i=0; i < TransformCoordinates.localSystems.length; i++) 
+			if (TransformCoordinates.localSystems[i].code == cwpointformat) return i + formatSelToLocalSystem.length;
+		
+		throw new IllegalArgumentException("CoordScreen.CWPointformatToformatSel: cwpointformat " + cwpointformat + "not supported");
+	}
+
+	public static final int getLocalSystem(int formatsel) { // be carefull: this method is also used by CalcPanel
+		if (formatsel < formatSelToLocalSystem.length) return formatSelToLocalSystem[formatsel];
+		return TransformCoordinates.localSystems[formatsel - formatSelToLocalSystem.length].code;
+	}
 	
+	public static final int combineToFormatSel(int radiobuttonindex, int choiceindex) {
+		int ret = radiobuttonindex;
+		if (ret == formatSelToLocalSystem.length) ret += choiceindex;
+		return ret;
+	}
+
 }
+
+
+

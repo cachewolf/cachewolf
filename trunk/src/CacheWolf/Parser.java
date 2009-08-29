@@ -46,7 +46,7 @@ package CacheWolf;
 
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.Navigate;
-
+import CacheWolf.navi.TransformCoordinates;
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.sys.Convert;
@@ -527,13 +527,8 @@ public class Parser{
     	String coord=popCalcStackAsString();
 		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
     	cwPt.set(coord);
-    	int fmt=CWPoint.CW;
-    	if (fmtStr.equals("dd")) fmt=CWPoint.DD;
-    	else if (fmtStr.equals("dmm")) fmt=CWPoint.DMM;
-    	else if (fmtStr.equals("dms")) fmt=CWPoint.DMS;
-    	else if (fmtStr.equals("utm")) fmt=CWPoint.UTM;
-    	else if (fmtStr.equals("gk")) fmt=CWPoint.GK;
-    	else if (!fmtStr.equals("cw")) err(MyLocale.getMsg(1713,"Invalid coordinate format. Allowed are CW/DD/DMM/DMS/UTM/GK"));
+    	int fmt = TransformCoordinates.getLocalSystemCode(fmtStr);
+    	if (fmt == TransformCoordinates.LOCALSYSTEM_NOT_SUPPORTED) err(MyLocale.getMsg(1713,"Invalid coordinate format. Allowed are cw / dd / dmm / dms / ") + Common.arrayToString(TransformCoordinates.getProjectedSystemIDs(), " / "));
     	return cwPt.toString(fmt);
     }
 
@@ -554,7 +549,7 @@ public class Parser{
     			err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
     			return;
     		}
-    		ch.LatLon=cwPt.toString(CWPoint.CW);
+    		ch.LatLon=cwPt.toString(TransformCoordinates.CW);
     		ch.pos.set(cwPt);
     		ch.calcDistance(Global.getPref().curCentrePt); // Update distance/bearing
     		nav.setDestination(ch);
@@ -995,7 +990,7 @@ public class Parser{
 				String coord=popCalcStackAsString();
 				cwPt.set(coord);
 				if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
-					ch.LatLon=cwPt.toString(CWPoint.CW);
+					ch.LatLon=cwPt.toString(TransformCoordinates.CW);
 					ch.pos.set(cwPt);
 					ch.calcDistance(Global.getPref().curCentrePt); // Update distance and bearing
 		    	    Global.getProfile().selectionChanged=true; // Tell moving map to updated displayed waypoints

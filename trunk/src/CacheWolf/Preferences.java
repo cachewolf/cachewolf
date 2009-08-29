@@ -2,6 +2,7 @@ package CacheWolf;
 
 import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.FileBugfix;
 import ewe.io.*;
 import ewe.sys.*;
@@ -554,7 +555,7 @@ public class Preferences extends MinML{
 			outp.print("    <garmin connection = \"" + SafeXML.strxmlencode(garminConn) + "\" GPSBabelOptions = \"" + SafeXML.strxmlencode(garminGPSBabelOptions) + "\" MaxWaypointLength = \"" + SafeXML.strxmlencode(garminMaxLen) +
 					        "\" addDetailsToWaypoint = \"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\" addDetailsToName = \"" + SafeXML.strxmlencode(addDetailsToName) + "\" />\n");
 			outp.print("    <opencaching downloadMissing=\"" + SafeXML.strxmlencode(downloadmissingOC) + "\"/>\n");
-			outp.print("    <location lat = \"" + SafeXML.strxmlencode(curCentrePt.getLatDeg(CWPoint.DD)) + "\" long = \"" + SafeXML.strxmlencode(curCentrePt.getLonDeg(CWPoint.DD)) + "\"/>\n");
+			outp.print("    <location lat = \"" + SafeXML.strxmlencode(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long = \"" + SafeXML.strxmlencode(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\"/>\n");
 			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");

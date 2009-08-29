@@ -1,5 +1,6 @@
 package CacheWolf;
 
+
 import CacheWolf.utils.FileBugfix;
 import ewe.io.File;
 import ewe.sys.Convert;
@@ -137,6 +138,16 @@ public final class Common {
 	public static String fixSerialPortName(String name) {
 		if (name.startsWith("/")) return new String(".."+name); // on linux (*nix) machines it is quite usual to give the complete file path to the serial port, but ewe expects only "ttyS0" or similar
 		else                      return name;
+	}
+	
+	public static String arrayToString(String[] a, String sep) {
+		if (a == null || a.length == 0) return "";
+		StringBuffer sb = new StringBuffer();
+		sb.append(a[0]);
+		for (int i=1; i < a.length; i++) {
+			sb.append(sep).append(a[i]);
+		}
+		return sb.toString();
 	}
 
 

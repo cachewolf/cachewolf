@@ -344,7 +344,7 @@ public class MapLoaderGui extends Form {
 			}
 			if (ev.target == coosBtn) {
 				CoordsScreen cs = new CoordsScreen();
-				cs.setFields(center, CWPoint.CW);
+				cs.setFields(center, TransformCoordinates.CW);
 				if (cs.execute() != FormBase.IDCANCEL) {
 					center = cs.getCoords();
 					coosBtn.setText(center.toString());

@@ -2,7 +2,7 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 
-public class GkProjection extends Projection{
+public final class GkProjection extends Projection{
 	double falseEasting;
 	double falseNorthing;
 	double degreeOfStripe0;
@@ -82,7 +82,7 @@ public class GkProjection extends Projection{
 	 * @param stripewidth width in degree of the stripe of the Gauß-Krüger-System (3 degreee usually used in Gauß-Krüger, 6 degree usually in UTM)
 	 * @return
 	 */
-	private static CWPoint unproject(ProjectedPoint gkp, double stripelon, Ellipsoid ellipsoid, double scale) {
+	public static CWPoint unproject(ProjectedPoint gkp, double stripelon, Ellipsoid ellipsoid, double scale) {
 		double L0 = stripelon; // decimal degree of the center of the stripe
 		double y = gkp.getRawEasting()/scale;
 
@@ -114,11 +114,12 @@ public class GkProjection extends Projection{
 		return new CWPoint(lat, lon);
 	}
 	
-	private static ProjectedPoint project(CWPoint latlon, Ellipsoid ellipsoid, double stripewidth, int stripe, double degreeOfStripe0, double scale, ProjectedPoint gkp) {
+	public static ProjectedPoint project(CWPoint latlon, Ellipsoid ellipsoid, double stripewidth, int stripe, double degreeOfStripe0, double scale, ProjectedPoint gkp) {
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
 		double l = latlon.lonDec;
 		if (l<0) l+=360;
 		l = (l - degreeOfStripe0 - stripe * stripewidth) /180*Math.PI;
+//		if (l < - 2* Math.PI) l += 4 * Math.PI;
 		double B = latlon.latDec /180*Math.PI;
 		double N = ellipsoid.a/ Math.sqrt(1- e2 * Math.pow(Math.sin(B),2));
 		double nue = Math.sqrt(Math.pow(ellipsoid.a, 2) / Math.pow(ellipsoid.b, 2)* e2 * Math.pow(Math.cos(B), 2));

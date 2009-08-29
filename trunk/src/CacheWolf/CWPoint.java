@@ -1,13 +1,11 @@
 package CacheWolf;
 
-import ewe.sys.Convert;
+
 import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.navi.GeodeticCalculator;
 
-import com.bbn.openmap.proj.coords.*;
-import com.bbn.openmap.*;
 import com.stevesoft.ewe_pat.Regex;
 
 /**
@@ -17,19 +15,14 @@ import com.stevesoft.ewe_pat.Regex;
  *
  */
 public class CWPoint extends TrackPoint{
-	public MGRSPoint utm = new MGRSPoint();
-	public boolean utmValid = false;
-
-	public static final int DD = 0;
-	public static final int DMM = 1;
-	public static final int DMS = 2;
-	public static final int UTM = 3;
-	public static final int GK = 4;
-	public static final int CW = 5;
-	public static final int REGEX = 6;
-	public static final int LAT_LON = 7;
-	public static final int LON_LAT = 8;
 	
+	public static final int CW 		= TransformCoordinates.CW;
+	public static final int DD 		= TransformCoordinates.DD;
+	public static final int DMM 	= TransformCoordinates.DMM;
+	public static final int LAT_LON	= TransformCoordinates.LAT_LON;
+	public static final int LON_LAT	= TransformCoordinates.LON_LAT;
+	public static final int UTM 	= TransformCoordinates.UTM;
+
 	/** Degrees/Radians conversion constant. */
 	static private final double PiOver180 = Math.PI / 180.0;	
 
@@ -40,7 +33,6 @@ public class CWPoint extends TrackPoint{
 	 */
 	public CWPoint(double lat, double lon) {
 		super(lat, lon);
-		this.utmValid = false;
 	}
 
 	/**
@@ -49,19 +41,9 @@ public class CWPoint extends TrackPoint{
 	
 	public CWPoint() {
 		super(-361,-361); // construct with unvalid == unset lat/lon 
-		this.utmValid = false;
 		
 	}
 
-	/**
-	 * Create CWPoint by using a LatLonPoint 
-	 * @param CWPoint LatLonPoint
-	 */
-
-	public CWPoint(LatLonPoint llPoint){
-		super (llPoint.getLatitude(), llPoint.getLongitude());
-		this.utmValid = false;
-	}
 
 	/**
 	 * Create CWPoint by using a CWPoint 
@@ -70,7 +52,6 @@ public class CWPoint extends TrackPoint{
 
 	public CWPoint(TrackPoint cwPoint){
 		super(cwPoint.latDec, cwPoint.lonDec);
-		this.utmValid = false;
 	}
 
 	
@@ -126,19 +107,8 @@ public class CWPoint extends TrackPoint{
 	public void set (double lat, double lon){
 		this.latDec = lat;
 		this.lonDec = lon;
-		this.utmValid = false;
 	}
 
-	/**
-	 * Set CWPoint by using a LatLonPoint 
-	 * @param CWPoint LatLonPoint
-	 */
-
-	public void set (LatLonPoint llPoint){
-		this.latDec = llPoint.getLatitude();
-		this.lonDec = llPoint.getLongitude();
-		this.utmValid = false;
-	}
 
 	/**
 	 * Set CWPoint by using a CWPoint 
@@ -148,7 +118,6 @@ public class CWPoint extends TrackPoint{
 	public void set (TrackPoint cwPoint){
 		this.latDec = cwPoint.latDec;
 		this.lonDec = cwPoint.lonDec;
-		this.utmValid = false;
 	}
 
 	
@@ -161,7 +130,7 @@ public class CWPoint extends TrackPoint{
 
 		if (coord!=null) {
 			switch (format){
-			case CW: 	ParseLatLon pll = new ParseLatLon (coord);
+			case TransformCoordinates.CW: 	ParseLatLon pll = new ParseLatLon (coord);
 				try {
 					pll.parse();
 					this.latDec = pll.lat2;
@@ -171,7 +140,7 @@ public class CWPoint extends TrackPoint{
 					this.lonDec = 361;
 					break;
 				}
-			case REGEX: set(coord);
+			case TransformCoordinates.REGEX: set(coord);
 			break;
 
 			default: 	this.latDec = 91; this.lonDec = 361;
@@ -179,7 +148,6 @@ public class CWPoint extends TrackPoint{
 		} else { 
 			this.latDec = 91; this.lonDec = 361;
 		}
-		this.utmValid = false;
 	}
 
 
@@ -201,7 +169,12 @@ public class CWPoint extends TrackPoint{
 					)|(?: 
 					   ([0-9]{1,2}[C-HJ-PQ-X])\s*[EeOo]?\s*([0-9]{1,7})\s+[Nn]?\s*([0-9]{1,7}) 
 					)
-		*/		
+		*/	
+	String crsid = null;
+	if (coord.charAt(2)=='.') { // first 2 letters = Internet domain of projected area
+		crsid = coord.substring(0, coord.indexOf(' '));
+		coord = coord.substring(coord.indexOf(' ') + 1, coord.length());
+	}
 				Regex rex=new Regex("(?:" +
 									"([NSns])\\s*([0-9]{1,2})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?\\s*" +
 									"[,./_;+:-]*\\s*" + // allow N xx xx.xxx / E xxx xx.xxx
@@ -214,30 +187,36 @@ public class CWPoint extends TrackPoint{
 									"([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" +
 									")|(?:" +
 									"[Rr]:?\\s*([+-]?[0-9]{1,7})\\s+[Hh]:?\\s*([+-]?[0-9]{1,7})" +
+									")|(?:" + 
+									"([\\-]{0,1}[0-9]{1,8})\\s+([\\-]{0,1}[0-9]{1,8})" + // projected easting northing  
 									")"); 
-				this.latDec = -91; // return unset / unvalid values if parsing was not successfull
-				this.lonDec = -361;
+				this.makeInvalid(); //return unset / unvalid values if parsing was not successfull
 				rex.search(coord);
 				if (rex.stringMatched(1)!= null) { // Std format
-					// Handle "E" oder "O" for longitiude
+					// Handle "E" or "O" for longitiude
 					String strEW = rex.stringMatched(6).toUpperCase();
 					if (!strEW.equals("W")) strEW = "E";
 					if (rex.stringMatched(4)!=null){ //Seconds available
 						set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2),rex.stringMatched(3),rex.stringMatched(4) + "." + rex.stringMatched(5),
-							strEW, rex.stringMatched(7),rex.stringMatched(8),rex.stringMatched(9) + "." + rex.stringMatched(10),DMS);
+							strEW, rex.stringMatched(7),rex.stringMatched(8),rex.stringMatched(9) + "." + rex.stringMatched(10),TransformCoordinates.DMS);
 					} else {
 						set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2),rex.stringMatched(3)+ "." + rex.stringMatched(5), null,
-							strEW, rex.stringMatched(7),rex.stringMatched(8)+ "." + rex.stringMatched(10), null, DMM);
+							strEW, rex.stringMatched(7),rex.stringMatched(8)+ "." + rex.stringMatched(10), null, TransformCoordinates.DMM);
 					}
 						
 				} else if (rex.stringMatched(12) != null){ // Decimal
-					
 					set(rex.stringMatched(11)==null?"N":rex.stringMatched(11).toUpperCase(), rex.stringMatched(12)+ "." + rex.stringMatched(13), null, null,
-						rex.stringMatched(14)==null?"E":rex.stringMatched(14).toUpperCase(), rex.stringMatched(15)+ "." + rex.stringMatched(16), null, null, DD);
+						rex.stringMatched(14)==null?"E":rex.stringMatched(14).toUpperCase(), rex.stringMatched(15)+ "." + rex.stringMatched(16), null, null, TransformCoordinates.DD);
 				} else if (rex.stringMatched(17) != null){ // UTM
-					set(rex.stringMatched(17),rex.stringMatched(19),rex.stringMatched(18)); //parse sequence is E N, but set needs N E
+					set(rex.stringMatched(19), rex.stringMatched(18), rex.stringMatched(17)); //parse sequence is E N, but set needs N E
 				} else if (rex.stringMatched(20) != null){ // GK
-					set(rex.stringMatched(21),rex.stringMatched(20));
+					set(rex.stringMatched(21),rex.stringMatched(20), TransformCoordinates.LOCALSYSTEM_DEFAULT);
+				} else if (rex.stringMatched(22) != null) { // general projected coordinate reference system
+					if (crsid != null) {
+						int ls = TransformCoordinates.getLocalSystemCode(crsid);
+						if (ls == -1) makeInvalid();
+						else set(rex.stringMatched(23), rex.stringMatched(22), ls);
+					}
 				}
 				//else Vm.debug("CWPoint: "+coord+" could not be parsed");
 			}	/**
@@ -256,13 +235,13 @@ public class CWPoint extends TrackPoint{
 		     String strLonEW, String strLonDeg, String strLonMin, String strLonSec,
 		     int format) {
 		switch (format){
-			case DD: 	this.latDec = Common.parseDouble(strLatDeg);
+			case TransformCoordinates.DD: 	this.latDec = Common.parseDouble(strLatDeg);
 						this.lonDec = Common.parseDouble(strLonDeg);
 						break;
-			case DMM: 	this.latDec = Math.abs(Common.parseDouble(strLatDeg)) + Math.abs((Common.parseDouble(strLatMin)/60));
+			case TransformCoordinates.DMM: 	this.latDec = Math.abs(Common.parseDouble(strLatDeg)) + Math.abs((Common.parseDouble(strLatMin)/60));
 						this.lonDec = Math.abs(Common.parseDouble(strLonDeg)) + Math.abs((Common.parseDouble(strLonMin)/60));
 						break;
-			case DMS: 	this.latDec = Math.abs(Common.parseDouble(strLatDeg)) + Math.abs((Common.parseDouble(strLatMin)/60))+Math.abs((Common.parseDouble(strLatSec)/3600));
+			case TransformCoordinates.DMS: 	this.latDec = Math.abs(Common.parseDouble(strLatDeg)) + Math.abs((Common.parseDouble(strLatMin)/60))+Math.abs((Common.parseDouble(strLatSec)/3600));
 						this.lonDec = Math.abs(Common.parseDouble(strLonDeg)) + Math.abs((Common.parseDouble(strLonMin)/60))+Math.abs((Common.parseDouble(strLonSec)/3600));
 						break;
 			
@@ -272,7 +251,17 @@ public class CWPoint extends TrackPoint{
 		// To avoid changing sign twice if we have something like W -34.2345
 		if (strLatNS.trim().equals("S") && this.latDec>0) this.latDec *= -1;
 		if (strLonEW.trim().equals("W") && this.lonDec>0) this.lonDec *= -1;
-		this.utmValid = false;
+	}
+	
+	/**
+	 * sets by UTM with respect to WGS84
+	 * @param UTMNorthing
+	 * @param UTMEasting
+	 * @param utmzone
+	 */
+	public void set(String UTMNorthing, String UTMEasting, String utmzone){
+		ProjectedPoint utm = new ProjectedPoint(new CWPoint(Common.parseDouble(UTMNorthing), Common.parseDouble(UTMEasting)), utmzone, TransformCoordinates.LOCALSYSTEM_UTM_WGS84, true);
+		set(TransformCoordinates.ProjectedToWgs84(utm, TransformCoordinates.LOCALSYSTEM_UTM_WGS84, true));
 	}
 
 	
@@ -298,49 +287,39 @@ public class CWPoint extends TrackPoint{
 		lonDec = 91;
 	}
 
-	/**
-	 * set lat and lon by using UTM coordinates  
-	 * @param strZone UTM-zone, e.g. 32U
-	 * @param strNorthing Northing component
-	 * @param strEasting  Easting component
-	 */
-	public void set ( String strZone, String strNorthing, String strEasting){
-		LatLonPoint ll =  new LatLonPoint();
-		
-		utm.zone_letter = strZone.charAt(strZone.length()-1);
-		utm.zone_number = Convert.toInt(strZone.substring(0,strZone.length()-1));
-		utm.northing = (float) Common.parseDouble(strNorthing);
-		utm.easting = (float) Common.parseDouble(strEasting);
-		
-		ll = utm.toLatLonPoint(); // returns null if unvalit UTM-coordinates
-		if (ll != null) { 
-			this.utmValid = true;
-			this.latDec = ll.getLatitude();
-			this.lonDec = ll.getLongitude();
-		} else {this.latDec = 91; this.lonDec = 361; }
-	}
 	
 	/**
-	 * set lat and lon by using GK coordinates  
+	 * set lat and lon by using a local coordinates system  
 	 * @param strEasting  Easting component
 	 * @param strNorthing Northing component
+	 * @param localCooSystem one of TransformCoordinates.LOCALSYSTEM_XXX
 	 */
-	public void set (String strNorthing, String strEasting){
+	public void set (String strNorthing, String strEasting, int localCooSystem){
 		CWPoint pp = new CWPoint(Common.parseDouble(strNorthing),Common.parseDouble(strEasting));
-		ProjectedPoint gk = new ProjectedPoint(pp, ProjectedPoint.LOCALSYSTEM_DEFAULT, true, true);
-		set(TransformCoordinates.ProjectedToWgs84(gk, ProjectedPoint.LOCALSYSTEM_DEFAULT, true));
+		ProjectedPoint gk = new ProjectedPoint(pp, localCooSystem, true, true);
+		set(TransformCoordinates.ProjectedToWgs84(gk, localCooSystem, true));
 	}
 
+	/**
+	 * set lat and lon by using UTM coordinates  
+	 * @param strEasting  Easting component
+	 * @param strNorthing Northing component
+	 * @param localCooSystem one of TransformCoordinates.LOCALSYSTEM_XXX which requires an explicit zone
+	 */
+	public void set (String strNorthing, String strEasting, String zone, int localCooSystem){
+		CWPoint pp = new CWPoint(Common.parseDouble(strNorthing),Common.parseDouble(strEasting));
+		ProjectedPoint gk = new ProjectedPoint(pp, zone, localCooSystem, true);
+		set(TransformCoordinates.ProjectedToWgs84(gk, localCooSystem, true));
+	}
 	/**
 	 * Get degrees of latitude in different formats
 	 * @param format	Format: DD, DMM, DMS,
 	 */
 	public String getLatDeg(int format) {
 		switch (format) {
-		case DD: 	return MyLocale.formatDouble(this.latDec, "00.00000").replace(',','.');
-		case CW:
-		case DMM:
-		case DMS:	return getDMS(latDec,0,format);
+		case TransformCoordinates.DD: 	return MyLocale.formatDouble(this.latDec, "00.00000").replace(',','.');
+		case TransformCoordinates.DMM:
+		case TransformCoordinates.DMS:	return getDMS(latDec,0,format);
 		default: return "";
 		}
 	}
@@ -351,10 +330,9 @@ public class CWPoint extends TrackPoint{
 	 */
 	public String getLonDeg(int format) {
 		switch (format) {
-		case DD: 	return MyLocale.formatDouble(this.lonDec, "000.00000").replace(',','.');
-		case CW:
-		case DMM:
-		case DMS:	return (((lonDec<100.0) && (lonDec>-100.0))?"0":"")+getDMS(lonDec,0,format);
+		case TransformCoordinates.DD: 	return MyLocale.formatDouble(this.lonDec, "000.00000").replace(',','.');
+		case TransformCoordinates.DMM:
+		case TransformCoordinates.DMS:	return (((lonDec<100.0) && (lonDec>-100.0))?"0":"")+getDMS(lonDec,0,format);
 		default: 	return ""; 
 		}
 	}
@@ -406,9 +384,8 @@ public class CWPoint extends TrackPoint{
 		double tmpMin, tmpSec;
 		tmpMin= (deg - iDeg)*60.0;
 		switch(format) {
-			case DD: return "";
-			case CW:
-			case DMM: 	
+			case TransformCoordinates.DD: return "";
+			case TransformCoordinates.DMM: 	
 			    // Need to check if minutes would round up to 60
 				if (java.lang.Math.round(tmpMin*1000.0) == 60000) { tmpMin =0;  iDeg++; }
 				switch (what) {
@@ -416,7 +393,7 @@ public class CWPoint extends TrackPoint{
 					case 1: return MyLocale.formatDouble(tmpMin, "00.000").replace(',','.');
 					case 2: return "";
 				}
-			case DMS:
+			case TransformCoordinates.DMS:
 				tmpSec= (tmpMin - (int)tmpMin) * 60.0;
 				tmpMin=(int) tmpMin;
 				// Check if seconds round up to 60 
@@ -454,59 +431,6 @@ public class CWPoint extends TrackPoint{
 	    return  result;
 	}
 
-	/**
-	 * Get UTMzonenumber, e.g. 32U
-	 */
-	public String getUTMZone(){
-		checkUTMvalid();
-		return Convert.toString(utm.zone_number) + utm.zone_letter;
-	}
-	
-	/**
-	 * Get UTM northing
-	 */
-	public String getUTMNorthing(){
-		checkUTMvalid();
-		return Convert.toString((long)utm.northing).replace(',','.');
-	}
-
-	/**
-	 * Get UTM easting
-	 */
-	public String getUTMEasting() {
-		checkUTMvalid();
-		return Convert.toString((long)utm.easting).replace(',','.');
-	}
-	
-	/**
-	 * Get GK northing
-	 */
-	public String getGKNorthing(int decimalplaces){
-		double gkNorthing = TransformCoordinates.wgs84ToLocalsystem(this, ProjectedPoint.LOCALSYSTEM_DEFAULT).getNorthing();
-		
-		ewe.sys.Double n = new ewe.sys.Double();
-		n.set(gkNorthing);
-		n.decimalPlaces = decimalplaces;
-		return n.toString().replace(',', '.');
-	}
-
-	/**
-	 * Get GK easting
-	 */
-	public String getGKEasting(int decimalplaces) {
-		double gkEasting = TransformCoordinates.wgs84ToLocalsystem(this, ProjectedPoint.LOCALSYSTEM_DEFAULT).getEasting();
-		
-		ewe.sys.Double e = new ewe.sys.Double();
-		e.set(gkEasting);
-		e.decimalPlaces = decimalplaces;
-		return e.toString().replace(',', '.');
-	}
-	
-	public String getGermanGkCoordinates() {
-		return TransformCoordinates.wgs84ToLocalsystem(this, ProjectedPoint.LOCALSYSTEM_DEFAULT).toString(0, "R:", " H:");
-	}
-
-	
 	/**
 	 * Method to calculate a projected waypoint
 	 * @param degrees Bearing
@@ -597,7 +521,7 @@ public class CWPoint extends TrackPoint{
 	 * @return  string like N 49° 33.167 E 011° 21.608 
 	 */	
 	public String toString(){
-		return toString(CW);
+		return toString(TransformCoordinates.CW);
 		
 	}
 	/**
@@ -608,36 +532,21 @@ public class CWPoint extends TrackPoint{
 	public String toString(int format){
 		if (!isValid()) return MyLocale.getMsg(999,"not set");
 		switch (format) {
-		case DD:	return getNSLetter() + " " + STRreplace.replace(getLatDeg(format),"-","") + "° "
+		case TransformCoordinates.DD:	return getNSLetter() + " " + STRreplace.replace(getLatDeg(format),"-","") + "° "
 						+  getEWLetter() + " " + STRreplace.replace(getLonDeg(format),"-","")+ "°";
-		case CW:	format = DMM;	
-					return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + " "
+		case TransformCoordinates.DMM:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + " "
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format);
-		case DMM:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + " "
-						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format);
-		case DMS:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " 
+		case TransformCoordinates.DMS:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " 
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
-		case UTM:	return getUTMZone()  + " E " + getUTMEasting()+ " N " + getUTMNorthing();
-		case LON_LAT:
-			return Common.DoubleToString(lonDec, 8) +  "," + Common.DoubleToString(latDec, 8);
-		case LAT_LON:
-			return Common.DoubleToString(latDec, 8) +  "," + Common.DoubleToString(lonDec, 8);
-		case GK:
-			return getGermanGkCoordinates();
-		default: return "Unknown Format: " + format;
+		//case TransformCoordinates.UTM: 	return TransformCoordinates.wgs84ToLocalsystem(this, TransformCoordinates.LOCALSYSTEM_UTM_WGS84).toHumanReadableString();
+		//case TransformCoordinates.CUSTOM:	return getGermanGkCoordinates();
+		default: return TransformCoordinates.getLocalSystem(format).id + " " + TransformCoordinates.wgs84ToLocalsystem(this, format).toHumanReadableString();
+			//return "Unknown Format: " + format;
 
 		}
 
 	}
 	
-	/**
-	 * Checks, if the data of utm is valid, if not, utm ist calculated
-	 */	
-	private void checkUTMvalid() {
-		if (this.utmValid) return;
-		this.utm = MGRSPoint.LLtoMGRS(new LatLonPoint(this.latDec, this.lonDec));
-		this.utmValid = true;
-	}
 	
 	/**
 	*	Method to identify one of 16 compass directions based
