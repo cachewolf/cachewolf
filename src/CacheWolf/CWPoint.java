@@ -171,9 +171,11 @@ public class CWPoint extends TrackPoint{
 					)
 		*/	
 	String crsid = null;
-	if (coord.charAt(2)=='.') { // first 2 letters = Internet domain of projected area
+	if ((coord.charAt(2)=='.') && (coord.indexOf(' ') >= 0)) { // first 2 letters = Internet domain of projected area
 		crsid = coord.substring(0, coord.indexOf(' '));
-		coord = coord.substring(coord.indexOf(' ') + 1, coord.length());
+		if (TransformCoordinates.getLocalSystemCode(crsid) != -1) {
+			coord = coord.substring(coord.indexOf(' ') + 1, coord.length());
+		}
 	}
 				Regex rex=new Regex("(?:" +
 									"([NSns])\\s*([0-9]{1,2})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?\\s*" +
