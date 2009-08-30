@@ -540,7 +540,8 @@ public class CWPoint extends TrackPoint{
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format);
 		case TransformCoordinates.DMS:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " 
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
-		//case TransformCoordinates.UTM: 	return TransformCoordinates.wgs84ToLocalsystem(this, TransformCoordinates.LOCALSYSTEM_UTM_WGS84).toHumanReadableString();
+		case TransformCoordinates.LAT_LON: 	return getLatDeg(DD)+","+getLonDeg(DD);
+		case TransformCoordinates.LON_LAT: 	return getLonDeg(DD)+","+getLatDeg(DD);
 		//case TransformCoordinates.CUSTOM:	return getGermanGkCoordinates();
 		default: return TransformCoordinates.getLocalSystem(format).id + " " + TransformCoordinates.wgs84ToLocalsystem(this, format).toHumanReadableString();
 			//return "Unknown Format: " + format;
