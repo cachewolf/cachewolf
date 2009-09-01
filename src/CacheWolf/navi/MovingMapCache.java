@@ -114,7 +114,7 @@ public class MovingMapCache {
 					return true;
 				if (obj == null)
 					return false;
-				if (getClass() != obj.getClass())
+				if (! (obj instanceof Key))
 					return false;
 				final Key other = (Key) obj;
 				if (column != other.column)
