@@ -976,7 +976,7 @@ public class MovingMap extends Form {
 		Vector icons = new Vector ();
 		for (Iterator i = mmp.images.iterator(); i.hasNext();) {
 			AniImage im = (AniImage) i.next();
-			if ( (im instanceof MapImage) && mmp.mapImage != im) {
+			if ( (im instanceof MapImage) && (!(im instanceof MapSymbol)) && mmp.mapImage != im) {
 				i.remove();
 			}
 			else{
