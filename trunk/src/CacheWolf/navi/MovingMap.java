@@ -1747,9 +1747,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu mapsMenu;
 	MenuItem selectMapMI = new MenuItem(MyLocale.getMsg(4234, "Select a map manually$s"), new IconAndText(new mImage("map_open.png"), MyLocale.getMsg(4235, "Select a map manually"), null, CellConstants.RIGHT));
 	MenuItem changeMapDirMI = new MenuItem(MyLocale.getMsg(4236, "Change map directory$c"), new IconAndText(new mImage("map_cd.png"), MyLocale.getMsg(4237, "Change map directory"), null, CellConstants.RIGHT));
-	MenuItem showMapMI = new MenuItem(MyLocale.getMsg(4238, "Show map"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4239, "Show map"), null, CellConstants.RIGHT));
-	MenuItem hideMapMI = new MenuItem(MyLocale.getMsg(4240, "Hide map"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4241, "Hide map"), null, CellConstants.RIGHT));
-	MenuItem fillMapMI = new MenuItem(MyLocale.getMsg(4267, "Show white areas"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4267, "Show white areas"), null, CellConstants.RIGHT));
+	MenuItem showMapMI = new MenuItem(MyLocale.getMsg(4238, "Show map"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4239, "Show map"), null, CellConstants.RIGHT));
+	MenuItem hideMapMI = new MenuItem(MyLocale.getMsg(4240, "Hide map"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4241, "Hide map"), null, CellConstants.RIGHT));
+	MenuItem fillMapMI = new MenuItem(MyLocale.getMsg(4267, "Show white areas"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4267, "Show white areas"), null, CellConstants.RIGHT));
 	MenuItem noFillMapMI = new MenuItem(MyLocale.getMsg(4266, "Fill white areas"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4266, "Fill white areas"), null, CellConstants.RIGHT));
 	// automatic
 	MenuItem mapChangeModusMI = new MenuItem(MyLocale.getMsg(4242, "Modus for automatic map change"), MenuItem.Separator, null);;
