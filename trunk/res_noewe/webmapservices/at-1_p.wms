@@ -1,0 +1,66 @@
+TakenFromUrl:       http://gis.bgld.gv.at:80/wmsconnector/com.esri.wms.Esrimap/CentropeMap?
+GetCapabilitiesUrl: http://gis.bgld.gv.at:80/wmsconnector/com.esri.wms.Esrimap/CentropeMap?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               at.Burgenland p SF=1..10
+MapType:                        photo
+MainUrl:            http://gis.bgld.gv.at:80/wmsconnector/com.esri.wms.Esrimap/CentropeMap?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31287
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31287
+#      <SRS>EPSG:31256</SRS>
+#      <SRS>EPSG:31259</SRS>
+#      <SRS>EPSG:31287</SRS>
+#      <SRS>EPSG:31297</SRS>
+#      <SRS>EPSG:4326</SRS>
+#      <SRS>EPSG:4267</SRS>
+#      <SRS>EPSG:4269</SRS> 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=oek50|OEK50||
+#LayersUrlPart:     LAYERS=ortho1m_farbe|Orthofoto Farbe||
+#LayersUrlPart:     LAYERS=Flugdatum_Farbe|Flugdatum Orthofoto Farbe||
+#LayersUrlPart:     LAYERS=Flugjahr_ortho|FlugjahrOrthofoto||
+#LayersUrlPart:     LAYERS=Polygondecker|Polygondecker||
+#LayersUrlPart:     LAYERS=orientierungskarte|Orientierungskarte|NaN|NaN
+#LayersUrlPart:     LAYERS=Ziel_1_Gebiet|Ziel_1_Gebiet|NaN|99999999
+#LayersUrlPart:     LAYERS=Ziel_2_Gebiet|Ziel_2_Gebiet|NaN|99999999
+#LayersUrlPart:     LAYERS=Vogelschutzrichtlinie|Vogelschutzrichtlinie (SPA)||
+#LayersUrlPart:     LAYERS=Habitatrichtlinie|Habitat-Richtlinie (PSCI)||
+#LayersUrlPart:     LAYERS=Naturpark|Naturpark||
+#LayersUrlPart:     LAYERS=Landschaftsschutzgebiet|Landschaftsschutzgebiet||
+#LayersUrlPart:     LAYERS=Nationalpark|Nationalpark||
+#LayersUrlPart:     LAYERS=Naturschutzgebiet|Naturschutzgebiet||
+#LayersUrlPart:     LAYERS=geschuetzteLandschaftsteile|geschuetzte Landschaftsteile||
+#LayersUrlPart:     LAYERS=sonstigeSchutzgebiete|sonstige Schutzgebiete||
+#LayersUrlPart:     LAYERS=Quellschongebiet|Quellschongebiet|NaN|99999999
+#LayersUrlPart:     LAYERS=Grundwasserschongebiet|Grundwasserschongebiet|NaN|99999999
+#LayersUrlPart:     LAYERS=Wasserschongebiet_allgemein|Wasserschongebiet_allgemein|NaN|99999999
+#LayersUrlPart:     LAYERS=iki|Katastropheninformation|NaN|99999999
+#LayersUrlPart:     LAYERS=Messstelle_gw|Messstelle Grundwasser|NaN|99999999
+#LayersUrlPart:     LAYERS=Messstelle_og|Messstelle Oberflaechengewaesser|NaN|99999999
+#LayersUrlPart:     LAYERS=Messstelle_ns|Messstelle Niederschlaege|NaN|99999999
+#LayersUrlPart:     LAYERS=wep|Waldentwicklungsplan|NaN|99999999
+#LayersUrlPart:     LAYERS=flu_50t|Fliessgewaesser||
+#LayersUrlPart:     LAYERS=see|Stehende Gewaesser||
+#LayersUrlPart:     LAYERS=so_str|sonstige Strasse||
+#LayersUrlPart:     LAYERS=l_str|Landesstrasse L||
+#LayersUrlPart:     LAYERS=b_str|Landesstrasse B||
+#LayersUrlPart:     LAYERS=s_str|Schnellstrasse||
+#LayersUrlPart:     LAYERS=a_str|Autobahn||
+#LayersUrlPart:     LAYERS=radwanderrouten|Radwanderrouten||
+#LayersUrlPart:     LAYERS=oertl_str|oertliches Strassennetz||
+#LayersUrlPart:     LAYERS=adressen|Adressen|NaN|99999999
+#LayersUrlPart:     LAYERS=geo_nam|geonam|NaN|NaN
+#LayersUrlPart:     LAYERS=PolitischeGemeinden|Politische Gemeinden||
+#LayersUrlPart:     LAYERS=PolitischeBezirke|Politische Bezirke||
+#LayersUrlPart:     LAYERS=Nuts3Regionen|Nuts3 Regionen|NaN|99999999
+#LayersUrlPart:     LAYERS=Landesgrenzen|Landesgrenzen||
+LayersUrlPart:     LAYERS=ortho1m_farbe,flu_50t,see,so_str,l_str,b_str,s_str,a_str,oertl_str
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 48.1886 E 15.9545
+BoundingBoxButtomRightWGS84: N 46.7613 E 17.2342
+#BBox_Mitte: N 47.47496561765 E 16.5943567439
+#MinScale:   0
+#MaxScale:   45
+RecommendedScale:   1
+ImageFileExtension: .png
