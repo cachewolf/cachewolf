@@ -34,7 +34,7 @@ import ewe.net.*;
 import ewe.sys.Double;
 
 /**
- *	Class to import Data from opencaching.de. 
+ *	Class to import Data from opencaching. 
  *	It uses the lastmodified parameter to identify new or changed caches.
  *	See here: http://www.opencaching.com/phpBB2/viewtopic.php?t=281 (out-dated)
  *   See here: http://www.opencaching.de/doc/xml/xml11.htm and http://develforum.opencaching.de/viewtopic.php?t=135&postdays=0&postorder=asc&start=0
@@ -46,8 +46,18 @@ public class OCXMLImporter extends MinML {
 	static protected final int STAT_CACHE_DESC = 2;
 	static protected final int STAT_CACHE_LOG = 3;
 	static protected final int STAT_PICTURE = 4;
-
-	final static String OPENCACHING_HOST = "www.opencaching.de";
+	
+	public final static String OPENCACHING_DE_HOST = "www.opencaching.de";
+	public final static String OPENCACHING_DE_PATTERN = "OC";
+	public final static String OPENCACHING_PL_HOST = "www.opencaching.pl";
+	public final static String OPENCACHING_PL_PATTERN = "OP";
+	public final static String OPENCACHING_CZ_HOST = "www.opencaching.cz";
+	public final static String OPENCACHING_CZ_PATTERN = "OZ";
+	public final static String OPENCACHING_UK_HOST = "www.opencaching.org.uk";
+	public final static String OPENCACHING_UK_PATTERN = "OK";
+	
+	String hostname;
+	
 	int state = STAT_INIT;
 	int numCacheImported, numDescImported, numLogImported= 0;
 
@@ -69,7 +79,6 @@ public class OCXMLImporter extends MinML {
 	String picUrl = new String();
 	String picTitle =  new String();
 	String picID = new String();
-	String ocSeekUrl = new String("http://"+OPENCACHING_HOST+"/viewcache.php?cacheid=");
 	String cacheID = new String();
 
 	String logData, logIcon, logDate, logFinder, logId;
@@ -97,6 +106,17 @@ public class OCXMLImporter extends MinML {
 		}//for
 
 	}
+	
+	protected void setHostname(String wpName){
+		if(wpName.startsWith(OPENCACHING_DE_PATTERN))
+			hostname = OPENCACHING_DE_HOST;
+		else if(wpName.startsWith(OPENCACHING_PL_PATTERN))
+			hostname = OPENCACHING_PL_HOST;
+		else if(wpName.startsWith(OPENCACHING_CZ_PATTERN))
+			hostname = OPENCACHING_CZ_HOST;
+		else if(wpName.startsWith(OPENCACHING_UK_PATTERN))
+			hostname = OPENCACHING_UK_HOST;
+	}
 
 	/** true, if not the last syncdate shall be used, but the caches shall be reloaded
 	 * only used in syncSingle */
@@ -110,20 +130,23 @@ public class OCXMLImporter extends MinML {
 	public boolean syncSingle(int number, InfoBox infB) {
 		ch = cacheDB.get(number);
 		holder= null; //new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
+		setHostname(ch.getWayPoint());
 
 		if (infB.isClosed) {
 			if (askForOptions) return false; 
 			else return true;
 		}
+		
 		if (askForOptions) {
-			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.ALL);
+			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( 
+				MyLocale.getMsg(1600, hostname + " Download"),OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.ALL);
 			if (importOpt.execute() == FormBase.IDCANCEL) {	return false; }
 			askForOptions = false;
 			reload = importOpt.missingCheckBox.getState();
 		}
 
 		// this is only a dummy-InfoBox for capturing the output
-		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
+		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from " + hostname), InfoBox.PROGRESS_WITH_WARNINGS, false);
 //		inf.setPreferredSize(220, 300);
 //		inf.relayout(false);
 //		inf.exec();
@@ -141,7 +164,7 @@ public class OCXMLImporter extends MinML {
 		String url = new String();
 		picCnt = 0;
 		//Build url
-		url = "http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
+		url = "http://" + hostname + "/xml/ocxml11.php?"
 			+ "modifiedsince=" + lastS
 			+ "&cache=1"
 			+ "&cachedesc=1";
@@ -171,7 +194,8 @@ public class OCXMLImporter extends MinML {
 			(new MessageBox("Error", "Coordinates for centre must be set", FormBase.OKB)).execute();
 			return;
 		}
-		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, "Opencaching.de Download"),
+		setHostname(ch.getWayPoint());
+		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, hostname + " Download"),
 																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES);
 		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
 		Vm.showWait(true);
@@ -198,7 +222,7 @@ public class OCXMLImporter extends MinML {
 		}	
 		picCnt = 0;
 		//Build url
-		url = "http://" + OPENCACHING_HOST + "/xml/ocxml11.php?"
+		url = "http://" + hostname + "/xml/ocxml11.php?"
 			+ "modifiedsince=" + lastS
 			+ "&cache=1"
 			+ "&cachedesc=1";
@@ -276,12 +300,12 @@ public class OCXMLImporter extends MinML {
 			else {
 				if (e.getMessage().equalsIgnoreCase("could not connect") ||
 						e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
-					finalMessage = MyLocale.getMsg(1616,"Error: could not download udpate file from opencaching.de");
+					finalMessage = MyLocale.getMsg(1616,"Error: could not download update file from " + hostname);
 				} else { finalMessage = "IOException: "+e.getMessage(); }
 				success = false;
 			}
 		}catch (IllegalArgumentException e) {
-			finalMessage = MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in opencaching.de\nplease try again later\n, state:")+" "+state+", waypoint: "+ holder.getWayPoint();
+			finalMessage = MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in " + hostname + "\nplease try again later\n, state:")+" "+state+", waypoint: "+ holder.getWayPoint();
 			success = false;
 			Vm.debug("Parse error: " + state + " " + holder.getWayPoint());
 			e.printStackTrace();
@@ -392,11 +416,12 @@ public class OCXMLImporter extends MinML {
 
 		if(name.equals("waypoints")){
 			holder.setWayPoint(atts.getValue("oc"));
-			if (holder.getWayPoint().length()==0) throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching.de / it happens on 27-12-2006 on cache OC143E
+			if (holder.getWayPoint().length()==0) throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching / it happens on 27-12-2006 on cache OC143E
 			return;
 		}
 
 	}
+	
 	private void startCacheDesc(String name, AttributeList atts){
 		inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported);
 		if (name.equals("cachedesc")){
@@ -443,6 +468,7 @@ public class OCXMLImporter extends MinML {
 
 	// TODO Do we have to release the "holder" cache details ?
 	private void endCache(String name){
+		setHostname(ch.getWayPoint());
 		if (name.equals("cache")){
 			holder.setLastSync(dateOfthisSync.format("yyyyMMddHHmmss"));
 			int index;
@@ -476,6 +502,7 @@ public class OCXMLImporter extends MinML {
 		if(name.equals("id")){ // </id>
 			holder = getHolder(strData); // Allocate a new CacheHolder object
 			holder.setOcCacheID(strData);
+			String ocSeekUrl = new String("http://" + hostname + "/viewcache.php?cacheid=");
 			holder.getFreshDetails().URL = ocSeekUrl + cacheID;
 			return;
 		}
@@ -523,15 +550,15 @@ public class OCXMLImporter extends MinML {
 			if (name.equals("cachedesc")){
 				if (pref.downloadPics && holder.is_HTML()) {
 					String fetchUrl, imgTag, imgAltText;
-					Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthält keine Anführungszeichen
+					Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthlt keine Anfhrungszeichen
 					Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
 					imgRegexAlt.setIgnoreCase(true);
 					imgRegexUrl.setIgnoreCase(true);
 					int descIndex=0;
 					int numDownloaded=1;
 					while (imgRegexUrl.searchFrom(holder.getFreshDetails().LongDescription, descIndex)) { // "img" found
-						imgTag=imgRegexUrl.stringMatched(1); // (1) enthält das gesamte <img ...>-tag
-						fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anführungszeichen 
+						imgTag=imgRegexUrl.stringMatched(1); // (1) enthlt das gesamte <img ...>-tag
+						fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anfhrungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anfhrungszeichen 
 						if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
 						if (fetchUrl==null) { // TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
 							inf.addWarning(MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.getWayPoint()));
@@ -541,9 +568,9 @@ public class OCXMLImporter extends MinML {
 						if (imgRegexAlt.search(imgTag)) {
 							imgAltText=imgRegexAlt.stringMatched(1);
 							if (imgAltText==null)	imgAltText=imgRegexAlt.stringMatched(2);
-							// kein alternativer Text als Bildüberschrift -> Dateiname
+							// kein alternativer Text als Bildberschrift -> Dateiname
 						} else { 
-							if (fetchUrl.toLowerCase().indexOf("opencaching.de") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0) //wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend 
+							if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0) //wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend 
 								imgAltText = new String("No image title");
 							else imgAltText = fetchUrl.substring(fetchUrl.lastIndexOf("/")+1);
 						}
@@ -586,8 +613,12 @@ public class OCXMLImporter extends MinML {
 	}
 	
 	private void getPic(String fetchURL, String picDesc) { // TODO handling of relativ URLs
+		setHostname(ch.getWayPoint());
 		try {
-			if (!fetchURL.startsWith("http://")) fetchURL = new URL(new URL("http://" + OPENCACHING_HOST+"/"), fetchURL).toString(); // TODO this is not quite correct: actually the "base" URL must be known... but anyway a different baseURL should not happen very often  - it doesn't in my area
+			//TODO this is not quite correct: actually the "base" URL must be known... 
+			// but anyway a different baseURL should not happen very often  - it doesn't in my area
+			if (!fetchURL.startsWith("http://")) fetchURL = new URL(
+				new URL("http://" + hostname+"/"), fetchURL).toString(); 
 			String fileName = createPicFilename(fetchURL);
 			ImageInfo imageInfo = new ImageInfo();
 			// add title
@@ -606,7 +637,8 @@ public class OCXMLImporter extends MinML {
 			} catch (IOException e) {
 				String ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ") + holder.getWayPoint() + ": ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+fetchURL); 
 				if (e.getMessage().toLowerCase().equalsIgnoreCase("could not connect") ||
-						e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
+						e.getMessage().equalsIgnoreCase("unkown host")) { 
+					// is there a better way to find out what happened?
 					ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+holder.getCacheName() + " ("+holder.getWayPoint()+")"+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
 				} 
 				inf.addWarning("\n"+ErrMessage);
