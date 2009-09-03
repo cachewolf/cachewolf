@@ -780,11 +780,14 @@ public class MainMenu extends MenuBar {
 		for(int i = 0; i <	cacheDB.size(); i++){
 			ch = cacheDB.get(i);
 			if(ch.is_Checked == true && ch.isVisible()) {
-				if ( ch.getWayPoint().length()>1 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC") 
-						|| ch.getWayPoint().substring(0,2).equalsIgnoreCase("OC")))
-//					if ( (ch.wayPoint.length() > 1 && ch.wayPoint.substring(0,2).equalsIgnoreCase("GC")))
+				String wpStart = ch.getWayPoint().substring(0,2);
+				if ( ch.getWayPoint().length()>1 && (wpStart.equalsIgnoreCase("GC") 
+					|| ch.getWayPoint().substring(0,2).equalsIgnoreCase(OCXMLImporter.OPENCACHING_DE_PATTERN)
+					|| ch.getWayPoint().substring(0,2).equalsIgnoreCase(OCXMLImporter.OPENCACHING_PL_PATTERN)
+					|| ch.getWayPoint().substring(0,2).equalsIgnoreCase(OCXMLImporter.OPENCACHING_CZ_PATTERN)
+					|| ch.getWayPoint().substring(0,2).equalsIgnoreCase(OCXMLImporter.OPENCACHING_UK_PATTERN)))
 //					Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
-//					Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
+//					Alter code prft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 				{
 					cachesToUpdate.add(new Integer(i));
 				} else {
@@ -796,8 +799,9 @@ public class MainMenu extends MenuBar {
 					if (!ch.isAddiWpt() && !alreadySaid) {
 						alreadySaid = true;
 						(new MessageBox(MyLocale.getMsg(327,"Information"),
-								        ch.getWayPoint()+ 
-								        MyLocale.getMsg(5002,": At the moment this function is only applicable for geocaching.com and opencaching.de."), FormBase.OKB)).execute();
+					        ch.getWayPoint()+ MyLocale.getMsg(5002,
+					        	": At the moment this function is only applicable for geocaching.com and opencaching.de/.pl/.cz/.org.uk ."),
+					        FormBase.OKB)).execute();
 					}
 				}
 
