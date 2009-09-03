@@ -125,6 +125,7 @@ public class Parser{
     	new fnType("lcase","lc",2),
     	new fnType("length","len",2),
     	new fnType("mid","mid",12),
+    	new fnType("mod","mod",4),
      	new fnType("pc","pz",3),
      	new fnType("profilecenter","pz",3),
      	new fnType("profilecentre","pz",3),
@@ -603,6 +604,15 @@ public class Parser{
     	}
     }
 
+    /** MOD function as in Basic */
+    private Double funcMod() throws Exception {
+    	double b=popCalcStackAsNumber(0);
+    	double a=popCalcStackAsNumber(0);
+		if (b==0.0)
+			err(MyLocale.getMsg(1729,"Division by 0"));
+		return new java.lang.Double(a % b);
+    }
+
 	/** Get or set the profile centre */
 	private void funcPz(int nargs) throws Exception {
 		if (nargs==0) {
@@ -652,7 +662,7 @@ public class Parser{
     		double bearing1 = point1.getBearing(point2);
     		double bearing2 = point1.getBearing(point1);
     		if (bearing1 == degrees1 || bearing2 == degrees2){
-    			err(MyLocale.getMsg(1740,"Invalid crossbearing angles"));    			
+    			err(MyLocale.getMsg(1740,"Invalid crossbearing angles"));
     		}
     	}
 
@@ -1156,6 +1166,7 @@ public class Parser{
 	    else if (funcDef.alias.equals("lc")) calcStack.add(popCalcStackAsString().toLowerCase());
 	    else if (funcDef.alias.equals("len")) calcStack.add(new Double(popCalcStackAsString().length()));
 	    else if (funcDef.alias.equals("mid")) calcStack.add(funcMid(nargs));
+	    else if (funcDef.alias.equals("mod")) calcStack.add(funcMod());
 	    else if (funcDef.alias.equals("project")) calcStack.add(funcProject());
 	    else if (funcDef.alias.equals("pz")) funcPz(nargs);
 	    else if (funcDef.alias.equals("rad")) funcDeg(false);
