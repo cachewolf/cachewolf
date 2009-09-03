@@ -230,17 +230,17 @@ public final class TransformCoordinates {
 		return ret;
 	}
 
-	public static boolean isSupported(int epsgcode) {
+	public static final boolean isSupported(int epsgcode) {
 		if ((epsgcode == EPSG_WGS84) || epsgcode == EPSG_ETRS89) return true;
 		return (getLocalProjectionSystem(epsgcode) >= 0);
 	}
 
 
-	public static CWPoint ProjectedEpsgToWgs84(ProjectedPoint lp, int epsg) {
+	public static final CWPoint ProjectedEpsgToWgs84(ProjectedPoint lp, int epsg) {
 		return ProjectedToWgs84(lp, epsg, false);
 	}
 
-	public static CWPoint ProjectedToWgs84(ProjectedPoint lp, int epsg_localsystem, boolean isLocalSystem) {
+	public static final CWPoint ProjectedToWgs84(ProjectedPoint lp, int epsg_localsystem, boolean isLocalSystem) {
 		CWPoint ll = lp.unproject();
 		int ls = (isLocalSystem ? epsg_localsystem : getLocalProjectionSystem(epsg_localsystem));
 		TransformParameters transparams = getTransParams(lp, ls);
@@ -267,14 +267,14 @@ public final class TransformCoordinates {
 	 */
 
 
-	public static TransformParameters getGermanGkTransformParameters(TrackPoint ll) {
+	public static final TransformParameters getGermanGkTransformParameters(TrackPoint ll) {
 		if (FORMER_GDR.isInBound(ll)) return GK_GERMANY_2001_TO_WGS84; // exlcude former GDR from the splitting germany in north/middel/south
 		if (ll.latDec <= 55 && ll.latDec >= 52.33333334 ) return  GK_NORD_GERMANY_TO_WGS84;
 		if (ll.latDec <= 52.33333334  && ll.latDec >= 50.33333334 ) return  GK_MID_GERMANY_TO_WGS84;
 		if (ll.latDec <= 50.33333334  && ll.latDec >= 47) return  GK_SOUTH_GERMANY_TO_WGS84;
 		return GK_GERMANY_2001_TO_WGS84;
 	}
-	public static TransformParameters getGermanTransformParams(ProjectedPoint gk) {
+	public static final TransformParameters getGermanTransformParams(ProjectedPoint gk) {
 		double n = gk.getNorthing();
 		if (n <= 6089288.064 && n >= 5585291.767 && // these coordinates are transformed ones from the invers routine
 				( gk.zone == 4 && gk.getEasting() >= 4404124.247 && gk.getEasting() <= 4679300.398) ||
@@ -286,23 +286,23 @@ public final class TransformCoordinates {
 		return GK_GERMANY_2001_TO_WGS84;
 	}
 
-	public static TransformParameters getItalianGkTransformParameters(TrackPoint ll) {
+	public static final TransformParameters getItalianGkTransformParameters(TrackPoint ll) {
 		if (ITALY_SARDINIA.isInBound(ll)) return GB_ITALIAN_SARDINIA_TO_WGS84;
 		if (ITALY_SICILIA.isInBound(ll)) return GB_ITALIAN_SICILIA_TO_WGS84;
 		else return GB_ITALIAN_PENINSULAR_TO_WGS84;
 	}
-	public static TransformParameters getItalianTransformParams(ProjectedPoint gk) {
+	public static final TransformParameters getItalianTransformParams(ProjectedPoint gk) {
 		if (ITALY_SARDINIA_GK.isInBound(gk.toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB))) return GB_ITALIAN_SARDINIA_TO_WGS84;
 		if (ITALY_SICILIA_GK.isInBound(gk.toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB))) return GB_ITALIAN_SICILIA_TO_WGS84;
 		else return GB_ITALIAN_PENINSULAR_TO_WGS84;
 	}
 
 
-	public static ProjectedPoint wgs84ToEpsg(TrackPoint wgs84, int epsg) throws IllegalArgumentException {
+	public static final ProjectedPoint wgs84ToEpsg(TrackPoint wgs84, int epsg) throws IllegalArgumentException {
 		return wgs84ToEpsgLocalsystem(wgs84, epsg, false);
 	}
 
-	public static ProjectedPoint wgs84ToLocalsystem(TrackPoint wgs84, int localsystem) throws IllegalArgumentException {
+	public static final ProjectedPoint wgs84ToLocalsystem(TrackPoint wgs84, int localsystem) throws IllegalArgumentException {
 		return wgs84ToEpsgLocalsystem(wgs84, localsystem, true);
 	}
 
@@ -314,7 +314,7 @@ public final class TransformCoordinates {
 	 * @return
 	 * @throws IllegalArgumentException if EPSG code is not supported GK or unsupported
 	 */
-	private static ProjectedPoint wgs84ToEpsgLocalsystem(TrackPoint wgs84, int epsg_localsystem, boolean isLocalsystem) throws IllegalArgumentException {
+	private static final ProjectedPoint wgs84ToEpsgLocalsystem(TrackPoint wgs84, int epsg_localsystem, boolean isLocalsystem) throws IllegalArgumentException {
 		//wgs84.latDec = 47.07472; // Testkoordinaten von http://www.geoclub.de/viewtopic.php?f=54&t=23912&start=30 
 		//wgs84.lonDec = 12.69417;
 		// xyzWgs.x = 3657660.66; // test case http://www.epsg.org/ p. 109 WGS72_TO_WGS84
@@ -330,7 +330,7 @@ public final class TransformCoordinates {
 		return ret;
 	}
 
-	private static TransformParameters getTransParams(TrackPoint wgs84, int localsystem) {
+	private static final TransformParameters getTransParams(TrackPoint wgs84, int localsystem) {
 		switch(localsystem) {
 		case TransformCoordinates.LOCALSYSTEM_GERMAN_GK: 
 			return getGermanGkTransformParameters(wgs84); 
@@ -347,7 +347,7 @@ public final class TransformCoordinates {
 			throw new IllegalArgumentException("TransformCoordinates.getTransParams(wgs84): localsystem: " + localsystem + "not supported");
 		}
 	}
-	private static TransformParameters getTransParams(ProjectedPoint pp, int localsystem) {
+	private static final TransformParameters getTransParams(ProjectedPoint pp, int localsystem) {
 		TransformParameters transparams;
 		switch (localsystem) {
 		case TransformCoordinates.LOCALSYSTEM_GERMAN_GK:
@@ -367,7 +367,7 @@ public final class TransformCoordinates {
 	}
 
 
-	private static XyzCoordinates latLon2xyz(TrackPoint ll, double alt, Ellipsoid ellipsoid) {
+	private static final XyzCoordinates latLon2xyz(TrackPoint ll, double alt, Ellipsoid ellipsoid) {
 		if (!ll.isValid()) throw new IllegalArgumentException("latLon2xyz: invalid lat-lon");
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
 		double N = ellipsoid.a/ Math.sqrt(1 - e2 * Math.pow(Math.sin(ll.latDec / 180*Math.PI), 2));
@@ -378,7 +378,7 @@ public final class TransformCoordinates {
 		return ret;
 	}
 
-	private static XyzCoordinates transform(XyzCoordinates from, TransformParameters transParams) {
+	private static final XyzCoordinates transform(XyzCoordinates from, TransformParameters transParams) {
 
 		Matrix coos = new Matrix(3, 1);
 		coos.matrix[0][0] = from.x;
@@ -405,7 +405,7 @@ public final class TransformCoordinates {
 		return new XyzCoordinates(coos.matrix[0][0], coos.matrix[1][0], coos.matrix[2][0]);
 	}
 
-	private static CWPoint xyz2Latlon(XyzCoordinates from, Ellipsoid ellipsoid) {
+	private static final CWPoint xyz2Latlon(XyzCoordinates from, Ellipsoid ellipsoid) {
 		double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b)/(ellipsoid.a * ellipsoid.a);
 		double s = Math.sqrt( Math.pow(from.x,2) + Math.pow(from.y,2));
 		double T = Math.atan( from.z * ellipsoid.a / (s * ellipsoid.b));
@@ -423,7 +423,7 @@ public final class TransformCoordinates {
 
 }
 
-class XyzCoordinates {
+final class XyzCoordinates {
 	double x, y, z;
 	public XyzCoordinates (double xi, double yi, double zi) {
 		x = xi;
@@ -433,7 +433,7 @@ class XyzCoordinates {
 }
 
 
-class TransformParameters {
+final class TransformParameters {
 	// shift parameter in meter
 	double dx, dy, dz, 
 	// rotation parameter in rad
@@ -441,6 +441,7 @@ class TransformParameters {
 	// scale as multiplicator
 	s;
 	Ellipsoid ellip;
+	public TransformParameters inverted = null;
 
 	/**
 	 * 
@@ -454,7 +455,7 @@ class TransformParameters {
 		ellip = ellip_;
 	}
 
-	protected void set(double dxi, double dyi, double dzi, double exi, double eyi, double ezi, double si, boolean addinverted) {
+	protected final void set(double dxi, double dyi, double dzi, double exi, double eyi, double ezi, double si, boolean addinverted) {
 		dx = dxi; dy = dyi; dz = dzi; 
 		ex = exi * Math.PI/180/3600;
 		ey = eyi * Math.PI/180/3600; 
@@ -474,12 +475,11 @@ class TransformParameters {
 		if (invert) invert();
 	}
 
-	public void invert() {
+	public final void invert() {
 		dx *= -1; dy *= -1;	dz *= -1;
 		ex *= -1; ey *= -1;	ez *= -1;
 		s = 1/s;
 	}
-	public TransformParameters inverted = null;
 }
 
 
