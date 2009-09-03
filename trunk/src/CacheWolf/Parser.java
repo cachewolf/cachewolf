@@ -122,6 +122,7 @@ public class Parser{
     	new fnType("ic","ic",3),
     	new fnType("ignorecase","ic",3),
     	new fnType("instr","instr",12),
+    	new fnType("int","int",2),
     	new fnType("lcase","lc",2),
     	new fnType("length","len",2),
     	new fnType("mid","mid",12),
@@ -1163,6 +1164,7 @@ public class Parser{
 	    else if (funcDef.alias.equals("goto")) funcGoto(nargs);
 	    else if (funcDef.alias.equals("ic")) funcIgnoreVariableCase(nargs);
 	    else if (funcDef.alias.equals("instr")) calcStack.add(new Double(funcInstr(nargs)));
+	    else if (funcDef.alias.equals("int")) calcStack.add(new Double(new Double(popCalcStackAsNumber(0)).longValue()));
 	    else if (funcDef.alias.equals("lc")) calcStack.add(popCalcStackAsString().toLowerCase());
 	    else if (funcDef.alias.equals("len")) calcStack.add(new Double(popCalcStackAsString().length()));
 	    else if (funcDef.alias.equals("mid")) calcStack.add(funcMid(nargs));
