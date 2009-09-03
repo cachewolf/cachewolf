@@ -4,6 +4,7 @@ import ewe.io.ByteArrayInputStream;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
 import ewe.net.Socket;
+import ewe.net.URL;
 import ewe.util.ByteArray;
 import ewe.util.CharArray;
 import ewe.util.Properties;
@@ -48,6 +49,13 @@ public class UrlFetcher {
 			sock = conn.connect();
 			if (conn.responseCode >= 400) throw new IOException("URL: "+ urltmp + "\nhttp response code: " + conn.responseCode);
 			urltmp = conn.getRedirectTo();
+			if(urltmp!=null){
+				urltmp = urltmp.replaceAll("/\\.\\./", "/");
+				URL eweUrl = new URL(url);
+				if(urltmp.indexOf(eweUrl.getHost())<0){
+					urltmp = new URL(eweUrl.getProtocol(), eweUrl.getHost(),eweUrl.getPort(), urltmp).url;
+				}
+			}
 		} while (urltmp != null && i <= maxRedirections ); 
 		if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: "+url + " only "+maxRedirections+" are allowed");
 		ByteArray daten = conn.readData(sock);
