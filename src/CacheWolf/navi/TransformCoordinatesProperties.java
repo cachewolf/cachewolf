@@ -15,8 +15,8 @@ import CacheWolf.MyLocale;
  * @author Pfeffer
  *
  */
-public class TransformCoordinatesProperties extends Properties {
-	public int epsgCode;
+public final class TransformCoordinatesProperties {
+
 	/**
 	 * return ll transformed into the desired coordinate reference system
 	 * if the prjection is Gauß-Krüger, easting will be put in lonDec and
@@ -24,7 +24,7 @@ public class TransformCoordinatesProperties extends Properties {
 	 * @param ll
 	 * @return
 	 */
-	public static TrackPoint fromWgs84(TrackPoint ll, int epsgCode) {
+	public final static TrackPoint fromWgs84(TrackPoint ll, int epsgCode) {
 		TrackPoint ret = null;
 		switch (epsgCode) {
 		case TransformCoordinates.EPSG_WGS84:
@@ -52,7 +52,7 @@ public class TransformCoordinatesProperties extends Properties {
 	 * @param p
 	 * @return
 	 */
-	public static CWPoint toWgs84(CWPoint p, int epsgCode) {
+	public final static CWPoint toWgs84(CWPoint p, int epsgCode) {
 		CWPoint ret = null;
 		switch (epsgCode) {
 		case TransformCoordinates.EPSG_WGS84:
