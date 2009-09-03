@@ -50,11 +50,11 @@ public class UrlFetcher {
 			if (conn.responseCode >= 400) throw new IOException("URL: "+ urltmp + "\nhttp response code: " + conn.responseCode);
 			urltmp = conn.getRedirectTo();
 			if(urltmp!=null){
-				urltmp = STRreplace.replace(urltmp, "/\\.\\./", "/");
 				URL eweUrl = new URL(url);
 				if(urltmp.indexOf(eweUrl.getHost())<0){
 					urltmp = new URL(eweUrl.getProtocol(), eweUrl.getHost(),eweUrl.getPort(), urltmp).url;
 				}
+				urltmp = STRreplace.replace(urltmp, eweUrl.getHost() + "/\\.\\./", eweUrl.getHost() + "/");
 			}
 		} while (urltmp != null && i <= maxRedirections ); 
 		if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: "+url + " only "+maxRedirections+" are allowed");
