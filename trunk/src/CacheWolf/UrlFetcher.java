@@ -50,7 +50,7 @@ public class UrlFetcher {
 			if (conn.responseCode >= 400) throw new IOException("URL: "+ urltmp + "\nhttp response code: " + conn.responseCode);
 			urltmp = conn.getRedirectTo();
 			if(urltmp!=null){
-				urltmp = urltmp.replaceAll("/\\.\\./", "/");
+				urltmp = STRreplace.replace(urltmp, "/\\.\\./", "/");
 				URL eweUrl = new URL(url);
 				if(urltmp.indexOf(eweUrl.getHost())<0){
 					urltmp = new URL(eweUrl.getProtocol(), eweUrl.getHost(),eweUrl.getPort(), urltmp).url;
