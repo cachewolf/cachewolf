@@ -74,7 +74,8 @@ public final class ProjectedPoint {
 		case TransformCoordinates.EPSG_AUSTRIAN_LAMBERT_NEW: return PJ_AUSTRIAN_LAMBERT_NEW;
 		case TransformCoordinates.EPSG_GERMAN_GK2: 
 		case TransformCoordinates.EPSG_GERMAN_GK3: 
-		case TransformCoordinates.EPSG_GERMAN_GK4: return PJ_GERMAN_GK;
+		case TransformCoordinates.EPSG_GERMAN_GK4:
+		case TransformCoordinates.EPSG_GERMAN_GK5:return PJ_GERMAN_GK;
 		case TransformCoordinates.EPSG_ITALIAN_GB_EW1:
 		case TransformCoordinates.EPSG_ITALIAN_GB_EW2: return PJ_ITALIAN_GB;
 		case TransformCoordinates.EPSG_FRENCH_LAMBERT_NTF_II : return PJ_FRENCH_LAMBERT_NTF_II;
