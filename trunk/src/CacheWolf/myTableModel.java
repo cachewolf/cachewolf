@@ -369,7 +369,7 @@ public class myTableModel extends TableModel{
 						if (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType()) return null;
 						return Convert.formatInt(ch.getNumRecommended());
 					case 14: // OC rating
-						if (ch.getWayPoint().startsWith("OC"))
+						if (ch.isOC())
 							return Convert.formatInt(ch.recommendationScore);
 						return null;
 					case 15: // Is solver filled?
