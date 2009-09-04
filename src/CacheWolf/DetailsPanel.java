@@ -421,11 +421,7 @@ public class DetailsPanel extends CellPanel {
 		if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) 
 				&& Global.mainTab.mainCache != null 
 				&& (Global.mainTab.mainCache.startsWith("GC") 
-						|| Global.mainTab.mainCache.startsWith(OCXMLImporter.OPENCACHING_CZ_PATTERN) 
-						|| Global.mainTab.mainCache.startsWith(OCXMLImporter.OPENCACHING_DE_PATTERN) 
-						|| Global.mainTab.mainCache.startsWith(OCXMLImporter.OPENCACHING_UK_PATTERN) 
-						//|| Global.mainTab.mainCache.startsWith(OCXMLImporter.OPENCACHING_PL_PATTERN) 
-						|| Global.mainTab.mainCache.startsWith("CW")) 
+					|| CacheHolder.isOCWaypoint(Global.mainTab.mainCache) || Global.mainTab.mainCache.startsWith("CW")) 
 				&& wpt.startsWith("CW")) {
 			// for what was this?:
 			Global.mainTab.lastselected = Global.mainTab.mainCache; // I don't know exactly, but it's needed for creating a series of Addis
@@ -435,11 +431,7 @@ public class DetailsPanel extends CellPanel {
 		}
 		if (!CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt()))
 				&& !(wpt.startsWith("GC")
-						|| wpt.startsWith(OCXMLImporter.OPENCACHING_CZ_PATTERN)
-						|| wpt.startsWith(OCXMLImporter.OPENCACHING_DE_PATTERN)
-						|| wpt.startsWith(OCXMLImporter.OPENCACHING_UK_PATTERN)
-						//|| wpt.startsWith(OCXMLImporter.OPENCACHING_PL_PATTERN)
-						|| wpt.startsWith("CW"))) {
+					|| CacheHolder.isOCWaypoint(wpt) || wpt.startsWith("CW"))) {
 			inpWaypoint.setText(Global.getProfile().getNewWayPointName());
 		}
 	}
