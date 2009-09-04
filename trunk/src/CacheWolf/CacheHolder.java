@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.navi.Metrics;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -24,7 +25,7 @@ public class CacheHolder{
 
 	/** Cachestatus is Found, Not found or a date in format yyyy-mm-dd hh:mm for found date */
 	private String cacheStatus = EMPTY;
-	/** The name of the waypoint typicall GC.... or OC.... or CW...... (can be any characters) */
+	/** The name of the waypoint, typically GC.... or OC.... or CW...... (can be any characters) */
 	private String wayPoint = EMPTY;
 	/** The name of the cache (short description) */
 	private String cacheName = EMPTY;
@@ -512,7 +513,8 @@ public class CacheHolder{
 	 * Call it only when necessary, it takes time, because all logs must be parsed
 	 */
 	public void calcRecommendationScore() {
-		if (getWayPoint().toLowerCase().startsWith("oc")) {
+		String pattern = getWayPoint().toUpperCase();
+		if (isOC()) {
 			// Calculate recommendation score only when details
 			// are already loaded. When they aren't loaded, then we assume
 			// that there is no change, so nothing to do.
@@ -587,6 +589,13 @@ public class CacheHolder{
 		return addiWpts.getCount()>0;
 	}
 
+	public boolean isOC() {
+		String pattern = getWayPoint().toUpperCase();
+		return pattern.startsWith( OCXMLImporter.OPENCACHING_CZ_PATTERN )
+				|| pattern.startsWith( OCXMLImporter.OPENCACHING_DE_PATTERN )
+				//|| pattern.startsWith( OCXMLImporter.OPENCACHING_PL_PATTERN )
+				|| pattern.startsWith( OCXMLImporter.OPENCACHING_UK_PATTERN );
+	}
 
 	public void calcDistance(CWPoint toPoint) {	
 		if(pos.isValid()){
@@ -818,8 +827,9 @@ public class CacheHolder{
 		
 	public String GetCacheID() {
 		String result = "";
-		
-		if ( getWayPoint().toUpperCase().startsWith( "GC" ) ) {
+		String pattern = getWayPoint().toUpperCase();
+
+		if ( pattern.startsWith( "GC" ) ) {
 			int gcId = 0;
 
 			String sequence = "0123456789ABCDEFGHJKMNPQRTVWXYZ";
@@ -841,7 +851,7 @@ public class CacheHolder{
 	        }
 	        
 	        result = Integer.toString(gcId);	        
-		} else if ( getWayPoint().toUpperCase().startsWith( "OC" ) ) {
+		} else if (isOC()) {
         	result = getOcCacheID();
         }
 
