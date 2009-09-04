@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.navi.Area;
 import CacheWolf.navi.TransformCoordinates;
 import ewe.io.BufferedWriter;
@@ -447,7 +448,13 @@ public class Profile {
 		String mainwpt = ch.getWayPoint().substring(2);
 		int mainindex = getCacheIndex("GC" + mainwpt);
 		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
-			mainindex = getCacheIndex("OC" + mainwpt);
+			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_CZ_PATTERN + mainwpt);
+		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
+			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_DE_PATTERN + mainwpt);
+//		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
+//			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_PL_PATTERN + mainwpt);
+		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
+			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_UK_PATTERN + mainwpt);
 		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
 			mainindex = getCacheIndex("CW" + mainwpt);
 		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()) {
