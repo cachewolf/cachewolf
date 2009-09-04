@@ -87,7 +87,7 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==14) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				if (ch.getWayPoint().startsWith("OC"))
+				if (ch.isOC())
 					ch.sort=MyLocale.formatLong(ch.recommendationScore,"00000");
 				else
 					ch.sort="\uFFFF";
