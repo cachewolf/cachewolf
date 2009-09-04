@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.navi.TransformCoordinates;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
@@ -420,7 +421,10 @@ public class DetailsPanel extends CellPanel {
 		if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) 
 				&& Global.mainTab.mainCache != null 
 				&& (Global.mainTab.mainCache.startsWith("GC") 
-						|| Global.mainTab.mainCache.startsWith("OC") 
+						|| Global.mainTab.mainCache.startsWith(OCXMLImporter.OPENCACHING_CZ_PATTERN) 
+						|| Global.mainTab.mainCache.startsWith(OCXMLImporter.OPENCACHING_DE_PATTERN) 
+						|| Global.mainTab.mainCache.startsWith(OCXMLImporter.OPENCACHING_UK_PATTERN) 
+						//|| Global.mainTab.mainCache.startsWith(OCXMLImporter.OPENCACHING_PL_PATTERN) 
 						|| Global.mainTab.mainCache.startsWith("CW")) 
 				&& wpt.startsWith("CW")) {
 			// for what was this?:
@@ -430,8 +434,12 @@ public class DetailsPanel extends CellPanel {
 					Global.mainTab.mainCache));
 		}
 		if (!CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt()))
-				&& !(wpt.startsWith("GC") || wpt.startsWith("OC") || wpt
-						.startsWith("CW"))) {
+				&& !(wpt.startsWith("GC")
+						|| wpt.startsWith(OCXMLImporter.OPENCACHING_CZ_PATTERN)
+						|| wpt.startsWith(OCXMLImporter.OPENCACHING_DE_PATTERN)
+						|| wpt.startsWith(OCXMLImporter.OPENCACHING_UK_PATTERN)
+						//|| wpt.startsWith(OCXMLImporter.OPENCACHING_PL_PATTERN)
+						|| wpt.startsWith("CW"))) {
 			inpWaypoint.setText(Global.getProfile().getNewWayPointName());
 		}
 	}
