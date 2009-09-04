@@ -88,8 +88,8 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] mnuImport = new MenuItem[7];
 		mnuImport[0] = loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")); //TODO internationalization
-		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download von opencaching.de")); 
-		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider von geocaching.com")); 
+		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")); 
+		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider from geocaching.com")); 
 		mnuImport[3] = spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")); 
 		mnuImport[4] = update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data"));
 		mnuImport[5] = mnuSeparator   = new MenuItem("-"); 
@@ -781,11 +781,7 @@ public class MainMenu extends MenuBar {
 			ch = cacheDB.get(i);
 			if(ch.is_Checked == true && ch.isVisible()) {
 				String wpStart = ch.getWayPoint().substring(0,2);
-				if ( ch.getWayPoint().length()>1 && (wpStart.equalsIgnoreCase("GC") 
-					|| ch.getWayPoint().substring(0,2).equalsIgnoreCase(OCXMLImporter.OPENCACHING_DE_PATTERN)
-					|| ch.getWayPoint().substring(0,2).equalsIgnoreCase(OCXMLImporter.OPENCACHING_PL_PATTERN)
-					|| ch.getWayPoint().substring(0,2).equalsIgnoreCase(OCXMLImporter.OPENCACHING_CZ_PATTERN)
-					|| ch.getWayPoint().substring(0,2).equalsIgnoreCase(OCXMLImporter.OPENCACHING_UK_PATTERN)))
+				if ( ch.getWayPoint().length()>1 && (wpStart.equalsIgnoreCase("GC") || ch.isOC()))
 //					Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
 //					Alter code prft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 				{
@@ -800,7 +796,7 @@ public class MainMenu extends MenuBar {
 						alreadySaid = true;
 						(new MessageBox(MyLocale.getMsg(327,"Information"),
 					        ch.getWayPoint()+ MyLocale.getMsg(5002,
-					        	": At the moment this function is only applicable for geocaching.com and opencaching.de/.pl/.cz/.org.uk ."),
+					        	": At the moment this function is only applicable for geocaching.com and opencaching.de/.cz/.org.uk ."),
 					        FormBase.OKB)).execute();
 					}
 				}
