@@ -590,7 +590,11 @@ public class CacheHolder{
 	}
 
 	public boolean isOC() {
-		String pattern = getWayPoint().toUpperCase();
+		return isOCWaypoint(getWayPoint());
+	}
+
+	public static boolean isOCWaypoint(String wpName) {
+		String pattern = wpName.toUpperCase();
 		return pattern.startsWith( OCXMLImporter.OPENCACHING_CZ_PATTERN )
 				|| pattern.startsWith( OCXMLImporter.OPENCACHING_DE_PATTERN )
 				//|| pattern.startsWith( OCXMLImporter.OPENCACHING_PL_PATTERN )
