@@ -2,8 +2,8 @@ TakenFromUrl:       http://www.centropemap.org
 GetCapabilitiesUrl: http://www.centropemap.org/cgi-bin/mapserv?map=/data/wms/centrope/ce_topogr_background_2008.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 #Name:               Oesterreich, Tschechien, Slowakei, Ungarn t100 SF=7..12
 #Name:               Centrope Oesterreich, Tschechien, Slowakei, Ungarn t25 SF=1..7
-Name:               CZ.Jihocesky t25 SF=1..7
-#Name:               CZ.Südböhmen t25 SF=1..7
+Name:               CZ.Vysocina t25 SF=1..7
+#Name:               CZ.Hochland t25 SF=1..7
 MapType:                        topo
 MainUrl:            http://www.centropemap.org/cgi-bin/mapserv?map=/data/wms/centrope/ce_topogr_background_2008.map&
 ServiceTypeUrlPart: SERVICE=WMS
@@ -89,9 +89,9 @@ ImageFormatUrlPart:FORMAT=image/png
 #real
 #BoundingBoxTopLeftWGS84: N 49.85157 E 13.44451
 #BoundingBoxButtomRightWGS84: N 46.72608 E 18.08012
-#Südböhmen
-BoundingBoxTopLeftWGS84: N 49.62233 E 13.51730
-BoundingBoxButtomRightWGS84: N 48.54843 E 15.61450
+#Hochland
+BoundingBoxTopLeftWGS84: N 49.86521 E 14.886475
+BoundingBoxButtomRightWGS84: N 48.932583 E 16.42529
 #MinScale:   1
 #MaxScale:   26
 RecommendedScale:   2.5
