@@ -1,0 +1,30 @@
+TakenFromUrl:       
+GetCapabilitiesUrl: http://sdi.geoportal.gov.pl/wms_topo/wmservice.aspx?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               pl t50 SF=1..8
+MapType:                        topo
+MainUrl:            http://sdi.geoportal.gov.pl/wms_topo/wmservice.aspx?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+#      <SRS>EPSG:2180</SRS>
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=TOPO_50_92|TOPO_50_92||
+#LayersUrlPart:     LAYERS=TOPO_50_65|TOPO_50_65||
+#LayersUrlPart:     LAYERS=TOPO_50_42|TOPO_50_42||
+#LayersUrlPart:     LAYERS=TOPO_25_65|TOPO_25_65||
+#LayersUrlPart:     LAYERS=TOPO_100_80|TOPO_100_80||
+#LayersUrlPart:     LAYERS=TOPO_10_92|TOPO_10_92||
+#LayersUrlPart:     LAYERS=TOPO_10_65_Sytuacja|TOPO_10_65_Sytuacja||
+#LayersUrlPart:     LAYERS=TOPO_10_65_Rzezba|TOPO_10_65_Rzezba||
+#LayersUrlPart:     LAYERS=TOPO_10_42|TOPO_10_42||
+LayersUrlPart:     LAYERS=TOPO_50_92
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 54.84 E 14.121686
+BoundingBoxButtomRightWGS84: N 48.9996 E 24.1488
+#BBox_Mitte: N 51.6341900499786 E 19.2912770537469
+MinScale:   1
+MaxScale:   8
+RecommendedScale:   5
+ImageFileExtension: .png
