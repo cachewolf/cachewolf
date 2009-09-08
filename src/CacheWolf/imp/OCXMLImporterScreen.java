@@ -26,6 +26,8 @@ public class OCXMLImporterScreen extends Form {
 	mInput maxNumberInput;
 	mInput maxLogsInput;
 	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox, travelbugsCheckBox;
+	ewe.ui.mChoice domains;
+
 	mLabel distLbl;
 	mLabel maxNumberLbl;
 	mLabel distUnit;
@@ -110,6 +112,14 @@ public class OCXMLImporterScreen extends Form {
 			imagesCheckBox.setText(MyLocale.getMsg(1602,"Download Images"));
 			imagesCheckBox.setState(pref.downloadPics);
 			this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		}
+
+		if((options & DIST) > 0){
+			// When distance is given (spidering), Host is also to be chosen
+			String[] hosts = new String[] {OCXMLImporter.OPENCACHING_DE_HOST, OCXMLImporter.OPENCACHING_CZ_HOST, OCXMLImporter.OPENCACHING_PL_HOST, OCXMLImporter.OPENCACHING_UK_HOST};
+			domains = new mChoice(hosts,0);
+			domains.setTextSize(25, 1);
+			this.addLast(domains, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
 		
 		if ((options & TRAVELBUGS) > 0) {
