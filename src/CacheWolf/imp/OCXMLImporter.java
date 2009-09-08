@@ -104,7 +104,7 @@ public class OCXMLImporter extends MinML {
 			if (!ch.getOcCacheID().equals(""))
 				DBindexID.put(ch.getOcCacheID(), new Integer(i));
 		}//for
-
+		
 	}
 	
 	protected void setHostname(String wpName){
@@ -185,7 +185,6 @@ public class OCXMLImporter extends MinML {
 		boolean success=true;
 		String finalMessage;
 
-		
 		String url = new String();
 
 		String lastS =  profile.getLast_sync_opencaching();
@@ -200,6 +199,10 @@ public class OCXMLImporter extends MinML {
 		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
 		Vm.showWait(true);
 		String dist = importOpt.distanceInput.getText();
+		
+		if (importOpt.domains.getSelectedItem()!=null)
+			hostname = (String)importOpt.domains.getSelectedItem();
+		
 		if (dist.length()== 0) return;
 		
 		Double distDouble = new Double();
