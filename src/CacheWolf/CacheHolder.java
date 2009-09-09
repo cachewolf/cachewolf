@@ -597,7 +597,7 @@ public class CacheHolder{
 		String pattern = wpName.toUpperCase();
 		return pattern.startsWith( OCXMLImporter.OPENCACHING_CZ_PATTERN )
 				|| pattern.startsWith( OCXMLImporter.OPENCACHING_DE_PATTERN )
-				//|| pattern.startsWith( OCXMLImporter.OPENCACHING_PL_PATTERN )
+				|| pattern.startsWith( OCXMLImporter.OPENCACHING_PL_PATTERN )
 				|| pattern.startsWith( OCXMLImporter.OPENCACHING_UK_PATTERN );
 	}
 
