@@ -278,14 +278,7 @@ public class SafeXML{
 						indexStart = alternativeStart;
 					} else {
 						String entity = htmlString.substring( indexStart, indexEnd + 1);
-						String isoCharacter = (String) iso2htmlMappings.get( entity);
-						if (isoCharacter != null) {
-							// insert iso character instead of html entity
-							isoBuffer.append( isoCharacter);
-						} else {
-							// illegal entity detected, ignore gracefully
-							isoBuffer.append( entity);
-						}
+						appendEntityAsIsoChar(entity, isoBuffer); 
 						indexStart = htmlString.indexOf( ENTITY_START, indexEnd + 1);
 						if (indexStart >= 0) {
 							// another entity start detected, flush the html string inbetween
@@ -308,6 +301,30 @@ public class SafeXML{
 		}
 	}
 
+	protected static void appendEntityAsIsoChar(String entity, StringBuffer addto) {
+		if (entity.startsWith("&#")) {
+			try{
+				if (entity.charAt(2)== 'x' || entity.charAt(2) == 'X') // number in hexadecimal // not tested because I don't have an XML containing hexadecimal encodings
+					addto.append((char)Integer.parseInt(entity.substring(2, entity.length()-1), 16)); 
+				else // number is decimal
+					addto.append((char)Integer.parseInt(entity.substring(2, entity.length()-1)));
+			} catch (NumberFormatException e) {
+				addto.append(entity); // not a valid number, insert original text
+			}
+
+		} // number format exception
+		else { // entity with a name like "&quot"						
+			String isoCharacter = (String) iso2htmlMappings.get(entity);
+			if (isoCharacter != null) {
+				// insert iso character instead of html entity
+				addto.append(isoCharacter);
+			} else {
+				// illegal entity detected, ignore gracefully
+				addto.append(entity);
+			}
+		}
+	}
+	
 	/**
      * convert a single char to its equivalent HTML entity. Ordinary chars are
      * not changed. 160 -> &nbsp;
