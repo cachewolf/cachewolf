@@ -708,10 +708,11 @@ public class CacheHolder{
 			}
 			if (details != null
 					  // for importing/spidering reasons helper objects with same waypoint are created
-					&& !cachesWithLoadedDetails.contains(this.getWayPoint())
+					&& !cachesWithLoadedDetails.contains(this)
 					  // helper objects may have empty waypoint
-					&& !this.getWayPoint().equals(CacheHolder.EMPTY)) {
-				cachesWithLoadedDetails.add(this.getWayPoint());
+					//&& !this.getWayPoint().equals(CacheHolder.EMPTY)
+					) {
+				cachesWithLoadedDetails.add(this);
 				if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails) removeOldestDetails();
 			}
 		}
@@ -752,24 +753,28 @@ public class CacheHolder{
 			details.saveCacheDetails(Global.getProfile().dataDir);
 		}
 		details = null;
-		cachesWithLoadedDetails.remove(this.getWayPoint());
+		cachesWithLoadedDetails.remove(this);
 	}
 
 	//final static int maxDetails = 50; 
 	static Vector cachesWithLoadedDetails = new Vector(Global.getPref().maxDetails);
 
 	public static void removeOldestDetails() {
+		CacheHolder ch;
 		for (int i=0; i<Global.getPref().deleteDetails; i++) {
-			String wp = (String) cachesWithLoadedDetails.get(i);
-			CacheHolder ch = Global.getProfile().cacheDB.get(wp);
+//			String wp = (String) cachesWithLoadedDetails.get(i);
+	//		CacheHolder ch = Global.getProfile().cacheDB.get(wp);
+			ch = (CacheHolder) cachesWithLoadedDetails.get(i);
 			if (ch!=null) ch.releaseCacheDetails();
 		}	
 	}
 
 	public static void removeAllDetails() {
+		CacheHolder ch;
 		for (int i=cachesWithLoadedDetails.size()-1; i>=0; i--) {
-			String wp = (String) cachesWithLoadedDetails.get(i);
-			CacheHolder ch = Global.getProfile().cacheDB.get(wp);
+			// String wp = (String) cachesWithLoadedDetails.get(i);
+			// CacheHolder ch = Global.getProfile().cacheDB.get(wp);
+			ch = (CacheHolder) cachesWithLoadedDetails.get(i);
 			if (ch!=null && ch.detailsLoaded()) ch.releaseCacheDetails();
 		}
 	}
@@ -782,8 +787,9 @@ public class CacheHolder{
 		CacheHolder ch;
 		CacheHolderDetail chD;
 		for (int i=cachesWithLoadedDetails.size()-1; i>=0; i--) {
-			String wp = (String) cachesWithLoadedDetails.get(i);
-			ch = Global.getProfile().cacheDB.get(wp);
+//			String wp = (String) cachesWithLoadedDetails.get(i);
+//			ch = Global.getProfile().cacheDB.get(wp);
+			ch = (CacheHolder) cachesWithLoadedDetails.get(i);
 			if (ch != null) {
 	            chD = ch.getExistingDetails();
 	            if (chD!=null && chD.hasUnsavedChanges) {

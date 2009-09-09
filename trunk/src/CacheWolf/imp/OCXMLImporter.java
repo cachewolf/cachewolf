@@ -64,7 +64,7 @@ public class OCXMLImporter extends MinML {
 	boolean debugGPX = false;
 	CacheDB cacheDB;
 	InfoBox inf;
-	CacheHolder ch;
+	//CacheHolder ch;
 	CacheHolder holder;
 	Preferences pref;
 	Profile profile;
@@ -99,6 +99,7 @@ public class OCXMLImporter extends MinML {
 			incUpdate = false;
 		}
 		user = p.myAlias.toLowerCase();
+		CacheHolder ch;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = cacheDB.get(i);
 			if (!ch.getOcCacheID().equals(""))
@@ -128,9 +129,10 @@ public class OCXMLImporter extends MinML {
 	 * @return true, if some change was made to the cacheDB
 	 */
 	public boolean syncSingle(int number, InfoBox infB) {
+		CacheHolder ch;
 		ch = cacheDB.get(number);
-		holder= null; //new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
 		setHostname(ch.getWayPoint());
+		holder= null; //new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
 
 		if (infB.isClosed) {
 			if (askForOptions) return false; 
@@ -139,7 +141,7 @@ public class OCXMLImporter extends MinML {
 		
 		if (askForOptions) {
 			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( 
-				MyLocale.getMsg(1600, hostname + " Download"),OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.ALL);
+					hostname + MyLocale.getMsg(1600, " Download"),OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.ALL);
 			if (importOpt.execute() == FormBase.IDCANCEL) {	return false; }
 			askForOptions = false;
 			reload = importOpt.missingCheckBox.getState();
@@ -193,7 +195,6 @@ public class OCXMLImporter extends MinML {
 			(new MessageBox("Error", "Coordinates for centre must be set", FormBase.OKB)).execute();
 			return;
 		}
-		setHostname(ch.getWayPoint());
 		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, hostname + " Download"),
 																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES);
 		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
@@ -217,6 +218,7 @@ public class OCXMLImporter extends MinML {
 		}
 		profile.setDistOC(dist);
 		// Clear status of caches in db
+		CacheHolder ch;
 		for(int i = cacheDB.size()-1; i>=0 ;i--){
 			ch = cacheDB.get(i);
 			ch.setUpdated(false);
@@ -316,7 +318,7 @@ public class OCXMLImporter extends MinML {
 			if (holder != null)	finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.getWayPoint();
 			else finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: <unkown>";
 			success = false;
-			Vm.debug("Parse error: " + state + " Exception:" + e.toString()+"   "+holder.getOcCacheID());
+			//Vm.debug("Parse error: " + state + " Exception:" + e.toString()+"   "+holder.getOcCacheID());
 			e.printStackTrace();
 		} finally {
 			if (tmpFile != null) tmpFile.delete();
@@ -470,8 +472,8 @@ public class OCXMLImporter extends MinML {
 	}
 
 	// TODO Do we have to release the "holder" cache details ?
+	// for details see: http://www.geoclub.de/viewtopic.php?f=40&t=33289
 	private void endCache(String name){
-		setHostname(ch.getWayPoint());
 		if (name.equals("cache")){
 			holder.setLastSync(dateOfthisSync.format("yyyyMMddHHmmss"));
 			int index;
@@ -616,7 +618,6 @@ public class OCXMLImporter extends MinML {
 	}
 	
 	private void getPic(String fetchURL, String picDesc) { // TODO handling of relativ URLs
-		setHostname(ch.getWayPoint());
 		try {
 			//TODO this is not quite correct: actually the "base" URL must be known... 
 			// but anyway a different baseURL should not happen very often  - it doesn't in my area
