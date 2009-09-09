@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package CacheWolf.imp;
 
-//TODO: move to CacheWOlf.imp
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
