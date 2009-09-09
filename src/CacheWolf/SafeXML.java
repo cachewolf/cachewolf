@@ -502,14 +502,14 @@ public class SafeXML{
 					dst.append(ch);
 				} else {
 					/* yes - string value */
-					StringBuffer tconv = new StringBuffer("#");
+					StringBuffer tconv = new StringBuffer("&");
 					String tc;
 
 					do {
 						tconv.append(tmp[i]);
 					} while (tmp[i++] != ';');
 
-					if ((tc = (String)iso2htmlMappings.get(tconv)) == null)
+					if ((tc = (String)iso2htmlMappings.get(tconv.toString())) == null)
 						/* invalid entity, just retain it */
 						dst.append(tconv);
 					else
