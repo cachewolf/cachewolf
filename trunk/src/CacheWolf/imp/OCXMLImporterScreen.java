@@ -32,15 +32,16 @@ public class OCXMLImporterScreen extends Form {
 	mLabel maxNumberLbl;
 	mLabel distUnit;
 	boolean isGC = true;
-	static int DIST = 1;
-	public static int IMAGES = 2;
-	static int ALL = 4;
-	static int INCLUDEFOUND = 8;
-	static int ISGC = 16;
-	static int MAXNUMBER = 32;
-	public static int TRAVELBUGS = 64;
-	public static int MAXLOGS = 128;
-	static int TYPE = 256;
+	public static final int DIST = 1;
+	public static final int IMAGES = 2;
+	public static final int ALL = 4;
+	public static final int INCLUDEFOUND = 8;
+	public static final int ISGC = 16;
+	public static final int MAXNUMBER = 32;
+	public static final int TRAVELBUGS = 64;
+	public static final int MAXLOGS = 128;
+	public static final int TYPE = 256;
+	public static final int HOST = 512;
 
 	
 	public OCXMLImporterScreen(String title, int options) {
@@ -51,6 +52,13 @@ public class OCXMLImporterScreen extends Form {
 		
 		this.title = title;
 				
+		if((options & HOST) > 0){
+			String[] hosts = new String[] {OCXMLImporter.OPENCACHING_DE_HOST, OCXMLImporter.OPENCACHING_CZ_HOST, OCXMLImporter.OPENCACHING_PL_HOST, OCXMLImporter.OPENCACHING_UK_HOST};
+			domains = new mChoice(hosts,0);
+			domains.setTextSize(25, 1);
+			this.addLast(domains, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		}
+		
 		if ((options & TYPE) > 0) {
 			this.addLast( chcType = new mChoice(new String[] {
 					MyLocale.getMsg(1627,"All caches"),	
@@ -114,14 +122,6 @@ public class OCXMLImporterScreen extends Form {
 			this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
 
-		if((options & DIST) > 0){
-			// When distance is given (spidering), Host is also to be chosen
-			String[] hosts = new String[] {OCXMLImporter.OPENCACHING_DE_HOST, OCXMLImporter.OPENCACHING_CZ_HOST, OCXMLImporter.OPENCACHING_PL_HOST, OCXMLImporter.OPENCACHING_UK_HOST};
-			domains = new mChoice(hosts,0);
-			domains.setTextSize(25, 1);
-			this.addLast(domains, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
-		}
-		
 		if ((options & TRAVELBUGS) > 0) {
 			travelbugsCheckBox = new mCheckBox();
 			travelbugsCheckBox.setText(MyLocale.getMsg(1625,"Download TBs"));
