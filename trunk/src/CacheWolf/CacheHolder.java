@@ -519,7 +519,7 @@ public class CacheHolder{
 			// are already loaded. When they aren't loaded, then we assume
 			// that there is no change, so nothing to do.
 			if (this.detailsLoaded()) {
-				CacheHolderDetail chD = getCacheDetails(true, false);
+				CacheHolderDetail chD = getCacheDetails(false, false);
 				if (chD != null) {
 					chD.CacheLogs.calcRecommendations();
 					recommendationScore = chD.CacheLogs.recommendationRating;
@@ -700,7 +700,7 @@ public class CacheHolder{
 						(new MessageBox(MyLocale.getMsg(31415,"Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ")
 						        + this.getWayPoint(), FormBase.OKB)).execute();
 					} else {
-						Global.getPref().log("Could not read details for waypoint " + getWayPoint());
+				//		Global.getPref().log("Could not read details for waypoint " + getWayPoint());
 					}
 					details = null;
 					this.setIncomplete(true);
@@ -744,7 +744,8 @@ public class CacheHolder{
 	 */
 	public void save() {
 		checkIncomplete();
-		this.getFreshDetails().saveCacheDetails(Global.getProfile().dataDir);
+		CacheHolderDetail chD = getCacheDetails(false, false);
+		if (chD != null) chD.saveCacheDetails(Global.getProfile().dataDir);
 	}
 	
 	void releaseCacheDetails() {
