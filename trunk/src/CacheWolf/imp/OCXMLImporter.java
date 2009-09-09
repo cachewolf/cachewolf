@@ -72,7 +72,6 @@ public class OCXMLImporter extends MinML {
 	String strData = new String();
 	int picCnt;
 	boolean incUpdate = true; // complete or incremental Update
-	boolean ignoreDesc = false;
 	boolean askForOptions = true;
 	Hashtable DBindexID = new Hashtable();
 
@@ -85,8 +84,11 @@ public class OCXMLImporter extends MinML {
 	boolean loggerRecommended;
 	int logtype;
 	String user;
-	double longitude;
 
+	/** Temporarly save the values from XML */
+	double longitude;
+	/** Temporarly save the values from XML: set to the language of the description which is currently parsed */
+	String processingDescLang;
 
 	public OCXMLImporter(Preferences p,Profile prof)
 	{
@@ -427,19 +429,18 @@ public class OCXMLImporter extends MinML {
 
 	}
 	
+
 	private void startCacheDesc(String name, AttributeList atts){
 		inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported);
 		if (name.equals("cachedesc")){
-			ignoreDesc = false;
 		}
 
 		if (name.equals("desc")){
 			holder.setHTML(atts.getValue("html").equals("1")?true:false);
 		}
-
-		if (name.equals("language") && !atts.getValue("id").equals("DE")){
-			if (holder.getFreshDetails().LongDescription.length()> 0) ignoreDesc = true; // TODO "DE" in preferences adjustable
-			else ignoreDesc = false;
+		
+		if (name.equals("language")) {
+			processingDescLang = atts.getValue("id");
 		}
 	}
 
@@ -471,8 +472,6 @@ public class OCXMLImporter extends MinML {
 		}
 	}
 
-	// TODO Do we have to release the "holder" cache details ?
-	// for details see: http://www.geoclub.de/viewtopic.php?f=40&t=33289
 	private void endCache(String name){
 		if (name.equals("cache")){
 			holder.setLastSync(dateOfthisSync.format("yyyyMMddHHmmss"));
@@ -550,65 +549,70 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void endCacheDesc(String name){
-
-		if (!ignoreDesc){
-			if (name.equals("cachedesc")){
-				if (pref.downloadPics && holder.is_HTML()) {
-					String fetchUrl, imgTag, imgAltText;
-					Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthlt keine Anfhrungszeichen
-					Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
-					imgRegexAlt.setIgnoreCase(true);
-					imgRegexUrl.setIgnoreCase(true);
-					int descIndex=0;
-					int numDownloaded=1;
-					while (imgRegexUrl.searchFrom(holder.getFreshDetails().LongDescription, descIndex)) { // "img" found
-						imgTag=imgRegexUrl.stringMatched(1); // (1) enthlt das gesamte <img ...>-tag
-						fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anfhrungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anfhrungszeichen 
-						if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
-						if (fetchUrl==null) { // TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
-							inf.addWarning(MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.getWayPoint()));
-							continue;
-						}
-						inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported + "\n"+MyLocale.getMsg(1620, "downloading embedded images: ") + numDownloaded++);
-						if (imgRegexAlt.search(imgTag)) {
-							imgAltText=imgRegexAlt.stringMatched(1);
-							if (imgAltText==null)	imgAltText=imgRegexAlt.stringMatched(2);
-							// kein alternativer Text als Bildberschrift -> Dateiname
-						} else { 
-							if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0) //wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend 
-								imgAltText = new String("No image title");
-							else imgAltText = fetchUrl.substring(fetchUrl.lastIndexOf("/")+1);
-						}
-						descIndex = imgRegexUrl.matchedTo();
-						getPic(fetchUrl, imgAltText);
+		if (name.equals("cachedesc")){
+			if (pref.downloadPics && holder.is_HTML()) {
+				String fetchUrl, imgTag, imgAltText;
+				Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); //  Ergebnis enthlt keine Anfhrungszeichen
+				Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
+				imgRegexAlt.setIgnoreCase(true);
+				imgRegexUrl.setIgnoreCase(true);
+				int descIndex=0;
+				int numDownloaded=1;
+				while (imgRegexUrl.searchFrom(holder.getFreshDetails().LongDescription, descIndex)) { // "img" found
+					imgTag=imgRegexUrl.stringMatched(1); // (1) enthlt das gesamte <img ...>-tag
+					fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anfhrungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anfhrungszeichen 
+					if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
+					if (fetchUrl==null) { // TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
+						inf.addWarning(MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache "+holder.getWayPoint()));
+						continue;
 					}
+					inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported + "\n"+MyLocale.getMsg(1620, "downloading embedded images: ") + numDownloaded++);
+					if (imgRegexAlt.search(imgTag)) {
+						imgAltText=imgRegexAlt.stringMatched(1);
+						if (imgAltText==null)	imgAltText=imgRegexAlt.stringMatched(2);
+						// no alternative text as image title -> use filename
+					} else { 
+						if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0) //wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend 
+							imgAltText = new String("No image title");
+						else imgAltText = fetchUrl.substring(fetchUrl.lastIndexOf("/")+1);
+					}
+					descIndex = imgRegexUrl.matchedTo();
+					getPic(fetchUrl, imgAltText);
 				}
-				holder.getFreshDetails().hasUnsavedChanges = true; //saveCacheDetails(profile.dataDir);
-				return;
 			}
+			holder.getFreshDetails().hasUnsavedChanges = true;
+			return;
+		}
 
 
-			if (name.equals("cacheid")){
-				// load cachedata
-				holder = getHolder(strData);
-				holder.setUpdated(true);
-				return;
-			}
+		if (name.equals("cacheid")){
+			// load cachedata
+			holder = getHolder(strData);
+			return;
+		}
 
-			if (name.equals("shortdesc")){
-				holder.getFreshDetails().LongDescription = strData;
-				return;
-			}
+		if (name.equals("shortdesc")){
+			String linebraek; 
 
-			if (name.equals("desc")){ // </desc>
-				if (holder.is_HTML())	holder.getFreshDetails().LongDescription +=SafeXML.cleanback(strData);
-				else holder.getFreshDetails().LongDescription +=strData;
-				return;
-			}
-			if (name.equals("hint")){
-				holder.getFreshDetails().Hints = Common.rot13(strData);
-				return;
-			}
+			if (holder.is_HTML())	linebraek = "<br>\n";
+			else 					linebraek = "\n";
+
+			if (holder.is_updated())	holder.getFreshDetails().LongDescription += linebraek + processingDescLang + ":" +  linebraek + strData; // if a long description is already updated, then this one is likely to be in another language
+			else 					 	holder.getFreshDetails().LongDescription =              processingDescLang + ":" +  linebraek + strData; 
+			return;
+		}
+
+		if (name.equals("desc")){ // </desc>
+			if (holder.is_HTML())	holder.getFreshDetails().LongDescription +=SafeXML.cleanback(strData);
+			else holder.getFreshDetails().LongDescription +=strData;
+			return;
+		}
+		if (name.equals("hint")){
+			if (holder.is_updated()) 	
+				holder.getFreshDetails().Hints += "\n" +  processingDescLang + ": " + Common.rot13(strData);
+			else						holder.getFreshDetails().Hints = Common.rot13(strData);
+			holder.setUpdated(true); // remark: this is used in "shortdesc" to decide weather the description should be appended or replaced
+			return;
 		}
 	}
 
