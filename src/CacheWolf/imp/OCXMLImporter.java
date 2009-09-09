@@ -198,7 +198,8 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, hostname + " Download"),
-																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES);
+																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES
+																 | OCXMLImporterScreen.HOST);
 		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
 		Vm.showWait(true);
 		String dist = importOpt.distanceInput.getText();
