@@ -744,8 +744,7 @@ public class CacheHolder{
 	 */
 	public void save() {
 		checkIncomplete();
-		CacheHolderDetail chD = getCacheDetails(false, false);
-		if (chD != null) chD.saveCacheDetails(Global.getProfile().dataDir);
+		this.getFreshDetails().saveCacheDetails(Global.getProfile().dataDir);
 	}
 	
 	void releaseCacheDetails() {
