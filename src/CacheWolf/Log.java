@@ -111,7 +111,7 @@ public class Log {
 			s.append("RECOMMENDED=\"1\"");
 		s.append("<![CDATA[");
 		s.append(toHtml());
-		s.append("]]>)");
+		s.append("]]>");
 		s.append("</LOG>\r\n");
 		return s.toString();
 	}
