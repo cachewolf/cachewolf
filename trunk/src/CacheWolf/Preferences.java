@@ -108,8 +108,6 @@ public class Preferences extends MinML{
 			}
 		} else
 			fontSize = 11;
-		
-
 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -283,6 +281,7 @@ public class Preferences extends MinML{
 			r.close();
 		}catch(IOException e){
 			log("IOException reading config file: " + pathToConfigFile, e, true);
+			browser = getDefaultBrowser();
 			(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile, FormBase.OKB)).execute();
 		}catch(Exception e){
 			if (e instanceof NullPointerException)
@@ -294,6 +293,42 @@ public class Preferences extends MinML{
 		isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
 	}
 
+/**
+ * Tries to find a executable browser
+ * return "" if no browser found
+ * @return
+ */
+	private String getDefaultBrowser() {
+		String pf = Vm.getPlatform();
+		String testlist[] = null;
+		if (pf.equals("Java") || pf.equals("Win32")) {
+			String progdir = Vm.getenv("ProgramFiles", null); // at least in java-Win XP this is set
+			if (progdir != null) {
+				String test[] = {
+						progdir+"/Firefox/firefox.exe",
+						progdir+"/Opera/opera.exe",
+						progdir+"/Internet Explorer/iexplore.exe"};
+				testlist = test;
+			} else {
+				String test[] = { // this part is not tested
+						"/opt/firefox/firefox", // default path in ubuntu
+						"/usr/bin/firefox"};
+				testlist = test;
+			}
+		}
+		if (pf.equals("WinCE")) {
+			String test[] = {"/windows/iexplore.exe"};
+			testlist = test;
+		}
+		if (testlist != null) {
+			for (int i=0; i < testlist.length; i++)
+				if ((new FileBugfix(testlist[i])).exists()) { 
+					return testlist[i]; 
+				}
+		}
+		return "";
+	}
+
 	/** Helper variables for XML parser */
 	private StringBuffer collectElement=null;
 	private String lastName; // The string to the last XML that was processed
@@ -301,11 +336,15 @@ public class Preferences extends MinML{
 	/**
 	 * Method that gets called when a new element has been identified in pref.xml
 	 */
+	
 	public void startElement(String name, AttributeList atts){
 		//Vm.debug("name = "+name);
 		lastName=name;
 		String tmp;
-		if(name.equals("browser")) browser = atts.getValue("name");
+		if(name.equals("browser")) {
+			browser = atts.getValue("name");
+			if (browser == null || browser.length() == 0) browser = getDefaultBrowser();
+		}
 		else if(name.equals("fixedsip")) {
 			if(atts.getValue("state").equals("true")) {
 				fixSIP = true;
@@ -724,6 +763,22 @@ public class Preferences extends MinML{
 	static protected final int PROFILE_SELECTOR_ONOROFF=2;
 
 	/**
+	 * tries to get the home data dir of the user
+	 * e.g. "c:\documents and...\<user>\my documents" or "/home/<user>" in linux 
+	 * if none could be identified, "/" is returned.
+	 * @return
+	 */
+	public String getHomeDir() {
+		String test;
+		test = Vm.getenv("HOMEDRIVE", ""); // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data>
+		log("Vm.getenv(HOMEDRIVE: " + test); // this works also in win32.exe (ewe-vm on win xp)
+		test += Vm.getenv("HOMEPATH", ""); // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data>
+		log("Vm.getenv(HOMEPATH: " + test); // this works also in win32.exe (ewe-vm on win xp)
+		if (test.length() == 0)	test = Vm.getenv("HOME", ""); // This should return on *nix system the home dir
+		if (test.length() == 0)	test = "/";
+		return test;
+	}
+	/**
 	 * Open Profile selector screen
 	 * @param prof
 	 * @param showProfileSelector
@@ -733,7 +788,7 @@ public class Preferences extends MinML{
 		// If datadir is empty, ask for one
 		if (baseDir.length()==0 || !(new FileBugfix(baseDir)).exists()) {
 			do {
-				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT,"/");
+				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, getHomeDir());
 				fc.title = MyLocale.getMsg(170,"Select base directory for cache data");
 				// If no base directory given, terminate
 				if (fc.execute() == FormBase.IDCANCEL) ewe.sys.Vm.exit(0);
