@@ -8,13 +8,13 @@ package CacheWolf;
 
 import ewe.util.Hashtable;
 
-public class SafeXML{
+public final class SafeXML{
 	private static final char ENTITY_START = '&';
 	private static final char ENTITY_END = ';';
 	
-	private static Hashtable iso2htmlMappings = new Hashtable(300);
+	private final static Hashtable iso2htmlMappings = new Hashtable(300);
 	static {
-		String[] mappingArray = new String[] {
+		final String[] mappingArray = new String[] {
 				"&apos;",   "'",		// Added 20061227 - not a valid HTML entity but sometimes used
 				"&quot;",   "\"",
 				"&amp;",    "&",
@@ -115,125 +115,7 @@ public class SafeXML{
 				"&uuml;",   "ü",
 				"&yacute;", "ý",
 				"&thorn;",  "þ",
-				"&yuml;",   "ÿ",
-				
-				"&#34;",  "\"",
-				"&#38;",  "&",
-				"&#60;",  "<",
-				"&#62;",  ">",
-				"&#160;", " ",
-				"&#161;", "¡",
-				"&#162;", "¢",
-				"&#163;", "£",
-				"&#164;", "¤",
-				"&#165;", "¥",
-				"&#166;", "¦",
-				"&#167;", "§",
-				"&#168;", "¨",
-				"&#169;", "©",
-				"&#170;", "ª",
-				"&#171;", "«",
-				"&#172;", "¬",
-				"&#173;", "­",
-				"&#174;", "®",
-				"&#175;", "¯",
-				"&#176;", "°",
-				"&#177;", "±",
-				"&#178;", "²",
-				"&#179;", "³",
-				"&#180;", "´",
-				"&#181;", "µ",
-				"&#182;", "¶",
-				"&#183;", "·",
-				"&#184;", "¸",
-				"&#185;", "¹",
-				"&#186;", "º",
-				"&#187;", "»",
-				"&#188;", "¼",
-				"&#189;", "½",
-				"&#190;", "¾",
-				"&#191;", "¿",
-				"&#192;", "À",
-				"&#193;", "Á",
-				"&#194;", "Â",
-				"&#195;", "Ã",
-				"&#196;", "Ä",
-				"&#197;", "Å",
-				"&#198;", "Æ",
-				"&#199;", "Ç",
-				"&#200;", "È",
-				"&#201;", "É",
-				"&#202;", "Ê",
-				"&#203;", "Ë",
-				"&#204;", "Ì",
-				"&#205;", "Í",
-				"&#206;", "Î",
-				"&#207;", "Ï",
-				"&#208;", "Ð",
-				"&#209;", "Ñ",
-				"&#210;", "Ò",
-				"&#211;", "Ó",
-				"&#212;", "Ô",
-				"&#213;", "Õ",
-				"&#214;", "Ö",
-				"&#215;", "×",
-				"&#216;", "Ø",
-				"&#217;", "Ù",
-				"&#218;", "Ú",
-				"&#219;", "Û",
-				"&#220;", "Ü",
-				"&#221;", "Ý",
-				"&#222;", "Þ",
-				"&#223;", "ß",
-				"&#224;", "à",
-				"&#225;", "á",
-				"&#226;", "â",
-				"&#227;", "ã",
-				"&#228;", "ä",
-				"&#229;", "å",
-				"&#230;", "æ",
-				"&#231;", "ç",
-				"&#232;", "è",
-				"&#233;", "é",
-				"&#234;", "ê",
-				"&#235;", "ë",
-				"&#236;", "ì",
-				"&#237;", "í",
-				"&#238;", "î",
-				"&#239;", "ï",
-				"&#240;", "ð",
-				"&#241;", "ñ",
-				"&#242;", "ò",
-				"&#243;", "ó",
-				"&#244;", "ô",
-				"&#245;", "õ",
-				"&#246;", "ö",
-				"&#247;", "÷",
-				"&#248;", "ø",
-				"&#249;", "ù",
-				"&#250;", "ú",
-				"&#251;", "û",
-				"&#252;", "ü",
-				"&#253;", "ý",
-				"&#254;", "þ",
-				"&#255;", "ÿ",
-				"&#8208;", "-",
-				"&#8209;", "-",
-				"&#8210;", "-",
-				"&#8211;", "-",
-				"&#8212;", "-",
-				"&#8213;", "-",
-				"&#8216;", "'",
-				"&#8217;", "'",
-				"&#8218;", "'",
-				"&#8219;", "'",
-				"&#8220;", "\"",
-				"&#8221;", "\"",
-				"&#8222;", "\"",
-				"&#8223;", "\"",
-				"&#8226;", "•",
-				"&#8242;", "'",
-				"&#8243;", "\""
+				"&yuml;",   "ÿ"
 				};
 		for (int i = 0; i < mappingArray.length; i = i + 2) {
 			iso2htmlMappings.put( mappingArray[i], mappingArray[i+1]);
@@ -257,7 +139,7 @@ public class SafeXML{
 	 * @return A <code>String</code> containing only ISO8859-1
 	 * 	characters
 	 */
-	public static String cleanback( String htmlString) {
+	public final static String cleanback( String htmlString) {
 		int indexStart;
 		// return immediately if string is null or does not contain &
 		if (htmlString != null && (indexStart = htmlString.indexOf( ENTITY_START))>=0) {
@@ -301,7 +183,7 @@ public class SafeXML{
 		}
 	}
 
-	protected static void appendEntityAsIsoChar(String entity, StringBuffer addto) {
+	private final static void appendEntityAsIsoChar(String entity, StringBuffer addto) {
 		if (entity.startsWith("&#")) {
 			try{
 				if (entity.charAt(2)== 'x' || entity.charAt(2) == 'X') // number in hexadecimal // not tested because I don't have an XML containing hexadecimal encodings
@@ -333,7 +215,7 @@ public class SafeXML{
      *
      * @return equivalent string eg. &amp;, null means leave char as is.
      */
-    protected static String charToEntity( char c )
+    private final static String charToEntity( char c )
         {
         switch ( c ) {
 	        case 34 : return "&quot;";
@@ -361,7 +243,7 @@ public class SafeXML{
      *
      * @return translated text, or null if input is null.
      */
-    public static String clean( String text ) {
+    public final static String clean( String text ) {
         if ( text == null ) return null;
         int originalTextLength = text.length();
         StringBuffer sb = new StringBuffer( originalTextLength * 110 / 100 );
@@ -392,7 +274,7 @@ public class SafeXML{
     } // end insertEntities
 	
 	
-	public static String cleanGPX(String str){
+	public final static String cleanGPX(String str){
 		String dummy = new String();
 		
 		dummy = STRreplace.replace(str, "&","&amp;");
@@ -416,124 +298,13 @@ public class SafeXML{
 	 *
 	 * @return (String) translated text, or null if input is null
 	 */
-	public static String strxmlencode(boolean src) {
+	public final static String strxmlencode(boolean src) {
 		/* bools are always safe */
 		return (src ? "true" : "false");
 	}
-	public static String strxmlencode(int src) {
+	public final static String strxmlencode(int src) {
 		/* numbers are always safe */
 		return (Integer.toString(src));
 	}
-	public static String strxmlencode(String src) {
-		int i, slen;
-		char tmp[];
-		StringBuffer dst;
 
-		if (src == null)
-			return (null);
-
-		slen = src.length();
-		dst = new StringBuffer(slen);
-		tmp = new char[slen];
-		src.getChars(0, slen, tmp, 0);
-		for (i = 0; i < slen; ++i)
-			if (tmp[i] == '&' || tmp[i] == '<' ||
-			    tmp[i] == '>' || tmp[i] > 0x7E) {
-				dst.append("&#");
-				dst.append((int)tmp[i]);
-				dst.append(';');
-			} else
-				dst.append(tmp[i]);
-		return (dst.toString());
-	}
-
-	/**
-	 * Converts a string that is safe to use inside an XML file (like
-	 * prefs.xml) back to a data string - entities like &amp; are *NOT*
-	 * valid XML unless declared specially, so we must use the numerical
-	 * values here. We also try to decode non-standard entities.
-	 *
-	 * @param src (String) translated text to be processed
-	 *
-	 * @return (String) raw text, or null if input is null
-	 */
-	public static String strxmldecode(String src) {
-		int i, j, slen;
-		char ch, tmp[];
-		StringBuffer dst;
-		boolean isinval;
-
-		if (src == null)
-			return (null);
-
-		slen = src.length();
-		dst = new StringBuffer(slen);
-		tmp = new char[slen];
-		src.getChars(0, slen, tmp, 0);
-		i = 0;
-		while (i < slen)
-			if (tmp[i] == '&') {
-				/* first scan if we have a trailing ; */
-				if (src.indexOf(';', i) == -1) {
-					/* no - ignore and proceed */
-					i++;
-					dst.append(0xFFFD);
-				} else if (tmp[++i] == '#') {
-					/* yes - numerical value? */
-					i++;
-					ch = 0;
-					isinval = false;
-					if (tmp[i] == 'x' || tmp[i] == 'X') {
-						/* hexadecimal numeric */
-						i++;
-						while ((j = tmp[i++]) != ';') {
-							ch *= 16;
-							if (j < 0x30)
-								isinval = true;
-							else if (j < 0x3A)
-								ch += j - 0x30;
-							else if (j < 0x41)
-								isinval = true;
-							else if (j < 0x47)
-								ch += j - 0x37;
-							else if (j < 0x61)
-								isinval = true;
-							else if (j < 0x67)
-								ch += j - 0x57;
-							else
-								isinval = true;
-						}
-					} else
-						/* decimal numeric */
-						while ((j = tmp[i++]) != ';') {
-							ch *= 10;
-							if (j < 0x30)
-								isinval = true;
-							else if (j < 0x3A)
-								ch += j - 0x30;
-							else
-								isinval = true;
-						}
-					if (isinval)
-						ch = 0xFFFD;
-					dst.append(ch);
-				} else {
-					/* yes - string value */
-					StringBuffer tconv = new StringBuffer("&");
-					String tc;
-
-					do {
-						tconv.append(tmp[i]);
-					} while (tmp[i++] != ';');
-
-					if ((tc = (String)iso2htmlMappings.get(tconv.toString())) == null)
-						/* invalid entity, just retain it */
-						dst.append(tconv);
-					else
-						dst.append(tc);
-				}
-			} else
-				dst.append(tmp[i++]);
-		return (dst.toString());
-	}
 }

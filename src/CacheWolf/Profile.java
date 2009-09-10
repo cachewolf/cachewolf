@@ -344,7 +344,7 @@ public class Profile {
 					setFilterAttrNo(Convert.parseLong(attr));
 					attr = ex.findNext();
 					setFilterAttrChoice(Convert.parseInt(attr));
-					setFilterStatus(SafeXML.strxmldecode(ex.findNext()));
+					setFilterStatus(SafeXML.cleanback(ex.findNext()));
 					setFilterUseRegexp(Boolean.valueOf(ex.findNext()).booleanValue());
 				} else if (text.indexOf("<FILTERCONFIG")>=0){
 					ex.setSource(text.substring(text.indexOf("<FILTERCONFIG")));
