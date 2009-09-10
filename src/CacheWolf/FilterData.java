@@ -50,13 +50,13 @@ public class FilterData {
 	public String toXML(String ID) {
 		String saveID="";
 		if (ID != null && ! ID.equals("")) {
-			saveID = "id = \""+SafeXML.strxmlencode(ID)+"\" ";
+			saveID = "id = \""+SafeXML.clean(ID)+"\" ";
 		}
 	    return "    <FILTERDATA "+saveID+"rose = \""+getFilterRose()+"\" type = \""+getFilterType()+
 		"\" var = \""+getFilterVar()+"\" dist = \""+getFilterDist().replace('"',' ')+"\" diff = \""+
 		getFilterDiff()+"\" terr = \""+getFilterTerr()+"\" size = \""+getFilterSize()+"\" attributesYes = \""+getFilterAttrYes()+
 		"\" attributesNo = \""+getFilterAttrNo()+"\" attributesChoice = \""+getFilterAttrChoice()+
-		"\" status = \""+SafeXML.strxmlencode(getFilterStatus())+"\" useRegexp = \""+useRegexp()+"\" />\n";	
+		"\" status = \""+SafeXML.clean(getFilterStatus())+"\" useRegexp = \""+useRegexp()+"\" />\n";	
 	}
 	/**
 	 * Ensure that all filters have the proper length so that the 'charAt' access in the filter do
