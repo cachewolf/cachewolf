@@ -209,7 +209,7 @@ public class CacheImages {
 			String obsoleteFilename = oldImages.get(i).getFilename();
 			if (!newImages.hasFile(obsoleteFilename)) {
 				String location = Global.getProfile().dataDir + obsoleteFilename;
-				File tmpFile = new File(location);
+				File tmpFile = new FileBugfix(location);
 				if (tmpFile.exists() && tmpFile.canWrite()) {
 					Global.getPref().log("Image not longer needed. Deleting: "+obsoleteFilename);
 					tmpFile.delete();
