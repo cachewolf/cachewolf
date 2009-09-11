@@ -619,7 +619,7 @@ public class OCXMLImporter extends MinML {
 
 	private String createPicFilename(String fetchURL) {
 		String fileName = holder.getWayPoint() + "_" + fetchURL.substring(fetchURL.lastIndexOf("/")+1);
-		return Common.ClearForFileName(fileName);
+		return Common.ClearForFileName(fileName).toLowerCase();
 	}
 	
 	private void getPic(String fetchURL, String picDesc) { // TODO handling of relativ URLs
