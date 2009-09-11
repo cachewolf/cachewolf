@@ -3,6 +3,7 @@ package CacheWolf;
 import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.navi.Area;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.utils.FileBugfix;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileNotFoundException;
@@ -234,7 +235,8 @@ public class Profile {
 			int lastShownWpt=0;
 			char decSep = MyLocale.getDigSeparator().charAt(0);
 			char notDecSep = decSep == '.' ? ',' : '.';
-			FileReader in = new FileReader(dataDir + "index.xml");
+			FileBugfix indexFile = new FileBugfix(dataDir + "index.xml");
+			FileReader in = new FileReader(indexFile.getAbsolutePath());
 			indexXmlVersion = 1; // Initial guess
 			in.readLine(); // <?xml version= ...
 			String text = in.readLine(); // <CACHELIST>
