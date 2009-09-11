@@ -1257,7 +1257,7 @@ public class SpiderGC{
 						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 						imageInfo = null;
 						if (idxUrl<0) { // New image
-							fileName = chD.getParent().getWayPoint() + "_" + Convert.toString(spiderCounter);
+							fileName = chD.getParent().getWayPoint().toLowerCase() + "_" + Convert.toString(spiderCounter);
 							if (lastImages != null) {
 								imageInfo = lastImages.needsSpidering(imgUrl, fileName+imgType);
 							}
