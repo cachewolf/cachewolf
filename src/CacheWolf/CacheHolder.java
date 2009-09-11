@@ -513,7 +513,7 @@ public class CacheHolder{
 	 * Call it only when necessary, it takes time, because all logs must be parsed
 	 */
 	public void calcRecommendationScore() {
-		String pattern = getWayPoint().toUpperCase();
+		// String pattern = getWayPoint().toUpperCase();
 		if (isOC()) {
 			// Calculate recommendation score only when details
 			// are already loaded. When they aren't loaded, then we assume

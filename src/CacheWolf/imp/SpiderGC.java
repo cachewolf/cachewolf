@@ -87,7 +87,7 @@ public class SpiderGC{
 	private static String viewstate = "";
 	private static String viewstate1 = "";
 	//FIXME Field is never read. Needed?
-	private static String eventvalidation = "";
+	//private static String eventvalidation = "";
 	private static String cookieID = "";
 	private static String cookieSession = "";
 	private static double distance = 0;
@@ -171,7 +171,7 @@ public class SpiderGC{
 			else {
 				rexEventvalidation.search(start);
 				if(rexEventvalidation.didMatch()){
-					eventvalidation = rexEventvalidation.stringMatched(1);
+					// eventvalidation = rexEventvalidation.stringMatched(1);
 					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
 				} else
 					pref.log("[login]:Eventvalidation not found before login");
@@ -496,11 +496,11 @@ public class SpiderGC{
 
 				rexEventvalidation.search(start);
 				if(rexEventvalidation.didMatch()){
-					eventvalidation = rexEventvalidation.stringMatched(1);
+					// eventvalidation = rexEventvalidation.stringMatched(1);
 					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
 				} else {
-					eventvalidation = "";
-					pref.log("Eventvalidation not found");
+					// eventvalidation = "";
+					// pref.log("Eventvalidation not found");
 				}
 
 				//Vm.debug("In loop");

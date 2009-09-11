@@ -1,7 +1,6 @@
 package CacheWolf.navi;
 
 import ewe.fx.Dimension;
-import ewe.fx.Rect;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Map;

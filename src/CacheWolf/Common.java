@@ -2,7 +2,6 @@ package CacheWolf;
 
 
 import CacheWolf.utils.FileBugfix;
-import ewe.io.File;
 import ewe.sys.Convert;
 
 public final class Common {
