@@ -115,6 +115,21 @@ public class FileBugfix extends File{
 		return (ewefile.getDrivePath());
 	}
 
+	public String getAbsolutePath() {
+		String fullPath = ewefile.getFullPath();
+		int rel = fullPath.indexOf("/..");
+		while (rel > 0) {
+			int parent = fullPath.lastIndexOf("/", rel-1);
+			if (parent == -1) {
+				break;
+			}
+			fullPath = fullPath.substring(0, parent) + fullPath.substring(rel+3);
+
+			rel = fullPath.indexOf("/..");
+		}
+		return fullPath;
+	}
+
 
 
 }
