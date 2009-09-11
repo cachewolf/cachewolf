@@ -493,7 +493,7 @@ class WebMapService extends OnlineMapService {
 	//	CWPoint buttomleft = new CWPoint(maparea.buttomright.latDec, maparea.topleft.lonDec);
 		int crs = getCrs(maparea.getCenter());
 		// FIXME region is never read. Needed?
-		int region = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[crs]);
+		// int region = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[crs]);
 		ret[TOPLEFT_INDEX] = TransformCoordinates.wgs84ToEpsg(maparea.topleft, coordinateReferenceSystem[crs]);
 		ret[BUTTOMRIGHT_INDEX] = TransformCoordinates.wgs84ToEpsg(maparea.buttomright, coordinateReferenceSystem[crs]);
 		ret[TOPRIGHT_INDEX] =  ret[BUTTOMRIGHT_INDEX].cloneIt();

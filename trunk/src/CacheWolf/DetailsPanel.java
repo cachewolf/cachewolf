@@ -1,6 +1,5 @@
 package CacheWolf;
 
-import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.navi.TransformCoordinates;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
