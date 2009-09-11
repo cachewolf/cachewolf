@@ -1,6 +1,5 @@
 package CacheWolf.navi;
 
-import ewe.util.Properties;
 import CacheWolf.CWPoint;
 import CacheWolf.MyLocale;
 
