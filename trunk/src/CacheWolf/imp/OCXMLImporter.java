@@ -72,7 +72,6 @@ public class OCXMLImporter extends MinML {
 	String strData = new String();
 	int picCnt;
 	boolean incUpdate = true; // complete or incremental Update
-	boolean askForOptions = true;
 	Hashtable DBindexID = new Hashtable();
 
 	String picUrl = new String();
@@ -121,9 +120,6 @@ public class OCXMLImporter extends MinML {
 			hostname = OPENCACHING_UK_HOST;
 	}
 
-	/** true, if not the last syncdate shall be used, but the caches shall be reloaded
-	 * only used in syncSingle */
-	boolean reload;
 	/**
 	 * 
 	 * @param number
@@ -135,28 +131,20 @@ public class OCXMLImporter extends MinML {
 		ch = cacheDB.get(number);
 		setHostname(ch.getWayPoint());
 		holder= null; //new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
-
-		if (infB.isClosed) {
-			if (askForOptions) return false; 
-			else return true;
-		}
 		
-		if (askForOptions) {
-			OCXMLImporterScreen importOpt = new OCXMLImporterScreen( 
-					hostname + MyLocale.getMsg(1600, " Download"),OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.ALL);
-			if (importOpt.execute() == FormBase.IDCANCEL) {	return false; }
-			askForOptions = false;
-			reload = importOpt.missingCheckBox.getState();
+		if (infB.isClosed) {
+			// there could have been an update before
+			return true;
 		}
 
 		// this is only a dummy-InfoBox for capturing the output
 		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from " + hostname), InfoBox.PROGRESS_WITH_WARNINGS, false);
-//		inf.setPreferredSize(220, 300);
-//		inf.relayout(false);
-//		inf.exec();
 
 		String lastS; 
-		if (reload)  lastS = "20050801000000";
+		/** pref.downloadmissingOC = true, if not the last syncdate shall be used,
+		 *  but the caches shall be reloaded
+		 *  only used in syncSingle  */
+		if (pref.downloadmissingOC)  lastS = "20050801000000";
 		else {
 			if (ch.getLastSync().length() < 14) lastS = "20050801000000";
 			else lastS = ch.getLastSync();
@@ -172,6 +160,7 @@ public class OCXMLImporter extends MinML {
 			+ "modifiedsince=" + lastS
 			+ "&cache=1"
 			+ "&cachedesc=1";
+		
 		if (pref.downloadPics) url += "&picture=1";
 		else url += "&picture=0";
 		url += "&cachelog=1"
