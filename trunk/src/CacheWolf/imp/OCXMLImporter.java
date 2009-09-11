@@ -408,13 +408,22 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		if(name.equals("status")){
-			if(atts.getValue("id").equals("1")) holder.setAvailable(true);
-			if(atts.getValue("id").equals("2")) holder.setAvailable(false);
-			if(atts.getValue("id").equals("3")) {
-				holder.setArchived(true);
+            // meaning of OC status :
+			//  1=Kann gesucht werden ;
+			//  2=Momentan nicht verfügbar ; 
+			//  3=Archiviert ; 
+			//  4= ; 
+			//  5= ; 
+			//  6=Gesperrt ;
+			//  are there more ? ;
+			if (atts.getValue("id").equals("1")) {
+				holder.setAvailable(true);
+			} else {
 				holder.setAvailable(false);
+				if(atts.getValue("id").equals("3")) {
+					holder.setArchived(true);
+				}
 			}
-			if(atts.getValue("id").equals("4")) holder.setAvailable(false);
 			return;
 		}
 		if(name.equals("size")){
