@@ -762,7 +762,7 @@ public class MainMenu extends MenuBar {
 		CacheDB cacheDB=profile.cacheDB;
 		CacheHolder ch;
 		
-		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5003,"Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS);
+		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5003,"Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.ALL);
 		if (options.execute() == FormBase.IDCANCEL) {	return; }
 				
 		SpiderGC spider = new SpiderGC(pref, profile, false);
