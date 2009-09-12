@@ -223,7 +223,7 @@ public class MovingMap extends Form {
 		if (loadingMapList) return;
 		loadingMapList = true;
 		//this.mapPath = mapsPath;
-		Vm.showWait(this, true);
+		ewe.sys.Vm.showWait(this, true);
 		resetCenterOfMap();
 		InfoBox inf = new InfoBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(4203, "Loading list of maps..."));
 		inf.exec();
@@ -238,7 +238,7 @@ public class MovingMap extends Form {
 		maps.addEmptyMaps(lat); // the empty maps must be added last, otherwise in method setBestMap, when no mapt is available, a malfunction will happen, see there
 		dontUpdatePos = saveGpsIgnoreStatus;
 		inf.close(0);
-		Vm.showWait(this, false);
+		ewe.sys.Vm.showWait(this, false);
 		this.mapsloaded = true;
 		loadingMapList = false;
 	}
@@ -1461,14 +1461,16 @@ public class MovingMap extends Form {
 			updateOnlyPosition(where, true); 
 			return;
 		}
-		Vm.showWait(true);
+		ewe.sys.Vm.showWait(this,true);
 		boolean saveIgnoreStatus;
 		saveIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;  // make updatePosition ignore calls during loading new map
+		/*
 		InfoBox inf;
 		inf = new InfoBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4216, "Loading map..."));
 		inf.show();
 		inf.waitUntilPainted(100);
+		*/
 		try {
 			this.currentMap = newmap; 
 			this.title = currentMap.mapName;
@@ -1503,8 +1505,8 @@ public class MovingMap extends Form {
 			forceMapLoad = false;
 			directionArrows.setMap(currentMap);
 			updateScale();
-			inf.close(0);  // this doesn't work in a ticked-thread in the ewe-vm. That's why i made a new mThread in gotoPanel for ticked
-			Vm.showWait(false);
+			// !!! inf.close(0);  // this doesn't work in a ticked-thread in the ewe-vm. That's why i made a new mThread in gotoPanel for ticked
+			ewe.sys.Vm.showWait(this,false);
 			dontUpdatePos = saveIgnoreStatus;
 		} catch (IllegalArgumentException e) { // thrown by new AniImage() in ewe-vm if file not found;
 			if (mmp.mapImage != null) {
@@ -1514,8 +1516,8 @@ public class MovingMap extends Form {
 			}
 			rebuildOverlaySet();
 			updateOnlyPosition(where, false);
-			inf.close(0);
-			Vm.showWait(false);
+			// !!! inf.close(0);
+			ewe.sys.Vm.showWait(this,false);
 			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4218, "Could not load map: \n")+ newmap.getImageFilename(), FormBase.OKB)).execute();
 			dontUpdatePos = saveIgnoreStatus;
 		} catch (OutOfMemoryError e) {
@@ -1526,8 +1528,8 @@ public class MovingMap extends Form {
 			}
 			rebuildOverlaySet();
 			updateOnlyPosition(where, false);
-			inf.close(0);
-			Vm.showWait(false);
+			// !!! inf.close(0);
+			ewe.sys.Vm.showWait(this,false);
 			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4219, "Not enough memory to load map: \n") 
 					+ newmap.getImageFilename()
 					+ MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"), 
@@ -1541,8 +1543,8 @@ public class MovingMap extends Form {
 			}
 			rebuildOverlaySet();
 			updateOnlyPosition(where, false); // TODO this doesn't work correctly if the resolution changed, I guess because the pixels of PosCircle will be interpreted from the new resolution, but should be interpreted using the old resolution to test: select a map with a much greater value of m per pixel manually 
-			inf.close(0);
-			Vm.showWait(false);
+			// !!! inf.close(0);
+			ewe.sys.Vm.showWait(this,false);
 			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4221, "Not enough ressources to load map: ")
 					+ newmap.getImageFilename()
 					+ MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"), 

@@ -109,9 +109,9 @@ public class MapsList extends Vector {
 	 */
 	public MapInfoObject getBestMap(CWPoint ll, Rect screen, float scale, boolean forceScale) {
 		if (size() == 0) return null;
-		long start = new Time().getTime();
-		InfoBox progressBox = null;
-		boolean showprogress = false;
+		// long start = new Time().getTime();
+		// InfoBox progressBox = null;
+		// boolean showprogress = false;
 		String cmp = "FF1"+Area.getEasyFindString(ll, 30);
 		MapListEntry ml;
 		MapInfoObject mi;
@@ -123,14 +123,16 @@ public class MapsList extends Vector {
 		Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMap.scale, bestMap);
 		float lastscale = -1;
 		int testkw = 0;
+		ewe.sys.Vm.showWait(true);
 		for (int i=size()-1; i >= 0 ;i--) {
+			/*
 			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 				showprogress = true;      
 				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
 				progressBox.exec(); 
 				progressBox.waitUntilPainted(100);
-				ewe.sys.Vm.showWait(true);
 			}
+			*/
 			ml = (MapListEntry)get(i);
 			try {
 				if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
@@ -170,10 +172,12 @@ public class MapsList extends Vector {
 				}
 			}
 		}
+		/*
 		if (progressBox != null) {
 			progressBox.close(0);
-			ewe.sys.Vm.showWait(false);
 		}
+		*/
+		ewe.sys.Vm.showWait(false);
 		if (bestMap == null) return null;
 		return new MapInfoObject(bestMap); // return a copy of the MapInfoObject so that zooming won't change the MapInfoObject in the list 
 	}
