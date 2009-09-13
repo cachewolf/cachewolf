@@ -139,7 +139,7 @@ public class OCXMLImporter extends MinML {
 
 		// this is only a dummy-InfoBox for capturing the output
 		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from " + hostname), InfoBox.PROGRESS_WITH_WARNINGS, false);
-
+		inf.exec();
 		String lastS; 
 		/** pref.downloadmissingOC = true, if not the last syncdate shall be used,
 		 *  but the caches shall be reloaded
@@ -632,7 +632,7 @@ public class OCXMLImporter extends MinML {
 			imageInfo.setTitle(picDesc);
 			holder.getFreshDetails().images.add(imageInfo);
 			try {
-				File ftest = new File(profile.dataDir + fileName);
+				File ftest = new FileBugfix(profile.dataDir + fileName);
 				if (ftest.exists()){
 					imageInfo.setFilename(fileName);
 				}
@@ -729,8 +729,8 @@ public class OCXMLImporter extends MinML {
 		//Vm.debug("Redirect: " + redirect);
 		CharArray realurl = new CharArray();
 		ByteArray daten = UrlFetcher.fetchByteArray(addr, realurl);
-		String address = realurl.toString();
-		if (holder != null) fileName = holder.getWayPoint() + "_" + Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
+		// String address = realurl.toString();
+		// if (holder != null) fileName = holder.getWayPoint() + "_" + Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
 		// else fileName = Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
 
 		//save file
