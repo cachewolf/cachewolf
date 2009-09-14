@@ -115,7 +115,8 @@ public class Preferences extends MinML{
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	/** The base directory contains one subdirectory for each profile*/
-	public String baseDir = "";
+	private String baseDir = "";
+	public String absoluteBaseDir = "";
 	/** Name of last used profile */
 	public String lastProfile="";
 	/** If true, the last profile is reloaded automatically without a dialogue */
@@ -385,7 +386,7 @@ public class Preferences extends MinML{
 		}
 
 		else if(name.equals("basedir")) {
-			baseDir = atts.getValue("dir");
+			setBaseDir(atts.getValue("dir"));
 		}
 		else if (name.equals("opencaching")) {
 			downloadmissingOC = Boolean.valueOf(atts.getValue("downloadmissing")).booleanValue();
@@ -570,7 +571,7 @@ public class Preferences extends MinML{
 			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			outp.print("<preferences>\n");
 			outp.print("    <locale language=\"" + SafeXML.clean(language) + "\"/>\n");
-			outp.print("    <basedir dir = \"" + SafeXML.clean(baseDir) + "\"/>\n");
+			outp.print("    <basedir dir = \"" + SafeXML.clean(getBaseDir()) + "\"/>\n");
 			outp.print("    <lastprofile autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\">" + SafeXML.clean(lastProfile) + "</lastprofile>\n"); //RB
 			outp.print("    <alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
 			outp.print("    <alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
@@ -675,7 +676,7 @@ public class Preferences extends MinML{
 		ret = getMapManuallySavePath(false);
 		File t = new FileBugfix(ret);
 		String[] f = t.list("*.wfl", FileBase.LIST_FILES_ONLY);
-		if (f != null && f.length > 0) return  baseDir + mapsPath;
+		if (f != null && f.length > 0) return  absoluteBaseDir + mapsPath;
 		f = t.list("*.wfl", FileBase.LIST_DIRECTORIES_ONLY | FileBase.LIST_ALWAYS_INCLUDE_DIRECTORIES);
 		if (f != null && f.length > 0) { // see if in a subdir of <baseDir>/maps/standard are .wfl files
 			String[] f2;
@@ -716,7 +717,7 @@ public class Preferences extends MinML{
 		// return getMapExpediaLoadPath();
 
 		//whole maps directory
-		return Global.getPref().baseDir.replace('\\', '/') + "maps";
+		return Global.getPref().absoluteBaseDir.replace('\\', '/') + "maps";
 	}
 
 	/**
@@ -725,7 +726,7 @@ public class Preferences extends MinML{
 	 * this should be adjustable in preferences...
 	 */
 	public String getMapManuallySavePath(boolean create) {
-		String mapsDir = baseDir + mapsPath;
+		String mapsDir = absoluteBaseDir + mapsPath;
 		if (create && !(new FileBugfix(mapsDir).isDirectory())) { // dir exists?
 			if (new FileBugfix(mapsDir).mkdirs() == false) {// dir creation failed?
 				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+mapsDir, FormBase.OKB)).exec();
@@ -739,8 +740,8 @@ public class Preferences extends MinML{
 	 * to this path the automatically downloaded maps are saved
 	 */
 	public String getMapDownloadSavePath(String mapkind) {
-		String subdir = Global.getProfile().dataDir.substring(Global.getPref().baseDir.length()).replace('\\', '/');
-		String mapsDir = Global.getPref().baseDir + "maps/" + Common.ClearForFileName(mapkind)+ "/" + subdir;
+		String subdir = Global.getProfile().dataDir.substring(Global.getPref().absoluteBaseDir.length()).replace('\\', '/');
+		String mapsDir = Global.getPref().absoluteBaseDir + "maps/" + Common.ClearForFileName(mapkind)+ "/" + subdir;
 		if (!(new FileBugfix(mapsDir).isDirectory())) { // dir exists?
 			if (new FileBugfix(mapsDir).mkdirs() == false) // dir creation failed?
 			{(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(172,"Error: cannot create maps directory: \n")+new FileBugfix(mapsDir).getParentFile(), FormBase.OKB)).exec();
@@ -751,7 +752,7 @@ public class Preferences extends MinML{
 	}
 
 	public String getMapExpediaLoadPath() {
-		return Global.getPref().baseDir.replace('\\', '/') + "maps/expedia"; // baseDir has trailing /
+		return Global.getPref().absoluteBaseDir.replace('\\', '/') + "maps/expedia"; // baseDir has trailing /
 	}
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -786,22 +787,20 @@ public class Preferences extends MinML{
 	 */
 	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
 		// If datadir is empty, ask for one
-		if (baseDir.length()==0 || !(new FileBugfix(baseDir)).exists()) {
+		if (absoluteBaseDir.length()==0 || !(new FileBugfix(absoluteBaseDir)).exists()) {
 			do {
 				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, getHomeDir());
 				fc.title = MyLocale.getMsg(170,"Select base directory for cache data");
 				// If no base directory given, terminate
 				if (fc.execute() == FormBase.IDCANCEL) ewe.sys.Vm.exit(0);
-				baseDir = fc.getChosenFile().toString();
-			}while (!(new FileBugfix(baseDir)).exists());
+				setBaseDir(fc.getChosenFile().toString());
+			}while (!(new FileBugfix(absoluteBaseDir)).exists());
 		}
-		baseDir=baseDir.replace('\\','/');
-		if (!baseDir.endsWith("/")) baseDir+="/";
 		boolean profileExists=true;  // Assume that the profile exists
 		do {
 			if(!profileExists || (showProfileSelector==PROFILE_SELECTOR_FORCED_ON) ||
 					(showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
-				ProfilesForm f = new ProfilesForm(baseDir,lastProfile,!profileExists || hasNewButton);
+				ProfilesForm f = new ProfilesForm(absoluteBaseDir,lastProfile,!profileExists || hasNewButton);
 				int code = f.execute();
 				// If no profile chosen (includes a new one), terminate
 				if (code==-1) return false; // Cancel pressed
@@ -812,13 +811,13 @@ public class Preferences extends MinML{
 				//curCentrePt.set(0,0); // No centre yet
 				lastProfile=f.newSelectedProfile;
 			}
-			profileExists=(new FileBugfix(baseDir+lastProfile)).exists();
+			profileExists=(new FileBugfix(absoluteBaseDir+lastProfile)).exists();
 			if (!profileExists) (new MessageBox(MyLocale.getMsg(144,"Warning"),
 					           MyLocale.getMsg(171,"Profile does not exist: ")+lastProfile,FormBase.MBOK)).execute();
 		} while (profileExists==false);
 		// Now we are sure that baseDir exists and basDir+profile exists
 		prof.name=lastProfile;
-		prof.dataDir=baseDir+lastProfile;
+		prof.dataDir=absoluteBaseDir+lastProfile;
 		prof.dataDir=prof.dataDir.replace('\\','/');
 		if (!prof.dataDir.endsWith("/")) prof.dataDir+='/';
 		savePreferences();
@@ -1032,6 +1031,19 @@ public class Preferences extends MinML{
 	 *  use this if you need a path where the user has sufficient rights to create a file */
 	public String getPathToConfigFile() {
 		return pathToConfigFile;
+	}
+	
+	public String getBaseDir() {
+		return baseDir;
+	}
+	
+	public void setBaseDir(String dir) {
+		baseDir = dir;
+		baseDir=baseDir.replace('\\','/');
+		if (!baseDir.endsWith("/")) baseDir+="/";
+		absoluteBaseDir = new FileBugfix(baseDir).getAbsolutePath();
+		absoluteBaseDir=absoluteBaseDir.replace('\\','/');
+		if (!absoluteBaseDir.endsWith("/")) absoluteBaseDir+="/";
 	}
 
 }
