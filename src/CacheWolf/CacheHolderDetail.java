@@ -185,11 +185,21 @@ public class CacheHolderDetail {
 			// If parent cache has empty waypoint then don't do anything. This might happen
 			// when a cache object is freshly created to serve as container for imported data
 			if (this.getParent().getWayPoint().equals(CacheHolder.EMPTY)) return;
-			
-			if (new FileBugfix(dir + getParent().getWayPoint().toLowerCase() + ".xml").exists()) in = new FileReader(dir+getParent().getWayPoint().toLowerCase() + ".xml");
-			if (in == null) {
-				if (new FileBugfix(dir + getParent().getWayPoint() + ".xml").exists()) in = new FileReader(dir+getParent().getWayPoint() + ".xml");
+			FileBugfix cacheFile = new FileBugfix(dir + getParent().getWayPoint().toLowerCase() + ".xml");			
+			if (cacheFile.exists()) {
+				try {
+					in = new FileReader(cacheFile.getAbsolutePath());
+				} catch (FileNotFoundException e) {
+					in = null; //exception is thrown again below, if file could not be found in upper case, too
+				}
 			}
+			if (in == null) {
+				cacheFile = new FileBugfix(dir + getParent().getWayPoint() + ".xml");			
+				if (cacheFile.exists()) {
+					in = new FileReader(cacheFile.getAbsolutePath());
+				}
+			}
+
 			if (in == null) throw new FileNotFoundException(dir+getParent().getWayPoint().toLowerCase()+".xml");
 			if (Global.getPref().debug) Global.getPref().log("Reading file "+getParent().getWayPoint() + ".xml");
 			String text= in.readAll();
@@ -343,7 +353,7 @@ public class CacheHolderDetail {
 			}
 			//Vm.debug("Writing to: " +dir + "for: " + wayPoint);
 			try{
-			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(dir + getParent().getWayPoint().toLowerCase() + ".xml")));
+			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(dir + getParent().getWayPoint().toLowerCase() + ".xml").getAbsolutePath())));
 			} catch (Exception e) {
 				Global.getPref().log("Problem creating details file",e,true);
 				return;
