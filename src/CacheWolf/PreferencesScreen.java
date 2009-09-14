@@ -81,7 +81,7 @@ public class PreferencesScreen extends Form {
 		//frmDataDir.setTag(INSETS,new Insets(10,10,10,10));
 		frmDataDir.addLast(brwBt = new mButton(MyLocale.getMsg(604,"Browse")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
 		DataDir = new mInput();
-		DataDir.setText(pref.baseDir);
+		DataDir.setText(pref.getBaseDir());
 		frmDataDir.addLast(DataDir.setTag(CellConstants.SPAN, new Dimension(3,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
 		frmDataDir.addLast(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629,"Autoload last profile")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if (pref.autoReloadLastProfile) chkAutoLoad.setState(true);
@@ -284,7 +284,7 @@ public class PreferencesScreen extends Form {
 			if (ev.target == applyB){
 				//if (pref.currProfile == 0){
 					//pref.curCentrePt.set(btnCentre.getText());
-					pref.baseDir = DataDir.getText();
+					pref.setBaseDir(DataDir.getText());
 				//}
 				pref.fontSize = Convert.toInt(fontSize.getText());
 				if (pref.fontSize<6) pref.fontSize=11;
@@ -332,7 +332,7 @@ public class PreferencesScreen extends Form {
 				this.close(0);
 			}
 			if(ev.target == brwBt){
-				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.baseDir);
+				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getBaseDir());
 				fc.setTitle(MyLocale.getMsg(616,"Select directory"));
 				if(fc.execute() != FormBase.IDCANCEL)	DataDir.setText(fc.getChosen()+"/");
 			}

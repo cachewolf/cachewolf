@@ -121,7 +121,7 @@ public class MapImporter extends Form {
 	 */
 	public int importMap(){
 		String rawFileName = new String();
-		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().baseDir);
+		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().absoluteBaseDir);
 		fc.addMask("*.png,*.gif,*.bmp,*.jpg");
 		fc.setTitle(MyLocale.getMsg(4100,"Select Directory:"));
 		int tmp = fc.execute() ; 
