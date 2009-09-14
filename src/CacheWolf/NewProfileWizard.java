@@ -9,14 +9,14 @@ public class NewProfileWizard {
 	static public boolean startNewProfileWizard(ewe.ui.Frame parent) {
 		if (Global.mainTab != null) Global.mainTab.saveUnsavedChanges(true);
 		Preferences pref = Global.getPref();
-		NewProfileForm f=new NewProfileForm(pref.baseDir);
+		NewProfileForm f=new NewProfileForm(pref.absoluteBaseDir);
 		int code=f.execute(parent, Gui.CENTER_FRAME);
 		if (code==0) {
 			Profile profile = Global.getProfile();
 			profile.clearProfile(); 
 			pref.lastProfile=profile.name=f.profileDir;
 			pref.savePreferences(); // Remember that this was the last profile used
-			profile.dataDir=pref.baseDir+f.profileDir+"/";
+			profile.dataDir=pref.absoluteBaseDir+f.profileDir+"/";
 			
 			CoordsScreen cs = new CoordsScreen();
 			cs.setFields(new CWPoint(), TransformCoordinates.CW);

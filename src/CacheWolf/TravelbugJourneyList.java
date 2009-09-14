@@ -101,7 +101,7 @@ public class TravelbugJourneyList extends MinML {
 	 */
 	public boolean readTravelbugsFile(){
 		try{
-			String datei = Global.getPref().baseDir + "/" + "travelbugs.xml";
+			String datei = Global.getPref().absoluteBaseDir + "/" + "travelbugs.xml";
 			datei = datei.replace('\\', '/');
 			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(datei));
 			parse(r);
@@ -159,7 +159,7 @@ public class TravelbugJourneyList extends MinML {
 	 * Method to save current travelbugs in the travelbugs.xml file
 	 */
 	public void saveTravelbugsFile(){
-		String baseDir=Global.getPref().baseDir;
+		String baseDir=Global.getPref().absoluteBaseDir;
 		try {
 			File backup=new File(baseDir+"travelbugs.bak");
 			if (backup.exists()) backup.delete();
