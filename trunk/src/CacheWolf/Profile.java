@@ -148,14 +148,16 @@ public class Profile {
 		CacheHolder ch;
 		try {
 			File backup=new File(dataDir+"index.bak");
-			if (backup.exists()) backup.delete();
+			if (backup.exists()) {
+				backup.delete();
+			}
 			File index=new File(dataDir+"index.xml");
 			index.rename("index.bak");
 		} catch (Exception ex) {
 			pref.log("Error deleting backup or renaming index.xml");
 		}
 		try{
-			detfile = new PrintWriter(new BufferedWriter(new FileWriter(dataDir + "index.xml")));
+			detfile = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(dataDir + "index.xml").getAbsolutePath())));
 		} catch (Exception e) {
 			Vm.debug("Problem creating index file "+e.toString()+"\nFilename="+dataDir + "index.xml");
 			return;
