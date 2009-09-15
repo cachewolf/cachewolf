@@ -124,12 +124,15 @@ public class MapsList extends Vector {
 		float lastscale = -1;
 		int testkw = 0;
 		for (int i=size()-1; i >= 0 ;i--) {
-			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
-				showprogress = true;      
-				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
-				progressBox.exec(); 
-				progressBox.waitUntilPainted(100);
-				ewe.sys.Vm.showWait(true);
+			if (Global.getPref().debug) {
+				if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
+					showprogress = true;      
+					progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
+					progressBox.exec(); 
+					progressBox.waitUntilPainted(100);
+					ewe.sys.Vm.showWait(true);
+					Global.getPref().log(MyLocale.getMsg(4701,"Searching for best map"));
+				}
 			}
 			ml = (MapListEntry)get(i);
 			try {

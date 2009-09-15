@@ -223,11 +223,14 @@ public class MovingMap extends Form {
 		if (loadingMapList) return;
 		loadingMapList = true;
 		//this.mapPath = mapsPath;
-		Vm.showWait(this, true);
-		resetCenterOfMap();
 		InfoBox inf = new InfoBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(4203, "Loading list of maps..."));
-		inf.exec();
-		inf.waitUntilPainted(100);
+		if (Global.getPref().debug) {
+			Vm.showWait(this, true);
+			inf.exec();
+			inf.waitUntilPainted(100);
+			Global.getPref().log(MyLocale.getMsg(4203, "Loading list of maps..."));
+		}
+		resetCenterOfMap();
 		boolean saveGpsIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;
 		maps = new MapsList(mapsPath); // this actually loads the maps
@@ -768,7 +771,9 @@ public class MovingMap extends Form {
 	 * @return
 	 */
 	public Point getMapPositionOnScreen() {
-		if (currentMap == null || !posCircle.where.isValid()) return new Point(pref.myAppWidth +1, pref.myAppHeight +1); // in case no calculation is possible return somthing outside of the screen
+		if (currentMap == null || !posCircle.where.isValid()) 
+			return new Point(pref.myAppWidth +1, pref.myAppHeight +1); 
+		// in case no calculation is possible return somthing outside of the screen
 		Point mapPos = new Point(); 
 		//if (mmp.mapImage != null) mmp.mapImage.getLocation(mapPos);
 		//else {
@@ -972,67 +977,75 @@ public class MovingMap extends Form {
 		}
 		updateOnlyPosition(where, true);
 		
-		//Clean up any additional images, tiles will removed and any other item be added again later
-		Vector icons = new Vector ();
-		for (Iterator i = mmp.images.iterator(); i.hasNext();) {
-			AniImage im = (AniImage) i.next();
-			if ( (im instanceof MapImage) && (
-					!((im instanceof MapSymbol) || (im instanceof TrackOverlay) || mmp.mapImage == im) ) ) {
-				i.remove();
-			}
-			else{
-				icons.add(im);
-				i.remove();
-			}
-		}
-		//Mark all tiles as dirty
-		MovingMapCache.getCache().clearUsedFlags ();
-		
-		Point mapPosx = getMapPositionOnScreen();
-		//Holds areas not filled by currentmap and/or used tiles
-		Vector rectangles = new Vector();
-		//calculate areas which will not drawn
-		Rect whiteArea = new Rect (0,0,width,height);
-		Rect blackArea = new Rect (mapPosx.x, mapPosx.y, mmp.mapImage.getWidth(), mmp.mapImage.getHeight());
-		calculateRectangles(blackArea, whiteArea,rectangles);
-		//I've sometimes experienced an endless loop which might be caused by a bug in getBestMap. Therefore i will stop the loop after 30 runs
-		int count=0;
-		while (isFillWhiteArea() && currentMap.zoomFactor == 1.0 && !mapHidden && !rectangles.isEmpty() && count < 30){
-			count++;
-			try {
-			updateTileForWhiteArea(rectangles);
-			} catch (ewe.sys.SystemResourceException sre) {
-				setFillWhiteArea(false);
-				(new MessageBox("Error", "Not enough ressources to fill white ares, disabling this", MessageBox.OKB)).execute();
-			}
-		}		
-		//Remove all tiles not needed from the cache to reduce memory
-		MovingMapCache.getCache().cleanCache ();
-		//At Last redraw all icons on the map
-		for(Iterator i = icons.iterator(); i.hasNext();){
-			AniImage im = (AniImage) i.next();
-			mmp.addImage(im);
-		}
-		
-		if (!autoSelectMap) return;
 		Point mapPos = getMapPositionOnScreen();
 		boolean screenNotCompletlyCovered =  mmp.mapImage == null || (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width));
-		if (forceMapLoad || wantMapTest|| screenNotCompletlyCovered) 	{ // if force || want || map doesn't cover the scree completly
-			//Vm.debug("Screen not completly covered by map");
-			if (forceMapLoad || (java.lang.Math.abs(lastCompareX-mapPos.x) > this.width/10 || java.lang.Math.abs(lastCompareY-mapPos.y) > this.height/10)) {
-				// more then 1/10 of screen moved since last time we tried to find a better map
-				lastCompareX = mapPos.x;
-				lastCompareY = mapPos.y;
-				setBestMap(where, screenNotCompletlyCovered);
-				forceMapLoad = false;
+		if (autoSelectMap) {
+			if (forceMapLoad || wantMapTest|| screenNotCompletlyCovered) 	{
+				//Vm.debug("Screen not completly covered by map");
+				if (forceMapLoad || (java.lang.Math.abs(lastCompareX-mapPos.x) > this.width/10 || java.lang.Math.abs(lastCompareY-mapPos.y) > this.height/10)) {
+					// more then 1/10 of screen moved since last time we tried to find a better map
+					lastCompareX = mapPos.x;
+					lastCompareY = mapPos.y;
+					setBestMap(where, true);
+					forceMapLoad = false;
+					// update for checking of whitearea 
+					if (!inBestMap) {
+						// map changed
+						mapPos = getMapPositionOnScreen();
+						screenNotCompletlyCovered =  mmp.mapImage == null || (mmp.mapImage != null && ( mapPos.y > 0 || mapPos.x > 0 || mapPos.y+mmp.mapImage.getHeight()<this.height	|| mapPos.x+mmp.mapImage.getWidth()<this.width));
+					}
+				}
 			}
+		}
+		
+		if (isFillWhiteArea() && screenNotCompletlyCovered) {
+        	if (Global.getPref().debug) {Global.getPref().log("updatePosition : "+where.toString(TransformCoordinates.DD));}
+			//Clean up any additional images, tiles will removed and any other item be added again later
+			Vector icons = new Vector ();
+			for (Iterator i = mmp.images.iterator(); i.hasNext();) {
+				AniImage im = (AniImage) i.next();
+				if ( (im instanceof MapImage) && (
+					!((im instanceof MapSymbol) || (im instanceof TrackOverlay) || mmp.mapImage == im) ) ) {
+						i.remove();
+				}
+				else{
+					icons.add(im);
+					i.remove();
+				}
+			}
+			//Mark all tiles as dirty
+			MovingMapCache.getCache().clearUsedFlags ();
+			//Holds areas not filled by currentMap and/or used tiles
+			Vector rectangles = new Vector();
+			//calculate areas which will not drawn
+			Rect whiteArea = new Rect (0,0,width,height);
+			Rect blackArea = new Rect (mapPos.x, mapPos.y, mmp.mapImage.getWidth(), mmp.mapImage.getHeight());
+			calculateRectangles(blackArea, whiteArea,rectangles);
+        	//I've sometimes experienced an endless loop which might be caused by a bug in getBestMap. Therefore i will stop the loop after 30 runs
+			int count=0;
+			while (isFillWhiteArea() && currentMap.zoomFactor == 1.0 && !mapHidden && count<rectangles.getCount() && count < 30){
+				try {
+					updateTileForWhiteArea(rectangles,count);
+				} catch (ewe.sys.SystemResourceException sre) {
+					setFillWhiteArea(false);
+					(new MessageBox("Error", "Not enough ressources to fill white ares, disabling this", MessageBox.OKB)).execute();
+				}
+				count++;
+			}		
+			//Remove all tiles not needed from the cache to reduce memory
+			MovingMapCache.getCache().cleanCache ();
+			//At Last redraw all icons on the map
+			for(Iterator i = icons.iterator(); i.hasNext();){
+				AniImage im = (AniImage) i.next();
+				mmp.addImage(im);
+			}	
+        	if (Global.getPref().debug) {Global.getPref().log("End updatePosition : "+where.toString(TransformCoordinates.DD)+"\n");}
 		}
 	}
 
-	private void updateTileForWhiteArea(Vector rectangles) {
+	private void updateTileForWhiteArea(Vector rectangles, int at) {
 		Rect blackArea;
-		Rect r = (Rect) rectangles.get(0);
-		rectangles.removeElementAt(0);
+		Rect r = (Rect) rectangles.get(at);
 		//calculate the center of the rectangle and try to get an map for it
 		int middlewidth = r.x + (r.width)/2;
 		int middleheight = r.y + (r.height)/2;
@@ -1084,7 +1097,7 @@ public class MovingMap extends Form {
 			}
 		}
 	}
-
+	
 	private void generateTiles(Rect blackArea, String filename, Point mapPos,
 			Dimension rect2, MapImage fullImage) {
 		//Generate tiles from the map
@@ -1152,11 +1165,18 @@ public class MovingMap extends Form {
 		}
 		return true;
 	}
+
+	private String SRect(Rect r){
+		String OL, UR ;
+		OL= " ("+String.valueOf(r.x)+","+String.valueOf(r.y)+")";
+		UR= " ("+String.valueOf(r.x+r.width)+","+String.valueOf(r.y+r.height)+") ";
+		return OL+" :"+UR;
+	}
 	
 	private void calculateRectangles(Rect blackArea, Rect whiteArea, Vector rectangles) {
 		if (width == 0 || height == 0) return;
 		if (whiteArea.x >= width || whiteArea.y >= height) return;
-		
+		if (Global.getPref().debug) {Global.getPref().log("Compare"+SRect(whiteArea)+"with"+SRect(blackArea)+" (blackarea)");}
 		if (blackArea.x < 0){
 			blackArea.width += blackArea.x; 
 			blackArea.x =0;
@@ -1179,6 +1199,7 @@ public class MovingMap extends Form {
 			r.width = blackArea.x;
 			r.height = whiteArea.height;
 			rectangles.add(r);
+			if (Global.getPref().debug) {Global.getPref().log("add whitearea : "+SRect(r));}
 		}
 		if (blackArea.y > whiteArea.y) {
 			Rect r= new Rect ();
@@ -1187,6 +1208,7 @@ public class MovingMap extends Form {
 			r.width = whiteArea.width;
 			r.height = blackArea.y;
 			rectangles.add(r);
+			if (Global.getPref().debug) {Global.getPref().log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.y + blackArea.height) <  whiteArea.y + whiteArea.height) {
 			Rect r= new Rect ();
@@ -1195,6 +1217,7 @@ public class MovingMap extends Form {
 			r.width = whiteArea.width;
 			r.height = (whiteArea.y + whiteArea.height) - r.y;
 			rectangles.add(r);
+			if (Global.getPref().debug) {Global.getPref().log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.x + blackArea.width)<  whiteArea.x + whiteArea.width) {
 			Rect r= new Rect ();
@@ -1203,6 +1226,7 @@ public class MovingMap extends Form {
 			r.width = (whiteArea.x + whiteArea.width) - r.x;
 			r.height = whiteArea.height;
 			rectangles.add(r);
+			if (Global.getPref().debug) {Global.getPref().log("add whitearea : "+SRect(r));}
 		}
 	}
 
@@ -1247,8 +1271,10 @@ public class MovingMap extends Form {
 	 * 
 	 * @param lat
 	 * @param lon
-	 * @param loadIfSameScale false: will not change the map if the better map has the same scale as the current - this is used not to change the map if it covers already the screen completely
-	 * true: willchange the map, regardless of change in scale
+	 * @param loadIfSameScale 
+	 * 			false: will not change the map if the better map has the same scale as the current
+	 * 			  - this is used not to change the map if it covers already the screen completely
+	 * 			true: willchange the map, regardless of change in scale
 	 */
 	public void setBestMap(CWPoint where, boolean loadIfSameScale) {
 		if (inBestMap) return;
@@ -1467,8 +1493,11 @@ public class MovingMap extends Form {
 		dontUpdatePos = true;  // make updatePosition ignore calls during loading new map
 		InfoBox inf;
 		inf = new InfoBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4216, "Loading map..."));
-		inf.show();
-		inf.waitUntilPainted(100);
+		if (Global.getPref().debug) {
+			inf.show();
+			inf.waitUntilPainted(100);
+			Global.getPref().log(MyLocale.getMsg(4216, "Loading map..."));
+		}
 		try {
 			this.currentMap = newmap; 
 			this.title = currentMap.mapName;
