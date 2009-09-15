@@ -264,6 +264,8 @@ public class Preferences extends MinML{
 	public int myAppWidth = 800;
 	/** True if the preferences were changed and need to be saved */
 	public boolean dirty = false;
+	
+	private String pathToProfile;
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Read pref.xml file
@@ -304,8 +306,10 @@ public class Preferences extends MinML{
 		String testlist[] = null;
 		if (pf.equals("Java") || pf.equals("Win32")) {
 			String progdir = Vm.getenv("ProgramFiles", null); // at least in java-Win XP this is set
+			String homedir=Vm.getenv("HOMEPATH", "");
 			if (progdir != null) {
 				String test[] = {
+						homedir+"/Lokale Einstellungen/Anwendungsdaten/Google/Chrome/Application/chrome.exe",
 						progdir+"/Firefox/firefox.exe",
 						progdir+"/Opera/opera.exe",
 						progdir+"/Internet Explorer/iexplore.exe"};
@@ -444,7 +448,7 @@ public class Preferences extends MinML{
 			if (tmp != null) solverDegMode=Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("mapspath")) {
-			customMapsPath=atts.getValue("dir").replace('\\', '/');
+			customMapsPath=atts.getValue("dir").replace('\\', '/');			
 		}
 		else if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
 
@@ -645,10 +649,34 @@ public class Preferences extends MinML{
 	   return customMapsPath;
 	}
 
+	private void saveProfilePreferences() {
+		PrintWriter outp;
+		try{
+			outp = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(pathToProfile + "profpref.xml").getAbsolutePath())));
+			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			outp.print("<preferences>\n");
+			outp.print("    <mapspath dir = \"" + customMapsPath + "\"/>\n");
+			outp.print("</preferences>");
+			outp.close();
+		}catch(Exception e){
+		}
+	}	
+	
+	private void getProfilePreferences() {
+		String fn = new FileBugfix(pathToProfile + "profpref.xml").getAbsolutePath();
+		try{
+			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(fn));
+			parse(r);
+			r.close();
+		}catch(Exception e){
+		}
+	}
+	
 	public void saveCustomMapsPath(String mapspath_) {
 		if (customMapsPath == null || !customMapsPath.equals(mapspath_)) {
 			customMapsPath=new String(mapspath_).replace('\\', '/');
 			savePreferences();
+			saveProfilePreferences();
 		}
 	}
 
@@ -820,6 +848,8 @@ public class Preferences extends MinML{
 		prof.dataDir=absoluteBaseDir+lastProfile;
 		prof.dataDir=prof.dataDir.replace('\\','/');
 		if (!prof.dataDir.endsWith("/")) prof.dataDir+='/';
+		pathToProfile=prof.dataDir;
+		getProfilePreferences();
 		savePreferences();
 		return true;
 	}
