@@ -130,14 +130,13 @@ public class OCXMLImporter extends MinML {
 		CacheHolder ch;
 		ch = cacheDB.get(number);
 		setHostname(ch.getWayPoint());
-		holder= null; //new CacheHolderDetail(ch); //TODO is this still correct? use getDetails ?
+		holder= null;
 		
 		if (infB.isClosed) {
 			// there could have been an update before
 			return true;
 		}
 
-		// this is only a dummy-InfoBox for capturing the output
 		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from " + hostname), InfoBox.PROGRESS_WITH_WARNINGS, false);
 		inf.setPreferredSize(220, 300);
 		inf.relayout(false);
@@ -650,14 +649,16 @@ public class OCXMLImporter extends MinML {
 				else 												wp = new String("WP???");
 				if (holder != null && holder.getCacheName() != null) n = holder.getCacheName();
 				else 												 n = new String("name???");
-				
-				if (e.getMessage().equalsIgnoreCase("could not connect") ||
-					e.getMessage().equalsIgnoreCase("unkown host")) { 
-					// is there a better way to find out what happened?
-					ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+ n + " ("+wp+")"+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
-				} else
-					ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ")+ n + " ("+wp+"): ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+fetchURL); 
-					
+
+				if (e == null) ErrMessage = "Ignoring error: OCXMLImporter.getPic: IOExeption == null, while downloading picture: "+fileName+" from URL:"+fetchURL;
+				else {
+					if (e.getMessage().equalsIgnoreCase("could not connect") ||
+							e.getMessage().equalsIgnoreCase("unkown host")) { 
+						// is there a better way to find out what happened?
+						ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+ n + " ("+wp+")"+MyLocale.getMsg(1619,": could not download image from URL: ")+fetchURL;
+					} else
+						ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ")+ n + " ("+wp+"): ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+fetchURL); 
+				}
 				inf.addWarning("\n"+ErrMessage);
 				//(new MessageBox(MyLocale.getMsg(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
 				pref.log(ErrMessage);
