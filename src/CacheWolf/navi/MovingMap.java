@@ -76,7 +76,7 @@ public class MovingMap extends Form {
 	boolean noMapsAvailable;
 	boolean zoomingMode = false;
 	boolean mapsloaded = false;
-	
+	boolean additionalOverlaysDeleted=true;
 	Point lastRepaintMapPos = null;
 	double lastDistance = -1;
 	
@@ -998,6 +998,17 @@ public class MovingMap extends Form {
 			}
 		}
 		
+		if (!screenNotCompletlyCovered && !additionalOverlaysDeleted){
+			for (Iterator i = mmp.images.iterator(); i.hasNext();) {
+				AniImage im = (AniImage) i.next();
+				if ( (im instanceof MapImage) && (
+					!((im instanceof MapSymbol) || (im instanceof TrackOverlay) || mmp.mapImage == im) ) ) {
+						i.remove();
+				}
+			}
+			additionalOverlaysDeleted = true;
+		}
+		
 		if (isFillWhiteArea() && screenNotCompletlyCovered) {
         	if (Global.getPref().debug) {Global.getPref().log("updatePosition : "+where.toString(TransformCoordinates.DD));}
 			//Clean up any additional images, tiles will removed and any other item be added again later
@@ -1039,6 +1050,7 @@ public class MovingMap extends Form {
 				AniImage im = (AniImage) i.next();
 				mmp.addImage(im);
 			}	
+			additionalOverlaysDeleted = false;
         	if (Global.getPref().debug) {Global.getPref().log("End updatePosition : "+where.toString(TransformCoordinates.DD)+"\n");}
 		}
 	}
