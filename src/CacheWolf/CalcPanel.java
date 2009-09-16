@@ -73,8 +73,8 @@ public final class CalcPanel extends CellPanel {
 		chkDMM.setGroup(chkFormat);
 		chkDMS.setGroup(chkFormat);
 		chkCustom.setGroup(chkFormat);
-		chkFormat.setInt(2);
-		currFormat = 2;
+		chkFormat.setInt(1);
+		currFormat = 1;
 		String[] ls = TransformCoordinates.getProjectedSystemNames();
 		TopP.addLast(localCooSystem = new mChoice(ls, 0),CellConstants.DONTSTRETCH, CellConstants.WEST);
 
@@ -168,7 +168,7 @@ public final class CalcPanel extends CellPanel {
 				inpBearing.setText("0");
 				inpDistance.setText("0");
 
-				currFormat = 2;
+				//currFormat = 1;
 				if (ch.LatLon.length()== 0) coordInp.set(0,0);
 				else coordInp.set(ch.LatLon, TransformCoordinates.CW);
 				setFields();				
@@ -198,7 +198,7 @@ public final class CalcPanel extends CellPanel {
 			if (ev.target == btnCalc){
 				readFields(coordInp, bd);
 				coordOut = coordInp.project(bd.degrees, bd.distance);
-				txtOutput.appendText(coordOut.toString(currFormat)+ "\n",true);
+				txtOutput.appendText(coordOut.toString(getLocalCooSystem())+ "\n",true);
 			}
 			if (ev.target == btnClear){
 				txtOutput.setText("");
