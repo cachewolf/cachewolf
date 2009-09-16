@@ -47,6 +47,9 @@ public class Profile {
 	/** Distance for geocaching caches */
 	private String distGC = new String();
 
+	/** path to the maps of the profile relative to the maps root */
+	private String relativeCustomMapsPath = new String();
+
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
 
@@ -112,6 +115,7 @@ public class Profile {
 		setLast_sync_opencaching("");
 		setDistOC("");
 		setDistGC("");
+		setRelativeCustomMapsPath("");
 		resetUnsavedChanges();
 	}
 
@@ -195,6 +199,7 @@ public class Profile {
 			detfile.print(this.getCurrentFilter().toXML(""));
 			detfile.print("    <SYNCOC date = \""+getLast_sync_opencaching()+"\" dist = \""+getDistOC()+"\"/>\n");
 			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\"/>\n");
+			detfile.print("    <mapspath relativeDir = \"" + relativeCustomMapsPath + "\"/>\n");
 			int size = cacheDB.size();
 			for (int i = 0; i < size; i++) {
 				if (showprogress) {
@@ -292,6 +297,9 @@ public class Profile {
 					setLast_sync_opencaching(text.substring(start,text.indexOf("\"",start)));
 					start=text.indexOf("dist = \"")+8;
 					setDistOC(text.substring(start,text.indexOf("\"",start)));
+				} else if (text.indexOf("mapspath")>=0) {
+					int start=text.indexOf("relativeDir = \"")+15;
+					setRelativeCustomMapsPath(text.substring(start,text.indexOf("\"",start)));
 				} else if (text.indexOf("<SPIDERGC")>=0) {
 					int start=text.indexOf("dist = \"")+8;
 					setDistGC(text.substring(start,text.indexOf("\"",start)));
@@ -763,6 +771,15 @@ public class Profile {
 		this.distGC = distGC;
 	}
 
+	public String getRelativeCustomMapsPath() {
+		return relativeCustomMapsPath;
+	}
+	
+	public void setRelativeCustomMapsPath(String relativeCustomMapsPath) {
+		relativeCustomMapsPath=SafeXML.clean(relativeCustomMapsPath.replace('\\','/'));
+		this.notifyUnsavedChanges(!relativeCustomMapsPath.equals(this.relativeCustomMapsPath));
+		this.relativeCustomMapsPath = relativeCustomMapsPath;
+	}
 	/**
 	 * Returns the currently active FilterData object for the profile.
 	 * @return Object representing the setting of the filter
