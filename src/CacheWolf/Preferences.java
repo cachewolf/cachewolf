@@ -448,7 +448,7 @@ public class Preferences extends MinML{
 			if (tmp != null) solverDegMode=Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("mapspath")) {
-			customMapsPath=atts.getValue("dir").replace('\\', '/');			
+			customMapsPath=atts.getValue("dir").replace('\\', '/');
 		}
 		else if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
 
@@ -646,29 +646,12 @@ public class Preferences extends MinML{
 	 * @return custom Maps Path, null if not set
 	 */
 	public String getCustomMapsPath() {
-	   return customMapsPath;
-	}
-
-	private void saveProfilePreferences() {
-		PrintWriter outp;
-		try{
-			outp = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(pathToProfile + "profpref.xml").getAbsolutePath())));
-			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-			outp.print("<preferences>\n");
-			outp.print("    <mapspath dir = \"" + customMapsPath + "\"/>\n");
-			outp.print("</preferences>");
-			outp.close();
-		}catch(Exception e){
-		}
-	}	
-	
-	private void getProfilePreferences() {
-		String fn = new FileBugfix(pathToProfile + "profpref.xml").getAbsolutePath();
-		try{
-			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(fn));
-			parse(r);
-			r.close();
-		}catch(Exception e){
+	   String s = Global.getProfile().getRelativeCustomMapsPath();
+	   if (s.equals("")) {
+		   return customMapsPath;
+		} else {
+			String t = absoluteBaseDir+"maps";
+			return t+s;
 		}
 	}
 	
@@ -676,7 +659,13 @@ public class Preferences extends MinML{
 		if (customMapsPath == null || !customMapsPath.equals(mapspath_)) {
 			customMapsPath=new String(mapspath_).replace('\\', '/');
 			savePreferences();
-			saveProfilePreferences();
+			String s = absoluteBaseDir+"maps";
+			if (customMapsPath.indexOf(s)==0) {
+				String t=customMapsPath.substring(s.length(), customMapsPath.length());
+				Global.getProfile().setRelativeCustomMapsPath(t);
+			} else {
+				Global.getProfile().setRelativeCustomMapsPath("");
+			}
 		}
 	}
 
@@ -849,7 +838,6 @@ public class Preferences extends MinML{
 		prof.dataDir=prof.dataDir.replace('\\','/');
 		if (!prof.dataDir.endsWith("/")) prof.dataDir+='/';
 		pathToProfile=prof.dataDir;
-		getProfilePreferences();
 		savePreferences();
 		return true;
 	}
