@@ -46,7 +46,11 @@ public class MapLoaderGui extends Form {
 	mCheckBox overviewChkBox = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
 	mCheckBox overviewChkBoxPerCache = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
 
-	MapLoader mapLoader;
+        mCheckBox smallTiles = new mCheckBox (MyLocale.getMsg (4280, "Small Tiles"));
+        mCheckBox bigTiles = new mCheckBox (MyLocale.getMsg (4282, "BigTiles"));
+        CheckBoxGroup tileSize = new CheckBoxGroup ();
+
+        MapLoader mapLoader;
 	String[] unsortedMapServices;
 	String[] sortedmapServices;
 	int[] sortingMapServices;
@@ -101,6 +105,11 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addLast(overlappingInput);
 		overviewChkBox.setState(true);
 		pnlTiles.addLast(overviewChkBox);
+		pnlTiles.addNext(smallTiles);
+		pnlTiles.addLast(bigTiles);
+		smallTiles.setGroup(tileSize);
+                bigTiles.setGroup(tileSize);
+		tileSize.selectIndex(1);
 		cancelB = new mButton(MyLocale.getMsg(1604,"Cancel"));
 		cancelB.setHotKey(0, IKeys.ESCAPE);
 		pnlTiles.addNext(cancelB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -205,11 +214,20 @@ public class MapLoaderGui extends Form {
 		progressBox.exec();
 		mapLoader.setProgressInfoBox(progressBox);
 		Vm.showWait(true);
-		ewe.fx.Point size = new ewe.fx.Point(1000,1000); // Size of the downloaded maps
+		int length;
+        	switch (tileSize.getSelectedIndex()){
+		    //Perhaps introduce a medium size??
+		case 0:
+		    length=500;
+		    break;
+		default:
+		    length=1000;
+		}
+		ewe.fx.Point size = new ewe.fx.Point(length,length);
 		if (forCachesChkBox.getState() || perCache) {
 			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
 			if (surArea == null) {
-				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are seleted"), FormBase.OKB)).execute();
+				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are selected"), FormBase.OKB)).execute();
 				Vm.showWait(false);
 				progressBox.close(0);
 				return;
@@ -294,9 +312,9 @@ public class MapLoaderGui extends Form {
 			if (ev.target == cancelB || ev.target == cancelBPerCache){
 				this.close(FormBase.IDCANCEL);
 			}
-			if (ev.target == okBtiles || ev.target == okBPerCache){
+			else if (ev.target == okBtiles || ev.target == okBPerCache){
 				if (sortingMapServices[mapServiceChoice.selectedIndex] == -1) {
-					(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1833, "Please don't select the separetor line in the wms service option"), FormBase.OKB)).execute(); 
+					(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1833, "Please don't select the separator line in the wms service option"), FormBase.OKB)).execute(); 
 				}
 				mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 				if (ev.target == okBtiles) { // get tiles
@@ -309,7 +327,7 @@ public class MapLoaderGui extends Form {
 					overlapping = Convert.toInt(overlappingInput.getText());
 					if (!forCachesChkBox.getState()) {
 						if (radius <= 0) { 
-							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be graeter than 0"), FormBase.OKB)).execute();
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be greater than 0"), FormBase.OKB)).execute();
 							return;
 						}
 						if (overlapping < 0) { 
@@ -342,7 +360,7 @@ public class MapLoaderGui extends Form {
 				this.close(FormBase.IDOK); 
 				this.downloadTiles();
 			}
-			if (ev.target == coosBtn) {
+			else if (ev.target == coosBtn) {
 				CoordsScreen cs = new CoordsScreen();
 				cs.setFields(center, TransformCoordinates.CW);
 				if (cs.execute() != FormBase.IDCANCEL) {
@@ -353,8 +371,17 @@ public class MapLoaderGui extends Form {
 					mapServiceChoice.set(sortedmapServices, (!inbound[tmp] ? 0 : getSortedMapServiceIndex((tmp))));
 				}
 			}
-			if (ev.target == forCachesChkBox) {
+			else if (ev.target == forCachesChkBox) {
 				updateForCachesState();
+			}
+			else if (ev.target == tileSize){
+			    switch (tileSize.getSelectedIndex()){
+			    case 0:
+			    overlappingInput.setText ("10");
+			    break;
+			    default:
+			    overlappingInput.setText ("100");
+			    }
 			}
 		} // end of "if controllEvent..."
 		if (ev instanceof DataChangeEvent && ev.target == mapServiceChoice) {
