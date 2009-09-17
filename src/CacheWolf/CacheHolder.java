@@ -1211,9 +1211,15 @@ public class CacheHolder{
     }
 
 	public void setFound(boolean is_found) {
-		Global.getProfile().notifyUnsavedChanges(is_found != this.found);		
-    	this.found = is_found;
+    if (is_found != this.found) {
+      Global.getProfile().notifyUnsavedChanges(true);		
+      this.found = is_found;
+      if (is_found && (this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null) ) {
+        this.mainCache.setFound(true);
+        this.mainCache.setAttributesToAddiWpts();
+      }
     }
+  }
 
 	/**
 	 * If this returns <code>true</code>, then the additional waypoints for this cache should be 
