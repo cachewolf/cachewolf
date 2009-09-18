@@ -246,6 +246,11 @@ public class Preferences extends MinML{
 	/** Determines whether to fill the white areas on the map */
 	public boolean fillWhiteArea=false;
 
+        /** Selected Size of map tiles */
+        public int mapTileSize=1;
+        /** How many should maptiles overlap */
+        public int mapOverlapping=100;
+
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
 	 * the line: <pre><debug value="true" /></pre>
@@ -549,6 +554,14 @@ public class Preferences extends MinML{
 			tmp = atts.getValue("on");
 			fillWhiteArea = tmp != null && tmp.equalsIgnoreCase("true");
 		}
+		else if (name.equals("mapLoader")){
+			     tmp = atts.getValue("tileSize");
+			     if (tmp == null || tmp.length() == 0) tmp = "1";
+			     mapTileSize = Convert.parseInt(tmp);
+                             tmp = atts.getValue("overlapping");
+			     if (tmp == null || tmp.length() == 0) tmp = "100";
+			     mapOverlapping = Convert.parseInt(tmp);
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -634,6 +647,7 @@ public class Preferences extends MinML{
 			if (rater != null) outp.print("    <rater tool=\"".concat(SafeXML.clean(rater)).concat("\"/>\n"));
 			outp.print("    <logkeeping maximum=\""+SafeXML.strxmlencode(maxLogsToKeep)+"\" keepown=\""+SafeXML.strxmlencode(alwaysKeepOwnLogs)+"\" />\n");
 			outp.print("    <fillWhiteArea on=\""+SafeXML.strxmlencode(fillWhiteArea)+"\"/>\n");
+			outp.print("    <mapLoader tileSize=\""+SafeXML.strxmlencode(mapTileSize)+"\" overlapping=\""+SafeXML.strxmlencode(mapOverlapping)+"\"/>\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {

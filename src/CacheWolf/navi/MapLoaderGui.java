@@ -22,7 +22,7 @@ import ewe.ui.*;
 
 public class MapLoaderGui extends Form {
 	mButton cancelB, okBtiles, okBPerCache, cancelBPerCache;
-	Preferences pref;
+    Preferences pref = Global.getPref ();
 	mTabbedPanel mTab = new mTabbedPanel();
 	CellPanel pnlTiles = new CellPanel();
 	CellPanel pnlPerCache = new CellPanel();
@@ -42,7 +42,7 @@ public class MapLoaderGui extends Form {
 	mInput scaleInput = new mInput ("3");
 	mInput scaleInputPerCache = new mInput ("1");
 	mLabel overlappingLbl = new mLabel(MyLocale.getMsg(1808,"overlapping in pixel:"));
-	mInput overlappingInput = new mInput("100");
+        mInput overlappingInput = new mInput(""+pref.mapOverlapping);
 	mCheckBox overviewChkBox = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
 	mCheckBox overviewChkBoxPerCache = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
 
@@ -67,7 +67,6 @@ public class MapLoaderGui extends Form {
 	public MapLoaderGui(CacheDB cacheDBi) {
 		super();
 		this.title = MyLocale.getMsg(1800, "Download georeferenced maps"); 
-		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 		center = new CWPoint(pref.curCentrePt);
 		cacheDB = cacheDBi;
 		mapLoader = new MapLoader(FileBase.getProgramDirectory()+"/"+"webmapservices");
@@ -109,7 +108,7 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addLast(bigTiles);
 		smallTiles.setGroup(tileSize);
                 bigTiles.setGroup(tileSize);
-		tileSize.selectIndex(1);
+		tileSize.selectIndex(pref.mapTileSize);
 		cancelB = new mButton(MyLocale.getMsg(1604,"Cancel"));
 		cancelB.setHotKey(0, IKeys.ESCAPE);
 		pnlTiles.addNext(cancelB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -223,6 +222,8 @@ public class MapLoaderGui extends Form {
 		default:
 		    length=1000;
 		}
+		//Override size if one tile for each cache is wanted
+		if (perCache) length=1000;
 		ewe.fx.Point size = new ewe.fx.Point(length,length);
 		if (forCachesChkBox.getState() || perCache) {
 			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
@@ -378,16 +379,25 @@ public class MapLoaderGui extends Form {
 			    switch (tileSize.getSelectedIndex()){
 			    case 0:
 			    overlappingInput.setText ("10");
+			    pref.mapTileSize=0;
+			    pref.mapOverlapping=10;
 			    break;
 			    default:
 			    overlappingInput.setText ("100");
+			    pref.mapTileSize=1;
+			    pref.mapOverlapping=100;
 			    }
 			}
 		} // end of "if controllEvent..."
-		if (ev instanceof DataChangeEvent && ev.target == mapServiceChoice) {
+		if (ev instanceof DataChangeEvent){
+		    if (ev.target == mapServiceChoice) {
 			mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 			scaleInput.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
 			scaleInputPerCache.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
+		    }
+		    else if (ev.target == overlappingInput){
+			pref.mapOverlapping = Convert.toInt(overlappingInput.getText ());
+		    }
 		}
 		super.onEvent(ev);
 	}
