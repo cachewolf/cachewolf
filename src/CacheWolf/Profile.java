@@ -358,6 +358,12 @@ public class Profile {
 					setFilterAttrChoice(Convert.parseInt(attr));
 					setFilterStatus(SafeXML.cleanback(ex.findNext()));
 					setFilterUseRegexp(Boolean.valueOf(ex.findNext()).booleanValue());
+					attr = ex.findNext();
+  				if (attr != null && !attr.equals("")) {
+  					setFilterNoCoord(Boolean.valueOf(attr).booleanValue());
+          } else {
+            setFilterNoCoord(true);
+          }
 				} else if (text.indexOf("<FILTERCONFIG")>=0){
 					ex.setSource(text.substring(text.indexOf("<FILTERCONFIG")));
 					String temp=ex.findNext();
@@ -742,6 +748,15 @@ public class Profile {
 	public void setFilterUseRegexp(boolean useRegexp) {
 		this.notifyUnsavedChanges(useRegexp != this.getFilterUseRegexp());
     	this.currentFilter.setUseRegexp(useRegexp);
+    }
+
+	public boolean getFilterNoCoord() {
+    	return currentFilter.getFilterNoCoord();
+    }
+
+	public void setFilterNoCoord(boolean filterNoCoord) {
+		this.notifyUnsavedChanges(filterNoCoord != this.getFilterNoCoord());
+    	this.currentFilter.setFilterNoCoord(filterNoCoord);
     }
 	
 	public String getLast_sync_opencaching() {

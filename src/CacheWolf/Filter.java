@@ -88,6 +88,7 @@ public class Filter{
 
 	private String cacheStatus;
 	private boolean useRegexp;
+	private boolean filterNoCoord;
 	
 	private boolean ownedByMe;
 	private boolean notOwnedByMe;
@@ -258,6 +259,7 @@ public class Filter{
 		typeMatchPattern=0;
 		cacheStatus  = profile.getFilterStatus();
 		useRegexp    = profile.getFilterUseRegexp();
+		filterNoCoord = profile.getFilterNoCoord();
 		
 		String filterType=profile.getFilterType();
 		if (filterType.charAt(0) == '1') typeMatchPattern|=TRADITIONAL;
@@ -463,10 +465,12 @@ public class Filter{
 				        cacheRosePattern = WNW;
 			        else if (ch.bearing.equals("W"))
 				        cacheRosePattern = W;
-			        else
+			        else if (ch.bearing.equals("WSW"))
 				        cacheRosePattern = WSW;
+			        else
+				        cacheRosePattern = 0;
 		        }
-		        if ((cacheRosePattern & roseMatchPattern) == 0) {
+		        if ((cacheRosePattern != 0) && ((cacheRosePattern & roseMatchPattern) == 0)) {
 			        cacheFiltered = true; break;
 		        }
 	        }
@@ -573,6 +577,9 @@ public class Filter{
 			        }
 		        }
 	        }
+	        ///////////////////////////////
+	        // Filter criterium 12: Status
+	        ///////////////////////////////
 	        if (!cacheStatus.equals("")) {
 	        	if (!useRegexp) {
 	        		if (ch.getCacheStatus().toLowerCase().indexOf(cacheStatus.toLowerCase())<0) {
@@ -588,6 +595,14 @@ public class Filter{
 	        		}
 	        	}
 	        }
+	        ///////////////////////////////
+	        // Filter criterium 11: NoCoord
+	        ///////////////////////////////
+	        if (!filterNoCoord && !ch.pos.isValid()) {
+	          cacheFiltered = true;
+	        	break;
+        }
+
 	        break;
         } while (true);
 		return cacheFiltered;
@@ -624,7 +639,8 @@ public class Filter{
 		    prof.getFilterTerr().equals("L") &&
 		    prof.getFilterAttrYes() == 0l &&
 		    prof.getFilterAttrNo() == 0l &&
-		    prof.getFilterStatus().equals(""));
+		    prof.getFilterStatus().equals("") &&
+        prof.getFilterNoCoord());
 	}
 
 }

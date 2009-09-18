@@ -17,6 +17,7 @@ public class FilterData {
 	private String filterType = new String(FILTERTYPE);
 	private String filterRose = new String(FILTERROSE);
 	private String filterSize = new String(FILTERSIZE);
+	private boolean filterNoCoord = true;
 
 	// filter settings for archived ... owner (section) in filterscreen
 	private String filterVar = new String(FILTERVAR);
@@ -56,7 +57,7 @@ public class FilterData {
 		"\" var = \""+getFilterVar()+"\" dist = \""+getFilterDist().replace('"',' ')+"\" diff = \""+
 		getFilterDiff()+"\" terr = \""+getFilterTerr()+"\" size = \""+getFilterSize()+"\" attributesYes = \""+getFilterAttrYes()+
 		"\" attributesNo = \""+getFilterAttrNo()+"\" attributesChoice = \""+getFilterAttrChoice()+
-		"\" status = \""+SafeXML.clean(getFilterStatus())+"\" useRegexp = \""+useRegexp()+"\" />\n";	
+		"\" status = \""+SafeXML.clean(getFilterStatus())+"\" useRegexp = \""+useRegexp()+"\" noCoord = \""+getFilterNoCoord()+"\" />\n";	
 	}
 	/**
 	 * Ensure that all filters have the proper length so that the 'charAt' access in the filter do
@@ -180,6 +181,14 @@ public class FilterData {
 
 	public void setUseRegexp(boolean useRegexp) {
     	this.useRegexp = useRegexp;
+    }
+
+	public boolean getFilterNoCoord() {
+    	return filterNoCoord;
+    }
+
+	public void setFilterNoCoord(boolean filterNoCoord) {
+    	this.filterNoCoord = filterNoCoord;
     }
 
 }
