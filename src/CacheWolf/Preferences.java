@@ -520,6 +520,12 @@ public class Preferences extends MinML{
 			data.setFilterAttrChoice(Convert.parseInt(atts.getValue("attributesChoice")));
 			data.setFilterStatus(SafeXML.cleanback(atts.getValue("status")));
 			data.setUseRegexp(Boolean.valueOf(atts.getValue("useRegexp")).booleanValue());
+			tmp = atts.getValue("noCoord");
+			if (tmp != null) {
+			  data.setFilterNoCoord(Boolean.valueOf(tmp).booleanValue());
+      } else {
+			  data.setFilterNoCoord(true);
+      }
 			// Filter object is remembered under the given ID
 			this.addFilter(id, data);
 		}
