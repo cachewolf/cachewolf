@@ -26,7 +26,7 @@ public class FilterScreen extends Form{
 					  chkMicro,chkSmall,chkRegular,chkLarge,chkVeryLarge,chkOther,chkCito,
 	                  chkArchived, chkNotArchived, chkAvailable, chkNotAvailable,
 					  chkNW, chkNNW , chkN , chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS,
-					  chkSSW, chkSW, chkWSW, chkW, chkWNW, chkWherigo;
+					  chkSSW, chkSW, chkWSW, chkW, chkWNW, chkWherigo, chkNoCoord;
 	private mComboBox chcStatus;
 	private mChoice   fltList;
 	private mCheckBox chkUseRegexp;
@@ -110,6 +110,8 @@ public class FilterScreen extends Form{
 		pnlBearDist.addNext(chcDist = new mChoice(new String[]{"<=", ">="},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		pnlBearDist.addLast(inpDist = new mInput(),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlBearDist.addLast(new mLabel(""));
+		pnlBearDist.addLast(chkNoCoord = new mCheckBox(MyLocale.getMsg(743,"No coordinates")),CellConstants.HSTRETCH, CellConstants.FILL);
+		
 		pnlRose.addNext(chkNW = new mCheckBox("NW"),CellConstants.HSTRETCH, CellConstants.FILL);
 		pnlRose.addNext(chkNNW = new mCheckBox("NNW"),CellConstants.HSTRETCH, CellConstants.FILL);
 		pnlRose.addNext(chkN = new mCheckBox("N"),CellConstants.HSTRETCH, CellConstants.FILL);
@@ -362,6 +364,7 @@ public class FilterScreen extends Form{
 			chcDist.select(0);
 			inpDist.setText("");
 		}
+		chkNoCoord.state = data.getFilterNoCoord();
 		String fltRose=data.getFilterRose();
 		chkNW.state   = fltRose.charAt(0) == '1';
 		chkNNW.state  = fltRose.charAt(1) == '1';
@@ -492,14 +495,14 @@ public class FilterScreen extends Form{
 			  !(chkNW.state && chkNNW.state && chkN.state && chkNNE.state &&
 				chkNE.state && chkENE.state && chkE.state && chkESE.state &&
 				chkSE.state && chkSSE.state && chkS.state && chkSSW.state &&
-				chkSW.state && chkWSW.state && chkW.state && chkWNW.state))
+				chkSW.state && chkWSW.state && chkW.state && chkWNW.state && chkNoCoord.state))
 			btnBearing.backGround=COLOR_FILTERACTIVE;
 		else
 			btnBearing.backGround=COLOR_FILTERINACTIVE;
 		if (  !(chkNW.state || chkNNW.state || chkN.state || chkNNE.state ||
 				chkNE.state || chkENE.state || chkE.state || chkESE.state ||
 				chkSE.state || chkSSE.state || chkS.state || chkSSW.state ||
-				chkSW.state || chkWSW.state || chkW.state || chkWNW.state))
+				chkSW.state || chkWSW.state || chkW.state || chkWNW.state || chkNoCoord.state))
 			btnBearing.backGround=COLOR_FILTERALL;
 		btnBearing.repaint();
 		
@@ -833,6 +836,7 @@ public class FilterScreen extends Form{
 	    data.setFilterAttrChoice(chcAttrib.selectedIndex);
 	    data.setFilterStatus(chcStatus.getText());
 	    data.setUseRegexp(chkUseRegexp.getState());
+	    data.setFilterNoCoord(chkNoCoord.getState());
 	    return data;
     }
 
