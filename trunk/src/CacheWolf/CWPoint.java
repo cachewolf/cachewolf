@@ -171,7 +171,7 @@ public class CWPoint extends TrackPoint{
 					)
 		*/	
 	String crsid = null;
-	if ((coord.charAt(2)=='.') && (coord.indexOf(' ') >= 0)) { // first 2 letters = Internet domain of projected area
+	if ((coord.length()>=2) && (coord.charAt(2)=='.') && (coord.indexOf(' ') >= 0)) { // first 2 letters = Internet domain of projected area
 		crsid = coord.substring(0, coord.indexOf(' '));
 		if (TransformCoordinates.getLocalSystemCode(crsid) != -1) {
 			coord = coord.substring(coord.indexOf(' ') + 1, coord.length());
@@ -262,8 +262,12 @@ public class CWPoint extends TrackPoint{
 	 * @param utmzone
 	 */
 	public void set(String UTMNorthing, String UTMEasting, String utmzone){
-		ProjectedPoint utm = new ProjectedPoint(new CWPoint(Common.parseDouble(UTMNorthing), Common.parseDouble(UTMEasting)), utmzone, TransformCoordinates.LOCALSYSTEM_UTM_WGS84, true);
-		set(TransformCoordinates.ProjectedToWgs84(utm, TransformCoordinates.LOCALSYSTEM_UTM_WGS84, true));
+		try {
+			ProjectedPoint utm = new ProjectedPoint(new CWPoint(Common.parseDouble(UTMNorthing), Common.parseDouble(UTMEasting)), utmzone, TransformCoordinates.LOCALSYSTEM_UTM_WGS84, true);
+			set(TransformCoordinates.ProjectedToWgs84(utm, TransformCoordinates.LOCALSYSTEM_UTM_WGS84, true));
+		} catch (Exception e){
+			makeInvalid();
+		}
 	}
 
 	
@@ -297,9 +301,13 @@ public class CWPoint extends TrackPoint{
 	 * @param localCooSystem one of TransformCoordinates.LOCALSYSTEM_XXX
 	 */
 	public void set (String strNorthing, String strEasting, int localCooSystem){
-		CWPoint pp = new CWPoint(Common.parseDouble(strNorthing),Common.parseDouble(strEasting));
-		ProjectedPoint gk = new ProjectedPoint(pp, localCooSystem, true, true);
-		set(TransformCoordinates.ProjectedToWgs84(gk, localCooSystem, true));
+		try {
+			CWPoint pp = new CWPoint(Common.parseDouble(strNorthing),Common.parseDouble(strEasting));
+			ProjectedPoint gk = new ProjectedPoint(pp, localCooSystem, true, true);
+			set(TransformCoordinates.ProjectedToWgs84(gk, localCooSystem, true));
+		} catch (Exception e){
+			makeInvalid();
+		}
 	}
 
 	/**
@@ -309,9 +317,13 @@ public class CWPoint extends TrackPoint{
 	 * @param localCooSystem one of TransformCoordinates.LOCALSYSTEM_XXX which requires an explicit zone
 	 */
 	public void set (String strNorthing, String strEasting, String zone, int localCooSystem){
-		CWPoint pp = new CWPoint(Common.parseDouble(strNorthing),Common.parseDouble(strEasting));
-		ProjectedPoint gk = new ProjectedPoint(pp, zone, localCooSystem, true);
-		set(TransformCoordinates.ProjectedToWgs84(gk, localCooSystem, true));
+		try {
+			CWPoint pp = new CWPoint(Common.parseDouble(strNorthing),Common.parseDouble(strEasting));
+			ProjectedPoint gk = new ProjectedPoint(pp, zone, localCooSystem, true);
+			set(TransformCoordinates.ProjectedToWgs84(gk, localCooSystem, true));
+		} catch (Exception e){
+			makeInvalid();
+		}
 	}
 	/**
 	 * Get degrees of latitude in different formats
