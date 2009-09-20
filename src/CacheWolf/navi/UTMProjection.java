@@ -56,6 +56,7 @@ public final class UTMProjection extends Projection {
 		pp.easting = easting - 500000;
 		if (northing > 10000000) pp.northing = northing - 10000000;
 		else pp.northing = northing;
+		if (zone.length() < 1) throw new IllegalArgumentException("UTMProjection.set: zone must be set");
 		if (zone.length() > 3) throw new IllegalArgumentException("UTMProjection.set: zone must not have more than 3 letters");
 		char lastletter = zone.charAt(zone.length()-1); 
 		int zoneletter = -1;
