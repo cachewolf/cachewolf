@@ -320,13 +320,18 @@ public class DetailsPanel extends CellPanel {
 	public void setDetails(final CacheHolder ch, boolean isNew) {
 		needsTableUpdate = isNew;
 		cache = ch;
+		CacheHolder mainCache = ch;
+		if (ch.isAddiWpt() && (ch.mainCache != null)) {
+			mainCache = ch.mainCache;
+		}
 		dirtyNotes = false;
 		dirtyDetails = false;
 		inpWaypoint.setText(ch.getWayPoint());
 		inpName.setText(ch.getCacheName());
 		btnCoordinates.setText(ch.pos.toString());
-		inpHidden.setText(ch.getDateHidden());
-		inpOwner.setText(ch.getCacheOwner());
+		inpHidden.setText(mainCache.getDateHidden());
+		inpOwner.setText(mainCache.getCacheOwner());			
+
 		if (ch.getCacheStatus().length() >= 10 && ch.getCacheStatus().charAt(4) == '-') {
 			chcStatus.setText(MyLocale.getMsg(318, "Found") + " " + ch.getCacheStatus());
 		} else {
@@ -349,7 +354,7 @@ public class DetailsPanel extends CellPanel {
 		if (inpWaypoint.getText().length() == 0) {
 			createWptName();
 		}
-		if (ch.has_bugs()) {
+		if (mainCache.has_bugs()) {
 			// btnShowBug.modify(Control.Disabled,1);
 			btnShowBug.image = imgShowBug;
 		} else {
@@ -357,12 +362,10 @@ public class DetailsPanel extends CellPanel {
 			btnShowBug.image = imgShowBugNo;
 		}
 		btnShowBug.repaintNow();
-		chcSize.setInt(ch.getCacheSize());
+		chcSize.setInt(mainCache.getCacheSize());
 
 		attViewer.showImages(ch.getCacheDetails(true).attributes);
 		if (ch.isAddiWpt() || ch.isCustomWpt()) {
-			btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
-			btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
 			deactivateControl(btnTerr);
 			deactivateControl(btnDiff);
 			deactivateControl(chcSize);
@@ -370,7 +373,6 @@ public class DetailsPanel extends CellPanel {
 			deactivateControl(inpHidden);
 			deactivateControl(btnShowBug);
 			deactivateControl(btnBlack);
-			chcSize.select(0);
 		} else {
 			activateControl(btnTerr);
 			activateControl(btnDiff);
@@ -379,25 +381,33 @@ public class DetailsPanel extends CellPanel {
 			activateControl(inpHidden);
 			activateControl(btnShowBug);
 			activateControl(btnBlack);
-			if (CacheTerrDiff.isValidTD(ch.getTerrain())) {
-				btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(ch.getTerrain()));
+		}
+		
+		if (ch.isCustomWpt()) {
+			btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
+			btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
+			chcSize.select(0);
+		} else {
+			if (CacheTerrDiff.isValidTD(mainCache.getTerrain())) {
+				btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(mainCache.getTerrain()));
 			} else {
 				btnTerr.setText("T: -.-");
-				ch.setIncomplete(true);
+				mainCache.setIncomplete(true);
 				if (Global.getPref().debug) {
-					Global.getPref().log(ch.getWayPoint() + " has wrong terrain " + ch.getTerrain());
+					Global.getPref().log(mainCache.getWayPoint() + " has wrong terrain " + mainCache.getTerrain());
 				}
 			}
-			if (CacheTerrDiff.isValidTD(ch.getHard())) {
-				btnDiff.setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT(ch.getHard()));
+			if (CacheTerrDiff.isValidTD(mainCache.getHard())) {
+				btnDiff.setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT(mainCache.getHard()));
 			} else {
 				btnDiff.setText("D: -.-");
-				ch.setIncomplete(true);
+				mainCache.setIncomplete(true);
 				if (Global.getPref().debug) {
-					Global.getPref().log(ch.getWayPoint() + " has wrong difficulty " + ch.getHard());
+					Global.getPref().log(mainCache.getWayPoint() + " has wrong difficulty " + mainCache.getHard());
 				}
 			}
 		}
+		
 		int addiCount = 0;
 		if (ch.mainCache == null) {
 			addiCount = ch.addiWpts.size();
@@ -702,7 +712,9 @@ public class DetailsPanel extends CellPanel {
 			cache.setFound(chcStatus.getText().startsWith(
 					MyLocale.getMsg(318, "Found")));
 		}
-		cache.setCacheOwner(inpOwner.getText().trim());
+		if (!cache.isAddiWpt()) {
+			cache.setCacheOwner(inpOwner.getText().trim());
+		}
 		cache.setOwned(cache.getCacheStatus().equals(
 				MyLocale.getMsg(320, "Owner")));
 		// Avoid setting is_owned if alias is empty and username is empty
@@ -715,8 +727,9 @@ public class DetailsPanel extends CellPanel {
 		cache.setBlack(blackStatus);
 		final String oldWaypoint = cache.getWayPoint();
 		cache.setWayPoint(inpWaypoint.getText().toUpperCase().trim());
-		cache.setCacheSize(CacheSize.guiSizeStrings2CwSize(chcSize
-				.getText()));
+		if (!cache.isAddiWpt()) {
+			cache.setCacheSize(CacheSize.guiSizeStrings2CwSize(chcSize.getText()));
+		}
 		// If the waypoint does not have a name, give it one
 		if (cache.getWayPoint().equals("")) {
 			cache.setWayPoint(profile.getNewWayPointName());
@@ -728,7 +741,9 @@ public class DetailsPanel extends CellPanel {
 			cache.setWayPoint(cache.getWayPoint() + " ");
 		cache.setCacheName(inpName.getText().trim());
 		cache.LatLon = cache.pos.toString();
-		cache.setDateHidden(inpHidden.getText().trim());
+		if (!cache.isAddiWpt()) {
+			cache.setDateHidden(inpHidden.getText().trim());
+		}
 		final byte oldType = cache.getType();
 		cache.setType(CacheType.guiSelect2Cw(chcType.getInt()));
 		// thisCache.saveCacheDetails(profile.dataDir); // this is redundant,
@@ -759,8 +774,10 @@ public class DetailsPanel extends CellPanel {
 			// set status also on addi wpts
 			cache.setAttributesToAddiWpts();
 		}
-		cache.setHard(decodeTerrDiff(btnDiff,MyLocale.getMsg(1000, "D"),cache.isCacheWpt()));
-		cache.setTerrain(decodeTerrDiff(btnTerr,MyLocale.getMsg(1001, "T"),cache.isCacheWpt()));
+		if (!cache.isAddiWpt()) {
+			cache.setHard(decodeTerrDiff(btnDiff,MyLocale.getMsg(1000, "D"),cache.isCacheWpt()));
+			cache.setTerrain(decodeTerrDiff(btnTerr,MyLocale.getMsg(1001, "T"),cache.isCacheWpt()));
+		}
 		dirtyNotes = false;
 		dirtyDetails = false;
 		needsTableUpdate = false;
