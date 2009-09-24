@@ -44,14 +44,14 @@ public class MapsList extends Vector {
 		MessageBox f = null; 
 		// sort(new StandardComparer(), false);
 
-		
+		files = new FileBugfix(mapsPath+"/"+dirs.get(0));
 		for (int j = 0; j < dirs.size(); j++) {
-			files = new FileBugfix(mapsPath+"/"+dirs.get(j));
+			files.set(null, mapsPath+"/"+dirs.get(j));
 			//ewe.sys.Vm.debug("mapd-Dirs:"+files);
 			
 			//add subdirectories
 			if (!dirs.get(j).equals(".")) {
-				dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY);
+				dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY | File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS); // the options "File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS" make it run about twice as fast in sun-vm. The option File.LIST_IGNORE_DIRECTORY_STATUS influences only the sorting (dirs first)  
 				if (dirstmp != null) {
 					for (int subDir = 0; subDir < dirstmp.length; subDir++) {
 						dirs.add(j+1+subDir, dirs.get(j)+"/"+dirstmp[subDir]);
@@ -59,7 +59,7 @@ public class MapsList extends Vector {
 				}
 			}
 
-			dateien = files.list("*.wfl", FileBase.LIST_FILES_ONLY); //"*.xyz" doesn't work on some systems -> use FileBugFix
+			dateien = files.list("*.wfl", FileBase.LIST_FILES_ONLY | File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS); //"*.xyz" doesn't work on some systems -> use FileBugFix
 			if (dateien == null) continue;
 			for(int i = 0; i < dateien.length;i++){
 				// if (!dateien[i].endsWith(".wfl")) continue;
