@@ -43,7 +43,7 @@ public class ImagePanel extends InteractivePanel{
 	* @see MainTab#onEvent(Event ev)
 	*/
 	public void setImages(CacheHolderDetail cache){
-		if (cache!=oldCache) {
+		if (cache!=oldCache) { 
 			pref = Global.getPref();
 			profile=Global.getProfile();
 			Vm.showWait(true);

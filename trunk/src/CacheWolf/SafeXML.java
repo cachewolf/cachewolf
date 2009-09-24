@@ -15,7 +15,7 @@ public final class SafeXML{
 	private final static Hashtable iso2htmlMappings = new Hashtable(300);
 	static {
 		final String[] mappingArray = new String[] {
-				"&apos;",   "'",		// Added 20061227 - not a valid HTML entity but sometimes used
+				"&apos;",   "'",		// Added 20061227 - not a valid HTML entity but used in XML
 				"&quot;",   "\"",
 				"&amp;",    "&",
 				"&lt;",     "<",
@@ -218,10 +218,11 @@ public final class SafeXML{
     private final static String charToEntity( char c )
         {
         switch ( c ) {
-	        case 34 : return "&quot;";
-	        case 38 : return "&amp;";
-	        case 60 : return "&lt;";
-	        case 62 : return "&gt;";
+	        case '"' : return "&quot;";
+	        case '&' : return "&amp;";
+	        case '<' : return "&lt;";
+	        case '>' : return "&gt;";
+	        case '\'': return "&apos;";
             default :
                 if ( c < 127 ) {
                     // leave alone as equivalent string.
@@ -283,7 +284,7 @@ public final class SafeXML{
 		//dummy = replace(dummy, "&nbsp;", "&amp;nbsp;");
 		dummy = STRreplace.replace(dummy, "\"", "&quot;");
 		dummy = STRreplace.replace(dummy, "'","&apos;");
-		dummy = STRreplace.replace(dummy, "]]>","]] >");
+		//dummy = STRreplace.replace(dummy, "]]>","]] >"); this means changing content, it is not necessary because ">" is already replaced by "&gt;"
 
 		return dummy;
 	}
