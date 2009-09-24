@@ -278,13 +278,13 @@ public final class SafeXML{
 	public final static String cleanGPX(String str){
 		String dummy = new String();
 		
-		dummy = STRreplace.replace(str, "&","&amp;");
+		dummy = STRreplace.replace(str, "&","&amp;"); // why is this here? in a CDATA section this is not necessary, see http://de.wikipedia.org/wiki/CDATA
 		dummy = STRreplace.replace(dummy, "<", "&lt;");
 		dummy = STRreplace.replace(dummy, ">", "&gt;");
 		//dummy = replace(dummy, "&nbsp;", "&amp;nbsp;");
 		dummy = STRreplace.replace(dummy, "\"", "&quot;");
 		dummy = STRreplace.replace(dummy, "'","&apos;");
-		//dummy = STRreplace.replace(dummy, "]]>","]] >"); this means changing content, it is not necessary because ">" is already replaced by "&gt;"
+		dummy = STRreplace.replace(dummy, "]]>","]] >"); // this means changing content, but it is the easiest way of avoiding ]]> to be interpreted as endmark of CDATA-section
 
 		return dummy;
 	}
