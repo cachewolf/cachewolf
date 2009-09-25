@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.utils.CWWrapper;
 import ewe.sys.*;
 import ewe.ui.*;
@@ -18,7 +19,7 @@ public class myTableControl extends TableControl{
 	public TablePanel tbp;
 	
 	private MenuItem miOpen, miGoto, miCenter, miUnhideAddis;
-	private MenuItem miOpenOnline, miOpenOffline;
+	private MenuItem miOpenOnline, miOpenOffline, miLogOnline;
 	private MenuItem miDelete, miUpdate;
 	private MenuItem miTickAll, miUntickAll;
 	private MenuItem miSeparator;
@@ -33,7 +34,7 @@ public class myTableControl extends TableControl{
 		tbp =tablePanel;
 		allowDragSelection = false; // allow only one row to be selected at one time
 				
-		MenuItem[] mnuFull = new MenuItem[13];
+		MenuItem[] mnuFull = new MenuItem[14];
   	mnuFull[0] = miOpen = new MenuItem(MyLocale.getMsg(1021,"Open description"));
   	mnuFull[1] = miGoto = new MenuItem(MyLocale.getMsg(1010,"Goto"));
   	mnuFull[2] = miCenter = new MenuItem(MyLocale.getMsg(1019,"Center"));
@@ -41,15 +42,16 @@ public class myTableControl extends TableControl{
   	mnuFull[4] = miSeparator = new MenuItem("-");
   	mnuFull[5] = miOpenOnline = new MenuItem(MyLocale.getMsg(1020,"Open in $browser online"));
   	mnuFull[6] = miOpenOffline = new MenuItem(MyLocale.getMsg(1018,"Open in browser offline"));
-  	mnuFull[7] = miSeparator;
-  	mnuFull[8] = miDelete = new MenuItem(MyLocale.getMsg(1012,"Delete selected"));
-  	mnuFull[9] = miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update"));
-  	mnuFull[10] = miSeparator;
-  	mnuFull[11] = miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all"));
-  	mnuFull[12] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));	
+  	mnuFull[7] = miLogOnline = new MenuItem(MyLocale.getMsg(1052,"Log online in Browser"));
+  	mnuFull[8] = miSeparator;
+  	mnuFull[9] = miDelete = new MenuItem(MyLocale.getMsg(1012,"Delete selected"));
+  	mnuFull[10] = miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update"));
+  	mnuFull[11] = miSeparator;
+  	mnuFull[12] = miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all"));
+  	mnuFull[13] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));	
   	mFull = new Menu(mnuFull, MyLocale.getMsg(1013,"With selection"));
 
-  	MenuItem[] mnuSmall = new MenuItem[7];
+  	MenuItem[] mnuSmall = new MenuItem[8];
   	mnuSmall[0] = miOpen;
   	mnuSmall[1] = miGoto;
   	mnuSmall[2] = miCenter;
@@ -57,6 +59,7 @@ public class myTableControl extends TableControl{
   	mnuSmall[4] = miSeparator;
   	mnuSmall[5] = miOpenOnline;
   	mnuSmall[6] = miOpenOffline;
+  	mnuSmall[7] = miLogOnline;
   	mSmall = new Menu(mnuSmall, MyLocale.getMsg(1013,"With selection"));	
 	}
 
@@ -273,6 +276,50 @@ public class myTableControl extends TableControl{
 				sc.showCache(cacheDB.get(tbp.getSelectedCache()));
 			}
 		} else
+			
+		if (selectedItem == miLogOnline){
+			if(browserPathIsValid()){
+				ch = cacheDB.get(tbp.getSelectedCache());
+				CacheHolder mainCache = ch;
+				if (ch.isAddiWpt() && (ch.mainCache != null)) {
+					mainCache = ch.mainCache;
+				}
+				if (mainCache.isCacheWpt()) {
+					CacheHolderDetail chD=mainCache.getCacheDetails(false, true);
+					try {
+						if (chD != null) {
+							String URL = "";
+							if (ch.isOC())
+							{
+								URL = chD.URL;
+								if (URL.indexOf("viewcache") >= 0) {
+									URL = STRreplace.replace(URL, "viewcache", "log");
+								} else {
+									URL = "";
+								}
+							} else {
+								URL = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();								
+							}
+
+							if (URL.length() > 0) {
+								String notes = chD.getCacheNotes();
+								if (notes.length() > 0) {
+									Vm.setClipboardText(notes);
+								}
+								CWWrapper.exec(pref.browser, URL);
+							}
+						}
+					} catch (IOException ex) {
+						(new MessageBox(MyLocale.getMsg(321,"Error"),
+								MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +
+								MyLocale.getMsg(1035,"Possible reason:") + "\n" +
+								MyLocale.getMsg(1036,"A bug in ewe VM, please be") + "\n" +
+								MyLocale.getMsg(1037,"patient for an update"),FormBase.OKB)).execute();
+					}
+				}
+			}
+		} else
+
 		    
 		if (selectedItem == miOpen){
 			penDoubleClicked(null);
