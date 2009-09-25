@@ -230,12 +230,11 @@ public class MovingMap extends Form {
 		loadingMapList = true;
 		//this.mapPath = mapsPath;
 		InfoBox inf = new InfoBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(4203, "Loading list of maps..."));
-		if (Global.getPref().debug) {
-			Vm.showWait(this, true);
-			inf.exec();
-			inf.waitUntilPainted(100);
+		Vm.showWait(this, true);
+		inf.exec();
+		inf.waitUntilPainted(100);
+		if (Global.getPref().debug)
 			Global.getPref().log(MyLocale.getMsg(4203, "Loading list of maps..."));
-		}
 		resetCenterOfMap();
 		boolean saveGpsIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;
