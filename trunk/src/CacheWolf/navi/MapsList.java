@@ -242,9 +242,11 @@ public class MapsList extends Vector {
 	private int quickfind(String searchfor, int llimitorig, int ulimit) {
 		int llimit = llimitorig;
 		int test;
-		int comp;
-		String cmp;
+		String cmp = ((MapListEntry)this.get(llimit)).sortEntryBBox; 
+		int comp = cmp.compareTo(searchfor);
 //		int testskw = 0;
+		if ( cmp.compareTo(searchfor.substring(0, cmp.length())) > 0 ||
+			 ((MapListEntry)this.get(ulimit)).sortEntryBBox.compareTo(searchfor.substring(0, cmp.length())) < 0)
 		if ( ((MapListEntry)this.get(llimit)).getSortEntryBBox().compareTo(searchfor) > 0 ||
 			 ((MapListEntry)this.get(ulimit)).getSortEntryBBox().compareTo(searchfor) < 0)
 			return llimit; // if searchfor is not in the range, return llimit (llimit because getBestMap counts downward, so returning llimit will cause it to do only 1 test
@@ -264,6 +266,7 @@ public class MapsList extends Vector {
 				}
 			}
 		}
+		if ( comp < 0) llimit = ulimit;
 	     // if the found mapListEntry doesn't contain the searchfor, then there is no map containing it.
 		if (!searchfor.startsWith(((MapListEntry)this.get(llimit)).getSortEntryBBox())) llimit = llimitorig;
 		// Vm.debug("quickfind: testskw: " + testskw + ", searched for: " + searchfor);
@@ -511,9 +514,9 @@ public class MapsList extends Vector {
 }
 
 class MapListEntry /*implements Comparable */ {
-	private String sortEntryBBox;
+	public String sortEntryBBox;
 	//String sortEntry;
-	private String filename;
+	public String filename;
 	String path;
 	MapInfoObject map;
 	static int rename = 0;
