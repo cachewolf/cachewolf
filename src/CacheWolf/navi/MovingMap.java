@@ -23,7 +23,7 @@ import ewe.util.Vector;
 /**
  *	Class to handle a moving map.
  */
-public class MovingMap extends Form {
+public final class MovingMap extends Form {
 	public final static int gotFix = 4; //green
 	public final static int lostFix = 3; //yellow
 	public final static int noGPSData = 2; // red
