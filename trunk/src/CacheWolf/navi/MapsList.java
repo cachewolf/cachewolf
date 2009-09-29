@@ -226,7 +226,7 @@ public final class MapsList extends Vector {
 			if ( ((MapListEntry)get(i)).sortEntryBBox.length() > numdigits) {
 				numDigitsStartIndex[digits_index] = i;
 				digits_index++;
-				numdigits = ((MapListEntry)get(i)).getSortEntryBBox().length();
+				numdigits = ((MapListEntry)get(i)).sortEntryBBox.length();
 			}
 		}
 		numDigitsStartIndex[digits_index] = s;
