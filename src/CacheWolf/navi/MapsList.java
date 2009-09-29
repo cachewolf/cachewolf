@@ -14,7 +14,6 @@ import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.Comparer;
-import ewe.util.SubString;
 import ewe.util.Vector;
 import ewe.fx.*;
 /**
@@ -24,7 +23,7 @@ import ewe.fx.*;
  * start offset for language file: 4700
  *
  */
-public class MapsList extends Vector {
+public final class MapsList extends Vector {
 	public static float scaleTolerance = 1.15f; // absolute deviations from this factor are seen to have the same scale
 
 	/**
@@ -68,7 +67,7 @@ public class MapsList extends Vector {
 					if (dirs.get(j).equals(".")) // the notation dir/./filename doesn't work on all platforms anyhow
 						tempMIO = new MapListEntry(mapsPath+"/", rawFileName);
 					else tempMIO = new MapListEntry(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
-					if (tempMIO.getSortEntryBBox() != null) add(tempMIO);
+					if (tempMIO.sortEntryBBox != null) add(tempMIO);
 					//ewe.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
 				}catch(Exception ex){ // TODO exception ist, glaub ich evtl überflüssig
 					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), FormBase.OKB)).exec();
@@ -118,7 +117,7 @@ public class MapsList extends Vector {
 		boolean showprogress = false;
 		String cmp = "FF1"+Area.getEasyFindString(ll, MAXDIGITS_IN_FF);
 		int guess = -1;
-		int foundkw = -1;
+//		int foundkw = -1;
 		MapListEntry ml;
 		MapInfoObject mi;
 		MapInfoObject bestMap = null; // = (MapInfoObject)get(0);
@@ -146,7 +145,7 @@ public class MapsList extends Vector {
 				}
 				ml = (MapListEntry)get(i);
 				try {
-					if (!Area.containsRoughly(ml.getSortEntryBBox(), cmp)) break; // TODO if no map available
+					if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) break; // TODO if no map available
 					else { mi = ml.getMap(); /* testkw++; */}
 				} catch (IOException ex) {continue; } // could not read .wfl-file
 				better = false;
@@ -212,8 +211,8 @@ public class MapsList extends Vector {
 				new Comparer()
 				{
 					public int compare(Object o1, Object o2){
-						String s1 = ((MapListEntry)o1).getSortEntryBBox();
-						String s2 = ((MapListEntry)o2).getSortEntryBBox();
+						String s1 = ((MapListEntry)o1).sortEntryBBox;
+						String s2 = ((MapListEntry)o2).sortEntryBBox;
 						int ret = s1.length() - s2.length(); // sort shorter sortEntryBBox at the beginning
 						if (ret == 0) ret = s1.compareTo(s2);
 						return ret;
@@ -224,7 +223,7 @@ public class MapsList extends Vector {
 		int numdigits = 0;
 		int s = size(); // avoid calling size() for each MaplistEntry (could be some thousand times)
 		for (int i = 0; i < s; i++) {
-			if ( ((MapListEntry)get(i)).getSortEntryBBox().length() > numdigits) {
+			if ( ((MapListEntry)get(i)).sortEntryBBox.length() > numdigits) {
 				numDigitsStartIndex[digits_index] = i;
 				digits_index++;
 				numdigits = ((MapListEntry)get(i)).getSortEntryBBox().length();
@@ -235,26 +234,26 @@ public class MapsList extends Vector {
 	}
 
 	/**
-	 *
-	 * @param searchfor String starting with FFE1, it should be longer than any sortEntryBoxString in the list
-	 * @return the highest index which matches the searchfor-String. Look downward from there to find the best map, llimit if there is no match
+	 * @param llimitorig lower limit to start the search from
+	 * @param ulimit upper limit to stop the search. llimit and ulimit must be set in a way that
+	 * the sortEntryBBox of each entry betwenn the limits have the same length
+	 * @param searchfor String starting with FF1, it should be longer than any sortEntryBoxString in the list
+	 * @return the highest index which matches the searchfor-String. Look downward from there to find the best map, returns llimit if there is no match
 	 */
 	private int quickfind(String searchfor, int llimitorig, int ulimit) {
 		int llimit = llimitorig;
 		int test;
-		String cmp = ((MapListEntry)this.get(llimit)).sortEntryBBox; 
-		int comp = cmp.compareTo(searchfor);
+		String cmp = ((MapListEntry)this.get(llimit)).sortEntryBBox;
+		String sshort = searchfor.substring(0, cmp.length());
+		int comp;
 //		int testskw = 0;
-		if ( cmp.compareTo(searchfor.substring(0, cmp.length())) > 0 ||
-			 ((MapListEntry)this.get(ulimit)).sortEntryBBox.compareTo(searchfor.substring(0, cmp.length())) < 0)
-		if ( ((MapListEntry)this.get(llimit)).getSortEntryBBox().compareTo(searchfor) > 0 ||
-			 ((MapListEntry)this.get(ulimit)).getSortEntryBBox().compareTo(searchfor) < 0)
+		if ( cmp.compareTo(sshort) > 0 ||
+			 ((MapListEntry)this.get(ulimit)).sortEntryBBox.compareTo(sshort) < 0)
 			return llimit; // if searchfor is not in the range, return llimit (llimit because getBestMap counts downward, so returning llimit will cause it to do only 1 test
 		while (ulimit - llimit > 1) {
 	//		testskw++;
 			test = (ulimit + llimit) / 2;
-			cmp = ((MapListEntry)this.get(test)).getSortEntryBBox();
-
+			cmp = ((MapListEntry)this.get(test)).sortEntryBBox;
 			comp = cmp.compareTo(searchfor);
 			if ( comp > 0 ) { // test > searchfor
 				ulimit = test;
@@ -265,10 +264,14 @@ public class MapsList extends Vector {
 					ulimit = test;
 				}
 			}
-		}
-		if ( comp < 0) llimit = ulimit;
-	     // if the found mapListEntry doesn't contain the searchfor, then there is no map containing it.
-		if (!searchfor.startsWith(((MapListEntry)this.get(llimit)).getSortEntryBBox())) llimit = llimitorig;
+		} // searchfor is between llimit and ulimit OR is at ulimit or higher OR at llimit or lower 
+		// we want to return the highest index of the map which starts with searchfor 
+		comp = ((MapListEntry)this.get(ulimit)).sortEntryBBox.compareTo(searchfor);
+		if ( (comp <= 0) && searchfor.startsWith(((MapListEntry)this.get(ulimit)).sortEntryBBox) ) 
+			llimit = ulimit; // search for is on ulimit or higher
+	     
+		if (!searchfor.startsWith(((MapListEntry)this.get(llimit)).sortEntryBBox)) 
+			llimit = llimitorig; // if the found mapListEntry doesn't contain the searchfor, then there is no map containing it.
 		// Vm.debug("quickfind: testskw: " + testskw + ", searched for: " + searchfor);
 		return llimit;
 	}
@@ -304,7 +307,7 @@ public class MapsList extends Vector {
 			}
 			ml = (MapListEntry)get(i);
 			try {
-				if (!Area.containsRoughly(ml.getSortEntryBBox(), cmp)) continue; // TODO if no map available
+				if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
 				else { mi = ml.getMap();}
 			} catch (IOException ex) {continue; } // could not read .wfl-file
 			better = false;
@@ -374,7 +377,7 @@ public class MapsList extends Vector {
 			better = false;
 			ml = (MapListEntry)get(i);
 			try {
-				if (!Area.containsRoughly(ml.getSortEntryBBox(), cmp)) continue; // TODO if no map available
+				if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
 				else { mi = ml.getMap();}
 			} catch (IOException ex) {continue; } // could not read .wfl-file
 			if (mi.fileNameWFL == "") continue; // exclude "maps" without image // TODO make this a boolean in MapInfoObject
@@ -513,12 +516,13 @@ public class MapsList extends Vector {
 	
 }
 
-class MapListEntry /*implements Comparable */ {
+final class MapListEntry /*implements Comparable */ {
 	public String sortEntryBBox;
 	//String sortEntry;
 	public String filename;
 	String path;
 	MapInfoObject map;
+	
 	static int rename = 0;
 	static int renameCounter = 0;
 	static InfoBox renameProgressInfoB = null;
@@ -539,7 +543,7 @@ class MapListEntry /*implements Comparable */ {
 		try {
 			if (filenamei.startsWith("FF1")) sortEntryBBox = filenamei.substring(0, filenamei.indexOf("E-"));
 		} catch (IndexOutOfBoundsException ex) {
-			Global.getPref().log("Ignored Exception", ex, true);
+			// Global.getPref().log("Ignored Exception", ex, true);
 		}
 		if (sortEntryBBox == null ) { //|| sortEntryScaleCenterPx.length() < 16) {
 			try {
@@ -611,13 +615,5 @@ class MapListEntry /*implements Comparable */ {
 		if (other == null) return 1;
 		return this.sortEntryBBox.compareTo(((MapListEntry)other).sortEntryBBox);
 	} */
-
-	public String getSortEntryBBox() {
-		return sortEntryBBox;
-	}
-
-	public String getFilename() {
-		return filename;
-	}
 }
 
