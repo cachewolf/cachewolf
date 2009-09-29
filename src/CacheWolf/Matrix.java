@@ -2,7 +2,7 @@ package CacheWolf;
 
 import ewe.sys.*;
 
-public class Matrix{
+public final class Matrix{
 	int iDF = 0;
 	
 	public double matrix[][] = new double[0][0];
