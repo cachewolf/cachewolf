@@ -983,7 +983,7 @@ public final class MovingMap extends Form {
 		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
 		//Vm.debug("updatepos, lat: "+where.latDec+" lon: "+where.lonDec);
 		if (!mapsloaded || !this.maps.getMapsPath().equals(Global.getPref().getCustomMapsPath())) {
-			loadMaps(Global.getPref().getMapLoadPath(), where.latDec);
+			loadMaps(Global.getPref().getCustomMapsPath(), where.latDec);
 			lastCompareX = Integer.MAX_VALUE;
 			lastCompareY = Integer.MAX_VALUE;
 			autoSelectMap = true;
@@ -2169,7 +2169,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							fc.setTitle(MyLocale.getMsg(4200,"Select map directory:"));
 							if(fc.execute() != FormBase.IDCANCEL){
 								Global.getPref().saveCustomMapsPath(fc.getChosen().toString());
-								mm.loadMaps(Global.getPref().getMapLoadPath(), mm.posCircle.where.latDec);
+								mm.loadMaps(Global.getPref().getCustomMapsPath(), mm.posCircle.where.latDec);
 								mm.forceMapLoad();
 							}
 						}

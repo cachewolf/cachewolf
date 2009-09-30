@@ -666,12 +666,11 @@ public class Preferences extends MinML{
 	 * @return custom Maps Path, null if not set
 	 */
 	public String getCustomMapsPath() {
-	   String s = Global.getProfile().getRelativeCustomMapsPath();
-	   if (s.equals("")) {
+	   String rCMP = Global.getProfile().getRelativeCustomMapsPath();
+	   if (rCMP.equals("")) {
 		   return customMapsPath;
 		} else {
-			String t = absoluteBaseDir+"maps";
-			return t+s;
+			return absoluteBaseDir+"maps"+rCMP;
 		}
 	}
 	
