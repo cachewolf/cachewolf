@@ -53,9 +53,24 @@ public class Area {
 				 // in case this is completly within a, the above tests will give false, so testing the otherway around
 				 || a.isInBound(this.topleft) || a.isInBound(this.buttomright)
 				 || a.isInBound(this.buttomright.latDec, this.topleft.lonDec) // buttom left
-				 || a.isInBound(this.topleft.latDec, this.buttomright.lonDec)) // top right
+				 || a.isInBound(this.topleft.latDec, this.buttomright.lonDec) // top right
+			 // no point is inbound, but the areas are crossing
+			 	 || crossingVertically(a) // TODO maybe these two tests are making all the previous ones redundant
+			 	 || a.crossingVertically(this)
+			 )
 			 return true;
 		 else return false;
+	 }
+	 
+	 // test if this is a vertical stripe overlapping a
+	 private boolean crossingVertically(Area a) {
+		 return ( 
+	 			   		(a.topleft.lonDec <= this.topleft.lonDec     && this.topleft.lonDec     <= a.buttomright.lonDec)
+		 			 || (a.topleft.lonDec <= this.buttomright.lonDec && this.buttomright.lonDec <= a.buttomright.lonDec)
+		 			 ) && (
+		 					   (this.topleft.latDec >= a.topleft.latDec     && a.topleft.latDec     >= this.buttomright.latDec)
+		 				    || (this.topleft.latDec >= a.buttomright.latDec && a.buttomright.latDec >= this.buttomright.latDec)
+		 				   );
 	 }
 
 	 public boolean equals(Area a) {
