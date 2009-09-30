@@ -149,6 +149,17 @@ public final class Common {
 		}
 		return sb.toString();
 	}
+	
+	/**
+	 * right pad with spaces
+	 * @param s
+	 * @param length
+	 * @return
+	 */
+	public static String rightPad(String s, int length) {
+		String p = "                                                          ";
+		return s + p.substring(s.length()+(p.length()-length));
+	}
 
 
 }
