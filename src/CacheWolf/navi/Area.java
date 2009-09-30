@@ -28,7 +28,6 @@ public class Area {
 				 && buttomright.latDec <= p.latDec && buttomright.lonDec >= p.lonDec) return true;
 		 else return false;
 	 }
-	 //if(affine[4] >= lati && lati >= lowlat && affine[5] <= loni && loni <= lowlon) isInBound = true;
 		
 	 public boolean isInBound(double lat, double lon) {
 		 if (topleft.latDec >= lat && topleft.lonDec <= lon
@@ -47,32 +46,13 @@ public class Area {
 	 
 	 
 	 public boolean isOverlapping(Area a) {
-		 if (       isInBound(a.topleft) || isInBound(a.buttomright) 
-				 || isInBound(a.buttomright.latDec, a.topleft.lonDec) // buttom left
-				 || isInBound(a.topleft.latDec, a.buttomright.lonDec) // top right
-				 // in case this is completly within a, the above tests will give false, so testing the otherway around
-				 || a.isInBound(this.topleft) || a.isInBound(this.buttomright)
-				 || a.isInBound(this.buttomright.latDec, this.topleft.lonDec) // buttom left
-				 || a.isInBound(this.topleft.latDec, this.buttomright.lonDec) // top right
-			 // no point is inbound, but the areas are crossing
-			 	 || crossingVertically(a) // TODO maybe these two tests are making all the previous ones redundant
-			 	 || a.crossingVertically(this)
-			 )
-			 return true;
-		 else return false;
+		 return ! ( // test if not overlapping and invert the result, see http://www.geoclub.de/viewtopic.php?f=40&t=38364&p=607033#p607033
+				    this.buttomright.latDec > a.topleft.latDec
+				 || this.topleft.latDec     < a.buttomright.latDec
+				 || this.buttomright.lonDec < a.topleft.lonDec
+				 || this.topleft.lonDec     > a.buttomright.lonDec);
 	 }
 	 
-	 // test if this is a vertical stripe overlapping a
-	 private boolean crossingVertically(Area a) {
-		 return ( 
-	 			   		(a.topleft.lonDec <= this.topleft.lonDec     && this.topleft.lonDec     <= a.buttomright.lonDec)
-		 			 || (a.topleft.lonDec <= this.buttomright.lonDec && this.buttomright.lonDec <= a.buttomright.lonDec)
-		 			 ) && (
-		 					   (this.topleft.latDec >= a.topleft.latDec     && a.topleft.latDec     >= this.buttomright.latDec)
-		 				    || (this.topleft.latDec >= a.buttomright.latDec && a.buttomright.latDec >= this.buttomright.latDec)
-		 				   );
-	 }
-
 	 public boolean equals(Area a) {
 		 if(java.lang.Math.abs(topleft.latDec - a.topleft.latDec) < edgeTolerance 
 				 && java.lang.Math.abs(topleft.lonDec - a.topleft.lonDec) < edgeTolerance
