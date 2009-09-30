@@ -997,57 +997,57 @@ public final class MovingMap extends Form {
 					|| (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
 				// more then 1/10 of screen moved since last time we tried to
 				// find a better map
-
-				// Clean up any additional images, tiles will removed and any
-				// other item be added again later
-				Vector icons = new Vector();
-				for (Iterator i = mmp.images.iterator(); i.hasNext();) {
-					AniImage im = (AniImage) i.next();
-					if ((im instanceof MapImage)
-							&& (!((im instanceof MapSymbol)
-									|| (im instanceof TrackOverlay) || mmp.mapImage == im))) {
-						i.remove();
-					} else {
-						icons.add(im);
-						i.remove();
-					}
-				}
-				// Mark all tiles as dirty
-				MovingMapCache.getCache().clearUsedFlags();
-
 				Point mapPosx = getMapPositionOnScreen();
-				// Holds areas not filled by currentmap and/or used tiles
-				Vector rectangles = new Vector();
-				// calculate areas which will not drawn
-				Rect whiteArea = new Rect((int)(-width/10), (int)(-height/10), (int)(width*1.1), (int)(height*1.1));
-				Rect blackArea = new Rect(mapPosx.x, mapPosx.y, mmp.mapImage
-						.getWidth(), mmp.mapImage.getHeight());
-				calculateRectangles(blackArea, whiteArea, rectangles);
-				// I've sometimes experienced an endless loop which might be
-				// caused by a bug in getBestMap. Therefore i will stop the loop
-				// after 30 runs
-				int count = 0;
-				while (isFillWhiteArea() && currentMap.zoomFactor == 1.0
-						&& !mapHidden && !rectangles.isEmpty() && count < 30) {
-					count++;
-					try {
-						updateTileForWhiteArea(rectangles);
-					} catch (ewe.sys.SystemResourceException sre) {
-						setFillWhiteArea(false);
-						(new MessageBox(
-								"Error",
-								"Not enough ressources to fill white ares, disabling this",
-								MessageBox.OKB)).execute();
+				if (isFillWhiteArea()) {
+					// Clean up any additional images, tiles will removed and any
+					// other item be added again later
+					Vector icons = new Vector();
+					for (Iterator i = mmp.images.iterator(); i.hasNext();) {
+						AniImage im = (AniImage) i.next();
+						if ((im instanceof MapImage)
+								&& (!((im instanceof MapSymbol)
+										|| (im instanceof TrackOverlay) || mmp.mapImage == im))) {
+							i.remove();
+						} else {
+							icons.add(im);
+							i.remove();
+						}
+					}
+					// Mark all tiles as dirty
+					MovingMapCache.getCache().clearUsedFlags();
+
+					// Holds areas not filled by currentmap and/or used tiles
+					Vector rectangles = new Vector();
+					// calculate areas which will not drawn
+					Rect whiteArea = new Rect((int)(-width/10), (int)(-height/10), (int)(width*1.1), (int)(height*1.1));
+					Rect blackArea = new Rect(mapPosx.x, mapPosx.y, mmp.mapImage
+							.getWidth(), mmp.mapImage.getHeight());
+					calculateRectangles(blackArea, whiteArea, rectangles);
+					// I've sometimes experienced an endless loop which might be
+					// caused by a bug in getBestMap. Therefore i will stop the loop
+					// after 30 runs
+					int count = 0;
+					while (isFillWhiteArea() && currentMap.zoomFactor == 1.0
+							&& !mapHidden && !rectangles.isEmpty() && count < 30) {
+						count++;
+						try {
+							updateTileForWhiteArea(rectangles);
+						} catch (ewe.sys.SystemResourceException sre) {
+							setFillWhiteArea(false);
+							(new MessageBox(
+									"Error",
+									"Not enough ressources to fill white ares, disabling this",
+									MessageBox.OKB)).execute();
+						}
+					}
+					// Remove all tiles not needed from the cache to reduce memory
+					MovingMapCache.getCache().cleanCache();
+					// At Last redraw all icons on the map
+					for (Iterator i = icons.iterator(); i.hasNext();) {
+						AniImage im = (AniImage) i.next();
+						mmp.addImage(im);
 					}
 				}
-				// Remove all tiles not needed from the cache to reduce memory
-				MovingMapCache.getCache().cleanCache();
-				// At Last redraw all icons on the map
-				for (Iterator i = icons.iterator(); i.hasNext();) {
-					AniImage im = (AniImage) i.next();
-					mmp.addImage(im);
-				}
-
 				lastCompareX = mapPos.x;
 				lastCompareY = mapPos.y;
 				setBestMap(where, screenNotCompletlyCovered);
