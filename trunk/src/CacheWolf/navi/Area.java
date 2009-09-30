@@ -3,15 +3,16 @@ package CacheWolf.navi;
 import CacheWolf.CWPoint;
 
 public class Area {
+	/* not used
 	 public final static int NOT_ON_EDGE = -1;
 	 public final static int AT_TOP_EDGE = 1;
 	 public final static int AT_RIGHT_EDGE = 2;
 	 public final static int AT_BUTTOM_EDGE = 3;
 	 public final static int AT_LEFT_EDGE = 4;
 	 public static double edgeTolerance = 3 * 360/40000000; // approx 3m will be seen as the same
-
-	 CWPoint topleft;
-	 CWPoint buttomright;
+*/
+	 public CWPoint topleft;
+	 public CWPoint buttomright;
 	 
 	 public Area() {
 		 topleft = new CWPoint();
@@ -23,13 +24,13 @@ public class Area {
 		 buttomright = new CWPoint(br);
 	 }
 
-	 public boolean isInBound(TrackPoint p) {
+	 public final boolean isInBound(TrackPoint p) {
 		 if (topleft.latDec >= p.latDec && topleft.lonDec <= p.lonDec 
 				 && buttomright.latDec <= p.latDec && buttomright.lonDec >= p.lonDec) return true;
 		 else return false;
 	 }
 		
-	 public boolean isInBound(double lat, double lon) {
+	 public final boolean isInBound(double lat, double lon) {
 		 if (topleft.latDec >= lat && topleft.lonDec <= lon
 				 && buttomright.latDec <= lat && buttomright.lonDec >= lon) return true;
 		 else return false;
@@ -40,12 +41,12 @@ public class Area {
 	 * @param a
 	 * @return
 	 */
-	 public boolean isInBound(Area a) {
+	 public final boolean isInBound(Area a) {
 		 return (isInBound(a.topleft) && isInBound(a.buttomright));
 	 }
 	 
 	 
-	 public boolean isOverlapping(Area a) {
+	 public final boolean isOverlapping(Area a) {
 		 return ! ( // test if not overlapping and invert the result, see http://www.geoclub.de/viewtopic.php?f=40&t=38364&p=607033#p607033
 				    this.buttomright.latDec > a.topleft.latDec
 				 || this.topleft.latDec     < a.buttomright.latDec
@@ -53,7 +54,8 @@ public class Area {
 				 || this.topleft.lonDec     > a.buttomright.lonDec);
 	 }
 	 
-	 public boolean equals(Area a) {
+	 /* not used at the moment
+	  public boolean equals(Area a) {
 		 if(java.lang.Math.abs(topleft.latDec - a.topleft.latDec) < edgeTolerance 
 				 && java.lang.Math.abs(topleft.lonDec - a.topleft.lonDec) < edgeTolerance
 				 && java.lang.Math.abs(buttomright.latDec - a.buttomright.latDec) < edgeTolerance
@@ -61,7 +63,9 @@ public class Area {
 			 return true;
 		 else return false;
 	 }
+	 */
 	 
+	 /* not used at the moment
 	 public int getEdge(CWPoint tl, CWPoint br) {
 		 if (java.lang.Math.abs(topleft.latDec - br.latDec) < edgeTolerance 
 				 && java.lang.Math.abs(topleft.lonDec - tl.lonDec) < edgeTolerance 
@@ -81,12 +85,13 @@ public class Area {
 				 return AT_LEFT_EDGE;
 			 return NOT_ON_EDGE;
 	 }
-	 
+	 */
+	  
 	 /**
 	  * get an easy find string for this area
 	  * @return
 	  */
-	 public String getEasyFindString() {
+	 public final String getEasyFindString() {
 		 String ul = getEasyFindString(topleft, 30);
 		 String br = getEasyFindString(buttomright, 30);
 		 int i;
@@ -102,7 +107,7 @@ public class Area {
 	  * @param prec number of digits to return, min 2, max: 30
 	  * @return
 	  */
-	 public static String getEasyFindString(CWPoint p, int prec) {
+	 public static final String getEasyFindString(CWPoint p, int prec) {
 		 double longinrange = p.lonDec;
 		 if (longinrange > 180) longinrange -= 180;
 		 int lat = (int) (((p.latDec+90d)/180d) * (1 << (prec)));
@@ -119,7 +124,7 @@ public class Area {
 		 return ret;
 	 }
 	 
-	 static public boolean containsRoughly(String boundingbox, String q) {
+	 public static final boolean containsRoughly(String boundingbox, String q) {
 		 if (boundingbox.length() <= q.length() ) return q.startsWith(boundingbox);
 		 else return boundingbox.startsWith(q);
 	 }
@@ -128,7 +133,7 @@ public class Area {
 		 return topleft.toString() + ", " + buttomright.toString();
 	 }
 	 
-	 public CWPoint getCenter() {
+	 public final CWPoint getCenter() {
 		 return new CWPoint((topleft.latDec + buttomright.latDec)/2, (topleft.lonDec + buttomright.lonDec)/2);
 	 }
 }
