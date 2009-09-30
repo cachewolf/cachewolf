@@ -97,6 +97,16 @@ public final class MovingMap extends Form {
 
 	public void setFillWhiteArea(boolean fillWhiteArea) {
 		pref.fillWhiteArea = fillWhiteArea;
+		if (!fillWhiteArea) { // remove tiles from panel
+			for (int i = mmp.images.size() -1; i >= 0; i--) {
+				AniImage im = (AniImage) mmp.images.get(i);
+				if ((im instanceof MapImage)
+						&& (!((im instanceof MapSymbol)
+								|| (im instanceof TrackOverlay) || mmp.mapImage == im))) {
+					mmp.images.remove(im);
+				} 
+			}
+		}
 	}
 
 	public MovingMap(Navigate nav, CacheDB cacheDB){
@@ -1022,7 +1032,7 @@ public final class MovingMap extends Form {
 					Point mapPosx = getMapPositionOnScreen();
 					if ( screenNotCompletlyCovered && ( // screen not completely covered is only used, because it is already calculated
 							mapPosx.x > this.width || mapPosx.y > this.height // map doesn't overlap with the screen
-							|| mapPosx.x - mmp.mapImage.getWidth() < 0 || mapPosx.y - mmp.mapImage.getHeight() < 0) ) {
+							|| mapPosx.x + mmp.mapImage.getWidth() < 0 || mapPosx.y + mmp.mapImage.getHeight() < 0) ) {
 						rectangles.add(new Rect(0,0, this.width, this.height)); // if the map is completely outside the screen, just fill the screen, nit all the space beteween the map and the screen
 					} else {
 						Rect whiteArea = new Rect((int)(-width/10), (int)(-height/10), (int)(width*1.1), (int)(height*1.1));
