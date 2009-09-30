@@ -285,55 +285,61 @@ public final class MapsList extends Vector {
 	 * if topleft is really topleft or if it is buttomright is not relevant.
 	 */
 
-	public MapInfoObject getMapForArea(CWPoint topleft, CWPoint bottomright){
+	public final MapInfoObject getMapForArea(CWPoint topleft, CWPoint bottomright){
 		long start = new Time().getTime();
 		InfoBox progressBox = null;
 		boolean showprogress = false;
 		MapListEntry ml;
 		MapInfoObject mi;
 		String cmp = "FF1"+(new Area(topleft, bottomright)).getEasyFindString();
+		String cmppadded = Common.rightPad(cmp, 30);
 		MapInfoObject fittingmap = null;
+		int guess;
 		boolean latNearer, lonNearer;
 		boolean better;
 		double minDistLat = 10000000000000000000000.0;
 		double minDistLon = 10000000000000000000000.0;
-		for (int i=size() -1; i>=0 ;i--) {
-			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
-				showprogress = true;
-				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
-				progressBox.exec();
-				progressBox.waitUntilPainted(100);
-				ewe.sys.Vm.showWait(true);
-			}
-			ml = (MapListEntry)get(i);
-			try {
-				if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
-				else { mi = ml.getMap();}
-			} catch (IOException ex) {continue; } // could not read .wfl-file
-			better = false;
-			if (mi.isInBound(topleft) && mi.isInBound(bottomright)) { // both points are inside the map
-				if (fittingmap == null || fittingmap.scale > mi.scale * scaleTolerance) {
-					better = true; // mi map has a better (lower) scale than the last knwon good map
-				} else {
-					if (scaleEquals(mi, fittingmap)) { // same scale as bestmap till now -> test if its center is nearer to the gps-point = topleft
-						latNearer = java.lang.Math.abs(topleft.latDec- mi.center.latDec)/mi.sizeKm < minDistLat ;
-						lonNearer = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
-						if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
-						else {
-							if ( (latNearer || lonNearer )) {
-								if (mi.center.getDistanceRad(topleft) < fittingmap.center.getDistanceRad(topleft) ) better = true;
+		for (int digitlength = 0; digitlength < maxDigits; digitlength++) {
+			guess = quickfind(cmppadded, this.numDigitsStartIndex[digitlength], this.numDigitsStartIndex[digitlength+1]-1);
+			if ( ((MapListEntry)get(guess)).sortEntryBBox.length() > cmp.length() ) break; // if the sortEntryBBox indicates that it cannot contain both points, stop searching
+			for (int i=guess; i >= numDigitsStartIndex[digitlength] ;i--) {
+				if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
+					showprogress = true;
+					progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
+					progressBox.exec();
+					progressBox.waitUntilPainted(100);
+					ewe.sys.Vm.showWait(true);
+				}
+				ml = (MapListEntry)get(i);
+				try {
+					if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
+					else { mi = ml.getMap();}
+				} catch (IOException ex) {continue; } // could not read .wfl-file
+				better = false;
+				if (mi.isInBound(topleft) && mi.isInBound(bottomright)) { // both points are inside the map
+					if (fittingmap == null || fittingmap.scale > mi.scale * scaleTolerance) {
+						better = true; // mi map has a better (lower) scale than the last knwon good map
+					} else {
+						if (scaleEquals(mi, fittingmap)) { // same scale as bestmap till now -> test if its center is nearer to the gps-point = topleft
+							latNearer = java.lang.Math.abs(topleft.latDec- mi.center.latDec)/mi.sizeKm < minDistLat ;
+							lonNearer = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
+							if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
+							else {
+								if ( (latNearer || lonNearer )) {
+									if (mi.center.getDistanceRad(topleft) < fittingmap.center.getDistanceRad(topleft) ) better = true;
+								}
 							}
-						}
 
+						}
+					}
+					if (better) {
+						fittingmap = mi;
+						minDistLat = java.lang.Math.abs(topleft.latDec - mi.center.latDec);
+						minDistLon = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec);
 					}
 				}
-				if (better) {
-					fittingmap = mi;
-					minDistLat = java.lang.Math.abs(topleft.latDec - mi.center.latDec);
-					minDistLon = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec);
-				}
-			}
-		} // for
+			} // for i
+		} // for digitlength
 		if (progressBox != null) {
 			progressBox.close(0);
 			ewe.sys.Vm.showWait(false);
