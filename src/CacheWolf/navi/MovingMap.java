@@ -985,10 +985,10 @@ public final class MovingMap extends Form {
 
 		if (!autoSelectMap) return;
 		Point mapPos = getMapPositionOnScreen();
-		boolean screenNotCompletlyCovered = mmp.mapImage == null
-				|| (mmp.mapImage != null && (mapPos.y > 0 || mapPos.x > 0
-						|| mapPos.y + mmp.mapImage.getHeight() < this.height || mapPos.x
-						+ mmp.mapImage.getWidth() < this.width));
+		boolean screenNotCompletlyCovered = (mmp.mapImage == null)
+				|| (mmp.mapImage != null && (
+				   mapPos.y > 0                                      || mapPos.x                           > 0
+				|| mapPos.y + mmp.mapImage.getHeight() < this.height || mapPos.x + mmp.mapImage.getWidth() < this.width));
 		//if screendimensions changed also force reload of map
 		forceMapLoad |= lastWidth != width || lastHeight != height;
 		if (forceMapLoad || wantMapTest || screenNotCompletlyCovered) { // if force || want || map doesn't cover the screen completly
@@ -997,7 +997,7 @@ public final class MovingMap extends Form {
 					|| (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
 				// more then 1/10 of screen moved since last time we tried to
 				// find a better map
-				Point mapPosx = getMapPositionOnScreen();
+						
 				if (isFillWhiteArea()) {
 					// Clean up any additional images, tiles will removed and any
 					// other item be added again later
@@ -1019,10 +1019,16 @@ public final class MovingMap extends Form {
 					// Holds areas not filled by currentmap and/or used tiles
 					Vector rectangles = new Vector();
 					// calculate areas which will not drawn
-					Rect whiteArea = new Rect((int)(-width/10), (int)(-height/10), (int)(width*1.1), (int)(height*1.1));
-					Rect blackArea = new Rect(mapPosx.x, mapPosx.y, mmp.mapImage
-							.getWidth(), mmp.mapImage.getHeight());
-					calculateRectangles(blackArea, whiteArea, rectangles);
+					Point mapPosx = getMapPositionOnScreen();
+					if ( screenNotCompletlyCovered && ( // screen not completely covered is only used, because it is already calculated
+							mapPosx.x > this.width || mapPosx.y > this.height // map doesn't overlap with the screen
+							|| mapPosx.x - mmp.mapImage.getWidth() < 0 || mapPosx.y - mmp.mapImage.getHeight() < 0) ) {
+						rectangles.add(new Rect(0,0, this.width, this.height)); // if the map is completely outside the screen, just fill the screen, nit all the space beteween the map and the screen
+					} else {
+						Rect whiteArea = new Rect((int)(-width/10), (int)(-height/10), (int)(width*1.1), (int)(height*1.1));
+						Rect blackArea = new Rect(mapPosx.x, mapPosx.y, mmp.mapImage.getWidth(), mmp.mapImage.getHeight());
+						calculateRectangles(blackArea, whiteArea, rectangles);
+					}
 					// I've sometimes experienced an endless loop which might be
 					// caused by a bug in getBestMap. Therefore i will stop the loop
 					// after 30 runs
