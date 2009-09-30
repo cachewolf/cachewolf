@@ -299,7 +299,7 @@ public class Profile {
 					setDistOC(text.substring(start,text.indexOf("\"",start)));
 				} else if (text.indexOf("mapspath")>=0) {
 					int start=text.indexOf("relativeDir = \"")+15;
-					setRelativeCustomMapsPath(text.substring(start,text.indexOf("\"",start)));
+					setRelativeCustomMapsPath(SafeXML.cleanback(text.substring(start,text.indexOf("\"",start))).replace('\\','/'));
 				} else if (text.indexOf("<SPIDERGC")>=0) {
 					int start=text.indexOf("dist = \"")+8;
 					setDistGC(text.substring(start,text.indexOf("\"",start)));
@@ -790,10 +790,9 @@ public class Profile {
 		return relativeCustomMapsPath;
 	}
 	
-	public void setRelativeCustomMapsPath(String relativeCustomMapsPath) {
-		relativeCustomMapsPath=SafeXML.clean(relativeCustomMapsPath.replace('\\','/'));
-		this.notifyUnsavedChanges(!relativeCustomMapsPath.equals(this.relativeCustomMapsPath));
-		this.relativeCustomMapsPath = relativeCustomMapsPath;
+	public void setRelativeCustomMapsPath(String rCMPath) {
+		this.notifyUnsavedChanges(!rCMPath.equals(this.relativeCustomMapsPath));
+		this.relativeCustomMapsPath = rCMPath;
 	}
 	/**
 	 * Returns the currently active FilterData object for the profile.
