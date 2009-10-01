@@ -199,7 +199,7 @@ public class Profile {
 			detfile.print(this.getCurrentFilter().toXML(""));
 			detfile.print("    <SYNCOC date = \""+getLast_sync_opencaching()+"\" dist = \""+getDistOC()+"\"/>\n");
 			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\"/>\n");
-			detfile.print("    <mapspath relativeDir = \"" + relativeCustomMapsPath + "\"/>\n");
+			detfile.print("    <mapspath relativeDir = \"" + SafeXML.clean(relativeCustomMapsPath) + "\"/>\n");
 			int size = cacheDB.size();
 			for (int i = 0; i < size; i++) {
 				if (showprogress) {
