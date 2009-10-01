@@ -350,9 +350,9 @@ public class MapLoaderGui extends Form {
 				if (scale < mapLoader.currentOnlineMapService.minscale || scale > mapLoader.currentOnlineMapService.maxscale) {
 					if (scale < mapLoader.currentOnlineMapService.minscale) {
 						scaleInput.setText(Convert.toString(mapLoader.currentOnlineMapService.minscale));
-						scaleInputPerCache.setText(Convert.toString(mapLoader.currentOnlineMapService.minscale));
+						scaleInputPerCache.setText(Convert.toString(java.lang.Math.ceil(mapLoader.currentOnlineMapService.minscale*100)/100));
 					} else {
-						scaleInput.setText(Convert.toString(mapLoader.currentOnlineMapService.maxscale));
+						scaleInput.setText(Convert.toString(java.lang.Math.floor(mapLoader.currentOnlineMapService.maxscale*100)/100));
 						scaleInputPerCache.setText(Convert.toString(mapLoader.currentOnlineMapService.maxscale));
 					}
 					(new MessageBox(MyLocale.getMsg(321, "Error"), "! " + scale + "\n" + MyLocale.getMsg(1830, "The selected online map service provides map in the scale from") + " " + mapLoader.currentOnlineMapService.minscale + MyLocale.getMsg(1831, " to") + " " + mapLoader.currentOnlineMapService.maxscale + MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), FormBase.OKB)).execute();
