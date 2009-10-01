@@ -453,7 +453,7 @@ public class Preferences extends MinML{
 			if (tmp != null) solverDegMode=Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("mapspath")) {
-			customMapsPath=atts.getValue("dir").replace('\\', '/');
+			customMapsPath=SafeXML.cleanback(atts.getValue("dir")).replace('\\', '/');
 		}
 		else if (name.equals("debug")) debug=Boolean.valueOf(atts.getValue("value")).booleanValue();
 
