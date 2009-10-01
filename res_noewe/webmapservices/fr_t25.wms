@@ -1,12 +1,20 @@
 TakenFromUrl:       http://www.geosignal.org/cgi-bin/wmsmap?version=1.1.1&service=WMS&request=GetLegendGraphic&layer=Voirie&format=image/png
 GetCapabilitiesUrl: http://www.geosignal.org/cgi-bin/wmsmap?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               fr topo 4000
+Name:               fr t25 SF=3..7
 MapType:                        topo
 MainUrl:            http://www.geosignal.org/cgi-bin/wmsmap?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:  4326
 CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+#CoordinateReferenceSystemCacheWolf:  27582
+#CoordinateReferenceSystemUrlPart: SRS=EPSG:27582 
+#      <SRS>EPSG:27582</SRS>
+#      <SRS>EPSG:27572</SRS>
+#      <SRS>EPSG:27563</SRS>
+#      <SRS>EPSG:27561</SRS>
+#      <SRS>EPSG:4269</SRS>
+#      <SRS>EPSG:4326</SRS>
 RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=Serveur Geosignal|Serveur Geosignal||
 #LayersUrlPart:     LAYERS=Monde|Pays du monde||
@@ -23,19 +31,25 @@ RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=Arrondissements|Arrondissements||
 #LayersUrlPart:     LAYERS=Departements|Departements||
 #LayersUrlPart:     LAYERS=Regions|Regions||
-#LayersUrlPart:     LAYERS=Voirie|Voirie urbaine||
+#LayersUrlPart:     LAYERS=Voirie|Voirie urbaine|1|5|Highways
 #LayersUrlPart:     LAYERS=Autres|Autres equipements routiers||
 #LayersUrlPart:     LAYERS=Secondaires|Routes Secondaires||
 #LayersUrlPart:     LAYERS=Departementales|Routes Departementales||
 #LayersUrlPart:     LAYERS=Nationales|Routes Nationales||
 #LayersUrlPart:     LAYERS=Autoroutes|Autoroutes||
 #LayersUrlPart:     LAYERS=CommunesXY|Ponctuels des communes||
-LayersUrlPart:     LAYERS=RASTER4000k,Communes,Cantons,Arrondissements,Departements,Regions,Voirie,Autres,Secondaires,Departementales,Nationales,Autoroutes,CommunesXY
+#LayersUrlPart:     LAYERS=Communes,Cantons,Arrondissements,Departements,Regions,Autres,Secondaires,Departementales,Nationales,Autoroutes,CommunesXY
+# working
+#LayersUrlPart:     LAYERS=RASTER5k SF=1(..2,5)
+#LayersUrlPart:     LAYERS=RASTER25k SF=3..7 ausgewählte Städte?
+#LayersUrlPart:     LAYERS=RASTER50k SF=8..14
+#LayersUrlPart:     LAYERS=Voirie SF 1..10..
+LayersUrlPart:     LAYERS=RASTER25k
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 51.2918 W 6.06258
 BoundingBoxButtomRightWGS84: N 41.1632 E 10.8783
-MinScale:   0
-MaxScale:   45
-RecommendedScale:   5
+#MinScale:   0
+#MaxScale:   45
+RecommendedScale:   1
 ImageFileExtension: .png
