@@ -7,6 +7,7 @@ import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.NewProfileForm;
 import CacheWolf.Preferences;
 import ewe.io.FileBase;
 import ewe.sys.Convert;
@@ -39,8 +40,8 @@ public class MapLoaderGui extends Form {
 	mLabel coosLbl;
 	mButton coosBtn;
 	mLabel scaleLbl = new mLabel(MyLocale.getMsg(1807,"Approx. m per pixel:"));
-	mInput scaleInput = new mInput ("3");
-	mInput scaleInputPerCache = new mInput ("1");
+	mComboBox scaleInput = new mComboBox();
+	mComboBox scaleInputPerCache = new mComboBox();
 	mLabel overlappingLbl = new mLabel(MyLocale.getMsg(1808,"overlapping in pixel:"));
         mInput overlappingInput = new mInput(""+pref.mapOverlapping);
 	mCheckBox overviewChkBox = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
@@ -95,8 +96,6 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addLast(coosBtn = new mButton(center.toString()));
 		pnlTiles.addNext(scaleLbl);
 		mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
-		scaleInput.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
-		scaleInputPerCache.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
 		this.focusFirst();
 		pnlTiles.addLast(scaleInput);
 		//	pnlTiles.addLast(resolutionLbl);
@@ -135,7 +134,19 @@ public class MapLoaderGui extends Form {
 		pnlPerCache.addLast(okBPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
 
 		mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
+		setRecommScaleInput();
 		this.addLast(mTab);
+	}
+	
+	private void setRecommScaleInput(){
+		String[] recScales = new String[mapLoader.currentOnlineMapService.recommendedScales.length];
+		for (int i=0; i<recScales.length; i++) {
+			recScales[i] = Convert.toString(mapLoader.currentOnlineMapService.recommendedScales[i]);
+		}
+		scaleInput.choice.set(recScales, 0); // setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScales));
+		scaleInputPerCache.choice.set(recScales, 0);
+		scaleInput.setText(recScales[0]);
+		scaleInputPerCache.setText(recScales[0]);
 	}
 
 	/**
@@ -392,8 +403,7 @@ public class MapLoaderGui extends Form {
 		if (ev instanceof DataChangeEvent){
 		    if (ev.target == mapServiceChoice) {
 			mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
-			scaleInput.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
-			scaleInputPerCache.setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScale));
+			setRecommScaleInput();
 		    }
 		    else if (ev.target == overlappingInput){
 			pref.mapOverlapping = Convert.toInt(overlappingInput.getText ());
