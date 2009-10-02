@@ -1007,7 +1007,7 @@ public final class MovingMap extends Form {
 				// more then 1/10 of screen moved since last time we tried to
 				// find a better map
 
-				if (!autoSelectMap) {
+				if (autoSelectMap) {
 					setBestMap(where, screenNotCompletlyCovered);
 					forceMapLoad = false;
 				}
