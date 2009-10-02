@@ -77,6 +77,7 @@ Partial Class Map
         Me.Controls.Add(Me.PictureBox)
         Me.Name = "Map"
         Me.ShowIcon = False
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
         Me.Text = "Map"
         CType(Me.PictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
