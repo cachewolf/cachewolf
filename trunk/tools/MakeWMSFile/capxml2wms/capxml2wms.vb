@@ -40,9 +40,7 @@ Public Class capxml2wms
     '12. CheckedListBoxLayers Layers mit Name, Title und Scalehint 
     '13. ComboBoxBBox LatlonBoundingBox
 
-
-    Dim MeineSkalierung As Integer
-
+    Dim WGS84 As Ellipsoid
     Dim OBBoxes As Dictionary(Of String, XmlElement)
 
     Private Sub capxml2wms_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
@@ -53,6 +51,9 @@ Public Class capxml2wms
     End Sub
 
     Private Sub capxml2wms_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        WGS84.a = 6378137
+        WGS84.b = 298.257223563
+
         xmlFileName = IO.Path.GetTempFileName
         IO.File.Delete(xmlFileName)
 
@@ -86,7 +87,70 @@ Public Class capxml2wms
     End Sub
 
     Private Sub ButtonShowMap_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonShowMap.Click
+        Dim MeineSkalierung As Double
+        MeineSkalierung = 2.0 * Me.HScrollBar1.Value
+        mapUrl = makeGetMapUrl(MeineSkalierung)
+        Dim SM As New Map(mapUrl, 0)
+        'MsgBox("Noch nicht vorhanden!", MsgBoxStyle.Information, "Hinweis!")
+        SM.ShowDialog()
+    End Sub
+    Private Sub ButtonFindScale_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonFindScale.Click
+        Dim BBoxString As String
 
+        Dim center As point
+        ' find center
+        Dim bb As XmlElement
+        Me.ComboBoxBBoxI.SelectedIndex = Me.ComboBoxBBox.SelectedIndex
+        bb = Me.ComboBoxBBoxI.SelectedItem
+        minx = bb.GetAttribute("minx")
+        rminx = Double.Parse(minx, DPunkt.NumberFormat)
+        miny = bb.GetAttribute("miny")
+        rminy = Double.Parse(miny, DPunkt.NumberFormat)
+        maxx = bb.GetAttribute("maxx")
+        rmaxx = Double.Parse(maxx, DPunkt.NumberFormat)
+        maxy = bb.GetAttribute("maxy")
+        rmaxy = Double.Parse(maxy, DPunkt.NumberFormat)
+ 
+        rxmitte = (rminx + rmaxx) / 2
+        rymitte = (rminy + rmaxy) / 2
+        center.x = rxmitte
+        center.y = rymitte
+
+        Dim scale_ll, scale_ul, scale_m As Double
+        Dim pixelwidth As Integer
+        pixelwidth = 500
+
+        scale_ll = 0.1
+        scale_ul = 1000
+
+        Dim SM As Map
+        Dim mapUrl As String
+        Do
+            scale_m = (scale_ll + scale_ul) / 2
+            BBoxString = ToBBox(center, metersToBBoxVertical(4326) * pixelwidth * scale_m)
+            mapUrl = makeGetMapUrlFromBBox(BBoxString)
+            SM = New Map(mapUrl, scale_m)
+            SM.ShowDialog()
+            Select Case SM.exitcode
+                Case -1
+                    scale_ul = scale_m
+                Case 1
+                    scale_ll = scale_m
+                Case 5
+                    ' shift center to the clicked pos
+                    center.x = center.x + SM.clickedAt.X * scale_m * metersToBBoxVertical(4326)
+                    center.y = center.y - SM.clickedAt.Y * scale_m * metersToBBoxVertical(4326)
+            End Select
+
+        Loop Until SM.exitcode = 0
+    End Sub
+    Private Function metersToBBoxVertical(ByVal epsg) As Double
+        If epsg = 4326 Then
+            metersToBBoxVertical = 360 / (WGS84.a * Math.PI * 2)
+        Else : metersToBBoxVertical = 1
+        End If
+    End Function
+    Private Function makeGetMapUrlFromBBox(ByVal bb As String) As String
         'http:// www.lv-bw.de/dv/service/getrds2.asp?login=dv&pw=anonymous
         '&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap
         '&SRS=EPSG:31467
@@ -97,7 +161,39 @@ Public Class capxml2wms
         '&STYLES=
         '&FORMAT=image/png
 
-        MeineSkalierung = 2.0 * Me.HScrollBar1.Value
+
+        mapUrl = wmsUrl & "SERVICE=WMS&VERSION=" & Version & "&REQUEST=GetMap"
+
+        mapUrl += "&SRS=EPSG:" & Me.ComboBoxEPSG.SelectedItem
+
+        Dim BBox As String = "&BBox=" & bb
+
+        mapUrl += BBox
+        mapUrl += "&WIDTH=500"
+        mapUrl += "&HEIGHT=500"
+        ' und die gewählten Layer durch Komma getrennt
+        Dim SelectedLayers As String = ""
+        For Each s As String In CheckedListBoxLayers.CheckedItems
+            SelectedLayers += "," & s.Split("|")(0)
+        Next
+        If SelectedLayers <> "" Then
+            mapUrl += "&LAYERS=" & SelectedLayers.Substring(1).Replace(" ", "%20")
+        End If
+        mapUrl += "&STYLES="
+        mapUrl += "&FORMAT=" & Me.ComboBoxFormat.SelectedItem.ToString
+        makeGetMapUrlFromBBox = mapUrl
+    End Function
+    Private Function makeGetMapUrl(ByVal scale As Double) As String
+        'http:// www.lv-bw.de/dv/service/getrds2.asp?login=dv&pw=anonymous
+        '&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap
+        '&SRS=EPSG:31467
+        '&BBOX=3500394.51 , 5371405.09 , 3520394.51 , 5391405.09 
+        '&WIDTH=1000
+        '&HEIGHT=1000
+        '&LAYERS=DVTK50K
+        '&STYLES=
+        '&FORMAT=image/png
+
 
         mapUrl = wmsUrl & "SERVICE=WMS&VERSION=" & Version & "&REQUEST=GetMap"
 
@@ -121,12 +217,12 @@ Public Class capxml2wms
                 GetBBoxValues(Me.ComboBoxBBoxI.SelectedItem)
                 ' jetzt haben wir die BBox zum WGS84
                 MsgBox("Kartenansicht für diese Auswahl nicht implementiert", MsgBoxStyle.Exclamation)
-                Exit Sub
+                Exit Function
             End Try
         End If
 
-        Dim HalbeKantenlaengex As Double = (rmaxx - rminx) / MeineSkalierung
-        Dim HalbeKantenlaengey As Double = (rmaxy - rminy) / MeineSkalierung
+        Dim HalbeKantenlaengex As Double = (rmaxx - rminx) / scale
+        Dim HalbeKantenlaengey As Double = (rmaxy - rminy) / scale
         Dim HalbeKantenlaenge As Double = HalbeKantenlaengex
         If HalbeKantenlaengex > HalbeKantenlaengey Then
             HalbeKantenlaenge = HalbeKantenlaengey
@@ -141,8 +237,8 @@ Public Class capxml2wms
         BBox += rxmax.ToString(DPunkt) & "," & rymax.ToString(DPunkt)
 
         mapUrl += BBox
-        mapUrl += "&WIDTH=1000"
-        mapUrl += "&HEIGHT=1000"
+        mapUrl += "&WIDTH=500"
+        mapUrl += "&HEIGHT=500"
         ' und die gewählten Layer durch Komma getrennt
         Dim SelectedLayers As String = ""
         For Each s As String In CheckedListBoxLayers.CheckedItems
@@ -153,12 +249,20 @@ Public Class capxml2wms
         End If
         mapUrl += "&STYLES="
         mapUrl += "&FORMAT=" & Me.ComboBoxFormat.SelectedItem.ToString
+        makeGetMapUrl = mapUrl
+    End Function
 
-        Dim SM As New Map(mapUrl)
-        'MsgBox("Noch nicht vorhanden!", MsgBoxStyle.Information, "Hinweis!")
-        SM.ShowDialog()
-    End Sub
-
+    Private Function ToBBox(ByRef center As point, ByVal sizeBboxVertically As Double) As String
+        Dim tl As point
+        Dim br As point
+        tl.x = center.x - sizeBboxVertically / 2
+        tl.y = center.y + sizeBboxVertically / 2
+        br.x = center.x + sizeBboxVertically / 2
+        br.y = center.y - sizeBboxVertically / 2
+        Dim BBox As String
+        BBox = tl.x.ToString(DPunkt) + "," + br.y.ToString(DPunkt) + "," + br.x.ToString(DPunkt) + "," + tl.y.ToString(DPunkt)
+        ToBBox = BBox
+    End Function
     Private Sub ButtonErstellen_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonErstellen.Click
 
         Dim wmsFileName As String = IO.Path.ChangeExtension(xmlFileName, ".wms")
@@ -352,7 +456,7 @@ Public Class capxml2wms
         Dim ms As New IO.MemoryStream
         xd.Save(ms)
         Dim encoding As System.Text.Encoding = New System.Text.UTF8Encoding '.ASCIIEncoding
-        Me.TextBoxXML.Text = encoding.UTF8.GetString(ms.GetBuffer())
+        Me.TextBoxXML.Text = System.Text.Encoding.UTF8.GetString(ms.GetBuffer())
         ms.Close()
 
         Me.ButtonShowMap.Enabled = True
