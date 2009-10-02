@@ -993,7 +993,6 @@ public final class MovingMap extends Form {
 		}
 		updateOnlyPosition(where, true);
 
-		if (!autoSelectMap) return;
 		Point mapPos = getMapPositionOnScreen();
 		boolean screenNotCompletlyCovered = (mmp.mapImage == null)
 				|| (mmp.mapImage != null && (
@@ -1007,7 +1006,12 @@ public final class MovingMap extends Form {
 					|| (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
 				// more then 1/10 of screen moved since last time we tried to
 				// find a better map
-						
+
+				if (!autoSelectMap) {
+					setBestMap(where, screenNotCompletlyCovered);
+					forceMapLoad = false;
+				}
+				
 				if (isFillWhiteArea()) {
 					// Clean up any additional images, tiles will removed and any
 					// other item be added again later
@@ -1066,8 +1070,6 @@ public final class MovingMap extends Form {
 				}
 				lastCompareX = mapPos.x;
 				lastCompareY = mapPos.y;
-				setBestMap(where, screenNotCompletlyCovered);
-				forceMapLoad = false;
 			}
 			else{
 				int deltaX = mapPos.x - lastXPos;
