@@ -104,7 +104,10 @@ MaxScale:	5.61182372
 # map download dialog as default. Scale is measured in meters per pixel
 # vertical, so, multiply it by 1.41 (=sqrt(2)) to get the scale as measured
 # above in MinScale and MaxScale
-RecommendedScale:	0.5
+# You can recommend several scales, separate them by one space. The first 
+# one will be pre-selected the others will appear in the drop-down box.
+# Anyway the user can still enter any scale he wishes 
+RecommendedScale:	1 2.5 5 25
 # set this according to ImageFormatUrlPart (must start with ".")
 ImageFileExtension: .png
 
