@@ -43,6 +43,7 @@ Partial Class capxml2wms
         Me.ComboBoxBBox = New System.Windows.Forms.ComboBox
         Me.Label6 = New System.Windows.Forms.Label
         Me.ComboBoxBBoxI = New System.Windows.Forms.ComboBox
+        Me.ButtonFindScale = New System.Windows.Forms.Button
         Me.SuspendLayout()
         '
         'ButtonErstellen
@@ -251,11 +252,22 @@ Partial Class capxml2wms
         Me.ComboBoxBBoxI.TabIndex = 22
         Me.ComboBoxBBoxI.Visible = False
         '
+        'ButtonFindScale
+        '
+        Me.ButtonFindScale.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.ButtonFindScale.Location = New System.Drawing.Point(540, 439)
+        Me.ButtonFindScale.Name = "ButtonFindScale"
+        Me.ButtonFindScale.Size = New System.Drawing.Size(123, 36)
+        Me.ButtonFindScale.TabIndex = 23
+        Me.ButtonFindScale.Text = "Optimale Scale finden"
+        Me.ButtonFindScale.UseVisualStyleBackColor = True
+        '
         'capxml2wms
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(675, 601)
+        Me.Controls.Add(Me.ButtonFindScale)
         Me.Controls.Add(Me.ComboBoxBBoxI)
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.ComboBoxBBox)
@@ -303,5 +315,6 @@ Partial Class capxml2wms
     Private WithEvents ComboBoxBBox As System.Windows.Forms.ComboBox
     Private WithEvents Label6 As System.Windows.Forms.Label
     Private WithEvents ComboBoxBBoxI As System.Windows.Forms.ComboBox
+    Private WithEvents ButtonFindScale As System.Windows.Forms.Button
 
 End Class
