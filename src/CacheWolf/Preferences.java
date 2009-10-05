@@ -121,6 +121,8 @@ public class Preferences extends MinML{
 	public String lastProfile="";
 	/** If true, the last profile is reloaded automatically without a dialogue */
 	public boolean autoReloadLastProfile=false;
+	/** If true current cetre will be set from gps position	 */
+	public boolean setCurrentCentreFromGPSPosition=true;
 	/** This is the login alias for geocaching.com and opencaching.de */
 	public String myAlias = "";
 	/** Optional password */
@@ -246,10 +248,13 @@ public class Preferences extends MinML{
 	/** Determines whether to fill the white areas on the map */
 	public boolean fillWhiteArea=false;
 
-        /** Selected Size of map tiles */
-        public int mapTileSize=1;
-        /** How many should maptiles overlap */
-        public int mapOverlapping=100;
+    /** Selected Size of map tiles */
+    public int mapTileSize=1;
+    /** How many should maptiles overlap */
+    public int mapOverlapping=100;
+
+    /** ShowCachesOnMap */
+    public boolean showCachesOnMap=true;
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -393,7 +398,9 @@ public class Preferences extends MinML{
 			collectElement=new StringBuffer(50);
 			if (atts.getValue("autoreload").equals("true")) autoReloadLastProfile=true;
 		}
-
+		else if (name.equals("CurrentCentre")) {
+			if (atts.getValue("FromGPSPosition").toLowerCase().equals("true")) setCurrentCentreFromGPSPosition=true;
+		}
 		else if(name.equals("basedir")) {
 			setBaseDir(atts.getValue("dir"));
 		}
@@ -562,6 +569,10 @@ public class Preferences extends MinML{
 			     if (tmp == null || tmp.length() == 0) tmp = "100";
 			     mapOverlapping = Convert.parseInt(tmp);
 		}
+		else if (name.equals("showCachesOnMap")){
+			tmp = atts.getValue("on");
+			showCachesOnMap = tmp != null && tmp.equalsIgnoreCase("true");
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -596,6 +607,7 @@ public class Preferences extends MinML{
 			outp.print("    <locale language=\"" + SafeXML.clean(language) + "\"/>\n");
 			outp.print("    <basedir dir = \"" + SafeXML.clean(getBaseDir()) + "\"/>\n");
 			outp.print("    <lastprofile autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\">" + SafeXML.clean(lastProfile) + "</lastprofile>\n"); //RB
+			outp.print("    <CurrentCentre FromGPSPosition= \"" + SafeXML.clean(Convert.toString(setCurrentCentreFromGPSPosition)) + "\"/>\n");
 			outp.print("    <alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
 			outp.print("    <alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
 			outp.print("    <gcmemberid name =\""+ SafeXML.clean(gcMemberId) +"\"/>\n");
@@ -648,6 +660,7 @@ public class Preferences extends MinML{
 			outp.print("    <logkeeping maximum=\""+SafeXML.strxmlencode(maxLogsToKeep)+"\" keepown=\""+SafeXML.strxmlencode(alwaysKeepOwnLogs)+"\" />\n");
 			outp.print("    <fillWhiteArea on=\""+SafeXML.strxmlencode(fillWhiteArea)+"\"/>\n");
 			outp.print("    <mapLoader tileSize=\""+SafeXML.strxmlencode(mapTileSize)+"\" overlapping=\""+SafeXML.strxmlencode(mapOverlapping)+"\"/>\n");
+			outp.print("    <showCachesOnMap on=\""+SafeXML.strxmlencode(showCachesOnMap)+"\"/>\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {

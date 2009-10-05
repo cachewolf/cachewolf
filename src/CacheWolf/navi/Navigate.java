@@ -14,12 +14,13 @@ import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.mString;
 import CacheWolf.CacheHolder;
+import CacheWolf.navi.MovingMap;
 
 
 /**
  * Non-Gui Class to handle all things regarding navigation
  * (GPS, Sun direction etc.)
- * start offset in localisation file: 4400 
+ * start offset in localisation file: 4400
  * @author Pfeffer
  *
  */
@@ -68,18 +69,18 @@ public class Navigate {
 				if (gotoPanel != null) gotoPanel.gpsStarted();
 				if (movingMap != null) movingMap.gpsStarted();
 			} catch (IOException e) {
-				(new MessageBox(MyLocale.getMsg(4403, "Error"), 
-					MyLocale.getMsg(4408, "Could not connect to GPSD:") 
+				(new MessageBox(MyLocale.getMsg(4403, "Error"),
+					MyLocale.getMsg(4408, "Could not connect to GPSD:")
 					+ e.getMessage()
-					+ MyLocale.getMsg(4409, "\npossible reasons:\nGPSD is not running or GPSD host is not reachable"), 
-					FormBase.OKB)).execute(); 
+					+ MyLocale.getMsg(4409, "\npossible reasons:\nGPSD is not running or GPSD host is not reachable"),
+					FormBase.OKB)).execute();
 			}
 		}else{
 			if (serThread != null) if (serThread.isAlive()) return; // TODO use gpsRunning
 			try {
 				serThread = new SerialThread(pref.mySPO, gpsPos, (pref.forwardGPS ? pref.forwardGpsHost : ""));
 				if (pref.forwardGPS && !serThread.tcpForward) {
-					(new MessageBox(MyLocale.getMsg(4400, "Warning"), 
+					(new MessageBox(MyLocale.getMsg(4400, "Warning"),
 							MyLocale.getMsg(4401, "Ignoring error:\n could not forward GPS data to host:\n")
 							+ pref.forwardGpsHost+"\n" + serThread.lastError
 							+ MyLocale.getMsg(4402, "\nstop and start GPS to retry"), FormBase.OKB)).exec();
@@ -96,16 +97,16 @@ public class Navigate {
 				if (gotoPanel != null) gotoPanel.gpsStarted();
 				if (movingMap != null) movingMap.gpsStarted();
 			} catch (IOException e) {
-				(new MessageBox(MyLocale.getMsg(4403, "Error"), 
-						MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ") 
+				(new MessageBox(MyLocale.getMsg(4403, "Error"),
+						MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ")
 						+ e.getMessage()
-						+ MyLocale.getMsg(4405, "\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS"), 
-						FormBase.OKB)).execute(); 
+						+ MyLocale.getMsg(4405, "\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS"),
+						FormBase.OKB)).execute();
 			} catch (UnsatisfiedLinkError e) {
-				(new MessageBox(MyLocale.getMsg(4403, "Error"), 
-						MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ") 
-						+ MyLocale.getMsg(4406, "Please copy jave_ewe.dll into the directory of the cachewolf program"), 
-						FormBase.OKB)).execute(); 
+				(new MessageBox(MyLocale.getMsg(4403, "Error"),
+						MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ")
+						+ MyLocale.getMsg(4406, "Please copy jave_ewe.dll into the directory of the cachewolf program"),
+						FormBase.OKB)).execute();
 			}
 		}
 	}
@@ -140,7 +141,7 @@ public class Navigate {
 	}
 
 
-	public void setDestination(String LatLon) { 
+	public void setDestination(String LatLon) {
 		setDestination(new CWPoint(LatLon));
 	}
 
@@ -151,7 +152,7 @@ public class Navigate {
 		if (gotoPanel != null) gotoPanel.destChanged(destination);
 		if (movingMap != null) movingMap.destChanged(destination);
 	}
-	
+
 	public void setDestination(CacheHolder ch) {
 		destinationIsCache = true;
 		destinationCache=ch;
@@ -176,7 +177,7 @@ public class Navigate {
 			try {
 				curTrack.add(gpsPos);
 			} catch (IndexOutOfBoundsException e) { // track full -> create a new one
-				curTrack = new Track(trackColor); 
+				curTrack = new Track(trackColor);
 				curTrack.add(gpsPos);
 				if (movingMap != null) movingMap.addTrack(curTrack);
 			}
@@ -186,11 +187,11 @@ public class Navigate {
 				skyOrientationDir = SkyOrientation.getLuminaryDir(luminary, jd, gpsPos);
 				// ewe.sys.Vm.debug("neu: "+ skyOrientationDir.lonDec+ "jd: " + jd);
 			} catch (NumberFormatException e) { // irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
-				skyOrientationDir.set(-361, -361); // any value out of range (bigger than 360) will prevent drawArrows from drawing it 
+				skyOrientationDir.set(-361, -361); // any value out of range (bigger than 360) will prevent drawArrows from drawing it
 			}
 
 		} else {
-			skyOrientationDir.set(-361, -361); // any value out of range (bigger than 360) will prevent drawArrows from drawing it		
+			skyOrientationDir.set(-361, -361); // any value out of range (bigger than 360) will prevent drawArrows from drawing it
 		}
 		gotoPanel.updateGps(fix);
 		if (movingMap != null) movingMap.updateGps(fix);
@@ -204,16 +205,16 @@ class GpsdThread extends mThread{
 	boolean run, tcpForward;
 	Socket tcpConn;
 	String lastError = new String();
-	
+
 	public GpsdThread(CWGPSPoint GPSPoint) throws IOException {
 		try{
 			gpsdSocket = new Socket(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
 		} catch (IOException e) {
 			throw new IOException(Global.getPref().gpsdHost);
-		} // catch (UnsatisfiedLinkError e) {} // TODO in original java-vm 
+		} // catch (UnsatisfiedLinkError e) {} // TODO in original java-vm
 		myGPS = GPSPoint;
 	}
-	
+
 	public void run() {
 		String gpsResult;
 		int noData = 0;
@@ -233,8 +234,8 @@ class GpsdThread extends mThread{
 					//Vm.debug("P -> " + gpsResult);
 					noData = 0;
 					if (myGPS.examineGpsd(gpsResult))
-						notinterpreted = 0; 
-					else 
+						notinterpreted = 0;
+					else
 						notinterpreted++;
 					if (notinterpreted > 22) myGPS.noInterpretableData();
 				}
@@ -263,7 +264,7 @@ class GpsdThread extends mThread{
 		}
 		String str = null;
 		if (rcvLength > 0)	{
-			str = mString.fromAscii(rcvBuff, 0, rcvLength); 
+			str = mString.fromAscii(rcvBuff, 0, rcvLength);
 		}
 		return str;
 	}
@@ -279,7 +280,7 @@ class GpsdThread extends mThread{
  *
  */
 class SerialThread extends mThread{
-	SerialPort comSp;   
+	SerialPort comSp;
 	byte[] comBuff = new byte[1024*10]; // when some action takes a long time (eg. loading or zooming a map), a lot of data can be in the buffer, read that at once
 	int comLength = 0;
 	CWGPSPoint myGPS;
@@ -293,13 +294,13 @@ class SerialThread extends mThread{
 			comSp = new SerialPort(spo);
 		} catch (IOException e) {
 			throw new IOException(spo.portName);
-		} // catch (UnsatisfiedLinkError e) {} // TODO in original java-vm 
-		if (forwardIP.length()>0) { 
+		} // catch (UnsatisfiedLinkError e) {} // TODO in original java-vm
+		if (forwardIP.length()>0) {
 			try {
 				tcpConn = new Socket(forwardIP, 23);
 				tcpForward = true;
 			} catch (ewe.net.UnknownHostException e) { tcpForward = false; lastError = e.getMessage();
-			} catch (IOException e) { tcpForward = false; lastError = e.getMessage(); 
+			} catch (IOException e) { tcpForward = false; lastError = e.getMessage();
 			}
 		}
 		myGPS = GPSPoint;
@@ -323,7 +324,7 @@ class SerialThread extends mThread{
 				//Vm.debug("Length: " + comBuff.length);
 				if (comLength > 0)	{
 					noData = 0;
-					String str = mString.fromAscii(comBuff, 0, comLength); 
+					String str = mString.fromAscii(comBuff, 0, comLength);
 					if (tcpForward) {
 						try {
 							tcpConn.write(comBuff, 0, comLength);
@@ -345,10 +346,10 @@ class SerialThread extends mThread{
 	}
 }
 
-/** 
- * Class for creating a new mThread to create timer ticks to be able to do form.close in the ticked-thread. 
- * Using the Vm.requestTimer-Method causes "ewe.sys.EventDirectionException: This task cannot be done within 
- * a Timer Tick." in the ewe-vm when form.close is called.  
+/**
+ * Class for creating a new mThread to create timer ticks to be able to do form.close in the ticked-thread.
+ * Using the Vm.requestTimer-Method causes "ewe.sys.EventDirectionException: This task cannot be done within
+ * a Timer Tick." in the ewe-vm when form.close is called.
  */
 
 class UpdateThread extends mThread {
@@ -375,5 +376,6 @@ class UpdateThread extends mThread {
 		run = false;
 	}
 }
+
 
 

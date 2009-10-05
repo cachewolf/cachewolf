@@ -31,7 +31,7 @@ public class MainTab extends mTabbedPanel {
 	CalcPanel calcP;
 	Preferences pref;
 	Profile profile;
-	GotoPanel gotoP; 
+	GotoPanel gotoP;
 	RadarPanel radarP = new RadarPanel();
 	ImagePanel imageP;
 	SolverPanel solverP;
@@ -45,7 +45,7 @@ public class MainTab extends mTabbedPanel {
 	public String mainCache="";
 	int oldCard=0;
 	boolean cacheDirty=false;
-	
+
 	public MainTab(MainMenu mainMenu,StatusBar statBar){
 		Global.mainTab=this;
 		mnuMain=mainMenu;
@@ -59,11 +59,11 @@ public class MainTab extends mTabbedPanel {
 		int sw = MyLocale.getScreenWidth();
 		if ( sw <= 240) this.dontExpandTabs=true;
 		String imagesize="";
-		if (pref.useBigIcons) imagesize="_vga";  
+		if (pref.useBigIcons) imagesize="_vga";
 		calcP = new CalcPanel(); // Init here so that Global.MainT is already set
 		tbP = new TablePanel(pref, profile, statBar);
 		Card c = this.addCard(new TableForm(tbP), MyLocale.getMsg(1200,"List"), null);
-		
+
 		c = this.addCard(detP, MyLocale.getMsg(1201,"Details"), null);
 		c.iconize(new Image("details"+imagesize+".gif"),true);
 
@@ -110,8 +110,8 @@ public class MainTab extends mTabbedPanel {
 		detP.clear(); // Clear only the attributes
 		hintLP.clear(); // Remove the logs
 		solverP.setInstructions("loading ...");
-	}	
-	
+	}
+
 	public void onEvent(Event ev) {
 		// This section clears old data when a new line is selected in the table
 		if (ev instanceof TableEvent) {
@@ -144,7 +144,7 @@ public class MainTab extends mTabbedPanel {
 			cacheDirty=false;
 			if (tbP.getSelectedCache()>=Global.mainTab.tbP.myMod.numRows || tbP.getSelectedCache()<0) {
 				ch=null;
-				chD=null; 
+				chD=null;
 				lastselected="";
 			} else {
 				ch = cacheDB.get(tbP.getSelectedCache());
@@ -193,13 +193,14 @@ public class MainTab extends mTabbedPanel {
 	 */
 	private void onEnteringPanel(int panelNo) {//Vm.debug("Entering "+panelNo);
 		switch (panelNo) {// Switch by panel number
-		case 0:
+		case 0:  //MainPanel
 			MyLocale.setSIPOff();
 			// If Solver or Details has changed, save Cache
 			updatePendingChanges();
 			if (detP.hasBlackStatusChanged()) {
 				tbP.refreshTable();
 			}
+			updateCurCentrePtFromGPS();
 			break;
 		case 1:  // DetailsPanel
 			boolean newCache = false;
@@ -216,7 +217,7 @@ public class MainTab extends mTabbedPanel {
 			break;
 		case 3: // Picture Panel
 			MyLocale.setSIPOff();
-			if (ch.isAddiWpt()) { 
+			if (ch.isAddiWpt()) {
 				imageP.setImages(ch.mainCache.getCacheDetails(true));
 			} else {
 				imageP.setImages(chD);
@@ -224,7 +225,7 @@ public class MainTab extends mTabbedPanel {
 			break;
 		case 4:  // Log Hint Panel
 			MyLocale.setSIPOff();
-			if (ch.isAddiWpt()) { 
+			if (ch.isAddiWpt()) {
 				hintLP.setText(ch.mainCache.getCacheDetails(true));
 			} else {
 				hintLP.setText(chD);
@@ -232,7 +233,7 @@ public class MainTab extends mTabbedPanel {
 			break;
 		case 5:  // Solver Panel
 			MyLocale.setSIPOff();
-			if (ch.isAddiWpt()) { 
+			if (ch.isAddiWpt()) {
 				chMain=ch.mainCache;
 				solverP.setInstructions(ch.mainCache);
 			} else {
@@ -250,20 +251,25 @@ public class MainTab extends mTabbedPanel {
 			MyLocale.setSIPOff();
 			radarP.setParam(pref, cacheDB, ch);
 			radarP.drawThePanel();
+			updateCurCentrePtFromGPS();
 			break;
 		}
 	}
-	
-	/** Update the distances of all caches to the centre and display a message 
+
+	/** Update the distances of all caches to the centre and display a message
 	 */
 	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
+/*
 		MessageBox info = new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \n werden neu berechnet...").replace('~','\n'), 0);
 		info.exec();
 		info.waitUntilPainted(200);
+*/
 		tbP.pref = pref;
 		profile.updateBearingDistance();
+/*
 		//tbP.refreshTable();
 		info.close(0);
+*/
 		tbP.tc.repaint();
 	}
 
@@ -282,11 +288,11 @@ public class MainTab extends mTabbedPanel {
 
 
 	/**
-	 * this is called from goto / MovingMap / CalcPanel / DetailsPanel and so on to 
+	 * this is called from goto / MovingMap / CalcPanel / DetailsPanel and so on to
 	 * offer the user the possibility of entering an new waypoint
 	 * at a given position. pCh must already been preset with a valid
 	 * CacheHolder object
-	 * 
+	 *
 	 * @param pCh
 	 */
 	public void newWaypoint(CacheHolder pCh){
@@ -297,7 +303,7 @@ public class MainTab extends mTabbedPanel {
 			onLeavingPanel(oldCard);
 		}
 		updatePendingChanges(); // was: onEnteringPanel(0); oldCard=0;
-		
+
 		mainCache=lastselected;
 		int selectedIndex = profile.getCacheIndex( lastselected );
 		if (selectedIndex >= 0) {
@@ -308,12 +314,12 @@ public class MainTab extends mTabbedPanel {
 				} else {
 					mainCache = null;
 				}
-			}			
+			}
 		}
 		if (CacheType.isAddiWpt(pCh.getType()) && mainCache!=null && mainCache.length()>2) {
 			pCh.setWayPoint(profile.getNewAddiWayPointName(mainCache));
 			profile.setAddiRef(pCh);
-		} else { 
+		} else {
 			pCh.setWayPoint(profile.getNewWayPointName());
 			lastselected=pCh.getWayPoint();
 		}
@@ -321,7 +327,7 @@ public class MainTab extends mTabbedPanel {
 		chD = pCh.getCacheDetails(true);
 		this.ch = pCh;
 		cacheDB.add(pCh);
-		Global.getProfile().notifyUnsavedChanges(true); // Just to be sure 
+		Global.getProfile().notifyUnsavedChanges(true); // Just to be sure
 		tbP.myMod.numRows++;
 		detP.setDetails(pCh, true);
 		oldCard=1;
@@ -331,10 +337,10 @@ public class MainTab extends mTabbedPanel {
 
 	}
 
-	
+
 	/**
 	 * sets posCircle Lat/Lon to centerTo
-	 * 
+	 *
 	 * @param centerTo true: centers centerTo on the screen and disconnects MovingMap from GPS if Gps-pos is not on the loaded map
 	 * @param forceCenter
 	 */
@@ -347,7 +353,7 @@ public class MainTab extends mTabbedPanel {
 			if (mm == null) {
 				mm = new MovingMap(nav, profile.cacheDB);
 				nav.setMovingMap(mm);
-			} 
+			}
 			if (forceCenter) mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
 			mm.updatePosition(centerTo);
 			mm.myExec();
@@ -364,14 +370,16 @@ public class MainTab extends mTabbedPanel {
 				mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS if GPS-pos is not on the screen
 				mm.setResModus(MovingMap.HIGHEST_RESOLUTION);
 				mm.updatePosition(centerTo.latDec, centerTo.lonDec);
-				mm.setCenterOfScreen(centerTo, true); 
+				mm.setCenterOfScreen(centerTo, true);
 			}
-					 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte 
+					 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte
 				}catch (InterruptedException e) {
+					e.printStackTrace();
 					Global.getPref().log("Error starting mavoing map (1): " + e.getMessage(), e, true);
-					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", FormBase.OKB)).execute(); } 
+					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", FormBase.OKB)).execute(); }
 			}
 		} catch (Exception e) { // TODO swith waiting indication clock off
+			e.printStackTrace();
 			Global.getPref().log("Error starting moving map (2): " + e.getMessage(), e, true);
 			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), FormBase.OKB)).execute(); }
 	}
@@ -383,9 +391,9 @@ public class MainTab extends mTabbedPanel {
 			cacheDirty = false;
 		}
 	}
-	
+
 	/** Save the index file
-	 * 
+	 *
 	 * @param askForConfirmation is ignored, old: If true, the save can be cancelled by user
 	 */
 	public void saveUnsavedChanges(boolean askForConfirmation) {
@@ -399,17 +407,31 @@ public class MainTab extends mTabbedPanel {
 	    this.tbP.saveColWidth(pref);
 		Global.getPref().savePreferences();
 	}
-	
+
 	private void checkProfileChange() {
 		// A panel is selected. Could be the same panel twice
-		mnuMain.allowProfileChange(false);	  
+		mnuMain.allowProfileChange(false);
 		if(this.getSelectedItem() == 0){// List view selected
-			mnuMain.allowProfileChange(true);	  
+			mnuMain.allowProfileChange(true);
 			MyLocale.setSIPOff();
 		}
 	}
+
+	private void  updateCurCentrePtFromGPS() {
+		if (pref.setCurrentCentreFromGPSPosition){
+			boolean gpsPosIsValid=nav.gpsPos.isValid();
+			if (gpsPosIsValid) {
+				CWPoint whereAmI = nav.gpsPos;
+				if (whereAmI != pref.curCentrePt) {
+					pref.curCentrePt.set(whereAmI);
+					this.updateBearDist();
+				}
+			}
+		}
+	}
 }
-// 
+//
+
 
 
 
