@@ -42,6 +42,10 @@ Public Class capxml2wms
 
     Dim WGS84 As Ellipsoid
     Dim OBBoxes As Dictionary(Of String, XmlElement)
+    Dim minScale As Double = 0
+    Dim maxScale As Double = 1000
+    Dim recScale As ArrayList
+
 
     Private Sub capxml2wms_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         Try
@@ -84,6 +88,11 @@ Public Class capxml2wms
 
     Private Sub ButtonGetCapabilities_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonGetCapabilities.Click
         GotCapabilities = GetCapabilities()
+        maxScale = 1000
+        minScale = 0
+        If Not recScale Is Nothing Then
+            recScale.Clear()
+        End If
     End Sub
 
     Private Sub ButtonShowMap_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonShowMap.Click
@@ -97,20 +106,28 @@ Public Class capxml2wms
     Private Sub ButtonFindScale_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonFindScale.Click
         Dim BBoxString As String
 
+        Dim srs As Integer
+        srs = Me.ComboBoxEPSG.SelectedItem
+
         Dim center As point
         ' find center
         Dim bb As XmlElement
-        Me.ComboBoxBBoxI.SelectedIndex = Me.ComboBoxBBox.SelectedIndex
-        bb = Me.ComboBoxBBoxI.SelectedItem
-        minx = bb.GetAttribute("minx")
-        rminx = Double.Parse(minx, DPunkt.NumberFormat)
-        miny = bb.GetAttribute("miny")
-        rminy = Double.Parse(miny, DPunkt.NumberFormat)
-        maxx = bb.GetAttribute("maxx")
-        rmaxx = Double.Parse(maxx, DPunkt.NumberFormat)
-        maxy = bb.GetAttribute("maxy")
-        rmaxy = Double.Parse(maxy, DPunkt.NumberFormat)
- 
+        If (Me.OBBoxes.ContainsKey("EPSG:" & Me.ComboBoxEPSG.SelectedItem)) Then
+            bb = Me.OBBoxes.Item("EPSG:" & Me.ComboBoxEPSG.SelectedItem)
+            minx = bb.GetAttribute("minx")
+            rminx = Double.Parse(minx, DPunkt.NumberFormat)
+            miny = bb.GetAttribute("miny")
+            rminy = Double.Parse(miny, DPunkt.NumberFormat)
+            maxx = bb.GetAttribute("maxx")
+            rmaxx = Double.Parse(maxx, DPunkt.NumberFormat)
+            maxy = bb.GetAttribute("maxy")
+            rmaxy = Double.Parse(maxy, DPunkt.NumberFormat)
+        Else
+            MsgBox("In dem ausgewähltem Raumbezugssystem (EPSG-code) ist die BoundingBox leider nicht angegeben." & _
+                   "Daher kann kein Zentrum automatisch bestimmt werden.")
+            Return
+        End If
+
         rxmitte = (rminx + rmaxx) / 2
         rymitte = (rminy + rmaxy) / 2
         center.x = rxmitte
@@ -120,14 +137,14 @@ Public Class capxml2wms
         Dim pixelwidth As Integer
         pixelwidth = 500
 
-        scale_ll = 0.1
-        scale_ul = 1000
+        scale_ll = minScale
+        scale_ul = maxScale
 
         Dim SM As Map
         Dim mapUrl As String
         Do
             scale_m = (scale_ll + scale_ul) / 2
-            BBoxString = ToBBox(center, metersToBBoxVertical(4326) * pixelwidth * scale_m)
+            BBoxString = ToBBox(center, srs, pixelwidth * scale_m)
             mapUrl = makeGetMapUrlFromBBox(BBoxString)
             SM = New Map(mapUrl, scale_m)
             SM.ShowDialog()
@@ -138,16 +155,37 @@ Public Class capxml2wms
                     scale_ll = scale_m
                 Case 5
                     ' shift center to the clicked pos
-                    center.x = center.x + SM.clickedAt.X * scale_m * metersToBBoxVertical(4326)
-                    center.y = center.y - SM.clickedAt.Y * scale_m * metersToBBoxVertical(4326)
+                    center.x = center.x + SM.clickedAt.X * scale_m * metersToBBoxHorizontal(srs, center)
+                    center.y = center.y - SM.clickedAt.Y * scale_m * metersToBBoxVertical(srs)
+                Case 99
+                    Me.minScale = scale_m * Math.Sqrt(2)
+                    scale_ll = scale_m
+                    scale_ul = Me.maxScale / Math.Sqrt(2)
+                Case 100
+                    If recScale Is Nothing Then
+                        recScale = New ArrayList
+                    End If
+                    recScale.Add(scale_m)
+                    scale_ll = Me.minScale / Math.Sqrt(2)
+                    scale_ul = Me.maxScale / Math.Sqrt(2)
+                Case 101
+                    Me.maxScale = scale_m * Math.Sqrt(2)
+                    scale_ul = scale_m
+                    scale_ll = Me.minScale / Math.Sqrt(2)
             End Select
 
         Loop Until SM.exitcode = 0
     End Sub
-    Private Function metersToBBoxVertical(ByVal epsg) As Double
+    Private Function metersToBBoxVertical(ByVal epsg As Integer) As Double
         If epsg = 4326 Then
             metersToBBoxVertical = 360 / (WGS84.a * Math.PI * 2)
         Else : metersToBBoxVertical = 1
+        End If
+    End Function
+    Private Function metersToBBoxHorizontal(ByVal epsg As Integer, ByRef center As point) As Double
+        If epsg = 4326 Then
+            metersToBBoxHorizontal = (360 / (WGS84.a * Math.PI * 2)) / Math.Cos(center.y / 180 * Math.PI)
+        Else : metersToBBoxHorizontal = 1
         End If
     End Function
     Private Function makeGetMapUrlFromBBox(ByVal bb As String) As String
@@ -176,6 +214,11 @@ Public Class capxml2wms
         For Each s As String In CheckedListBoxLayers.CheckedItems
             SelectedLayers += "," & s.Split("|")(0)
         Next
+        If SelectedLayers.Length = 0 Then
+            MsgBox("Mindestens 1 Layer muss ausgewählt werden")
+            Return ""
+        End If
+
         If SelectedLayers <> "" Then
             mapUrl += "&LAYERS=" & SelectedLayers.Substring(1).Replace(" ", "%20")
         End If
@@ -252,13 +295,16 @@ Public Class capxml2wms
         makeGetMapUrl = mapUrl
     End Function
 
-    Private Function ToBBox(ByRef center As point, ByVal sizeBboxVertically As Double) As String
+    Private Function ToBBox(ByRef center As point, ByVal srs As Integer, ByVal meter As Double) As String
         Dim tl As point
         Dim br As point
-        tl.x = center.x - sizeBboxVertically / 2
-        tl.y = center.y + sizeBboxVertically / 2
-        br.x = center.x + sizeBboxVertically / 2
-        br.y = center.y - sizeBboxVertically / 2
+        Dim diff_v, diff_h As Double
+        diff_h = metersToBBoxHorizontal(srs, center) * meter
+        diff_v = metersToBBoxVertical(srs) * meter
+        tl.x = center.x - diff_h / 2
+        tl.y = center.y + diff_v / 2
+        br.x = center.x + diff_h / 2
+        br.y = center.y - diff_v / 2
         Dim BBox As String
         BBox = tl.x.ToString(DPunkt) + "," + br.y.ToString(DPunkt) + "," + br.x.ToString(DPunkt) + "," + tl.y.ToString(DPunkt)
         ToBBox = BBox
@@ -307,9 +353,18 @@ Public Class capxml2wms
         F.WriteLine("BoundingBoxTopLeftWGS84: " & maxy & " " & minx)
         F.WriteLine("BoundingBoxButtomRightWGS84: " & miny & " " & maxx)
         F.WriteLine("#BBox_Mitte: " & mittey & " " & mittex)
-        F.WriteLine("MinScale:   0")
-        F.WriteLine("MaxScale:   45")
-        F.WriteLine("RecommendedScale:   5")
+        F.WriteLine("MinScale:   " & (Math.Ceiling(minScale * 10000) / 10000).ToString(DPunkt))
+        F.WriteLine("MaxScale:   " & (Math.Floor(maxScale * 10000) / 10000).ToString(DPunkt))
+        Dim recsscales As String = ""
+        If Not recScale Is Nothing Then
+            For Each d As Double In recScale
+                recsscales = recsscales & " " & (Math.Floor(d * 10000) / 10000).ToString(DPunkt)
+            Next
+            recsscales.Trim()
+        Else
+            recsscales = "5"
+        End If
+        F.WriteLine("RecommendedScale:   " & recsscales)
         'Me.ComboBoxFormat.SelectedItem.ToString.Split("/")(1)
         Dim rk As Microsoft.Win32.RegistryKey = My.Computer.Registry.ClassesRoot.OpenSubKey("Mime\Database\Content Type\" & Me.ComboBoxFormat.SelectedItem.ToString)
         Dim stmp As String = rk.GetValue("Extension")
@@ -640,7 +695,19 @@ Public Class capxml2wms
                 End If
             End If
         Next
+        If Not OBBoxes.ContainsKey("EPSG:4326") Then
+            For Each n As XmlNode In Layer.GetElementsByTagName("LatLonBoundingBox")
+                If n.NodeType = XmlNodeType.Element Then
+                    Dim e As XmlElement = n
+                    Dim stmp As String = e.GetAttribute("SRS")
+                    If Not OBBoxes.ContainsKey(stmp) Then
+                        OBBoxes.Add("EPSG:4326", e)
+                    End If
+                End If
+            Next
+        End If
 
+        ButtonCheckAll_Click(Nothing, Nothing)
         Return True
 
     End Function
