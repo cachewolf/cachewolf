@@ -1,6 +1,8 @@
 package CacheWolf;
 
 import CacheWolf.navi.TransformCoordinates;
+import ewe.fx.Insets;
+import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
@@ -8,6 +10,7 @@ import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.UIConstants;
 import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
 import ewe.ui.mLabel;
 
 /**
@@ -16,7 +19,8 @@ import ewe.ui.mLabel;
 */
 public class ProfileDataForm extends Form {
 
-	private mButton btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur;
+	private mButton btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur;//, btnGPS2Cur;
+	mCheckBox chkSetCurrentCentreFromGPSPosition;
 	private Preferences pref;
 	private Profile profile;
 	private CellPanel content = new CellPanel();
@@ -31,6 +35,10 @@ public class ProfileDataForm extends Form {
 		content.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_RECT;
 	    //defaultTags.set(this.INSETS,new Insets(2,2,2,2));		
 		title = MyLocale.getMsg(1118,"Profile")+": "+profile.name;
+		content.addNext(new mLabel(MyLocale.getMsg(600,"Preferences")));		
+		content.addLast(chkSetCurrentCentreFromGPSPosition = new mCheckBox(MyLocale.getMsg(646,"centre from GPS")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		// content.addLast(btnGPS2Cur=new mButton("   v   "),DONTSTRETCH,DONTFILL|LEFT);
+		if (pref.setCurrentCentreFromGPSPosition) chkSetCurrentCentreFromGPSPosition.setState(true);		
 		content.addNext(new mLabel(MyLocale.getMsg(1116,"Current")));
 		content.addLast(btnCurrentCentre=new mButton(pref.curCentrePt.toString()),HSTRETCH,HFILL|LEFT);
 		content.addNext(new mLabel("      "),HSTRETCH,HFILL);
@@ -40,7 +48,7 @@ public class ProfileDataForm extends Form {
 		content.addNext(new mLabel(MyLocale.getMsg(1118,"Profile")));
 		content.addLast(btnProfileCentre=new mButton(profile.centre.toString()),HSTRETCH,HFILL|LEFT);
 		addLast(content,HSTRETCH,HFILL);
-		addLast(new mLabel(""),VSTRETCH,FILL);
+		//addLast(new mLabel(""),VSTRETCH,FILL);
 		//addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
 		addLast(btnOK = new mButton("OK"),DONTSTRETCH,HFILL|RIGHT);
 	}
@@ -56,6 +64,7 @@ public class ProfileDataForm extends Form {
 				close(-1);
 			}*/
 			if (ev.target == btnOK){
+				pref.setCurrentCentreFromGPSPosition=chkSetCurrentCentreFromGPSPosition.getState();
 				close(1);
 			}
 			if (ev.target == btnCurrentCentre){
