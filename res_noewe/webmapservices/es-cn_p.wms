@@ -1,12 +1,12 @@
 TakenFromUrl:       http://idecan1.grafcan.es/ServicioWMS/OrtoExpress?
-GetCapabilitiesUrl: http://idecan1.grafcan.es/ServicioWMS/OrtoExpress?REQUEST=GetCapabilities&SERVICE=WMS&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+GetCapabilitiesUrl: http://idecan1.grafcan.es/ServicioWMS/OrtoExpress?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 Name:               es.Canarias photo
 MapType:                        photo
-MainUrl:            http://idecan1.grafcan.es/ServicioWMS/OrtoExpress?REQUEST=GetCapabilities&SERVICE=WMS&
+MainUrl:            http://idecan1.grafcan.es/ServicioWMS/OrtoExpress?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:  4326
-CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326
 RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=WMS_OrtoExpress|IDECanarias OrtoExpress||
 #LayersUrlPart:     LAYERS=ortoexpress|OrtoExpress||
