@@ -8,7 +8,7 @@ public final class ProjectedPoint {
 	public static final LambertProjection PJ_AUSTRIAN_LAMBERT_NEW 	= new LambertProjection(TransformCoordinates.EPSG_AUSTRIAN_LAMBERT_NEW,  TransformCoordinates.WGS84);
 	public static final LambertProjection PJ_FRENCH_LAMBERT_NTF_II 	= new LambertProjection(TransformCoordinates.EPSG_FRENCH_LAMBERT_NTF_II, TransformCoordinates.CLARKE1880IGN);
 	public static final LambertProjection PJ_TEST 	                = new LambertProjection(TransformCoordinates.EPSG_TEST, TransformCoordinates.CLARKE1866); 
-	{ 
+	static { 
 		PJ_AUSTRIAN_LAMBERT_OLD.setup ( 400000, 400000, 49.0, 46.0, 1         , 47.5, 13.333333); // actually this should be done inside the constructor. But Ewe doesn't support more than 8 parameters (at least for constructors)
 		PJ_AUSTRIAN_LAMBERT_NEW.setup ( 400000, 400000, 49.0, 46.0, 1         , 47.5, 13.333333);
 		PJ_FRENCH_LAMBERT_NTF_II.setup(2200000, 600000, 46.8, 46.8, 0.99987742, 46.8, 2.337229172 /*(2+20/60+14.025/3600) */); 
