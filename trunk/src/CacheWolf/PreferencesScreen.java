@@ -21,7 +21,7 @@ public class PreferencesScreen extends Form {
 	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, 
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
 	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus,chkHasCloseButton,
-	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName;
+	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSetCurrentCentreFromGPSPosition;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
 	mLabel lblGarmin;
@@ -83,9 +83,11 @@ public class PreferencesScreen extends Form {
 		DataDir = new mInput();
 		DataDir.setText(pref.getBaseDir());
 		frmDataDir.addLast(DataDir.setTag(CellConstants.SPAN, new Dimension(3,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
-		frmDataDir.addLast(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629,"Autoload last profile")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmDataDir.addNext(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629,"Autoload last profile")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		if (pref.autoReloadLastProfile) chkAutoLoad.setState(true);
 		chkAutoLoad.setTag(INSETS,new Insets(0,0,2,0));
+		frmDataDir.addLast(chkSetCurrentCentreFromGPSPosition = new mCheckBox(MyLocale.getMsg(646,"centre from GPS")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
+		if (pref.setCurrentCentreFromGPSPosition) chkSetCurrentCentreFromGPSPosition.setState(true);
 		pnlGeneral.addLast(frmDataDir,HSTRETCH,HFILL);
 		
 		CellPanel pnlBrowser=new CellPanel();
@@ -311,6 +313,7 @@ public class PreferencesScreen extends Form {
 				HttpConnection.setProxy(pref.myproxy, Common.parseInt(pref.myproxyport), pref.proxyActive); // TODO generate an error message if proxy port is not a number
 				//myPreferences.nLogs = Convert.parseInt(nLogs.getText());
 				pref.autoReloadLastProfile=chkAutoLoad.getState();
+				pref.setCurrentCentreFromGPSPosition=chkSetCurrentCentreFromGPSPosition.getState();
 				pref.showDeletedImages=chkShowDeletedImg.getState();
 				pref.garminConn=chcGarminPort.getSelectedItem().toString();
 				pref.garminGPSBabelOptions=chkSynthShort.state?"-s":"";
