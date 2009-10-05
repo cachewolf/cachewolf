@@ -72,10 +72,10 @@ public final class MovingMap extends Form {
 	boolean ignoreGps = false; // ignores updateGps-calls if true
 	boolean autoSelectMap = true;
 	boolean forceMapLoad = true; // only needed to force updateposition to try to load the best map again after OutOfMemoryError after an repeated click on snap-to-gps
-	boolean mapHidden = false;
+	public boolean mapHidden = false;
 	boolean noMapsAvailable;
 	boolean zoomingMode = false;
-	boolean mapsloaded = false;
+	public boolean mapsloaded = false;
 	boolean additionalOverlaysDeleted=true;
 	Point lastRepaintMapPos = null;
 	double lastDistance = -1;
@@ -104,9 +104,21 @@ public final class MovingMap extends Form {
 						&& (!((im instanceof MapSymbol)
 								|| (im instanceof TrackOverlay) || mmp.mapImage == im))) {
 					mmp.images.remove(im);
-				} 
+				}
 			}
 		}
+	}
+
+	public boolean getShowCachesOnMap() {return pref.showCachesOnMap; }
+	public void setShowCachesOnMap(boolean value) {
+		if (value != pref.showCachesOnMap) {
+			pref.showCachesOnMap=value;
+		}
+		if (!value) {
+			// todo: add : goto Cache Symbol, Selected Symbol , Selected Cache Symbol
+			this.removeAllMapSymbolsButGoto();
+			}
+
 	}
 
 	public MovingMap(Navigate nav, CacheDB cacheDB){
@@ -122,7 +134,6 @@ public final class MovingMap extends Form {
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
 		this.title = "Moving Map";
 		this.backGround = new Color(254,254,254); // background must not be black because black is interpreted as transparent and transparent images above (eg trackoverlay) want be drawn in windows-VM, so be care, don|t use white either
-		//this.mapPath = Global.getPref().getMapLoadPath();
 
 		mmp = new MovingMapPanel(this);
 		this.addLast(mmp);
@@ -243,8 +254,7 @@ public final class MovingMap extends Form {
 		Vm.showWait(this, true);
 		inf.exec();
 		inf.waitUntilPainted(100);
-		if (Global.getPref().debug)
-			Global.getPref().log(MyLocale.getMsg(4203, "Loading list of maps..."));
+		if (pref.debug) pref.log(MyLocale.getMsg(4203, "Loading list of maps..."));
 		resetCenterOfMap();
 		boolean saveGpsIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;
@@ -270,7 +280,7 @@ public final class MovingMap extends Form {
 		{
 			double lineLengthMeters = 40 * currentMap.scale;
 
-			int metricSystem = Global.getPref().metricSystem;
+			int metricSystem = pref.metricSystem;
 			double localizedLineLength = 0;
 			int bigUnit = -1;
 			int smallUnit = -1;
@@ -346,7 +356,7 @@ public final class MovingMap extends Form {
 				ewe.sys.Double dd = new ewe.sys.Double();
 				String d;
 
-				int metricSystem = Global.getPref().metricSystem;
+				int metricSystem = pref.metricSystem;
 				double localizedDistance = 0;
 				int bigUnit = -1;
 				int smallUnit = -1;
@@ -911,7 +921,10 @@ public final class MovingMap extends Form {
 			mmp.removeImage((MapSymbol)symbols.get(i));
 		}
 		symbols.removeAllElements();
-		if (gotoPos != null) symbols.add(gotoPos);
+		if (gotoPos != null) {
+			symbols.add(gotoPos);
+			mmp.addImage(gotoPos);
+		}
 	}
 
 	public void removeMapSymbol(String pName) {
@@ -982,8 +995,8 @@ public final class MovingMap extends Form {
 	public void updatePosition(CWPoint where){
 		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
 		//Vm.debug("updatepos, lat: "+where.latDec+" lon: "+where.lonDec);
-		if (!mapsloaded || !this.maps.getMapsPath().equals(Global.getPref().getCustomMapsPath())) {
-			loadMaps(Global.getPref().getCustomMapsPath(), where.latDec);
+		if (!mapsloaded || !this.maps.getMapsPath().equals(pref.getCustomMapsPath())) {
+			loadMaps(pref.getCustomMapsPath(), where.latDec);
 			lastCompareX = Integer.MAX_VALUE;
 			lastCompareY = Integer.MAX_VALUE;
 			autoSelectMap = true;
@@ -1004,14 +1017,28 @@ public final class MovingMap extends Form {
 			// Vm.debug("Screen not completly covered by map");
 			if (forceMapLoad
 					|| (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
-				// more then 1/10 of screen moved since last time we tried to
-				// find a better map
-
+				// more then 1/10 of screen moved since last time we tried to find a better map
 				if (autoSelectMap) {
 					setBestMap(where, screenNotCompletlyCovered);
 					forceMapLoad = false;
 				}
-				
+				if (getShowCachesOnMap()) {
+					CacheHolder ch;
+					int twidth = width/10;
+					int theight = height/10;
+					Area screenArea = new Area(ScreenXY2LatLon(-twidth,-theight), ScreenXY2LatLon(width+twidth,height+theight));
+					for (int i = cacheDB.size() - 1; i >= 0; i--) {
+						ch = cacheDB.get(i);
+						if (screenArea.isInBound(ch.pos)) {
+							// because visible and valid don't change while showing map -->need no remove
+							if (ch.isVisible() && ch.pos.isValid()) {
+								addSymbolIfNecessary(ch.cacheName, ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
+							}
+						}else{
+							removeMapSymbol(ch.cacheName);
+						}
+					}
+				}
 				if (isFillWhiteArea()) {
 					// Clean up any additional images, tiles will removed and any
 					// other item be added again later
@@ -1268,7 +1295,7 @@ public final class MovingMap extends Form {
 			r.width = blackArea.x + offsetX;
 			r.height = whiteArea.height;
 			rectangles.add(r);
-			if (Global.getPref().debug) {Global.getPref().log("add whitearea : "+SRect(r));}
+			if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if (blackArea.y > whiteArea.y) {
 			Rect r= new Rect ();
@@ -1277,7 +1304,7 @@ public final class MovingMap extends Form {
 			r.width = whiteArea.width;
 			r.height = blackArea.y + offsetY;
 			rectangles.add(r);
-			if (Global.getPref().debug) {Global.getPref().log("add whitearea : "+SRect(r));}
+			if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.y + blackArea.height) <  whiteArea.y + whiteArea.height) {
 			Rect r= new Rect ();
@@ -1286,7 +1313,7 @@ public final class MovingMap extends Form {
 			r.width = whiteArea.width;
 			r.height = (whiteArea.y + whiteArea.height) - r.y;
 			rectangles.add(r);
-			if (Global.getPref().debug) {Global.getPref().log("add whitearea : "+SRect(r));}
+			if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.x + blackArea.width)<  whiteArea.x + whiteArea.width) {
 			Rect r= new Rect ();
@@ -1295,7 +1322,7 @@ public final class MovingMap extends Form {
 			r.width = (whiteArea.x + whiteArea.width) - r.x;
 			r.height = whiteArea.height;
 			rectangles.add(r);
-			if (Global.getPref().debug) {Global.getPref().log("add whitearea : "+SRect(r));}
+			if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 	}
 
@@ -1562,10 +1589,10 @@ public final class MovingMap extends Form {
 		dontUpdatePos = true;  // make updatePosition ignore calls during loading new map
 		InfoBox inf;
 		inf = new InfoBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4216, "Loading map..."));
-		if (Global.getPref().debug) {
+		if (pref.debug) {
 			inf.show();
 			inf.waitUntilPainted(100);
-			Global.getPref().log(MyLocale.getMsg(4216, "Loading map..."));
+			pref.log(MyLocale.getMsg(4216, "Loading map...")+newmap.mapName);
 		}
 		try {
 			this.currentMap = newmap;
@@ -1749,6 +1776,28 @@ public final class MovingMap extends Form {
 		zoomFromUnscaled(zoomFactor * currentMap.zoomFactor, newImageRect, center);
 	}
 
+	public void zoomin() {
+		zoomScreenRect(new Point(this.width / 4, this.height / 4),
+				this.width / 2, this.height / 2);
+	}
+
+	public void zoomout() {
+		CWPoint center = currentMap.center;
+		float zoomfactor = currentMap.zoomFactor / 2;
+		if (zoomfactor < 1) {
+			zoomfactor = 1;
+		}
+		if (mapImage1to1 != null)
+			zoomFromUnscaled(zoomfactor, new Rect(0, 0,
+					mapImage1to1.getWidth(), mapImage1to1.getHeight()), center);
+		else
+			zoomFromUnscaled(zoomfactor, new Rect(0, 0, 1, 1), center);
+	}
+
+	public void setZoomingMode(boolean mode) {
+		zoomingMode = mode;
+	}
+
 	public void zoom1to1() {
 		CWPoint center = ScreenXY2LatLon(this.width /2 , this.height/2);
 		if (mapImage1to1 != null) zoomFromUnscaled(1, new Rect(0,0,mapImage1to1.getWidth(), mapImage1to1.getHeight()), center);
@@ -1849,6 +1898,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	MenuItem hideMapMI = new MenuItem(MyLocale.getMsg(4240, "Hide map"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4241, "Hide map"), null, CellConstants.RIGHT));
 	MenuItem fillMapMI = new MenuItem(MyLocale.getMsg(4267, "Show white areas"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4267, "Show white areas"), null, CellConstants.RIGHT));
 	MenuItem noFillMapMI = new MenuItem(MyLocale.getMsg(4266, "Fill white areas"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4266, "Fill white areas"), null, CellConstants.RIGHT));
+	MenuItem showCachesOnMapMI = new MenuItem(MyLocale.getMsg(4268, "Alle Cache anzeigen"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4268, "Alle Cache anzeigen"), null, CellConstants.RIGHT));
+	MenuItem noShowCachesOnMapMI = new MenuItem(MyLocale.getMsg(4269, "Keine Cache anzeigen"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4269, "Keine Cache anzeigen"), null, CellConstants.RIGHT));
 	// automatic
 	MenuItem mapChangeModusMI = new MenuItem(MyLocale.getMsg(4242, "Modus for automatic map change"), MenuItem.Separator, null);;
 	MenuItem highestResGpsDestMI = new MenuItem(MyLocale.getMsg(4244, "Highest res. containing dest. & cur. position"), new IconAndText(new mImage("res_gps_goto.png"), MyLocale.getMsg(4245, "Highest res. containing dest. & cur. position"), null, CellConstants.RIGHT)); //immer h�chste Aufl�sung w�hlen, die akt. Pos. und Ziel enthalten
@@ -2060,6 +2111,12 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			else{
 				mapsMenu.addItem(noFillMapMI);
 			}
+			if (mm.getShowCachesOnMap()){
+				mapsMenu.addItem(noShowCachesOnMapMI);
+			}
+			else{
+				mapsMenu.addItem(showCachesOnMapMI);
+			}
 			// automatic
 			highestResGpsDestMI.modifiers &= ~MenuItem.Checked;
 			highestResolutionMI.modifiers &= ~MenuItem.Checked;
@@ -2150,12 +2207,15 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	}
 
 	public void onEvent(Event ev){
-		if (mapsMenu != null && ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this) {mapsMenu.close(); mapsMenu = null;}
-		if (kontextMenu != null && ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this) {kontextMenu.close(); kontextMenu = null; }
+		if (mapsMenu != null && ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this)
+			{mapsMenu.close(); mapsMenu = null;}
+		if (kontextMenu != null && ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this)
+			{kontextMenu.close(); kontextMenu = null; }
 
 		if (ev instanceof MenuEvent) {
 			if (ev.target == mapsMenu) {
-				if (ev.type == MenuEvent.ABORTED || ev.type == ControlEvent.CANCELLED || ev.type == ControlEvent.FOCUS_OUT) mapsMenu.close(); // TODO menuIsActive() benutzen?
+				if (ev.type == MenuEvent.ABORTED || ev.type == ControlEvent.CANCELLED || ev.type == ControlEvent.FOCUS_OUT)
+						mapsMenu.close(); // TODO menuIsActive() benutzen?
 				if (ev.type == MenuEvent.SELECTED ) {
 					MenuItem action = (MenuItem) mapsMenu.getSelectedItem();
 					if (mapsMenu.getSelectedItem() != null) {
@@ -2166,7 +2226,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						}
 						else if (action == changeMapDirMI)	{
 							mapsMenu.close();
-							FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().absoluteBaseDir+"maps");
+							FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().getCustomMapsPath());
 							fc.addMask("*.wfl");
 							fc.setTitle(MyLocale.getMsg(4200,"Select map directory:"));
 							if(fc.execute() != FormBase.IDCANCEL){
@@ -2184,6 +2244,20 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						else if (action == noFillMapMI){
 							mapsMenu.close ();
 							mm.setFillWhiteArea(true);
+							mm.updatePosition (mm.posCircle.where);
+							repaintNow();
+						}
+						else if (action == showCachesOnMapMI){
+							mapsMenu.close ();
+							mm.setShowCachesOnMap(true);
+							mm.forceMapLoad=true;
+							mm.updatePosition (mm.posCircle.where);
+							repaintNow();
+						}
+						else if (action == noShowCachesOnMapMI){
+							mapsMenu.close ();
+							mm.setShowCachesOnMap(false);
+							mm.forceMapLoad=true;
 							mm.updatePosition (mm.posCircle.where);
 							repaintNow();
 						}
@@ -2240,6 +2314,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					}
 				}
 			} // if (ev.target == mapsMenu)
+
 			if (ev.target == kontextMenu) {
 				if ((((MenuEvent)ev).type==MenuEvent.SELECTED)) {
 					MenuItem action = (MenuItem) kontextMenu.getSelectedItem();
