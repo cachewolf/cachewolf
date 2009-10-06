@@ -31,6 +31,7 @@ public final class MovingMap extends Form {
 	public final static int ignoreGPS = -1; // ignore even changes in GPS-signal (eg. from lost fix to gotFix) this is wanted when the map is moved manually
 
 	public MapSymbol gotoPos = null;
+	CacheHolder markedCache = null;
 	public int GpsStatus;
 	Preferences pref;
 	MovingMapPanel mmp;
@@ -115,9 +116,8 @@ public final class MovingMap extends Form {
 			pref.showCachesOnMap=value;
 		}
 		if (!value) {
-			// todo: add : goto Cache Symbol, Selected Symbol , Selected Cache Symbol
-			this.removeAllMapSymbolsButGoto();
-			}
+			removeAllMapSymbols();
+		}
 
 	}
 
@@ -410,37 +410,37 @@ public final class MovingMap extends Form {
 		updatePosition(posCircle.where); // this sets forceMapLoad to false after loading a map
 	}
 
-	public final FormFrame myExec() {
-		// update cache symbols in map
+	public final FormFrame myExec(CWPoint centerTo) {
+		FormFrame ret = exec();
 		running = true;
-		MainTab mainT = Global.mainTab;
+
+		// to load maplist + place a map on screen otherwise no symbol can be placed
+		updatePosition(centerTo); 
+		
+		// update cache symbols in map
 		if (Global.getProfile().selectionChanged) {
+			// this means marking has changed
 			Global.getProfile().selectionChanged = false;
-			removeAllMapSymbolsButGoto();
-			CacheHolder ch;
-			for (int i=cacheDB.size()-1; i>=0; i--) {
-				ch = cacheDB.get(i);
-				if (ch.is_Checked && ch.isVisible() && ch != mainT.ch) {
-					if (ch.pos.isValid()) addSymbol(ch.getCacheName(), ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
-				}
-			}
+			if (getShowCachesOnMap()) removeAllMapSymbols(); // not really needed: hopefully removed by showCachesOnMap			
 		}
-		setMarkedCache(mainT.ch);
+		setMarkedCache(Global.mainTab.ch); // this is the selected one (not necessary marked)
+		showCachesOnMap();
+		
 		addTrack(myNavigation.curTrack);
 		if (tracks != null && tracks.size() > 0 && ((Track)tracks.get(0)).num > 0)
 			rebuildOverlaySet(); // show points which where added when MavingMap was not running
+
 		if (myNavigation.destinationIsCache) {
 			destChanged(myNavigation.destinationCache);
 		}
 		else {
 			destChanged(myNavigation.destination);
 		}
-
-		FormFrame ret = exec();
+		
+		repaint();
 		return ret;
 	}
 
-	CacheHolder markedCache = null;
 	public void setMarkedCache(CacheHolder ch) {
 		if (ch == markedCache) return;
 		if (markedCache != null) {
@@ -871,7 +871,11 @@ public final class MovingMap extends Form {
 	public void addSymbolIfNecessary(String pName, Object mapObject, Image imSymb, CWPoint where) {
 		if (findMapSymbol(pName) >= 0) return;
 		else addSymbol(pName, mapObject, imSymb, where);
+	}
 
+	public void addSymbolOnTop(String pName, Object mapObject, String filename, CWPoint where) {
+		removeMapSymbol(pName); // Object possibly removes another picture from screen
+		addSymbol(pName,mapObject,filename, where);
 	}
 
 	public void addSymbol(String pName, Object mapObject, Image imSymb, CWPoint ll) {
@@ -887,7 +891,7 @@ public final class MovingMap extends Form {
 	public void destChanged(CWPoint d) {
 		if(!running || (d == null && gotoPos == null) ||
 				(d != null && gotoPos != null && gotoPos.where.equals(d))) return;
-		removeGotoPosition();
+		removeMapSymbol("goto");
 		if (d == null || !d.isValid() ) return;
 		gotoPos = addSymbol("goto", "goto_map.png", d);
 		//updateDistance(); - this is called from updatePosition
@@ -898,7 +902,7 @@ public final class MovingMap extends Form {
 	public void destChanged(CacheHolder ch) {
 		CWPoint d = new CWPoint (ch.pos);
 		if(!running || (gotoPos != null && gotoPos.where.equals(d))) return;
-		removeGotoPosition();
+		removeMapSymbol("goto");
 		if (!d.isValid() ) return;
 		gotoPos = addSymbol("goto", ch, "goto_map.png", d);
 		//updateDistance(); - this is called from updatePosition
@@ -906,25 +910,17 @@ public final class MovingMap extends Form {
 		if (this.width != 0) updatePosition(posCircle.where); // dirty hack: if this.width == 0, then the symbols are not on the screen and get hidden by updateSymbolPositions
 	}
 
-	public void removeGotoPosition() {
-		removeMapSymbol("goto");
-	}
-
 	public CWPoint getGotoPos(){
 		if (gotoPos == null) return null;
 		return new CWPoint(gotoPos.where);
 	}
 
-	public void removeAllMapSymbolsButGoto(){
+	public void removeAllMapSymbols(){
 		if (symbols == null) return;
 		for (int i = symbols.size()-1; i >= 0; i--) {
 			mmp.removeImage((MapSymbol)symbols.get(i));
 		}
 		symbols.removeAllElements();
-		if (gotoPos != null) {
-			symbols.add(gotoPos);
-			mmp.addImage(gotoPos);
-		}
 	}
 
 	public void removeMapSymbol(String pName) {
@@ -1004,6 +1000,7 @@ public final class MovingMap extends Form {
 			forceMapLoad = false;
 			return;
 		}
+		if (width==0 || height==0) { Vm.debug("no window shown"); return; } // why is this called with these values
 		updateOnlyPosition(where, true);
 
 		Point mapPos = getMapPositionOnScreen();
@@ -1022,23 +1019,7 @@ public final class MovingMap extends Form {
 					setBestMap(where, screenNotCompletlyCovered);
 					forceMapLoad = false;
 				}
-				if (getShowCachesOnMap()) {
-					CacheHolder ch;
-					int twidth = width/10;
-					int theight = height/10;
-					Area screenArea = new Area(ScreenXY2LatLon(-twidth,-theight), ScreenXY2LatLon(width+twidth,height+theight));
-					for (int i = cacheDB.size() - 1; i >= 0; i--) {
-						ch = cacheDB.get(i);
-						if (screenArea.isInBound(ch.pos)) {
-							// because visible and valid don't change while showing map -->need no remove
-							if (ch.isVisible() && ch.pos.isValid()) {
-								addSymbolIfNecessary(ch.cacheName, ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
-							}
-						}else{
-							removeMapSymbol(ch.cacheName);
-						}
-					}
-				}
+				showCachesOnMap();
 				if (isFillWhiteArea()) {
 					// Clean up any additional images, tiles will removed and any
 					// other item be added again later
@@ -1121,6 +1102,62 @@ public final class MovingMap extends Form {
 		lastYPos = mapPos.y;
 		lastWidth = width;
 		lastHeight = height;
+		repaint();
+	}
+
+	private void showCachesOnMap() {
+		// if (width == 0 || height == 0) return;
+		CacheHolder ch;
+		int twidth = width/10;
+		int theight = height/10;
+		Area screenArea = new Area(ScreenXY2LatLon(-twidth,-theight), ScreenXY2LatLon(width+twidth,height+theight));
+		for (int i = cacheDB.size() - 1; i >= 0; i--) {
+			ch = cacheDB.get(i);
+			if (screenArea.isInBound(ch.pos)) {
+				// because visible and valid don't change while showing map -->need no remove
+				if (ch.isVisible() && ch.pos.isValid()) {
+					if (getShowCachesOnMap()) {
+						addSymbolIfNecessary(ch.cacheName, ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
+					}
+					else {
+						if (ch.is_Checked) {
+							addSymbolIfNecessary(ch.cacheName, ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
+						}
+						else {
+							removeMapSymbol(ch);
+						}
+					}
+				}
+			}else{
+				if (ch.cacheName.equals("")) {
+					removeMapSymbol(ch);
+				}
+				else {
+					// remove the right one , as
+					// possibly more than one picture associated with ch (target,selected ..)
+					removeMapSymbol(ch.cacheName); 
+				}
+			}
+		}
+		// adding target and selected 
+		// show target
+		if (gotoPos != null) {
+			// the CacheHolder Symbol must be inserted too, even if not marked (if it is Cache)
+			// anywhere there if all Caches shown on map 
+			CacheHolder gotoPosCH = null;
+			if (gotoPos.mapObject instanceof CacheHolder) {
+				gotoPosCH = (CacheHolder) gotoPos.mapObject;				
+			}
+			if (!getShowCachesOnMap() && (gotoPosCH != null)) {
+				addSymbolIfNecessary(gotoPosCH.cacheName, gotoPosCH, GuiImageBroker.getTypeImage(gotoPosCH.getType()), gotoPosCH.pos);
+			}
+			addSymbolOnTop("goto", gotoPosCH, "goto_map.png", gotoPos.where);
+		}
+		// show Selected
+		if (markedCache != null) {
+			addSymbolIfNecessary(markedCache.cacheName, markedCache, GuiImageBroker.getTypeImage(markedCache.getType()), markedCache.pos);
+			addSymbolOnTop("selectedCache", markedCache, MARK_CACHE_IMAGE, markedCache.pos);
+		}
 	}
 
 	private void updateTileForWhiteArea(Vector rectangles) {
@@ -2182,15 +2219,17 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				kontextMenu.addItem(newWayPointMenuItem);
 				AniImage clickedOnImage = images.findHotImage(p);
 				if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
-					clickedCache = ((CacheHolder)((MapSymbol)clickedOnImage).mapObject);
-					if (clickedCache != null) {
-						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(4270, "Open")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
-						kontextMenu.addItem(openCacheDescMenuItem);
-						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$g"); // clickedCache == null can happen if clicked on the goto-symbol
-						kontextMenu.addItem(gotoCacheMenuItem);
-						if (Global.mainForm.cacheListVisible) {
-							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
-							kontextMenu.addItem(addCachetoListMenuItem);
+					if ( ((MapSymbol)clickedOnImage).mapObject instanceof CacheHolder) {
+						clickedCache = (CacheHolder)( ((MapSymbol)clickedOnImage).mapObject);
+						if (clickedCache != null) {
+							openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(4270, "Open")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+							kontextMenu.addItem(openCacheDescMenuItem);
+							gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$g"); // clickedCache == null can happen if clicked on the goto-symbol
+							kontextMenu.addItem(gotoCacheMenuItem);
+							if (Global.mainForm.cacheListVisible) {
+								addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
+								kontextMenu.addItem(addCachetoListMenuItem);
+							}
 						}
 					}
 				}
