@@ -1021,60 +1021,7 @@ public final class MovingMap extends Form {
 				}
 				showCachesOnMap();
 				if (isFillWhiteArea()) {
-					// Clean up any additional images, tiles will removed and any
-					// other item be added again later
-					Vector icons = new Vector();
-					for (Iterator i = mmp.images.iterator(); i.hasNext();) {
-						AniImage im = (AniImage) i.next();
-						if ((im instanceof MapImage)
-								&& (!((im instanceof MapSymbol)
-										|| (im instanceof TrackOverlay) || mmp.mapImage == im))) {
-							i.remove();
-						} else {
-							icons.add(im);
-							i.remove();
-						}
-					}
-					// Mark all tiles as dirty
-					MovingMapCache.getCache().clearUsedFlags();
-
-					// Holds areas not filled by currentmap and/or used tiles
-					Vector rectangles = new Vector();
-					// calculate areas which will not drawn
-					Point mapPosx = getMapPositionOnScreen();
-					if ( screenNotCompletlyCovered && ( // screen not completely covered is only used, because it is already calculated
-							mapPosx.x > this.width || mapPosx.y > this.height // map doesn't overlap with the screen
-							|| mapPosx.x + mmp.mapImage.getWidth() < 0 || mapPosx.y + mmp.mapImage.getHeight() < 0) ) {
-						rectangles.add(new Rect(0,0, this.width, this.height)); // if the map is completely outside the screen, just fill the screen, nit all the space beteween the map and the screen
-					} else {
-						Rect whiteArea = new Rect((int)(-width/10), (int)(-height/10), (int)(width*1.1), (int)(height*1.1));
-						Rect blackArea = new Rect(mapPosx.x, mapPosx.y, mmp.mapImage.getWidth(), mmp.mapImage.getHeight());
-						calculateRectangles(blackArea, whiteArea, rectangles);
-					}
-					// I've sometimes experienced an endless loop which might be
-					// caused by a bug in getBestMap. Therefore i will stop the loop
-					// after 30 runs
-					int count = 0;
-					while (isFillWhiteArea() && currentMap.zoomFactor == 1.0
-							&& !mapHidden && !rectangles.isEmpty() && count < 30) {
-						count++;
-						try {
-							updateTileForWhiteArea(rectangles);
-						} catch (ewe.sys.SystemResourceException sre) {
-							setFillWhiteArea(false);
-							(new MessageBox(
-									"Error",
-									"Not enough ressources to fill white ares, disabling this",
-									MessageBox.OKB)).execute();
-						}
-					}
-					// Remove all tiles not needed from the cache to reduce memory
-					MovingMapCache.getCache().cleanCache();
-					// At Last redraw all icons on the map
-					for (Iterator i = icons.iterator(); i.hasNext();) {
-						AniImage im = (AniImage) i.next();
-						mmp.addImage(im);
-					}
+					fillWhiteArea(screenNotCompletlyCovered);
 				}
 				lastCompareX = mapPos.x;
 				lastCompareY = mapPos.y;
@@ -1096,13 +1043,13 @@ public final class MovingMap extends Form {
 						im.setLocation(p.x, p.y);
 					}
 				}
+				repaint();
 			}
 		}
 		lastXPos = mapPos.x;
 		lastYPos = mapPos.y;
 		lastWidth = width;
 		lastHeight = height;
-		repaint();
 	}
 
 	private void showCachesOnMap() {
@@ -1160,6 +1107,63 @@ public final class MovingMap extends Form {
 		}
 	}
 
+	private void fillWhiteArea(boolean screenNotCompletlyCovered) {
+		// Clean up any additional images, tiles will removed and any
+		// other item be added again later
+		Vector icons = new Vector();
+		for (Iterator i = mmp.images.iterator(); i.hasNext();) {
+			AniImage im = (AniImage) i.next();
+			if ((im instanceof MapImage)
+					&& (!((im instanceof MapSymbol)
+							|| (im instanceof TrackOverlay) || mmp.mapImage == im))) {
+				i.remove();
+			} else {
+				icons.add(im);
+				i.remove();
+			}
+		}
+		// Mark all tiles as dirty
+		MovingMapCache.getCache().clearUsedFlags();
+
+		// Holds areas not filled by currentmap and/or used tiles
+		Vector rectangles = new Vector();
+		// calculate areas which will not drawn
+		Point mapPosx = getMapPositionOnScreen();
+		if ( screenNotCompletlyCovered && ( // screen not completely covered is only used, because it is already calculated
+				mapPosx.x > this.width || mapPosx.y > this.height // map doesn't overlap with the screen
+				|| mapPosx.x + mmp.mapImage.getWidth() < 0 || mapPosx.y + mmp.mapImage.getHeight() < 0) ) {
+			rectangles.add(new Rect(0,0, this.width, this.height)); // if the map is completely outside the screen, just fill the screen, nit all the space beteween the map and the screen
+		} else {
+			Rect whiteArea = new Rect((int)(-width/10), (int)(-height/10), (int)(width*1.1), (int)(height*1.1));
+			Rect blackArea = new Rect(mapPosx.x, mapPosx.y, mmp.mapImage.getWidth(), mmp.mapImage.getHeight());
+			calculateRectangles(blackArea, whiteArea, rectangles);
+		}
+		// I've sometimes experienced an endless loop which might be
+		// caused by a bug in getBestMap. Therefore i will stop the loop
+		// after 30 runs
+		int count = 0;
+		while (isFillWhiteArea() && currentMap.zoomFactor == 1.0
+				&& !mapHidden && !rectangles.isEmpty() && count < 30) {
+			count++;
+			try {
+				updateTileForWhiteArea(rectangles);
+			} catch (ewe.sys.SystemResourceException sre) {
+				setFillWhiteArea(false);
+				(new MessageBox(
+						"Error",
+						"Not enough ressources to fill white ares, disabling this",
+						MessageBox.OKB)).execute();
+			}
+		}
+		// Remove all tiles not needed from the cache to reduce memory
+		MovingMapCache.getCache().cleanCache();
+		// At Last redraw all icons on the map
+		for (Iterator i = icons.iterator(); i.hasNext();) {
+			AniImage im = (AniImage) i.next();
+			mmp.addImage(im);
+		}
+		repaint();
+	}
 	private void updateTileForWhiteArea(Vector rectangles) {
 		Rect blackArea;
 		Rect r = (Rect) rectangles.get(0);
@@ -1483,7 +1487,9 @@ public final class MovingMap extends Form {
 		if (mapChangeModus == modus) return;
 		mapChangeModus = modus;
 		lastHighestResolutionGPSDestScale = -1;
-		if (modus != NORMAL_KEEP_RESOLUTION) setBestMap(posCircle.where, true);
+		if (modus != NORMAL_KEEP_RESOLUTION) {
+			setBestMap(posCircle.where, true);
+		}
 	}
 	/**
 	 * method to get a point on the screen which must be included in the map
@@ -1541,6 +1547,9 @@ public final class MovingMap extends Form {
 			dontUpdatePos = true;
 			setMap(m, cll);
 			setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
+			if (isFillWhiteArea()) {
+				fillWhiteArea(true);
+			}
 			dontUpdatePos = saveGpsIgnStatus;
 		}
 		else (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4211, "No ") +
