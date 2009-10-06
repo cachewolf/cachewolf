@@ -17,7 +17,6 @@ import ewe.sys.Double;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.*;
-import ewe.util.Iterator;
 import ewe.util.Vector;
 
 /**
@@ -237,7 +236,7 @@ public final class MovingMap extends Form {
 			for (int i = symbols.size() -1; i >= 0; i-- ) {
 				((MapSymbol)symbols.get(i)).screenDimChanged();
 			}
-}
+		}
 	}
 
 	boolean loadingMapList = false;
@@ -1029,8 +1028,8 @@ public final class MovingMap extends Form {
 			else{
 				int deltaX = mapPos.x - lastXPos;
 				int deltaY = mapPos.y - lastYPos;
-				for(Iterator i =mmp.images.iterator(); i.hasNext ();){
-					AniImage im = (AniImage) i.next();
+				for(int i = mmp.images.size() -1; i >= 0; i--){
+					AniImage im = (AniImage) mmp.images.get(i);
 					if ((im instanceof MapImage)
 						&& (!((im instanceof MapSymbol)
 							|| (im instanceof TrackOverlay)
@@ -1110,18 +1109,18 @@ public final class MovingMap extends Form {
 	private void fillWhiteArea(boolean screenNotCompletlyCovered) {
 		// Clean up any additional images, tiles will removed and any
 		// other item be added again later
-		Vector icons = new Vector();
-		for (Iterator i = mmp.images.iterator(); i.hasNext();) {
-			AniImage im = (AniImage) i.next();
-			if ((im instanceof MapImage)
-					&& (!((im instanceof MapSymbol)
-							|| (im instanceof TrackOverlay) || mmp.mapImage == im))) {
-				i.remove();
-			} else {
+		Vector icons = new Vector(mmp.images.size());
+		int s = mmp.images.size(); // avoid calling size() in each iteration
+		for (int i = 0; i < s ;  i++) {
+			AniImage im = (AniImage) mmp.images.get(i);
+			if (!(im instanceof MapImage) ||
+				(im instanceof MapSymbol) ||
+				(im instanceof TrackOverlay) || 
+				mmp.mapImage == im) {
 				icons.add(im);
-				i.remove();
 			}
 		}
+		mmp.images.clear();
 		// Mark all tiles as dirty
 		MovingMapCache.getCache().clearUsedFlags();
 
@@ -1158,10 +1157,7 @@ public final class MovingMap extends Form {
 		// Remove all tiles not needed from the cache to reduce memory
 		MovingMapCache.getCache().cleanCache();
 		// At Last redraw all icons on the map
-		for (Iterator i = icons.iterator(); i.hasNext();) {
-			AniImage im = (AniImage) i.next();
-			mmp.addImage(im);
-		}
+		mmp.images.addAll(icons);
 		repaint();
 	}
 	private void updateTileForWhiteArea(Vector rectangles) {
@@ -1244,8 +1240,8 @@ public final class MovingMap extends Form {
 				if (im != null) {
 					//Check if not already added. this might happen if the map for horizontal and vertical stripe is the same
 					boolean added=false;
-					for(Iterator i=mmp.images.iterator(); i.hasNext();){
-						MapImage m=(MapImage) i.next();
+					for(int i=mmp.images.size()-1; i >= 0; i--) {
+						MapImage m=(MapImage) mmp.images.get(i);
 						if (m == im){
 							added=true;
 							break;
