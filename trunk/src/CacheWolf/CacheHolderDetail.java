@@ -260,6 +260,10 @@ public class CacheHolderDetail {
 			dummy = ex.findNext();
 			int imgNr = 0;
 			while(ex.endOfSearch() == false){
+				if (imgNr >= this.images.size()) {
+					images.add(new ImageInfo()); // this (more IMGTEXT than IMG in the <cache>.xml, but it happens. So avoid an ArrayIndexOutOfBoundException and add an ImageInfo gracefully
+					Global.getPref().log("Error reading " + this.getParent().getWayPoint() + "More IMGTEXT tags than IMG tags");
+				}
 				imageInfo = this.images.get(imgNr);
 				int pos=dummy.indexOf("<DESC>");
 				if (pos>0) {
