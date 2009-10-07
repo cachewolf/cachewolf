@@ -615,13 +615,25 @@ public class CacheHolder{
 	public void setAttributesFromMainCache(){
 		CacheHolder mainCh = this.mainCache;
 		this.setCacheOwner(mainCh.getCacheOwner());
-		this.setCacheStatus(mainCh.getCacheStatus());
+		if (mainCh.is_found()) {
+			if (!this.found) {
+				this.setCacheStatus(mainCh.getCacheStatus());
+				this.setFound(true);
+			}
+			// else addi is already found (perhaps at other time) 
+		}
+		else {
+			// there may be a found addi , so don't overwrite
+			if ((this.getType() == CacheType.CW_TYPE_FINAL)) {
+				this.setCacheStatus(mainCh.getCacheStatus());
+				this.setFound(false);
+			}
+		}
 		this.setArchived(mainCh.is_archived());
 		this.setAvailable(mainCh.is_available());
 		this.setBlack(mainCh.is_black());
 		this.setOwned(mainCh.is_owned());
 		this.setNew(mainCh.is_new());
-		this.setFound(mainCh.is_found());
 	}
 
 	public void setAttributesToAddiWpts(){
@@ -1093,9 +1105,16 @@ public class CacheHolder{
     }
 
 	public void setCacheStatus(String cacheStatus) {
-		Global.getProfile().notifyUnsavedChanges(!cacheStatus.equals(this.cacheStatus));		
-    	this.cacheStatus = cacheStatus;
-    }
+        if (!cacheStatus.equals(this.cacheStatus)) {
+        	this.cacheStatus = cacheStatus;
+            Global.getProfile().notifyUnsavedChanges(true);		
+            this.cacheStatus = cacheStatus;
+            if ((this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null) ) {
+              this.mainCache.setCacheStatus(this.getCacheStatus());
+              // change the addi's in setFound
+            }
+        }
+	}
 
 	public String getWayPoint() {
     	return wayPoint;
@@ -1214,9 +1233,11 @@ public class CacheHolder{
     if (is_found != this.found) {
       Global.getProfile().notifyUnsavedChanges(true);		
       this.found = is_found;
-      if (is_found && (this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null) ) {
-        this.mainCache.setFound(true);
-        this.mainCache.setAttributesToAddiWpts();
+      if ((this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null) ) {
+        this.mainCache.setFound(is_found);
+		// done in setCacheStatus this.mainCache.setCacheStatus(this.getCacheStatus());
+        // so setFound should be called after setCacheStatus 
+        if (is_found) this.mainCache.setAttributesToAddiWpts();
       }
     }
   }
