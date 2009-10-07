@@ -21,7 +21,8 @@ public class PreferencesScreen extends Form {
 	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, 
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
 	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus,chkHasCloseButton,
-	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSetCurrentCentreFromGPSPosition;
+	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, 
+	          chkSetCurrentCentreFromGPSPosition,chkSortingGroupedByCache,chkDebug;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
 	mLabel lblGarmin;
@@ -225,6 +226,11 @@ public class PreferencesScreen extends Form {
 		pnlMore.addNext(new mLabel(MyLocale.getMsg(588, "Length units")),DONTSTRETCH,DONTFILL|WEST);
 		int currMetrik = pref.metricSystem == Metrics.METRIC ? 0 : 1;
 		pnlMore.addLast(inpMetric=new mChoice(metriken, currMetrik),DONTSTRETCH,DONTFILL|WEST);
+		pnlMore.addLast(chkSortingGroupedByCache=new mCheckBox(MyLocale.getMsg(647,"Sorting grouped by Cache")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
+		chkSortingGroupedByCache.setState(pref.SortingGroupedByCache);
+		pnlMore.addLast(chkDebug=new mCheckBox(MyLocale.getMsg(648,"Debug Mode")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
+		chkDebug.setState(pref.debug);
+
 		/////////////////////////////////////////////////////////
 		// Fourth/Fifth panel - Listview and Travelbugs
 		/////////////////////////////////////////////////////////
@@ -329,6 +335,8 @@ public class PreferencesScreen extends Form {
 				pref.spiderUpdates = inpSpiderUpdates.getInt();
 				pref.addDetailsToWaypoint = chkAddDetailsToWaypoint.getState();
 				pref.addDetailsToName = chkAddDetailsToName.getState();
+				pref.SortingGroupedByCache=chkSortingGroupedByCache.getState();
+				pref.debug=chkDebug.getState();
 
 				pref.savePreferences();
 				pref.dirty = true; // Need to update table in case columns were enabled/disabled
