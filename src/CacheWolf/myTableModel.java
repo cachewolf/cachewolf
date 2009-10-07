@@ -164,27 +164,32 @@ public class myTableModel extends TableModel{
 			if (!ch.isVisible()) {
 				notVisibleDB.add(ch);
 			} else { // point is not filtered
-				if (ch.isAddiWpt()){ // unfiltered Addi Wpt
-					// check if main wpt is filtered
-					if(ch.mainCache != null) { // parent exists
-						if (! ch.mainCache.isVisible())
-							sortDB.add(ch); // Unfiltered Addi Wpt with filtered Main Wpt, show it on its own
-						// else 
-						// Main cache is not filtered, Addi will be added below main cache further down
-						// This case doesn't seem to be a problem. It occurs regularly, when
-						// filtered addis are unfiltered, so there is not need to log this case.
-					} else { //Addi without main Cache
-						sortDB.add(ch);
-					}
-				} else { // Main Wpt, not filtered. Check for Addis
-					sortDB.add(ch);
-					if (ch.hasAddiWpt()){
-						for (int j=0; j<ch.addiWpts.getCount();j++){
-							addiWpt = (CacheHolder)ch.addiWpts.get(j);
-							if (addiWpt.isVisible()) sortDB.add(addiWpt);
+				if (Global.getPref().SortingGroupedByCache) {
+					if (ch.isAddiWpt()){ // unfiltered Addi Wpt
+						// check if main wpt is filtered
+						if(ch.mainCache != null) { // parent exists
+							if (! ch.mainCache.isVisible())
+								sortDB.add(ch); // Unfiltered Addi Wpt with filtered Main Wpt, show it on its own
+							// else 
+							// Main cache is not filtered, Addi will be added below main cache further down
+							// This case doesn't seem to be a problem. It occurs regularly, when
+							// filtered addis are unfiltered, so there is not need to log this case.
+						} else { //Addi without main Cache
+							sortDB.add(ch);
 						}
-					}// if hasAddiWpt
-				} // if AddiWpt
+					} else { // Main Wpt, not filtered. Check for Addis
+						sortDB.add(ch);
+						if (ch.hasAddiWpt()){
+							for (int j=0; j<ch.addiWpts.getCount();j++){
+								addiWpt = (CacheHolder)ch.addiWpts.get(j);
+								if (addiWpt.isVisible()) sortDB.add(addiWpt);
+							}
+						}// if hasAddiWpt
+					} // if AddiWpt
+				}
+				else {
+					sortDB.add(ch);
+				}
 			} // if filtered
 		}
 		// rebuild database

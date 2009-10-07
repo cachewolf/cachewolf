@@ -256,6 +256,9 @@ public class Preferences extends MinML{
     /** ShowCachesOnMap */
     public boolean showCachesOnMap=true;
 
+    /** SortingGroupedByCache */
+    public boolean SortingGroupedByCache=true;
+
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
 	 * the line: <pre><debug value="true" /></pre>
@@ -573,6 +576,10 @@ public class Preferences extends MinML{
 			tmp = atts.getValue("on");
 			showCachesOnMap = tmp != null && tmp.equalsIgnoreCase("true");
 		}
+		else if (name.equals("SortingGroupedByCache")){
+			tmp = atts.getValue("on");
+			SortingGroupedByCache = tmp != null && tmp.equalsIgnoreCase("true");
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -661,6 +668,7 @@ public class Preferences extends MinML{
 			outp.print("    <fillWhiteArea on=\""+SafeXML.strxmlencode(fillWhiteArea)+"\"/>\n");
 			outp.print("    <mapLoader tileSize=\""+SafeXML.strxmlencode(mapTileSize)+"\" overlapping=\""+SafeXML.strxmlencode(mapOverlapping)+"\"/>\n");
 			outp.print("    <showCachesOnMap on=\""+SafeXML.strxmlencode(showCachesOnMap)+"\"/>\n");
+			outp.print("    <SortingGroupedByCache on=\""+SafeXML.strxmlencode(SortingGroupedByCache)+"\"/>\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
