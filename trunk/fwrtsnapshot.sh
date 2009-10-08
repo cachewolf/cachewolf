@@ -19,7 +19,7 @@ rm -rf bin
 mkdir -p bin/CacheWolf
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
     -cp lib/CompileEwe.zip:lib -d bin -deprecation -nowarn \
-    src/CacheWolf/*.java src/CacheWolf/*/*.java 
+    src/CacheWolf/*.java src/CacheWolf/*/*.java
 $EWE programs/Jewel.ewe -c cw-pda.jnf
 $EWE programs/Jewel.ewe -c cw-pc.jnf
 # Don’t change the order of the above Jewel commands because
@@ -38,6 +38,8 @@ cp work/CacheWolf.ewe published/
 (cd res_noewe && cp -R * ../published/dat/)
 cp resources/attributes-big/*.gif resources/attributes/*-non.gif \
     published/dat/attributes/
+cp platform-dep/PocketPC2003/ewe.dll published/dat/
+cp -R platform-dep/PNA-WinCE42/ewe.dll published/dat/PNA-WinCE42/
 chmod -R 0755 published
 find published -type f -print0 | xargs -0 chmod 0644
 (
