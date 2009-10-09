@@ -142,10 +142,10 @@ Partial Class Map
     Private WithEvents PictureBox As System.Windows.Forms.PictureBox
     Friend WithEvents LabelScaleVertical As System.Windows.Forms.Label
     Friend WithEvents ButtonScaleDown As System.Windows.Forms.Button
-    Friend WithEvents ButtonScaleUp As System.Windows.Forms.Button
     Friend WithEvents LabelScaleDiagonal As System.Windows.Forms.Label
     Friend WithEvents ButtonUseAsMaxScale As System.Windows.Forms.Button
     Friend WithEvents ButtonAddToRecommendedScale As System.Windows.Forms.Button
     Friend WithEvents ButtonUseAsMinScale As System.Windows.Forms.Button
     Friend WithEvents ButtonHelp As System.Windows.Forms.Button
+    Friend WithEvents ButtonScaleUp As System.Windows.Forms.Button
 End Class
