@@ -1,12 +1,12 @@
 TakenFromUrl:       http://osm.wheregroup.com/cgi-bin/osm_basic.xml?SERVICE=WMS&
 GetCapabilitiesUrl: http://osm.wheregroup.com/cgi-bin/osm_basic.xml?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               eu t OSM_wheregroup
+Name:               Europa t OSM(Server wheregroup)
 MapType:                        topo
 MainUrl:            http://osm.wheregroup.com/cgi-bin/osm_basic.xml?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:  4326
-CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326
 RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=OSM_Basic|OSM_Basic||
 #LayersUrlPart:     LAYERS=Grenzen|Europa||
