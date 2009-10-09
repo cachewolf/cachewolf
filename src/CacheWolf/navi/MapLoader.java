@@ -478,7 +478,7 @@ class WebMapService extends OnlineMapService {
 		String [] recommendedScalesStr = mString.split(wms.getProperty("RecommendedScale", "5").trim(), ' ');
 		recommendedScales = new float[recommendedScalesStr.length];
 		for (int i=0; i < recommendedScales.length; i++) {
-			recommendedScales[i] = Convert.toFloat(recommendedScalesStr[i].replace(',', '.'));
+			recommendedScales[i] = (float)Common.parseDouble(recommendedScalesStr[i].replace(',', '.'));
 		}
 		
 	}
