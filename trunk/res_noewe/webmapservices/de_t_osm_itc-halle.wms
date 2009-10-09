@@ -1,12 +1,12 @@
 TakenFromUrl:       http://osmwms.itc-halle.de/maps/osmfree?SERVICE=WMS&
 GetCapabilitiesUrl: http://osmwms.itc-halle.de/maps/osmfree?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               de t SF=0..88 OSM-itc-halle
+Name:               Deutschland t SF=0..88 OSM(Server itc-halle)
 MapType:                        topo
 MainUrl:            http://osmwms.itc-halle.de/maps/osmfree?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:  31466 31467 31468
-CoordinateReferenceSystemUrlPart: SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468 
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468
 RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=osmwms|OpenStreetMap-WMS||
 #LayersUrlPart:     LAYERS=grenzen|Administrative Grenzen (M 1:100000000)||
