@@ -101,6 +101,14 @@ Public Class capxml2wms
         mapUrl = makeGetMapUrl(MeineSkalierung)
         Dim SM As New Map(mapUrl, 0)
         'MsgBox("Noch nicht vorhanden!", MsgBoxStyle.Information, "Hinweis!")
+        SM.ButtonAddToRecommendedScale.Visible = False
+        SM.ButtonHelp.Visible = False
+        SM.ButtonScaleDown.Visible = False
+        SM.ButtonScaleUp.Visible = False
+        SM.ButtonUseAsMaxScale.Visible = False
+        SM.ButtonUseAsMinScale.Visible = False
+        SM.LabelScaleDiagonal.Visible = False
+        SM.LabelScaleVertical.Visible = False
         SM.ShowDialog()
     End Sub
     Private Sub ButtonFindScale_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonFindScale.Click
