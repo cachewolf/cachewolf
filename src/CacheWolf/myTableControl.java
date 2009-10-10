@@ -256,9 +256,12 @@ public class myTableControl extends TableControl{
 			if(browserPathIsValid()){
 				ch = cacheDB.get(tbp.getSelectedCache());
 				CacheHolderDetail chD=ch.getCacheDetails(false, true);
+				String url =chD.URL;
+				int logpos = url.toLowerCase().indexOf("&log=y");
+				if (logpos > 0) url=url.substring(0,logpos) + url.substring(logpos+6,url.length());
 				try {
 					if (chD != null) {
-						CWWrapper.exec(pref.browser, chD.URL); // maybe this works on some PDAs?
+						CWWrapper.exec(pref.browser, url); // maybe this works on some PDAs?
 					}
 				} catch (IOException ex) {
 					(new MessageBox(MyLocale.getMsg(321,"Error"),
