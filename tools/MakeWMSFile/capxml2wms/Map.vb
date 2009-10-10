@@ -3,9 +3,11 @@ Public Class Map
     Dim GetMapUrl As String
     Dim pngFileName As String
     Dim i As Image
-    Dim scale_ As Double
+    Dim sf As Double
+    Dim center As capxml2wms.point
     Public exitcode As Integer
     Public clickedAt As Point
+    Dim scaleLowerLimit, scaleUpperLimit As Double
 
 
     Private Sub Map_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
@@ -18,7 +20,31 @@ Public Class Map
     End Sub
 
     Private Sub Map_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        Me.Text = GetMapUrl
+        _MapLoad()
+    End Sub
+
+    Friend Sub New(ByVal _GetMapUrl As String, ByVal _scale As Double, ByVal _sfmin As Double, ByVal _sfmax As Double, ByVal _center As capxml2wms.point)
+
+        ' Dieser Aufruf ist für den Windows Form-Designer erforderlich.
+        InitializeComponent()
+
+        ' Fügen Sie Initialisierungen nach dem InitializeComponent()-Aufruf hinzu.
+        GetMapUrl = _GetMapUrl
+        sf = _scale
+        scaleLowerLimit = _sfmin
+        scaleUpperLimit = _sfmax
+        center = _center
+        LabelScaleVertical.Text = "Vertical scale m/pixel: " & sf
+        LabelScaleDiagonal.Text = "Diagonal scale m/pixel: " & sf * Math.Sqrt(2)
+        ButtonUseAsMaxScale.Enabled = True
+        ButtonUseAsMinScale.Enabled = False
+        ButtonAddToRecommendedScale.Enabled = False
+    End Sub
+
+    Private Sub _MapLoad()
+        sf = (scaleLowerLimit + scaleUpperLimit) / 2
+        Dim BBoxString As String = capxml2wms.ToBBox(center, capxml2wms._srs, capxml2wms._pixelwidth * sf)
+        GetMapUrl = capxml2wms.makeGetMapUrlFromBBox(BBoxString)
         Try
             Dim wc As New WebClient()
             pngFileName = IO.Path.GetTempFileName
@@ -33,28 +59,18 @@ Public Class Map
             MsgBox("Tut mir leid, das mag der wms-Server wohl so nicht", MsgBoxStyle.Exclamation)
             Close()
         End Try
-    End Sub
-
-    Public Sub New(ByVal _GetMapUrl As String, ByVal scale As Double)
-
-        ' Dieser Aufruf ist für den Windows Form-Designer erforderlich.
-        InitializeComponent()
-
-        ' Fügen Sie Initialisierungen nach dem InitializeComponent()-Aufruf hinzu.
-        GetMapUrl = _GetMapUrl
-        scale_ = scale
-        LabelScaleVertical.Text = "Vertical scale m/pixel: " & scale
-        LabelScaleDiagonal.Text = "Diagonal scale m/pixel: " & scale * Math.Sqrt(2)
+        LabelScaleVertical.Text = "Vertical scale m/pixel: " & sf
+        LabelScaleDiagonal.Text = "Diagonal scale m/pixel: " & sf * Math.Sqrt(2)
     End Sub
 
     Private Sub ButtonScaleUp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonScaleUp.Click
-        exitcode = +1
-        Close()
+        scaleLowerLimit = sf
+        _MapLoad()
     End Sub
 
     Private Sub ButtonScaleDown_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonScaleDown.Click
-        exitcode = -1
-        Close()
+        scaleUpperLimit = sf
+        _MapLoad()
     End Sub
 
     Private Sub PictureBox_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox.Click
@@ -65,23 +81,44 @@ Public Class Map
         clickedAt = New Point
         clickedAt.X = mev.X - (Width - im.Width) / 2 - im.Width / 2
         clickedAt.Y = mev.Y - (Height - im.Height) / 2 - im.Height / 2
-        exitcode = 5
-        Close()
+        ' shift center to the clicked pos
+        center.x = center.x + clickedAt.X * sf * capxml2wms.metersToBBoxHorizontal(capxml2wms._srs, center)
+        center.y = center.y - clickedAt.Y * sf * capxml2wms.metersToBBoxVertical(capxml2wms._srs)
+        _MapLoad()
     End Sub
 
     Private Sub ButtonUseAsMaxScale_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonUseAsMaxScale.Click
-        exitcode = 101
-        Close()
+        capxml2wms.maxScale = sf * Math.Sqrt(2)
+        scaleUpperLimit = sf
+        scaleLowerLimit = capxml2wms.minScale / Math.Sqrt(2)
+        _MapLoad()
+        ButtonUseAsMaxScale.Enabled = False
+        ButtonUseAsMinScale.Enabled = True
+        AddToRecommendedScale()
     End Sub
 
     Private Sub ButtonAddToRecommendedScale_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonAddToRecommendedScale.Click
-        exitcode = 100
-        Close()
+        AddToRecommendedScale()
+    End Sub
+
+    Private Sub AddToRecommendedScale()
+        If capxml2wms.recScale Is Nothing Then
+            capxml2wms.recScale = New ArrayList
+        End If
+        capxml2wms.recScale.Add(sf)
+        scaleLowerLimit = capxml2wms.minScale / Math.Sqrt(2)
+        scaleUpperLimit = capxml2wms.maxScale / Math.Sqrt(2)
+        _MapLoad()
     End Sub
 
     Private Sub ButtonUseAsMinScale_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonUseAsMinScale.Click
-        exitcode = 99
-        Close()
+        capxml2wms.minScale = sf * Math.Sqrt(2)
+        scaleLowerLimit = sf
+        scaleUpperLimit = capxml2wms.maxScale / Math.Sqrt(2)
+        _MapLoad()
+        ButtonUseAsMinScale.Enabled = False
+        ButtonAddToRecommendedScale.Enabled = True
+        AddToRecommendedScale()
     End Sub
 
     Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonHelp.Click
