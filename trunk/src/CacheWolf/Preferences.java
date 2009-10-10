@@ -277,7 +277,7 @@ public class Preferences extends MinML{
 	public int myAppWidth = 800;
 	/** True if the preferences were changed and need to be saved */
 	public boolean dirty = false;
-	
+
 	private String pathToProfile;
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -340,8 +340,8 @@ public class Preferences extends MinML{
 		}
 		if (testlist != null) {
 			for (int i=0; i < testlist.length; i++)
-				if ((new FileBugfix(testlist[i])).exists()) { 
-					return testlist[i]; 
+				if ((new FileBugfix(testlist[i])).exists()) {
+					return testlist[i];
 				}
 		}
 		return "";
@@ -354,7 +354,7 @@ public class Preferences extends MinML{
 	/**
 	 * Method that gets called when a new element has been identified in pref.xml
 	 */
-	
+
 	public void startElement(String name, AttributeList atts){
 		//Vm.debug("name = "+name);
 		lastName=name;
@@ -552,13 +552,13 @@ public class Preferences extends MinML{
 		}
 		else if (name.equals("logkeeping")) {
 			tmp = atts.getValue("maximum");
-			if (tmp != null) 
+			if (tmp != null)
 				maxLogsToKeep = Convert.parseInt(tmp);
 			if (maxLogsToKeep < 0) maxLogsToKeep = 0;
-			
+
 			tmp = atts.getValue("keepown");
 			if (tmp != null)
-				alwaysKeepOwnLogs = Boolean.valueOf(tmp).booleanValue();  
+				alwaysKeepOwnLogs = Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("fillWhiteArea")){
 			tmp = atts.getValue("on");
@@ -694,7 +694,7 @@ public class Preferences extends MinML{
 			return absoluteBaseDir+"maps"+rCMP;
 		}
 	}
-	
+
 	public void saveCustomMapsPath(String mapspath_) {
 		if (customMapsPath == null || !customMapsPath.equals(mapspath_)) {
 			customMapsPath=new String(mapspath_).replace('\\', '/');
@@ -822,7 +822,7 @@ public class Preferences extends MinML{
 
 	/**
 	 * tries to get the home data dir of the user
-	 * e.g. "c:\documents and...\<user>\my documents" or "/home/<user>" in linux 
+	 * e.g. "c:\documents and...\<user>\my documents" or "/home/<user>" in linux
 	 * if none could be identified, "/" is returned.
 	 * @return
 	 */
@@ -836,13 +836,8 @@ public class Preferences extends MinML{
 		if (test.length() == 0)	test = "/";
 		return test;
 	}
-	/**
-	 * Open Profile selector screen
-	 * @param prof
-	 * @param showProfileSelector
-	 * @return True if a profile was selected
-	 */
-	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
+
+	private void checkAbsoluteBaseDir() {
 		// If datadir is empty, ask for one
 		if (absoluteBaseDir.length()==0 || !(new FileBugfix(absoluteBaseDir)).exists()) {
 			do {
@@ -853,11 +848,21 @@ public class Preferences extends MinML{
 				setBaseDir(fc.getChosenFile().toString());
 			}while (!(new FileBugfix(absoluteBaseDir)).exists());
 		}
+	}
+
+	/**
+	 * Open Profile selector screen
+	 * @param prof
+	 * @param showProfileSelector
+	 * @return True if a profile was selected
+	 */
+	public boolean selectProfile(Profile prof, int showProfileSelector, boolean hasNewButton) {
+		checkAbsoluteBaseDir();
 		boolean profileExists=true;  // Assume that the profile exists
 		do {
 			if(!profileExists || (showProfileSelector==PROFILE_SELECTOR_FORCED_ON) ||
 					(showProfileSelector==PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)){ // Ask for the profile
-				ProfilesForm f = new ProfilesForm(absoluteBaseDir,lastProfile,!profileExists || hasNewButton);
+				ProfilesForm f = new ProfilesForm(absoluteBaseDir,lastProfile,!profileExists || hasNewButton ? 0 : 1);
 				int code = f.execute();
 				// If no profile chosen (includes a new one), terminate
 				if (code==-1) return false; // Cancel pressed
@@ -882,6 +887,47 @@ public class Preferences extends MinML{
 		return true;
 	}
 
+	public void deleteProfile() {
+		checkAbsoluteBaseDir(); // perhaps not necessary
+		ProfilesForm f = new ProfilesForm(absoluteBaseDir,"",2);
+		int code = f.execute();
+		// If no profile chosen (includes a new one), terminate
+		if (code==-1) return; // Cancel pressed
+		if (lastProfile.equals(f.newSelectedProfile)) {
+			// aktives Profil kann nicht gelöscht / umbenannt werden;
+			new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(227,"[active profile cannot be deleted.]"),FormBase.MBOK).execute();
+		}
+		else {
+			if (!(new FileBugfix(absoluteBaseDir+f.newSelectedProfile).delete()) ) {
+				// Fehler beim löschen des Profils;
+				new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(226,"[Profile cannot be deleted.]"),FormBase.MBOK).execute();
+			}
+		}
+	}
+
+	public void renameProfile(ewe.ui.Frame parent) {
+		// not yet implemented
+		/*
+		checkAbsoluteBaseDir(); // perhaps not necessary
+		ProfilesForm f = new ProfilesForm(absoluteBaseDir,"",3);
+		int code = f.execute();
+		// If no profile chosen (includes a new one), terminate
+		if (code==-1) return; // Cancel pressed
+		if (lastProfile.equals(f.newSelectedProfile)) {
+			// aktives Profil kann nicht gelöscht / umbenannt werden;
+			new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(228,"[active profile cannot be renamed.]"),FormBase.MBOK).execute();
+		}
+		else {
+			NewProfileForm x=new NewProfileForm(absoluteBaseDir);
+			x.execute(parent, Gui.CENTER_FRAME);
+			if (!(new FileBugfix(absoluteBaseDir+f.newSelectedProfile).rename(x.profileDir))) {
+				// Fehler beim löschen des Profils;
+				new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(229,"[Profile cannot be renamed.]"),FormBase.MBOK).execute();
+			}
+		}
+		*/		
+		new MessageBox(MyLocale.getMsg(321,"Error"),"Noch nicht implementiert. Nutzen Sie solange das Betriebssystem um das Profilverzeichnis umzubenennen!",FormBase.MBOK).execute();
+	}
     //////////////////////////////////////////////////////////////////////////////////////
     // Log functions
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -1063,9 +1109,9 @@ public class Preferences extends MinML{
 		Utils.sort(result, comp, false);
 		return result;
 	}
-	
+
 	public String gpsbabel = null;
-	
+
 	public void setgpsbabel() {
 		try{
 			ewe.sys.Process p = Vm.exec("gpsbabel -V");
@@ -1084,17 +1130,17 @@ public class Preferences extends MinML{
 			}
 		}
 	}
-	
+
 	/** get directory where pref.xml is stored<br>
 	 *  use this if you need a path where the user has sufficient rights to create a file */
 	public String getPathToConfigFile() {
 		return pathToConfigFile;
 	}
-	
+
 	public String getBaseDir() {
 		return baseDir;
 	}
-	
+
 	public void setBaseDir(String dir) {
 		baseDir = dir;
 		baseDir=baseDir.replace('\\','/');

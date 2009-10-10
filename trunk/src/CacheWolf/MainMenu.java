@@ -62,7 +62,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem exportLOC, exportGPS, mnuSeparator;
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgCheckNotesAndSolver, orgRater;
 	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
-	private MenuItem mnuNewProfile, mnuOpenProfile, mnuEditCenter;
+	private MenuItem mnuNewProfile, mnuOpenProfile, mnuDeleteProfile, mnuRenameProfile, mnuEditCenter;
 	private Form father;
 	private TablePanel tbp;
 	private FilterScreen scnFilter=new FilterScreen();
@@ -78,9 +78,11 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for profiles, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mnuProfile = new MenuItem[2];
+		MenuItem[] mnuProfile = new MenuItem[4];
 		mnuProfile[0] = mnuNewProfile = new MenuItem(MyLocale.getMsg(1107,"New"));
 		mnuProfile[1] = mnuOpenProfile = new MenuItem(MyLocale.getMsg(1109,"Open"));
+		mnuProfile[2] = mnuDeleteProfile = new MenuItem(MyLocale.getMsg(1125,"Delete"));
+		mnuProfile[3] = mnuRenameProfile = new MenuItem(MyLocale.getMsg(1126,"Rename"));
 		Menu profileMenu = new Menu(mnuProfile,MyLocale.getMsg(121,"Profiles"));
 
 		///////////////////////////////////////////////////////////////////////
@@ -303,6 +305,12 @@ public class MainMenu extends MenuBar {
 					infB.close(0);
 					tbp.resetModel();
 				}
+			}
+			if(mev.selectedItem == mnuDeleteProfile) {
+				pref.deleteProfile();
+			}
+			if(mev.selectedItem == mnuRenameProfile) {
+				pref.renameProfile(getFrame());
 			}
 			if(mev.selectedItem == mnuEditCenter){
 				ProfileDataForm f=new ProfileDataForm(pref,profile);
