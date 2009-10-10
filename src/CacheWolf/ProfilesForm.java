@@ -17,21 +17,21 @@ public class ProfilesForm extends Form{
 	private class MyList extends mList {
 		private int first=1;
 		private int select;
-	    
+
 		public MyList() {
 			super(1,1,false);
 		}
-		
+
 		public void selectLastProfile(String selectedItem) {
 			selectItem(selectedItem);
 			select=getSelectedIndex(0);
 		}
 
 		public void doPaint(Graphics gr,Rect area) {
-			if (first==1) { 
+			if (first==1) {
 				first=0;
 				selectAndView(select);
-				makeVisible(select); 
+				makeVisible(select);
 			}
 			super.doPaint(gr,area);
 		}
@@ -45,7 +45,7 @@ public class ProfilesForm extends Form{
 			sp.modify(0,TakeControlEvents);
 			return sp;
 		}
-		
+
 	}
 
 	private MyList choice;
@@ -55,13 +55,13 @@ public class ProfilesForm extends Form{
 	public String newSelectedProfile;	// This is only used if a new profile is being created
 
 	/**
-	*	Constructor to create a form to select profiles. It requires that the preferences 
+	*	Constructor to create a form to select profiles. It requires that the preferences
 	*	have been loaded so that the calling parameters can be set.
 	* @param baseDir The base directory which holds one subdirectory per profile
 	* @param oldProfiles List of names of old profiles
 	* @param selectedProfile Name of the last used profile
 	*/
-	public ProfilesForm(String baseDir, String selectedProfile, boolean hasNewButton){
+	public ProfilesForm(String baseDir, String selectedProfile, int outfit){
 		super();
     	resizable =  false;
 		int w=MyLocale.getScreenWidth();
@@ -69,22 +69,39 @@ public class ProfilesForm extends Form{
 		if (w>240) w=240;
 		if (h>320) h=320;
 		setPreferredSize(w,h);
-	    defaultTags.set(CellConstants.INSETS,new Insets(2,2,2,2));		
+	    defaultTags.set(CellConstants.INSETS,new Insets(2,2,2,2));
 		title = MyLocale.getMsg(1301,"Select Profile:");
-		if (hasNewButton) {
+		if (outfit==0) {
 			addNext(new mLabel(MyLocale.getMsg(1106,"Choose profile or New")),DONTSTRETCH,DONTSTRETCH|LEFT);
 			addLast(btnNew=new mButton(MyLocale.getMsg(1107,"New")),HSTRETCH,HFILL|RIGHT);
-		} else {
-			addLast(new mLabel(MyLocale.getMsg(1108,"Choose profile")),DONTSTRETCH,DONTSTRETCH|LEFT);
 		}
-		
+		else {
+			if (outfit==1) {
+				addLast(new mLabel(MyLocale.getMsg(1108,"Choose profile")),DONTSTRETCH,DONTSTRETCH|LEFT);
+			}
+			else {
+				if (outfit==2) {
+					//delete
+					String msg = MyLocale.getMsg(1118,"profile") + " " + MyLocale.getMsg(1125,"delete") ; 
+					addLast(new mLabel(msg),DONTSTRETCH,DONTSTRETCH|LEFT);
+				}
+				else {
+					if (outfit==3) {
+						// rename
+						String msg = MyLocale.getMsg(1118,"profile") + " " + MyLocale.getMsg(1126,"rename") ; 
+						addLast(new mLabel(msg),DONTSTRETCH,DONTSTRETCH|LEFT);
+					}
+				}
+			}
+		}
+
 		choice=new MyList();
 		// Get all subdirectories in the base directory
 		File fileBaseDir=new FileBugfix(baseDir);
 		String[] existingProfiles=fileBaseDir.list("*.*",FileBase.LIST_DIRECTORIES_ONLY);
         // Now add these subdirectories to the list of profiles but
         // exclude the "maps" directory which will contain the moving maps
-        for (int i=0; i<existingProfiles.length; i++) 
+        for (int i=0; i<existingProfiles.length; i++)
 			if (!existingProfiles[i].equalsIgnoreCase("maps")) choice.addItem(existingProfiles[i]);
         // Highlight the profile that was used last
         choice.selectLastProfile(selectedProfile);
@@ -101,7 +118,7 @@ public class ProfilesForm extends Form{
 		this.baseDir=baseDir;
 		choice.takeFocus(ControlConstants.ByKeyboard);
 	}
-	
+
 	/**
 	 * Ask for a new profile directory. If it exists, cancel. If it does not exist, create it
 	 * @return Name of directory (just the part below baseDir)
@@ -109,7 +126,7 @@ public class ProfilesForm extends Form{
 	public String createNewProfile() {
 		NewProfileForm f=new NewProfileForm(baseDir);
 	    int code=f.execute(getFrame(), Gui.CENTER_FRAME);
-		if (code==0) { 
+		if (code==0) {
 			 return f.profileDir;
 		} else
 			 return "";
