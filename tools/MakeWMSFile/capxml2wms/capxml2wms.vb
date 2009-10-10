@@ -42,9 +42,9 @@ Public Class capxml2wms
 
     Dim WGS84 As Ellipsoid
     Dim OBBoxes As Dictionary(Of String, XmlElement)
-    Dim minScale As Double = 0
-    Dim maxScale As Double = 1000
-    Dim recScale As ArrayList
+    Friend minScale As Double = 0
+    Friend maxScale As Double = 1000
+    Friend recScale As ArrayList
 
 
     Private Sub capxml2wms_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
@@ -99,7 +99,10 @@ Public Class capxml2wms
         Dim MeineSkalierung As Double
         MeineSkalierung = 2.0 * Me.HScrollBar1.Value
         mapUrl = makeGetMapUrl(MeineSkalierung)
-        Dim SM As New Map(mapUrl, 0)
+        Dim center As point
+        center.x = 0
+        center.y = 0
+        Dim SM As New Map(mapUrl, 0, 0, 0, center)
         'MsgBox("Noch nicht vorhanden!", MsgBoxStyle.Information, "Hinweis!")
         SM.ButtonAddToRecommendedScale.Visible = False
         SM.ButtonHelp.Visible = False
@@ -111,11 +114,12 @@ Public Class capxml2wms
         SM.LabelScaleVertical.Visible = False
         SM.ShowDialog()
     End Sub
+    Friend _srs As Integer
+    Friend _pixelwidth As Integer
     Private Sub ButtonFindScale_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonFindScale.Click
         Dim BBoxString As String
 
-        Dim srs As Integer
-        srs = Me.ComboBoxEPSG.SelectedItem
+        _srs = Me.ComboBoxEPSG.SelectedItem
 
         Dim center As point
         ' find center
@@ -142,8 +146,7 @@ Public Class capxml2wms
         center.y = rymitte
 
         Dim scale_ll, scale_ul, scale_m As Double
-        Dim pixelwidth As Integer
-        pixelwidth = 500
+        _pixelwidth = 500
 
         scale_ll = minScale
         scale_ul = maxScale
@@ -152,51 +155,13 @@ Public Class capxml2wms
         Dim mapUrl As String
         Do
             scale_m = (scale_ll + scale_ul) / 2
-            BBoxString = ToBBox(center, srs, pixelwidth * scale_m)
+            BBoxString = ToBBox(center, _srs, _pixelwidth * scale_m)
             mapUrl = makeGetMapUrlFromBBox(BBoxString)
-            SM = New Map(mapUrl, scale_m)
+            SM = New Map(mapUrl, scale_m, minScale, maxScale, center)
             SM.ShowDialog()
-            Select Case SM.exitcode
-                Case -1
-                    scale_ul = scale_m
-                Case 1
-                    scale_ll = scale_m
-                Case 5
-                    ' shift center to the clicked pos
-                    center.x = center.x + SM.clickedAt.X * scale_m * metersToBBoxHorizontal(srs, center)
-                    center.y = center.y - SM.clickedAt.Y * scale_m * metersToBBoxVertical(srs)
-                Case 99
-                    Me.minScale = scale_m * Math.Sqrt(2)
-                    scale_ll = scale_m
-                    scale_ul = Me.maxScale / Math.Sqrt(2)
-                Case 100
-                    If recScale Is Nothing Then
-                        recScale = New ArrayList
-                    End If
-                    recScale.Add(scale_m)
-                    scale_ll = Me.minScale / Math.Sqrt(2)
-                    scale_ul = Me.maxScale / Math.Sqrt(2)
-                Case 101
-                    Me.maxScale = scale_m * Math.Sqrt(2)
-                    scale_ul = scale_m
-                    scale_ll = Me.minScale / Math.Sqrt(2)
-            End Select
-
         Loop Until SM.exitcode = 0
     End Sub
-    Private Function metersToBBoxVertical(ByVal epsg As Integer) As Double
-        If epsg = 4326 Then
-            metersToBBoxVertical = 360 / (WGS84.a * Math.PI * 2)
-        Else : metersToBBoxVertical = 1
-        End If
-    End Function
-    Private Function metersToBBoxHorizontal(ByVal epsg As Integer, ByRef center As point) As Double
-        If epsg = 4326 Then
-            metersToBBoxHorizontal = (360 / (WGS84.a * Math.PI * 2)) / Math.Cos(center.y / 180 * Math.PI)
-        Else : metersToBBoxHorizontal = 1
-        End If
-    End Function
-    Private Function makeGetMapUrlFromBBox(ByVal bb As String) As String
+    Friend Function makeGetMapUrlFromBBox(ByVal bb As String) As String
         'http:// www.lv-bw.de/dv/service/getrds2.asp?login=dv&pw=anonymous
         '&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap
         '&SRS=EPSG:31467
@@ -303,7 +268,20 @@ Public Class capxml2wms
         makeGetMapUrl = mapUrl
     End Function
 
-    Private Function ToBBox(ByRef center As point, ByVal srs As Integer, ByVal meter As Double) As String
+    Friend Function metersToBBoxVertical(ByVal epsg As Integer) As Double
+        If epsg = 4326 Then
+            metersToBBoxVertical = 360 / (WGS84.a * Math.PI * 2)
+        Else : metersToBBoxVertical = 1
+        End If
+    End Function
+    Friend Function metersToBBoxHorizontal(ByVal epsg As Integer, ByRef center As capxml2wms.point) As Double
+        If epsg = 4326 Then
+            metersToBBoxHorizontal = (360 / (WGS84.a * Math.PI * 2)) / Math.Cos(center.Y / 180 * Math.PI)
+        Else : metersToBBoxHorizontal = 1
+        End If
+    End Function
+
+    Friend Function ToBBox(ByRef center As point, ByVal srs As Integer, ByVal meter As Double) As String
         Dim tl As point
         Dim br As point
         Dim diff_v, diff_h As Double
@@ -708,7 +686,7 @@ Public Class capxml2wms
                 If n.NodeType = XmlNodeType.Element Then
                     Dim e As XmlElement = n
                     Dim stmp As String = e.GetAttribute("SRS")
-                    If Not OBBoxes.ContainsKey(stmp) Then
+                    If Not stmp = "" And Not OBBoxes.ContainsKey(stmp) Then
                         OBBoxes.Add("EPSG:4326", e)
                     End If
                 End If
@@ -786,7 +764,7 @@ Public Class capxml2wms
 
     End Sub
 
-    Private Structure point
+    Friend Structure point
         Dim x As Double
         Dim y As Double
     End Structure
