@@ -39,6 +39,7 @@ cp work/CacheWolf.ewe published/
 cp resources/attributes-big/*.gif resources/attributes/*-non.gif \
     published/dat/attributes/
 cp platform-dep/PocketPC2003/ewe.dll published/dat/
+mkdir -p published/dat/PNA-WinCE42
 cp -R platform-dep/PNA-WinCE42/ewe.dll published/dat/PNA-WinCE42/
 chmod -R 0755 published
 find published -type f -print0 | xargs -0 chmod 0644
