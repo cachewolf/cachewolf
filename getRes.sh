@@ -2,7 +2,7 @@
 
 filestosave="pref.xml garminmap.xml"
 
-for savefile in $filestosave; do 
+for savefile in $filestosave; do
 	if [ -f "work/$savefile" ]; then
 		echo "backup of $savefile"
 		mv "work/$savefile" /tmp/
@@ -22,6 +22,7 @@ mkdir -p work/webmapservices
 mkdir -p work/languages
 mkdir -p work/templates
 mkdir -p work/exporticons
+mkdir -p work/symbols
 
 # get ressources
 cp -fa resources/*.* work
@@ -31,6 +32,7 @@ cp -fa res_noewe/webmapservices/* work/webmapservices/
 cp -fa res_noewe/languages/* work/languages/
 cp -fa res_noewe/templates/* work/templates/
 cp -fa res_noewe/exporticons/* work/exporticons/
+cp -fa res_noewe/symbols/* work/symbols/
 
 # set sane permissions
 find work -type f -exec chmod 644 "{}" \;
