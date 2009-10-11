@@ -775,6 +775,10 @@ public class DetailsPanel extends CellPanel {
 		dirtyDetails = false;
 		needsTableUpdate = false;
 		cache.getFreshDetails().hasUnsavedChanges = true;
+		if (!oldWaypoint.equals(cache.getWayPoint())){
+		 // Delete old XML - File
+			cache.getFreshDetails().deleteFile(Global.getProfile().dataDir+oldWaypoint+".xml");
+		}		
 	}
 	
 	/**
