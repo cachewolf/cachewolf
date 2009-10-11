@@ -20,14 +20,14 @@ import ewe.ui.ProgressBarForm;
 
 /**
  * This class holds a profile, i.e. a group of caches with a centre location
- * 
+ *
  * @author salzkammergut
  *
  */
 public class Profile {
 
 	/** The list of caches (CacheHolder objects). A pointer to this object exists in many classes in parallel to
-	 *  this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector. 
+	 *  this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector.
 	 */
 	public CacheDB cacheDB=new CacheDB();
 	/** The centre point of this group of caches. Read from ans stored to index.xml file */
@@ -59,9 +59,9 @@ public class Profile {
 	private boolean showBlacklisted = false;
 	private boolean showSearchResult = false;
 
-	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map 
+	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map
 	/** True if the profile has been modified and not saved
-	 * The following modifications set this flag: New profile centre, Change of waypoint data 
+	 * The following modifications set this flag: New profile centre, Change of waypoint data
 	 */
 	private boolean hasUnsavedChanges = false;
 	public boolean byPassIndexActive = false;
@@ -83,7 +83,7 @@ public class Profile {
 	/**
 	 * Returns <code>true</code> if profile needs to be changed when profile is left. Returns
 	 * <code>false</code> if no relevant changes have been made.
-	 * 
+	 *
 	 * @return hasUnsavedChanges
 	 */
 	public boolean hasUnsavedChanges() {
@@ -94,14 +94,14 @@ public class Profile {
 	 * Remember that profile needs to be saved. Flag is set <code>true</code> when parameter is
 	 * true, but it's not set to <code>false</code> when parameter is <code>false</code>.<br>
 	 * This is only done internally on saving the cache.
-	 * 
+	 *
 	 * @param hasUnsavedChanges
 	 *            the hasUnsavedChanges to set
 	 */
 	public void notifyUnsavedChanges(boolean changes) {
 		hasUnsavedChanges = hasUnsavedChanges || changes;
 	}
-	
+
 	public void resetUnsavedChanges() {
 		hasUnsavedChanges = false;
 	}
@@ -123,25 +123,26 @@ public class Profile {
 		this.notifyUnsavedChanges(coords.equals(this.centre));
 		this.centre.set(coords);
 	}
-	
+
 	/**
 	 *	Method to save the index.xml file that holds the total information
 	 *	on available caches in the database. The database is nothing else
 	 *	than the collection of caches in a directory.
-	 *   
-	 *   Not sure whether we need to keep 'pref' in method signature. May eventually remove it. 
-	 *   
+	 *
+	 *   Not sure whether we need to keep 'pref' in method signature. May eventually remove it.
+	 *
 	 *   Saves the index with the filter settings from Filter
 	 */
 //	public void saveIndex(Preferences pref, boolean showprogress){
 //		saveIndex(pref,showprogress, Filter.filterActive,Filter.filterInverted);
 //	}
 
-	
-	/** Save index with filter settings given */ 
-	public void saveIndex(Preferences pref, boolean showprogress) { 
+
+	/** Save index with filter settings given */
+	public void saveIndex(Preferences pref, boolean showprogress) {
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
+		int updFrequ=Vm.isMobile()?10:40; // Number of caches between screen updates
 		if(showprogress){
 			pbf.showMainTask = false;
 			pbf.setTask(h,"Saving Index");
@@ -204,11 +205,11 @@ public class Profile {
 			for (int i = 0; i < size; i++) {
 				if (showprogress) {
 					h.progress = (float) i / (float) size;
-					h.changed();
+					if ((i%updFrequ)==0) h.changed();
 				}
 				ch = cacheDB.get(i);
 				// //Vm.debug("Saving: " + ch.CacheName);
-				if (ch.getWayPoint().length() > 0) { 
+				if (ch.getWayPoint().length() > 0) {
 					detfile.print(ch.toXML());
 				}
 			}
@@ -233,7 +234,7 @@ public class Profile {
 	 *	than the collection of caches in a directory.
 	 */
 	public void readIndex(InfoBox infoBox) {
-
+		int updFrequ=Vm.isMobile()?10:40; // Number of caches between screen updates
 		try {
 			selectionChanged = true;
 			boolean fmtDec = false;
@@ -249,7 +250,7 @@ public class Profile {
 			String text = in.readLine(); // <CACHELIST>
 			if (text!=null && text.indexOf("decimal")>0) fmtDec=true;
 			Extractor ex = new Extractor(null, " = \"", "\" ", 0, true);
-			
+
 			//ewe.sys.Time startT=new ewe.sys.Time();
 			boolean convertWarningDisplayed = false;
 			while ((text = in.readLine()) != null){
@@ -262,7 +263,7 @@ public class Profile {
 						}
 					}
 					if (infoBox!=null) {
-						if (wptNo - 10 >= lastShownWpt) {
+						if (wptNo - updFrequ >= lastShownWpt) {
 							infoBox.setInfo(mainInfoText+"\n"+String.valueOf(wptNo));
 							lastShownWpt = wptNo;
 						}
@@ -277,13 +278,13 @@ public class Profile {
 						start=text.indexOf("lon=\"")+5;
 						String lon=text.substring(start,text.indexOf("\"",start)).replace(notDecSep,decSep);
 						centre.set(Convert.parseDouble(lat),Convert.parseDouble(lon));
-					} else {	
+					} else {
 						int start=text.indexOf("lat=\"")+5;
 						String lat=SafeXML.cleanback(text.substring(start,text.indexOf("\"",start)));
 						start=text.indexOf("long=\"")+6;
 						String lon=SafeXML.cleanback(text.substring(start,text.indexOf("\"",start)));
 						centre.set(lat+" "+lon,TransformCoordinates.CW); // Fast parse
-					}	
+					}
 				} else if (text.indexOf("<VERSION")>=0) {
 					int start=text.indexOf("value = \"")+9;
 					indexXmlVersion  = Integer.valueOf(text.substring(start,text.indexOf("\"",start))).intValue();
@@ -309,13 +310,13 @@ public class Profile {
 					String temp=ex.findNext(); // Filter status is now first, need to deal with old versions which don't have filter status
 					if (temp.length()==2) {
 						// Compatibility with previous versions
-						if (temp.charAt(0)=='T') 
+						if (temp.charAt(0)=='T')
 							setFilterActive(Filter.FILTER_ACTIVE);
 						else
 							setFilterActive(Common.parseInt(temp.substring(0,1)));
 						setFilterInverted(temp.charAt(1)=='T');
 						setFilterRose(ex.findNext());
-					} else 
+					} else
 						setFilterRose(temp);
 					setFilterType(ex.findNext());
 					//Need this to stay "downward" compatible. New type introduced
@@ -376,7 +377,7 @@ public class Profile {
 			//ewe.sys.Time endT=new ewe.sys.Time();
 			//Vm.debug("Time="+((((endT.hour*60+endT.minute)*60+endT.second)*1000+endT.millis)-(((startT.hour*60+startT.minute)*60+startT.second)*1000+startT.millis)));
 			//Vm.debug("Start:"+startT.format("H:mm:ss.SSS"));
-			//Vm.debug("End  :"+endT.format("H:mm:ss.SSS"));	
+			//Vm.debug("End  :"+endT.format("H:mm:ss.SSS"));
 			// Build references between caches and addi wpts
 			if (infoBox!=null) {
 				infoBox.setInfo(MyLocale.getMsg(5004,"Building references..."));
@@ -389,21 +390,21 @@ public class Profile {
 			Global.getPref().log("index.xml not found in directory "+dataDir); // Normal when profile is opened for first time
 			//e.printStackTrace();
 		} catch (IOException e){
-			Global.getPref().log("Problem reading index.xml in dir: "+dataDir,e,true); 
+			Global.getPref().log("Problem reading index.xml in dir: "+dataDir,e,true);
 		}
 		// TODO Brauchen wir das noch?
 		this.getCurrentFilter().normaliseFilters();
 		resetUnsavedChanges();
 	}
 
-	/** Restore the filter to the values stored in this profile 
-	 *  Called from Main Form and MainMenu 
-	 *  The values of Filter.isActive and Filter.isInactive are set by the filter 
+	/** Restore the filter to the values stored in this profile
+	 *  Called from Main Form and MainMenu
+	 *  The values of Filter.isActive and Filter.isInactive are set by the filter
 	 **/
 	public void restoreFilter() {
-		restoreFilter( true );		
+		restoreFilter( true );
 	}
-	
+
 	void restoreFilter(boolean clearIfInactive) {
 		boolean inverted=isFilterInverted(); // Save it as doFilter will clear filterInverted
 		Filter flt=new Filter();
@@ -423,7 +424,7 @@ public class Profile {
 			}
 		}
 	}
-	
+
 	public int getCacheIndex(String wp) {
 		return cacheDB.getIndex(wp);
 	}
@@ -444,7 +445,7 @@ public class Profile {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param forcache maincache
 	 * @return
 	 */
@@ -459,7 +460,7 @@ public class Profile {
 
 	/**
 	 * Call this after getNewAddiWayPointName to set the references between main and addi correctly
-	 * 
+	 *
 	 * @param ch
 	 */
 	public void setAddiRef(CacheHolder ch) {
@@ -575,12 +576,12 @@ public class Profile {
 			ch.addiWpts.clear();
 			ch.mainCache = null;
 		}
-		
+
 		// Build references
 		int max = cacheDB.size();
 		for (int i = 0; i < max; i++) {
 			ch = cacheDB.get(i);
-			if (ch.isAddiWpt()) 
+			if (ch.isAddiWpt())
 				setAddiRef(ch);
 		}
 		// sort addi wpts
@@ -688,13 +689,13 @@ public class Profile {
 
 	/**
 	 * If <code>true</code> then the cache list will only display the
-	 * caches that are result of a search.   
+	 * caches that are result of a search.
 	 * @return <code>True</code> if list should only display search results
 	 */
 	public boolean showSearchResult() {
 		return showSearchResult;
 	}
-	
+
 	/**
 	 * Sets parameter if cache list should only display the caches that are
 	 * results of a search.
@@ -758,7 +759,7 @@ public class Profile {
 		this.notifyUnsavedChanges(filterNoCoord != this.getFilterNoCoord());
     	this.currentFilter.setFilterNoCoord(filterNoCoord);
     }
-	
+
 	public String getLast_sync_opencaching() {
 		return last_sync_opencaching;
 	}
@@ -789,7 +790,7 @@ public class Profile {
 	public String getRelativeCustomMapsPath() {
 		return relativeCustomMapsPath;
 	}
-	
+
 	public void setRelativeCustomMapsPath(String rCMPath) {
 		this.notifyUnsavedChanges(!rCMPath.equals(this.relativeCustomMapsPath));
 		this.relativeCustomMapsPath = rCMPath;
@@ -805,13 +806,13 @@ public class Profile {
 	public void setCurrentFilter(FilterData currentFilter) {
     	this.currentFilter = currentFilter;
     }
-	
+
 	private class MyComparer implements ewe.util.Comparer {
 
 		public int compare(Object o1, Object o2) {
 			return ((CacheHolder) o1).getWayPoint().compareTo(
 			        ((CacheHolder) o2).getWayPoint());
 		}
-		
+
 	}
 }
