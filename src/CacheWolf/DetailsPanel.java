@@ -754,22 +754,15 @@ public class DetailsPanel extends CellPanel {
 		cache.checkIncomplete();
 		
 		/*
-		 * The references have to be rebuilt if: - the cachetype changed from
-		 * addi->normal or normal->addi - the old cachetype or the new cachetype
-		 * were 'addi' and the waypointname has changed
+		 * The references have to be rebuilt if: 
+		 * - the cachetype changed from addi->normal or from normal->addi
+		 * - the old cachetype or the new cachetype were 'addi' and the waypointname has changed
 		 */
-		if (CacheType.isAddiWpt(cache.getType()) != CacheType.isAddiWpt(oldType)
-				|| ((CacheType.isAddiWpt(cache.getType()) || CacheType
-						.isAddiWpt(oldType)) && !cache.getWayPoint()
-						.equals(oldWaypoint))) {
+		if (CacheType.isAddiWpt(cache.getType()) != CacheType.isAddiWpt(oldType) ||
+			((CacheType.isAddiWpt(cache.getType()) || CacheType.isAddiWpt(oldType)) && !cache.getWayPoint().equals(oldWaypoint))) {
 			// If we changed the type to addi, check that a parent exists
 			//FIXME: if cache was renamed we need to rebuild CacheDB.hashDB first
-			if (CacheType.isAddiWpt(cache.getType())) {
-				profile.setAddiRef(cache);
-			} else {
-				// rebuild links between caches
-				profile.buildReferences();
-			}
+			profile.buildReferences();
 		} else {
 			// set status also on addi wpts
 			cache.setAttributesToAddiWpts();
