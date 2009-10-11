@@ -303,7 +303,7 @@ class OnlineMapService {
 	String MainUrl; //http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS
 	/** including "." */
 	String imageFileExt; // ".gif", ".jpg"...
-	float recommendedScales[];
+	double recommendedScales[];
 	double minscale;
 	double maxscale;
 	Area boundingBox;
@@ -476,9 +476,9 @@ class WebMapService extends OnlineMapService {
 		imageFileExt = wms.getProperty("ImageFileExtension", "").trim();
 		if (imageFileExt == "") throw new IllegalArgumentException(MyLocale.getMsg(4821, "WebMapService: property >ImageFileExtension:< missing in file:\n") + filename);
 		String [] recommendedScalesStr = mString.split(wms.getProperty("RecommendedScale", "5").trim(), ' ');
-		recommendedScales = new float[recommendedScalesStr.length];
+		recommendedScales = new double[recommendedScalesStr.length];
 		for (int i=0; i < recommendedScales.length; i++) {
-			recommendedScales[i] = (float)Common.parseDouble(recommendedScalesStr[i].replace(',', '.'));
+			recommendedScales[i] = Common.parseDouble(recommendedScalesStr[i].replace(',', '.'));
 		}
 		
 	}
@@ -676,7 +676,7 @@ class ExpediaMapService extends OnlineMapService {
 		MainUrl = "Rhttp://www.expedia.de/pub/agent.dll?qscr=mrdt&ID=3kQaz."; //"Rhttp://" forces doenloadUrl to retry the URL until it gets an http-redirect and then downloads from there 
 		imageFileExt = ".gif";
 		mapType = "expedia";
-		recommendedScales = new float[]{5};
+		recommendedScales = new double[]{5};
 		minscale = getMetersPerPixel(0.00000000000000000000001f);
 		maxscale = getMetersPerPixel((float)new CWPoint(0,0).getDistance(new CWPoint(0,180)) * 2 * 1000 / 1000); // whole world * 1000 because of km -> m. /1000 because we have 1000x1000 Pixel usually
 		boundingBox = new Area(new CWPoint(90,-180), new CWPoint(-90,180));
