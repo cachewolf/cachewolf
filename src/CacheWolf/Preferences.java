@@ -886,6 +886,22 @@ public class Preferences extends MinML{
 		savePreferences();
 		return true;
 	}
+	
+	  static public boolean deleteDirectory(File path) {
+		    if( path.exists() ) {
+		      String[] files = path.list();
+		      for(int i=0; i<files.length; i++) {
+		    	 File f = path.getNew(path + "/" + files[i]);
+		         if(f.isDirectory()) {
+		           deleteDirectory(f);
+		         }
+		         else {
+		        	 f.delete();
+		         }
+		      }
+		    }
+		    return( path.delete() );
+		  }
 
 	public void deleteProfile() {
 		checkAbsoluteBaseDir(); // perhaps not necessary
@@ -898,7 +914,7 @@ public class Preferences extends MinML{
 			new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(227,"[active profile cannot be deleted.]"),FormBase.MBOK).execute();
 		}
 		else {
-			if (!(new FileBugfix(absoluteBaseDir+f.newSelectedProfile).delete()) ) {
+			if (!deleteDirectory(new File(absoluteBaseDir+f.newSelectedProfile)) ) {
 				// Fehler beim löschen des Profils;
 				new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(226,"[Profile cannot be deleted.]"),FormBase.MBOK).execute();
 			}
