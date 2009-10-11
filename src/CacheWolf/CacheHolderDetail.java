@@ -337,26 +337,27 @@ public class CacheHolderDetail {
 			ex = new Extractor(text, "<SOLVER><![CDATA[", "]]></SOLVER>", 0, true);
 			this.setSolver(ex.findNext());
 		}
-		
+		public void deleteFile(String FileName) {	
+			//File exists?
+			boolean exists = (new File(FileName)).exists();
+			//yes: then delete
+			if (exists) {
+				boolean ok = (new File(FileName)).delete();
+				if(ok) ok = true;
+			}
+			boolean exists2 = (new File(FileName.toLowerCase())).exists();
+			//yes: delete
+			if (exists2) {
+				boolean ok2 = (new File(FileName.toLowerCase())).delete();
+				if(ok2) ok2=true;
+			}
+		}
 		/**
 		*	Method to save a cache.xml file.
 		*/
 		public void saveCacheDetails(String dir){
 			PrintWriter detfile;
-			
-			//File exists?
-			boolean exists = (new File(dir + getParent().getWayPoint() + ".xml")).exists();
-			//yes: then delete
-			if (exists) {
-				boolean ok = (new File(dir + getParent().getWayPoint() + ".xml")).delete();
-				if(ok) ok = true;
-			}
-			boolean exists2 = (new File(dir + getParent().getWayPoint().toLowerCase() + ".xml")).exists();
-			//yes: delete
-			if (exists2) {
-				boolean ok2 = (new File(dir + getParent().getWayPoint().toLowerCase() + ".xml")).delete();
-				if(ok2) ok2=true;
-			}
+			deleteFile(dir + getParent().getWayPoint() + ".xml");
 			//Vm.debug("Writing to: " +dir + "for: " + wayPoint);
 			try{
 			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(dir + getParent().getWayPoint().toLowerCase() + ".xml").getAbsolutePath())));
