@@ -326,6 +326,8 @@ public class CacheHolderDetail {
 			dummy = ex.findNext();
 			if (dummy.length() > 10){
 				URL = dummy;
+				int logpos = URL.indexOf("&"); //&Submit &log=y
+				if (logpos > 0) URL=URL.substring(0,logpos);
 			}
 			else {
 				if (getParent().getWayPoint().startsWith("GC")) {
