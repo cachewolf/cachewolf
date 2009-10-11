@@ -13,6 +13,7 @@ import ewe.io.*;
 import ewe.fx.*;
 import ewe.util.*;
 import ewe.sys.*;
+import ewe.sys.Double;
 import ewe.net.*;
 import java.lang.Math;
 
@@ -304,6 +305,7 @@ class OnlineMapService {
 	/** including "." */
 	String imageFileExt; // ".gif", ".jpg"...
 	double recommendedScales[];
+	int preselectedRecScaleIndex = 0;
 	double minscale;
 	double maxscale;
 	Area boundingBox;
@@ -476,11 +478,21 @@ class WebMapService extends OnlineMapService {
 		imageFileExt = wms.getProperty("ImageFileExtension", "").trim();
 		if (imageFileExt == "") throw new IllegalArgumentException(MyLocale.getMsg(4821, "WebMapService: property >ImageFileExtension:< missing in file:\n") + filename);
 		String [] recommendedScalesStr = mString.split(wms.getProperty("RecommendedScale", "5").trim(), ' ');
-		recommendedScales = new double[recommendedScalesStr.length];
-		for (int i=0; i < recommendedScales.length; i++) {
-			recommendedScales[i] = Common.parseDouble(recommendedScalesStr[i].replace(',', '.'));
+		// convert recommended scales to doube[], sort them and set preselected recommended scale
+		if (recommendedScalesStr.length > 0) {
+			double preselected = Common.parseDouble(recommendedScalesStr[0]);
+			Double[] recommendedScalesObj = new Double[recommendedScalesStr.length];
+			for (int i=0; i < recommendedScalesObj.length; i++) {
+				recommendedScalesObj[i] = new Double();
+				recommendedScalesObj[i].set(Common.parseDouble(recommendedScalesStr[i].replace(',', '.')));
+			}
+			Utils.sort(recommendedScalesObj, new StandardComparer(), false);
+			recommendedScales = new double[recommendedScalesStr.length];
+			for (int i=0; i < recommendedScales.length; i++) {
+				recommendedScales[i] = recommendedScalesObj[i].value;
+				if (recommendedScales[i] == preselected) preselectedRecScaleIndex = i;
+			}
 		}
-		
 	}
 
 	private static final int TOPLEFT_INDEX = 0;

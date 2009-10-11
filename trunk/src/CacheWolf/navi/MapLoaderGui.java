@@ -143,10 +143,10 @@ public class MapLoaderGui extends Form {
 		for (int i=0; i<recScales.length; i++) {
 			recScales[i] = Convert.toString(mapLoader.currentOnlineMapService.recommendedScales[i]);
 		}
-		scaleInput.choice.set(recScales, 0); // setText(Convert.toString(mapLoader.currentOnlineMapService.recommendedScales));
-		scaleInputPerCache.choice.set(recScales, 0);
-		scaleInput.setText(recScales[0]);
-		scaleInputPerCache.setText(recScales[0]);
+		scaleInput.choice.set(recScales, mapLoader.currentOnlineMapService.preselectedRecScaleIndex);
+		scaleInputPerCache.choice.set(recScales, mapLoader.currentOnlineMapService.preselectedRecScaleIndex);
+		scaleInput.setText(recScales[mapLoader.currentOnlineMapService.preselectedRecScaleIndex]);
+		scaleInputPerCache.setText(recScales[mapLoader.currentOnlineMapService.preselectedRecScaleIndex]);
 	}
 
 	/**
