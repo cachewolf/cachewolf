@@ -2664,7 +2664,7 @@ class ArrowsOnMap extends AniImage {
 				if (sunDirArrow == null ) sunDirArrow = new Point[2];
 				makeArrow(sunDirArrow, sunDir, 0.75f);
 			} else sunDirArrow = null;
-			if (java.lang.Math.abs(map.rotationRad) > 1.5 / 180 * java.lang.Math.PI)	{ // show northth arrow only if it has more than 1.5 degree deviation from vertical direction
+			if (map != null && java.lang.Math.abs(map.rotationRad) > 1.5 / 180 * java.lang.Math.PI)	{ // show northth arrow only if it has more than 1.5 degree deviation from vertical direction
 				if (northDirArrow == null) northDirArrow = new Point[2];
 				makeArrow(northDirArrow, 0, 1.0f); // north direction
 			} else northDirArrow = null;
