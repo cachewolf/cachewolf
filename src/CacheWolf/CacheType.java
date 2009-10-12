@@ -314,29 +314,19 @@ public final class CacheType {
 		case CW_TYPE_REFERENCE: return true;
 		default: return false;
 		}
-		
 	}
-	
+	/**
+	 * this is the same as !isAddiWpt except that CW_TYPE_CUSTUM and CW_TYPE_ERROR return false
+	 * I (pfeffer) don't know if this behaviour is intended, I guess it is.
+	 * @param type
+	 * @return
+	 */
 	public static boolean isCacheWpt(final byte type) {
 		switch (type) {
-		case CW_TYPE_TRADITIONAL: // fall through
-		case CW_TYPE_MULTI: // fall through
-		case CW_TYPE_VIRTUAL: // fall through
-		case CW_TYPE_LETTERBOX: // fall through
-		case CW_TYPE_EVENT: // fall through
-		case CW_TYPE_QUIZ: // fall through
-		case CW_TYPE_UNKNOWN: // fall through
-		case CW_TYPE_MOVING: // fall through
-		case CW_TYPE_DRIVE_IN: // fall through
-		case CW_TYPE_WEBCAM: // fall through
-		case CW_TYPE_LOCATIONLESS: // fall through
-		case CW_TYPE_CITO: // fall through
-		case CW_TYPE_MEGA_EVENT: // fall through
-		case CW_TYPE_WHEREIGO: // fall through
-		case CW_TYPE_EARTH: // fall through
-		case CW_TYPE_APE: // fall through
-		case CW_TYPE_MAZE: return true;
-		default: return false;
+		case CW_TYPE_CUSTOM:
+		case CW_TYPE_ERROR:
+			return false;
+		default: return !isAddiWpt(type);
 		}
 	}
 	

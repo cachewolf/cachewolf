@@ -1381,7 +1381,7 @@ public class CacheHolder{
 					|| getWayPoint().length() < 3
 //					|| getCacheOwner().length() > 0
 //					|| getDateHidden().length() > 0 
-					|| getCacheName().length() == 0
+//					|| getCacheName().length() == 0
 					)
 				ret = true;
 			else

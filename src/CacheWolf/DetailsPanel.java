@@ -790,8 +790,6 @@ public class DetailsPanel extends CellPanel {
 	 * @return 0 for additional or custum waypoints, -1 for caches if td is not valid, parsed byte otherwise
 	 */
 	private byte decodeTerrDiff(mButton button, String td, boolean isCache) {
-		final StringBuffer tdv = new StringBuffer(2);
-		
 		// terrain and difficulty are always unset for non cache waypoints
 		if (! isCache) return CacheTerrDiff.CW_DT_UNSET;
 		
@@ -800,6 +798,7 @@ public class DetailsPanel extends CellPanel {
 		// we now should have a string of length 3
 		if (buttonText.length() != 3) return -1;
 
+		final StringBuffer tdv = new StringBuffer(2);
 		buttonText=tdv.append(buttonText.charAt(0)).append(buttonText.charAt(2)).toString();
 
 		// unset value is invalid
