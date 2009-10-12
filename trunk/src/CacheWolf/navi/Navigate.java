@@ -368,7 +368,9 @@ class UpdateThread extends mThread {
 			try { sleep (calldelay);} catch (InterruptedException e) {
 				Global.getPref().log("Ignored Exception", e, true);
 			}
-			ticked.ticked();
+			try { ticked.ticked();} catch (Exception e) {
+				Global.getPref().log("Ignored Exception", e, true);
+			}
 		}
 	}
 
