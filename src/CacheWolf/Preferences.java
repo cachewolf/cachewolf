@@ -887,62 +887,54 @@ public class Preferences extends MinML{
 		return true;
 	}
 	
-	  static public boolean deleteDirectory(File path) {
-		    if( path.exists() ) {
-		      String[] files = path.list();
-		      for(int i=0; i<files.length; i++) {
-		    	 File f = path.getNew(path + "/" + files[i]);
-		         if(f.isDirectory()) {
-		           deleteDirectory(f);
-		         }
-		         else {
-		        	 f.delete();
-		         }
-		      }
+	static public boolean deleteDirectory(FileBugfix path) {
+	    if( path.exists() ) {
+	    	String[] files = path.list();
+	    	for(int i=0; i<files.length; i++) {
+	    		FileBugfix f = new FileBugfix(path.getFullPath() + "/" + files[i]);
+		        if(f.isDirectory()) {
+		        	deleteDirectory(f);
+		        }
+		        else {
+		        	f.delete();
+		        }
+		     }
 		    }
-		    return( path.delete() );
-		  }
-
-	public void deleteProfile() {
-		checkAbsoluteBaseDir(); // perhaps not necessary
-		ProfilesForm f = new ProfilesForm(absoluteBaseDir,"",2);
-		int code = f.execute();
-		// If no profile chosen (includes a new one), terminate
-		if (code==-1) return; // Cancel pressed
-		if (lastProfile.equals(f.newSelectedProfile)) {
-			// aktives Profil kann nicht gelöscht / umbenannt werden;
-			new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(227,"[active profile cannot be deleted.]"),FormBase.MBOK).execute();
-		}
-		else {
-			if (!deleteDirectory(new File(absoluteBaseDir+f.newSelectedProfile)) ) {
-				// Fehler beim löschen des Profils;
-				new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(226,"[Profile cannot be deleted.]"),FormBase.MBOK).execute();
-			}
-		}
+	    return( path.delete() );
 	}
 
-	public void renameProfile(ewe.ui.Frame parent) {
-		// not yet implemented
-		/*
+	static public boolean renameDirectory(FileBugfix OldPath, FileBugfix NewPath) {
+	    return OldPath.renameTo(NewPath);		
+	}
+
+	/* 
+	 * operation 2=delete 3=rename
+	 */
+	public void editProfile(int operation, int ErrorMsgActive, int ErrorMsg) {
 		checkAbsoluteBaseDir(); // perhaps not necessary
-		ProfilesForm f = new ProfilesForm(absoluteBaseDir,"",3);
-		int code = f.execute();
-		// If no profile chosen (includes a new one), terminate
-		if (code==-1) return; // Cancel pressed
+		// select profile
+		ProfilesForm f = new ProfilesForm(absoluteBaseDir,"",operation);
+		if (f.execute()==-1) return ; // no select
+		// check selection
 		if (lastProfile.equals(f.newSelectedProfile)) {
 			// aktives Profil kann nicht gelöscht / umbenannt werden;
-			new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(228,"[active profile cannot be renamed.]"),FormBase.MBOK).execute();
+			new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(ErrorMsgActive,"[Profile active...]"),FormBase.MBOK).execute();
 		}
 		else {
-			NewProfileForm x=new NewProfileForm(absoluteBaseDir);
-			x.execute(parent, Gui.CENTER_FRAME);
-			if (!(new FileBugfix(absoluteBaseDir+f.newSelectedProfile).rename(x.profileDir))) {
-				// Fehler beim löschen des Profils;
-				new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(229,"[Profile cannot be renamed.]"),FormBase.MBOK).execute();
+			boolean err=true;
+			if (operation==3) {
+				String newName = new InputBox("Bitte neuen Verzeichnisnamen eingeben : ").input("",50);
+				if (!newName.equals(null)) {
+					err=!renameDirectory(new FileBugfix(absoluteBaseDir+f.newSelectedProfile),new FileBugfix(absoluteBaseDir+newName));
+				}
 			}
+			else 
+			if (operation==2){
+				err=!deleteDirectory(new FileBugfix(absoluteBaseDir+f.newSelectedProfile));
+				// ? wait until deleted ?
+			}
+			if (err) {new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(ErrorMsg,"[Profile Error...]"),FormBase.MBOK).execute();}
 		}
-		*/		
-		new MessageBox(MyLocale.getMsg(321,"Error"),"Noch nicht implementiert. Nutzen Sie solange das Betriebssystem um das Profilverzeichnis umzubenennen!",FormBase.MBOK).execute();
 	}
     //////////////////////////////////////////////////////////////////////////////////////
     // Log functions
