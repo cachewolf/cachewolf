@@ -365,11 +365,9 @@ class UpdateThread extends mThread {
 	public void run () {
 		run = true;
 		while (run) {
-			try { sleep (calldelay);} catch (InterruptedException e) {
-				Global.getPref().log("Ignored Exception", e, true);
-			}
+			try { sleep (calldelay);} catch (InterruptedException e) {	}
 			try { ticked.ticked();} catch (Exception e) {
-				Global.getPref().log("Ignored Exception", e, true);
+				Global.getPref().log("Navigate.UpdateThread.run(): Ignored Exception. There should not be an Exception, so please report it in the cachewolf forum at www.geoclub.de", e, true);
 			}
 		}
 	}
