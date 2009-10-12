@@ -307,10 +307,10 @@ public class MainMenu extends MenuBar {
 				}
 			}
 			if(mev.selectedItem == mnuDeleteProfile) {
-				pref.deleteProfile();
+				pref.editProfile(2,227,226);
 			}
 			if(mev.selectedItem == mnuRenameProfile) {
-				pref.renameProfile(getFrame());
+				pref.editProfile(3,228,229);
 			}
 			if(mev.selectedItem == mnuEditCenter){
 				ProfileDataForm f=new ProfileDataForm(pref,profile);
