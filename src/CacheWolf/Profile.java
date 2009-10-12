@@ -470,13 +470,13 @@ public class Profile {
 			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_CZ_PATTERN + mainwpt);
 		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
 			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_DE_PATTERN + mainwpt);
-//		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
-//			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_PL_PATTERN + mainwpt);
+		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
+			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_PL_PATTERN + mainwpt);
 		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
 			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_UK_PATTERN + mainwpt);
 		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
 			mainindex = getCacheIndex("CW" + mainwpt);
-		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()) {
+		if (mainindex < 0 /* || !cacheDB.get(mainindex)..isCacheWpt() */ )  {
 			ch.setIncomplete(true);
 		} else {
 			CacheHolder mainch = cacheDB.get(mainindex);
