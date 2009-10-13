@@ -40,7 +40,7 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==5) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				ch.sort=ch.getCacheName().toLowerCase();
+				ch.sort=ch.getCacheName().trim().toLowerCase();
 			}
 		} else if (colToCompare==6) {
 			for (int i=0; i<visibleSize; i++) {
