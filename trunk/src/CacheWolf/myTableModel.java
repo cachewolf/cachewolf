@@ -64,7 +64,8 @@ public class myTableModel extends TableModel{
 	public static mImage red, blue, yellow; // skull, green
 	private Image checkboxTicked,checkboxUnticked;
 	private mImage bug;
-	private boolean sortAsc = false;
+    private static mImage imgSortUp, imgSortDown;
+	private boolean sortAscending = false;
 	private int sortedBy = -1;
 	private FontMetrics fm;
 //	private mImage picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge,picSizeNonPhysical;
@@ -99,6 +100,8 @@ public class myTableModel extends TableModel{
 		bug = new mImage("bug_table.png");bug.transparentColor=Color.DarkBlue;
 		checkboxTicked = new Image("checkboxTicked.png");
 		checkboxUnticked= new Image("checkboxUnticked.png");
+		imgSortUp = new mImage( "sortup.png" ); imgSortUp.transparentColor = Color.White;
+		imgSortDown = new mImage( "sortdown.png" ); imgSortDown.transparentColor = Color.White;
 
 //		picSizeMicro=new mImage("sizeMicro.png"); picSizeMicro.transparentColor=Color.White;
 //		picSizeSmall=new mImage("sizeSmall.png"); picSizeSmall.transparentColor=Color.White;
@@ -170,7 +173,7 @@ public class myTableModel extends TableModel{
 						if(ch.mainCache != null) { // parent exists
 							if (! ch.mainCache.isVisible())
 								sortDB.add(ch); // Unfiltered Addi Wpt with filtered Main Wpt, show it on its own
-							// else 
+							// else
 							// Main cache is not filtered, Addi will be added below main cache further down
 							// This case doesn't seem to be a problem. It occurs regularly, when
 							// filtered addis are unfiltered, so there is not need to log this case.
@@ -304,7 +307,27 @@ public class myTableModel extends TableModel{
 	}
 
 	public Object getCellData(int row, int col){
-		if(row == -1) return colName[colMap[col]];
+		// if(row == -1) return colName[colMap[col]];
+		if(row == -1)
+        {
+            if( sortedBy > 0 && colMap[col] == sortedBy )
+            {
+                if( sortAscending )
+                {
+                    return new IconAndText( imgSortUp, colName[colMap[col]], fm);
+                    //return "^ "+colName[colMap[col]];
+                }
+                else
+                {
+                    return new IconAndText( imgSortDown, colName[colMap[col]], fm);
+                    //return "v "+colName[colMap[col]];
+                }
+            }
+            else
+            {
+                return colName[colMap[col]];
+            }
+        }
 		try { // Access to row can fail if many caches are deleted
 			CacheHolder ch = cacheDB.get(row);
 			if(ch!=null /*ch.isVisible()*/){ // Check of visibility needed here??
@@ -449,10 +472,10 @@ public class myTableModel extends TableModel{
 				Vm.showWait(true);
 				Point a = tcControl.getSelectedCell(null);
 				if((a != null) && (a.y >= 0) && (a.y < cacheDB.size())) ch = cacheDB.get(a.y);
-				if (mappedCol == sortedBy) sortAsc=!sortAsc;
-				else sortAsc = false;
+				if (mappedCol == sortedBy) sortAscending=!sortAscending;
+				else sortAscending = true; // always start ascending 
 				sortedBy = mappedCol;
-				cacheDB.sort(new MyComparer(cacheDB, mappedCol,numRows), sortAsc);
+				cacheDB.sort(new MyComparer(cacheDB, mappedCol,numRows), !sortAscending);
 				updateRows();
 				if(a != null && ch!=null){
 					int rownum = Global.getProfile().getCacheIndex(ch.getWayPoint());
