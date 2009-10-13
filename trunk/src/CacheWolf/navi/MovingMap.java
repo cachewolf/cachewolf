@@ -976,7 +976,7 @@ public final class MovingMap extends Form {
 			updateSymbolPositions();
 			updateDistance(false);
 			if (updateOverlay ) updateOverlayPos(); // && TrackOverlays != null
-			mmp.repaintNow();
+			repaint(); // don't wait
 		}
 		else
 		{
@@ -1011,17 +1011,16 @@ public final class MovingMap extends Form {
 		forceMapLoad |= lastWidth != width || lastHeight != height;
 		if (forceMapLoad || wantMapTest || screenNotCompletlyCovered) { // if force || want || map doesn't cover the screen completly
 			// Vm.debug("Screen not completly covered by map");
-			if (forceMapLoad
-					|| (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
+			if (forceMapLoad ||
+				(java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || 
+				 java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
 				// more then 1/10 of screen moved since last time we tried to find a better map
 				if (autoSelectMap) {
 					setBestMap(where, screenNotCompletlyCovered);
 					forceMapLoad = false;
 				}
 				showCachesOnMap();
-				if (isFillWhiteArea()) {
-					fillWhiteArea(screenNotCompletlyCovered);
-				}
+				if (isFillWhiteArea()) { fillWhiteArea(screenNotCompletlyCovered); }
 				lastCompareX = mapPos.x;
 				lastCompareY = mapPos.y;
 			}
@@ -2283,27 +2282,27 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							mapsMenu.close ();
 							mm.setFillWhiteArea(false);
 							mm.updatePosition (mm.posCircle.where);
-							repaintNow();
+							repaint();
 						}
 						else if (action == noFillMapMI){
 							mapsMenu.close ();
 							mm.setFillWhiteArea(true);
 							mm.updatePosition (mm.posCircle.where);
-							repaintNow();
+							repaint();
 						}
 						else if (action == showCachesOnMapMI){
 							mapsMenu.close ();
 							mm.setShowCachesOnMap(true);
 							mm.forceMapLoad=true;
 							mm.updatePosition (mm.posCircle.where);
-							repaintNow();
+							repaint();
 						}
 						else if (action == noShowCachesOnMapMI){
 							mapsMenu.close ();
 							mm.setShowCachesOnMap(false);
 							mm.forceMapLoad=true;
 							mm.updatePosition (mm.posCircle.where);
-							repaintNow();
+							repaint();
 						}
 						//dont show map
 						else if (action == hideMapMI) {
