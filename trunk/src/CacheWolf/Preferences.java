@@ -122,7 +122,7 @@ public class Preferences extends MinML{
 	/** If true, the last profile is reloaded automatically without a dialogue */
 	public boolean autoReloadLastProfile=false;
 	/** If true current cetre will be set from gps position	 */
-	public boolean setCurrentCentreFromGPSPosition=true;
+	public boolean setCurrentCentreFromGPSPosition=false;
 	/** This is the login alias for geocaching.com and opencaching.de */
 	public String myAlias = "";
 	/** Optional password */
@@ -886,7 +886,7 @@ public class Preferences extends MinML{
 		savePreferences();
 		return true;
 	}
-	
+
 	static public boolean deleteDirectory(FileBugfix path) {
 	    if( path.exists() ) {
 	    	String[] files = path.list();
@@ -904,10 +904,10 @@ public class Preferences extends MinML{
 	}
 
 	static public boolean renameDirectory(FileBugfix OldPath, FileBugfix NewPath) {
-	    return OldPath.renameTo(NewPath);		
+	    return OldPath.renameTo(NewPath);
 	}
 
-	/* 
+	/*
 	 * operation 2=delete 3=rename
 	 */
 	public void editProfile(int operation, int ErrorMsgActive, int ErrorMsg) {
@@ -928,7 +928,7 @@ public class Preferences extends MinML{
 					err=!renameDirectory(new FileBugfix(absoluteBaseDir+f.newSelectedProfile),new FileBugfix(absoluteBaseDir+newName));
 				}
 			}
-			else 
+			else
 			if (operation==2){
 				err=!deleteDirectory(new FileBugfix(absoluteBaseDir+f.newSelectedProfile));
 				// ? wait until deleted ?
