@@ -66,15 +66,22 @@ public class MyComparer implements Comparer{
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
 				// CHECK Is the formatting correctly done?
-				ch.sort = MyLocale.formatDouble(ch.kilom*1000, "000000000000");
 				if (ch.kilom==-1.0) {
 					ch.sort="\uFFFF";
+				}
+				else {
+					ch.sort = MyLocale.formatDouble(ch.kilom*1000, "000000000000");
 				}
 			}
 		} else if (colToCompare==11) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				ch.sort=ch.bearing;
+				if (ch.bearing.equals("?")) {
+					ch.sort="\uFFFF";
+				}
+				else {
+					ch.sort=ch.bearing;
+				}			
 			}
 			
 		} else if (colToCompare==12) {
