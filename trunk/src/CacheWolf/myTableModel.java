@@ -66,7 +66,7 @@ public class myTableModel extends TableModel{
 	private mImage bug;
     private static mImage imgSortUp, imgSortDown;
 	private boolean sortAscending = false;
-	private int sortedBy = -1;
+	private int sortedBy = -1; // -1 don't sort 
 	private FontMetrics fm;
 //	private mImage picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge,picSizeNonPhysical;
 	private mImage picHasSolver,picHasNotes;
@@ -76,7 +76,7 @@ public class myTableModel extends TableModel{
 	public int penEventModifiers;
 
 //	private int lastRow=-1;
-	private myTableControl tcControl;
+	public myTableControl tcControl;
 	public boolean showExtraWptInfo=true;
 
 	public myTableModel(myTableControl tc, FontMetrics fm){
@@ -307,24 +307,18 @@ public class myTableModel extends TableModel{
 	}
 
 	public Object getCellData(int row, int col){
-		// if(row == -1) return colName[colMap[col]];
-		if(row == -1)
-        {
-            if( sortedBy > 0 && colMap[col] == sortedBy )
-            {
-                if( sortAscending )
-                {
+		if(row == -1) {
+            if( sortedBy > 0 && colMap[col] == sortedBy ) {
+                if( sortAscending ) {
                     return new IconAndText( imgSortUp, colName[colMap[col]], fm);
                     //return "^ "+colName[colMap[col]];
                 }
-                else
-                {
+                else {
                     return new IconAndText( imgSortDown, colName[colMap[col]], fm);
                     //return "v "+colName[colMap[col]];
                 }
             }
-            else
-            {
+            else {
                 return colName[colMap[col]];
             }
         }
@@ -457,39 +451,13 @@ public class myTableModel extends TableModel{
 				}
 			}
 			if(cell.y == -1){ // Hit a header => sort the table accordingly
-				CacheHolder ch=null;
-				// cell.x is the physical column but we have to sort by the
-				// column it is mapped into
+				// cell.x is the physical column 
+				// but we have to sort by the column it is mapped into
 				int mappedCol=colMap[cell.x];
-				if (mappedCol==0) { // Click on Tickbox header
-					// Hide/unhide the additional information about a waypoint such as
-					// travelbugs/number of notfound logs/yellow circle/red circle etc.
-					// This helps on small PDA screens
-					showExtraWptInfo=!showExtraWptInfo;
-					this.table.repaint();
-					return true;
-				}
-				Vm.showWait(true);
-				Point a = tcControl.getSelectedCell(null);
-				if((a != null) && (a.y >= 0) && (a.y < cacheDB.size())) ch = cacheDB.get(a.y);
-				if (mappedCol == sortedBy) sortAscending=!sortAscending;
-				else sortAscending = true; // always start ascending 
-				sortedBy = mappedCol;
-				cacheDB.sort(new MyComparer(cacheDB, mappedCol,numRows), !sortAscending);
-				updateRows();
-				if(a != null && ch!=null){
-					int rownum = Global.getProfile().getCacheIndex(ch.getWayPoint());
-					if(rownum >= 0){
-						tcControl.cursorTo(rownum, 0, true);
-	/*					tcControl.scrollToVisible(rownum, 0);
-						tcControl.clearSelectedCells(new Vector());
-						for(int i= 0; i < MAXCOLUMNS; i++){
-							tcControl.addToSelection(rownum,i);
-						}
-		*/			}
-				}
-				Vm.showWait(false);
-				tcControl.update(true);
+				boolean sortvalue = true;
+				if (mappedCol==0) sortvalue = !showExtraWptInfo;
+				else if (mappedCol == sortedBy) sortvalue=!sortAscending;
+				sortTable(mappedCol,sortvalue);
 				retval = true;
 			}
 		} catch(NullPointerException npex){
@@ -498,6 +466,34 @@ public class myTableModel extends TableModel{
 			}
 		return retval;
 	}
+
+    public void sortTable(int mappedCol, boolean howToDo){
+        sortedBy = mappedCol;
+        if( mappedCol <= 0 ) {
+        	// 0 is Tickbox header
+			// Hide/unhide the additional information about a waypoint such as
+			// travelbugs/number of notfound logs/yellow circle/red circle etc.
+			// This helps on small PDA screens
+            if (mappedCol == 0) showExtraWptInfo=howToDo;
+        }
+        else {
+            sortAscending = howToDo;
+            Vm.showWait( true );
+            // get selected Cache
+            Point a = tcControl.getSelectedCell( null );
+            CacheHolder ch = null;
+            if ( ( a != null ) && ( a.y >= 0 ) && ( a.y < cacheDB.size() ) ) ch = cacheDB.get( a.y );
+            cacheDB.sort( new MyComparer( cacheDB, sortedBy, numRows ), !sortAscending );
+            updateRows(); // = cacheDB.rebuild(sortedVector of ch, invisibleVector of ch)
+            // select previously selected Cache again
+            if( ch != null ) {
+                int rownum = Global.getProfile().getCacheIndex( ch.getWayPoint() );
+                if( rownum >= 0 ) tcControl.cursorTo( rownum, 0, true );
+            }
+            Vm.showWait( false );
+        }
+        tcControl.update( true ); // repaint    	
+    }
 
 	/** Toggle the select status for a group of caches
 	 * If from==to, the addi Waypoints are also toggled if the cache is a main waypoint

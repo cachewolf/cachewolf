@@ -38,6 +38,7 @@ public class TablePanel extends CellPanel{
 		myMod.hasRowHeaders = false;
 		myMod.hasColumnHeaders  = true;
 		tc.setTableModel(myMod);
+		statBar.setMyTableModel(myMod);
 	}
 	
 	/** Mark the row as selected so that myTableModel can color it grey */
