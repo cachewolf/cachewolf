@@ -25,35 +25,45 @@ public class StatusBar extends CellPanel{
 	private mButton btnCacheTour;
 	private mImage imgCacheTour;
 	private boolean MobileVGA;
-	
+	private mImage imgNoSorting;
+	private mButton btnNoSorting;
+	private myTableModel table;
+
+	public void setMyTableModel(myTableModel myTableModel) {
+		table=myTableModel;
+	}
+
 	public StatusBar(Preferences p, CacheDB db){
 		pref=p;
 		MobileVGA = pref.useBigIcons;
 		String imagesize="";
-		if(MobileVGA) imagesize="_vga";  
+		if(MobileVGA) imagesize="_vga";
 		addNext(btnCacheTour=new mButton(imgCacheTour=new mImage("cachetour"+imagesize+".png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
 		imgCacheTour.transparentColor=Color.White;
 		if(MobileVGA)
 			btnCacheTour.setPreferredSize(28,20);
 		else
 			btnCacheTour.setPreferredSize(20,13);
-		btnCacheTour.borderWidth=0; 
+		btnCacheTour.borderWidth=0;
 		btnCacheTour.setToolTip(MyLocale.getMsg(197,"Show/Hide cachetour"));
-		addNext(btnFlt= new mButton(imgFlt=new mImage("filter" + imagesize + ".png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL); 
-		btnFlt.backGround=new ewe.fx.Color(0,255,0); 
-		if(MobileVGA)
-			btnFlt.setPreferredSize(28,20);
-		else
-			btnFlt.setPreferredSize(20,13);
+
+		addNext(btnFlt= new mButton(imgFlt=new mImage("filter" + imagesize + ".png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		btnFlt.backGround=new ewe.fx.Color(0,255,0);
 		btnFlt.borderWidth=0; imgFlt.transparentColor=Color.White;
-		btnFlt.setToolTip("Filter status");
+		btnFlt.setToolTip("Klick : Filter");
+
+		addNext(btnNoSorting=new mButton(imgNoSorting=new mImage("nosort" + imagesize + ".png")),CellConstants.DONTSTRETCH, CellConstants.FILL);
+		btnNoSorting.borderWidth=0; imgNoSorting.transparentColor=Color.White;
+		btnNoSorting.setToolTip("Klick : Keine Sortierung");
+
 		stats = new DBStats(db);
 		addNext(disp = new mLabel(""),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		disp.setToolTip(MyLocale.getMsg(196,"Total # of caches (GC&OC)\nTotal # visible\nTotal # found"));
+
 		addLast(lblCenter=new mLabel(""),CellConstants.STRETCH, WEST|CellConstants.FILL);
 		lblCenter.setToolTip(MyLocale.getMsg(195,"Current centre"));
 	}
-	
+
 	public void updateDisplay(){
 		String strStatus, strCenter="";
 		strStatus = MyLocale.getMsg(4500,"Tot:") + " " + stats.total() + " " +
@@ -72,13 +82,13 @@ public class StatusBar extends CellPanel{
 		// Current centre can only be displayed if screen is big
 		// Otherwise it forces a scrollbar
 		// This can happen even on bigger screens with big fonts
-		if ((MyLocale.getScreenWidth()>=320) && !(MobileVGA && (pref.fontSize > 20))) 
+		if ((MyLocale.getScreenWidth()>=320) && !(MobileVGA && (pref.fontSize > 20)))
 			strCenter="  \u00a4 " + pref.curCentrePt.toString();
-		
+
 		lblCenter.setText(strCenter);
 		relayout(true); // in case the numbers increased and need more space
 	}
-	
+
 	public void onEvent(Event ev) {
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btnFlt){
@@ -92,7 +102,10 @@ public class StatusBar extends CellPanel{
 				Global.mainTab.tbP.refreshTable();
 			}
 			if (ev.target == btnCacheTour){
-				Global.mainForm.toggleCacheListVisible();			
+				Global.mainForm.toggleCacheListVisible();
+			}
+			if (ev.target==btnNoSorting){
+				table.sortTable(-1,true);
 			}
 			Gui.takeFocus(Global.mainTab.tbP.tc, ControlConstants.ByKeyboard);
 		}
