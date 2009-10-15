@@ -50,11 +50,11 @@ public class StatusBar extends CellPanel{
 		addNext(btnFlt= new mButton(imgFlt=new mImage("filter" + imagesize + ".png")),CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
 		btnFlt.backGround=new ewe.fx.Color(0,255,0);
 		btnFlt.borderWidth=0; imgFlt.transparentColor=Color.White;
-		btnFlt.setToolTip("Klick : Filter");
+		btnFlt.setToolTip(MyLocale.getMsg(273,"filter on/off"));
 
 		addNext(btnNoSorting=new mButton(imgNoSorting=new mImage("nosort" + imagesize + ".png")),CellConstants.DONTSTRETCH, CellConstants.FILL);
 		btnNoSorting.borderWidth=0; imgNoSorting.transparentColor=Color.White;
-		btnNoSorting.setToolTip("Klick : Keine Sortierung");
+		btnNoSorting.setToolTip(MyLocale.getMsg(274,"no autosort"));
 
 		stats = new DBStats(db);
 		addNext(disp = new mLabel(""),CellConstants.DONTSTRETCH, CellConstants.FILL);

@@ -65,8 +65,8 @@ public class myTableModel extends TableModel{
 	private Image checkboxTicked,checkboxUnticked;
 	private mImage bug;
     private static mImage imgSortUp, imgSortDown;
-	private boolean sortAscending = false;
-	private int sortedBy = -1; // -1 don't sort 
+	public boolean sortAscending = false;
+	public int sortedBy = -1; // -1 don't sort 
 	private FontMetrics fm;
 //	private mImage picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge,picSizeNonPhysical;
 	private mImage picHasSolver,picHasNotes;
