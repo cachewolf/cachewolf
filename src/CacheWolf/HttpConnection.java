@@ -618,12 +618,12 @@ private Handle readInData(final Socket connection)
 	
 	FIXME: never referenced
  */
-////===================================================================
-//public Handle readInData() 
-////===================================================================
-//{
-//	return readInData(connectedSocket);
-//}
+//===================================================================
+public Handle readInData() 
+//===================================================================
+{
+	return readInData(connectedSocket);
+}
 /**
 * Get an InputStream to read in the data. This is a very important method as it is used by
 * the readInData() method.
@@ -733,7 +733,7 @@ public CharArray readText(Socket connection,TextCodec documentTextDecoder) throw
  * Success, then the returnValue of the IOHandle will hold the connected socket.
  */
 //===================================================================
-private Handle connectAsync()
+public Handle connectAsync()
 //===================================================================
 {
 	return connectAsync(new AsciiCodec());
