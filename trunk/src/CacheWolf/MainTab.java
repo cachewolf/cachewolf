@@ -420,10 +420,14 @@ public class MainTab extends mTabbedPanel {
 		if (pref.setCurrentCentreFromGPSPosition){
 			boolean gpsPosIsValid=nav.gpsPos.isValid();
 			if (gpsPosIsValid) {
-				CWPoint whereAmI = nav.gpsPos;
-				if (whereAmI != pref.curCentrePt) {
-					pref.curCentrePt.set(whereAmI);
-					this.updateBearDist();
+				double latWhereAmI, lonWhereAmI, latCurCentr, lonCurCentr;
+				latWhereAmI = nav.gpsPos.latDec;
+				lonWhereAmI = nav.gpsPos.lonDec;
+				latCurCentr = pref.getCurCentrePt().latDec;
+				lonCurCentr = pref.getCurCentrePt().lonDec;
+				if (latWhereAmI != latCurCentr ||
+					lonWhereAmI != lonCurCentr ) {
+					pref.setCurCentrePt(nav.gpsPos);
 				}
 			}
 		}

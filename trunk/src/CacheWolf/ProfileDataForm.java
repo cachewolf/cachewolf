@@ -29,18 +29,18 @@ public class ProfileDataForm extends Form {
 		super();
 		pref=p;
 		profile=prof;
-		
+
     	resizable =  false;
 		content.setText(MyLocale.getMsg(1115,"Centre"));
 		content.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_RECT;
-	    //defaultTags.set(this.INSETS,new Insets(2,2,2,2));		
+	    //defaultTags.set(this.INSETS,new Insets(2,2,2,2));
 		title = MyLocale.getMsg(1118,"Profile")+": "+profile.name;
-		content.addNext(new mLabel(MyLocale.getMsg(600,"Preferences")));		
+		content.addNext(new mLabel(MyLocale.getMsg(600,"Preferences")));
 		content.addLast(chkSetCurrentCentreFromGPSPosition = new mCheckBox(MyLocale.getMsg(646,"centre from GPS")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		// content.addLast(btnGPS2Cur=new mButton("   v   "),DONTSTRETCH,DONTFILL|LEFT);
-		if (pref.setCurrentCentreFromGPSPosition) chkSetCurrentCentreFromGPSPosition.setState(true);		
+		if (pref.setCurrentCentreFromGPSPosition) chkSetCurrentCentreFromGPSPosition.setState(true);
 		content.addNext(new mLabel(MyLocale.getMsg(1116,"Current")));
-		content.addLast(btnCurrentCentre=new mButton(pref.curCentrePt.toString()),HSTRETCH,HFILL|LEFT);
+		content.addLast(btnCurrentCentre=new mButton(pref.getCurCentrePt().toString()),HSTRETCH,HFILL|LEFT);
 		content.addNext(new mLabel("      "),HSTRETCH,HFILL);
 		content.addNext(btnCur2Prof=new mButton("   v   "),DONTSTRETCH,DONTFILL|LEFT);
 		content.addNext(new mLabel(MyLocale.getMsg(1117,"copy")));
@@ -52,7 +52,7 @@ public class ProfileDataForm extends Form {
 		//addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
 		addLast(btnOK = new mButton("OK"),DONTSTRETCH,HFILL|RIGHT);
 	}
-	
+
 	/**
 	*	The event handler to react to a users selection.
 	*	A return value is created and passed back to the calling form
@@ -69,10 +69,10 @@ public class ProfileDataForm extends Form {
 			}
 			if (ev.target == btnCurrentCentre){
 				CoordsScreen cs = new CoordsScreen();
-				cs.setFields(pref.curCentrePt, TransformCoordinates.CW);
+				cs.setFields(pref.getCurCentrePt(), TransformCoordinates.CW);
 				if (cs.execute()== FormBase.IDOK){
-					pref.curCentrePt.set(cs.getCoords());
-					btnCurrentCentre.setText(pref.curCentrePt.toString());
+					pref.setCurCentrePt(cs.getCoords());
+					btnCurrentCentre.setText(pref.getCurCentrePt().toString());
 					Global.getProfile().updateBearingDistance();
 				}
 			}
@@ -86,13 +86,13 @@ public class ProfileDataForm extends Form {
 				}
 			}
 			if (ev.target == btnCur2Prof){
-				profile.notifyUnsavedChanges(pref.curCentrePt.equals(profile.centre));
-				profile.centre.set(pref.curCentrePt);
+				profile.notifyUnsavedChanges(pref.getCurCentrePt().equals(profile.centre));
+				profile.centre.set(pref.getCurCentrePt());
 				btnProfileCentre.setText(profile.centre.toString());
 			}
 			if (ev.target == btnProf2Cur){
-				pref.curCentrePt.set(profile.centre);
-				btnCurrentCentre.setText(pref.curCentrePt.toString());
+				pref.setCurCentrePt(profile.centre);
+				btnCurrentCentre.setText(pref.getCurCentrePt().toString());
 				Global.getProfile().updateBearingDistance();
 			}
 		}

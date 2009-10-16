@@ -1,6 +1,5 @@
 package CacheWolf;
 
-import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.utils.CWWrapper;
 import ewe.sys.*;
 import ewe.ui.*;
@@ -17,7 +16,7 @@ public class myTableControl extends TableControl{
 	public Profile profile;
 	public CacheDB cacheDB;
 	public TablePanel tbp;
-	
+
 	private MenuItem miOpen, miGoto, miCenter, miUnhideAddis;
 	private MenuItem miOpenOnline, miOpenOffline, miLogOnline;
 	private MenuItem miDelete, miUpdate;
@@ -33,7 +32,7 @@ public class myTableControl extends TableControl{
 		pref = Global.getPref();
 		tbp =tablePanel;
 		allowDragSelection = false; // allow only one row to be selected at one time
-				
+
 		MenuItem[] mnuFull = new MenuItem[14];
   	mnuFull[0] = miOpen = new MenuItem(MyLocale.getMsg(1021,"Open description"));
   	mnuFull[1] = miGoto = new MenuItem(MyLocale.getMsg(1010,"Goto"));
@@ -48,7 +47,7 @@ public class myTableControl extends TableControl{
   	mnuFull[10] = miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update"));
   	mnuFull[11] = miSeparator;
   	mnuFull[12] = miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all"));
-  	mnuFull[13] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));	
+  	mnuFull[13] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));
   	mFull = new Menu(mnuFull, MyLocale.getMsg(1013,"With selection"));
 
   	MenuItem[] mnuSmall = new MenuItem[8];
@@ -60,7 +59,7 @@ public class myTableControl extends TableControl{
   	mnuSmall[5] = miOpenOnline;
   	mnuSmall[6] = miOpenOffline;
   	mnuSmall[7] = miLogOnline;
-  	mSmall = new Menu(mnuSmall, MyLocale.getMsg(1013,"With selection"));	
+  	mSmall = new Menu(mnuSmall, MyLocale.getMsg(1013,"With selection"));
 	}
 
 	/** Full menu when listview includes checkbox */
@@ -69,7 +68,7 @@ public class myTableControl extends TableControl{
 //		if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
 //		   ((MenuItem)mFull.items.get(5)).modifiers|=MenuItem.Disabled;
 	}
-	
+
 	public Menu getMenuFull() {
 		return mFull;
 	}
@@ -80,19 +79,19 @@ public class myTableControl extends TableControl{
 		//if (!Vm.getPlatform().equals("Win32") && !Vm.getPlatform().equals("Java"))
 		//	   ((MenuItem)mSmall.items.get(5)).modifiers|=MenuItem.Disabled;
 	}
-	
+
 	public void penRightReleased(Point p){
 		if (cacheDB.size()>0) { // No context menu when DB is empty
 			adjustAddiHideUnhideMenu();
 			menuState.doShowMenu(p,true,null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
-			
+
 		}
 	}
 
     public void penHeld(Point p){
 		if (cacheDB.size()>0) // No context menu when DB is empty
 			adjustAddiHideUnhideMenu();
-			menuState.doShowMenu(p,true,null); 
+			menuState.doShowMenu(p,true,null);
 	}
 
 	public void onKeyEvent(KeyEvent ev) {
@@ -109,15 +108,15 @@ public class myTableControl extends TableControl{
 				else if (ev.key == IKeys.PAGE_DOWN) Global.mainTab.tbP.selectRow(java.lang.Math.min(cursor.y+ getOnScreen(null).height-1, model.numRows-1)); //cursorTo(java.lang.Math.min(cursor.y+ getOnScreen(null).height-1, model.numRows-1),cursor.x+listMode,true); // I don't know why this doesn't work: tbp.doScroll(IScroll.Vertical, IScroll.PageHigher, 1);
 				else if (ev.key == IKeys.PAGE_UP) Global.mainTab.tbP.selectRow(java.lang.Math.max(cursor.y-getOnScreen(null).height+1, 0)); // cursorTo(java.lang.Math.max(cursor.y-getOnScreen(null).height+1, 0),cursor.x+listMode,true);
 				else if (ev.key == IKeys.ACTION || ev.key == IKeys.ENTER) Global.mainTab.select(Global.mainTab.descP);
-				else if (ev.key == IKeys.DOWN) Global.mainTab.tbP.selectRow(java.lang.Math.min(cursor.y+ 1, model.numRows-1)); 
+				else if (ev.key == IKeys.DOWN) Global.mainTab.tbP.selectRow(java.lang.Math.min(cursor.y+ 1, model.numRows-1));
 				else if (ev.key == IKeys.UP) Global.mainTab.tbP.selectRow(java.lang.Math.max(cursor.y-1, 0));
-				else if (ev.key == IKeys.LEFT && Global.mainForm.cacheListVisible && cursor.y>=0 && cursor.y<tbp.myMod.numRows) Global.mainForm.cacheList.addCache(cacheDB.get(cursor.y).getWayPoint()); 
+				else if (ev.key == IKeys.LEFT && Global.mainForm.cacheListVisible && cursor.y>=0 && cursor.y<tbp.myMod.numRows) Global.mainForm.cacheList.addCache(cacheDB.get(cursor.y).getWayPoint());
 				else if (ev.key == IKeys.RIGHT) {
 					CacheHolder ch;
 					ch = cacheDB.get(tbp.getSelectedCache());
-					Global.mainTab.gotoP.setDestinationAndSwitch(ch); 
+					Global.mainTab.gotoP.setDestinationAndSwitch(ch);
 				}
-				else if (ev.key == 6 ) MainMenu.search(); // (char)6 == ctrl + f 
+				else if (ev.key == 6 ) MainMenu.search(); // (char)6 == ctrl + f
 				else super.onKeyEvent(ev);
 			}
 		}
@@ -129,13 +128,13 @@ public class myTableControl extends TableControl{
 		Global.getProfile().setSelectForAll(selectStatus);
 		tbp.refreshTable();
 	}
-	
-	 
+
+
 	/** always select a whole row */
 	public boolean isSelected(int pRow,int pCol) {
 		return pRow==selection.y;
 	}
-	
+
 	public void popupMenuEvent(Object selectedItem){
 		if (selectedItem == null) return;
 		CacheHolder ch;
@@ -173,9 +172,9 @@ public class myTableControl extends TableControl{
 			shouldDeleteCount = allCount;
 			if (addiNonVisibleCount + mainNonVisibleCount > 0){
 				if ((new MessageBox(MyLocale.getMsg(144,"Warning"),
-						            MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") + 
-						            	mainNonVisibleCount + MyLocale.getMsg(1030, ", additional Waypoints: ") + 
-						            	addiNonVisibleCount+")\n" + MyLocale.getMsg(1031, "Delete them, too?"), 
+						            MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") +
+						            	mainNonVisibleCount + MyLocale.getMsg(1030, ", additional Waypoints: ") +
+						            	addiNonVisibleCount+")\n" + MyLocale.getMsg(1031, "Delete them, too?"),
 						            	FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
 					deleteFiltered = true;
 				} else {
@@ -206,13 +205,13 @@ public class myTableControl extends TableControl{
 					}
 					pbf.exit(0);
 					tbp.myMod.numRows-=nDeleted;
-					profile.saveIndex(pref,true);	
+					profile.saveIndex(pref,true);
 					tbp.refreshTable();
 				}
 			}
 			Vm.showWait(false);
 		} else
-				
+
 		if (selectedItem == miUpdate){
 			MainMenu.updateSelectedCaches(tbp);
 		} else
@@ -227,13 +226,11 @@ public class myTableControl extends TableControl{
 			if (!cp.isValid()){
 				MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 				tmpMB.execute();
-			} else {				
-				pref.curCentrePt.set(cp);
-				Global.mainTab.updateBearDist(); // Update the distances with a warning message
-				//tbp.refreshTable();
+			} else {
+				pref.setCurCentrePt(cp);
 			}
 		} else
-		
+
 		if (selectedItem == miUnhideAddis) {
 			// This toggles the "showAddis" Flag
 			ch = cacheDB.get(tbp.getSelectedCache());
@@ -249,9 +246,9 @@ public class myTableControl extends TableControl{
 
 		if (selectedItem == miGoto){
 			ch = cacheDB.get(tbp.getSelectedCache());
-			Global.mainTab.gotoP.setDestinationAndSwitch(ch); 
+			Global.mainTab.gotoP.setDestinationAndSwitch(ch);
 		} else
-		    
+
 		if (selectedItem == miOpenOnline){
 			if(browserPathIsValid()){
 				ch = cacheDB.get(tbp.getSelectedCache());
@@ -269,14 +266,14 @@ public class myTableControl extends TableControl{
 				}
 			}
 		} else
-		    
+
 		if (selectedItem == miOpenOffline) {
 			if(browserPathIsValid()){
 				ShowCacheInBrowser sc=new ShowCacheInBrowser();
 				sc.showCache(cacheDB.get(tbp.getSelectedCache()));
 			}
 		} else
-			
+
 		if (selectedItem == miLogOnline){
 			if(browserPathIsValid()){
 				ch = cacheDB.get(tbp.getSelectedCache());
@@ -298,7 +295,7 @@ public class myTableControl extends TableControl{
 									URL = "";
 								}
 							} else {
-								URL = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();								
+								URL = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
 							}
 
 							if (URL.length() > 0) {
@@ -320,13 +317,13 @@ public class myTableControl extends TableControl{
 			}
 		} else
 
-		    
+
 		if (selectedItem == miOpen){
 			penDoubleClicked(null);
 		}
 
 	}
-	
+
 	public boolean browserPathIsValid() {
 		if(!new File(pref.browser).exists()){
 			(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(1032,"Path to browser:")+"\n"+pref.browser+"\n"+MyLocale.getMsg(1033,"is incorrect!"),FormBase.OKB)).execute();
@@ -335,15 +332,15 @@ public class myTableControl extends TableControl{
 		else
 			return true;
 	}
-	
+
 	public void penDoubleClicked(Point where) {
 		Global.mainTab.select(Global.mainTab.descP);
 	}
-	
+
 	public void onEvent(Event ev) {
 		if (ev instanceof PenEvent && (ev.type == PenEvent.PEN_DOWN) ){
 			Global.mainTab.tbP.myMod.penEventModifiers=((PenEvent)ev).modifiers;
-	    } 
+	    }
 
 		super.onEvent(ev);
 	}
@@ -352,7 +349,7 @@ public class myTableControl extends TableControl{
 	 * Adjusting the menu item for hiding or unhiding additional waypoints. If the cache has no
 	 * addis, then the menu is deactivated. If it has addis, then the menu text is adapted according
 	 * to the current value of the property <code>showAddis()</code>.
-	 * 
+	 *
 	 */
 	public void adjustAddiHideUnhideMenu() {
 		if (tbp.getSelectedCache() < 0) {
@@ -375,19 +372,19 @@ public class myTableControl extends TableControl{
 			}
 		}
 	}
-	
+
 	// /////////////////////////////////////////////////
 	// Allow the caches to be dragged into a cachelist
     ///////////////////////////////////////////////////
-	
+
 	IconAndText imgDrag;
 	String wayPoint;
 	int row;
-	
+
 	public void startDragging(DragContext dc) {
 		 Point p=cellAtPoint(dc.start.x,dc.start.y,null);
 		 wayPoint=null;
-		 if (p.y>=0) { 
+		 if (p.y>=0) {
 			if (!Global.mainForm.cacheListVisible) {
 				dc.cancelled=true;
 				return;
@@ -421,7 +418,7 @@ public class myTableControl extends TableControl{
 			 //Vm.debug("Control "+c.toString()+"/"+c.text);
 		 }else super.stopDragging(dc);
 	 }
-	 
+
 	 public void dragged(DragContext dc) {
 	 	if (wayPoint!=null)
 		   dc.imageDrag();
@@ -453,23 +450,23 @@ public class myTableControl extends TableControl{
 	 {
 		 Point p2 = cellAtPoint(p.x,p.y,null);
 		 super.penReleased(p, isDouble);
-		 Rect sel = getSelection(null); 
-		 if ((sel.height == 0 || sel.height == 0) && p2 != null) cursorTo(p2.y,p2.x, true); // if the selection is gone -> reselect it 
-			 
+		 Rect sel = getSelection(null);
+		 if ((sel.height == 0 || sel.height == 0) && p2 != null) cursorTo(p2.y,p2.x, true); // if the selection is gone -> reselect it
+
 	 }
 
 	 class myProgressBarForm extends ProgressBarForm {
 
 		 boolean isClosed=false;
-		 
+
 		 protected boolean canExit(int exitCode) {
 			isClosed=true;
 			return true;
 		 }
-		 
+
 	 }
-	 
-	 
+
+
 
 	public Menu getMenuSmall() {
 		return mSmall;
