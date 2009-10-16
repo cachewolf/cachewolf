@@ -219,4 +219,55 @@ public class OCXMLImporterScreen extends Form {
 		}
 		return cacheTypeRestriction;
 	}
+	
+	public byte getRestrictedCacheType(SpiderProperties p){
+		byte RestrictedType = CacheType.CW_TYPE_ERROR;
+
+		if (chcType!=null){
+			try {
+				switch (chcType.getInt()) {
+				case  0:
+					RestrictedType = CacheType.CW_TYPE_ERROR;
+					break;
+				case  1: 
+					RestrictedType = CacheType.CW_TYPE_TRADITIONAL;
+					break;
+				case  2:
+					RestrictedType = CacheType.CW_TYPE_MULTI;
+					break;
+				case  3:
+					RestrictedType = CacheType.CW_TYPE_VIRTUAL;
+					break;
+				case  4:
+					RestrictedType = CacheType.CW_TYPE_LETTERBOX;
+					break;
+				case  5:
+					RestrictedType = CacheType.CW_TYPE_EVENT;
+					break;
+				case  6:
+					RestrictedType = CacheType.CW_TYPE_MEGA_EVENT;
+					break;
+				case  7:
+					RestrictedType = CacheType.CW_TYPE_WEBCAM;
+					break;
+				case  8:
+					RestrictedType = CacheType.CW_TYPE_UNKNOWN;
+					break;
+				case 9:
+					RestrictedType = CacheType.CW_TYPE_CITO;
+					break;
+				case 10:
+					RestrictedType = CacheType.CW_TYPE_EARTH;
+					break;
+				case 11:
+					RestrictedType = CacheType.CW_TYPE_WHEREIGO;
+					break;
+				default:
+					RestrictedType = CacheType.CW_TYPE_ERROR;
+				}
+			}catch (Exception ex) { // Some tag missing from spider.def
+			}
+		}
+		return RestrictedType;
+	}
 }
