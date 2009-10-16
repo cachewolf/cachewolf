@@ -50,7 +50,7 @@ public class DetailsPanel extends CellPanel {
 	/** way point coordinates, open change coordinates dialog. */
 	private static mButton btnCoordinates;
 	/** set center to current way point. */
-	private static mButton btnCenter;
+	// private static mButton btnCenter;
 	/** add time stamp to notes. */
 	private static mButton btnAddDateTime;
 	/** create a new way point. */
@@ -251,10 +251,10 @@ public class DetailsPanel extends CellPanel {
 		imgShowBug = new mImage(useBigIcons ? "bug_vga.gif":"bug.gif");
 		imgShowBugNo = new mImage(useBigIcons ? "bug_no_vga.gif":"bug_no.gif");
 	}
-	
+
 	private CellPanel createToolsPanel() {
 		final CellPanel pnlTools = new CellPanel();
-		
+
 		btnNewWpt = new mButton(imgNewWpt = new mImage(useBigIcons ? "newwpt_vga.png" : "newwpt.png"));
 		// FIXME: get an image with proper transparency
 		imgNewWpt.transparentColor = new Color(255, 0, 0);
@@ -286,7 +286,7 @@ public class DetailsPanel extends CellPanel {
 
 		btnAddDateTime = new mButton(new mImage(useBigIcons ? "date_time_vga.gif" : "date_time.gif"));
 		btnAddDateTime.setToolTip(MyLocale.getMsg(350, "Add timestamp to notes"));
-		
+
 		pnlTools.addNext(btnNewWpt);
 		pnlTools.addNext(btnGoto);
 		pnlTools.addNext(btnShowBug);
@@ -297,7 +297,7 @@ public class DetailsPanel extends CellPanel {
 		pnlTools.addLast(btnAddDateTime);
 
 		pnlTools.stretchFirstRow = true;
-		
+
 		return pnlTools;
 	}
 
@@ -330,7 +330,7 @@ public class DetailsPanel extends CellPanel {
 		inpName.setText(ch.getCacheName());
 		btnCoordinates.setText(ch.pos.toString());
 		inpHidden.setText(mainCache.getDateHidden());
-		inpOwner.setText(mainCache.getCacheOwner());			
+		inpOwner.setText(mainCache.getCacheOwner());
 
 		if (ch.getCacheStatus().length() >= 10 && ch.getCacheStatus().charAt(4) == '-') {
 			chcStatus.setText(MyLocale.getMsg(318, "Found") + " " + ch.getCacheStatus());
@@ -382,7 +382,7 @@ public class DetailsPanel extends CellPanel {
 			activateControl(btnShowBug);
 			activateControl(btnBlack);
 		}
-		
+
 		if (ch.isCustomWpt()) {
 			btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
 			btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
@@ -407,7 +407,7 @@ public class DetailsPanel extends CellPanel {
 				}
 			}
 		}
-		
+
 		int addiCount = 0;
 		if (ch.mainCache == null) {
 			addiCount = ch.addiWpts.size();
@@ -427,10 +427,10 @@ public class DetailsPanel extends CellPanel {
 	 */
 	public void createWptName() {
 		final String wpt = inpWaypoint.getText().toUpperCase();
-		if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) 
-				&& Global.mainTab.mainCache != null 
-				&& (Global.mainTab.mainCache.startsWith("GC") 
-					|| CacheHolder.isOCWaypoint(Global.mainTab.mainCache) || Global.mainTab.mainCache.startsWith("CW")) 
+		if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt()))
+				&& Global.mainTab.mainCache != null
+				&& (Global.mainTab.mainCache.startsWith("GC")
+					|| CacheHolder.isOCWaypoint(Global.mainTab.mainCache) || Global.mainTab.mainCache.startsWith("CW"))
 				&& wpt.startsWith("CW")) {
 			// for what was this?:
 			Global.mainTab.lastselected = Global.mainTab.mainCache; // I don't know exactly, but it's needed for creating a series of Addis
@@ -508,11 +508,11 @@ public class DetailsPanel extends CellPanel {
 				// is.execute();
 				final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(true).Travelbugs.toHtml(),	"Travelbugs");
 				ts.execute(this.getFrame(), Gui.CENTER_FRAME);
+			/* not fully implemented
 			} else if (ev.target == btnCenter) {
 				final CWPoint cp = new CWPoint(cache.LatLon);
 				if (cp.isValid()) {
-					pref.curCentrePt.set(cp);
-					Global.mainTab.updateBearDist();
+					pref.setCurCentrePt(cp);
 				} else {
 					final MessageBox tmpMB = new MessageBox(
 							MyLocale.getMsg(312, "Error"),
@@ -520,22 +520,23 @@ public class DetailsPanel extends CellPanel {
 							FormBase.OKB);
 					tmpMB.exec();
 				}
+			*/
 
 			} else if (ev.target == btnAddDateTime) {
 				dirtyNotes = true;
-				
+
 				final StringBuffer newNote = new StringBuffer();
 				newNote.append(cache.getCacheDetails(true).getCacheNotes());
-				
+
 				final Time dtm = new Time();
 				dtm.getTime();
 				dtm.setFormat("E dd.MM.yyyy '/' HH:mm");
-				
+
 				if (newNote.length() > 0) {
 					newNote.append('\n');
 				}
 				newNote.append(dtm.toString()).append('\n');
-				
+
 				cache.getCacheDetails(true).setCacheNotes(newNote.toString());
 				//FIXME: better use saveDirtyWaypoint()?
 				cache.save();
@@ -578,9 +579,9 @@ public class DetailsPanel extends CellPanel {
 					btnCoordinates.setText(coords.toString());
 					cache.LatLon = coords.toString();
 					// If the current centre is valid, calculate the distance and bearing to it
-					final CWPoint centre = Global.getPref().curCentrePt;
+					final CWPoint centre = Global.getPref().getCurCentrePt();
 					if (centre.isValid()) {
-						cache.calcDistance(centre);
+						cache.calcDistance(centre); // todo perhaps sortTable
 					}
 				}
 			} else if (ev.target == btnFoundDate) {
@@ -637,9 +638,9 @@ public class DetailsPanel extends CellPanel {
 				}
 			} else if (ev.target == btnTerr) {
 				int returnValue;
-				final TerrDiffForm tdf = new TerrDiffForm(true, 
-						decodeTerrDiff(btnTerr, 
-								MyLocale.getMsg(1001, "T"), 
+				final TerrDiffForm tdf = new TerrDiffForm(true,
+						decodeTerrDiff(btnTerr,
+								MyLocale.getMsg(1001, "T"),
 								CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))
 							)
 						);
@@ -650,13 +651,13 @@ public class DetailsPanel extends CellPanel {
 				}
 			} else if (ev.target == btnDiff) {
 				int returnValue;
-				final TerrDiffForm tdf = new TerrDiffForm(false, 
-						decodeTerrDiff(btnDiff, 
-								MyLocale.getMsg(1001, "D"), 
+				final TerrDiffForm tdf = new TerrDiffForm(false,
+						decodeTerrDiff(btnDiff,
+								MyLocale.getMsg(1001, "D"),
 								CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))
 							)
 						);
-						
+
 				returnValue = tdf.execute();
 				if (returnValue == 1) {
 					btnDiff.setText(MyLocale.getMsg(1000, "D") + ": "
@@ -667,7 +668,7 @@ public class DetailsPanel extends CellPanel {
 			ev.consumed = true;
 		}
 	}
-	
+
 	/** allow user input on control item */
 	private void activateControl(final Control ctrl) {
 		if (ctrl.change(0, ControlConstants.Disabled))
@@ -685,13 +686,13 @@ public class DetailsPanel extends CellPanel {
 		//FIXME: take care of renaming waypoints
 		//FIXME: add method to convert back text of difficulty & terrain buttons
 		//FIXME: check if manual changes have converted a cache from incomplete to complete
-		
+
 		// We have to update two objects: thisCache (a CacheHolderDetail) which
 		// contains
 		// the full cache which will be written to the cache.xml file AND
 		// the CacheHolder object which sits in cacheDB
 		//FIXME: so how do we do this??
-		
+
 		// Strip the found message if the status contains a date
 		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found"))
 				&& chcStatus.getText().length() >= MyLocale
@@ -750,11 +751,11 @@ public class DetailsPanel extends CellPanel {
 		// because all changes
 		// affecting the details are immediately saved
 		// Now update the table
-		
+
 		cache.checkIncomplete();
-		
+
 		/*
-		 * The references have to be rebuilt if: 
+		 * The references have to be rebuilt if:
 		 * - the cachetype changed from addi->normal or from normal->addi
 		 * - the old cachetype or the new cachetype were 'addi' and the waypointname has changed
 		 */
@@ -778,13 +779,13 @@ public class DetailsPanel extends CellPanel {
 		if (!oldWaypoint.equals(cache.getWayPoint())){
 		 // Delete old XML - File
 			cache.getFreshDetails().deleteFile(Global.getProfile().dataDir+oldWaypoint+".xml");
-		}		
+		}
 	}
-	
+
 	/**
 	 * convert the string displayed in the terrain in difficulty buttons to a byte for intrernal use<br>
 	 * assumes that the relevant information will at positions 3 and 5 in a 0 indexed string
-	 * @param button button control to get the text from 
+	 * @param button button control to get the text from
 	 * @param td localized string for abbreviation of terrain or difficulty
 	 * @param isCache true if waypoint is a cache, false for addis and custom
 	 * @return 0 for additional or custum waypoints, -1 for caches if td is not valid, parsed byte otherwise
@@ -792,7 +793,7 @@ public class DetailsPanel extends CellPanel {
 	private byte decodeTerrDiff(mButton button, String td, boolean isCache) {
 		// terrain and difficulty are always unset for non cache waypoints
 		if (! isCache) return CacheTerrDiff.CW_DT_UNSET;
-		
+
 		// cut off beginning of string
 		String buttonText = button.getText().substring(td.length()+2);
 		// we now should have a string of length 3
@@ -803,7 +804,7 @@ public class DetailsPanel extends CellPanel {
 
 		// unset value is invalid
 		if ("--".equals(buttonText)) return CacheTerrDiff.CW_DT_ERROR;
-		
+
 		return Byte.parseByte(buttonText);
 	}
 
@@ -811,7 +812,7 @@ public class DetailsPanel extends CellPanel {
 
 		private final DispPanel disp = new DispPanel();
 		private final mButton btCancel;
-		
+
 
 		TravelbugInCacheScreen(String text, String title) {
 			super();

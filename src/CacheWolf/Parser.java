@@ -402,12 +402,11 @@ public class Parser{
     /** Get or set the current centre */
 	private void funcCenter(int nargs) throws Exception {
 		if (nargs==0) {
-			calcStack.add(Global.getPref().curCentrePt.toString());
+			calcStack.add(Global.getPref().getCurCentrePt().toString());
 		} else {
 	    	String coordA=popCalcStackAsString();
 			if (!isValidCoord(coordA)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coordA);
-			Global.getPref().curCentrePt.set(coordA);
-			Global.getProfile().updateBearingDistance();
+			Global.getPref().setCurCentrePt(new CWPoint(coordA));
 		}
 	}
 
@@ -553,7 +552,7 @@ public class Parser{
     		}
     		ch.LatLon=cwPt.toString(TransformCoordinates.CW);
     		ch.pos.set(cwPt);
-    		ch.calcDistance(Global.getPref().curCentrePt); // Update distance/bearing
+    		ch.calcDistance(Global.getPref().getCurCentrePt()); // Update distance/bearing
     		nav.setDestination(ch);
     	    Global.getProfile().selectionChanged=true; // Tell moving map to updated displayed waypoints
     	}
@@ -1003,7 +1002,7 @@ public class Parser{
 				if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
 					ch.LatLon=cwPt.toString(TransformCoordinates.CW);
 					ch.pos.set(cwPt);
-					ch.calcDistance(Global.getPref().curCentrePt); // Update distance and bearing
+					ch.calcDistance(Global.getPref().getCurCentrePt()); // Update distance and bearing
 		    	    Global.getProfile().selectionChanged=true; // Tell moving map to updated displayed waypoints
 				    return;
 				} else

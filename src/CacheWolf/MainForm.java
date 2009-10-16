@@ -89,8 +89,7 @@ public class MainForm extends Editor {
 			infB.exec();
 			infB.waitUntilPainted(100);
 			profile.readIndex(infB);
-			pref.curCentrePt.set(profile.centre);
-			profile.updateBearingDistance();
+			pref.setCurCentrePt(profile.centre);
 			setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 		} catch (Exception e){
 			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());

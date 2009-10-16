@@ -70,7 +70,7 @@ public final class GotoPanel extends CellPanel {
 	MenuItem miNorthCentered;
 
 	/**
-	 * Create GotoPanel 
+	 * Create GotoPanel
 	 * @param Preferences 	global preferences
 	 * @param MainTab		reference to MainTable
 	 * @param DetailsPanel 	reference to DetailsPanel
@@ -90,7 +90,7 @@ public final class GotoPanel extends CellPanel {
 		ButtonP.addNext(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addLast(btnMap = new mButton(MyLocale.getMsg(1506,"Map")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
-		//Format selection for coords		
+		//Format selection for coords
 		//context menu
 		mnuContextFormt = new Menu();
 		currFormatSel = 1; // default to d° m.m
@@ -174,7 +174,7 @@ public final class GotoPanel extends CellPanel {
 		//		// myGPS.noInterpretableData();
 
 
-		//		}	
+		//		}
 	}
 
 	public void resizeTo(int pWidth, int pHeight){
@@ -185,19 +185,19 @@ public final class GotoPanel extends CellPanel {
 			//some space for the SIP button
 			if ( (Vm.getParameter(VmConstants.VM_FLAGS) & (VmConstants.VM_FLAG_SIP_BUTTON_ON_SCREEN)) == (VmConstants.VM_FLAG_SIP_BUTTON_ON_SCREEN) ){
 				Rect screen = (Rect)Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new Rect(),0);
-				roseHeight -= screen.height / 14;				
+				roseHeight -= screen.height / 14;
 			}
 		}
-		roseP.resizeTo(pWidth, roseHeight); 
+		roseP.resizeTo(pWidth, roseHeight);
 		icRose.resizeTo(pWidth, roseHeight);
 		compassRose.resize(pWidth, roseHeight);
 	}
 
 
 	/**
-	 * set the coords of the destination  
+	 * set the coords of the destination
 	 * @param dest destination
-	 */ 
+	 */
 	public void setDestination(CWPoint dest){
 		myNavigation.setDestination(dest);
 		if (!myNavigation.destination.isValid()) (new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(1507,"Coordinates are out of range:") +"\n"+MyLocale.getMsg(1508,"latitude")+": "+myNavigation.destination.latDec+"\n "+MyLocale.getMsg(1509,"longditue")+": "+myNavigation.destination.lonDec, FormBase.OKB)).execute();
@@ -211,9 +211,9 @@ public final class GotoPanel extends CellPanel {
 
 
 	/**
-	 * set the coords of the destination and switch to gotoPanel  
+	 * set the coords of the destination and switch to gotoPanel
 	 * @param LatLon destination
-	 */ 
+	 */
 	public void setDestinationAndSwitch(CWPoint where) {
 		myNavigation.setDestination(where);
 		mainT.select(this);
@@ -238,8 +238,8 @@ public final class GotoPanel extends CellPanel {
 	}
 
 	/**
-	 * method which is called if a timer is set up  
-	 */ 
+	 * method which is called if a timer is set up
+	 */
 	public void updateGps(int fix) {
 		Double bearMov = new Double();
 		Double speed = new Double();
@@ -306,21 +306,21 @@ public final class GotoPanel extends CellPanel {
 			else {
 				if (mainT.ch != null && mainT.ch.pos.isValid()) centerTo = new CWPoint(mainT.ch.pos);
 				else {
-					if (pref.curCentrePt.isValid()) centerTo = new CWPoint(pref.curCentrePt);
+					if (pref.getCurCentrePt().isValid()) centerTo = new CWPoint(pref.getCurCentrePt());
 				}
 			}
 		}
 		if (centerTo != null && centerTo.isValid())
 			mainT.SwitchToMovingMap(centerTo, false);
 		else
-			(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS"), FormBase.OKB)).execute(); 
+			(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS"), FormBase.OKB)).execute();
 	}
 
 	/**
 	 * Eventhandler
 	 */
 	public void onEvent(Event ev){
-		if (ev instanceof MenuEvent) { 
+		if (ev instanceof MenuEvent) {
 			if (ev.type == MenuEvent.SELECTED) {
 				if (((MenuEvent)ev).menu == mnuContextFormt) {
 					mnuContextFormt.close();
@@ -343,7 +343,7 @@ public final class GotoPanel extends CellPanel {
 						if (action == miNorthCentered) {
 							if (compassRose.isNorthCentered()) {
 								compassRose.setNorthCentered(false);
-								miNorthCentered.modifiers &= ~MenuItem.Checked;							
+								miNorthCentered.modifiers &= ~MenuItem.Checked;
 							}
 							else
 							{
@@ -363,19 +363,16 @@ public final class GotoPanel extends CellPanel {
 				else myNavigation.stopGps();
 			}
 
-			// set current position as centre and recalculate distance of caches in MainTab 
+			// set current position as centre and recalculate distance of caches in MainTab
 			if (ev.target == btnCenter){
 				if (myNavigation.gpsPos.isValid()) {
-					Vm.showWait(true);
-					pref.curCentrePt.set(myNavigation.gpsPos);
-					mainT.updateBearDist();
-					Vm.showWait(false);
+					pref.setCurCentrePt(myNavigation.gpsPos);
 				} else (new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set"), FormBase.OKB)).execute();
 			}
 			//Start moving map
 			if (ev.target == btnMap){
 				switchToMovingMap();
-			} 
+			}
 			// create new waypoint with current GPS-position
 			if (ev.target == btnSave){
 				CacheHolder ch = new CacheHolder();
@@ -511,16 +508,16 @@ class GotoRose extends AniImage {
 		String strTemp = MyLocale.getMsg(1512, "Waypoint");
 		g.setColor(Color.DarkBlue);
 		g.fillRect(0, 0, fm.getTextWidth(strTemp) + 4, lineHeight);
-		g.setColor(Color.White);		
+		g.setColor(Color.White);
 		g.drawText(strTemp, 2, 0);
 
-		g.setColor(Color.Black);		
+		g.setColor(Color.Black);
 
 		int metricSystem = Global.getPref().metricSystem;
 		Double tmp = new Double();
 		strTemp = "";
 		double newDistance = 0;
-		int bigUnit = -1; 
+		int bigUnit = -1;
 		int smallUnit = -1;
 		double threshold = -1;
 		// Allow for different metric systems
@@ -577,7 +574,7 @@ class GotoRose extends AniImage {
 		}
 		if (tmp.value >= 0) {
 			if (tmp.value >= 100) {
-				strSpeed = MyLocale.formatDouble(tmp,"0") + unit;				
+				strSpeed = MyLocale.formatDouble(tmp,"0") + unit;
 			}
 			else {
 				strSpeed = MyLocale.formatDouble(tmp,"0.0") + unit;
@@ -595,8 +592,8 @@ class GotoRose extends AniImage {
 		int startX = location.width - (textWidth + 4);
 		g.fillRect(startX, 0, location.width - startX, lineHeight);
 
-		g.setColor(Color.Black);		
-		g.drawText(strHeadline, startX + 2, 0);		
+		g.setColor(Color.Black);
+		g.drawText(strHeadline, startX + 2, 0);
 		g.drawText(strSpeed, startX + 2, lineHeight);
 		g.drawText(strMoveDir, startX + 2, 2*lineHeight);
 	}
@@ -615,7 +612,7 @@ class GotoRose extends AniImage {
 		int startY = location.height - 2*lineHeight;
 		g.fillRect(0, startY, textWidth + 4, location.height - startY);
 
-		g.setColor(Color.Black);		
+		g.setColor(Color.Black);
 		g.drawText(m_Luminary, 2, startY);
 		g.drawText(strSunDir, 2, startY + lineHeight);
 	}
@@ -705,8 +702,8 @@ class GotoRose extends AniImage {
 					g.drawLine(location.width/2, location.height/2 - radius, location.width/2, location.height/2 + radius);
 
 					if (gotoDir < 360 && gotoDir > -360) drawThinArrow(g, gotoDir - moveDir, Color.DarkBlue, moveDirColor, 1.0f);
-					if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir - moveDir, YELLOW, 0.75f);					
-				}				
+					if (sunDir < 360 && sunDir > -360) drawSunArrow(g, sunDir - moveDir, YELLOW, 0.75f);
+				}
 			}
 		}
 	}
@@ -767,7 +764,7 @@ class GotoRose extends AniImage {
 		g.fillPolygon(pointsX, pointsY, 4);
 		if (colPoint != null) {
 			g.setBrush(new Brush(colPoint, Brush.SOLID));
-			g.fillPolygon(pointsX, pointsY, 3);			
+			g.fillPolygon(pointsX, pointsY, 3);
 		}
 	}
 
@@ -781,7 +778,7 @@ class GotoRose extends AniImage {
 			drawRosePart(g,  45 + angle, colLeft, colRight, colBorder, colText, scale * subScale2, innerScale, "NE", bDrawText);
 			drawRosePart(g, 135 + angle, colLeft, colRight, colBorder, colText, scale * subScale2, innerScale, "SE", bDrawText);
 			drawRosePart(g, 225 + angle, colLeft, colRight, colBorder, colText, scale * subScale2, innerScale, "SW", bDrawText);
-			drawRosePart(g, 315 + angle, colLeft, colRight, colBorder, colText, scale * subScale2, innerScale, "NW", bDrawText);	
+			drawRosePart(g, 315 + angle, colLeft, colRight, colBorder, colText, scale * subScale2, innerScale, "NW", bDrawText);
 		}
 
 		drawRosePart(g,   0 + angle, colNorthLeft, colNorthRight, colBorder, colText, scale * subScale1, innerScale, "N", bDrawText);

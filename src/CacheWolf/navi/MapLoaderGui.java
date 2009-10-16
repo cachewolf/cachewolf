@@ -17,7 +17,7 @@ import ewe.ui.*;
 /**
  * @author pfeffer
  * This Class is the Dialog for Download calibrated from expedia.com
- * is called from 
+ * is called from
  *  * start offset for language file: 1800
  */
 
@@ -67,8 +67,8 @@ public class MapLoaderGui extends Form {
 
 	public MapLoaderGui(CacheDB cacheDBi) {
 		super();
-		this.title = MyLocale.getMsg(1800, "Download georeferenced maps"); 
-		center = new CWPoint(pref.curCentrePt);
+		this.title = MyLocale.getMsg(1800, "Download georeferenced maps");
+		center = new CWPoint(pref.getCurCentrePt());
 		cacheDB = cacheDBi;
 		mapLoader = new MapLoader(FileBase.getProgramDirectory()+"/"+"webmapservices");
 
@@ -76,7 +76,7 @@ public class MapLoaderGui extends Form {
 		unsortedMapServices = mapLoader.getAvailableOnlineMapServices();
 		sortMapServices();
 		mapServiceChoice = new mChoice(sortedmapServices, 0);
-		MessageArea desc = new MessageArea(descString); 
+		MessageArea desc = new MessageArea(descString);
 		desc.modifyAll(ControlConstants.NotEditable | ControlConstants.DisplayOnly | ControlConstants.NoFocus, ControlConstants.TakesKeyFocus);
 		desc.borderStyle = UIConstants.BDR_NOBORDER;
 		this.addLast(desc);
@@ -137,7 +137,7 @@ public class MapLoaderGui extends Form {
 		setRecommScaleInput();
 		this.addLast(mTab);
 	}
-	
+
 	private void setRecommScaleInput(){
 		String[] recScales = new String[mapLoader.currentOnlineMapService.recommendedScales.length];
 		for (int i=0; i<recScales.length; i++) {
@@ -151,10 +151,10 @@ public class MapLoaderGui extends Form {
 
 	/**
 	 * sort the map services in order to have the services, which cover
-	 * the current center first in the list 
+	 * the current center first in the list
 	 * this sets inbound[], sortedMapServices[] and sortingmapServices[]
 	 *
-	 */	
+	 */
 	private void sortMapServices() {
 		sortingMapServices = new int[unsortedMapServices.length+1];
 		inbound = new boolean[unsortedMapServices.length];
@@ -169,7 +169,7 @@ public class MapLoaderGui extends Form {
 		int k=j;
 		sortedmapServices = new String[unsortedMapServices.length+1];
 		for (int i=0; i < sortedmapServices.length-1; i++) {
-			if (!inbound[i]) { 
+			if (!inbound[i]) {
 				sortingMapServices[j] = i;
 				j++;
 			}
@@ -180,7 +180,7 @@ public class MapLoaderGui extends Form {
 		sortingMapServices[j]=sortingMapServices[k];
 		sortingMapServices[k]=-1;
 	}
-	
+
 	private int getSortedMapServiceIndex(int originalindex) {
 		for (int i = 0; i < sortingMapServices.length; i++) {
 			if (sortingMapServices[i] == originalindex) return i;
@@ -213,7 +213,7 @@ public class MapLoaderGui extends Form {
 		} while (StartPos<LastPos);
 		return LeadingPath;
 	}
-	
+
 	public void downloadTiles() {
 		String mapsDir = getMapsDir();
 		if (mapsDir == null) return;
@@ -245,12 +245,12 @@ public class MapLoaderGui extends Form {
 				return;
 			}
 			mapLoader.setTiles(surArea.topleft, surArea.buttomright, scale, size, overlapping );
-		} else 
+		} else
 		{ // calculate from centre point an radius
 			mapLoader.setTiles(center, radius * 1000, scale, size, overlapping);
 		}
 		if (overviewmap) {
-			progressBox.setInfo(MyLocale.getMsg(1824, "downloading overview map")); 
+			progressBox.setInfo(MyLocale.getMsg(1824, "downloading overview map"));
 			float overviewScale = MapLoader.getScale(center, radius * 1000, size);
 			try {
 				mapLoader.downloadMap(center, overviewScale, size, mapsDir);
@@ -262,7 +262,7 @@ public class MapLoaderGui extends Form {
 			mapLoader.setProgressInfoBox(progressBox);
 			mapLoader.downlaodTiles(mapsDir);
 		} else { // per cache
-			CacheHolder ch; 
+			CacheHolder ch;
 			CWPoint tmpca = new CWPoint();
 			int numdownloaded = 0;
 			Global.getProfile().getSourroundingArea(onlySelected); // calculate numCachesInArea
@@ -292,7 +292,7 @@ public class MapLoaderGui extends Form {
 		progressBox.waitUntilClosed();
 		mapLoader.setProgressInfoBox(null);
 		//progressBox.close(0);
-		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false; 
+		if(Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false;
 		//	(new MessageBox("Download maps", "Downloaded and calibrated the maps successfully", MessageBox.OKB)).execute();
 	}
 
@@ -326,7 +326,7 @@ public class MapLoaderGui extends Form {
 			}
 			else if (ev.target == okBtiles || ev.target == okBPerCache){
 				if (sortingMapServices[mapServiceChoice.selectedIndex] == -1) {
-					(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1833, "Please don't select the separator line in the wms service option"), FormBase.OKB)).execute(); 
+					(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1833, "Please don't select the separator line in the wms service option"), FormBase.OKB)).execute();
 				}
 				mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 				if (ev.target == okBtiles) { // get tiles
@@ -338,11 +338,11 @@ public class MapLoaderGui extends Form {
 					scale = (float)CacheWolf.Common.parseDouble(scaleInput.getText());
 					overlapping = Convert.toInt(overlappingInput.getText());
 					if (!forCachesChkBox.getState()) {
-						if (radius <= 0) { 
+						if (radius <= 0) {
 							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be greater than 0"), FormBase.OKB)).execute();
 							return;
 						}
-						if (overlapping < 0) { 
+						if (overlapping < 0) {
 							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1828, "'overlapping' must be greater or equal 0"), FormBase.OKB)).execute();
 							return;
 						}
@@ -369,7 +369,7 @@ public class MapLoaderGui extends Form {
 					(new MessageBox(MyLocale.getMsg(321, "Error"), "! " + scale + "\n" + MyLocale.getMsg(1830, "The selected online map service provides map in the scale from") + " " + mapLoader.currentOnlineMapService.minscale + MyLocale.getMsg(1831, " to") + " " + mapLoader.currentOnlineMapService.maxscale + MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), FormBase.OKB)).execute();
 					return;
 				}
-				this.close(FormBase.IDOK); 
+				this.close(FormBase.IDOK);
 				this.downloadTiles();
 			}
 			else if (ev.target == coosBtn) {

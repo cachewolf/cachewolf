@@ -8,13 +8,13 @@ import ewe.sys.*;
 *	the TOP50 map products (mainly available in german speaking countries).
 */
 public class OVLExporter extends Exporter{
-	
+
 	public OVLExporter(Preferences p, Profile prof){
 		super();
 		this.setMask("*.ovl");
 		this.setHowManyParams(LAT_LON|COUNT);
 	}
-	
+
 	public String record(CacheHolder ch, String lat, String lon, int counter){
 		StringBuffer str = new StringBuffer(200);
 		double tmp;
@@ -47,7 +47,7 @@ public class OVLExporter extends Exporter{
 
 		return str.toString();
 	}
-	
+
 	public String trailer(int counter){
 		StringBuffer str = new StringBuffer(200);
 
@@ -58,8 +58,8 @@ public class OVLExporter extends Exporter{
 		str.append("MapName=Gesamtes Bundesgebiet (D1000)\r\n");
 		str.append("DimmFc=100\r\n");
 		str.append("ZoomFc=100\r\n");
-		str.append("CenterLat="+pref.curCentrePt.getLatDeg(TransformCoordinates.CW)+".00\r\n");
-		str.append("CenterLong="+pref.curCentrePt.getLonDeg(TransformCoordinates.CW)+".00\r\n");
+		str.append("CenterLat="+pref.getCurCentrePt().getLatDeg(TransformCoordinates.CW)+".00\r\n");
+		str.append("CenterLong="+pref.getCurCentrePt().getLonDeg(TransformCoordinates.CW)+".00\r\n");
 		str.append("RefColor=255\r\n");
 		str.append("RefRad=58\r\n");
 		str.append("RefLine=6\r\n");
@@ -68,7 +68,7 @@ public class OVLExporter extends Exporter{
 		return str.toString();
 	}
 
-	
+
 /*	public void doIt(){
 		CacheHolder holder;
 		ParseLatLon pll;
@@ -112,7 +112,7 @@ public class OVLExporter extends Exporter{
 						outp.print("Text="+holder.wayPoint+"\r\n");
 						symCounter++;
 					}//if holder...
-				}//for ... i < cacheDB ...			
+				}//for ... i < cacheDB ...
 				// overlay section
 				outp.print("[Overlay]\r\n");
 				outp.print("Symbols="+Convert.toString(symCounter-1)+"\r\n");
@@ -128,7 +128,7 @@ public class OVLExporter extends Exporter{
 				outp.print("RefLine=6\r\n");
 				outp.print("RefOn=0\r\n");
 				outp.print("\r\n");
-				
+
 				outp.close();
 			}catch(Exception e){
 				Vm.debug("Error writing to OVL file! "+e.toString());

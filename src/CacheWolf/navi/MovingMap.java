@@ -414,17 +414,17 @@ public final class MovingMap extends Form {
 		running = true;
 
 		// to load maplist + place a map on screen otherwise no symbol can be placed
-		updatePosition(centerTo); 
-		
+		updatePosition(centerTo);
+
 		// update cache symbols in map
 		if (Global.getProfile().selectionChanged) {
 			// this means marking has changed
 			Global.getProfile().selectionChanged = false;
-			if (getShowCachesOnMap()) removeAllMapSymbols(); // not really needed: hopefully removed by showCachesOnMap			
+			if (getShowCachesOnMap()) removeAllMapSymbols(); // not really needed: hopefully removed by showCachesOnMap
 		}
 		setMarkedCache(Global.mainTab.ch); // this is the selected one (not necessary marked)
 		showCachesOnMap();
-		
+
 		addTrack(myNavigation.curTrack);
 		if (tracks != null && tracks.size() > 0 && ((Track)tracks.get(0)).num > 0)
 			rebuildOverlaySet(); // show points which where added when MavingMap was not running
@@ -435,7 +435,7 @@ public final class MovingMap extends Form {
 		else {
 			destChanged(myNavigation.destination);
 		}
-		
+
 		repaint();
 		return ret;
 	}
@@ -1012,7 +1012,7 @@ public final class MovingMap extends Form {
 		if (forceMapLoad || wantMapTest || screenNotCompletlyCovered) { // if force || want || map doesn't cover the screen completly
 			// Vm.debug("Screen not completly covered by map");
 			if (forceMapLoad ||
-				(java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || 
+				(java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 ||
 				 java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
 				// more then 1/10 of screen moved since last time we tried to find a better map
 				if (autoSelectMap) {
@@ -1080,18 +1080,18 @@ public final class MovingMap extends Form {
 				else {
 					// remove the right one , as
 					// possibly more than one picture associated with ch (target,selected ..)
-					removeMapSymbol(ch.cacheName); 
+					removeMapSymbol(ch.cacheName);
 				}
 			}
 		}
-		// adding target and selected 
+		// adding target and selected
 		// show target
 		if (gotoPos != null) {
 			// the CacheHolder Symbol must be inserted too, even if not marked (if it is Cache)
-			// anywhere there if all Caches shown on map 
+			// anywhere there if all Caches shown on map
 			CacheHolder gotoPosCH = null;
 			if (gotoPos.mapObject instanceof CacheHolder) {
-				gotoPosCH = (CacheHolder) gotoPos.mapObject;				
+				gotoPosCH = (CacheHolder) gotoPos.mapObject;
 			}
 			if (!getShowCachesOnMap() && (gotoPosCH != null)) {
 				addSymbolIfNecessary(gotoPosCH.cacheName, gotoPosCH, GuiImageBroker.getTypeImage(gotoPosCH.getType()), gotoPosCH.pos);
@@ -1114,7 +1114,7 @@ public final class MovingMap extends Form {
 			AniImage im = (AniImage) mmp.images.get(i);
 			if (!(im instanceof MapImage) ||
 				(im instanceof MapSymbol) ||
-				(im instanceof TrackOverlay) || 
+				(im instanceof TrackOverlay) ||
 				mmp.mapImage == im) {
 				icons.add(im);
 			}
@@ -2181,7 +2181,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			if (mm.gotoPos != null) moveToDestMI.modifiers &= ~MenuItem.Disabled;
 			else moveToDestMI.modifiers |= MenuItem.Disabled;
 			mapsMenu.addItem(moveToDestMI);
-			if (Global.getPref().curCentrePt.isValid()) moveToCenterMI.modifiers &= ~MenuItem.Disabled;
+			if (Global.getPref().getCurCentrePt().isValid()) moveToCenterMI.modifiers &= ~MenuItem.Disabled;
 			else moveToCenterMI.modifiers |= MenuItem.Disabled;
 			mapsMenu.addItem(moveToCenterMI);
 			mapsMenu.addItem(moveToGpsMI);
@@ -2343,7 +2343,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						// moveto position
 						else if (action == moveToCenterMI) {
 							mapsMenu.close();
-							mm.setCenterOfScreen(Global.getPref().curCentrePt, true);
+							mm.setCenterOfScreen(Global.getPref().getCurCentrePt(), true);
 						}
 						else if (action == moveToDestMI) {
 							mapsMenu.close();

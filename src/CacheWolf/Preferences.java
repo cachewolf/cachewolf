@@ -201,7 +201,7 @@ public class Preferences extends MinML{
 	public boolean downloadmissingOC = false;
 	/** The currently used centre point, can be different from the profile's centrepoint. This is used
 	 *  for spidering */
-	public CWPoint curCentrePt=new CWPoint();
+	private CWPoint curCentrePt=new CWPoint();
 	/** True if a login screen is displayed on each spider operation */
 	public boolean forceLogin=true;
 	/** True if the goto panel is North centered */
@@ -706,6 +706,23 @@ public class Preferences extends MinML{
 			} else {
 				Global.getProfile().setRelativeCustomMapsPath("");
 			}
+		}
+	}
+
+	private myTableModel table;
+	public void setMyTableModel(myTableModel myTableModel) {table=myTableModel;}
+	public CWPoint getCurCentrePt() {return curCentrePt;}
+	public void setCurCentrePt(CWPoint newCentre) {
+		curCentrePt.set(newCentre);
+		Global.getProfile().updateBearingDistance();
+		// if corresponding column ist sorted
+		if (table != null) {
+			if (table.sortedBy == 10) {
+				table.sortTable(10, table.sortAscending);
+				// oder ??? 
+				// TablePanel.refreshTable();
+			}
+			else table.tcControl.repaint();
 		}
 	}
 
