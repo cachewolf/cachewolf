@@ -415,22 +415,28 @@ public class SpiderGC{
 		Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
 
 		if (pref.spiderUpdates != Preferences.NO) {
-  		double distanceInKm = distance;
-  		if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
-  			distanceInKm = Metrics.convertUnit(distance, Metrics.MILES, Metrics.KILOMETER);
-  		}
-  		for(int i = 0; i<cacheDB.size();i++){
-  			ch = cacheDB.get(i);
-  			if (spiderAllFinds) {
-  				if ( (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) ) {
-  					cachesToUpdate.put(ch.getWayPoint(), ch);
-  				}
-  			} else {
-  				if ( (!ch.is_archived()) && (ch.kilom <= distanceInKm) && !(doNotgetFound && (ch.is_found() || ch.is_owned())) && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) ) {
-  					cachesToUpdate.put(ch.getWayPoint(), ch);
-  				}
-  			}
-  		}
+			double distanceInKm = distance;
+			if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
+				distanceInKm = Metrics.convertUnit(distance, Metrics.MILES, Metrics.KILOMETER);
+			}
+			byte restrictedCacheType = options.getRestrictedCacheType(p);
+			for(int i = 0; i<cacheDB.size();i++){
+				ch = cacheDB.get(i);
+				if (spiderAllFinds) {
+					if ( (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
+					     && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) ) ) {
+						cachesToUpdate.put(ch.getWayPoint(), ch);
+					}
+				} else {
+					if ( (!ch.is_archived())
+						 && (ch.kilom <= distanceInKm)
+						 && !(doNotgetFound && (ch.is_found() || ch.is_owned()))
+						 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
+						 && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) ) ) {
+						cachesToUpdate.put(ch.getWayPoint(), ch);
+					}
+				}
+			}
 		}
 
 		//=======
@@ -474,7 +480,12 @@ public class SpiderGC{
 		try {
 			//Loop till maximum distance has been found or no more caches are in the list
 			while(distance > 0){
-				if (infB.isClosed) break;
+				if (infB.isClosed){
+					//don't update existing caches, because list is not correct when aborting
+					cachesToUpdate.clear();
+
+					break;
+				}
 
 				rexViewstate.search(start);
 				if(rexViewstate.didMatch()){
@@ -532,14 +543,14 @@ public class SpiderGC{
 
 								//if we don't want to update caches, we can stop directly after adding the maximum of new caches.
 								if ( (pref.spiderUpdates == Preferences.NO) && (maxNumber > 0) && (cachesToLoad.size() >= maxNumber)) {
-								  maxNumberAbort = true;
+									maxNumberAbort = true;
 
-							   	//add no more caches
-								  distance = 0;
+									//add no more caches
+									distance = 0;
 
-								  //don't update existing caches, because list is not correct when aborting
-								  cachesToUpdate.clear();
-                }
+									//don't update existing caches, because list is not correct when aborting
+									cachesToUpdate.clear();
+								}
 							}
 						} else {
 							pref.log(waypoint+" already in DB");
