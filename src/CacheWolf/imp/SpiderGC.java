@@ -80,7 +80,7 @@ public class SpiderGC{
 	public static int SPIDER_ERROR = 0;
 	/** Cache was spidered without problems */
 	public static int SPIDER_OK = 1;
-	
+
 	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
 	private Profile profile;
@@ -338,7 +338,7 @@ public class SpiderGC{
 		String postStr, dummy, ln, wpt;
 		Regex lineRex;
 		CacheHolder holder;
-		CWPoint origin = pref.curCentrePt; // No need to copy curCentrePt as it is only read and not written
+		CWPoint origin = pref.getCurCentrePt(); // No need to copy curCentrePt as it is only read and not written
 		if ( !spiderAllFinds && !origin.isValid()) {
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), FormBase.OKB)).execute();
 			return;
@@ -413,7 +413,7 @@ public class SpiderGC{
 		saveDistanceInMiles = java.lang.Math.ceil(saveDistanceInMiles) + 1;
 
 		Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
-		
+
 		if (pref.spiderUpdates != Preferences.NO) {
   		double distanceInKm = distance;
   		if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
@@ -529,7 +529,7 @@ public class SpiderGC{
 								cachesToUpdate.clear();
 							} else {
 								cachesToLoad.add(waypoint);
-								
+
 								//if we don't want to update caches, we can stop directly after adding the maximum of new caches.
 								if ( (pref.spiderUpdates == Preferences.NO) && (maxNumber > 0) && (cachesToLoad.size() >= maxNumber)) {
 								  maxNumberAbort = true;
@@ -1215,13 +1215,13 @@ public class SpiderGC{
 		Extractor exImgBlock,exImgComment;
 		int idxUrl; // Index of already spidered Url in list of spideredUrls
 		CacheImages lastImages=null;
-		
+
 		// First: Get current image object of waypoint before spidering images.
 		CacheHolder oldCh = Global.getProfile().cacheDB.get(chD.getParent().getWayPoint());
 		if (oldCh != null) {
 			lastImages = oldCh.getFreshDetails().images;
 		}
-		
+
 		//========
 		//In the long description
 		//========
@@ -1775,7 +1775,7 @@ public class SpiderGC{
 				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5504,"Could not load 'spider.def'"), FormBase.OKB)).execute();
 			}
 		}
-		
+
 		/**
 		 * Gets an entry in spider.def by its key (tag)
 		 * @param key The key which is attributed to a specific entry
