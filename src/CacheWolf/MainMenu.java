@@ -290,6 +290,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == mnuOpenProfile){
 				Global.mainTab.saveUnsavedChanges(true);
 				if (pref.selectProfile(profile,Preferences.PROFILE_SELECTOR_FORCED_ON,false)) {
+					tbp.myMod.sortedBy=-1;
 					tbp.myMod.numRows=0;
 					CacheHolder.removeAllDetails();
 					profile.cacheDB.clear();
