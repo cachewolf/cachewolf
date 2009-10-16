@@ -23,7 +23,7 @@ public class CoordsScreen extends Form {
 	mInput inpNSDeg, inpNSm, inpNSs, inpEWDeg, inpEWm, inpEWs;
 	mInput inpUTMZone, inpUTMNorthing, inpUTMEasting;
 	mInput inpText;
-	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse, btnGps, btnClear;
+	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse, btnGps, btnClear, btnSearch;
 	CWPoint coordInp = new CWPoint();
 	CellPanel topLinePanel = new CellPanel();
 	CellPanel mainPanel = new CellPanel();
@@ -60,8 +60,6 @@ public class CoordsScreen extends Form {
 		chkDD.setGroup(chkFormat); chkDD.exitKeys=exitKeys;
 		chkDMM.setGroup(chkFormat);chkDMM.exitKeys=exitKeys;
 		chkDMS.setGroup(chkFormat);chkDMS.exitKeys=exitKeys;
-		//	chkUTM.setGroup(chkFormat);chkUTM.exitKeys=exitKeys;
-		//localCooSystem.setGroup(chkFormat);chkGK.exitKeys=exitKeys;
 		chkCustom.setGroup(chkFormat);chkCustom.exitKeys=exitKeys;
 		this.addLast(topLinePanel,CellConstants.DONTSTRETCH, CellConstants.WEST);
 
@@ -87,7 +85,8 @@ public class CoordsScreen extends Form {
 		} else {
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1400,"Zone")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1402,"Easting")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
-			mainPanel.addLast(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
+			mainPanel.addNext(new mLabel(MyLocale.getMsg(1401,"Northing")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.SOUTHWEST));
+			mainPanel.addLast(btnSearch = new mButton(MyLocale.getMsg(1414,"Search")),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		}
 
 		mainPanel.addNext(inpUTMZone = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -302,6 +301,15 @@ public class CoordsScreen extends Form {
 				CWPoint coord = new CWPoint(91,361);
 				currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
 				setFields(coord,currFormat);
+			}
+			
+			if (ev.target == btnSearch) {
+				GeoCodeGui s = new GeoCodeGui(); 
+				int ok = s.execute();
+				if (ok == FormBase.IDOK) {
+					currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
+					setFields(s.coordInp,currFormat);
+				}
 			}
 		}
 		super.onEvent(ev);
