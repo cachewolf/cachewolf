@@ -13,6 +13,7 @@ public class TablePanel extends CellPanel{
 	myTableControl tc;
 	myTableModel myMod;
 	Preferences pref;
+	Profile profile;
 	CacheDB cacheDB;
 	MainTab myMaintab;
 	StatusBar statBar;
@@ -27,9 +28,9 @@ public class TablePanel extends CellPanel{
 	int selectedIdx=0;
 	CacheHolder selectedCh;
 	
-	public TablePanel(Preferences p, Profile profileXX, StatusBar statBar){
-		pref = Global.getPref();
-		Profile profile=Global.getProfile();
+	public TablePanel(Preferences p, Profile prof, StatusBar statBar){
+		pref = p; //Global.getPref();
+		profile=prof; //Global.getProfile();
 		this.statBar = statBar;
 		cacheDB = profile.cacheDB;
 		addLast(new MyScrollBarPanel(tc = new myTableControl(this)));
@@ -82,7 +83,7 @@ public class TablePanel extends CellPanel{
 	
 	public void resetModel() {
 		myMod.numRows = cacheDB.size();
-		Global.getProfile().updateBearingDistance();
+		profile.updateBearingDistance(); //Global.getProfile().updateBearingDistance();
 		tc.scrollToVisible(0,0);
 		refreshTable();
 	}
@@ -93,6 +94,7 @@ public class TablePanel extends CellPanel{
 	 */
 	public void refreshControl(){
 		tc.update(true);
+		if (statBar!=null) statBar.updateDisplay();
 	}
 	
 	/** Move all filtered caches to the end of the table and redisplay table */
@@ -118,7 +120,7 @@ public class TablePanel extends CellPanel{
 		// Check whether the currently selected cache is still visible
 		int rownum = 0;
 		if (wayPoint != null) {
-			rownum = Global.getProfile().cacheDB.getIndex(wayPoint);
+			rownum = profile.cacheDB.getIndex(wayPoint); //Global.getProfile().cacheDB.getIndex(wayPoint);
 			// If it is not visible: Go backward in the list of the 
 			// previously visible caches and look if you find
 			// any cache that is now still visible.
@@ -127,7 +129,7 @@ public class TablePanel extends CellPanel{
 	                int i;
 	                for (i = sel - 1; i >= 0; i--) {
 		                CacheHolder checkCache = (CacheHolder) oldVisibleCaches.get(i);
-		                rownum = Global.getProfile().cacheDB.getIndex(checkCache.getWayPoint());
+		                rownum = profile.cacheDB.getIndex(checkCache.getWayPoint()); //Global.getProfile().cacheDB.getIndex(checkCache.getWayPoint());
 		                if ((rownum >= 0) && (rownum < myMod.numRows))
 			                break;
 		                rownum = 0;
