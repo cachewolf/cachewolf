@@ -66,7 +66,7 @@ public class myTableModel extends TableModel{
 	private mImage bug;
     private static mImage imgSortUp, imgSortDown;
 	public boolean sortAscending = false;
-	public int sortedBy = -1; // -1 don't sort 
+	public int sortedBy = -1; // -1 don't sort
 	private FontMetrics fm;
 //	private mImage picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge,picSizeNonPhysical;
 	private mImage picHasSolver,picHasNotes;
@@ -74,18 +74,16 @@ public class myTableModel extends TableModel{
 	/** This is the modifier (Shift & Control key status) for Pen Events
 	 * it is set in myTableControl.onEvent */
 	public int penEventModifiers;
-
-//	private int lastRow=-1;
 	public myTableControl tcControl;
 	public boolean showExtraWptInfo=true;
 
 	public myTableModel(myTableControl tc, FontMetrics fm){
 		super();
 		cacheDB = Global.getProfile().cacheDB;
-		fm = this.fm;
+		this.fm=fm;
 		tcControl = tc;
 		setColumnNamesAndWidths();
-		this.numRows = cacheDB.size();
+		numRows = cacheDB.size();
 		//Dimension selrow = new Dimension(-1,1);
 		//this.cursorSize = selrow;
 		noFindLogs[0] = new Image("no_1_log.png");
@@ -451,7 +449,7 @@ public class myTableModel extends TableModel{
 				}
 			}
 			if(cell.y == -1){ // Hit a header => sort the table accordingly
-				// cell.x is the physical column 
+				// cell.x is the physical column
 				// but we have to sort by the column it is mapped into
 				int mappedCol=colMap[cell.x];
 				boolean sortvalue = true;
@@ -492,7 +490,7 @@ public class myTableModel extends TableModel{
             }
             Vm.showWait( false );
         }
-        tcControl.update( true ); // repaint    	
+        tcControl.tbp.refreshControl(); // repaint with update Statusbar
     }
 
 	/** Toggle the select status for a group of caches
