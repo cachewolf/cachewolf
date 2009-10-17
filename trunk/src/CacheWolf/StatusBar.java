@@ -84,6 +84,12 @@ public class StatusBar extends CellPanel{
 		// This can happen even on bigger screens with big fonts
 		if ((MyLocale.getScreenWidth()>=320) && !(MobileVGA && (pref.fontSize > 20)))
 			strCenter="  \u00a4 " + pref.getCurCentrePt().toString();
+		if (table.sortedBy>-1) {
+			this.btnNoSorting.backGround=new Color(0,255,255);
+		}
+		else {
+			this.btnNoSorting.backGround=null;			
+		}
 
 		lblCenter.setText(strCenter);
 		relayout(true); // in case the numbers increased and need more space
