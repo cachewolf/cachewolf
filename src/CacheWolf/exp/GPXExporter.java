@@ -145,7 +145,7 @@ public class GPXExporter extends Exporter{
 			}else {
 				// there is no HTML in the description of addi wpts
 				strBuf.append("    <sym>").append(CacheType.id2GpxString(ch.getType())).append("</sym>\r\n");
-				strBuf.append("    <type>Waypoint|").append(CacheType.id2GpxString(ch.getType())).append("</type>\r\n");
+				strBuf.append("    <type>").append(CacheType.id2GpxString(ch.getType())).append("</type>\r\n");
 			}
 			strBuf.append("  </wpt>\r\n");
 		}catch(Exception e){
