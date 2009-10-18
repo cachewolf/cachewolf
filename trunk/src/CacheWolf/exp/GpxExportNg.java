@@ -697,7 +697,7 @@ public class GpxExportNg {
 		}
 
 		for (int i = 0; i < exportlogs; i++) {
-			String logId = "";
+			String logId = Integer.toString(i);
 			Log log = logs.getLog(i);
 
 			if (exportStyle == STYLE_GPX_MYFINDS && !log.getLogger().equals(Global.getPref().myAlias))
