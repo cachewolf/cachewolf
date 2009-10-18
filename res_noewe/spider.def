@@ -30,6 +30,7 @@
 # Version 4.6 - 20090406 Fix for country/state (did not work with US caches)
 # Version 4.7 - 20090521 Strings for single cache types added
 # Version 4.8 - 20090805 More specific unavailability detection
+# Version 4.9 - 20091018 Should work now with proxies and cachetypes as background
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -91,7 +92,7 @@ hintsRex           = <span\ id="Hints"\ class="displayMe">((?s).*?)</span>
 sizeRex            = alt="Size:\ ((?s).*?)"\ title="Size:
 difficultyRex      = <span\ id="Difficulty">.*?alt="(.*?)\ out\ of
 terrainRex         = <span\ id="Terrain">.*?alt="(.*?)\ out\ of
-cacheTypeRex       = \\./images/WptTypes/(.*?)\\.gif
+cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ ALT="
 cacheLocationRex   = <span\ id="Location">In\ ([^<]*?)<
 premiumCachepage   = Sorry, the owner of this listing has made it viewable to subscribers only.
 
