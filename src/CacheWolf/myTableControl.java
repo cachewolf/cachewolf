@@ -18,7 +18,7 @@ public class myTableControl extends TableControl{
 	public TablePanel tbp;
 
 	private MenuItem miOpen, miGoto, miCenter, miUnhideAddis;
-	private MenuItem miOpenOnline, miOpenOffline, miLogOnline;
+	private MenuItem miOpenOnline, miOpenOffline, miLogOnline, miOpenGmaps;
 	private MenuItem miDelete, miUpdate;
 	private MenuItem miTickAll, miUntickAll;
 	private MenuItem miSeparator;
@@ -33,7 +33,7 @@ public class myTableControl extends TableControl{
 		tbp =tablePanel;
 		allowDragSelection = false; // allow only one row to be selected at one time
 
-		MenuItem[] mnuFull = new MenuItem[14];
+		MenuItem[] mnuFull = new MenuItem[15];
   	mnuFull[0] = miOpen = new MenuItem(MyLocale.getMsg(1021,"Open description"));
   	mnuFull[1] = miGoto = new MenuItem(MyLocale.getMsg(1010,"Goto"));
   	mnuFull[2] = miCenter = new MenuItem(MyLocale.getMsg(1019,"Center"));
@@ -42,12 +42,13 @@ public class myTableControl extends TableControl{
   	mnuFull[5] = miOpenOnline = new MenuItem(MyLocale.getMsg(1020,"Open in $browser online"));
   	mnuFull[6] = miOpenOffline = new MenuItem(MyLocale.getMsg(1018,"Open in browser offline"));
   	mnuFull[7] = miLogOnline = new MenuItem(MyLocale.getMsg(1052,"Log online in Browser"));
-  	mnuFull[8] = miSeparator;
-  	mnuFull[9] = miDelete = new MenuItem(MyLocale.getMsg(1012,"Delete selected"));
-  	mnuFull[10] = miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update"));
-  	mnuFull[11] = miSeparator;
-  	mnuFull[12] = miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all"));
-  	mnuFull[13] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));
+  	mnuFull[8] = miOpenGmaps = new MenuItem(MyLocale.getMsg(1053,"Open in Google maps online"));
+  	mnuFull[9] = miSeparator;
+  	mnuFull[10] = miDelete = new MenuItem(MyLocale.getMsg(1012,"Delete selected"));
+  	mnuFull[11] = miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update"));
+  	mnuFull[12] = miSeparator;
+  	mnuFull[13] = miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all"));
+  	mnuFull[14] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));
   	mFull = new Menu(mnuFull, MyLocale.getMsg(1013,"With selection"));
 
   	MenuItem[] mnuSmall = new MenuItem[8];
@@ -134,6 +135,18 @@ public class myTableControl extends TableControl{
 	public boolean isSelected(int pRow,int pCol) {
 		return pRow==selection.y;
 	}
+	private void callExternalProgram(String program, String parameter) {
+		// invalid path will be handled by try
+		try {
+			CWWrapper.exec(program, parameter); // maybe this works on some PDAs?
+		} catch (IOException ex) {
+			(new MessageBox(MyLocale.getMsg(321,"Error"),
+					MyLocale.getMsg(1034,"Cannot start "+program+"!") + "\n" + ex.toString() + "\n" +
+					MyLocale.getMsg(1035,"Possible reason:") + "\n" +
+					MyLocale.getMsg(1036,"A bug in ewe VM, please be") + "\n" +
+					MyLocale.getMsg(1037,"patient for an update"),FormBase.OKB)).execute();
+		}
+	}
 
 	public void popupMenuEvent(Object selectedItem){
 		if (selectedItem == null) return;
@@ -167,8 +180,7 @@ public class myTableControl extends TableControl{
 					}
 				}
 			}
-			// Warn if there are ticked but invisible caches - and ask if they should be deleted,
-			// too.
+			// Warn if there are ticked but invisible caches - and ask if they should be deleted too.
 			shouldDeleteCount = allCount;
 			if (addiNonVisibleCount + mainNonVisibleCount > 0){
 				if ((new MessageBox(MyLocale.getMsg(144,"Warning"),
@@ -250,32 +262,29 @@ public class myTableControl extends TableControl{
 		} else
 
 		if (selectedItem == miOpenOnline){
-			if(browserPathIsValid()){
 				ch = cacheDB.get(tbp.getSelectedCache());
 				CacheHolderDetail chD=ch.getCacheDetails(false, true);
-				try {
-					if (chD != null) {
-						CWWrapper.exec(pref.browser, chD.URL); // maybe this works on some PDAs?
-					}
-				} catch (IOException ex) {
-					(new MessageBox(MyLocale.getMsg(321,"Error"),
-							MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +
-							MyLocale.getMsg(1035,"Possible reason:") + "\n" +
-							MyLocale.getMsg(1036,"A bug in ewe VM, please be") + "\n" +
-							MyLocale.getMsg(1037,"patient for an update"),FormBase.OKB)).execute();
-				}
+				if (chD != null) { callExternalProgram(pref.browser, chD.URL); }
+		} else
+
+		if (selectedItem == miOpenGmaps) {
+			ch = cacheDB.get(tbp.getSelectedCache());
+			if (ch.pos.isValid()) {
+				String latlon=""+ch.pos.latDec+","+ch.pos.lonDec;
+				String nameOfCache=ewe.net.URL.encodeURL(ch.cacheName,false).replace('#','N').replace('@','_');
+				String language=Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
+				if (!pref.language.equalsIgnoreCase("auto")) {language=pref.language;}
+				String url="http://maps.google."+language+"/maps?q="+nameOfCache+"@"+latlon;
+				callExternalProgram(pref.browser, url);
 			}
 		} else
 
 		if (selectedItem == miOpenOffline) {
-			if(browserPathIsValid()){
-				ShowCacheInBrowser sc=new ShowCacheInBrowser();
-				sc.showCache(cacheDB.get(tbp.getSelectedCache()));
-			}
+			ShowCacheInBrowser sc=new ShowCacheInBrowser();
+			sc.showCache(cacheDB.get(tbp.getSelectedCache()));
 		} else
 
 		if (selectedItem == miLogOnline){
-			if(browserPathIsValid()){
 				ch = cacheDB.get(tbp.getSelectedCache());
 				CacheHolder mainCache = ch;
 				if (ch.isAddiWpt() && (ch.mainCache != null)) {
@@ -283,11 +292,9 @@ public class myTableControl extends TableControl{
 				}
 				if (mainCache.isCacheWpt()) {
 					CacheHolderDetail chD=mainCache.getCacheDetails(false, true);
-					try {
 						if (chD != null) {
 							String URL = "";
-							if (ch.isOC())
-							{
+							if (ch.isOC()) {
 								URL = chD.URL;
 								if (URL.indexOf("viewcache") >= 0) {
 									URL = STRreplace.replace(URL, "viewcache", "log");
@@ -303,34 +310,16 @@ public class myTableControl extends TableControl{
 								if (notes.length() > 0) {
 									Vm.setClipboardText(notes);
 								}
-								CWWrapper.exec(pref.browser, URL);
+								callExternalProgram(pref.browser, URL);
 							}
 						}
-					} catch (IOException ex) {
-						(new MessageBox(MyLocale.getMsg(321,"Error"),
-								MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +
-								MyLocale.getMsg(1035,"Possible reason:") + "\n" +
-								MyLocale.getMsg(1036,"A bug in ewe VM, please be") + "\n" +
-								MyLocale.getMsg(1037,"patient for an update"),FormBase.OKB)).execute();
-					}
 				}
-			}
 		} else
-
 
 		if (selectedItem == miOpen){
 			penDoubleClicked(null);
 		}
 
-	}
-
-	public boolean browserPathIsValid() {
-		if(!new File(pref.browser).exists()){
-			(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(1032,"Path to browser:")+"\n"+pref.browser+"\n"+MyLocale.getMsg(1033,"is incorrect!"),FormBase.OKB)).execute();
-			return false;
-		}
-		else
-			return true;
 	}
 
 	public void penDoubleClicked(Point where) {
