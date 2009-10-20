@@ -449,7 +449,7 @@ public final class MovingMap extends Form {
 		if (ch != null) {
 			if ( ch.pos.isValid()) {
 				addSymbol("selectedCache", MARK_CACHE_IMAGE, ch.pos);
-				addSymbolIfNecessary(ch.getCacheName(), ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
+				addSymbolIfNecessary(ch.getCacheName(), ch, GuiImageBroker.getTypeImage(ch.getType(),true), ch.pos);
 				markedCache = ch;
 			}
 		}
@@ -1062,11 +1062,11 @@ public final class MovingMap extends Form {
 				// because visible and valid don't change while showing map -->need no remove
 				if (ch.isVisible() && ch.pos.isValid()) {
 					if (getShowCachesOnMap()) {
-						addSymbolIfNecessary(ch.cacheName, ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
+						addSymbolIfNecessary(ch.cacheName, ch, GuiImageBroker.getTypeImage(ch.getType(),true), ch.pos);
 					}
 					else {
 						if (ch.is_Checked) {
-							addSymbolIfNecessary(ch.cacheName, ch, GuiImageBroker.getTypeImage(ch.getType()), ch.pos);
+							addSymbolIfNecessary(ch.cacheName, ch, GuiImageBroker.getTypeImage(ch.getType(),true), ch.pos);
 						}
 						else {
 							removeMapSymbol(ch);
@@ -1094,13 +1094,13 @@ public final class MovingMap extends Form {
 				gotoPosCH = (CacheHolder) gotoPos.mapObject;
 			}
 			if (!getShowCachesOnMap() && (gotoPosCH != null)) {
-				addSymbolIfNecessary(gotoPosCH.cacheName, gotoPosCH, GuiImageBroker.getTypeImage(gotoPosCH.getType()), gotoPosCH.pos);
+				addSymbolIfNecessary(gotoPosCH.cacheName, gotoPosCH, GuiImageBroker.getTypeImage(gotoPosCH.getType(),true), gotoPosCH.pos);
 			}
 			addSymbolOnTop("goto", gotoPosCH, "goto_map.png", gotoPos.where);
 		}
 		// show Selected
 		if (markedCache != null) {
-			addSymbolIfNecessary(markedCache.cacheName, markedCache, GuiImageBroker.getTypeImage(markedCache.getType()), markedCache.pos);
+			addSymbolIfNecessary(markedCache.cacheName, markedCache, GuiImageBroker.getTypeImage(markedCache.getType(),true), markedCache.pos);
 			addSymbolOnTop("selectedCache", markedCache, MARK_CACHE_IMAGE, markedCache.pos);
 		}
 	}

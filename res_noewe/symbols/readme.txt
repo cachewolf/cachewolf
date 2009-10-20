@@ -1,9 +1,15 @@
-In diesem Verzeichnis vorhandene .png-Dateien werden als alternative Symbole in den Cachewolf geladen. Dabei sollte es sich um PNGs der Größe 15x15 handeln. Wichtig ist die korrekte Benennung der Dateien. Falsch benannte Dateien werden ignoriert.
-Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen. Ist keine entsprechende Datei vorhanden, wird das Cachewolf-interne Symbol beibehalten.
+In diesem Verzeichnis vorhandene .png-Dateien werden als alternative Symbole in den Cachewolf geladen.
+Dabei sollte es sich um PNGs der Größe 16x16 handeln oder kleiner.
+Auf der Karte werden auch grössere Symbole angezeigt, falls sie existieren und der Dateiname auf size endet.
+Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen.
+Ist keine entsprechende Datei vorhanden, wird das Cachewolf-interne Symbol beibehalten.
 
-.png-files in this directory will be loaded as customized symbols into Cachewolf. They're supposed to be 15x15 PNGs. It's important to name them correctly. Incorrectly named
-files will be ignored.
-You only have to create images for those symbols you want customized. For symbols without corresponding file the buildt-in symbol will be maintained.
+.png-files in this directory will be loaded as customized symbols into Cachewolf.
+They're supposed to be 16x16 PNGs or less.
+On the map larger symbols are shown, if they exist and the filename ends on size.
+Incorrectly named files will be ignored.
+You only have to create images for those symbols you want customized.
+For symbols without corresponding file the buildt-in symbol will be maintained.
 
 
 Zuordnung der Dateinamen/filename assignment:
