@@ -16,7 +16,7 @@ public final class GuiImageBroker {
 
 	/** image to be displayed in case of error */
 	public static Image imageError = new Image("guiError.png");
-	
+
 	/**
 	 * images to be displayed for cache types in GUI
 	 * @see getTypeImage
@@ -47,21 +47,35 @@ public final class GuiImageBroker {
 		new Image(CacheType.CW_GUIIMG_WHEREIGO)		// 21
 	};
 
-	// TODO: move size images here
-//	private static final Image[] sizeImages = {
-//		new Image(CacheSize.CW_GUIIMG_NONPHYSICAL),
-//		new Image(CacheSize.CW_GUIIMG_MICRO),
-//		new Image(CacheSize.CW_GUIIMG_SMALL),
-//		new Image(CacheSize.CW_GUIIMG_NORMAL),
-//		new Image(CacheSize.CW_GUIIMG_LARGE),
-//		new Image(CacheSize.CW_GUIIMG_VERYLARGE)
-//	};
+	private static final Image[] sizeImages = {
+		new Image(CacheType.CW_GUIIMG_CUSTOM),		// 0
+		new Image(CacheType.CW_GUIIMG_APE),			// 1
+		new Image(CacheType.CW_GUIIMG_CITO),		// 2
+		new Image(CacheType.CW_GUIIMG_DRIVE_IN),	// 3
+		new Image(CacheType.CW_GUIIMG_EARTH),		// 4
+		new Image(CacheType.CW_GUIIMG_EVENT),		// 5
+		new Image(CacheType.CW_GUIIMG_FINAL),		// 6
+		new Image(CacheType.CW_GUIIMG_LETTERBOX),	// 7
+		new Image(CacheType.CW_GUIIMG_LOCATIONLESS),// 8
+		new Image(CacheType.CW_GUIIMG_MAZE),		// 9
+		new Image(CacheType.CW_GUIIMG_MEGA_EVENT),	// 10
+		new Image(CacheType.CW_GUIIMG_MULTI),		// 11
+		new Image(CacheType.CW_GUIIMG_PARKING),		// 12
+		new Image(CacheType.CW_GUIIMG_QUESTION),	// 13
+		new Image(CacheType.CW_GUIIMG_REFERENCE),	// 14
+		new Image(CacheType.CW_GUIIMG_STAGE),		// 15
+		new Image(CacheType.CW_GUIIMG_TRADITIONAL),	// 16
+		new Image(CacheType.CW_GUIIMG_TRAILHEAD),	// 17
+		new Image(CacheType.CW_GUIIMG_UNKNOWN),		// 18
+		new Image(CacheType.CW_GUIIMG_VIRTUAL),		// 19
+		new Image(CacheType.CW_GUIIMG_WEBCAM),		// 20
+		new Image(CacheType.CW_GUIIMG_WHEREIGO)		// 21
+	};
 
 	/** thou shallst not instantiate this object */
-	private GuiImageBroker() { 
+	private GuiImageBroker() {
 		// Noting to do
 	}
-	
 
 	/**
 	 * select image to be displayed for a given cache type
@@ -95,6 +109,39 @@ public final class GuiImageBroker {
 		default: return imageError;
 		}
 	}
+	public static Image getTypeImage(byte id,boolean map) {
+		if (!map) {
+			return getTypeImage(id);
+		}
+		else {
+			switch (id) {
+			case CacheType.CW_TYPE_CUSTOM: return sizeImages[0];
+			case CacheType.CW_TYPE_APE: return sizeImages[1];
+			case CacheType.CW_TYPE_CITO: return sizeImages[2];
+			case CacheType.CW_TYPE_DRIVE_IN: return sizeImages[3];
+			case CacheType.CW_TYPE_EARTH: return sizeImages[4];
+			case CacheType.CW_TYPE_EVENT: return sizeImages[5];
+			case CacheType.CW_TYPE_FINAL: return sizeImages[6];
+			case CacheType.CW_TYPE_LETTERBOX: return sizeImages[7];
+			case CacheType.CW_TYPE_LOCATIONLESS: return sizeImages[8];
+			case CacheType.CW_TYPE_MAZE: return sizeImages[9];
+			case CacheType.CW_TYPE_MEGA_EVENT: return sizeImages[10];
+			case CacheType.CW_TYPE_MULTI: return sizeImages[11];
+			case CacheType.CW_TYPE_PARKING: return sizeImages[12];
+			case CacheType.CW_TYPE_QUESTION: return sizeImages[13];
+			case CacheType.CW_TYPE_REFERENCE: return sizeImages[14];
+			case CacheType.CW_TYPE_STAGE: return sizeImages[15];
+			case CacheType.CW_TYPE_TRADITIONAL: return sizeImages[16];
+			case CacheType.CW_TYPE_TRAILHEAD: return sizeImages[17];
+			case CacheType.CW_TYPE_UNKNOWN: return sizeImages[18];
+			case CacheType.CW_TYPE_VIRTUAL: return sizeImages[19];
+			case CacheType.CW_TYPE_WEBCAM: return sizeImages[20];
+			case CacheType.CW_TYPE_WHEREIGO: return sizeImages[21];
+			default: return imageError;
+			}
+		}
+	}
+
 
 	/**
 	 * Replaces the build-in symbols by images stored in /symbols:
@@ -106,22 +153,33 @@ public final class GuiImageBroker {
 	 * Images are NOT checked for size etc.
 	 */
 	public static void customizedSymbols() {
-		final FileBugfix dir = new FileBugfix(FileBase.getProgramDirectory()+"/symbols");
+		final FileBugfix dir=new FileBugfix(FileBase.getProgramDirectory()+"/symbols");
 		if (dir.isDirectory()){
-			int type;
+			int id;
+			boolean size=false;
 			String name = "";
 			String [] pngFiles;
 			pngFiles=dir.list("*.png",0);
-			for (int i=0; i < pngFiles.length; i++) {
+			for (int i=0; i<pngFiles.length; i++) {
 				name = pngFiles[i].substring(0,pngFiles[i].length()-4);
+				if (name.endsWith("size")){
+					size=true;
+					name=name.substring(0,name.length()-4);
+				}
 				try {
-					type = Integer.parseInt(name);
+					id = Integer.parseInt (name);
 				}
 				catch (Exception E){
-					type = -1; //filename invalid for symbols
+					id = -1; //filename invalid for symbols
 				}
-				if (0<=type && type<=TYPEIMAGES.length){
-					TYPEIMAGES[type] = new Image(FileBase.getProgramDirectory()+"/symbols/"+pngFiles[i]);
+				if (0<=id && id<=TYPEIMAGES.length){
+					if (!size){
+						TYPEIMAGES[id]= new Image(FileBase.getProgramDirectory()+"/symbols/"+pngFiles[i]);
+					}
+					else{
+						sizeImages[id]= new Image(FileBase.getProgramDirectory()+"/symbols/"+pngFiles[i]);
+						size=false;
+					}
 				}
 			}
 		}
