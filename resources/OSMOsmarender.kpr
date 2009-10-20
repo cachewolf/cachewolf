@@ -1,0 +1,13 @@
+<KosmosProject Version="2.2">
+  <RulesSource>
+    <WikiPage>http://wiki.openstreetmap.org/index.php/Kosmos_General_Purpose_Rules</WikiPage>
+  </RulesSource>
+  <DataFiles>
+    <WebMap>
+      <Provider>OSM Osmarender</Provider>
+      <Transparency>100</Transparency>
+    </WebMap>
+  </DataFiles>
+  <PrintSettings>
+  </PrintSettings>
+</KosmosProject>
