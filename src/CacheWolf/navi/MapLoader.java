@@ -221,15 +221,15 @@ public class MapLoader {
 		WebMapService wms = (WebMapService) currentOnlineMapService;
 		if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {
 			url="bitmapgen"+
-				" \""+FileBase.getProgramDirectory().replace('/','\\')+"\\"+wms.serviceTypeUrlPart+" \""+
-				" \""+path.replace('/','\\')+imagename+"\""+
+				" \""+FileBase.getProgramDirectory().replace('/',File.separatorChar)+"\\"+wms.serviceTypeUrlPart+"\""+
+				" \""+path.replace('/', File.separatorChar)+imagename+"\""+
 				" -mb "+url; // + minx miny maxx maxy + pixelsize.x
 			File f=new FileBugfix(wms.MainUrl);
-			if (!f.exists()) {
+			if (!f.exists() || !f.canRead()) {
 				MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1834,"Please enter the correct path to Kosmos.Console.exe into the wms-file."),ewe.ui.MessageBox.OKB);
 				mb.execute();
 			} else {
-				CWWrapper.exec(wms.MainUrl, url, true);
+				Vm.exec(wms.MainUrl.replace('/', File.separatorChar), url, 0, true);
 				mio.saveWFL();
 			}
 		}
