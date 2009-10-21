@@ -31,6 +31,7 @@
 # Version 4.7 - 20090521 Strings for single cache types added
 # Version 4.8 - 20090805 More specific unavailability detection
 # Version 4.9 - 20091018 Should work now with proxies and cachetypes as background
+# Version 4.10- 20091021 Tags in Description are now correctly closed
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -84,7 +85,7 @@ cacheUnavailable   = <ul><font\ color="red"><li>This\ cache\ is\ temporarily\ un
 cacheArchived      = This cache\ has\ been\ archived
 latLonRex          = <span\ id="LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = <span\ id="ShortDescription">((?s).*?)</span>
-longDescRex        = <span\ id="LongDescription">((?s).*?)<strong>Additional\ Hints&nbsp;\\(</strong>
+longDescRex        = <span\ id="LongDescription">((?s).*?)</span>(?:\\s*)<br\ />(?:\\s*)</p>(?:\\s*)<p>(?:\\s*)<strong>Additional\ Hints&nbsp;\\(</strong>
 cacheNameRex       = <span\ id="CacheName">((?s).*?)</span>
 cacheOwnerRex      = <span\ id="CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span>
 dateHiddenRex      = <span\ id="DateHidden">((?s).*?)</span>
