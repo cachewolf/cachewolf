@@ -7,6 +7,7 @@ import CacheWolf.HttpConnection;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.STRreplace;
+import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.FileBugfix;
 import ewe.ui.*;
 import ewe.io.*;
@@ -228,7 +229,7 @@ public class MapLoader {
 				MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1834,"Please enter the correct path to Kosmos.Console.exe into the wms-file."),ewe.ui.MessageBox.OKB);
 				mb.execute();
 			} else {
-				Vm.exec(wms.MainUrl, url, 0, true);
+				CWWrapper.exec(wms.MainUrl, url, true);
 				mio.saveWFL();
 			}
 		}
