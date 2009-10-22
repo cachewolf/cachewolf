@@ -183,7 +183,7 @@ public final class CacheType {
 	/** GPX identifier for additional waypoint QTA */
 	public static final String GC_GPX_QUESTION = "Waypoint|Question to Answer";
 	/** GPX identifier for additional waypoint Final */
-	public static final String GC_GPX_FINAL = "Waypoint|Final Coordinates";
+	public static final String GC_GPX_FINAL = "Waypoint|Final Location";
 	/** GPX identifier for additional waypoint Trailhead */
 	public static final String GC_GPX_TRAILHEAD = "Waypoint|Trailhead";
 	/** GPX identifier for additional waypoint Reference Point */
@@ -455,7 +455,7 @@ public final class CacheType {
 		if (gpxType.equals(GC_GPX_PARKING)) return CW_TYPE_PARKING;
 		if (gpxType.equals(GC_GPX_STAGE)) return CW_TYPE_STAGE;
 		if (gpxType.equals(GC_GPX_QUESTION)) return CW_TYPE_QUESTION;
-		if (gpxType.equals(GC_GPX_FINAL)||gpxType.equals("Waypoint|Final Location")) return CW_TYPE_FINAL;
+		if (gpxType.equals(GC_GPX_FINAL)||gpxType.equals("Waypoint|Final Coordinates")) return CW_TYPE_FINAL;
 		if (gpxType.equals(GC_GPX_TRAILHEAD)) return CW_TYPE_TRAILHEAD;
 		if (gpxType.equals(GC_GPX_REFERENCE)) return CW_TYPE_REFERENCE;
 		if (gpxType.equals(GC_GPX_MAZE)) return CW_TYPE_MAZE;
