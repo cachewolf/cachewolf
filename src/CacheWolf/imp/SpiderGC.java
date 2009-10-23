@@ -985,6 +985,10 @@ public class SpiderGC{
 		rex2.search(doc);
 		res = ((inRex.stringMatched(1)==null)?"":inRex.stringMatched(1)) + "<br>";
 		res += rex2.stringMatched(1);
+		int spanEnd = res.lastIndexOf("</span>");
+		if (spanEnd >= 0) {
+			res = res.substring(0, spanEnd);
+		}
 		return res; // SafeXML.cleanback(res);
 	}
 
