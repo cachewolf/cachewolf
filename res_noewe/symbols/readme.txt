@@ -1,7 +1,7 @@
 In diesem Verzeichnis vorhandene .png-Dateien werden als alternative Symbole in den Cachewolf geladen.
-Dabei sollte es sich um PNGs der Größe 16x16 handeln oder kleiner.
-Auf der Karte werden auch grössere Symbole angezeigt, falls sie existieren und der Dateiname auf size endet.
-Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen.
+Dabei sollte es sich um PNGs der Groesse 16x16 handeln oder kleiner.
+Auf der Karte werden auch groessere Symbole angezeigt, falls sie existieren und der Dateiname auf size endet.
+Es muessen nur die Dateien erstellt werden, die ersetzt werden sollen.
 Ist keine entsprechende Datei vorhanden, wird das Cachewolf-interne Symbol beibehalten.
 
 .png-files in this directory will be loaded as customized symbols into Cachewolf.
@@ -37,3 +37,5 @@ Zuordnung der Dateinamen/filename assignment:
 19.png - Virtual
 20.png - Webcam
 21.png - Wherigo
+
+
