@@ -82,7 +82,7 @@ public class MainForm extends Editor {
 
 
 			// Replace buildt-in symbols with customized images
-			GuiImageBroker.customizedSymbols();
+			if (pref.useOwnSymbols) GuiImageBroker.customizedSymbols();
 
 			// Load CacheList
 			infB = new InfoBox("CacheWolf",MyLocale.getMsg(5000,"Loading Cache-List"));

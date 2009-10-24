@@ -22,7 +22,7 @@ public class PreferencesScreen extends Form {
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
 	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus,chkHasCloseButton,
 	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, 
-	          chkSetCurrentCentreFromGPSPosition,chkSortingGroupedByCache,chkDebug;
+	          chkSetCurrentCentreFromGPSPosition,chkSortingGroupedByCache,chkuseOwnSymbols,chkDebug;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
 	mLabel lblGarmin;
@@ -228,6 +228,8 @@ public class PreferencesScreen extends Form {
 		pnlMore.addLast(inpMetric=new mChoice(metriken, currMetrik),DONTSTRETCH,DONTFILL|WEST);
 		pnlMore.addLast(chkSortingGroupedByCache=new mCheckBox(MyLocale.getMsg(647,"Sorting grouped by Cache")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
 		chkSortingGroupedByCache.setState(pref.SortingGroupedByCache);
+		pnlMore.addLast(chkuseOwnSymbols=new mCheckBox(MyLocale.getMsg(649,"use own symbols")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
+		chkuseOwnSymbols.setState(pref.useOwnSymbols);
 		pnlMore.addLast(chkDebug=new mCheckBox(MyLocale.getMsg(648,"Debug Mode")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
 		chkDebug.setState(pref.debug);
 
@@ -336,6 +338,7 @@ public class PreferencesScreen extends Form {
 				pref.addDetailsToWaypoint = chkAddDetailsToWaypoint.getState();
 				pref.addDetailsToName = chkAddDetailsToName.getState();
 				pref.SortingGroupedByCache=chkSortingGroupedByCache.getState();
+				pref.useOwnSymbols=chkuseOwnSymbols.getState();
 				pref.debug=chkDebug.getState();
 
 				pref.savePreferences();

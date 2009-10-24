@@ -122,7 +122,7 @@ public class Preferences extends MinML{
 	/** If true, the last profile is reloaded automatically without a dialogue */
 	public boolean autoReloadLastProfile=false;
 	/** If true current cetre will be set from gps position	 */
-	public boolean setCurrentCentreFromGPSPosition=false;
+	public boolean setCurrentCentreFromGPSPosition=true;
 	/** This is the login alias for geocaching.com and opencaching.de */
 	public String myAlias = "";
 	/** Optional password */
@@ -258,6 +258,9 @@ public class Preferences extends MinML{
 
     /** SortingGroupedByCache */
     public boolean SortingGroupedByCache=true;
+    
+    /** useOwnSymbols */
+    public boolean useOwnSymbols=true;
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -402,14 +405,13 @@ public class Preferences extends MinML{
 			if (atts.getValue("autoreload").equals("true")) autoReloadLastProfile=true;
 		}
 		else if (name.equals("CurrentCentre")) {
-			if (atts.getValue("FromGPSPosition").toLowerCase().equals("true")) setCurrentCentreFromGPSPosition=true;
+			setCurrentCentreFromGPSPosition=Boolean.valueOf(atts.getValue("FromGPSPosition")).booleanValue();
 		}
 		else if(name.equals("basedir")) {
 			setBaseDir(atts.getValue("dir"));
 		}
 		else if (name.equals("opencaching")) {
 			downloadmissingOC = Boolean.valueOf(atts.getValue("downloadmissing")).booleanValue();
-
 		}
 		else if (name.equals("listview")) {
 			listColMap=atts.getValue("colmap");
@@ -580,6 +582,9 @@ public class Preferences extends MinML{
 			tmp = atts.getValue("on");
 			SortingGroupedByCache = tmp != null && tmp.equalsIgnoreCase("true");
 		}
+		else if (name.equals("Symbols")) {
+			useOwnSymbols=Boolean.valueOf(atts.getValue("useOwnSymbols")).booleanValue();
+		}
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -614,7 +619,7 @@ public class Preferences extends MinML{
 			outp.print("    <locale language=\"" + SafeXML.clean(language) + "\"/>\n");
 			outp.print("    <basedir dir = \"" + SafeXML.clean(getBaseDir()) + "\"/>\n");
 			outp.print("    <lastprofile autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\">" + SafeXML.clean(lastProfile) + "</lastprofile>\n"); //RB
-			outp.print("    <CurrentCentre FromGPSPosition= \"" + SafeXML.clean(Convert.toString(setCurrentCentreFromGPSPosition)) + "\"/>\n");
+			outp.print("    <CurrentCentre FromGPSPosition=\"" + SafeXML.clean(Convert.toString(setCurrentCentreFromGPSPosition)) + "\"/>\n");
 			outp.print("    <alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
 			outp.print("    <alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
 			outp.print("    <gcmemberid name =\""+ SafeXML.clean(gcMemberId) +"\"/>\n");
@@ -669,6 +674,7 @@ public class Preferences extends MinML{
 			outp.print("    <mapLoader tileSize=\""+SafeXML.strxmlencode(mapTileSize)+"\" overlapping=\""+SafeXML.strxmlencode(mapOverlapping)+"\"/>\n");
 			outp.print("    <showCachesOnMap on=\""+SafeXML.strxmlencode(showCachesOnMap)+"\"/>\n");
 			outp.print("    <SortingGroupedByCache on=\""+SafeXML.strxmlencode(SortingGroupedByCache)+"\"/>\n");
+			outp.print("    <Symbols useOwnSymbols=\"" + SafeXML.strxmlencode(useOwnSymbols) + "\"/>\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
