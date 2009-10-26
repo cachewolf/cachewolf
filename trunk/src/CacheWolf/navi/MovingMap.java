@@ -154,7 +154,7 @@ public final class MovingMap extends Form {
 		buttonImageZoom1to1 = new AniImage("zoom1to1"+imagesize+".png");
 		posCircle = new MapSymbol("position_green"+imagesize+".png", "gps-position", new CWPoint());
 		MARK_CACHE_IMAGE = "mark_cache.png";
-
+		//Close
 		DrawnIcon closeX;
 		if(mobileVGA)
 			closeX = new DrawnIcon(DrawnIcon.CROSS,30,30,new Color(0,0,0));
@@ -167,19 +167,24 @@ public final class MovingMap extends Form {
 		closeX.doDraw(tmp, 0);
 		bottonImageClose.properties |= mImage.AlwaysOnTop;
 		mmp.addImage(bottonImageClose);
+		//CenterScreenToGPSPosition (also starts GPS)
 		buttonImageGpsOn.properties = mImage.AlwaysOnTop;
 		mmp.addImage(buttonImageGpsOn);
+		//ImageChooseMap
 		bottonImageChooseMap.properties = mImage.AlwaysOnTop;
 		mmp.addImage(bottonImageChooseMap);
+		//directionArrows
 		directionArrows.properties = mImage.AlwaysOnTop;
 		mmp.addImage(directionArrows);
+		//ImageLens
 		buttonImageLens.properties = mImage.AlwaysOnTop;
 		buttonImageLensActivated.properties = mImage.AlwaysOnTop;
 		buttonImageLensActivatedZoomIn.properties = mImage.AlwaysOnTop;
 		buttonImageLensActivatedZoomOut.properties = mImage.AlwaysOnTop;
 		mmp.addImage(buttonImageLens);
+		//Zoom1to1
 		buttonImageZoom1to1.properties = mImage.AlwaysOnTop;
-		mmp.addImage(buttonImageZoom1to1);
+		mmp.addImage(buttonImageZoom1to1);		
 		//target distance
 		int fontSize = ( 3 * pref.fontSize ) / 2;
 		Font imageFont = new Font("Helvetica", Font.PLAIN, fontSize );
@@ -197,13 +202,13 @@ public final class MovingMap extends Form {
 		ScaleImageGraphics.setFont(imageFont);
 		ScaleImage.properties = mImage.AlwaysOnTop;
 		mmp.addImage(ScaleImage);
-		//resizeTo(pref.myAppWidth, pref.myAppWidth); // is necessary to initialise mapImage.screenSize
+
 		setGpsStatus(noGPS);
 		posCircle.properties = mImage.AlwaysOnTop;
 		mmp.addImage(posCircle);
+		
 		mmp.startDragResolution = 5;
 		mapsloaded = false;
-		//updateDistance(); // fill Rect with transparent color
 		scaleWanted = 1;
 		mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
 		lastHighestResolutionGPSDestScale = -1;
@@ -932,7 +937,6 @@ public final class MovingMap extends Form {
 		if (symbNr != -1) removeMapSymbol(symbNr);
 	}
 
-
 	public void removeMapSymbol(int SymNr) {
 		mmp.removeImage(((MapSymbol)symbols.get(SymNr)));
 		symbols.removeElementAt(SymNr);
@@ -1053,9 +1057,13 @@ public final class MovingMap extends Form {
 	private void showCachesOnMap() {
 		// if (width == 0 || height == 0) return;
 		CacheHolder ch;
+		/*
+		 * Symbols not on screen move invisible topleft but on top , so no menu for yellow triangle
 		int twidth = width/10;
 		int theight = height/10;
 		Area screenArea = new Area(ScreenXY2LatLon(-twidth,-theight), ScreenXY2LatLon(width+twidth,height+theight));
+		 */
+		Area screenArea = new Area(ScreenXY2LatLon(0,0), ScreenXY2LatLon(width,height));
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			ch = cacheDB.get(i);
 			if (screenArea.isInBound(ch.pos)) {
