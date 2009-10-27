@@ -31,12 +31,12 @@ public class Rebuild {
 			int pos=xmlFiles[i].lastIndexOf('.');
 			if (pos<0) continue;
 			String wayPoint=xmlFiles[i].substring(0,pos).toUpperCase();
-			if (wayPoint.equalsIgnoreCase("index") || 			// Check for index.xml and index.bak
-				prof.getCacheIndex(wayPoint)>=0)		// Check for waypoints already in database
-				xmlFiles[i]=null;   				// Remove existing caches or index.xml
+			if (wayPoint.equalsIgnoreCase("index"))	// Check for index.xml and index.bak
+				xmlFiles[i]=null;   				// Remove (existing caches) or index.xml
 			else {
 				//ewe.sys.Vm.debug("Orphan: "+wayPoint);
 				orphans++;
+				prof.cacheDB.removeElementAt(prof.getCacheIndex(wayPoint));
 			}
 		}
 		if (orphans>0) { // At least one cache not in database
