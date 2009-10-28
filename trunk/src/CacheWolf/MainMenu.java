@@ -637,6 +637,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == orgRebuild){
 				Rebuild rb=new Rebuild();
 				rb.rebuild();
+				profile.updateBearingDistance();
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == orgCheckNotesAndSolver){
