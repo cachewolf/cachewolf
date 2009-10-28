@@ -101,7 +101,7 @@ public class MapLoaderGui extends Form {
 		//	pnlTiles.addLast(resolutionLbl);
 		pnlTiles.addNext(overlappingLbl);
 		pnlTiles.addLast(overlappingInput);
-		overviewChkBox.setState(true);
+		overviewChkBox.setState(false);
 		pnlTiles.addLast(overviewChkBox);
 		pnlTiles.addNext(smallTiles);
 		pnlTiles.addLast(bigTiles);
