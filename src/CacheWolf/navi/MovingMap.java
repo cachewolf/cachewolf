@@ -1101,15 +1101,19 @@ public final class MovingMap extends Form {
 			if (gotoPos.mapObject instanceof CacheHolder) {
 				gotoPosCH = (CacheHolder) gotoPos.mapObject;
 			}
-			if (!getShowCachesOnMap() && (gotoPosCH != null)) {
-				addSymbolIfNecessary(gotoPosCH.cacheName, gotoPosCH, GuiImageBroker.getTypeImage(gotoPosCH.getType(),true), gotoPosCH.pos);
-			}
-			addSymbolOnTop("goto", gotoPosCH, "goto_map.png", gotoPos.where);
+			if (screenArea.isInBound(gotoPosCH.pos)) {
+				if (!getShowCachesOnMap() && (gotoPosCH != null)) {
+					addSymbolIfNecessary(gotoPosCH.cacheName, gotoPosCH, GuiImageBroker.getTypeImage(gotoPosCH.getType(),true), gotoPosCH.pos);
+				}
+				addSymbolOnTop("goto", gotoPosCH, "goto_map.png", gotoPos.where);
+			}		
 		}
 		// show Selected
 		if (markedCache != null) {
-			addSymbolIfNecessary(markedCache.cacheName, markedCache, GuiImageBroker.getTypeImage(markedCache.getType(),true), markedCache.pos);
-			addSymbolOnTop("selectedCache", markedCache, MARK_CACHE_IMAGE, markedCache.pos);
+			if (screenArea.isInBound(markedCache.pos)) {
+				addSymbolIfNecessary(markedCache.cacheName, markedCache, GuiImageBroker.getTypeImage(markedCache.getType(),true), markedCache.pos);
+				addSymbolOnTop("selectedCache", markedCache, MARK_CACHE_IMAGE, markedCache.pos);
+			}			
 		}
 	}
 
@@ -1921,7 +1925,11 @@ public final class MovingMap extends Form {
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			running = false;
 		}
-		if( ev instanceof KeyEvent && ev.target == this && ( (((KeyEvent)ev).key == IKeys.ESCAPE) || (((KeyEvent)ev).key == IKeys.ENTER) || (((KeyEvent)ev).key == IKeys.ACTION) ) ) {
+		if( ev instanceof KeyEvent && 
+			ev.target == this && 
+			( (((KeyEvent)ev).key == IKeys.ESCAPE) ||
+			  (((KeyEvent)ev).key == IKeys.ENTER) || 
+			  (((KeyEvent)ev).key == IKeys.ACTION) ) ) {
 			this.close(0);
 			ev.consumed = true;
 		}
