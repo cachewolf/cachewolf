@@ -218,24 +218,30 @@ public class MapLoader {
 		String filename = createFilename(mio.getCenter(), mio.scale);
 		String imagename = mio.setName(path, filename) + currentOnlineMapService.getImageFileExt();
 		String url = currentOnlineMapService.getUrlForCenterScale(center, scale, pixelsize);
-		WebMapService wms = (WebMapService) currentOnlineMapService;
-		if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {
-			url="bitmapgen"+
-				" \""+FileBase.getProgramDirectory().replace('/',File.separatorChar)+"\\"+wms.serviceTypeUrlPart+"\""+
-				" \""+path.replace('/', File.separatorChar)+imagename+"\""+
-				" -mb "+url; // + minx miny maxx maxy + pixelsize.x
-			File f=new FileBugfix(wms.MainUrl);
-			if (!f.exists() || !f.canRead()) {
-				MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1834,"Please enter the correct path to Kosmos.Console.exe into the wms-file."),ewe.ui.MessageBox.OKB);
-				mb.execute();
-			} else {
-				Vm.exec(wms.MainUrl.replace('/', File.separatorChar), url, 0, true);
-				mio.saveWFL();
-			}
-		}
-		else {
+		if (currentOnlineMapService instanceof ExpediaMapService) {
 			downloadImage(url, path+imagename);
 			mio.saveWFL();
+		}
+		else {
+			WebMapService wms = (WebMapService) currentOnlineMapService;
+			if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {
+				url="bitmapgen"+
+					" \""+FileBase.getProgramDirectory().replace('/',File.separatorChar)+"\\"+wms.serviceTypeUrlPart+"\""+
+					" \""+path.replace('/', File.separatorChar)+imagename+"\""+
+					" -mb "+url; // + minx miny maxx maxy + pixelsize.x
+				File f=new FileBugfix(wms.MainUrl);
+				if (!f.exists() || !f.canRead()) {
+					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1834,"Please enter the correct path to Kosmos.Console.exe into the wms-file."),ewe.ui.MessageBox.OKB);
+					mb.execute();
+				} else {
+					Vm.exec(wms.MainUrl.replace('/', File.separatorChar), url, 0, true);
+					mio.saveWFL();
+				}
+			}
+			else {
+				downloadImage(url, path+imagename);
+				mio.saveWFL();
+			}
 		}
 	}
 
