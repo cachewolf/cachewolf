@@ -36,7 +36,8 @@ public class Rebuild {
 			else {
 				//ewe.sys.Vm.debug("Orphan: "+wayPoint);
 				orphans++;
-				prof.cacheDB.removeElementAt(prof.getCacheIndex(wayPoint));
+				int cacheIndex=prof.getCacheIndex(wayPoint); 
+				if (cacheIndex > -1) prof.cacheDB.removeElementAt(cacheIndex);
 			}
 		}
 		if (orphans>0) { // At least one cache not in database
@@ -57,8 +58,8 @@ public class Rebuild {
 				if (pbf.isClosed) break;
 			}
 			(new MessageBox(MyLocale.getMsg(327, "Information"),
-					  MyLocale.getMsg(210,"Caches nicht in index.xml: ")+orphans+
-					  MyLocale.getMsg(211,"\nDavon hinzugefügt: ")+nAdded
+					  MyLocale.getMsg(210,"Caches deleted: ")+orphans+
+					  MyLocale.getMsg(211,"\nCaches added: ")+nAdded
 					, FormBase.OKB)).execute();
 			prof.buildReferences();
 			prof.saveIndex(Global.getPref(),true);
