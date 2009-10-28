@@ -10,6 +10,7 @@ import ewe.ui.ProgressBarForm;
 public class Rebuild {
 	String [] xmlFiles;
 	private int cacheXmlVersion;
+	private int startOfCacheDetails;
 
 	public Rebuild() { // Public constructor
 	}
@@ -37,6 +38,11 @@ public class Rebuild {
 				//ewe.sys.Vm.debug("Orphan: "+wayPoint);
 				orphans++;
 				int cacheIndex=prof.getCacheIndex(wayPoint); 
+				getCacheDetails(prof.dataDir+xmlFiles[i]);
+				if (startOfCacheDetails < 0) {
+					CacheHolder ch=prof.cacheDB.get(cacheIndex);
+					ch.save();
+				}
 				if (cacheIndex > -1) prof.cacheDB.removeElementAt(cacheIndex);
 			}
 		}
@@ -48,7 +54,8 @@ public class Rebuild {
 					h.progress = ((float)nProcessed++)/(float)(orphans);
 					h.changed();
 					String details=getCacheDetails(prof.dataDir+xmlFiles[i]);
-					if (details!=null) { // In older Versions of CW the <CACHE... /> line was not stored in the cache.xml
+					if (details!=null) { 
+						// In older Versions of CW the <CACHE... /> line was not stored in the cache.xml
 						CacheHolder ch=new CacheHolder(details, cacheXmlVersion);
 						prof.cacheDB.add(ch);
 						nAdded++;
@@ -96,7 +103,9 @@ public class Rebuild {
 			int vstart;
 			cacheXmlVersion = 1; // Initial guess
 			// Check that we have not accidentally listed another xml file in the directory
-			if (text.indexOf("<CACHEDETAILS>")<0 || (start=text.indexOf("<CACHE "))<0) return null;
+			startOfCacheDetails=text.indexOf("<CACHE ");
+			if ((start=startOfCacheDetails)<0) return null;
+			if (text.indexOf("<CACHEDETAILS>")<0) return null; // startOfCacheDetails must be set in advance
 			if ((vstart = text.indexOf("<VERSION value = \"")) >= 0) {
 				cacheXmlVersion = Integer.valueOf(text.substring(vstart+18, text.indexOf("\"", vstart+18))).intValue();
 			}
