@@ -58,8 +58,6 @@ public final class GotoPanel extends CellPanel {
 	final static Color GREEN = new Color(0,255,0);
 	final static Color BLUE = new Color(0,0,255);
 
-	final static Font BOLD = new Font("Arial", Font.BOLD, 14);
-
 	int ticker = 0;
 
 	Menu mnuContextFormt;
@@ -479,7 +477,7 @@ class GotoRose extends AniImage {
 		g.fillRect(0, 0, location.width, location.height);
 
 		int fontSize = location.width / 17;
-		mainFont = new Font("Verdana", Font.BOLD, fontSize);
+		mainFont = GetCorrectedFont(g, "Verdana", Font.BOLD, fontSize);
 		g.setFont(mainFont);
 		fm = g.getFontMetrics(mainFont);
 		lineHeight = fm.getHeight() + 1;
@@ -868,4 +866,21 @@ class GotoRose extends AniImage {
 	public boolean isNorthCentered() {
 		return northCentered;
 	}
+	
+	public static Font GetCorrectedFont(Graphics g, String name, int style, int size) {
+		Font newFont = new Font(name, style, size);
+		FontMetrics metrics = g.getFontMetrics(newFont);
+		int fontHeight = metrics.getHeight();
+		
+		float ratio = (float)fontHeight / (float)size;
+		if(ratio < 0.9 || ratio > 1.1){
+			size = (int) (size / ratio + 0.5);
+			if(size<5)
+				size=5;
+			newFont = new Font(name, style, size);
+		}
+		
+		return newFont;
+	}
 }
+
