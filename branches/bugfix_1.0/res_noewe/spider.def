@@ -23,7 +23,8 @@
 # Version 3.7 - 20080613 Some lines generalized for proxies replacing the images.
 # Version 4.0 - 20080725 adaption to new GC-design
 # Version 4.1 - 20080725 adaption to new GC-design (images and travelbugs)
-# Version 5.0 - 20091105 adaption to new GC-design
+# Version 4.x - 20091105 some updates from trunk
+#=Version 5.0 - 20091105 adaption to new GC-design
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -57,7 +58,7 @@ nextListPage       = /seek/nearest.aspx
 #--------------------------------------
 getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
-cacheUnavailable   = This\ cache\ is\ temporarily\ unavailable
+cacheUnavailable   = <ul><font\ color="red"><li>This\ cache\ is\ temporarily\ unavailable.\ Read\ the\ logs\ below\ to\ read\ the\ status\ for\ this\ cache.</li></font></ul>
 cacheArchived      = This cache\ has\ been\ archived
 latLonRex          = <span\ id="LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = <span\ id="ShortDescription">((?s).*?)</span>
@@ -69,7 +70,7 @@ hintsRex           = <span\ id="Hints"\ class="displayMe">((?s).*?)</span>
 sizeRex            = alt="Size:\ ((?s).*?)"\ title="Size:
 difficultyRex      = <span\ id="Difficulty">.*?alt="(.*?)\ out\ of
 terrainRex         = <span\ id="Terrain">.*?alt="(.*?)\ out\ of
-cacheTypeRex       = /images/WptTypes/(.*?)\\.gif
+cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ ALT="
 
 #--------------------------------------
 #Section2a: Logs
