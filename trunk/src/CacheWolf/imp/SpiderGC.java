@@ -585,7 +585,7 @@ public class SpiderGC{
 				if (spiderAllFinds) {
 					postStr = p.getProp("firstLine");
 				} else {
-					postStr = p.getProp("firstLine") + "lat=" + origin.getLatDeg(TransformCoordinates.DD) + "&lng=" + origin.getLonDeg(TransformCoordinates.DD)
+					postStr = p.getProp("firstLine") + origin.getLatDeg(TransformCoordinates.DD) + p.getProp("firstLine2") + origin.getLonDeg(TransformCoordinates.DD)
 							                             + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );
 					if(doNotgetFound) postStr = postStr + p.getProp("showOnlyFound");
 				}
