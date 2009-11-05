@@ -33,6 +33,7 @@
 # Version 4.9 - 20091018 Should work now with proxies and cachetypes as background
 # Version 4.10- 20091021 Tags in Description are now correctly closed
 # Version 4.11- 20091023 Reverted last change, because it doesn't work with EWE/EXE
+# Version 5.0 - 20091105 adaption to new GC-design
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -50,7 +51,7 @@ waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
 #Section1: First page with list of caches
 #--------------------------------------
 firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
-firstPage2         = &lon=
+firstPage2         = &lng=
 firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
 # Regex to search for cachenames
 listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
@@ -59,7 +60,8 @@ distRex            = <br\ />(.*?)(?:km|mi)(?:\\s*)</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
 showOnlyFound      = &f=1
 maxDistance        = &dist=
-firstLine          = http://www.geocaching.com/seek/nearest.aspx?
+firstLine          = http://www.geocaching.com/seek/nearest.aspx?lat=
+firstLine2         = &lng=
 nextListPage       = /seek/nearest.aspx
 
 onlyWherigo         = &tx=0544fa55-772d-4e5c-96a9-36a51ebcf5c9
@@ -132,7 +134,7 @@ icon_attended      = icon_attended.gif
 #--------------------------------------
 # blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
 blockExStart       = >&nbsp;<b>Inventory</b>
-blockExEnd         = What\ is\ a\ Travel\ Bug?
+blockExEnd         = What\ are\ Trackable\ Items?
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
 bugExStart         = <a\ href='
 bugExEnd           = </a></strong></td>
