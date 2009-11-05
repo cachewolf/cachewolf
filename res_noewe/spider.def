@@ -23,6 +23,7 @@
 # Version 3.7 - 20080613 Some lines generalized for proxies replacing the images.
 # Version 4.0 - 20080725 adaption to new GC-design
 # Version 4.1 - 20080725 adaption to new GC-design (images and travelbugs)
+# Version 5.0 - 20091105 adaption to new GC-design
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -40,14 +41,15 @@ waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
 #Section1: First page with list of caches
 #--------------------------------------
 firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
-firstPage2         = &lon=
+firstPage2         = &lng=
 # Regex to search for cachenames 
 listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
 lineRex            = <tr\ bgcolor='#.{6}'>(?:(?s).*?)<td\ valign="top"\ align="left">((?s).*?)</tr>
 distRex            = <br\ />(.*?)(?:km|mi)(?:\\s*)</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
 showOnlyFound      = &f=1
-firstLine          = http://www.geocaching.com/seek/nearest.aspx?
+firstLine          = http://www.geocaching.com/seek/nearest.aspx?lat=
+firstLine2         = &lng=
 nextListPage       = /seek/nearest.aspx
 
 #--------------------------------------
@@ -99,7 +101,7 @@ icon_attended      = icon_attended.gif
 #--------------------------------------
 # blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
 blockExStart       = >&nbsp;<b>Inventory</b>
-blockExEnd         = What\ is\ a\ Travel\ Bug?
+blockExEnd         = What\ are\ Trackable\ Items?
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
 bugExStart         = <a\ href='
 bugExEnd           = </a></strong></td>

@@ -346,7 +346,7 @@ public class SpiderGC{
 		}
 		dummy = "";
 		//String lineBlck = "";
-		int page_number = 4;
+		int page_number = 1;
 		try  {
 			lineRex = new Regex(p.getProp("lineRex")); //"<tr bgcolor=((?s).*?)</tr>"
 		} catch (Exception ex) {
@@ -424,22 +424,28 @@ public class SpiderGC{
 				}
 				infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
 				if(found_on_page < 20) distance = 0;
-				postStr = p.getProp("firstLine") + origin.getLatDeg(CWPoint.DD) + "&" + origin.getLonDeg(CWPoint.DD);
+				postStr = p.getProp("firstLine") + origin.getLatDeg(CWPoint.DD) + p.getProp("firstLine2") + origin.getLonDeg(CWPoint.DD);
+
 				if(doNotgetFound) postStr = postStr + p.getProp("showOnlyFound");
 				if(distance > 0){
 					page_number++;
-					if(page_number >= 15) page_number = 5;
 					String strNextPage;
+					/*
+					if(page_number >= 15) page_number = 5;
 					if (page_number < 10) {
 						strNextPage = "ctl00$ContentBody$pgrTop$ctl0" + page_number;
 					} else {
 						strNextPage = "ctl00$ContentBody$pgrTop$ctl" + page_number;
 					}
+					*/
+					strNextPage = "ctl00$ContentBody$pgrTop$ctl08";
+					
 					doc = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strNextPage,false)
 					    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
-					    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
-					    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
-					    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
+//					    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
+					    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
+//					    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
+//					    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
 					try{
 						start = "";
 						pref.log("Fetching next list page:" + doc);
