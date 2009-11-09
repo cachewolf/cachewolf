@@ -424,7 +424,8 @@ public class SpiderGC{
 				ch = cacheDB.get(i);
 				if (spiderAllFinds) {
 					if ( (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
-					     && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) ) ) {
+					     && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) )
+					     && !ch.is_black() ) {
 						cachesToUpdate.put(ch.getWayPoint(), ch);
 					}
 				} else {
@@ -432,7 +433,8 @@ public class SpiderGC{
 						 && (ch.kilom <= distanceInKm)
 						 && !(doNotgetFound && (ch.is_found() || ch.is_owned()))
 						 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
-						 && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) ) ) {
+						 && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) )
+						 && !ch.is_black() ) {
 						cachesToUpdate.put(ch.getWayPoint(), ch);
 					}
 				}
