@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. -->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
 <!ENTITY __Installation__f6afn1eo SYSTEM "Installation.xml">
 <!ENTITY __DerersteStart__f6anus0g SYSTEM "Der_erste_Start.xml">
 <!ENTITY __ansichten__f6anvxip SYSTEM "ansichten.xml">
@@ -9,25 +9,10 @@
 ]>
 <book>
   <title>CacheWolf Dokumentation</title>
-
   <bookinfo>
     <edition>1.0</edition>
-
     <productnumber>1.0</productnumber>
-
     <pubdate>Noch nicht veröffentlicht!</pubdate>
-
-    <releaseinfo>Dieses Dokument in der Ausgabe 1.0 bezieht sich auf die
-    CacheWolf Version 1.0.</releaseinfo>
+    <releaseinfo>Dieses Dokument in der Ausgabe 1.0 bezieht sich auf die CacheWolf Version 1.0.</releaseinfo>
   </bookinfo>
-
-  &__Installation__f6afn1eo;
-
-  &__DerersteStart__f6anus0g;
-
-  &__ansichten__f6anvxip;
-
-  &__menu__fay2x5r3;
-
-  &__benutzte_dateien__fe71ytbk;
-</book>
+&__Installation__f6afn1eo;&__DerersteStart__f6anus0g;&__ansichten__f6anvxip;&__menu__fay2x5r3;&__benutzte_dateien__fe71ytbk;</book>
