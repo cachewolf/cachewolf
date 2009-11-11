@@ -70,7 +70,7 @@
     </para>
     <para>Dieser fordert dich nun auf, das Datenverzeichnis für CacheWolf auszuwählen für die noch kommenden Cache-Daten und die Karten. Die Idee dahinter ist folgende: In diesem Verzeichnis kannst du beliebig viele Unterordner anlegen; jeder dieser Ordner ist ein eigenes Profil (siehe: <xref linkend="profil"/>) innerhalb des Cachewolf.</para>
     <tip>
-      <para>Auf einem PocketPC kannst du dieses Verzeichnis auf die Speicherkarte legen (den CW am besten auf dem Gerät oder der Flash-Disk ablegen).</para>
+      <para>Auf einem PocketPC solltest du dieses Verzeichnis auf die Speicherkarte legen (den CW am besten auf dem Gerät oder der Flash-Disk ablegen).</para>
     </tip>
     <para>Wähle nun ein Verzeichnis aus und bestätige mit <literal>Select Folder</literal></para>
     <para>Danach erscheint der Dialog zur Auswahl eines Profils. In einem Profil werden in der Regel die Daten einer Cache-Gegend gespeichert. Lege ein neues Profil durch klick auf &quot;neu&quot; an, gebe einen Namen ein, beispielsweise den Namen der Stadt, in deren Gegend Du Caches suchen willst. Danach erscheint ein Dialog, in dem die Koordinaten des Mittelpunktes eingegeben werden sollen, um die herum die Caches dieses Profils liegen (Zentrum).</para>
@@ -97,7 +97,7 @@
           </imageobject>
         </inlinemediaobject>
       </para>
-      <para>Dieser Tab enthält einige Einstellungen. Was die Einstellung <literal>Verzeichnis</literal> für Profile bewirkt, ist hier <xref linkend="start"/> schon beschrieben worden. Wenn der Haken bei <literal>Profil auto. laden</literal> gesetzt wurde, erscheint beim nächsten und allen weiteren Starts von CacheWolf der Profil-Abfrageschirm</para>
+      <para>Dieser Tab enthält einige Einstellungen. Was die Einstellung <literal>Verzeichnis</literal> für Profile bewirkt, ist hier <xref linkend="start"/> schon beschrieben worden. Wenn der Haken bei <literal>Profil auto. laden</literal> gesetzt wurde, erscheint bei allen weiteren Starts von CacheWolf der Profil-Abfrageschirm</para>
       <para>
         <inlinemediaobject>
           <imageobject>
@@ -105,15 +105,15 @@
           </imageobject>
         </inlinemediaobject>
       </para>
-      <para>nicht mehr. Ist der Haken nicht gesetzt, musst Du jedes Mal nach Programmstart das gewünschte Profil auswählen.</para>
+      <para>nicht mehr. Ist der Haken nicht gesetzt, musst Du jedes Mal beim Programmstart das gewünschte Profil auswählen.</para>
+      <para>Wenn der Haken bei <literal>/Windows/iexplore.exe</literal> gesetzt ist, dann wird jedesmal (bei eingeschaltetem GPS) wenn man in die (<xref linkend="liste"/>) Listenansicht oder in die (<xref linkend="radar"/> ) Radaransicht  wechselt, das  Zentrum auf die aktuelle GPS-Koordinate gesetzt.</para>
       <para>Bei <literal>Browser</literal> kannst Du einen Link zu dem Browserprogramm Deiner Wahl einfügen.</para>
       <example>
         <title>Link zum Browser</title>
-        <para>Der Internet Explorer unter Windows:</para>
-        <para><literal>C:\Program Files (x86)\Internet Explorer\iexplore.exe</literal></para>
+        <para>Der Internet Explorer unter Windows: <literal>C:\Programme\Internet Explorer\iexplore.exe</literal> bzw. auf dem PDA: <literal>/Windows/iexplore.exe</literal></para>
       </example>
       <para>Unter <literal>Dein Alias</literal> und <literal>Passwt</literal> kannst Du Deine Zugangsdaten zu <literal>geocaching.com</literal> hinterlegen. <emphasis role="bold">Achtung!</emphasis> Dein Passwort wird nicht verschlüsselt hinterlegt. Im Zweifel solltest Du Dein Passwort hier nicht eingeben. CacheWolf wird beim nächsten Einloggen nach Deinem Passwort fragen.</para>
-      <para>Durch einen Klick auf den <literal>GPS</literal> Button wird der Schirm zur Einstellung des GPS Empfängers angezeigt: </para>
+      <para>Durch einen Klick auf den <literal>GPS</literal> Button  </para>
       <para>
         <inlinemediaobject>
           <imageobject>
@@ -121,10 +121,10 @@
           </imageobject>
         </inlinemediaobject>
       </para>
+      <para>wird ein Fenster mit den  Einstellungen des GPS Empfängers angezeigt. (folgendes Kapitel)</para>
       <para>Mit CacheWolf ist es möglich Caches direkt an Deinen GPS Empfänger zu senden (siehe auch <xref linkend="zu_garmin"/>). Unter <literal>GPSBabel</literal> läßt sich der Port einstellen, der von GPSBabel beim Export genutzt werden soll. Der gesetzte Haken bei Kurznamen sorgt dafür, dass nicht die Waypointnamen an den Empfänger geschickt werden, sondern der etwas verkürzte Cachename (Beispiel: Grosse Dose wird zu Grsse Dse).</para>
       <section>
         <title>GPS Empfänger</title>
-        <para/>
         <para>
           <inlinemediaobject>
             <imageobject>
@@ -132,7 +132,7 @@
             </imageobject>
           </inlinemediaobject>
         </para>
-        <para>Am besten jetzt auf <literal>Update Ports</literal> klicken. Damit ermittelt CacheWolf, welche Ports auf dem PDA zur Verfügung stehen. Danach den Port des GPS Empfängers einstellen. Mit einem Klick auf den Button <literal>Scan</literal> sucht Cachewolf auf allen verfügbaren Ports selbständig nach einem vorhandenen GPS Empfänger und stellt Port und Baudrate automatisch ein. Möchtest Du den GPS Empfänger manuell einstellen, kannst du unter <literal>Baud</literal> die Geschwindigkeit des Empfängers einstellen; 4800 passt in der Regel.</para>
+        <para>Am besten zuerst auf <literal>Ports auflisten</literal> klicken. Damit ermittelt CacheWolf, welche Ports auf dem PDA zur Verfügung stehen. Danach den Port des GPS Empfängers einstellen. Mit einem Klick auf den Button <literal>Scan</literal> sucht Cachewolf auf allen verfügbaren Ports selbständig nach einem vorhandenen GPS Empfänger und stellt Port und Baudrate automatisch ein. Möchtest Du den GPS Empfänger manuell einstellen, kannst du unter <literal>Baud</literal> die Geschwindigkeit des Empfängers einstellen; 4800 passt in der Regel.</para>
         <para>Durch einen Klick auf <literal>Test</literal> kannst Du überprüfen, ob eine Verbindung zum Empfänger besteht. Vorher bitte sicherstellen, dass der Empfänger angeschaltet ist. Mit <literal>OK</literal> die Einstellungen bestätigen.</para>
       </section>
     </section>
@@ -148,6 +148,7 @@
       <para>In diesem Tab kannst Du weitere Look &amp; Feel Einstellungen in CacheWolf vornehmen.</para>
       <para>Bei <literal>Font</literal> stellst Du die allgemeine Schriftgrösse ein, die CacheWolf benutzt. Der Haken bei <literal>PDA hat Schliessen Button</literal> hat zur Folge, dass auf dem PDA rechts oben im CacheWolf Fenster ein &quot;X&quot; erscheint. Klickst Du auf dieses &quot;X&quot; wird CacheWolf beendet, und aus dem Speicher entfernt.</para>
       <para>Der Haken neben <literal>Menü oben</literal> setzt die Menüeinträge im PDA oben, ansonsten erscheinen diese unten :-) Dasselbe gilt für <literal>Tabs oben</literal>. Ein Haken hier setzt die Tabs in den Ansichten oben. Der Haken bei <literal>Status</literal> bewirkt, dass CacheWolf eine Statusleiste unten in der Listenansicht (siehe <xref linkend="liste"/>) anzeigt. </para>
+      <para>Bei <literal>Hinweise/Logs</literal> kann man einstellen, wie viele Logs auf der Logseite  (siehe <xref linkend="hintsandlogs"/>) anzeigt werden. Durch die Logseiten kann man mit den &quot;&gt;&gt;&quot; und &quot;&lt;&lt;&quot; Tasten blättern. Unter <literal>Max. logs spidern</literal> wird eingestellt, wieviele Logs maximal je Cache gespidert werden. Diese Anzahl wird beim aktualisieren von Caches und beim Spidern jeweils vorgeschlagen und kann dort von Fall zu Fall direkt geändert werden ohne immer in diesen Einstellungsdialog wechseln zu müssen.Wird hier eine Zahl &lt;6 eingestellt geht das spidern deutlich schneller da nicht immer für jeden Cache die Webseite mit allen Logs geladen werden muss. Wird hier eine Zahl &lt;6 eingestellt geht das spidern deutlich schneller da nicht immer für jeden Cache die Webseite mit allen Logs geladen werden muss. Im Cachewolf - Verzeichnis findest Du eine Datei &quot;pref.xml&quot; in der diese (+weitere) Einstellungen abgespeichert werden. Dort gibt es auch eine Zeile &quot;logkeeping maximum&quot;. Damit kann man die maximale Anzahl an Logs die pro Cache in der Cachwolf-Datenbank gespeichert werden festlegen.  Beim Spidern oder Aktualisieren werden die neuen Logs immer an die schon bestehenden angefügt, so lange bis die  unter &quot;logkeeping maximum&quot; eingestellte Gesamtanzahl erreicht ist. Dann werden die ältesten Logs aus der Datenbank mit den neuen überschrieben. Direkt daneben gibt es den Eintrag &quot;keep own&quot;. Wird dieser auf true gesetzt dann werden eingene Logs auf jeden Fall in der Datenbank gehalten, auch wenn die eingestellte max. Anzahl erreicht ist.</para>
       <para>Mit dem Feld <literal>Beim Spidern aktualisieren</literal> kann man dafür sorgen, daß beim Spidern nicht nur neue Caches erfasst werden, sondern gleichzeitig überprüft wird, ob sich für die vorhandenen Caches in dem Profil der Status (z.B. Archiviert/Disabled) geändert hat. In diesem Fall werden alle Caches mit geändertem Status, je nach Einstellung hier, ebenfalls neu gespidert.</para>
     </section>
     <section>
@@ -160,7 +161,7 @@
         </inlinemediaobject>
       </para>
       <para>In diesem Tab können Proxydaten eingegeben werden. Durch setzen des Hakens bei <literal>Proxy verwenden</literal> werden diese Daten beim nächsten Zugriff ins Internet genutzt.</para>
-      <para>CacheWolf kennt aktuell vier Sprachen:</para>
+      <para>CacheWolf kennt aktuell fünf Sprachen:</para>
       <itemizedlist>
         <listitem>
           <para>DE = Deutsch,</para>
@@ -174,8 +175,11 @@
         <listitem>
           <para>FR = Französisch.</para>
         </listitem>
+        <listitem>
+          <para>PL = Polnisch</para>
+        </listitem>
       </itemizedlist>
-      <para>Um die Sprache zu ändern muss das entsprechende Zweibuchstabenkürzel <literal>bei Sprache</literal> eingegeben werden. Die neu eingestellte Sprache wird im Fall einer Änderung allerdings erst nach einem Neustart benutzt.</para>
+      <para>Die Sprache kann aus dem Dropdown-Menü ausgewählt werden. Die neu eingestellte Sprache wird im Fall einer Änderung allerdings erst nach einem Neustart benutzt.</para>
     </section>
     <section>
       <title id="einstellungListe">Einstellungen Liste</title>
