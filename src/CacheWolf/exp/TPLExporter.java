@@ -56,6 +56,7 @@ class TplFilter implements HTML.Tmpl.Filter
 	TextCodec codec = new AsciiCodec();
 	String badChars;
 	String decSep = ".";
+	int shortNameLength=30;
 	
 
 	public TplFilter(){
@@ -116,6 +117,9 @@ class TplFilter implements HTML.Tmpl.Filter
 			if (param.equals("decsep")) {
 				decSep = value;
 			}
+			if (param.equals("ShortNameLength")) {
+				shortNameLength = Integer.valueOf(value).intValue();
+			}
 
 
 		}
@@ -136,6 +140,7 @@ public class TPLExporter {
 	String tplFile;
 	String expName;
 	Regex rex=null;
+	private static GarminMap gm=null;
 	
 	public TPLExporter(Preferences p, Profile prof, String tpl){
 		pref = p;
@@ -145,6 +150,8 @@ public class TPLExporter {
 		File tmpFile = new File(tpl);
 		expName = tmpFile.getName();
 		expName = expName.substring(0, expName.indexOf("."));
+		gm=new GarminMap();
+		gm.readGarminMap();
 	}
 	
 	public void doIt(){
@@ -179,7 +186,6 @@ public class TPLExporter {
 			args.put("max_includes", new Integer(5));
 			args.put("filter", myFilter);
 			Template tpl = new Template(args);
-
 			for(int i = 0; i<counter;i++){
 				ch = cacheDB.get(i);
 				det = ch.getExistingDetails();
@@ -195,10 +201,22 @@ public class TPLExporter {
 						varParams.put("SHORTTYPE", CacheType.getExportShortId(ch.getType()));
 						varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 						varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.getCacheSize()));
-						varParams.put("WAYPOINT", ch.getWayPoint());
+						String wp = ch.getWayPoint();
+						varParams.put("WAYPOINT", wp);
+						int wpl = wp.length();
+						int wps = (wpl < 3) ? 0 : wpl - 3;
+						varParams.put("SHORTWAYPOINT", wp.substring(wps, wpl));
 						varParams.put("OWNER", ch.getCacheOwner());
-						varParams.put("DIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType())?"":dec.replaceAll(CacheTerrDiff.longDT(ch.getHard())));
-						varParams.put("TERRAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType())?"":dec.replaceAll(CacheTerrDiff.longDT(ch.getTerrain())));
+						byte chGetHard=ch.getHard();
+						varParams.put("DIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetHard < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(chGetHard)));
+						String sHard = Byte.toString(chGetHard);
+						varParams.put("SHORTDIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetHard < 0)?"":sHard);
+						varParams.put("SHDIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetHard < 0)?"":sHard.substring(0,1));
+						byte chGetTerrain=ch.getTerrain();
+						varParams.put("TERRAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetTerrain < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(chGetTerrain)));
+						String sTerrain = Byte.toString(chGetTerrain);
+						varParams.put("SHORTTERAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetTerrain < 0)?"":sTerrain);
+						varParams.put("SHTERRAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetTerrain < 0)?"":sTerrain.substring(0,1));
 						varParams.put("DISTANCE", dec.replaceAll(ch.getDistance()));
 						varParams.put("BEARING", ch.bearing);
 						varParams.put("LATLON", ch.LatLon);
@@ -211,17 +229,32 @@ public class TPLExporter {
 						varParams.put("URL", det.URL);
 						varParams.put("GC_LOGTYPE", (ch.is_found()?"Found it":"Didn't find it"));
 						varParams.put("DESCRIPTION", det.LongDescription);
+						String cacheName=null;
+						if (myFilter.codec instanceof AsciiCodec) {
+							cacheName=Exporter.simplifyString(ch.getCacheName()); 
+						}
 						if (myFilter.badChars != null) {
-							varParams.put("NAME", rex.replaceAll(ch.getCacheName()));
+							cacheName=rex.replaceAll(cacheName);
 							varParams.put("NOTES", rex.replaceAll(det.getCacheNotes()));
 							varParams.put("HINTS", rex.replaceAll(det.Hints));
 							varParams.put("DECRYPTEDHINTS", rex.replaceAll(Common.rot13(det.Hints)));
 						} else {
-							varParams.put("NAME", ch.getCacheName());
 							varParams.put("NOTES", det.getCacheNotes());
 							varParams.put("HINTS", det.Hints);
 							varParams.put("DECRYPTEDHINTS", Common.rot13(det.Hints));
 						}
+						varParams.put("NAME", cacheName);
+						String shortName=removeCharsfromString(cacheName, myFilter.shortNameLength, "aeiou");
+						if (shortName.length()>myFilter.shortNameLength) {
+							StringBuffer lower=new StringBuffer(26);// region/language dependent ?
+							for (i=97; i<=122; i++ ) {
+								lower.append((char) i);
+							}
+							shortName=removeCharsfromString(shortName, myFilter.shortNameLength, lower.toString());
+						}
+						varParams.put("SHORTNAME", shortName);						
+						varParams.put("TRAVELBUG", (ch.has_bugs()?"Y":"N"));
+						varParams.put("GMTYPE", gm.getIcon(ch));
 						cache_index.add(varParams);
 					}catch(Exception e){
 						Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
@@ -230,7 +263,6 @@ public class TPLExporter {
 					}
 				}
 			}
-
 			tpl.setParam("cache_index", cache_index);
 			PrintWriter detfile; 
 			FileWriter fw = new FileWriter(saveTo);
@@ -253,6 +285,28 @@ public class TPLExporter {
 		}
 		pbf.exit(0);
 	}
-
+		
+    private static String removeCharsfromString( String text, int MaxLength, String chars ) {
+        if ( text == null ) return null;
+        int originalTextLength = text.length();
+        int anzToRemove=originalTextLength-MaxLength;
+        if (anzToRemove<=0) return text;
+        int anzRemoved=0;
+        StringBuffer sb = new StringBuffer( 50 );
+        for ( int i = originalTextLength-1; i >= 0; i-- ) {
+            char c = text.charAt( i );
+            if (chars.indexOf(c) == -1) {
+            	sb.insert(0,c);
+            }
+            else {
+            	anzRemoved++;
+            	if (anzRemoved==anzToRemove) {
+            		sb.insert(0, text.substring(0,i));
+            		i=0; // exit for
+            	}
+            }
+        }
+        return sb.toString();
+    }
 
 }
