@@ -95,7 +95,7 @@ public class CacheImages {
 					if (i==j) continue; // Except same image
 					ImageInfo testImg = this.get(j);
 					// Are the filenames the same?
-					if (currImg.getFilename().equals(testImg.getFilename())) {
+					if (currImg.getFilename().toLowerCase().equals(testImg.getFilename().toLowerCase())) {
 						// Check if other title is better than current one
 						if (currImg.getTitle().startsWith(prefix) &&
 							!testImg.getTitle().startsWith(prefix)) {
