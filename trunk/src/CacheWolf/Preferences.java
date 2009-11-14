@@ -953,6 +953,14 @@ public class Preferences extends MinML{
 			}
 			else
 			if (operation==2){
+				Profile p = new Profile();
+				p.dataDir=absoluteBaseDir+f.newSelectedProfile+"/";
+				p.readIndex();
+				String mapsPath=absoluteBaseDir+"maps"+p.getRelativeCustomMapsPath();
+				int answer=new MessageBox("",mapsPath+" "+MyLocale.getMsg(143,"löschen ?"),FormBase.MBYESNO).execute();
+				if (answer==1) {
+					deleteDirectory(new FileBugfix(mapsPath));
+				}
 				err=!deleteDirectory(new FileBugfix(absoluteBaseDir+f.newSelectedProfile));
 				// ? wait until deleted ?
 			}
