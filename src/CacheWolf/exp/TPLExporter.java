@@ -173,6 +173,12 @@ public class TPLExporter {
 		System.runFinalization();
 		Vm.gc();
 		//Vm.debug("v: "+Vm.countObjects(true));
+		String selbstLaute="aeiouAEIOU";
+		StringBuffer lower=new StringBuffer(26);// region/language dependent ?
+		for (int i=97; i<=122; i++ ) {
+			lower.append((char) i);
+		}
+		String mitLauteKlein=lower.toString();
 		try {
 			Vector cache_index = new Vector(); // declare variables inside try {} -> in case of OutOfMemoryError, they can be garbage collected - anyhow it doesn't work :-(
 			Hashtable varParams;
@@ -226,31 +232,27 @@ public class TPLExporter {
 						varParams.put("STATUS_DATE", ch.GetStatusDate());
 						varParams.put("STATUS_TIME", ch.GetStatusTime());
 						varParams.put("DATE", ch.getDateHidden());
-						varParams.put("URL", det.URL);
+						varParams.put("URL", det != null ? det.URL : "");
 						varParams.put("GC_LOGTYPE", (ch.is_found()?"Found it":"Didn't find it"));
-						varParams.put("DESCRIPTION", det.LongDescription);
+						varParams.put("DESCRIPTION", det != null ? det.LongDescription : "");
 						String cacheName=null;
 						if (myFilter.codec instanceof AsciiCodec) {
 							cacheName=Exporter.simplifyString(ch.getCacheName()); 
 						}
 						if (myFilter.badChars != null) {
 							cacheName=rex.replaceAll(cacheName);
-							varParams.put("NOTES", rex.replaceAll(det.getCacheNotes()));
-							varParams.put("HINTS", rex.replaceAll(det.Hints));
-							varParams.put("DECRYPTEDHINTS", rex.replaceAll(Common.rot13(det.Hints)));
+							varParams.put("NOTES", det != null ? rex.replaceAll(det.getCacheNotes()): "");
+							varParams.put("HINTS", det != null ? rex.replaceAll(det.Hints): "");
+							varParams.put("DECRYPTEDHINTS", det != null ? rex.replaceAll(Common.rot13(det.Hints)): "");
 						} else {
-							varParams.put("NOTES", det.getCacheNotes());
-							varParams.put("HINTS", det.Hints);
-							varParams.put("DECRYPTEDHINTS", Common.rot13(det.Hints));
+							varParams.put("NOTES", det != null ? det.getCacheNotes(): "");
+							varParams.put("HINTS", det != null ? det.Hints: "");
+							varParams.put("DECRYPTEDHINTS", det != null ? Common.rot13(det.Hints): "");
 						}
 						varParams.put("NAME", cacheName);
-						String shortName=removeCharsfromString(cacheName, myFilter.shortNameLength, "aeiou");
+						String shortName=removeCharsfromString(cacheName, myFilter.shortNameLength, selbstLaute);
 						if (shortName.length()>myFilter.shortNameLength) {
-							StringBuffer lower=new StringBuffer(26);// region/language dependent ?
-							for (i=97; i<=122; i++ ) {
-								lower.append((char) i);
-							}
-							shortName=removeCharsfromString(shortName, myFilter.shortNameLength, lower.toString());
+							shortName=removeCharsfromString(shortName, myFilter.shortNameLength, mitLauteKlein);
 						}
 						varParams.put("SHORTNAME", shortName);						
 						varParams.put("TRAVELBUG", (ch.has_bugs()?"Y":"N"));
