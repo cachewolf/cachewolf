@@ -235,9 +235,9 @@ public class TPLExporter {
 						varParams.put("URL", det != null ? det.URL : "");
 						varParams.put("GC_LOGTYPE", (ch.is_found()?"Found it":"Didn't find it"));
 						varParams.put("DESCRIPTION", det != null ? det.LongDescription : "");
-						String cacheName=null;
+						String cacheName=ch.getCacheName();
 						if (myFilter.codec instanceof AsciiCodec) {
-							cacheName=Exporter.simplifyString(ch.getCacheName()); 
+							cacheName=Exporter.simplifyString(cacheName); 
 						}
 						if (myFilter.badChars != null) {
 							cacheName=rex.replaceAll(cacheName);
