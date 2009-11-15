@@ -84,7 +84,7 @@ public class StatusBar extends CellPanel{
 		// This can happen even on bigger screens with big fonts
 		if ((MyLocale.getScreenWidth()>=320) && !(MobileVGA && (pref.fontSize > 20)))
 			strCenter="  \u00a4 " + pref.getCurCentrePt().toString();
-		if (table.sortedBy>-1) {
+		if (Global.getPref().sortAutomatic) {
 			this.btnNoSorting.backGround=new Color(0,255,255);
 		}
 		else {
@@ -111,6 +111,7 @@ public class StatusBar extends CellPanel{
 				Global.mainForm.toggleCacheListVisible();
 			}
 			if (ev.target==btnNoSorting){
+				Global.getPref().sortAutomatic = ! Global.getPref().sortAutomatic;
 				table.sortTable(-1,true);
 			}
 			Gui.takeFocus(Global.mainTab.tbP.tc, ControlConstants.ByKeyboard);
