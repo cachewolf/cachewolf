@@ -67,6 +67,7 @@ public class myTableModel extends TableModel{
     private static mImage imgSortUp, imgSortDown;
 	public boolean sortAscending = false;
 	public int sortedBy = -1; // -1 don't sort
+	public boolean isSorted = false; // true if "sort order indicators" should be displayed 
 	private FontMetrics fm;
 //	private mImage picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge,picSizeNonPhysical;
 	private mImage picHasSolver,picHasNotes;
@@ -306,7 +307,7 @@ public class myTableModel extends TableModel{
 
 	public Object getCellData(int row, int col){
 		if(row == -1) {
-            if( sortedBy > 0 && colMap[col] == sortedBy ) {
+            if (colMap[col] == sortedBy && isSorted) {
                 if( sortAscending ) {
                     return new IconAndText( imgSortUp, colName[colMap[col]], fm);
                     //return "^ "+colName[colMap[col]];
@@ -488,6 +489,7 @@ public class myTableModel extends TableModel{
                 int rownum = Global.getProfile().getCacheIndex( ch.getWayPoint() );
                 if( rownum >= 0 ) tcControl.cursorTo( rownum, 0, true );
             }
+            this.isSorted = true;
             Vm.showWait( false );
         }
         tcControl.tbp.refreshControl(); // repaint with update Statusbar

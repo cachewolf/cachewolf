@@ -261,6 +261,9 @@ public class Preferences extends MinML{
     
     /** useOwnSymbols */
     public boolean useOwnSymbols=true;
+    
+    /** TRUE if we want automatic sorting **/
+    public boolean sortAutomatic = true;
 
 	//////////////////////////////////////////////
 	/** The debug switch (Can be used to activate dormant code) by adding
@@ -715,20 +718,21 @@ public class Preferences extends MinML{
 		}
 	}
 
-	private myTableModel table;
-	public void setMyTableModel(myTableModel myTableModel) {table=myTableModel;}
+	private myTableModel tableMod;
+	public void setMyTableModel(myTableModel myTableModel) {tableMod=myTableModel;}
 	public CWPoint getCurCentrePt() {return curCentrePt;}
 	public void setCurCentrePt(CWPoint newCentre) {
 		curCentrePt.set(newCentre);
 		Global.getProfile().updateBearingDistance();
+		tableMod.isSorted = false;
 		// if corresponding column ist sorted
-		if (table != null) {
-			if (table.sortedBy == 10) {
-				table.sortTable(10, table.sortAscending);
+		if (tableMod != null) {
+			if (tableMod.sortedBy == 10 && this.sortAutomatic) {
+				tableMod.sortTable(tableMod.sortedBy, tableMod.sortAscending);
 				// oder ??? 
 				// TablePanel.refreshTable();
 			}
-			else table.tcControl.repaint();
+			else tableMod.tcControl.repaint();
 		}
 	}
 
