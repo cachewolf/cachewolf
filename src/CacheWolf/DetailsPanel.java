@@ -5,6 +5,7 @@ import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Point;
 import ewe.fx.mImage;
+import ewe.io.File;
 import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
@@ -115,6 +116,7 @@ public class DetailsPanel extends CellPanel {
 	private final boolean useBigIcons;
 	/** String to display for invalid or not applicable terrain or difficulty values.*/
 	private final static String DTINVALID = ": -.-";
+	public boolean evWaypointChanged=false;
 
     // TODO: move images to image broker
     //mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgShowMaps, imgAddImages, imgNotes;
@@ -451,9 +453,23 @@ public class DetailsPanel extends CellPanel {
 	public void onEvent(final Event ev) {
 		if (ev instanceof DataChangeEvent) {
 			if (ev.target == inpWaypoint) {
-				// If user used lower case -> convert directly to upper case
-				inpWaypoint.setText(inpWaypoint.getText().toUpperCase());
-				//FIXME: if name was changed, we should rename the waypoint.xml file. how? where?
+				if (evWaypointChanged) {
+					String iTmp=inpWaypoint.getText();
+					String uTmp=iTmp.toUpperCase();
+					if (!iTmp.equals(uTmp)){
+						inpWaypoint.setText(uTmp); // If user entered LowerCase -> convert directly to UpperCase
+						evWaypointChanged=false; //next DataChangeEvent fired by change to UpperCase will be ignored
+					}
+					// same waypointname as before edit will not be checked !!!  filename is LowerCase
+					if ((new File(profile.dataDir + iTmp.toLowerCase()+".xml")).exists()) {
+						new MessageBox("Warning :",MyLocale.getMsg(275,"Waypoint already exists!"),MessageBox.OKB).execute();
+					}
+				}
+				else {
+					// first DataChangeEvent is fired by Klick into (after reload). that really didn't change anything
+					evWaypointChanged=true;
+				}
+				// FIXME: if name was changed, we should rename the waypoint.xml file. how? where?
 			} else if (ev.target == chcType) {
 				createWptName();
 				if (CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.selectedIndex))) {
