@@ -153,6 +153,7 @@ public class MainTab extends mTabbedPanel {
 			}
 		}
 		if (panelNo==1) { // Leaving the Details Panel
+			detP.evWaypointChanged=false;
 			// Update chD with Details
 			if(detP.isDirty()) {
 				cacheDirty=true;
