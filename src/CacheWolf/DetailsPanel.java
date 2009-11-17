@@ -117,6 +117,7 @@ public class DetailsPanel extends CellPanel {
 	/** String to display for invalid or not applicable terrain or difficulty values.*/
 	private final static String DTINVALID = ": -.-";
 	public boolean evWaypointChanged=false;
+	private String warnedForWaypoint="";
 
     // TODO: move images to image broker
     //mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgShowMaps, imgAddImages, imgNotes;
@@ -460,13 +461,20 @@ public class DetailsPanel extends CellPanel {
 						inpWaypoint.setText(uTmp); // If user entered LowerCase -> convert directly to UpperCase
 						evWaypointChanged=false; //next DataChangeEvent fired by change to UpperCase will be ignored
 					}
-					// same waypointname as before edit will not be checked !!!  filename is LowerCase
-					if ((new File(profile.dataDir + iTmp.toLowerCase()+".xml")).exists()) {
-						new MessageBox("Warning :",MyLocale.getMsg(275,"Waypoint already exists!"),MessageBox.OKB).execute();
+					// already warned(multi same DataChangeEvents) or same waypointname as before edit !!!
+					if(!warnedForWaypoint.equals(uTmp) && !uTmp.equals(this.cache.getWayPoint())){
+						if ((new File(profile.dataDir + iTmp.toLowerCase()+".xml")).exists()) {
+							warnedForWaypoint=uTmp; // before MessageBox cause Multithread DataChangeEvents
+							// filename is LowerCase
+							new MessageBox("Warning :",uTmp+"\n"+MyLocale.getMsg(275,"Waypoint already exists!"),MessageBox.OKB).execute();
+							// revert waypointname
+							inpWaypoint.setText(this.cache.getWayPoint());
+						}
 					}
 				}
 				else {
-					// first DataChangeEvent is fired by Klick into (after reload). that really didn't change anything
+					// first DataChangeEvent is fired by Klick into (after reload). 
+					// that really didn't change anything
 					evWaypointChanged=true;
 				}
 				// FIXME: if name was changed, we should rename the waypoint.xml file. how? where?
