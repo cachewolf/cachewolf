@@ -184,7 +184,7 @@ public final class MovingMap extends Form {
 		mmp.addImage(buttonImageLens);
 		//Zoom1to1
 		buttonImageZoom1to1.properties = mImage.AlwaysOnTop;
-		mmp.addImage(buttonImageZoom1to1);		
+		mmp.addImage(buttonImageZoom1to1);
 		//target distance
 		int fontSize = ( 3 * pref.fontSize ) / 2;
 		Font imageFont = new Font("Helvetica", Font.PLAIN, fontSize );
@@ -206,7 +206,7 @@ public final class MovingMap extends Form {
 		setGpsStatus(noGPS);
 		posCircle.properties = mImage.AlwaysOnTop;
 		mmp.addImage(posCircle);
-		
+
 		mmp.startDragResolution = 5;
 		mapsloaded = false;
 		scaleWanted = 1;
@@ -788,7 +788,7 @@ public final class MovingMap extends Form {
 			dontUpdatePos = false;
 			updatePosition(posCircle.where);
 		}
-		updateSymbolPositions();
+		else updateSymbolPositions(); // will also be done in updatePosition
 		updateOverlayPos();
 	}
 
@@ -839,6 +839,7 @@ public final class MovingMap extends Form {
 		Point pOnScreen;
 		MapSymbol symb;
 		int w, h;
+		showCachesOnMap();
 		for (int i=symbols.size()-1; i>=0; i--) {
 			symb = (MapSymbol)symbols.get(i);
 			pOnScreen = getXYonScreen(symb.where);
@@ -1023,7 +1024,6 @@ public final class MovingMap extends Form {
 					setBestMap(where, screenNotCompletlyCovered);
 					forceMapLoad = false;
 				}
-				showCachesOnMap();
 				if (isFillWhiteArea()) { fillWhiteArea(screenNotCompletlyCovered); }
 				lastCompareX = mapPos.x;
 				lastCompareY = mapPos.y;
@@ -1101,19 +1101,21 @@ public final class MovingMap extends Form {
 			if (gotoPos.mapObject instanceof CacheHolder) {
 				gotoPosCH = (CacheHolder) gotoPos.mapObject;
 			}
-			if (screenArea.isInBound(gotoPosCH.pos)) {
-				if (!getShowCachesOnMap() && (gotoPosCH != null)) {
-					addSymbolIfNecessary(gotoPosCH.cacheName, gotoPosCH, GuiImageBroker.getTypeImage(gotoPosCH.getType(),true), gotoPosCH.pos);
+			if (gotoPosCH != null) {
+				if (screenArea.isInBound(gotoPosCH.pos)) {
+					if (!getShowCachesOnMap()) {
+						addSymbolIfNecessary(gotoPosCH.cacheName, gotoPosCH, GuiImageBroker.getTypeImage(gotoPosCH.getType(),true), gotoPosCH.pos);
+					}
+					addSymbolOnTop("goto", gotoPosCH, "goto_map.png", gotoPos.where);
 				}
-				addSymbolOnTop("goto", gotoPosCH, "goto_map.png", gotoPos.where);
-			}		
+			}
 		}
 		// show Selected
 		if (markedCache != null) {
 			if (screenArea.isInBound(markedCache.pos)) {
 				addSymbolIfNecessary(markedCache.cacheName, markedCache, GuiImageBroker.getTypeImage(markedCache.getType(),true), markedCache.pos);
 				addSymbolOnTop("selectedCache", markedCache, MARK_CACHE_IMAGE, markedCache.pos);
-			}			
+			}
 		}
 	}
 
@@ -1925,10 +1927,10 @@ public final class MovingMap extends Form {
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			running = false;
 		}
-		if( ev instanceof KeyEvent && 
-			ev.target == this && 
+		if( ev instanceof KeyEvent &&
+			ev.target == this &&
 			( (((KeyEvent)ev).key == IKeys.ESCAPE) ||
-			  (((KeyEvent)ev).key == IKeys.ENTER) || 
+			  (((KeyEvent)ev).key == IKeys.ENTER) ||
 			  (((KeyEvent)ev).key == IKeys.ACTION) ) ) {
 			this.close(0);
 			ev.consumed = true;
