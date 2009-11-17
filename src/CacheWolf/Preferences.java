@@ -724,9 +724,9 @@ public class Preferences extends MinML{
 	public void setCurCentrePt(CWPoint newCentre) {
 		curCentrePt.set(newCentre);
 		Global.getProfile().updateBearingDistance();
-		tableMod.isSorted = false;
 		// if corresponding column ist sorted
 		if (tableMod != null) {
+			tableMod.isSorted = false;
 			if (tableMod.sortedBy == 10 && this.sortAutomatic) {
 				tableMod.sortTable(tableMod.sortedBy, tableMod.sortAscending);
 				// oder ??? 
