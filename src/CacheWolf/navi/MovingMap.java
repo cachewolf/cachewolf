@@ -253,12 +253,11 @@ public final class MovingMap extends Form {
 	public void loadMaps(String mapsPath, double lat){
 		if (loadingMapList) return;
 		loadingMapList = true;
-		//this.mapPath = mapsPath;
 		InfoBox inf = new InfoBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(4203, "Loading list of maps..."));
 		Vm.showWait(this, true);
 		inf.exec();
 		inf.waitUntilPainted(100);
-		if (pref.debug) pref.log(MyLocale.getMsg(4203, "Loading list of maps..."));
+		// if (pref.debug) pref.log(MyLocale.getMsg(4203, "Loading list of maps..."));
 		resetCenterOfMap();
 		boolean saveGpsIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;
@@ -1184,7 +1183,7 @@ public final class MovingMap extends Form {
 		Rect screen = new Rect ();
 		screen.height = r.height ;//- r.y;
 		screen.width = r.width ;//- r.x;
-		MapInfoObject bestMap = maps.getBestMap(centerPoint, screen, currentMap.scale, true);
+		MapInfoObject bestMap = maps.getBestMap(centerPoint, screen, currentMap.scale, true,false);
 		if (bestMap == null){
 			//No map found, area must be left white
 			return;
@@ -1307,14 +1306,14 @@ public final class MovingMap extends Form {
 		}
 		return true;
 	}
-
+	/*
 	private String SRect(Rect r){
 		String OL, UR ;
 		OL= " ("+String.valueOf(r.x)+","+String.valueOf(r.y)+")";
 		UR= " ("+String.valueOf(r.x+r.width)+","+String.valueOf(r.y+r.height)+") ";
 		return OL+" :"+UR;
 	}
-
+	*/
 	private void calculateRectangles(Rect blackArea, Rect whiteArea, Vector rectangles) {
 		if (width == 0 || height == 0) return;
 		int offsetX = width/10;
@@ -1345,7 +1344,7 @@ public final class MovingMap extends Form {
 			r.width = blackArea.x + offsetX;
 			r.height = whiteArea.height;
 			rectangles.add(r);
-			if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
+			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if (blackArea.y > whiteArea.y) {
 			Rect r= new Rect ();
@@ -1354,7 +1353,7 @@ public final class MovingMap extends Form {
 			r.width = whiteArea.width;
 			r.height = blackArea.y + offsetY;
 			rectangles.add(r);
-			if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
+			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.y + blackArea.height) <  whiteArea.y + whiteArea.height) {
 			Rect r= new Rect ();
@@ -1363,7 +1362,7 @@ public final class MovingMap extends Form {
 			r.width = whiteArea.width;
 			r.height = (whiteArea.y + whiteArea.height) - r.y;
 			rectangles.add(r);
-			if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
+			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.x + blackArea.width)<  whiteArea.x + whiteArea.width) {
 			Rect r= new Rect ();
@@ -1372,7 +1371,7 @@ public final class MovingMap extends Form {
 			r.width = (whiteArea.x + whiteArea.width) - r.x;
 			r.height = whiteArea.height;
 			rectangles.add(r);
-			if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
+			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 	}
 
@@ -1435,27 +1434,27 @@ public final class MovingMap extends Form {
 		switch (mapChangeModus) {
 		case NORMAL_KEEP_RESOLUTION:
 			lastHighestResolutionGPSDestScale = -1;
-			newmap = maps.getBestMap(cll, screen, scaleWanted, false);
+			newmap = maps.getBestMap(cll, screen, scaleWanted, false,true);
 			if (newmap == null) newmap = currentMap;
 			if (MapsList.scaleEquals(scaleWanted, newmap)) wantMapTest = false;
 			break;
 		case HIGHEST_RESOLUTION:
 			lastHighestResolutionGPSDestScale = -1;
-			newmap = maps.getBestMap(cll, screen, 0.000001f, false);
+			newmap = maps.getBestMap(cll, screen, 0.000001f, false,true);
 			break;
 		case HIGHEST_RESOLUTION_GPS_DEST:
 			if (gotoPos!= null && GpsStatus != noGPS && posCircle.where.isValid()) {
 				if ( ( !posCircleOnScreen ) && ( lastHighestResolutionGPSDestScale > 0 ) ) {
-					newmap = maps.getBestMap(cll, screen, lastHighestResolutionGPSDestScale , false);
+					newmap = maps.getBestMap(cll, screen, lastHighestResolutionGPSDestScale , false,true);
 				} else {
 					newmap = maps.getMapForArea(posCircle.where, gotoPos.where); // TODO use home-coos if no gps? - consider start from details panel and from gotopanel
-					if (newmap == null)	newmap = maps.getBestMap(cll, screen, 10000000000000000000000000000000000f, false); // use map with most available overview if no map containing PosCircle and GotoPos is available
+					if (newmap == null)	newmap = maps.getBestMap(cll, screen, 10000000000000000000000000000000000f, false,true); // use map with most available overview if no map containing PosCircle and GotoPos is available
 
 					if (newmap != null) {
 						lastHighestResolutionGPSDestScale = newmap.scale;
 
 						if (!posCircleOnScreen) {
-							newmap = maps.getBestMap(cll, screen, lastHighestResolutionGPSDestScale , false);
+							newmap = maps.getBestMap(cll, screen, lastHighestResolutionGPSDestScale , false,true);
 						}
 					}
 				}
@@ -1463,7 +1462,7 @@ public final class MovingMap extends Form {
 			//	either Goto-Pos or GPS-Pos not set
 			else {
 				lastHighestResolutionGPSDestScale = -1;
-				newmap = maps.getBestMap(cll, screen, 0.000001f, false);
+				newmap = maps.getBestMap(cll, screen, 0.000001f, false,true);
 			}
 			break;
 		default: (new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4208, "Bug: \nillegal mapChangeModus: ") + mapChangeModus, FormBase.OKB)).execute(); break;
@@ -1578,7 +1577,7 @@ public final class MovingMap extends Form {
 			Object [] s = getRectForMapChange(posCircle.where);
 			CWPoint cll = (CWPoint) s[0];
 			Rect screen = (Rect) s[1];
-			newmap = maps.getBestMap(cll, screen, Float.MAX_VALUE -1, false);
+			newmap = maps.getBestMap(cll, screen, Float.MAX_VALUE -1, false,true);
 		}
 		if (newmap == null) { // no map is covering any area of the caches -> zoom an empty map to cover all caches on screen
 			try {
@@ -1634,7 +1633,7 @@ public final class MovingMap extends Form {
 	 * @param lon -361: don't adust to lat/lon
 	 */
 	public void setMap(MapInfoObject newmap, CWPoint where) {
-		if (currentMap != null && newmap.mapName.equals(currentMap.mapName) && !forceMapLoad) { // note: newmap.mapName == currentMap.mapName won't work because they are different String containing the same text
+		if (currentMap != null && newmap.mapName.equals(currentMap.mapName) && !forceMapLoad) {
 			updateOnlyPosition(where, true);
 			return;
 		}
@@ -1644,11 +1643,9 @@ public final class MovingMap extends Form {
 		dontUpdatePos = true;  // make updatePosition ignore calls during loading new map
 		InfoBox inf;
 		inf = new InfoBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4216, "Loading map..."));
-		if (pref.debug) {
-			inf.show();
-			inf.waitUntilPainted(100);
-			pref.log(MyLocale.getMsg(4216, "Loading map...")+newmap.mapName);
-		}
+		inf.show();
+		inf.waitUntilPainted(100);
+		pref.log(MyLocale.getMsg(4216, "Loading map...")+newmap.mapName);
 		try {
 			this.currentMap = newmap;
 			this.title = currentMap.mapName;

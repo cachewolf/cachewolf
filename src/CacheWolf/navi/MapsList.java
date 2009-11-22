@@ -110,7 +110,7 @@ public final class MapsList extends Vector {
 	 * it always returns a map (if the list is not empty) as long as it overlaps the screen
 	 * @param forceScale: when true, return null if no map with specified scale could be found
 	 */
-	public MapInfoObject getBestMap(CWPoint ll, Rect screen, float scale, boolean forceScale) {
+	public MapInfoObject getBestMap(CWPoint ll, Rect screen, float scale, boolean forceScale,boolean withProgressBox) {
 		if (size() == 0) return null;
 		long start = new Time().getTime();
 		InfoBox progressBox = null;
@@ -133,7 +133,7 @@ public final class MapsList extends Vector {
 			guess = quickfind(cmp, this.numDigitsStartIndex[digitlenght], this.numDigitsStartIndex[digitlenght+1]-1);
 			for (int i=guess; i >= numDigitsStartIndex[digitlenght] ;i--) {
 				// testdkw++;
-				if (Global.getPref().debug) {
+				if (withProgressBox) {
 					if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 						showprogress = true;
 						progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
