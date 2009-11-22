@@ -1121,6 +1121,7 @@ public final class MovingMap extends Form {
 	private void fillWhiteArea(boolean screenNotCompletlyCovered) {
 		// Clean up any additional images, tiles will removed and any
 		// other item be added again later
+		Vm.showWait(true);
 		Vector icons = new Vector(mmp.images.size());
 		int s = mmp.images.size(); // avoid calling size() in each iteration
 		for (int i = 0; i < s ;  i++) {
@@ -1170,6 +1171,7 @@ public final class MovingMap extends Form {
 		MovingMapCache.getCache().cleanCache();
 		// At Last redraw all icons on the map
 		mmp.images.addAll(icons);
+		Vm.showWait(false);		
 		repaint();
 	}
 	private void updateTileForWhiteArea(Vector rectangles) {
