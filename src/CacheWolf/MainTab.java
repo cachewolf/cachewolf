@@ -257,23 +257,6 @@ public class MainTab extends mTabbedPanel {
 		}
 	}
 
-	/** Update the distances of all caches to the centre and display a message
-	 */
-	public void updateBearDist(){// Called from DetailsPanel, GotoPanel and myTableControl
-/*
-		MessageBox info = new MessageBox(MyLocale.getMsg(327,"Information"), MyLocale.getMsg(1024,"Entfernungen in der Listenansicht \n werden neu berechnet...").replace('~','\n'), 0);
-		info.exec();
-		info.waitUntilPainted(200);
-*/
-		tbP.pref = pref;
-		profile.updateBearingDistance();
-/*
-		//tbP.refreshTable();
-		info.close(0);
-*/
-		tbP.tc.repaint();
-	}
-
 	public void openDescriptionPanel(CacheHolder chi) {
 		MyLocale.setSIPOff();
 		// To change cache we need to be in panel 0
