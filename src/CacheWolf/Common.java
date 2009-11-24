@@ -67,7 +67,19 @@ public final class Common {
 			else if (c == ']') {
 				convert = true;
 				dummy[i] = ']';
-			} 
+			}
+			else if (c == '<') {
+				// reflecting html break (newline) only lowercase
+				if (i+3<text.length() && text.charAt(i+1)=='b' && text.charAt(i+2)=='r' && text.charAt(i+3)=='>') {
+					dummy[i]='<';
+					i++;
+					dummy[i]='b';
+					i++;
+					dummy[i]='r';
+					i++;
+					dummy[i]='>';
+				}
+			}
 			else {
 				dummy[i] = c;
 			}
