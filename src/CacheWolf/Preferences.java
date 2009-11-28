@@ -722,6 +722,7 @@ public class Preferences extends MinML{
 	public void setMyTableModel(myTableModel myTableModel) {tableMod=myTableModel;}
 	public CWPoint getCurCentrePt() {return curCentrePt;}
 	public void setCurCentrePt(CWPoint newCentre) {
+		Vm.showWait(true);
 		curCentrePt.set(newCentre);
 		Global.getProfile().updateBearingDistance();
 		if (tableMod != null) {
@@ -733,6 +734,7 @@ public class Preferences extends MinML{
 			}
 			else tableMod.tcControl.repaint();
 		}
+		Vm.showWait(false);
 	}
 
 	/**
