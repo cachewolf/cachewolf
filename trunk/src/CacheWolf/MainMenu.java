@@ -53,7 +53,7 @@ import ewe.util.Vector;
  */
 public class MainMenu extends MenuBar {
 	private MenuItem preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
-	private MenuItem downloadmap, kalibmap, importmap;
+	private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
 	private MenuItem spider, spiderAllFinds, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportGpxNg, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
@@ -126,10 +126,11 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for maps, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mapMenuItems = new MenuItem[3];
+		MenuItem[] mapMenuItems = new MenuItem[4];
 		mapMenuItems[0] = downloadmap = new MenuItem(MyLocale.getMsg(162,"Download calibrated"));
 		mapMenuItems[1] = importmap = new MenuItem(MyLocale.getMsg(150,"Import"));
 		mapMenuItems[2] = kalibmap = new MenuItem(MyLocale.getMsg(151,"Calibrate"));
+		mapMenuItems[3] = selectMapPath = new MenuItem(MyLocale.getMsg(4236, "Change map directory$c"));
 		Menu mapsMenu = new Menu(mapMenuItems, null);
 
 		// Now we start with the horizontal menu bar "Application", "Search", "Filter", "Organise", "About"
@@ -495,6 +496,17 @@ public class MainMenu extends MenuBar {
 						tmpMB.exec();
 					}
 				}
+			}
+			if (mev.selectedItem==selectMapPath) {
+				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().getCustomMapsPath());
+				fc.addMask("*.wfl");
+				fc.setTitle(MyLocale.getMsg(4200,"Select map directory:"));
+				if(fc.execute() != FormBase.IDCANCEL){
+					Global.getPref().saveCustomMapsPath(fc.getChosen().toString());
+					//mm.loadMaps(Global.getPref().getCustomMapsPath(), mm.posCircle.where.latDec);
+					//mm.forceMapLoad();
+				}
+
 			}
 			///////////////////////////////////////////////////////////////////////
 			// "Application" pulldown menu
