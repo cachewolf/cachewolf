@@ -64,8 +64,8 @@ public class ImagePanel extends InteractivePanel{
 			Rect r = new Rect(0, 0, pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+padding);
 			this.virtualSize = r;
 			//this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
-			this.checkScrolls();
-			this.refresh();
+			// this.checkScrolls();
+			// this.refresh();
 			locY=0;
 			addTitle(MyLocale.getMsg(340,"Cache Images:"));
 			locY = 20;
@@ -84,6 +84,9 @@ public class ImagePanel extends InteractivePanel{
 			}
 			oldCache=cache;
 		} // cache!=oldCache	
+		if (locY>this.height) {
+			this.checkScrolls();
+		}
 		this.refresh();
 		Vm.showWait(false);
 		//this.repaintNow();
