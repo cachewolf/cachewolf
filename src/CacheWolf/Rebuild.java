@@ -26,7 +26,7 @@ public class Rebuild {
 
 		FileBugfix file=new FileBugfix(Global.getProfile().dataDir);
 		xmlFiles=file.list("*.xml",0);
-		int orphans=0; // xml Files without entry in database
+		int orphans=0; // xml Files without entry in database : Changed to all entries!!!
 		int nAdded=0;  // caches added to database
 		for (i=0; i<xmlFiles.length; i++) {
 			int pos=xmlFiles[i].lastIndexOf('.');
@@ -38,14 +38,19 @@ public class Rebuild {
 				//ewe.sys.Vm.debug("Orphan: "+wayPoint);
 				orphans++;
 				int cacheIndex=prof.getCacheIndex(wayPoint); 
-				getCacheDetails(prof.dataDir+xmlFiles[i]);
-				if (startOfCacheDetails < 0) {
-					CacheHolder ch=prof.cacheDB.get(cacheIndex);
-					ch.save();
+				if (cacheIndex > -1) {
+					// In older Versions of CW the <CACHE... /> line was not stored in the cache.xml
+					// therefore get it from the index.xml (prof.cacheDB) and put it into the cache.xml
+					getCacheDetails(prof.dataDir+xmlFiles[i]);
+					if (startOfCacheDetails < 0) {
+						CacheHolder ch=prof.cacheDB.get(cacheIndex);
+						ch.save();
+					}
+					// prof.cacheDB.removeElementAt(cacheIndex);
 				}
-				if (cacheIndex > -1) prof.cacheDB.removeElementAt(cacheIndex);
 			}
 		}
+		prof.cacheDB.clear(); //easier than removeElementAt
 		if (orphans>0) { // At least one cache not in database
 			int nProcessed=0;
 			// Now do the actual work
@@ -55,7 +60,6 @@ public class Rebuild {
 					h.changed();
 					String details=getCacheDetails(prof.dataDir+xmlFiles[i]);
 					if (details!=null) { 
-						// In older Versions of CW the <CACHE... /> line was not stored in the cache.xml
 						CacheHolder ch=new CacheHolder(details, cacheXmlVersion);
 						prof.cacheDB.add(ch);
 						nAdded++;
