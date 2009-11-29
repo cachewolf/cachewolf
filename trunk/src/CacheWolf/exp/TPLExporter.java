@@ -1,8 +1,8 @@
 /*
-    CacheWolf is a software for PocketPC, Win and Linux that 
-    enables paperless caching. 
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
     It supports the sites geocaching.com and opencaching.de
-    
+
     Copyright (C) 2006  CacheWolf development team
     See http://developer.berlios.de/projects/cachewolf/
     for more information.
@@ -57,22 +57,23 @@ class TplFilter implements HTML.Tmpl.Filter
 	String badChars;
 	String decSep = ".";
 	int shortNameLength=30;
-	
+	int shortWaypointLength=3;
+
 
 	public TplFilter(){
 		codec = new AsciiCodec(AsciiCodec.STRIP_CR);
 		return;
 	}
-	
+
 	public int format() {
 		return this.type;
 	}
-	
+
 	public String parse(String t) {
 		//Vm.debug(t);
 		Regex rex, rex1;
 		String param, value;
-		// Filter newlines 
+		// Filter newlines
 		rex = new Regex("(?m)\n$","");
 		t = rex.replaceAll(t);
 
@@ -87,7 +88,7 @@ class TplFilter implements HTML.Tmpl.Filter
 			t = rex.replaceAll(t);
 			t += newLine;
 		}
-		
+
 		// search for parameters
 		rex = new Regex("(?i)<tmpl_par.*>");
 		rex.search(t);
@@ -100,7 +101,7 @@ class TplFilter implements HTML.Tmpl.Filter
 			//Vm.debug("param=" + param + "\nvalue=" + value);
 			//clear t, because we allow only one parameter per line
 			t = "";
-			
+
 			// get the values
 			if (param.equals("charset")) {
 				if (value.equals("ASCII")) codec = new AsciiCodec();
@@ -120,18 +121,21 @@ class TplFilter implements HTML.Tmpl.Filter
 			if (param.equals("ShortNameLength")) {
 				shortNameLength = Integer.valueOf(value).intValue();
 			}
+			if (param.equals("WaypointLength")) {
+				shortWaypointLength = Integer.valueOf(value).intValue();
+			}
 
 
 		}
 		return t;
 	}
-		
-	
+
+
 	public String [] parse(String [] t) {
 		throw new UnsupportedOperationException();
 	}
 }
- 
+
 
 public class TPLExporter {
 	CacheDB cacheDB;
@@ -141,7 +145,7 @@ public class TPLExporter {
 	String expName;
 	Regex rex=null;
 	private static GarminMap gm=null;
-	
+
 	public TPLExporter(Preferences p, Profile prof, String tpl){
 		pref = p;
 		profile=prof;
@@ -153,7 +157,7 @@ public class TPLExporter {
 		gm=new GarminMap();
 		gm.readGarminMap();
 	}
-	
+
 	public void doIt(){
 		CacheHolderDetail det;
 		CacheHolder ch;
@@ -183,7 +187,7 @@ public class TPLExporter {
 			Vector cache_index = new Vector(); // declare variables inside try {} -> in case of OutOfMemoryError, they can be garbage collected - anyhow it doesn't work :-(
 			Hashtable varParams;
 			TplFilter myFilter;
-			Hashtable args = new Hashtable(); 
+			Hashtable args = new Hashtable();
 			myFilter = new TplFilter();
 			//args.put("debug", "true");
 			args.put("filename", tplFile);
@@ -207,10 +211,16 @@ public class TPLExporter {
 						varParams.put("SHORTTYPE", CacheType.getExportShortId(ch.getType()));
 						varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 						varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.getCacheSize()));
+						if (ch.isAddiWpt()) {
+							varParams.put("MAINWP",ch.mainCache.getWayPoint());
+						}
+						else {
+							varParams.put("MAINWP", "");
+						}
 						String wp = ch.getWayPoint();
 						varParams.put("WAYPOINT", wp);
 						int wpl = wp.length();
-						int wps = (wpl < 3) ? 0 : wpl - 3;
+						int wps = (wpl < myFilter.shortWaypointLength) ? 0 : wpl - myFilter.shortWaypointLength;
 						varParams.put("SHORTWAYPOINT", wp.substring(wps, wpl));
 						varParams.put("OWNER", ch.getCacheOwner());
 						byte chGetHard=ch.getHard();
@@ -237,7 +247,7 @@ public class TPLExporter {
 						varParams.put("DESCRIPTION", det != null ? det.LongDescription : "");
 						String cacheName=ch.getCacheName();
 						if (myFilter.codec instanceof AsciiCodec) {
-							cacheName=Exporter.simplifyString(cacheName); 
+							cacheName=Exporter.simplifyString(cacheName);
 						}
 						if (myFilter.badChars != null) {
 							cacheName=rex.replaceAll(cacheName);
@@ -254,7 +264,7 @@ public class TPLExporter {
 						if (shortName.length()>myFilter.shortNameLength) {
 							shortName=removeCharsfromString(shortName, myFilter.shortNameLength, mitLauteKlein);
 						}
-						varParams.put("SHORTNAME", shortName);						
+						varParams.put("SHORTNAME", shortName);
 						varParams.put("TRAVELBUG", (ch.has_bugs()?"Y":"N"));
 						varParams.put("GMTYPE", gm.getIcon(ch));
 						cache_index.add(varParams);
@@ -266,7 +276,7 @@ public class TPLExporter {
 				}
 			}
 			tpl.setParam("cache_index", cache_index);
-			PrintWriter detfile; 
+			PrintWriter detfile;
 			FileWriter fw = new FileWriter(saveTo);
 			fw.codec = myFilter.codec;
 			detfile = new PrintWriter(new BufferedWriter(fw));
@@ -287,7 +297,7 @@ public class TPLExporter {
 		}
 		pbf.exit(0);
 	}
-		
+
     private static String removeCharsfromString( String text, int MaxLength, String chars ) {
         if ( text == null ) return null;
         int originalTextLength = text.length();
