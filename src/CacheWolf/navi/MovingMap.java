@@ -418,7 +418,8 @@ public final class MovingMap extends Form {
 		running = true;
 
 		// to load maplist + place a map on screen otherwise no symbol can be placed
-		updatePosition(centerTo);
+		dontUpdatePos=true; // else overlay symbols are removed on started gps
+		loadBestMap(centerTo);
 
 		// update cache symbols in map
 		if (Global.getProfile().selectionChanged) {
@@ -441,6 +442,7 @@ public final class MovingMap extends Form {
 		}
 
 		repaint();
+		dontUpdatePos=false;
 		return ret;
 	}
 
@@ -988,12 +990,7 @@ public final class MovingMap extends Form {
 		}
 		//Vm.debug("update only position");
 	}
-	/**
-	 * Method to laod the best map for lat/lon and move the map so that the posCircle is at lat/lon
-	 */
-	public void updatePosition(CWPoint where){
-		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
-		//Vm.debug("updatepos, lat: "+where.latDec+" lon: "+where.lonDec);
+	private void loadBestMap(CWPoint where) {
 		if (!mapsloaded || !this.maps.getMapsPath().equals(pref.getCustomMapsPath())) {
 			loadMaps(pref.getCustomMapsPath(), where.latDec);
 			lastCompareX = Integer.MAX_VALUE;
@@ -1003,6 +1000,14 @@ public final class MovingMap extends Form {
 			forceMapLoad = false;
 			return;
 		}
+	}
+	/**
+	 * Method to laod the best map for lat/lon and move the map so that the posCircle is at lat/lon
+	 */
+	public void updatePosition(CWPoint where){
+		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
+		//Vm.debug("updatepos, lat: "+where.latDec+" lon: "+where.lonDec);
+		loadBestMap(where);
 		if (width==0 || height==0) { Vm.debug("no window shown"); return; } // why is this called with these values
 		updateOnlyPosition(where, true);
 
@@ -1117,11 +1122,12 @@ public final class MovingMap extends Form {
 			}
 		}
 	}
-
+	boolean reflectResourceException=true;
 	private void fillWhiteArea(boolean screenNotCompletlyCovered) {
 		// Clean up any additional images, tiles will removed and any
 		// other item be added again later
 		Vm.showWait(true);
+		dontUpdatePos=true; // no new Position while filling 
 		Vector icons = new Vector(mmp.images.size());
 		int s = mmp.images.size(); // avoid calling size() in each iteration
 		for (int i = 0; i < s ;  i++) {
@@ -1160,11 +1166,19 @@ public final class MovingMap extends Form {
 			try {
 				updateTileForWhiteArea(rectangles);
 			} catch (ewe.sys.SystemResourceException sre) {
-				setFillWhiteArea(false);
-				(new MessageBox(
-						"Error",
-						"Not enough ressources to fill white ares, disabling this",
-						MessageBox.OKB)).execute();
+				// next time there may be no problem, and ask only once
+				if (reflectResourceException) {
+					if (new MessageBox(
+							"Error",
+							"Not enough ressources to fill white ares, disabling this",
+							MessageBox.YESB | MessageBox.NOB).execute() == MessageBox.IDYES) {
+						setFillWhiteArea(false);
+						reflectResourceException=true;
+					}
+					else {
+						reflectResourceException=false;						
+					}
+				}
 			}
 		}
 		// Remove all tiles not needed from the cache to reduce memory
@@ -1172,6 +1186,7 @@ public final class MovingMap extends Form {
 		// At Last redraw all icons on the map
 		mmp.images.addAll(icons);
 		Vm.showWait(false);		
+		dontUpdatePos=false; // do next Position 
 		repaint();
 	}
 	private void updateTileForWhiteArea(Vector rectangles) {
