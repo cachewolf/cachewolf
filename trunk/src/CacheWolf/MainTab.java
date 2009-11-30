@@ -364,7 +364,8 @@ public class MainTab extends mTabbedPanel {
 		} catch (Exception e) { // TODO swith waiting indication clock off
 			e.printStackTrace();
 			Global.getPref().log("Error starting moving map (2): " + e.getMessage(), e, true);
-			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), FormBase.OKB)).execute(); }
+			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), FormBase.OKB)).execute();
+		}
 	}
 
 	void updatePendingChanges() {
