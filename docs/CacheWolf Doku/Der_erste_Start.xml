@@ -106,11 +106,11 @@
         </inlinemediaobject>
       </para>
       <para>nicht mehr. Ist der Haken nicht gesetzt, musst Du jedes Mal beim Programmstart das gewünschte Profil auswählen.</para>
-      <para>Wenn der Haken bei <literal>/Windows/iexplore.exe</literal> gesetzt ist, dann wird jedesmal (bei eingeschaltetem GPS) wenn man in die (<xref linkend="liste"/>) Listenansicht oder in die (<xref linkend="radar"/> ) Radaransicht  wechselt, das  Zentrum auf die aktuelle GPS-Koordinate gesetzt.</para>
+      <para>Wenn der Haken bei <literal>/Windows/iexplore.exe</literal> gesetzt ist, dann wird jedesmal (bei eingeschaltetem GPS) wenn man in die (<xref linkend="liste"/>) Listenansicht oder in die (<xref linkend="radar"/> ) Radaransicht  wechselt, das  Zentrum auf die aktuelle GPS-Koordinate gesetzt.</para>
       <para>Bei <literal>Browser</literal> kannst Du einen Link zu dem Browserprogramm Deiner Wahl einfügen.</para>
       <example>
         <title>Link zum Browser</title>
-        <para>Der Internet Explorer unter Windows: <literal>C:\Programme\Internet Explorer\iexplore.exe</literal> bzw. auf dem PDA: <literal>/Windows/iexplore.exe</literal></para>
+        <para>Der Internet Explorer unter Windows: <literal>C:\Programme\Internet Explorer\iexplore.exe</literal> bzw. auf dem PDA: <literal>/Windows/iexplore.exe</literal></para>
       </example>
       <para>Unter <literal>Dein Alias</literal> und <literal>Passwt</literal> kannst Du Deine Zugangsdaten zu <literal>geocaching.com</literal> hinterlegen. <emphasis role="bold">Achtung!</emphasis> Dein Passwort wird nicht verschlüsselt hinterlegt. Im Zweifel solltest Du Dein Passwort hier nicht eingeben. CacheWolf wird beim nächsten Einloggen nach Deinem Passwort fragen.</para>
       <para>Durch einen Klick auf den <literal>GPS</literal> Button  </para>
@@ -134,6 +134,7 @@
         </para>
         <para>Am besten zuerst auf <literal>Ports auflisten</literal> klicken. Damit ermittelt CacheWolf, welche Ports auf dem PDA zur Verfügung stehen. Danach den Port des GPS Empfängers einstellen. Mit einem Klick auf den Button <literal>Scan</literal> sucht Cachewolf auf allen verfügbaren Ports selbständig nach einem vorhandenen GPS Empfänger und stellt Port und Baudrate automatisch ein. Möchtest Du den GPS Empfänger manuell einstellen, kannst du unter <literal>Baud</literal> die Geschwindigkeit des Empfängers einstellen; 4800 passt in der Regel.</para>
         <para>Durch einen Klick auf <literal>Test</literal> kannst Du überprüfen, ob eine Verbindung zum Empfänger besteht. Vorher bitte sicherstellen, dass der Empfänger angeschaltet ist. Mit <literal>OK</literal> die Einstellungen bestätigen.</para>
+        <para>Mit einem Haken bei <literal>Position alle X-Sekunden speichern</literal> wird das GPS Signal in dem eingegebenen Zeitabstand in eine Datei geschrieben. Mit Hilfe dieser Datei kann die gelaufene / gefahrene Route später in einem externen Programm nachvollzogen werden.</para>
       </section>
     </section>
     <section>
@@ -148,6 +149,7 @@
       <para>In diesem Tab kannst Du weitere Look &amp; Feel Einstellungen in CacheWolf vornehmen.</para>
       <para>Bei <literal>Font</literal> stellst Du die allgemeine Schriftgrösse ein, die CacheWolf benutzt. Der Haken bei <literal>PDA hat Schliessen Button</literal> hat zur Folge, dass auf dem PDA rechts oben im CacheWolf Fenster ein &quot;X&quot; erscheint. Klickst Du auf dieses &quot;X&quot; wird CacheWolf beendet, und aus dem Speicher entfernt.</para>
       <para>Der Haken neben <literal>Menü oben</literal> setzt die Menüeinträge im PDA oben, ansonsten erscheinen diese unten :-) Dasselbe gilt für <literal>Tabs oben</literal>. Ein Haken hier setzt die Tabs in den Ansichten oben. Der Haken bei <literal>Status</literal> bewirkt, dass CacheWolf eine Statusleiste unten in der Listenansicht (siehe <xref linkend="liste"/>) anzeigt. </para>
+      <para>In CW können an verschiedenen Stellen Bilder angezeigt werden (z.B. Cachebeschreibung, Spoilerbilder). Diese Bilder werden als Dateien im Profil gespeichert. Wurde eine Bilddatei aus dem Profil gelöscht und ist <literal>Gelöschte Bilder zeigen</literal> angehakt, dann wird statt des Bildes ein Symbol welches auf ein fehlendes Bild hinweist angezeigt. Mit dem Haken bei  <literal>Bilder in Beschreibung anzeigen</literal> werden Bilder die in der Cachebeschreibung vorkommen auch in CW entsprechend angezeigt. Wird der Haken entfernt fehlen diese Bilder, dafür die Anzeigegeschwindigkeit höher. (Siehe <xref linkend="Bilder"/>)</para>
       <para>Bei <literal>Hinweise/Logs</literal> kann man einstellen, wie viele Logs auf der Logseite  (siehe <xref linkend="hintsandlogs"/>) anzeigt werden. Durch die Logseiten kann man mit den &quot;&gt;&gt;&quot; und &quot;&lt;&lt;&quot; Tasten blättern. Unter <literal>Max. logs spidern</literal> wird eingestellt, wieviele Logs maximal je Cache gespidert werden. Diese Anzahl wird beim aktualisieren von Caches und beim Spidern jeweils vorgeschlagen und kann dort von Fall zu Fall direkt geändert werden ohne immer in diesen Einstellungsdialog wechseln zu müssen.Wird hier eine Zahl &lt;6 eingestellt geht das spidern deutlich schneller da nicht immer für jeden Cache die Webseite mit allen Logs geladen werden muss. Wird hier eine Zahl &lt;6 eingestellt geht das spidern deutlich schneller da nicht immer für jeden Cache die Webseite mit allen Logs geladen werden muss. Im Cachewolf - Verzeichnis findest Du eine Datei &quot;pref.xml&quot; in der diese (+weitere) Einstellungen abgespeichert werden. Dort gibt es auch eine Zeile &quot;logkeeping maximum&quot;. Damit kann man die maximale Anzahl an Logs die pro Cache in der Cachwolf-Datenbank gespeichert werden festlegen.  Beim Spidern oder Aktualisieren werden die neuen Logs immer an die schon bestehenden angefügt, so lange bis die  unter &quot;logkeeping maximum&quot; eingestellte Gesamtanzahl erreicht ist. Dann werden die ältesten Logs aus der Datenbank mit den neuen überschrieben. Direkt daneben gibt es den Eintrag &quot;keep own&quot;. Wird dieser auf true gesetzt dann werden eingene Logs auf jeden Fall in der Datenbank gehalten, auch wenn die eingestellte max. Anzahl erreicht ist.</para>
       <para>Mit dem Feld <literal>Beim Spidern aktualisieren</literal> kann man dafür sorgen, daß beim Spidern nicht nur neue Caches erfasst werden, sondern gleichzeitig überprüft wird, ob sich für die vorhandenen Caches in dem Profil der Status (z.B. Archiviert/Disabled) geändert hat. In diesem Fall werden alle Caches mit geändertem Status, je nach Einstellung hier, ebenfalls neu gespidert.</para>
     </section>
@@ -179,7 +181,12 @@
           <para>PL = Polnisch</para>
         </listitem>
       </itemizedlist>
-      <para>Die Sprache kann aus dem Dropdown-Menü ausgewählt werden. Die neu eingestellte Sprache wird im Fall einer Änderung allerdings erst nach einem Neustart benutzt.</para>
+      <para>Die Sprache kann aus dem Dropdown-Menü ausgewählt werden. Die neu eingestellte Sprache wird im Fall einer Änderung allerdings erst nach einem Neustart benutzt.</para>
+      <para>Unter Längeneinheit kann auf die Verwendung von Meilen statt km umgestellt werden.</para>
+      <para>Mit <literal>Sortierung nach Cache gruppiert</literal> wird erreicht, daß bei Sortierung einer Spalte in der Listenansicht immer nur der Hauptwegpunkt eines Caches berücksichtigt wird, die Additional Waypoints werden durch die Sortierung nicht erfasst und bleiben stets unter Ihrem Hauptwegpunkt eingeordnet. Andernfalls werden wirklich alle Zeilen entsprechend sortiert, was aber dazu führen kann, daß die Additional Waypoints an ganz anderer Stelle in der sortierten Liste auftauchen, wie der zugehörige Hauptwegpunkt.</para>
+      <para>Ist <literal>use own symbols</literal> angehakt und befinden sich im Unterverzeichnis &quot;Symbols&quot;  .png-Dateien, werden diese als alternative Symbole in den Cachewolf geladen. Dabei sollte es sich um PNGs der Größe 15x15 handeln. Wichtig ist die korrekte Benennung der Dateien. Falsch benannte Dateien werden ignoriert.
+Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen. Ist keine entsprechende Datei vorhanden, wird das Cachewolf-interne Symbol beibehalten. (Siehe auch die readme.txt in diesem Verzeichnis)</para>
+      <para>Mit <literal>Fehlersuch Modus</literal> werden weitergehende Ausgaben angezeigt, die eine Fehlersuche erleichtern sollen.</para>
     </section>
     <section>
       <title id="einstellungListe">Einstellungen Liste</title>
@@ -198,7 +205,7 @@
     <section>
       <title>Einstellungen T-bugs</title>
       <para>CacheWolf besitzt eine integrierte Travelbug - Verwaltung (siehe <xref linkend="tbugs_verwalten"/>).</para>
-      <para>In diesem Tab kannst Du, wie im vorigen Abschnitt beschrieben, einstellen, welche Spalten in der Travelbugtabelle angezeigt werden sollen und in welcher Reihenfolge diese angezeigt werden.</para>
+      <para>In diesem Tab kannst Du, ähnlich wie im vorigen Abschnitt beschrieben, einstellen, welche Spalten in der Travelbugtabelle angezeigt werden sollen und in welcher Reihenfolge diese angezeigt werden.</para>
       <para>
         <inlinemediaobject>
           <imageobject>
@@ -210,7 +217,7 @@
   </section>
   <section id="DatenImportieren">
     <title id="DatenImport">Cachedaten importieren</title>
-    <para>Programm läuft, Einstellungen erledigt? Gut! Jetzt müssen wir noch an Cache-Daten kommen. CacheWolf liest GPX-Dateien ein. Diese können entweder von <ulink url="http://www.geocaching.com">Geocaching.com</ulink> oder von <ulink url="http://www.opencaching.de">Opencaching.de</ulink> kommen. Alternativ können die Daten auch direkt heruntergeladen (gespidert) werden.</para>
+    <para>Programm läuft, Einstellungen erledigt? Gut! Jetzt müssen wir noch an Cache-Daten kommen. CacheWolf kann unterschiedliche Dateiformate einlesen. Diese können entweder von <ulink url="http://www.geocaching.com">Geocaching.com</ulink> oder von <ulink url="http://www.opencaching.de">Opencaching.de</ulink> kommen. Alternativ können die Daten auch direkt heruntergeladen (gespidert) werden.</para>
     <section>
       <title>Geocaching.com</title>
       <para>Es gibt verschiedene Möglichkeiten an die Daten bei <ulink url="http:\\www.geocaching.com">geocaching.com</ulink> zu kommen: Entweder durch den Import einer GPX Datei, einer LOC Datei oder direkt durch Herunterladen von der geocaching.com Webseite (spidern).</para>
@@ -239,6 +246,7 @@
       </section>
       <section id="DatenImportSpider">
         <title>Direktes herunterladen (spidern)</title>
+        <para>WICHTIG: Durch Anwenden dieser Funktion ruft CW automatisiert die Internetseiten mit den entsprechenden Cachebeschreibungen auf und speichert die dort enthaltenen Daten in seiner Datenbank ab. Dies ist aber lt. den Nutzungsbestimmungen von Geocaching.com verboten. Zuwiederhandlungen können u.U. auch ein Sperren des entspechenden Nutzerkontos bei Geocaching.com zur Folge haben!</para>
         <para>Durch Anwählen von <literal>Anwendung -&gt; Import -&gt; Spider von geocaching.com</literal> wirst Du zuerst aufgefordert Dein Passwort einzugeben. Dies ist das Passwort, das Du für Deinen Account bei geocaching.com nutzt. Deinen Alias hast Du ja bereits in den Einstellungen eingetragen. Nach der Eingabe Deines Passwortes loggt sich CacheWolf auf der geocaching.com Homepage ein und präsentiert dann die Spideroptionen ein einem neuen Fenster:</para>
         <para>
           <inlinemediaobject>
@@ -247,13 +255,13 @@
             </imageobject>
           </inlinemediaobject>
         </para>
-        <para>Ganz oben kann im Drop-Down Feld gewählt werden ob alle Cachetypen gespidert werden sollen oder nur ein bestimmter Cachetyp, z.B. alle Traditionals. Unter <literal>max. Abstand</literal> wird eine Entfernung zum aktuellem Zentrum eingestellt (siehe <xref linkend="zentrum"/>). Cachewolf wird alle Caches im angegebenen Umkreis um das Zentrum herunterladen. Mit der Einstellung <literal>Max. Anzahl </literal> wird die maximale Zahl der Caches die gespidert werden begrenzt. Liegen mehr Caches innerhalb des Spiderradiusses wird das spidern nach der angegebenen Anzahl abgebrochen. Damit soll verhindert werden, daß auf der Webseite von GC zu großer Traffic entsteht. Wird der Haken bei <literal>Bilder downloaden</literal> gesetzt, wird Cachewolf sowohl die Bilder in der Cachebeschreibung als auch die Spoilerbilder herunterladen. Mit dem Haken bei <literal>TBs downloaden </literal>werden neben den Cachedaten auch die evtl. in den Caches enthaltenen Trackable Items wie Geocoins oder Travelbugs heruntergeladen und in dem CW-Profil verwaltet. Der Download von bereits gefundenen Caches kann durch Auswählen der Option <literal>Gefundene Caches nicht laden verhindert</literal> werden.</para>
+        <para>Ganz oben kann im Drop-Down Feld gewählt werden ob alle Cachetypen gespidert werden sollen oder nur ein bestimmter Cachetyp, z.B. alle Traditionals. Unter <literal>max. Abstand</literal> wird eine Entfernung zum aktuellem Zentrum eingestellt (siehe <xref linkend="zentrum"/>). Cachewolf wird alle Caches im angegebenen Umkreis um das Zentrum herunterladen. Mit der Einstellung <literal>Max. Anzahl </literal> wird die maximale Zahl der Caches die gespidert werden begrenzt. Liegen mehr Caches innerhalb des Spiderradiusses wird das spidern nach der angegebenen Anzahl abgebrochen. Damit soll verhindert werden, daß auf der Webseite von GC zu großer Traffic entsteht. (Siehe auch WICHTIG ganz oben in diesem Kapitel! Wird der Haken bei <literal>Bilder downloaden</literal> gesetzt, wird Cachewolf sowohl die Bilder in der Cachebeschreibung als auch die Spoilerbilder herunterladen. Mit dem Haken bei <literal>TBs downloaden </literal>werden neben den Cachedaten auch die evtl. in den Caches enthaltenen Trackable Items wie Geocoins oder Travelbugs heruntergeladen und in dem CW-Profil verwaltet. Der Download von bereits gefundenen Caches kann durch Auswählen der Option <literal>Gefundene Caches nicht laden verhindert</literal> werden.</para>
         <para>Mit <literal>OK</literal> wird der Spider gestartet. Je nach Entfernung und Cache-Dichte wird das Spidern nun einige Zeit in Anspruch nehmen.</para>
       </section>
     </section>
     <section>
       <title>Opencaching.de</title>
-      <para>Alternativ zu geocaching.com können Caches auch von <ulink url="http://opencaching.de">opencaching.de</ulink> importiert werden. Wie bereits im vorangegangen Abschnitt beschrieben, können die benötigten Daten entweder über GPX-Dateien oder durch direktes Herunterladen bezogen werden.</para>
+      <para>Alternativ zu geocaching.com können Caches auch von <ulink url="http://opencaching.de">opencaching.de</ulink> importiert werden. Wie bereits im vorangegangen Abschnitt beschrieben, können die benötigten Daten entweder über GPX-Dateien oder durch direktes Herunterladen bezogen werden. Dies ist  bei opencaching.de im Gegensatz zu geocaching.com nicht verboten.</para>
       <section id="DatenImportGPX2">
         <title id="OpenGPX">Importieren einer bereits heruntergeladenen GPX-Datei</title>
         <para>Auf der Seite von Opencaching.de hat man die Option eine GPX-Datei herunterzuladen. Diese Option befindet sich am Ende der Suchergebnisseite. Die ZIP-Datei einfach in irgendein Verzeichnis kopieren. Der GPX-Import erkennt automatisch dieses Format. Es ist nicht notwendig die Datei zu entpacken! Bei opencaching.de werden in der aktuellen Version alle Bilder geladen.</para>
