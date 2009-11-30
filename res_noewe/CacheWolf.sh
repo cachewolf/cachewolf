@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cd "$(dirname "$0")"
-java -jar CacheWolf.jar &
+java -Xms64M -Xmx1024M -cp CacheWolf.jar ewe.applet.Applet CacheWolf.CacheWolf &
