@@ -409,7 +409,7 @@
     Schriftgröße der Beschreibung vergrößern und verkleinern.</para>
   </section>
   <section>
-    <title>Bilder</title>
+    <title id="Bilder">Bilder</title>
     <para>Falls Bilder in der Cachebeschreibung vorhanden sind, werden diese
     in der Bilder–Ansicht als „Thumbnails” dargestellt. Ein Klick auf ein Bild
     öffnet ein neues Fenster. In diesem Fenster wird das Bild so dargestellt,
