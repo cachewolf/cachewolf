@@ -207,7 +207,7 @@ public class TPLExporter {
 						Regex dec = new Regex("[,.]",myFilter.decSep);
 						if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
 						varParams = new Hashtable();
-						varParams.put("TYPE", CacheType.cw2ExportString(ch.getType()));
+						varParams.put("TYPE", CacheType.sym2GpxString(ch.getType()));
 						varParams.put("SHORTTYPE", CacheType.getExportShortId(ch.getType()));
 						varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 						varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.getCacheSize()));
@@ -217,6 +217,9 @@ public class TPLExporter {
 						else {
 							varParams.put("MAINWP", "");
 						}
+						if (ch.isCustomWpt()) {
+
+						}
 						String wp = ch.getWayPoint();
 						varParams.put("WAYPOINT", wp);
 						int wpl = wp.length();
@@ -224,15 +227,15 @@ public class TPLExporter {
 						varParams.put("SHORTWAYPOINT", wp.substring(wps, wpl));
 						varParams.put("OWNER", ch.getCacheOwner());
 						byte chGetHard=ch.getHard();
-						varParams.put("DIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetHard < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(chGetHard)));
+						varParams.put("DIFFICULTY", (ch.isAddiWpt() || ch.isCustomWpt() || chGetHard < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(chGetHard)));
 						String sHard = Byte.toString(chGetHard);
-						varParams.put("SHORTDIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetHard < 0)?"":sHard);
-						varParams.put("SHDIFFICULTY", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetHard < 0)?"":sHard.substring(0,1));
+						varParams.put("SHORTDIFFICULTY", (ch.isAddiWpt() || ch.isCustomWpt() || chGetHard < 0)?"":sHard);
+						varParams.put("SHDIFFICULTY", (ch.isAddiWpt() || ch.isCustomWpt() || chGetHard < 0)?"":sHard.substring(0,1));
 						byte chGetTerrain=ch.getTerrain();
-						varParams.put("TERRAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetTerrain < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(chGetTerrain)));
+						varParams.put("TERRAIN", (ch.isAddiWpt() || ch.isCustomWpt() || chGetTerrain < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(chGetTerrain)));
 						String sTerrain = Byte.toString(chGetTerrain);
-						varParams.put("SHORTTERAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetTerrain < 0)?"":sTerrain);
-						varParams.put("SHTERRAIN", (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType() || chGetTerrain < 0)?"":sTerrain.substring(0,1));
+						varParams.put("SHORTTERAIN", (ch.isAddiWpt() || ch.isCustomWpt() || chGetTerrain < 0)?"":sTerrain);
+						varParams.put("SHTERRAIN", (ch.isAddiWpt() || ch.isCustomWpt() || chGetTerrain < 0)?"":sTerrain.substring(0,1));
 						varParams.put("DISTANCE", dec.replaceAll(ch.getDistance()));
 						varParams.put("BEARING", ch.bearing);
 						varParams.put("LATLON", ch.LatLon);

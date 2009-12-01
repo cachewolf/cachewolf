@@ -6,7 +6,7 @@ import CacheWolf.*;
  * Class to export the cache database (index) to an CSV File which can bei easy
  * importet bei MS AutoRoute (testet with AR 2001 German) Format of the file:
  * Name;Breitengrad;Längengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink
- * 
+ *
  */
 public class MSARCSVExporter extends Exporter {
 
@@ -26,7 +26,7 @@ public class MSARCSVExporter extends Exporter {
 		StringBuffer str = new StringBuffer(200);
 		str.append("\"" + ch.getWayPoint() + " - " + ch.getCacheName() + "\";");
 		str.append(lat + ";" + lon +";");
-		str.append("\"" + CacheType.cw2ExportString(ch.getType())+ "\";");
+		str.append("\"" + CacheType.sym2GpxString(ch.getType())+ "\";");
 		str.append("\"" + CacheSize.cw2ExportString(ch.getCacheSize()) + "\";");
 		str.append("\"" + ch.getWayPoint() + "\";");
 		str.append("\"" + ch.getDateHidden() + "\";");
