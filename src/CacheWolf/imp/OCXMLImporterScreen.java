@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package CacheWolf.imp;
 
@@ -14,7 +14,7 @@ import ewe.ui.*;
 
 /**
  * @author pfeffer
- * This Class is the Dialog for Download from Opencaching.de 
+ * This Class is the Dialog for Download from Opencaching.de
  * is called from OCXMLImporter
  * 20061209 Bugfix: Checking for uninitialised missingCheckBox
  */
@@ -43,36 +43,36 @@ public class OCXMLImporterScreen extends Form {
 	public static final int TYPE = 256;
 	public static final int HOST = 512;
 
-	
+
 	public OCXMLImporterScreen(String title, int options) {
 		super();
 		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
-		
+
 		isGC = ((options & ISGC) > 0);
-		
+
 		this.title = title;
-				
+
 		if((options & HOST) > 0){
 			String[] hosts = new String[] {OCXMLImporter.OPENCACHING_DE_HOST, OCXMLImporter.OPENCACHING_CZ_HOST, OCXMLImporter.OPENCACHING_PL_HOST, OCXMLImporter.OPENCACHING_UK_HOST};
 			domains = new mChoice(hosts,0);
 			domains.setTextSize(25, 1);
 			this.addLast(domains, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
-		
+
 		if ((options & TYPE) > 0) {
 			this.addLast( chcType = new mChoice(new String[] {
-					MyLocale.getMsg(1627,"All caches"),	
-					CacheType.CW_GUISTR_TRADI,
-					CacheType.CW_GUISTR_MULTI,
-					CacheType.CW_GUISTR_VIRTUAL,
-					CacheType.CW_GUISTR_LETTERBOX,
-					CacheType.CW_GUISTR_EVENT,
-					CacheType.CW_GUISTR_MEGAEVENT,
-					CacheType.CW_GUISTR_WEBCAM,
-					CacheType.CW_GUISTR_UNKNOWN,
-					CacheType.CW_GUISTR_CITO,
-					CacheType.CW_GUISTR_EARTH,
-					CacheType.CW_GUISTR_WHEREIGO
+					MyLocale.getMsg(1627,"All caches"),
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_TRADITIONAL)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_MULTI)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_VIRTUAL)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_LETTERBOX)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_EVENT)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_MEGA_EVENT)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_WEBCAM)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_UNKNOWN)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_CITO)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_EARTH)],
+					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_WHEREIGO)],
 				},0), CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		}
 
@@ -95,7 +95,7 @@ public class OCXMLImporterScreen extends Form {
 			this.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			this.addLast(distUnit = new mLabel(" km/mi."),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
-		
+
 		if ((options & MAXNUMBER) > 0) {
 			this.addNext(maxNumberLbl = new mLabel(MyLocale.getMsg(1623,"Max. number:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			maxNumberInput = new mInput();
@@ -107,7 +107,7 @@ public class OCXMLImporterScreen extends Form {
 			this.addNext(maxNumberInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			this.addLast( new mLabel(MyLocale.getMsg(1624," caches")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
-		
+
 		if ((options & MAXLOGS) > 0) {
 			this.addNext(new mLabel(MyLocale.getMsg(1626,"Max. logs:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			maxLogsInput = new mInput();
@@ -128,7 +128,7 @@ public class OCXMLImporterScreen extends Form {
 			travelbugsCheckBox.setState(pref.downloadTBs);
 			this.addLast(travelbugsCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
-		
+
 		if((options & INCLUDEFOUND) > 0){
 			foundCheckBox = new mCheckBox();
 			foundCheckBox.setText(MyLocale.getMsg(1622,"Exclude found caches"));
@@ -168,7 +168,7 @@ public class OCXMLImporterScreen extends Form {
 		}
 		super.onEvent(ev);
 	}
-	
+
 	public String getCacheTypeRestriction(SpiderProperties p){
 		String cacheTypeRestriction = "";
 
@@ -178,7 +178,7 @@ public class OCXMLImporterScreen extends Form {
 				case  0:
 					cacheTypeRestriction = "";
 					break;
-				case  1: 
+				case  1:
 					cacheTypeRestriction = p.getProp("onlyTraditional");
 					break;
 				case  2:
@@ -219,7 +219,7 @@ public class OCXMLImporterScreen extends Form {
 		}
 		return cacheTypeRestriction;
 	}
-	
+
 	public byte getRestrictedCacheType(SpiderProperties p){
 		byte RestrictedType = CacheType.CW_TYPE_ERROR;
 
@@ -229,7 +229,7 @@ public class OCXMLImporterScreen extends Form {
 				case  0:
 					RestrictedType = CacheType.CW_TYPE_ERROR;
 					break;
-				case  1: 
+				case  1:
 					RestrictedType = CacheType.CW_TYPE_TRADITIONAL;
 					break;
 				case  2:

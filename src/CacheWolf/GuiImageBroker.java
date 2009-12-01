@@ -23,53 +23,53 @@ public final class GuiImageBroker {
 	 * @see CacheTypes
 	 */
 	private static final Image[] TYPEIMAGES = {
-		new Image(CacheType.CW_GUIIMG_CUSTOM),		// 0
-		new Image(CacheType.CW_GUIIMG_APE),			// 1
-		new Image(CacheType.CW_GUIIMG_CITO),		// 2
-		new Image(CacheType.CW_GUIIMG_DRIVE_IN),	// 3
-		new Image(CacheType.CW_GUIIMG_EARTH),		// 4
-		new Image(CacheType.CW_GUIIMG_EVENT),		// 5
-		new Image(CacheType.CW_GUIIMG_FINAL),		// 6
-		new Image(CacheType.CW_GUIIMG_LETTERBOX),	// 7
-		new Image(CacheType.CW_GUIIMG_LOCATIONLESS),// 8
-		new Image(CacheType.CW_GUIIMG_MAZE),		// 9
-		new Image(CacheType.CW_GUIIMG_MEGA_EVENT),	// 10
-		new Image(CacheType.CW_GUIIMG_MULTI),		// 11
-		new Image(CacheType.CW_GUIIMG_PARKING),		// 12
-		new Image(CacheType.CW_GUIIMG_QUESTION),	// 13
-		new Image(CacheType.CW_GUIIMG_REFERENCE),	// 14
-		new Image(CacheType.CW_GUIIMG_STAGE),		// 15
-		new Image(CacheType.CW_GUIIMG_TRADITIONAL),	// 16
-		new Image(CacheType.CW_GUIIMG_TRAILHEAD),	// 17
-		new Image(CacheType.CW_GUIIMG_UNKNOWN),		// 18
-		new Image(CacheType.CW_GUIIMG_VIRTUAL),		// 19
-		new Image(CacheType.CW_GUIIMG_WEBCAM),		// 20
-		new Image(CacheType.CW_GUIIMG_WHEREIGO)		// 21
+		new Image(CacheType.CT_FILENAME[0]),
+		new Image(CacheType.CT_FILENAME[1]),
+		new Image(CacheType.CT_FILENAME[2]),
+		new Image(CacheType.CT_FILENAME[3]),
+		new Image(CacheType.CT_FILENAME[4]),
+		new Image(CacheType.CT_FILENAME[5]),
+		new Image(CacheType.CT_FILENAME[6]),
+		new Image(CacheType.CT_FILENAME[7]),
+		new Image(CacheType.CT_FILENAME[8]),
+		new Image(CacheType.CT_FILENAME[9]),
+		new Image(CacheType.CT_FILENAME[10]),
+		new Image(CacheType.CT_FILENAME[11]),
+		new Image(CacheType.CT_FILENAME[12]),
+		new Image(CacheType.CT_FILENAME[13]),
+		new Image(CacheType.CT_FILENAME[14]),
+		new Image(CacheType.CT_FILENAME[15]),
+		new Image(CacheType.CT_FILENAME[16]),
+		new Image(CacheType.CT_FILENAME[17]),
+		new Image(CacheType.CT_FILENAME[18]),
+		new Image(CacheType.CT_FILENAME[19]),
+		new Image(CacheType.CT_FILENAME[20]),
+		new Image(CacheType.CT_FILENAME[21]),
 	};
 
 	private static final Image[] sizeImages = {
-		new Image(CacheType.CW_GUIIMG_CUSTOM),		// 0
-		new Image(CacheType.CW_GUIIMG_APE),			// 1
-		new Image(CacheType.CW_GUIIMG_CITO),		// 2
-		new Image(CacheType.CW_GUIIMG_DRIVE_IN),	// 3
-		new Image(CacheType.CW_GUIIMG_EARTH),		// 4
-		new Image(CacheType.CW_GUIIMG_EVENT),		// 5
-		new Image(CacheType.CW_GUIIMG_FINAL),		// 6
-		new Image(CacheType.CW_GUIIMG_LETTERBOX),	// 7
-		new Image(CacheType.CW_GUIIMG_LOCATIONLESS),// 8
-		new Image(CacheType.CW_GUIIMG_MAZE),		// 9
-		new Image(CacheType.CW_GUIIMG_MEGA_EVENT),	// 10
-		new Image(CacheType.CW_GUIIMG_MULTI),		// 11
-		new Image(CacheType.CW_GUIIMG_PARKING),		// 12
-		new Image(CacheType.CW_GUIIMG_QUESTION),	// 13
-		new Image(CacheType.CW_GUIIMG_REFERENCE),	// 14
-		new Image(CacheType.CW_GUIIMG_STAGE),		// 15
-		new Image(CacheType.CW_GUIIMG_TRADITIONAL),	// 16
-		new Image(CacheType.CW_GUIIMG_TRAILHEAD),	// 17
-		new Image(CacheType.CW_GUIIMG_UNKNOWN),		// 18
-		new Image(CacheType.CW_GUIIMG_VIRTUAL),		// 19
-		new Image(CacheType.CW_GUIIMG_WEBCAM),		// 20
-		new Image(CacheType.CW_GUIIMG_WHEREIGO)		// 21
+		new Image(CacheType.CT_FILENAME[0]),
+		new Image(CacheType.CT_FILENAME[1]),
+		new Image(CacheType.CT_FILENAME[2]),
+		new Image(CacheType.CT_FILENAME[3]),
+		new Image(CacheType.CT_FILENAME[4]),
+		new Image(CacheType.CT_FILENAME[5]),
+		new Image(CacheType.CT_FILENAME[6]),
+		new Image(CacheType.CT_FILENAME[7]),
+		new Image(CacheType.CT_FILENAME[8]),
+		new Image(CacheType.CT_FILENAME[9]),
+		new Image(CacheType.CT_FILENAME[10]),
+		new Image(CacheType.CT_FILENAME[11]),
+		new Image(CacheType.CT_FILENAME[12]),
+		new Image(CacheType.CT_FILENAME[13]),
+		new Image(CacheType.CT_FILENAME[14]),
+		new Image(CacheType.CT_FILENAME[15]),
+		new Image(CacheType.CT_FILENAME[16]),
+		new Image(CacheType.CT_FILENAME[17]),
+		new Image(CacheType.CT_FILENAME[18]),
+		new Image(CacheType.CT_FILENAME[19]),
+		new Image(CacheType.CT_FILENAME[20]),
+		new Image(CacheType.CT_FILENAME[21]),
 	};
 
 	/** thou shallst not instantiate this object */

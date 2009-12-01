@@ -38,7 +38,7 @@ public class HTMLExporter{
 		profile=prof;
 		cacheDB = profile.cacheDB;
 	}
-	
+
 	public void doIt(){
 		CacheHolderDetail det;
 		CacheHolder ch;
@@ -69,7 +69,7 @@ public class HTMLExporter{
 
 			//Generate index page
 			int counter = cacheDB.countVisible();
-			
+
 			pbf.showMainTask = false;
 			pbf.setTask(h,"Exporting ...");
 			pbf.exec();
@@ -87,18 +87,18 @@ public class HTMLExporter{
 					}
 					det=ch.getCacheDetails(false,false);
 					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.cw2ExportString(ch.getType()));
+					varParams.put("TYPE", CacheType.sym2GpxString(ch.getType()));
 					varParams.put("WAYPOINT", ch.getWayPoint());
 					varParams.put("NAME", ch.getCacheName());
 					varParams.put("OWNER", ch.getCacheOwner());
-					if (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType()) {
+					if (ch.isAddiWpt() || ch.isCustomWpt()) {
 						varParams.put("SIZE", "");
 						varParams.put("DIFFICULTY", "");
 						varParams.put("TERRAIN", "");
 					} else {
 						varParams.put("SIZE", CacheSize.isValidSize(ch.getCacheSize())?
 								CacheSize.cw2ExportString(ch.getCacheSize()):"");
-						varParams.put("DIFFICULTY", CacheTerrDiff.isValidTD(ch.getHard())? 
+						varParams.put("DIFFICULTY", CacheTerrDiff.isValidTD(ch.getHard())?
 								CacheTerrDiff.longDT(ch.getHard()):"");
 						varParams.put("TERRAIN", CacheTerrDiff.isValidTD(ch.getTerrain())?
 								CacheTerrDiff.longDT(ch.getTerrain()):"");
@@ -132,7 +132,7 @@ public class HTMLExporter{
 							}
 							page_tpl.setParam("HINTS", det.Hints);
 							page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(det.Hints));
-							
+
 							StringBuffer sb=new StringBuffer(2000);
 							for(int j = 0; j<det.CacheLogs.size(); j++){
 								sb.append(STRreplace.replace(det.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
@@ -140,10 +140,10 @@ public class HTMLExporter{
 								icon=det.CacheLogs.getLog(j).getIcon();
 								if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
 							}
-							
+
 							page_tpl.setParam("LOGS", sb.toString());
 							page_tpl.setParam("NOTES", STRreplace.replace(det.getCacheNotes(), "\n","<br>"));
-							
+
 							cacheImg.clear();
 							for(int j = 0; j<det.images.size(); j++){
 								imgParams = new Hashtable();
@@ -156,7 +156,7 @@ public class HTMLExporter{
 									exportErrors++;
 							}
 							page_tpl.setParam("cacheImg", cacheImg);
-							
+
 							// Log images
 							logImg.clear();
 							for(int j = 0; j<det.logImages.size(); j++){
@@ -170,7 +170,7 @@ public class HTMLExporter{
 									exportErrors++;
 							}
 							page_tpl.setParam("logImg", logImg);
-							
+
 							// User images
 							usrImg.clear();
 							for(int j = 0; j<det.userImages.size(); j++){
@@ -184,11 +184,11 @@ public class HTMLExporter{
 									exportErrors++;
 							}
 							page_tpl.setParam("userImg", usrImg);
-							
+
 							// Map images
 							mapImg.clear();
 							mapImgParams = new Hashtable();
-							
+
 							String mapImgFile = new String(ch.getWayPoint() + "_map.gif");
 							// check if map file exists
 							File test = new File(profile.dataDir + mapImgFile);
@@ -200,7 +200,7 @@ public class HTMLExporter{
 									mapImg.add(mapImgParams);
 								else
 									exportErrors++;
-								
+
 								mapImgParams = new Hashtable();
 								mapImgFile = ch.getWayPoint() + "_map_2.gif";
 								mapImgParams.put("FILE", mapImgFile);
@@ -209,7 +209,7 @@ public class HTMLExporter{
 									mapImg.add(mapImgParams);
 								else
 									exportErrors++;
-		
+
 								page_tpl.setParam("mapImg", mapImg);
 							}
 						} else {
@@ -224,7 +224,7 @@ public class HTMLExporter{
 							page_tpl.setParam("mapImg", ""); // ???
 							exportErrors++;
 						}
-						
+
 						PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getWayPoint()+".html")));
 						pagefile.print(page_tpl.output());
 						pagefile.close();
@@ -244,15 +244,15 @@ public class HTMLExporter{
 				icon=(String) logIcons.elementAt(j);
 				if (!DataMover.copy(FileBase.getProgramDirectory() + "/"+icon,targetDir + icon))
 					exportErrors++;
-				
+
 			}
 			if (!DataMover.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif"))
 				exportErrors++;
-			
+
 			try{
 				Template tpl = new Template(template_init_index);
 				tpl.setParam("cache_index", cache_index);
-				PrintWriter detfile; 
+				PrintWriter detfile;
 				detfile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + "/index.html")));
 				detfile.print(tpl.output());
 				detfile.close();
@@ -270,16 +270,16 @@ public class HTMLExporter{
 				Vm.debug("Problem writing HTML files\n");
 				e.printStackTrace();
 			}//try
-			
+
 		}//if
 		pbf.exit(0);
-		
+
 		if (exportErrors > 0) {
 			new MessageBox("Export Error", exportErrors+" errors during export. See log for details.", FormBase.OKB).execute();
 		}
 
 	}
-	
+
 	/**
 	 * Modify the image links in the long description so that they point to image files in the local directory
 	 * Also copy the image file to the target directory so that it can be displayed.
@@ -322,10 +322,10 @@ public class HTMLExporter{
 		if (start>=0) s.append(chD.LongDescription.substring(start));
 		return s.toString();
 	}
-	
+
 	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field){
-		PrintWriter detfile; 
-		
+		PrintWriter detfile;
+
 		list.sort(new HTMLComparer(field),false);
 		try {
 			detfile = new PrintWriter(new BufferedWriter(new FileWriter(file)));
@@ -337,11 +337,11 @@ public class HTMLExporter{
 		}
 	}
 
-	
+
 	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field, boolean fullCompare){
 		Vector navi_index;
-		PrintWriter detfile; 
-		
+		PrintWriter detfile;
+
 		list.sort(new HTMLComparer(field),false);
 		navi_index = addAnchorString(list,field, fullCompare);
 		if (navi_index != null){
@@ -356,11 +356,11 @@ public class HTMLExporter{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field, double diff){
 		Vector navi_index;
-		PrintWriter detfile; 
-		
+		PrintWriter detfile;
+
 		list.sort(new HTMLComparer(field),false);
 		navi_index = addAnchorString(list,field, diff);
 		if (navi_index != null){
@@ -374,7 +374,7 @@ public class HTMLExporter{
 			Vm.debug("Problem writing HTML files\n");
 			e.printStackTrace();
 		}
-		
+
 	}
 
 
@@ -382,14 +382,14 @@ public class HTMLExporter{
 		Vector topIndex = new Vector();
 		Hashtable topIndexParms, currEntry;
 		String lastValue, currValue;
-		
+
 		if (list.size() == 0) return null;
-		
+
 		currEntry = (Hashtable) list.get(0);
 		lastValue = (String) currEntry.get(field);
 		if (lastValue == null || lastValue.length() == 0) lastValue = "  ";
 		lastValue = lastValue.toUpperCase();
-		
+
 		for (int i=1; i<list.size(); i++){
 			currEntry = (Hashtable) list.get(i);
 			currValue = (String) currEntry.get(field);
@@ -398,7 +398,7 @@ public class HTMLExporter{
 			try {
 				if (fullCompare) {
 					if (lastValue.compareTo(currValue)!= 0){
-						// Values for navigation line 
+						// Values for navigation line
 						topIndexParms = new Hashtable();
 						topIndexParms.put("HREF", Convert.toString(i));
 						topIndexParms.put("TEXT", currValue);
@@ -415,7 +415,7 @@ public class HTMLExporter{
 				}
 				else {
 					if (lastValue.charAt(0)!= currValue.charAt(0)){
-						// Values for navigation line 
+						// Values for navigation line
 						topIndexParms = new Hashtable();
 						topIndexParms.put("HREF", Convert.toString(i));
 						topIndexParms.put("TEXT", currValue.charAt(0)+ " ");
@@ -442,17 +442,17 @@ public class HTMLExporter{
 		Vector topIndex = new Vector();
 		Hashtable topIndexParms, currEntry;
 		double lastValue, currValue;
-		
+
 		if (list.size() == 0) return null;
-		
+
 		currEntry = (Hashtable) list.get(0);
 		lastValue = Common.parseDouble((String) currEntry.get(field)) + diff;
-		
+
 		for (int i=1; i<list.size(); i++){
 			currEntry = (Hashtable) list.get(i);
 			currValue = Common.parseDouble((String) currEntry.get(field));
 			if (currValue >= lastValue ){
-				// Values for navigation line 
+				// Values for navigation line
 				topIndexParms = new Hashtable();
 				topIndexParms.put("HREF", Convert.toString(i));
 				topIndexParms.put("TEXT", Convert.toString(lastValue));
@@ -482,7 +482,7 @@ public class HTMLExporter{
 		public HTMLComparer (String what){
 			this.compareWhat = what;
 		}
-		
+
 		public int compare(Object o1, Object o2){
 			Hashtable hash1 = (Hashtable)o1;
 			Hashtable hash2 = (Hashtable)o2;
@@ -491,12 +491,12 @@ public class HTMLExporter{
 
 			str1 = hash1.get(compareWhat).toString().toLowerCase();
 			str2 = hash2.get(compareWhat).toString().toLowerCase();
-			
+
 			if (this.compareWhat.equals("WAYPOINT")){
 				str1 = hash1.get(compareWhat).toString().substring(2).toLowerCase();
 				str2 = hash2.get(compareWhat).toString().substring(2).toLowerCase();
 			}
-			
+
 			if (this.compareWhat.equals("DISTANCE")){
 				dbl1 = Common.parseDouble(str1.substring(0,str1.length()-3));
 				dbl2 = Common.parseDouble(str2.substring(0,str2.length()-3));
@@ -510,5 +510,5 @@ public class HTMLExporter{
 		}
 	}
 
-	
+
 }

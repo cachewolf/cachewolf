@@ -28,12 +28,12 @@ import ewe.util.zip.ZipFile;
 
 /**
 *	Class to export the cache database (index) to an KML-File
-*	which can be read by Google Earth   
-*   
+*	which can be read by Google Earth
+*
 */
 public class KMLExporter extends Exporter {
-	private static final String COLOR_FOUND = "ff98fb98"; 
-	private static final String COLOR_OWNED = "ffffaa55"; 
+	private static final String COLOR_FOUND = "ff98fb98";
+	private static final String COLOR_OWNED = "ffffaa55";
 	private static final String COLOR_AVAILABLE = "ffffffff";
 	private static final String COLOR_NOT_AVAILABLE = "ff0000ff";
 
@@ -43,8 +43,8 @@ public class KMLExporter extends Exporter {
 	static final int OWNED = 2;
 	static final int NOT_AVAILABLE = 3;
 	static final int UNKNOWN = 4;
-	
-	
+
+
 	String []categoryNames = {"Available","Found", "Owned", "Not Available", "UNKNOWN"};
 	Hashtable [] outCacheDB = new Hashtable[categoryNames.length];
 
@@ -54,7 +54,7 @@ public class KMLExporter extends Exporter {
 		this.setHowManyParams(LAT_LON);
 	}
 
-	
+
 	public KMLExporter(Preferences p, Profile prof){
 			super();
 			this.setMask("*.kml");
@@ -67,7 +67,7 @@ public class KMLExporter extends Exporter {
 		CacheHolder addiWpt;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
-		
+
 		if (variant == ASK_FILE) {
 			outFile = getOutputFile();
 			if (outFile == null) return;
@@ -83,7 +83,7 @@ public class KMLExporter extends Exporter {
 		int expCount = 0;
 		copyIcons(outFile.getParent());
 		buildOutDB();
-		
+
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 			str = this.header();
@@ -96,13 +96,13 @@ public class KMLExporter extends Exporter {
 				outp.print(startFolder(categoryNames[cat]));
 
 				Vector tmp;
-				MapEntry entry; 
+				MapEntry entry;
 				while (outLoop.hasNext()){
 					entry = (MapEntry) outLoop.next();
 					tmp = (Vector)entry.getValue();
 					// skip over empty cachetypes
 					if (tmp.size() == 0) continue;
-					outp.print(startFolder(CacheType.cw2ExportString(new Integer((String)entry.getKey()).byteValue())));
+					outp.print(startFolder(CacheType.sym2GpxString(new Integer((String)entry.getKey()).byteValue())));
 
 					for(int i = 0; i<tmp.size(); i++){
 						ch = (CacheHolder) tmp.get(i);
@@ -110,7 +110,7 @@ public class KMLExporter extends Exporter {
 						expCount++;
 						h.progress = (float)expCount/(float)counter;
 						h.changed();
-						
+
 						if (ch.pos.isValid()){
 							str = record(ch, ch.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator),
 								     ch.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
@@ -130,7 +130,7 @@ public class KMLExporter extends Exporter {
 											addiWpt.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 									if (str != null) outp.print(str);
 								}
-								
+
 							}
 							if (createdAdditionalWaypointsFolder) {
 								outp.print(endFolder());// addi wpts
@@ -141,7 +141,7 @@ public class KMLExporter extends Exporter {
 				}
 				outp.print(endFolder());// category
 			}
-			
+
 			str = trailer();
 			if (str != null) outp.print(str);
 			outp.close();
@@ -152,14 +152,14 @@ public class KMLExporter extends Exporter {
 		//try
 
 	}
-	
+
 	private void buildOutDB(){
 		CacheHolder ch;
 		Vector tmp;
 		Iterator categoryLoop;
 		MapEntry entry;
 		boolean foundOne;
-		
+
 		// create the roots for the different categories
 		for (int i = 0; i < categoryNames.length; i++) {
 			outCacheDB[i] = new Hashtable();
@@ -179,11 +179,11 @@ public class KMLExporter extends Exporter {
 				else if (ch.is_archived() || !ch.is_available()){ tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(String.valueOf(ch.getType()));}
 				else if (ch.is_available()){ tmp = (Vector) outCacheDB[AVAILABLE].get(String.valueOf(ch.getType()));}
 				else { tmp = (Vector) outCacheDB[UNKNOWN].get(String.valueOf(ch.getType()));}
-				
+
 				tmp.add(ch);
 			}
 		}
-		
+
 		//eleminate empty categories
 		for (int i = 0; i < categoryNames.length; i++) {
 			categoryLoop = outCacheDB[i].entries();
@@ -200,14 +200,14 @@ public class KMLExporter extends Exporter {
 			// set hashtable for that category to null
 			if (!foundOne)outCacheDB[i] = null;
 		}
-		
+
 
 	}
-	
+
 	private String startFolder(String name){
 		return startFolder(name, true);
 	}
-	
+
 	private String startFolder(String name, boolean open){
 		StringBuffer strBuf = new StringBuffer(200);
 		strBuf.append("<Folder>\r\n");
@@ -218,7 +218,7 @@ public class KMLExporter extends Exporter {
 	}
 
 	private String endFolder() {
-		
+
 		return "</Folder>\r\n";
 	}
 
@@ -227,7 +227,7 @@ public class KMLExporter extends Exporter {
 			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator + "exporticons" + FileBase.separator + "GoogleEarth.zip");
 			ZipEntry zipEnt;
 			int len;
-			String fileName; 
+			String fileName;
 
 			for (int i = 0; i < CacheType.guiTypeStrings().length; i++) {
 				fileName = CacheType.typeImageForId(CacheType.guiSelect2Cw(i));
@@ -252,16 +252,16 @@ public class KMLExporter extends Exporter {
 			}
 	}
 
-	
+
 	public String header () {
 		StringBuffer strBuf = new StringBuffer(200);
-				
+
 		strBuf.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
 		strBuf.append("<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n");
 		strBuf.append("<Folder>\r\n");
 		strBuf.append("<name>CacheWolf</name>\r\n");
 		strBuf.append("<open>1</open>\r\n");
-	
+
 		return strBuf.toString();
 	}
 
@@ -269,7 +269,7 @@ public class KMLExporter extends Exporter {
 	public String record(CacheHolder ch, String lat, String lon){
 		StringBuffer strBuf = new StringBuffer(200);
 		CacheHolderDetail det = ch.getExistingDetails();
-		
+
 		strBuf.append("   <Placemark>\r\n");
 		if (det.URL != null){
 			strBuf.append("      <description>"+SafeXML.clean(det.URL)+"</description>\r\n");
@@ -295,10 +295,10 @@ public class KMLExporter extends Exporter {
 		strBuf.append("      </LabelStyle>\r\n");
 		strBuf.append("      </Style>\r\n");
 		strBuf.append("   </Placemark>\r\n");
-	
+
 		return strBuf.toString();
 	}
-	
+
 	public String trailer(){
 		StringBuffer strBuf = new StringBuffer(50);
 
@@ -307,13 +307,13 @@ public class KMLExporter extends Exporter {
 
 		return strBuf.toString();
 	}
-	
+
 	private String getColor(CacheHolder ch){
 		if (ch.is_found()) return COLOR_FOUND;
 		if (ch.is_owned()) return COLOR_OWNED;
 		if (ch.is_archived() || !ch.is_available()) return COLOR_NOT_AVAILABLE;
-		
+
 		return COLOR_AVAILABLE;
 	}
-	
+
 }

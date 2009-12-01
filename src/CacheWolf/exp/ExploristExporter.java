@@ -96,7 +96,7 @@ public class ExploristExporter {
 			doIt(null);
 		}
 	}
-	
+
 	/**
 	 * Does the most work for exporting data
 	 */
@@ -167,7 +167,7 @@ public class ExploristExporter {
 
 	/**
 	 * uses a filechooser to get the name of the export file
-	 * 
+	 *
 	 * @return
 	 */
 	public File getOutputFile() {
@@ -187,7 +187,7 @@ public class ExploristExporter {
 
 	/**
 	 * this method can be overided by an exporter class
-	 * 
+	 *
 	 * @param ch
 	 *            cachedata
 	 * @return formated cache data
@@ -223,28 +223,28 @@ public class ExploristExporter {
 			} else if (ch.getType() == 51) {
 				add = "St:";
 			} else if (ch.getType() == 52) {
-				add = "Qu:"; 
-			} else if (ch.getType() == 53) {	
+				add = "Qu:";
+			} else if (ch.getType() == 53) {
 				add = "Fi:";
 			} else if (ch.getType() == 54) {
 				add = "Tr:";
-			} else if (ch.getType() == 55) {	
+			} else if (ch.getType() == 55) {
 				add = "Re:";
 			}
 			sb.append(add).append(removeCommas(ch.getCacheName()));
 		} else {
 			sb.append(removeCommas(ch.getCacheName()));
-		}		
+		}
 		sb.append(",");
 		sb.append(removeCommas(ch.getCacheOwner()));
 		sb.append(",");
 		sb.append(removeCommas(Common.rot13(det.Hints)));
 		sb.append(",");
-		
+
 		if (!add.equals("")) { // Set Picture in Explorist to Virtual
 			sb.append("Virtual Cache");
 		} else if (ch.getType() != CacheType.CW_TYPE_UNKNOWN) { // Rewrite Unknown Caches
-			sb.append(CacheType.cw2ExportString(ch.getType()));
+			sb.append(CacheType.sym2GpxString(ch.getType()));
 		} else {
 			sb.append("Mystery Cache");
 		}
@@ -257,7 +257,7 @@ public class ExploristExporter {
 				lastFound = det.CacheLogs.getLog(i).getDate();
 			}
 		}
-		
+
 		sb.append(toGsDateFormat(lastFound)); // lastFound - DDMMYYY, YYY = year - 1900
 		sb.append(",");
 		sb.append(CacheTerrDiff.longDT(ch.getHard()));
@@ -269,13 +269,13 @@ public class ExploristExporter {
 
 	/**
 	 * this method can be overided by an exporter class
-	 * 
+	 *
 	 * @return formated trailer data
 	 */
 	public String trailer() {
 		return "$PMGNCMD,END*3D\n";
 	}
-	
+
 	/**
 	 * Changes "," in "." in the input String
 	 * @param input
@@ -284,19 +284,19 @@ public class ExploristExporter {
 	private String removeCommas(String input) {
 		return input.replace(',', '.');
 	}
-	
+
 	/**
-	 * change the Dateformat from "yyyy-mm-dd" to ddmmyyy, where yyy is years after 1900 
+	 * change the Dateformat from "yyyy-mm-dd" to ddmmyyy, where yyy is years after 1900
 	 * @param input Date in yyyy-mm-dd
  	 * @return Date in ddmmyyy
 	 */
 	private String toGsDateFormat(String input) {
 		if (input.length() >= 10) {
 			return input.substring(8, 10) + input.substring(5, 7) + "1" + input.substring(2, 4);
-		} 
+		}
 		else {
 			return "";
 		}
 	}
-	
+
 }
