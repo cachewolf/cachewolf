@@ -418,7 +418,7 @@ public final class MovingMap extends Form {
 		running = true;
 
 		// to load maplist + place a map on screen otherwise no symbol can be placed
-		dontUpdatePos=true; // else overlay symbols are removed on started gps
+		ignoreGps=true; // else overlay symbols are removed on started gps
 		loadBestMap(centerTo);
 
 		// update cache symbols in map
@@ -442,7 +442,7 @@ public final class MovingMap extends Form {
 		}
 
 		repaint();
-		dontUpdatePos=false;
+		ignoreGps=false;
 		return ret;
 	}
 
