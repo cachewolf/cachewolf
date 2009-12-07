@@ -138,7 +138,8 @@ public class RadarPanel extends CellPanel{
 					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = holder.getWayPoint();
 					rpi.rownum = i;
-					rpi.setLocation(centerX+drX-7,centerY+drY-7);
+					int dxy = (imgCache.getHeight() - 2) / 2;
+					rpi.setLocation(centerX+drX-dxy,centerY+drY-dxy);
 					iActP.addImage(rpi);
 					if(holder == selectedWaypoint){ // Draw red circle around selected wpt
 						Image imgCircle = new Image(20, 20);
