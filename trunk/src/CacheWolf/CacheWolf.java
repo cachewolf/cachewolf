@@ -33,13 +33,15 @@ public class CacheWolf extends Editor{
 		String configfile = null;
 		boolean debug = false;
 		if(args.length > 0){
+			/* 
 			if(args[0].equals("test")){
 				Test t=new Test(); 
 				t.testAll();
 			}
+			*/
 			for (int i=0; i < args.length ; i++) {
-				Vm.debug("prog: " + args[i]);
-				Vm.debug("vm: " + vmargs[i]);
+				// Vm.debug("prog: " + args[i]);
+				// Vm.debug("vm: " + vmargs[i]);
 				if (args[i] != null && args[i].length() > 1 &&
 						(args[i].startsWith("-") || args[i].startsWith("/")) ) {
 					String c = args[i].substring(1, args[i].length());
@@ -61,11 +63,12 @@ public class CacheWolf extends Editor{
 				}
 			}
 		}
-		
+		/*
 		if (debug) {
 			Vm.debug("prg-args: " + args.length);
 			Vm.debug("vm-args: " + vmargs.length);
 		}
+		*/
 		
 		Editor mainF = new MainForm(debug, configfile);
 		Device.preventIdleState(true);
