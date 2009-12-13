@@ -107,9 +107,9 @@ public final class CacheType {
 	   }
 	}
 	public static byte CT_Index(final byte type) {
-		return CT_Index[type+1];			
+		return CT_Index[type+1];
 	}
-		
+
 	static final String[] CT_FILENAME={
 		"typeCustom.png", "typeApe.png", "typeCito.png", "typeDrivein.png", "typeEarth.png",
 		"typeEvent.png", "typeFinal.png", "typeLetterbox.png", "typeLocless.png", "typeMaze.png",
@@ -119,7 +119,7 @@ public final class CacheType {
 		"typeUnknown.png", "typeMath.png", "typeMoving.png",
 		"guiError.png"
 	};
-	static final String[] CT_GPXTYPE = {
+	static final String[] CT_TYPETAG = {
 		"Geocache|Custom", "Geocache|Project APE Cache", "Geocache|Cache In Trash Out Event", "Geocache|DriveIn", "Geocache|Earthcache",
 		"Geocache|Event Cache", "Waypoint|Final Location", "Geocache|Letterbox Hybrid", "Geocache|Locationless (Reverse) Cache", "Geocache|GPS Adventures Exhibit",
 		"Geocache|Mega-Event Cache", "Geocache|Multi-cache", "Waypoint|Parking Area", "Waypoint|Question to Answer", "Waypoint|Reference Point",
@@ -128,7 +128,16 @@ public final class CacheType {
 		"Geocache|Unknown Cache", "Geocache|Math", "Geocache|Moving",
 		"Fehler"
 	};
-	static final String[] CT_GPXSYM = {
+	static final String[] CT_SYMTAG = {
+		"Custom", "Geocache", "Geocache", "Geocache", "Geocache",
+		"Geocache", "Final Location", "Geocache", "Geocache", "Geocache",
+		"Geocache", "Geocache", "Parking Area", "Question to Answer", "Reference Point",
+		"Stages of a Multicache", "Geocache", "Trailhead", "Geocache", "Geocache",
+		"Geocache", "Geocache",
+		"Geocache", "Geocache", "Geocache",
+		"Fehler"
+	};
+	static final String[] CT_GSTYPETAG = {
 		"Custom", "Project APE Cache", "Cache In Trash Out Event", "DriveIn", "Earthcache",
 		"Event Cache", "Final Location", "Letterbox Hybrid", "Locationless (Reverse) Cache", "GPS Adventures Exhibit",
 		"Mega-Event Cache", "Multi-cache", "Parking Area", "Question to Answer", "Reference Point",
@@ -390,10 +399,15 @@ public final class CacheType {
 	 */
 	public static byte gpxType2CwType(final String gpxType) throws IllegalArgumentException {
 		for (byte i=0; i<CT.length; i++) {
-			if (CT_GPXTYPE[i].equals(gpxType)) {return CT[i];};
+			if (CT_TYPETAG[i].equals(gpxType)) {return CT[i];};
 		}
+		/*
 		for (byte i=0; i<CT.length; i++) {
-			if (CT_GPXSYM[i].equals(gpxType)) {return CT[i];};
+			if (CT_SYMTAG[i].equals(gpxType)) {return CT[i];};
+		}
+		 */
+		for (byte i=0; i<CT.length; i++) {
+			if (CT_GSTYPETAG[i].equals(gpxType)) {return CT[i];};
 		}
 		if (gpxType.equals("Traditional")|| gpxType.equals("Classic")) return CW_TYPE_TRADITIONAL;
 		if (gpxType.equals("Multi") || gpxType.equals("Offset")) return CW_TYPE_MULTI;
@@ -461,19 +475,26 @@ public final class CacheType {
 	/**
 	 * generate type description matching those of GC for GPX export
 	 * @param typeId internal type id
-	 * @return type information in GC.com GPX format
+	 * @return type information in GC.com <type> GPX format
 	 */
-	public static String type2GpxString(final byte typeId) {
-		return CT_GPXTYPE[CT_Index(typeId)];
+	public static String type2TypeTag(final byte typeId) {
+		return CT_TYPETAG[CT_Index(typeId)];
 	}
-
 	/**
 	 * generate type description matching those of GC for GPX export
 	 * @param typeId internal type id
-	 * @return symb information in GC.com GPX format
+	 * @return symb information in GC.com <sym> GPX format
 	 */
-	public static String sym2GpxString(final byte typeId) {
-		return CT_GPXSYM[CT_Index(typeId)];
+	public static String type2SymTag(final byte typeId) {
+		return CT_SYMTAG[CT_Index(typeId)];
+	}
+	/**
+	 * generate type description matching those of GC for GPX export
+	 * @param typeId internal type id
+	 * @return type information in GC.com <groundspeak:type> GPX format
+	 */
+	public static String type2GSTypeTag(final byte typeId) {
+		return CT_GSTYPETAG[CT_Index(typeId)];
 	}
 
 	/**

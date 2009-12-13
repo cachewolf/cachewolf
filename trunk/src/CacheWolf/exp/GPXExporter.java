@@ -71,7 +71,7 @@ public class GPXExporter extends Exporter{
 				} else {
 					strBuf.append("    <sym>Geocache</sym>\r\n");
 				}
-				strBuf.append("    <type>").append(CacheType.type2GpxString(ch.getType())).append("</type>\r\n");
+				strBuf.append("    <type>").append(CacheType.type2TypeTag(ch.getType())).append("</type>\r\n");
 				String dummyAvailable = ch.is_available() ? STRING_TRUE:STRING_FALSE;
 				String dummyArchived = ch.is_archived() ? STRING_TRUE:STRING_FALSE;
 				strBuf.append("    <groundspeak:cache id=\"").append( ch.GetCacheID() ).append( "\" available=\"" ).append( dummyAvailable ).append( "\" archived=\"" ).append( dummyArchived).append( "\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">\r\n");
@@ -79,7 +79,7 @@ public class GPXExporter extends Exporter{
 				strBuf.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:placed_by>\r\n");
 				//todo low prio: correct owner-id
 				strBuf.append("      <groundspeak:owner id=\"23\">").append(SafeXML.cleanGPX(ch.getCacheOwner())+"</groundspeak:owner>\r\n");
-				strBuf.append("      <groundspeak:type>").append(CacheType.sym2GpxString(ch.getType())).append("</groundspeak:type>\r\n");
+				strBuf.append("      <groundspeak:type>").append(CacheType.type2GSTypeTag(ch.getType())).append("</groundspeak:type>\r\n");
 				strBuf.append("      <groundspeak:container>").append(CacheSize.cw2ExportString(ch.getCacheSize())).append("</groundspeak:container>\r\n");
 				//for Colorado/Oregon: 2.0 -> 2
 				String diffTerr = CacheTerrDiff.shortDT(ch.getHard());
@@ -144,8 +144,8 @@ public class GPXExporter extends Exporter{
 				strBuf.append("    </groundspeak:cache>\r\n");
 			}else {
 				// there is no HTML in the description of addi wpts
-				strBuf.append("    <sym>").append(CacheType.sym2GpxString(ch.getType())).append("</sym>\r\n");
-				strBuf.append("    <type>").append(CacheType.type2GpxString(ch.getType())).append("</type>\r\n");
+				strBuf.append("    <sym>").append(CacheType.type2SymTag(ch.getType())).append("</sym>\r\n");
+				strBuf.append("    <type>").append(CacheType.type2TypeTag(ch.getType())).append("</type>\r\n");
 			}
 			strBuf.append("  </wpt>\r\n");
 		}catch(Exception e){

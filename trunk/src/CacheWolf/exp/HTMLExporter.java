@@ -87,7 +87,7 @@ public class HTMLExporter{
 					}
 					det=ch.getCacheDetails(false,false);
 					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.sym2GpxString(ch.getType()));
+					varParams.put("TYPE", CacheType.type2TypeTag(ch.getType()));
 					varParams.put("WAYPOINT", ch.getWayPoint());
 					varParams.put("NAME", ch.getCacheName());
 					varParams.put("OWNER", ch.getCacheOwner());
