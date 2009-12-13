@@ -85,9 +85,6 @@ public class SpiderGC{
 	private static Preferences pref;
 	private Profile profile;
 	private static String viewstate = "";
-	private static String viewstate1 = "";
-	//FIXME Field is never read. Needed?
-	//private static String eventvalidation = "";
 	private static String cookieID = "";
 	private static String cookieSession = "";
 	private static double distance = 0;
@@ -156,7 +153,7 @@ public class SpiderGC{
 		if (!localInfB.isClosed) { // If user has not aborted, we continue
 			Regex rexCookieID = new Regex("(?i)Set-Cookie: userid=(.*?);.*");
 			Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
-			Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
+			// Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
 			Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*?)\" />");
 			Regex rexCookieSession = new Regex("(?i)Set-Cookie: ASP.NET_SessionId=(.*?);.*");
 			rexViewstate.search(start);
@@ -217,11 +214,12 @@ public class SpiderGC{
 			}
 			viewstate = rexViewstate.stringMatched(1);
 
+			/*
 			rexViewstate1.search(start);
 			if (!rexViewstate1.didMatch()) {
 				pref.log("[login]:Viewstate1 not found");
 			}
-			viewstate1 = rexViewstate1.stringMatched(1);
+			*/
 
 			rexCookieID.search(start);
 			if (!rexCookieID.didMatch()) {
@@ -353,7 +351,7 @@ public class SpiderGC{
 		}
 		String start = "";
 		Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*)\" />");
-		Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*)\" />");
+		// Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*)\" />");
 		Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*)\" />");
 		String doc = "";
 
@@ -498,15 +496,6 @@ public class SpiderGC{
 					pref.log("Viewstate not found");
 				}
 
-				rexViewstate1.search(start);
-				if(rexViewstate1.didMatch()){
-					viewstate1 = rexViewstate1.stringMatched(1);
-					//Vm.debug("ViewState: " + viewstate);
-				} else {
-					viewstate1 = "";
-					pref.log("Viewstate1 not found");
-				}
-
 				rexEventvalidation.search(start);
 				if(rexEventvalidation.didMatch()){
 					// eventvalidation = rexEventvalidation.stringMatched(1);
@@ -604,7 +593,7 @@ public class SpiderGC{
 					}
 					*/
 					strNextPage = "ctl00$ContentBody$pgrTop$ctl08";
-					
+
 					doc = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strNextPage,false)
 					    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
 //					    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
@@ -1575,14 +1564,15 @@ public class SpiderGC{
 				pref.log("[fetch]:No Cookie found");
 			conn.setRequestorProperty("Connection", "close");
 			conn.documentIsEncoded = true;
-			if (pref.debug) pref.log("[fetch]:Connecting");
+			if (pref.debug) pref.log("[fetch]:Connecting "+address);
 			Socket sock = conn.connect();
-			if (pref.debug) pref.log("[fetch]:Connect ok!");
-			ByteArray daten = conn.readData(sock);
-			if (pref.debug) pref.log("[fetch]:Read data ok");
+			if (pref.debug) pref.log("[fetch]:Connect ok! "+address);
+			// ByteArray daten = conn.readData(sock);
 			JavaUtf8Codec codec = new JavaUtf8Codec();
-			c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+			// c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+			c_data = conn.readText(sock, codec);
 			sock.close();
+			if (pref.debug) pref.log("[fetch]:Read data ok "+address);
 			return getResponseHeaders(conn)+ c_data.toString();
 		}catch(IOException ioex){
 			pref.log("IOException in fetch", ioex);
@@ -1608,17 +1598,18 @@ public class SpiderGC{
 			conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
 			if(cookieSession.length()>0){
 				conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="+cookieSession+"; userid="+cookieID);
-				pref.log("[fetch]:Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
+				pref.log("[fetch_post]:Cookie Zeug: " + "Cookie: ASP.NET_SessionId="+cookieSession +"; userid="+cookieID);
 			} else {
-				pref.log("[fetch]:No Cookie found");
+				pref.log("[fetch_post]:No Cookie found");
 			}
 			conn.setRequestorProperty("Connection", "close");
-			if (pref.debug) pref.log("[fetch]:Connecting");
+			if (pref.debug) pref.log("[fetch_post]:Connecting "+address);
 			Socket sock = conn.connect();
-			if (pref.debug) pref.log("[fetch]:Connect ok!");
-			ByteArray daten = conn.readData(sock);
-			if (pref.debug) pref.log("[fetch]:Read data ok");
-			CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+			if (pref.debug) pref.log("[fetch_post]:Connect ok! "+address);
+			// ByteArray daten = conn.readData(sock);
+			CharArray c_data = conn.readText(sock, codec);
+			if (pref.debug) pref.log("[fetch_post]:Read data ok "+address);
+			// CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 			sock.close();
 			return getResponseHeaders(conn)+c_data.toString();
 		} catch (Exception e) {

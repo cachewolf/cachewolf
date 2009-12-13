@@ -7,7 +7,6 @@ import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import CacheWolf.NewProfileForm;
 import CacheWolf.Preferences;
 import ewe.io.FileBase;
 import ewe.sys.Convert;
