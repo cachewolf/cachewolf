@@ -244,7 +244,7 @@ public class ExploristExporter {
 		if (!add.equals("")) { // Set Picture in Explorist to Virtual
 			sb.append("Virtual Cache");
 		} else if (ch.getType() != CacheType.CW_TYPE_UNKNOWN) { // Rewrite Unknown Caches
-			sb.append(CacheType.sym2GpxString(ch.getType()));
+			sb.append(CacheType.type2GSTypeTag(ch.getType()));
 		} else {
 			sb.append("Mystery Cache");
 		}

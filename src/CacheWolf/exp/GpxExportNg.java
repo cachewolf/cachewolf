@@ -606,7 +606,7 @@ public class GpxExportNg {
 			ret.append("    <desc>".concat(SafeXML.cleanGPX(ch.getCacheName())).concat("</desc>".concat(newLine)));
 		} else {
 			ret.append("    <desc>".concat(SafeXML.cleanGPX(ch.getCacheName().concat(" by ").concat(ch.getCacheOwner()).concat(", ")
-					.concat(CacheType.sym2GpxString(ch.getType()))
+					.concat(CacheType.type2GSTypeTag(ch.getType()))
 					.concat(" (").concat(CacheTerrDiff.shortDT(ch.getHard()))
 					.concat("/").concat(CacheTerrDiff.shortDT(ch.getTerrain())).concat(")")))
 					.concat("</desc>".concat(newLine)));
@@ -623,7 +623,7 @@ public class GpxExportNg {
 			ret.append("    <sym>".concat(poiMapper.getIcon(ch)).concat("</sym>".concat(newLine)));
 		} else {
 			if (ch.isAddiWpt()) {
-				ret.append("    <sym>".concat(CacheType.sym2GpxString(ch.getType())).concat("</sym>".concat(newLine)));
+				ret.append("    <sym>".concat(CacheType.type2SymTag(ch.getType())).concat("</sym>".concat(newLine)));
 			} else if (ch.isCustomWpt()) {
 				ret.append("    <sym>Custom</sym>".concat(newLine));
 			} else if (ch.is_found()) {
@@ -634,7 +634,7 @@ public class GpxExportNg {
 		}
 
 		if (exportStyle != STYLE_GPX_COMPACT) {
-			ret.append("    <type>".concat(CacheType.type2GpxString(ch.getType())).concat("</type>".concat(newLine)));
+			ret.append("    <type>".concat(CacheType.type2TypeTag(ch.getType())).concat("</type>".concat(newLine)));
 		}
 
 		return ret.toString();
@@ -654,7 +654,7 @@ public class GpxExportNg {
 		.concat("      <groundspeak:name>").concat(SafeXML.cleanGPX(ch.getCacheName())).concat("</groundspeak:name>".concat(newLine))
 		.concat("      <groundspeak:placed_by>").concat(SafeXML.cleanGPX(ch.getCacheOwner())).concat("</groundspeak:placed_by>".concat(newLine))
 		.concat("      <groundspeak:owner id=\"").concat("31415").concat("\">").concat(SafeXML.cleanGPX(ch.getCacheOwner())).concat("</groundspeak:owner>".concat(newLine))
-		.concat("      <groundspeak:type>").concat(CacheType.type2GpxString(ch.getType())).concat("</groundspeak:type>".concat(newLine))
+		.concat("      <groundspeak:type>").concat(CacheType.type2GSTypeTag(ch.getType())).concat("</groundspeak:type>".concat(newLine))
 		.concat("      <groundspeak:container>").concat(CacheSize.cw2ExportString(ch.getCacheSize())).concat("</groundspeak:container>".concat(newLine))
 		.concat("      <groundspeak:difficulty>").concat(CacheTerrDiff.shortDT(ch.getHard())).concat("</groundspeak:difficulty>".concat(newLine))
 		.concat("      <groundspeak:terrain>").concat(CacheTerrDiff.shortDT(ch.getTerrain())).concat("</groundspeak:terrain>".concat(newLine))

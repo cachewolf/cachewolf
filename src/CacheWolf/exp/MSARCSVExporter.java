@@ -26,7 +26,7 @@ public class MSARCSVExporter extends Exporter {
 		StringBuffer str = new StringBuffer(200);
 		str.append("\"" + ch.getWayPoint() + " - " + ch.getCacheName() + "\";");
 		str.append(lat + ";" + lon +";");
-		str.append("\"" + CacheType.sym2GpxString(ch.getType())+ "\";");
+		str.append("\"" + CacheType.type2SymTag(ch.getType())+ "\";");
 		str.append("\"" + CacheSize.cw2ExportString(ch.getCacheSize()) + "\";");
 		str.append("\"" + ch.getWayPoint() + "\";");
 		str.append("\"" + ch.getDateHidden() + "\";");
