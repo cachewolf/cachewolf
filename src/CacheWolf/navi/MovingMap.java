@@ -431,8 +431,6 @@ public final class MovingMap extends Form {
 		showCachesOnMap();
 
 		addTrack(myNavigation.curTrack);
-		if (tracks != null && tracks.size() > 0 && ((Track)tracks.get(0)).num > 0)
-			rebuildOverlaySet(); // show points which where added when MavingMap was not running
 
 		if (myNavigation.destinationIsCache) {
 			destChanged(myNavigation.destinationCache);
