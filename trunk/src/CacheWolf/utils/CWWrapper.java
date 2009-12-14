@@ -13,15 +13,15 @@ import ewe.sys.Vm;
  * Win* VM: cmd may be quoted, arg are whitespace-split
  */
 public final class CWWrapper {
-	
+
 	/**
 	 * thou shallst not instantiate this object
 	 */
 	private CWWrapper() {
 		// Nothing to do
 	}
-	
-	
+
+
 	/**
 	 * Apply needed quotes around the command or the argument,
 	 * then call Vm.exec() appropriately.
@@ -29,13 +29,13 @@ public final class CWWrapper {
 	 * @param arg (only one argument)
 	 * @throws ewe.io.IOException
 	 */
-	public static void exec(final String cmd, final String arg) throws ewe.io.IOException{
-		exec(cmd, arg, false);
+	public static int exec(final String cmd, final String arg) throws ewe.io.IOException{
+		return exec(cmd, arg, false, true);
 	}
-	
-	public static int exec(String cmd, String arg, final boolean wait) throws ewe.io.IOException {
-		if (Vm.getPlatform().equals("WinCE") ||
-			    Vm.getPlatform().equals("Win32")) {
+	public static int exec(String cmd, String arg, final boolean wait, final boolean surround) throws ewe.io.IOException {
+		if (surround) {
+			if (Vm.getPlatform().equals("WinCE") || Vm.getPlatform().equals("Win32"))
+			{
 				/* we need extra quotes here, see vm/nmwin32_c.c */
 				if (arg.indexOf(' ') > -1) {
 					arg = "\"" + arg + "\"";
@@ -48,11 +48,12 @@ public final class CWWrapper {
 				if (cmd.indexOf(' ') > -1) {
 					cmd = "\"" + cmd + "\"";
 				}
-					
 				if (arg.indexOf(' ') > -1) {
 					arg = "\"" + arg + "\"";
 				}
 			}
+		}
+		// CacheWolf.Global.getPref().log(arg);
 		return Vm.exec(cmd, arg, 0, wait);
 	}
 
