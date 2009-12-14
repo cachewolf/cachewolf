@@ -523,6 +523,7 @@ public final class MovingMap extends Form {
 			for (int xi=0; xi<3; xi++) {
 				i = yi*3+xi;
 				if (TrackOverlays[i]==null) {
+					pref.log("addMissingOverlays: widht: " + width + ", height: " + height);
 					TrackOverlays[i]= new TrackOverlay(ScreenXY2LatLon(upperleftOf4.x+(xi-1)*width, upperleftOf4.y+(yi-1)*height), width, height, currentMap);
 					TrackOverlays[i].setLocation(width+1, height+1); // outside of the screen will hide it automatically it will get the correct position in upadteOverlayposition
 					TrackOverlays[i].tracks = this.tracks;
