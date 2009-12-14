@@ -210,7 +210,7 @@ public class ShowCacheInBrowser {
 			//detfile.print(tpl.output());
 			detfile.close();
 			try {
-				CWWrapper.exec(Global.getPref().browser, "file://"+saveTo); // maybe this works on some PDAs?
+				CWWrapper.exec(Global.getPref().browser, "file://"+saveTo, false, false); // maybe this works on some PDAs?
 			} catch (IOException ex) {
 				(new MessageBox(MyLocale.getMsg(321,"Error"),
 						MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +

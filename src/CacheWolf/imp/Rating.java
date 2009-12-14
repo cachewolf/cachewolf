@@ -42,7 +42,7 @@ public class Rating {
 				if (ch.isCacheWpt()) {
 					int rate;
 					try {
-						rate = CWWrapper.exec(rater, ch.getWayPoint(), true);
+						rate = CWWrapper.exec(rater, ch.getWayPoint(), true, true);
 						ch.setNumRecommended(rate);
 					} catch (Exception ex) {
 						ex.printStackTrace();
