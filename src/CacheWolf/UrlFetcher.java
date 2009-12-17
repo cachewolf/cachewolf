@@ -34,9 +34,9 @@ public class UrlFetcher {
 		try {
 		return fetchByteArray(url, realurl, hndl);
 		} catch ( InterruptedException e) {
-			throw new IOException("Error reading data.");
+			throw new IOException("Error reading data. i :"+url);
 		} catch ( HandleStoppedException e) {
-			throw new IOException("Error reading data.");
+			throw new IOException("Error reading data. s :"+url);
 		}
 	}
 
