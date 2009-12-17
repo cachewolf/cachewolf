@@ -37,7 +37,7 @@ public class Rebuild {
 			else {
 				//ewe.sys.Vm.debug("Orphan: "+wayPoint);
 				orphans++;
-				int cacheIndex=prof.getCacheIndex(wayPoint); 
+				int cacheIndex=prof.getCacheIndex(wayPoint);
 				if (cacheIndex > -1) {
 					// In older Versions of CW the <CACHE... /> line was not stored in the cache.xml
 					// therefore get it from the index.xml (prof.cacheDB) and put it into the cache.xml
@@ -59,7 +59,7 @@ public class Rebuild {
 					h.progress = ((float)nProcessed++)/(float)(orphans);
 					h.changed();
 					String details=getCacheDetails(prof.dataDir+xmlFiles[i]);
-					if (details!=null) { 
+					if (details!=null) {
 						CacheHolder ch=new CacheHolder(details, cacheXmlVersion);
 						prof.cacheDB.add(ch);
 						nAdded++;
@@ -82,6 +82,7 @@ public class Rebuild {
 			pbf.setTask(h,MyLocale.getMsg(213,"Deleting orphans"));
 			DataMover dm=new DataMover();
 			int nDeleted=0;
+			String[] CacheFiles = new FileBugfix(prof.dataDir).list("*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 			for (i=0; i<xmlFiles.length; i++) {
 				if (xmlFiles[i]!=null){
 					h.progress = ((float)nDeleted++)/(float)(orphans-nAdded);
@@ -90,7 +91,7 @@ public class Rebuild {
 					if (dotPos > 0) {
 					    // This may appear when there are directories in the profile
 					    String wayPoint=xmlFiles[i].substring(0,dotPos);
-					    dm.deleteCacheFiles(wayPoint,prof.dataDir);
+					    dm.deleteCacheFiles(wayPoint,prof.dataDir,CacheFiles);
 					}
 				}
 			}
