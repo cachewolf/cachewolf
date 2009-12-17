@@ -11,26 +11,26 @@ import ewe.sys.*;
 
 /**
 *	This class moves or copies the database files of selected caches from one directory to
-*   another. It provides also the possibility to delete cachefiles. 	
+*   another. It provides also the possibility to delete cachefiles.
 */
 public class DataMover {
 
 	private CacheDB srcDB;
 	private Preferences pref;
 	private Profile profile;
-	
+
 	public DataMover(){
 		pref = Global.getPref();
 		profile=Global.getProfile();
 		srcDB = profile.cacheDB;
 	}
 	public void deleteCaches(){
-		
+
 		int mode = showMessageBox(251,"All waypoints will be deleted");
 		if (mode == -1){
 			return;
 		}
-		
+
 		processCaches(new Deleter(MyLocale.getMsg(143, "Delete")), mode);
 		// write indexfiles
 		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
@@ -38,18 +38,18 @@ public class DataMover {
 
 	public void copyCaches(){
 		Profile dstProfile=new Profile();
-		
+
 		dstProfile.dataDir=selectTargetDir();
 		if (dstProfile.dataDir.equals(profile.dataDir) ||
 			dstProfile.dataDir.equals("")) return;
-		
+
 		//Von Andi P
 		int mode = showMessageBox(253,"All waypoints will be copied");
 		if (mode == -1){
 			return;
 		}
 		//Ende
-		
+
 		// Read indexfile of destination, if one exists
 		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if(ftest.exists()){
@@ -67,7 +67,7 @@ public class DataMover {
 			}
 		}
 	}
-	
+
 	/**
 	 * Shows the messagebox before copying/moving/deleting waypoints.
 	 * It returns the mode selected by the user.
@@ -104,7 +104,7 @@ public class DataMover {
 			' ' + MyLocale.getMsg(257, "Main") + ", "+countAddiWP +
 			MyLocale.getMsg(258, " Addi") +')';
 	}
-	
+
 	private String makeVisibleText() {
 		int size=srcDB.size();
 		int countMainWP=0;
@@ -141,32 +141,32 @@ public class DataMover {
 		MyLocale.getMsg(258, " Addi") +')';
 	}
 
-	
+
 	public void moveCaches() {
 		Profile dstProfile=new Profile();
 		// Select destination directory
 		dstProfile.dataDir=selectTargetDir();
 		if (dstProfile.dataDir.equals(profile.dataDir) ||
 			dstProfile.dataDir.equals("")) return;
-		
+
 		int mode = showMessageBox(252, "All waypoints will be moved");
 		if (mode == -1){
 			return;
 		}
-				
+
 		// Read indexfile of destination, if one exists
 		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if(ftest.exists()){
-			dstProfile.readIndex();		
+			dstProfile.readIndex();
 		}
 		processCaches(new Mover(MyLocale.getMsg(142, "Move"),dstProfile), mode);
 		// write indexfiles
-		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR); 
+		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
 		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
 	}
-	
+
 	 /**
-	  * This function carries out the copy/delete/move with a progress bar. 
+	  * This function carries out the copy/delete/move with a progress bar.
 	  * The Executor class defines what operation is to be carried out.
 	  * mode defines if visible/marked or visible and markes caches are be processed.
 	  * 0 means all visible
@@ -177,7 +177,7 @@ public class DataMover {
 	  */
 	 private void processCaches(Executor exec, int mode) {
 		// First empty the cache so that the correct cache details are on disk
-		CacheHolder.saveAllModifiedDetails(); 
+		CacheHolder.saveAllModifiedDetails();
 		int size=srcDB.size();
 		int count=0;
 		// Count the number of caches to move/delete/copy
@@ -209,7 +209,7 @@ public class DataMover {
 		Handle h = new Handle();
 		pbf.setTask(h,exec.title);
 		pbf.exec();
-		
+
 		int nProcessed=0;
 		// Now do the actual work
 		for(int i = size-1; i>=0; i--){
@@ -224,7 +224,7 @@ public class DataMover {
 		}
 		pbf.exit(0);
 	 }
-	
+
 	 class myProgressBarForm extends ProgressBarForm {
 		 boolean isClosed=false;
 		 protected boolean canExit(int exitCode) {
@@ -232,12 +232,12 @@ public class DataMover {
 			return true;
 		 }
 	 }
-	 
+
 	//////////////////////////////////////////////////////////////////////
 	// Utility functions
 	//////////////////////////////////////////////////////////////////////
-	
-	public String selectTargetDir() {
+
+	private String selectTargetDir() {
 		// Select destination directory
 		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.absoluteBaseDir);
 		fc.setTitle(MyLocale.getMsg(148,"Select Target directory"));
@@ -246,29 +246,35 @@ public class DataMover {
 		}
 		else return "";
 	}
-	 
-	public void deleteCacheFiles(String wpt, String dir){
+
+	public void deleteCacheFiles(String wpt,String dir, String[] tmp ){
 		// delete files in dstDir to clean up trash
-		String tmp[] = new FileBugfix(dir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		// String tmp[] = new FileBugfix(dir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < tmp.length;i++){
-			File tmpFile = new File(dir + tmp[i]);
-			tmpFile.delete();
+			if (tmp[i].substring(0, wpt.length()).equalsIgnoreCase(wpt)) {
+				File tmpFile = new File(dir + tmp[i]);
+				tmpFile.delete();
+			}
 		}
 	}
 
-	public void moveCacheFiles(String wpt, String srcDir, String dstDir){
-		String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+	private void moveCacheFiles(String wpt, String srcDir, String dstDir, String[] srcFiles){
+		// String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
-			File srcFile = new File(srcDir + srcFiles[i]);
-			File dstFile = new File(dstDir + srcFiles[i]);
-			srcFile.move(dstFile);
+			if (srcFiles[i].substring(0, wpt.length()).equalsIgnoreCase(wpt)) {
+				File srcFile = new File(srcDir + srcFiles[i]);
+				File dstFile = new File(dstDir + srcFiles[i]);
+				srcFile.move(dstFile);
+			}
 		}
 	}
 
-	public void copyCacheFiles(String wpt, String srcDir, String dstDir){
-		String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+	private void copyCacheFiles(String wpt, String srcDir, String dstDir, String[] srcFiles){
+		// String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
-			copy(srcDir + srcFiles[i],dstDir + srcFiles[i]);
+			if (srcFiles[i].substring(0, wpt.length()).equalsIgnoreCase(wpt)) {
+				copy(srcDir + srcFiles[i],dstDir + srcFiles[i]);
+			}
 		}
 	}
 
@@ -301,75 +307,87 @@ public class DataMover {
 	//////////////////////////////////////////////////////////////////////
 	// Executor
 	//////////////////////////////////////////////////////////////////////
-		
+
 	private abstract class Executor {
 		String title;
 		Profile dstProfile;
+		String[] destFileList;
+		String[] srcFileList;
 		public abstract void doIt(int i, CacheHolder srcHolder);
 	}
-	 
+
 	private class Deleter extends Executor {
 		 Deleter(String title) {
 			 this.title=title;
+			 FileBugfix destPath=new FileBugfix(profile.dataDir);
+			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY);
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
 			 srcDB.removeElementAt(i);
-			 deleteCacheFiles(srcHolder.getWayPoint(),profile.dataDir);
+			 deleteCacheFiles(srcHolder.getWayPoint(),profile.dataDir, destFileList);
 		 }
 	}
-	 
+
 	private class Copier extends Executor {
 		 Copier(String title, Profile dstProfile) {
 			 this.title=title;
 			 this.dstProfile=dstProfile;
+			 FileBugfix srcPath=new FileBugfix(profile.dataDir);
+			 srcFileList= srcPath.list(null,FileBase.LIST_FILES_ONLY);
+			 FileBugfix destPath=new FileBugfix(dstProfile.dataDir);
+			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY);
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
-				srcHolder.save();
-				deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir);
-				copyCacheFiles(srcHolder.getWayPoint(),profile.dataDir, dstProfile.dataDir);
-				// does cache exists in destDB ?
-				// Update database
-				//*wall* when copying addis without their maincache, the maincache in the srcDB will be set to null on saving the dstProfile later.
-				//Therefore it will be shown twice in the cachelist.
-				//To prevent this, addis will be cloned and to save memory only addis will be clones.
-				//TODO clone addis only when the maincache will not be copied.
-//				if (srcHolder.isAddiWpt()){
-//					try {
-//						srcHolder = (CacheHolder) srcHolder.clone();
-//					} catch (CloneNotSupportedException e) {
-//						//ignore, CacheHolder implements Cloneable ensures this methods
-//					}
-//				}
-				int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
-				if (dstPos >= 0){
-					dstProfile.cacheDB.set(dstPos,srcHolder);
-				}
-				else {
-					dstProfile.cacheDB.add(srcHolder);
-				}
-			 }		 
-		}
-
-		private class Mover extends Executor {
-			 Mover(String title, Profile dstProfile) {
-				 this.title=title;
-				 this.dstProfile=dstProfile;
-			 }
-			 public void doIt(int i,CacheHolder srcHolder) {
-				 srcDB.removeElementAt(i);
-				 deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir);
-				 moveCacheFiles(srcHolder.getWayPoint(),profile.dataDir, dstProfile.dataDir);
-				// does cache exists in destDB ?
-				 // Update database
-				int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
-				if (dstPos >= 0){
-					dstProfile.cacheDB.set(dstPos,srcHolder);
-				}
-				else {
-					// Update database
-					dstProfile.cacheDB.add(srcHolder);
-				}
-				i--;
-			 }		 
+			srcHolder.save();
+			deleteCacheFiles(srcHolder.getWayPoint(),dstProfile.dataDir, destFileList);
+			copyCacheFiles(srcHolder.getWayPoint(),profile.dataDir ,dstProfile.dataDir, srcFileList);
+			// does cache exists in destDB ?
+			// Update database
+			//*wall* when copying addis without their maincache, the maincache in the srcDB will be set to null on saving the dstProfile later.
+			//Therefore it will be shown twice in the cachelist.
+			//To prevent this, addis will be cloned and to save memory only addis will be clones.
+			//TODO clone addis only when the maincache will not be copied.
+			//			if (srcHolder.isAddiWpt()){
+			//			try {
+			//				srcHolder = (CacheHolder) srcHolder.clone();
+			//			} catch (CloneNotSupportedException e) {
+			//				//ignore, CacheHolder implements Cloneable ensures this methods
+			//			}
+			//		}
+			int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
+			if (dstPos >= 0){
+				dstProfile.cacheDB.set(dstPos,srcHolder);
+			}
+			else {
+				dstProfile.cacheDB.add(srcHolder);
+			}
 		}
 	}
+
+	private class Mover extends Executor {
+		 Mover(String title, Profile dstProfile) {
+			 this.title=title;
+			 this.dstProfile=dstProfile;
+			 FileBugfix srcPath=new FileBugfix(profile.dataDir);
+			 srcFileList= srcPath.list(null,FileBase.LIST_FILES_ONLY);
+			 FileBugfix destPath=new FileBugfix(dstProfile.dataDir);
+			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY);
+		 }
+		 public void doIt(int i,CacheHolder srcHolder) {
+			 srcDB.removeElementAt(i);
+			 deleteCacheFiles(srcHolder.getWayPoint(),dstProfile.dataDir, destFileList);
+			 moveCacheFiles(srcHolder.getWayPoint(),profile.dataDir ,dstProfile.dataDir, srcFileList);
+			// does cache exists in destDB ?
+			 // Update database
+			int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
+			if (dstPos >= 0){
+				dstProfile.cacheDB.set(dstPos,srcHolder);
+			}
+			else {
+				// Update database
+				dstProfile.cacheDB.add(srcHolder);
+			}
+			i--;
+		 }
+	}
+}
