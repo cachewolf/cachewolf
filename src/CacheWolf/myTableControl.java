@@ -1,6 +1,7 @@
 package CacheWolf;
 
 import CacheWolf.utils.CWWrapper;
+import CacheWolf.utils.FileBugfix;
 import ewe.sys.*;
 import ewe.ui.*;
 import ewe.fx.*;
@@ -203,6 +204,7 @@ public class myTableControl extends TableControl{
 					pbf.exec();
 					int nDeleted=0;
 					int size=cacheDB.size();
+					String[] CacheFiles = new FileBugfix(profile.dataDir).list("*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 					for(int i = size-1; i >=0; i--){// Start Counting down, as the size decreases with each deleted cache
 						ch = cacheDB.get(i);
 						if(ch.is_Checked && (ch.isVisible() || deleteFiltered)) {
@@ -210,7 +212,7 @@ public class myTableControl extends TableControl{
 							h.progress = ((float)nDeleted)/(float)allCount;
 							h.changed();
 							cacheDB.removeElementAt(i);
-							dm.deleteCacheFiles(ch.getWayPoint(),profile.dataDir);
+							dm.deleteCacheFiles(ch.getWayPoint(),profile.dataDir,CacheFiles);
 							ch=null;
 							if (pbf.isClosed) break;
 						}
