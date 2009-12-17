@@ -21,6 +21,7 @@ javac -source 1.3 -target 1.1 -encoding windows-1252 \
     -cp lib/CompileEwe.zip:lib -d bin -deprecation -nowarn \
     src/CacheWolf/*.java src/CacheWolf/*/*.java
 $EWE programs/Jewel.ewe -c cw-pda.jnf
+$EWE programs/Jewel.ewe -c cw-ppc2003.jnf
 $EWE programs/Jewel.ewe -c cw-pc.jnf
 # Don’t change the order of the above Jewel commands because
 # the PC version has to overwrite the PDA version of the EWE file
