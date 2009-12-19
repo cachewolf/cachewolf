@@ -1000,24 +1000,25 @@ public class Preferences extends MinML{
 	 * @param text to log
 	 */
 	public void log(String text){
-		Time dtm = new Time();
-		dtm.getTime();
-		dtm.setFormat("dd.MM.yyyy'/'HH:mm:ss.SSS");
-		text = dtm.toString()+ ": "+ text;
-		if (debug) Vm.debug(text);
-		text=text+"\n";
-		FileWriter logFile = null;
-		try{
-			logFile = new FileWriter(LOGFILENAME, true);
-			//Stream strout = null;
-			//strout = logFile.toWritableStream(true);
-			logFile.println(text);
-			//Vm.debug(text); Not needed - put <debug value="true"> into pref.xml
-		}catch(Exception ex){
-			Vm.debug("Error writing to log file!");
-		}finally{
-			if (logFile != null) try {logFile.close(); } catch (IOException ioe) {
-				Global.getPref().log("Ignored Exception", ioe, true);
+		if (debug) {
+			Vm.debug(text);
+			Time dtm = new Time();
+			dtm.getTime();
+			dtm.setFormat("dd.MM.yyyy'/'HH:mm:ss.SSS");
+			text = dtm.toString()+ ": "+ text;
+			FileWriter logFile = null;
+			try{
+				logFile = new FileWriter(LOGFILENAME, true);
+				//Stream strout = null;
+				//strout = logFile.toWritableStream(true);
+				logFile.println(text);
+				//Vm.debug(text); Not needed - put <debug value="true"> into pref.xml
+			}catch(Exception ex){
+				Vm.debug("Error writing to log file!");
+			}finally{
+				if (logFile != null) try {logFile.close(); } catch (IOException ioe) {
+					log("Ignored Exception", ioe, true);
+				}
 			}
 		}
 	}
