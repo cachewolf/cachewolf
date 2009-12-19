@@ -22,7 +22,9 @@ public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;
 	Preferences pref;
 	mChoice chcType;
-	mInput distanceInput;
+	mInput maxDistanceInput;
+	mInput minDistanceInput;
+	mInput directionInput;
 	mInput maxNumberInput;
 	mInput maxLogsInput;
 	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox, travelbugsCheckBox;
@@ -42,6 +44,8 @@ public class OCXMLImporterScreen extends Form {
 	public static final int MAXLOGS = 128;
 	public static final int TYPE = 256;
 	public static final int HOST = 512;
+	public static final int MINDIST = 1024;
+	public static final int DIRECTION = 2048;
 
 
 	public OCXMLImporterScreen(String title, int options) {
@@ -76,9 +80,29 @@ public class OCXMLImporterScreen extends Form {
 				},0), CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		}
 
+		if ((options & MINDIST) > 0) {
+			this.addNext(distLbl = new mLabel(MyLocale.getMsg(1628,"min. Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			minDistanceInput = new mInput();
+			String dist1="0";
+			String dist2="0";
+			if (isGC) {
+				dist1 = Global.getProfile().getMinDistGC();
+				dist2 = Global.getProfile().getDistOC();
+			} else {
+				dist1 = Global.getProfile().getDistOC();
+				dist2 = Global.getProfile().getMinDistGC();
+			}
+			if ( dist1.equals("") || dist1.equals("0") || dist1.equals("0.0") ) {
+				dist1 = dist2;
+			}
+			minDistanceInput.setText(dist1);
+			this.addNext(minDistanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			this.addLast(new mLabel(" km/mi."),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		}
+
 		if ((options & DIST) > 0) {
 			this.addNext(distLbl = new mLabel(MyLocale.getMsg(1601,"Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-			distanceInput = new mInput();
+			maxDistanceInput = new mInput();
 			String dist1;
 			String dist2;
 			if (isGC) {
@@ -91,9 +115,16 @@ public class OCXMLImporterScreen extends Form {
 			if ( dist1.equals("") || dist1.equals("0") || dist1.equals("0.0") ) {
 				dist1 = dist2;
 			}
-			distanceInput.setText(dist1);
-			this.addNext(distanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			maxDistanceInput.setText(dist1);
+			this.addNext(maxDistanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			this.addLast(distUnit = new mLabel(" km/mi."),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		}
+
+		if ((options & DIRECTION) > 0) {
+			this.addNext(new mLabel(MyLocale.getMsg(1629,"Richtung (leer,N,O,S,W):")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			directionInput = new mInput();
+			directionInput.setText(Global.getProfile().getDirectionGC());
+			this.addLast(directionInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
 
 		if ((options & MAXNUMBER) > 0) {

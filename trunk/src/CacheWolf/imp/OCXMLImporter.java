@@ -192,7 +192,7 @@ public class OCXMLImporter extends MinML {
 																 | OCXMLImporterScreen.HOST);
 		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
 		Vm.showWait(true);
-		String dist = importOpt.distanceInput.getText();
+		String dist = importOpt.maxDistanceInput.getText();
 
 		if (importOpt.domains.getSelectedItem()!=null)
 			hostname = (String)importOpt.domains.getSelectedItem();
