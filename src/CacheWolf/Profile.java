@@ -46,6 +46,9 @@ public class Profile {
 
 	/** Distance for geocaching caches */
 	private String distGC = new String();
+	private String minDistGC = new String();
+	/** Direction for geocaching caches */
+	private String directionGC = new String();
 
 	/** path to the maps of the profile relative to the maps root */
 	private String relativeCustomMapsPath = new String();
@@ -115,6 +118,8 @@ public class Profile {
 		setLast_sync_opencaching("");
 		setDistOC("");
 		setDistGC("");
+		setMinDistGC("");
+		setDirectionGC("");
 		setRelativeCustomMapsPath("");
 		resetUnsavedChanges();
 	}
@@ -185,7 +190,13 @@ public class Profile {
 			if (getDistGC() == null || getDistGC().endsWith("null") || getDistGC().equals("")) {
 				setDistGC("0.0");
 			}
-
+			if (getMinDistGC() == null || getMinDistGC().endsWith("null") || getMinDistGC().equals("")) {
+				setMinDistGC("0.0");
+			}
+			if (getDirectionGC() == null || getDirectionGC().endsWith("null") || getDirectionGC().equals("")) {
+				setDirectionGC("");
+			}
+			
 			// If the current filter is a CacheTour filter, then save it as
 			// normal filter, because after loading there is no cache tour defined
 			// which could be used as filter criterium.
@@ -199,7 +210,7 @@ public class Profile {
 					(isFilterInverted()?"T":"F")+"\" showBlacklist = \""+showBlacklisted()+"\" />\n");
 			detfile.print(this.getCurrentFilter().toXML(""));
 			detfile.print("    <SYNCOC date = \""+getLast_sync_opencaching()+"\" dist = \""+getDistOC()+"\"/>\n");
-			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\"/>\n");
+			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\" direction = \"" + getDirectionGC() + "\"/>\n");
 			detfile.print("    <mapspath relativeDir = \"" + SafeXML.clean(relativeCustomMapsPath) + "\"/>\n");
 			int size = cacheDB.size();
 			for (int i = 0; i < size; i++) {
@@ -304,6 +315,10 @@ public class Profile {
 				} else if (text.indexOf("<SPIDERGC")>=0) {
 					int start=text.indexOf("dist = \"")+8;
 					setDistGC(text.substring(start,text.indexOf("\"",start)));
+					start=text.indexOf("mindist = \"")+11;
+					setMinDistGC(text.substring(start,text.indexOf("\"",start)));
+					start=text.indexOf("direction = \"")+13;
+					setDirectionGC(text.substring(start,text.indexOf("\"",start)));
 				} else if (indexXmlVersion <=2 && text.indexOf("<FILTER")>=0){
 					// Read filter data of file versions 1 and 2. (Legacy code)
 					ex.setSource(text.substring(text.indexOf("<FILTER")));
@@ -782,9 +797,30 @@ public class Profile {
 		return distGC;
 	}
 
+	public String getMinDistGC() {
+		return minDistGC;
+	}
+
+	public String getDirectionGC() {
+		return directionGC;
+	}
+//
+	public void setMinDistGC(String minDistGC) {
+		this.notifyUnsavedChanges(!minDistGC.equals(this.minDistGC));
+		this.minDistGC = minDistGC;
+	}
+
 	public void setDistGC(String distGC) {
 		this.notifyUnsavedChanges(!distGC.equals(this.distGC));
 		this.distGC = distGC;
+	}
+
+	public void setDirectionGC(String directionGC) {
+		if (directionGC.length() > 2) {
+			directionGC=directionGC.substring(0,2);
+		}
+		this.notifyUnsavedChanges(!directionGC.equals(this.directionGC));
+		this.directionGC = directionGC;
 	}
 
 	public String getRelativeCustomMapsPath() {
