@@ -90,6 +90,7 @@ public class SpiderGC{
 	private static double minDistance = 0;
 	private static double maxDistance = 0;
 	private static String direction = "";
+	private static String[] directions;
 	private Regex inRex = new Regex();
 	private CacheDB cacheDB;
 	private Vector cachesToLoad = new Vector();
@@ -391,10 +392,13 @@ public class SpiderGC{
 			profile.setDistGC(maxDist);
 
 			direction=options.directionInput.getText().toUpperCase();
+			direction=direction.replace(' ',','); // separator blank to ,
+			direction=direction.replace(';',','); // separator ; to ,
 			profile.setDirectionGC(direction);
-			direction.replace('O', 'E');
-			direction.replace('Z', 'S');
-			direction.replace('P', 'S');
+			direction=direction.replace('O', 'E'); // synonym for East
+			direction=direction.replace('Z', 'S'); // synonym for South
+			direction=direction.replace('P', 'S'); // synonym for South
+			directions=mString.split(direction, ',');
 
 			doNotgetFound = options.foundCheckBox.getState();
 		}
@@ -536,16 +540,14 @@ public class SpiderGC{
 					Global.getPref().log("Ignored Exception", nex, true);
 				}
 				String oneCacheDesc="";
-				String gotDirection="";
 				while ( maxDistance>0 && lineRex.didMatch()){
 					//Vm.debug(getDist(lineRex.stringMatched(1)) + " / " +getWP(lineRex.stringMatched(1)));
 					found_on_page++;
 					oneCacheDesc=lineRex.stringMatched(1);
 					double gotDistance=getDist(oneCacheDesc);
-					gotDirection=getDirection(oneCacheDesc);
 					if(gotDistance <= maxDistance){
 						if ( gotDistance >= minDistance &&
-							 gotDirection.startsWith(direction) ){
+							 directionOK(directions,getDirection(oneCacheDesc)) ){
 							String waypoint=getWP(oneCacheDesc);
 							CacheHolder existingCache;
 							if((existingCache=cacheDB.get(waypoint)) == null){
@@ -728,6 +730,22 @@ public class SpiderGC{
 		}
 		Global.getProfile().restoreFilter();
 		Global.getProfile().saveIndex(Global.getPref(),true);
+	}
+	
+	private boolean directionOK(String[] directions, String gotDirection) {
+		if (directions.length==0) return true; // nothing means all
+		for (int i = 0; i < directions.length; i++) {
+			if (directions[i].equals(gotDirection)) {
+				return true;
+			}
+			int j=directions[i].indexOf("*");
+			if (j>0){
+				if (gotDirection.startsWith(directions[i].substring(0, 1))) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

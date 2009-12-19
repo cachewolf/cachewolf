@@ -816,9 +816,6 @@ public class Profile {
 	}
 
 	public void setDirectionGC(String directionGC) {
-		if (directionGC.length() > 2) {
-			directionGC=directionGC.substring(0,2);
-		}
 		this.notifyUnsavedChanges(!directionGC.equals(this.directionGC));
 		this.directionGC = directionGC;
 	}
