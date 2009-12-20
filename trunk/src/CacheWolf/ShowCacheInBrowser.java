@@ -21,7 +21,7 @@ public class ShowCacheInBrowser {
 	static Hashtable diff=null;
 	static Hashtable terr=null;
 	static Hashtable args=null;
-	
+
 	ShowCacheInBrowser() {
 		if (diff==null) {
 			diff=new Hashtable(15);
@@ -36,7 +36,7 @@ public class ShowCacheInBrowser {
 			diff.put("4",y+y+y+y);
 			diff.put("4.5",y+y+y+y+y2);
 			diff.put("5",y+y+y+y+y);
-	
+
 			terr=new Hashtable(15);
 			String g="<img src=\"file://" + pd + "/g.png\" border=0>";
 			String g2="<img src=\"file://" + pd + "/g2.png\" border=0>";
@@ -49,7 +49,7 @@ public class ShowCacheInBrowser {
 			terr.put("4",g+g+g+g);
 			terr.put("4.5",g+g+g+g+g2);
 			terr.put("5",g+g+g+g+g);
-			
+
 			args = new Hashtable();
 			args.put("filename", pd+"/GCTemplate.html");
 			args.put("case_sensitive", "true");
@@ -57,7 +57,7 @@ public class ShowCacheInBrowser {
 			args.put("max_includes", new Integer(5));
 		}
 	}
-	
+
 	public void showCache(CacheHolder chD) {
 		if (chD == null) return;
 		try {
@@ -67,7 +67,7 @@ public class ShowCacheInBrowser {
 				try {
 //					if (chD.getWayPoint().startsWith("OC"))
 //						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+CacheType.transOCType(chD.getType())+".gif\"");
-//					else	
+//					else
 						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+chD.getType()+".gif\"");
 					tpl.setParam("SIZE", CacheSize.cw2ExportString(chD.getCacheSize()));
 					tpl.setParam("WAYPOINT", chD.getWayPoint());
@@ -87,7 +87,7 @@ public class ShowCacheInBrowser {
 						tpl.setParam("STATUS",MyLocale.getMsg(318,"Found")+" "+chD.getCacheStatus());
 					else
 						tpl.setParam("STATUS", chD.getCacheStatus());
-					
+
 					// Cache attributes
 					if (chD.getExistingDetails().attributes.getCount()>0) {
 						Vector attVect=new Vector(chD.getExistingDetails().attributes.getCount()+1);
@@ -96,7 +96,7 @@ public class ShowCacheInBrowser {
 							atts.put("IMAGE","<img src=\"file://"+
 									   Attribute.getImageDir()+chD.getExistingDetails().attributes.getName(i)+
 									   "\" border=0 alt=\""+chD.getExistingDetails().attributes.getInfo(i)+"\">");
-							if (i % 5 ==4) 
+							if (i % 5 ==4)
 								atts.put("BR","<br/>");
 							else
 								atts.put("BR","");
@@ -105,14 +105,14 @@ public class ShowCacheInBrowser {
 						}
 						tpl.setParam("ATTRIBUTES",attVect);
 					}
-					
+
 					tpl.setParam("DATE", chD.getDateHidden());
 					tpl.setParam("URL", chD.getExistingDetails().URL);
 					if (chD.getExistingDetails().Travelbugs.size()>0) tpl.setParam("BUGS",chD.getExistingDetails().Travelbugs.toHtml());
 					if (chD.getExistingDetails().getCacheNotes().trim().length()>0) tpl.setParam("NOTES", STRreplace.replace(chD.getExistingDetails().getCacheNotes(),"\n","<br/>\n"));
 					if (chD.getExistingDetails().getSolver()!=null && chD.getExistingDetails().getSolver().trim().length()>0) tpl.setParam("SOLVER", STRreplace.replace(chD.getExistingDetails().getSolver(),"\n","<br/>\n"));
 					// Look for images
-					
+
 					StringBuffer s=new StringBuffer(chD.getExistingDetails().LongDescription.length());
 					int start=0;
 					int pos;
@@ -138,7 +138,7 @@ public class ShowCacheInBrowser {
 					}
 					if (start>=0) s.append(chD.getExistingDetails().LongDescription.substring(start));
 					tpl.setParam("DESCRIPTION", s.toString());
-					
+
 					// Do the remaining pictures which are not included in main body of text
 					// They will be hidden initially and can be displayed by clicking on a link
 					if (imageNo<chD.getExistingDetails().images.size()) {
@@ -157,7 +157,7 @@ public class ShowCacheInBrowser {
 						}
 						tpl.setParam("IMAGES",imageVect);
 					}
-					
+
 					Vector logVect=new Vector(chD.getExistingDetails().CacheLogs.size());
 					for (int i=0; i<chD.getExistingDetails().CacheLogs.size(); i++) {
 						Hashtable logs=new Hashtable();
@@ -167,7 +167,7 @@ public class ShowCacheInBrowser {
 							logs.put("LOG",log);
 							logs.put("LOGTYPE","");
 						} else {
-							int posBr=log.indexOf("<br>"); 
+							int posBr=log.indexOf("<br>");
 							if(posBr<0) {
 								logs.put("LOG",log);
 								logs.put("LOGTYPE","");
@@ -182,7 +182,7 @@ public class ShowCacheInBrowser {
 					tpl.setParam("LOGS",logVect);
 					if (!chD.is_available()) tpl.setParam("UNAVAILABLE","1");
 					if (!chD.getExistingDetails().Hints.equals("null"))tpl.setParam("HINT",Common.rot13(chD.getExistingDetails().Hints));
-					
+
 					if (chD.hasAddiWpt()) {
 						Vector addiVect=new Vector(chD.addiWpts.size());
 						for (int i=0; i<chD.addiWpts.size(); i++) {
@@ -203,14 +203,14 @@ public class ShowCacheInBrowser {
 					e.printStackTrace();
 				}
 			}
-			PrintWriter detfile; 
+			PrintWriter detfile;
 			FileWriter fw = new FileWriter(saveTo);
 			detfile = new PrintWriter(new BufferedWriter(fw));
 			tpl.printTo(detfile);
 			//detfile.print(tpl.output());
 			detfile.close();
 			try {
-				CWWrapper.exec(Global.getPref().browser, "file://"+saveTo, false, false); // maybe this works on some PDAs?
+				CWWrapper.exec(Global.getPref().browser, "file://"+saveTo);
 			} catch (IOException ex) {
 				(new MessageBox(MyLocale.getMsg(321,"Error"),
 						MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +
@@ -218,7 +218,7 @@ public class ShowCacheInBrowser {
 						MyLocale.getMsg(1036,"A bug in ewe VM, please be") + "\n" +
 						MyLocale.getMsg(1037,"patient for an update"),FormBase.OKB)).execute();
 			}
-			
+
 		} catch(Exception e) {
 			e.printStackTrace();
 			Global.getPref().log("Error in ShowCache "+e.toString());
