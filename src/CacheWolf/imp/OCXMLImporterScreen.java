@@ -83,19 +83,7 @@ public class OCXMLImporterScreen extends Form {
 		if ((options & MINDIST) > 0) {
 			this.addNext(distLbl = new mLabel(MyLocale.getMsg(1628,"min. Distance:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			minDistanceInput = new mInput();
-			String dist1="0";
-			String dist2="0";
-			if (isGC) {
-				dist1 = Global.getProfile().getMinDistGC();
-				dist2 = Global.getProfile().getDistOC();
-			} else {
-				dist1 = Global.getProfile().getDistOC();
-				dist2 = Global.getProfile().getMinDistGC();
-			}
-			if ( dist1.equals("") || dist1.equals("0") || dist1.equals("0.0") ) {
-				dist1 = dist2;
-			}
-			minDistanceInput.setText(dist1);
+			minDistanceInput.setText(Global.getProfile().getMinDistGC());
 			this.addNext(minDistanceInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			this.addLast(new mLabel(" km/mi."),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
