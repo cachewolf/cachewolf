@@ -1,6 +1,7 @@
 package CacheWolf;
 
 import CacheWolf.utils.FileBugfix;
+import ewe.io.FileBase;
 import ewe.io.FileReader;
 import ewe.sys.Handle;
 import ewe.ui.FormBase;
@@ -82,7 +83,7 @@ public class Rebuild {
 			pbf.setTask(h,MyLocale.getMsg(213,"Deleting orphans"));
 			DataMover dm=new DataMover();
 			int nDeleted=0;
-			String[] CacheFiles = new FileBugfix(prof.dataDir).list("*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+			String[] CacheFiles = new FileBugfix(prof.dataDir).list(null, FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
 			for (i=0; i<xmlFiles.length; i++) {
 				if (xmlFiles[i]!=null){
 					h.progress = ((float)nDeleted++)/(float)(orphans-nAdded);

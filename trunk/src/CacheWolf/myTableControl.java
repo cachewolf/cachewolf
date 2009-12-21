@@ -6,6 +6,7 @@ import ewe.sys.*;
 import ewe.ui.*;
 import ewe.fx.*;
 import ewe.io.File;
+import ewe.io.FileBase;
 import ewe.io.IOException;
 
 /**
@@ -204,7 +205,7 @@ public class myTableControl extends TableControl{
 					pbf.exec();
 					int nDeleted=0;
 					int size=cacheDB.size();
-					String[] CacheFiles = new FileBugfix(profile.dataDir).list("*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+					String[] CacheFiles = new FileBugfix(profile.dataDir).list(null, FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
 					for(int i = size-1; i >=0; i--){// Start Counting down, as the size decreases with each deleted cache
 						ch = cacheDB.get(i);
 						if(ch.is_Checked && (ch.isVisible() || deleteFiltered)) {

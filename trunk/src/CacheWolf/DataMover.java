@@ -320,7 +320,7 @@ public class DataMover {
 		 Deleter(String title) {
 			 this.title=title;
 			 FileBugfix destPath=new FileBugfix(profile.dataDir);
-			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY);
+			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
 			 srcDB.removeElementAt(i);
@@ -333,9 +333,9 @@ public class DataMover {
 			 this.title=title;
 			 this.dstProfile=dstProfile;
 			 FileBugfix srcPath=new FileBugfix(profile.dataDir);
-			 srcFileList= srcPath.list(null,FileBase.LIST_FILES_ONLY);
+			 srcFileList= srcPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
 			 FileBugfix destPath=new FileBugfix(dstProfile.dataDir);
-			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY);
+			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
 			srcHolder.save();
@@ -369,9 +369,9 @@ public class DataMover {
 			 this.title=title;
 			 this.dstProfile=dstProfile;
 			 FileBugfix srcPath=new FileBugfix(profile.dataDir);
-			 srcFileList= srcPath.list(null,FileBase.LIST_FILES_ONLY);
+			 srcFileList= srcPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
 			 FileBugfix destPath=new FileBugfix(dstProfile.dataDir);
-			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY);
+			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
 			 srcDB.removeElementAt(i);
