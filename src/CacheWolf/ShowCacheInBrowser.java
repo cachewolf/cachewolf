@@ -210,7 +210,8 @@ public class ShowCacheInBrowser {
 			//detfile.print(tpl.output());
 			detfile.close();
 			try {
-				CWWrapper.exec(Global.getPref().browser, "file://"+saveTo);
+				// on pda surrounding quotes " will be converted to %22 (and a %22file:// does not work)
+				CWWrapper.exec(Global.getPref().browser, "file://"+STRreplace.replace(saveTo," ","%20"),false,false);
 			} catch (IOException ex) {
 				(new MessageBox(MyLocale.getMsg(321,"Error"),
 						MyLocale.getMsg(1034,"Cannot start browser!") + "\n" + ex.toString() + "\n" +
