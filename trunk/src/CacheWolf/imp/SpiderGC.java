@@ -548,53 +548,40 @@ public class SpiderGC{
 					if(gotDistance <= maxDistance){
 						if ( gotDistance >= minDistance &&
 							 directionOK(directions,getDirection(oneCacheDesc)) ){
-							String waypoint=getWP(oneCacheDesc);
-							CacheHolder existingCache;
-							if((existingCache=cacheDB.get(waypoint)) == null){
-								if ( (maxNumber > 0) && (cachesToLoad.size() >= maxNumber) ) {
+							String chWaypoint=getWP(oneCacheDesc);
+							ch=cacheDB.get(chWaypoint);
+							if(ch == null){
+								pref.log(chWaypoint+" added to load!");
+								cachesToLoad.add(chWaypoint);
+								if ((maxNumber > 0) && (cachesToLoad.size() >= maxNumber)) {
 									maxNumberAbort = true;
-
-									//add no more caches
-									maxDistance = 0;
-
-									//don't update existing caches, because list is not correct when aborting
-									cachesToUpdate.clear();
-								} else {
-									pref.log(waypoint+" added to load!");
-									cachesToLoad.add(waypoint);
-
-									//if we don't want to update caches, we can stop directly after adding the maximum of new caches.
-									if ( (pref.spiderUpdates == Preferences.NO) && (maxNumber > 0) && (cachesToLoad.size() >= maxNumber)) {
-										maxNumberAbort = true;
-
-										//add no more caches
-										maxDistance = 0;
-
-										//don't update existing caches, because list is not correct when aborting
-										cachesToUpdate.clear();
-									}
+									maxDistance = 0; //add no more caches
+									cachesToUpdate.clear(); //don't update existing caches, because list is not correct when aborting
 								}
 							} else {
-								pref.log(waypoint+" already in DB");
-								ch=existingCache;
-								// If the <strike> tag is used, the cache is marked as unavailable or archived
-								boolean is_archived_GC=oneCacheDesc.indexOf("<strike><font color=\"red\">")!=-1;
-								boolean is_available_GC=oneCacheDesc.indexOf("<strike>")==-1;
-								if (ch.is_archived()!=is_archived_GC) { // Update the database with the cache status
-									pref.log("Updating status of "+waypoint+" to "+(is_archived_GC?"archived":"not archived"));
-									if ( ch.is_archived() ) {
-										cachesToUpdate.put(ch.getWayPoint(), ch);
+								// if (pref.spiderUpdates != Preferences.NO) {
+									pref.log(chWaypoint+" already in DB");
+									// If the <strike> tag is used, the cache is marked as unavailable or archived
+									boolean is_archived_GC=oneCacheDesc.indexOf("<strike><font color=\"red\">")!=-1;
+									boolean is_available_GC=oneCacheDesc.indexOf("<strike>")==-1;
+									// CacheHolderDetail det = ch.getCacheDetails(true);
+									if (ch.is_archived()!=is_archived_GC) { // Update the database with the cache status
+										pref.log("Updating status of "+chWaypoint+" to "+(is_archived_GC?"archived":"not archived"));
+										if ( ch.is_archived() ) {
+											// is not yet in updateList
+											cachesToUpdate.put(chWaypoint, ch);
+										}
+										ch.setArchived(is_archived_GC);
+									} else if (ch.is_available()!=is_available_GC) { // Update the database with the cache status
+										pref.log("Updating status of "+chWaypoint+" to "+(is_available_GC?"available":"not available"));
+										ch.setAvailable(is_available_GC);
+									} else if (spiderAllFinds && !ch.is_found()) { // Update the database with the cache status
+										pref.log("Updating status of "+chWaypoint+" to found");
+										ch.setFound(true);
+									} else {
+										cachesToUpdate.remove( chWaypoint );
 									}
-									ch.setArchived(is_archived_GC);
-								} else if (ch.is_available()!=is_available_GC) { // Update the database with the cache status
-									pref.log("Updating status of "+waypoint+" to "+(is_available_GC?"available":"not available"));
-									ch.setAvailable(is_available_GC);
-								} else if (spiderAllFinds && !ch.is_found()) { // Update the database with the cache status
-									pref.log("Updating status of "+waypoint+" to found");
-									ch.setFound(true);
-								} else {
-									cachesToUpdate.remove( ch.getWayPoint() );
-								}
+								// }
 							}
 						}
 					} else maxDistance = 0;
@@ -1698,9 +1685,7 @@ public class SpiderGC{
 		return "";
 	}
 
-
 	final static String hex = ewe.util.TextEncoder.hex;
-
 	public String encodeUTF8URL(byte[] what) {
 		int max = what.length;
 		char [] dest = new char[6*max]; // Assume each char is a UTF char and encoded into 6 chars
