@@ -187,7 +187,7 @@ public class OCXMLImporter extends MinML {
 			(new MessageBox("Error", "Coordinates for centre must be set", FormBase.OKB)).execute();
 			return;
 		}
-		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600, hostname + " Download"),
+		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600," Download") + hostname,
 																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES
 																 | OCXMLImporterScreen.HOST);
 		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
@@ -267,6 +267,7 @@ public class OCXMLImporter extends MinML {
 		picCnt = 0;
 		try{
 			holder = null;
+			pref.log(url+"fetching");
 			file = fetch(url, "dummy");
 
 			//parse

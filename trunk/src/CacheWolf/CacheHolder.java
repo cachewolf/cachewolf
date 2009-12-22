@@ -1212,8 +1212,9 @@ public class CacheHolder{
     }
 
 	public void setAvailable(boolean is_available) {
-		Global.getProfile().notifyUnsavedChanges(is_available != this.available);		
+		Global.getProfile().notifyUnsavedChanges(is_available != this.available);
     	this.available = is_available;
+		if (this.available) {this.archived=false;}
     }
 
 	public boolean is_owned() {
