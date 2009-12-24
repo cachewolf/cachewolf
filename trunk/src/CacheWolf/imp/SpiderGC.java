@@ -398,10 +398,10 @@ public class SpiderGC{
 			direction=direction.replace('O', 'E'); // synonym for East
 			direction=direction.replace('Z', 'S'); // synonym for South
 			direction=direction.replace('P', 'S'); // synonym for South
-			directions=mString.split(direction, ',');
 
 			doNotgetFound = options.foundCheckBox.getState();
 		}
+		directions=mString.split(direction, ',');
 
 		int maxNumber = -1;
 		String maxNumberString = options.maxNumberInput.getText();
