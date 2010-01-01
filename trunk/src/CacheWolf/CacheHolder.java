@@ -1205,6 +1205,7 @@ public class CacheHolder{
 	public void setArchived(boolean is_archived) {
 		Global.getProfile().notifyUnsavedChanges(is_archived != this.archived);		
     	this.archived = is_archived;
+    	if (this.archived) {this.available=false;}
     }
 
 	public boolean is_available() {
