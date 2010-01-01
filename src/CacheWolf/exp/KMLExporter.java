@@ -6,6 +6,7 @@ import CacheWolf.CacheHolderDetail;
 import CacheWolf.CacheType;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
+import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
@@ -47,6 +48,7 @@ public class KMLExporter extends Exporter {
 
 	String []categoryNames = {"Available","Found", "Owned", "Not Available", "UNKNOWN"};
 	Hashtable [] outCacheDB = new Hashtable[categoryNames.length];
+	private Profile prof;
 
 	public KMLExporter(){
 		super();
@@ -55,9 +57,10 @@ public class KMLExporter extends Exporter {
 	}
 
 
-	public KMLExporter(Preferences p, Profile prof){
+	public KMLExporter(Preferences p, Profile _prof){
 			super();
 			this.setMask("*.kml");
+			prof=_prof;
 	}
 
 	public void doIt(int variant){
@@ -86,7 +89,7 @@ public class KMLExporter extends Exporter {
 
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-			str = this.header();
+			str = STRreplace.replace(this.header(),"CacheWolf",prof.name);
 			if (str != null) outp.print(str);
 			for (int cat = 0; cat < categoryNames.length; cat++) {
 				// skip over empty categories
@@ -102,7 +105,7 @@ public class KMLExporter extends Exporter {
 					tmp = (Vector)entry.getValue();
 					// skip over empty cachetypes
 					if (tmp.size() == 0) continue;
-					outp.print(startFolder(CacheType.type2SymTag(new Integer((String)entry.getKey()).byteValue())));
+					outp.print(startFolder(CacheType.type2Gui(new Integer((String)entry.getKey()).byteValue())));
 
 					for(int i = 0; i<tmp.size(); i++){
 						ch = (CacheHolder) tmp.get(i);
