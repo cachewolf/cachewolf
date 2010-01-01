@@ -58,6 +58,7 @@ class TplFilter implements HTML.Tmpl.Filter
 	String decSep = ".";
 	int shortNameLength=30;
 	int shortWaypointLength=3;
+	String out="*.gpx";
 
 
 	public TplFilter(){
@@ -124,6 +125,9 @@ class TplFilter implements HTML.Tmpl.Filter
 			if (param.equals("WaypointLength")) {
 				shortWaypointLength = Integer.valueOf(value).intValue();
 			}
+			if (param.equals("Out")) {
+				out = value;
+			}
 
 
 		}
@@ -163,12 +167,6 @@ public class TPLExporter {
 		CacheHolder ch;
 		ProgressBarForm pbf = new ProgressBarForm();
 		ewe.sys.Handle h = new ewe.sys.Handle();
-
-		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
-		fc.setTitle("Select target file:");
-		if(fc.execute() == FormBase.IDCANCEL) return;
-		File saveTo = fc.getChosenFile();
-		pref.setExportPath(expName, saveTo.getPath());
 		int counter = cacheDB.countVisible();
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
@@ -196,6 +194,14 @@ public class TPLExporter {
 			args.put("max_includes", new Integer(5));
 			args.put("filter", myFilter);
 			Template tpl = new Template(args);
+
+			FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
+			fc.setTitle("Select target file:");
+			fc.addMask(myFilter.out);
+			if(fc.execute() == FormBase.IDCANCEL) return;
+			File saveTo = fc.getChosenFile();
+			pref.setExportPath(expName, saveTo.getPath());
+
 			for(int i = 0; i<counter;i++){
 				ch = cacheDB.get(i);
 				det = ch.getExistingDetails();
