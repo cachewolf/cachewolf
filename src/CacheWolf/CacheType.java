@@ -496,6 +496,9 @@ public final class CacheType {
 	public static String type2GSTypeTag(final byte typeId) {
 		return CT_GSTYPETAG[CT_Index(typeId)];
 	}
+	public static String type2Gui(final byte typeId) {
+		return CT_GUI[CT_Index(typeId)];
+	}
 
 	/**
 	 * checks if the given type would be valid for internal use in cachewolf
