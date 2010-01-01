@@ -251,7 +251,7 @@ public class DataMover {
 		// delete files in dstDir to clean up trash
 		// String tmp[] = new FileBugfix(dir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < tmp.length;i++){
-			if (tmp[i].substring(0, wpt.length()).equalsIgnoreCase(wpt)) {
+			if (tmp[i].substring(0, java.lang.Math.min(tmp[i].length(),wpt.length())).equalsIgnoreCase(wpt)) {
 				File tmpFile = new File(dir + tmp[i]);
 				tmpFile.delete();
 			}
