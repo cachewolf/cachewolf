@@ -261,7 +261,7 @@ public class DataMover {
 	private void moveCacheFiles(String wpt, String srcDir, String dstDir, String[] srcFiles){
 		// String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
-			if (srcFiles[i].substring(0, wpt.length()).equalsIgnoreCase(wpt)) {
+			if (srcFiles[i].substring(0, java.lang.Math.min(srcFiles[i].length(),wpt.length())).equalsIgnoreCase(wpt)) {
 				File srcFile = new File(srcDir + srcFiles[i]);
 				File dstFile = new File(dstDir + srcFiles[i]);
 				srcFile.move(dstFile);
@@ -272,7 +272,7 @@ public class DataMover {
 	private void copyCacheFiles(String wpt, String srcDir, String dstDir, String[] srcFiles){
 		// String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
-			if (srcFiles[i].substring(0, wpt.length()).equalsIgnoreCase(wpt)) {
+			if (srcFiles[i].substring(0, java.lang.Math.min(srcFiles[i].length(),wpt.length())).equalsIgnoreCase(wpt)) {
 				copy(srcDir + srcFiles[i],dstDir + srcFiles[i]);
 			}
 		}
