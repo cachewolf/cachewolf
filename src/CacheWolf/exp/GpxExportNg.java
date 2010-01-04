@@ -952,9 +952,9 @@ public class GpxExportNg {
 			this.hasGpsbabelFrm = hasGpsbabel;
 
 			// TODO: get/set defaults from profile
-			chosenStyle = 0;
-			chosenTarget = 0;
-			chosenIds = 0;
+			chosenStyle = Global.getProfile().getGpxStyle();
+			chosenTarget = Global.getProfile().getGpxTarget();
+			chosenIds = Global.getProfile().getGpxId();
 
 			this.setTitle("GPX Export");
 			this.resizable = false;
@@ -1026,8 +1026,154 @@ public class GpxExportNg {
 
 			addButton(btnOk);
 			addButton(btnCancel);
+
+			checkStyle();
+			checkTarget();
+			checkIds();
+		}
+		
+		/**
+		 * in  : chStyle.selectedIndex;
+		 * out : chosenStyle
+		 */
+		private void checkStyle() {
+			if (chStyle.selectedIndex == 2) { // my finds export
+				chIds.select(0);
+				if (chIds.change(ControlConstants.Disabled, 0))
+					chIds.repaint();
+
+				chTarget.select(0);
+				if (chTarget.change(ControlConstants.Disabled, 0))
+					chTarget.repaint();
+
+				if (ibPrefix.change(ControlConstants.Disabled, 0))
+					ibPrefix.repaint();
+
+				if (ibMaxLogs.change(ControlConstants.Disabled, 0))
+					ibMaxLogs.repaint();
+
+				cbSendToGarmin.state = false;
+				if (cbSendToGarmin.change(ControlConstants.Disabled, 0))
+					cbSendToGarmin.repaint();
+
+				cbCustomIcons.state = false;
+				if (cbCustomIcons.change(ControlConstants.Disabled, 0))
+					cbCustomIcons.repaint();
+
+				cbSeperateHints.state = false;
+				if (cbSeperateHints.change(ControlConstants.Disabled, 0))
+					cbSeperateHints.repaint();
+
+				if (ibMaxLogs.change(ControlConstants.Disabled, 0))
+					ibMaxLogs.repaint();
+
+				if (ibPrefix.change(ControlConstants.Disabled, 0))
+					ibPrefix.repaint();
+			} else if (chStyle.selectedIndex == 1) { // PQ like export
+				if (chIds.change(0, ControlConstants.Disabled))
+					chIds.repaint();
+
+				chTarget.select(0);
+				if (chTarget.change(ControlConstants.Disabled, 0))
+					chTarget.repaint();
+
+				if (hasGpsbabelFrm && cbSendToGarmin.change(0, ControlConstants.Disabled))
+					cbSendToGarmin.repaint();
+
+				if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
+					cbCustomIcons.repaint();
+
+				cbSeperateHints.state = false;
+				if (cbSeperateHints.change(ControlConstants.Disabled, 0))
+					cbSeperateHints.repaint();
+
+				if (ibMaxLogs.change(0, ControlConstants.Disabled))
+					ibMaxLogs.repaint();
+
+				if (ibPrefix.change(ControlConstants.Disabled, 0))
+					ibPrefix.repaint();
+			} else { // compact export
+				if (chIds.change(0, ControlConstants.Disabled))
+					chIds.repaint();
+
+				if (chTarget.change(0, ControlConstants.Disabled))
+					chTarget.repaint();
+
+				if (hasGpsbabelFrm && cbSendToGarmin.change(0, ControlConstants.Disabled))
+					cbSendToGarmin.repaint();
+
+				if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
+					cbCustomIcons.repaint();
+
+				cbSeperateHints.state = false;
+				if (cbSeperateHints.change(ControlConstants.Disabled, 0))
+					cbSeperateHints.repaint();
+
+				if (ibMaxLogs.change(ControlConstants.Disabled, 0))
+					ibMaxLogs.repaint();
+			}
+			chosenStyle = chStyle.selectedIndex;
+			chosenTarget = chTarget.selectedIndex;
+			chosenIds = chIds.selectedIndex;
 		}
 
+		/**
+		 * in : chTarget.selectedIndex
+		 * out: chosenTarget
+		 */
+		private void checkTarget() {
+			if (chTarget.selectedIndex == 2) { // POI
+				cbSendToGarmin.state = false;
+				if (cbSendToGarmin.change(ControlConstants.Disabled, 0))
+					cbSendToGarmin.repaint();
+
+				cbCustomIcons.state = false;
+				if (cbCustomIcons.change(ControlConstants.Disabled, 0))
+					cbCustomIcons.repaint();
+
+				if (cbSeperateHints.change(0, ControlConstants.Disabled))
+					cbSeperateHints.repaint();
+
+				if (ibPrefix.change(0, ControlConstants.Disabled))
+					ibPrefix.repaint();
+			} else if (chTarget.selectedIndex == 1) { // Separate File
+				cbSendToGarmin.state = false;
+				if (cbSendToGarmin.change(ControlConstants.Disabled, 0))
+					cbSendToGarmin.repaint();
+
+				if (hasBitmapsFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
+					cbCustomIcons.repaint();
+
+				if (cbSeperateHints.change(0, ControlConstants.Disabled))
+					cbSeperateHints.repaint();
+
+				if (ibPrefix.change(0, ControlConstants.Disabled))
+					ibPrefix.repaint();
+			} else { // Single GPX
+				if (hasGpsbabelFrm && cbSendToGarmin.change(0, ControlConstants.Disabled))
+					cbSendToGarmin.repaint();
+
+				if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
+					cbCustomIcons.repaint();
+
+				cbSeperateHints.state=false;
+				if (cbSeperateHints.change(ControlConstants.Disabled, 0))
+					cbSeperateHints.repaint();
+
+				if (ibPrefix.change(ControlConstants.Disabled, 0))
+					ibPrefix.repaint();
+			}
+			chosenStyle = chStyle.selectedIndex;
+			chosenTarget = chTarget.selectedIndex;
+			chosenIds = chIds.selectedIndex;
+		}
+
+		private void checkIds() {
+			chosenStyle = chStyle.selectedIndex;
+			chosenTarget = chTarget.selectedIndex;
+			chosenIds = chIds.selectedIndex;
+		}
+		
 		/**
 		 * react to GUI events and toogle access to the checkboxes according to
 		 * radio button settings pass everything else to <code>super()</code>
@@ -1035,133 +1181,19 @@ public class GpxExportNg {
 		public void onEvent(Event ev) {
 			if (ev instanceof DataChangeEvent && ev.type == DataChangeEvent.DATA_CHANGED) {
 				if (ev.target == chStyle && chStyle.selectedIndex != chosenStyle) {
-					if (chStyle.selectedIndex == 2) { // my finds export
-						chIds.select(0);
-						if (chIds.change(ControlConstants.Disabled, 0))
-							chIds.repaint();
-
-						chTarget.select(0);
-						if (chTarget.change(ControlConstants.Disabled, 0))
-							chTarget.repaint();
-
-						if (ibPrefix.change(ControlConstants.Disabled, 0))
-							ibPrefix.repaint();
-
-						if (ibMaxLogs.change(ControlConstants.Disabled, 0))
-							ibMaxLogs.repaint();
-
-						cbSendToGarmin.state = false;
-						if (cbSendToGarmin.change(ControlConstants.Disabled, 0))
-							cbSendToGarmin.repaint();
-
-						cbCustomIcons.state = false;
-						if (cbCustomIcons.change(ControlConstants.Disabled, 0))
-							cbCustomIcons.repaint();
-
-						cbSeperateHints.state = false;
-						if (cbSeperateHints.change(ControlConstants.Disabled, 0))
-							cbSeperateHints.repaint();
-
-						if (ibMaxLogs.change(ControlConstants.Disabled, 0))
-							ibMaxLogs.repaint();
-
-						if (ibPrefix.change(ControlConstants.Disabled, 0))
-							ibPrefix.repaint();
-					} else if (chStyle.selectedIndex == 1) { // PQ like export
-						if (chIds.change(0, ControlConstants.Disabled))
-							chIds.repaint();
-
-						chTarget.select(0);
-						if (chTarget.change(ControlConstants.Disabled, 0))
-							chTarget.repaint();
-
-						if (hasGpsbabelFrm && cbSendToGarmin.change(0, ControlConstants.Disabled))
-							cbSendToGarmin.repaint();
-
-						if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
-							cbCustomIcons.repaint();
-
-						cbSeperateHints.state = false;
-						if (cbSeperateHints.change(ControlConstants.Disabled, 0))
-							cbSeperateHints.repaint();
-
-						if (ibMaxLogs.change(0, ControlConstants.Disabled))
-							ibMaxLogs.repaint();
-
-						if (ibPrefix.change(ControlConstants.Disabled, 0))
-							ibPrefix.repaint();
-					} else { // compact export
-						if (chIds.change(0, ControlConstants.Disabled))
-							chIds.repaint();
-
-						if (chTarget.change(0, ControlConstants.Disabled))
-							chTarget.repaint();
-
-						if (hasGpsbabelFrm && cbSendToGarmin.change(0, ControlConstants.Disabled))
-							cbSendToGarmin.repaint();
-
-						if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
-							cbCustomIcons.repaint();
-
-						cbSeperateHints.state = false;
-						if (cbSeperateHints.change(ControlConstants.Disabled, 0))
-							cbSeperateHints.repaint();
-
-						if (ibMaxLogs.change(ControlConstants.Disabled, 0))
-							ibMaxLogs.repaint();
-					}
-					chosenStyle = chStyle.selectedIndex;
+					checkStyle();
 				} else if (ev.target == chTarget && chTarget.selectedIndex != chosenTarget) {
-					if (chTarget.selectedIndex == 2) { // POI
-						cbSendToGarmin.state = false;
-						if (cbSendToGarmin.change(ControlConstants.Disabled, 0))
-							cbSendToGarmin.repaint();
-
-						cbCustomIcons.state = false;
-						if (cbCustomIcons.change(ControlConstants.Disabled, 0))
-							cbCustomIcons.repaint();
-
-						if (cbSeperateHints.change(0, ControlConstants.Disabled))
-							cbSeperateHints.repaint();
-
-						if (ibPrefix.change(0, ControlConstants.Disabled))
-							ibPrefix.repaint();
-					} else if (chTarget.selectedIndex == 1) { // Separate File
-						cbSendToGarmin.state = false;
-						if (cbSendToGarmin.change(ControlConstants.Disabled, 0))
-							cbSendToGarmin.repaint();
-
-						if (hasBitmapsFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
-							cbCustomIcons.repaint();
-
-						if (cbSeperateHints.change(0, ControlConstants.Disabled))
-							cbSeperateHints.repaint();
-
-						if (ibPrefix.change(0, ControlConstants.Disabled))
-							ibPrefix.repaint();
-					} else { // Single GPX
-						if (hasGpsbabelFrm && cbSendToGarmin.change(0, ControlConstants.Disabled))
-							cbSendToGarmin.repaint();
-
-						if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
-							cbCustomIcons.repaint();
-
-						cbSeperateHints.state=false;
-						if (cbSeperateHints.change(ControlConstants.Disabled, 0))
-							cbSeperateHints.repaint();
-
-						if (ibPrefix.change(ControlConstants.Disabled, 0))
-							ibPrefix.repaint();
-					}
-
-					chosenTarget = chTarget.selectedIndex;
+					checkTarget();
 				} else if (ev.target == chIds && chIds.selectedIndex != chosenIds) {
-					chosenIds = chIds.selectedIndex;
+					checkIds();
 				}
 			} else if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 				if (ev.target == btnCancel) {
 					close(-1);
 				} else if (ev.target == btnOk) {
+					Global.getProfile().setGpxStyle(Convert.toString(chosenStyle));
+					Global.getProfile().setGpxTarget(Convert.toString(chosenTarget));
+					Global.getProfile().setGpxId(Convert.toString(chosenIds));
 					if (chosenStyle == GpxExportNg.STYLE_GPX_PQLIKE) {
 						try {
 							int logs = getMaxLogs();

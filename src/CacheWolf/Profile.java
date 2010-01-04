@@ -49,6 +49,10 @@ public class Profile {
 	private String minDistGC = new String();
 	/** Direction for geocaching caches */
 	private String directionGC = new String();
+	
+	private String gpxStyle =new String(); 
+	private String gpxTarget =new String(); 
+	private String gpxId =new String(); 
 
 	/** path to the maps of the profile relative to the maps root */
 	private String relativeCustomMapsPath = new String();
@@ -120,6 +124,9 @@ public class Profile {
 		setDistGC("");
 		setMinDistGC("");
 		setDirectionGC("");
+		setGpxId("0");
+		setGpxStyle("0");
+		setGpxTarget("0");
 		setRelativeCustomMapsPath("");
 		resetUnsavedChanges();
 	}
@@ -211,6 +218,7 @@ public class Profile {
 			detfile.print(this.getCurrentFilter().toXML(""));
 			detfile.print("    <SYNCOC date = \""+getLast_sync_opencaching()+"\" dist = \""+getDistOC()+"\"/>\n");
 			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\" direction = \"" + getDirectionGC() + "\"/>\n");
+			detfile.print("    <EXPORT style = \"" + getGpxStyle() + "\" target = \"" + getGpxTarget() + "\" id = \"" + getGpxId() + "\"/>\n");
 			detfile.print("    <mapspath relativeDir = \"" + SafeXML.clean(relativeCustomMapsPath) + "\"/>\n");
 			int size = cacheDB.size();
 			for (int i = 0; i < size; i++) {
@@ -316,9 +324,21 @@ public class Profile {
 					int start=text.indexOf("dist = \"")+8;
 					setDistGC(text.substring(start,text.indexOf("\"",start)));
 					start=text.indexOf("mindist = \"")+11;
-					setMinDistGC(text.substring(start,text.indexOf("\"",start)));
+					if (start==10) {setMinDistGC("0");}
+					else setMinDistGC(text.substring(start,text.indexOf("\"",start)));
 					start=text.indexOf("direction = \"")+13;
-					setDirectionGC(text.substring(start,text.indexOf("\"",start)));
+					if (start==12) {setDirectionGC("");}
+					else setDirectionGC(text.substring(start,text.indexOf("\"",start)));
+				} else if (text.indexOf("<EXPORT")>=0) {
+					int start=text.indexOf("style = \"")+9;
+					if (start==8) {setGpxStyle("0");}
+					else setGpxStyle(text.substring(start,text.indexOf("\"",start)));
+					start=text.indexOf("target = \"")+10;
+					if (start==9) {setGpxTarget("0");}
+					else setGpxTarget(text.substring(start,text.indexOf("\"",start)));
+					start=text.indexOf("id = \"")+6;
+					if (start==5) {setGpxId("0");}
+					else setGpxId(text.substring(start,text.indexOf("\"",start)));
 				} else if (indexXmlVersion <=2 && text.indexOf("<FILTER")>=0){
 					// Read filter data of file versions 1 and 2. (Legacy code)
 					ex.setSource(text.substring(text.indexOf("<FILTER")));
@@ -804,6 +824,18 @@ public class Profile {
 	public String getDirectionGC() {
 		return directionGC;
 	}
+
+	public int getGpxStyle() {
+		return Convert.toInt(gpxStyle);
+	}
+
+	public int getGpxTarget() {
+		return Convert.toInt(gpxTarget);
+	}
+
+	public int getGpxId() {
+		return Convert.toInt(gpxId);
+	}
 //
 	public void setMinDistGC(String minDistGC) {
 		this.notifyUnsavedChanges(!minDistGC.equals(this.minDistGC));
@@ -818,6 +850,21 @@ public class Profile {
 	public void setDirectionGC(String directionGC) {
 		this.notifyUnsavedChanges(!directionGC.equals(this.directionGC));
 		this.directionGC = directionGC;
+	}
+
+	public void setGpxStyle(String style) {
+		this.notifyUnsavedChanges(!style.equals(this.gpxStyle));
+		this.gpxStyle = style;
+	}
+
+	public void setGpxTarget(String target) {
+		this.notifyUnsavedChanges(!target.equals(this.gpxTarget));
+		this.gpxTarget = target;
+	}
+
+	public void setGpxId(String id) {
+		this.notifyUnsavedChanges(!id.equals(this.gpxId));
+		this.gpxId = id;
 	}
 
 	public String getRelativeCustomMapsPath() {
