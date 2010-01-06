@@ -453,7 +453,7 @@ public class SpiderGC{
 					}
 				} else {
 					if ( (!ch.is_archived())
-						 && (ch.kilom <= distanceInKm) && (ch.kilom >= minDistanceInKm)
+						 && (ch.kilom <= distanceInKm) /*&& (ch.kilom >= minDistanceInKm)*/
 						 && !(doNotgetFound && (ch.is_found() || ch.is_owned()))
 						 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
 						 && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) )
@@ -546,11 +546,10 @@ public class SpiderGC{
 					oneCacheDesc=lineRex.stringMatched(1);
 					double gotDistance=getDist(oneCacheDesc);
 					if(gotDistance <= maxDistance){
-						if ( gotDistance >= minDistance &&
-							 directionOK(directions,getDirection(oneCacheDesc)) ){
-							String chWaypoint=getWP(oneCacheDesc);
-							ch=cacheDB.get(chWaypoint);
-							if(ch == null){
+					  String chWaypoint=getWP(oneCacheDesc);
+						ch=cacheDB.get(chWaypoint);
+						if(ch == null){
+						  if ( gotDistance >= minDistance && directionOK(directions,getDirection(oneCacheDesc)) ){
 								pref.log(chWaypoint+" added to load!");
 								cachesToLoad.add(chWaypoint);
 								if ((maxNumber > 0) && (cachesToLoad.size() >= maxNumber)) {
@@ -558,32 +557,32 @@ public class SpiderGC{
 									maxDistance = 0; //add no more caches
 									cachesToUpdate.clear(); //don't update existing caches, because list is not correct when aborting
 								}
-							} else {
-								// if (pref.spiderUpdates != Preferences.NO) {
-									pref.log(chWaypoint+" already in DB");
-									// If the <strike> tag is used, the cache is marked as unavailable or archived
-									boolean is_archived_GC=oneCacheDesc.indexOf("<strike><font color=\"red\">")!=-1;
-									boolean is_available_GC=oneCacheDesc.indexOf("<strike>")==-1;
-									// CacheHolderDetail det = ch.getCacheDetails(true);
-									if (ch.is_archived()!=is_archived_GC) { // Update the database with the cache status
-										pref.log("Updating status of "+chWaypoint+" to "+(is_archived_GC?"archived":"not archived"));
-										if ( ch.is_archived() ) {
-											// is not yet in updateList
-											cachesToUpdate.put(chWaypoint, ch);
-										}
-										ch.setArchived(is_archived_GC);
-									} else if (ch.is_available()!=is_available_GC) { // Update the database with the cache status
-										pref.log("Updating status of "+chWaypoint+" to "+(is_available_GC?"available":"not available"));
-										ch.setAvailable(is_available_GC);
-									} else if (spiderAllFinds && !ch.is_found()) { // Update the database with the cache status
-										pref.log("Updating status of "+chWaypoint+" to found");
-										ch.setFound(true);
-									} else {
-										cachesToUpdate.remove( chWaypoint );
-									}
-								// }
 							}
-						}
+						} else {
+							// if (pref.spiderUpdates != Preferences.NO) {
+							pref.log(chWaypoint+" already in DB");
+						  // If the <strike> tag is used, the cache is marked as unavailable or archived
+							boolean is_archived_GC=oneCacheDesc.indexOf("<strike><font color=\"red\">")!=-1;
+							boolean is_available_GC=oneCacheDesc.indexOf("<strike>")==-1;
+							// CacheHolderDetail det = ch.getCacheDetails(true);
+							if (ch.is_archived()!=is_archived_GC) { // Update the database with the cache status
+								pref.log("Updating status of "+chWaypoint+" to "+(is_archived_GC?"archived":"not archived"));
+								if ( ch.is_archived() ) {
+									// is not yet in updateList
+									cachesToUpdate.put(chWaypoint, ch);
+								}
+								ch.setArchived(is_archived_GC);
+							} else if (ch.is_available()!=is_available_GC) { // Update the database with the cache status
+								pref.log("Updating status of "+chWaypoint+" to "+(is_available_GC?"available":"not available"));
+								ch.setAvailable(is_available_GC);
+							} else if (spiderAllFinds && !ch.is_found()) { // Update the database with the cache status
+								pref.log("Updating status of "+chWaypoint+" to found");
+								ch.setFound(true);
+							} else {
+								cachesToUpdate.remove( chWaypoint );
+							}
+						// }
+  					}
 					} else maxDistance = 0;
 					// next Cache Description of this page
 					lineRex.searchFrom(dummy, lineRex.matchedTo());
