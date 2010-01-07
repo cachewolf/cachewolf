@@ -44,7 +44,17 @@
           <surname>Klaus Rieger</surname>
         </author>
         <revdescription>
-          <para>Bilder auf V1.1.2320 aktualisiert, Tippfehler korrigiert, neue Funktionen beschrieben</para>
+          <para>Bilder auf V1.1.2320 aktualisiert, Tippfehler korrigiert, neue Funktionen beschrieben</para>
+        </revdescription>
+      </revision>
+      <revision>
+        <revnumber>1.01</revnumber>
+        <date>07.01.2010</date>
+        <author>
+          <surname>Klaus Rieger</surname>
+        </author>
+        <revdescription>
+          <para>Bilder auf V1.1.2386 akutalisiert</para>
         </revdescription>
       </revision>
     </revhistory>
@@ -181,7 +191,7 @@
           <para>PL = Polnisch</para>
         </listitem>
       </itemizedlist>
-      <para>Die Sprache kann aus dem Dropdown-Menü ausgewählt werden. Die neu eingestellte Sprache wird im Fall einer Änderung allerdings erst nach einem Neustart benutzt.</para>
+      <para>Die Sprache kann aus dem Dropdown-Menü ausgewählt werden. Die neu eingestellte Sprache wird im Fall einer Änderung allerdings erst nach einem Neustart benutzt.</para>
       <para>Unter Längeneinheit kann auf die Verwendung von Meilen statt km umgestellt werden.</para>
       <para>Mit <literal>Sortierung nach Cache gruppiert</literal> wird erreicht, daß bei Sortierung einer Spalte in der Listenansicht immer nur der Hauptwegpunkt eines Caches berücksichtigt wird, die Additional Waypoints werden durch die Sortierung nicht erfasst und bleiben stets unter Ihrem Hauptwegpunkt eingeordnet. Andernfalls werden wirklich alle Zeilen entsprechend sortiert, was aber dazu führen kann, daß die Additional Waypoints an ganz anderer Stelle in der sortierten Liste auftauchen, wie der zugehörige Hauptwegpunkt.</para>
       <para>Ist <literal>use own symbols</literal> angehakt und befinden sich im Unterverzeichnis &quot;Symbols&quot;  .png-Dateien, werden diese als alternative Symbole in den Cachewolf geladen. Dabei sollte es sich um PNGs der Größe 15x15 handeln. Wichtig ist die korrekte Benennung der Dateien. Falsch benannte Dateien werden ignoriert.
@@ -224,7 +234,7 @@ Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen. Ist keine
       <section id="DatenImportGPX">
         <title>Import einer GPX Datei</title>
         <para>Um an GPX-Dateien von geocaching.com zu kommen, muss man Premium-Mitglied sein. Die GPX-Dateien werden nach einer Pocket Query (häufig als zip-Archiv) per Mail verschickt. Alternativ können GPX-Dateien für einzelne Caches direkt heruntergeladen werden. Die heruntengeladenen Dateien können einfach in ein Verzeichnis abgelegt und müssen nicht entpackt werden.</para>
-        <para>Den Import startest Du durch Anwählen von &quot;<literal>Anwendung -&gt; Import -&gt; Importiere GPX</literal>&quot;. Du kannst eine Datei oder mit Hilfe der Umschalt - Taste mehrere Dateien auswählen.</para>
+        <para>Den Import startest Du durch Anwählen von &quot;<literal>Anwendung -&gt; Import -&gt; aus GPX-Datei</literal>&quot;. Du kannst eine Datei oder mit Hilfe der Umschalt - Taste mehrere Dateien auswählen.</para>
         <para>Nach der Wahl der Datei, die du importieren möchtest, erscheint ein Fenster mit der Frage, ob Du auch Bilder herunterladen möchtest:</para>
         <para>
           <inlinemediaobject>
@@ -247,7 +257,7 @@ Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen. Ist keine
       <section id="DatenImportSpider">
         <title>Direktes herunterladen (spidern)</title>
         <para>WICHTIG: Durch Anwenden dieser Funktion ruft CW automatisiert die Internetseiten mit den entsprechenden Cachebeschreibungen auf und speichert die dort enthaltenen Daten in seiner Datenbank ab. Dies ist aber lt. den Nutzungsbestimmungen von Geocaching.com verboten. Zuwiederhandlungen können u.U. auch ein Sperren des entspechenden Nutzerkontos bei Geocaching.com zur Folge haben!</para>
-        <para>Durch Anwählen von <literal>Anwendung -&gt; Import -&gt; Spider von geocaching.com</literal> wirst Du zuerst aufgefordert Dein Passwort einzugeben. Dies ist das Passwort, das Du für Deinen Account bei geocaching.com nutzt. Deinen Alias hast Du ja bereits in den Einstellungen eingetragen. Nach der Eingabe Deines Passwortes loggt sich CacheWolf auf der geocaching.com Homepage ein und präsentiert dann die Spideroptionen ein einem neuen Fenster:</para>
+        <para>Durch Anwählen von <literal>Anwendung -&gt; Import -&gt; von geocaching.com</literal> wirst Du zuerst aufgefordert Dein Passwort einzugeben. Dies ist das Passwort, das Du für Deinen Account bei geocaching.com nutzt. Deinen Alias hast Du ja bereits in den Einstellungen eingetragen. Nach der Eingabe Deines Passwortes loggt sich CacheWolf auf der geocaching.com Homepage ein und präsentiert dann die Spideroptionen ein einem neuen Fenster:</para>
         <para>
           <inlinemediaobject>
             <imageobject>
@@ -255,7 +265,7 @@ Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen. Ist keine
             </imageobject>
           </inlinemediaobject>
         </para>
-        <para>Ganz oben kann im Drop-Down Feld gewählt werden ob alle Cachetypen gespidert werden sollen oder nur ein bestimmter Cachetyp, z.B. alle Traditionals. Unter <literal>max. Abstand</literal> wird eine Entfernung zum aktuellem Zentrum eingestellt (siehe <xref linkend="zentrum"/>). Cachewolf wird alle Caches im angegebenen Umkreis um das Zentrum herunterladen. Mit der Einstellung <literal>Max. Anzahl </literal> wird die maximale Zahl der Caches die gespidert werden begrenzt. Liegen mehr Caches innerhalb des Spiderradiusses wird das spidern nach der angegebenen Anzahl abgebrochen. Damit soll verhindert werden, daß auf der Webseite von GC zu großer Traffic entsteht. (Siehe auch WICHTIG ganz oben in diesem Kapitel! Wird der Haken bei <literal>Bilder downloaden</literal> gesetzt, wird Cachewolf sowohl die Bilder in der Cachebeschreibung als auch die Spoilerbilder herunterladen. Mit dem Haken bei <literal>TBs downloaden </literal>werden neben den Cachedaten auch die evtl. in den Caches enthaltenen Trackable Items wie Geocoins oder Travelbugs heruntergeladen und in dem CW-Profil verwaltet. Der Download von bereits gefundenen Caches kann durch Auswählen der Option <literal>Gefundene Caches nicht laden verhindert</literal> werden.</para>
+        <para>Ganz oben kann im Drop-Down Feld gewählt werden ob alle Cachetypen gespidert werden sollen oder nur ein bestimmter Cachetyp, z.B. alle Traditionals. Es werden alle Caches geladen, die zwischen <literal>min. Abstand </literal>und <literal>max. Abstand</literal> um das aktuelle Zentrum liegen (siehe <xref linkend="zentrum"/>). Gibt man bei <literal>Richtung </literal>etwas ein, werden nur die Caches geladen, die in der angegebenen Richtung vom Zentrum aus liegen. Bleibt das Feld leer, werden alle Richtungen berücksichtigt. Mit der Einstellung <literal>Max. Anzahl </literal> wird die maximale Zahl der Caches die gespidert werden begrenzt. Liegen mehr Caches innerhalb des Spiderradiusses wird das spidern nach der angegebenen Anzahl abgebrochen. Damit soll verhindert werden, daß auf der Webseite von GC zu großer Traffic entsteht. (Siehe auch WICHTIG ganz oben in diesem Kapitel! Wird der Haken bei <literal>Bilder downloaden</literal> gesetzt, wird Cachewolf sowohl die Bilder in der Cachebeschreibung als auch die Spoilerbilder herunterladen. Mit dem Haken bei <literal>TBs downloaden </literal>werden neben den Cachedaten auch die evtl. in den Caches enthaltenen Trackable Items wie Geocoins oder Travelbugs heruntergeladen und in dem CW-Profil verwaltet. Der Download von bereits gefundenen Caches kann durch Auswählen der Option <literal>Gefundene Caches nicht laden verhindert</literal> werden.</para>
         <para>Mit <literal>OK</literal> wird der Spider gestartet. Je nach Entfernung und Cache-Dichte wird das Spidern nun einige Zeit in Anspruch nehmen.</para>
       </section>
     </section>
@@ -268,7 +278,7 @@ Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen. Ist keine
       </section>
       <section id="DatenImportDownload">
         <title id="OpenSpider">Direkter Download von opencaching.de</title>
-        <para>Mit der Funktion <literal>Anwendung -&gt; Import -&gt; Download von opencaching.de</literal> öffnet sich ein Dialog. Ganz oben im Drop-Down Feld kann die Datenbank gewählt werden, aus der die Cachedaten importiert werden sollen. Darunter die Eingabe des Abstands: </para>
+        <para>Mit der Funktion <literal>Anwendung -&gt; Import -&gt; von opencaching de,pl,cz.uk</literal> öffnet sich ein Dialog. Ganz oben im Drop-Down Feld kann die Datenbank gewählt werden, aus der die Cachedaten importiert werden sollen. Darunter die Eingabe des Abstands: </para>
         <para>
           <inlinemediaobject>
             <imageobject>
