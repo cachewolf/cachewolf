@@ -49,6 +49,16 @@
           <para>Kapitel fertig.</para>
         </revdescription>
       </revision>
+      <revision>
+        <revnumber>1.01</revnumber>
+        <date>07.01.2010</date>
+        <author>
+          <surname>Klaus Rieger</surname>
+        </author>
+        <revdescription>
+          <para>an V1.1.2386 angepasst</para>
+        </revdescription>
+      </revision>
     </revhistory>
   </chapterinfo>
   <title>Ansichten</title>
@@ -64,7 +74,7 @@
     <para>Die Listenansicht zeigt tabellarisch die Caches im ausgewählten
     Profil an. Welche Spalten sichtbar sind ,läßt sich in den Einstellungen
     konfigurieren (siehe <xref linkend="einstellungListe"/>). Ein Doppelklick
-    auf eine Zeile öffnet die Beschreibung zu dem Cache.</para>
+    auf eine Zeile öffnet die Beschreibung zu dem Cache (siehe Section <xref linkend="Beschreibungsansicht"/> )</para>
     <para><inlinemediaobject>
         <imageobject>
           <imagedata fileref="pics/ansicht_liste.jpg"/>
@@ -97,8 +107,12 @@
       </inlinemediaobject> läßt sich ein- und auschalten. Der Filter <xref linkend="filter"/> wird hier ausführlich beschrieben.</para>
     <para>Durch einen Klick auf den Spaltenkopf wird die Tabelle neu
     sortiert., z.B. nach der Entfernung zum Zentrum. Zuerst aufsteigend und
-    dann absteigend, oder andersherum, je nachdem &quot;wo&quot; man angefangen hat. Die
-    Spaltenbreite läßt sich ebenfalls verändern.</para>
+    dann absteigend, oder andersherum, je nachdem &quot;wo&quot; man angefangen hat. Die Sortierrichtung wird durch einen Marker   <inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="pics/sortierrichtung.jpg"/>
+        </imageobject>
+      </inlinemediaobject> vor dem Spaltennamen angezeigt. Die
+    Spaltenbreite läßt sich durch Klicken und Verschieben der Spaltentrennlinien ebenfalls verändern.</para>
     <para id="WegpunktStatus"><emphasis role="bold">In der Listenansicht können einzelne Zeilen mit Farben hinterlegt sein:</emphasis></para>
     <itemizedlist>
       <listitem>
@@ -204,19 +218,24 @@
           in der Listenansicht an.</para>
         </listitem>
         <listitem>
+          <para><literal>Addis einblenden</literal> zeigt die zugehörigen Additional Waypoints für einen Cache an, wenn mittels Filter die Addis ausgeblendet sind. Der Text ändert sich dann zu <literal>Addis ausblenden</literal> damit können die angezeigten Additional Waypoints wieder ausgeblendet werden. Hat man in den Einstellungen zur Listenansicht die Spalte <literal># Addis</literal> eingeblendet, dann kann man bei jedem Hauptwegpunkt sehen, ob und wieviele zugehörige Additional Waypoints vorhanden sind (in der Spalte &quot;A&quot;)</para>
+        </listitem>
+        <listitem>
           <para><literal>Im Browser online öffnen</literal>: Die originale
           Cachebeschreibung wird von geocaching.com oder opencaching.de
           gezeigt. Benötigt eine online-Verbindung. Die Daten in Cachewolf
-          werden hierbei nicht aktualisiert! In der Java Version wird dies
-          nicht funktionieren, da aktuell ein Bug in der EWE VM vorhanden
-          ist.</para>
+          werden hierbei nicht aktualisiert! </para>
         </listitem>
         <listitem>
           <para><literal>Im Browser offline öffnen</literal>: Die
           Cachebeschreibung wird in dem Browser, der in den Präferenzen
-          eingestellt wurde, dargestellt. In der Java Version wird dies nicht
-          funktionieren, da aktuell ein Bug in der EWE VM vorhanden
-          ist.</para>
+          eingestellt wurde, dargestellt. </para>
+        </listitem>
+        <listitem>
+          <para><literal>Im Browser online loggen</literal> öffnet im eingestellten Browser die Logseite des angewählten Caches.</para>
+        </listitem>
+        <listitem>
+          <para><literal>In Googlemaps öffnen</literal> öffnet im eingestellten Browser Google Maps und zeigt für den angewählten Wegpunkt (sofern dieser Koordinaten besitzt) einen Marker auf der Karte an. Hat der Wegpunkt keine Koordinaten öffnet sich der Browser nicht.</para>
         </listitem>
         <listitem>
           <para><literal>Markierte löschen</literal>: Es werden alle Wegpunkte
@@ -396,7 +415,7 @@
       </inlinemediaobject></para>
   </section>
   <section>
-    <title>Beschreibung</title>
+    <title id="Beschreibungsansicht">Beschreibung</title>
     <para>Die Beschreibung erfolgt weitestgehend in HTML. Bilder werden, falls
     möglich, ebenfalls angezeigt. Ansonsten kann man sich die Bilder auch
     einzeln in der Bilderansicht (nächster Reiter) anschauen.</para>
