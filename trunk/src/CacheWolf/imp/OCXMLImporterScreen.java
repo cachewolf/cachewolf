@@ -26,6 +26,7 @@ public class OCXMLImporterScreen extends Form {
 	mInput minDistanceInput;
 	mInput directionInput;
 	mInput maxNumberInput;
+	mInput maxNumberUpdates;
 	mInput maxLogsInput;
 	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox, travelbugsCheckBox;
 	ewe.ui.mChoice domains;
@@ -46,6 +47,7 @@ public class OCXMLImporterScreen extends Form {
 	public static final int HOST = 512;
 	public static final int MINDIST = 1024;
 	public static final int DIRECTION = 2048;
+	public static final int MAXUPDATE = 4096;
 
 
 	public OCXMLImporterScreen(String title, int options) {
@@ -125,6 +127,14 @@ public class OCXMLImporterScreen extends Form {
 				maxNumberInput.setText(Integer.toString(pref.maxSpiderNumber));
 			}
 			this.addNext(maxNumberInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			this.addLast( new mLabel(MyLocale.getMsg(1624," caches")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		}
+
+		if ((options & MAXUPDATE) > 0) {
+			this.addNext(new mLabel(MyLocale.getMsg(1631,"Max. Updates:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+			maxNumberUpdates = new mInput();
+			maxNumberUpdates.setText("");
+			this.addNext(maxNumberUpdates,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			this.addLast( new mLabel(MyLocale.getMsg(1624," caches")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
 

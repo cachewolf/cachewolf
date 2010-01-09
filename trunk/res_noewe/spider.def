@@ -56,8 +56,8 @@ firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
 # Regex to search for cachenames
 listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
 lineRex            = <tr\ bgcolor='#.{6}'>(?:(?s).*?)<td\ valign="top"\ align="left">((?s).*?)</tr>
-directionRex       = /compass/(.*?).gif" alt="
-distRex            = <br\ />(.*?)(?:km|mi)(?:\\s*)</td>
+directionRex       = /compass/(.*?).gif
+distRex            = <br\ />(.*?)(?:km|mi)
 waypointRex        = \\(GC(.*?)\\)<br\ />
 showOnlyFound      = &f=1
 maxDistance        = &dist=
