@@ -137,13 +137,11 @@ public class OCXMLImporter extends MinML {
 			return true;
 		}
 
-		/*
 		inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from " + hostname), InfoBox.PROGRESS_WITH_WARNINGS, false);
 		inf.setPreferredSize(220, 300);
 		inf.relayout(false);
 		inf.exec();
-		*/
-		
+
 		String lastS;
 		/** pref.downloadmissingOC = true, if not the last syncdate shall be used,
 		 *  but the caches shall be reloaded
