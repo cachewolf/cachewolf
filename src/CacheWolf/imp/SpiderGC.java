@@ -84,18 +84,39 @@ public class SpiderGC{
 	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
 	private Profile profile;
-	private static String viewstate = "";
+
 	private static String cookieID = "";
 	private static String cookieSession = "";
 	private static double minDistance = 0;
 	private static double maxDistance = 0;
 	private static String direction = "";
 	private static String[] directions;
-	private Regex inRex = new Regex();
 	private CacheDB cacheDB;
 	private Vector cachesToLoad = new Vector();
 	private InfoBox infB;
 	private static SpiderProperties p=null;
+	// following filled at doit
+	private CWPoint origin;
+	private double saveDistanceInMiles;
+	private boolean doNotgetFound;
+	private String cacheTypeRestriction;
+	private boolean spiderAllFinds;
+	private int page_number;
+	private int found_on_page;
+	private String htmlListPage;
+	private int maxNew;
+	private int maxUpdate;
+	private boolean maxNumberAbort;
+
+	private static String propFirstPage;
+	private static String propFirstPage2;
+	private static String propFirstPageFinds;
+	private static String propFirstLine;
+	private static String propFirstLine2;
+	private static String propMaxDistance;
+	private static String propShowOnlyFound;
+	private static String propListBlockRex;
+	private static String propLineRex;
 
 	public SpiderGC(Preferences prf, Profile profile, boolean bypass){
 		this.profile=profile;
@@ -108,145 +129,328 @@ public class SpiderGC{
 	}
 
 	/**
-	 * Method to login the user to gc.com
-	 * It will request a password and use the alias defined in preferences
-	 * If the login page cannot be fetched, the password is cleared.
-	 * If the login fails, an appropriate message is displayed.
-	 */
-	public int login(){
-		loggedIn = false;
-		String start,loginPage,loginSuccess,nextPage;
-		try {
-			loginPage=p.getProp("loginPage");
-			loginSuccess=p.getProp("loginSuccess");
-			nextPage=p.getProp("nextPage");
-		} catch (Exception ex) { // Tag not found in spider.def
-			return ERR_LOGIN;
+	*	Method to start the spider for a search around the centre coordinates
+	*/
+	public void doIt(){
+		doIt(false);
+	}
+	public void doIt(boolean _spiderAllFinds){
+		spiderAllFinds=_spiderAllFinds;
+		origin = pref.getCurCentrePt(); // No need to copy curCentrePt as it is only read and not written
+		if ( !spiderAllFinds && !origin.isValid()) {
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), FormBase.OKB)).execute();
+			return;
 		}
-		//Get password
-		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506,"Password"), MyLocale.getMsg(5505,"Enter Password"), InfoBox.INPUT);
-		localInfB.feedback.setText(passwort); // Remember the PWD for next time
-		localInfB.feedback.isPassword=true;
-		int code=FormBase.IDOK;
-		if (passwort.equals("")) {
-			code = localInfB.execute();
-			passwort = localInfB.getInput();
+		if (System.getProperty("os.name")!=null)pref.log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"));
+		if (System.getProperty("java.vendor")!=null)pref.log("Java: "+System.getProperty("java.vendor")+"/"+System.getProperty("java.version"));
+		CacheHolder ch;
+		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
+		for(int i = 0; i<cacheDB.size();i++){
+			ch = cacheDB.get(i);
+			if (ch.mainCache==null) ch.initStates(false);
 		}
-		localInfB.close(0);
-		if(code != FormBase.IDOK) return code;
-		// Now start the login proper
-		localInfB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
-		localInfB.exec();
-		try{
-			pref.log("[login]:Fetching login page");
-			//Access the page once to get a viewstate
-			start = fetch(loginPage);   //http://www.geocaching.com/login/Default.aspx
-			if (start.equals("")) {
-				localInfB.close(0);
-				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
-				pref.log("[login]:Could not fetch: gc.com login page");
-				return ERR_LOGIN;
-			}
-		} catch(Exception ex){
-			localInfB.close(0);
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
-			pref.log("[login]:Could not fetch: gc.com login page",ex);
-			return ERR_LOGIN;
-		}
-		if (!localInfB.isClosed) { // If user has not aborted, we continue
-			Regex rexCookieID = new Regex("(?i)Set-Cookie: userid=(.*?);.*");
-			Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
-			// Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
-			Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*?)\" />");
-			Regex rexCookieSession = new Regex("(?i)Set-Cookie: ASP.NET_SessionId=(.*?);.*");
-			rexViewstate.search(start);
-			if(rexViewstate.didMatch()){
-				viewstate = rexViewstate.stringMatched(1);
-				//Vm.debug("ViewState: " + viewstate);
-			} else
-				pref.log("[login]:Viewstate not found before login");
 
-			if(start.indexOf(loginSuccess) > 0)
-				pref.log("[login]:Already logged in");
-			else {
-				rexEventvalidation.search(start);
-				if(rexEventvalidation.didMatch()){
-					// eventvalidation = rexEventvalidation.stringMatched(1);
-					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
-				} else
-					pref.log("[login]:Eventvalidation not found before login");
-				//Ok now login!
-				try{
-					pref.log("[login]:Logging in as "+pref.myAlias);
-					StringBuffer sb=new StringBuffer(1000);
-					sb.append(URL.encodeURL("__VIEWSTATE",false));	sb.append("="); sb.append(URL.encodeURL(viewstate,false));
-					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("myUsername",false));
-					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
-					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("myPassword",false));
-					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
-					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("cookie",false));
-					sb.append("="); sb.append(URL.encodeURL("on",false));
-					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("Button1",false));
-					sb.append("="); sb.append(URL.encodeURL("Login",false));
-//					sb.append("&"); sb.append(URL.encodeURL("__EVENTVALIDATION",false));
-//					sb.append("="); sb.append(URL.encodeURL(eventvalidation,false));
-					start = fetch_post(loginPage, sb.toString(), nextPage);  // /login/default.aspx
-					if(start.indexOf(loginSuccess) > 0)
-						pref.log("[login]:Login successful");
-					else {
-						pref.log("[login]:Login failed. Wrong Account or Password?");
-						if (pref.debug) {
-							pref.log("[login.LoginUrl]:"+sb.toString());
-							pref.log("[login.Answer]:"+start);
-						}
-						localInfB.close(0);
-						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), FormBase.OKB)).execute();
-						return ERR_LOGIN;
+		if (!loggedIn || Global.getPref().forceLogin) {
+			if(login() != FormBase.IDOK) return;
+		}
+
+		doNotgetFound = false;
+
+		OCXMLImporterScreen options;
+		if (spiderAllFinds) {
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),
+					OCXMLImporterScreen.MAXNUMBER|
+					OCXMLImporterScreen.MAXUPDATE|
+					OCXMLImporterScreen.IMAGES|
+					OCXMLImporterScreen.ISGC|
+					OCXMLImporterScreen.TRAVELBUGS);
+
+			options.maxNumberUpdates.setText("0"); // no updates for founds
+
+			if (options.execute() == FormBase.IDCANCEL) {return; }
+			maxDistance = 1;
+			minDistance = 0;
+			direction="";
+		} else {
+			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),
+					OCXMLImporterScreen.MAXNUMBER|
+					OCXMLImporterScreen.MAXUPDATE|
+					OCXMLImporterScreen.INCLUDEFOUND|
+					OCXMLImporterScreen.MINDIST|
+					OCXMLImporterScreen.DIST|
+					OCXMLImporterScreen.DIRECTION|
+					OCXMLImporterScreen.IMAGES|
+					OCXMLImporterScreen.ISGC|
+					OCXMLImporterScreen.TRAVELBUGS|
+					OCXMLImporterScreen.MAXLOGS|
+					OCXMLImporterScreen.TYPE);
+
+			if (pref.spiderUpdates == Preferences.NO) {options.maxNumberUpdates.setText("0");} // no updates else all
+
+			if (options.execute() == FormBase.IDCANCEL) {return; }
+
+			String minDist = options.minDistanceInput.getText();
+			if (minDist.length() == 0) minDist="0";
+			minDistance = Common.parseDouble(minDist);
+			Double distDouble = new Double();
+			distDouble.value = minDistance;
+			minDist = distDouble.toString(0, 1, 0).replace(',', '.');
+			profile.setMinDistGC(minDist);
+
+			String maxDist = options.maxDistanceInput.getText();
+			if (maxDist.length()== 0) return;
+			maxDistance = Common.parseDouble(maxDist);
+			//save last radius to profile
+			distDouble.value = maxDistance;
+			maxDist = distDouble.toString(0, 1, 0).replace(',', '.');
+			profile.setDistGC(maxDist);
+
+			direction=options.directionInput.getText().toUpperCase();
+			direction=direction.replace(' ',','); // separator blank to ,
+			direction=direction.replace(';',','); // separator ; to ,
+			profile.setDirectionGC(direction);
+			direction=direction.replace('O', 'E'); // synonym for East
+			direction=direction.replace('Z', 'S'); // synonym for South
+			direction=direction.replace('P', 'S'); // synonym for South
+
+			doNotgetFound = options.foundCheckBox.getState();
+		}
+		directions=mString.split(direction, ',');
+
+		maxNew = -1;
+		String maxNumberString = options.maxNumberInput.getText();
+		if (maxNumberString.length()!= 0) {
+			maxNew = Common.parseInt(maxNumberString);
+		}
+		if (maxNew != pref.maxSpiderNumber) {
+			pref.maxSpiderNumber = maxNew;
+			pref.savePreferences();
+		}
+
+		maxUpdate = -1;
+		String maxUpdateString = options.maxNumberUpdates.getText();
+		if (maxUpdateString.length()!= 0) {
+			maxUpdate = Common.parseInt(maxUpdateString);
+		}
+		// TODO maxUpdate in preferences ?
+		
+		if (maxNew == 0) return;
+		if(maxNew==-1) maxNew=Integer.MAX_VALUE;
+		if(maxUpdate==-1) maxUpdate=Integer.MAX_VALUE;
+
+		boolean getImages = options.imagesCheckBox.getState();
+		boolean getTBs = options.travelbugsCheckBox.getState();
+
+		cacheTypeRestriction = options.getCacheTypeRestriction(p);
+		byte restrictedCacheType = options.getRestrictedCacheType(p);
+		options.close(0);
+
+		//max distance in miles for URL, so we can get more than 80km
+		saveDistanceInMiles = maxDistance;
+		if ( Global.getPref().metricSystem != Metrics.IMPERIAL ) {
+			saveDistanceInMiles = Metrics.convertUnit(maxDistance, Metrics.KILOMETER, Metrics.MILES);
+		}
+		// add a mile to be save from different distance calculations in CW and at GC
+		saveDistanceInMiles = java.lang.Math.ceil(saveDistanceInMiles) + 1;
+
+		Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
+		Hashtable cachesShouldUpdate = new Hashtable(cacheDB.size()); // for don't loose the already done work
+
+		if (maxUpdate==Integer.MAX_VALUE) {
+			double distanceInKm = maxDistance;
+			if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
+				distanceInKm = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
+			}
+			// to get in meantime possibly archived caches
+			for(int i = 0; i<cacheDB.size();i++){
+				ch = cacheDB.get(i);
+				if (spiderAllFinds) {
+					if ( (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
+					     && !ch.is_black() ) {
+						cachesToUpdate.put(ch.getWayPoint(), ch);
 					}
-				}catch(Exception ex){
-					pref.log("[login]:Login failed with exception.", ex);
-					localInfB.close(0);
-					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), FormBase.OKB)).execute();
-					return ERR_LOGIN;
+				} else {
+					if ( (!ch.is_archived())
+						 && (ch.kilom <= distanceInKm)
+						 && !(doNotgetFound && (ch.is_found() || ch.is_owned()))
+						 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
+						 && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) )
+						 && !ch.is_black() ) {
+						cachesToUpdate.put(ch.getWayPoint(), ch);
+					}
 				}
 			}
-
-			rexViewstate.search(start);
-			if (!rexViewstate.didMatch()) {
-				pref.log("[login]:Viewstate not found");
-			}
-			viewstate = rexViewstate.stringMatched(1);
-
-			/*
-			rexViewstate1.search(start);
-			if (!rexViewstate1.didMatch()) {
-				pref.log("[login]:Viewstate1 not found");
-			}
-			*/
-
-			rexCookieID.search(start);
-			if (!rexCookieID.didMatch()) {
-				pref.log("[login]:CookieID not found. Using old one.");
-			} else
-				cookieID = rexCookieID.stringMatched(1);
-			//Vm.debug(cookieID);
-			rexCookieSession.search(start);
-			if (!rexCookieSession.didMatch()) {
-				pref.log("[login]:CookieSession not found. Using old one.");
-				//cookieSession="";
-			} else
-				cookieSession = rexCookieSession.stringMatched(1);
-			//Vm.debug("cookieSession = " + cookieSession);
 		}
-		boolean loginAborted=localInfB.isClosed;
-		localInfB.close(0);
-		if (loginAborted)
-			return FormBase.IDCANCEL;
-		else {
-			loggedIn = true;
-			return FormBase.IDOK;
+
+		//=======
+		// Prepare list of all caches that are to be spidered
+		//=======
+		initialiseProperties();
+		getFirstListPage();
+
+		int numFinds=0; // spiderAllFinds : Number of GC-founds for this user
+		int numFoundInDB=0; // Number of GC-founds already in this profile
+		if (spiderAllFinds) {
+			numFoundInDB=getFoundInDB();
+			numFinds=getNumFound(htmlListPage);
+			maxNew=java.lang.Math.min(numFinds-numFoundInDB,maxNew);
+			if (maxUpdate==0 && maxNew == 0) { Vm.showWait(false); infB.close(0); return; }
 		}
-	}
+		
+		String[] cacheDescGC;
+		int anzLines=38;
+		int lineDistance=1;
+		int lineDirection=1;
+		int lineWaypoint=22;
+		int lineDescription=20;
+		int lineLastFound=27;
+		Regex lineRex = new Regex(propLineRex);
+		try {
+			//Loop pages till maximum distance has been found or no more caches are in the list
+			while(maxDistance > 0){
+				Regex listBlockRex = new Regex(propListBlockRex); // "<table id=\"dlResults\"((?s).*?)</table>"
+				listBlockRex.search(htmlListPage);
+				String tableOfHtmlListPage = listBlockRex.stringMatched(1);
+				lineRex.search(tableOfHtmlListPage);
+				while (maxDistance > 0){
+					if (!lineRex.didMatch()) break;
+					found_on_page++;
+					cacheDescGC=mString.split(lineRex.stringMatched(1),'\n');
+					if(cacheDescGC.length!=anzLines) {
+						maxDistance = 0; //add no more caches
+						(new MessageBox(MyLocale.getMsg(5500,"Error"), "GC changed table output \nCW must be changed too!", FormBase.OKB)).execute();
+						throw new Exception("GC changed table output");
+					}
+					double gotDistance=getDistGC(cacheDescGC[lineDistance]);
+					String chWaypoint=getWP(cacheDescGC[lineWaypoint]);
+					if(gotDistance <= maxDistance){
+						ch=cacheDB.get(chWaypoint);
+						if(ch == null){ // not in DB
+							if ( gotDistance >= minDistance &&
+								 directionOK(directions,getDirection(cacheDescGC[lineDirection])) ){
+								cachesToLoad.add(chWaypoint);
+								if(cachesToLoad.size()==maxNew) {
+									if(maxUpdate!=Integer.MAX_VALUE) maxDistance=0;
+								}
+							}
+						}
+						else {
+							if (maxUpdate>0) {
+								boolean update=false;
+								if (spiderAllFinds) {
+									if(!ch.is_found()) { ch.setFound(true); update=true;}
+									boolean is_archived_GC=cacheDescGC[lineDescription].indexOf("<font color=\"red\"><strike>")!=-1;
+									if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); update=true;}
+								}
+								boolean is_available_GC=cacheDescGC[lineDescription].indexOf("<strike>")==-1;
+								if (is_available_GC != ch.is_available()) { ch.setAvailable(is_available_GC); update=true;}
+								if (newLogExists(ch,cacheDescGC[lineLastFound])) {update=true;}
+								if (update) {
+									cachesShouldUpdate.put(chWaypoint, ch);
+									if(cachesShouldUpdate.size()==maxUpdate) maxDistance=0;
+								}
+								else
+									if (maxUpdate==Integer.MAX_VALUE) cachesToUpdate.remove( chWaypoint );
+							}
+						}
+					} else maxDistance = 0; // finish listing
+					// get next row of table (next Cache Description) of this htmlListPage
+					lineRex.searchFrom(tableOfHtmlListPage, lineRex.matchedTo());
+					if (infB.isClosed) break;
+				} // next Cache
+				infB.setInfo(MyLocale.getMsg(5521,"Page ") + page_number + "\n" +
+							 MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
+				if(found_on_page < 20) maxDistance = 0; // last page (has less than 20 entries!?) to check reached
+				if(maxDistance > 0){getNextListPage();}
+			} // loop pages
+		} // try
+		catch (Exception ex) {
+			infB.close(0);
+			Vm.showWait(false);
+			return;
+		}
+
+		if (infB.isClosed) { Vm.showWait(false); return; }
+		infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
+		pref.log("Found " + cachesToLoad.size() + " new caches");
+		pref.log("Found " + cachesToUpdate.size() + " caches for update");
+
+		//=======
+		// Now ready to spider each cache in the list
+		//=======
+		boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
+
+		int spiderErrors = 0;
+		if (cachesToUpdate.size()==0) cachesToUpdate=cachesShouldUpdate;
+
+		if ( cachesToUpdate.size() > 0 ) {
+			switch (pref.spiderUpdates) {
+			case Preferences.NO:
+				cachesToUpdate.clear();
+				break;
+			case Preferences.ASK:
+				MessageBox mBox = new MessageBox(MyLocale.getMsg(5517,"Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518," caches in database need an update. Update now?") , FormBase.IDYES |FormBase.IDNO);
+				if (mBox.execute() != FormBase.IDOK){
+					cachesToUpdate.clear();
+				}
+				break;
+			}
+		}
+
+		int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
+
+		for(int i = 0; i<cachesToLoad.size(); i++){
+			if (infB.isClosed) break;
+
+			String wpt = (String)cachesToLoad.get(i);
+			// Get only caches not already available in the DB
+			if(cacheDB.getIndex(wpt) == -1){
+				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + totalCachesToLoad + ")");
+				CacheHolder holder = new CacheHolder();
+				holder.setWayPoint(wpt);
+				int test = getCacheByWaypointName(holder,false,getImages,getTBs,doNotgetFound,loadAllLogs);
+				if (test == SPIDER_CANCEL) {
+					infB.close(0);
+					break;
+				} else if (test == SPIDER_ERROR) {
+					spiderErrors++;
+				} else if (test == SPIDER_OK){
+					if (!holder.is_found() || !doNotgetFound ) {
+						cacheDB.add(holder);
+						holder.save();
+					}
+				} // For test==SPIDER_IGNORE_PREMIUM: Nothing to do
+			}
+		}
+
+		if (!infB.isClosed) {
+			int j = 1;
+			for (Enumeration e = cachesToUpdate.elements() ; e.hasMoreElements() ; j++) {
+				ch = (CacheHolder)e.nextElement();
+				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.getWayPoint() +" (" + (cachesToLoad.size()+j) + " / " + totalCachesToLoad + ")");
+				int test = spiderSingle(cacheDB.getIndex(ch), infB,false,loadAllLogs);
+				if (test == SPIDER_CANCEL) {
+					break;
+				} else if (test == SPIDER_ERROR) {
+					spiderErrors++;
+					Global.getPref().log("SpiderGC: could not spider "+ch.getWayPoint());
+				} else {
+					//profile.hasUnsavedChanges=true;
+				}
+			}
+		}
+
+		infB.close(0);
+		Vm.showWait(false);
+		if ( spiderErrors > 0) {
+			new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
+		}
+		if ( maxNumberAbort ) {
+			new MessageBox(MyLocale.getMsg(5519,"Information"),MyLocale.getMsg(5520,"Only the given maximum of caches were loaded.%0aRepeat spidering later to load more caches.%0aNo already existing caches were updated."),FormBase.DEFOKB).execute();
+		}
+		Global.getProfile().restoreFilter();
+		Global.getProfile().saveIndex(Global.getPref(),true);
+	} // End of DoIt spider many / all finds
 
 	/**
 	 * Method to spider a single cache.
@@ -327,161 +531,188 @@ public class SpiderGC{
 		} catch (Exception ex) {
 			return "????";
 		}
-	}
+	} // getCacheCoordinates
 
 	/**
-	*	Method to start the spider for a search around the centre coordinates
-	*/
-	public void doIt(){
-		doIt(false);
-	}
-	public void doIt(boolean spiderAllFinds){
-		String postStr, dummy, ln, wpt;
-		Regex lineRex;
-		CacheHolder holder;
-		CWPoint origin = pref.getCurCentrePt(); // No need to copy curCentrePt as it is only read and not written
-		if ( !spiderAllFinds && !origin.isValid()) {
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), FormBase.OKB)).execute();
-			return;
+	 * Method to login the user to gc.com
+	 * It will request a password and use the alias defined in preferences
+	 * If the login page cannot be fetched, the password is cleared.
+	 * If the login fails, an appropriate message is displayed.
+	 */
+	private int login(){
+		loggedIn = false;
+		String loginPage,loginPageUrl,loginSuccess,nextPage;
+		try {
+			loginPageUrl=p.getProp("loginPage");
+			loginSuccess=p.getProp("loginSuccess");
+			nextPage=p.getProp("nextPage");
+		} catch (Exception ex) { // Tag not found in spider.def
+			return ERR_LOGIN;
 		}
-		if (System.getProperty("os.name")!=null)pref.log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"));
-		if (System.getProperty("java.vendor")!=null)pref.log("Java: "+System.getProperty("java.vendor")+"/"+System.getProperty("java.version"));
-		CacheHolder ch;
-		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
-		for(int i = 0; i<cacheDB.size();i++){
-			ch = cacheDB.get(i);
-			if (ch.mainCache==null) ch.initStates(false);
+		//Get password
+		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506,"Password"), MyLocale.getMsg(5505,"Enter Password"), InfoBox.INPUT);
+		localInfB.feedback.setText(passwort); // Remember the PWD for next time
+		localInfB.feedback.isPassword=true;
+		int code=FormBase.IDOK;
+		if (passwort.equals("")) {
+			code = localInfB.execute();
+			passwort = localInfB.getInput();
 		}
-		String start = "";
-		Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*)\" />");
-		// Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*)\" />");
-		Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*)\" />");
-		String doc = "";
-
-		if (!loggedIn || Global.getPref().forceLogin) {
-			if(login() != FormBase.IDOK) return;
-		}
-
-		boolean doNotgetFound = false;
-
-		OCXMLImporterScreen options;
-		if (spiderAllFinds) {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"), OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.TYPE);
-			if (options.execute() == FormBase.IDCANCEL) {return; }
-			maxDistance = 1;
-			minDistance = 0;
-			direction="";
-		} else {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),	OCXMLImporterScreen.MAXNUMBER|OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.MINDIST| OCXMLImporterScreen.DIST| OCXMLImporterScreen.DIRECTION| OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.ISGC| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.TYPE);
-			if (options.execute() == FormBase.IDCANCEL) {return; }
-
-			String minDist = options.minDistanceInput.getText();
-			if (minDist.length() == 0) minDist="0";
-			minDistance = Common.parseDouble(minDist);
-			Double distDouble = new Double();
-			distDouble.value = minDistance;
-			minDist = distDouble.toString(0, 1, 0).replace(',', '.');
-			profile.setMinDistGC(minDist);
-
-			String maxDist = options.maxDistanceInput.getText();
-			if (maxDist.length()== 0) return;
-			maxDistance = Common.parseDouble(maxDist);
-			//save last radius to profile
-			distDouble.value = maxDistance;
-			maxDist = distDouble.toString(0, 1, 0).replace(',', '.');
-			profile.setDistGC(maxDist);
-
-			direction=options.directionInput.getText().toUpperCase();
-			direction=direction.replace(' ',','); // separator blank to ,
-			direction=direction.replace(';',','); // separator ; to ,
-			profile.setDirectionGC(direction);
-			direction=direction.replace('O', 'E'); // synonym for East
-			direction=direction.replace('Z', 'S'); // synonym for South
-			direction=direction.replace('P', 'S'); // synonym for South
-
-			doNotgetFound = options.foundCheckBox.getState();
-		}
-		directions=mString.split(direction, ',');
-
-		int maxNumber = -1;
-		String maxNumberString = options.maxNumberInput.getText();
-		if (maxNumberString.length()!= 0) {
-			maxNumber = Common.parseInt(maxNumberString);
-		}
-		if (maxNumber != pref.maxSpiderNumber) {
-			pref.maxSpiderNumber = maxNumber;
-			pref.savePreferences();
-		}
-		if (maxNumber == 0) return;
-		boolean maxNumberAbort = false;
-
-		boolean getImages = options.imagesCheckBox.getState();
-		boolean getTBs = options.travelbugsCheckBox.getState();
-
-		String cacheTypeRestriction = options.getCacheTypeRestriction(p);
-
-		options.close(0);
-
-		//max distance in miles for URL, so we can get more than 80km
-		double saveDistanceInMiles = maxDistance;
-		if ( Global.getPref().metricSystem != Metrics.IMPERIAL ) {
-			saveDistanceInMiles = Metrics.convertUnit(maxDistance, Metrics.KILOMETER, Metrics.MILES);
-		}
-		// add a mile to be save from different distance calculations in CW and at GC
-		saveDistanceInMiles = java.lang.Math.ceil(saveDistanceInMiles) + 1;
-
-		Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
-
-		if (pref.spiderUpdates != Preferences.NO) {
-			double distanceInKm = maxDistance;
-			if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
-				distanceInKm = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
+		localInfB.close(0);
+		if(code != FormBase.IDOK) return code;
+		// Now start the login proper
+		localInfB = new InfoBox(MyLocale.getMsg(5507,"Status"), MyLocale.getMsg(5508,"Logging in..."));
+		localInfB.exec();
+		try{
+			pref.log("[login]:Fetching login page");
+			//Access the page once to get a viewstate
+			loginPage = fetch(loginPageUrl);   //http://www.geocaching.com/login/Default.aspx
+			if (loginPage.equals("")) {
+				localInfB.close(0);
+				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
+				pref.log("[login]:Could not fetch: gc.com login page");
+				return ERR_LOGIN;
 			}
-			double minDistanceInKm = minDistance;
-			if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
-				minDistanceInKm = Metrics.convertUnit(minDistance, Metrics.MILES, Metrics.KILOMETER);
-			}
+		} catch(Exception ex){
+			localInfB.close(0);
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5499,"Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
+			pref.log("[login]:Could not fetch: gc.com login page",ex);
+			return ERR_LOGIN;
+		}
+		if (!localInfB.isClosed) { // If user has not aborted, we continue
+			Regex rexCookieID = new Regex("(?i)Set-Cookie: userid=(.*?);.*");
+			Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
+			// Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
+			Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*?)\" />");
+			Regex rexCookieSession = new Regex("(?i)Set-Cookie: ASP.NET_SessionId=(.*?);.*");
+			String viewstate="";
+			rexViewstate.search(loginPage);
+			if(rexViewstate.didMatch()){
+				viewstate = rexViewstate.stringMatched(1);
+				//Vm.debug("ViewState: " + viewstate);
+			} else
+				pref.log("[login]:Viewstate not found before login");
 
-			byte restrictedCacheType = options.getRestrictedCacheType(p);
-			for(int i = 0; i<cacheDB.size();i++){
-				ch = cacheDB.get(i);
-				if (spiderAllFinds) {
-					if ( (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
-					     && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) )
-					     && !ch.is_black() ) {
-						cachesToUpdate.put(ch.getWayPoint(), ch);
+			if(loginPage.indexOf(loginSuccess) > 0)
+				pref.log("[login]:Already logged in");
+			else {
+				rexEventvalidation.search(loginPage);
+				if(rexEventvalidation.didMatch()){
+					// eventvalidation = rexEventvalidation.stringMatched(1);
+					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
+				} else
+					pref.log("[login]:Eventvalidation not found before login");
+				//Ok now login!
+				try{
+					pref.log("[login]:Logging in as "+pref.myAlias);
+					StringBuffer sb=new StringBuffer(1000);
+					sb.append(URL.encodeURL("__VIEWSTATE",false));	sb.append("="); sb.append(URL.encodeURL(viewstate,false));
+					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("myUsername",false));
+					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
+					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("myPassword",false));
+					sb.append("="); sb.append(encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
+					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("cookie",false));
+					sb.append("="); sb.append(URL.encodeURL("on",false));
+					sb.append("&ctl00%24ContentBody%24"); sb.append(URL.encodeURL("Button1",false));
+					sb.append("="); sb.append(URL.encodeURL("Login",false));
+//					sb.append("&"); sb.append(URL.encodeURL("__EVENTVALIDATION",false));
+//					sb.append("="); sb.append(URL.encodeURL(eventvalidation,false));
+					loginPage = fetch_post(loginPageUrl, sb.toString(), nextPage);  // /login/default.aspx
+					if(loginPage.indexOf(loginSuccess) > 0)
+						pref.log("[login]:Login successful");
+					else {
+						pref.log("[login]:Login failed. Wrong Account or Password?");
+						if (pref.debug) {
+							pref.log("[login.LoginUrl]:"+sb.toString());
+							pref.log("[login.Answer]:"+loginPage);
+						}
+						localInfB.close(0);
+						(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed! Wrong account or password?"), FormBase.OKB)).execute();
+						return ERR_LOGIN;
 					}
-				} else {
-					if ( (!ch.is_archived())
-						 && (ch.kilom <= distanceInKm) /*&& (ch.kilom >= minDistanceInKm)*/
-						 && !(doNotgetFound && (ch.is_found() || ch.is_owned()))
-						 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
-						 && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) )
-						 && !ch.is_black() ) {
-						cachesToUpdate.put(ch.getWayPoint(), ch);
-					}
+				}catch(Exception ex){
+					pref.log("[login]:Login failed with exception.", ex);
+					localInfB.close(0);
+					(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5501,"Login failed. Error loading page after login."), FormBase.OKB)).execute();
+					return ERR_LOGIN;
 				}
 			}
-		}
 
-		//=======
-		// Prepare list of all caches that are to be spidered
-		//=======
+			rexViewstate.search(loginPage);
+			if (!rexViewstate.didMatch()) {
+				pref.log("[login]:Viewstate not found");
+			}
+			viewstate = rexViewstate.stringMatched(1);
+
+			/*
+			rexViewstate1.search(start);
+			if (!rexViewstate1.didMatch()) {
+				pref.log("[login]:Viewstate1 not found");
+			}
+			*/
+
+			rexCookieID.search(loginPage);
+			if (!rexCookieID.didMatch()) {
+				pref.log("[login]:CookieID not found. Using old one.");
+			} else
+				cookieID = rexCookieID.stringMatched(1);
+			//Vm.debug(cookieID);
+			rexCookieSession.search(loginPage);
+			if (!rexCookieSession.didMatch()) {
+				pref.log("[login]:CookieSession not found. Using old one.");
+				//cookieSession="";
+			} else
+				cookieSession = rexCookieSession.stringMatched(1);
+			//Vm.debug("cookieSession = " + cookieSession);
+		}
+		boolean loginAborted=localInfB.isClosed;
+		localInfB.close(0);
+		if (loginAborted)
+			return FormBase.IDCANCEL;
+		else {
+			loggedIn = true;
+			return FormBase.IDOK;
+		}
+	}
+	/*
+	 *
+	 */
+	private void initialiseProperties() {
+		try {
+			propFirstPage=p.getProp("firstPage");
+			propFirstPage2=p.getProp("firstPage2");
+			propFirstPageFinds=p.getProp("firstPageFinds");
+			propFirstLine=p.getProp("firstLine");
+			propFirstLine2=p.getProp("firstLine2");
+			propMaxDistance=p.getProp("maxDistance");
+			propShowOnlyFound=p.getProp("showOnlyFound");
+			propListBlockRex=p.getProp("listBlockRex");
+			propLineRex=p.getProp("lineRex");
+		}catch(Exception ex){
+		}
+	}
+
+	/*
+	 *
+	 */
+	private void getFirstListPage() {
 		Vm.showWait(true);
 		infB = new InfoBox("Status", MyLocale.getMsg(5502,"Fetching first page..."));
 		infB.exec();
 		//Get first page
+
+		String url;
+		if (spiderAllFinds) {
+			url = propFirstPageFinds + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias));
+		} else {
+			url = propFirstPage + origin.getLatDeg(TransformCoordinates.DD) + propFirstPage2 + origin.getLonDeg(TransformCoordinates.DD)
+		                              + propMaxDistance + Integer.toString( (int)saveDistanceInMiles );
+			if(doNotgetFound) url = url + propShowOnlyFound;
+		}
+		url = url + cacheTypeRestriction;
+		pref.log("Getting first page: "+url);
 		try{
-			if (spiderAllFinds) {
-				ln = p.getProp("firstPageFinds") + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias));
-			} else {
-				ln = p.getProp("firstPage") + origin.getLatDeg(TransformCoordinates.DD) + p.getProp("firstPage2") + origin.getLonDeg(TransformCoordinates.DD)
-			                              + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );
-				if(doNotgetFound) ln = ln + p.getProp("showOnlyFound");
-			}
-			ln = ln + cacheTypeRestriction;
-			pref.log("Getting first page: "+ln);
-			start = fetch(ln);
+			htmlListPage = fetch(url);
 			pref.log("Got first page");
 		}catch(Exception ex){
 			pref.log("Error fetching first list page",ex,true);
@@ -490,234 +721,125 @@ public class SpiderGC{
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), FormBase.OKB)).execute();
 			return;
 		}
-		dummy = "";
-		//String lineBlck = "";
-		int page_number = 1;
-		try  {
-			lineRex = new Regex(p.getProp("lineRex")); //"<tr bgcolor=((?s).*?)</tr>"
-		} catch (Exception ex) {
-			infB.close(0);
-			Vm.showWait(false);
-			return;
-		}
-		int page = 0;
-		int found_on_page = 0;
-		try {
-			//Loop till maximum distance has been found or no more caches are in the list
-			while(maxDistance > 0){
-				if (infB.isClosed){
-					//don't update existing caches, because list is not correct when aborting
-					cachesToUpdate.clear();
-
-					break;
-				}
-
-				rexViewstate.search(start);
-				if(rexViewstate.didMatch()){
-					viewstate = rexViewstate.stringMatched(1);
-					//Vm.debug("ViewState: " + viewstate);
-				} else {
-					viewstate = "";
-					pref.log("Viewstate not found");
-				}
-
-				rexEventvalidation.search(start);
-				if(rexEventvalidation.didMatch()){
-					// eventvalidation = rexEventvalidation.stringMatched(1);
-					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
-				} else {
-					// eventvalidation = "";
-					// pref.log("Eventvalidation not found");
-				}
-
-				//Vm.debug("In loop");
-				Regex listBlockRex = new Regex(p.getProp("listBlockRex")); // "<table id=\"dlResults\"((?s).*?)</table>"
-				listBlockRex.search(start);
-				dummy = listBlockRex.stringMatched(1);
-				try{
-					lineRex.search(dummy);
-				}catch(NullPointerException nex){
-					Global.getPref().log("Ignored Exception", nex, true);
-				}
-				String oneCacheDesc="";
-				while ( maxDistance>0 && lineRex.didMatch()){
-					//Vm.debug(getDist(lineRex.stringMatched(1)) + " / " +getWP(lineRex.stringMatched(1)));
-					found_on_page++;
-					oneCacheDesc=lineRex.stringMatched(1);
-					double gotDistance=getDist(oneCacheDesc);
-					if(gotDistance <= maxDistance){
-					  String chWaypoint=getWP(oneCacheDesc);
-						ch=cacheDB.get(chWaypoint);
-						if(ch == null){
-						  if ( gotDistance >= minDistance && directionOK(directions,getDirection(oneCacheDesc)) ){
-								pref.log(chWaypoint+" added to load!");
-								cachesToLoad.add(chWaypoint);
-								if ((maxNumber > 0) && (cachesToLoad.size() >= maxNumber)) {
-									maxNumberAbort = true;
-									maxDistance = 0; //add no more caches
-									cachesToUpdate.clear(); //don't update existing caches, because list is not correct when aborting
-								}
-							}
-						} else {
-							// if (pref.spiderUpdates != Preferences.NO) {
-							pref.log(chWaypoint+" already in DB");
-						  // If the <strike> tag is used, the cache is marked as unavailable or archived
-							boolean is_archived_GC=oneCacheDesc.indexOf("<strike><font color=\"red\">")!=-1;
-							boolean is_available_GC=oneCacheDesc.indexOf("<strike>")==-1;
-							// CacheHolderDetail det = ch.getCacheDetails(true);
-							if (ch.is_archived()!=is_archived_GC) { // Update the database with the cache status
-								pref.log("Updating status of "+chWaypoint+" to "+(is_archived_GC?"archived":"not archived"));
-								if ( ch.is_archived() ) {
-									// is not yet in updateList
-									cachesToUpdate.put(chWaypoint, ch);
-								}
-								ch.setArchived(is_archived_GC);
-							} else if (ch.is_available()!=is_available_GC) { // Update the database with the cache status
-								pref.log("Updating status of "+chWaypoint+" to "+(is_available_GC?"available":"not available"));
-								ch.setAvailable(is_available_GC);
-							} else if (spiderAllFinds && !ch.is_found()) { // Update the database with the cache status
-								pref.log("Updating status of "+chWaypoint+" to found");
-								ch.setFound(true);
-							} else {
-								cachesToUpdate.remove( chWaypoint );
-							}
-						// }
-  					}
-					} else maxDistance = 0;
-					// next Cache Description of this page
-					lineRex.searchFrom(dummy, lineRex.matchedTo());
-				}
-
-				page++;
-				infB.setInfo(MyLocale.getMsg(5521,"Page ") + page + "\n" + MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
-
-				if(found_on_page < 20) maxDistance = 0;
-				if (spiderAllFinds) {
-					postStr = p.getProp("firstLine");
-				} else {
-					postStr = p.getProp("firstLine") + origin.getLatDeg(TransformCoordinates.DD) + p.getProp("firstLine2") + origin.getLonDeg(TransformCoordinates.DD)
-							                             + p.getProp("maxDistance") + Integer.toString( (int)saveDistanceInMiles );
-					if(doNotgetFound) postStr = postStr + p.getProp("showOnlyFound");
-				}
-				postStr = postStr + cacheTypeRestriction;
-				if(maxDistance > 0){
-					page_number++;
-					String strNextPage;
-					/*
-					if(page_number >= 15) page_number = 5;
-					if (page_number < 10) {
-						strNextPage = "ctl00$ContentBody$pgrTop$ctl0" + page_number;
-					} else {
-						strNextPage = "ctl00$ContentBody$pgrTop$ctl" + page_number;
-					}
-					*/
-					strNextPage = "ctl00$ContentBody$pgrTop$ctl08";
-
-					doc = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strNextPage,false)
-					    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
-//					    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
-					    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
-//					    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
-//					    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
-					try{
-						start = "";
-						pref.log("Fetching next list page:" + doc);
-						start = fetch_post(postStr, doc, p.getProp("nextListPage"));
-					}catch(Exception ex){
-						//Vm.debug("Couldn't get the next page");
-						pref.log("Error getting next page");
-					}
-				}
-				//Vm.debug("Distance is now: " + distance);
-				found_on_page = 0;
-			}
-		} catch (Exception ex) { // Some tag missing from spider.def
-			infB.close(0);
-			Vm.showWait(false);
-			return;
-		}
-		pref.log("Found " + cachesToLoad.size() + " new caches");
-		pref.log("Found " + cachesToUpdate.size() + " caches for update");
-		if (!infB.isClosed) infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
-
-		//=======
-		// Now ready to spider each cache in the list
-		//=======
-		boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
-
-		int spiderErrors = 0;
-
-		if ( cachesToUpdate.size() > 0 ) {
-			switch (pref.spiderUpdates) {
-			case Preferences.NO:
-				cachesToUpdate.clear();
-				break;
-			case Preferences.ASK:
-				MessageBox mBox = new MessageBox(MyLocale.getMsg(5517,"Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518," caches in database need an update. Update now?") , FormBase.IDYES |FormBase.IDNO);
-				if (mBox.execute() != FormBase.IDOK){
-					cachesToUpdate.clear();
-				}
-				break;
-			}
-		}
-
-		int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
-
-		for(int i = 0; i<cachesToLoad.size(); i++){
-			if (infB.isClosed) break;
-
-			wpt = (String)cachesToLoad.get(i);
-			// Get only caches not already available in the DB
-			if(cacheDB.getIndex(wpt) == -1){
-				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + totalCachesToLoad + ")");
-				holder = new CacheHolder();
-				holder.setWayPoint(wpt);
-				int test = getCacheByWaypointName(holder,false,getImages,getTBs,doNotgetFound,loadAllLogs);
-				if (test == SPIDER_CANCEL) {
-					infB.close(0);
-					break;
-				} else if (test == SPIDER_ERROR) {
-					spiderErrors++;
-				} else if (test == SPIDER_OK){
-					if (!holder.is_found() || !doNotgetFound ) {
-						cacheDB.add(holder);
-						holder.save();
-					}
-				} // For test==SPIDER_IGNORE_PREMIUM: Nothing to do
-			}
-		}
-
-		if (!infB.isClosed) {
-			int j = 1;
-			for (Enumeration e = cachesToUpdate.elements() ; e.hasMoreElements() ; j++) {
-				ch = (CacheHolder)e.nextElement();
-				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.getWayPoint() +" (" + (cachesToLoad.size()+j) + " / " + totalCachesToLoad + ")");
-				infB.redisplay();
-
-				int test = spiderSingle(cacheDB.getIndex(ch), infB,false,loadAllLogs);
-				if (test == SPIDER_CANCEL) {
-					break;
-				} else if (test == SPIDER_ERROR) {
-					spiderErrors++;
-					Global.getPref().log("SpiderGC: could not spider "+ch.getWayPoint());
-				} else {
-					//profile.hasUnsavedChanges=true;
-				}
-			}
-		}
-
-		infB.close(0);
-		Vm.showWait(false);
-		if ( spiderErrors > 0) {
-			new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
-		}
-		if ( maxNumberAbort ) {
-			new MessageBox(MyLocale.getMsg(5519,"Information"),MyLocale.getMsg(5520,"Only the given maximum of caches were loaded.%0aRepeat spidering later to load more caches.%0aNo already existing caches were updated."),FormBase.DEFOKB).execute();
-		}
-		Global.getProfile().restoreFilter();
-		Global.getProfile().saveIndex(Global.getPref(),true);
+		page_number = 1;
+		found_on_page = 0;
 	}
-	
+
+	/**
+	 * in: ...
+	 * out: page_number,htmlPage
+	 */
+	private void getNextListPage() {
+		String postStr;
+		if (spiderAllFinds) {
+			postStr = propFirstLine;
+		} else {
+			postStr = propFirstLine + origin.getLatDeg(TransformCoordinates.DD) + propFirstLine2 + origin.getLonDeg(TransformCoordinates.DD)
+					                             + propMaxDistance + Integer.toString( (int)saveDistanceInMiles );
+			if(doNotgetFound) postStr = postStr + propShowOnlyFound;
+		}
+		postStr = postStr + cacheTypeRestriction;
+		Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
+		String viewstate;
+		rexViewstate.search(htmlListPage);
+		if(rexViewstate.didMatch()){
+			viewstate = rexViewstate.stringMatched(1);
+		} else {
+			viewstate = "";
+		}
+		/*
+		rexEventvalidation.search(htmlPage);
+		if(rexEventvalidation.didMatch()){
+			eventvalidation = rexEventvalidation.stringMatched(1);
+		} else {
+			eventvalidation = "";
+		}
+		*/
+		String strNextPage = "ctl00$ContentBody$pgrTop$ctl08";
+		String url = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strNextPage,false)
+	    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
+//	    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
+	    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
+//	    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
+//	    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
+		try{
+			pref.log("Fetching next list page:" + url);
+			htmlListPage = fetch_post(postStr, url, p.getProp("nextListPage"));
+		}catch(Exception ex){
+			pref.log("Error getting next page");
+		}
+		page_number++;
+		found_on_page = 0;
+	}
+
+	/**
+	 * Get num found
+	 * @param doc A previously fetched cachepage
+	 * @return numFound
+	 */
+	private int getNumFound(String doc) {
+		Regex numFindsRex = new Regex("Total Records: <b>(.*?)</b>");
+		numFindsRex.search(doc);
+		if (numFindsRex.didMatch()) {
+			 return Convert.toInt(numFindsRex.stringMatched(1));}
+		else return 0;
+	}
+
+	private int getFoundInDB() {
+		CacheHolder ch;
+		int counter = 0;
+		for(int i = 0; i<cacheDB.size();i++){
+			ch = cacheDB.get(i);
+			if(ch.is_found() == true) {
+				if(ch.getWayPoint().startsWith("GC") ) counter++;
+			}
+		}
+		return counter;
+	}
+
+	/**
+	 * Get the Distance to the centre
+	 * @param doc A previously fetched cachepage
+	 * @return Distance
+	 */
+	private double getDistGC(String doc) throws Exception {
+		if(doc.indexOf("Here") >= 0) {
+			return(0);
+		}
+		else {
+			//inRex = new Regex(p.getProp("distRex"));
+			Regex inRex = new Regex("<br />(.*?)(?:km|mi)");
+			inRex.search(doc);
+			if (!inRex.didMatch()) return 0;
+			if(MyLocale.getDigSeparator().equals(",")) return Convert.toDouble(inRex.stringMatched(1).replace('.',','));
+			return Convert.toDouble(inRex.stringMatched(1));
+		}
+	}
+
+	/**
+	 * Get the waypoint name
+	 * @param doc A previously fetched cachepage
+	 * @return Name of waypoint to add to list
+	 */
+	private String getWP(String doc) throws Exception {
+		Regex inRex = new Regex(p.getProp("waypointRex"));
+		inRex.search(doc);
+		if (!inRex.didMatch()) return "???";
+		return "GC"+inRex.stringMatched(1);
+	}
+
+	/**
+	 * Get the direction
+	 * @param doc A previously fetched cachepage
+	 * @return direction String
+	 */
+	private String getDirection(String doc) throws Exception {
+		Regex inRex = new Regex(p.getProp("directionRex"));
+		inRex.search(doc);
+		if (!inRex.didMatch()) return "";
+		return inRex.stringMatched(1);
+	}
+
 	private boolean directionOK(String[] directions, String gotDirection) {
 		if (directions.length==0) return true; // nothing means all
 		for (int i = 0; i < directions.length; i++) {
@@ -732,6 +854,50 @@ public class SpiderGC{
 			}
 		}
 		return false;
+	}
+
+	/*
+	 * in CacheHolder ch
+	 * in String cacheDescGC
+	 */
+	private boolean newLogExists(CacheHolder ch, String cacheDescGC) {
+		Time lastLogCW = new Time();
+		CacheHolderDetail chd = ch.getCacheDetails(true);
+		String slastLogCW=chd.CacheLogs.getLog(0).getDate();
+		if (slastLogCW.equals("")) return true; // or check cacheDescGC also no log?
+		lastLogCW.parse(slastLogCW,"yyyy-MM-dd");
+
+		Time lastLogGC = new Time(); // is current time
+		lastLogGC.hour=0;
+		lastLogGC.minute=0;
+		lastLogGC.second=0;
+		lastLogGC.millis=0;
+		String[] SDate;
+		String stmp=cacheDescGC.trim();
+		if (stmp.indexOf("day")>0) {
+			lastLogGC.day=java.lang.Math.max(1, lastLogGC.day-7); // simplyfied (update if not newer than last week)
+		}
+		else if (stmp.startsWith("<br />")) {
+			Vm.debug("no log yet");
+			return false; // no log yet
+		}
+		else {
+			final String monthNames[] = { "January", "February", "March", "April", "May",
+					"June", "July", "August", "September", "October", "November",
+					"December" };
+			SDate=mString.split(stmp,' ');
+			lastLogGC.day=Integer.parseInt(SDate[0]);
+			for (int m = 0; m < 12; m++) {
+				if (monthNames[m].startsWith(SDate[1])) {
+					lastLogGC.month=m+1;
+					m=12;
+				}
+			}
+			lastLogGC.year=2000+Integer.parseInt(SDate[2].substring(0,2));
+		}
+		// compare
+		// Vm.debug("CW:"+lastLogCW.toString()+" GC:"+lastLogGC.toString());
+		return lastLogCW.compareTo(lastLogGC) < 0;
 	}
 
 	/**
@@ -802,8 +968,6 @@ public class SpiderGC{
 						}
 
 						ch.setHTML(true);
-						ch.setAvailable(true);
-						ch.setArchived(false);
 						ch.setIncomplete(true);
 						// Save size of logs to be able to check whether any new logs were added
 						//int logsz = chD.CacheLogs.size();
@@ -811,8 +975,8 @@ public class SpiderGC{
 						ch.addiWpts.clear();
 						ch.getFreshDetails().images.clear();
 
-						if(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0) ch.setAvailable(false);
-						if(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0) ch.setArchived(true);
+						ch.setAvailable(!(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0));
+						ch.setArchived(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0);
 						//==========
 						// General Cache Data
 						//==========
@@ -965,50 +1129,12 @@ public class SpiderGC{
 
 
 	/**
-	 * Get the Distance to the centre
-	 * @param doc A previously fetched cachepage
-	 * @return Distance
-	 */
-	private double getDist(String doc) throws Exception {
-		inRex = new Regex(p.getProp("distRex"));
-		inRex.search(doc);
-		if(doc.indexOf("Here") >= 0) return(0);
-		if (!inRex.didMatch()) return 0;
-		if(MyLocale.getDigSeparator().equals(",")) return Convert.toDouble(inRex.stringMatched(1).replace('.',','));
-		return Convert.toDouble(inRex.stringMatched(1));
-	}
-
-	/**
-	 * Get the direction
-	 * @param doc A previously fetched cachepage
-	 * @return direction String
-	 */
-	private String getDirection(String doc) throws Exception {
-		inRex = new Regex(p.getProp("directionRex"));
-		inRex.search(doc);
-		if (!inRex.didMatch()) return "";
-		return inRex.stringMatched(1);
-	}
-
-	/**
-	 * Get the waypoint name
-	 * @param doc A previously fetched cachepage
-	 * @return Name of waypoint to add to list
-	 */
-	private String getWP(String doc) throws Exception {
-		inRex = new Regex(p.getProp("waypointRex"));
-		inRex.search(doc);
-		if (!inRex.didMatch()) return "???";
-		return "GC"+inRex.stringMatched(1);
-	}
-
-	/**
 	 * Get the coordinates of the cache
 	 * @param doc A previously fetched cachepage
 	 * @return Cache coordinates
 	 */
 	private String getLatLon(String doc) throws Exception{
-		inRex = new Regex(p.getProp("latLonRex"));
+		Regex inRex = new Regex(p.getProp("latLonRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
@@ -1021,7 +1147,7 @@ public class SpiderGC{
 	 */
 	private String getLongDesc(String doc) throws Exception{
 		String res = "";
-		inRex = new Regex(p.getProp("shortDescRex"));
+		Regex inRex = new Regex(p.getProp("shortDescRex"));
 		Regex rex2 = new Regex(p.getProp("longDescRex"));
 		inRex.search(doc);
 		rex2.search(doc);
@@ -1040,7 +1166,7 @@ public class SpiderGC{
 	 * @return the location (country and state) of the cache
 	 */
 	private String getLocation(String doc) throws Exception{
-		inRex = new Regex(p.getProp("cacheLocationRex"));
+		Regex inRex = new Regex(p.getProp("cacheLocationRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) return "";
 
@@ -1053,7 +1179,7 @@ public class SpiderGC{
 	 * @return the name of the cache
 	 */
 	private String getName(String doc) throws Exception{
-		inRex = new Regex(p.getProp("cacheNameRex"));
+		Regex inRex = new Regex(p.getProp("cacheNameRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
@@ -1065,7 +1191,7 @@ public class SpiderGC{
 	 * @return the cache owner
 	 */
 	private String getOwner(String doc) throws Exception{
-		inRex = new Regex(p.getProp("cacheOwnerRex"));
+		Regex inRex = new Regex(p.getProp("cacheOwnerRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
@@ -1077,7 +1203,7 @@ public class SpiderGC{
 	 * @return Hidden date
 	 */
 	private String getDateHidden(String doc) throws Exception{
-		inRex = new Regex(p.getProp("dateHiddenRex"));
+		Regex inRex = new Regex(p.getProp("dateHiddenRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) return "???";
 		return inRex.stringMatched(1);
@@ -1089,7 +1215,7 @@ public class SpiderGC{
 	 * @return Cachehints
 	 */
 	private String getHints(String doc) throws Exception{
-		inRex = new Regex(p.getProp("hintsRex"));
+		Regex inRex = new Regex(p.getProp("hintsRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) return "";
 		return inRex.stringMatched(1);
@@ -1101,7 +1227,7 @@ public class SpiderGC{
 	 * @return Cache size
 	 */
 	private String getSize(String doc) throws Exception{
-		inRex = new Regex(p.getProp("sizeRex"));
+		Regex inRex = new Regex(p.getProp("sizeRex"));
 		inRex.search(doc);
 		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "None";
@@ -1113,7 +1239,7 @@ public class SpiderGC{
 	 * @return The cache difficulty
 	 */
 	private String getDiff(String doc) throws Exception{
-		inRex = new Regex(p.getProp("difficultyRex"));
+		Regex inRex = new Regex(p.getProp("difficultyRex"));
 		inRex.search(doc);
 		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "";
@@ -1125,7 +1251,7 @@ public class SpiderGC{
 	 * @return Terrain rating
 	 */
 	private String getTerr(String doc) throws Exception{
-		inRex = new Regex(p.getProp("terrainRex"));
+		Regex inRex = new Regex(p.getProp("terrainRex"));
 		inRex.search(doc);
 		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else return "";
@@ -1137,7 +1263,7 @@ public class SpiderGC{
 	 * @return the waypoint type (Tradi, Multi, etc.)
 	 */
 	private byte getType(String doc) throws Exception {
-		inRex = new Regex(p.getProp("cacheTypeRex"));
+		Regex inRex = new Regex(p.getProp("cacheTypeRex"));
 		inRex.search(doc);
 		if(inRex.didMatch()) return CacheType.gcSpider2CwType(inRex.stringMatched(1));
 		else return 0;
@@ -1508,7 +1634,7 @@ public class SpiderGC{
 	 * @param wayPoint The name of the cache
 	 * @param is_found Found status of the cached (is inherited by the additional waypoints)
 	 */
-	public void getAddWaypoints(String doc, String wayPoint, boolean is_found) throws Exception{
+	private void getAddWaypoints(String doc, String wayPoint, boolean is_found) throws Exception{
 		Extractor exWayBlock = new Extractor(doc,p.getProp("wayBlockExStart"),p.getProp("wayBlockExEnd"), 0, false);
 		String wayBlock = "";
 		String rowBlock = "";
