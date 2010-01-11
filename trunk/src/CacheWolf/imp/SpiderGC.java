@@ -118,6 +118,11 @@ public class SpiderGC{
 	private static String propListBlockRex;
 	private static String propLineRex;
 
+	private int numFoundUpdates=0;
+	private int numArchivedUpdates=0;
+	private int numAvailableUpdates=0;
+	private int numLogUpdates=0;
+	
 	public SpiderGC(Preferences prf, Profile profile, boolean bypass){
 		this.profile=profile;
 		this.cacheDB = profile.cacheDB;
@@ -352,8 +357,19 @@ public class SpiderGC{
 
 		if (infB.isClosed) { Vm.showWait(false); return; }
 		infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
+		
+		pref.log("Checked " + page_number + " pages");
+		pref.log("with " + ((page_number-1)*20+found_on_page) + " caches");
 		pref.log("Found " + cachesToLoad.size() + " new caches");
-		pref.log("Found " + cachesToUpdate.size() + " caches for update");
+		pref.log("Found " + cachesToUpdate.size() + "/" + cachesShouldUpdate.size() + " caches for update");
+		if(spiderAllFinds){
+			pref.log("Found " + numFoundUpdates + " caches with no found in profile.");
+			pref.log("Found " + numArchivedUpdates + " caches with changed archived status.");
+		}
+		pref.log("Found " + numAvailableUpdates + " caches with changed available status.");
+		pref.log("Found " + numLogUpdates + " caches with new found in log.");
+		pref.log("Found " + (cachesToUpdate.size()-numAvailableUpdates-numLogUpdates) + " caches possibly archived.");
+		pref.log("Found " + cachesShouldUpdate.size() + "?=" + (numFoundUpdates+numArchivedUpdates+numAvailableUpdates+numArchivedUpdates) + " caches to update.");
 
 		//=======
 		// Now ready to spider each cache in the list
@@ -402,7 +418,7 @@ public class SpiderGC{
 				} // For test==SPIDER_IGNORE_PREMIUM: Nothing to do
 			}
 		}
-
+		
 		if (!infB.isClosed) {
 			int j = 1;
 			for (Enumeration e = cachesToUpdate.elements() ; e.hasMoreElements() ; j++) {
@@ -761,13 +777,13 @@ public class SpiderGC{
 	private boolean updateExists(CacheHolder ch, String CacheDescription) {
 		// int lineDescription=20;
 		if (spiderAllFinds) {
-			if(!ch.is_found()) { ch.setFound(true); ch.save(); return true;}
+			if(!ch.is_found()) { ch.setFound(true); ch.save(); numFoundUpdates+=1; return true;}
 			boolean is_archived_GC=CacheDescription.indexOf("<font color=\"red\"><strike>")!=-1;
-			if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); ch.save(); return true;}
+			if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); ch.save(); numArchivedUpdates+=1; return true;}
 		}
 		boolean is_available_GC=CacheDescription.indexOf("<strike>")==-1;
-		if (is_available_GC != ch.is_available()) { ch.setAvailable(is_available_GC); ch.save(); return true;}
-		if (newLogExists(ch,CacheDescription)) {return true;}
+		if (is_available_GC != ch.is_available()) { ch.setAvailable(is_available_GC); ch.save(); numAvailableUpdates+=1; return true;}
+		if (newLogExists(ch,CacheDescription)) {numLogUpdates+=1; return true;}
 		return false;
 	}
 	/**
