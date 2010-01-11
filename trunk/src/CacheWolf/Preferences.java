@@ -226,12 +226,16 @@ public class Preferences extends MinML{
 	public boolean addDetailsToName = false;
 	/** The own GC member ID */
 	public String gcMemberId = "";
+	/** Premium Member ? */
+	public boolean isPremium = true;
 	/** The maximum number of logs to export */
 	public int numberOfLogsToExport = 5;
 	/** Add Travelbugs when exporting */
 	public boolean exportTravelbugs = false;
 	/** Try to make a MyFinds GPX when exporting to GPX */
 	public boolean exportGpxAsMyFinds = true;
+	/** Check if lastFound is newer than saved log*/
+	public boolean checkLog=false;
 	/** Download images when loading cache data */
 	public boolean downloadPics = true;
 	/** Download TB information when loading cache data */
@@ -258,10 +262,10 @@ public class Preferences extends MinML{
 
     /** SortingGroupedByCache */
     public boolean SortingGroupedByCache=true;
-    
+
     /** useOwnSymbols */
     public boolean useOwnSymbols=true;
-    
+
     /** TRUE if we want automatic sorting **/
     public boolean sortAutomatic = true;
 
@@ -382,7 +386,10 @@ public class Preferences extends MinML{
 			SpiderGC.passwort=password;
 		}
 		else if(name.equals("alias2")) myAlias2 = SafeXML.cleanback(atts.getValue("name"));
-		else if(name.equals("gcmemberid")) gcMemberId = atts.getValue("name");
+		else if(name.equals("gcmemberid")) {
+			gcMemberId = atts.getValue("name");
+			isPremium=Boolean.valueOf(atts.getValue("Premium")).booleanValue();
+		}
 		else if(name.equals("location")){
 			curCentrePt.set(atts.getValue("lat")+" "+atts.getValue("long"));
 		}
@@ -488,6 +495,7 @@ public class Preferences extends MinML{
 		}
 		else if (name.equals("spider")) {
 			forceLogin = Boolean.valueOf(atts.getValue("forcelogin")).booleanValue();
+			checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();
 			tmp = atts.getValue("spiderUpdates");
 			if (tmp != null) spiderUpdates=Convert.parseInt(tmp);
 			tmp = atts.getValue("maxSpiderNumber");
@@ -625,7 +633,7 @@ public class Preferences extends MinML{
 			outp.print("    <CurrentCentre FromGPSPosition=\"" + SafeXML.clean(Convert.toString(setCurrentCentreFromGPSPosition)) + "\"/>\n");
 			outp.print("    <alias name =\""+ SafeXML.clean(myAlias) +"\" password=\""+SafeXML.clean(password)+"\" />\n");
 			outp.print("    <alias2 name =\""+ SafeXML.clean(myAlias2) +"\"/>\n");
-			outp.print("    <gcmemberid name =\""+ SafeXML.clean(gcMemberId) +"\"/>\n");
+			outp.print("    <gcmemberid name =\""+ SafeXML.clean(gcMemberId) + "\"" + " Premium =\""+ SafeXML.strxmlencode(isPremium) +"\"/>\n");
 			outp.print("    <browser name = \"" + SafeXML.clean(browser) + "\"/>\n");
 			outp.print("    <proxy prx = \"" + SafeXML.clean(myproxy) + "\" prt = \"" + SafeXML.clean(myproxyport) + "\" active = \"" + SafeXML.strxmlencode(proxyActive) + "\" />\n");
 			outp.print("    <port portname = \"" + SafeXML.clean(mySPO.portName) + "\" baud = \"" + SafeXML.strxmlencode(mySPO.baudRate) + "\"/>\n");
@@ -646,7 +654,7 @@ public class Preferences extends MinML{
 					        "\" addDetailsToWaypoint = \"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\" addDetailsToName = \"" + SafeXML.strxmlencode(addDetailsToName) + "\" />\n");
 			outp.print("    <opencaching downloadMissing=\"" + SafeXML.strxmlencode(downloadmissingOC) + "\"/>\n");
 			outp.print("    <location lat = \"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long = \"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\"/>\n");
-			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
+			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");
