@@ -296,14 +296,6 @@ public class SpiderGC{
 			maxNew=java.lang.Math.min(numFinds-numFoundInDB,maxNew);
 			if (maxUpdate==0 && maxNew == 0) { Vm.showWait(false); infB.close(0); return; }
 		}
-		
-		String[] cacheDescGC;
-		int anzLines=38;
-		int lineDistance=1;
-		int lineDirection=1;
-		int lineWaypoint=22;
-		int lineDescription=20;
-		int lineLastFound=27;
 		Regex lineRex = new Regex(propLineRex);
 		try {
 			//Loop pages till maximum distance has been found or no more caches are in the list
@@ -315,39 +307,27 @@ public class SpiderGC{
 				while (maxDistance > 0){
 					if (!lineRex.didMatch()) break;
 					found_on_page++;
-					cacheDescGC=mString.split(lineRex.stringMatched(1),'\n');
-					if(cacheDescGC.length!=anzLines) {
-						maxDistance = 0; //add no more caches
-						(new MessageBox(MyLocale.getMsg(5500,"Error"), "GC changed table output \nCW must be changed too!", FormBase.OKB)).execute();
-						throw new Exception("GC changed table output");
-					}
-					double gotDistance=getDistGC(cacheDescGC[lineDistance]);
-					String chWaypoint=getWP(cacheDescGC[lineWaypoint]);
+					String CacheDescriptionGC=lineRex.stringMatched(1);
+					double gotDistance=getDistGC(CacheDescriptionGC);
+					String chWaypoint=getWP(CacheDescriptionGC);
 					if(gotDistance <= maxDistance){
 						ch=cacheDB.get(chWaypoint);
 						if(ch == null){ // not in DB
-							if ( gotDistance >= minDistance &&
-								 directionOK(directions,getDirection(cacheDescGC[lineDirection])) ){
+							if(cachesToLoad.size() < maxNew) {
+								if ( gotDistance >= minDistance &&
+										 directionOK(directions,getDirection(CacheDescriptionGC))  &&
+										 doPMCache(CacheDescriptionGC) ){
 								cachesToLoad.add(chWaypoint);
-								if(cachesToLoad.size()==maxNew) {
-									if(maxUpdate!=Integer.MAX_VALUE) maxDistance=0;
 								}
+							}
+							else {
+								if(maxUpdate!=Integer.MAX_VALUE) { maxDistance=0; }
 							}
 						}
 						else {
 							if (maxUpdate>0) {
-								boolean update=false;
-								if (spiderAllFinds) {
-									if(!ch.is_found()) { ch.setFound(true); update=true;}
-									boolean is_archived_GC=cacheDescGC[lineDescription].indexOf("<font color=\"red\"><strike>")!=-1;
-									if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); update=true;}
-								}
-								boolean is_available_GC=cacheDescGC[lineDescription].indexOf("<strike>")==-1;
-								if (is_available_GC != ch.is_available()) { ch.setAvailable(is_available_GC); update=true;}
-								if (newLogExists(ch,cacheDescGC[lineLastFound])) {update=true;}
-								if (update) {
-									cachesShouldUpdate.put(chWaypoint, ch);
-									if(cachesShouldUpdate.size()==maxUpdate) maxDistance=0;
+								if (updateExists(ch,CacheDescriptionGC)) {
+									if (!ch.is_black() && (cachesShouldUpdate.size()<maxUpdate)) cachesShouldUpdate.put(chWaypoint, ch);
 								}
 								else
 									if (maxUpdate==Integer.MAX_VALUE) cachesToUpdate.remove( chWaypoint );
@@ -773,6 +753,24 @@ public class SpiderGC{
 	}
 
 	/**
+	 * check if new Update exists
+	 * @param ch CacheHolder
+	 * @param CacheDescription A previously fetched cachepage
+	 * @return true if new Update exists else false
+	 */
+	private boolean updateExists(CacheHolder ch, String CacheDescription) {
+		// int lineDescription=20;
+		if (spiderAllFinds) {
+			if(!ch.is_found()) { ch.setFound(true); ch.save(); return true;}
+			boolean is_archived_GC=CacheDescription.indexOf("<font color=\"red\"><strike>")!=-1;
+			if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); ch.save(); return true;}
+		}
+		boolean is_available_GC=CacheDescription.indexOf("<strike>")==-1;
+		if (is_available_GC != ch.is_available()) { ch.setAvailable(is_available_GC); ch.save(); return true;}
+		if (newLogExists(ch,CacheDescription)) {return true;}
+		return false;
+	}
+	/**
 	 * Get num found
 	 * @param doc A previously fetched cachepage
 	 * @return numFound
@@ -807,8 +805,8 @@ public class SpiderGC{
 			return(0);
 		}
 		else {
-			//inRex = new Regex(p.getProp("distRex"));
-			Regex inRex = new Regex("<br />(.*?)(?:km|mi)");
+			 // int lineDistance=1;
+			Regex inRex = new Regex(p.getProp("distRex"));
 			inRex.search(doc);
 			if (!inRex.didMatch()) return 0;
 			if(MyLocale.getDigSeparator().equals(",")) return Convert.toDouble(inRex.stringMatched(1).replace('.',','));
@@ -822,10 +820,20 @@ public class SpiderGC{
 	 * @return Name of waypoint to add to list
 	 */
 	private String getWP(String doc) throws Exception {
+		// int lineWaypoint=22;
 		Regex inRex = new Regex(p.getProp("waypointRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) return "???";
 		return "GC"+inRex.stringMatched(1);
+	}
+	
+	/**
+	 * check for Premium Member Cache
+	 */
+	private boolean doPMCache(String toCheck) {
+		// int linePM=10;
+		if (pref.isPremium) return true;
+		if (toCheck.indexOf("small_profile.gif")>0) return false; else return true;
 	}
 
 	/**
@@ -834,12 +842,16 @@ public class SpiderGC{
 	 * @return direction String
 	 */
 	private String getDirection(String doc) throws Exception {
+		// int lineDirection=1;
 		Regex inRex = new Regex(p.getProp("directionRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) return "";
 		return inRex.stringMatched(1);
 	}
-
+	
+	/*
+	 * if cache lies in the desired direction
+	 */
 	private boolean directionOK(String[] directions, String gotDirection) {
 		if (directions.length==0) return true; // nothing means all
 		for (int i = 0; i < directions.length; i++) {
@@ -857,10 +869,20 @@ public class SpiderGC{
 	}
 
 	/*
-	 * in CacheHolder ch
-	 * in String cacheDescGC
+	 * @param CacheHolder ch
+	 * @param String cacheDescGC
+	 * @return boolean newLogExists
 	 */
-	private boolean newLogExists(CacheHolder ch, String cacheDescGC) {
+	private boolean newLogExists(CacheHolder ch, String cacheDescrition) {
+		if(!pref.checkLog) return false;
+		String[] CacheDesc=mString.split(cacheDescrition,'\n');
+		int anzLines=38;
+		int lineLastFound=27;
+		if(CacheDesc.length!=anzLines) {
+			maxDistance = 0; //add no more caches
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), "GC changed table output \nCW must be changed too!", FormBase.OKB)).execute();
+			return false;
+		}
 		Time lastLogCW = new Time();
 		CacheHolderDetail chd = ch.getCacheDetails(true);
 		String slastLogCW=chd.CacheLogs.getLog(0).getDate();
@@ -873,7 +895,7 @@ public class SpiderGC{
 		lastLogGC.second=0;
 		lastLogGC.millis=0;
 		String[] SDate;
-		String stmp=cacheDescGC.trim();
+		String stmp=CacheDesc[lineLastFound].trim();
 		if (stmp.indexOf("day")>0) {
 			lastLogGC.day=java.lang.Math.max(1, lastLogGC.day-7); // simplyfied (update if not newer than last week)
 		}
