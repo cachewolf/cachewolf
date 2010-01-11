@@ -98,7 +98,9 @@ public class LogList {
 		while(countNoFoundLogs < size() && countNoFoundLogs < 5){
 			if(getLog(countNoFoundLogs).getIcon().startsWith("icon_sad")) {
 				countNoFoundLogs++;
-			}else break;
+			}else if (getLog(countNoFoundLogs).getIcon().startsWith("icon_smile")) {
+        break;
+      }
 		}
 		return countNoFoundLogs;
 	 }
