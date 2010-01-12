@@ -122,7 +122,7 @@ public class SpiderGC{
 	private int numArchivedUpdates=0;
 	private int numAvailableUpdates=0;
 	private int numLogUpdates=0;
-	
+
 	public SpiderGC(Preferences prf, Profile profile, boolean bypass){
 		this.profile=profile;
 		this.cacheDB = profile.cacheDB;
@@ -238,7 +238,7 @@ public class SpiderGC{
 			maxUpdate = Common.parseInt(maxUpdateString);
 		}
 		// TODO maxUpdate in preferences ?
-		
+
 		if (maxNew == 0) return;
 		if(maxNew==-1) maxNew=Integer.MAX_VALUE;
 		if(maxUpdate==-1) maxUpdate=Integer.MAX_VALUE;
@@ -357,7 +357,7 @@ public class SpiderGC{
 
 		if (infB.isClosed) { Vm.showWait(false); return; }
 		infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
-		
+
 		pref.log("Checked " + page_number + " pages");
 		pref.log("with " + ((page_number-1)*20+found_on_page) + " caches");
 		pref.log("Found " + cachesToLoad.size() + " new caches");
@@ -418,7 +418,7 @@ public class SpiderGC{
 				} // For test==SPIDER_IGNORE_PREMIUM: Nothing to do
 			}
 		}
-		
+
 		if (!infB.isClosed) {
 			int j = 1;
 			for (Enumeration e = cachesToUpdate.elements() ; e.hasMoreElements() ; j++) {
@@ -842,7 +842,7 @@ public class SpiderGC{
 		if (!inRex.didMatch()) return "???";
 		return "GC"+inRex.stringMatched(1);
 	}
-	
+
 	/**
 	 * check for Premium Member Cache
 	 */
@@ -864,7 +864,7 @@ public class SpiderGC{
 		if (!inRex.didMatch()) return "";
 		return inRex.stringMatched(1);
 	}
-	
+
 	/*
 	 * if cache lies in the desired direction
 	 */
@@ -876,7 +876,7 @@ public class SpiderGC{
 			}
 			int j=directions[i].indexOf("*");
 			if (j>0){
-				if (gotDirection.startsWith(directions[i].substring(0, 1))) {
+				if (gotDirection.indexOf(directions[i].substring(0, 1))>-1) {
 					return true;
 				}
 			}
