@@ -101,7 +101,9 @@ public class LogList {
 			currentIcon = getLog(currentLog).getIcon();
 			if(currentIcon.startsWith("icon_sad")) {
 				countNoFoundLogs++;
-			}else if (currentIcon.startsWith("icon_smile") || currentIcon.startsWith("icon_camera") || currentIcon.startsWith("icon_attended") || currentIcon.startsWith("icon_rsvp")) {
+			}else if (currentIcon.startsWith("icon_smile") || currentIcon.startsWith("icon_camera")
+             || currentIcon.startsWith("icon_attended") || currentIcon.startsWith("icon_rsvp")
+             || currentIcon.startsWith("icon_maint")) {
 				break;
 			}
 			currentLog++;
