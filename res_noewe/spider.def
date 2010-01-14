@@ -34,6 +34,7 @@
 # Version 4.10- 20091021 Tags in Description are now correctly closed
 # Version 4.11- 20091023 Reverted last change, because it doesn't work with EWE/EXE
 # Version 5.0 - 20091105 adaption to new GC-design
+# Version 6.0 - 20100113 adaption to new GC-design
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -55,9 +56,12 @@ firstPage2         = &lng=
 firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
 # Regex to search for cachenames
 listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
-lineRex            = <tr\ bgcolor='#.{6}'>(?:(?s).*?)<td\ valign="top"\ align="left">((?s).*?)</tr>
+lineRex            = <tr\ bgcolor='#.{6}'\ class="Data\ BorderTop">((?s).*?)</tr>
 directionRex       = /compass/(.*?).gif
-distRex            = <br\ />(.*?)(?:km|mi)(?:\\s*)</td>
+logDateRex         = <td>(.*?)<br\ /><span\ class="Success"></span></td>
+availableRex       = <span class="Strike">
+PMRex              = small_profile.gif
+distRex            = <br\ />(.*?)(?:km|mi)
 waypointRex        = \\(GC(.*?)\\)<br\ />
 showOnlyFound      = &f=1
 maxDistance        = &dist=
@@ -85,46 +89,46 @@ onlyGPSAdventure    = &tx=72e69af2-7986-4990-afd9-bc16cbbb4ce3
 #--------------------------------------
 getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
-cacheUnavailable   = <ul><font\ color="red"><li>This\ cache\ is\ temporarily\ unavailable.\ Read\ the\ logs\ below\ to\ read\ the\ status\ for\ this\ cache.</li></font></ul>
-cacheArchived      = This cache\ has\ been\ archived
-latLonRex          = <span\ id="LatLon"\ style="font-weight:bold;">((?s).*?)</span>
-shortDescRex       = <span\ id="ShortDescription">((?s).*?)</span>
+cacheUnavailable   = <ul\ class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable.\ Read\ the\ logs\ below\ to\ read\ the\ status\ for\ this\ cache.</li></ul></span>
+cacheArchived      = <ul\ class="OldWarning"><li>This\ cache\ has\ been\ archived,\ but\ is\ available\ for\ viewing\ for\ archival\ purposes.</li></ul></span>
+latLonRex          = <span\ id="ctl00_ContentBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
+shortDescRex       = <span\ id="ctl00_ContentBody_ShortDescription">((?s).*?)</span>
 #This version doesn't work with EWE/EXE, so we trim the tags in code
-#longDescRex        = <span\ id="LongDescription">((?s).*?)</span>(?:\\s*)<br\ />(?:\\s*)</p>(?:\\s*)<p>(?:\\s*)<strong>Additional\ Hints&nbsp;\\(</strong>
-longDescRex        = <span\ id="LongDescription">((?s).*?)<strong>Additional\ Hints&nbsp;\\(</strong>
-cacheNameRex       = <span\ id="CacheName">((?s).*?)</span>
-cacheOwnerRex      = <span\ id="CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span>
-dateHiddenRex      = <span\ id="DateHidden">((?s).*?)</span>
-hintsRex           = <span\ id="Hints"\ class="displayMe">((?s).*?)</span>
-sizeRex            = alt="Size:\ ((?s).*?)"\ title="Size:
-difficultyRex      = <span\ id="Difficulty">.*?alt="(.*?)\ out\ of
-terrainRex         = <span\ id="Terrain">.*?alt="(.*?)\ out\ of
-cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ ALT="
-cacheLocationRex   = <span\ id="Location">In\ ([^<]*?)<
+#longDescRex        = <span\ id="ctl00_ContentBody_LongDescription">((?s).*?)</span>(?:\\s*)<br\ />(?:\\s*)</p>(?:\\s*)<p>(?:\\s*)<strong>Additional\ Hints&nbsp;\\(</strong>
+longDescRex        = <span\ id="ctl00_ContentBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">&nbsp;</td>
+cacheNameRex       = <span\ id="ctl00_ContentBody_CacheName">((?s).*?)</span>
+cacheOwnerRex      = <span\ id="ctl00_ContentBody_CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span>
+dateHiddenRex      = <span\ id="ctl00_ContentBody_DateHidden">((?s).*?)</span>
+hintsRex           = <span\ id="ctl00_ContentBody_Hints"\ class="displayMe">((?s).*?)</span>
+sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
+difficultyRex      = <span\ id="ctl00_ContentBody_Difficulty">.*?alt="(.*?)\ out\ of
+terrainRex         = <span\ id="ctl00_ContentBody_Terrain">.*?alt="(.*?)\ out\ of
+cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ alt="
+cacheLocationRex   = <span\ id="ctl00_ContentBody_Location">In\ ([^<]*?)<
 premiumCachepage   = Sorry, the owner of this listing has made it viewable to subscribers only.
 
 #--------------------------------------
 #Section2a: Logs
 #--------------------------------------
 # blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
-blockRex           = <span\ id="CacheLogs">((?s).*?)</span>
+blockRex           = <table class="LogsTable Table">((?s).*?)</table></span></p>
 # singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
-singleLogExStart   = <STRONG>
-singleLogExEnd     = [<a\ href=
+singleLogExStart   = <strong>
+singleLogExEnd     = <small><a\ href="
 # iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
 iconExStart        = http://www.geocaching.com/images/icons/
-iconExEnd          = '\ align='abs
+iconExEnd          = "\ alt=""\ />
 nameTempExStart    = <a\ href="
 nameTempExEnd      = /a>
 # Name extrahiert aus nameTemp
 nameExStart        = >
 nameExEnd          = <
-dateExStart        = align='absmiddle'>&nbsp;
-dateExEnd          = \ by\ <
+dateExStart        = gif"\ alt=""\ />&nbsp;
+dateExEnd          = \ by\ <a\ href="/profile/?guid=
 logExStart         = found)<br\ />
-logExEnd           = <br\ />[
-logIdExStart         = by\ <a\ name="
-logIdExEnd           = "\ style="
+logExEnd           = <br\ /><small><a\ href="
+logIdExStart         = "\ id="
+logIdExEnd           = ">
 # Die Icons, die einen erfolgreichen Fund signalisieren
 icon_smile         = icon_smile.gif
 icon_camera        = icon_camera.gif
@@ -134,11 +138,11 @@ icon_attended      = icon_attended.gif
 #Section2b: Bugs
 #--------------------------------------
 # blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
-blockExStart       = >&nbsp;<b>Inventory</b>
-blockExEnd         = What\ are\ Trackable\ Items?
+blockExStart       = >&nbsp;Inventory</h3>
+blockExEnd         = <p class="NoSpacing">
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
-bugExStart         = <a\ href='
-bugExEnd           = </a></strong></td>
+bugExStart         = <a\ href="
+bugExEnd           = </a></li>
 bugDetailsStart    = id="ctl00_ContentBody_BugDetails_BugGoal">
 bugDetailsEnd      = </span>
 getBugByName       = http://www.geocaching.com/track/search.aspx?k=
@@ -160,10 +164,10 @@ bugNameEnd         = </span>
 imgBlockExStart    = <IMG
 imgBlockExEnd      = >
 # imgSpanEx searches for images in the image section
-imgSpanExStart     = <span\ id="Images"
-imgSpanExEnd       = </span>
-imgNameExStart     = align="absmiddle"\ border="0">
-imgNameExEnd       = </a><br\ />
+imgSpanExStart     = <span id="ctl00_ContentBody_Images">
+imgSpanExEnd       = </span></p>
+imgNameExStart     = "\ />\ <span>
+imgNameExEnd       = </span></a>
 imgSrcExStart      = <a\ href="http://
 imgSrcExEnd        = "\ rel="lightbox"
 imgCommentExStart  = </a><br\ />
@@ -175,18 +179,18 @@ imgCommentExEnd    = <a\ href
 wayBlockExStart    = <strong>Additional\ Waypoints</strong>
 wayBlockExEnd      = </table>
 nameRex            = &RefDS=1">(.*)</a>
-koordRex           = align="left">([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})</td>
+koordRex           = <td>([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})</td>
 descRex            = colspan="4">((?:.|\n|\r)*?)</td>
 typeRex            = </a>\ \\((.*)\\)</td>
 rowBlockExStart    = <tr
 rowBlockExEnd      = </tr>
-prefixExStart      = <td\ valign=\"top\"\ align=\"left\">
+prefixExStart      = <td>
 prefixExEnd        = </td>
 
 #--------------------------------------
 #Section2e: Attributes
 #--------------------------------------
-attBlockExStart = &nbsp;<b>Attributes</b><br/><table
-attBlockExEnd  = </td></tr></table>
+attBlockExStart = watching\ this\ cache.<br\ /></small>
+attBlockExEnd  = What\ are\ Attributes?</a></small></p>
 attExStart = /images/attributes/
-attExEnd = " Alt="
+attExEnd = "\ alt="
