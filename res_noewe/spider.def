@@ -95,7 +95,7 @@ latLonRex          = <span\ id="ctl00_ContentBody_LatLon"\ style="font-weight:bo
 shortDescRex       = <span\ id="ctl00_ContentBody_ShortDescription">((?s).*?)</span>
 #This version doesn't work with EWE/EXE, so we trim the tags in code
 #longDescRex        = <span\ id="ctl00_ContentBody_LongDescription">((?s).*?)</span>(?:\\s*)<br\ />(?:\\s*)</p>(?:\\s*)<p>(?:\\s*)<strong>Additional\ Hints&nbsp;\\(</strong>
-longDescRex        = <span\ id="ctl00_ContentBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">&nbsp;</td>
+longDescRex        = <span\ id="ctl00_ContentBody_LongDescription">((?s).*?)<td\ valign="top"
 cacheNameRex       = <span\ id="ctl00_ContentBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = <span\ id="ctl00_ContentBody_CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span>
 dateHiddenRex      = <span\ id="ctl00_ContentBody_DateHidden">((?s).*?)</span>
