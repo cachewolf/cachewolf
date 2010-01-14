@@ -121,6 +121,8 @@ public class SpiderGC{
 	private static String propAvailable;
 	private static String propPM;
 	private static Regex RexPropDirection;
+	private static Regex RexPropDistance;
+	private static Regex RexPropWaypoint;
 
 	private int numFoundUpdates=0;
 	private int numArchivedUpdates=0;
@@ -290,6 +292,7 @@ public class SpiderGC{
 				}
 			}
 		}
+		int startSize=cachesToUpdate.size();
 
 		//=======
 		// Prepare list of all caches that are to be spidered
@@ -361,7 +364,7 @@ public class SpiderGC{
 		infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
 
 		pref.log("Checked " + page_number + " pages");
-		pref.log("with " + ((page_number-1)*20+found_on_page) + " caches");
+		pref.log("with " + ((page_number-1)*20+found_on_page-1) + " caches");
 		pref.log("Found " + cachesToLoad.size() + " new caches");
 		pref.log("Found " + cachesToUpdate.size() + "/" + cachesShouldUpdate.size() + " caches for update");
 		if(spiderAllFinds){
@@ -379,6 +382,7 @@ public class SpiderGC{
 		boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
 
 		int spiderErrors = 0;
+		if (cachesToUpdate.size()==startSize) cachesToUpdate.clear(); // there must be something wrong
 		if (cachesToUpdate.size()==0) cachesToUpdate=cachesShouldUpdate;
 
 		if ( cachesToUpdate.size() > 0 ) {
@@ -690,6 +694,8 @@ public class SpiderGC{
 			propAvailable=p.getProp("availableRex");
 			propPM=p.getProp("PMRex");
 			RexPropDirection=new Regex(p.getProp("directionRex"));
+			RexPropDistance = new Regex(p.getProp("distRex"));
+			RexPropWaypoint = new Regex(p.getProp("waypointRex"));
 		}catch(Exception ex){
 		}
 	}
@@ -781,17 +787,20 @@ public class SpiderGC{
 	 * @return true if new Update exists else false
 	 */
 	private boolean updateExists(CacheHolder ch, String CacheDescription) {
-		// int lineDescription=20;
+		boolean ret = false;
+		boolean save = false;
 		if (spiderAllFinds) {
-			if(!ch.is_found()) { ch.setFound(true); ch.save(); numFoundUpdates+=1; return true;}
+			if(!ch.is_found()) { ch.setFound(true); save=true; numFoundUpdates+=1; ret=true;}
 			boolean is_archived_GC=CacheDescription.indexOf("<font color=\"red\"><strike>")!=-1;
-			if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); ch.save(); numArchivedUpdates+=1; return true;}
+			if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); save=true; numArchivedUpdates+=1; ret=true;}
 		}
 		boolean is_available_GC=CacheDescription.indexOf(propAvailable)==-1;
 		if (is_available_GC != ch.is_available()) {
-			ch.setAvailable(is_available_GC); ch.save(); numAvailableUpdates+=1; return true;}
-		if (newLogExists(ch,CacheDescription)) {numLogUpdates+=1; return true;}
-		return false;
+			ch.setAvailable(is_available_GC); save=true; numAvailableUpdates+=1; ret=true;}
+		// we could check for update of terrain,difficult,size,cache type for not necessarily to load the complete cache 
+		if (newLogExists(ch,CacheDescription)) {numLogUpdates+=1; ret=true;}
+		if (save) ch.save();
+		return ret;
 	}
 	/**
 	 * Get num found
@@ -828,12 +837,10 @@ public class SpiderGC{
 			return(0);
 		}
 		else {
-			 // int lineDistance=1;
-			Regex inRex = new Regex(p.getProp("distRex"));
-			inRex.search(doc);
-			if (!inRex.didMatch()) return 0;
-			if(MyLocale.getDigSeparator().equals(",")) return Convert.toDouble(inRex.stringMatched(1).replace('.',','));
-			return Convert.toDouble(inRex.stringMatched(1));
+			RexPropDistance.search(doc);
+			if (!RexPropDistance.didMatch()) return 0;
+			if(MyLocale.getDigSeparator().equals(",")) return Convert.toDouble(RexPropDistance.stringMatched(1).replace('.',','));
+			return Convert.toDouble(RexPropDistance.stringMatched(1));
 		}
 	}
 
@@ -843,11 +850,9 @@ public class SpiderGC{
 	 * @return Name of waypoint to add to list
 	 */
 	private String getWP(String doc) throws Exception {
-		// int lineWaypoint=22;
-		Regex inRex = new Regex(p.getProp("waypointRex"));
-		inRex.search(doc);
-		if (!inRex.didMatch()) return "???";
-		return "GC"+inRex.stringMatched(1);
+		RexPropWaypoint.search(doc);
+		if (!RexPropWaypoint.didMatch()) return "???";
+		return "GC"+RexPropWaypoint.stringMatched(1);
 	}
 
 	/**
@@ -912,7 +917,6 @@ public class SpiderGC{
 		lastLogGC.second=0;
 		lastLogGC.millis=0;
 		String[] SDate;
-		// String stmp=CacheDesc[lineLastFound].trim();
 		String stmp="";
 		RexPropLogDate.search(cacheDescrition);
 		if (RexPropLogDate.didMatch()) {
@@ -1202,7 +1206,7 @@ public class SpiderGC{
 		if (spanEnd >= 0) {
 			res = res.substring(0, spanEnd);
 		}
-		return res; // SafeXML.cleanback(res);
+		return SafeXML.cleanback(res); // since internal viewer doesn't show html-entities that are now in cacheDescription
 	}
 
 	/**
