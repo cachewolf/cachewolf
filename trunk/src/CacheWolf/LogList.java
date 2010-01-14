@@ -97,7 +97,7 @@ public class LogList {
 		byte countNoFoundLogs = 0;
 		int currentLog = 0;
 		String currentIcon;
-		while(countNoFoundLogs < size() && countNoFoundLogs < 5){
+		while(currentLog < size() && countNoFoundLogs < 5){
 			currentIcon = getLog(currentLog).getIcon();
 			if(currentIcon.startsWith("icon_sad")) {
 				countNoFoundLogs++;
