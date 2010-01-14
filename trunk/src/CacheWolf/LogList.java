@@ -93,17 +93,21 @@ public class LogList {
 	 /**
 	  *  Count the number of not-found logs
 	  */
-	 public byte countNotFoundLogs() {
+	public byte countNotFoundLogs() {
 		byte countNoFoundLogs = 0;
+		int currentLog = 0;
+		String currentIcon;
 		while(countNoFoundLogs < size() && countNoFoundLogs < 5){
-			if(getLog(countNoFoundLogs).getIcon().startsWith("icon_sad")) {
+			currentIcon = getLog(currentLog).getIcon();
+			if(currentIcon.startsWith("icon_sad")) {
 				countNoFoundLogs++;
-			}else if (getLog(countNoFoundLogs).getIcon().startsWith("icon_smile")) {
-        break;
-      }
+			}else if (currentIcon.startsWith("icon_smile") || currentIcon.startsWith("icon_camera") || currentIcon.startsWith("icon_attended") || currentIcon.startsWith("icon_rsvp")) {
+				break;
+			}
+			currentLog++;
 		}
 		return countNoFoundLogs;
-	 }
+	}
 
 	 /** only valid after calling calcRecommendations() */
 	 int numRecommended = 0;
