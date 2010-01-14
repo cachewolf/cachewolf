@@ -115,8 +115,12 @@ public class SpiderGC{
 	private static String propFirstLine2;
 	private static String propMaxDistance;
 	private static String propShowOnlyFound;
-	private static String propListBlockRex;
-	private static String propLineRex;
+	private static Regex RexPropListBlock;
+	private static Regex RexPropLine;
+	private static Regex RexPropLogDate;
+	private static String propAvailable;
+	private static String propPM;
+	private static Regex RexPropDirection;
 
 	private int numFoundUpdates=0;
 	private int numArchivedUpdates=0;
@@ -301,18 +305,16 @@ public class SpiderGC{
 			maxNew=java.lang.Math.min(numFinds-numFoundInDB,maxNew);
 			if (maxUpdate==0 && maxNew == 0) { Vm.showWait(false); infB.close(0); return; }
 		}
-		Regex lineRex = new Regex(propLineRex);
 		try {
 			//Loop pages till maximum distance has been found or no more caches are in the list
 			while(maxDistance > 0){
-				Regex listBlockRex = new Regex(propListBlockRex); // "<table id=\"dlResults\"((?s).*?)</table>"
-				listBlockRex.search(htmlListPage);
-				String tableOfHtmlListPage = listBlockRex.stringMatched(1);
-				lineRex.search(tableOfHtmlListPage);
+				RexPropListBlock.search(htmlListPage);
+				String tableOfHtmlListPage = RexPropListBlock.stringMatched(1);
+				RexPropLine.search(tableOfHtmlListPage);
 				while (maxDistance > 0){
-					if (!lineRex.didMatch()) break;
+					if (!RexPropLine.didMatch()) break;
 					found_on_page++;
-					String CacheDescriptionGC=lineRex.stringMatched(1);
+					String CacheDescriptionGC=RexPropLine.stringMatched(1);
 					double gotDistance=getDistGC(CacheDescriptionGC);
 					String chWaypoint=getWP(CacheDescriptionGC);
 					if(gotDistance <= maxDistance){
@@ -340,7 +342,7 @@ public class SpiderGC{
 						}
 					} else maxDistance = 0; // finish listing
 					// get next row of table (next Cache Description) of this htmlListPage
-					lineRex.searchFrom(tableOfHtmlListPage, lineRex.matchedTo());
+					RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
 					if (infB.isClosed) break;
 				} // next Cache
 				infB.setInfo(MyLocale.getMsg(5521,"Page ") + page_number + "\n" +
@@ -682,8 +684,12 @@ public class SpiderGC{
 			propFirstLine2=p.getProp("firstLine2");
 			propMaxDistance=p.getProp("maxDistance");
 			propShowOnlyFound=p.getProp("showOnlyFound");
-			propListBlockRex=p.getProp("listBlockRex");
-			propLineRex=p.getProp("lineRex");
+			RexPropListBlock = new Regex(p.getProp("listBlockRex"));
+			RexPropLine = new Regex(p.getProp("lineRex"));
+			RexPropLogDate = new Regex(p.getProp("logDateRex"));
+			propAvailable=p.getProp("availableRex");
+			propPM=p.getProp("PMRex");
+			RexPropDirection=new Regex(p.getProp("directionRex"));
 		}catch(Exception ex){
 		}
 	}
@@ -781,8 +787,9 @@ public class SpiderGC{
 			boolean is_archived_GC=CacheDescription.indexOf("<font color=\"red\"><strike>")!=-1;
 			if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); ch.save(); numArchivedUpdates+=1; return true;}
 		}
-		boolean is_available_GC=CacheDescription.indexOf("<strike>")==-1;
-		if (is_available_GC != ch.is_available()) { ch.setAvailable(is_available_GC); ch.save(); numAvailableUpdates+=1; return true;}
+		boolean is_available_GC=CacheDescription.indexOf(propAvailable)==-1;
+		if (is_available_GC != ch.is_available()) {
+			ch.setAvailable(is_available_GC); ch.save(); numAvailableUpdates+=1; return true;}
 		if (newLogExists(ch,CacheDescription)) {numLogUpdates+=1; return true;}
 		return false;
 	}
@@ -849,7 +856,10 @@ public class SpiderGC{
 	private boolean doPMCache(String toCheck) {
 		// int linePM=10;
 		if (pref.isPremium) return true;
-		if (toCheck.indexOf("small_profile.gif")>0) return false; else return true;
+		if (toCheck.indexOf(propPM)>0)
+			return false;
+		else
+			return true;
 	}
 
 	/**
@@ -858,11 +868,9 @@ public class SpiderGC{
 	 * @return direction String
 	 */
 	private String getDirection(String doc) throws Exception {
-		// int lineDirection=1;
-		Regex inRex = new Regex(p.getProp("directionRex"));
-		inRex.search(doc);
-		if (!inRex.didMatch()) return "";
-		return inRex.stringMatched(1);
+		RexPropDirection.search(doc);
+		if (!RexPropDirection.didMatch()) return "";
+		return RexPropDirection.stringMatched(1);
 	}
 
 	/*
@@ -891,14 +899,7 @@ public class SpiderGC{
 	 */
 	private boolean newLogExists(CacheHolder ch, String cacheDescrition) {
 		if(!pref.checkLog) return false;
-		String[] CacheDesc=mString.split(cacheDescrition,'\n');
-		int anzLines=38;
-		int lineLastFound=27;
-		if(CacheDesc.length!=anzLines) {
-			maxDistance = 0; //add no more caches
-			(new MessageBox(MyLocale.getMsg(5500,"Error"), "GC changed table output \nCW must be changed too!", FormBase.OKB)).execute();
-			return false;
-		}
+		// String[] CacheDesc=mString.split(cacheDescrition,'\n');
 		Time lastLogCW = new Time();
 		CacheHolderDetail chd = ch.getCacheDetails(true);
 		String slastLogCW=chd.CacheLogs.getLog(0).getDate();
@@ -911,11 +912,17 @@ public class SpiderGC{
 		lastLogGC.second=0;
 		lastLogGC.millis=0;
 		String[] SDate;
-		String stmp=CacheDesc[lineLastFound].trim();
+		// String stmp=CacheDesc[lineLastFound].trim();
+		String stmp="";
+		RexPropLogDate.search(cacheDescrition);
+		if (RexPropLogDate.didMatch()) {
+			stmp=RexPropLogDate.stringMatched(1);
+		}
+		else return false;
 		if (stmp.indexOf("day")>0) {
 			lastLogGC.day=java.lang.Math.max(1, lastLogGC.day-7); // simplyfied (update if not newer than last week)
 		}
-		else if (stmp.startsWith("<br />")) {
+		else if (stmp.equals("")) {
 			Vm.debug("no log yet");
 			return false; // no log yet
 		}
@@ -1395,7 +1402,7 @@ public class SpiderGC{
 		while(exBug.endOfSearch() == false){
 			if (infB.isClosed) break; // Allow user to cancel by closing progress form
 			linkPlusBug= exBug.findNext();
-			int idx=linkPlusBug.indexOf("'>");
+			int idx=linkPlusBug.indexOf("\">");
 			if (idx<0) break; // No link/bug pair found
 			link=linkPlusBug.substring(0,idx);
 			bug=linkPlusBug.substring(idx+2);
@@ -1688,8 +1695,16 @@ public class SpiderGC{
 			rowBlock = exRowBlock.findNext();
 			while(exRowBlock.endOfSearch()==false){
 				CacheHolder hd = null;
-				Extractor exPrefix=new Extractor(rowBlock,p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
+
+				String[] AddiBlock=mString.split(rowBlock,'\n');
+				int linePrefix=3;
+				if(AddiBlock.length < linePrefix + 1) {
+					(new MessageBox(MyLocale.getMsg(5500,"Error"), "GC changed table output \nCW must be changed too!", FormBase.OKB)).execute();
+					break;
+				}				
+				Extractor exPrefix=new Extractor(AddiBlock[linePrefix].trim(),p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
 				String prefix=exPrefix.findNext();
+
 				String adWayPoint;
 				if (prefix.length()==2)
 					adWayPoint=prefix+wayPoint.substring(2);
