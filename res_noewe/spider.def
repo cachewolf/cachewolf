@@ -61,7 +61,7 @@ directionRex       = /compass/(.*?).gif
 logDateRex         = <td>(.*?)<br\ /><span\ class="Success"></span></td>
 availableRex       = <span class="Strike">
 PMRex              = small_profile.gif
-distRex            = <br\ />(.*?)(?:km|mi)
+distRex            = <br\ />(.*?)(?:km|mi)</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
 showOnlyFound      = &f=1
 maxDistance        = &dist=
