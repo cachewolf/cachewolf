@@ -347,8 +347,10 @@ public class SpiderGC{
 		dummy = "";
 		//String lineBlck = "";
 		int page_number = 1;
+		String propAvailable;
 		try  {
 			lineRex = new Regex(p.getProp("lineRex")); //"<tr bgcolor=((?s).*?)</tr>"
+			propAvailable=p.getProp("availableRex");
 		} catch (Exception ex) {
 			infB.close(0);
 			Vm.showWait(false);
@@ -405,8 +407,8 @@ public class SpiderGC{
 							pref.log(waypoint+" already in DB");
 							ch=(CacheHolder) cacheDB.get(nr.intValue());
 							// If the <strike> tag is used, the cache is marked as unavailable or archived
-							boolean is_archived_GC=lineRex.stringMatched(1).indexOf("<strike><font color=\"red\">")!=-1;
-							boolean is_available_GC=lineRex.stringMatched(1).indexOf("<strike>")==-1;
+							boolean is_archived_GC=lineRex.stringMatched(1).indexOf("<font color=\"red\"><strike>")!=-1;
+							boolean is_available_GC=lineRex.stringMatched(1).indexOf(propAvailable)==-1;
 							if (ch.is_archived!=is_archived_GC) { // Update the database with the cache status
 								pref.log("Updating status of "+waypoint+" to "+(is_archived_GC?"archived":"not archived"));
 								ch.is_archived=is_archived_GC;
@@ -763,7 +765,7 @@ public class SpiderGC{
 		rex2.search(doc);
 		res = ((inRex.stringMatched(1)==null)?"":inRex.stringMatched(1)) + "<br>";
 		res += rex2.stringMatched(1);
-		return res; // SafeXML.cleanback(res);
+		return SafeXML.cleanback(res); // since internal viewer doesn't show html-entities that are now in cacheDescription
 	}
 
 	/**
@@ -942,7 +944,7 @@ public class SpiderGC{
 		while(exBug.endOfSearch() == false){
 			if (infB.isClosed) break; // Allow user to cancel by closing progress form
 			linkPlusBug= exBug.findNext();
-			int idx=linkPlusBug.indexOf("'>");
+			int idx=linkPlusBug.indexOf("\">");
 			if (idx<0) break; // No link/bug pair found
 			link=linkPlusBug.substring(0,idx);
 			bug=linkPlusBug.substring(idx+2);
@@ -1185,8 +1187,16 @@ public class SpiderGC{
 			rowBlock = exRowBlock.findNext();
 			while(exRowBlock.endOfSearch()==false){
 				CacheHolderDetail cxD = new CacheHolderDetail();
-				Extractor exPrefix=new Extractor(rowBlock,p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
+				
+				String[] AddiBlock=mString.split(rowBlock,'\n');
+				int linePrefix=3;
+				if(AddiBlock.length < linePrefix + 1) {
+					(new MessageBox(MyLocale.getMsg(5500,"Error"), "GC changed table output \nCW must be changed too!", FormBase.OKB)).execute();
+					break;
+				}				
+				Extractor exPrefix=new Extractor(AddiBlock[linePrefix].trim(),p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
 				String prefix=exPrefix.findNext();
+
 				String adWayPoint;
 				if (prefix.length()==2)
 					adWayPoint=prefix+wayPoint.substring(2);
