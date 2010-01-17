@@ -201,11 +201,14 @@ public class myTableControl extends TableControl{
 					DataMover dm=new DataMover();
 					myProgressBarForm pbf = new myProgressBarForm();
 					Handle h = new Handle();
-					pbf.setTask(h,MyLocale.getMsg(1012, "Delete selected"));
-					pbf.exec();
 					int nDeleted=0;
 					int size=cacheDB.size();
+					pbf.setTask(h,"Be patient. Reading directory");
+					pbf.exec();
+					h.progress = (float)0.5;
+					h.changed();
 					String[] CacheFiles = new FileBugfix(profile.dataDir).list(null, FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
+					pbf.setTask(h,MyLocale.getMsg(1012, "Delete selected"));
 					for(int i = size-1; i >=0; i--){// Start Counting down, as the size decreases with each deleted cache
 						ch = cacheDB.get(i);
 						if(ch.is_Checked && (ch.isVisible() || deleteFiltered)) {
