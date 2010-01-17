@@ -10,22 +10,42 @@ package CacheWolf;
 
 import ewe.sys.Convert;
 import ewe.sys.Time;
+import ewe.util.mString;
 
 public class DateFormat {
 
 	/** Convert the US Format into a sortable format */
 	public static String MDY2YMD(String date) {
 		// Dates are in format M/D/Y
-		int p1, p2 = -1;
+		int p1, p2 = -1, p3;
 		p1 = date.indexOf("/");
-		if (p1 > 0)
-			p2 = date.indexOf("/", p1 + 1);
-		if (p1 > 0 && p2 > 0) {
-			return date.substring(p2 + 1) + "-" + (p1 == 1 ? "0" : "")
-					+ date.substring(0, p1) + "-" + (p1 + 2 == p2 ? "0" : "")
-					+ date.substring(p1 + 1, p2);
-		} else
+		if (p1==-1){
+			//dayofweek, month dayofmonth, year (Saturday, December 12, 2009)
+			p1 = date.indexOf(",");			
+			p2 = date.indexOf(" ", p1 + 2);
+			p3 = date.indexOf(",", p2 + 1);
+			final String monthNames[] = { "January", "February", "March", "April", "May",
+					"June", "July", "August", "September", "October", "November",
+					"December" };
+			for (int m = 0; m < 12; m++) {
+				if (monthNames[m].equals(date.substring(p1+2,p2))) {
+					String mm = Integer.toString(m+1);
+					if (mm.length()==1) {mm=0+mm;}
+					return date.substring(p3+2,p3+6) + "-" + mm + "-" + date.substring(p2+1, p2+3);
+				}
+			}
 			return date;
+		}
+		else {
+			if (p1 > 0)
+				p2 = date.indexOf("/", p1 + 1);
+			if (p1 > 0 && p2 > 0) {
+				return date.substring(p2 + 1) + "-" + (p1 == 1 ? "0" : "")
+						+ date.substring(0, p1) + "-" + (p1 + 2 == p2 ? "0" : "")
+						+ date.substring(p1 + 1, p2);
+			} else
+				return date;
+		}
 	}
 
 	/* Convert the sortable date into a US date */

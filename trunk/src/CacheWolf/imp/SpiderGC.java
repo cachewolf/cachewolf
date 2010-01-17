@@ -815,7 +815,6 @@ public class SpiderGC{
 				if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); save=true; numArchivedUpdates+=1; ret=true;}
 		}
 		boolean is_available_GC=!is_archived_GC && CacheDescription.indexOf(propAvailable)==-1;
-
 		if (is_available_GC != ch.is_available()) {
 			ch.setAvailable(is_available_GC); save=true; numAvailableUpdates+=1; ret=true;}
 		// we could check for update of terrain,difficult,size,cache type for not necessarily to load the complete cache 
