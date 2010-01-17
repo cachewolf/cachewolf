@@ -133,14 +133,15 @@ public class SpiderGC{
 	private static String propFirstLine2;
 	private static String propMaxDistance;
 	private static String propShowOnlyFound;
-	private static Regex RexPropListBlock;
-	private static Regex RexPropLine;
-	private static Regex RexPropLogDate;
+	private Regex RexPropListBlock;
+	private Regex RexPropLine;
+	private Regex RexPropLogDate;
 	private static String propAvailable;
+	private static String propArchived;
 	private static String propPM;
-	private static Regex RexPropDirection;
-	private static Regex RexPropDistance;
-	private static Regex RexPropWaypoint;
+	private Regex RexPropDirection;
+	private Regex RexPropDistance;
+	private Regex RexPropWaypoint;
 
 	private int numFoundUpdates=0;
 	private int numArchivedUpdates=0;
@@ -341,20 +342,19 @@ public class SpiderGC{
 					if(gotDistance <= maxDistance){
 						ch=cacheDB.get(chWaypoint);
 						if(ch == null){ // not in DB
-							if(cachesToLoad.size() < maxNew) {
-								if ( gotDistance >= minDistance &&
-										 directionOK(directions,getDirection(CacheDescriptionGC))  &&
-										 doPMCache(CacheDescriptionGC) ){
-								cachesToLoad.add(chWaypoint);
-								}
+							if ( gotDistance >= minDistance &&
+									 directionOK(directions,getDirection(CacheDescriptionGC))  &&
+									 doPMCache(CacheDescriptionGC) ){
+							cachesToLoad.add(chWaypoint);
 							}
-							else {
+							else {cachesToUpdate.remove( chWaypoint );}
+							if(cachesToLoad.size() >= maxNew) {
 								if(maxUpdate!=Integer.MAX_VALUE) { maxDistance=0; }
 							}
 						}
 						else {
 							if (maxUpdate>0) {
-								if (updateExists(ch,CacheDescriptionGC)) {
+								if (doPMCache(CacheDescriptionGC) && updateExists(ch,CacheDescriptionGC)) {
 									if (!ch.is_black() && (cachesShouldUpdate.size()<maxUpdate)) cachesShouldUpdate.put(chWaypoint, ch);
 								}
 								else
@@ -710,6 +710,7 @@ public class SpiderGC{
 			RexPropLine = new Regex(p.getProp("lineRex"));
 			RexPropLogDate = new Regex(p.getProp("logDateRex"));
 			propAvailable=p.getProp("availableRex");
+			propArchived=p.getProp("archivedRex");
 			propPM=p.getProp("PMRex");
 			RexPropDirection=new Regex(p.getProp("directionRex"));
 			RexPropDistance = new Regex(p.getProp("distRex"));
@@ -807,12 +808,14 @@ public class SpiderGC{
 	private boolean updateExists(CacheHolder ch, String CacheDescription) {
 		boolean ret = false;
 		boolean save = false;
+		boolean is_archived_GC=false;
 		if (spiderAllFinds) {
 			if(!ch.is_found()) { ch.setFound(true); save=true; numFoundUpdates+=1; ret=true;}
-			boolean is_archived_GC=CacheDescription.indexOf("<font color=\"red\"><strike>")!=-1;
-			if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); save=true; numArchivedUpdates+=1; ret=true;}
+			is_archived_GC=CacheDescription.indexOf(propArchived)!=-1;
+				if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); save=true; numArchivedUpdates+=1; ret=true;}
 		}
-		boolean is_available_GC=CacheDescription.indexOf(propAvailable)==-1;
+		boolean is_available_GC=!is_archived_GC && CacheDescription.indexOf(propAvailable)==-1;
+
 		if (is_available_GC != ch.is_available()) {
 			ch.setAvailable(is_available_GC); save=true; numAvailableUpdates+=1; ret=true;}
 		// we could check for update of terrain,difficult,size,cache type for not necessarily to load the complete cache 
