@@ -59,7 +59,8 @@ listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
 lineRex            = <tr\ bgcolor='#.{6}'\ class="Data\ BorderTop">((?s).*?)</tr>
 directionRex       = /compass/(.*?).gif
 logDateRex         = <td>(.*?)<br\ /><span\ class="Success"></span></td>
-availableRex       = <span class="Strike">
+availableRex       = <span\ class="Strike">
+archivedRex        = <span\ class="Warning Strike">
 PMRex              = small_profile.gif
 distRex            = <br\ />(.*?)(?:km|mi)</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
