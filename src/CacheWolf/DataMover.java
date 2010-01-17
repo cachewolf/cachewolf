@@ -3,10 +3,15 @@ package CacheWolf;
 import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.io.*;
-import ewe.ui.*;
+import ewe.io.File;
+import ewe.io.FileBase;
+import ewe.io.FileInputStream;
+import ewe.io.FileOutputStream;
+import ewe.sys.Handle;
+import ewe.ui.FormBase;
+import ewe.ui.Gui;
+import ewe.ui.ProgressBarForm;
 import ewe.util.Iterator;
-import ewe.sys.*;
 
 
 /**
@@ -33,7 +38,7 @@ public class DataMover {
 
 		processCaches(new Deleter(MyLocale.getMsg(143, "Delete")), mode);
 		// write indexfiles
-		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+		profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 	}
 
 	public void copyCaches(){
@@ -57,7 +62,7 @@ public class DataMover {
 		}
 		processCaches(new Copier(MyLocale.getMsg(141, "Copy"),dstProfile), mode);
 		// write indexfiles and keep the filter status
-		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+		dstProfile.saveIndex(pref, Profile.SHOW_PROGRESS_BAR);
 		//Now repair the cache-Vector:
 		for(int i =0; i < srcDB.size();i++){
 			CacheHolder holder = srcDB.get(i);
@@ -161,8 +166,8 @@ public class DataMover {
 		}
 		processCaches(new Mover(MyLocale.getMsg(142, "Move"),dstProfile), mode);
 		// write indexfiles
-		dstProfile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
-		profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+		dstProfile.saveIndex(pref, Profile.SHOW_PROGRESS_BAR);
+		profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 	}
 
 	 /**
@@ -319,8 +324,15 @@ public class DataMover {
 	private class Deleter extends Executor {
 		 Deleter(String title) {
 			 this.title=title;
+			 myProgressBarForm pbf = new myProgressBarForm();
+			 Handle h = new Handle();
+			 pbf.setTask(h,"Be patient. Reading Source Directory");
+			 pbf.exec();
+			 h.progress=(float) 0.5;
+			 h.changed();
 			 FileBugfix destPath=new FileBugfix(profile.dataDir);
 			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
+			 pbf.exit(0);
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
 			 srcDB.removeElementAt(i);
@@ -332,10 +344,20 @@ public class DataMover {
 		 Copier(String title, Profile dstProfile) {
 			 this.title=title;
 			 this.dstProfile=dstProfile;
+			 myProgressBarForm pbf = new myProgressBarForm();
+			 Handle h = new Handle();
+			 pbf.setTask(h,"Be patient. Reading Source Directory");
+			 pbf.exec();
+			 h.progress=(float) 0.33;
+			 h.changed();
 			 FileBugfix srcPath=new FileBugfix(profile.dataDir);
 			 srcFileList= srcPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
+			 pbf.setTask(h,"Be patient. Reading Destination Directory");
+			 h.progress=(float) 0.66;
+			 h.changed();
 			 FileBugfix destPath=new FileBugfix(dstProfile.dataDir);
 			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
+			 pbf.exit(0);
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
 			srcHolder.save();
@@ -368,10 +390,20 @@ public class DataMover {
 		 Mover(String title, Profile dstProfile) {
 			 this.title=title;
 			 this.dstProfile=dstProfile;
+			 myProgressBarForm pbf = new myProgressBarForm();
+			 Handle h = new Handle();
+			 pbf.setTask(h,"Be patient. Reading Source Directory");
+			 pbf.exec();
+			 h.progress=(float) 0.33;
+			 h.changed();
 			 FileBugfix srcPath=new FileBugfix(profile.dataDir);
 			 srcFileList= srcPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
+			 pbf.setTask(h,"Be patient. Reading Destination Directory");
+			 h.progress=(float) 0.66;
+			 h.changed();
 			 FileBugfix destPath=new FileBugfix(dstProfile.dataDir);
 			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
+			 pbf.exit(0);
 		 }
 		 public void doIt(int i,CacheHolder srcHolder) {
 			 srcDB.removeElementAt(i);

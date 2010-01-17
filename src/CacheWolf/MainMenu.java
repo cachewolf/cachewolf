@@ -634,21 +634,21 @@ public class MainMenu extends MenuBar {
 			}
 
 			if(mev.selectedItem == orgCopy){
-				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
 				dm.copyCaches();
 				tbp.refreshTable();
 			}
 
 			if(mev.selectedItem == orgMove){
-				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
 				dm.moveCaches();
 				tbp.refreshTable();
 			}
 
 			if(mev.selectedItem == orgDelete){
-				profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR);
+				profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
 				dm.deleteCaches();
 				tbp.refreshTable();
