@@ -10,6 +10,7 @@ import CacheWolf.exp.LocExporter;
 import CacheWolf.exp.MSARCSVExporter;
 import CacheWolf.exp.OVLExporter;
 import CacheWolf.exp.OziExporter;
+import CacheWolf.exp.SpoilerPOIExporter;
 import CacheWolf.exp.TPLExporter;
 import CacheWolf.exp.TomTomExporter;
 import CacheWolf.imp.GPXImporter;
@@ -56,7 +57,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
 	private MenuItem spider, spiderAllFinds, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
-	private MenuItem exportGpxNg, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV;
+	private MenuItem exportGpxNg, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator;
@@ -102,7 +103,7 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] exitems = new MenuItem[13];
+		MenuItem[] exitems = new MenuItem[14];
 		//Vm.debug("Hi in MainMenu "+lr);
 		exitems[0] = exporthtml = new MenuItem(MyLocale.getMsg(100,"to HTML"));
 		exitems[1] = exportGpxNg = new MenuItem(MyLocale.getMsg(101,"to GPX Test"));
@@ -120,6 +121,7 @@ public class MainMenu extends MenuBar {
 		exitems[10] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
 		exitems[11] = exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist"));
 		exitems[12] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
+		exitems[13] = exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135,"to SpoilerPOI"));
 
 		Menu exportMenu = new Menu(exitems, MyLocale.getMsg(107,"Export"));
 
@@ -472,6 +474,11 @@ public class MainMenu extends MenuBar {
 				ExploristExporter mag = new ExploristExporter( pref, profile);
 				mag.doIt();
 			}
+			if(mev.selectedItem == exportSpoilerPOI) {
+				SpoilerPOIExporter spoilerpoi = new SpoilerPOIExporter( pref, profile);
+				spoilerpoi.doIt();
+			}
+
 			///////////////////////////////////////////////////////////////////////
 			// subMenu for maps, part of "Application" menu
 			///////////////////////////////////////////////////////////////////////
