@@ -4,14 +4,33 @@ import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.FileBugfix;
-import ewe.io.*;
-import ewe.sys.*;
-import ewe.ui.*;
-import ewesoft.xml.*;
-import ewesoft.xml.sax.*;
-import ewe.filechooser.*;
-import ewe.util.*;
+import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
+import ewe.io.BufferedWriter;
+import ewe.io.File;
+import ewe.io.FileBase;
+import ewe.io.FileWriter;
+import ewe.io.IOException;
+import ewe.io.PrintWriter;
+import ewe.io.SerialPort;
+import ewe.io.SerialPortOptions;
+import ewe.sys.Convert;
+import ewe.sys.Time;
+import ewe.sys.Vm;
+import ewe.ui.FormBase;
+import ewe.ui.InputBox;
+import ewe.ui.MessageBox;
+import ewe.ui.Window;
+import ewe.ui.WindowConstants;
+import ewe.util.Comparer;
+import ewe.util.Enumeration;
+import ewe.util.Hashtable;
+import ewe.util.Iterator;
+import ewe.util.StringTokenizer;
+import ewe.util.Utils;
 import ewe.util.Map.MapEntry;
+import ewesoft.xml.MinML;
+import ewesoft.xml.sax.AttributeList;
 
 /**
  *	A class to hold the preferences that were loaded upon start up of CacheWolf.
@@ -227,7 +246,7 @@ public class Preferences extends MinML{
 	/** The own GC member ID */
 	public String gcMemberId = "";
 	/** Premium Member ? */
-	public boolean isPremium = true;
+	public boolean isPremium=true;
 	/** The maximum number of logs to export */
 	public int numberOfLogsToExport = 5;
 	/** Add Travelbugs when exporting */
@@ -388,7 +407,8 @@ public class Preferences extends MinML{
 		else if(name.equals("alias2")) myAlias2 = SafeXML.cleanback(atts.getValue("name"));
 		else if(name.equals("gcmemberid")) {
 			gcMemberId = atts.getValue("name");
-			isPremium=Boolean.valueOf(atts.getValue("Premium")).booleanValue();
+			tmp=atts.getValue("Premium");
+			if (tmp != null) isPremium=Boolean.valueOf(tmp).booleanValue();
 		}
 		else if(name.equals("location")){
 			curCentrePt.set(atts.getValue("lat")+" "+atts.getValue("long"));
