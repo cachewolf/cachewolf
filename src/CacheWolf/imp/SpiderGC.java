@@ -24,11 +24,6 @@
     */
 
 package CacheWolf.imp;
-import ewe.net.*;
-import ewe.io.*;
-import ewe.sys.*;
-import ewe.sys.Double;
-import ewe.util.*;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
@@ -55,10 +50,33 @@ import CacheWolf.Travelbug;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 
-import com.stevesoft.ewe_pat.*;
-import ewe.ui.*;
+import com.stevesoft.ewe_pat.Regex;
+
 import ewe.data.Property;
 import ewe.data.PropertyList;
+import ewe.io.File;
+import ewe.io.FileBase;
+import ewe.io.FileInputStream;
+import ewe.io.FileOutputStream;
+import ewe.io.IOException;
+import ewe.io.JavaUtf8Codec;
+import ewe.net.Socket;
+import ewe.net.URL;
+import ewe.net.UnknownHostException;
+import ewe.sys.Convert;
+import ewe.sys.Double;
+import ewe.sys.Time;
+import ewe.sys.Vm;
+import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
+import ewe.util.ByteArray;
+import ewe.util.CharArray;
+import ewe.util.Enumeration;
+import ewe.util.Hashtable;
+import ewe.util.Properties;
+import ewe.util.Utils;
+import ewe.util.Vector;
+import ewe.util.mString;
 
 /**
 *	Class to spider caches from gc.com
@@ -859,7 +877,6 @@ public class SpiderGC{
 	 * check for Premium Member Cache
 	 */
 	private boolean doPMCache(String toCheck) {
-		// int linePM=10;
 		if (pref.isPremium) return true;
 		if (toCheck.indexOf(propPM)>0)
 			return false;
