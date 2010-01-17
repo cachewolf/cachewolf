@@ -156,7 +156,7 @@ public class Profile {
 		Handle h = new Handle();
 		int updFrequ=Vm.isMobile()?10:40; // Number of caches between screen updates
 		if(showprogress){
-			pbf.showMainTask = false;
+			pbf.showMainTask = true;//false;
 			pbf.setTask(h,"Saving Index");
 			pbf.exec();
 		}
