@@ -878,10 +878,7 @@ public class SpiderGC{
 	 */
 	private boolean doPMCache(String toCheck) {
 		if (pref.isPremium) return true;
-		if (toCheck.indexOf(propPM)>0)
-			return false;
-		else
-			return true;
+		return toCheck.indexOf(propPM) <= 0;
 	}
 
 	/**
