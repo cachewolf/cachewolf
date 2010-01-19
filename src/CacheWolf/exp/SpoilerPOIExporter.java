@@ -1,5 +1,6 @@
 package CacheWolf.exp;
 import ewe.sys.Time;
+import ewe.ui.FormBase;
 import CacheWolf.*;
 
 /** 
@@ -10,7 +11,8 @@ import CacheWolf.*;
  */
 
 public class SpoilerPOIExporter extends Exporter {
-
+	private SpoilerPOIExporterScreen infoScreen;
+	private boolean onlySpoiler;
 	
 	public SpoilerPOIExporter(Preferences p, Profile prof){
 		super();
@@ -19,6 +21,12 @@ public class SpoilerPOIExporter extends Exporter {
 		this.setNeedCacheDetails(true);
 	}
 
+	public void doIt() {
+		infoScreen = new SpoilerPOIExporterScreen("SpoilerPOIExport");
+		if (infoScreen.execute() == FormBase.IDCANCEL) return;
+		onlySpoiler = infoScreen.getOnlySpoiler();
+		super.doIt();
+	}
 	
 	public String header () {
 		StringBuffer strBuf = new StringBuffer(200);
@@ -57,10 +65,10 @@ public class SpoilerPOIExporter extends Exporter {
 			// POILoader can only work with JPG-Files
 			if ( !filename.endsWith(".jpg")) continue;
 			// Try to export only Spoiler
-			if ( comment.indexOf("oiler") < 1) continue;
+			if ( onlySpoiler && (comment.indexOf("oiler") < 1)) continue;
 			
 			strBuf.append("<wpt lat=\"" + lat + "\" lon=\"" + lon + "\">\r\n");
-			strBuf.append("  <name>Spoiler: " + SafeXML.cleanGPX(ch.cacheName) + "</name>\r\n");
+			strBuf.append("  <name>Sp " + i + ": " + SafeXML.cleanGPX(ch.cacheName) + "</name>\r\n");
 			strBuf.append("  <cmt>\r\n");
 			if (ch.details.Hints.length()> 0){
 				strBuf.append("  Hint: " + SafeXML.cleanGPX(Common.rot13(ch.details.Hints)) + "\r\n");
