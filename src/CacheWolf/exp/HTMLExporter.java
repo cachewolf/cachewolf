@@ -74,6 +74,9 @@ public class HTMLExporter{
 			pbf.setTask(h,"Exporting ...");
 			pbf.exec();
 
+			String decSep = "."; // myFilter.decSep
+			Regex dec = new Regex("[,.]",decSep);
+
 			for(int i = 0; i<counter;i++){
 				h.progress = (float)(i+1)/(float)counter;
 				h.changed();
@@ -87,8 +90,10 @@ public class HTMLExporter{
 					}
 					det=ch.getCacheDetails(false,false);
 					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.type2TypeTag(ch.getType()));
-					varParams.put("WAYPOINT", ch.getWayPoint());
+					varParams.put("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
+					varParams.put("SYM", CacheType.type2SymTag(ch.getType())); //<sym>
+					varParams.put("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); //<groundspeak:type>
+					varParams.put("WAYPOINT", ch.getWayPoint()); //<name>
 					varParams.put("NAME", ch.getCacheName());
 					varParams.put("OWNER", ch.getCacheOwner());
 					if (ch.isAddiWpt() || ch.isCustomWpt()) {
@@ -106,13 +111,18 @@ public class HTMLExporter{
 					varParams.put("DISTANCE", ch.getDistance());
 					varParams.put("BEARING", ch.bearing);
 					varParams.put("LATLON", ch.LatLon);
+					varParams.put("LAT", dec.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
+					varParams.put("LON", dec.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
 					varParams.put("STATUS", ch.getCacheStatus());
 					varParams.put("DATE", ch.getDateHidden());
 					cache_index.add(varParams);
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						page_tpl.setParam("TYPE", varParams.get("TYPE").toString());
+						page_tpl.setParam("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
+						// page_tpl.setParam("TYPE", varParams.get("TYPE").toString());
+						page_tpl.setParam("SYM", CacheType.type2SymTag(ch.getType())); //<sym>
+						page_tpl.setParam("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); //<groundspeak:type>
 						page_tpl.setParam("SIZE", varParams.get("SIZE").toString());
 						page_tpl.setParam("WAYPOINT", ch.getWayPoint());
 						page_tpl.setParam("NAME", ch.getCacheName());
@@ -122,6 +132,8 @@ public class HTMLExporter{
 						page_tpl.setParam("DISTANCE", ch.getDistance());
 						page_tpl.setParam("BEARING", ch.bearing);
 						page_tpl.setParam("LATLON", ch.LatLon);
+						page_tpl.setParam("LAT", dec.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
+						page_tpl.setParam("LON", dec.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
 						page_tpl.setParam("STATUS", ch.getCacheStatus());
 						page_tpl.setParam("DATE", ch.getDateHidden());
 						if (det != null) {
