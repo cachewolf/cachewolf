@@ -12,7 +12,7 @@ test -n "$EWE" || EWE=$(which ewecl)
 test -n "$CPIO" || CPIO=$(which cpio)
 
 set -x
-v=$(svn info | sed -n '/Revision: /s///p')
+v=$(svn info | sed -n '/Last Changed Rev: /s///p')
 printf '/VER_SVN =/s/\$.*\$/$LastChanged''Revision: %s $/\nw\nq\n' $v | \
     ed -s src/CacheWolf/Version.java
 rm -rf bin
