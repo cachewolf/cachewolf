@@ -2,7 +2,9 @@
 # $Id$
 
 PATH=$PATH:/usr/local/bin:/usr/bin:$HOME/bin
-export PATH
+LC_ALL=C
+unset LANG LANGUAGE
+export PATH LC_ALL
 
 # natureshadow insists on using “which”… so be it
 # allow the caller to override the paths to the tools
@@ -10,7 +12,7 @@ test -n "$EWE" || EWE=$(which ewecl)
 test -n "$CPIO" || CPIO=$(which cpio)
 
 set -x
-v=$(svn info | sed -n '/Revision: /s///p')
+v=$(svn info | sed -n '/Last Changed Rev: /s///p')
 printf '/VER_SVN =/s/\$.*\$/$LastChangedRevision: %s $/\nwq\n' $v | \
     ed -s src/CacheWolf/Version.java
 rm -rf bin
