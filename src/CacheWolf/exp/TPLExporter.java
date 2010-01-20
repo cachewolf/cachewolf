@@ -213,7 +213,9 @@ public class TPLExporter {
 						Regex dec = new Regex("[,.]",myFilter.decSep);
 						if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
 						varParams = new Hashtable();
-						varParams.put("TYPE", CacheType.type2TypeTag(ch.getType()));
+						varParams.put("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
+						varParams.put("SYM", CacheType.type2SymTag(ch.getType())); //<sym>
+						varParams.put("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); //<groundspeak:type>
 						varParams.put("SHORTTYPE", CacheType.getExportShortId(ch.getType()));
 						varParams.put("SIZE", CacheSize.cw2ExportString(ch.getCacheSize()));
 						varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.getCacheSize()));
@@ -227,7 +229,7 @@ public class TPLExporter {
 
 						}
 						String wp = ch.getWayPoint();
-						varParams.put("WAYPOINT", wp);
+						varParams.put("WAYPOINT", wp); //<name>
 						int wpl = wp.length();
 						int wps = (wpl < myFilter.shortWaypointLength) ? 0 : wpl - myFilter.shortWaypointLength;
 						varParams.put("SHORTWAYPOINT", wp.substring(wps, wpl));
