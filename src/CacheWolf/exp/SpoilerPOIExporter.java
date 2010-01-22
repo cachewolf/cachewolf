@@ -2,6 +2,7 @@ package CacheWolf.exp;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
 import CacheWolf.*;
+import CacheWolf.utils.URLUTF8Encoder;
 
 /** 
  * 
@@ -49,7 +50,7 @@ public class SpoilerPOIExporter extends Exporter {
 	
 	public String record(CacheHolder ch, String lat, String lon) {
 		StringBuffer strBuf = new StringBuffer(1000);
-		String comment,filename;
+		String comment,filename, url;
 		
 		// Makes only sense for main waypoints
 		if (ch.isAddiWpt()) return null;
@@ -78,7 +79,8 @@ public class SpoilerPOIExporter extends Exporter {
 			}
 			strBuf.append("  </cmt>\r\n");
 			strBuf.append("  <desc>GCcode: " + ch.getWayPoint() + " </desc>\r\n");
-			strBuf.append("   <link href=\"" + profile.dataDir + filename + "\"/>\r\n");
+			url = profile.dataDir + filename;
+			strBuf.append("   <link href=\"" + URLUTF8Encoder.encode(url, false)  + "\"/>\r\n");
 			strBuf.append("  <sym>Scenic Area</sym>\r\n");
 			strBuf.append("  <extensions>\r\n");
 			strBuf.append("     <gpxx:WaypointExtension xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\">\r\n");
