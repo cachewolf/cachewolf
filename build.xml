@@ -3,22 +3,22 @@
 
 	<!--
 		This is the ant (http://ant.apache.org/) build file for CacheWolf
-		
+
 		Arguments:
 			-Dbuild.version=integer
 					source code version covered by the build. of "official" builds this shoul be the
 					svn revision number
 					Default: todays date (YYYYMMDD)
-			
+
 			-Dbuild.type=interger
 					see src/CacheWolf/Version.kava VERSION_TYPES for valid values
 					Default: 3 (InDevelopmentNewest)
-			
+
 			-Dbuild.cab=true
-					also build a cab version from the PPC2003 zip file. 
+					also build a cab version from the PPC2003 zip file.
 					Default: do not build it
 					make sure to check the prerequisites on http://ant.apache.org/manual/OptionalTasks/cab.html
-					
+
 		futher information about ant can be found at
 			http://ant.apache.org/manual/
 			http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.user/gettingStarted/qs-81_basics.htm
@@ -205,6 +205,16 @@
 		<exec executable="programs/ewecl" os="Linux">
 			<arg value="programs/Jewel.ewe" />
 			<arg value="-c" />
+			<arg value="cw-ppc2003.jnf" />
+		</exec>
+		<exec executable="programs/ewecl" os="Linux">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
+			<arg value="cw-jar.jnf" />
+		</exec>
+		<exec executable="programs/ewecl" os="Linux">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
 			<arg value="cw-pc.jnf" />
 		</exec>
 		<exec executable="programs/ewe.exe" osfamily="windows">
@@ -215,7 +225,17 @@
 		<exec executable="programs/ewe.exe" osfamily="windows">
 			<arg value="programs/Jewel.ewe" />
 			<arg value="-c" />
+			<arg value="cw-ppc2003.jnf" />
+		</exec>
+		<exec executable="programs/ewe.exe" osfamily="windows">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
 			<arg value="cw-pc.jnf" />
+		</exec>
+		<exec executable="programs/ewe.exe" osfamily="windows">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
+			<arg value="cw-jar.jnf" />
 		</exec>
 	</target>
 
