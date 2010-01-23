@@ -23,6 +23,7 @@ javac -source 1.3 -target 1.1 -encoding windows-1252 \
 $EWE programs/Jewel.ewe -c cw-pda.jnf
 $EWE programs/Jewel.ewe -c cw-ppc2003.jnf
 $EWE programs/Jewel.ewe -c cw-pc.jnf
+$EWE programs/Jewel.ewe -c cw-jar.jnf
 # Don’t change the order of the above Jewel commands because
 # the PC version has to overwrite the PDA version of the EWE file
 rm -rf published
