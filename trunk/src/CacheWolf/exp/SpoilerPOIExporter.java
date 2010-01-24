@@ -2,6 +2,7 @@ package CacheWolf.exp;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
 import CacheWolf.*;
+import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.URLUTF8Encoder;
 
 /** 
@@ -51,6 +52,8 @@ public class SpoilerPOIExporter extends Exporter {
 	public String record(CacheHolder ch, String lat, String lon) {
 		StringBuffer strBuf = new StringBuffer(1000);
 		String comment,filename, url;
+		CacheImages images;
+		int picCounter;
 		
 		// Makes only sense for main waypoints
 		if (ch.isAddiWpt()) return null;
@@ -60,16 +63,23 @@ public class SpoilerPOIExporter extends Exporter {
 		if (! ch.detailsLoaded()) return null;
 		if (ch.details.images.size() == 0) return null;
 		
-		for (int i=0; i < ch.details.images.size(); i++ ) {
-			filename = ch.details.images.get(i).getFilename();
-			comment = ch.details.images.get(i).getTitle();
+		images = ch.details.images.getDisplayImages(ch.getWayPoint());
+		picCounter = 0;
+		for (int i=0; i < images.size(); i++ ) {
+			filename = images.get(i).getFilename();
+			comment = images.get(i).getTitle();
+			url = profile.dataDir + filename;
+			
 			// POILoader can only work with JPG-Files
 			if ( !filename.endsWith(".jpg")) continue;
 			// Try to export only Spoiler
 			if ( onlySpoiler && (comment.indexOf("oiler") < 1)) continue;
+			// check if the file is not deleted
+			if (!(new FileBugfix(url)).exists()) continue;
 			
+			picCounter++;
 			strBuf.append("<wpt lat=\"" + lat + "\" lon=\"" + lon + "\">\r\n");
-			strBuf.append("  <name>Sp " + i + ": " + SafeXML.cleanGPX(ch.cacheName) + "</name>\r\n");
+			strBuf.append("  <name>Sp " + picCounter + ": " + SafeXML.cleanGPX(ch.cacheName) + "</name>\r\n");
 			strBuf.append("  <cmt>\r\n");
 			if (ch.details.Hints.length()> 0){
 				strBuf.append("  Hint: " + SafeXML.cleanGPX(Common.rot13(ch.details.Hints)) + "\r\n");
@@ -79,7 +89,6 @@ public class SpoilerPOIExporter extends Exporter {
 			}
 			strBuf.append("  </cmt>\r\n");
 			strBuf.append("  <desc>GCcode: " + ch.getWayPoint() + " </desc>\r\n");
-			url = profile.dataDir + filename;
 			strBuf.append("   <link href=\"" + URLUTF8Encoder.encode(url, false)  + "\"/>\r\n");
 			strBuf.append("  <sym>Scenic Area</sym>\r\n");
 			strBuf.append("  <extensions>\r\n");
