@@ -55,6 +55,8 @@ public class OCXMLImporter extends MinML {
 	public final static String OPENCACHING_CZ_PATTERN = "OZ";
 	public final static String OPENCACHING_UK_HOST = "www.opencaching.org.uk";
 	public final static String OPENCACHING_UK_PATTERN = "OK";
+	public final static String OPENCACHING_SE_HOST = "www.opencaching.se";
+	public final static String OPENCACHING_SE_PATTERN = "OK";
 
 	String hostname;
 
@@ -118,6 +120,8 @@ public class OCXMLImporter extends MinML {
 			hostname = OPENCACHING_CZ_HOST;
 		else if(wpName.startsWith(OPENCACHING_UK_PATTERN))
 			hostname = OPENCACHING_UK_HOST;
+		else if(wpName.startsWith(OPENCACHING_SE_PATTERN))
+			hostname = OPENCACHING_SE_HOST;
 	}
 
 	/**
