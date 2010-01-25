@@ -59,7 +59,7 @@ public class OCXMLImporterScreen extends Form {
 		this.title = title;
 
 		if((options & HOST) > 0){
-			String[] hosts = new String[] {OCXMLImporter.OPENCACHING_DE_HOST, OCXMLImporter.OPENCACHING_CZ_HOST, OCXMLImporter.OPENCACHING_PL_HOST, OCXMLImporter.OPENCACHING_UK_HOST};
+			String[] hosts = new String[] {OCXMLImporter.OPENCACHING_DE_HOST, OCXMLImporter.OPENCACHING_CZ_HOST, OCXMLImporter.OPENCACHING_PL_HOST, OCXMLImporter.OPENCACHING_UK_HOST, OCXMLImporter.OPENCACHING_SE_HOST};
 			domains = new mChoice(hosts,0);
 			domains.setTextSize(25, 1);
 			this.addLast(domains, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
