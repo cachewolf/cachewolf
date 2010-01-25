@@ -198,14 +198,14 @@ values are CR, LF or CRLF . These defines, what should be used for replacing<br>
 value=&quot;,&quot;&gt;<span style='mso-tab-count:4'>                                        </span>Decimal
 separator : Defines, which decimal separator is used , values &quot;.&quot; or
 ','<br>
-&lt;<span class=SpellE>tmpl_par</span> name=&quot; <span class=SpellE>ShortNameLength</span>&quot;
-value=&quot;30&quot;&gt;<span style='mso-tab-count:2'>                     </span>Number
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>ShortNameLength</span>&quot;
+value=&quot;30&quot;&gt;<span style='mso-tab-count:2'>                      </span>Number
 of characters for Variable SHORTNAME <br>
-&lt;<span class=SpellE>tmpl_par</span> name=&quot; <span class=SpellE>WaypointLength</span>&quot;
-value=&quot;3&quot;&gt;<span style='mso-tab-count:3'>                         </span>Number
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>WaypointLength</span>&quot;
+value=&quot;3&quot;&gt;<span style='mso-tab-count:3'>                          </span>Number
 of characters for Variable SHORTWAYPOINT<br>
-&lt;<span class=SpellE>tmpl_par</span> name=&quot; Out&quot; value=&quot;*.<span
-class=SpellE>gpx</span>&quot;&gt;<span style='mso-tab-count:4'>                                      </span>Output
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;Out&quot; value=&quot;*.<span
+class=SpellE>gpx</span>&quot;&gt;<span style='mso-tab-count:4'>                                       </span>Output
 Filename or Extension</span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
@@ -225,8 +225,9 @@ At the end of the line &lt;<span class=SpellE>br</span> /&gt; has to be placed,
 this is replaced by CR.<o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><u><span
-style='font-size:10.0pt;font-family:Arial'>Variables &lt;<span class=SpellE>tmpl_var</span>
-<span class=SpellE>NameOfVariable</span>&gt;</span><o:p></o:p></u></p>
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Variables
+&lt;<span class=SpellE>tmpl_var</span> <span class=SpellE>NameOfVariable</span>&gt;</span></u><u><span
+lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>TYPE<span
@@ -259,7 +260,8 @@ gekürzt wird. (Hintergrund: das Notes -Feld der meisten <span class=SpellE>Garmi
 kann nur 30 Buchstaben)<br>
 </span><span style='font-size:10.0pt;font-family:Arial'>OWNER<span
 style='mso-tab-count:8'>                                                                                             </span>:<br>
-DIFFICULTY<span style='mso-tab-count:8'>                                                                                        </span>:<br>
+DIFFICULTY<span style='mso-tab-count:7'>                                                                            </span><span
+style='mso-tab-count:1'>            </span>:<br>
 </span><span style='font-size:10.0pt;font-family:Helvetica'>SHORTDIFFICULTY<span
 style='mso-tab-count:7'>                                                                             </span>:
 <span class=SpellE>Difficulty</span> mal 10 also 15 statt 1.5<br>
@@ -282,14 +284,14 @@ LATON<span style='mso-tab-count:9'>                                             
 class=SpellE>format</span>, <span class=SpellE>e.g</span>. N 50° 31.234 E 008°
 45.267<br>
 LAT<span style='mso-tab-count:9'>                                                                                                    </span>:
-&lt;<span class=SpellE>wpt</span> <span class=SpellE>lat=”xx.yyyy</span>” ……..&gt;
-</span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:
-EN-GB'>Latitude in decimal format, e.g. 50.20147<br>
+&lt;<span class=SpellE>wpt</span> <span class=SpellE>lat=”xx.yyyy</span>”
+……..&gt; </span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
+mso-ansi-language:EN-GB'>Latitude in decimal format, e.g. 50.20147<br>
 LON<span style='mso-tab-count:9'>                                                                                                   </span>:
 &lt;<span class=SpellE>wpt</span> …… <span class=SpellE>lon</span>=”<span
 class=SpellE>xx.yyyy</span>” &gt; Longitude in decimal format, e.g. 008.58132<br>
-STATUS<span style='mso-tab-count:8'>                                                                                             </span>:
-<span style='mso-spacerun:yes'> </span>means found<br>
+STATUS<span style='mso-tab-count:8'>                                                                                             </span>:<span
+style='mso-spacerun:yes'>  </span>means found<br>
 STATUS_DATE<span style='mso-tab-count:8'>                                                                                   </span>:
 Get the date part of the status <br>
 STATUS_TIME<span style='mso-tab-count:8'>                                                                                    </span>:
@@ -309,12 +311,12 @@ DESCRYPTEDHINTS<span style='mso-tab-count:7'>                                   
 Decrypted hints&nbsp;&nbsp;&nbsp; (<span class=SpellE>badchars</span> are
 removed, see below) <br>
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
-mso-ansi-language:EN-GB'>SHORTWAYPOINT<span style='mso-tab-count:7'>                                                                              </span>:
-</span><span class=SpellE><span lang=EN-GB style='font-size:10.0pt;font-family:
-Arial;mso-ansi-language:EN-GB'>ShortNameLength</span></span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Helvetica;mso-ansi-language:EN-GB'> <span
-class=SpellE>Zeichen</span> des Waypoints (<span class=SpellE>für</span> <span
-class=SpellE>Benutzer</span> alter <span class=SpellE>Geräte</span> <span
+mso-ansi-language:EN-GB'>SHORTWAYPOINT<span style='mso-tab-count:6'>                                                                  </span><span
+style='mso-tab-count:1'>            </span>: </span><span class=SpellE><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>ShortNameLength</span></span><span
+lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;mso-ansi-language:
+EN-GB'> <span class=SpellE>Zeichen</span> des Waypoints (<span class=SpellE>für</span>
+<span class=SpellE>Benutzer</span> alter <span class=SpellE>Geräte</span> <span
 class=SpellE>mit</span> <span class=SpellE>nur</span> 6 <span class=SpellE>Waypointzeichen</span>,
 <br>
 <span style='mso-spacerun:yes'> </span><span style='mso-tab-count:9'>                                                                                                         </span>:
@@ -373,8 +375,9 @@ name=DIFFICULTY&gt;-&lt;<span class=SpellE>tmpl_var</span> name=TERRAIN&gt;
 class=SpellE>tmpl_var</span> name=LAT&gt;;&lt;<span class=SpellE>tmpl_var</span>
 name=LON&gt;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=TYPE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
-name=SIZE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span> name=WAYPOINT&gt;&quot;;&quot;&lt;<span
-class=SpellE>tmpl_var</span> name=DATE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
+name=SIZE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
+name=WAYPOINT&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
+name=DATE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=URL&gt;&quot;&lt;<span class=SpellE>br</span> /&gt;<br>
 &lt;/<span class=SpellE>tmpl_loop</span>&gt;<br style='mso-special-character:
 line-break'>
@@ -397,8 +400,8 @@ can set default values for your template variables, which</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
 style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>will be used
 if no value has been set through the <span class=SpellE>setParam</span> method.<br>
-&lt;TMPL_VAR name=&quot;<span class=SpellE>var_name</span>&quot; default=&quot;my
-value&quot;&gt;<br>
+&lt;TMPL_VAR name=&quot;<span class=SpellE>var_name</span>&quot;
+default=&quot;my value&quot;&gt;<br>
 If <span class=SpellE>var_name</span> is set using <span class=SpellE>setParam</span>
 (or <span class=SpellE>setParams</span>), then it's value will be whatever it
 was set to<span class=GramE>,<span style='mso-spacerun:yes'>  </span>else</span></span><span
@@ -450,11 +453,11 @@ style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>The
 &lt;<span class=SpellE>tmpl_if</span>&gt; tag allows you to include or not
-include a block of the template based on the <span class=GramE>value <span
-style='mso-spacerun:yes'> </span>of</span></span><span lang=EN-GB
+include a block of the template based on the <span class=GramE>value<span
+style='mso-spacerun:yes'>  </span>of</span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB style='font-size:10.0pt;
-font-family:Arial;mso-ansi-language:EN-GB'>a given parameter name. If the parameter
-is given a value that is true, then the block is included in</span><span
+font-family:Arial;mso-ansi-language:EN-GB'>a given parameter name. If the
+parameter is given a value that is true, then the block is included in</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
 style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>the output.
 If the value is false, then it is skipped.<br>
@@ -493,7 +496,7 @@ style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>While
 the if block allows us to display some output if a condition is true<span
-class=GramE>, <span style='mso-spacerun:yes'> </span>we</span></span><span
+class=GramE>,<span style='mso-spacerun:yes'>  </span>we</span></span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
 style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>may also
 need to display content if the condition is false. This can be done by using
@@ -530,8 +533,8 @@ the other tags. It allows you to create a section of text that</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
 style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>will be
 displayed repeatedly for every item in the loop control variable. Inside the
-&lt;<span class=SpellE>tmpl_loop</span>&gt;<span class=GramE>, <span
-style='mso-spacerun:yes'> </span>you</span></span><span lang=EN-GB
+&lt;<span class=SpellE>tmpl_loop</span>&gt;<span class=GramE>,<span
+style='mso-spacerun:yes'>  </span>you</span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB style='font-size:10.0pt;
 font-family:Arial;mso-ansi-language:EN-GB'>place &lt;<span class=SpellE>tmpl_var</span>&gt;s.<b
 style='mso-bidi-font-weight:normal'> The only loop used by the template
@@ -547,8 +550,8 @@ variables</span></u><u><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>If
-you set <span class=SpellE>loop_context_vars</span> to true in your Template's
-constructor, then you will have access to five special</span><span lang=EN-GB
+you set <span class=SpellE>loop_context_vars</span> to true in your Template's constructor,
+then you will have access to five special</span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB style='font-size:10.0pt;
 font-family:Arial;mso-ansi-language:EN-GB'>variables in all your loops. These
 are:</span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
