@@ -105,8 +105,9 @@ class TplFilter implements HTML.Tmpl.Filter
 
 			// get the values
 			if (param.equals("charset")) {
-				if (value.equals("ASCII")) codec = new AsciiCodec();
-				if (value.equals("UTF8")) codec = new JavaUtf8Codec();
+				if (value.equals("ASCII")) {codec = new AsciiCodec();}
+				else if (value.equals("UTF8")) {codec = new JavaUtf8Codec();}
+				else {codec = new NoCodec();}
 			}
 			if (param.equals("badchars")) {
 				badChars = value;
@@ -331,5 +332,87 @@ public class TPLExporter {
         }
         return sb.toString();
     }
-
 }
+
+//##################################################################
+class NoCodec implements TextCodec{
+//##################################################################
+
+/**
+* This is a creation option. It specifies that CR characters should be removed when
+* encoding text into UTF.
+**/
+public static final int STRIP_CR_ON_DECODE = 0x1;
+/**
+* This is a creation option. It specifies that CR characters should be removed when
+* decoding text from UTF.
+**/
+public static final int STRIP_CR_ON_ENCODE = 0x2;
+/**
+* This is a creation option. It specifies that CR characters should be removed when
+* decoding text from UTF AND encoding text to UTF.
+**/
+public static final int STRIP_CR = STRIP_CR_ON_DECODE|STRIP_CR_ON_ENCODE;
+
+private int flags = 0;
+
+//===================================================================
+public NoCodec(int options)
+//===================================================================
+{
+	flags = options;
+}
+//===================================================================
+public NoCodec()
+//===================================================================
+{
+	this(0);
+}
+//===================================================================
+public ByteArray encodeText(char [] text, int start, int length, boolean endOfData, ByteArray dest) throws IOException
+//===================================================================
+{
+	if (dest == null) dest = new ByteArray();
+	int size = length == 0 ? 2 : 2+text.length*2;
+	if (dest.data == null || dest.data.length < size)
+		dest.data = new byte[size];
+	byte [] destination = dest.data;
+	int s = 0;
+	if (length>0){
+		destination[s++] = (byte) 0xFF;
+		destination[s++] = (byte) 0xFE;
+	}
+	for (int i = 0; i<length; i++){
+		char c = text[i+start];
+		if (c == 13 && ((flags & STRIP_CR_ON_ENCODE) != 0)) continue;
+		destination[s++] = (byte)(c & 0xFF);
+		destination[s++] = (byte)((c>>8) & 0xFF);
+	}
+	dest.length = s;
+	return dest;
+}
+
+//===================================================================
+public CharArray decodeText(byte [] encoded, int start, int length, boolean endOfData, CharArray dest) throws IOException
+//===================================================================
+{
+	if (dest == null) dest = new CharArray();
+	dest.length = 0;
+	return dest;
+}
+
+//===================================================================
+public void closeCodec() throws IOException
+//===================================================================
+{
+}
+
+//===================================================================
+public Object getCopy()
+//===================================================================
+{
+	return new NoCodec(flags);
+}
+//##################################################################
+}
+//##################################################################
