@@ -438,7 +438,7 @@ public class GpxExportNg {
 					h.changed();
 				}
 
-				if (Global.getPref().debug) Vm.debug("stop: "+new Time().getTime());
+				Global.getPref().log("stop: "+new Time().getTime());
 
 				pbf.exit(0);
 
@@ -682,57 +682,37 @@ public class GpxExportNg {
 	public String formatLogs(CacheHolder ch) {
 		LogList logs = ch.getFreshDetails().CacheLogs;
 		StringBuffer ret = new StringBuffer();
-		String fid = "";
-
-		if (exportStyle == STYLE_GPX_MYFINDS)
-			fid = finderid;
-
-		if (0 == logs.size())
-			return "";
-
 		int exportlogs;
-
-		if (exportStyle == STYLE_GPX_PQLIKE && maxLogs < logs.size()) {
-			exportlogs = maxLogs;
-		} else {
-			exportlogs = logs.size();
+		if (exportStyle == STYLE_GPX_PQLIKE && maxLogs < logs.size())
+			{exportlogs = maxLogs;}
+		else {exportlogs = logs.size();}
+		if (exportStyle == STYLE_GPX_MYFINDS) {
+			// only own log
+			if (ch.details.OwnLogId.equals("")) 
+				return "";
+			if(ch.details.OwnLog == null) 
+				return "";
+			addLog(ch.details.OwnLogId, ch.details.OwnLog, finderid ,ret);
 		}
-
-		boolean logexported=false;
-		for (int i = 0; i < exportlogs; i++) {
-			String logId = Integer.toString(i);
-			Log log = logs.getLog(i);
-
-			if (exportStyle == STYLE_GPX_MYFINDS) {
-				if (!log.isOwnLog()) { continue; }
-				else {if (!log.isFoundLog()) { continue; } }
+		else {
+			for (int i = 0; i < exportlogs; i++) {
+				addLog(Integer.toString(i), logs.getLog(i),"" ,ret);
 			}
-			Transformer trans = new Transformer(true);
-			trans.add(new Regex("@@LOGID@@", logId));
-			trans.add(new Regex("@@LOGDATE@@", log.getDate()));
-			trans.add(new Regex("@@LOGTYPE@@", image2TypeText(log.getIcon())));
-			trans.add(new Regex("@@LOGFINDERID@@", fid));
-			trans.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
-			trans.add(new Regex("@@LOGENCODE@@", ""));
-			trans.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(log.getMessage())));
-			ret.append(trans.replaceAll(GPXLOG));
-			if (exportStyle == STYLE_GPX_MYFINDS ) {logexported = true; break;}
 		}
-		if (exportStyle == STYLE_GPX_MYFINDS && !logexported) {
-			// own log is not within the saved logs
-			Transformer trans = new Transformer(true);
-			trans.add(new Regex("@@LOGID@@", "0"));
-			trans.add(new Regex("@@LOGDATE@@", ch.GetStatusDate()+"T"+ch.GetStatusTime()+":00"));
-			trans.add(new Regex("@@LOGTYPE@@", "Found it"));
-			trans.add(new Regex("@@LOGFINDERID@@", fid));
-			trans.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(Global.getPref().myAlias)));
-			trans.add(new Regex("@@LOGENCODE@@", ""));
-			// trans.add(new Regex("@@LOGTEXT@@",ch.details == null ? "" : ch.details.OwnLog == null ? "" : SafeXML.cleanGPX(ch.details.OwnLog.getMessage())));
-			trans.add(new Regex("@@LOGTEXT@@","")); // who cares about the text ?
-			ret.append(trans.replaceAll(GPXLOG));
-		}
-
 		return ret.toString();
+	}
+	
+	private StringBuffer addLog(String logId, Log log, String FinderID, StringBuffer ret) {
+		Transformer trans = new Transformer(true);
+		trans.add(new Regex("@@LOGID@@", logId));
+		trans.add(new Regex("@@LOGDATE@@", log.getDate()));
+		trans.add(new Regex("@@LOGTYPE@@", image2TypeText(log.getIcon())));
+		trans.add(new Regex("@@LOGFINDERID@@", FinderID));
+		trans.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
+		trans.add(new Regex("@@LOGENCODE@@", ""));
+		trans.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(log.getMessage())));
+		ret.append(trans.replaceAll(GPXLOG));
+		return ret;
 	}
 
 	/**
