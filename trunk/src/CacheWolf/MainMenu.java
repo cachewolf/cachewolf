@@ -842,7 +842,7 @@ public class MainMenu extends MenuBar {
 			infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + ch.getWayPoint() +" (" + (j+1) + " / " + cachesToUpdate.size() + ")");
 			infB.redisplay();
 			if (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC")) {
-				int test = spider.spiderSingle(i, infB, forceLogin, loadAllLogs);
+				int test = spider.spiderSingle(i, infB, forceLogin, loadAllLogs || ch.is_found());
 				if (test == SpiderGC.SPIDER_CANCEL) {
 					infB.close(0);
 					break;

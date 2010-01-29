@@ -64,6 +64,12 @@ archivedRex        = <span\ class="Warning Strike">
 PMRex              = small_profile.gif
 distRex            = <br\ />(.*?)(?:km|mi)</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
+TypeRex            = /WptTypes/([0-9]+).gif
+SizeRex            = /container/(.*?).gif
+DandTRex           = <td>((.*?)/(.*?))<br
+found              = /WptTypes/check.gif
+own                = /WptTypes/name_tag.gif
+TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
 showOnlyFound      = &f=1
 maxDistance        = &dist=
 firstLine          = http://www.geocaching.com/seek/nearest.aspx?lat=
