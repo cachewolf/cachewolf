@@ -158,7 +158,7 @@ public class CacheHolderDetail {
 				imgFile = fc.getChosenFile();
 				imgDesc = new InputBox("Description").input("",10);
 				//Create Destination Filename
-				String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf("."));
+				String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf('.'));
 				imgDestName = getParent().getWayPoint() + "_U_" + (this.userImages.size()+1) + ext;
 				
 				ImageInfo userImageInfo = new ImageInfo();

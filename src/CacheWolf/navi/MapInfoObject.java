@@ -147,7 +147,7 @@ public class MapInfoObject extends Area {
 	public String getImageFilename() {
 		// if (fileName == null || fileName.length() > 0) return fileName; 
 		if (fileNameWFL.length() == 0) return ""; // no image associated (empty map)
-		String n = fileNameWFL.substring(0, fileNameWFL.lastIndexOf("."));
+		String n = fileNameWFL.substring(0, fileNameWFL.lastIndexOf('.'));
 		return Common.getImageName(CacheWolf.STRreplace.replace(n, "//", "/"));
 	}
 

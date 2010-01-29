@@ -172,9 +172,9 @@ public class TPLExporter {
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
 		pbf.exec();
-		Vm.gc(); // all this doesn't really work :-(
-		System.runFinalization();
-		Vm.gc();
+		// Vm.gc(); // all this doesn't really work :-(
+		// System.runFinalization();
+		// Vm.gc();
 		//Vm.debug("v: "+Vm.countObjects(true));
 		String selbstLaute="aeiouAEIOU";
 		StringBuffer lower=new StringBuffer(26);// region/language dependent ?
@@ -237,12 +237,12 @@ public class TPLExporter {
 						varParams.put("OWNER", ch.getCacheOwner());
 						byte chGetHard=ch.getHard();
 						varParams.put("DIFFICULTY", (ch.isAddiWpt() || ch.isCustomWpt() || chGetHard < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(chGetHard)));
-						String sHard = Byte.toString(chGetHard);
+						String sHard = Integer.toString(chGetHard);
 						varParams.put("SHORTDIFFICULTY", (ch.isAddiWpt() || ch.isCustomWpt() || chGetHard < 0)?"":sHard);
 						varParams.put("SHDIFFICULTY", (ch.isAddiWpt() || ch.isCustomWpt() || chGetHard < 0)?"":sHard.substring(0,1));
 						byte chGetTerrain=ch.getTerrain();
 						varParams.put("TERRAIN", (ch.isAddiWpt() || ch.isCustomWpt() || chGetTerrain < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(chGetTerrain)));
-						String sTerrain = Byte.toString(chGetTerrain);
+						String sTerrain = Integer.toString(chGetTerrain);
 						varParams.put("SHORTTERAIN", (ch.isAddiWpt() || ch.isCustomWpt() || chGetTerrain < 0)?"":sTerrain);
 						varParams.put("SHTERRAIN", (ch.isAddiWpt() || ch.isCustomWpt() || chGetTerrain < 0)?"":sTerrain.substring(0,1));
 						varParams.put("DISTANCE", dec.replaceAll(ch.getDistance()));
@@ -299,13 +299,13 @@ public class TPLExporter {
 			e.printStackTrace();
 			Global.getPref().log("Exception in TplExporter", e, true);
 		} catch (OutOfMemoryError e) {
-			//Global.getPref().log("OutOfMemeory in TplExporter", e, true);
-			Vm.gc(); // this doesn't help :-(
-			System.runFinalization();
-			Vm.gc(); // this doesn't help :-( - I don't know why :-(
-			//Vm.debug("n: "+Vm.countObjects(true));
+			// Global.getPref().log("OutOfMemeory in TplExporter", e, true);
+			// Vm.gc(); // this doesn't help :-(
+			// System.runFinalization();
+			// Vm.gc(); // this doesn't help :-( - I don't know why :-(
+			// Vm.debug("n: "+Vm.countObjects(true));
 			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now", FormBase.OKB)).execute();
-			//Vm.debug("n: "+Vm.countObjects(true));
+			// Vm.debug("n: "+Vm.countObjects(true));
 		}
 		pbf.exit(0);
 	}
