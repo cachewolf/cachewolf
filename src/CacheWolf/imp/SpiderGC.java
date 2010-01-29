@@ -98,6 +98,8 @@ public class SpiderGC{
 	public static int SPIDER_ERROR = 0;
 	/** Cache was spidered without problems */
 	public static int SPIDER_OK = 1;
+	/** no probs, but exmpl found und not want this*/
+	public static int SPIDER_IGNORE = 2;
 
 	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
@@ -138,6 +140,7 @@ public class SpiderGC{
 	private Regex RexPropLogDate;
 	private static String propAvailable;
 	private static String propArchived;
+	private static String propFound;
 	private static String propPM;
 	private Regex RexPropDirection;
 	private Regex RexPropDistance;
@@ -193,6 +196,7 @@ public class SpiderGC{
 					OCXMLImporterScreen.MAXUPDATE|
 					OCXMLImporterScreen.IMAGES|
 					OCXMLImporterScreen.ISGC|
+					OCXMLImporterScreen.MAXLOGS|
 					OCXMLImporterScreen.TRAVELBUGS);
 
 			options.maxNumberUpdates.setText("0"); // no updates for founds
@@ -435,11 +439,9 @@ public class SpiderGC{
 				} else if (test == SPIDER_ERROR) {
 					spiderErrors++;
 				} else if (test == SPIDER_OK){
-					if (!holder.is_found() || !doNotgetFound ) {
-						cacheDB.add(holder);
-						holder.save();
-					}
-				} // For test==SPIDER_IGNORE_PREMIUM: Nothing to do
+					cacheDB.add(holder);
+					holder.save();
+				} // For test == SPIDER_IGNORE_PREMIUM and SPIDER_IGNORE there is nothing to do
 			}
 		}
 
@@ -711,6 +713,7 @@ public class SpiderGC{
 			RexPropLogDate = new Regex(p.getProp("logDateRex"));
 			propAvailable=p.getProp("availableRex");
 			propArchived=p.getProp("archivedRex");
+			propFound=p.getProp("found");		
 			propPM=p.getProp("PMRex");
 			RexPropDirection=new Regex(p.getProp("directionRex"));
 			RexPropDistance = new Regex(p.getProp("distRex"));
@@ -809,11 +812,17 @@ public class SpiderGC{
 		boolean ret = false;
 		boolean save = false;
 		boolean is_archived_GC=false;
+		boolean is_found_GC=false;
+		CacheHolderDetail chd = ch.getFreshDetails();
 		if (spiderAllFinds) {
 			if(!ch.is_found()) { ch.setFound(true); save=true; numFoundUpdates+=1; ret=true;}
 			is_archived_GC=CacheDescription.indexOf(propArchived)!=-1;
-				if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); save=true; numArchivedUpdates+=1; ret=true;}
+			if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); save=true; numArchivedUpdates+=1; ret=true;}
+		} else if (!doNotgetFound){ // there could be a found or own ...
+			is_found_GC=CacheDescription.indexOf(propFound)!=-1;
+			if (is_found_GC!=ch.is_found()) {ch.setFound(is_found_GC); save=true; ret=true;}
 		}
+		if (ch.is_found() && chd.OwnLogId.equals("")) {ret=true;}
 		boolean is_available_GC=!is_archived_GC && CacheDescription.indexOf(propAvailable)==-1;
 		if (is_available_GC != ch.is_available()) {
 			ch.setAvailable(is_available_GC); save=true; numAvailableUpdates+=1; ret=true;}
@@ -922,8 +931,7 @@ public class SpiderGC{
 		if(!pref.checkLog) return false;
 		// String[] CacheDesc=mString.split(cacheDescrition,'\n');
 		Time lastLogCW = new Time();
-		CacheHolderDetail chd = ch.getCacheDetails(true);
-		String slastLogCW=chd.CacheLogs.getLog(0).getDate();
+		String slastLogCW=ch.details.CacheLogs.getLog(0).getDate();
 		if (slastLogCW.equals("")) return true; // or check cacheDescGC also no log?
 		lastLogCW.parse(slastLogCW,"yyyy-MM-dd");
 
@@ -983,14 +991,14 @@ public class SpiderGC{
 	 */
 	private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean fetchTBs, boolean doNotGetFound, boolean fetchAllLogs) {
 		int ret = SPIDER_OK; // initialize value;
-		while (true) {
+		while (true) { // retry even if failure
 			String completeWebPage;
 			int spiderTrys=0;
 			int MAX_SPIDER_TRYS=3;
 			while (spiderTrys++<MAX_SPIDER_TRYS) {
 				ret = SPIDER_OK; // initialize value;
 				try{
-					String doc = p.getProp("getPageByName") + ch.getWayPoint() +(fetchAllLogs?p.getProp("fetchAllLogs"):"");
+					String doc = p.getProp("getPageByName") + ch.getWayPoint() +((fetchAllLogs||ch.is_found())?p.getProp("fetchAllLogs"):"");
 					pref.log("Fetching: " + ch.getWayPoint());
 					completeWebPage = fetch(doc);
 					if	( completeWebPage.equals("")) {
@@ -1035,7 +1043,7 @@ public class SpiderGC{
 						ch.setHTML(true);
 						ch.setIncomplete(true);
 						// Save size of logs to be able to check whether any new logs were added
-						//int logsz = chD.CacheLogs.size();
+						// int logsz = chD.CacheLogs.size();
 						//chD.CacheLogs.clear();
 						ch.addiWpts.clear();
 						ch.getFreshDetails().images.clear();
@@ -1043,21 +1051,30 @@ public class SpiderGC{
 						ch.setAvailable(!(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0));
 						ch.setArchived(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0);
 						//==========
+						// Logs first (for check early for break)
+						//==========
+						ch.getFreshDetails().setCacheLogs(getLogs(completeWebPage, ch.getFreshDetails()));
+						pref.log("Got logs");
+						// If the switch is set to not store found caches and we found the cache => return
+						if (ch.is_found() && doNotGetFound) {
+							if (infB.isClosed) {
+								return SPIDER_CANCEL;
+							} else {
+								return SPIDER_IGNORE;
+							}
+						}
+						//==========
 						// General Cache Data
 						//==========
 						ch.setLatLon(latLon);
 						pref.log("LatLon: " + ch.LatLon);
-						if (pref.debug) pref.log("chD.pos: " + ch.pos.toString());
 
-						pref.log("Trying description");
 						ch.getFreshDetails().setLongDescription(getLongDesc(completeWebPage));
 						pref.log("Got description");
 
-						pref.log("Getting cache name");
 						ch.setCacheName(SafeXML.cleanback(getName(completeWebPage)));
-						if (pref.debug) pref.log("Name: " + ch.getCacheName()); else pref.log("Got name");
+						pref.log("Name: " + ch.getCacheName());
 
-						pref.log("Trying location (country/state)");
 						String location = getLocation(completeWebPage);
 						if (location.length() != 0) {
 							int countryStart = location.indexOf(",");
@@ -1075,95 +1092,56 @@ public class SpiderGC{
 							pref.log("No location (country/state) found");
 						}
 
-						pref.log("Trying owner");
 						ch.setCacheOwner(SafeXML.cleanback(getOwner(completeWebPage)).trim());
 						if(ch.getCacheOwner().equals(pref.myAlias) || (pref.myAlias2.length()>0 && ch.getCacheOwner().equals(pref.myAlias2))) ch.setOwned(true);
-						if (pref.debug) pref.log("Owner: " + ch.getCacheOwner() +"; is_owned = "+ch.is_owned()+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
-						else pref.log("Got owner");
+						pref.log("Owner: " + ch.getCacheOwner() +"; is_owned = "+ch.is_owned()+";  alias1,2 = ["+pref.myAlias+"|"+pref.myAlias2+"]");
 
-
-						pref.log("Trying date hidden");
 						ch.setDateHidden(DateFormat.MDY2YMD(getDateHidden(completeWebPage)));
-						if (pref.debug) pref.log("Hidden: " + ch.getDateHidden());
-						else pref.log("Got date hidden");
+						pref.log("Hidden: " + ch.getDateHidden());
 
-						pref.log("Trying hints");
 						ch.getFreshDetails().setHints(getHints(completeWebPage));
-						if (pref.debug) pref.log("Hints: " + ch.getFreshDetails().Hints);
-						else pref.log("Got hints");
+						pref.log("Hints: " + ch.getFreshDetails().Hints);
 
-						pref.log("Trying size");
 						ch.setCacheSize(CacheSize.gcSpiderString2Cw(getSize(completeWebPage)));
-						if (pref.debug) pref.log("Size: " + ch.getCacheSize());
-						else pref.log("Got size");
+						pref.log("Size: " + ch.getCacheSize());
 
-						pref.log("Trying difficulty");
 						ch.setHard(CacheTerrDiff.v1Converter(getDiff(completeWebPage)));
-						if (pref.debug) pref.log("Hard: " + ch.getHard());
-						else pref.log("Got difficulty");
+						pref.log("Hard: " + ch.getHard());
 
-						pref.log("Trying terrain");
 						ch.setTerrain(CacheTerrDiff.v1Converter(getTerr(completeWebPage)));
-						if (pref.debug) pref.log("Terr: " + ch.getTerrain());
-						else pref.log("Got terrain");
+						pref.log("Terr: " + ch.getTerrain());
 
-						pref.log("Trying cache type");
 						ch.setType(getType(completeWebPage));
-						if (pref.debug) pref.log("Type: " + ch.getType());
-						else pref.log("Got cache type");
-
-						//==========
-						// Logs
-						//==========
-						pref.log("Trying logs");
-						ch.getFreshDetails().setCacheLogs(getLogs(completeWebPage, ch.getFreshDetails()));
-						pref.log("Found logs");
-
-						// If the switch is set to not store found caches and we found the cache => return
-						if (ch.is_found() && doNotGetFound) {
-							if (infB.isClosed) {
-								return SPIDER_CANCEL;
-							} else {
-								return SPIDER_OK;
-							}
-						}
-
+						pref.log("Type: " + ch.getType());
 						//==========
 						// Bugs
 						//==========
-						// As there may be several bugs, we check whether the user has aborted
-						if (!infB.isClosed && fetchTBs) getBugs(ch.getFreshDetails(),completeWebPage);
+						if (fetchTBs) getBugs(ch.getFreshDetails(),completeWebPage);
 						ch.setHas_bugs(ch.getFreshDetails().Travelbugs.size()>0);
-
+						pref.log("Got TBs");
 						//==========
 						// Images
 						//==========
 						if(fetchImages){
-							pref.log("Trying images");
 							getImages(completeWebPage, ch.getFreshDetails());
 							pref.log("Got images");
 						}
 						//==========
 						// Addi waypoints
 						//==========
-
-						pref.log("Getting additional waypoints");
 						getAddWaypoints(completeWebPage, ch.getWayPoint(), ch.is_found());
 						pref.log("Got additional waypoints");
-
 						//==========
 						// Attributes
 						//==========
-						pref.log("Getting attributes");
 						getAttributes(completeWebPage, ch.getFreshDetails());
 						pref.log("Got attributes");
-						//if (ch.is_new()) ch.setUpdated(false);
 						//==========
 						// Last sync date
 						//==========
 						ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
-
 						ch.setIncomplete(false);
+						pref.log("ready " + ch.getWayPoint() + " : "+ ch.getLastSync()+"\n");
 						break;
 					}catch(Exception ex){
 						pref.log("Error reading cache: "+ch.getWayPoint());
@@ -1177,7 +1155,7 @@ public class SpiderGC{
 				pref.log(">>> Failed to spider cache. Number of retrys exhausted.");
 				int decision = (new MessageBox(MyLocale.getMsg(5500,"Error"),MyLocale.getMsg(5515,"Failed to load cache.%0aPleas check your internet connection.%0aRetry?"),FormBase.DEFOKB|FormBase.NOB|FormBase.CANCELB)).execute();
 				if ( decision == FormBase.IDOK ) {
-					continue;
+					continue; // retry even if failure
 				} else if ( decision == FormBase.IDNO ){
 					ret = SPIDER_ERROR;
 				} else {
@@ -1185,7 +1163,7 @@ public class SpiderGC{
 				}
 			}
 			break;
-		}//while(true)
+		}//while(true) // retry even if failure
 		if (infB.isClosed) {// If the infoBox was closed before getting here, we return -1
 			return SPIDER_CANCEL;
 		}
@@ -1376,6 +1354,7 @@ public class SpiderGC{
 			logText = exLog.findNext();
 			logId = exLogId.findNext();
 			String d=DateFormat.logdate2YMD(exDate.findNext());
+			// if this log says this Cache is found by me
 			if((icon.equals(p.getProp("icon_smile")) || icon.equals(p.getProp("icon_camera")) || icon.equals(p.getProp("icon_attended"))) &&
 				(name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) || (pref.myAlias2.length()>0 && name.equalsIgnoreCase(SafeXML.clean(pref.myAlias2)))) )  {
 				chD.getParent().setFound(true);
@@ -1395,7 +1374,11 @@ public class SpiderGC{
 			exLogId.setSource(singleLog);
 			// We cannot simply stop if we have reached MAXLOGS just in case we are waiting for
 			// a log by our alias that happened earlier.
-			if (nLogs>=pref.maxLogsToSpider && chD.getParent().is_found() && (chD.OwnLogId.length() != 0) && (chD.OwnLog != null) && !(chD.OwnLog.getDate().equals("1900-01-01"))) break;
+			if (nLogs>=pref.maxLogsToSpider && 
+				chD.getParent().is_found() && 
+				chD.OwnLogId.length() != 0 && 
+				chD.OwnLog != null && 
+				!(chD.OwnLog.getDate().equals("1900-01-01"))) break;
 		}
 		if (nLogs>pref.maxLogsToSpider) {
 			reslts.add(Log.maxLog());
@@ -1497,7 +1480,7 @@ public class SpiderGC{
 				// Optimize: img.groundspeak.com -> img.geocaching.com (for better caching purposes)
 				imgUrl = CacheImages.optimizeLink("http://" + imgUrl);
 				try{
-					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+					imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase()+"    ").substring(0,4).trim();
 					// imgType is now max 4 chars, starting with .
 					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
@@ -1559,7 +1542,7 @@ public class SpiderGC{
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
 				try{
-					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+					imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase()+"    ").substring(0,4).trim();
 					// imgType is now max 4 chars, starting with .
 					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
@@ -1610,9 +1593,9 @@ public class SpiderGC{
 				// Optimize: img.groundspeak.com -> img.geocaching.com (for better caching purposes)
 				imgUrl = CacheImages.optimizeLink("http://" + imgUrl);
 				try{
-					imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+					imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase()+"    ").substring(0,4).trim();
 					// imgType is now max 4 chars, starting with . Delete characters in URL after the image extension
-					imgUrl=imgUrl.substring(0,imgUrl.lastIndexOf(".")+imgType.length());
+					imgUrl=imgUrl.substring(0,imgUrl.lastIndexOf('.')+imgType.length());
 					if( imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")){
 						// Check whether image was already spidered for this cache
 						idxUrl=spideredUrls.find(imgUrl);
