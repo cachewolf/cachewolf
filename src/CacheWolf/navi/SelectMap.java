@@ -41,7 +41,7 @@ public class SelectMap extends Form{
 			String rawFileName = new String();
 			dateien = files.listMultiple("*.png,*.jpg,*.gif,*.bmp", FileBase.LIST_FILES_ONLY);
 			for(int i = 0; i < dateien.length;i++){
-				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
+				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf('.'));
 				checkWFL = new File(mapsPath + rawFileName + ".wfl");
 				
 				if(checkWFL.exists()){

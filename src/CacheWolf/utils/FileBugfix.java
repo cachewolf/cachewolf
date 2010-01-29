@@ -119,7 +119,7 @@ public class FileBugfix extends File{
 		String fullPath = ewefile.getFullPath();
 		int rel = fullPath.indexOf("/..");
 		while (rel > 0) {
-			int parent = fullPath.lastIndexOf("/", rel-1);
+			int parent = fullPath.lastIndexOf('/', rel-1);
 			if (parent == -1) {
 				break;
 			}

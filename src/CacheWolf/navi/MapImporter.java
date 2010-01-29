@@ -192,7 +192,7 @@ public class MapImporter extends Form {
 				}
 			}
 			//Check for a .map file
-			rawFileName = currfile.substring(0, currfile.lastIndexOf("."));
+			rawFileName = currfile.substring(0, currfile.lastIndexOf('.'));
 			mapFile = new File(inDir.getFullPath() + "/" + rawFileName + ".map");
 			if(!imageerror && mapFile.exists()){
 				GCPoint gcp1 = new GCPoint();

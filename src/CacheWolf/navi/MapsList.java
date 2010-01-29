@@ -61,7 +61,7 @@ public final class MapsList extends Vector {
 			if (dateien == null) continue;
 			for(int i = 0; i < dateien.length;i++){
 				// if (!dateien[i].endsWith(".wfl")) continue;
-				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf("."));
+				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf('.'));
 				try {
 					if (dirs.get(j).equals(".")) // the notation dir/./filename doesn't work on all platforms anyhow
 						tempMIO = new MapListEntry(mapsPath+"/", rawFileName);

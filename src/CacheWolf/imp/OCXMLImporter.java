@@ -580,7 +580,7 @@ public class OCXMLImporter extends MinML {
 					} else {
 						if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0) //wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend
 							imgAltText = new String("No image title");
-						else imgAltText = fetchUrl.substring(fetchUrl.lastIndexOf("/")+1);
+						else imgAltText = fetchUrl.substring(fetchUrl.lastIndexOf('/')+1);
 					}
 					descIndex = imgRegexUrl.matchedTo();
 					getPic(fetchUrl, imgAltText);
@@ -623,7 +623,7 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private String createPicFilename(String fetchURL) {
-		String fileName = holder.getWayPoint() + "_" + fetchURL.substring(fetchURL.lastIndexOf("/")+1);
+		String fileName = holder.getWayPoint() + "_" + fetchURL.substring(fetchURL.lastIndexOf('/')+1);
 		return Common.ClearForFileName(fileName).toLowerCase();
 	}
 
