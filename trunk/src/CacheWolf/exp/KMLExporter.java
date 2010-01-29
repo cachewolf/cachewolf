@@ -105,7 +105,7 @@ public class KMLExporter extends Exporter {
 					tmp = (Vector)entry.getValue();
 					// skip over empty cachetypes
 					if (tmp.size() == 0) continue;
-					outp.print(startFolder(CacheType.type2Gui(new Integer((String)entry.getKey()).byteValue())));
+					outp.print(startFolder(CacheType.type2Gui(Integer.valueOf(entry.getKey().toString()).byteValue())));
 
 					for(int i = 0; i<tmp.size(); i++){
 						ch = (CacheHolder) tmp.get(i);

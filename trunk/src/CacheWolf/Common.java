@@ -142,7 +142,7 @@ public final class Common {
 	 */
 	public static String getFilenameExtension (String fn) {
 		if (fn == null || fn.length() == 0) return "";
-		int dot = fn.lastIndexOf(".");
+		int dot = fn.lastIndexOf('.');
 		if (dot < 0) return "";
 		return fn.substring(dot, fn.length());
 	}

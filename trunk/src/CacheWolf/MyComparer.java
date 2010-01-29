@@ -87,7 +87,7 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==12) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				ch.sort=Byte.toString(ch.getCacheSize());
+				ch.sort=Integer.toString(ch.getCacheSize());
 			}
 		} else if (colToCompare==13) {
 			for (int i=0; i<visibleSize; i++) {
