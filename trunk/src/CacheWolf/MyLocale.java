@@ -50,7 +50,27 @@ public class MyLocale {
 	 * @param language_ 2 digits of language code as specified in ISO
 	 */
 	private static void setLocale(String language_) {
-		int tmp = Locale.createID(language_, "", 0); // in ewe-vm v1.49 this call is enough to set the locale correctly and this works even with not supported languages like FR (french), e.g. it works even if tmp == -1, call new Locale() instead of new Locale(tmp) then.
+		String country ="";
+		/*
+		int[] all=ewe.sys.Locale.getAllIDs(0);
+		Locale ll = new Locale(true);
+		Global.getPref().debug=true;
+		for (int i = 0; i<all.length; i++){
+			ll.set(all[i]);
+			String lg = ll.getString(13,0,0);
+			if (!language_.equalsIgnoreCase(lg)) continue;
+			country = ll.getString(23,0,0);
+			// Global.getPref().log(lg+"-"+country);
+			if (!country.equals("")) break;
+		}
+		 */
+		if (language_.equalsIgnoreCase("DE")) country="DEU"; 
+		if (language_.equalsIgnoreCase("FR")) country="FRA"; 
+		if (language_.equalsIgnoreCase("EN")) country="USA"; 
+		if (language_.equalsIgnoreCase("NL")) country="NLD"; 
+		if (language_.equalsIgnoreCase("PL")) country="POL"; 
+		if (language_.equalsIgnoreCase("SV")) country="SWE"; 
+		int tmp = Locale.createID(language_, country, 0); // in ewe-vm v1.49 this call is enough to set the locale correctly and this works even with not supported languages like FR (french), e.g. it works even if tmp == -1, call new Locale() instead of new Locale(tmp) then.
 		tmp = (tmp >= 1024 ? tmp-1024 : tmp); // ewe-vm v1.49 some times returns the correct value + 1024
 		// Vm.debug("spec-lang: " + tmp);
 		if (tmp > -1)	l = new Locale(tmp);
