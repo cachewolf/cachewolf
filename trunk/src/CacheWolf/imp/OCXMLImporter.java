@@ -12,6 +12,7 @@ import CacheWolf.ImageInfo;
 import CacheWolf.InfoBox;
 import CacheWolf.Log;
 import CacheWolf.MyLocale;
+import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
@@ -46,17 +47,6 @@ public class OCXMLImporter extends MinML {
 	static protected final int STAT_CACHE_DESC = 2;
 	static protected final int STAT_CACHE_LOG = 3;
 	static protected final int STAT_PICTURE = 4;
-
-	public final static String OPENCACHING_DE_HOST = "www.opencaching.de";
-	public final static String OPENCACHING_DE_PATTERN = "OC";
-	public final static String OPENCACHING_PL_HOST = "www.opencaching.pl";
-	public final static String OPENCACHING_PL_PATTERN = "OP";
-	public final static String OPENCACHING_CZ_HOST = "www.opencaching.cz";
-	public final static String OPENCACHING_CZ_PATTERN = "OZ";
-	public final static String OPENCACHING_UK_HOST = "www.opencaching.org.uk";
-	public final static String OPENCACHING_UK_PATTERN = "OK";
-	public final static String OPENCACHING_SE_HOST = "www.opencaching.se";
-	public final static String OPENCACHING_SE_PATTERN = "OS";
 
 	String hostname;
 
@@ -111,19 +101,6 @@ public class OCXMLImporter extends MinML {
 
 	}
 
-	protected void setHostname(String wpName){
-		if(wpName.startsWith(OPENCACHING_DE_PATTERN))
-			hostname = OPENCACHING_DE_HOST;
-		else if(wpName.startsWith(OPENCACHING_PL_PATTERN))
-			hostname = OPENCACHING_PL_HOST;
-		else if(wpName.startsWith(OPENCACHING_CZ_PATTERN))
-			hostname = OPENCACHING_CZ_HOST;
-		else if(wpName.startsWith(OPENCACHING_UK_PATTERN))
-			hostname = OPENCACHING_UK_HOST;
-		else if(wpName.startsWith(OPENCACHING_SE_PATTERN))
-			hostname = OPENCACHING_SE_HOST;
-	}
-
 	/**
 	 *
 	 * @param number
@@ -133,7 +110,7 @@ public class OCXMLImporter extends MinML {
 	public boolean syncSingle(int number, InfoBox infB) {
 		CacheHolder ch;
 		ch = cacheDB.get(number);
-		setHostname(ch.getWayPoint());
+		hostname=OC.getOCHostName(ch.getWayPoint());
 		holder= null;
 
 		if (infB.isClosed) {
