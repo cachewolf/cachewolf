@@ -590,15 +590,7 @@ public class CacheHolder{
 	}
 
 	public boolean isOC() {
-		return isOCWaypoint(getWayPoint());
-	}
-
-	public static boolean isOCWaypoint(String wpName) {
-		String pattern = wpName.toUpperCase();
-		return pattern.startsWith( OCXMLImporter.OPENCACHING_CZ_PATTERN )
-				|| pattern.startsWith( OCXMLImporter.OPENCACHING_DE_PATTERN )
-				|| pattern.startsWith( OCXMLImporter.OPENCACHING_PL_PATTERN )
-				|| pattern.startsWith( OCXMLImporter.OPENCACHING_UK_PATTERN );
+		return OC.isOC(wayPoint);
 	}
 
 	public void calcDistance(CWPoint toPoint) {	
