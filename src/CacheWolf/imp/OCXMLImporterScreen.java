@@ -60,8 +60,7 @@ public class OCXMLImporterScreen extends Form {
 		this.title = title;
 
 		if((options & HOST) > 0){
-			// String[] hosts = new String[] {OCXMLImporter.OPENCACHING_DE_HOST, OCXMLImporter.OPENCACHING_CZ_HOST, OCXMLImporter.OPENCACHING_PL_HOST, OCXMLImporter.OPENCACHING_UK_HOST, OCXMLImporter.OPENCACHING_SE_HOST};
-			domains = new mChoice(OC.OCHostNames(),0);
+			domains = new mChoice(OC.OCHostNames(),OC.getSiteIndex(pref.lastOCSite));
 			domains.setTextSize(25, 1);
 			this.addLast(domains, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
@@ -170,7 +169,7 @@ public class OCXMLImporterScreen extends Form {
 		if((options & ALL) > 0){
 			missingCheckBox = new mCheckBox();
 			missingCheckBox.setText(MyLocale.getMsg(1606,"Alle erneut downloaden"));
-			missingCheckBox.setState(pref.downloadmissingOC);
+			missingCheckBox.setState(pref.downloadMissingOC);
 			this.addLast(missingCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
 
@@ -190,7 +189,7 @@ public class OCXMLImporterScreen extends Form {
 			if (ev.target == okB){
 				    // distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
 					if (imagesCheckBox!=null) pref.downloadPics = imagesCheckBox.state;
-					if (missingCheckBox!=null) pref.downloadmissingOC = missingCheckBox.state;
+					if (missingCheckBox!=null) pref.downloadMissingOC = missingCheckBox.state;
 					if (travelbugsCheckBox!=null) pref.downloadTBs = travelbugsCheckBox.state;
 					if (maxLogsInput!=null) pref.maxLogsToSpider=Common.parseInt(maxLogsInput.getText());
 					pref.savePreferences();
