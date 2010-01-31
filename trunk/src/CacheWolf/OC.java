@@ -37,4 +37,13 @@ public final class OC {
 	public final static boolean isOC(String wpName) {
 		return (getOCHostName(wpName.toUpperCase()) != null);		
 	}
+	
+	public final static int getSiteIndex(String site) {
+		for (int i = 0; i < OCSites.length; i++) {
+			if(site.equalsIgnoreCase(OCSites[i][OC_HOSTNAME])) {
+				return i;
+			}
+		}
+		return 0; // don't get a fault
+	}
 }
