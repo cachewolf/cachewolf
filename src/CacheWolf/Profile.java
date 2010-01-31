@@ -501,14 +501,14 @@ public class Profile {
 	public void setAddiRef(CacheHolder ch) {
 		String mainwpt = ch.getWayPoint().substring(2);
 		int mainindex = getCacheIndex("GC" + mainwpt);
-		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
-			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_CZ_PATTERN + mainwpt);
-		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
-			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_DE_PATTERN + mainwpt);
-		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
-			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_PL_PATTERN + mainwpt);
-		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
-			mainindex = getCacheIndex(OCXMLImporter.OPENCACHING_UK_PATTERN + mainwpt);
+		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()) {
+			for (int i = 0; i < OC.OCSites.length; i++) {
+				mainindex=getCacheIndex(OC.OCSites[i][OC.OC_PREFIX] + mainwpt);
+				if (mainindex >= 0 && cacheDB.get(mainindex).isCacheWpt()){
+					break;
+				}
+			}
+		}
 		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
 			mainindex = getCacheIndex("CW" + mainwpt);
 		if (mainindex < 0 /* || !cacheDB.get(mainindex)..isCacheWpt() */ )  {
