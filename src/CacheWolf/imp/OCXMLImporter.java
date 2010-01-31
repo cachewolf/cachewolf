@@ -127,7 +127,7 @@ public class OCXMLImporter extends MinML {
 		/** pref.downloadmissingOC = true, if not the last syncdate shall be used,
 		 *  but the caches shall be reloaded
 		 *  only used in syncSingle  */
-		if (pref.downloadmissingOC)  lastS = "20050801000000";
+		if (pref.downloadMissingOC)  lastS = "20050801000000";
 		else {
 			if (ch.getLastSync().length() < 14) lastS = "20050801000000";
 			else lastS = ch.getLastSync();
@@ -176,8 +176,10 @@ public class OCXMLImporter extends MinML {
 		Vm.showWait(true);
 		String dist = importOpt.maxDistanceInput.getText();
 
-		if (importOpt.domains.getSelectedItem()!=null)
+		if (importOpt.domains.getSelectedItem()!=null) {
 			hostname = (String)importOpt.domains.getSelectedItem();
+			pref.lastOCSite=hostname;
+		}
 
 		if (dist.length()== 0) return;
 
@@ -186,7 +188,7 @@ public class OCXMLImporter extends MinML {
 		dist = distDouble.toString(0, 1, 0).replace(',', '.');
 		//check, if distance is greater than before
 		if (Convert.toInt(dist) > Convert.toInt(profile.getDistOC()) ||
-				pref.downloadmissingOC  ){
+				pref.downloadMissingOC  ){
 			// resysnc
 			lastS = "20050801000000";
 			incUpdate = false;

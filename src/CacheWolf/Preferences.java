@@ -217,7 +217,8 @@ public class Preferences extends MinML{
 	public String garminGPSBabelOptions="";
 	/** Max. length for Garmin waypoint names (for etrex which can only accept 6 chars) */
 	public int garminMaxLen=0;
-	public boolean downloadmissingOC = false;
+	public boolean downloadMissingOC = false;
+	public String lastOCSite=OC.OCSites[0][OC.OC_HOSTNAME];
 	/** The currently used centre point, can be different from the profile's centrepoint. This is used
 	 *  for spidering */
 	private CWPoint curCentrePt=new CWPoint();
@@ -441,7 +442,10 @@ public class Preferences extends MinML{
 			setBaseDir(atts.getValue("dir"));
 		}
 		else if (name.equals("opencaching")) {
-			downloadmissingOC = Boolean.valueOf(atts.getValue("downloadmissing")).booleanValue();
+			tmp=atts.getValue("lastSite");
+			if (!(tmp == null) && OC.getSiteIndex(tmp)>=0 ) lastOCSite=tmp;
+			tmp=atts.getValue("downloadMissing");
+			if (!(tmp == null)) downloadMissingOC = Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("listview")) {
 			listColMap=atts.getValue("colmap");
@@ -672,7 +676,7 @@ public class Preferences extends MinML{
 			outp.print("    <solver ignorevariablecase=\"" + SafeXML.strxmlencode(solverIgnoreCase) + "\" degMode=\"" + SafeXML.strxmlencode(solverDegMode) + "\" />\n");
 			outp.print("    <garmin connection = \"" + SafeXML.clean(garminConn) + "\" GPSBabelOptions = \"" + SafeXML.clean(garminGPSBabelOptions) + "\" MaxWaypointLength = \"" + SafeXML.strxmlencode(garminMaxLen) +
 					        "\" addDetailsToWaypoint = \"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\" addDetailsToName = \"" + SafeXML.strxmlencode(addDetailsToName) + "\" />\n");
-			outp.print("    <opencaching downloadMissing=\"" + SafeXML.strxmlencode(downloadmissingOC) + "\"/>\n");
+			outp.print("    <opencaching lastSite=\""+lastOCSite+"\" downloadMissing=\"" + SafeXML.strxmlencode(downloadMissingOC) + "\"/>\n");
 			outp.print("    <location lat = \"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long = \"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\"/>\n");
 			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
