@@ -135,17 +135,33 @@ public class SpiderGC{
 	private static String propFirstLine2;
 	private static String propMaxDistance;
 	private static String propShowOnlyFound;
-	private Regex RexPropListBlock;
-	private Regex RexPropLine;
-	private Regex RexPropLogDate;
+	private static Regex RexPropListBlock;
+	private static Regex RexPropLine;
+	private static Regex RexPropLogDate;
 	private static String propAvailable;
 	private static String propArchived;
 	private static String propFound;
 	private static String propPM;
-	private Regex RexPropDirection;
-	private Regex RexPropDistance;
-	private Regex RexPropWaypoint;
-
+	private static Regex RexPropDirection;
+	private static Regex RexPropDistance;
+	private static Regex RexPropWaypoint;
+	private static Regex RexPropType;
+	private static Regex RexPropSize;
+	private static Regex RexPropDandT;
+	private static Regex RexPropOwn;	
+	private static Regex RexLogBlock;
+	private static Extractor exSingleLog;
+	private static Extractor exIcon;
+	private static Extractor exNameTemp;
+	private static Extractor exName;
+	private static Extractor exDate;
+	private static Extractor exLog;
+	private static Extractor exLogId;
+	private static String icon_smile;
+	private static String icon_camera;
+	private static String icon_attended;
+	private static Regex RexCacheType;
+	
 	private int numFoundUpdates=0;
 	private int numArchivedUpdates=0;
 	private int numAvailableUpdates=0;
@@ -718,6 +734,22 @@ public class SpiderGC{
 			RexPropDirection=new Regex(p.getProp("directionRex"));
 			RexPropDistance = new Regex(p.getProp("distRex"));
 			RexPropWaypoint = new Regex(p.getProp("waypointRex"));
+			RexPropType = new Regex(p.getProp("TypeRex"));
+			RexPropSize = new Regex(p.getProp("SizeRex"));
+			RexPropDandT = new Regex(p.getProp("DandTRex"));
+			RexPropOwn = new Regex(p.getProp("own"));
+			RexLogBlock = new Regex(p.getProp("blockRex"));
+			exSingleLog = new Extractor("",p.getProp("singleLogExStart"), p.getProp("singleLogExEnd"), 0, false); 
+			exIcon = new Extractor("",p.getProp("iconExStart"), p.getProp("iconExEnd"), 0, true);
+			exNameTemp = new Extractor("",p.getProp("nameTempExStart"), p.getProp("nameTempExEnd"), 0 , true);
+			exName = new Extractor("", p.getProp("nameExStart"), p.getProp("nameExEnd"), 0 , true);
+			exDate = new Extractor("",p.getProp("dateExStart"), p.getProp("dateExEnd"), 0 , true);
+			exLog = new Extractor("", p.getProp("logExStart"), p.getProp("logExEnd"), 0, true);
+			exLogId = new Extractor("", p.getProp("logIdExStart"), p.getProp("logIdExEnd"), 0, true);
+			icon_smile=p.getProp("icon_smile");
+			icon_camera=p.getProp("icon_camera");
+			icon_attended=p.getProp("icon_attended");
+			RexCacheType = new Regex(p.getProp("cacheTypeRex"));
 		}catch(Exception ex){
 		}
 	}
@@ -826,7 +858,9 @@ public class SpiderGC{
 		boolean is_available_GC=!is_archived_GC && CacheDescription.indexOf(propAvailable)==-1;
 		if (is_available_GC != ch.is_available()) {
 			ch.setAvailable(is_available_GC); save=true; numAvailableUpdates+=1; ret=true;}
-		// we could check for update of terrain,difficult,size,cache type for not necessarily to load the complete cache 
+		// we could check for update of terrain,difficult,size,cache type for not necessarily to load the complete cache
+		if (typeChanged(ch,CacheDescription)) { ret=true;}
+		if (sizeChanged(ch,CacheDescription)) { ret=true;}
 		if (newLogExists(ch,CacheDescription)) {numLogUpdates+=1; ret=true;}
 		if (save) ch.save();
 		return ret;
@@ -890,6 +924,36 @@ public class SpiderGC{
 	private boolean doPMCache(String toCheck) {
 		if (pref.isPremium) return true;
 		return toCheck.indexOf(propPM) <= 0;
+	}
+	/*
+	 * check for changed Cachetype
+	 */
+	private boolean typeChanged(CacheHolder ch, String toCheck){
+		RexPropType.search(toCheck);
+		if(RexPropType.didMatch()) {
+			String stmp=RexPropType.stringMatched(1);
+			if (Common.parseInt(stmp)==0){
+				if (stmp.equalsIgnoreCase("EarthCache")) stmp="137";
+			}
+			if(ch.getType()==CacheType.gcSpider2CwType(stmp))
+				return false;
+				else return true;
+		}
+		return false;
+	}
+	/*
+	 * check for changed CacheSize
+	 */
+	private boolean sizeChanged(CacheHolder ch, String toCheck) {
+		RexPropSize.search(toCheck);
+		if(RexPropSize.didMatch()){
+			String stmp=RexPropSize.stringMatched(1);
+			//gcSpiderString2Cw
+			if(ch.getCacheSize()==CacheSize.gcSpiderString2Cw(stmp))
+				return false;
+				else return true;
+		}
+		return false;
 	}
 
 	/**
@@ -992,6 +1056,7 @@ public class SpiderGC{
 	private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean fetchTBs, boolean doNotGetFound, boolean fetchAllLogs) {
 		int ret = SPIDER_OK; // initialize value;
 		while (true) { // retry even if failure
+			pref.log(""); // new line for more overview
 			String completeWebPage;
 			int spiderTrys=0;
 			int MAX_SPIDER_TRYS=3;
@@ -1141,7 +1206,7 @@ public class SpiderGC{
 						//==========
 						ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
 						ch.setIncomplete(false);
-						pref.log("ready " + ch.getWayPoint() + " : "+ ch.getLastSync()+"\n");
+						pref.log("ready " + ch.getWayPoint() + " : "+ ch.getLastSync());
 						break;
 					}catch(Exception ex){
 						pref.log("Error reading cache: "+ch.getWayPoint());
@@ -1305,10 +1370,9 @@ public class SpiderGC{
 	 * @param doc A previously fetched cachepage
 	 * @return the waypoint type (Tradi, Multi, etc.)
 	 */
-	private byte getType(String doc) throws Exception {
-		Regex inRex = new Regex(p.getProp("cacheTypeRex"));
-		inRex.search(doc);
-		if(inRex.didMatch()) return CacheType.gcSpider2CwType(inRex.stringMatched(1));
+	private byte getType(String doc){
+		RexCacheType.search(doc);
+		if(RexCacheType.didMatch()) return CacheType.gcSpider2CwType(RexCacheType.stringMatched(1));
 		else return 0;
 	}
 
@@ -1318,73 +1382,62 @@ public class SpiderGC{
 	 * @param chD Cache Details
 	 * @return A HTML string containing the logs
 	 */
-	private LogList getLogs(String doc, CacheHolderDetail chD) throws Exception {
+	private LogList getLogs(String completeWebPage, CacheHolderDetail chD) throws Exception {
 		String icon = "";
 		String name = "";
 		String logText = "";
 		String logId = "";
-		LogList reslts = new LogList();
-		Regex blockRex = new Regex(p.getProp("blockRex"));
-		blockRex.search(doc);
-		doc = blockRex.stringMatched(1);
 		String singleLog = "";
-		Extractor exSingleLog = new Extractor(doc,p.getProp("singleLogExStart"), p.getProp("singleLogExEnd"), 0, false); // maybe here is some change neccessary because findnext now gives the whole endstring back???
+		LogList reslts = new LogList();
+		RexLogBlock.search(completeWebPage);
+		String LogBlock = RexLogBlock.stringMatched(1);
+		//pref.log(LogBlock);
+		exSingleLog.setSource(LogBlock);
 		singleLog = exSingleLog.findNext();
-		Extractor exIcon = new Extractor(singleLog,p.getProp("iconExStart"), p.getProp("iconExEnd"), 0, true);
-		Extractor exNameTemp = new Extractor(singleLog,p.getProp("nameTempExStart"), p.getProp("nameTempExEnd"), 0 , true);
-		String nameTemp = "";
-		nameTemp = exNameTemp.findNext();
-		Extractor exName = new Extractor(nameTemp, p.getProp("nameExStart"), p.getProp("nameExEnd"), 0 , true);
-		Extractor exDate = new Extractor(singleLog,p.getProp("dateExStart"), p.getProp("dateExEnd"), 0 , true);
-		Extractor exLog = new Extractor(singleLog, p.getProp("logExStart"), p.getProp("logExEnd"), 0, true);
-		Extractor exLogId = new Extractor(singleLog, p.getProp("logIdExStart"), p.getProp("logIdExEnd"), 0, true);
-		//Vm.debug("Log Block: " + singleLog);
+		exIcon.setSource(singleLog);
+		exNameTemp.setSource(singleLog);
+		exName.setSource(exNameTemp.findNext());
+		exDate.setSource(singleLog);
+		exLog.setSource(singleLog);
+		exLogId.setSource(singleLog);
 		int nLogs=0;
-		while(exSingleLog.endOfSearch() == false){
+		boolean foundown = false;
+		while(!exSingleLog.endOfSearch()){
+			//pref.log(singleLog);
 			nLogs++;
-			//Vm.debug("--------------------------------------------");
-			//Vm.debug("Log Block: " + singleLog);
-			//Vm.debug("Icon: "+exIcon.findNext());
-			//Vm.debug(exName.findNext());
-			//Vm.debug(exDate.findNext());
-			//Vm.debug(exLog.findNext());
-			//Vm.debug("--------------------------------------------");
 			icon = exIcon.findNext();
 			name = exName.findNext();
 			logText = exLog.findNext();
 			logId = exLogId.findNext();
 			String d=DateFormat.logdate2YMD(exDate.findNext());
+			//pref.log(Integer.toString(nLogs)+":"+icon+"|logger:"+name+"|id:"+logId+"|"+d);
 			// if this log says this Cache is found by me
-			if((icon.equals(p.getProp("icon_smile")) || icon.equals(p.getProp("icon_camera")) || icon.equals(p.getProp("icon_attended"))) &&
-				(name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) || (pref.myAlias2.length()>0 && name.equalsIgnoreCase(SafeXML.clean(pref.myAlias2)))) )  {
+			if((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) &&
+				(name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) || 
+				(pref.myAlias2.length()>0 && name.equalsIgnoreCase(SafeXML.clean(pref.myAlias2)))) )  {
 				chD.getParent().setFound(true);
 				chD.getParent().setCacheStatus(d);
 				chD.OwnLogId = logId;
 				chD.OwnLog = new Log(icon,d,name,logText);
+				reslts.add(new Log(icon,d,name,logText));
+				foundown=true;
+				//pref.log("own log detected!");
 			}
-			if (nLogs<=pref.maxLogsToSpider) reslts.add(new Log(icon,d,name,logText));
-
+			if (nLogs<=pref.maxLogsToSpider) {reslts.add(new Log(icon,d,name,logText));}
+			else {if (foundown){break;}}
 			singleLog = exSingleLog.findNext();
 			exIcon.setSource(singleLog);
 			exNameTemp.setSource(singleLog);
-			nameTemp = exNameTemp.findNext();
-			exName.setSource(nameTemp);
+			exName.setSource(exNameTemp.findNext());
 			exDate.setSource(singleLog);
 			exLog.setSource(singleLog);
 			exLogId.setSource(singleLog);
-			// We cannot simply stop if we have reached MAXLOGS just in case we are waiting for
-			// a log by our alias that happened earlier.
-			if (nLogs>=pref.maxLogsToSpider && 
-				chD.getParent().is_found() && 
-				chD.OwnLogId.length() != 0 && 
-				chD.OwnLog != null && 
-				!(chD.OwnLog.getDate().equals("1900-01-01"))) break;
 		}
 		if (nLogs>pref.maxLogsToSpider) {
 			reslts.add(Log.maxLog());
-			pref.log("Too many logs. MAXLOGS reached ("+pref.maxLogsToSpider+")");
-		} else
-			pref.log(nLogs+" logs found");
+			//pref.log("MAXLOGS reached ("+pref.maxLogsToSpider+")");
+		} 
+		//pref.log(nLogs+" checked!");
 		return reslts;
 	}
 

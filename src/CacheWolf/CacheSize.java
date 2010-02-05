@@ -224,22 +224,24 @@ public final class CacheSize {
 	 */
 
 	public static byte gcGpxString2Cw(final String gcstring) throws IllegalArgumentException {
-		if (gcstring.equals(GC_SIZE_MICRO)) {
+		if (gcstring.equalsIgnoreCase(GC_SIZE_MICRO)) {
 			return CW_SIZE_MICRO;
-		} else if (gcstring.equals(GC_SIZE_SMALL)) {
+		} else if (gcstring.equalsIgnoreCase(GC_SIZE_SMALL)) {
 			return CW_SIZE_SMALL;
-		} else if (gcstring.equals(GC_SIZE_REGULAR)) {
+		} else if (gcstring.equalsIgnoreCase(GC_SIZE_REGULAR)) {
 			return CW_SIZE_REGULAR;
-		} else if (gcstring.equals(GC_SIZE_LARGE)) {
+		} else if (gcstring.equalsIgnoreCase(GC_SIZE_LARGE)) {
 			return CW_SIZE_LARGE;
-		} else if (gcstring.equals(GC_SIZE_NOTCHOSEN)) {
+		} else if (gcstring.equalsIgnoreCase(GC_SIZE_NOTCHOSEN)) {
 			return CW_SIZE_NOTCHOSEN;
-		} else if (gcstring.equals(GC_SIZE_OTHER)) {
+		} else if (gcstring.equalsIgnoreCase(GC_SIZE_OTHER)) {
 			return CW_SIZE_OTHER;
-		} else if (gcstring.equals(GC_SIZE_VIRTUAL)) {
+		} else if (gcstring.equalsIgnoreCase(GC_SIZE_VIRTUAL)) {
 			return CW_SIZE_VIRTUAL;
 		// GSAK exports wrong type information
-		} else if (gcstring.equals("Unknown")) {
+		} else if (gcstring.equalsIgnoreCase("Unknown")) {
+			return CW_SIZE_NOTCHOSEN;
+		} else if (gcstring.equalsIgnoreCase("not_chosen")) {
 			return CW_SIZE_NOTCHOSEN;
 		} else {
 			throw (new IllegalArgumentException("unmatched argument " + gcstring + " in CacheSize gcGpxString2Cw()"));

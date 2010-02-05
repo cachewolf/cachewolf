@@ -46,6 +46,7 @@ public class Preferences extends MinML{
 	public static final int YES = 0;
 	public static final int NO = 1;
 	public static final int ASK = 2;
+	private static String NEWLINE="\n";
 	// Hashtable is saving filter data objects the user wants to save
 	private Hashtable filterList = new Hashtable(15);
 	/** screen is big enough to hold additional information like cache notes */
@@ -103,6 +104,10 @@ public class Preferences extends MinML{
 		}
 		pathToConfigFile = STRreplace.replace(p_, "//", "/"); // this is necessary in case that the root dir is the dir where the pref.xml is stored
 		pathToConfigFile = pathToConfigFile.replace('\\', '/');
+		p=System.getProperty("os.name");
+		if (p==null || p.indexOf("indows")!=-1) {
+			NEWLINE = "\r\n";
+		} 
 	}
 
 	/**
@@ -1043,7 +1048,7 @@ public class Preferences extends MinML{
 				logFile = new FileWriter(LOGFILENAME, true);
 				//Stream strout = null;
 				//strout = logFile.toWritableStream(true);
-				logFile.println(text);
+				logFile.print(text+NEWLINE);
 				//Vm.debug(text); Not needed - put <debug value="true"> into pref.xml
 			}catch(Exception ex){
 				Vm.debug("Error writing to log file!");
