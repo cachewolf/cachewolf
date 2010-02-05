@@ -452,14 +452,14 @@ public final class CacheType {
 		if (gcType.equals("5")) { return CW_TYPE_LETTERBOX; }
 		if (gcType.equals("6")) { return CW_TYPE_EVENT; }
 		if (gcType.equals("8")) { return CW_TYPE_UNKNOWN; }
-		if (gcType.equals("9")) { return CW_TYPE_APE; }
+		if (gcType.equals("9")) { return CW_TYPE_APE; } //102
 		if (gcType.equals("11")) { return CW_TYPE_WEBCAM; }
 		if (gcType.equals("12")) { return CW_TYPE_LOCATIONLESS; }
 		if (gcType.equals("13")) { return CW_TYPE_CITO; }
-		if (gcType.equals("137")) { return CW_TYPE_EARTH; }
-		if (gcType.equals("453")) { return CW_TYPE_MEGA_EVENT; }
-		if (gcType.equals("1304")) { return CW_TYPE_MAZE; }
-		if (gcType.equals("1858")) { return CW_TYPE_WHEREIGO; }
+		if (gcType.equals("137")) { return CW_TYPE_EARTH; } //104
+		if (gcType.equals("453")) { return CW_TYPE_MEGA_EVENT; } //100
+		if (gcType.equals("1304")) { return CW_TYPE_MAZE; } //103
+		if (gcType.equals("1858")) { return CW_TYPE_WHEREIGO; } //101
 		throw new IllegalArgumentException("unmatched argument "+gcType+" in CacheSize gcSpider2CwType()");
 	}
 

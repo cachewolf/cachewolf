@@ -64,10 +64,10 @@ archivedRex        = <span\ class="Warning Strike">
 PMRex              = small_profile.gif
 distRex            = <br\ />(.*?)(?:km|mi)</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
-TypeRex            = /WptTypes/([0-9]+).gif
-SizeRex            = /container/(.*?).gif
+TypeRex            = k"><img\ src="/images/WptTypes/(.*?)\\.gif
+SizeRex            = /container/(.*?)\\.gif
 DandTRex           = <td>((.*?)/(.*?))<br
-found              = /WptTypes/check.gif
+found              = alt="Found\ It!"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
 showOnlyFound      = &f=1
@@ -123,7 +123,7 @@ blockRex           = <table class="LogsTable Table">((?s).*?)</table></span></p>
 singleLogExStart   = <strong>
 singleLogExEnd     = <small><a\ href="
 # iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
-iconExStart        = http://www.geocaching.com/images/icons/
+iconExStart        = www.geocaching.com/images/icons/
 iconExEnd          = "\ alt=""\ />
 nameTempExStart    = <a\ href="
 nameTempExEnd      = /a>
@@ -152,10 +152,10 @@ bugExStart         = <a\ href="
 bugExEnd           = </a></li>
 bugDetailsStart    = id="ctl00_ContentBody_BugDetails_BugGoal">
 bugDetailsEnd      = </span>
-getBugByName       = http://www.geocaching.com/track/search.aspx?k=
-getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
-getBugById         = http://www.geocaching.com/track/details.aspx?id=
-getBugByTrackNr    = http://www.geocaching.com/track/details.aspx?tracker=
+getBugByName       = www.geocaching.com/track/search.aspx?k=
+getBugByGuid       = www.geocaching.com/track/details.aspx?guid=
+getBugById         = www.geocaching.com/track/details.aspx?id=
+getBugByTrackNr    = www.geocaching.com/track/details.aspx?tracker=
 bugGuidExStart     = www.geocaching.com/track/details.aspx?id=
 bugGuidExEnd       = "
 bugNotFound        = No\ results\ were\ found\ for\ your\ search
