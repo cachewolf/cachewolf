@@ -66,7 +66,7 @@ distRex            = <br\ />(.*?)(?:km|mi)</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
 TypeRex            = k"><img\ src="/images/WptTypes/(.*?)\\.gif
 SizeRex            = /container/(.*?)\\.gif
-DandTRex           = <td>((.*?)/(.*?))<br
+DandTRex           = <td>\\((.*?)/(.*?)\\)<br
 found              = alt="Found\ It!"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
