@@ -137,6 +137,7 @@ public class SpiderGC{
 	private static String propShowOnlyFound;
 	private static Regex RexPropListBlock;
 	private static Regex RexPropLine;
+	private static Regex RexNumFinds;
 	private static Regex RexPropLogDate;
 	private static String propAvailable;
 	private static String propArchived;
@@ -726,6 +727,7 @@ public class SpiderGC{
 			propShowOnlyFound=p.getProp("showOnlyFound");
 			RexPropListBlock = new Regex(p.getProp("listBlockRex"));
 			RexPropLine = new Regex(p.getProp("lineRex"));
+			RexNumFinds = new Regex("Total Records: <b>(.*?)</b>");
 			RexPropLogDate = new Regex(p.getProp("logDateRex"));
 			propAvailable=p.getProp("availableRex");
 			propArchived=p.getProp("archivedRex");
@@ -854,14 +856,14 @@ public class SpiderGC{
 			is_found_GC=CacheDescription.indexOf(propFound)!=-1;
 			if (is_found_GC!=ch.is_found()) {ch.setFound(is_found_GC); save=true; ret=true;}
 		}
-		if (ch.is_found() && chd.OwnLogId.equals("")) {ret=true;}
+		if (ch.is_found() && chd.OwnLogId.equals("")) {ret=true;} //missing ownLogID
 		boolean is_available_GC=!is_archived_GC && CacheDescription.indexOf(propAvailable)==-1;
 		if (is_available_GC != ch.is_available()) {
 			ch.setAvailable(is_available_GC); save=true; numAvailableUpdates+=1; ret=true;}
-		// we could check for update of terrain,difficult,size,cache type for not necessarily to load the complete cache
-		if (typeChanged(ch,CacheDescription)) { ret=true;}
-		if (sizeChanged(ch,CacheDescription)) { ret=true;}
-		if (newLogExists(ch,CacheDescription)) {numLogUpdates+=1; ret=true;}
+		if (typeChanged(ch,CacheDescription)) { save=true; ret=true;}
+		if (sizeChanged(ch,CacheDescription)) { save=true; ret=true;}
+		if (difficultyOrTerrainChanged(ch,CacheDescription)) {save=true; ret=true;}
+		if (newFoundExists(ch,CacheDescription)) {numLogUpdates+=1; ret=true;}
 		if (save) ch.save();
 		return ret;
 	}
@@ -871,13 +873,11 @@ public class SpiderGC{
 	 * @return numFound
 	 */
 	private int getNumFound(String doc) {
-		Regex numFindsRex = new Regex("Total Records: <b>(.*?)</b>");
-		numFindsRex.search(doc);
-		if (numFindsRex.didMatch()) {
-			 return Convert.toInt(numFindsRex.stringMatched(1));}
+		RexNumFinds.search(doc);
+		if (RexNumFinds.didMatch()) {
+			 return Convert.toInt(RexNumFinds.stringMatched(1));}
 		else return 0;
 	}
-
 	private int getFoundInDB() {
 		CacheHolder ch;
 		int counter = 0;
@@ -889,7 +889,6 @@ public class SpiderGC{
 		}
 		return counter;
 	}
-
 	/**
 	 * Get the Distance to the centre
 	 * @param doc A previously fetched cachepage
@@ -906,7 +905,6 @@ public class SpiderGC{
 			return Convert.toDouble(RexPropDistance.stringMatched(1));
 		}
 	}
-
 	/**
 	 * Get the waypoint name
 	 * @param doc A previously fetched cachepage
@@ -937,7 +935,10 @@ public class SpiderGC{
 			}
 			if(ch.getType()==CacheType.gcSpider2CwType(stmp))
 				return false;
-				else return true;
+				else {
+					ch.setType(CacheType.gcSpider2CwType(stmp));
+					return true;
+				}
 		}
 		return false;
 	}
@@ -948,14 +949,36 @@ public class SpiderGC{
 		RexPropSize.search(toCheck);
 		if(RexPropSize.didMatch()){
 			String stmp=RexPropSize.stringMatched(1);
-			//gcSpiderString2Cw
 			if(ch.getCacheSize()==CacheSize.gcSpiderString2Cw(stmp))
 				return false;
-				else return true;
+				else {
+					ch.setCacheSize(CacheSize.gcSpiderString2Cw(stmp));
+					return true;
+				}
 		}
 		return false;
 	}
-
+	/*
+	 * check for changed Difficulty or Terrain
+	 */
+	private boolean difficultyOrTerrainChanged(CacheHolder ch, String toCheck) {
+		boolean ret = false;
+		RexPropDandT.search(toCheck);	
+		if(RexPropDandT.didMatch()){
+			String stmp=RexPropDandT.stringMatched(1);
+			if(!(ch.getHard()==CacheTerrDiff.v1Converter(stmp))) {
+				ch.setHard(CacheTerrDiff.v1Converter(stmp));
+				ret=true;
+			}
+			stmp=RexPropDandT.stringMatched(2);
+			if(!(ch.getTerrain()==CacheTerrDiff.v1Converter(stmp))) {
+				ch.setTerrain(CacheTerrDiff.v1Converter(stmp));
+				ret=true;
+			}
+		}
+		return ret;
+	}
+	
 	/**
 	 * Get the direction
 	 * @param doc A previously fetched cachepage
@@ -991,7 +1014,7 @@ public class SpiderGC{
 	 * @param String cacheDescGC
 	 * @return boolean newLogExists
 	 */
-	private boolean newLogExists(CacheHolder ch, String cacheDescrition) {
+	private boolean newFoundExists(CacheHolder ch, String cacheDescrition) {
 		if(!pref.checkLog) return false;
 		// String[] CacheDesc=mString.split(cacheDescrition,'\n');
 		Time lastLogCW = new Time();
