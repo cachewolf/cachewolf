@@ -335,7 +335,8 @@ public class DetailsPanel extends CellPanel {
 		inpHidden.setText(mainCache.getDateHidden());
 		inpOwner.setText(mainCache.getCacheOwner());
 
-		if (ch.getCacheStatus().length() >= 10 && ch.getCacheStatus().charAt(4) == '-') {
+		if ((cache.getCacheStatus().length() == 10 || cache.getCacheStatus().length() == 16) &&
+				cache.getCacheStatus().charAt(4) == '-') {
 			chcStatus.setText(MyLocale.getMsg(318, "Found") + " " + ch.getCacheStatus());
 		} else {
 			chcStatus.setText(ch.getCacheStatus());
@@ -617,6 +618,9 @@ public class DetailsPanel extends CellPanel {
 				if (foundDate.startsWith(MyLocale.getMsg(318, "Found") + " ")) {
 					foundDate = foundDate.substring(MyLocale.getMsg(318, "Found").length() + 1);
 				}
+				else if (foundDate.endsWith(MyLocale.getMsg(319, "not Found"))) {
+					foundDate = foundDate.substring(0,16);					
+				}
 				final Time t = new Time();
 				try {
 					t.parse(foundDate, "y-M-d H:m");
@@ -636,7 +640,15 @@ public class DetailsPanel extends CellPanel {
 									+ MyLocale.formatLong(dc.day, "00") + " "
 									+ dc.time);
 					dirtyDetails = true;
-					// profile.hasUnsavedChanges=true;
+				}
+				else {
+					chcStatus.setText(Convert.toString(dc.year) + "-"
+							+ MyLocale.formatLong(dc.month, "00") + "-"
+							+ MyLocale.formatLong(dc.day, "00") + " "
+							+ dc.time + " "
+							+ MyLocale.getMsg(319, "not Found")
+							);
+					dirtyDetails = true;
 				}
 			} else if (ev.target == btnHiddenDate) {
 				DateChooser.dayFirst = true;
@@ -718,24 +730,22 @@ public class DetailsPanel extends CellPanel {
 		//FIXME: so how do we do this??
 
 		// Strip the found message if the status contains a date
-		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found"))
-				&& chcStatus.getText().length() >= MyLocale
-						.getMsg(318, "Found").length() + 11) {
-			cache.setCacheStatus(chcStatus.getText().substring(
-					MyLocale.getMsg(318, "Found").length() + 1));
+		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found")) &&
+			chcStatus.getText().length() >= MyLocale.getMsg(318, "Found").length() + 11) {
+			cache.setCacheStatus(chcStatus.getText().substring(MyLocale.getMsg(318, "Found").length() + 1));
 		} else {
 			cache.setCacheStatus(chcStatus.getText());
 		}
-		if (!cache.is_found() && cache.getCacheStatus().length() >= 10
-				&& cache.getCacheStatus().charAt(4) == '-') {
+		if (!cache.is_found() && 
+			(cache.getCacheStatus().length() == 10 || cache.getCacheStatus().length() == 16) &&
+			cache.getCacheStatus().charAt(4) == '-') {
 			// Use same heuristic condition as in setDetails(CacheHolder) to
 			// determine, if this
 			// cache
 			// has to considered as found.
 			cache.setFound(true);
 		} else {
-			cache.setFound(chcStatus.getText().startsWith(
-					MyLocale.getMsg(318, "Found")));
+			cache.setFound(cache.getCacheStatus().startsWith(MyLocale.getMsg(318, "Found")));
 		}
 		if (!cache.isAddiWpt()) {
 			cache.setCacheOwner(inpOwner.getText().trim());
