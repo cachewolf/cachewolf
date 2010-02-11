@@ -176,6 +176,7 @@ public class SpiderGC{
 			pref.logInit();
 			p=new SpiderProperties();
 		}
+		initialiseProperties();
 	}
 
 	/**
@@ -337,7 +338,6 @@ public class SpiderGC{
 		//=======
 		// Prepare list of all caches that are to be spidered
 		//=======
-		initialiseProperties();
 		getFirstListPage();
 
 		int numFinds=0; // spiderAllFinds : Number of GC-founds for this user
