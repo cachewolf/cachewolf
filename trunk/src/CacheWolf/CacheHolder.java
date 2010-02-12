@@ -807,7 +807,7 @@ public class CacheHolder{
 	public String GetStatusDate() {
 		String statusDate = "";
 		
-		if (is_found()) {
+		if (is_found() || getCacheStatus().indexOf(MyLocale.getMsg(319,"not found"))>10) {
 			Regex rexDate=new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
 			rexDate.search(getCacheStatus());
 			if (rexDate.stringMatched(1)!= null) {
@@ -821,7 +821,7 @@ public class CacheHolder{
 	public String GetStatusTime() {
 		String statusTime = "";
 
-		if (is_found()) {
+		if (is_found() || getCacheStatus().indexOf(MyLocale.getMsg(319,"not found"))>10) {
 			Regex rexTime=new Regex("([0-9]{1,2}:[0-9]{2})");
 			rexTime.search(getCacheStatus());
 			if (rexTime.stringMatched(1)!= null) {
