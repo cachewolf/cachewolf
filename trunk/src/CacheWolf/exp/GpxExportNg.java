@@ -105,7 +105,7 @@ public class GpxExportNg {
 			.concat("<email>contact@cachewolf.de</email>".concat(newLine))
 			.concat("<url>http://www.cachewolf.de/</url>".concat(newLine))
 			.concat("<urlname>CacheWolf - Paperless Geocaching</urlname>".concat(newLine))
-			.concat("<time>@@CREATEDATE@@T00:00:00.0000000-07:00</time>".concat(newLine))
+			.concat("<time>@@CREATEDATE@@T07:00:00Z</time>".concat(newLine))
 			.concat("<keywords>cache, geocache, waypoints</keywords>".concat(newLine))
 	// TODO: is it worth a second loop?
 	// .concat("<bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\" maxlon=\"6.918817\" />")
@@ -551,7 +551,7 @@ public class GpxExportNg {
 		if (exportStyle != STYLE_GPX_COMPACT) {
 			if (ch.isAddiWpt()) {
 				try {
-					ret.append("    <time>"+ch.mainCache.getDateHidden()+"T00:00:00</time>".concat(newLine));
+					ret.append("    <time>"+ch.mainCache.getDateHidden()+"T07:00:00Z</time>".concat(newLine));
 				} catch (Exception e) {
 					Global.getPref().log(ch.getWayPoint() + " has no parent");
 					exportErrors++;
