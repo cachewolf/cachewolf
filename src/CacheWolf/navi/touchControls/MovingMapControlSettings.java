@@ -2,11 +2,9 @@ package CacheWolf.navi.touchControls;
 
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
 import ewe.fx.Dimension;
 import ewe.io.FileBase;
-import ewe.sys.VMApp;
 import ewe.sys.Vm;
 import ewe.util.Hashtable;
 import ewe.util.Vector;
@@ -18,28 +16,91 @@ import ewesoft.xml.sax.SAXException;
 public class MovingMapControlSettings extends MinML {
 
 	public static final String SETTINGS = "settings";
+	/**
+	 * the size of the font on the icons
+	 */
 	public static final String SETTINGS_ATTR_FONTSIZE = "fontsize";
 
 	public static final String ROLE = "role";
+	/**
+	 * name of the role [String]
+	 */
 	public static final String ROLE_ATTR_NAME = "name";
+	/**
+	 * the inital state of the role [true|false]
+	 */
 	public static final String ROLE_ATTR_ACTIVE = "active";
+	/**
+	 * A list of roles to disable, if this role changes the state from active to inactive. Delimiter is '|'.
+	 * [String|String|...]
+	 */
 	public static final String ROLE_ATTR_DISABLE = "disable";
 
 	public static final String BUTTON = "button";
+	/**
+	 * position of the left upper corner of the button from the left screen border [int (pixel)]
+	 */
 	public static final String BUTTON_ATTR_FROM_LEFT = "fromLeft";
+	/**
+	 * position of the left upper corner of the button from the upper screen border [int (pixel)]
+	 */
 	public static final String BUTTON_ATTR_FROM_TOP = "fromTop";
+	/**
+	 * position of the left upper corner of the button from the right screen border. If fromLeft is set, this option
+	 * will not be read! [int (pixel)]
+	 */
 	public static final String BUTTON_ATTR_FROM_RIGHT = "fromRight";
+	/**
+	 * position of the left upper corner of the button from the bottom screen border. If fromTop is set, this option
+	 * will not be read! [int (pixel)]
+	 */
 	public static final String BUTTON_ATTR_FROM_BOTTOM = "fromBottom";
+	/**
+	 * define when this button is visible. Contains a list of rolenames. Delimiter is '+'. If the role name starts with
+	 * '!' the buttom is shown if this role is inactive [(!)String+(!)String...] Example visibleIf="menu+!zoom" button
+	 * is visible if role "menu" is active and role "zoom" is inactive.
+	 */
 	public static final String BUTTON_ATTR_VISIBILITY = "visibleIf";
-	public static final String BUTTON_ATTR_CHANGE_STAE_OF = "changeStateof";
-
+	/**
+	 * the id of the text in the language file
+	 */
 	public static final String BUTTON_ATTR_LOCALE_ID = "localeID";
+	/**
+	 * the default text on the button if no localID is set or found.
+	 */
 	public static final String BUTTON_ATTR_LOCALE_DEFAULT = "localeDefault";
+	/**
+	 * the alpha value set the level of transparency of the button. [0-255]
+	 */
 	public static final String BUTTON_ATTR_ALPHA = "alpha";
+	/**
+	 * the file path and name of the button
+	 */
 	public static final String BUTTON_ATTR_LOCATION = "location";
+	/**
+	 * the file path and name of the icon which can be displayed on the button
+	 */
 	public static final String BUTTON_ATTR_ICON = "icon";
+	/**
+	 * the action command. Defines what is to do if the button is clicked
+	 */
 	public static final String BUTTON_ATTR_ACTION = "action";
+	/**
+	 * if the defined action is "changeStateOfRole", this attribute defines which role state should be changed [String]
+	 */
+	public static final String BUTTON_ATTR_CHANGE_STAE_OF = "changeStateof";
+	/**
+	 * the name of content which is displayed on the button. Currently the content distance and scale are known.
+	 */
 	public static final String BUTTON_ATTR_CONTEXT = "content";
+	/**
+	 * the alignment of the text on the buttons. 
+	 * if the String starts with 'T' the text will be displayed on the top line of the button
+	 * if the String starts with 'B' the text will be displayed on the bottom line of the button
+	 * if the String starts ends 'L' the text will be displayed on the left side of the button
+	 * if the String starts ends 'R' the text will be displayed on the right side of the button
+	 * otherwise horizontal and vertical center will be used as default
+	 */
 	public static final String BUTTON_ATTR_ALIGNTEXT = "alignText";
 
 	Vector menuItems = new Vector(10);

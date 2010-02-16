@@ -4,8 +4,6 @@ package CacheWolf.navi.touchControls;
 import ewe.fx.Image;
 import ewe.fx.mImage;
 import ewe.graphics.AniImage;
-import ewe.sys.Vm;
-import ewe.util.ByteArray;
 
 public class MovingMapControlItemText extends MovingMapControlItem {
 
