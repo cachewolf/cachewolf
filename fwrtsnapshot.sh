@@ -38,7 +38,7 @@ chmod -R u+w published
 printf '1,$g/ 12M/s///\nw\nq\n' | ed -s published/Jar/CacheWolf.bat
 cp work/CacheWolf.ewe published/
 (cd res_noewe && cp -R * ../published/dat/)
-cp resources/attributes-big/*.gif resources/attributes/*-non.gif \
+cp resources/attributes-big/*.gif resources/attributes/*-non.gif resources/attributes/mmc240x320/*.* resources/attributes/mmc240x320/*.* resources/attributes/mmcDefault/*.*\
     published/dat/attributes/
 cp platform-dep/PocketPC2003/ewe.dll published/dat/
 mkdir -p published/dat/PNA-WinCE42
