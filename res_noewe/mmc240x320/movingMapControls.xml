@@ -13,8 +13,8 @@
 	<role name="zoom_manually"/><!-- this name of role is fix in code! -->
 
 	<!-- Buttons right side -->
-	<button action="close" fromRight="51" fromTop="1" location="mmc240x320/bg_q.png"  icon="mmc240x320/icon_close.png"  alpha="80" visibleIf="!menu" />
-	<button action="moveToGps" fromRight="51" fromTop="50" location="mmc240x320/bg_q.png"  icon="mmc240x320/icon_gps.png"  alpha="80" visibleIf="!menu" />
+	<button action="close" fromRight="49" fromTop="1" location="mmc240x320/bg_q.png"  icon="mmc240x320/icon_close.png"  alpha="80" visibleIf="!menu" />
+	<button action="moveToGps" fromRight="49" fromTop="50" location="mmc240x320/bg_q.png"  icon="mmc240x320/icon_gps.png"  alpha="80" visibleIf="!menu" />
 	
 	<!-- buttom text icons -->
 	<button action="changeStateOfRole" fromLeft="0" fromBottom="33" changeStateof="menu" location="mmc240x320/text_left_110x33.png" alpha="220" visibleIf="!menu" content="distance" alignText="BL"/>
@@ -22,49 +22,49 @@
 	<button action="changeStateOfRole" fromRight="110" fromBottom="33" changeStateof="menu" location="mmc240x320/text_right_110x33.png" alpha="220" visibleIf="!menu" content="scale" alignText="BR"/>
 
 	<!-- menu items -->
-	<button action="changeStateOfRole" fromLeft="1" fromTop="1" changeStateof="map" location="mmc240x320/bg_q.png"  icon="mmc240x320/icon_map.png"  visibleIf="menu+!map" />	
-	<button action="changeStateOfRole" fromLeft="1" fromTop="1" changeStateof="map" location="mmc240x320/bg_q_active.png"  icon="mmc240x320/icon_map.png" visibleIf="menu+map" />	
+	<button action="changeStateOfRole" fromRight="49" fromTop="1" changeStateof="map" location="mmc240x320/bg_q.png"  icon="mmc240x320/icon_map.png"  visibleIf="menu+!map" />	
+	<button action="changeStateOfRole" fromRight="49" fromTop="1" changeStateof="map" location="mmc240x320/bg_q_active.png"  icon="mmc240x320/icon_map.png" visibleIf="menu+map" />	
 	
-	<button action="changeStateOfRole" fromLeft="1" fromTop="50" changeStateof="zoom" location="mmc240x320/bg_q.png"  icon="mmc240x320/icon_zoom.png" visibleIf="menu+!zoom" />	
-	<button action="changeStateOfRole" fromLeft="1" fromTop="50" changeStateof="zoom" location="mmc240x320/bg_q_active.png"  icon="mmc240x320/icon_zoom.png" visibleIf="menu+zoom" />	
+	<button action="changeStateOfRole" fromRight="49" fromTop="50" changeStateof="zoom" location="mmc240x320/bg_q.png"  icon="mmc240x320/icon_zoom.png" visibleIf="menu+!zoom" />	
+	<button action="changeStateOfRole" fromRight="49" fromTop="50" changeStateof="zoom" location="mmc240x320/bg_q_active.png"  icon="mmc240x320/icon_zoom.png" visibleIf="menu+zoom" />	
 	
-	<button action="changeStateOfRole" fromLeft="1" fromTop="100" changeStateof="detail" location="mmc240x320/bg_q.png" icon="mmc240x320/icon_map_pos_dest.png" visibleIf="menu+!detail" />	
-	<button action="changeStateOfRole" fromLeft="1" fromTop="100" changeStateof="detail" location="mmc240x320/bg_q_active.png"  icon="mmc240x320/icon_map_pos_dest.png" visibleIf="menu+detail" />	
+	<button action="changeStateOfRole" fromRight="49" fromTop="100" changeStateof="detail" location="mmc240x320/bg_q.png" icon="mmc240x320/icon_map_pos_dest.png" visibleIf="menu+!detail" />	
+	<button action="changeStateOfRole" fromRight="49" fromTop="100" changeStateof="detail" location="mmc240x320/bg_q_active.png"  icon="mmc240x320/icon_map_pos_dest.png" visibleIf="menu+detail" />	
 		
 	
-	<button action="changeStateOfRole" fromLeft="1" fromTop="150" changeStateof="centermap" location="mmc240x320/bg_q.png" icon="mmc240x320/icon_to_centre.png" visibleIf="menu+!centermap" />	
-	<button action="changeStateOfRole" fromLeft="1" fromTop="150" changeStateof="centermap" location="mmc240x320/bg_q_active.png"  icon="mmc240x320/icon_to_centre.png" visibleIf="menu+centermap" />	
+	<button action="changeStateOfRole" fromRight="49" fromTop="150" changeStateof="centermap" location="mmc240x320/bg_q.png" icon="mmc240x320/icon_to_centre.png" visibleIf="menu+!centermap" />	
+	<button action="changeStateOfRole" fromRight="49" fromTop="150" changeStateof="centermap" location="mmc240x320/bg_q_active.png"  icon="mmc240x320/icon_to_centre.png" visibleIf="menu+centermap" />	
 	
 	
 	<!-- sub menu: map -->
-	<button action="selectMap" fromLeft="54" fromTop="0"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_folder.png"  visibleIf="menu+map" localeDefault="Select a map manually$s" localeID="4235" alignText="CR"/>	
-	<button action="changeMapDir" fromLeft="54" fromTop="50"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_folders.png"  visibleIf="menu+map" localeDefault="Change map directory" localeID="4237" alignText="CR"/>	
-	<button action="changeStateOfRole" fromLeft="54" fromTop="100" changeStateof="show_map" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map.png"  visibleIf="menu+map+!show_map" localeDefault="Show map" localeID="4239" alignText="CR"/>	
-	<button action="changeStateOfRole" fromLeft="54" fromTop="100" changeStateof="show_map" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_nomap.png"  visibleIf="menu+map+show_map" localeDefault="Hide map" localeID="4241" alignText="CR"/>	
-	<button action="changeStateOfRole" fromLeft="54" fromTop="150" changeStateof="fill_white" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_no_fill.png"  visibleIf="menu+map+!fill_white" localeDefault="Show white areas" localeID="4267" alignText="CR"/>	
-	<button action="changeStateOfRole" fromLeft="54" fromTop="150" changeStateof="fill_white" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_fill.png"  visibleIf="menu+map+fill_white" localeDefault="Fill white areas" localeID="4266" alignText="CR"/>	
-	<button action="changeStateOfRole" fromLeft="54" fromTop="200" changeStateof="show_caches" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_cache.png"  visibleIf="menu+map+!show_caches" localeDefault="Alle Cache anzeigen" localeID="4268" alignText="CR"/>	
-	<button action="changeStateOfRole" fromLeft="54" fromTop="200" changeStateof="show_caches" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_no_cache.png"  visibleIf="menu+map+show_caches" localeDefault="Keine Cache anzeigen" localeID="4269" alignText="CR"/>	
+	<button action="selectMap" fromLeft="5" fromTop="0"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_folder.png"  visibleIf="menu+map" localeDefault="Select a map manually$s" localeID="4235" alignText="CR"/>	
+	<button action="changeMapDir" fromLeft="5" fromTop="50"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_folders.png"  visibleIf="menu+map" localeDefault="Change map directory" localeID="4237" alignText="CR"/>	
+	<button action="changeStateOfRole" fromLeft="5" fromTop="100" changeStateof="show_map" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map.png"  visibleIf="menu+map+!show_map" localeDefault="Show map" localeID="4239" alignText="CR"/>	
+	<button action="changeStateOfRole" fromLeft="5" fromTop="100" changeStateof="show_map" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_nomap.png"  visibleIf="menu+map+show_map" localeDefault="Hide map" localeID="4241" alignText="CR"/>	
+	<button action="changeStateOfRole" fromLeft="5" fromTop="150" changeStateof="fill_white" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_no_fill.png"  visibleIf="menu+map+!fill_white" localeDefault="Show white areas" localeID="4267" alignText="CR"/>	
+	<button action="changeStateOfRole" fromLeft="5" fromTop="150" changeStateof="fill_white" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_fill.png"  visibleIf="menu+map+fill_white" localeDefault="Fill white areas" localeID="4266" alignText="CR"/>	
+	<button action="changeStateOfRole" fromLeft="5" fromTop="200" changeStateof="show_caches" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_cache.png"  visibleIf="menu+map+!show_caches" localeDefault="Alle Cache anzeigen" localeID="4268" alignText="CR"/>	
+	<button action="changeStateOfRole" fromLeft="5" fromTop="200" changeStateof="show_caches" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_no_cache.png"  visibleIf="menu+map+show_caches" localeDefault="Keine Cache anzeigen" localeID="4269" alignText="CR"/>	
 		
 	<!-- sub menu: zoom -->
-	<button action="changeStateOfRole" fromLeft="54" fromTop="0" changeStateof="zoom_manually" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_zoom.png"  visibleIf="menu+zoom" localeDefault="Activate manually zoom" localeID="4292" alignText="CR"/>	
-	<button action="zoomin" fromLeft="54" fromTop="50"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_zoom_in.png"  visibleIf="menu+zoom" localeDefault="Zoom in" localeID="4291" alignText="CR"/>	
-	<button action="zoomout" fromLeft="54" fromTop="100"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_zoom_out.png"  visibleIf="menu+zoom" localeDefault="Zoom out" localeID="4290" alignText="CR"/>	
-	<button action="1to1" fromLeft="54" fromTop="150"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_1to1.png"  visibleIf="menu+zoom" localeDefault="Zoom to original resolution" localeID="4293" alignText="CR"/>	
+	<button action="changeStateOfRole" fromLeft="5" fromTop="0" changeStateof="zoom_manually" location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_zoom.png"  visibleIf="menu+zoom" localeDefault="Activate manually zoom" localeID="4292" alignText="CR"/>	
+	<button action="zoomin" fromLeft="5" fromTop="50"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_zoom_in.png"  visibleIf="menu+zoom" localeDefault="Zoom in" localeID="4291" alignText="CR"/>	
+	<button action="zoomout" fromLeft="5" fromTop="100"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_zoom_out.png"  visibleIf="menu+zoom" localeDefault="Zoom out" localeID="4290" alignText="CR"/>	
+	<button action="1to1" fromLeft="5" fromTop="150"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_1to1.png"  visibleIf="menu+zoom" localeDefault="Zoom to original resolution" localeID="4293" alignText="CR"/>	
 		
 	
 	<!-- sub menu: center map -->
-	<button action="moveToDest" fromLeft="54" fromTop="0"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_to_target.png"  visibleIf="menu+centermap" localeDefault="Move to goto point" localeID="4260" alignText="CR"/>	
-	<button action="moveToGps" fromLeft="54" fromTop="50"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_to_gps.png"  visibleIf="menu+centermap" localeDefault="Move to GPS position" localeID="4262" alignText="CR"/>	
-	<button action="moveToCenter" fromLeft="54" fromTop="100"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_to_centre.png"  visibleIf="menu+centermap" localeDefault="Move to centre" localeID="4264" alignText="CR"/>	
+	<button action="moveToDest" fromLeft="5" fromTop="0"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_to_target.png"  visibleIf="menu+centermap" localeDefault="Move to goto point" localeID="4260" alignText="CR"/>	
+	<button action="moveToGps" fromLeft="5" fromTop="50"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_to_gps.png"  visibleIf="menu+centermap" localeDefault="Move to GPS position" localeID="4262" alignText="CR"/>	
+	<button action="moveToCenter" fromLeft="5" fromTop="100"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_to_centre.png"  visibleIf="menu+centermap" localeDefault="Move to centre" localeID="4264" alignText="CR"/>	
 	
 	<!-- sub menu: detail -->
-	<button action="highestResGpsDest" fromLeft="54" fromTop="0"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_pos_dest.png"  visibleIf="menu+detail" localeDefault= "Highest res. containing dest.  cur. position" localeID="4244" alignText="CR"/>	
-	<button action="highestResolution" fromLeft="54" fromTop="50"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_highest_res.png"  visibleIf="menu+detail" localeDefault="Highest resolution" localeID="4246" alignText="CR"/>	
-	<button action="keepManResolution" fromLeft="54" fromTop="100"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_man_res.png"  visibleIf="menu+detail" localeDefault="Keep manual resolution" localeID="4248" alignText="CR"/>	
-	<button action="allCachesRes" fromLeft="54" fromTop="150"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_all.png"  visibleIf="menu+detail" localeDefault="Load a map containing all marked caches" localeID="4252" alignText="CR"/>	
-	<button action="moreDetails" fromLeft="54" fromTop="200"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_more_details.png"  visibleIf="menu+detail" localeDefault="Load a map with more details" localeID="4254" alignText="CR"/>	
-	<button action="moreOverview" fromLeft="54" fromTop="250"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_less_details.png"  visibleIf="menu+detail" localeDefault="Load a map for a better overview" localeID="4256" alignText="CR"/>	
+	<button action="highestResGpsDest" fromLeft="5" fromTop="0"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_pos_dest.png"  visibleIf="menu+detail" localeDefault= "Highest res. containing dest.  cur. position" localeID="4244" alignText="CR"/>	
+	<button action="highestResolution" fromLeft="5" fromTop="50"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_highest_res.png"  visibleIf="menu+detail" localeDefault="Highest resolution" localeID="4246" alignText="CR"/>	
+	<button action="keepManResolution" fromLeft="5" fromTop="100"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_man_res.png"  visibleIf="menu+detail" localeDefault="Keep manual resolution" localeID="4248" alignText="CR"/>	
+	<button action="allCachesRes" fromLeft="5" fromTop="150"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_all.png"  visibleIf="menu+detail" localeDefault="Load a map containing all marked caches" localeID="4252" alignText="CR"/>	
+	<button action="moreDetails" fromLeft="5" fromTop="200"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_more_details.png"  visibleIf="menu+detail" localeDefault="Load a map with more details" localeID="4254" alignText="CR"/>	
+	<button action="moreOverview" fromLeft="5" fromTop="250"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_less_details.png"  visibleIf="menu+detail" localeDefault="Load a map for a better overview" localeID="4256" alignText="CR"/>	
 	
 	<button action="changeStateOfRole" fromRight="45" fromTop="100" changeStateof="zoom_manually" location="mmcDefault/icon_zoom.png"  icon="mmcDefault/icon_zoom.png"  visibleIf="!menu+zoom_manually"/>	
 </mmc>

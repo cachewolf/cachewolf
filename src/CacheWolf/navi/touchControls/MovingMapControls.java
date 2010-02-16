@@ -1,10 +1,8 @@
 package CacheWolf.navi.touchControls;
 
-import CacheWolf.Global;
 import CacheWolf.navi.MovingMap;
 import ewe.fx.Dimension;
 import ewe.fx.Point;
-import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.sys.Vm;
 import ewe.util.Hashtable;
@@ -16,15 +14,21 @@ import ewe.util.Vector;
 
 public class MovingMapControls implements ICommandListener {
 
+	private static final String ROLE_ZOOM_MANUALLY = "zoom_manually";
+
+	private static final String ROLE_FILL_WHITE = "fill_white";
+
+	private static final String ROLE_SHOW_CACHES = "show_caches";
+
+	private static final String ROLE_SHOW_MAP = "show_map";
+
+	private static final String ROLE_MENU = "menu";
+
 	Vector buttons = null;
 
 	private boolean vga;
 
 	private MovingMap movingMap;
-
-	// private TextImage iconHelp;
-
-	private boolean helpIsVisible = false;
 
 	private int lastTime = Vm.getTimeStamp();
 
@@ -39,7 +43,6 @@ public class MovingMapControls implements ICommandListener {
 		this.movingMap = movingMap;
 		Dimension di = new Dimension();
 		movingMap.getDisplayedSize(di);
-		Vm.debug(di.height+" "+ di.width);
 		MovingMapControlSettings movingMapControlSettings = new MovingMapControlSettings(
 				vga, roles);
 		
@@ -102,41 +105,51 @@ public class MovingMapControls implements ICommandListener {
 			}
 		}
 		setStateOfIcons();
+		
+		boolean action = checkRolesForAction(roleName, b.booleanValue());
 		movingMap.repaintNow();
 		
-		return checkRolesForAction(roleName, b.booleanValue());
+		return action;
 	}
 
 	private boolean checkRolesForAction(String role, boolean state) {
 		if (role==null) {
 			return false;
 		}
-		if ("show_map".equals(role)) {
+		if (ROLE_SHOW_MAP.equals(role)) {
 			if (state) {
 				return movingMap.handleCommand(SHOW_MAP);
 			}else
 				return movingMap.handleCommand(HIDE_MAP);
 		}
-		if ("show_caches".equals(role)) {
+		if (ROLE_SHOW_CACHES.equals(role)) {
 			if (state) {
 				return movingMap.handleCommand(SHOW_CACHES);
 			}else
 				return movingMap.handleCommand(HIDE_CACHES);
 		}
 		
-		if ("fill_white".equals(role)) {
+		if (ROLE_FILL_WHITE.equals(role)) {
 			if (state) {
 				return movingMap.handleCommand(FILL_MAP);
 			}else
 				return movingMap.handleCommand(NO_FILL_MAP);
 		}
 		
-		if ("zoom_manually".equals(role)) {
+		if (ROLE_ZOOM_MANUALLY.equals(role)) {
 			if (state) {
 				movingMap.setZoomingMode(true);
 			}else
 				movingMap.setZoomingMode(false);
 			return true;
+		}
+		
+		if (ROLE_MENU.equals(role)) {
+			if (state) {
+				movingMap.setPaintPosDestLine(false);
+			}else
+				movingMap.setPaintPosDestLine(true);
+			return false;
 		}
 		return false;
 	}
@@ -193,12 +206,6 @@ public class MovingMapControls implements ICommandListener {
 
 			if ((item.xProperties & MovingMapControlItem.IS_ICON_WITH_COMMAND) == 0
 					&& (item.xProperties & MovingMapControlItem.IS_ICON_WITH_TEXT) == 0) {
-				// System.out
-				// .println(((item.xProperties &
-				// MovingMapControlItem.IS_ICON_WITH_COMMAND) == 0)
-				// + " "
-				// + ((item.xProperties &
-				// MovingMapControlItem.IS_ICON_WITH_TEXT) == 0));
 			}
 
 			AniImage ani = item.getImage();
@@ -236,39 +243,32 @@ public class MovingMapControls implements ICommandListener {
 			AniImage ani = item.getImage();
 			if (which == ani) {
 				String command = item.getActionCommand();
-				if (helpIsVisible && item.getHelp() != null) {
-					// iconHelp.setText(item.getHelp());
-					movingMap.repaintNow();
-				} else if ("changeStateOfRole".equals(command)) {
+				 if ("changeStateOfRole".equals(command)) {
 					boolean val =changeRoleState(item.getRoleToChange());
 					if (val) {
-						changeRoleState("menu", Boolean.FALSE);
+						changeRoleState(ROLE_MENU, Boolean.FALSE);
 					}
 					setStateOfIcons();
 					movingMap.repaintNow();
 					return val;
 				} else if (movingMap.handleCommand(command)) {
-					changeRoleState("menu", Boolean.FALSE);
+					changeRoleState(ROLE_MENU, Boolean.FALSE);
 				}				
 				return true;
 			}
 		}
-		changeRoleState("menu", Boolean.FALSE);
-		return false;
+		changeRoleState(ROLE_MENU, Boolean.FALSE);
+		return true;
 	}
 
 	
 
 	public boolean handleCommand(String actionCommand) {
-
 		if (CLOSE.equals(actionCommand)) {
-			roles.put("menu", Boolean.FALSE);
+			 return changeRoleState(ROLE_MENU, Boolean.FALSE);
 		}
-
 		return false;
 	}
-
-	// Methods for the eventlistener
 
 	/**
 	 * Method to react to user.
@@ -277,25 +277,36 @@ public class MovingMapControls implements ICommandListener {
 		if (which == null)
 			return false;
 
-		// if menu is oben but klickt to an other place, close menu
 		boolean imageClicked = imageClicked(which);
-
-		// boolean menuIsVisible= getStateofRole("menu");;
-		// if (!imageClicked && menuIsVisible) {
-		// roles.put("menu",Boolean.FALSE);
-		// }
 		return imageClicked;
 	}
 
 
 	public boolean imageBeginDragged(AniImage which, Point pos) {
+		boolean contains = containsImage(which);
 
-		imageClicked(which);
-		// no moving of images is needed here. Return false to say the moving event is cleared.
+		if (contains) {
+			imageClicked(which);
+			// if there was the right image, return true to say the event is handled
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean containsImage(AniImage which) {
+		if (which==null) {
+			return false;
+		}
+		for (int i = 0; i < buttons.size(); i++) {
+			MovingMapControlItem item = (MovingMapControlItem) buttons.get(i);
+			AniImage ani = item.getImage();
+			if (which == ani) {
+				return true;
+			}
+		}
 		return false;
 	}
 
-	
 	public static class Role{
 		Boolean state = Boolean.FALSE;
 		String rolesToDisable[]=null;
