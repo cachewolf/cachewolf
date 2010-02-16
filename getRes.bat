@@ -11,6 +11,14 @@ copy .\res_noewe\*.* .\work\*.*
 mkdir .\work\attributes
 copy .\resources\attributes-big\*.* .\work\attributes\*.*
 copy .\resources\attributes\*-non.gif .\work\attributes\*.*
+rem
+mkdir .\work\mmcDefault
+copy .\res_noewe\mmcDefault\*.* .\work\mmcDefault\*.*
+mkdir .\work\mmc240x320
+copy .\res_noewe\mmc240x320\*.* .\work\mmc240x320\*.*
+mkdir .\work\mmc480x640
+copy .\res_noewe\mmc480x640\*.* .\work\mmc480x640\*.*
+rem
 mkdir .\work\webmapservices
 copy .\res_noewe\webmapservices\*.* .\work\webmapservices\*.*
 mkdir .\work\languages
