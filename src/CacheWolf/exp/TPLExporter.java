@@ -33,6 +33,7 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
+import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.Common;
@@ -202,6 +203,10 @@ public class TPLExporter {
 			if(fc.execute() == FormBase.IDCANCEL) return;
 			File saveTo = fc.getChosenFile();
 			pref.setExportPath(expName, saveTo.getPath());
+			Time nowdate = new Time();
+			nowdate = nowdate.setFormat("yyyy-MM-dd");
+			Time nowtime = new Time();
+			nowtime = nowtime.setFormat("HH:mm");
 
 			for(int i = 0; i<counter;i++){
 				ch = cacheDB.get(i);
@@ -250,12 +255,25 @@ public class TPLExporter {
 						varParams.put("LATLON", ch.LatLon);
 						varParams.put("LAT", dec.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
 						varParams.put("LON", dec.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
-						varParams.put("STATUS", ch.getCacheStatus());
+						String stmp = ch.getCacheStatus();
+						String logType=MyLocale.getMsg(354, "Write note");
+						varParams.put("STATUS", stmp);
+						if (ch.is_found()) {
+							logType=MyLocale.getMsg(358, "Found it");
+						}
+						else {
+							for (int j = 313; j < 321; j++) {
+								if (stmp.equals(MyLocale.getMsg(j, "org"))) {
+									logType=MyLocale.getMsg(j+40, "en");
+									break;
+								}
+							}
+						}
+						varParams.put("GC_LOGTYPE", logType);
 						varParams.put("STATUS_DATE", ch.GetStatusDate());
 						varParams.put("STATUS_TIME", ch.GetStatusTime());
 						varParams.put("DATE", ch.getDateHidden());
 						varParams.put("URL", det != null ? det.URL : "");
-						varParams.put("GC_LOGTYPE", (ch.is_found()?"Found it":"Didn't find it"));
 						varParams.put("DESCRIPTION", det != null ? det.LongDescription : "");
 						String cacheName=ch.getCacheName();
 						if (myFilter.codec instanceof AsciiCodec) {
@@ -279,6 +297,9 @@ public class TPLExporter {
 						varParams.put("SHORTNAME", shortName);
 						varParams.put("TRAVELBUG", (ch.has_bugs()?"Y":"N"));
 						varParams.put("GMTYPE", gm.getIcon(ch));
+						varParams.put("NOW_DATE",nowdate.setToCurrentTime().toString());
+						varParams.put("NOW_TIME",nowtime.setToCurrentTime().toString());
+
 						cache_index.add(varParams);
 					}catch(Exception e){
 						Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
