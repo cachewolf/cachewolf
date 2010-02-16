@@ -159,11 +159,15 @@ public class DetailsPanel extends CellPanel {
 		chcSize = new mChoice(CacheSize.guiSizeStrings(), 0);
 		chcSize.alwaysDrop = true;
 		chcStatus = new mComboBox(new String[] { "",
-				MyLocale.getMsg(313, "Flag 1"), MyLocale.getMsg(314, "Flag 2"),
-				MyLocale.getMsg(315, "Flag 3"), MyLocale.getMsg(316, "Flag 4"),
-				MyLocale.getMsg(317, "Search"), MyLocale.getMsg(318, "Found"),
+				MyLocale.getMsg(318, "Found"),
 				MyLocale.getMsg(319, "Not Found"),
-				MyLocale.getMsg(320, "Owner") }, 0);
+				MyLocale.getMsg(314, "Write note"), 
+				MyLocale.getMsg(315, "Needs Archived"),
+				MyLocale.getMsg(316, "Needs Maintenance"),
+				MyLocale.getMsg(317, "Search"), 
+				MyLocale.getMsg(313, "Flag 1"),
+				MyLocale.getMsg(320, "Owner")
+				}, 0);
 		inpWaypoint = new mInput();
 		inpName = new mInput();
 
