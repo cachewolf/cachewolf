@@ -23,16 +23,23 @@ mkdir -p work/languages
 mkdir -p work/templates
 mkdir -p work/exporticons
 mkdir -p work/symbols
+mkdir -p work/mmcDefault
+mkdir -p work/mmc240x320
+mkdir -p work/mmc480x640
 
 # get ressources
 cp -fa resources/*.* work
 cp -fa res_noewe/*.* work
 cp -fa resources/attributes/* work/attributes
+cp -fa res_noewe/mmcDefault/* work/mmcDefault/
+cp -fa res_noewe/mmc240x320/* work/mmc240x320/
+cp -fa res_noewe/mmc480x640/* work/mmc480x640/
 cp -fa res_noewe/webmapservices/* work/webmapservices/
 cp -fa res_noewe/languages/* work/languages/
 cp -fa res_noewe/templates/* work/templates/
 cp -fa res_noewe/exporticons/* work/exporticons/
 cp -fa res_noewe/symbols/* work/symbols/
+
 
 # set sane permissions
 find work -type f -exec chmod 644 "{}" \;

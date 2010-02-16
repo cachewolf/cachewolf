@@ -41,11 +41,11 @@ cp work/CacheWolf.ewe published/
 cp resources/attributes-big/*.gif resources/attributes/*-non.gif
     published/dat/attributes/
 mkdir -p published/dat/mmc240x320
-cp res_noewe/mmc240x320/*.* published/dat/mmc240x320
+cp res_noewe/mmc240x320/* published/dat/mmc240x320
 mkdir -p published/dat/mmc480x640
-cp res_noewe/mmc480x640/*.* published/dat/mmc480x640
+cp res_noewe/mmc480x640/* published/dat/mmc480x640
 mkdir -p published/dat/mmcDefault
-cp res_noewe/mmcDefault/*.* published/dat/mmcDefault
+cp res_noewe/mmcDefault/* published/dat/mmcDefault
 cp platform-dep/PocketPC2003/ewe.dll published/dat/
 mkdir -p published/dat/PNA-WinCE42
 cp -R platform-dep/PNA-WinCE42/ewe.dll published/dat/PNA-WinCE42/
