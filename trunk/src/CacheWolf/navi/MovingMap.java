@@ -9,20 +9,55 @@ import CacheWolf.InfoBox;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
-import ewe.ui.*;
-import ewe.graphics.*;
-import ewe.io.IOException;
-import ewe.sys.*;
-import ewe.sys.Double;
+import CacheWolf.navi.touchControls.ICommandListener;
+import CacheWolf.navi.touchControls.MovingMapControls;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.fx.*;
+import ewe.fx.Color;
+import ewe.fx.Dimension;
+import ewe.fx.Font;
+import ewe.fx.FontMetrics;
+import ewe.fx.Graphics;
+import ewe.fx.Image;
+import ewe.fx.Pen;
+import ewe.fx.Point;
+import ewe.fx.Rect;
+import ewe.fx.mImage;
+import ewe.graphics.AniImage;
+import ewe.graphics.ImageDragContext;
+import ewe.graphics.ImageList;
+import ewe.graphics.InteractivePanel;
+import ewe.io.IOException;
+import ewe.sys.Convert;
+import ewe.sys.Double;
+import ewe.sys.SystemResourceException;
+import ewe.sys.Vm;
+import ewe.ui.CellConstants;
+import ewe.ui.ControlConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.Event;
+import ewe.ui.EventListener;
+import ewe.ui.Form;
+import ewe.ui.FormBase;
+import ewe.ui.FormEvent;
+import ewe.ui.FormFrame;
+import ewe.ui.IKeys;
+import ewe.ui.KeyEvent;
+import ewe.ui.Menu;
+import ewe.ui.MenuEvent;
+import ewe.ui.MenuItem;
+import ewe.ui.MessageBox;
+import ewe.ui.PenEvent;
+import ewe.ui.WindowConstants;
+import ewe.ui.WindowEvent;
+import ewe.ui.mButton;
+import ewe.ui.mList;
 import ewe.util.Vector;
 
 /**
  *	Class to handle a moving map.
  */
-public final class MovingMap extends Form {
+public final class MovingMap extends Form implements ICommandListener {
 	public final static int gotFix = 4; //green
 	public final static int lostFix = 3; //yellow
 	public final static int noGPSData = 2; // red
@@ -50,18 +85,6 @@ public final class MovingMap extends Form {
 	AniImage statusImageHaveSignal;
 	AniImage statusImageNoSignal;
 	AniImage statusImageNoGps;
-	AniImage bottonImageClose;
-	AniImage bottonImageChooseMap;
-	AniImage buttonImageGpsOn;
-	AniImage buttonImageLens;
-	AniImage buttonImageLensActivated;
-	AniImage buttonImageLensActivatedZoomIn;
-	AniImage buttonImageLensActivatedZoomOut;
-	AniImage buttonImageZoom1to1;
-	AniImage DistanceImage;
-	Graphics DistanceImageGraphics;
-	AniImage ScaleImage;
-	Graphics ScaleImageGraphics;
 	MapSymbol posCircle;
 	String MARK_CACHE_IMAGE;
 	int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
@@ -77,9 +100,13 @@ public final class MovingMap extends Form {
 	boolean zoomingMode = false;
 	public boolean mapsloaded = false;
 	boolean additionalOverlaysDeleted=true;
+	protected boolean paintPosDestLine=true;
 	Point lastRepaintMapPos = null;
 	double lastDistance = -1;
 
+	// the layer for the buttons
+	private MovingMapControls controlsLayer;
+	
 	float lastHighestResolutionGPSDestScale = -1;
 
 	public static final int tileWidth = 100;
@@ -90,6 +117,7 @@ public final class MovingMap extends Form {
 	private int lastYPos;
 	private int lastWidth;
 	private int lastHeight;
+	private boolean mobileVGA = false;
 
 	public boolean isFillWhiteArea() {
 		return pref.fillWhiteArea;
@@ -119,6 +147,19 @@ public final class MovingMap extends Form {
 		}
 
 	}
+	
+	
+	public boolean isMobileVga() {
+		return mobileVGA;
+	}
+	
+	public InteractivePanel getMmp() {
+		return mmp;
+	}
+	
+	public MovingMapControls getControlsLayer() {
+		return controlsLayer;
+	}
 
 	public MovingMap(Navigate nav, CacheDB cacheDB){
 		this.cacheDB = cacheDB;
@@ -131,78 +172,31 @@ public final class MovingMap extends Form {
 		this.hasTopBar = false;
 		this.noBorder = true;
 		this.setPreferredSize(pref.myAppWidth, pref.myAppHeight);
+//		this.setPreferredSize(240,320);
 		this.title = "Moving Map";
 		this.backGround = new Color(254,254,254); // background must not be black because black is interpreted as transparent and transparent images above (eg trackoverlay) want be drawn in windows-VM, so be care, don|t use white either
 
 		mmp = new MovingMapPanel(this);
 		this.addLast(mmp);
 
-		boolean mobileVGA = false;
-		if (Vm.isMobile() && MyLocale.getScreenWidth() >= 400) mobileVGA = true;
+		if (Vm.isMobile() && MyLocale.getScreenWidth() >= 400) 
+			mobileVGA = true;
 		String imagesize="";
 		if(mobileVGA) imagesize="_vga";
 
+		
 		statusImageHaveSignal = new AniImage("position_green"+imagesize+".png");
 		statusImageNoSignal = new AniImage("position_yellow"+imagesize+".png");
 		statusImageNoGps = new AniImage("position_red"+imagesize+".png");
-		bottonImageChooseMap = new AniImage("choose_map"+imagesize+".gif");
-		buttonImageGpsOn = new AniImage("snap2gps"+imagesize+".gif");
-		buttonImageLens = new AniImage("lupe"+imagesize+".png");
-		buttonImageLensActivated = new AniImage("lupe_activated"+imagesize+".png");
-		buttonImageLensActivatedZoomIn = new AniImage("lupe_activated_zin"+imagesize+".png");
-		buttonImageLensActivatedZoomOut = new AniImage("lupe_activated_zout"+imagesize+".png");
-		buttonImageZoom1to1 = new AniImage("zoom1to1"+imagesize+".png");
 		posCircle = new MapSymbol("position_green"+imagesize+".png", "gps-position", new CWPoint());
 		MARK_CACHE_IMAGE = "mark_cache.png";
-		//Close
-		DrawnIcon closeX;
-		if(mobileVGA)
-			closeX = new DrawnIcon(DrawnIcon.CROSS,30,30,new Color(0,0,0));
-		else
-			closeX = new DrawnIcon(DrawnIcon.CROSS,15,15,new Color(0,0,0));
-		bottonImageClose = new AniImage(new Image(closeX.getWidth(), closeX.getHeight()));
-		Graphics tmp = new Graphics(bottonImageClose.image);
-		tmp.setColor(255, 255, 255);
-		tmp.fillRect(0, 0, closeX.getWidth(), closeX.getHeight());
-		closeX.doDraw(tmp, 0);
-		bottonImageClose.properties |= mImage.AlwaysOnTop;
-		mmp.addImage(bottonImageClose);
-		//CenterScreenToGPSPosition (also starts GPS)
-		buttonImageGpsOn.properties = mImage.AlwaysOnTop;
-		mmp.addImage(buttonImageGpsOn);
-		//ImageChooseMap
-		bottonImageChooseMap.properties = mImage.AlwaysOnTop;
-		mmp.addImage(bottonImageChooseMap);
 		//directionArrows
 		directionArrows.properties = mImage.AlwaysOnTop;
 		mmp.addImage(directionArrows);
-		//ImageLens
-		buttonImageLens.properties = mImage.AlwaysOnTop;
-		buttonImageLensActivated.properties = mImage.AlwaysOnTop;
-		buttonImageLensActivatedZoomIn.properties = mImage.AlwaysOnTop;
-		buttonImageLensActivatedZoomOut.properties = mImage.AlwaysOnTop;
-		mmp.addImage(buttonImageLens);
-		//Zoom1to1
-		buttonImageZoom1to1.properties = mImage.AlwaysOnTop;
-		mmp.addImage(buttonImageZoom1to1);
 		//target distance
 		int fontSize = ( 3 * pref.fontSize ) / 2;
 		Font imageFont = new Font("Helvetica", Font.PLAIN, fontSize );
 		fm = getFontMetrics(imageFont);
-		DistanceImage = new AniImage();
-		DistanceImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight() ), Color.White); // consider the size of the font used
-		DistanceImageGraphics = new Graphics(DistanceImage.image);
-		DistanceImageGraphics.setFont(imageFont);
-		DistanceImage.properties = mImage.AlwaysOnTop;
-		mmp.addImage(DistanceImage);
-		//scale
-		ScaleImage = new AniImage();
-		ScaleImage.setImage(new Image(MyLocale.getScreenWidth()/2, fm.getHeight() ), Color.White); // consider the size of the font used
-		ScaleImageGraphics = new Graphics(ScaleImage.image);
-		ScaleImageGraphics.setFont(imageFont);
-		ScaleImage.properties = mImage.AlwaysOnTop;
-		mmp.addImage(ScaleImage);
-
 		setGpsStatus(noGPS);
 		posCircle.properties = mImage.AlwaysOnTop;
 		mmp.addImage(posCircle);
@@ -214,6 +208,10 @@ public final class MovingMap extends Form {
 		lastHighestResolutionGPSDestScale = -1;
 
 		lastRepaintMapPos = new Point(pref.myAppWidth +1, pref.myAppHeight +1);
+		
+		controlsLayer = new MovingMapControls(this);
+		
+		
 	}
 
 	public void resizeTo(int w,int h) {
@@ -223,17 +221,7 @@ public final class MovingMap extends Form {
 
 	public void updateFormSize(int w, int h) {
 		MapImage.setScreenSize(w, h);
-		bottonImageClose.setLocation(w- bottonImageClose.getWidth()- 5, 5);
-		buttonImageGpsOn.setLocation(w- bottonImageChooseMap.getWidth()-5, bottonImageClose.getHeight() + 20);
-		bottonImageChooseMap.setLocation(10,10);
 		directionArrows.setLocation(w/2-directionArrows.getWidth()/2, 10);
-		buttonImageZoom1to1.setLocation(w - buttonImageZoom1to1.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 - buttonImageZoom1to1.getHeight() -10);
-		buttonImageLens.setLocation(w - buttonImageLens.getWidth()-10, h/2 - buttonImageLens.getHeight()/2 );
-		buttonImageLensActivated.setLocation(w - buttonImageLensActivated.getWidth()-10, h/2 - buttonImageLensActivated.getHeight()/2 );
-		buttonImageLensActivatedZoomIn.setLocation(w - buttonImageLensActivatedZoomIn.getWidth()-10, h/2 - buttonImageLensActivatedZoomIn.getHeight()/2 );
-		buttonImageLensActivatedZoomOut.setLocation(w - buttonImageLensActivatedZoomOut.getWidth()-10, h/2 - buttonImageLensActivatedZoomOut.getHeight()/2 );
-		DistanceImage.setLocation(0, h - DistanceImage.getHeight());
-		ScaleImage.setLocation(w - ScaleImage.getWidth(), h - ScaleImage.getHeight());
 		if (mmp.mapImage != null) mmp.mapImage.screenDimChanged();
 		if (posCircle != null) posCircle.screenDimChanged();
 		if (tracks != null) rebuildOverlaySet();
@@ -241,6 +229,9 @@ public final class MovingMap extends Form {
 			for (int i = symbols.size() -1; i >= 0; i-- ) {
 				((MapSymbol)symbols.get(i)).screenDimChanged();
 			}
+		}
+		if (controlsLayer!=null) {
+			controlsLayer.updateFormSize(w, h);
 		}
 	}
 
@@ -276,8 +267,6 @@ public final class MovingMap extends Form {
 	}
 
 	public void updateScale() {
-		ScaleImageGraphics.setColor(ScaleImage.transparentColor);
-		ScaleImageGraphics.fillRect(0, 0, ScaleImage.location.width,ScaleImage.location.height);
 
 		if (currentMap != null)
 		{
@@ -332,24 +321,18 @@ public final class MovingMap extends Form {
 			lineLengthMeters = Metrics.convertUnit( localizedLineLength, currentUnit, Metrics.METER);
 
 			int lineLengthPixels = (int)java.lang.Math.round( lineLengthMeters / currentMap.scale );
-			int backgroundStartX = ScaleImage.location.width - (lineLengthPixels + fm.getTextWidth(lineLengthString) + 7);
 
-			ScaleImageGraphics.setColor(new Color(250,250,250));
-			ScaleImageGraphics.fillRect(backgroundStartX, 0, ScaleImage.location.width - backgroundStartX ,ScaleImage.location.height);
-
-			ScaleImageGraphics.setPen(new Pen(Color.DarkBlue,Pen.SOLID,3));
-			ScaleImageGraphics.drawLine(backgroundStartX + 2, ScaleImage.location.height / 2, backgroundStartX+2+lineLengthPixels, ScaleImage.location.height / 2);
-			ScaleImageGraphics.setColor(Color.DarkBlue);
-			ScaleImageGraphics.drawText(lineLengthString , backgroundStartX + lineLengthPixels + 5, 0);
+			controlsLayer.updateContext("scale", lineLengthString,
+					lineLengthPixels);
 		}
+		else{
 
-		ScaleImageGraphics.drawImage(ScaleImage.image,null,Color.LightBlue,0,0,ScaleImage.location.width,ScaleImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed
-		ScaleImageGraphics.drawImage(ScaleImage.image,null,Color.White,0,0,ScaleImage.location.width,ScaleImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
+		controlsLayer.updateContext("scale", "no map",
+				20);
+		}
 	}
 
 	public void updateDistance(boolean repaint) {
-		DistanceImageGraphics.setColor(DistanceImage.transparentColor);
-		DistanceImageGraphics.fillRect(0, 0, DistanceImage.location.width,DistanceImage.location.height);
 		if (gotoPos != null && posCircle.where.isValid())
 		{
 			double currentDistance = gotoPos.where.getDistance(posCircle.where);
@@ -385,26 +368,13 @@ public final class MovingMap extends Form {
 					d = dd.toString(3,0,0) + Metrics.getUnit(smallUnit);
 				}
 
-				int backgroundWidth = fm.getTextWidth(d) + 4;
+				controlsLayer.updateContext("distance", d);
 
-				DistanceImageGraphics.setColor(new Color(250,250,250));
-				DistanceImageGraphics.fillRect(0, 0, backgroundWidth ,DistanceImage.location.height);
-
-				DistanceImageGraphics.setColor(Color.DarkBlue);
-				DistanceImageGraphics.drawText(d, 2, 0);
-
-				DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.LightBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed
-				DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.White,0,0,DistanceImage.location.width,DistanceImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
-				if (repaint)
-				{
-					DistanceImage.refreshNow();
-				}
 			}
 		}
 		else
 		{
-			DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.LightBlue,0,0,DistanceImage.location.width,DistanceImage.location.height); // changing the mask forces graphics to copy from image._awtImage to image.bufferedImage, which is displayed
-			DistanceImageGraphics.drawImage(DistanceImage.image,null,Color.White,0,0,DistanceImage.location.width,DistanceImage.location.height); // these 2 commands are necessary because of a bug or near to a bug in the ewe-vm
+			controlsLayer.updateContext("distance", "");
 		}
 	}
 
@@ -420,6 +390,7 @@ public final class MovingMap extends Form {
 		// to load maplist + place a map on screen otherwise no symbol can be placed
 		ignoreGps=true; // else overlay symbols are removed on started gps
 		loadBestMap(centerTo);
+		handleCommand(HIDE_MENU);
 
 		// update cache symbols in map
 		if (Global.getProfile().selectionChanged) {
@@ -1784,8 +1755,6 @@ public final class MovingMap extends Form {
 	}
 
 	public void setZoomingMode() {
-		mmp.removeImage(buttonImageLens);
-		mmp.addImage(buttonImageLensActivated);
 		repaintNow();
 		zoomingMode = true;
 	}
@@ -1950,6 +1919,145 @@ public final class MovingMap extends Form {
 		}
 		super.onEvent(ev);
 	}
+
+	public boolean handleCommand(String actionCommand) {
+		// handle closing event
+		if (CLOSE.equals(actionCommand)) {
+			
+			WindowEvent tmp = new WindowEvent();
+			tmp.type = WindowEvent.CLOSE;
+			postEvent(tmp);
+			return true;
+		} 
+		if (SELECT_MAP.equals(actionCommand)) {
+			mmp.chooseMap();
+			return true;
+		}
+		if (CHANGE_MAP_DIR.equals(actionCommand)) {
+			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().getCustomMapsPath());
+			fc.addMask("*.wfl");
+			fc.setTitle(MyLocale.getMsg(4200,"Select map directory:"));
+			if(fc.execute() != FormBase.IDCANCEL){
+				Global.getPref().saveCustomMapsPath(fc.getChosen().toString());
+				loadMaps(Global.getPref().getCustomMapsPath(), posCircle.where.latDec);
+				forceMapLoad();
+			}
+			return true;
+		}
+
+		
+		if (FILL_MAP.equals(actionCommand)) {
+			setFillWhiteArea(false);
+			updatePosition (posCircle.where);
+			mmp.repaint();
+			return true;
+		}
+		
+		if (NO_FILL_MAP.equals(actionCommand)) {
+			setFillWhiteArea(true);
+			updatePosition (posCircle.where);
+			mmp.repaint();
+			return true;
+		}
+		
+		
+		if (SHOW_CACHES.equals(actionCommand)) {
+			setShowCachesOnMap(true);
+			forceMapLoad=true;
+			updatePosition (posCircle.where);
+			mmp.repaint();
+			return true;
+		}
+		if (HIDE_CACHES.equals(actionCommand)) {
+			setShowCachesOnMap(false);
+			forceMapLoad=true;
+			updatePosition (posCircle.where);
+			mmp.repaint();
+			return true;
+		}
+		
+		if (HIDE_MAP.equals(actionCommand)) {
+			hideMap();
+			return true;
+		}
+		
+		if (SHOW_MAP.equals(actionCommand)) {
+			showMap();
+			return true;
+		}
+		// map change modus
+		if (HIGHEST_RES_GPS_DEST.equals(actionCommand)) {
+			setResModus(MovingMap.HIGHEST_RESOLUTION_GPS_DEST);
+			return true;
+		}
+		if (HIGHEST_RES.equals(actionCommand)) {
+			setResModus(MovingMap.HIGHEST_RESOLUTION);
+			return true;
+		}
+		
+		if (KEEP_MAN_RESOLUTION.equals(actionCommand)) {
+			setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
+			return true;
+		}
+		
+		if (MORE_DETAILS.equals(actionCommand)) {
+			loadMoreDetailedMap(false);
+			return true;
+		}
+		if (MORE_OVERVIEW.equals(actionCommand)) {
+			loadMoreDetailedMap(true);
+			return true;
+		}
+		if (ALL_CACHES_RES.equals(actionCommand)) {
+			loadMapForAllCaches();
+			return true;
+		}
+
+		if (MOVE_TO_CENTER.equals(actionCommand)) {
+			setCenterOfScreen(Global.getPref().getCurCentrePt(), true);
+			return true;
+		}
+		if (MOVE_TO_DEST.equals(actionCommand)) {
+			if (gotoPos!=null) {
+				setCenterOfScreen(gotoPos.where, true);
+			}
+			return true;
+		}
+		if (MOVE_TO_GPS.equals(actionCommand)) {
+			mmp.snapToGps();
+			return true;
+		}
+		
+		if (ZOOM_1_TO_1.equals(actionCommand)) {
+			zoom1to1();
+			return true;
+		}
+		if (ZOOMIN.equals(actionCommand)) {
+			zoomin();
+			return true;
+		}
+		if (ZOOMOUT.equals(actionCommand)) {
+			zoomout();
+			return true;
+		}
+		
+		return controlsLayer.handleCommand(actionCommand);
+	}
+
+	public MapSymbol getDestination() {
+		return gotoPos;
+	}
+
+	public boolean isMapHidden() {
+		return mapHidden;
+	}
+
+	
+	public void setPaintPosDestLine(boolean paintPosDestLine) {
+		this.paintPosDestLine = paintPosDestLine;
+	}
+	
+	
 }
 
 /**
@@ -1963,37 +2071,13 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 
 	MenuItem miLuminary[];
 
-	Menu mapsMenu;
-	MenuItem selectMapMI = new MenuItem(MyLocale.getMsg(4234, "Select a map manually$s"), new IconAndText(new mImage("map_open.png"), MyLocale.getMsg(4235, "Select a map manually"), null, CellConstants.RIGHT));
-	MenuItem changeMapDirMI = new MenuItem(MyLocale.getMsg(4236, "Change map directory$c"), new IconAndText(new mImage("map_cd.png"), MyLocale.getMsg(4237, "Change map directory"), null, CellConstants.RIGHT));
-	MenuItem showMapMI = new MenuItem(MyLocale.getMsg(4238, "Show map"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4239, "Show map"), null, CellConstants.RIGHT));
-	MenuItem hideMapMI = new MenuItem(MyLocale.getMsg(4240, "Hide map"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4241, "Hide map"), null, CellConstants.RIGHT));
-	MenuItem fillMapMI = new MenuItem(MyLocale.getMsg(4267, "Show white areas"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4267, "Show white areas"), null, CellConstants.RIGHT));
-	MenuItem noFillMapMI = new MenuItem(MyLocale.getMsg(4266, "Fill white areas"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4266, "Fill white areas"), null, CellConstants.RIGHT));
-	MenuItem showCachesOnMapMI = new MenuItem(MyLocale.getMsg(4268, "Alle Cache anzeigen"), new IconAndText(new mImage("map_off.png"), MyLocale.getMsg(4268, "Alle Cache anzeigen"), null, CellConstants.RIGHT));
-	MenuItem noShowCachesOnMapMI = new MenuItem(MyLocale.getMsg(4269, "Keine Cache anzeigen"), new IconAndText(new mImage("map_on.png"), MyLocale.getMsg(4269, "Keine Cache anzeigen"), null, CellConstants.RIGHT));
-	// automatic
-	MenuItem mapChangeModusMI = new MenuItem(MyLocale.getMsg(4242, "Modus for automatic map change"), MenuItem.Separator, null);;
-	MenuItem highestResGpsDestMI = new MenuItem(MyLocale.getMsg(4244, "Highest res. containing dest. & cur. position"), new IconAndText(new mImage("res_gps_goto.png"), MyLocale.getMsg(4245, "Highest res. containing dest. & cur. position"), null, CellConstants.RIGHT)); //immer h�chste Aufl�sung w�hlen, die akt. Pos. und Ziel enthalten
-	MenuItem highestResolutionMI = new MenuItem(MyLocale.getMsg(4246, "Highest resolution"), new IconAndText(new mImage("res_high.png"), MyLocale.getMsg(4247, "Highest resolution"), null, CellConstants.RIGHT)); //immer h�chste Aufl�sung w�hlen
-	MenuItem keepManResolutionMI = new MenuItem(MyLocale.getMsg(4248, "Keep manual resolution"), new IconAndText(new mImage("res_manuell.png"), MyLocale.getMsg(4249, "Keep manual resolution"), null, CellConstants.RIGHT)); // manuell gew�hlte Aufl�sung beibehalten
-	// manuell
-	MenuItem mapChangeResMI = new MenuItem(MyLocale.getMsg(4250, "Change resolution manually"), MenuItem.Separator, null);;
-	MenuItem AllCachesResMI = new MenuItem(MyLocale.getMsg(4252, "Load a map containing all marked caches"),  new IconAndText(new mImage("loupe_all.png"), MyLocale.getMsg(4253, "Load a map containing all marked caches"), null, CellConstants.RIGHT));
-	MenuItem moreDetailsMI = new MenuItem(MyLocale.getMsg(4254, "Load a map with more details"), new IconAndText(new mImage("loupe_more_details.png"), MyLocale.getMsg(4255, "Load a map with more details"), null, CellConstants.RIGHT)); // laod a map with more details
-	MenuItem moreOverviewMI = new MenuItem(MyLocale.getMsg(4256, "Load a map for a better overview"), new IconAndText(new mImage("loupe_better_overview.png"), MyLocale.getMsg(4257, "Load a map for a better overview"), null, CellConstants.RIGHT)); // Load a map for a better overview --> lesser details
-	// move map to
-	MenuItem moveToMI = new MenuItem(MyLocale.getMsg(4258, "Move map to and load map"), MenuItem.Separator, null);;
-	MenuItem moveToDestMI = new MenuItem(MyLocale.getMsg(4260, "Move to goto point"), new IconAndText(new mImage("move2goto.png"), MyLocale.getMsg(4261, "Move to goto point"), null, CellConstants.RIGHT)); //* Karte zum Ziel verschieben (und ggf. entsprechende Karte laden)
-	MenuItem moveToGpsMI = new MenuItem(MyLocale.getMsg(4262, "Move to GPS position"), new IconAndText(new mImage("move2gps.png"), MyLocale.getMsg(4263, "Move to GPS position"), null, CellConstants.RIGHT));
-	MenuItem moveToCenterMI = new MenuItem(MyLocale.getMsg(4264, "Move to centre"), new IconAndText(new mImage("move2center.png"), MyLocale.getMsg(4265, "Move to centre"), null, CellConstants.RIGHT));
-
 	CacheHolder clickedCache;
 	MovingMap mm;
 	MapImage mapImage;
 	Point saveMapLoc = null;
 	boolean saveGpsIgnoreStatus;
 	boolean paintingZoomArea;
+	
 	ImageList saveImageList = null;
 	int lastZoomWidth , lastZoomHeight;
 
@@ -2013,6 +2097,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			//	mm.ignoreGps = true;
 			return false;
 		}
+		if (mm.getControlsLayer().imageBeginDragged(which, pos)) {
+			return false;
+		}			
 		// move (drag) map
 		//if (!(which == null || which == mapImage || which instanceof TrackOverlay || which == mm.directionArrows) ) return false;
 		saveGpsIgnoreStatus = mm.dontUpdatePos;
@@ -2050,9 +2137,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		if (mm.zoomingMode && ev.type == PenEvent.PEN_UP ) {
 			paintingZoomArea = false;
 			mm.zoomingMode = false;
+			mm.getControlsLayer().changeRoleState("zoom_manually", Boolean.FALSE);
 			mm.dontUpdatePos = saveGpsIgnoreStatus;
-			removeImage(mm.buttonImageLensActivated);
-			addImage(mm.buttonImageLens);
 			if (java.lang.Math.abs(lastZoomWidth) < 15 || java.lang.Math.abs(lastZoomHeight) < 15)  {
 				repaintNow();
 				return; // dont make to big zoom jumps - it is most probable not an intentional zoom
@@ -2071,18 +2157,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			top -= 2;
 			if (top < 0) top = 0;
 			if (left < 0) left = 0;
-			if ((lastZoomWidth <= 0) && (ev.x - saveMapLoc.x > 0)) { // changed from zooming out to zooming in
-				removeImage(mm.buttonImageLensActivated);
-				removeImage(mm.buttonImageLensActivatedZoomOut);
-				addImage(mm.buttonImageLensActivatedZoomIn);
-				this.repaintNow(dr, new Rect(mm.buttonImageLensActivatedZoomIn.location.x, mm.buttonImageLensActivatedZoomIn.location.y, mm.buttonImageLensActivatedZoomIn.getWidth(), mm.buttonImageLensActivatedZoomIn.getHeight()));
-			}
-			if ((lastZoomWidth >= 0) && (ev.x - saveMapLoc.x < 0)) { // changed from zooming out to zooming in
-				removeImage(mm.buttonImageLensActivated);
-				removeImage(mm.buttonImageLensActivatedZoomIn);
-				addImage(mm.buttonImageLensActivatedZoomOut);
-				this.repaintNow(dr, new Rect(mm.buttonImageLensActivatedZoomOut.location.x, mm.buttonImageLensActivatedZoomOut.location.y, mm.buttonImageLensActivatedZoomOut.getWidth(), mm.buttonImageLensActivatedZoomOut.getHeight()));
-			}
 			this.repaintNow(dr, new Rect(left, top, java.lang.Math.abs(lastZoomWidth)+4, java.lang.Math.abs(lastZoomHeight)+4));
 			lastZoomWidth = ev.x - saveMapLoc.x;
 			lastZoomHeight =  ev.y - saveMapLoc.y;
@@ -2129,7 +2203,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 
 	public void doPaint(Graphics g,Rect area) {
 		super.doPaint(g, area);
-		if (mm.gotoPos != null) {
+		if (mm.gotoPos != null && mm.paintPosDestLine) {
 			Point dest = mm.getXYonScreen(mm.gotoPos.where);
 			g.setPen(new Pen(Color.DarkBlue, Pen.SOLID, 3));
 			g.drawLine(mm.posCircleX, mm.posCircleY, dest.x, dest.y);
@@ -2168,74 +2242,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	 *	Method to react to user.
 	 */
 	public void imageClicked(AniImage which, Point pos){
-		if (which == mm.bottonImageChooseMap){
-			mapsMenu = new Menu();
-			mapsMenu.addItem(selectMapMI);
-			mapsMenu.addItem(changeMapDirMI);
-			if (!mm.noMapsAvailable)
-			{
-				if (mm.mapHidden) mapsMenu.addItem(showMapMI);
-				else mapsMenu.addItem(hideMapMI);
-			}
-			if (mm.isFillWhiteArea()){
-				mapsMenu.addItem(fillMapMI);
-			}
-			else{
-				mapsMenu.addItem(noFillMapMI);
-			}
-			if (mm.getShowCachesOnMap()){
-				mapsMenu.addItem(noShowCachesOnMapMI);
-			}
-			else{
-				mapsMenu.addItem(showCachesOnMapMI);
-			}
-			// automatic
-			highestResGpsDestMI.modifiers &= ~MenuItem.Checked;
-			highestResolutionMI.modifiers &= ~MenuItem.Checked;
-			keepManResolutionMI.modifiers &= ~MenuItem.Checked;
-			switch (mm.mapChangeModus) {
-			case MovingMap.NORMAL_KEEP_RESOLUTION: keepManResolutionMI.modifiers |= MenuItem.Checked; break;
-			case MovingMap.HIGHEST_RESOLUTION: highestResolutionMI.modifiers |= MenuItem.Checked; break;
-			case MovingMap.HIGHEST_RESOLUTION_GPS_DEST: highestResGpsDestMI.modifiers |= MenuItem.Checked; break;
-			}
-			mapsMenu.addItem(mapChangeModusMI);
-			mapsMenu.addItem(highestResGpsDestMI);
-			mapsMenu.addItem(highestResolutionMI);
-			mapsMenu.addItem(keepManResolutionMI);
-			// manuell
-			mapsMenu.addItem(mapChangeResMI);
-			mapsMenu.addItem(AllCachesResMI);
-			mapsMenu.addItem(moreDetailsMI);
-			mapsMenu.addItem(moreOverviewMI);
-			// move map to
-			mapsMenu.addItem(moveToMI);
-			if (mm.gotoPos != null) moveToDestMI.modifiers &= ~MenuItem.Disabled;
-			else moveToDestMI.modifiers |= MenuItem.Disabled;
-			mapsMenu.addItem(moveToDestMI);
-			if (Global.getPref().getCurCentrePt().isValid()) moveToCenterMI.modifiers &= ~MenuItem.Disabled;
-			else moveToCenterMI.modifiers |= MenuItem.Disabled;
-			mapsMenu.addItem(moveToCenterMI);
-			mapsMenu.addItem(moveToGpsMI);
-
-			//m.set(Menu., status)
-			mapsMenu.exec(this, new Point(which.location.x, which.location.y), this);
-		}
-		if (which == mm.buttonImageGpsOn) {
-			this.snapToGps();
-		}
-		if (which == mm.buttonImageLens) {
-			mm.setZoomingMode();
-			lastZoomWidth = 0;
-			lastZoomHeight = 0;
-		}
-		if (which == mm.buttonImageZoom1to1) {
-			mm.zoom1to1();
-		}
-		if (which == mm.bottonImageClose) {
-			WindowEvent tmp = new WindowEvent();
-			tmp.type = WindowEvent.CLOSE;
-			mm.postEvent(tmp);
-		}
+		mm.getControlsLayer().imageClicked(which);
 	}
 
 	public void snapToGps() {
@@ -2281,114 +2288,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	}
 
 	public void onEvent(Event ev){
-		if (mapsMenu != null && ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this)
-			{mapsMenu.close(); mapsMenu = null;}
 		if (kontextMenu != null && ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this)
 			{kontextMenu.close(); kontextMenu = null; }
 
 		if (ev instanceof MenuEvent) {
-			if (ev.target == mapsMenu) {
-				if (ev.type == MenuEvent.ABORTED || ev.type == ControlEvent.CANCELLED || ev.type == ControlEvent.FOCUS_OUT)
-						mapsMenu.close(); // TODO menuIsActive() benutzen?
-				if (ev.type == MenuEvent.SELECTED ) {
-					MenuItem action = (MenuItem) mapsMenu.getSelectedItem();
-					if (mapsMenu.getSelectedItem() != null) {
-						//maps
-						if (action == selectMapMI)	{
-							mapsMenu.close();
-							chooseMap();
-						}
-						else if (action == changeMapDirMI)	{
-							mapsMenu.close();
-							FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().getCustomMapsPath());
-							fc.addMask("*.wfl");
-							fc.setTitle(MyLocale.getMsg(4200,"Select map directory:"));
-							if(fc.execute() != FormBase.IDCANCEL){
-								Global.getPref().saveCustomMapsPath(fc.getChosen().toString());
-								mm.loadMaps(Global.getPref().getCustomMapsPath(), mm.posCircle.where.latDec);
-								mm.forceMapLoad();
-							}
-						}
-						else if (action == fillMapMI){
-							mapsMenu.close ();
-							mm.setFillWhiteArea(false);
-							mm.updatePosition (mm.posCircle.where);
-							repaint();
-						}
-						else if (action == noFillMapMI){
-							mapsMenu.close ();
-							mm.setFillWhiteArea(true);
-							mm.updatePosition (mm.posCircle.where);
-							repaint();
-						}
-						else if (action == showCachesOnMapMI){
-							mapsMenu.close ();
-							mm.setShowCachesOnMap(true);
-							mm.forceMapLoad=true;
-							mm.updatePosition (mm.posCircle.where);
-							repaint();
-						}
-						else if (action == noShowCachesOnMapMI){
-							mapsMenu.close ();
-							mm.setShowCachesOnMap(false);
-							mm.forceMapLoad=true;
-							mm.updatePosition (mm.posCircle.where);
-							repaint();
-						}
-						//dont show map
-						else if (action == hideMapMI) {
-							mapsMenu.close();
-							mm.hideMap();
-						}
-						// show map
-						else if (action == showMapMI) {
-							mapsMenu.close();
-							mm.showMap();
-						}
-						// map change modus
-						else if (action == highestResGpsDestMI) {
-							mapsMenu.close();
-							mm.setResModus(MovingMap.HIGHEST_RESOLUTION_GPS_DEST);
-						}
-						else if (action == highestResolutionMI) {
-							mapsMenu.close();
-							mm.setResModus(MovingMap.HIGHEST_RESOLUTION);
-						}
-						else if (action == keepManResolutionMI) {
-							mapsMenu.close();
-							mm.setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
-						}
-						// manually change map resolution
-						else if (action == moreDetailsMI) {
-							mapsMenu.close();
-							mm.loadMoreDetailedMap(false);
-						}
-						else if (action == moreOverviewMI) {
-							mapsMenu.close();
-							mm.loadMoreDetailedMap(true);
-						}
-						else if (action == AllCachesResMI) {
-							mapsMenu.close();
-							mm.loadMapForAllCaches();
-						}
-						// moveto position
-						else if (action == moveToCenterMI) {
-							mapsMenu.close();
-							mm.setCenterOfScreen(Global.getPref().getCurCentrePt(), true);
-						}
-						else if (action == moveToDestMI) {
-							mapsMenu.close();
-							mm.setCenterOfScreen(mm.gotoPos.where, true);
-						}
-						else if (action == moveToGpsMI) {
-							mapsMenu.close();
-							this.snapToGps();
-						}
-
-					}
-				}
-			} // if (ev.target == mapsMenu)
-
 			if (ev.target == kontextMenu) {
 				if ((((MenuEvent)ev).type==MenuEvent.SELECTED)) {
 					MenuItem action = (MenuItem) kontextMenu.getSelectedItem();
@@ -2435,7 +2338,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					}
 				}
 			} // if (ev.target == kontextMenu)
-		} // if (ev instanceof ControlEvent )
+		}
 		super.onEvent(ev);
 	}
 }
