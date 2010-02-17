@@ -34,21 +34,28 @@ fi
 mkdir -p published/dat/attributes
 mv programs/CacheWolf/* published/
 cp lib/java_ewe.dll published/Jar/
+
 chmod -R u+w published
+
 printf '1,$g/ 12M/s///\nw\nq\n' | ed -s published/Jar/CacheWolf.bat
 cp work/CacheWolf.ewe published/
 (cd res_noewe && cp -R * ../published/dat/)
-cp resources/attributes-big/*.gif resources/attributes/*-non.gif
-    published/dat/attributes/
-mkdir -p published/dat/mmc240x320
-cp res_noewe/mmc240x320/* published/dat/mmc240x320
-mkdir -p published/dat/mmc480x640
-cp res_noewe/mmc480x640/* published/dat/mmc480x640
-mkdir -p published/dat/mmcDefault
-cp res_noewe/mmcDefault/* published/dat/mmcDefault
+##
+#mkdir -p published/dat/attributes
+cp res_noewe/attributes-big/*.gif published/dat/attributes/
+#cp res_noewe/attributes/*-non.gif published/dat/attributes/
+## the touchmap
+#mkdir -p published/dat/mmc240x320
+#cp res_noewe/mmc240x320/* published/dat/mmc240x320
+#mkdir -p published/dat/mmc480x640
+#cp res_noewe/mmc480x640/* published/dat/mmc480x640
+#mkdir -p published/dat/mmcDefault
+#cp res_noewe/mmcDefault/* published/dat/mmcDefault
+## ewe libs
 cp platform-dep/PocketPC2003/ewe.dll published/dat/
 mkdir -p published/dat/PNA-WinCE42
 cp -R platform-dep/PNA-WinCE42/ewe.dll published/dat/PNA-WinCE42/
+# make datfiles zip and tgz
 chmod -R 0755 published
 find published -type f -print0 | xargs -0 chmod 0644
 (
