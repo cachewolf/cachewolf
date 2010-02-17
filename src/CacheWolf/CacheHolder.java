@@ -871,6 +871,55 @@ public class CacheHolder{
 
 		return result;
 	}
+
+	private final static int MSG_NR = 0; 
+	private final static int GC_MSG = 1; 
+	private final static int IDX_WRITENOTE = 4; 	
+	private final static int IDX_FOUNDIT = 1; 	
+	private final static int IDX_NOTFOUND = 3; 	
+	private final static String[][] _logType = {	
+			{"353", ""},
+			{"318", "Found it"},
+			{"355", "Attended"},
+			{"319", "Didn't find it"},
+			{"314", "Write note"}, 
+			{"315", "Needs Archived"},
+			{"316", "Needs Maintenance"},
+			{"317", "Search"}, 
+			{"354", "Will Attend"},
+			{"320", "Owner"},
+			{"359", "Owner Maintenance"},
+			{"356", "Temporarily Disable Listing"},
+			{"357", "Enable Listing"},
+			{"358", "Post Reviewer Note"},
+			{"313", "Flag 1"},
+			{"360", "Flag 2"},
+	};
+
+	public final static String[] GetGuiLogTypes() {
+		String[] ret = new String[_logType.length];
+		for (int i = 0; i < _logType.length; i++) {
+			ret[i]=MyLocale.getMsg(Integer.parseInt(_logType[i][MSG_NR]),"");
+		}
+		return ret;
+	}
+	
+	public String GetGCLogType() {                                                                                
+		String gcLogType=_logType[IDX_WRITENOTE][GC_MSG];
+		if (is_found()) {
+			gcLogType = _logType[IDX_FOUNDIT][GC_MSG];                                                                 
+		}
+		else {
+			String CacheStatus=getCacheStatus();  
+			for (int i = 1; i < _logType.length; i++) {
+				if (CacheStatus.endsWith(MyLocale.getMsg(Integer.parseInt(_logType[i][MSG_NR]),""))) {
+					gcLogType=_logType[i][GC_MSG];
+					break;
+				}
+			}
+		}
+		return gcLogType;    
+	}                                                                                                             
 	
 	/**
 	 * Initializes the caches states (and its addis) before updating, so that the "new", "updated",
