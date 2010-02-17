@@ -255,21 +255,8 @@ public class TPLExporter {
 						varParams.put("LATLON", ch.LatLon);
 						varParams.put("LAT", dec.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
 						varParams.put("LON", dec.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
-						String stmp = ch.getCacheStatus();
-						String logType=MyLocale.getMsg(354, "Write note");
-						varParams.put("STATUS", stmp);
-						if (ch.is_found()) {
-							logType=MyLocale.getMsg(358, "Found it");
-						}
-						else {
-							for (int j = 313; j < 321; j++) {
-								if (stmp.equals(MyLocale.getMsg(j, "org"))) {
-									logType=MyLocale.getMsg(j+40, "en");
-									break;
-								}
-							}
-						}
-						varParams.put("GC_LOGTYPE", logType);
+						varParams.put("STATUS", ch.getCacheStatus());
+						varParams.put("GC_LOGTYPE", ch.GetGCLogType());
 						varParams.put("STATUS_DATE", ch.GetStatusDate());
 						varParams.put("STATUS_TIME", ch.GetStatusTime());
 						varParams.put("DATE", ch.getDateHidden());
