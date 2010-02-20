@@ -146,7 +146,7 @@
 		<copy file="${ewe.progdir}/PocketPC2003/CacheWolf.exe" todir="${assemble.dir}" />
 		<!-- copy big attributes -->
 		<copy todir="${assemble.dir}/attributes-big">
-			<fileset dir="resources/attributes-big" />
+			<fileset dir="res_noewe/attributes-big" />
 		</copy>
 		<antcall target="copyres" />
 		<antcall target="copyppcdll" />
@@ -257,6 +257,36 @@
 	</target>
 
 	<target name="copyres" description="copy images to the assembly directory">
+        <!-- copy attributes -->
+        <copy todir="${assemble.dir}/attributes" failonerror="true" verbose="true">
+            <fileset dir="res_noewe/attributes" />
+        </copy>
+		<!-- copy attributes big will be done only for PPC2003 -->
+		        
+        <!-- copy exporticons -->
+        <copy todir="${assemble.dir}/exporticons" failonerror="true" verbose="true">
+            <fileset dir="res_noewe/exporticons" />
+        </copy>
+        <!-- copy languages -->
+        <copy todir="${assemble.dir}/languages" failonerror="true" verbose="true">
+            <fileset dir="res_noewe/languages" />
+        </copy>
+        <!-- copy moving map icons  -->
+        <copy todir="${assemble.dir}/mmc240x320" failonerror="true" verbose="true">
+            <fileset dir="res_noewe/mmc240x320" />
+        </copy>
+        <!-- copy moving map icons for devices with high ppi -->
+        <copy todir="${assemble.dir}/mmc480x640" failonerror="true" verbose="true">
+            <fileset dir="res_noewe/mmc480x640" />
+        </copy>
+        <!-- copy moving map default icons -->
+        <copy todir="${assemble.dir}/mmcDefault" failonerror="true" verbose="true">
+            <fileset dir="res_noewe/mmcDefault" />
+        </copy>
+        <!-- copy alternative symbol sets -->
+        <copy todir="${assemble.dir}/symbols" failonerror="true" verbose="true">
+            <fileset dir="res_noewe/symbols/*">  </fileset>
+        </copy>
 		<!-- copy templates -->
 		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
 			<fileset dir="res_noewe">
@@ -267,6 +297,7 @@
 		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
 			<fileset dir="res_noewe" includes="${icons.gui.files}" />
 		</copy>
+		
 		<!-- copy browser icons -->
 		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
 			<fileset dir="res_noewe" includes="${icons.browser.files}" />
@@ -282,18 +313,6 @@
 		<!-- copy webmapservices -->
 		<copy todir="${assemble.dir}/webmapservices" failonerror="true" verbose="true">
 			<fileset dir="res_noewe/webmapservices" />
-		</copy>
-		<!-- copy languages -->
-		<copy todir="${assemble.dir}/languages" failonerror="true" verbose="true">
-			<fileset dir="res_noewe/languages" />
-		</copy>
-		<!-- copy attributes -->
-		<copy todir="${assemble.dir}/attributes" failonerror="true" verbose="true">
-			<fileset dir="resources/attributes" />
-		</copy>
-		<!-- copy exporticons -->
-		<copy todir="${assemble.dir}/exporticons" failonerror="true" verbose="true">
-			<fileset dir="res_noewe/exporticons" />
 		</copy>
 		<!-- copy logo -->
 		<copy todir="${assemble.dir}" file="resources/CacheWolf.ico" failonerror="true" verbose="true" />
