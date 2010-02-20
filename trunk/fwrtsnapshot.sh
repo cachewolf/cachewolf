@@ -1,7 +1,7 @@
 #!/bin/sh
 # $Id$
 
-PATH=$PATH:/usr/local/bin:/usr/bin:$HOME/bin
+PATH=$PATH:/usr/local/bin:/usr/bin:$HOME/bin:./programs
 LC_ALL=C
 unset LANG LANGUAGE
 export PATH LC_ALL
