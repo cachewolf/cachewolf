@@ -1,5 +1,5 @@
 package CacheWolf.navi;
-
+ 
 import CacheWolf.CWPoint;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
