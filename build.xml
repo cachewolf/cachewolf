@@ -109,7 +109,7 @@
 		depends="CW-ARM,CW-MIPS,CW-SH3,CW-PPC2003,CW-EWE,CW-Win32,CW-Java"
 		description="package all platforms">
 	-->
-	<target name="release" depends="CW-PPC2003,CW-PPC2003-CAB,CW-EWE,CW-Win32,CW-Java"
+	<target name="release" depends="CW-PPC2003,CW-PPC2003-CAB,CW-ARM,CW-EWE,CW-Win32,CW-Java"
 		description="package all platforms">
 		<echo message="packages for all platforms are now in ${pkg.dir}" />
 	</target>
