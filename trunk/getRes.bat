@@ -5,24 +5,33 @@ del .\work\*.gif
 del .\work\*.html
 del .\work\*.tpl
 del .\work\*.ico
-REM get ressources
+REM
+REM fill .\work root
+REM
 copy .\resources\*.* .\work\*.*
+REM
 copy .\res_noewe\*.* .\work\*.*
+REM
+REM fill .\work subdirs
+REM
 mkdir .\work\attributes
-copy .\resources\attributes-big\*.* .\work\attributes\*.*
-copy .\resources\attributes\*-non.gif .\work\attributes\*.*
-rem
+copy .\res_noewe\attributes-big\*.* .\work\attributes\*.*
+copy .\res_noewe\attributes\*-non.gif .\work\attributes\*.*
+REM
 mkdir .\work\mmcDefault
 copy .\res_noewe\mmcDefault\*.* .\work\mmcDefault\*.*
 mkdir .\work\mmc240x320
 copy .\res_noewe\mmc240x320\*.* .\work\mmc240x320\*.*
 mkdir .\work\mmc480x640
 copy .\res_noewe\mmc480x640\*.* .\work\mmc480x640\*.*
-rem
+REM
 mkdir .\work\webmapservices
 copy .\res_noewe\webmapservices\*.* .\work\webmapservices\*.*
+REM
 mkdir .\work\languages
 copy .\res_noewe\languages\*.* .\work\languages\*.*
+REM
 mkdir .\work\symbols
 copy .\res_noewe\symbols\*.* .\work\symbols\*.*
+REM
 copy .\lib\*.dll .\work\
