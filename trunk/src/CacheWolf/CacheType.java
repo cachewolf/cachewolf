@@ -409,6 +409,7 @@ public final class CacheType {
 		for (byte i=0; i<CT.length; i++) {
 			if (CT_GSTYPETAG[i].equals(gpxType)) {return CT[i];};
 		}
+		
 		if (gpxType.equals("Traditional")|| gpxType.equals("Classic")) return CW_TYPE_TRADITIONAL;
 		if (gpxType.equals("Multi") || gpxType.equals("Offset")) return CW_TYPE_MULTI;
 		if (gpxType.equals("Virtual")) return CW_TYPE_VIRTUAL;
@@ -416,6 +417,7 @@ public final class CacheType {
 		if (gpxType.equals("Other") || gpxType.equals("Quiz")) return CW_TYPE_UNKNOWN;
 		if (gpxType.equals("Webcam")) return CW_TYPE_WEBCAM;
 		if (gpxType.equals("Earth")) return CW_TYPE_EARTH;
+		if (!(gpxType.indexOf("Mystery")==-1)) return CW_TYPE_UNKNOWN; 
 		return CW_TYPE_ERROR;
 	}
 
