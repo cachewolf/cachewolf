@@ -133,7 +133,7 @@
 
 		<antcall target="copyres" />
 
-		<copy file="${ewe.progdir]/PocketPC-ARM/CacheWolf.exe" todir="${assemble.dir}" />
+		<copy file="${ewe.progdir}/PocketPC-ARM/CacheWolf.exe" todir="${assemble.dir}" />
 		<zip destfile="${pkg.dir}/CacheWolf-ARM.zip" basedir="${assemble.dir}" />
 
 		<delete dir="${assemble.dir}" />
