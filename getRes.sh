@@ -30,7 +30,8 @@ mkdir -p work/mmc480x640
 # get ressources
 cp -fa resources/*.* work
 cp -fa res_noewe/*.* work
-cp -fa resources/attributes/* work/attributes
+cp -fa res_noewe/attributes/* work/attributes
+cp -fa res_noewe/attributes-big/* work/attributes
 cp -fa res_noewe/mmcDefault/* work/mmcDefault/
 cp -fa res_noewe/mmc240x320/* work/mmc240x320/
 cp -fa res_noewe/mmc480x640/* work/mmc480x640/

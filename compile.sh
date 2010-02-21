@@ -11,4 +11,5 @@ javac \
 	-deprecation \
 	-nowarn \
 	./src/CacheWolf/*.java \
-	./src/CacheWolf/*/*.java 
+	./src/CacheWolf/*/*/*.java \
+	./src/CacheWolf/*/*.java
