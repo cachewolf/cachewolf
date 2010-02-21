@@ -38,19 +38,12 @@ cp lib/java_ewe.dll published/Jar/
 chmod -R u+w published
 
 printf '1,$g/ 12M/s///\nw\nq\n' | ed -s published/Jar/CacheWolf.bat
+#preparing the files for datfiles zip/tgz in ../published/dat
+## CacheWolf.ewe from work and all files from res_noewe
 cp work/CacheWolf.ewe published/
 (cd res_noewe && cp -R * ../published/dat/)
-##
-#mkdir -p published/dat/attributes
+## vga-sized attributes
 cp res_noewe/attributes-big/*.gif published/dat/attributes/
-#cp res_noewe/attributes/*-non.gif published/dat/attributes/
-## the touchmap
-#mkdir -p published/dat/mmc240x320
-#cp res_noewe/mmc240x320/* published/dat/mmc240x320
-#mkdir -p published/dat/mmc480x640
-#cp res_noewe/mmc480x640/* published/dat/mmc480x640
-#mkdir -p published/dat/mmcDefault
-#cp res_noewe/mmcDefault/* published/dat/mmcDefault
 ## ewe libs
 cp platform-dep/PocketPC2003/ewe.dll published/dat/
 mkdir -p published/dat/PNA-WinCE42
