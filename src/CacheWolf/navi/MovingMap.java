@@ -391,7 +391,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		ignoreGps=true; // else overlay symbols are removed on started gps
 		loadBestMap(centerTo);
 		if (getControlsLayer()!=null) {
-			getControlsLayer().changeRoleState(MovingMapControls.ROLE_MENU, Boolean.FALSE);
+			getControlsLayer().changeRoleState(MovingMapControls.ROLE_MENU, false);
 		}
 
 		// update cache symbols in map
@@ -2139,7 +2139,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		if (mm.zoomingMode && ev.type == PenEvent.PEN_UP ) {
 			paintingZoomArea = false;
 			mm.zoomingMode = false;
-			mm.getControlsLayer().changeRoleState("zoom_manually", Boolean.FALSE);
+			mm.getControlsLayer().changeRoleState("zoom_manually", false);
 			mm.dontUpdatePos = saveGpsIgnoreStatus;
 			if (java.lang.Math.abs(lastZoomWidth) < 15 || java.lang.Math.abs(lastZoomHeight) < 15)  {
 				repaintNow();

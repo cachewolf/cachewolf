@@ -189,8 +189,7 @@ public abstract class MovingMapControlItem {
 			}
 
 			Role overallElement = (Role) overallRoles.get(nextKey);
-			if (thisElement.booleanValue() != overallElement.getState()
-					.booleanValue()) {
+			if (thisElement.booleanValue() != overallElement.getState()) {
 				return false;
 			}
 
