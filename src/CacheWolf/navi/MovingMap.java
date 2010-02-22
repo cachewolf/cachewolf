@@ -390,7 +390,9 @@ public final class MovingMap extends Form implements ICommandListener {
 		// to load maplist + place a map on screen otherwise no symbol can be placed
 		ignoreGps=true; // else overlay symbols are removed on started gps
 		loadBestMap(centerTo);
-		handleCommand(HIDE_MENU);
+		if (getControlsLayer()!=null) {
+			getControlsLayer().changeRoleState(MovingMapControls.ROLE_MENU, Boolean.FALSE);
+		}
 
 		// update cache symbols in map
 		if (Global.getProfile().selectionChanged) {

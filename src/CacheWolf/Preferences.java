@@ -182,6 +182,8 @@ public class Preferences extends MinML{
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
 	/** True if the menu is to be displayed at the top of the screen */
 	public boolean menuAtTop=true;
+	/** True if big icons for touch is enabled */
+	public boolean touchControls=false;
 	/** True if the tabs are to be displayed at the top of the screen */
 	public boolean tabsAtTop=true;
 	/** True if the status bar is to be displayed (hidden if false) */
@@ -486,6 +488,8 @@ public class Preferences extends MinML{
 			showStatus=Boolean.valueOf(atts.getValue("showstatus")).booleanValue();
 			if (atts.getValue("hasclosebutton")!=null)
 				hasCloseButton=Boolean.valueOf(atts.getValue("hasclosebutton")).booleanValue();
+			if (atts.getValue("touchControls")!=null)
+				touchControls=Boolean.valueOf(atts.getValue("touchControls")).booleanValue();
 			if (atts.getValue("h")!=null) {
 				myAppHeight=Convert.toInt(atts.getValue("h"));
 				myAppWidth=Convert.toInt(atts.getValue("w"));
@@ -670,7 +674,7 @@ public class Preferences extends MinML{
 			outp.print("    <gpsd active= \"" + SafeXML.clean(Convert.toString(useGPSD)) + "\" host = \"" + SafeXML.clean(gpsdHost) + "\" port = \"" + SafeXML.strxmlencode(gpsdPort) + "\"/>\n");
 			outp.print("    <portlog active= \"" + SafeXML.clean(Convert.toString(logGPS)) + "\" logTimer = \"" + SafeXML.clean(logGPSTimer) + "\"/>\n");
 			outp.print("    <font size =\"" + SafeXML.strxmlencode(fontSize) + "\"/>\n");
-			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+
+			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+"\" touchControls=\""+touchControls+
 	                "\" h=\""+myAppHeight+"\" w=\""+myAppWidth+"\" />\n");
 			outp.print("    <fixedsip state = \"" + SafeXML.strxmlencode(fixSIP) + "\"/>\n");
 			outp.print("    <listview colmap=\"" + SafeXML.clean(listColMap) + "\" colwidths=\"" + SafeXML.clean(listColWidth) + "\" />\n");
