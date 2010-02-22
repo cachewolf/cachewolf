@@ -10,20 +10,18 @@
 		src/CacheWolf/Version.kava VERSION_TYPES for valid values Default: 3
 		(InDevelopmentNewest) -Dbuild.cab=true also build a cab version from
 		the PPC2003 zip file. Default: do not build it. To build it in linux
-		you need cablist - here is a skripft from UncleOwen, that does
-		all you need: http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236
-		For windows make sure to check the
-		prerequisites on http://ant.apache.org/manual/OptionalTasks/cab.html
-		
-
-		futher information about ant can be found at
-		http://ant.apache.org/manual/
+		you need cablist - here is a skripft from UncleOwen, that does all you
+		need: http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236 For
+		windows make sure to check the prerequisites on
+		http://ant.apache.org/manual/OptionalTasks/cab.html futher information
+		about ant can be found at http://ant.apache.org/manual/
 		http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.user/gettingStarted/qs-81_basics.htm
 		or check one of the many ant tutorials on the web
 	-->
 
 	<!-- ewe builder only exist for windows and linux -->
-	<fail message="unsupport operating system. sorry">
+	<fail
+		message="unsupported operating system. sorry, only Windows and Linux are supported">
 		<condition>
 			<not>
 				<or>
@@ -113,7 +111,8 @@
 		depends="CW-ARM,CW-MIPS,CW-SH3,CW-PPC2003,CW-EWE,CW-Win32,CW-Java"
 		description="package all platforms">
 	-->
-	<target name="release" depends="CW-PPC2003,CW-PPC2003-CAB,CW-ARM,CW-EWE,CW-Win32,CW-Java"
+	<target name="release"
+		depends="CW-PPC2003,CW-PPC2003-CAB,CW-ARM,CW-EWE,CW-Win32,CW-Java"
 		description="package all platforms">
 		<echo message="packages for all platforms are now in ${pkg.dir}" />
 	</target>
@@ -217,6 +216,40 @@
 		<delete dir="${assemble.dir}" />
 	</target>
 
+	<!-- This target will make a html file from the docbook manual to Cachewolf -->
+	<!--
+		I installed "Serna Free Open Source XML Editor" in Ubuntu 9.10 to
+		compile the docbook to html, but I guess installung docbook-xsl would
+		be enough
+	-->
+	<target name="doku-html-de" description="make a html file from the docbook documentation">
+		<mkdir dir="${assemble.dir}" />
+		<mkdir dir="${assemble.dir}/doku_html_de" />
+		<exec executable="xsltproc" os="Linux">
+			<arg value="--xinclude" />
+			<arg value="-o" />
+			<arg value="${assemble.dir}/doku_html_de/CacheWolf_Dokumentation.html" />
+			<!--
+				the docbook-html.xsl ist taken from
+				/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html/docbook.xsl
+			-->
+			<arg value="docs/CacheWolf_Doku/docbook-html.xsl" />
+			<arg value="docs/CacheWolf_Doku/CacheWolf_Dokumentation.xml" />
+		</exec>
+
+		<copy todir="${assemble.dir}/doku_html_de/pics" failonerror="true"
+			verbose="true">
+			<fileset dir="docs/CacheWolf_Doku/pics" />
+		</copy>
+		<zip destfile="${pkg.dir}/Handbuch_html.zip" basedir="${assemble.dir}/doku_html_de" />
+		<copy todir="${pkg.dir}/Handbuch_html" failonerror="true"
+			verbose="true">
+			<fileset dir="${assemble.dir}/doku_html_de" />
+		</copy>
+
+		<delete dir="${assemble.dir}" />
+	</target>
+
 	<target name="CW-Java" depends="ewebuild"
 		description="package Java release of CacheWolf">
 		<mkdir dir="${assemble.dir}" />
@@ -297,8 +330,7 @@
 	</target>
 
 	<!--
-		Copy all ressources from res_noewe
-		This is not the optimal way,
+		Copy all ressources from res_noewe This is not the optimal way,
 		because some might not be needed, e.g. big symbols on a desktop
 		computer, or the alternative set of symbols But for easier
 		programming, I - for the moment - consider this the better way If you
@@ -309,9 +341,9 @@
 		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
 			<fileset dir="res_noewe" />
 		</copy>
-        <!-- copy logo -->
-        <copy todir="${assemble.dir}" file="resources/CacheWolf.ico"
-            failonerror="true" verbose="true" />
+		<!-- copy logo -->
+		<copy todir="${assemble.dir}" file="resources/CacheWolf.ico"
+			failonerror="true" verbose="true" />
 	</target>
 
 	<!--
