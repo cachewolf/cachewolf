@@ -10,11 +10,13 @@
 		src/CacheWolf/Version.kava VERSION_TYPES for valid values Default: 3
 		(InDevelopmentNewest) -Dbuild.cab=true also build a cab version from
 		the PPC2003 zip file. Default: do not build it. To build it in linux
-		you need cablist - here is a skripft from UncleOwen, that does all you
-		need: http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236 For
+		you need cablist - here is a skript from UncleOwen, that does all you
+		need: http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236 to
+		install it in linux / ubuntu. For
 		windows make sure to check the prerequisites on
-		http://ant.apache.org/manual/OptionalTasks/cab.html futher information
-		about ant can be found at http://ant.apache.org/manual/
+		http://ant.apache.org/manual/OptionalTasks/cab.html 
+		Further information about ant can be found at 
+		http://ant.apache.org/manual/
 		http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.user/gettingStarted/qs-81_basics.htm
 		or check one of the many ant tutorials on the web
 	-->
@@ -225,25 +227,24 @@
 	<target name="doku-html-de" description="make a html file from the docbook documentation">
 		<mkdir dir="${assemble.dir}" />
 		<mkdir dir="${assemble.dir}/doku_html_de" />
+	    <!-- generate html file and pics dir in the source folder -->		
 		<exec executable="xsltproc" os="Linux">
 			<arg value="--xinclude" />
 			<arg value="-o" />
 			<arg value="${assemble.dir}/doku_html_de/CacheWolf_Dokumentation.html" />
 			<!--
-				the docbook-html.xsl ist taken from
-				/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html/docbook.xsl
+				the docbook-html.xsl is taken from
+				/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html/*
 			-->
-			<arg value="docs/CacheWolf_Doku/docbook-html.xsl" />
+			<arg value="docs/CacheWolf_Doku/docbook2html_xsl/docbook.xsl" />
 			<arg value="docs/CacheWolf_Doku/CacheWolf_Dokumentation.xml" />
 		</exec>
 
-		<copy todir="${assemble.dir}/doku_html_de/pics" failonerror="true"
-			verbose="true">
+		<copy todir="${assemble.dir}/doku_html_de/pics" failonerror="true">
 			<fileset dir="docs/CacheWolf_Doku/pics" />
 		</copy>
 		<zip destfile="${pkg.dir}/Handbuch_html.zip" basedir="${assemble.dir}/doku_html_de" />
-		<copy todir="${pkg.dir}/Handbuch_html" failonerror="true"
-			verbose="true">
+		<copy todir="${pkg.dir}/Handbuch_html" failonerror="true">
 			<fileset dir="${assemble.dir}/doku_html_de" />
 		</copy>
 
