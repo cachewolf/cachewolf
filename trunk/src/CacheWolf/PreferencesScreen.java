@@ -20,7 +20,7 @@ public class PreferencesScreen extends Form {
 	mChoice inpLanguage, inpMetric, inpSpiderUpdates;
 	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, 
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
-	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus,chkHasCloseButton,
+	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTouchControl, chkTabsAtTop, chkShowStatus,chkHasCloseButton,
 	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, 
 	          chkSetCurrentCentreFromGPSPosition,chkSortingGroupedByCache,chkuseOwnSymbols,chkDebug;
 	mTabbedPanel mTab;
@@ -145,6 +145,11 @@ public class PreferencesScreen extends Form {
 		fontSize.setPreferredSize(40,-1);
 		frmScreen.addLast(pnlScreen,HSTRETCH,HFILL);
 		fontSize.setText(Convert.toString(pref.fontSize));
+		
+		  //FIXME local settings
+        frmScreen.addNext(chkTouchControl=new mCheckBox(MyLocale.getMsg(00,"Touch(Beta)")),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.EAST));	
+    	//lblTitle.setTag(INSETS,new Insets(2,0,0,0));
+        chkTouchControl.setState(pref.touchControls);
 		
 		frmScreen.addLast(chkHasCloseButton=new mCheckBox(MyLocale.getMsg(631,"PDA has close Button")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
     	//lblTitle.setTag(INSETS,new Insets(2,0,0,0));
@@ -326,6 +331,7 @@ public class PreferencesScreen extends Form {
 				pref.garminConn=chcGarminPort.getSelectedItem().toString();
 				pref.garminGPSBabelOptions=chkSynthShort.state?"-s":"";
 				pref.menuAtTop=chkMenuAtTop.getState();
+				pref.touchControls=chkTouchControl.getState();
 				pref.tabsAtTop=chkTabsAtTop.getState();
 				pref.showStatus=chkShowStatus.getState();
 				pref.hasCloseButton=chkHasCloseButton.getState();

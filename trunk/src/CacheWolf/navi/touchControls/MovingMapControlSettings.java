@@ -2,6 +2,8 @@ package CacheWolf.navi.touchControls;
 
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
+import CacheWolf.navi.touchControls.MovingMapControlItemText.TextOptions;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
 import ewe.fx.Dimension;
 import ewe.io.FileBase;
@@ -81,6 +83,19 @@ public class MovingMapControlSettings extends MinML {
 	 * the file path and name of the icon which can be displayed on the button
 	 */
 	public static final String BUTTON_ATTR_ICON = "icon";
+
+	public static final String BUTTON_ATTR_ICON_OFFSET_X = "iconX";
+
+	public static final String BUTTON_ATTR_ICON_OFFSET_Y = "iconY";
+
+	public static final String BUTTON_ATTR_TEXT_OFFSET_L = "textOffsetLeft";
+
+	public static final String BUTTON_ATTR_TEXT_OFFSET_R = "textOffsetRight";
+
+	public static final String BUTTON_ATTR_TEXT_OFFSET_T = "textOffsetTop";
+
+	public static final String BUTTON_ATTR_TEXT_OFFSET_B = "textOffsetBottom";
+
 	/**
 	 * the action command. Defines what is to do if the button is clicked
 	 */
@@ -94,23 +109,24 @@ public class MovingMapControlSettings extends MinML {
 	 */
 	public static final String BUTTON_ATTR_CONTEXT = "content";
 	/**
-	 * the alignment of the text on the buttons. 
-	 * if the String starts with 'T' the text will be displayed on the top line of the button
-	 * if the String starts with 'B' the text will be displayed on the bottom line of the button
-	 * if the String starts ends 'L' the text will be displayed on the left side of the button
-	 * if the String starts ends 'R' the text will be displayed on the right side of the button
-	 * otherwise horizontal and vertical center will be used as default
+	 * the alignment of the text on the buttons. if the String starts with 'T' the text will be displayed on the top
+	 * line of the button if the String starts with 'B' the text will be displayed on the bottom line of the button if
+	 * the String starts ends 'L' the text will be displayed on the left side of the button if the String starts ends
+	 * 'R' the text will be displayed on the right side of the button otherwise horizontal and vertical center will be
+	 * used as default
 	 */
 	public static final String BUTTON_ATTR_ALIGNTEXT = "alignText";
 
 	Vector menuItems = new Vector(10);
 	private Hashtable roles;
 	private int fontsize;
+	private Preferences pref;
 
 	public MovingMapControlSettings(boolean vga, Hashtable roles) {
 		double fontscale = vga ? 1.5 : 1;
 		this.fontsize = (int) (Global.getPref().fontSize * fontscale);
 		this.roles = roles;
+		this.pref = Global.getPref();
 	}
 
 	public void startElement(String name, AttributeList attributes)
@@ -187,17 +203,9 @@ public class MovingMapControlSettings extends MinML {
 					.getValue(BUTTON_ATTR_CHANGE_STAE_OF);
 
 			String visibility = attributes.getValue(BUTTON_ATTR_VISIBILITY);
-
-			if (visibility == null) {
-				Vm.debug("no valid " + BUTTON_ATTR_VISIBILITY + " set.");
-				return;
-			}
-
 			String action = attributes.getValue(BUTTON_ATTR_ACTION);
-			String alpha = attributes.getValue(BUTTON_ATTR_ALPHA);
 			String localeDefault = attributes
 					.getValue(BUTTON_ATTR_LOCALE_DEFAULT);
-			String localeID = attributes.getValue(BUTTON_ATTR_LOCALE_ID);
 			String imageLocation = attributes.getValue(BUTTON_ATTR_LOCATION);
 			String iconLocation = attributes.getValue(BUTTON_ATTR_ICON);
 			String alignText = attributes.getValue(BUTTON_ATTR_ALIGNTEXT);
@@ -212,25 +220,10 @@ public class MovingMapControlSettings extends MinML {
 						+ " not set!");
 				return;
 			}
-			// convert values
-			int alphavalue = -1;
-			if (alpha != null) {
-				try {
-					alphavalue = Integer.parseInt(alpha);
-				} catch (Exception e) {
-					// nothing
-				}
-			}
+			int alphavalue = getIntFromFile(attributes, BUTTON_ATTR_ALPHA, -1);
 
-			int localIDValue = -1;
-
-			if (localeID != null) {
-				try {
-					localIDValue = Integer.parseInt(localeID);
-				} catch (Exception e) {
-					Vm.debug(e.getMessage());
-				}
-			}
+			int localIDValue = getIntFromFile(attributes,
+					BUTTON_ATTR_LOCALE_ID, 0);
 
 			if (imageLocation == null) {
 				// something not set
@@ -238,22 +231,30 @@ public class MovingMapControlSettings extends MinML {
 				return;
 			}
 
+			// textoptions
+			TextOptions tOptions = new TextOptions(fontsize, getIntFromFile(
+					attributes, BUTTON_ATTR_TEXT_OFFSET_L, 0), getIntFromFile(
+					attributes, BUTTON_ATTR_TEXT_OFFSET_R, 0), getIntFromFile(
+					attributes, BUTTON_ATTR_TEXT_OFFSET_T, 0), getIntFromFile(
+					attributes, BUTTON_ATTR_TEXT_OFFSET_B, 0));
+
 			MovingMapControlItem button;
 			if (context != null) {
 				button = new MovingMapControlItemText("", imageLocation,
 						iconLocation, alphavalue, action, context, alignText,
-						fontsize);
+						tOptions);
 			} else if (localeDefault != null) {
 				button = new MovingMapControlItemText(MyLocale.getMsg(
 						localIDValue, localeDefault), imageLocation,
 						iconLocation, alphavalue, action, context, alignText,
-						fontsize);
+						tOptions);
 			} else {
-
 				button = new MovingMapControlItemButton(imageLocation,
 						iconLocation, action, alphavalue);
 			}
 
+			// add extra role to all icons
+			visibility += "+!" + MovingMapControls.ROLE_WORKING;
 			button.setVisibilityRole(visibility);
 			if (changeState != null) {
 				button.setRole(changeState);
@@ -267,6 +268,19 @@ public class MovingMapControlSettings extends MinML {
 
 	}
 
+	private int getIntFromFile(AttributeList attributes, String field,
+			int defaultValue) {
+		String entry = attributes.getValue(field);
+		if (entry != null) {
+			try {
+				defaultValue = Integer.parseInt(entry);
+			} catch (Exception e) {
+				Vm.debug("Can not read int for filed " + field + ": " + entry);
+			}
+		}
+		return defaultValue;
+	}
+
 	private int toIntValue(String pos) {
 		try {
 			return Integer.parseInt(pos);
@@ -277,19 +291,24 @@ public class MovingMapControlSettings extends MinML {
 
 	public boolean readFile(Dimension dest) {
 		setDocumentHandler(this);
-
 		String file = FileBase.makePath(FileBase.getProgramDirectory(),
-				"mmcDefault/movingMapControls.xml");
+				"mmcOldStyle/movingMapControls.xml");
 
-		if (dest.height <= 320 && dest.width <= 240) {
+		if (pref.touchControls) {
 			file = FileBase.makePath(FileBase.getProgramDirectory(),
-					"mmc240x320/movingMapControls.xml");
-		} else if (dest.height <= 640 && dest.width <= 480) {
-			file = FileBase.makePath(FileBase.getProgramDirectory(),
-					"mmc480x640/movingMapControls.xml");
+					"mmcDefault/movingMapControls.xml");
+
+			if (dest.height <= 320 && dest.width <= 240) {
+				file = FileBase.makePath(FileBase.getProgramDirectory(),
+						"mmc240x320/movingMapControls.xml");
+			} else if (dest.height <= 640 && dest.width <= 480) {
+				file = FileBase.makePath(FileBase.getProgramDirectory(),
+						"mmc480x640/movingMapControls.xml");
+			}
 		}
+
 		try {
-			Vm.debug("read mmc file " + file);
+			// Vm.debug("read mmc file " + file);
 			file = file.replace('\\', '/');
 			ewe.io.Reader r = new ewe.io.InputStreamReader(
 					new ewe.io.FileInputStream(file));
