@@ -153,7 +153,7 @@ public class MovingMapControlSettings extends MinML {
 				roles.put(role_name, r);
 
 				if (role_active != null) {
-					r.setState(Boolean.TRUE);
+					r.setState(true);
 				}
 				if (disable != null) {
 					r.setRolesToDisable(mString.split(disable));

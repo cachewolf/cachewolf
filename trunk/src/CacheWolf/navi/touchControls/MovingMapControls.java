@@ -80,10 +80,10 @@ public class MovingMapControls implements ICommandListener {
 			return false;
 		}
 		Role r = (Role) object;
-		if (r.getState() == Boolean.TRUE) {
-			return changeRoleState(role, r, Boolean.FALSE);
+		if (r.getState() == true) {
+			return changeRoleState(role, r, false);
 		} else {
-			return changeRoleState(role, r, Boolean.TRUE);
+			return changeRoleState(role, r, true);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class MovingMapControls implements ICommandListener {
 
 	}
 
-	public boolean changeRoleState(String role, Boolean b) {
+	public boolean changeRoleState(String role, boolean b) {
 		Object object = roles.get(role);
 		if (object == null) {
 			return false;
@@ -107,25 +107,25 @@ public class MovingMapControls implements ICommandListener {
 
 	}
 
-	private boolean changeRoleState(String roleName, Role role, Boolean b) {
+	private boolean changeRoleState(String roleName, Role role, boolean b) {
 		role.setState(b);
-		if (b == Boolean.TRUE) {
+		if (b == true) {
 			String[] rToDis = role.getRolesToDisable();
 			if (rToDis != null) {
 				for (int i = 0; i < rToDis.length; i++) {
 					String roleToDis = rToDis[i];
-					changeRoleState(roleToDis, Boolean.FALSE);
+					changeRoleState(roleToDis, false);
 				}
 			}
 		}
 		setStateOfIcons();
 
-		boolean action = checkRolesForAction(roleName, b.booleanValue());
+		boolean action = checkRolesForAction(roleName, b);
 		if (action) {
 
 		}
 		if (getStateOfRole(ROLE_WORKING)) {
-			changeRoleState(ROLE_WORKING, Boolean.FALSE);
+			changeRoleState(ROLE_WORKING, false);
 		}
 		movingMap.repaintNow();
 
@@ -137,14 +137,14 @@ public class MovingMapControls implements ICommandListener {
 			return false;
 		}
 		if (ROLE_SHOW_MAP.equals(role)) {
-			changeRoleState(ROLE_WORKING, Boolean.TRUE);
+			changeRoleState(ROLE_WORKING, true);
 			if (state) {
 				return movingMap.handleCommand(SHOW_MAP);
 			} else
 				return movingMap.handleCommand(HIDE_MAP);
 		}
 		if (ROLE_SHOW_CACHES.equals(role)) {
-			changeRoleState(ROLE_WORKING, Boolean.TRUE);
+			changeRoleState(ROLE_WORKING, true);
 			if (state) {
 				return movingMap.handleCommand(SHOW_CACHES);
 			} else
@@ -152,7 +152,7 @@ public class MovingMapControls implements ICommandListener {
 		}
 
 		if (ROLE_FILL_WHITE.equals(role)) {
-			changeRoleState(ROLE_WORKING, Boolean.TRUE);
+			changeRoleState(ROLE_WORKING, true);
 			if (state) {
 				return movingMap.handleCommand(FILL_MAP);
 			} else
@@ -160,7 +160,7 @@ public class MovingMapControls implements ICommandListener {
 		}
 
 		if (ROLE_ZOOM_MANUALLY.equals(role)) {
-			changeRoleState(ROLE_WORKING, Boolean.TRUE);
+			changeRoleState(ROLE_WORKING, true);
 			if (state) {
 				movingMap.setZoomingMode(true);
 			} else
@@ -270,28 +270,28 @@ public class MovingMapControls implements ICommandListener {
 				if ("changeStateOfRole".equals(command)) {
 					boolean val = changeRoleState(item.getRoleToChange());
 					if (val) {
-						changeRoleState(ROLE_MENU, Boolean.FALSE);
+						changeRoleState(ROLE_MENU, false);
 					}
 					setStateOfIcons();
 					movingMap.repaintNow();
 					return val;
 				}
-				changeRoleState(ROLE_WORKING, Boolean.TRUE);
+				changeRoleState(ROLE_WORKING, true);
 				boolean handleCommand = movingMap.handleCommand(command);
 				if (handleCommand) {
-					changeRoleState(ROLE_MENU, Boolean.FALSE);
+					changeRoleState(ROLE_MENU, false);
 				}
-				changeRoleState(ROLE_WORKING, Boolean.FALSE);
+				changeRoleState(ROLE_WORKING, false);
 				return true;
 			}
 		}
-		changeRoleState(ROLE_MENU, Boolean.FALSE);
+		changeRoleState(ROLE_MENU, false);
 		return true;
 	}
 
 	public boolean handleCommand(String actionCommand) {
 		if (CLOSE.equals(actionCommand)) {
-			return changeRoleState(ROLE_MENU, Boolean.FALSE);
+			return changeRoleState(ROLE_MENU, false);
 		}
 		return false;
 	}
@@ -333,18 +333,18 @@ public class MovingMapControls implements ICommandListener {
 	}
 
 	public static class Role {
-		Boolean state = Boolean.FALSE;
+		boolean state = false;
 		String rolesToDisable[] = null;
 
 		public void setRolesToDisable(String[] rolesToDisable) {
 			this.rolesToDisable = rolesToDisable;
 		}
 
-		public void setState(Boolean state) {
+		public void setState(boolean state) {
 			this.state = state;
 		}
 
-		public Boolean getState() {
+		public boolean getState() {
 			return state;
 		}
 
