@@ -218,7 +218,12 @@
 		<delete dir="${assemble.dir}" />
 	</target>
 
-	<!-- This target will make a html file from the docbook manual to Cachewolf -->
+	<!-- 
+	   This target will make a html file from the docbook manual to Cachewolf
+	   You need to set -DdocbookTo=/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html/
+	   on Ubuntu 9.10
+	-->
+	
 	<!--
 		I installed "Serna Free Open Source XML Editor" in Ubuntu 9.10 to
 		compile the docbook to html, but I guess installung docbook-xsl would
@@ -236,7 +241,7 @@
 				the docbook-html.xsl is taken from
 				/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html/*
 			-->
-			<arg value="docs/CacheWolf_Doku/docbook2html_xsl/docbook.xsl" />
+			<arg value="${docbookTo}" />
 			<arg value="docs/CacheWolf_Doku/CacheWolf_Dokumentation.xml" />
 		</exec>
 
