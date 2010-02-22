@@ -240,9 +240,12 @@
 			<arg value="docs/CacheWolf_Doku/CacheWolf_Dokumentation.xml" />
 		</exec>
 
-		<copy todir="${assemble.dir}/doku_html_de/pics" failonerror="true">
-			<fileset dir="docs/CacheWolf_Doku/pics" />
+		<copy todir="${assemble.dir}/doku_html_de" failonerror="true">
+			<fileset file="docs/CacheWolf_Doku/html.css" />
 		</copy>
+        <copy todir="${assemble.dir}/doku_html_de/pics" failonerror="true">
+            <fileset dir="docs/CacheWolf_Doku/pics" />
+        </copy>
 		<zip destfile="${pkg.dir}/Handbuch_html.zip" basedir="${assemble.dir}/doku_html_de" />
 		<copy todir="${pkg.dir}/Handbuch_html" failonerror="true">
 			<fileset dir="${assemble.dir}/doku_html_de" />
