@@ -1,5 +1,6 @@
 package CacheWolf.navi.touchControls;
 
+import CacheWolf.navi.touchControls.MovingMapControlItemText.TextOptions;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Font;
@@ -25,13 +26,14 @@ public class ImageWithText extends AniImage {
 
 	private int startlineWidth = 0;
 
-	private int xProperties = 0;;
+	private int xProperties = 0;
 
-	public ImageWithText(Image imageSrc, int fontsize) {
+	private TextOptions tOptions;;
+
+	public ImageWithText(Image imageSrc, TextOptions tOptions) {
 		super(imageSrc);
-		imageFont = new Font("Helvetica", Font.BOLD,
-				fontsize);
-		
+		imageFont = new Font("Helvetica", Font.BOLD, tOptions.getFontSize());
+		this.tOptions = tOptions;
 		MainWindow win = MainWindow.getMainWindow();
 		fm = win.getFontMetrics(imageFont);
 	}
@@ -44,57 +46,70 @@ public class ImageWithText extends AniImage {
 		int completeWidth = textWidth + 5 + startlineWidth;
 		int completeHight = textHeight;
 
-		int startX = x;
-		int startY = y;
+		int startX = x+tOptions.getTextFromLeft();
+		int startY = y+tOptions.getTextFromTop();
 		if ((xProperties & MovingMapControlItem.ICON_TEXT_HORIZONTAL_CENTER) != 0) {
-			startX = x + (getWidth() - completeWidth) / 2;
+			startX = x + tOptions.getTextFromLeft()+ (getWidth() - completeWidth-tOptions.getTextFromLeft()) / 2;
 		} else if ((xProperties & MovingMapControlItem.ICON_TEXT_RIGHT) != 0) {
-			startX = x + getWidth() - completeWidth-5;
+			startX = x + getWidth() - completeWidth - tOptions.getTextFromRight();
 
 		}
 
 		if ((xProperties & MovingMapControlItem.ICON_TEXT_VERTICAL_CENTER) != 0) {
-			startY = y + (getHeight() - completeHight) / 2;
+			startY = y +tOptions.getTextFromTop() + (getHeight() - completeHight) / 2;
 		} else if ((xProperties & MovingMapControlItem.ICON_TEXT_BOTTOM) != 0) {
-			startY = y + getHeight() - completeHight;
+			startY = y + getHeight() - completeHight - tOptions.getTextFromBottom();
 		}
 
 		if (startlineWidth > 0) {
 			int startliney = startY + completeHight / 2 - 2;
 			g.drawRect(startX, startliney, startlineWidth, 4);
-			g.fillRect(startX, startliney,
-					startlineWidth /2, 4);
-			
+			g.fillRect(startX, startliney, startlineWidth / 2, 4);
+
 		}
 		if (text != null) {
-			g.drawText(fm,text,new Rect((startX + 2 + startlineWidth), startY,textWidth,textHeight),Graphics.CENTER,1);
+			g.drawText(fm, text, new Rect((startX + 2 + startlineWidth),
+					startY, textWidth, textHeight), Graphics.CENTER, 1);
 		}
 	}
 
 	public void setText(String text) {
 		Dimension size = new Dimension();
 		Graphics.getSize(fm, text, size);
-		if (size.width>getWidth()*0.7) {
-			this.text = new String[]{"",""};
-			String[] split= mString.split(text, ' ');
-			int lineLength=0;
-			for (int i = 0; i < split.length; i++) {
-				String part = split[i];
-				if (lineLength>text.length()/2) {
-					this.text[1]+=part+" ";
-				}else{
-					this.text[0]+=part+" ";
-					lineLength++;
-					lineLength+=part.length();
+		int offsets = 0;
+		offsets += tOptions.getTextFromLeft();
+		offsets += tOptions.getTextFromRight();
+
+		if (size.width > getWidth() - offsets) {
+			char[] chars = text.toCharArray();
+			int splitindex = 0;
+			int half = chars.length / 2;
+			for (int i = 0; i < chars.length; i++) {
+				char c = chars[i];
+				if (c == ' ') {
+					if (i <= half / 2) {
+						splitindex = i;
+					} else {
+						if (splitindex <= half && half - splitindex > i - half) {
+							splitindex = i;
+							break;
+						}
+					}
 				}
 			}
-			Graphics.getSize(fm, this.text, 0, this.text.length, size);
-		}else{
-			this.text = new String[]{text};
+
+			if (splitindex > 0) {
+				this.text = new String[] { text.substring(0, splitindex),
+						text.substring(splitindex) };
+				Graphics.getSize(fm, this.text, 0, this.text.length, size);
+			}
+
+		} else {
+			this.text = new String[] { text };
 		}
 		textHeight = size.height;
 		textWidth = size.width;
-		
+
 	}
 
 	public void setStartlineWitdth(int startlineWidth) {

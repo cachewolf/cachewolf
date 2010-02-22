@@ -349,6 +349,11 @@
 			verbose="true">
 			<fileset dir="res_noewe/mmcDefault" />
 		</copy>
+		<!-- copy moving map old icons -->
+		<copy todir="${assemble.dir}/mmcOldStyle" failonerror="true"
+			verbose="true">
+			<fileset dir="res_noewe/mmcOldStyle" />
+		</copy>
 		<!-- copy alternative symbol sets -->
 		<copy todir="${assemble.dir}/symbols" failonerror="true" verbose="true">
 			<fileset dir="res_noewe/symbols/*">

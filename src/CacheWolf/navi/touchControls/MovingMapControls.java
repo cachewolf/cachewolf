@@ -22,7 +22,9 @@ public class MovingMapControls implements ICommandListener {
 
 	private static final String ROLE_SHOW_MAP = "show_map";
 
-	private static final String ROLE_MENU = "menu";
+	public static final String ROLE_MENU = "menu";
+
+	public static final String ROLE_WORKING = "working";
 
 	Vector buttons = null;
 
@@ -45,11 +47,13 @@ public class MovingMapControls implements ICommandListener {
 		movingMap.getDisplayedSize(di);
 		MovingMapControlSettings movingMapControlSettings = new MovingMapControlSettings(
 				vga, roles);
-		
-		Dimension dest= new Dimension();
+
+		Dimension dest = new Dimension();
 		movingMap.getPreferredSize(dest);
 		movingMapControlSettings.readFile(dest);
 		buttons = movingMapControlSettings.getMenuItems();
+
+		roles.put(ROLE_WORKING, new Role());
 
 		// create all needed Buttons
 		setStateOfIcons();
@@ -77,23 +81,33 @@ public class MovingMapControls implements ICommandListener {
 		}
 		Role r = (Role) object;
 		if (r.getState() == Boolean.TRUE) {
-			return changeRoleState(role,r,Boolean.FALSE);
+			return changeRoleState(role, r, Boolean.FALSE);
 		} else {
-			return changeRoleState(role,r,Boolean.TRUE);
+			return changeRoleState(role, r, Boolean.TRUE);
 		}
 	}
-	
+
+	public boolean getStateOfRole(String role) {
+		Object object = roles.get(role);
+		if (object == null) {
+			return false;
+		}
+		Role r = (Role) object;
+		return r.getState();
+
+	}
+
 	public boolean changeRoleState(String role, Boolean b) {
 		Object object = roles.get(role);
 		if (object == null) {
 			return false;
 		}
 		Role r = (Role) object;
-		return changeRoleState(role,r,b);
-		
+		return changeRoleState(role, r, b);
+
 	}
-	
-	private boolean  changeRoleState(String roleName , Role role, Boolean b) {
+
+	private boolean changeRoleState(String roleName, Role role, Boolean b) {
 		role.setState(b);
 		if (b == Boolean.TRUE) {
 			String[] rToDis = role.getRolesToDisable();
@@ -105,71 +119,81 @@ public class MovingMapControls implements ICommandListener {
 			}
 		}
 		setStateOfIcons();
-		
+
 		boolean action = checkRolesForAction(roleName, b.booleanValue());
+		if (action) {
+
+		}
+		if (getStateOfRole(ROLE_WORKING)) {
+			changeRoleState(ROLE_WORKING, Boolean.FALSE);
+		}
 		movingMap.repaintNow();
-		
+
 		return action;
 	}
 
 	private boolean checkRolesForAction(String role, boolean state) {
-		if (role==null) {
+		if (role == null) {
 			return false;
 		}
 		if (ROLE_SHOW_MAP.equals(role)) {
+			changeRoleState(ROLE_WORKING, Boolean.TRUE);
 			if (state) {
 				return movingMap.handleCommand(SHOW_MAP);
-			}else
+			} else
 				return movingMap.handleCommand(HIDE_MAP);
 		}
 		if (ROLE_SHOW_CACHES.equals(role)) {
+			changeRoleState(ROLE_WORKING, Boolean.TRUE);
 			if (state) {
 				return movingMap.handleCommand(SHOW_CACHES);
-			}else
+			} else
 				return movingMap.handleCommand(HIDE_CACHES);
 		}
-		
+
 		if (ROLE_FILL_WHITE.equals(role)) {
+			changeRoleState(ROLE_WORKING, Boolean.TRUE);
 			if (state) {
 				return movingMap.handleCommand(FILL_MAP);
-			}else
+			} else
 				return movingMap.handleCommand(NO_FILL_MAP);
 		}
-		
+
 		if (ROLE_ZOOM_MANUALLY.equals(role)) {
+			changeRoleState(ROLE_WORKING, Boolean.TRUE);
 			if (state) {
 				movingMap.setZoomingMode(true);
-			}else
+			} else
 				movingMap.setZoomingMode(false);
 			return true;
 		}
-		
+
 		if (ROLE_MENU.equals(role)) {
 			if (state) {
 				movingMap.setPaintPosDestLine(false);
-			}else
+			} else
 				movingMap.setPaintPosDestLine(true);
 			return false;
 		}
 		return false;
 	}
 
-//	private void checkStateOfIcon(MovingMapControlItem item, AniImage ani) {
-//		if (MOVE_TO_DEST.equals(item.getActionCommand())) {
-//			if (movingMap.getDestination() != null) {
-//				ani.properties &= ~mImage.IsNotHot;
-//			} else {
-//				ani.properties |= mImage.IsNotHot;
-//			}
-//		}
-//		if (MOVE_TO_CENTER.equals(item.getActionCommand())) {
-//			if (Global.getPref().getCurCentrePt().isValid())
-//				ani.properties &= ~mImage.IsNotHot;
-//			else {
-//				ani.properties |= mImage.IsNotHot;
-//
-//			}
-//		}}
+	// private void checkStateOfIcon(MovingMapControlItem item, AniImage ani) {
+	// if (MOVE_TO_DEST.equals(item.getActionCommand())) {
+	// if (movingMap.getDestination() != null) {
+	// ani.properties &= ~mImage.IsNotHot;
+	// } else {
+	// ani.properties |= mImage.IsNotHot;
+	// }
+	// }
+	// if (MOVE_TO_CENTER.equals(item.getActionCommand())) {
+	// if (Global.getPref().getCurCentrePt().isValid())
+	// ani.properties &= ~mImage.IsNotHot;
+	// else {
+	// ani.properties |= mImage.IsNotHot;
+	//
+	// }
+	// }}
 
 	public void updateContext(String contextName, String text) {
 		if (contextName == null) {
@@ -196,7 +220,6 @@ public class MovingMapControls implements ICommandListener {
 		}
 
 	}
-
 
 	public void updateFormSize(int w, int h) {
 
@@ -234,7 +257,7 @@ public class MovingMapControls implements ICommandListener {
 		int timenow = Vm.getTimeStamp();
 
 		// avoid double clicks
-		if (timenow < 100 + lastTime) {
+		if (timenow < 200 + lastTime) {
 			return false;
 		}
 		lastTime = timenow;
@@ -242,18 +265,23 @@ public class MovingMapControls implements ICommandListener {
 			MovingMapControlItem item = (MovingMapControlItem) buttons.get(i);
 			AniImage ani = item.getImage();
 			if (which == ani) {
+
 				String command = item.getActionCommand();
-				 if ("changeStateOfRole".equals(command)) {
-					boolean val =changeRoleState(item.getRoleToChange());
+				if ("changeStateOfRole".equals(command)) {
+					boolean val = changeRoleState(item.getRoleToChange());
 					if (val) {
 						changeRoleState(ROLE_MENU, Boolean.FALSE);
 					}
 					setStateOfIcons();
 					movingMap.repaintNow();
 					return val;
-				} else if (movingMap.handleCommand(command)) {
+				}
+				changeRoleState(ROLE_WORKING, Boolean.TRUE);
+				boolean handleCommand = movingMap.handleCommand(command);
+				if (handleCommand) {
 					changeRoleState(ROLE_MENU, Boolean.FALSE);
-				}				
+				}
+				changeRoleState(ROLE_WORKING, Boolean.FALSE);
 				return true;
 			}
 		}
@@ -261,11 +289,9 @@ public class MovingMapControls implements ICommandListener {
 		return true;
 	}
 
-	
-
 	public boolean handleCommand(String actionCommand) {
 		if (CLOSE.equals(actionCommand)) {
-			 return changeRoleState(ROLE_MENU, Boolean.FALSE);
+			return changeRoleState(ROLE_MENU, Boolean.FALSE);
 		}
 		return false;
 	}
@@ -281,7 +307,6 @@ public class MovingMapControls implements ICommandListener {
 		return imageClicked;
 	}
 
-
 	public boolean imageBeginDragged(AniImage which, Point pos) {
 		boolean contains = containsImage(which);
 
@@ -292,9 +317,9 @@ public class MovingMapControls implements ICommandListener {
 		}
 		return false;
 	}
-	
+
 	private boolean containsImage(AniImage which) {
-		if (which==null) {
+		if (which == null) {
 			return false;
 		}
 		for (int i = 0; i < buttons.size(); i++) {
@@ -307,22 +332,22 @@ public class MovingMapControls implements ICommandListener {
 		return false;
 	}
 
-	public static class Role{
+	public static class Role {
 		Boolean state = Boolean.FALSE;
-		String rolesToDisable[]=null;
-		
+		String rolesToDisable[] = null;
+
 		public void setRolesToDisable(String[] rolesToDisable) {
 			this.rolesToDisable = rolesToDisable;
 		}
-		
+
 		public void setState(Boolean state) {
 			this.state = state;
 		}
-		
+
 		public Boolean getState() {
 			return state;
 		}
-		
+
 		public String[] getRolesToDisable() {
 			return rolesToDisable;
 		}

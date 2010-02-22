@@ -12,11 +12,11 @@ public class MovingMapControlItemText extends MovingMapControlItem {
 	private String context;
 
 	public MovingMapControlItemText(final String iconText, String imageSource,String iconSource,
-			int alpha, String actionCommand, String context, String alignText,int fontsize) {
+			int alpha, String actionCommand, String context, String alignText,TextOptions tOptions) {
 
 		Image image = MovingMapControlItem.createImage(imageSource, iconSource, alpha);
 		
-		aniImage = new ImageWithText(image,fontsize);
+		aniImage = new ImageWithText(image,tOptions);
 
 		aniImage.setText(iconText);
 		aniImage.freeSource();
@@ -91,5 +91,46 @@ public class MovingMapControlItemText extends MovingMapControlItem {
 
 	public String getActionCommand() {
 		return command;
+	}
+	
+	public static class TextOptions{
+		
+		
+		private final int fontSize;
+		private final int textFromLeft;
+		private final int textFromRight;
+		private final int textFromTop;
+		private final int textFromBottom;
+		public TextOptions(int fontSize, int textFromLeft, int textFromRight,
+				int textFromTop, int textFromBottom) {
+			super();
+			this.fontSize = fontSize;
+			this.textFromLeft = textFromLeft;
+			this.textFromRight = textFromRight;
+			this.textFromTop = textFromTop;
+			this.textFromBottom = textFromBottom;
+		}
+		
+		
+		public int getFontSize() {
+			return fontSize;
+		}
+		
+		public int getTextFromLeft() {
+			return textFromLeft;
+		}
+		
+		public int getTextFromRight() {
+			return textFromRight;
+		}
+		
+		public int getTextFromTop() {
+			return textFromTop;
+		}
+		
+		public int getTextFromBottom() {
+			return textFromBottom;
+		}
+		
 	}
 }
