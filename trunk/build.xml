@@ -220,7 +220,7 @@
 
 	<!-- 
 	   This target will make a html file from the docbook manual to Cachewolf
-	   You need to set -DdocbookTo=/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html/
+	   You need to set -DdocbookTo=/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html
 	   on Ubuntu 9.10
 	-->
 	
@@ -229,19 +229,20 @@
 		compile the docbook to html, but I guess installung docbook-xsl would
 		be enough
 	-->
-	<target name="doku-html-de" description="make a html file from the docbook documentation">
+	<target name="doku_html_de" description="Make a html file from the docbook documentation">
 		<mkdir dir="${assemble.dir}" />
 		<mkdir dir="${assemble.dir}/doku_html_de" />
+		<fail message="please set property docbookTo"
+		unless="docbookTo" />
+		<echo message="taking conversion infos from ${docbookTo}" />
+		
 	    <!-- generate html file and pics dir in the source folder -->		
-		<exec executable="xsltproc" os="Linux">
+		<exec executable="xsltproc">
+		        <arg value="-" />
 			<arg value="--xinclude" />
 			<arg value="-o" />
 			<arg value="${assemble.dir}/doku_html_de/CacheWolf_Dokumentation.html" />
-			<!--
-				the docbook-html.xsl is taken from
-				/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html/*
-			-->
-			<arg value="${docbookTo}" />
+			<arg value= "${docbookTo}/docbook.xsl" />
 			<arg value="docs/CacheWolf_Doku/CacheWolf_Dokumentation.xml" />
 		</exec>
 
@@ -251,6 +252,8 @@
         <copy todir="${assemble.dir}/doku_html_de/pics" failonerror="true">
             <fileset dir="docs/CacheWolf_Doku/pics" />
         </copy>
+        		<mkdir dir="${pkg.dir}" />
+
 		<zip destfile="${pkg.dir}/Handbuch_html.zip" basedir="${assemble.dir}/doku_html_de" />
 		<copy todir="${pkg.dir}/Handbuch_html" failonerror="true">
 			<fileset dir="${assemble.dir}/doku_html_de" />
