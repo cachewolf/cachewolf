@@ -249,14 +249,15 @@
 		<copy todir="${assemble.dir}/doku_html_de" failonerror="true">
 			<fileset file="docs/CacheWolf_Doku/html.css" />
 		</copy>
-        <copy todir="${assemble.dir}/doku_html_de/pics" failonerror="true">
-            <fileset dir="docs/CacheWolf_Doku/pics" />
-        </copy>
-        		<mkdir dir="${pkg.dir}" />
+                <copy todir="${assemble.dir}/doku_html_de/pics" failonerror="true">
+                        <fileset dir="docs/CacheWolf_Doku/pics" />
+                </copy>
+        	<mkdir dir="${pkg.dir}" />
 
 		<zip destfile="${pkg.dir}/Handbuch_html.zip" basedir="${assemble.dir}/doku_html_de" />
 		<copy todir="${pkg.dir}/Handbuch_html" failonerror="true">
-			<fileset dir="${assemble.dir}/doku_html_de" />
+			<fileset dir="${assemble.dir}/doku_html_de"
+			include="**/*.*" />
 		</copy>
 
 		<delete dir="${assemble.dir}" />
