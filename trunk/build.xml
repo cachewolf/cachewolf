@@ -238,7 +238,7 @@
 		
 	    <!-- generate html file and pics dir in the source folder -->		
 		<exec executable="xsltproc">
-		        <arg value="-" />
+		        <arg value="-v" />
 			<arg value="--xinclude" />
 			<arg value="-o" />
 			<arg value="${assemble.dir}/doku_html_de/CacheWolf_Dokumentation.html" />
