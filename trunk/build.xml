@@ -339,7 +339,7 @@
 	</target>
 
 	<target name="copyppcdll" description="copy modified dll for PPC2003">
-		<copy todir="${assemble.dir}" file="platform-dep/PNA-WinCE42/ewe.dll" />
+		<copy todir="${assemble.dir}" file="platform-dep/PocketPC2003/ewe.dll" />
 	</target>
 
 	<!--
