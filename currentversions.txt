@@ -11,7 +11,7 @@ T1SvnRevision: 2409
 # InDevelopmentStable
 T2VersionMajor: 1
 T2VersionMinor: 1
-T2SvnRevision: 2454
+T2SvnRevision: 2447
 
 # InDevelopmentNewest
 T3VersionMajor: 1
