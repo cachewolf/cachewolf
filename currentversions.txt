@@ -11,14 +11,14 @@ T1SvnRevision: 2409
 # InDevelopmentStable
 T2VersionMajor: 1
 T2VersionMinor: 1
-T2SvnRevision: 2408
+T2SvnRevision: 2454
 
 # InDevelopmentNewest
 T3VersionMajor: 1
 T3VersionMinor: 1
 #T3SvnRevision: http://flyingfish.freewrt.org:8180/job/Cachewolf/lastBuild/ (?i)Revision[\\s]*[:=][\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 #T3SvnRevision: http://www.naturalnik.de/CacheWolf-BE/zcurrent.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
-T3SvnRevision: http://cachewolf.de.ms/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
+T3SvnRevision: http://cachewolf.aldos.de/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 
 RecommendedType: 1
 
