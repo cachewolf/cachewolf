@@ -1,0 +1,9 @@
+C:\Dateien_Entwicklung\Java_Projekte\CacheWolf\CacheWolf\tools\rating\gcvote\bin\Debug\gcvote.exe
+C:\Dateien_Entwicklung\Java_Projekte\CacheWolf\CacheWolf\tools\rating\gcvote\bin\Debug\gcvote.pdb
+C:\Dateien_Entwicklung\Java_Projekte\CacheWolf\CacheWolf\tools\rating\gcvote\bin\Debug\gcvote.xml
+C:\Dateien_Entwicklung\Java_Projekte\CacheWolf\CacheWolf\tools\rating\gcvote\obj\Debug\ResolveAssemblyReference.cache
+C:\Dateien_Entwicklung\Java_Projekte\CacheWolf\CacheWolf\tools\rating\gcvote\obj\Debug\ConsoleApplication1.Resources.resources
+C:\Dateien_Entwicklung\Java_Projekte\CacheWolf\CacheWolf\tools\rating\gcvote\obj\Debug\gcvote.vbproj.GenerateResource.Cache
+C:\Dateien_Entwicklung\Java_Projekte\CacheWolf\CacheWolf\tools\rating\gcvote\obj\Debug\gcvote.exe
+C:\Dateien_Entwicklung\Java_Projekte\CacheWolf\CacheWolf\tools\rating\gcvote\obj\Debug\gcvote.xml
+C:\Dateien_Entwicklung\Java_Projekte\CacheWolf\CacheWolf\tools\rating\gcvote\obj\Debug\gcvote.pdb
