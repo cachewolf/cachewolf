@@ -6,6 +6,7 @@ import CacheWolf.Preferences;
 import CacheWolf.navi.touchControls.MovingMapControlItemText.TextOptions;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
 import ewe.fx.Dimension;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.sys.Vm;
 import ewe.util.Hashtable;
@@ -17,6 +18,10 @@ import ewesoft.xml.sax.SAXException;
 
 public class MovingMapControlSettings extends MinML {
 
+	public static final String CONFIG_FILE_NAME = "movingMapControls.xml";
+	
+	public static final String CONFIG_FILE_NAME_OVERWRITE = "my_movingMapControls.xml";
+	
 	public static final String SETTINGS = "settings";
 	/**
 	 * the size of the font on the icons
@@ -230,9 +235,9 @@ public class MovingMapControlSettings extends MinML {
 				Vm.debug("Image for '" + localeDefault + "' not found");
 				return;
 			}
-
+			int localfontsize=getIntFromFile(attributes, SETTINGS_ATTR_FONTSIZE, fontsize);
 			// textoptions
-			TextOptions tOptions = new TextOptions(fontsize, getIntFromFile(
+			TextOptions tOptions = new TextOptions(localfontsize, getIntFromFile(
 					attributes, BUTTON_ATTR_TEXT_OFFSET_L, 0), getIntFromFile(
 					attributes, BUTTON_ATTR_TEXT_OFFSET_R, 0), getIntFromFile(
 					attributes, BUTTON_ATTR_TEXT_OFFSET_T, 0), getIntFromFile(
@@ -291,25 +296,29 @@ public class MovingMapControlSettings extends MinML {
 
 	public boolean readFile(Dimension dest) {
 		setDocumentHandler(this);
-		String file = FileBase.makePath(FileBase.getProgramDirectory(),
-				"mmcOldStyle/movingMapControls.xml");
+		String path = FileBase.makePath(FileBase.getProgramDirectory(),
+				"mmcOldStyle/");
 
 		if (pref.touchControls) {
-			file = FileBase.makePath(FileBase.getProgramDirectory(),
-					"mmcDefault/movingMapControls.xml");
+			path = FileBase.makePath(FileBase.getProgramDirectory(),
+					"mmcDefault/");
 
 			if (dest.height <= 320 && dest.width <= 240) {
-				file = FileBase.makePath(FileBase.getProgramDirectory(),
-						"mmc240x320/movingMapControls.xml");
+				path = FileBase.makePath(FileBase.getProgramDirectory(),
+						"mmc240x320/");
 			} else if (dest.height <= 640 && dest.width <= 480) {
-				file = FileBase.makePath(FileBase.getProgramDirectory(),
-						"mmc480x640/movingMapControls.xml");
+				path = FileBase.makePath(FileBase.getProgramDirectory(),
+						"mmc480x640/");
 			}
 		}
-
+		path = path.replace('\\', '/');
+		File file = new File(path, CONFIG_FILE_NAME_OVERWRITE);
+		if (!file.exists()) {
+			file = new File(path, CONFIG_FILE_NAME);
+		}
+		
+		
 		try {
-			// Vm.debug("read mmc file " + file);
-			file = file.replace('\\', '/');
 			ewe.io.Reader r = new ewe.io.InputStreamReader(
 					new ewe.io.FileInputStream(file));
 			parse(r);
@@ -317,12 +326,12 @@ public class MovingMapControlSettings extends MinML {
 		} catch (Exception e) {
 			if (e instanceof NullPointerException)
 				Global.getPref().log(
-						"Error reading " + file
+						"Error reading " + path
 								+ ": NullPointerException in Element " + ""
 								+ ". Wrong attribute, File not existing?", e,
 						true);
 			else
-				Global.getPref().log("Error reading " + file + ": ", e);
+				Global.getPref().log("Error reading " + path + ": ", e);
 			return false;
 		}
 		return true;
