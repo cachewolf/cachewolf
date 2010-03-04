@@ -5,7 +5,6 @@ import CacheWolf.Preferences;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
 import ewe.fx.Image;
 import ewe.graphics.AniImage;
-import ewe.sys.Math;
 import ewe.sys.Vm;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
