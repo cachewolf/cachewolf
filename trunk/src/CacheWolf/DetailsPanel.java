@@ -731,6 +731,7 @@ public class DetailsPanel extends CellPanel {
 		} else {
 			cache.setCacheStatus(chcStatus.getText());
 		}
+		
 		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found")) ||
 			chcStatus.getText().startsWith(MyLocale.getMsg(355, "Attended")) ||
 			(cache.getCacheStatus().length() == 10 || cache.getCacheStatus().length() == 16) &&
@@ -740,7 +741,9 @@ public class DetailsPanel extends CellPanel {
 			// cache
 			// has to considered as found.
 			cache.setFound(true);
-		} 
+		}
+		else cache.setFound(false);
+		
 		if (!cache.isAddiWpt()) {
 			cache.setCacheOwner(inpOwner.getText().trim());
 		}
