@@ -4,7 +4,6 @@ package CacheWolf.navi.touchControls;
 import ewe.fx.Image;
 import ewe.fx.mImage;
 import ewe.graphics.AniImage;
-import ewe.sys.Vm;
 
 public class MovingMapControlItemButton extends MovingMapControlItem {
 
@@ -27,7 +26,6 @@ public class MovingMapControlItemButton extends MovingMapControlItem {
 
 	
 	public int getWidth() {
-		
 		return aniImage.getWidth();
 	}
 

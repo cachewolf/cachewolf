@@ -10,7 +10,6 @@ import ewe.fx.Image;
 import ewe.fx.Rect;
 import ewe.graphics.AniImage;
 import ewe.ui.MainWindow;
-import ewe.util.mString;
 
 public class ImageWithText extends AniImage {
 
