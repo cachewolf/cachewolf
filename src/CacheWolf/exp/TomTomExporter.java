@@ -36,7 +36,7 @@ public class TomTomExporter {
 
 		dirName = pref.getExportPath(expName);
 		
-		if (infoScreen.oneFilePerType()==true){
+		if (infoScreen.oneFilePerType()){
 			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, dirName);
 			fc.setTitle("Select target dir:");
 			if(fc.execute() == FormBase.IDCANCEL) return;
@@ -92,7 +92,7 @@ public class TomTomExporter {
 				for(int i = 0; i<cacheDB.size(); i++){
 					holder=cacheDB.get(i);
 
-					if(holder.getType() == CacheType.guiSelect2Cw(j) && holder.isVisible() == true){
+					if(holder.getType() == CacheType.guiSelect2Cw(j) && holder.isVisible()){
 						currExp++;
 						h.progress = (float)currExp/(float)counter;
 						h.changed();

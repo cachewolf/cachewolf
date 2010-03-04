@@ -33,7 +33,6 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
-import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.Common;
