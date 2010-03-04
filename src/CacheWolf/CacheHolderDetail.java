@@ -115,7 +115,7 @@ public class CacheHolderDetail {
 			 Travelbug tb=newCh.Travelbugs.getTB(i);  
 		     Travelbug oldTB=this.Travelbugs.find(tb.getName());
 		     // If the bug is already in the cache, we keep it
-		     if (oldTB!=null)
+		     if (oldTB != null)
 		    	 newCh.Travelbugs.replace(i,oldTB);
 		    
 		  }
@@ -235,7 +235,7 @@ public class CacheHolderDetail {
 			ex = new Extractor(dummy, "<LOG>","</LOG>", 0, true);
 			
 			dummy = ex.findNext();
-			while(ex.endOfSearch()==false){
+			while(!ex.endOfSearch()){
 				CacheLogs.add(new Log(dummy));
 				dummy = ex.findNext();
 			}
@@ -244,7 +244,7 @@ public class CacheHolderDetail {
 			images.clear();
 			ex = new Extractor(text, "<IMG>", "</IMG>", 0, true);
 			dummy = ex.findNext();
-			while(ex.endOfSearch() == false){
+			while(!ex.endOfSearch()){
 				imageInfo = new ImageInfo();
 				int pos=dummy.indexOf("<URL>");
 				if (pos>0) {
@@ -259,7 +259,7 @@ public class CacheHolderDetail {
 			ex = new Extractor(text, "<IMGTEXT>", "</IMGTEXT>", 0, true);
 			dummy = ex.findNext();
 			int imgNr = 0;
-			while(ex.endOfSearch() == false){
+			while(!ex.endOfSearch()){
 				if (imgNr >= this.images.size()) {
 					images.add(new ImageInfo()); // this (more IMGTEXT than IMG in the <cache>.xml, but it happens. So avoid an ArrayIndexOutOfBoundException and add an ImageInfo gracefully
 					Global.getPref().log("Error reading " + this.getParent().getWayPoint() + "More IMGTEXT tags than IMG tags");
@@ -279,7 +279,7 @@ public class CacheHolderDetail {
 			logImages.clear();
 			ex = new Extractor(text, "<LOGIMG>", "</LOGIMG>", 0, true);
 			dummy = ex.findNext();
-			while(ex.endOfSearch() == false){
+			while(!ex.endOfSearch()){
 				imageInfo = new ImageInfo();
 				imageInfo.setFilename(dummy);
 				logImages.add(imageInfo);
@@ -288,7 +288,7 @@ public class CacheHolderDetail {
 			ex = new Extractor(text, "<LOGIMGTEXT>", "</LOGIMGTEXT>", 0, true);
 			dummy = ex.findNext();
 			imgNr = 0;
-			while(ex.endOfSearch() == false){
+			while(!ex.endOfSearch()){
 				imageInfo = logImages.get(imgNr++);
 				imageInfo.setTitle(dummy);
 				dummy = ex.findNext();
@@ -297,7 +297,7 @@ public class CacheHolderDetail {
 			userImages.clear();
 			ex = new Extractor(text, "<USERIMG>", "</USERIMG>", 0, true);
 			dummy = ex.findNext();
-			while(ex.endOfSearch() == false){
+			while(!ex.endOfSearch()){
 				imageInfo = new ImageInfo();
 				imageInfo.setFilename(dummy);
 				userImages.add(imageInfo);
@@ -306,7 +306,7 @@ public class CacheHolderDetail {
 			ex = new Extractor(text, "<USERIMGTEXT>", "</USERIMGTEXT>", 0, true);
 			dummy = ex.findNext();
 			imgNr = 0;
-			while(ex.endOfSearch() == false){
+			while(!ex.endOfSearch()){
 				imageInfo = userImages.get(imgNr++);
 				imageInfo.setTitle(dummy);
 				dummy = ex.findNext();
@@ -476,15 +476,15 @@ public class CacheHolderDetail {
 				String filename = images.get(i).getFilename();
 				String comment = images.get(i).getComment();
 				String title = images.get(i).getTitle();
-				if (filename.indexOf(getParent().getWayPoint())==0) {
+				if (filename.indexOf(getParent().getWayPoint()) == 0) {
 					filename=newWptId.concat(filename.substring(oldWptLength));
 					images.get(i).setFilename(filename);
 				}
-				if (comment.indexOf(getParent().getWayPoint())==0) {
+				if (comment.indexOf(getParent().getWayPoint()) == 0) {
 					comment=newWptId.concat(comment.substring(oldWptLength));
 					images.get(i).setComment(comment);
 				}
-				if (title.indexOf(getParent().getWayPoint())==0) {
+				if (title.indexOf(getParent().getWayPoint()) == 0) {
 					title=newWptId.concat(title.substring(oldWptLength));
 					images.get(i).setTitle(title);
 				}
@@ -493,15 +493,15 @@ public class CacheHolderDetail {
 				String filename = logImages.get(i).getFilename();
 				String comment = logImages.get(i).getComment();
 				String title = logImages.get(i).getTitle();
-				if (filename.indexOf(getParent().getWayPoint())==0) {
+				if (filename.indexOf(getParent().getWayPoint()) == 0) {
 					filename=newWptId.concat(filename.substring(oldWptLength));
 					logImages.get(i).setFilename(filename);
 				}
-				if (comment.indexOf(getParent().getWayPoint())==0) {
+				if (comment.indexOf(getParent().getWayPoint()) == 0) {
 					comment=newWptId.concat(comment.substring(oldWptLength));
 					logImages.get(i).setComment(comment);
 				}
-				if (title.indexOf(getParent().getWayPoint())==0) {
+				if (title.indexOf(getParent().getWayPoint()) == 0) {
 					title=newWptId.concat(title.substring(oldWptLength));
 					logImages.get(i).setTitle(title);
 				}
@@ -510,15 +510,15 @@ public class CacheHolderDetail {
 				String filename = userImages.get(i).getFilename();
 				String comment = userImages.get(i).getComment();
 				String title = userImages.get(i).getTitle();
-				if (filename.indexOf(getParent().getWayPoint())==0) {
+				if (filename.indexOf(getParent().getWayPoint()) == 0) {
 					filename=newWptId.concat(filename.substring(oldWptLength));
 					userImages.get(i).setFilename(filename);
 				}
-				if (comment.indexOf(getParent().getWayPoint())==0) {
+				if (comment.indexOf(getParent().getWayPoint()) == 0) {
 					comment=newWptId.concat(comment.substring(oldWptLength));
 					userImages.get(i).setComment(comment);
 				}
-				if (title.indexOf(getParent().getWayPoint())==0) {
+				if (title.indexOf(getParent().getWayPoint()) == 0) {
 					title=newWptId.concat(title.substring(oldWptLength));
 					userImages.get(i).setTitle(title);
 				}

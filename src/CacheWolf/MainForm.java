@@ -63,7 +63,7 @@ public class MainForm extends Editor {
 			if (MyLocale.initErrors.length() != 0) {
 				new MessageBox("Error", MyLocale.initErrors, FormBase.OKB).execute();
 			}
-			if(Vm.isMobile() == true) {
+			if(Vm.isMobile()) {
 				//this.windowFlagsToSet |=Window.FLAG_FULL_SCREEN;
 				this.resizable = false;
 				this.moveable = false;
@@ -92,11 +92,11 @@ public class MainForm extends Editor {
 			pref.setCurCentrePt(profile.centre);
 			setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
 		} catch (Exception e){
-			if(pref.debug == true) Vm.debug("MainForm:: Exception:: " + e.toString());
+			if(pref.debug) Vm.debug("MainForm:: Exception:: " + e.toString());
 		}
 
 
-		if(pref.fixSIP == true){
+		if(pref.fixSIP){
 			if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 				//Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
 				Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON,1);
@@ -152,7 +152,7 @@ public class MainForm extends Editor {
 	}
 
 	public void onEvent(Event ev){ // Preferences have been changed by PreferencesScreen
-		if(pref.dirty == true){
+		if(pref.dirty){
 			mTab.getTablePanel().myMod.setColumnNamesAndWidths();
 			mTab.getTablePanel().refreshControl();
 		    //mTab.getTablePanel().refreshTable();

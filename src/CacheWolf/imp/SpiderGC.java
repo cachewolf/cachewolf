@@ -172,7 +172,7 @@ public class SpiderGC{
 		this.profile=profile;
 		this.cacheDB = profile.cacheDB;
 		pref = prf;
-		if (p==null) {
+		if (p == null) {
 			pref.logInit();
 			p=new SpiderProperties();
 		}
@@ -198,7 +198,7 @@ public class SpiderGC{
 		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = cacheDB.get(i);
-			if (ch.mainCache==null) ch.initStates(false);
+			if (ch.mainCache == null) ch.initStates(false);
 		}
 
 		if (!loggedIn || Global.getPref().forceLogin) {
@@ -250,7 +250,7 @@ public class SpiderGC{
 			profile.setMinDistGC(minDist);
 
 			String maxDist = options.maxDistanceInput.getText();
-			if (maxDist.length()== 0) return;
+			if (maxDist.length() ==  0) return;
 			maxDistance = Common.parseDouble(maxDist);
 			//save last radius to profile
 			distDouble.value = maxDistance;
@@ -287,8 +287,8 @@ public class SpiderGC{
 		// TODO maxUpdate in preferences ?
 
 		if (maxNew == 0) return;
-		if(maxNew==-1) maxNew=Integer.MAX_VALUE;
-		if(maxUpdate==-1) maxUpdate=Integer.MAX_VALUE;
+		if(maxNew == -1) maxNew=Integer.MAX_VALUE;
+		if(maxUpdate == -1) maxUpdate=Integer.MAX_VALUE;
 
 		boolean getImages = options.imagesCheckBox.getState();
 		boolean getTBs = options.travelbugsCheckBox.getState();
@@ -308,7 +308,7 @@ public class SpiderGC{
 		Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
 		Hashtable cachesShouldUpdate = new Hashtable(cacheDB.size()); // for don't loose the already done work
 
-		if (maxUpdate==Integer.MAX_VALUE) {
+		if (maxUpdate == Integer.MAX_VALUE) {
 			double distanceInKm = maxDistance;
 			if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
 				distanceInKm = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
@@ -346,7 +346,7 @@ public class SpiderGC{
 			numFoundInDB=getFoundInDB();
 			numFinds=getNumFound(htmlListPage);
 			maxNew=java.lang.Math.min(numFinds-numFoundInDB,maxNew);
-			if (maxUpdate==0 && maxNew == 0) { Vm.showWait(false); infB.close(0); return; }
+			if (maxUpdate == 0 && maxNew == 0) { Vm.showWait(false); infB.close(0); return; }
 		}
 		try {
 			//Loop pages till maximum distance has been found or no more caches are in the list
@@ -379,7 +379,7 @@ public class SpiderGC{
 									if (!ch.is_black() && (cachesShouldUpdate.size()<maxUpdate)) cachesShouldUpdate.put(chWaypoint, ch);
 								}
 								else
-									if (maxUpdate==Integer.MAX_VALUE) cachesToUpdate.remove( chWaypoint );
+									if (maxUpdate == Integer.MAX_VALUE) cachesToUpdate.remove( chWaypoint );
 							}
 						}
 					} else maxDistance = 0; // finish listing
@@ -421,8 +421,8 @@ public class SpiderGC{
 		boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
 
 		int spiderErrors = 0;
-		if (cachesToUpdate.size()==startSize) cachesToUpdate.clear(); // there must be something wrong
-		if (cachesToUpdate.size()==0) cachesToUpdate=cachesShouldUpdate;
+		if (cachesToUpdate.size() == startSize) cachesToUpdate.clear(); // there must be something wrong
+		if (cachesToUpdate.size() == 0) cachesToUpdate=cachesShouldUpdate;
 
 		if ( cachesToUpdate.size() > 0 ) {
 			switch (pref.spiderUpdates) {
@@ -857,7 +857,7 @@ public class SpiderGC{
 			if (is_found_GC!=ch.is_found()) {ch.setFound(is_found_GC); save=true; ret=true;}
 		}
 		if (ch.is_found() && chd.OwnLogId.equals("")) {ret=true;} //missing ownLogID
-		boolean is_available_GC=!is_archived_GC && CacheDescription.indexOf(propAvailable)==-1;
+		boolean is_available_GC=!is_archived_GC && CacheDescription.indexOf(propAvailable) == -1;
 		if (is_available_GC != ch.is_available()) {
 			ch.setAvailable(is_available_GC); save=true; numAvailableUpdates+=1; ret=true;}
 		if (typeChanged(ch,CacheDescription)) { save=true; ret=true;}
@@ -883,7 +883,7 @@ public class SpiderGC{
 		int counter = 0;
 		for(int i = 0; i<cacheDB.size();i++){
 			ch = cacheDB.get(i);
-			if(ch.is_found() == true) {
+			if(ch.is_found()) {
 				if(ch.getWayPoint().startsWith("GC") ) counter++;
 			}
 		}
@@ -930,10 +930,10 @@ public class SpiderGC{
 		RexPropType.search(toCheck);
 		if(RexPropType.didMatch()) {
 			String stmp=RexPropType.stringMatched(1);
-			if (Common.parseInt(stmp)==0){
+			if (Common.parseInt(stmp) == 0){
 				if (stmp.equalsIgnoreCase("EarthCache")) stmp="137";
 			}
-			if(ch.getType()==CacheType.gcSpider2CwType(stmp))
+			if(ch.getType() == CacheType.gcSpider2CwType(stmp))
 				return false;
 				else {
 					ch.setType(CacheType.gcSpider2CwType(stmp));
@@ -949,7 +949,7 @@ public class SpiderGC{
 		RexPropSize.search(toCheck);
 		if(RexPropSize.didMatch()){
 			String stmp=RexPropSize.stringMatched(1);
-			if(ch.getCacheSize()==CacheSize.gcSpiderString2Cw(stmp))
+			if(ch.getCacheSize() == CacheSize.gcSpiderString2Cw(stmp))
 				return false;
 				else {
 					ch.setCacheSize(CacheSize.gcSpiderString2Cw(stmp));
@@ -966,12 +966,12 @@ public class SpiderGC{
 		RexPropDandT.search(toCheck);	
 		if(RexPropDandT.didMatch()){
 			String stmp=RexPropDandT.stringMatched(1);
-			if(!(ch.getHard()==CacheTerrDiff.v1Converter(stmp))) {
+			if(!(ch.getHard() == CacheTerrDiff.v1Converter(stmp))) {
 				ch.setHard(CacheTerrDiff.v1Converter(stmp));
 				ret=true;
 			}
 			stmp=RexPropDandT.stringMatched(2);
-			if(!(ch.getTerrain()==CacheTerrDiff.v1Converter(stmp))) {
+			if(!(ch.getTerrain() == CacheTerrDiff.v1Converter(stmp))) {
 				ch.setTerrain(CacheTerrDiff.v1Converter(stmp));
 				ret=true;
 			}
@@ -994,7 +994,7 @@ public class SpiderGC{
 	 * if cache lies in the desired direction
 	 */
 	private boolean directionOK(String[] directions, String gotDirection) {
-		if (directions.length==0) return true; // nothing means all
+		if (directions.length == 0) return true; // nothing means all
 		for (int i = 0; i < directions.length; i++) {
 			if (directions[i].equals(gotDirection)) {
 				return true;
@@ -1282,7 +1282,7 @@ public class SpiderGC{
 		Regex rex2 = new Regex(p.getProp("longDescRex"));
 		inRex.search(doc);
 		rex2.search(doc);
-		res = ((inRex.stringMatched(1)==null)?"":inRex.stringMatched(1)) + "<br>";
+		res = ((inRex.stringMatched(1) == null)?"":inRex.stringMatched(1)) + "<br>";
 		res += rex2.stringMatched(1);
 		int spanEnd = res.lastIndexOf("</span>");
 		if (spanEnd >= 0) {
@@ -1478,7 +1478,7 @@ public class SpiderGC{
 		String link,bug,linkPlusBug,bugDetails;
 		String oldInfoBox=infB.getInfo();
 		chD.Travelbugs.clear();
-		while(exBug.endOfSearch() == false){
+		while(!exBug.endOfSearch()){
 			if (infB.isClosed) break; // Allow user to cancel by closing progress form
 			linkPlusBug= exBug.findNext();
 			int idx=linkPlusBug.indexOf("\">");
@@ -1611,7 +1611,7 @@ public class SpiderGC{
 		} catch (Exception ex) { // Missing property in spider .def
 			return;
 		}
-		while(exImgSrc.endOfSearch() == false){
+		while(!exImgSrc.endOfSearch()){
 			imgUrl = exImgSrc.findNext();
 			imgComment = exImgComment.findNext();
 			//Vm.debug("Img Url: " +imgUrl);
@@ -1663,7 +1663,7 @@ public class SpiderGC{
 		//Final sweep to check for images in hrefs
 		//========
 		Extractor exFinal = new Extractor(longDesc, "http://", "\"", 0, true);
-		while(exFinal.endOfSearch() == false){
+		while(!exFinal.endOfSearch()){
 			imgUrl = exFinal.findNext();
 			if(imgUrl.length()>0){
 				// Optimize: img.groundspeak.com -> img.geocaching.com (for better caching purposes)
@@ -1681,7 +1681,7 @@ public class SpiderGC{
 							if (lastImages != null) {
 								imageInfo = lastImages.needsSpidering(imgUrl, fileName+imgType);
 							}
-							if (imageInfo == null) {
+							if (imageInfo==null) {
 								imageInfo = new ImageInfo();
 								pref.log("Loading image: " + imgUrl+" as "+fileName+imgType);
 								spiderImage(imgUrl, fileName+imgType);
@@ -1768,11 +1768,11 @@ public class SpiderGC{
 		Regex descRex = new Regex(p.getProp("descRex"));
 		Regex typeRex = new Regex(p.getProp("typeRex"));
 		int counter = 0;
-		if(exWayBlock.endOfSearch() == false && wayBlock.indexOf("No additional waypoints to display.")<0){
+		if(!exWayBlock.endOfSearch() && wayBlock.indexOf("No additional waypoints to display.")<0){
 			Extractor exRowBlock = new Extractor(wayBlock,p.getProp("rowBlockExStart"),p.getProp("rowBlockExEnd"), 0, false);
 			rowBlock = exRowBlock.findNext();
 			rowBlock = exRowBlock.findNext();
-			while(exRowBlock.endOfSearch()==false){
+			while(!exRowBlock.endOfSearch()){
 				CacheHolder hd = null;
 
 				String[] AddiBlock=mString.split(rowBlock,'\n');
@@ -1785,7 +1785,7 @@ public class SpiderGC{
 				String prefix=exPrefix.findNext();
 
 				String adWayPoint;
-				if (prefix.length()==2)
+				if (prefix.length() == 2)
 					adWayPoint=prefix+wayPoint.substring(2);
 				else
 				    adWayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
@@ -1839,7 +1839,7 @@ public class SpiderGC{
 		Extractor attEx = new Extractor(atts,p.getProp("attExStart"),p.getProp("attExEnd"), 0 , true);
 		String attribute=attEx.findNext();
 		chD.attributes.clear();
-		while (attEx.endOfSearch()==false) {
+		while (!attEx.endOfSearch()) {
 			chD.attributes.add(attribute);
 			attribute=attEx.findNext();
 		}
@@ -2099,7 +2099,7 @@ public class SpiderGC{
 		 */
 		public String getProp(String key) throws Exception {
 			String s=super.getProperty(key);
-			if (s==null) {
+			if (s == null) {
 				(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5497,"Error missing tag in spider.def") + ": "+key, FormBase.OKB)).execute();
 				throw new Exception("Missing tag in spider.def: "+key);
 			}

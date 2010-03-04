@@ -292,11 +292,11 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					while(ex.endOfSearch() != true){
 						currToken = ex.findNext();
 						i++;
-						if (currToken.length()==0) {
+						if (currToken.length() == 0) {
 							if (i >= 2 && i <= 6) latlonerror = true; // force non-fix if lat-lon not contained
 							continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
 						}
-						if (currToken.length()==0) continue;
+						if (currToken.length() == 0) continue;
 						//Vm.debug("zz: " + i);
 						//Vm.debug(currToken);
 						switch (i){
@@ -362,7 +362,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					while(ex.endOfSearch() != true){
 						currToken = ex.findNext();
 						i++;
-						if (currToken.length()==0) continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
+						if (currToken.length() == 0) continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
 						switch (i){
 						case 3: this.numSatsInView = Convert.toInt(currToken); interpreted = true; break;
 						} // switch
