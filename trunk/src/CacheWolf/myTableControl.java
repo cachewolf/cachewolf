@@ -5,7 +5,6 @@ import CacheWolf.utils.FileBugfix;
 import ewe.sys.*;
 import ewe.ui.*;
 import ewe.fx.*;
-import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.IOException;
 

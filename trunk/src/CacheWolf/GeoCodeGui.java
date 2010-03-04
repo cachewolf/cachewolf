@@ -15,7 +15,6 @@ import ewe.ui.ScrollBarPanel;
 import ewe.ui.mButton;
 import ewe.ui.mInput;
 import ewe.ui.mLabel;
-import ewe.util.ByteArray;
 import ewe.util.Vector;
 import ewesoft.xml.sax.SAXException;
 
