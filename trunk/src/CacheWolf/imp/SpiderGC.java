@@ -1843,8 +1843,7 @@ public class SpiderGC{
 			chD.attributes.add(attribute);
 			attribute=attEx.findNext();
 		}
-		chD.getParent().setAttributesYes(chD.attributes.attributesYes);
-		chD.getParent().setAttributesNo(chD.attributes.attributesNo);
+		chD.getParent().setAttribsAsBits(chD.attributes.getAttribsAsBits());
 	}
 
 

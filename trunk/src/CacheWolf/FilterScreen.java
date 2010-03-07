@@ -269,7 +269,9 @@ public class FilterScreen extends Form{
 
 		attV=new AttributesSelector();
 		pnlCacheAttributes.addLast(attV, CellConstants.STRETCH|CellConstants.LEFT/*|CellConstants.BORDER*/, CellConstants.STRETCH);
-		attV.setSelectionMasks( 0l, 0l );
+
+		long[] ini = {0l,0l,0l,0l};
+		attV.setSelectionMasks(ini);
 		
 		Frame frmScreen=new Frame();
 		mLabel lblInfo; 
@@ -481,7 +483,7 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		// Panel 8 - Cache attributes
 		//////////////////////////
-		attV.setSelectionMasks( data.getFilterAttrYes(), data.getFilterAttrNo() );
+		attV.setSelectionMasks( data.getFilterAttr());
 		chcAttrib.select(data.getFilterAttrChoice());
 		
 		// Adjust colors of buttons depending on which filters are active
@@ -578,10 +580,10 @@ public class FilterScreen extends Form{
 		// Panel 7 - Search
 
 		// Panel 8 - Cache attributes
-		if ( attV.selectionMaskYes == 0l && attV.selectionMaskNo == 0l)
-			btnCacheAttributes.backGround=COLOR_FILTERINACTIVE;
-		else
+		if (attV.isSetSelectionMask()) 
 			btnCacheAttributes.backGround=COLOR_FILTERACTIVE;
+		else
+			btnCacheAttributes.backGround=COLOR_FILTERINACTIVE;
 		btnCacheAttributes.repaint();
 
 		
@@ -831,8 +833,7 @@ public class FilterScreen extends Form{
 	    } else { 
 	    	data.setFilterTerr("G"+inpTerr.getText());
 	    }
-	    data.setFilterAttrYes(attV.selectionMaskYes);
-	    data.setFilterAttrNo(attV.selectionMaskNo);
+	    data.setFilterAttr(attV.getSelectionMasks());
 	    data.setFilterAttrChoice(chcAttrib.selectedIndex);
 	    data.setFilterStatus(chcStatus.getText());
 	    data.setUseRegexp(chkUseRegexp.getState());

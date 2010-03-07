@@ -380,6 +380,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if(name.equals("type")){
 			holder.setType(CacheType.ocType2CwType(atts.getValue("id")));
+			holder.getFreshDetails().attributes.clear();
 			return;
 		}
 		if(name.equals("status")){
@@ -409,6 +410,13 @@ public class OCXMLImporter extends MinML {
 		if(name.equals("waypoints")){
 			holder.setWayPoint(atts.getValue("oc"));
 			if (holder.getWayPoint().length()==0) throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching / it happens on 27-12-2006 on cache OC143E
+			return;
+		}
+		
+		if (name.equals("attribute")) {
+			int id = Integer.parseInt(atts.getValue("id"));
+			holder.getFreshDetails().attributes.add(id);
+			holder.setAttribsAsBits(holder.getFreshDetails().attributes.getAttribsAsBits());
 			return;
 		}
 
@@ -443,10 +451,12 @@ public class OCXMLImporter extends MinML {
 			case 1:
 				logIcon = GPXImporter.typeText2Image("Found");
 				break;
-			case 2:	logIcon = GPXImporter.typeText2Image("Not Found");
-			holder.setNoFindLogs((byte)(holder.getNoFindLogs()+1));
-			break;
-			case 3: logIcon = GPXImporter.typeText2Image("Note");
+			case 2:	
+				logIcon = GPXImporter.typeText2Image("Not Found");
+				holder.setNoFindLogs((byte)(holder.getNoFindLogs()+1));
+				break;
+			case 3: 
+				logIcon = GPXImporter.typeText2Image("Note");
 			}
 			loggerRecommended = atts.getValue("recommended").equals("1");
 			return;
@@ -582,8 +592,7 @@ public class OCXMLImporter extends MinML {
 			if (holder.is_HTML())	linebraek = "<br>\n";
 			else 					linebraek = "\n";
 
-			if (holder.is_updated())	holder.getFreshDetails().LongDescription += linebraek + processingDescLang + ":" +  linebraek + strData; // if a long description is already updated, then this one is likely to be in another language
-			else 					 	holder.getFreshDetails().LongDescription =              processingDescLang + ":" +  linebraek + strData;
+			holder.getFreshDetails().LongDescription =              processingDescLang + ":" +  linebraek + strData;
 			return;
 		}
 
@@ -593,9 +602,7 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		if (name.equals("hint")){
-			if (holder.is_updated())
-				holder.getFreshDetails().Hints += "\n" +  processingDescLang + ": " + Common.rot13(strData);
-			else						holder.getFreshDetails().Hints = Common.rot13(strData);
+			holder.getFreshDetails().Hints = Common.rot13(strData);
 			holder.setUpdated(true); // remark: this is used in "shortdesc" to decide weather the description should be appended or replaced
 			return;
 		}

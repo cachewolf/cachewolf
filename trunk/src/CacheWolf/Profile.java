@@ -1,6 +1,5 @@
 package CacheWolf;
 
-import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.navi.Area;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.FileBugfix;
@@ -364,12 +363,14 @@ public class Profile {
 					setFilterTerr(ex.findNext());
 					setFilterSize(ex.findNext());
 					String attr = ex.findNext();
+					long[] filterAttr = { 0l,0l,0l,0l };					
 					if (attr != null && !attr.equals(""))
-						setFilterAttrYes(Convert.parseLong(attr));
+						filterAttr[0] = Convert.parseLong(attr);
 					attr = ex.findNext();
 					if (attr != null && !attr.equals(""))
-						setFilterAttrNo(Convert.parseLong(attr));
+						filterAttr[2] = Convert.parseLong(attr);
 					attr = ex.findNext();
+					setFilterAttr(filterAttr);					
 					if (attr != null && !attr.equals(""))
 						setFilterAttrChoice(Convert.parseInt(attr));
 					setShowBlacklisted(Boolean.valueOf(ex.findNext()).booleanValue());
@@ -387,19 +388,32 @@ public class Profile {
 					setFilterTerr(ex.findNext());
 					setFilterSize(ex.findNext());
 					String attr = ex.findNext();
-					setFilterAttrYes(Convert.parseLong(attr));
+					long[] filterAttr = { 0l,0l,0l,0l };					
+					if (attr != null && !attr.equals(""))
+						filterAttr[0] = Convert.parseLong(attr);
 					attr = ex.findNext();
-					setFilterAttrNo(Convert.parseLong(attr));
+					if (attr != null && !attr.equals(""))
+						filterAttr[2] = Convert.parseLong(attr);
+					setFilterAttr(filterAttr);
 					attr = ex.findNext();
 					setFilterAttrChoice(Convert.parseInt(attr));
 					setFilterStatus(SafeXML.cleanback(ex.findNext()));
 					setFilterUseRegexp(Boolean.valueOf(ex.findNext()).booleanValue());
-					attr = ex.findNext();
-  				if (attr != null && !attr.equals("")) {
-  					setFilterNoCoord(Boolean.valueOf(attr).booleanValue());
-          } else {
-            setFilterNoCoord(true);
-          }
+					attr = ex.findNext();					
+	  				if (attr != null && !attr.equals("")) {
+	  					setFilterNoCoord(Boolean.valueOf(attr).booleanValue());
+
+	  				}
+	  				else {
+	  					setFilterNoCoord(true);
+	  				}
+	  				attr = ex.findNext();					
+	  				if (attr != null && !attr.equals(""))
+	  					filterAttr[1] = Convert.parseLong(attr);
+	  				attr = ex.findNext();
+	  				if (attr != null && !attr.equals(""))
+	  					filterAttr[3] = Convert.parseLong(attr);
+	  				setFilterAttr(filterAttr);
 				} else if (text.indexOf("<FILTERCONFIG")>=0){
 					ex.setSource(text.substring(text.indexOf("<FILTERCONFIG")));
 					String temp=ex.findNext();
@@ -741,26 +755,17 @@ public class Profile {
 		this.showSearchResult = showSearchResult;
 	}
 
-	public long getFilterAttrYes() {
-		return currentFilter.getFilterAttrYes();
+	public void setFilterAttr(long[] filterAttr) {
+		this.notifyUnsavedChanges(filterAttr != this.getFilterAttr());
+		this.currentFilter.setFilterAttr(filterAttr);
 	}
 
-	public void setFilterAttrYes(long filterAttrYes) {
-		this.notifyUnsavedChanges(filterAttrYes != this.getFilterAttrYes());
-		this.currentFilter.setFilterAttrYes(filterAttrYes);
-	}
-
-	public long getFilterAttrNo() {
-		return currentFilter.getFilterAttrNo();
-	}
-
-	public void setFilterAttrNo(long filterAttrNo) {
-		this.notifyUnsavedChanges(filterAttrNo != this.getFilterAttrNo());
-		this.currentFilter.setFilterAttrNo(filterAttrNo);
+	public long[] getFilterAttr() {
+		return currentFilter.getFilterAttr();
 	}
 
 	public int getFilterAttrChoice() {
-		return currentFilter.getFilterAttrChoice();
+		return this.currentFilter.getFilterAttrChoice();
 	}
 
 	public void setFilterAttrChoice(int filterAttrChoice) {
