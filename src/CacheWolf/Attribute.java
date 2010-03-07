@@ -10,179 +10,282 @@ import ewe.io.FileBase;
  */
 public class Attribute {
 	// Constructors
-	public Attribute() { attNo=0; }
-	public Attribute(String attributeName) { attNo=attName2int(attributeName); }
-	
-	private int attNo;
+	public Attribute(int id, int inc) {_Id=id;setInc(inc);setIdBit();}
+	public Attribute(String attributeName) { attName2attNo(attributeName); setIdBit();}
+	public Attribute(int attIdOC) { OCAttNo2attNo(attIdOC); setIdBit();}
+	public Attribute(int attIdGC, String Yes0No1) { GCAttNo2attNo(attIdGC, Yes0No1); setIdBit();}
+	// Constructors end
+	private int _Id;
+	private int _Inc; // Yes=0 No=1 non=2
+	private String _ImageName;
+	private long[] _bit = {0l,0l};
+	// for GC Constructor Spider
+	private void attName2attNo(String attributeName) {
+    	for (int i=0; i<maxAttRef; i++) {
+    		if (attributeName.toLowerCase().startsWith(attRef[i][PIC_NAME])) {
+				_Id=i;
+				_Inc=attributeName.toLowerCase().endsWith("-no.gif") ? 1 : 0;
+				_ImageName=attRef[i][PIC_NAME]+(_Inc==1 ? "-no.gif" : "-yes.gif");
+				return;
+    		}
+    	}
+    	_Id=-1; // Error
+    	_ImageName="error.gif";
+    	}
+	// for OC Constructor
+    private void OCAttNo2attNo(int attIdOC) {
+    	for (int i=0; i<maxAttRef; i++) {
+    		if (attIdOC == Integer.parseInt(attRef[i][OC_ID])) {
+				_Id=i;
+				_Inc=0;
+				_ImageName=attRef[i][PIC_NAME]+"-yes.gif";
+				return;
+    		}
+    	}
+    	_Id=-1; // Error
+    	_ImageName="error.gif";
+    }
+    // for GC Constructor gpx-Import
+    private void GCAttNo2attNo(int attIdGC, String Yes0No1 ) {
+    	for (int i=0; i<maxAttRef; i++) {
+    		if (attIdGC == Integer.parseInt(attRef[i][GC_ID])) {
+				_Id=i;
+    			_Inc=Yes0No1.equals("1") ? 1 : 0;
+				_ImageName=attRef[i][PIC_NAME]+(_Inc==1 ? "-no.gif" : "-yes.gif");
+    		}
+    	}
+    	_Id=-1; // Error
+    	_ImageName="error.gif";
+    }
+    // used by all Constructors
+    private void setIdBit() {
+    	_bit=getIdBit(_Id);
+    }
 
-	public int getAttrNr () { return attNo; }
-
-	/**
-	 * The attribute names are identical to the image names.
-	 * Internally the first image name has number 0, the next number 1 and so on.
-	 */
-	public static final String [] attributeNames= {
-			"error.gif",			//00 Unknown attribute
-			"available-no.gif", 	//01 not 24-7
-			"available-yes.gif", 	//02 available 24-7
-			"bicycles-no.gif", 		//03 no bikes
-			"bicycles-yes.gif", 	//04 bikes allowed
-			"boat-no.gif", 			//05
-			"boat-yes.gif", 		//06
-			"cactus-no.gif", 		//07
-			"cactus-yes.gif",		//08
-			"campfires-no.gif", 	//09 no campfires
-			"campfires-yes.gif", 	//10 campfires allowed
-			"camping-no.gif", 		//11 No camping
-			"camping-yes.gif", 		//12 Camping allowed
-			"cliff-no.gif", 		//13
-			"cliff-yes.gif", 		//14 falling-rocks nearby
-			"climbing-no.gif", 		//15 no difficult climbing
-			"climbing-yes.gif", 	//16 difficult climbing
-			"compass-no.gif", 		//17 
-			"compass-yes.gif",		//18
-			"cow-no.gif", 			//19
-			"cow-yes.gif", 			//20 watch for livestock
-			"danger-no.gif", 		//21
-			"danger-yes.gif", 		//22 dangerous area
-			"dogs-no.gif", 			//23 no dogs
-			"dogs-yes.gif", 		//24 dogs allowed
-			"fee-no.gif", 			//25
-			"fee-yes.gif", 			//26 access/parking fees
-			"hiking-no.gif", 		//27
-			"hiking-yes.gif", 		//28 significant hike
-			"horses-no.gif", 		//29 no horses
-			"horses-yes.gif", 		//30 horses allowed
-			"hunting-no.gif", 		//31
-			"hunting-yes.gif", 		//32 hunting area
-			"jeeps-no.gif", 		//33 no off-road vehicles
-			"jeeps-yes.gif", 		//34 off-road vehicles allowed
-			"kids-no.gif", 			//35 no kids
-			"kids-yes.gif", 		//36 kid friendly
-			"mine-no.gif", 			//37
-			"mine-yes.gif", 		//38
-			"motorcycles-no.gif", 	//39 no motorcycles
-			"motorcycles-yes.gif", 	//40 motorcycles allowed
-			"night-no.gif", 		//41 not recommended at night
-			"night-yes.gif", 		//42 recommended at night
-			"onehour-no.gif", 		//43 takes more than one hour
-			"onehour-yes.gif", 		//44 takes less than one hour
-			"parking-no.gif", 		//45
-			"parking-yes.gif", 		//46 parking available
-			"phone-no.gif", 		//47
-			"phone-yes.gif", 		//48 telephone nearby
-			"picnic-no.gif", 		//49
-			"picnic-yes.gif", 		//50 picnic tables available
-			"poisonoak-no.gif", 	//51
-			"poisonoak-yes.gif", 	//52
-			"public-no.gif", 		//53
-			"public-yes.gif", 		//54 public transit available
-			"quads-no.gif", 		//55 no quads
-			"quads-yes.gif", 		//56 quads allowed
-			"rappelling-no.gif", 	//57
-			"rappelling-yes.gif", 	//58 climbing gear
-			"restrooms-no.gif", 	//59
-			"restrooms-yes.gif", 	//60 restrooms available
-			"scenic-no.gif", 		//61
-			"scenic-yes.gif", 		//62 scenic view
-			"scuba-no.gif", 		//63
-			"scuba-yes.gif", 		//64
-			"snakes-no.gif", 		//65
-			"snakes-yes.gif", 		//66
-			"snowmobiles-no.gif", 	//67 no snowmobiles
-			"snowmobiles-yes.gif", 	//68
-			"stealth-no.gif", 		//69 no stealth required
-			"stealth-yes.gif", 		//70 stealth required
-			"stroller-no.gif",		//71 not stroller accessible
-			"stroller-yes.gif", 	//72 stroller accessible
-			"swimming-no.gif", 		//73
-			"swimming-yes.gif", 	//74
-			"thorn-no.gif", 		//75
-			"thorn-yes.gif", 		//76 thorns!
-			"ticks-no.gif", 		//77
-			"ticks-yes.gif", 		//78 ticks!
-			"wading-no.gif", 		//79
-			"wading-yes.gif", 		//80 may require wading
-			"water-no.gif", 		//81
-			"water-yes.gif", 		//82 drinking water nearby
-			"wheelchair-no.gif", 	//83 not wheelchair accessible
-			"wheelchair-yes.gif", 	//84 wheelchair accessible
-			"winter-no.gif", 		//85 not available for winter
-			"winter-yes.gif", 		//86 available in winter
-			"firstaid-no.gif",              //87 does not need maintenance
-			"firstaid-yes.gif",              //88 needs maintenance
-			"flashlight-yes.gif"    // 89 Flashlight required
-	};
-	private static mImage [] attributeImages=new mImage[90];
-	private static String IMAGEDIR=STRreplace.replace(FileBase.getProgramDirectory()+"/attributes/", "//", "/");
-	
-	public static String getImageDir() {
-		return IMAGEDIR; 
-	}
-    
+    // *** public part
+    public static long[] getIdBit(int id) {
+    	long [] bit = new long[2];
+    	if (id>-1) {
+        	int b = Integer.parseInt(attRef[id][BIT_NR]);
+    		bit[0] = b>63 ? 0l : (1L << b);
+    		bit[1] = b>63 ? (1L << 64-b) : 0;
+    	}
+    	else {
+        	bit[0]=0;
+        	bit[1]=0;
+    	}
+    	return bit;
+    }    
+    //
+	//public int getAttId () { return _Id; }
+	//
     /**
-     * Returns the image name for a give attribute number
-     * @return Image Name
+     * getting attribute given=0,negative=1,not specified=2  
      */
-	public String getImageName(){
-		if (attNo>attributeNames.length)
+	public int getInc () { return _Inc; }
+    /**
+     * setting/changing attribute given=0,negative=1,not specified=2  
+     */
+    public void setInc(int inc) {
+    	_Inc=inc;
+		_ImageName=attRef[_Id][PIC_NAME];
+		if (inc==1) _ImageName+="-no.gif";
+		else if (inc==0) _ImageName+="-yes.gif";
+		else _ImageName+="-non.gif";
+    }
+    /**
+     * getting name of corresponding image stored in attributes subdirectory 
+     */
+    public String getImageName() {
+    	return _ImageName;
+    }   
+    /**
+     * getting path+name of corresponding image stored in attributes subdirectory 
+     */
+    public String getPathAndImageName() {
+    	return IMAGEDIR+_ImageName;
+    }
+    /**
+     * set/unset the bit in the long array that belongs to the Id of the attribute  
+     */
+    public long[] getYesBit(long[] yes) {
+    	if (_Inc==0) {
+    		yes[0]|=_bit[0];
+    		yes[1]|=_bit[1];    		
+    	}
+    	else {
+    		yes[0]&=~_bit[0];
+    		yes[1]&=~_bit[1];    		
+    	}
+    	return yes;
+    }
+    /**
+     * set/unset the bit in the long array that belongs to the Id of the attribute  
+     */
+    public long[] getNoBit(long[] no) {
+    	if (_Inc==1) {
+    		no[0]|=_bit[0];
+    		no[1]|=_bit[1];
+    	}
+    	else {
+    		no[0]&=~_bit[0];
+    		no[1]&=~_bit[1];    		
+    	}
+    	return no;
+    }
+    /**
+     * get the language dependant description of the attribute  
+     */
+    public String getMsg() {
+    	return getMsg(_Id,_Inc);
+    }
+	
+	private final static int BIT_NR = 0; 
+	private final static int MSG_NR = 1;
+	private final static int PIC_NAME = 2;
+	private final static int OC_ID = 3;
+	private final static int GC_ID = 4;
+	//private final static int GC_TEXT = 5; // for export , didn't extract by myself, copied from forum	
+	private static final String[][] attRef = {
+		// Empfehlungen / Personen
+		{"30","2562","scenic","","8","Scenic view"},//62 scenic view
+		{"17","2536","kids","59","6","Recommended for kids"},//36 kid friendly
+		{"35","2572","stroller","","41","Stroller accessible"},//72 stroller accessible	
+		{"41","2584","wheelchair","","24","Wheelchair accessible"},//84 wheelchair accessible
+		//  vorhanden / Eigenschaften / Infrastruktur
+		{"22","2546","parking","18","25","Parking available"},//46 parking available
+		{"26","2554","public","19","26","Public transportation"},//54 public transit available
+		{"40","2582","water","20","27","Drinking water nearby"},//82 drinking water nearby
+		{"29","2560","restrooms","21","28","Public restrooms nearby"},//60 restrooms available
+		{"23","2548","phone","22","29","Telephone nearby"},//48 telephone nearby
+		{"24","2550","picnic","","30","Picnic tables nearby"},//50 picnic tables available
+		{"43","2588","firstaid","23","42","Firstaid"}, //88 erste Hilfe
+		// Erlaubt
+		{"11","2524","dogs","","1","Dogs"},//24 dogs allowed
+		{"05","2512","camping","","31","Camping available"},//12 Camping allowed
+		{"01","2504","bicycles","","32","Bicycles"},//04 bikes allowed
+		{"19","2540","motorcycles","","33","Motorcycles"},//40 motorcycles allowed
+		{"27","2556","quads","","34","Quads"},//56 quads allowed
+		{"16","2534","jeeps","","35","Off-road vehicles"},//34 off-road vehicles allowed
+		{"33","2568","snowmobiles","","36","Snowmobiles"},//68
+		{"14","2530","horses","","37","Horses"},//30 horses allowed
+		{"04","2510","campfires","","38","Campfires"},//10 campfires allowed
+		// Eigenschaften / Gefahren
+		{"10","2522","danger","9","23","Dangerous area"},//22 dangerous area
+		{"62","2644","train","10","",""},// 144 aktive Eisenbahnlinien in der Nähe
+		{"06","2514","cliff","11","21","Cliff / falling rocks"},//14 falling-rocks nearby
+		{"15","2532","hunting","12","22","Hunting"},//32 hunting area
+		{"37","2576","thorn","13","39","Thorns"},//76 thorns!
+		{"38","2578","ticks","14","19","Ticks"},//78 ticks!
+		{"18","2538","mine","15","20","Abandoned mines"},//38
+		{"25","2552","poisonoak","16","17","Poison plants"},//52 Giftige Pflanzen
+		{"46","2594","animals","17","",""},// 94 Giftige/gef%e4hrliche Tiere
+		{"03","2508","cactus","","",""},//08
+		{"32","2566","snakes","","18","Snakes"},//66
+		{"09","2520","cow","","43","Watch for livestock"},//20 watch for livestock
+		// Eigenschaften / Der Weg
+		{"49","2600","car","24","",""},// 100 Nahe beim Auto
+		{"21","2544","onehour","","7","Takes less than an hour"},//44 takes less than one hour
+		{"13","2528","hiking","25","9","Significant hike"},//28 significant hike
+		{"39","2580","wading","26","11","May require wading"},//80 may require wading
+		{"65","2634","steep","27","",""},// 134 Hügeliges Gelände
+		{"07","2516","climbing","28","10","Difficult climbing"},//16 easy climbing(OC-28), difficult climbing(GC-10) 
+		{"36","2574","swimming","29","12","May require swimming"},//74
+		// Eigenschaften / Wegpunkte
+		{"55","2612","letter","8","",""},// 112 Letterbox (benötigt Stempel)
+		{"54","2610","interestsign","30","",""},// 110 Interessanter Ort ev mit scenic zusammenfassen?
+		{"56","2614","moving","31","",""},// 114 Bewegliches Ziel
+		{"64","2646","webcam","32","",""},// 146 Webcam am Ziel
+		{"53","2608","indoor","33","",""},// 108 In geschlossenen Räumen
+		{"66","2636","submerged","34","",""},// 136 Im Wasser
+		{"58","2618","nogps","35","",""},// 118 Ohne GPS
+		{"34","2570","stealth","","40","Stealth required"},//70 stealth required (Heimlich,List,Schläue)
+		// Einschränkungen und Voraussetzungen / Allgemein
+		{"12","2526","fee","36","2","Access or parking fee"},//26 access/parking fees
+		{"61","2624","overnight","37","",""},// 124 Übernachtung erforderlich
+		// Einschränkungen und Voraussetzungen / Zeitlich
+		{"20","2542","night","1","14","Recommended at night"},//42 recommended at night
+		{"00","2502","available","38","13","Available at all times"},//02 available 24-7
+		{"68","2640","time","39","",""},// 140 An bestimmte Zeiten gebunden
+		{"52","2606","day","40","",""},// 106 nur tagsüber
+		{"67","2638","tide","41","",""},// 138 Gezeiten
+		// Einschränkungen und Voraussetzungen / Saisonbedingt
+		{"51","2604","date","42","",""},// 104 während des ganzen Jahres zugänglich
+		{"57","2616","naturschutz","43","",""},// 116 Brutsaison/Naturschutz
+		{"42","2586","winter","44","15","Available during winter"},//86 available in winter 132 Schneesicheres Versteck
+		// Einschränkungen und Voraussetzungen / Systembedingt
+		{"59","2620","oconly","6","",""},// 120 Nur bei Opencaching logbar
+		{"71","2650","wwwlink","7","",""},// 150 Nur Hyperlink zu OC-externen Portalen
+		// Einschränkungen und Voraussetzungen / Benötigt Werkzeug
+		{"69","2642","tools","46","",""},// 142 Spezielle Ausrüstung
+		{"08","2518","compass","47","",""},//18 Kompass
+		{"44","2590","flashlight","48","44","Flashlight required"}, // 90 Flashlight required
+		{"28","2558","rappelling","49","3","Climbing gear"},//58 climbing gear Kletterausrüstung
+		{"50","2602","cave","50","",""},// 102 Höhlenausrüstung
+		{"31","2564","scuba","51","5","Scuba gear"},//64 Tauchausrüstung
+		{"02","2506","boat","52","4","Boat"},//06 Wasserfahrzeug
+		{"45","2592","aircraft","53","38",""},// 92
+		// Einschränkungen und Voraussetzungen / Benötigt Vorarbeit
+		{"70","2648","wiki","54","",""},// 148 Recherche
+		{"63","2630","riddle","55","",""},// 130 Rätsel
+		{"47","2596","arith_prob","56",""},// 96 Rechenaufgabe
+		{"60","2622","othercache","57","",""},// 122 besondere Cacheart
+		{"48","2598","ask","58","",""},// 98 Startbedingungen beim Owner erfragen
+
+	};
+    public static int maxAttRef=attRef.length;	
+    private static String IMAGEDIR=STRreplace.replace(FileBase.getProgramDirectory()+"/attributes/", "//", "/");
+    /*
+    private static String getImageName(int cw_Id, int cw_Inc){
+		if (cw_Id<0 || cw_Id>maxAttRef)
 			return "error.gif";
-		else return attributeNames[attNo];
+		else {
+			switch (cw_Inc) {
+			case 0: return attRef[cw_Id][PIC_NAME]+"-yes.gif";
+			case 1: return attRef[cw_Id][PIC_NAME]+"-no.gif";
+			case 2: return attRef[cw_Id][PIC_NAME]+"-non.gif";
+			default:return "error.gif";
+			}
+		}
 	}
-	
-	/**
-	 * Returns the text description of the image
-	 * @return Text description of Image
-	 */
-	public String getInfo(){
-		return MyLocale.getMsg(2500+attNo,"No attribute info found");
+	*/
+    private static String getMsg(int cw_Id, int cw_Inc){
+		if (cw_Inc==1)
+			return MyLocale.getMsg(Integer.parseInt(attRef[cw_Id][MSG_NR])-1,"");
+		else
+			return MyLocale.getMsg(Integer.parseInt(attRef[cw_Id][MSG_NR]),"");
 	}
-	
+    private static mImage[] yesImages=new mImage[maxAttRef];
+	private static mImage[] noImages=new mImage[maxAttRef];
+	private static mImage[] nonImages=new mImage[maxAttRef];
+	private static final mImage errorImage=new mImage(IMAGEDIR+"error.gif");	
 	/**
 	 * Returns the width of the attribute icons
 	 * @return The width of the images 
 	 */
 	public static int getImageWidth() {
-		initErrorImg();
-		return attributeImages[0].image.getWidth();
-	}
-	
+		return errorImage.image.getWidth();
+	}	
     /**
-     * Get the image for a given attribute number. We use lazy initialisation here, i.e. the images are only
-     * loaded when they are requested. 
-     * @param attNo The attribute number
+     * Get the image for a given attribute number. 
+     * We use lazy initialisation here, i.e. the images are only loaded when they are requested. 
      * @return
      */
     public mImage getImage() {
-    	if (attNo<0 || attNo>=attributeNames.length) {
-    		return attributeImages[0];
+    	if (_Id<0 || _Id>=maxAttRef) {
+    		return errorImage;
     	}
-    	if (attributeImages[attNo]==null) {
-    		attributeImages[attNo]=new mImage(IMAGEDIR+attributeNames[attNo]);
+    	if (_Inc==0) {
+    		if (yesImages[_Id]==null) {yesImages[_Id]=new mImage(IMAGEDIR+getImageName());}
+    		return yesImages[_Id];
     	}
-    	return attributeImages[attNo];
-    }
-    
-	/**
-     * Encode an attribute name with the internal attribute number
-     * @param attributeName The attribute name (=filename) to encode
-     * @return The number of the attribute
-     */
-    private int attName2int(String attributeName) {
-    	int size=attributeNames.length;
-    	for (int i=1; i<size; i++) {
-    		if (attributeName.equalsIgnoreCase(attributeNames[i])) return i;
+    	else if (_Inc==1) {
+    		if (noImages[_Id]==null) {noImages[_Id]=new mImage(IMAGEDIR+getImageName());}
+    		return noImages[_Id];
     	}
-    	return 0; // Error
-    }
-
-    private static void initErrorImg() {
-		if (attributeImages[0]==null) attributeImages[0]=new mImage(IMAGEDIR+"error.gif");
-    }
-    
-    { // Static initialisation of error image
-    	initErrorImg();
-    }
-
-	
+    	else {
+    		if (nonImages[_Id]==null) {nonImages[_Id]=new mImage(IMAGEDIR+getImageName());}
+    		return nonImages[_Id];
+    	}
+    }	
 }

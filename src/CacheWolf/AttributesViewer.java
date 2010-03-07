@@ -41,11 +41,11 @@ public class AttributesViewer extends CellPanel {
 	}
 	protected InteractivePanel iap=new attInteractivePanel();
 	
-	public void showImages(Attributes att) {
+	public void showImages(Attributes atts) {
 		iap.images.clear();
-		for (int i=0; i<att.getCount(); i++) {
-			attAniImage img=new attAniImage( att.getImage(i));
-			img.info=att.getInfo(i);
+		for (int i=0; i<atts.getCount(); i++) {
+			attAniImage img=new attAniImage( atts.getAttribute(i).getImage());
+			img.info=atts.getAttribute(i).getMsg();
 			img.location=new Rect((i % ICONS_PER_ROW)*TILESIZE,(i / ICONS_PER_ROW)*TILESIZE,TILESIZE,TILESIZE);
 			iap.addImage(img);			
 		}

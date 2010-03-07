@@ -94,13 +94,13 @@ public class ShowCacheInBrowser {
 						for (int i=0; i<chD.getExistingDetails().attributes.getCount(); i++) {
 							Hashtable atts=new Hashtable();
 							atts.put("IMAGE","<img src=\"file://"+
-									   Attribute.getImageDir()+chD.getExistingDetails().attributes.getName(i)+
-									   "\" border=0 alt=\""+chD.getExistingDetails().attributes.getInfo(i)+"\">");
+									 chD.getExistingDetails().attributes.getAttribute(i).getPathAndImageName()+
+									 "\" border=0 alt=\""+chD.getExistingDetails().attributes.getAttribute(i).getMsg()+"\">");
 							if (i % 5 ==4)
 								atts.put("BR","<br/>");
 							else
 								atts.put("BR","");
-							atts.put("INFO",chD.getExistingDetails().attributes.getInfo(i));
+							atts.put("INFO",chD.getExistingDetails().attributes.getAttribute(i).getMsg());
 							attVect.add(atts);
 						}
 						tpl.setParam("ATTRIBUTES",attVect);

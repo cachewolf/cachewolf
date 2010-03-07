@@ -257,7 +257,13 @@ public class GPXImporter extends MinML {
 			for (int i = 0; i < atts.getLength(); i++) {
 				Vm.debug("Type: " + atts.getType(i) + " Name: " + atts.getName(i)+ " Value: "+atts.getValue(i));
 			}
-		}
+		}	
+		if (name.equals("attribute")) {
+			int id = Integer.parseInt(atts.getValue("id"));
+			holder.getFreshDetails().attributes.add(id,atts.getValue("inc")); // from GC!
+			holder.setAttribsAsBits(holder.getFreshDetails().attributes.getAttribsAsBits());
+			return;
+		}		
 	}
 	
 	public void endElement(String name){
@@ -307,8 +313,8 @@ public class GPXImporter extends MinML {
 				cacheDB.add(holder);
 				// don't spider additional waypoints, so check
 				// if waypoint starts with "GC"
-				if(doSpider == true) {
-					if(spiderOK == true && holder.is_archived() == false){
+				if(doSpider) {
+					if(spiderOK && holder.is_archived() == false){
 							if(holder.LatLon.length() > 1){
 							if(getMaps){
 								ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
@@ -329,7 +335,7 @@ public class GPXImporter extends MinML {
 							Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
 							text = ex.findNext();
 							int num = 0;
-							while(ex.endOfSearch() == false && spiderOK == true){
+							while(ex.endOfSearch() == false && spiderOK){
 								//Vm.debug("Replacing: " + text);
 								if (num >= holder.getFreshDetails().images.size())break;
 								imgName = holder.getFreshDetails().images.get(num).getTitle();
