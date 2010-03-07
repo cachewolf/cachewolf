@@ -25,8 +25,7 @@ public class FilterData {
 	private String filterDiff = new String("L");
 	private String filterTerr = new String("L");
 
-	private long filterAttrYes = 0l;
-	private long filterAttrNo = 0l;
+	private long[] filterAttr = {0l,0l,0l,0l};
 	private int filterAttrChoice = 0;
 
 	// filter setting for state of cache
@@ -41,23 +40,36 @@ public class FilterData {
 	}
 
 	/**
-	 * Returns an XML representation of the filter data. If a non empty String is passed as
-	 * parameter, then this String is used as ID-tag for the filter. If it is empty, then the ID
-	 * tag will not appear in the cache data. The ID tag is the string which is used in the filter
-	 * screen to appear in the filter list.
+	 * Returns an XML representation of the filter data.
+	 * If a non empty String is passed as parameter, then this String is used as ID-tag for the filter.
+	 * If it is empty, then the ID tag will not appear in the cache data. 
+	 * The ID tag is the string which is used in the filter screen to appear in the filter list.
 	 * @param ID ID tag of filter 
 	 * @return XML represenation of filter
 	 */
 	public String toXML(String ID) {
+		// do not change order, cause reading this is done in simple way
 		String saveID="";
 		if (ID != null && ! ID.equals("")) {
 			saveID = "id = \""+SafeXML.clean(ID)+"\" ";
 		}
-	    return "    <FILTERDATA "+saveID+"rose = \""+getFilterRose()+"\" type = \""+getFilterType()+
-		"\" var = \""+getFilterVar()+"\" dist = \""+getFilterDist().replace('"',' ')+"\" diff = \""+
-		getFilterDiff()+"\" terr = \""+getFilterTerr()+"\" size = \""+getFilterSize()+"\" attributesYes = \""+getFilterAttrYes()+
-		"\" attributesNo = \""+getFilterAttrNo()+"\" attributesChoice = \""+getFilterAttrChoice()+
-		"\" status = \""+SafeXML.clean(getFilterStatus())+"\" useRegexp = \""+useRegexp()+"\" noCoord = \""+getFilterNoCoord()+"\" />\n";	
+	    return "    <FILTERDATA "+saveID+
+	    "rose = \""+getFilterRose()+ "\"" +
+	    " type = \""+getFilterType()+ "\"" +
+		" var = \""+getFilterVar()+ "\"" +
+		" dist = \""+getFilterDist().replace('"',' ')+ "\"" +
+		" diff = \""+getFilterDiff()+ "\"" +
+		" terr = \""+getFilterTerr()+ "\"" +
+		" size = \""+getFilterSize()+ "\"" +
+		" attributesYes = \""+filterAttr[0]+ "\"" +
+		" attributesNo = \""+filterAttr[2]+ "\"" +
+		" attributesChoice = \""+getFilterAttrChoice()+ "\"" +
+		" status = \""+SafeXML.clean(getFilterStatus())+ "\"" +
+		" useRegexp = \""+useRegexp()+ "\"" +
+		" noCoord = \""+getFilterNoCoord()+ "\"" +
+		" attributesYes1 = \""+filterAttr[1]+ "\"" +
+		" attributesNo1 = \""+filterAttr[3]+ "\"" +
+		" />\n";	
 	}
 	/**
 	 * Ensure that all filters have the proper length so that the 'charAt' access in the filter do
@@ -143,22 +155,14 @@ public class FilterData {
 		this.filterTerr = filterTerr;
 	}
 
-	public long getFilterAttrYes() {
-		return filterAttrYes;
+	public long[] getFilterAttr() {
+		return filterAttr;
 	}
 
-	public void setFilterAttrYes(long filterAttrYes) {
-		this.filterAttrYes = filterAttrYes;
+	public void setFilterAttr(long[] filterAttr ) {
+		this.filterAttr=filterAttr;
 	}
-
-	public long getFilterAttrNo() {
-		return filterAttrNo;
-	}
-
-	public void setFilterAttrNo(long filterAttrNo) {
-		this.filterAttrNo = filterAttrNo;
-	}
-
+	
 	public int getFilterAttrChoice() {
 		return filterAttrChoice;
 	}

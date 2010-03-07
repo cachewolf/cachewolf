@@ -1,6 +1,5 @@
 package CacheWolf;
 
-import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.navi.Metrics;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -113,8 +112,7 @@ public class CacheHolder{
 	public String sort;
 	private static StringBuffer sb=new StringBuffer(530); // Used in toXML()
 
-	private long attributesYes = 0;
-	private long attributesNo  = 0;
+	private long[] attributesBits = {0l,0l,0l,0l};
 	
 	private IconAndText iconAndTextWP = null;
 	private int iconAndTextWPLevel = 0;
@@ -122,7 +120,7 @@ public class CacheHolder{
 	static char decSep,notDecSep;
 	static {
 		decSep=MyLocale.getDigSeparator().charAt(0);
-		notDecSep=decSep=='.'?',':'.';
+		notDecSep = (decSep == '.'?',':'.');
 	}
 
 	public CacheHolder() {
@@ -294,15 +292,16 @@ public class CacheHolder{
 	
 			        start = xmlString.indexOf('"', end + 1);
 		            end = xmlString.indexOf('"', start + 1);
+		            long[] attribsBits={0l,0l,0l,0l};
 		            if (start > -1 && end > -1) {
-			            setAttributesYes(Convert.parseLong(xmlString.substring(start + 1, end)));
-	
-	
-			        start = xmlString.indexOf('"', end + 1);
-			        end = xmlString.indexOf('"', start + 1);
-			            if (start > -1 && end > -1)
-				            setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
+		            	attribsBits[0]=(Convert.parseLong(xmlString.substring(start + 1, end)));
+		        		
+				        start = xmlString.indexOf('"', end + 1);
+				        end = xmlString.indexOf('"', start + 1);
+				        if (start > -1 && end > -1)
+			            	attribsBits[2]=(Convert.parseLong(xmlString.substring(start + 1, end)));
 		            }
+		            setAttribsAsBits(attribsBits);
 	            } else if (version == 3 || version == 2) {
 		            start = xmlString.indexOf('"');
 		            end = xmlString.indexOf('"', start + 1);
@@ -359,14 +358,16 @@ public class CacheHolder{
 		            
 		            start = xmlString.indexOf('"', end + 1);
 		            end = xmlString.indexOf('"', start + 1);
+		            long[] attribsBits={0l,0l,0l,0l};
 			        if (start > -1 && end > -1) {
-				        setAttributesYes(Convert.parseLong(xmlString.substring(start + 1, end)));
+			        	attribsBits[0]=(Convert.parseLong(xmlString.substring(start + 1, end)));
 	
 				        start = xmlString.indexOf('"', end + 1);
 				        end = xmlString.indexOf('"', start + 1);
 				        if (start > -1 && end > -1)
-					        setAttributesNo(Convert.parseLong(xmlString.substring(start + 1, end)));
+				        	attribsBits[2]=(Convert.parseLong(xmlString.substring(start + 1, end)));
 			        }
+			        setAttribsAsBits(attribsBits);
 			        
 		            start = xmlString.indexOf('"', end + 1);
 		            end = xmlString.indexOf('"', start + 1);
@@ -503,8 +504,7 @@ public class CacheHolder{
 		this.sort=ch.sort;
 		this.setLastSync(ch.getLastSync());
 
-		this.setAttributesYes(ch.getAttributesYes());
-		this.setAttributesNo(ch.getAttributesNo());
+		this.setAttribsAsBits(ch.getAttributesBits());
 		if (ch.detailsLoaded()) {
 			this.getFreshDetails().update(ch.getFreshDetails());
 		}	
@@ -554,10 +554,13 @@ public class CacheHolder{
 		sb.append("\" lastSyncOC = \"" );sb.append(getLastSync()); 
 		sb.append("\" num_recommended = \"");sb.append(Convert.formatInt(getNumRecommended())); 
 		sb.append("\" num_found = \"" );sb.append(Convert.formatInt(getNumFoundsSinceRecommendation()));
-		sb.append("\" attributesYes = \"" ); sb.append(Convert.formatLong(getAttributesYes()));
-		sb.append("\" attributesNo = \"" ); sb.append(Convert.formatLong(getAttributesNo()));
+		long[] attribsBits = getAttributesBits();
+		sb.append("\" attributesYes = \"" ); sb.append(Convert.formatLong(attribsBits[0]));
+		sb.append("\" attributesNo = \"" ); sb.append(Convert.formatLong(attribsBits[2]));
 		sb.append("\" boolFields=\"" ); sb.append(Convert.formatLong(this.boolFields2long()));
 		sb.append("\" byteFields=\"" ); sb.append(Convert.formatLong(this.byteFields2long()));
+		sb.append("\" attributesYes1 = \"" ); sb.append(Convert.formatLong(attribsBits[1]));
+		sb.append("\" attributesNo1 = \"" ); sb.append(Convert.formatLong(attribsBits[3]));
 		sb.append("\" />\n");
 		return sb.toString();
 	}
@@ -876,7 +879,7 @@ public class CacheHolder{
 	private final static int GC_MSG = 1; 
 	private final static int IDX_WRITENOTE = 4; 	
 	private final static int IDX_FOUNDIT = 1; 	
-	private final static int IDX_NOTFOUND = 3; 	
+	//private final static int IDX_NOTFOUND = 3; 	
 	private final static String[][] _logType = {	
 			{"353", ""},
 			{"318", "Found it"},
@@ -1107,10 +1110,10 @@ public class CacheHolder{
 				||
 			   (profile.showSearchResult() && !this.is_flaged)   
 			    ||
-			   ( (filter==Filter.FILTER_ACTIVE||filter==Filter.FILTER_MARKED_ONLY) &&	
+			   ( (filter == Filter.FILTER_ACTIVE||filter == Filter.FILTER_MARKED_ONLY) &&	
 			  	 (this.is_filtered())^profile.isFilterInverted())                            
 			  	||
-			   (filter==Filter.FILTER_CACHELIST) && 
+			   (filter == Filter.FILTER_CACHELIST) && 
 			     !Global.mainForm.cacheList.contains(this.getWayPoint())
 			);
 		boolean showAddi = this.showAddis() && this.mainCache != null && this.mainCache.isVisible();
@@ -1362,7 +1365,7 @@ public class CacheHolder{
 
 	public void setLog_updated(boolean is_log_updated) {
 		Global.getProfile().notifyUnsavedChanges(is_log_updated != this.log_updated);		
-		if (is_log_updated && iconAndTextWPLevel==1) iconAndTextWP = null;
+		if (is_log_updated && iconAndTextWPLevel == 1) iconAndTextWP = null;
     	this.log_updated = is_log_updated;
     }
 
@@ -1372,7 +1375,7 @@ public class CacheHolder{
 
 	public void setUpdated(boolean is_updated) {
 		Global.getProfile().notifyUnsavedChanges(is_updated != this.cache_updated);		
-		if (is_updated && iconAndTextWPLevel==2) iconAndTextWP = null;
+		if (is_updated && iconAndTextWPLevel == 2) iconAndTextWP = null;
     	this.cache_updated = is_updated;
     }
 
@@ -1382,7 +1385,7 @@ public class CacheHolder{
 
 	public void setIncomplete(boolean is_incomplete) {
 		Global.getProfile().notifyUnsavedChanges(is_incomplete != this.incomplete);	
-		if (is_incomplete && iconAndTextWPLevel==4) iconAndTextWP = null;
+		if (is_incomplete && iconAndTextWPLevel == 4) iconAndTextWP = null;
     	this.incomplete = is_incomplete;
     }
 	
@@ -1460,7 +1463,7 @@ public class CacheHolder{
 
 	public void setNew(boolean is_new) {
 		Global.getProfile().notifyUnsavedChanges(is_new != this.newCache);		
-		if (is_new && iconAndTextWPLevel==3) iconAndTextWP = null;
+		if (is_new && iconAndTextWPLevel == 3) iconAndTextWP = null;
 		this.newCache = is_new;
     }
 
@@ -1527,22 +1530,13 @@ public class CacheHolder{
     	this.lastSync = lastSync;
     }
 
-	public long getAttributesYes() {
-    	return attributesYes;
+	public long[] getAttributesBits() {
+    	return this.attributesBits;
     }
 
-	public void setAttributesYes(long attributesYes) {
-		Global.getProfile().notifyUnsavedChanges(attributesYes != this.attributesYes);		
-    	this.attributesYes = attributesYes;
-    }
-
-	public long getAttributesNo() {
-    	return attributesNo;
-    }
-
-	public void setAttributesNo(long attributesNo) {
-		Global.getProfile().notifyUnsavedChanges(attributesNo != this.attributesNo);		
-    	this.attributesNo = attributesNo;
+	public void setAttribsAsBits(long[] attributesBits) {
+		Global.getProfile().notifyUnsavedChanges(attributesBits != this.attributesBits);		
+    	this.attributesBits = attributesBits;
     }
 	
 	public boolean hasSolver() {

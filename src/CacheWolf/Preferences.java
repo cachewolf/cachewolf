@@ -387,11 +387,18 @@ public class Preferences extends MinML{
 	/** Helper variables for XML parser */
 	private StringBuffer collectElement=null;
 	private String lastName; // The string to the last XML that was processed
+	private long getLongAttr(AttributeList atts, String name) {
+		String stmp=atts.getValue(name);
+		long ret = 0l;
+		if (stmp != null) {
+			ret = Convert.parseLong(stmp);
+		}
+		return ret;
+	}
 
 	/**
 	 * Method that gets called when a new element has been identified in pref.xml
 	 */
-
 	public void startElement(String name, AttributeList atts){
 		//Vm.debug("name = "+name);
 		lastName=name;
@@ -576,8 +583,12 @@ public class Preferences extends MinML{
 			data.setFilterDiff(atts.getValue("diff"));
 			data.setFilterTerr(atts.getValue("terr"));
 			data.setFilterSize(atts.getValue("size"));
-			data.setFilterAttrYes(Convert.parseLong(atts.getValue("attributesYes")));
-			data.setFilterAttrNo(Convert.parseLong(atts.getValue("attributesNo")));
+			long[] filterAttr = { 0l,0l,0l,0l };
+			filterAttr[0] = getLongAttr(atts, "attributesYes");
+			filterAttr[1] = getLongAttr(atts, "attributesYes1");
+			filterAttr[2] = getLongAttr(atts, "attributesNo");
+			filterAttr[3] = getLongAttr(atts, "attributesNo1");
+			data.setFilterAttr(filterAttr);
 			data.setFilterAttrChoice(Convert.parseInt(atts.getValue("attributesChoice")));
 			data.setFilterStatus(SafeXML.cleanback(atts.getValue("status")));
 			data.setUseRegexp(Boolean.valueOf(atts.getValue("useRegexp")).booleanValue());

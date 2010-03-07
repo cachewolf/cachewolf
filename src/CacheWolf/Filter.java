@@ -104,8 +104,7 @@ public class Filter{
 	private boolean notAvailable = false;
 	double pi180=java.lang.Math.PI / 180.0;
 
-	private long attributesYesPattern = 0;
-	private long attributesNoPattern = 0;
+	private long[] attributesPattern = {0l,0l,0l,0l};
 	private int attributesChoice = 0;
 	
 	/**
@@ -318,8 +317,7 @@ public class Filter{
 		terrdirec = profile.getFilterTerr().charAt(0) == 'L' ? SMALLER : 
 				(profile.getFilterTerr().charAt(0) == '=' ? EQUAL : GREATER );
 		fscTerr = Common.parseDouble(profile.getFilterTerr().substring(1));  // Terrain
-		attributesYesPattern = profile.getFilterAttrYes();
-		attributesNoPattern = profile.getFilterAttrNo();
+		attributesPattern = profile.getFilterAttr();
 		attributesChoice = profile.getFilterAttrChoice();
 	}
 	
@@ -553,25 +551,36 @@ public class Filter{
 	        ///////////////////////////////
 	        // Filter criterium 11: Attributes
 	        ///////////////////////////////
-	        if ((attributesYesPattern != 0 || attributesNoPattern != 0) && ch.mainCache == null) {
+	        if ((attributesPattern[0] != 0 || attributesPattern[1] != 0 || attributesPattern[2] != 0 || attributesPattern[3] != 0) 
+	        		&& ch.mainCache == null) {
+	        	long[] chAtts=ch.getAttributesBits();
 		        if (attributesChoice == 0) {
 			        // AND-condition:
-			        if ((ch.getAttributesYes() & attributesYesPattern) != attributesYesPattern
-			                || (ch.getAttributesNo() & attributesNoPattern) != attributesNoPattern) {
+			        if ((chAtts[0] & attributesPattern[0]) != attributesPattern[0] ||
+				        	(chAtts[1] & attributesPattern[1]) != attributesPattern[1] ||
+				        	(chAtts[2] & attributesPattern[2]) != attributesPattern[2] ||
+				        	(chAtts[3] & attributesPattern[3]) != attributesPattern[3] )
+				        {
 				        cacheFiltered = true;
 				        break;
 			        }
 		        } else if (attributesChoice == 1) {
 			        // OR-condition:
-			        if ((ch.getAttributesYes() & attributesYesPattern) == 0
-			                && (ch.getAttributesNo() & attributesNoPattern) == 0) {
+			        if ((chAtts[0] & attributesPattern[0]) == 0 ||
+				        	(chAtts[1] & attributesPattern[1]) == 0 ||
+				        	(chAtts[2] & attributesPattern[2]) == 0 ||
+				        	(chAtts[3] & attributesPattern[3]) == 0 )
+				        {
 				        cacheFiltered = true;
 				        break;
 			        }
 		        } else {
 			        // NOT-condition:
-			        if ((ch.getAttributesYes() & attributesYesPattern) != 0
-			                || (ch.getAttributesNo() & attributesNoPattern) != 0) {
+			        if ((chAtts[0] & attributesPattern[0]) != 0 ||
+				        	(chAtts[1] & attributesPattern[1]) != 0 ||
+				        	(chAtts[2] & attributesPattern[2]) != 0 ||
+				        	(chAtts[3] & attributesPattern[3]) != 0 )
+				        {
 				        cacheFiltered = true;
 				        break;
 			        }
@@ -630,6 +639,7 @@ public class Filter{
 
 		public boolean hasFilter() {
 		Profile prof=Global.getProfile();
+		long[] attribs=prof.getFilterAttr();
 		return !(prof.getFilterType().equals(FilterData.FILTERTYPE) &&
 		    prof.getFilterRose().equals(FilterData.FILTERROSE) &&
 		    prof.getFilterVar().equals(FilterData.FILTERVAR) &&
@@ -637,8 +647,10 @@ public class Filter{
 		    prof.getFilterDist().equals("L") &&
 		    prof.getFilterDiff().equals("L") &&
 		    prof.getFilterTerr().equals("L") &&
-		    prof.getFilterAttrYes() == 0l &&
-		    prof.getFilterAttrNo() == 0l &&
+		    attribs[0] == 0l &&
+		    attribs[1] == 0l &&
+		    attribs[2] == 0l &&
+		    attribs[3] == 0l &&
 		    prof.getFilterStatus().equals("") &&
         prof.getFilterNoCoord());
 	}
