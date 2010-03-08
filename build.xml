@@ -14,8 +14,8 @@
 		need: http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236 to
 		install it in linux / ubuntu. For
 		windows make sure to check the prerequisites on
-		http://ant.apache.org/manual/OptionalTasks/cab.html 
-		Further information about ant can be found at 
+		http://ant.apache.org/manual/OptionalTasks/cab.html
+		Further information about ant can be found at
 		http://ant.apache.org/manual/
 		http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.user/gettingStarted/qs-81_basics.htm
 		or check one of the many ant tutorials on the web
@@ -178,13 +178,13 @@
 		<mkdir dir="${pkg.dir}" />
 
 		<copy file="${ewe.progdir}/PocketPC2003/CacheWolf.exe" todir="${assemble.dir}" />
-		<!-- copy big attributes -->
-		<copy todir="${assemble.dir}/attributes-big">
-			<fileset dir="res_noewe/attributes-big" />
-		</copy>
 		<antcall target="copyres" />
+	<!--
+	dll can be downloaded separately and is needed for all PDA - Versions
+	so why assemble only for PPC2003
+	the space is not really a problem, but as long as there are these massive hint in cw homepage for installing the ewe - VM ...
 		<antcall target="copyppcdll" />
-
+	-->
 		<zip destfile="${pkg.dir}/CacheWolf-PPC2003.zip" basedir="${assemble.dir}" />
 
 		<delete dir="${assemble.dir}" />
@@ -218,14 +218,14 @@
 		<delete dir="${assemble.dir}" />
 	</target>
 
-	<!-- 
+	<!--
 	   This target will make a html file from the docbook manual to Cachewolf
 	   You need to set
 	   -DdocbookTo=/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html/docbook
 	   (leave out the .xsl)
 	   on Ubuntu 9.10
 	-->
-	
+
 	<!--
 		I installed "Serna Free Open Source XML Editor" in Ubuntu 9.10 to
 		compile the docbook to html, but I guess installung docbook-xsl would
@@ -236,8 +236,8 @@
 		<mkdir dir="${assemble.dir}" />
 		<mkdir dir="${assemble.dir}/doku_html_de" />
 		<echo message="taking conversion infos from ${docbookTo}" />
-		
-	    <!-- generate html file and pics dir in the source folder -->		
+
+	    <!-- generate html file and pics dir in the source folder -->
 		<exec executable="xsltproc">
 			<arg value="--xinclude" />
 			<arg value="-o" />
@@ -371,7 +371,6 @@
 			verbose="true">
 			<fileset dir="res_noewe/attributes" />
 		</copy>
-		<!-- copy attributes big will be done only for PPC2003 -->
 
 		<!-- copy exporticons -->
 		<copy todir="${assemble.dir}/exporticons" failonerror="true"
