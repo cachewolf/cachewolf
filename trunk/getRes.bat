@@ -15,8 +15,7 @@ REM
 REM fill .\work subdirs
 REM
 mkdir .\work\attributes
-copy .\res_noewe\attributes-big\*.* .\work\attributes\*.*
-copy .\res_noewe\attributes\*-non.gif .\work\attributes\*.*
+copy .\res_noewe\attributes\*.* .\work\attributes\*.*
 REM
 mkdir .\work\mmcDefault
 copy .\res_noewe\mmcDefault\*.* .\work\mmcDefault\*.*
