@@ -2,6 +2,8 @@ package CacheWolf;
 
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.InputScreen;
+import ewe.sys.Vm;
 import ewe.ui.*;
 import ewe.ui.formatted.TextDisplay;
 import ewe.fx.Dimension;
@@ -53,6 +55,7 @@ public final class CalcPanel extends CellPanel {
 	CellPanel BottomP = new CellPanel();
 	
 	String lastWaypoint = "";
+	boolean bBearing, bDistance;
 	
 	int currFormat;
 	mButton btnChangeLatLon;
@@ -186,6 +189,23 @@ public final class CalcPanel extends CellPanel {
 	public void onEvent(Event ev){
 
 		//Vm.debug(ev.toString());
+		if(ev instanceof ControlEvent && ev.type == ControlEvent.FOCUS_IN && Vm.isMobile()){
+			if (ev.target == inpBearing && !bBearing){
+				bBearing = true;
+				InputScreen inpScreen = new InputScreen(inpBearing, MyLocale.getMsg(1403,"Bearing"));
+				inpScreen.execute();
+				bDistance = false;
+			}
+			
+			if (ev.target == inpDistance && !bDistance){
+				bDistance = true;
+				InputScreen inpScreen = new InputScreen(inpDistance, MyLocale.getMsg(1404,"Distance"));
+				inpScreen.execute();
+				bBearing = false;
+			}
+		}
+		
+		
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == chkFormat 
 					|| ((ev.type == ControlEvent.PRESSED) && (ev.target == localCooSystem )) ) {
