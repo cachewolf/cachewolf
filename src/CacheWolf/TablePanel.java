@@ -39,7 +39,7 @@ public class TablePanel extends CellPanel{
 		myMod.hasRowHeaders = false;
 		myMod.hasColumnHeaders  = true;
 		tc.setTableModel(myMod);
-		statBar.setMyTableModel(myMod);
+		if (statBar!=null) statBar.setMyTableModel(myMod);
 		pref.setMyTableModel(myMod);
 	}
 	
