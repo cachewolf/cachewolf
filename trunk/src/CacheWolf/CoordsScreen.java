@@ -4,6 +4,7 @@ import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.InputScreen;
 import ewe.ui.*;
 import ewe.fx.Dimension;
 import ewe.sys.*;
@@ -24,11 +25,23 @@ public class CoordsScreen extends Form {
 	mInput inpUTMZone, inpUTMNorthing, inpUTMEasting;
 	mInput inpText;
 	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse, btnGps, btnClear, btnSearch;
+	InputScreen inpScreen;
+
 	CWPoint coordInp = new CWPoint();
 	CellPanel topLinePanel = new CellPanel();
 	CellPanel mainPanel = new CellPanel();
 	int exitKeys[]={75009};
 	int currFormat;
+
+	boolean bNSDeg = false;
+	boolean bNSm = false;
+	boolean	bNSs = false;
+	boolean bEWDeg = false;
+	boolean bEWm = false;
+	boolean bEWs = false;
+	boolean bUTMNorthing = false;
+	boolean bUTMEasting = false;
+	
 
 	private boolean allowInvalid = false;
 
@@ -116,27 +129,30 @@ public class CoordsScreen extends Form {
 		//add Panels
 		this.addLast(mainPanel,CellConstants.DONTSTRETCH, CellConstants.WEST);
 		chcNS.takeFocus(ControlConstants.ByKeyboard);
+		
+		
 	}
 
 	public void activateFields(int format){
-		inpEWDeg.wantReturn=false; inpEWm.wantReturn=false; inpEWs.wantReturn=false; inpUTMNorthing.wantReturn=false;
+		//inpEWDeg.wantReturn=false; inpEWm.wantReturn=false; inpEWs.wantReturn=false; inpUTMNorthing.wantReturn=false;
+
 		switch (format){
 		case TransformCoordinates.DD:
 			enable(chcNS); enable(inpNSDeg); disable(inpNSm); disable(inpNSs);
 			enable(chcEW); enable(inpEWDeg); disable(inpEWm); disable(inpEWs);
-			inpEWDeg.wantReturn=true;
+			//inpEWDeg.wantReturn=true;
 			disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
 			break;
 		case TransformCoordinates.DMM: 	
 			enable(chcNS); enable(inpNSDeg); enable(inpNSm); disable(inpNSs);
 			enable(chcEW); enable(inpEWDeg); enable(inpEWm); disable(inpEWs);
-			inpEWm.wantReturn=true;
+			//inpEWm.wantReturn=true;
 			disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
 			break;
 		case TransformCoordinates.DMS: 	
 			enable(chcNS); enable(inpNSDeg); enable(inpNSm); enable(inpNSs);
 			enable(chcEW); enable(inpEWDeg); enable(inpEWm); enable(inpEWs);
-			inpEWs.wantReturn=true;
+			//inpEWs.wantReturn=true;
 			disable(inpUTMZone); disable(inpUTMNorthing); disable(inpUTMEasting);
 			break;
 		default: 	
@@ -145,7 +161,7 @@ public class CoordsScreen extends Form {
 			if (TransformCoordinates.localSystems[localCooSystem.getInt()].zoneSeperatly) enable(inpUTMZone);
 			else disable(inpUTMZone); 
 			enable(inpUTMNorthing); enable(inpUTMEasting);
-			inpUTMNorthing.wantReturn=true;
+			//inpUTMNorthing.wantReturn=true;
 			break;
 		}
 
@@ -216,12 +232,86 @@ public class CoordsScreen extends Form {
 	}
 
 
+	
 	public void onEvent(Event ev){
 
 		//Vm.debug(ev.toString());
 		// Ensure that the Enter key moves to the appropriate field
 		// for Checkboxes and Choice controls this is done via the exitKeys
 		// For input fields we use the wantReturn field
+
+		if(ev instanceof ControlEvent && ev.type == ControlEvent.FOCUS_IN  && Vm.isMobile()){
+		//if(ev instanceof ControlEvent && ev.type == ControlEvent.FOCUS_IN){
+			if (ev.target == inpNSDeg && !bNSDeg){
+				bNSDeg = true;
+				if(chkFormat.getSelectedIndex() == 0)
+					inpScreen = new InputScreen(inpNSDeg,"Format: d.d°");
+				else
+					inpScreen = new InputScreen(inpNSDeg,"Format: d°");					
+				inpScreen.execute();
+				bNSm = bNSs = bEWDeg = bEWm = bEWs = bUTMNorthing = bUTMEasting = false;
+			}
+			
+			if (ev.target == inpNSm && !bNSm){
+				bNSm = true;
+				if(chkFormat.getSelectedIndex() == 2)
+					inpScreen = new InputScreen(inpNSm,"Format: m");
+				else
+					inpScreen = new InputScreen(inpNSm,"Format: m.s");					
+				inpScreen.execute();
+				bNSDeg = bNSs = bEWDeg = bEWm = bEWs = bUTMNorthing = bUTMEasting = false;
+			}
+			
+			if (ev.target == inpNSs && !bNSs){
+				bNSs = true;
+				inpScreen = new InputScreen(inpNSs,"Format: s");
+				inpScreen.execute();
+				bNSDeg = bNSm = bEWDeg = bEWm = bEWs = bUTMNorthing = bUTMEasting = false;
+			}
+			
+			if (ev.target == inpEWDeg && !bEWDeg){
+				bEWDeg = true;
+				if(chkFormat.getSelectedIndex() == 0)
+					inpScreen = new InputScreen(inpEWDeg,"Format: d.d°");
+				else
+					inpScreen = new InputScreen(inpEWDeg,"Format: d°");	
+				inpScreen.execute();
+				bNSDeg = bNSm = bNSs = bEWm = bEWs = bUTMNorthing = bUTMEasting = false;
+			}
+			
+			if (ev.target == inpEWm && !bEWm){
+				bEWm = true;
+				if(chkFormat.getSelectedIndex() == 2)
+					inpScreen = new InputScreen(inpEWm,"Format: m");
+				else
+					inpScreen = new InputScreen(inpEWm,"Format: m.s");
+				inpScreen.execute();
+				bNSDeg = bNSm = bNSs = bEWDeg = bEWs = bUTMNorthing = bUTMEasting = false;
+			}
+			
+			if (ev.target == inpEWs && !bEWs){
+				bEWs = true;
+				inpScreen = new InputScreen(inpEWs,"Format: s");
+				inpScreen.execute();
+				bNSDeg = bNSm = bNSs = bEWDeg = bEWm = bUTMNorthing = bUTMEasting = false;
+			}
+
+			if (ev.target == inpUTMNorthing && !bUTMNorthing){
+				bUTMNorthing = true;
+				inpScreen = new InputScreen(inpUTMNorthing,"Format: " + MyLocale.getMsg(1401,"Northing"));
+				inpScreen.execute();
+				bNSDeg = bNSm = bNSs = bEWDeg = bEWm = bEWs = bUTMEasting = false;
+			}
+			
+			if (ev.target == inpUTMEasting && !bUTMEasting){
+				bUTMEasting = true;
+				inpScreen = new InputScreen(inpUTMEasting,"Format: " + MyLocale.getMsg(1402,"Easting"));
+				inpScreen.execute();
+				bNSDeg = bNSm = bNSs = bEWDeg = bEWm = bEWs = bUTMNorthing = false;
+			}
+			
+		}
+			
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.EXITED){
 			if (((ControlEvent)ev).target==chkDD || ((ControlEvent)ev).target==chkDMM ||
 					((ControlEvent)ev).target==chkDMS) Gui.takeFocus(chcNS,ControlConstants.ByKeyboard);	
@@ -232,6 +322,7 @@ public class CoordsScreen extends Form {
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (((ControlEvent)ev).target==inpEWDeg || ((ControlEvent)ev).target==inpEWm ||
 					((ControlEvent)ev).target==inpEWs || ((ControlEvent)ev).target==inpUTMNorthing) Gui.takeFocus(btnApply,ControlConstants.ByKeyboard);	
+			
 			
 			if (ev.target == chkFormat || ev.target == localCooSystem){
 				if (ev.target == localCooSystem) chkFormat.selectIndex(3);
@@ -314,6 +405,7 @@ public class CoordsScreen extends Form {
 		}
 		super.onEvent(ev);
 	}
+	
 
 	private static final int[] formatSelToLocalSystem = {
 		TransformCoordinates.DD,
