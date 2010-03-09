@@ -5,8 +5,8 @@ MapType:   topo
 MainUrl:   http://webgis.regione.sardegna.it/wmsconnector/com.esri.wms.Esrimap/ras_wms?
 ServiceTypeUrlPart:   SERVICE=WMS
 VersionUrlPart:   VERSION=1.1.1
-CoordinateReferenceSystemCacheWolf:   3003
-CoordinateReferenceSystemUrlPart:   SRS=EPSG:3003
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326
 RequestUrlPart:   REQUEST=GetMap
 # Topographisch schwarz/weiss
 #LayersUrlPart:   LAYERS=CTR10K%20raster
@@ -14,7 +14,7 @@ RequestUrlPart:   REQUEST=GetMap
 #LayersUrlPart:   LAYERS=mosaico_2006IT_1,mosaico_2006IT_2,mosaico_2006IT_3,mosaico_2006IT_4,mosaico_2006IT_5,mosaico_2006IT_6,mosaico_2006IT_7,mosaico_2006IT_8,mosaico_2006IT_9,CTR10K%20raster
 # Luftbild schwarz/weiss
 #LayersUrlPart:   LAYERS=sardegna_2003gb_1,sardegna_2003gb_2,sardegna_2003gb_3,sardegna_2003gb_4,sardegna_2003gb_5,sardegna_2003gb_6,sardegna_2003gb_7,sardegna_2003gb_8,sardegna_2003gb_9,CTR10K%20raster
-# farbiges Luftbild mit Raterdaten überlagert 
+# farbiges Luftbild mit Raterdaten überlagert
 #LayersUrlPart:   LAYERS=mosaico_2006IT_1,CTR10K%20raster
 # farbiges Luftbild anscheinend nur die layer entsprchend der Skalierung angeben ( es tun nur die Skalierungen 1 bis 4)
 #LayersUrlPart:   LAYERS=mosaico_2006IT_1
