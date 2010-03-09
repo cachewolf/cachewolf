@@ -1,0 +1,10 @@
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\bin\Debug\DoFiles.exe
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\bin\Debug\DoFiles.pdb
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\bin\Debug\DoFiles.xml
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\obj\Debug\ResolveAssemblyReference.cache
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\obj\Debug\DoFiles.DoFiles.resources
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\obj\Debug\DoFiles.Resources.resources
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\obj\Debug\DoFiles.vbproj.GenerateResource.Cache
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\obj\Debug\DoFiles.exe
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\obj\Debug\DoFiles.xml
+C:\Dateien_Entwicklung\pgn Konvertierung\DoFiles\obj\Debug\DoFiles.pdb
