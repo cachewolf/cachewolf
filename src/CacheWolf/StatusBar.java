@@ -82,7 +82,8 @@ public class StatusBar extends CellPanel{
 		// Current centre can only be displayed if screen is big
 		// Otherwise it forces a scrollbar
 		// This can happen even on bigger screens with big fonts
-		if ((MyLocale.getScreenWidth()>=320) && !(MobileVGA && (pref.fontSize > 20)))
+		// >=320 --> >=640 Das ist mir zu blöd, dann sieht man eben keine Zentrumskoordinaten
+		if ((MyLocale.getScreenWidth()>=640) && !(MobileVGA && (pref.fontSize > 20)))
 			strCenter="  \u00a4 " + pref.getCurCentrePt().toString();
 		if (Global.getPref().sortAutomatic) {
 			this.btnNoSorting.backGround=new Color(0,255,255);
