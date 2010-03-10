@@ -256,18 +256,26 @@ public class MainTab extends mTabbedPanel {
 			break;
 		}
 	}
-
-	public void openDescriptionPanel(CacheHolder chi) {
+	/**
+	 * this is called from MovingMap Cache context menu
+	 * @param chi , the CacheHolder for the Cache to switch to
+	 * @param panelNo 1=DetailsPanel 2=Description Panel
+	 */
+	public void openPanel(CacheHolder chi, int panelNo) {
 		MyLocale.setSIPOff();
 		// To change cache we need to be in panel 0
 		onLeavingPanel(oldCard);
 		onEnteringPanel(0); oldCard=0;
 		int row = profile.getCacheIndex(chi.getWayPoint());
 		tbP.selectRow(row);
-		//tbP.tc.scrollToVisible(row, 0);
-		//tbP.selectRow(row);
-		select(descP);
-		//descP.setText(chi);
+		switch (panelNo) {// Switch by panel number
+		case 1:  // DetailsPanel
+			select(detP);
+			break;
+		case 2: // Description Panel
+			select(descP);
+			break;
+		}		
 	}
 
 
