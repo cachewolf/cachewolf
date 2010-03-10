@@ -2069,7 +2069,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu kontextMenu;
 	MenuItem gotoMenuItem = new MenuItem(MyLocale.getMsg(4230, "Goto here$g"), 0, null);
 	MenuItem newWayPointMenuItem = new MenuItem(MyLocale.getMsg(4232, "Create new Waypoint here$n"), 0, null);;
-	MenuItem openCacheDescMenuItem,addCachetoListMenuItem,gotoCacheMenuItem;
+	MenuItem openCacheDescMenuItem,openCacheDetailMenuItem,addCachetoListMenuItem,gotoCacheMenuItem;
 
 	MenuItem miLuminary[];
 
@@ -2082,7 +2082,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	
 	ImageList saveImageList = null;
 	int lastZoomWidth , lastZoomHeight;
-
+	
+	boolean ignoreNextDrag=false;
+	
 	public MovingMapPanel(MovingMap f){
 		this.mm = f;
 		miLuminary = new MenuItem[SkyOrientation.LUMINARY_NAMES.length];
@@ -2132,10 +2134,11 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			saveMapLoc = new Point (ev.x, ev.y);
 			paintingZoomArea = true;
 			mm.zoomingMode = true;
-		}
+		}		
 		if (!mm.zoomingMode && ev.type == PenEvent.PEN_DOWN && ev.modifiers == PenEvent.RIGHT_BUTTON) {
+			// context penHeld is fired on PDA but not on PC (Java)
 			penHeld(new Point (ev.x, ev.y));
-		}
+		}		
 		if (mm.zoomingMode && ev.type == PenEvent.PEN_UP ) {
 			paintingZoomArea = false;
 			mm.zoomingMode = false;
@@ -2168,6 +2171,11 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			else top = saveMapLoc.y;
 			dr.setPen(new Pen(new Color(255,0,0),Pen.SOLID,3));
 			dr.drawRect(left, top, java.lang.Math.abs(lastZoomWidth), java.lang.Math.abs(lastZoomHeight), 0); // bug in ewe: thickness parameter is ignored
+		}
+		if (ignoreNextDrag) {
+			// On PDA next event after a Kontext ist a drag, that will move the map unwanted
+			ignoreNextDrag=false;
+			if (ev.type == PenEvent.PEN_DRAG) return; // ignoring now
 		}
 		super.onPenEvent(ev);
 	}
@@ -2253,30 +2261,33 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	}
 
 	public void penHeld(Point p){
-		//	if (!menuIsActive()) doMenu(p);
+		ignoreNextDrag=true;
 		if (!mm.zoomingMode) {
-			//( (ev.type == PenEvent.PEN_DOWN) && ((PenEvent)ev).modifiers == PenEvent.RIGHT_BUTTON)
-			//|| ((ev.type == PenEvent.RIGHT_BUTTON) ) )) ---> these events are not posted --> this overridering is the only solution
 			kontextMenu = new Menu();
-			if ( !(mm.directionArrows.onHotArea(p.x, p.y)) ) {
-				kontextMenu.addItem(gotoMenuItem);
-				kontextMenu.addItem(newWayPointMenuItem);
-				AniImage clickedOnImage = images.findHotImage(p);
-				if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
-					if ( ((MapSymbol)clickedOnImage).mapObject instanceof CacheHolder) {
-						clickedCache = (CacheHolder)( ((MapSymbol)clickedOnImage).mapObject);
-						if (clickedCache != null) {
-							openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(4270, "Open")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
-							kontextMenu.addItem(openCacheDescMenuItem);
-							gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$g"); // clickedCache == null can happen if clicked on the goto-symbol
-							kontextMenu.addItem(gotoCacheMenuItem);
-							if (Global.mainForm.cacheListVisible) {
-								addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
-								kontextMenu.addItem(addCachetoListMenuItem);
-							}
+			kontextMenu.addItem(gotoMenuItem);
+			kontextMenu.addItem(newWayPointMenuItem);
+			AniImage clickedOnImage = images.findHotImage(p);
+			if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
+				if ( ((MapSymbol)clickedOnImage).mapObject instanceof CacheHolder) {
+					clickedCache = (CacheHolder)( ((MapSymbol)clickedOnImage).mapObject);
+					if (clickedCache != null) {
+						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(201, "Open Desctiption")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+						kontextMenu.addItem(openCacheDescMenuItem);
+						openCacheDetailMenuItem = new MenuItem(MyLocale.getMsg(200, "Open Details")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+						kontextMenu.addItem(openCacheDetailMenuItem);
+						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$g"); // clickedCache == null can happen if clicked on the goto-symbol
+						kontextMenu.addItem(gotoCacheMenuItem);
+						if (Global.mainForm.cacheListVisible) {
+							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
+							kontextMenu.addItem(addCachetoListMenuItem);
 						}
 					}
 				}
+			}
+			/*
+			 *  this kontext will be replaced by the settings of the rose in the goto panel
+			 *    
+			if ( !(mm.directionArrows.onHotArea(p.x, p.y)) ) {
 			}
 			else {
 				for (int i=0; i<SkyOrientation.LUMINARY_NAMES.length; i++) {
@@ -2285,13 +2296,14 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					else miLuminary[i].modifiers &= MenuItem.Checked;
 				}
 			}
+			*/
 			kontextMenu.exec(this, new Point(p.x, p.y), this);
 		}
 	}
 
 	public void onEvent(Event ev){
 		if (kontextMenu != null && ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this)
-			{kontextMenu.close(); kontextMenu = null; }
+			{kontextMenu.close(); kontextMenu = null; return;}
 
 		if (ev instanceof MenuEvent) {
 			if (ev.target == kontextMenu) {
@@ -2301,15 +2313,17 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						kontextMenu.close();
 						mm.myNavigation.setDestination(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));
 					}
-					if (action == openCacheDescMenuItem) {
-						//mm.onEvent(new FormEvent(FormEvent.CLOSED, mm));
+					if (action == openCacheDescMenuItem || action == openCacheDetailMenuItem) {
 						kontextMenu.close();
 						WindowEvent close = new WindowEvent();
 						close.target = mm;
 						close.type = WindowEvent.CLOSE;
 						mm.postEvent(close);
 						MainTab mainT = Global.mainTab;
-						mainT.openDescriptionPanel(clickedCache);
+						if (action == openCacheDescMenuItem) 
+							mainT.openPanel(clickedCache,2);
+						else
+							mainT.openPanel(clickedCache,1);
 					}
 					if (action == gotoCacheMenuItem) {
 						kontextMenu.close();
