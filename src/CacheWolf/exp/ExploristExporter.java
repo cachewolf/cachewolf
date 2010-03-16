@@ -193,7 +193,7 @@ public class ExploristExporter {
 	 * @return formated cache data
 	 */
 	public String record(CacheHolder ch) {
-		CacheHolderDetail det = ch.getExistingDetails();
+		CacheHolderDetail det = ch.getCacheDetails(true);
 		/*
 		static protected final int GC_AW_PARKING = 50;
 		static protected final int GC_AW_STAGE_OF_MULTI = 51;

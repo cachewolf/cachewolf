@@ -179,7 +179,7 @@ public class MainTab extends mTabbedPanel {
 					if (oldHasSolver != chD.getParent().hasSolver()) tbP.tc.update(true);
 				} else {
 					boolean oldHasSolver = chMain.hasSolver();
-					chMain.getExistingDetails().setSolver(solverP.getInstructions());
+					chMain.getCacheDetails(true).setSolver(solverP.getInstructions());
 					if (oldHasSolver != chMain.hasSolver()) tbP.tc.update(true);
 					chMain.save();//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
 					chMain=null;

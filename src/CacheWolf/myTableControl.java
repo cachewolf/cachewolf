@@ -268,7 +268,7 @@ public class myTableControl extends TableControl{
 
 		if (selectedItem == miOpenOnline){
 				ch = cacheDB.get(tbp.getSelectedCache());
-				CacheHolderDetail chD=ch.getCacheDetails(false, true);
+				CacheHolderDetail chD=ch.getCacheDetails(true);
 				if (chD != null) { callExternalProgram(pref.browser, chD.URL); }
 		} else
 
@@ -296,7 +296,7 @@ public class myTableControl extends TableControl{
 					mainCache = ch.mainCache;
 				}
 				if (mainCache.isCacheWpt()) {
-					CacheHolderDetail chD=mainCache.getCacheDetails(false, true);
+					CacheHolderDetail chD=mainCache.getCacheDetails(true);
 						if (chD != null) {
 							String URL = "";
 							if (ch.isOC()) {

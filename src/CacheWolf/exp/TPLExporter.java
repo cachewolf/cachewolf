@@ -164,18 +164,14 @@ public class TPLExporter {
 	}
 
 	public void doIt(){
-		CacheHolderDetail det;
-		CacheHolder ch;
+
 		ProgressBarForm pbf = new ProgressBarForm();
 		ewe.sys.Handle h = new ewe.sys.Handle();
 		int counter = cacheDB.countVisible();
 		pbf.showMainTask = false;
 		pbf.setTask(h,"Exporting ...");
 		pbf.exec();
-		// Vm.gc(); // all this doesn't really work :-(
-		// System.runFinalization();
-		// Vm.gc();
-		//Vm.debug("v: "+Vm.countObjects(true));
+
 		String selbstLaute="aeiouAEIOU";
 		StringBuffer lower=new StringBuffer(26);// region/language dependent ?
 		for (int i=97; i<=122; i++ ) {
@@ -183,11 +179,8 @@ public class TPLExporter {
 		}
 		String mitLauteKlein=lower.toString();
 		try {
-			Vector cache_index = new Vector(); // declare variables inside try {} -> in case of OutOfMemoryError, they can be garbage collected - anyhow it doesn't work :-(
-			Hashtable varParams;
-			TplFilter myFilter;
+			TplFilter myFilter = new TplFilter();			
 			Hashtable args = new Hashtable();
-			myFilter = new TplFilter();
 			//args.put("debug", "true");
 			args.put("filename", tplFile);
 			args.put("case_sensitive", "true");
@@ -202,14 +195,16 @@ public class TPLExporter {
 			if(fc.execute() == FormBase.IDCANCEL) return;
 			File saveTo = fc.getChosenFile();
 			pref.setExportPath(expName, saveTo.getPath());
+			
 			Time nowdate = new Time();
 			nowdate = nowdate.setFormat("yyyy-MM-dd");
 			Time nowtime = new Time();
 			nowtime = nowtime.setFormat("HH:mm");
 
+			Vector cache_index = new Vector(); 			
 			for(int i = 0; i<counter;i++){
-				ch = cacheDB.get(i);
-				det = ch.getExistingDetails();
+				CacheHolder ch = cacheDB.get(i);
+				CacheHolderDetail det = ch.getCacheDetails(true);
 				h.progress = (float)i/(float)counter;
 				h.changed();
 				if(ch.isVisible()){
@@ -217,7 +212,7 @@ public class TPLExporter {
 					try {
 						Regex dec = new Regex("[,.]",myFilter.decSep);
 						if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
-						varParams = new Hashtable();
+						Hashtable varParams = new Hashtable();
 						varParams.put("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
 						varParams.put("SYM", CacheType.type2SymTag(ch.getType())); //<sym>
 						varParams.put("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); //<groundspeak:type>

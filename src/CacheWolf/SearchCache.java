@@ -44,10 +44,10 @@ public class SearchCache {
 				   ch.getCacheName().toUpperCase().indexOf(searchStr) <0 && 
 				   ch.getCacheStatus().toUpperCase().indexOf(searchStr)<0 &&
 				   (! searchInDescriptionAndNotes || 
-					ch.getExistingDetails().LongDescription.toUpperCase().indexOf(searchStr)<0 &&
-					ch.getExistingDetails().getCacheNotes().toUpperCase().indexOf(searchStr)<0)&&
+					ch.getCacheDetails(true).LongDescription.toUpperCase().indexOf(searchStr)<0 &&
+					ch.getCacheDetails(true).getCacheNotes().toUpperCase().indexOf(searchStr)<0)&&
 				   (! searchInLogs ||
-					ch.getExistingDetails().CacheLogs.allMessages().toUpperCase().indexOf(searchStr)<0)){
+					ch.getCacheDetails(true).CacheLogs.allMessages().toUpperCase().indexOf(searchStr)<0)){
 					ch.is_flaged = false;
 				} else
 					ch.is_flaged=true;

@@ -2125,57 +2125,63 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	}
 
 	public void onPenEvent(PenEvent ev) {
-		if (!mm.zoomingMode && ev.type == PenEvent.PEN_DOWN) {
-			saveMapLoc = new Point (ev.x, ev.y);
-		}
-		if (mm.zoomingMode && ev.type == PenEvent.PEN_DOWN) {
-			saveGpsIgnoreStatus = mm.dontUpdatePos;
-			mm.dontUpdatePos = true;
-			saveMapLoc = new Point (ev.x, ev.y);
-			paintingZoomArea = true;
-			mm.zoomingMode = true;
-		}		
-		if (!mm.zoomingMode && ev.type == PenEvent.PEN_DOWN && ev.modifiers == PenEvent.RIGHT_BUTTON) {
-			// context penHeld is fired on PDA but not on PC (Java)
-			penHeld(new Point (ev.x, ev.y));
-		}		
-		if (mm.zoomingMode && ev.type == PenEvent.PEN_UP ) {
-			paintingZoomArea = false;
-			mm.zoomingMode = false;
-			mm.getControlsLayer().changeRoleState("zoom_manually", false);
-			mm.dontUpdatePos = saveGpsIgnoreStatus;
-			if (java.lang.Math.abs(lastZoomWidth) < 15 || java.lang.Math.abs(lastZoomHeight) < 15)  {
-				repaintNow();
-				return; // dont make to big zoom jumps - it is most probable not an intentional zoom
-			}
-			mm.zoomScreenRect(saveMapLoc, lastZoomWidth, lastZoomHeight);
-		}
-
-		if (mm.zoomingMode && paintingZoomArea && (ev.type == PenEvent.PEN_MOVED_ON || ev.type == PenEvent.PEN_MOVE || ev.type == PenEvent.PEN_DRAG)) {
-			int left, top;
-			Graphics dr = this.getGraphics();
-			if (lastZoomWidth < 0)left = saveMapLoc.x + lastZoomWidth;
-			else left = saveMapLoc.x;
-			if (lastZoomHeight < 0)top = saveMapLoc.y + lastZoomHeight;
-			else top = saveMapLoc.y;
-			left -= 2;
-			top -= 2;
-			if (top < 0) top = 0;
-			if (left < 0) left = 0;
-			this.repaintNow(dr, new Rect(left, top, java.lang.Math.abs(lastZoomWidth)+4, java.lang.Math.abs(lastZoomHeight)+4));
-			lastZoomWidth = ev.x - saveMapLoc.x;
-			lastZoomHeight =  ev.y - saveMapLoc.y;
-			if (lastZoomWidth < 0) left = saveMapLoc.x + lastZoomWidth;
-			else left = saveMapLoc.x;
-			if (lastZoomHeight < 0)top = saveMapLoc.y + lastZoomHeight;
-			else top = saveMapLoc.y;
-			dr.setPen(new Pen(new Color(255,0,0),Pen.SOLID,3));
-			dr.drawRect(left, top, java.lang.Math.abs(lastZoomWidth), java.lang.Math.abs(lastZoomHeight), 0); // bug in ewe: thickness parameter is ignored
-		}
 		if (ignoreNextDrag) {
 			// On PDA next event after a Kontext ist a drag, that will move the map unwanted
 			ignoreNextDrag=false;
 			if (ev.type == PenEvent.PEN_DRAG) return; // ignoring now
+		}
+		if (ev.type == PenEvent.PEN_DOWN) {
+			if (mm.zoomingMode) {
+				saveGpsIgnoreStatus = mm.dontUpdatePos;
+				mm.dontUpdatePos = true;
+				saveMapLoc = new Point (ev.x, ev.y);
+				paintingZoomArea = true;
+				mm.zoomingMode = true;
+			}
+			else {
+				saveMapLoc = new Point (ev.x, ev.y);
+				if (ev.modifiers == PenEvent.RIGHT_BUTTON) {
+					// context penHeld is fired on PDA but not on PC (Java)
+					penHeld(new Point (ev.x, ev.y));
+				}
+			}
+		}
+		else {
+			if (mm.zoomingMode) {
+				if ( ev.type == PenEvent.PEN_UP ) {
+					paintingZoomArea = false;
+					mm.zoomingMode = false;
+					mm.getControlsLayer().changeRoleState("zoom_manually", false);
+					mm.dontUpdatePos = saveGpsIgnoreStatus;
+					if (java.lang.Math.abs(lastZoomWidth) < 15 || java.lang.Math.abs(lastZoomHeight) < 15)  {
+						repaintNow();
+						return; // dont make to big zoom jumps - it is most probable not an intentional zoom
+					}
+					mm.zoomScreenRect(saveMapLoc, lastZoomWidth, lastZoomHeight);
+				}
+				if (paintingZoomArea && 
+					(ev.type == PenEvent.PEN_MOVED_ON || ev.type == PenEvent.PEN_MOVE || ev.type == PenEvent.PEN_DRAG)) {
+					int left, top;
+					Graphics dr = this.getGraphics();
+					if (lastZoomWidth < 0)left = saveMapLoc.x + lastZoomWidth;
+					else left = saveMapLoc.x;
+					if (lastZoomHeight < 0)top = saveMapLoc.y + lastZoomHeight;
+					else top = saveMapLoc.y;
+					left -= 2;
+					top -= 2;
+					if (top < 0) top = 0;
+					if (left < 0) left = 0;
+					this.repaintNow(dr, new Rect(left, top, java.lang.Math.abs(lastZoomWidth)+4, java.lang.Math.abs(lastZoomHeight)+4));
+					lastZoomWidth = ev.x - saveMapLoc.x;
+					lastZoomHeight =  ev.y - saveMapLoc.y;
+					if (lastZoomWidth < 0) left = saveMapLoc.x + lastZoomWidth;
+					else left = saveMapLoc.x;
+					if (lastZoomHeight < 0)top = saveMapLoc.y + lastZoomHeight;
+					else top = saveMapLoc.y;
+					dr.setPen(new Pen(new Color(255,0,0),Pen.SOLID,3));
+					dr.drawRect(left, top, java.lang.Math.abs(lastZoomWidth), java.lang.Math.abs(lastZoomHeight), 0); // bug in ewe: thickness parameter is ignored
+				}
+			}
 		}
 		super.onPenEvent(ev);
 	}
