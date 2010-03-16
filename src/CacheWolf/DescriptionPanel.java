@@ -49,14 +49,14 @@ public class DescriptionPanel extends CellPanel{
             isHtml = cache.is_HTML();
             if (cache.isAddiWpt()) {
                 isHtml = cache.mainCache.is_HTML();
-                if (cache.getExistingDetails().LongDescription != null && cache.getExistingDetails().LongDescription.length() > 0)
-                    desc = cache.getExistingDetails().LongDescription + (isHtml ? "<hr>\n" : "\n")
-                            + cache.mainCache.getExistingDetails().LongDescription;
+                if (cache.getCacheDetails(true).LongDescription != null && cache.getCacheDetails(true).LongDescription.length() > 0)
+                    desc = cache.getCacheDetails(true).LongDescription + (isHtml ? "<hr>\n" : "\n")
+                            + cache.mainCache.getCacheDetails(true).LongDescription;
                 else
-                    desc = cache.mainCache.getExistingDetails().LongDescription;
+                    desc = cache.mainCache.getCacheDetails(true).LongDescription;
             } else
                 // not an addi-wpt
-                desc = cache.getExistingDetails().LongDescription;
+                desc = cache.getCacheDetails(true).LongDescription;
         }
         // HtmlDisplay does not show the <sup> tag correctly, so we need to replace with ^
         if (desc.indexOf("<sup>")>=0) {
@@ -74,7 +74,7 @@ public class DescriptionPanel extends CellPanel{
                 } else {
                     chImages=cache;
                 }
-            	Images = chImages.getExistingDetails().images;
+            	Images = chImages.getCacheDetails(true).images;
                 StringBuffer s = new StringBuffer(desc.length() + Images.size() * 100);
                 int start = 0;
                 int pos;
@@ -108,7 +108,7 @@ public class DescriptionPanel extends CellPanel{
                     s.append(desc.substring(start));
                 desc = s.toString();
                 if (imageNo<Images.size()) {
-                    desc += getPicDesc(imageNo, chImages.getExistingDetails());
+                    desc += getPicDesc(imageNo, chImages.getCacheDetails(true));
                 }
             }
             //disp.setHtml(desc);

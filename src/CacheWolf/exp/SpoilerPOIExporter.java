@@ -59,11 +59,11 @@ public class SpoilerPOIExporter extends Exporter {
 		if (ch.isAddiWpt()) return null;
 		
 		// First check, if there a any pictures in the db for the wpt
-		ch.getCacheDetails(false);
+		ch.getCacheDetails(true);
 		if (! ch.detailsLoaded()) return null;
-		if (ch.details.images.size() == 0) return null;
+		if (ch.getCacheDetails(true).images.size() == 0) return null;
 		
-		images = ch.details.images.getDisplayImages(ch.getWayPoint());
+		images = ch.getCacheDetails(true).images.getDisplayImages(ch.getWayPoint());
 		picCounter = 0;
 		for (int i=0; i < images.size(); i++ ) {
 			filename = images.get(i).getFilename();
@@ -81,8 +81,8 @@ public class SpoilerPOIExporter extends Exporter {
 			strBuf.append("<wpt lat=\"" + lat + "\" lon=\"" + lon + "\">\r\n");
 			strBuf.append("  <name>Sp " + picCounter + ": " + SafeXML.cleanGPX(ch.cacheName) + "</name>\r\n");
 			strBuf.append("  <cmt>\r\n");
-			if (ch.details.Hints.length()> 0){
-				strBuf.append("  Hint: " + SafeXML.cleanGPX(Common.rot13(ch.details.Hints)) + "\r\n");
+			if (ch.getCacheDetails(true).Hints.length()> 0){
+				strBuf.append("  Hint: " + SafeXML.cleanGPX(Common.rot13(ch.getCacheDetails(true).Hints)) + "\r\n");
 			}
 			if (comment != null){
 				strBuf.append("  Comment: " + SafeXML.cleanGPX(SafeXML.cleanback(comment)) + "\r\n");

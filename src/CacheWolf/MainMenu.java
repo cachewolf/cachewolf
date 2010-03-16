@@ -668,8 +668,8 @@ public class MainMenu extends MenuBar {
 					cwp.setPosition(i);
 					CacheHolder ch = cacheDB.get(i);
 					if (ch.mainCache==null) {
-						ch.setHasNote(!ch.getFreshDetails().getCacheNotes().equals(""));
-						ch.setHasSolver(!ch.getFreshDetails().getSolver().equals(""));
+						ch.setHasNote(!ch.getCacheDetails(false).getCacheNotes().equals(""));
+						ch.setHasSolver(!ch.getCacheDetails(false).getSolver().equals(""));
 					}
 					if (cwp.isClosed()) break;
 				} // for

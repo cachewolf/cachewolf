@@ -5,7 +5,7 @@ public class Attributes {
 	/**
 	 * The number of attributes for this cache (=number of array elements in use in attribs)
 	 */
-	private int count=0;
+	private int _count=0;
 	/**
 	 * The attributes as array of MAXATTRIBS Attribute
 	 */
@@ -19,12 +19,12 @@ public class Attributes {
 	 * Get the number of attributes in the list
 	 * @return number of attributes
 	 */
-	public int getCount(){return count;}	
+	public int count(){return _count;}	
 	/**
 	 * getting an empty attributes list for this Cache 
 	 */
 	public void clear() {
-		count=0;
+		_count=0;
 		attrYes[0]=0l;
 		attrYes[1]=0l;
 		attrNo[0]=0l;
@@ -50,7 +50,7 @@ public class Attributes {
 	public String XmlAttributesWrite(){
 		StringBuffer sb=new StringBuffer(1000);
 		sb.append("<ATTRIBUTES>\n");
-		for (int i=0; i<count; i++) {
+		for (int i=0; i<_count; i++) {
 			sb.append("   <ATT>");
 			sb.append(attribs[i].getImageName());
 			sb.append("</ATT>\n");
@@ -63,10 +63,10 @@ public class Attributes {
 	 * @param attributeName
 	 */
 	public void add(String attributeName){
-		if (count<attribs.length) {
+		if (_count<attribs.length) {
 			if ( !attributeName.equalsIgnoreCase( "attribute-blank.gif" ) ) {
 				Attribute attr = new Attribute(attributeName);
-				attribs[count++] = attr;
+				attribs[_count++] = attr;
 				attrYes=attr.getYesBit(attrYes);
 				attrNo=attr.getNoBit(attrNo);
 			}
@@ -78,9 +78,9 @@ public class Attributes {
 	 * @param GC attribute Inc (attribute set = 0 ,attribute  not set = 1)
 	 */
 	public void add(int attIdGC, String Yes0No1) {
-		if (count<attribs.length) {
+		if (_count<attribs.length) {
 			Attribute attr = new Attribute(attIdGC, Yes0No1);
-			attribs[count++] = attr;
+			attribs[_count++] = attr;
 			attrYes=attr.getYesBit(attrYes);
 			attrNo=attr.getNoBit(attrNo);			
 		}
@@ -90,9 +90,9 @@ public class Attributes {
 	 * @param OC attribute ID
 	 */
 	public void add(int attIdOC) {
-		if (count<attribs.length) {
+		if (_count<attribs.length) {
 			Attribute attr = new Attribute(attIdOC);
-			attribs[count++] = attr;
+			attribs[_count++] = attr;
 			attrYes=attr.getYesBit(attrYes);
 		}
 	}

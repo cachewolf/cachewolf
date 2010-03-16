@@ -525,10 +525,10 @@ public class SpiderGC{
 				ch.setNumRecommended(cacheInDB.getNumRecommended());
 				if (pref.downloadPics) {
 					// delete obsolete images when we have current set
-					CacheImages.cleanupOldImages(cacheInDB.getExistingDetails().images, ch.getFreshDetails().images);
+					CacheImages.cleanupOldImages(cacheInDB.getCacheDetails(true).images, ch.getCacheDetails(false).images);
 				} else {
 					// preserve images if not downloaded
-					ch.getFreshDetails().images = cacheInDB.getExistingDetails().images;
+					ch.getCacheDetails(false).images = cacheInDB.getCacheDetails(true).images;
 				}
 				cacheInDB.update(ch);
 				cacheInDB.save();
@@ -847,7 +847,7 @@ public class SpiderGC{
 		boolean save = false;
 		boolean is_archived_GC=false;
 		boolean is_found_GC=false;
-		CacheHolderDetail chd = ch.getFreshDetails();
+		CacheHolderDetail chd = ch.getCacheDetails(false);
 		if (spiderAllFinds) {
 			if(!ch.is_found()) { ch.setFound(true); save=true; numFoundUpdates+=1; ret=true;}
 			is_archived_GC=CacheDescription.indexOf(propArchived)!=-1;
@@ -1018,7 +1018,7 @@ public class SpiderGC{
 		if(!pref.checkLog) return false;
 		// String[] CacheDesc=mString.split(cacheDescrition,'\n');
 		Time lastLogCW = new Time();
-		String slastLogCW=ch.details.CacheLogs.getLog(0).getDate();
+		String slastLogCW=ch.getCacheDetails(true).CacheLogs.getLog(0).getDate();
 		if (slastLogCW.equals("")) return true; // or check cacheDescGC also no log?
 		lastLogCW.parse(slastLogCW,"yyyy-MM-dd");
 
@@ -1134,14 +1134,14 @@ public class SpiderGC{
 						// int logsz = chD.CacheLogs.size();
 						//chD.CacheLogs.clear();
 						ch.addiWpts.clear();
-						ch.getFreshDetails().images.clear();
+						ch.getCacheDetails(false).images.clear();
 
 						ch.setAvailable(!(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0));
 						ch.setArchived(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0);
 						//==========
 						// Logs first (for check early for break)
 						//==========
-						ch.getFreshDetails().setCacheLogs(getLogs(completeWebPage, ch.getFreshDetails()));
+						ch.getCacheDetails(false).setCacheLogs(getLogs(completeWebPage, ch.getCacheDetails(false)));
 						pref.log("Got logs");
 						// If the switch is set to not store found caches and we found the cache => return
 						if (ch.is_found() && doNotGetFound) {
@@ -1157,7 +1157,7 @@ public class SpiderGC{
 						ch.setLatLon(latLon);
 						pref.log("LatLon: " + ch.LatLon);
 
-						ch.getFreshDetails().setLongDescription(getLongDesc(completeWebPage));
+						ch.getCacheDetails(false).setLongDescription(getLongDesc(completeWebPage));
 						pref.log("Got description");
 
 						ch.setCacheName(SafeXML.cleanback(getName(completeWebPage)));
@@ -1167,16 +1167,16 @@ public class SpiderGC{
 						if (location.length() != 0) {
 							int countryStart = location.indexOf(",");
 							if (countryStart > -1) {
-								ch.getFreshDetails().Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
-								ch.getFreshDetails().State = SafeXML.cleanback(location.substring(0, countryStart).trim());
+								ch.getCacheDetails(false).Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
+								ch.getCacheDetails(false).State = SafeXML.cleanback(location.substring(0, countryStart).trim());
 							} else {
-								ch.getFreshDetails().Country = location.trim();
-								ch.getFreshDetails().State = "";
+								ch.getCacheDetails(false).Country = location.trim();
+								ch.getCacheDetails(false).State = "";
 							}
 							pref.log("Got location (country/state)");
 						} else {
-							ch.getFreshDetails().Country = "";
-							ch.getFreshDetails().State = "";
+							ch.getCacheDetails(false).Country = "";
+							ch.getCacheDetails(false).State = "";
 							pref.log("No location (country/state) found");
 						}
 
@@ -1187,8 +1187,8 @@ public class SpiderGC{
 						ch.setDateHidden(DateFormat.MDY2YMD(getDateHidden(completeWebPage)));
 						pref.log("Hidden: " + ch.getDateHidden());
 
-						ch.getFreshDetails().setHints(getHints(completeWebPage));
-						pref.log("Hints: " + ch.getFreshDetails().Hints);
+						ch.getCacheDetails(false).setHints(getHints(completeWebPage));
+						pref.log("Hints: " + ch.getCacheDetails(false).Hints);
 
 						ch.setCacheSize(CacheSize.gcSpiderString2Cw(getSize(completeWebPage)));
 						pref.log("Size: " + ch.getCacheSize());
@@ -1204,14 +1204,14 @@ public class SpiderGC{
 						//==========
 						// Bugs
 						//==========
-						if (fetchTBs) getBugs(ch.getFreshDetails(),completeWebPage);
-						ch.setHas_bugs(ch.getFreshDetails().Travelbugs.size()>0);
+						if (fetchTBs) getBugs(ch.getCacheDetails(false),completeWebPage);
+						ch.setHas_bugs(ch.getCacheDetails(false).Travelbugs.size()>0);
 						pref.log("Got TBs");
 						//==========
 						// Images
 						//==========
 						if(fetchImages){
-							getImages(completeWebPage, ch.getFreshDetails());
+							getImages(completeWebPage, ch.getCacheDetails(false));
 							pref.log("Got images");
 						}
 						//==========
@@ -1222,7 +1222,7 @@ public class SpiderGC{
 						//==========
 						// Attributes
 						//==========
-						getAttributes(completeWebPage, ch.getFreshDetails());
+						getAttributes(completeWebPage, ch.getCacheDetails(false));
 						pref.log("Got attributes");
 						//==========
 						// Last sync date
@@ -1526,7 +1526,7 @@ public class SpiderGC{
 		// First: Get current image object of waypoint before spidering images.
 		CacheHolder oldCh = Global.getProfile().cacheDB.get(chD.getParent().getWayPoint());
 		if (oldCh != null) {
-			lastImages = oldCh.getFreshDetails().images;
+			lastImages = oldCh.getCacheDetails(false).images;
 		}
 
 		//========
@@ -1795,7 +1795,7 @@ public class SpiderGC{
 					// Creating new CacheHolder, but accessing old cache.xml file
 					hd=new CacheHolder();
 					hd.setWayPoint(adWayPoint);
-					hd.getExistingDetails(); // Accessing Details reads file if not yet done
+					hd.getCacheDetails(true); // Accessing Details reads file if not yet done
 				} else {
 					hd=new CacheHolder();
 					hd.setWayPoint(adWayPoint);
@@ -1809,7 +1809,7 @@ public class SpiderGC{
 				if(typeRex.didMatch()) hd.setType(CacheType.gpxType2CwType("Waypoint|"+typeRex.stringMatched(1)));
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
-				hd.getFreshDetails().setLongDescription(descRex.stringMatched(1));
+				hd.getCacheDetails(false).setLongDescription(descRex.stringMatched(1));
 				hd.setFound(is_found);
 				hd.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 				hd.setHard(CacheTerrDiff.CW_DT_UNSET);

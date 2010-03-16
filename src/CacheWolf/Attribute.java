@@ -76,9 +76,14 @@ public class Attribute {
     	}
     	return bit;
     }    
-    //
-	//public int getAttId () { return _Id; }
-	//
+    /**
+     * get GC_ID string
+	 */
+    public String getGCText () { return attRef[_Id][GC_TEXT]; }
+    /**
+     * get GC_ID string
+	 */
+    public String getGCId () { return attRef[_Id][GC_ID]; }
     /**
      * getting attribute given=0,negative=1,not specified=2  
      */
@@ -145,22 +150,22 @@ public class Attribute {
 	private final static int PIC_NAME = 2;
 	private final static int OC_ID = 3;
 	private final static int GC_ID = 4;
-	//private final static int GC_TEXT = 5; // for export , didn't extract by myself, copied from forum	
+	private final static int GC_TEXT = 5; // for export , didn't extract by myself, copied from forum	
 	private static final String[][] attRef = {
-		// Empfehlungen / Personen
+		// Empfehlungen / Personen - Conditions (Yes/No)
 		{"30","2562","scenic","","8","Scenic view"},//62 scenic view
 		{"17","2536","kids","59","6","Recommended for kids"},//36 kid friendly
 		{"35","2572","stroller","","41","Stroller accessible"},//72 stroller accessible	
 		{"41","2584","wheelchair","","24","Wheelchair accessible"},//84 wheelchair accessible
-		//  vorhanden / Eigenschaften / Infrastruktur
+		//  vorhanden / Eigenschaften / Infrastruktur - Facilities (Yes/No)
 		{"22","2546","parking","18","25","Parking available"},//46 parking available
 		{"26","2554","public","19","26","Public transportation"},//54 public transit available
 		{"40","2582","water","20","27","Drinking water nearby"},//82 drinking water nearby
 		{"29","2560","restrooms","21","28","Public restrooms nearby"},//60 restrooms available
 		{"23","2548","phone","22","29","Telephone nearby"},//48 telephone nearby
 		{"24","2550","picnic","","30","Picnic tables nearby"},//50 picnic tables available
-		{"43","2588","firstaid","23","42","Firstaid"}, //88 erste Hilfe
-		// Erlaubt
+		{"43","2588","firstaid","23","42","Firstaid"}, //88 erste Hilfe !!! da 
+		// Erlaubt - Permissions (Allowed/Not Allowed)
 		{"11","2524","dogs","","1","Dogs"},//24 dogs allowed
 		{"05","2512","camping","","31","Camping available"},//12 Camping allowed
 		{"01","2504","bicycles","","32","Bicycles"},//04 bikes allowed
@@ -170,7 +175,7 @@ public class Attribute {
 		{"33","2568","snowmobiles","","36","Snowmobiles"},//68
 		{"14","2530","horses","","37","Horses"},//30 horses allowed
 		{"04","2510","campfires","","38","Campfires"},//10 campfires allowed
-		// Eigenschaften / Gefahren
+		// Eigenschaften / Gefahren - Hazards (Present/Not Present)
 		{"10","2522","danger","9","23","Dangerous area"},//22 dangerous area
 		{"62","2644","train","10","",""},// 144 aktive Eisenbahnlinien in der Nähe
 		{"06","2514","cliff","11","21","Cliff / falling rocks"},//14 falling-rocks nearby
@@ -183,7 +188,7 @@ public class Attribute {
 		{"03","2508","cactus","","",""},//08
 		{"32","2566","snakes","","18","Snakes"},//66
 		{"09","2520","cow","","43","Watch for livestock"},//20 watch for livestock
-		// Eigenschaften / Der Weg
+		// Eigenschaften / Der Weg - Conditions (Yes/No)
 		{"49","2600","car","24","",""},// 100 Nahe beim Auto
 		{"21","2544","onehour","","7","Takes less than an hour"},//44 takes less than one hour
 		{"13","2528","hiking","25","9","Significant hike"},//28 significant hike
@@ -191,7 +196,7 @@ public class Attribute {
 		{"65","2634","steep","27","",""},// 134 Hügeliges Gelände
 		{"07","2516","climbing","28","10","Difficult climbing"},//16 easy climbing(OC-28), difficult climbing(GC-10) 
 		{"36","2574","swimming","29","12","May require swimming"},//74
-		// Eigenschaften / Wegpunkte
+		// Eigenschaften / Wegpunkte  - Conditions (Yes/No)
 		{"55","2612","letter","8","",""},// 112 Letterbox (benötigt Stempel)
 		{"54","2610","interestsign","30","",""},// 110 Interessanter Ort ev mit scenic zusammenfassen?
 		{"56","2614","moving","31","",""},// 114 Bewegliches Ziel
@@ -216,7 +221,7 @@ public class Attribute {
 		// Einschränkungen und Voraussetzungen / Systembedingt
 		{"59","2620","oconly","6","",""},// 120 Nur bei Opencaching logbar
 		{"71","2650","wwwlink","7","",""},// 150 Nur Hyperlink zu OC-externen Portalen
-		// Einschränkungen und Voraussetzungen / Benötigt Werkzeug
+		// Einschränkungen und Voraussetzungen / Benötigt Werkzeug - Special Equipment (Required/Not Required)
 		{"69","2642","tools","46","",""},// 142 Spezielle Ausrüstung
 		{"08","2518","compass","47","",""},//18 Kompass
 		{"44","2590","flashlight","48","44","Flashlight required"}, // 90 Flashlight required

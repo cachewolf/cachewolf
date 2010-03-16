@@ -416,7 +416,7 @@ public class DetailsPanel extends CellPanel {
 		lblAddiCount.setText(MyLocale.getMsg(1044, "Addis") + ": " + addiCount);
 
 		if (isBigScreen) {
-			waypointNotes.setText(ch.getExistingDetails().getCacheNotes());
+			waypointNotes.setText(ch.getCacheDetails(true).getCacheNotes());
 		}
 	}
 
@@ -806,10 +806,10 @@ public class DetailsPanel extends CellPanel {
 		dirtyNotes = false;
 		dirtyDetails = false;
 		needsTableUpdate = false;
-		cache.getFreshDetails().hasUnsavedChanges = true;
+		cache.getCacheDetails(false).hasUnsavedChanges = true;
 		if (!oldWaypoint.equals(cache.getWayPoint())){
 		 // Delete old XML - File
-			cache.getFreshDetails().deleteFile(Global.getProfile().dataDir+oldWaypoint+".xml");
+			cache.getCacheDetails(false).deleteFile(Global.getProfile().dataDir+oldWaypoint+".xml");
 		}
 	}
 

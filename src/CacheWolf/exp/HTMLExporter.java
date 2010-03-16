@@ -88,7 +88,7 @@ public class HTMLExporter{
 						Global.getPref().log("HTMLExport: skipping export of incomplete waypoint "+ch.getWayPoint());
 						continue;
 					}
-					det=ch.getCacheDetails(false,false);
+					det=ch.getCacheDetails(true);
 					varParams = new Hashtable();
 					varParams.put("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
 					varParams.put("SYM", CacheType.type2SymTag(ch.getType())); //<sym>

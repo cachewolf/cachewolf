@@ -380,7 +380,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if(name.equals("type")){
 			holder.setType(CacheType.ocType2CwType(atts.getValue("id")));
-			holder.getFreshDetails().attributes.clear();
+			holder.getCacheDetails(false).attributes.clear();
 			return;
 		}
 		if(name.equals("status")){
@@ -415,8 +415,8 @@ public class OCXMLImporter extends MinML {
 		
 		if (name.equals("attribute")) {
 			int id = Integer.parseInt(atts.getValue("id"));
-			holder.getFreshDetails().attributes.add(id);
-			holder.setAttribsAsBits(holder.getFreshDetails().attributes.getAttribsAsBits());
+			holder.getCacheDetails(false).attributes.add(id);
+			holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());
 			return;
 		}
 
@@ -488,12 +488,12 @@ public class OCXMLImporter extends MinML {
 			}
 			// clear data (picture, logs) if we do a complete Update
 			if (incUpdate == false){
-				holder.getFreshDetails().CacheLogs.clear();
-				holder.getFreshDetails().images.clear();
+				holder.getCacheDetails(false).CacheLogs.clear();
+				holder.getCacheDetails(false).images.clear();
 			}
 
 			// save all
-			holder.getFreshDetails().hasUnsavedChanges = true; // this makes CachHolder save the details in case that they are unloaded from memory
+			holder.getCacheDetails(false).hasUnsavedChanges = true; // this makes CachHolder save the details in case that they are unloaded from memory
 			// chD.saveCacheDetails(profile.dataDir);
 			// profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); // this is done after .xml is completly processed
 			return;
@@ -502,7 +502,7 @@ public class OCXMLImporter extends MinML {
 			holder = getHolder(strData); // Allocate a new CacheHolder object
 			holder.setOcCacheID(strData);
 			String ocSeekUrl = new String("http://" + hostname + "/viewcache.php?cacheid=");
-			holder.getFreshDetails().URL = ocSeekUrl + cacheID;
+			holder.getCacheDetails(false).URL = ocSeekUrl + cacheID;
 			return;
 		}
 
@@ -538,7 +538,7 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		if (name.equals("country")){
-			holder.getFreshDetails().Country = strData;
+			holder.getCacheDetails(false).Country = strData;
 			return;
 		}
 	}
@@ -553,7 +553,7 @@ public class OCXMLImporter extends MinML {
 				imgRegexUrl.setIgnoreCase(true);
 				int descIndex=0;
 				int numDownloaded=1;
-				while (imgRegexUrl.searchFrom(holder.getFreshDetails().LongDescription, descIndex)) { // "img" found
+				while (imgRegexUrl.searchFrom(holder.getCacheDetails(false).LongDescription, descIndex)) { // "img" found
 					imgTag=imgRegexUrl.stringMatched(1); // (1) enthlt das gesamte <img ...>-tag
 					fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anfhrungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anfhrungszeichen
 					if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); }
@@ -575,7 +575,7 @@ public class OCXMLImporter extends MinML {
 					getPic(fetchUrl, imgAltText);
 				}
 			}
-			holder.getFreshDetails().hasUnsavedChanges = true;
+			holder.getCacheDetails(false).hasUnsavedChanges = true;
 			return;
 		}
 
@@ -592,17 +592,17 @@ public class OCXMLImporter extends MinML {
 			if (holder.is_HTML())	linebraek = "<br>\n";
 			else 					linebraek = "\n";
 
-			holder.getFreshDetails().LongDescription =              processingDescLang + ":" +  linebraek + strData;
+			holder.getCacheDetails(false).LongDescription =              processingDescLang + ":" +  linebraek + strData;
 			return;
 		}
 
 		if (name.equals("desc")){ // </desc>
-			if (holder.is_HTML())	holder.getFreshDetails().LongDescription +=SafeXML.cleanback(strData);
-			else holder.getFreshDetails().LongDescription +=strData;
+			if (holder.is_HTML())	holder.getCacheDetails(false).LongDescription +=SafeXML.cleanback(strData);
+			else holder.getCacheDetails(false).LongDescription +=strData;
 			return;
 		}
 		if (name.equals("hint")){
-			holder.getFreshDetails().Hints = Common.rot13(strData);
+			holder.getCacheDetails(false).Hints = Common.rot13(strData);
 			holder.setUpdated(true); // remark: this is used in "shortdesc" to decide weather the description should be appended or replaced
 			return;
 		}
@@ -623,7 +623,7 @@ public class OCXMLImporter extends MinML {
 			ImageInfo imageInfo = new ImageInfo();
 			// add title
 			imageInfo.setTitle(picDesc);
-			holder.getFreshDetails().images.add(imageInfo);
+			holder.getCacheDetails(false).images.add(imageInfo);
 			try {
 				File ftest = new FileBugfix(profile.dataDir + fileName);
 				if (ftest.exists()){
@@ -688,21 +688,21 @@ public class OCXMLImporter extends MinML {
 		if(name.equals("picture")){
 			//String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
 			getPic(picUrl,picTitle);
-			holder.getFreshDetails().hasUnsavedChanges = true; //saveCacheDetails(profile.dataDir);
+			holder.getCacheDetails(false).hasUnsavedChanges = true; //saveCacheDetails(profile.dataDir);
 			return;
 		}
 	}
 
 	private void endCacheLog(String name){
 		if (name.equals("cachelog")){ // </cachelog>
-			holder.getFreshDetails().CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended));
+			holder.getCacheDetails(false).CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended));
 			if((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(pref.myAlias2)) && logtype == 1) {
 						holder.setCacheStatus(logDate);
 						holder.setFound(true);
-						holder.getFreshDetails().OwnLogId = logId;
-						holder.getFreshDetails().OwnLog = new Log(logIcon, logDate, logFinder, logData, loggerRecommended);
+						holder.getCacheDetails(false).OwnLogId = logId;
+						holder.getCacheDetails(false).OwnLog = new Log(logIcon, logDate, logFinder, logData, loggerRecommended);
 			}
-			holder.getFreshDetails().hasUnsavedChanges = true; //chD.saveCacheDetails(profile.dataDir);
+			holder.getCacheDetails(false).hasUnsavedChanges = true; //chD.saveCacheDetails(profile.dataDir);
 			return;
 		}
 
