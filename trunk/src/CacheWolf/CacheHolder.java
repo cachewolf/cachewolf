@@ -105,7 +105,7 @@ public class CacheHolder{
 	private boolean hasSolver = false;
 	/** True if a note is entered for the cache */
 	private boolean hasNote = false;
-	public CacheHolderDetail details = null;
+	private CacheHolderDetail details = null;
 	/** When sorting the cacheDB this field is used. The relevant field is copied here and
 	 *  the sort is always done on this field to speed up the sorting process 
 	 */
@@ -383,7 +383,7 @@ public class CacheHolder{
 	            }
 				if (version < Profile.CURRENTFILEFORMAT) {
 		            // forceload of details, creates waypoint.xml if missing
-		            details = getCacheDetails(true, false);
+		            details = getCacheDetails(false);
 		            // make sure details get (re)written in new format
 		            details.hasUnsavedChanges = true;
 		            // update information on notes and solver info
@@ -506,7 +506,7 @@ public class CacheHolder{
 
 		this.setAttribsAsBits(ch.getAttributesBits());
 		if (ch.detailsLoaded()) {
-			this.getFreshDetails().update(ch.getFreshDetails());
+			this.getCacheDetails(false).update(ch.getCacheDetails(false));
 		}	
 	}
 	/**
@@ -519,7 +519,7 @@ public class CacheHolder{
 			// are already loaded. When they aren't loaded, then we assume
 			// that there is no change, so nothing to do.
 			if (this.detailsLoaded()) {
-				CacheHolderDetail chD = getCacheDetails(false, false);
+				CacheHolderDetail chD = getCacheDetails(true);
 				if (chD != null) {
 					chD.CacheLogs.calcRecommendations();
 					recommendationScore = chD.CacheLogs.recommendationRating;
@@ -662,19 +662,7 @@ public class CacheHolder{
 	public boolean detailsLoaded() {
 		return details!=null;
 	}
-	
-	/** 
-	 * Call this method to get the long-description and so on.
-	 * If the according .xml-file is already read, it will return
-	 * that one, otherwise it will be loaded.
-	 * To avoid memory problems this routine loads not for more caches than maxDetails
-	 * the details. If maxdetails is reached, it will remove from RAM the details 
-	 * of the 5 caches that were loaded most long ago.
-	 */
-	public CacheHolderDetail getCacheDetails(boolean maybenew) {
-		return getCacheDetails(maybenew, true);
-	}
-	
+
 	/**
 	 * Gets the detail object of a cache. The detail object stores information which is not needed
 	 * for every cache instantaneously, but can be loaded if the user decides to look at this cache.
@@ -684,65 +672,32 @@ public class CacheHolder{
 	 * or the user is warned that the file doesn't exist.
 	 * If more than <code>maxdetails</code> details are loaded, then the 5 last recently loaded 
 	 * caches are unloaded (to save ram). 
-	 * 
-	 * @param maybenew
-	 * 			  If true and the cache file could not be read, then an empty detail object is 
-	 *            returned.
 	 * @param alarmuser
 	 *            If true an error message will be displayed to the user, if the details could not
 	 *            be read, and the method returns null 
 	 * @return The respective CacheHolderDetail, or null
 	 */
-
-	public CacheHolderDetail getCacheDetails(boolean maybenew, boolean alarmuser) {
+	public CacheHolderDetail getCacheDetails(boolean alarmuser) {
 		if (details == null) {
-
 			details = new CacheHolderDetail(this);
 			try {
 				details.readCache(Global.getProfile().dataDir);
 			} catch (IOException e) {
-				if (! maybenew ) {
-					if (alarmuser) {
-						//FIXME: put a message to languages file
-						(new MessageBox(MyLocale.getMsg(31415,"Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ")
-						        + this.getWayPoint(), FormBase.OKB)).execute();
-					} else {
-				//		Global.getPref().log("Could not read details for waypoint " + getWayPoint());
-					}
-					details = null;
-					this.setIncomplete(true);
+				if (alarmuser) {
+					//FIXME: put a message to languages file
+					(new MessageBox(MyLocale.getMsg(31415,"Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ")
+					        + this.getWayPoint(), FormBase.OKB)).execute();
 				}
+				details = null;
+				this.setIncomplete(true);
 			}
-			if (details != null
-					  // for importing/spidering reasons helper objects with same waypoint are created
-					&& !cachesWithLoadedDetails.contains(this)
-					  // helper objects may have empty waypoint
-					//&& !this.getWayPoint().equals(CacheHolder.EMPTY)
-					) {
+			// for importing/spidering reasons helper objects with same waypoint are created
+			if (details != null && !cachesWithLoadedDetails.contains(this)) {
 				cachesWithLoadedDetails.add(this);
 				if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails) removeOldestDetails();
 			}
 		}
 		return details;
-	}
-	
-	/**
-	 * Gets a detail object for the cache. If the object is already created, then this object is
-	 * returned, otherwise it's created from the cache.xml file. If no such file is found, an empty
-	 * object is returned.
-	 * @return The object representing the cache details
-	 */
-	public CacheHolderDetail getFreshDetails() {
-		return this.getCacheDetails(true, false);
-	}
-	/**
-	 * Gets a detail object for the cache. If the object is already created, then this object is
-	 * returned, otherwise it's created from the cache.xml file. If no such file is found, an error
-	 * message is displayed and <code>null</code> is returned.
-	 * @return The object representing the cache details, or <code>null</code>.
-	 */
-	public CacheHolderDetail getExistingDetails() {
-		return this.getCacheDetails(false, true);
 	}
 
 	/**
@@ -752,7 +707,7 @@ public class CacheHolder{
 	 */
 	public void save() {
 		checkIncomplete();
-		this.getFreshDetails().saveCacheDetails(Global.getProfile().dataDir);
+		this.getCacheDetails(false).saveCacheDetails(Global.getProfile().dataDir);
 	}
 	
 	void releaseCacheDetails() {
@@ -798,7 +753,7 @@ public class CacheHolder{
 //			ch = Global.getProfile().cacheDB.get(wp);
 			ch = (CacheHolder) cachesWithLoadedDetails.get(i);
 			if (ch != null) {
-	            chD = ch.getExistingDetails();
+	            chD = ch.getCacheDetails(true);
 	            if (chD!=null && chD.hasUnsavedChanges) {
 		            //ch.calcRecommendationScore();
 		            chD.saveCacheDetails(Global.getProfile().dataDir);
@@ -1564,7 +1519,7 @@ public class CacheHolder{
 	 */
 	public boolean rename(String newWptId) {
 		newWptId = newWptId.toUpperCase();
-		getFreshDetails();
+		getCacheDetails(false);
 		if (details.rename(newWptId)) {
 			setWayPoint(newWptId);
 			save();

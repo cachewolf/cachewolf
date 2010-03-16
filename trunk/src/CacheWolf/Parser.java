@@ -834,8 +834,8 @@ public class Parser{
 					op.append(addiWpt.getCacheName());
 					op.append("] = \" $");
 					op.append(addiWpt.getWayPoint());
-					if (addiWpt.getExistingDetails().LongDescription.trim().length()>0)
-						op.append("\n   \""+STRreplace.replace(addiWpt.getExistingDetails().LongDescription,"\"","\"\"")+"\"");
+					if (addiWpt.getCacheDetails(true).LongDescription.trim().length()>0)
+						op.append("\n   \""+STRreplace.replace(addiWpt.getCacheDetails(true).LongDescription,"\"","\"\"")+"\"");
 					op.append("\n   goto($");
 					op.append(addiWpt.getWayPoint());
 					op.append("); STOP\nENDIF\n\n");

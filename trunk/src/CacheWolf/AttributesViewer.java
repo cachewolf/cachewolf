@@ -43,7 +43,7 @@ public class AttributesViewer extends CellPanel {
 	
 	public void showImages(Attributes atts) {
 		iap.images.clear();
-		for (int i=0; i<atts.getCount(); i++) {
+		for (int i=0; i<atts.count(); i++) {
 			attAniImage img=new attAniImage( atts.getAttribute(i).getImage());
 			img.info=atts.getAttribute(i).getMsg();
 			img.location=new Rect((i % ICONS_PER_ROW)*TILESIZE,(i / ICONS_PER_ROW)*TILESIZE,TILESIZE,TILESIZE);

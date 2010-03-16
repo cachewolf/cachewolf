@@ -1,5 +1,6 @@
 package CacheWolf.exp;
 
+import CacheWolf.Attribute;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
@@ -11,6 +12,7 @@ import CacheWolf.Log;
 import CacheWolf.LogList;
 import CacheWolf.MyLocale;
 import CacheWolf.SafeXML;
+import CacheWolf.Travelbug;
 import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -511,7 +513,7 @@ public class GpxExportNg {
 			return "";
 
 		StringBuffer ret = new StringBuffer();
-		ch.getFreshDetails();
+		ch.getCacheDetails(true);
 
 		try {
 			ret.append(formatCompact(ch));
@@ -589,15 +591,15 @@ public class GpxExportNg {
 		if (!ch.isCustomWpt()) {
 			if (exportIds == WPNAME_ID_SMART && exportStyle == STYLE_GPX_COMPACT) {
 				if (ch.isAddiWpt()) {
-					ret.append("    <cmt>".concat(SafeXML.cleanGPX(ch.getCacheName() + " " + ch.getFreshDetails().LongDescription)).concat("</cmt>".concat(newLine)));
+					ret.append("    <cmt>".concat(SafeXML.cleanGPX(ch.getCacheName() + " " + ch.getCacheDetails(true).LongDescription)).concat("</cmt>".concat(newLine)));
 				} else {
-					ret.append("    <cmt>".concat(SafeXML.cleanGPX(ch.getCacheName() + " " + Common.rot13(ch.getFreshDetails().Hints))).concat("</cmt>".concat(newLine)));
+					ret.append("    <cmt>".concat(SafeXML.cleanGPX(ch.getCacheName() + " " + Common.rot13(ch.getCacheDetails(true).Hints))).concat("</cmt>".concat(newLine)));
 				}
 			} else if (exportIds == WPNAME_NAME_SMART) {
 				// TBD
 			} else {
 				if (ch.isAddiWpt()) {
-					ret.append("    <cmt>".concat(SafeXML.cleanGPX(ch.getFreshDetails().LongDescription)).concat("</cmt>".concat(newLine)));
+					ret.append("    <cmt>".concat(SafeXML.cleanGPX(ch.getCacheDetails(true).LongDescription)).concat("</cmt>".concat(newLine)));
 				} // caches have no <cmt> in gc.com PQs
 			}
 		}
@@ -614,7 +616,7 @@ public class GpxExportNg {
 
 		if (exportStyle != STYLE_GPX_COMPACT) {
 			if (!ch.isCustomWpt()) {
-				ret.append("    <url>".concat(ch.details.URL).concat("</url>".concat(newLine)));
+				ret.append("    <url>".concat(ch.getCacheDetails(true).URL).concat("</url>".concat(newLine)));
 				ret.append("    <urlname>".concat(SafeXML.cleanGPX(ch.getCacheName())).concat("</urlname>".concat(newLine)));
 			}
 		}
@@ -658,29 +660,71 @@ public class GpxExportNg {
 		.concat("      <groundspeak:container>").concat(CacheSize.cw2ExportString(ch.getCacheSize())).concat("</groundspeak:container>".concat(newLine))
 		.concat("      <groundspeak:difficulty>").concat(CacheTerrDiff.shortDT(ch.getHard())).concat("</groundspeak:difficulty>".concat(newLine))
 		.concat("      <groundspeak:terrain>").concat(CacheTerrDiff.shortDT(ch.getTerrain())).concat("</groundspeak:terrain>".concat(newLine))
-		.concat("      <groundspeak:country>").concat(SafeXML.cleanGPX(ch.details.Country)).concat("</groundspeak:country>".concat(newLine))
-		.concat("      <groundspeak:state>").concat(SafeXML.cleanGPX(ch.details.State)).concat("</groundspeak:state>".concat(newLine))
+		.concat("      <groundspeak:country>").concat(SafeXML.cleanGPX(ch.getCacheDetails(true).Country)).concat("</groundspeak:country>".concat(newLine))
+		.concat("      <groundspeak:state>").concat(SafeXML.cleanGPX(ch.getCacheDetails(true).State)).concat("</groundspeak:state>".concat(newLine))
 		.concat("      <groundspeak:short_description html=\"").concat(ch.is_HTML() ? TRUE : FALSE).concat("\"></groundspeak:short_description>".concat(newLine))
 		.concat("      <groundspeak:long_description html=\"").concat(ch.is_HTML() ? TRUE : FALSE).concat("\">").concat(SafeXML.cleanGPX(formatLongDescription(ch))).concat("</groundspeak:long_description>".concat(newLine))
-		.concat("      <groundspeak:encoded_hints>").concat(SafeXML.cleanGPX(Common.rot13(ch.details.Hints))).concat("</groundspeak:encoded_hints>".concat(newLine))
+		.concat("      <groundspeak:encoded_hints>").concat(SafeXML.cleanGPX(Common.rot13(ch.getCacheDetails(true).Hints))).concat("</groundspeak:encoded_hints>".concat(newLine))
+		.concat("      <groundspeak:attributes>".concat(newLine))
+		.concat(formatAttributes(ch))
+		.concat("      </groundspeak:attributes>".concat(newLine))
 		.concat("      <groundspeak:logs>".concat(newLine))
 		.concat(formatLogs(ch))
 		.concat("      </groundspeak:logs>".concat(newLine))
 		.concat("      <groundspeak:travelbugs>".concat(newLine))
-//		.concat(formatTbs(ch))
+		.concat(formatTbs(ch))
 		.concat("      </groundspeak:travelbugs>".concat(newLine))
 		.concat("    </groundspeak:cache>".concat(newLine));
-
 	}
-
-
+	/**
+	 * 
+	 */
+	private String formatTbs(CacheHolder ch) {
+		StringBuffer ret = new StringBuffer();
+		Travelbug Tb;
+		for (int i = 0; i < ch.getCacheDetails(true).Travelbugs.size(); i++) {
+			Tb=ch.getCacheDetails(true).Travelbugs.getTB(i);
+			ret.append("        <groundspeak:travelbug id=\"").
+			append(Integer.toString(i)).
+			append("\" ref=\"TB\">").
+			// append(newLine).
+			// append("          <groundspeak:name>").
+			append("<groundspeak:name>").
+			append(SafeXML.cleanGPX(Tb.getName())).
+			append("</groundspeak:name>").
+			// append(newLine).
+			// append("        </groundspeak:travelbug>\r\n");
+			append("</groundspeak:travelbug>\r\n");
+		}
+		return ret.toString();
+	}
+	/**
+	 * 
+	 */
+	private String formatAttributes(CacheHolder ch){
+		StringBuffer ret = new StringBuffer();
+		Attribute attrib;
+		for (int i = 0; i < ch.getCacheDetails(true).attributes.count(); i++) {
+			// <groundspeak:attribute id="X" inc="Y">text für X</groundspeak:attribute>
+			attrib=ch.getCacheDetails(true).attributes.getAttribute(i);
+			ret.append("        <groundspeak:attribute id=\"").
+			append(attrib.getGCId()).
+			append("\" inc=\"").
+			append(attrib.getInc()).
+			append("\">").
+			append(attrib.getGCText()).
+			append("</groundspeak:attribute>").
+			append(newLine);
+		}
+		return ret.toString();
+	}
 	/**
 	 * format cache logs as found in a gc.com GPX file
 	 * @param ch CacheHolder containing the logs
 	 * @return formatted logs or empty string if no logs are present
 	 */
-	public String formatLogs(CacheHolder ch) {
-		LogList logs = ch.getFreshDetails().CacheLogs;
+	private String formatLogs(CacheHolder ch) {
+		LogList logs = ch.getCacheDetails(true).CacheLogs;
 		StringBuffer ret = new StringBuffer();
 		int exportlogs;
 		if (exportStyle == STYLE_GPX_PQLIKE && maxLogs < logs.size())
@@ -688,11 +732,11 @@ public class GpxExportNg {
 		else {exportlogs = logs.size();}
 		if (exportStyle == STYLE_GPX_MYFINDS) {
 			// only own log
-			if (ch.details.OwnLogId.equals("")) 
+			if (ch.getCacheDetails(true).OwnLogId.equals("")) 
 				return "";
-			if(ch.details.OwnLog == null) 
+			if(ch.getCacheDetails(true).OwnLog == null) 
 				return "";
-			addLog(ch.details.OwnLogId, ch.details.OwnLog, finderid ,ret);
+			addLog(ch.getCacheDetails(true).OwnLogId, ch.getCacheDetails(true).OwnLog, finderid ,ret);
 		}
 		else {
 			for (int i = 0; i < exportlogs; i++) {
@@ -719,7 +763,7 @@ public class GpxExportNg {
 	 * format the header of the GPX file
 	 * @return
 	 */
-	public String formatHeader() {
+	private String formatHeader() {
 		//FIXME: extend profile to add <bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\" maxlon=\"6.918817\" />
 		//Global.getProfile().getSourroundingArea(false);
 		Transformer trans = new Transformer(true);
@@ -742,13 +786,13 @@ public class GpxExportNg {
 	 * @param ch CacheHolder to format
 	 * @return formatted output
 	 */
-	public String formatLongDescription(CacheHolder ch) {
+	private String formatLongDescription(CacheHolder ch) {
 		if (ch.isAddiWpt() || ch.isCustomWpt()) {
-			return ch.details.LongDescription;
+			return ch.getCacheDetails(true).LongDescription;
 		} else {
 			StringBuffer ret = new StringBuffer();
 			String delim = "";
-			ret.append(ch.details.LongDescription);
+			ret.append(ch.getCacheDetails(true).LongDescription);
 			if (ch.is_HTML()) {
 				delim = "<br />";
 			} else {
@@ -772,7 +816,7 @@ public class GpxExportNg {
 					trans.add(new Regex("@@ADDIDELIM@@", delim));
 					trans.add(new Regex("@@ADDILAT@@",formatAddiLatLon(addi.pos)));
 					trans.add(new Regex("@@ADDILON@@", ""));
-					trans.add(new Regex("@@ADDILONG@@",addi.getFreshDetails().LongDescription));
+					trans.add(new Regex("@@ADDILONG@@",addi.getCacheDetails(true).LongDescription));
 					ret.append(trans.replaceAll(GPXADDIINMAIN));
 				}
 				ret.append(delim).append(newLine);
@@ -786,7 +830,7 @@ public class GpxExportNg {
 	 * @param image name of the image to display
 	 * @return log type. will default to "Write note" for unknown logtypes
 	 */
-	public String image2TypeText(String image) {
+	private String image2TypeText(String image) {
 		if (image.equals("icon_smile.gif"))
 			return "Found it";
 		if (image.equals("icon_sad.gif"))
@@ -925,13 +969,12 @@ public class GpxExportNg {
 		/**
 		 * set up the form / dialog
 		 */
-		public GpxExportNgForm(boolean hasGarminMap, boolean hasBitmaps, boolean hasGpsbabel) {
+		private GpxExportNgForm(boolean hasGarminMap, boolean hasBitmaps, boolean hasGpsbabel) {
 
 			this.hasBitmapsFrm = hasBitmaps;
 			this.hasGarminMapFrm = hasGarminMap;
 			this.hasGpsbabelFrm = hasGpsbabel;
 
-			// TODO: get/set defaults from profile
 			chosenStyle = Global.getProfile().getGpxStyle();
 			chosenTarget = Global.getProfile().getGpxTarget();
 			chosenIds = Global.getProfile().getGpxId();
@@ -1202,7 +1245,7 @@ public class GpxExportNg {
 		 * amount of data to be exported
 		 * @return 0 Compact, 1 PQ like, 2 MyFinds
 		 */
-		public int getExportStyle () {
+		private int getExportStyle () {
 			return chosenStyle;
 		}
 
@@ -1210,7 +1253,7 @@ public class GpxExportNg {
 		 * style of waypoint identifiers
 		 * @return 0 Classic IDs, 1 Smart IDs, 3 Smart Names (should only be used with gpsbabel)
 		 */
-		public int getWpNameStyle() {
+		private int getWpNameStyle() {
 			return chosenIds;
 		}
 
@@ -1218,7 +1261,7 @@ public class GpxExportNg {
 		 * what kind of output should be generated
 		 * @return 0 single file, 1 separate files, 2 POI (GPI) files
 		 */
-		public int getOutputTarget() {
+		private int getOutputTarget() {
 			return chosenTarget;
 		}
 
@@ -1227,7 +1270,7 @@ public class GpxExportNg {
 		 *
 		 * @return true for GPSr transfer, false otherwise
 		 */
-		public boolean getSendToGarmin() {
+		private boolean getSendToGarmin() {
 			return cbSendToGarmin.state;
 		}
 
@@ -1236,7 +1279,7 @@ public class GpxExportNg {
 		 *
 		 * @return true if user wants custom icons, false otherwise
 		 */
-		public boolean getCustomIcons() {
+		private boolean getCustomIcons() {
 			return cbCustomIcons.state;
 		}
 
@@ -1245,7 +1288,7 @@ public class GpxExportNg {
 		 *
 		 * @return number of logs to export
 		 */
-		public int getMaxLogs() {
+		private int getMaxLogs() {
 			return Convert.parseInt(ibMaxLogs.getText());
 		}
 
@@ -1254,7 +1297,7 @@ public class GpxExportNg {
 		 *
 		 * @return prefix for separate file export
 		 */
-		public String getPrefix() {
+		private String getPrefix() {
 			return ibPrefix.getText();
 		}
 

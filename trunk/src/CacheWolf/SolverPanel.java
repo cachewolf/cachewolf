@@ -67,7 +67,7 @@ public class SolverPanel extends CellPanel{
 	 */
 	public void setInstructions(CacheHolder pCh) {
 		if (pCh != null) {
-	        this.setInstructions(pCh.getFreshDetails().getSolver());
+	        this.setInstructions(pCh.getCacheDetails(false).getSolver());
 	        if (!pCh.hasSameMainCache(ch)) {
 		        this.clearOutput();
 	        }

@@ -57,7 +57,7 @@ public class LocExporter extends Exporter{
 			if ( !Global.getPref().addDetailsToWaypoint ) {
 				strBuf.append( getShortDetails( ch ) );
 			}
-			CacheHolderDetail det = ch.getExistingDetails();
+			CacheHolderDetail det = ch.getCacheDetails(true);
 			if ( (!det.Hints.equals("null")) && (det.Hints.length() > 0) ) {
 				strBuf.append(":");
 				strBuf.append( simplifyString(Common.rot13(det.Hints)) );
