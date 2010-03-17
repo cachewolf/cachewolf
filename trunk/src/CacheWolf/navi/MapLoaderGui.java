@@ -270,7 +270,7 @@ public class MapLoaderGui extends Form {
 				ch = cacheDB.get(i);
 				if (!this.onlySelected || ch.is_Checked) {
 					if (ch.pos == null) { // this can not happen
-						tmpca.set(ch.LatLon);
+						tmpca.set(ch.getLatLon());
 						ch.pos = new CWPoint(tmpca);
 					}
 					if (ch.pos.isValid() && ch.pos.latDec != 0 && ch.pos.lonDec != 0) { // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist

@@ -1155,7 +1155,7 @@ public class SpiderGC{
 						// General Cache Data
 						//==========
 						ch.setLatLon(latLon);
-						pref.log("LatLon: " + ch.LatLon);
+						pref.log("LatLon: " + ch.getLatLon());
 
 						ch.getCacheDetails(false).setLongDescription(getLongDesc(completeWebPage));
 						pref.log("Got description");

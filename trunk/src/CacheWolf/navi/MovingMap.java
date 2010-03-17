@@ -2343,7 +2343,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						mm.postEvent(close);
 						CacheHolder newWP = new CacheHolder();
 						newWP.pos = mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y);
-						newWP.LatLon=newWP.pos.toString();
+						newWP.setLatLon(newWP.pos.toString());
 						Global.mainTab.newWaypoint(newWP);
 					}
 					if (action == addCachetoListMenuItem) {

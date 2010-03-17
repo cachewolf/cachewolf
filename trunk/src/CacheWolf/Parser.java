@@ -550,7 +550,7 @@ public class Parser{
     			err(MyLocale.getMsg(1714,"Goto: Waypoint does not exist: ")+waypointName);
     			return;
     		}
-    		ch.LatLon=cwPt.toString(TransformCoordinates.CW);
+    		ch.setLatLon(cwPt.toString(TransformCoordinates.CW));
     		ch.pos.set(cwPt);
     		ch.calcDistance(Global.getPref().getCurCentrePt()); // Update distance/bearing
     		nav.setDestination(ch);
@@ -1000,7 +1000,7 @@ public class Parser{
 				String coord=popCalcStackAsString();
 				cwPt.set(coord);
 				if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
-					ch.LatLon=cwPt.toString(TransformCoordinates.CW);
+					ch.setLatLon(cwPt.toString(TransformCoordinates.CW));
 					ch.pos.set(cwPt);
 					ch.calcDistance(Global.getPref().getCurCentrePt()); // Update distance and bearing
 		    	    Global.getProfile().selectionChanged=true; // Tell moving map to updated displayed waypoints

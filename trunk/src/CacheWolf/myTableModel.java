@@ -369,7 +369,7 @@ public class myTableModel extends TableModel{
 						wpVal.addColumn(ch.getCacheName());
 						return wpVal;
 					case 6: // Location
-						return ch.LatLon;
+						return ch.getLatLon();
 					case 7: // Owner
 						return ch.getCacheOwner();
 					case 8: // Date hidden
@@ -379,7 +379,7 @@ public class myTableModel extends TableModel{
 					case 10: // Distance
 						return ch.getDistance();
 					case 11: // Bearing
-						return ch.bearing;
+						return ch.getBearing();
 					case 12: // Size
 						if (ch.isAddiWpt()) {
 							return "";

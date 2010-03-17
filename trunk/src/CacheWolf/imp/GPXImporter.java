@@ -190,7 +190,7 @@ public class GPXImporter extends MinML {
 		if (name.equals("wpt")) {
 			holder = new CacheHolder();
 			holder.pos.set(Common.parseDouble(atts.getValue("lat")),Common.parseDouble(atts.getValue("lon")));
-			holder.LatLon=holder.pos.toString();
+			holder.setLatLon(holder.pos.toString());
 			inWpt = true;
 			inLogs = false;
 			inBug = false;
@@ -315,9 +315,9 @@ public class GPXImporter extends MinML {
 				// if waypoint starts with "GC"
 				if(doSpider) {
 					if(spiderOK && holder.is_archived() == false){
-							if(holder.LatLon.length() > 1){
+							if(holder.getLatLon().length() > 1){
 							if(getMaps){
-								ParseLatLon pll = new ParseLatLon(holder.LatLon,".");
+								ParseLatLon pll = new ParseLatLon(holder.getLatLon(),".");
 								pll.parse();
 								//MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
 								//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");

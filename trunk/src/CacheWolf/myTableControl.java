@@ -239,7 +239,7 @@ public class myTableControl extends TableControl{
 				return;
 			}
 			CacheHolder thisCache = cacheDB.get(tbp.getSelectedCache());
-			CWPoint cp=new CWPoint(thisCache.LatLon);
+			CWPoint cp=new CWPoint(thisCache.getLatLon());
 			if (!cp.isValid()){
 				MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4111,"Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 				tmpMB.execute();

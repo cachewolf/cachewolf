@@ -1,15 +1,21 @@
 package CacheWolf;
 
+import CacheWolf.exp.Exporter;
+import CacheWolf.exp.GarminMap;
 import CacheWolf.navi.Metrics;
 
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.fx.FontMetrics;
 import ewe.fx.IconAndText;
+import ewe.io.AsciiCodec;
 import ewe.io.IOException;
+import ewe.io.TextCodec;
 import ewe.sys.Convert;
+import ewe.sys.Time;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
+import ewe.util.Hashtable;
 import ewe.util.Vector;
 
 /**
@@ -33,7 +39,7 @@ public class CacheHolder{
 	/** The coordinates of the cache */
 	public CWPoint pos = new CWPoint();
 	/** The coordinates of the cache */
-	public String LatLon = pos.toString();
+	private String LatLon = pos.toString();
 	/** The date when the cache was hidden in format yyyy-mm-dd */
 	private String dateHidden = EMPTY;
 	/** The size of the cache (as per GC cache sizes Micro, Small, ....) */
@@ -44,7 +50,7 @@ public class CacheHolder{
 	public int lastMetric = -1; // Cache last metric
 	public String lastDistance = ""; // Cache last distance
 	/** The bearing N, NNE, NE, ENE ... from the current centre to this point */
-	public String bearing = NOBEARING;
+	private String bearing = NOBEARING;
 	/** The angle (0=North, 180=South) from the current centre to this point */
 	public double degrees = 0;
 	/** The difficulty of the cache from 1 to 5 in .5 incements */ 
@@ -564,27 +570,128 @@ public class CacheHolder{
 		sb.append("\" />\n");
 		return sb.toString();
 	}
+	
+	/** Return a Hashtable containing all the cache data for Templates */
+	public Hashtable toHashtable(Regex dec, Regex rex, int shortWaypointLength, int shortNameLength, TextCodec codec, GarminMap gm) {
+		Hashtable varParams = new Hashtable();
+		CacheHolderDetail det = this.getCacheDetails(false);
+		varParams.put("TYPE", CacheType.type2TypeTag(type)); //<type>
+		varParams.put("SYM", CacheType.type2SymTag(type)); //<sym>
+		varParams.put("GSTYPE", CacheType.type2GSTypeTag(type)); //<groundspeak:type>
+		varParams.put("SHORTTYPE", CacheType.getExportShortId(type));
+		varParams.put("SIZE", CacheSize.cw2ExportString(cacheSize));
+		varParams.put("SHORTSIZE", CacheSize.getExportShortId(cacheSize));
+		if (isAddiWpt()) {
+			varParams.put("MAINWP",this.mainCache.getWayPoint());
+		}
+		else {
+			varParams.put("MAINWP", "");
+		}
+		if (isCustomWpt()) {
 
-	public void setLatLon(String latLon) {
-		latLon=latLon.trim();
-		if (!latLon.equals(LatLon.trim())) setUpdated(true);
-		LatLon = latLon;
-		pos.set(latLon);
+		}
+		varParams.put("WAYPOINT", wayPoint); //<name>
+		int wpl = wayPoint.length();
+		int wps = (wpl < shortWaypointLength) ? 0 : wpl - shortWaypointLength;
+		varParams.put("SHORTWAYPOINT", wayPoint.substring(wps, wpl));
+		varParams.put("OWNER", cacheOwner);
+		varParams.put("DIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(hard)));
+		String sHard = Integer.toString(hard);
+		varParams.put("SHORTDIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":sHard);
+		varParams.put("SHDIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":sHard.substring(0,1));
+		varParams.put("TERRAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(terrain)));
+		String sTerrain = Integer.toString(terrain);
+		varParams.put("SHORTTERAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":sTerrain);
+		varParams.put("SHTERRAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":sTerrain.substring(0,1));
+		varParams.put("DISTANCE", dec.replaceAll(getDistance()));
+		varParams.put("BEARING", bearing);
+		varParams.put("LATLON", LatLon);
+		varParams.put("LAT", dec.replaceAll(pos.getLatDeg(CWPoint.DD)));
+		varParams.put("LON", dec.replaceAll(pos.getLonDeg(CWPoint.DD)));
+		varParams.put("STATUS", cacheStatus);
+		varParams.put("GC_LOGTYPE", GetGCLogType());
+		varParams.put("STATUS_DATE", GetStatusDate());
+		varParams.put("STATUS_TIME", GetStatusTime());
+		varParams.put("DATE", dateHidden);
+		varParams.put("URL", det != null ? det.URL : "");
+		varParams.put("DESCRIPTION", det != null ? det.LongDescription : "");
+		if (codec instanceof AsciiCodec) {
+			cacheName=Exporter.simplifyString(cacheName);
+		}
+		if (rex != null) {
+			cacheName=rex.replaceAll(cacheName);
+			varParams.put("NOTES", det != null ? rex.replaceAll(det.getCacheNotes()): "");
+			varParams.put("HINTS", det != null ? rex.replaceAll(det.Hints): "");
+			varParams.put("DECRYPTEDHINTS", det != null ? rex.replaceAll(Common.rot13(det.Hints)): "");
+		} else {
+			varParams.put("NOTES", det != null ? det.getCacheNotes(): "");
+			varParams.put("HINTS", det != null ? det.Hints: "");
+			varParams.put("DECRYPTEDHINTS", det != null ? Common.rot13(det.Hints): "");
+		}
+		varParams.put("NAME", cacheName);
+		String shortName=removeCharsfromString(cacheName, shortNameLength, selbstLaute);
+		if (shortName.length()>shortNameLength) {
+			shortName=removeCharsfromString(shortName, shortNameLength, mitLauteKlein());
+		}
+		varParams.put("SHORTNAME", shortName);
+		varParams.put("TRAVELBUG", (bugs?"Y":"N"));
+		varParams.put("GMTYPE", gm != null ? gm.getIcon(this) : "");
+		varParams.put("NOW_DATE",nowdate().setToCurrentTime().toString());
+		varParams.put("NOW_TIME",nowtime().setToCurrentTime().toString());
+		return varParams;
+	}	
+	private final static Time nowdate() {
+		Time nd = new Time();
+		return nd.setFormat("yyyy-MM-dd");
 	}
+	private final static Time nowtime() {
+		Time nt = new Time();
+		return nt.setFormat("HH:mm");
+	}	
+	private final static String selbstLaute="aeiouAEIOU";
+	private final static String mitLauteKlein() {
+		final StringBuffer lower=new StringBuffer(26);// region/language dependent ?
+		for (int i=97; i<=122; i++ ) {
+			lower.append((char) i);
+		}
+		return lower.toString();
+	}
+    private static String removeCharsfromString( String text, int MaxLength, String chars ) {
+        if ( text == null ) return null;
+        int originalTextLength = text.length();
+        int anzToRemove=originalTextLength-MaxLength;
+        if (anzToRemove<=0) return text;
+        int anzRemoved=0;
+        StringBuffer sb = new StringBuffer( 50 );
+        for ( int i = originalTextLength-1; i >= 0; i-- ) {
+            char c = text.charAt( i );
+            if (chars.indexOf(c) == -1) {
+            	sb.insert(0,c);
+            }
+            else {
+            	anzRemoved++;
+            	if (anzRemoved==anzToRemove) {
+            		sb.insert(0, text.substring(0,i));
+            		i=0; // exit for
+            	}
+            }
+        }
+        return sb.toString();
+    }
 
 	/** return true if waypoint is an additional waypoint of a cache */
 	public boolean isAddiWpt() {
-		return CacheType.isAddiWpt(this.getType());
+		return CacheType.isAddiWpt(type);
 	}
 	
 	/** return true if waypoint is a custom waypoint */
 	public boolean isCustomWpt() {
-		return CacheType.isCustomWpt(getType());
+		return CacheType.isCustomWpt(type);
 	}
 	
 	/** return true if waypoint is a cache main waypoint */
 	public boolean isCacheWpt() {
-		return CacheType.isCacheWpt(getType());
+		return CacheType.isCacheWpt(type);
 	}
 
 	/** return true waypoint has one or more additional waypoints */
@@ -688,7 +795,7 @@ public class CacheHolder{
 					(new MessageBox(MyLocale.getMsg(31415,"Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ")
 					        + this.getWayPoint(), FormBase.OKB)).execute();
 				}
-				details = null;
+				// details = null;
 				this.setIncomplete(true);
 			}
 			// for importing/spidering reasons helper objects with same waypoint are created
@@ -1078,6 +1185,16 @@ public class CacheHolder{
 
 	// Getter and Setter for private properties
 
+	public String getLatLon() { return LatLon; }
+	public void setLatLon(String _LatLon) {
+		_LatLon=_LatLon.trim();
+		if (!_LatLon.equals(LatLon.trim())) setUpdated(true);
+		LatLon = _LatLon;
+		pos.set(_LatLon);
+	}
+
+	public String getBearing() {return bearing;}
+	
 	/**
 	 * Gets an IconAndText object for the cache. If the level of the Icon is equal to the 
 	 * last call of the method, the same (cached) object is returned. If the object is
@@ -1099,9 +1216,7 @@ public class CacheHolder{
 		return iconAndTextWP;
 	}
 	
-	public String getCacheStatus() {
-    	return cacheStatus;
-    }
+	public String getCacheStatus() { return cacheStatus; }
 
 	public void setCacheStatus(String cacheStatus) {
         if (!cacheStatus.equals(this.cacheStatus)) {
