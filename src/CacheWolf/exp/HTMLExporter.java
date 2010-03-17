@@ -88,33 +88,8 @@ public class HTMLExporter{
 						Global.getPref().log("HTMLExport: skipping export of incomplete waypoint "+ch.getWayPoint());
 						continue;
 					}
-					det=ch.getCacheDetails(true);
-					varParams = new Hashtable();
-					varParams.put("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
-					varParams.put("SYM", CacheType.type2SymTag(ch.getType())); //<sym>
-					varParams.put("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); //<groundspeak:type>
-					varParams.put("WAYPOINT", ch.getWayPoint()); //<name>
-					varParams.put("NAME", ch.getCacheName());
-					varParams.put("OWNER", ch.getCacheOwner());
-					if (ch.isAddiWpt() || ch.isCustomWpt()) {
-						varParams.put("SIZE", "");
-						varParams.put("DIFFICULTY", "");
-						varParams.put("TERRAIN", "");
-					} else {
-						varParams.put("SIZE", CacheSize.isValidSize(ch.getCacheSize())?
-								CacheSize.cw2ExportString(ch.getCacheSize()):"");
-						varParams.put("DIFFICULTY", CacheTerrDiff.isValidTD(ch.getHard())?
-								CacheTerrDiff.longDT(ch.getHard()):"");
-						varParams.put("TERRAIN", CacheTerrDiff.isValidTD(ch.getTerrain())?
-								CacheTerrDiff.longDT(ch.getTerrain()):"");
-					}
-					varParams.put("DISTANCE", ch.getDistance());
-					varParams.put("BEARING", ch.bearing);
-					varParams.put("LATLON", ch.LatLon);
-					varParams.put("LAT", dec.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
-					varParams.put("LON", dec.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
-					varParams.put("STATUS", ch.getCacheStatus());
-					varParams.put("DATE", ch.getDateHidden());
+					det=ch.getCacheDetails(false);
+					varParams=ch.toHashtable(dec, null, 0, 30, new AsciiCodec(), null);
 					cache_index.add(varParams);
 					//We can generate the individual page here!
 					try{
@@ -130,8 +105,8 @@ public class HTMLExporter{
 						page_tpl.setParam("DIFFICULTY", varParams.get("DIFFICULTY").toString());
 						page_tpl.setParam("TERRAIN", varParams.get("TERRAIN").toString());
 						page_tpl.setParam("DISTANCE", ch.getDistance());
-						page_tpl.setParam("BEARING", ch.bearing);
-						page_tpl.setParam("LATLON", ch.LatLon);
+						page_tpl.setParam("BEARING", ch.getBearing());
+						page_tpl.setParam("LATLON", ch.getLatLon());
 						page_tpl.setParam("LAT", dec.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
 						page_tpl.setParam("LON", dec.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
 						page_tpl.setParam("STATUS", ch.getCacheStatus());
