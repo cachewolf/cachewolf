@@ -173,7 +173,7 @@ public class Filter{
 				//... go through the current cache database
 				for(int i = cacheDB.size()-1; i >=0 ; i--){
 					ch = cacheDB.get(i);
-					cwp = new CWPoint(ch.LatLon, TransformCoordinates.CW);
+					cwp = new CWPoint(ch.getLatLon(), TransformCoordinates.CW);
 					calcDistance = DistToSegment(fromPoint, toPoint, cwp);
 					calcDistance = (calcDistance*180*60)/java.lang.Math.PI;
 					calcDistance = calcDistance * 1.852;
@@ -429,41 +429,41 @@ public class Filter{
 	        // By first checking the first letter, we can reduce the average number further to
 	        // just under 5
 	        if (hasRoseMatchPattern) {
-		        if (ch.bearing.startsWith("N")) {
-			        if (ch.bearing.equals("NW"))
+		        if (ch.getBearing().startsWith("N")) {
+			        if (ch.getBearing().equals("NW"))
 				        cacheRosePattern = NW;
-			        else if (ch.bearing.equals("NNW"))
+			        else if (ch.getBearing().equals("NNW"))
 				        cacheRosePattern = NNW;
-			        else if (ch.bearing.equals("N"))
+			        else if (ch.getBearing().equals("N"))
 				        cacheRosePattern = N;
-			        else if (ch.bearing.equals("NNE"))
+			        else if (ch.getBearing().equals("NNE"))
 				        cacheRosePattern = NNE;
 			        else
 				        cacheRosePattern = NE;
-		        } else if (ch.bearing.startsWith("E")) {
-			        if (ch.bearing.equals("ENE"))
+		        } else if (ch.getBearing().startsWith("E")) {
+			        if (ch.getBearing().equals("ENE"))
 				        cacheRosePattern = ENE;
-			        else if (ch.bearing.equals("E"))
+			        else if (ch.getBearing().equals("E"))
 				        cacheRosePattern = E;
 			        else
 				        cacheRosePattern = ESE;
-		        } else if (ch.bearing.startsWith("S")) {
-			        if (ch.bearing.equals("SW"))
+		        } else if (ch.getBearing().startsWith("S")) {
+			        if (ch.getBearing().equals("SW"))
 				        cacheRosePattern = SW;
-			        else if (ch.bearing.equals("SSW"))
+			        else if (ch.getBearing().equals("SSW"))
 				        cacheRosePattern = SSW;
-			        else if (ch.bearing.equals("S"))
+			        else if (ch.getBearing().equals("S"))
 				        cacheRosePattern = S;
-			        else if (ch.bearing.equals("SSE"))
+			        else if (ch.getBearing().equals("SSE"))
 				        cacheRosePattern = SSE;
 			        else
 				        cacheRosePattern = SE;
 		        } else {
-			        if (ch.bearing.equals("WNW"))
+			        if (ch.getBearing().equals("WNW"))
 				        cacheRosePattern = WNW;
-			        else if (ch.bearing.equals("W"))
+			        else if (ch.getBearing().equals("W"))
 				        cacheRosePattern = W;
-			        else if (ch.bearing.equals("WSW"))
+			        else if (ch.getBearing().equals("WSW"))
 				        cacheRosePattern = WSW;
 			        else
 				        cacheRosePattern = 0;

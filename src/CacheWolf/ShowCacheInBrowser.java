@@ -76,9 +76,9 @@ public class ShowCacheInBrowser {
 					tpl.setParam("DIFFICULTY", CacheTerrDiff.longDT(chD.getHard()));
 					tpl.setParam("TERRAIN", CacheTerrDiff.longDT(chD.getTerrain()));
 					tpl.setParam("DISTANCE", chD.getDistance().replace(',','.'));
-					tpl.setParam("BEARING", chD.bearing);
+					tpl.setParam("BEARING", chD.getBearing());
 					if (chD.pos!=null && chD.pos.isValid()) {
-						tpl.setParam("LATLON", chD.LatLon);
+						tpl.setParam("LATLON", chD.getLatLon());
 					} else {
 						tpl.setParam("LATLON", "unknown");
 					}
@@ -190,7 +190,7 @@ public class ShowCacheInBrowser {
 							CacheHolder ch=(CacheHolder) chD.addiWpts.get(i);
 							addis.put("WAYPOINT",ch.getWayPoint());
 							addis.put("NAME",ch.getCacheName());
-							addis.put("LATLON",ch.LatLon);
+							addis.put("LATLON",ch.getLatLon());
 							addis.put("IMG","<img src=\""+CacheType.typeImageForId(ch.getType())+"\">");
 							addis.put("LONGDESC",ch.getCacheDetails(true).LongDescription); // Do we need to treat longDesc as above ?
 							addiVect.add(addis);

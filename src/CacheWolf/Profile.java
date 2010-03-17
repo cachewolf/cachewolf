@@ -568,7 +568,7 @@ public class Profile {
 			ch = cacheDB.get(i);
 			if (!onlyOfSelected || ch.is_Checked) {
 				if (ch.pos == null) { // this can not happen
-					tmpca.set(ch.LatLon);
+					tmpca.set(ch.getLatLon());
 					ch.pos = new CWPoint(tmpca);
 				}
 				if (ch.pos.isValid() ){ // done: && ch.pos.latDec != 0 && ch.pos.lonDec != 0 TO-DO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird

@@ -15,7 +15,7 @@ import ewesoft.xml.sax.AttributeList;
  * @author salzkammergut
  *
  */
-class GarminMap extends MinML {
+public class GarminMap extends MinML {
 
 	private Vector symbols=new Vector(24);
 

@@ -45,7 +45,7 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==6) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				ch.sort=ch.LatLon;
+				ch.sort=ch.getLatLon();
 			}
 		} else if (colToCompare==7) {
 			for (int i=0; i<visibleSize; i++) {
@@ -76,11 +76,11 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==11) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				if (ch.bearing.equals("?")) {
+				if (ch.getBearing().equals("?")) {
 					ch.sort="\uFFFF";
 				}
 				else {
-					ch.sort=ch.bearing;
+					ch.sort=ch.getBearing();
 				}			
 			}
 			

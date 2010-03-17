@@ -172,8 +172,8 @@ public final class CalcPanel extends CellPanel {
 				inpDistance.setText("0");
 
 				//currFormat = 1;
-				if (ch.LatLon.length()== 0) coordInp.set(0,0);
-				else coordInp.set(ch.LatLon, TransformCoordinates.CW);
+				if (ch.getLatLon().length()== 0) coordInp.set(0,0);
+				else coordInp.set(ch.getLatLon(), TransformCoordinates.CW);
 				setFields();				
 			}
 		}
@@ -227,7 +227,7 @@ public final class CalcPanel extends CellPanel {
 				CacheHolder ch = new CacheHolder();
 				readFields(coordInp, bd);
 				coordOut = coordInp.project(bd.degrees, bd.distance);
-				ch.LatLon = coordOut.toString();
+				ch.setLatLon(coordOut.toString());
 				ch.pos.set(coordOut);
 				ch.setType(CacheType.CW_TYPE_STAGE); // TODO unfertig
 				mainT.newWaypoint(ch);
