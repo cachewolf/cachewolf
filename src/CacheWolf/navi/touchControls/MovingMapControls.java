@@ -257,10 +257,16 @@ public class MovingMapControls implements ICommandListener {
 		int timenow = Vm.getTimeStamp();
 
 		// avoid double clicks
-		if (timenow < 200 + lastTime) {
+		if (timenow < 300 + lastTime) {
 			return false;
 		}
-		lastTime = timenow;
+		
+		boolean result = handleImageClicked(which);
+		lastTime = Vm.getTimeStamp();
+		return result;
+	}
+
+	private boolean handleImageClicked(AniImage which) {
 		for (int i = 0; i < buttons.size(); i++) {
 			MovingMapControlItem item = (MovingMapControlItem) buttons.get(i);
 			AniImage ani = item.getImage();
@@ -294,17 +300,6 @@ public class MovingMapControls implements ICommandListener {
 			return changeRoleState(ROLE_MENU, false);
 		}
 		return false;
-	}
-
-	/**
-	 * Method to react to user.
-	 */
-	public boolean handleImageClickedEvent(AniImage which) {
-		if (which == null)
-			return false;
-
-		boolean imageClicked = imageClicked(which);
-		return imageClicked;
 	}
 
 	public boolean imageBeginDragged(AniImage which, Point pos) {
