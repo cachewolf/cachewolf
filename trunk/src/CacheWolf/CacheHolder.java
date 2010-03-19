@@ -613,18 +613,17 @@ public class CacheHolder{
 		varParams.put("STATUS_DATE", GetStatusDate());
 		varParams.put("STATUS_TIME", GetStatusTime());
 		varParams.put("DATE", dateHidden);
+		
 		varParams.put("URL", det != null ? det.URL : "");
 		varParams.put("DESCRIPTION", det != null ? det.LongDescription : "");
-		if (codec instanceof AsciiCodec) {
-			cacheName=Exporter.simplifyString(cacheName);
-		}
+		if (codec instanceof AsciiCodec) { cacheName=Exporter.simplifyString(cacheName);}
 		if (rex != null) {
 			cacheName=rex.replaceAll(cacheName);
-			varParams.put("NOTES", det != null ? rex.replaceAll(det.getCacheNotes()): "");
+			varParams.put("NOTES", det != null ? STRreplace.replace(rex.replaceAll(det.getCacheNotes()), "\n","<br>"): "");
 			varParams.put("HINTS", det != null ? rex.replaceAll(det.Hints): "");
 			varParams.put("DECRYPTEDHINTS", det != null ? rex.replaceAll(Common.rot13(det.Hints)): "");
 		} else {
-			varParams.put("NOTES", det != null ? det.getCacheNotes(): "");
+			varParams.put("NOTES", det != null ? STRreplace.replace(det.getCacheNotes(), "\n","<br>"): "");
 			varParams.put("HINTS", det != null ? det.Hints: "");
 			varParams.put("DECRYPTEDHINTS", det != null ? Common.rot13(det.Hints): "");
 		}
@@ -794,8 +793,8 @@ public class CacheHolder{
 					//FIXME: put a message to languages file
 					(new MessageBox(MyLocale.getMsg(31415,"Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ")
 					        + this.getWayPoint(), FormBase.OKB)).execute();
+					// details = null;
 				}
-				// details = null;
 				this.setIncomplete(true);
 			}
 			// for importing/spidering reasons helper objects with same waypoint are created
