@@ -204,8 +204,7 @@ public class ShowCacheInBrowser {
 				}
 			}
 			PrintWriter detfile;
-			FileWriter fw = new FileWriter(saveTo);
-			detfile = new PrintWriter(new BufferedWriter(fw));
+			detfile = new PrintWriter(new BufferedWriter(new FileWriter(saveTo)));
 			tpl.printTo(detfile);
 			//detfile.print(tpl.output());
 			detfile.close();
