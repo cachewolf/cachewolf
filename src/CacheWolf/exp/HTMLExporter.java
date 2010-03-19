@@ -1,4 +1,5 @@
 package CacheWolf.exp;
+
 import com.stevesoft.ewe_pat.Regex;
 
 import CacheWolf.*;
@@ -8,6 +9,7 @@ import ewe.io.*;
 import ewe.ui.*;
 import ewe.filechooser.*;
 import HTML.*;
+import HTML.Tmpl.Element.Element;
 
 /**
 *	Class to export cache information to individual HTML files.<br>
@@ -94,31 +96,21 @@ public class HTMLExporter{
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						page_tpl.setParam("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
-						// page_tpl.setParam("TYPE", varParams.get("TYPE").toString());
-						page_tpl.setParam("SYM", CacheType.type2SymTag(ch.getType())); //<sym>
-						page_tpl.setParam("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); //<groundspeak:type>
-						page_tpl.setParam("SIZE", varParams.get("SIZE").toString());
-						page_tpl.setParam("WAYPOINT", ch.getWayPoint());
-						page_tpl.setParam("NAME", ch.getCacheName());
-						page_tpl.setParam("OWNER", ch.getCacheOwner());
-						page_tpl.setParam("DIFFICULTY", varParams.get("DIFFICULTY").toString());
-						page_tpl.setParam("TERRAIN", varParams.get("TERRAIN").toString());
-						page_tpl.setParam("DISTANCE", ch.getDistance());
-						page_tpl.setParam("BEARING", ch.getBearing());
-						page_tpl.setParam("LATLON", ch.getLatLon());
-						page_tpl.setParam("LAT", dec.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
-						page_tpl.setParam("LON", dec.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
-						page_tpl.setParam("STATUS", ch.getCacheStatus());
-						page_tpl.setParam("DATE", ch.getDateHidden());
+						
+						Enumeration de = varParams.keys();
+						while(de.hasMoreElements()) {
+							String s = de.nextElement().toString();
+							if (!s.equals("DESCRIPTION")) {
+								page_tpl.setParam(s,varParams.get(s).toString());
+							}
+						}
+						
 						if (det != null) {
 							if (ch.is_HTML()) {
 								page_tpl.setParam("DESCRIPTION", modifyLongDesc(det,targetDir));
 							} else {
 								page_tpl.setParam("DESCRIPTION",STRreplace.replace(det.LongDescription, "\n", "<br>"));
 							}
-							page_tpl.setParam("HINTS", det.Hints);
-							page_tpl.setParam("DECRYPTEDHINTS", Common.rot13(det.Hints));
 
 							StringBuffer sb=new StringBuffer(2000);
 							for(int j = 0; j<det.CacheLogs.size(); j++){
@@ -201,8 +193,6 @@ public class HTMLExporter{
 							}
 						} else {
 							page_tpl.setParam("DESCRIPTION", "");
-							page_tpl.setParam("HINTS", "");
-							page_tpl.setParam("DECRYPTEDHINTS", "");
 							page_tpl.setParam("LOGS", "");
 							page_tpl.setParam("NOTES", "");
 							page_tpl.setParam("cacheImg", cacheImg);
