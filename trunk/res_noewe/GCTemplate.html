@@ -1,20 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!-- saved from url=(0014)http://localhost/ -->
 <!-- Note: The line above is needed to avoid the warning due to the javascript contained in this page.
-   Using javascript, various sections of the Cache listing can be hidden/unhidden. 
+   Using javascript, various sections of the Cache listing can be hidden/unhidden.
    Try clicking on anything that is underlined.
 -->
 <html>
 <META HTTP-EQUIV="content-type" content="text/html; charset=utf-8" />
 <META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT">
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <script type="text/javascript">
 function toggleDivOL( elemID ) { // Hide or show a DIV
 	var elem = document.getElementById( elemID );
 	if (!elem.style.display || elem.style.display=='block') {
 		elem.style.display='none';
 	} else {
-		elem.style.display='block';	
+		elem.style.display='block';
 	}
 }
 var logsVisible=true;
@@ -22,7 +22,7 @@ function toggleAll() {
 	logsVisible=!logsVisible;
 	var logs = document.getElementsByName("log");
 	for (logElem=0; logElem<logs.length; logElem++) {
-		if (logsVisible) 
+		if (logsVisible)
 			logs[logElem].style.display='block';
 		else
 			logs[logElem].style.display='none';
@@ -54,10 +54,10 @@ td { font-size:small;  }
 <head>
 	<title>Cache: <tmpl_var WAYPOINT> <tmpl_var CACHE_NAME> by <tmpl_var OWNER></title>
 </head>
-	
+
 <body bgcolor="#FFFFFF" LINK="#000000" VLINK="#000000" ALINK="#000000" TEXT="#000000" marginwidth="20" marginheight="0" leftmargin="20" topmargin="0">
 <div style="float:left;">
-	<img src=<tmpl_var TYPE> BORDER=0 WIDTH=32 HEIGHT=32><FONT face="Verdana" size="4"><strong> <tmpl_var CACHE_NAME></strong></FONT>
+	<img src="file://<tmpl_var PROGDIR>/<tmpl_var TYPENO>.gif" BORDER=0 WIDTH=32 HEIGHT=32><FONT face="Verdana" size="4"><strong> <tmpl_var CACHE_NAME></strong></FONT>
 	<FONT face="Verdana" size="2" style="font-size:X-Small;font-weight:bold;"> by <tmpl_var OWNER></FONT>
 	<br/><br/>
     <strong><tmpl_var LATLON></strong> (WGS84)<br/>
@@ -84,11 +84,11 @@ td { font-size:small;  }
 </div>
 <div style="float:left">
 	<hr>
-<tmpl_if UNAVAILABLE>	
+<tmpl_if UNAVAILABLE>
 	<FONT face="Verdana" color="red" size="+0">
 	<br/><strong>The cache is not currently available.<br/></strong>
 	</FONT>
-</tmpl_if>	
+</tmpl_if>
 
 	<br/>
 	<FONT face="Verdana" size="2">
@@ -102,7 +102,7 @@ td { font-size:small;  }
 				<TH align=left>Waypoint</TH>
 				<TH align=left>Name</TH>
 				<TH align=left>Coordinate</TH>
-			<tmpl_loop ADDIS>	
+			<tmpl_loop ADDIS>
 			<TR bgColor=#ffffff>
 				<TD vAlign=top align=middle width=16><tmpl_var IMG></TD>
 				<TD vAlign=top align=left><tmpl_var WAYPOINT></TD>
@@ -111,11 +111,11 @@ td { font-size:small;  }
 			<TR bgColor=#ffffff>
 				<TD vAlign=top align=middle width=16>Note:</TD>
 				<TD vAlign=top align=left ColSpan=3><tmpl_var LONGDESC></TD>
-			</tmpl_loop>	
+			</tmpl_loop>
 		</TBODY>
-	</TABLE><BR/></div>	
+	</TABLE><BR/></div>
 </tmpl_if>
-<tmpl_if IMAGES> 
+<tmpl_if IMAGES>
 	<tmpl_loop IMAGES>
 		<a href="javascript:toggleDivOL(<tmpl_var I>);"><image src="images.gif" border=0> <tmpl_var IMAGETEXT></a>&nbsp;<i><tmpl_var IMAGECOMMENT></i><br/>
 		<div id=<tmpl_var I> style="display:none"><tmpl_var IMAGE></div>
@@ -136,12 +136,12 @@ td { font-size:small;  }
 		<div><center><div style="width:66%"><hr></div></center></div></div>
 	</tmpl_loop>
 	</div>
-<tmpl_else><br/><STRONG>No logs</STRONG><br/>	
+<tmpl_else><br/><STRONG>No logs</STRONG><br/>
 </tmpl_if>
 <tmpl_if BUGS>
 	<hr>
 	<a href="javascript:toggleDivOL('bugs');"><FONT face="Verdana" size="+0"><STRONG>Bugs</STRONG></FONT></a><span class="clickHint">Click to hide/unhide section</span><br/><br/>
-	<div id="bugs" class="bugs"><tmpl_var BUGS></div>	
+	<div id="bugs" class="bugs"><tmpl_var BUGS></div>
 </tmpl_if>
 <tmpl_if NOTES>
 <tmpl_if BUGS><TMPL_ELSE><hr></tmpl_if>
