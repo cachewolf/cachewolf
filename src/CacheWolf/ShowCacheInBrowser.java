@@ -2,6 +2,7 @@ package CacheWolf;
 
 import com.stevesoft.ewe_pat.Regex;
 
+import ewe.io.AsciiCodec;
 import ewe.io.BufferedWriter;
 import ewe.io.FileBase;
 import ewe.io.FileWriter;
@@ -65,28 +66,16 @@ public class ShowCacheInBrowser {
 			if(chD.isVisible()){
 				Vm.showWait(true);
 				try {
-//					if (chD.getWayPoint().startsWith("OC"))
-//						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+CacheType.transOCType(chD.getType())+".gif\"");
-//					else
-						tpl.setParam("TYPE", "\"file://"+FileBase.getProgramDirectory()+"/"+chD.getType()+".gif\"");
-					tpl.setParam("SIZE", CacheSize.cw2ExportString(chD.getCacheSize()));
-					tpl.setParam("WAYPOINT", chD.getWayPoint());
-					tpl.setParam("CACHE_NAME", chD.getCacheName());
-					tpl.setParam("OWNER", chD.getCacheOwner());
-					tpl.setParam("DIFFICULTY", CacheTerrDiff.longDT(chD.getHard()));
-					tpl.setParam("TERRAIN", CacheTerrDiff.longDT(chD.getTerrain()));
-					tpl.setParam("DISTANCE", chD.getDistance().replace(',','.'));
-					tpl.setParam("BEARING", chD.getBearing());
-					if (chD.pos!=null && chD.pos.isValid()) {
-						tpl.setParam("LATLON", chD.getLatLon());
-					} else {
-						tpl.setParam("LATLON", "unknown");
+					
+					Hashtable varParams;
+					varParams=chD.toHashtable(new Regex("[,.]","."), null, 0, 30, new AsciiCodec(), null, true);
+					Enumeration de = varParams.keys();
+					while(de.hasMoreElements()) {
+						String s = de.nextElement().toString();
+						if (!s.equals("DESCRIPTION")) {
+							tpl.setParam(s,varParams.get(s).toString());
+						}
 					}
-					// If status is of format yyyy-mm-dd prefix it with a "Found" message in local language
-					if (chD.getCacheStatus().length()>=10 && chD.getCacheStatus().charAt(4)=='-')
-						tpl.setParam("STATUS",MyLocale.getMsg(318,"Found")+" "+chD.getCacheStatus());
-					else
-						tpl.setParam("STATUS", chD.getCacheStatus());
 
 					// Cache attributes
 					if (chD.getCacheDetails(true).attributes.count()>0) {
@@ -105,11 +94,7 @@ public class ShowCacheInBrowser {
 						}
 						tpl.setParam("ATTRIBUTES",attVect);
 					}
-
-					tpl.setParam("DATE", chD.getDateHidden());
-					tpl.setParam("URL", chD.getCacheDetails(true).URL);
 					if (chD.getCacheDetails(true).Travelbugs.size()>0) tpl.setParam("BUGS",chD.getCacheDetails(true).Travelbugs.toHtml());
-					if (chD.getCacheDetails(true).getCacheNotes().trim().length()>0) tpl.setParam("NOTES", STRreplace.replace(chD.getCacheDetails(true).getCacheNotes(),"\n","<br/>\n"));
 					if (chD.getCacheDetails(true).getSolver()!=null && chD.getCacheDetails(true).getSolver().trim().length()>0) tpl.setParam("SOLVER", STRreplace.replace(chD.getCacheDetails(true).getSolver(),"\n","<br/>\n"));
 					// Look for images
 

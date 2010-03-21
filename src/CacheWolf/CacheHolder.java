@@ -9,6 +9,7 @@ import com.stevesoft.ewe_pat.Regex;
 import ewe.fx.FontMetrics;
 import ewe.fx.IconAndText;
 import ewe.io.AsciiCodec;
+import ewe.io.FileBase;
 import ewe.io.IOException;
 import ewe.io.TextCodec;
 import ewe.sys.Convert;
@@ -572,10 +573,17 @@ public class CacheHolder{
 	}
 	
 	/** Return a Hashtable containing all the cache data for Templates */
-	public Hashtable toHashtable(Regex dec, Regex rex, int shortWaypointLength, int shortNameLength, TextCodec codec, GarminMap gm) {
+	public Hashtable toHashtable(
+			Regex dec, Regex rex, 
+			int shortWaypointLength, int shortNameLength, 
+			TextCodec codec, GarminMap gm,
+			boolean withFoundText
+			) {
 		Hashtable varParams = new Hashtable();
 		CacheHolderDetail det = this.getCacheDetails(false);
+		varParams.put("PROGDIR", FileBase.getProgramDirectory());
 		varParams.put("TYPE", CacheType.type2TypeTag(type)); //<type>
+		varParams.put("TYPENO",""+type);
 		varParams.put("SYM", CacheType.type2SymTag(type)); //<sym>
 		varParams.put("GSTYPE", CacheType.type2GSTypeTag(type)); //<groundspeak:type>
 		varParams.put("SHORTTYPE", CacheType.getExportShortId(type));
@@ -605,17 +613,22 @@ public class CacheHolder{
 		varParams.put("SHTERRAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":sTerrain.substring(0,1));
 		varParams.put("DISTANCE", dec.replaceAll(getDistance()));
 		varParams.put("BEARING", bearing);
-		varParams.put("LATLON", LatLon);
+		varParams.put("LATLON", (pos!=null && pos.isValid())?LatLon:"unknown");
 		varParams.put("LAT", dec.replaceAll(pos.getLatDeg(CWPoint.DD)));
-		varParams.put("LON", dec.replaceAll(pos.getLonDeg(CWPoint.DD)));
-		varParams.put("STATUS", cacheStatus);
+		varParams.put("LON", dec.replaceAll(pos.getLonDeg(CWPoint.DD)));		
+		if (withFoundText && cacheStatus.length()>=10 && cacheStatus.charAt(4)=='-')
+			varParams.put("STATUS",MyLocale.getMsg(318,"Found")+" "+cacheStatus);
+		else
+			varParams.put("STATUS", cacheStatus);
 		varParams.put("GC_LOGTYPE", GetGCLogType());
 		varParams.put("STATUS_DATE", GetStatusDate());
 		varParams.put("STATUS_TIME", GetStatusTime());
 		varParams.put("DATE", dateHidden);
 		
 		varParams.put("URL", det != null ? det.URL : "");
+
 		varParams.put("DESCRIPTION", det != null ? det.LongDescription : "");
+		varParams.put("CACHE_NAME", cacheName);
 		if (codec instanceof AsciiCodec) { cacheName=Exporter.simplifyString(cacheName);}
 		if (rex != null) {
 			cacheName=rex.replaceAll(cacheName);
