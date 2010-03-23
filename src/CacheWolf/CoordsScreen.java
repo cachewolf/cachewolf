@@ -4,7 +4,6 @@ import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.TransformCoordinates;
-import CacheWolf.InputScreen;
 import ewe.ui.*;
 import ewe.fx.Dimension;
 import ewe.sys.*;
@@ -240,78 +239,6 @@ public class CoordsScreen extends Form {
 		// for Checkboxes and Choice controls this is done via the exitKeys
 		// For input fields we use the wantReturn field
 
-		if(ev instanceof ControlEvent && ev.type == ControlEvent.FOCUS_IN  && Vm.isMobile()){
-		//if(ev instanceof ControlEvent && ev.type == ControlEvent.FOCUS_IN){
-			if (ev.target == inpNSDeg && !bNSDeg){
-				bNSDeg = true;
-				if(chkFormat.getSelectedIndex() == 0)
-					inpScreen = new InputScreen(inpNSDeg,"Format: d.d°");
-				else
-					inpScreen = new InputScreen(inpNSDeg,"Format: d°");					
-				inpScreen.execute();
-				bNSm = bNSs = bEWDeg = bEWm = bEWs = bUTMNorthing = bUTMEasting = false;
-			}
-			
-			if (ev.target == inpNSm && !bNSm){
-				bNSm = true;
-				if(chkFormat.getSelectedIndex() == 2)
-					inpScreen = new InputScreen(inpNSm,"Format: m");
-				else
-					inpScreen = new InputScreen(inpNSm,"Format: m.s");					
-				inpScreen.execute();
-				bNSDeg = bNSs = bEWDeg = bEWm = bEWs = bUTMNorthing = bUTMEasting = false;
-			}
-			
-			if (ev.target == inpNSs && !bNSs){
-				bNSs = true;
-				inpScreen = new InputScreen(inpNSs,"Format: s");
-				inpScreen.execute();
-				bNSDeg = bNSm = bEWDeg = bEWm = bEWs = bUTMNorthing = bUTMEasting = false;
-			}
-			
-			if (ev.target == inpEWDeg && !bEWDeg){
-				bEWDeg = true;
-				if(chkFormat.getSelectedIndex() == 0)
-					inpScreen = new InputScreen(inpEWDeg,"Format: d.d°");
-				else
-					inpScreen = new InputScreen(inpEWDeg,"Format: d°");	
-				inpScreen.execute();
-				bNSDeg = bNSm = bNSs = bEWm = bEWs = bUTMNorthing = bUTMEasting = false;
-			}
-			
-			if (ev.target == inpEWm && !bEWm){
-				bEWm = true;
-				if(chkFormat.getSelectedIndex() == 2)
-					inpScreen = new InputScreen(inpEWm,"Format: m");
-				else
-					inpScreen = new InputScreen(inpEWm,"Format: m.s");
-				inpScreen.execute();
-				bNSDeg = bNSm = bNSs = bEWDeg = bEWs = bUTMNorthing = bUTMEasting = false;
-			}
-			
-			if (ev.target == inpEWs && !bEWs){
-				bEWs = true;
-				inpScreen = new InputScreen(inpEWs,"Format: s");
-				inpScreen.execute();
-				bNSDeg = bNSm = bNSs = bEWDeg = bEWm = bUTMNorthing = bUTMEasting = false;
-			}
-
-			if (ev.target == inpUTMNorthing && !bUTMNorthing){
-				bUTMNorthing = true;
-				inpScreen = new InputScreen(inpUTMNorthing,"Format: " + MyLocale.getMsg(1401,"Northing"));
-				inpScreen.execute();
-				bNSDeg = bNSm = bNSs = bEWDeg = bEWm = bEWs = bUTMEasting = false;
-			}
-			
-			if (ev.target == inpUTMEasting && !bUTMEasting){
-				bUTMEasting = true;
-				inpScreen = new InputScreen(inpUTMEasting,"Format: " + MyLocale.getMsg(1402,"Easting"));
-				inpScreen.execute();
-				bNSDeg = bNSm = bNSs = bEWDeg = bEWm = bEWs = bUTMNorthing = false;
-			}
-			
-		}
-			
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.EXITED){
 			if (((ControlEvent)ev).target==chkDD || ((ControlEvent)ev).target==chkDMM ||
 					((ControlEvent)ev).target==chkDMS) Gui.takeFocus(chcNS,ControlConstants.ByKeyboard);	
