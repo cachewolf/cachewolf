@@ -5,6 +5,7 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
 import CacheWolf.CoordsScreen;
+import CacheWolf.InputScreen;
 import CacheWolf.DetailsPanel;
 import CacheWolf.Global;
 import CacheWolf.MainTab;
@@ -381,11 +382,20 @@ public final class GotoPanel extends CellPanel {
 			}
 			// change destination waypoint
 			if (ev.target == btnGoto){
-				CoordsScreen cs = new CoordsScreen();
-				if (myNavigation.destination.isValid())	cs.setFields(myNavigation.destination, CoordsScreen.getLocalSystem(currFormatSel));
-				else cs.setFields(new CWPoint(0,0), CoordsScreen.getLocalSystem(currFormatSel));
-				if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK)
-					setDestination(cs.getCoords());
+				if(Vm.isMobile()){
+					InputScreen InScr = new InputScreen(myNavigation , currFormatSel);
+					if (myNavigation.destination.isValid())	InScr.setCcords(myNavigation.destination);
+					else InScr.setCcords(new CWPoint(0,0));
+					if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
+						setDestination(InScr.getCoords());
+				}else
+				{
+				        CoordsScreen cs = new CoordsScreen();
+				        if (myNavigation.destination.isValid())	cs.setFields(myNavigation.destination, CoordsScreen.getLocalSystem(currFormatSel));
+				        else cs.setFields(new CWPoint(0,0), CoordsScreen.getLocalSystem(currFormatSel));
+				        if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK)
+					        setDestination(cs.getCoords());
+                                }
 			}
 		}
 		super.onEvent(ev);
