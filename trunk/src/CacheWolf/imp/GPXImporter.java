@@ -355,6 +355,7 @@ public class GPXImporter extends MinML {
 				// Preserve images: Copy images from old cache version because here we didn't add
 				// any image information to the holder object.
 				holder.getCacheDetails(false).images = oldCh.getCacheDetails(true).images;
+				oldCh.initStates(false);
 				oldCh.update(holder);
 				oldCh.save();
 			}
