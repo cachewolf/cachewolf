@@ -365,12 +365,13 @@ public class SpiderGC{
 						if(ch == null){ // not in DB
 							if ( gotDistance >= minDistance &&
 									 directionOK(directions,getDirection(CacheDescriptionGC))  &&
-									 doPMCache(CacheDescriptionGC) ){
+									 doPMCache(CacheDescriptionGC) &&
+									 cachesToLoad.size() < maxNew){
 							cachesToLoad.add(chWaypoint);
 							}
 							else {cachesToUpdate.remove( chWaypoint );}
 							if(cachesToLoad.size() >= maxNew) {
-								if(maxUpdate!=Integer.MAX_VALUE) { maxDistance=0; }
+								if(maxUpdate!=Integer.MAX_VALUE || cachesToUpdate.size() <= cachesShouldUpdate.size()) { maxDistance=0; }
 							}
 						}
 						else {
