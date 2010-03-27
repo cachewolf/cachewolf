@@ -52,6 +52,7 @@ import ewe.ui.WindowConstants;
 import ewe.ui.WindowEvent;
 import ewe.ui.mButton;
 import ewe.ui.mList;
+import ewe.util.Iterator;
 import ewe.util.Vector;
 
 /**
@@ -1746,6 +1747,12 @@ public final class MovingMap extends Form implements ICommandListener {
 	public void hideMap() {
 		if (mmp != null && mmp.mapImage != null)
 			mmp.mapImage.hide();
+		for(Iterator i=mmp.images.iterator(); i.hasNext ();){
+			AniImage image = (AniImage) i.next();
+			if (image instanceof MapImage && !(image instanceof MapSymbol) && !(image instanceof TrackOverlay)){
+				((MapImage) image).hide();
+			}
+		}
 		mapHidden = true;
 		repaintNow();
 	}
@@ -1753,6 +1760,12 @@ public final class MovingMap extends Form implements ICommandListener {
 	public void showMap() {
 		if (mmp != null && mmp.mapImage != null) mmp.mapImage.unhide();
 		mapHidden = false;
+		for(Iterator i=mmp.images.iterator(); i.hasNext ();){
+			AniImage image = (AniImage) i.next();
+			if (image instanceof MapImage && !(image instanceof MapSymbol) && !(image instanceof TrackOverlay)){
+				((MapImage) image).unhide();
+			}
+		}
 		repaintNow();
 	}
 
