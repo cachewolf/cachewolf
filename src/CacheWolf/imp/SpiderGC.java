@@ -308,33 +308,32 @@ public class SpiderGC{
 		Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
 		Hashtable cachesShouldUpdate = new Hashtable(cacheDB.size()); // for don't loose the already done work
 
-		if (maxUpdate == Integer.MAX_VALUE) {
-			double distanceInKm = maxDistance;
-			if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
-				distanceInKm = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
-			}
-			// to get in meantime possibly archived caches
-			for(int i = 0; i<cacheDB.size();i++){
-				ch = cacheDB.get(i);
-				if (spiderAllFinds) {
-					if ( (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
-					     && !ch.is_black() ) {
-						cachesToUpdate.put(ch.getWayPoint(), ch);
-					}
-				} else {
-					if ( (!ch.is_archived())
-						 && (ch.kilom <= distanceInKm)
-						 && !(doNotgetFound && (ch.is_found() || ch.is_owned()))
-						 && (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
-						 && ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) )
-						 && !ch.is_black() ) {
-						cachesToUpdate.put(ch.getWayPoint(), ch);
-					}
+		double distanceInKm = maxDistance;
+		if ( Global.getPref().metricSystem == Metrics.IMPERIAL ) {
+			distanceInKm = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
+		}
+		// to get in meantime possibly archived caches
+		for(int i = 0; i<cacheDB.size();i++){
+			ch = cacheDB.get(i);
+			if (spiderAllFinds) {
+				if ( (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
+						&& !ch.is_black() ) {
+					cachesToUpdate.put(ch.getWayPoint(), ch);
+				}
+			} else {
+				if ( (!ch.is_archived())
+						&& (ch.kilom <= distanceInKm)
+						&& !(doNotgetFound && (ch.is_found() || ch.is_owned()))
+						&& (ch.getWayPoint().substring(0,2).equalsIgnoreCase("GC"))
+						&& ( (restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType) )
+						&& !ch.is_black() ) {
+					cachesToUpdate.put(ch.getWayPoint(), ch);
 				}
 			}
 		}
-		int startSize=cachesToUpdate.size();
 
+		int startSize=cachesToUpdate.size();
+		
 		//=======
 		// Prepare list of all caches that are to be spidered
 		//=======
@@ -370,9 +369,6 @@ public class SpiderGC{
 							cachesToLoad.add(chWaypoint);
 							}
 							else {cachesToUpdate.remove( chWaypoint );}
-							if(cachesToLoad.size() >= maxNew) {
-								if(maxUpdate!=Integer.MAX_VALUE || cachesToUpdate.size() <= cachesShouldUpdate.size()) { maxDistance=0; }
-							}
 						}
 						else {
 							if (maxUpdate>0) {
@@ -381,6 +377,16 @@ public class SpiderGC{
 								}
 								else
 									if (maxUpdate == Integer.MAX_VALUE) cachesToUpdate.remove( chWaypoint );
+							}
+						}
+						if(cachesToLoad.size() >= maxNew) {
+							if(maxUpdate!=Integer.MAX_VALUE) {
+								maxDistance=0;
+								cachesToUpdate.clear();
+							} else {
+								if ( cachesToUpdate.size() <= cachesShouldUpdate.size() ) {
+									maxDistance=0;
+								}
 							}
 						}
 					} else maxDistance = 0; // finish listing
@@ -423,7 +429,7 @@ public class SpiderGC{
 
 		int spiderErrors = 0;
 		if (cachesToUpdate.size() == startSize) cachesToUpdate.clear(); // there must be something wrong
-		if (cachesToUpdate.size() == 0) cachesToUpdate=cachesShouldUpdate;
+		if (cachesToUpdate.size() == 0 || cachesToUpdate.size() > maxUpdate) cachesToUpdate=cachesShouldUpdate;
 
 		if ( cachesToUpdate.size() > 0 ) {
 			switch (pref.spiderUpdates) {
