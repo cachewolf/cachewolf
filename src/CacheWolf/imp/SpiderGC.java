@@ -366,6 +366,7 @@ public class SpiderGC{
 									 directionOK(directions,getDirection(CacheDescriptionGC))  &&
 									 doPMCache(CacheDescriptionGC) &&
 									 cachesToLoad.size() < maxNew){
+								if (CacheDescriptionGC.indexOf(propFound)!=-1) chWaypoint=chWaypoint+"found";
 							cachesToLoad.add(chWaypoint);
 							}
 							else {cachesToUpdate.remove( chWaypoint );}
@@ -451,12 +452,14 @@ public class SpiderGC{
 			if (infB.isClosed) break;
 
 			String wpt = (String)cachesToLoad.get(i);
+			boolean is_found = wpt.indexOf("found")!=-1;
+			if (is_found) wpt=wpt.substring(0,wpt.indexOf("found"));
 			// Get only caches not already available in the DB
 			if(cacheDB.getIndex(wpt) == -1){
 				infB.setInfo(MyLocale.getMsg(5513,"Loading: ") + wpt +" (" + (i+1) + " / " + totalCachesToLoad + ")");
 				CacheHolder holder = new CacheHolder();
 				holder.setWayPoint(wpt);
-				int test = getCacheByWaypointName(holder,false,getImages,getTBs,doNotgetFound,loadAllLogs);
+				int test = getCacheByWaypointName(holder,false,getImages,getTBs,doNotgetFound,loadAllLogs||is_found);
 				if (test == SPIDER_CANCEL) {
 					infB.close(0);
 					break;
