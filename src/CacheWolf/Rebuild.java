@@ -24,10 +24,10 @@ public class Rebuild {
 
 		int orphans=0; // xml Files without entry in database : Changed to all entries!!!
 		int nAdded=0;  // caches added to database
-		boolean checkOlder;
-		MessageBox mBox = new MessageBox("", MyLocale.getMsg(5522,"Check for older Versions xml-Files ( without <CACHE... /> )") , FormBase.IDYES |FormBase.IDNO);
-		if (mBox.execute() == FormBase.IDOK){checkOlder=true;}
-		else {checkOlder=false;}
+		boolean checkOlder = false;
+		//MessageBox mBox = new MessageBox("", MyLocale.getMsg(5522,"Check for older Versions xml-Files ( without <CACHE... /> )") , FormBase.IDYES |FormBase.IDNO);
+		//if (mBox.execute() == FormBase.IDOK){checkOlder=true;}
+		//else {checkOlder=false;}
 		// still time consuming the list files
 		pbf.setTask(h, "Reading Directory, be patient");
 		pbf.exec();
