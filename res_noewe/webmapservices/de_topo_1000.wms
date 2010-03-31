@@ -1,21 +1,11 @@
-# For an example and explantion please see readme_wms.txt, which
-# you can find in the program directory of CacheWolf. There
-# you always get the newest information about .wms format.
-# plaese include this hint in any .wms you create
-#
-# Please include the two lines (TakenFromUrl: and GetCapabilitiesUrl:)
-# and fill in accordingly in any .wms file you make. They
-# are (still) not used by CacheWolf but they are usefull
-# for someone who wants to make his own changes to your file.
-# 
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl:	http://gdz1.leipzig.ifag.de/servlet/com.esri.wms.Esrimap?servicename=dtk200_500_1000_a10_gk4_wms&service=WMS&version=1.1.1&request=GetCapabilities
-Name:	de Topo 1000
+Name: not available @ 31.3.2010 de Topo 1000
 MainUrl:	http://gdz1.leipzig.ifag.de/servlet/com.esri.wms.Esrimap?servicename=dtk200_500_1000_a10_gk4_wms&
 MapType:	topo
 ServiceTypeUrlPart:	SERVICE=WMS
 VersionUrlPart:	VERSION=1.1.0
-CoordinateReferenceSystemCacheWolf:	31468 
+CoordinateReferenceSystemCacheWolf:	31468
 CoordinateReferenceSystemUrlPart:	SRS=EPSG:31468
 RequestUrlPart:	REQUEST=GetMap
 LayersUrlPart:	LAYERS=DTK1000

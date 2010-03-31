@@ -1,13 +1,13 @@
 TakenFromUrl:   http://www.rete.toscana.it/sett/territorio/carto/repertorio/geoscopio_wms/
-GetCapabilitiesUrl:      http://web.rete.toscana.it/sgrwms/com.rt.wms.RTmap?ServiceName=_rt_wms_cartografia&service=WMS&request=GetCapabilities
-Name:   it.Toskana topo 10 black/white
+GetCapabilitiesUrl:      http://web.rete.toscana.it/sgrwms/com.rt.wms.RTmap?service=WMS&request=GetCapabilities
+Name: it.Toskana topo 10 black/white
 #MainUrl:   http://web.rete.toscana.it:80/sgrwms/com.rt.wms.RTmap/_rt_wms_cartografia?
 MainUrl:   http://web.rete.toscana.it/sgrwms/com.rt.wms.RTmap?
 MapType: topo
 ServiceTypeUrlPart:   SERVICE=WMS
 VersionUrlPart:   VERSION=1.1.0
-CoordinateReferenceSystemCacheWolf:   3003
-CoordinateReferenceSystemUrlPart:   SRS=EPSG:3003
+CoordinateReferenceSystemCacheWolf:   4326
+CoordinateReferenceSystemUrlPart:   SRS=EPSG:4326
 RequestUrlPart:   REQUEST=GetMap
 #LayersUrlPart:     LAYERS=_idita|ITALIA||
 #LayersUrlPart:     LAYERS=_idbati|BATIMETRICHE||

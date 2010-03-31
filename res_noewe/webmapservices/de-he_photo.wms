@@ -1,9 +1,9 @@
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl:	http://lika.hessen.de/cgi-bin/lika-services/de-viewer/access/ogc-free-images.plx?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
-Name:	de.he Luftbild
+Name: not available @ 31.3.2010 de.he Luftbild
 MapType:	photo
 MainUrl:	http://lika.hessen.de/cgi-bin/lika-services/de-viewer/access/ogc-free-images.plx?
-ServiceTypeUrlPart:	SERVICE=WMS 
+ServiceTypeUrlPart:	SERVICE=WMS
 VersionUrlPart:	VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:	31467
 CoordinateReferenceSystemUrlPart:	SRS=EPSG:31467
