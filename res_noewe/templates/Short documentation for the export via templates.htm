@@ -229,73 +229,122 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Va
 lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
-lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>TYPE<span
-style='mso-tab-count:9'>                                                                                                 </span>:
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>PROGDIR<span
+style='mso-tab-count:8'>                                                                                           </span>:
+<span class=SpellE>FileBase.getProgramDirectory</span>()<br>
+TYPE<span style='mso-tab-count:9'>                                                                                                 </span>:
 &lt;type&gt; Type of cache, e.g. Regular, Multi<br>
+TYPENO<span style='mso-tab-count:8'>                                                                                             </span>:
+&lt;type&gt; as number string (see <span class=SpellE>CacheType.java</span> <span
+class=SpellE>e.g</span> : 0=Custom , 2=<span class=SpellE>Tradi</span> ,50=Parking
+104=Earth)<br>
 SYM<span style='mso-tab-count:9'>                                                                                                   </span>:
 &lt;sym&gt;<br>
 GSTYPE<span style='mso-tab-count:8'>                                                                                             </span>:
-&lt;<span class=SpellE>groundspeak<span class=GramE>:type</span></span>&gt;<br>
+&lt;<span class=SpellE>groundspeak:type</span>&gt;<br>
 SHORTTYPE<span style='mso-tab-count:8'>                                                                                      </span>:
 First Letter of &lt;type&gt; ???<br>
-</span><span style='font-size:10.0pt;font-family:Arial'>SIZE<span
-style='mso-tab-count:9'>                                                                                                   </span>:
-<span class=SpellE>Size</span> of Cache, <span class=SpellE>e.g</span>. <span
-class=SpellE>Regular</span>, <span class=SpellE>Micro</span><br>
+SIZE<span style='mso-tab-count:9'>                                                                                                   </span>:
+Size of Cache, e.g. Regular, Micro<br>
 SHORTSIZE<span style='mso-tab-count:8'>                                                                                        </span>:
-First <span class=SpellE>letter</span> of <span class=SpellE>size</span><br>
-WAYPOINT<span style='mso-tab-count:8'>                                                                                         </span>:
-&lt;<span class=SpellE>name</span>&gt; GCXXXX, OCXXXX<br>
-NAME<span style='mso-tab-count:9'>                                                                                                </span>:
-Name of <span class=SpellE>cache</span> (<span class=SpellE>badchars</span> <span
-class=SpellE>are</span> <span class=SpellE>removed</span>, <span class=SpellE>see</span>
-<span class=SpellE>below</span>) (neuerdings bei ASCII Simplifizierung von
-Zeichen)<br>
-SHORTNAME<span style='mso-tab-count:8'>                                                                                     </span>:
-</span><span style='font-size:10.0pt;font-family:Helvetica'>Name der durch
-Weglassen von Vokalen von hinten und wenn das nicht reicht durch Weglassen von
-Kleinbuchstaben von hinten auf eine in den Einstellungen vorgegebene Länge
-gekürzt wird. (Hintergrund: das Notes -Feld der meisten <span class=SpellE>Garmins</span>
-kann nur 30 Buchstaben)<br>
-</span><span style='font-size:10.0pt;font-family:Arial'>OWNER<span
-style='mso-tab-count:8'>                                                                                             </span>:<br>
+First letter of size<br>
+</span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
+mso-ansi-language:EN-GB'>MAINWP<span style='mso-tab-count:8'>                                                                                            </span>:
+““ if is <span class=SpellE>Mainwaypoint</span>, <span class=SpellE>Mainwaypointname</span>
+if is <span class=SpellE>Addi</span> Waypoint<br>
+</span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:
+EN-GB'>WAYPOINT<span style='mso-tab-count:8'>                                                                                         </span>:
+&lt;name&gt; GCXXXX, OCXXXX<br>
+</span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
+mso-ansi-language:EN-GB'>SHORTWAYPOINT<span style='mso-tab-count:7'>                                                                              </span>:
+</span><span class=SpellE><span lang=EN-GB style='font-size:10.0pt;font-family:
+Arial;mso-ansi-language:EN-GB'>ShortNameLength</span></span><span lang=EN-GB
+style='font-size:10.0pt;font-family:Helvetica;mso-ansi-language:EN-GB'> <span
+class=SpellE>Zeichen</span> des Waypoints (<span class=SpellE>für</span> <span
+class=SpellE>Benutzer</span> alter <span class=SpellE>Geräte</span> <span
+class=SpellE>mit</span> <span class=SpellE>nur</span> 6 <span class=SpellE>Waypointzeichen</span>,
+<br>
+</span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:
+EN-GB'>OWNER<span style='mso-tab-count:8'>                                                                                             </span>:
+<span class=SpellE>Cacheowner</span><br>
 DIFFICULTY<span style='mso-tab-count:8'>                                                                                        </span>:<br>
-</span><span style='font-size:10.0pt;font-family:Helvetica'>SHORTDIFFICULTY<span
-style='mso-tab-count:7'>                                                                             </span>:
-<span class=SpellE>Difficulty</span> mal 10 also 15 statt 1.5<br>
+</span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
+mso-ansi-language:EN-GB'>SHORTDIFFICULTY<span style='mso-tab-count:7'>                                                                             </span>:
+Difficulty mal 10 also 15 <span class=SpellE>statt</span> 1.5<br>
 SHDIFFICULTY<span style='mso-tab-count:8'>                                                                                   </span>:
-<span class=SpellE>Difficulty</span> abgerundet also 1 statt 1.5<br>
-</span><span style='font-size:10.0pt;font-family:Arial'>TERRAIN<span
-style='mso-tab-count:8'>                                                                                            </span>:<br>
-</span><span style='font-size:10.0pt;font-family:Helvetica'>SHORTTERAIN<span
-style='mso-tab-count:8'>                                                                                   </span>:
+Difficulty <span class=SpellE>abgerundet</span> also 1 <span class=SpellE>statt</span>
+1.5<br>
+</span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:
+EN-GB'>TERRAIN<span style='mso-tab-count:8'>                                                                                            </span>:<br>
+</span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
+mso-ansi-language:EN-GB'>SHORTTERAIN<span style='mso-tab-count:8'>                                                                                   </span>:
 Terrain mal 10<br>
 SHTERRAIN<span style='mso-tab-count:8'>                                                                                        </span>:
-Terrain abgerundet<br>
-</span><span style='font-size:10.0pt;font-family:Arial'>DISTANCE<span
-style='mso-tab-count:8'>                                                                                          </span>:
-Distance <span class=SpellE>calculated</span> in <span class=SpellE>cachelist</span><br>
+Terrain <span class=SpellE>abgerundet</span><br>
+</span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:
+EN-GB'>DISTANCE<span style='mso-tab-count:8'>                                                                                          </span>:
+Distance calculated in <span class=SpellE>cachelist</span><br>
 BEARING<span style='mso-tab-count:8'>                                                                                           </span>:
-Bearing <span class=SpellE>calculated</span> in <span class=SpellE>cachelist</span><br>
+Bearing calculated in <span class=SpellE>cachelist</span><br>
 LATON<span style='mso-tab-count:9'>                                                                                               </span>:
-<span class=SpellE>Coordinates</span> in <span class=SpellE>long</span> <span
-class=SpellE>format</span>, <span class=SpellE>e.g</span>. N 50° 31.234 E 008°
-45.267<br>
+Coordinates in long format, e.g. N 50° 31.234 E 008° 45.267<br>
 LAT<span style='mso-tab-count:9'>                                                                                                    </span>:
-&lt;<span class=SpellE>wpt</span> <span class=SpellE>lat=”xx.yyyy</span>”
-……..&gt; </span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
-mso-ansi-language:EN-GB'>Latitude in decimal format, e.g. 50.20147<br>
+&lt;<span class=SpellE>wpt</span> lat=”<span class=SpellE>xx.yyyy</span>”
+……..&gt; Latitude in decimal format, e.g. 50.20147<br>
 LON<span style='mso-tab-count:9'>                                                                                                   </span>:
 &lt;<span class=SpellE>wpt</span> …… <span class=SpellE>lon</span>=”<span
 class=SpellE>xx.yyyy</span>” &gt; Longitude in decimal format, e.g. 008.58132<br>
 STATUS<span style='mso-tab-count:8'>                                                                                             </span>:<span
 style='mso-spacerun:yes'>  </span>means found<br>
+GC_LOGTYPE<span style='mso-tab-count:8'>                                                                                    </span>:
+the English Status texts (for <span class=SpellE>gpx</span> – export)<br>
 STATUS_DATE<span style='mso-tab-count:8'>                                                                                   </span>:
 Get the date part of the status <br>
 STATUS_TIME<span style='mso-tab-count:8'>                                                                                    </span>:
 Get the time part of the status<br>
 DATE<span style='mso-tab-count:9'>                                                                                                 </span>:
 date hidden<br>
+CACHE_NAME<span style='mso-tab-count:8'>                                                                                   </span>:
+original Name of cache<br>
+NAME<span style='mso-tab-count:9'>                                                                                                </span>:
+Name of cache (<span class=SpellE>badchars</span> are removed, see below) (<span
+class=SpellE>neuerdings</span> <span class=SpellE>bei</span> ASCII <span
+class=SpellE>Simplifizierung</span> von <span class=SpellE>Zeichen</span>)<br>
+SHORTNAME<span style='mso-tab-count:8'>                                                                                     </span>:
+</span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
+mso-ansi-language:EN-GB'>Name <span class=SpellE>der</span> <span class=SpellE>durch</span>
+<span class=SpellE>Weglassen</span> von <span class=SpellE>Vokalen</span> von <span
+class=SpellE>hinten</span> und <span class=SpellE>wenn</span> <span
+class=SpellE>das</span> <span class=SpellE>nicht</span> <span class=SpellE>reicht</span>
+<span class=SpellE>durch</span> <span class=SpellE>Weglassen</span> von <span
+style='mso-spacerun:yes'>  </span><span style='mso-spacerun:yes'>  </span><span
+style='mso-tab-count:9'>                                                                                                      </span>:
+<span class=SpellE>Kleinbuchstaben</span> von <span class=SpellE>hinten</span>
+auf <span class=SpellE>eine</span> in den <span class=SpellE>Einstellungen</span>
+<span class=SpellE>vorgegebene</span> <span class=SpellE>Länge</span> <span
+class=SpellE>gekürzt</span> <span class=SpellE>wird</span>. <br>
+<span style='mso-tab-count:9'>                                                                                                          </span>:
+(<span class=SpellE>Hintergrund</span>: <span class=SpellE>das</span> Notes -<span
+class=SpellE>Feld</span> <span class=SpellE>der</span> <span class=SpellE>meisten</span>
+<span class=SpellE>Garmins</span> <span class=SpellE>kann</span> <span
+class=SpellE>nur</span> 30 <span class=SpellE>Buchstaben</span>)<br>
+<span style='mso-tab-count:9'>                                                                                                          </span>:
+<span class=SpellE>dann</span> <span class=SpellE>kriegen</span> <span
+class=SpellE>sie</span> <span class=SpellE>noch</span> <span class=SpellE>Infos</span>
+<span class=SpellE>wie</span> Difficulty etc. rein)<br>
+TRAVELBUG<span style='mso-tab-count:8'>                                                                                      </span>:
+Y or N <span class=SpellE>für</span> <span class=SpellE>Anwesenheit/Abwesenheit</span>
+von <span class=SpellE>TBs</span> <span class=SpellE>im</span> Cache&nbsp;<br>
+GMTYPE<span style='mso-tab-count:8'>                                                                                            </span>:
+Type <span class=SpellE>aus</span> <span class=SpellE>der</span> <span
+class=SpellE>Garminmap.xml</span>, also <span class=SpellE>z.B</span>. Custom
+1, <span class=SpellE>zur</span> <span class=SpellE>Verwendung</span> <span
+class=SpellE>der</span> <span class=SpellE>Benutzerdefinierten</span> Icons<br>
+NOW</span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
+mso-ansi-language:EN-GB'>_DATE<span style='mso-tab-count:8'>                                                                                        </span>:
+Get the date part of now<br>
+NOW_TIME<span style='mso-tab-count:8'>                                                                                         </span>:
+Get the time part of now<br>
 URL<span style='mso-tab-count:9'>                                                                                                    </span>:<br>
 DESCRIPTION<span style='mso-tab-count:8'>                                                                                    </span>:
 Cache Description (possibly in HTML Format)<br>
@@ -308,35 +357,11 @@ see below)<br>
 DESCRYPTEDHINTS<span style='mso-tab-count:7'>                                                                           </span>:
 Decrypted hints&nbsp;&nbsp;&nbsp; (<span class=SpellE>badchars</span> are
 removed, see below) <br>
-</span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
-mso-ansi-language:EN-GB'>SHORTWAYPOINT<span style='mso-tab-count:7'>                                                                              </span>:
-</span><span class=SpellE><span lang=EN-GB style='font-size:10.0pt;font-family:
-Arial;mso-ansi-language:EN-GB'>ShortNameLength</span></span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Helvetica;mso-ansi-language:EN-GB'> <span
-class=SpellE>Zeichen</span> des Waypoints (<span class=SpellE>für</span> <span
-class=SpellE>Benutzer</span> alter <span class=SpellE>Geräte</span> <span
-class=SpellE>mit</span> <span class=SpellE>nur</span> 6 <span class=SpellE>Waypointzeichen</span>,
-<br>
-<span style='mso-spacerun:yes'> </span><span style='mso-tab-count:9'>                                                                                                         </span>:
-<span class=SpellE>dann</span> <span class=SpellE>kriegen</span> <span
-class=SpellE>sie</span> <span class=SpellE>noch</span> <span class=SpellE>Infos</span>
-<span class=SpellE>wie</span> Difficulty etc. rein)<br>
-TRAVELBUG<span style='mso-tab-count:8'>                                                                                      </span>:
-Y or N <span class=SpellE>für</span> <span class=SpellE>Anwesenheit/Abwesenheit</span>
-von <span class=SpellE>TBs</span> <span class=SpellE>im</span> Cache&nbsp;<br>
-GMTYPE<span style='mso-tab-count:8'>                                                                                            </span>:
-Type <span class=SpellE>aus</span> <span class=SpellE>der</span> <span
-class=SpellE>Garminmap.xml</span>, also <span class=SpellE>z.B</span>. Custom
-1, <span class=SpellE>zur</span> <span class=SpellE>Verwendung</span> <span
-class=SpellE>der</span> <span class=SpellE>Benutzerdefinierten</span> Icons<br>
-MAINWP<span style='mso-tab-count:8'>                                                                                            </span>:
-““ if is <span class=SpellE>Mainwaypoint</span>, <span class=SpellE>Mainwaypointname</span>
-if is <span class=SpellE>Addi</span> Waypoint<br>
-NOW</span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
-mso-ansi-language:EN-GB'>_DATE<span style='mso-tab-count:8'>                                                                                        </span>:
-Get the date part of now<br>
-NOW_TIME<span style='mso-tab-count:8'>                                                                                         </span>:
-Get the time part of now<br style='mso-special-character:line-break'>
+BUGS<span style='mso-tab-count:9'>                                                                                                 </span>:
+<span class=SpellE>Liste</span> <span class=SpellE>der</span> <span
+class=SpellE>TBs</span> : <br>
+SOLVER<span style='mso-tab-count:8'>                                                                                             </span>:
+Solver Infos<br style='mso-special-character:line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
 <![endif]><o:p></o:p></span></p>
 
@@ -377,9 +402,9 @@ class=SpellE>tmpl_var</span> name=LAT&gt;;&lt;<span class=SpellE>tmpl_var</span>
 name=LON&gt;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=TYPE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=SIZE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
-name=WAYPOINT&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
-name=DATE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
-name=URL&gt;&quot;&lt;<span class=SpellE>br</span> /&gt;<br>
+name=WAYPOINT&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span> name=DATE&gt;&quot;;&quot;&lt;<span
+class=SpellE>tmpl_var</span> name=URL&gt;&quot;&lt;<span class=SpellE>br</span>
+/&gt;<br>
 &lt;/<span class=SpellE>tmpl_loop</span>&gt;<br style='mso-special-character:
 line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
@@ -551,8 +576,8 @@ variables</span></u><u><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>If
-you set <span class=SpellE>loop_context_vars</span> to true in your Template's constructor,
-then you will have access to five special</span><span lang=EN-GB
+you set <span class=SpellE>loop_context_vars</span> to true in your Template's
+constructor, then you will have access to five special</span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB style='font-size:10.0pt;
 font-family:Arial;mso-ansi-language:EN-GB'>variables in all your loops. These
 are:</span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>

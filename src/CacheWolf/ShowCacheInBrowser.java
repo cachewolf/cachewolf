@@ -66,64 +66,44 @@ public class ShowCacheInBrowser {
 			if(chD.isVisible()){
 				Vm.showWait(true);
 				try {
-					
-					Hashtable varParams;
-					varParams=chD.toHashtable(new Regex("[,.]","."), null, 0, 30, new AsciiCodec(), null, true);
-					Enumeration de = varParams.keys();
-					while(de.hasMoreElements()) {
-						String s = de.nextElement().toString();
-						if (!s.equals("DESCRIPTION")) {
-							tpl.setParam(s,varParams.get(s).toString());
-						}
-					}
+					tpl.setParams(chD.toHashtable(new Regex("[,.]","."), null, 0, 30, new AsciiCodec(), null, true, 1));
 
 					// Cache attributes
-					if (chD.getCacheDetails(true).attributes.count()>0) {
-						Vector attVect=new Vector(chD.getCacheDetails(true).attributes.count()+1);
-						for (int i=0; i<chD.getCacheDetails(true).attributes.count(); i++) {
+					if (chD.getCacheDetails(false).attributes.count()>0) {
+						Vector attVect=new Vector(chD.getCacheDetails(false).attributes.count()+1);
+						for (int i=0; i<chD.getCacheDetails(false).attributes.count(); i++) {
 							Hashtable atts=new Hashtable();
 							atts.put("IMAGE","<img src=\"file://"+
-									 chD.getCacheDetails(true).attributes.getAttribute(i).getPathAndImageName()+
-									 "\" border=0 alt=\""+chD.getCacheDetails(true).attributes.getAttribute(i).getMsg()+"\">");
+									 chD.getCacheDetails(false).attributes.getAttribute(i).getPathAndImageName()+
+									 "\" border=0 alt=\""+chD.getCacheDetails(false).attributes.getAttribute(i).getMsg()+"\">");
 							if (i % 5 ==4)
 								atts.put("BR","<br/>");
 							else
 								atts.put("BR","");
-							atts.put("INFO",chD.getCacheDetails(true).attributes.getAttribute(i).getMsg());
+							atts.put("INFO",chD.getCacheDetails(false).attributes.getAttribute(i).getMsg());
 							attVect.add(atts);
 						}
 						tpl.setParam("ATTRIBUTES",attVect);
 					}
-					if (chD.getCacheDetails(true).Travelbugs.size()>0) tpl.setParam("BUGS",chD.getCacheDetails(true).Travelbugs.toHtml());
-					if (chD.getCacheDetails(true).getSolver()!=null && chD.getCacheDetails(true).getSolver().trim().length()>0) tpl.setParam("SOLVER", STRreplace.replace(chD.getCacheDetails(true).getSolver(),"\n","<br/>\n"));
 					// Look for images
-
-					StringBuffer s=new StringBuffer(chD.getCacheDetails(true).LongDescription.length());
+					// count only the images of main body
 					int start=0;
 					int pos;
 					int imageNo=0;
 					Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
 					while (start>=0 && (pos=chD.getCacheDetails(true).LongDescription.indexOf("<img",start))>0) {
 						if (imageNo >= chD.getCacheDetails(true).images.size())break;
-						s.append(chD.getCacheDetails(true).LongDescription.substring(start,pos));
 						imgRex.searchFrom(chD.getCacheDetails(true).LongDescription,pos);
 						String imgUrl=imgRex.stringMatched(1);
-						//Vm.debug("imgUrl "+imgUrl);
 						if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
 							String imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase()+"    ").substring(0,4).trim();
-							// If we have an image which we stored when spidering, we can display it
         					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
-								s.append("<img src=\"file://"+
-								   Global.getProfile().dataDir+chD.getCacheDetails(true).images.get(imageNo).getFilename()+"\">");
 								imageNo++;
 							}
 						}
 						start=chD.getCacheDetails(true).LongDescription.indexOf(">",pos);
 						if (start>=0) start++;
 					}
-					if (start>=0) s.append(chD.getCacheDetails(true).LongDescription.substring(start));
-					tpl.setParam("DESCRIPTION", s.toString());
-
 					// Do the remaining pictures which are not included in main body of text
 					// They will be hidden initially and can be displayed by clicking on a link
 					if (imageNo<chD.getCacheDetails(true).images.size()) {

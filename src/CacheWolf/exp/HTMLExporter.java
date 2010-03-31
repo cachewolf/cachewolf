@@ -91,26 +91,14 @@ public class HTMLExporter{
 						continue;
 					}
 					det=ch.getCacheDetails(false);
-					varParams=ch.toHashtable(dec, null, 0, 30, new AsciiCodec(), null, false);
+					varParams=ch.toHashtable(dec, null, 0, 30, new AsciiCodec(), null, false, 2);
 					cache_index.add(varParams);
 					//We can generate the individual page here!
 					try{
 						Template page_tpl = new Template(template_init_page);
-						
-						Enumeration de = varParams.keys();
-						while(de.hasMoreElements()) {
-							String s = de.nextElement().toString();
-							if (!s.equals("DESCRIPTION")) {
-								page_tpl.setParam(s,varParams.get(s).toString());
-							}
-						}
+						page_tpl.setParams(varParams);
 						
 						if (det != null) {
-							if (ch.is_HTML()) {
-								page_tpl.setParam("DESCRIPTION", modifyLongDesc(det,targetDir));
-							} else {
-								page_tpl.setParam("DESCRIPTION",STRreplace.replace(det.LongDescription, "\n", "<br>"));
-							}
 
 							StringBuffer sb=new StringBuffer(2000);
 							for(int j = 0; j<det.CacheLogs.size(); j++){
@@ -119,9 +107,7 @@ public class HTMLExporter{
 								icon=det.CacheLogs.getLog(j).getIcon();
 								if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
 							}
-
 							page_tpl.setParam("LOGS", sb.toString());
-							page_tpl.setParam("NOTES", STRreplace.replace(det.getCacheNotes(), "\n","<br>"));
 
 							cacheImg.clear();
 							for(int j = 0; j<det.images.size(); j++){
@@ -255,49 +241,6 @@ public class HTMLExporter{
 			new MessageBox("Export Error", exportErrors+" errors during export. See log for details.", FormBase.OKB).execute();
 		}
 
-	}
-
-	/**
-	 * Modify the image links in the long description so that they point to image files in the local directory
-	 * Also copy the image file to the target directory so that it can be displayed.
-	 * @param chD CacheHolderDetail
-	 * @return The modified long description
-	 */
-	private String modifyLongDesc(CacheHolderDetail chD, String targetDir) {
-		StringBuffer s=new StringBuffer(chD.LongDescription.length());
-		int start=0;
-		int pos;
-		int imageNo=0;
-		Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
-		while (start>=0 && (pos=chD.LongDescription.indexOf("<img",start))>0) {
-			s.append(chD.LongDescription.substring(start,pos));
-			imgRex.searchFrom(chD.LongDescription,pos);
-			String imgUrl=imgRex.stringMatched(1);
-			//Vm.debug("imgUrl "+imgUrl);
-			if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
-				String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
-				// If we have an image which we stored when spidering, we can display it
-				if(!imgType.startsWith(".com") && !imgType.startsWith(".php") && !imgType.startsWith(".exe") && !imgType.startsWith(".pl")){
-					// It may occur that there are less local images than
-					// image links in the description (eg. because of importing
-					// GPX files). We have to allow for this situation.
-					Object localImageSource = null;
-					if (imageNo < chD.images.size()) {
-						localImageSource = chD.images.get(imageNo).getFilename();
-					}
-					if (localImageSource == null) localImageSource = imgUrl;
-					s.append("<img src=\""+localImageSource+"\">");
-					// The actual immages are copied elswhere
-					//DataMover.copy(profile.dataDir + chD.Images.get(imageNo),targetDir + chD.Images.get(imageNo));
-					imageNo++;
-				}
-			}
-			start=chD.LongDescription.indexOf(">",pos);
-			if (start>=0) start++;
-			if (imageNo >= chD.images.size()) break;
-		}
-		if (start>=0) s.append(chD.LongDescription.substring(start));
-		return s.toString();
 	}
 
 	private void sortAndPrintIndex(Template tmpl, Vector list, String file, String field){
