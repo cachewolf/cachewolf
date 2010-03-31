@@ -194,7 +194,7 @@ public class TPLExporter {
 				h.changed();
 				if(ch.isVisible() && ch.pos.isValid()){
 					try {
-						cache_index.add(ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.codec, gm, false));
+						cache_index.add(ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.codec, gm, false, 0));
 					}catch(Exception e){
 						Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
 						e.printStackTrace();
