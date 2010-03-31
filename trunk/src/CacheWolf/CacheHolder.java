@@ -574,10 +574,11 @@ public class CacheHolder{
 	
 	/** Return a Hashtable containing all the cache data for Templates */
 	public Hashtable toHashtable(
-			Regex dec, Regex rex, 
+			Regex decSep, Regex badChars, 
 			int shortWaypointLength, int shortNameLength, 
 			TextCodec codec, GarminMap gm,
-			boolean withFoundText
+			boolean withFoundText,
+			int ModTypLongDesc
 			) {
 		Hashtable varParams = new Hashtable();
 		CacheHolderDetail det = this.getCacheDetails(false);
@@ -603,19 +604,19 @@ public class CacheHolder{
 		int wps = (wpl < shortWaypointLength) ? 0 : wpl - shortWaypointLength;
 		varParams.put("SHORTWAYPOINT", wayPoint.substring(wps, wpl));
 		varParams.put("OWNER", cacheOwner);
-		varParams.put("DIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(hard)));
+		varParams.put("DIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(hard)));
 		String sHard = Integer.toString(hard);
 		varParams.put("SHORTDIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":sHard);
 		varParams.put("SHDIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":sHard.substring(0,1));
-		varParams.put("TERRAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":dec.replaceAll(CacheTerrDiff.longDT(terrain)));
+		varParams.put("TERRAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(terrain)));
 		String sTerrain = Integer.toString(terrain);
 		varParams.put("SHORTTERAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":sTerrain);
 		varParams.put("SHTERRAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":sTerrain.substring(0,1));
-		varParams.put("DISTANCE", dec.replaceAll(getDistance()));
+		varParams.put("DISTANCE", decSep.replaceAll(getDistance()));
 		varParams.put("BEARING", bearing);
 		varParams.put("LATLON", (pos!=null && pos.isValid())?LatLon:"unknown");
-		varParams.put("LAT", dec.replaceAll(pos.getLatDeg(CWPoint.DD)));
-		varParams.put("LON", dec.replaceAll(pos.getLonDeg(CWPoint.DD)));		
+		varParams.put("LAT", decSep.replaceAll(pos.getLatDeg(CWPoint.DD)));
+		varParams.put("LON", decSep.replaceAll(pos.getLonDeg(CWPoint.DD)));		
 		if (withFoundText && cacheStatus.length()>=10 && cacheStatus.charAt(4)=='-')
 			varParams.put("STATUS",MyLocale.getMsg(318,"Found")+" "+cacheStatus);
 		else
@@ -624,23 +625,10 @@ public class CacheHolder{
 		varParams.put("STATUS_DATE", GetStatusDate());
 		varParams.put("STATUS_TIME", GetStatusTime());
 		varParams.put("DATE", dateHidden);
-		
-		varParams.put("URL", det != null ? det.URL : "");
-
-		varParams.put("DESCRIPTION", det != null ? det.LongDescription : "");
 		varParams.put("CACHE_NAME", cacheName);
-		if (codec instanceof AsciiCodec) { cacheName=Exporter.simplifyString(cacheName);}
-		if (rex != null) {
-			cacheName=rex.replaceAll(cacheName);
-			varParams.put("NOTES", det != null ? STRreplace.replace(rex.replaceAll(det.getCacheNotes()), "\n","<br>"): "");
-			varParams.put("HINTS", det != null ? rex.replaceAll(det.Hints): "");
-			varParams.put("DECRYPTEDHINTS", det != null ? rex.replaceAll(Common.rot13(det.Hints)): "");
-		} else {
-			varParams.put("NOTES", det != null ? STRreplace.replace(det.getCacheNotes(), "\n","<br>"): "");
-			varParams.put("HINTS", det != null ? det.Hints: "");
-			varParams.put("DECRYPTEDHINTS", det != null ? Common.rot13(det.Hints): "");
-		}
-		varParams.put("NAME", cacheName);
+		if (codec instanceof AsciiCodec) { cacheName=Exporter.simplifyString(cacheName);} // use for "NAME"
+		if (badChars != null) { cacheName=badChars.replaceAll(cacheName); } // use for "NAME"
+		varParams.put("NAME", cacheName); // !!! cacheName used twice
 		String shortName=removeCharsfromString(cacheName, shortNameLength, selbstLaute);
 		if (shortName.length()>shortNameLength) {
 			shortName=removeCharsfromString(shortName, shortNameLength, mitLauteKlein());
@@ -650,8 +638,82 @@ public class CacheHolder{
 		varParams.put("GMTYPE", gm != null ? gm.getIcon(this) : "");
 		varParams.put("NOW_DATE",nowdate().setToCurrentTime().toString());
 		varParams.put("NOW_TIME",nowtime().setToCurrentTime().toString());
+		if (det == null){
+			varParams.put("URL", "");
+			varParams.put("DESCRIPTION", "");
+			varParams.put("NOTES", "");
+			varParams.put("HINTS", "");
+			varParams.put("DECRYPTEDHINTS", "");
+		}
+		else {
+			varParams.put("URL", det.URL);
+			if (html) {
+				if (ModTypLongDesc == 0) {
+					varParams.put("DESCRIPTION",det.LongDescription);
+				}
+				else {
+					varParams.put("DESCRIPTION", modifyLongDesc(det, ModTypLongDesc));
+				}
+			} else {
+				 // what was the reason? replace or no replace? I dont remember
+				varParams.put("DESCRIPTION",STRreplace.replace(det.LongDescription, "\n", "<br>"));
+			}
+			
+			if (badChars != null) {
+				varParams.put("NOTES",STRreplace.replace(badChars.replaceAll(det.getCacheNotes()), "\n","<br>"));
+				varParams.put("HINTS",badChars.replaceAll(det.Hints));
+				varParams.put("DECRYPTEDHINTS",badChars.replaceAll(Common.rot13(det.Hints)));
+			} else {
+				varParams.put("NOTES", STRreplace.replace(det.getCacheNotes(), "\n","<br>"));
+				varParams.put("HINTS", det.Hints);
+				varParams.put("DECRYPTEDHINTS", Common.rot13(det.Hints));
+			}
+			if (det.Travelbugs.size()>0) varParams.put("BUGS",det.Travelbugs.toHtml());
+			if (det.getSolver()!=null && det.getSolver().trim().length()>0) varParams.put("SOLVER", STRreplace.replace(det.getSolver(),"\n","<br/>\n"));
+		}
 		return varParams;
 	}	
+
+	/**
+	 * Modify the image links in the long description so that they point to image files in the local directory
+	 * Also copy the image file to the target directory so that it can be displayed.
+	 * @param chD CacheHolderDetail
+	 * @param int ModTypLongDesc == 1 get image from profile path, == 2 get image from html-path
+	 * @return The modified long description
+	 */
+	private String modifyLongDesc(CacheHolderDetail chD, int ModTypLongDesc) {
+		StringBuffer s=new StringBuffer(chD.LongDescription.length());
+		int start=0;
+		int pos;
+		int imageNo=0;
+		String imgsrc="";
+		if (ModTypLongDesc==1) imgsrc="file://"+Global.getProfile().dataDir;
+		Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
+		while (start>=0 && (pos=chD.LongDescription.indexOf("<img",start))>0) {
+			if (imageNo >= chD.images.size()) break;
+			s.append(chD.LongDescription.substring(start,pos));
+			imgRex.searchFrom(chD.LongDescription,pos);
+			String imgUrl=imgRex.stringMatched(1);
+			if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
+				String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
+				// If we have an image which we stored when spidering, we can display it
+   				if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
+					Object localImageSource = null;
+					if (imageNo < chD.images.size()) {
+						localImageSource = chD.images.get(imageNo).getFilename();
+					}
+					if (localImageSource == null) localImageSource = imgUrl;
+					s.append("<img src=\""+imgsrc+localImageSource+"\">");
+					imageNo++;
+				}
+			}
+			start=chD.LongDescription.indexOf(">",pos);
+			if (start>=0) start++;
+		}
+		if (start>=0) s.append(chD.LongDescription.substring(start));
+		return s.toString();
+	}
+
 	private final static Time nowdate() {
 		Time nd = new Time();
 		return nd.setFormat("yyyy-MM-dd");
