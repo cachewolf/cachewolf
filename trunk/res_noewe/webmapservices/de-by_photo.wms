@@ -1,12 +1,12 @@
 # please refer to readme_wms.txt for an explantion of this file format
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl:	http://www.geodaten.bayern.de/ogc/getogc.cgi?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
-Name:	de.by Luftbild
+Name: not available @ 31.3.2010 de.by Luftbild
 MapType:	photo
 MainUrl:	http://www.geodaten.bayern.de/ogc/getogc.cgi?
-ServiceTypeUrlPart:	SERVICE=WMS 
-VersionUrlPart:	VERSION=1.1.1 
-CoordinateReferenceSystemCacheWolf: 31468 
+ServiceTypeUrlPart:	SERVICE=WMS
+VersionUrlPart:	VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf: 31468
 CoordinateReferenceSystemUrlPart:	SRS=EPSG:31468
 RequestUrlPart:	REQUEST=GetMap
 LayersUrlPart:	LAYERS=DOP

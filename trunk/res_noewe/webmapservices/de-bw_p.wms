@@ -1,6 +1,6 @@
 TakenFromUrl:       http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
-GetCapabilitiesUrl: http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:	de.Baden-Wuerttemberg p/bw SF=0.3..700
+GetCapabilitiesUrl: http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&SERVICE=WMS&REQUEST=GetCapabilities
+Name: de.Baden-Wuerttemberg p/bw SF=0.3..700
 MapType:                        photo
 MainUrl:            http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&
 ServiceTypeUrlPart: SERVICE=WMS

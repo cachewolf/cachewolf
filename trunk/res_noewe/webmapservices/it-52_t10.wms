@@ -1,14 +1,14 @@
 TakenFromUrl:   http://www.rete.toscana.it/sett/territorio/carto/repertorio/geoscopio_wms/
-GetCapabilitiesUrl:      http://web.rete.toscana.it/sgrwms/com.rt.wms.RTmap?ServiceName=_rt_wms_topogr&service=WMS&request=GetCapabilities
-Name:   it.Toskana topo 10
+GetCapabilitiesUrl:      http://web.rete.toscana.it/sgrwms/com.rt.wms.RTmap?service=WMS&request=GetCapabilities
+Name: it.Toskana topo 10
 MapType: topo
 #MainUrl:   http://web.rete.toscana.it:80/sgrwms/com.rt.wms.RTmap/_rt_wms_topogr?
 #MainUrl:   http://web.rete.toscana.it:80/sgrwms/com.rt.wms.RTmap/_rt_wms?
 MainUrl:    http://web.rete.toscana.it/sgrwms/com.rt.wms.RTmap?
 ServiceTypeUrlPart:   SERVICE=WMS
 VersionUrlPart:   VERSION=1.1.0
-CoordinateReferenceSystemCacheWolf:   3003
-CoordinateReferenceSystemUrlPart:   SRS=EPSG:3003
+CoordinateReferenceSystemCacheWolf:   4326
+CoordinateReferenceSystemUrlPart:   SRS=EPSG:4326
 RequestUrlPart:   REQUEST=GetMap
 #LayersUrlPart:     LAYERS=_idita|ITALIA||
 #LayersUrlPart:     LAYERS=_idbati|BATIMETRICHE||
@@ -286,7 +286,7 @@ ImageFormatUrlPart:   FORMAT=image/png
 BoundingBoxTopLeftWGS84:   N 44.500805 E 9.642548
 BoundingBoxButtomRightWGS84:   N 42.168745 E 12.462359
 MinScale:   0
-MaxScale:   70 
+MaxScale:   70
 # maxscale 14.14214
 #Höhenlinien nur bei Scale unter 4.0
 RecommendedScale:   1
