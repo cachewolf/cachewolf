@@ -1,6 +1,6 @@
 TakenFromUrl:       http://services.giub.uni-bonn.de:80/geoserver/wms
 GetCapabilitiesUrl: http://services.giub.uni-bonn.de/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               Europa t OSM(Server uni-bonn)
+Name: not available @ 31.3.2010 Europa t OSM(Server uni-bonn)
 MapType:                        topo
 MainUrl:            http://services.giub.uni-bonn.de/wms?
 ServiceTypeUrlPart: SERVICE=WMS
