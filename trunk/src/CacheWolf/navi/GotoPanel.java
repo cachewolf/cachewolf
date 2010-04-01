@@ -383,19 +383,20 @@ public final class GotoPanel extends CellPanel {
 			// change destination waypoint
 			if (ev.target == btnGoto){
 				if(Vm.isMobile()){
-					InputScreen InScr = new InputScreen(myNavigation , currFormatSel);
+					InputScreen InScr = new InputScreen(CoordsScreen.getLocalSystem(currFormatSel));
 					if (myNavigation.destination.isValid())	InScr.setCcords(myNavigation.destination);
 					else InScr.setCcords(new CWPoint(0,0));
 					if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
 						setDestination(InScr.getCoords());
 				}else
 				{
-				        CoordsScreen cs = new CoordsScreen();
-				        if (myNavigation.destination.isValid())	cs.setFields(myNavigation.destination, CoordsScreen.getLocalSystem(currFormatSel));
-				        else cs.setFields(new CWPoint(0,0), CoordsScreen.getLocalSystem(currFormatSel));
-				        if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK)
-					        setDestination(cs.getCoords());
-                                }
+					CoordsScreen cs = new CoordsScreen();
+					if (myNavigation.destination.isValid())	cs.setFields(myNavigation.destination, CoordsScreen.getLocalSystem(currFormatSel));
+					else cs.setFields(new CWPoint(0,0), CoordsScreen.getLocalSystem(currFormatSel));
+					if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK)
+						setDestination(cs.getCoords());
+				}
+
 			}
 		}
 		super.onEvent(ev);
@@ -876,12 +877,12 @@ class GotoRose extends AniImage {
 	public boolean isNorthCentered() {
 		return northCentered;
 	}
-	
+
 	public static Font GetCorrectedFont(Graphics g, String name, int style, int size) {
 		Font newFont = new Font(name, style, size);
 		FontMetrics metrics = g.getFontMetrics(newFont);
 		int fontHeight = metrics.getHeight();
-		
+
 		float ratio = (float)fontHeight / (float)size;
 		if(ratio < 0.9 || ratio > 1.1){
 			size = (int) (size / ratio + 0.5);
@@ -889,7 +890,7 @@ class GotoRose extends AniImage {
 				size=5;
 			newFont = new Font(name, style, size);
 		}
-		
+
 		return newFont;
 	}
 }

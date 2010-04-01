@@ -1,6 +1,7 @@
 package CacheWolf;
 
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.InputScreen;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Point;
@@ -589,19 +590,39 @@ public class DetailsPanel extends CellPanel {
 				Global.mainTab.gotoP.setDestinationAndSwitch(cache);
 			} else if (ev.target == btnCoordinates) {
 				CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.CW);
-				final CoordsScreen cs = new CoordsScreen(true);
-				cs.setFields(coords, TransformCoordinates.CW);
-				if (cs.execute() == FormBase.IDOK) {
-					dirtyDetails = true;
-					coords = cs.getCoords();
-					Global.getProfile().notifyUnsavedChanges(!cache.pos.toString().equals(coords.toString()));
-					cache.pos.set(coords);
-					btnCoordinates.setText(coords.toString());
-					cache.setLatLon(coords.toString());
-					// If the current centre is valid, calculate the distance and bearing to it
-					final CWPoint centre = Global.getPref().getCurCentrePt();
-					if (centre.isValid()) {
-						cache.calcDistance(centre); // todo perhaps sortTable
+				if(Vm.isMobile()){
+					InputScreen InScr = new InputScreen(TransformCoordinates.CW);
+					if (coords.isValid())	InScr.setCcords(coords);
+						else InScr.setCcords(new CWPoint(0,0));
+					if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
+					{
+						dirtyDetails = true;
+						coords = InScr.getCoords();
+						Global.getProfile().notifyUnsavedChanges(!cache.pos.toString().equals(coords.toString()));
+						cache.pos.set(coords);
+						btnCoordinates.setText(coords.toString());
+						cache.setLatLon(coords.toString());
+						// If the current centre is valid, calculate the distance and bearing to it
+						final CWPoint centre = Global.getPref().getCurCentrePt();
+						if (centre.isValid()) {
+							cache.calcDistance(centre); // todo perhaps sortTable
+						}
+					}
+				}else{
+					final CoordsScreen cs = new CoordsScreen(true);
+					cs.setFields(coords, TransformCoordinates.CW);
+					if (cs.execute() == FormBase.IDOK) {
+						dirtyDetails = true;
+						coords = cs.getCoords();
+						Global.getProfile().notifyUnsavedChanges(!cache.pos.toString().equals(coords.toString()));
+						cache.pos.set(coords);
+						btnCoordinates.setText(coords.toString());
+						cache.setLatLon(coords.toString());
+						// If the current centre is valid, calculate the distance and bearing to it
+						final CWPoint centre = Global.getPref().getCurCentrePt();
+						if (centre.isValid()) {
+							cache.calcDistance(centre); // todo perhaps sortTable
+						}
 					}
 				}
 			} else if (ev.target == btnFoundDate) {
