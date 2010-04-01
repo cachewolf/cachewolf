@@ -3,8 +3,7 @@ package CacheWolf;
 
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
-import ewe.fx.Font;
-import ewe.fx.Color;
+import ewe.fx.*;
 import ewe.ui.*;
 
 
@@ -21,16 +20,17 @@ public class InputScreen extends Form {
 	private static StringBuffer strBufBear = new StringBuffer(3);
 
 
-	private int iPosition;
 	private static final int POS_NDD=2, LEN_NDD=3;
 	private static final int POS_NMM=6, LEN_NMM=3;
 	private static final int POS_NSSS=9, LEN_NSSS=3;
 	private static final int POS_EDDD=15, LEN_EDDD=4;
 	private static final int POS_EMM=20, LEN_EMM=3;
 	private static final int POS_ESSS=23, LEN_ESSS=3;
+	private int iPosition = POS_NDD;
+	private int iPosBear=0,iPosDist=0;
 
-	public Navigate myNavigation;
 	int currFormatSel;
+	CWPoint CoordsInput = new CWPoint();
 	CWPoint CoordsBack = new CWPoint();
 	CWPoint CoordsBear = new CWPoint();
 
@@ -38,6 +38,7 @@ public class InputScreen extends Form {
 	private boolean bBearingPanelOnTop = false;
 
 	static Color ColorEdit = new Color(0,255,0);// green
+	static Color ColorPos = new Color(255,0,0);// red
 	static Color ColorNormal = new Color(192,192,192);// grey
 	// different panels to avoid spanning
 	private CellPanel MainP = new CellPanel();
@@ -48,21 +49,77 @@ public class InputScreen extends Form {
 	private CellPanel BearP = new CellPanel();
 	// all Buttons
 	private mButton btnNorth, btnWest;
-	private mButton btnNorthDD, btnEastDDD;
-	private mButton btnNorthMM, btnEastMM;
-	private mButton btnNorthSSS, btnEastSSS;
+	private mButtonPos btnNorthDD, btnEastDDD;
+	private mButtonPos btnNorthMM, btnEastMM;
+	private mButtonPos btnNorthSSS, btnEastSSS;
 	private mButton btn9, btn8, btn7, btn6, btn5, btn4, btn3, btn2, btn1, btn0, btnOk, btnEsc;
 	private mButton btnBear, btnGPS , btnExpert;
 	private mLabel lblDistanc = new mLabel(MyLocale.getMsg(1404,"Distance"));
 	private mLabel lblBearing = new mLabel(MyLocale.getMsg(1403,"Bearing"));
-	private mButton btnBearing, btnDistanc;
+	private mButtonPos btnBearing, btnDistanc;
 	private mLabel lblDist = new mLabel("m");
 	private mLabel lblBear = new mLabel("°");
+	private int[] iPointPos = {0,0,0,0,0,0};
+
+	public class mButtonPos  extends mButton {
+		private int iPosition, iPosY = 5 , iGap =1;
+		private FontMetrics tempFm;
+		private int stringHeight;
+		private int sWidth1,sWidth2,sWidth3,stringWidth;
+		private int TextStart;
 
 
-	public InputScreen(Navigate nav, int FormSelect)
+		mButtonPos(String sValue){
+			this.setText(sValue);
+		}
+
+		public void setText(String sValue, int iPos){
+			this.setText(sValue);
+			tempFm = this.getFontMetrics(font);
+			stringHeight = tempFm.getHeight();
+			if(sValue.length() >= 3){
+				sWidth1 = tempFm.getTextWidth(sValue.substring(0, 1));
+				sWidth2 = tempFm.getTextWidth(sValue.substring(1, 2));
+				sWidth3 = tempFm.getTextWidth(sValue.substring(2, 3));
+				stringWidth = tempFm.getTextWidth(sValue);
+				TextStart = (this.width - stringWidth)/2;
+			}
+			iPosition= iPos;
+		}
+
+		public void doPaint(Graphics g, Rect area){
+			//if(iPosition > 0) g.setColor(ColorEdit); else  g.setColor(ColorNormal);
+			super.doPaint(g, area);
+			g.setPen(new Pen(ColorPos, Pen.SOLID, 2));
+			//g.fillRect(area.x, area.y, area.height, area.width);
+			//g.draw3DRect(area, 1, false, ColorEdit, ColorEdit);
+
+			switch(iPosition)
+			{
+				case 0: g.setPen(new Pen(ColorNormal, Pen.SOLID, 2));
+						g.drawRect(0, 0, 0 ,0);
+						g.draw3DRect(area,	ButtonObject.buttonEdge,true,null,ColorNormal);
+						break;
+				case 1: g.draw3DRect(area,	ButtonObject.buttonEdge,true,null,ColorEdit);
+						g.drawRect(TextStart, iPosY, sWidth1+1 ,stringHeight);
+						break;
+				case 2: g.draw3DRect(area,	ButtonObject.buttonEdge,true,null,ColorEdit);
+						g.drawRect(TextStart + sWidth2 + iGap, iPosY, sWidth2+1 ,stringHeight);
+						break;
+				case 3: g.draw3DRect(area,	ButtonObject.buttonEdge,true,null,ColorEdit);
+						g.drawRect(TextStart + sWidth2 + sWidth3, iPosY, sWidth3+1 ,stringHeight);
+						break;
+				default: g.draw3DRect(area,	ButtonObject.buttonEdge,true,null,ColorEdit);
+						 break;
+			}
+
+		}
+
+
+	}
+
+	public InputScreen( int FormSelect)
 	{
-		myNavigation = nav;
 		currFormatSel = FormSelect;
 		InitInputScreen();
 	//	setTextButton(sCoords);
@@ -107,26 +164,26 @@ public class InputScreen extends Form {
 		btnNorth = new mButton("N");
 		btnNorth.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnNorth,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnNorthDD = new mButton("DD°");
+		btnNorthDD = new mButtonPos("DD°");
 		btnNorthDD.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnNorthDD,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnNorthMM = new mButton("MM.");
+		btnNorthMM = new mButtonPos("MM.");
 		btnNorthMM.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnNorthMM,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnNorthSSS = new mButton("SSS");
+		btnNorthSSS = new mButtonPos("SSS");
 		btnNorthSSS.borderStyle = BDR_NOBORDER;
 		TopP.addLast(btnNorthSSS,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 
 		btnWest = new mButton("E");
 		btnWest.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnWest,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnEastDDD = new mButton("DDD°");
+		btnEastDDD = new mButtonPos("DDD°");
 		btnEastDDD.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnEastDDD,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnEastMM = new mButton("MM.");
+		btnEastMM = new mButtonPos("MM.");
 		btnEastMM.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnEastMM,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnEastSSS = new mButton("SSS");
+		btnEastSSS = new mButtonPos("SSS");
 		btnEastSSS.borderStyle = BDR_NOBORDER;
 		TopP.addLast(btnEastSSS,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 		TopSP.setControl(TopP);
@@ -149,28 +206,28 @@ public class InputScreen extends Form {
 		BottomP.addNext(btn2,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 		btn3 = new mButton(" 3 ");
 		BottomP.addLast(btn3,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btn0 = new mButton("  0  ");
+		btn0 = new mButton("     0     ");
 		BottomP.addNext(btn0,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnEsc = new mButton("ESC");
-		BottomP.addNext(btnEsc,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnOk = new mButton("OK ");
-		BottomP.addLast(btnOk,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		btnGPS = new mButton("   GPS   ");
+		BottomP.addNext(btnGPS,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 		btnBear = new mButton(MyLocale.getMsg(1415,"bearing"));
-		ExpertP.addNext(btnBear,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnGPS = new mButton(" GPS ");
-		ExpertP.addNext(btnGPS,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addLast(btnBear,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 		btnExpert = new mButton("Expert");
-		ExpertP.addLast(btnExpert,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		ExpertP.addNext(btnExpert,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		btnEsc = new mButton("  Abbr  ");
+		ExpertP.addNext(btnEsc,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		btnOk = new mButton("    OK   ");
+		ExpertP.addLast(btnOk,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 		//this.addLast(mainPanel,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 
 		//bearing Pannel
 		BearP.addNext(lblDistanc,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnDistanc = new mButton("        0");
+		btnDistanc = new mButtonPos("        0");
 		btnDistanc.borderStyle = BDR_NOBORDER;
 		BearP.addNext(btnDistanc,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 		BearP.addLast(lblDist,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 		BearP.addNext(lblBearing,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnBearing = new mButton("        0");
+		btnBearing = new mButtonPos("        0");
 		btnBearing.borderStyle = BDR_NOBORDER;
 		BearP.addNext(btnBearing,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
 		BearP.addLast(lblBear,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
@@ -184,8 +241,7 @@ public class InputScreen extends Form {
 		btnNorthMM.setFont(inpNewFont);    btnEastMM.setFont(inpNewFont);
 		btnNorthSSS.setFont(inpNewFont);   btnEastSSS.setFont(inpNewFont);
 		lblBear.setFont(inpNewFont);	   lblDist.setFont(inpNewFont);
-		btnBear.setFont(inpNewFont);       btnExpert.setFont(inpNewFont);
-		btnGPS.setFont(inpNewFont);
+
 
 
 		int btnFontSize = ( 3 * pref.fontSize ) / 2;
@@ -194,29 +250,39 @@ public class InputScreen extends Form {
 		btn6.setFont(btnNewFont); btn5.setFont(btnNewFont);   btn4.setFont(btnNewFont);
 		btn3.setFont(btnNewFont); btn2.setFont(btnNewFont);   btn1.setFont(btnNewFont);
 		btn0.setFont(btnNewFont); btnEsc.setFont(btnNewFont); btnOk.setFont(btnNewFont);
-
-		btnOk.takeFocus(ControlConstants.ByKeyboard);
+		btnExpert.setFont(btnNewFont); btnBear.setFont(btnNewFont);btnGPS.setFont(btnNewFont);
 
 
 	}
 
 	private void disable(Control c) {c.modify(ControlConstants.Disabled,ControlConstants.TakesKeyFocus); }
+	private void enable(Control c) {c.modify(ControlConstants.TakesKeyFocus,ControlConstants.Disabled); }
+
+
+	private void setFocusCoords()
+	{
+		iPosition=POS_NSSS;
+		checkPosition();
+	}
+
 
 	private void changeTextButton()
 	{
-		btnNorthDD.setText(strBufCoords.substring(POS_NDD, LEN_NDD+POS_NDD));
-		btnNorthMM.setText(strBufCoords.substring(POS_NMM, LEN_NMM+POS_NMM));
-		btnNorthSSS.setText(strBufCoords.substring(POS_NSSS, LEN_NSSS+POS_NSSS));
-		btnEastDDD.setText(strBufCoords.substring(POS_EDDD, LEN_EDDD+POS_EDDD));
-		btnEastMM.setText(strBufCoords.substring(POS_EMM, LEN_EMM+POS_EMM));
-		btnEastSSS.setText(strBufCoords.substring(POS_ESSS, LEN_ESSS+POS_ESSS));
-		disable(btnBear);
+		btnNorthDD.setText(strBufCoords.substring(POS_NDD, LEN_NDD+POS_NDD),iPointPos[0]);
+		btnNorthMM.setText(strBufCoords.substring(POS_NMM, LEN_NMM+POS_NMM),iPointPos[1]);
+		btnNorthSSS.setText(strBufCoords.substring(POS_NSSS, LEN_NSSS+POS_NSSS),iPointPos[2]);
+		btnEastDDD.setText(strBufCoords.substring(POS_EDDD, LEN_EDDD+POS_EDDD),iPointPos[3]);
+		btnEastMM.setText(strBufCoords.substring(POS_EMM, LEN_EMM+POS_EMM),iPointPos[4]);
+		btnEastSSS.setText(strBufCoords.substring(POS_ESSS, LEN_ESSS+POS_ESSS),iPointPos[5]);
+		this.repaint();
+		//disable(btnBear);
 	}
 
 	private void changeTextButtonBearing()
 	{
-		btnDistanc.setText(strBufDistanc.toString());
-		btnBearing.setText(strBufBear.toString());
+		btnDistanc.setText(strBufDistanc.toString(),iPosDist);
+		btnBearing.setText(strBufBear.toString(),iPosBear);
+		this.repaint();
 	}
 
 
@@ -226,26 +292,17 @@ public class InputScreen extends Form {
 		strBufCoords.delete(0, strBufCoords.length());
 
 		if (coords.isValid()){
-
 				strBufTemp.append(coords.toString(TransformCoordinates.CW));
-
 				strBufCoords.append(strBufTemp.toString());
-				btnNorth.setText(strBufTemp.substring(0, 1));
-				btnNorthDD.setText(strBufTemp.substring(2, 5));
-				btnNorthMM.setText(strBufTemp.substring(6,9));
-				btnNorthSSS.setText(strBufTemp.substring(9,12));
-
-				btnWest.setText(strBufTemp.substring(13,14));
-				btnEastDDD.setText(strBufTemp.substring(15,19));
-				btnEastMM.setText(strBufTemp.substring(20,23));
-				btnEastSSS.setText(strBufTemp.substring(23,26));
+				CoordsInput = coords;
+				setFocusCoords();
 		}
 	}
 
 	private void setTextBuffer(char cValue)
 	{
 		if(bBearingPanelOnTop){
-			if(btnBearing.backGround  == ColorEdit){
+			if(iPosBear == 4){
 				if(strBufBear.length()  < 3) strBufBear.insert(strBufBear.length(), cValue);
 			    changeTextButtonBearing();
 			}else{
@@ -269,28 +326,54 @@ public class InputScreen extends Form {
 			if(iPosition == POS_EDDD-1)	iPosition++;
 
 			if(iPosition >= strBufCoords.length()){
-				iPosition = strBufCoords.length();
-				return;
+				//iPosition = strBufCoords.length();
+				iPosition =POS_NDD;
+				//return;
 			}
 				strBufCoords.setCharAt(iPosition, cValue);
 			    iPosition++;
-			    changeTextButton();
 			    checkPosition();
-
 		}
 	}
 
 	private void checkPosition()
 	{
-		btnNorthDD.backGround  = btnNorthMM.backGround = btnNorthSSS.backGround = ColorNormal;
-		btnEastDDD.backGround  = btnEastSSS.backGround = btnEastMM.backGround = ColorNormal;
-		if(iPosition >= POS_NDD && iPosition < POS_NMM -2) btnNorthDD.backGround = ColorEdit;
-		if(iPosition >= POS_NMM-2 && iPosition < POS_NSSS -1) btnNorthMM.backGround = ColorEdit;
-		if(iPosition >= POS_NSSS-1 && iPosition < POS_EDDD-3) btnNorthSSS.backGround = ColorEdit;
-		if(iPosition >= POS_EDDD-3 && iPosition < POS_EMM -2) btnEastDDD.backGround  = ColorEdit;
-		if(iPosition >= POS_EMM-2 && iPosition < POS_ESSS -1) btnEastMM.backGround  = ColorEdit;
-		if(iPosition >= POS_ESSS-1) btnEastSSS.backGround  = ColorEdit;
-		this.repaint();
+		iPointPos[0]=0;iPointPos[1]=0;iPointPos[2]=0;iPointPos[3]=0;iPointPos[4]=0;iPointPos[5]=0;
+		switch(iPosition){
+			//NorthDD
+		    case 26:
+			case 2: iPointPos[0] = 1; break;
+			case 3: iPointPos[0] = 2; break;
+			//NorthMM
+			case 4:
+			case 5:
+			case 6: iPointPos[1] = 1; break;
+			case 7: iPointPos[1] = 2; break;
+			//NorthSSS
+			case 8:
+			case 9:  iPointPos[2] = 1; break;
+			case 10: iPointPos[2] = 2; break;
+			case 11: iPointPos[2] = 3; break;
+
+			//EastDDD
+			case 12:
+			case 13:
+			case 14:
+			case 15: iPointPos[3] = 1; break;
+			case 16: iPointPos[3] = 2; break;
+			case 17: iPointPos[3] = 3; break;
+			//EastMM
+			case 18:
+			case 19:
+			case 20: iPointPos[4] = 1; break;
+			case 21: iPointPos[4] = 2; break;
+			//EastSSS
+			case 22:
+			case 23: iPointPos[5] = 1; break;
+			case 24: iPointPos[5] = 2; break;
+			case 25: iPointPos[5] = 3; break;
+		}
+		changeTextButton();
 	}
 
 	/*
@@ -311,14 +394,15 @@ public class InputScreen extends Form {
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			// Button "E"
 			if (ev.target == btnWest){
-				if(btnWest.getText() == "E")
+				if(btnWest.getText().startsWith("E"))
 					btnWest.setText("W");
 				else
 					btnWest.setText("E");
 			}
+
 			// Button "N"
 			if (ev.target == btnNorth){
-				if(btnNorth.getText() == "N")
+				if(btnNorth.getText().startsWith("N"))
 					btnNorth.setText("S");
 				else
 					btnNorth.setText("N");
@@ -327,20 +411,16 @@ public class InputScreen extends Form {
 
 			// Button "Bearing"
 			if (ev.target == btnBearing){
-				btnBearing.backGround  = ColorEdit;
-				btnDistanc.backGround = ColorNormal;
+				iPosDist = 0; iPosBear = 4;
 				strBufBear.delete(0, strBufBear.length());
 				changeTextButtonBearing();
-				this.repaint();
 			}
 
 			// Button "Distanc"
 			if (ev.target == btnDistanc){
-				btnBearing.backGround  = ColorNormal;
-				btnDistanc.backGround = ColorEdit;
+				iPosDist = 4; iPosBear = 0;
 				strBufDistanc.delete(0, strBufDistanc.length());
 				changeTextButtonBearing();
-				this.repaint();
 			}
 
 
@@ -436,14 +516,26 @@ public class InputScreen extends Form {
 			}
 			// Button "ESC"
 			if (ev.target == btnEsc ){
-				iPosition = 0;
-				this.close(0);
+				if(bBearingPanelOnTop){
+					enable(btnExpert);
+				    enable(btnGPS);
+				    TopSP.setControl(TopP);
+				    bBearingPanelOnTop = false;
+				    this.repaint();
+				}
+				else
+				{
+					iPosition = 0;
+					this.close(0);
+				}
 			}
 
 			// Button "Bearing"
 			if (ev.target == btnBear ){
 				    disable(btnExpert);
 				    disable(btnGPS);
+					strBufBear.delete(0, strBufBear.length());
+					strBufDistanc.delete(0, strBufDistanc.length());
 				    TopSP.setControl(BearP,true);
 				    bBearingPanelOnTop = true;
 
@@ -461,7 +553,8 @@ public class InputScreen extends Form {
 			// Button "Expert"
 			if (ev.target == btnExpert ){
 				CoordsScreen cs = new CoordsScreen();
-				if (myNavigation.destination.isValid())	cs.setFields(myNavigation.destination, CoordsScreen.getLocalSystem(currFormatSel));
+				//if (CoordsInput.isValid())	cs.setFields(CoordsInput, CoordsScreen.getLocalSystem(currFormatSel));
+				if (CoordsInput.isValid())	cs.setFields(CoordsInput, currFormatSel);
 				else cs.setFields(new CWPoint(0,0), CoordsScreen.getLocalSystem(currFormatSel));
 				if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK){
 					setCcords(cs.getCoords());
@@ -471,6 +564,7 @@ public class InputScreen extends Form {
 			}
 
 		}
+		super.onEvent(ev);
 	}
 
 }

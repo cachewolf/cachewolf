@@ -2,6 +2,7 @@ package CacheWolf;
 
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.InputScreen;
 import ewe.sys.Vm;
 import ewe.ui.*;
 import ewe.ui.formatted.TextDisplay;
@@ -20,12 +21,12 @@ import ewe.fx.FontMetrics;
 class BearingDistance {
 	public double degrees;
 	public double distance;
-	
+
 	public BearingDistance(){
 		this.degrees = 0;
 		this.distance = 0;
 	}
-	
+
 	public BearingDistance(double degrees, double distance) {
 		this.degrees = degrees;
 		this.distance = distance;
@@ -52,20 +53,20 @@ public final class CalcPanel extends CellPanel {
 	// different panels to avoid spanning
 	CellPanel TopP = new CellPanel();
 	CellPanel BottomP = new CellPanel();
-	
+
 	String lastWaypoint = "";
 	boolean bBearing, bDistance;
-	
+
 	int currFormat;
 	mButton btnChangeLatLon;
-	
+
 	public CalcPanel()	{
 		pref = Global.getPref();
 		profile=Global.getProfile();
 		mainT = Global.mainTab;
 		cacheDB = profile.cacheDB;
-		
-		
+
+
 		TopP.addNext(chkDD =new mCheckBox("d.d°"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		TopP.addNext(chkDMM =new mCheckBox("d°m.m\'"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		TopP.addNext(chkDMS =new mCheckBox("d°m\'s\""),CellConstants.DONTSTRETCH,CellConstants.WEST);
@@ -101,33 +102,33 @@ public final class CalcPanel extends CellPanel {
 		} else {
 			chcDistUnit.setInt(3); // Feet
 		}
-		
+
 		// Buttons for calc and save
 		BottomP.addNext(btnCalc = new mButton("Calc"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addNext(btnClear = new mButton("Clear"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addNext(btnGoto = new mButton("Goto"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		BottomP.addLast(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		
-		// Output 
+
+		// Output
 		txtOutput = new TextDisplay(3,1); // Need to limit size for small screens
 		ScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
 		BottomP.addLast(sbp.setTag(CellConstants.SPAN, new Dimension(4,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
-		
+
 		//add Panels
 		this.addLast(TopP,CellConstants.HSTRETCH, CellConstants.WEST);//.setTag(SPAN,new Dimension(4,1));
 		this.addLast(BottomP,CellConstants.VSTRETCH, CellConstants.VFILL|CellConstants.WEST); //.setTag(SPAN,new Dimension(4,1));
-		
+
 	}
-	
+
 	private final int getLocalCooSystem() {
 		return CoordsScreen.getLocalSystem(currFormat);
 	}
-	
+
 	public final void readFields(CWPoint coords, BearingDistance degKm){
 		// coords.set(btnChangeLatLon.getText());
 		currFormat = CoordsScreen.combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt());
 		degKm.degrees = Common.parseDouble(inpBearing.getText());
-		
+
 		double rawDistance = Common.parseDouble(inpDistance.getText());
 		switch ( chcDistUnit.getInt() ) {
 		case 0:
@@ -161,7 +162,7 @@ public final class CalcPanel extends CellPanel {
 		}
 		return;
 	}
-	
+
 	// ch must not be null
 	public void setFields(CacheHolder ch){
 		if ( !ch.getWayPoint().equalsIgnoreCase(lastWaypoint) ) {
@@ -173,12 +174,12 @@ public final class CalcPanel extends CellPanel {
 				//currFormat = 1;
 				if (ch.getLatLon().length()== 0) coordInp.set(0,0);
 				else coordInp.set(ch.getLatLon(), TransformCoordinates.CW);
-				setFields();				
+				setFields();
 			}
 		}
 	}
-	
-	
+
+
 	public void setFields() {
 		btnChangeLatLon.setText(coordInp.toString(getLocalCooSystem()));
 		//chkFormat.selectIndex(currFormat);
@@ -187,8 +188,10 @@ public final class CalcPanel extends CellPanel {
 
 	public void onEvent(Event ev){
 
+
+
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
-			if (ev.target == chkFormat 
+			if (ev.target == chkFormat
 					|| ((ev.type == ControlEvent.PRESSED) && (ev.target == localCooSystem )) ) {
 				if (ev.target == localCooSystem) chkFormat.selectIndex(3);
 				readFields(coordInp, bd);
@@ -213,13 +216,25 @@ public final class CalcPanel extends CellPanel {
 				ch.setType(CacheType.CW_TYPE_STAGE); // TODO unfertig
 				mainT.newWaypoint(ch);
 			}
-			
+
 			if (ev.target == btnGoto){
 				readFields(coordInp, bd);
 				coordOut = coordInp.project(bd.degrees, bd.distance);
-				mainT.gotoP.setDestinationAndSwitch(coordOut); 
+				mainT.gotoP.setDestinationAndSwitch(coordOut);
 			}
+			
 			if (ev.target == btnChangeLatLon){
+				if(Vm.isMobile()){
+					readFields(coordInp, bd);
+					InputScreen InScr = new InputScreen(getLocalCooSystem());
+					if (coordInp.isValid())	InScr.setCcords(coordInp);
+						else InScr.setCcords(new CWPoint(0,0));
+				if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
+				{
+					btnChangeLatLon.setText(InScr.getCoords().toString(getLocalCooSystem()));
+					coordInp.set(InScr.getCoords());
+				}
+			}else{
 				CoordsScreen cs = new CoordsScreen();
 				readFields(coordInp, bd);
 				cs.setFields(coordInp, getLocalCooSystem());
@@ -228,8 +243,9 @@ public final class CalcPanel extends CellPanel {
 					coordInp.set(cs.getCoords());
 				}
 			}
-			
+
 		}
 		super.onEvent(ev);
+	}
 	}
 }
