@@ -36,6 +36,7 @@
 # Version 5.0 - 20091105 adaption to new GC-design
 # Version 6.0 - 20100113 adaption to new GC-design
 # Version 6.1 - 20100305 better log recognition
+# Version 7.0 - 20100402 adaption to new GC-design
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -57,17 +58,17 @@ firstPage2         = &lng=
 firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
 # Regex to search for cachenames
 listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
-lineRex            = <tr\ bgcolor='#.{6}'\ class="Data\ BorderTop">((?s).*?)</tr>
+lineRex            = <tr\ bgcolor='#.{6}'\\s*class="Data\ BorderTop">((?s).*?)</tr>
 directionRex       = /compass/(.*?).gif
 logDateRex         = <td>(.*?)<br\ /><span\ class="Success">
 availableRex       = <span\ class="Strike">
 archivedRex        = <span\ class="Warning Strike">
 PMRex              = small_profile.gif
-distRex            = <br\ />(.*?)(?:km|mi)</td>
+distRex            = <br\ />(.*?)(?:km|mi)\\s*</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
-TypeRex            = k"><img\ src="/images/WptTypes/(.*?)\\.gif
+TypeRex            = k">\\s*<img\ src="/images/WptTypes/(.*?)\\.gif
 SizeRex            = /container/(.*?)\\.gif
-DandTRex           = <td>\\((.*?)/(.*?)\\)<br
+DandTRex           = <td>\\s*\\((.*?)/(.*?)\\)<br
 found              = alt="Found\ It!"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
@@ -107,7 +108,7 @@ longDescRex        = <span\ id="ctl00_ContentBody_LongDescription">((?s).*?)<td\
 cacheNameRex       = <span\ id="ctl00_ContentBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = <span\ id="ctl00_ContentBody_CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span>
 dateHiddenRex      = <span\ id="ctl00_ContentBody_DateHidden">((?s).*?)</span>
-hintsRex           = <span\ id="ctl00_ContentBody_Hints"\ class="displayMe">((?s).*?)</span>
+hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
 difficultyRex      = <span\ id="ctl00_ContentBody_Difficulty">.*?alt="(.*?)\ out\ of
 terrainRex         = <span\ id="ctl00_ContentBody_Terrain">.*?alt="(.*?)\ out\ of
