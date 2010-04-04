@@ -310,7 +310,7 @@ public final class GotoPanel extends CellPanel {
 			}
 		}
 		if (centerTo != null && centerTo.isValid())
-			mainT.SwitchToMovingMap(centerTo, false);
+			mainT.SwitchToMovingMap(centerTo, true);
 		else
 			(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS"), FormBase.OKB)).execute();
 	}
