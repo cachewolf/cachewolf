@@ -1,17 +1,17 @@
 # Release
 T0VersionMajor: 1
 T0VersionMinor: 0
-T0SvnRevision: 2409
+T0SvnRevision: 2535
 
 # ReleaseCandidate
 T1VersionMajor: 1
 T1VersionMinor: 0
-T1SvnRevision: 2409
+T1SvnRevision: 2535
 
 # InDevelopmentStable
 T2VersionMajor: 1
 T2VersionMinor: 1
-T2SvnRevision: 2447
+T2SvnRevision: 2534
 
 # InDevelopmentNewest
 T3VersionMajor: 1
