@@ -634,7 +634,7 @@ public class DetailsPanel extends CellPanel {
 				if (foundDate.startsWith(MyLocale.getMsg(318, "Found") + " ")) {
 					foundDate = foundDate.substring(MyLocale.getMsg(318, "Found").length() + 1);
 				}
-				else if (foundDate.endsWith(MyLocale.getMsg(319, "not Found"))) {
+				else if (foundDate.endsWith(" "+MyLocale.getMsg(319, "not Found"))) {
 					foundDate = foundDate.substring(0,16);					
 				}
 				final Time t = new Time();
