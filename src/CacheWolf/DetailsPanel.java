@@ -445,281 +445,294 @@ public class DetailsPanel extends CellPanel {
 		}
 	}
 
-	/**
-	 * Method to react to a user input.
-	 */
-	public void onEvent(final Event ev) {
-		if (ev instanceof DataChangeEvent) {
-			if (ev.target == inpWaypoint) {
-				if (evWaypointChanged) {
-					String iTmp=inpWaypoint.getText();
-					String uTmp=iTmp.toUpperCase();
-					if (!iTmp.equals(uTmp)){
-						inpWaypoint.setText(uTmp); // If user entered LowerCase -> convert directly to UpperCase
-						evWaypointChanged=false; //next DataChangeEvent fired by change to UpperCase will be ignored
-					}
-					// already warned(multi same DataChangeEvents) or same waypointname as before edit !!!
-					if(!warnedForWaypoint.equals(uTmp) && !uTmp.equals(this.cache.getWayPoint())){
-						if ((new File(profile.dataDir + iTmp.toLowerCase()+".xml")).exists()) {
-							warnedForWaypoint=uTmp; // before MessageBox cause Multithread DataChangeEvents
-							// filename is LowerCase
-							new MessageBox("Warning :",uTmp+"\n"+MyLocale.getMsg(275,"Waypoint already exists!"),MessageBox.OKB).execute();
-							// revert waypointname
-							inpWaypoint.setText(this.cache.getWayPoint());
-						}
-					}
-				}
-				else {
-					// first DataChangeEvent is fired by Klick into (after reload). 
-					// that really didn't change anything
-					evWaypointChanged=true;
-				}
-				// FIXME: if name was changed, we should rename the waypoint.xml file. how? where?
-			} else if (ev.target == chcType) {
-				createWptName();
-				if (CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.selectedIndex))) {
-					activateControl(btnTerr);
-					activateControl(btnDiff);
-					activateControl(chcSize);
-					activateControl(inpOwner);
-					activateControl(inpHidden);
-					activateControl(btnShowBug);
-					activateControl(btnBlack);
-				} else {
-					deactivateControl(btnTerr);
-					deactivateControl(btnDiff);
-					deactivateControl(chcSize);
-					deactivateControl(inpOwner);
-					deactivateControl(inpHidden);
-					deactivateControl(btnShowBug);
-					deactivateControl(btnBlack);
-					chcSize.select(0);
-					btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
-					btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
-				}
-			}
-			//FIXME: check if something was actually changed, since datacachnge events also occur if you just hop through the fileds with the tab key (Why? don't know!)
-			dirtyDetails = true;
-			needsTableUpdate = true;
-		}
-		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-			if (ev.target == btnNotes) {
-				dirtyNotes = true; // TODO I think this is redundant, because
-									// the notes are saved separately by the notes screen itself
-				final NotesScreen nsc = new NotesScreen(cache
-						.getCacheDetails(true));
-				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
-				if (isBigScreen) {
-					waypointNotes.setText(cache.getCacheDetails(true).getCacheNotes());
-				}
-			} else if (ev.target == btnShowMap) {
-				Global.mainTab.SwitchToMovingMap(cache.pos, true);
-				/*
-				 * try { MapDetailForm mdf = new
-				 * MapDetailForm(thisCache.wayPoint, pref, profile);
-				 * mdf.execute(); } catch (IllegalArgumentException e) {
-				 * MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"),
-				 * MyLocale.getMsg(322,"Kann Bild/Karte nicht finden")+":
-				 * "+e.getMessage(), MessageBox.OKB); tmp.exec(); }
-				 */
-			} else if (ev.target == btnShowBug) {
-				// InfoScreen is = new InfoScreen(thisCache.Travelbugs.toHtml(),
-				// "Travelbugs",
-				// false, pref);
-				// is.execute();
-				final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(true).Travelbugs.toHtml(),	"Travelbugs");
-				ts.execute(this.getFrame(), Gui.CENTER_FRAME);
-			/* not fully implemented
-			} else if (ev.target == btnCenter) {
-				final CWPoint cp = new CWPoint(cache.LatLon);
-				if (cp.isValid()) {
-					pref.setCurCentrePt(cp);
-				} else {
-					final MessageBox tmpMB = new MessageBox(
-							MyLocale.getMsg(312, "Error"),
-							MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"),
-							FormBase.OKB);
-					tmpMB.exec();
-				}
-			*/
+    /**
+     * Method to react to a user input.
+     */
+    public void onEvent(final Event ev) {
+        if (ev instanceof DataChangeEvent) {
+            if (ev.target == inpWaypoint) {
+                if (evWaypointChanged) {
+                    String iTmp=inpWaypoint.getText();
+                    String uTmp=iTmp.toUpperCase();
+                    if (!iTmp.equals(uTmp)){
+                        inpWaypoint.setText(uTmp); // If user entered LowerCase -> convert directly to UpperCase
+                        evWaypointChanged=false; //next DataChangeEvent fired by change to UpperCase will be ignored
+                    }
+                    // already warned(multi same DataChangeEvents) or same waypointname as before edit !!!
+                    if(!warnedForWaypoint.equals(uTmp) && !uTmp.equals(this.cache.getWayPoint())){
+                        if ((new File(profile.dataDir + iTmp.toLowerCase()+".xml")).exists()) {
+                            warnedForWaypoint=uTmp; // before MessageBox cause Multithread DataChangeEvents
+                            // filename is LowerCase
+                            new MessageBox("Warning :",uTmp+"\n"+MyLocale.getMsg(275,"Waypoint already exists!"),MessageBox.OKB).execute();
+                            // revert waypointname
+                            inpWaypoint.setText(this.cache.getWayPoint());
+                        }
+                    }
+                }
+                else {
+                    // first DataChangeEvent is fired by Klick into (after reload).
+                    // that really didn't change anything
+                    evWaypointChanged=true;
+                }
+                // FIXME: if name was changed, we should rename the waypoint.xml file. how? where?
+            } else if (ev.target == chcType) {
+                createWptName();
+                if (CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.selectedIndex))) {
+                    activateControl(btnTerr);
+                    activateControl(btnDiff);
+                    activateControl(chcSize);
+                    activateControl(inpOwner);
+                    activateControl(inpHidden);
+                    activateControl(btnShowBug);
+                    activateControl(btnBlack);
+                } else {
+                    deactivateControl(btnTerr);
+                    deactivateControl(btnDiff);
+                    deactivateControl(chcSize);
+                    deactivateControl(inpOwner);
+                    deactivateControl(inpHidden);
+                    deactivateControl(btnShowBug);
+                    deactivateControl(btnBlack);
+                    chcSize.select(0);
+                    btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
+                    btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
+                }
+            }
+            //FIXME: check if something was actually changed, since datacachnge events also occur if you just hop through the fileds with the tab key (Why? don't know!)
+            dirtyDetails = true;
+            needsTableUpdate = true;
+        }
+        if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+            if (ev.target == btnNotes) {
+                dirtyNotes = true; // TODO I think this is redundant, because
+                                    // the notes are saved separately by the notes screen itself
+                final NotesScreen nsc = new NotesScreen(cache
+                        .getCacheDetails(true));
+                nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
+                if (isBigScreen) {
+                    waypointNotes.setText(cache.getCacheDetails(true).getCacheNotes());
+                }
+            } else if (ev.target == btnShowMap) {
+                Global.mainTab.SwitchToMovingMap(cache.pos, true);
+                /*
+                 * try { MapDetailForm mdf = new
+                 * MapDetailForm(thisCache.wayPoint, pref, profile);
+                 * mdf.execute(); } catch (IllegalArgumentException e) {
+                 * MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"),
+                 * MyLocale.getMsg(322,"Kann Bild/Karte nicht finden")+":
+                 * "+e.getMessage(), MessageBox.OKB); tmp.exec(); }
+                 */
+            } else if (ev.target == btnShowBug) {
+                // InfoScreen is = new InfoScreen(thisCache.Travelbugs.toHtml(),
+                // "Travelbugs",
+                // false, pref);
+                // is.execute();
+                final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(true).Travelbugs.toHtml(),	"Travelbugs");
+                ts.execute(this.getFrame(), Gui.CENTER_FRAME);
+            /* not fully implemented
+            } else if (ev.target == btnCenter) {
+                final CWPoint cp = new CWPoint(cache.LatLon);
+                if (cp.isValid()) {
+                    pref.setCurCentrePt(cp);
+                } else {
+                    final MessageBox tmpMB = new MessageBox(
+                            MyLocale.getMsg(312, "Error"),
+                            MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"),
+                            FormBase.OKB);
+                    tmpMB.exec();
+                }
+            */
 
-			} else if (ev.target == btnAddDateTime) {
-				dirtyNotes = true;
+            } else if (ev.target == btnAddDateTime) {
+                dirtyNotes = true;
 
-				final StringBuffer newNote = new StringBuffer();
-				newNote.append(cache.getCacheDetails(true).getCacheNotes());
+                final StringBuffer newNote = new StringBuffer();
+                newNote.append(cache.getCacheDetails(true).getCacheNotes());
 
-				final Time dtm = new Time();
-				dtm.getTime();
-				dtm.setFormat("E dd.MM.yyyy '/' HH:mm");
+                final Time dtm = new Time();
+                dtm.getTime();
+                dtm.setFormat("E dd.MM.yyyy '/' HH:mm");
 
-				if (newNote.length() > 0) {
-					newNote.append('\n');
-				}
-				newNote.append(dtm.toString()).append('\n');
+                if (newNote.length() > 0) {
+                    newNote.append('\n');
+                }
+                newNote.append(dtm.toString()).append('\n');
 
-				cache.getCacheDetails(true).setCacheNotes(newNote.toString());
-				//FIXME: better use saveDirtyWaypoint()?
-				cache.save();
-			} else if (ev.target == btnAddPicture) {
-				cache.getCacheDetails(true).addUserImage(profile);
-			} else if (ev.target == btnBlack) {
-				if (cache.is_black()) {
-					cache.setBlack(false);
-					btnBlack.image = imgBlackNo;
-				} else {
-					cache.setBlack(true);
-					btnBlack.image = imgBlack;
-				}
-				blackStatus = cache.is_black();
-				cache.setAttributesToAddiWpts();
-				btnBlack.repaintNow();
-				dirtyDetails = true;
-				blackStatusChanged = true;
-			} else if (ev.target == btnNewWpt) {
-				final CacheHolder ch = new CacheHolder();
-				ch.setLatLon(cache.getLatLon());
-				ch.pos = new CWPoint(cache.pos);
-				ch.setType(CacheType.CW_TYPE_STAGE);
-				ch.setHard(CacheTerrDiff.CW_DT_UNSET);
-				ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
-				ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-				Global.mainTab.newWaypoint(ch);
-			} else if (ev.target == btnGoto) {
-				// FIXME: if something changed saveDirtyWaypoint();
-				Global.mainTab.gotoP.setDestinationAndSwitch(cache);
-			} else if (ev.target == btnCoordinates) {
-				CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.CW);
-				if(Vm.isMobile()){
-					InputScreen InScr = new InputScreen(TransformCoordinates.CW);
-					if (coords.isValid())	InScr.setCcords(coords);
-						else InScr.setCcords(new CWPoint(0,0));
-					if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
-					{
-						dirtyDetails = true;
-						coords = InScr.getCoords();
-						Global.getProfile().notifyUnsavedChanges(!cache.pos.toString().equals(coords.toString()));
-						cache.pos.set(coords);
-						btnCoordinates.setText(coords.toString());
-						cache.setLatLon(coords.toString());
-						// If the current centre is valid, calculate the distance and bearing to it
-						final CWPoint centre = Global.getPref().getCurCentrePt();
-						if (centre.isValid()) {
-							cache.calcDistance(centre); // todo perhaps sortTable
-						}
-					}
-				}else{
-					final CoordsScreen cs = new CoordsScreen(true);
-					cs.setFields(coords, TransformCoordinates.CW);
-					if (cs.execute() == FormBase.IDOK) {
-						dirtyDetails = true;
-						coords = cs.getCoords();
-						Global.getProfile().notifyUnsavedChanges(!cache.pos.toString().equals(coords.toString()));
-						cache.pos.set(coords);
-						btnCoordinates.setText(coords.toString());
-						cache.setLatLon(coords.toString());
-						// If the current centre is valid, calculate the distance and bearing to it
-						final CWPoint centre = Global.getPref().getCurCentrePt();
-						if (centre.isValid()) {
-							cache.calcDistance(centre); // todo perhaps sortTable
-						}
-					}
-				}
-			} else if (ev.target == btnFoundDate) {
-				// DateChooser.dayFirst=true;
-				final DateTimeChooser dc = new DateTimeChooser(Vm.getLocale());
-				dc.title = MyLocale.getMsg(328, "Date found");
-				dc.setPreferredSize(240, 240);
-				String foundDate = chcStatus.getText();
-				if (foundDate.startsWith(MyLocale.getMsg(318, "Found") + " ")) {
-					foundDate = foundDate.substring(MyLocale.getMsg(318, "Found").length() + 1);
-				}
-				else if (foundDate.endsWith(" "+MyLocale.getMsg(319, "not Found"))) {
-					foundDate = foundDate.substring(0,16);					
-				}
-				final Time t = new Time();
-				try {
-					t.parse(foundDate, "y-M-d H:m");
-				} catch (IllegalArgumentException e) {
-					try {
-						t.parse(foundDate, "y-M-d");
-					} catch (IllegalArgumentException e1) {
-						Global.getPref().log("No parsable date given - should not appear", e1, true);
-					}
-				}
+                cache.getCacheDetails(true).setCacheNotes(newNote.toString());
+                //FIXME: better use saveDirtyWaypoint()?
+                cache.save();
+            } else if (ev.target == btnAddPicture) {
+                cache.getCacheDetails(true).addUserImage(profile);
+            } else if (ev.target == btnBlack) {
+                if (cache.is_black()) {
+                    cache.setBlack(false);
+                    btnBlack.image = imgBlackNo;
+                } else {
+                    cache.setBlack(true);
+                    btnBlack.image = imgBlack;
+                }
+                blackStatus = cache.is_black();
+                cache.setAttributesToAddiWpts();
+                btnBlack.repaintNow();
+                dirtyDetails = true;
+                blackStatusChanged = true;
+            } else if (ev.target == btnNewWpt) {
+                final CacheHolder ch = new CacheHolder();
+                ch.setLatLon(cache.getLatLon());
+                ch.pos = new CWPoint(cache.pos);
+                ch.setType(CacheType.CW_TYPE_STAGE);
+                ch.setHard(CacheTerrDiff.CW_DT_UNSET);
+                ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
+                ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+                Global.mainTab.newWaypoint(ch);
+            } else if (ev.target == btnGoto) {
+                // FIXME: if something changed saveDirtyWaypoint();
+                Global.mainTab.gotoP.setDestinationAndSwitch(cache);
+            } else if (ev.target == btnCoordinates) {
+                CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.CW);
+                if(Vm.isMobile()){
+                    InputScreen InScr = new InputScreen(TransformCoordinates.CW);
+                    if (coords.isValid())	InScr.setCcords(coords);
+                        else InScr.setCcords(new CWPoint(0,0));
+                    if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
+                    {
+                        dirtyDetails = true;
+                        coords = InScr.getCoords();
+                        Global.getProfile().notifyUnsavedChanges(!cache.pos.toString().equals(coords.toString()));
+                        cache.pos.set(coords);
+                        btnCoordinates.setText(coords.toString());
+                        cache.setLatLon(coords.toString());
+                        // If the current centre is valid, calculate the distance and bearing to it
+                        final CWPoint centre = Global.getPref().getCurCentrePt();
+                        if (centre.isValid()) {
+                            cache.calcDistance(centre); // todo perhaps sortTable
+                        }
+                    }
+                }else{
+                    final CoordsScreen cs = new CoordsScreen(true);
+                    cs.setFields(coords, TransformCoordinates.CW);
+                    if (cs.execute() == FormBase.IDOK) {
+                        dirtyDetails = true;
+                        coords = cs.getCoords();
+                        Global.getProfile().notifyUnsavedChanges(!cache.pos.toString().equals(coords.toString()));
+                        cache.pos.set(coords);
+                        btnCoordinates.setText(coords.toString());
+                        cache.setLatLon(coords.toString());
+                        // If the current centre is valid, calculate the distance and bearing to it
+                        final CWPoint centre = Global.getPref().getCurCentrePt();
+                        if (centre.isValid()) {
+                            cache.calcDistance(centre); // todo perhaps sortTable
+                        }
+                    }
+                }
+            } else if (ev.target == btnFoundDate) {
+                // DateChooser.dayFirst=true;
+                final DateTimeChooser dc = new DateTimeChooser(Vm.getLocale());
+                dc.title = MyLocale.getMsg(328, "Date found");
+                dc.setPreferredSize(240, 240);
+                String foundDate = chcStatus.getText();
+                if (foundDate.startsWith(MyLocale.getMsg(318, "Found") + " ")) {
+                    foundDate = foundDate.substring(MyLocale.getMsg(318, "Found").length() + 1);
+                }
+                else if (foundDate.endsWith(MyLocale.getMsg(319, "not Found"))) {
+                    foundDate = foundDate.substring(0,foundDate.length()-MyLocale.getMsg(319, "not Found").length());
+                    dc.title=MyLocale.getMsg(330,"Date Not Found");
+                }
+                foundDate=foundDate.trim();
+                if (foundDate.length()>0 && foundDate.indexOf('-')>0) { //Don't try and parse empty date
+                    final Time t = new Time();
+                    try {
+                        t.parse(foundDate, "y-M-d H:m");
+                    } catch (IllegalArgumentException e) {
+                        try {
+                            t.parse(foundDate, "y-M-d");
+                        } catch (IllegalArgumentException e1) {
+                            Global.getPref().log("No parsable date given - should not appear ("+foundDate+")", e1, true);
+                        }
+                    }
 
-				dc.reset(t);
-				if (dc.execute() == ewe.ui.FormBase.IDOK) {
-					chcStatus.setText(MyLocale.getMsg(318, "Found") + " "
-									+ Convert.toString(dc.year) + "-"
-									+ MyLocale.formatLong(dc.month, "00") + "-"
-									+ MyLocale.formatLong(dc.day, "00") + " "
-									+ dc.time);
-					dirtyDetails = true;
-				}
-				else {
-					chcStatus.setText(Convert.toString(dc.year) + "-"
-							+ MyLocale.formatLong(dc.month, "00") + "-"
-							+ MyLocale.formatLong(dc.day, "00") + " "
-							+ dc.time + " "
-							+ MyLocale.getMsg(319, "not Found")
-							);
-					dirtyDetails = true;
-				}
-			} else if (ev.target == btnHiddenDate) {
-				DateChooser.dayFirst = true;
-				final DateChooser dc = new DateChooser(Vm.getLocale());
-				dc.title = MyLocale.getMsg(329, "Hidden date");
-				dc.setPreferredSize(240, 240);
-				if (inpHidden.getText().length() == 10)
-					try {
-						dc.setDate(new Time(Convert.parseInt(inpHidden
-								.getText().substring(8)), Convert
-								.parseInt(inpHidden.getText().substring(5, 7)),
-								Convert.parseInt(inpHidden.getText().substring(
-										0, 4))));
-					} catch (NumberFormatException e) {
-						dc.reset(new Time());
-					}
-				if (dc.execute() == ewe.ui.FormBase.IDOK) {
-					inpHidden.setText(Convert.toString(dc.year) + "-"
-							+ MyLocale.formatLong(dc.month, "00") + "-"
-							+ MyLocale.formatLong(dc.day, "00"));
-					dirtyDetails = true;
-					// profile.hasUnsavedChanges=true;
-				}
-			} else if (ev.target == btnTerr) {
-				int returnValue;
-				final TerrDiffForm tdf = new TerrDiffForm(true,
-						decodeTerrDiff(btnTerr,
-								MyLocale.getMsg(1001, "T"),
-								CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))
-							)
-						);
-				returnValue = tdf.execute();
-				if (returnValue == 1) {
-					btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(tdf.getDT()));
-					dirtyDetails = true;
-				}
-			} else if (ev.target == btnDiff) {
-				int returnValue;
-				final TerrDiffForm tdf = new TerrDiffForm(false,
-						decodeTerrDiff(btnDiff,
-								MyLocale.getMsg(1001, "D"),
-								CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))
-							)
-						);
+                    dc.reset(t);
+                }
+                // We can create a not found log with date in two ways:
+                //   1) Exiting the date-time dialog by clicking the x if the status is empty (somewhat
+                //      non-standard but quick and dirty)
+                //   2) Exiting the date-time dialog by clicking the tick. Then we check whether
+                //      the status field was preset with the not-found text. If yes it stays a not found
+                //      but the date is prepended
+                //TODO: The functions for extracting the date and the found/not-found text should not be in the GUI
+                int retCode=dc.execute();
+                if (retCode == ewe.ui.FormBase.IDOK && !chcStatus.getText().endsWith(MyLocale.getMsg(319, "not Found"))) {
+                    chcStatus.setText(MyLocale.getMsg(318, "Found") + " "
+                                    + Convert.toString(dc.year) + "-"
+                                    + MyLocale.formatLong(dc.month, "00") + "-"
+                                    + MyLocale.formatLong(dc.day, "00") + " "
+                                    + dc.time);
+                    dirtyDetails = true;
+                }
+                else if (chcStatus.getText().length()==0 ||
+                		(retCode==ewe.ui.FormBase.IDOK && chcStatus.getText().endsWith(MyLocale.getMsg(319, "not Found")) )) {
+                    chcStatus.setText(Convert.toString(dc.year) + "-"
+                            + MyLocale.formatLong(dc.month, "00") + "-"
+                            + MyLocale.formatLong(dc.day, "00") + " "
+                            + dc.time + " "
+                            + MyLocale.getMsg(319, "not Found")
+                            );
+                    dirtyDetails = true;
+                }
+            } else if (ev.target == btnHiddenDate) {
+                DateChooser.dayFirst = true;
+                final DateChooser dc = new DateChooser(Vm.getLocale());
+                dc.title = MyLocale.getMsg(329, "Hidden date");
+                dc.setPreferredSize(240, 240);
+                if (inpHidden.getText().length() == 10)
+                    try {
+                        dc.setDate(new Time(Convert.parseInt(inpHidden
+                                .getText().substring(8)), Convert
+                                .parseInt(inpHidden.getText().substring(5, 7)),
+                                Convert.parseInt(inpHidden.getText().substring(
+                                        0, 4))));
+                    } catch (NumberFormatException e) {
+                        dc.reset(new Time());
+                    }
+                if (dc.execute() == ewe.ui.FormBase.IDOK) {
+                    inpHidden.setText(Convert.toString(dc.year) + "-"
+                            + MyLocale.formatLong(dc.month, "00") + "-"
+                            + MyLocale.formatLong(dc.day, "00"));
+                    dirtyDetails = true;
+                    // profile.hasUnsavedChanges=true;
+                }
+            } else if (ev.target == btnTerr) {
+                int returnValue;
+                final TerrDiffForm tdf = new TerrDiffForm(true,
+                        decodeTerrDiff(btnTerr,
+                                MyLocale.getMsg(1001, "T"),
+                                CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))
+                            )
+                        );
+                returnValue = tdf.execute();
+                if (returnValue == 1) {
+                    btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(tdf.getDT()));
+                    dirtyDetails = true;
+                }
+            } else if (ev.target == btnDiff) {
+                int returnValue;
+                final TerrDiffForm tdf = new TerrDiffForm(false,
+                        decodeTerrDiff(btnDiff,
+                                MyLocale.getMsg(1001, "D"),
+                                CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))
+                            )
+                        );
 
-				returnValue = tdf.execute();
-				if (returnValue == 1) {
-					btnDiff.setText(MyLocale.getMsg(1000, "D") + ": "
-							+ CacheTerrDiff.longDT(tdf.getDT()));
-					dirtyDetails = true;
-				}
-			}
-			ev.consumed = true;
-		}
-	}
+                returnValue = tdf.execute();
+                if (returnValue == 1) {
+                    btnDiff.setText(MyLocale.getMsg(1000, "D") + ": "
+                            + CacheTerrDiff.longDT(tdf.getDT()));
+                    dirtyDetails = true;
+                }
+            }
+            ev.consumed = true;
+        }
+    }
 
 	/** allow user input on control item */
 	private void activateControl(final Control ctrl) {
@@ -752,7 +765,7 @@ public class DetailsPanel extends CellPanel {
 		} else {
 			cache.setCacheStatus(chcStatus.getText());
 		}
-		
+
 		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found")) ||
 			chcStatus.getText().startsWith(MyLocale.getMsg(355, "Attended")) ||
 			(cache.getCacheStatus().length() == 10 || cache.getCacheStatus().length() == 16) &&
@@ -764,7 +777,7 @@ public class DetailsPanel extends CellPanel {
 			cache.setFound(true);
 		}
 		else cache.setFound(false);
-		
+
 		if (!cache.isAddiWpt()) {
 			cache.setCacheOwner(inpOwner.getText().trim());
 		}
