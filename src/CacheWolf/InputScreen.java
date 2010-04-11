@@ -60,6 +60,8 @@ public class InputScreen extends Form {
 	private mLabel lblDist = new mLabel("m");
 	private mLabel lblBear = new mLabel("°");
 	private int[] iPointPos = {0,0,0,0,0,0};
+	
+	private boolean allowInvalid = false;
 
 	public class mButtonPos  extends mButton {
 		private int iPosition, iPosY = 5 , iGap =1;
@@ -118,7 +120,17 @@ public class InputScreen extends Form {
 
 	}
 
-	public InputScreen( int FormSelect)
+
+	public InputScreen(int FormSelect, boolean allowInvalidCoords)
+	{
+		allowInvalid = allowInvalidCoords;
+
+		currFormatSel = FormSelect;
+		InitInputScreen();
+	//	setTextButton(sCoords);
+	}
+
+	public InputScreen(int FormSelect)
 	{
 		currFormatSel = FormSelect;
 		InitInputScreen();
@@ -552,7 +564,7 @@ public class InputScreen extends Form {
 
 			// Button "Expert"
 			if (ev.target == btnExpert ){
-				CoordsScreen cs = new CoordsScreen();
+				CoordsScreen cs = new CoordsScreen(allowInvalid);
 				//if (CoordsInput.isValid())	cs.setFields(CoordsInput, CoordsScreen.getLocalSystem(currFormatSel));
 				if (CoordsInput.isValid())	cs.setFields(CoordsInput, currFormatSel);
 				else cs.setFields(new CWPoint(0,0), CoordsScreen.getLocalSystem(currFormatSel));
