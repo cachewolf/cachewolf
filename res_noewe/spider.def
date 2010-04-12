@@ -154,10 +154,10 @@ bugExStart         = <a\ href="
 bugExEnd           = </a></li>
 bugDetailsStart    = id="ctl00_ContentBody_BugDetails_BugGoal">
 bugDetailsEnd      = </span>
-getBugByName       = www.geocaching.com/track/search.aspx?k=
-getBugByGuid       = www.geocaching.com/track/details.aspx?guid=
-getBugById         = www.geocaching.com/track/details.aspx?id=
-getBugByTrackNr    = www.geocaching.com/track/details.aspx?tracker=
+getBugByName       = http://www.geocaching.com/track/search.aspx?k=
+getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
+getBugById         = http://www.geocaching.com/track/details.aspx?id=
+getBugByTrackNr    = http://www.geocaching.com/track/details.aspx?tracker=
 bugGuidExStart     = www.geocaching.com/track/details.aspx?id=
 bugGuidExEnd       = "
 bugNotFound        = No\ results\ were\ found\ for\ your\ search
