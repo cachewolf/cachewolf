@@ -592,8 +592,8 @@ public class DetailsPanel extends CellPanel {
                 CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.CW);
                 if(Vm.isMobile()){
                     InputScreen InScr = new InputScreen(TransformCoordinates.CW, true);
-                    if (coords.isValid())	InScr.setCcords(coords);
-                        else InScr.setCcords(new CWPoint(0,0));
+                    if (coords.isValid())	InScr.setCoords(coords);
+                        else InScr.setCoords(new CWPoint(0,0));
                     if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
                     {
                         dirtyDetails = true;

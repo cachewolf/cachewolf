@@ -384,8 +384,8 @@ public final class GotoPanel extends CellPanel {
 			if (ev.target == btnGoto){
 				if(Vm.isMobile()){
 					InputScreen InScr = new InputScreen(CoordsScreen.getLocalSystem(currFormatSel));
-					if (myNavigation.destination.isValid())	InScr.setCcords(myNavigation.destination);
-					else InScr.setCcords(new CWPoint(0,0));
+					if (myNavigation.destination.isValid())	InScr.setCoords(myNavigation.destination);
+					else InScr.setCoords(new CWPoint(0,0));
 					if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
 						setDestination(InScr.getCoords());
 				}else
