@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?><!-- This document was created with Syntext Serna Free. --><chapter>
+<?xml version='1.0' encoding='UTF-8'?><chapter>
   <chapterinfo>
     <title>Der erste Start</title>
     <date>12.3.2008</date>
@@ -44,7 +44,8 @@
           <surname>Klaus Rieger</surname>
         </author>
         <revdescription>
-          <para>Bilder auf V1.1.2320 aktualisiert, Tippfehler korrigiert, neue Funktionen beschrieben</para>
+          <para>Bilder auf V1.1.2320 aktualisiert, Tippfehler korrigiert, neue Funktionen beschrieben
+</para>
         </revdescription>
       </revision>
       <revision>
