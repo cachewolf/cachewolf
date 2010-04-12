@@ -199,7 +199,7 @@ prefixExEnd        = </td>
 #--------------------------------------
 #Section2e: Attributes
 #--------------------------------------
-attBlockExStart = watching\ this\ cache.<br\ /></small>
+attBlockExStart = <div\ class="CacheDetailNavigationWidget\ Spacing">
 attBlockExEnd  = What\ are\ Attributes?</a></small></p>
 attExStart = /images/attributes/
 attExEnd = "\ alt="
