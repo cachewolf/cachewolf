@@ -227,8 +227,8 @@ public final class CalcPanel extends CellPanel {
 				if(Vm.isMobile()){
 					readFields(coordInp, bd);
 					InputScreen InScr = new InputScreen(getLocalCooSystem());
-					if (coordInp.isValid())	InScr.setCcords(coordInp);
-						else InScr.setCcords(new CWPoint(0,0));
+					if (coordInp.isValid())	InScr.setCoords(coordInp);
+						else InScr.setCoords(new CWPoint(0,0));
 				if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
 				{
 					btnChangeLatLon.setText(InScr.getCoords().toString(getLocalCooSystem()));

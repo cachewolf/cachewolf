@@ -297,17 +297,26 @@ public class InputScreen extends Form {
 		this.repaint();
 	}
 
+	public void setCoords(CWPoint coords) {
+		setCoords(coords, true);
+	}
 
-	public void setCcords(CWPoint coords) {
+	public void setCoords(CWPoint coords, boolean setFocus) {
 		StringBuffer strBufTemp =new StringBuffer(30);
 		strBufTemp.delete(0, strBufTemp.length());
 		strBufCoords.delete(0, strBufCoords.length());
 
 		if (coords.isValid()){
-				strBufTemp.append(coords.toString(TransformCoordinates.CW));
-				strBufCoords.append(strBufTemp.toString());
-				CoordsInput = coords;
-				setFocusCoords();
+			strBufTemp.append(coords.toString(TransformCoordinates.CW));
+			String temp = coords.toString(TransformCoordinates.CW);
+			strBufCoords.append(strBufTemp.toString());
+			CoordsInput = coords;
+		} else {
+			strBufCoords.append("N 91° 00.000 E 361° 00.000");
+			CoordsInput = coords;
+		}
+		if(setFocus){
+			setFocusCoords();
 		}
 	}
 
@@ -394,10 +403,7 @@ public class InputScreen extends Form {
 	 * @param format only CWPoint.CW is supported
 	 */
 	public CWPoint getCoords(){
-		String CoordsNorth, CoordsEast;
-		CoordsNorth = btnNorth.getText()+ " " + btnNorthDD.getText()+ " " + btnNorthMM.getText()+ btnNorthSSS.getText();
-		CoordsEast = btnWest.getText()+ " " + btnEastDDD.getText()+ " " + btnEastMM.getText()+ btnEastSSS.getText();
-		CoordsBack.set(CoordsNorth + " " + CoordsEast , TransformCoordinates.CW);
+		CoordsBack.set(strBufCoords.toString() , TransformCoordinates.CW);
 		return CoordsBack;
 	}
 
@@ -521,7 +527,7 @@ public class InputScreen extends Form {
 					bd.degrees = Common.parseDouble(btnBearing.getText());
 					bd.distance = Common.parseDouble(btnDistanc.getText());
 					// only meters !!
-					setCcords(CoordsBear.project(bd.degrees, bd.distance/1000.0));
+					setCoords(CoordsBear.project(bd.degrees, bd.distance/1000.0));
 					bBearingPanelOnTop = false;
 				}
 				this.close(IDOK);
@@ -557,7 +563,7 @@ public class InputScreen extends Form {
 			if (ev.target == btnGPS){
 				Navigate nav=Global.mainTab.nav;
 				if (nav.gpsPos.isValid()){
-					setCcords(nav.gpsPos);
+					setCoords(nav.gpsPos);
 				}
 			}
 
@@ -565,11 +571,12 @@ public class InputScreen extends Form {
 			// Button "Expert"
 			if (ev.target == btnExpert ){
 				CoordsScreen cs = new CoordsScreen(allowInvalid);
+				setCoords(getCoords(), false);
 				//if (CoordsInput.isValid())	cs.setFields(CoordsInput, CoordsScreen.getLocalSystem(currFormatSel));
 				if (CoordsInput.isValid())	cs.setFields(CoordsInput, currFormatSel);
 				else cs.setFields(new CWPoint(0,0), CoordsScreen.getLocalSystem(currFormatSel));
 				if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK){
-					setCcords(cs.getCoords());
+					setCoords(cs.getCoords(), false);
 					this.close(IDOK);
 				}
 
