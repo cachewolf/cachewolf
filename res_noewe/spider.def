@@ -62,7 +62,7 @@ lineRex            = <tr\ bgcolor='#.{6}'\\s*class="Data\ BorderTop">((?s).*?)</
 directionRex       = /compass/(.*?).gif
 logDateRex         = <td>(.*?)<br\ /><span\ class="Success">
 availableRex       = <span\ class="Strike">
-archivedRex        = <span\ class="Warning Strike">
+archivedRex        = <span\ class="OldWarning\ Strike">
 PMRex              = small_profile.gif
 distRex            = <br\ />(.*?)(?:km|mi)\\s*</td>
 waypointRex        = \\(GC(.*?)\\)<br\ />
