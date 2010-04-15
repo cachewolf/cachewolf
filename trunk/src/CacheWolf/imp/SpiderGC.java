@@ -376,12 +376,13 @@ public class SpiderGC{
 								if (doPMCache(CacheDescriptionGC) && updateExists(ch,CacheDescriptionGC)) {
 									if (!ch.is_black() && (cachesShouldUpdate.size()<maxUpdate)) cachesShouldUpdate.put(chWaypoint, ch);
 								}
-								else
-									if (maxUpdate == Integer.MAX_VALUE) cachesToUpdate.remove( chWaypoint );
+								else {
+									cachesToUpdate.remove( chWaypoint );
+								}
 							}
 						}
 						if(cachesToLoad.size() >= maxNew) {
-							if(maxUpdate!=Integer.MAX_VALUE) {
+							if(cachesShouldUpdate.size() >= maxUpdate) {
 								maxDistance=0;
 								cachesToUpdate.clear();
 							} else {
@@ -429,8 +430,10 @@ public class SpiderGC{
 		boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
 
 		int spiderErrors = 0;
-		if (cachesToUpdate.size() == startSize) cachesToUpdate.clear(); // there must be something wrong
-		if (cachesToUpdate.size() == 0 || cachesToUpdate.size() > maxUpdate) cachesToUpdate=cachesShouldUpdate;
+		if (cachesToUpdate.size() == startSize)
+			cachesToUpdate.clear(); // there must be something wrong
+		if (cachesToUpdate.size() == 0 || cachesToUpdate.size() > maxUpdate)
+			cachesToUpdate=cachesShouldUpdate;
 
 		if ( cachesToUpdate.size() > 0 ) {
 			switch (pref.spiderUpdates) {
