@@ -27,6 +27,16 @@
           <para>Section Hilfe eingefügt</para>
         </revdescription>
       </revision>
+      <revision>
+        <revnumber>0.3</revnumber>
+        <date>13. April 2010</date>
+        <author>
+          <surname>René Schmidt</surname>
+        </author>
+        <revdescription>
+          <para>Voraussetzungen PocketPC eingefügt</para>
+        </revdescription>
+      </revision>
     </revhistory>
   </chapterinfo>
   <title>Vor der Installation</title>
@@ -40,7 +50,7 @@
     <title>Copyright/Lizenz</title>
     <para>Das Urheberrecht von Cachewolf liegt beim Entwicklungsteam von Cachewolf. Mehr Informationen können unter <ulink url="http://developer.berlios.de/projects/cachewolf/ ">http://developer.berlios.de/projects/cachewolf/ </ulink>  abgerufen werden. </para>
     <para>Cachewolf ist OpenSource, das heißt, der Quelltext ist für jedermann frei zugänglich. Es wurde unter der GNU General Public License, in Version 2 der von der Free Software Foundation entwickelten Fassung, veröffentlicht. Unter diesen Bedingungen kann Cachewolf verbreitet und/oder bearbeitet werden. Der Wortlaut der GNU Public License v2 kann unter     <ulink url="http://www.gnu.org/licenses/gpl-2.0.html">http://www.gnu.org/licenses/gpl-2.0.html</ulink> oder in der Anlage eingesehen werden.</para>
-    <para>Cachewolf wird in der Hoffnung, dass es nützlich ist, verbreitet. Es wird mit der Verbreitung und Entwicklung keinerlei Garantie übernommen, insbesondere auch keine impilzite Garantie für die allgemeine Gebrauchsfähigkeit or die Gebrauchsfähigkeit für einen bestimmten Zweck. Für weitere Informationen schauen Sie bitte in die GNU General Public License v2.</para>
+    <para>Cachewolf wird in der Hoffnung, dass es nützlich ist, verbreitet. Es wird mit der Verbreitung und Entwicklung keinerlei Garantie übernommen, insbesondere auch keine impilzite Garantie für die allgemeine Gebrauchsfähigkeit oder die Gebrauchsfähigkeit für einen bestimmten Zweck. Für weitere Informationen schauen Sie bitte in die GNU General Public License v2.</para>
   </section>
   <section>
     <title>Systemvoraussetzungen</title>
@@ -113,6 +123,42 @@
     </section>
     <section>
       <title>Pocket PC</title>
+      <para>Mindestvoraussetzungen:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Windows Mobile</para>
+        </listitem>
+        <listitem>
+          <para>2,5 Megabyte freier Speicherplatz für EWE VM im Hauptspeicher des Gerätes</para>
+        </listitem>
+        <listitem>
+          <para>5 Megabyte freier Speicherplatz für Cachewolf</para>
+        </listitem>
+        <listitem>
+          <para>20 Megabyte freier Speicherplatz für Profildaten</para>
+        </listitem>
+      </itemizedlist>
+      <para>Empfohlene Voraussetzungen:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Windows Mobile</para>
+        </listitem>
+        <listitem>
+          <para>2,5 Megabyte freier Speicherplatz für EWE VM im Hauptspeicher des Gerätes</para>
+        </listitem>
+        <listitem>
+          <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte zusätzlich für die Installation)</para>
+        </listitem>
+        <listitem>
+          <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive Karten)</para>
+        </listitem>
+        <listitem>
+          <para>Internet</para>
+        </listitem>
+        <listitem>
+          <para>GPS-Empfänger</para>
+        </listitem>
+      </itemizedlist>
     </section>
     <section>
       <title>Zaurus</title>

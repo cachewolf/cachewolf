@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?><chapter>
   <chapterinfo>
     <title>Installation</title>
-    <date>12.3.2008</date>
+    <date>13.4.2010</date>
     <releaseinfo>CacheWolf 1.0</releaseinfo>
     <author>
       <surname>Marc Schnitzler</surname>
@@ -25,6 +25,16 @@
         </author>
         <revdescription>
           <para>Kapitel fertig</para>
+        </revdescription>
+      </revision>
+      <revision>
+        <revnumber>0.99a</revnumber>
+        <date>13.4.2010</date>
+        <author>
+          <surname>René Schmidt</surname>
+        </author>
+        <revdescription>
+          <para>um Informationen für HP iPAQ ergänzt</para>
         </revdescription>
       </revision>
     </revhistory>
@@ -72,36 +82,11 @@
       PocketPC: für Geräte mit ARM-Prozessor und für Geräte mit
       Intel-Prozessor. Welche Version benötigt wird, kann man auch durch
       Probieren ermitteln (teilweise laufen auch beide Versionen). Zusätzlich
-      gibt es noch Versionen für SH3 und MIPS Prozessoren. </para>
+      gibt es noch Versionen für SH3 und MIPS Prozessoren.</para>
+      <para>Die Cachewolf-Version für PPC2003 läuft nur unter Windows Mobile 2003 SE, Windows Mobile 5, Windows Mobile 6 oder besser.</para>
       <para>CacheWolf erkennt übrigens VGA-Geräte und stellt die Auflösung
       entsprechend ein.</para>
-      <highlights>
-        <para>Aus der FAQ:</para>
-        <para>Frage 3: Welche Version von CacheWolf ist die richtige für mein
-        Pocket PC?</para>
-        <para>Antwort: Diese Frage ist leider nicht so einfach zu
-        beantworten.</para>
-        <para>Auf dieser Seite (www.pocketpc-users.de) gibt es eine sehr gute
-        Beschreibung.</para>
-        <para>Vielleicht hilft aber folgende (kurze) Zusammenfassung:</para>
-        <para>* Hast Du ein Pocket PC 2000 Gerät, dann benutzt es
-        wahrscheinlich einen ARM (kompatiblen) Prozessor. Es gibt allerdings
-        Ausnahmen, die einen SH3 oder MIPS Prozessor nutzen.</para>
-        <para>* Pocket PC 2002 und 2003 Geräte nutzen ausschließlich einen ARM
-        (kompatiblen) Prozessor.</para>
-        <para>* Hast Du Dein Gerät in der zweiten Jahreshälfte von 2004 oder
-        später gekauft, dann solltest Du die &quot;PocketPC2003&quot; Version von
-        CacheWolf installieren. Die &quot;ARM&quot; Version sollte zwar auch laufen,
-        kann aber nicht alle Funktionen Deines Geräts optimal nutzen.
-        Beispiele (von Nutzern):</para>
-        <para>** PocketPCArm: XDA Trion, ASUS632,Yakumo Delta GPS, Loox N520,
-        Compaq IPAQ 6915, Medion MDPPC250, FSC Loox N560, Dell Axim X51V,
-        Yakumo DeltaX5BT, Acer N35</para>
-        <para>** PocketPC2003: Loox N520, Mio Digi Walker P550</para>
-        <para>** Zaurus: Sharp SL-C1000</para>
-        <para>Sagt dir das alles gar nichts, probier einfach die Versionen
-        durch - eine wird auf jeden Fall funktionieren!</para>
-      </highlights>
+      <para>Bitte beachte bei Problemen auch Frage 3 der FAQ.</para>
       <section>
         <title>Installation</title>
         <itemizedlist>
