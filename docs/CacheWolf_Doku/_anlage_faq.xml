@@ -128,6 +128,16 @@ Ab Windows Mobile 5 wird sogenannter Flash-Speicher verwendet - das ist Speicher
             <para>Inhalt von cachewolf.de eingefügt</para>
           </revdescription>
         </revision>
+        <revision>
+          <revnumber>1.0a</revnumber>
+          <date>13. April 2010</date>
+          <author>
+            <surname>René Schmidt</surname>
+          </author>
+          <revdescription>
+            <para>Acer N50, HP iPAQ H5500 hinzugefügt</para>
+          </revdescription>
+        </revision>
       </revhistory>
     </sectioninfo>
     <title>Welche Version von CacheWolf ist die richtige für meinen Pocket PC?</title>
@@ -145,8 +155,8 @@ Ab Windows Mobile 5 wird sogenannter Flash-Speicher verwendet - das ist Speicher
     </itemizedlist>
     <para><emphasis role="bold">Beispiele (von Nutzern):</emphasis></para>
     <simplelist>
-      <member><emphasis role="underline">PocketPCArm:</emphasis> XDA Trion, ASUS632,Yakumo Delta GPS, Loox N520, Compaq IPAQ 6915, Medion MDPPC250, FSC Loox N560, Dell Axim X51V, Yakumo DeltaX5BT, Acer N35</member>
-      <member><emphasis role="underline">PocketPC:</emphasis> Loox N520, Mio Digi Walker P550</member>
+      <member><emphasis role="underline">PocketPCArm:</emphasis> XDA Trion, ASUS632,Yakumo Delta GPS, Loox N520, Compaq IPAQ 6915, Medion MDPPC250, FSC Loox N560, Dell Axim X51V, Yakumo DeltaX5BT, Acer N35, HP iPAQ H5500</member>
+      <member><emphasis role="underline">PocketPC:</emphasis> Acer N50, Loox N520, Mio Digi Walker P550</member>
       <member><emphasis role="underline">Zaurus:</emphasis> Sharp SL-C1000</member>
     </simplelist>
     <para>Sagt dir das alles gar nichts probier einfach die Versionen durch - eine wird auf jeden Fall funktionieren! </para>
