@@ -37,6 +37,16 @@
           <para>Voraussetzungen PocketPC eingefügt</para>
         </revdescription>
       </revision>
+      <revision>
+        <revnumber>0.4</revnumber>
+        <date>19. April 2010</date>
+        <author>
+          <surname>René Schmidt</surname>
+        </author>
+        <revdescription>
+          <para>Voraussetzungen Zaurus eingefügt</para>
+        </revdescription>
+      </revision>
     </revhistory>
   </chapterinfo>
   <title>Vor der Installation</title>
@@ -162,6 +172,42 @@
     </section>
     <section>
       <title>Zaurus</title>
+      <para>Mindestvoraussetzungen:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Zaurus SL-5500 oder Nachfolge-Modell</para>
+        </listitem>
+        <listitem>
+          <para>3 Megabyte freier Speicherplatz für EWE VM</para>
+        </listitem>
+        <listitem>
+          <para>5 Megabyte freier Speicherplatz für Cachewolf</para>
+        </listitem>
+        <listitem>
+          <para>20 Megabyte freier Speicherplatz für Profildaten</para>
+        </listitem>
+      </itemizedlist>
+      <para>Empfohlene Voraussetzungen:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Zaurus SL-5500 oder Nachfolge-Modell</para>
+        </listitem>
+        <listitem>
+          <para>3 Megabyte freier Speicherplatz für EWE VM</para>
+        </listitem>
+        <listitem>
+          <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte zusätzlich für die Installation)</para>
+        </listitem>
+        <listitem>
+          <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive Karten)</para>
+        </listitem>
+        <listitem>
+          <para>Internet</para>
+        </listitem>
+        <listitem>
+          <para>GPS-Empfänger</para>
+        </listitem>
+      </itemizedlist>
     </section>
   </section>
   <section>
