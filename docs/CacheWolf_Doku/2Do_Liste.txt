@@ -13,12 +13,6 @@ Anlage FAQ
 ----------
 - um im Forum häufig gestellte Fragen erweitern
 
-
-1. Vor der Installation
------------------------
-- Systemvoraussetzungen Zaurus
-
-
 2. Installation
 ---------------
 - ist Berlios noch für die Packages die primäre Download-Seite?

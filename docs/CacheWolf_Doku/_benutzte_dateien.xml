@@ -1,70 +1,248 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<chapter>
+<?xml version='1.0' encoding='UTF-8'?><chapter>
   <chapterinfo>
     <title>Von Cachewolf benutzte Dateien</title>
-
     <date>24.3.2008</date>
-
     <releaseinfo>CacheWolf 1.0</releaseinfo>
-
     <author>
       <surname>Marc Schnitzler</surname>
     </author>
-
     <revhistory>
       <revision>
         <revnumber>0.1</revnumber>
-
         <date>24.3.2008</date>
-
         <author>
           <surname>Marc Schnitzler</surname>
         </author>
-
         <revdescription>
           <para>Erster Entwurf, kopiert www.cachewolf.de</para>
         </revdescription>
       </revision>
+      <revision>
+        <revnumber>0.2</revnumber>
+        <date>19.4.2010</date>
+        <author>
+          <surname>René Schmidt</surname>
+        </author>
+        <revdescription>
+          <para>pref.xml vorbereitet an Hand von Musterprofil</para>
+        </revdescription>
+      </revision>
     </revhistory>
   </chapterinfo>
-
   <title>Von Cachewolf benutzte Dateien</title>
-
-  <para></para>
-
+  <para/>
   <section>
     <title>pref.xml</title>
-
-    <para></para>
+    <para>Im Hauptverzeichnis von Cachewolf wird mit dem ersten Start von Cachewolf die Datei pref.xml angelegt. Sie enthält alle Einstellungen von Cachewolf. Die Einstellungen sind im XML-Format abgespeichert. Alle Daten sind im Container <code>preferences</code> abgelegt.</para>
+    <para>Folgende Container mit Einstellungen nutzt Cachewolf: (zur besseren Verdeutlichung sind die Standardwerte bereits eingetragen)</para>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">&lt;locale language=&quot;&quot;/&gt;</emphasis></para>
+        <para>Hier wird die Sprache von Cachewolf ausgewählt. Für language können folgende Werte  ausgewählt werden:</para>
+        <table>
+          <caption>pref.xml - locale</caption>
+          <thead>
+            <tr>
+              <th>Paramter</th>
+              <th>Bedeutung</th>
+            </tr>
+          </thead>
+          <tr>
+            <td>AUTO</td>
+            <td>Automatische Sprachauswahl; falls die von Cachewolf erkannte Systemsprache nicht unterstützt wird, wird Englisch als Sprache genutzt</td>
+          </tr>
+          <tr>
+            <td>DE</td>
+            <td>Deutsch</td>
+          </tr>
+          <tr>
+            <td>EN</td>
+            <td>Englisch</td>
+          </tr>
+          <tr>
+            <td>FR</td>
+            <td>Französisch</td>
+          </tr>
+          <tr>
+            <td>NL</td>
+            <td>Niederländisch</td>
+          </tr>
+          <tr>
+            <td>PL</td>
+            <td>Polnisch</td>
+          </tr>
+          <tr>
+            <td>SV</td>
+            <td>Swedisch</td>
+          </tr>
+        </table>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;basedir dir = &quot;C:/Cachewolf/profile&quot;/&gt;</emphasis></para>
+        <para>Hier wird das Verzeichnis, in dem die Profile von Cachewolf liegen, angegeben. Der Paramter dir enthält den Pfad zu den Profilen. Er kann sowhl absolut, als auch relativ zu Cachewolf angegeben werden</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;lastprofile autoreload=&quot;false&quot;&gt;Musterprofil&lt;/lastprofile&gt;</emphasis></para>
+        <para>Der Container lastprofile enthält Informationen zum zu letzt genutzten Profil. In dem Beispiel ist dies das Profil Musterprofil.</para>
+        <para>Über den Paramter autoreload (Werte: true/false) kann eingestellt werden, ob das zuletztgenutze Profil bei Start von Cachewolf automatisch geladen oder ob der Nutzer nach dem zu ladenen Profil gefragt werden soll.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;CurrentCentre FromGPSPosition=&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;alias name=&quot;&quot; password=&quot;&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;alias2 name=&quot;&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;gcmemberid name =&quot;&quot; Premium =&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;browser name = &quot;C:\Programme/Internet Explorer/iexplore.exe&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;proxy prx = &quot;&quot; prt = &quot;&quot; active = &quot;false&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;port portname = &quot;&quot; baud = &quot;4800&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;portforward active= &quot;false&quot; destinationHost = &quot;192.168.1.15&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;Cgpsd active= &quot;false&quot; host = &quot; 127.0.0.1&quot; port = &quot;2947&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;portlog active= &quot;false&quot; logTimer = &quot;5&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;font size=&quot;16&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;screen menuattop=&quot;true&quot; tabsattop=&quot;true&quot; showstatus=&quot;true&quot; hasclosebutton=&quot;true&quot; touchControls=&quot;false&quot; h=&quot;600&quot; w=&quot;800&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;fixedsip state = &quot;false&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;listview colmap=&quot;0,1,2,3,4,5,6,7,8,9,10,11,12&quot; colwidths=&quot;15,20,20,25,81,177,177,83,74,161,50,104,22,30,30,30,30,30,30,30&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;travelbugs colmap=&quot;1,4,5,6,8,9,10,7&quot; colwidths=&quot;212,136,62,90,50,56,90,38,50,50,94,50&quot; shownonlogged=&quot;false&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;descpanel showimages=&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;imagepanel showdeletedimages=&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;hintlogpanel logsperpage=&quot;5&quot; initialhintheight=&quot;10&quot; naxspiderlogs=&quot;250&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;solver ignorevariablecase=&quot;true&quot; degMode=&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;garmin connection = &quot;com1&quot; GPSBabelOptions = &quot;&quot; MaxWaypointLength = &quot;0&quot; addDetailsToWaypoint = &quot;false&quot; addDetailsToName = &quot;false&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;opencaching lastSite=&quot;www.opencaching.de&quot; downloadMissing=&quot;false&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;location lat = &quot;51.33173&quot; long = &quot;012.38112&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;spider forcelogin=&quot;true&quot; spiderUpdates=&quot;2&quot; checkLog=&quot;false&quot; maxSpiderNumer=&quot;200&quot; downloadPics=&quot;true&quot; downloadTBs=&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;gotopanel northcentered=&quot;true&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;details cacheSize=&quot;50&quot; delete=&quot;5&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;metric type=&quot;1&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;export numberOfLogsToExport=&quot;5&quot; exportTravelBugs=&quot;false&quot; exportGpxAsMyFinds=&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;datamover processorMode=&quot;0&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;logkeeping maximum=&quot;250&quot; keepown=&quot;true&quot; /&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;fillWhiteArea on=&quot;false&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;mapLoader tileSize=&quot;1&quot; overlapping=&quot;100&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;showCachesOnMap on=&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;SortingGroupedByCache on=&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">&lt;Symbols useOwnSymbols=&quot;true&quot;/&gt;</emphasis></para>
+        <para/>
+      </listitem>
+    </itemizedlist>
+    <para/>
   </section>
-
   <section>
     <title>index.xml</title>
-
-    <para></para>
+    <para/>
   </section>
-
   <section>
     <title>sonstige xml Dateien</title>
-
-    <para></para>
+    <para/>
   </section>
-
   <section>
     <title>spider.def</title>
-
-    <para></para>
+    <para/>
   </section>
-
   <section>
     <title>Die .tpl Dateien</title>
-
-    <para></para>
+    <para/>
   </section>
-
   <section>
     <title>Die .wfl Dateien</title>
-
-    <para></para>
+    <para/>
   </section>
 </chapter>
