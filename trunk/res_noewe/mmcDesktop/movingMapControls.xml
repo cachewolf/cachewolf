@@ -1,0 +1,113 @@
+<mmc>
+	<settings fontsize="14"/>
+
+	<role name="always" active="true"/>
+	<role name="menu"/>
+	<role name="done" disable="map|centermap|zoom|detail"/>
+	<role name="zoom" disable="map|centermap|detail"/>
+	<role name="centermap"  disable="zoom|map|detail"/>
+	<role name="map" disable="zoom|centermap|detail"/>
+	<role name="detail" disable="zoom|centermap|map"/>
+	<role name="show_map" active="true"/> <!-- this name of role is fix in code! -->
+	<role name="show_caches" active="true"/><!-- this name of role is fix in code! -->
+	<role name="fill_white" active="true"/><!-- this name of role is fix in code! -->
+	<role name="zoom_manually"/><!-- this name of role is fix in code! -->
+
+
+
+	<button action="changeStateOfRole" fromLeft="0" fromTop="0"  changeStateof="map" location="mmcDesktop/top.png"  visibleIf="!map"  localeDefault="map"/>
+	<button action="changeStateOfRole" fromLeft="0" fromTop="0"  changeStateof="map" location="mmcDesktop/top_active.png"  visibleIf="map"  localeDefault="map"/>
+	
+	<button action="changeStateOfRole" fromLeft="140" fromTop="0"  changeStateof="zoom" location="mmcDesktop/top.png"  visibleIf="!zoom"  localeDefault="zoom"/>
+	<button action="changeStateOfRole" fromLeft="140" fromTop="0"  changeStateof="zoom" location="mmcDesktop/top_active.png"  visibleIf="zoom"  localeDefault="zoom"/>
+	
+	<button action="changeStateOfRole" fromLeft="280" fromTop="0"  changeStateof="centermap" location="mmcDesktop/top.png"  visibleIf="!centermap"  localeDefault="center to"/>
+	<button action="changeStateOfRole" fromLeft="280" fromTop="0"  changeStateof="centermap" location="mmcDesktop/top_active.png"  visibleIf="centermap"  localeDefault="center to"/>
+	
+	<button action="changeStateOfRole" fromLeft="420" fromTop="0"  changeStateof="detail" location="mmcDesktop/top.png"  visibleIf="!detail"  localeDefault="detail"/>
+	<button action="changeStateOfRole" fromLeft="420" fromTop="0"  changeStateof="detail" location="mmcDesktop/top_active.png"  visibleIf="detail"  localeDefault="detail"/>
+
+	<button action="" fromLeft="560" fromTop="0" location="mmcDesktop/top_long.png"  visibleIf="always"/>
+	<button action="close" fromRight="30" fromTop="0"  changeStateof="detail" location="mmcDesktop/close.png" icon="mmcDesktop/icon_close.png" visibleIf="always" />
+
+	
+	<!-- sub menu: map -->
+	<button action="selectMap" fromLeft="0" fromTop="20"  location="mmcDesktop/row.png"  icon="mmcDesktop/icon_folder.png"  visibleIf="map" localeDefault="Select a map manually$s" localeID="4235" alignText="C" textOffsetLeft="20"/>	
+	<button action="changeMapDir" fromLeft="0" fromTop="40"  location="mmcDesktop/row.png"  icon="mmcDesktop/icon_folders.png"  visibleIf="map" localeDefault="Change map directory" localeID="4237" alignText="C" textOffsetLeft="20"/>	
+	<button action="changeStateOfRole" fromLeft="0" fromTop="60" changeStateof="show_map" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_map.png"  visibleIf="map+!show_map" localeDefault="Show map" localeID="4239" alignText="C" textOffsetLeft="20"/>	
+	<button action="changeStateOfRole" fromLeft="0" fromTop="60" changeStateof="show_map" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_nomap.png"  visibleIf="map+show_map" localeDefault="Hide map" localeID="4241" alignText="C" textOffsetLeft="20"/>	
+	<button action="changeStateOfRole" fromLeft="0" fromTop="80" changeStateof="fill_white" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_map_no_fill.png"  visibleIf="map+!fill_white" localeDefault="Show white areas" localeID="4267" alignText="C" textOffsetLeft="20"/>	
+	<button action="changeStateOfRole" fromLeft="0" fromTop="80" changeStateof="fill_white" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_map_fill.png"  visibleIf="map+fill_white" localeDefault="Fill white areas" localeID="4266" alignText="C" textOffsetLeft="20"/>	
+	<button action="changeStateOfRole" fromLeft="0" fromTop="100" changeStateof="show_caches" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_map_cache.png"  visibleIf="map+!show_caches" localeDefault="Alle Cache anzeigen" localeID="4268" alignText="C" textOffsetLeft="20"/>	
+	<button action="changeStateOfRole" fromLeft="0" fromTop="100" changeStateof="show_caches" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_map_no_cache.png"  visibleIf="map+show_caches" localeDefault="Keine Cache anzeigen" localeID="4269" alignText="C" textOffsetLeft="20"/>	
+		
+	<!-- sub menu: zoom -->
+	
+	<button action="changeStateOfRole" fromLeft="140" fromTop="20"  changeStateof="zoom_manually"  location="mmcDesktop/row.png"  icon="mmcDesktop/icon_zoom.png"  visibleIf="zoom+!zoom_manually" localeDefault="Manual zoom" localeID="4292" alignText="C"  textOffsetLeft="20"/>	
+	<button action="changeStateOfRole" fromLeft="140" fromTop="20"  changeStateof="zoom_manually"  location="mmcDesktop/row.png"  icon="mmcDesktop/icon_zoom.png"  visibleIf="zoom+zoom_manually" localeDefault="Manual zoom" localeID="4292" alignText="C"  textOffsetLeft="20"/>	
+	<button action="zoomin" fromLeft="140" fromTop="40"  location="mmcDesktop/row.png"  icon="mmcDesktop/icon_zoom_in.png"  visibleIf="zoom" localeDefault="Zoom in" localeID="4291" alignText="C"  textOffsetLeft="20"/>	
+	<button action="zoomout" fromLeft="140" fromTop="60" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_zoom_out.png"  visibleIf="zoom" localeDefault="Zoom out" localeID="4290" alignText="C" textOffsetLeft="20"/>	
+	<button action="1to1" fromLeft="140" fromTop="80" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_1to1.png"  visibleIf="zoom" localeDefault="Zoom to original resolution" localeID="4293" alignText="C" textOffsetLeft="20"/>	
+	
+	
+	<!-- sub menu: center map -->
+	
+	<button action="moveToDest" fromLeft="280" fromTop="20" location="mmcDesktop/row.png"   icon="mmcDesktop/icon_to_target.png"  visibleIf="centermap" localeDefault="Move to goto point" localeID="4260" alignText="C" textOffsetLeft="20"/>	
+	<button action="moveToGps" fromLeft="280" fromTop="40"  location="mmcDesktop/row.png"  icon="mmcDesktop/icon_to_gps.png"  visibleIf="centermap" localeDefault="Move to GPS position" localeID="4262" alignText="C" textOffsetLeft="20"/>	
+	<button action="moveToCenter" fromLeft="280" fromTop="60" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_to_centre.png"  visibleIf="centermap" localeDefault="Move to centre" localeID="4264" alignText="C" textOffsetLeft="20"/>	
+	
+	
+	<!-- sub menu: detail -->
+	
+	<button action="highestResGpsDest" fromLeft="420" fromTop="20" location="mmcDesktop/row.png"    icon="mmcDesktop/icon_map_pos_dest.png"  visibleIf="detail" localeDefault= "Highest res. containing dest.  cur. position" localeID="4244" alignText="C" textOffsetLeft="20"/>	
+	<button action="highestResolution" fromLeft="420" fromTop="40"  location="mmcDesktop/row.png"  icon="mmcDesktop/icon_map_highest_res.png"  visibleIf="detail" localeDefault="Highest resolution" localeID="4246" alignText="C" textOffsetLeft="20"/>	
+	<button action="keepManResolution" fromLeft="420" fromTop="60" location="mmcDesktop/row.png"  icon="mmcDesktop/icon_map_man_res.png"  visibleIf="detail" localeDefault="Keep manual resolution" localeID="4248" alignText="C"  textOffsetLeft="20"/>	
+	<button action="allCachesRes" fromLeft="420" fromTop="80" location="mmcDesktop/row.png"   icon="mmcDesktop/icon_map_all.png"  visibleIf="detail" localeDefault="Load a map containing all marked caches" localeID="4252" alignText="C" textOffsetLeft="20"/>	
+	<button action="moreDetails" fromLeft="420" fromTop="100"  location="mmcDesktop/row.png"   icon="mmcDesktop/icon_map_more_details.png"  visibleIf="detail" localeDefault="Load a map with more details" localeID="4254" alignText="C" textOffsetLeft="20"/>	
+	<button action="moreOverview" fromLeft="420" fromTop="120" location="mmcDesktop/row.png" icon="mmcDesktop/icon_map_less_details.png"  visibleIf="detail" localeDefault="Load a map for a better overview" localeID="4256" alignText="C" textOffsetLeft="20"/>	
+	
+	<!-- statusline -->
+	
+	<button action="" fromLeft="0" fromBottom="25" location="mmcDesktop/status_long.png"  visibleIf="always"/>	
+	<button action="" fromRight="200" fromBottom="25" location="mmcDesktop/status.png"  visibleIf="always" content="distance" alignText="C"/>
+	<button action="" fromRight="100" fromBottom="25" location="mmcDesktop/status.png" visibleIf="always" content="scale" alignText="C"/>
+	
+	
+	<!--status line icons-->
+	
+		<!-- sub menu: map -->
+	<button action="selectMap" fromLeft="10" fromBottom="22"  location="mmcDesktop/icon_folder.png"  visibleIf="always" />	
+	<button action="changeMapDir" fromLeft="30" fromBottom="22"   location="mmcDesktop/icon_folders.png"  visibleIf="always"/>	
+	<button action="changeStateOfRole" fromLeft="50" fromBottom="22"  changeStateof="show_map" location="mmcDesktop/icon_map.png"  visibleIf="!show_map"/>	
+	<button action="changeStateOfRole" fromLeft="50" fromBottom="22"  changeStateof="show_map" location="mmcDesktop/icon_nomap.png"  visibleIf="show_map"/>	
+	<button action="changeStateOfRole" fromLeft="70" fromBottom="22"  changeStateof="fill_white" location="mmcDesktop/icon_map_no_fill.png"  visibleIf="!fill_white"/>	
+	<button action="changeStateOfRole" fromLeft="70" fromBottom="22"  changeStateof="fill_white" location="mmcDesktop/icon_map_fill.png"  visibleIf="fill_white"/>	
+	<button action="changeStateOfRole" fromLeft="90" fromBottom="22"  changeStateof="show_caches" location="mmcDesktop/icon_map_cache.png"  visibleIf="!show_caches"/>	
+	<button action="changeStateOfRole" fromLeft="90" fromBottom="22" changeStateof="show_caches" location="mmcDesktop/icon_map_no_cache.png"  visibleIf="show_caches"/>	
+		
+	<!-- sub menu: zoom -->
+	
+	<button action="changeStateOfRole" fromLeft="140" fromBottom="22"   changeStateof="zoom_manually"  location="mmcDesktop/icon_zoom.png"  visibleIf="!zoom_manually"/>	
+	<button action="changeStateOfRole" fromLeft="140" fromBottom="22"   changeStateof="zoom_manually"  location="mmcDesktop/icon_zoom.png"  visibleIf="zoom_manually"/>	
+	<button action="zoomin" fromLeft="160" fromBottom="22" location="mmcDesktop/icon_zoom_in.png"  visibleIf="always"/>	
+	<button action="zoomout" fromLeft="180" fromBottom="22" location="mmcDesktop/icon_zoom_out.png"  visibleIf="always"/>	
+	<button action="1to1" fromLeft="200" fromBottom="22" location="mmcDesktop/icon_1to1.png"  visibleIf="always"/>	
+	
+	
+	<!-- sub menu: center map -->
+	
+	<button action="moveToDest" fromLeft="250" fromBottom="22" location="mmcDesktop/icon_to_target.png"  visibleIf="always"/>	
+	<button action="moveToGps" fromLeft="270" fromBottom="22"  location="mmcDesktop/icon_to_gps.png"  visibleIf="always"/>	
+	<button action="moveToCenter" fromLeft="290" fromBottom="22" location="mmcDesktop/icon_to_centre.png"  visibleIf="always"/>	
+	
+	
+	<!-- sub menu: detail -->
+	
+	<button action="highestResGpsDest" fromLeft="340" fromBottom="22" location="mmcDesktop/icon_map_pos_dest.png"  visibleIf="always" />	
+	<button action="highestResolution" fromLeft="360" fromBottom="22"  location="mmcDesktop/icon_map_highest_res.png"  visibleIf="always"/>	
+	<button action="keepManResolution" fromLeft="380" fromBottom="22" location="mmcDesktop/icon_map_man_res.png"  visibleIf="always"/>	
+	<button action="allCachesRes" fromLeft="400" fromBottom="22" location="mmcDesktop/icon_map_all.png"  visibleIf="always"/>	
+	<button action="moreDetails" fromLeft="420" fromBottom="22"  location="mmcDesktop/icon_map_more_details.png"  visibleIf="always"/>	
+	<button action="moreOverview" fromLeft="440" fromBottom="22" location="mmcDesktop/icon_map_less_details.png"  visibleIf="always"/>	
+	
+</mmc>

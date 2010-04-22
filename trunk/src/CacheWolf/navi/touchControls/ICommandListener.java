@@ -54,6 +54,18 @@ public interface ICommandListener {
 	
 	public static final String NO_FILL_MAP = "nofillMap";
 
+	public static final String CONTEXT_GOTO = "context_goto";
+
+	public static final String CONTEXT_NEW_WAY_POINT = "context_nwp";
+
+	public static final String CONTEXT_OPEN_CACHE_DESC = "context_ocDesc";
+
+	public static final String CONTEXT_OPEN_CACHE_DETAIL =  "context_ocDetail";
+
+	public static final String CONTEXT_GOTO_CACHE = "context_goto_cache";
+
+	public static final String CONTEXT_TOUR = "context_tour";
+
 	public boolean handleCommand(String command);
 
 }
