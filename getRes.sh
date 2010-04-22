@@ -23,20 +23,18 @@ mkdir -p work/languages
 mkdir -p work/templates
 mkdir -p work/exporticons
 mkdir -p work/symbols
-mkdir -p work/mmcDefault
+mkdir -p work/mmcDesktop
 mkdir -p work/mmc240x320
 mkdir -p work/mmc480x640
-mkdir -p work/mmcOldStyle
 
 # get ressources
 cp -fa resources/*.* work
 cp -fa res_noewe/*.* work
 cp -fa res_noewe/attributes/* work/attributes
 cp -fa res_noewe/attributes-big/* work/attributes
-cp -fa res_noewe/mmcDefault/* work/mmcDefault/
+cp -fa res_noewe/mmcDesktop/* work/mmcDesktop/
 cp -fa res_noewe/mmc240x320/* work/mmc240x320/
 cp -fa res_noewe/mmc480x640/* work/mmc480x640/
-cp -fa res_noewe/mmcOldStyle/* work/mmcOldStyle/
 cp -fa res_noewe/webmapservices/* work/webmapservices/
 cp -fa res_noewe/languages/* work/languages/
 cp -fa res_noewe/templates/* work/templates/

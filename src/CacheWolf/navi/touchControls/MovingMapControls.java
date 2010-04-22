@@ -23,10 +23,14 @@ public class MovingMapControls implements ICommandListener {
 	private static final String ROLE_SHOW_MAP = "show_map";
 
 	public static final String ROLE_MENU = "menu";
+	
+	public static final String ROLE_DONE = "done";
 
 	public static final String ROLE_WORKING = "working";
 
 	Vector buttons = null;
+	
+	Vector visibleImages = null;
 
 	private boolean vga;
 
@@ -52,6 +56,7 @@ public class MovingMapControls implements ICommandListener {
 		movingMap.getPreferredSize(dest);
 		movingMapControlSettings.readFile(dest);
 		buttons = movingMapControlSettings.getMenuItems();
+		visibleImages = new Vector();
 
 		roles.put(ROLE_WORKING, new Role());
 
@@ -61,16 +66,22 @@ public class MovingMapControls implements ICommandListener {
 	}
 
 	private void setStateOfIcons() {
+		for (int i = 0; i < visibleImages.size(); i++) {
+			AniImage ani = (AniImage) visibleImages.get(i);
+			movingMap.getMmp().removeImage(ani);
+		}
 		for (int i = 0; i < buttons.size(); i++) {
 			MovingMapControlItem item = (MovingMapControlItem) buttons.get(i);
+
+			if (!item.isVisible(roles)) {
+				continue;
+			}
 			AniImage ani = item.getImage();
 			if (ani == null) {
 				continue;
 			}
-			movingMap.getMmp().removeImage(ani);
-			if (item.isVisible(roles)) {
-				movingMap.getMmp().addImage(ani);
-			}
+			movingMap.getMmp().addImage(ani);
+			visibleImages.add(ani);
 		}
 	}
 
@@ -88,15 +99,21 @@ public class MovingMapControls implements ICommandListener {
 	}
 
 	public boolean getStateOfRole(String role) {
-		Object object = roles.get(role);
-		if (object == null) {
+		Role r =getRole(role);
+		if (r == null) {
 			return false;
 		}
-		Role r = (Role) object;
 		return r.getState();
 
 	}
+	public Role getRole(String role) {
+		Object object = roles.get(role);
+		if (object == null) {
+			return null;
+		}
+		return (Role) object;
 
+	}
 	public boolean changeRoleState(String role, boolean b) {
 		Object object = roles.get(role);
 		if (object == null) {
@@ -117,13 +134,22 @@ public class MovingMapControls implements ICommandListener {
 					changeRoleState(roleToDis, false);
 				}
 			}
+		}else if (ROLE_MENU.equals(roleName)) {
+			Role done = getRole(ROLE_DONE);
+			String[] rToDis = done.getRolesToDisable();
+			if (rToDis != null) {
+				for (int i = 0; i < rToDis.length; i++) {
+					String roleToDis = rToDis[i];
+					changeRoleState(roleToDis, false);
+				}
+			}
 		}
 		setStateOfIcons();
 
 		boolean action = checkRolesForAction(roleName, b);
-		if (action) {
-
-		}
+//		if (action) {
+//
+//		}
 		if (getStateOfRole(ROLE_WORKING)) {
 			changeRoleState(ROLE_WORKING, false);
 		}
@@ -257,16 +283,18 @@ public class MovingMapControls implements ICommandListener {
 		int timenow = Vm.getTimeStamp();
 
 		// avoid double clicks
-		if (timenow < 300 + lastTime) {
+		if (timenow < 40 + lastTime) {
 			return false;
 		}
 		
 		boolean result = handleImageClicked(which);
+		
 		lastTime = Vm.getTimeStamp();
 		return result;
 	}
 
 	private boolean handleImageClicked(AniImage which) {
+	
 		for (int i = 0; i < buttons.size(); i++) {
 			MovingMapControlItem item = (MovingMapControlItem) buttons.get(i);
 			AniImage ani = item.getImage();

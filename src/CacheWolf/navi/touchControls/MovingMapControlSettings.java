@@ -125,13 +125,11 @@ public class MovingMapControlSettings extends MinML {
 	Vector menuItems = new Vector(10);
 	private Hashtable roles;
 	private int fontsize;
-	private Preferences pref;
 
 	public MovingMapControlSettings(boolean vga, Hashtable roles) {
 		double fontscale = vga ? 1.5 : 1;
 		this.fontsize = (int) (Global.getPref().fontSize * fontscale);
 		this.roles = roles;
-		this.pref = Global.getPref();
 	}
 
 	public void startElement(String name, AttributeList attributes)
@@ -297,16 +295,13 @@ public class MovingMapControlSettings extends MinML {
 	public boolean readFile(Dimension dest) {
 		setDocumentHandler(this);
 		String path = FileBase.makePath(FileBase.getProgramDirectory(),
-				"mmcOldStyle/");
+				"mmcDesktop/");
 
-		if (pref.touchControls) {
+		if (Vm.isMobile()) {
 			path = FileBase.makePath(FileBase.getProgramDirectory(),
-					"mmcDefault/");
-
-			if (dest.height <= 320 && dest.width <= 240) {
-				path = FileBase.makePath(FileBase.getProgramDirectory(),
-						"mmc240x320/");
-			} else if (dest.height <= 640 && dest.width <= 480) {
+			"mmc240x320/");
+			
+			if (dest.height >= 640 && dest.width >= 480) {
 				path = FileBase.makePath(FileBase.getProgramDirectory(),
 						"mmc480x640/");
 			}
