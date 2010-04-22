@@ -17,10 +17,8 @@ REM
 mkdir .\work\attributes
 copy .\res_noewe\attributes\*.* .\work\attributes\*.*
 REM
-mkdir .\work\mmcDefault
-copy .\res_noewe\mmcDefault\*.* .\work\mmcDefault\*.*
-mkdir .\work\mmcOldStyle
-copy .\res_noewe\mmcOldStyle\*.* .\work\mmcOldStyle\*.*
+mkdir .\work\mmcDesktop
+copy .\res_noewe\mmcDesktop\*.* .\work\mmcDesktop\*.*
 mkdir .\work\mmc240x320
 copy .\res_noewe\mmc240x320\*.* .\work\mmc240x320\*.*
 mkdir .\work\mmc480x640
