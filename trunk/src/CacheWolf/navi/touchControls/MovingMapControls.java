@@ -52,9 +52,7 @@ public class MovingMapControls implements ICommandListener {
 		MovingMapControlSettings movingMapControlSettings = new MovingMapControlSettings(
 				vga, roles);
 
-		Dimension dest = new Dimension();
-		movingMap.getPreferredSize(dest);
-		movingMapControlSettings.readFile(dest);
+		movingMapControlSettings.readFile();
 		buttons = movingMapControlSettings.getMenuItems();
 		visibleImages = new Vector();
 
