@@ -292,7 +292,7 @@ public class MovingMapControlSettings extends MinML {
 		}
 	}
 
-	public boolean readFile(Dimension dest) {
+	public boolean readFile() {
 		setDocumentHandler(this);
 		String path = FileBase.makePath(FileBase.getProgramDirectory(),
 				"mmcDesktop/");
@@ -301,7 +301,7 @@ public class MovingMapControlSettings extends MinML {
 			path = FileBase.makePath(FileBase.getProgramDirectory(),
 			"mmc240x320/");
 			
-			if (dest.height >= 640 && dest.width >= 480) {
+			if (MyLocale.getScreenHeight() >= 640 && MyLocale.getScreenWidth() >= 480) {
 				path = FileBase.makePath(FileBase.getProgramDirectory(),
 						"mmc480x640/");
 			}
