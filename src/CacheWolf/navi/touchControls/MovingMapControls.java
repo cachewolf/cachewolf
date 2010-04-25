@@ -136,14 +136,17 @@ public class MovingMapControls implements ICommandListener {
 			}
 		}else if (ROLE_MENU.equals(roleName)) {
 			Role done = getRole(ROLE_DONE);
-			String[] rToDis = done.getRolesToDisable();
-			if (rToDis != null) {
-				for (int i = 0; i < rToDis.length; i++) {
-					String roleToDis = rToDis[i];
-					changeRoleState(roleToDis, false);
+			if ( done != null ) { // I (pfeffer) added this because it caused an NullPointerException on PPC2003. I guess that "if (ROLE_MENU.equals(..." is not needed any more - old code? 
+				String[] rToDis = done.getRolesToDisable();
+				if (rToDis != null) {
+					for (int i = 0; i < rToDis.length; i++) {
+						String roleToDis = rToDis[i];
+						changeRoleState(roleToDis, false);
+					}
 				}
 			}
 		}
+			
 		setStateOfIcons();
 
 		boolean action = checkRolesForAction(roleName, b);
