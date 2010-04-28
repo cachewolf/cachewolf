@@ -1367,7 +1367,8 @@ public final class MovingMap extends Form implements ICommandListener {
 
 	public void updateGps(int fix) {
 		if (!running || ignoreGps) return;
-		// runMovingMap neccessary in case of multi-threaded Java-VM: ticked could be called during load of mmp
+		// runMovingMap neccessary in case of multi-threaded Java-VM: 
+		// ticked could be called during load of mmp
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) { // TODO is getSats really necessary?
 			directionArrows.setDirections((float)myNavigation.gpsPos.getBearing(myNavigation.destination),
 					(float)myNavigation.skyOrientationDir.lonDec, (float)myNavigation.gpsPos.getBear());
@@ -1611,7 +1612,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		lastCompareY = Integer.MAX_VALUE;
 		autoSelectMap = true;
 		forceMapLoad = true;
-		showMap();
+		// showMap(); why this?
 		if (myNavigation.gpsPos.Fix <=0) updatePosition(posCircle.where);
 		else updateGps(myNavigation.gpsPos.getFix());
 	}
@@ -2039,7 +2040,8 @@ public final class MovingMap extends Form implements ICommandListener {
 			return true;
 		}
 		if (MOVE_TO_GPS.equals(actionCommand)) {
-			mmp.snapToGps();
+			myNavigation.startGps(pref.logGPS, Convert.toInt(pref.logGPSTimer));
+			SnapToGps();
 			return true;
 		}
 		
@@ -2272,11 +2274,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	 */
 	public void imageClicked(AniImage which, Point pos){
 		mm.getControlsLayer().imageClicked(which);
-	}
-
-	public void snapToGps() {
-		mm.myNavigation.startGps(mm.pref.logGPS, Convert.toInt(mm.pref.logGPSTimer));
-		mm.SnapToGps();
 	}
 
 	public void penHeld(Point p){

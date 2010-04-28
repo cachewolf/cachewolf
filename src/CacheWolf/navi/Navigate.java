@@ -53,14 +53,11 @@ public class Navigate {
 	}
 
 	public void startGps(boolean loggingOn, int loggingIntervall) {
-		setRawLogging(loggingOn, loggingIntervall);
+		lograw = loggingOn;
+		logIntervall = loggingIntervall; // TODO switch on and off during serthread running
 		if(Global.getPref().useGPSD){
 			try {
 				gpsdThread = new GpsdThread(gpsPos);
-				if (gpsPos.latDec == 0 && gpsPos.lonDec == 0) { // TODO use isValid() // TODO raus damit?
-					gpsPos.latDec = destination.latDec; // setze Zielpunkt als Ausgangspunkt
-					gpsPos.lonDec = destination.lonDec;
-				}
 				gpsdThread.start();
 				startDisplayTimer();
 				gpsRunning = true;
@@ -85,10 +82,6 @@ public class Navigate {
 							+ pref.forwardGpsHost+"\n" + serThread.lastError
 							+ MyLocale.getMsg(4402, "\nstop and start GPS to retry"), FormBase.OKB)).exec();
 				}
-				if (gpsPos.latDec == 0 && gpsPos.lonDec == 0) { // TODO use isValid() // TODO raus damit?
-					gpsPos.latDec = destination.latDec; // setze Zielpunkt als Ausgangspunkt
-					gpsPos.lonDec = destination.lonDec;
-				}
 				serThread.start();
 				startDisplayTimer();
 				gpsRunning = true;
@@ -110,11 +103,6 @@ public class Navigate {
 			}
 		}
 	}
-
-	public void setRawLogging(boolean on, int intervall) {
-		lograw = on;
-		logIntervall = intervall; // TODO switch on and off during serthread running
-	}
 	public void startDisplayTimer() {
 		tickerThread = new UpdateThread(this, 1000);
 		tickerThread.start();
@@ -125,10 +113,8 @@ public class Navigate {
 	}
 
 	public void stopGps() {
-		if(serThread!=null)
-			serThread.stop();
-		if(gpsdThread!=null)
-			gpsdThread.stop();
+		if(serThread!=null)	serThread.stop();
+		if(gpsdThread!=null) gpsdThread.stop();
 		stopDisplayTimer();
 		gpsPos.stopLog();
 		gpsRunning = false;
@@ -171,7 +157,6 @@ public class Navigate {
 	public void ticked() {
 		int fix = gpsPos.getFix();
 		if (fix > 0 && (gpsPos.getSats()>= 0)) {
-			//gpsPosition.printAll();
 			//Vm.debug("currTrack.add: before");
 			if (curTrack == null) curTrack = new Track(trackColor);
 			try {
