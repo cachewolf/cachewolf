@@ -411,16 +411,14 @@ public class MainTab extends mTabbedPanel {
 
 	private void  updateCurCentrePtFromGPS() {
 		if (pref.setCurrentCentreFromGPSPosition){
-			boolean gpsPosIsValid=nav.gpsPos.isValid();
-			if (gpsPosIsValid) {
-				double latWhereAmI, lonWhereAmI, latCurCentr, lonCurCentr;
-				latWhereAmI = nav.gpsPos.latDec;
-				lonWhereAmI = nav.gpsPos.lonDec;
-				latCurCentr = pref.getCurCentrePt().latDec;
-				lonCurCentr = pref.getCurCentrePt().lonDec;
-				if (latWhereAmI != latCurCentr ||
-					lonWhereAmI != lonCurCentr ) {
-					pref.setCurCentrePt(nav.gpsPos);
+			if (nav.gpsRunning) {
+				CWPoint whereAmI = nav.gpsPos;
+				if (whereAmI.isValid()) {
+					CWPoint curCentr = pref.getCurCentrePt();
+					if (whereAmI.latDec != curCentr.latDec ||
+						whereAmI.lonDec != curCentr.lonDec ) {
+						pref.setCurCentrePt(whereAmI);
+					}
 				}
 			}
 		}
