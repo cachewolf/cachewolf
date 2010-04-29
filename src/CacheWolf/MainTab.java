@@ -346,24 +346,16 @@ public class MainTab extends mTabbedPanel {
 				mm = new MovingMap(nav, profile.cacheDB);
 				nav.setMovingMap(mm);
 			}
-			if (forceCenter) mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
-			mm.myExec(centerTo);
+			
+			mm.myExec(centerTo, forceCenter);
+			
 			if (forceCenter) {
 				try {
 					int i = 0;
 					while (MapImage.screenDim.width == 0 && i < 10*60) { i++; ewe.sys.mThread.sleep(100);} // wait until the window size of the moving map is known note: ewe.sys.sleep() will pause the whole vm - no other thread will run
 					if (i >= 10*60) {(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", FormBase.OKB)).execute(); return;}
-					mm.setCenterOfScreen(centerTo, false); // this can only be executed if mm knows its window size that's why myExec must be executed before
-					mm.updatePosition(centerTo);
 					//If white Areas are filled there is a problem with painting the image. We force painting here.
 					mm.repaint ();
-					/*			if(!mm.posCircle.isOnScreen()) { // TODO this doesn't work because lat lon is set to the wished pos and not to gps anymore
-				mm.setGpsStatus(MovingMap.noGPS); // disconnect movingMap from GPS if GPS-pos is not on the screen
-				mm.setResModus(MovingMap.HIGHEST_RESOLUTION);
-				mm.updatePosition(centerTo.latDec, centerTo.lonDec);
-				mm.setCenterOfScreen(centerTo, true);
-			}
-					 */			//TODO what to do, if there is a map at centerTo, but it is not loaded because of mapSwitchMode == dest & cuurpos und dafür gibt es keine Karte
 				}catch (InterruptedException e) {
 					e.printStackTrace();
 					Global.getPref().log("Error starting mavoing map (1): " + e.getMessage(), e, true);
