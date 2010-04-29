@@ -514,14 +514,6 @@ public class DetailsPanel extends CellPanel {
                 }
             } else if (ev.target == btnShowMap) {
                 Global.mainTab.SwitchToMovingMap(cache.pos, true);
-                /*
-                 * try { MapDetailForm mdf = new
-                 * MapDetailForm(thisCache.wayPoint, pref, profile);
-                 * mdf.execute(); } catch (IllegalArgumentException e) {
-                 * MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Error"),
-                 * MyLocale.getMsg(322,"Kann Bild/Karte nicht finden")+":
-                 * "+e.getMessage(), MessageBox.OKB); tmp.exec(); }
-                 */
             } else if (ev.target == btnShowBug) {
                 // InfoScreen is = new InfoScreen(thisCache.Travelbugs.toHtml(),
                 // "Travelbugs",
