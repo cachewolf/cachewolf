@@ -384,13 +384,17 @@ public final class MovingMap extends Form implements ICommandListener {
 		updatePosition(posCircle.where); // this sets forceMapLoad to false after loading a map
 	}
 
-	public final FormFrame myExec(CWPoint centerTo) {
+	public final FormFrame myExec(CWPoint centerTo, boolean forceCenter) {
 		FormFrame ret = exec();
 		running = true;
-
+		// disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
+		if (forceCenter) setGpsStatus(noGPS);
 		// to load maplist + place a map on screen otherwise no symbol can be placed
 		ignoreGps=true; // else overlay symbols are removed on started gps
-		loadBestMap(centerTo);
+		
+		updatePosition(centerTo);
+		setCenterOfScreen(centerTo, false);
+		
 		if (getControlsLayer()!=null) {
 			getControlsLayer().changeRoleState(MovingMapControls.ROLE_MENU, false);
 		}
@@ -415,6 +419,7 @@ public final class MovingMap extends Form implements ICommandListener {
 
 		repaint();
 		ignoreGps=false;
+		
 		return ret;
 	}
 
@@ -1034,12 +1039,6 @@ public final class MovingMap extends Form implements ICommandListener {
 	private void showCachesOnMap() {
 		// if (width == 0 || height == 0) return;
 		CacheHolder ch;
-		/*
-		 * Symbols not on screen move invisible topleft but on top , so no menu for yellow triangle
-		int twidth = width/10;
-		int theight = height/10;
-		Area screenArea = new Area(ScreenXY2LatLon(-twidth,-theight), ScreenXY2LatLon(width+twidth,height+theight));
-		 */
 		Area screenArea = new Area(ScreenXY2LatLon(0,0), ScreenXY2LatLon(width,height));
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			ch = cacheDB.get(i);
