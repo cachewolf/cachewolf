@@ -462,6 +462,7 @@ public final class CacheType {
 		if (gcType.equals("453")) { return CW_TYPE_MEGA_EVENT; } //100
 		if (gcType.equals("1304")) { return CW_TYPE_MAZE; } //103
 		if (gcType.equals("1858")) { return CW_TYPE_WHEREIGO; } //101
+		if (gcType.equals("3653")) { return CW_TYPE_EVENT; } // 10 years
 		throw new IllegalArgumentException("unmatched argument "+gcType+" in CacheSize gcSpider2CwType()");
 	}
 
