@@ -660,11 +660,11 @@ public class CacheHolder{
 			}
 			
 			if (badChars != null) {
-				varParams.put("NOTES",STRreplace.replace(badChars.replaceAll(det.getCacheNotes()), "\n","<br>"));
+				varParams.put("NOTES",badChars.replaceAll(det.getCacheNotes()));
 				varParams.put("HINTS",badChars.replaceAll(det.Hints));
 				varParams.put("DECRYPTEDHINTS",badChars.replaceAll(Common.rot13(det.Hints)));
 			} else {
-				varParams.put("NOTES", STRreplace.replace(det.getCacheNotes(), "\n","<br>"));
+				varParams.put("NOTES", det.getCacheNotes());
 				varParams.put("HINTS", det.Hints);
 				varParams.put("DECRYPTEDHINTS", Common.rot13(det.Hints));
 			}
