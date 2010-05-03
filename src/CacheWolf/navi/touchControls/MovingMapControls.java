@@ -1,5 +1,7 @@
 package CacheWolf.navi.touchControls;
 
+import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.navi.MovingMap;
 import ewe.fx.Dimension;
 import ewe.fx.Point;
@@ -54,6 +56,10 @@ public class MovingMapControls implements ICommandListener {
 
 		movingMapControlSettings.readFile();
 		buttons = movingMapControlSettings.getMenuItems();
+		
+		checkStatesofRole(Global.getPref());
+		
+		
 		visibleImages = new Vector();
 
 		roles.put(ROLE_WORKING, new Role());
@@ -61,6 +67,21 @@ public class MovingMapControls implements ICommandListener {
 		// create all needed Buttons
 		setStateOfIcons();
 		Vm.showWait(movingMap, false);
+	}
+
+	/**
+	 * some roles are active at start
+	 * @param pref 
+	 */
+	private void checkStatesofRole(Preferences pref) {
+		Role role = getRole(ROLE_FILL_WHITE);
+		if (role!=null) {
+			role.setState(pref.fillWhiteArea);
+		}
+		role = getRole(ROLE_SHOW_CACHES);
+		if (role!=null) {
+			role.setState(pref.showCachesOnMap);
+		}
 	}
 
 	private void setStateOfIcons() {
