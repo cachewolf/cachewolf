@@ -578,7 +578,7 @@ public class CacheHolder{
 			int shortWaypointLength, int shortNameLength, 
 			TextCodec codec, GarminMap gm,
 			boolean withFoundText,
-			int ModTypLongDesc
+			int ModTyp
 			) {
 		Hashtable varParams = new Hashtable();
 		CacheHolderDetail det = this.getCacheDetails(false);
@@ -648,11 +648,11 @@ public class CacheHolder{
 		else {
 			varParams.put("URL", det.URL);
 			if (html) {
-				if (ModTypLongDesc == 0) {
+				if (ModTyp == 0) {
 					varParams.put("DESCRIPTION",det.LongDescription);
 				}
 				else {
-					varParams.put("DESCRIPTION", modifyLongDesc(det, ModTypLongDesc));
+					varParams.put("DESCRIPTION", modifyLongDesc(det, ModTyp));
 				}
 			} else {
 				 // what was the reason? replace or no replace? I dont remember
@@ -660,11 +660,21 @@ public class CacheHolder{
 			}
 			
 			if (badChars != null) {
-				varParams.put("NOTES",badChars.replaceAll(det.getCacheNotes()));
+				if (ModTyp == 0){
+					varParams.put("NOTES",badChars.replaceAll(det.getCacheNotes()));
+				}
+				else {
+					varParams.put("NOTES",STRreplace.replace(badChars.replaceAll(det.getCacheNotes()), "\n", "<br>"));
+				}
 				varParams.put("HINTS",badChars.replaceAll(det.Hints));
 				varParams.put("DECRYPTEDHINTS",badChars.replaceAll(Common.rot13(det.Hints)));
 			} else {
-				varParams.put("NOTES", det.getCacheNotes());
+				if (ModTyp == 0){
+					varParams.put("NOTES", det.getCacheNotes());
+				}
+				else {
+					varParams.put("NOTES", STRreplace.replace(det.getCacheNotes(), "\n", "<br>"));
+				}
 				varParams.put("HINTS", det.Hints);
 				varParams.put("DECRYPTEDHINTS", Common.rot13(det.Hints));
 			}
