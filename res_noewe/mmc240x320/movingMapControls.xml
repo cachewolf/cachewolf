@@ -66,5 +66,5 @@
 	<button action="moreDetails" fromLeft="5" fromTop="200"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_more_details.png"  visibleIf="menu+detail" localeDefault="Load a map with more details" localeID="4254" alignText="C" textOffsetLeft="50"/>
 	<button action="moreOverview" fromLeft="5" fromTop="250"  location="mmc240x320/bg_w.png"  icon="mmc240x320/icon_map_less_details.png"  visibleIf="menu+detail" localeDefault="Load a map for a better overview" localeID="4256" alignText="C" textOffsetLeft="50"/>
 
-	<button action="changeStateOfRole" fromRight="45" fromTop="100" changeStateof="zoom_manually" location="mmc240x320/icon_zoom.png"  icon="mmcDefault/icon_zoom.png"  visibleIf="!menu+zoom_manually"/>
+	<button action="changeStateOfRole" fromRight="45" fromTop="100" changeStateof="zoom_manually" location="mmc240x320/icon_zoom.png"  icon="mmc240x320/icon_zoom.png"  visibleIf="!menu+zoom_manually"/>
 </mmc>
