@@ -948,11 +948,8 @@ public final class MovingMap extends Form implements ICommandListener {
 	 * @param
 	 */
 	public void updateOnlyPosition(CWPoint where, boolean updateOverlay){
-		//Point oldMapPos = getMapPositionOnScreen();
 		posCircle.where.set(where);
 		Point mapPos = getMapPositionOnScreen();
-		//Vm.debug("mapx = " + mapx);
-		//Vm.debug("mapy = " + mapy);
 		if (forceMapLoad || (java.lang.Math.abs(lastRepaintMapPos.x - mapPos.x) > 1 || java.lang.Math.abs(lastRepaintMapPos.y - mapPos.y) > 1))
 		{
 			lastRepaintMapPos = mapPos;
@@ -966,7 +963,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		{
 			updateDistance(true);
 		}
-		//Vm.debug("update only position");
 	}
 	private void loadBestMap(CWPoint where) {
 		if (!mapsloaded || !this.maps.getMapsPath().equals(pref.getCustomMapsPath())) {
@@ -976,7 +972,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			autoSelectMap = true;
 			setBestMap(where, true);
 			forceMapLoad = false;
-			return;
 		}
 	}
 	/**
@@ -984,11 +979,9 @@ public final class MovingMap extends Form implements ICommandListener {
 	 */
 	public void updatePosition(CWPoint where){
 		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
-		//Vm.debug("updatepos, lat: "+where.latDec+" lon: "+where.lonDec);
 		loadBestMap(where);
 		if (width==0 || height==0) { Vm.debug("no window shown"); return; } // why is this called with these values
 		updateOnlyPosition(where, true);
-
 		Point mapPos = getMapPositionOnScreen();
 		boolean screenNotCompletlyCovered = (mmp.mapImage == null)
 				|| (mmp.mapImage != null && (
@@ -997,7 +990,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		//if screendimensions changed also force reload of map
 		forceMapLoad |= lastWidth != width || lastHeight != height;
 		if (forceMapLoad || wantMapTest || screenNotCompletlyCovered) { // if force || want || map doesn't cover the screen completly
-			// Vm.debug("Screen not completly covered by map");
 			if (forceMapLoad ||
 				(java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 ||
 				 java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
@@ -1096,11 +1088,14 @@ public final class MovingMap extends Form implements ICommandListener {
 	}
 	boolean reflectResourceException=true;
 	private void fillWhiteArea(boolean screenNotCompletlyCovered) {
+		if (mmp.mapImage == null) return; // if error at map load
 		// Clean up any additional images, tiles will removed and any
 		// other item be added again later
-		Vm.showWait(true);
-		dontUpdatePos=true; // no new Position while filling 
 		Vector icons = new Vector(mmp.images.size());
+		try {			
+		Vm.showWait(true);
+		dontUpdatePos=true; // no new Position while filling
+		
 		int s = mmp.images.size(); // avoid calling size() in each iteration
 		for (int i = 0; i < s ;  i++) {
 			AniImage im = (AniImage) mmp.images.get(i);
@@ -1137,7 +1132,8 @@ public final class MovingMap extends Form implements ICommandListener {
 			count++;
 			try {
 				updateTileForWhiteArea(rectangles);
-			} catch (ewe.sys.SystemResourceException sre) {
+			}
+			catch (ewe.sys.SystemResourceException sre) {
 				// next time there may be no problem, and ask only once
 				if (reflectResourceException) {
 					if (new MessageBox(
@@ -1153,13 +1149,16 @@ public final class MovingMap extends Form implements ICommandListener {
 				}
 			}
 		}
-		// Remove all tiles not needed from the cache to reduce memory
-		MovingMapCache.getCache().cleanCache();
-		// At Last redraw all icons on the map
-		mmp.images.addAll(icons);
-		Vm.showWait(false);		
-		dontUpdatePos=false; // do next Position 
-		repaint();
+		} 
+		finally {
+			// Remove all tiles not needed from the cache to reduce memory
+			MovingMapCache.getCache().cleanCache();
+			// At Last redraw all icons on the map
+			mmp.images.addAll(icons);
+			Vm.showWait(false);		
+			dontUpdatePos=false; // do next Position 
+			repaint();
+		} 
 	}
 	private void updateTileForWhiteArea(Vector rectangles) {
 		Rect blackArea;
@@ -1419,7 +1418,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		Rect screen = (Rect) s[1];
 		boolean posCircleOnScreen = ((Boolean) s[2]).booleanValue();
 		MapInfoObject newmap = null;
-		//if (mapChangeModus == 0) mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
 		wantMapTest = true;
 		switch (mapChangeModus) {
 		case NORMAL_KEEP_RESOLUTION:
@@ -1459,7 +1457,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 		if ( newmap != null && (currentMap == null || !currentMap.mapName.equals(newmap.mapName)) ) {
 			if (loadIfSameScale || !MapsList.scaleEquals(currentMap.scale / currentMap.zoomFactor, newmap) ) {
-				//Vm.debug("better map found");
+				// better map found
 				setMap(newmap, where);
 				moveScreenXYtoLatLon(new Point(screen.x, screen.y), cll, true);
 			}
@@ -1467,7 +1465,7 @@ public final class MovingMap extends Form implements ICommandListener {
 			return;
 		}
 		if (currentMap == null && newmap == null) {
-			// (new MessageBox("Information", "F?r die aktuelle Position steht keine Karte zur Verf?ng, bitte w?hlen Sie eine manuell", MessageBox.OKB)).execute();
+			// F?r die aktuelle Position steht keine Karte zur Verf?ng
 			posCircle.where.set(cll); // choosemap calls setmap with posCircle-coos
 			try {
 				setMap( ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(), where); // beware: "-4" only works if the empty maps were added last see MapsList.addEmptyMaps
@@ -1627,94 +1625,103 @@ public final class MovingMap extends Form implements ICommandListener {
 			updateOnlyPosition(where, true);
 			return;
 		}
-		Vm.showWait(true);
-		boolean saveIgnoreStatus;
-		saveIgnoreStatus = dontUpdatePos;
-		dontUpdatePos = true;  // make updatePosition ignore calls during loading new map
-		InfoBox inf;
-		inf = new InfoBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4216, "Loading map..."));
-		inf.show();
-		inf.waitUntilPainted(100);
-		pref.log(MyLocale.getMsg(4216, "Loading map...")+newmap.mapName);
-		try {
-			this.currentMap = newmap;
-			this.title = currentMap.mapName;
-			lastCompareX = Integer.MAX_VALUE; // neccessary to make updateposition to test if the current map is the best one for the GPS-Position
-			lastCompareY = Integer.MAX_VALUE;
-			if (mmp.mapImage != null ) {
-				//Vm.debug("free: "+Vm.getUsedMemory(false)+"classMemory: "+Vm.getClassMemory()+ "after garbage collection: "+Vm.getUsedMemory(false));
-				mmp.removeImage(mmp.mapImage); mmp.mapImage.free(); mmp.mapImage = null; mapImage1to1 = mmp.mapImage;
-
-				//Vm.debug("free: "+Vm.getUsedMemory(false)+"classMemory: "+Vm.getClassMemory()+ "after garbage collection: "+Vm.getUsedMemory(false));
-				Vm.getUsedMemory(true); // calls the garbage collection
-			} // give memory free before loading the new map to avoid out of memory error
-			String ImageFilename = currentMap.getImageFilename();
-			if (ImageFilename == null ) {
-				mmp.mapImage = new MapImage();
-				maps.remove(currentMap);
-				(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4217, "Could not find image associated with: \n")+currentMap.fileNameWFL, FormBase.OKB)).execute();
+		try {			
+			Vm.showWait(true);
+			boolean saveIgnoreStatus;
+			saveIgnoreStatus = dontUpdatePos;
+			dontUpdatePos = true;  // make updatePosition ignore calls during loading new map
+			pref.log(MyLocale.getMsg(4216, "Loading map...")+newmap.mapName);
+			try {
+				this.currentMap = newmap;
+				this.title = currentMap.mapName;
+				// neccessary to make updateposition to test if the current map is the best one for the GPS-Position
+				lastCompareX = Integer.MAX_VALUE; 
+				lastCompareY = Integer.MAX_VALUE;
+				if (mmp.mapImage != null ) {
+					mmp.removeImage(mmp.mapImage); 
+					mmp.mapImage.free(); 
+					mmp.mapImage = null; 
+					mapImage1to1 = mmp.mapImage;
+					// calls the garbage collection
+					Vm.getUsedMemory(true); 
+				} 
+				// give memory free before loading the new map to avoid out of memory error
+				String ImageFilename = currentMap.getImageFilename();
+				if (ImageFilename == null ) {
+					mmp.mapImage = new MapImage();
+					maps.remove(currentMap);
+					(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4217, "Could not find image associated with: \n")+currentMap.fileNameWFL, FormBase.OKB)).execute();
+				}
+				else {
+					if (ImageFilename.length() > 0) {
+						// attention: when running in native java-vm,
+						// no exception will be thrown, not even OutOfMemeoryError
+						mmp.mapImage = new MapImage(ImageFilename); 
+					}
+					else mmp.mapImage = new MapImage(); // no image associated with the calibration info ("empty map")
+				}
+				mapImage1to1 = mmp.mapImage;
+				mmp.mapImage.properties = mmp.mapImage.properties | mImage.IsMoveable;
+				if (mapHidden) mmp.mapImage.hide();
+				mmp.mapImage.move(0,0);
+				mmp.addImage(mmp.mapImage);
+				mmp.images.moveToBack(mmp.mapImage);
+				rebuildOverlaySet();
+				forceMapLoad = true; // forces updateOnlyPosition to redraw
+				updateAfterMapChange(where);
+				forceMapLoad = false;
+				directionArrows.setMap(currentMap);
+				updateScale();
+				// this doesn't work in a ticked-thread in the ewe-vm. 
+				// That's why i made a new mThread in gotoPanel for ticked
+				dontUpdatePos = saveIgnoreStatus;
+			} catch (IllegalArgumentException e) { 
+				// thrown by new AniImage() in ewe-vm if file not found;
+				pref.log("IllegalArgumentException");
+				if (mmp.mapImage != null) {
+					mmp.removeImage(mmp.mapImage);
+					mmp.mapImage.free();
+					mmp.mapImage = null; 
+					mapImage1to1 = mmp.mapImage;
+				}
+				rebuildOverlaySet();
+				updateOnlyPosition(where, false);
+				(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4218, "Could not load map: \n")+ newmap.getImageFilename(), FormBase.OKB)).execute();
+				dontUpdatePos = saveIgnoreStatus;
+			} catch (OutOfMemoryError e) {
+				pref.log("OutOfMemoryError");
+				if (mmp.mapImage != null) {
+					mmp.removeImage(mmp.mapImage);
+					mmp.mapImage.free();
+					mmp.mapImage = null; 
+					mapImage1to1 = mmp.mapImage;
+				}
+				rebuildOverlaySet();
+				updateOnlyPosition(where, false);
+				(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4219, "Not enough memory to load map: \n")
+						+ newmap.getImageFilename()
+						+ MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"),
+						FormBase.OKB)).execute();
+				dontUpdatePos = saveIgnoreStatus;
+			}catch (SystemResourceException e) {
+				pref.log("SystemResourceException");
+				if (mmp.mapImage != null) {
+					mmp.removeImage(mmp.mapImage);
+					mmp.mapImage.free();
+					mmp.mapImage = null; 
+					mapImage1to1 = mmp.mapImage;
+				}
+				rebuildOverlaySet();
+				updateOnlyPosition(where, false); // TODO this doesn't work correctly if the resolution changed, I guess because the pixels of PosCircle will be interpreted from the new resolution, but should be interpreted using the old resolution to test: select a map with a much greater value of m per pixel manually
+				(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4221, "Not enough ressources to load map: ")
+						+ newmap.getImageFilename()
+						+ MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"),
+						FormBase.OKB)).execute();
+				dontUpdatePos = saveIgnoreStatus;
 			}
-			else {
-				if (ImageFilename.length() > 0) mmp.mapImage = new MapImage(ImageFilename); // attention: when running in native java-vm, no exception will be thrown, not even OutOfMemeoryError
-				else mmp.mapImage = new MapImage(); // no image associated with the calibration info ("empty map")
-			}
-			mapImage1to1 = mmp.mapImage;
-			mmp.mapImage.properties = mmp.mapImage.properties | mImage.IsMoveable;
-			if (mapHidden) mmp.mapImage.hide();
-			mmp.mapImage.move(0,0);
-			mmp.addImage(mmp.mapImage);
-			mmp.images.moveToBack(mmp.mapImage);
-			rebuildOverlaySet();
-			forceMapLoad = true; // forces updateOnlyPosition to redraw
-			updateAfterMapChange(where);
-			forceMapLoad = false;
-			directionArrows.setMap(currentMap);
-			updateScale();
-			inf.close(0);  // this doesn't work in a ticked-thread in the ewe-vm. That's why i made a new mThread in gotoPanel for ticked
+		}
+		finally{
 			Vm.showWait(false);
-			dontUpdatePos = saveIgnoreStatus;
-		} catch (IllegalArgumentException e) { // thrown by new AniImage() in ewe-vm if file not found;
-			if (mmp.mapImage != null) {
-				mmp.removeImage(mmp.mapImage);
-				mmp.mapImage.free();
-				mmp.mapImage = null; mapImage1to1 = mmp.mapImage;
-			}
-			rebuildOverlaySet();
-			updateOnlyPosition(where, false);
-			inf.close(0);
-			Vm.showWait(false);
-			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4218, "Could not load map: \n")+ newmap.getImageFilename(), FormBase.OKB)).execute();
-			dontUpdatePos = saveIgnoreStatus;
-		} catch (OutOfMemoryError e) {
-			if (mmp.mapImage != null) {
-				mmp.removeImage(mmp.mapImage);
-				mmp.mapImage.free();
-				mmp.mapImage = null; mapImage1to1 = mmp.mapImage;
-			}
-			rebuildOverlaySet();
-			updateOnlyPosition(where, false);
-			inf.close(0);
-			Vm.showWait(false);
-			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4219, "Not enough memory to load map: \n")
-					+ newmap.getImageFilename()
-					+ MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"),
-					FormBase.OKB)).execute();
-			dontUpdatePos = saveIgnoreStatus;
-		}catch (SystemResourceException e) {
-			if (mmp.mapImage != null) {
-				mmp.removeImage(mmp.mapImage);
-				mmp.mapImage.free();
-				mmp.mapImage = null; mapImage1to1 = mmp.mapImage;
-			}
-			rebuildOverlaySet();
-			updateOnlyPosition(where, false); // TODO this doesn't work correctly if the resolution changed, I guess because the pixels of PosCircle will be interpreted from the new resolution, but should be interpreted using the old resolution to test: select a map with a much greater value of m per pixel manually
-			inf.close(0);
-			Vm.showWait(false);
-			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4221, "Not enough ressources to load map: ")
-					+ newmap.getImageFilename()
-					+ MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"),
-					FormBase.OKB)).execute();
-			dontUpdatePos = saveIgnoreStatus;
 		}
 	}
 
