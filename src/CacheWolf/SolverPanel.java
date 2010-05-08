@@ -173,9 +173,9 @@ public class SolverPanel extends CellPanel{
     }
 	
 	public void onEvent(Event ev){
-		if (ev instanceof DataChangeEvent) Global.mainTab.cacheDirty=true;
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if(ev.target == mBtSolve){
+				saveChanges();
 				processCommand(mText.getText());
 			}
 			if (ev.target==btnWolfLang) {
@@ -187,6 +187,28 @@ public class SolverPanel extends CellPanel{
 				btnDegRad.setText(getSolverDegMode());
 			}
 		}
+	}
+	
+	/**
+	 * Saves solver content to file if it is changed. Saving is always done in the main
+	 * cache (if it is an addi waypoint).
+	 */
+	private void saveChanges() {
+		if (isDirty()) {
+			CacheHolder cacheToUpdate;
+			if (ch.mainCache == null) {
+				cacheToUpdate = ch;
+			} else {
+				cacheToUpdate = ch.mainCache;
+			}
+			boolean oldHasSolver = cacheToUpdate.hasSolver();
+			cacheToUpdate.getCacheDetails(false).setSolver(getInstructions());
+			if (oldHasSolver != cacheToUpdate.hasSolver()) { 
+				Global.mainTab.tbP.tc.update(true);
+			}	
+			cacheToUpdate.save();
+			originalInstructions = getInstructions();
+		}		
 	}
 	
 }
