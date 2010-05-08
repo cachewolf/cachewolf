@@ -172,11 +172,14 @@ public class MainTab extends mTabbedPanel {
 			// Update chD or chMain with Solver
 			// If chMain is set (i.e. if it is an addi Wpt) save it immediately
 			if (chD!=null && solverP.isDirty()) {
-				cacheDirty=true;
 				if (chMain==null) {
+					cacheDirty=true;
 					boolean oldHasSolver = chD.getParent().hasSolver();
 					chD.setSolver(solverP.getInstructions());
 					if (oldHasSolver != chD.getParent().hasSolver()) tbP.tc.update(true);
+					// For safety reasons: Immediately save solver instructions when
+					// switching panels
+					updatePendingChanges();
 				} else {
 					boolean oldHasSolver = chMain.hasSolver();
 					chMain.getCacheDetails(true).setSolver(solverP.getInstructions());
