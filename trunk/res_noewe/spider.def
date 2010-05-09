@@ -114,7 +114,7 @@ difficultyRex      = <span\ id="ctl00_ContentBody_Difficulty">.*?alt="(.*?)\ out
 terrainRex         = <span\ id="ctl00_ContentBody_Terrain">.*?alt="(.*?)\ out\ of
 cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ alt="
 cacheLocationRex   = <span\ id="ctl00_ContentBody_Location">In\ ([^<]*?)<
-premiumCachepage   = Sorry, the owner of this listing has made it viewable to subscribers only.
+premiumCachepage   = Sorry, the owner of this listing has made it viewable to Premium Members only.
 
 #--------------------------------------
 #Section2a: Logs
