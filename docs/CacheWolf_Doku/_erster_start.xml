@@ -63,11 +63,11 @@
   <title>Der erste Start</title>
   <section>
     <title id="start">Programmstart</title>
-    <para>Wenn man CacheWolf zum ersten Mal startet, erscheint erst folgendes Bild:</para>
+    <para>Wenn man CacheWolf zum ersten Mal startet, erscheint erst folgendes Bild, welches anzeigt, dass die Cacheliste des Profils geladen wird sowie die zusätzlichen Wegpunkte erzeugt werden:</para>
     <para>
       <inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/lade_liste.jpg"/>
+          <imagedata fileref="pics/3_Start_Startup.png"/>
         </imageobject>
       </inlinemediaobject>
     </para>
@@ -75,7 +75,7 @@
     <para>
       <inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/basisverzeichnis.gif"/>
+          <imagedata fileref="pics/3_Start_Basisverzeichnis-waehlen.png"/>
         </imageobject>
       </inlinemediaobject>
     </para>
@@ -92,7 +92,7 @@
     <para>
       <inlinemediaobject>
         <imageobject>
-          <imagedata width="600" fileref="pics/cw_empty.jpg"/>
+          <imagedata width="600" fileref="pics/3_Start_Leeres-Profil.png"/>
         </imageobject>
       </inlinemediaobject>
     </para>
@@ -104,15 +104,15 @@
       <para>
         <inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/pref_1.jpg"/>
+            <imagedata fileref="pics/3_Start_Einstellungen.png"/>
           </imageobject>
         </inlinemediaobject>
       </para>
-      <para>Dieser Tab enthält einige Einstellungen. Was die Einstellung <literal>Verzeichnis</literal> für Profile bewirkt, ist hier <xref linkend="start"/> schon beschrieben worden. Wenn der Haken bei <literal>Profil auto. laden</literal> gesetzt wurde, erscheint bei allen weiteren Starts von CacheWolf der Profil-Abfrageschirm</para>
+      <para>Dieser Tab enthält einige Einstellungen. Was die Einstellung <literal>Datenverzeichnis</literal> für Profile bewirkt, ist hier <xref linkend="start"/> schon beschrieben worden. Wenn der Haken bei <literal>Profil auto. laden</literal> gesetzt wurde, erscheint bei allen weiteren Starts von CacheWolf der Profil-Abfrageschirm</para>
       <para>
         <inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/startup.jpg"/>
+            <imagedata fileref="pics/3_Start_Profilauswahl.png"/>
           </imageobject>
         </inlinemediaobject>
       </para>
@@ -128,7 +128,7 @@
       <para>
         <inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics\GPS_config.jpg"/>
+            <imagedata fileref="pics/3_Start_Einstellungen_GPS.png"/>
           </imageobject>
         </inlinemediaobject>
       </para>
@@ -139,7 +139,7 @@
         <para>
           <inlinemediaobject>
             <imageobject>
-              <imagedata fileref="pics/GPS.jpg"/>
+              <imagedata fileref="pics/3_Start_GPS-konfigurieren.png"/>
             </imageobject>
           </inlinemediaobject>
         </para>
@@ -153,7 +153,7 @@
       <para>
         <inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/pref_2.jpg"/>
+            <imagedata fileref="pics/3_Start_Einstellungen_Ansicht.png"/>
           </imageobject>
         </inlinemediaobject>
       </para>
@@ -169,7 +169,7 @@
       <para>
         <inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/pref_3.jpg"/>
+            <imagedata fileref="pics/3_Start_Einstellungen_Mehr.png"/>
           </imageobject>
         </inlinemediaobject>
       </para>
@@ -183,13 +183,16 @@
           <para>EN = Englisch,</para>
         </listitem>
         <listitem>
+          <para>FR = Französisch,</para>
+        </listitem>
+        <listitem>
           <para>NL = Niederländisch,</para>
         </listitem>
         <listitem>
-          <para>FR = Französisch.</para>
+          <para>PL = Polnisch,</para>
         </listitem>
         <listitem>
-          <para>PL = Polnisch</para>
+          <para>SV = Swedisch.</para>
         </listitem>
       </itemizedlist>
       <para>Die Sprache kann aus dem Dropdown-Menü ausgewählt werden. Die neu eingestellte Sprache wird im Fall einer Änderung allerdings erst nach einem Neustart benutzt.</para>
@@ -204,7 +207,7 @@ Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen. Ist keine
       <para>
         <inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/pref_4.jpg"/>
+            <imagedata fileref="pics/3_Start_Einstellungen_Liste.png"/>
           </imageobject>
         </inlinemediaobject>
       </para>
@@ -220,7 +223,7 @@ Es müssen nur die Dateien erstellt werden, die ersetzt werden sollen. Ist keine
       <para>
         <inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/pref_5.jpg"/>
+            <imagedata fileref="pics/3_Start_Einstellungen_TBugs.png"/>
           </imageobject>
         </inlinemediaobject>
       </para>
