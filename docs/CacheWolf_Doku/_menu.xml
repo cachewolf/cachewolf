@@ -62,7 +62,7 @@
       <para>Nach der Menüauswahl erscheint das nachfolgende Fenster:</para>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/zentrum.jpg"/>
+            <imagedata fileref="pics/5_Menues_Zentrum.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>Die Koordinaten, die neben <literal>Profil</literal> stehen, sind
@@ -80,7 +80,7 @@
       manuell ändern kann:</para>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/coordsparser.jpg"/>
+            <imagedata fileref="pics/5_Menues_Zentrum_Koordinaten.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>Das Format der eingegebenen Koordinaten kannst Du zwischen UTM und
@@ -274,7 +274,7 @@
         <para>Nach einem Klick auf die Menüoption <literal>Kalibrierte herunterladen</literal> erscheint folgendes Fenster:</para>
         <para><inlinemediaobject>
             <imageobject>
-              <imagedata fileref="pics/georef_laden.jpg"/>
+              <imagedata fileref="pics/5_Menues_Karten.png"/>
             </imageobject>
           </inlinemediaobject></para>
         <para>Hier muss man nun unterscheiden, was genau man haben möchte. Mit
@@ -298,7 +298,7 @@
         Daher besteht auch die Möglichkeit, Karten je Cache zu laden:</para>
         <para><inlinemediaobject>
             <imageobject>
-              <imagedata fileref="pics/georef_per_cache.jpg"/>
+              <imagedata fileref="pics/5_Menues_Karten_proCache.png"/>
             </imageobject>
           </inlinemediaobject></para>
         <para>Auch hier besteht die Möglichkeit, eine Karte je Cache in der
@@ -347,7 +347,7 @@
         genauer. Durch einen Klick auf <literal>Anwendung -&gt; Karten -&gt; Kalibrieren</literal> erhält man folgendes Bild:</para>
         <para><inlinemediaobject>
             <imageobject>
-              <imagedata fileref="pics/kalib.png"/>
+              <imagedata fileref="pics/5_Menues_Karten_kalibrieren.png"/>
             </imageobject>
           </inlinemediaobject></para>
         <para>Zum Kalibrieren eine Karte aus der Liste <literal>Nicht kalibrierte Karten</literal> auswählen und auf
@@ -451,7 +451,7 @@
       <para>Der Richtungsfilter:</para>
       <para> <inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/filter_richtung.jpg"/>
+            <imagedata fileref="pics/5_Menues_Filter.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>erlaubt es all die Caches (und sonstigen Wegpunkte) auszufiltern
@@ -463,7 +463,7 @@
       <para>Der Statusfilter:</para>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/filter_status.jpg"/>
+            <imagedata fileref="pics/5_Menues_Filter_Status.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>erlaubt es, die Caches auszublenden, die einen Status haben, der
@@ -475,7 +475,7 @@
       und Difficulty:</para>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/filter_bewertung.jpg"/>
+            <imagedata fileref="pics/5_Menues_Filter_Bewertung.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>Das Prinzip ist wie beim Richtungsfilter: Z.B. bei der Wahl
@@ -484,7 +484,7 @@
       <para>Mit dem Typenfilter:</para>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/filter_typen.jpg"/>
+            <imagedata fileref="pics/5_Menues_Filter_Typen.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>können je nach Type ausgeblendet werden. Einnicht gesetztes
@@ -492,7 +492,7 @@
       <para>Mit dem Addi Wpt filter:</para>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/filter_addi.jpg"/>
+            <imagedata fileref="pics/5_Menues_Filter_Addi.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>können Additional Waypoints aus- oder eingeblendet werden. Häkchen
@@ -503,14 +503,14 @@
       ausgeblendet werden:</para>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/filter_behalter.jpg"/>
+            <imagedata fileref="pics/5_Menues_Filter_Behaelter.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>Der Attributenfilter erlaubt es gezielt Caches zu finden, die mit
       einem speziellen Attribute versehen sind:</para>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/filter_attrib.jpg"/>
+            <imagedata fileref="pics/5_Menues_Filter_Attribute.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>In der Normaleinstelung werden alle Caches angezeigt. In dem hier
