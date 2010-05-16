@@ -66,24 +66,24 @@
   Reiter zur Verfügung gestellt:</para>
   <para><inlinemediaobject>
       <imageobject>
-        <imagedata fileref="pics/ansichten.jpg"/>
+        <imagedata fileref="pics/4_Ansichten_Reiter.png"/>
       </imageobject>
     </inlinemediaobject></para>
   <section>
     <title id="liste">Liste</title>
     <para>Die Listenansicht zeigt tabellarisch die Caches im ausgewählten
-    Profil an. Welche Spalten sichtbar sind ,läßt sich in den Einstellungen
+    Profil an. Welche Spalten sichtbar sind, läßt sich in den Einstellungen
     konfigurieren (siehe <xref linkend="einstellungListe"/>). Ein Doppelklick
     auf eine Zeile öffnet die Beschreibung zu dem Cache (siehe Section <xref linkend="Beschreibungsansicht"/> )</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/ansicht_liste.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Liste.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para>Nur in dieser Ansicht wird das Menü</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/menu.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Liste_Menuezeile.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para>angeboten! Die einzelnen Funktionen im Menü werden hier <xref linkend="menue"/> beschrieben.</para>
@@ -91,7 +91,7 @@
     falls diese in den Einstellungen aktiviert wurde:</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/statusleiste.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Liste_Statuszeile.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para>Über die Statusleiste läßt sich die Tourenverwaltung
@@ -129,12 +129,15 @@
       </listitem>
       <listitem>
         <para>gelbe Zeilen kennzeichnen Caches, die der Suche
-        entsprechen.</para>
+        entsprechen,</para>
+      </listitem>
+      <listitem>
+        <para>graue Zeilen kennzeichnen den aktuell selektierten Cache.</para>
       </listitem>
     </itemizedlist>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/farbbsp1.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Liste_Farbbeispiel.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para>Ob der Cache Dir gehört, wird durch Vergleich des in den
@@ -167,7 +170,7 @@
     letzte Logeintrag ein DNF war:</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/dnfzeile.png"/>
+          <imagedata fileref="pics/4_Ansichten_Liste_DNF.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para><inlinemediaobject>
@@ -198,7 +201,7 @@
       Menü:</para>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/list_popup.jpg"/>
+            <imagedata fileref="pics/4_Ansichten_Liste_Kontextmenue.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <orderedlist>
@@ -279,7 +282,7 @@
             <entry>
               <inlinemediaobject>
                 <imageobject>
-                  <imagedata fileref="pics/tourenplaner.jpg"/>
+                  <imagedata fileref="pics/4_Ansichten_Liste_Tourplaner.png"/>
                 </imageobject>
               </inlinemediaobject>
             </entry>
@@ -316,7 +319,7 @@
     Cache:</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/ansicht_details.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Details.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para>Weitere Funktionalität wird durch die Felder im oberen Rand der
@@ -404,7 +407,7 @@
     Klick auf das grüne Häckchen gesetzt).</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/calender.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Details_Kalender.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para>Ebenso wird die Uhrzeit gespeichert.</para>
@@ -421,7 +424,7 @@
     einzeln in der Bilderansicht (nächster Reiter) anschauen.</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/ansicht_beschreibung.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Beschreibung.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para>Mit <literal>+</literal> und <literal>-</literal> läßt sich die
@@ -441,7 +444,7 @@
     werden.</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/bilder.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Bilder.png"/>
         </imageobject>
       </inlinemediaobject></para>
   </section>
@@ -462,7 +465,7 @@
     maximiert werden.</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/hint_log.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_HintUndLogs.png"/>
         </imageobject>
       </inlinemediaobject></para>
   </section>
@@ -473,7 +476,7 @@
     die das Lösen von umfangreichen Berechnungen vereinfachen.</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/loeser.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Loeser.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para>Der Löser hat zwei Bereiche: Der obere (weiße) dient zur Eingabe von
@@ -1047,7 +1050,7 @@ ENDIF</programlisting>
     Ausgabe-Bildschirm.</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/rechner.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Rechner.png"/>
         </imageobject>
       </inlinemediaobject></para>
   </section>
@@ -1058,7 +1061,7 @@ ENDIF</programlisting>
     zu einem Cache navigieren lassen.</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/goto.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Goto.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para>Die Navigation wird durch einen Klick auf den Knopf
@@ -1102,7 +1105,7 @@ ENDIF</programlisting>
       </orderedlist>
       <para><inlinemediaobject>
           <imageobject>
-            <imagedata fileref="pics/moving_map.jpg"/>
+            <imagedata fileref="pics/4_Ansichten_Goto_Karte.png"/>
           </imageobject>
         </inlinemediaobject></para>
       <para>Durch Klicken und Ziehen der Maus lässt sich die geladene Karte
@@ -1189,7 +1192,7 @@ ENDIF</programlisting>
     ist.</para>
     <para><inlinemediaobject>
         <imageobject>
-          <imagedata fileref="pics/radar.jpg"/>
+          <imagedata fileref="pics/4_Ansichten_Radar.png"/>
         </imageobject>
       </inlinemediaobject></para>
     <para/>
