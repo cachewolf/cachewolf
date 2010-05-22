@@ -8,6 +8,7 @@ import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
+import ewe.fx.Point;
 import ewe.io.FileBase;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
@@ -42,15 +43,20 @@ public class MapLoaderGui extends Form {
 	mComboBox scaleInput = new mComboBox();
 	mComboBox scaleInputPerCache = new mComboBox();
 	mLabel overlappingLbl = new mLabel(MyLocale.getMsg(1808,"overlapping in pixel:"));
-        mInput overlappingInput = new mInput(""+pref.mapOverlapping);
+    mInput overlappingInput = new mInput(""+pref.mapOverlapping);
 	mCheckBox overviewChkBox = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
 	mCheckBox overviewChkBoxPerCache = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
 
-        mCheckBox smallTiles = new mCheckBox (MyLocale.getMsg (4280, "Small Tiles"));
-        mCheckBox bigTiles = new mCheckBox (MyLocale.getMsg (4282, "BigTiles"));
-        CheckBoxGroup tileSize = new CheckBoxGroup ();
+    mCheckBox smallTiles = new mCheckBox (MyLocale.getMsg (4280, "Small Tiles"));
+    mCheckBox bigTiles = new mCheckBox (MyLocale.getMsg (4282, "BigTiles"));
+    CheckBoxGroup tileSize = new CheckBoxGroup ();
 
-        MapLoader mapLoader;
+    /**
+     * Inputfields for width an height of tile size
+     */
+    private mInput tileWidthInput = new mInput ();
+    private mInput tileHeightInput = new mInput();
+    MapLoader mapLoader;
 	String[] unsortedMapServices;
 	String[] sortedmapServices;
 	int[] sortingMapServices;
@@ -63,11 +69,23 @@ public class MapLoaderGui extends Form {
 	float scale;
 	int overlapping;
 	boolean overviewmap;
+	/**
+	 * Determines width and height of tiles for `per cache maps'
+	 */
+	private int tileWidth;
+	private int tileHeight;
 
 	public MapLoaderGui(CacheDB cacheDBi) {
 		super();
 		this.title = MyLocale.getMsg(1800, "Download georeferenced maps");
 		center = new CWPoint(pref.getCurCentrePt());
+		tileWidth = pref.tilewidth;
+		tileHeight=pref.tileheight;
+		if (tileWidth == 0 || tileHeight == 0) {
+			tileWidth = MyLocale.getScreenWidth();
+			tileHeight = MyLocale.getScreenHeight();
+		}
+		initTileInputfields();
 		cacheDB = cacheDBi;
 		mapLoader = new MapLoader(FileBase.getProgramDirectory()+"/"+"webmapservices");
 
@@ -118,23 +136,36 @@ public class MapLoaderGui extends Form {
 		mTab.addCard(pnlTiles, MyLocale.getMsg(1812, "Tiles"), MyLocale.getMsg(1812, "Tiles"));
 
 		// per cache panel
-		pnlPerCache.addNext(new mLabel(MyLocale.getMsg(1813, "Download one map for")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
-		pnlPerCache.addNext(forSelectedChkBoxPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
-		pnlPerCache.addLast(new mLabel(MyLocale.getMsg(1806, "caches")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
-		pnlPerCache.addNext(new mLabel(MyLocale.getMsg(1807, "Approx. m per pixel")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
-		pnlPerCache.addLast(scaleInputPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
-
-		cancelBPerCache = new mButton(MyLocale.getMsg(1604,"Cancel"));
+		pnlPerCache.addNext(new mLabel(MyLocale.getMsg(1813, "Download one map for")), CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		pnlPerCache.addNext(forSelectedChkBoxPerCache, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		pnlPerCache.addLast(new mLabel(MyLocale.getMsg(1806, "caches")), CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		pnlPerCache.addNext(new mLabel(MyLocale.getMsg(1807, "Approx. m per pixel")), CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		pnlPerCache.addLast(scaleInputPerCache, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		
+		pnlPerCache.addNext (new mLabel(MyLocale.getMsg(1835, "Tilesize")), CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		CellPanel pnl = new CellPanel();		
+		tileHeightInput.columns = tileWidthInput.columns = 5;
+		pnl.addNext (tileWidthInput, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		pnl.addNext (new mLabel("x"), CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+		pnl.addLast (tileHeightInput, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+        pnlPerCache.addLast(pnl,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		
+        cancelBPerCache = new mButton(MyLocale.getMsg(1604,"Cancel"));
 		cancelBPerCache.setHotKey(0, IKeys.ESCAPE);
-		pnlPerCache.addNext(cancelBPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
+		pnlPerCache.addNext(cancelBPerCache, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
 		okBPerCache = new mButton(MyLocale.getMsg(1605,"OK"));
 		okBPerCache.setHotKey(0, IKeys.ACTION);
 		okBPerCache.setHotKey(0, IKeys.ENTER);
-		pnlPerCache.addLast(okBPerCache, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL));
+		pnlPerCache.addLast(okBPerCache, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
 
 		mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
 		setRecommScaleInput();
 		this.addLast(mTab);
+	}
+
+	private void initTileInputfields() {
+		tileWidthInput.setText(Integer.toString(pref.tilewidth));
+		tileHeightInput.setText(Integer.toString(pref.tileheight));
 	}
 
 	private void setRecommScaleInput(){
@@ -233,8 +264,11 @@ public class MapLoaderGui extends Form {
 		    length=1000;
 		}
 		//Override size if one tile for each cache is wanted
-		if (perCache) length=1000;
-		ewe.fx.Point size = new ewe.fx.Point(length,length);
+			Point size = new Point(length, length);
+		if (perCache) {
+			length = 1000;
+			size = new Point(tileWidth, tileHeight);
+		}
 		if (forCachesChkBox.getState() || perCache) {
 			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
 			if (surArea == null) {
@@ -356,6 +390,21 @@ public class MapLoaderGui extends Form {
 					else onlySelected = true;
 					overviewmap = overviewChkBoxPerCache.getState();
 					scale = (float)CacheWolf.Common.parseDouble(scaleInputPerCache.getText());
+					tileWidth = CacheWolf.Common.parseInt(tileWidthInput.getText());
+					tileHeight = CacheWolf.Common.parseInt(tileHeightInput.getText());
+					if (tileWidth <= 0) {
+						new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1836, "Width of tiles must be greater 0."), FormBase.OKB).execute();
+						initTileInputfields ();
+						return;
+					}
+					if (tileHeight <= 0) {
+						new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1837, "Height of tiles must be greater 0."), FormBase.OKB).execute();
+						initTileInputfields ();
+						return;
+					}
+					// If width and height has been valid, set them in preferences also:
+					pref.tileheight=tileHeight;
+					pref.tilewidth=tileWidth;
 				}
 				if (scale < mapLoader.currentOnlineMapService.minscale || scale > mapLoader.currentOnlineMapService.maxscale) {
 					if (scale < mapLoader.currentOnlineMapService.minscale) {

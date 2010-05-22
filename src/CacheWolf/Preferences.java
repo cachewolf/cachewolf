@@ -281,7 +281,10 @@ public class Preferences extends MinML{
     public int mapTileSize=1;
     /** How many should maptiles overlap */
     public int mapOverlapping=100;
-
+    /** Width and height of free defined tile size */
+    public int tilewidth;
+    public int tileheight;
+    
     /** ShowCachesOnMap */
     public boolean showCachesOnMap=true;
 
@@ -621,9 +624,13 @@ public class Preferences extends MinML{
 			     tmp = atts.getValue("tileSize");
 			     if (tmp == null || tmp.length() == 0) tmp = "1";
 			     mapTileSize = Convert.parseInt(tmp);
-                             tmp = atts.getValue("overlapping");
+                 tmp = atts.getValue("overlapping");
 			     if (tmp == null || tmp.length() == 0) tmp = "100";
 			     mapOverlapping = Convert.parseInt(tmp);
+			     tmp = atts.getValue("tilewidth");
+			     tilewidth= (tmp != null && tmp.length() > 0)?Convert.parseInt(tmp):0;
+			     tmp = atts.getValue("tileheight");
+			     tileheight= (tmp != null && tmp.length() > 0)?Convert.parseInt(tmp):0;			    	 
 		}
 		else if (name.equals("showCachesOnMap")){
 			tmp = atts.getValue("on");
@@ -722,7 +729,7 @@ public class Preferences extends MinML{
 			if (rater != null) outp.print("    <rater tool=\"".concat(SafeXML.clean(rater)).concat("\"/>\n"));
 			outp.print("    <logkeeping maximum=\""+SafeXML.strxmlencode(maxLogsToKeep)+"\" keepown=\""+SafeXML.strxmlencode(alwaysKeepOwnLogs)+"\" />\n");
 			outp.print("    <fillWhiteArea on=\""+SafeXML.strxmlencode(fillWhiteArea)+"\"/>\n");
-			outp.print("    <mapLoader tileSize=\""+SafeXML.strxmlencode(mapTileSize)+"\" overlapping=\""+SafeXML.strxmlencode(mapOverlapping)+"\"/>\n");
+			outp.print("    <mapLoader tileSize=\""+SafeXML.strxmlencode(mapTileSize)+"\" overlapping=\""+SafeXML.strxmlencode(mapOverlapping)+"\" tilewidth=\""+SafeXML.strxmlencode(tilewidth)+"\" tileheight=\""+SafeXML.strxmlencode(tileheight)+"\"/>\n");
 			outp.print("    <showCachesOnMap on=\""+SafeXML.strxmlencode(showCachesOnMap)+"\"/>\n");
 			outp.print("    <SortingGroupedByCache on=\""+SafeXML.strxmlencode(SortingGroupedByCache)+"\"/>\n");
 			outp.print("    <Symbols useOwnSymbols=\"" + SafeXML.strxmlencode(useOwnSymbols) + "\"/>\n");
