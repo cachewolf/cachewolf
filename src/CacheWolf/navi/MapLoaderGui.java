@@ -82,8 +82,8 @@ public class MapLoaderGui extends Form {
 		tileWidth = pref.tilewidth;
 		tileHeight=pref.tileheight;
 		if (tileWidth == 0 || tileHeight == 0) {
-			tileWidth = MyLocale.getScreenWidth();
-			tileHeight = MyLocale.getScreenHeight();
+			tileWidth = pref.myAppWidth > 200?pref.myAppWidth:200;
+			tileHeight = pref.myAppHeight > 175?pref.myAppHeight:175;
 		}
 		initTileInputfields();
 		cacheDB = cacheDBi;
