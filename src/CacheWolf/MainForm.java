@@ -29,10 +29,16 @@ public class MainForm extends Editor {
 	*	@see	MainTab
 	*/
 	public MainForm(){
-		doIt();
+		this(false, null);
 	}
 
 	public MainForm(boolean dbg, String pathtoprefxml){
+		//Resize the Close und Ok-Buttons of all Forms. This is just a test for the PDA Versions:
+		int fontSize = pref.fontSize;
+		FormBase.close = new DrawnIcon(DrawnIcon.CROSS,fontSize,fontSize,new Color(0,0,0));
+		FormBase.tick = new DrawnIcon(DrawnIcon.TICK,fontSize,fontSize,new Color(0,128,0));
+		FormBase.cross = new DrawnIcon(DrawnIcon.CROSS,fontSize,fontSize,new Color(128,0,0));
+
 		pref.debug = dbg;
 		pref.setPathToConfigFile(pathtoprefxml); // in case pathtoprefxml == null the preferences will determine the path itself
 		doIt();
