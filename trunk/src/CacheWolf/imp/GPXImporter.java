@@ -211,8 +211,8 @@ public class GPXImporter extends MinML {
 			holder.setArchived(atts.getValue("archived").equals("True"));
 			return;
 		}
-
-		if (name.equals("geocache")) {
+		// OC
+		if (name.equals("geocache")|| name.equals("cache")) {
 			boolean available = false;
 			boolean archived  = false;
 			inCache=true;
@@ -272,7 +272,7 @@ public class GPXImporter extends MinML {
 		
 		// logs
 		if (inLogs){
-			if (name.equals("groundspeak:date")|| name.equals("time")|| name.equals("terra:date"))  {
+			if (name.equals("groundspeak:date")|| name.equals("time")|| name.equals("date")|| name.equals("terra:date"))  {
 				logDate = new String(strData.substring(0,10));
 				return;
 			}
@@ -280,7 +280,7 @@ public class GPXImporter extends MinML {
 				logIcon = new String(typeText2Image(strData));
 				return;
 			}
-			if (name.equals("groundspeak:finder")|| name.equals("geocacher")|| name.equals("terra:user")){
+			if (name.equals("groundspeak:finder")|| name.equals("geocacher")|| name.equals("finder")|| name.equals("terra:user")){
 				logFinder = new String(strData);
 				return;
 			}
@@ -395,7 +395,7 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		// cache information
-		if (name.equals("groundspeak:cache") || name.equals("geocache")|| name.equals("terra:terracache")) {
+		if (name.equals("groundspeak:cache") || name.equals("geocache")|| name.equals("cache")|| name.equals("terra:terracache")) {
 			inCache = false;
 		}
 		
