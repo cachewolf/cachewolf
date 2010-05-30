@@ -77,9 +77,9 @@ public class Attributes {
 	 * @param GC attribute ID
 	 * @param GC attribute Inc (attribute set = 0 ,attribute  not set = 1)
 	 */
-	public void add(int attIdGC, String Yes0No1) {
+	public void add(int attIdGC, String Yes1No0) {
 		if (_count<attribs.length) {
-			Attribute attr = new Attribute(attIdGC, Yes0No1);
+			Attribute attr = new Attribute(attIdGC, Yes1No0);
 			attribs[_count++] = attr;
 			attrYes=attr.getYesBit(attrYes);
 			attrNo=attr.getNoBit(attrNo);			

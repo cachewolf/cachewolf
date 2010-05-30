@@ -103,10 +103,10 @@ public class AttributesSelector extends Panel {
 			long[] bitMask = Attribute.getIdBit(i);
 			if ( ((selectionMaskYes[0] & bitMask[0]) != 0 ) || 
 					((selectionMaskYes[1] & bitMask[1]) != 0 ))
-				inc = 0;
+				inc = 1;
 			else if ( ((selectionMaskNo[0] & bitMask[0]) != 0 ) ||
 					((selectionMaskNo[1] & bitMask[1]) != 0 ))
-				inc = 1;
+				inc = 0;
 			else
 				inc = 2;			
 			Attribute att = new Attribute(i,inc); 
