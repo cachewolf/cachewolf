@@ -284,6 +284,7 @@ public final class SafeXML{
 		//dummy = replace(dummy, "&nbsp;", "&amp;nbsp;");
 		dummy = STRreplace.replace(dummy, "\"", "&quot;");
 		dummy = STRreplace.replace(dummy, "'","&apos;");
+		dummy = STRreplace.replace(dummy, "\u0004","");
 		dummy = STRreplace.replace(dummy, "]]>","]] >"); // this means changing content, but it is the easiest way of avoiding ]]> to be interpreted as endmark of CDATA-section
 
 		return dummy;
