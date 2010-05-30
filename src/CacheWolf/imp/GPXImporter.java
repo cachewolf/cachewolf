@@ -258,7 +258,7 @@ public class GPXImporter extends MinML {
 				Vm.debug("Type: " + atts.getType(i) + " Name: " + atts.getName(i)+ " Value: "+atts.getValue(i));
 			}
 		}	
-		if (name.equals("attribute")) {
+		if (name.equals("groundspeak:attribute")) {
 			int id = Integer.parseInt(atts.getValue("id"));
 			holder.getCacheDetails(false).attributes.add(id,atts.getValue("inc")); // from GC!
 			holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());

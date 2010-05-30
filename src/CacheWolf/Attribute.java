@@ -13,10 +13,10 @@ public class Attribute {
 	public Attribute(int id, int inc) {_Id=id;setInc(inc);setIdBit();}
 	public Attribute(String attributeName) { attName2attNo(attributeName); setIdBit();}
 	public Attribute(int attIdOC) { OCAttNo2attNo(attIdOC); setIdBit();}
-	public Attribute(int attIdGC, String Yes0No1) { GCAttNo2attNo(attIdGC, Yes0No1); setIdBit();}
+	public Attribute(int attIdGC, String Yes1No0) { GCAttNo2attNo(attIdGC, Yes1No0); setIdBit();}
 	// Constructors end
 	private int _Id;
-	private int _Inc; // Yes=0 No=1 non=2
+	private int _Inc; // Yes=1 No=0 non=2
 	private String _ImageName;
 	private long[] _bit = {0l,0l};
 	// for GC Constructor Spider
@@ -24,8 +24,8 @@ public class Attribute {
     	for (int i=0; i<maxAttRef; i++) {
     		if (attributeName.toLowerCase().startsWith(attRef[i][PIC_NAME])) {
 				_Id=i;
-				_Inc=attributeName.toLowerCase().endsWith("-no.gif") ? 1 : 0;
-				_ImageName=attRef[i][PIC_NAME]+(_Inc==1 ? "-no.gif" : "-yes.gif");
+				_Inc=attributeName.toLowerCase().endsWith("-no.gif") ? 0 : 1;
+				_ImageName=attRef[i][PIC_NAME]+(_Inc==0 ? "-no.gif" : "-yes.gif");
 				return;
     		}
     	}
@@ -37,7 +37,7 @@ public class Attribute {
     	for (int i=0; i<maxAttRef; i++) {
     		if (attIdOC == Integer.parseInt(attRef[i][OC_ID])) {
 				_Id=i;
-				_Inc=0;
+				_Inc=1;
 				_ImageName=attRef[i][PIC_NAME]+"-yes.gif";
 				return;
     		}
@@ -46,12 +46,13 @@ public class Attribute {
     	_ImageName="error.gif";
     }
     // for GC Constructor gpx-Import
-    private void GCAttNo2attNo(int attIdGC, String Yes0No1 ) {
+    private void GCAttNo2attNo(int attIdGC, String Yes1No0 ) {
     	for (int i=0; i<maxAttRef; i++) {
     		if (attIdGC == Integer.parseInt(attRef[i][GC_ID])) {
 				_Id=i;
-    			_Inc=Yes0No1.equals("1") ? 1 : 0;
-				_ImageName=attRef[i][PIC_NAME]+(_Inc==1 ? "-no.gif" : "-yes.gif");
+    			_Inc=Yes1No0.equals("1") ? 1 : 0;
+				_ImageName=attRef[i][PIC_NAME]+(_Inc==0 ? "-no.gif" : "-yes.gif");
+				return;				
     		}
     	}
     	_Id=-1; // Error
@@ -77,7 +78,7 @@ public class Attribute {
     	return bit;
     }    
     /**
-     * get GC_ID string
+     * get GC_TEXT string
 	 */
     public String getGCText () { return attRef[_Id][GC_TEXT]; }
     /**
@@ -94,8 +95,8 @@ public class Attribute {
     public void setInc(int inc) {
     	_Inc=inc;
 		_ImageName=attRef[_Id][PIC_NAME];
-		if (inc==1) _ImageName+="-no.gif";
-		else if (inc==0) _ImageName+="-yes.gif";
+		if (inc==0) _ImageName+="-no.gif";
+		else if (inc==1) _ImageName+="-yes.gif";
 		else _ImageName+="-non.gif";
     }
     /**
@@ -114,7 +115,7 @@ public class Attribute {
      * set/unset the bit in the long array that belongs to the Id of the attribute  
      */
     public long[] getYesBit(long[] yes) {
-    	if (_Inc==0) {
+    	if (_Inc==1) {
     		yes[0]|=_bit[0];
     		yes[1]|=_bit[1];    		
     	}
@@ -128,7 +129,7 @@ public class Attribute {
      * set/unset the bit in the long array that belongs to the Id of the attribute  
      */
     public long[] getNoBit(long[] no) {
-    	if (_Inc==1) {
+    	if (_Inc==0) {
     		no[0]|=_bit[0];
     		no[1]|=_bit[1];
     	}
@@ -246,8 +247,8 @@ public class Attribute {
 			return "error.gif";
 		else {
 			switch (cw_Inc) {
-			case 0: return attRef[cw_Id][PIC_NAME]+"-yes.gif";
-			case 1: return attRef[cw_Id][PIC_NAME]+"-no.gif";
+			case 1: return attRef[cw_Id][PIC_NAME]+"-yes.gif";
+			case 0: return attRef[cw_Id][PIC_NAME]+"-no.gif";
 			case 2: return attRef[cw_Id][PIC_NAME]+"-non.gif";
 			default:return "error.gif";
 			}
@@ -255,7 +256,7 @@ public class Attribute {
 	}
 	*/
     private static String getMsg(int cw_Id, int cw_Inc){
-		if (cw_Inc==1)
+		if (cw_Inc==0)
 			return MyLocale.getMsg(Integer.parseInt(attRef[cw_Id][MSG_NR])-1,"");
 		else
 			return MyLocale.getMsg(Integer.parseInt(attRef[cw_Id][MSG_NR]),"");
@@ -280,11 +281,11 @@ public class Attribute {
     	if (_Id<0 || _Id>=maxAttRef) {
     		return errorImage;
     	}
-    	if (_Inc==0) {
+    	if (_Inc==1) {
     		if (yesImages[_Id]==null) {yesImages[_Id]=new mImage(IMAGEDIR+getImageName());}
     		return yesImages[_Id];
     	}
-    	else if (_Inc==1) {
+    	else if (_Inc==0) {
     		if (noImages[_Id]==null) {noImages[_Id]=new mImage(IMAGEDIR+getImageName());}
     		return noImages[_Id];
     	}
