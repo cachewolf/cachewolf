@@ -740,7 +740,7 @@ public class GpxExportNg {
 		}
 		else {
 			for (int i = 0; i < exportlogs; i++) {
-				addLog(Integer.toString(i), logs.getLog(i),"" ,ret);
+				addLog(ch.GetCacheID()+Integer.toString(i), logs.getLog(i),"" ,ret);
 			}
 		}
 		return ret.toString();
