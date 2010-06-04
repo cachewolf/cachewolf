@@ -38,6 +38,7 @@
 # Version 6.1 - 20100305 better log recognition
 # Version 7.0 - 20100402 adaption to new GC-design
 # Version 7.1 - 20100528 better description recognition
+# Version 8.0 - 20100604 adaption to new GC-design
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -99,20 +100,18 @@ onlyGPSAdventure    = &tx=72e69af2-7986-4990-afd9-bc16cbbb4ce3
 #--------------------------------------
 getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
-cacheUnavailable   = <ul\ class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable.\ Read\ the\ logs\ below\ to\ read\ the\ status\ for\ this\ cache.</li></ul></span>
-cacheArchived      = <ul\ class="OldWarning"><li>This\ cache\ has\ been\ archived,\ but\ is\ available\ for\ viewing\ for\ archival\ purposes.</li></ul></span>
+cacheUnavailable   = <ul\ class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable.\ Read\ the\ logs\ below\ to\ read\ the\ status\ for\ this\ cache.</li></ul>
+cacheArchived      = <ul\ class="OldWarning"><li>This\ cache\ has\ been\ archived,\ but\ is\ available\ for\ viewing\ for\ archival\ purposes.</li></ul>
 latLonRex          = <span\ id="ctl00_ContentBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = <span\ id="ctl00_ContentBody_ShortDescription">((?s).*?)</span>
-#This version doesn't work with EWE/EXE, so we trim the tags in code
-#longDescRex        = <span\ id="ctl00_ContentBody_LongDescription">((?s).*?)</span>(?:\\s*)<br\ />(?:\\s*)</p>(?:\\s*)<p>(?:\\s*)<strong>Additional\ Hints&nbsp;\\(</strong>
-longDescRex        = tentBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">&nbsp;</td>\s*<td
+longDescRex        = tentBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
 cacheNameRex       = <span\ id="ctl00_ContentBody_CacheName">((?s).*?)</span>
-cacheOwnerRex      = <span\ id="ctl00_ContentBody_CacheOwner">by\ <a\ href=(?:(?s).*?)>((?s).*?)</a></span>
-dateHiddenRex      = <span\ id="ctl00_ContentBody_DateHidden">((?s).*?)</span>
+cacheOwnerRex      = <strong>\\s*A.*\\s*cache\\s*</strong>\\s*by\ <a\ href=(?:(?s).*?)>((?s).*?)</a>\\s*</td>
+dateHiddenRex      = <td>\\s*<strong>\\s*(?:Hidden|Event\ Date)\\s*:</strong>\\s*((?s).*?)\\s*(?:</td>|<a href=)
 hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
-difficultyRex      = <span\ id="ctl00_ContentBody_Difficulty">.*?alt="(.*?)\ out\ of
-terrainRex         = <span\ id="ctl00_ContentBody_Terrain">.*?alt="(.*?)\ out\ of
+difficultyRex      = <td>\\s*<strong>\\s*Difficulty:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
+terrainRex         = <td>\\s*<strong>\\s*Terrain:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
 cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ alt="
 cacheLocationRex   = <span\ id="ctl00_ContentBody_Location">In\ ([^<]*?)<
 premiumCachepage   = Sorry, the owner of this listing has made it viewable to Premium Members only.
@@ -121,7 +120,7 @@ premiumCachepage   = Sorry, the owner of this listing has made it viewable to Pr
 #Section2a: Logs
 #--------------------------------------
 # blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
-blockRex           = <table class="LogsTable Table">((?s).*?)</table></span></p>
+blockRex           = <table class="LogsTable Table">((?s).*?)</table>
 # singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
 singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
@@ -148,11 +147,14 @@ icon_attended      = icon_attended.gif
 #Section2b: Bugs
 #--------------------------------------
 # blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
-blockExStart       = >&nbsp;Inventory</h3>
+blockExStart       = <span\ id="ctl00_ContentBody_uxTravelBugList_uxInventoryLabel">Inventory</span>
 blockExEnd         = <p class="NoSpacing">
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
 bugExStart         = <a\ href="
-bugExEnd           = </a></li>
+bugExEnd           = </a>
+bugLinkEnd         = "\ class="lnk">
+bugNameExStart     = <span>
+bugNameExEnd       = </span>
 bugDetailsStart    = id="ctl00_ContentBody_BugDetails_BugGoal">
 bugDetailsEnd      = </span>
 getBugByName       = http://www.geocaching.com/track/search.aspx?k=
@@ -186,16 +188,16 @@ imgCommentExEnd    = <a\ href
 #--------------------------------------
 #Section2d: Additional waypoints
 #--------------------------------------
-wayBlockExStart    = <strong>Additional\ Waypoints</strong>
+wayBlockExStart    = <span\ id="ctl00_ContentBody_WaypointsInfo"\ style="font-weight:bold;">Additional\ Waypoints</span>
 wayBlockExEnd      = </table>
 nameRex            = &RefDS=1">(.*)</a>
-koordRex           = <td>([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})</td>
-descRex            = colspan="4">((?:.|\n|\r)*?)</td>
-typeRex            = </a>\ \\((.*)\\)</td>
+koordRex           = <td>\\s*([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})\\s*</td>
+descRex            = colspan="6">((?:.|\n|\r)*?)</td>
+typeRex            = </a>\ \\((.*)\\)\\s*</td>
 rowBlockExStart    = <tr
 rowBlockExEnd      = </tr>
-prefixExStart      = <td>
-prefixExEnd        = </td>
+prefixExStart      =
+prefixExEnd        =
 
 #--------------------------------------
 #Section2e: Attributes
