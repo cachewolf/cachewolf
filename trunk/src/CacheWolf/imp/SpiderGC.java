@@ -816,6 +816,7 @@ public class SpiderGC{
 			if(doNotgetFound) postStr = postStr + propShowOnlyFound;
 		}
 		postStr = postStr + cacheTypeRestriction;
+		
 		Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
 		String viewstate;
 		rexViewstate.search(htmlListPage);
@@ -824,6 +825,16 @@ public class SpiderGC{
 		} else {
 			viewstate = "";
 		}
+		
+		Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
+		String viewstate1;
+		rexViewstate1.search(htmlListPage);
+		if(rexViewstate1.didMatch()){
+			viewstate1 = rexViewstate1.stringMatched(1);
+		} else {
+			viewstate1 = "";
+		}
+
 		/*
 		rexEventvalidation.search(htmlPage);
 		if(rexEventvalidation.didMatch()){
@@ -832,12 +843,13 @@ public class SpiderGC{
 			eventvalidation = "";
 		}
 		*/
+
 		String strNextPage = "ctl00$ContentBody$pgrTop$ctl08";
 		String url = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strNextPage,false)
 	    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
-//	    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
-	    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
-//	    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
+	    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
+	    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
+	    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
 //	    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
 		try{
 			pref.log("Fetching next list page:" + url);
@@ -1494,10 +1506,11 @@ public class SpiderGC{
 		while(!exBug.endOfSearch()){
 			if (infB.isClosed) break; // Allow user to cancel by closing progress form
 			linkPlusBug= exBug.findNext();
-			int idx=linkPlusBug.indexOf("\">");
+			int idx=linkPlusBug.indexOf(p.getProp("bugLinkEnd"));
 			if (idx<0) break; // No link/bug pair found
 			link=linkPlusBug.substring(0,idx);
-			bug=linkPlusBug.substring(idx+2);
+			Extractor exBugName = new Extractor(linkPlusBug,p.getProp("bugNameExStart"),p.getProp("bugNameExEnd"),0,Extractor.EXCLUDESTARTEND);
+			bug=exBugName.findNext();
 			if(bug.length()>0) { // Found a bug, get its details
 				Travelbug tb=new Travelbug(bug);
 				try{
@@ -1789,13 +1802,14 @@ public class SpiderGC{
 				CacheHolder hd = null;
 
 				String[] AddiBlock=mString.split(rowBlock,'\n');
-				int linePrefix=3;
+				int linePrefix=8;
 				if(AddiBlock.length < linePrefix + 1) {
 					(new MessageBox(MyLocale.getMsg(5500,"Error"), "GC changed table output \nCW must be changed too!", FormBase.OKB)).execute();
 					break;
 				}				
-				Extractor exPrefix=new Extractor(AddiBlock[linePrefix].trim(),p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
-				String prefix=exPrefix.findNext();
+//				Extractor exPrefix=new Extractor(AddiBlock[linePrefix].trim(),p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
+//				String prefix=exPrefix.findNext();
+				String prefix=AddiBlock[linePrefix].trim();
 
 				String adWayPoint;
 				if (prefix.length() == 2)
