@@ -120,7 +120,7 @@ premiumCachepage   = Sorry, the owner of this listing has made it viewable to Pr
 #Section2a: Logs
 #--------------------------------------
 # blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
-blockRex           = <table class="LogsTable Table">((?s).*?)</table>
+blockRex           = <table class="LogsTable Table">((?s).*?)<td></td></tr></table>
 # singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
 singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
