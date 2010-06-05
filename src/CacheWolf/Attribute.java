@@ -86,11 +86,11 @@ public class Attribute {
 	 */
     public String getGCId () { return attRef[_Id][GC_ID]; }
     /**
-     * getting attribute given=0,negative=1,not specified=2  
+     * getting attribute given=1,negative=0,not specified=2  
      */
 	public int getInc () { return _Inc; }
     /**
-     * setting/changing attribute given=0,negative=1,not specified=2  
+     * setting/changing attribute given=1,negative=0,not specified=2  
      */
     public void setInc(int inc) {
     	_Inc=inc;
