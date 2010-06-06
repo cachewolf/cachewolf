@@ -59,7 +59,7 @@ public class CacheHolder{
 	/** The terrain rating of the cache from 1 to 5 in .5 incements */
 	private byte terrain = CacheTerrDiff.CW_DT_UNSET;
 	/** The cache type (@see CacheType for translation table)  */
-	private byte type = CacheType.CW_TYPE_CUSTOM; 
+	private byte type; 
 	/** True if the cache has been archived */
 	private boolean archived = false;
 	/** True if the cache is available for searching */
@@ -676,7 +676,6 @@ public class CacheHolder{
 			if (det.Travelbugs.size()>0) varParams.put("BUGS",det.Travelbugs.toHtml());
 			if (det.getSolver()!=null && det.getSolver().trim().length()>0) varParams.put("SOLVER", STRreplace.replace(det.getSolver(),"\n","<br/>\n"));
 			
-
 			// Cache attributes
 			if (det.attributes.count()>0) {
 				Vector attVect=new Vector(det.attributes.count()+1);
@@ -1140,7 +1139,7 @@ public class CacheHolder{
 	private long byteFields2long() {
 		long value = byteBitMask(hard, 1)    | 
 		byteBitMask(terrain, 2)   |
-		byteBitMask(this.type, 3)    |
+		byteBitMask(type, 3)    |
 		byteBitMask(cacheSize, 4)|
 		byteBitMask(this.noFindLogs, 5);		             
 		return value;
@@ -1398,12 +1397,11 @@ public class CacheHolder{
 	/**
 	 * Sets the type of the cache. As the cache type values are int for the rest of CacheWolf
 	 * and byte internally of CacheHolder, some conversion has to be done.
-	 * @param type Cache Type
+	 * @param typeId Cache Type
 	 */
-	public void setType(byte type) {
-		byte newType = type;
-		Global.getProfile().notifyUnsavedChanges(newType != this.type);		
-    	this.type = newType;
+	public void setType(byte typeId) {
+		Global.getProfile().notifyUnsavedChanges(typeId != type);		
+    	type = typeId;
     }
 
 	public boolean is_archived() {
