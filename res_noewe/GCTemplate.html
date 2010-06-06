@@ -78,7 +78,11 @@ td { font-size:small;  }
 	</table>
 	</div>
 	<div style="float:right;">
-		<tmpl_loop ATTRIBUTES><tmpl_var IMAGE><tmpl_var BR><!--<tmpl_var INFO>-->
+		<tmpl_loop ATTRIBUTES>
+			<img src="file://<tmpl_var PATHANDIMAGE>" border=0 alt="<tmpl_var INFO>">
+			<tmpl_var BR>
+			<!--<tmpl_var IMAGE>-->
+			<!--<tmpl_var INFO>-->
 		</tmpl_loop>
 	</div>
 </div>

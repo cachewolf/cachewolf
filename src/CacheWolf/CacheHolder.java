@@ -179,12 +179,7 @@ public class CacheHolder{
 			        
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
-			        try {
-			        	setType(CacheType.v1Converter((xmlString.substring(start + 1, end))));
-			        } catch (IllegalArgumentException ex) {
-			        	setType(CacheType.CW_TYPE_ERROR);
-			        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
-			        }
+		        	setType(CacheType.v1Converter((xmlString.substring(start + 1, end))));
 		            
 			        start = xmlString.indexOf('"', end + 1);
 			        end = xmlString.indexOf('"', start + 1);
@@ -680,6 +675,25 @@ public class CacheHolder{
 			}
 			if (det.Travelbugs.size()>0) varParams.put("BUGS",det.Travelbugs.toHtml());
 			if (det.getSolver()!=null && det.getSolver().trim().length()>0) varParams.put("SOLVER", STRreplace.replace(det.getSolver(),"\n","<br/>\n"));
+			
+
+			// Cache attributes
+			if (det.attributes.count()>0) {
+				Vector attVect=new Vector(det.attributes.count()+1);
+				for (int i=0; i<det.attributes.count(); i++) {
+					Hashtable atts=new Hashtable();
+					atts.put("PATHANDIMAGE", det.attributes.getAttribute(i).getPathAndImageName());
+					atts.put("IMAGE", det.attributes.getAttribute(i).getImageName());
+					if (i % 5 ==4)
+						atts.put("BR","<br/>");
+					else
+						atts.put("BR","");
+					atts.put("INFO",det.attributes.getAttribute(i).getMsg());
+					attVect.add(atts);
+				}
+				varParams.put("ATTRIBUTES",attVect);
+			}
+
 		}
 		return varParams;
 	}	
@@ -1157,11 +1171,7 @@ public class CacheHolder{
 	private void long2byteFieldsv2(long value) {
 		setHard(byteFromLong(value, 1));
 		setTerrain(byteFromLong(value, 2));
-		try {
-			setType(CacheType.v2Converter(byteFromLong(value, 3)));
-		} catch (IllegalArgumentException ex) {
-			setType(CacheType.CW_TYPE_UNKNOWN);
-		}
+		setType(CacheType.v2Converter(byteFromLong(value, 3)));
 		setCacheSize(byteFromLong(value, 4));
 		setNoFindLogs((byteFromLong(value, 5)));
 		if (getHard() == -1 || getTerrain() == -1 || getCacheSize() == -1) {

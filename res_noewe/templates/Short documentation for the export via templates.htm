@@ -269,8 +269,9 @@ EN-GB'>OWNER<span style='mso-tab-count:8'>                                      
 <span class=SpellE>Cacheowner</span><br>
 DIFFICULTY<span style='mso-tab-count:8'>                                                                                        </span>:<br>
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
-mso-ansi-language:EN-GB'>SHORTDIFFICULTY<span style='mso-tab-count:7'>                                                                             </span>:
-Difficulty mal 10 also 15 <span class=SpellE>statt</span> 1.5<br>
+mso-ansi-language:EN-GB'>SHORTDIFFICULTY<span style='mso-tab-count:6'>                                                                 </span><span
+style='mso-tab-count:1'>            </span>: Difficulty mal 10 also 15 <span
+class=SpellE>statt</span> 1.5<br>
 SHDIFFICULTY<span style='mso-tab-count:8'>                                                                                   </span>:
 Difficulty <span class=SpellE>abgerundet</span> also 1 <span class=SpellE>statt</span>
 1.5<br>
@@ -284,8 +285,9 @@ Terrain <span class=SpellE>abgerundet</span><br>
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:
 EN-GB'>DISTANCE<span style='mso-tab-count:8'>                                                                                          </span>:
 Distance calculated in <span class=SpellE>cachelist</span><br>
-BEARING<span style='mso-tab-count:8'>                                                                                           </span>:
-Bearing calculated in <span class=SpellE>cachelist</span><br>
+BEARING<span style='mso-tab-count:7'>                                                                                </span><span
+style='mso-tab-count:1'>            </span>: Bearing calculated in <span
+class=SpellE>cachelist</span><br>
 LATON<span style='mso-tab-count:9'>                                                                                               </span>:
 Coordinates in long format, e.g. N 50° 31.234 E 008° 45.267<br>
 LAT<span style='mso-tab-count:9'>                                                                                                    </span>:
@@ -304,7 +306,8 @@ STATUS_TIME<span style='mso-tab-count:8'>                                       
 Get the time part of the status<br>
 DATE<span style='mso-tab-count:9'>                                                                                                 </span>:
 date hidden<br>
-CACHE_NAME<span style='mso-tab-count:8'>                                                                                   </span>:
+CACHE_NAME<span style='mso-tab-count:1'> </span><span style='mso-tab-count:
+7'>                                                                                  </span>:
 original Name of cache<br>
 NAME<span style='mso-tab-count:9'>                                                                                                </span>:
 Name of cache (<span class=SpellE>badchars</span> are removed, see below) (<span
@@ -316,9 +319,8 @@ mso-ansi-language:EN-GB'>Name <span class=SpellE>der</span> <span class=SpellE>d
 <span class=SpellE>Weglassen</span> von <span class=SpellE>Vokalen</span> von <span
 class=SpellE>hinten</span> und <span class=SpellE>wenn</span> <span
 class=SpellE>das</span> <span class=SpellE>nicht</span> <span class=SpellE>reicht</span>
-<span class=SpellE>durch</span> <span class=SpellE>Weglassen</span> von <span
-style='mso-spacerun:yes'>  </span><span style='mso-spacerun:yes'>  </span><span
-style='mso-tab-count:9'>                                                                                                      </span>:
+<span class=SpellE>durch</span> <span class=SpellE>Weglassen</span> von<span
+style='mso-spacerun:yes'>     </span><span style='mso-tab-count:9'>                                                                                                      </span>:
 <span class=SpellE>Kleinbuchstaben</span> von <span class=SpellE>hinten</span>
 auf <span class=SpellE>eine</span> in den <span class=SpellE>Einstellungen</span>
 <span class=SpellE>vorgegebene</span> <span class=SpellE>Länge</span> <span
@@ -361,9 +363,24 @@ BUGS<span style='mso-tab-count:9'>                                              
 <span class=SpellE>Liste</span> <span class=SpellE>der</span> <span
 class=SpellE>TBs</span> : <br>
 SOLVER<span style='mso-tab-count:8'>                                                                                             </span>:
-Solver Infos<br style='mso-special-character:line-break'>
+Solver <span class=SpellE>Infos</span><br style='mso-special-character:line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
 <![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>ATTRIBUTES<span
+style='mso-tab-count:8'>                                                                                      </span>:
+the &lt;<span class=SpellE>tmpl_loop</span> ATTRIBUTES&gt;, example see GCTemplate.html
+/ show cache in browser offline<br>
+PATHANDIMAGE<span style='mso-tab-count:7'>                                                                                </span>:
+path an <span class=SpellE>imagename</span> of the attribute<br>
+IMAGE<span style='mso-tab-count:9'>                                                                                               </span>:
+<span class=SpellE>imagename</span> of the attribute<br>
+INFO<span style='mso-tab-count:9'>                                                                                                  </span>:
+description of the attribute from language <span class=SpellE>config</span><br>
+BR<span style='mso-tab-count:9'>                                                                                                     </span>:
+contains &lt;<span class=SpellE>br</span>/&gt; every 5<sup>th</sup> attribute
+else empty (can be used with &lt;<span class=SpellE>tmp_if</span>&gt;)<o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 mso-outline-level:1'><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
@@ -402,9 +419,9 @@ class=SpellE>tmpl_var</span> name=LAT&gt;;&lt;<span class=SpellE>tmpl_var</span>
 name=LON&gt;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=TYPE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=SIZE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
-name=WAYPOINT&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span> name=DATE&gt;&quot;;&quot;&lt;<span
-class=SpellE>tmpl_var</span> name=URL&gt;&quot;&lt;<span class=SpellE>br</span>
-/&gt;<br>
+name=WAYPOINT&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
+name=DATE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
+name=URL&gt;&quot;&lt;<span class=SpellE>br</span> /&gt;<br>
 &lt;/<span class=SpellE>tmpl_loop</span>&gt;<br style='mso-special-character:
 line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
@@ -544,8 +561,8 @@ control variable</span><span lang=EN-GB style='mso-ansi-language:EN-GB'> </span>
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>evaluates
 to false. If the control variable evaluates to true, then the else block, if</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>any, is
-displayed instead.</span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>any, is displayed
+instead.</span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 class=SpellE><u><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;

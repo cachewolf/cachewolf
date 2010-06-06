@@ -67,24 +67,6 @@ public class ShowCacheInBrowser {
 				Vm.showWait(true);
 				try {
 					tpl.setParams(chD.toHashtable(new Regex("[,.]","."), null, 0, 30, new AsciiCodec(), null, true, 1));
-
-					// Cache attributes
-					if (chD.getCacheDetails(false).attributes.count()>0) {
-						Vector attVect=new Vector(chD.getCacheDetails(false).attributes.count()+1);
-						for (int i=0; i<chD.getCacheDetails(false).attributes.count(); i++) {
-							Hashtable atts=new Hashtable();
-							atts.put("IMAGE","<img src=\"file://"+
-									 chD.getCacheDetails(false).attributes.getAttribute(i).getPathAndImageName()+
-									 "\" border=0 alt=\""+chD.getCacheDetails(false).attributes.getAttribute(i).getMsg()+"\">");
-							if (i % 5 ==4)
-								atts.put("BR","<br/>");
-							else
-								atts.put("BR","");
-							atts.put("INFO",chD.getCacheDetails(false).attributes.getAttribute(i).getMsg());
-							attVect.add(atts);
-						}
-						tpl.setParam("ATTRIBUTES",attVect);
-					}
 					// Look for images
 					// count only the images of main body
 					int start=0;
