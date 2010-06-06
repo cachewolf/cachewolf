@@ -50,17 +50,17 @@ public class ImagePanel extends InteractivePanel{
 			clearImages();
 			thumb_size = ((pref.myAppWidth-2*padding) / 3);
 			thumb_size = thumb_size - padding;
-			int rowCounter1 = 0;
+			double rowCounter1 = 0;
 			if (cache.images.getDisplayImages(cache.getParent().getWayPoint()).size()>0) {
 				rowCounter1 = cache.images.getDisplayImages(cache.getParent().getWayPoint()).size();
-				rowCounter1 = (int) java.lang.Math.floor((rowCounter1-1)/3)+1;
+				rowCounter1 = java.lang.Math.ceil(rowCounter1/3);
 			}
-			int rowCounter2 = 0;
+			double rowCounter2 = 0;
 			if (cache.userImages.size()>0){
 				rowCounter2 = cache.userImages.size();
-				rowCounter2 = (int) java.lang.Math.floor((rowCounter2-1)/3)+1;
+				rowCounter2 = java.lang.Math.ceil(rowCounter2/3);
 			}
-			int rowCounter = rowCounter1 + rowCounter2;
+			int rowCounter = (int) (rowCounter1 + rowCounter2);
 			Rect r = new Rect(0, 0, pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+padding);
 			this.virtualSize = r;
 			//this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
