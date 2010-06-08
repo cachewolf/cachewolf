@@ -133,19 +133,15 @@ public class LOCXMLImporter extends MinML {
 			Vm.debug(strData);
 	}
 
-	private CacheHolder getHolder(String wpt) {// See also OCXMLImporter
+	private CacheHolder getHolder(String wpt) {
 		CacheHolder ch;
 
 		ch = cacheDB.get(wpt);
 		if (ch == null) {
-			ch = new CacheHolder();
-			// TODO: once the cleanup is done, this should be move to
-			// CacheHolder constructor
-			ch.setType(CacheType.CW_TYPE_CUSTOM);
+			ch = new CacheHolder(wpt);
 			ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 			ch.setHard(CacheTerrDiff.CW_DT_UNSET);
 			ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-			ch.setWayPoint(wpt);
 		}
 		return ch;
 	}

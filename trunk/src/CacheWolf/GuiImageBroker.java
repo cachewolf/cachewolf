@@ -22,123 +22,18 @@ public final class GuiImageBroker {
 	 * @see getTypeImage
 	 * @see CacheTypes
 	 */
-	private static final Image[] TYPEIMAGES = {
-		new Image(CacheType.CT_FILENAME[0]),
-		new Image(CacheType.CT_FILENAME[1]),
-		new Image(CacheType.CT_FILENAME[2]),
-		new Image(CacheType.CT_FILENAME[3]),
-		new Image(CacheType.CT_FILENAME[4]),
-		new Image(CacheType.CT_FILENAME[5]),
-		new Image(CacheType.CT_FILENAME[6]),
-		new Image(CacheType.CT_FILENAME[7]),
-		new Image(CacheType.CT_FILENAME[8]),
-		new Image(CacheType.CT_FILENAME[9]),
-		new Image(CacheType.CT_FILENAME[10]),
-		new Image(CacheType.CT_FILENAME[11]),
-		new Image(CacheType.CT_FILENAME[12]),
-		new Image(CacheType.CT_FILENAME[13]),
-		new Image(CacheType.CT_FILENAME[14]),
-		new Image(CacheType.CT_FILENAME[15]),
-		new Image(CacheType.CT_FILENAME[16]),
-		new Image(CacheType.CT_FILENAME[17]),
-		new Image(CacheType.CT_FILENAME[18]),
-		new Image(CacheType.CT_FILENAME[19]),
-		new Image(CacheType.CT_FILENAME[20]),
-		new Image(CacheType.CT_FILENAME[21]),
-	};
-
-	private static final Image[] sizeImages = {
-		new Image(CacheType.CT_FILENAME[0]),
-		new Image(CacheType.CT_FILENAME[1]),
-		new Image(CacheType.CT_FILENAME[2]),
-		new Image(CacheType.CT_FILENAME[3]),
-		new Image(CacheType.CT_FILENAME[4]),
-		new Image(CacheType.CT_FILENAME[5]),
-		new Image(CacheType.CT_FILENAME[6]),
-		new Image(CacheType.CT_FILENAME[7]),
-		new Image(CacheType.CT_FILENAME[8]),
-		new Image(CacheType.CT_FILENAME[9]),
-		new Image(CacheType.CT_FILENAME[10]),
-		new Image(CacheType.CT_FILENAME[11]),
-		new Image(CacheType.CT_FILENAME[12]),
-		new Image(CacheType.CT_FILENAME[13]),
-		new Image(CacheType.CT_FILENAME[14]),
-		new Image(CacheType.CT_FILENAME[15]),
-		new Image(CacheType.CT_FILENAME[16]),
-		new Image(CacheType.CT_FILENAME[17]),
-		new Image(CacheType.CT_FILENAME[18]),
-		new Image(CacheType.CT_FILENAME[19]),
-		new Image(CacheType.CT_FILENAME[20]),
-		new Image(CacheType.CT_FILENAME[21]),
-	};
 
 	/** thou shallst not instantiate this object */
 	private GuiImageBroker() {
 		// Noting to do
 	}
 
-	/**
-	 * select image to be displayed for a given cache type
-	 * @param type internal cache type id
-	 * @return <code>Image</code> object to be displayed
-	 */
-	public static Image getTypeImage(final byte type) {
-		switch (type) {
-		case CacheType.CW_TYPE_CUSTOM: return TYPEIMAGES[0];
-		case CacheType.CW_TYPE_APE: return TYPEIMAGES[1];
-		case CacheType.CW_TYPE_CITO: return TYPEIMAGES[2];
-		case CacheType.CW_TYPE_DRIVE_IN: return TYPEIMAGES[3];
-		case CacheType.CW_TYPE_EARTH: return TYPEIMAGES[4];
-		case CacheType.CW_TYPE_EVENT: return TYPEIMAGES[5];
-		case CacheType.CW_TYPE_FINAL: return TYPEIMAGES[6];
-		case CacheType.CW_TYPE_LETTERBOX: return TYPEIMAGES[7];
-		case CacheType.CW_TYPE_LOCATIONLESS: return TYPEIMAGES[8];
-		case CacheType.CW_TYPE_MAZE: return TYPEIMAGES[9];
-		case CacheType.CW_TYPE_MEGA_EVENT: return TYPEIMAGES[10];
-		case CacheType.CW_TYPE_MULTI: return TYPEIMAGES[11];
-		case CacheType.CW_TYPE_PARKING: return TYPEIMAGES[12];
-		case CacheType.CW_TYPE_QUESTION: return TYPEIMAGES[13];
-		case CacheType.CW_TYPE_REFERENCE: return TYPEIMAGES[14];
-		case CacheType.CW_TYPE_STAGE: return TYPEIMAGES[15];
-		case CacheType.CW_TYPE_TRADITIONAL: return TYPEIMAGES[16];
-		case CacheType.CW_TYPE_TRAILHEAD: return TYPEIMAGES[17];
-		case CacheType.CW_TYPE_UNKNOWN: return TYPEIMAGES[18];
-		case CacheType.CW_TYPE_VIRTUAL: return TYPEIMAGES[19];
-		case CacheType.CW_TYPE_WEBCAM: return TYPEIMAGES[20];
-		case CacheType.CW_TYPE_WHEREIGO: return TYPEIMAGES[21];
-		default: return imageError;
-		}
-	}
-	public static Image getTypeImage(byte id,boolean map) {
+	public static Image getTypeImage(byte typeId,boolean map) {
 		if (!map) {
-			return getTypeImage(id);
+			return CacheType.getTypeImage(typeId);
 		}
 		else {
-			switch (id) {
-			case CacheType.CW_TYPE_CUSTOM: return sizeImages[0];
-			case CacheType.CW_TYPE_APE: return sizeImages[1];
-			case CacheType.CW_TYPE_CITO: return sizeImages[2];
-			case CacheType.CW_TYPE_DRIVE_IN: return sizeImages[3];
-			case CacheType.CW_TYPE_EARTH: return sizeImages[4];
-			case CacheType.CW_TYPE_EVENT: return sizeImages[5];
-			case CacheType.CW_TYPE_FINAL: return sizeImages[6];
-			case CacheType.CW_TYPE_LETTERBOX: return sizeImages[7];
-			case CacheType.CW_TYPE_LOCATIONLESS: return sizeImages[8];
-			case CacheType.CW_TYPE_MAZE: return sizeImages[9];
-			case CacheType.CW_TYPE_MEGA_EVENT: return sizeImages[10];
-			case CacheType.CW_TYPE_MULTI: return sizeImages[11];
-			case CacheType.CW_TYPE_PARKING: return sizeImages[12];
-			case CacheType.CW_TYPE_QUESTION: return sizeImages[13];
-			case CacheType.CW_TYPE_REFERENCE: return sizeImages[14];
-			case CacheType.CW_TYPE_STAGE: return sizeImages[15];
-			case CacheType.CW_TYPE_TRADITIONAL: return sizeImages[16];
-			case CacheType.CW_TYPE_TRAILHEAD: return sizeImages[17];
-			case CacheType.CW_TYPE_UNKNOWN: return sizeImages[18];
-			case CacheType.CW_TYPE_VIRTUAL: return sizeImages[19];
-			case CacheType.CW_TYPE_WEBCAM: return sizeImages[20];
-			case CacheType.CW_TYPE_WHEREIGO: return sizeImages[21];
-			default: return imageError;
-			}
+			return CacheType.getMapImage(typeId);
 		}
 	}
 
@@ -153,7 +48,8 @@ public final class GuiImageBroker {
 	 * Images are NOT checked for size etc.
 	 */
 	public static void customizedSymbols() {
-		final FileBugfix dir=new FileBugfix(FileBase.getProgramDirectory()+"/symbols");
+		final String sdir="/symbols/";
+		final FileBugfix dir=new FileBugfix(FileBase.getProgramDirectory()+sdir);
 		if (dir.isDirectory()){
 			int id;
 			boolean size=false;
@@ -172,12 +68,13 @@ public final class GuiImageBroker {
 				catch (Exception E){
 					id = -1; //filename invalid for symbols
 				}
-				if (0<=id && id<=TYPEIMAGES.length){
+				if (0<=id && id<=CacheType.maxCWCType){
 					if (!size){
-						TYPEIMAGES[id]= new Image(FileBase.getProgramDirectory()+"/symbols/"+pngFiles[i]);
+						String s=FileBase.getProgramDirectory()+sdir+pngFiles[i];
+						CacheType.setTypeImage((byte) id, new Image(s));
 					}
 					else{
-						sizeImages[id]= new Image(FileBase.getProgramDirectory()+"/symbols/"+pngFiles[i]);
+						CacheType.setMapImage((byte) id, new Image(FileBase.getProgramDirectory()+sdir+pngFiles[i]));
 						size=false;
 					}
 				}

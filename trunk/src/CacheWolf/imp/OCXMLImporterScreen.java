@@ -68,17 +68,18 @@ public class OCXMLImporterScreen extends Form {
 		if ((options & TYPE) > 0) {
 			this.addLast( chcType = new mChoice(new String[] {
 					MyLocale.getMsg(1627,"All caches"),
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_TRADITIONAL)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_MULTI)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_VIRTUAL)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_LETTERBOX)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_EVENT)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_MEGA_EVENT)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_WEBCAM)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_UNKNOWN)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_CITO)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_EARTH)],
-					CacheType.CT_GUI[CacheType.CT_Index(CacheType.CW_TYPE_WHEREIGO)],
+					MyLocale.getMsg(2,"Tradi"),
+					MyLocale.getMsg(3,"Multi"),
+					MyLocale.getMsg(4,"Virtual"),
+					MyLocale.getMsg(5,"Letterbox"),
+					MyLocale.getMsg(6,"Event"),
+					MyLocale.getMsg(14,"Mega Event"),
+					MyLocale.getMsg(11,"Webcam"),
+					MyLocale.getMsg(8,"Mysterie"),
+					MyLocale.getMsg(13,"CITO"),
+					MyLocale.getMsg(18,"Earth"),
+					MyLocale.getMsg(15,"WhereIGo"),
+					MyLocale.getMsg(11,"Webcam"),
 				},0), CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		}
 

@@ -28,29 +28,6 @@ public class Filter{
 	private static final int EQUAL = 0;
 	private static final int GREATER = 1;
 
-	private static final int TRADITIONAL = 1;
-	private static final int MULTI = 2;
-	private static final int VIRTUAL = 4;
-	private static final int LETTER = 8;
-	private static final int EVENT = 16;
-	private static final int WEBCAM = 32;
-	private static final int MYSTERY = 64;
-	private static final int LOCLESS = 128;
-	private static final int CUSTOM = 256;
-	private static final int MEGA = 512;
-	private static final int EARTH = 1024;
-	private static final int PARKING = 2048;
-	private static final int STAGE = 4096;
-	private static final int QUESTION = 8192;
-	private static final int FINAL = 16384;
-	private static final int TRAILHEAD = 32768;
-	private static final int REFERENCE = 65536;
-	private static final int CITO = 131072;
-	private static final int WHERIGO = 262144;
-	private static final int TYPE_ALL=TRADITIONAL|MULTI|VIRTUAL|LETTER|EVENT|WEBCAM|MYSTERY|LOCLESS|CUSTOM
-	                                  |MEGA|EARTH|PARKING|STAGE|QUESTION|FINAL|TRAILHEAD|REFERENCE|CITO|WHERIGO;
-	private static final int TYPE_MAIN=TRADITIONAL|MULTI|VIRTUAL|LETTER|EVENT|WEBCAM|MYSTERY|LOCLESS|CUSTOM|MEGA|EARTH|CITO|WHERIGO;
-
 	private static final int N = 1;
 	private static final int NNE = 2;
 	private static final int NE = 4;
@@ -255,32 +232,12 @@ public class Filter{
 		notAvailable = profile.getFilterVar().charAt(5) == '1';
 		notFoundByMe = profile.getFilterVar().charAt(6) == '1';
 		notOwnedByMe = profile.getFilterVar().charAt(7) == '1';
-		typeMatchPattern=0;
 		cacheStatus  = profile.getFilterStatus();
 		useRegexp    = profile.getFilterUseRegexp();
 		filterNoCoord = profile.getFilterNoCoord();
 		
-		String filterType=profile.getFilterType();
-		if (filterType.charAt(0) == '1') typeMatchPattern|=TRADITIONAL;
-		if (filterType.charAt(1) == '1') typeMatchPattern|=MULTI;
-		if (filterType.charAt(2) == '1') typeMatchPattern|=VIRTUAL;
-		if (filterType.charAt(3) == '1') typeMatchPattern|=LETTER;
-		if (filterType.charAt(4) == '1') typeMatchPattern|=EVENT;
-		if (filterType.charAt(5) == '1') typeMatchPattern|=WEBCAM;
-		if (filterType.charAt(6) == '1') typeMatchPattern|=MYSTERY;
-		if (filterType.charAt(7) == '1') typeMatchPattern|=EARTH;
-		if (filterType.charAt(8) == '1') typeMatchPattern|=LOCLESS;
-		if (filterType.charAt(9) == '1') typeMatchPattern|=MEGA;
-		if (filterType.charAt(10) == '1') typeMatchPattern|=CUSTOM;
-		if (filterType.charAt(11) == '1') typeMatchPattern|=PARKING;
-		if (filterType.charAt(12) == '1') typeMatchPattern|=STAGE;
-		if (filterType.charAt(13) == '1') typeMatchPattern|=QUESTION;
-		if (filterType.charAt(14) == '1') typeMatchPattern|=FINAL;
-		if (filterType.charAt(15) == '1') typeMatchPattern|=TRAILHEAD;
-		if (filterType.charAt(16) == '1') typeMatchPattern|=REFERENCE;
-		if (filterType.charAt(17) == '1') typeMatchPattern|=CITO;
-		if (filterType.charAt(18) == '1') typeMatchPattern|=WHERIGO;
-		hasTypeMatchPattern= typeMatchPattern!=TYPE_ALL;
+		typeMatchPattern=CacheType.Type_FilterString2Type_FilterPattern(profile.getFilterType());
+		hasTypeMatchPattern=CacheType.hasTypeMatchPattern(typeMatchPattern);
 		roseMatchPattern=0;
 		String filterRose=profile.getFilterRose();
 		if (filterRose.charAt(0) == '1') roseMatchPattern|=NW;
@@ -343,7 +300,7 @@ public class Filter{
 			if (examinedCaches.containsKey(ch)) continue;
 			
 			boolean filterCache = excludedByFilter(ch);
-			if (!filterCache && ch.mainCache!=null && ((typeMatchPattern & TYPE_MAIN) != 0)) {
+			if (!filterCache && ch.mainCache!=null && CacheType.hasMainTypeMatchPattern(typeMatchPattern)) {
 				if (examinedCaches.containsKey(ch.mainCache)) {
 					filterCache = ch.mainCache.is_filtered();
 				} else {
@@ -377,46 +334,7 @@ public class Filter{
 	        // Filter criterium 1: Cache type
 	        ///////////////////////////////
 	        if (hasTypeMatchPattern) { // Only do the checks if we have a filter
-		        cacheTypePattern = 0;
-		        // As each cache can only have one type, we can use else if and set the type
-		        if (ch.getType() == CacheType.CW_TYPE_CUSTOM)
-			        cacheTypePattern = CUSTOM;
-		        else if (ch.getType() == CacheType.CW_TYPE_TRADITIONAL)
-			        cacheTypePattern = TRADITIONAL;
-		        else if (ch.getType() == CacheType.CW_TYPE_MULTI)
-			        cacheTypePattern = MULTI;
-		        else if (ch.getType() == CacheType.CW_TYPE_VIRTUAL)
-			        cacheTypePattern = VIRTUAL;
-		        else if (ch.getType() == CacheType.CW_TYPE_LETTERBOX)
-			        cacheTypePattern = LETTER;
-		        else if (ch.getType() == CacheType.CW_TYPE_EVENT)
-			        cacheTypePattern = EVENT;
-		        else if (ch.getType() == CacheType.CW_TYPE_UNKNOWN)
-			        cacheTypePattern = MYSTERY;
-		        else if (ch.getType() == CacheType.CW_TYPE_WEBCAM)
-			        cacheTypePattern = WEBCAM;
-		        else if (ch.getType() == CacheType.CW_TYPE_LOCATIONLESS)
-			        cacheTypePattern = LOCLESS;
-		        else if (ch.getType() == CacheType.CW_TYPE_EARTH)
-			        cacheTypePattern = EARTH;
-		        else if (ch.getType() == CacheType.CW_TYPE_MEGA_EVENT)
-			        cacheTypePattern = MEGA;
-		        else if (ch.getType() == CacheType.CW_TYPE_PARKING)
-			        cacheTypePattern = PARKING;
-		        else if (ch.getType() == CacheType.CW_TYPE_STAGE)
-			        cacheTypePattern = STAGE;
-		        else if (ch.getType() == CacheType.CW_TYPE_QUESTION)
-			        cacheTypePattern = QUESTION;
-		        else if (ch.getType() == CacheType.CW_TYPE_FINAL)
-			        cacheTypePattern = FINAL;
-		        else if (ch.getType() == CacheType.CW_TYPE_TRAILHEAD)
-			        cacheTypePattern = TRAILHEAD;
-		        else if (ch.getType() == CacheType.CW_TYPE_REFERENCE)
-			        cacheTypePattern = REFERENCE;
-		        else if (ch.getType() == CacheType.CW_TYPE_CITO)
-			        cacheTypePattern = CITO;
-		        else if (ch.getType() == CacheType.CW_TYPE_WHEREIGO)
-			        cacheTypePattern = WHERIGO;
+	        	cacheTypePattern = CacheType.getCacheTypePattern(ch.getType());
 		        if ((cacheTypePattern & typeMatchPattern) == 0) {
 			        cacheFiltered = true; break;
 		        }

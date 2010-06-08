@@ -331,17 +331,15 @@ public class myTableModel extends TableModel{
 						else
 							return checkboxUnticked;
 					case 1: // Type
-						return GuiImageBroker.getTypeImage(ch.getType());
+						return CacheType.getTypeImage(ch.getType());
 					case 2: // Difficulty;
-						// FIXME Needs optimizing when code is stable
-						if (ch.isAddiWpt() || ch.getType()==CacheType.CW_TYPE_CUSTOM) {
+						if (!ch.isCacheWpt()) {
 							return "";
 						} else {
 							return CacheTerrDiff.longDT(ch.getHard());
 						}
 					case 3: // Terrain
-						// FIXME Needs optimizing when code is stable
-						if (ch.isAddiWpt() || ch.getType()==CacheType.CW_TYPE_CUSTOM) {
+						if (!ch.isCacheWpt()) {
 							return "";
 						} else {
 							return CacheTerrDiff.longDT(ch.getTerrain());
@@ -387,7 +385,7 @@ public class myTableModel extends TableModel{
 							return sizePics[CacheSize.guiSizeImageId(ch.getCacheSize())];
 						}
 					case 13: // OC number of recommendations
-						if (ch.isAddiWpt() || CacheType.CW_TYPE_CUSTOM == ch.getType()) return null;
+						if (!ch.isCacheWpt()) return null;
 						return Convert.formatInt(ch.getNumRecommended());
 					case 14: // OC rating
 						if (ch.isOC())
