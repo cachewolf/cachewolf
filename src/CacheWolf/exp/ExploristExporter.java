@@ -240,12 +240,10 @@ public class ExploristExporter {
 		sb.append(removeCommas(Common.rot13(det.Hints)));
 		sb.append(",");
 
-		if (!add.equals("")) { // Set Picture in Explorist to Virtual
+		if (!add.equals("")) { // Set Picture in Explorist to Virtual for Addis
 			sb.append("Virtual Cache");
-		} else if (ch.getType() != CacheType.CW_TYPE_UNKNOWN) { // Rewrite Unknown Caches
-			sb.append(CacheType.type2GSTypeTag(ch.getType()));
 		} else {
-			sb.append("Mystery Cache");
+			sb.append(CacheType.type2GSTypeTag(ch.getType()));
 		}
 		sb.append(",");
 		sb.append(toGsDateFormat(ch.getDateHidden()));  // created - DDMMYYY, YYY = year - 1900
