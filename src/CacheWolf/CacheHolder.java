@@ -624,10 +624,7 @@ public class CacheHolder{
 		if (codec instanceof AsciiCodec) { cacheName=Exporter.simplifyString(cacheName);} // use for "NAME"
 		if (badChars != null) { cacheName=badChars.replaceAll(cacheName); } // use for "NAME"
 		varParams.put("NAME", cacheName); // !!! cacheName used twice
-		String shortName=removeCharsfromString(cacheName, shortNameLength, selbstLaute);
-		if (shortName.length()>shortNameLength) {
-			shortName=removeCharsfromString(shortName, shortNameLength, mitLauteKlein());
-		}
+		String shortName=shortenName(cacheName, shortNameLength);
 		varParams.put("SHORTNAME", shortName);
 		varParams.put("TRAVELBUG", (bugs?"Y":"N"));
 		varParams.put("GMTYPE", gm != null ? gm.getIcon(this) : "");
@@ -744,7 +741,8 @@ public class CacheHolder{
 	private final static Time nowtime() {
 		Time nt = new Time();
 		return nt.setFormat("HH:mm");
-	}	
+	}
+
 	private final static String selbstLaute="aeiouAEIOU";
 	private final static String mitLauteKlein() {
 		final StringBuffer lower=new StringBuffer(26);// region/language dependent ?
@@ -752,6 +750,10 @@ public class CacheHolder{
 			lower.append((char) i);
 		}
 		return lower.toString();
+	}
+	public String shortenName(String Name, int maxLength) {
+		String shortName=removeCharsfromString(Name, maxLength, selbstLaute);
+		return  removeCharsfromString(shortName, maxLength, mitLauteKlein());
 	}
     private static String removeCharsfromString( String text, int MaxLength, String chars ) {
         if ( text == null ) return null;
