@@ -110,7 +110,7 @@ public class myInteractivePanel extends InteractivePanel{
 		CacheHolder ch=Global.getProfile().cacheDB.get(wayPoint);
 		if (ch != null) {
 			 IconAndText icnDrag=new IconAndText();
-			 icnDrag.addColumn(GuiImageBroker.getTypeImage(ch.getType()));
+			 icnDrag.addColumn(CacheType.getTypeImage(ch.getType()));
 			 icnDrag.addColumn(ch.getWayPoint());
 			 dc.dragData=dc.startImageDrag(icnDrag,new Point(8,8),this);
 			 //if (dc instanceof ImageDragContext) Vm.debug(">>>>Is Image drag");

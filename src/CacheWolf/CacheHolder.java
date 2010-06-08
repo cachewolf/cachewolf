@@ -136,6 +136,7 @@ public class CacheHolder{
 	
 	public CacheHolder(String wp) {
 		wayPoint = wp;
+		type=-1;
     }
 	
 	public CacheHolder(String xmlString, int version) {
