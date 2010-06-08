@@ -231,10 +231,9 @@ public class ExploristExporter {
 			} else if (ch.getType() == 55) {
 				add = "Re:";
 			}
-			sb.append(add).append(removeCommas(ch.getCacheName()));
-		} else {
-			sb.append(removeCommas(ch.getCacheName()));
+			sb.append(add);
 		}
+		sb.append(removeCommas(ch.shortenName(ch.getCacheName(), 20)).substring(0,20));
 		sb.append(",");
 		sb.append(removeCommas(ch.getCacheOwner()));
 		sb.append(",");
