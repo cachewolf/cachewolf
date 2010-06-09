@@ -233,7 +233,7 @@ public class ExploristExporter {
 			}
 			sb.append(add);
 		}
-		sb.append(removeCommas(ch.shortenName(ch.getCacheName(), 20)).substring(0,20));
+		sb.append(ch.getWayPoint() + " " + removeCommas(ch.getCacheName()));
 		sb.append(",");
 		sb.append(removeCommas(ch.getCacheOwner()));
 		sb.append(",");
