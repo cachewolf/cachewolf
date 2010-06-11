@@ -588,9 +588,11 @@ public class CacheHolder{
 		varParams.put("SHORTSIZE", CacheSize.getExportShortId(cacheSize));
 		if (isAddiWpt()) {
 			varParams.put("MAINWP",this.mainCache.getWayPoint());
+			varParams.put("MAINWPNAME", this.mainCache.getCacheName());
 		}
 		else {
 			varParams.put("MAINWP", "");
+			varParams.put("MAINWPNAME", "");
 		}
 		if (isCustomWpt()) {
 
@@ -681,6 +683,8 @@ public class CacheHolder{
 					Hashtable atts=new Hashtable();
 					atts.put("PATHANDIMAGE", det.attributes.getAttribute(i).getPathAndImageName());
 					atts.put("IMAGE", det.attributes.getAttribute(i).getImageName());
+					atts.put("GCID", det.attributes.getAttribute(i).getGCId());
+					atts.put("INC", "" + det.attributes.getAttribute(i).getInc());
 					if (i % 5 ==4)
 						atts.put("BR","<br/>");
 					else
