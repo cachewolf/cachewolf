@@ -25,9 +25,13 @@ Decrypted Hints:<br>
 </td></tr>
 <tr style = "font-family:sans-serif;font-size:12;"><td>
 Logs:<br>
-<tmpl_var LOGS>
+<tmpl_loop LOGS>
+#logNr=<tmpl_var __COUNTER__><br>
+<img src="<tmpl_var ICON>" border="0">&nbsp;<tmpl_var DATE>&nbsp;by&nbsp;<tmpl_var LOGGER><br><tmpl_var MESSAGE>
+</tmpl_loop>
 </td></tr>
 <tr style = "font-family:sans-serif;font-size:12;"><td>
+<br>
 Notes:<br>
 <tmpl_var NOTES>
 </td></tr>
