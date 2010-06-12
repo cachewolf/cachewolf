@@ -31,6 +31,7 @@ public class HTMLExporter{
 	String [] template_init_page = {
 	 		"filename",  FileBase.getProgramDirectory()+FileBase.separator+"templates"+FileBase.separator+"page.tpl",
 	 		"case_sensitive", "true",
+	 		"loop_context_vars", "true",
 	 		"max_includes",   "5"
 	 	};
 	public final static String expName = "HTML";
@@ -100,14 +101,10 @@ public class HTMLExporter{
 						
 						if (det != null) {
 
-							StringBuffer sb=new StringBuffer(2000);
-							for(int j = 0; j<det.CacheLogs.size(); j++){
-								sb.append(STRreplace.replace(det.CacheLogs.getLog(j).toHtml(),"http://www.geocaching.com/images/icons/",null));
-								sb.append("<br>");
+							for(int j = 0; j<det.CacheLogs.size()-1; j++){
 								icon=det.CacheLogs.getLog(j).getIcon();
 								if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
 							}
-							page_tpl.setParam("LOGS", sb.toString());
 
 							cacheImg.clear();
 							for(int j = 0; j<det.images.size(); j++){

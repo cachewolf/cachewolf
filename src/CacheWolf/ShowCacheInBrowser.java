@@ -104,29 +104,6 @@ public class ShowCacheInBrowser {
 						}
 						tpl.setParam("IMAGES",imageVect);
 					}
-
-					Vector logVect=new Vector(chD.getCacheDetails(true).CacheLogs.size());
-					for (int i=0; i<chD.getCacheDetails(true).CacheLogs.size(); i++) {
-						Hashtable logs=new Hashtable();
-						String log=STRreplace.replace(chD.getCacheDetails(true).CacheLogs.getLog(i).toHtml(),"http://www.geocaching.com/images/icons/","");
-						int posGt=log.indexOf('>'); // Find the icon which defines the type of log
-						if (posGt<0) {
-							logs.put("LOG",log);
-							logs.put("LOGTYPE","");
-						} else {
-							int posBr=log.indexOf("<br>");
-							if(posBr<0) {
-								logs.put("LOG",log);
-								logs.put("LOGTYPE","");
-							} else {
-								logs.put("LOG",log.substring(posBr));
-								logs.put("LOGTYPE",log.substring(0,posGt)+" border='0'"+log.substring(posGt,posBr+4));
-							}
-						}
-						logs.put("I","'log"+new Integer(i).toString()+"'");
-						logVect.add(logs);
-					}
-					tpl.setParam("LOGS",logVect);
 					if (!chD.is_available()) tpl.setParam("UNAVAILABLE","1");
 					if (!chD.getCacheDetails(true).Hints.equals("null"))tpl.setParam("HINT",Common.rot13(chD.getCacheDetails(true).Hints));
 

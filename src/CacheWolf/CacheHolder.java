@@ -676,7 +676,7 @@ public class CacheHolder{
 			if (det.Travelbugs.size()>0) varParams.put("BUGS",det.Travelbugs.toHtml());
 			if (det.getSolver()!=null && det.getSolver().trim().length()>0) varParams.put("SOLVER", STRreplace.replace(det.getSolver(),"\n","<br/>\n"));
 			
-			// Cache attributes
+			// attributes
 			if (det.attributes.count()>0) {
 				Vector attVect=new Vector(det.attributes.count()+1);
 				for (int i=0; i<det.attributes.count(); i++) {
@@ -694,6 +694,25 @@ public class CacheHolder{
 				}
 				varParams.put("ATTRIBUTES",attVect);
 			}
+			// logs
+			Vector logVect=new Vector(det.CacheLogs.size());
+			for (int i=0; i<det.CacheLogs.size(); i++) {
+				Hashtable logs=new Hashtable();
+				if (det.CacheLogs.getLog(i).getIcon().equals("MAXLOG")) {
+					logs.put("ICON","");
+					logs.put("DATE", "");
+					logs.put("LOGGER", "");
+					logs.put("MESSAGE", "<hr>"+MyLocale.getMsg(736,"Too many logs")+"<hr>");
+				}
+				else {
+					logs.put("ICON",det.CacheLogs.getLog(i).getIcon());
+					logs.put("DATE", det.CacheLogs.getLog(i).getDate());
+					logs.put("LOGGER", det.CacheLogs.getLog(i).getLogger());
+					logs.put("MESSAGE", STRreplace.replace(det.CacheLogs.getLog(i).getMessage().trim(),"http://www.geocaching.com/images/icons/",null));
+				}
+				logVect.add(logs);
+			}
+			varParams.put("LOGS",logVect);
 
 		}
 		return varParams;

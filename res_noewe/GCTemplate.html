@@ -135,8 +135,8 @@ td { font-size:small;  }
 	<br/><a href="javascript:toggleDivOL('logs');"><FONT face="Verdana" size="+0"><STRONG>Logs</STRONG></FONT></a><font class="clickHint" onClick="toggleAll();">Click 'Logs' to hide/unhide section; Click this to hide/unhide each log; Click any log to hide/unhide</font><br/><br/>
 	<div id="logs" class="logs">
 	<tmpl_loop LOGS>
-		<a href="javascript:toggleDivOL(<tmpl_var I>);"><tmpl_var LOGTYPE></a>
-		<div id=<tmpl_var I> name="log" style="display:block"><font face='Verdana' size='2'><tmpl_var LOG></font><br/>
+		<a href="javascript:toggleDivOL(<tmpl_var __COUNTER__>);"><img src="<tmpl_var ICON>" border="0">&nbsp;<tmpl_var DATE>&nbsp;by&nbsp;<tmpl_var LOGGER><br></a>
+		<div id=<tmpl_var __COUNTER__> name="log" style="display:block"><font face='Verdana' size='2'><tmpl_var MESSAGE></font><br/>
 		<div><center><div style="width:66%"><hr></div></center></div></div>
 	</tmpl_loop>
 	</div>
