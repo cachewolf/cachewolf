@@ -152,6 +152,7 @@ public class OCXMLImporter extends MinML {
 			+ "&charset=utf-8"
 			+ "&cdata=0"
 			+ "&session=0";
+		ch.setUpdated(false);
 		syncOC(url);
 		inf.close(0);
 		return true;
@@ -591,8 +592,10 @@ public class OCXMLImporter extends MinML {
 
 			if (holder.is_HTML())	linebraek = "<br>\n";
 			else 					linebraek = "\n";
-
-			holder.getCacheDetails(false).LongDescription =              processingDescLang + ":" +  linebraek + strData;
+			
+			     // this is set by "hint" a few lines down: if a long description is already updated, then this one is likely to be in another language
+			if (holder.is_updated())	holder.getCacheDetails(false).LongDescription += linebraek + processingDescLang + ":" +  linebraek + strData;
+			else 					 	holder.getCacheDetails(false).LongDescription =              processingDescLang + ":" +  linebraek + strData;
 			return;
 		}
 
