@@ -750,7 +750,7 @@ public class GpxExportNg {
 		Transformer trans = new Transformer(true);
 		trans.add(new Regex("@@LOGID@@", logId));
 		trans.add(new Regex("@@LOGDATE@@", log.getDate()));
-		trans.add(new Regex("@@LOGTYPE@@", image2TypeText(log.getIcon())));
+		trans.add(new Regex("@@LOGTYPE@@", CacheHolder.image2TypeText(log.getIcon())));
 		trans.add(new Regex("@@LOGFINDERID@@", FinderID));
 		trans.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
 		trans.add(new Regex("@@LOGENCODE@@", ""));
@@ -823,49 +823,6 @@ public class GpxExportNg {
 			}
 			return ret.toString();
 		}
-	}
-
-	/**
-	 * generate a gc.com compatible string representation of log derived from the internally stored image
-	 * @param image name of the image to display
-	 * @return log type. will default to "Write note" for unknown logtypes
-	 */
-	private String image2TypeText(String image) {
-		if (image.equals("icon_smile.gif"))
-			return "Found it";
-		if (image.equals("icon_sad.gif"))
-			return "Didn't find it";
-		if (image.equals("icon_note.gif"))
-			return "Write note";
-		if (image.equals("icon_enabled.gif"))
-			return "Enable Listing";
-		if (image.equals("icon_disabled.gif"))
-			return "Temporarily Disable Listing";
-		if (image.equals("icon_camera.gif"))
-			return "Webcam Photo Taken";
-		if (image.equals("icon_attended.gif"))
-			return "Attended";
-		if (image.equals("icon_greenlight.gif"))
-			return "Publish Listing";
-		if (image.equals("icon_rsvp.gif"))
-			return "Will Attend";
-		if (image.equals("big_smile.gif"))
-			return "Post Reviewer Note";
-		if (image.equals("traffic_cone.gif"))
-			return "Archive";
-		if (image.equals("icon_maint.gif"))
-			return "Owner Maintenance";
-		if (image.equals("icon_needsmaint.gif"))
-			return "Needs Maintenance";
-		if (image.equals("coord_update.gif"))
-			return "Update Coordinates";
-		if (image.equals("icon_remove.gif"))
-			return "Needs Archived";
-		if (image.equals("icon_redlight.gif"))
-			return "Retract Listing";
-		Global.getPref().log("GPX Export: warning - unknown logtype " + image + " was changed to 'Write note'");
-		exportErrors++;
-		return "Write note";
 	}
 
 	/**
