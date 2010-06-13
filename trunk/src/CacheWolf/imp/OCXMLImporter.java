@@ -426,7 +426,9 @@ public class OCXMLImporter extends MinML {
 
 	private void startCacheDesc(String name, AttributeList atts){
 		inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported);
-		if (name.equals("cachedesc")){
+		if (name.equals("cacheid")){
+			String ocCacheID = new String(atts.getValue("id"));
+			holder.setOcCacheID(ocCacheID);
 		}
 
 		if (name.equals("desc")){
