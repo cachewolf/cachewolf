@@ -56,7 +56,6 @@ public class GPXImporter extends MinML {
 	public static final int DOIT_ASK = 0;
 	public static final int DOIT_NOSPOILER = 1;
 	public static final int DOIT_WITHSPOILER = 2;
-	boolean getMaps = false;
 	SpiderGC imgSpider;
 	StringBuffer strBuf;
 	private int doitHow;
@@ -232,7 +231,7 @@ public class GPXImporter extends MinML {
 		}
 
 		
-		if (name.equals("groundspeak:long_description")) {
+		if (name.indexOf("long_description") > -1) {
 			holder.setHTML(atts.getValue("html").toLowerCase().equals("true"));
 		}
 		if (name.equals("description") || name.equals("terra:description") ) {
@@ -302,12 +301,9 @@ public class GPXImporter extends MinML {
 		}
 		
 		if (name.equals("wpt")){
-			// Add cache Data only, if waypoint not already in database
-			//if (searchWpt(cacheDB, holder.wayPoint)== -1){
+			
 			int index=cacheDB.getIndex(holder.getWayPoint());
-			//Vm.debug("here ?!?!?");
-			//Vm.debug("could be new!!!!");
-			if (index == -1){
+			if (index == -1){// Add cache Data only, if waypoint not already in database
 				holder.setNoFindLogs(holder.getCacheDetails(false).CacheLogs.countNotFoundLogs());
 				holder.setNew(true);
 				cacheDB.add(holder);
@@ -316,13 +312,6 @@ public class GPXImporter extends MinML {
 				if(doSpider) {
 					if(spiderOK && holder.is_archived() == false){
 							if(holder.getLatLon().length() > 1){
-							if(getMaps){
-								ParseLatLon pll = new ParseLatLon(holder.getLatLon(),".");
-								pll.parse();
-								//MapLoader mpl = new MapLoader(pref.myproxy, pref.myproxyport);
-								//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map.gif", "3");
-								//mpl.loadTo(profile.dataDir + "/" + holder.wayPoint + "_map_2.gif", "10");
-							}
 						}
 						if(holder.getWayPoint().startsWith("GC")|| fromTC) {
 							//spiderImages();
@@ -440,7 +429,7 @@ public class GPXImporter extends MinML {
 			holder.setLastSync("");
 		}
 		
-		if ((name.equals("groundspeak:name")|| name.equals("terra:name")) && inCache) {
+		if (name.indexOf("name")>-1 && inCache) {
 			holder.setCacheName(strData);
 			return;
 		}
@@ -482,18 +471,18 @@ public class GPXImporter extends MinML {
 			holder.setCacheSize(CacheSize.tcGpxString2Cw(strData));
 		}
 
-		if (name.equals("groundspeak:short_description")|| name.equals("summary")) {
+		if (name.indexOf("short_description") > -1|| name.equals("summary")) {
 			if (holder.is_HTML())	holder.getCacheDetails(false).LongDescription =SafeXML.cleanback(strData)+"<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
 			else holder.getCacheDetails(false).LongDescription =strData+"\n";
 			return;
 		}
 
-		if (name.equals("groundspeak:long_description")|| name.equals("description")|| name.equals("terra:description")) {
+		if (name.indexOf("long_description") > -1 || name.equals("description")|| name.equals("terra:description")) {
 			if (holder.is_HTML())	holder.getCacheDetails(false).LongDescription +=SafeXML.cleanback(strData);
 			else holder.getCacheDetails(false).LongDescription +=strData;
 			return;
 		}
-		if (name.equals("groundspeak:encoded_hints") || name.equals("hints")) {
+		if (name.indexOf("encoded_hints") > -1 || name.equals("hints")) {
 			holder.getCacheDetails(false).Hints = Common.rot13(strData);
 			return;
 		}
