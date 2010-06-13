@@ -594,8 +594,8 @@ public class OCXMLImporter extends MinML {
 			else 					linebraek = "\n";
 			
 			     // this is set by "hint" a few lines down: if a long description is already updated, then this one is likely to be in another language
-			if (holder.is_updated())	holder.getCacheDetails(false).LongDescription += linebraek + processingDescLang + ":" +  linebraek + strData;
-			else 					 	holder.getCacheDetails(false).LongDescription =              processingDescLang + ":" +  linebraek + strData;
+			if (holder.is_updated())	holder.getCacheDetails(false).LongDescription += linebraek + processingDescLang + ":" +  linebraek + strData  +  linebraek;
+			else 					 	holder.getCacheDetails(false).LongDescription =              processingDescLang + ":" +  linebraek + strData  +  linebraek;
 			return;
 		}
 
