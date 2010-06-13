@@ -633,12 +633,19 @@ public class CacheHolder{
 		varParams.put("GMTYPE", gm != null ? gm.getIcon(this) : "");
 		varParams.put("NOW_DATE",nowdate().setToCurrentTime().toString());
 		varParams.put("NOW_TIME",nowtime().setToCurrentTime().toString());
+		varParams.put("CACHEID", GetCacheID());
+		varParams.put("AVAILABLE", available ? "TRUE" : "FALSE");
+		varParams.put("ARCHIVED", archived ? "TRUE" : "FALSE");
+		varParams.put("HTML", html ? "TRUE" : "FALSE");
+		//() ? TRUE : FALSE
 		if (det == null){
 			varParams.put("URL", "");
 			varParams.put("DESCRIPTION", "");
 			varParams.put("NOTES", "");
 			varParams.put("HINTS", "");
 			varParams.put("DECRYPTEDHINTS", "");
+			varParams.put("COUNTRY", "");
+			varParams.put("STATE", "");
 		}
 		else {
 			varParams.put("URL", det.URL);
@@ -675,6 +682,8 @@ public class CacheHolder{
 			}
 			if (det.Travelbugs.size()>0) varParams.put("BUGS",det.Travelbugs.toHtml());
 			if (det.getSolver()!=null && det.getSolver().trim().length()>0) varParams.put("SOLVER", STRreplace.replace(det.getSolver(),"\n","<br/>\n"));
+			varParams.put("COUNTRY", det.Country);
+			varParams.put("STATE", det.State);
 			
 			// attributes
 			if (det.attributes.count()>0) {
@@ -685,6 +694,7 @@ public class CacheHolder{
 					atts.put("IMAGE", det.attributes.getAttribute(i).getImageName());
 					atts.put("GCID", det.attributes.getAttribute(i).getGCId());
 					atts.put("INC", "" + det.attributes.getAttribute(i).getInc());
+					atts.put("INC2TXT", det.attributes.getAttribute(i).getInc()==1 ? "YES:" : "NO:");
 					if (i % 5 ==4)
 						atts.put("BR","<br/>");
 					else
@@ -699,13 +709,17 @@ public class CacheHolder{
 			for (int i=0; i<det.CacheLogs.size(); i++) {
 				Hashtable logs=new Hashtable();
 				if (det.CacheLogs.getLog(i).getIcon().equals("MAXLOG")) {
+					logs.put("WAYPOINT", wayPoint);
 					logs.put("ICON","");
+					logs.put("LOGTYPE","");
 					logs.put("DATE", "");
 					logs.put("LOGGER", "");
 					logs.put("MESSAGE", "<hr>"+MyLocale.getMsg(736,"Too many logs")+"<hr>");
 				}
 				else {
+					logs.put("WAYPOINT", wayPoint);
 					logs.put("ICON",det.CacheLogs.getLog(i).getIcon());
+					logs.put("LOGTYPE",image2TypeText(det.CacheLogs.getLog(i).getIcon()));
 					logs.put("DATE", det.CacheLogs.getLog(i).getDate());
 					logs.put("LOGGER", det.CacheLogs.getLog(i).getLogger());
 					logs.put("MESSAGE", STRreplace.replace(det.CacheLogs.getLog(i).getMessage().trim(),"http://www.geocaching.com/images/icons/",null));
@@ -717,6 +731,47 @@ public class CacheHolder{
 		}
 		return varParams;
 	}	
+
+	/**
+	 * generate a gc.com compatible string representation of log derived from the internally stored image
+	 * @param image name of the image to display
+	 * @return log type. will default to "Write note" for unknown logtypes
+	 */
+	public static final String image2TypeText(String image) {
+		if (image.equals("icon_smile.gif"))
+			return "Found it";
+		if (image.equals("icon_sad.gif"))
+			return "Didn't find it";
+		if (image.equals("icon_note.gif"))
+			return "Write note";
+		if (image.equals("icon_enabled.gif"))
+			return "Enable Listing";
+		if (image.equals("icon_disabled.gif"))
+			return "Temporarily Disable Listing";
+		if (image.equals("icon_camera.gif"))
+			return "Webcam Photo Taken";
+		if (image.equals("icon_attended.gif"))
+			return "Attended";
+		if (image.equals("icon_greenlight.gif"))
+			return "Publish Listing";
+		if (image.equals("icon_rsvp.gif"))
+			return "Will Attend";
+		if (image.equals("big_smile.gif"))
+			return "Post Reviewer Note";
+		if (image.equals("traffic_cone.gif"))
+			return "Archive";
+		if (image.equals("icon_maint.gif"))
+			return "Owner Maintenance";
+		if (image.equals("icon_needsmaint.gif"))
+			return "Needs Maintenance";
+		if (image.equals("coord_update.gif"))
+			return "Update Coordinates";
+		if (image.equals("icon_remove.gif"))
+			return "Needs Archived";
+		if (image.equals("icon_redlight.gif"))
+			return "Retract Listing";
+		return "unknown logtype " + image;
+	}
 
 	/**
 	 * Modify the image links in the long description so that they point to image files in the local directory
