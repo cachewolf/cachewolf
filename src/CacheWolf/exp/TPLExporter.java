@@ -180,7 +180,7 @@ public class TPLExporter {
 			FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
 			fc.setTitle("Select target file:");
 			fc.addMask(myFilter.out);
-			if(fc.execute() == FormBase.IDCANCEL) return;
+			if(fc.execute() == FormBase.IDCANCEL) {pbf.exit(0); return; }
 			File saveTo = fc.getChosenFile();
 			pref.setExportPath(expName, saveTo.getPath());
 
