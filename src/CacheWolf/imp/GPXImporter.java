@@ -215,6 +215,8 @@ public class GPXImporter extends MinML {
 			boolean available = false;
 			boolean archived  = false;
 			inCache=true;
+			String ocCacheID = new String(atts.getValue("id"));
+			holder.setOcCacheID(ocCacheID);
 			// get status
 			String status = new String(atts.getValue("status"));
 			if (status.equals("Available")) available = true;
