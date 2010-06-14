@@ -651,7 +651,7 @@ public class CacheHolder{
 			varParams.put("URL", det.URL);
 			if (html) {
 				if (ModTyp == 0) {
-					varParams.put("DESCRIPTION",det.LongDescription);
+					varParams.put("DESCRIPTION",SafeXML.cleanGPX(det.LongDescription));
 				}
 				else {
 					varParams.put("DESCRIPTION", modifyLongDesc(det, ModTyp));
