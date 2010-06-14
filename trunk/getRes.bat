@@ -33,4 +33,8 @@ REM
 mkdir .\work\symbols
 copy .\res_noewe\symbols\*.* .\work\symbols\*.*
 REM
+mkdir .\work\templates
+copy .\res_noewe\templates\*.* .\work\templates\*.*
+REM
+
 copy .\lib\*.dll .\work\
