@@ -607,7 +607,11 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 		if (name.equals("hint")){
-			holder.getCacheDetails(false).Hints = Common.rot13(strData);
+			String linebreak;
+			if (holder.is_HTML())	linebreak = "<br>\n";
+			else 					linebreak = "\n";
+			if (holder.is_updated())	holder.getCacheDetails(false).Hints += linebreak + "[" + processingDescLang + ":]" +  linebreak + Common.rot13(strData)  +  linebreak;
+			else 					 	holder.getCacheDetails(false).Hints =              "[" + processingDescLang + ":]" +  linebreak + Common.rot13(strData)  +  linebreak;
 			holder.setUpdated(true); // remark: this is used in "shortdesc" to decide weather the description should be appended or replaced
 			return;
 		}
