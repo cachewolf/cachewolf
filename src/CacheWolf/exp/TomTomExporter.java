@@ -248,8 +248,14 @@ public class TomTomExporter {
 	}
 	
 	public void copyIcon(int intWayType, String prefix, String typeName){
+		ZipFile zif=null;
 		try {
-			ZipFile zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator+"exporticons"+FileBase.separator+"TomTom.zip");
+			zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator+"exporticons"+FileBase.separator+"TomTom.zip");
+		} catch (IOException e) {}
+		try {
+			if (zif == null) {
+				zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator+"exporticons"+ FileBase.separator+"exporticons"+FileBase.separator+"TomTom.zip");
+			}
 			ZipEntry zipEnt;
 			int len;
 			String entName; 
