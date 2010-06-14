@@ -115,7 +115,8 @@ public class MainMenu extends MenuBar {
 		exitems[7] = exportLOC = new MenuItem(MyLocale.getMsg(215,"to LOC"));
 		exitems[8] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
 		if ( Global.getPref().gpsbabel == null ) {
-			exitems[8].modifiers = MenuItem.Disabled;
+			exportGPS.modifiers = MenuItem.Disabled;
+			exportGPS.setText(MyLocale.getMsg(136,"to GPS : gpsbabel missing."));
 		}
 		exitems[9] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
 		exitems[10] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
