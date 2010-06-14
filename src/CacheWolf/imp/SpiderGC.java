@@ -167,6 +167,7 @@ public class SpiderGC{
 	private int numArchivedUpdates=0;
 	private int numAvailableUpdates=0;
 	private int numLogUpdates=0;
+	private int numPrivate=0;
 
 	public SpiderGC(Preferences prf, Profile profile, boolean bypass){
 		this.profile=profile;
@@ -369,7 +370,10 @@ public class SpiderGC{
 								if (CacheDescriptionGC.indexOf(propFound)!=-1) chWaypoint=chWaypoint+"found";
 							cachesToLoad.add(chWaypoint);
 							}
-							else {cachesToUpdate.remove( chWaypoint );}
+							else {
+								pref.log("no load of : " + chWaypoint);
+								cachesToUpdate.remove( chWaypoint );
+								}
 						}
 						else {
 							if (maxUpdate>0) {
@@ -398,7 +402,15 @@ public class SpiderGC{
 				} // next Cache
 				infB.setInfo(MyLocale.getMsg(5521,"Page ") + page_number + "\n" +
 							 MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
-				if(found_on_page < 20) maxDistance = 0; // last page (has less than 20 entries!?) to check reached
+				if(found_on_page < 20) {
+					if (spiderAllFinds) {
+						// check all pages ( seen a gc-account with found_on_page less 20 and not on end )
+						if (((page_number-1)*20+found_on_page) >= numFinds) {
+							maxDistance = 0;
+						}
+					}
+					else maxDistance = 0; // last page (has less than 20 entries!?) to check reached
+				}
 				if(maxDistance > 0){getNextListPage();}
 			} // loop pages
 		} // try
@@ -412,7 +424,7 @@ public class SpiderGC{
 		infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
 
 		pref.log("Checked " + page_number + " pages");
-		pref.log("with " + ((page_number-1)*20+found_on_page-1) + " caches");
+		pref.log("with " + ((page_number-1)*20+found_on_page) + " caches");
 		pref.log("Found " + cachesToLoad.size() + " new caches");
 		pref.log("Found " + cachesToUpdate.size() + "/" + cachesShouldUpdate.size() + " caches for update");
 		if(spiderAllFinds){
@@ -423,6 +435,7 @@ public class SpiderGC{
 		pref.log("Found " + numLogUpdates + " caches with new found in log.");
 		pref.log("Found " + (cachesToUpdate.size()-numAvailableUpdates-numLogUpdates) + " caches possibly archived.");
 		pref.log("Found " + cachesShouldUpdate.size() + "?=" + (numFoundUpdates+numArchivedUpdates+numAvailableUpdates+numArchivedUpdates) + " caches to update.");
+		pref.log("Found " + numPrivate + " Premium Caches (for non Premium Member.)");
 
 		//=======
 		// Now ready to spider each cache in the list
@@ -875,7 +888,7 @@ public class SpiderGC{
 		CacheHolderDetail chd = ch.getCacheDetails(false);
 		if (spiderAllFinds) {
 			if(!ch.is_found()) { ch.setFound(true); save=true; numFoundUpdates+=1; ret=true;}
-			is_archived_GC=CacheDescription.indexOf(propArchived)!=-1;
+			is_archived_GC=CacheDescription.indexOf(propArchived) != -1;
 			if (is_archived_GC!=ch.is_archived()) { ch.setArchived(is_archived_GC); save=true; numArchivedUpdates+=1; ret=true;}
 		} else if (!doNotgetFound){ // there could be a found or own ...
 			is_found_GC=CacheDescription.indexOf(propFound)!=-1;
@@ -888,7 +901,7 @@ public class SpiderGC{
 		if (typeChanged(ch,CacheDescription)) { save=true; ret=true;}
 		if (sizeChanged(ch,CacheDescription)) { save=true; ret=true;}
 		if (difficultyOrTerrainChanged(ch,CacheDescription)) {save=true; ret=true;}
-		if (newFoundExists(ch,CacheDescription)) {numLogUpdates+=1; ret=true;}
+		if (newFoundExists(ch,CacheDescription)) {numLogUpdates++; ret=true;}
 		if (save) ch.save();
 		return ret;
 	}
@@ -946,7 +959,13 @@ public class SpiderGC{
 	 */
 	private boolean doPMCache(String toCheck) {
 		if (pref.isPremium) return true;
-		return toCheck.indexOf(propPM) <= 0;
+		if (toCheck.indexOf(propPM) <= 0) {
+			return true;
+		}
+		else {
+			numPrivate=numPrivate+1;
+			return false;			
+		}
 	}
 	/*
 	 * check for changed Cachetype
