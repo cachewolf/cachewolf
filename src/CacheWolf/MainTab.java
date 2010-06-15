@@ -267,12 +267,14 @@ public class MainTab extends mTabbedPanel {
 	public void openPanel(CacheHolder chi, int panelNo) {
 		MyLocale.setSIPOff();
 		// To change cache we need to be in panel 0
-		onLeavingPanel(oldCard);
+		onLeavingPanel(oldCard); // is 7 or 1
 		onEnteringPanel(0); oldCard=0;
 		int row = profile.getCacheIndex(chi.getWayPoint());
 		tbP.selectRow(row);
-		switch (panelNo) {// Switch by panel number
+	switch (panelNo) {// Switch by panel number
 		case 1:  // DetailsPanel
+			ch=chi; // wrong (old) detail if map is called directly
+			onEnteringPanel(1);
 			select(detP);
 			break;
 		case 2: // Description Panel
