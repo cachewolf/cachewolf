@@ -21,6 +21,8 @@ public class MovingMapControlSettings extends MinML {
 	public static final String CONFIG_FILE_NAME = "movingMapControls.xml";
 	
 	public static final String CONFIG_FILE_NAME_OVERWRITE = "my_movingMapControls.xml";
+
+	public static String CONFIG_RELATIVE_PATH = "mmc/"; 
 	
 	public static final String SETTINGS = "settings";
 	/**
@@ -207,10 +209,9 @@ public class MovingMapControlSettings extends MinML {
 
 			String visibility = attributes.getValue(BUTTON_ATTR_VISIBILITY);
 			String action = attributes.getValue(BUTTON_ATTR_ACTION);
-			String localeDefault = attributes
-					.getValue(BUTTON_ATTR_LOCALE_DEFAULT);
-			String imageLocation = attributes.getValue(BUTTON_ATTR_LOCATION);
-			String iconLocation = attributes.getValue(BUTTON_ATTR_ICON);
+			String localeDefault = attributes.getValue(BUTTON_ATTR_LOCALE_DEFAULT);
+			String imageLocation = CONFIG_RELATIVE_PATH + attributes.getValue(BUTTON_ATTR_LOCATION);
+			String iconLocation = CONFIG_RELATIVE_PATH + attributes.getValue(BUTTON_ATTR_ICON);
 			String alignText = attributes.getValue(BUTTON_ATTR_ALIGNTEXT);
 			String context = attributes.getValue(BUTTON_ATTR_CONTEXT);
 			if (visibility == null) {
@@ -294,23 +295,20 @@ public class MovingMapControlSettings extends MinML {
 
 	public boolean readFile() {
 		setDocumentHandler(this);
-		String path = FileBase.makePath(FileBase.getProgramDirectory(),
-				"mmcDesktop/");
+		CONFIG_RELATIVE_PATH=CONFIG_RELATIVE_PATH+"Desktop/";
 
 		if (Vm.isMobile()) {
-			path = FileBase.makePath(FileBase.getProgramDirectory(),
-			"mmc240x320/");
+			CONFIG_RELATIVE_PATH=CONFIG_RELATIVE_PATH+"pda/";
 			
-			if (MyLocale.getScreenHeight() >= 640 && MyLocale.getScreenWidth() >= 480) {
-				path = FileBase.makePath(FileBase.getProgramDirectory(),
-						"mmc480x640/");
+			if (MyLocale.getScreenHeight() >= 480 && MyLocale.getScreenWidth() >= 480) {
+				CONFIG_RELATIVE_PATH=CONFIG_RELATIVE_PATH+"pda_vga/";
 			}
 		}
+		String path = FileBase.makePath(FileBase.getProgramDirectory(),CONFIG_RELATIVE_PATH);
 		path = path.replace('\\', '/');
 		File file = new File(path, CONFIG_FILE_NAME_OVERWRITE);
-		if (!file.exists()) {
-			file = new File(path, CONFIG_FILE_NAME);
-		}
+		if (!file.exists()) {file = new File(path, ""+MyLocale.getScreenWidth()+"x"+MyLocale.getScreenHeight());}
+		if (!file.exists()) {file = new File(path, CONFIG_FILE_NAME);}
 		
 		
 		try {
