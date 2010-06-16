@@ -17,12 +17,14 @@ REM
 mkdir .\work\attributes
 copy .\res_noewe\attributes\*.* .\work\attributes\*.*
 REM
-mkdir .\work\mmcDesktop
-copy .\res_noewe\mmcDesktop\*.* .\work\mmcDesktop\*.*
-mkdir .\work\mmc240x320
-copy .\res_noewe\mmc240x320\*.* .\work\mmc240x320\*.*
-mkdir .\work\mmc480x640
-copy .\res_noewe\mmc480x640\*.* .\work\mmc480x640\*.*
+mkdir .\work\mmc
+copy .\res_noewe\mmc\*.* .\work\mmc\*.*
+mkdir .\work\mmc\Desktop
+copy .\res_noewe\mmc\Desktop\*.* .\work\mmc\Desktop\*.*
+mkdir .\work\mmc\pda
+copy .\res_noewe\pda\*.* .\work\pda\*.*
+mkdir .\work\mmc\pda_vga
+copy .\res_noewe\mmc\pda_vga\*.* .\work\mmc\pda_vga\*.*
 REM
 mkdir .\work\webmapservices
 copy .\res_noewe\webmapservices\*.* .\work\webmapservices\*.*
