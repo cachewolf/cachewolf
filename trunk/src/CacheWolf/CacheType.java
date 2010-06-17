@@ -11,7 +11,7 @@ final class CTyp {
 	public String _ocCTypeXmlImport; // GC Type on Spider Import from GC.com 
 	public byte _cwCTypeV2; // V2 Cache Typ 
 	public char _gpxShortCType; // Short Typ (one char abbreviation)
-	public String _imageName; // name of imageNameture for Icon, "showCacheInBrowser" and "KML Export"
+	public String _imageName; // name of imageName for Icon, "showCacheInBrowser" and "KML Export"
 	public String _gpxWptTypeTag; // gpx wpt <type> tag
 	public String _gpxWptSymTag; // gpx wpt <sym> tag
 	public String _gpxWptGCextensionTypTag; // gpx cache extension <groundspeak:type> tag

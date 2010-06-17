@@ -80,10 +80,14 @@ public class TomTomExporter {
 		try{
 			//loop through type
 			for(int j = 0; j < CacheType.guiTypeStrings().length; j++){
+				/*
 				String typeName = CacheType.guiTypeStrings()[j];
 				if (typeName.startsWith("Addi: ")) {
 					typeName = typeName.substring(6);
 				}
+				*/
+				String typeName = CacheType.typeImageForId(CacheType.guiSelect2Cw(j));
+				typeName=typeName.substring(0, typeName.length()-4);		
 				
 				fileName = dirName + "/" + prefix + typeName + ext;
 				dfile = new File(fileName);
