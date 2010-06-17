@@ -22,7 +22,7 @@ public class PreferencesScreen extends Form {
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
 	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus,chkHasCloseButton,
 	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, 
-	          chkSetCurrentCentreFromGPSPosition,chkSortingGroupedByCache,chkuseOwnSymbols,chkDebug;
+	          chkSetCurrentCentreFromGPSPosition,chkSortingGroupedByCache,chkuseOwnSymbols,chkDebug,chkPM;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
 	mLabel lblGarmin;
@@ -34,8 +34,8 @@ public class PreferencesScreen extends Form {
 	CellPanel pnlDisplay = new CellPanel();
 	CellPanel pnlMore = new CellPanel();
 	CellPanel pnlTB = new CellPanel();
-	//Frame frmGarmin = new Frame();
-	ScrollBarPanel scp; // TODO not neede any more?
+
+	// ScrollBarPanel scp;
 	String [] garminPorts= new String[]{"com1","com2","com3","com4","com5","com6","com7","usb"};
 	
 	public PreferencesScreen (Preferences p){
@@ -76,100 +76,91 @@ public class PreferencesScreen extends Form {
 		/////////////////////////////////////////////////////////
 		// First panel - General
 		/////////////////////////////////////////////////////////
-		Frame frmDataDir=new Frame();
-		frmDataDir.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_BOTTOM;
-		frmDataDir.addNext(new mLabel(MyLocale.getMsg(603,"Data Directory:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		//frmDataDir.setTag(INSETS,new Insets(10,10,10,10));
-		frmDataDir.addLast(brwBt = new mButton(MyLocale.getMsg(604,"Browse")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
+		CellPanel cpDataDir=new CellPanel();
+		cpDataDir.addNext(new mLabel(MyLocale.getMsg(603,"Data Directory:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 		DataDir = new mInput();
 		DataDir.setText(pref.getBaseDir());
-		frmDataDir.addLast(DataDir.setTag(CellConstants.SPAN, new Dimension(3,1)),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.EAST));
-		frmDataDir.addNext(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629,"Autoload last profile")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		cpDataDir.addNext(DataDir,CellConstants.STRETCH, (CellConstants.FILL|CellConstants.LEFT));
+		cpDataDir.addLast(brwBt = new mButton(MyLocale.getMsg(604,"Browse")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.RIGHT));
+		cpDataDir.addNext(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629,"Autoload last profile")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 		if (pref.autoReloadLastProfile) chkAutoLoad.setState(true);
-		chkAutoLoad.setTag(INSETS,new Insets(0,0,2,0));
-		frmDataDir.addLast(chkSetCurrentCentreFromGPSPosition = new mCheckBox(MyLocale.getMsg(646,"centre from GPS")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.EAST));
+		cpDataDir.addNext(chkSetCurrentCentreFromGPSPosition = new mCheckBox(MyLocale.getMsg(646,"centre from GPS")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.RIGHT));
 		if (pref.setCurrentCentreFromGPSPosition) chkSetCurrentCentreFromGPSPosition.setState(true);
-		pnlGeneral.addLast(frmDataDir,HSTRETCH,HFILL);
+		pnlGeneral.addLast(separator(cpDataDir),HSTRETCH,HFILL);
 		
-		CellPanel pnlBrowser=new CellPanel();
-		pnlBrowser.setTag(INSETS,new Insets(2,0,0,0));
-		pnlBrowser.addNext(new mLabel("Browser:"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		Browser = new mInput();
-		Browser.setText(pref.browser);
-		pnlBrowser.addLast(Browser,CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
-
-		pnlBrowser.addNext(new mLabel(MyLocale.getMsg(601,"Your Alias:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		Alias = new mInput();
-		Alias.setText(pref.myAlias);
-		pnlBrowser.addNext(Alias,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlBrowser.addNext(new mLabel(MyLocale.getMsg(594,"Pwd")));
-		pnlBrowser.addLast(inpPassword=new mInput(pref.password),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		CellPanel cpBrowser=new CellPanel();
+		cpBrowser.addNext(new mLabel("Browser:"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		cpBrowser.addLast(Browser = new mInput(pref.browser),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.LEFT));
+		cpBrowser.addNext(new mLabel(MyLocale.getMsg(601,"Your Alias:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		
+		cpBrowser.addNext(Alias = new mInput(pref.myAlias),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		cpBrowser.addNext(new mLabel(MyLocale.getMsg(594,"Pwd")));
+		cpBrowser.addLast(inpPassword=new mInput(pref.password),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		cpBrowser.addLast(chkPM=new mCheckBox("PM"));
+		if (pref.isPremium) chkPM.setState(true);
 		inpPassword.setToolTip(MyLocale.getMsg(593,"Password is optional here.\nEnter only if you want to store it in pref.xml"));
 		inpPassword.isPassword=true;
-		pnlGeneral.addLast(pnlBrowser,HSTRETCH,HFILL);
+		pnlGeneral.addLast(separator(cpBrowser),HSTRETCH,HFILL);
 		
-		pnlGeneral.addLast(gpsB = new mButton("GPS: " + 
-			(pref.useGPSD ? "gpsd " + pref.gpsdHost : pref.mySPO.portName+"/"+pref.mySPO.baudRate) ),
-			CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		CellPanel cpGPS=new CellPanel();
+		cpGPS.addNext(new mLabel("GPS: "),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		cpGPS.addLast(gpsB = new mButton(MyLocale.getMsg(600,"Preferences")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		// "GPS: " + (pref.useGPSD ? "gpsd " + pref.gpsdHost : pref.mySPO.portName+"/"+pref.mySPO.baudRate) 
+		pnlGeneral.addLast(separator(cpGPS),HSTRETCH,HFILL);
 
 		// Garmin and GPSBabel
-		pnlGeneral.addNext(lblGarmin=new mLabel(MyLocale.getMsg(173,"Garmin:  PC Port:")),DONTSTRETCH,LEFT);
-//		lblGarmin.setTag(INSETS,new Insets(4,0,0,0));
-		pnlGeneral.addNext(chcGarminPort=new mChoice(garminPorts,0),DONTSTRETCH,RIGHT);
-		//chcGarminPort.setTag(INSETS,new Insets(4,0,0,0));
+		CellPanel cpBabel=new CellPanel();
+		cpBabel.addNext(lblGarmin=new mLabel(MyLocale.getMsg(173,"Garmin:  PC Port:")),DONTSTRETCH,LEFT);
+		cpBabel.addNext(chcGarminPort=new mChoice(garminPorts,0),DONTSTRETCH,RIGHT);
 		chcGarminPort.selectItem(pref.garminConn);
-		pnlGeneral.addLast(chkSynthShort=new mCheckBox(MyLocale.getMsg(174,"Short Names")),STRETCH,LEFT);
-		//chkSynthShort.setTag(INSETS,new Insets(4,0,0,0));
+		cpBabel.addLast(chkSynthShort=new mCheckBox(MyLocale.getMsg(174,"Short Names")),STRETCH,LEFT);
 		chkSynthShort.setState(!pref.garminGPSBabelOptions.equals(""));
-		//frmGarmin.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_TOP;
-		//frmGarmin.setTag(INSETS,new Insets(4,0,0,0));
-		//pnlGeneral.addLast(frmGarmin);
-		pnlGeneral.addNext(new mLabel(MyLocale.getMsg(643,"Append cache details to:")),DONTSTRETCH,LEFT);
-		pnlGeneral.addNext(chkAddDetailsToWaypoint=new mCheckBox(MyLocale.getMsg(644,"waypoints")),DONTSTRETCH,RIGHT);
+		cpBabel.addNext(new mLabel(MyLocale.getMsg(643,"Append cache details to:")),DONTSTRETCH,LEFT);
+		cpBabel.addNext(chkAddDetailsToWaypoint=new mCheckBox(MyLocale.getMsg(644,"waypoints")),DONTSTRETCH,RIGHT);
 		chkAddDetailsToWaypoint.setState(pref.addDetailsToWaypoint);
-		pnlGeneral.addLast(chkAddDetailsToName=new mCheckBox(MyLocale.getMsg(645,"names")),STRETCH,LEFT);
+		cpBabel.addLast(chkAddDetailsToName=new mCheckBox(MyLocale.getMsg(645,"names")),STRETCH,LEFT);
 		chkAddDetailsToName.setState(pref.addDetailsToName);
-		//pnlGeneral.addLast(new mLabel(""));
+		pnlGeneral.addLast(cpBabel,HSTRETCH,HFILL);
 		
 		/////////////////////////////////////////////////////////
 		// Second panel - Screen
 		/////////////////////////////////////////////////////////
 		
+		CellPanel pnlScreen=new CellPanel();
 		Frame frmScreen=new Frame();
 		frmScreen.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER;
-		CellPanel pnlScreen=new CellPanel();
 		pnlScreen.addNext(new mLabel(MyLocale.getMsg(625,"Screen (needs restart):")));
-		pnlScreen.addNext(new mLabel("Font"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlScreen.addLast(fontSize = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlScreen.addNext(new mLabel("Font"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		pnlScreen.addLast(fontSize = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.LEFT));
 		fontSize.maxLength=2;
 		fontSize.setPreferredSize(40,-1);
 		frmScreen.addLast(pnlScreen,HSTRETCH,HFILL);
 		fontSize.setText(Convert.toString(pref.fontSize));
 		
-		frmScreen.addLast(chkHasCloseButton=new mCheckBox(MyLocale.getMsg(631,"PDA has close Button")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
+		frmScreen.addLast(chkHasCloseButton=new mCheckBox(MyLocale.getMsg(631,"PDA has close Button")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));	
     	//lblTitle.setTag(INSETS,new Insets(2,0,0,0));
         chkHasCloseButton.setState(pref.hasCloseButton);
-		frmScreen.addNext(chkMenuAtTop = new mCheckBox(MyLocale.getMsg(626,"Menu top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmScreen.addNext(chkMenuAtTop = new mCheckBox(MyLocale.getMsg(626,"Menu top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 		chkMenuAtTop.setTag(INSETS,new Insets(0,0,2,0));
 		chkMenuAtTop.setState(pref.menuAtTop);
-		frmScreen.addNext(chkTabsAtTop = new mCheckBox(MyLocale.getMsg(627,"Tabs top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmScreen.addNext(chkTabsAtTop = new mCheckBox(MyLocale.getMsg(627,"Tabs top")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 		chkTabsAtTop.setState(pref.tabsAtTop);
 		chkTabsAtTop.setTag(INSETS,new Insets(0,0,2,0));
-		frmScreen.addLast(chkShowStatus = new mCheckBox(MyLocale.getMsg(628,"Status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		frmScreen.addLast(chkShowStatus = new mCheckBox(MyLocale.getMsg(628,"Status")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 		chkShowStatus.setState(pref.showStatus);
 		chkShowStatus.setTag(INSETS,new Insets(0,0,2,0));
 		pnlDisplay.addLast(frmScreen,CellConstants.HSTRETCH,CellConstants.FILL);
 		
 		Frame frmImages=new Frame();
 		frmImages.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_TOP|UIConstants.BF_BOTTOM;
-		//frmImages.addNext(new mLabel(MyLocale.getMsg(623,"Images:")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		frmImages.addLast(chkShowDeletedImg = new mCheckBox(MyLocale.getMsg(624,"Show deleted images")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		//frmImages.addNext(new mLabel(MyLocale.getMsg(623,"Images:")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		frmImages.addLast(chkShowDeletedImg = new mCheckBox(MyLocale.getMsg(624,"Show deleted images")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 		chkShowDeletedImg.setTag(INSETS,new Insets(2,0,0,0));
 		if (pref.showDeletedImages) chkShowDeletedImg.setState(true);
 		//mLabel dummy;
-		//frmImages.addNext(dummy=new mLabel(""),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST|CellConstants.NORTH));
+		//frmImages.addNext(dummy=new mLabel(""),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT|CellConstants.NORTH));
 		//dummy.setTag(INSETS,new Insets(0,0,2,0));
-		frmImages.addLast(chkDescShowImg = new mCheckBox(MyLocale.getMsg(638,"Show pictures in description")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST|CellConstants.NORTH));
+		frmImages.addLast(chkDescShowImg = new mCheckBox(MyLocale.getMsg(638,"Show pictures in description")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT|CellConstants.NORTH));
 		chkDescShowImg.setTag(INSETS,new Insets(0,0,2,0));
 		if (pref.descShowImg) chkDescShowImg.setState(true);
 		pnlDisplay.addLast(frmImages,CellConstants.STRETCH,CellConstants.FILL);
@@ -177,37 +168,37 @@ public class PreferencesScreen extends Form {
 		Frame frmHintLog=new Frame();
 		//frmHintLog.borderStyle=CellPanel.BDR_RAISEDOUTER|CellPanel.BDR_SUNKENINNER|CellPanel.BF_BOTTOM;
 		frmHintLog.addNext(new mLabel(MyLocale.getMsg(630,"HintLogPanel:  Logs per page ")),CellConstants.DONTSTRETCH,CellConstants.DONTFILL);	
-		frmHintLog.addLast(inpLogsPerPage=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.EAST);
+		frmHintLog.addLast(inpLogsPerPage=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.RIGHT);
 		inpLogsPerPage.setText(Convert.toString(pref.logsPerPage));
 		inpLogsPerPage.setPreferredSize(40,-1);
 		//inpLogsPerPage.setTag(INSETS,new Insets(0,0,2,0));
 		//lblHlP.setTag(INSETS,new Insets(6,0,2,0));
 
 		frmHintLog.addNext(new mLabel(MyLocale.getMsg(633,"Max. logs to spider")),CellConstants.DONTSTRETCH,CellConstants.DONTFILL);	
-		frmHintLog.addLast(inpMaxLogsToSpider=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.EAST);
+		frmHintLog.addLast(inpMaxLogsToSpider=new mInput(),CellConstants.DONTSTRETCH,CellConstants.DONTFILL|CellConstants.RIGHT);
 		inpMaxLogsToSpider.setText(Convert.toString(pref.maxLogsToSpider));
 		inpMaxLogsToSpider.setPreferredSize(40,-1);
 		
 		String [] spiderUpdateOptions = { MyLocale.getMsg(640,"Yes"), MyLocale.getMsg(641,"No"), MyLocale.getMsg(642,"Ask") };
-		frmHintLog.addNext(new mLabel( MyLocale.getMsg(639,"Update caches when spidering?") ),DONTSTRETCH,DONTFILL|WEST);
-		frmHintLog.addLast(inpSpiderUpdates=new mChoice(spiderUpdateOptions, pref.spiderUpdates),DONTSTRETCH,DONTFILL|WEST);
+		frmHintLog.addNext(new mLabel( MyLocale.getMsg(639,"Update caches when spidering?") ),DONTSTRETCH,DONTFILL|LEFT);
+		frmHintLog.addLast(inpSpiderUpdates=new mChoice(spiderUpdateOptions, pref.spiderUpdates),DONTSTRETCH,DONTFILL|LEFT);
 		pnlDisplay.addLast(frmHintLog,CellConstants.STRETCH,CellConstants.FILL);
 
 		/////////////////////////////////////////////////////////
 		// Third panel - More
 		/////////////////////////////////////////////////////////
 		CellPanel pnlProxy=new CellPanel();
-		pnlProxy.addNext(new mLabel("Proxy"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlProxy.addLast(Proxy = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST)).setTag(SPAN,new Dimension(2,1));
+		pnlProxy.addNext(new mLabel("Proxy"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		pnlProxy.addLast(Proxy = new mInput(),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.LEFT)).setTag(SPAN,new Dimension(2,1));
 		Proxy.setText(pref.myproxy);
-		pnlProxy.addNext(new mLabel("Port"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlProxy.addLast(ProxyPort = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		pnlProxy.addNext(new mLabel("Port"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		pnlProxy.addLast(ProxyPort = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 		ProxyPort.setText(pref.myproxyport);
 		pnlProxy.addNext(new mLabel(""),HSTRETCH,HFILL);
 		pnlProxy.addLast(chkProxyActive=new mCheckBox(MyLocale.getMsg(634,"use Proxy")));
 		chkProxyActive.setState(pref.proxyActive);
 		pnlMore.addLast(pnlProxy,HSTRETCH,HFILL);
-		pnlMore.addNext(new mLabel(MyLocale.getMsg(592,"Language (needs restart)")),DONTSTRETCH,DONTFILL|WEST);
+		pnlMore.addNext(new mLabel(MyLocale.getMsg(592,"Language (needs restart)")),DONTSTRETCH,DONTFILL|LEFT);
 		String[] tmp = (new FileBugfix(FileBase.getProgramDirectory()+"/languages").list("*.cfg", FileBase.LIST_FILES_ONLY)); //"*.xyz" doesn't work on some systems -> use FileBugFix
 		if (tmp == null) tmp = new String[0];
 		String [] langs = new String[tmp.length +1];
@@ -218,19 +209,19 @@ public class PreferencesScreen extends Form {
 			if (langs[i+1].equalsIgnoreCase(MyLocale.language)) curlang = i+1 ;
 		}
 		//ewe.sys.Vm.copyArray(tmp, 0, langs, 1, tmp.length);
-		pnlMore.addLast(inpLanguage=new mChoice(langs, curlang),DONTSTRETCH,DONTFILL|WEST);
+		pnlMore.addLast(inpLanguage=new mChoice(langs, curlang),DONTSTRETCH,DONTFILL|LEFT);
 		//inpLanguage.setPreferredSize(20,-1);
 		inpLanguage.setToolTip(MyLocale.getMsg(591,"Select \"auto\" for system language or select your preferred language, e.g. DE or EN"));
 		String [] metriken = {MyLocale.getMsg(589, "Metric (km)"), 
 				              MyLocale.getMsg(590, "Imperial (mi)")};
-		pnlMore.addNext(new mLabel(MyLocale.getMsg(588, "Length units")),DONTSTRETCH,DONTFILL|WEST);
+		pnlMore.addNext(new mLabel(MyLocale.getMsg(588, "Length units")),DONTSTRETCH,DONTFILL|LEFT);
 		int currMetrik = pref.metricSystem == Metrics.METRIC ? 0 : 1;
-		pnlMore.addLast(inpMetric=new mChoice(metriken, currMetrik),DONTSTRETCH,DONTFILL|WEST);
-		pnlMore.addLast(chkSortingGroupedByCache=new mCheckBox(MyLocale.getMsg(647,"Sorting grouped by Cache")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
+		pnlMore.addLast(inpMetric=new mChoice(metriken, currMetrik),DONTSTRETCH,DONTFILL|LEFT);
+		pnlMore.addLast(chkSortingGroupedByCache=new mCheckBox(MyLocale.getMsg(647,"Sorting grouped by Cache")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));	
 		chkSortingGroupedByCache.setState(pref.SortingGroupedByCache);
-		pnlMore.addLast(chkuseOwnSymbols=new mCheckBox(MyLocale.getMsg(649,"use own symbols")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
+		pnlMore.addLast(chkuseOwnSymbols=new mCheckBox(MyLocale.getMsg(649,"use own symbols")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));	
 		chkuseOwnSymbols.setState(pref.useOwnSymbols);
-		pnlMore.addLast(chkDebug=new mCheckBox(MyLocale.getMsg(648,"Debug Mode")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));	
+		pnlMore.addLast(chkDebug=new mCheckBox(MyLocale.getMsg(648,"Debug Mode")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));	
 		chkDebug.setState(pref.debug);
 
 		/////////////////////////////////////////////////////////
@@ -280,12 +271,20 @@ public class PreferencesScreen extends Form {
 		this.addLast(mTab);
 		cancelB = new mButton(MyLocale.getMsg(614,"Cancel"));
 		cancelB.setHotKey(0, IKeys.ESCAPE);
-		addNext(cancelB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		addNext(cancelB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 		applyB = new mButton(MyLocale.getMsg(615,"Apply"));
 		applyB.setHotKey(0, IKeys.ACTION);
-		addLast(applyB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		addLast(applyB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 	}
 	
+	private CellPanel separator(CellPanel pnl) {
+		CellPanel outerPnl = new CellPanel();
+		pnl.setTag(INSETS,new Insets(0,0,2,0));
+		outerPnl.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER|UIConstants.BF_BOTTOM;
+		outerPnl.setTag(INSETS,new Insets(0,0,2,0));
+		outerPnl.addLast(pnl,HSTRETCH,HFILL);
+		return outerPnl;
+	}
 	public void onEvent(Event ev){
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == cancelB){
@@ -321,6 +320,7 @@ public class PreferencesScreen extends Form {
 				HttpConnection.setProxy(pref.myproxy, Common.parseInt(pref.myproxyport), pref.proxyActive); // TODO generate an error message if proxy port is not a number
 				//myPreferences.nLogs = Convert.parseInt(nLogs.getText());
 				pref.autoReloadLastProfile=chkAutoLoad.getState();
+				pref.isPremium=chkPM.getState();
 				pref.setCurrentCentreFromGPSPosition=chkSetCurrentCentreFromGPSPosition.getState();
 				pref.showDeletedImages=chkShowDeletedImg.getState();
 				pref.garminConn=chcGarminPort.getSelectedItem().toString();
