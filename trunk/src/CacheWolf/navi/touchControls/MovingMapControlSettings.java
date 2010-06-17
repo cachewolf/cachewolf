@@ -295,15 +295,16 @@ public class MovingMapControlSettings extends MinML {
 
 	public boolean readFile() {
 		setDocumentHandler(this);
-		CONFIG_RELATIVE_PATH=CONFIG_RELATIVE_PATH+"Desktop/";
+		String tmp = CONFIG_RELATIVE_PATH+"Desktop/";
 
 		if (Vm.isMobile()) {
-			CONFIG_RELATIVE_PATH=CONFIG_RELATIVE_PATH+"pda/";
+			tmp=CONFIG_RELATIVE_PATH+"pda/";
 			
 			if (MyLocale.getScreenHeight() >= 480 && MyLocale.getScreenWidth() >= 480) {
-				CONFIG_RELATIVE_PATH=CONFIG_RELATIVE_PATH+"pda_vga/";
+				tmp=CONFIG_RELATIVE_PATH+"pda_vga/";
 			}
 		}
+		CONFIG_RELATIVE_PATH=tmp;
 		String path = FileBase.makePath(FileBase.getProgramDirectory(),CONFIG_RELATIVE_PATH);
 		path = path.replace('\\', '/');
 		File file = new File(path, CONFIG_FILE_NAME_OVERWRITE);
