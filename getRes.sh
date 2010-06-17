@@ -22,23 +22,24 @@ mkdir -p work/webmapservices
 mkdir -p work/languages
 mkdir -p work/templates
 mkdir -p work/exporticons
+mkdir -p work/exporticons/exporticons
 mkdir -p work/symbols
-mkdir -p work/mmcDesktop
-mkdir -p work/mmc240x320
-mkdir -p work/mmc480x640
+mkdir -p work/mmc
+mkdir -p work/mmc/Desktop
+mkdir -p work/mmc/pda
+mkdir -p work/mmc/pda_vga
 
 # get ressources
 cp -fa resources/*.* work
 cp -fa res_noewe/*.* work
 cp -fa res_noewe/attributes/* work/attributes
-cp -fa res_noewe/attributes-big/* work/attributes
-cp -fa res_noewe/mmcDesktop/* work/mmcDesktop/
-cp -fa res_noewe/mmc240x320/* work/mmc240x320/
-cp -fa res_noewe/mmc480x640/* work/mmc480x640/
+cp -fa res_noewe/mmc/Desktop/* work/mmc/Desktop/
+cp -fa res_noewe/mmc/pda/* work/pda/
+cp -fa res_noewe/mmc/pda_vga/* work/mmc/pda_vga/
 cp -fa res_noewe/webmapservices/* work/webmapservices/
 cp -fa res_noewe/languages/* work/languages/
 cp -fa res_noewe/templates/* work/templates/
-cp -fa res_noewe/exporticons/* work/exporticons/
+cp -fa res_noewe/exporticons/exporticons/* work/exporticons/exporticons/
 cp -fa res_noewe/symbols/* work/symbols/
 
 # set sane permissions
