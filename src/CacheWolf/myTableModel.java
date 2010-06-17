@@ -268,7 +268,7 @@ public class myTableModel extends TableModel {
 						lineColorBG.set(COLOR_FOUND);
 					else if (ch.is_flaged)
 						lineColorBG.set(COLOR_FLAGED);
-					else if (!ch.getCacheStatus().equals(""))
+					else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
 						lineColorBG.set(COLOR_STATUS);
 					else if (Global.getPref().debug && ch.detailsLoaded())
 						lineColorBG.set(COLOR_DETAILS_LOADED);
