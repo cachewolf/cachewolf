@@ -308,7 +308,7 @@ public class MovingMapControlSettings extends MinML {
 		String path = FileBase.makePath(FileBase.getProgramDirectory(),CONFIG_RELATIVE_PATH);
 		path = path.replace('\\', '/');
 		File file = new File(path, CONFIG_FILE_NAME_OVERWRITE);
-		if (!file.exists()) {file = new File(path, ""+MyLocale.getScreenWidth()+"x"+MyLocale.getScreenHeight());}
+		if (!file.exists()) {file = new File(path, ""+MyLocale.getScreenWidth()+"x"+MyLocale.getScreenHeight()+".xml");}
 		if (!file.exists()) {file = new File(path, CONFIG_FILE_NAME);}
 		
 		
