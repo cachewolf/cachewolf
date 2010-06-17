@@ -383,24 +383,9 @@
 			<fileset dir="res_noewe/languages" />
 		</copy>
 		<!-- copy moving map icons  -->
-		<copy todir="${assemble.dir}/mmc240x320" failonerror="true"
+		<copy todir="${assemble.dir}/mmc" failonerror="true"
 			verbose="true">
-			<fileset dir="res_noewe/mmc240x320" />
-		</copy>
-		<!-- copy moving map icons for devices with high ppi -->
-		<copy todir="${assemble.dir}/mmc480x640" failonerror="true"
-			verbose="true">
-			<fileset dir="res_noewe/mmc480x640" />
-		</copy>
-		<!-- copy moving map default icons -->
-		<copy todir="${assemble.dir}/mmcDefault" failonerror="true"
-			verbose="true">
-			<fileset dir="res_noewe/mmcDefault" />
-		</copy>
-		<!-- copy moving map old icons -->
-		<copy todir="${assemble.dir}/mmcOldStyle" failonerror="true"
-			verbose="true">
-			<fileset dir="res_noewe/mmcOldStyle" />
+			<fileset dir="res_noewe/mmc" />
 		</copy>
 		<!-- copy alternative symbol sets -->
 		<copy todir="${assemble.dir}/symbols" failonerror="true" verbose="true">
