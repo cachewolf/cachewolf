@@ -22,7 +22,7 @@ copy .\res_noewe\mmc\*.* .\work\mmc\*.*
 mkdir .\work\mmc\Desktop
 copy .\res_noewe\mmc\Desktop\*.* .\work\mmc\Desktop\*.*
 mkdir .\work\mmc\pda
-copy .\res_noewe\pda\*.* .\work\pda\*.*
+copy .\res_noewe\mmc\pda\*.* .\work\mmc\pda\*.*
 mkdir .\work\mmc\pda_vga
 copy .\res_noewe\mmc\pda_vga\*.* .\work\mmc\pda_vga\*.*
 REM
