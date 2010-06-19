@@ -22,9 +22,9 @@ import CacheWolf.Preferences;
  */
 public class MapImporter extends Form {
 	Preferences pref;
-	String mapsPath = new String();
-	String thisMap = new String();
-	public String selectedMap = new String();
+	String mapsPath = "";
+	String thisMap = "";
+	public String selectedMap = "";
 	CellPanel infPanel;
 	mLabel infLabel = new mLabel("                          ");
 	Vector GCPs = new Vector();
@@ -120,7 +120,7 @@ public class MapImporter extends Form {
 	 *	It will use these files to automatically georeference the files during import.
 	 */
 	public int importMap(){
-		String rawFileName = new String();
+		String rawFileName = "";
 		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().absoluteBaseDir);
 		fc.addMask("*.png,*.gif,*.bmp,*.jpg");
 		fc.setTitle(MyLocale.getMsg(4100,"Select Directory:"));
@@ -140,7 +140,7 @@ public class MapImporter extends Form {
 		//at the same time try to find associated .map files!
 		//These are georeference files targeted for OziExplorer.
 		//So lets check if we have more than 1 png file:
-		String line = new String();
+		String line = "";
 		InputStream in = null;
 		OutputStream out = null;
 		FileReader inMap;

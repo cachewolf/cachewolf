@@ -49,7 +49,6 @@ public class HTMLExporter{
 		Handle h = new Handle();
 		int exportErrors = 0;
 
-		new String();
 		FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getExportPath(expName));
 		fc.setTitle("Select target directory:");
 		String targetDir;
@@ -98,7 +97,7 @@ public class HTMLExporter{
 					try{
 						Template page_tpl = new Template(template_init_page);
 						page_tpl.setParams(varParams);
-						
+
 						if (det != null) {
 
 							for(int j = 0; j<det.CacheLogs.size()-1; j++){
