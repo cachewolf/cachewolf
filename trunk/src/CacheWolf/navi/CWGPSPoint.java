@@ -5,7 +5,7 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package CacheWolf.navi;
-import com.stevesoft.ewe_pat.Regex;
+//import com.stevesoft.ewe_pat.Regex;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
@@ -42,9 +42,9 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	boolean writeLog = false;
 	boolean doLogging = false;
 	FileWriter logFile;
-	String lastStrExamined = new String();
+	String lastStrExamined = "";
 
-	Regex numberMatcher = new Regex("\\-?\\d+");
+	//Regex numberMatcher = new Regex("\\-?\\d+");
 
 	public CWGPSPoint()
 	{
@@ -114,7 +114,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	}
 
 	/**
-	 * 
+	 *
 	 * @param logFileDir directory for logfile
 	 * @param seconds	 intervall for writing to logfile
 	 * @param flag		 level of logging
@@ -132,7 +132,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		} catch (IOException e) {
 			Vm.debug("Error creating LogFile " + logFileName);
 			return -1;
-		} 
+		}
 		// start timer
 		logTimer = Vm.requestTimer(this, 1000 * seconds);
 		logFlag = flag;
@@ -177,28 +177,28 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	 * @param NMEA	string with data to examine
 	 * @return true if some data could be interpreted false otherwise
 	 */
-	public boolean examine(String NMEA){ 
+	public boolean examine(String NMEA){
 		boolean interpreted = false;
 		boolean logWritten = false;
 		try {
 			int i, start, end;
-			String latDeg="0", latMin="0", latNS="N"; 
+			String latDeg="0", latMin="0", latNS="N";
 			String lonDeg="0", lonMin="0", lonEW="E";
 			String currToken;
 			end = 0;
 			lastStrExamined = NMEA;
 			//Vm.debug(NMEA);
-/*			if (writeLog && (logFlag & LOGRAW) > 0){ 
+/*			if (writeLog && (logFlag & LOGRAW) > 0){
 				try {
 					logFile.write(NMEA);
 					writeLog = false;
 				} catch (IOException e) {}
 			}
 */			while(true){
-				start = NMEA.indexOf("$GP", end);  
+				start = NMEA.indexOf("$GP", end);
 				if (start == -1) break;
-				end = NMEA.indexOf("*", start);  
-				if ((end == -1)||(end+3 > NMEA.length())) break;  
+				end = NMEA.indexOf("*", start);
+				if ((end == -1)||(end+3 > NMEA.length())) break;
 
 
 				//Vm.debug(NMEA.substring(start,end+3));
@@ -206,8 +206,8 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					//Vm.debug("checksum wrong");
 					continue;
 				}
-				// Write log after finding valid NMEA sequence 
-				if (writeLog && (logFlag & LOGRAW) > 0){ 
+				// Write log after finding valid NMEA sequence
+				if (writeLog && (logFlag & LOGRAW) > 0){
 					try {
 						logFile.write(NMEA.substring(start,end+3)+"\n");
 						logWritten = true;
@@ -242,13 +242,13 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						break;
 						case 5: lonEW = currToken;
 						break;
-						case 6: 
+						case 6:
 							if (!latlonerror) {
-								this.Fix = Convert.toInt(currToken); 
-								interpreted = true; 
+								this.Fix = Convert.toInt(currToken);
+								interpreted = true;
 								break;
 							} else {
-								this.Fix = 0; 
+								this.Fix = 0;
 								break;
 							}
 						case 7: this.numSat = Convert.toInt(currToken); interpreted = true; break;
@@ -278,7 +278,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						break;
 						case 7: try { this.Speed = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
 							Global.getPref().log("Ignored Exception", e, true);
-						} 
+						}
 						break;
 						} // switch
 					} // while
@@ -301,7 +301,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						//Vm.debug(currToken);
 						switch (i){
 						case 1: this.Time = currToken; interpreted = true; break;
-						case 2: status = currToken; 
+						case 2: status = currToken;
 						if (status.equals("A")) this.Fix = 1;
 						else this.Fix = 0;
 						interpreted = true;
@@ -326,7 +326,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						break;
 						case 7: if (status.equals("A")){
 							try {this.Speed = Common.parseDouble(currToken)*1.854;
-							interpreted = true; } catch (NumberFormatException e) { 
+							interpreted = true; } catch (NumberFormatException e) {
 								Global.getPref().log("Ignored Exception", e, true);
 							}
 						}
@@ -340,7 +340,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						break;
 						case 9: if (status.equals("A") && currToken.length()> 0){
 							try {this.Date = currToken;
-							interpreted = true; } catch (NumberFormatException e) { 
+							interpreted = true; } catch (NumberFormatException e) {
 								Global.getPref().log("Ignored Exception", e, true);
 							}
 						}
@@ -351,7 +351,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					else {
 						if (status.equals("A")){
 							this.set(latNS, latDeg, latMin, "0",
-									lonEW, lonDeg, lonMin, "0", TransformCoordinates.DMM);				
+									lonEW, lonDeg, lonMin, "0", TransformCoordinates.DMM);
 						}
 					}
 				} // if
@@ -368,7 +368,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						} // switch
 					} // while
 				} // if
-				
+
 				//Vm.debug("End of examine");
 			} //while
 		} catch (Exception e) {
@@ -382,11 +382,11 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		return interpreted;
 	}
 
-	
+
 	/**
 	 * Sets the attributes from a GPSD string
 	 * @param gps	GPSD string with data to examine
-	 *              Format: GPSD,key=value,... 
+	 *              Format: GPSD,key=value,...
 	 * @return true if some data could be interpreted false otherwise
 	 */
 	public boolean examineGpsd(String gps){
@@ -397,12 +397,12 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		while(!ex.endOfSearch()){
 			String part = ex.findNext();
 			if(part.startsWith("A=") && part.indexOf('?')<0){
-				// The current altitude as "A=%f", meters above mean sea level. 
+				// The current altitude as "A=%f", meters above mean sea level.
 				this.Alt=Common.parseDouble(part.substring(2));
 				valid = true;
 			}else if(part.startsWith("D=") && part.indexOf('?')<0){
 				// Returns the UTC time in the ISO 8601 format, "D=yyyy-mm-ddThh:mm:ss.ssZ"
-				//                                               0000000000111111111122 
+				//                                               0000000000111111111122
 				//                                               0123456789012345678901
 				String year = part.substring(2,6);
 				String month = part.substring(7,9);
@@ -414,7 +414,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				this.Time=hour+min+sec;
 				valid = true;
 			}else if(part.startsWith("P=")){
-				// Returns the current position in the form "P=%f %f"; numbers are in degrees, latitude first. 
+				// Returns the current position in the form "P=%f %f"; numbers are in degrees, latitude first.
 				if(part.indexOf('?')<0){
 					this.Fix = 1;
 					int spacepos=part.indexOf(' ');
@@ -431,7 +431,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				valid = true;
 			}else if(part.startsWith("Q=")){
 				// Returns "Q=%d %f %f %f %f %f": a count of satellites used in the last fix,
-				// and five dimensionless dilution-of-precision (DOP) numbers -- 
+				// and five dimensionless dilution-of-precision (DOP) numbers --
 				// spherical, horizontal, vertical, time, and total geometric.
 				int spacepos=part.indexOf(' ');
 				if(part.indexOf('?')<0 && spacepos>=3){
@@ -454,7 +454,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		}
 		return valid;
 	}
-		
+
 	private boolean checkSumOK(String nmea){
 		int startPos = 1; // begin after $
 		int endPos = nmea.length() - 3;// without * an two checksum chars
