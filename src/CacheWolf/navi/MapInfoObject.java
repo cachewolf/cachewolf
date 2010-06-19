@@ -46,11 +46,11 @@ public class MapInfoObject extends Area {
 	public CWPoint origAffineUpperLeft; // this is only valid after zooming 
 	public float rotationRad; // contains the rotation of the map == north direction in rad
 	/** full path to the respective worldfile, including ".wfl"*/
-	public String fileNameWFL = new String();
+	public String fileNameWFL = "";
 	/** filename wihout directory */
 //	public String fileName = new String();
 	/** name of the map, introduced to allow 'maps' without an image (empty maps) */ 
-	public String mapName = new String();
+	public String mapName = "";
 	//private Character digSep = new Character(' ');
 	static private String digSep = MyLocale.getDigSeparator();
 	private int coordTrans = 0; 
@@ -163,7 +163,7 @@ public class MapInfoObject extends Area {
 		FileInputStream instream = new FileInputStream (CacheWolf.STRreplace.replace(mapsPath + thisMap + ".wfl", "//", "/"));
 		InputStreamReader in = new InputStreamReader(instream);
 		
-		String line = new String();
+		String line = "";
 		try {
 			for(int i = 0; i<4;i++){
 				line = in.readLine();

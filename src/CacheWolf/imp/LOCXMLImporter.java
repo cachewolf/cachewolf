@@ -52,7 +52,7 @@ public class LOCXMLImporter extends MinML {
 	String file;
 	CacheHolder holder;
 
-	String strData = new String();
+	String strData = "";
 
 	public LOCXMLImporter(Preferences pf, Profile prof, String f) {
 		pref = pf;
