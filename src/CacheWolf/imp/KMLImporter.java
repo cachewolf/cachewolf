@@ -19,8 +19,8 @@ public class KMLImporter extends MinML {
 	
 	public Vector points = new Vector();
 	private CWPoint point = new CWPoint();
-	private String file = new String();
-	String strData = new String();
+	private String file = "";
+	String strData = "";
 	private int status = 0;
 	private static int MultiGeometry = 1;
 	private static int LineString = 2;
@@ -72,10 +72,10 @@ public class KMLImporter extends MinML {
 	private void parseCoordinatesLine(){
 		StringTokenizer exBlock = new StringTokenizer(strData, " ");
 		StringTokenizer numbers;
-		String lat = new String();
-		String lon = new String();
+		String lat = "";
+		String lon = "";
 		
-		String test = new String();
+		String test = "";
 		
 		while(exBlock.hasMoreTokens()){
 			test = exBlock.nextToken();

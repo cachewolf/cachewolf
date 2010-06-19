@@ -61,13 +61,13 @@ public class OCXMLImporter extends MinML {
 	Preferences pref;
 	Profile profile;
 	Time dateOfthisSync;
-	String strData = new String();
+	String strData = "";
 	int picCnt;
 	boolean incUpdate = true; // complete or incremental Update
 	Hashtable DBindexID = new Hashtable();
 
-	String picUrl = new String();
-	String picTitle =  new String();
+	String picUrl = "";
+	String picTitle =  "";
 	String picID = new String();
 	String cacheID = new String();
 
