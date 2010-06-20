@@ -210,8 +210,11 @@ public class MovingMapControlSettings extends MinML {
 			String visibility = attributes.getValue(BUTTON_ATTR_VISIBILITY);
 			String action = attributes.getValue(BUTTON_ATTR_ACTION);
 			String localeDefault = attributes.getValue(BUTTON_ATTR_LOCALE_DEFAULT);
-			String imageLocation = CONFIG_RELATIVE_PATH + attributes.getValue(BUTTON_ATTR_LOCATION);
-			String iconLocation = CONFIG_RELATIVE_PATH + attributes.getValue(BUTTON_ATTR_ICON);
+			String imageLocation = attributes.getValue(BUTTON_ATTR_LOCATION);
+			String iconLocation = attributes.getValue(BUTTON_ATTR_ICON);
+			if (iconLocation != null) {
+				iconLocation = CONFIG_RELATIVE_PATH + iconLocation; 
+			}
 			String alignText = attributes.getValue(BUTTON_ATTR_ALIGNTEXT);
 			String context = attributes.getValue(BUTTON_ATTR_CONTEXT);
 			if (visibility == null) {
@@ -233,6 +236,9 @@ public class MovingMapControlSettings extends MinML {
 				// something not set
 				Vm.debug("Image for '" + localeDefault + "' not found");
 				return;
+			}
+			else {
+				imageLocation = CONFIG_RELATIVE_PATH + imageLocation; 
 			}
 			int localfontsize=getIntFromFile(attributes, SETTINGS_ATTR_FONTSIZE, fontsize);
 			// textoptions
