@@ -131,6 +131,7 @@ public class GpxExportNg {
 
 	private static boolean customIcons;
 	private static boolean sendToGarmin;
+	private static boolean attrib2Log;
 
 	private static int exportIds;
 	private static int exportTarget;
@@ -171,6 +172,7 @@ public class GpxExportNg {
 		exportTarget = exportOptions.getOutputTarget();
 		sendToGarmin = exportOptions.getSendToGarmin();
 		customIcons = exportOptions.getCustomIcons();
+		attrib2Log = exportOptions.getAttrib2Log();
 
 		if (exportTarget == OUTPUT_SEPARATE || exportTarget == OUTPUT_POI) {
 			final Hashtable fileHandles = new Hashtable();
@@ -739,11 +741,28 @@ public class GpxExportNg {
 			addLog(ch.getCacheDetails(true).OwnLogId, ch.getCacheDetails(true).OwnLog, finderid ,ret);
 		}
 		else {
+			// add log with attributes
+			if (attrib2Log){
+				addLog (ch.GetCacheID()+Integer.toString(exportlogs), createAttrLog(ch),"",ret);
+			}
 			for (int i = 0; i < exportlogs; i++) {
 				addLog(ch.GetCacheID()+Integer.toString(i), logs.getLog(i),"" ,ret);
 			}
 		}
 		return ret.toString();
+	}
+	private Log createAttrLog(CacheHolder ch) {
+		Attribute attrib;
+		StringBuffer logText = new StringBuffer();
+		for (int i = 0; i < ch.getCacheDetails(true).attributes.count(); i++) {
+			attrib=ch.getCacheDetails(true).attributes.getAttribute(i);
+			logText.append(attrib.getInc()==1?"Yes: ":"No: ").
+			append(attrib.getMsg()).
+			append("<br />").
+			append(newLine);
+		}
+		Log log = new Log("icon_note.gif", "2000-01-01", "CacheWolf",logText.toString());
+		return log;
 	}
 	
 	private StringBuffer addLog(String logId, Log log, String FinderID, StringBuffer ret) {
@@ -912,7 +931,7 @@ public class GpxExportNg {
 	 */
 	private class GpxExportNgForm extends Form {
 
-		private mCheckBox cbCustomIcons, cbSendToGarmin, cbSeperateHints;
+		private mCheckBox cbCustomIcons, cbSendToGarmin, cbSeperateHints, cbAttrib2Log;
 		private mInput ibMaxLogs, ibPrefix;
 		private mButton btnOk, btnCancel;
 
@@ -983,7 +1002,8 @@ public class GpxExportNg {
 			cbCustomIcons = new mCheckBox(MyLocale.getMsg(31415,"Custom Icons"));
 			if (!hasGarminMap) cbCustomIcons.modify(ControlConstants.Disabled, 0);
 
-
+			cbAttrib2Log = new mCheckBox(MyLocale.getMsg(31415,"Attrib.->Log"));
+			
 			addNext(new mLabel(MyLocale.getMsg(31415,"GPX Style")));
 			addLast(chStyle);
 
@@ -1000,7 +1020,9 @@ public class GpxExportNg {
 
             addNext(new mLabel(MyLocale.getMsg(31415,"Prefix")));
             addLast(ibPrefix);
-
+            
+            addLast(cbAttrib2Log);
+            
             addNext(new mLabel(MyLocale.getMsg(31415,"Max Logs")));
             addLast(ibMaxLogs);
 
@@ -1040,6 +1062,10 @@ public class GpxExportNg {
 				if (cbCustomIcons.change(ControlConstants.Disabled, 0))
 					cbCustomIcons.repaint();
 
+				cbAttrib2Log.state = false;
+				if (cbAttrib2Log.change(ControlConstants.Disabled, 0))
+					cbAttrib2Log.repaint();
+				
 				cbSeperateHints.state = false;
 				if (cbSeperateHints.change(ControlConstants.Disabled, 0))
 					cbSeperateHints.repaint();
@@ -1063,6 +1089,9 @@ public class GpxExportNg {
 				if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
 					cbCustomIcons.repaint();
 
+				if (cbAttrib2Log.change(0, ControlConstants.Disabled))
+					cbAttrib2Log.repaint();
+				
 				cbSeperateHints.state = false;
 				if (cbSeperateHints.change(ControlConstants.Disabled, 0))
 					cbSeperateHints.repaint();
@@ -1085,6 +1114,9 @@ public class GpxExportNg {
 				if (hasGarminMapFrm && cbCustomIcons.change(0, ControlConstants.Disabled))
 					cbCustomIcons.repaint();
 
+				if (cbAttrib2Log.change(ControlConstants.Disabled, 0))
+					cbAttrib2Log.repaint();
+		
 				cbSeperateHints.state = false;
 				if (cbSeperateHints.change(ControlConstants.Disabled, 0))
 					cbSeperateHints.repaint();
@@ -1257,6 +1289,14 @@ public class GpxExportNg {
 		private String getPrefix() {
 			return ibPrefix.getText();
 		}
-
+		
+		/**
+		 * check if user wants to export attributes as log
+		 * 
+		 * @return true if attributes should exported as log, false otherwise
+		 */
+		private boolean getAttrib2Log (){
+			return cbAttrib2Log.state;
+		}
 	}
 }
