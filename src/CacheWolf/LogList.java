@@ -14,7 +14,10 @@ public class LogList {
 	
 	/** Get the Log at a certain position in the list */
 	public Log getLog(int i) {
-		return (Log) logList.elementAt(i);
+		if (logList.size()>i) {
+			return (Log) logList.elementAt(i);			
+		}
+		else return null;
 	}
 	
 	/** Return the size of the list */
