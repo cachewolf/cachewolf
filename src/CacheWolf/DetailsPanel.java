@@ -432,8 +432,8 @@ public class DetailsPanel extends CellPanel {
 				&& (Global.mainTab.mainCache.startsWith("GC")
 					|| OC.isOC(Global.mainTab.mainCache) || Global.mainTab.mainCache.startsWith("CW"))
 				&& wpt.startsWith("CW")) {
-			// for what was this?:
-			Global.mainTab.lastselected = Global.mainTab.mainCache; // I don't know exactly, but it's needed for creating a series of Addis
+			// for creating the Addiname on creating a new Waypoint
+			Global.mainTab.lastselected = Global.mainTab.mainCache; 
 
 			inpWaypoint.setText(Global.getProfile().getNewAddiWayPointName(
 					Global.mainTab.mainCache));

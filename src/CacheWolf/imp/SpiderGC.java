@@ -352,10 +352,20 @@ public class SpiderGC{
 			//Loop pages till maximum distance has been found or no more caches are in the list
 			while(maxDistance > 0){
 				RexPropListBlock.search(htmlListPage);
-				String tableOfHtmlListPage = RexPropListBlock.stringMatched(1);
+				String tableOfHtmlListPage;
+				if (RexPropListBlock.didMatch()) {
+					tableOfHtmlListPage = RexPropListBlock.stringMatched(1);
+				}
+				else {
+					pref.log("check listBlockRex in spider.def\n"+htmlListPage);
+					tableOfHtmlListPage = "";
+				}
 				RexPropLine.search(tableOfHtmlListPage);
 				while (maxDistance > 0){
-					if (!RexPropLine.didMatch()) break;
+					if (!RexPropLine.didMatch()) {
+						if (page_number==1 && found_on_page==0) pref.log("check lineRex in spider.def");
+						break;
+					}
 					found_on_page++;
 					String CacheDescriptionGC=RexPropLine.stringMatched(1);
 					double gotDistance=getDistGC(CacheDescriptionGC);
@@ -371,7 +381,7 @@ public class SpiderGC{
 							cachesToLoad.add(chWaypoint);
 							}
 							else {
-								pref.log("no load of : " + chWaypoint);
+								// pref.log("no load of (Premium Cache/other direction/short Distance ?) " + chWaypoint);
 								cachesToUpdate.remove( chWaypoint );
 								}
 						}
@@ -432,7 +442,7 @@ public class SpiderGC{
 			pref.log("Found " + numArchivedUpdates + " caches with changed archived status.");
 		}
 		pref.log("Found " + numAvailableUpdates + " caches with changed available status.");
-		pref.log("Found " + numLogUpdates + " caches with new found in log.");
+		pref.log("Found " + numLogUpdates + " caches with new found in log (inc. blacklisted");
 		pref.log("Found " + (cachesToUpdate.size()-numAvailableUpdates-numLogUpdates) + " caches possibly archived.");
 		pref.log("Found " + cachesShouldUpdate.size() + "?=" + (numFoundUpdates+numArchivedUpdates+numAvailableUpdates+numArchivedUpdates) + " caches to update.");
 		pref.log("Found " + numPrivate + " Premium Caches (for non Premium Member.)");
@@ -655,8 +665,9 @@ public class SpiderGC{
 			if(rexViewstate.didMatch()){
 				viewstate = rexViewstate.stringMatched(1);
 				//Vm.debug("ViewState: " + viewstate);
-			} else
-				pref.log("[login]:Viewstate not found before login");
+			} else {
+				pref.log("[login]:rexViewstate not found before login\n");
+			}
 
 			if(loginPage.indexOf(loginSuccess) > 0)
 				pref.log("[login]:Already logged in");
@@ -666,7 +677,7 @@ public class SpiderGC{
 					// eventvalidation = rexEventvalidation.stringMatched(1);
 					//Vm.debug("EVENTVALIDATION: " + eventvalidation);
 				} else
-					pref.log("[login]:Eventvalidation not found before login");
+					pref.log("[login]:rexEventvalidation not found before login\n");
 				//Ok now login!
 				try{
 					pref.log("[login]:Logging in as "+pref.myAlias);
@@ -705,7 +716,7 @@ public class SpiderGC{
 
 			rexViewstate.search(loginPage);
 			if (!rexViewstate.didMatch()) {
-				pref.log("[login]:Viewstate not found");
+				pref.log("[login]:check rexViewstate in SpiderGC.java --> not found after login\n"+loginPage);
 			}
 			viewstate = rexViewstate.stringMatched(1);
 
@@ -718,13 +729,13 @@ public class SpiderGC{
 
 			rexCookieID.search(loginPage);
 			if (!rexCookieID.didMatch()) {
-				pref.log("[login]:CookieID not found. Using old one.");
+				pref.log("[login]:check rexCookieID in SpiderGC.java --> CookieID not found. Using old one.\n"+loginPage);
 			} else
 				cookieID = rexCookieID.stringMatched(1);
 			//Vm.debug(cookieID);
 			rexCookieSession.search(loginPage);
 			if (!rexCookieSession.didMatch()) {
-				pref.log("[login]:CookieSession not found. Using old one.");
+				pref.log("[login]:check rexCookieSession in SpiderGC.java --> CookieSession not found. Using old one.\n"+loginPage);
 				//cookieSession="";
 			} else
 				cookieSession = rexCookieSession.stringMatched(1);
@@ -837,6 +848,7 @@ public class SpiderGC{
 			viewstate = rexViewstate.stringMatched(1);
 		} else {
 			viewstate = "";
+			pref.log("[getNextListPage]:check rexViewstate in SpiderGC.java\n"+htmlListPage);
 		}
 		
 		Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
@@ -846,6 +858,7 @@ public class SpiderGC{
 			viewstate1 = rexViewstate1.stringMatched(1);
 		} else {
 			viewstate1 = "";
+			pref.log("[getNextListPage]:check rexViewstate1 in SpiderGC.java\n"+htmlListPage);
 		}
 
 		/*
@@ -901,7 +914,9 @@ public class SpiderGC{
 		if (typeChanged(ch,CacheDescription)) { save=true; ret=true;}
 		if (sizeChanged(ch,CacheDescription)) { save=true; ret=true;}
 		if (difficultyOrTerrainChanged(ch,CacheDescription)) {save=true; ret=true;}
-		if (newFoundExists(ch,CacheDescription)) {numLogUpdates++; ret=true;}
+		if (newFoundExists(ch,CacheDescription)) {
+			numLogUpdates++; ret=true;
+			}
 		if (save) ch.save();
 		return ret;
 	}
@@ -914,7 +929,10 @@ public class SpiderGC{
 		RexNumFinds.search(doc);
 		if (RexNumFinds.didMatch()) {
 			 return Convert.toInt(RexNumFinds.stringMatched(1));}
-		else return 0;
+		else {
+			pref.log("check RexNumFinds in SpiderGC.java / initialiseProperties\n"+doc);
+			return 0;
+		}
 	}
 	private int getFoundInDB() {
 		CacheHolder ch;
@@ -938,7 +956,10 @@ public class SpiderGC{
 		}
 		else {
 			RexPropDistance.search(doc);
-			if (!RexPropDistance.didMatch()) return 0;
+			if (!RexPropDistance.didMatch()) {
+				pref.log("check distRex in spider.def\n"+doc);
+				return 0;
+			}
 			if(MyLocale.getDigSeparator().equals(",")) return Convert.toDouble(RexPropDistance.stringMatched(1).replace('.',','));
 			return Convert.toDouble(RexPropDistance.stringMatched(1));
 		}
@@ -950,7 +971,10 @@ public class SpiderGC{
 	 */
 	private String getWP(String doc) throws Exception {
 		RexPropWaypoint.search(doc);
-		if (!RexPropWaypoint.didMatch()) return "???";
+		if (!RexPropWaypoint.didMatch()) {
+			pref.log("check waypointRex in spider.def\n"+doc);
+			return "???";
+		}
 		return "GC"+RexPropWaypoint.stringMatched(1);
 	}
 
@@ -984,6 +1008,7 @@ public class SpiderGC{
 					return true;
 				}
 		}
+		pref.log("check TypeRex in spider.def\n"+toCheck);
 		return false;
 	}
 	/*
@@ -1000,6 +1025,7 @@ public class SpiderGC{
 					return true;
 				}
 		}
+		pref.log("check SizeRex in spider.def\n"+toCheck);
 		return false;
 	}
 	/*
@@ -1020,6 +1046,9 @@ public class SpiderGC{
 				ret=true;
 			}
 		}
+		else {
+			pref.log("check DandTRex in spider.def\n"+toCheck);
+		}
 		return ret;
 	}
 	
@@ -1030,7 +1059,10 @@ public class SpiderGC{
 	 */
 	private String getDirection(String doc) throws Exception {
 		RexPropDirection.search(doc);
-		if (!RexPropDirection.didMatch()) return "";
+		if (!RexPropDirection.didMatch()) {
+			pref.log("check directionRex in spider.def\n"+doc);
+			return "";
+		}
 		return RexPropDirection.stringMatched(1);
 	}
 
@@ -1062,7 +1094,9 @@ public class SpiderGC{
 		if(!pref.checkLog) return false;
 		// String[] CacheDesc=mString.split(cacheDescrition,'\n');
 		Time lastLogCW = new Time();
-		String slastLogCW=ch.getCacheDetails(true).CacheLogs.getLog(0).getDate();
+		Log lastLog = ch.getCacheDetails(true).CacheLogs.getLog(0);
+		if (lastLog == null) return true;
+		String slastLogCW=lastLog.getDate();
 		if (slastLogCW.equals("")) return true; // or check cacheDescGC also no log?
 		lastLogCW.parse(slastLogCW,"yyyy-MM-dd");
 
@@ -1077,7 +1111,10 @@ public class SpiderGC{
 		if (RexPropLogDate.didMatch()) {
 			stmp=RexPropLogDate.stringMatched(1);
 		}
-		else return false;
+		else {
+			pref.log("check logDateRex in spider.def\n"+cacheDescrition);
+			return false;
+		}
 		if (stmp.indexOf("day")>0) {
 			lastLogGC.day=java.lang.Math.max(1, lastLogGC.day-7); // simplyfied (update if not newer than last week)
 		}
@@ -1311,10 +1348,14 @@ public class SpiderGC{
 	private String getLatLon(String doc) throws Exception{
 		Regex inRex = new Regex(p.getProp("latLonRex"));
 		inRex.search(doc);
-		if (!inRex.didMatch()) return "???";
+		if (!inRex.didMatch()) {
+			pref.log("check latLonRex in spider.def\n"+doc);
+			return "???";
+		}
 		return inRex.stringMatched(1);
 	}
 
+	boolean shortDescRex_not_yet_found=true;
 	/**
 	 * Get the long description
 	 * @param doc A previously fetched cachepage
@@ -1322,12 +1363,24 @@ public class SpiderGC{
 	 */
 	private String getLongDesc(String doc) throws Exception{
 		String res = "";
-		Regex inRex = new Regex(p.getProp("shortDescRex"));
-		Regex rex2 = new Regex(p.getProp("longDescRex"));
-		inRex.search(doc);
-		rex2.search(doc);
-		res = ((inRex.stringMatched(1) == null)?"":inRex.stringMatched(1)) + "<br>";
-		res += rex2.stringMatched(1);
+		Regex shortDescRex = new Regex(p.getProp("shortDescRex"));
+		Regex longDescRex = new Regex(p.getProp("longDescRex"));
+		shortDescRex.search(doc);
+		if (!shortDescRex.didMatch()) {
+			if (shortDescRex_not_yet_found) pref.log("no shortDesc or check shortDescRex in spider.def\n"+doc);
+		}
+		else {
+			res = shortDescRex.stringMatched(1);
+			shortDescRex_not_yet_found=false;
+		}
+		res += "<br>";
+		longDescRex.search(doc);
+		if (!longDescRex.didMatch()) {
+			pref.log("check longDescRex in spider.def\n"+doc);
+		}
+		else {
+			res += longDescRex.stringMatched(1);
+		}
 		int spanEnd = res.lastIndexOf("</span>");
 		if (spanEnd >= 0) {
 			res = res.substring(0, spanEnd);
@@ -1343,8 +1396,10 @@ public class SpiderGC{
 	private String getLocation(String doc) throws Exception{
 		Regex inRex = new Regex(p.getProp("cacheLocationRex"));
 		inRex.search(doc);
-		if (!inRex.didMatch()) return "";
-
+		if (!inRex.didMatch()) {
+			pref.log("check cacheLocationRex in spider.def\n"+doc);
+			return "";
+		}
 		return inRex.stringMatched(1);
 	}
 
@@ -1356,7 +1411,10 @@ public class SpiderGC{
 	private String getName(String doc) throws Exception{
 		Regex inRex = new Regex(p.getProp("cacheNameRex"));
 		inRex.search(doc);
-		if (!inRex.didMatch()) return "???";
+		if (!inRex.didMatch()) {
+			pref.log("check cacheNameRex in spider.def\n"+doc);
+			return "???";
+		}
 		return inRex.stringMatched(1);
 	}
 
@@ -1368,7 +1426,10 @@ public class SpiderGC{
 	private String getOwner(String doc) throws Exception{
 		Regex inRex = new Regex(p.getProp("cacheOwnerRex"));
 		inRex.search(doc);
-		if (!inRex.didMatch()) return "???";
+		if (!inRex.didMatch()) {
+			pref.log("check cacheOwnerRex in spider.def\n"+doc);
+			return "???";
+		}
 		return inRex.stringMatched(1);
 	}
 
@@ -1380,7 +1441,10 @@ public class SpiderGC{
 	private String getDateHidden(String doc) throws Exception{
 		Regex inRex = new Regex(p.getProp("dateHiddenRex"));
 		inRex.search(doc);
-		if (!inRex.didMatch()) return "???";
+		if (!inRex.didMatch()) {
+			pref.log("check dateHiddenRex in spider.def\n"+doc);
+			return "???";
+		}
 		return inRex.stringMatched(1);
 	}
 
@@ -1392,7 +1456,10 @@ public class SpiderGC{
 	private String getHints(String doc) throws Exception{
 		Regex inRex = new Regex(p.getProp("hintsRex"));
 		inRex.search(doc);
-		if (!inRex.didMatch()) return "";
+		if (!inRex.didMatch()) {
+			pref.log("check hintsRex in spider.def\n"+doc);
+			return "";
+		}
 		return inRex.stringMatched(1);
 	}
 
@@ -1405,7 +1472,10 @@ public class SpiderGC{
 		Regex inRex = new Regex(p.getProp("sizeRex"));
 		inRex.search(doc);
 		if(inRex.didMatch()) return inRex.stringMatched(1);
-		else return "None";
+		else {
+			pref.log("check sizeRex in spider.def\n"+doc);
+			return "None";
+		}
 	}
 
 	/**
@@ -1417,7 +1487,10 @@ public class SpiderGC{
 		Regex inRex = new Regex(p.getProp("difficultyRex"));
 		inRex.search(doc);
 		if(inRex.didMatch()) return inRex.stringMatched(1);
-		else return "";
+		else {
+			pref.log("check difficultyRex in spider.def\n"+doc);
+			return "";
+		}
 	}
 
 	/**
@@ -1429,7 +1502,10 @@ public class SpiderGC{
 		Regex inRex = new Regex(p.getProp("terrainRex"));
 		inRex.search(doc);
 		if(inRex.didMatch()) return inRex.stringMatched(1);
-		else return "";
+		else {
+			pref.log("check terrainRex in spider.def\n"+doc);
+			return "";
+		}
 	}
 
 	/**
@@ -1440,7 +1516,10 @@ public class SpiderGC{
 	private byte getType(String doc){
 		RexCacheType.search(doc);
 		if(RexCacheType.didMatch()) return CacheType.gcSpider2CwType(RexCacheType.stringMatched(1));
-		else return 0;
+		else {
+			pref.log("check cacheTypeRex in spider.def\n"+doc);
+			return 0;
+		}
 	}
 
 	/**
@@ -1457,8 +1536,10 @@ public class SpiderGC{
 		String singleLog = "";
 		LogList reslts = new LogList();
 		RexLogBlock.search(completeWebPage);
+		if (!RexLogBlock.didMatch()) {
+			pref.log("check blockRex in spider.def\n"+completeWebPage);			
+		}
 		String LogBlock = RexLogBlock.stringMatched(1);
-		//pref.log(LogBlock);
 		exSingleLog.setSource(LogBlock);
 		singleLog = exSingleLog.findNext();
 		exIcon.setSource(singleLog);
@@ -1803,6 +1884,7 @@ public class SpiderGC{
 	 * @param wayPoint The name of the cache
 	 * @param is_found Found status of the cached (is inherited by the additional waypoints)
 	 */
+	boolean koords_not_yet_found = true; 
 	private void getAddWaypoints(String doc, String wayPoint, boolean is_found) throws Exception{
 		Extractor exWayBlock = new Extractor(doc,p.getProp("wayBlockExStart"),p.getProp("wayBlockExEnd"), 0, false);
 		String wayBlock = "";
@@ -1848,14 +1930,35 @@ public class SpiderGC{
 				}
 				hd.initStates(idx<0);
 				nameRex.search(rowBlock);
+				if (nameRex.didMatch()) {
+					hd.setCacheName(nameRex.stringMatched(1));
+				}
+				else {
+					pref.log("check nameRex in spider.def\n"+rowBlock);			
+				}
 				koordRex.search(rowBlock);
 				typeRex.search(rowBlock);
-				hd.setCacheName(nameRex.stringMatched(1));
-				if(koordRex.didMatch()) hd.setLatLon(koordRex.stringMatched(1));
-				if(typeRex.didMatch()) hd.setType(CacheType.gpxType2CwType("Waypoint|"+typeRex.stringMatched(1)));
+				if(koordRex.didMatch()) {
+					hd.setLatLon(koordRex.stringMatched(1));
+					koords_not_yet_found = false;
+				}
+				else {
+					if (koords_not_yet_found) pref.log("check koordRex in spider.def\n"+rowBlock);			
+				}
+				if(typeRex.didMatch()) {
+					hd.setType(CacheType.gpxType2CwType("Waypoint|"+typeRex.stringMatched(1)));
+				}
+				else {
+					pref.log("check typeRex in spider.def\n"+rowBlock);			
+				}
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
-				hd.getCacheDetails(false).setLongDescription(descRex.stringMatched(1));
+				if (descRex.didMatch()) {
+					hd.getCacheDetails(false).setLongDescription(descRex.stringMatched(1));
+				}
+				else {
+					pref.log("check descRex in spider.def\n"+rowBlock);			
+				}
 				hd.setFound(is_found);
 				hd.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 				hd.setHard(CacheTerrDiff.CW_DT_UNSET);
