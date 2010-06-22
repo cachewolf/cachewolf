@@ -62,7 +62,7 @@ firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
 listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
 lineRex            = <tr\ bgcolor='#.{6}'\\s*class="Data\ BorderTop">((?s).*?)</tr>
 directionRex       = /compass/(.*?).gif
-logDateRex         = <td>(.*?)<br\ /><span\ class="Success">
+logDateRex         = <td>\\s*(.*?)<br\ />\\s*<span\ class="Success">
 availableRex       = <span\ class="Strike">
 archivedRex        = <span\ class="OldWarning\ Strike">
 PMRex              = small_profile.gif
