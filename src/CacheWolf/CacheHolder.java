@@ -721,8 +721,8 @@ public class CacheHolder{
 					logs.put("ICON",det.CacheLogs.getLog(i).getIcon());
 					logs.put("LOGTYPE",image2TypeText(det.CacheLogs.getLog(i).getIcon()));
 					logs.put("DATE", det.CacheLogs.getLog(i).getDate());
-					logs.put("LOGGER", det.CacheLogs.getLog(i).getLogger());
-					logs.put("MESSAGE", STRreplace.replace(det.CacheLogs.getLog(i).getMessage().trim(),"http://www.geocaching.com/images/icons/",null));
+					logs.put("LOGGER", SafeXML.cleanGPX(det.CacheLogs.getLog(i).getLogger()));
+					logs.put("MESSAGE", SafeXML.cleanGPX(STRreplace.replace(det.CacheLogs.getLog(i).getMessage().trim(),"http://www.geocaching.com/images/icons/",null)));
 				}
 				logVect.add(logs);
 			}
