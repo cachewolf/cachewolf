@@ -46,7 +46,10 @@ public class CacheDB {
 	 * @return CacheHolder object with corresponding index
 	 */
 	public CacheHolder get(int index) {
-		return (CacheHolder) vectorDB.get(index);
+		if (vectorDB.size() > index) {
+			return (CacheHolder) vectorDB.get(index);
+		}
+		else return null;
 	}
 
 	/** Gets the stored CacheHolder object by its waypoint. If no such Cache exists,
