@@ -120,7 +120,7 @@ public final class CacheType {
 		new CTyp((byte) 100,(byte) 100,'C',"453","453","",(byte) 101,'X',"typeMegaevent.png",new String[] {"Geocache|Mega-Event Cache","Geocache","Mega-Event Cache","Mega"},14,6,9,0x000200),
 		new CTyp((byte) 11,(byte) 11,'C',"11","11","5",(byte) -117,'W',"typeWebcam.png",new String[] {"Geocache|Webcam Cache","Geocache","Webcam Cache","Webcam"},11,7,5,0x000020),
 		new CTyp((byte) 8,(byte) 8,'C',"8","8","",(byte) -120,'U',"typeUnknown.png",new String[] {"Geocache|Unknown Cache","Geocache","Unknown Cache","Mystery"},8,8,6,0x000040),
-		new CTyp((byte) 12,(byte) 12,'C',"12","12","",(byte) -116,'O',"typeLocless.png",new String[] {"Geocache|Locationless new CTyp(Reverse) Cache","Geocache","Locationless new CTyp(Reverse) Cache","Locationless"},12,9,8,0x000080),
+		new CTyp((byte) 12,(byte) 12,'C',"12","12","",(byte) -116,'O',"typeLocless.png",new String[] {"Geocache|Locationless (Reverse) Cache","Geocache","Locationless (Reverse) Cache","Locationless"},12,9,8,0x000080),
 		new CTyp((byte) 13,(byte) 13,'C',"13","13","",(byte) -115,'X',"typeCito.png",new String[] {"Geocache|Cache In Trash Out Event","Geocache","Cache In Trash Out Event","CITO"},13,10,17,0x020000),
 		new CTyp((byte) 104,(byte) 104,'C',"137","137","",(byte) 9,'E',"typeEarth.png",new String[] {"Geocache|Earthcache","Geocache","Earthcache","Earth"},18,11,7,0x000400),
 		new CTyp((byte) 101,(byte) 101,'C',"1858","1858","",(byte) 100,'G',"typeWhereigo.png",new String[] {"Geocache|Wherigo Cache","Geocache","Wherigo Cache","Wherigo"},15,12,18,0x040000),
