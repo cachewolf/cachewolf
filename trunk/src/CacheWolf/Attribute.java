@@ -237,6 +237,7 @@ public class Attribute {
 		{"47","2596","arith_prob","56","0",""},// 96 Rechenaufgabe
 		{"60","2622","othercache","57","0",""},// 122 besondere Cacheart
 		{"48","2598","ask","58","0",""},// 98 Startbedingungen beim Owner erfragen
+		{"72","2652","landf","0","0",""},// todo GC_ID und GC_TEXT setzen
 
 	};
     public static int maxAttRef=attRef.length;	
