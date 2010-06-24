@@ -601,7 +601,7 @@ public class CacheHolder{
 		int wpl = wayPoint.length();
 		int wps = (wpl < shortWaypointLength) ? 0 : wpl - shortWaypointLength;
 		varParams.put("SHORTWAYPOINT", wayPoint.substring(wps, wpl));
-		varParams.put("OWNER", cacheOwner);
+		varParams.put("OWNER", SafeXML.cleanGPX(cacheOwner));
 		varParams.put("DIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(hard)));
 		String sHard = Integer.toString(hard);
 		varParams.put("SHORTDIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":sHard);
@@ -700,6 +700,7 @@ public class CacheHolder{
 					else
 						atts.put("BR","");
 					atts.put("INFO",det.attributes.getAttribute(i).getMsg());
+					atts.put("GCINFO",det.attributes.getAttribute(i).getGCText());
 					attVect.add(atts);
 				}
 				varParams.put("ATTRIBUTES",attVect);

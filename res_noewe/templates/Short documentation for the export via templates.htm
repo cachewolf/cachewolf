@@ -385,10 +385,13 @@ the &lt;<span class=SpellE>tmpl_loop</span> ATTRIBUTES&gt;, example see
 GCTemplate.html / show cache in browser offline<br>
 PATHANDIMAGE<span style='mso-tab-count:7'>                                                                                </span>:
 path an <span class=SpellE>imagename</span> of the attribute<br>
-IMAGE<span style='mso-tab-count:9'>                                                                                               </span>:
+IMAGE<span style='mso-tab-count:2'>             </span><span style='mso-tab-count:
+7'>                                                                                  </span>:
 <span class=SpellE>imagename</span> of the attribute<br>
 INFO<span style='mso-tab-count:9'>                                                                                                  </span>:
 description of the attribute from language <span class=SpellE>config</span><br>
+GCINFO<span style='mso-tab-count:8'>                                                                                              </span>:
+description of the attribute as from gc.com<br>
 BR<span style='mso-tab-count:9'>                                                                                                     </span>:
 contains &lt;<span class=SpellE>br</span>/&gt; every 5<sup>th</sup> attribute
 else empty (can be used with &lt;<span class=SpellE>tmp_if</span>&gt;<span
@@ -550,8 +553,8 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Pa
 values for conditions are Strings in java, and not <span class=SpellE><span
 class=GramE>boolean</span></span> values, hence, what evaluates to true and</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>false needs
-to be specifically defined.<br>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>false needs to
+be specifically defined.<br>
 As of now, the following values evaluate to false:<br>
 &quot;&quot; - the empty string<br>
 &quot;0&quot; - the string containing only the number zero<br>
@@ -601,8 +604,8 @@ style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>The
-&lt;<span class=SpellE>tmpl_loop</span>&gt; tag is a bit more complicated than
-the other tags. It allows you to create a section of text that</span><span
+&lt;<span class=SpellE>tmpl_loop</span>&gt; tag is a bit more complicated than the
+other tags. It allows you to create a section of text that</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
 style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>will be
 displayed repeatedly for every item in the loop control variable. Inside the
@@ -610,8 +613,8 @@ displayed repeatedly for every item in the loop control variable. Inside the
 style='mso-spacerun:yes'>  </span>you</span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB style='font-size:10.0pt;
 font-family:Arial;mso-ansi-language:EN-GB'>place &lt;<span class=SpellE>tmpl_var</span>&gt;s.<b
-style='mso-bidi-font-weight:normal'> The only loop used by the template exporter
-is '<span class=SpellE>cache_index</span>', see example above. </b></span><span
+style='mso-bidi-font-weight:normal'> The only loop used by the template
+exporter is '<span class=SpellE>cache_index</span>', see example above. </b></span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
@@ -649,8 +652,8 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Tr
 if both __FIRST__ and __LAST__ are false<br>
 __COUNTER__<span style='mso-tab-count:1'> </span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'>&nbsp;&nbsp;&nbsp; </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Which iteration
-is currently on. Starts at 1<br style='mso-special-character:line-break'>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Which
+iteration is currently on. Starts at 1<br style='mso-special-character:line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
 <![endif]></span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
