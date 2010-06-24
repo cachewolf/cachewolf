@@ -21,7 +21,6 @@ public class AttributesSelector extends Panel {
 
 	public AttributesSelector() {
 		if (MyLocale.getScreenWidth() > 240) { TILESIZE=22; PREF_HEIGHT=180; PREF_WIDTH=205;}
-		//Rect r = new Rect(0,0,TILESIZE * ICONS_PER_ROW,TILESIZE * ICONROWS); // As on GC: 6 wide, 2 high
 		iap.virtualSize =  new Rect(0,0,200,200);
 		iap.setPreferredSize(PREF_WIDTH, PREF_HEIGHT);
 		addLast(iap,CellConstants.STRETCH,FILL);

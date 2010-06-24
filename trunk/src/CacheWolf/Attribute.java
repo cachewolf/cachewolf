@@ -165,7 +165,7 @@ public class Attribute {
 		{"29","2560","restrooms","21","28","Public restrooms nearby"},//60 restrooms available
 		{"23","2548","phone","22","29","Telephone nearby"},//48 telephone nearby
 		{"24","2550","picnic","0","30","Picnic tables nearby"},//50 picnic tables available
-		{"43","2588","firstaid","23","42","Firstaid"}, //88 erste Hilfe !!! da 
+		{"43","2588","firstaid","23","42","Firstaid"}, // GC: Cachewartung notwendig (Auto Attribut) , OC: erste Hilfe 
 		// Erlaubt - Permissions (Allowed/Not Allowed)
 		{"11","2524","dogs","0","1","Dogs"},//24 dogs allowed
 		{"05","2512","camping","0","31","Camping available"},//12 Camping allowed
@@ -237,7 +237,9 @@ public class Attribute {
 		{"47","2596","arith_prob","56","0",""},// 96 Rechenaufgabe
 		{"60","2622","othercache","57","0",""},// 122 besondere Cacheart
 		{"48","2598","ask","58","0",""},// 98 Startbedingungen beim Owner erfragen
-		{"72","2652","landf","0","0",""},// todo GC_ID und GC_TEXT setzen
+		// !!! todo correct Filter Implementation
+		{"72","2652","landf","45","0","Lost And Found Tour"}, // thx to Kappler and MiK
+		// {"-1","2500","error","0","0",""}, //
 
 	};
     public static int maxAttRef=attRef.length;	
@@ -257,6 +259,9 @@ public class Attribute {
 	}
 	*/
     private static String getMsg(int cw_Id, int cw_Inc){
+    	if (cw_Id<0 || cw_Id>=maxAttRef) {
+    		return MyLocale.getMsg(2500,"error attribute");
+    	}
 		if (cw_Inc==0)
 			return MyLocale.getMsg(Integer.parseInt(attRef[cw_Id][MSG_NR])-1,"");
 		else

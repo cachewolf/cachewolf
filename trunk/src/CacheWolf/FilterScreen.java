@@ -267,10 +267,7 @@ public class FilterScreen extends Form{
 		if (MyLocale.getScreenHeight()>240) addTitle(pnlCacheAttributes,MyLocale.getMsg(737,"Attributes"));
 		pnlCacheAttributes.addNext(new mLabel(MyLocale.getMsg(739,"Filter on")+":"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlCacheAttributes.addLast(chcAttrib = new mChoice(new String[]{MyLocale.getMsg(740,"all"), MyLocale.getMsg(741,"one"), MyLocale.getMsg(742,"none")},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-
-		attV=new AttributesSelector();
-		pnlCacheAttributes.addLast(attV, CellConstants.STRETCH|CellConstants.LEFT/*|CellConstants.BORDER*/, CellConstants.STRETCH);
-
+		pnlCacheAttributes.addLast(attV=new AttributesSelector(), CellConstants.STRETCH|CellConstants.LEFT/*|CellConstants.BORDER*/, CellConstants.STRETCH);
 		long[] ini = {0l,0l,0l,0l};
 		attV.setSelectionMasks(ini);
 		
