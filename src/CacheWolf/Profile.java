@@ -277,7 +277,10 @@ public class Profile {
 					if (indexXmlVersion < CURRENTFILEFORMAT && !convertWarningDisplayed) {
 						if (indexXmlVersion < CURRENTFILEFORMAT) {
 							convertWarningDisplayed = true;
-							new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4407, "The profile files are not in the current format.%0aTherefore they are now converted to the current format. Depending of the size of the profile and the computer involved this may take some minutes. Please bear with us until the conversion is done."), FormBase.OKB).execute();
+							int res=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4407, "The profile files are not in the current format.%0aTherefore they are now converted to the current format. Depending of the size of the profile and the computer involved this may take some minutes. Please bear with us until the conversion is done."), FormBase.YESB|FormBase.NOB).execute();
+							if (res == MessageBox.NOB) {
+								ewe.sys.Vm.exit(0);
+							}
 						}
 					}
 					if (infoBox!=null) {
