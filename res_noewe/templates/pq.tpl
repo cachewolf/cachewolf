@@ -28,7 +28,7 @@
       <groundspeak:container><tmpl_var SIZE></groundspeak:container><br>
       <groundspeak:attributes><br>
         <tmpl_loop ATTRIBUTES>
-        <groundspeak:attribute id="<tmpl_var GCID>" inc="<tmpl_var INC>"><tmpl_var INFO></groundspeak:attribute><br>
+        <groundspeak:attribute id="<tmpl_var GCID>" inc="<tmpl_var INC>"><tmpl_var GCINFO></groundspeak:attribute><br>
         </tmpl_loop>
        </groundspeak:attributes><br>
       <groundspeak:difficulty><tmpl_var DIFFICULTY></groundspeak:difficulty><br>
@@ -43,7 +43,8 @@
           <groundspeak:date><tmpl_var NOW_DATE>T19:00:00Z</groundspeak:date><br>
           <groundspeak:type>Write note</groundspeak:type><br>
           <groundspeak:finder id="0">CacheWolf</groundspeak:finder><br>
-          <groundspeak:text encoded="False"><tmpl_loop ATTRIBUTES>&lt;br /&gt;<tmpl_var INC2TXT>&amp;nbsp;<tmpl_var INFO>&lt;br /&gt;</tmpl_loop></groundspeak:text><br>
+          <groundspeak:text encoded="False"><tmpl_loop ATTRIBUTES><tmpl_var INC2TXT>&amp;nbsp;<tmpl_var INFO>&lt;br /&gt;<br>
+          </tmpl_loop></groundspeak:text><br>
         </groundspeak:log><br>
       <tmpl_loop LOGS>  <groundspeak:log id="<tmpl_var WAYPOINT><tmpl_var __COUNTER__>"><br>
           <groundspeak:date><tmpl_var DATE>T19:00:00Z</groundspeak:date><br>
