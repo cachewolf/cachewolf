@@ -596,12 +596,12 @@ public class CacheHolder{
 		}
 		if (isCustomWpt()) {
 
-		}
+		}		
 		varParams.put("WAYPOINT", wayPoint); //<name>
 		int wpl = wayPoint.length();
 		int wps = (wpl < shortWaypointLength) ? 0 : wpl - shortWaypointLength;
 		varParams.put("SHORTWAYPOINT", wayPoint.substring(wps, wpl));
-		varParams.put("OWNER", SafeXML.cleanGPX(cacheOwner));
+		varParams.put("OWNER", (ModTyp == 0) ? SafeXML.cleanGPX(cacheOwner) : cacheOwner);
 		varParams.put("DIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(hard)));
 		String sHard = Integer.toString(hard);
 		varParams.put("SHORTDIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":sHard);
@@ -668,20 +668,21 @@ public class CacheHolder{
 				else {
 					varParams.put("NOTES",STRreplace.replace(badChars.replaceAll(det.getCacheNotes()), "\n", "<br>"));
 				}
-				varParams.put("HINTS",badChars.replaceAll(det.Hints));
-				varParams.put("DECRYPTEDHINTS",badChars.replaceAll(Common.rot13(det.Hints)));
+				varParams.put("HINTS",(ModTyp == 0) ? SafeXML.cleanGPX(badChars.replaceAll(det.Hints)) : badChars.replaceAll(det.Hints));
+				varParams.put("DECRYPTEDHINTS",(ModTyp == 0) ? SafeXML.cleanGPX(badChars.replaceAll(Common.rot13(det.Hints))) : badChars.replaceAll(Common.rot13(det.Hints)));
 			} else {
 				if (ModTyp == 0){
-					varParams.put("NOTES", det.getCacheNotes());
+					varParams.put("NOTES", SafeXML.cleanGPX(det.getCacheNotes()));
 				}
 				else {
 					varParams.put("NOTES", STRreplace.replace(det.getCacheNotes(), "\n", "<br>"));
 				}
-				varParams.put("HINTS", det.Hints);
-				varParams.put("DECRYPTEDHINTS", Common.rot13(det.Hints));
+				varParams.put("HINTS",(ModTyp == 0) ? SafeXML.cleanGPX(det.Hints) : det.Hints);
+				varParams.put("DECRYPTEDHINTS",(ModTyp == 0) ? SafeXML.cleanGPX(Common.rot13(det.Hints)) : Common.rot13(det.Hints));
 			}
-			if (det.Travelbugs.size()>0) varParams.put("BUGS",det.Travelbugs.toHtml());
-			if (det.getSolver()!=null && det.getSolver().trim().length()>0) varParams.put("SOLVER", STRreplace.replace(det.getSolver(),"\n","<br/>\n"));
+			if (det.Travelbugs.size()>0) varParams.put("BUGS",(ModTyp == 0) ? SafeXML.cleanGPX(det.Travelbugs.toHtml()) : det.Travelbugs.toHtml());
+			if (det.getSolver()!=null && det.getSolver().trim().length()>0) 
+				varParams.put("SOLVER", STRreplace.replace(det.getSolver(),"\n","<br/>\n"));
 			varParams.put("COUNTRY", det.Country);
 			varParams.put("STATE", det.State);
 			
@@ -722,8 +723,9 @@ public class CacheHolder{
 					logs.put("ICON",det.CacheLogs.getLog(i).getIcon());
 					logs.put("LOGTYPE",image2TypeText(det.CacheLogs.getLog(i).getIcon()));
 					logs.put("DATE", det.CacheLogs.getLog(i).getDate());
-					logs.put("LOGGER", SafeXML.cleanGPX(det.CacheLogs.getLog(i).getLogger()));
-					logs.put("MESSAGE", SafeXML.cleanGPX(STRreplace.replace(det.CacheLogs.getLog(i).getMessage().trim(),"http://www.geocaching.com/images/icons/",null)));
+					logs.put("LOGGER", (ModTyp == 0) ? SafeXML.cleanGPX(det.CacheLogs.getLog(i).getLogger()) : det.CacheLogs.getLog(i).getLogger());
+					String stmp = STRreplace.replace(det.CacheLogs.getLog(i).getMessage().trim(),"http://www.geocaching.com/images/icons/",null);
+					logs.put("MESSAGE", (ModTyp == 0) ? SafeXML.cleanGPX(stmp) : stmp);
 				}
 				logVect.add(logs);
 			}
