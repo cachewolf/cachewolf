@@ -80,7 +80,21 @@ public class Attributes {
 	public void add(int attIdGC, String Yes1No0) {
 		if (_count<attribs.length) {
 			Attribute attr = new Attribute(attIdGC, Yes1No0);
-			attribs[_count++] = attr;
+			boolean doAdd = true;
+			int replace=0;
+			for (int i = 0; i < _count; i++) {
+				if (attribs[i].getImageName().equals(attr.getImageName())){
+					doAdd=false;
+					replace=i;
+				}
+			}
+			if (doAdd) {
+				attribs[_count++] = attr;
+			}
+			else {
+				// free old attr ?
+				attribs[replace]=attr;
+			}
 			attrYes=attr.getYesBit(attrYes);
 			attrNo=attr.getNoBit(attrNo);			
 		}
