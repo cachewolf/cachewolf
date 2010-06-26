@@ -30,7 +30,15 @@ public class TravelbugList extends MinML{
 
 	/** Add a travelbug to the list */
 	public void add(Travelbug pTb) {
-		tbList.add(pTb);
+		boolean doAdd = true;
+		for (int i = 0; i < tbList.size(); i++) {
+			Travelbug element = (Travelbug) tbList.get(i);
+			if (pTb.getName().equals(element.getName())) {
+				doAdd=false;
+				break;
+			}
+		}
+		if (doAdd) tbList.add(pTb);
 	}
 	
 	/** Remove a travelbug from the list */

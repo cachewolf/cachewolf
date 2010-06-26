@@ -86,6 +86,7 @@ public class Attributes {
 				if (attribs[i].getGCId() == attr.getGCId()){
 					doAdd=false;
 					replace=i;
+					break;
 				}
 			}
 			if (doAdd) {
