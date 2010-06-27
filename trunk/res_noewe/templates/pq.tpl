@@ -50,7 +50,7 @@
           <groundspeak:date><tmpl_var NOW_DATE>T19:00:00Z</groundspeak:date><br>
           <groundspeak:type>Write note</groundspeak:type><br>
           <groundspeak:finder id="1">TBs</groundspeak:finder><br>
-          <groundspeak:text encoded="False"><tmpl_var BUGS><br>
+          <groundspeak:text encoded="False"><tmpl_var BUGS></groundspeak:text><br>
         </groundspeak:log><br>
       <tmpl_loop LOGS>  <groundspeak:log id="<tmpl_var WAYPOINT><tmpl_var __COUNTER__>"><br>
           <groundspeak:date><tmpl_var DATE>T19:00:00Z</groundspeak:date><br>
