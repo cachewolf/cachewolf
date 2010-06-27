@@ -710,13 +710,14 @@ public class CacheHolder{
 			Vector logVect=new Vector(det.CacheLogs.size());
 			for (int i=0; i<det.CacheLogs.size(); i++) {
 				Hashtable logs=new Hashtable();
+				String stmp;
 				if (det.CacheLogs.getLog(i).getIcon().equals("MAXLOG")) {
 					logs.put("WAYPOINT", wayPoint);
 					logs.put("ICON","");
 					logs.put("LOGTYPE","");
 					logs.put("DATE", "");
 					logs.put("LOGGER", "");
-					logs.put("MESSAGE", "<hr>"+MyLocale.getMsg(736,"Too many logs")+"<hr>");
+					stmp = "<hr>"+MyLocale.getMsg(736,"Too many logs")+"<hr>";
 				}
 				else {
 					logs.put("WAYPOINT", wayPoint);
@@ -724,9 +725,9 @@ public class CacheHolder{
 					logs.put("LOGTYPE",image2TypeText(det.CacheLogs.getLog(i).getIcon()));
 					logs.put("DATE", det.CacheLogs.getLog(i).getDate());
 					logs.put("LOGGER", (ModTyp == 0) ? SafeXML.cleanGPX(det.CacheLogs.getLog(i).getLogger()) : det.CacheLogs.getLog(i).getLogger());
-					String stmp = STRreplace.replace(det.CacheLogs.getLog(i).getMessage().trim(),"http://www.geocaching.com/images/icons/",null);
-					logs.put("MESSAGE", (ModTyp == 0) ? SafeXML.cleanGPX(stmp) : stmp);
+					stmp = STRreplace.replace(det.CacheLogs.getLog(i).getMessage().trim(),"http://www.geocaching.com/images/icons/",null);
 				}
+				logs.put("MESSAGE", (ModTyp == 0) ? SafeXML.cleanGPX(stmp) : stmp);
 				logVect.add(logs);
 			}
 			varParams.put("LOGS",logVect);
