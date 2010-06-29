@@ -2,7 +2,7 @@
 <tmpl_par name="Out" value="*.txt">
 <tmpl_par name="charset" value="UTF8">
 <tmpl_par name="newline" value="CRLF">
-<tmpl_par name="badchars" value=",">
+<tmpl_par name="badchars" value="\"">
 <tmpl_loop cache_index>
 <tmpl_unless MAINWP>
 <tmpl_if STATUS>
