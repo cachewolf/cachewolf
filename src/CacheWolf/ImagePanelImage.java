@@ -11,6 +11,7 @@ import ewe.fx.*;
 public class ImagePanelImage extends AniImage{
 	public String fileName = new String();
 	public String imageText = null;
+	public String imageComment = null;
 	public ImagePanelImage(mImage i){
 		super(i);
 	}
