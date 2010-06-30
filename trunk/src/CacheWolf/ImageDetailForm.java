@@ -11,12 +11,14 @@ public class ImageDetailForm extends Form{
 	ImageInteractivePanel ipp = new ImageInteractivePanel();
 	ScrollBarPanel scp;
 	
-	public ImageDetailForm(String imgLoc, Preferences p){
+	public ImageDetailForm(String imgLoc, String imgTitle, String imgComment, Preferences p){
 		scp = new MyScrollBarPanel(ipp);
 		ipp.setImage(imgLoc);
 		this.title = "Image";
 		this.setPreferredSize(p.myAppWidth, p.myAppHeight);
 		this.addLast(scp, CellConstants.STRETCH, CellConstants.FILL);
+		this.addLast(new mLabel(imgTitle), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		this.addLast(new mLabel(imgComment), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	}
 	
 	public void onEvent(Event ev) {
