@@ -191,7 +191,8 @@ public class ImagePanel extends InteractivePanel{
 					AimgText.setLocation(locX,locY+scaleY);
 					addImage(AimgText);
 					AimgText.refresh();
-					ipi.imageText = imgText; 
+					ipi.imageText = imgText;
+					ipi.imageComment = SafeXML.cleanback(pImages.get(i).getComment());
 				}
 				ipi.refresh();
 				locX = locX + thumb_size + padding;
@@ -261,7 +262,7 @@ public class ImagePanel extends InteractivePanel{
 				ImagePanelImage ich = (ImagePanelImage)which;
 				fn = ich.fileName;
 				try {
-					ImageDetailForm iF = new ImageDetailForm(fn, pref);
+					ImageDetailForm iF = new ImageDetailForm(fn, ich.imageText, ich.imageComment, pref);
 					iF.execute(null, Gui.CENTER_FRAME);
 				} catch (IllegalArgumentException e) {
 					MessageBox tmp = new MessageBox(MyLocale.getMsg(321,"Fehler"), MyLocale.getMsg(322,"Kann Bild/Karte nicht finden"), FormBase.OKB); // @todo: language support
