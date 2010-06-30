@@ -115,7 +115,8 @@ public final class SafeXML{
 				"&uuml;",   "ü",
 				"&yacute;", "ý",
 				"&thorn;",  "þ",
-				"&yuml;",   "ÿ"
+				"&yuml;",   "ÿ",
+				"&ndash;",  "–"
 				};
 		for (int i = 0; i < mappingArray.length; i = i + 2) {
 			iso2htmlMappings.put( mappingArray[i], mappingArray[i+1]);
