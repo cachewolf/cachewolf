@@ -252,6 +252,7 @@ public class GPXImporter extends MinML {
 		}
 		if (name.equals("groundspeak:travelbugs")) {
 			inBug = true;
+			holder.getCacheDetails(false).Travelbugs.clear();
 			return;
 		}
 		if (debugGPX){
