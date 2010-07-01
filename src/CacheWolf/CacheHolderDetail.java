@@ -115,8 +115,13 @@ public class CacheHolderDetail {
 			 Travelbug tb=newCh.Travelbugs.getTB(i);  
 		     Travelbug oldTB=this.Travelbugs.find(tb.getName());
 		     // If the bug is already in the cache, we keep it
-		     if (oldTB != null)
+		     if (oldTB != null) {
+		    	 if (tb.getMission().length() > 0)
+		    		 oldTB.setMission(tb.getMission());
+		    	 if (tb.getGuid().length() > 0)
+		    		 oldTB.setGuid(tb.getGuid());
 		    	 newCh.Travelbugs.replace(i,oldTB);
+		     }
 		    
 		  }
 		  this.Travelbugs = newCh.Travelbugs;
