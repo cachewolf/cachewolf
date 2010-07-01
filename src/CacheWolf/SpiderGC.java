@@ -1188,16 +1188,21 @@ public class SpiderGC{
 			rowBlock = exRowBlock.findNext();
 			while(exRowBlock.endOfSearch()==false){
 				CacheHolderDetail cxD = new CacheHolderDetail();
-				
+
+/*				
 				String[] AddiBlock=mString.split(rowBlock,'\n');
 				int linePrefix=8;
 				if(AddiBlock.length < linePrefix + 1) {
 					(new MessageBox(MyLocale.getMsg(5500,"Error"), "GC changed table output \nCW must be changed too!", FormBase.OKB)).execute();
 					break;
 				}				
-//				Extractor exPrefix=new Extractor(AddiBlock[linePrefix].trim(),p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
-//				String prefix=exPrefix.findNext();
 				String prefix=AddiBlock[linePrefix].trim();
+*/
+
+//				Extractor exPrefix=new Extractor(AddiBlock[linePrefix].trim(),p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
+
+				Extractor exPrefix=new Extractor(rowBlock,p.getProp("prefixExStart"),p.getProp("prefixExEnd"),0,true);
+				String prefix=exPrefix.findNext();
 
 				String adWayPoint;
 				if (prefix.length()==2)
