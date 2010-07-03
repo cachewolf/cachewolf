@@ -85,6 +85,11 @@ public class MapLoaderGui extends Form {
 			tileWidth = pref.myAppWidth > 200?pref.myAppWidth:200;
 			tileHeight = pref.myAppHeight > 175?pref.myAppHeight:175;
 		}
+		pref.tilewidth=tileWidth;
+		pref.tileheight=tileHeight;
+		// ist das wirklich so gewollt?
+		pref.tilewidth=1000;
+		pref.tileheight=1000;
 		initTileInputfields();
 		cacheDB = cacheDBi;
 		mapLoader = new MapLoader(FileBase.getProgramDirectory()+"/"+"webmapservices");
