@@ -47,6 +47,7 @@ public final class GotoPanel extends CellPanel {
 	Preferences pref;
 	Profile profile;
 	// different panels to avoid spanning
+	CellPanel HeadP = new CellPanel();
 	CellPanel ButtonP = new CellPanel();
 	CellPanel CoordsP = new CellPanel();
 	CellPanel roseP = new CellPanel();
@@ -58,8 +59,6 @@ public final class GotoPanel extends CellPanel {
 	final static Color YELLOW = new Color(255,255,0);
 	final static Color GREEN = new Color(0,255,0);
 	final static Color BLUE = new Color(0,0,255);
-
-	int ticker = 0;
 
 	Menu mnuContextFormt;
 	MenuItem miCooformat[] = new MenuItem[TransformCoordinates.localSystems.length + 3]; //miDMM, miDMS, miDD, miUTM, miGK;
@@ -86,8 +85,8 @@ public final class GotoPanel extends CellPanel {
 		// Button
 		ButtonP.addNext(btnGPS = new mButton(MyLocale.getMsg(1504,"Start")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		ButtonP.addNext(btnCenter = new mButton(MyLocale.getMsg(309,"Centre")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		ButtonP.addNext(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		ButtonP.addLast(btnMap = new mButton(MyLocale.getMsg(1506,"Map")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		ButtonP.addLast(btnSave = new mButton(MyLocale.getMsg(311,"Create Waypoint")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		// ButtonP.addLast(btnMap = new mButton(MyLocale.getMsg(1506,"Map")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 
 		//Format selection for coords
 		//context menu
@@ -142,10 +141,12 @@ public final class GotoPanel extends CellPanel {
 		else miNorthCentered.modifiers &= MenuItem.Checked;
 
 		//add Panels
-		this.addLast(ButtonP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
-		this.addLast(CoordsP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(2,1));
+		HeadP.addLast(ButtonP,CellConstants.HSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
+		HeadP.addLast(CoordsP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(2,1));	
+		this.addNext(HeadP,CellConstants.HSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(2,1));		
+		this.addLast(btnMap = new mButton(" ---> "+MyLocale.getMsg(1506,"Map")+" "),CellConstants.HSTRETCH, CellConstants.VFILL|CellConstants.RIGHT).setTag(SPAN,new Dimension(2,1));
 		this.addLast(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
-
+		btnMap.backGround=GREEN;
 		// for debuging
 		/*		CWGPSPoint myGPS;
 		myGPS = new CWGPSPoint();
