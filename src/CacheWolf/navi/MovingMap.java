@@ -392,6 +392,8 @@ public final class MovingMap extends Form implements ICommandListener {
 		// to load maplist + place a map on screen otherwise no symbol can be placed
 		ignoreGps=true; // else overlay symbols are removed on started gps
 		
+		rebuildOverlaySet(); // show tracks , even if reentering map
+		
 		updatePosition(centerTo);
 		setCenterOfScreen(centerTo, false);
 		
@@ -407,9 +409,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 		setMarkedCache(Global.mainTab.ch); // this is the selected one (not necessary marked)
 		showCachesOnMap();
-
-		addTrack(myNavigation.curTrack);
-
+		
 		if (myNavigation.destinationIsCache) {
 			destChanged(myNavigation.destinationCache);
 		}
@@ -1775,12 +1775,12 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 		repaintNow();
 	}
-
+/*
 	public void setZoomingMode() {
 		repaintNow();
 		zoomingMode = true;
 	}
-
+*/
 	/**
 	 * zommes in if w>0 and out if w<0
 	 * @param firstclickpoint
