@@ -1382,12 +1382,12 @@ public class CacheHolder{
 	 * @return New or old IconAndText object
 	 */
 	public IconAndText getIconAndTextWP(int level, FontMetrics fm) {
-		if (level != iconAndTextWPLevel || iconAndTextWP == null) {
+		if (level != iconAndTextWPLevel || iconAndTextWP == null || !iconAndTextWP.text.equals(wayPoint)) {
 			switch (level) {
-				case 4: iconAndTextWP = new IconAndText(GuiImageBroker.imageError, this.getWayPoint(), fm); break;
-				case 3: iconAndTextWP = new IconAndText(myTableModel.yellow, this.getWayPoint(), fm); break;
-				case 2: iconAndTextWP = new IconAndText(myTableModel.red, this.getWayPoint(), fm); break;
-				case 1: iconAndTextWP = new IconAndText(myTableModel.blue, this.getWayPoint(), fm); break;
+				case 4: iconAndTextWP = new IconAndText(GuiImageBroker.imageError, wayPoint, fm); break;
+				case 3: iconAndTextWP = new IconAndText(myTableModel.yellow, wayPoint, fm); break;
+				case 2: iconAndTextWP = new IconAndText(myTableModel.red, wayPoint, fm); break;
+				case 1: iconAndTextWP = new IconAndText(myTableModel.blue, wayPoint, fm); break;
 			}
 			iconAndTextWPLevel = level;
 		}
