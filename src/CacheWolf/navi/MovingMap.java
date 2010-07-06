@@ -1969,14 +1969,14 @@ public final class MovingMap extends Form implements ICommandListener {
 
 		
 		if (FILL_MAP.equals(actionCommand)) {
-			setFillWhiteArea(false);
+			setFillWhiteArea(true);
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
 		}
 		
 		if (NO_FILL_MAP.equals(actionCommand)) {
-			setFillWhiteArea(true);
+			setFillWhiteArea(false);
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
