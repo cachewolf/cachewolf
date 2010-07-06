@@ -66,57 +66,55 @@ public class DescriptionPanel extends CellPanel{
         Vm.showWait(true);
         if (cache!=null && isHtml) {
             int imageNo = 0;
-            if (Global.getPref().descShowImg) {
-                CacheImages Images;
-                CacheHolder chImages; // cache which supplies the images (could be main cache)
-                if (cache.isAddiWpt()) {
-                    chImages=cache.mainCache;
-                } else {
-                    chImages=cache;
-                }
-            	Images = chImages.getCacheDetails(true).images;
-                StringBuffer s = new StringBuffer(desc.length() + Images.size() * 100);
-                int start = 0;
-                int pos;
-                Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
-                if (Images.size() > 0) {
-                    while (start >= 0 && (pos = desc.indexOf("<img", start)) > 0) {
-                        s.append(desc.substring(start, pos));
-                        imgRex.searchFrom(desc, pos);
-                        String imgUrl = imgRex.stringMatched(1);
-                        if (imgUrl==null) break; // Remaining pictures are from image span
-                        // Vm.debug("imgUrl "+imgUrl);
-                        if (imgUrl.lastIndexOf('.') > 0 && imgUrl.toLowerCase().startsWith("http")) {
-                            String imgType = (imgUrl.substring(imgUrl.lastIndexOf('.'))
-                                    .toLowerCase() + "    ").substring(0, 4).trim();
-                            // If we have an image which we stored when spidering, we can display it
-        					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
-                                s.append("<img src=\"" +
-                                // Global.getProfile().dataDir+
-                                        Images.get(imageNo).getFilename() + "\">");
-                                imageNo++;
-                            }
+            CacheImages Images;
+            CacheHolder chImages; // cache which supplies the images (could be main cache)
+            if (cache.isAddiWpt()) {
+                chImages=cache.mainCache;
+            } else {
+                chImages=cache;
+            }
+        	Images = chImages.getCacheDetails(true).images;
+            StringBuffer s = new StringBuffer(desc.length() + Images.size() * 100);
+            int start = 0;
+            int pos;
+            Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
+            while (start >= 0 && (pos = desc.indexOf("<img", start)) > 0) {
+                s.append(desc.substring(start, pos));
+                imgRex.searchFrom(desc, pos);
+                String imgUrl = imgRex.stringMatched(1);
+                if (imgUrl==null) break; // Remaining pictures are from image span
+                // Vm.debug("imgUrl "+imgUrl);
+                if (imgUrl.lastIndexOf('.') > 0 && imgUrl.toLowerCase().startsWith("http")) {
+                    String imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
+                    // If we have an image which we stored when spidering, we can display it
+                    if (Images.size()>0 && Global.getPref().descShowImg) {
+    					if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
+                            s.append("<img src=\"" +Images.get(imageNo).getFilename() + "\">");
+                            imageNo++;
                         }
-                        start = desc.indexOf(">", pos);
-                        if (start >= 0)
-                            start++;
-                        if (imageNo >= Images.size())
-                            break;
+                    }
+                    else {
+                        // s.append(" \"" + imgUrl + "\" : " + MyLocale.getMsg(322,"") + " ");
+                        s.append("<img src=\"" + "noImage.png" + "\"" + " alt=\"no image\"" + ">");
                     }
                 }
-                if (start >= 0)
-                    s.append(desc.substring(start));
-                desc = s.toString();
-                if (imageNo<Images.size()) {
-                    desc += getPicDesc(imageNo, chImages.getCacheDetails(true));
-                }
+                start = desc.indexOf(">", pos);
+                if (start >= 0) start++;
+                if (imageNo >= Images.size()) break;
             }
+            if (start >= 0)
+                s.append(desc.substring(start));
+            desc = s.toString();
+            start=Images.size();
+            if (imageNo<Images.size() && Global.getPref().descShowImg) {
+                desc += getPicDesc(imageNo, chImages.getCacheDetails(true));
+            }
+
             //disp.setHtml(desc);
             disp.startHtml();
             disp.getDecoderProperties().set("documentroot", Global.getProfile().dataDir);
             disp.addHtml(desc, new ewe.sys.Handle());
             disp.endHtml();
-
         } else {
             disp.startHtml(); // To clear the old HTML display
             disp.endHtml();
