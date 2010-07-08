@@ -1516,7 +1516,7 @@ public class SpiderGC{
 		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else {
 			pref.log("check difficultyRex in spider.def\n"+doc);
-			return "";
+			return "-1";
 		}
 	}
 
@@ -1531,7 +1531,7 @@ public class SpiderGC{
 		if(inRex.didMatch()) return inRex.stringMatched(1);
 		else {
 			pref.log("check terrainRex in spider.def\n"+doc);
-			return "";
+			return "-1";
 		}
 	}
 
