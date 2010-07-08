@@ -60,8 +60,8 @@ public final class CacheTerrDiff {
 		if (v1TerrDiff.equals("3.5")) { return CW_DT_35; }
 		if (v1TerrDiff.equals("4.5")) { return CW_DT_45; }
 		
-		throw new IllegalArgumentException("error mapping terrain or difficulty");
-	}
+		return CW_DT_ERROR; // simplyfied for "-1" for not set // no exception
+}
 	
 	/**
 	 * generate strings of terrain and difficulty for general use
@@ -80,6 +80,7 @@ public final class CacheTerrDiff {
 		case CW_DT_40: return "4.0";
 		case CW_DT_45: return "4.5";
 		case CW_DT_50: return "5.0";
+		case CW_DT_ERROR : return "-.-";
 		default: throw new IllegalArgumentException("unmapped terrain or diffulty "+terrdiff);
 		}
 	}
@@ -101,6 +102,7 @@ public final class CacheTerrDiff {
 		case CW_DT_40: return "4";
 		case CW_DT_45: return "4.5";
 		case CW_DT_50: return "5";
+		case CW_DT_ERROR : return "-1";
 		default: throw new IllegalArgumentException("unmapped terrain or diffulty "+terrdiff);
 		}
 	}
@@ -123,6 +125,7 @@ public final class CacheTerrDiff {
 		case CW_DT_40: return true;
 		case CW_DT_45: return true;
 		case CW_DT_50: return true;
+		case CW_DT_ERROR: return true;
 		default: return false;
 		}
 	}
