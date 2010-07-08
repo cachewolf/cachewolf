@@ -719,14 +719,7 @@ public class SpiderGC{
 				pref.log("[login]:check rexViewstate in SpiderGC.java --> not found after login\n"+loginPage);
 			}
 			viewstate = rexViewstate.stringMatched(1);
-
-			/*
-			rexViewstate1.search(start);
-			if (!rexViewstate1.didMatch()) {
-				pref.log("[login]:Viewstate1 not found");
-			}
-			*/
-
+			
 			rexCookieID.search(loginPage);
 			if (!rexCookieID.didMatch()) {
 				pref.log("[login]:check rexCookieID in SpiderGC.java --> CookieID not found. Using old one.\n"+loginPage);
@@ -740,6 +733,40 @@ public class SpiderGC{
 			} else
 				cookieSession = rexCookieSession.stringMatched(1);
 			//Vm.debug("cookieSession = " + cookieSession);
+
+			/*
+			String viewstate1;
+			rexViewstate1.search(loginPage);
+			if(rexViewstate1.didMatch()){
+				viewstate1 = rexViewstate1.stringMatched(1);
+			} else {
+				viewstate1 = "";
+				pref.log("[login]:check rexViewstate1 in SpiderGC.java --> not found after login\n"+loginPage);
+			}
+			*/
+						
+			/*
+			rexEventvalidation.search(htmlPage);
+			if(rexEventvalidation.didMatch()){
+				eventvalidation = rexEventvalidation.stringMatched(1);
+			} else {
+				eventvalidation = "";
+			}
+			*/
+
+			String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl01$uxLocaleItem";
+			String postStr = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strEnglishPage,false)
+		    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
+//		    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
+		    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
+//		    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
+//		    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
+			try{
+				pref.log("Switching to English:" + postStr);
+				loginPage = fetch_post(loginPageUrl, postStr, nextPage);
+			}catch(Exception ex){
+				pref.log("Error switching to English");
+			}
 		}
 		boolean loginAborted=localInfB.isClosed;
 		localInfB.close(0);
