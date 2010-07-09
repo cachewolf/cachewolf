@@ -2162,7 +2162,8 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			else {
 				saveMapLoc = new Point (ev.x, ev.y);
 				if (ev.modifiers == PenEvent.RIGHT_BUTTON) {
-					// context penHeld is fired on PDA but not on PC (Java)
+					// context penHeld is fired directly on PDA (cause WantHoldDown Control Modifier)
+					// but not on PC (Java) , therefor it is here
 					penHeld(new Point (ev.x, ev.y));
 				}
 			}
@@ -2324,23 +2325,26 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	}
 
 	public void onEvent(Event ev){
-		if (kontextMenu != null && ev instanceof PenEvent && ev.type == PenEvent.PEN_DOWN && ev.target == this)
-			{kontextMenu.close(); kontextMenu = null; return;}
-
+		// nothing selected in kontext
+		if (kontextMenu != null 
+				&& ev instanceof PenEvent 
+				&& ev.type == PenEvent.PEN_DOWN 
+				&& ev.target == this) {
+			kontextMenu.close(); 
+			kontextMenu = null; 
+			return;
+		}
+		// something selected
 		if (ev instanceof MenuEvent) {
 			if (ev.target == kontextMenu) {
 				if ((((MenuEvent)ev).type==MenuEvent.SELECTED)) {
 					MenuItem action = (MenuItem) kontextMenu.getSelectedItem();
 					if (action == gotoMenuItem) {
-						kontextMenu.close();
+						closeKontextMenu();
 						mm.myNavigation.setDestination(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));
 					}
 					if (action == openCacheDescMenuItem || action == openCacheDetailMenuItem) {
-						kontextMenu.close();
-						WindowEvent close = new WindowEvent();
-						close.target = mm;
-						close.type = WindowEvent.CLOSE;
-						mm.postEvent(close);
+						leaveMovingMap();
 						MainTab mainT = Global.mainTab;
 						if (action == openCacheDescMenuItem) 
 							mainT.openPanel(clickedCache,2);
@@ -2348,24 +2352,21 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							mainT.openPanel(clickedCache,1);
 					}
 					if (action == gotoCacheMenuItem) {
-						kontextMenu.close();
+						closeKontextMenu();
 						mm.myNavigation.setDestination(clickedCache);
 					}
 					if (action == newWayPointMenuItem) {
-						kontextMenu.close();
-						WindowEvent close = new WindowEvent();
-						close.target = mm;
-						close.type = WindowEvent.CLOSE;
-						mm.postEvent(close);
+						leaveMovingMap();
 						CacheHolder newWP = new CacheHolder();
 						newWP.pos = mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y);
 						newWP.setLatLon(newWP.pos.toString());
 						Global.mainTab.newWaypoint(newWP);
 					}
 					if (action == addCachetoListMenuItem) {
-						kontextMenu.close();
+						closeKontextMenu();
 						Global.mainForm.cacheList.addCache(clickedCache.getWayPoint());
 					}
+					/*
 					for (int i=0; i<miLuminary.length; i++) {
 						if (action == miLuminary[i]) {
 							kontextMenu.close();
@@ -2374,13 +2375,31 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							miLuminary[i].modifiers |= MenuItem.Checked;
 						} else miLuminary[i].modifiers &= ~MenuItem.Checked;
 					}
+					*/
 				}
 			} // if (ev.target == kontextMenu)
 		}
 		super.onEvent(ev);
 	}
-}
 
+	private void closeKontextMenu() {
+		kontextMenu.close();
+		// for not to do an additional klick (before reacting on klicks)
+		PenEvent pev = new PenEvent();
+		pev.target=this;
+		pev.type=PenEvent.PEN_DOWN;
+		this.postEvent(pev);
+		pev.type=PenEvent.PEN_UP;
+		this.postEvent(pev);
+	}
+	private void leaveMovingMap() {
+		closeKontextMenu();
+		WindowEvent close = new WindowEvent();
+		close.target = this;
+		close.type = WindowEvent.CLOSE;
+		this.postEvent(close);		
+	}
+}
 
 /**
  *	Class to display maps to choose from
