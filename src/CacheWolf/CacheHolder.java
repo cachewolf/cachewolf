@@ -1241,14 +1241,12 @@ public class CacheHolder{
 		setCacheSize(byteFromLong(value, 4));
 		setNoFindLogs((byteFromLong(value, 5)));
 		
-		if (
-				   getCacheSize() == CacheSize.CW_SIZE_ERROR 
+		if ( getHard() == CacheTerrDiff.CW_DT_ERROR 
+				|| getTerrain() == CacheTerrDiff.CW_DT_ERROR 
+				|| getCacheSize() == CacheSize.CW_SIZE_ERROR 
 				|| getType() == CacheType.CW_TYPE_ERROR ) {
 			setIncomplete(true);
 		}
-		// no longer
-		 // getHard() == CacheTerrDiff.CW_DT_ERROR 
-		//	|| getTerrain() == CacheTerrDiff.CW_DT_ERROR
 	}
 	
 	/**
@@ -1645,8 +1643,8 @@ public class CacheHolder{
 		boolean ret;
 		if (isCacheWpt()) {
 			if (getWayPoint().length() < 3
-					// || getHard() <= CacheTerrDiff.CW_DT_UNSET // possible for older caches see exmpl gcf0
-					// || getTerrain() <= CacheTerrDiff.CW_DT_UNSET
+					|| getHard() < CacheTerrDiff.CW_DT_UNSET
+					|| getTerrain() < CacheTerrDiff.CW_DT_UNSET
 					|| getCacheSize() == CacheSize.CW_SIZE_ERROR
 					|| getCacheOwner().length() == 0
 					|| getDateHidden().length() == 0 
