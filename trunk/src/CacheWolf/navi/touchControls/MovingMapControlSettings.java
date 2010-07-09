@@ -204,8 +204,7 @@ public class MovingMapControlSettings extends MinML {
 				ypos = 0;
 			}
 
-			String changeState = attributes
-					.getValue(BUTTON_ATTR_CHANGE_STAE_OF);
+			String changeState = attributes.getValue(BUTTON_ATTR_CHANGE_STAE_OF);
 
 			String visibility = attributes.getValue(BUTTON_ATTR_VISIBILITY);
 			String action = attributes.getValue(BUTTON_ATTR_ACTION);
@@ -229,8 +228,7 @@ public class MovingMapControlSettings extends MinML {
 			}
 			int alphavalue = getIntFromFile(attributes, BUTTON_ATTR_ALPHA, -1);
 
-			int localIDValue = getIntFromFile(attributes,
-					BUTTON_ATTR_LOCALE_ID, 0);
+			int localIDValue = getIntFromFile(attributes, BUTTON_ATTR_LOCALE_ID, 0);
 
 			if (imageLocation == null) {
 				// something not set
@@ -250,17 +248,14 @@ public class MovingMapControlSettings extends MinML {
 
 			MovingMapControlItem button;
 			if (context != null) {
-				button = new MovingMapControlItemText("", imageLocation,
-						iconLocation, alphavalue, action, context, alignText,
-						tOptions);
+				button = new MovingMapControlItemText("", 
+						imageLocation, iconLocation, alphavalue, action, context, alignText, tOptions);
 			} else if (localeDefault != null) {
-				button = new MovingMapControlItemText(MyLocale.getMsg(
-						localIDValue, localeDefault), imageLocation,
-						iconLocation, alphavalue, action, context, alignText,
-						tOptions);
+				button = new MovingMapControlItemText(MyLocale.getMsg(localIDValue, localeDefault),
+						imageLocation, iconLocation, alphavalue, action, context, alignText, tOptions);
 			} else {
-				button = new MovingMapControlItemButton(imageLocation,
-						iconLocation, action, alphavalue);
+				button = new MovingMapControlItemButton(
+						imageLocation, iconLocation, action, alphavalue);
 			}
 
 			// add extra role to all icons
