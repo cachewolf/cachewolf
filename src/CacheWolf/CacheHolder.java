@@ -1128,6 +1128,7 @@ public class CacheHolder{
 			{"353", ""},
 			{"318", "Found it"},
 			{"355", "Attended"},
+			{"361", "Webcam Photo Taken"},
 			{"319", "Didn't find it"},
 			{"314", "Write note"}, 
 			{"315", "Needs Archived"},
@@ -1139,6 +1140,7 @@ public class CacheHolder{
 			{"356", "Temporarily Disable Listing"},
 			{"357", "Enable Listing"},
 			{"358", "Post Reviewer Note"},
+			{"362", "Solved"},
 			{"313", "Flag 1"},
 			{"360", "Flag 2"},
 	};
