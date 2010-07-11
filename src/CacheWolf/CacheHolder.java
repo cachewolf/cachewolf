@@ -615,8 +615,13 @@ public class CacheHolder{
 		varParams.put("LATLON", (pos!=null && pos.isValid())?LatLon:"unknown");
 		varParams.put("LAT", decSep.replaceAll(pos.getLatDeg(CWPoint.DD)));
 		varParams.put("LON", decSep.replaceAll(pos.getLonDeg(CWPoint.DD)));		
-		if (withFoundText && cacheStatus.length()>=10 && cacheStatus.charAt(4)=='-')
-			varParams.put("STATUS",MyLocale.getMsg(318,"Found")+" "+cacheStatus);
+		if (withFoundText && cacheStatus.length()>=10 && cacheStatus.charAt(4)=='-') {
+			int msgNr=318; // normal found			
+			if (type == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
+			else if (type == CacheType.CW_TYPE_EVENT 
+					|| type == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
+			varParams.put("STATUS",MyLocale.getMsg(msgNr,"Found")+" "+cacheStatus);
+		}
 		else
 			varParams.put("STATUS", cacheStatus);
 		varParams.put("GC_LOGTYPE", GetGCLogType());
@@ -1122,8 +1127,6 @@ public class CacheHolder{
 	private final static int MSG_NR = 0; 
 	private final static int GC_MSG = 1; 
 	private final static int IDX_WRITENOTE = 4; 	
-	private final static int IDX_FOUNDIT = 1; 	
-	//private final static int IDX_NOTFOUND = 3; 	
 	private final static String[][] _logType = {	
 			{"353", ""},
 			{"318", "Found it"},
@@ -1156,7 +1159,16 @@ public class CacheHolder{
 	public String GetGCLogType() {                                                                                
 		String gcLogType=_logType[IDX_WRITENOTE][GC_MSG];
 		if (is_found()) {
-			gcLogType = _logType[IDX_FOUNDIT][GC_MSG];                                                                 
+			String msgNr="318"; // normal found			
+			if (type == CacheType.CW_TYPE_WEBCAM) { msgNr="361";}
+			else if (type == CacheType.CW_TYPE_EVENT 
+					|| type == CacheType.CW_TYPE_MEGA_EVENT) { msgNr="355";}
+			for (int i = 1; i < _logType.length; i++) {
+				if (_logType[i][MSG_NR].equals(msgNr)) {
+					gcLogType = _logType[i][GC_MSG]; 
+					break;
+				}
+			}
 		}
 		else {
 			String CacheStatus=getCacheStatus();  

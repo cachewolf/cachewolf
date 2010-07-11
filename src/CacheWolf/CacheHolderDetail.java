@@ -104,49 +104,47 @@ public class CacheHolderDetail {
 	 * @param newCh new cache data
 	 * @return CacheHolder with updated data
 	 */
-	public CacheHolderDetail update(CacheHolderDetail newCh){
-		  // flags
-		  if (getParent().is_found() && getParent().getCacheStatus().equals("")) getParent().setCacheStatus(MyLocale.getMsg(318,"Found"));
-
-		  //travelbugs:GPX-File contains all actual travelbugs but not the missions
-		  //  we need to check whether the travelbug is already in the existing list
-		  getParent().setHas_bugs(newCh.Travelbugs.size()>0);
-		  for (int i=newCh.Travelbugs.size()-1; i>=0; i--) {
-			 Travelbug tb=newCh.Travelbugs.getTB(i);  
-		     Travelbug oldTB=this.Travelbugs.find(tb.getName());
-		     // If the bug is already in the cache, we keep it
-		     if (oldTB != null) {
-		    	 if (tb.getMission().length() > 0)
-		    		 oldTB.setMission(tb.getMission());
-		    	 if (tb.getGuid().length() > 0)
-		    		 oldTB.setGuid(tb.getGuid());
-		    	 newCh.Travelbugs.replace(i,oldTB);
-		     }
-		    
-		  }
-		  this.Travelbugs = newCh.Travelbugs;
-		  
-		  if (newCh.attributes.count() > 0) this.attributes = newCh.attributes;
-		  
-		  // URL
-		  this.URL = newCh.URL;
-		  
-		  // Images
-		  this.images = newCh.images;
-		  
-		  setLongDescription(newCh.LongDescription);
-		  setHints(newCh.Hints);
-		  setCacheLogs(newCh.CacheLogs);
-		  
-		  if (newCh.OwnLogId.length()>0) this.OwnLogId=newCh.OwnLogId;
-		  if (newCh.OwnLog != null) this.OwnLog = newCh.OwnLog;
-		  
-		  if (newCh.Country.length()>0) this.Country=newCh.Country;
-		  if (newCh.State.length()>0) this.State=newCh.State;
-		  
-		  if (newCh.getSolver().length()>0) this.setSolver(newCh.getSolver());
-	 	return this;
-	  }
+	 public CacheHolderDetail update(CacheHolderDetail newCh) {
+			// flags
+			CacheHolder ch = getParent();
+			if (ch.is_found() && ch.getCacheStatus().equals("")) {
+				int msgNr=318; // normal found			 
+				if (ch.getType() == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
+				else if (ch.getType() == CacheType.CW_TYPE_EVENT 
+						|| ch.getType() == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
+				ch.setCacheStatus(MyLocale.getMsg(msgNr,"Found"));
+			}
+			//travelbugs:GPX-File contains all actual travelbugs but not the missions
+			// we need to check whether the travelbug is already in the existing list
+			getParent().setHas_bugs(newCh.Travelbugs.size()>0);
+			for (int i=newCh.Travelbugs.size()-1; i>=0; i--) {
+				Travelbug tb=newCh.Travelbugs.getTB(i);
+				Travelbug oldTB=this.Travelbugs.find(tb.getName());
+				// If the bug is already in the cache, we keep it
+				if (oldTB != null) {
+					if (tb.getMission().length() > 0)
+						oldTB.setMission(tb.getMission());
+					if (tb.getGuid().length() > 0)
+						oldTB.setGuid(tb.getGuid());
+					newCh.Travelbugs.replace(i,oldTB);
+				}
+			}
+			this.Travelbugs = newCh.Travelbugs;
+			if (newCh.attributes.count() > 0) this.attributes = newCh.attributes;
+			// URL
+			this.URL = newCh.URL;
+			// Images
+			this.images = newCh.images;
+			setLongDescription(newCh.LongDescription);
+			setHints(newCh.Hints);
+			setCacheLogs(newCh.CacheLogs);
+			if (newCh.OwnLogId.length()>0) this.OwnLogId=newCh.OwnLogId;
+			if (newCh.OwnLog != null) this.OwnLog = newCh.OwnLog;
+			if (newCh.Country.length()>0) this.Country=newCh.Country;
+			if (newCh.State.length()>0) this.State=newCh.State;
+			if (newCh.getSolver().length()>0) this.setSolver(newCh.getSolver());
+			return this;		
+	 }
 	  
 	  /**
 	   * Adds a user image to the cache data
