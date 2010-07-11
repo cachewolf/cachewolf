@@ -331,15 +331,21 @@ public class DetailsPanel extends CellPanel {
 		inpHidden.setText(mainCache.getDateHidden());
 		inpOwner.setText(mainCache.getCacheOwner());
 
+		int msgNr=318; // normal found
+    	if (cache.getType() == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
+    	else if (cache.getType() == CacheType.CW_TYPE_EVENT 
+    			|| cache.getType() == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
+
 		if ((cache.getCacheStatus().length() == 10 || cache.getCacheStatus().length() == 16) &&
 				cache.getCacheStatus().charAt(4) == '-') {
-			chcStatus.setText(MyLocale.getMsg(318, "Found") + " " + ch.getCacheStatus());
+			// todo found text for webcam or event
+			chcStatus.setText(MyLocale.getMsg(msgNr, "Found") + " " + ch.getCacheStatus());			
 		} else {
 			chcStatus.setText(ch.getCacheStatus());
 			// If the cache status contains a date, do not overwrite it with
 			// 'found' message
 			if (ch.is_found()) {
-				chcStatus.setText(MyLocale.getMsg(318, "Found"));
+				chcStatus.setText(MyLocale.getMsg(msgNr, "Found"));
 			}
 		}
 		chcType.setInt(CacheType.cw2GuiSelect(ch.getType()));
@@ -618,13 +624,17 @@ public class DetailsPanel extends CellPanel {
                     }
                 }
             } else if (ev.target == btnFoundDate) {
+            	int msgNr=318; // normal found
+            	if (cache.getType() == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
+            	else if (cache.getType() == CacheType.CW_TYPE_EVENT 
+            			|| cache.getType() == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
                 // DateChooser.dayFirst=true;
                 final DateTimeChooser dc = new DateTimeChooser(Vm.getLocale());
                 dc.title = MyLocale.getMsg(328, "Date found");
                 dc.setPreferredSize(240, 240);
                 String foundDate = chcStatus.getText();
-                if (foundDate.startsWith(MyLocale.getMsg(318, "Found") + " ")) {
-                    foundDate = foundDate.substring(MyLocale.getMsg(318, "Found").length() + 1);
+                if (foundDate.startsWith(MyLocale.getMsg(msgNr, "Found") + " ")) {
+                    foundDate = foundDate.substring(MyLocale.getMsg(msgNr, "Found").length() + 1);
                 }
                 else if (foundDate.endsWith(MyLocale.getMsg(319, "not Found"))) {
                     foundDate = foundDate.substring(0,foundDate.length()-MyLocale.getMsg(319, "not Found").length());
@@ -654,7 +664,7 @@ public class DetailsPanel extends CellPanel {
                 //TODO: The functions for extracting the date and the found/not-found text should not be in the GUI
                 int retCode=dc.execute();
                 if (retCode == ewe.ui.FormBase.IDOK && !chcStatus.getText().endsWith(MyLocale.getMsg(319, "not Found"))) {
-                    chcStatus.setText(MyLocale.getMsg(318, "Found") + " "
+                    chcStatus.setText(MyLocale.getMsg(msgNr, "Found") + " "
                                     + Convert.toString(dc.year) + "-"
                                     + MyLocale.formatLong(dc.month, "00") + "-"
                                     + MyLocale.formatLong(dc.day, "00") + " "
@@ -750,18 +760,21 @@ public class DetailsPanel extends CellPanel {
 		// the CacheHolder object which sits in cacheDB
 		//FIXME: so how do we do this??
 
+		int msgNr=318; // normal found
+    	if (cache.getType() == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
+    	else if (cache.getType() == CacheType.CW_TYPE_EVENT 
+    			|| cache.getType() == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
+
 		// Strip the found message if the status contains a date
-		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found")) &&
-			chcStatus.getText().length() >= MyLocale.getMsg(318, "Found").length() + 11) {
-			cache.setCacheStatus(chcStatus.getText().substring(MyLocale.getMsg(318, "Found").length() + 1));
+		if (chcStatus.getText().startsWith(MyLocale.getMsg(msgNr, "Found")) &&
+			chcStatus.getText().length() >= MyLocale.getMsg(msgNr, "Found").length() + 11) {
+			cache.setCacheStatus(chcStatus.getText().substring(MyLocale.getMsg(msgNr, "Found").length() + 1));
 		} else {
 			cache.setCacheStatus(chcStatus.getText());
 		}
 
-		if (chcStatus.getText().startsWith(MyLocale.getMsg(318, "Found")) ||
-			chcStatus.getText().startsWith(MyLocale.getMsg(355, "Attended")) ||
-			(cache.getCacheStatus().length() == 10 || cache.getCacheStatus().length() == 16) &&
-			cache.getCacheStatus().charAt(4) == '-') {
+		if (chcStatus.getText().startsWith(MyLocale.getMsg(msgNr, "Found")) ||
+			(cache.getCacheStatus().length() == 10 || cache.getCacheStatus().length() == 16) && cache.getCacheStatus().charAt(4) == '-') {
 			// Use same heuristic condition as in setDetails(CacheHolder) to
 			// determine, if this
 			// cache
@@ -773,14 +786,16 @@ public class DetailsPanel extends CellPanel {
 		if (!cache.isAddiWpt()) {
 			cache.setCacheOwner(inpOwner.getText().trim());
 		}
-		cache.setOwned(cache.getCacheStatus().equals(
-				MyLocale.getMsg(320, "Owner")));
+		cache.setOwned(cache.getCacheStatus().equals(MyLocale.getMsg(320, "Owner")));
 		// Avoid setting is_owned if alias is empty and username is empty
 		if (!cache.is_owned()) {
-			cache.setOwned((!pref.myAlias.equals("") && pref.myAlias
-					.equals(cache.getCacheOwner()))
-					|| (!pref.myAlias2.equals("") && pref.myAlias2
-							.equals(cache.getCacheOwner())));
+			cache.setOwned(
+					(!pref.myAlias.equals("") &&
+						pref.myAlias.equals(cache.getCacheOwner()))
+					||
+					(!pref.myAlias2.equals("") &&
+						pref.myAlias2.equals(cache.getCacheOwner()))
+					);
 		}
 		cache.setBlack(blackStatus);
 		final String oldWaypoint = cache.getWayPoint();
