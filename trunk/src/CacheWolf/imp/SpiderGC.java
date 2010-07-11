@@ -1733,7 +1733,7 @@ public class SpiderGC{
 							spideredUrls.add(imgUrl);
 							spiderCounter++;
 						} else { // Image already spidered as wayPoint_'idxUrl'
-							fileName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
+							fileName = chD.getParent().getWayPoint().toLowerCase() + "_" + Convert.toString(idxUrl);
 							pref.log("Already loaded image: " + imgUrl+" as "+fileName+imgType);
 							imageInfo = new ImageInfo();
 							imageInfo.setFilename(fileName+imgType);
@@ -1779,7 +1779,7 @@ public class SpiderGC{
 						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 						imageInfo = null;
 						if (idxUrl<0) { // New image
-							fileName = chD.getParent().getWayPoint() + "_" + Convert.toString(spiderCounter);
+							fileName = chD.getParent().getWayPoint().toLowerCase() + "_" + Convert.toString(spiderCounter);
 							if (lastImages != null) {
 								imageInfo = lastImages.needsSpidering(imgUrl, fileName+imgType);
 							}
@@ -1795,7 +1795,7 @@ public class SpiderGC{
 							spideredUrls.add(imgUrl);
 							spiderCounter++;
 						} else { // Image already spidered as wayPoint_'idxUrl'
-							fileName = chD.getParent().getWayPoint() + "_" + Convert.toString(idxUrl);
+							fileName = chD.getParent().getWayPoint().toLowerCase() + "_" + Convert.toString(idxUrl);
 							pref.log("Already loaded image: " + imgUrl+" as "+fileName+imgType);
 							imageInfo = new ImageInfo();
 							imageInfo.setFilename(fileName+imgType);
@@ -1830,7 +1830,7 @@ public class SpiderGC{
 						idxUrl=spideredUrls.find(imgUrl);
 						if (idxUrl<0) { // New image
 							imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
-							fileName = chD.getParent().getWayPoint() + "_" + Convert.toString(spiderCounter);
+							fileName = chD.getParent().getWayPoint().toLowerCase() + "_" + Convert.toString(spiderCounter);
 							if (lastImages != null) {
 								imageInfo = lastImages.needsSpidering(imgUrl, fileName+imgType);
 							}
