@@ -330,24 +330,7 @@ public class DetailsPanel extends CellPanel {
 		btnCoordinates.setText(ch.pos.toString());
 		inpHidden.setText(mainCache.getDateHidden());
 		inpOwner.setText(mainCache.getCacheOwner());
-
-		int msgNr=318; // normal found
-    	if (cache.getType() == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
-    	else if (cache.getType() == CacheType.CW_TYPE_EVENT 
-    			|| cache.getType() == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
-
-		if ((cache.getCacheStatus().length() == 10 || cache.getCacheStatus().length() == 16) &&
-				cache.getCacheStatus().charAt(4) == '-') {
-			// todo found text for webcam or event
-			chcStatus.setText(MyLocale.getMsg(msgNr, "Found") + " " + ch.getCacheStatus());			
-		} else {
-			chcStatus.setText(ch.getCacheStatus());
-			// If the cache status contains a date, do not overwrite it with
-			// 'found' message
-			if (ch.is_found()) {
-				chcStatus.setText(MyLocale.getMsg(msgNr, "Found"));
-			}
-		}
+		chcStatus.setText(cache.getStatusText());
 		chcType.setInt(CacheType.cw2GuiSelect(ch.getType()));
 		if (ch.is_black()) {
 			btnBlack.image = imgBlack;

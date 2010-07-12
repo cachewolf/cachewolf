@@ -108,11 +108,7 @@ public class CacheHolderDetail {
 			// flags
 			CacheHolder ch = getParent();
 			if (ch.is_found() && ch.getCacheStatus().equals("")) {
-				int msgNr=318; // normal found			 
-				if (ch.getType() == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
-				else if (ch.getType() == CacheType.CW_TYPE_EVENT 
-						|| ch.getType() == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
-				ch.setCacheStatus(MyLocale.getMsg(msgNr,"Found"));
+				ch.setCacheStatus(ch.getFoundText());
 			}
 			//travelbugs:GPX-File contains all actual travelbugs but not the missions
 			// we need to check whether the travelbug is already in the existing list
