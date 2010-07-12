@@ -156,7 +156,7 @@ public class FilterScreen extends Form{
 		pnlAttributes.addLast(chkNotOwned = new mCheckBox(MyLocale.getMsg(732,"Anderer Besitzer")), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		pnlAttributes.addNext(new mLabel(MyLocale.getMsg(307,"Status:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlAttributes.addLast(chcStatus = new mComboBox(new String[]{"", MyLocale.getMsg(313,"Flag 1"), MyLocale.getMsg(314,"Flag 2"), MyLocale.getMsg(315,"Flag 3"), MyLocale.getMsg(316,"Flag 4"), MyLocale.getMsg(317,"Search"), MyLocale.getMsg(318,"Found"), MyLocale.getMsg(319,"Not Found"), MyLocale.getMsg(320,"Owner")},0),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
+		pnlAttributes.addLast(chcStatus = new mComboBox(CacheHolder.GetGuiLogTypes(),0),CellConstants.HSTRETCH, (CellConstants.HFILL|CellConstants.WEST));
 		pnlAttributes.addLast(chkUseRegexp = new mCheckBox(MyLocale.getMsg(299,"Regular expression")));
 		
 		//////////////////////////

@@ -618,18 +618,14 @@ public class CacheHolder{
 		varParams.put("LATLON", (pos!=null && pos.isValid())?LatLon:"unknown");
 		varParams.put("LAT", decSep.replaceAll(pos.getLatDeg(CWPoint.DD)));
 		varParams.put("LON", decSep.replaceAll(pos.getLonDeg(CWPoint.DD)));		
-		if (withFoundText && cacheStatus.length()>=10 && cacheStatus.charAt(4)=='-') {
-			int msgNr=318; // normal found			
-			if (type == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
-			else if (type == CacheType.CW_TYPE_EVENT 
-					|| type == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
-			varParams.put("STATUS",MyLocale.getMsg(msgNr,"Found")+" "+cacheStatus);
+		if (withFoundText) {
+			varParams.put("STATUS",getStatusText());
 		}
 		else
 			varParams.put("STATUS", cacheStatus);
-		varParams.put("GC_LOGTYPE", GetGCLogType());
-		varParams.put("STATUS_DATE", GetStatusDate());
-		varParams.put("STATUS_TIME", GetStatusTime());
+		varParams.put("GC_LOGTYPE", getGCLogType());
+		varParams.put("STATUS_DATE", getStatusDate());
+		varParams.put("STATUS_TIME", getStatusTime());
 		varParams.put("DATE", dateHidden);
 		varParams.put("CACHE_NAME", cacheName);
 		if (codec instanceof AsciiCodec) { cacheName=Exporter.simplifyString(cacheName);} // use for "NAME"
@@ -1058,8 +1054,30 @@ public class CacheHolder{
             }
 		}
 	}
+	
+	public String getFoundText() {
+		int msgNr=318; // normal found			 
+		if (type == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
+		else if (type == CacheType.CW_TYPE_EVENT 
+				|| type == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
+		return MyLocale.getMsg(msgNr, "Found");
+	}
+	
+	public String getStatusText() {
+		if ((cacheStatus.length() == 10 || cacheStatus.length() == 16) &&
+				cacheStatus.charAt(4) == '-') {
+			return getFoundText() + " " + cacheStatus;			
+		} else {
+			if (found) {
+				return getFoundText();
+			}
+			else {
+				return cacheStatus;
+			}
+		}
+	}
 
-	public String GetStatusDate() {
+	public String getStatusDate() {
 		String statusDate = "";
 		
 		if (is_found() || getCacheStatus().indexOf(MyLocale.getMsg(319,"not found"))>10) {
@@ -1073,7 +1091,7 @@ public class CacheHolder{
 		return statusDate;		
 	}
 	
-	public String GetStatusTime() {
+	public String getStatusTime() {
 		String statusTime = "";
 
 		if (is_found() || getCacheStatus().indexOf(MyLocale.getMsg(319,"not found"))>10) {
@@ -1159,7 +1177,7 @@ public class CacheHolder{
 		return ret;
 	}
 	
-	public String GetGCLogType() {                                                                                
+	public String getGCLogType() {                                                                                
 		String gcLogType=_logType[IDX_WRITENOTE][GC_MSG];
 		if (is_found()) {
 			String msgNr="318"; // normal found			
