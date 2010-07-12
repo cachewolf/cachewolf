@@ -166,6 +166,7 @@ public class Attribute {
 		{"23","2548","phone","22","29","Telephone nearby"},//48 telephone nearby
 		{"24","2550","picnic","0","30","Picnic tables nearby"},//50 picnic tables available
 		{"43","2588","firstaid","23","42","Firstaid"}, // GC: Cachewartung notwendig (Auto Attribut) , OC: erste Hilfe 
+		{"73","2654","rv","0","46","Truck Driver/RV"},// changed by Moorteufel 12.07.10 
 		// Erlaubt - Permissions (Allowed/Not Allowed)
 		{"11","2524","dogs","0","1","Dogs"},//24 dogs allowed
 		{"05","2512","camping","0","31","Camping available"},//12 Camping allowed
@@ -234,11 +235,12 @@ public class Attribute {
 		// Einschränkungen und Voraussetzungen / Benötigt Vorarbeit
 		{"70","2648","wiki","54","0",""},// 148 Recherche
 		{"63","2630","riddle","55","0",""},// 130 Rätsel
+		{"74","2656","field_puzzle","0","47","Field Puzzle"},// changed by Moorteufel 12.07.10
 		{"47","2596","arith_prob","56","0",""},// 96 Rechenaufgabe
 		{"60","2622","othercache","57","0",""},// 122 besondere Cacheart
 		{"48","2598","ask","58","0",""},// 98 Startbedingungen beim Owner erfragen
 		// !!! todo correct Filter Implementation
-		{"72","2652","landf","45","0","Lost And Found Tour"}, // thx to Kappler and MiK
+		{"72","2652","landf","0","45","Lost And Found Tour"}, // thx to Kappler and MiK
 		// {"-1","2500","error","0","0",""}, //
 
 	};
