@@ -377,6 +377,7 @@ public class myTableControl extends TableControl{
 
 	public void startDragging(DragContext dc) {
 		 Point p=cellAtPoint(dc.start.x,dc.start.y,null);
+		 if (p==null) {super.startDragging(dc); return;}
 		 wayPoint=null;
 		 if (p.y>=0) {
 			if (!Global.mainForm.cacheListVisible) {
