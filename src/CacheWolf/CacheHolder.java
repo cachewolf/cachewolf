@@ -370,7 +370,6 @@ public class CacheHolder{
 				        if (start > -1 && end > -1)
 				        	attribsBits[2]=(Convert.parseLong(xmlString.substring(start + 1, end)));
 			        }
-			        setAttribsAsBits(attribsBits);
 			        
 		            start = xmlString.indexOf('"', end + 1);
 		            end = xmlString.indexOf('"', start + 1);
@@ -383,6 +382,17 @@ public class CacheHolder{
 		            } else {
 		            	long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));
 		            }
+		            start = xmlString.indexOf('"', end + 1);
+		            end = xmlString.indexOf('"', start + 1);
+			        if (start > -1 && end > -1) {
+			        	attribsBits[1]=(Convert.parseLong(xmlString.substring(start + 1, end)));
+	
+				        start = xmlString.indexOf('"', end + 1);
+				        end = xmlString.indexOf('"', start + 1);
+				        if (start > -1 && end > -1)
+				        	attribsBits[3]=(Convert.parseLong(xmlString.substring(start + 1, end)));
+			        }
+			        setAttribsAsBits(attribsBits);
 	            }
 				if (version < Profile.CURRENTFILEFORMAT) {
 		            // forceload of details, creates waypoint.xml if missing
