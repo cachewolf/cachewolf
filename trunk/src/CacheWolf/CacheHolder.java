@@ -436,10 +436,6 @@ public class CacheHolder{
 		}
 		return result;
 	}
-	
-	public void update(CacheHolder ch) {
-		update(ch, false);
-	}
 	/** 
 	 * Updates Cache information with information provided by cache given as argument. This is used
 	 * to update the cache with the information retrieved from files or web: The argument cache
@@ -449,34 +445,31 @@ public class CacheHolder{
 	 * @param overwrite If <code>true</code>, then <i>status</i>, <i>is_found</i> and <i>position</i>
 	 * is updated, otherwise not.
 	 */
-	public void update(CacheHolder ch, boolean overwrite) {
+	public void update(CacheHolder ch) {
 		this.recommendationScore = ch.recommendationScore;
 		this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
 		this.setNumRecommended(ch.getNumRecommended());
-		if (overwrite) {
-			this.setCacheStatus(ch.getCacheStatus());
-			this.setFound(ch.is_found());
-			this.pos = ch.pos;
-			this.LatLon = ch.LatLon;
-		} else {
-			/* Here we have to distinguish several cases:
-	   this.is_found       this                ch               Update 'this'
-	   --------------------------------------------------------------------
-	   false               empty               yyyy-mm-dd       yes
-	   true                "Found"             yyyy-mm-dd       yes
-	   true                yyyy-mm-dd          yyyy-mm-dd       no (or yes)
-	   true                yyyy-mm-dd hh:mm    yyyy-mm-dd       no
-	   any                 any                 empty            no
-			 */
-			if (!this.is_found() || this.getCacheStatus().indexOf(":")<0) {
-				// don't overwrite with empty data
-				if (!ch.getCacheStatus().trim().equals("")) {
-					this.setCacheStatus(ch.getCacheStatus());
-				}
-				this.setFound(ch.is_found());
+		boolean mayChangeCoordinates = !this.cacheStatus.startsWith(MyLocale.getMsg(362,"solved"));
+		/* Here we have to distinguish several cases:
+		 * this.is_found       this                ch               Update 'this'
+		 *                                         (values are
+		 *                                     empty or yyyy-mm-dd)
+		 * ----------------------------------------------------------------------
+		 * false               any                 yyyy-mm-dd       yes
+		 * true                "Found"             yyyy-mm-dd       yes
+		 * true                yyyy-mm-dd          yyyy-mm-dd       yes (or no)
+		 * true                yyyy-mm-dd hh:mm    yyyy-mm-dd       no
+		*/
+		if (!this.found || this.cacheStatus.indexOf(":")<0) {
+			// don't overwrite with empty data
+			if (!ch.getCacheStatus().trim().equals("")) {
+				this.setCacheStatus(ch.getCacheStatus());
 			}
-			// Don't overwrite valid coordinates with invalid ones
-			if (ch.pos.isValid() || !this.pos.isValid()) {
+			this.setFound(ch.is_found());
+		}
+		// Don't overwrite valid coordinates with invalid ones
+		if (ch.pos.isValid() || !this.pos.isValid()) {
+			if (mayChangeCoordinates) {
 				this.pos = ch.pos;
 				this.LatLon = ch.LatLon;
 			}
