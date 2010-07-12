@@ -509,13 +509,13 @@ public class Filter{
 	        ///////////////////////////////
 	        if (!cacheStatus.equals("")) {
 	        	if (!useRegexp) {
-	        		if (ch.getCacheStatus().toLowerCase().indexOf(cacheStatus.toLowerCase())<0) {
+	        		if (ch.getStatusText().toLowerCase().indexOf(cacheStatus.toLowerCase())<0) {
 	        			cacheFiltered = true;
 	        			break;
 	        		}
 	        	} else {
 	        		Regex rex=new Regex(cacheStatus.toLowerCase());
-	        		rex.search(ch.getCacheStatus().toLowerCase());
+	        		rex.search(ch.getStatusText().toLowerCase());
 	        		if (rex.stringMatched()==null) {
 	        			cacheFiltered = true;
 	        			break;

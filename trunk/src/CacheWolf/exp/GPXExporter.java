@@ -103,7 +103,7 @@ public class GPXExporter extends Exporter{
 					} else {
 						strBuf.append("        <groundspeak:log id=\"" ).append( Integer.toString(counter) ).append( "\">\r\n");
 					}
-					strBuf.append("          <groundspeak:date>").append(SafeXML.cleanGPX(ch.GetStatusDate())).append("T").append(SafeXML.cleanGPX(ch.GetStatusTime())).append(":00</groundspeak:date>\r\n");
+					strBuf.append("          <groundspeak:date>").append(SafeXML.cleanGPX(ch.getStatusDate())).append("T").append(SafeXML.cleanGPX(ch.getStatusTime())).append(":00</groundspeak:date>\r\n");
 					if ( det.OwnLog != null ) {
 						strBuf.append("          <groundspeak:type>").append(image2TypeText(det.OwnLog.getIcon())).append("</groundspeak:type>\r\n");
 					} else {
