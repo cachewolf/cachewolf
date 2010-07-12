@@ -103,26 +103,26 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] exitems = new MenuItem[14];
+		MenuItem[] exitems = new MenuItem[13];
 		//Vm.debug("Hi in MainMenu "+lr);
 		exitems[0] = exporthtml = new MenuItem(MyLocale.getMsg(100,"to HTML"));
 		exitems[1] = exportGpxNg = new MenuItem(MyLocale.getMsg(101,"to GPX Test"));
 		exitems[2] = exporttop50 = new MenuItem(MyLocale.getMsg(102,"to TOP50 ASCII"));
-		exitems[3] = exportGPX = new MenuItem(MyLocale.getMsg(103,"to GPX"));
-		exitems[4] = exportASC = new MenuItem(MyLocale.getMsg(104,"to CSV"));
-		exitems[5] = exportTomTom = new MenuItem(MyLocale.getMsg(105,"to TomTom"));
-		exitems[6] = exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV"));
-		exitems[7] = exportLOC = new MenuItem(MyLocale.getMsg(215,"to LOC"));
-		exitems[8] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
+		// exitems[3] = exportGPX = new MenuItem(MyLocale.getMsg(103,"to GPX"));
+		exitems[3] = exportASC = new MenuItem(MyLocale.getMsg(104,"to CSV"));
+		exitems[4] = exportTomTom = new MenuItem(MyLocale.getMsg(105,"to TomTom"));
+		exitems[5] = exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV"));
+		exitems[6] = exportLOC = new MenuItem(MyLocale.getMsg(215,"to LOC"));
+		exitems[7] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
 		if ( Global.getPref().gpsbabel == null ) {
 			exportGPS.modifiers = MenuItem.Disabled;
 			exportGPS.setText(MyLocale.getMsg(136,"to GPS : gpsbabel missing."));
 		}
-		exitems[9] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
-		exitems[10] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
-		exitems[11] = exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist"));
-		exitems[12] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
-		exitems[13] = exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135,"to SpoilerPOI"));
+		exitems[8] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
+		exitems[9] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
+		exitems[10] = exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist"));
+		exitems[11] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
+		exitems[12] = exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135,"to SpoilerPOI"));
 
 		Menu exportMenu = new Menu(exitems, MyLocale.getMsg(107,"Export"));
 
