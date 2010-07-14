@@ -69,7 +69,7 @@ public class Attribute {
     	if (id>-1) {
         	int b = Integer.parseInt(attRef[id][BIT_NR]);
     		bit[0] = b>63 ? 0l : (1L << b);
-    		bit[1] = b>63 ? (1L << 64-b) : 0;
+    		bit[1] = b>63 ? (1L << b-64) : 0;
     	}
     	else {
         	bit[0]=0;
