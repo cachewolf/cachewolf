@@ -355,7 +355,7 @@ public class SpiderGC{
 					+ (spiderAllFinds ? "all Finds (DB/GC)"+ numFoundInDB+"/"+numFinds : "new and update Caches") + "\n"
 					+ "minDistance: " + minDistance + "\n"
 					+ "maxDistance: " + maxDistance + "\n"
-					+ "directions: " + directions + "\n"
+					+ "directions: " + direction + "\n"
 					+ "maxNew: " + maxNew + "\n"
 					+ "maxUpdate: " + maxUpdate + "\n"
 					+ "maxLogs: " + (loadAllLogs ? "completepage " : "shortpage") + "save:" + pref.maxLogsToSpider + "\n"
