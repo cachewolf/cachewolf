@@ -348,8 +348,23 @@ public class SpiderGC{
 			maxNew=java.lang.Math.min(numFinds-numFoundInDB,maxNew);
 			if (maxUpdate == 0 && maxNew == 0) { Vm.showWait(false); infB.close(0); return; }
 		}
+		boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
 		try {
 			//Loop pages till maximum distance has been found or no more caches are in the list
+			pref.log("Download properties : \n"
+					+ (spiderAllFinds ? "all Finds (DB/GC)"+ numFoundInDB+"/"+numFinds : "new and update Caches") + "\n"
+					+ "minDistance: " + minDistance + "\n"
+					+ "maxDistance: " + maxDistance + "\n"
+					+ "directions: " + directions + "\n"
+					+ "maxNew: " + maxNew + "\n"
+					+ "maxUpdate: " + maxUpdate + "\n"
+					+ "maxLogs: " + (loadAllLogs ? "completepage " : "shortpage") + "save:" + pref.maxLogsToSpider + "\n"
+					+ "with pictures     : " + (!getImages ? "no" : "yes")+ "\n"
+					+ "with tb           : " + (!getTBs ? "no" : "yes") + "\n"
+					+ "with Founds       : " + (doNotgetFound ? "no" : "yes") + "\n"
+					+ "alias is premium m: " + (!pref.isPremium ? "no" : "yes") + "\n"
+					+ "Update if new Logs: " + (!pref.checkLog ? "no" : "yes") + "\n"
+					);
 			while(maxDistance > 0){
 				RexPropListBlock.search(htmlListPage);
 				String tableOfHtmlListPage;
@@ -425,6 +440,7 @@ public class SpiderGC{
 			} // loop pages
 		} // try
 		catch (Exception ex) {
+			pref.log("Download error : ", ex);
 			infB.close(0);
 			Vm.showWait(false);
 			return;
@@ -450,7 +466,6 @@ public class SpiderGC{
 		//=======
 		// Now ready to spider each cache in the list
 		//=======
-		boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
 
 		int spiderErrors = 0;
 		if (cachesToUpdate.size() == startSize)
