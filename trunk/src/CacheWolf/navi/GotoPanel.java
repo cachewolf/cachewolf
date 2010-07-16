@@ -144,7 +144,7 @@ public final class GotoPanel extends CellPanel {
 		HeadP.addLast(ButtonP,CellConstants.HSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
 		HeadP.addLast(CoordsP,CellConstants.HSTRETCH, CellConstants.HFILL|CellConstants.NORTH).setTag(SPAN,new Dimension(2,1));	
 		this.addNext(HeadP,CellConstants.HSTRETCH, CellConstants.WEST).setTag(SPAN,new Dimension(2,1));		
-		this.addLast(btnMap = new mButton(" ---> "+MyLocale.getMsg(1506,"Map")+" "),CellConstants.HSTRETCH, CellConstants.VFILL|CellConstants.RIGHT).setTag(SPAN,new Dimension(2,1));
+		this.addLast(btnMap = new mButton(MyLocale.getMsg(1506,"Map")+" "),CellConstants.HSTRETCH, CellConstants.VFILL|CellConstants.RIGHT).setTag(SPAN,new Dimension(2,1));
 		this.addLast(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
 		btnMap.backGround=GREEN;
 		// for debuging
