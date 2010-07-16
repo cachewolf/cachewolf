@@ -1,5 +1,5 @@
 cd %~d0%~p0
-rem call getres.bat
+call getres.bat
 java -cp lib/ewe.jar Ewe programs/Jewel.ewe -c cw-pda.jnf
 java -cp lib/ewe.jar Ewe programs/Jewel.ewe -c cw-ppc2003.jnf
 java -cp lib/ewe.jar Ewe programs/Jewel.ewe -c cw-pc.jnf
