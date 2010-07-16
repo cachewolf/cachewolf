@@ -19,7 +19,7 @@ public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB;
 	mChoice inpLanguage, inpMetric, inpSpiderUpdates;
 	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, 
-	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword;
+	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword,inpGcMemberID;
 	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus,chkHasCloseButton,
 	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, 
 	          chkSetCurrentCentreFromGPSPosition,chkSortingGroupedByCache,chkuseOwnSymbols,chkDebug,chkPM;
@@ -55,20 +55,21 @@ public class PreferencesScreen extends Form {
 		if((pref.fontSize <= 13)||(sw <= 240)||(sh <= 240)){
 			setPreferredSize(240,240);
 		}
-		else if(pref.fontSize <= 17){
-			setPreferredSize(300,250);
+		else if(pref.fontSize <= 28){
+			// was for <=16 setPreferredSize(288,252);
+			setPreferredSize(pref.fontSize*18,pref.fontSize*16);
 		}
 		else if(pref.fontSize <= 20){
-			setPreferredSize(350,300);
+			setPreferredSize(352,302);
 		}
 		else if(pref.fontSize <= 24){
-			setPreferredSize(400,350);
+			setPreferredSize(420,350);
 		}
 		else if(pref.fontSize <= 28){
-			setPreferredSize(450,400);
+			setPreferredSize(480,390);
 		}
 		else{
-			setPreferredSize(500,450);
+			setPreferredSize(576,512);
 		}
 		
 		//scp = new ScrollBarPanel(pnlGeneral);
@@ -96,10 +97,13 @@ public class PreferencesScreen extends Form {
 		cpBrowser.addNext(Alias = new mInput(pref.myAlias),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
 		cpBrowser.addNext(new mLabel(MyLocale.getMsg(594,"Pwd")));
 		cpBrowser.addLast(inpPassword=new mInput(pref.password),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
-		cpBrowser.addLast(chkPM=new mCheckBox("PM"));
-		if (pref.isPremium) chkPM.setState(true);
 		inpPassword.setToolTip(MyLocale.getMsg(593,"Password is optional here.\nEnter only if you want to store it in pref.xml"));
 		inpPassword.isPassword=true;
+		cpBrowser.addNext(chkPM=new mCheckBox("PM"));
+		if (pref.isPremium) chkPM.setState(true);
+		cpBrowser.addNext(new mLabel(MyLocale.getMsg(650,"GcMemberID:")));
+		cpBrowser.addLast(inpGcMemberID=new mInput(pref.gcMemberId),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		
 		pnlGeneral.addLast(separator(cpBrowser),HSTRETCH,HFILL);
 		
 		CellPanel cpGPS=new CellPanel();
@@ -311,6 +315,7 @@ public class PreferencesScreen extends Form {
 				
 				pref.myAlias = Alias.getText().trim();
 				SpiderGC.passwort=pref.password= inpPassword.getText().trim();
+				pref.gcMemberId=inpGcMemberID.getText().trim();
 				MyLocale.saveLanguage(MyLocale.language=inpLanguage.getText().toUpperCase().trim());
 				pref.browser = Browser.getText();
 				//Vm.debug(myPreferences.browser);
