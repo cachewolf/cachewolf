@@ -2,7 +2,6 @@ package CacheWolf;
 
 import CacheWolf.exp.ASCExporter;
 import CacheWolf.exp.ExploristExporter;
-import CacheWolf.exp.GPXExporter;
 import CacheWolf.exp.GpxExportNg;
 import CacheWolf.exp.HTMLExporter;
 import CacheWolf.exp.KMLExporter;
@@ -57,10 +56,10 @@ public class MainMenu extends MenuBar {
 	private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
 	private MenuItem spider, spiderAllFinds, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
-	private MenuItem exportGpxNg, exporthtml, exporttop50, exportGPX, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
+	private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
-	private MenuItem exportLOC, exportGPS, mnuSeparator;
+	private MenuItem exportLOC, exportGPS, mnuSeparator=new MenuItem("-");
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgCheckNotesAndSolver, orgRater;
 	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuDeleteProfile, mnuRenameProfile, mnuEditCenter;
@@ -79,125 +78,127 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for profiles, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mnuProfile = new MenuItem[4];
-		mnuProfile[0] = mnuNewProfile = new MenuItem(MyLocale.getMsg(1107,"New"));
-		mnuProfile[1] = mnuOpenProfile = new MenuItem(MyLocale.getMsg(1109,"Open"));
-		mnuProfile[2] = mnuDeleteProfile = new MenuItem(MyLocale.getMsg(1125,"Delete"));
-		mnuProfile[3] = mnuRenameProfile = new MenuItem(MyLocale.getMsg(1126,"Rename"));
+		MenuItem[] mnuProfile = {
+			mnuNewProfile = new MenuItem(MyLocale.getMsg(1107,"New")),
+			mnuOpenProfile = new MenuItem(MyLocale.getMsg(1109,"Open")),
+			mnuDeleteProfile = new MenuItem(MyLocale.getMsg(1125,"Delete")),
+			mnuRenameProfile = new MenuItem(MyLocale.getMsg(1126,"Rename")),
+		};
 		Menu profileMenu = new Menu(mnuProfile,MyLocale.getMsg(121,"Profiles"));
 
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for import, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mnuImport = new MenuItem[7];
-		mnuImport[0] = loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")); //TODO internationalization
-		mnuImport[1] = loadOC      = new MenuItem(MyLocale.getMsg(130,"Download from opencaching"));
-		mnuImport[2] = spider      = new MenuItem(MyLocale.getMsg(131,"Spider from geocaching.com"));
-		mnuImport[3] = spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com"));
-		mnuImport[4] = update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data"));
-		mnuImport[5] = mnuSeparator   = new MenuItem("-");
-		mnuImport[6] = mnuForceLogin  = new MenuItem(MyLocale.getMsg(216,"Always login to GC"));
+		MenuItem[] mnuImport = {				
+				loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")),
+				loadOC      = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")),
+				spider      = new MenuItem(MyLocale.getMsg(131,"Spider from geocaching.com")),
+				spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")),
+				update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data")),
+				mnuSeparator,
+				mnuForceLogin  = new MenuItem(MyLocale.getMsg(216,"Always login to GC")),
+		};
 		Menu importMenu = new Menu(mnuImport, MyLocale.getMsg(175,"Import"));
 		if (Global.getPref().forceLogin) mnuForceLogin.modifiers^=MenuItem.Checked;
 
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] exitems = new MenuItem[13];
-		//Vm.debug("Hi in MainMenu "+lr);
-		exitems[0] = exporthtml = new MenuItem(MyLocale.getMsg(100,"to HTML"));
-		exitems[1] = exportGpxNg = new MenuItem(MyLocale.getMsg(101,"to GPX Test"));
-		exitems[2] = exporttop50 = new MenuItem(MyLocale.getMsg(102,"to TOP50 ASCII"));
-		// exitems[3] = exportGPX = new MenuItem(MyLocale.getMsg(103,"to GPX"));
-		exitems[3] = exportASC = new MenuItem(MyLocale.getMsg(104,"to CSV"));
-		exitems[4] = exportTomTom = new MenuItem(MyLocale.getMsg(105,"to TomTom"));
-		exitems[5] = exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV"));
-		exitems[6] = exportLOC = new MenuItem(MyLocale.getMsg(215,"to LOC"));
-		exitems[7] = exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS"));
+		MenuItem[] exitems = {
+				exporthtml = new MenuItem(MyLocale.getMsg(100,"to HTML")),
+				exportGpxNg = new MenuItem(MyLocale.getMsg(101,"to GPX Test")),
+				exporttop50 = new MenuItem(MyLocale.getMsg(102,"to TOP50 ASCII")),
+				exportASC = new MenuItem(MyLocale.getMsg(104,"to CSV")),
+				exportTomTom = new MenuItem(MyLocale.getMsg(105,"to TomTom")),
+				exportMSARCSV = new MenuItem(MyLocale.getMsg(106,"to MS AutoRoute CSV")),
+				exportLOC = new MenuItem(MyLocale.getMsg(215,"to LOC")),
+				exportGPS = new MenuItem(MyLocale.getMsg(122,"to GPS")),
+				exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI")),
+				exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth")),
+				exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist")),
+				exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template")),
+				exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135,"to SpoilerPOI")),
+		};
 		if ( Global.getPref().gpsbabel == null ) {
 			exportGPS.modifiers = MenuItem.Disabled;
 			exportGPS.setText(MyLocale.getMsg(136,"to GPS : gpsbabel missing."));
 		}
-		exitems[8] = exportOZI = new MenuItem(MyLocale.getMsg(124,"to OZI"));
-		exitems[9] = exportKML = new MenuItem(MyLocale.getMsg(125,"to Google Earth"));
-		exitems[10] = exportExplorist = new MenuItem(MyLocale.getMsg(132,"to Explorist"));
-		exitems[11] = exportTPL = new MenuItem(MyLocale.getMsg(128,"via Template"));
-		exitems[12] = exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135,"to SpoilerPOI"));
 
 		Menu exportMenu = new Menu(exitems, MyLocale.getMsg(107,"Export"));
 
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for maps, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] mapMenuItems = new MenuItem[4];
-		mapMenuItems[0] = downloadmap = new MenuItem(MyLocale.getMsg(162,"Download calibrated"));
-		mapMenuItems[1] = importmap = new MenuItem(MyLocale.getMsg(150,"Import"));
-		mapMenuItems[2] = kalibmap = new MenuItem(MyLocale.getMsg(151,"Calibrate"));
-		mapMenuItems[3] = selectMapPath = new MenuItem(MyLocale.getMsg(4236, "Change map directory$c"));
+		MenuItem[] mapMenuItems = {
+				downloadmap = new MenuItem(MyLocale.getMsg(162,"Download calibrated")),
+				importmap = new MenuItem(MyLocale.getMsg(150,"Import")),
+				kalibmap = new MenuItem(MyLocale.getMsg(151,"Calibrate")),
+				selectMapPath = new MenuItem(MyLocale.getMsg(4236, "Change map directory$c")),
+		};
 		Menu mapsMenu = new Menu(mapMenuItems, null);
 
 		// Now we start with the horizontal menu bar "Application", "Search", "Filter", "Organise", "About"
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Application" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem [] appMenuItems=new MenuItem[11];
-		appMenuItems[0] = new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu);
-		appMenuItems[1] = preferences = new MenuItem(MyLocale.getMsg(108,"Preferences"));
-		appMenuItems[2] = mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Centre"));
-		appMenuItems[3] = mnuContext = new MenuItem(MyLocale.getMsg(134,"Current Cache"));
-		appMenuItems[4] = mnuSeparator;
-		appMenuItems[5] = new MenuItem(MyLocale.getMsg(175,"Import"),0,importMenu);
-		appMenuItems[6] = new MenuItem(MyLocale.getMsg(107,"Export"),0,exportMenu);
-		appMenuItems[7] = new MenuItem(MyLocale.getMsg(149,"Maps"),0,mapsMenu);
-		appMenuItems[8] = mnuSeparator;
-		appMenuItems[9] = savenoxit = new MenuItem(MyLocale.getMsg(127,"Save"));
-		//appMenuItems[10] = savenexit = new MenuItem(MyLocale.getMsg(110,"Save & Exit"));
-		appMenuItems[10] = exit = new MenuItem(MyLocale.getMsg(111,"Exit"));
+		MenuItem [] appMenuItems={
+				new MenuItem(MyLocale.getMsg(121,"Profile"), 0, profileMenu),
+				preferences = new MenuItem(MyLocale.getMsg(108,"Preferences")),
+				mnuEditCenter = new MenuItem(MyLocale.getMsg(1110,"Centre")),
+				mnuContext = new MenuItem(MyLocale.getMsg(134,"Current Cache")),
+				mnuSeparator,
+				new MenuItem(MyLocale.getMsg(175,"Import"),0,importMenu),
+				new MenuItem(MyLocale.getMsg(107,"Export"),0,exportMenu),
+				new MenuItem(MyLocale.getMsg(149,"Maps"),0,mapsMenu),
+				mnuSeparator,
+				savenoxit = new MenuItem(MyLocale.getMsg(127,"Save")),
+				// savenexit = new MenuItem(MyLocale.getMsg(110,"Save & Exit")),
+				exit = new MenuItem(MyLocale.getMsg(111,"Exit")),
+		};
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(120,"Application"),new Menu(appMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Search" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] searchMenuItems=new MenuItem[3];
-		searchMenuItems[0] = search = new MenuItem(MyLocale.getMsg(112,"Search$"+(char)6)); // char 6 = ctrl +f
-		searchMenuItems[1] = searchAll = new MenuItem(MyLocale.getMsg(133,"Search All"));
-		searchMenuItems[2] = searchClr = new MenuItem(MyLocale.getMsg(113,"Clear search"));
+		MenuItem[] searchMenuItems={
+				search = new MenuItem(MyLocale.getMsg(112,"Search$"+(char)6)),// char 6 = ctrl +f
+				searchAll = new MenuItem(MyLocale.getMsg(133,"Search All")),
+				searchClr = new MenuItem(MyLocale.getMsg(113,"Clear search")),
+		};
 
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Filter" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterMenuItems=new MenuItem[9];
-		filterMenuItems[0] = filtApply  = new MenuItem(MyLocale.getMsg(709,"Apply"));
-		filterMenuItems[1] = filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create"));
-		filterMenuItems[2] = filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert"));
-		filterMenuItems[3] = filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear"));
-		filterMenuItems[4] = mnuSeparator;
-		filterMenuItems[5] = filtSelected = new MenuItem(MyLocale.getMsg(160,"Filter selected"));
-		filterMenuItems[6] = filtNonSelected = new MenuItem(MyLocale.getMsg(1011,"Filter out non selected"));
-		filterMenuItems[7] = mnuSeparator;
-		filterMenuItems[8] = filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist"));
+		MenuItem[] filterMenuItems={
+				filtApply  = new MenuItem(MyLocale.getMsg(709,"Apply")),
+				filtCreate  = new MenuItem(MyLocale.getMsg(114,"Create")),
+				filtInvert  = new MenuItem(MyLocale.getMsg(115,"Invert")),
+				filtClear   = new MenuItem(MyLocale.getMsg(116,"Clear")),
+				mnuSeparator,
+				filtSelected = new MenuItem(MyLocale.getMsg(160,"Filter selected")),
+				filtNonSelected = new MenuItem(MyLocale.getMsg(1011,"Filter out non selected")),
+				mnuSeparator,
+				filtBlack   = new MenuItem(MyLocale.getMsg(161,"Show Blacklist")),
+		};
         filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
-		//filterMenuItems[9] = mnuSeparator;
-		//filterMenuItems[10] = cacheTour;
 
 		///////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] filterAndSearchMenuItems=new MenuItem[12];
-		filterAndSearchMenuItems[0]=filtApply;
-		filterAndSearchMenuItems[1]=filtCreate;
-		filterAndSearchMenuItems[2]=filtInvert;
-		filterAndSearchMenuItems[3]=filtClear;
-		filterAndSearchMenuItems[4]=mnuSeparator;
-		filterAndSearchMenuItems[5]=filtSelected;
-		filterAndSearchMenuItems[6]=filtNonSelected;
-		filterAndSearchMenuItems[7]=mnuSeparator;
-		filterAndSearchMenuItems[8]=filtBlack;
-		filterAndSearchMenuItems[9]=mnuSeparator;
-		filterAndSearchMenuItems[10]=search;
-		filterAndSearchMenuItems[11]=searchClr;
-		//filterAndSearchMenuItems[12] = mnuSeparator;
-		//filterAndSearchMenuItems[13] = cacheTour;
+		MenuItem[] filterAndSearchMenuItems={
+				filtApply,
+				filtCreate,
+				filtInvert,
+				filtClear,
+				mnuSeparator,
+				filtSelected,
+				filtNonSelected,
+				mnuSeparator,
+				filtBlack,
+				mnuSeparator,
+				search,
+				searchClr,
+		};
 
 		// Depending on screen width display either filter and search menus or the combined menu
 		if (MyLocale.getScreenWidth()>300) {
@@ -210,31 +211,32 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// Create the "Organise" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] organiseMenuItems=new MenuItem[11];
-		organiseMenuItems[0] = orgNewWP = new MenuItem(MyLocale.getMsg(214,"New Waypoint"));
-		organiseMenuItems[1] = mnuSeparator;
-		organiseMenuItems[2] = orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy"));
-		organiseMenuItems[3] = orgMove  = new MenuItem(MyLocale.getMsg(142,"Move"));
-		organiseMenuItems[4] = orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete"));
-		organiseMenuItems[5] = orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index"));
-		organiseMenuItems[6] = orgCheckNotesAndSolver = new MenuItem(MyLocale.getMsg(220,"Check Notes/Solver"));
-		organiseMenuItems[7] = orgRater = new MenuItem("Rater");
+		MenuItem[] organiseMenuItems={				
+				orgNewWP = new MenuItem(MyLocale.getMsg(214,"New Waypoint")),
+				mnuSeparator,
+				orgCopy  = new MenuItem(MyLocale.getMsg(141,"Copy")),
+				orgMove  = new MenuItem(MyLocale.getMsg(142,"Move")),
+				orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete")),
+				orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index")),
+				orgCheckNotesAndSolver = new MenuItem(MyLocale.getMsg(220,"Check Notes/Solver")),
+				orgRater = new MenuItem("Rater"),
+				mnuSeparator,
+				orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs")),
+				cacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour")),
+		};
 		if (null == Global.getPref().rater) orgRater.modifiers = MenuItem.Disabled;
-		organiseMenuItems[8] = mnuSeparator;
-		organiseMenuItems[9] = orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs"));
-		cacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour"));
-		organiseMenuItems[10] = cacheTour;
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organise"),new Menu(organiseMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
 		// Create the "About" pulldown menu
 		///////////////////////////////////////////////////////////////////////
-		MenuItem[] aboutMenuItems=new MenuItem[5];
-		aboutMenuItems[0] = about = new MenuItem(MyLocale.getMsg(117,"About"));
-		aboutMenuItems[1] = legend = new MenuItem(MyLocale.getMsg(155,"Legend"));
-		aboutMenuItems[2] = wolflang = new MenuItem(MyLocale.getMsg(118,"WolfLanguage"));
-		aboutMenuItems[3] = sysinfo = new MenuItem(MyLocale.getMsg(157,"System"));
-		aboutMenuItems[4] = chkVersion = new MenuItem(MyLocale.getMsg(158,"Version Check"));
+		MenuItem[] aboutMenuItems={
+				about = new MenuItem(MyLocale.getMsg(117,"About")),
+				legend = new MenuItem(MyLocale.getMsg(155,"Legend")),
+				wolflang = new MenuItem(MyLocale.getMsg(118,"WolfLanguage")),
+				sysinfo = new MenuItem(MyLocale.getMsg(157,"System")),
+				chkVersion = new MenuItem(MyLocale.getMsg(158,"Version Check")),
+		};
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(117,"About"),new Menu(aboutMenuItems,null)));
 	}
 
@@ -408,10 +410,6 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == exporttop50){
 				OVLExporter ovl = new OVLExporter(pref, profile);
 				ovl.doIt();
-			}
-			if(mev.selectedItem == exportGPX){
-				GPXExporter gpx = new GPXExporter(pref,profile);
-				gpx.doIt(1);
 			}
 			if(mev.selectedItem == exportASC){
 				ASCExporter asc = new ASCExporter(pref,profile);
