@@ -20,7 +20,7 @@ public class myTableControl extends TableControl{
 
 	private MenuItem miOpen, miGoto, miCenter, miUnhideAddis;
 	private MenuItem miOpenOnline, miOpenOffline, miLogOnline, miOpenGmaps;
-	private MenuItem miDelete, miUpdate;
+	private MenuItem miDelete, miUpdate, miChangeBlack;
 	private MenuItem miTickAll, miUntickAll;
 	private MenuItem miSeparator;
 
@@ -33,25 +33,25 @@ public class myTableControl extends TableControl{
 		pref = Global.getPref();
 		tbp =tablePanel;
 		allowDragSelection = false; // allow only one row to be selected at one time
-
-		MenuItem[] mnuFull = new MenuItem[15];
-  	mnuFull[0] = miOpen = new MenuItem(MyLocale.getMsg(1021,"Open description"));
-  	mnuFull[1] = miGoto = new MenuItem(MyLocale.getMsg(1010,"Goto"));
-  	mnuFull[2] = miCenter = new MenuItem(MyLocale.getMsg(1019,"Center"));
-  	mnuFull[3] = miUnhideAddis = new MenuItem(MyLocale.getMsg(1042,"Unhide Addis"));
-  	mnuFull[4] = miSeparator = new MenuItem("-");
-  	mnuFull[5] = miOpenOnline = new MenuItem(MyLocale.getMsg(1020,"Open in $browser online"));
-  	mnuFull[6] = miOpenOffline = new MenuItem(MyLocale.getMsg(1018,"Open in browser offline"));
-  	mnuFull[7] = miLogOnline = new MenuItem(MyLocale.getMsg(1052,"Log online in Browser"));
-  	mnuFull[8] = miOpenGmaps = new MenuItem(MyLocale.getMsg(1053,"Open in Google maps online"));
-  	mnuFull[9] = miSeparator;
-  	mnuFull[10] = miDelete = new MenuItem(MyLocale.getMsg(1012,"Delete selected"));
-  	mnuFull[11] = miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update"));
-  	mnuFull[12] = miSeparator;
-  	mnuFull[13] = miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all"));
-  	mnuFull[14] = miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"));
+	MenuItem[] mnuFull = {
+			miOpen = new MenuItem(MyLocale.getMsg(1021,"Open description")),
+			miGoto = new MenuItem(MyLocale.getMsg(1010,"Goto")),
+		  	miCenter = new MenuItem(MyLocale.getMsg(1019,"Center")),
+		  	miUnhideAddis = new MenuItem(MyLocale.getMsg(1042,"Unhide Addis")),
+		  	miSeparator = new MenuItem("-"),
+		  	miOpenOnline = new MenuItem(MyLocale.getMsg(1020,"Open in $browser online")),
+		  	miOpenOffline = new MenuItem(MyLocale.getMsg(1018,"Open in browser offline")),
+		  	miLogOnline = new MenuItem(MyLocale.getMsg(1052,"Log online in Browser")),
+		  	miOpenGmaps = new MenuItem(MyLocale.getMsg(1053,"Open in Google maps online")),
+		  	miSeparator,
+		  	miDelete = new MenuItem(MyLocale.getMsg(1012,"Delete selected")),
+		  	miUpdate = new MenuItem(MyLocale.getMsg(1014,"Update")),
+		  	miChangeBlack = new MenuItem(MyLocale.getMsg(1054, "Change Blacklist")),
+		  	miSeparator,
+		  	miTickAll = new MenuItem(MyLocale.getMsg(1015,"Select all")),
+		  	miUntickAll = new MenuItem(MyLocale.getMsg(1016,"De-select all"))
+	};
   	mFull = new Menu(mnuFull, MyLocale.getMsg(1013,"With selection"));
-
   	MenuItem[] mnuSmall = new MenuItem[8];
   	mnuSmall[0] = miOpen;
   	mnuSmall[1] = miGoto;
@@ -231,6 +231,23 @@ public class myTableControl extends TableControl{
 
 		if (selectedItem == miUpdate){
 			MainMenu.updateSelectedCaches(tbp);
+		} else
+		
+		if (selectedItem == miChangeBlack){
+			for(int i = cacheDB.size()-1; i >=0; i--){
+				CacheHolder currCache = cacheDB.get(i);
+				if ( currCache.is_Checked) {
+					if (currCache.isAddiWpt()) {
+						// currCache.setBlack(!currCache.is_black());
+					} else {
+						currCache.setBlack(!currCache.is_black());
+						currCache.save(); // to reflect it in xml
+					}
+				}
+			}
+			// profile.saveIndex(pref,true);
+			profile.buildReferences();
+			tbp.refreshTable();
 		} else
 
 		if (selectedItem == miCenter){
