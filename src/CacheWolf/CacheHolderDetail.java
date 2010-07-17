@@ -401,7 +401,7 @@ public class CacheHolderDetail {
 				  int iis = images.size();
 				  for(int i = 0;i<iis;i++){
 						stbuf = images.get(i).getTitle();
-						if (i< iis && images.get(i).getComment() != null)
+						if (i< iis && !images.get(i).getComment().equals(""))
 							detfile.print("    <IMGTEXT>"+stbuf+"<DESC>"+images.get(i).getComment()+"</DESC></IMGTEXT>\n");
 						else 
 							detfile.print("    <IMGTEXT>"+stbuf+"</IMGTEXT>\n");
@@ -453,7 +453,7 @@ public class CacheHolderDetail {
 		 */
 		public boolean hasImageInfo() {
 			for (int i=this.images.size()-1; i>=0; i--)
-				if (this.images.get(i).getComment() != null) return true;
+				if (!this.images.get(i).getComment().equals("")) return true;
 			return false;
 		}
 

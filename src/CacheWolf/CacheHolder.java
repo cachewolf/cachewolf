@@ -752,9 +752,17 @@ public class CacheHolder{
 					addis.put("LONGDESC",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheDetails(false).LongDescription) : ch.getCacheDetails(false).LongDescription);
 					addiVect.add(addis);
 				}
-				varParams.put("ADDIS",addiVect);
+				if (addiWpts.size()>0) varParams.put("ADDIS",addiVect);
 			}
-
+			Vector imgVect=new Vector(det.images.size());
+			for (int i=0; i<det.images.size(); i++) {
+				Hashtable imgs=new Hashtable();
+				imgs.put("FILENAME",det.images.get(i).getFilename());
+				imgs.put("TEXT",det.images.get(i).getTitle());
+				imgs.put("COMMENT",det.images.get(i).getComment());
+				imgs.put("URL",det.images.get(i).getURL());
+			}
+			if (det.images.size()>0) varParams.put("ALLIMGS",imgVect);
 		}
 		return varParams;
 	}	
