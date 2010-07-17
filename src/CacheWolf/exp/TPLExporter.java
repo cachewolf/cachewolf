@@ -52,6 +52,7 @@ class TplFilter implements HTML.Tmpl.Filter
 	String decSep = ".";
 	int shortNameLength=30;
 	int shortWaypointLength=3;
+	int noOfLogs=-1; // means all
 	String out="*.gpx";
 
 
@@ -120,10 +121,12 @@ class TplFilter implements HTML.Tmpl.Filter
 			if (param.equals("WaypointLength")) {
 				shortWaypointLength = Integer.valueOf(value).intValue();
 			}
+			if (param.equals("NrLogs")) {
+				noOfLogs = Integer.valueOf(value).intValue();
+			}
 			if (param.equals("Out")) {
 				out = value;
 			}
-
 
 		}
 		return t;
@@ -194,7 +197,7 @@ public class TPLExporter {
 				h.changed();
 				if(ch.isVisible() && ch.pos.isValid()){
 					try {
-						cache_index.add(ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.codec, gm, false, 0));
+						cache_index.add(ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, 0));
 					}catch(Exception e){
 						Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
 						e.printStackTrace();

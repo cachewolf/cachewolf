@@ -66,7 +66,7 @@ public class ShowCacheInBrowser {
 			if(chD.isVisible()){
 				Vm.showWait(true);
 				try {
-					tpl.setParams(chD.toHashtable(new Regex("[,.]","."), null, 0, 30, new AsciiCodec(), null, true, 1));
+					tpl.setParams(chD.toHashtable(new Regex("[,.]","."), null, 0, 30, -1, new AsciiCodec(), null, true, 1));
 					// Look for images
 					// count only the images of main body
 					int start=0;
@@ -106,21 +106,6 @@ public class ShowCacheInBrowser {
 					}
 					if (!chD.is_available()) tpl.setParam("UNAVAILABLE","1");
 					if (!chD.getCacheDetails(true).Hints.equals("null"))tpl.setParam("HINT",Common.rot13(chD.getCacheDetails(true).Hints));
-
-					if (chD.hasAddiWpt()) {
-						Vector addiVect=new Vector(chD.addiWpts.size());
-						for (int i=0; i<chD.addiWpts.size(); i++) {
-							Hashtable addis=new Hashtable();
-							CacheHolder ch=(CacheHolder) chD.addiWpts.get(i);
-							addis.put("WAYPOINT",ch.getWayPoint());
-							addis.put("NAME",ch.getCacheName());
-							addis.put("LATLON",ch.getLatLon());
-							addis.put("IMG","<img src=\""+CacheType.typeImageForId(ch.getType())+"\">");
-							addis.put("LONGDESC",ch.getCacheDetails(true).LongDescription); // Do we need to treat longDesc as above ?
-							addiVect.add(addis);
-						}
-						tpl.setParam("ADDIS",addiVect);
-					}
 				}catch(Exception e){
 					Vm.debug("Problem getting Parameter, Cache: " + chD.getWayPoint());
 					Global.getPref().log("Problem getting parameter "+e.toString()+", Cache: " + chD.getWayPoint());

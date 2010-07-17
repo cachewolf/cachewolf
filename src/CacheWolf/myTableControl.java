@@ -234,20 +234,25 @@ public class myTableControl extends TableControl{
 		} else
 		
 		if (selectedItem == miChangeBlack){
-			for(int i = cacheDB.size()-1; i >=0; i--){
-				CacheHolder currCache = cacheDB.get(i);
-				if ( currCache.is_Checked) {
-					if (currCache.isAddiWpt()) {
-						// currCache.setBlack(!currCache.is_black());
-					} else {
-						currCache.setBlack(!currCache.is_black());
-						currCache.save(); // to reflect it in xml
+			Vm.showWait(true);
+			try {
+				for(int i = cacheDB.size()-1; i >=0; i--){
+					CacheHolder currCache = cacheDB.get(i);
+					if ( currCache.isVisible() && currCache.is_Checked) {
+						if (currCache.isAddiWpt()) {
+							// currCache.setBlack(!currCache.is_black());
+						} else {
+							currCache.setBlack(!currCache.is_black());
+							currCache.save(); // to reflect it in xml and what takes time reading+writing
+						}
 					}
 				}
-			}
-			// profile.saveIndex(pref,true);
-			profile.buildReferences();
-			tbp.refreshTable();
+				// profile.saveIndex(pref,true);
+				profile.buildReferences();
+				tbp.refreshTable();
+			} finally {
+				Vm.showWait(false);
+			};
 		} else
 
 		if (selectedItem == miCenter){
