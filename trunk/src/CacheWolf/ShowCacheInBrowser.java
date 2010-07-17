@@ -95,10 +95,8 @@ public class ShowCacheInBrowser {
 							imgs.put("IMAGE","<img src=\"file://"+
 									   Global.getProfile().dataDir+chD.getCacheDetails(true).images.get(imageNo).getFilename()+"\" border=0>");
 							imgs.put("IMAGETEXT",chD.getCacheDetails(true).images.get(imageNo).getTitle());
-							if (imageNo<chD.getCacheDetails(true).images.size() && chD.getCacheDetails(true).images.get(imageNo).getComment()!=null)
+							if (imageNo<chD.getCacheDetails(true).images.size())
 								imgs.put("IMAGECOMMENT",chD.getCacheDetails(true).images.get(imageNo).getComment());
-							else
-								imgs.put("IMAGECOMMENT","");
 							imgs.put("I","'img"+new Integer(imageNo).toString()+"'");
 							imageVect.add(imgs);
 						}
