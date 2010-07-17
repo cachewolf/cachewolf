@@ -91,7 +91,7 @@ public class HTMLExporter{
 						continue;
 					}
 					det=ch.getCacheDetails(false);
-					varParams=ch.toHashtable(dec, null, 0, 30, new AsciiCodec(), null, false, 2);
+					varParams=ch.toHashtable(dec, null, 0, 30, -1, new AsciiCodec(), null, false, 2);
 					cache_index.add(varParams);
 					//We can generate the individual page here!
 					try{

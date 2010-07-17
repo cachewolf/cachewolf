@@ -205,7 +205,11 @@ value=&quot;3&quot;&gt;<span style='mso-tab-count:3'>                          <
 of characters for Variable SHORTWAYPOINT<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;Out&quot; value=&quot;*.<span
 class=SpellE>gpx</span>&quot;&gt;<span style='mso-tab-count:4'>                                       </span>Output
-Filename or Extension</span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
+Filename or Extension<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>NrLogs</span>
+&quot; value=&quot;-1&quot;&gt;<span style='mso-tab-count:4'>                                     </span><span
+class=SpellE>Anzahl</span> logs (-1 = alle)</span><span lang=EN-GB
+style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 mso-outline-level:1'><u><span lang=EN-GB style='font-size:10.0pt;font-family:
@@ -236,8 +240,8 @@ TYPE<span style='mso-tab-count:9'>                                              
 &lt;type&gt; Type of cache, e.g. Regular, Multi<br>
 TYPENO<span style='mso-tab-count:8'>                                                                                             </span>:
 &lt;type&gt; as number string (see <span class=SpellE>CacheType.java</span> <span
-class=SpellE>e.g</span> : 0=Custom , 2=<span class=SpellE>Tradi</span> ,50=Parking
-104=Earth)<br>
+class=SpellE>e.g</span> : 0=Custom , 2=<span class=SpellE>Tradi</span>
+,50=Parking 104=Earth)<br>
 SYM<span style='mso-tab-count:9'>                                                                                                   </span>:
 &lt;sym&gt;<br>
 GSTYPE<span style='mso-tab-count:8'>                                                                                             </span>:
@@ -291,7 +295,8 @@ BEARING<span style='mso-tab-count:8'>                                           
 Bearing calculated in <span class=SpellE>cachelist</span><br>
 LATON<span style='mso-tab-count:9'>                                                                                               </span>:
 Coordinates in long format, e.g. N 50° 31.234 E 008° 45.267<br>
-LAT<span style='mso-tab-count:9'>                                                                                                    </span>:
+LAT<span style='mso-tab-count:2'>                  </span><span
+style='mso-tab-count:7'>                                                                                  </span>:
 &lt;<span class=SpellE>wpt</span> lat=”<span class=SpellE>xx.yyyy</span>”
 ……..&gt; Latitude in decimal format, e.g. 50.20147<br>
 LON<span style='mso-tab-count:9'>                                                                                                   </span>:
@@ -303,8 +308,7 @@ GC_LOGTYPE<span style='mso-tab-count:8'>                                        
 the English Status texts (for <span class=SpellE>gpx</span> – export)<br>
 STATUS_DATE<span style='mso-tab-count:8'>                                                                                   </span>:
 Get the date part of the status <br>
-STATUS_TIME<span style='mso-tab-count:3'>                         </span><span
-style='mso-tab-count:5'>                                                           </span>:
+STATUS_TIME<span style='mso-tab-count:8'>                                                                                    </span>:
 Get the time part of the status<br>
 DATE<span style='mso-tab-count:9'>                                                                                                 </span>:
 date hidden<br>
@@ -326,11 +330,12 @@ style='mso-spacerun:yes'>     </span><span style='mso-tab-count:9'>             
 auf <span class=SpellE>eine</span> in den <span class=SpellE>Einstellungen</span>
 <span class=SpellE>vorgegebene</span> <span class=SpellE>Länge</span> <span
 class=SpellE>gekürzt</span> <span class=SpellE>wird</span>. <br>
-<span style='mso-tab-count:9'>                                                                                                          </span>:
-(<span class=SpellE>Hintergrund</span>: <span class=SpellE>das</span> Notes -<span
-class=SpellE>Feld</span> <span class=SpellE>der</span> <span class=SpellE>meisten</span>
-<span class=SpellE>Garmins</span> <span class=SpellE>kann</span> <span
-class=SpellE>nur</span> 30 <span class=SpellE>Buchstaben</span>)<br>
+<span style='mso-tab-count:8'>                                                                                              </span><span
+style='mso-tab-count:1'>            </span>: (<span class=SpellE>Hintergrund</span>:
+<span class=SpellE>das</span> Notes -<span class=SpellE>Feld</span> <span
+class=SpellE>der</span> <span class=SpellE>meisten</span> <span class=SpellE>Garmins</span>
+<span class=SpellE>kann</span> <span class=SpellE>nur</span> 30 <span
+class=SpellE>Buchstaben</span>)<br>
 <span style='mso-tab-count:9'>                                                                                                          </span>:
 <span class=SpellE>dann</span> <span class=SpellE>kriegen</span> <span
 class=SpellE>sie</span> <span class=SpellE>noch</span> <span class=SpellE>Infos</span>
@@ -385,8 +390,7 @@ the &lt;<span class=SpellE>tmpl_loop</span> ATTRIBUTES&gt;, example see
 GCTemplate.html / show cache in browser offline<br>
 PATHANDIMAGE<span style='mso-tab-count:7'>                                                                                </span>:
 path an <span class=SpellE>imagename</span> of the attribute<br>
-IMAGE<span style='mso-tab-count:2'>             </span><span style='mso-tab-count:
-7'>                                                                                  </span>:
+IMAGE<span style='mso-tab-count:9'>                                                                                               </span>:
 <span class=SpellE>imagename</span> of the attribute<br>
 INFO<span style='mso-tab-count:9'>                                                                                                  </span>:
 description of the attribute from language <span class=SpellE>config</span><br>
@@ -413,7 +417,24 @@ date of the log<br>
 LOGGER<span style='mso-tab-count:8'>                                                                                            </span>:
 name<br>
 MESSAGE<span style='mso-tab-count:8'>                                                                                         </span>:
-logtext<o:p></o:p></span></p>
+<span class=SpellE>logtext</span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>ADDIS<span
+style='mso-tab-count:9'>                                                                                                </span>:
+the &lt;<span class=SpellE>tmpl_loop</span> ADDIS&gt; example see
+GCTemplate.html<br>
+WAYPOINT<span style='mso-tab-count:8'>                                                                                         </span>:
+<span class=SpellE>der</span> <span class=SpellE>Addi</span><br>
+NAME<span style='mso-tab-count:9'>                                                                                                </span>:
+Name des <span class=SpellE>Addi</span><br>
+LATLON<span style='mso-tab-count:8'>                                                                                              </span>:
+<span class=SpellE>Koordinaten</span> des <span class=SpellE>Addi</span><br>
+IMG<span style='mso-tab-count:9'>                                                                                                    </span>:
+Name des <span class=SpellE>Addi</span> Icons<br>
+LONGDESC<span style='mso-tab-count:8'>                                                                                        </span>:
+<span class=SpellE>Beschreibungstext</span> <span class=SpellE>für</span> den
+Addi<o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 mso-outline-level:1'><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
@@ -553,8 +574,8 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Pa
 values for conditions are Strings in java, and not <span class=SpellE><span
 class=GramE>boolean</span></span> values, hence, what evaluates to true and</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>false needs to
-be specifically defined.<br>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>false needs
+to be specifically defined.<br>
 As of now, the following values evaluate to false:<br>
 &quot;&quot; - the empty string<br>
 &quot;0&quot; - the string containing only the number zero<br>
@@ -604,8 +625,8 @@ style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>The
-&lt;<span class=SpellE>tmpl_loop</span>&gt; tag is a bit more complicated than the
-other tags. It allows you to create a section of text that</span><span
+&lt;<span class=SpellE>tmpl_loop</span>&gt; tag is a bit more complicated than
+the other tags. It allows you to create a section of text that</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
 style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>will be
 displayed repeatedly for every item in the loop control variable. Inside the
