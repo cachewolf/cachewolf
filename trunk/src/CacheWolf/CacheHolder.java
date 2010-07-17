@@ -574,7 +574,7 @@ public class CacheHolder{
 	/** Return a Hashtable containing all the cache data for Templates */
 	public Hashtable toHashtable(
 			Regex decSep, Regex badChars, 
-			int shortWaypointLength, int shortNameLength, 
+			int shortWaypointLength, int shortNameLength, int nrOfLogs,
 			TextCodec codec, GarminMap gm,
 			boolean withFoundText,
 			int ModTyp
@@ -712,7 +712,9 @@ public class CacheHolder{
 			}
 			// logs
 			Vector logVect=new Vector(det.CacheLogs.size());
-			for (int i=0; i<det.CacheLogs.size(); i++) {
+			int maxlogs = det.CacheLogs.size();
+			if (nrOfLogs < maxlogs ) maxlogs=nrOfLogs;
+			for (int i=0; i<maxlogs; i++) {
 				Hashtable logs=new Hashtable();
 				String stmp;
 				if (det.CacheLogs.getLog(i).getIcon().equals("MAXLOG")) {
@@ -734,7 +736,22 @@ public class CacheHolder{
 				logs.put("MESSAGE", (ModTyp == 0) ? SafeXML.cleanGPX(stmp) : stmp);
 				logVect.add(logs);
 			}
-			varParams.put("LOGS",logVect);
+			if (nrOfLogs>0) varParams.put("LOGS",logVect);
+
+			if (hasAddiWpt()) {
+				Vector addiVect=new Vector(addiWpts.size());
+				for (int i=0; i<addiWpts.size(); i++) {
+					Hashtable addis=new Hashtable();
+					CacheHolder ch=(CacheHolder) addiWpts.get(i);
+					addis.put("WAYPOINT",ch.getWayPoint());
+					addis.put("NAME",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheName()) : ch.getCacheName());
+					addis.put("LATLON",ch.getLatLon());
+					addis.put("IMG",(ModTyp == 0) ? CacheType.typeImageForId(ch.getType()) : "<img src=\""+CacheType.typeImageForId(ch.getType())+"\">");
+					addis.put("LONGDESC",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheDetails(false).LongDescription) : ch.getCacheDetails(false).LongDescription);
+					addiVect.add(addis);
+				}
+				varParams.put("ADDIS",addiVect);
+			}
 
 		}
 		return varParams;
