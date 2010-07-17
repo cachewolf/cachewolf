@@ -713,7 +713,7 @@ public class CacheHolder{
 			// logs
 			Vector logVect=new Vector(det.CacheLogs.size());
 			int maxlogs = det.CacheLogs.size();
-			if (nrOfLogs < maxlogs ) maxlogs=nrOfLogs;
+			if (nrOfLogs > -1 && nrOfLogs < maxlogs ) maxlogs=nrOfLogs;
 			for (int i=0; i<maxlogs; i++) {
 				Hashtable logs=new Hashtable();
 				String stmp;
@@ -736,7 +736,7 @@ public class CacheHolder{
 				logs.put("MESSAGE", (ModTyp == 0) ? SafeXML.cleanGPX(stmp) : stmp);
 				logVect.add(logs);
 			}
-			if (nrOfLogs>0) varParams.put("LOGS",logVect);
+			if (maxlogs>0) varParams.put("LOGS",logVect);
 
 			if (hasAddiWpt()) {
 				Vector addiVect=new Vector(addiWpts.size());
@@ -747,6 +747,8 @@ public class CacheHolder{
 					addis.put("NAME",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheName()) : ch.getCacheName());
 					addis.put("LATLON",ch.getLatLon());
 					addis.put("IMG",(ModTyp == 0) ? CacheType.typeImageForId(ch.getType()) : "<img src=\""+CacheType.typeImageForId(ch.getType())+"\">");
+					addis.put("ICON",""+ch.getType());
+					addis.put("TYPENAME", CacheType.type2Gui(ch.getType()));
 					addis.put("LONGDESC",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheDetails(false).LongDescription) : ch.getCacheDetails(false).LongDescription);
 					addiVect.add(addis);
 				}
