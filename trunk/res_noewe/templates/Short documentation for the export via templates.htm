@@ -295,8 +295,7 @@ BEARING<span style='mso-tab-count:8'>                                           
 Bearing calculated in <span class=SpellE>cachelist</span><br>
 LATON<span style='mso-tab-count:9'>                                                                                               </span>:
 Coordinates in long format, e.g. N 50° 31.234 E 008° 45.267<br>
-LAT<span style='mso-tab-count:2'>                  </span><span
-style='mso-tab-count:7'>                                                                                  </span>:
+LAT<span style='mso-tab-count:1'>      </span><span style='mso-tab-count:8'>                                                                                              </span>:
 &lt;<span class=SpellE>wpt</span> lat=”<span class=SpellE>xx.yyyy</span>”
 ……..&gt; Latitude in decimal format, e.g. 50.20147<br>
 LON<span style='mso-tab-count:9'>                                                                                                   </span>:
@@ -330,8 +329,8 @@ style='mso-spacerun:yes'>     </span><span style='mso-tab-count:9'>             
 auf <span class=SpellE>eine</span> in den <span class=SpellE>Einstellungen</span>
 <span class=SpellE>vorgegebene</span> <span class=SpellE>Länge</span> <span
 class=SpellE>gekürzt</span> <span class=SpellE>wird</span>. <br>
-<span style='mso-tab-count:8'>                                                                                              </span><span
-style='mso-tab-count:1'>            </span>: (<span class=SpellE>Hintergrund</span>:
+<span style='mso-tab-count:7'>                                                                                  </span><span
+style='mso-tab-count:2'>                        </span>: (<span class=SpellE>Hintergrund</span>:
 <span class=SpellE>das</span> Notes -<span class=SpellE>Feld</span> <span
 class=SpellE>der</span> <span class=SpellE>meisten</span> <span class=SpellE>Garmins</span>
 <span class=SpellE>kann</span> <span class=SpellE>nur</span> 30 <span
@@ -431,7 +430,15 @@ Name des <span class=SpellE>Addi</span><br>
 LATLON<span style='mso-tab-count:8'>                                                                                              </span>:
 <span class=SpellE>Koordinaten</span> des <span class=SpellE>Addi</span><br>
 IMG<span style='mso-tab-count:9'>                                                                                                    </span>:
-Name des <span class=SpellE>Addi</span> Icons<br>
+Name des <span class=SpellE>Addi</span> Icons <span class=SpellE>png</span>
+(resources <span class=SpellE>oder</span> <span class=SpellE>exporticons</span><span
+class=GramE>)</span><br>
+ICON<span style='mso-tab-count:9'>                                                                                                  </span>:
+CW-<span class=SpellE>Typenr</span>, Name des <span class=SpellE>Addi</span>
+Icons (symbols)<br>
+TYPENAME<span style='mso-tab-count:8'>                                                                                        </span>:
+<span class=SpellE>Typename</span> des <span class=SpellE>Addi</span> <span
+class=SpellE>wie</span> in <span class=SpellE>der</span> GUI<br>
 LONGDESC<span style='mso-tab-count:8'>                                                                                        </span>:
 <span class=SpellE>Beschreibungstext</span> <span class=SpellE>für</span> den
 Addi<o:p></o:p></span></p>
@@ -470,9 +477,8 @@ class=SpellE>tmpl_var</span> name=SHORTSIZE&gt;-&lt;<span class=SpellE>tmpl_var<
 name=DIFFICULTY&gt;-&lt;<span class=SpellE>tmpl_var</span> name=TERRAIN&gt;
 &lt;<span class=SpellE>tmpl_var</span> name=NAME&gt;&quot;;&lt;<span
 class=SpellE>tmpl_var</span> name=LAT&gt;;&lt;<span class=SpellE>tmpl_var</span>
-name=LON&gt;;&quot;&lt;<span class=SpellE>tmpl_var</span>
-name=TYPE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
-name=SIZE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
+name=LON&gt;;&quot;&lt;<span class=SpellE>tmpl_var</span> name=TYPE&gt;&quot;;&quot;&lt;<span
+class=SpellE>tmpl_var</span> name=SIZE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=WAYPOINT&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=DATE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=URL&gt;&quot;&lt;<span class=SpellE>br</span> /&gt;<br>
@@ -634,8 +640,8 @@ displayed repeatedly for every item in the loop control variable. Inside the
 style='mso-spacerun:yes'>  </span>you</span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB style='font-size:10.0pt;
 font-family:Arial;mso-ansi-language:EN-GB'>place &lt;<span class=SpellE>tmpl_var</span>&gt;s.<b
-style='mso-bidi-font-weight:normal'> The only loop used by the template
-exporter is '<span class=SpellE>cache_index</span>', see example above. </b></span><span
+style='mso-bidi-font-weight:normal'> The only loop used by the template exporter
+is '<span class=SpellE>cache_index</span>', see example above. </b></span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
@@ -673,8 +679,8 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Tr
 if both __FIRST__ and __LAST__ are false<br>
 __COUNTER__<span style='mso-tab-count:1'> </span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'>&nbsp;&nbsp;&nbsp; </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Which
-iteration is currently on. Starts at 1<br style='mso-special-character:line-break'>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Which iteration
+is currently on. Starts at 1<br style='mso-special-character:line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
 <![endif]></span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
