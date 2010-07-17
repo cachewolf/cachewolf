@@ -49,19 +49,15 @@ public class ImageInfo {
 	 * @return Comment
 	 */
 	public String getComment() {
+		if (comment == null) return "";
     	return comment;
     }
 	/**
-	 * Sets the comment of the image. If an empty string is passed, the comment will be set to <code>
-	 * null</code>.
+	 * Sets the comment of the image.
 	 * @param comment Comment
 	 */
 	public void setComment(String comment) {
-		if (comment != null && comment.equals("")) {
-			this.comment = null;
-		} else {
 			this.comment = comment;
-		}
     }
 	public String getURL() {
 		if (URL == null) return "";
