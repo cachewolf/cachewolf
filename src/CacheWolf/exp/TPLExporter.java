@@ -37,6 +37,7 @@ import ewe.io.*;
 import ewe.sys.*;
 import ewe.ui.*;
 import ewe.util.*;
+
 import com.stevesoft.ewe_pat.*;
 
 /**
@@ -53,6 +54,8 @@ class TplFilter implements HTML.Tmpl.Filter
 	int shortNameLength=30;
 	int shortWaypointLength=3;
 	int noOfLogs=-1; // means all
+	boolean single = true;
+	int formatModifier = 0;
 	String out="*.gpx";
 
 
@@ -123,6 +126,12 @@ class TplFilter implements HTML.Tmpl.Filter
 			}
 			if (param.equals("NrLogs")) {
 				noOfLogs = Integer.valueOf(value).intValue();
+			}
+			if (param.equals("singleFile")) {
+				single = value.equals("yes") ? true : false ;
+			}
+			if (param.equals("formatModifier")) {
+				formatModifier = Integer.valueOf(value).intValue();
 			}
 			if (param.equals("Out")) {
 				out = value;
@@ -197,7 +206,17 @@ public class TPLExporter {
 				h.changed();
 				if(ch.isVisible() && ch.pos.isValid()){
 					try {
-						cache_index.add(ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, 0));
+						Hashtable varParams=ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier);
+						if (myFilter.single) {
+							cache_index.add(varParams);
+						}
+						else {
+							tpl.setParams(varParams);
+							String ext = (myFilter.out.substring(myFilter.out.lastIndexOf(".")).toLowerCase()+"    ").trim();
+							PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(saveTo.getPath() + ch.getWayPoint() + ext)));
+							pagefile.print(tpl.output());
+							pagefile.close();							
+						}
 					}catch(Exception e){
 						Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
 						e.printStackTrace();
@@ -205,14 +224,16 @@ public class TPLExporter {
 					}
 				}
 			}
-			tpl.setParam("cache_index", cache_index);
-			PrintWriter detfile;
-			FileWriter fw = new FileWriter(saveTo);
-			fw.codec = myFilter.codec;
-			detfile = new PrintWriter(new BufferedWriter(fw));
-			tpl.printTo(detfile);
-			//detfile.print(tpl.output());
-			detfile.close();
+			if (myFilter.single) {
+				tpl.setParam("cache_index", cache_index);
+				PrintWriter detfile;
+				FileWriter fw = new FileWriter(saveTo);
+				fw.codec = myFilter.codec;
+				detfile = new PrintWriter(new BufferedWriter(fw));
+				tpl.printTo(detfile);
+				//detfile.print(tpl.output());
+				detfile.close();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			Global.getPref().log("Exception in TplExporter", e, true);
