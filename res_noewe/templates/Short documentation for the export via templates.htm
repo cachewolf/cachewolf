@@ -208,8 +208,15 @@ class=SpellE>gpx</span>&quot;&gt;<span style='mso-tab-count:4'>                 
 Filename or Extension<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>NrLogs</span>
 &quot; value=&quot;-1&quot;&gt;<span style='mso-tab-count:4'>                                     </span><span
-class=SpellE>Anzahl</span> logs (-1 = alle)</span><span lang=EN-GB
-style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
+class=SpellE>Anzahl</span> logs (-1 = alle)<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>singleFile</span>&quot;
+value=&quot;yes&quot;&gt;<span style='mso-tab-count:3'>                                </span>one
+<span class=SpellE>outputfile</span> value=”yes” or one file per cache value=”no”
+(use a dummy / not existing name for Out par)<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>formatModifier</span>&quot;
+value=&quot;0&quot;&gt;<span style='mso-tab-count:3'>                             </span>0
+is xml as <span class=SpellE>gpx</span> generation before, 1 is html like <span
+class=SpellE>showCacheInBrowser</span>, 2 is html like html-exporter<o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 mso-outline-level:1'><u><span lang=EN-GB style='font-size:10.0pt;font-family:
@@ -458,8 +465,9 @@ original source of the image<o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 mso-outline-level:1'><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
-mso-ansi-language:EN-GB'>Further documentation of template library: http://html-tmpl-java.sourceforge.net/</span><span
-lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
+mso-ansi-language:EN-GB'>Further documentation of template library:
+http://html-tmpl-java.sourceforge.net/</span><span lang=EN-GB style='mso-ansi-language:
+EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 mso-outline-level:1'><u><span lang=EN-GB style='font-size:10.0pt;font-family:
@@ -614,9 +622,9 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Wh
 the if block allows us to display some output if a condition is true<span
 class=GramE>,<span style='mso-spacerun:yes'>  </span>we</span></span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>may also
-need to display content if the condition is false. This can be done by using
-the optional else</span><span lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>may also need
+to display content if the condition is false. This can be done by using the
+optional else</span><span lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>branch
 of <span class=GramE>the if</span> block.</span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
@@ -684,8 +692,8 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Tr
 for the last run of the loop, false otherwise<br>
 __ODD__<span style='mso-tab-count:1'>          </span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'>&nbsp;&nbsp;&nbsp; </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>True for every
-other iteration of the loop - a loop starts at 1<br>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>True for
+every other iteration of the loop - a loop starts at 1<br>
 __INNER__</span><span lang=EN-GB style='mso-ansi-language:EN-GB'><span
 style='mso-tab-count:1'>       </span>&nbsp;&nbsp;&nbsp; </span><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>True
