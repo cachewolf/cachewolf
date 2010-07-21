@@ -56,26 +56,28 @@ public final class GuiImageBroker {
 			String name = "";
 			String [] pngFiles;
 			pngFiles=dir.list("*.png",0);
+			Global.getPref().log("Nr. of own symbols (png-files) : "+pngFiles.length);
 			for (int i=0; i<pngFiles.length; i++) {
 				name = pngFiles[i].substring(0,pngFiles[i].length()-4);
-				if (name.endsWith("size")){
+				if (name.toLowerCase().endsWith("size")){
 					size=true;
 					name=name.substring(0,name.length()-4);
 				}
 				try {
-					id = Integer.parseInt (name);
+					id = Integer.parseInt(name);
 				}
 				catch (Exception E){
 					id = -1; //filename invalid for symbols
 				}
 				if (0<=id && id<=CacheType.maxCWCType){
-					if (!size){
-						String s=FileBase.getProgramDirectory()+sdir+pngFiles[i];
-						CacheType.setTypeImage((byte) id, new Image(s));
+					String s=FileBase.getProgramDirectory()+sdir+pngFiles[i];
+					Global.getPref().log("own symbol: "+(i+1)+" = "+pngFiles[i]);
+					if (size){
+						CacheType.setMapImage((byte) id, new Image(s));
+						size=false;
 					}
 					else{
-						CacheType.setMapImage((byte) id, new Image(FileBase.getProgramDirectory()+sdir+pngFiles[i]));
-						size=false;
+						CacheType.setTypeImage((byte) id, new Image(s));
 					}
 				}
 			}
