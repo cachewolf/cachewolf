@@ -169,80 +169,79 @@ public class InputScreen extends Form {
 		this.setTitle("InputConsole");
 
 
-		addLast(MainP,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		MainP.addLast(TopSP,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		MainP.addLast(BottomP,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		MainP.addLast(ExpertP,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		addLast(MainP,CellConstants.STRETCH, (CellConstants.FILL));
+		MainP.addLast(TopSP,CellConstants.STRETCH, (CellConstants.FILL));
+		MainP.addLast(BottomP,CellConstants.STRETCH, (CellConstants.FILL));
+		MainP.addLast(ExpertP,CellConstants.STRETCH, (CellConstants.FILL));
 		btnNorth = new mButton("N");
 		btnNorth.borderStyle = BDR_NOBORDER;
-		TopP.addNext(btnNorth,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		TopP.addNext(btnNorth,CellConstants.STRETCH, (CellConstants.FILL));
 		btnNorthDD = new mButtonPos("DD°");
 		btnNorthDD.borderStyle = BDR_NOBORDER;
-		TopP.addNext(btnNorthDD,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		TopP.addNext(btnNorthDD,CellConstants.STRETCH, (CellConstants.FILL));
 		btnNorthMM = new mButtonPos("MM.");
 		btnNorthMM.borderStyle = BDR_NOBORDER;
-		TopP.addNext(btnNorthMM,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		TopP.addNext(btnNorthMM,CellConstants.STRETCH, (CellConstants.FILL));
 		btnNorthSSS = new mButtonPos("SSS");
 		btnNorthSSS.borderStyle = BDR_NOBORDER;
-		TopP.addLast(btnNorthSSS,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		TopP.addLast(btnNorthSSS,CellConstants.STRETCH, (CellConstants.FILL));
 
 		btnWest = new mButton("E");
 		btnWest.borderStyle = BDR_NOBORDER;
-		TopP.addNext(btnWest,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		TopP.addNext(btnWest,CellConstants.STRETCH, (CellConstants.FILL));
 		btnEastDDD = new mButtonPos("DDD°");
 		btnEastDDD.borderStyle = BDR_NOBORDER;
-		TopP.addNext(btnEastDDD,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		TopP.addNext(btnEastDDD,CellConstants.STRETCH, (CellConstants.FILL));
 		btnEastMM = new mButtonPos("MM.");
 		btnEastMM.borderStyle = BDR_NOBORDER;
-		TopP.addNext(btnEastMM,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		TopP.addNext(btnEastMM,CellConstants.STRETCH, (CellConstants.FILL));
 		btnEastSSS = new mButtonPos("SSS");
 		btnEastSSS.borderStyle = BDR_NOBORDER;
-		TopP.addLast(btnEastSSS,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		TopP.addLast(btnEastSSS,CellConstants.STRETCH, (CellConstants.FILL));
 		TopSP.setControl(TopP);
 
 		btn7 = new mButton("  7  ");
-		BottomP.addNext(btn7,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addNext(btn7,CellConstants.STRETCH, (CellConstants.FILL));
 		btn8 = new mButton(" 8 ");
-		BottomP.addNext(btn8,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addNext(btn8,CellConstants.STRETCH, (CellConstants.FILL));
 		btn9 = new mButton(" 9 ");
-		BottomP.addLast(btn9,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addLast(btn9,CellConstants.STRETCH, (CellConstants.FILL));
 		btn4 = new mButton("  4  ");
-		BottomP.addNext(btn4,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addNext(btn4,CellConstants.STRETCH, (CellConstants.FILL));
 		btn5 = new mButton(" 5 ");
-		BottomP.addNext(btn5,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addNext(btn5,CellConstants.STRETCH, (CellConstants.FILL));
 		btn6 = new mButton(" 6 ");
-		BottomP.addLast(btn6,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addLast(btn6,CellConstants.STRETCH, (CellConstants.FILL));
 		btn1 = new mButton("  1  ");
-		BottomP.addNext(btn1,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addNext(btn1,CellConstants.STRETCH, (CellConstants.FILL));
 		btn2 = new mButton(" 2 ");
-		BottomP.addNext(btn2,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addNext(btn2,CellConstants.STRETCH, (CellConstants.FILL));
 		btn3 = new mButton(" 3 ");
-		BottomP.addLast(btn3,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addLast(btn3,CellConstants.STRETCH, (CellConstants.FILL));
 		btn0 = new mButton("     0     ");
-		BottomP.addNext(btn0,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addNext(btn0,CellConstants.STRETCH, (CellConstants.FILL));
 		btnGPS = new mButton("   GPS   ");
-		BottomP.addNext(btnGPS,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addNext(btnGPS,CellConstants.STRETCH, (CellConstants.FILL));
 		btnBear = new mButton(MyLocale.getMsg(1415,"bearing"));
-		BottomP.addLast(btnBear,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnExpert = new mButton("Expert");
-		ExpertP.addNext(btnExpert,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnEsc = new mButton("  Abbr  ");
-		ExpertP.addNext(btnEsc,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		btnOk = new mButton("    OK   ");
-		ExpertP.addLast(btnOk,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		//this.addLast(mainPanel,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BottomP.addLast(btnBear,CellConstants.STRETCH, (CellConstants.FILL));
+		btnExpert = new mButton(" Expert");
+		ExpertP.addNext(btnExpert,CellConstants.STRETCH, (CellConstants.FILL));
+		btnEsc = new mButton("  Abbr   ");
+		ExpertP.addNext(btnEsc,CellConstants.STRETCH, (CellConstants.FILL));
+		btnOk = new mButton("   OK   ");
+		ExpertP.addLast(btnOk,CellConstants.STRETCH, (CellConstants.FILL));
 
 		//bearing Pannel
-		BearP.addNext(lblDistanc,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BearP.addNext(lblDistanc,CellConstants.STRETCH, (CellConstants.FILL));
 		btnDistanc = new mButtonPos("        0");
 		btnDistanc.borderStyle = BDR_NOBORDER;
-		BearP.addNext(btnDistanc,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		BearP.addLast(lblDist,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		BearP.addNext(lblBearing,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BearP.addNext(btnDistanc,CellConstants.STRETCH, (CellConstants.FILL));
+		BearP.addLast(lblDist,CellConstants.STRETCH, (CellConstants.FILL));
+		BearP.addNext(lblBearing,CellConstants.STRETCH, (CellConstants.FILL));
 		btnBearing = new mButtonPos("        0");
 		btnBearing.borderStyle = BDR_NOBORDER;
-		BearP.addNext(btnBearing,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
-		BearP.addLast(lblBear,CellConstants.HSTRETCH | CellConstants.VSTRETCH, (CellConstants.HFILL| CellConstants.VFILL));
+		BearP.addNext(btnBearing,CellConstants.STRETCH, (CellConstants.FILL));
+		BearP.addLast(lblBear,CellConstants.STRETCH, (CellConstants.FILL));
 
 		int inpFontSize = ( 4 * pref.fontSize ) / 2;
 		Font inpNewFont = new Font("Helvetica", Font.PLAIN, inpFontSize );
@@ -256,12 +255,12 @@ public class InputScreen extends Form {
 
 
 
-		int btnFontSize = ( 3 * pref.fontSize ) / 2;
-		Font btnNewFont = new Font("Helvetica", Font.PLAIN, btnFontSize );
+		// int btnFontSize = ( 3 * pref.fontSize ) / 2;
+		Font btnNewFont = inpNewFont; // new Font("Helvetica", Font.PLAIN, btnFontSize );
 		btn9.setFont(btnNewFont); btn8.setFont(btnNewFont);   btn7.setFont(btnNewFont);
 		btn6.setFont(btnNewFont); btn5.setFont(btnNewFont);   btn4.setFont(btnNewFont);
 		btn3.setFont(btnNewFont); btn2.setFont(btnNewFont);   btn1.setFont(btnNewFont);
-		btn0.setFont(btnNewFont); btnEsc.setFont(btnNewFont); btnOk.setFont(btnNewFont);
+		btn0.setFont(btnNewFont); btnEsc.setFont(btnNewFont); btnOk.setFont(inpNewFont);
 		btnExpert.setFont(btnNewFont); btnBear.setFont(btnNewFont);btnGPS.setFont(btnNewFont);
 
 
@@ -273,7 +272,7 @@ public class InputScreen extends Form {
 
 	private void setFocusCoords()
 	{
-		iPosition=POS_NSSS;
+		iPosition=POS_NMM;
 		checkPosition();
 	}
 
@@ -308,7 +307,6 @@ public class InputScreen extends Form {
 
 		if (coords.isValid()){
 			strBufTemp.append(coords.toString(TransformCoordinates.CW));
-			String temp = coords.toString(TransformCoordinates.CW);
 			strBufCoords.append(strBufTemp.toString());
 			CoordsInput = coords;
 		} else {
@@ -344,16 +342,19 @@ public class InputScreen extends Form {
 				|| iPosition == POS_EMM-1
 				|| iPosition == POS_EDDD-2)	iPosition++;
 
+
 			if(iPosition == POS_EDDD-1)	iPosition++;
 
 			if(iPosition >= strBufCoords.length()){
 				//iPosition = strBufCoords.length();
 				iPosition =POS_NDD;
 				//return;
-			}
-				strBufCoords.setCharAt(iPosition, cValue);
-			    iPosition++;
-			    checkPosition();
+			}			
+			strBufCoords.setCharAt(iPosition, cValue);
+
+			if(iPosition == POS_NSSS+2)	iPosition=POS_EMM-1;
+		    iPosition++;
+		    checkPosition();
 		}
 	}
 
