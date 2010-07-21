@@ -108,7 +108,7 @@ shortDescRex       = <span\ id="ctl00_ContentBody_ShortDescription">((?s).*?)</s
 longDescRex        = tentBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
 cacheNameRex       = <span\ id="ctl00_ContentBody_CacheName">((?s).*?)</span>
 #cacheOwnerRex      = <strong>\\s*A.*\\s*cache\\s*</strong>\\s*by\ <a\ href=(?:(?s).*?)>((?s).*?)</a>\\s*</td>
-cacheOwnerRex      = www.geocaching.com/profile/(?:(?s).*?)>((?s).*?)</a>
+cacheOwnerRex      = by\ <a\ href="http://www.geocaching.com/profile/(?:(?s).*?)>((?s).*?)</a>
 dateHiddenRex      = <td>\\s*<strong>\\s*(?:Hidden|Event\ Date)\\s*:</strong>\\s*((?s).*?)\\s*(?:</td>|<a href=)
 hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
