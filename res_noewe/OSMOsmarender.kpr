@@ -1,6 +1,6 @@
 <KosmosProject Version="2.2">
   <RulesSource>
-    <WikiPage>http://wiki.openstreetmap.org/index.php/Kosmos_General_Purpose_Rules</WikiPage>
+    <WikiPage>Kosmos.Rendering.Rules</WikiPage>
   </RulesSource>
   <DataFiles>
     <WebMap>
