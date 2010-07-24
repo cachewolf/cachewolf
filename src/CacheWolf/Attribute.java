@@ -62,11 +62,19 @@ public class Attribute {
     private void setIdBit() {
     	_bit=getIdBit(_Id);
     }
-
+    // checking for array limits (caus -1 is possible value)
+    private static String attRef(int row, int column ) {
+    	if (row > -1 && row < maxAttRef) {
+    		return attRef[row][column];
+    	}
+    	else {
+    		return "";
+    	}
+    }
     // *** public part
     public static long[] getIdBit(int id) {
     	long [] bit = new long[2];
-    	if (id>-1) {
+    	if (id>-1 && id<maxAttRef) {
         	int b = Integer.parseInt(attRef[id][BIT_NR]);
     		bit[0] = b>63 ? 0l : (1L << b);
     		bit[1] = b>63 ? (1L << b-64) : 0;
@@ -80,11 +88,11 @@ public class Attribute {
     /**
      * get GC_TEXT string
 	 */
-    public String getGCText () { return attRef[_Id][GC_TEXT]; }
+    public String getGCText () { return attRef(_Id,GC_TEXT); }
     /**
      * get GC_ID string
 	 */
-    public String getGCId () { return attRef[_Id][GC_ID]; }
+    public String getGCId () { return attRef(_Id,GC_ID); }
     /**
      * getting attribute given=1,negative=0,not specified=2  
      */
@@ -94,10 +102,15 @@ public class Attribute {
      */
     public void setInc(int inc) {
     	_Inc=inc;
-		_ImageName=attRef[_Id][PIC_NAME];
-		if (inc==0) _ImageName+="-no.gif";
-		else if (inc==1) _ImageName+="-yes.gif";
-		else _ImageName+="-non.gif";
+    	if (_Id<0 || _Id>=maxAttRef) {
+    		_ImageName="error.gif";
+    	}
+    	else {
+    		_ImageName=attRef(_Id,PIC_NAME);
+    		if (inc==0) _ImageName+="-no.gif";
+    		else if (inc==1) _ImageName+="-yes.gif";
+    		else _ImageName+="-non.gif";
+    	}
     }
     /**
      * getting name of corresponding image stored in attributes subdirectory 
