@@ -83,7 +83,7 @@ public class Attributes {
 			boolean doAdd = true;
 			int replace=0;
 			for (int i = 0; i < _count; i++) {
-				if (attribs[i].getGCId() == attr.getGCId()){
+				if (attribs[i].getGCId().equals(attr.getGCId())){
 					doAdd=false;
 					replace=i;
 					break;
