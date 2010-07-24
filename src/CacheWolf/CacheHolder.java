@@ -582,6 +582,7 @@ public class CacheHolder{
 		Hashtable varParams = new Hashtable();
 		CacheHolderDetail det = this.getCacheDetails(false);
 		varParams.put("PROGDIR", FileBase.getProgramDirectory());
+		varParams.put("PROFILDIR", Global.getProfile().dataDir);
 		varParams.put("TYPE", CacheType.type2TypeTag(type)); //<type>
 		varParams.put("TYPENO",""+type);
 		varParams.put("SYM", CacheType.type2SymTag(type)); //<sym>
@@ -615,9 +616,16 @@ public class CacheHolder{
 		varParams.put("SHTERRAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":sTerrain.substring(0,1));
 		varParams.put("DISTANCE", decSep.replaceAll(getDistance()));
 		varParams.put("BEARING", bearing);
-		varParams.put("LATLON", (pos!=null && pos.isValid())?LatLon:"unknown");
-		varParams.put("LAT", decSep.replaceAll(pos.getLatDeg(CWPoint.DD)));
-		varParams.put("LON", decSep.replaceAll(pos.getLonDeg(CWPoint.DD)));		
+		if ((pos!=null && pos.isValid())) {
+			varParams.put("LATLON", decSep.replaceAll(LatLon));
+			varParams.put("LAT", decSep.replaceAll(pos.getLatDeg(CWPoint.DD)));
+			varParams.put("LON", decSep.replaceAll(pos.getLonDeg(CWPoint.DD)));		
+		}
+		else {
+			varParams.put("LATLON", "unknown");
+			varParams.put("LAT", "");
+			varParams.put("LON", "");		
+		}
 		if (withFoundText) {
 			varParams.put("STATUS",getStatusText());
 		}
@@ -745,10 +753,22 @@ public class CacheHolder{
 					CacheHolder ch=(CacheHolder) addiWpts.get(i);
 					addis.put("WAYPOINT",ch.getWayPoint());
 					addis.put("NAME",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheName()) : ch.getCacheName());
-					addis.put("LATLON",ch.getLatLon());
-					addis.put("IMG",(ModTyp == 0) ? CacheType.typeImageForId(ch.getType()) : "<img src=\""+CacheType.typeImageForId(ch.getType())+"\">");
+					if ((ch.pos!=null && ch.pos.isValid())) {
+						addis.put("LATLON",decSep.replaceAll(ch.pos.toString()));
+						addis.put("LAT",decSep.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
+						addis.put("LON",decSep.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
+					}
+					else {
+						addis.put("LATLON", "unknown");
+						addis.put("LAT", "");
+						addis.put("LON", "");		
+					}
+					addis.put("IMG",CacheType.typeImageForId(ch.getType()));
 					addis.put("ICON",""+ch.getType());
 					addis.put("TYPENAME", CacheType.type2Gui(ch.getType()));
+					addis.put("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
+					addis.put("SYM", CacheType.type2SymTag(ch.getType())); //<sym>
+					addis.put("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); //<groundspeak:type>
 					addis.put("LONGDESC",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheDetails(false).LongDescription) : ch.getCacheDetails(false).LongDescription);
 					addiVect.add(addis);
 				}
@@ -761,6 +781,7 @@ public class CacheHolder{
 				imgs.put("TEXT",det.images.get(i).getTitle());
 				imgs.put("COMMENT",det.images.get(i).getComment());
 				imgs.put("URL",det.images.get(i).getURL());
+				imgVect.add(imgs);
 			}
 			if (det.images.size()>0) varParams.put("ALLIMGS",imgVect);
 		}
