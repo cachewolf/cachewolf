@@ -102,7 +102,12 @@ public class HTMLExporter{
 
 							for(int j = 0; j<det.CacheLogs.size()-1; j++){
 								icon=det.CacheLogs.getLog(j).getIcon();
-								if (logIcons.find(icon)<0) logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
+								if (logIcons.find(icon)<0) {
+									logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
+									if (icon.length() > 20) {
+										icon=det.CacheLogs.getLog(j).getIcon();
+									}
+								}
 							}
 
 							cacheImg.clear();
@@ -113,8 +118,10 @@ public class HTMLExporter{
 								imgParams.put("TEXT",det.images.get(j).getTitle());
 								if (DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile))
 									cacheImg.add(imgParams);
-								else
+								else {
+									pref.log("Error at "+ch.getWayPoint());
 									exportErrors++;
+								}
 							}
 							page_tpl.setParam("cacheImg", cacheImg);
 
@@ -127,8 +134,10 @@ public class HTMLExporter{
 								logImgParams.put("TEXT",det.logImages.get(j).getTitle());
 								if (DataMover.copy(profile.dataDir + logImgFile,targetDir + logImgFile))
 									logImg.add(logImgParams);
-								else
+								else {
+									pref.log("Error at "+ch.getWayPoint());
 									exportErrors++;
+								}
 							}
 							page_tpl.setParam("logImg", logImg);
 
@@ -141,8 +150,10 @@ public class HTMLExporter{
 								usrImgParams.put("TEXT",det.userImages.get(j).getTitle());
 								if (DataMover.copy(profile.dataDir + usrImgFile,targetDir + usrImgFile))
 									usrImg.add(usrImgParams);
-								else
+								else {
+									pref.log("Error at "+ch.getWayPoint());
 									exportErrors++;
+								}
 							}
 							page_tpl.setParam("userImg", usrImg);
 
@@ -159,18 +170,20 @@ public class HTMLExporter{
 								mapImgParams.put("TEXT",mapImgFile);
 								if (DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile))
 									mapImg.add(mapImgParams);
-								else
+								else {
+									pref.log("Error at "+ch.getWayPoint());
 									exportErrors++;
-
+								}
 								mapImgParams = new Hashtable();
 								mapImgFile = ch.getWayPoint() + "_map_2.gif";
 								mapImgParams.put("FILE", mapImgFile);
 								mapImgParams.put("TEXT",mapImgFile);
 								if (DataMover.copy(profile.dataDir + mapImgFile,targetDir + mapImgFile))
 									mapImg.add(mapImgParams);
-								else
+								else {
+									pref.log("Error at "+ch.getWayPoint());
 									exportErrors++;
-
+								}
 								page_tpl.setParam("mapImg", mapImg);
 							}
 						} else {
@@ -181,6 +194,7 @@ public class HTMLExporter{
 							page_tpl.setParam("logImg", ""); // ???
 							page_tpl.setParam("userImg", ""); // ???
 							page_tpl.setParam("mapImg", ""); // ???
+							pref.log("Error at "+ch.getWayPoint());
 							exportErrors++;
 						}
 
@@ -188,12 +202,13 @@ public class HTMLExporter{
 						pagefile.print(page_tpl.output());
 						pagefile.close();
 					} catch (IllegalArgumentException e) {
+						pref.log("Error at "+ch.getWayPoint());
 						exportErrors++;
 						ch.setIncomplete(true);
-						Global.getPref().log("HTMLExport: "+ch.getWayPoint()+" is incomplete reason: ",e,Global.getPref().debug);
+						pref.log("HTMLExport: "+ch.getWayPoint()+" is incomplete reason: ",e,Global.getPref().debug);
 					} catch(Exception e){
 						exportErrors++;
-						Global.getPref().log("HTMLExport: error wehen exporting "+ch.getWayPoint()+" reason: ",e,Global.getPref().debug);
+						pref.log("HTMLExport: error wehen exporting "+ch.getWayPoint()+" reason: ",e,Global.getPref().debug);
 					}
 				}//if is black, filtered
 			}
@@ -201,12 +216,16 @@ public class HTMLExporter{
 			// Copy the log-icons to the destination directory
 			for (int j=0; j<logIcons.size(); j++) {
 				icon=(String) logIcons.elementAt(j);
-				if (!DataMover.copy(FileBase.getProgramDirectory() + "/"+icon,targetDir + icon))
+				if (!DataMover.copy(FileBase.getProgramDirectory() + "/"+icon,targetDir + icon)) {
+					pref.log("Error copying logIcons");
 					exportErrors++;
+				}
 
 			}
-			if (!DataMover.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif"))
-				exportErrors++;
+			if (!DataMover.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif",targetDir + "recommendedlog.gif")) {
+				pref.log("Error copying recommendedlog.gif");
+				exportErrors++;	
+			}
 
 			try{
 				Template tpl = new Template(template_init_index);
