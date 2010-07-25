@@ -60,21 +60,9 @@ public class Rebuild {
 					int start=0;
 					boolean doit=true;
 					try {
-						FileInputStream in = new FileInputStream(prof.dataDir + CacheFiles[i]);
-
-						// details=in.readAll();
-						str.setLength(0);
-						while(true){
-							int got = in.read(buff,0,buff.length);
-							if (got == -1) { details = str.toString(); break; }
-							for (int j = 0; j < got; j++) {
-								str.append((char) buff[j]); 
-							}
-
-						}
-						// end readAll substitute
+						FileReader in = new FileReader(prof.dataDir + CacheFiles[i]);
+						details=in.readAll();
 						in.close();
-
 						start = details.indexOf("<CACHE ");
 						if (start < 0) doit=false;
 						else if (details.indexOf("<CACHEDETAILS>") < 0) doit=false;					
