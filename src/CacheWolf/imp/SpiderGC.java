@@ -2001,7 +2001,7 @@ public class SpiderGC{
 				rowBlock = exRowBlock.findNext();
 				descRex.search(rowBlock);
 				if (descRex.didMatch()) {
-					hd.getCacheDetails(false).setLongDescription(descRex.stringMatched(1));
+					hd.getCacheDetails(false).setLongDescription(descRex.stringMatched(1).trim());
 				}
 				else {
 					pref.log("check descRex in spider.def\n"+rowBlock);			

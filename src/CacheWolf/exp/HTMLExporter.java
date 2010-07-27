@@ -100,13 +100,11 @@ public class HTMLExporter{
 
 						if (det != null) {
 
+							// Add the icon to list of icons to copy to dest directory
 							for(int j = 0; j<det.CacheLogs.size()-1; j++){
 								icon=det.CacheLogs.getLog(j).getIcon();
 								if (logIcons.find(icon)<0) {
-									logIcons.add(icon); // Add the icon to list of icons to copy to dest directory
-									if (icon.length() > 20) {
-										icon=det.CacheLogs.getLog(j).getIcon();
-									}
+									logIcons.add(icon); 
 								}
 							}
 
