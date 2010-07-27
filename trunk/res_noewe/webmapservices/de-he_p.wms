@@ -1,0 +1,21 @@
+TakenFromUrl:       http://www.gds-srv.hessen.de/cgi-bin/lika-services/de-viewer/access/ogc-free-images.ows?
+GetCapabilitiesUrl: http://www.gds-srv.hessen.de/cgi-bin/lika-services/de-viewer/access/ogc-free-images.ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               DE Hessen photo
+MapType:                        photo
+MainUrl:            http://www.gds-srv.hessen.de/cgi-bin/lika-services/de-viewer/access/ogc-free-images.ows?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31467
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31467
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=free-maps|Hessen Geodaten Luftbild||
+#LayersUrlPart:     LAYERS=adv_dop|DOP|0.39912227874371|79.8244557487419
+LayersUrlPart:     LAYERS=adv_dop
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 51.6697 E 7.6991
+BoundingBoxButtomRightWGS84: N 49.3455 E 11.3986
+MinScale:   0.4
+MaxScale:   3
+RecommendedScale:    1
+ImageFileExtension: .png
