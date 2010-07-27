@@ -41,6 +41,7 @@ public class MainForm extends Editor {
 
 		pref.debug = dbg;
 		pref.setPathToConfigFile(pathtoprefxml); // in case pathtoprefxml == null the preferences will determine the path itself
+		pref.logInit();
 		doIt();
 	}
 	protected void checkButtons() {

@@ -593,10 +593,12 @@ public class CacheHolder{
 		if (isAddiWpt()) {
 			varParams.put("MAINWP",this.mainCache.getWayPoint());
 			varParams.put("MAINWPNAME", this.mainCache.getCacheName());
+			varParams.put("DATE", this.mainCache.dateHidden);
 		}
 		else {
 			varParams.put("MAINWP", "");
 			varParams.put("MAINWPNAME", "");
+			varParams.put("DATE", dateHidden);
 		}
 		if (isCustomWpt()) {
 
@@ -634,7 +636,6 @@ public class CacheHolder{
 		varParams.put("GC_LOGTYPE", getGCLogType());
 		varParams.put("STATUS_DATE", getStatusDate());
 		varParams.put("STATUS_TIME", getStatusTime());
-		varParams.put("DATE", dateHidden);
 		varParams.put("CACHE_NAME", cacheName);
 		if (codec instanceof AsciiCodec) { cacheName=Exporter.simplifyString(cacheName);} // use for "NAME"
 		if (badChars != null) { cacheName=badChars.replaceAll(cacheName); } // use for "NAME"
