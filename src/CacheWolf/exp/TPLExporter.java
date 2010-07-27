@@ -48,7 +48,7 @@ class TplFilter implements HTML.Tmpl.Filter
 {
 	private int type=SCALAR;
 	private String newLine="\n";
-	TextCodec codec = new AsciiCodec();
+	TextCodec codec = new AsciiCodec(); // codec = new AsciiCodec(AsciiCodec.STRIP_CR);
 	String badChars;
 	String decSep = ".";
 	int shortNameLength=30;
@@ -60,7 +60,6 @@ class TplFilter implements HTML.Tmpl.Filter
 
 
 	public TplFilter(){
-		codec = new AsciiCodec(AsciiCodec.STRIP_CR);
 		return;
 	}
 
@@ -69,24 +68,9 @@ class TplFilter implements HTML.Tmpl.Filter
 	}
 
 	public String parse(String t) {
-		//Vm.debug(t);
+
 		Regex rex, rex1;
 		String param, value;
-		// Filter newlines
-		rex = new Regex("(?m)\n$","");
-		t = rex.replaceAll(t);
-
-		// Filter comments <#-- and -->
-		rex = new Regex("<#--.*-->","");
-		t = rex.replaceAll(t);
-
-		// replace <br> or <br /> with newline
-		rex = new Regex("<br.*>","");
-		rex.search(t);
-		if (rex.didMatch()){
-			t = rex.replaceAll(t);
-			t += newLine;
-		}
 
 		// search for parameters
 		rex = new Regex("(?i)<tmpl_par.*>");
@@ -138,6 +122,26 @@ class TplFilter implements HTML.Tmpl.Filter
 			}
 
 		}
+
+		if (formatModifier == 0) {
+			// for gpx output
+			// Filter newlines
+			rex = new Regex("(?m)\n$","");
+			t = rex.replaceAll(t);
+
+			// Filter comments <#-- and -->
+			rex = new Regex("<#--.*-->","");
+			t = rex.replaceAll(t);
+
+			// replace <br> or <br /> with newline
+			rex = new Regex("<br.*>","");
+			rex.search(t);
+			if (rex.didMatch()){
+				t = rex.replaceAll(t);
+				t += newLine;
+			}
+		}
+
 		return t;
 	}
 
@@ -198,7 +202,7 @@ public class TPLExporter {
 
 			Regex dec = new Regex("[,.]",myFilter.decSep);
 			if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
-
+			
 			Vector cache_index = new Vector(); 			
 			for(int i = 0; i<counter;i++){
 				CacheHolder ch = cacheDB.get(i);
@@ -214,9 +218,11 @@ public class TPLExporter {
 							cache_index.add(varParams);
 							tpl.setParam("cache_index", cache_index);
 							String ext = (myFilter.out.substring(myFilter.out.lastIndexOf(".")).toLowerCase()+"    ").trim();
-							PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(saveTo.getPath() + ch.getWayPoint() + ext)));
-							pagefile.print(tpl.output());
-							pagefile.close();
+							FileWriter fw = new FileWriter(saveTo.getPath() + ch.getWayPoint() + ext);
+							fw.codec = myFilter.codec;
+							PrintWriter detfile = new PrintWriter(new BufferedWriter(fw));
+							tpl.printTo(detfile);
+							detfile.close();
 							cache_index.clear();
 						}
 					}catch(Exception e){
@@ -228,12 +234,11 @@ public class TPLExporter {
 			}
 			if (myFilter.single) {
 				tpl.setParam("cache_index", cache_index);
-				PrintWriter detfile;
 				FileWriter fw = new FileWriter(saveTo);
 				fw.codec = myFilter.codec;
-				detfile = new PrintWriter(new BufferedWriter(fw));
+				PrintWriter detfile = new PrintWriter(new BufferedWriter(fw));
 				tpl.printTo(detfile);
-				//detfile.print(tpl.output());
+				// oder detfile.print(tpl.output());
 				detfile.close();
 			}
 		} catch (Exception e) {
