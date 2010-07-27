@@ -588,16 +588,37 @@ public class CacheHolder{
 		varParams.put("SYM", CacheType.type2SymTag(type)); //<sym>
 		varParams.put("GSTYPE", CacheType.type2GSTypeTag(type)); //<groundspeak:type>
 		varParams.put("SHORTTYPE", CacheType.getExportShortId(type));
-		varParams.put("SIZE", CacheSize.cw2ExportString(cacheSize));
-		varParams.put("SHORTSIZE", CacheSize.getExportShortId(cacheSize));
 		if (isAddiWpt()) {
-			varParams.put("MAINWP",this.mainCache.getWayPoint());
-			varParams.put("MAINWPNAME", this.mainCache.getCacheName());
-			varParams.put("DATE", this.mainCache.dateHidden);
+			CacheHolder ch=this.mainCache;
+			varParams.put("MAINWP",ch.getWayPoint());
+			varParams.put("MAINWPNAME", ch.getCacheName());
+			varParams.put("DIFFICULTY", (ch.hard < 0)?"!<!":decSep.replaceAll(CacheTerrDiff.longDT(ch.hard)));
+			String sHard = Integer.toString(ch.hard);
+			varParams.put("SHORTDIFFICULTY", (ch.hard < 0)?"":sHard);
+			varParams.put("SHDIFFICULTY", (ch.hard < 0)?"":sHard.substring(0,1));
+			varParams.put("TERRAIN", (ch.terrain < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(ch.terrain)));
+			String sTerrain = Integer.toString(ch.terrain);
+			varParams.put("SHORTTERAIN", (ch.terrain < 0)?"":sTerrain);
+			varParams.put("SHTERRAIN", (ch.terrain < 0)?"":sTerrain.substring(0,1));
+			varParams.put("SIZE", CacheSize.cw2ExportString(ch.cacheSize));
+			varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.cacheSize));
+			varParams.put("OWNER", (ModTyp == 0) ? SafeXML.cleanGPX(ch.cacheOwner) : ch.cacheOwner);
+			varParams.put("DATE", ch.dateHidden);
 		}
 		else {
 			varParams.put("MAINWP", "");
 			varParams.put("MAINWPNAME", "");
+			varParams.put("DIFFICULTY", (isCustomWpt() || hard < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(hard)));
+			String sHard = Integer.toString(hard);
+			varParams.put("SHORTDIFFICULTY", (isCustomWpt() || hard < 0)?"":sHard);
+			varParams.put("SHDIFFICULTY", (isCustomWpt() || hard < 0)?"":sHard.substring(0,1));
+			varParams.put("TERRAIN", (isCustomWpt() || terrain < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(terrain)));
+			String sTerrain = Integer.toString(terrain);
+			varParams.put("SHORTTERAIN", (isCustomWpt() || terrain < 0)?"":sTerrain);
+			varParams.put("SHTERRAIN", (isCustomWpt() || terrain < 0)?"":sTerrain.substring(0,1));
+			varParams.put("SIZE", CacheSize.cw2ExportString(cacheSize));
+			varParams.put("SHORTSIZE", CacheSize.getExportShortId(cacheSize));
+			varParams.put("OWNER", (ModTyp == 0) ? SafeXML.cleanGPX(cacheOwner) : cacheOwner);
 			varParams.put("DATE", dateHidden);
 		}
 		if (isCustomWpt()) {
@@ -607,15 +628,6 @@ public class CacheHolder{
 		int wpl = wayPoint.length();
 		int wps = (wpl < shortWaypointLength) ? 0 : wpl - shortWaypointLength;
 		varParams.put("SHORTWAYPOINT", wayPoint.substring(wps, wpl));
-		varParams.put("OWNER", (ModTyp == 0) ? SafeXML.cleanGPX(cacheOwner) : cacheOwner);
-		varParams.put("DIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(hard)));
-		String sHard = Integer.toString(hard);
-		varParams.put("SHORTDIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":sHard);
-		varParams.put("SHDIFFICULTY", (isAddiWpt() || isCustomWpt() || hard < 0)?"":sHard.substring(0,1));
-		varParams.put("TERRAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(terrain)));
-		String sTerrain = Integer.toString(terrain);
-		varParams.put("SHORTTERAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":sTerrain);
-		varParams.put("SHTERRAIN", (isAddiWpt() || isCustomWpt() || terrain < 0)?"":sTerrain.substring(0,1));
 		varParams.put("DISTANCE", decSep.replaceAll(getDistance()));
 		varParams.put("BEARING", bearing);
 		if ((pos!=null && pos.isValid())) {
