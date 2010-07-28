@@ -215,8 +215,14 @@ public class GPXImporter extends MinML {
 			boolean available = false;
 			boolean archived  = false;
 			inCache=true;
-			String ocCacheID = new String(atts.getValue("id"));
-			holder.setOcCacheID(ocCacheID);
+			// get CacheID -- missing p.ex. on GcTour gpx
+			for (int i = 0; i < atts.getLength(); i++) {
+				if (atts.getName(i).equals("id")) {
+					String ocCacheID = atts.getValue("id");
+					holder.setOcCacheID(ocCacheID);
+					break;
+				}
+			}
 			// get status
 			String status = new String(atts.getValue("status"));
 			if (status.equals("Available")) available = true;
