@@ -5,7 +5,6 @@
 <tmpl_par name="NrLogs " value="-1">
 <tmpl_par name="singleFile" value="no">
 <tmpl_par name="formatModifier" value="1">
-<tmpl_loop cache_index>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!-- saved from url=(0014)http://localhost/ -->
 <!-- Note: The line above is needed to avoid the warning due to the javascript contained in this page.
@@ -167,5 +166,3 @@ td { font-size:small;  }
 </div>
 </body>
 </html>
-
-</tmpl_loop>
