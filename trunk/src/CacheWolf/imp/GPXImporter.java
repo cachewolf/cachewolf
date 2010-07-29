@@ -447,6 +447,13 @@ public class GPXImporter extends MinML {
 			if(pref.myAlias.equals(strData)) holder.setOwned(true);
 			return;
 		}
+		if (name.equals("groundspeak:placed_by")) {
+			if(holder.getCacheOwner().equals("")) {
+				holder.setCacheOwner(strData);
+				if(pref.myAlias.equals(strData)) holder.setOwned(true);
+			}
+			return;
+		}
 		if (name.equals("groundspeak:difficulty") || name.equals("difficulty") || name.equals("terra:mental_challenge")) {
 			holder.setHard(CacheTerrDiff.v1Converter(strData));
 			return;

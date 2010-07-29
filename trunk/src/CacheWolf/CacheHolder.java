@@ -3,7 +3,6 @@ package CacheWolf;
 import CacheWolf.exp.Exporter;
 import CacheWolf.exp.GarminMap;
 import CacheWolf.navi.Metrics;
-
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.fx.FontMetrics;
@@ -856,27 +855,14 @@ public class CacheHolder{
 		int imageNo=0;
 		String imgsrc="";
 		if (ModTypLongDesc==1) imgsrc="file://"+Global.getProfile().dataDir;
-		Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
 		while (start>=0 && (pos=chD.LongDescription.indexOf("<img",start))>0) {
 			if (imageNo >= chD.images.size()) break;
 			s.append(chD.LongDescription.substring(start,pos));
-			imgRex.searchFrom(chD.LongDescription,pos);
-			String imgUrl=imgRex.stringMatched(1);
-			if (imgUrl.lastIndexOf('.')>0 && imgUrl.toLowerCase().startsWith("http")) {
-				String imgType = (imgUrl.substring(imgUrl.lastIndexOf(".")).toLowerCase()+"    ").substring(0,4).trim();
-				// If we have an image which we stored when spidering, we can display it
-   				if(imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")){
-					Object localImageSource = null;
-					if (imageNo < chD.images.size()) {
-						localImageSource = chD.images.get(imageNo).getFilename();
-					}
-					if (localImageSource == null) localImageSource = imgUrl;
-					s.append("<img src=\""+imgsrc+localImageSource+"\">");
-					imageNo++;
-				}
-			}
-			start=chD.LongDescription.indexOf(">",pos);
-			if (start>=0) start++;
+			start=chD.LongDescription.indexOf(">",pos)+1;
+			String oldurl=chD.images.get(imageNo).getURL();
+			String newurl=imgsrc+chD.images.get(imageNo).getFilename();
+			s.append(STRreplace.replace(chD.LongDescription.substring(pos, start),oldurl,newurl));
+			imageNo++;
 		}
 		if (start>=0) s.append(chD.LongDescription.substring(start));
 		return s.toString();
