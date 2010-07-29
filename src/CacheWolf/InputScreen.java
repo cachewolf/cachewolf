@@ -538,6 +538,7 @@ public class InputScreen extends Form {
 				if(bBearingPanelOnTop){
 					enable(btnExpert);
 				    enable(btnGPS);
+				    enable(btnBear);
 				    TopSP.setControl(TopP);
 				    bBearingPanelOnTop = false;
 				    this.repaint();
@@ -553,6 +554,7 @@ public class InputScreen extends Form {
 			if (ev.target == btnBear ){
 				    disable(btnExpert);
 				    disable(btnGPS);
+				    disable(btnBear);
 					strBufBear.delete(0, strBufBear.length());
 					strBufDistanc.delete(0, strBufDistanc.length());
 				    TopSP.setControl(BearP,true);
