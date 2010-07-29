@@ -40,6 +40,7 @@
 # Version 7.1 - 20100528 better description recognition
 # Version 8.0 - 20100604 adaption to new GC-design
 # Version 9.0 - 20100630 adaption to new GC-design
+# Version 10.0 - 20100729 adaption to new GC-design DateHiddenrex , optimized cacheOwnerRex araber95
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -107,9 +108,8 @@ latLonRex          = <span\ id="ctl00_ContentBody_LatLon"\ style="font-weight:bo
 shortDescRex       = <span\ id="ctl00_ContentBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tentBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
 cacheNameRex       = <span\ id="ctl00_ContentBody_CacheName">((?s).*?)</span>
-#cacheOwnerRex      = <strong>\\s*A.*\\s*cache\\s*</strong>\\s*by\ <a\ href=(?:(?s).*?)>((?s).*?)</a>\\s*</td>
-cacheOwnerRex      = by\ <a\ href="http://www.geocaching.com/profile/(?:(?s).*?)>((?s).*?)</a>
-dateHiddenRex      = <td>\\s*<strong>\\s*(?:Hidden|Event\ Date)\\s*:</strong>\\s*((?s).*?)\\s*(?:</td>|<a href=)
+cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
+dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\ </strong>\\s*((?s).*?)\\s*<
 hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
 difficultyRex      = <td>\\s*<strong>\\s*Difficulty:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
