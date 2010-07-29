@@ -215,15 +215,13 @@ public class TPLExporter {
 							cache_index.add(varParams);
 						}
 						else {
-							cache_index.add(varParams);
-							tpl.setParam("cache_index", cache_index);
+							tpl.setParams(varParams);
 							String ext = (myFilter.out.substring(myFilter.out.lastIndexOf(".")).toLowerCase()+"    ").trim();
 							FileWriter fw = new FileWriter(saveTo.getPath() + ch.getWayPoint() + ext);
 							fw.codec = myFilter.codec;
 							PrintWriter detfile = new PrintWriter(new BufferedWriter(fw));
 							tpl.printTo(detfile);
 							detfile.close();
-							cache_index.clear();
 						}
 					}catch(Exception e){
 						Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());

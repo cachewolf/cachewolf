@@ -5,7 +5,6 @@
 <tmpl_par name="NrLogs " value="-1">
 <tmpl_par name="singleFile" value="no">
 <tmpl_par name="formatModifier" value="1">
-<tmpl_loop cache_index>
 <html>
 
 <head>
@@ -112,4 +111,3 @@ Maps:<br>
 </table>
 </body>
 </html>
-</tmpl_loop>
