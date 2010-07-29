@@ -557,6 +557,7 @@ public class InputScreen extends Form {
 					strBufDistanc.delete(0, strBufDistanc.length());
 				    TopSP.setControl(BearP,true);
 				    bBearingPanelOnTop = true;
+				    this.repaint();
 
 				}
 
