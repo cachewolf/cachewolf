@@ -192,6 +192,40 @@ public class SpiderGC{
 			} else
 				cookieSession = rexCookieSession.stringMatched(1);
 			//Vm.debug("cookieSession = " + cookieSession);
+
+			/*
+			String viewstate1;
+			rexViewstate1.search(loginPage);
+			if(rexViewstate1.didMatch()){
+				viewstate1 = rexViewstate1.stringMatched(1);
+			} else {
+				viewstate1 = "";
+				pref.log("[login]:check rexViewstate1 in SpiderGC.java --> not found after login\n"+loginPage);
+			}
+			*/
+						
+			/*
+			rexEventvalidation.search(htmlPage);
+			if(rexEventvalidation.didMatch()){
+				eventvalidation = rexEventvalidation.stringMatched(1);
+			} else {
+				eventvalidation = "";
+			}
+			*/
+
+			String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl01$uxLocaleItem";
+			String postStr = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(strEnglishPage,false)
+		    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
+//		    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
+		    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false);
+//		    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
+//		    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
+			try{
+				pref.log("Switching to English:" + postStr);
+				loginPage = fetch_post(loginPage, postStr, nextPage);
+			}catch(Exception ex){
+				pref.log("Error switching to English");
+			}
 		}
 		boolean loginAborted=infB.isClosed;
 		infB.close(0);
