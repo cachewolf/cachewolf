@@ -30,13 +30,13 @@ public class Version {
 	static String[] versionnumbers;
 
 	public static String getRelease() {
-		return Convert.toString(VER_MAJOR) + "." + Convert.toString(VER_MINOR);
+		return Convert.toString(VER_MAJOR) + "." + Convert.toString(VER_MINOR)+ "." + Convert.toString(SVN_REVISION);
 	}
 
 	public static String getReleaseDetailed() {
 		// habe die SVN-Nummer doch aus der Anzeige erstmal wieder herausgenommen, weil es in einem final Release doch recht seltsam auss�he.
 		// Sinnvoll w�re daher vielleicht, eine Methode getReleaseDatail, die die SVN-Versionnummer mit angibt und z.B. im "�ber"-Dialog angezeigt werden k�nnte.
-		return getRelease() + "." + Convert.toString(SVN_REVISION) + " " + VERSION_TYPES[VERSION_TYPE];
+		return getRelease() + " " + VERSION_TYPES[VERSION_TYPE];
 	}
 
 	/**
