@@ -41,6 +41,9 @@ public class MainForm extends Editor {
 
 		pref.debug = dbg;
 		pref.setPathToConfigFile(pathtoprefxml); // in case pathtoprefxml == null the preferences will determine the path itself
+		//We will now read the preferences. This must be done before initializing the log otherwise the locale preference will not be honoured, because
+		//logInit initializes the MyLocale-Singleton.
+		pref.readPrefFile();
 		pref.logInit();
 		doIt();
 	}
