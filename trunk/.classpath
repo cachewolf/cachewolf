@@ -3,5 +3,6 @@
 	<classpathentry excluding="build/" kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/CompileEwe.zip" sourcepath="lib/JavaEwe.zip"/>
 	<classpathentry kind="lib" path="lib"/>
+	<classpathentry kind="lib" path="lib/json.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
