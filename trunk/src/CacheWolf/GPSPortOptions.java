@@ -35,6 +35,13 @@ import ewe.reflect.Reflect;
 import ewe.sys.*;
 import ewe.util.*;
 
+// Stuff needed by the GpsdThread class:
+import net.ax86.GPS;
+import net.ax86.GPSException;
+import org.json.JSONObject;
+import org.json.JSONException;
+
+
 /**
  * Thread for reading data from COM-port
  *
@@ -95,7 +102,100 @@ class mySerialThread extends mThread{
 	}
 }
 
-class GpsdThread extends mThread{
+/**
+ * Thread for reading data from gpsd and simply displaying it to the user.
+ *
+ * This is a modified version of {@link CacheWolf.navi.GpsdThread}.
+ *
+ * @author Tilman Blumenbach
+ */
+class GpsdThread extends mThread {
+	GPS gpsObj;
+	TextDisplay out;
+	boolean run;
+
+
+	public GpsdThread(TextDisplay td) throws IOException, JSONException, GPSException {
+		JSONObject response;
+		int proto_major;
+
+		gpsObj = new GPS(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
+		gpsObj.stream( GPS.WATCH_ENABLE );
+
+		// Check major protocol version:
+		response = gpsObj.read();
+
+		if( ! response.getString( "class" ).equals( "VERSION" ) ) {
+			throw new GPSException( "Expected VERSION object at connect." );
+		} else if( ( proto_major = response.getInt( "proto_major" ) ) != 3 ) {
+			throw new GPSException( "Invalid protocol API version; got " +
+					proto_major + ", wanted 3." );
+		}
+
+		out = td;
+		// Show data to user:
+		out.appendText(response.toString(2) + "\n", true);
+	}
+
+
+	public void run() {
+		JSONObject response;
+
+		run = true;
+		while (run) {
+			try {
+				sleep(1000);
+			} catch (InterruptedException e) {
+				Global.getPref().log("Ignored Exception", e, true);
+			}
+
+			if( gpsObj == null ) {
+				continue;
+			}
+
+			try {
+				/* Tblue> This is ugly, but BufferedReader::ready() seems to
+				 *        be broken in Ewe, so instead of only polling when
+				 *        there is no data from gpsd, we poll on every iteration.
+				 *        Not ideal, but works for now.
+				 */
+				gpsObj.poll();
+
+				/* Tblue> TODO: I think this call should not block, but
+				 *              my GPS class does not yet support non-blocking
+				 *              reads... Seems to work, anyway.
+				 */
+				response = gpsObj.read();
+				out.appendText(response.toString(2) + "\n", true);
+
+				// Keep up with new devices:
+				if( response.getString( "class" ).equals( "DEVICE" ) &&
+				    response.has( "activated" ) && response.getDouble( "activated" ) != 0 )
+				{	// This is a new device, we need to tell gpsd we want to watch it:
+					Global.getPref().log( "New GPS device, sending WATCH command." );
+					gpsObj.stream( GPS.WATCH_ENABLE );
+				}
+			} catch( Exception e ) {
+				// We will just ignore this JSON object:
+				Global.getPref().log("Ignored Exception", e, true);
+			}
+		} // while
+	}
+
+
+	public boolean stop() {
+		run = false;
+
+		if( gpsObj == null ) {
+			return true;
+		}
+
+		gpsObj.cleanup();
+		return false; 
+	}
+}
+
+class OldGpsdThread extends mThread{
 	Socket gpsdSocket;
 	boolean run;
 	TextDisplay out;
@@ -103,7 +203,7 @@ class GpsdThread extends mThread{
 	String lastError = new String();
 	public String lastgot;
 	
-	public GpsdThread(TextDisplay td) throws IOException {
+	public OldGpsdThread(TextDisplay td) throws IOException {
 		try{
 			gpsdSocket = new Socket(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
 		} catch (IOException e) {
@@ -177,17 +277,25 @@ public class GPSPortOptions extends SerialPortOptions {
 	mLabel  labelForwardHost;
 	public mCheckBox forwardGpsChkB;
 	public mInput inputBoxGpsdHost;
+	mLabel  labelUseGpsd;
+	public mChoice chcUseGpsd;
 	mLabel  labelGpsdHost;
-	public mCheckBox gpsdChkB;
 	public mInput inputBoxLogTimer;
 	mLabel  labelLogTimer;
 	public mCheckBox logGpsChkB;
 	mySerialThread serThread;
 	GpsdThread gpsdThread = null;
+	OldGpsdThread oldGpsdThread = null;
 	boolean gpsRunning = false;
 	MyEditor ed = new MyEditor();
 
-	
+	private String[] useGpsdChoices = new String[]{
+		MyLocale.getMsg(641, "No"),
+		MyLocale.getMsg(99999, "Yes (< v2.91)"),
+		MyLocale.getMsg(99999, "Yes (>= v2.91)"),
+	};
+
+
 	public Editor getEditor(){
 		// The following lines are mainly copied from SerialPortOptions.
 		// Reason: We want to use MyEditor instead of the default Editor,
@@ -224,29 +332,34 @@ public class GPSPortOptions extends SerialPortOptions {
 		
 		forwardGpsChkB = new mCheckBox("");
 		ed.addField(ed.addNext(forwardGpsChkB, CellConstants.DONTSTRETCH, (CellConstants.EAST | CellConstants.DONTFILL)), "forwardGpsChkB");
-		labelForwardHost = new mLabel(MyLocale.getMsg(7105, "Forward GPS data to host"));
+		labelForwardHost = new mLabel(MyLocale.getMsg(7105, "Forward GPS data to host (serial port only)"));
 		ed.addField(ed.addNext(labelForwardHost, CellConstants.DONTSTRETCH, (CellConstants.WEST | CellConstants.DONTFILL)), "labelForwardIP");
 		inputBoxForwardHost = new mInput("tcpForwardHost");
 		inputBoxForwardHost.setPromptControl(labelForwardHost);
 		inputBoxForwardHost.setToolTip(MyLocale.getMsg(7106, "All data from GPS will be sent to TCP-port 23\n and can be redirected there to a serial port\n by HW Virtual Serial Port"));
 		ed.addField(ed.addLast(inputBoxForwardHost,0 , (CellConstants.WEST | CellConstants.HFILL)), "tcpForwardHost");
 
-		gpsdChkB = new mCheckBox("");
-		ed.addField(ed.addNext(gpsdChkB, CellConstants.DONTSTRETCH, (CellConstants.EAST | CellConstants.DONTFILL)), "gpsdChkB");
-		labelGpsdHost = new mLabel(MyLocale.getMsg(7121, "Receive GPS from gpsd host"));
-		ed.addField(ed.addNext(labelGpsdHost, CellConstants.DONTSTRETCH, (CellConstants.WEST | CellConstants.DONTFILL)), "labelGpsd");
-		inputBoxGpsdHost = new mInput("GpsdHost");
-		inputBoxGpsdHost.setPromptControl(labelGpsdHost);
-		inputBoxGpsdHost.setToolTip(MyLocale.getMsg(7122, "GPS data will be received from a gpsd server, not from a serial port"));
-		ed.addField(ed.addLast(inputBoxGpsdHost,0 , (CellConstants.WEST | CellConstants.HFILL)), "GpsdHost");
-
 		logGpsChkB = new mCheckBox("");
 		ed.addField(ed.addNext(logGpsChkB, CellConstants.DONTSTRETCH, (CellConstants.EAST | CellConstants.DONTFILL)), "logGpsChkB");
-		labelLogTimer = new mLabel(MyLocale.getMsg(7107, "Interval in sec for logging"));
+		labelLogTimer = new mLabel(MyLocale.getMsg(7107, "Interval in sec for logging (serial port only)"));
 		ed.addField(ed.addNext(labelLogTimer, CellConstants.DONTSTRETCH, (CellConstants.WEST | CellConstants.DONTFILL)), "labelLogTimer");
 		inputBoxLogTimer = new mInput("GPSLogTimer");
 		inputBoxLogTimer.setPromptControl(labelLogTimer);
-		ed.addField(ed.addLast(inputBoxLogTimer,0 , (CellConstants.WEST | CellConstants.HFILL)), "GPSLogTimer");
+		ed.addField(ed.addLast(inputBoxLogTimer, 0, (CellConstants.WEST | CellConstants.HFILL)), "GPSLogTimer");
+
+		labelUseGpsd = new mLabel(MyLocale.getMsg(7121, "Receive GPS data from gpsd:"));
+		ed.addField(ed.addNext(labelUseGpsd, CellConstants.DONTSTRETCH, (CellConstants.EAST | CellConstants.DONTFILL)), "labelUseGpsd");
+		chcUseGpsd = new mChoice( useGpsdChoices, 0 );
+		chcUseGpsd.setPromptControl(labelUseGpsd);
+		chcUseGpsd.setToolTip(MyLocale.getMsg(7122, "GPS data will be received from a gpsd server, not from a serial port"));
+		ed.addField(ed.addLast(chcUseGpsd, 0, (CellConstants.WEST | CellConstants.HFILL)), "UseGpsd");
+
+		labelGpsdHost = new mLabel(MyLocale.getMsg(99999, "gpsd host:"));
+		ed.addField(ed.addNext(labelGpsdHost, CellConstants.DONTSTRETCH, (CellConstants.EAST | CellConstants.DONTFILL)), "labelGpsdHost");
+		inputBoxGpsdHost = new mInput("GpsdHost");
+		inputBoxGpsdHost.setPromptControl(labelGpsdHost);
+		ed.addField(ed.addLast(inputBoxGpsdHost, 0, (CellConstants.WEST | CellConstants.HFILL)), "GpsdHost");
+
 		this.ed.firstFocus = btnUpdatePortList;
 		gpsRunning = false;
 		return ed;
@@ -306,37 +419,67 @@ public class GPSPortOptions extends SerialPortOptions {
 		if (field.equals("test")){
 			if (!gpsRunning){
 				ed_.fromControls();
-				if(Global.getPref().useGPSD){
-					txtOutput.setText(MyLocale.getMsg(99999, "Displaying data from gpsd directly:\n"));
-					try {
-						btnScan.set(ControlConstants.Disabled, true);
-						btnScan.repaintNow();
-						gpsdThread = new GpsdThread(txtOutput);
-						gpsdThread.start();
-						btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
-						gpsRunning = true;
-					} catch (IOException e) {
-						(new MessageBox(MyLocale.getMsg(4403, "Error"), 
-							MyLocale.getMsg(99999, "Could not connect to GPSD.") 
-							+ e.getMessage()
-							+ MyLocale.getMsg(99999, "\npossible reasons:\nGPSD is not running or GPSD host is not reachable"), 
-							FormBase.OKB)).execute(); 
-					}
-				}else{
-					txtOutput.setText(MyLocale.getMsg(7117, "Displaying data from serial port directly:\n"));
-					try {
-						btnScan.set(ControlConstants.Disabled, true);
-						btnScan.repaintNow();
-						this.portName = Common.fixSerialPortName(portName);
-						serThread = new mySerialThread(this, txtOutput);
-						serThread.start();
-						btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
-						gpsRunning = true;
-					} catch (IOException e) {
-						btnScan.set(ControlConstants.Disabled, false);
-						btnScan.repaintNow();
-						txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + this.portName + ", IOException: " + e.getMessage() + "\n", true);
-					}
+
+				switch(Global.getPref().useGPSD) {
+					case Preferences.GPSD_FORMAT_NEW:
+						txtOutput.setText(MyLocale.getMsg(99999, "Displaying data from gpsd directly (JSON):\n"));
+						try {
+							btnScan.set(ControlConstants.Disabled, true);
+							btnScan.repaintNow();
+							gpsdThread = new GpsdThread(txtOutput);
+							gpsdThread.start();
+							btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
+							gpsRunning = true;
+						} catch (IOException e) {
+							(new MessageBox(MyLocale.getMsg(4403, "Error"), 
+								MyLocale.getMsg(99999, "Could not connect to GPSD: ") 
+								+ e.getMessage()
+								+ MyLocale.getMsg(99999, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"), 
+								FormBase.OKB)).execute(); 
+						} catch( Exception e ) {
+							// Other error (JSON/GPS).
+							(new MessageBox(MyLocale.getMsg(4403, "Error"),
+								MyLocale.getMsg(99999, "Could not initialize GPSD connection: ") 
+								+ e.getMessage(),
+								FormBase.OKB)).execute();
+						}
+						break;
+
+					case Preferences.GPSD_FORMAT_OLD:
+						txtOutput.setText(MyLocale.getMsg(99999, "Displaying data from gpsd directly (old protocol):\n"));
+						try {
+							btnScan.set(ControlConstants.Disabled, true);
+							btnScan.repaintNow();
+							oldGpsdThread = new OldGpsdThread(txtOutput);
+							oldGpsdThread.start();
+							btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
+							gpsRunning = true;
+						} catch (IOException e) {
+							(new MessageBox(MyLocale.getMsg(4403, "Error"), 
+								MyLocale.getMsg(99999, "Could not connect to GPSD: ") 
+								+ e.getMessage()
+								+ MyLocale.getMsg(99999, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"), 
+								FormBase.OKB)).execute(); 
+						}
+						break;
+
+					case Preferences.GPSD_DISABLED:
+					default:
+						txtOutput.setText(MyLocale.getMsg(7117, "Displaying data from serial port directly:\n"));
+						try {
+							btnScan.set(ControlConstants.Disabled, true);
+							btnScan.repaintNow();
+							this.portName = Common.fixSerialPortName(portName);
+							serThread = new mySerialThread(this, txtOutput);
+							serThread.start();
+							btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
+							gpsRunning = true;
+						} catch (IOException e) {
+							btnScan.set(ControlConstants.Disabled, false);
+							btnScan.repaintNow();
+							txtOutput.appendText(MyLocale.getMsg(7108, "Failed to open serial port: ") + this.portName + ", IOException: " + e.getMessage() + "\n", true);
+						}
+						break;
 				}
 			}
 			else {
@@ -344,6 +487,8 @@ public class GPSPortOptions extends SerialPortOptions {
 					serThread.stop();
 				if(gpsdThread!=null)
 					gpsdThread.stop();
+				if(oldGpsdThread!=null)
+					oldGpsdThread.stop();
 				btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7104,"Test$t")));
 				gpsRunning = false;
 				btnScan.set(ControlConstants.Disabled, false);
