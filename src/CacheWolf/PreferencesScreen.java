@@ -362,7 +362,7 @@ public class PreferencesScreen extends Form {
 				Editor s = gpo.getEditor();
 				gpo.forwardGpsChkB.setState(pref.forwardGPS);
 				gpo.inputBoxForwardHost.setText(pref.forwardGpsHost);
-				gpo.gpsdChkB.setState(pref.useGPSD);
+				gpo.chcUseGpsd.select(pref.useGPSD);
 				if(pref.gpsdPort!=pref.DEFAULT_GPSD_PORT){
 					gpo.inputBoxGpsdHost.setText(pref.gpsdHost + ":" + Convert.toString(pref.gpsdPort));
 				}else{
@@ -376,7 +376,7 @@ public class PreferencesScreen extends Form {
 					pref.mySPO.baudRate = gpo.baudRate;
 					pref.forwardGPS = gpo.forwardGpsChkB.getState();
 					pref.forwardGpsHost = gpo.inputBoxForwardHost.getText();
-					pref.useGPSD = gpo.gpsdChkB.getState();
+					pref.useGPSD = gpo.chcUseGpsd.getInt();
 					String gpsdHostString = gpo.inputBoxGpsdHost.getText();	// hostname[:port]
 					int posColon = gpsdHostString.indexOf(':');
 					if(posColon>=0){
