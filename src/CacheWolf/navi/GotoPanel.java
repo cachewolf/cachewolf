@@ -264,13 +264,13 @@ public final class GotoPanel extends CellPanel {
 		}
 		// receiving no data
 		if (fix == -1) {
-			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1510, "No data from GPS\nConnection to serial port closed"),FormBase.OKB)).exec();
+			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1510, "No data from GPS.\nConnection to serial port/gpsd closed."),FormBase.OKB)).exec();
 			gpsStatus = RED;
 			myNavigation.stopGps();
 		}
 		// cannot interpret data
 		if (fix == -2) {
-			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511, "Cannot interpret data from GPS\n possible reasons:\n wrong Port,\n wrong Baudrate,\n not NMEA-Protocol\nConnection to serial port closed\nLast String tried to interprete:\n")+myNavigation.gpsPos.lastStrExamined, FormBase.OKB)).exec();
+			if (gpsStatus != RED) (new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511, "Cannot interpret data from GPS/gpsd!\nPossible reasons:\nWrong port,\nwrong baud rate,\ninvalid protocol (need NMEA/gpsd).\nConnection to serial port closed.\nLast String tried to interpret:\n")+myNavigation.gpsPos.lastStrExamined, FormBase.OKB)).exec();
 			gpsStatus = RED;
 			myNavigation.stopGps(); // TODO automatic in myNavigate?
 		}

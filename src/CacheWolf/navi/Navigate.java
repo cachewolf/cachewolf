@@ -10,11 +10,18 @@ import ewe.io.SerialPort;
 import ewe.io.SerialPortOptions;
 import ewe.net.Socket;
 import ewe.sys.mThread;
+import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.mString;
 import CacheWolf.CacheHolder;
 import CacheWolf.navi.MovingMap;
+
+// Stuff needed by the GpsdThread class:
+import net.ax86.GPS;
+import net.ax86.GPSException;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 
 /**
@@ -37,6 +44,7 @@ public class Navigate {
 	public GotoPanel gotoPanel = null;
 	public MovingMap movingMap = null;
 	public GpsdThread gpsdThread = null;
+	public OldGpsdThread oldGpsdThread = null;
 	public SerialThread serThread = null;
 	public Preferences pref = Global.getPref();
 	public UpdateThread tickerThread;
@@ -55,52 +63,85 @@ public class Navigate {
 	public void startGps(boolean loggingOn, int loggingIntervall) {
 		lograw = loggingOn;
 		logIntervall = loggingIntervall; // TODO switch on and off during serthread running
-		if(Global.getPref().useGPSD){
-			try {
-				gpsdThread = new GpsdThread(gpsPos);
-				gpsdThread.start();
-				startDisplayTimer();
-				gpsRunning = true;
-				curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
-				if (lograw)	gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
-				if (gotoPanel != null) gotoPanel.gpsStarted();
-				if (movingMap != null) movingMap.gpsStarted();
-			} catch (IOException e) {
-				(new MessageBox(MyLocale.getMsg(4403, "Error"),
-					MyLocale.getMsg(4408, "Could not connect to GPSD:")
-					+ e.getMessage()
-					+ MyLocale.getMsg(4409, "\npossible reasons:\nGPSD is not running or GPSD host is not reachable"),
-					FormBase.OKB)).execute();
-			}
-		}else{
-			if (serThread != null) if (serThread.isAlive()) return; // TODO use gpsRunning
-			try {
-				serThread = new SerialThread(pref.mySPO, gpsPos, (pref.forwardGPS ? pref.forwardGpsHost : ""));
-				if (pref.forwardGPS && !serThread.tcpForward) {
-					(new MessageBox(MyLocale.getMsg(4400, "Warning"),
-							MyLocale.getMsg(4401, "Ignoring error:\n could not forward GPS data to host:\n")
-							+ pref.forwardGpsHost+"\n" + serThread.lastError
-							+ MyLocale.getMsg(4402, "\nstop and start GPS to retry"), FormBase.OKB)).exec();
-				}
-				serThread.start();
-				startDisplayTimer();
-				gpsRunning = true;
-				curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
-				if (lograw)	gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
-				if (gotoPanel != null) gotoPanel.gpsStarted();
-				if (movingMap != null) movingMap.gpsStarted();
-			} catch (IOException e) {
-				(new MessageBox(MyLocale.getMsg(4403, "Error"),
-						MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ")
+		
+		switch(Global.getPref().useGPSD) {
+			// Tblue> TODO: NEW vs. OLD: This is ugly! The only line that's
+			//        different is the one where the object is created!
+			case Preferences.GPSD_FORMAT_NEW:
+				try {
+					gpsdThread = new GpsdThread(gpsPos);
+					gpsdThread.start();
+					startDisplayTimer();
+					gpsRunning = true;
+					curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
+					if (lograw)	gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
+					if (gotoPanel != null) gotoPanel.gpsStarted();
+					if (movingMap != null) movingMap.gpsStarted();
+				} catch (IOException e) {
+					(new MessageBox(MyLocale.getMsg(4403, "Error"),
+						MyLocale.getMsg(4408, "Could not connect to GPSD: ")
 						+ e.getMessage()
-						+ MyLocale.getMsg(4405, "\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS"),
+						+ MyLocale.getMsg(4409, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"),
 						FormBase.OKB)).execute();
-			} catch (UnsatisfiedLinkError e) {
-				(new MessageBox(MyLocale.getMsg(4403, "Error"),
-						MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ")
-						+ MyLocale.getMsg(4406, "Please copy jave_ewe.dll into the directory of the cachewolf program"),
+				} catch( Exception e ) {
+					// Other error (JSON/GPS).
+					(new MessageBox(MyLocale.getMsg(4403, "Error"),
+						MyLocale.getMsg(99999, "Could not initialize GPSD connection: ") 
+						+ e.getMessage(),
 						FormBase.OKB)).execute();
-			}
+				}
+				break;
+
+			case Preferences.GPSD_FORMAT_OLD:
+				try {
+					oldGpsdThread = new OldGpsdThread(gpsPos);
+					oldGpsdThread.start();
+					startDisplayTimer();
+					gpsRunning = true;
+					curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
+					if (lograw)	gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
+					if (gotoPanel != null) gotoPanel.gpsStarted();
+					if (movingMap != null) movingMap.gpsStarted();
+				} catch (IOException e) {
+					(new MessageBox(MyLocale.getMsg(4403, "Error"),
+						MyLocale.getMsg(4408, "Could not connect to GPSD: ")
+						+ e.getMessage()
+						+ MyLocale.getMsg(4409, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"),
+						FormBase.OKB)).execute();
+				}
+				break;
+
+			case Preferences.GPSD_DISABLED:
+			default:
+				if (serThread != null) if (serThread.isAlive()) return; // TODO use gpsRunning
+				try {
+					serThread = new SerialThread(pref.mySPO, gpsPos, (pref.forwardGPS ? pref.forwardGpsHost : ""));
+					if (pref.forwardGPS && !serThread.tcpForward) {
+						(new MessageBox(MyLocale.getMsg(4400, "Warning"),
+								MyLocale.getMsg(4401, "Ignoring error:\n could not forward GPS data to host:\n")
+								+ pref.forwardGpsHost+"\n" + serThread.lastError
+								+ MyLocale.getMsg(4402, "\nstop and start GPS to retry"), FormBase.OKB)).exec();
+					}
+					serThread.start();
+					startDisplayTimer();
+					gpsRunning = true;
+					curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
+					if (lograw)	gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
+					if (gotoPanel != null) gotoPanel.gpsStarted();
+					if (movingMap != null) movingMap.gpsStarted();
+				} catch (IOException e) {
+					(new MessageBox(MyLocale.getMsg(4403, "Error"),
+							MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ")
+							+ e.getMessage()
+							+ MyLocale.getMsg(4405, "\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS"),
+							FormBase.OKB)).execute();
+				} catch (UnsatisfiedLinkError e) {
+					(new MessageBox(MyLocale.getMsg(4403, "Error"),
+							MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ")
+							+ MyLocale.getMsg(4406, "Please copy jave_ewe.dll into the directory of the cachewolf program"),
+							FormBase.OKB)).execute();
+				}
+				break;
 		}
 	}
 	public void startDisplayTimer() {
@@ -115,6 +156,7 @@ public class Navigate {
 	public void stopGps() {
 		if(serThread!=null)	serThread.stop();
 		if(gpsdThread!=null) gpsdThread.stop();
+		if(oldGpsdThread!=null) oldGpsdThread.stop();
 		stopDisplayTimer();
 		gpsPos.stopLog();
 		gpsRunning = false;
@@ -123,7 +165,10 @@ public class Navigate {
 	}
 
 	public boolean isGpsPosValid() {
-		return (serThread != null && serThread.isAlive() || gpsdThread != null && gpsdThread.isAlive() ) && gpsPos.isValid() ; // && gpsPos.getfiex();
+		return ((serThread != null && serThread.isAlive()) ||
+		       (gpsdThread != null && gpsdThread.isAlive()) ||
+		       (oldGpsdThread != null && oldGpsdThread.isAlive()))
+		        && gpsPos.isValid() ; // && gpsPos.getfiex();
 	}
 
 
@@ -184,14 +229,137 @@ public class Navigate {
 }
 
 
-class GpsdThread extends mThread{
+/**
+ * Thread for reading data from gpsd.
+ *
+ * @author Tilman Blumenbach
+ */
+class GpsdThread extends mThread {
+	GPS gpsObj;
+	CWGPSPoint myGPS;
+	boolean run;
+
+
+	public GpsdThread(CWGPSPoint GPSPoint) throws IOException, JSONException, GPSException {
+		JSONObject response;
+		int proto_major;
+
+		myGPS = GPSPoint;
+		gpsObj = new GPS(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
+		gpsObj.stream( GPS.WATCH_ENABLE );
+
+		// Check major protocol version:
+		response = gpsObj.read();
+
+		if( ! response.getString( "class" ).equals( "VERSION" ) ) {
+			throw new GPSException( "Expected VERSION object at connect." );
+		} else if( ( proto_major = response.getInt( "proto_major" ) ) != 3 ) {
+			throw new GPSException( "Invalid protocol API version; got " +
+					proto_major + ", want 3." );
+		}
+	}
+
+
+	public void run() {
+		JSONObject response;
+		String respClass;
+		int noData = 0;
+		int notInterpreted = 0;
+		boolean gotValidData = false; // redundant, but compiler complains.
+
+		run = true;
+		while (run) {
+			if( gpsObj != null ) {
+				gotValidData = false;
+
+				try {
+					/* Tblue> This is ugly, but BufferedReader::ready() seems to
+					 *        be broken in Ewe, so instead of only polling when
+					 *        there is no data from gpsd (by checking the return
+					 *        value of GPS::waiting(), we poll on every iteration.
+					 *        Not ideal, but works for now.
+					 */
+					gpsObj.poll();
+
+					/* Tblue> TODO: I think this call should not block, but
+					 *              my GPS class does not yet support non-blocking
+					 *              reads...
+					 */
+					response  = gpsObj.read();
+					
+					// If we get here we have got some data:
+					noData = 0;
+
+					respClass = response.getString( "class" );
+					if( respClass.equals( "DEVICE" ) && response.has( "activated" ) &&
+						response.getDouble( "activated" ) != 0 )
+					{	// This is a new device, we need to tell gpsd we want to watch it:
+						Global.getPref().log( "New GPS device, sending WATCH command." );
+						gpsObj.stream( GPS.WATCH_ENABLE );
+					} else if( respClass.equals( "POLL" ) ) {
+						gotValidData = myGPS.examineGpsd(response);
+					} else if( respClass.equals( "ERROR" ) ) {
+						Global.getPref().log( "Ignored gpsd error: " + response.getString( "message" ) );
+					}
+				} catch( Exception e ) {
+					// Something bad happened, will just ignore this JSON
+					// object:
+					Global.getPref().log("Ignored Exception", e, true);
+					gotValidData = false;
+				}
+
+				if( gotValidData ) {
+					notInterpreted = 0;
+				} else {
+					notInterpreted++;
+				}
+				if (notInterpreted > 22) {
+					myGPS.noInterpretableData();
+				}
+			}
+
+			try {
+				sleep(1000);
+			} catch (InterruptedException e) {
+				Global.getPref().log("Ignored Exception", e, true);
+			}
+
+			noData++;
+			if (noData > 5) {
+				myGPS.noDataError();
+			}
+
+/*
+			Vm.debug( "------------------" );
+			Vm.debug( "noData        : " + noData );
+			Vm.debug( "notInterpreted: " + notInterpreted );
+			Vm.debug( "gotValidData  : " + gotValidData );
+*/
+			//myGPS.printAll();
+		} // while
+
+		myGPS.noData();
+	}
+
+
+	public void stop() {
+		run = false;
+
+		if( gpsObj != null ) {
+			gpsObj.cleanup();
+		}
+	}
+}
+
+
+class OldGpsdThread extends mThread{
 	Socket gpsdSocket;
 	CWGPSPoint myGPS;
 	boolean run, tcpForward;
 	Socket tcpConn;
 	String lastError = new String();
 
-	public GpsdThread(CWGPSPoint GPSPoint) throws IOException {
+	public OldGpsdThread(CWGPSPoint GPSPoint) throws IOException {
 		try{
 			gpsdSocket = new Socket(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
 		} catch (IOException e) {
@@ -218,13 +386,15 @@ class GpsdThread extends mThread{
 				if (gpsResult!=null) {
 					//Vm.debug("P -> " + gpsResult);
 					noData = 0;
-					if (myGPS.examineGpsd(gpsResult))
+					if (myGPS.examineOldGpsd(gpsResult))
 						notinterpreted = 0;
 					else
 						notinterpreted++;
 					if (notinterpreted > 22) myGPS.noInterpretableData();
 				}
 			}
+
+			//myGPS.printAll();
 		} // while
 		myGPS.noData();
 	}
@@ -259,6 +429,7 @@ class GpsdThread extends mThread{
 		if (gpsdSocket != null) gpsdSocket.close();
 	}
 }
+
 
 /**
  * Thread for reading data from COM-port

@@ -14,6 +14,10 @@ import CacheWolf.Global;
 import ewe.sys.*;
 import ewe.io.*;
 
+// Stuff needed by CWGPSPoint::examineGpsd():
+import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 
 /**
@@ -26,15 +30,15 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 	public static final int LOGRAW  = 0x02;
 	public static final int LOGALL  = LOGNMEA|LOGRAW;
 
-	public double Speed; //Speed
-	public double Bear;	//Bearing
-	public String Time; //Time
-	public String Date;
-	public int Fix; //Fix
-	public int numSat; //Satellites in use, -1 indicates no data, -2 that data could not be interpreted
-	public int numSatsInView; //Satellites in view
+	public double Speed; // Speed: km/h
+	public double Bear;	// Bearing
+	public String Time; // Time: HHmmss.SS
+	public String Date; // Date: ddMMyy
+	public int Fix; // Fix (0: none, 1: GPS, 2: differential GPS). See getFix() for more possible values.
+	public int numSat; // Satellites in use, -1 indicates no data, -2 that data could not be interpreted
+	public int numSatsInView; // Satellites in view
 	public double HDOP; // Horizontal dilution of precision
-	public double Alt; //Altitude
+	public double Alt; // Altitude in meters
 
 	//Logging
 	int logTimer = 0;
@@ -384,12 +388,95 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 
 
 	/**
-	 * Sets the attributes from a GPSD string
+	 * Sets the attributes from a GPSD <code>POLL</code> object
+	 *
+	 * @param gps	{@link JSONObject} containing GPS <code>POLL</code> data.
+	 * @return true if some data could be interpreted false otherwise
+	 *         Tblue> For now, this always returns true. Any ideas what
+	 *                should be treated as not interpretable?
+	 * @throws JSONException When trying to access a not existing key (should not happen!).
+	 */
+	public boolean examineGpsd(JSONObject gps) throws JSONException {
+		JSONArray fixes    = gps.getJSONArray( "fixes" );
+		JSONArray skyviews = gps.getJSONArray( "skyviews" );
+		JSONArray sats;
+		JSONObject a_fix, a_skyview;
+		int fix_mode, i;
+		double my_lat, my_lon;
+		Time TimeObj = new Time();
+
+		lastStrExamined = gps.toString();
+
+		TimeObj.setTime( (long)( gps.getDouble( "timestamp" ) * 1000 ) );
+		this.Time = TimeObj.format( "HHmmss.SS" );
+		this.Date = TimeObj.format( "ddMMyy" );
+
+		if( fixes.length() > 0 ) {
+			// We will only use the first fix.
+			// TODO: Randomize?
+			a_fix = fixes.getJSONObject( 0 );
+			
+			// 0: no mode seen yet, 1: none, 2: 2D, 3: 3D.
+			// Tblue> Does 3D mean differential here?
+			this.Fix = ( fix_mode = a_fix.getInt( "mode" ) ) > 0 ? fix_mode - 1 : 0;
+
+			// Speed is in m/s.
+			if( a_fix.has( "speed" ) ) {
+				this.Speed = ( a_fix.getDouble( "speed" ) / 1000 ) * 60 * 60;
+			}
+
+			if( a_fix.has( "track" ) ) {
+				this.Bear = a_fix.getDouble( "track" );
+			}
+
+			if( a_fix.has( "alt" ) ) {
+				this.Alt = a_fix.getDouble( "alt" );
+			}
+
+			if( a_fix.has( "lat" ) && a_fix.has( "lon" ) ) {
+				my_lat = a_fix.getDouble( "lat" );
+				my_lon = a_fix.getDouble( "lon" );
+
+				set( my_lat > 0 ? "N" : "S", String.valueOf( my_lat ), "0", "0",
+					 my_lon > 0 ? "E" : "W", String.valueOf( my_lon ), "0", "0",
+					 TransformCoordinates.DD );
+			}
+		}
+
+		if( skyviews.length() > 0 )
+		{
+			// We will only use the first skyview.
+			// TODO: Randomize?
+			a_skyview = skyviews.getJSONObject( 0 );
+
+			if( a_skyview.has( "hdop" ) ) {
+				this.HDOP = a_skyview.getDouble( "hdop" );
+			}
+
+			sats = a_skyview.getJSONArray( "satellites" );
+			this.numSatsInView = sats.length();
+
+			if( this.numSatsInView > 0 )
+			{
+				for( this.numSat = 0, i = 0; i < this.numSatsInView; i++ ) {
+					if( sats.getJSONObject( i ).getBoolean( "used" ) ) {
+						this.numSat++;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * Sets the attributes from an old-style GPSD string.
 	 * @param gps	GPSD string with data to examine
 	 *              Format: GPSD,key=value,...
 	 * @return true if some data could be interpreted false otherwise
 	 */
-	public boolean examineGpsd(String gps){
+	public boolean examineOldGpsd(String gps){
 		boolean valid = false;
 		if(!gps.startsWith("GPSD,"))
 			return false;
@@ -454,6 +541,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		}
 		return valid;
 	}
+
 
 	private boolean checkSumOK(String nmea){
 		int startPos = 1; // begin after $
