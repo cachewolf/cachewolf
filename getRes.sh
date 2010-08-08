@@ -33,9 +33,9 @@ mkdir -p work/mmc/pda_vga
 cp -fa resources/*.* work
 cp -fa res_noewe/*.* work
 cp -fa res_noewe/attributes/* work/attributes
-cp -fa res_noewe/mmc/Desktop/* work/mmc/Desktop/
-cp -fa res_noewe/mmc/pda/* work/pda/
 cp -fa res_noewe/mmc/pda_vga/* work/mmc/pda_vga/
+cp -fa res_noewe/mmc/Desktop/* work/mmc/Desktop/
+cp -fa res_noewe/mmc/pda/* work/mmc/pda/
 cp -fa res_noewe/webmapservices/* work/webmapservices/
 cp -fa res_noewe/languages/* work/languages/
 cp -fa res_noewe/templates/* work/templates/
