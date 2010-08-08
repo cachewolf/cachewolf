@@ -16,8 +16,8 @@ import CacheWolf.imp.GPXImporter;
 import CacheWolf.imp.LOCXMLImporter;
 import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.imp.OCXMLImporterScreen;
-import CacheWolf.imp.Rating;
 import CacheWolf.imp.SpiderGC;
+import CacheWolf.imp.GCVoteImporter;
 import CacheWolf.navi.MapImporter;
 import CacheWolf.navi.MapLoaderGui;
 import CacheWolf.navi.SelectMap;
@@ -54,13 +54,13 @@ import ewe.util.Vector;
 public class MainMenu extends MenuBar {
 	private MenuItem preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
-	private MenuItem spider, spiderAllFinds, update, chkVersion;
+	private MenuItem spider, spiderAllFinds, loadGCVotes, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator=new MenuItem("-");
-	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgCheckNotesAndSolver, orgRater;
+	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgCheckNotesAndSolver;
 	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuDeleteProfile, mnuRenameProfile, mnuEditCenter;
 	private Form father;
@@ -95,6 +95,8 @@ public class MainMenu extends MenuBar {
 				spider      = new MenuItem(MyLocale.getMsg(131,"Spider from geocaching.com")),
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")),
 				update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data")),
+				mnuSeparator,
+				loadGCVotes    = new MenuItem(MyLocale.getMsg(1208,"Import ratings from GCVote")),
 				mnuSeparator,
 				mnuForceLogin  = new MenuItem(MyLocale.getMsg(216,"Always login to GC")),
 		};
@@ -219,12 +221,10 @@ public class MainMenu extends MenuBar {
 				orgDelete   = new MenuItem(MyLocale.getMsg(143,"Delete")),
 				orgRebuild   = new MenuItem(MyLocale.getMsg(208,"Rebuild Index")),
 				orgCheckNotesAndSolver = new MenuItem(MyLocale.getMsg(220,"Check Notes/Solver")),
-				orgRater = new MenuItem("Rater"),
 				mnuSeparator,
 				orgTravelbugs = new MenuItem(MyLocale.getMsg(139,"Manage travelbugs")),
 				cacheTour = new MenuItem(MyLocale.getMsg(198,"Cachetour")),
 		};
-		if (null == Global.getPref().rater) orgRater.modifiers = MenuItem.Disabled;
 		this.addMenu(new PullDownMenu(MyLocale.getMsg(140,"Organise"),new Menu(organiseMenuItems,null)));
 
 		///////////////////////////////////////////////////////////////////////
@@ -343,6 +343,11 @@ public class MainMenu extends MenuBar {
 				cacheDB.clear();
 				profile.readIndex();
 				tbp.resetModel();
+			}
+			if(mev.selectedItem == loadGCVotes){
+                GCVoteImporter sGCV = new GCVoteImporter(pref, profile, true);
+                sGCV.doIt();
+                tbp.resetModel();
 			}
 			if(mev.selectedItem == loadcaches){
 				String dir = pref.getImporterPath("LocGpxImporter");
@@ -686,10 +691,6 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == cacheTour){
 				cacheTour.modifiers^=MenuItem.Checked;
 				Global.mainForm.toggleCacheListVisible();
-			}
-			if(mev.selectedItem == orgRater) {
-				Rating rater = new Rating();
-				rater.run();
 			}
 
 			///////////////////////////////////////////////////////////////////////
