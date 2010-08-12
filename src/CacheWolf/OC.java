@@ -14,7 +14,9 @@ public final class OC {
 		{"www.opencaching.pl", "OP"},
 		{"www.opencaching.cz", "OZ"},
 		{"www.opencaching.org.uk", "OK"},
-		{"www.opencaching.se", "OS"}
+		{"www.opencaching.se", "OS"},
+		{"www.opencaching.no", "ON"},
+		{"www.opencaching.us", "OU"}
 		};
 
 	public final static String[] OCHostNames() {
