@@ -15,6 +15,7 @@ import CacheWolf.MyLocale;
 import CacheWolf.ParseLatLon;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
+import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
 import ewe.sys.Time;
@@ -499,14 +500,14 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		if (name.indexOf("encoded_hints") > -1 || name.equals("hints")) {
-			holder.getCacheDetails(false).Hints = Common.rot13(strData);
+			holder.getCacheDetails(false).Hints = STRreplace.replace(STRreplace.replace(Common.rot13(strData),"\n","<br>"),"\t","");
 			return;
 		}
 		
 		if (name.equals("terra:hint")) {
 			// remove "&lt;br&gt;<br>" from the end
 			int indexTrash = strData.indexOf("&lt;br&gt;<br>");
-			if (indexTrash > 0)	holder.getCacheDetails(false).Hints = Common.rot13(strData.substring(0,indexTrash));
+			if (indexTrash > 0)	holder.getCacheDetails(false).Hints = STRreplace.replace(STRreplace.replace(Common.rot13(strData.substring(0,indexTrash)),"\n","<br>"),"\t","");
 			return;
 		}
 
