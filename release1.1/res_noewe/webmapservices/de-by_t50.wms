@@ -1,0 +1,24 @@
+TakenFromUrl:       http://www.geodaten.bayern.de/ogc/getogc.cgi?
+GetCapabilitiesUrl: http://www.geodaten.bayern.de/ogc/getogc.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               DE Bayern t50
+MapType:                        topo
+MainUrl:            http://www.geodaten.bayern.de/ogc/getogc.cgi?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31468
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31468
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=OGC:WMS|Web Map Service der Bayerischen Vermessungsverwaltung||
+#LayersUrlPart:     LAYERS=copyright|Copyrightvermerk||
+#LayersUrlPart:     LAYERS=TK50|Digitale Topographische Karte 1:50000|0.997805696859274|24.9451424214819
+#LayersUrlPart:     LAYERS=UK500|Digitale Topographische Karte 1:500000|14.9670854528891|498.902848429637
+#LayersUrlPart:     LAYERS=DOP|Digitale Orthophotos 2,0m|2.82329121926332|1147.47655138817
+LayersUrlPart:     LAYERS=TK50
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 50.6269 E 8.8929
+BoundingBoxButtomRightWGS84: N 47.0828 E 13.9782
+MinScale:   1
+MaxScale:   15
+RecommendedScale:    3 5 7
+ImageFileExtension: .png

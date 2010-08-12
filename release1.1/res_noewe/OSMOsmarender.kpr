@@ -1,0 +1,13 @@
+<KosmosProject Version="2.2">
+  <RulesSource>
+    <WikiPage>Kosmos.Rendering.Rules</WikiPage>
+  </RulesSource>
+  <DataFiles>
+    <WebMap>
+      <Provider>OSM Osmarender</Provider>
+      <Transparency>100</Transparency>
+    </WebMap>
+  </DataFiles>
+  <PrintSettings>
+  </PrintSettings>
+</KosmosProject>

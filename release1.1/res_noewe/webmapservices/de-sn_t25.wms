@@ -1,0 +1,44 @@
+TakenFromUrl:   http://www.landesvermessung.sachsen.de/inhalt/geo/basis/basis_dienste.html
+GetCapabilitiesUrl:   http://www.landesvermessung.sachsen.de/ias/basiskarte4/service/SRV4TKFREE/WMSFREE_TK/wmsservice?REQUEST=GetCapabilities
+Name:	de.Sachsen topo 25 SF 1,77..3,52
+MapType:   topo
+MainUrl:   http://www.landesvermessung.sachsen.de/ias/basiskarte4/service/SRV4TKFREE/WMSFREE_TK/wmsservice?
+ServiceTypeUrlPart:   SERVICE=WMS 
+VersionUrlPart:   VERSION=1.1.1 
+CoordinateReferenceSystemCacheWolf: 31468 
+CoordinateReferenceSystemUrlPart:   SRS=EPSG:31468
+RequestUrlPart:   REQUEST=GetMap
+#LayersUrlPart:     LAYERS=MS|Topogr. Karten||
+#LayersUrlPart:     LAYERS=UEB|Uebersicht|62.3629|1247.26
+#LayersUrlPart:     LAYERS=TK100|TK 100||
+#LayersUrlPart:     LAYERS=tk100v|TK 100 - Vegetation|12.4726|62.3629
+#LayersUrlPart:     LAYERS=tk100i|TK 100 - Hoehenlinien|12.4726|62.3629
+#LayersUrlPart:     LAYERS=tk100w|TK 100 - Gewaesser|12.4726|62.3629
+#LayersUrlPart:     LAYERS=tk100g|TK 100 - Grundriss|12.4726|62.3629
+#LayersUrlPart:     LAYERS=tk100s|TK 100 - Schriften|12.4726|62.3629
+#LayersUrlPart:     LAYERS=TK50|TK 50||
+#LayersUrlPart:     LAYERS=tk50v|TK 50 - Vegetation|4.98903|12.4726
+#LayersUrlPart:     LAYERS=tk50i|TK 50 - Hoehenlinien|4.98903|12.4726
+#LayersUrlPart:     LAYERS=tk50w|TK 50 - Gewaesser|4.98903|12.4726
+#LayersUrlPart:     LAYERS=tk50g|TK 50 - Grundriss|4.98903|12.4726
+#LayersUrlPart:     LAYERS=TK25|TK 25||
+#LayersUrlPart:     LAYERS=tk25v|TK 25 - Vegetation|2.49451|4.98903
+#LayersUrlPart:     LAYERS=tk25i|TK 25 - Hoehenlinien|2.49451|4.98903
+#LayersUrlPart:     LAYERS=tk25w|TK 25 - Gewaesser|2.49451|4.98903
+#LayersUrlPart:     LAYERS=tk25g|TK 25 - Grundriss|2.49451|4.98903
+#LayersUrlPart:     LAYERS=TK10|TK 10||
+#LayersUrlPart:     LAYERS=tk10v|TK 10 - Vegetation|0.0503892|2.49451
+#LayersUrlPart:     LAYERS=tk10i|TK 10 - Hoehenlinien|0.0503892|2.49451
+#LayersUrlPart:     LAYERS=tk10w|TK 10 - Gewaesser|0.0503892|2.49451
+#LayersUrlPart:     LAYERS=tk10g|TK 10 - Grundriss|0.0503892|2.49451
+LayersUrlPart:	LAYERS=TK25
+#LayersUrlPart:   LAYERS=tk25,tk25i,tk25g,tk25w
+StylesUrlPart:   STYLES=
+ImageFormatUrlPart:   FORMAT=image/png
+BoundingBoxTopLeftWGS84:   N 51.8592 E 11.7651
+BoundingBoxButtomRightWGS84:   N 50.0294 E 15.1358
+MinScale:   2.49452
+MaxScale:   4.98903
+RecommendedScale:   2.5
+ImageFileExtension: .png
+#MinScale 2,49451 = 1,7638849367376546650931502697142 Praktisch aber 1,77

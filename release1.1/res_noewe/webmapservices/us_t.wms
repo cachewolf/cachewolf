@@ -1,0 +1,22 @@
+TakenFromUrl:       http://terraservice.net/
+GetCapabilitiesUrl: http://terraservice.net/ogccapabilities.ashx?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               USA topo
+MapType:                        topo
+MainUrl:            http://terraservice.net/ogcwms.aspx?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=DOQ|USGS Digital Ortho-Quadrangles||
+#LayersUrlPart:     LAYERS=DRG|USGS Raster Graphics (Topo Maps)||
+#LayersUrlPart:     LAYERS=UrbanArea|USGS Urban Areas Ortho-Imagery||
+LayersUrlPart:     LAYERS=DRG
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 71.5500 W 168.6700
+BoundingBoxButtomRightWGS84: N 17.8400 W 65.1500
+MinScale:   0
+MaxScale:   45
+RecommendedScale:   5
+ImageFileExtension: .jpg

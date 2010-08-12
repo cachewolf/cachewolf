@@ -1,0 +1,71 @@
+<mmc>
+	<settings fontsize="20"/>
+
+	<role name="always" active="true"/>
+	<role name="menu"/>
+	<role name="zoom" disable="map|centermap|detail"/>
+	<role name="centermap"  disable="zoom|map|detail"/>
+	<role name="map" disable="zoom|centermap|detail"/>
+	<role name="detail" disable="zoom|centermap|map"/>
+	<role name="show_map" active="true"/> <!-- this name of role is fix in code! -->
+	<role name="show_caches" active="true"/><!-- this name of role is fix in code! -->
+	<role name="fill_white" active="true"/><!-- this name of role is fix in code! -->
+	<role name="zoom_manually"/><!-- this name of role is fix in code! -->
+
+	<!-- Buttons right side -->
+	<button action="close" fromRight="91" fromTop="1" location="90x90.png"  icon="icon_close.png"  alpha="80" visibleIf="!menu" />
+	<button action="moveToGps" fromRight="91" fromTop="96" location="90x90.png"  icon="icon_gps.png"  alpha="80" visibleIf="!menu" />
+
+	<!-- buttom text icons -->
+	<button action="changeStateOfRole" fromLeft="0" fromBottom="80" changeStateof="menu" location="text_left_110x80.png" icon="text_left_110x80.png" alpha="220" visibleIf="!menu" content="distance" alignText="BL"/>
+
+	<button action="changeStateOfRole" fromRight="110" fromBottom="80" changeStateof="menu" location="text_right_110x80.png" icon="text_right_110x80.png" alpha="220" visibleIf="!menu" content="scale" alignText="BR"/>
+
+	<!-- menu items -->
+	<button action="changeStateOfRole" fromRight="91" fromTop="1" changeStateof="map" location="90x90.png"  icon="icon_map.png"  visibleIf="menu+!map" />
+	<button action="changeStateOfRole" fromRight="91" fromTop="1" changeStateof="map" location="90x90_active.png"  icon="icon_map.png" visibleIf="menu+map" />
+
+	<button action="changeStateOfRole" fromRight="91" fromTop="95" changeStateof="zoom" location="90x90.png"  icon="icon_zoom.png" visibleIf="menu+!zoom" />
+	<button action="changeStateOfRole" fromRight="91" fromTop="95" changeStateof="zoom" location="90x90_active.png"  icon="icon_zoom.png" visibleIf="menu+zoom" />
+
+	<button action="changeStateOfRole" fromRight="91" fromTop="190" changeStateof="detail" location="90x90.png" icon="icon_map_pos_dest.png" visibleIf="menu+!detail" />
+	<button action="changeStateOfRole" fromRight="91" fromTop="190" changeStateof="detail" location="90x90_active.png"  icon="icon_map_pos_dest.png" visibleIf="menu+detail" />
+
+
+	<button action="changeStateOfRole" fromRight="91" fromTop="285" changeStateof="centermap" location="90x90.png" icon="icon_to_centre.png" visibleIf="menu+!centermap" />
+	<button action="changeStateOfRole" fromRight="91" fromTop="285" changeStateof="centermap" location="90x90_active.png"  icon="icon_to_centre.png" visibleIf="menu+centermap" />
+
+
+	<!-- sub menu: map -->
+	<button action="selectMap" fromLeft="3" fromTop="0"  location="360x90.png"  icon="icon_folder.png"  visibleIf="menu+map" localeDefault="Select a map manually$s" localeID="4235" alignText="C" textOffsetLeft="75"/>
+	<button action="changeMapDir" fromLeft="3" fromTop="95"  location="360x90.png"  icon="icon_folders.png"  visibleIf="menu+map" localeDefault="Change map directory" localeID="4237" alignText="C" textOffsetLeft="75"/>
+	<button action="changeStateOfRole" fromLeft="3" fromTop="190" changeStateof="show_map" location="360x90.png"  icon="icon_map.png"  visibleIf="menu+map+!show_map" localeDefault="Show map" localeID="4239" alignText="C" textOffsetLeft="75"/>
+	<button action="changeStateOfRole" fromLeft="3" fromTop="190" changeStateof="show_map" location="360x90.png"  icon="icon_nomap.png"  visibleIf="menu+map+show_map" localeDefault="Hide map" localeID="4241" alignText="C" textOffsetLeft="75"/>
+	<button action="changeStateOfRole" fromLeft="3" fromTop="285" changeStateof="fill_white" location="360x90.png"  icon="icon_map_no_fill.png"  visibleIf="menu+map+fill_white" localeDefault="Show white areas" localeID="4267" alignText="C" textOffsetLeft="75"/>
+	<button action="changeStateOfRole" fromLeft="3" fromTop="285" changeStateof="fill_white" location="360x90.png"  icon="icon_map_fill.png"  visibleIf="menu+map+!fill_white" localeDefault="Fill white areas" localeID="4266" alignText="C" textOffsetLeft="75"/>
+	<button action="changeStateOfRole" fromLeft="3" fromTop="380" changeStateof="show_caches" location="360x90.png"  icon="icon_map_cache.png"  visibleIf="menu+map+!show_caches" localeDefault="Alle Cache anzeigen" localeID="4268" alignText="C" textOffsetLeft="75"/>
+	<button action="changeStateOfRole" fromLeft="3" fromTop="380" changeStateof="show_caches" location="360x90.png"  icon="icon_map_no_cache.png"  visibleIf="menu+map+show_caches" localeDefault="Keine Cache anzeigen" localeID="4269" alignText="C" textOffsetLeft="75"/>
+
+	<!-- sub menu: zoom -->
+	<button action="changeStateOfRole" fromLeft="3" fromTop="0" changeStateof="zoom_manually" location="360x90.png"  icon="icon_zoom.png"  visibleIf="menu+zoom+!zoom_manually" localeDefault="Manual zoom" localeID="4292" alignText="C" textOffsetLeft="75"/>
+	<button action="changeStateOfRole" fromLeft="3" fromTop="0" changeStateof="zoom_manually" location="360x90_active.png"  icon="icon_zoom.png"  visibleIf="menu+zoom+zoom_manually" localeDefault="Manual zoom" localeID="4292" alignText="C" textOffsetLeft="75"/>
+	<button action="zoomin" fromLeft="3" fromTop="95"  location="360x90.png"  icon="icon_zoom_in.png"  visibleIf="menu+zoom" localeDefault="Zoom in" localeID="4291" alignText="C" textOffsetLeft="75"/>
+	<button action="zoomout" fromLeft="3" fromTop="190"  location="360x90.png"  icon="icon_zoom_out.png"  visibleIf="menu+zoom" localeDefault="Zoom out" localeID="4290" alignText="C" textOffsetLeft="75"/>
+	<button action="1to1" fromLeft="3" fromTop="285"  location="360x90.png"  icon="icon_1to1.png"  visibleIf="menu+zoom" localeDefault="Zoom to original resolution" localeID="4293" alignText="C" textOffsetLeft="75"/>
+
+
+	<!-- sub menu: center map -->
+	<button action="moveToDest" fromLeft="3" fromTop="0"  location="360x90.png"  icon="icon_to_target.png"  visibleIf="menu+centermap" localeDefault="Move to goto point" localeID="4260" alignText="C" textOffsetLeft="75"/>
+	<button action="moveToGps" fromLeft="3" fromTop="95"  location="360x90.png"  icon="icon_to_gps.png"  visibleIf="menu+centermap" localeDefault="Move to GPS position" localeID="4262" alignText="C" textOffsetLeft="75"/>
+	<button action="moveToCenter" fromLeft="3" fromTop="190"  location="360x90.png"  icon="icon_to_centre.png"  visibleIf="menu+centermap" localeDefault="Move to centre" localeID="4264" alignText="C" textOffsetLeft="75"/>
+
+	<!-- sub menu: detail -->
+	<button action="highestResGpsDest" fromLeft="3" fromTop="0"  location="360x90.png"  icon="icon_map_pos_dest.png"  visibleIf="menu+detail" localeDefault= "Highest res. containing dest.  cur. position" localeID="4244" alignText="C" textOffsetLeft="75"/>
+	<button action="highestResolution" fromLeft="3" fromTop="95"  location="360x90.png"  icon="icon_map_highest_res.png"  visibleIf="menu+detail" localeDefault="Highest resolution" localeID="4246" alignText="C" textOffsetLeft="75"/>
+	<button action="keepManResolution" fromLeft="3" fromTop="190"  location="360x90.png"  icon="icon_map_man_res.png"  visibleIf="menu+detail" localeDefault="Keep manual resolution" localeID="4248" alignText="C" textOffsetLeft="75"/>
+	<button action="allCachesRes" fromLeft="3" fromTop="285"  location="360x90.png"  icon="icon_map_all.png"  visibleIf="menu+detail" localeDefault="Load a map containing all marked caches" localeID="4252" alignText="C" textOffsetLeft="75"/>
+	<button action="moreDetails" fromLeft="3" fromTop="380"  location="360x90.png"  icon="icon_map_more_details.png"  visibleIf="menu+detail" localeDefault="Load a map with more details" localeID="4254" alignText="C" textOffsetLeft="75"/>
+	<button action="moreOverview" fromLeft="3" fromTop="475"  location="360x90.png"  icon="icon_map_less_details.png"  visibleIf="menu+detail" localeDefault="Load a map for a better overview" localeID="4256" alignText="C" textOffsetLeft="75"/>
+
+	<button action="changeStateOfRole" fromRight="70" fromTop="200" changeStateof="zoom_manually" location="icon_zoom.png"  icon="icon_zoom.png"  visibleIf="!menu+zoom_manually"/>
+</mmc>

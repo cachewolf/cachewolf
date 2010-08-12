@@ -1,0 +1,20 @@
+TakenFromUrl:   http://www.andaluciajunta.es/IDEAndalucia/OGC.shtml#ogc18
+GetCapabilitiesUrl:   http://andaluciajunta.es/IDEAndalucia/IDEAwms/wms/mta10r_95?REQUEST=GetCapabilities&SERVICE=WMS
+Name:   es.andalucia topo 10_95
+MapType:   topo
+MainUrl:   http://andaluciajunta.es/IDEAndalucia/IDEAwms/wms/mta10r_95?
+LayersName:
+ServiceTypeUrlPart:   SERVICE=WMS
+VersionUrlPart:   VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:   4326
+CoordinateReferenceSystemUrlPart:   SRS=EPSG:4326
+RequestUrlPart:   REQUEST=GetMap
+LayersUrlPart:   LAYERS=mta10r
+StylesUrlPart:   STYLES=
+ImageFormatUrlPart:   FORMAT=image/png
+BoundingBoxTopLeftWGS84:   N 38.748  W 7.587
+BoundingBoxButtomRightWGS84:   N 35.947 W 1.602
+MinScale:   0
+MaxScale:   49.8902848429637
+RecommendedScale:   5.000
+ImageFileExtension: .png

@@ -1,0 +1,177 @@
+﻿Short documentation for the export via templates
+
+Comment
+=======
+
+<#-- TomTom ASC or POI -->
+Anything between "<#--" and "-->" is handled as a comment
+
+Configuration section
+=====================
+
+Charsets: <tmpl_par name="charset" value="ASCII">, values ASCII or UTF8
+
+Bad Chars
+=========
+
+These chars are removed from the cachename, hints and notes, for example the ',' if ',' is used as a separator.
+<tmpl_par name="badchars" value=",">
+
+Newline
+=======
+
+These defines, what should be used for replacing <br />
+<tmpl_par name="newline" value="CRLF">, values are CR, LF or CRLF
+
+Decimal separator
+=================
+
+Defines, which decimal separator is used
+<tmpl_par name="decsep" value=",">, values "." or ','
+
+Output section
+==============
+Anything (except comments and variables) is written to the output file. The cachedata ist placed between <tmpl_loop cache_index> and </tmpl_loop>. Variables defined like this: <tmpl_var name=LON>. At the end of the line <br /> has to be placed, this ist replaced by CR.
+
+Variables
+=========
+
+TYPE: Type of cache, e.g. Regular, Multi
+SHORTTYPE: First Letter of type
+SIZE: Size of Cache, e.g. Regular, Micro
+SHORTSIZE: First letter of size
+WAYPOINT: GCXXXX, OCXXXX
+NAME: Name of cache (badchars are removed, see below)
+OWNER
+DIFFICULTY
+TERRAIN
+DISTANCE: Distance calculated in cachelist
+BEARING: Bearing calculated in cachelist
+LATON: Coordinates in long format, e.g. N 50° 31.234 E 008° 45.267
+LAT: Latitude in decimal format, e.g. 50.20147
+LON: Longitude in decimal format, e.g. 008.58132
+STATUS
+STATUS_DATE: Get the date part of the status 
+STATUS_TIME: Get the time part of the status
+DATE: date hidden
+URL
+DESCRIPTION: Cache Description (possibly in HTML Format)
+NOTES: User Notes   (badchars are removed, see below)
+HINTS: Encrypted hints   (badchars are removed, see below)
+DESCRYPTEDHINTS: Decrypted hints    (badchars are removed, see below) 
+
+Further documentation of template library: http://html-tmpl-java.sourceforge.net/
+
+
+Example
+=======
+
+<#-- Microsoft AutoRoute -->
+<#-- Codecs: ASCII, UTF8 -->
+<tmpl_par name="charset" value="ASCII">
+<#-- somme chars should not appear in the cachename -->
+<tmpl_par name="badchars" value=";"">
+<#-- newline: CR, LF, CRLF -->
+<tmpl_par name="newline" value="CRLF">
+<#-- decimal seperator: . or , -->
+<tmpl_par name="decsep" value=",">
+Name;Breitengrad;Längengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink<br />
+<tmpl_loop cache_index>
+"<tmpl_var name=SHORTTYPE>-<tmpl_var name=SHORTSIZE>-<tmpl_var name=DIFFICULTY>-<tmpl_var name=TERRAIN> <tmpl_var name=NAME>";<tmpl_var name=LAT>;<tmpl_var name=LON>;"<tmpl_var name=TYPE>";"<tmpl_var name=SIZE>";"<tmpl_var name=WAYPOINT>";"<tmpl_var name=DATE>";"<tmpl_var name=URL>"<br />
+</tmpl_loop>
+
+
+Tags
+====
+
+tmpl_var
+--------
+
+You can set default values for your template variables, 
+which will be used if no value has been set through the setParam method.
+
+<TMPL_VAR name="var_name" default="my value">
+
+If var_name is set using setParam (or setParams), then it's value will be whatever it was set to, 
+else it will be "my value" (without the quotes).
+
+You can also "escape" certain strings. The following escape modes are possible.
+  none:   String unchanged (this is the default if escape is not specified)
+  html:   Encode special characters: & > < ".  They are changed to &amp; &lt;  &gt;  and &quot; respectively
+  url:    Encode special characters in URL, e.g. space becomes %20
+  quote:  Change quotation marks:   " becomes \"  and ' becomes \'
+
+Example: <TMPL_VAR name="var_name" escape="html">
+
+tmpl_if
+-------
+
+The <tmpl_if> tag allows you to include or not include a block of the template based on the value 
+of a given parameter name. If the parameter is given a value that is true, then the block is included 
+in the output. If the value is false, then it is skipped.
+
+The tmpl_if must be closed with a corresponding /tmpl_if, e.g.
+
+<tmpl_if ...>
+...
+</tmpl_if>
+
+
+Parameter values for conditions are Strings in java, and not boolean values, hence, what evaluates to true 
+and false needs to be specifically defined.
+
+As of now, the following values evaluate to false:
+"" - the empty string
+"0" - the string containing only the number zero
+null - the null value
+
+tmpl_else
+---------
+
+While the if block allows us to display some output if a condition is true, 
+we may also need to display content if the condition is false. This can be done by using the optional 
+else branch of the if block.
+
+tmpl_unless
+-----------
+
+This tag is the exact opposite of the <tmpl_if> tag. A <tmpl_unless> block is displayed if its control 
+variable evaluates to false. If the control variable evaluates to true, then the else block, 
+if any, is displayed instead.
+
+tmpl_loop
+---------
+
+The <tmpl_loop> tag is a bit more complicated than the other tags. It allows you to create a section of text 
+that will be displayed repeatedly for every item in the loop control variable. Inside the <tmpl_loop>, 
+you place <tmpl_var>s. The only loop used by the template exporter is 'cache_index', see example above. 
+
+Loop context variables
+----------------------
+
+If you set loop_context_vars to true in your Template's constructor, then you will have access to five 
+special variables in all your loops. These are:
+
+__FIRST__
+    True for the first run of the loop, false otherwise
+__LAST__
+    True for the last run of the loop, false otherwise
+__ODD__
+    True for every other iteration of the loop - a loop starts at 1
+__INNER__
+    True if both __FIRST__ and __LAST__ are false
+__COUNTER__
+    Which iteration is currently on. Starts at 1
+
+You may use these like any other <TMPL_VAR> inside your loop.
+
+
+tmpl_include
+------------
+
+The <tmpl_include> tag is the next simplest tag after <tmpl_var>, however, it will not do what you expect it to do 
+inside a <tmpl_if>
+
+<tmpl_include> is used to include the contents of another template within this template, at the position of the tag. 
+Processing then continues, as if the included template were always a part of the current template. 
+

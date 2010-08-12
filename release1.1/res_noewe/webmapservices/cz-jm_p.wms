@@ -1,0 +1,98 @@
+TakenFromUrl:       http://ias.kr-jihomoravsky.cz:8080/wmsconnector/com.esri.wms.Esrimap/kolo?
+GetCapabilitiesUrl: http://ias.kr-jihomoravsky.cz:8080/wmsconnector/com.esri.wms.Esrimap/kolo?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetCapabilities
+Name:               cz.jihomoravsky p SF=1
+#Name:               cz.Suedmaehren p SF=1
+MapType:                        photo
+MainUrl:            http://ias.kr-jihomoravsky.cz:8080/wmsconnector/com.esri.wms.Esrimap/kolo?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.0
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+#<SRS>EPSG:4326 EPSG:102067 EPSG:4267 EPSG:4269</SRS>
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=u15|Relief||
+#LayersUrlPart:     LAYERS=orto|OrtoFoto2003||
+#LayersUrlPart:     LAYERS=lesy|SDE.LESY_JMK|NaN|NaN
+#LayersUrlPart:     LAYERS=u1|JARDA.RC_CZ0620_A213|NaN|NaN
+#LayersUrlPart:     LAYERS=u2|JARDA.RC_CZ0620_A234|NaN|9999999
+#LayersUrlPart:     LAYERS=u3|JARDA.SILNICE|NaN|9999999
+#LayersUrlPart:     LAYERS=u4|Obce|NaN|9999999
+#LayersUrlPart:     LAYERS=21|Lesni puda se stromy|NaN|NaN
+#LayersUrlPart:     LAYERS=22|Lesni puda s kosodrevinou|NaN|NaN
+#LayersUrlPart:     LAYERS=23|Lesni puda s krovinatym porostem|NaN|NaN
+#LayersUrlPart:     LAYERS=24|Louka pastvina|NaN|NaN
+#LayersUrlPart:     LAYERS=25|Okrasna zahrada, park|NaN|NaN
+#LayersUrlPart:     LAYERS=27|Vinice|NaN|NaN
+#LayersUrlPart:     LAYERS=28|Ovocny sad zahrada|NaN|NaN
+#LayersUrlPart:     LAYERS=29|Orna puda a ostatni neurcena plocha|NaN|NaN
+#LayersUrlPart:     LAYERS=30|Intravilan|NaN|NaN
+#LayersUrlPart:     LAYERS=33|Ucelova zastavba|NaN|NaN
+#LayersUrlPart:     LAYERS=35|Skladka|0|NaN
+#LayersUrlPart:     LAYERS=37|Vodni tok|NaN|NaN
+#LayersUrlPart:     LAYERS=41|Vodni plocha|NaN|NaN
+#LayersUrlPart:     LAYERS=43|Valcova nadrz, zasobnik|NaN|NaN
+#LayersUrlPart:     LAYERS=46|Budova blok budov1|NaN|NaN
+#LayersUrlPart:     LAYERS=47|Chladici vez|NaN|NaN
+#LayersUrlPart:     LAYERS=59|Usazovaci nadrz odkaliste|NaN|NaN
+#LayersUrlPart:     LAYERS=53|Stupen|0|NaN
+#LayersUrlPart:     LAYERS=55|Rokle vymol|0|NaN
+#LayersUrlPart:     LAYERS=56|Vrstevnice doplnkova|NaN|NaN
+#LayersUrlPart:     LAYERS=57|Vrstevnice zesilena|NaN|NaN
+#LayersUrlPart:     LAYERS=62|Prehradni hraz jez|0|NaN
+#LayersUrlPart:     LAYERS=65|Brod|0|NaN
+#LayersUrlPart:     LAYERS=66|Akvadukt shybka|0|NaN
+#LayersUrlPart:     LAYERS=68|Obvod letistni drahy|NaN|NaN
+#LayersUrlPart:     LAYERS=71|Lesni prusek|0|NaN
+#LayersUrlPart:     LAYERS=73|Elektricke vedeni|NaN|NaN
+#LayersUrlPart:     LAYERS=74|Tunel|NaN|NaN
+#LayersUrlPart:     LAYERS=75|Produktovod potrubi|NaN|NaN
+#LayersUrlPart:     LAYERS=77|Lanova draha lyzarsky vlek|0|NaN
+#LayersUrlPart:     LAYERS=78|Cesta|0|NaN
+#LayersUrlPart:     LAYERS=79|Pesina|0|NaN
+#LayersUrlPart:     LAYERS=81|Silnice dalnice|NaN|NaN
+#LayersUrlPart:     LAYERS=82|Vlecka|0|NaN
+#LayersUrlPart:     LAYERS=84|Poulicni draha|0|NaN
+#LayersUrlPart:     LAYERS=85|Zeleznicni trat|0|NaN
+#LayersUrlPart:     LAYERS=89|Hranice dobyvaciho prostoru|NaN|NaN
+#LayersUrlPart:     LAYERS=90|Chranene uzemi|0|NaN
+#LayersUrlPart:     LAYERS=91|Hrbitov|0|NaN
+#LayersUrlPart:     LAYERS=92|Propustek|0|NaN
+#LayersUrlPart:     LAYERS=93|Lavka|0|NaN
+#LayersUrlPart:     LAYERS=94|Podjezd|0|NaN
+#LayersUrlPart:     LAYERS=95|Most|0|NaN
+#LayersUrlPart:     LAYERS=97|Bod tihoveho pole|0|NaN
+#LayersUrlPart:     LAYERS=98|Bod polohoveho pole|0|NaN
+#LayersUrlPart:     LAYERS=99|Bod vyskoveho pole|0|NaN
+#LayersUrlPart:     LAYERS=100|Hranicni prechod|0|NaN
+#LayersUrlPart:     LAYERS=101|Osamely strom, lesik|0|NaN
+#LayersUrlPart:     LAYERS=103|Osamely balvan skala|0|NaN
+#LayersUrlPart:     LAYERS=104|Vstup do jeskyne|0|NaN
+#LayersUrlPart:     LAYERS=105|Kotovany bod|0|NaN
+#LayersUrlPart:     LAYERS=107|Zdroj podzemnich vod|0|NaN
+#LayersUrlPart:     LAYERS=108|Pristaviste|0|NaN
+#LayersUrlPart:     LAYERS=110|Zeleznicni zastavka|0|NaN
+#LayersUrlPart:     LAYERS=120|Uzlovy bod silnicni site UBS|0|NaN
+#LayersUrlPart:     LAYERS=121|Vodojem vezovy|0|NaN
+#LayersUrlPart:     LAYERS=122|Valcova nadrz zasobnik|NaN|NaN
+#LayersUrlPart:     LAYERS=123|Silo|NaN|NaN
+#LayersUrlPart:     LAYERS=125|Kriz sloup kulturniho vyznamu|0|NaN
+#LayersUrlPart:     LAYERS=126|Nastavba na budove, rozhledna|0|NaN
+#LayersUrlPart:     LAYERS=127|Budova blok budov|NaN|NaN
+#LayersUrlPart:     LAYERS=128|Vetrny motor|0|NaN
+#LayersUrlPart:     LAYERS=130|Tovarni komin|0|NaN
+#LayersUrlPart:     LAYERS=131|Tezni vez|0|NaN
+#LayersUrlPart:     LAYERS=132|Usti sachty stoly|0|NaN
+#LayersUrlPart:     LAYERS=obceZ|SDE.OBCE_B_2|NaN|NaN
+#LayersUrlPart:     LAYERS=cyklo|Cyklotrasy||
+#LayersUrlPart:     LAYERS=PRECHOD|HranPrechod||
+#LayersUrlPart:     LAYERS=OBCE2|JARDA.RA_CZ620_C113||
+LayersUrlPart:     LAYERS=orto
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+#manuell
+BoundingBoxTopLeftWGS84: N 49.634341 E 15.50975
+BoundingBoxButtomRightWGS84: N 48.614016 E 17.666016
+#MinScale:   0
+#MaxScale:   45
+RecommendedScale:   1
+ImageFileExtension: .jpg

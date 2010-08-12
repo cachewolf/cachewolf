@@ -1,0 +1,30 @@
+# For an example and explantion please see readme_wms.txt, which
+# you can find in the program directory of CacheWolf. There
+# you always get the newest information about .wms format.
+#
+# Please include the two lines (TakenFromUrl: and GetCapabilitiesUrl:)
+# and fill in accordingly in any .wms file you make. They
+# are (still) not used by CacheWolf but they are usefull
+# for someone who wants to make his own changes to your file.
+# 
+TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
+GetCapabilitiesUrl:	http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/DTK10?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.0
+Name:   de.nrw Topo 10
+MapType:	topo
+MainUrl:   http://www.geoserver.nrw.de:80/GeoOgcWms1.3/servlet/DTK10?
+ServiceTypeUrlPart:	SERVICE=WMS
+VersionUrlPart:	VERSION=1.1.0
+CoordinateReferenceSystemCacheWolf:	31466 31467
+CoordinateReferenceSystemUrlPart:	SRS=EPSG:31466 SRS=EPSG:31467
+RequestUrlPart:	REQUEST=GetMap
+LayersUrlPart:	LAYERS=Raster%3ADTK10%3ADtk10G
+StylesUrlPart:	STYLES=
+# jpeg: ca. 40 KB, png: 20 KB for 500x500 pixels 
+ImageFormatUrlPart:	FORMAT=image/png
+BoundingBoxTopLeftWGS84:	N 52.7729742 E 5.672412
+BoundingBoxButtomRightWGS84:	N 49.998341 E 10.1417782
+MinScale:   0.0
+# above 13 we get only white (empty) maps, despite of 14.001 is provided in the GetCapabilities-Answer
+MaxScale:   13.0
+RecommendedScale:	1
+ImageFileExtension:	.png

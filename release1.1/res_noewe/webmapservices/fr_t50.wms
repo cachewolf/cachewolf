@@ -1,0 +1,55 @@
+TakenFromUrl:       http://www.geosignal.org/cgi-bin/wmsmap?version=1.1.1&service=WMS&request=GetLegendGraphic&layer=Voirie&format=image/png
+GetCapabilitiesUrl: http://www.geosignal.org/cgi-bin/wmsmap?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               fr t50 SF=8..14
+MapType:                        topo
+MainUrl:            http://www.geosignal.org/cgi-bin/wmsmap?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+#CoordinateReferenceSystemCacheWolf:  27582
+#CoordinateReferenceSystemUrlPart: SRS=EPSG:27582 
+#      <SRS>EPSG:27582</SRS>
+#      <SRS>EPSG:27572</SRS>
+#      <SRS>EPSG:27563</SRS>
+#      <SRS>EPSG:27561</SRS>
+#      <SRS>EPSG:4269</SRS>
+#      <SRS>EPSG:4326</SRS>
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=Serveur Geosignal|Serveur Geosignal||
+#LayersUrlPart:     LAYERS=Monde|Pays du monde||
+#LayersUrlPart:     LAYERS=RASTER4000k|Raster France 1/4 000 000|935.443|0
+#LayersUrlPart:     LAYERS=RASTER1000k|Raster France 1/1 000 000|280.633|935.443
+#LayersUrlPart:     LAYERS=RASTER500k|Raster France 1/500 000|140.316|280.633
+#LayersUrlPart:     LAYERS=RASTER250k|Raster France 1/250 000|65.481|140.316
+#LayersUrlPart:     LAYERS=RASTER100k|Raster France 1/100 000|28.0633|65.481
+#LayersUrlPart:     LAYERS=RASTER50k|Raster France 1/50 000|14.0316|28.0633
+#LayersUrlPart:     LAYERS=RASTER25k|Raster France 1/25 000|5.61266|14.0316
+#LayersUrlPart:     LAYERS=RASTER5k|Raster France 1/5 000|0.374177|5.61266
+#LayersUrlPart:     LAYERS=Communes|Communes||
+#LayersUrlPart:     LAYERS=Cantons|Cantons||
+#LayersUrlPart:     LAYERS=Arrondissements|Arrondissements||
+#LayersUrlPart:     LAYERS=Departements|Departements||
+#LayersUrlPart:     LAYERS=Regions|Regions||
+#LayersUrlPart:     LAYERS=Voirie|Voirie urbaine|1|5|Highways
+#LayersUrlPart:     LAYERS=Autres|Autres equipements routiers||
+#LayersUrlPart:     LAYERS=Secondaires|Routes Secondaires||
+#LayersUrlPart:     LAYERS=Departementales|Routes Departementales||
+#LayersUrlPart:     LAYERS=Nationales|Routes Nationales||
+#LayersUrlPart:     LAYERS=Autoroutes|Autoroutes||
+#LayersUrlPart:     LAYERS=CommunesXY|Ponctuels des communes||
+#LayersUrlPart:     LAYERS=Communes,Cantons,Arrondissements,Departements,Regions,Autres,Secondaires,Departementales,Nationales,Autoroutes,CommunesXY
+# working
+#LayersUrlPart:     LAYERS=RASTER5k SF=1(..2,5)
+#LayersUrlPart:     LAYERS=RASTER25k SF=3..7 ausgewählte Städte?
+#LayersUrlPart:     LAYERS=RASTER50k SF=8..14
+#LayersUrlPart:     LAYERS=Voirie SF 1..10..
+LayersUrlPart:     LAYERS=RASTER50k
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 51.2918 W 6.06258
+BoundingBoxButtomRightWGS84: N 41.1632 E 10.8783
+#MinScale:   0
+#MaxScale:   45
+RecommendedScale:   1
+ImageFileExtension: .png

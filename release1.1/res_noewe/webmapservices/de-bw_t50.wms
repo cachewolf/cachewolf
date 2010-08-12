@@ -1,0 +1,21 @@
+TakenFromUrl:       http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
+GetCapabilitiesUrl: http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&SERVICE=WMS&REQUEST=GetCapabilities
+Name: de.Baden-Wuerttemberg t50 SF=0.3..700
+MapType:                        topo
+MainUrl:            http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31467
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31467
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=DVDOP2|DOP_2m||
+#LayersUrlPart:     LAYERS=DVTK50K|TK50||
+LayersUrlPart:     LAYERS=DVTK50K
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 50.0000 E 7.6000
+BoundingBoxButtomRightWGS84: N 47.4000 E 10.0000
+MinScale:   0.3
+MaxScale:   700
+RecommendedScale:    5 8 4 2 1
+ImageFileExtension: .png
