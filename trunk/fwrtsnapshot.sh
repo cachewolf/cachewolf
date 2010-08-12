@@ -20,6 +20,9 @@ mkdir -p bin/CacheWolf
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
     -cp lib/CompileEwe.zip:lib -d bin -deprecation -nowarn \
     src/CacheWolf/*.java src/CacheWolf/*/*.java src/CacheWolf/navi/touchControls/*.java
+javac -source 1.3 -target 1.1 -encoding windows-1252 \
+    -cp ./lib/CompileEwe.zip:lib -d lib -deprecation -nowarn \
+	lib/net/ax86/*.java ./lib/org/json/*.java
 $EWE programs/Jewel.ewe -c cw-pda.jnf
 $EWE programs/Jewel.ewe -c cw-ppc2003.jnf
 $EWE programs/Jewel.ewe -c cw-pc.jnf
