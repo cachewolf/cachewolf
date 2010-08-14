@@ -180,6 +180,8 @@ public class Attribute {
 		{"24","2550","picnic","0","30","Picnic tables nearby"},//50 picnic tables available
 		{"43","2588","firstaid","23","42","Firstaid"}, // GC: Cachewartung notwendig (Auto Attribut) , OC: erste Hilfe 
 		{"73","2654","rv","0","46","Truck Driver/RV"},// changed by Moorteufel 12.07.10 
+		{"85","2678","fuel","0","58","Fuel nearby"}, // changed by araber95 14.08.10 
+		{"86","2680","food","0","59","Food nearby"}, // changed by araber95 14.08.10
 		// Erlaubt - Permissions (Allowed/Not Allowed)
 		{"11","2524","dogs","0","1","Dogs"},//24 dogs allowed
 		{"05","2512","camping","0","31","Camping available"},//12 Camping allowed
@@ -206,11 +208,17 @@ public class Attribute {
 		// Eigenschaften / Der Weg - Conditions (Yes/No)
 		{"49","2600","car","24","0",""},// 100 Nahe beim Auto
 		{"21","2544","onehour","0","7","Takes less than an hour"},//44 takes less than one hour
+		{"82","2672","hike_short","0","55","Short hike"}, // added by araber95 14.8.10
+		{"83","2674","hike_med","0","56","Medium Hike"}, // added by araber95 14.8.10
+		{"84","2676","hike_long","0","57","Long Hike"}, // added by araber95 14.8.10
 		{"13","2528","hiking","25","9","Significant hike"},//28 significant hike
 		{"39","2580","wading","26","11","May require wading"},//80 may require wading
 		{"65","2634","steep","27","0",""},// 134 Hügeliges Gelände
 		{"07","2516","climbing","28","10","Difficult climbing"},//16 easy climbing(OC-28), difficult climbing(GC-10) 
 		{"36","2574","swimming","29","12","May require swimming"},//74
+		{"79","2666","nightcache","0","52","Night Cache"}, // added by araber95 14.8.10
+		{"80","2668","parkngrab","0","53","Park and grab"}, // added by araber95 14.8.10
+		{"81","2670","abandonedbuilding","0","54","Abandoned structure"}, // added by araber95 14.8.10
 		// Eigenschaften / Wegpunkte  - Conditions (Yes/No)
 		{"55","2612","letter","8","0",""},// 112 Letterbox (benötigt Stempel)
 		{"54","2610","interestsign","30","0",""},// 110 Interessanter Ort ev mit scenic zusammenfassen?
@@ -236,8 +244,8 @@ public class Attribute {
 		// Einschränkungen und Voraussetzungen / Systembedingt
 		{"59","2620","oconly","6","0",""},// 120 Nur bei Opencaching logbar
 		{"71","2650","wwwlink","7","0",""},// 150 Nur Hyperlink zu OC-externen Portalen
-		// Einschränkungen und Voraussetzungen / Benötigt Werkzeug - Special Equipment (Required/Not Required)
-		{"69","2642","tools","46","0",""},// 142 Spezielle Ausrüstung
+		// Einschränkungen und Voraussetzungen / Werkzeug - Equipment (Required/Not Required)
+		{"69","2642","tools","46","0","Special Tool required"},// 142 Spezielle Ausrüstung
 		{"08","2518","compass","47","0",""},//18 Kompass
 		{"44","2590","flashlight","48","44","Flashlight required"}, // 90 Flashlight required
 		{"28","2558","rappelling","49","3","Climbing gear"},//58 climbing gear Kletterausrüstung
@@ -245,6 +253,10 @@ public class Attribute {
 		{"31","2564","scuba","51","5","Scuba gear"},//64 Tauchausrüstung
 		{"02","2506","boat","52","4","Boat"},//06 Wasserfahrzeug
 		{"45","2592","aircraft","53","38",""},// 92
+		{"75","2658","UV","0","48","UV Light required"}, // added by araber95 14.8.10
+		{"76","2660","snowshoes","0","49","Snowshoes"}, // added by araber95 14.8.10"
+		{"77","2662","skiis","0","50","Cross Country Skis"}, // added by araber95 14.8.10
+		{"78","2664","s-tool","0","51","Special Tool required"}, // added by araber95 14.8.10
 		// Einschränkungen und Voraussetzungen / Benötigt Vorarbeit
 		{"70","2648","wiki","54","0",""},// 148 Recherche
 		{"63","2630","riddle","55","0",""},// 130 Rätsel
