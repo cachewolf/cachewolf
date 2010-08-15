@@ -202,8 +202,9 @@ public class Attribute {
 		{"18","2538","mine","15","20","Abandoned mines"},//38
 		{"25","2552","poisonoak","16","17","Poison plants"},//52 Giftige Pflanzen
 		{"46","2594","animals","17","0",""},// 94 Giftige/gef%e4hrliche Tiere
-		{"03","2508","cactus","0","0",""},//08
-		{"32","2566","snakes","0","18","Snakes"},//66
+		// {"03","2508","cactus","0","0",""},//08 removed 14.08.10 araber95
+		{"32","2566","dangerousanimals","0","18","Dangerous Animals"},//66
+		// {"32","2566","snakes","0","18","Snakes"},//66 araber95 replaced by Dangerous Animals 14.08.10
 		{"09","2520","cow","0","43","Watch for livestock"},//20 watch for livestock
 		// Eigenschaften / Der Weg - Conditions (Yes/No)
 		{"49","2600","car","24","0",""},// 100 Nahe beim Auto
@@ -321,7 +322,7 @@ public class Attribute {
     	else if (_Inc==0) {
     		if (noImages[_Id]==null) {noImages[_Id]=new mImage(IMAGEDIR+getImageName());}
     		return noImages[_Id];
-    	}
+    	} 
     	else {
     		if (nonImages[_Id]==null) {nonImages[_Id]=new mImage(IMAGEDIR+getImageName());}
     		return nonImages[_Id];
