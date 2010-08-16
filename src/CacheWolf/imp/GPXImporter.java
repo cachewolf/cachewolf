@@ -177,6 +177,7 @@ public class GPXImporter extends MinML {
 	}
 	public void startElement(String name, AttributeList atts){
 		strBuf=new StringBuffer(300);
+		if(infB.isClosed)  return;
 		if (name.equals("gpx")){
 			// check for opencaching
 			if (atts.getValue("creator").indexOf("opencaching")> 0) fromOC = true;
@@ -278,7 +279,7 @@ public class GPXImporter extends MinML {
 	public void endElement(String name){
 		strData=strBuf.toString();
 		//Vm.debug("Ende: " + name);
-		
+		if(infB.isClosed) return;
 		// logs
 		if (inLogs){
 			if (name.equals("groundspeak:date")|| name.equals("time")|| name.equals("date")|| name.equals("terra:date"))  {
