@@ -1,0 +1,27 @@
+﻿Zeichen sind als "Quoted printable" kodiert mit einem % Zeichen
+Siehe auch http://de.wikipedia.org/wiki/Quoted-printable
+und http://www.cs.tut.fi/~jkorpela/chars.html
+
+Leertaste: +
+ä %e4
+ö %f6
+ü %fc
+ß %df
+Ä %c4
+Ö %d6
+Ü %dc
+\n %0a
+é %e9
+è %e8
+É %c9
+È %c8
+à %e0
+À %c0
+ù %f9
+Ù %d9
+î %ee
+Î %ce
+â %e2
+Â %c2
+ô %f4
+Ô %d4

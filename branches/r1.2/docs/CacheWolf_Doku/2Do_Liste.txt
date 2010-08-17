@@ -1,0 +1,31 @@
+Generell
+--------
+- Nummerierung der einzelnen Abschnitte (Überschriften) beim Publish
+- bei HTML-Output Stylesheet anpassen (und einbinden)
+- Screenshots vereinheitlichen (gleiches OS, Auflösung, Version (Ewe, Java, Windows...))
+- Rechtschreibkorrektur
+- Ausdruck verbessern (vollständige und zusammenhängende Sätze)
+- Links überprüfen
+- auf zusätzliche Funktionen/Features überprüfen und diese einfügen
+
+
+Anlage FAQ
+----------
+- um im Forum häufig gestellte Fragen erweitern
+
+2. Installation
+---------------
+- ist Berlios noch für die Packages die primäre Download-Seite?
+- Installationsvorgang ausführlicher erklären
+
+4.9.1 Karte / Moving Map
+------------------------
+- an aktuellen Entwicklungsstand anpassen
+
+5.1.6 Export
+------------
+- ausführlicher und auf die einzelnen Exportfunktionen eingehen
+
+6. von Cachewolf benutzte Dateien
+---------------------------------
+- noch vollständig auszuarbeiten

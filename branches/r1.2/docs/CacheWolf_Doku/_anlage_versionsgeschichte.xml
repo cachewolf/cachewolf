@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?><appendix>
+  <appendixinfo>
+    <title>Versionsgeschichte</title>
+    <date>12.04.2010</date>
+    <author>
+      <surname>René Schmidt</surname>
+    </author>
+    <revhistory>
+      <revision>
+        <revnumber>0.1</revnumber>
+        <date>12. April 2010</date>
+        <author>
+          <surname>René Schmidt</surname>
+        </author>
+        <revdescription>
+          <para>Platzhalter eingefügt, wird mit Veröffentlichung der stabilen Version von Cachewolf 1.1 begonnen; bei Bedarf kann auch die Versionsgeschichte der Nightly Builds mit eingefügt werden</para>
+        </revdescription>
+      </revision>
+    </revhistory>
+  </appendixinfo>
+  <title>Versionsgeschichte</title>
+  <table>
+    <caption>Versionsgeschichte</caption>
+    <thead>
+      <tr>
+        <td>Versionsnummer</td>
+        <td>Erfolgte Änderungen</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1.1.xxxx</td>
+        <td>stabiles Release von Cachewolf 1.1</td>
+      </tr>
+    </tbody>
+  </table>
+</appendix>

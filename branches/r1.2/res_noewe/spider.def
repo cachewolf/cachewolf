@@ -1,0 +1,210 @@
+#============================================================
+# spider.def - Definition file for reading caches from GC.COM
+# Version 1.0 - 20070526 skg
+# Version 2.0 - 20070531 nach GC Änderungen
+# Version 2.1 - 20070601 TB Anpassung an GC Änderung
+# Version 2.2 - 20070602 firstLine ergänzt. Damit funktionieren jetzt auch die nächsten Seiten.
+# Version 2.3 - 20070602 sizeRex an GC Änderungen angepasst
+# Version 2.4 - 20070616 neu: Attribute
+# Version 2.5 - 20070629 Anpassungen an Listenänderung bei GC
+# Version 2.6 - 20070701 Bugfix: Wenn Zentrum exakt in Cachekoordinaten liegt wurde der Cache nicht gespidert
+# Version 2.7 - 20070811 Bugfix fuer verschluesselte Logs
+# Version 2.8 - 20070814 Findet jetzt auch Addi Wpts in eigenen Caches
+# Version 2.9 - 20070817 Bessere Unterscheidung zwischen Werbung vs.normalen Caches + Caches ohne Richtung/Entfenung
+# Version 2.10 - 20070825 Travelbug support
+# Version 2.11 - 20070907 get travelbug mission by tracking number
+# Version 3.0 - 20071010 adaption to new GC-design
+# Version 3.1 - 20071013 Use the given prefix for addi waypoints
+# Version 3.2 - 20071024 longer end sequence for longDescRex
+# Version 3.3 - 20080316 get travelbug name by tracking number
+# Version 3.4 - 20080227 Image comments added
+# Version 3.5 - 20080529 Modified descRex to allow for linebreaks
+# Version 3.6 - 20080531 Modified descRex to avoid Stack overflow in exe
+# Version 3.7 - 20080613 Some lines generalized for proxies replacing the images.
+# Version 4.0 - 20080725 adaption to new GC-design
+# Version 4.1 - 20080725 adaption to new GC-design (images and travelbugs)
+# Version 4.2 - 20081031 Fix for cache type (background image with name of type)
+# Version 4.3 - 20090314 maxDistance string added
+# Version 4.4 - 20090314 firstPageFinds string added
+# Version 4.5 - 20090315 strings for spidering country/state/logId
+# Version 4.6 - 20090406 Fix for country/state (did not work with US caches)
+# Version 4.7 - 20090521 Strings for single cache types added
+# Version 4.8 - 20090805 More specific unavailability detection
+# Version 4.9 - 20091018 Should work now with proxies and cachetypes as background
+# Version 4.10- 20091021 Tags in Description are now correctly closed
+# Version 4.11- 20091023 Reverted last change, because it doesn't work with EWE/EXE
+# Version 5.0 - 20091105 adaption to new GC-design
+# Version 6.0 - 20100113 adaption to new GC-design
+# Version 6.1 - 20100305 better log recognition
+# Version 7.0 - 20100402 adaption to new GC-design
+# Version 7.1 - 20100528 better description recognition
+# Version 8.0 - 20100604 adaption to new GC-design
+# Version 9.0 - 20100630 adaption to new GC-design
+# Version 10.0 - 20100729 adaption to new GC-design DateHiddenrex , optimized cacheOwnerRex araber95
+#============================================================
+# A suffix of Rex indicates a regular expression
+# A suffix of ExStart indicates the start of an Extractor search pattern
+# A suffix of ExEnd indicates the end of an Extractor search pattern
+#
+# Important:
+# * When entering spaces into a string ensure to escape them or write them as \\u0020
+# * Be sure that you have no hidden spaces at the end of a line or the patterns will not match!
+#------------------------------------------------------------
+loginPage          = http://www.geocaching.com/login/Default.aspx
+loginSuccess       = You\ are\ logged\ in\ as
+nextPage           = /login/default.aspx
+waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
+#--------------------------------------
+#Section1: First page with list of caches
+#--------------------------------------
+firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
+firstPage2         = &lng=
+firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
+# Regex to search for cachenames
+listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
+lineRex            = <tr\ bgcolor='#.{6}'\\s*class="Data\ BorderTop">((?s).*?)</tr>
+directionRex       = /compass/(.*?).gif
+logDateRex         = <td>\\s*(.*?)<br\ />\\s*<span\ class="Success">
+availableRex       = <span\ class="Strike">
+archivedRex        = <span\ class="OldWarning\ Strike">
+PMRex              = small_profile.gif
+distRex            = <br\ />(.*?)(?:km|mi)\\s*</td>
+waypointRex        = \\(GC(.*?)\\)<br\ />
+TypeRex            = k">\\s*<img\ src="/images/WptTypes/(.*?)\\.gif
+SizeRex            = /container/(.*?)\\.gif
+DandTRex           = <td>\\s*\\((.*?)/(.*?)\\)<br
+found              = alt="Found\ It!"
+own                = /WptTypes/name_tag.gif
+TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
+showOnlyFound      = &f=1
+maxDistance        = &dist=
+firstLine          = http://www.geocaching.com/seek/nearest.aspx?lat=
+firstLine2         = &lng=
+nextListPage       = /seek/nearest.aspx
+
+onlyWherigo         = &tx=0544fa55-772d-4e5c-96a9-36a51ebcf5c9
+onlyMegaEvent       = &tx=69eb8535-b718-4b35-ae3c-a856a55b0874
+onlyEarth           = &tx=c66f5cf3-9523-4549-b8dd-759cd2f18db8
+onlyUnknown         = &tx=40861821-1835-4e11-b666-8d41064d03fe
+onlyMulti           = &tx=a5f6d0ad-d2f2-4011-8c14-940a9ebf3c74
+onlyVirtual         = &tx=294d4360-ac86-4c83-84dd-8113ef678d7e
+onlyLetterboxHybrid = &tx=4bdd8fb2-d7bc-453f-a9c5-968563b15d24
+onlyTraditional     = &tx=32bc9333-5e52-4957-b0f6-5a2c8fc7b257
+onlyEvent           = &tx=69eb8534-b718-4b35-ae3c-a856a55b0874
+onlyCito            = &tx=57150806-bc1a-42d6-9cf0-538d171a2d22
+onlyWebcam          = &tx=31d2ae3c-c358-4b5f-8dcd-2185bf472d3d
+
+onlyProjectAPE      = &tx=2555690d-b2bc-4b55-b5ac-0cb704c0b768
+onlyGPSAdventure    = &tx=72e69af2-7986-4990-afd9-bc16cbbb4ce3
+
+#--------------------------------------
+#Section2: Get cachepage by name
+#--------------------------------------
+getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
+fetchAllLogs       = &log=y
+cacheUnavailable   = <ul\ class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable.\ Read\ the\ logs\ below\ to\ read\ the\ status\ for\ this\ cache.</li></ul>
+cacheArchived      = <ul\ class="OldWarning"><li>This\ cache\ has\ been\ archived,\ but\ is\ available\ for\ viewing\ for\ archival\ purposes.</li></ul>
+latLonRex          = <span\ id="ctl00_ContentBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
+shortDescRex       = <span\ id="ctl00_ContentBody_ShortDescription">((?s).*?)</span>
+longDescRex        = tentBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
+cacheNameRex       = <span\ id="ctl00_ContentBody_CacheName">((?s).*?)</span>
+cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
+dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\ </strong>\\s*((?s).*?)\\s*<
+hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
+sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
+difficultyRex      = <td>\\s*<strong>\\s*Difficulty:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
+terrainRex         = <td>\\s*<strong>\\s*Terrain:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
+cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ alt="
+cacheLocationRex   = <span\ id="ctl00_ContentBody_Location">In\ ([^<]*?)<
+premiumCachepage   = Sorry, the owner of this listing has made it viewable to Premium Members only.
+
+#--------------------------------------
+#Section2a: Logs
+#--------------------------------------
+# blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
+blockRex           = <table class="LogsTable Table">((?s).*?)<td></td></tr></table>
+# singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
+singleLogExStart   = ><strong><img src=
+singleLogExEnd     = <small><a\ href="
+# iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
+iconExStart        = www.geocaching.com/images/icons/
+iconExEnd          = "\ title="
+nameTempExStart    = <a\ href="
+nameTempExEnd      = /a>
+# Name extrahiert aus nameTemp
+nameExStart        = >
+nameExEnd          = <
+dateExStart        = "\ />&nbsp;
+dateExEnd          = \ by\ <a\ href="/profile/?guid=
+logExStart         = found)<br\ /><br\ />
+logExEnd           = <br\ /><br\ /><small><a\ href="
+logIdExStart         = "\ id="
+logIdExEnd           = ">
+# Die Icons, die einen erfolgreichen Fund signalisieren
+icon_smile         = icon_smile.gif
+icon_camera        = icon_camera.gif
+icon_attended      = icon_attended.gif
+
+#--------------------------------------
+#Section2b: Bugs
+#--------------------------------------
+# blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
+blockExStart       = <span\ id="ctl00_ContentBody_uxTravelBugList_uxInventoryLabel">Inventory</span>
+blockExEnd         = <p class="NoSpacing">
+# bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
+bugExStart         = <a\ href="
+bugExEnd           = </a>
+bugLinkEnd         = "\ class="lnk">
+bugNameExStart     = <span>
+bugNameExEnd       = </span>
+bugDetailsStart    = id="ctl00_ContentBody_BugDetails_BugGoal">
+bugDetailsEnd      = </span>
+getBugByName       = http://www.geocaching.com/track/search.aspx?k=
+getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
+getBugById         = http://www.geocaching.com/track/details.aspx?id=
+getBugByTrackNr    = http://www.geocaching.com/track/details.aspx?tracker=
+bugGuidExStart     = www.geocaching.com/track/details.aspx?id=
+bugGuidExEnd       = "
+bugNotFound        = No\ results\ were\ found\ for\ your\ search
+bugTotalRecords    = Total\ Records:\ <b>1</b>
+bugNameStart       = <span id="ctl00_ContentBody_lbHeading">
+bugNameEnd         = </span>
+
+
+#--------------------------------------
+#Section2c: Images
+#--------------------------------------
+# imgBlockEx searches for images in the long description
+imgBlockExStart    = <IMG
+imgBlockExEnd      = >
+# imgSpanEx searches for images in the image section
+imgSpanExStart     = <span id="ctl00_ContentBody_Images">
+imgSpanExEnd       = </p>
+imgNameExStart     = "\ />\ <span>
+imgNameExEnd       = </span></a>
+imgSrcExStart      = <a\ href="http://
+imgSrcExEnd        = "\ rel="lightbox"
+imgCommentExStart  = </a><br\ /><br\ />
+imgCommentExEnd    = <
+
+#--------------------------------------
+#Section2d: Additional waypoints
+#--------------------------------------
+wayBlockExStart    = <span\ id="ctl00_ContentBody_WaypointsInfo"\ style="font-weight:bold;">Additional\ Waypoints</span>
+wayBlockExEnd      = </table>
+nameRex            = &RefDS=1">(.*)</a>
+koordRex           = <td>\\s*([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})&nbsp;\\s*</td>
+descRex            = colspan="6">((?:.|\n|\r)*?)</td>
+typeRex            = </a>\ \\((.*)\\)\\s*</td>
+rowBlockExStart    = <tr
+rowBlockExEnd      = </tr>
+prefixExStart      = <span\ id="awpt_
+prefixExEnd        = ">
+
+#--------------------------------------
+#Section2e: Attributes
+#--------------------------------------
+attBlockExStart = <div\ class="CacheDetailNavigationWidget\ Spacing">
+attBlockExEnd  = What\ are\ Attributes?</a></small></p>
+attExStart = /images/attributes/
+attExEnd = "\ alt="

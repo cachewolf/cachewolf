@@ -1,0 +1,30 @@
+TakenFromUrl:       http://isk.geobasis-bb.de/index.php?cms=1101
+GetCapabilitiesUrl: http://isk.geobasis-bb.de/ows/dnm010.php?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.Berlin/Brandenburg t10 SF=0,1..7
+MapType:                        topo
+MainUrl:            http://isk.geobasis-bb.de/ows/dnm010.php?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31468 31469
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31468 SRS=EPSG:31469 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=bg|Hintergrundfläche|0.498903|1746.16 # ist leer
+#LayersUrlPart:     LAYERS=siedlung|Siedlungsflächen|0.05|5.0
+#LayersUrlPart:     LAYERS=vegetation|Vegetationsflächen|0.05|5.0
+#LayersUrlPart:     LAYERS=gewaesser|Gewässer (See, Fluss, Kanal)|0.05|5.0
+#LayersUrlPart:     LAYERS=transport|Transportwege|0.05|5.0
+#LayersUrlPart:     LAYERS=strassennamen|Straßenklassifizierungen und Strassennamen|0.05|5.0 # Symbole überdecken Details
+#LayersUrlPart:     LAYERS=ortsnamen|Namen der Ortschaften|0.05|5.0 # ist leer
+#LayersUrlPart:     LAYERS=gewaessernamen|Gewaessernamen|0.05|5.0 # zum Cachen nicht wichtig ?
+#LayersUrlPart:   LAYERS=siedlung,transport,vegetation,gewaesser,gewaessernamen,ortsnamen,strassennamen
+LayersUrlPart:   LAYERS=siedlung,transport,vegetation,gewaesser
+StylesUrlPart:   STYLES=2
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 53.5000 E 11.7000
+BoundingBoxButtomRightWGS84: N 51.3000 E 14.8000
+MinScale:   0.1
+MaxScale:   11
+RecommendedScale:   1
+ImageFileExtension: .png
+#SF bis 7 teilweise getestet (Capabilities stimmen nicht)
+#BBox aus Capabilities (ev zu klein)

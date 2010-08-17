@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="CacheWolf" default="release">
+
+	<!--
+		This is the ant (http://ant.apache.org/) build file for CacheWolf
+
+		Arguments: -Dbuild.version=integer source code version covered by the
+		build. of "official" builds this shoul be the svn revision number
+		Default: todays date (YYYYMMDD) -Dbuild.type=interger see
+		src/CacheWolf/Version.kava VERSION_TYPES for valid values Default: 3
+		(InDevelopmentNewest) -Dbuild.cab=true also build a cab version from
+		the PPC2003 zip file. Default: do not build it. To build it in linux
+		you need cablist - here is a skript from UncleOwen, that does all you
+		need: http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236 to
+		install it in linux / ubuntu. For
+		windows make sure to check the prerequisites on
+		http://ant.apache.org/manual/OptionalTasks/cab.html
+		Further information about ant can be found at
+		http://ant.apache.org/manual/
+		http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.user/gettingStarted/qs-81_basics.htm
+		or check one of the many ant tutorials on the web
+	-->
+
+	<!-- ewe builder only exist for windows and linux -->
+	<fail
+		message="unsupported operating system. sorry, only Windows and Linux are supported">
+		<condition>
+			<not>
+				<or>
+					<os family="windows" />
+					<os name="Linux" />
+				</or>
+			</not>
+		</condition>
+	</fail>
+
+	<!--
+		seems the ewe compiler uses different paths on windows and linux :-(
+	-->
+	<condition property="ewe.progdir" value="CacheWolf" else="programs/CacheWolf">
+		<os family="windows" />
+	</condition>
+
+	<!--
+		TODO: find out how to get svn revision information platform
+		independent.
+	-->
+	<!--
+		TODO: especially since svnversion would give better information if
+		current directory is up to date
+	-->
+	<!--
+		set a default build.version as long as not defined otherwiese on
+		command line
+	-->
+	<tstamp>
+		<format property="build.version" pattern="yyyyMMdd" />
+	</tstamp>
+	<!--
+		set build type to experimental as long as not defined otherwiese on
+		command line
+	-->
+	<property name="build.type" value="3" />
+
+	<!-- define output directorties -->
+	<property name="pkg.dir" value="published" />
+	<property name="classes.dir" value="bin" />
+	<property name="assemble.dir" value="assemble" />
+
+	<!--
+		lists of files to be packaged, this should become less confusing later
+		on
+	-->
+	<property name="template.files" value="templates/*.tpl" />
+	<property name="icons.gui.files" value="dnf.gif,bug.gif,red.png,yellow.png,blue.png" />
+	<property name="icons.log.files"
+		value="traffic_cone.gif,recommendedlog.gif,icon_smile.gif,icon_sad.gif,icon_rsvp.gif,icon_note.gif,icon_needsmaint.gif,icon_maint.gif,icon_enabled.gif,icon_disabled.gif,icon_camera.gif,icon_attended.gif,big_smile.gif,coord_update.gif,icon_greenlight.gif,icon_redlight.gif,icon_remove.gif" />
+	<property name="icons.cache.files"
+		value="11.gif,8.gif,6.gif,5.gif,4.gif,3.gif,2.gif,13.gif,12.gif,100.gif,101.gif,102.gif,103.gif,104.gif" />
+	<property name="icons.browser.files" value="g.png,g2.png,y.png,y2.png" />
+	<property name="doc.files"
+		value="wolflang.html,GCTemplate.html,info.html,legende.html" />
+
+	<!--
+		please note that the ftp task is optional for ant implementations, so
+		plaese make sure your ant version supports this before you use it
+	-->
+	<target name="upload" description="upload release to ftp server"
+		depends="release">
+		<fail message="please set property ftp.user" unless="ftp.user" />
+		<fail message="please set property ftp.server" unless="ftp.server" />
+		<fail message="please set property ftp.password" unless="ftp.password" />
+		<fail message="please set property ftp.remotedir" unless="ftp.remotedir" />
+		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}"
+			remotedir="${ftp.remotedir}" verbose="yes" binary="yes" passive="yes">
+			<fileset dir="${pkg.dir}" />
+		</ftp>
+	</target>
+
+	<target name="fixreleasenumber" description="fix the release number in "
+		depends="clean">
+		<echo message="setting build version: ${build.version}" />
+		<replaceregexp file="src/CacheWolf/Version.java"
+			match="static final int SVN_REVISION = (.*);" replace="static final int SVN_REVISION = ${build.version};" />
+		<echo message="setting build type: ${build.type}" />
+		<replaceregexp file="src/CacheWolf/Version.java"
+			match="static final int VERSION_TYPE = (.*);" replace="static final int VERSION_TYPE = ${build.type};" />
+
+	</target>
+
+	<!--
+		<target name="release"
+		depends="CW-ARM,CW-MIPS,CW-SH3,CW-PPC2003,CW-EWE,CW-Win32,CW-Java"
+		description="package all platforms">
+	-->
+	<target name="release"
+		depends="CW-PPC2003,CW-PPC2003-CAB,CW-ARM,CW-EWE,CW-Win32,CW-Java"
+		description="package all platforms">
+		<echo message="packages for all platforms are now in ${pkg.dir}" />
+	</target>
+
+	<target name="CW-PPC2003-CAB" depends="CW-PPC2003,compilecabhelper"
+		description="package PPC2003 build as CAB" if="build.cab">
+		<delete dir="${assemble.dir}" />
+		<mkdir dir="${assemble.dir}" />
+		<java classname="build.CabHelper" classpath="bin" failonerror="true">
+			<arg value="${pkg.dir}/CacheWolf-PPC2003.zip" />
+			<arg value="${assemble.dir}" />
+		</java>
+		<cab cabfile="${pkg.dir}/CacheWolf-PPC2003.cab" basedir="${assemble.dir}" />
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<target name="CW-ARM" depends="ewebuild" description="package ARM release of CacheWolf">
+		<mkdir dir="${assemble.dir}" />
+
+		<mkdir dir="${pkg.dir}" />
+
+		<antcall target="copyres" />
+
+		<copy file="${ewe.progdir}/PocketPC-ARM/CacheWolf.exe" todir="${assemble.dir}" />
+		<zip destfile="${pkg.dir}/CacheWolf-ARM.zip" basedir="${assemble.dir}" />
+
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<target name="CW-MIPS" depends="ewebuild"
+		description="package MIPS release of CacheWolf">
+		<mkdir dir="${assemble.dir}" />
+
+		<mkdir dir="${pkg.dir}" />
+
+		<antcall target="copyres" />
+
+		<copy file="${ewe.progdir}/PocketPC-MIPS/CacheWolf.exe" todir="${assemble.dir}" />
+		<zip destfile="${pkg.dir}/CacheWolf-MIPS.zip" basedir="${assemble.dir}" />
+
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<target name="CW-SH3" depends="ewebuild" description="package SH3 release of CacheWolf">
+		<mkdir dir="${assemble.dir}" />
+
+		<mkdir dir="${pkg.dir}" />
+
+		<copy file="${ewe.progdir}/PocketPC-SH3/CacheWolf.exe" todir="${assemble.dir}" />
+		<antcall target="copyres" />
+
+		<zip destfile="${pkg.dir}/CacheWolf-SH3.zip" basedir="${assemble.dir}" />
+
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<target name="CW-PPC2003" depends="ewebuild"
+		description="package PocketPC 2003 release of CacheWolf">
+		<mkdir dir="${assemble.dir}" />
+
+		<mkdir dir="${pkg.dir}" />
+
+		<copy file="${ewe.progdir}/PocketPC2003/CacheWolf.exe" todir="${assemble.dir}" />
+		<antcall target="copyres" />
+	<!--
+	dll can be downloaded separately and is needed for all PDA - Versions
+	so why assemble only for PPC2003
+	the space is not really a problem, but as long as there are these massive hint in cw homepage for installing the ewe - VM ...
+		<antcall target="copyppcdll" />
+	-->
+		<zip destfile="${pkg.dir}/CacheWolf-PPC2003.zip" basedir="${assemble.dir}" />
+
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<target name="CW-EWE" depends="ewebuild" description="package Ewe release of CacheWolf">
+		<mkdir dir="${assemble.dir}" />
+
+		<mkdir dir="${pkg.dir}" />
+
+		<copy file="work/CacheWolf.ewe" todir="${assemble.dir}" />
+		<antcall target="copyres" />
+
+		<zip destfile="${pkg.dir}/CacheWolf-EWE.zip" basedir="${assemble.dir}" />
+
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<target name="CW-Win32" depends="ewebuild"
+		description="package Win32 release of CacheWolf">
+		<mkdir dir="${assemble.dir}" />
+
+		<mkdir dir="${pkg.dir}" />
+
+		<copy file="${ewe.progdir}/x86-Win32-StaticLinked/CacheWolf.exe"
+			todir="${assemble.dir}" />
+		<antcall target="copyres" />
+
+		<zip destfile="${pkg.dir}/CacheWolf-Win32.zip" basedir="${assemble.dir}" />
+
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<!--
+	   This target will make a html file from the docbook manual to Cachewolf
+	   You need to set
+	   -DdocbookTo=/usr/local/serna-4.1/xml/stylesheets/docbook-xsl-1.68.1/html/docbook
+	   (leave out the .xsl)
+	   on Ubuntu 9.10
+	-->
+
+	<!--
+		I installed "Serna Free Open Source XML Editor" in Ubuntu 9.10 to
+		compile the docbook to html, but I guess installung docbook-xsl would
+		be enough
+	-->
+	<target name="doku_html_de" description="Make a html file from the docbook documentation">
+        <fail message="please set property docbookTo" unless="docbookTo" />
+		<mkdir dir="${assemble.dir}" />
+		<mkdir dir="${assemble.dir}/doku_html_de" />
+		<echo message="taking conversion infos from ${docbookTo}" />
+
+	    <!-- generate html file and pics dir in the source folder -->
+		<exec executable="xsltproc">
+			<arg value="--xinclude" />
+			<arg value="-o" />
+			<arg value="${assemble.dir}/doku_html_de/CacheWolf_Dokumentation.html" />
+			<arg value= "${docbookTo}.xsl" />
+			<arg value="docs/CacheWolf_Doku/CacheWolf_Dokumentation.xml" />
+		</exec>
+
+		<copy todir="${assemble.dir}/doku_html_de" failonerror="true">
+			<fileset file="docs/CacheWolf_Doku/html.css" />
+		</copy>
+        <copy todir="${assemble.dir}/doku_html_de/pics" failonerror="true">
+            <fileset dir="docs/CacheWolf_Doku/pics" />
+        </copy>
+        <mkdir dir="${pkg.dir}" />
+
+		<zip destfile="${pkg.dir}/Handbuch_html.zip" basedir="${assemble.dir}/doku_html_de" />
+		<copy todir="${pkg.dir}/Handbuch_html" failonerror="true">
+			<fileset dir="${assemble.dir}/doku_html_de"
+			includes="**/*.*" />
+		</copy>
+
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<target name="CW-Java" depends="ewebuild"
+		description="package Java release of CacheWolf">
+		<mkdir dir="${assemble.dir}" />
+
+		<copy file="${ewe.progdir}/Jar/CacheWolf.jar" todir="${assemble.dir}" />
+		<copy file="lib/java_ewe.dll" todir="${assemble.dir}" />
+		<copy file="docs/cachewolf.svg" todir="${assemble.dir}" />
+		<antcall target="copyres" />
+
+		<mkdir dir="${pkg.dir}" />
+		<zip destfile="${pkg.dir}/CacheWolf-Java.zip" basedir="${assemble.dir}" />
+
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<target name="ewebuild" depends="compile" description="build platform files">
+		<echo
+			message="Operating System ${os.name} Version ${os.version} Arch ${os.arch}" />
+		<exec executable="programs/ewecl" os="Linux">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c cw-pda.jnf" />
+		</exec>
+		<exec executable="programs/ewecl" os="Linux">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
+			<arg value="cw-ppc2003.jnf" />
+		</exec>
+		<exec executable="programs/ewecl" os="Linux">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
+			<arg value="cw-jar.jnf" />
+		</exec>
+		<exec executable="programs/ewecl" os="Linux">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
+			<arg value="cw-pc.jnf" />
+		</exec>
+		<exec executable="programs/ewe.exe" osfamily="windows">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
+			<arg value="cw-pda.jnf" />
+		</exec>
+		<exec executable="programs/ewe.exe" osfamily="windows">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
+			<arg value="cw-ppc2003.jnf" />
+		</exec>
+		<exec executable="programs/ewe.exe" osfamily="windows">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
+			<arg value="cw-pc.jnf" />
+		</exec>
+		<exec executable="programs/ewe.exe" osfamily="windows">
+			<arg value="programs/Jewel.ewe" />
+			<arg value="-c" />
+			<arg value="cw-jar.jnf" />
+		</exec>
+	</target>
+
+	<target name="clean" description="clean up before build">
+		<delete dir="${pkg.dir}" />
+		<delete dir="${classes.dir}" />
+		<delete dir="programs/CacheWolf" />
+		<delete dir="${assemble.dir}" />
+	</target>
+
+	<target name="compile" depends="fixreleasenumber" description="compile sources with java">
+		<mkdir dir="${classes.dir}" />
+		<javac source="1.3" target="1.1" encoding="windows-1252"
+			classpath="./lib/CompileEwe.zip:./lib/" destdir="${classes.dir}"
+			deprecation="off" nowarn="on" srcdir="src"
+			includes="CacheWolf/*.java,CacheWolf/*/*.java" />
+
+	</target>
+
+	<target name="copyppcdll" description="copy modified dll for PPC2003">
+		<copy todir="${assemble.dir}" file="platform-dep/PocketPC2003/ewe.dll" />
+	</target>
+
+	<!--
+		Copy all ressources from res_noewe This is not the optimal way,
+		because some might not be needed, e.g. big symbols on a desktop
+		computer, or the alternative set of symbols But for easier
+		programming, I - for the moment - consider this the better way If you
+		want to make it more precise, you find a prototype one target below
+	-->
+	<target name="copyres" description="copy images to the assembly directory">
+		<!-- copy all ressources from res_noewe -->
+		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
+			<fileset dir="res_noewe" />
+		</copy>
+		<!-- copy logo -->
+		<copy todir="${assemble.dir}" file="resources/CacheWolf.ico"
+			failonerror="true" verbose="true" />
+	</target>
+
+	<!--
+		This routine can be used to copy only the needed ressources for
+		different platforms. I (Pfeffer) replaced it by the routine above,
+		because it is easier for the developers to just copy all ressources
+		and I don't consider space a problem any more even on mobile devices
+	-->
+	<target name="copyres_finer" description="copy images to the assembly directory">
+		<!-- copy attributes -->
+		<copy todir="${assemble.dir}/attributes" failonerror="true"
+			verbose="true">
+			<fileset dir="res_noewe/attributes" />
+		</copy>
+
+		<!-- copy exporticons -->
+		<copy todir="${assemble.dir}/exporticons" failonerror="true"
+			verbose="true">
+			<fileset dir="res_noewe/exporticons" />
+		</copy>
+		<!-- copy languages -->
+		<copy todir="${assemble.dir}/languages" failonerror="true"
+			verbose="true">
+			<fileset dir="res_noewe/languages" />
+		</copy>
+		<!-- copy moving map icons  -->
+		<copy todir="${assemble.dir}/mmc" failonerror="true"
+			verbose="true">
+			<fileset dir="res_noewe/mmc" />
+		</copy>
+		<!-- copy alternative symbol sets -->
+		<copy todir="${assemble.dir}/symbols" failonerror="true" verbose="true">
+			<fileset dir="res_noewe/symbols/*">
+			</fileset>
+		</copy>
+		<!-- copy templates -->
+		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
+			<fileset dir="res_noewe">
+				<include name="${template.files}" />
+			</fileset>
+		</copy>
+		<!-- copy gui icons -->
+		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
+			<fileset dir="res_noewe" includes="${icons.gui.files}" />
+		</copy>
+
+		<!-- copy browser icons -->
+		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
+			<fileset dir="res_noewe" includes="${icons.browser.files}" />
+		</copy>
+		<!-- copy cache icons -->
+		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
+			<fileset dir="res_noewe" includes="${icons.cache.files}" />
+		</copy>
+		<!-- copy log icons -->
+		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
+			<fileset dir="res_noewe" includes="${icons.log.files}" />
+		</copy>
+		<!-- copy webmapservices -->
+		<copy todir="${assemble.dir}/webmapservices" failonerror="true"
+			verbose="true">
+			<fileset dir="res_noewe/webmapservices" />
+		</copy>
+		<!-- copy logo -->
+		<copy todir="${assemble.dir}" file="resources/CacheWolf.ico"
+			failonerror="true" verbose="true" />
+		<!-- copy documentation -->
+		<copy todir="${assemble.dir}" failonerror="true" verbose="true">
+			<fileset dir="res_noewe" includes="${doc.files}" />
+		</copy>
+		<!-- spider.def -->
+		<copy todir="${assemble.dir}" file="res_noewe/spider.def"
+			failonerror="true" verbose="true" />
+	</target>
+
+	<target name="compilecabhelper" description="helper classes for building cabs"
+		if="build.cab">
+		<mkdir dir="${classes.dir}" />
+		<javac source="1.5" target="1.5" encoding="windows-1252"
+			destdir="${classes.dir}" srcdir="src" includes="build/*.java" />
+	</target>
+</project>
