@@ -36,14 +36,14 @@ st1\:*{behavior:url(#ieooui) }
 	mso-font-charset:0;
 	mso-generic-font-family:swiss;
 	mso-font-pitch:variable;
-	mso-font-signature:536902279 -2147483648 8 0 511 0;}
+	mso-font-signature:-536855809 -1073711037 9 0 511 0;}
 @font-face
 	{font-family:Tahoma;
 	panose-1:2 11 6 4 3 5 4 4 2 4;
 	mso-font-charset:0;
 	mso-generic-font-family:swiss;
 	mso-font-pitch:variable;
-	mso-font-signature:1627421319 -2147483648 8 0 66047 0;}
+	mso-font-signature:-520078593 -1073717157 41 0 66047 0;}
  /* Style Definitions */
  p.MsoNormal, li.MsoNormal, div.MsoNormal
 	{mso-style-parent:"";
@@ -203,8 +203,8 @@ of characters for Variable SHORTNAME <br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>WaypointLength</span>&quot;
 value=&quot;3&quot;&gt;<span style='mso-tab-count:3'>                          </span>Number
 of characters for Variable SHORTWAYPOINT<br>
-&lt;<span class=SpellE>tmpl_par</span> name=&quot;Out&quot; value=&quot;*.<span
-class=SpellE>gpx</span>&quot;&gt;<span style='mso-tab-count:4'>                                       </span>Output
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;Out&quot; value=&quot;.<span
+class=SpellE>gpx</span>&quot;&gt;<span style='mso-tab-count:4'>                                        </span>Output
 Filename or Extension<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>NrLogs</span>
 &quot; value=&quot;-1&quot;&gt;<span style='mso-tab-count:4'>                                     </span><span
@@ -217,7 +217,16 @@ value=”no” (use a dummy / not existing name for Out par)<br>
 value=&quot;0&quot;&gt;<span style='mso-tab-count:1'>      </span><span
 style='mso-tab-count:2'>                        </span>0 is xml as <span
 class=SpellE>gpx</span> generation before, 1 is html like <span class=SpellE>showCacheInBrowser</span>,
-2 is html like html-exporter<o:p></o:p></span></p>
+2 is html like html-exporter<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>takeOnlyWp</span>&quot;
+value=&quot;<span class=SpellE>addi</span>&quot;&gt;<span style='mso-tab-count:
+1'>    </span><span style='mso-tab-count:2'>                        </span>process
+only this <span class=SpellE>Cachetypegroups</span> value is either “main” or “<span
+class=SpellE>addi</span>” else both is assumed<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;input*&quot; value=&quot;default&quot;&gt;<span
+style='mso-tab-count:1'>          </span><span style='mso-tab-count:2'>                        </span>calls
+input with a “default” value and makes a <span class=SpellE>tmpl_var</span>
+with the name * (* is placeholder)<o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 mso-outline-level:1'><u><span lang=EN-GB style='font-size:10.0pt;font-family:
@@ -457,7 +466,7 @@ LON<span style='mso-tab-count:9'>                                               
 IMG<span style='mso-tab-count:9'>                                                                                                    </span>:
 Name des <span class=SpellE>Addi</span> Icons <span class=SpellE>png</span>
 (resources <span class=SpellE>oder</span> <span class=SpellE>exporticons</span>)<br>
-ICON<span style='mso-tab-count:1'>    </span><span style='mso-tab-count:8'>                                                                                              </span>:
+ICON<span style='mso-tab-count:9'>                                                                                                  </span>:
 &lt;type&gt; as number string (see <span class=SpellE>CacheType.java</span> <span
 class=SpellE>e.g</span> : …,50=Parking ….)<br>
 </span><span style='font-size:10.0pt;font-family:Arial'>TYPENAME<span
@@ -473,8 +482,7 @@ LONGDESC<span style='mso-tab-count:8'>                                          
 Beschreibungstext für den Addi<o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-mso-outline-level:1'><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
-mso-ansi-language:EN-GB'><o:p>&nbsp;</o:p></span></p>
+mso-outline-level:1'><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 mso-outline-level:1'><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
@@ -553,8 +561,8 @@ if no value has been set through the <span class=SpellE>setParam</span> method.<
 &lt;TMPL_VAR name=&quot;<span class=SpellE>var_name</span>&quot;
 default=&quot;my value&quot;&gt;<br>
 If <span class=SpellE>var_name</span> is set using <span class=SpellE>setParam</span>
-(or <span class=SpellE>setParams</span>), then it's value will be whatever it
-was set to<span class=GramE>,<span style='mso-spacerun:yes'>  </span>else</span></span><span
+(or <span class=SpellE>setParams</span>), then it's value will be whatever it was
+set to<span class=GramE>,<span style='mso-spacerun:yes'>  </span>else</span></span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
 style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>it will be
 &quot;my value&quot; (without the quotes).<o:p></o:p></span></p>
@@ -581,8 +589,8 @@ mso-ansi-language:EN-GB'>url</span></span><span lang=EN-GB style='font-size:
 special characters in URL, e.g. space becomes %20<br>
 </span><span lang=EN-GB style='mso-ansi-language:EN-GB'>&nbsp; </span><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>quote:&nbsp;
-Change quotation marks:&nbsp;&nbsp; &quot; becomes \&quot;&nbsp; and ' becomes \'<br
-style='mso-special-character:line-break'>
+Change quotation marks:&nbsp;&nbsp; &quot; becomes \&quot;&nbsp; and ' becomes
+\'<br style='mso-special-character:line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
 <![endif]></span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
@@ -695,8 +703,8 @@ lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 mso-outline-level:1'><st1:place><u><span lang=EN-GB style='font-size:10.0pt;
  font-family:Arial;mso-ansi-language:EN-GB'>Loop</span></u></st1:place><u><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span></u><u><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>context variables</span></u><u><span
-lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>context
+variables</span></u><u><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>If

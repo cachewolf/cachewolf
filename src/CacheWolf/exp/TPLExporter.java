@@ -28,6 +28,7 @@ package CacheWolf.exp;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.Global;
+import CacheWolf.InfoBox;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import HTML.Template;
@@ -56,6 +57,10 @@ class TplFilter implements HTML.Tmpl.Filter
 	int noOfLogs=-1; // means all
 	boolean single = true;
 	int formatModifier = 0;
+	boolean getAddiWp = true;
+	boolean getMainWp = true;
+	Hashtable input = new Hashtable();
+	String userValue = "";
 	String out="*.gpx";
 
 
@@ -81,46 +86,59 @@ class TplFilter implements HTML.Tmpl.Filter
 			rex1.search(t);
 			param = rex1.stringMatched(1);
 			value = rex1.stringMatched(2);
-			//Vm.debug("param=" + param + "\nvalue=" + value);
-			//clear t, because we allow only one parameter per line
-			t = "";
+			// t="";
 
-			// get the values
 			if (param.equals("charset")) {
 				if (value.equals("ASCII")) {codec = new AsciiCodec();}
 				else if (value.equals("UTF8")) {codec = new JavaUtf8Codec();}
 				else {codec = new NoCodec();}
 			}
-			if (param.equals("badchars")) {
+			else if (param.equals("badchars")) {
 				badChars = value;
 			}
-			if (param.equals("newline")){
+			else if (param.equals("newline")){
 				newLine = "";
 				if (value.indexOf("CR") >= 0) newLine += "\r";
 				if (value.indexOf("LF") >= 0) newLine += "\n";
 			}
-			if (param.equals("decsep")) {
+			else if (param.equals("decsep")) {
 				decSep = value;
 			}
-			if (param.equals("ShortNameLength")) {
+			else if (param.equals("ShortNameLength")) {
 				shortNameLength = Integer.valueOf(value).intValue();
 			}
-			if (param.equals("WaypointLength")) {
+			else if (param.equals("WaypointLength")) {
 				shortWaypointLength = Integer.valueOf(value).intValue();
 			}
-			if (param.equals("NrLogs")) {
+			else if (param.equals("NrLogs")) {
 				noOfLogs = Integer.valueOf(value).intValue();
 			}
-			if (param.equals("singleFile")) {
+			else if (param.equals("singleFile")) {
 				single = value.equals("yes") ? true : false ;
 			}
-			if (param.equals("formatModifier")) {
+			else if (param.equals("formatModifier")) {
 				formatModifier = Integer.valueOf(value).intValue();
 			}
-			if (param.equals("Out")) {
+			else if (param.equals("Out")) {
 				out = value;
 			}
-
+			else if (param.equals("takeOnlyWp")) {
+				if (value.equals("main")) {
+					getAddiWp=false;
+				}
+				else if (value.equals("addi")) {
+					getMainWp=false;
+				}
+			}
+			else if (param.startsWith("input")) {
+				String par = param.substring(5);
+				InfoBox inf = new InfoBox("Eingabe", par, InfoBox.INPUT);
+				inf.feedback.setText(value);
+				inf.execute();
+				String res = inf.getInput();
+				input.put(par,res);
+			}
+			return "";
 		}
 
 		if (formatModifier == 0) {
@@ -206,27 +224,29 @@ public class TPLExporter {
 			Vector cache_index = new Vector(); 			
 			for(int i = 0; i<counter;i++){
 				CacheHolder ch = cacheDB.get(i);
-				h.progress = (float)i/(float)counter;
-				h.changed();
-				if(ch.isVisible() && ch.pos.isValid()){
-					try {
-						Hashtable varParams=ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier);
-						if (myFilter.single) {
-							cache_index.add(varParams);
+				if (ch.isVisible() && (ch.pos.isValid() || myFilter.formatModifier>0) ){
+					if (myFilter.getAddiWp == ch.isAddiWpt() || myFilter.getMainWp == !ch.isAddiWpt()) {
+						h.progress = (float)i/(float)counter;
+						h.changed();
+						try {
+							Hashtable varParams=ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier);
+							if (myFilter.single) {
+								cache_index.add(varParams);
+							}
+							else {
+								tpl.setParams(varParams);
+								String ext = (myFilter.out.substring(myFilter.out.lastIndexOf(".")).toLowerCase()+"    ").trim();
+								FileWriter fw = new FileWriter(saveTo.getPath() + ch.getWayPoint() + ext);
+								fw.codec = myFilter.codec;
+								PrintWriter detfile = new PrintWriter(new BufferedWriter(fw));
+								tpl.printTo(detfile);
+								detfile.close();
+							}
+						}catch(Exception e){
+							Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
+							e.printStackTrace();
+							Global.getPref().log("Exception in TplExporter = Problem getting Parameter, Cache: " + ch.getWayPoint(), e, true);
 						}
-						else {
-							tpl.setParams(varParams);
-							String ext = (myFilter.out.substring(myFilter.out.lastIndexOf(".")).toLowerCase()+"    ").trim();
-							FileWriter fw = new FileWriter(saveTo.getPath() + ch.getWayPoint() + ext);
-							fw.codec = myFilter.codec;
-							PrintWriter detfile = new PrintWriter(new BufferedWriter(fw));
-							tpl.printTo(detfile);
-							detfile.close();
-						}
-					}catch(Exception e){
-						Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
-						e.printStackTrace();
-						Global.getPref().log("Exception in TplExporter = Problem getting Parameter, Cache: " + ch.getWayPoint(), e, true);
 					}
 				}
 			}
