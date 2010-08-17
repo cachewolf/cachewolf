@@ -572,6 +572,8 @@ public class MainMenu extends MenuBar {
 			}
 			if(mev.selectedItem == filtCreate){
 				scnFilter.setData(profile.getCurrentFilter());
+				scnFilter.setPreferredSize(450, 480);
+				if(Vm.isMobile()) scnFilter.setPreferredSize(MyLocale.getScreenWidth(), MyLocale.getScreenHeight()); //Fullscreen
 				scnFilter.execute(father.getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
 			}
