@@ -12,16 +12,31 @@ import ewe.ui.Panel;
 import ewe.ui.mLabel;
 
 public class AttributesSelector extends Panel {
-	protected static int TILESIZE=17; // for small screen 
+	protected static int TILESIZE=16; // for small screen 
 	protected static int PREF_WIDTH=180; // for small screen 
-	protected static int PREF_HEIGHT=145; // for small screen 
+	protected static int PREF_HEIGHT=150; // for small screen 
 	private long[] selectionMaskYes = {0l,0l};
 	private long[] selectionMaskNo = {0l,0l};
 	protected mLabel mInfo;
 
 	public AttributesSelector() {
-		if (MyLocale.getScreenWidth() > 240) { TILESIZE=22; PREF_HEIGHT=180; PREF_WIDTH=205;}
-		iap.virtualSize =  new Rect(0,0,200,200);
+		if(!Vm.isMobile()) { TILESIZE = 30; PREF_HEIGHT =(TILESIZE+2)*10; PREF_WIDTH =(TILESIZE+2)*9;}
+		
+		if(Vm.isMobile()){
+			if(MyLocale.getScreenWidth() == 320 & MyLocale.getScreenHeight() == 240){
+				TILESIZE = 14; PREF_HEIGHT = 120; PREF_WIDTH = 180;
+			}
+			if(MyLocale.getScreenWidth() == 480 & MyLocale.getScreenHeight() == 640){
+				TILESIZE = 25; PREF_HEIGHT =(TILESIZE+2)*10; PREF_WIDTH =(TILESIZE+2)*9;
+			}
+			if(MyLocale.getScreenWidth() == 480 & MyLocale.getScreenHeight() == 800){
+				TILESIZE = 25; PREF_HEIGHT =(TILESIZE+2)*10; PREF_WIDTH =(TILESIZE+2)*9;
+			}
+			if(MyLocale.getScreenWidth() == 640 & MyLocale.getScreenHeight() == 480){
+				TILESIZE = 20; PREF_HEIGHT =(TILESIZE+2)*7; PREF_WIDTH =(TILESIZE+2)*12;
+			}
+		}
+		iap.virtualSize =  new Rect(10,10,400,400);
 		iap.setPreferredSize(PREF_WIDTH, PREF_HEIGHT);
 		addLast(iap,CellConstants.STRETCH,FILL);
 		addLast(mInfo=new mLabel(""),HSTRETCH,HFILL);
