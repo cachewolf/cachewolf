@@ -254,7 +254,7 @@ public class Attribute {
 		{"31","2564","scuba","51","5","Scuba gear"},//64 Tauchausrüstung
 		{"02","2506","boat","52","4","Boat"},//06 Wasserfahrzeug
 		{"45","2592","aircraft","53","38",""},// 92
-		{"75","2658","UV","0","48","UV Light required"}, // added by araber95 14.8.10
+		{"75","2658","uv","0","48","UV Light required"}, // added by araber95 14.8.10
 		{"76","2660","snowshoes","0","49","Snowshoes"}, // added by araber95 14.8.10"
 		{"77","2662","skiis","0","50","Cross Country Skis"}, // added by araber95 14.8.10
 		{"78","2664","s-tool","0","51","Special Tool required"}, // added by araber95 14.8.10
