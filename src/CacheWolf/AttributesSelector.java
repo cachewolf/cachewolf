@@ -6,6 +6,7 @@ import ewe.fx.Rect;
 import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.InteractivePanel;
+import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.DataChangeEvent;
 import ewe.ui.Panel;

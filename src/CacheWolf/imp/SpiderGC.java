@@ -1264,7 +1264,7 @@ public class SpiderGC{
 						//==========
 						// Logs first (for check early for break)
 						//==========
-						ch.getCacheDetails(false).setCacheLogs(getLogs(completeWebPage, ch.getCacheDetails(false)));
+						getLogs(completeWebPage, ch.getCacheDetails(false));
 						pref.log("Got logs");
 						// If the switch is set to not store found caches and we found the cache => return
 						if (ch.is_found() && doNotGetFound) {
@@ -1279,8 +1279,9 @@ public class SpiderGC{
 						//==========
 						ch.setLatLon(latLon);
 						pref.log("LatLon: " + ch.getLatLon());
-
-						ch.getCacheDetails(false).setLongDescription(getLongDesc(completeWebPage));
+						
+						String longDesc=getLongDesc(completeWebPage);
+						ch.getCacheDetails(false).setLongDescription(longDesc);
 						pref.log("Got description");
 
 						ch.setCacheName(SafeXML.cleanback(getName(completeWebPage)));
@@ -1570,13 +1571,13 @@ public class SpiderGC{
 	 * @param chD Cache Details
 	 * @return A HTML string containing the logs
 	 */
-	private LogList getLogs(String completeWebPage, CacheHolderDetail chD) throws Exception {
+	private void getLogs(String completeWebPage, CacheHolderDetail chD) throws Exception {
 		String icon = "";
 		String name = "";
 		String logText = "";
 		String logId = "";
 		String singleLog = "";
-		LogList reslts = new LogList();
+		LogList reslts = chD.CacheLogs;
 		RexLogBlock.search(completeWebPage);
 		if (!RexLogBlock.didMatch()) {
 			pref.log("check blockRex in spider.def\n"+completeWebPage);			
@@ -1628,7 +1629,7 @@ public class SpiderGC{
 			//pref.log("MAXLOGS reached ("+pref.maxLogsToSpider+")");
 		} 
 		//pref.log(nLogs+" checked!");
-		return reslts;
+		// return reslts;
 	}
 
 	/**

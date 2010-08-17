@@ -276,7 +276,7 @@ public class HTMLExporter{
 		PrintWriter detfile;
 
 		list.sort(new HTMLComparer(field),false);
-		navi_index = addAnchorString(list,field, fullCompare);
+		navi_index = addAnchorString(list, field, fullCompare);
 		if (navi_index != null){
 			tmpl.setParam("navi_index",navi_index);
 		}

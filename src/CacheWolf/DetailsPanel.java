@@ -495,8 +495,7 @@ public class DetailsPanel extends CellPanel {
             if (ev.target == btnNotes) {
                 dirtyNotes = true; // TODO I think this is redundant, because
                                     // the notes are saved separately by the notes screen itself
-                final NotesScreen nsc = new NotesScreen(cache
-                        .getCacheDetails(true));
+                final NotesScreen nsc = new NotesScreen(cache.getCacheDetails(true));
                 nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
                 if (isBigScreen) {
                     waypointNotes.setText(cache.getCacheDetails(true).getCacheNotes());
