@@ -8,13 +8,12 @@ import ewe.sys.*;
 *	Class ID=
 */
 public class NotesScreen extends Form{
-	// mTextPad wayNotes = new mTextPad();
-	mInput wayNotes = new mInput();
+	mTextPad wayNotes = new mTextPad();
 	CacheHolderDetail chD = null;
 	mButton addDateTime;
 	mButton btSave = new mButton(MyLocale.getMsg(127,"Save"));
 	mButton cancelBtn = new mButton("Cancel");
-	// ScrollBarPanel sbp = new MyScrollBarPanel(wayNotes);
+	ScrollBarPanel sbp = new MyScrollBarPanel(wayNotes);
 	
 	public NotesScreen(CacheHolderDetail ch){
 		String imagesize = "";
@@ -26,7 +25,7 @@ public class NotesScreen extends Form{
 		this.resizeOnSIP = true;
 		chD = ch;
 		wayNotes.setText(chD.getCacheNotes());
-		addLast(wayNotes.setTag(CellConstants.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
+		addLast(sbp.setTag(CellConstants.SPAN, new Dimension(3,1)),CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		titleControls=new CellPanel();
 		titleControls.addNext(addDateTime,CellConstants.HSTRETCH,CellConstants.HFILL);
 		titleControls.addNext(cancelBtn,CellConstants.HSTRETCH,CellConstants.HFILL);
