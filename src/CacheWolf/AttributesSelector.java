@@ -10,6 +10,7 @@ import ewe.ui.CellConstants;
 import ewe.ui.DataChangeEvent;
 import ewe.ui.Panel;
 import ewe.ui.mLabel;
+import ewe.sys.*;
 
 public class AttributesSelector extends Panel {
 	protected static int TILESIZE=16; // for small screen 
@@ -30,7 +31,7 @@ public class AttributesSelector extends Panel {
 				TILESIZE = 25; PREF_HEIGHT =(TILESIZE+2)*10; PREF_WIDTH =(TILESIZE+2)*9;
 			}
 			if(MyLocale.getScreenWidth() == 480 & MyLocale.getScreenHeight() == 800){
-				TILESIZE = 25; PREF_HEIGHT =(TILESIZE+2)*10; PREF_WIDTH =(TILESIZE+2)*9;
+				TILESIZE = 30; PREF_HEIGHT =(TILESIZE+2)*10; PREF_WIDTH =(TILESIZE+2)*9;
 			}
 			if(MyLocale.getScreenWidth() == 640 & MyLocale.getScreenHeight() == 480){
 				TILESIZE = 20; PREF_HEIGHT =(TILESIZE+2)*7; PREF_WIDTH =(TILESIZE+2)*12;
