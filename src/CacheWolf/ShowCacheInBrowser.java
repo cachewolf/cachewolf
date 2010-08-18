@@ -66,7 +66,7 @@ public class ShowCacheInBrowser {
 			if(chD.isVisible()){
 				Vm.showWait(true);
 				try {
-					tpl.setParams(chD.toHashtable(new Regex("[,.]","."), null, 0, 30, -1, new AsciiCodec(), null, true, 1));
+					tpl.setParams(chD.toHashtable(new Regex("[,.]","."), null, 0, 30, -1, new AsciiCodec(), null, true, 1, ""));
 					// Look for images
 					// count only the images of main body
 					int start=0;
