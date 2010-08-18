@@ -576,7 +576,8 @@ public class CacheHolder{
 			int shortWaypointLength, int shortNameLength, int nrOfLogs,
 			TextCodec codec, GarminMap gm,
 			boolean withFoundText,
-			int ModTyp
+			int ModTyp,
+			String expName
 			) {
 		Hashtable varParams = new Hashtable();
 		CacheHolderDetail det = this.getCacheDetails(false);
@@ -789,10 +790,18 @@ public class CacheHolder{
 			Vector imgVect=new Vector(det.images.size());
 			for (int i=0; i<det.images.size(); i++) {
 				Hashtable imgs=new Hashtable();
-				imgs.put("FILENAME",det.images.get(i).getFilename());
+				String imgFile = det.images.get(i).getFilename();
+				imgs.put("FILENAME",imgFile);
 				imgs.put("TEXT",det.images.get(i).getTitle());
 				imgs.put("COMMENT",det.images.get(i).getComment());
 				imgs.put("URL",det.images.get(i).getURL());
+				if (!expName.equals("")) {
+					String src = Global.getProfile().dataDir + imgFile;
+					String dest = Global.getPref().getExportPath(expName) + imgFile;
+					if (!DataMover.copy(src,dest)) {
+						Global.getPref().log("error copying "+imgFile+" to "+Global.getPref().getExportPath(expName));
+					}
+				}
 				imgVect.add(imgs);
 			}
 			if (det.images.size()>0) varParams.put("ALLIMGS",imgVect);
