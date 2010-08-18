@@ -9,7 +9,6 @@ import ewe.io.*;
 import ewe.ui.*;
 import ewe.filechooser.*;
 import HTML.*;
-import HTML.Tmpl.Element.Element;
 
 /**
 *	Class to export cache information to individual HTML files.<br>
@@ -23,13 +22,13 @@ public class HTMLExporter{
 	Preferences pref;
 	Profile profile;
 	String [] template_init_index = {
-	 		"filename",  FileBase.getProgramDirectory()+FileBase.separator+"templates"+FileBase.separator+"index.tpl",
+	 		"filename",  FileBase.getProgramDirectory()+FileBase.separator+FileBase.separator+"index.html",
 	 		"case_sensitive", "true",
 	 		"max_includes",   "5"
 	 		//,"debug", "true"
 	 	};
 	String [] template_init_page = {
-	 		"filename",  FileBase.getProgramDirectory()+FileBase.separator+"templates"+FileBase.separator+"page.tpl",
+	 		"filename",  FileBase.getProgramDirectory()+FileBase.separator+FileBase.separator+"page.html",
 	 		"case_sensitive", "true",
 	 		"loop_context_vars", "true",
 	 		"max_includes",   "5"
@@ -64,7 +63,6 @@ public class HTMLExporter{
 			String icon;
 
 			Hashtable varParams;
-			Hashtable imgParams;
 			Hashtable logImgParams;
 			Hashtable usrImgParams;
 			Hashtable mapImgParams;
@@ -91,7 +89,7 @@ public class HTMLExporter{
 						continue;
 					}
 					det=ch.getCacheDetails(false);
-					varParams=ch.toHashtable(dec, null, 0, 30, -1, new AsciiCodec(), null, false, 2);
+					varParams=ch.toHashtable(dec, null, 0, 30, -1, new AsciiCodec(), null, false, 2, expName);
 					cache_index.add(varParams);
 					//We can generate the individual page here!
 					try{
@@ -107,21 +105,6 @@ public class HTMLExporter{
 									logIcons.add(icon); 
 								}
 							}
-
-							cacheImg.clear();
-							for(int j = 0; j<det.images.size(); j++){
-								imgParams = new Hashtable();
-								String imgFile = new String(det.images.get(j).getFilename());
-								imgParams.put("FILE", imgFile);
-								imgParams.put("TEXT",det.images.get(j).getTitle());
-								if (DataMover.copy(profile.dataDir + imgFile,targetDir + imgFile))
-									cacheImg.add(imgParams);
-								else {
-									pref.log("Error at "+ch.getWayPoint());
-									exportErrors++;
-								}
-							}
-							page_tpl.setParam("cacheImg", cacheImg);
 
 							// Log images
 							logImg.clear();

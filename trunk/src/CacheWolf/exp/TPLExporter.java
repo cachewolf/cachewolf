@@ -27,6 +27,7 @@ package CacheWolf.exp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.DataMover;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.Preferences;
@@ -59,7 +60,8 @@ class TplFilter implements HTML.Tmpl.Filter
 	int formatModifier = 0;
 	boolean getAddiWp = true;
 	boolean getMainWp = true;
-	Hashtable input = new Hashtable();
+	boolean copyCacheImages = false;
+	Hashtable additionalVarParams = new Hashtable();
 	String userValue = "";
 	String out="*.gpx";
 
@@ -86,7 +88,6 @@ class TplFilter implements HTML.Tmpl.Filter
 			rex1.search(t);
 			param = rex1.stringMatched(1);
 			value = rex1.stringMatched(2);
-			// t="";
 
 			if (param.equals("charset")) {
 				if (value.equals("ASCII")) {codec = new AsciiCodec();}
@@ -130,13 +131,21 @@ class TplFilter implements HTML.Tmpl.Filter
 					getMainWp=false;
 				}
 			}
+			else if (param.equals("CopyCacheImages")) {
+				if (value.equals("yes")) copyCacheImages=true;
+			}
 			else if (param.startsWith("input")) {
 				String par = param.substring(5);
 				InfoBox inf = new InfoBox("Eingabe", par, InfoBox.INPUT);
 				inf.feedback.setText(value);
-				inf.execute();
-				String res = inf.getInput();
-				input.put(par,res);
+				String res;
+				if (inf.execute() == FormBase.IDOK) {
+					res = inf.getInput();
+					additionalVarParams.put(par,res);
+				}
+			}
+			else if (param.startsWith("const")) {
+				additionalVarParams.put(param.substring(5),value);
 			}
 			return "";
 		}
@@ -221,7 +230,9 @@ public class TPLExporter {
 			Regex dec = new Regex("[,.]",myFilter.decSep);
 			if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
 			
-			Vector cache_index = new Vector(); 			
+			Vector cache_index = new Vector();
+			String imgExpName="";
+			if (myFilter.copyCacheImages) imgExpName=expName;
 			for(int i = 0; i<counter;i++){
 				CacheHolder ch = cacheDB.get(i);
 				if (ch.isVisible() && (ch.pos.isValid() || myFilter.formatModifier>0) ){
@@ -229,10 +240,19 @@ public class TPLExporter {
 						h.progress = (float)i/(float)counter;
 						h.changed();
 						try {
-							Hashtable varParams=ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier);
+							Hashtable varParams=ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier, imgExpName);
+							
+							Enumeration e = myFilter.additionalVarParams.keys();
+							while(e.hasMoreElements()) {
+								String key = (String)e.nextElement();
+								Object value = myFilter.additionalVarParams.get(key);
+								varParams.put(key, value);
+							}
+							
 							if (myFilter.single) {
 								cache_index.add(varParams);
 							}
+
 							else {
 								tpl.setParams(varParams);
 								String ext = (myFilter.out.substring(myFilter.out.lastIndexOf(".")).toLowerCase()+"    ").trim();
