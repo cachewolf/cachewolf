@@ -804,7 +804,7 @@ public class CacheHolder{
 				}
 				imgVect.add(imgs);
 			}
-			if (det.images.size()>0) varParams.put("ALLIMGS",imgVect);
+			if (det.images.size()>0) varParams.put("cacheImg",imgVect);
 		}
 		return varParams;
 	}	

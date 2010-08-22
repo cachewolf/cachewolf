@@ -218,22 +218,23 @@ value=&quot;0&quot;&gt;<span style='mso-tab-count:2'>                  </span><s
 style='mso-tab-count:1'>            </span>0 is xml as <span class=SpellE>gpx</span>
 generation before, 1 is html for local use 2 is html for export use<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>takeOnlyWp</span>&quot;
-value=&quot;<span class=SpellE>addi</span>&quot;&gt;<span style='mso-tab-count:
-3'>                           </span>process only this <span class=SpellE>Cachetypegroups</span>
-value is either “main” or “<span class=SpellE>addi</span>” else both is assumed<br>
+value=&quot;all&quot;&gt;<span style='mso-tab-count:3'>                              </span>process
+only this <span class=SpellE>Cachetypegroups</span> value is either “main” or “<span
+class=SpellE>addi</span>” else both (here all = default ) is assumed<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>CopyCacheImages</span>&quot;
 value=&quot;yes&quot;&gt;<span style='mso-tab-count:2'>                   </span><span
 class=SpellE>CacheImages</span> are copied to the output directory (copy <span
 class=SpellE>attribs</span> and icons manually, they are fix)<br>
-&lt;<span class=SpellE>tmpl_par</span> name=&quot;input*&quot; value=&quot;default&quot;&gt;<span
-style='mso-tab-count:3'>                                  </span>calls input
-with a “default” value and makes a <span class=SpellE>tmpl_var</span> with the
-name * (* is placeholder) (!<span class=SpellE>dont</span> use umlauts in
-defaults)<br>
-&lt;<span class=SpellE>tmpl_par</span> name=&quot;const*&quot; value=&quot;value&quot;&gt;<span
-style='mso-tab-count:1'>           </span><span style='mso-tab-count:2'>                        </span>sets
-a <span class=SpellE>tmpl_var</span> with the name * (* is placeholder) (!<span
-class=SpellE>dont</span> use umlauts in value)<o:p></o:p></span></p>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>inputEingabe</span>&quot;
+value=&quot;default&quot;&gt;<span style='mso-tab-count:2'>                       </span>calls
+input with a “default” value and makes a <span class=SpellE>tmpl_var</span>
+with the name <span class=SpellE>Eingabe</span> (<span class=SpellE>Eingabe</span>
+is placeholder) (!<span class=SpellE>dont</span> use umlauts in defaults)<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>constKonstante</span>&quot;
+value=&quot;value&quot;&gt;<span style='mso-tab-count:2'>                     </span>sets
+a <span class=SpellE>tmpl_var</span> with the name <span class=SpellE>Konstante</span>
+(<span class=SpellE>Konstante</span> is placeholder) (!<span class=SpellE>dont</span>
+use umlauts in value)<o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 mso-outline-level:1'><u><span lang=EN-GB style='font-size:10.0pt;font-family:
@@ -262,9 +263,8 @@ style='mso-tab-count:8'>                                                        
 <span class=SpellE>FileBase.getProgramDirectory</span>()<br>
 PROFILDIR<span style='mso-tab-count:8'>                                                                                         </span>:
 <br>
-TYPE<span style='mso-tab-count:8'>                                                                                      </span><span
-style='mso-tab-count:1'>            </span>: &lt;type&gt; Type of cache, e.g.
-Regular, Multi<br>
+TYPE<span style='mso-tab-count:9'>                                                                                                 </span>:
+&lt;type&gt; Type of cache, e.g. Regular, Multi<br>
 TYPENO<span style='mso-tab-count:8'>                                                                                             </span>:
 &lt;type&gt; as number string (see <span class=SpellE>CacheType.java</span> <span
 class=SpellE>e.g</span> : 0=Custom , 2=<span class=SpellE>Tradi</span>
@@ -287,8 +287,8 @@ MAINWPNAME<span style='mso-tab-count:8'>                                        
 ““ if is <span class=SpellE>Mainwaypoint</span>, <span class=SpellE>Mainwaypoint</span>
 name if is <span class=SpellE>Addi</span> Waypoint<br>
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:
-EN-GB'>WAYPOINT<span style='mso-tab-count:7'>                                                                             </span><span
-style='mso-tab-count:1'>            </span>: &lt;name&gt; GCXXXX, OCXXXX<br>
+EN-GB'>WAYPOINT<span style='mso-tab-count:8'>                                                                                         </span>:
+&lt;name&gt; GCXXXX, OCXXXX<br>
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
 mso-ansi-language:EN-GB'>SHORTWAYPOINT<span style='mso-tab-count:7'>                                                                              </span>:
 </span><span class=SpellE><span lang=EN-GB style='font-size:10.0pt;font-family:
@@ -328,7 +328,8 @@ LAT<span style='mso-tab-count:9'>                                               
 LON<span style='mso-tab-count:9'>                                                                                                   </span>:
 &lt;<span class=SpellE>wpt</span> …… <span class=SpellE>lon</span>=”<span
 class=SpellE>xx.yyyy</span>” &gt; Longitude in decimal format, e.g. 008.58132<br>
-STATUS<span style='mso-tab-count:8'>                                                                                             </span>:<span
+STATUS<span style='mso-tab-count:1'>           </span><span style='mso-tab-count:
+7'>                                                                                  </span>:<span
 style='mso-spacerun:yes'>  </span>means found<br>
 GC_LOGTYPE<span style='mso-tab-count:8'>                                                                                    </span>:
 the English Status texts (for <span class=SpellE>gpx</span> – export)<br>
@@ -367,8 +368,7 @@ class=SpellE>sie</span> <span class=SpellE>noch</span> <span class=SpellE>Infos<
 <span class=SpellE>wie</span> Difficulty etc. rein)<br>
 CACHEID<span style='mso-tab-count:8'>                                                                                            </span>:<br>
 ARCHIVED<span style='mso-tab-count:8'>                                                                                         </span>:<br>
-AVAILABLE<span style='mso-tab-count:3'>                             </span><span
-style='mso-tab-count:5'>                                                           </span>:
+AVAILABLE<span style='mso-tab-count:8'>                                                                                        </span>:
 <br>
 TRAVELBUG<span style='mso-tab-count:8'>                                                                                      </span>:
 Y or N <span class=SpellE>für</span> <span class=SpellE>Anwesenheit/Abwesenheit</span>
@@ -492,9 +492,11 @@ Beschreibungstext für den Addi<o:p></o:p></span></p>
 mso-outline-level:1'><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-mso-outline-level:1'><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
-mso-ansi-language:EN-GB'>ALLIMGS<span style='mso-tab-count:8'>                                                                                            </span>:
-the &lt;<span class=SpellE>tmpl_loop</span> ALLIMGS&gt;<br>
+mso-outline-level:1'><span class=SpellE><span class=GramE><span lang=EN-GB
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>cacheImg</span></span></span><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'><span
+style='mso-tab-count:8'>                                                                                            </span>:
+the &lt;<span class=SpellE>tmpl_loop</span> <span class=SpellE>cacheImg</span>&gt;<br>
 FILENAME<span style='mso-tab-count:8'>                                                                                          </span>:
 the filename in the profile directory<br>
 TEXT<span style='mso-tab-count:9'>                                                                                                  </span>:
@@ -603,8 +605,9 @@ Change quotation marks:&nbsp;&nbsp; &quot; becomes \&quot;&nbsp; and ' becomes
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Example:
-&lt;TMPL_VAR name=&quot;<span class=SpellE>var_name</span>&quot; escape=&quot;html&quot;&gt;</span><span
-lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
+&lt;TMPL_VAR name=&quot;<span class=SpellE>var_name</span>&quot;
+escape=&quot;html&quot;&gt;</span><span lang=EN-GB style='mso-ansi-language:
+EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='mso-ansi-language:EN-GB'>&nbsp;<o:p></o:p></span></p>
@@ -641,8 +644,8 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Pa
 values for conditions are Strings in java, and not <span class=SpellE><span
 class=GramE>boolean</span></span> values, hence, what evaluates to true and</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>false needs to
-be specifically defined.<br>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>false needs
+to be specifically defined.<br>
 As of now, the following values evaluate to false:<br>
 &quot;&quot; - the empty string<br>
 &quot;0&quot; - the string containing only the number zero<br>
@@ -677,8 +680,8 @@ style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>This
 tag is the exact opposite of the &lt;<span class=SpellE>tmpl_if</span>&gt; tag.
-A &lt;<span class=SpellE>tmpl_unless</span>&gt; block is displayed if its
-control variable</span><span lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span
+A &lt;<span class=SpellE>tmpl_unless</span>&gt; block is displayed if its control
+variable</span><span lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>evaluates
 to false. If the control variable evaluates to true, then the else block, if</span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
