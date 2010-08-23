@@ -39,19 +39,7 @@ Notes:<br>
 Pictures:<br>
 Cache:<br>
 <tmpl_loop cacheImg>
-<a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
-</tmpl_loop>
-User:<br>
-<tmpl_loop userImg>
-<a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
-</tmpl_loop>
-Logs:<br>
-<tmpl_loop logImg>
-<a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
-</tmpl_loop>
-Maps:<br>
-<tmpl_loop mapImg>
-<a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
+<a href = "<tmpl_var FILENAME>"><tmpl_var TEXT></a><br>
 </tmpl_loop>
 </td></tr>
 <tr style = "font-family:sans-serif;font-size:12;"><td>
