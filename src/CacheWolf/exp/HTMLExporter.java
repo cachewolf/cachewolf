@@ -22,13 +22,13 @@ public class HTMLExporter{
 	Preferences pref;
 	Profile profile;
 	String [] template_init_index = {
-	 		"filename",  FileBase.getProgramDirectory()+FileBase.separator+FileBase.separator+"index.html",
+	 		"filename",  FileBase.getProgramDirectory()+FileBase.separator+FileBase.separator+"indextpl.html",
 	 		"case_sensitive", "true",
 	 		"max_includes",   "5"
 	 		//,"debug", "true"
 	 	};
 	String [] template_init_page = {
-	 		"filename",  FileBase.getProgramDirectory()+FileBase.separator+FileBase.separator+"page.html",
+	 		"filename",  FileBase.getProgramDirectory()+FileBase.separator+FileBase.separator+"pagetpl.html",
 	 		"case_sensitive", "true",
 	 		"loop_context_vars", "true",
 	 		"max_includes",   "5"
