@@ -94,7 +94,7 @@ public class TablePanel extends CellPanel{
 	 */
 	public void refreshControl(){
 		tc.update(true);
-		if (statBar!=null) statBar.updateDisplay();
+		if (statBar!=null) statBar.updateDisplay("");
 	}
 	
 	/** Move all filtered caches to the end of the table and redisplay table */
@@ -140,7 +140,7 @@ public class TablePanel extends CellPanel{
 		selectRow(rownum);
 
 		tc.update(true); // Update and repaint
-		if (statBar!=null) statBar.updateDisplay();
+		if (statBar!=null) statBar.updateDisplay("");
 	}
 	
 }

@@ -54,7 +54,7 @@ import ewe.util.Vector;
 public class MainMenu extends MenuBar {
 	private MenuItem preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
-	private MenuItem spider, spiderAllFinds, loadGCVotes, update, chkVersion;
+	private MenuItem spider, spiderRoute, spiderAllFinds, loadGCVotes, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
@@ -90,9 +90,10 @@ public class MainMenu extends MenuBar {
 		// subMenu for import, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
 		MenuItem[] mnuImport = {				
-				loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")),
-				loadOC      = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")),
-				spider      = new MenuItem(MyLocale.getMsg(131,"Spider from geocaching.com")),
+				loadcaches     = new MenuItem(MyLocale.getMsg(129,"Import GPX")),
+				loadOC         = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")),
+				spider         = new MenuItem(MyLocale.getMsg(131,"Download from geocaching.com")),
+				spiderRoute    = new MenuItem(MyLocale.getMsg(137,"Download along a Route from geocaching.com")),
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")),
 				update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data")),
 				mnuSeparator,
@@ -332,6 +333,14 @@ public class MainMenu extends MenuBar {
 				SpiderGC spGC = new SpiderGC(pref, profile, true);
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doIt();
+				cacheDB.clear();
+				profile.readIndex();
+				tbp.resetModel();
+			}
+			if(mev.selectedItem == spiderRoute){
+				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				Global.mainTab.saveUnsavedChanges(false);
+				spGC.doItAlongARoute();
 				cacheDB.clear();
 				profile.readIndex();
 				tbp.resetModel();

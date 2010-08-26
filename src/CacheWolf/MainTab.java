@@ -39,7 +39,7 @@ public class MainTab extends mTabbedPanel {
 	public CacheHolder ch=null, chMain=null;
 	CacheHolderDetail chD =null;
 	MainMenu mnuMain;
-	StatusBar statBar;
+	public StatusBar statBar;
 	public MovingMap mm;
 	Navigate nav;
 	public String mainCache="";
@@ -165,7 +165,7 @@ public class MainTab extends mTabbedPanel {
 				}
 				//was tbP.refreshTable();
 				tbP.tc.update(true); // Update and repaint
-				if (statBar!=null) statBar.updateDisplay();
+				if (statBar!=null) statBar.updateDisplay("");
 			}
 		}
 		if (panelNo==5) { // Leaving the Solver Panel
