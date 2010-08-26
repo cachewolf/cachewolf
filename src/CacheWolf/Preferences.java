@@ -49,7 +49,7 @@ public class Preferences extends MinML{
 	public static final int YES = 0;
 	public static final int NO = 1;
 	public static final int ASK = 2;
-	private static String NEWLINE="\n";
+	public static String NEWLINE="\n";
 	// Hashtable is saving filter data objects the user wants to save
 	private Hashtable filterList = new Hashtable(15);
 	/** screen is big enough to hold additional information like cache notes */
@@ -1042,6 +1042,8 @@ public class Preferences extends MinML{
 		log("CW Version "+Version.getReleaseDetailed());
 	}
 
+	boolean forceLog = false;
+	
 	/**
 	 * Method to log messages to a file called log.txt
 	 * It will always append to an existing file.
@@ -1052,7 +1054,7 @@ public class Preferences extends MinML{
 	 * @param text to log
 	 */
 	public void log(String text){
-		if (debug) {
+		if (debug || forceLog) {
 			Vm.debug(text);
 			Time dtm = new Time();
 			dtm.getTime();
@@ -1086,15 +1088,16 @@ public class Preferences extends MinML{
 	 * in Version.getRelease()
 	 */
 	public void log(String text,Throwable e, boolean withStackTrace) {
-		String msg;
-		if (text.equals("")) msg=text; else msg=text+"\n";
 		if (e!=null) {
-			if (withStackTrace && debug)
-				msg+=ewe.sys.Vm.getAStackTrace(e);
+			text+="\n";
+			if (withStackTrace)
+				text+=ewe.sys.Vm.getAStackTrace(e);
 			else
-				msg+=e.toString();
+				text+=e.toString();
 		}
-		log(msg);
+		forceLog=true;
+		log(text);
+		forceLog=false;
 	}
 
 	/** Log an exception to the log file without a stack trace, i.e.

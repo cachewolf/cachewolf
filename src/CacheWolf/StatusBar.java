@@ -64,10 +64,20 @@ public class StatusBar extends CellPanel{
 		lblCenter.setToolTip(MyLocale.getMsg(195,"Current centre"));
 	}
 
-	public void updateDisplay(){
-		String strStatus, strCenter="";
-		strStatus = MyLocale.getMsg(4500,"Tot:") + " " + stats.total() + " " +
-					MyLocale.getMsg(4501,"Dsp:") + " " + stats.visible() + " " +
+	String oldInfo="";
+	public void updateDisplay(String strInfo){
+		if (strInfo.equals("")) {
+			lblCenter.backGround=null;	
+		}
+		else {
+			if (oldInfo.equals(strInfo)) { return; }
+			lblCenter.backGround=new Color(0,255,0);
+			oldInfo=strInfo;				
+		}
+		String strStatus="";
+		boolean bigScreen=(MyLocale.getScreenWidth()>=480) && !(MobileVGA && (pref.fontSize > 20));
+		strStatus += MyLocale.getMsg(4500,"Tot:") + " " + stats.total(bigScreen) + " " +
+					MyLocale.getMsg(4501,"Dsp:") + " " + stats.visible(bigScreen) + " " +
 					MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound() + "  ";
 		disp.setText(strStatus);
 		// Indicate that a filter is active in the status line
@@ -79,12 +89,8 @@ public class StatusBar extends CellPanel{
 			btnFlt.backGround=new Color(0,255,255);
 		else
 			btnFlt.backGround=null;
-		// Current centre can only be displayed if screen is big
-		// Otherwise it forces a scrollbar
-		// This can happen even on bigger screens with big fonts
-		// >=320 --> >=480 Das ist mir zu blöd, dann sieht man eben keine Zentrumskoordinaten
-		if ((MyLocale.getScreenWidth()>=480) && !(MobileVGA && (pref.fontSize > 20)))
-			strCenter="  \u00a4 " + pref.getCurCentrePt().toString();
+		if (bigScreen && lblCenter.backGround == null)
+			strInfo="  \u00a4 " + pref.getCurCentrePt().toString();
 		if (Global.getPref().sortAutomatic) {
 			this.btnNoSorting.backGround=new Color(0,255,255);
 		}
@@ -92,8 +98,9 @@ public class StatusBar extends CellPanel{
 			this.btnNoSorting.backGround=null;			
 		}
 
-		lblCenter.setText(strCenter);
+		lblCenter.setText(strInfo);
 		relayout(true); // in case the numbers increased and need more space
+		this.repaintNow();
 	}
 
 	public void onEvent(Event ev) {

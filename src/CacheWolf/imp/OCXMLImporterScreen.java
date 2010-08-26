@@ -122,7 +122,7 @@ public class OCXMLImporterScreen extends Form {
 		if ((options & MAXNUMBER) > 0) {
 			this.addNext(maxNumberLbl = new mLabel(MyLocale.getMsg(1623,"Max. number:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			maxNumberInput = new mInput();
-			if ( pref.maxSpiderNumber < 0 ) {
+			if ( pref.maxSpiderNumber < 0 || pref.maxSpiderNumber == Integer.MAX_VALUE) {
 				maxNumberInput.setText("");
 			} else {
 				maxNumberInput.setText(Integer.toString(pref.maxSpiderNumber));
@@ -189,8 +189,8 @@ public class OCXMLImporterScreen extends Form {
 			}
 			if (ev.target == okB){
 				    // distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
-					if (imagesCheckBox!=null) pref.downloadPics = imagesCheckBox.state;
 					if (missingCheckBox!=null) pref.downloadMissingOC = missingCheckBox.state;
+					if (imagesCheckBox!=null) pref.downloadPics = imagesCheckBox.state;
 					if (travelbugsCheckBox!=null) pref.downloadTBs = travelbugsCheckBox.state;
 					if (maxLogsInput!=null) pref.maxLogsToSpider=Common.parseInt(maxLogsInput.getText());
 					pref.savePreferences();
