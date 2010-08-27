@@ -6,7 +6,7 @@
 <?xml version="1.0"?><loc version="1.0" src=EasyGPS"><br/>
 <tmpl_loop cache_index>
 <waypoint><br/>
-   <name id="<tmpl_var WAYPOINT> <tmpl_var SHORTSIZE><tmpl_var SHORTDIFFICULTY>/<tmpl_var SHORTTERAIN>"><![CDATA[<tmpl_var SHORTNAME> TB:<tmpl_var TRAVELBUG>]]></name><br/>
+   <name id="<tmpl_var WAYPOINT> <tmpl_var SHORTSIZE><tmpl_var SHORTDIFFICULTY>/<tmpl_var SHORTTERRAIN>"><![CDATA[<tmpl_var SHORTNAME> TB:<tmpl_var TRAVELBUG>]]></name><br/>
    <coord lat="<tmpl_var LAT>" lon="<tmpl_var LON>"/><br/>
    <type><tmpl_var GMTYPE></type><br/>
 </waypoint><br/>
