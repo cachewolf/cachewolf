@@ -614,7 +614,7 @@ public class CacheHolder{
 			varParams.put("SHDIFFICULTY", (isCustomWpt() || hard < 0)?"":sHard.substring(0,1));
 			varParams.put("TERRAIN", (isCustomWpt() || terrain < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(terrain)));
 			String sTerrain = Integer.toString(terrain);
-			varParams.put("SHORTTERAIN", (isCustomWpt() || terrain < 0)?"":sTerrain);
+			varParams.put("SHORTTERRAIN", (isCustomWpt() || terrain < 0)?"":sTerrain);
 			varParams.put("SHTERRAIN", (isCustomWpt() || terrain < 0)?"":sTerrain.substring(0,1));
 			varParams.put("SIZE", CacheSize.cw2ExportString(cacheSize));
 			varParams.put("SHORTSIZE", CacheSize.getExportShortId(cacheSize));
