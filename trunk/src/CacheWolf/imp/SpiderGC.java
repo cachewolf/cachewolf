@@ -208,70 +208,70 @@ public class SpiderGC{
 		}
 		
 		if (doDownloadGui(0)) {
-		
-		pref.log("Download properties : "+Preferences.NEWLINE
-				+ "minDistance: " + minDistance+Preferences.NEWLINE
-				+ "maxDistance: " + maxDistance+Preferences.NEWLINE
-				+ "directions: " + direction+Preferences.NEWLINE
-				+ "maxNew: " + pref.maxSpiderNumber +Preferences.NEWLINE
-				+ "maxUpdate: " + maxUpdate+Preferences.NEWLINE
-				+ "with Founds       : " + (doNotgetFound ? "no" : "yes")+Preferences.NEWLINE
-				+ "alias is premium m: " + (!pref.isPremium ? "no" : "yes")+Preferences.NEWLINE
-				+ "Update if new Logs: " + (!pref.checkLog ? "no" : "yes")+Preferences.NEWLINE
-				,null);
-		
-		
-		Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
-		
-		fillDownloadLists(pref.maxSpiderNumber , maxUpdate, maxDistance, minDistance, directions, cachesToUpdate);
-		if (infB.isClosed) { Vm.showWait(false); return; }
-		infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
+			
+			pref.log("Download properties : "+Preferences.NEWLINE
+					+ "minDistance: " + minDistance+Preferences.NEWLINE
+					+ "maxDistance: " + maxDistance+Preferences.NEWLINE
+					+ "directions: " + direction+Preferences.NEWLINE
+					+ "maxNew: " + pref.maxSpiderNumber +Preferences.NEWLINE
+					+ "maxUpdate: " + maxUpdate+Preferences.NEWLINE
+					+ "with Founds       : " + (doNotgetFound ? "no" : "yes")+Preferences.NEWLINE
+					+ "alias is premium m: " + (!pref.isPremium ? "no" : "yes")+Preferences.NEWLINE
+					+ "Update if new Logs: " + (!pref.checkLog ? "no" : "yes")+Preferences.NEWLINE
+					,null);
+			
+			
+			Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
+			
+			fillDownloadLists(pref.maxSpiderNumber , maxUpdate, maxDistance, minDistance, directions, cachesToUpdate);
+			if (infB.isClosed) { Vm.showWait(false); return; }
+			infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
 
-		//=======
-		// Now ready to spider each cache in the lists
-		//=======
+			//=======
+			// Now ready to spider each cache in the lists
+			//=======
 
-		if ( cachesToUpdate.size() > 0 ) {
-			switch (pref.spiderUpdates) {
-			case Preferences.NO:
-				cachesToUpdate.clear();
-				break;
-			case Preferences.ASK:
-				MessageBox mBox = new MessageBox(MyLocale.getMsg(5517,"Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518," caches in database need an update. Update now?") , FormBase.IDYES |FormBase.IDNO);
-				if (mBox.execute() != FormBase.IDOK){
+			if ( cachesToUpdate.size() > 0 ) {
+				switch (pref.spiderUpdates) {
+				case Preferences.NO:
 					cachesToUpdate.clear();
+					break;
+				case Preferences.ASK:
+					MessageBox mBox = new MessageBox(MyLocale.getMsg(5517,"Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518," caches in database need an update. Update now?") , FormBase.IDYES |FormBase.IDNO);
+					if (mBox.execute() != FormBase.IDOK){
+						cachesToUpdate.clear();
+					}
+					break;
 				}
-				break;
 			}
-		}
 
-		int spiderErrors = 0;
-		int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
-		boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
-		pref.log("Download properties : "+Preferences.NEWLINE
-				+ "maxLogs: " + (loadAllLogs ? "completepage " : "shortpage") + "save:" + pref.maxLogsToSpider+Preferences.NEWLINE
-				+ "with pictures     : " + (!pref.downloadPics ? "no" : "yes")+Preferences.NEWLINE
-				+ "with tb           : " + (!pref.downloadTBs ? "no" : "yes")+Preferences.NEWLINE
-				,null);
+			int spiderErrors = 0;
+			int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
+			boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
+			pref.log("Download properties : "+Preferences.NEWLINE
+					+ "maxLogs: " + (loadAllLogs ? "completepage " : "shortpage") + "save:" + pref.maxLogsToSpider+Preferences.NEWLINE
+					+ "with pictures     : " + (!pref.downloadPics ? "no" : "yes")+Preferences.NEWLINE
+					+ "with tb           : " + (!pref.downloadTBs ? "no" : "yes")+Preferences.NEWLINE
+					,null);
 
-		spiderErrors=downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
-		spiderErrors=updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
+			spiderErrors=downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
+			spiderErrors=updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
 
-		if (infB.isClosed) { Vm.showWait(false); return; }
+			if (infB.isClosed) { Vm.showWait(false); return; }
 
-		if ( spiderErrors > 0) {
-			new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
-		}
-		if ( maxNumberAbort ) {
-			new MessageBox(MyLocale.getMsg(5519,"Information"),MyLocale.getMsg(5520,"Only the given maximum of caches were loaded.%0aRepeat spidering later to load more caches.%0aNo already existing caches were updated."),FormBase.DEFOKB).execute();
-		}
-		Global.getProfile().restoreFilter();
-		Global.getProfile().saveIndex(Global.getPref(),true);
-		
+			if ( spiderErrors > 0) {
+				new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
+			}
+			if ( maxNumberAbort ) {
+				new MessageBox(MyLocale.getMsg(5519,"Information"),MyLocale.getMsg(5520,"Only the given maximum of caches were loaded.%0aRepeat spidering later to load more caches.%0aNo already existing caches were updated."),FormBase.DEFOKB).execute();
+			}
+			Global.getProfile().restoreFilter();
+			Global.getProfile().saveIndex(Global.getPref(),true);
+			
 		}
 		infB.close(0);
 		Vm.showWait(false);
-	} // End of DoIt spider many / all finds
+	} // End of DoIt
 	
 	public void doItAlongARoute() {
 
@@ -295,7 +295,7 @@ public class SpiderGC{
 		Hashtable cachesToUpdate = new Hashtable(); //dummy , won't update
 		CacheHolder nextCache=null;
 		int n;
-		while ((n=nextRoutePoint(startPos)) > -1) {
+		while ((n=nextRoutePoint(startPos, lateralDistance)) > -1) {
 			// spider around startpos			
 			fillDownloadLists(Integer.MAX_VALUE, 0, lateralDistance, 0.0, directions, cachesToUpdate);
 			nextCache=cacheDB.get(n);
@@ -309,17 +309,19 @@ public class SpiderGC{
 				origin=nextCheckPoint;
 				fillDownloadLists(Integer.MAX_VALUE, 0, lateralDistance, 0.0, directions, cachesToUpdate);
 				// Global.getPref().log("next CP = "+nextCheckPoint.toString(),null);
+				if (infB.isClosed) { break; }
 			}
 			startPos=nextCache.pos;
 			// Global.getPref().log("next WP = "+nextCache.getWayPoint()+" : "+CWPoint.getDirection(degrees),null);
+			if (infB.isClosed) { break; }
 		}
 		// spider around startpos (means endpos)
 		origin=startPos;
 		fillDownloadLists(Integer.MAX_VALUE, 0, lateralDistance, 0.0, directions, cachesToUpdate);
 		int spiderErrors=0;
+		if (infB.isClosed) { Vm.showWait(false); return; } // or ask for download of intermediate result 
 		spiderErrors=downloadCaches(cachesToLoad, spiderErrors, cachesToLoad.size(), true);
 
-		if (infB.isClosed) { Vm.showWait(false); return; }
 		infB.close(0);
 		Vm.showWait(false);
 		if ( spiderErrors > 0) {
@@ -332,7 +334,7 @@ public class SpiderGC{
 		Global.getProfile().saveIndex(Global.getPref(),true);
 	}
 	
-	private int nextRoutePoint(CWPoint startPos) {
+	private int nextRoutePoint(CWPoint startPos, double lateralDistance) {
 		// get next Destination
 		double nextDistance = 0;
 		int index=-1;
@@ -344,20 +346,27 @@ public class SpiderGC{
 				CWPoint tmpPos = ch.pos;
 				double tmpDistance=tmpPos.getDistance(startPos);
 				if (nextDistance==0) {
+					// Startwert
 					index=i;
 					nextDistance=tmpDistance;
 					nextCache=ch;
+					nextCache.is_Checked=false;
 				}
 				else {
-					if (tmpDistance < nextDistance) {
-						index=i;
-						nextDistance=tmpDistance;
-						nextCache=ch;
+					if (tmpDistance > lateralDistance) {
+						if (tmpDistance < nextDistance) {
+							index=i;
+							nextDistance=tmpDistance;
+							nextCache=ch;
+							nextCache.is_Checked=false;
+						}
+					}
+					else {
+						ch.is_Checked=false;
 					}
 				}
 			}
 		}
-		if (nextCache!=null) nextCache.is_Checked=false; // oder i>-1
 		return index;
 	}
 
