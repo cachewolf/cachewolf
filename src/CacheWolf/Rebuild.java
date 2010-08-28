@@ -2,7 +2,6 @@ package CacheWolf;
 
 import CacheWolf.utils.FileBugfix;
 import ewe.io.FileBase;
-import ewe.io.FileInputStream;
 import ewe.io.FileReader;
 import ewe.io.IOException;
 import ewe.sys.Handle;
@@ -47,8 +46,6 @@ public class Rebuild {
 			int nProcessed = 0;
 			// Now do the actual work
 			String details="";
-			byte [] buff = new byte[10*1024];
-			StringBuffer str = new StringBuffer();
 			for (i = 0; i < CacheFiles.length; i++) {
 				if (CacheFiles[i] != null) {
 					
