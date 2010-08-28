@@ -55,6 +55,7 @@ public class HintLogPanel extends CellPanel{
 
 	public HintLogPanel(){
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
+		MyLocale.setSplitterSize(split);
 		CellPanel logpane = split.getNextPanel();
 		CellPanel hintpane = split.getNextPanel();
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);

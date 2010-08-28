@@ -1,5 +1,6 @@
 package CacheWolf;
 
+import ewe.sys.Vm;
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.ScrollClient;
 import ewe.ui.ScrollablePanel;
@@ -21,6 +22,10 @@ public class MyScrollBarPanel extends ScrollBarPanel {
 	public MyScrollBarPanel(ScrollClient client)
 	{
 		this(client,0);
+		if(Vm.isMobile()){
+//			hbar.setPreferredSizes(50,50,50);
+		}
+		
 	}
 	public ScrollablePanel getScrollablePanel()
 	{

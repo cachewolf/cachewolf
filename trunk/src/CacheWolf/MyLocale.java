@@ -11,6 +11,7 @@ import ewe.io.FileBase;
 import ewe.sys.*;
 import ewe.sys.Double;
 import ewe.sys.Long;
+import ewe.ui.SplittablePanel;
 import ewe.ui.Window;
 import ewe.ui.WindowConstants;
 /**
@@ -297,6 +298,17 @@ public class MyLocale {
 	public static void setSIPButton() {
 		if (Vm.isMobile()) {
 			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
+		}
+	}
+
+	/**
+	 * This method modifies the thickness of splitter on modern PDAs with a VGA resolution or better.
+	 * @param split
+	 */
+	public static void setSplitterSize(SplittablePanel split) {
+		if (Vm.isMobile() && MyLocale.getScreenHeight() > 400) {
+				split.theSplitter.thickness = 20;
+			
 		}
 	}
 
