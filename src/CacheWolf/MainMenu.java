@@ -61,7 +61,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator=new MenuItem("-");
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgCheckNotesAndSolver;
-	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
+	public MenuItem cacheTour, orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuDeleteProfile, mnuRenameProfile, mnuEditCenter;
 	private Form father;
 	private TablePanel tbp;

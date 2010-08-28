@@ -125,6 +125,7 @@ public class SolverPanel extends CellPanel{
 	public SolverPanel (Preferences p, Profile prof){
 		pref = p;
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
+		MyLocale.setSplitterSize(split);
 
 		programPanel = split.getNextPanel();
 		outputPanel = split.getNextPanel();

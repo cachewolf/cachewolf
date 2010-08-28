@@ -114,8 +114,9 @@ public class MainForm extends Editor {
         if (pref.showStatus) statBar = new StatusBar(pref, profile.cacheDB);
 		mMenu = new MainMenu(this);
 		mTab = new MainTab(mMenu,statBar);
-		split=new SplittablePanel(PanelSplitter.HORIZONTAL);
-		split.theSplitter.thickness=0; split.theSplitter.modify(Invisible,0);
+		split = new SplittablePanel(PanelSplitter.HORIZONTAL);
+		split.theSplitter.thickness = 0;
+		split.theSplitter.modify(Invisible, 0);
 		CellPanel pnlCacheList = split.getNextPanel();
 		CellPanel pnlMainTab = split.getNextPanel();
 		split.setSplitter(PanelSplitter.MIN_SIZE|PanelSplitter.BEFORE,PanelSplitter.HIDDEN|PanelSplitter.BEFORE,PanelSplitter.CLOSED);
