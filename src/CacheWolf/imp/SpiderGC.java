@@ -187,9 +187,6 @@ public class SpiderGC{
 	}
 
 	public void doIt(boolean _spiderAllFinds){
-		Vm.showWait(true);
-		infB = new InfoBox("Status", MyLocale.getMsg(5502,"Fetching first page..."));
-		infB.exec();
 		cachesToLoad.clear();
 		spiderAllFinds=_spiderAllFinds;
 		origin = pref.getCurCentrePt(); // No need to copy curCentrePt as it is only read and not written
@@ -208,6 +205,10 @@ public class SpiderGC{
 		}
 		
 		if (doDownloadGui(0)) {
+
+			Vm.showWait(true);
+			infB = new InfoBox("Status", MyLocale.getMsg(5502,"Fetching first page..."));
+			infB.exec();
 			
 			pref.log("Download properties : "+Preferences.NEWLINE
 					+ "minDistance: " + minDistance+Preferences.NEWLINE
@@ -267,10 +268,10 @@ public class SpiderGC{
 			}
 			Global.getProfile().restoreFilter();
 			Global.getProfile().saveIndex(Global.getPref(),true);
-			
+
+			infB.close(0);
+			Vm.showWait(false);			
 		}
-		infB.close(0);
-		Vm.showWait(false);
 	} // End of DoIt
 	
 	public void doItAlongARoute() {
