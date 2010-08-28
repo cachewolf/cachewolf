@@ -255,6 +255,8 @@ public class SpiderGC{
 					+ "with tb           : " + (!pref.downloadTBs ? "no" : "yes")+Preferences.NEWLINE
 					,null);
 
+			if (Global.mainTab.statBar!=null) Global.mainTab.statBar.updateDisplay("");
+
 			spiderErrors=downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
 			spiderErrors=updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
 
@@ -574,6 +576,7 @@ public class SpiderGC{
 						break;
 					}
 					found_on_page++;
+					if (Global.mainTab.statBar!=null) Global.mainTab.statBar.updateDisplay("working "+found_on_page);
 					String CacheDescriptionGC=RexPropLine.stringMatched(1);
 					double gotDistance=getDistGC(CacheDescriptionGC);
 					String chWaypoint=getWP(CacheDescriptionGC);
