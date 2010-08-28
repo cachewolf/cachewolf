@@ -135,7 +135,7 @@ public class CacheHolder{
 	
 	public CacheHolder(String wp) {
 		wayPoint = wp;
-		type=-1;
+		type=CacheType.CW_TYPE_ERROR;
     }
 	
 	public CacheHolder(String xmlString, int version) {

@@ -139,6 +139,7 @@ public class LOCXMLImporter extends MinML {
 		ch = cacheDB.get(wpt);
 		if (ch == null) {
 			ch = new CacheHolder(wpt);
+			ch.setType(CacheType.CW_TYPE_CUSTOM); // loc is always type "Geocache" but is incomplete D/T
 			ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 			ch.setHard(CacheTerrDiff.CW_DT_UNSET);
 			ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
