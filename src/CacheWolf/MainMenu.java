@@ -14,6 +14,7 @@ import CacheWolf.exp.TPLExporter;
 import CacheWolf.exp.TomTomExporter;
 import CacheWolf.imp.GPXImporter;
 import CacheWolf.imp.LOCXMLImporter;
+import CacheWolf.imp.FieldnotesImporter;
 import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.imp.OCXMLImporterScreen;
 import CacheWolf.imp.SpiderGC;
@@ -361,7 +362,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == loadcaches){
 				String dir = pref.getImporterPath("LocGpxImporter");
 				FileChooser fc = new FileChooser(FileChooserBase.OPEN|FileChooserBase.MULTI_SELECT, dir);
-				fc.addMask("*.gpx,*.zip,*.loc");
+				fc.addMask("*.gpx,*.zip,*.loc,fieldnotes.txt,geocache_visits.txt");
 				fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
 				if(fc.execute() != FormBase.IDCANCEL){
 					dir = fc.getChosenDirectory().toString();
@@ -381,7 +382,11 @@ public class MainMenu extends MenuBar {
 					int how = GPXImporter.DOIT_ASK;
 					for (int i = 0; i < files.length; i++){
 						String file = dir + "/" + files[i];
-						if (file.endsWith("loc")){
+						if (file.endsWith("txt")){
+							FieldnotesImporter fn=new FieldnotesImporter(pref, profile, file);
+							fn.doIt();
+						}
+						else if (file.endsWith("loc")){
 							LOCXMLImporter loc = new LOCXMLImporter(pref, profile, file);
 							loc.doIt();
 						}
