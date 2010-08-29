@@ -1118,6 +1118,26 @@ public class CacheHolder{
 				|| type == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
 		return MyLocale.getMsg(msgNr, "Found");
 	}
+	public String getGCFoundText() {
+		int msgNr=318; // normal found			 
+		if (type == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
+		else if (type == CacheType.CW_TYPE_EVENT 
+				|| type == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
+		for (int i = 0; i < _logType.length; i++) {
+			if ((""+msgNr).equals(_logType[i][MSG_NR])) {
+				return _logType[i][GC_MSG];
+			}			
+		}
+		return "";
+	}
+	public String getCWLogText(String s) {
+		for (int i = 0; i < _logType.length; i++) {
+			if ((s).equals(_logType[i][GC_MSG])) {
+				return MyLocale.getMsg(Integer.parseInt(_logType[i][MSG_NR]),"");
+			}			
+		}
+		return "";
+	}
 	
 	public String getStatusText() {
 		if ((cacheStatus.length() == 10 || cacheStatus.length() == 16) &&
@@ -1203,7 +1223,7 @@ public class CacheHolder{
 
 	private final static int MSG_NR = 0; 
 	private final static int GC_MSG = 1; 
-	private final static int IDX_WRITENOTE = 4; 	
+	private final static int IDX_WRITENOTE = 5; 	
 	private final static String[][] _logType = {	
 			{"353", ""},
 			{"318", "Found it"},
@@ -1258,6 +1278,8 @@ public class CacheHolder{
 		}
 		return gcLogType;    
 	}                                                                                                             
+	
+	
 	
 	/**
 	 * Initializes the caches states (and its addis) before updating, so that the "new", "updated",
