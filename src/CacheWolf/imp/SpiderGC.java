@@ -576,7 +576,7 @@ public class SpiderGC{
 						break;
 					}
 					found_on_page++;
-					if (Global.mainTab.statBar!=null) Global.mainTab.statBar.updateDisplay("working "+found_on_page);
+					if (Global.mainTab.statBar!=null) Global.mainTab.statBar.updateDisplay("working "+page_number+" / "+found_on_page);
 					String CacheDescriptionGC=RexPropLine.stringMatched(1);
 					double gotDistance=getDistGC(CacheDescriptionGC);
 					String chWaypoint=getWP(CacheDescriptionGC);
