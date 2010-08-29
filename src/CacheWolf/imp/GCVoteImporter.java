@@ -120,7 +120,7 @@ public class GCVoteImporter extends MinML{
 			if (pref.debug) pref.log("[GCVote]:WQaypoint = " + waypoint + "-" + voteAvg);
 
 			CacheHolder cb = cacheDB.get(waypoint);
-			cb.setNumRecommended((int)voteAvg);
+			cb.setNumRecommended((int)(voteAvg + 0.5));
 		}
 	}
 
