@@ -484,6 +484,7 @@ public class SpiderGC{
 			if (maxDist.length() ==  0) return false;
 			maxDistance = Common.parseDouble(maxDist.replace(',', '.'));
 			if (maxDistance ==  0) return false;
+			if (maxDistance<0.5) maxDistance=0.5; // zur Sicherheit mindenstens 500 meter Umkreis
 			//save last radius to profile
 			Double distDouble = new Double();
 			distDouble.value = maxDistance;
