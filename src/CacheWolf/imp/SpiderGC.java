@@ -1404,7 +1404,8 @@ public class SpiderGC{
 								ret = SPIDER_IGNORE_PREMIUM;
 								continue;
 							} else {
-								pref.log(">>>> Failed to spider Cache. Retry.");
+								if (spiderTrys == MAX_SPIDER_TRYS)
+									pref.log(">>>> Failed to spider Cache. Retry."+completeWebPage,null);
 								ret = SPIDER_ERROR;
 								continue; // Restart the spider
 							}
@@ -1769,7 +1770,6 @@ public class SpiderGC{
 				chD.getParent().setCacheStatus(d);
 				chD.OwnLogId = logId;
 				chD.OwnLog = new Log(icon,d,name,logText);
-				reslts.add(new Log(icon,d,name,logText));
 				foundown=true;
 				//pref.log("own log detected!");
 			}
