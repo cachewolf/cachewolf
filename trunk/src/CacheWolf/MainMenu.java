@@ -90,11 +90,14 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for import, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
+		if (Global.getPref().spiderRoute) 
+			spiderRoute = new MenuItem(MyLocale.getMsg(137,"Download along a Route from geocaching.com"));
+		else spiderRoute = mnuSeparator;
 		MenuItem[] mnuImport = {				
 				loadcaches     = new MenuItem(MyLocale.getMsg(129,"Import GPX")),
 				loadOC         = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")),
 				spider         = new MenuItem(MyLocale.getMsg(131,"Download from geocaching.com")),
-				spiderRoute    = new MenuItem(MyLocale.getMsg(137,"Download along a Route from geocaching.com")),
+				spiderRoute,
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")),
 				update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data")),
 				mnuSeparator,
@@ -809,7 +812,7 @@ public class MainMenu extends MenuBar {
 		CacheDB cacheDB=profile.cacheDB;
 		CacheHolder ch;
 
-		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5003,"Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.ALL);
+		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(130,"Download from opencaching"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.ALL);
 		if (options.execute() == FormBase.IDCANCEL) {	return; }
 
 		SpiderGC spider = new SpiderGC(pref, profile, false);

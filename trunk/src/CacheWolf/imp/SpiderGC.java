@@ -378,7 +378,7 @@ public class SpiderGC{
 
 		OCXMLImporterScreen options;
 		if (menu==0 && spiderAllFinds) {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(5510,"Spider Options"),
+			options = new OCXMLImporterScreen(MyLocale.getMsg(217,"Spider all finds from geocaching.com"),
 					OCXMLImporterScreen.ISGC|
 					OCXMLImporterScreen.MAXNUMBER|
 					OCXMLImporterScreen.MAXUPDATE|
