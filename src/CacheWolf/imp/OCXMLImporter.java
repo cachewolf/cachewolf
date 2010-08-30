@@ -170,7 +170,7 @@ public class OCXMLImporter extends MinML {
 			(new MessageBox("Error", "Coordinates for centre must be set", FormBase.OKB)).execute();
 			return;
 		}
-		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600," Download") + hostname,
+		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(130,"Download from opencaching"),
 																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES
 																 | OCXMLImporterScreen.HOST);
 		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
