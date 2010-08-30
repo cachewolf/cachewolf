@@ -264,6 +264,8 @@ public class Preferences extends MinML{
 	public boolean exportGpxAsMyFinds = true;
 	/** Check if lastFound is newer than saved log*/
 	public boolean checkLog=false;
+	/** menu of spider along a route exists*/
+	public boolean spiderRoute=false;
 	/** Download images when loading cache data */
 	public boolean downloadPics = true;
 	/** Download TB information when loading cache data */
@@ -536,6 +538,7 @@ public class Preferences extends MinML{
 		else if (name.equals("spider")) {
 			forceLogin = Boolean.valueOf(atts.getValue("forcelogin")).booleanValue();
 			checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();
+			spiderRoute = Boolean.valueOf(atts.getValue("spiderRoute")).booleanValue();
 			tmp = atts.getValue("spiderUpdates");
 			if (tmp != null) spiderUpdates=Convert.parseInt(tmp);
 			tmp = atts.getValue("maxSpiderNumber");
@@ -699,7 +702,7 @@ public class Preferences extends MinML{
 					        "\" addDetailsToWaypoint = \"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\" addDetailsToName = \"" + SafeXML.strxmlencode(addDetailsToName) + "\" />\n");
 			outp.print("    <opencaching lastSite=\""+lastOCSite+"\" downloadMissing=\"" + SafeXML.strxmlencode(downloadMissingOC) + "\"/>\n");
 			outp.print("    <location lat = \"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long = \"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\"/>\n");
-			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
+			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" checkLog=\"" + SafeXML.strxmlencode(checkLog)+ "\" spiderRoute=\"" + SafeXML.strxmlencode(spiderRoute) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");
