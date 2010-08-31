@@ -23,7 +23,7 @@ public class NewProfileWizard {
 			if (cs.execute() == FormBase.IDOK) {
 				profile.setCenterCoords(cs.getCoords());
 			}
-			Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
+			Global.mainForm.setTitle(profile.name + " - CW "+Version.getRelease());
 			profile.notifyUnsavedChanges(true);
 		}
 		f.close(0);

@@ -313,7 +313,7 @@ public class MainMenu extends MenuBar {
 					Vm.showWait(infB, false);
 					pref.setCurCentrePt(profile.centre);
                     filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
-					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
+        			Global.mainForm.setTitle(profile.name + " - CW "+Version.getRelease());
 					infB.close(0);
 					tbp.resetModel();
 				}
