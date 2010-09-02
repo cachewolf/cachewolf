@@ -453,7 +453,18 @@ public class myTableModel extends TableModel {
 				case 13: // OC number of recommendations
 					if (!ch.isCacheWpt())
 						return null;
-					return Convert.formatInt(ch.getNumRecommended());
+					if ( ch.isOC() ) {
+					  return Convert.formatInt(ch.getNumRecommended());
+					} else {
+					  int gcVote = ch.getNumRecommended();
+					  if ( gcVote < 100 ) {
+					    return MyLocale.formatDouble((double)gcVote/10.0, "0.0"); 
+					  } else {
+					    int votes = gcVote / 100;
+					    gcVote = gcVote - 100 * votes;
+					    return MyLocale.formatDouble((double)gcVote/10.0, "0.0") + " (" + Convert.formatInt(votes) + ")";
+            } 
+          }
 				case 14: // OC rating
 					if (ch.isOC())
 						return Convert.formatInt(ch.recommendationScore);
