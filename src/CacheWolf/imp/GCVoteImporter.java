@@ -115,7 +115,7 @@ public class GCVoteImporter extends MinML{
 		double voteAvg;
 		if(name.equals("vote")) {
 			waypoint = atts.getValue("waypoint");
-			voteAvg = Common.parseDouble(atts.getValue("voteAvg")) * 2.0;
+			voteAvg = Common.parseDouble(atts.getValue("voteAvg")) * 10.0;
 			// voteCnt = atts.getValue("voteCnt");
 			if (pref.debug) pref.log("[GCVote]:WQaypoint = " + waypoint + "-" + voteAvg);
 
