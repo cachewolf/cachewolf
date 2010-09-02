@@ -92,7 +92,18 @@ public class MyComparer implements Comparer{
 		} else if (colToCompare==13) {
 			for (int i=0; i<visibleSize; i++) {
 				CacheHolder ch=cacheDB.get(i);
-				ch.sort=MyLocale.formatLong(ch.getNumRecommended(),"00000");
+				if ( ch.isOC() ) {
+  				ch.sort=MyLocale.formatLong(ch.getNumRecommended(),"00000");
+        } else {
+				  int gcVote = ch.getNumRecommended();
+				  if ( gcVote < 100 ) {
+				    ch.sort=MyLocale.formatLong(gcVote,"00") + "00000000";
+          } else {
+            int votes = gcVote / 100;
+            gcVote = gcVote - 100 * votes;
+            ch.sort = MyLocale.formatLong(gcVote,"00") + MyLocale.formatLong(votes,"00000000");
+          }
+        }
 			}			
 		} else if (colToCompare==14) {
 			for (int i=0; i<visibleSize; i++) {

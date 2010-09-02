@@ -113,14 +113,15 @@ public class GCVoteImporter extends MinML{
 	public void startElement(String name, AttributeList atts){
 		String waypoint;
 		double voteAvg;
+		int voteCnt;
 		if(name.equals("vote")) {
 			waypoint = atts.getValue("waypoint");
 			voteAvg = Common.parseDouble(atts.getValue("voteAvg")) * 10.0;
-			// voteCnt = atts.getValue("voteCnt");
-			if (pref.debug) pref.log("[GCVote]:WQaypoint = " + waypoint + "-" + voteAvg);
+			voteCnt = Common.parseInt(atts.getValue("voteCnt"));
+			if (pref.debug) pref.log("[GCVote]:Waypoint = " + waypoint + " - " + voteAvg + "(" + voteCnt + " votes)" );
 
 			CacheHolder cb = cacheDB.get(waypoint);
-			cb.setNumRecommended((int)(voteAvg + 0.5));
+			cb.setNumRecommended( 100*voteCnt + (int)(voteAvg + 0.5));
 		}
 	}
 
