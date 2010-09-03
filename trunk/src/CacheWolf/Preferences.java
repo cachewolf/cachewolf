@@ -1042,7 +1042,11 @@ public class Preferences extends MinML{
 	public void logInit(){
 		File logFile = new FileBugfix(LOGFILENAME);
 		logFile.delete();
-		log("CW Version "+Version.getReleaseDetailed());
+		log("CW Version "+Version.getReleaseDetailed(),null);
+		
+		if (System.getProperty("os.name")!=null) log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"),null);
+		if (System.getProperty("java.vendor")!=null) log("Java: "+System.getProperty("java.vendor")+"/"+System.getProperty("java.version"),null);
+		
 	}
 
 	boolean forceLog = false;
@@ -1092,7 +1096,7 @@ public class Preferences extends MinML{
 	 */
 	public void log(String text,Throwable e, boolean withStackTrace) {
 		if (e!=null) {
-			text+="\n";
+			text+=Preferences.NEWLINE;
 			if (withStackTrace)
 				text+=ewe.sys.Vm.getAStackTrace(e);
 			else
