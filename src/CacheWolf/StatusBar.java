@@ -79,6 +79,7 @@ public class StatusBar extends CellPanel{
 		strStatus += MyLocale.getMsg(4500,"Tot:") + " " + stats.total(bigScreen) + " " +
 					MyLocale.getMsg(4501,"Dsp:") + " " + stats.visible(bigScreen) + " " +
 					MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound() + "  ";
+		disp.setToolTip("Cache/Addi +Blacklisted");
 		disp.setText(strStatus);
 		// Indicate that a filter is active in the status line
 		if (Global.getProfile().getFilterActive()==Filter.FILTER_ACTIVE)

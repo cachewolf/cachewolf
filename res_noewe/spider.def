@@ -157,8 +157,8 @@ bugExEnd           = </a>
 bugLinkEnd         = "\ class="lnk">
 bugNameExStart     = <span>
 bugNameExEnd       = </span>
-bugDetailsStart    = id="ctl00_ContentBody_BugDetails_BugGoal">
-bugDetailsEnd      = </span>
+bugDetailsStart    = "og:description"\ content="
+bugDetailsEnd      = "\ property="og:desc
 getBugByName       = http://www.geocaching.com/track/search.aspx?k=
 getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
 getBugById         = http://www.geocaching.com/track/details.aspx?id=
