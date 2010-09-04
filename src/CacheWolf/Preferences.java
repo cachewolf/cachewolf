@@ -1042,10 +1042,10 @@ public class Preferences extends MinML{
 	public void logInit(){
 		File logFile = new FileBugfix(LOGFILENAME);
 		logFile.delete();
-		log("CW Version "+Version.getReleaseDetailed(),null);
+		log("CW Version "+Version.getReleaseDetailed(),null,true);
 		
-		if (System.getProperty("os.name")!=null) log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"),null);
-		if (System.getProperty("java.vendor")!=null) log("Java: "+System.getProperty("java.vendor")+"/"+System.getProperty("java.version"),null);
+		if (System.getProperty("os.name")!=null) log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"),null,true);
+		if (System.getProperty("java.vendor")!=null) log("Java: "+System.getProperty("java.vendor")+"/"+System.getProperty("java.version"),null,true);
 		
 	}
 
