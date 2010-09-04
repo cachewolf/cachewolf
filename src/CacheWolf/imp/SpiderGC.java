@@ -128,8 +128,6 @@ public class SpiderGC{
 	private static String propFirstPage;
 	private static String propFirstPage2;
 	private static String propFirstPageFinds;
-	private static String propFirstLine;
-	private static String propFirstLine2;
 	private static String gotoNextPage = "ctl00$ContentBody$pgrTop$ctl08";
 	private static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06"; // change to the block (10pages) of the wanted page
 	private static String gotoPage = "ctl00$ContentBody$pgrTop$lbGoToPage_"; // add pagenumber 
@@ -173,10 +171,7 @@ public class SpiderGC{
 		this.profile=profile;
 		this.cacheDB = profile.cacheDB;
 		pref = prf;
-		if (p == null) {
-			pref.logInit();
-			p=new SpiderProperties();
-		}
+		if (p == null) {p=new SpiderProperties();}
 		initialiseProperties();
 	}
 
@@ -622,11 +617,11 @@ public class SpiderGC{
 						}
 						else {
 							if (maxUpdate>0) {
-								if (doPMCache(CacheDescriptionGC) && updateExists(ch,CacheDescriptionGC)) {
-									if (!ch.is_black()) { 
-											if (cFoundForUpdate.size()<maxUpdate) {
-												cFoundForUpdate.put(chWaypoint, ch); }
-											else cExpectedForUpdate.remove( chWaypoint );
+								if (!ch.is_black()) {
+									if (doPMCache(CacheDescriptionGC) && updateExists(ch,CacheDescriptionGC)) {
+										if (cFoundForUpdate.size()<maxUpdate) {
+											cFoundForUpdate.put(chWaypoint, ch); }
+										else cExpectedForUpdate.remove( chWaypoint );
 									}
 									else cExpectedForUpdate.remove( chWaypoint );
 								}
@@ -675,7 +670,7 @@ public class SpiderGC{
 				"Found " + cachesToLoad.size() + " new caches"+Preferences.NEWLINE+
 				"Found " + cExpectedForUpdate.size() + "/" + cFoundForUpdate.size() + " caches for update"+Preferences.NEWLINE+
 				"Found " + numAvailableUpdates + " caches with changed available status."+Preferences.NEWLINE+
-				"Found " + numLogUpdates + " caches with new found in log (inc. blacklisted"+Preferences.NEWLINE+
+				"Found " + numLogUpdates + " caches with new found in log."+Preferences.NEWLINE+
 				"Found " + (cExpectedForUpdate.size()-numAvailableUpdates-numLogUpdates) + " caches possibly archived."+Preferences.NEWLINE+
 				"Found " + cFoundForUpdate.size() + "?=" + (numFoundUpdates+numArchivedUpdates+numAvailableUpdates+numArchivedUpdates) + " caches to update."+Preferences.NEWLINE+
 				"Found " + numPrivate + " Premium Caches (for non Premium Member.)",null);
@@ -865,7 +860,7 @@ public class SpiderGC{
 			Regex rexCookieID = new Regex("(?i)Set-Cookie: userid=(.*?);.*");
 			Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
 			// Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
-			Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*?)\" />");
+			// Regex rexEventvalidation = new Regex("id=\"__EVENTVALIDATION\" value=\"(.*?)\" />");
 			Regex rexCookieSession = new Regex("(?i)Set-Cookie: ASP.NET_SessionId=(.*?);.*");
 			String viewstate="";
 			rexViewstate.search(loginPage);
@@ -878,12 +873,14 @@ public class SpiderGC{
 			if(loginPage.indexOf(loginSuccess) > 0)
 				pref.log("[login]:Already logged in"+pref.myAlias);
 			else {
+				/*
 				rexEventvalidation.search(loginPage);
 				if(rexEventvalidation.didMatch()){
 					// eventvalidation = rexEventvalidation.stringMatched(1);
 				} else
-					pref.log("[login]:rexEventvalidation not found before login"+Preferences.NEWLINE,null);
+					pref.log("[login]:rexEventvalidation not found before login",null);
 				//Ok now login!
+				 */
 				try{
 					StringBuffer sb=new StringBuffer(1000);
 					sb.append(URL.encodeURL("__VIEWSTATE",false));	sb.append("="); sb.append(URL.encodeURL(viewstate,false));
@@ -984,8 +981,6 @@ public class SpiderGC{
 			propFirstPage=p.getProp("firstPage");
 			propFirstPage2=p.getProp("firstPage2");
 			propFirstPageFinds=p.getProp("firstPageFinds");
-			propFirstLine=p.getProp("firstLine");
-			propFirstLine2=p.getProp("firstLine2");
 			propMaxDistance=p.getProp("maxDistance");
 			propShowOnlyFound=p.getProp("showOnlyFound");
 			RexPropListBlock = new Regex(p.getProp("listBlockRex"));
@@ -1037,9 +1032,9 @@ public class SpiderGC{
 		url = url + cacheTypeRestriction;
 		try{
 			htmlListPage = fetch(url);
-			pref.log("Got first page "+url);
+			pref.log("[getFirstListPage] Got first page "+url);
 		}catch(Exception ex){
-			pref.log("Error fetching first list page "+url,ex,true);
+			pref.log("[getFirstListPage] Error fetching first list page "+url,ex,true);
 			Vm.showWait(false);
 			infB.close(0);
 			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5503,"Error fetching first list page."), FormBase.OKB)).execute();
@@ -1054,9 +1049,9 @@ public class SpiderGC{
 	private void getAListPage(int distance, String whatPage) {
 		String postStr;
 		if (spiderAllFinds) {
-			postStr = propFirstLine;
+			postStr = propFirstPage;
 		} else {
-			postStr = propFirstLine + origin.getLatDeg(TransformCoordinates.DD) + propFirstLine2 + origin.getLonDeg(TransformCoordinates.DD)
+			postStr = propFirstPage + origin.getLatDeg(TransformCoordinates.DD) + propFirstPage2 + origin.getLonDeg(TransformCoordinates.DD)
 					                             + propMaxDistance + Integer.toString(distance);
 			if(doNotgetFound) postStr = postStr + propShowOnlyFound;
 		}
@@ -1069,7 +1064,7 @@ public class SpiderGC{
 			viewstate = rexViewstate.stringMatched(1);
 		} else {
 			viewstate = "";
-			pref.log("[getNextListPage]:check rexViewstate in SpiderGC.java"+Preferences.NEWLINE+htmlListPage);
+			pref.log("[getAListPage] check rexViewstate in SpiderGC.java"+Preferences.NEWLINE+htmlListPage);
 		}
 		
 		Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
@@ -1079,7 +1074,7 @@ public class SpiderGC{
 			viewstate1 = rexViewstate1.stringMatched(1);
 		} else {
 			viewstate1 = "";
-			pref.log("[getNextListPage]:check rexViewstate1 in SpiderGC.java"+Preferences.NEWLINE+htmlListPage);
+			pref.log("[getAListPage] check rexViewstate1 in SpiderGC.java"+Preferences.NEWLINE+htmlListPage);
 		}
 
 		/*
@@ -1091,17 +1086,17 @@ public class SpiderGC{
 		}
 		*/
 
-		String url = URL.encodeURL("__EVENTTARGET",false) +"="+ URL.encodeURL(whatPage,false)
-	    + "&" + URL.encodeURL("__EVENTARGUMENT",false) +"="+ URL.encodeURL("",false)
-	    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) +"=2"
-	    + "&" + URL.encodeURL("__VIEWSTATE",false) +"="+ URL.encodeURL(viewstate,false)
-	    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
-//	    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
+		String url = URL.encodeURL("__EVENTTARGET",false) + "=" + URL.encodeURL(whatPage,false)
+	    + "&" + URL.encodeURL("__EVENTARGUMENT",false) + "=" + URL.encodeURL("",false)
+	    + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false) + "=2"
+	    + "&" + URL.encodeURL("__VIEWSTATE",false) + "=" + URL.encodeURL(viewstate,false)
+	    + "&" + URL.encodeURL("__VIEWSTATE1",false) + "=" + URL.encodeURL(viewstate1,false);
+//	    + "&" + URL.encodeURL("__EVENTVALIDATION",false) + "=" + URL.encodeURL(eventvalidation,false);
 		try{
 			htmlListPage = fetch_post(postStr, url, p.getProp("nextListPage"));
-			pref.log("Got next list page:" + url);
+			pref.log("[getAListPage] Got list page: "+URL.encodeURL(whatPage,false));
 		}catch(Exception ex){
-			pref.log("Error getting next page"+url,ex);
+			pref.log("[getAListPage] Error getting a list page"+url,ex);
 		}
 	}
 
@@ -1408,7 +1403,7 @@ public class SpiderGC{
 					try{
 						ch.initStates(!isUpdate);
 
-						//first check if coordinates are available to prevent deleting existing coorinates
+						//first check if coordinates are available to prevent deleting existing coordinates
 						String latLon = getLatLon(completeWebPage);
 						if (latLon.equals("???")) {
 							if (completeWebPage.indexOf(p.getProp("premiumCachepage"))>0) {
@@ -1833,7 +1828,7 @@ public class SpiderGC{
 					pref.log("[getBugs] Fetched TB details: "+bug);
 					Extractor exDetails = new Extractor(bugDetails,p.getProp("bugDetailsStart"),p.getProp("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
 					tb.setMission(exDetails.findNext());
-					Extractor exGuid = new Extractor(bugDetails,"details.aspx?guid=","\" id=\"aspnetForm",0,Extractor.EXCLUDESTARTEND); // TODO Replace with spider.def see also further down
+					Extractor exGuid = new Extractor(bugDetails,"action=\"details.aspx?guid=","\" id=\"aspnetForm",0,Extractor.EXCLUDESTARTEND); // TODO Replace with spider.def see also further down
 					tb.setGuid(exGuid.findNext());
 					chD.Travelbugs.add(tb);
 				}catch(Exception ex){
