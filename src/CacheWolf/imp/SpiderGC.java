@@ -641,7 +641,7 @@ public class SpiderGC{
 					} else toDistance = 0; // finish listing
 					// get next row of table (next Cache Description) of this htmlListPage
 					RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
-					if (infB.isClosed) break;
+					if (infB.isClosed) { toDistance=0; break; }
 				} // next Cache
 				 infB.setInfo(MyLocale.getMsg(5511,"Found ")+
 						 cachesToLoad.size()+" / "+
