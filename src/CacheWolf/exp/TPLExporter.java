@@ -27,7 +27,6 @@ package CacheWolf.exp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.DataMover;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.Preferences;
