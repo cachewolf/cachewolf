@@ -462,14 +462,14 @@ public class OCXMLImporter extends MinML {
 			logtype = Convert.toInt(atts.getValue("id"));
 			switch (logtype) {
 			case 1:
-				logIcon = GPXImporter.typeText2Image("Found");
+				logIcon = Log.typeText2Image("Found");
 				break;
 			case 2:	
-				logIcon = GPXImporter.typeText2Image("Not Found");
+				logIcon = Log.typeText2Image("Not Found");
 				holder.setNoFindLogs((byte)(holder.getNoFindLogs()+1));
 				break;
 			case 3: 
-				logIcon = GPXImporter.typeText2Image("Note");
+				logIcon = Log.typeText2Image("Note");
 			}
 			loggerRecommended = atts.getValue("recommended").equals("1");
 			return;
