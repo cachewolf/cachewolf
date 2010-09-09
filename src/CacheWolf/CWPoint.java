@@ -274,13 +274,15 @@ public class CWPoint extends TrackPoint{
 	/**
 	 * shift the point
 	 * @param meters positiv to north (east), negativ to south (west)
-	 * @param direction 0 north-south, 1 east-west
+	 * @param direction 0 north(meters negative=south), 1 east(meters negative=west) 2 south(meters negative=north) 3 west(meters negative=east)
 	 */
 	public void shift(double meters, int direction) {
 		double meters2deglon = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		switch (direction) { // TODO use ellipsoid distance calculations for better accuracy
 			case 0: latDec += meters *  meters2deglon; return;
 			case 1: lonDec += meters * (meters2deglon / Math.cos(latDec / 180 * Math.PI));return;
+			case 2: latDec += -meters *  meters2deglon; return;
+			case 3: lonDec += -meters * (meters2deglon / Math.cos(latDec / 180 * Math.PI));return;
 		}
 	}
 

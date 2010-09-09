@@ -64,7 +64,6 @@ import ewe.net.Socket;
 import ewe.net.URL;
 import ewe.net.UnknownHostException;
 import ewe.sys.Convert;
-import ewe.sys.Double;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
@@ -166,6 +165,8 @@ public class SpiderGC{
 	private int numAvailableUpdates=0;
 	private int numLogUpdates=0;
 	private int numPrivate=0;
+	private int page_number=1;
+	private int num_added=0;
 
 	public SpiderGC(Preferences prf, Profile profile, boolean bypass){
 		this.profile=profile;
@@ -332,6 +333,7 @@ public class SpiderGC{
 		Global.getProfile().saveIndex(Global.getPref(),true);
 	}
 	
+	
 	private int nextRoutePoint(CWPoint startPos, double lateralDistance) {
 		// get next Destination
 		double nextDistance = 0;
@@ -368,6 +370,132 @@ public class SpiderGC{
 		return index;
 	}
 
+	public void doItQuickFillFromMapList() {
+
+		CWPoint origin = pref.getCurCentrePt();
+		if (!origin.isValid()) return; //
+		if (!doDownloadGui(2)) return;
+
+		Vm.showWait(true);
+		infB = new InfoBox("Status", MyLocale.getMsg(0,"getting the caches."));
+		infB.exec();
+
+		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
+		for(int i = 0; i<cacheDB.size();i++){
+			CacheHolder ch = cacheDB.get(i);
+			if (ch.mainCache == null) ch.initStates(false);
+		}
+
+		double halfSideLength=maxDistance; // halbe Seitenlänge eines Quadrats ums Zentrum in km
+		if ( pref.metricSystem == Metrics.IMPERIAL ) {
+			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
+		}
+
+		if (!loggedIn || pref.forceLogin) {
+			if(login() != FormBase.IDOK) return;
+		}
+
+		page_number = 1;
+		num_added = 0;
+		getCaches(origin,halfSideLength);
+		
+		if (!infB.isClosed) infB.close(0);
+		Vm.showWait(false);
+
+		Global.getProfile().restoreFilter();
+		Global.getProfile().saveIndex(Global.getPref(),true);
+				
+	}
+	
+	private void getCaches(CWPoint middleOfSquare, double halfSideLength) {
+		if (infB.isClosed) return;
+		page_number++;
+		String listPage=getMapListPage(middleOfSquare, halfSideLength, halfSideLength);
+		if (listPage.indexOf("\"count\": 501")>-1 || halfSideLength < 1.0 ) {
+			Vm.debug("split "+middleOfSquare.toString());
+			double quarterSideLength = halfSideLength/2.0;
+			double metersQuarterSideLength = quarterSideLength * 1000;
+			int north = 0;
+			int east = 1;
+			int south = 2;
+			int west = 3;
+
+			CWPoint northwest = new CWPoint(middleOfSquare); 
+			northwest.shift(metersQuarterSideLength, north);
+			CWPoint northeast = new CWPoint(northwest);
+			northwest.shift(metersQuarterSideLength , west);
+			northeast.shift(metersQuarterSideLength, east);
+			
+			CWPoint southwest = new CWPoint(middleOfSquare);
+			southwest.shift(metersQuarterSideLength, south);
+			CWPoint southeast = new CWPoint(southwest);
+			southwest.shift(metersQuarterSideLength, west);
+			southeast.shift(metersQuarterSideLength, east);
+			
+			Vm.debug("get northwest");
+			getCaches(northwest, quarterSideLength);
+			Vm.debug("get northeast");
+			getCaches(northeast, quarterSideLength);
+			Vm.debug("get southwest");
+			getCaches(southwest, quarterSideLength);
+			Vm.debug("get southeast");
+			getCaches(southeast, quarterSideLength);
+			
+		}
+		else {
+			Vm.debug("add Caches "+middleOfSquare.toString());
+			addCaches(listPage);
+		}
+		Vm.debug("ready "+middleOfSquare.toString());
+	}
+	
+	private void addCaches(String listPage) {
+		String[] caches = mString.split(listPage, '{');
+		for (int i = 0; i < caches.length; i++) {
+			if (infB.isClosed) return;
+			String elements[] = mString.split(caches[i],',');
+			String e1[]= mString.split(elements[0],' '); //.indexOf("\"lat\": ");
+			if ( e1[0].indexOf("lat") > -1) {
+				boolean found=mString.split(elements[5],' ')[1].equals("true");
+				if (found && doNotgetFound) continue;
+				byte cacheType=CacheType.gcSpider2CwType(mString.split(elements[4],' ')[1]);
+				if (restrictedCacheType != CacheType.CW_TYPE_ERROR ) {
+					if (restrictedCacheType!=cacheType) continue;
+				}
+				String lat=e1[1];
+				String lon=mString.split(elements[2],' ')[1];
+				String wp=mString.split(elements[3],'\"')[3];
+				String own=mString.split(elements[6],' ')[1];
+				String available=mString.split(elements[7],' ')[1];
+				String cacheName=mString.split(elements[8],'\"')[3];;
+				CacheHolder ch=cacheDB.get(wp);
+				if (ch==null) {
+					ch = new CacheHolder();
+					ch.setWayPoint(wp);
+					ch.setLatLon(lat+" "+lon);
+					ch.setType(cacheType);
+					if (own.equals("true")) {
+						ch.setOwned(true);
+					}
+					else {
+						if (found) {
+							ch.setFound(true);
+							ch.setCacheStatus(ch.getFoundText());
+						}
+					}
+					ch.setAvailable(available.equals("true")? true : false);
+					ch.setCacheName(cacheName);
+					ch.save();
+					num_added++;
+					cacheDB.add(ch);
+					if (Global.mainTab.statBar!=null) Global.mainTab.statBar.updateDisplay("GC pages: "+page_number+" Caches added to CW: "+num_added);
+				}
+				else {
+					Vm.debug("uups");
+				}
+			}			
+		}
+	}
 	
 	private boolean doDownloadGui(int menu){
 
@@ -411,10 +539,7 @@ public class SpiderGC{
 			String minDist = options.minDistanceInput.getText();
 			if (minDist.length() == 0) minDist="0";
 			minDistance = Common.parseDouble(minDist);
-			Double distDouble = new Double();
-			distDouble.value = minDistance;
-			minDist = distDouble.toString(0, 1, 0).replace(',', '.');
-			profile.setMinDistGC(minDist);
+			profile.setMinDistGC(Double.toString(minDistance).replace(',', '.'));
 
 			direction=options.directionInput.getText().toUpperCase();
 			direction=direction.replace(' ',','); // separator blank to ,
@@ -427,7 +552,7 @@ public class SpiderGC{
 			doNotgetFound = options.foundCheckBox.getState();
 
 		}
-		else { // menu=1 input values for get Caches along a route
+		else if (menu == 1) { // menu = 1 input values for get Caches along a route
 			options = new OCXMLImporterScreen(MyLocale.getMsg(137,"Download along a Route from geocaching.com"),
 					OCXMLImporterScreen.ISGC|
 					OCXMLImporterScreen.DIST|
@@ -444,6 +569,17 @@ public class SpiderGC{
 			doNotgetFound = options.foundCheckBox.getState();
 			direction="";
 			maxUpdate=0;
+		}
+		else { // if (menu == 2) {
+			options = new OCXMLImporterScreen(MyLocale.getMsg(0,"Qick Import"),
+					OCXMLImporterScreen.ISGC|
+					OCXMLImporterScreen.DIST|
+					OCXMLImporterScreen.INCLUDEFOUND|
+					OCXMLImporterScreen.TYPE);
+			// setting defaults for input 
+			// doing the input
+			if (options.execute() == FormBase.IDCANCEL) {return false; }
+			doNotgetFound = options.foundCheckBox.getState();
 		}
 
 		if (menu==0) {
@@ -477,14 +613,10 @@ public class SpiderGC{
 		if (options.maxDistanceInput != null){
 			String maxDist = options.maxDistanceInput.getText();
 			if (maxDist.length() ==  0) return false;
-			maxDistance = Common.parseDouble(maxDist.replace(',', '.'));
+			maxDistance = Common.parseDouble(maxDist);
 			if (maxDistance ==  0) return false;
 			if (maxDistance<0.5) maxDistance=0.5; // zur Sicherheit mindenstens 500 meter Umkreis
-			//save last radius to profile
-			Double distDouble = new Double();
-			distDouble.value = maxDistance;
-			maxDist = distDouble.toString(0, 1, 0).replace(',', '.');
-			profile.setDistGC(maxDist);
+			profile.setDistGC(Double.toString(maxDistance));
 		}
 
 		directions=mString.split(direction, ',');
@@ -573,7 +705,7 @@ public class SpiderGC{
 		int startSize=cExpectedForUpdate.size(); //for save reasons
 
 		Hashtable cFoundForUpdate = new Hashtable(cacheDB.size()); // for don't loose the already done work
-		int page_number = 1;
+		page_number = 1;
 		int found_on_page = 0;
 		try {
 			//Loop pages till maximum distance has been found or no more caches are in the list
@@ -894,7 +1026,7 @@ public class SpiderGC{
 					sb.append("="); sb.append(URL.encodeURL("Login",false));
 //					sb.append("&"); sb.append(URL.encodeURL("__EVENTVALIDATION",false));
 //					sb.append("="); sb.append(URL.encodeURL(eventvalidation,false));
-					loginPage = fetch_post(loginPageUrl, sb.toString(), nextPage);  // /login/default.aspx
+					loginPage = fetch_post(loginPageUrl, sb.toString(), nextPage, true);  // /login/default.aspx
 					if(loginPage.indexOf(loginSuccess) > 0)
 						pref.log("Login successful: "+pref.myAlias);
 					else {
@@ -958,7 +1090,7 @@ public class SpiderGC{
 //		    + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+ URL.encodeURL(viewstate1,false);
 //		    + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+ URL.encodeURL(eventvalidation,false);
 			try{
-				loginPage = fetch_post(loginPageUrl, postStr, nextPage);
+				loginPage = fetch_post(loginPageUrl, postStr, nextPage, true);
 				pref.log("Switched to English");
 			}catch(Exception ex){
 				pref.log("Error switching to English: check/n" + loginPageUrl + "/n" + postStr + "/n" + nextPage + "/n",ex);
@@ -1093,12 +1225,56 @@ public class SpiderGC{
 	    + "&" + URL.encodeURL("__VIEWSTATE1",false) + "=" + URL.encodeURL(viewstate1,false);
 //	    + "&" + URL.encodeURL("__EVENTVALIDATION",false) + "=" + URL.encodeURL(eventvalidation,false);
 		try{
-			htmlListPage = fetch_post(postStr, url, p.getProp("nextListPage"));
+			htmlListPage = fetch_post(postStr, url, p.getProp("nextListPage"), true);
 			pref.log("[getAListPage] Got list page: "+URL.encodeURL(whatPage,false));
 		}catch(Exception ex){
 			pref.log("[getAListPage] Error getting a list page"+url,ex);
 		}
 	}
+	/* */
+	private String getMapListPage(CWPoint origin, double kmlat, double kmlon) {
+		double km2latdeg=1/(origin.getDistance(new CWPoint(origin.latDec+1,origin.lonDec)));
+		double km2londeg=1/(origin.getDistance(new CWPoint(origin.latDec,origin.lonDec+1)));
+		double dlat = kmlat * km2latdeg;
+		double dlon = kmlon * km2londeg;
+		String url="http://www.geocaching.com/map/default.aspx"+
+			"?lat="+origin.getLatDeg(TransformCoordinates.DD)+
+			"&lng="+origin.getLonDeg(TransformCoordinates.DD);
+		double left = origin.lonDec - dlon;
+		double up = origin.latDec + dlat;
+		double right = origin.lonDec + dlon;
+		double down = origin.latDec - dlat;
+		String strLeft=MyLocale.formatDouble(left, "00.00000").replace(',','.');
+		String strUp=MyLocale.formatDouble(up, "00.00000").replace(',','.');
+		String strRight=MyLocale.formatDouble(right, "00.00000").replace(',','.');
+		String strDown=MyLocale.formatDouble(down, "00.00000").replace(',','.');
+
+		String eo_cb_param1 = "eo_cb_param=%7B%22c%22%3A%201%2C%20%22m%22%3A%20%22%22%2C%20%22d%22%3A%20%22";
+		String eo_cb_param2 = strUp+"|"+strDown+"|"+strRight+"|"+strLeft+"%22%7D";
+		String ret;
+		String doc="";
+		try{
+
+			doc="eo_cb_id=ctl00_ContentBody_cbAjax" +
+			"&"+eo_cb_param1 + eo_cb_param2 +
+			"&__eo_obj_states="+
+			//"&__VIEWSTATE="+viewstate+
+			"&__VIEWSTATE=%2FwEPDwULLTEyOTYyNjYwNjkPZBYCZg9kFgZmD2QWAgIODxYCHgdWaXNpYmxlaGQCAQ9kFhICBQ8WAh4EVGV4dGRkAgkPFgIfAQUWWW91IGFyZSBub3QgbG9nZ2VkIGluLmQCCw8PFgQeC05hdmlnYXRlVXJsBZEBaHR0cDovL3d3dy5nZW9jYWNoaW5nLmNvbS9sb2dpbi9kZWZhdWx0LmFzcHg%2FUkVTRVQ9WSZyZWRpcj1odHRwJTNhJTJmJTJmd3d3Lmdlb2NhY2hpbmcuY29tJTJmbWFwJTJmZGVmYXVsdC5hc3B4JTNmbGF0JTNkNDYuNjE1OTclMjZsbmclM2QxMy44NDg3Mx8BBQZMb2cgaW5kZAIPD2QWAgIBDw8WAh8BZGRkAhEPZBYCAgEPD2QPZAUMRFFJQkFBQUFBQUE9ZAIfDxYCHwBnZAInDw8WBB8CBQwvcmV2aWV3cy9ncHMfAQULR1BTIFJldmlld3NkZAIrD2QWAgIBDw8WAh8BBZcCPGlmcmFtZSBzcmM9Imh0dHA6Ly9iYW5tYW41Lmdyb3VuZHNwZWFrLmNvbS9iYW5tYW41L2FkLmFzcHg%2FWm9uZUlEPTkmVGFzaz1HZXQmU2l0ZUlEPTEmWD0nMzdlYWVjMTQzODVjNDc1Y2JiZjFhODk0YTgzOTNiMGMnIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjI0MCIgTWFyZ2lud2lkdGg9IjAiIE1hcmdpbmhlaWdodD0iMCIgSHNwYWNlPSIwIiBWc3BhY2U9IjAiIEZyYW1lYm9yZGVyPSIwIiBTY3JvbGxpbmc9Im5vIiBzdHlsZT0id2lkdGg6MTIwcHg7SGVpZ2h0OjI0MHB4OyI%2BPC9pZnJhbWU%2BZGQCLQ9kFgJmD2QWAmYPFgIeC18hSXRlbUNvdW50AgYWDAIBD2QWAgIBDw8WCB4PQ29tbWFuZEFyZ3VtZW50BQVlbi1VUx4LQ29tbWFuZE5hbWUFDVNldFRlbXBMb2NhbGUfAQUHRW5nbGlzaB4QQ2F1c2VzVmFsaWRhdGlvbmhkZAICD2QWAgIBDw8WCB8EBQVkZS1ERR8FBQ1TZXRUZW1wTG9jYWxlHwEFB0RldXRzY2gfBmhkZAIDD2QWAgIBDw8WCB8EBQVmci1GUh8FBQ1TZXRUZW1wTG9jYWxlHwEFCUZyYW7Dp2Fpcx8GaGRkAgQPZBYCAgEPDxYIHwQFBXB0LVBUHwUFDVNldFRlbXBMb2NhbGUfAQUKUG9ydHVndcOqcx8GaGRkAgUPZBYCAgEPDxYIHwQFBWNzLUNaHwUFDVNldFRlbXBMb2NhbGUfAQUJxIxlxaF0aW5hHwZoZGQCBg9kFgICAQ8PFggfBAUFc3YtU0UfBQUNU2V0VGVtcExvY2FsZR8BBQdTdmVuc2thHwZoZGQCAw8WAh8BBSxTZXJ2ZXI6IFdFQjA4OyBCdWlsZDogVEZTLlJlbGVhc2VfMjAxMDA4MzAuMWRkkWJYA8UHbJ38zIk7cJhELr1nbU4%3D"+
+			"&eo_version=5.0.51.2"+
+			"&=on&=&=&=2&=3&=4&=5&=1858&=6&=8&=11&=137&=13&=453&=3653&=on&=" +
+			"&__EVENTVALIDATION="+
+			"&__EVENTTARGET="+
+			"&__EVENTARGUMENT=";
+
+			ret = fetch_post(url, doc, "/map/default.aspx", false);
+			pref.log("[getAListPage] Got map Cachepage: ");
+		}catch(Exception ex){
+			ret="";
+			pref.log("[getAListPage] Error getting map Cachepage"+url+doc,ex);
+		}
+		return ret;
+	}
+	 /* */
 
 	/**
 	 * check if new Update exists
@@ -1141,7 +1317,7 @@ public class SpiderGC{
 	private int getNumFound(String doc) {
 		RexNumFinds.search(doc);
 		if (RexNumFinds.didMatch()) {
-			 return Convert.toInt(RexNumFinds.stringMatched(1));}
+			 return Common.parseInt(RexNumFinds.stringMatched(1));}
 		else {
 			pref.log("check RexNumFinds in SpiderGC.java / initialiseProperties"+Preferences.NEWLINE+doc);
 			return 0;
@@ -1338,14 +1514,14 @@ public class SpiderGC{
 					"June", "July", "August", "September", "October", "November",
 					"December" };
 			SDate=mString.split(stmp,' ');
-			lastLogGC.day=Integer.parseInt(SDate[0]);
+			lastLogGC.day=Common.parseInt(SDate[0]);
 			for (int m = 0; m < 12; m++) {
 				if (monthNames[m].startsWith(SDate[1])) {
 					lastLogGC.month=m+1;
 					m=12;
 				}
 			}
-			lastLogGC.year=2000+Integer.parseInt(SDate[2].substring(0,2));
+			lastLogGC.year=2000+Common.parseInt(SDate[2].substring(0,2));
 		}
 		boolean ret = lastLogCW.compareTo(lastLogGC) < 0;
 		return ret;
@@ -2251,7 +2427,7 @@ public class SpiderGC{
 	*	This method does exactly that. Actually this method is generic in the sense
 	*	that it can be used to post to a URL using http post.
 	*/
-	private static String fetch_post(String address, String document, String path) {
+	private static String fetch_post(String address, String document, String path, boolean withResponseHeaders) {
 		HttpConnection conn;
 		try {
 			conn = new HttpConnection(address);
@@ -2274,7 +2450,9 @@ public class SpiderGC{
 			pref.log("[fetch_post]:Read data ok "+address);
 			// CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 			sock.close();
-			return getResponseHeaders(conn)+c_data.toString();
+			if (withResponseHeaders)
+				return getResponseHeaders(conn)+c_data.toString();
+			else return c_data.toString();
 		} catch (Exception e) {
 			pref.log("[fetch_post] Ignored Exception", e, true);
 		}

@@ -198,8 +198,8 @@ public class CoordsScreen extends Form {
 				localCooSystem.setInt(formatsel - formatSelToLocalSystem.length);
 				ProjectedPoint pp = TransformCoordinates.wgs84ToLocalsystem(coords, format);
 				inpText.setText(pp.toHumanReadableString());
-				inpUTMNorthing.setText(Common.DoubleToString(pp.getNorthing(),0));
-				inpUTMEasting.setText(Common.DoubleToString(pp.getEasting(),0));
+				inpUTMNorthing.setText(Common.DoubleToString(pp.getNorthing(),0,0));
+				inpUTMEasting.setText(Common.DoubleToString(pp.getEasting(),0,0));
 				if (TransformCoordinates.getLocalSystem(format).zoneSeperatly) inpUTMZone.setText(pp.getZoneString()); 
 				else inpUTMZone.setText("");
 			}
