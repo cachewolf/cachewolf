@@ -2,7 +2,6 @@ package CacheWolf;
 
 
 import CacheWolf.utils.FileBugfix;
-import ewe.sys.Convert;
 
 public final class Common {
 
@@ -94,7 +93,7 @@ public final class Common {
 		}// for
 		return new String(dummy);
 	}
-	
+/*	
 	public static String stringToHex(String str){
 		StringBuffer strBuf = new StringBuffer();
 		StringBuffer strHex = new StringBuffer();
@@ -108,7 +107,7 @@ public final class Common {
 		strBuf.append(strHex);
 		return strBuf.toString();
 	}
-	
+*/	
 	public static String ClearForFileName(String str) {
 		String ret = str.replace('?', '_');
 		ret = ret.replace(' ', '-');
@@ -147,11 +146,10 @@ public final class Common {
 		return fn.substring(dot, fn.length());
 	}
 	
-	public static String DoubleToString(double d, int decimalplaces) {
+	public static String DoubleToString(double d, int length, int decimalplaces) {
 		ewe.sys.Double e = new ewe.sys.Double();
 		e.set(d);
-		e.decimalPlaces = decimalplaces;
-		return e.toString().replace(',', '.');
+		return e.toString(length,decimalplaces,0).replace(',', '.');
 
 	}
 	

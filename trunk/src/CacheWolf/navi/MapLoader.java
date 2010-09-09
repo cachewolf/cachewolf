@@ -245,7 +245,7 @@ public class MapLoader {
 	}
 
 	public String createFilename(CWPoint center, float scale) {
-		String filename = Common.ClearForFileName(currentOnlineMapService.getNameForFileSystem()+"_s"+Common.DoubleToString(scale, 1)
+		String filename = Common.ClearForFileName(currentOnlineMapService.getNameForFileSystem()+"_s"+Common.DoubleToString(scale,0,1)
 				+ "_c" + center.toString(TransformCoordinates.LAT_LON).replace(',', '-'));
 		return filename;
 	}
@@ -472,7 +472,7 @@ class WebMapService extends OnlineMapService {
 		String[] tmp2 = mString.split(tmp, ' ');
 		coordinateReferenceSystem = new int[tmp2.length];
 		for (int i = 0; i < tmp2.length; i++) {
-			coordinateReferenceSystem[i] = Convert.toInt(tmp2[i].trim());
+			coordinateReferenceSystem[i] = Common.parseInt(tmp2[i].trim());
 			if (!TransformCoordinates.isSupported(coordinateReferenceSystem[i])) throw new IllegalArgumentException(MyLocale.getMsg(4815, "Coordinate reference system not supported by CacheWolf:\n") + coordinateReferenceSystem[i]);
 		}
 		tmp = wms.getProperty("CoordinateReferenceSystemUrlPart", "").trim();
