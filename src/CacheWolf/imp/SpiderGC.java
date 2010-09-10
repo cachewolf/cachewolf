@@ -220,8 +220,10 @@ public class SpiderGC{
 			
 			cachesToUpdate=fillDownloadLists(pref.maxSpiderNumber , maxUpdate, maxDistance, minDistance, directions, cachesToUpdate);
 			if (cachesToUpdate == null) {cachesToUpdate = new Hashtable();};
-			if (infB.isClosed) { Vm.showWait(false); return; }
-			infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
+			if (!infB.isClosed){
+				infB.setInfo(MyLocale.getMsg(5511,"Found ") + cachesToLoad.size() + MyLocale.getMsg(5512," caches"));
+			}
+			// continue to update index to changed cache.xml things (size,terrain,difficulty,...?) 
 
 			//=======
 			// Now ready to spider each cache in the lists
@@ -252,8 +254,10 @@ public class SpiderGC{
 
 			if (Global.mainTab.statBar!=null) Global.mainTab.statBar.updateDisplay("");
 
-			spiderErrors=downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
-			spiderErrors=updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
+			if (!infB.isClosed) {
+				spiderErrors=downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
+				spiderErrors=updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
+			}
 
 			if ( spiderErrors > 0) {
 				new MessageBox(MyLocale.getMsg(5500,"Error"),spiderErrors + MyLocale.getMsg(5516," cache descriptions%0acould not be loaded."),FormBase.DEFOKB).execute();
@@ -397,7 +401,21 @@ public class SpiderGC{
 
 		page_number = 1;
 		num_added = 0;
-		getCaches(origin,halfSideLength);
+		
+		int north = 0;
+		int east = 1;
+		int south = 2;
+		int west = 3;
+
+		halfSideLength=halfSideLength*1000; // in meters
+		CWPoint northwest = new CWPoint(origin); 
+		northwest.shift(halfSideLength , north);
+		northwest.shift(halfSideLength , west);		
+		CWPoint southeast = new CWPoint(origin);
+		southeast.shift(halfSideLength, south);
+		southeast.shift(halfSideLength, east);
+
+		getCaches(northwest.latDec,northwest.lonDec,southeast.latDec,southeast.lonDec);
 		
 		if (!infB.isClosed) infB.close(0);
 		Vm.showWait(false);
@@ -407,46 +425,40 @@ public class SpiderGC{
 				
 	}
 	
-	private void getCaches(CWPoint middleOfSquare, double halfSideLength) {
+	private void getCaches(double north, double west, double south, double east) {
 		if (infB.isClosed) return;
 		page_number++;
-		String listPage=getMapListPage(middleOfSquare, halfSideLength, halfSideLength);
-		if (listPage.indexOf("\"count\": 501")>-1 || halfSideLength < 1.0 ) {
-			Vm.debug("split "+middleOfSquare.toString());
-			double quarterSideLength = halfSideLength/2.0;
-			double metersQuarterSideLength = quarterSideLength * 1000;
-			int north = 0;
-			int east = 1;
-			int south = 2;
-			int west = 3;
+		CWPoint middle = new CWPoint((north+south)/2.0,(west+east)/2.0);
+		
+		// Global.getPref().log("Mitte: "+middle,null);
+		// Global.getPref().log("Rechteck: "+south+" "+west+" to "+north+" "+east,null);
+		CWPoint lu = new CWPoint(south,west);
+		CWPoint ro = new CWPoint(north,east);
+		CWPoint lo = new CWPoint(north,west);
+		CWPoint ru = new CWPoint(south,east);
+		// Global.getPref().log("Seitenlängen: "+lu.getDistance(ru)+" "+lu.getDistance(lo)+" "+ro.getDistance(lo)+" "+ro.getDistance(ru),null);		
 
-			CWPoint northwest = new CWPoint(middleOfSquare); 
-			northwest.shift(metersQuarterSideLength, north);
-			CWPoint northeast = new CWPoint(northwest);
-			northwest.shift(metersQuarterSideLength , west);
-			northeast.shift(metersQuarterSideLength, east);
+		String listPage=getMapListPage(middle, north, west, south, east);
+		if (listPage.indexOf("\"count\": 501")>-1 && +lu.getDistance(ru) > 2.0 ) {
+			Vm.debug("split ");
 			
-			CWPoint southwest = new CWPoint(middleOfSquare);
-			southwest.shift(metersQuarterSideLength, south);
-			CWPoint southeast = new CWPoint(southwest);
-			southwest.shift(metersQuarterSideLength, west);
-			southeast.shift(metersQuarterSideLength, east);
-			
+			double northsouthmiddle = (north+south)/2.0;
+			double westeastmiddle = (west+east)/2.0;
 			Vm.debug("get northwest");
-			getCaches(northwest, quarterSideLength);
+			getCaches(north, west, northsouthmiddle, westeastmiddle);
 			Vm.debug("get northeast");
-			getCaches(northeast, quarterSideLength);
+			getCaches(north, westeastmiddle, northsouthmiddle, east);
 			Vm.debug("get southwest");
-			getCaches(southwest, quarterSideLength);
+			getCaches(northsouthmiddle, west, south, westeastmiddle);
 			Vm.debug("get southeast");
-			getCaches(southeast, quarterSideLength);
+			getCaches(northsouthmiddle, westeastmiddle, south, east);
 			
 		}
 		else {
-			Vm.debug("add Caches "+middleOfSquare.toString());
+			Vm.debug("add Caches ");
 			addCaches(listPage);
 		}
-		Vm.debug("ready "+middleOfSquare.toString());
+		Vm.debug("ready ");
 	}
 	
 	private void addCaches(String listPage) {
@@ -666,7 +678,7 @@ public class SpiderGC{
 			for (int i = 0; i < (startPage / 10); i++) {
 				getAListPage(toDistanceInMiles,gotoNextBlock);			
 			}
-			getAListPage(toDistanceInMiles,gotoPage+startPage);			
+			if (startPage>1) getAListPage(toDistanceInMiles,gotoPage+startPage);			
 		}
 		
 		int numFoundInDB=0; // Number of GC-founds already in this profile
@@ -748,7 +760,7 @@ public class SpiderGC{
 								}
 						}
 						else {
-							if (maxUpdate>0) {
+							if (maxUpdate>0) { // regardless of fromDistance
 								if (!ch.is_black()) {
 									if (doPMCache(CacheDescriptionGC) && updateExists(ch,CacheDescriptionGC)) {
 										if (cFoundForUpdate.size()<maxUpdate) {
@@ -773,7 +785,8 @@ public class SpiderGC{
 					} else toDistance = 0; // finish listing
 					// get next row of table (next Cache Description) of this htmlListPage
 					RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
-					if (infB.isClosed) { toDistance=0; break; }
+					if (infB.isClosed) {
+						toDistance=0; break; }
 				} // next Cache
 				 infB.setInfo(MyLocale.getMsg(5511,"Found ")+
 						 cachesToLoad.size()+" / "+
@@ -1232,22 +1245,16 @@ public class SpiderGC{
 		}
 	}
 	/* */
-	private String getMapListPage(CWPoint origin, double kmlat, double kmlon) {
-		double km2latdeg=1/(origin.getDistance(new CWPoint(origin.latDec+1,origin.lonDec)));
-		double km2londeg=1/(origin.getDistance(new CWPoint(origin.latDec,origin.lonDec+1)));
-		double dlat = kmlat * km2latdeg;
-		double dlon = kmlon * km2londeg;
+	private String getMapListPage(CWPoint middle, double north, double west, double south, double east) {
+
 		String url="http://www.geocaching.com/map/default.aspx"+
-			"?lat="+origin.getLatDeg(TransformCoordinates.DD)+
-			"&lng="+origin.getLonDeg(TransformCoordinates.DD);
-		double left = origin.lonDec - dlon;
-		double up = origin.latDec + dlat;
-		double right = origin.lonDec + dlon;
-		double down = origin.latDec - dlat;
-		String strLeft=MyLocale.formatDouble(left, "00.00000").replace(',','.');
-		String strUp=MyLocale.formatDouble(up, "00.00000").replace(',','.');
-		String strRight=MyLocale.formatDouble(right, "00.00000").replace(',','.');
-		String strDown=MyLocale.formatDouble(down, "00.00000").replace(',','.');
+			"?lat="+middle.getLatDeg(TransformCoordinates.DD)+
+			"&lng="+middle.getLonDeg(TransformCoordinates.DD);
+				
+		String strLeft=MyLocale.formatDouble(west, "00.00000").replace(',','.');
+		String strUp=MyLocale.formatDouble(north, "00.00000").replace(',','.');
+		String strRight=MyLocale.formatDouble(east, "00.00000").replace(',','.');
+		String strDown=MyLocale.formatDouble(south, "00.00000").replace(',','.');
 
 		String eo_cb_param1 = "eo_cb_param=%7B%22c%22%3A%201%2C%20%22m%22%3A%20%22%22%2C%20%22d%22%3A%20%22";
 		String eo_cb_param2 = strUp+"|"+strDown+"|"+strRight+"|"+strLeft+"%22%7D";
