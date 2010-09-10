@@ -97,7 +97,7 @@ public class MainMenu extends MenuBar {
 				loadcaches     = new MenuItem(MyLocale.getMsg(129,"Import GPX")),
 				loadOC         = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")),
 				spider         = new MenuItem(MyLocale.getMsg(131,"Download from geocaching.com")),
-				spiderQuick    = new MenuItem(MyLocale.getMsg(0,"from GC quick")),
+				spiderQuick    = new MenuItem(MyLocale.getMsg(138,"from GC quick")),
 				spiderRoute,
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")),
 				update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data")),
