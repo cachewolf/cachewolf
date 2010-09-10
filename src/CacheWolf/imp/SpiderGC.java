@@ -381,7 +381,7 @@ public class SpiderGC{
 		if (!doDownloadGui(2)) return;
 
 		Vm.showWait(true);
-		infB = new InfoBox("Status", MyLocale.getMsg(0,"getting the caches."));
+		infB = new InfoBox("Status", MyLocale.getMsg(1609,"getting the caches."));
 		infB.exec();
 
 		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
@@ -583,7 +583,7 @@ public class SpiderGC{
 			maxUpdate=0;
 		}
 		else { // if (menu == 2) {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(0,"Qick Import"),
+			options = new OCXMLImporterScreen(MyLocale.getMsg(138,"Qick Import"),
 					OCXMLImporterScreen.ISGC|
 					OCXMLImporterScreen.DIST|
 					OCXMLImporterScreen.INCLUDEFOUND|
