@@ -461,17 +461,10 @@ public class SpiderGC{
 	
 	private void getCaches(double north, double west, double south, double east, boolean setCachesToLoad) {
 		if (infB.isClosed) return;
-		CWPoint middle = new CWPoint((north+south)/2.0,(west+east)/2.0);
-		
-		// Global.getPref().log("Mitte: "+middle,null);
-		// Global.getPref().log("Rechteck: "+south+" "+west+" to "+north+" "+east,null);
-		CWPoint lu = new CWPoint(south,west);
-		//CWPoint ro = new CWPoint(north,east);
-		//CWPoint lo = new CWPoint(north,west);
-		CWPoint ru = new CWPoint(south,east);
-		// Global.getPref().log("Seitenlängen: "+lu.getDistance(ru)+" "+lu.getDistance(lo)+" "+ro.getDistance(lo)+" "+ro.getDistance(ru),null);		
-		double len = lu.getDistance(ru);
-
+		double lm = (north+south)/2.0;
+		CWPoint middle = new CWPoint(lm,(west+east)/2.0);
+		CWPoint rm = new CWPoint(lm, east);
+		double len = middle.getDistance(rm) * 2.0;
 		page_number++;
 		String listPage=getMapListPage(middle, north, west, south, east);
 		if ((listPage.indexOf("\"count\": 501")>-1) || (listPage.indexOf("\"count\": 0")>-1 && len > 30)) {
