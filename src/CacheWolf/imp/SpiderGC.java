@@ -47,6 +47,7 @@ import CacheWolf.Profile;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
+import CacheWolf.navi.Area;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 
@@ -274,14 +275,22 @@ public class SpiderGC{
 	} // End of DoIt
 	
 	public void doItAlongARoute() {
+		Area sq;
 
 		CWPoint startPos = pref.getCurCentrePt();
-		if (!startPos.isValid()) return; //
+		if (!startPos.isValid()) {
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), FormBase.OKB)).execute();
+			return; //
+		}
 		if (!doDownloadGui(1)) return;
 
 		Vm.showWait(true);
 		infB = new InfoBox("Status", MyLocale.getMsg(5502,"Fetching first page..."));
 		infB.exec();
+
+		if (!loggedIn || pref.forceLogin) {
+			if(login() != FormBase.IDOK) return;
+		}
 
 		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
 		for(int i = 0; i<cacheDB.size();i++){
@@ -299,8 +308,11 @@ public class SpiderGC{
 		CacheHolder nextCache=null;
 		int n;
 		while ((n=nextRoutePoint(startPos, lateralDistance)) > -1) {
-			// spider around startpos			
-			cachesToUpdate=fillDownloadLists(Integer.MAX_VALUE, 0, lateralDistance, 0.0, directions, cachesToUpdate);
+			// spider around startPos			
+			// cachesToUpdate=fillDownloadLists(Integer.MAX_VALUE, 0, lateralDistance, 0.0, directions, cachesToUpdate);			
+			sq=getSquare(origin, lateralDistance);
+			getCaches(sq.topleft.latDec,sq.topleft.lonDec,sq.buttomright.latDec,sq.buttomright.lonDec, true);
+
 			nextCache=cacheDB.get(n);
 			double degrees = startPos.getBearing(nextCache.pos);
 			double distanceToNextCache=startPos.getDistance(nextCache.pos);
@@ -310,7 +322,9 @@ public class SpiderGC{
 				startPos=nextCheckPoint;
 				// spider around nextCheckPoint
 				origin=nextCheckPoint;
-				cachesToUpdate=fillDownloadLists(Integer.MAX_VALUE, 0, lateralDistance, 0.0, directions, cachesToUpdate);
+				// cachesToUpdate=fillDownloadLists(Integer.MAX_VALUE, 0, lateralDistance, 0.0, directions, cachesToUpdate);
+				sq=getSquare(origin, lateralDistance);
+				getCaches(sq.topleft.latDec,sq.topleft.lonDec,sq.buttomright.latDec,sq.buttomright.lonDec, true);
 				// pref.log("next CP = "+nextCheckPoint.toString(),null);
 				if (infB.isClosed) { break; }
 			}
@@ -320,9 +334,18 @@ public class SpiderGC{
 		}
 		// spider around startpos (means endpos)
 		origin=startPos;
-		cachesToUpdate=fillDownloadLists(Integer.MAX_VALUE, 0, lateralDistance, 0.0, directions, cachesToUpdate);
+		// cachesToUpdate=fillDownloadLists(Integer.MAX_VALUE, 0, lateralDistance, 0.0, directions, cachesToUpdate);
+		sq=getSquare(origin, lateralDistance);
+		getCaches(sq.topleft.latDec,sq.topleft.lonDec,sq.buttomright.latDec,sq.buttomright.lonDec, true);
 		int spiderErrors=0;
 		if (infB.isClosed) { Vm.showWait(false); return; } // or ask for download of intermediate result 
+		for (int i = 0; i < cachesToLoad.size(); i++) {
+			String wpt = (String)cachesToLoad.get(i);
+			boolean is_found = wpt.indexOf("found")!=-1;
+			if (is_found) wpt=wpt.substring(0,wpt.indexOf("found"));
+			int j = cacheDB.getIndex(wpt);
+			if (j!=-1) cacheDB.removeElementAt(j);			
+		}
 		spiderErrors=downloadCaches(cachesToLoad, spiderErrors, cachesToLoad.size(), true);
 
 		infB.close(0);
@@ -374,10 +397,33 @@ public class SpiderGC{
 		return index;
 	}
 
+	private Area getSquare(CWPoint centre, double halfSideLengthKm) {		
+		int north = 0;
+		int east = 1;
+		int south = 2;
+		int west = 3;
+		double halfSideLength=halfSideLengthKm * 1000.0; // in meters
+		Area ret = new Area();
+		ret.topleft.latDec=centre.latDec;
+		ret.topleft.lonDec=centre.lonDec;
+		ret.topleft.shift(halfSideLength, north);
+		ret.topleft.shift(halfSideLength, west);
+
+		ret.buttomright.latDec=centre.latDec;
+		ret.buttomright.lonDec=centre.lonDec;
+		ret.buttomright.shift(halfSideLength, south);
+		ret.buttomright.shift(halfSideLength, east);
+		
+		return ret;
+	}
+	
 	public void doItQuickFillFromMapList() {
 
 		CWPoint origin = pref.getCurCentrePt();
-		if (!origin.isValid()) return; //
+		if (!origin.isValid()) {
+			(new MessageBox(MyLocale.getMsg(5500,"Error"), MyLocale.getMsg(5509,"Coordinates for centre must be set"), FormBase.OKB)).execute();
+			return; //
+		}
 		if (!doDownloadGui(2)) return;
 
 		Vm.showWait(true);
@@ -399,24 +445,12 @@ public class SpiderGC{
 			if(login() != FormBase.IDOK) return;
 		}
 
-		page_number = 1;
+		page_number = 0;
 		num_added = 0;
 		
-		int north = 0;
-		int east = 1;
-		int south = 2;
-		int west = 3;
-
-		halfSideLength=halfSideLength*1000; // in meters
-		CWPoint northwest = new CWPoint(origin); 
-		northwest.shift(halfSideLength , north);
-		northwest.shift(halfSideLength , west);		
-		CWPoint southeast = new CWPoint(origin);
-		southeast.shift(halfSideLength, south);
-		southeast.shift(halfSideLength, east);
-
-		getCaches(northwest.latDec,northwest.lonDec,southeast.latDec,southeast.lonDec);
-		
+		Area sq=getSquare(origin, halfSideLength);
+		getCaches(sq.topleft.latDec,sq.topleft.lonDec,sq.buttomright.latDec,sq.buttomright.lonDec, false);
+				
 		if (!infB.isClosed) infB.close(0);
 		Vm.showWait(false);
 
@@ -425,19 +459,19 @@ public class SpiderGC{
 				
 	}
 	
-	private void getCaches(double north, double west, double south, double east) {
+	private void getCaches(double north, double west, double south, double east, boolean setCachesToLoad) {
 		if (infB.isClosed) return;
-		page_number++;
 		CWPoint middle = new CWPoint((north+south)/2.0,(west+east)/2.0);
 		
 		// Global.getPref().log("Mitte: "+middle,null);
 		// Global.getPref().log("Rechteck: "+south+" "+west+" to "+north+" "+east,null);
 		CWPoint lu = new CWPoint(south,west);
-		CWPoint ro = new CWPoint(north,east);
-		CWPoint lo = new CWPoint(north,west);
+		//CWPoint ro = new CWPoint(north,east);
+		//CWPoint lo = new CWPoint(north,west);
 		CWPoint ru = new CWPoint(south,east);
 		// Global.getPref().log("Seitenlängen: "+lu.getDistance(ru)+" "+lu.getDistance(lo)+" "+ro.getDistance(lo)+" "+ro.getDistance(ru),null);		
 
+		page_number++;
 		String listPage=getMapListPage(middle, north, west, south, east);
 		if (listPage.indexOf("\"count\": 501")>-1 && +lu.getDistance(ru) > 2.0 ) {
 			Vm.debug("split ");
@@ -445,23 +479,23 @@ public class SpiderGC{
 			double northsouthmiddle = (north+south)/2.0;
 			double westeastmiddle = (west+east)/2.0;
 			Vm.debug("get northwest");
-			getCaches(north, west, northsouthmiddle, westeastmiddle);
+			getCaches(north, west, northsouthmiddle, westeastmiddle, setCachesToLoad);
 			Vm.debug("get northeast");
-			getCaches(north, westeastmiddle, northsouthmiddle, east);
+			getCaches(north, westeastmiddle, northsouthmiddle, east, setCachesToLoad);
 			Vm.debug("get southwest");
-			getCaches(northsouthmiddle, west, south, westeastmiddle);
+			getCaches(northsouthmiddle, west, south, westeastmiddle, setCachesToLoad);
 			Vm.debug("get southeast");
-			getCaches(northsouthmiddle, westeastmiddle, south, east);
+			getCaches(northsouthmiddle, westeastmiddle, south, east, setCachesToLoad);
 			
 		}
 		else {
 			Vm.debug("add Caches ");
-			addCaches(listPage);
+			addCaches(listPage, setCachesToLoad);
 		}
 		Vm.debug("ready ");
 	}
 	
-	private void addCaches(String listPage) {
+	private void addCaches(String listPage, boolean setCachesToLoad) {
 		String[] caches = mString.split(listPage, '{');
 		for (int i = 0; i < caches.length; i++) {
 			if (infB.isClosed) return;
@@ -497,9 +531,13 @@ public class SpiderGC{
 					}
 					ch.setAvailable(available.equals("true")? true : false);
 					ch.setCacheName(cacheName);
-					ch.save();
 					num_added++;
-					cacheDB.add(ch);
+					cacheDB.add(ch); 
+					if (setCachesToLoad) {
+						cachesToLoad.add(wp+"found");}
+					else {
+						ch.save();
+					}
 					if (Global.mainTab.statBar!=null) Global.mainTab.statBar.updateDisplay("GC pages: "+page_number+" Caches added to CW: "+num_added);
 				}
 				else {
