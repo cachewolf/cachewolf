@@ -10,7 +10,7 @@ T1SvnRevision: http://cachewolf.aldos.de/rc/mostrecentbuild.txt [\\s]*[\\\\r]*[\
 
 # InDevelopmentStable
 T2VersionMajor: 1
-T2VersionMinor: 2
+T2VersionMinor: 3
 T2SvnRevision: http://cachewolf.aldos.de/stable.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 
 # InDevelopmentNewest
@@ -20,5 +20,5 @@ T3VersionMinor: 3
 #T3SvnRevision: http://www.naturalnik.de/CacheWolf-BE/zcurrent.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 T3SvnRevision: http://cachewolf.aldos.de/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 
-RecommendedType: 1
+RecommendedType: 2
 
