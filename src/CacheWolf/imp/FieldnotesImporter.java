@@ -2,22 +2,16 @@ package CacheWolf.imp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheSize;
-import CacheWolf.CacheTerrDiff;
-import CacheWolf.CacheType;
-import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import HTML.Tmpl.Util;
-import HTML.Tmpl.Element.Element;
-import ewe.io.BufferedReader;
-import ewe.io.FileNotFoundException;
+import ewe.io.AsciiCodec;
 import ewe.io.FileReader;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
+import ewe.io.TextCodec;
 import ewe.sys.Vm;
-import ewe.sys.Time;
-import ewe.util.EmptyStackException;
+import ewe.util.ByteArray;
+import ewe.util.CharArray;
 import ewe.util.mString;
 
 public class FieldnotesImporter {
@@ -35,9 +29,28 @@ public class FieldnotesImporter {
 
 	public void doIt() {
 		try {
-			Vm.showWait(true);
-			FileReader r = new FileReader(file);
-			r.codec=new JavaUtf8Codec();
+			Vm.showWait(true);	
+			FileReader r = null;
+
+			try {
+				r = new FileReader(file);
+				r.codec=new NoCodec();				
+				r.read(); // for checking of Codec
+			}
+			catch (Error e) {
+				r.close();
+				r = new FileReader(file);
+				if (e.getMessage().equals("UTF-8")) {
+					r.codec=new JavaUtf8Codec();
+				}
+				else if (e.getMessage().equals("ASCII")){
+					r.codec=new AsciiCodec();
+				}
+				else {
+					Vm.showWait(false);
+					return;
+				}
+			}		
 			parse(r.readAll());
 			r.close();
 			// save Index
@@ -48,64 +61,6 @@ public class FieldnotesImporter {
 			Vm.showWait(false);
 		}
 	}
-/* TODO Import of files with UNICODE Charset 
-	private void read_file(String filename)
-			throws FileNotFoundException, 
-				IllegalStateException,
-				IOException, 
-				EmptyStackException
-	{
-		BufferedReader br=openFile(filename);
-
-		String line;
-
-		Element e = null;
-		if(elements.empty())
-			e = __template__;
-		else
-			e = (Element)elements.pop();
-
-		max_includes--;
-		while((line=br.readLine()) != null) {
-			Util.debug_print("Line: " + line);
-			e = parseLine(line+"\n", e);
-		}
-		max_includes++;
-
-		br.close();
-		br=null;
-
-	}
-	
-	private BufferedReader openFile(String filename)
-	throws FileNotFoundException{
-		boolean add_path=true;
-		if(!elements.empty() && !search_path_on_include)
-			add_path=false;
-
-		if(filename.startsWith("/"))
-			add_path=false;
-
-		if(this.path == null)
-			add_path=false;
-
-		Util.debug_print("open " + filename);
-		if(!add_path)
-			return new BufferedReader(new FileReader(filename));
-
-		BufferedReader br=null;
-
-		for(int i=0; i<this.path.length; i++) {
-			try {
-				Util.debug_print("trying " + this.path[i] +	"/" + filename);
-				br = new BufferedReader(new FileReader(this.path[i] + "/" + filename));
-				break;
-			} catch (FileNotFoundException fnfe) {}
-		}
-		if(br == null) throw new FileNotFoundException(filename);
-		return br;
-	}
- */
 	
 	private void parse(String s) {
 		final byte WPPOS=0;
@@ -127,7 +82,7 @@ public class FieldnotesImporter {
 			CacheHolder ch = cacheDB.get(wayPoint);
 			if (ch!=null) {
 				if (l1[LOGTYPPOS].equals(ch.getGCFoundText())) {
-					String stmp=ch.getCacheStatus();
+					// String stmp=ch.getCacheStatus();
 					ch.setCacheStatus(l1[DATEPOS].replace('T',' ').replace('Z', ' ').trim());
 					ch.setFound(true);
 				} else {
@@ -144,3 +99,104 @@ public class FieldnotesImporter {
 	}
 
 }
+
+//##################################################################
+class NoCodec implements TextCodec{
+//##################################################################
+
+/**
+* This is a creation option. It specifies that CR characters should be removed when
+* encoding text into UTF.
+**/
+public static final int STRIP_CR_ON_DECODE = 0x1;
+/**
+* This is a creation option. It specifies that CR characters should be removed when
+* decoding text from UTF.
+**/
+public static final int STRIP_CR_ON_ENCODE = 0x2;
+/**
+* This is a creation option. It specifies that CR characters should be removed when
+* decoding text from UTF AND encoding text to UTF.
+**/
+public static final int STRIP_CR = STRIP_CR_ON_DECODE|STRIP_CR_ON_ENCODE;
+
+private int flags = 0;
+private boolean checked=false;
+
+//===================================================================
+public NoCodec(int options)
+//===================================================================
+{
+	flags = options;
+}
+//===================================================================
+public NoCodec()
+//===================================================================
+{
+	this(0);
+}
+//===================================================================
+public ByteArray encodeText(char [] text, int start, int length, boolean endOfData, ByteArray dest) throws IOException
+//===================================================================
+{
+	if (dest == null) dest = new ByteArray();
+	int size = length == 0 ? 2 : 2+text.length*2;
+	if (dest.data == null || dest.data.length < size)
+		dest.data = new byte[size];
+	byte [] destination = dest.data;
+	int s = 0;
+	if (length>0){
+		destination[s++] = (byte) 0xFF;
+		destination[s++] = (byte) 0xFE;
+	}
+	for (int i = 0; i<length; i++){
+		char c = text[i+start];
+		if (c == 13 && ((flags & STRIP_CR_ON_ENCODE) != 0)) continue;
+		destination[s++] = (byte)(c & 0xFF);
+		destination[s++] = (byte)((c>>8) & 0xFF);
+	}
+	dest.length = s;
+	return dest;
+}
+
+//===================================================================
+public CharArray decodeText(byte [] encoded, int start, int length, boolean endOfData, CharArray dest) throws Error, IOException
+//===================================================================
+// strip CR ignored
+{
+	if (dest == null) dest = new CharArray();
+	dest.length = 0;
+	if (!checked && length>3) {
+		checked=true;
+		int magicNumber=encoded[start]+256*encoded[start+1];
+		if (magicNumber!=-513) {
+			if (magicNumber==-17681) {
+				throw new Error("UTF-8");}
+			else {throw new Error("ASCII");}
+		}
+	}
+	for (int i = start; i < start+length; i++) {
+		int k = encoded[i];
+		i++;
+		k=k + 256*encoded[i];
+		String s=""+(char)k;
+		dest.append(s);
+	}
+	return dest;
+}
+
+//===================================================================
+public void closeCodec() throws IOException
+//===================================================================
+{
+}
+
+//===================================================================
+public Object getCopy()
+//===================================================================
+{
+	return new NoCodec(flags);
+}
+//##################################################################
+}
+//##################################################################
