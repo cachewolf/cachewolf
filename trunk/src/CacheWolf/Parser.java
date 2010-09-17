@@ -1,16 +1,42 @@
-/* A parser that parses the following grammar:
-  EBNF Meta-Symbols:
-    {xx}        xx can occur any number of times incl 0
-    [xx]        xx or empty
-    |           or
-    "x"         x is terminal symbol
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
+/* 
+A parser that parses the following grammar:
+EBNF Meta-Symbols:
+  {xx}        xx can occur any number of times incl 0
+  [xx]        xx or empty
+  |           or
+  "x"         x is terminal symbol
 
 command -> if |
-           simplecommand
+         simplecommand
 
 simplecommand -> "stop" | "st" |
 		   assign
-           stringexp |
+         stringexp |
 
 if -> "IF" stringexpr compop stringexpr "THEN" simplecommand { ";" simplecommand } "ENDIF"          // Nested IF's not allowed
 
@@ -29,31 +55,30 @@ term -> factor { ("*" | "/") factor }
 factor -> expfactor { "^" expfactor }
 
 expfactor -> ident |
-          number |
-          "(" stringexpr ")" |
-          function "(" stringexpr { "," stringexpr }")"
+        number |
+        "(" stringexpr ")" |
+        function "(" stringexpr { "," stringexpr }")"
 
 function -> "sin" | "cos" | "tan" | "asin" | "acos" | "atan" | "goto" | "project" | "show"  | "crosstotal" |
-            "rot13" | "len" | "mid"
+          "rot13" | "len" | "mid"
 
 ident -> valid identifier
 number -> valid number
 
 
 */
-
 package CacheWolf;
 
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
+
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.sys.Convert;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Vector;
-
 
 /**
 *	The wolf language parser. New version - January 2007
@@ -308,7 +333,6 @@ public class Parser{
 	private void getToken() throws Exception {
 		if(scanpos < tokenStack.size()){
 			thisToken = (TokenObj)tokenStack.get(scanpos);
-			//Vm.debug(thisToken.token);
 			scanpos++;
 		} else err(MyLocale.getMsg(1704,"Unexpected end of source"));
 	}
@@ -1197,7 +1221,6 @@ public class Parser{
 		try{
 			parseCommand();
 		}catch(Exception ex){
-			//Vm.debug(ex.toString());
 		}
 	}
 

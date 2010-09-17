@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
@@ -5,21 +30,42 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
 import CacheWolf.CoordsScreen;
-import CacheWolf.InputScreen;
 import CacheWolf.DetailsPanel;
 import CacheWolf.Global;
+import CacheWolf.InputScreen;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import ewe.ui.*;
-import ewe.fx.*;
+import ewe.fx.Brush;
+import ewe.fx.Color;
+import ewe.fx.Dimension;
+import ewe.fx.Font;
+import ewe.fx.FontMetrics;
+import ewe.fx.Graphics;
+import ewe.fx.Pen;
+import ewe.fx.Rect;
 import ewe.graphics.AniImage;
-//import ewe.io.IOException;
-//import ewe.io.SerialPort;
-//import ewe.io.SerialPortOptions;
-import ewe.sys.*;
+import ewe.sys.Convert;
 import ewe.sys.Double;
+import ewe.sys.Vm;
+import ewe.sys.VmConstants;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.Event;
+import ewe.ui.FormBase;
+import ewe.ui.Gui;
+import ewe.ui.ImageControl;
+import ewe.ui.Menu;
+import ewe.ui.MenuEvent;
+import ewe.ui.MenuItem;
+import ewe.ui.MessageBox;
+import ewe.ui.Window;
+import ewe.ui.WindowConstants;
+import ewe.ui.mButton;
+import ewe.ui.mLabel;
 
 /**
  *	Class to create the panel which handles the connection to the GPS-device<br>
@@ -147,34 +193,6 @@ public final class GotoPanel extends CellPanel {
 		this.addLast(btnMap = new mButton(MyLocale.getMsg(1506,"Map")+" "),CellConstants.HSTRETCH, CellConstants.VFILL|CellConstants.RIGHT).setTag(SPAN,new Dimension(2,1));
 		this.addLast(roseP,CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST).setTag(SPAN,new Dimension(2,1));
 		btnMap.backGround=GREEN;
-		// for debuging
-		/*		CWGPSPoint myGPS;
-		myGPS = new CWGPSPoint();
-		String ex = new String();
-		boolean test = false;
-		try { FileReader f = new FileReader("c:\\kw\\20060928_1051.log");
-		ex = f.readAll();
-		test = myGPS.examine(ex);
-		f.close();
-		} catch (IOException e ) {
-			Vm.debug(e.toString());
-		}
-		test = myGPS.examine("$GPGLL,5226.8935,N,01338.5327,E,084635.00,A,D*6E");
-		test = myGPS.examine("$GPGSA,A,3,10,28,26,29,09,,,,,,,,04.1,02.6,03.2*0F");
-		test = myGPS.examine("$GPGSV,4,1,13,08,40,072,28,10,29,201,47,27,15,079,29,28,62,102,44*7E");
-		test = myGPS.examine("$GPGSV,4,2,13,29,72,289,38,26,63,296,41,09,12,259,35,18,14,324,*79");
-		test = myGPS.examine("$GPGSV,4,3,13,19,09,025,,17,06,138,,21,06,300,,37,29,171,40*7A");
-		test = myGPS.examine("$GPGSV,4,4,13,39,29,166,38*40");
-		 */
-
-		//while (true){
-		//		int notinterpreted = 0;
-		//		if (myGPS.examine("@��H @��H�@��HH�������H")) { notinterpreted = 0;} else notinterpreted++;
-		//		if (notinterpreted > 5) myGPS.noInterpretableData();
-		//		// myGPS.noInterpretableData();
-
-
-		//		}
 	}
 
 	public void resizeTo(int pWidth, int pHeight){
@@ -244,11 +262,9 @@ public final class GotoPanel extends CellPanel {
 		Double bearMov = new Double();
 		Double speed = new Double();
 		Double sunAzimut = new Double();
-		//Vm.debug("ticked: before");
 		compassRose.setGpsStatus(fix, myNavigation.gpsPos.getSats(), myNavigation.gpsPos.getSatsInView(), myNavigation.gpsPos.getHDOP());
 		if ((fix > 0) && (myNavigation.gpsPos.getSats()>= 0)) {
 			// display values only, if signal good
-			//Vm.debug("currTrack.add: nachher");
 			lblPosition.setText(myNavigation.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
 			speed.set(myNavigation.gpsPos.getSpeed());
 			sunAzimut.set(myNavigation.skyOrientationDir.lonDec);

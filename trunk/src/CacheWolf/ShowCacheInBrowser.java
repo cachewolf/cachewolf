@@ -1,4 +1,32 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
+
+import CacheWolf.utils.CWWrapper;
+import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -11,9 +39,8 @@ import ewe.io.PrintWriter;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
-import ewe.util.*;
-import CacheWolf.utils.CWWrapper;
-import HTML.Template;
+import ewe.util.Hashtable;
+import ewe.util.Vector;
 
 
 public class ShowCacheInBrowser {
@@ -105,9 +132,7 @@ public class ShowCacheInBrowser {
 					if (!chD.is_available()) tpl.setParam("UNAVAILABLE","1");
 					if (!chD.getCacheDetails(true).Hints.equals("null"))tpl.setParam("HINT",Common.rot13(chD.getCacheDetails(true).Hints));
 				}catch(Exception e){
-					Vm.debug("Problem getting Parameter, Cache: " + chD.getWayPoint());
-					Global.getPref().log("Problem getting parameter "+e.toString()+", Cache: " + chD.getWayPoint());
-					e.printStackTrace();
+					Global.getPref().log("Problem getting parameter , Cache: " + chD.getWayPoint(),e,true);
 				}
 			}
 			PrintWriter detfile;
@@ -127,8 +152,7 @@ public class ShowCacheInBrowser {
 			}
 
 		} catch(Exception e) {
-			e.printStackTrace();
-			Global.getPref().log("Error in ShowCache "+e.toString());
+			Global.getPref().log("Error in ShowCache ",e,true);
 		} finally {
 			Vm.showWait(false);
 		}

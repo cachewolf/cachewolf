@@ -1,12 +1,43 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
+import CacheWolf.imp.KMLImporter;
+import CacheWolf.navi.TransformCoordinates;
+
+import com.stevesoft.ewe_pat.Regex;
+
+import ewe.io.File;
+import ewe.io.FileNotFoundException;
+import ewe.io.FileReader;
+import ewe.io.IOException;
+import ewe.sys.Convert;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
-import ewe.util.*;
-import ewe.sys.*;
-import ewe.io.*;
-import com.stevesoft.ewe_pat.*;
-import CacheWolf.imp.*;
-import CacheWolf.navi.TransformCoordinates;
+import ewe.util.Hashtable;
+import ewe.util.Vector;
 
 /**
 *	Class that actually filters the cache database.<br>
@@ -108,19 +139,6 @@ public class Filter{
 				String line; 
 				while((line = in.readLine()) != null){
 					rex.search(line);
-					/*
-					Vm.debug(line);
-					Vm.debug(rex.stringMatched(1));
-					Vm.debug(rex.stringMatched(2));
-					Vm.debug(rex.stringMatched(3));
-					Vm.debug(rex.stringMatched(5));
-					
-					Vm.debug(rex.stringMatched(6));
-					Vm.debug(rex.stringMatched(7));
-					Vm.debug(rex.stringMatched(8));
-					Vm.debug(rex.stringMatched(10));
-					Vm.debug(" ");
-					*/
 					// parse the route file
 					if(rex.didMatch()){
 						lat = Convert.toDouble(rex.stringMatched(2)) + Convert.toDouble(rex.stringMatched(3))/60 + Convert.toDouble(rex.stringMatched(5))/60000;
@@ -154,12 +172,9 @@ public class Filter{
 					calcDistance = DistToSegment(fromPoint, toPoint, cwp);
 					calcDistance = (calcDistance*180*60)/java.lang.Math.PI;
 					calcDistance = calcDistance * 1.852;
-					//Vm.debug("Distcalc: " + calcDistance + "Cache: " +ch.CacheName + " / z is = " + z);
 					if(calcDistance <= distance) {
-						//Vm.debug("Distcalc: " + calcDistance + "Cache: " +ch.CacheName + " / z is = " + z);
 						ch.in_range = true;
 					}
-					//cacheDB.set(i, ch);
 				} // for database
 			} // for segments
 			for(int i = cacheDB.size()-1; i >=0 ; i--){
@@ -177,22 +192,6 @@ public class Filter{
 	*	Method to calculate the distance of a point to a segment
 	*/
 	private double DistToSegment(CWPoint fromPoint, CWPoint toPoint, CWPoint cwp){
-		
-		/*
-		double XTD = 0;
-		double dist = 0;
-		
-		double crs_AB = fromPoint.getBearing(toPoint);
-		crs_AB = crs_AB * java.lang.Math.PI / 180;
-		double crs_AD = fromPoint.getBearing(cwp);
-		crs_AD = crs_AD * java.lang.Math.PI / 180;
-		double dist_AD = fromPoint.getDistance(cwp);
-		Vm.debug("Distance: "+dist_AD);
-		dist_AD = dist_AD / 1.852;
-		dist_AD = (java.lang.Math.PI/(180*60))*dist_AD;
-		XTD =java.lang.Math.asin(java.lang.Math.sin(dist_AD)*java.lang.Math.sin(crs_AD-crs_AB));
-		return java.lang.Math.abs(XTD);
-		*/
 		double dist = 0;
 		double px = cwp.lonDec * pi180;
 		double py = cwp.latDec * pi180;

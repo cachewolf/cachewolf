@@ -1,12 +1,55 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.FileBugfix;
-import ewe.sys.*;
-import ewe.ui.*;
-import ewe.fx.*;
+import ewe.fx.IconAndText;
+import ewe.fx.Point;
+import ewe.fx.Rect;
 import ewe.io.FileBase;
 import ewe.io.IOException;
+import ewe.sys.Handle;
+import ewe.sys.Locale;
+import ewe.sys.Vm;
+import ewe.ui.Control;
+import ewe.ui.DragContext;
+import ewe.ui.Event;
+import ewe.ui.FormBase;
+import ewe.ui.Gui;
+import ewe.ui.IKeys;
+import ewe.ui.KeyEvent;
+import ewe.ui.Menu;
+import ewe.ui.MenuItem;
+import ewe.ui.MessageBox;
+import ewe.ui.PenEvent;
+import ewe.ui.ProgressBarForm;
+import ewe.ui.TableControl;
+import ewe.ui.TableEvent;
+import ewe.ui.mList;
 
 /**
  *	Implements the user interaction of the list view. Works together with myTableModel and TablePanel
@@ -257,7 +300,7 @@ public class myTableControl extends TableControl{
 
 		if (selectedItem == miCenter){
 			if (tbp.getSelectedCache() < 0) {
-				Global.getPref().log("popupMenuEvent: getSelectedCache() < 0");
+				Global.getPref().log("[myTableControl:popupMenuEvent] getSelectedCache() < 0");
 				return;
 			}
 			CacheHolder thisCache = cacheDB.get(tbp.getSelectedCache());
@@ -409,7 +452,6 @@ public class myTableControl extends TableControl{
 			 row=p.y;
 			 CacheHolder ch=cacheDB.get(p.y);
 			 wayPoint=ch.getWayPoint();
-			 //Vm.debug("Waypoint : "+ch.wayPoint);
 			 imgDrag=new IconAndText();
 			 imgDrag.addColumn(CacheType.getTypeImage(ch.getType()));
 			 imgDrag.addColumn(ch.getWayPoint());
@@ -419,7 +461,6 @@ public class myTableControl extends TableControl{
 
 	 public void stopDragging(DragContext dc) {
 		 if (wayPoint!=null && !dc.cancelled) {
-			 //Vm.debug("Stop  Dragging"+dc.curPoint.x+"/"+dc.curPoint.y);
 			 dc.stopImageDrag(true);
 			 Point p = Gui.getPosInParent(this,getWindow());
 			 p.x += dc.curPoint.x;
@@ -432,7 +473,6 @@ public class myTableControl extends TableControl{
 		    	 }
 		     }
 		     Global.mainTab.tbP.selectRow(row);
-			 //Vm.debug("Control "+c.toString()+"/"+c.text);
 		 }else super.stopDragging(dc);
 	 }
 

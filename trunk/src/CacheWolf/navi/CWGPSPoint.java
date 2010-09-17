@@ -1,23 +1,44 @@
-/*
- * Created on 02.04.2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi;
-//import com.stevesoft.ewe_pat.Regex;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
 import CacheWolf.Extractor;
 import CacheWolf.Global;
-import ewe.sys.*;
-import ewe.io.*;
-
-// Stuff needed by CWGPSPoint::examineGpsd():
-import org.json.JSONObject;
-import org.json.JSONArray;
-import org.json.JSONException;
+import ewe.io.FileWriter;
+import ewe.io.IOException;
+import ewe.sys.Convert;
+import ewe.sys.Time;
+import ewe.sys.TimerProc;
+import ewe.sys.Vm;
 
 
 /**
@@ -134,7 +155,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		try {
 			logFile = new FileWriter(logFileName);
 		} catch (IOException e) {
-			Vm.debug("Error creating LogFile " + logFileName);
+			Global.getPref().log("Error creating LogFile " + logFileName,e,true);
 			return -1;
 		}
 		// start timer
@@ -191,23 +212,13 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 			String currToken;
 			end = 0;
 			lastStrExamined = NMEA;
-			//Vm.debug(NMEA);
-/*			if (writeLog && (logFlag & LOGRAW) > 0){
-				try {
-					logFile.write(NMEA);
-					writeLog = false;
-				} catch (IOException e) {}
-			}
-*/			while(true){
+			while(true){
 				start = NMEA.indexOf("$GP", end);
 				if (start == -1) break;
 				end = NMEA.indexOf("*", start);
 				if ((end == -1)||(end+3 > NMEA.length())) break;
 
-
-				//Vm.debug(NMEA.substring(start,end+3));
 				if ((end - start) < 15 || !checkSumOK(NMEA.substring(start,end+3))){
-					//Vm.debug("checksum wrong");
 					continue;
 				}
 				// Write log after finding valid NMEA sequence
@@ -223,7 +234,6 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				Extractor ex = new Extractor ("," + NMEA.substring(start,end), ",",",",0,true);
 				currToken = ex.findNext();
 				if (currToken.equals("$GPGGA")){
-					//Vm.debug("In $GPGGA");
 					i = 0;
 					while(ex.endOfSearch() != true){
 						boolean latlonerror = false; // indicate that some error occured in the data -> in this case frace fix to non-fixed in order to avoid invalid coordinates when a fix is indicated to the higher level API
@@ -278,7 +288,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						case 1: try { this.Bear =Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
 							Global.getPref().log("Ignored Exception", e, true);
 						}
-						if (this.Bear > 360) Vm.debug("Error bear VTG");
+						if (this.Bear > 360) Global.getPref().log("Error bear VTG",null);
 						break;
 						case 7: try { this.Speed = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
 							Global.getPref().log("Ignored Exception", e, true);
@@ -289,7 +299,6 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				} // if
 
 				if (currToken.equals("$GPRMC")){
-					//Vm.debug("In $GPRMC");
 					i = 0;
 					String status = "V";
 					boolean latlonerror = false;
@@ -301,8 +310,6 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 							continue; // sometimes there are 2 colons directly one after the other like ",," (e.g. loox)
 						}
 						if (currToken.length() == 0) continue;
-						//Vm.debug("zz: " + i);
-						//Vm.debug(currToken);
 						switch (i){
 						case 1: this.Time = currToken; interpreted = true; break;
 						case 2: status = currToken;
@@ -310,11 +317,9 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						else this.Fix = 0;
 						interpreted = true;
 						break;
-						case 3: 	//Vm.debug("Here--->");
+						case 3:
 							try {latDeg = currToken.substring(0,2); interpreted = true;} catch (IndexOutOfBoundsException e) {latlonerror = true;}
-							//Vm.debug(":" + latDeg);
 							try {latMin = currToken.substring(2,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {latlonerror = true;}
-							//Vm.debug(":" + latMin);
 							break;
 						case 4: latNS = currToken; interpreted = true;
 						break;
@@ -361,7 +366,6 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 				} // if
 
 				if (currToken.equals("$GPGSV")){
-					//Vm.debug("In $$GPGSV");
 					i = 0;
 					while(ex.endOfSearch() != true){
 						currToken = ex.findNext();
@@ -373,11 +377,9 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 					} // while
 				} // if
 
-				//Vm.debug("End of examine");
 			} //while
 		} catch (Exception e) {
 			Global.getPref().log("Exception in examine in CWGPSPoint", e, true);
-			e.printStackTrace();
 		}
 
 		if	(logWritten)
@@ -551,7 +553,6 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 		for (int i= startPos; i<endPos;i++){
 			checkSum ^= nmea.charAt(i);
 		}
-		//Vm.debug(nmea.substring(3,6)+" Checksum: " + nmea.substring(endPos+1) + " Calculated: " + Convert.intToHexString(checkSum));
 		try { return (checkSum == Byte.parseByte(nmea.substring(endPos+1),16));
 		} catch (IndexOutOfBoundsException e) {
 			return false;
@@ -563,17 +564,17 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 
 
 	public void printAll(){
-		Vm.debug("Latitude:     " + this.getLatDeg(TransformCoordinates.DD));
-		Vm.debug("Longitude:    " + this.getLonDeg(TransformCoordinates.DD));
-		Vm.debug("Speed:        " + this.Speed);
-		Vm.debug("Bearing:      " + this.Bear);
-		Vm.debug("Time:         " + this.Time);
-		Vm.debug("Fix:          " + this.Fix);
-		Vm.debug("Sats:         " + this.numSat);
-		Vm.debug("Sats in view: " + this.numSatsInView);
-		Vm.debug("HDOP:         " + this.HDOP);
-		Vm.debug("Alt:          " + this.Alt);
-		Vm.debug("----------------");
+		Global.getPref().log("Latitude:     " + this.getLatDeg(TransformCoordinates.DD));
+		Global.getPref().log("Longitude:    " + this.getLonDeg(TransformCoordinates.DD));
+		Global.getPref().log("Speed:        " + this.Speed);
+		Global.getPref().log("Bearing:      " + this.Bear);
+		Global.getPref().log("Time:         " + this.Time);
+		Global.getPref().log("Fix:          " + this.Fix);
+		Global.getPref().log("Sats:         " + this.numSat);
+		Global.getPref().log("Sats in view: " + this.numSatsInView);
+		Global.getPref().log("HDOP:         " + this.HDOP);
+		Global.getPref().log("Alt:          " + this.Alt);
+		Global.getPref().log("----------------");
 	}
 }
 

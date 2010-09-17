@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import CacheWolf.navi.Area;
@@ -170,12 +195,12 @@ public class Profile {
 			File index=new File(dataDir+"index.xml");
 			index.rename("index.bak");
 		} catch (Exception ex) {
-			pref.log("Error deleting backup or renaming index.xml");
+			pref.log("[Profile:saveIndex]Error deleting backup or renaming index.xml");
 		}
 		try{
 			detfile = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(dataDir + "index.xml").getAbsolutePath())));
 		} catch (Exception e) {
-			Vm.debug("Problem creating index file "+e.toString()+"\nFilename="+dataDir + "index.xml");
+			pref.log("Problem creating index.xml " + dataDir,e);
 			return;
 		}
 		CWPoint savedCentre=centre;
@@ -226,7 +251,6 @@ public class Profile {
 					if ((i%updFrequ)==0) h.changed();
 				}
 				ch = cacheDB.get(i);
-				// //Vm.debug("Saving: " + ch.CacheName);
 				if (ch.getWayPoint().length() > 0) {
 					detfile.print(ch.toXML());
 				}
@@ -236,7 +260,7 @@ public class Profile {
 			buildReferences(); //TODO Why is this needed here?
 			if(showprogress) pbf.exit(0);
 		}catch(Exception e){
-			Vm.debug("Problem writing to index file "+e.toString());
+			pref.log("Problem writing to index file ",e);
 			detfile.close();
 			if(showprogress) pbf.exit(0);
 		}
@@ -310,7 +334,7 @@ public class Profile {
 					int start=text.indexOf("value = \"")+9;
 					indexXmlVersion  = Integer.valueOf(text.substring(start,text.indexOf("\"",start))).intValue();
 					if (indexXmlVersion > CURRENTFILEFORMAT) {
-						Global.getPref().log("unsupported file format");
+						Global.getPref().log("[Profile:readIndex]unsupported file format");
 						clearProfile();
 						return;
 					}
@@ -356,10 +380,6 @@ public class Profile {
 					} else
 						setFilterRose(temp);
 					setFilterType(ex.findNext());
-					//Need this to stay "downward" compatible. New type introduced
-					//if(filterType.length()<=17) filterType = filterType + "1";
-					//Vm.debug("fil len: " +filterType.length());
-					//This is handled by "normaliseFilters" which is called at the end.
 					setFilterVar(ex.findNext());
 					setFilterDist(ex.findNext());
 					setFilterDiff(ex.findNext());
@@ -381,10 +401,6 @@ public class Profile {
 					ex.setSource(text.substring(text.indexOf("<FILTERDATA")));
 					setFilterRose(ex.findNext());
 					setFilterType(ex.findNext());
-					//Need this to stay "downward" compatible. New type introduced
-					//if(filterType.length()<=17) filterType = filterType + "1";
-					//Vm.debug("fil len: " +filterType.length());
-					//This is handled by "normaliseFilters" which is called at the end.
 					setFilterVar(ex.findNext());
 					setFilterDist(ex.findNext());
 					setFilterDiff(ex.findNext());
@@ -426,10 +442,6 @@ public class Profile {
 				}
 			}
 			in.close();
-			//ewe.sys.Time endT=new ewe.sys.Time();
-			//Vm.debug("Time="+((((endT.hour*60+endT.minute)*60+endT.second)*1000+endT.millis)-(((startT.hour*60+startT.minute)*60+startT.second)*1000+startT.millis)));
-			//Vm.debug("Start:"+startT.format("H:mm:ss.SSS"));
-			//Vm.debug("End  :"+endT.format("H:mm:ss.SSS"));
 			// Build references between caches and addi wpts
 			if (infoBox!=null) {
 				infoBox.setInfo(MyLocale.getMsg(5004,"Building references..."));
@@ -439,12 +451,10 @@ public class Profile {
 				saveIndex(Global.getPref(), true);
 			}
 		} catch (FileNotFoundException e) {
-			Global.getPref().log("index.xml not found in directory "+dataDir); // Normal when profile is opened for first time
-			//e.printStackTrace();
+			Global.getPref().log("index.xml not found in directory "+dataDir,e);
 		} catch (IOException e){
 			Global.getPref().log("Problem reading index.xml in dir: "+dataDir,e,true);
 		}
-		// TODO Brauchen wir das noch?
 		this.getCurrentFilter().normaliseFilters();
 		resetUnsavedChanges();
 	}

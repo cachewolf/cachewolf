@@ -1,10 +1,49 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 import CacheWolf.utils.FileBugfix;
-import ewe.graphics.*;
-import ewe.sys.*;
-import ewe.fx.*;
-import ewe.ui.*;
-import ewe.io.*;
+import ewe.fx.Color;
+import ewe.fx.Font;
+import ewe.fx.FontMetrics;
+import ewe.fx.Graphics;
+import ewe.fx.Image;
+import ewe.fx.Point;
+import ewe.fx.Rect;
+import ewe.fx.mImage;
+import ewe.graphics.AniImage;
+import ewe.graphics.InteractivePanel;
+import ewe.io.File;
+import ewe.sys.SystemResourceException;
+import ewe.sys.Vm;
+import ewe.ui.ControlBase;
+import ewe.ui.Event;
+import ewe.ui.FormBase;
+import ewe.ui.Gui;
+import ewe.ui.MessageBox;
+import ewe.ui.PenEvent;
 
 
 /**
@@ -73,8 +112,6 @@ public class ImagePanel extends InteractivePanel{
 			addImages(cache.images.getDisplayImages(cache.getParent().getWayPoint()));
 			// load user images
 			if(locCounter==1 || locCounter ==2) locY = locY + thumb_size;
-			//Vm.debug("thumb_size: " + Convert.toString(thumb_size));
-			//Vm.debug("locy after: " + Convert.toString(locY));
 			if (cache.userImages.size()> 0){
 				addTitle(MyLocale.getMsg(341,"User Images:"));
 				locY = locY + 20;
@@ -240,13 +277,11 @@ public class ImagePanel extends InteractivePanel{
 	* If right mouse key is clicked, a dialogue to delete the image wil be displayed
 	*/
 	public void imageClicked(AniImage which, Point pos){
-//		Vm.debug("Clicked"+pos.x+","+pos.y+" "+(((Control.currentPenEvent.modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON)?"RIGHT":"LEFT") );
 		if ((ControlBase.currentPenEvent.modifiers&PenEvent.RIGHT_BUTTON)==PenEvent.RIGHT_BUTTON || duration>LONG_PEN_DOWN_DURATION) {
 			// Right button pressed - delete image to conserve space
 			if (which instanceof ImagePanelImage && !((ImagePanelImage)which).fileName.equals(NO_IMAGE)) {
 				MessageBox mBox = new MessageBox (MyLocale.getMsg(144,"Warning"),MyLocale.getMsg(344,"Delete image")+" \""+((ImagePanelImage)which).imageText+"\"?", FormBase.IDYES |FormBase.IDNO);
 				if (mBox.execute() == FormBase.IDOK){
-						//Vm.debug("Deleting "+((ImagePanelImage)which).fileName);
 						try {
 							File f=new File(((ImagePanelImage)which).fileName);
 							f.delete();

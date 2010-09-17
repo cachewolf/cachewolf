@@ -1,3 +1,28 @@
+/*
+GNU General Public License
+CacheWolf is a software for PocketPC, Win and Linux that
+enables paperless caching.
+It supports the sites geocaching.com and opencaching.de
+
+Copyright (C) 2006  CacheWolf development team
+See http://developer.berlios.de/projects/cachewolf/
+for more information.
+Contact: 	bilbowolf@users.berlios.de
+			kalli@users.berlios.de
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 2 of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
@@ -6,6 +31,8 @@ import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.utils.FileBugfix;
+import ewe.fx.Point;
+import ewe.fx.Rect;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.IOException;
@@ -14,7 +41,6 @@ import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.Comparer;
 import ewe.util.Vector;
-import ewe.fx.*;
 /**
  * class to handle a list of maps
  * it loads the list, finds the best map for a given location,
@@ -45,8 +71,6 @@ public final class MapsList extends Vector {
 		files = new FileBugfix(mapsPath+"/"+dirs.get(0));
 		for (int j = 0; j < dirs.size(); j++) {
 			files.set(null, mapsPath+"/"+dirs.get(j));
-			//ewe.sys.Vm.debug("mapd-Dirs:"+files);
-
 			//add subdirectories
 			if (!dirs.get(j).equals(".")) {
 				dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY | File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS); // the options "File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS" make it run about twice as fast in sun-vm. The option File.LIST_IGNORE_DIRECTORY_STATUS influences only the sorting (dirs first)
@@ -67,7 +91,6 @@ public final class MapsList extends Vector {
 						tempMIO = new MapListEntry(mapsPath+"/", rawFileName);
 					else tempMIO = new MapListEntry(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
 					if (tempMIO.sortEntryBBox != null) add(tempMIO);
-					//ewe.sys.Vm.debug(tempMIO.getEasyFindString() + tempMIO.mapName);
 				}catch(Exception ex){ // TODO exception ist, glaub ich evtl überflüssig
 					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), FormBase.OKB)).exec();
 				} /* catch(ArithmeticException ex){ // affine contain not allowed values
@@ -177,7 +200,6 @@ public final class MapsList extends Vector {
 							minDistLon = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm;
 							bestMap = mi;
 							//foundkw = i;
-							// Vm.debug("better"+ i);
 						}
 					}
 				}
@@ -188,7 +210,6 @@ public final class MapsList extends Vector {
 			ewe.sys.Vm.showWait(false);
 		}
 		if (bestMap == null) return null;
-		//Vm.debug("getBestMap: guess: " + guess + ", bestmap: " + foundkw + ", durchläufe: "+ testdkw);
 		return new MapInfoObject(bestMap); // return a copy of the MapInfoObject so that zooming won't change the MapInfoObject in the list
 	}
 	/*
@@ -271,7 +292,6 @@ public final class MapsList extends Vector {
 	     
 		if (!searchfor.startsWith(((MapListEntry)this.get(llimit)).sortEntryBBox)) 
 			llimit = llimitorig; // if the found mapListEntry doesn't contain the searchfor, then there is no map containing it.
-		// Vm.debug("quickfind: testskw: " + testskw + ", searched for: " + searchfor);
 		return llimit;
 	}
 
@@ -410,7 +430,6 @@ public final class MapsList extends Vector {
 					minDistLat = java.lang.Math.abs(ll.latDec - mi.center.latDec)/mi.sizeKm;
 					minDistLon = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm;
 					bestMap = mi;
-					// Vm.debug("better"+ i);
 				}
 			}
 		}
@@ -537,24 +556,15 @@ final class MapListEntry /*implements Comparable */ {
 		path = new String(pathi);
 		sortEntryBBox = null;
 		map = null;
-		/*
-		try {map = new MapInfoObject(path, filename); } catch (Exception e) {
-		}
-
-		ewe.sys.Vm.debug("centerID: "+map.getCenterID());
-		ewe.sys.Vm.debug("PxID: "+map.getPxSizeID());
-		ewe.sys.Vm.debug("scaleID: "+map.getScaleID()+"scale: "+map.scale);
-		*/
 		try {
 			if (filenamei.startsWith("FF1")) sortEntryBBox = filenamei.substring(0, filenamei.indexOf("E-"));
 		} catch (IndexOutOfBoundsException ex) {
-			// Global.getPref().log("Ignored Exception", ex, true);
+			Global.getPref().log("[MapsList:MapListEntry]", ex, true);
 		}
 		if (sortEntryBBox == null ) { //|| sortEntryScaleCenterPx.length() < 16) {
 			try {
 				map = new MapInfoObject(path, filename);
 				sortEntryBBox = "FF1"+map.getEasyFindString();
-				ewe.sys.Vm.debug(sortEntryBBox + ": "+filename);
 				if (rename == 0) { // never asked before
 					if ( (new MessageBox(MyLocale.getMsg(4702,"Optimisation"), MyLocale.getMsg(4703,"Cachewolf can make loading maps much faster by adding a identification mark to the filename. Do you want me to do this now?\n It can take several minutes"),
 							FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES)
@@ -576,11 +586,11 @@ final class MapListEntry /*implements Comparable */ {
 					if (f != null) {
 						to = sortEntryBBox+"E-"+filename+Common.getFilenameExtension(f);
 						if (!new File(f).rename(to)) {
-							Global.getPref().log("MapListEntry (String pathi, String filenamei): Failed to rename: "+path+filename+": "+f+".wfl to: "+to);
+							Global.getPref().log("MapListEntry (String pathi, String filenamei): Failed to rename: "+path+filename+": "+f+".wfl to: "+to,null);
 							(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
 						}
 					} else {
-						Global.getPref().log("MapListEntry (String pathi, String filenamei): Could not find image assiciated to: "+path+filename+".wfl");
+						Global.getPref().log("MapListEntry (String pathi, String filenamei): Could not find image assiciated to: "+path+filename+".wfl",null);
 						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4709,"Could not find image assiciated to:\n")+path+filename+".wfl", FormBase.OKB)).exec();
 					}
 					filename = sortEntryBBox+"E-"+filename;

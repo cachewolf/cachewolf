@@ -22,24 +22,35 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     */
-
 package CacheWolf.exp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import HTML.Template;
+
+import com.stevesoft.ewe_pat.Regex;
+
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.io.*;
-import ewe.sys.*;
-import ewe.ui.*;
-import ewe.util.*;
-
-import com.stevesoft.ewe_pat.*;
+import ewe.io.AsciiCodec;
+import ewe.io.BufferedWriter;
+import ewe.io.File;
+import ewe.io.FileWriter;
+import ewe.io.IOException;
+import ewe.io.JavaUtf8Codec;
+import ewe.io.PrintWriter;
+import ewe.io.TextCodec;
+import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
+import ewe.ui.ProgressBarForm;
+import ewe.util.ByteArray;
+import ewe.util.CharArray;
+import ewe.util.Enumeration;
+import ewe.util.Hashtable;
+import ewe.util.Vector;
 
 /**
  * @author Kalle
@@ -262,9 +273,7 @@ public class TPLExporter {
 								detfile.close();
 							}
 						}catch(Exception e){
-							Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
-							e.printStackTrace();
-							Global.getPref().log("Exception in TplExporter = Problem getting Parameter, Cache: " + ch.getWayPoint(), e, true);
+							pref.log("Exception in TplExporter = Problem getting Parameter, Cache: " + ch.getWayPoint(), e, true);
 						}
 					}
 				}
@@ -279,16 +288,9 @@ public class TPLExporter {
 				detfile.close();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			Global.getPref().log("Exception in TplExporter", e, true);
+			pref.log("Exception in TplExporter", e, true);
 		} catch (OutOfMemoryError e) {
-			// Global.getPref().log("OutOfMemeory in TplExporter", e, true);
-			// Vm.gc(); // this doesn't help :-(
-			// System.runFinalization();
-			// Vm.gc(); // this doesn't help :-( - I don't know why :-(
-			// Vm.debug("n: "+Vm.countObjects(true));
 			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now", FormBase.OKB)).execute();
-			// Vm.debug("n: "+Vm.countObjects(true));
 		}
 		pbf.exit(0);
 	}

@@ -1,8 +1,48 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
-import ewe.ui.*;
-import ewe.sys.*;
-import ewe.fx.*;
+import ewe.fx.Color;
+import ewe.fx.DrawnIcon;
+import ewe.fx.Font;
+import ewe.fx.Graphics;
+import ewe.fx.Rect;
+import ewe.sys.Device;
+import ewe.sys.Vm;
+import ewe.ui.CellPanel;
+import ewe.ui.Editor;
+import ewe.ui.Event;
+import ewe.ui.FormBase;
+import ewe.ui.Gui;
+import ewe.ui.MenuItem;
+import ewe.ui.MessageBox;
+import ewe.ui.PanelSplitter;
+import ewe.ui.SplittablePanel;
+import ewe.ui.WindowConstants;
+import ewe.ui.mApp;
 
 /**
 *	Mainform is responsible for building the user interface.
@@ -34,7 +74,7 @@ public class MainForm extends Editor {
 
 	public MainForm(boolean dbg, String pathtoprefxml){
 		//Resize the Close und Ok-Buttons of all Forms. This is just a test for the PDA Versions:
-		int fontSize = pref.fontSize;
+		int fontSize = pref.fontSize; // constructor default value
 		FormBase.close = new DrawnIcon(DrawnIcon.CROSS,fontSize,fontSize,new Color(0,0,0));
 		FormBase.tick = new DrawnIcon(DrawnIcon.TICK,fontSize,fontSize,new Color(0,128,0));
 		FormBase.cross = new DrawnIcon(DrawnIcon.CROSS,fontSize,fontSize,new Color(128,0,0));
@@ -60,6 +100,7 @@ public class MainForm extends Editor {
 		this.resizable = true;
 		this.moveable = true;
 		this.windowFlagsToSet = WindowConstants.FLAG_MAXIMIZE_ON_PDA;
+		// if (ewe.ui.Gui.screenSize.width <= 350 && ewe.ui.Gui.screenSize.height <= 350)
 		//Rect screen = ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0)));
 		//if ( screen.height >= 600 && screen.width >= 800) this.setPreferredSize(800, 600);
 		this.resizeOnSIP = true;
@@ -99,10 +140,12 @@ public class MainForm extends Editor {
 			pref.setCurCentrePt(profile.centre);
 			setTitle(profile.name + " - CW "+Version.getRelease());
 		} catch (Exception e){
-			if(pref.debug) Vm.debug("MainForm:: Exception:: " + e.toString());
+			pref.log("[MainForm:DoIt]",e);
 		}
 
-
+		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
+			Vm.setSIP(Vm.SIP_LEAVE_BUTTON,mApp.mainApp);
+		}
 		if(pref.fixSIP){
 			if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 				//Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
