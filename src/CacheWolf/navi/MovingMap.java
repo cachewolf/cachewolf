@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
@@ -249,7 +274,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		Vm.showWait(this, true);
 		inf.exec();
 		inf.waitUntilPainted(100);
-		// if (pref.debug) pref.log(MyLocale.getMsg(4203, "Loading list of maps..."));
 		resetCenterOfMap();
 		boolean saveGpsIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;
@@ -674,7 +698,6 @@ public final class MovingMap extends Form implements ICommandListener {
 										} // this happens if a position jump occured
 								}}}}}}} // close all IFs
 		Vm.gc(); // call garbage collection
-		//Vm.debug("Overlayrearanged"+TrackOverlays.toString());
 	}
 
 	public void ShowLastAddedPoint(Track tr) {
@@ -803,7 +826,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		if (currentMap == null) return null;
 		Point coords = currentMap.calcMapXY(ll);
 		Point mapPos = getMapPositionOnScreen();
-		//		Vm.debug("getXYinMap, posCiLat: "+posCircleLat+"poscLOn: "+ posCircleLon+"gotoLat: "+ lat + "gotoLon: "+ lon+" mapPosX: "+mapPos.x+"mapposY"+mapPos.y);
 		return new Point(coords.x + mapPos.x, coords.y + mapPos.y);
 	}
 
@@ -980,7 +1002,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	public void updatePosition(CWPoint where){
 		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
 		loadBestMap(where);
-		if (width==0 || height==0) { Vm.debug("no window shown"); return; } // why is this called with these values
+		if (width==0 || height==0) { pref.log("[MovingMap:updatePosition]no window shown"); return; } // why is this called with these values
 		updateOnlyPosition(where, true);
 		Point mapPos = getMapPositionOnScreen();
 		boolean screenNotCompletlyCovered = (mmp.mapImage == null)
@@ -1332,7 +1354,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			r.width = blackArea.x + offsetX;
 			r.height = whiteArea.height;
 			rectangles.add(r);
-			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if (blackArea.y > whiteArea.y) {
 			Rect r= new Rect ();
@@ -1341,7 +1362,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			r.width = whiteArea.width;
 			r.height = blackArea.y + offsetY;
 			rectangles.add(r);
-			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.y + blackArea.height) <  whiteArea.y + whiteArea.height) {
 			Rect r= new Rect ();
@@ -1350,7 +1370,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			r.width = whiteArea.width;
 			r.height = (whiteArea.y + whiteArea.height) - r.y;
 			rectangles.add(r);
-			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.x + blackArea.width)<  whiteArea.x + whiteArea.width) {
 			Rect r= new Rect ();
@@ -1359,7 +1378,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			r.width = (whiteArea.x + whiteArea.width) - r.x;
 			r.height = whiteArea.height;
 			rectangles.add(r);
-			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 	}
 
@@ -1677,7 +1695,7 @@ public final class MovingMap extends Form implements ICommandListener {
 				dontUpdatePos = saveIgnoreStatus;
 			} catch (IllegalArgumentException e) { 
 				// thrown by new AniImage() in ewe-vm if file not found;
-				pref.log("IllegalArgumentException");
+				pref.log("[MovingMap:setMap]IllegalArgumentException",e,true);
 				if (mmp.mapImage != null) {
 					mmp.removeImage(mmp.mapImage);
 					mmp.mapImage.free();
@@ -1689,7 +1707,7 @@ public final class MovingMap extends Form implements ICommandListener {
 				(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4218, "Could not load map: \n")+ newmap.getImageFilename(), FormBase.OKB)).execute();
 				dontUpdatePos = saveIgnoreStatus;
 			} catch (OutOfMemoryError e) {
-				pref.log("OutOfMemoryError");
+				pref.log("[MovingMap:setMap]OutOfMemoryError",e,true);
 				if (mmp.mapImage != null) {
 					mmp.removeImage(mmp.mapImage);
 					mmp.mapImage.free();
@@ -1704,7 +1722,7 @@ public final class MovingMap extends Form implements ICommandListener {
 						FormBase.OKB)).execute();
 				dontUpdatePos = saveIgnoreStatus;
 			}catch (SystemResourceException e) {
-				pref.log("SystemResourceException");
+				pref.log("[MovingMap:setMap]SystemResourceException",e,true);
 				if (mmp.mapImage != null) {
 					mmp.removeImage(mmp.mapImage);
 					mmp.mapImage.free();
@@ -1919,14 +1937,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		dontUpdatePos = savegpsstatus;
 	}
 
-	/*	public void gotFocus(int how) {
-		super.gotFocus(how);
-		Dimension ws = getSize(null);
-		onWindowResize(ws.width, ws.height);
-		Vm.debug(ws.width + " h: "+ws.height);
-		this.setPreferredSize(width, height)
-	}
-	 */
 	public void onEvent(Event ev){
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			running = false;
@@ -2254,7 +2264,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		else gpspos = null;
 		ListBox l = new ListBox(mm.maps, gpspos, mm.getGotoPos(), mm.currentMap);
 		if(l.execute() == FormBase.IDOK){
-//			Vm.debug("Trying map: " + l.selectedMap.fileName);
 			mm.autoSelectMap = false;
 			if (l.selectedMap.isInBound(mm.posCircle.where) || l.selectedMap.getImageFilename().length()==0) {
 				mm.setMap(l.selectedMap, mm.posCircle.where);
@@ -2522,7 +2531,6 @@ class ListBox extends Form{
 			if (it != ""){
 				it = it.substring(0,it.indexOf(':'));
 				mapNum = Convert.toInt(it);
-				//	Vm.debug("Kartennummer: " + mapNum);
 				try {
 				selectedMap = ((MapListEntry)maps.get(mapNum)).getMap();
 				selected = true;

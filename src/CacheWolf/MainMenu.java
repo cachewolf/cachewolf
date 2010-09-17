@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import CacheWolf.exp.ASCExporter;
@@ -12,13 +37,13 @@ import CacheWolf.exp.OziExporter;
 import CacheWolf.exp.SpoilerPOIExporter;
 import CacheWolf.exp.TPLExporter;
 import CacheWolf.exp.TomTomExporter;
+import CacheWolf.imp.FieldnotesImporter;
+import CacheWolf.imp.GCVoteImporter;
 import CacheWolf.imp.GPXImporter;
 import CacheWolf.imp.LOCXMLImporter;
-import CacheWolf.imp.FieldnotesImporter;
 import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.imp.OCXMLImporterScreen;
 import CacheWolf.imp.SpiderGC;
-import CacheWolf.imp.GCVoteImporter;
 import CacheWolf.navi.MapImporter;
 import CacheWolf.navi.MapLoaderGui;
 import CacheWolf.navi.SelectMap;
@@ -97,9 +122,9 @@ public class MainMenu extends MenuBar {
 				loadcaches     = new MenuItem(MyLocale.getMsg(129,"Import GPX")),
 				loadOC         = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")),
 				spider         = new MenuItem(MyLocale.getMsg(131,"Download from geocaching.com")),
-				spiderQuick    = new MenuItem(MyLocale.getMsg(138,"from GC quick")),
 				spiderRoute,
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")),
+				spiderQuick    = new MenuItem(MyLocale.getMsg(138,"from GC quick")),
 				update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data")),
 				mnuSeparator,
 				loadGCVotes    = new MenuItem(MyLocale.getMsg(1208,"Import ratings from GCVote")),
@@ -470,7 +495,7 @@ public class MainMenu extends MenuBar {
 				loc.doIt(LocExporter.MODE_AUTO);
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
 				gpsBabelCommand = pref.gpsbabel+" "+pref.garminGPSBabelOptions+" -i geo -f "+ tmpFileName +" -o garmin -F " + pref.garminConn +":";
-				if (pref.debug)	pref.log( gpsBabelCommand );
+				pref.log("[MainMenu:onEvent] "+gpsBabelCommand);
 				try {
 					// this will *only* work with ewe.jar at the moment
 					ewe.sys.Process p = Vm.exec( gpsBabelCommand );
@@ -737,7 +762,6 @@ public class MainMenu extends MenuBar {
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == sysinfo){
-				//Vm.debug("Checking system...");
 				StringBuffer sb=new StringBuffer(400);
 				Font f = mApp.guiFont;
 				sb.append(MyLocale.getMsg(121,"Profile"));
@@ -798,6 +822,7 @@ public class MainMenu extends MenuBar {
 				sb.append(Version.getReleaseDetailed());
 				sb.append("<br>");
 				InfoScreen is = new InfoScreen(sb.toString(), "System", false,pref);
+				pref.log(STRreplace.replace(sb.toString(),"<br>",Preferences.NEWLINE),null);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == chkVersion){
@@ -826,7 +851,6 @@ public class MainMenu extends MenuBar {
 
 		SpiderGC spider = new SpiderGC(pref, profile, false);
 		OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
-		//Vm.debug("ByPass? " + profile.byPassIndexActive);
 		Vm.showWait(true);
 		boolean alreadySaid = false;
 		boolean alreadySaid2 = false;

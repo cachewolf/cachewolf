@@ -1,6 +1,38 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi;
  
+import net.ax86.GPS;
+import net.ax86.GPSException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import CacheWolf.CWPoint;
+import CacheWolf.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
@@ -10,18 +42,9 @@ import ewe.io.SerialPort;
 import ewe.io.SerialPortOptions;
 import ewe.net.Socket;
 import ewe.sys.mThread;
-import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.mString;
-import CacheWolf.CacheHolder;
-import CacheWolf.navi.MovingMap;
-
-// Stuff needed by the GpsdThread class:
-import net.ax86.GPS;
-import net.ax86.GPSException;
-import org.json.JSONObject;
-import org.json.JSONException;
 
 
 /**
@@ -202,7 +225,6 @@ public class Navigate {
 	public void ticked() {
 		int fix = gpsPos.getFix();
 		if (fix > 0 && (gpsPos.getSats()>= 0)) {
-			//Vm.debug("currTrack.add: before");
 			if (curTrack == null) curTrack = new Track(trackColor);
 			try {
 				curTrack.add(gpsPos);
@@ -215,7 +237,6 @@ public class Navigate {
 				SkyOrientation.getSunAzimut(gpsPos.Time, gpsPos.Date, gpsPos.latDec, gpsPos.lonDec);
 				double jd = SkyOrientation.utc2juliandate(gpsPos.Time, gpsPos.Date);
 				skyOrientationDir = SkyOrientation.getLuminaryDir(luminary, jd, gpsPos);
-				// ewe.sys.Vm.debug("neu: "+ skyOrientationDir.lonDec+ "jd: " + jd);
 			} catch (NumberFormatException e) { // irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
 				skyOrientationDir.set(-361, -361); // any value out of range (bigger than 360) will prevent drawArrows from drawing it
 			}
@@ -328,14 +349,6 @@ class GpsdThread extends mThread {
 			if (noData > 5) {
 				myGPS.noDataError();
 			}
-
-/*
-			Vm.debug( "------------------" );
-			Vm.debug( "noData        : " + noData );
-			Vm.debug( "notInterpreted: " + notInterpreted );
-			Vm.debug( "gotValidData  : " + gotValidData );
-*/
-			//myGPS.printAll();
 		} // while
 
 		myGPS.noData();
@@ -384,7 +397,6 @@ class OldGpsdThread extends mThread{
 			if (gpsdSocket != null)	{
 				gpsResult = getGpsdData("ADPQTV\r\n");
 				if (gpsResult!=null) {
-					//Vm.debug("P -> " + gpsResult);
 					noData = 0;
 					if (myGPS.examineOldGpsd(gpsResult))
 						notinterpreted = 0;
@@ -469,7 +481,6 @@ class SerialThread extends mThread{
 		while (run){
 			try {
 				sleep(1000);
-				//Vm.debug("Loop? " + noData);
 				noData++;
 				if (noData > 5) { myGPS.noDataError(); }
 			} catch (InterruptedException e) {
@@ -477,7 +488,6 @@ class SerialThread extends mThread{
 			}
 			if (comSp != null)	{
 				comLength = comSp.nonBlockingRead(comBuff, 0 ,comBuff.length);
-				//Vm.debug("Length: " + comBuff.length);
 				if (comLength > 0)	{
 					noData = 0;
 					String str = mString.fromAscii(comBuff, 0, comLength);
@@ -486,7 +496,6 @@ class SerialThread extends mThread{
 							tcpConn.write(comBuff, 0, comLength);
 						} catch (IOException e) { tcpForward = false; }
 					}
-					//Vm.debug(str);
 					if (myGPS.examine(str)) notinterpreted = 0; else notinterpreted++;
 					if (notinterpreted > 22) myGPS.noInterpretableData();
 				}

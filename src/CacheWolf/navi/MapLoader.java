@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
@@ -8,14 +33,25 @@ import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.STRreplace;
 import CacheWolf.utils.FileBugfix;
-import ewe.ui.*;
-import ewe.io.*;
-import ewe.fx.*;
-import ewe.util.*;
-import ewe.sys.*;
+import ewe.fx.Point;
+import ewe.io.File;
+import ewe.io.FileBase;
+import ewe.io.FileInputStream;
+import ewe.io.FileOutputStream;
+import ewe.io.IOException;
+import ewe.net.Socket;
+import ewe.sys.Convert;
 import ewe.sys.Double;
-import ewe.net.*;
-import java.lang.Math;
+import ewe.sys.Time;
+import ewe.sys.Vm;
+import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
+import ewe.util.ByteArray;
+import ewe.util.Properties;
+import ewe.util.StandardComparer;
+import ewe.util.Utils;
+import ewe.util.Vector;
+import ewe.util.mString;
 
 
 /**
@@ -284,7 +320,6 @@ public class MapLoader {
 				String quelle = connImg.getRedirectTo();
 				boolean redirrected = false;
 				while (i < 5 && (quelle != null || (forceredirect && !redirrected))) { // this is necessary because expedia sometimes doesn't directly anser with the redirect to the map-image, but give a page in between. Solved the problem by retrying see also: http://www.geoclub.de/viewtopic.php?p=305071#305071
-					//Vm.debug("Redirect: " + i + connImg.getRedirectTo());
 					if (quelle != null) {
 						redirrected = true;
 						sockImg.close();
@@ -308,12 +343,9 @@ public class MapLoader {
 				fos.close();
 				sockImg.close();
 			}
-			//Vm.debug("done");
 		}catch(IOException e){
 			throw new IOException(MyLocale.getMsg(4810, "Error while downloading or saving map:\n") + e.getMessage());
 		}
-//		(new MessageBox("Error", "Error saving calibration file:\n"+e.getMessage(), MessageBox.OKB)).exec();
-
 	}
 }
 
@@ -540,8 +572,6 @@ class WebMapService extends OnlineMapService {
 		ret[TOPRIGHT_INDEX].shift(ret[TOPLEFT_INDEX].getNorthing() - ret[BUTTOMRIGHT_INDEX].getNorthing(), 0); // was: new GkPoint(ret[BUTTOMRIGHT_INDEX].getEasting(region), ret[TOPLEFT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth, ret[TOPLEFT_INDEX].lengthOfStripe0);
 		ret[BUTTOMLEFT_INDEX] = ret[BUTTOMRIGHT_INDEX].cloneIt();
 		ret[BUTTOMLEFT_INDEX].shift(ret[TOPLEFT_INDEX].getEasting() - ret[BUTTOMRIGHT_INDEX].getEasting(), 1); // was: new GkPoint(ret[TOPLEFT_INDEX].getEasting(region), ret[BUTTOMRIGHT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth, ret[TOPLEFT_INDEX].lengthOfStripe0);
-		//Vm.debug("rot left direkt: " + TransformCoordinates.GkToWgs84(ret[TOPLEFT_INDEX], region).getBearing(TransformCoordinates.GkToWgs84(ret[BUTTOMLEFT_INDEX], region)));
-		//Vm.debug("rot right direkt: " + TransformCoordinates.GkToWgs84(ret[TOPRIGHT_INDEX], region).getBearing(TransformCoordinates.GkToWgs84(ret[BUTTOMRIGHT_INDEX], region)));
 		//ret[2] = TransformCoordinates.wgs84ToGermanGk(topright, coordinateReferenceSystem[crs]);
 		//ret[3] = TransformCoordinates.wgs84ToGermanGk(buttomleft, coordinateReferenceSystem[crs]);
 		return ret;
@@ -666,8 +696,6 @@ class WebMapService extends OnlineMapService {
 			gk[BUTTOMLEFT_INDEX].shift(metersperpixalhorizontal / 2, 1);
 			gk[BUTTOMLEFT_INDEX].shift(metersperpixalvertical / 2, 0);
 
-			//Vm.debug("\n" + maparea.topleft.toString(CWPoint.LAT_LON));
-			//Vm.debug(TransformCoordinates.germanGkToWgs84(TransformCoordinates.wgs84ToGermanGk(maparea.topleft)).toString(CWPoint.LAT_LON));
 			topleft.set(gk[TOPLEFT_INDEX].getNorthing(), gk[TOPLEFT_INDEX].getEasting());
 			buttomright.set(gk[BUTTOMRIGHT_INDEX].getNorthing(), gk[BUTTOMRIGHT_INDEX].getEasting());
 			topright.set(gk[TOPRIGHT_INDEX].getNorthing(), gk[TOPRIGHT_INDEX].getEasting());
@@ -688,14 +716,6 @@ class WebMapService extends OnlineMapService {
 
 		MapInfoObject ret = new MapInfoObject();
 		ret.evalGCP(georef, pixelsize.x, pixelsize.y, coordinateReferenceSystem[getCrs(maparea.getCenter())]);
-		//Vm.debug("\n nach kal");
-		//Vm.debug("fehler tl: " + ret.calcLatLon(0, 0).getDistance(maparea.topleft)*1000);
-		//Vm.debug("fehler tl: " + ret.calcLatLon(0, 0).getBearing(maparea.topleft));
-		//Vm.debug("fehler br: " + ret.calcLatLon(pixelsize.x, pixelsize.y).getDistance(maparea.buttomright)*1000);
-		//Vm.debug("fehler br: " + ret.calcLatLon(pixelsize.x, pixelsize.y).getBearing(maparea.buttomright));
-		//Vm.debug(ret.calcLatLon(pixelsize.x, pixelsize.y).toString(CWPoint.LAT_LON));
-		//Vm.debug(ret.calcLatLon(pixelsize.x, 0).toString(CWPoint.LAT_LON));
-		//Vm.debug(ret.calcLatLon(0, pixelsize.y).toString(CWPoint.LAT_LON));
 		return ret;
 	}
 }

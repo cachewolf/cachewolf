@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import ewe.data.Property;
@@ -300,7 +325,6 @@ public HttpConnection(String url)
 		document = url;
 	} else {
 		url = FileBase.fixupPath(url);
-		//ewe.sys.Vm.debug("url: "+url);
 		port = 80;
 		String uu = url.toLowerCase();
 		if (uu.startsWith("http://")){
@@ -443,12 +467,9 @@ private int makeRequest(Socket sock,TextCodec td) throws IOException
 		if (idx == -1) continue;
 		String name = s.substring(0,idx).trim().toLowerCase();
 		String value = s.substring(idx+1).trim();
-		//if (document.endsWith("html")) ewe.sys.Vm.debug(document+": "+name+" = "+value);
 		documentProperties.add(name,value);
 	}
 	contentLength = documentProperties.getInt("content-length",-1);
-	//if (document.endsWith("?") || document.endsWith(".gif"))
-	//ewe.sys.Vm.debug(documentProperties.toString());
 	return responseCode;
 }
 
@@ -512,87 +533,8 @@ private int readInChunkedHeader(Socket connection,ByteArray buff,CharArray chBuf
 		clen *= 16;
 		clen += c <= '9' ? c-'0' : c-'A'+10;
 	}
-	//ewe.sys.Vm.debug("Length: "+length+" = "+clen);
 	return clen;
 }
-/*
-//===================================================================
-Handle readInSomeData(final Socket connection,final int numBytes,final ByteArray dest)
-//===================================================================
-{
-	return new ewe.sys.TaskObject(){
-		protected void doRun(){
-			try{
-				ByteArray ba = dest;
-				if (ba == null) ba = new ByteArray();
-				ba.clear();
-				int size = numBytes;
-				if (buffer == null) buffer = new byte[10240];			
-				handle.setProgress(0.0f);
-				while(size > 0){
-					int toRead = size > buffer.length ? buffer.length : size;
-					toRead = connection.read(buffer,0,toRead);
-					if (toRead <= 0) throw new IOException();
-					ba.append(buffer,0,toRead);
-					size -= toRead;
-					handle.setProgress((float)((double)(numBytes-size)/numBytes));
-				}
-				handle.setProgress(1.0f);
-				handle.returnValue = ba;
-				handle.set(Handle.Succeeded);
-				return;
-			}catch(Exception e){
-				handle.failed(e);
-			}finally{
-				if (!keepAliveMode || ((handle.check() & handle.Success) == 0))
-					connection.close();
-			}
-		}
-	}.startTask();
-}
-*/
-/*
-//===================================================================
-Handle readInChunkedData(final Socket connection)
-//===================================================================
-{
-	return new ewe.sys.TaskObject(){
-		protected void doRun(){
-			try{
-				ByteArray ba = new ByteArray();
-				while(true){
-					handle.setProgress(-1f);
-					int size = readInChunkedHeader(connection,null,null);
-					if (size == 0) break;
-					if (buffer == null) buffer = new byte[10240];			
-					while(size > 0){
-						int toRead = size > buffer.length ? buffer.length : size;
-						//ewe.sys.Vm.debug("Reading: "+toRead);
-						toRead = connection.read(buffer,0,toRead);
-						if (toRead <= 0) throw new IOException();
-						ba.append(buffer,0,toRead);
-						size -= toRead;
-						handle.setProgress(-1f);
-					}
-					//
-					// Should be a CRLF after the data.
-					//
-					while(true){
-						int got = connection.read();
-						if (got == -1) throw new IOException();
-						if (got == '\n') break;
-					}
-				}
-				handle.returnValue = ba;
-				handle.set(Handle.Succeeded);
-				return;
-			}catch(IOException e){
-				handle.failed(e);
-			}
-		}
-	}.startTask();
-}
-*/
 /**
  * Read in all the data from the Socket.
  * @param connection The socket returned by a connect() call.
@@ -632,7 +574,6 @@ public Handle readInData()
 private InputStream getInputStream()
 //===================================================================
 {
-	//ewe.sys.Vm.debug(documentProperties.toString());
 	int length = documentProperties.getInt("content-length",-1);
 	if ("chunked".equals(documentProperties.getValue(encodings,null)))
 		return new MemoryStream(true){
@@ -763,7 +704,6 @@ private Handle connectAsync(final TextCodec serverTextDecoder)
 				// Now wait until connected.
 				//
 				if (!waitOnSuccess(sh,true)) return;
-				//ewe.sys.Vm.debug("Socket connected.");
 				//
 				// Report that the socket connection was made.
 				// Now have to decode the data.
@@ -771,7 +711,6 @@ private Handle connectAsync(final TextCodec serverTextDecoder)
 				handle.setFlags(SocketConnected,0);
 				//
 				makeRequest(sock,serverTextDecoder);
-				//ewe.sys.Vm.debug("Request made.");
 				handle.returnValue = connectedSocket = sock;
 				handle.setFlags(Handle.Success,0);
 				return;
@@ -793,69 +732,9 @@ private Handle connectAsync(final TextCodec serverTextDecoder)
  * the document properties list.
  * @exception IOException if there was an error connecting or getting the data.
  */
-//===================================================================
-public Socket connect() throws IOException
-//===================================================================
-{
+public Socket connect() throws IOException {
 	return (Socket)waitOnIO(connectAsync(),"Could not connect.");
 }
-/**
- * Connect to the server and save the socket for later use as the "connectedSocket" field.
- * @return the connected socket - before any data is sent or read.
- * @exception IOException if a connection could not be made.
- * FIXME: never referenced
- */
-////===================================================================
-//public Socket connectSocketOnly() throws IOException
-////===================================================================
-//{
-//	//if (connectedSocket != null) return connectedSocket;
-//	//return connectedSocket = new Socket(host,port);
-//	if (openSocket != null) return openSocket;
-//	return openSocket = new Socket(host,port);
-//}
-
-/*
-//===================================================================
-public Handle connectAsync2()
-//===================================================================
-{
-	return new ewe.sys.Vm.TaskObject(){
-		protected void doRun(){
-			try{
-				Socket sock = new Socket(host,port);
-				handle.setFlags(SocketConnected,0);
-								
-			}catch(Exception e){
-				handle.set(Handle.Failed);
-				return;
-			}
-		}
-	}.stratTask();
 }
-*/
-/*
-//===================================================================
-public static void main(String args[]) throws IOException, InterruptedException
-//===================================================================
-{
-	ewe.sys.Vm.startEwe(args);
-	HttpConnection hp = new HttpConnection("192.168.0.52",80,"/eweDemo.zip");
-	Socket sock = hp.connect();
-	Handle h = hp.readInData(sock);
-	ProgressBarForm pbf = new ProgressBarForm();
-	pbf.showStop = true;
-	pbf.execute(h,"Reading...");
-	pbf.showMainTask = false;
-	pbf.showSubTask = true;
-	h.waitUntilStopped();
-	if ((h.check() & h.Success) != 0) ewe.sys.Vm.debug("Success!!");
-	sock.close();
-	ewe.sys.Vm.exit(0);
-}
-*/
-//##################################################################
-}
-//##################################################################
 
 

@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi.touchControls;
 
 import CacheWolf.Global;
@@ -15,33 +40,19 @@ import ewe.util.Vector;
  */
 
 public class MovingMapControls implements ICommandListener {
-
 	private static final String ROLE_ZOOM_MANUALLY = "zoom_manually";
-
 	private static final String ROLE_FILL_WHITE = "fill_white";
-
 	private static final String ROLE_SHOW_CACHES = "show_caches";
-
 	private static final String ROLE_SHOW_MAP = "show_map";
-
 	public static final String ROLE_MENU = "menu";
-	
 	public static final String ROLE_DONE = "done";
-
 	public static final String ROLE_WORKING = "working";
-
 	Vector buttons = null;
-	
 	Vector visibleImages = null;
-
 	private boolean vga;
-
 	private MovingMap movingMap;
-
 	private int lastTime = Vm.getTimeStamp();
-
 	private Hashtable roles = new Hashtable();
-
 	public MovingMapControls(MovingMap movingMap) {
 		if (movingMap == null) {
 			throw new IllegalArgumentException("moving map not set");
@@ -58,8 +69,7 @@ public class MovingMapControls implements ICommandListener {
 		buttons = movingMapControlSettings.getMenuItems();
 		
 		checkStatesofRole(Global.getPref());
-		
-		
+				
 		visibleImages = new Vector();
 
 		roles.put(ROLE_WORKING, new Role());

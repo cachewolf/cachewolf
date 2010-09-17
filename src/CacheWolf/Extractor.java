@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 
@@ -28,9 +53,7 @@ public class Extractor  {
 		public Extractor(String sTxt, String st, String e, int sOff, boolean only){
 			startOffset = sOff;
 			searchText = sTxt;
-			//Vm.debug("Start " + st);
 			end = e;
-			//Vm.debug("End: " + e);
 			start = st;
 			betweenonly = only;
 		}
@@ -41,7 +64,6 @@ public class Extractor  {
 		 */
 		public void setSource(String sTxt){
 			searchText = sTxt;
-			//Vm.debug("Searchtext: " + searchText);
 			startOffset = 0;
 		}
 		
@@ -63,7 +85,6 @@ public class Extractor  {
 			if (searchText == null) return new String(); //maby null should 
 			int idxStart = searchText.indexOf(start,startOffset);
 			int idxEnd = searchText.indexOf(end, idxStart+start.length());
-			////Vm.debug("Start: " + Convert.toString(idxStart) + " End: " + Convert.toString(idxEnd));
 			if(idxEnd == -1) idxEnd = searchText.length(); //index counts from zero length from 1 but the last char is not included in substr and substr accepts length +1 (but not length+2)
 			startOffset = idxEnd;
 			tst = new String();

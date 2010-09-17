@@ -1,47 +1,46 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
-import ewe.ui.*;
-import ewe.sys.*;
+import ewe.sys.Device;
+import ewe.ui.Editor;
+import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
 
-public class CacheWolf extends Editor{
-	
-	
+public class CacheWolf{
 	public static void main(String vmargs[])
 	{
-		//start with parameters:
-		//args[0]: spider
-		//args[1]: distance
 		ewe.sys.Vm.startEwe(vmargs);
-/*		Gui.screenIs(Gui.PDA_SCREEN);
-		Rect s = (Rect)Window.getGuiInfo(Window.INFO_SCREEN_RECT,null,new Rect(),0);
-		//Gui.screenIs(Gui.PDA_SCREEN)
-		if (Vm.isMobile() && s.height >= 400) {
-			Font defaultGuiFont = mApp.findFont("gui");
-			int sz = (int)(defaultGuiFont.getSize());
-			Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz); 
-			mApp.addFont(newGuiFont, "gui"); 
-			mApp.fontsChanged();
-			mApp.mainApp.font = newGuiFont;
-		}
-*/		
-		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-			Vm.setSIP(Vm.SIP_LEAVE_BUTTON);
-		}
 		
 		// get program command line parameters and switches
 		String[] args = vmargs; // Vm.getProgramArguments(); <-- only works in eclipse, but mixes the letters in the ewe-vm (tested in ewe-1.49 on win xp)
 		String configfile = null;
 		boolean debug = false;
 		if(args.length > 0){
-			/* 
-			if(args[0].equals("test")){
-				Test t=new Test(); 
-				t.testAll();
-			}
-			*/
 			for (int i=0; i < args.length ; i++) {
-				// Vm.debug("prog: " + args[i]);
-				// Vm.debug("vm: " + vmargs[i]);
 				if (args[i] != null && args[i].length() > 1 &&
 						(args[i].startsWith("-") || args[i].startsWith("/")) ) {
 					String c = args[i].substring(1, args[i].length());
@@ -56,20 +55,14 @@ public class CacheWolf extends Editor{
 						}
 					}
 					if (c.equalsIgnoreCase("debug")) {
-						//Vm.debug("d");
 						debug = true;
 					}
 
 				}
 			}
 		}
-		/*
-		if (debug) {
-			Vm.debug("prg-args: " + args.length);
-			Vm.debug("vm-args: " + vmargs.length);
-		}
-		*/
-		
+		// debug = true will permanently set this in pref.xml
+		// !!! debug = false will be overwritten by reading pref.xml
 		Editor mainF = new MainForm(debug, configfile);
 		Device.preventIdleState(true);
 		mainF.execute();

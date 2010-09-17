@@ -1,11 +1,34 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi.touchControls;
 
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
 import CacheWolf.navi.touchControls.MovingMapControlItemText.TextOptions;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
-import ewe.fx.Dimension;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.sys.Vm;
@@ -143,7 +166,7 @@ public class MovingMapControlSettings extends MinML {
 				try {
 					fontsize = Integer.parseInt(fontsizeString);
 				} catch (Exception e) {
-					Vm.debug("fontsize not an int " + fontsizeString);
+					Global.getPref().log("fontsize not an int " + fontsizeString,e);
 				}
 			}
 		}
@@ -191,16 +214,16 @@ public class MovingMapControlSettings extends MinML {
 			}
 
 			if (xpos < 0) {
-				Vm.debug("the x position of the button has to be set! "
+				Global.getPref().log("the x position of the button has to be set! "
 						+ "use attribute '" + BUTTON_ATTR_FROM_LEFT + "' or '"
-						+ BUTTON_ATTR_FROM_RIGHT + "'");
+						+ BUTTON_ATTR_FROM_RIGHT + "'",null);
 				xpos = 0;
 			}
 
 			if (ypos < 0) {
-				Vm.debug("the y position of the button has to be set! "
+				Global.getPref().log("the y position of the button has to be set! "
 						+ "use attribute '" + BUTTON_ATTR_FROM_TOP + "' or '"
-						+ BUTTON_ATTR_FROM_BOTTOM + "'");
+						+ BUTTON_ATTR_FROM_BOTTOM + "'",null);
 				ypos = 0;
 			}
 
@@ -217,13 +240,13 @@ public class MovingMapControlSettings extends MinML {
 			String alignText = attributes.getValue(BUTTON_ATTR_ALIGNTEXT);
 			String context = attributes.getValue(BUTTON_ATTR_CONTEXT);
 			if (visibility == null) {
-				Vm.debug("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY
-						+ " not set!");
+				Global.getPref().log("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY
+						+ " not set!",null);
 				return;
 			}
 			if (action == null) {
-				Vm.debug("read MovingMap settings: " + BUTTON_ATTR_ACTION
-						+ " not set!");
+				Global.getPref().log("read MovingMap settings: " + BUTTON_ATTR_ACTION
+						+ " not set!",null);
 				return;
 			}
 			int alphavalue = getIntFromFile(attributes, BUTTON_ATTR_ALPHA, -1);
@@ -232,7 +255,7 @@ public class MovingMapControlSettings extends MinML {
 
 			if (imageLocation == null) {
 				// something not set
-				Vm.debug("Image for '" + localeDefault + "' not found");
+				Global.getPref().log("Image for '" + localeDefault + "' not found",null);
 				return;
 			}
 			else {
@@ -280,7 +303,7 @@ public class MovingMapControlSettings extends MinML {
 			try {
 				defaultValue = Integer.parseInt(entry);
 			} catch (Exception e) {
-				Vm.debug("Can not read int for filed " + field + ": " + entry);
+				Global.getPref().log("Can not read int for filed " + field + ": " + entry,e);
 			}
 		}
 		return defaultValue;
