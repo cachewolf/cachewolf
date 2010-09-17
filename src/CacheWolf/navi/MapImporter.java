@@ -1,12 +1,29 @@
-package CacheWolf.navi;
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
 
-import ewe.util.*;
-import ewe.io.*;
-import ewe.filechooser.*;
-import ewe.sys.*;
-import ewe.ui.*;
-import ewe.graphics.*;
-import ewe.fx.*;
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
+package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
@@ -15,6 +32,41 @@ import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
+import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
+import ewe.fx.Color;
+import ewe.fx.Graphics;
+import ewe.fx.Image;
+import ewe.fx.ImageInfo;
+import ewe.fx.PixelBuffer;
+import ewe.fx.Point;
+import ewe.fx.mImage;
+import ewe.graphics.AniImage;
+import ewe.graphics.InteractivePanel;
+import ewe.io.File;
+import ewe.io.FileBase;
+import ewe.io.FileInputStream;
+import ewe.io.FileNotFoundException;
+import ewe.io.FileOutputStream;
+import ewe.io.FileReader;
+import ewe.io.IOException;
+import ewe.io.InputStream;
+import ewe.io.OutputStream;
+import ewe.sys.Convert;
+import ewe.sys.Vm;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlEvent;
+import ewe.ui.Event;
+import ewe.ui.Form;
+import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
+import ewe.ui.ScrollBarPanel;
+import ewe.ui.mButton;
+import ewe.ui.mLabel;
+import ewe.util.ByteArray;
+import ewe.util.Vector;
+import ewe.util.mString;
 
 /**
  *	This class is for importing and manually georeferencing maps
@@ -70,11 +122,10 @@ public class MapImporter extends Form {
 		try {
 			wfl.loadwfl(mapsPath, thisMap);
 		}catch(FileNotFoundException ex){
-			//	Vm.debug("Cannot load world file!");
 		}catch (IOException ex) { // is thrown if lat/lon out of range
 			MessageBox tmpMB=new MessageBox(MyLocale.getMsg(312, "Error"), ex.getMessage(), FormBase.OKB);
 			tmpMB.execute();
-			Vm.debug("Cannot load world file!");
+			pref.log("Cannot load world file!",ex);
 		}
 		mapInteractivePanel pane = new mapInteractivePanel(this);
 		scp = new CacheWolf.MyScrollBarPanel(pane);
@@ -157,8 +208,6 @@ public class MapImporter extends Form {
 			currfile = files[i];
 			inf.setInfo(MyLocale.getMsg(4110,"Loading: ")+ "\n" + currfile + "\n("+(num-i)+"/"+num+")");
 			//Copy the file
-			//Vm.debug("Copy: " + inDir.getFullPath() + "/" +files[i]);
-			//Vm.debug("to: " + mapsPath + files[i]);
 			curInFullPath = inDir.getFullPath() + "/" +currfile;
 			curOutFullPath = mapsPath + currfile;
 			boolean imageerror = false;
@@ -200,7 +249,6 @@ public class MapImporter extends Form {
 				GCPoint gcp3 = new GCPoint();
 				GCPoint gcp4 = new GCPoint();
 				GCPoint gcpG = new GCPoint();
-				//Vm.debug("Found file: " + inDir.getFullPath() + "/" + rawFileName + ".map");
 				try {
 					inMap = new FileReader(inDir.getFullPath() + "/" + rawFileName + ".map");
 					while((line = inMap.readLine()) != null){
@@ -290,7 +338,6 @@ public class MapImporter extends Form {
 							}
 							 */
 							wfl.evalGCP(GCPs, imageWidth, imageHeight);
-							//Vm.debug("Saving .map file to: " + mapsPath + "/" + rawFileName + ".wfl");
 							wfl.saveWFL(mapsPath, rawFileName);
 							GCPs.clear();
 						} // if
@@ -361,7 +408,6 @@ class mapInteractivePanel extends InteractivePanel{
 	 *	Event handler to catch clicks on the map
 	 */
 	public void imageClicked(AniImage which, Point pos){
-		//Vm.debug("X = " +pos.x + " Y = " + pos.y);
 		Image img = new Image(31, 31);
 		Graphics g = new Graphics(img);
 		g.setColor(new Color(0,0,0));

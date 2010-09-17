@@ -1,12 +1,62 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.fx.*;
-import ewe.io.*;
-import ewe.sys.*;
-import ewe.ui.*;
-import ewe.util.*;
+import ewe.fx.Color;
+import ewe.fx.IconAndText;
+import ewe.fx.Point;
+import ewe.fx.mImage;
+import ewe.io.BufferedWriter;
+import ewe.io.FileReader;
+import ewe.io.FileWriter;
+import ewe.io.PrintWriter;
+import ewe.sys.Convert;
+import ewe.ui.CellPanel;
+import ewe.ui.Control;
+import ewe.ui.ControlConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.DragContext;
+import ewe.ui.Event;
+import ewe.ui.FormBase;
+import ewe.ui.Gui;
+import ewe.ui.IKeys;
+import ewe.ui.KeyEvent;
+import ewe.ui.MenuEvent;
+import ewe.ui.MenuItem;
+import ewe.ui.MessageBox;
+import ewe.ui.MultiPanelEvent;
+import ewe.ui.ScrollBarPanel;
+import ewe.ui.ScrollablePanel;
+import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
+import ewe.ui.mLabel;
+import ewe.ui.mList;
+import ewe.util.Comparer;
 
 /********************************************************
  * This class implements the core functionality of a flexible cachelist for collecting

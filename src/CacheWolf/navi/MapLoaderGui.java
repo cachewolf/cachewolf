@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
@@ -12,7 +37,26 @@ import ewe.fx.Point;
 import ewe.io.FileBase;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
-import ewe.ui.*;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.CheckBoxGroup;
+import ewe.ui.ControlConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.DataChangeEvent;
+import ewe.ui.Event;
+import ewe.ui.Form;
+import ewe.ui.FormBase;
+import ewe.ui.IKeys;
+import ewe.ui.MessageArea;
+import ewe.ui.MessageBox;
+import ewe.ui.UIConstants;
+import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
+import ewe.ui.mChoice;
+import ewe.ui.mComboBox;
+import ewe.ui.mInput;
+import ewe.ui.mLabel;
+import ewe.ui.mTabbedPanel;
 
 /**
  * @author pfeffer

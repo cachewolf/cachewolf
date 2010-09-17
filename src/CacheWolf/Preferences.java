@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import CacheWolf.imp.SpiderGC;
@@ -181,7 +206,7 @@ public class Preferences extends MinML{
 	/** Timer for logging GPS data */
 	public String logGPSTimer = "5";
 	/** The default font size */
-	public int fontSize = 11;
+	public int fontSize; 
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
 	/** True if the menu is to be displayed at the top of the screen */
 	public boolean menuAtTop=true;
@@ -404,7 +429,6 @@ public class Preferences extends MinML{
 	 * Method that gets called when a new element has been identified in pref.xml
 	 */
 	public void startElement(String name, AttributeList atts){
-		//Vm.debug("name = "+name);
 		lastName=name;
 		String tmp;
 		if(name.equals("browser")) {
@@ -912,9 +936,9 @@ public class Preferences extends MinML{
 	public String getHomeDir() {
 		String test;
 		test = Vm.getenv("HOMEDRIVE", ""); // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data>
-		log("Vm.getenv(HOMEDRIVE: " + test); // this works also in win32.exe (ewe-vm on win xp)
+		log("[Preferences:getHomeDir]" + test); // this works also in win32.exe (ewe-vm on win xp)
 		test += Vm.getenv("HOMEPATH", ""); // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data>
-		log("Vm.getenv(HOMEPATH: " + test); // this works also in win32.exe (ewe-vm on win xp)
+		log("[Preferences:getHomeDir]" + test); // this works also in win32.exe (ewe-vm on win xp)
 		if (test.length() == 0)	test = Vm.getenv("HOME", ""); // This should return on *nix system the home dir
 		if (test.length() == 0)	test = "/";
 		return test;
@@ -1073,7 +1097,6 @@ public class Preferences extends MinML{
 				//Stream strout = null;
 				//strout = logFile.toWritableStream(true);
 				logFile.print(text+NEWLINE);
-				//Vm.debug(text); Not needed - put <debug value="true"> into pref.xml
 			}catch(Exception ex){
 				Vm.debug("Error writing to log file!");
 			}finally{

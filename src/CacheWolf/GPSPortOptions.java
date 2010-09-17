@@ -1,8 +1,9 @@
     /*
-    CacheWolf is a software for PocketPC, Win and Linux that 
-    enables paperless caching. 
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
     It supports the sites geocaching.com and opencaching.de
-    
+
     Copyright (C) 2006  CacheWolf development team
     See http://developer.berlios.de/projects/cachewolf/
     for more information.
@@ -11,8 +12,7 @@
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation; version 2 of the License.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,23 +23,41 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     */
-
 package CacheWolf;
 
-import ewe.ui.*;
-import ewe.io.*;
-import ewe.ui.formatted.TextDisplay;
+import net.ax86.GPS;
+import net.ax86.GPSException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ewe.io.IOException;
+import ewe.io.SerialPort;
+import ewe.io.SerialPortOptions;
 import ewe.net.Socket;
 import ewe.reflect.FieldTransfer;
 import ewe.reflect.Reflect;
-import ewe.sys.*;
-import ewe.util.*;
-
-// Stuff needed by the GpsdThread class:
-import net.ax86.GPS;
-import net.ax86.GPSException;
-import org.json.JSONObject;
-import org.json.JSONException;
+import ewe.sys.Time;
+import ewe.sys.mThread;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlConstants;
+import ewe.ui.Editor;
+import ewe.ui.EditorEvent;
+import ewe.ui.FormBase;
+import ewe.ui.Gui;
+import ewe.ui.InputStack;
+import ewe.ui.MessageBox;
+import ewe.ui.ScrollBarPanel;
+import ewe.ui.ScrollablePanel;
+import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
+import ewe.ui.mChoice;
+import ewe.ui.mComboBox;
+import ewe.ui.mInput;
+import ewe.ui.mLabel;
+import ewe.ui.formatted.TextDisplay;
+import ewe.util.mString;
 
 
 /**

@@ -1,4 +1,5 @@
-/*
+    /*
+    GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
     It supports the sites geocaching.com and opencaching.de
@@ -7,11 +8,11 @@
     See http://developer.berlios.de/projects/cachewolf/
     for more information.
     Contact: 	bilbowolf@users.berlios.de
-		kalli@users.berlios.de
+    			kalli@users.berlios.de
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation version 2 of the License.
+    the Free Software Foundation; version 2 of the License.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,7 +23,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     */
-
 package CacheWolf.imp;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
@@ -339,6 +339,7 @@ public class SpiderGC{
 		getCaches(sq.topleft.latDec,sq.topleft.lonDec,sq.buttomright.latDec,sq.buttomright.lonDec, true);
 		int spiderErrors=0;
 		if (infB.isClosed) { Vm.showWait(false); return; } // or ask for download of intermediate result 
+		
 		for (int i = 0; i < cachesToLoad.size(); i++) {
 			String wpt = (String)cachesToLoad.get(i);
 			boolean is_found = wpt.indexOf("found")!=-1;
@@ -526,7 +527,6 @@ public class SpiderGC{
 					if (Global.mainTab.statBar!=null) Global.mainTab.statBar.updateDisplay("GC pages: "+page_number+" Caches added to CW: "+num_added);
 				}
 				else {
-					// Vm.debug("no Caches found");
 				}
 			}			
 		}
@@ -963,7 +963,7 @@ public class SpiderGC{
 		localInfB.exec();
 		try{
 			String doc = p.getProp("waypoint") + wayPoint;
-			completeWebPage = fetch(doc);
+			completeWebPage = fetch(doc,false);
 			pref.log("Fetched " + wayPoint);
 		}catch(Exception ex){
 			localInfB.close(0);
@@ -1010,7 +1010,7 @@ public class SpiderGC{
 		localInfB.exec();
 		try{
 			//Access the page once to get a viewstate
-			loginPage = fetch(loginPageUrl);   //http://www.geocaching.com/login/Default.aspx
+			loginPage = fetch(loginPageUrl,true);   //http://www.geocaching.com/login/Default.aspx
 			pref.log("[login]:Fetched login page "+loginPageUrl);
 			if (loginPage.equals("")) {
 				localInfB.close(0);
@@ -1199,7 +1199,7 @@ public class SpiderGC{
 		}
 		url = url + cacheTypeRestriction;
 		try{
-			htmlListPage = fetch(url);
+			htmlListPage = fetch(url,false);
 			pref.log("[getFirstListPage] Got first page "+url);
 		}catch(Exception ex){
 			pref.log("[getFirstListPage] Error fetching first list page "+url,ex,true);
@@ -1584,7 +1584,7 @@ public class SpiderGC{
 				ret = SPIDER_OK; // initialize value;
 				try{
 					String doc = p.getProp("getPageByName") + ch.getWayPoint() +((fetchAllLogs||ch.is_found())?p.getProp("fetchAllLogs"):"");
-					completeWebPage = fetch(doc);
+					completeWebPage = fetch(doc,false);
 					pref.log("Fetched: " + ch.getWayPoint());
 					if	( completeWebPage.equals("")) {
 						pref.log("Could not fetch " + ch.getWayPoint(),null);
@@ -2030,7 +2030,7 @@ public class SpiderGC{
 				Travelbug tb=new Travelbug(bug);
 				try{
 					infB.setInfo(oldInfoBox+MyLocale.getMsg(5514,"\nGetting bug: ")+SafeXML.cleanback(bug));
-					bugDetails = fetch(link);
+					bugDetails = fetch(link,false);
 					pref.log("[getBugs] Fetched TB details: "+bug);
 					Extractor exDetails = new Extractor(bugDetails,p.getProp("bugDetailsStart"),p.getProp("bugDetailsEnd"),0,Extractor.EXCLUDESTARTEND);
 					tb.setMission(exDetails.findNext());
@@ -2041,8 +2041,6 @@ public class SpiderGC{
 					pref.log("[getBugs] Could not fetch bug details",ex);
 				}
 			}
-			//Vm.debug("B: " + bug);
-			//Vm.debug("End? " + exBug.endOfSearch());
 		}
 		infB.setInfo(oldInfoBox);
 	}
@@ -2090,7 +2088,6 @@ public class SpiderGC{
 		Extractor exImgSrc = new Extractor(tst, "http://", "\"", 0, true);
 		while(exImgBlock.endOfSearch() == false){
 			imgUrl = exImgSrc.findNext();
-			//Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				// Optimize: img.groundspeak.com -> img.geocaching.com (for better caching purposes)
 				imgUrl = CacheImages.optimizeLink("http://" + imgUrl);
@@ -2152,7 +2149,6 @@ public class SpiderGC{
 		while(!exImgSrc.endOfSearch()){
 			imgUrl = exImgSrc.findNext();
 			imgComment = exImgComment.findNext();
-			//Vm.debug("Img Url: " +imgUrl);
 			if(imgUrl.length()>0){
 				imgUrl = "http://" + imgUrl;
 				try{
@@ -2418,7 +2414,7 @@ public class SpiderGC{
 	*	it will be a gc.com address. This method is used to obtain
 	*	the result of a search for caches screen.
 	*/
-	public static String fetch(String address) {
+	public static String fetch(String address, boolean withResponseHeaders) {
 		CharArray c_data;
 		try{
 			HttpConnection conn;
@@ -2443,7 +2439,9 @@ public class SpiderGC{
 			c_data = conn.readText(sock, codec);
 			sock.close();
 			pref.log("[fetch]:Read data ok "+address);
-			return getResponseHeaders(conn)+ c_data.toString();
+			if (withResponseHeaders)
+				return getResponseHeaders(conn)+c_data.toString();
+			else return c_data.toString();
 		}catch(IOException ioex){
 			pref.log("IOException in fetch", ioex);
 		}finally{
@@ -2537,7 +2535,7 @@ public class SpiderGC{
 		String bugList;
 		try{
 			//infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
-			bugList = fetch(p.getProp("getBugByName")+STRreplace.replace(SafeXML.clean(name)," ","+"));
+			bugList = fetch(p.getProp("getBugByName")+STRreplace.replace(SafeXML.clean(name)," ","+"),false);
 			pref.log("[getBugId] Fetched bugId: "+name);
 		}catch(Exception ex){
 			pref.log("[getBugId] Could not fetch bug list"+name,ex);
@@ -2571,9 +2569,9 @@ public class SpiderGC{
 		try{
 			//infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
 			if (guid.length()>10)
-				bugDetails = fetch(p.getProp("getBugByGuid")+guid);
+				bugDetails = fetch(p.getProp("getBugByGuid")+guid,false);
 			else
-				bugDetails = fetch(p.getProp("getBugById")+guid);
+				bugDetails = fetch(p.getProp("getBugById")+guid,false);
 			pref.log("[getBugMissionByGuid] Fetched TB detailsById: "+guid);
 		}catch(Exception ex){
 			pref.log("[getBugMissionByGuid] Could not fetch TB details "+guid,ex);
@@ -2600,7 +2598,7 @@ public class SpiderGC{
 	public String getBugMissionByTrackNr(String trackNr) {
 		String bugDetails;
 		try{
-			bugDetails = fetch(p.getProp("getBugByTrackNr")+trackNr);
+			bugDetails = fetch(p.getProp("getBugByTrackNr")+trackNr,false);
 			pref.log("[getBugMissionByTrackNr] Fetched bug detailsByTrackNr: "+trackNr);
 		}catch(Exception ex){
 			pref.log("[getBugMissionByTrackNr] getBugByTrackNr "+trackNr,ex);
@@ -2629,7 +2627,7 @@ public class SpiderGC{
 		String bugDetails;
 		String trackNr = TB.getTrackingNo();
 		try{
-			bugDetails = fetch(p.getProp("getBugByTrackNr")+trackNr);
+			bugDetails = fetch(p.getProp("getBugByTrackNr")+trackNr,false);
 			pref.log("[getBugMissionAndNameByTrackNr] Fetched TB getBugByTrackNr: "+trackNr);
 		}catch(Exception ex){
 			pref.log("[getBugMissionAndNameByTrackNr] Could not fetch bug details: "+trackNr,ex);

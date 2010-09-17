@@ -1,9 +1,54 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
-import ewe.ui.*;
-import ewe.fx.*;
-import ewe.sys.*;
-import ewe.util.*;
-import ewe.reflect.*;
+import ewe.fx.Color;
+import ewe.fx.DrawnIcon;
+import ewe.fx.Insets;
+import ewe.fx.Point;
+import ewe.reflect.FieldTransfer;
+import ewe.sys.Convert;
+import ewe.sys.Locale;
+import ewe.sys.Time;
+import ewe.sys.TimeOfDay;
+import ewe.sys.Vm;
+import ewe.ui.CardPanel;
+import ewe.ui.CellPanel;
+import ewe.ui.Control;
+import ewe.ui.ControlEvent;
+import ewe.ui.Editor;
+import ewe.ui.InputPanelTableModel;
+import ewe.ui.MultiPanel;
+import ewe.ui.TableCellAttributes;
+import ewe.ui.TableControl;
+import ewe.ui.TableEvent;
+import ewe.ui.TableModel;
+import ewe.ui.UIConstants;
+import ewe.ui.mButton;
+import ewe.util.Vector;
+import ewe.util.mString;
 
 
 public class DateTimeChooser extends Editor {
@@ -305,11 +350,9 @@ class dayChooserTableModel extends InputPanelTableModel {
 	
 	
 	void set(int day,int month,int year) {
-		//ewe.sys.Vm.debug(month+","+year);
 		numDays = Time.numberOfDays(month,year);
 		Time t = new Time(1,month,year);
 		firstDayIndex = Time.indexOfDayInWeek(t.dayOfWeek,locale)-1;
-		//ewe.sys.Vm.debug(""+firstDayIndex+", "+numDays);
 		int oldDay = chosenDay;
 		chosenDay = day;
 		if (oldDay != chosenDay) refreshDay(oldDay);
