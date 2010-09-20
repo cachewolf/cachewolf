@@ -559,7 +559,7 @@ public class CacheHolderDetail {
 				}
 				success = true;
 			} catch (Exception e) {
-				Global.getPref().log("Error renaming waypoint details", e, Global.getPref().debug);
+				Global.getPref().log("Error renaming waypoint details", e, true);
 				//TODO: any chance of a roll back?
 				//TODO: should we ignore a file not found?
 			}

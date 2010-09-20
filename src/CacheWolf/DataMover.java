@@ -328,7 +328,7 @@ public class DataMover {
 			fis.close();
 		}
 		catch (Exception ex){
-			Global.getPref().log("Filecopy failed: "+sFileSrc+"=>"+sFileDst,ex,Global.getPref().debug);
+			Global.getPref().log("Filecopy failed: "+sFileSrc+"=>"+sFileDst,ex,true);
 			return false;
 		}
 		return true;

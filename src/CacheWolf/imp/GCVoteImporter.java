@@ -158,13 +158,13 @@ public class GCVoteImporter extends MinML{
 			conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (compatible; Cachewolf; GCVoteImporter)");
 			conn.setRequestorProperty("Connection", "close");
 			conn.documentIsEncoded = true;
-			if (pref.debug) pref.log("[GCVote]:Connecting "+address);
+			pref.log("[GCVote]:Connecting "+address);
 			Socket sock = conn.connect();
-			if (pref.debug) pref.log("[GCVote]:Connect ok! "+address);
+			pref.log("[GCVote]:Connect ok! "+address);
 			JavaUtf8Codec codec = new JavaUtf8Codec();
 			c_data = conn.readText(sock, codec);
 			sock.close();
-			if (pref.debug) pref.log("[GCVote]:Read data ok "+address);
+			pref.log("[GCVote]:Read data ok "+address);
 			return c_data.toString();
 		}catch(IOException ioex){
 			pref.log("IOException in fetch", ioex);

@@ -1101,7 +1101,7 @@ public class Preferences extends MinML{
 				Vm.debug("Error writing to log file!");
 			}finally{
 				if (logFile != null) try {logFile.close(); } catch (IOException ioe) {
-					log("Ignored Exception", ioe, true);
+					// log("Ignored Exception", ioe, true);
 				}
 			}
 		}
