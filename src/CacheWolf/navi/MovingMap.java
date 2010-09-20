@@ -2309,6 +2309,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			if (!onlyIfCache) {
 				kontextMenu.addItem(gotoMenuItem);
 				kontextMenu.addItem(newWayPointMenuItem);
+				kontextMenu.addItem(new MenuItem("-"));
 			}
 			AniImage clickedOnImage = images.findHotImage(p);
 			if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
@@ -2326,6 +2327,12 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
 							kontextMenu.addItem(addCachetoListMenuItem);
 						}
+						kontextMenu.addItem(new MenuItem("-"));
+						kontextMenu.addItem(new MenuItem(clickedCache.getWayPoint()+" Info:"));
+						kontextMenu.addItem(new MenuItem("Difficulty: "+CacheTerrDiff.longDT(clickedCache.getHard())));
+						kontextMenu.addItem(new MenuItem("Terrain: "+CacheTerrDiff.longDT(clickedCache.getTerrain())));
+						kontextMenu.addItem(new MenuItem("Size: "+CacheSize.cw2ExportString(clickedCache.getCacheSize())));
+						kontextMenu.addItem(new MenuItem("Hint: "+Common.rot13(clickedCache.getCacheDetails(false).Hints)));
 					}
 				}
 			}
