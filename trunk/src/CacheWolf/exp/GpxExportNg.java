@@ -315,7 +315,7 @@ public class GpxExportNg {
 				try {
 					poiZip = new ZipFile(bitmapFileName);
 				} catch (IOException e) {
-					Global.getPref().log("GPX Export: warning GarminPOI.zip not found", e, Global.getPref().debug);
+					Global.getPref().log("GPX Export: warning GarminPOI.zip not found", e, true);
 					exportErrors++;
 				}
 
@@ -401,7 +401,7 @@ public class GpxExportNg {
 				pbf.exit(0);
 
 			} catch (Exception e) {
-				Global.getPref().log("GPX Export: unknown cause for ", e, Global.getPref().debug);
+				Global.getPref().log("GPX Export: unknown cause for ", e, true);
 				exportErrors++;
 				pbf.exit(0);
 			}
@@ -489,7 +489,7 @@ public class GpxExportNg {
 				outp.close();
 			} catch (Exception ex) {
 				exportErrors++;
-				Global.getPref().log("GPX Export: unable to write output to " + file.toString(), ex, Global.getPref().debug);
+				Global.getPref().log("GPX Export: unable to write output to " + file.toString(), ex, true);
 				new MessageBox("Export Error", "unable to write output to "	+ file.toString(), FormBase.OKB).execute();
 				return;
 			}
@@ -529,7 +529,7 @@ public class GpxExportNg {
 						}
 					}
 				} catch (Exception ex) {
-					Global.getPref().log("GPX Export error :", ex, Global.getPref().debug);
+					Global.getPref().log("GPX Export error :", ex, true);
 				}
 				file.delete();
 			}
@@ -568,11 +568,11 @@ public class GpxExportNg {
 		} catch (IllegalArgumentException e) {
 			exportErrors++;
 			ch.setIncomplete(true);
-			Global.getPref().log("GPX Export: " + ch.getWayPoint() + " set to incomplete ",	e, Global.getPref().debug);
+			Global.getPref().log("GPX Export: " + ch.getWayPoint() + " set to incomplete ",	e, true);
 			return "";
 		} catch (Exception e) {
 			exportErrors++;
-			Global.getPref().log("GPX Export: " + ch.getWayPoint() + " caused ", e,	Global.getPref().debug);
+			Global.getPref().log("GPX Export: " + ch.getWayPoint() + " caused ", e,	true);
 			return "";
 		}
 
@@ -936,10 +936,10 @@ public class GpxExportNg {
 			fos.close();
 			fis.close();
 		} catch (ZipException e) {
-			Global.getPref().log("failed to copy icon " + type + ".bmp", e,Global.getPref().debug);
+			Global.getPref().log("failed to copy icon " + type + ".bmp", e, true);
 			return false;
 		} catch (IOException e) {
-			Global.getPref().log("failed to copy icon " + type + ".bmp", e,Global.getPref().debug);
+			Global.getPref().log("failed to copy icon " + type + ".bmp", e, true);
 			return false;
 		}
 		return true;
@@ -968,7 +968,7 @@ public class GpxExportNg {
 		try {
 			return Vm.exec(command);
 		} catch (IOException e) {
-			Global.getPref().log("error excuting "+command, e, Global.getPref().debug);
+			Global.getPref().log("error excuting "+command, e, true);
 			exportErrors++;
 			return null;
 		}

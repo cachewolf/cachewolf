@@ -237,7 +237,7 @@ public class MapImporter extends Form {
 					if (in != null) in.close();
 					if (out  != null) out.close(); 
 				} catch (Throwable e) {
-					Global.getPref().log("Ignored Exception", e, true);
+					// Global.getPref().log("Ignored Exception", e, true);
 				}
 			}
 			//Check for a .map file

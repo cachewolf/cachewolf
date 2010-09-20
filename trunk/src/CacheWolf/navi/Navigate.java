@@ -320,12 +320,12 @@ class GpsdThread extends mThread {
 					} else if( respClass.equals( "POLL" ) ) {
 						gotValidData = myGPS.examineGpsd(response);
 					} else if( respClass.equals( "ERROR" ) ) {
-						Global.getPref().log( "Ignored gpsd error: " + response.getString( "message" ) );
+						// Global.getPref().log( "Ignored gpsd error: " + response.getString( "message" ) );
 					}
 				} catch( Exception e ) {
 					// Something bad happened, will just ignore this JSON
 					// object:
-					Global.getPref().log("Ignored Exception", e, true);
+					// Ignored Exception", e, true);
 					gotValidData = false;
 				}
 
@@ -342,7 +342,7 @@ class GpsdThread extends mThread {
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
-				Global.getPref().log("Ignored Exception", e, true);
+				// Global.getPref().log("Ignored Exception", e, true);
 			}
 
 			noData++;
@@ -392,7 +392,7 @@ class OldGpsdThread extends mThread{
 				noData++;
 				if (noData > 5) { myGPS.noDataError(); }
 			} catch (InterruptedException e) {
-				Global.getPref().log("Ignored Exception", e, true);
+				// Global.getPref().log("Ignored Exception", e, true);
 			}
 			if (gpsdSocket != null)	{
 				gpsResult = getGpsdData("ADPQTV\r\n");
@@ -422,7 +422,7 @@ class OldGpsdThread extends mThread{
 		try {
 			sleep(100);
 		} catch (InterruptedException e) {
-			Global.getPref().log("Ignored exception", e, true);
+			// Global.getPref().log("Ignored exception", e, true);
 		}
 		try {
 			rcvLength = gpsdSocket.read(rcvBuff);
@@ -484,7 +484,7 @@ class SerialThread extends mThread{
 				noData++;
 				if (noData > 5) { myGPS.noDataError(); }
 			} catch (InterruptedException e) {
-				Global.getPref().log("Ignored Exception", e, true);
+				// Global.getPref().log("Ignored Exception", e, true);
 			}
 			if (comSp != null)	{
 				comLength = comSp.nonBlockingRead(comBuff, 0 ,comBuff.length);
@@ -532,7 +532,7 @@ class UpdateThread extends mThread {
 		while (run) {
 			try { sleep (calldelay);} catch (InterruptedException e) {	}
 			try { ticked.ticked();} catch (Exception e) {
-				Global.getPref().log("Navigate.UpdateThread.run(): Ignored Exception. There should not be an Exception, so please report it in the cachewolf forum at www.geoclub.de", e, true);
+				// Global.getPref().log("Navigate.UpdateThread.run(): Ignored Exception. There should not be an Exception, so please report it in the cachewolf forum at www.geoclub.de", e, true);
 			}
 		}
 	}

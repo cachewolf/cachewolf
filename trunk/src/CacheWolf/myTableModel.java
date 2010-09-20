@@ -270,8 +270,7 @@ public class myTableModel extends TableModel {
 	 * @see ewe.ui.TableModel#getCellAttributes(int, int, boolean,
 	 * ewe.ui.TableCellAttributes)
 	 */
-	public TableCellAttributes getCellAttributes(int row, int col,
-			boolean isSelected, TableCellAttributes ta) {
+	public TableCellAttributes getCellAttributes(int row, int col, boolean isSelected, TableCellAttributes ta) {
 		ta = super.getCellAttributes(row, col, isSelected, ta);
 		ta.alignment = CellConstants.LEFT;
 		ta.anchor = CellConstants.LEFT;
@@ -283,8 +282,7 @@ public class myTableModel extends TableModel {
 		if (row >= 0) {
 			if (row == 0 || row != lastRow) {
 				try {
-					// Now find out if the line should be painted in an other
-					// color.
+					// Now find out if the line should be painted in an other color.
 					// Selected lines are not considered, so far
 					CacheHolder ch = cacheDB.get(row);
 					if (ch.is_owned())
@@ -323,12 +321,7 @@ public class myTableModel extends TableModel {
 					lastColorFG.set(ta.foreground);
 					lastRow = row;
 				} catch (Exception e) {
-					if (Global.getPref().debug)
-						Global
-								.getPref()
-								.log(
-										"Ignored Exception in myTableModel.TableCellAttributes()",
-										e, true);
+					// Global.getPref().log("[myTableModel:getCellAttributes]Ignored",e, true);
 				}
 				;
 			} else {
@@ -522,10 +515,7 @@ public class myTableModel extends TableModel {
 							lastSyncWorker.parse(ch.getLastSync(),
 									"yyyyMMddHHmmss");
 						} catch (IllegalArgumentException e) {
-							Global.getPref().log(
-									"Could not parse 'lastSyncDate': "
-											+ ch.getLastSync()
-											+ ". Reset to empty.", e);
+							Global.getPref().log("Could not parse 'lastSyncDate': "	+ ch.getLastSync() + ". Reset to empty.", e);
 							ch.setLastSync("");
 						}
 						return lastSyncWorker.format("yyyy-MM-dd HH:mm");
@@ -535,10 +525,7 @@ public class myTableModel extends TableModel {
 				} // Switch
 			} // if
 		} catch (Exception e) {
-			if (Global.getPref().debug)
-				Global.getPref().log(
-						"Ignored Exception in myTableModel.getCellData()", e,
-						true);
+			// Global.getPref().log("[myTableModel:getCellData]Ignored", e,true);
 			return null;
 		}
 		return null;

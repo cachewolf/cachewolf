@@ -84,19 +84,6 @@ public class MyLocale {
 	 */
 	private static void setLocale(String language_) {
 		String country ="";
-		/*
-		int[] all=ewe.sys.Locale.getAllIDs(0);
-		Locale ll = new Locale(true);
-		Global.getPref().debug=true;
-		for (int i = 0; i<all.length; i++){
-			ll.set(all[i]);
-			String lg = ll.getString(13,0,0);
-			if (!language_.equalsIgnoreCase(lg)) continue;
-			country = ll.getString(23,0,0);
-			// Global.getPref().log(lg+"-"+country);
-			if (!country.equals("")) break;
-		}
-		 */
 		if (language_.equalsIgnoreCase("DE")) country="DEU"; 
 		if (language_.equalsIgnoreCase("FR")) country="FRA"; 
 		if (language_.equalsIgnoreCase("EN")) country="USA"; 

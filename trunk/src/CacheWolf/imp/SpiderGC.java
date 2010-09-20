@@ -468,6 +468,8 @@ public class SpiderGC{
 		double len = middle.getDistance(rm) * 2.0;
 		page_number++;
 		String listPage=getMapListPage(middle, north, west, south, east);
+		int i = listPage.indexOf("\"count\":");
+		pref.log(""+north+" "+west+" "+south+" "+east+" "+listPage.substring(i, i+12)+" len="+len);
 		if ((listPage.indexOf("\"count\": 501")>-1) || (listPage.indexOf("\"count\": 0")>-1 && len > 30)) {
 			double northsouthmiddle = (north+south)/2.0;
 			double westeastmiddle = (west+east)/2.0;
@@ -2482,7 +2484,7 @@ public class SpiderGC{
 				return getResponseHeaders(conn)+c_data.toString();
 			else return c_data.toString();
 		} catch (Exception e) {
-			pref.log("[fetch_post] Ignored Exception", e, true);
+			// pref.log("[fetch_post] Ignored Exception", e, true);
 		}
 		return "";
 	}

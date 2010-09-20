@@ -503,7 +503,7 @@ public class MainMenu extends MenuBar {
 				}catch(IOException ioex){
 					Vm.showWait(false);
 					(new MessageBox("Error", "Garmin export unsuccessful", FormBase.OKB)).execute();
-					pref.log("Error exporting to Garmin",ioex,pref.debug);
+					pref.log("Error exporting to Garmin",ioex,true);
 				};
 				ProgressBarForm.clear();
 				Vm.showWait(false);
