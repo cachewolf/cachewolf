@@ -69,13 +69,13 @@ public class FieldnotesImporter {
 					r.codec=new JavaUtf8Codec();
 				}
 				else if (e.getMessage().equals("ASCII")){
-					r.codec=new AsciiCodec();
+					r.codec=new NoCodec(true);
 				}
 				else {
 					Vm.showWait(false);
 					return;
 				}
-			}		
+			}
 			parse(r.readAll());
 			r.close();
 			// save Index
@@ -148,16 +148,16 @@ private int flags = 0;
 private boolean checked=false;
 
 //===================================================================
-public NoCodec(int options)
+public NoCodec(boolean _checked)
 //===================================================================
 {
-	flags = options;
+	checked=_checked; flags=0;
 }
 //===================================================================
 public NoCodec()
 //===================================================================
 {
-	this(0);
+	checked=false; flags=0;
 }
 //===================================================================
 public ByteArray encodeText(char [] text, int start, int length, boolean endOfData, ByteArray dest) throws IOException
@@ -219,7 +219,7 @@ public void closeCodec() throws IOException
 public Object getCopy()
 //===================================================================
 {
-	return new NoCodec(flags);
+	return new NoCodec(false);
 }
 //##################################################################
 }
