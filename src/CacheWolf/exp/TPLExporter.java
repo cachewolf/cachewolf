@@ -273,7 +273,7 @@ public class TPLExporter {
 								detfile.close();
 							}
 						}catch(Exception e){
-							pref.log("Exception in TplExporter = Problem getting Parameter, Cache: " + ch.getWayPoint(), e, true);
+							pref.log("[TplExporter:doIt]" + ch.getWayPoint(), e, true);
 						}
 					}
 				}
@@ -288,7 +288,7 @@ public class TPLExporter {
 				detfile.close();
 			}
 		} catch (Exception e) {
-			pref.log("Exception in TplExporter", e, true);
+			pref.log("[TplExporter:doIt]", e, true);
 		} catch (OutOfMemoryError e) {
 			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now", FormBase.OKB)).execute();
 		}

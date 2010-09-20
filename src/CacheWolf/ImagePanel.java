@@ -287,7 +287,7 @@ public class ImagePanel extends InteractivePanel{
 							f.delete();
 							removeImage(which);
 						} catch(Exception e) {
-							Global.getPref().log("Ignored Exception", e, true);
+							// Global.getPref().log("Ignored Exception", e, true);
 						};
 				}
 			}

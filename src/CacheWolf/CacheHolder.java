@@ -217,7 +217,7 @@ public class CacheHolder{
 				        } catch (IllegalArgumentException ex) {
 				        	setHard(CacheTerrDiff.CW_DT_ERROR);
 				        	setIncomplete(true);
-				        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+				        	Global.getPref().log(wayPoint, ex, true);
 				        }
 			        }
 			        start = xmlString.indexOf('"', end + 1);
@@ -230,7 +230,7 @@ public class CacheHolder{
 					    } catch (IllegalArgumentException ex) {
 					    	setTerrain(CacheTerrDiff.CW_DT_ERROR);
 					    	setIncomplete(true);
-					    	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+					    	Global.getPref().log(wayPoint, ex, true);
 				        }
 				    }
 			        // The next item was 'dirty' but this is no longer used.
@@ -248,7 +248,7 @@ public class CacheHolder{
 				        } catch (IllegalArgumentException ex) {
 				        	setCacheSize(CacheSize.CW_SIZE_ERROR);
 				        	setIncomplete(true);
-				        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+				        	Global.getPref().log(wayPoint, ex, true);
 				        }
 			        }
 			        start = xmlString.indexOf('"', end + 1);
@@ -429,7 +429,7 @@ public class CacheHolder{
 			    setHasSolver(!details.getSolver().equals(""));
 				}
 	        } catch (Exception ex) {
-	        	Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
+	        	// Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
 	        }
         }
 	

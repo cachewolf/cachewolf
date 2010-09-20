@@ -636,7 +636,7 @@ class tbListControl extends TableControl {
 					CWWrapper.exec(Global.getPref().browser, s);
 					Global.getPref().log("Executed: \""+Global.getPref().browser+"\" \""+s+"\"");
 				} catch (Exception ioex) {
-					Global.getPref().log("Ignored Exception", ioex, true);
+					// Global.getPref().log("Ignored Exception", ioex, true);
 				}
 			}
 		}

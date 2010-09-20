@@ -228,7 +228,7 @@ public void setPostData(Object data)
 			ByteArray got = td.encodeText(Vm.getStringChars(s),0,s.length(),true,null);
 			setPostData(got.toBytes());
 		}catch(IOException e){
-			Global.getPref().log("Ignored exception", e, true);
+			// Global.getPref().log("Ignored exception", e, true);
 		}
 	}
 	else if (data instanceof InputStream) bytesToPost = new StreamAdapter((InputStream)data);

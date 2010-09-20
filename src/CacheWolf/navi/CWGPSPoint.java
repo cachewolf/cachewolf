@@ -227,7 +227,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						logFile.write(NMEA.substring(start,end+3)+"\n");
 						logWritten = true;
 					} catch (IOException e) {
-						Global.getPref().log("Ignored Exception", e, true);
+						// Global.getPref().log("Ignored Exception", e, true);
 					}
 				}
 
@@ -267,10 +267,10 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 							}
 						case 7: this.numSat = Convert.toInt(currToken); interpreted = true; break;
 						case 8: try {this.HDOP = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
-							Global.getPref().log("Ignored Exception", e, true);
+							// Global.getPref().log("Ignored Exception", e, true);
 						} break;
 						case 9: try {this.Alt = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
-							Global.getPref().log("Ignored Exception", e, true);
+							// Global.getPref().log("Ignored Exception", e, true);
 						} break;
 						} // switch
 					} // while
@@ -286,12 +286,12 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						if (currToken.length()==0) continue;
 						switch (i){
 						case 1: try { this.Bear =Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
-							Global.getPref().log("Ignored Exception", e, true);
+							// Global.getPref().log("Ignored Exception", e, true);
 						}
 						if (this.Bear > 360) Global.getPref().log("Error bear VTG",null);
 						break;
 						case 7: try { this.Speed = Common.parseDouble(currToken); interpreted = true; } catch (NumberFormatException e) {
-							Global.getPref().log("Ignored Exception", e, true);
+							// Global.getPref().log("Ignored Exception", e, true);
 						}
 						break;
 						} // switch
@@ -324,10 +324,10 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						case 4: latNS = currToken; interpreted = true;
 						break;
 						case 5: try {lonDeg = currToken.substring(0,3); interpreted = true;} catch (IndexOutOfBoundsException e) {
-							Global.getPref().log("Ignored Exception", e, true);
+							// Global.getPref().log("Ignored Exception", e, true);
 						}
 						try {lonMin = currToken.substring(3,currToken.length()); interpreted = true;} catch (IndexOutOfBoundsException e) {
-							Global.getPref().log("Ignored Exception", e, true);
+							// Global.getPref().log("Ignored Exception", e, true);
 						}
 						break;
 						case 6: lonEW = currToken;
@@ -336,21 +336,21 @@ public class CWGPSPoint extends CWPoint implements TimerProc{
 						case 7: if (status.equals("A")){
 							try {this.Speed = Common.parseDouble(currToken)*1.854;
 							interpreted = true; } catch (NumberFormatException e) {
-								Global.getPref().log("Ignored Exception", e, true);
+								//Global.getPref().log("Ignored Exception", e, true);
 							}
 						}
 						break;
 						case 8: if (status.equals("A") && currToken.length()> 0){
 							try {this.Bear = Common.parseDouble(currToken);
 							interpreted = true; } catch (NumberFormatException e) {
-								Global.getPref().log("Ignored Exception", e, true);
+								// Global.getPref().log("Ignored Exception", e, true);
 							}
 						}
 						break;
 						case 9: if (status.equals("A") && currToken.length()> 0){
 							try {this.Date = currToken;
 							interpreted = true; } catch (NumberFormatException e) {
-								Global.getPref().log("Ignored Exception", e, true);
+								// Global.getPref().log("Ignored Exception", e, true);
 							}
 						}
 						break;
