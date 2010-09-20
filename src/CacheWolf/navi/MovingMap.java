@@ -28,6 +28,9 @@ package CacheWolf.navi;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.CacheSize;
+import CacheWolf.CacheTerrDiff;
+import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.GuiImageBroker;
 import CacheWolf.InfoBox;
@@ -73,6 +76,7 @@ import ewe.ui.MenuEvent;
 import ewe.ui.MenuItem;
 import ewe.ui.MessageBox;
 import ewe.ui.PenEvent;
+import ewe.ui.ToolTip;
 import ewe.ui.WindowConstants;
 import ewe.ui.WindowEvent;
 import ewe.ui.mButton;
@@ -2115,6 +2119,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	int lastZoomWidth , lastZoomHeight;
 	
 	boolean ignoreNextDrag=false;
+	boolean onlyIfCache=false;
 	
 	public MovingMapPanel(MovingMap f){
 		this.mm = f;
@@ -2174,6 +2179,11 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				if (ev.modifiers == PenEvent.RIGHT_BUTTON) {
 					// context penHeld is fired directly on PDA (cause WantHoldDown Control Modifier)
 					// but not on PC (Java) , therefor it is here
+					penHeld(new Point (ev.x, ev.y));
+				}
+				else {
+					// do it even on left klick
+					onlyIfCache=true;
 					penHeld(new Point (ev.x, ev.y));
 				}
 			}
@@ -2296,18 +2306,21 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		ignoreNextDrag=true;
 		if (!mm.zoomingMode) {
 			kontextMenu = new Menu();
-			kontextMenu.addItem(gotoMenuItem);
-			kontextMenu.addItem(newWayPointMenuItem);
+			if (!onlyIfCache) {
+				kontextMenu.addItem(gotoMenuItem);
+				kontextMenu.addItem(newWayPointMenuItem);
+			}
 			AniImage clickedOnImage = images.findHotImage(p);
 			if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
 				if ( ((MapSymbol)clickedOnImage).mapObject instanceof CacheHolder) {
 					clickedCache = (CacheHolder)( ((MapSymbol)clickedOnImage).mapObject);
+					// clickedCache == null can happen if clicked on the goto-symbol
 					if (clickedCache != null) {
-						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(201, "Open Desctiption")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(201, "Open Desctiption")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o");
 						kontextMenu.addItem(openCacheDescMenuItem);
-						openCacheDetailMenuItem = new MenuItem(MyLocale.getMsg(200, "Open Details")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+						openCacheDetailMenuItem = new MenuItem(MyLocale.getMsg(200, "Open Details")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$e");
 						kontextMenu.addItem(openCacheDetailMenuItem);
-						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$g"); // clickedCache == null can happen if clicked on the goto-symbol
+						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$g"); 
 						kontextMenu.addItem(gotoCacheMenuItem);
 						if (Global.mainForm.cacheListVisible) {
 							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
@@ -2329,8 +2342,35 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				}
 			}
 			*/
-			kontextMenu.exec(this, new Point(p.x, p.y), this);
+			onlyIfCache=false;
+			if (kontextMenu.items.size()>0) {
+				kontextMenu.exec(this, new Point(p.x, p.y), this);
+			}
+			else kontextMenu=null;
 		}
+	}
+	
+	public boolean imageMovedOn(AniImage which) {
+		if (which instanceof MapSymbol) {
+			if ( ((MapSymbol)which).mapObject instanceof CacheHolder) {
+				CacheHolder ch = (CacheHolder) ((MapSymbol) which).mapObject;
+				this.toolTip=ch.getWayPoint()+"\n"
+							+ ch.cacheName+"\n"
+							+ "Difficulty: "+CacheTerrDiff.longDT(ch.getHard())+"\n"
+							+ "Terrain: "+CacheTerrDiff.longDT(ch.getTerrain())+"\n"
+							+ "Size: "+CacheSize.cw2ExportString(ch.getCacheSize())+"\n"
+							+ "Hint: "+Common.rot13(ch.getCacheDetails(false).Hints);
+			}
+		}
+		return true;
+	}
+	public boolean imageMovedOff(AniImage which) {
+		if (which instanceof MapSymbol) {
+			if ( ((MapSymbol)which).mapObject instanceof CacheHolder) {
+				this.toolTip=null;
+			}
+		}
+		return true;
 	}
 
 	public void onEvent(Event ev){
