@@ -37,7 +37,7 @@ import ewe.util.Vector;
 public class TablePanel extends CellPanel{
 	
 	myTableControl tc;
-	myTableModel myMod;
+	public myTableModel myMod;
 	Preferences pref;
 	Profile profile;
 	CacheDB cacheDB;
