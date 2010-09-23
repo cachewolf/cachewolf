@@ -26,6 +26,7 @@ package CacheWolf.exp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
@@ -68,6 +69,7 @@ class TplFilter implements HTML.Tmpl.Filter
 	int noOfLogs=-1; // means all
 	boolean single = true;
 	int formatModifier = 0;
+	int sortedBy = -1;
 	boolean getAddiWp = true;
 	boolean getMainWp = true;
 	boolean copyCacheImages = false;
@@ -140,6 +142,9 @@ class TplFilter implements HTML.Tmpl.Filter
 				else if (value.equals("addi")) {
 					getMainWp=false;
 				}
+			}
+			else if (param.equals("sortedBy")) {
+				sortedBy=Integer.valueOf(value).intValue();
 			}
 			else if (param.equals("CopyCacheImages")) {
 				if (value.equals("yes")) copyCacheImages=true;
@@ -237,6 +242,10 @@ public class TPLExporter {
 			File saveTo = fc.getChosenFile();
 			pref.setExportPath(expName, saveTo.getPath());
 
+			if (myFilter.sortedBy!=-1) {
+				Global.mainTab.tbP.myMod.sortTable(myFilter.sortedBy, true);
+			}
+			
 			Regex dec = new Regex("[,.]",myFilter.decSep);
 			if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
 			

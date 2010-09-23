@@ -609,6 +609,7 @@ public class CacheHolder{
 		CacheHolderDetail det = this.getCacheDetails(false);
 		varParams.put("PROGDIR", FileBase.getProgramDirectory());
 		varParams.put("PROFILDIR", Global.getProfile().dataDir);
+		varParams.put("ALIAS", Global.getPref().myAlias);
 		varParams.put("TYPE", CacheType.type2TypeTag(type)); //<type>
 		varParams.put("TYPENO",""+type);
 		varParams.put("SYM", CacheType.type2SymTag(type)); //<sym>
@@ -688,6 +689,7 @@ public class CacheHolder{
 		varParams.put("AVAILABLE", available ? "TRUE" : "FALSE");
 		varParams.put("ARCHIVED", archived ? "TRUE" : "FALSE");
 		varParams.put("HTML", html ? "TRUE" : "FALSE");
+		varParams.put("VOTE", getRecommended());
 		//() ? TRUE : FALSE
 		if (det == null){
 			varParams.put("URL", "");
@@ -1875,6 +1877,22 @@ public class CacheHolder{
 	public int getNumRecommended() {
     	return numRecommended;
     }
+	public String getRecommended() {
+		if (!isCacheWpt())
+			return "";
+		if ( isOC() ) {
+		  return Convert.formatInt(numRecommended);
+		} else {
+		  int gcVote = numRecommended;
+		  if ( gcVote < 100 ) {
+		    return MyLocale.formatDouble((double)gcVote/10.0, "0.0"); 
+		  } else {
+		    int votes = gcVote / 100;
+		    gcVote = gcVote - 100 * votes;
+		    return MyLocale.formatDouble((double)gcVote/10.0, "0.0") + " (" + Convert.formatInt(votes) + ")";
+		  }
+		}
+	}
 
 	public void setNumRecommended(int numRecommended) {
 		Global.getProfile().notifyUnsavedChanges(numRecommended != this.numRecommended);		
