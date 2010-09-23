@@ -50,7 +50,7 @@ import ewe.ui.mTabbedPanel;
 public class MainTab extends mTabbedPanel {
 	DescriptionPanel descP= new DescriptionPanel();
 	HintLogPanel hintLP = new HintLogPanel();
-	TablePanel tbP;
+	public TablePanel tbP;
 	CacheDB cacheDB;
 	public DetailsPanel detP = new DetailsPanel();
 	CalcPanel calcP;

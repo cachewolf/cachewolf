@@ -276,9 +276,8 @@ public class myTableModel extends TableModel {
 		ta.anchor = CellConstants.LEFT;
 		// The default color of a line is white
 		lineColorBG.set(COLOR_WHITE);
-		// Determination of colors is only done for first column. Other columns
-		// take same
-		// color.
+		// Determination of colors is only done for first column.
+		// Other columns take same color.
 		if (row >= 0) {
 			if (row == 0 || row != lastRow) {
 				try {
@@ -321,7 +320,7 @@ public class myTableModel extends TableModel {
 					lastColorFG.set(ta.foreground);
 					lastRow = row;
 				} catch (Exception e) {
-					// Global.getPref().log("[myTableModel:getCellAttributes]Ignored",e, true);
+					Global.getPref().log("[myTableModel:getCellAttributes]Ignored row="+row+" lastRow="+lastRow,e, true);
 				}
 				;
 			} else {
@@ -388,8 +387,7 @@ public class myTableModel extends TableModel {
 					return new IconAndText(imgSortUp, colName[colMap[col]], fm);
 					// return "^ "+colName[colMap[col]];
 				} else {
-					return new IconAndText(imgSortDown, colName[colMap[col]],
-							fm);
+					return new IconAndText(imgSortDown, colName[colMap[col]], fm);
 					// return "v "+colName[colMap[col]];
 				}
 			} else {
@@ -465,24 +463,11 @@ public class myTableModel extends TableModel {
 					if (ch.isAddiWpt()) {
 						return "";
 					} else {
-						return sizePics[CacheSize.guiSizeImageId(ch
-								.getCacheSize())];
+						return sizePics[CacheSize.guiSizeImageId(ch.getCacheSize())];
 					}
 				case 13: // OC number of recommendations
-					if (!ch.isCacheWpt())
-						return null;
-					if ( ch.isOC() ) {
-					  return Convert.formatInt(ch.getNumRecommended());
-					} else {
-					  int gcVote = ch.getNumRecommended();
-					  if ( gcVote < 100 ) {
-					    return MyLocale.formatDouble((double)gcVote/10.0, "0.0"); 
-					  } else {
-					    int votes = gcVote / 100;
-					    gcVote = gcVote - 100 * votes;
-					    return MyLocale.formatDouble((double)gcVote/10.0, "0.0") + " (" + Convert.formatInt(votes) + ")";
-            } 
-          }
+					 return ch.getRecommended();
+          
 				case 14: // OC rating
 					if (ch.isOC())
 						return Convert.formatInt(ch.recommendationScore);
@@ -589,14 +574,13 @@ public class myTableModel extends TableModel {
 			CacheHolder ch = null;
 			if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size()))
 				ch = cacheDB.get(a.y);
-			cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows),
-					!sortAscending);
-			updateRows(); // = cacheDB.rebuild(sortedVector of ch,
-							// invisibleVector of ch)
+			cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows),!sortAscending);
+			updateRows();
+			// = cacheDB.rebuild(sortedVector of ch,
+			// invisibleVector of ch)
 			// select previously selected Cache again
 			if (ch != null) {
-				int rownum = Global.getProfile()
-						.getCacheIndex(ch.getWayPoint());
+				int rownum = Global.getProfile().getCacheIndex(ch.getWayPoint());
 				if (rownum >= 0)
 					tcControl.cursorTo(rownum, 0, true);
 			}

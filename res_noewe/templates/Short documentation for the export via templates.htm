@@ -214,9 +214,9 @@ value=&quot;yes&quot;&gt;<span style='mso-tab-count:3'>                         
 <span class=SpellE>outputfile</span> value=”yes” or one file per cache
 value=”no” (use a dummy / not existing name for Out par)<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>formatModifier</span>&quot;
-value=&quot;0&quot;&gt;<span style='mso-tab-count:2'>                  </span><span
-style='mso-tab-count:1'>            </span>0 is xml as <span class=SpellE>gpx</span>
-generation before, 1 is html for local use 2 is html for export use<br>
+value=&quot;0&quot;&gt;<span style='mso-tab-count:3'>                             </span>0
+is xml as <span class=SpellE>gpx</span> generation before, 1 is html for local
+use 2 is html for export use<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>takeOnlyWp</span>&quot;
 value=&quot;all&quot;&gt;<span style='mso-tab-count:3'>                              </span>process
 only this <span class=SpellE>Cachetypegroups</span> value is either “main” or “<span
@@ -234,12 +234,15 @@ is placeholder) (!<span class=SpellE>dont</span> use umlauts in defaults)<br>
 value=&quot;value&quot;&gt;<span style='mso-tab-count:2'>                     </span>sets
 a <span class=SpellE>tmpl_var</span> with the name <span class=SpellE>Konstante</span>
 (<span class=SpellE>Konstante</span> is placeholder) (!<span class=SpellE>dont</span>
-use umlauts in value)<o:p></o:p></span></p>
+use umlauts in value)<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>sortedBy</span>&quot;
+value=&quot;-1&quot;&gt;<span style='mso-tab-count:3'>                                    </span>sets
+a <span class=SpellE>tmpl_var</span> with the name <span class=SpellE>sortedBy</span>:
+values are 1..19. (5=Waypoint,6=Name,9=Status,10=Distance… see myComparer.java)<o:p></o:p></span></p>
 
-<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-mso-outline-level:1'><u><span lang=EN-GB style='font-size:10.0pt;font-family:
-Arial;mso-ansi-language:EN-GB'>Output section</span></u><span lang=EN-GB
-style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
+<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><u><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Output
+section</span></u><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Anything
@@ -261,8 +264,10 @@ lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>PROGDIR<span
 style='mso-tab-count:8'>                                                                                           </span>:
 <span class=SpellE>FileBase.getProgramDirectory</span>()<br>
-PROFILDIR<span style='mso-tab-count:8'>                                                                                         </span>:
-<br>
+PROFILDIR<span style='mso-tab-count:8'>                                                                                         </span>:<span
+style='mso-tab-count:6'>                                                                      </span><span
+style='mso-tab-count:2'>                        </span>: <br>
+ALIAS<span style='mso-tab-count:9'>                                                                                                 </span>:<br>
 TYPE<span style='mso-tab-count:9'>                                                                                                 </span>:
 &lt;type&gt; Type of cache, e.g. Regular, Multi<br>
 TYPENO<span style='mso-tab-count:8'>                                                                                             </span>:
@@ -283,8 +288,7 @@ First letter of size<br>
 mso-ansi-language:EN-GB'>MAINWP<span style='mso-tab-count:8'>                                                                                            </span>:
 ““ if is <span class=SpellE>Mainwaypoint</span>, <span class=SpellE>Mainwaypoint</span>
 if is <span class=SpellE>Addi</span> Waypoint<br>
-MAINWPNAME<span style='mso-tab-count:1'> </span><span style='mso-tab-count:
-7'>                                                                                  </span>:
+MAINWPNAME<span style='mso-tab-count:8'>                                                                                   </span>:
 ““ if is <span class=SpellE>Mainwaypoint</span>, <span class=SpellE>Mainwaypoint</span>
 name if is <span class=SpellE>Addi</span> Waypoint<br>
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:
@@ -331,7 +335,8 @@ LON<span style='mso-tab-count:9'>                                               
 class=SpellE>xx.yyyy</span>” &gt; Longitude in decimal format, e.g. 008.58132<br>
 STATUS<span style='mso-tab-count:8'>                                                                                             </span>:<span
 style='mso-spacerun:yes'>  </span>means found<br>
-GC_LOGTYPE<span style='mso-tab-count:8'>                                                                                    </span>:
+GC_LOGTYPE<span style='mso-tab-count:4'>                                     </span><span
+style='mso-tab-count:4'>                                               </span>:
 the English Status texts (for <span class=SpellE>gpx</span> – export)<br>
 STATUS_DATE<span style='mso-tab-count:8'>                                                                                   </span>:
 Get the date part of the status <br>
@@ -352,7 +357,8 @@ mso-ansi-language:EN-GB'>Name <span class=SpellE>der</span> <span class=SpellE>d
 class=SpellE>hinten</span> und <span class=SpellE>wenn</span> <span
 class=SpellE>das</span> <span class=SpellE>nicht</span> <span class=SpellE>reicht</span>
 <span class=SpellE>durch</span> <span class=SpellE>Weglassen</span> von<span
-style='mso-spacerun:yes'>     </span><span style='mso-tab-count:9'>                                                                                                      </span>:
+style='mso-spacerun:yes'>     </span><span style='mso-tab-count:9'>                                                                                                      </span><span
+style='mso-tab-count:5'>                                                           </span>:
 <span class=SpellE>Kleinbuchstaben</span> von <span class=SpellE>hinten</span>
 auf <span class=SpellE>eine</span> in den <span class=SpellE>Einstellungen</span>
 <span class=SpellE>vorgegebene</span> <span class=SpellE>Länge</span> <span
@@ -389,8 +395,7 @@ Cache Description (possibly in HTML Format)<br>
 NOTES<span style='mso-tab-count:9'>                                                                                               </span>:
 User Notes&nbsp;&nbsp; (<span class=SpellE>badchars</span> are removed, see
 below)<br>
-HINTS<span style='mso-tab-count:5'>                                                  </span><span
-style='mso-tab-count:4'>                                               </span>:
+HINTS<span style='mso-tab-count:9'>                                                                                                 </span>:
 Encrypted hints&nbsp;&nbsp; (<span class=SpellE>badchars</span> are removed,
 see below)<br>
 DECRYPTEDHINTS<span style='mso-tab-count:7'>                                                                             </span>:
@@ -405,9 +410,10 @@ COUNTRY<span style='mso-tab-count:8'>                                           
 <span class=SpellE>Staat</span> <br>
 STATE<span style='mso-tab-count:9'>                                                                                                </span>:
 <span class=SpellE>Bundesland</span><br>
-HTML<span style='mso-tab-count:5'>                                                  </span><span
-style='mso-tab-count:4'>                                               </span>:
-TRUE / FALSE if description is html<br style='mso-special-character:line-break'>
+HTML<span style='mso-tab-count:9'>                                                                                                 </span>:
+TRUE / FALSE if description is html<br>
+VOTE<span style='mso-tab-count:9'>                                                                                                 </span>:
+<span class=SpellE>gcvote</span> / OC<br style='mso-special-character:line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
 <![endif]><o:p></o:p></span></p>
 
@@ -420,8 +426,7 @@ PATHANDIMAGE<span style='mso-tab-count:7'>                                      
 path an <span class=SpellE>imagename</span> of the attribute<br>
 IMAGE<span style='mso-tab-count:9'>                                                                                               </span>:
 <span class=SpellE>imagename</span> of the attribute<br>
-INFO<span style='mso-tab-count:2'>                </span><span
-style='mso-tab-count:7'>                                                                                  </span>:
+INFO<span style='mso-tab-count:9'>                                                                                                  </span>:
 description of the attribute from language <span class=SpellE>config</span><br>
 GCINFO<span style='mso-tab-count:8'>                                                                                              </span>:
 description of the attribute as from gc.com<br>
@@ -473,10 +478,9 @@ LATLON<span style='mso-tab-count:8'>                                            
 LAT<span style='mso-tab-count:9'>                                                                                                    </span><span
 class=GramE>:</span><br>
 LON<span style='mso-tab-count:9'>                                                                                                   </span>:<br>
-IMG<span style='mso-tab-count:6'>                                                                 </span><span
-style='mso-tab-count:3'>                                   </span>: Name des <span
-class=SpellE>Addi</span> Icons <span class=SpellE>png</span> (resources <span
-class=SpellE>oder</span> <span class=SpellE>exporticons</span>)<br>
+IMG<span style='mso-tab-count:9'>                                                                                                    </span>:
+Name des <span class=SpellE>Addi</span> Icons <span class=SpellE>png</span>
+(resources <span class=SpellE>oder</span> <span class=SpellE>exporticons</span>)<br>
 ICON<span style='mso-tab-count:9'>                                                                                                  </span>:
 &lt;type&gt; as number string (see <span class=SpellE>CacheType.java</span> <span
 class=SpellE>e.g</span> : …,50=Parking ….)<br>
@@ -499,7 +503,7 @@ mso-outline-level:1'><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp
 mso-outline-level:1'><span class=SpellE><span class=GramE><span lang=EN-GB
 style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>cacheImg</span></span></span><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'><span
-style='mso-tab-count:8'>                                                                                            </span>:
+style='mso-tab-count:1'>          </span><span style='mso-tab-count:7'>                                                                                  </span>:
 the &lt;<span class=SpellE>tmpl_loop</span> <span class=SpellE>cacheImg</span>&gt;<br>
 FILENAME<span style='mso-tab-count:8'>                                                                                          </span>:
 the filename in the profile directory<br>
@@ -546,8 +550,9 @@ name=DIFFICULTY&gt;-&lt;<span class=SpellE>tmpl_var</span> name=TERRAIN&gt;
 class=SpellE>tmpl_var</span> name=LAT&gt;;&lt;<span class=SpellE>tmpl_var</span>
 name=LON&gt;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=TYPE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
-name=SIZE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span> name=WAYPOINT&gt;&quot;;&quot;&lt;<span
-class=SpellE>tmpl_var</span> name=DATE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
+name=SIZE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
+name=WAYPOINT&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
+name=DATE&gt;&quot;;&quot;&lt;<span class=SpellE>tmpl_var</span>
 name=URL&gt;&quot;&lt;<span class=SpellE>br</span> /&gt;<br>
 &lt;/<span class=SpellE>tmpl_loop</span>&gt;<br style='mso-special-character:
 line-break'>
@@ -573,8 +578,8 @@ if no value has been set through the <span class=SpellE>setParam</span> method.<
 &lt;TMPL_VAR name=&quot;<span class=SpellE>var_name</span>&quot;
 default=&quot;my value&quot;&gt;<br>
 If <span class=SpellE>var_name</span> is set using <span class=SpellE>setParam</span>
-(or <span class=SpellE>setParams</span>), then it's value will be whatever it
-was set to<span class=GramE>,<span style='mso-spacerun:yes'>  </span>else</span></span><span
+(or <span class=SpellE>setParams</span>), then it's value will be whatever it was
+set to<span class=GramE>,<span style='mso-spacerun:yes'>  </span>else</span></span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB
 style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>it will be
 &quot;my value&quot; (without the quotes).<o:p></o:p></span></p>
@@ -586,8 +591,8 @@ possible.<br>
 </span><span lang=EN-GB style='mso-ansi-language:EN-GB'>&nbsp; </span><span
 class=GramE><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
 mso-ansi-language:EN-GB'>none</span></span><span lang=EN-GB style='font-size:
-10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>:&nbsp;&nbsp; String unchanged
-(this is the default if escape is not specified)<br>
+10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>:&nbsp;&nbsp; String
+unchanged (this is the default if escape is not specified)<br>
 </span><span lang=EN-GB style='mso-ansi-language:EN-GB'>&nbsp; </span><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>html:&nbsp;&nbsp;
 Encode special characters: &amp; &gt; &lt; &quot;.&nbsp; They are changed to
@@ -707,8 +712,8 @@ displayed repeatedly for every item in the loop control variable. Inside the
 style='mso-spacerun:yes'>  </span>you</span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'> </span><span lang=EN-GB style='font-size:10.0pt;
 font-family:Arial;mso-ansi-language:EN-GB'>place &lt;<span class=SpellE>tmpl_var</span>&gt;s.<b
-style='mso-bidi-font-weight:normal'> The only loop used by the template exporter
-is '<span class=SpellE>cache_index</span>', see example above. </b></span><span
+style='mso-bidi-font-weight:normal'> The only loop used by the template
+exporter is '<span class=SpellE>cache_index</span>', see example above. </b></span><span
 lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
@@ -746,8 +751,8 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Tr
 if both __FIRST__ and __LAST__ are false<br>
 __COUNTER__<span style='mso-tab-count:1'> </span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'>&nbsp;&nbsp;&nbsp; </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Which iteration
-is currently on. Starts at 1<br style='mso-special-character:line-break'>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Which
+iteration is currently on. Starts at 1<br style='mso-special-character:line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
 <![endif]></span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
