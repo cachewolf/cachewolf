@@ -399,7 +399,7 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == loadcaches){
 				String dir = pref.getImporterPath("LocGpxImporter");
 				FileChooser fc = new FileChooser(FileChooserBase.OPEN|FileChooserBase.MULTI_SELECT, dir);
-				fc.addMask("*.gpx,*.zip,*.loc,fieldnotes.txt,geocache_visits.txt");
+				fc.addMask("*.gpx,*.zip,*.loc,fieldnotes.txt,geocache_visits.txt,FieldNotes.log,newlogs.txt");
 				fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
 				if(fc.execute() != FormBase.IDCANCEL){
 					dir = fc.getChosenDirectory().toString();
@@ -419,7 +419,7 @@ public class MainMenu extends MenuBar {
 					int how = GPXImporter.DOIT_ASK;
 					for (int i = 0; i < files.length; i++){
 						String file = dir + "/" + files[i];
-						if (file.endsWith("txt")){
+						if (file.endsWith("txt")||file.endsWith("log")){
 							FieldnotesImporter fn=new FieldnotesImporter(pref, profile, file);
 							fn.doIt();
 						}
@@ -427,7 +427,7 @@ public class MainMenu extends MenuBar {
 							LOCXMLImporter loc = new LOCXMLImporter(pref, profile, file);
 							loc.doIt();
 						}
-						else {
+						else { //gpx + zip
 							GPXImporter gpx = new GPXImporter(pref, profile, file);
 							gpx.doIt(how);
 							how = gpx.getHow();
@@ -846,7 +846,7 @@ public class MainMenu extends MenuBar {
 		CacheDB cacheDB=profile.cacheDB;
 		CacheHolder ch;
 
-		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(130,"Download from opencaching"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.ALL);
+		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(1014,"updateSelectedCaches"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.ALL);
 		if (options.execute() == FormBase.IDCANCEL) {	return; }
 
 		SpiderGC spider = new SpiderGC(pref, profile, false);
