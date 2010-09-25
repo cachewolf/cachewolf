@@ -57,6 +57,12 @@ public final class Common {
 			return java.lang.Double.parseDouble(value.replace(notDigSep,digSep));
 	}
 	
+	/**
+	 * throws no exception if the string could not be converted to int.
+	 * returns 0 in that case
+	 * @param String value
+	 * @return int java.lang.Integer.parseInt(value)
+	 */
 	public static int parseInt(String value){
 		try {
 			return java.lang.Integer.parseInt(value);

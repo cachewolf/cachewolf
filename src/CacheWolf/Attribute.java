@@ -60,7 +60,7 @@ public class Attribute {
 	// for OC Constructor
     private void OCAttNo2attNo(int attIdOC) {
     	for (int i=0; i<maxAttRef; i++) {
-    		if (attIdOC == Integer.parseInt(attRef[i][OC_ID])) {
+    		if (attIdOC == Common.parseInt(attRef[i][OC_ID])) {
 				_Id=i;
 				_Inc=1;
 				_ImageName=attRef[i][PIC_NAME]+"-yes.gif";
@@ -73,7 +73,7 @@ public class Attribute {
     // for GC Constructor gpx-Import
     private void GCAttNo2attNo(int attIdGC, String Yes1No0 ) {
     	for (int i=0; i<maxAttRef; i++) {
-    		if (attIdGC == Integer.parseInt(attRef[i][GC_ID])) {
+    		if (attIdGC == Common.parseInt(attRef[i][GC_ID])) {
 				_Id=i;
     			_Inc=Yes1No0.equals("1") ? 1 : 0;
 				_ImageName=attRef[i][PIC_NAME]+(_Inc==0 ? "-no.gif" : "-yes.gif");
@@ -100,7 +100,7 @@ public class Attribute {
     public static long[] getIdBit(int id) {
     	long [] bit = new long[2];
     	if (id>-1 && id<maxAttRef) {
-        	int b = Integer.parseInt(attRef[id][BIT_NR]);
+        	int b = Common.parseInt(attRef[id][BIT_NR]);
     		bit[0] = b>63 ? 0l : (1L << b);
     		bit[1] = b>63 ? (1L << b-64) : 0;
     	}
@@ -316,9 +316,9 @@ public class Attribute {
     		return MyLocale.getMsg(2500,"error attribute");
     	}
 		if (cw_Inc==0)
-			return MyLocale.getMsg(Integer.parseInt(attRef[cw_Id][MSG_NR])-1,"");
+			return MyLocale.getMsg(Common.parseInt(attRef[cw_Id][MSG_NR])-1,"");
 		else
-			return MyLocale.getMsg(Integer.parseInt(attRef[cw_Id][MSG_NR]),"");
+			return MyLocale.getMsg(Common.parseInt(attRef[cw_Id][MSG_NR]),"");
 	}
     private static mImage[] yesImages=new mImage[maxAttRef];
 	private static mImage[] noImages=new mImage[maxAttRef];
