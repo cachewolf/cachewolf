@@ -1956,20 +1956,18 @@ public final class MovingMap extends Form implements ICommandListener {
 		super.onEvent(ev);
 	}
 
-	public boolean handleCommand(String actionCommand) {
-		// handle closing event
-		if (CLOSE.equals(actionCommand)) {
-			
+	public boolean handleCommand(int actionCommand) {
+		if (CLOSE == actionCommand) {			
 			WindowEvent tmp = new WindowEvent();
 			tmp.type = WindowEvent.CLOSE;
 			postEvent(tmp);
 			return true;
 		} 
-		if (SELECT_MAP.equals(actionCommand)) {
+		if (SELECT_MAP == actionCommand) {
 			mmp.chooseMap();
 			return true;
 		}
-		if (CHANGE_MAP_DIR.equals(actionCommand)) {
+		if (CHANGE_MAP_DIR == actionCommand) {
 			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().getCustomMapsPath());
 			fc.addMask("*.wfl");
 			fc.setTitle(MyLocale.getMsg(4200,"Select map directory:"));
@@ -1980,104 +1978,91 @@ public final class MovingMap extends Form implements ICommandListener {
 			}
 			return true;
 		}
-
-		
-		if (FILL_MAP.equals(actionCommand)) {
+		if (FILL_MAP == actionCommand) {
 			setFillWhiteArea(true);
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
 		}
-		
-		if (NO_FILL_MAP.equals(actionCommand)) {
+		if (NO_FILL_MAP == actionCommand) {
 			setFillWhiteArea(false);
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
 		}
-		
-		
-		if (SHOW_CACHES.equals(actionCommand)) {
+		if (SHOW_CACHES == actionCommand) {
 			setShowCachesOnMap(true);
 			forceMapLoad=true;
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
 		}
-		if (HIDE_CACHES.equals(actionCommand)) {
+		if (HIDE_CACHES == actionCommand) {
 			setShowCachesOnMap(false);
 			forceMapLoad=true;
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
 		}
-		
-		if (HIDE_MAP.equals(actionCommand)) {
+		if (HIDE_MAP == actionCommand) {
 			hideMap();
 			return true;
 		}
-		
-		if (SHOW_MAP.equals(actionCommand)) {
+		if (SHOW_MAP == actionCommand) {
 			showMap();
 			return true;
 		}
-		// map change modus
-		if (HIGHEST_RES_GPS_DEST.equals(actionCommand)) {
+		if (HIGHEST_RES_GPS_DEST == actionCommand) {
 			setResModus(MovingMap.HIGHEST_RESOLUTION_GPS_DEST);
 			return true;
 		}
-		if (HIGHEST_RES.equals(actionCommand)) {
+		if (HIGHEST_RES == actionCommand) {
 			setResModus(MovingMap.HIGHEST_RESOLUTION);
 			return true;
 		}
-		
-		if (KEEP_MAN_RESOLUTION.equals(actionCommand)) {
+		if (KEEP_MAN_RESOLUTION == actionCommand) {
 			setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 			return true;
 		}
-		
-		if (MORE_DETAILS.equals(actionCommand)) {
+		if (MORE_DETAILS == actionCommand) {
 			loadMoreDetailedMap(false);
 			return true;
 		}
-		if (MORE_OVERVIEW.equals(actionCommand)) {
+		if (MORE_OVERVIEW == actionCommand) {
 			loadMoreDetailedMap(true);
 			return true;
 		}
-		if (ALL_CACHES_RES.equals(actionCommand)) {
+		if (ALL_CACHES_RES == actionCommand) {
 			loadMapForAllCaches();
 			return true;
 		}
-
-		if (MOVE_TO_CENTER.equals(actionCommand)) {
+		if (MOVE_TO_CENTER == actionCommand) {
 			setCenterOfScreen(Global.getPref().getCurCentrePt(), true);
 			return true;
 		}
-		if (MOVE_TO_DEST.equals(actionCommand)) {
+		if (MOVE_TO_DEST == actionCommand) {
 			if (gotoPos!=null) {
 				setCenterOfScreen(gotoPos.where, true);
 			}
 			return true;
 		}
-		if (MOVE_TO_GPS.equals(actionCommand)) {
+		if (MOVE_TO_GPS == actionCommand) {
 			myNavigation.startGps(pref.logGPS, Convert.toInt(pref.logGPSTimer));
 			SnapToGps();
 			return true;
 		}
-		
-		if (ZOOM_1_TO_1.equals(actionCommand)) {
+		if (ZOOM_1_TO_1 == actionCommand) {
 			zoom1to1();
 			return true;
 		}
-		if (ZOOMIN.equals(actionCommand)) {
+		if (ZOOMIN == actionCommand) {
 			zoomin();
 			return true;
 		}
-		if (ZOOMOUT.equals(actionCommand)) {
+		if (ZOOMOUT == actionCommand) {
 			zoomout();
 			return true;
 		}
-		
 		return controlsLayer.handleCommand(actionCommand);
 	}
 

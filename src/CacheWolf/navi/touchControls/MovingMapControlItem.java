@@ -149,8 +149,8 @@ public abstract class MovingMapControlItem {
 
 	public abstract void setText(String text);
 
-	public String getActionCommand() {
-		return null;
+	public int getActionCommand() {
+		return -1;
 	}
 
 	public String getContext() {

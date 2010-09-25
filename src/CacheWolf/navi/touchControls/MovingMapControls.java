@@ -62,8 +62,7 @@ public class MovingMapControls implements ICommandListener {
 		this.movingMap = movingMap;
 		Dimension di = new Dimension();
 		movingMap.getDisplayedSize(di);
-		MovingMapControlSettings movingMapControlSettings = new MovingMapControlSettings(
-				vga, roles);
+		MovingMapControlSettings movingMapControlSettings = new MovingMapControlSettings(vga, roles);
 
 		movingMapControlSettings.readFile();
 		buttons = movingMapControlSettings.getMenuItems();
@@ -332,8 +331,8 @@ public class MovingMapControls implements ICommandListener {
 			AniImage ani = item.getImage();
 			if (which == ani) {
 
-				String command = item.getActionCommand();
-				if ("changeStateOfRole".equals(command)) {
+				int command = item.getActionCommand();
+				if (changeStateOfRole == command) {
 					boolean val = changeRoleState(item.getRoleToChange());
 					if (val) {
 						changeRoleState(ROLE_MENU, false);
@@ -355,8 +354,8 @@ public class MovingMapControls implements ICommandListener {
 		return true;
 	}
 
-	public boolean handleCommand(String actionCommand) {
-		if (CLOSE.equals(actionCommand)) {
+	public boolean handleCommand(int actionCommand) {
+		if (CLOSE == actionCommand) {
 			return changeRoleState(ROLE_MENU, false);
 		}
 		return false;
