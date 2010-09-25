@@ -111,7 +111,6 @@ public class OCXMLImporterScreen extends Form {
 					MyLocale.getMsg(13,"CITO"),
 					MyLocale.getMsg(18,"Earth"),
 					MyLocale.getMsg(15,"WhereIGo"),
-					MyLocale.getMsg(11,"Webcam"),
 				},0), CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		}
 
