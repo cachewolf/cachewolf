@@ -32,10 +32,10 @@ import ewe.graphics.AniImage;
 
 public class MovingMapControlItemButton extends MovingMapControlItem {
 
-	private String command;
+	private int command;
 	private AniImageGrayScaled aniImage;
 	
-	public MovingMapControlItemButton(String source,String iconSrc, String actionCommand,
+	public MovingMapControlItemButton(String source,String iconSrc, int actionCommand,
 			int alpha) {
 		Image image = MovingMapControlItem.createImage(source, iconSrc, alpha);
 		aniImage = new AniImageGrayScaled(image);
@@ -45,7 +45,7 @@ public class MovingMapControlItemButton extends MovingMapControlItem {
 		xProperties|=IS_ICON_WITH_COMMAND;
 	}
 
-	public String getActionCommand() {
+	public int getActionCommand() {
 		return command;
 	}
 
