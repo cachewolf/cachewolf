@@ -41,6 +41,7 @@ import CacheWolf.Profile;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
+import ewe.io.FileInputStream;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
@@ -151,13 +152,19 @@ public class GPXImporter extends MinML {
 					}
 				}
 				else {
-					r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
+					FileInputStream rFIS = new ewe.io.FileInputStream(file);
+					r = new ewe.io.InputStreamReader(rFIS);
 					infB = new InfoBox("Info",(MyLocale.getMsg(4000,"Loaded caches: ") + zaehlerGel));
 					infB.show();
-					if (r.read() != 65279)
-						r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
+					if (r.read() != 65279) {
+						r.close();
+						rFIS.close();
+						rFIS = new ewe.io.FileInputStream(file);
+						r = new ewe.io.InputStreamReader(rFIS);
+					}
 					parse(r);
 					r.close();
+					rFIS.close();
 					infB.close(0);
 				}
 				// save Index 
