@@ -1161,7 +1161,7 @@ public class CacheHolder{
 	public String getCWLogText(String s) {
 		for (int i = 0; i < _logType.length; i++) {
 			if ((s).equals(_logType[i][GC_MSG])) {
-				return MyLocale.getMsg(Integer.parseInt(_logType[i][MSG_NR]),"");
+				return MyLocale.getMsg(Common.parseInt(_logType[i][MSG_NR]),"");
 			}			
 		}
 		return "";
@@ -1258,7 +1258,7 @@ public class CacheHolder{
 			{"355", "Attended"},
 			{"361", "Webcam Photo Taken"},
 			{"319", "Didn't find it"},
-			{"314", "Write note"}, 
+			{"314", "Write note"}, // at change do change IDX_WRITENOTE = 5;
 			{"315", "Needs Archived"},
 			{"316", "Needs Maintenance"},
 			{"317", "Search"}, 
@@ -1276,7 +1276,7 @@ public class CacheHolder{
 	public final static String[] GetGuiLogTypes() {
 		String[] ret = new String[_logType.length];
 		for (int i = 0; i < _logType.length; i++) {
-			ret[i]=MyLocale.getMsg(Integer.parseInt(_logType[i][MSG_NR]),"");
+			ret[i]=MyLocale.getMsg(Common.parseInt(_logType[i][MSG_NR]),"");
 		}
 		return ret;
 	}
@@ -1298,7 +1298,7 @@ public class CacheHolder{
 		else {
 			String CacheStatus=getCacheStatus();  
 			for (int i = 1; i < _logType.length; i++) {
-				if (CacheStatus.endsWith(MyLocale.getMsg(Integer.parseInt(_logType[i][MSG_NR]),""))) {
+				if (CacheStatus.endsWith(MyLocale.getMsg(Common.parseInt(_logType[i][MSG_NR]),""))) {
 					gcLogType=_logType[i][GC_MSG];
 					break;
 				}
