@@ -405,17 +405,6 @@ public class MainMenu extends MenuBar {
 					dir = fc.getChosenDirectory().toString();
 					pref.setImporterPath("LocGpxImporter", dir);
 					String files[] = fc.getAllChosen();
-					/*
-					int how = GPXImporter.DOIT_ASK;
-					if (files.length > 0){
-							InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
-							iB.execute();
-							boolean doSpider = iB.mCB_state;
-							if (doSpider) how = GPXImporter.DOIT_WITHSPOILER;
-							else how = GPXImporter.DOIT_NOSPOILER;
-					}
-					 */
-
 					int how = GPXImporter.DOIT_ASK;
 					for (int i = 0; i < files.length; i++){
 						String file = dir + "/" + files[i];

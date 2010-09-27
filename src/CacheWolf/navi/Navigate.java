@@ -60,7 +60,7 @@ public class Navigate {
 	public boolean destinationIsCache = false;
 	public CWGPSPoint gpsPos = new CWGPSPoint();
 	public Track curTrack = null;
-	Color trackColor = new Color(255,0,0); // red
+	public Color trackColor = new Color(255,0,0); // red
 	public CWPoint skyOrientationDir = new CWPoint();
 	public int luminary = SkyOrientation.SUN;
 

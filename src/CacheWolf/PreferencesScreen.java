@@ -25,7 +25,6 @@
     */
 package CacheWolf;
 
-import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
 import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
@@ -356,7 +355,7 @@ public class PreferencesScreen extends Form {
 				mApp.mainApp.font = newGuiFont;
 				
 				pref.myAlias = Alias.getText().trim();
-				SpiderGC.passwort=pref.password= inpPassword.getText().trim();
+				pref.password= inpPassword.getText().trim();
 				pref.gcMemberId=inpGcMemberID.getText().trim();
 				MyLocale.saveLanguage(MyLocale.language=inpLanguage.getText().toUpperCase().trim());
 				pref.browser = Browser.getText();
