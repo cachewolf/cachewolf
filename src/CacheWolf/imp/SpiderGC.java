@@ -660,6 +660,7 @@ public class SpiderGC {
 					if (setCachesToLoad) {
 						cachesToLoad.add(wp + "found");
 					} else {
+						ch.getCacheDetails(false).URL="http://www.geocaching.com/seek/cache_details.aspx?wp="+wp;
 						ch.save();
 					}
 					if (Global.mainTab.statBar != null)
