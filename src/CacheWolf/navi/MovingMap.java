@@ -76,7 +76,6 @@ import ewe.ui.MenuEvent;
 import ewe.ui.MenuItem;
 import ewe.ui.MessageBox;
 import ewe.ui.PenEvent;
-import ewe.ui.ToolTip;
 import ewe.ui.WindowConstants;
 import ewe.ui.WindowEvent;
 import ewe.ui.mButton;

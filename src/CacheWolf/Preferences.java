@@ -25,7 +25,6 @@
     */
 package CacheWolf;
 
-import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.FileBugfix;
@@ -445,7 +444,6 @@ public class Preferences extends MinML{
 			myAlias = SafeXML.cleanback(atts.getValue("name"));
 			tmp = SafeXML.cleanback(atts.getValue("password"));
 			if (tmp != null) password=tmp;
-			SpiderGC.passwort=password;
 		}
 		else if(name.equals("alias2")) myAlias2 = SafeXML.cleanback(atts.getValue("name"));
 		else if(name.equals("gcmemberid")) {

@@ -66,7 +66,7 @@ public class MainTab extends mTabbedPanel {
 	MainMenu mnuMain;
 	public StatusBar statBar;
 	public MovingMap mm;
-	Navigate nav;
+	public Navigate nav;
 	public String mainCache="";
 	int oldCard=0;
 	boolean cacheDirty=false;
