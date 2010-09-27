@@ -348,9 +348,11 @@ public class SpiderGC {
 				startPos = null;
 		}
 
-		if (new MessageBox(MyLocale.getMsg(651, "Question"),
-				MyLocale.getMsg(653,"Do you want to get the Caches?"),
-				MessageBox.YESB | MessageBox.NOB).execute() == MessageBox.NOB) {
+		int answer = new MessageBox(MyLocale.getMsg(651, "Question"),
+				MyLocale.getMsg(652,"Update caches with all details?"),
+				MessageBox.YESB | MessageBox.NOB | MessageBox.CANCELB).execute();
+		boolean complete = answer == MessageBox.YESB;
+		if ( answer == MessageBox.CANCELB) {
 			if (startPos != null) pref.setCurCentrePt(startPos);
 			return;
 		}
@@ -407,7 +409,7 @@ public class SpiderGC {
 			if (nextPos != null) {
 				sq = getSquare(startPos, lateralDistance);
 				getCaches(sq.topleft.latDec, sq.topleft.lonDec,
-						sq.buttomright.latDec, sq.buttomright.lonDec, false);
+						sq.buttomright.latDec, sq.buttomright.lonDec, complete);
 				// pref.log("next WP = " + startPos.toString(), null);
 
 				double degrees = startPos.getBearing(nextPos);
@@ -420,7 +422,7 @@ public class SpiderGC {
 					origin = nextCheckPoint;
 					sq = getSquare(origin, lateralDistance);
 					getCaches(sq.topleft.latDec, sq.topleft.lonDec,
-							sq.buttomright.latDec, sq.buttomright.lonDec, false);
+							sq.buttomright.latDec, sq.buttomright.lonDec, complete);
 					// pref.log("next CP = " + origin.toString(), null);
 					if (infB.isClosed) {
 						break;
@@ -434,7 +436,7 @@ public class SpiderGC {
 		}
 		sq = getSquare(startPos, lateralDistance);
 		getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.buttomright.latDec,
-				sq.buttomright.lonDec, false);
+				sq.buttomright.lonDec, complete);
 		// pref.log("last WP = " + startPos.toString(), null);
 		if (infB.isClosed) {
 			Vm.showWait(false);
@@ -442,10 +444,7 @@ public class SpiderGC {
 		} // or ask for download of intermediate result
 		
 		int spiderErrors = 0;
-		if (new MessageBox(MyLocale.getMsg(651, "Question"),
-				MyLocale.getMsg(652,"Update caches with all details?"),
-				MessageBox.YESB | MessageBox.NOB).execute() == MessageBox.IDYES) {
-
+		if (complete) {
 			for (int i = 0; i < cachesToLoad.size(); i++) {
 				String wpt = (String) cachesToLoad.get(i);
 				boolean is_found = wpt.indexOf("found") != -1;
