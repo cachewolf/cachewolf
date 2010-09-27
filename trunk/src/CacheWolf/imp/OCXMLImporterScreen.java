@@ -32,6 +32,8 @@ import CacheWolf.MyLocale;
 import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.imp.SpiderGC.SpiderProperties;
+import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.sys.Convert;
 import ewe.ui.CellConstants;
 import ewe.ui.ControlEvent;
@@ -63,6 +65,7 @@ public class OCXMLImporterScreen extends Form {
 	mInput maxLogsInput;
 	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox, travelbugsCheckBox;
 	ewe.ui.mChoice domains;
+	String fileName;
 
 	mLabel distLbl;
 	mLabel maxNumberLbl;
@@ -81,6 +84,7 @@ public class OCXMLImporterScreen extends Form {
 	public static final int MINDIST = 1024;
 	public static final int DIRECTION = 2048;
 	public static final int MAXUPDATE = 4096;
+	public static final int FILENAME = 8192; // track or route gpx
 
 
 	public OCXMLImporterScreen(String title, int options) {
@@ -203,6 +207,22 @@ public class OCXMLImporterScreen extends Form {
 			missingCheckBox.setText(MyLocale.getMsg(1606,"Alle erneut downloaden"));
 			missingCheckBox.setState(pref.downloadMissingOC);
 			this.addLast(missingCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
+		}
+
+		if ((options & FILENAME) > 0) {
+			String dir = pref.getImporterPath("LocGpxImporter");
+			FileChooser fc = new FileChooser(FileChooserBase.OPEN, dir);
+			fc.addMask("*.gpx");
+			fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
+			if(fc.execute() != FormBase.IDCANCEL){
+				dir = fc.getChosenDirectory().toString();
+				pref.setImporterPath("LocGpxImporter", dir);
+				//String files[] = fc.getAllChosen();
+				fileName=fc.file;
+			}
+			else {
+				fileName="";
+			}
 		}
 
 		cancelB = new mButton(MyLocale.getMsg(1604,"Cancel"));
