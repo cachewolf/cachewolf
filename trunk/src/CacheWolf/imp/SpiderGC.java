@@ -348,6 +348,13 @@ public class SpiderGC {
 				startPos = null;
 		}
 
+		if (new MessageBox(MyLocale.getMsg(651, "Question"),
+				MyLocale.getMsg(653,"Do you want to get the Caches?"),
+				MessageBox.YESB | MessageBox.NOB).execute() == MessageBox.NOB) {
+			if (startPos != null) pref.setCurCentrePt(startPos);
+			return;
+		}
+
 		if (startPos != null && !startPos.isValid()) {
 			(new MessageBox(MyLocale.getMsg(5500, "Error"),
 					MyLocale.getMsg(5509, "Coordinates for centre must be set"), FormBase.OKB))
@@ -356,7 +363,7 @@ public class SpiderGC {
 		}
 
 		Vm.showWait(true);
-		infB = new InfoBox("Status", MyLocale.getMsg(5502,"Fetching first page..."));
+		infB = new InfoBox("Status", MyLocale.getMsg(5502,"Fetching pages..."));
 		infB.exec();
 
 		if (!loggedIn || pref.forceLogin) {
@@ -435,8 +442,8 @@ public class SpiderGC {
 		} // or ask for download of intermediate result
 		
 		int spiderErrors = 0;
-		if (new MessageBox("Question",
-				"Update caches with all details?",
+		if (new MessageBox(MyLocale.getMsg(651, "Question"),
+				MyLocale.getMsg(652,"Update caches with all details?"),
 				MessageBox.YESB | MessageBox.NOB).execute() == MessageBox.IDYES) {
 
 			for (int i = 0; i < cachesToLoad.size(); i++) {
@@ -462,8 +469,7 @@ public class SpiderGC {
 					FormBase.DEFOKB).execute();
 		}
 		if (maxNumberAbort) {
-			new MessageBox(
-					MyLocale.getMsg(5519,"Information"),
+			new MessageBox(MyLocale.getMsg(5519,"Information"),
 					MyLocale.getMsg(5520,"Only the given maximum of caches were loaded.\nRepeat spidering later to load more caches.\nNo already existing caches were updated."),
 					FormBase.DEFOKB).execute();
 		}
