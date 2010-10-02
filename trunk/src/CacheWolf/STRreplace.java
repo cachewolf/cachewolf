@@ -33,8 +33,8 @@ public class STRreplace{
 		 */ 
 		public static String replace( String s, String f, String r )
 		{
-		   if (s == null)  return s;
-		   if (f == null)  return s;
+		   if (s == null || s.equals(""))  return s;
+		   if (f == null || f.equals(""))  return s;
 		   if (r == null)  r = "";
 		
 		   int index01 = s.indexOf( f );

@@ -302,7 +302,6 @@ public class GpxExportNg {
 							String strOut=formatCache(ch);
 							if (!strOut.equals("")) {
 								writer.print(strOut);
-								expCount++;
 							}
 						}
 
