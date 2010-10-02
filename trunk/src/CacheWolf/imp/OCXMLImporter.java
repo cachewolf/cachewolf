@@ -674,6 +674,7 @@ public class OCXMLImporter extends MinML {
 				new URL("http://" + hostname+"/"), fetchURL).toString();
 			String fileName = createPicFilename(fetchURL);
 			ImageInfo imageInfo = new ImageInfo();
+			imageInfo.setURL(fetchURL);
 			// add title
 			imageInfo.setTitle(picDesc);
 			holder.getCacheDetails(false).images.add(imageInfo);
