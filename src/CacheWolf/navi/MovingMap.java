@@ -2088,7 +2088,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu kontextMenu;
 	MenuItem gotoMenuItem = new MenuItem(MyLocale.getMsg(4230, "Goto here$g"), 0, null);
 	MenuItem newWayPointMenuItem = new MenuItem(MyLocale.getMsg(4232, "Create new Waypoint here$n"), 0, null);;
-	MenuItem openCacheDescMenuItem,openCacheDetailMenuItem,addCachetoListMenuItem,gotoCacheMenuItem;
+	MenuItem openCacheDescMenuItem,openCacheDetailMenuItem,addCachetoListMenuItem,gotoCacheMenuItem,hintMenuItem;
 
 	MenuItem miLuminary[];
 
@@ -2316,7 +2316,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						kontextMenu.addItem(new MenuItem("Difficulty: "+CacheTerrDiff.longDT(clickedCache.getHard())));
 						kontextMenu.addItem(new MenuItem("Terrain: "+CacheTerrDiff.longDT(clickedCache.getTerrain())));
 						kontextMenu.addItem(new MenuItem("Size: "+CacheSize.cw2ExportString(clickedCache.getCacheSize())));
-						kontextMenu.addItem(new MenuItem("Hint: "+Common.rot13(clickedCache.getCacheDetails(false).Hints)));
+						kontextMenu.addItem(hintMenuItem=new MenuItem("Hint: "+clickedCache.getCacheDetails(false).Hints));
 					}
 				}
 			}
@@ -2350,7 +2350,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							+ "Difficulty: "+CacheTerrDiff.longDT(ch.getHard())+"\n"
 							+ "Terrain: "+CacheTerrDiff.longDT(ch.getTerrain())+"\n"
 							+ "Size: "+CacheSize.cw2ExportString(ch.getCacheSize())+"\n"
-							+ "Hint: "+Common.rot13(ch.getCacheDetails(false).Hints);
+							+ "";
 			}
 		}
 		return true;
@@ -2405,6 +2405,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					if (action == addCachetoListMenuItem) {
 						closeKontextMenu();
 						Global.mainForm.cacheList.addCache(clickedCache.getWayPoint());
+					}
+					if (action == hintMenuItem) {
+						hintMenuItem.setText(Common.rot13(hintMenuItem.action));
 					}
 					/*
 					for (int i=0; i<miLuminary.length; i++) {
