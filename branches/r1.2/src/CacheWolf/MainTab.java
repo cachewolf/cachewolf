@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import CacheWolf.navi.GotoPanel;
@@ -25,7 +50,7 @@ import ewe.ui.mTabbedPanel;
 public class MainTab extends mTabbedPanel {
 	DescriptionPanel descP= new DescriptionPanel();
 	HintLogPanel hintLP = new HintLogPanel();
-	TablePanel tbP;
+	public TablePanel tbP;
 	CacheDB cacheDB;
 	public DetailsPanel detP = new DetailsPanel();
 	CalcPanel calcP;
@@ -39,9 +64,9 @@ public class MainTab extends mTabbedPanel {
 	public CacheHolder ch=null, chMain=null;
 	CacheHolderDetail chD =null;
 	MainMenu mnuMain;
-	StatusBar statBar;
+	public StatusBar statBar;
 	public MovingMap mm;
-	Navigate nav;
+	public Navigate nav;
 	public String mainCache="";
 	int oldCard=0;
 	boolean cacheDirty=false;
@@ -135,7 +160,7 @@ public class MainTab extends mTabbedPanel {
 	 * Code to execute when leaving a panel (oldCard is the panel number)
 	 *
 	 */
-	private void onLeavingPanel(int panelNo) {//Vm.debug("Leaving "+panelNo);
+	private void onLeavingPanel(int panelNo) {
 		if (panelNo==0) { // Leaving the list view
 			// Get the cache for the current line (ch)
 			// Get the details for the current line (chD)
@@ -165,7 +190,7 @@ public class MainTab extends mTabbedPanel {
 				}
 				//was tbP.refreshTable();
 				tbP.tc.update(true); // Update and repaint
-				if (statBar!=null) statBar.updateDisplay();
+				if (statBar!=null) statBar.updateDisplay("");
 			}
 		}
 		if (panelNo==5) { // Leaving the Solver Panel
@@ -184,7 +209,7 @@ public class MainTab extends mTabbedPanel {
 					boolean oldHasSolver = chMain.hasSolver();
 					chMain.getCacheDetails(true).setSolver(solverP.getInstructions());
 					if (oldHasSolver != chMain.hasSolver()) tbP.tc.update(true);
-					chMain.save();//Vm.debug("mainT:SaveCache "+chMain.wayPoint+"/S:"+chMain.Solver);
+					chMain.save();
 					chMain=null;
 				}
 			}
@@ -195,7 +220,7 @@ public class MainTab extends mTabbedPanel {
 	 * Code to execute when entering a panel (getSelectedItem() is the panel number)
 	 *
 	 */
-	private void onEnteringPanel(int panelNo) {//Vm.debug("Entering "+panelNo);
+	private void onEnteringPanel(int panelNo) {
 		switch (panelNo) {// Switch by panel number
 		case 0:  //MainPanel
 			MyLocale.setSIPOff();
@@ -362,13 +387,11 @@ public class MainTab extends mTabbedPanel {
 					//If white Areas are filled there is a problem with painting the image. We force painting here.
 					mm.repaint ();
 				}catch (InterruptedException e) {
-					e.printStackTrace();
-					Global.getPref().log("Error starting mavoing map (1): " + e.getMessage(), e, true);
+					Global.getPref().log("Error starting mavoing map (1): ", e, true);
 					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", FormBase.OKB)).execute(); }
 			}
 		} catch (Exception e) { // TODO swith waiting indication clock off
-			e.printStackTrace();
-			Global.getPref().log("Error starting moving map (2): " + e.getMessage(), e, true);
+			Global.getPref().log("Error starting moving map (2): ", e, true);
 			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), FormBase.OKB)).execute();
 		}
 	}

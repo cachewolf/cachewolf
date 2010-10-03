@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi.touchControls;
 
 
@@ -8,21 +33,17 @@ import ewe.graphics.AniImage;
 public class MovingMapControlItemText extends MovingMapControlItem {
 
 	private ImageWithText aniImage;
-	private String command;
+	private int command;
 	private String context;
 
 	public MovingMapControlItemText(final String iconText, String imageSource,String iconSource,
-			int alpha, String actionCommand, String context, String alignText,TextOptions tOptions) {
+			int alpha, int actionCommand, String context, String alignText,TextOptions tOptions) {
 
-		Image image = MovingMapControlItem.createImage(imageSource, iconSource, alpha);
-		
+		Image image = MovingMapControlItem.createImage(imageSource, iconSource, alpha);		
 		aniImage = new ImageWithText(image,tOptions);
-
 		aniImage.setText(iconText);
 		aniImage.freeSource();
-
-		aniImage.properties |= mImage.AlwaysOnTop;
-
+		aniImage.properties |= mImage.AlwaysOnTop;		
 		if (context != null) {
 			this.context = context;
 			xProperties |= IS_ICON_WITH_TEXT;
@@ -32,14 +53,12 @@ public class MovingMapControlItemText extends MovingMapControlItem {
 		}
 		if (alignText != null) {
 			alignText = alignText.toUpperCase();
-
 			if (alignText.startsWith("T")) {
 				xProperties |= ICON_TEXT_TOP;
 			} else if (alignText.startsWith("B")) {
 				xProperties |= ICON_TEXT_BOTTOM;
 			} else
 				xProperties |= ICON_TEXT_VERTICAL_CENTER;
-
 			if (alignText.endsWith("L")) {
 				xProperties |= ICON_TEXT_LEFT;
 			} else if (alignText.endsWith("R")) {
@@ -50,59 +69,44 @@ public class MovingMapControlItemText extends MovingMapControlItem {
 			xProperties |= ICON_TEXT_VERTICAL_CENTER;
 			xProperties |= ICON_TEXT_HORIZONTAL_CENTER;
 		}
-		if (actionCommand != null) {
+		if (actionCommand != -1) {
 			command = actionCommand;
 			xProperties |= IS_ICON_WITH_COMMAND;
 		}
-
 		aniImage.setProperties(xProperties);
 	}
-
 	public void setText(String iconText) {
 		aniImage.setText(iconText);
 	}
-
 	public int getWidth() {
 		return aniImage.getWidth();
-
 	}
-
 	public int getHeight() {
-
 		return aniImage.getHeight();
 	}
-
 	public AniImage getImage() {
-
 		return aniImage;
 	}
-
-	public String getCommand() {
+	public int getCommand() {
 		return command;
 	}
-
 	public String getContext() {
 		return context;
 	}
-
 	public void setAdditionalProperty(int prop) {
 		aniImage.setStartlineWitdth(prop);
 	}
-
-	public String getActionCommand() {
+	public int getActionCommand() {
 		return command;
 	}
 	
-	public static class TextOptions{
-		
-		
+	public static class TextOptions{		
 		private final int fontSize;
 		private final int textFromLeft;
 		private final int textFromRight;
 		private final int textFromTop;
 		private final int textFromBottom;
-		public TextOptions(int fontSize, int textFromLeft, int textFromRight,
-				int textFromTop, int textFromBottom) {
+		public TextOptions(int fontSize, int textFromLeft, int textFromRight, int textFromTop, int textFromBottom) {
 			super();
 			this.fontSize = fontSize;
 			this.textFromLeft = textFromLeft;
@@ -110,27 +114,21 @@ public class MovingMapControlItemText extends MovingMapControlItem {
 			this.textFromTop = textFromTop;
 			this.textFromBottom = textFromBottom;
 		}
-		
-		
 		public int getFontSize() {
 			return fontSize;
-		}
-		
+		}		
 		public int getTextFromLeft() {
 			return textFromLeft;
-		}
-		
+		}		
 		public int getTextFromRight() {
 			return textFromRight;
-		}
-		
+		}		
 		public int getTextFromTop() {
 			return textFromTop;
-		}
-		
+		}		
 		public int getTextFromBottom() {
 			return textFromBottom;
-		}
-		
+		}		
 	}
+
 }

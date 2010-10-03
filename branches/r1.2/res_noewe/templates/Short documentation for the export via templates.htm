@@ -206,32 +206,43 @@ of characters for Variable SHORTWAYPOINT<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;Out&quot; value=&quot;.<span
 class=SpellE>gpx</span>&quot;&gt;<span style='mso-tab-count:4'>                                        </span>Output
 Filename or Extension<br>
-&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>NrLogs</span>
-&quot; value=&quot;-1&quot;&gt;<span style='mso-tab-count:4'>                                     </span><span
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>NrLogs</span>&quot;
+value=&quot;-1&quot;&gt;<span style='mso-tab-count:4'>                                      </span><span
 class=SpellE>Anzahl</span> logs (-1 = alle)<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>singleFile</span>&quot;
 value=&quot;yes&quot;&gt;<span style='mso-tab-count:3'>                                </span>one
 <span class=SpellE>outputfile</span> value=”yes” or one file per cache
 value=”no” (use a dummy / not existing name for Out par)<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>formatModifier</span>&quot;
-value=&quot;0&quot;&gt;<span style='mso-tab-count:1'>      </span><span
-style='mso-tab-count:2'>                        </span>0 is xml as <span
-class=SpellE>gpx</span> generation before, 1 is html like <span class=SpellE>showCacheInBrowser</span>,
-2 is html like html-exporter<br>
+value=&quot;0&quot;&gt;<span style='mso-tab-count:3'>                             </span>0
+is xml as <span class=SpellE>gpx</span> generation before, 1 is html for local
+use 2 is html for export use<br>
 &lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>takeOnlyWp</span>&quot;
-value=&quot;<span class=SpellE>addi</span>&quot;&gt;<span style='mso-tab-count:
-1'>    </span><span style='mso-tab-count:2'>                        </span>process
+value=&quot;all&quot;&gt;<span style='mso-tab-count:3'>                              </span>process
 only this <span class=SpellE>Cachetypegroups</span> value is either “main” or “<span
-class=SpellE>addi</span>” else both is assumed<br>
-&lt;<span class=SpellE>tmpl_par</span> name=&quot;input*&quot; value=&quot;default&quot;&gt;<span
-style='mso-tab-count:1'>          </span><span style='mso-tab-count:2'>                        </span>calls
+class=SpellE>addi</span>” else both (here all = default ) is assumed<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>CopyCacheImages</span>&quot;
+value=&quot;yes&quot;&gt;<span style='mso-tab-count:2'>                   </span><span
+class=SpellE>CacheImages</span> are copied to the output directory (copy <span
+class=SpellE>attribs</span> and icons manually, they are fix)<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>inputEingabe</span>&quot;
+value=&quot;default&quot;&gt;<span style='mso-tab-count:2'>                       </span>calls
 input with a “default” value and makes a <span class=SpellE>tmpl_var</span>
-with the name * (* is placeholder)<o:p></o:p></span></p>
+with the name <span class=SpellE>Eingabe</span> (<span class=SpellE>Eingabe</span>
+is placeholder) (!<span class=SpellE>dont</span> use umlauts in defaults)<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>constKonstante</span>&quot;
+value=&quot;value&quot;&gt;<span style='mso-tab-count:2'>                     </span>sets
+a <span class=SpellE>tmpl_var</span> with the name <span class=SpellE>Konstante</span>
+(<span class=SpellE>Konstante</span> is placeholder) (!<span class=SpellE>dont</span>
+use umlauts in value)<br>
+&lt;<span class=SpellE>tmpl_par</span> name=&quot;<span class=SpellE>sortedBy</span>&quot;
+value=&quot;-1&quot;&gt;<span style='mso-tab-count:3'>                                    </span>sets
+a <span class=SpellE>tmpl_var</span> with the name <span class=SpellE>sortedBy</span>:
+values are 1..19. (5=Waypoint,6=Name,9=Status,10=Distance… see myComparer.java)<o:p></o:p></span></p>
 
-<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-mso-outline-level:1'><u><span lang=EN-GB style='font-size:10.0pt;font-family:
-Arial;mso-ansi-language:EN-GB'>Output section</span></u><span lang=EN-GB
-style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
+<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><u><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Output
+section</span></u><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Anything
@@ -253,8 +264,10 @@ lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>PROGDIR<span
 style='mso-tab-count:8'>                                                                                           </span>:
 <span class=SpellE>FileBase.getProgramDirectory</span>()<br>
-PROFILDIR<span style='mso-tab-count:8'>                                                                                         </span>:
-<br>
+PROFILDIR<span style='mso-tab-count:8'>                                                                                         </span>:<span
+style='mso-tab-count:6'>                                                                      </span><span
+style='mso-tab-count:2'>                        </span>: <br>
+ALIAS<span style='mso-tab-count:9'>                                                                                                 </span>:<br>
 TYPE<span style='mso-tab-count:9'>                                                                                                 </span>:
 &lt;type&gt; Type of cache, e.g. Regular, Multi<br>
 TYPENO<span style='mso-tab-count:8'>                                                                                             </span>:
@@ -267,9 +280,8 @@ GSTYPE<span style='mso-tab-count:8'>                                            
 &lt;<span class=SpellE>groundspeak:type</span>&gt;<br>
 SHORTTYPE<span style='mso-tab-count:8'>                                                                                      </span>:
 First Letter of &lt;type&gt; ???<br>
-SIZE<span style='mso-tab-count:7'>                                                                           </span><span
-style='mso-tab-count:2'>                        </span>: Size of Cache, e.g.
-Regular, Micro<br>
+SIZE<span style='mso-tab-count:9'>                                                                                                   </span>:
+Size of Cache, e.g. Regular, Micro<br>
 SHORTSIZE<span style='mso-tab-count:8'>                                                                                        </span>:
 First letter of size<br>
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
@@ -298,13 +310,13 @@ DIFFICULTY<span style='mso-tab-count:8'>                                        
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
 mso-ansi-language:EN-GB'>SHORTDIFFICULTY<span style='mso-tab-count:7'>                                                                             </span>:
 Difficulty mal 10 also 15 <span class=SpellE>statt</span> 1.5<br>
-SHDIFFICULTY<span style='mso-tab-count:7'>                                                                        </span><span
-style='mso-tab-count:1'>            </span>: Difficulty <span class=SpellE>abgerundet</span>
-also 1 <span class=SpellE>statt</span> 1.5<br>
+SHDIFFICULTY<span style='mso-tab-count:8'>                                                                                   </span>:
+Difficulty <span class=SpellE>abgerundet</span> also 1 <span class=SpellE>statt</span>
+1.5<br>
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:
 EN-GB'>TERRAIN<span style='mso-tab-count:8'>                                                                                            </span>:<br>
 </span><span lang=EN-GB style='font-size:10.0pt;font-family:Helvetica;
-mso-ansi-language:EN-GB'>SHORTTERAIN<span style='mso-tab-count:8'>                                                                                   </span>:
+mso-ansi-language:EN-GB'>SHORTTERRAIN<span style='mso-tab-count:7'>                                                                                 </span>:
 Terrain mal 10<br>
 SHTERRAIN<span style='mso-tab-count:8'>                                                                                        </span>:
 Terrain <span class=SpellE>abgerundet</span><br>
@@ -323,8 +335,8 @@ LON<span style='mso-tab-count:9'>                                               
 class=SpellE>xx.yyyy</span>” &gt; Longitude in decimal format, e.g. 008.58132<br>
 STATUS<span style='mso-tab-count:8'>                                                                                             </span>:<span
 style='mso-spacerun:yes'>  </span>means found<br>
-GC_LOGTYPE<span style='mso-tab-count:1'>  </span><span style='mso-tab-count:
-7'>                                                                                  </span>:
+GC_LOGTYPE<span style='mso-tab-count:4'>                                     </span><span
+style='mso-tab-count:4'>                                               </span>:
 the English Status texts (for <span class=SpellE>gpx</span> – export)<br>
 STATUS_DATE<span style='mso-tab-count:8'>                                                                                   </span>:
 Get the date part of the status <br>
@@ -345,7 +357,8 @@ mso-ansi-language:EN-GB'>Name <span class=SpellE>der</span> <span class=SpellE>d
 class=SpellE>hinten</span> und <span class=SpellE>wenn</span> <span
 class=SpellE>das</span> <span class=SpellE>nicht</span> <span class=SpellE>reicht</span>
 <span class=SpellE>durch</span> <span class=SpellE>Weglassen</span> von<span
-style='mso-spacerun:yes'>     </span><span style='mso-tab-count:9'>                                                                                                      </span>:
+style='mso-spacerun:yes'>     </span><span style='mso-tab-count:9'>                                                                                                      </span><span
+style='mso-tab-count:5'>                                                           </span>:
 <span class=SpellE>Kleinbuchstaben</span> von <span class=SpellE>hinten</span>
 auf <span class=SpellE>eine</span> in den <span class=SpellE>Einstellungen</span>
 <span class=SpellE>vorgegebene</span> <span class=SpellE>Länge</span> <span
@@ -398,7 +411,9 @@ COUNTRY<span style='mso-tab-count:8'>                                           
 STATE<span style='mso-tab-count:9'>                                                                                                </span>:
 <span class=SpellE>Bundesland</span><br>
 HTML<span style='mso-tab-count:9'>                                                                                                 </span>:
-TRUE / FALSE if description is html<br style='mso-special-character:line-break'>
+TRUE / FALSE if description is html<br>
+VOTE<span style='mso-tab-count:9'>                                                                                                 </span>:
+<span class=SpellE>gcvote</span> / OC<br style='mso-special-character:line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
 <![endif]><o:p></o:p></span></p>
 
@@ -485,9 +500,11 @@ Beschreibungstext für den Addi<o:p></o:p></span></p>
 mso-outline-level:1'><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-mso-outline-level:1'><span lang=EN-GB style='font-size:10.0pt;font-family:Arial;
-mso-ansi-language:EN-GB'>ALLIMGS<span style='mso-tab-count:8'>                                                                                            </span>:
-the &lt;<span class=SpellE>tmpl_loop</span> ALLIMGS&gt;<br>
+mso-outline-level:1'><span class=SpellE><span class=GramE><span lang=EN-GB
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>cacheImg</span></span></span><span
+lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'><span
+style='mso-tab-count:1'>          </span><span style='mso-tab-count:7'>                                                                                  </span>:
+the &lt;<span class=SpellE>tmpl_loop</span> <span class=SpellE>cacheImg</span>&gt;<br>
 FILENAME<span style='mso-tab-count:8'>                                                                                          </span>:
 the filename in the profile directory<br>
 TEXT<span style='mso-tab-count:9'>                                                                                                  </span>:

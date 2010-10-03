@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import CacheWolf.exp.ASCExporter;
@@ -12,12 +37,13 @@ import CacheWolf.exp.OziExporter;
 import CacheWolf.exp.SpoilerPOIExporter;
 import CacheWolf.exp.TPLExporter;
 import CacheWolf.exp.TomTomExporter;
+import CacheWolf.imp.FieldnotesImporter;
+import CacheWolf.imp.GCVoteImporter;
 import CacheWolf.imp.GPXImporter;
 import CacheWolf.imp.LOCXMLImporter;
 import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.imp.OCXMLImporterScreen;
 import CacheWolf.imp.SpiderGC;
-import CacheWolf.imp.GCVoteImporter;
 import CacheWolf.navi.MapImporter;
 import CacheWolf.navi.MapLoaderGui;
 import CacheWolf.navi.SelectMap;
@@ -54,14 +80,14 @@ import ewe.util.Vector;
 public class MainMenu extends MenuBar {
 	private MenuItem preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
-	private MenuItem spider, spiderAllFinds, loadGCVotes, update, chkVersion;
+	private MenuItem spider, spiderRoute, spiderQuick, spiderAllFinds, loadGCVotes, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator=new MenuItem("-");
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete,orgRebuild,orgCheckNotesAndSolver;
-	public MenuItem cacheTour,orgTravelbugs, mnuForceLogin;
+	public MenuItem cacheTour, orgTravelbugs, mnuForceLogin;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuDeleteProfile, mnuRenameProfile, mnuEditCenter;
 	private Form father;
 	private TablePanel tbp;
@@ -89,11 +115,16 @@ public class MainMenu extends MenuBar {
 		///////////////////////////////////////////////////////////////////////
 		// subMenu for import, part of "Application" menu below
 		///////////////////////////////////////////////////////////////////////
+		if (Global.getPref().spiderRoute) 
+			spiderRoute = new MenuItem(MyLocale.getMsg(137,"Download along a Route from geocaching.com"));
+		else spiderRoute = mnuSeparator;
 		MenuItem[] mnuImport = {				
-				loadcaches  = new MenuItem(MyLocale.getMsg(129,"Import GPX")),
-				loadOC      = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")),
-				spider      = new MenuItem(MyLocale.getMsg(131,"Spider from geocaching.com")),
+				loadcaches     = new MenuItem(MyLocale.getMsg(129,"Import GPX")),
+				loadOC         = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")),
+				spider         = new MenuItem(MyLocale.getMsg(131,"Download from geocaching.com")),
+				spiderRoute,
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")),
+				spiderQuick    = new MenuItem(MyLocale.getMsg(138,"from GC quick")),
 				update         = new MenuItem(MyLocale.getMsg(1014,"Update cache data")),
 				mnuSeparator,
 				loadGCVotes    = new MenuItem(MyLocale.getMsg(1208,"Import ratings from GCVote")),
@@ -308,7 +339,7 @@ public class MainMenu extends MenuBar {
 					Vm.showWait(infB, false);
 					pref.setCurCentrePt(profile.centre);
                     filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
-					Global.mainForm.setTitle("Cachewolf "+Version.getRelease()+" - "+profile.name);
+        			Global.mainForm.setTitle(profile.name + " - CW "+Version.getRelease());
 					infB.close(0);
 					tbp.resetModel();
 				}
@@ -336,6 +367,22 @@ public class MainMenu extends MenuBar {
 				profile.readIndex();
 				tbp.resetModel();
 			}
+			if(mev.selectedItem == spiderRoute){
+				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				Global.mainTab.saveUnsavedChanges(false);
+				spGC.doItAlongARoute();
+				cacheDB.clear();
+				profile.readIndex();
+				tbp.resetModel();
+			}
+			if(mev.selectedItem == spiderQuick){
+				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				Global.mainTab.saveUnsavedChanges(false);
+				spGC.doItQuickFillFromMapList();
+				cacheDB.clear();
+				profile.readIndex();
+				tbp.resetModel();
+			}
 			if(mev.selectedItem == spiderAllFinds){
 				SpiderGC spGC = new SpiderGC(pref, profile, true);
 				Global.mainTab.saveUnsavedChanges(false);
@@ -352,31 +399,24 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == loadcaches){
 				String dir = pref.getImporterPath("LocGpxImporter");
 				FileChooser fc = new FileChooser(FileChooserBase.OPEN|FileChooserBase.MULTI_SELECT, dir);
-				fc.addMask("*.gpx,*.zip,*.loc");
+				fc.addMask("*.gpx,*.zip,*.loc,fieldnotes.txt,geocache_visits.txt,FieldNotes.log,newlogs.txt");
 				fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
 				if(fc.execute() != FormBase.IDCANCEL){
 					dir = fc.getChosenDirectory().toString();
 					pref.setImporterPath("LocGpxImporter", dir);
 					String files[] = fc.getAllChosen();
-					/*
-					int how = GPXImporter.DOIT_ASK;
-					if (files.length > 0){
-							InfoBox iB = new InfoBox("Spider?", "Spider Images?", InfoBox.CHECKBOX);
-							iB.execute();
-							boolean doSpider = iB.mCB_state;
-							if (doSpider) how = GPXImporter.DOIT_WITHSPOILER;
-							else how = GPXImporter.DOIT_NOSPOILER;
-					}
-					 */
-
 					int how = GPXImporter.DOIT_ASK;
 					for (int i = 0; i < files.length; i++){
 						String file = dir + "/" + files[i];
-						if (file.endsWith("loc")){
+						if (file.endsWith("txt")||file.endsWith("log")){
+							FieldnotesImporter fn=new FieldnotesImporter(pref, profile, file);
+							fn.doIt();
+						}
+						else if (file.endsWith("loc")){
 							LOCXMLImporter loc = new LOCXMLImporter(pref, profile, file);
 							loc.doIt();
 						}
-						else {
+						else { //gpx + zip
 							GPXImporter gpx = new GPXImporter(pref, profile, file);
 							gpx.doIt(how);
 							how = gpx.getHow();
@@ -444,7 +484,7 @@ public class MainMenu extends MenuBar {
 				loc.doIt(LocExporter.MODE_AUTO);
 				ProgressBarForm.display(MyLocale.getMsg(950,"Transfer"),MyLocale.getMsg(951,"Sending to GPS"), null);
 				gpsBabelCommand = pref.gpsbabel+" "+pref.garminGPSBabelOptions+" -i geo -f "+ tmpFileName +" -o garmin -F " + pref.garminConn +":";
-				if (pref.debug)	pref.log( gpsBabelCommand );
+				pref.log("[MainMenu:onEvent] "+gpsBabelCommand);
 				try {
 					// this will *only* work with ewe.jar at the moment
 					ewe.sys.Process p = Vm.exec( gpsBabelCommand );
@@ -452,7 +492,7 @@ public class MainMenu extends MenuBar {
 				}catch(IOException ioex){
 					Vm.showWait(false);
 					(new MessageBox("Error", "Garmin export unsuccessful", FormBase.OKB)).execute();
-					pref.log("Error exporting to Garmin",ioex,pref.debug);
+					pref.log("Error exporting to Garmin",ioex,true);
 				};
 				ProgressBarForm.clear();
 				Vm.showWait(false);
@@ -711,7 +751,6 @@ public class MainMenu extends MenuBar {
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == sysinfo){
-				//Vm.debug("Checking system...");
 				StringBuffer sb=new StringBuffer(400);
 				Font f = mApp.guiFont;
 				sb.append(MyLocale.getMsg(121,"Profile"));
@@ -772,6 +811,7 @@ public class MainMenu extends MenuBar {
 				sb.append(Version.getReleaseDetailed());
 				sb.append("<br>");
 				InfoScreen is = new InfoScreen(sb.toString(), "System", false,pref);
+				pref.log(STRreplace.replace(sb.toString(),"<br>",Preferences.NEWLINE),null);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if(mev.selectedItem == chkVersion){
@@ -795,12 +835,11 @@ public class MainMenu extends MenuBar {
 		CacheDB cacheDB=profile.cacheDB;
 		CacheHolder ch;
 
-		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5003,"Options"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.ALL);
+		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(1014,"updateSelectedCaches"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.ALL);
 		if (options.execute() == FormBase.IDCANCEL) {	return; }
 
 		SpiderGC spider = new SpiderGC(pref, profile, false);
 		OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
-		//Vm.debug("ByPass? " + profile.byPassIndexActive);
 		Vm.showWait(true);
 		boolean alreadySaid = false;
 		boolean alreadySaid2 = false;

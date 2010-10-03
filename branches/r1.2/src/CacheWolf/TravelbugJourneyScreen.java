@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 /**
@@ -13,11 +38,45 @@ package CacheWolf;
 
 import CacheWolf.imp.SpiderGC;
 import CacheWolf.utils.CWWrapper;
+import ewe.fx.Color;
+import ewe.fx.Dimension;
+import ewe.fx.FontMetrics;
+import ewe.fx.IImage;
+import ewe.fx.IconAndText;
+import ewe.fx.Image;
+import ewe.fx.Point;
+import ewe.fx.Rect;
+import ewe.fx.mImage;
 import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
-import ewe.ui.*;
-import ewe.fx.*;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.Control;
+import ewe.ui.ControlConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.DataChangeEvent;
+import ewe.ui.Event;
+import ewe.ui.Form;
+import ewe.ui.FormEvent;
+import ewe.ui.Gui;
+import ewe.ui.HtmlDisplay;
+import ewe.ui.IKeys;
+import ewe.ui.Menu;
+import ewe.ui.MenuItem;
+import ewe.ui.MultiPanelEvent;
+import ewe.ui.PanelSplitter;
+import ewe.ui.PenEvent;
+import ewe.ui.ScrollablePanel;
+import ewe.ui.SplittablePanel;
+import ewe.ui.TableCellAttributes;
+import ewe.ui.TableControl;
+import ewe.ui.TableModel;
+import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
+import ewe.ui.mInput;
+import ewe.ui.mLabel;
+import ewe.ui.mTabbedPanel;
 
 public class TravelbugJourneyScreen extends Form  {
 	
@@ -575,9 +634,9 @@ class tbListControl extends TableControl {
 						s = "http://www.geocaching.com/track/details.aspx?id="+tbj.getTb().getGuid();
 
 					CWWrapper.exec(Global.getPref().browser, s);
-					Global.getPref().log("Executing: \""+Global.getPref().browser+"\" \""+s+"\"");
+					Global.getPref().log("Executed: \""+Global.getPref().browser+"\" \""+s+"\"");
 				} catch (Exception ioex) {
-					Global.getPref().log("Ignored Exception", ioex, true);
+					// Global.getPref().log("Ignored Exception", ioex, true);
 				}
 			}
 		}

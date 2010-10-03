@@ -1,7 +1,43 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
-import ewe.ui.*;
-import ewe.fx.*;
-import ewe.graphics.*;
+import ewe.fx.Color;
+import ewe.fx.Dimension;
+import ewe.fx.Font;
+import ewe.fx.FontMetrics;
+import ewe.fx.Graphics;
+import ewe.fx.Image;
+import ewe.fx.Rect;
+import ewe.fx.mImage;
+import ewe.graphics.AniImage;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlEvent;
+import ewe.ui.Event;
+import ewe.ui.mButton;
 
 /**
 *	The radar panel. Displays the caches around a centre point.<br>
@@ -55,11 +91,7 @@ public class RadarPanel extends CellPanel{
 		pref = p;
 		cacheDB = db;
 		height = (pref.myAppHeight)*6/5; // add 10% each at top/bottom 
-		//height = (int)height * 2;
-		////Vm.debug("Height: " + Convert.toString(height));
-		////Vm.debug("App Height: " + Convert.toString(pref.myAppHeight));
 		width = (pref.myAppWidth)*6/5;
-		//width = (int)width * 2;
 	}
 	
 	// Call this after the centre has changed to re-center the radar panel
@@ -173,7 +205,6 @@ public class RadarPanel extends CellPanel{
 		Image img = new Image(width, height);
 		Graphics g = new Graphics(img);
 		g.setColor(Color.Black);
-		//Vm.debug(Convert.toString(height));
 		g.fillRect(0,0,width, height);
 		
 		
@@ -197,7 +228,6 @@ public class RadarPanel extends CellPanel{
 		}
 		for(int i = 1; i <= steps; i++){
 			radius = (radstep * i)*2;
-			//Vm.debug("Draw: " + Convert.toString(scale));
 			g.drawEllipse(centerX-radius/2,centerY-radius/2, radius,radius);
 		}
 		g.drawLine(centerX,0,centerX,height);

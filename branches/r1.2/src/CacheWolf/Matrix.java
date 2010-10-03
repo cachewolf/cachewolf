@@ -1,6 +1,29 @@
-package CacheWolf;
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
 
-import ewe.sys.*;
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
+package CacheWolf;
 
 public final class Matrix{
 	int iDF = 0;
@@ -26,7 +49,6 @@ public final class Matrix{
 		double m[][] = new double[matrix.length][srcMatrix.matrix[0].length];
 		for (int i = 0; i < m.length; i++)
 			for (int j = 0; j < m[i].length; j++){
-				//Vm.debug("i: " + i + " j: " + j);
 				m[i][j] = calculateRowColumnProduct(matrix,i,srcMatrix.matrix,j);
 			}
 		
@@ -40,7 +62,6 @@ public final class Matrix{
 	private double calculateRowColumnProduct(double[][] A, int row, double[][] B, int col){
 		double product = 0;
 		for(int i = 0; i < A[row].length; i++){
-			//Vm.debug("i = " + i + " row = " + row + " col = " + col);
 			product +=A[row][i]*B[i][col];
 		}
 		return product;
@@ -99,7 +120,7 @@ public final class Matrix{
 	public void DumpMatrix(){
 		for (int i = 0; i < matrix.length; i++)
 			for (int j = 0; j < matrix[i].length; j++)
-				Vm.debug("[ "+i+ " " + j + " ] " + matrix[i][j]);
+				Global.getPref().log("[ "+i+ " " + j + " ] " + matrix[i][j]);
 	}
 	
 	/**
@@ -140,7 +161,7 @@ public final class Matrix{
 							m[row][i] = f1 * m[col][i] + m[row][i];
 						}
 					} catch (Exception e) {
-						Vm.debug("Still Here!!!");
+						Global.getPref().log("Still Here!!!");
 					}
 				}
 			}
@@ -181,7 +202,7 @@ public final class Matrix{
 		double dd = 0;
 
 		if (det == 0) {
-			Vm.debug("Determinant Equals 0, Not Invertible.");
+			Global.getPref().log("Determinant Equals 0, Not Invertible.");
 		} else {
 			dd = 1 / det;
 		}

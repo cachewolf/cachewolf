@@ -1,5 +1,29 @@
-package CacheWolf.imp;
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
 
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
+package CacheWolf.imp;
 
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
@@ -17,22 +41,34 @@ import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
-
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
 
-import ewesoft.xml.*;
-import ewesoft.xml.sax.*;
-import ewe.io.*;
-import ewe.sys.*;
+import ewe.io.BufferedReader;
+import ewe.io.File;
+import ewe.io.FileOutputStream;
+import ewe.io.IO;
+import ewe.io.IOException;
+import ewe.io.InputStreamReader;
+import ewe.net.MalformedURLException;
+import ewe.net.URL;
+import ewe.sys.Convert;
+import ewe.sys.Double;
+import ewe.sys.Time;
+import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
-import ewe.util.*;
-import ewe.util.zip.*;
-import ewe.net.*;
-import ewe.sys.Double;
+import ewe.util.ByteArray;
+import ewe.util.CharArray;
+import ewe.util.Enumeration;
+import ewe.util.Hashtable;
+import ewe.util.zip.ZipEntry;
+import ewe.util.zip.ZipException;
+import ewe.util.zip.ZipFile;
+import ewesoft.xml.MinML;
+import ewesoft.xml.sax.AttributeList;
 
 /**
  *	Class to import Data from opencaching.
@@ -170,7 +206,7 @@ public class OCXMLImporter extends MinML {
 			(new MessageBox("Error", "Coordinates for centre must be set", FormBase.OKB)).execute();
 			return;
 		}
-		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(1600," Download") + hostname,
+		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(130,"Download from opencaching"),
 																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES
 																 | OCXMLImporterScreen.HOST);
 		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
@@ -291,14 +327,12 @@ public class OCXMLImporter extends MinML {
 		}catch (IllegalArgumentException e) {
 			finalMessage = MyLocale.getMsg(1621,"Error parsing update file\n this is likely a bug in " + hostname + "\nplease try again later\n, state:")+" "+state+", waypoint: "+ holder.getWayPoint();
 			success = false;
-			Vm.debug("Parse error: " + state + " " + holder.getWayPoint());
-			e.printStackTrace();
+			pref.log("Parse error: " + state + " " + holder.getWayPoint(),e,true);
 		}catch (Exception e){ // here should be used the correct exception
 			if (holder != null)	finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: "+ holder.getWayPoint();
 			else finalMessage = MyLocale.getMsg(1615,"Error parsing update file, state:")+" "+state+", waypoint: <unkown>";
 			success = false;
-			//Vm.debug("Parse error: " + state + " Exception:" + e.toString()+"   "+holder.getOcCacheID());
-			e.printStackTrace();
+			pref.log("",e,true);
 		} finally {
 			if (tmpFile != null) tmpFile.delete();
 		}
@@ -317,7 +351,7 @@ public class OCXMLImporter extends MinML {
 	public void startElement(String name, AttributeList atts){
 		if (debugGPX){
 			for (int i = 0; i < atts.getLength(); i++) {
-				Vm.debug(" Name: " + atts.getName(i)+ " Value: "+atts.getValue(i));
+				pref.log(" Name: " + atts.getName(i)+ " Value: "+atts.getValue(i));
 			}
 		}
 		strData ="";
@@ -326,8 +360,8 @@ public class OCXMLImporter extends MinML {
 			Time lastSync = new Time();
 			try {
 				lastSync.parse(atts.getValue("date"),"yyyy-MM-dd HH:mm:ss");
-			}catch (IllegalArgumentException e){ // TODO Fehler werfen
-				Vm.debug(e.toString());
+			}catch (IllegalArgumentException e){
+				pref.log("",e,true);
 			}
 			// reduce time at 1 second to avoid sync problems
 			lastSync.setTime(lastSync.getTime() - 1000);
@@ -371,7 +405,7 @@ public class OCXMLImporter extends MinML {
 	public void characters(char[] ch2,int start,int length){
 		String chars = new String(ch2,start,length);
 		strData += chars;
-		if (debugGPX) Vm.debug(strData);
+		if (debugGPX) pref.log(strData,null);
 	}
 
 	private void startCache(String name, AttributeList atts){
@@ -462,14 +496,14 @@ public class OCXMLImporter extends MinML {
 			logtype = Convert.toInt(atts.getValue("id"));
 			switch (logtype) {
 			case 1:
-				logIcon = GPXImporter.typeText2Image("Found");
+				logIcon = Log.typeText2Image("Found");
 				break;
 			case 2:	
-				logIcon = GPXImporter.typeText2Image("Not Found");
+				logIcon = Log.typeText2Image("Not Found");
 				holder.setNoFindLogs((byte)(holder.getNoFindLogs()+1));
 				break;
 			case 3: 
-				logIcon = GPXImporter.typeText2Image("Note");
+				logIcon = Log.typeText2Image("Note");
 			}
 			loggerRecommended = atts.getValue("recommended").equals("1");
 			return;
@@ -640,6 +674,7 @@ public class OCXMLImporter extends MinML {
 				new URL("http://" + hostname+"/"), fetchURL).toString();
 			String fileName = createPicFilename(fetchURL);
 			ImageInfo imageInfo = new ImageInfo();
+			imageInfo.setURL(fetchURL);
 			// add title
 			imageInfo.setTitle(picDesc);
 			holder.getCacheDetails(false).images.add(imageInfo);
@@ -671,14 +706,12 @@ public class OCXMLImporter extends MinML {
 						ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ")+ n + " ("+wp+"): ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+fetchURL);
 				}
 				inf.addWarning("\n"+ErrMessage);
-				//(new MessageBox(MyLocale.getMsg(144, "Warning"), ErrMessage, MessageBox.OKB)).exec();
-				pref.log(ErrMessage);
-				e.printStackTrace();
+				pref.log(ErrMessage,e,true);
 			}
 		} catch (MalformedURLException e) {
 			String ErrMessage = new String (MyLocale.getMsg(1618,"Ignoring error in cache: ") + holder.getWayPoint() + ": ignoring MalformedUrlException: " + e.getMessage()+ " while downloading from URL:" + fetchURL);
 			inf.addWarning("\n"+ErrMessage);
-			pref.log(ErrMessage);
+			pref.log(ErrMessage,e);
 		}
 
 	}
@@ -748,16 +781,8 @@ public class OCXMLImporter extends MinML {
 
 	private String fetch(String addr, String fileName ) throws IOException
 	{
-		//Vm.debug("Redirect: " + redirect);
 		CharArray realurl = new CharArray();
 		ByteArray daten = UrlFetcher.fetchByteArray(addr, realurl);
-		// String address = realurl.toString();
-		// if (holder != null) fileName = holder.getWayPoint() + "_" + Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
-		// else fileName = Common.ClearForFileName(address.substring(address.lastIndexOf("/")+1));
-
-		//save file
-		//Vm.debug("Save: " + myPref.mydatadir + fileName);
-		//Vm.debug("Daten: " + daten.length);
 		FileOutputStream outp =  new FileOutputStream(profile.dataDir + fileName);
 		outp.write(daten.toBytes());
 		outp.close();

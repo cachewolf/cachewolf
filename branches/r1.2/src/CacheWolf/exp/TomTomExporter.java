@@ -1,13 +1,54 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.exp;
 
-import CacheWolf.*;
-import ewe.ui.*;
-import ewe.util.*;
-import ewe.util.zip.*;
+import CacheWolf.CWPoint;
+import CacheWolf.CacheDB;
+import CacheWolf.CacheHolder;
+import CacheWolf.CacheSize;
+import CacheWolf.CacheType;
+import CacheWolf.Common;
+import CacheWolf.Global;
+import CacheWolf.Preferences;
+import CacheWolf.Profile;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.io.*;
-import ewe.sys.*;
+import ewe.io.File;
+import ewe.io.FileBase;
+import ewe.io.FileOutputStream;
+import ewe.io.IOException;
+import ewe.io.InputStream;
+import ewe.io.RandomAccessFile;
+import ewe.sys.Handle;
+import ewe.ui.FormBase;
+import ewe.ui.ProgressBarForm;
+import ewe.util.ByteArray;
+import ewe.util.zip.ZipEntry;
+import ewe.util.zip.ZipException;
+import ewe.util.zip.ZipFile;
 
 public class TomTomExporter {
 	public final static int TT_ASC = 0;
@@ -119,8 +160,7 @@ public class TomTomExporter {
 			}//for wayType
 			progressForm.exit(0);
 		} catch (IOException e){
-			Vm.debug("Problem creating file! " + fileName);
-			e.printStackTrace();
+			pref.log("Problem creating file! " + fileName,e,true);
 		}//try
 	}
 	
@@ -161,8 +201,7 @@ public class TomTomExporter {
 			copyIcon(0, fileName.substring(0,fileName.indexOf(".")),"");
 			pbf.exit(0);
 		}catch (Exception e){
-			Vm.debug("Problem writing to file! " + fileName);
-			e.printStackTrace();
+			pref.log("Problem writing to file! " + fileName,e,true);
 		}//try
 	}
 	
@@ -188,8 +227,7 @@ public class TomTomExporter {
 			outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
 			outp.writeBytes("\"\r\n");
 		} catch (IOException e) {
-			Vm.debug("Error writing to file");
-			e.printStackTrace();
+			pref.log("Error writing to file",e,true);
 		}
 		return;
 	}
@@ -227,8 +265,7 @@ public class TomTomExporter {
 			d = 0;
 			outp.writeByte((byte)d);
 		} catch (IOException e) {
-			Vm.debug("Error writing to file");
-			e.printStackTrace();
+			pref.log("Error writing to file",e,true);
 		}
 
 		return;
@@ -244,8 +281,7 @@ public class TomTomExporter {
 			outp.writeByte(buf.data[1]);
 			outp.writeByte(buf.data[0]);
 		} catch (IOException e) {
-			Vm.debug("Error writing to file");
-			e.printStackTrace();
+			pref.log("Error writing to file",e,true);
 		}
 
 		return;
@@ -277,11 +313,9 @@ public class TomTomExporter {
 		    fos.close();
 		    fis.close();
 		} catch (ZipException e) {
-			Vm.debug("Problem copying Icon " + "GC-" + typeName + ".bmp" );
-			e.printStackTrace();
+			pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp" ,e,true);
 		} catch (IOException e) {
-			Vm.debug("Problem copying Icon " + "GC-" + typeName + ".bmp" );
-			e.printStackTrace();
+			pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp" ,e,true);
 		}
 	}
 	

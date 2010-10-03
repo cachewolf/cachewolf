@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
@@ -48,8 +73,6 @@ public final class LambertProjection extends Projection{
 			double t2 = java.lang.Math.tan(java.lang.Math.PI/4 - secondSandardParallel/ 2) / java.lang.Math.pow((1.0 - (e * java.lang.Math.sin(secondSandardParallel))) / (1.0 + (e * java.lang.Math.sin(secondSandardParallel))), e/2);
 			n = (java.lang.Math.log(m1) - java.lang.Math.log(m2)) / (java.lang.Math.log(t1) - java.lang.Math.log(t2));
 		}
-		// double nsin = java.lang.Math.sin(centralLat); // nsin and n should be equal
-		// Vm.debug("n-log: " + n+ " n-sin phi: " + nsin);
 		F0 = m1 / (n * java.lang.Math.pow(t1, n)) * scale_; // pow(t2???, n)
 		Rb = ellip.a * F0 * java.lang.Math.pow(t0, n);
 	}
@@ -78,13 +101,10 @@ public final class LambertProjection extends Projection{
 		double northing = Rb - R * java.lang.Math.cos(gamma); // + @False_Northing
 		if (pp == null) pp = new ProjectedPoint(this);
 		pp.setRaw(northing, easting);
-		//Vm.debug("project erg: "+ret.toString(0, "", " ", AUSTRIAN_LAMBERT));
-		//Vm.debug("project: ll: " + unproject(TransformCoordinates.BESSEL).toString(CWPoint.DD));
 		return pp;
 	}
 
 	public CWPoint unproject(ProjectedPoint pp) {
-		//Vm.debug("unproject: "+pp.toString(0, "", " ", AUSTRIAN_LAMBERT));
 
 		double ns = Rb - pp.northing;
 		double es = pp.easting;
@@ -102,7 +122,6 @@ public final class LambertProjection extends Projection{
 		} while (iterate);
 
 		CWPoint ret = new CWPoint(phi1 * 180 / java.lang.Math.PI, lambda * 180 / java.lang.Math.PI);
-		//Vm.debug("unproject: ret: " + ret.toString(CWPoint.DD));
 		return ret;
 	}
 

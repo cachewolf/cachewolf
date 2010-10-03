@@ -1,6 +1,29 @@
-package CacheWolf;
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
 
-import CacheWolf.imp.GPXImporter;
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
+package CacheWolf;
 
 public class Log {
 	private static String MAXLOGICON="MAXLOG";
@@ -41,7 +64,7 @@ public class Log {
 			if (logLine.indexOf("<img")<0) { // Have we reached the line that states max logs reached 
 				icon=MAXLOGICON; 
 			} else {
-				Global.getPref().log("Error parsing log: "+logLine);
+				Global.getPref().log("Error parsing log: "+logLine,ex);
 				icon=INVALIDLOGICON;
 			}	
 			date="1900-00-00";
@@ -95,7 +118,31 @@ public class Log {
 	}
 	
 	public boolean isFoundLog() {
-		return icon.equals(GPXImporter.typeText2Image("Found"));
+		return icon.equals(typeText2Image("Found"));
+	}
+	
+	// if you change any of these make sure to check image2TypeText in the GPX exporters
+	public static String typeText2Image(String typeText){
+		if (typeText.equals("Found it")||typeText.equals("Found")||typeText.equals("find")) return "icon_smile.gif";
+		if (typeText.equals("Didn't find it")||typeText.equals("Not Found")||typeText.equals("no_find")) return "icon_sad.gif";
+		if (typeText.equals("Write note")||typeText.equals("Note")||typeText.equals("note")
+			||typeText.equals("Not Attempted")||typeText.equals("Other")) return "icon_note.gif";
+		if (typeText.equals("Enable Listing")) return "icon_enabled.gif";
+		if (typeText.equals("Temporarily Disable Listing")) return "icon_disabled.gif";
+		if (typeText.equals("Webcam Photo Taken")) return "icon_camera.gif";
+		if (typeText.equals("Attended")) return "icon_attended.gif";
+		if (typeText.equals("Publish Listing")) return "icon_greenlight.gif";
+		if (typeText.equals("Will Attend")) return "icon_rsvp.gif";
+		if (typeText.equals("Post Reviewer Note")) return "big_smile.gif";
+		if (typeText.equals("Unarchive")) return "traffic_cone.gif";
+		if (typeText.equals("Archive")) return "traffic_cone.gif";
+		if (typeText.equals("Owner Maintenance")) return "icon_maint.gif";
+		if (typeText.equals("Needs Maintenance")) return "icon_needsmaint.gif";
+		if (typeText.equals("Needs Archived")) return "icon_remove.gif";
+		if (typeText.equals("Update Coordinates")) return "coord_update.gif";
+		if (typeText.equals("Retract Listing")) return "img_redlight.gif";
+		Global.getPref().log("GPX Import: warning, unknown logtype "+typeText+" assuming Write note",null);
+		return "icon_note.gif";
 	}
 
 	/** log was written by one of the aliases defined in preferences */

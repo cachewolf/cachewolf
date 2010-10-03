@@ -1,6 +1,28 @@
-/**
- *
- */
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.imp;
 
 import CacheWolf.CacheType;
@@ -10,8 +32,20 @@ import CacheWolf.MyLocale;
 import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.imp.SpiderGC.SpiderProperties;
+import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.sys.Convert;
-import ewe.ui.*;
+import ewe.ui.CellConstants;
+import ewe.ui.ControlEvent;
+import ewe.ui.Event;
+import ewe.ui.Form;
+import ewe.ui.FormBase;
+import ewe.ui.IKeys;
+import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
+import ewe.ui.mChoice;
+import ewe.ui.mInput;
+import ewe.ui.mLabel;
 
 /**
  * @author pfeffer
@@ -31,6 +65,7 @@ public class OCXMLImporterScreen extends Form {
 	mInput maxLogsInput;
 	mCheckBox imagesCheckBox, /*mapsCheckBox, */ missingCheckBox, foundCheckBox, travelbugsCheckBox;
 	ewe.ui.mChoice domains;
+	String fileName;
 
 	mLabel distLbl;
 	mLabel maxNumberLbl;
@@ -49,6 +84,7 @@ public class OCXMLImporterScreen extends Form {
 	public static final int MINDIST = 1024;
 	public static final int DIRECTION = 2048;
 	public static final int MAXUPDATE = 4096;
+	public static final int FILENAME = 8192; // track or route gpx
 
 
 	public OCXMLImporterScreen(String title, int options) {
@@ -79,7 +115,6 @@ public class OCXMLImporterScreen extends Form {
 					MyLocale.getMsg(13,"CITO"),
 					MyLocale.getMsg(18,"Earth"),
 					MyLocale.getMsg(15,"WhereIGo"),
-					MyLocale.getMsg(11,"Webcam"),
 				},0), CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
 		}
 
@@ -122,7 +157,7 @@ public class OCXMLImporterScreen extends Form {
 		if ((options & MAXNUMBER) > 0) {
 			this.addNext(maxNumberLbl = new mLabel(MyLocale.getMsg(1623,"Max. number:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			maxNumberInput = new mInput();
-			if ( pref.maxSpiderNumber < 0 ) {
+			if ( pref.maxSpiderNumber < 0 || pref.maxSpiderNumber == Integer.MAX_VALUE) {
 				maxNumberInput.setText("");
 			} else {
 				maxNumberInput.setText(Integer.toString(pref.maxSpiderNumber));
@@ -174,6 +209,22 @@ public class OCXMLImporterScreen extends Form {
 			this.addLast(missingCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL|CellConstants.WEST);
 		}
 
+		if ((options & FILENAME) > 0) {
+			String dir = pref.getImporterPath("LocGpxImporter");
+			FileChooser fc = new FileChooser(FileChooserBase.OPEN, dir);
+			fc.addMask("*.gpx");
+			fc.setTitle(MyLocale.getMsg(909,"Select file(s)"));
+			if(fc.execute() != FormBase.IDCANCEL){
+				dir = fc.getChosenDirectory().toString();
+				pref.setImporterPath("LocGpxImporter", dir);
+				//String files[] = fc.getAllChosen();
+				fileName=fc.file;
+			}
+			else {
+				fileName="";
+			}
+		}
+
 		cancelB = new mButton(MyLocale.getMsg(1604,"Cancel"));
 		cancelB.setHotKey(0, IKeys.ESCAPE);
 		this.addNext(cancelB,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
@@ -189,8 +240,8 @@ public class OCXMLImporterScreen extends Form {
 			}
 			if (ev.target == okB){
 				    // distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
-					if (imagesCheckBox!=null) pref.downloadPics = imagesCheckBox.state;
 					if (missingCheckBox!=null) pref.downloadMissingOC = missingCheckBox.state;
+					if (imagesCheckBox!=null) pref.downloadPics = imagesCheckBox.state;
 					if (travelbugsCheckBox!=null) pref.downloadTBs = travelbugsCheckBox.state;
 					if (maxLogsInput!=null) pref.maxLogsToSpider=Common.parseInt(maxLogsInput.getText());
 					pref.savePreferences();

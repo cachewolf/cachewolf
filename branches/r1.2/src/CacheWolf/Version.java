@@ -1,10 +1,36 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
 
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import com.stevesoft.ewe_pat.Regex;
-import ewe.io.*;
-import ewe.util.*;
-import ewe.sys.*;
+
+import ewe.io.IOException;
+import ewe.sys.Convert;
+import ewe.sys.Vm;
+import ewe.util.Properties;
 
 /**
  * Class to hold and handle version information of the cachewolf project
@@ -16,12 +42,12 @@ public class Version {
 	static final int VER_MINOR = 2;
 	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
 	static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ")+1, VER_SVN.lastIndexOf(" ")));
-	static final int VERSION_TYPE = 3;
-	public static final String[] VERSION_TYPES = {
-		"Release",
-		"ReleaseCandidate",
-		"InDevelopmentStable",
-		"InDevelopmentNewest"
+	static final int VERSION_TYPE = 1;
+	public static final String VERSION_TYPES(int i) {
+		if (i==0) return MyLocale.getMsg(7000,"Release");
+		if (i==1) return MyLocale.getMsg(7001,"Release candidate");
+		if (i==2) return MyLocale.getMsg(7002,"in development, stable");
+		return MyLocale.getMsg(7003,"in development, newest");
 	};
 
 	/** only valid after calling checkForUpdates() */
@@ -36,7 +62,7 @@ public class Version {
 	public static String getReleaseDetailed() {
 		// habe die SVN-Nummer doch aus der Anzeige erstmal wieder herausgenommen, weil es in einem final Release doch recht seltsam auss�he.
 		// Sinnvoll w�re daher vielleicht, eine Methode getReleaseDatail, die die SVN-Versionnummer mit angibt und z.B. im "�ber"-Dialog angezeigt werden k�nnte.
-		return getRelease() + " " + VERSION_TYPES[VERSION_TYPE];
+		return getRelease() + " " + VERSION_TYPES(VERSION_TYPE);
 	}
 
 	/**
@@ -45,7 +71,7 @@ public class Version {
 	 * @throws IOException
 	 */
 	public static void checkForUpdates() throws IOException {
-		Properties curvers = UrlFetcher.fetchPropertyList("http://www.cachewolf.org/currentversions.txt");
+		Properties curvers = UrlFetcher.fetchPropertyList("http://svn.berlios.de/svnroot/repos/cachewolf/trunk/currentversions.txt");
 		versionnumbers = new String[updateavailabe.length];
 		for (int i = updateavailabe.length-1; i >=1; i--) {
 			updateavailabe[i] = checkVersion(curvers, "T"+(i-1), i); // this also sets versionnumber[i]
@@ -59,20 +85,22 @@ public class Version {
 	 */
 	public static String newVersionsArrayToString() {
 		StringBuffer ret = new StringBuffer(500);
+		ret.append(MyLocale.getMsg(7022, "Version type")+"\n");
+		ret.append(VERSION_TYPES(VERSION_TYPE)+getRelease());
+		ret.append(" -> "+MyLocale.getMsg(7010 + updateavailabe[VERSION_TYPE+1], ""+updateavailabe[VERSION_TYPE+1]));
+		ret.append("\n\n");
+
 		for (int i=1; i <= updateavailabe.length -1; i++) {
 			if (updateavailabe[i] != 2 || i-1 == VERSION_TYPE) {
-				ret.append(MyLocale.getMsg(7000+i-1, VERSION_TYPES[i-1]));
-				if (versionnumbers[i] != null) ret.append(" ").append(versionnumbers[i]);
+				ret.append(VERSION_TYPES(i-1));
+				if (versionnumbers[i] != null) ret.append(" ").append(versionnumbers[i]).append(" ");
 				if (i == updateavailabe[0]) ret.append("*");
 				if (i-1 == VERSION_TYPE ) ret.append("+");
-				ret.append(": ");
-				ret.append(MyLocale.getMsg(7010 + updateavailabe[i], Convert.toString(updateavailabe[i])));
 				ret.append("\n");
 			}
 		}
-		ret.append("* = ").append(MyLocale.getMsg(7020, "Recommended version type"));
+		ret.append("\n* = ").append(MyLocale.getMsg(7020, "Recommended version type"));
 		ret.append("\n+ = ").append(MyLocale.getMsg(7021, "This version type")).append("\n");
-		ret.append(getReleaseDetailed());
 		return ret.toString();
 	}
 
@@ -80,7 +108,7 @@ public class Version {
 		Vm.showWait(true);
 		try {
 			checkForUpdates();
-			return MyLocale.getMsg(7022, "Version type") +"\n"+ newVersionsArrayToString();
+			return newVersionsArrayToString();
 		} catch (IOException e) {
 			return MyLocale.getMsg(7023, "Error getting current version information") +"\n" + e.getMessage();
 		}

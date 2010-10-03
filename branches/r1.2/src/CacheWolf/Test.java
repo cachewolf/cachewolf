@@ -1,13 +1,38 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
+import CacheWolf.navi.TransformCoordinates;
 import ewe.io.File;
 import ewe.io.IOException;
 import ewe.io.RandomAccessFile;
-import ewe.sys.*;
-
-import java.lang.Math;
-
-import CacheWolf.navi.TransformCoordinates;
+import ewe.sys.Convert;
+import ewe.sys.Time;
+import ewe.sys.Vm;
+import ewe.sys.mThread;
  
 
 public class Test extends mThread{
@@ -21,12 +46,7 @@ public class Test extends mThread{
 	}
 	void testAll(){
 		testPerformance();
-/*		testRegex();
-		if (allPassed) 
-			Vm.debug("SUCCESS: All tests passed"); 
-		else 
-			Vm.debug("FAILURE: At least one test failed"); 
-*/	}
+	}
 	void testPerformance(){
 		Time start, end;
 		int i;
@@ -90,8 +110,7 @@ public class Test extends mThread{
 			File dfile = new File(fileName);
 			dfile.delete();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Global.getPref().log("",e,true);
 		}
 		printResult("Filewrite 10 Bytes", start, end, i);
 		
@@ -102,7 +121,7 @@ public class Test extends mThread{
 		long time;
 		time = end.getTime() - start.getTime();
 		
-		Vm.debug(VM + " " +  Convert.toString(time) + " msec " + Convert.toString(count) + " * " + what);
+		Global.getPref().log(VM + " " +  Convert.toString(time) + " msec " + Convert.toString(count) + " * " + what);
 	}
 	
 	void testPassedRegex(String pattern, String expectedResult, int format) {
@@ -111,7 +130,7 @@ public class Test extends mThread{
 
 		if (expectedResult.equals(res)) return; 
 
-		Vm.debug("Failed test Regex: "+pattern+" Expected="+expectedResult+" Actual="+res); 
+		Global.getPref().log("Failed test Regex: "+pattern+" Expected="+expectedResult+" Actual="+res); 
 		allPassed=false; 
 	}
 	

@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 /*
  *  CacheWolf - Local settings class
@@ -8,9 +33,17 @@ import CacheWolf.utils.FileBugfix;
 import ewe.fx.Rect;
 import ewe.io.File;
 import ewe.io.FileBase;
-import ewe.sys.*;
+import ewe.io.FileReader;
+import ewe.io.IOException;
+import ewe.io.TreeConfigFile;
+import ewe.io.TreeConfigNode;
+import ewe.sys.Convert;
 import ewe.sys.Double;
+import ewe.sys.LocalResource;
+import ewe.sys.Locale;
 import ewe.sys.Long;
+import ewe.sys.Vm;
+import ewe.ui.SplittablePanel;
 import ewe.ui.Window;
 import ewe.ui.WindowConstants;
 /**
@@ -51,19 +84,6 @@ public class MyLocale {
 	 */
 	private static void setLocale(String language_) {
 		String country ="";
-		/*
-		int[] all=ewe.sys.Locale.getAllIDs(0);
-		Locale ll = new Locale(true);
-		Global.getPref().debug=true;
-		for (int i = 0; i<all.length; i++){
-			ll.set(all[i]);
-			String lg = ll.getString(13,0,0);
-			if (!language_.equalsIgnoreCase(lg)) continue;
-			country = ll.getString(23,0,0);
-			// Global.getPref().log(lg+"-"+country);
-			if (!country.equals("")) break;
-		}
-		 */
 		if (language_.equalsIgnoreCase("DE")) country="DEU"; 
 		if (language_.equalsIgnoreCase("FR")) country="FRA"; 
 		if (language_.equalsIgnoreCase("EN")) country="USA"; 
@@ -72,7 +92,6 @@ public class MyLocale {
 		if (language_.equalsIgnoreCase("SV")) country="SWE"; 
 		int tmp = Locale.createID(language_, country, 0); // in ewe-vm v1.49 this call is enough to set the locale correctly and this works even with not supported languages like FR (french), e.g. it works even if tmp == -1, call new Locale() instead of new Locale(tmp) then.
 		tmp = (tmp >= 1024 ? tmp-1024 : tmp); // ewe-vm v1.49 some times returns the correct value + 1024
-		// Vm.debug("spec-lang: " + tmp);
 		if (tmp > -1)	l = new Locale(tmp);
 		else 			l = Locale.createFor("EN", "", 0 /*Locale.FORCE_CREATION*/); // forcing the requiered language doesn't work, because Locale.numberformat and so on cannot determine the requested format then. BTW: if French is system language new Locale() works even in ewe-vm v1.49
 		resourcelanguage = language_;
@@ -106,21 +125,15 @@ public class MyLocale {
 			if (!(new FileBugfix(getLocaleFileName(resourcelanguage)).exists())) {
 				setLocale(standardLanguage);
 				initErrors += "Your system language is not supported by cachewolf - using English\n You can choose a different language in the preferences\n";
-				/*       //uncomment this code to print a list of all supported languge (Locales), remark: this differs from vm to vm _and_ from OS to OS
-  					 Vm.debug("gewählte Sprache: " + resourcelanguage, 0, 0);
-					 int [] all = Locale.getAllIDs(0);
-					 Locale ltmp = new Locale(); 
-					 for (int i = 0; i<all.length; i++){
-						 ltmp.set(all[i]);
-						 String lg = ltmp.getString(Locale.LANGUAGE_SHORT,0,0);
-						 Vm.debug(i + "sprache: " + lg + " (" + ltmp.getString(Locale.LANGUAGE, 0, 0) + ", " + ltmp.getString(Locale.LANGUAGE_ENGLISH, 0, 0) + ") land: " + ltmp.getString(Locale.COUNTRY, 0, 0));
-					 }
-				 */
 			}
 		}
 		lr = null;
 		if (new FileBugfix(getLocaleFileName(resourcelanguage)).exists() ) {
-			ewe.io.TreeConfigFile tcf = ewe.io.TreeConfigFile.getConfigFile(getLocaleFileName(resourcelanguage));
+
+			// ewe.io.TreeConfigFile.getConfigFile(getLocaleFileName(resourcelanguage));
+			// above replaced for to change resourcefile to have UTF-8 Codec
+			TreeConfigFile tcf = getConfigFile(getLocaleFileName(resourcelanguage));
+						
 			if (tcf != null) {			 
 				lr = tcf.getLocalResourceObject(new Locale() {
 					public String getString(int what,int forValue,int options) {
@@ -131,9 +144,7 @@ public class MyLocale {
 			}
 		}
 		if (lr == null) {
-		//	Vm.debug("lr==null 1");
 			initErrors += "Language file " + getLocaleFileName(resourcelanguage) + " couldn't be loaded - using hard coded messages";
-		//	Vm.debug("lr==null 2");
 			lr = new LocalResource(){
 				public Object get(int id,Object data){return data;}
 				public Object get(String id,Object data){return data;}
@@ -301,6 +312,17 @@ public class MyLocale {
 	}
 
 	/**
+	 * This method modifies the thickness of splitter on modern PDAs with a VGA resolution or better.
+	 * @param split
+	 */
+	public static void setSplitterSize(SplittablePanel split) {
+		if (Vm.isMobile() && MyLocale.getScreenHeight() > 400) {
+				split.theSplitter.thickness = 20;
+			
+		}
+	}
+
+	/**
 	 * Read the language from the prefs and return the specified language (or empty
 	 * string if none specified).
 	 * @return Language (e.g. DE, EN etc.) or ""
@@ -347,7 +369,49 @@ public class MyLocale {
 			return new File (programmDirectory,basename).toString();
 		}
 	}
-
-
+	//===================================================================
+	static TreeConfigFile getConfigFile(String path)
+	//===================================================================
+	{
+		try {
+		ewe.io.TreeConfigFile tcf = new TreeConfigFile();
+		tcf.configFileName = path;
+		TreeConfigNode root = (TreeConfigNode) tcf.getRoot();
+		FileReader r = null;
+		r = new FileReader(path);
+		r.codec=new ewe.io.JavaUtf8Codec();
+		r.read(); // should skip the UTF-8 BOM first 3 Bytes, but doesn't
+		TreeConfigNode tcn = root;
+		while(true){
+			String got = r.readLine();
+			if (got == null) break;
+			got = got.trim();
+			if (got.startsWith(";")) { continue;}
+			if (got.startsWith("{..}")){
+				if (tcn == root) break;
+				else tcn = (TreeConfigNode)tcn.getParent();
+				continue;
+			}
+			if (got.startsWith("{")){
+				int idx = got.indexOf('}');
+				if (idx == -1) idx = got.length();
+				TreeConfigNode nn = new TreeConfigNode(got.substring(1,idx));
+				tcn.addChild(nn);
+				tcn = nn;
+				continue;
+			}
+			int eq = got.indexOf('=');
+			if (eq != -1){
+				String key=got.substring(0,eq).trim();
+				String value=STRreplace.replace(got.substring(eq+1).trim(),"\\n","\n");
+				if (value.endsWith("+")) { value=value.substring(0, value.length()-1)+' '; }
+				tcn.getProperties().add(key,value);
+			}
+		}
+		r.close();
+		return tcf;
+		} catch (IOException e) {
+			return null;
+		}		
+	}
 }
-
