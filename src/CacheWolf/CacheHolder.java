@@ -897,12 +897,15 @@ public class CacheHolder{
 			s.append(chD.LongDescription.substring(start,pos));
 			start=chD.LongDescription.indexOf(">",pos)+1;
 			String oldurl=chD.images.get(imageNo).getURL();
-			if (oldurl.startsWith("http://")) {
-				int i = oldurl.indexOf("/", 7)+1;
-				oldurl=oldurl.substring(i);
+			String imgString=chD.LongDescription.substring(pos, start);
+			if (imgString.indexOf(oldurl)==-1) {
+				if (oldurl.startsWith("http://")) {
+					int i = oldurl.indexOf("/", 7)+1;
+					oldurl=oldurl.substring(i);
+				}
 			}
 			String newurl=imgsrc+chD.images.get(imageNo).getFilename();
-			s.append(STRreplace.replace(chD.LongDescription.substring(pos, start),oldurl,newurl));
+			s.append(STRreplace.replace(imgString,oldurl,newurl));
 			imageNo++;
 		}
 		if (start>=0) s.append(chD.LongDescription.substring(start));
