@@ -1,6 +1,30 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
-import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.FileBugfix;
@@ -49,7 +73,7 @@ public class Preferences extends MinML{
 	public static final int YES = 0;
 	public static final int NO = 1;
 	public static final int ASK = 2;
-	private static String NEWLINE="\n";
+	public static String NEWLINE="\n";
 	// Hashtable is saving filter data objects the user wants to save
 	private Hashtable filterList = new Hashtable(15);
 	/** screen is big enough to hold additional information like cache notes */
@@ -181,7 +205,7 @@ public class Preferences extends MinML{
 	/** Timer for logging GPS data */
 	public String logGPSTimer = "5";
 	/** The default font size */
-	public int fontSize = 11;
+	public int fontSize; 
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
 	/** True if the menu is to be displayed at the top of the screen */
 	public boolean menuAtTop=true;
@@ -264,6 +288,8 @@ public class Preferences extends MinML{
 	public boolean exportGpxAsMyFinds = true;
 	/** Check if lastFound is newer than saved log*/
 	public boolean checkLog=false;
+	/** menu of spider along a route exists*/
+	public boolean spiderRoute=false;
 	/** Download images when loading cache data */
 	public boolean downloadPics = true;
 	/** Download TB information when loading cache data */
@@ -402,7 +428,6 @@ public class Preferences extends MinML{
 	 * Method that gets called when a new element has been identified in pref.xml
 	 */
 	public void startElement(String name, AttributeList atts){
-		//Vm.debug("name = "+name);
 		lastName=name;
 		String tmp;
 		if(name.equals("browser")) {
@@ -419,7 +444,6 @@ public class Preferences extends MinML{
 			myAlias = SafeXML.cleanback(atts.getValue("name"));
 			tmp = SafeXML.cleanback(atts.getValue("password"));
 			if (tmp != null) password=tmp;
-			SpiderGC.passwort=password;
 		}
 		else if(name.equals("alias2")) myAlias2 = SafeXML.cleanback(atts.getValue("name"));
 		else if(name.equals("gcmemberid")) {
@@ -536,6 +560,7 @@ public class Preferences extends MinML{
 		else if (name.equals("spider")) {
 			forceLogin = Boolean.valueOf(atts.getValue("forcelogin")).booleanValue();
 			checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();
+			spiderRoute = Boolean.valueOf(atts.getValue("spiderRoute")).booleanValue();
 			tmp = atts.getValue("spiderUpdates");
 			if (tmp != null) spiderUpdates=Convert.parseInt(tmp);
 			tmp = atts.getValue("maxSpiderNumber");
@@ -699,7 +724,7 @@ public class Preferences extends MinML{
 					        "\" addDetailsToWaypoint = \"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\" addDetailsToName = \"" + SafeXML.strxmlencode(addDetailsToName) + "\" />\n");
 			outp.print("    <opencaching lastSite=\""+lastOCSite+"\" downloadMissing=\"" + SafeXML.strxmlencode(downloadMissingOC) + "\"/>\n");
 			outp.print("    <location lat = \"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long = \"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\"/>\n");
-			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
+			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" checkLog=\"" + SafeXML.strxmlencode(checkLog)+ "\" spiderRoute=\"" + SafeXML.strxmlencode(spiderRoute) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");
@@ -909,9 +934,9 @@ public class Preferences extends MinML{
 	public String getHomeDir() {
 		String test;
 		test = Vm.getenv("HOMEDRIVE", ""); // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data>
-		log("Vm.getenv(HOMEDRIVE: " + test); // this works also in win32.exe (ewe-vm on win xp)
+		log("[Preferences:getHomeDir]" + test); // this works also in win32.exe (ewe-vm on win xp)
 		test += Vm.getenv("HOMEPATH", ""); // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data>
-		log("Vm.getenv(HOMEPATH: " + test); // this works also in win32.exe (ewe-vm on win xp)
+		log("[Preferences:getHomeDir]" + test); // this works also in win32.exe (ewe-vm on win xp)
 		if (test.length() == 0)	test = Vm.getenv("HOME", ""); // This should return on *nix system the home dir
 		if (test.length() == 0)	test = "/";
 		return test;
@@ -1039,9 +1064,15 @@ public class Preferences extends MinML{
 	public void logInit(){
 		File logFile = new FileBugfix(LOGFILENAME);
 		logFile.delete();
-		log("CW Version "+Version.getReleaseDetailed());
+		log("CW Version "+Version.getReleaseDetailed(),null,true);
+		
+		if (System.getProperty("os.name")!=null) log("Operating system: "+System.getProperty("os.name")+"/"+System.getProperty("os.arch"),null,true);
+		if (System.getProperty("java.vendor")!=null) log("Java: "+System.getProperty("java.vendor")+"/"+System.getProperty("java.version"),null,true);
+		
 	}
 
+	boolean forceLog = false;
+	
 	/**
 	 * Method to log messages to a file called log.txt
 	 * It will always append to an existing file.
@@ -1052,8 +1083,8 @@ public class Preferences extends MinML{
 	 * @param text to log
 	 */
 	public void log(String text){
-		if (debug) {
-			Vm.debug(text);
+		if (debug || forceLog) {
+			if (debug) Vm.debug(text);
 			Time dtm = new Time();
 			dtm.getTime();
 			dtm.setFormat("dd.MM.yyyy'/'HH:mm:ss.SSS");
@@ -1064,12 +1095,11 @@ public class Preferences extends MinML{
 				//Stream strout = null;
 				//strout = logFile.toWritableStream(true);
 				logFile.print(text+NEWLINE);
-				//Vm.debug(text); Not needed - put <debug value="true"> into pref.xml
 			}catch(Exception ex){
 				Vm.debug("Error writing to log file!");
 			}finally{
 				if (logFile != null) try {logFile.close(); } catch (IOException ioe) {
-					log("Ignored Exception", ioe, true);
+					// log("Ignored Exception", ioe, true);
 				}
 			}
 		}
@@ -1086,15 +1116,16 @@ public class Preferences extends MinML{
 	 * in Version.getRelease()
 	 */
 	public void log(String text,Throwable e, boolean withStackTrace) {
-		String msg;
-		if (text.equals("")) msg=text; else msg=text+"\n";
 		if (e!=null) {
-			if (withStackTrace && debug)
-				msg+=ewe.sys.Vm.getAStackTrace(e);
+			text+=Preferences.NEWLINE;
+			if (withStackTrace)
+				text+=ewe.sys.Vm.getAStackTrace(e);
 			else
-				msg+=e.toString();
+				text+=e.toString();
 		}
-		log(msg);
+		forceLog=true;
+		log(text);
+		forceLog=false;
 	}
 
 	/** Log an exception to the log file without a stack trace, i.e.

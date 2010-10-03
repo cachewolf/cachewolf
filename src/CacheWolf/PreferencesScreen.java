@@ -1,13 +1,57 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
-import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
 import CacheWolf.utils.FileBugfix;
-import ewe.ui.*;
-import ewe.io.*;
-import ewe.fx.*;
-import ewe.filechooser.*;
-import ewe.sys.*;
+import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
+import ewe.fx.Dimension;
+import ewe.fx.Font;
+import ewe.fx.Insets;
+import ewe.io.FileBase;
+import ewe.sys.Convert;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlEvent;
+import ewe.ui.Editor;
+import ewe.ui.Event;
+import ewe.ui.Form;
+import ewe.ui.FormBase;
+import ewe.ui.Frame;
+import ewe.ui.Gui;
+import ewe.ui.IKeys;
+import ewe.ui.UIConstants;
+import ewe.ui.mApp;
+import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
+import ewe.ui.mChoice;
+import ewe.ui.mInput;
+import ewe.ui.mLabel;
+import ewe.ui.mTabbedPanel;
 
 /**
 *	This class displays a user interface allowing the user to change and set
@@ -295,10 +339,7 @@ public class PreferencesScreen extends Form {
 				this.close(0);
 			}
 			if (ev.target == applyB){
-				//if (pref.currProfile == 0){
-					//pref.curCentrePt.set(btnCentre.getText());
-					pref.setBaseDir(DataDir.getText());
-				//}
+				pref.setBaseDir(DataDir.getText());
 				pref.fontSize = Convert.toInt(fontSize.getText());
 				if (pref.fontSize<6) pref.fontSize=11;
 				pref.logsPerPage=Common.parseInt(inpLogsPerPage.getText());
@@ -314,16 +355,14 @@ public class PreferencesScreen extends Form {
 				mApp.mainApp.font = newGuiFont;
 				
 				pref.myAlias = Alias.getText().trim();
-				SpiderGC.passwort=pref.password= inpPassword.getText().trim();
+				pref.password= inpPassword.getText().trim();
 				pref.gcMemberId=inpGcMemberID.getText().trim();
 				MyLocale.saveLanguage(MyLocale.language=inpLanguage.getText().toUpperCase().trim());
 				pref.browser = Browser.getText();
-				//Vm.debug(myPreferences.browser);
 				pref.myproxy = Proxy.getText();
 				pref.myproxyport = ProxyPort.getText();
 				pref.proxyActive=chkProxyActive.getState();
 				HttpConnection.setProxy(pref.myproxy, Common.parseInt(pref.myproxyport), pref.proxyActive); // TODO generate an error message if proxy port is not a number
-				//myPreferences.nLogs = Convert.parseInt(nLogs.getText());
 				pref.autoReloadLastProfile=chkAutoLoad.getState();
 				pref.isPremium=chkPM.getState();
 				pref.setCurrentCentreFromGPSPosition=chkSetCurrentCentreFromGPSPosition.getState();

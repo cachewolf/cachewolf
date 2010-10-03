@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import ewe.fx.Color;
@@ -245,21 +270,18 @@ public class myTableModel extends TableModel {
 	 * @see ewe.ui.TableModel#getCellAttributes(int, int, boolean,
 	 * ewe.ui.TableCellAttributes)
 	 */
-	public TableCellAttributes getCellAttributes(int row, int col,
-			boolean isSelected, TableCellAttributes ta) {
+	public TableCellAttributes getCellAttributes(int row, int col, boolean isSelected, TableCellAttributes ta) {
 		ta = super.getCellAttributes(row, col, isSelected, ta);
 		ta.alignment = CellConstants.LEFT;
 		ta.anchor = CellConstants.LEFT;
 		// The default color of a line is white
 		lineColorBG.set(COLOR_WHITE);
-		// Determination of colors is only done for first column. Other columns
-		// take same
-		// color.
+		// Determination of colors is only done for first column.
+		// Other columns take same color.
 		if (row >= 0) {
 			if (row == 0 || row != lastRow) {
 				try {
-					// Now find out if the line should be painted in an other
-					// color.
+					// Now find out if the line should be painted in an other color.
 					// Selected lines are not considered, so far
 					CacheHolder ch = cacheDB.get(row);
 					if (ch.is_owned())
@@ -298,12 +320,7 @@ public class myTableModel extends TableModel {
 					lastColorFG.set(ta.foreground);
 					lastRow = row;
 				} catch (Exception e) {
-					if (Global.getPref().debug)
-						Global
-								.getPref()
-								.log(
-										"Ignored Exception in myTableModel.TableCellAttributes()",
-										e, true);
+					Global.getPref().log("[myTableModel:getCellAttributes]Ignored row="+row+" lastRow="+lastRow,e, true);
 				}
 				;
 			} else {
@@ -370,8 +387,7 @@ public class myTableModel extends TableModel {
 					return new IconAndText(imgSortUp, colName[colMap[col]], fm);
 					// return "^ "+colName[colMap[col]];
 				} else {
-					return new IconAndText(imgSortDown, colName[colMap[col]],
-							fm);
+					return new IconAndText(imgSortDown, colName[colMap[col]], fm);
 					// return "v "+colName[colMap[col]];
 				}
 			} else {
@@ -447,13 +463,11 @@ public class myTableModel extends TableModel {
 					if (ch.isAddiWpt()) {
 						return "";
 					} else {
-						return sizePics[CacheSize.guiSizeImageId(ch
-								.getCacheSize())];
+						return sizePics[CacheSize.guiSizeImageId(ch.getCacheSize())];
 					}
 				case 13: // OC number of recommendations
-					if (!ch.isCacheWpt())
-						return null;
-					return Convert.formatInt(ch.getNumRecommended());
+					 return ch.getRecommended();
+          
 				case 14: // OC rating
 					if (ch.isOC())
 						return Convert.formatInt(ch.recommendationScore);
@@ -486,10 +500,7 @@ public class myTableModel extends TableModel {
 							lastSyncWorker.parse(ch.getLastSync(),
 									"yyyyMMddHHmmss");
 						} catch (IllegalArgumentException e) {
-							Global.getPref().log(
-									"Could not parse 'lastSyncDate': "
-											+ ch.getLastSync()
-											+ ". Reset to empty.", e);
+							Global.getPref().log("Could not parse 'lastSyncDate': "	+ ch.getLastSync() + ". Reset to empty.", e);
 							ch.setLastSync("");
 						}
 						return lastSyncWorker.format("yyyy-MM-dd HH:mm");
@@ -499,10 +510,7 @@ public class myTableModel extends TableModel {
 				} // Switch
 			} // if
 		} catch (Exception e) {
-			if (Global.getPref().debug)
-				Global.getPref().log(
-						"Ignored Exception in myTableModel.getCellData()", e,
-						true);
+			// Global.getPref().log("[myTableModel:getCellData]Ignored", e,true);
 			return null;
 		}
 		return null;
@@ -543,7 +551,7 @@ public class myTableModel extends TableModel {
 				retval = true;
 			}
 		} catch (NullPointerException npex) {
-			Global.getPref().log("NPE in myTableModel.Penpressed");
+			Global.getPref().log("[myTableModel:Penpressed]",npex,true);
 			Vm.showWait(false);
 		}
 		return retval;
@@ -566,14 +574,13 @@ public class myTableModel extends TableModel {
 			CacheHolder ch = null;
 			if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size()))
 				ch = cacheDB.get(a.y);
-			cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows),
-					!sortAscending);
-			updateRows(); // = cacheDB.rebuild(sortedVector of ch,
-							// invisibleVector of ch)
+			cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows),!sortAscending);
+			updateRows();
+			// = cacheDB.rebuild(sortedVector of ch,
+			// invisibleVector of ch)
 			// select previously selected Cache again
 			if (ch != null) {
-				int rownum = Global.getProfile()
-						.getCacheIndex(ch.getWayPoint());
+				int rownum = Global.getProfile().getCacheIndex(ch.getWayPoint());
 				if (rownum >= 0)
 					tcControl.cursorTo(rownum, 0, true);
 			}

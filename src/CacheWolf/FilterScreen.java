@@ -1,10 +1,63 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 import CacheWolf.navi.Metrics;
-import ewe.ui.*;
-import ewe.io.*;
-import ewe.fx.*;
-import ewe.sys.*;
-import ewe.filechooser.*;
+import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
+import ewe.fx.Color;
+import ewe.fx.Dimension;
+import ewe.fx.Graphics;
+import ewe.fx.Image;
+import ewe.fx.Insets;
+import ewe.fx.Pen;
+import ewe.fx.Rect;
+import ewe.fx.mImage;
+import ewe.io.File;
+import ewe.sys.Convert;
+import ewe.sys.Vm;
+import ewe.ui.ButtonObject;
+import ewe.ui.CardPanel;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
+import ewe.ui.ControlEvent;
+import ewe.ui.DataChangeEvent;
+import ewe.ui.Event;
+import ewe.ui.Form;
+import ewe.ui.FormBase;
+import ewe.ui.Frame;
+import ewe.ui.InputBox;
+import ewe.ui.MessageBox;
+import ewe.ui.Panel;
+import ewe.ui.UIConstants;
+import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
+import ewe.ui.mChoice;
+import ewe.ui.mComboBox;
+import ewe.ui.mInput;
+import ewe.ui.mLabel;
 
 /**
 *	This class displays a form that the user uses to set the filter criteria.
@@ -721,9 +774,6 @@ public class FilterScreen extends Form{
 						this.repaintNow();
 					}
 				}
-//				Vm.debug("Event: "+ev.toString()+"; Target: "+ev.target+"; Liste: "+fltList.getText()+
-//						" (alt: "+fltList.oldText+")");
-				//setColors();
 			}
 			setColors();
 		}

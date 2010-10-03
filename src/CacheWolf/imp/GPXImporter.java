@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.imp;
 
 import CacheWolf.CacheDB;
@@ -8,16 +33,15 @@ import CacheWolf.CacheType;
 import CacheWolf.Common;
 import CacheWolf.Extractor;
 import CacheWolf.Filter;
-import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.Log;
 import CacheWolf.MyLocale;
-import CacheWolf.ParseLatLon;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
+import ewe.io.FileInputStream;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
@@ -76,30 +100,7 @@ public class GPXImporter extends MinML {
 		inBug = false;
 		doitHow = DOIT_ASK;
 	}
-/*	skg: This Constructor is not referenced, therefore commented out 
-	public GPXImporter(Vector DB, String[] f,String d, Preferences p)
-	{
-		pref = p;
-		cacheDB = DB;
-		saveDir = pref.mydatadir;
-		for (int i=0;i<f.length;i++){
-			files.add(d + "/" + f[i]);
-		}
-		
-		//msgA = msgArea;
-		inWpt = false;
-		inCache = false;
-		inLogs = false;
-		inBug =false;
-		strData = new String();
-		//index db for faster search
-		CacheHolder ch;
-		for(int i = 0; i<cacheDB.size();i++){
-			ch = (CacheHolder)cacheDB.get(i);
-			DBindex.put((String)ch.wayPoint, new Integer(i));
-		}//for
-	}
-*/	
+
 	public void doIt(int how){
 		doitHow = how;
 		Filter flt = new Filter();
@@ -125,7 +126,6 @@ public class GPXImporter extends MinML {
 				doitHow = DOIT_NOSPOILER;
 			}
 			
-			//Vm.debug("State of: " + doSpider);
 			Vm.showWait(true);
 			for (int i=0; i<files.size();i++){
 				//Test for zip.file
@@ -152,13 +152,19 @@ public class GPXImporter extends MinML {
 					}
 				}
 				else {
-					r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
+					FileInputStream rFIS = new ewe.io.FileInputStream(file);
+					r = new ewe.io.InputStreamReader(rFIS);
 					infB = new InfoBox("Info",(MyLocale.getMsg(4000,"Loaded caches: ") + zaehlerGel));
 					infB.show();
-					if (r.read() != 65279)
-						r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
+					if (r.read() != 65279) {
+						r.close();
+						rFIS.close();
+						rFIS = new ewe.io.FileInputStream(file);
+						r = new ewe.io.InputStreamReader(rFIS);
+					}
 					parse(r);
 					r.close();
+					rFIS.close();
 					infB.close(0);
 				}
 				// save Index 
@@ -167,7 +173,7 @@ public class GPXImporter extends MinML {
 			}
 				Vm.showWait(false);
 			}catch(Exception e){
-				e.printStackTrace();
+				pref.log("[GPXExporter:DoIt]",e,true);
 				Vm.showWait(false);
 			}
 		if(wasFiltered){
@@ -265,7 +271,7 @@ public class GPXImporter extends MinML {
 		}
 		if (debugGPX){
 			for (int i = 0; i < atts.getLength(); i++) {
-				Vm.debug("Type: " + atts.getType(i) + " Name: " + atts.getName(i)+ " Value: "+atts.getValue(i));
+				pref.log("[GPXExporter:startElement]Type: " + atts.getType(i) + " Name: " + atts.getName(i)+ " Value: "+atts.getValue(i),null);
 			}
 		}	
 		if (name.equals("groundspeak:attribute")) {
@@ -278,7 +284,6 @@ public class GPXImporter extends MinML {
 	
 	public void endElement(String name){
 		strData=strBuf.toString();
-		//Vm.debug("Ende: " + name);
 		if(infB.isClosed) return;
 		// logs
 		if (inLogs){
@@ -287,7 +292,7 @@ public class GPXImporter extends MinML {
 				return;
 			}
 			if (name.equals("groundspeak:type") || name.equals("type") || name.equals("terra:type")){
-				logIcon = new String(typeText2Image(strData));
+				logIcon = new String(Log.typeText2Image(strData));
 				return;
 			}
 			if (name.equals("groundspeak:finder")|| name.equals("geocacher")|| name.equals("finder")|| name.equals("terra:user")){
@@ -336,10 +341,9 @@ public class GPXImporter extends MinML {
 							text = ex.findNext();
 							int num = 0;
 							while(ex.endOfSearch() == false && spiderOK){
-								//Vm.debug("Replacing: " + text);
 								if (num >= holder.getCacheDetails(false).images.size())break;
 								imgName = holder.getCacheDetails(false).images.get(num).getTitle();
-								holder.getCacheDetails(false).LongDescription = replace(holder.getCacheDetails(false).LongDescription, text, "[[Image: " + imgName + "]]");
+								holder.getCacheDetails(false).LongDescription = STRreplace.replace(holder.getCacheDetails(false).LongDescription, text, "[[Image: " + imgName + "]]");
 								num++;
 								text = ex.findNext();
 							}
@@ -385,7 +389,7 @@ public class GPXImporter extends MinML {
 			    gpxDate.parse(strData.substring(0,19),"yyyy-MM-dd'T'HH:mm:ss");
 			} catch (IllegalArgumentException e) {
 			    gpxDate.setTime(0);
-			    Global.getPref().log("Error parsing date: '"+strData+"'. Ignoring.");
+			    pref.log("[GPXImporter:endElement]Error parsing Element time: '"+strData+"'. Ignoring.");
 			}
 			return;
 		}
@@ -409,13 +413,11 @@ public class GPXImporter extends MinML {
 			//msgA.setText("import " + strData);
 			return;
 		}
-		//Vm.debug("Check: " + inWpt + " / " + fromOC);
 
 		// fill name with contents of <desc>, in case of gc.com the name is
 		// later replaced by the contents of <groundspeak:name> which is shorter
 		if (name.equals("desc")&& inWpt ) {
 			holder.setCacheName(strData);
-			//Vm.debug("CacheName: " + strData);
 			//msgA.setText("import " + strData);
 			return;
 		}
@@ -516,31 +518,7 @@ public class GPXImporter extends MinML {
 	}
 	public void characters(char[] ch,int start,int length){
 		strBuf.append(ch,start,length);
-		if (debugGPX) Vm.debug("Char: " + strBuf.toString());
-	}
-	
-	// if you change any of these make sure to check image2TypeText in the GPX exporters
-	public static String typeText2Image(String typeText){
-		if (typeText.equals("Found it")||typeText.equals("Found")||typeText.equals("find")) return "icon_smile.gif";
-		if (typeText.equals("Didn't find it")||typeText.equals("Not Found")||typeText.equals("no_find")) return "icon_sad.gif";
-		if (typeText.equals("Write note")||typeText.equals("Note")||typeText.equals("note")
-			||typeText.equals("Not Attempted")||typeText.equals("Other")) return "icon_note.gif";
-		if (typeText.equals("Enable Listing")) return "icon_enabled.gif";
-		if (typeText.equals("Temporarily Disable Listing")) return "icon_disabled.gif";
-		if (typeText.equals("Webcam Photo Taken")) return "icon_camera.gif";
-		if (typeText.equals("Attended")) return "icon_attended.gif";
-		if (typeText.equals("Publish Listing")) return "icon_greenlight.gif";
-		if (typeText.equals("Will Attend")) return "icon_rsvp.gif";
-		if (typeText.equals("Post Reviewer Note")) return "big_smile.gif";
-		if (typeText.equals("Unarchive")) return "traffic_cone.gif";
-		if (typeText.equals("Archive")) return "traffic_cone.gif";
-		if (typeText.equals("Owner Maintenance")) return "icon_maint.gif";
-		if (typeText.equals("Needs Maintenance")) return "icon_needsmaint.gif";
-		if (typeText.equals("Needs Archived")) return "icon_remove.gif";
-		if (typeText.equals("Update Coordinates")) return "coord_update.gif";
-		if (typeText.equals("Retract Listing")) return "img_redlight.gif";
-		Global.getPref().log("GPX Import: warning, unknown logtype "+typeText+" assuming Write note");
-		return "icon_note.gif";
+		if (debugGPX) pref.log("Char: " + strBuf.toString(),null);
 	}
 	
 	public static String TCSizetoText(String size){
@@ -552,27 +530,6 @@ public class GPXImporter extends MinML {
 
 		return "None";
 	}
-
-	/**
-	* Method to iterate through cache database and look for waypoint.
-	* Returns value >= 0 if waypoint is found, else -1
-	*/
-	/*
-	private int searchWpt(Vector db, String wpt){
-		if(wpt.length()>0){
-			wpt = wpt.toUpperCase();
-			CacheHolder ch = new CacheHolder();
-			//Search through complete database
-			for(int i = 0;i < db.size();i++){
-				ch = (CacheHolder)db.get(i);
-				if(ch.wayPoint.indexOf(wpt) >=0 ){
-					return i;
-				}
-			} // for
-		} // if
-		return -1;
-	}
-	*/
 	
 	private void spiderImagesUsingSpider(){
 		String addr;
@@ -586,36 +543,14 @@ public class GPXImporter extends MinML {
 		}
 		else {
 			addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.getWayPoint() ;
-			//Vm.debug(addr + "|");
-			cacheText = SpiderGC.fetch(addr);
+			cacheText = SpiderGC.fetch(addr,false);
 			imgSpider.getImages(cacheText, holder.getCacheDetails(false));
 			try {
 				imgSpider.getAttributes(cacheText, holder.getCacheDetails(false));
 			} catch (Exception e) {
-				if (Global.getPref().debug) Global.getPref().log("unable to fetch attrivbutes for"+holder.getWayPoint(), e);
+				pref.log("unable to fetch attrivbutes for"+holder.getWayPoint(), e);
 			}
 		}
-	}
-	
-	public static String replace(String source, String pattern, String replace){
-		if (source!=null)
-		{
-			final int len = pattern.length();
-			StringBuffer sb = new StringBuffer();
-			int found = -1;
-			int start = 0;
-		
-			while( (found = source.indexOf(pattern, start) ) != -1) {
-			    sb.append(source.substring(start, found));
-			    sb.append(replace);
-			    start = found + len;
-			}
-		
-			sb.append(source.substring(start));
-		
-			return sb.toString();
-		}
-		else return "";
 	}
 	
 	public int getHow() {

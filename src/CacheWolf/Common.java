@@ -1,8 +1,32 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 
 import CacheWolf.utils.FileBugfix;
-import ewe.sys.Convert;
 
 public final class Common {
 
@@ -33,6 +57,12 @@ public final class Common {
 			return java.lang.Double.parseDouble(value.replace(notDigSep,digSep));
 	}
 	
+	/**
+	 * throws no exception if the string could not be converted to int.
+	 * returns 0 in that case
+	 * @param String value
+	 * @return int java.lang.Integer.parseInt(value)
+	 */
 	public static int parseInt(String value){
 		try {
 			return java.lang.Integer.parseInt(value);
@@ -94,7 +124,7 @@ public final class Common {
 		}// for
 		return new String(dummy);
 	}
-	
+/*	
 	public static String stringToHex(String str){
 		StringBuffer strBuf = new StringBuffer();
 		StringBuffer strHex = new StringBuffer();
@@ -108,7 +138,7 @@ public final class Common {
 		strBuf.append(strHex);
 		return strBuf.toString();
 	}
-	
+*/	
 	public static String ClearForFileName(String str) {
 		String ret = str.replace('?', '_');
 		ret = ret.replace(' ', '-');
@@ -147,11 +177,10 @@ public final class Common {
 		return fn.substring(dot, fn.length());
 	}
 	
-	public static String DoubleToString(double d, int decimalplaces) {
+	public static String DoubleToString(double d, int length, int decimalplaces) {
 		ewe.sys.Double e = new ewe.sys.Double();
 		e.set(d);
-		e.decimalPlaces = decimalplaces;
-		return e.toString().replace(',', '.');
+		return e.toString(length,decimalplaces,0).replace(',', '.');
 
 	}
 	

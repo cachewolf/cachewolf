@@ -1,8 +1,36 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.CacheSize;
+import CacheWolf.CacheTerrDiff;
+import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.GuiImageBroker;
 import CacheWolf.InfoBox;
@@ -249,7 +277,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		Vm.showWait(this, true);
 		inf.exec();
 		inf.waitUntilPainted(100);
-		// if (pref.debug) pref.log(MyLocale.getMsg(4203, "Loading list of maps..."));
 		resetCenterOfMap();
 		boolean saveGpsIgnoreStatus = dontUpdatePos;
 		dontUpdatePos = true;
@@ -674,7 +701,6 @@ public final class MovingMap extends Form implements ICommandListener {
 										} // this happens if a position jump occured
 								}}}}}}} // close all IFs
 		Vm.gc(); // call garbage collection
-		//Vm.debug("Overlayrearanged"+TrackOverlays.toString());
 	}
 
 	public void ShowLastAddedPoint(Track tr) {
@@ -803,7 +829,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		if (currentMap == null) return null;
 		Point coords = currentMap.calcMapXY(ll);
 		Point mapPos = getMapPositionOnScreen();
-		//		Vm.debug("getXYinMap, posCiLat: "+posCircleLat+"poscLOn: "+ posCircleLon+"gotoLat: "+ lat + "gotoLon: "+ lon+" mapPosX: "+mapPos.x+"mapposY"+mapPos.y);
 		return new Point(coords.x + mapPos.x, coords.y + mapPos.y);
 	}
 
@@ -980,7 +1005,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	public void updatePosition(CWPoint where){
 		if (dontUpdatePos || loadingMapList) return; // avoid multi-threading problems
 		loadBestMap(where);
-		if (width==0 || height==0) { Vm.debug("no window shown"); return; } // why is this called with these values
+		if (width==0 || height==0) { pref.log("[MovingMap:updatePosition]no window shown"); return; } // why is this called with these values
 		updateOnlyPosition(where, true);
 		Point mapPos = getMapPositionOnScreen();
 		boolean screenNotCompletlyCovered = (mmp.mapImage == null)
@@ -1332,7 +1357,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			r.width = blackArea.x + offsetX;
 			r.height = whiteArea.height;
 			rectangles.add(r);
-			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if (blackArea.y > whiteArea.y) {
 			Rect r= new Rect ();
@@ -1341,7 +1365,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			r.width = whiteArea.width;
 			r.height = blackArea.y + offsetY;
 			rectangles.add(r);
-			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.y + blackArea.height) <  whiteArea.y + whiteArea.height) {
 			Rect r= new Rect ();
@@ -1350,7 +1373,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			r.width = whiteArea.width;
 			r.height = (whiteArea.y + whiteArea.height) - r.y;
 			rectangles.add(r);
-			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 		if ((blackArea.x + blackArea.width)<  whiteArea.x + whiteArea.width) {
 			Rect r= new Rect ();
@@ -1359,7 +1381,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			r.width = (whiteArea.x + whiteArea.width) - r.x;
 			r.height = whiteArea.height;
 			rectangles.add(r);
-			// if (pref.debug) {pref.log("add whitearea : "+SRect(r));}
 		}
 	}
 
@@ -1677,7 +1698,7 @@ public final class MovingMap extends Form implements ICommandListener {
 				dontUpdatePos = saveIgnoreStatus;
 			} catch (IllegalArgumentException e) { 
 				// thrown by new AniImage() in ewe-vm if file not found;
-				pref.log("IllegalArgumentException");
+				pref.log("[MovingMap:setMap]IllegalArgumentException",e,true);
 				if (mmp.mapImage != null) {
 					mmp.removeImage(mmp.mapImage);
 					mmp.mapImage.free();
@@ -1689,7 +1710,7 @@ public final class MovingMap extends Form implements ICommandListener {
 				(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4218, "Could not load map: \n")+ newmap.getImageFilename(), FormBase.OKB)).execute();
 				dontUpdatePos = saveIgnoreStatus;
 			} catch (OutOfMemoryError e) {
-				pref.log("OutOfMemoryError");
+				pref.log("[MovingMap:setMap]OutOfMemoryError",e,true);
 				if (mmp.mapImage != null) {
 					mmp.removeImage(mmp.mapImage);
 					mmp.mapImage.free();
@@ -1704,7 +1725,7 @@ public final class MovingMap extends Form implements ICommandListener {
 						FormBase.OKB)).execute();
 				dontUpdatePos = saveIgnoreStatus;
 			}catch (SystemResourceException e) {
-				pref.log("SystemResourceException");
+				pref.log("[MovingMap:setMap]SystemResourceException",e,true);
 				if (mmp.mapImage != null) {
 					mmp.removeImage(mmp.mapImage);
 					mmp.mapImage.free();
@@ -1919,14 +1940,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		dontUpdatePos = savegpsstatus;
 	}
 
-	/*	public void gotFocus(int how) {
-		super.gotFocus(how);
-		Dimension ws = getSize(null);
-		onWindowResize(ws.width, ws.height);
-		Vm.debug(ws.width + " h: "+ws.height);
-		this.setPreferredSize(width, height)
-	}
-	 */
 	public void onEvent(Event ev){
 		if(ev instanceof FormEvent && (ev.type == FormEvent.CLOSED )){
 			running = false;
@@ -1942,20 +1955,18 @@ public final class MovingMap extends Form implements ICommandListener {
 		super.onEvent(ev);
 	}
 
-	public boolean handleCommand(String actionCommand) {
-		// handle closing event
-		if (CLOSE.equals(actionCommand)) {
-			
+	public boolean handleCommand(int actionCommand) {
+		if (CLOSE == actionCommand) {			
 			WindowEvent tmp = new WindowEvent();
 			tmp.type = WindowEvent.CLOSE;
 			postEvent(tmp);
 			return true;
 		} 
-		if (SELECT_MAP.equals(actionCommand)) {
+		if (SELECT_MAP == actionCommand) {
 			mmp.chooseMap();
 			return true;
 		}
-		if (CHANGE_MAP_DIR.equals(actionCommand)) {
+		if (CHANGE_MAP_DIR == actionCommand) {
 			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().getCustomMapsPath());
 			fc.addMask("*.wfl");
 			fc.setTitle(MyLocale.getMsg(4200,"Select map directory:"));
@@ -1966,104 +1977,91 @@ public final class MovingMap extends Form implements ICommandListener {
 			}
 			return true;
 		}
-
-		
-		if (FILL_MAP.equals(actionCommand)) {
+		if (FILL_MAP == actionCommand) {
 			setFillWhiteArea(true);
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
 		}
-		
-		if (NO_FILL_MAP.equals(actionCommand)) {
+		if (NO_FILL_MAP == actionCommand) {
 			setFillWhiteArea(false);
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
 		}
-		
-		
-		if (SHOW_CACHES.equals(actionCommand)) {
+		if (SHOW_CACHES == actionCommand) {
 			setShowCachesOnMap(true);
 			forceMapLoad=true;
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
 		}
-		if (HIDE_CACHES.equals(actionCommand)) {
+		if (HIDE_CACHES == actionCommand) {
 			setShowCachesOnMap(false);
 			forceMapLoad=true;
 			updatePosition (posCircle.where);
 			mmp.repaint();
 			return true;
 		}
-		
-		if (HIDE_MAP.equals(actionCommand)) {
+		if (HIDE_MAP == actionCommand) {
 			hideMap();
 			return true;
 		}
-		
-		if (SHOW_MAP.equals(actionCommand)) {
+		if (SHOW_MAP == actionCommand) {
 			showMap();
 			return true;
 		}
-		// map change modus
-		if (HIGHEST_RES_GPS_DEST.equals(actionCommand)) {
+		if (HIGHEST_RES_GPS_DEST == actionCommand) {
 			setResModus(MovingMap.HIGHEST_RESOLUTION_GPS_DEST);
 			return true;
 		}
-		if (HIGHEST_RES.equals(actionCommand)) {
+		if (HIGHEST_RES == actionCommand) {
 			setResModus(MovingMap.HIGHEST_RESOLUTION);
 			return true;
 		}
-		
-		if (KEEP_MAN_RESOLUTION.equals(actionCommand)) {
+		if (KEEP_MAN_RESOLUTION == actionCommand) {
 			setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 			return true;
 		}
-		
-		if (MORE_DETAILS.equals(actionCommand)) {
+		if (MORE_DETAILS == actionCommand) {
 			loadMoreDetailedMap(false);
 			return true;
 		}
-		if (MORE_OVERVIEW.equals(actionCommand)) {
+		if (MORE_OVERVIEW == actionCommand) {
 			loadMoreDetailedMap(true);
 			return true;
 		}
-		if (ALL_CACHES_RES.equals(actionCommand)) {
+		if (ALL_CACHES_RES == actionCommand) {
 			loadMapForAllCaches();
 			return true;
 		}
-
-		if (MOVE_TO_CENTER.equals(actionCommand)) {
+		if (MOVE_TO_CENTER == actionCommand) {
 			setCenterOfScreen(Global.getPref().getCurCentrePt(), true);
 			return true;
 		}
-		if (MOVE_TO_DEST.equals(actionCommand)) {
+		if (MOVE_TO_DEST == actionCommand) {
 			if (gotoPos!=null) {
 				setCenterOfScreen(gotoPos.where, true);
 			}
 			return true;
 		}
-		if (MOVE_TO_GPS.equals(actionCommand)) {
+		if (MOVE_TO_GPS == actionCommand) {
 			myNavigation.startGps(pref.logGPS, Convert.toInt(pref.logGPSTimer));
 			SnapToGps();
 			return true;
 		}
-		
-		if (ZOOM_1_TO_1.equals(actionCommand)) {
+		if (ZOOM_1_TO_1 == actionCommand) {
 			zoom1to1();
 			return true;
 		}
-		if (ZOOMIN.equals(actionCommand)) {
+		if (ZOOMIN == actionCommand) {
 			zoomin();
 			return true;
 		}
-		if (ZOOMOUT.equals(actionCommand)) {
+		if (ZOOMOUT == actionCommand) {
 			zoomout();
 			return true;
 		}
-		
 		return controlsLayer.handleCommand(actionCommand);
 	}
 
@@ -2090,7 +2088,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu kontextMenu;
 	MenuItem gotoMenuItem = new MenuItem(MyLocale.getMsg(4230, "Goto here$g"), 0, null);
 	MenuItem newWayPointMenuItem = new MenuItem(MyLocale.getMsg(4232, "Create new Waypoint here$n"), 0, null);;
-	MenuItem openCacheDescMenuItem,openCacheDetailMenuItem,addCachetoListMenuItem,gotoCacheMenuItem;
+	MenuItem openCacheDescMenuItem,openCacheDetailMenuItem,addCachetoListMenuItem,gotoCacheMenuItem,hintMenuItem;
 
 	MenuItem miLuminary[];
 
@@ -2105,6 +2103,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	int lastZoomWidth , lastZoomHeight;
 	
 	boolean ignoreNextDrag=false;
+	boolean onlyIfCache=false;
 	
 	public MovingMapPanel(MovingMap f){
 		this.mm = f;
@@ -2164,6 +2163,11 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				if (ev.modifiers == PenEvent.RIGHT_BUTTON) {
 					// context penHeld is fired directly on PDA (cause WantHoldDown Control Modifier)
 					// but not on PC (Java) , therefor it is here
+					penHeld(new Point (ev.x, ev.y));
+				}
+				else {
+					// do it even on left klick
+					onlyIfCache=true;
 					penHeld(new Point (ev.x, ev.y));
 				}
 			}
@@ -2254,7 +2258,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		else gpspos = null;
 		ListBox l = new ListBox(mm.maps, gpspos, mm.getGotoPos(), mm.currentMap);
 		if(l.execute() == FormBase.IDOK){
-//			Vm.debug("Trying map: " + l.selectedMap.fileName);
 			mm.autoSelectMap = false;
 			if (l.selectedMap.isInBound(mm.posCircle.where) || l.selectedMap.getImageFilename().length()==0) {
 				mm.setMap(l.selectedMap, mm.posCircle.where);
@@ -2287,23 +2290,33 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		ignoreNextDrag=true;
 		if (!mm.zoomingMode) {
 			kontextMenu = new Menu();
-			kontextMenu.addItem(gotoMenuItem);
-			kontextMenu.addItem(newWayPointMenuItem);
+			if (!onlyIfCache) {
+				kontextMenu.addItem(gotoMenuItem);
+				kontextMenu.addItem(newWayPointMenuItem);
+				kontextMenu.addItem(new MenuItem("-"));
+			}
 			AniImage clickedOnImage = images.findHotImage(p);
 			if (clickedOnImage != null && clickedOnImage instanceof MapSymbol) {
 				if ( ((MapSymbol)clickedOnImage).mapObject instanceof CacheHolder) {
 					clickedCache = (CacheHolder)( ((MapSymbol)clickedOnImage).mapObject);
+					// clickedCache == null can happen if clicked on the goto-symbol
 					if (clickedCache != null) {
-						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(201, "Open Desctiption")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(201, "Open Desctiption")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o");
 						kontextMenu.addItem(openCacheDescMenuItem);
-						openCacheDetailMenuItem = new MenuItem(MyLocale.getMsg(200, "Open Details")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$o"); // clickedCache == null can happen if clicked on the goto-symbol
+						openCacheDetailMenuItem = new MenuItem(MyLocale.getMsg(200, "Open Details")+" '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$e");
 						kontextMenu.addItem(openCacheDetailMenuItem);
-						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$g"); // clickedCache == null can happen if clicked on the goto-symbol
+						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto")+ " '"+(clickedCache.getCacheName().length()>0 ? clickedCache.getCacheName() : clickedCache.getWayPoint())+"'$g"); 
 						kontextMenu.addItem(gotoCacheMenuItem);
 						if (Global.mainForm.cacheListVisible) {
 							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
 							kontextMenu.addItem(addCachetoListMenuItem);
 						}
+						kontextMenu.addItem(new MenuItem("-"));
+						kontextMenu.addItem(new MenuItem(clickedCache.getWayPoint()+" Info:"));
+						kontextMenu.addItem(new MenuItem("Difficulty: "+CacheTerrDiff.longDT(clickedCache.getHard())));
+						kontextMenu.addItem(new MenuItem("Terrain: "+CacheTerrDiff.longDT(clickedCache.getTerrain())));
+						kontextMenu.addItem(new MenuItem("Size: "+CacheSize.cw2ExportString(clickedCache.getCacheSize())));
+						kontextMenu.addItem(hintMenuItem=new MenuItem("Hint: "+clickedCache.getCacheDetails(false).Hints));
 					}
 				}
 			}
@@ -2320,8 +2333,35 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 				}
 			}
 			*/
-			kontextMenu.exec(this, new Point(p.x, p.y), this);
+			onlyIfCache=false;
+			if (kontextMenu.items.size()>0) {
+				kontextMenu.exec(this, new Point(p.x, p.y), this);
+			}
+			else kontextMenu=null;
 		}
+	}
+	
+	public boolean imageMovedOn(AniImage which) {
+		if (which instanceof MapSymbol) {
+			if ( ((MapSymbol)which).mapObject instanceof CacheHolder) {
+				CacheHolder ch = (CacheHolder) ((MapSymbol) which).mapObject;
+				this.toolTip=ch.getWayPoint()+"\n"
+							+ ch.cacheName+"\n"
+							+ "Difficulty: "+CacheTerrDiff.longDT(ch.getHard())+"\n"
+							+ "Terrain: "+CacheTerrDiff.longDT(ch.getTerrain())+"\n"
+							+ "Size: "+CacheSize.cw2ExportString(ch.getCacheSize())+"\n"
+							+ "";
+			}
+		}
+		return true;
+	}
+	public boolean imageMovedOff(AniImage which) {
+		if (which instanceof MapSymbol) {
+			if ( ((MapSymbol)which).mapObject instanceof CacheHolder) {
+				this.toolTip=null;
+			}
+		}
+		return true;
 	}
 
 	public void onEvent(Event ev){
@@ -2365,6 +2405,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					if (action == addCachetoListMenuItem) {
 						closeKontextMenu();
 						Global.mainForm.cacheList.addCache(clickedCache.getWayPoint());
+					}
+					if (action == hintMenuItem) {
+						hintMenuItem.setText(Common.rot13(hintMenuItem.action));
 					}
 					/*
 					for (int i=0; i<miLuminary.length; i++) {
@@ -2522,7 +2565,6 @@ class ListBox extends Form{
 			if (it != ""){
 				it = it.substring(0,it.indexOf(':'));
 				mapNum = Convert.toInt(it);
-				//	Vm.debug("Kartennummer: " + mapNum);
 				try {
 				selectedMap = ((MapListEntry)maps.get(mapNum)).getMap();
 				selected = true;

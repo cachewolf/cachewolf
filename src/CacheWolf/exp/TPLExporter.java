@@ -22,7 +22,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     */
-
 package CacheWolf.exp;
 
 import CacheWolf.CacheDB;
@@ -32,14 +31,27 @@ import CacheWolf.InfoBox;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import HTML.Template;
+
+import com.stevesoft.ewe_pat.Regex;
+
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.io.*;
-import ewe.sys.*;
-import ewe.ui.*;
-import ewe.util.*;
-
-import com.stevesoft.ewe_pat.*;
+import ewe.io.AsciiCodec;
+import ewe.io.BufferedWriter;
+import ewe.io.File;
+import ewe.io.FileWriter;
+import ewe.io.IOException;
+import ewe.io.JavaUtf8Codec;
+import ewe.io.PrintWriter;
+import ewe.io.TextCodec;
+import ewe.ui.FormBase;
+import ewe.ui.MessageBox;
+import ewe.ui.ProgressBarForm;
+import ewe.util.ByteArray;
+import ewe.util.CharArray;
+import ewe.util.Enumeration;
+import ewe.util.Hashtable;
+import ewe.util.Vector;
 
 /**
  * @author Kalle
@@ -57,9 +69,11 @@ class TplFilter implements HTML.Tmpl.Filter
 	int noOfLogs=-1; // means all
 	boolean single = true;
 	int formatModifier = 0;
+	int sortedBy = -1;
 	boolean getAddiWp = true;
 	boolean getMainWp = true;
-	Hashtable input = new Hashtable();
+	boolean copyCacheImages = false;
+	Hashtable additionalVarParams = new Hashtable();
 	String userValue = "";
 	String out="*.gpx";
 
@@ -86,7 +100,6 @@ class TplFilter implements HTML.Tmpl.Filter
 			rex1.search(t);
 			param = rex1.stringMatched(1);
 			value = rex1.stringMatched(2);
-			// t="";
 
 			if (param.equals("charset")) {
 				if (value.equals("ASCII")) {codec = new AsciiCodec();}
@@ -130,13 +143,24 @@ class TplFilter implements HTML.Tmpl.Filter
 					getMainWp=false;
 				}
 			}
+			else if (param.equals("sortedBy")) {
+				sortedBy=Integer.valueOf(value).intValue();
+			}
+			else if (param.equals("CopyCacheImages")) {
+				if (value.equals("yes")) copyCacheImages=true;
+			}
 			else if (param.startsWith("input")) {
 				String par = param.substring(5);
 				InfoBox inf = new InfoBox("Eingabe", par, InfoBox.INPUT);
 				inf.feedback.setText(value);
-				inf.execute();
-				String res = inf.getInput();
-				input.put(par,res);
+				String res;
+				if (inf.execute() == FormBase.IDOK) {
+					res = inf.getInput();
+					additionalVarParams.put(par,res);
+				}
+			}
+			else if (param.startsWith("const")) {
+				additionalVarParams.put(param.substring(5),value);
 			}
 			return "";
 		}
@@ -218,10 +242,16 @@ public class TPLExporter {
 			File saveTo = fc.getChosenFile();
 			pref.setExportPath(expName, saveTo.getPath());
 
+			if (myFilter.sortedBy!=-1) {
+				Global.mainTab.tbP.myMod.sortTable(myFilter.sortedBy, true);
+			}
+			
 			Regex dec = new Regex("[,.]",myFilter.decSep);
 			if (myFilter.badChars != null) rex = new Regex("["+myFilter.badChars+"]","");
 			
-			Vector cache_index = new Vector(); 			
+			Vector cache_index = new Vector();
+			String imgExpName="";
+			if (myFilter.copyCacheImages) imgExpName=expName;
 			for(int i = 0; i<counter;i++){
 				CacheHolder ch = cacheDB.get(i);
 				if (ch.isVisible() && (ch.pos.isValid() || myFilter.formatModifier>0) ){
@@ -229,10 +259,19 @@ public class TPLExporter {
 						h.progress = (float)i/(float)counter;
 						h.changed();
 						try {
-							Hashtable varParams=ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier);
+							Hashtable varParams=ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier, imgExpName);
+							
+							Enumeration e = myFilter.additionalVarParams.keys();
+							while(e.hasMoreElements()) {
+								String key = (String)e.nextElement();
+								Object value = myFilter.additionalVarParams.get(key);
+								varParams.put(key, value);
+							}
+							
 							if (myFilter.single) {
 								cache_index.add(varParams);
 							}
+
 							else {
 								tpl.setParams(varParams);
 								String ext = (myFilter.out.substring(myFilter.out.lastIndexOf(".")).toLowerCase()+"    ").trim();
@@ -243,9 +282,7 @@ public class TPLExporter {
 								detfile.close();
 							}
 						}catch(Exception e){
-							Vm.debug("Problem getting Parameter, Cache: " + ch.getWayPoint());
-							e.printStackTrace();
-							Global.getPref().log("Exception in TplExporter = Problem getting Parameter, Cache: " + ch.getWayPoint(), e, true);
+							pref.log("[TplExporter:doIt]" + ch.getWayPoint(), e, true);
 						}
 					}
 				}
@@ -260,16 +297,9 @@ public class TPLExporter {
 				detfile.close();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			Global.getPref().log("Exception in TplExporter", e, true);
+			pref.log("[TplExporter:doIt]", e, true);
 		} catch (OutOfMemoryError e) {
-			// Global.getPref().log("OutOfMemeory in TplExporter", e, true);
-			// Vm.gc(); // this doesn't help :-(
-			// System.runFinalization();
-			// Vm.gc(); // this doesn't help :-( - I don't know why :-(
-			// Vm.debug("n: "+Vm.countObjects(true));
 			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now", FormBase.OKB)).execute();
-			// Vm.debug("n: "+Vm.countObjects(true));
 		}
 		pbf.exit(0);
 	}

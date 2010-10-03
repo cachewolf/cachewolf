@@ -1,3 +1,28 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import CacheWolf.utils.FileBugfix;
@@ -200,7 +225,7 @@ public class CacheHolderDetail {
 			}
 
 			if (in == null) throw new FileNotFoundException(dir+getParent().getWayPoint().toLowerCase()+".xml");
-			if (Global.getPref().debug) Global.getPref().log("Reading file "+getParent().getWayPoint() + ".xml");
+			Global.getPref().log("Reading file "+getParent().getWayPoint() + ".xml");
 			String text= in.readAll();
 			in.close();
 			Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);		
@@ -357,7 +382,6 @@ public class CacheHolderDetail {
 		public void saveCacheDetails(String dir){
 			PrintWriter detfile;
 			deleteFile(dir + getParent().getWayPoint() + ".xml");
-			//Vm.debug("Writing to: " +dir + "for: " + wayPoint);
 			try{
 			  detfile = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(dir + getParent().getWayPoint().toLowerCase() + ".xml").getAbsolutePath())));
 			} catch (Exception e) {
@@ -437,12 +461,12 @@ public class CacheHolderDetail {
 				  Global.getPref().log("Writing file: "+getParent().getWayPoint().toLowerCase() + ".xml");
 				} // if length
 			} catch (Exception e){
-				Global.getPref().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: " + e.getMessage());
+				Global.getPref().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ",e);
 			}
 			try{
 			  detfile.close();
 			} catch (Exception e){
-				Global.getPref().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: " + e.getMessage());
+				Global.getPref().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ",e);
 			}
 			hasUnsavedChanges = false;
 		}
@@ -535,7 +559,7 @@ public class CacheHolderDetail {
 				}
 				success = true;
 			} catch (Exception e) {
-				Global.getPref().log("Error renaming waypoint details", e, Global.getPref().debug);
+				Global.getPref().log("Error renaming waypoint details", e, true);
 				//TODO: any chance of a roll back?
 				//TODO: should we ignore a file not found?
 			}

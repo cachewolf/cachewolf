@@ -1,8 +1,34 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 import CacheWolf.exp.Exporter;
 import CacheWolf.exp.GarminMap;
 import CacheWolf.navi.Metrics;
+
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.fx.FontMetrics;
@@ -135,7 +161,7 @@ public class CacheHolder{
 	
 	public CacheHolder(String wp) {
 		wayPoint = wp;
-		type=-1;
+		type=CacheType.CW_TYPE_ERROR;
     }
 	
 	public CacheHolder(String xmlString, int version) {
@@ -191,7 +217,7 @@ public class CacheHolder{
 				        } catch (IllegalArgumentException ex) {
 				        	setHard(CacheTerrDiff.CW_DT_ERROR);
 				        	setIncomplete(true);
-				        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+				        	Global.getPref().log(wayPoint, ex, true);
 				        }
 			        }
 			        start = xmlString.indexOf('"', end + 1);
@@ -204,7 +230,7 @@ public class CacheHolder{
 					    } catch (IllegalArgumentException ex) {
 					    	setTerrain(CacheTerrDiff.CW_DT_ERROR);
 					    	setIncomplete(true);
-					    	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+					    	Global.getPref().log(wayPoint, ex, true);
 				        }
 				    }
 			        // The next item was 'dirty' but this is no longer used.
@@ -222,7 +248,7 @@ public class CacheHolder{
 				        } catch (IllegalArgumentException ex) {
 				        	setCacheSize(CacheSize.CW_SIZE_ERROR);
 				        	setIncomplete(true);
-				        	if (Global.getPref().debug) Global.getPref().log(wayPoint, ex, true);
+				        	Global.getPref().log(wayPoint, ex, true);
 				        }
 			        }
 			        start = xmlString.indexOf('"', end + 1);
@@ -403,7 +429,7 @@ public class CacheHolder{
 			    setHasSolver(!details.getSolver().equals(""));
 				}
 	        } catch (Exception ex) {
-	        	Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
+	        	// Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
 	        }
         }
 	
@@ -576,12 +602,14 @@ public class CacheHolder{
 			int shortWaypointLength, int shortNameLength, int nrOfLogs,
 			TextCodec codec, GarminMap gm,
 			boolean withFoundText,
-			int ModTyp
+			int ModTyp,
+			String expName
 			) {
 		Hashtable varParams = new Hashtable();
 		CacheHolderDetail det = this.getCacheDetails(false);
 		varParams.put("PROGDIR", FileBase.getProgramDirectory());
 		varParams.put("PROFILDIR", Global.getProfile().dataDir);
+		varParams.put("ALIAS", Global.getPref().myAlias);
 		varParams.put("TYPE", CacheType.type2TypeTag(type)); //<type>
 		varParams.put("TYPENO",""+type);
 		varParams.put("SYM", CacheType.type2SymTag(type)); //<sym>
@@ -597,7 +625,7 @@ public class CacheHolder{
 			varParams.put("SHDIFFICULTY", (ch.hard < 0)?"":sHard.substring(0,1));
 			varParams.put("TERRAIN", (ch.terrain < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(ch.terrain)));
 			String sTerrain = Integer.toString(ch.terrain);
-			varParams.put("SHORTTERAIN", (ch.terrain < 0)?"":sTerrain);
+			varParams.put("SHORTTERRAIN", (ch.terrain < 0)?"":sTerrain);
 			varParams.put("SHTERRAIN", (ch.terrain < 0)?"":sTerrain.substring(0,1));
 			varParams.put("SIZE", CacheSize.cw2ExportString(ch.cacheSize));
 			varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.cacheSize));
@@ -613,7 +641,7 @@ public class CacheHolder{
 			varParams.put("SHDIFFICULTY", (isCustomWpt() || hard < 0)?"":sHard.substring(0,1));
 			varParams.put("TERRAIN", (isCustomWpt() || terrain < 0)?"":decSep.replaceAll(CacheTerrDiff.longDT(terrain)));
 			String sTerrain = Integer.toString(terrain);
-			varParams.put("SHORTTERAIN", (isCustomWpt() || terrain < 0)?"":sTerrain);
+			varParams.put("SHORTTERRAIN", (isCustomWpt() || terrain < 0)?"":sTerrain);
 			varParams.put("SHTERRAIN", (isCustomWpt() || terrain < 0)?"":sTerrain.substring(0,1));
 			varParams.put("SIZE", CacheSize.cw2ExportString(cacheSize));
 			varParams.put("SHORTSIZE", CacheSize.getExportShortId(cacheSize));
@@ -661,6 +689,7 @@ public class CacheHolder{
 		varParams.put("AVAILABLE", available ? "TRUE" : "FALSE");
 		varParams.put("ARCHIVED", archived ? "TRUE" : "FALSE");
 		varParams.put("HTML", html ? "TRUE" : "FALSE");
+		varParams.put("VOTE", getRecommended());
 		//() ? TRUE : FALSE
 		if (det == null){
 			varParams.put("URL", "");
@@ -789,13 +818,21 @@ public class CacheHolder{
 			Vector imgVect=new Vector(det.images.size());
 			for (int i=0; i<det.images.size(); i++) {
 				Hashtable imgs=new Hashtable();
-				imgs.put("FILENAME",det.images.get(i).getFilename());
+				String imgFile = det.images.get(i).getFilename();
+				imgs.put("FILENAME",imgFile);
 				imgs.put("TEXT",det.images.get(i).getTitle());
 				imgs.put("COMMENT",det.images.get(i).getComment());
 				imgs.put("URL",det.images.get(i).getURL());
+				if (!expName.equals("")) {
+					String src = Global.getProfile().dataDir + imgFile;
+					String dest = Global.getPref().getExportPath(expName) + imgFile;
+					if (!DataMover.copy(src,dest)) {
+						Global.getPref().log("[CacheHolder:toHashtable]error copying "+imgFile+" to "+Global.getPref().getExportPath(expName));
+					}
+				}
 				imgVect.add(imgs);
 			}
-			if (det.images.size()>0) varParams.put("ALLIMGS",imgVect);
+			if (det.images.size()>0) varParams.put("cacheImg",imgVect);
 		}
 		return varParams;
 	}	
@@ -860,8 +897,15 @@ public class CacheHolder{
 			s.append(chD.LongDescription.substring(start,pos));
 			start=chD.LongDescription.indexOf(">",pos)+1;
 			String oldurl=chD.images.get(imageNo).getURL();
+			String imgString=chD.LongDescription.substring(pos, start);
+			if (imgString.indexOf(oldurl)==-1) {
+				if (oldurl.startsWith("http://")) {
+					int i = oldurl.indexOf("/", 7)+1;
+					oldurl=oldurl.substring(i);
+				}
+			}
 			String newurl=imgsrc+chD.images.get(imageNo).getFilename();
-			s.append(STRreplace.replace(chD.LongDescription.substring(pos, start),oldurl,newurl));
+			s.append(STRreplace.replace(imgString,oldurl,newurl));
 			imageNo++;
 		}
 		if (start>=0) s.append(chD.LongDescription.substring(start));
@@ -1109,6 +1153,26 @@ public class CacheHolder{
 				|| type == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
 		return MyLocale.getMsg(msgNr, "Found");
 	}
+	public String getGCFoundText() {
+		int msgNr=318; // normal found			 
+		if (type == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
+		else if (type == CacheType.CW_TYPE_EVENT 
+				|| type == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
+		for (int i = 0; i < _logType.length; i++) {
+			if ((""+msgNr).equals(_logType[i][MSG_NR])) {
+				return _logType[i][GC_MSG];
+			}			
+		}
+		return "";
+	}
+	public String getCWLogText(String s) {
+		for (int i = 0; i < _logType.length; i++) {
+			if ((s).equals(_logType[i][GC_MSG])) {
+				return MyLocale.getMsg(Common.parseInt(_logType[i][MSG_NR]),"");
+			}			
+		}
+		return "";
+	}
 	
 	public String getStatusText() {
 		if ((cacheStatus.length() == 10 || cacheStatus.length() == 16) &&
@@ -1194,14 +1258,14 @@ public class CacheHolder{
 
 	private final static int MSG_NR = 0; 
 	private final static int GC_MSG = 1; 
-	private final static int IDX_WRITENOTE = 4; 	
+	private final static int IDX_WRITENOTE = 5; 	
 	private final static String[][] _logType = {	
 			{"353", ""},
 			{"318", "Found it"},
 			{"355", "Attended"},
 			{"361", "Webcam Photo Taken"},
 			{"319", "Didn't find it"},
-			{"314", "Write note"}, 
+			{"314", "Write note"}, // at change do change IDX_WRITENOTE = 5;
 			{"315", "Needs Archived"},
 			{"316", "Needs Maintenance"},
 			{"317", "Search"}, 
@@ -1219,7 +1283,7 @@ public class CacheHolder{
 	public final static String[] GetGuiLogTypes() {
 		String[] ret = new String[_logType.length];
 		for (int i = 0; i < _logType.length; i++) {
-			ret[i]=MyLocale.getMsg(Integer.parseInt(_logType[i][MSG_NR]),"");
+			ret[i]=MyLocale.getMsg(Common.parseInt(_logType[i][MSG_NR]),"");
 		}
 		return ret;
 	}
@@ -1241,7 +1305,7 @@ public class CacheHolder{
 		else {
 			String CacheStatus=getCacheStatus();  
 			for (int i = 1; i < _logType.length; i++) {
-				if (CacheStatus.endsWith(MyLocale.getMsg(Integer.parseInt(_logType[i][MSG_NR]),""))) {
+				if (CacheStatus.endsWith(MyLocale.getMsg(Common.parseInt(_logType[i][MSG_NR]),""))) {
 					gcLogType=_logType[i][GC_MSG];
 					break;
 				}
@@ -1249,6 +1313,8 @@ public class CacheHolder{
 		}
 		return gcLogType;    
 	}                                                                                                             
+	
+	
 	
 	/**
 	 * Initializes the caches states (and its addis) before updating, so that the "new", "updated",
@@ -1818,6 +1884,22 @@ public class CacheHolder{
 	public int getNumRecommended() {
     	return numRecommended;
     }
+	public String getRecommended() {
+		if (!isCacheWpt())
+			return "";
+		if ( isOC() ) {
+		  return Convert.formatInt(numRecommended);
+		} else {
+		  int gcVote = numRecommended;
+		  if ( gcVote < 100 ) {
+		    return MyLocale.formatDouble((double)gcVote/10.0, "0.0"); 
+		  } else {
+		    int votes = gcVote / 100;
+		    gcVote = gcVote - 100 * votes;
+		    return MyLocale.formatDouble((double)gcVote/10.0, "0.0") + " (" + Convert.formatInt(votes) + ")";
+		  }
+		}
+	}
 
 	public void setNumRecommended(int numRecommended) {
 		Global.getProfile().notifyUnsavedChanges(numRecommended != this.numRecommended);		

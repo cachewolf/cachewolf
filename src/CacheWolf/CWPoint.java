@@ -1,10 +1,35 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf;
 
 
+import CacheWolf.navi.GeodeticCalculator;
 import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
-import CacheWolf.navi.GeodeticCalculator;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -220,7 +245,6 @@ public class CWPoint extends TrackPoint{
 						else set(rex.stringMatched(23), rex.stringMatched(22), ls);
 					}
 				}
-				//else Vm.debug("CWPoint: "+coord+" could not be parsed");
 			}	/**
 	 * set lat and lon 
 	 * @param strLatNS "N" or "S"
@@ -274,13 +298,15 @@ public class CWPoint extends TrackPoint{
 	/**
 	 * shift the point
 	 * @param meters positiv to north (east), negativ to south (west)
-	 * @param direction 0 north-south, 1 east-west
+	 * @param direction 0 north(meters negative=south), 1 east(meters negative=west) 2 south(meters negative=north) 3 west(meters negative=east)
 	 */
 	public void shift(double meters, int direction) {
 		double meters2deglon = 1/(1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		switch (direction) { // TODO use ellipsoid distance calculations for better accuracy
 			case 0: latDec += meters *  meters2deglon; return;
 			case 1: lonDec += meters * (meters2deglon / Math.cos(latDec / 180 * Math.PI));return;
+			case 2: latDec += -meters *  meters2deglon; return;
+			case 3: lonDec += -meters * (meters2deglon / Math.cos(latDec / 180 * Math.PI));return;
 		}
 	}
 

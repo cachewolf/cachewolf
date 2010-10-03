@@ -1,11 +1,34 @@
+    /*
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
+
+    Copyright (C) 2006  CacheWolf development team
+    See http://developer.berlios.de/projects/cachewolf/
+    for more information.
+    Contact: 	bilbowolf@users.berlios.de
+    			kalli@users.berlios.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    */
 package CacheWolf.navi.touchControls;
 
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
 import CacheWolf.navi.touchControls.MovingMapControlItemText.TextOptions;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
-import ewe.fx.Dimension;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.sys.Vm;
@@ -16,20 +39,16 @@ import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 import ewesoft.xml.sax.SAXException;
 
-public class MovingMapControlSettings extends MinML {
+public class MovingMapControlSettings extends MinML  implements ICommandListener {
 
 	public static final String CONFIG_FILE_NAME = "movingMapControls.xml";
-	
 	public static final String CONFIG_FILE_NAME_OVERWRITE = "my_movingMapControls.xml";
-
-	public static String CONFIG_RELATIVE_PATH = "mmc/"; 
-	
+	public static String CONFIG_RELATIVE_PATH = "mmc/";
 	public static final String SETTINGS = "settings";
 	/**
 	 * the size of the font on the icons
 	 */
 	public static final String SETTINGS_ATTR_FONTSIZE = "fontsize";
-
 	public static final String ROLE = "role";
 	/**
 	 * name of the role [String]
@@ -44,7 +63,6 @@ public class MovingMapControlSettings extends MinML {
 	 * [String|String|...]
 	 */
 	public static final String ROLE_ATTR_DISABLE = "disable";
-
 	public static final String BUTTON = "button";
 	/**
 	 * position of the left upper corner of the button from the left screen border [int (pixel)]
@@ -90,19 +108,12 @@ public class MovingMapControlSettings extends MinML {
 	 * the file path and name of the icon which can be displayed on the button
 	 */
 	public static final String BUTTON_ATTR_ICON = "icon";
-
 	public static final String BUTTON_ATTR_ICON_OFFSET_X = "iconX";
-
 	public static final String BUTTON_ATTR_ICON_OFFSET_Y = "iconY";
-
 	public static final String BUTTON_ATTR_TEXT_OFFSET_L = "textOffsetLeft";
-
 	public static final String BUTTON_ATTR_TEXT_OFFSET_R = "textOffsetRight";
-
 	public static final String BUTTON_ATTR_TEXT_OFFSET_T = "textOffsetTop";
-
 	public static final String BUTTON_ATTR_TEXT_OFFSET_B = "textOffsetBottom";
-
 	/**
 	 * the action command. Defines what is to do if the button is clicked
 	 */
@@ -123,27 +134,22 @@ public class MovingMapControlSettings extends MinML {
 	 * used as default
 	 */
 	public static final String BUTTON_ATTR_ALIGNTEXT = "alignText";
-
 	Vector menuItems = new Vector(10);
 	private Hashtable roles;
 	private int fontsize;
-
 	public MovingMapControlSettings(boolean vga, Hashtable roles) {
 		double fontscale = vga ? 1.5 : 1;
 		this.fontsize = (int) (Global.getPref().fontSize * fontscale);
 		this.roles = roles;
 	}
-
-	public void startElement(String name, AttributeList attributes)
-			throws SAXException {
-
+	public void startElement(String name, AttributeList attributes) throws SAXException {
 		if (name.equals(SETTINGS)) {
 			String fontsizeString = attributes.getValue(SETTINGS_ATTR_FONTSIZE);
 			if (fontsizeString != null) {
 				try {
 					fontsize = Integer.parseInt(fontsizeString);
 				} catch (Exception e) {
-					Vm.debug("fontsize not an int " + fontsizeString);
+					Global.getPref().log("fontsize not an int " + fontsizeString,e);
 				}
 			}
 		}
@@ -167,7 +173,6 @@ public class MovingMapControlSettings extends MinML {
 		}
 
 		if (name.equals(BUTTON)) {
-
 			int xProperties = 0;
 			String fromLeft = attributes.getValue(BUTTON_ATTR_FROM_LEFT);
 			String fromRight = attributes.getValue(BUTTON_ATTR_FROM_RIGHT);
@@ -191,23 +196,23 @@ public class MovingMapControlSettings extends MinML {
 			}
 
 			if (xpos < 0) {
-				Vm.debug("the x position of the button has to be set! "
+				Global.getPref().log("the x position of the button has to be set! "
 						+ "use attribute '" + BUTTON_ATTR_FROM_LEFT + "' or '"
-						+ BUTTON_ATTR_FROM_RIGHT + "'");
+						+ BUTTON_ATTR_FROM_RIGHT + "'",null);
 				xpos = 0;
 			}
 
 			if (ypos < 0) {
-				Vm.debug("the y position of the button has to be set! "
+				Global.getPref().log("the y position of the button has to be set! "
 						+ "use attribute '" + BUTTON_ATTR_FROM_TOP + "' or '"
-						+ BUTTON_ATTR_FROM_BOTTOM + "'");
+						+ BUTTON_ATTR_FROM_BOTTOM + "'",null);
 				ypos = 0;
 			}
 
 			String changeState = attributes.getValue(BUTTON_ATTR_CHANGE_STAE_OF);
 
 			String visibility = attributes.getValue(BUTTON_ATTR_VISIBILITY);
-			String action = attributes.getValue(BUTTON_ATTR_ACTION);
+			int action = getCommand(attributes.getValue(BUTTON_ATTR_ACTION));
 			String localeDefault = attributes.getValue(BUTTON_ATTR_LOCALE_DEFAULT);
 			String imageLocation = attributes.getValue(BUTTON_ATTR_LOCATION);
 			String iconLocation = attributes.getValue(BUTTON_ATTR_ICON);
@@ -217,13 +222,12 @@ public class MovingMapControlSettings extends MinML {
 			String alignText = attributes.getValue(BUTTON_ATTR_ALIGNTEXT);
 			String context = attributes.getValue(BUTTON_ATTR_CONTEXT);
 			if (visibility == null) {
-				Vm.debug("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY
-						+ " not set!");
+				Global.getPref().log("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY
+						+ " not set!",null);
 				return;
 			}
-			if (action == null) {
-				Vm.debug("read MovingMap settings: " + BUTTON_ATTR_ACTION
-						+ " not set!");
+			if (action == -2) {
+				Global.getPref().log("read MovingMap settings: " + BUTTON_ATTR_ACTION + " not set!",null);
 				return;
 			}
 			int alphavalue = getIntFromFile(attributes, BUTTON_ATTR_ALPHA, -1);
@@ -232,7 +236,7 @@ public class MovingMapControlSettings extends MinML {
 
 			if (imageLocation == null) {
 				// something not set
-				Vm.debug("Image for '" + localeDefault + "' not found");
+				Global.getPref().log("Image for '" + localeDefault + "' not found",null);
 				return;
 			}
 			else {
@@ -254,8 +258,7 @@ public class MovingMapControlSettings extends MinML {
 				button = new MovingMapControlItemText(MyLocale.getMsg(localIDValue, localeDefault),
 						imageLocation, iconLocation, alphavalue, action, context, alignText, tOptions);
 			} else {
-				button = new MovingMapControlItemButton(
-						imageLocation, iconLocation, action, alphavalue);
+				button = new MovingMapControlItemButton(imageLocation, iconLocation, action, alphavalue);
 			}
 
 			// add extra role to all icons
@@ -273,6 +276,44 @@ public class MovingMapControlSettings extends MinML {
 
 	}
 
+	private int getCommand(String value) {
+		if (value == null ) return -2;
+		else if (value.equals("selectMap")) return SELECT_MAP;
+		else if (value.equals("changeMapDir")) return CHANGE_MAP_DIR;
+		else if (value.equals("moveToGps")) return MOVE_TO_GPS;
+		else if (value.equals("moveToDest")) return MOVE_TO_DEST;
+		else if (value.equals("moveToCenter")) return MOVE_TO_CENTER;
+		else if (value.equals("allCachesRes")) return ALL_CACHES_RES;
+		else if (value.equals("moreOverview")) return MORE_OVERVIEW;
+		else if (value.equals("moreDetails")) return MORE_DETAILS;
+		else if (value.equals("keepManResolution")) return KEEP_MAN_RESOLUTION;
+		else if (value.equals("changeStateOfRole")) return changeStateOfRole;
+		else if (value.equals("highestResolution")) return HIGHEST_RES;
+		else if (value.equals("highestResGpsDest")) return HIGHEST_RES_GPS_DEST;
+		else if (value.equals("showMap")) return SHOW_MAP;
+		else if (value.equals("hideMap")) return HIDE_MAP;
+		else if (value.equals("menu")) return SHOW_MENU;
+		else if (value.equals("hide_menu")) return HIDE_MENU;
+		else if (value.equals("show_caches")) return SHOW_CACHES;
+		else if (value.equals("hide_caches")) return HIDE_CACHES;
+		else if (value.equals("zoomin")) return ZOOMIN;
+		else if (value.equals("zoomout")) return ZOOMOUT;
+		else if (value.equals("1to1")) return ZOOM_1_TO_1;
+		else if (value.equals("map_moved")) return MAP_MOVED;
+		else if (value.equals("pos_updated")) return POS_UPDATED;
+		else if (value.equals("goto_updated")) return GOTO_UPDATED;
+		else if (value.equals("close")) return CLOSE;
+		else if (value.equals("fillMap")) return FILL_MAP;
+		else if (value.equals("nofillMap")) return NO_FILL_MAP;
+		else if (value.equals("context_goto")) return CONTEXT_GOTO;
+		else if (value.equals("context_nwp")) return CONTEXT_NEW_WAY_POINT;
+		else if (value.equals("context_ocDesc")) return CONTEXT_OPEN_CACHE_DESC;
+		else if (value.equals("context_ocDetail")) return CONTEXT_OPEN_CACHE_DETAIL;
+		else if (value.equals("context_goto_cache")) return CONTEXT_GOTO_CACHE;
+		else if (value.equals("context_tour")) return CONTEXT_TOUR;
+		else return -1;
+	}
+
 	private int getIntFromFile(AttributeList attributes, String field,
 			int defaultValue) {
 		String entry = attributes.getValue(field);
@@ -280,7 +321,7 @@ public class MovingMapControlSettings extends MinML {
 			try {
 				defaultValue = Integer.parseInt(entry);
 			} catch (Exception e) {
-				Vm.debug("Can not read int for filed " + field + ": " + entry);
+				Global.getPref().log("Can not read int for filed " + field + ": " + entry,e);
 			}
 		}
 		return defaultValue;
@@ -314,8 +355,7 @@ public class MovingMapControlSettings extends MinML {
 		
 		
 		try {
-			ewe.io.Reader r = new ewe.io.InputStreamReader(
-					new ewe.io.FileInputStream(file));
+			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
 			parse(r);
 			r.close();
 		} catch (Exception e) {
@@ -334,5 +374,9 @@ public class MovingMapControlSettings extends MinML {
 
 	public Vector getMenuItems() {
 		return menuItems;
+	}
+	public boolean handleCommand(int command) {
+		// dummy
+		return false;
 	}
 }
