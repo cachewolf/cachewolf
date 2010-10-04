@@ -39,10 +39,10 @@ import ewe.util.Properties;
 
 public class Version {
 	static final int VER_MAJOR = 1;
-	static final int VER_MINOR = 2;
+	static final int VER_MINOR = 3;
 	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
 	static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ")+1, VER_SVN.lastIndexOf(" ")));
-	static final int VERSION_TYPE = 1;
+	static final int VERSION_TYPE = 3;
 	public static final String VERSION_TYPES(int i) {
 		if (i==0) return MyLocale.getMsg(7000,"Release");
 		if (i==1) return MyLocale.getMsg(7001,"Release candidate");
@@ -71,7 +71,7 @@ public class Version {
 	 * @throws IOException
 	 */
 	public static void checkForUpdates() throws IOException {
-		Properties curvers = UrlFetcher.fetchPropertyList("http://www.cachewolf.org/currentversions.txt");
+		Properties curvers = UrlFetcher.fetchPropertyList("http://svn.berlios.de/svnroot/repos/cachewolf/trunk/currentversions.txt");
 		versionnumbers = new String[updateavailabe.length];
 		for (int i = updateavailabe.length-1; i >=1; i--) {
 			updateavailabe[i] = checkVersion(curvers, "T"+(i-1), i); // this also sets versionnumber[i]
