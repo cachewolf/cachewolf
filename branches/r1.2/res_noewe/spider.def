@@ -60,6 +60,9 @@ waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
 firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
 firstPage2         = &lng=
 firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
+showOnlyFound      = &f=1
+maxDistance        = &dist=
+nextListPage       = /seek/nearest.aspx
 # Regex to search for cachenames
 listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
 lineRex            = <tr\ bgcolor='#.{6}'\\s*class="Data\ BorderTop">((?s).*?)</tr>
@@ -76,47 +79,43 @@ DandTRex           = <td>\\s*\\((.*?)/(.*?)\\)<br
 found              = alt="Found\ It!"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
-showOnlyFound      = &f=1
-maxDistance        = &dist=
-firstLine          = http://www.geocaching.com/seek/nearest.aspx?lat=
-firstLine2         = &lng=
-nextListPage       = /seek/nearest.aspx
 
-onlyWherigo         = &tx=0544fa55-772d-4e5c-96a9-36a51ebcf5c9
-onlyMegaEvent       = &tx=69eb8535-b718-4b35-ae3c-a856a55b0874
-onlyEarth           = &tx=c66f5cf3-9523-4549-b8dd-759cd2f18db8
-onlyUnknown         = &tx=40861821-1835-4e11-b666-8d41064d03fe
+onlyTraditional     = &tx=32bc9333-5e52-4957-b0f6-5a2c8fc7b257
 onlyMulti           = &tx=a5f6d0ad-d2f2-4011-8c14-940a9ebf3c74
 onlyVirtual         = &tx=294d4360-ac86-4c83-84dd-8113ef678d7e
 onlyLetterboxHybrid = &tx=4bdd8fb2-d7bc-453f-a9c5-968563b15d24
-onlyTraditional     = &tx=32bc9333-5e52-4957-b0f6-5a2c8fc7b257
+#allEventTypes==onlyEvent       = &tx=69eb8534-b718-4b35-ae3c-a856a55b0874
 onlyEvent           = &tx=69eb8534-b718-4b35-ae3c-a856a55b0874
+onlyMegaEvent       = &tx=69eb8535-b718-4b35-ae3c-a856a55b0874
 onlyCito            = &tx=57150806-bc1a-42d6-9cf0-538d171a2d22
+onlyL_FEvent        = &tx=3ea6533d-bb52-42fe-b2d2-79a3424d4728
+onlyUnknown         = &tx=40861821-1835-4e11-b666-8d41064d03fe
 onlyWebcam          = &tx=31d2ae3c-c358-4b5f-8dcd-2185bf472d3d
-
-onlyProjectAPE      = &tx=2555690d-b2bc-4b55-b5ac-0cb704c0b768
-onlyGPSAdventure    = &tx=72e69af2-7986-4990-afd9-bc16cbbb4ce3
+onlyEarth           = &tx=c66f5cf3-9523-4549-b8dd-759cd2f18db8
+onlyWherigo         = &tx=0544fa55-772d-4e5c-96a9-36a51ebcf5c9
+#onlyProjectAPE      = &tx=2555690d-b2bc-4b55-b5ac-0cb704c0b768
+#onlyGPSAdventure    = &tx=72e69af2-7986-4990-afd9-bc16cbbb4ce3
 
 #--------------------------------------
 #Section2: Get cachepage by name
 #--------------------------------------
 getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
-cacheUnavailable   = <ul\ class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable.\ Read\ the\ logs\ below\ to\ read\ the\ status\ for\ this\ cache.</li></ul>
-cacheArchived      = <ul\ class="OldWarning"><li>This\ cache\ has\ been\ archived,\ but\ is\ available\ for\ viewing\ for\ archival\ purposes.</li></ul>
-latLonRex          = <span\ id="ctl00_ContentBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
-shortDescRex       = <span\ id="ctl00_ContentBody_ShortDescription">((?s).*?)</span>
-longDescRex        = tentBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
-cacheNameRex       = <span\ id="ctl00_ContentBody_CacheName">((?s).*?)</span>
+cacheUnavailable   = cache\ is\ temporarily\ unavailable
+cacheArchived      = cache\ has\ been\ archived
+premiumCachepage   = viewable\ to\ Premium\ Members\ only.
+latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
+shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
+longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
+cacheNameRex       = tBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
 dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\ </strong>\\s*((?s).*?)\\s*<
 hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
-difficultyRex      = <td>\\s*<strong>\\s*Difficulty:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
-terrainRex         = <td>\\s*<strong>\\s*Terrain:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
+difficultyRex      = Difficulty:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
+terrainRex         = Terrain:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
 cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ alt="
-cacheLocationRex   = <span\ id="ctl00_ContentBody_Location">In\ ([^<]*?)<
-premiumCachepage   = Sorry, the owner of this listing has made it viewable to Premium Members only.
+cacheLocationRex   = tBody_Location">In\ ([^<]*?)<
 
 #--------------------------------------
 #Section2a: Logs
@@ -157,8 +156,8 @@ bugExEnd           = </a>
 bugLinkEnd         = "\ class="lnk">
 bugNameExStart     = <span>
 bugNameExEnd       = </span>
-bugDetailsStart    = id="ctl00_ContentBody_BugDetails_BugGoal">
-bugDetailsEnd      = </span>
+bugDetailsStart    = "og:description"\ content="
+bugDetailsEnd      = "\ property="og:desc
 getBugByName       = http://www.geocaching.com/track/search.aspx?k=
 getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
 getBugById         = http://www.geocaching.com/track/details.aspx?id=
