@@ -601,14 +601,10 @@ public class SpiderGC {
 				|| (listPage.indexOf("\"count\": 0") > -1 && len > 30)) {
 			double northsouthmiddle = (north + south) / 2.0;
 			double westeastmiddle = (west + east) / 2.0;
-			getCaches(north, west, northsouthmiddle, westeastmiddle,
-					setCachesToLoad);
-			getCaches(north, westeastmiddle, northsouthmiddle, east,
-					setCachesToLoad);
-			getCaches(northsouthmiddle, west, south, westeastmiddle,
-					setCachesToLoad);
-			getCaches(northsouthmiddle, westeastmiddle, south, east,
-					setCachesToLoad);
+			getCaches(north, west, northsouthmiddle, westeastmiddle, setCachesToLoad);
+			getCaches(north, westeastmiddle, northsouthmiddle, east, setCachesToLoad);
+			getCaches(northsouthmiddle, west, south, westeastmiddle, setCachesToLoad);
+			getCaches(northsouthmiddle, westeastmiddle, south, east, setCachesToLoad);
 		} else {
 			addCaches(listPage, setCachesToLoad);
 		}
@@ -616,59 +612,65 @@ public class SpiderGC {
 
 	private void addCaches(String listPage, boolean setCachesToLoad) {
 		String[] caches = mString.split(listPage, '{');
-		for (int i = 0; i < caches.length; i++) {
-			if (infB.isClosed)
-				return;
+		//int posId=0;        //id egal
+		int posName=1;      //nn
+		int posWP=2;        //gc 
+		int posLat=3;       //lat
+		int posLon=4;       //lon
+		int posType=5;      //ctid
+		int posFound=6;     //f
+		int posOwn=7;       //o
+		int posAvailable=8; //ia
+		// ignoring first 3 lines
+		for (int i = 3; i < caches.length; i++) {
+			if (infB.isClosed) return;
 			String elements[] = mString.split(caches[i], ',');
-			String e1[] = mString.split(elements[0], ' '); // .indexOf("\"lat\": ");
-			if (e1[0].indexOf("lat") > -1) {
-				boolean found = mString.split(elements[5], ' ')[1]
-						.equals("true");
-				if (found && doNotgetFound)
-					continue;
-				byte cacheType = CacheType.gcSpider2CwType(mString.split(
-						elements[4], ' ')[1]);
-				if (restrictedCacheType != CacheType.CW_TYPE_ERROR) {
-					if (restrictedCacheType != cacheType)
-						continue;
-				}
-				String lat = e1[1];
-				String lon = mString.split(elements[2], ' ')[1];
-				String wp = mString.split(elements[3], '\"')[3];
-				String own = mString.split(elements[6], ' ')[1];
-				String available = mString.split(elements[7], ' ')[1];
-				String cacheName = mString.split(elements[8], '\"')[3];
-				;
-				CacheHolder ch = cacheDB.get(wp);
-				if (ch == null) {
-					ch = new CacheHolder();
-					ch.setWayPoint(wp);
-					ch.setLatLon(lat + " " + lon);
-					ch.setType(cacheType);
-					if (own.equals("true")) {
-						ch.setOwned(true);
-					} else {
-						if (found) {
-							ch.setFound(true);
-							ch.setCacheStatus(ch.getFoundText());
-						}
-					}
-					ch.setAvailable(available.equals("true") ? true : false);
-					ch.setCacheName(cacheName);
-					num_added++;
-					cacheDB.add(ch);
-					if (setCachesToLoad) {
-						cachesToLoad.add(wp + "found");
-					} else {
-						ch.getCacheDetails(false).URL="http://www.geocaching.com/seek/cache_details.aspx?wp="+wp;
-						ch.save();
-					}
-					if (Global.mainTab.statBar != null)
-						Global.mainTab.statBar.updateDisplay("GC pages: "
-								+ page_number + " Caches added to CW: "
-								+ num_added);
+			
+			boolean found = (elements[posFound].indexOf("true") > -1 ? true : false);
+			if (found && doNotgetFound)	continue;
+			
+			byte cacheType = CacheType.gcSpider2CwType(mString.split(elements[posType], ':')[1]);
+			if (restrictedCacheType != CacheType.CW_TYPE_ERROR) {
+				if (restrictedCacheType != cacheType) continue;
+			}
+
+			String wp = mString.split(elements[posWP], '\"')[3];			
+			CacheHolder ch = cacheDB.get(wp);
+			if (ch == null) {
+
+				String lat = mString.split(elements[posLat], ':')[1];
+				String lon = mString.split(elements[posLon], ':')[1];
+				String own = mString.split(elements[posOwn], ':')[1];
+				boolean available = (elements[posAvailable].indexOf("true") > -1 ? true : false);
+				String cacheName = mString.split(elements[posName], '\"')[3];
+
+				ch = new CacheHolder();
+				ch.setWayPoint(wp);
+				ch.setLatLon(lat + " " + lon);
+				ch.setType(cacheType);
+				if (own.equals("true")) {
+					ch.setOwned(true);
 				} else {
+					if (found) {
+						ch.setFound(true);
+						ch.setCacheStatus(ch.getFoundText());
+					}
 				}
+				ch.setAvailable(available);
+				ch.setCacheName(cacheName);
+				num_added++;
+				cacheDB.add(ch);
+				if (setCachesToLoad) {
+					cachesToLoad.add(wp + "found");
+				} else {
+					ch.getCacheDetails(false).URL="http://www.geocaching.com/seek/cache_details.aspx?wp="+wp;
+					ch.save();
+				}
+				if (Global.mainTab.statBar != null)
+					Global.mainTab.statBar.updateDisplay("GC pages: "
+							+ page_number + " Caches added to CW: "
+							+ num_added);
+			} else {
 			}
 		}
 	}
