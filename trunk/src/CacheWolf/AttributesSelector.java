@@ -48,6 +48,7 @@ public class AttributesSelector extends Panel {
 	private int virtualWidth; 
 
 	public AttributesSelector() {
+		scp.setOptions(MyScrollBarPanel.NeverShowHorizontalScrollers);
 		TILESIZE = 30; W_OFFSET=100; H_OFFSET=150;
 		if(Vm.isMobile()){
 			if(MyLocale.getScreenWidth() == 240 & MyLocale.getScreenHeight() == 320){
