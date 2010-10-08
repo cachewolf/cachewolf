@@ -318,9 +318,9 @@ public class FilterScreen extends Form{
 		//////////////////////////
 		
 		if (MyLocale.getScreenHeight()>240) addTitle(pnlCacheAttributes,MyLocale.getMsg(737,"Attributes"));
-		pnlCacheAttributes.addNext(new mLabel(MyLocale.getMsg(739,"Filter on")+":"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlCacheAttributes.addLast(chcAttrib = new mChoice(new String[]{MyLocale.getMsg(740,"all"), MyLocale.getMsg(741,"one"), MyLocale.getMsg(742,"none")},0),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
-		pnlCacheAttributes.addLast(attV=new AttributesSelector(), CellConstants.STRETCH|CellConstants.LEFT/*|CellConstants.BORDER*/, CellConstants.STRETCH);
+		pnlCacheAttributes.addNext(new mLabel(MyLocale.getMsg(739,"Filter on")+":"), CellConstants.DONTSTRETCH, CellConstants.LEFT);
+		pnlCacheAttributes.addLast(chcAttrib = new mChoice(new String[]{MyLocale.getMsg(740,"all"), MyLocale.getMsg(741,"one"), MyLocale.getMsg(742,"none")},0),CellConstants.DONTSTRETCH, CellConstants.LEFT);
+		pnlCacheAttributes.addLast(attV=new AttributesSelector(), DONTSTRETCH, CENTER|TOP);
 		long[] ini = {0l,0l,0l,0l};
 		attV.setSelectionMasks(ini);
 		
@@ -394,7 +394,12 @@ public class FilterScreen extends Form{
 		// Populating the comboBox of saved filters
 		buildFilterList();
 	}
-	
+
+    public void resizeTo(int width, int height) {
+		attV.changeIapSize(width, height);
+		this.relayout(true);
+		super.resizeTo(width,height);
+	}
 	
 	public void setData(FilterData data){
 
@@ -776,8 +781,7 @@ public class FilterScreen extends Form{
 				}
 			}
 			setColors();
-		}
-
+		}	
 	}
 	
 	/**

@@ -32,39 +32,41 @@ import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.InteractivePanel;
 import ewe.sys.Vm;
-import ewe.ui.CellConstants;
 import ewe.ui.DataChangeEvent;
 import ewe.ui.Panel;
 import ewe.ui.mLabel;
 
 public class AttributesSelector extends Panel {
-	protected static int TILESIZE=16; // for small screen 
-	protected static int PREF_WIDTH=180; // for small screen 
-	protected static int PREF_HEIGHT=150; // for small screen 
+	protected static int TILESIZE;
+	protected static int W_OFFSET;  // depends on Global.getPref().fontSize ?
+	protected static int H_OFFSET;	// depends on Global.getPref().fontSize ?
 	private long[] selectionMaskYes = {0l,0l};
 	private long[] selectionMaskNo = {0l,0l};
 	protected mLabel mInfo;
+	protected InteractivePanel iap=new attInteractivePanel();
+	protected MyScrollBarPanel scp = new MyScrollBarPanel(iap);
+	private int virtualWidth; 
 
 	public AttributesSelector() {
-		if(!Vm.isMobile()) { TILESIZE = 30; PREF_HEIGHT =(TILESIZE+2)*10; PREF_WIDTH =(TILESIZE+2)*9;}
-		
+		TILESIZE = 30; W_OFFSET=100; H_OFFSET=150;
 		if(Vm.isMobile()){
+			if(MyLocale.getScreenWidth() == 240 & MyLocale.getScreenHeight() == 320){
+				TILESIZE = 28; W_OFFSET=80; H_OFFSET=120;
+			}
 			if(MyLocale.getScreenWidth() == 320 & MyLocale.getScreenHeight() == 240){
-				TILESIZE = 14; PREF_HEIGHT = 120; PREF_WIDTH = 180;
 			}
 			if(MyLocale.getScreenWidth() == 480 & MyLocale.getScreenHeight() == 640){
-				TILESIZE = 25; PREF_HEIGHT =(TILESIZE+2)*10; PREF_WIDTH =(TILESIZE+2)*9;
 			}
 			if(MyLocale.getScreenWidth() == 480 & MyLocale.getScreenHeight() == 800){
-				TILESIZE = 30; PREF_HEIGHT =(TILESIZE+2)*10; PREF_WIDTH =(TILESIZE+2)*9;
 			}
 			if(MyLocale.getScreenWidth() == 640 & MyLocale.getScreenHeight() == 480){
-				TILESIZE = 20; PREF_HEIGHT =(TILESIZE+2)*7; PREF_WIDTH =(TILESIZE+2)*12;
 			}
 		}
-		iap.virtualSize =  new Rect(10,10,400,400);
-		iap.setPreferredSize(PREF_WIDTH, PREF_HEIGHT);
-		addLast(iap,CellConstants.STRETCH,FILL);
+		else {
+			TILESIZE = 36; W_OFFSET=106; H_OFFSET=150;
+		}
+		iap.virtualSize = new Rect(0,0,0,0); // create once
+		addLast(scp,STRETCH,FILL);
 		addLast(mInfo=new mLabel(""),HSTRETCH,HFILL);
 	}
 
@@ -132,11 +134,10 @@ public class AttributesSelector extends Panel {
 			return true;
 		}
 	}
-	protected InteractivePanel iap=new attInteractivePanel();
 
 	private void showAttributePalette() {
 		iap.images.clear();
-		int myWidth = PREF_WIDTH;
+		int myWidth = virtualWidth;
 		int myX = 2; int myY = 2;
 		int inc = 2;
 		for (int i = 0; i < Attribute.maxAttRef; i++) {
@@ -162,11 +163,27 @@ public class AttributesSelector extends Panel {
 			myX += TILESIZE;
 			
 		}
-		iap.repaintNow();
+		iap.repaintNow();		
 	}
 	
-/*	public void resizeTo(int width, int height) {
-		super.resizeTo(width,height);
+
+	private void setIapSize(int width, int height) {
+		iap.setPreferredSize(width, height);
+		Global.getPref().log("[AttributesSelector:changeIapSize]  pref. area: "+width+"x"+height);
+
+		int anzPerWidth = width / (TILESIZE+2);
+		virtualWidth = anzPerWidth * (TILESIZE+2);
+		double max = Attribute.maxAttRef;
+		int anzPerHeight = (int) java.lang.Math.ceil(max / anzPerWidth);
+		iap.virtualSize.set(0,0,virtualWidth ,anzPerHeight * (TILESIZE+2));
+		Global.getPref().log("[AttributesSelector:setIapSize] virt. area: "+virtualWidth+"x"+anzPerHeight * (TILESIZE+2));
+
 	}
-*/	
+
+	public void changeIapSize(int width, int height) {
+		Global.getPref().log("[AttributesSelector:changeIapSize]  max. area: "+width+"x"+height);
+		setIapSize(width-W_OFFSET, height-H_OFFSET);
+		showAttributePalette();
+	}
+
 }
