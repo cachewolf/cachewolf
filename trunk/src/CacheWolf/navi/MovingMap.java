@@ -30,6 +30,7 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
+import CacheWolf.CacheType;
 import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.GuiImageBroker;
@@ -2316,6 +2317,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						kontextMenu.addItem(new MenuItem("Difficulty: "+CacheTerrDiff.longDT(clickedCache.getHard())));
 						kontextMenu.addItem(new MenuItem("Terrain: "+CacheTerrDiff.longDT(clickedCache.getTerrain())));
 						kontextMenu.addItem(new MenuItem("Size: "+CacheSize.cw2ExportString(clickedCache.getCacheSize())));
+						if (clickedCache.getType() == CacheType.CW_TYPE_QUESTION) {
+							kontextMenu.addItem(new MenuItem(clickedCache.getCacheDetails(false).LongDescription));
+						}
 						kontextMenu.addItem(hintMenuItem=new MenuItem("Hint: "+clickedCache.getCacheDetails(false).Hints));
 					}
 				}
@@ -2349,8 +2353,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							+ ch.cacheName+"\n"
 							+ "Difficulty: "+CacheTerrDiff.longDT(ch.getHard())+"\n"
 							+ "Terrain: "+CacheTerrDiff.longDT(ch.getTerrain())+"\n"
-							+ "Size: "+CacheSize.cw2ExportString(ch.getCacheSize())+"\n"
-							+ "";
+							+ "Size: "+CacheSize.cw2ExportString(ch.getCacheSize())+"\n";
+				if (ch.getType() == CacheType.CW_TYPE_QUESTION) {
+					this.toolTip = this.toolTip + ch.getCacheDetails(false).LongDescription;
+				}
 			}
 		}
 		return true;
