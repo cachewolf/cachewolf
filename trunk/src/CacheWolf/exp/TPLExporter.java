@@ -212,7 +212,6 @@ public class TPLExporter {
 		expName = tmpFile.getName();
 		expName = expName.substring(0, expName.indexOf("."));
 		gm=new GarminMap();
-		gm.readGarminMap();
 	}
 
 	public void doIt(){

@@ -53,10 +53,7 @@ public class LocExporter extends Exporter{
 		if (Global.getPref().addDetailsToName) {
 			this.setNeedCacheDetails(true);
 		}
-		if ((new File(FileBase.getProgramDirectory()+"/garminmap.xml")).exists()) {
-			gm=new GarminMap();
-			gm.readGarminMap();
-		}
+		gm=new GarminMap();
 	}
 
 	public String header () {
@@ -97,14 +94,7 @@ public class LocExporter extends Exporter{
 		strBuf.append("\" lon=\"");
 		strBuf.append(ch.pos.getLonDeg(CWPoint.DD));
 		strBuf.append("\"/>\r\n   <type>");
-		if (gm!=null) {
-			strBuf.append(gm.getIcon(ch));
-		} else {
-			if (ch.is_found())
-				strBuf.append("Geocache Found");
-			else
-				strBuf.append("Geocache");
-		}
+		strBuf.append(gm.getIcon(ch));
 		strBuf.append("</type>\r\n</waypoint>\r\n");
 		return strBuf.toString();
 	}
