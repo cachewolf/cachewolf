@@ -37,18 +37,13 @@ import ewe.io.FileBase;
 */
 public class OziExporter extends Exporter{
 	
-	GarminMap poiMapper;
+	GarminMap oziColorMapper;
 	
 	public OziExporter(Preferences p, Profile prof){
 		super();
 		this.setHowManyParams(LAT_LON);
 		this.setMask("*.wpt");
-		if ((new File(FileBase.getProgramDirectory()+"/garminmap.xml")).exists()) {
-			poiMapper=new GarminMap();
-			poiMapper.readGarminMap();
-		} else {
-			poiMapper = null;
-		}
+		oziColorMapper=new GarminMap();
 	}
 	
 	public String header () {
@@ -97,13 +92,7 @@ public class OziExporter extends Exporter{
 		// Field 9 : Foreground Color (RGB value)
 		strBuf.append("0,");
 		// Field 10 : Background Color (RGB value)
-		String color="16777215";
-		if (poiMapper != null) {
-			String tmpcolor = poiMapper.ozicolor(ch);
-			if (tmpcolor != null)
-				color = tmpcolor;
-		}
-		strBuf.append(color+",");
+		strBuf.append(oziColorMapper.ozicolor(ch)+",");
 		// Field 11 : Description (max 40), no commas
 		tmpName = simplifyString(ch.getCacheName()).replace(',', ' ');
 		if (tmpName.length() <= 40){

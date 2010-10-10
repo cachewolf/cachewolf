@@ -682,7 +682,7 @@ public class CacheHolder{
 		String shortName=shortenName(cacheName, shortNameLength);
 		varParams.put("SHORTNAME", shortName);
 		varParams.put("TRAVELBUG", (bugs?"Y":"N"));
-		varParams.put("GMTYPE", gm != null ? gm.getIcon(this) : "");
+		varParams.put("GMTYPE", gm.getIcon(this));
 		varParams.put("NOW_DATE",nowdate().setToCurrentTime().toString());
 		varParams.put("NOW_TIME",nowtime().setToCurrentTime().toString());
 		varParams.put("CACHEID", GetCacheID());
