@@ -352,7 +352,7 @@ public class SpiderGC {
 				MyLocale.getMsg(652,"Update caches with all details?"),
 				MessageBox.YESB | MessageBox.NOB | MessageBox.CANCELB).execute();
 		boolean complete = answer == MessageBox.YESB;
-		if ( answer == MessageBox.CANCELB) {
+		if ( answer == MessageBox.IDCANCEL) {
 			if (startPos != null) pref.setCurCentrePt(startPos);
 			return;
 		}
