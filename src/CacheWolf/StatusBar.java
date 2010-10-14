@@ -27,6 +27,7 @@ package CacheWolf;
 
 import ewe.fx.Color;
 import ewe.fx.mImage;
+import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
 import ewe.ui.ControlConstants;
@@ -100,7 +101,8 @@ public class StatusBar extends CellPanel{
 			oldInfo=strInfo;				
 		}
 		String strStatus="";
-		boolean bigScreen=(MyLocale.getScreenWidth()>=480) && !(MobileVGA && (pref.fontSize > 20));
+		// boolean bigScreen=(MyLocale.getScreenWidth()>=480) && !(MobileVGA && (pref.fontSize > 20));
+		boolean bigScreen=!Vm.isMobile();
 		strStatus += MyLocale.getMsg(4500,"Tot:") + " " + stats.total(bigScreen) + " " +
 					MyLocale.getMsg(4501,"Dsp:") + " " + stats.visible(bigScreen) + " " +
 					MyLocale.getMsg(4502,"Fnd:") + " " + stats.totalFound() + "  ";
