@@ -120,9 +120,9 @@ public class DateTimeChooser extends Editor {
 	public CellPanel addTopSection(CellPanel addTo,Control cp) {
 		int IconSize;
 		if (Vm.isMobile() && MyLocale.getScreenWidth() >= 400)
-			IconSize = 20;
+			IconSize = 30;
 		else
-			IconSize = 10;
+			IconSize = 30;
 		addTo.modify(DrawFlat,0);
 		addTo.defaultTags.set(INSETS,new Insets(0,0,0,0));
 		mButton b = new mButton();
