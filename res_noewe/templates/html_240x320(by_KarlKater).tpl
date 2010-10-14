@@ -4,7 +4,9 @@
 <tmpl_par name="Out" value=".html">
 <tmpl_par name="NrLogs " value="-1">
 <tmpl_par name="singleFile" value="no">
-<tmpl_par name="formatModifier" value="1">
+<tmpl_par name="formatModifier" value="2">
+<tmpl_par name="takeOnlyWp" value="main">
+<tmpl_par name="CopyCacheImages" value="yes">
 <html>
 
 <head>
@@ -18,7 +20,8 @@
 
 <tr style = "background-color:lightgrey;font-family:sans-serif;font-size:14;">
 <td>
-<tmpl_var TYPE> <tmpl_var WAYPOINT> <tmpl_var NAME> by <tmpl_var OWNER><br>
+<img src="../attributes/<tmpl_var GSTYPE>.png"><tmpl_var GSTYPE> <tmpl_var WAYPOINT><br>
+<tmpl_var NAME> by <tmpl_var OWNER><br>
 Difficulty: <tmpl_var DIFFICULTY>&nbsp;&nbsp;Terrain: <tmpl_var TERRAIN>&nbsp;&nbsp;Size: <tmpl_var SIZE><br>
 Coordinates: <tmpl_var LATLON>
 </td>
@@ -42,12 +45,12 @@ Coordinates: <tmpl_var LATLON>
 <TABLE cellSpacing=1 cellPadding=1 bgColor=#448e35 border=0>
 <TBODY>
 <TR bgColor=#c6e3c0>
-<TH align=left>Waypoint</TH>
+<TH align=left width=50>Waypoint</TH>
 <TH align=left>Name</TH>
-<TH align=left>Coordinate</TH>
+<TH align=left width=73>Coordinate</TH>
 <tmpl_loop ADDIS>
 <TR bgColor=#ffffff>
-<TD vAlign=top align=left><tmpl_var WAYPOINT></TD>
+<TD vAlign=top align=left><img src="../attributes/<tmpl_var IMG>"><br><tmpl_var WAYPOINT></TD>
 <TD vAlign=top align=left><tmpl_var NAME></TD>
 <TD vAlign=top align=left><tmpl_var LATLON></TD></TR>
 <TR bgColor=#ffffff>
@@ -73,7 +76,7 @@ Coordinates: <tmpl_var LATLON>
 <tr style = "font-family:sans-serif;font-size:12;"><td>
 Logs:<br>
 <tmpl_loop LOGS>
-<img src="<tmpl_var ICON>" border="0">&nbsp;<tmpl_var DATE>&nbsp;by&nbsp;<tmpl_var LOGGER><br><tmpl_var MESSAGE>
+<img src="../attributes/<tmpl_var ICON>" border="0">&nbsp;<tmpl_var DATE>&nbsp;by&nbsp;<tmpl_var LOGGER><br><tmpl_var MESSAGE>
 <br>
 </tmpl_loop>
 </td>
@@ -90,19 +93,19 @@ Notes:<br>
 Pictures:<br>
 Cache:<br>
 <tmpl_loop cacheImg>
-<a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
+<a href = "<tmpl_var FILENAME>"><tmpl_var TEXT></a><br>
 </tmpl_loop>
 User:<br>
 <tmpl_loop userImg>
-<a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
+<a href = "<tmpl_var FILENAME>"><tmpl_var TEXT></a><br>
 </tmpl_loop>
 Logs:<br>
 <tmpl_loop logImg>
-<a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
+<a href = "<tmpl_var FILENAME>"><tmpl_var TEXT></a><br>
 </tmpl_loop>
 Maps:<br>
 <tmpl_loop mapImg>
-<a href = "<tmpl_var FILE>"><tmpl_var TEXT></a><br>
+<a href = "<tmpl_var FILENAME>"><tmpl_var TEXT></a><br>
 </tmpl_loop>
 </td>
 </tr>
