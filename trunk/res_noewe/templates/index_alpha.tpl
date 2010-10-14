@@ -1,11 +1,11 @@
 <tmpl_par name="charset" value="UTF8">
 <tmpl_par name="decsep" value=".">
 <tmpl_par name="newline" value="LF">
-<tmpl_par name="Out" value="index.html">
+<tmpl_par name="Out" value="index_alpha.html">
 <tmpl_par name="singleFile" value="yes">
 <tmpl_par name="formatModifier" value="2">
 <tmpl_par name="takeOnlyWp" value="main">
-<tmpl_par name="sortedBy" value="4">
+<tmpl_par name="sortedBy" value="5">
 <html>
 <head>
 <title></title>
