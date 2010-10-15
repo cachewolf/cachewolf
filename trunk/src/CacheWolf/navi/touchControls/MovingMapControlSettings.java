@@ -252,14 +252,15 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 					attributes, BUTTON_ATTR_TEXT_OFFSET_B, 0));
 
 			MovingMapControlItem button;
-			if (content != null) {
-				button = new MovingMapControlItemText("", 
-						imageLocation, iconLocation, alphavalue, action, content, alignText, tOptions);
-			} else if (localeDefault != null) {
-				button = new MovingMapControlItemText(MyLocale.getMsg(localIDValue, localeDefault),
-						imageLocation, iconLocation, alphavalue, action, content, alignText, tOptions);
-			} else {
+			String itemText;
+			if (localeDefault == null) 
+				itemText=MyLocale.getMsg(localIDValue, "");
+			else itemText=MyLocale.getMsg(localIDValue, localeDefault);
+			if (itemText.equals("") && content == null) {
 				button = new MovingMapControlItemButton(imageLocation, iconLocation, action, alphavalue);
+			} else {
+				button = new MovingMapControlItemText(itemText,
+						imageLocation, iconLocation, alphavalue, action, content, alignText, tOptions);
 			}
 
 			// add extra role to all icons
