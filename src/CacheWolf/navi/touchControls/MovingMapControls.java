@@ -266,7 +266,7 @@ public class MovingMapControls implements ICommandListener {
 
 			if ((item.xProperties & MovingMapControlItem.IS_ICON_WITH_TEXT) != 0) {
 				if (contentName.equals(item.getContent())) {
-					item.setText(text);
+					item.setText(item.getText()+text);
 				}
 			}
 			if ((item.xProperties & MovingMapControlItem.IS_ICON_WITH_FRONTLINE) != 0) {

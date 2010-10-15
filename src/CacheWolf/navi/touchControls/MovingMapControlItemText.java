@@ -35,12 +35,14 @@ public class MovingMapControlItemText extends MovingMapControlItem {
 	private ImageWithText aniImage;
 	private int command;
 	private String content;
+	private String iconText;
 
 	public MovingMapControlItemText(final String iconText, String imageSource,String iconSource,
 			int alpha, int actionCommand, String content, String alignText,TextOptions tOptions) {
 
 		Image image = MovingMapControlItem.createImage(imageSource, iconSource, alpha);		
 		aniImage = new ImageWithText(image,tOptions);
+		this.iconText=iconText;
 		aniImage.setText(iconText);
 		aniImage.freeSource();
 		aniImage.properties |= mImage.AlwaysOnTop;		
@@ -92,6 +94,9 @@ public class MovingMapControlItemText extends MovingMapControlItem {
 	}
 	public String getContent() {
 		return content;
+	}
+	public String getText() {
+		return iconText;
 	}
 	public void setAdditionalProperty(int prop) {
 		aniImage.setStartlineWitdth(prop);
