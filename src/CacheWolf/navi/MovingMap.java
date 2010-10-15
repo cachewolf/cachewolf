@@ -351,13 +351,11 @@ public final class MovingMap extends Form implements ICommandListener {
 
 			int lineLengthPixels = (int)java.lang.Math.round( lineLengthMeters / currentMap.scale );
 
-			controlsLayer.updateContext("scale", lineLengthString,
-					lineLengthPixels);
+			controlsLayer.updateContent("scale", lineLengthString, lineLengthPixels);
 		}
 		else{
 
-		controlsLayer.updateContext("scale", "no map",
-				20);
+		controlsLayer.updateContent("scale", "no map", 20);
 		}
 	}
 
@@ -397,13 +395,13 @@ public final class MovingMap extends Form implements ICommandListener {
 					d = dd.toString(3,0,0) + Metrics.getUnit(smallUnit);
 				}
 
-				controlsLayer.updateContext("distance", d);
+				controlsLayer.updateContent("distance", d);
 
 			}
 		}
 		else
 		{
-			controlsLayer.updateContext("distance", "");
+			controlsLayer.updateContent("distance", "");
 		}
 	}
 
@@ -1398,6 +1396,8 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 		if (fix == 0 && myNavigation.gpsPos.getSats()== 0) 	setGpsStatus(MovingMap.lostFix);
 		if (fix < 0 )	setGpsStatus(MovingMap.noGPSData);
+		controlsLayer.updateContent("hdop", Convert.toString(myNavigation.gpsPos.getHDOP()));
+		controlsLayer.updateContent("sats", Convert.toString(myNavigation.gpsPos.getSats()) + "/" + Convert.toString(myNavigation.gpsPos.getSatsInView()));
 	}
 
 	public void gpsStarted() {
