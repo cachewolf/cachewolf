@@ -123,9 +123,10 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 	 */
 	public static final String BUTTON_ATTR_CHANGE_STAE_OF = "changeStateof";
 	/**
-	 * the name of content which is displayed on the button. Currently the content distance and scale are known.
+	 * the name of content which is displayed on the button.
+	 * Currently the content distance, scale, hdop, sats are known.
 	 */
-	public static final String BUTTON_ATTR_CONTEXT = "content";
+	public static final String BUTTON_ATTR_CONTENT = "content";
 	/**
 	 * the alignment of the text on the buttons. if the String starts with 'T' the text will be displayed on the top
 	 * line of the button if the String starts with 'B' the text will be displayed on the bottom line of the button if
@@ -220,7 +221,7 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 				iconLocation = CONFIG_RELATIVE_PATH + iconLocation; 
 			}
 			String alignText = attributes.getValue(BUTTON_ATTR_ALIGNTEXT);
-			String context = attributes.getValue(BUTTON_ATTR_CONTEXT);
+			String content = attributes.getValue(BUTTON_ATTR_CONTENT);
 			if (visibility == null) {
 				Global.getPref().log("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY
 						+ " not set!",null);
@@ -251,12 +252,12 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 					attributes, BUTTON_ATTR_TEXT_OFFSET_B, 0));
 
 			MovingMapControlItem button;
-			if (context != null) {
+			if (content != null) {
 				button = new MovingMapControlItemText("", 
-						imageLocation, iconLocation, alphavalue, action, context, alignText, tOptions);
+						imageLocation, iconLocation, alphavalue, action, content, alignText, tOptions);
 			} else if (localeDefault != null) {
 				button = new MovingMapControlItemText(MyLocale.getMsg(localIDValue, localeDefault),
-						imageLocation, iconLocation, alphavalue, action, context, alignText, tOptions);
+						imageLocation, iconLocation, alphavalue, action, content, alignText, tOptions);
 			} else {
 				button = new MovingMapControlItemButton(imageLocation, iconLocation, action, alphavalue);
 			}
