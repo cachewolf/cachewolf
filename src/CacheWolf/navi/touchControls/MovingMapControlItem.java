@@ -156,6 +156,9 @@ public abstract class MovingMapControlItem {
 	public String getContent() {
 		return null;
 	}
+	public String getText() {
+		return null;
+	}
 
 	public String getHelp() {
 
