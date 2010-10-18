@@ -38,6 +38,7 @@ import CacheWolf.InfoBox;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
+import CacheWolf.STRreplace;
 import CacheWolf.navi.touchControls.ICommandListener;
 import CacheWolf.navi.touchControls.MovingMapControls;
 import ewe.filechooser.FileChooser;
@@ -2089,7 +2090,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu kontextMenu;
 	MenuItem gotoMenuItem = new MenuItem(MyLocale.getMsg(4230, "Goto here$g"), 0, null);
 	MenuItem newWayPointMenuItem = new MenuItem(MyLocale.getMsg(4232, "Create new Waypoint here$n"), 0, null);;
-	MenuItem openCacheDescMenuItem,openCacheDetailMenuItem,addCachetoListMenuItem,gotoCacheMenuItem,hintMenuItem;
+	MenuItem openCacheDescMenuItem,openCacheDetailMenuItem,addCachetoListMenuItem,gotoCacheMenuItem,hintMenuItem,missionMenuItem;
 
 	MenuItem miLuminary[];
 
@@ -2312,15 +2313,22 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
 							kontextMenu.addItem(addCachetoListMenuItem);
 						}
+						String stmp=clickedCache.getCacheDetails(false).Hints;
+						stmp=stmp.substring(0,Math.min(10,stmp.length())).trim();
+						if (!stmp.equals("")){
+							kontextMenu.addItem(hintMenuItem=new MenuItem("Hint: "+stmp));
+						}
+						if (clickedCache.getType() == CacheType.CW_TYPE_QUESTION) {
+							stmp=clickedCache.getCacheDetails(false).LongDescription;
+							if (!stmp.equals("")) {
+								kontextMenu.addItem(missionMenuItem=new MenuItem("?: "));								
+							}
+						}
 						kontextMenu.addItem(new MenuItem("-"));
 						kontextMenu.addItem(new MenuItem(clickedCache.getWayPoint()+" Info:"));
 						kontextMenu.addItem(new MenuItem("Difficulty: "+CacheTerrDiff.longDT(clickedCache.getHard())));
 						kontextMenu.addItem(new MenuItem("Terrain: "+CacheTerrDiff.longDT(clickedCache.getTerrain())));
 						kontextMenu.addItem(new MenuItem("Size: "+CacheSize.cw2ExportString(clickedCache.getCacheSize())));
-						if (clickedCache.getType() == CacheType.CW_TYPE_QUESTION) {
-							kontextMenu.addItem(new MenuItem(clickedCache.getCacheDetails(false).LongDescription));
-						}
-						kontextMenu.addItem(hintMenuItem=new MenuItem("Hint: "+clickedCache.getCacheDetails(false).Hints));
 					}
 				}
 			}
@@ -2413,7 +2421,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						Global.mainForm.cacheList.addCache(clickedCache.getWayPoint());
 					}
 					if (action == hintMenuItem) {
-						hintMenuItem.setText(Common.rot13(hintMenuItem.action));
+						(new MessageBox("Hint", Common.rot13(clickedCache.getCacheDetails(false).Hints), FormBase.OKB)).execute();
+					}
+					if (action == missionMenuItem) {
+						(new MessageBox("Mission", STRreplace.replace(clickedCache.getCacheDetails(false).LongDescription,"<br>","\n"), FormBase.OKB)).execute();
 					}
 					/*
 					for (int i=0; i<miLuminary.length; i++) {
