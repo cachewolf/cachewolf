@@ -2421,7 +2421,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						Global.mainForm.cacheList.addCache(clickedCache.getWayPoint());
 					}
 					if (action == hintMenuItem) {
-						(new MessageBox("Hint", Common.rot13(clickedCache.getCacheDetails(false).Hints), FormBase.OKB)).execute();
+						(new MessageBox("Hint", STRreplace.replace(Common.rot13(clickedCache.getCacheDetails(false).Hints),"<br>","\n"), FormBase.OKB)).execute();
 					}
 					if (action == missionMenuItem) {
 						(new MessageBox("Mission", STRreplace.replace(clickedCache.getCacheDetails(false).LongDescription,"<br>","\n"), FormBase.OKB)).execute();
