@@ -1,0 +1,129 @@
+TakenFromUrl:       http://service.schleswig-holstein.de/OGCFassade/SH_WMS_ATKIS_IK_MRH.aspx?
+GetCapabilitiesUrl: http://service.schleswig-holstein.de/OGCFassade/SH_WMS_ATKIS_IK_MRH.aspx?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.schleswig-holstein t
+MapType:                        t
+MainUrl:            http://service.schleswig-holstein.de/OGCFassade/SH_WMS_ATKIS_IK_MRH.aspx?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31467
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31467 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=0|SH_M5_F101_F_SDLG|NaN|NaN
+#LayersUrlPart:     LAYERS=1|SH_M5_F109_F_VEG|NaN|NaN
+#LayersUrlPart:     LAYERS=2|SH_M5_F103_F_BW|NaN|NaN
+#LayersUrlPart:     LAYERS=3|SH_M5_F102_F_SDLGFF|NaN|NaN
+#LayersUrlPart:     LAYERS=4|SH_M5_F108_F_TRANS|NaN|NaN
+#LayersUrlPart:     LAYERS=5|SH_M5_F104_F_PLATZ|NaN|NaN
+#LayersUrlPart:     LAYERS=6|SH_M5_F106_F_FLUG|NaN|NaN
+#LayersUrlPart:     LAYERS=7|SH_M5_F111_F_GEW|NaN|NaN
+#LayersUrlPart:     LAYERS=8|SH_M5_F111_F_GEW_WATT|NaN|NaN
+#LayersUrlPart:     LAYERS=9|SH_M5_F113_FT_GEW_BW_1|NaN|NaN
+#LayersUrlPart:     LAYERS=10|SH_M5_F107_F_SCHIFF|NaN|NaN
+#LayersUrlPart:     LAYERS=11|SH_M5_F113_F_UFER|NaN|NaN
+#LayersUrlPart:     LAYERS=12|SH_M5_F111_L_GEW|NaN|NaN
+#LayersUrlPart:     LAYERS=13|SH_M5_F113_L_UFER|NaN|NaN
+#LayersUrlPart:     LAYERS=14|SH_M5_F107_L_SCHIFF|NaN|NaN
+#LayersUrlPart:     LAYERS=15|SH_M5_F115_L_DEICH|NaN|NaN
+#LayersUrlPart:     LAYERS=16|SH_M5_F104_L_WEG|NaN|NaN
+#LayersUrlPart:     LAYERS=17|SH_M5_F104_L_Str_M|NaN|NaN
+#LayersUrlPart:     LAYERS=18|SH_M5_F104_F_Str - Fussgaengerzone|NaN|NaN
+#LayersUrlPart:     LAYERS=19|SH_M5_F104_F_Str - Kreisstrasse und Gemeindestrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=20|SH_M5_F104_F_Str - Landesstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=21|SH_M5_F104_F_Str - Autobahn und Bundesstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=22|SH_M5_F104_L_Str_M - Mittellinie bei Strassen mit getrennter Fahrbahn|NaN|NaN
+#LayersUrlPart:     LAYERS=23|SH_M5_F105_L_BAHN|NaN|NaN
+#LayersUrlPart:     LAYERS=24|SH_M5_F108_PT_TRANS|NaN|NaN
+#LayersUrlPart:     LAYERS=25|SH_M5_F117_L_GRENZEN|NaN|NaN
+#LayersUrlPart:     LAYERS=26|SH_M5_TEXT_GEBIETE|NaN|NaN
+#LayersUrlPart:     LAYERS=27|SH_M5_TEXT_F|NaN|NaN
+#LayersUrlPart:     LAYERS=28|SH_M5_TEXT_P|NaN|NaN
+#LayersUrlPart:     LAYERS=29|SH_M5_F104_T_STR_NR_ANNO|NaN|NaN
+#LayersUrlPart:     LAYERS=30|SH_M5_F104_T_STR|NaN|NaN
+#LayersUrlPart:     LAYERS=31|SH_M20_F101_F_SDLG|NaN|NaN
+#LayersUrlPart:     LAYERS=32|SH_M20_F109_F_VEG|NaN|NaN
+#LayersUrlPart:     LAYERS=33|SH_M20_F103_F_BW|NaN|NaN
+#LayersUrlPart:     LAYERS=34|SH_M20_F102_F_SDLGFF|NaN|NaN
+#LayersUrlPart:     LAYERS=35|SH_M20_F108_F_TRANS|NaN|NaN
+#LayersUrlPart:     LAYERS=36|SH_M20_F104_F_PLATZ|NaN|NaN
+#LayersUrlPart:     LAYERS=37|SH_M20_F106_F_FLUG|NaN|NaN
+#LayersUrlPart:     LAYERS=38|SH_M20_F111_F_GEW|NaN|NaN
+#LayersUrlPart:     LAYERS=39|SH_M20_F111_F_GEW_WATT|NaN|NaN
+#LayersUrlPart:     LAYERS=40|SH_M20_F113_FT_GEW_BW|NaN|NaN
+#LayersUrlPart:     LAYERS=41|SH_M20_F113_F_UFER|NaN|NaN
+#LayersUrlPart:     LAYERS=42|SH_M20_F111_L_GEW|NaN|NaN
+#LayersUrlPart:     LAYERS=43|SH_M20_F113_L_UFER|NaN|NaN
+#LayersUrlPart:     LAYERS=44|SH_M20_F115_L_DEICH|NaN|NaN
+#LayersUrlPart:     LAYERS=45|SH_M20_F104_L_Str - Konturen|NaN|NaN
+#LayersUrlPart:     LAYERS=46|SH_M20_F104_L_Str - Wirtschaftsweg|NaN|NaN
+#LayersUrlPart:     LAYERS=47|SH_M20_F104_L_Str - Kreisstrasse, Gemeindestrasse und Hauptwirtschaftsweg|NaN|NaN
+#LayersUrlPart:     LAYERS=48|SH_M20_F104_L_Str - Landesstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=49|SH_M20_F104_L_Str - Autobahn und Bundesstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=50|SH_M20_F104_L_Str - Kreis- und Gemeindestrasse, Fussgaengerzone|NaN|NaN
+#LayersUrlPart:     LAYERS=51|SH_M20_F105_L_BAHN|NaN|NaN
+#LayersUrlPart:     LAYERS=52|SH_M20_F108_PT_TRANS|NaN|NaN
+#LayersUrlPart:     LAYERS=53|SH_M20_F117_L_GRENZEN|NaN|NaN
+#LayersUrlPart:     LAYERS=54|SH_M20_TEXT_GEBIETE|NaN|NaN
+#LayersUrlPart:     LAYERS=55|SH_M20_TEXT_F|NaN|NaN
+#LayersUrlPart:     LAYERS=56|SH_M20_TEXT_P|NaN|NaN
+#LayersUrlPart:     LAYERS=57|SH_M20_F104_T_STR_NR_ANNO|NaN|NaN
+#LayersUrlPart:     LAYERS=58|SH_M50_F101_F_SDLG|NaN|NaN
+#LayersUrlPart:     LAYERS=59|SH_M50_F109_F_VEG|NaN|NaN
+#LayersUrlPart:     LAYERS=60|SH_M50_F103_F_BW_1|NaN|NaN
+#LayersUrlPart:     LAYERS=61|SH_M50_F102_F_SDLGFF|NaN|NaN
+#LayersUrlPart:     LAYERS=62|SH_M50_F108_F_TRANS|NaN|NaN
+#LayersUrlPart:     LAYERS=63|SH_M50_F104_F_PLATZ|NaN|NaN
+#LayersUrlPart:     LAYERS=64|SH_M50_F106_F_FLUG|NaN|NaN
+#LayersUrlPart:     LAYERS=65|SH_M50_F111_F_GEW|NaN|NaN
+#LayersUrlPart:     LAYERS=66|SH_M50_F113_F_GEW_BW|NaN|NaN
+#LayersUrlPart:     LAYERS=67|SH_M50_F111_L_GEW|NaN|NaN
+#LayersUrlPart:     LAYERS=68|SH_M50_F104_L_Str - Konturen|NaN|NaN
+#LayersUrlPart:     LAYERS=69|SH_M50_F104_L_Str - Kreisstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=70|SH_M50_F104_L_Str - Landesstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=71|SH_M50_F104_L_Str - Autobahn und Bundesstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=72|SH_M50_F105_L_BAHN|NaN|NaN
+#LayersUrlPart:     LAYERS=73|SH_M50_F117_L_GRENZEN|NaN|NaN
+#LayersUrlPart:     LAYERS=74|SH_M50_TEXT_GEBIETE|NaN|NaN
+#LayersUrlPart:     LAYERS=75|SH_M50_TEXT_F|NaN|NaN
+#LayersUrlPart:     LAYERS=76|SH_M50_F101_PT_ORTSLAGE|NaN|NaN
+#LayersUrlPart:     LAYERS=77|SH_M50_F104_T_STR_NR_ANNO|NaN|NaN
+#LayersUrlPart:     LAYERS=78|SH_M70_F101_F_SDLG|NaN|NaN
+#LayersUrlPart:     LAYERS=79|SH_M70_F109_F_VEG|NaN|NaN
+#LayersUrlPart:     LAYERS=80|SH_M70_F103_F_BW_1|NaN|NaN
+#LayersUrlPart:     LAYERS=81|SH_M70_F102_F_SDLGFF|NaN|NaN
+#LayersUrlPart:     LAYERS=82|SH_M70_F108_F_TRANS|NaN|NaN
+#LayersUrlPart:     LAYERS=83|SH_M70_F104_F_PLATZ|NaN|NaN
+#LayersUrlPart:     LAYERS=84|SH_M70_F106_F_FLUG|NaN|NaN
+#LayersUrlPart:     LAYERS=85|SH_M70_F111_F_GEW|NaN|NaN
+#LayersUrlPart:     LAYERS=86|SH_M70_F113_F_GEW_BW|NaN|NaN
+#LayersUrlPart:     LAYERS=87|SH_M70_F111_L_GEW|NaN|NaN
+#LayersUrlPart:     LAYERS=88|SH_M70_F104_L_Str - Konturen|NaN|NaN
+#LayersUrlPart:     LAYERS=89|SH_M70_F104_L_Str - Kreisstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=90|SH_M70_F104_L_Str - Landesstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=91|SH_M70_F104_L_Str - Autobahn und Bundesstrasse|NaN|NaN
+#LayersUrlPart:     LAYERS=92|SH_M70_F105_L_BAHN|NaN|NaN
+#LayersUrlPart:     LAYERS=93|SH_M70_F117_L_GRENZEN|NaN|NaN
+#LayersUrlPart:     LAYERS=94|SH_M70_TEXT_GEBIETE|NaN|NaN
+#LayersUrlPart:     LAYERS=95|SH_M70_F116_T_Verw|NaN|NaN
+#LayersUrlPart:     LAYERS=96|SH_M70_TEXT_F|NaN|NaN
+#LayersUrlPart:     LAYERS=97|SH_M70_F101_PT_ORTSLAGE|NaN|NaN
+#LayersUrlPart:     LAYERS=98|SH_M70_F104_T_STR_NR_ANNO|NaN|NaN
+#LayersUrlPart:     LAYERS=99|SH_M200_GRUNDFLAECHE|NaN|99999999
+#LayersUrlPart:     LAYERS=100|SH_M200_F101_F_ORTSLAGE|NaN|99999999
+#LayersUrlPart:     LAYERS=101|SH_M200_F111_F_GEW|NaN|99999999
+#LayersUrlPart:     LAYERS=102|SH_M200_F111_L_GEW|NaN|99999999
+#LayersUrlPart:     LAYERS=103|SH_M200_F104_L_STR|NaN|99999999
+#LayersUrlPart:     LAYERS=104|SH_M200_F101_PT_ORTE|NaN|99999999
+#LayersUrlPart:     LAYERS=105|SH_M200_F117_L_GRENZEN|NaN|99999999
+#LayersUrlPart:     LAYERS=106|SH_M200_TEXT_F|NaN|99999999
+#LayersUrlPart:     LAYERS=107|SH_M200_TEXT_F_Query|NaN|NaN
+#LayersUrlPart:     LAYERS=108|Nordsee Text|NaN|NaN
+LayersUrlPart:     LAYERS=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 54.4216 E 8.9841
+BoundingBoxButtomRightWGS84: N 54.3450 E 9.1779
+#BBox_Mitte: N 54.38330696615 E 9.08100723035
+MinScale:   0.5
+MaxScale:   45
+RecommendedScale:    1 2.5 10 16
+ImageFileExtension: .png
