@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <iconmap>
 <!-- Tradi -->
-<icon type="2" name="Geocache" poiid="Tradi" ozicolor="65280"/>
 <icon type="2" found="1" name="Geocache Found" poiid="TradiFound" ozicolor="65280"/>
+<icon type="2" name="Geocache" poiid="Tradi" ozicolor="65280"/>
 <!-- Multi -->
-<icon type="3" name="Bank" poiid="Multi" ozicolor="4227327"/>
 <icon type="3" found="1" name="Geocache Found" poiid="MultiFound" ozicolor="4227327"/>
+<icon type="3" name="Bank" poiid="Multi" ozicolor="4227327"/>
 <!-- Letterbox -->
-<icon type="5" name="Residence" poiid="Letterbox" ozicolor="12632256"/>
 <icon type="5" found="1" name="Geocache Found" poiid="LetterboxFound" ozicolor="12632256"/>
+<icon type="5" name="Residence" poiid="Letterbox" ozicolor="12632256"/>
 <!-- Mystery -->
-<icon type="8" name="Medical Facility" poiid="Mystery" ozicolor="13141291"/>
 <icon type="8" found="1" name="Geocache Found" poiid="MysteryFound" ozicolor="13141291"/>
+<icon type="8" name="Medical Facility" poiid="Mystery" ozicolor="13141291"/>
 <!-- EVENT -->
-<icon type="6" name="Restroom" poiid="Event" ozicolor="16777215"/>
 <icon type="6" found="1" name="Geocache Found" poiid="EventAttended" ozicolor="16777215"/>
+<icon type="6" name="Restroom" poiid="Event" ozicolor="16777215"/>
 <!-- CITO -->
-<icon type="13" name="Picnic Area" poiid="CITO" ozicolor="16777215"/>
 <icon type="13" found="1" name="Geocache Found" poiid="CITOAttended" ozicolor="16777215"/>
+<icon type="13" name="Picnic Area" poiid="CITO" ozicolor="16777215"/>
 <!-- Virtual -->
-<icon type="4" name="Skull and Crossbones" poiid="Virtual" ozicolor="16777215"/>
 <icon type="4" found="1" name="Geocache Found" poiid="Virtual" ozicolor="16777215"/>
+<icon type="4" name="Skull and Crossbones" poiid="Virtual" ozicolor="16777215"/>
 <!-- Webcam -->
-<icon type="11" name="Scenic Area" poiid="Webcam" ozicolor="8421504"/>
 <icon type="11" found="1" name="Geocache Found" poiid="Webcam" ozicolor="8421504"/>
+<icon type="11" name="Scenic Area" poiid="Webcam" ozicolor="8421504"/>
 <!-- Locationless -->
-<icon type="12" name="Airport" poiid="Locationless" ozicolor="0"/>
 <icon type="12" found="1" name="Geocache Found" poiid="Locationless" ozicolor="0"/>
+<icon type="12" name="Airport" poiid="Locationless" ozicolor="0"/>
 <!-- Earthcache -->
-<icon type="104" name="Campground" poiid="Earthcache" ozicolor="2933223"/>
 <icon type="104" found="1" name="Geocache Found" poiid="Earthcache" ozicolor="2933223"/>
+<icon type="104" name="Campground" poiid="Earthcache" ozicolor="2933223"/>
 <!-- Mega-Event -->
-<icon type="100" name="Parachute Area" poiid="MegaEvent" ozicolor="16777215"/>
 <icon type="100" found="1" name="Geocache Found" poiid="MegaEvent" ozicolor="16777215"/>
+<icon type="100" name="Parachute Area" poiid="MegaEvent" ozicolor="16777215"/>
 <!-- WHEREIGO -->
-<icon type="101" name="Geocache" poiid="WhereIGo" ozicolor="2142890"/>
 <icon type="101" found="1" name="Geocache Found" poiid="WhereIGo" ozicolor="2142890"/>
+<icon type="101" name="Geocache" poiid="WhereIGo" ozicolor="2142890"/>
 <!-- Project Ape -->
-<icon type="102" name="Geocache" poiid="ProjectApe" ozicolor="16777215" />
 <icon type="102" found="1" name="Geocache Found" poiid="ProjectApe" ozicolor="16777215" />
+<icon type="102" name="Geocache" poiid="ProjectApe" ozicolor="16777215" />
 <!-- Adventure Maze Exhibit -->
-<icon type="103" name="Geocache" poiid="AdventureMaze" ozicolor="16777215"/>
 <icon type="103" found="1" name="Geocache Found" poiid="AdventureMaze" ozicolor="16777215"/>
+<icon type="103" name="Geocache" poiid="AdventureMaze" ozicolor="16777215"/>
 
 <!-- Final WP -->
 <icon type="53" name="Golf Course" poiid="Final" ozicolor="16243391"/>
