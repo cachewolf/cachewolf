@@ -2096,8 +2096,7 @@ public class SpiderGC {
 						// Images
 						// ==========
 						if (fetchImages) {
-							getImages(completeWebPage, ch
-									.getCacheDetails(false));
+							getImages(completeWebPage, ch.getCacheDetails(false),true);
 							pref.log("Got images");
 						}
 						// ==========
@@ -2520,7 +2519,7 @@ public class SpiderGC {
 	 * @param chD
 	 *            The Cachedetails
 	 */
-	public void getImages(String doc, CacheHolderDetail chD) {
+	public void getImages(String doc, CacheHolderDetail chD, boolean extractLongDesc) {
 		int imgCounter = 0;
 		int spiderCounter = 0;
 		String fileName, imgName, imgType, imgUrl, imgComment;
@@ -2531,8 +2530,7 @@ public class SpiderGC {
 		CacheImages lastImages = null;
 
 		// First: Get current image object of waypoint before spidering images.
-		CacheHolder oldCh = Global.getProfile().cacheDB.get(chD.getParent()
-				.getWayPoint());
+		CacheHolder oldCh = Global.getProfile().cacheDB.get(chD.getParent().getWayPoint());
 		if (oldCh != null) {
 			lastImages = oldCh.getCacheDetails(false).images;
 		}
@@ -2542,7 +2540,7 @@ public class SpiderGC {
 		// ========
 		String longDesc = "";
 		try {
-			if (chD.getParent().getWayPoint().startsWith("TC"))
+			if (chD.getParent().getWayPoint().startsWith("TC") || !extractLongDesc)
 				longDesc = doc;
 			else
 				longDesc = getLongDesc(doc);

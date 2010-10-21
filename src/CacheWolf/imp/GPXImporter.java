@@ -25,6 +25,8 @@
     */
 package CacheWolf.imp;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
@@ -41,6 +43,7 @@ import CacheWolf.Profile;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
+import CacheWolf.imp.SpiderGC.SpiderProperties;
 import ewe.io.FileInputStream;
 import ewe.sys.Time;
 import ewe.sys.Vm;
@@ -82,6 +85,7 @@ public class GPXImporter extends MinML {
 	public static final int DOIT_NOSPOILER = 1;
 	public static final int DOIT_WITHSPOILER = 2;
 	SpiderGC imgSpider;
+	SpiderProperties propsSpider;
 	StringBuffer strBuf;
 	private int doitHow;
 	
@@ -537,19 +541,30 @@ public class GPXImporter extends MinML {
 		
 		// just to be sure to have a spider object
 		if (imgSpider == null) imgSpider = new SpiderGC(pref, profile, false);
+		if (propsSpider == null) {propsSpider = imgSpider.new SpiderProperties();	}
 		
-		if (fromTC) {
-				imgSpider.getImages(holder.getCacheDetails(false).LongDescription, holder.getCacheDetails(false));
-		}
-		else {
-			addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.getWayPoint() ;
-			cacheText = SpiderGC.fetch(addr,false);
-			imgSpider.getImages(cacheText, holder.getCacheDetails(false));
-			try {
-				imgSpider.getAttributes(cacheText, holder.getCacheDetails(false));
-			} catch (Exception e) {
-				pref.log("unable to fetch attrivbutes for"+holder.getWayPoint(), e);
-			}
+		try {
+				if (fromTC) {
+						imgSpider.getImages(holder.getCacheDetails(false).LongDescription, holder.getCacheDetails(false),false);
+				}
+				else {
+					addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.getWayPoint() ;
+					cacheText = SpiderGC.fetch(addr,false);
+					if (cacheText.indexOf(propsSpider.getProp("premiumCachepage")) > 0) {
+						// Premium cache spidered by non premium member
+						imgSpider.getImages(holder.getCacheDetails(false).LongDescription, holder.getCacheDetails(false),false);
+					}
+					else {
+						imgSpider.getImages(cacheText, holder.getCacheDetails(false),true);
+					}
+					try {
+						imgSpider.getAttributes(cacheText, holder.getCacheDetails(false));
+					} catch (Exception e) {
+						pref.log("unable to fetch attrivbutes for"+holder.getWayPoint(), e);
+					}
+				}
+		} catch (Exception e1) {
+			// e1.printStackTrace();
 		}
 	}
 	

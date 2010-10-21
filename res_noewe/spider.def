@@ -103,7 +103,7 @@ getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
 cacheUnavailable   = cache\ is\ temporarily\ unavailable
 cacheArchived      = cache\ has\ been\ archived
-premiumCachepage   = viewable\ to\ Premium\ Members\ only.
+premiumCachepage   = Premium\ Member\ Only\ Cache
 latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
