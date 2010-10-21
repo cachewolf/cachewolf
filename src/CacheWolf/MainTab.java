@@ -298,8 +298,9 @@ public class MainTab extends mTabbedPanel {
 		tbP.selectRow(row);
 	switch (panelNo) {// Switch by panel number
 		case 1:  // DetailsPanel
-			ch=chi; // wrong (old) detail if map is called directly
+			ch=chi; //possibly wrong (old) detail if map is called directly
 			onEnteringPanel(1);
+			oldCard=1;
 			select(detP);
 			break;
 		case 2: // Description Panel
