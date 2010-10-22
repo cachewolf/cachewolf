@@ -669,7 +669,7 @@ public class GpxExportNg {
 			} else if (ch.isCustomWpt()) {
 				ret.append("    <sym>Custom</sym>").append(newLine);
 			} else if (ch.is_found()) {
-				ret.append("    <sym>Geocache found</sym>").append(newLine);
+				ret.append("    <sym>Geocache Found</sym>").append(newLine);
 			} else {
 				ret.append("    <sym>Geocache</sym>").append(newLine);
 			}
