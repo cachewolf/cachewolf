@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <iconmap>
 <!-- Tradi -->
-<icon type="2" found="1" name="Geocache Found" poiid="TradiFound" ozicolor="65280"/>
-<icon type="2" name="Geocache" poiid="Tradi" ozicolor="65280"/>
+<icon type="2" found="1" name="Geocache Found" poiid="TraditionalFound" ozicolor="65280"/>
+<icon type="2" name="Geocache" poiid="Traditional" ozicolor="65280"/>
 <!-- Multi -->
 <icon type="3" found="1" name="Geocache Found" poiid="MultiFound" ozicolor="4227327"/>
 <icon type="3" name="Bank" poiid="Multi" ozicolor="4227327"/>
