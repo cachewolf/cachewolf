@@ -130,8 +130,13 @@ public class Attributes {
 	 * @param OC attribute ID
 	 */
 	public void add(int attIdOC) {
+		Attribute attr = new Attribute(attIdOC);
+		for (int i = 0; i < _count; i++) {
+			if (attribs[i].getImageName().equals(attr.getImageName())) {
+				return;
+			}
+		}
 		if (_count<attribs.length) {
-			Attribute attr = new Attribute(attIdOC);
 			attribs[_count++] = attr;
 			attrYes=attr.getYesBit(attrYes);
 		}
