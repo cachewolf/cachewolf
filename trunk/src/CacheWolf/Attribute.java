@@ -291,7 +291,6 @@ public class Attribute {
 		{"47","2596","arith_prob","56","0",""},// 96 Rechenaufgabe
 		{"60","2622","othercache","57","0",""},// 122 besondere Cacheart
 		{"48","2598","ask","58","0",""},// 98 Startbedingungen beim Owner erfragen
-		// !!! todo correct Filter Implementation
 		{"72","2652","landf","0","45","Lost And Found Tour"}, // thx to Kappler and MiK
 		// {"-1","2500","error","0","0",""}, //
 
