@@ -446,7 +446,7 @@ public class OCXMLImporter extends MinML {
 			holder.setWayPoint(atts.getValue("oc"));
 			String CName = atts.getValue("nccom") + " " + atts.getValue("gccom");
 			if (!CName.equals(" ")) {
-				holder.setCacheName(CName.trim() + " " + holder.getCacheName());
+				holder.setCacheOwner(holder.getCacheOwner() + " / " + CName.trim());
 				holder.getCacheDetails(false).attributes.add(7); // not only OC
 				holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());
 			}
