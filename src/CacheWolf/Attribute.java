@@ -283,6 +283,7 @@ public class Attribute {
 		{"76","2660","snowshoes","0","49","Snowshoes"}, // added by araber95 14.8.10"
 		{"77","2662","skiis","0","50","Cross Country Skis"}, // added by araber95 14.8.10
 		{"78","2664","s-tool","0","51","Special Tool required"}, // added by araber95 14.8.10
+		{"87","2681","wirelessbeacon","0","60","Wireless Beacon"}, // added by araber95 27.10.10
 		// Einschränkungen und Voraussetzungen / Benötigt Vorarbeit
 		{"70","2648","wiki","54","0",""},// 148 Recherche
 		{"63","2630","riddle","55","0",""},// 130 Rätsel
