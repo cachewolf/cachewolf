@@ -132,7 +132,7 @@ public class Attributes {
 	public void add(int attIdOC) {
 		Attribute attr = new Attribute(attIdOC);
 		for (int i = 0; i < _count; i++) {
-			if (attribs[i].getImageName().equals(attr.getImageName())) {
+			if (attribs[i].getId() == (attr.getId())) {
 				return;
 			}
 		}
