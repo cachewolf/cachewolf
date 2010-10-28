@@ -650,7 +650,7 @@ public class SpiderGC {
 				
 				int NameIndex = caches[i].indexOf("\"nn\"");
 				String cacheName = caches[i].substring (NameIndex + 6, WpIndex - 2 );
-				//cacheName = cacheName.replaceAll( "\\\\\"", "\"" );
+				cacheName = STRreplace.replace(cacheName, "\\\"", "\"" );
 
 				ch = new CacheHolder();
 				ch.setWayPoint(wp);
