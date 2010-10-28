@@ -613,18 +613,23 @@ public class SpiderGC {
 	private void addCaches(String listPage, boolean setCachesToLoad) {
 		String[] caches = mString.split(listPage, '{');
 		//int posId=0;        //id egal
-		int posName=1;      //nn
-		int posWP=2;        //gc 
-		int posLat=3;       //lat
-		int posLon=4;       //lon
-		int posType=5;      //ctid
-		int posFound=6;     //f
-		int posOwn=7;       //o
-		int posAvailable=8; //ia
+		//int posName=1;      //nn
+		
+		//positions decreased by 2, because we cut away the name to prevent parsing errors
+		int posWP=0;        //gc 
+		int posLat=1;       //lat
+		int posLon=2;       //lon
+		int posType=3;      //ctid
+		int posFound=4;     //f
+		int posOwn=5;       //o
+		int posAvailable=6; //ia
 		// ignoring first 3 lines
 		for (int i = 3; i < caches.length; i++) {
 			if (infB.isClosed) return;
-			String elements[] = mString.split(caches[i], ',');
+			
+			//cut away name to prevent parsing errors			
+			int WpIndex = caches[i].indexOf("\"gc\"");
+			String elements[] = mString.split(caches[i].substring(WpIndex), ',');
 			
 			boolean found = (elements[posFound].indexOf("true") > -1 ? true : false);
 			if (found && doNotgetFound)	continue;
@@ -642,7 +647,10 @@ public class SpiderGC {
 				String lon = mString.split(elements[posLon], ':')[1];
 				String own = mString.split(elements[posOwn], ':')[1];
 				boolean available = (elements[posAvailable].indexOf("true") > -1 ? true : false);
-				String cacheName = mString.split(elements[posName], '\"')[3];
+				
+				int NameIndex = caches[i].indexOf("\"nn\"");
+				String cacheName = caches[i].substring (NameIndex + 6, WpIndex - 2 );
+				cacheName = cacheName.replaceAll( "\\\\\"", "\"" );
 
 				ch = new CacheHolder();
 				ch.setWayPoint(wp);
