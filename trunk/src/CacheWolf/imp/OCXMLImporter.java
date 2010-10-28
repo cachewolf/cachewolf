@@ -447,11 +447,11 @@ public class OCXMLImporter extends MinML {
 			String CName = atts.getValue("nccom") + " " + atts.getValue("gccom");
 			if (!CName.equals(" ")) {
 				holder.setCacheOwner(holder.getCacheOwner() + " / " + CName.trim());
-				holder.getCacheDetails(false).attributes.add(7); // not only OC
+				holder.getCacheDetails(false).attributes.add(7); // wwwlink
 				holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());
 			}
 			else {
-				holder.getCacheDetails(false).attributes.add(6); // only OC
+				holder.getCacheDetails(false).attributes.add(6); // oconly
 				holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());
 			}
 			if (holder.getWayPoint().length()==0) throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching / it happens on 27-12-2006 on cache OC143E

@@ -123,6 +123,10 @@ public class Attribute {
      */
 	public int getInc () { return _Inc; }
     /**
+     * getting CW internal attribute number (-1..127)  
+     */
+	public int getId () { return _Id; }
+    /**
      * setting/changing attribute given=1,negative=0,not specified=2  
      */
     public void setInc(int inc) {
