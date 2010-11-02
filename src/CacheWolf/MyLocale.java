@@ -405,6 +405,7 @@ public class MyLocale {
 				String key=got.substring(0,eq).trim();
 				String value=STRreplace.replace(got.substring(eq+1).trim(),"\\n","\n");
 				if (value.endsWith("+")) { value=value.substring(0, value.length()-1)+' '; }
+				if (value.startsWith("+")) { value=' ' + value.substring(1, value.length()); }
 				tcn.getProperties().add(key,value);
 			}
 		}
