@@ -26,6 +26,7 @@
 package CacheWolf;
 
 import com.stevesoft.ewe_pat.Regex;
+import com.stevesoft.ewe_pat.Transformer;
 
 import ewe.fx.Font;
 import ewe.sys.Vm;
@@ -44,7 +45,7 @@ import ewe.ui.mButton;
 */
 public class DescriptionPanel extends CellPanel{
 	HtmlDisplay disp = new HtmlDisplay();
-	mButton btnPlus, btnMinus;
+	mButton btnPlus, btnMinus, btnText, btnHtml;
 	CacheHolder currCache;
 	
 	CellPanel buttonP = new CellPanel();
@@ -54,6 +55,8 @@ public class DescriptionPanel extends CellPanel{
 
 	public DescriptionPanel(){
 		buttonP.addNext(btnPlus = new mButton("+"),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		buttonP.addNext(btnText = new mButton("Text"),CellConstants.HSTRETCH, (CellConstants.HFILL));
+		buttonP.addNext(btnHtml = new mButton("Html"),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		buttonP.addLast(btnMinus = new mButton("-"),CellConstants.HSTRETCH, (CellConstants.HFILL));
 		ScrollBarPanel sbp = new MyScrollBarPanel(disp, 0);
 		//sbp.setScrollBarSize(40,40, 20);
@@ -202,6 +205,27 @@ public class DescriptionPanel extends CellPanel{
 				disp.setFont(currFont);
 				disp.displayPropertiesChanged();
 				//redraw();
+			}
+			if (ev.target == btnText){
+	            disp.startHtml(); // To clear the old HTML display
+	            disp.endHtml();
+	    		Transformer trans = new Transformer(true);
+	    		trans.add(new Regex("\r", ""));
+	    		trans.add(new Regex("\n", " "));
+	    		trans.add(new Regex("<br>", "\n"));
+	    		trans.add(new Regex("<p>", "\n"));
+	    		trans.add(new Regex("<hr>", "\n"));
+	    		trans.add(new Regex("<br />", "\n"));
+	    		trans.add(new Regex("<(.*?)>", ""));
+	    		Transformer ttrans=new Transformer(true);
+	    		ttrans.add(new Regex("<(.*?)>", ""));
+	    		disp.setPlainText(ttrans.replaceAll(trans.replaceAll(desc)));
+			}
+			if (ev.target == btnHtml){
+	            disp.startHtml();
+	            disp.getDecoderProperties().set("documentroot", Global.getProfile().dataDir);
+	            disp.addHtml(desc, new ewe.sys.Handle());
+	            disp.endHtml();
 			}
 		}
 		super.onEvent(ev);
