@@ -30,6 +30,7 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
+import CacheWolf.CacheType;
 import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.GuiImageBroker;
@@ -37,6 +38,7 @@ import CacheWolf.InfoBox;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
+import CacheWolf.STRreplace;
 import CacheWolf.navi.touchControls.ICommandListener;
 import CacheWolf.navi.touchControls.MovingMapControls;
 import ewe.filechooser.FileChooser;
@@ -350,13 +352,11 @@ public final class MovingMap extends Form implements ICommandListener {
 
 			int lineLengthPixels = (int)java.lang.Math.round( lineLengthMeters / currentMap.scale );
 
-			controlsLayer.updateContext("scale", lineLengthString,
-					lineLengthPixels);
+			controlsLayer.updateContent("scale", lineLengthString, lineLengthPixels);
 		}
 		else{
 
-		controlsLayer.updateContext("scale", "no map",
-				20);
+		controlsLayer.updateContent("scale", "no map", 20);
 		}
 	}
 
@@ -396,13 +396,13 @@ public final class MovingMap extends Form implements ICommandListener {
 					d = dd.toString(3,0,0) + Metrics.getUnit(smallUnit);
 				}
 
-				controlsLayer.updateContext("distance", d);
+				controlsLayer.updateContent("distance", d);
 
 			}
 		}
 		else
 		{
-			controlsLayer.updateContext("distance", "");
+			controlsLayer.updateContent("distance", "");
 		}
 	}
 
@@ -1397,6 +1397,8 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 		if (fix == 0 && myNavigation.gpsPos.getSats()== 0) 	setGpsStatus(MovingMap.lostFix);
 		if (fix < 0 )	setGpsStatus(MovingMap.noGPSData);
+		controlsLayer.updateContent("hdop", Convert.toString(myNavigation.gpsPos.getHDOP()));
+		controlsLayer.updateContent("sats", Convert.toString(myNavigation.gpsPos.getSats()) + "/" + Convert.toString(myNavigation.gpsPos.getSatsInView()));
 	}
 
 	public void gpsStarted() {
@@ -2088,7 +2090,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu kontextMenu;
 	MenuItem gotoMenuItem = new MenuItem(MyLocale.getMsg(4230, "Goto here$g"), 0, null);
 	MenuItem newWayPointMenuItem = new MenuItem(MyLocale.getMsg(4232, "Create new Waypoint here$n"), 0, null);;
-	MenuItem openCacheDescMenuItem,openCacheDetailMenuItem,addCachetoListMenuItem,gotoCacheMenuItem,hintMenuItem;
+	MenuItem openCacheDescMenuItem,openCacheDetailMenuItem,addCachetoListMenuItem,gotoCacheMenuItem,hintMenuItem,missionMenuItem;
 
 	MenuItem miLuminary[];
 
@@ -2311,12 +2313,22 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199,"Add to cachetour"));
 							kontextMenu.addItem(addCachetoListMenuItem);
 						}
+						String stmp=clickedCache.getCacheDetails(false).Hints;
+						stmp=stmp.substring(0,Math.min(10,stmp.length())).trim();
+						if (!stmp.equals("")){
+							kontextMenu.addItem(hintMenuItem=new MenuItem("Hint: "+stmp));
+						}
+						if (clickedCache.getType() == CacheType.CW_TYPE_QUESTION) {
+							stmp=clickedCache.getCacheDetails(false).LongDescription;
+							if (!stmp.equals("")) {
+								kontextMenu.addItem(missionMenuItem=new MenuItem("?: "));								
+							}
+						}
 						kontextMenu.addItem(new MenuItem("-"));
 						kontextMenu.addItem(new MenuItem(clickedCache.getWayPoint()+" Info:"));
 						kontextMenu.addItem(new MenuItem("Difficulty: "+CacheTerrDiff.longDT(clickedCache.getHard())));
 						kontextMenu.addItem(new MenuItem("Terrain: "+CacheTerrDiff.longDT(clickedCache.getTerrain())));
 						kontextMenu.addItem(new MenuItem("Size: "+CacheSize.cw2ExportString(clickedCache.getCacheSize())));
-						kontextMenu.addItem(hintMenuItem=new MenuItem("Hint: "+clickedCache.getCacheDetails(false).Hints));
 					}
 				}
 			}
@@ -2349,8 +2361,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 							+ ch.cacheName+"\n"
 							+ "Difficulty: "+CacheTerrDiff.longDT(ch.getHard())+"\n"
 							+ "Terrain: "+CacheTerrDiff.longDT(ch.getTerrain())+"\n"
-							+ "Size: "+CacheSize.cw2ExportString(ch.getCacheSize())+"\n"
-							+ "";
+							+ "Size: "+CacheSize.cw2ExportString(ch.getCacheSize())+"\n";
+				if (ch.getType() == CacheType.CW_TYPE_QUESTION) {
+					this.toolTip = this.toolTip + ch.getCacheDetails(false).LongDescription;
+				}
 			}
 		}
 		return true;
@@ -2407,7 +2421,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						Global.mainForm.cacheList.addCache(clickedCache.getWayPoint());
 					}
 					if (action == hintMenuItem) {
-						hintMenuItem.setText(Common.rot13(hintMenuItem.action));
+						(new MessageBox("Hint", STRreplace.replace(Common.rot13(clickedCache.getCacheDetails(false).Hints),"<br>","\n"), FormBase.OKB)).execute();
+					}
+					if (action == missionMenuItem) {
+						(new MessageBox("Mission", STRreplace.replace(clickedCache.getCacheDetails(false).LongDescription,"<br>","\n"), FormBase.OKB)).execute();
 					}
 					/*
 					for (int i=0; i<miLuminary.length; i++) {

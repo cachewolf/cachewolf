@@ -79,6 +79,7 @@ import ewe.sys.Convert;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Vector;
+import ewe.util.mString;
 
 /**
 *	The wolf language parser. New version - January 2007
@@ -142,7 +143,7 @@ public class Parser{
      	new fnType("deg2rad","deg2rad",2),
      	new fnType("distance","distance",4),
      	new fnType("encode","encode",8),
-    	new fnType("format","format",6),
+    	new fnType("format","format",12),
     	new fnType("goto","goto",6),
     	new fnType("ic","ic",3),
     	new fnType("ignorecase","ic",3),
@@ -547,14 +548,23 @@ public class Parser{
      * @param nargs 1 or 2 args
      */
     private String funcFormat(int nargs) throws Exception {
+    	int spart=0;
+    	if (nargs==3) spart=(int) popCalcStackAsNumber(0);
     	String fmtStr="";
-    	if (nargs==2)fmtStr=popCalcStackAsString().toLowerCase();
+    	if (nargs>=2)fmtStr=popCalcStackAsString().toLowerCase();
     	String coord=popCalcStackAsString();
 		if (!isValidCoord(coord)) err(MyLocale.getMsg(1712,"Invalid coordinate: ")+coord);
     	cwPt.set(coord);
     	int fmt = TransformCoordinates.getLocalSystemCode(fmtStr);
     	if (fmt == TransformCoordinates.LOCALSYSTEM_NOT_SUPPORTED) err(MyLocale.getMsg(1713,"Invalid coordinate format. Allowed are cw / dd / dmm / dms / ") + Common.arrayToString(TransformCoordinates.getProjectedSystemIDs(), " / "));
-    	return cwPt.toString(fmt);
+    	String ret = cwPt.toString(fmt);
+    	if (nargs==3){
+    		String[] parts=mString.split(ret, ' ');
+    		if (spart>0 && parts.length>=spart)
+    		ret = parts[spart-1];
+    		else err("Param 3 !!! "+MyLocale.getMsg(1713,"Invalid coordinate format."));
+    	}
+    	return ret;
     }
 
     /** Implements a goto command goto(coordinate,optionalWaypointName).
