@@ -153,7 +153,10 @@ public abstract class MovingMapControlItem {
 		return -1;
 	}
 
-	public String getContext() {
+	public String getContent() {
+		return null;
+	}
+	public String getText() {
 		return null;
 	}
 

@@ -352,7 +352,7 @@ public class SpiderGC {
 				MyLocale.getMsg(652,"Update caches with all details?"),
 				MessageBox.YESB | MessageBox.NOB | MessageBox.CANCELB).execute();
 		boolean complete = answer == MessageBox.YESB;
-		if ( answer == MessageBox.CANCELB) {
+		if ( answer == MessageBox.IDCANCEL) {
 			if (startPos != null) pref.setCurCentrePt(startPos);
 			return;
 		}
@@ -613,18 +613,23 @@ public class SpiderGC {
 	private void addCaches(String listPage, boolean setCachesToLoad) {
 		String[] caches = mString.split(listPage, '{');
 		//int posId=0;        //id egal
-		int posName=1;      //nn
-		int posWP=2;        //gc 
-		int posLat=3;       //lat
-		int posLon=4;       //lon
-		int posType=5;      //ctid
-		int posFound=6;     //f
-		int posOwn=7;       //o
-		int posAvailable=8; //ia
+		//int posName=1;      //nn
+		
+		//positions decreased by 2, because we cut away the name to prevent parsing errors
+		int posWP=0;        //gc 
+		int posLat=1;       //lat
+		int posLon=2;       //lon
+		int posType=3;      //ctid
+		int posFound=4;     //f
+		int posOwn=5;       //o
+		int posAvailable=6; //ia
 		// ignoring first 3 lines
 		for (int i = 3; i < caches.length; i++) {
 			if (infB.isClosed) return;
-			String elements[] = mString.split(caches[i], ',');
+			
+			//cut away name to prevent parsing errors			
+			int WpIndex = caches[i].indexOf("\"gc\"");
+			String elements[] = mString.split(caches[i].substring(WpIndex), ',');
 			
 			boolean found = (elements[posFound].indexOf("true") > -1 ? true : false);
 			if (found && doNotgetFound)	continue;
@@ -642,7 +647,10 @@ public class SpiderGC {
 				String lon = mString.split(elements[posLon], ':')[1];
 				String own = mString.split(elements[posOwn], ':')[1];
 				boolean available = (elements[posAvailable].indexOf("true") > -1 ? true : false);
-				String cacheName = mString.split(elements[posName], '\"')[3];
+				
+				int NameIndex = caches[i].indexOf("\"nn\"");
+				String cacheName = caches[i].substring (NameIndex + 6, WpIndex - 2 );
+				cacheName = STRreplace.replace(cacheName, "\\\"", "\"" );
 
 				ch = new CacheHolder();
 				ch.setWayPoint(wp);
@@ -2096,8 +2104,7 @@ public class SpiderGC {
 						// Images
 						// ==========
 						if (fetchImages) {
-							getImages(completeWebPage, ch
-									.getCacheDetails(false));
+							getImages(completeWebPage, ch.getCacheDetails(false),true);
 							pref.log("Got images");
 						}
 						// ==========
@@ -2520,7 +2527,7 @@ public class SpiderGC {
 	 * @param chD
 	 *            The Cachedetails
 	 */
-	public void getImages(String doc, CacheHolderDetail chD) {
+	public void getImages(String doc, CacheHolderDetail chD, boolean extractLongDesc) {
 		int imgCounter = 0;
 		int spiderCounter = 0;
 		String fileName, imgName, imgType, imgUrl, imgComment;
@@ -2531,8 +2538,7 @@ public class SpiderGC {
 		CacheImages lastImages = null;
 
 		// First: Get current image object of waypoint before spidering images.
-		CacheHolder oldCh = Global.getProfile().cacheDB.get(chD.getParent()
-				.getWayPoint());
+		CacheHolder oldCh = Global.getProfile().cacheDB.get(chD.getParent().getWayPoint());
 		if (oldCh != null) {
 			lastImages = oldCh.getCacheDetails(false).images;
 		}
@@ -2542,7 +2548,7 @@ public class SpiderGC {
 		// ========
 		String longDesc = "";
 		try {
-			if (chD.getParent().getWayPoint().startsWith("TC"))
+			if (chD.getParent().getWayPoint().startsWith("TC") || !extractLongDesc)
 				longDesc = doc;
 			else
 				longDesc = getLongDesc(doc);

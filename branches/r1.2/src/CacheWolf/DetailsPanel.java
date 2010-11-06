@@ -354,7 +354,7 @@ public class DetailsPanel extends CellPanel {
 		btnCoordinates.setText(ch.pos.toString());
 		inpHidden.setText(mainCache.getDateHidden());
 		inpOwner.setText(mainCache.getCacheOwner());
-		chcStatus.setText(cache.getStatusText());
+		chcStatus.setText(ch.getStatusText());
 		chcType.setInt(CacheType.cw2GuiSelect(ch.getType()));
 		if (ch.is_black()) {
 			btnBlack.image = imgBlack;

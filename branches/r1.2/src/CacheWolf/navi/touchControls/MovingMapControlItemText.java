@@ -34,20 +34,22 @@ public class MovingMapControlItemText extends MovingMapControlItem {
 
 	private ImageWithText aniImage;
 	private int command;
-	private String context;
+	private String content;
+	private String iconText;
 
 	public MovingMapControlItemText(final String iconText, String imageSource,String iconSource,
-			int alpha, int actionCommand, String context, String alignText,TextOptions tOptions) {
+			int alpha, int actionCommand, String content, String alignText,TextOptions tOptions) {
 
 		Image image = MovingMapControlItem.createImage(imageSource, iconSource, alpha);		
 		aniImage = new ImageWithText(image,tOptions);
+		this.iconText=iconText;
 		aniImage.setText(iconText);
 		aniImage.freeSource();
 		aniImage.properties |= mImage.AlwaysOnTop;		
-		if (context != null) {
-			this.context = context;
+		if (content != null) {
+			this.content = content;
 			xProperties |= IS_ICON_WITH_TEXT;
-			if (context.equals("scale")) {
+			if (content.equals("scale")) {
 				xProperties |= IS_ICON_WITH_FRONTLINE;
 			}
 		}
@@ -90,8 +92,11 @@ public class MovingMapControlItemText extends MovingMapControlItem {
 	public int getCommand() {
 		return command;
 	}
-	public String getContext() {
-		return context;
+	public String getContent() {
+		return content;
+	}
+	public String getText() {
+		return iconText;
 	}
 	public void setAdditionalProperty(int prop) {
 		aniImage.setStartlineWitdth(prop);

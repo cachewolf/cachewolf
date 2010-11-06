@@ -301,20 +301,6 @@ public final class SafeXML{
     } // end insertEntities
 	
 	
-	public final static String cleanGPX(String str){
-		String dummy = new String();
-		
-		dummy = STRreplace.replace(str, "&","&amp;"); // why is this here? in a CDATA section this is not necessary, see http://de.wikipedia.org/wiki/CDATA
-		dummy = STRreplace.replace(dummy, "<", "&lt;");
-		dummy = STRreplace.replace(dummy, ">", "&gt;");
-		//dummy = replace(dummy, "&nbsp;", "&amp;nbsp;");
-		dummy = STRreplace.replace(dummy, "\"", "&quot;");
-		dummy = STRreplace.replace(dummy, "'","&apos;");
-		dummy = STRreplace.replace(dummy, "\u0004","");
-		dummy = STRreplace.replace(dummy, "]]>","]] >"); // this means changing content, but it is the easiest way of avoiding ]]> to be interpreted as endmark of CDATA-section
-
-		return dummy;
-	}
 
 	/**
 	 * Converts a data string to something that is safe to use inside
@@ -326,6 +312,24 @@ public final class SafeXML{
 	 *
 	 * @return (String) translated text, or null if input is null
 	 */
+	public final static String cleanGPX(String str){
+		String dummy = new String();
+		
+		dummy = STRreplace.replace(str, "&","&amp;");
+		dummy = STRreplace.replace(dummy, "<", "&lt;");
+		dummy = STRreplace.replace(dummy, ">", "&gt;");
+		dummy = STRreplace.replace(dummy, "\"", "&quot;");
+		dummy = STRreplace.replace(dummy, "'","&apos;");
+		// why
+		dummy = STRreplace.replace(dummy, "\u0004","");
+		// this means changing content, 
+		// but it is the easiest way of avoiding ]]> to be interpreted as endmark of CDATA-section
+		dummy = STRreplace.replace(dummy, "]]>","]] >");
+		// \ in gpx is not imported by mapsource, basecamp, garmin?...(there is no replacement)
+		dummy = STRreplace.replace(dummy, "\\","BkSlsh;");
+
+		return dummy;
+	}
 	public final static String strxmlencode(boolean src) {
 		/* bools are always safe */
 		return (src ? "true" : "false");

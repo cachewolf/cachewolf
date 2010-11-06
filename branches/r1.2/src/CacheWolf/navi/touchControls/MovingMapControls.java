@@ -252,25 +252,25 @@ public class MovingMapControls implements ICommandListener {
 	// }
 	// }}
 
-	public void updateContext(String contextName, String text) {
-		if (contextName == null) {
+	public void updateContent(String contentName, String text) {
+		if (contentName == null) {
 			return;
 		}
-		updateContext(contextName, text, -1);
+		updateContent(contentName, text, -1);
 
 	}
 
-	public void updateContext(String contextName, String text, int property) {
+	public void updateContent(String contentName, String text, int property) {
 		for (int i = 0; i < buttons.size(); i++) {
 			MovingMapControlItem item = (MovingMapControlItem) buttons.get(i);
 
 			if ((item.xProperties & MovingMapControlItem.IS_ICON_WITH_TEXT) != 0) {
-				if (contextName.equals(item.getContext())) {
-					item.setText(text);
+				if (contentName.equals(item.getContent())) {
+					item.setText(item.getText()+text);
 				}
 			}
 			if ((item.xProperties & MovingMapControlItem.IS_ICON_WITH_FRONTLINE) != 0) {
-				if (contextName.equals(item.getContext())) {
+				if (contentName.equals(item.getContent())) {
 					item.setAdditionalProperty(property);
 				}
 			}

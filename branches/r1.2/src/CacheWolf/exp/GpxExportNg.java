@@ -117,7 +117,7 @@ public class GpxExportNg {
 	/** string representation of false */
 	final static String FALSE = "False";
 	/** object used to determine custom symbols and POI categories */
-	private static GarminMap poiMapper;
+	private static GarminMap poiMapper = new GarminMap();
 	/** maximum number of logs to export. can be overwritten with preferences, default unlimited*/
 	private int maxLogs = ewe.math.Number.INTEGER_MAX_VALUE;
 	/** number of errors / warnings during export */
@@ -165,18 +165,17 @@ public class GpxExportNg {
 	private static int exportStyle;
 
 	private static boolean hasBitmaps;
-	private static boolean hasGarminMap;
 	private static boolean hasGpsbabel;
 
 	private static String bitmapFileName;
-	private static String garminMapFileName;
 
 	public GpxExportNg() {
-		garminMapFileName = FileBase.getProgramDirectory() + "/garminmap.xml";
-		bitmapFileName = FileBase.getProgramDirectory()	+ FileBase.separator + "GarminPOI.zip";
+		bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/GarminPOI.zip"; //own version
+		if (!(hasBitmaps=new File(bitmapFileName).exists())) {
+			bitmapFileName=FileBase.getProgramDirectory() + "/exporticons/exporticons/GarminPOI.zip"; //cw default version
+			hasBitmaps=new File(bitmapFileName).exists();			
+		}
 
-		hasGarminMap = new File(garminMapFileName).exists();
-		hasBitmaps = new File(bitmapFileName).exists();
 		hasGpsbabel = Global.getPref().gpsbabel != null;
 
 		finderid = Global.getPref().gcMemberId;
@@ -187,7 +186,7 @@ public class GpxExportNg {
 		GpxExportNgForm exportOptions;
 		int ret;
 
-		exportOptions = new GpxExportNgForm(hasGarminMap, hasBitmaps, hasGpsbabel);
+		exportOptions = new GpxExportNgForm(poiMapper.exists, hasBitmaps, hasGpsbabel);
 		ret = exportOptions.execute();
 
 		if (FormBase.IDCANCEL == ret) {
@@ -230,10 +229,7 @@ public class GpxExportNg {
 				Global.getPref().setExportPath(expName + "-GPI", outDir);
 			}
 
-			if ((new File(baseDir + "/garminmap.xml")).exists()) {
-				poiMapper = new GarminMap();
-				poiMapper.readGarminMap();
-			} else {
+			if (!poiMapper.exists) {
 				Global.getPref().log("GPX Export: unable to load garminmap.xml",null);
 				new MessageBox("Export Error", "unable to load garminmap.xml",
 						FormBase.OKB).execute();
@@ -406,10 +402,7 @@ public class GpxExportNg {
 			}
 		} else {
 			if (customIcons) {
-				if ((new File(FileBase.getProgramDirectory() + "/garminmap.xml")).exists()) {
-					poiMapper = new GarminMap();
-					poiMapper.readGarminMap();
-				} else {
+				if (!poiMapper.exists) {
 					customIcons = false;
 					Global.getPref().log("unable to load garminmap.xml",null);
 				}
@@ -516,7 +509,7 @@ public class GpxExportNg {
 						while (errorStream.isOpen()) {
 							String errorMsg = errorStream.readALine();
 							if (errorMsg != null) {
-								Global.getPref().log("GPX Export: " + errorMsg,null);
+								Global.getPref().log("[GPX Export:sendToGarmin] " + errorMsg,null);
 								exportErrors++;
 							}
 							try {
@@ -550,7 +543,7 @@ public class GpxExportNg {
 			return "";
 
 		if (!ch.pos.isValid()) {
-			Global.getPref().log("GPX Export: " + ch.getWayPoint() + " has invalid coords.",null);
+			Global.getPref().log("[GPX Export:formatCache] " + ch.getWayPoint() + " has invalid coords.");
 			return "";
 		}
 
@@ -676,7 +669,7 @@ public class GpxExportNg {
 			} else if (ch.isCustomWpt()) {
 				ret.append("    <sym>Custom</sym>").append(newLine);
 			} else if (ch.is_found()) {
-				ret.append("    <sym>Geocache found</sym>").append(newLine);
+				ret.append("    <sym>Geocache Found</sym>").append(newLine);
 			} else {
 				ret.append("    <sym>Geocache</sym>").append(newLine);
 			}
