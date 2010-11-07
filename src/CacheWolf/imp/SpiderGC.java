@@ -1659,6 +1659,9 @@ public class SpiderGC {
 			numLogUpdates++;
 			ret = true;
 		}
+		if (!ret && TBchanged(ch, CacheDescription)) {
+			ret = true;
+		}
 		if (save)
 			ch.save();
 		return ret;
@@ -1858,7 +1861,7 @@ public class SpiderGC {
 	 * 
 	 * @return boolean newLogExists
 	 */
-	private boolean newFoundExists(CacheHolder ch, String cacheDescrition) {
+	private boolean newFoundExists(CacheHolder ch, String cacheDescription) {
 		if (!pref.checkLog)
 			return false;
 		Time lastLogCW = new Time();
@@ -1877,12 +1880,12 @@ public class SpiderGC {
 		lastLogGC.millis = 0;
 		String[] SDate;
 		String stmp = "";
-		RexPropLogDate.search(cacheDescrition);
+		RexPropLogDate.search(cacheDescription);
 		if (RexPropLogDate.didMatch()) {
 			stmp = RexPropLogDate.stringMatched(1);
 		} else {
 			pref.log("check logDateRex in spider.def" 
-					+ Preferences.NEWLINE + cacheDescrition);
+					+ Preferences.NEWLINE + cacheDescription);
 			return false;
 		}
 		if (stmp.indexOf("day") > 0) {
@@ -1910,6 +1913,15 @@ public class SpiderGC {
 		}
 		boolean ret = lastLogCW.compareTo(lastLogGC) < 0;
 		return ret;
+	}
+	private boolean TBchanged(CacheHolder ch, String cacheDescription) {
+		// simplified Version: only presence is checked 
+		if (pref.downloadTBs) {
+			boolean hasCoin=cacheDescription.indexOf("Geocoin") > -1;
+			boolean hasTB=cacheDescription.indexOf("Travel Bug Dog Tag") > -1;						
+			return (ch.has_bugs() != (hasCoin || hasTB));
+		}
+		return false;
 	}
 
 	/**
