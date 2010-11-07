@@ -740,25 +740,24 @@ public class CacheHolder{
 			varParams.put("STATE", det.State);
 			
 			// attributes
-			if (det.attributes.count()>0) {
-				Vector attVect=new Vector(det.attributes.count()+1);
-				for (int i=0; i<det.attributes.count(); i++) {
-					Hashtable atts=new Hashtable();
-					atts.put("PATHANDIMAGE", det.attributes.getAttribute(i).getPathAndImageName());
-					atts.put("IMAGE", det.attributes.getAttribute(i).getImageName());
-					atts.put("GCID", det.attributes.getAttribute(i).getGCId());
-					atts.put("INC", "" + det.attributes.getAttribute(i).getInc());
-					atts.put("INC2TXT", det.attributes.getAttribute(i).getInc()==1 ? "YES:" : "NO:");
-					if (i % 5 ==4)
-						atts.put("BR","<br/>");
-					else
-						atts.put("BR","");
-					atts.put("INFO",det.attributes.getAttribute(i).getMsg());
-					atts.put("GCINFO",det.attributes.getAttribute(i).getGCText());
-					attVect.add(atts);
-				}
-				varParams.put("ATTRIBUTES",attVect);
+			Vector attVect=new Vector(det.attributes.count()+1);
+			for (int i=0; i<det.attributes.count(); i++) {
+				Hashtable atts=new Hashtable();
+				atts.put("PATHANDIMAGE", det.attributes.getAttribute(i).getPathAndImageName());
+				atts.put("IMAGE", det.attributes.getAttribute(i).getImageName());
+				atts.put("GCID", det.attributes.getAttribute(i).getGCId());
+				atts.put("INC", "" + det.attributes.getAttribute(i).getInc());
+				atts.put("INC2TXT", det.attributes.getAttribute(i).getInc()==1 ? "YES:" : "NO:");
+				if (i % 5 ==4)
+					atts.put("BR","<br/>");
+				else
+					atts.put("BR","");
+				atts.put("INFO",det.attributes.getAttribute(i).getMsg());
+				atts.put("GCINFO",det.attributes.getAttribute(i).getGCText());
+				attVect.add(atts);
 			}
+			varParams.put("ATTRIBUTES",attVect);
+			
 			// logs
 			Vector logVect=new Vector(det.CacheLogs.size());
 			int maxlogs = det.CacheLogs.size();
@@ -785,36 +784,35 @@ public class CacheHolder{
 				logs.put("MESSAGE", (ModTyp == 0) ? SafeXML.cleanGPX(stmp) : stmp);
 				logVect.add(logs);
 			}
-			if (maxlogs>0) varParams.put("LOGS",logVect);
+			varParams.put("LOGS",logVect);
 
-			if (hasAddiWpt()) {
-				Vector addiVect=new Vector(addiWpts.size());
-				for (int i=0; i<addiWpts.size(); i++) {
-					Hashtable addis=new Hashtable();
-					CacheHolder ch=(CacheHolder) addiWpts.get(i);
-					addis.put("WAYPOINT",ch.getWayPoint());
-					addis.put("NAME",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheName()) : ch.getCacheName());
-					if ((ch.pos!=null && ch.pos.isValid())) {
-						addis.put("LATLON",decSep.replaceAll(ch.pos.toString()));
-						addis.put("LAT",decSep.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
-						addis.put("LON",decSep.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
-					}
-					else {
-						addis.put("LATLON", "unknown");
-						addis.put("LAT", "");
-						addis.put("LON", "");		
-					}
-					addis.put("IMG",CacheType.typeImageForId(ch.getType()));
-					addis.put("ICON",""+ch.getType());
-					addis.put("TYPENAME", CacheType.type2Gui(ch.getType()));
-					addis.put("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
-					addis.put("SYM", CacheType.type2SymTag(ch.getType())); //<sym>
-					addis.put("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); //<groundspeak:type>
-					addis.put("LONGDESC",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheDetails(false).LongDescription) : ch.getCacheDetails(false).LongDescription);
-					addiVect.add(addis);
+			Vector addiVect=new Vector(addiWpts.size());
+			for (int i=0; i<addiWpts.size(); i++) {
+				Hashtable addis=new Hashtable();
+				CacheHolder ch=(CacheHolder) addiWpts.get(i);
+				addis.put("WAYPOINT",ch.getWayPoint());
+				addis.put("NAME",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheName()) : ch.getCacheName());
+				if ((ch.pos!=null && ch.pos.isValid())) {
+					addis.put("LATLON",decSep.replaceAll(ch.pos.toString()));
+					addis.put("LAT",decSep.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
+					addis.put("LON",decSep.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
 				}
-				if (addiWpts.size()>0) varParams.put("ADDIS",addiVect);
+				else {
+					addis.put("LATLON", "unknown");
+					addis.put("LAT", "");
+					addis.put("LON", "");		
+				}
+				addis.put("IMG",CacheType.typeImageForId(ch.getType()));
+				addis.put("ICON",""+ch.getType());
+				addis.put("TYPENAME", CacheType.type2Gui(ch.getType()));
+				addis.put("TYPE", CacheType.type2TypeTag(ch.getType())); //<type>
+				addis.put("SYM", CacheType.type2SymTag(ch.getType())); //<sym>
+				addis.put("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); //<groundspeak:type>
+				addis.put("LONGDESC",(ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheDetails(false).LongDescription) : ch.getCacheDetails(false).LongDescription);
+				addiVect.add(addis);
 			}
+			varParams.put("ADDIS",addiVect);
+			
 			Vector imgVect=new Vector(det.images.size());
 			for (int i=0; i<det.images.size(); i++) {
 				Hashtable imgs=new Hashtable();
@@ -832,7 +830,7 @@ public class CacheHolder{
 				}
 				imgVect.add(imgs);
 			}
-			if (det.images.size()>0) varParams.put("cacheImg",imgVect);
+			varParams.put("cacheImg",imgVect);
 		}
 		return varParams;
 	}	
