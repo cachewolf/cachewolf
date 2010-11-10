@@ -41,6 +41,7 @@
 # Version 8.0 - 20100604 adaption to new GC-design
 # Version 9.0 - 20100630 adaption to new GC-design
 # Version 10.0 - 20100729 adaption to new GC-design DateHiddenrex , optimized cacheOwnerRex araber95
+# Version 11.0 - 20101110 adaption to new GC-design (maybe not complete)
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -103,13 +104,13 @@ getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
 cacheUnavailable   = cache\ is\ temporarily\ unavailable
 cacheArchived      = cache\ has\ been\ archived
-premiumCachepage   = viewable\ to\ Premium\ Members\ only.
+premiumCachepage   = Premium\ Member\ Only\ Cache
 latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
-dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\ </strong>\\s*((?s).*?)\\s*<
+dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*</strong>\\s*((?s).*?)\\s*<
 hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
 difficultyRex      = Difficulty:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
@@ -127,18 +128,18 @@ singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
 # iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
 iconExStart        = www.geocaching.com/images/icons/
-iconExEnd          = "\ title="
-nameTempExStart    = <a\ href="
+iconExEnd          = '\ title='
+nameTempExStart    = <a\ href='
 nameTempExEnd      = /a>
 # Name extrahiert aus nameTemp
 nameExStart        = >
 nameExEnd          = <
-dateExStart        = "\ />&nbsp;
-dateExEnd          = \ by\ <a\ href="/profile/?guid=
-logExStart         = found)<br\ /><br\ />
+dateExStart        = '\ />&nbsp;
+dateExEnd          = \ by\ <a\ href='/profile/?guid=
+logExStart         = found)<br/><br/>
 logExEnd           = <br\ /><br\ /><small><a\ href="
-logIdExStart         = "\ id="
-logIdExEnd           = ">
+logIdExStart         = '\ id='
+logIdExEnd           = '>
 # Die Icons, die einen erfolgreichen Fund signalisieren
 icon_smile         = icon_smile.gif
 icon_camera        = icon_camera.gif
@@ -149,7 +150,7 @@ icon_attended      = icon_attended.gif
 #--------------------------------------
 # blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
 blockExStart       = <span\ id="ctl00_ContentBody_uxTravelBugList_uxInventoryLabel">Inventory</span>
-blockExEnd         = <p class="NoSpacing">
+blockExEnd         = <p\ class="NoSpacing">
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
 bugExStart         = <a\ href="
 bugExEnd           = </a>
