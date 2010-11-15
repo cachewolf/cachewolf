@@ -135,7 +135,7 @@ public class HintLogPanel extends CellPanel{
 		int nLogs=currCache.CacheLogs.size();
 		int logsPerPage=Global.getPref().logsPerPage;
 		for(int i = crntLogPosition; i<nLogs; i++){
-			dummy.append(currCache.CacheLogs.getLog(i).toHtml());
+			dummy.append(SafeXML.cleanback(currCache.CacheLogs.getLog(i).toHtml()));
 			dummy.append("<br>");
 			if(++counter >= logsPerPage) break;
 		}

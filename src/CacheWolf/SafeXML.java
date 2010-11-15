@@ -213,7 +213,7 @@ public final class SafeXML{
 		if (entity.startsWith("&#")) {
 			try{
 				if (entity.charAt(2)== 'x' || entity.charAt(2) == 'X') // number in hexadecimal // not tested because I don't have an XML containing hexadecimal encodings
-					addto.append((char)Integer.parseInt(entity.substring(2, entity.length()-1), 16)); 
+					addto.append((char)Integer.parseInt(entity.substring(3, entity.length()-1), 16)); 
 				else // number is decimal
 					addto.append((char)Integer.parseInt(entity.substring(2, entity.length()-1)));
 			} catch (NumberFormatException e) {
