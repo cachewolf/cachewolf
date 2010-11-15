@@ -594,11 +594,10 @@ public class SpiderGC {
 		double len = middle.getDistance(rm) * 2.0;
 		page_number++;
 		String listPage = getMapListPage(middle, north, west, south, east);
-		int i = listPage.indexOf("\"count\":");
-		pref.log("" + north + " " + west + " " + south + " " + east + " "
-				+ listPage.substring(i, i + 12) + " len=" + len);
-		if ((listPage.indexOf("\"count\": 501") > -1)
-				|| (listPage.indexOf("\"count\": 0") > -1 && len > 30)) {
+		int i = listPage.indexOf("\"count\\\":"); // \"count\":
+		pref.log("" + north + " " + west + " " + south + " " + east + " " + listPage.substring(i) + "\n len=" + len);
+		if ((listPage.indexOf("\"count\\\": 501") > -1)
+		||  (listPage.indexOf("\"count\\\": 0") > -1 && len > 30)) {
 			double northsouthmiddle = (north + south) / 2.0;
 			double westeastmiddle = (west + east) / 2.0;
 			getCaches(north, west, northsouthmiddle, westeastmiddle, setCachesToLoad);
@@ -624,11 +623,11 @@ public class SpiderGC {
 		int posOwn=5;       //o
 		int posAvailable=6; //ia
 		// ignoring first 3 lines
-		for (int i = 3; i < caches.length; i++) {
+		for (int i = 4; i < caches.length; i++) {
 			if (infB.isClosed) return;
 			
 			//cut away name to prevent parsing errors			
-			int WpIndex = caches[i].indexOf("\"gc\"");
+			int WpIndex = caches[i].indexOf("\"gc\\\"");
 			String elements[] = mString.split(caches[i].substring(WpIndex), ',');
 			
 			boolean found = (elements[posFound].indexOf("true") > -1 ? true : false);
@@ -639,7 +638,8 @@ public class SpiderGC {
 				if (restrictedCacheType != cacheType) continue;
 			}
 
-			String wp = mString.split(elements[posWP], '\"')[3];			
+			String wp = mString.split(elements[posWP], '\"')[3];
+			wp=wp.substring(0, wp.length()-1);
 			CacheHolder ch = cacheDB.get(wp);
 			if (ch == null) {
 
@@ -648,8 +648,8 @@ public class SpiderGC {
 				String own = mString.split(elements[posOwn], ':')[1];
 				boolean available = (elements[posAvailable].indexOf("true") > -1 ? true : false);
 				
-				int NameIndex = caches[i].indexOf("\"nn\"");
-				String cacheName = caches[i].substring (NameIndex + 6, WpIndex - 2 );
+				int NameIndex = caches[i].indexOf("\"nn\\\"");
+				String cacheName = caches[i].substring (NameIndex + 8, WpIndex - 4 );
 				cacheName = STRreplace.replace(cacheName, "\\\"", "\"" );
 
 				ch = new CacheHolder();
@@ -1314,8 +1314,7 @@ public class SpiderGC {
 					// sb.append(URL.encodeURL("__EVENTVALIDATION",false));
 					// sb.append("=");
 					// sb.append(URL.encodeURL(eventvalidation,false));
-					loginPage = fetch_post(loginPageUrl, sb.toString(),
-							nextPage, true); // /login/default.aspx
+					loginPage = fetch_post(loginPageUrl, sb.toString(), true);
 					if (loginPage.indexOf(loginSuccess) > 0)
 						pref.log("Login successful: " + pref.myAlias);
 					else {
@@ -1388,7 +1387,7 @@ public class SpiderGC {
 			// + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+
 			// URL.encodeURL(eventvalidation,false);
 			try {
-				loginPage = fetch_post(loginPageUrl, postStr, nextPage, true);
+				loginPage = fetch_post(loginPageUrl, postStr, true);
 				pref.log("Switched to English");
 			} catch (Exception ex) {
 				pref.log("Error switching to English: check/n" + loginPageUrl
@@ -1455,17 +1454,17 @@ public class SpiderGC {
 
 		String url;
 		if (spiderAllFinds) {
-			url = propFirstPageFinds
-					+ encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias));
+			url = propFirstPageFinds + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias));
 		} else {
 			url = propFirstPage + origin.getLatDeg(TransformCoordinates.DD)
-					+ propFirstPage2
-					+ origin.getLonDeg(TransformCoordinates.DD)
-					+ propMaxDistance + Integer.toString(distance);
+				+ propFirstPage2
+				+ origin.getLonDeg(TransformCoordinates.DD)
+				+ propMaxDistance + Integer.toString(distance);
 			if (doNotgetFound)
 				url = url + propShowOnlyFound;
 		}
 		url = url + cacheTypeRestriction;
+		
 		try {
 			htmlListPage = fetch(url, false);
 			pref.log("[getFirstListPage] Got first page " + url);
@@ -1484,18 +1483,18 @@ public class SpiderGC {
 	 * in: ... out: page_number,htmlPage
 	 */
 	private void getAListPage(int distance, String whatPage) {
-		String postStr;
+		String url;
 		if (spiderAllFinds) {
-			postStr = propFirstPage;
+			url = propFirstPage;
 		} else {
-			postStr = propFirstPage + origin.getLatDeg(TransformCoordinates.DD)
-					+ propFirstPage2
-					+ origin.getLonDeg(TransformCoordinates.DD)
-					+ propMaxDistance + Integer.toString(distance);
+			url = propFirstPage + origin.getLatDeg(TransformCoordinates.DD)
+				+ propFirstPage2
+				+ origin.getLonDeg(TransformCoordinates.DD)
+				+ propMaxDistance + Integer.toString(distance);
 			if (doNotgetFound)
-				postStr = postStr + propShowOnlyFound;
+				url = url + propShowOnlyFound;
 		}
-		postStr = postStr + cacheTypeRestriction;
+		url = url + cacheTypeRestriction;
 
 		Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
 		String viewstate;
@@ -1504,96 +1503,107 @@ public class SpiderGC {
 			viewstate = rexViewstate.stringMatched(1);
 		} else {
 			viewstate = "";
-			pref.log("[getAListPage] check rexViewstate in SpiderGC.java"
-					+ Preferences.NEWLINE + htmlListPage);
+			pref.log("[getAListPage] check rexViewstate in SpiderGC.java" + Preferences.NEWLINE + htmlListPage);
 		}
 
-		Regex rexViewstate1 = new Regex(
-				"id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
+		Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
 		String viewstate1;
 		rexViewstate1.search(htmlListPage);
 		if (rexViewstate1.didMatch()) {
 			viewstate1 = rexViewstate1.stringMatched(1);
 		} else {
 			viewstate1 = "";
-			pref.log("[getAListPage] check rexViewstate1 in SpiderGC.java"
-					+ Preferences.NEWLINE + htmlListPage);
+			pref.log("[getAListPage] check rexViewstate1 in SpiderGC.java" + Preferences.NEWLINE + htmlListPage);
 		}
 
 		/*
 		 * rexEventvalidation.search(htmlPage);
-		 * if(rexEventvalidation.didMatch()){ eventvalidation =
-		 * rexEventvalidation.stringMatched(1); } else { eventvalidation = ""; }
+		 * if(rexEventvalidation.didMatch()){ 
+		 * eventvalidation = rexEventvalidation.stringMatched(1); } 
+		 * else { eventvalidation = ""; }
 		 */
 
-		String url = URL.encodeURL("__EVENTTARGET", false) + "="
-				+ URL.encodeURL(whatPage, false) + "&"
-				+ URL.encodeURL("__EVENTARGUMENT", false) + "="
-				+ URL.encodeURL("", false) + "&"
-				+ URL.encodeURL("__VIEWSTATEFIELDCOUNT", false) + "=2" + "&"
-				+ URL.encodeURL("__VIEWSTATE", false) + "="
-				+ URL.encodeURL(viewstate, false) + "&"
-				+ URL.encodeURL("__VIEWSTATE1", false) + "="
-				+ URL.encodeURL(viewstate1, false);
-		// + "&" + URL.encodeURL("__EVENTVALIDATION",false) + "=" +
-		// URL.encodeURL(eventvalidation,false);
+		String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) + "&" +
+						  "__EVENTARGUMENT=" + "&" +
+						  "__VIEWSTATEFIELDCOUNT=2" + "&" +
+						  "__VIEWSTATE=" + URL.encodeURL(viewstate, false) + "&" +
+						  "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false); // + "&" +
+						  //"__EVENTVALIDATION=" + URL.encodeURL(eventvalidation,false);
 		try {
-			htmlListPage = fetch_post(postStr, url, p.getProp("nextListPage"),
-					true);
-			pref.log("[getAListPage] Got list page: "
-					+ URL.encodeURL(whatPage, false));
+			htmlListPage = fetch_post(url, postData, true);
+			pref.log("[getAListPage] Got list page: " + URL.encodeURL(whatPage, false));
 		} catch (Exception ex) {
 			pref.log("[getAListPage] Error getting a list page" + url, ex);
 		}
 	}
 
 	/* */
-	private String getMapListPage(CWPoint middle, double north, double west,
-			double south, double east) {
-
-		String url = "http://www.geocaching.com/map/default.aspx" + "?lat="
-				+ middle.getLatDeg(TransformCoordinates.DD) + "&lng="
-				+ middle.getLonDeg(TransformCoordinates.DD);
-
-		String strLeft = MyLocale.formatDouble(west, "00.00000").replace(',',
-				'.');
-		String strUp = MyLocale.formatDouble(north, "00.00000").replace(',',
-				'.');
-		String strRight = MyLocale.formatDouble(east, "00.00000").replace(',',
-				'.');
-		String strDown = MyLocale.formatDouble(south, "00.00000").replace(',',
-				'.');
-
-		String eo_cb_param1 = "eo_cb_param=%7B%22c%22%3A%201%2C%20%22m%22%3A%20%22%22%2C%20%22d%22%3A%20%22";
-		String eo_cb_param2 = strUp + "|" + strDown + "|" + strRight + "|"
-				+ strLeft + "%22%7D";
+	private String getMapListPage(CWPoint middle, double north, double west, double south, double east) {
 		String ret;
-		String doc = "";
+		
+		String referer = "http://www.geocaching.com/map/default.aspx" + 
+		"?lat="	+ middle.getLatDeg(TransformCoordinates.DD) + 
+		"&lng="	+ middle.getLonDeg(TransformCoordinates.DD);
+
+		String url = "http://www.geocaching.com/map/default.aspx/MapAction";
+
+		String strLeft = MyLocale.formatDouble(west, "#0.00000").replace(',','.');
+		String strUp = MyLocale.formatDouble(north, "#0.00000").replace(',','.');
+		String strRight = MyLocale.formatDouble(east, "#0.00000").replace(',','.');
+		String strDown = MyLocale.formatDouble(south, "#0.00000").replace(',','.');
+		String param1 = "{\"dto\":{\"data\":{\"c\":1,\"m\":\"\",\"d\":\"";
+		String param2 = strUp + "|" + strDown + "|" + strRight + "|" + strLeft;
+		//String param3 = "\"},\"ut\":\"WQZID4ZFAYC6SFPYDLA632UY6Y6NBSLQY3VWLUKML2MZ5WN377MNTSARCO5JE7MUFIXJ4P4MHLY6VLXAP4DDCURO3E\"}}";
+		String param3 = "\"},\"ut\":\"FOUTFKOKLELXOQSV5FY2MWTVZDFOIRRFBBKZYJNIJL3L45ZASVQDMLLGRRNCSHNA2LWSKIMJGRRLUTGIKWPRM5CDCWNJBFCJGC7AFSI\"}}";
+		String postData = param1+param2+param3;
+
 		try {
-
-			doc = "eo_cb_id=ctl00_ContentBody_cbAjax"
-					+ "&"
-					+ eo_cb_param1
-					+ eo_cb_param2
-					+ "&__eo_obj_states="
-					+
-					// "&__VIEWSTATE="+viewstate+
-					"&__VIEWSTATE=%2FwEPDwULLTEyOTYyNjYwNjkPZBYCZg9kFgZmD2QWAgIODxYCHgdWaXNpYmxlaGQCAQ9kFhICBQ8WAh4EVGV4dGRkAgkPFgIfAQUWWW91IGFyZSBub3QgbG9nZ2VkIGluLmQCCw8PFgQeC05hdmlnYXRlVXJsBZEBaHR0cDovL3d3dy5nZW9jYWNoaW5nLmNvbS9sb2dpbi9kZWZhdWx0LmFzcHg%2FUkVTRVQ9WSZyZWRpcj1odHRwJTNhJTJmJTJmd3d3Lmdlb2NhY2hpbmcuY29tJTJmbWFwJTJmZGVmYXVsdC5hc3B4JTNmbGF0JTNkNDYuNjE1OTclMjZsbmclM2QxMy44NDg3Mx8BBQZMb2cgaW5kZAIPD2QWAgIBDw8WAh8BZGRkAhEPZBYCAgEPD2QPZAUMRFFJQkFBQUFBQUE9ZAIfDxYCHwBnZAInDw8WBB8CBQwvcmV2aWV3cy9ncHMfAQULR1BTIFJldmlld3NkZAIrD2QWAgIBDw8WAh8BBZcCPGlmcmFtZSBzcmM9Imh0dHA6Ly9iYW5tYW41Lmdyb3VuZHNwZWFrLmNvbS9iYW5tYW41L2FkLmFzcHg%2FWm9uZUlEPTkmVGFzaz1HZXQmU2l0ZUlEPTEmWD0nMzdlYWVjMTQzODVjNDc1Y2JiZjFhODk0YTgzOTNiMGMnIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjI0MCIgTWFyZ2lud2lkdGg9IjAiIE1hcmdpbmhlaWdodD0iMCIgSHNwYWNlPSIwIiBWc3BhY2U9IjAiIEZyYW1lYm9yZGVyPSIwIiBTY3JvbGxpbmc9Im5vIiBzdHlsZT0id2lkdGg6MTIwcHg7SGVpZ2h0OjI0MHB4OyI%2BPC9pZnJhbWU%2BZGQCLQ9kFgJmD2QWAmYPFgIeC18hSXRlbUNvdW50AgYWDAIBD2QWAgIBDw8WCB4PQ29tbWFuZEFyZ3VtZW50BQVlbi1VUx4LQ29tbWFuZE5hbWUFDVNldFRlbXBMb2NhbGUfAQUHRW5nbGlzaB4QQ2F1c2VzVmFsaWRhdGlvbmhkZAICD2QWAgIBDw8WCB8EBQVkZS1ERR8FBQ1TZXRUZW1wTG9jYWxlHwEFB0RldXRzY2gfBmhkZAIDD2QWAgIBDw8WCB8EBQVmci1GUh8FBQ1TZXRUZW1wTG9jYWxlHwEFCUZyYW7Dp2Fpcx8GaGRkAgQPZBYCAgEPDxYIHwQFBXB0LVBUHwUFDVNldFRlbXBMb2NhbGUfAQUKUG9ydHVndcOqcx8GaGRkAgUPZBYCAgEPDxYIHwQFBWNzLUNaHwUFDVNldFRlbXBMb2NhbGUfAQUJxIxlxaF0aW5hHwZoZGQCBg9kFgICAQ8PFggfBAUFc3YtU0UfBQUNU2V0VGVtcExvY2FsZR8BBQdTdmVuc2thHwZoZGQCAw8WAh8BBSxTZXJ2ZXI6IFdFQjA4OyBCdWlsZDogVEZTLlJlbGVhc2VfMjAxMDA4MzAuMWRkkWJYA8UHbJ38zIk7cJhELr1nbU4%3D"
-					+ "&eo_version=5.0.51.2"
-					+ "&=on&=&=&=2&=3&=4&=5&=1858&=6&=8&=11&=137&=13&=453&=3653&=on&="
-					+ "&__EVENTVALIDATION=" + "&__EVENTTARGET="
-					+ "&__EVENTARGUMENT=";
-
-			ret = fetch_post(url, doc, "/map/default.aspx", false);
-			pref.log("[getAListPage] Got map Cachepage: ");
+		ret = post(url, postData, referer, false);
 		} catch (Exception ex) {
 			ret = "";
-			pref.log("[getAListPage] Error getting map Cachepage" + url + doc, ex);
+			pref.log("[SpiderGC:getMapListPage] Error getting map Cachepage" + url + postData, ex);
 		}
 		return ret;
-	}
+ 	}
 
-	/* */
+	private static String post(String url, String postData, String referer, boolean withResponseHeaders) {
+		HttpConnection conn;
+		try {
+			conn = new HttpConnection(url);
+			JavaUtf8Codec codec = new ewe.io.JavaUtf8Codec();
+			conn.documentIsEncoded = true;
+			conn.setRequestorProperty("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 6.0; de; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12");
+			conn.setRequestorProperty("Accept","application/json, text/javascript, */*; q=0.01");
+			conn.setRequestorProperty("Accept-Language","de-de,de;q=0.8,en-us;q=0.5,en;q=0.3");
+			conn.setRequestorProperty("Accept-Encoding","gzip,deflate");
+			conn.setRequestorProperty("Accept-Charset","ISO-8859-1,utf-8;q=0.7,*;q=0.7");
+			conn.setRequestorProperty("Keep-Alive","115");
+			conn.setRequestorProperty("Proxy-Connection","keep-alive");
+			conn.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
+			conn.setRequestorProperty("X-Requested-With","XMLHttpRequest");
+			conn.setRequestorProperty("Referer",referer);
+			conn.setRequestorProperty("Pragma","no-cache");
+			conn.setRequestorProperty("Cache-Control","no-cache");
+			if (cookieSession.length() > 0) { conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID); }
+			conn.setRequestorProperty("Connection", "close");
+			//conn.setPostData(codec.encodeText(postData.toCharArray(), 0, postData.length(), true, null));
+			conn.setPostData(postData);
+			Socket sock = conn.connect();
+			// CharArray c_data = conn.readText(sock, codec);
+			ByteArray daten = conn.readData(sock);
+			CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+			
+			sock.close();
+			
+			if (withResponseHeaders)
+				return getResponseHeaders(conn) + c_data.toString();
+			else
+				return c_data.toString();
+		} catch (Exception e) {
+			pref.log("[fetch_post] Ignored Exception", e, true);
+		}
+		return "";
+	}
 
 	/**
 	 * check if new Update exists
@@ -2972,29 +2982,19 @@ public class SpiderGC {
 	public static String fetch(String address, boolean withResponseHeaders) {
 		CharArray c_data;
 		try {
-			HttpConnection conn;
 			if (pref.myproxy.length() > 0 && pref.proxyActive) {
-				pref.log("[fetch]:Using proxy: " + pref.myproxy + " / "
-						+ pref.myproxyport);
+				pref.log("[fetch]:Using proxy: " + pref.myproxy + " / " + pref.myproxyport);
 			}
-			conn = new HttpConnection(address);
-			conn.setRequestorProperty("User-Agent",
-					"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-			if (cookieSession.length() > 0) {
-				conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID);
-				pref.log("[fetch]:Cookie Zeug: " + "Cookie: ASP.NET_SessionId="
-						+ cookieSession + "; userid=" + cookieID);
-			} else
-				pref.log("[fetch]:No Cookie found", null);
+			HttpConnection conn = new HttpConnection(address);
+			conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+			if (cookieSession.length() > 0) {conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID);};
 			conn.setRequestorProperty("Connection", "close");
 			conn.documentIsEncoded = true;
-			pref.log("[fetch]:Connecting " + address);
 			Socket sock = conn.connect();
 			pref.log("[fetch]:Connect ok! " + address);
-			// ByteArray daten = conn.readData(sock);
 			JavaUtf8Codec codec = new JavaUtf8Codec();
-			// c_data = codec.decodeText(daten.data, 0, daten.length, true,
-			// null);
+			// ByteArray daten = conn.readData(sock);
+			// c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 			c_data = conn.readText(sock, codec);
 			sock.close();
 			pref.log("[fetch]:Read data ok " + address);
@@ -3004,8 +3004,6 @@ public class SpiderGC {
 				return c_data.toString();
 		} catch (IOException ioex) {
 			pref.log("IOException in fetch", ioex);
-		} finally {
-			// continue
 		}
 		return "";
 	}
@@ -3015,40 +3013,29 @@ public class SpiderGC {
 	 * This method does exactly that. Actually this method is generic in the
 	 * sense that it can be used to post to a URL using http post.
 	 */
-	private static String fetch_post(String address, String document,
-			String path, boolean withResponseHeaders) {
-		HttpConnection conn;
+	private static String fetch_post(String address, String postData, boolean withResponseHeaders) {
 		try {
-			conn = new HttpConnection(address);
+			HttpConnection conn = new HttpConnection(address);
 			JavaUtf8Codec codec = new JavaUtf8Codec();
 			conn.documentIsEncoded = true;
-			conn.setRequestorProperty("User-Agent",
-					"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-			conn.setPostData(codec.encodeText(document.toCharArray(), 0, document.length(), true, null));
+			conn.setRequestorProperty("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+			conn.setPostData(codec.encodeText(postData.toCharArray(), 0, postData.length(), true, null));
 			conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
-			if (cookieSession.length() > 0) {
-				conn.setRequestorProperty("Cookie", "ASP.NET_SessionId="
-						+ cookieSession + "; userid=" + cookieID);
-				pref.log("[fetch_post] " + "Cookie: ASP.NET_SessionId="
-						+ cookieSession + "; userid=" + cookieID);
-			} else {
-				pref.log("[fetch_post]:No Cookie found", null);
-			}
+			if (cookieSession.length() > 0) { conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID);};
 			conn.setRequestorProperty("Connection", "close");
 			Socket sock = conn.connect();
 			pref.log("[fetch_post]:Connect ok! " + address);
 			// ByteArray daten = conn.readData(sock);
 			CharArray c_data = conn.readText(sock, codec);
 			pref.log("[fetch_post]:Read data ok " + address);
-			// CharArray c_data = codec.decodeText(daten.data, 0, daten.length,
-			// true, null);
+			// CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 			sock.close();
 			if (withResponseHeaders)
 				return getResponseHeaders(conn) + c_data.toString();
 			else
 				return c_data.toString();
 		} catch (Exception e) {
-			// pref.log("[fetch_post] Ignored Exception", e, true);
+			pref.log("[fetch_post] Ignored Exception", e, true);
 		}
 		return "";
 	}
@@ -3107,8 +3094,7 @@ public class SpiderGC {
 		String bugList;
 		try {
 			// infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
-			bugList = fetch(p.getProp("getBugByName")
-					+ STRreplace.replace(SafeXML.clean(name), " ", "+"), false);
+			bugList = fetch(p.getProp("getBugByName") + STRreplace.replace(SafeXML.clean(name), " ", "+"), false);
 			pref.log("[getBugId] Fetched bugId: " + name);
 		} catch (Exception ex) {
 			pref.log("[getBugId] Could not fetch bug list" + name, ex);
