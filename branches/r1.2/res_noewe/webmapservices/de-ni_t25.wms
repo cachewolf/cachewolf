@@ -36,8 +36,8 @@ StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 54.001848 E 6.579380
 BoundingBoxButtomRightWGS84: N 51.372735 E 11.734608
-MinScale:   2.772396
-MaxScale:   4.950000
+MinScale:   0
+MaxScale:   100
 RecommendedScale:   2,5
 #MinSFInput:1,9586
 #MaxSFInput:3,5001
