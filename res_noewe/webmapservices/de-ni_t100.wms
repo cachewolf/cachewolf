@@ -19,5 +19,5 @@ BoundingBoxTopLeftWGS84: N 54.9403 E 6.1804
 BoundingBoxButtomRightWGS84: N 50.5028 E 13.6833
 MinScale:   6.76160460880501
 MaxScale:   52.82503600628914
-RecommendedScale:   5
+RecommendedScale:   15 5 10 20
 ImageFileExtension: .png
