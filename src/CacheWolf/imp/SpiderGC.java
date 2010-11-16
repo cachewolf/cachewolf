@@ -596,8 +596,8 @@ public class SpiderGC {
 		String listPage = getMapListPage(middle, north, west, south, east);
 		int i = listPage.indexOf("\"count\\\":"); // \"count\":
 		pref.log("" + north + " " + west + " " + south + " " + east + " " + listPage.substring(i) + "\n len=" + len);
-		if ((listPage.indexOf("\"count\\\": 501") > -1)
-		||  (listPage.indexOf("\"count\\\": 0") > -1 && len > 30)) {
+		if ((listPage.indexOf("\"count\\\":501") > -1)
+		||  (listPage.indexOf("\"count\\\":0") > -1 && len > 30)) {
 			double northsouthmiddle = (north + south) / 2.0;
 			double westeastmiddle = (west + east) / 2.0;
 			getCaches(north, west, northsouthmiddle, westeastmiddle, setCachesToLoad);
