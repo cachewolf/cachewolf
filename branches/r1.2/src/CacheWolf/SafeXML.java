@@ -316,7 +316,7 @@ public final class SafeXML{
 		String dummy = new String();
 		
 		dummy = STRreplace.replace(str, "&","&amp;");
-		dummy = STRreplace.replace(str, "&amp;#","&#"); //siehe  http://www.geoclub.de/viewtopic.php?f=40&t=50635&p=798796#p798796
+		dummy = STRreplace.replace(dummy, "&amp;#","&#"); //siehe  http://www.geoclub.de/viewtopic.php?f=40&t=50635&p=798796#p798796
 		dummy = STRreplace.replace(dummy, "<", "&lt;");
 		dummy = STRreplace.replace(dummy, ">", "&gt;");
 		dummy = STRreplace.replace(dummy, "\"", "&quot;");
