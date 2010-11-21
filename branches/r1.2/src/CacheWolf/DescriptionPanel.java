@@ -29,7 +29,6 @@ import com.stevesoft.ewe_pat.Regex;
 import com.stevesoft.ewe_pat.Transformer;
 
 import ewe.fx.Font;
-import ewe.sys.Date;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
