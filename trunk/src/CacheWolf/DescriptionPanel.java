@@ -29,6 +29,7 @@ import com.stevesoft.ewe_pat.Regex;
 import com.stevesoft.ewe_pat.Transformer;
 
 import ewe.fx.Font;
+import ewe.sys.Date;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
@@ -97,6 +98,26 @@ public class DescriptionPanel extends CellPanel{
         	desc=STRreplace.replace(desc,"<sup>","^(");
         	desc=STRreplace.replace(desc, "</sup>",")");
         }
+        // HtmlDisplay interprets &something; as entity, showing "?", so replacing & with +
+        // real entities are uncorrectly shown as "?" (except "&amp";),
+        // so they are replaced at import(spider,..) with the IsoChar of the entity (SafeXML.java cleanback)  
+        StringBuffer buf = new StringBuffer( desc );
+        boolean checkit=true;
+        int beg=0;
+        while (checkit){
+        	int p1=desc.indexOf("&",beg);
+        	int p2=desc.indexOf(";", p1+1);
+        	if (p1==-1 || p2==-1) checkit=false;
+        	else {
+                beg=p2+1;
+                if (beg>=desc.length()) checkit=false;
+        	}
+        	if (checkit && p2-p1>7 ){
+                buf.setCharAt( p1, '+');
+        	}
+        }
+        desc = buf.toString( );
+        
         Vm.showWait(true);
         if (cache!=null && isHtml) {
             int imageNo = 0;
