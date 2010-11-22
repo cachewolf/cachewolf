@@ -135,6 +135,7 @@ public class SpiderGC {
 	private boolean maxNumberAbort;
 	private byte restrictedCacheType = 0;
 	private String fileName = "";
+	private String userToken = "";
 
 	private static String propFirstPage;
 	private static String propFirstPage2;
@@ -1545,6 +1546,14 @@ public class SpiderGC {
 		"?lat="	+ middle.getLatDeg(TransformCoordinates.DD) + 
 		"&lng="	+ middle.getLonDeg(TransformCoordinates.DD);
 
+		if (userToken.equals("")) {
+			ret = fetch(referer, false);
+			int i = ret.indexOf("userToken = '");
+			i=i+13;
+			int j = ret.indexOf("'", i);
+			userToken = ret.substring(i,j);
+		}
+		
 		String url = "http://www.geocaching.com/map/default.aspx/MapAction";
 
 		String strLeft = MyLocale.formatDouble(west, "#0.00000").replace(',','.');
@@ -1553,10 +1562,9 @@ public class SpiderGC {
 		String strDown = MyLocale.formatDouble(south, "#0.00000").replace(',','.');
 		String param1 = "{\"dto\":{\"data\":{\"c\":1,\"m\":\"\",\"d\":\"";
 		String param2 = strUp + "|" + strDown + "|" + strRight + "|" + strLeft;
-		//String param3 = "\"},\"ut\":\"WQZID4ZFAYC6SFPYDLA632UY6Y6NBSLQY3VWLUKML2MZ5WN377MNTSARCO5JE7MUFIXJ4P4MHLY6VLXAP4DDCURO3E\"}}";
-		//String param3 = "\"},\"ut\":\"FOUTFKOKLELXOQSV5FY2MWTVZDFOIRRFBBKZYJNIJL3L45ZASVQDMLLGRRNCSHNA2LWSKIMJGRRLUTGIKWPRM5CDCWNJBFCJGC7AFSI\"}}";
-		String param3 = "\"},\"ut\":\"FOUTFKOKLELXOQSV5FY2MWTVZDFOIRRFBBKZYJNIJL3L45ZASVQDMLLGRRNCSHNAGV4OXVWAHOOUFX6ZCHNMWNGCH7PCGVT6LGCHH3I\"}}";
-		String postData = param1+param2+param3;
+		String param3 = "\"},\"ut\":\"";
+		String param4 = "\"}}";
+		String postData = param1+param2+param3+userToken+param4;
 
 		try {
 		ret = post(url, postData, referer, false);
@@ -1585,7 +1593,7 @@ public class SpiderGC {
 			conn.setRequestorProperty("Referer",referer);
 			conn.setRequestorProperty("Pragma","no-cache");
 			conn.setRequestorProperty("Cache-Control","no-cache");
-			if (cookieSession.length() > 0) { conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID); }
+			// if (cookieSession.length() > 0) { conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID); }
 			conn.setRequestorProperty("Connection", "close");
 			//conn.setPostData(codec.encodeText(postData.toCharArray(), 0, postData.length(), true, null));
 			conn.setPostData(postData);
