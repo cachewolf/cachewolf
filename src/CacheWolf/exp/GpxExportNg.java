@@ -693,7 +693,7 @@ public class GpxExportNg {
 		if (ch.isCustomWpt() || ch.isAddiWpt())
 			return "";
 		StringBuffer ret = new StringBuffer();
-		ret.append("    <groundspeak:cache id=\"").append(ch.GetCacheID()).append("\" available=\"").append(ch.is_available() ? TRUE : FALSE).append("\" archived=\"").append(ch.is_archived() ? TRUE : FALSE).append("\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">").append(newLine)
+		ret.append("    <groundspeak:cache id=\"").append(ch.GetCacheID()).append("\" available=\"").append(ch.is_available() ? TRUE : FALSE).append("\" archived=\"").append(ch.is_archived() ? TRUE : FALSE).append("\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0/1\">").append(newLine)
 		.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.getCacheName())).append("</groundspeak:name>").append(newLine)
 		.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:placed_by>").append(newLine)
 		.append("      <groundspeak:owner id=\"").append("31415").append("\">").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:owner>").append(newLine)
