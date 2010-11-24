@@ -802,6 +802,11 @@ public class GpxExportNg {
 			append("<br />").
 			append(newLine);
 		}
+		if (ch.hasNote()) {
+			logText.append(SafeXML.cleanGPX(ch.getCacheDetails(true).getCacheNotes())).
+			append("<br />").
+			append(newLine);
+		}
 		Log log = new Log("icon_note.gif", "2000-01-01", "CacheWolf",logText.toString());
 		return log;
 	}
