@@ -197,7 +197,7 @@ public class TravelbugJourneyList extends MinML {
 		String datei = baseDir + "travelbugs.xml";
 		try{
 			PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(datei)));
-			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			outp.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			outp.print("<travelbugJourneys>\n");	
 			int size=tbJourneyList.size();
 			for (int i=0; i<size; i++) outp.print(((TravelbugJourney)tbJourneyList.elementAt(i)).toXML());
