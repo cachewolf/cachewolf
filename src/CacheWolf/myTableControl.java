@@ -340,11 +340,13 @@ public class myTableControl extends TableControl{
 		if (selectedItem == miOpenGmaps) {
 			ch = cacheDB.get(tbp.getSelectedCache());
 			if (ch.pos.isValid()) {
-				String latlon=""+ch.pos.getLatDeg(CWPoint.DD)+","+ch.pos.getLonDeg(CWPoint.DD);
+				String lat=""+ch.pos.getLatDeg(CWPoint.DD);
+				String lon=""+ch.pos.getLonDeg(CWPoint.DD);
 				String nameOfCache=ewe.net.URL.encodeURL(ch.cacheName,false).replace('#','N').replace('@','_');
 				String language=Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
 				if (!pref.language.equalsIgnoreCase("auto")) {language=pref.language;}
-				String url="http://maps.google."+language+"/maps?q="+nameOfCache+"@"+latlon;
+				String url="http://maps.google."+language+"/maps?q="+nameOfCache+"@"+lat+","+lon;
+				url="http://www.geocaching.com/map/default.aspx?lat="+lat+"&lng="+lon;
 				callExternalProgram(pref.browser, url);
 			}
 		} else
