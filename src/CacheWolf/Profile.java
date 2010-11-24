@@ -207,7 +207,7 @@ public class Profile {
 		if (centre==null || !centre.isValid() || (savedCentre.latDec==0.0 && savedCentre.lonDec==0.0)) savedCentre=pref.getCurCentrePt();
 
 		try{
-			detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			detfile.print("<CACHELIST format=\"decimal\">\n");
 			detfile.print("    <VERSION value = \"3\"/>\n");
 			if (savedCentre.isValid())

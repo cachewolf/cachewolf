@@ -390,7 +390,7 @@ public class CacheHolderDetail {
 			}
 			try{
 				if(getParent().getWayPoint().length()>0){
-				  detfile.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n");
+				  detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
 				  detfile.print("<CACHEDETAILS>\r\n");
 				  detfile.print("<VERSION value = \"3\"/>\n");
 				  detfile.print("<DETAILS><![CDATA["+LongDescription+"]]></DETAILS>\r\n");
