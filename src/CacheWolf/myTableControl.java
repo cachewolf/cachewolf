@@ -346,6 +346,7 @@ public class myTableControl extends TableControl{
 				String language=Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
 				if (!pref.language.equalsIgnoreCase("auto")) {language=pref.language;}
 				String url="http://maps.google."+language+"/maps?q="+nameOfCache+"@"+lat+","+lon;
+				callExternalProgram(pref.browser, url);
 				url="http://www.geocaching.com/map/default.aspx?lat="+lat+"&lng="+lon;
 				callExternalProgram(pref.browser, url);
 			}
