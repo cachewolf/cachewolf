@@ -316,7 +316,26 @@ public final class SafeXML{
 		String dummy = new String();
 		
 		dummy = STRreplace.replace(str, "&","&amp;");
-		dummy = STRreplace.replace(dummy, "&amp;#","&#"); //siehe  http://www.geoclub.de/viewtopic.php?f=40&t=50635&p=798796#p798796
+		//"&amp;#" --> "&#"); //Darstellung Umlaute etc : siehe  http://www.geoclub.de/viewtopic.php?f=40&t=50635&p=798796#p798796
+		// aber so etwas nicht "&amp;#entry15063" --> !!not!! "&#entry15063" (Cache GCPB5P export -> gpx, import -> mapsource)
+		int pos=0;
+		while (pos>-1) {
+			pos=dummy.indexOf("&amp;#",pos);
+			int pos1=dummy.indexOf(";",pos+6);
+			int k = pos1-pos; // wann kommt das ; als Ende eines numerischen entities?
+			if (pos>-1) {
+				if ( k < 12) {
+					String s = dummy.substring(pos+6,pos+8).toLowerCase();
+					char c=s.charAt(0);
+					char c1=s.charAt(1);
+					if ((c=='x' && ((c1>='0' && c1<='9') || (c1>='a' && c1<='f'))) || (c>='0' && c<='9')) {
+						dummy=dummy.substring(0, pos+1) + dummy.substring(pos+5, dummy.length());
+					}
+				}
+				pos++;
+			}
+		}
+			
 		dummy = STRreplace.replace(dummy, "<", "&lt;");
 		dummy = STRreplace.replace(dummy, ">", "&gt;");
 		dummy = STRreplace.replace(dummy, "\"", "&quot;");
