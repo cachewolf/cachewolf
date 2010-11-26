@@ -127,7 +127,7 @@ public class GpxExportNg {
 
 	// we need to fake desc to make clients like GSAK accept additional waypoints together with caches
 	final static String GPXHEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"+(newLine)
-			+("<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" version=\"1.0\" creator=\"CacheWolf\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.groundspeak.com/cache/1/0/1 http://www.groundspeak.com/cache/1/0/1/cache.xsd\" xmlns=\"http://www.topografix.com/GPX/1/0\">")+(newLine)
+			+("<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" version=\"1.0\" creator=\"CacheWolf\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.groundspeak.com/cache/1/0 http://www.groundspeak.com/cache/1/0/cache.xsd\" xmlns=\"http://www.topografix.com/GPX/1/0\">")+(newLine)
 			+("<name>@@NAME@@</name>")+(newLine)
 			+("<desc>This is an individual cache generated from Geocaching.com</desc>")+(newLine)
 			+("<author>Various users from geocaching.com and/or opencaching.de</author>")+(newLine)
@@ -693,7 +693,7 @@ public class GpxExportNg {
 		if (ch.isCustomWpt() || ch.isAddiWpt())
 			return "";
 		StringBuffer ret = new StringBuffer();
-		ret.append("    <groundspeak:cache id=\"").append(ch.GetCacheID()).append("\" available=\"").append(ch.is_available() ? TRUE : FALSE).append("\" archived=\"").append(ch.is_archived() ? TRUE : FALSE).append("\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0/1\">").append(newLine)
+		ret.append("    <groundspeak:cache id=\"").append(ch.GetCacheID()).append("\" available=\"").append(ch.is_available() ? TRUE : FALSE).append("\" archived=\"").append(ch.is_archived() ? TRUE : FALSE).append("\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">").append(newLine)
 		.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.getCacheName())).append("</groundspeak:name>").append(newLine)
 		.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:placed_by>").append(newLine)
 		.append("      <groundspeak:owner id=\"").append("31415").append("\">").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:owner>").append(newLine)
