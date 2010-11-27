@@ -1,4 +1,4 @@
-<#-- Export-Template for Export to 'G7ToWin'-->
+<#-- Export-Template V0.9 for Export via .loc to 'G7ToWin'-->
 
 <tmpl_par name="charset" value="ASCII">
 <tmpl_par name="newline" value="CRLF">
@@ -11,7 +11,10 @@
 
 <tmpl_loop cache_index>
    <waypoint><br/>
-      <name id="<tmpl_var WAYPOINT>"><![CDATA[<tmpl_var NAME>]]></name><br/>
+      <name id="<tmpl_var WAYPOINT>"><![CDATA[<tmpl_var NAME> (D=<tmpl_var DIFFICULTY>/T=<tmpl_var TERRAIN>/<tmpl_var SIZE>
+<tmpl_if ADDIS>/Multi)]]></name><br/>
+<tmpl_else>/Single)]]></name><br/>
+</tmpl_if>
       <coord lat="<tmpl_var LAT>" lon="<tmpl_var LON>"/><br/>
       <type><tmpl_var GMTYPE></type><br/>
       <link><tmpl_var URL></link><br/>
