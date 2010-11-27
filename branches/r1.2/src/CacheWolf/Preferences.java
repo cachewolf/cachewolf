@@ -695,7 +695,7 @@ public class Preferences extends MinML{
 		if (pathToConfigFile == null) setPathToConfigFile(null); // this sets the default value
 		try{
 			PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(pathToConfigFile)));
-			outp.print("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			outp.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			outp.print("<preferences>\n");
 			outp.print("    <locale language=\"" + SafeXML.clean(language) + "\"/>\n");
 			outp.print("    <basedir dir = \"" + SafeXML.clean(getBaseDir()) + "\"/>\n");

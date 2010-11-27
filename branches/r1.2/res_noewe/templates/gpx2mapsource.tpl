@@ -1,4 +1,4 @@
-<#-- Export-Template for Export to 'MapSource'-->
+<#-- Export-Template V0.9 for Export via .gpx to 'MapSource'-->
 
 <tmpl_par name="charset" value="UTF8">
 <tmpl_par name="newline" value="CRLF">
@@ -12,9 +12,12 @@
 <tmpl_loop cache_index>
    <wpt lat="<tmpl_var LAT>" lon="<tmpl_var LON>"><br>
       <name><tmpl_var WAYPOINT></name><br>
-      <desc><tmpl_var NAME> (<tmpl_var DIFFICULTY>/<tmpl_var TERRAIN>)</desc><br>
+      <desc><tmpl_var name="NAME" escape="html"> (D=<tmpl_var DIFFICULTY>/T=<tmpl_var TERRAIN>/<tmpl_var SIZE>
+<tmpl_if ADDIS>/Multi)</desc><br>
+<tmpl_else>/Single)</desc><br>
+</tmpl_if>
       <url><tmpl_var URL></url><br>
-      <urlname><tmpl_var NAME></urlname><br>
+      <urlname><tmpl_var name="NAME" escape="html"></urlname><br>
       <sym><tmpl_var SYM></sym><br>
       <type><tmpl_var TYPE></type><br>
    </wpt>
@@ -27,7 +30,7 @@
          <wpt lat="00.000001" lon="00.000001">
          </tmpl_if><br>
             <name><tmpl_var WAYPOINT></name><br>
-            <desc><tmpl_var NAME></desc><br>
+            <desc><tmpl_var name="NAME" escape="html"></desc><br>
             <sym><tmpl_var SYM></sym><br>
             <type><tmpl_var TYPE></type><br>
          </wpt>
