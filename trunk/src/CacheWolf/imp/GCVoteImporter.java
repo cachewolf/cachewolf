@@ -79,7 +79,7 @@ public class GCVoteImporter extends MinML{
 	public void doIt() {
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
-		this.GCVUser = pref.myAlias;
+		this.GCVUser = "dummy"; // pref.myAlias;
 		this.GCVPassword = "";
 
 		int totalWaypoints = cacheDB.countVisible();
