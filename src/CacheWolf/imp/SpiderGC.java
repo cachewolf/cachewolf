@@ -1935,7 +1935,7 @@ public class SpiderGC {
 	}
 	private boolean TBchanged(CacheHolder ch, String cacheDescription) {
 		// simplified Version: only presence is checked 
-		if (pref.downloadTBs) {
+		if (pref.downloadTBs && pref.checkTBs ) {
 			boolean hasCoin=cacheDescription.indexOf("Geocoin") > -1;
 			boolean hasTB=cacheDescription.indexOf("Travel Bug Dog Tag") > -1;						
 			return (ch.has_bugs() != (hasCoin || hasTB));
