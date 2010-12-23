@@ -73,7 +73,7 @@ logDateRex         = <td>\\s*(.*?)<br\ />\\s*<span\ class="Success">
 availableRex       = <span\ class="Strike">
 archivedRex        = <span\ class="OldWarning\ Strike">
 PMRex              = small_profile.gif
-distRex            = <br\ />(.*?)(?:km|mi)\\s*</td>
+distRex            = (.*?)(?:km|mi)
 waypointRex        = \\(GC(.*?)\\)<br\ />
 TypeRex            = k">\\s*<img\ src="/images/WptTypes/(.*?)\\.gif
 SizeRex            = /container/(.*?)\\.gif
